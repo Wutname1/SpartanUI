@@ -6,7 +6,7 @@ oUF:SetActiveStyle("Spartan_PlayerFrames");
 addon.player = oUF:Spawn("player","SUI_PlayerFrame");
 addon.player:SetPoint("BOTTOMRIGHT",SpartanUI,"TOP",-72,-3);
 
-function WarlockPowerFrame_Relocate()
+function WarlockPowerFrame_Relocate() -- Sets the location of the warlock bars based on spec
 	local spec = GetSpecialization();
 	if ( spec == SPEC_WARLOCK_AFFLICTION ) then
 		-- set up Affliction
@@ -29,12 +29,15 @@ do -- relocate the AlternatePowerBar
 	hooksecurefunc(PlayerFrameAlternateManaBar,"SetPoint",function(_,_,parent)
 		if (parent ~= addon.player) then
 			PlayerFrameAlternateManaBar:ClearAllPoints();
-			PlayerFrameAlternateManaBarSetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",55,2);
+			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
 		end
 	end);
 	PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
 	PlayerFrameAlternateManaBar:SetFrameLevel(4); PlayerFrameAlternateManaBar:SetScale(1); PlayerFrameAlternateManaBar:ClearAllPoints();
-	PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",55,2);
+	if (class == MONK) then
+		PlayerFrameAlternateManaBar:SetScale(1.1);
+	end
+	PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
 end
 
 do -- relocate the druid EclipseBar
@@ -83,6 +86,9 @@ do -- relocate the shaman TotemFrame
 		if (parent ~= addon.player) then
 			TotemFrame:ClearAllPoints();
 			TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,18);
+			if (class == MONK) then
+				TotemFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",-15,-105);
+			end
 		end
 	end);
 	TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
@@ -90,7 +96,7 @@ do -- relocate the shaman TotemFrame
 	TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",55,11);
 end
 
-do -- relocate the warlock ShardBar
+do -- relocate the warlock bars
 	hooksecurefunc(WarlockPowerFrame,"SetPoint",function(_,_,parent)
 		if (parent ~= addon.player) then
 			WarlockPowerFrame:ClearAllPoints();
@@ -107,6 +113,18 @@ do -- relocate the warlock ShardBar
 	WarlockSpecWatcher:SetScript("OnEvent",function()
 		WarlockPowerFrame_Relocate();
 	end);
+end
+
+do -- relocate the Priest PriestBarFrame
+	hooksecurefunc(PriestBarFrame,"SetPoint",function(_,_,parent)
+		if (parent ~= addon.player) then
+			PriestBarFrame:ClearAllPoints();
+			PriestBarFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",2,-2);
+		end
+	end);
+	PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
+	PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7); PriestBarFrame:ClearAllPoints();
+	PriestBarFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",-4,-2);
 end
 
 do -- create a LFD cooldown frame

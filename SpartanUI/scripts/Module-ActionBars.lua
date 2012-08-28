@@ -59,9 +59,10 @@ local SetupBartender = function()
 			StanceBar	= {	enabled = true,	padding = 1, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-605,	y=-2,	scale = 0.85,	growHorizontal="LEFT"},		rows = 1},
 			MultiCast	= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
 			Vehicle		= {	enabled = true,	padding = 3,		position = {point = "LEFT",			parent = "SUI_ActionBarPlate",	x=364,	y=-1,	scale = 0.85}},
+			ExtraActionBar = {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,y=240}},
 			BlizzardArt	= {	enabled = false,	},
 		};
-	local newtest = "SpartanUI New Test"
+	local newtest = "SpartanUI 3.0"
 	local newtestsettings = { -- actual settings being inserted into our custom profile
 			ActionBars = {
 				actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
@@ -77,12 +78,13 @@ local SetupBartender = function()
 					{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}} -- 10
 				}
 			},
-			BagBar		= {	enabled = true, padding = 0, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-153,	y=-2,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, onebag = false, keyring = true},
+			BagBar		= {	enabled = true, padding = 0, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-6,	y=-2,	scale = 0.70,	growHorizontal="LEFT"},		rows = 1, onebag = false, keyring = true},
 			MicroMenu	= {	enabled = true,	padding = -3,		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=603,	y=0,	scale = 0.80,	growHorizontal="RIGHT"}},
-			PetBar		= {	enabled = true, padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=174,	y=-6,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
-			StanceBar	= {	enabled = true,	padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=4,	y=-2,	scale = 0.85,	growHorizontal="RIGHT"},	rows = 1},
+			PetBar		= {	enabled = true, padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=5,	y=-6,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
+			StanceBar	= {	enabled = true,	padding = 1, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-605,	y=-2,	scale = 0.85,	growHorizontal="LEFT"},		rows = 1},
 			MultiCast	= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
 			Vehicle		= {	enabled = true,	padding = 3,		position = {point = "LEFT",			parent = "SUI_ActionBarPlate",	x=364,	y=-1,	scale = 0.85}},
+			ExtraActionBar = {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,y=240}},
 			BlizzardArt	= {	enabled = false,	},
 		};
 	
@@ -110,17 +112,6 @@ local SetupBartender = function()
 		-- New check for updating old profiles
 		if ( not suiChar.ActionBars.SpartanUI_Version) then
 			suiChar.ActionBars.SpartanUI_Version = GetAddOnMetadata("SpartanUI", "Version");
-			-- Update Blizzard Art Bar settings on the newtest profile
-			if BartenderProfileCheck(newtest,false) then
-				for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-					if v.db and v.db.profile then
-						-- Fixup Blizzard Art Bar
-						v.db.profile["BlizzardArt"] = module:MergeData(v.db.profile["BlizzardArt"],newtestsettings["BlizzardArt"])
-						-- Fixup Vehicle Bar
-						v.db.profile["Vehicle"] = module:MergeData(v.db.profile["Vehicle"],newtestsettings["Vehicle"])
-					end
-				end
-			end
 			-- Update Blizzard Art Bar settings on the standard profile
 			if BartenderProfileCheck(standard,false) then
 				for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
@@ -134,21 +125,6 @@ local SetupBartender = function()
 			end
 		end
 		print("Using this profile: "..Bartender4.db:GetCurrentProfile())
-		-- Fixup chosing newtest profile if Standard exist
-		local profile = Bartender4.db:GetCurrentProfile()
-		-- Checking for the newtest Profile
-		if (not BartenderProfileCheck(newtest,true)) then suiChar.ActionBars.Bartender4 = false end
-		if (not suiChar.ActionBars.Bartender4) then
-			Bartender4.db:SetProfile(newtest);
-			for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-				if newtestsettings[k] and v.db.profile then
-					v.db.profile = module:MergeData(v.db.profile,newtestsettings[k])
-				end
-			end
-			Bartender4:UpdateModuleConfigs(); -- run ApplyConfig for all modules, so that the new settings are applied
-			if BartenderProfileCheck(newtest,false) then addon:Print(newtest.." Profile generated in Bartender.") end
-			suiChar.ActionBars.Bartender4 = true;
-		end
 		-- Checking for the standard Profile
 		if (not BartenderProfileCheck(standard,true)) then suiChar.ActionBars.Bartender4 = false end
 		-- Fixup setting profile to standard if standard profile exist
@@ -169,7 +145,7 @@ local SetupBartender = function()
 		if (Bartender4.db:GetCurrentProfile() == standard) or (Bartender4.db:GetCurrentProfile() == newtest) then
 			if Bartender4.Locked then return; end
 			addon:Print("The ability to unlock your bars is disabled when using the SpartanUI Default profile in Bartender4. Please change profiles to enable this functionality.");
-			Bartender4:Lock();
+			--Bartender4:Lock();
 		end
 	end);
 end;

@@ -4,12 +4,13 @@ local addon = spartan:GetModule("PlayerFrames");
 oUF:SetActiveStyle("Spartan_PlayerFrames");
 
 local focus = oUF:Spawn("focus","SUI_FocusFrame");
-addon.focus = focus; addon.focus:SetPoint("CENTER",UIParent,"CENTER");
+addon.focus = focus;
+addon.focus:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",140,50);
 
 do -- scripts to make it movable
-	focus.mover = CreateFrame("Frame");	
-	focus.mover:SetWidth(220); focus.mover:SetHeight(90);
-	focus.mover:SetPoint("CENTER",focus,"CENTER");	
+	focus.mover = CreateFrame("Frame");
+	focus.mover:SetWidth(180); focus.mover:SetHeight(60);
+	focus.mover:SetPoint("CENTER",focus,"CENTER");
 	focus.mover:EnableMouse(true);
 	
 	focus.bg = focus.mover:CreateTexture(nil,"BACKGROUND");
@@ -47,7 +48,7 @@ do -- scripts to make it movable
 				focus.mover:Show();
 				focus.mover:UnregisterEvent("PLAYER_REGEN_ENABLED");
 			end
-		end			
+		end
 	end);
 	focus.mover:RegisterEvent("VARIABLES_LOADED");
 	focus.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
@@ -64,8 +65,8 @@ do -- scripts to make it movable
 			focus:SetMovable(true);
 		else
 			focus:SetMovable(false);
-			focus:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",200,200);
+			focus:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",170,110);
 		end
-	end	
+	end
 	addon:UpdateFocusPosition();
 end

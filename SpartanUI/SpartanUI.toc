@@ -6,5 +6,15 @@
 ## OptionalDeps: Ace3, Bartender4
 ## SavedVariablesPerCharacter: suiChar
 
-scripts\Embed-Libraries.xml
+#@no-lib-strip@
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\Ace3\AceAddon-3.0.lua
+libs\Ace3\AceConfig-3.0.lua
+libs\Ace3\AceConfigCmd-3.0.lua
+libs\Ace3\AceConfigRegistry-3.0.lua
+libs\Ace3\AceConsole-3.0.lua
+#@end-no-lib-strip@
+
+
 scripts\Global-Framework.xml

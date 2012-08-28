@@ -4,8 +4,11 @@
 ## Version: 3.0.0
 ## Author: Atriace, Beladona, Wutname1
 ## X-Category: User Interfaces
-## RequiredDeps: SpartanUI, oUF
+## RequiredDeps: SpartanUI
 ## OptionalDeps: SpartanUI_PlayerFrames
+## X-oUF: oUF
+
+libs\oUF\oUF.xml
 
 scripts\Global-Framework.xml
 scripts\Unit-PartyFrames.lua

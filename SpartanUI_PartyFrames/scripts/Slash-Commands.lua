@@ -58,7 +58,7 @@ function addon:OnInitialize()
 			end
 		end
 	};
-	spartan.options.args.castbar.args.text.args.party = {
+	spartan.options.args.castbar.args.party = {
 		name = "toggle party castbar text style", type = "toggle", 
 		get = function(info) return suiChar.PartyFrames.castbartext; end,
 		set = function(info,val)

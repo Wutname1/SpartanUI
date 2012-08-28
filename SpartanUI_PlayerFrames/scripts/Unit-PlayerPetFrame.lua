@@ -13,5 +13,3 @@ do -- fix for certain elements on the pet frame not updating properly
 	end
 	addon.pet:RegisterEvent("UNIT_PET",Update);
 end
-	
-	

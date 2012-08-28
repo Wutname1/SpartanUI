@@ -3,6 +3,5 @@ local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 oUF:SetActiveStyle("Spartan_PlayerFrames");
 
-local targetfocus = oUF:Spawn("focustarget","SUI_TargetFocusFrame");
-addon.targetfocus = targetfocus;
-addon.targetfocus:SetPoint("BOTTOMLEFT","SUI_FocusFrame","BOTTOMRIGHT",20,0);
+addon.focustarget = oUF:Spawn("focustarget","SUI_FocusTargetFrame");
+addon.focustarget:SetPoint("TOPLEFT", "SUI_FocusFrame", "TOPRIGHT", -51, 0);

@@ -4,15 +4,16 @@ local addon = spartan:NewModule("PlayerFrames");
 do -- ClassIcon as an oUF module
 	local ClassIconCoord = {
 		WARRIOR = {			0.00, 0.25, 0.00, 0.25 },
-		MAGE = {				0.25, 0.50, 0.00, 0.25 },
-		ROGUE = {				0.50, 0.75, 0.00, 0.25 },
-		DRUID = {				0.75, 1.00, 0.00, 0.25 },
+		MAGE = {			0.25, 0.50, 0.00, 0.25 },
+		ROGUE = {			0.50, 0.75, 0.00, 0.25 },
+		DRUID = {			0.75, 1.00, 0.00, 0.25 },
 		HUNTER = {			0.00, 0.25, 0.25, 0.50 },
 		SHAMAN = {			0.25, 0.50, 0.25, 0.50 },
-		PRIEST = {				0.50, 0.75, 0.25, 0.50 },
-		WARLOCK = {		0.75, 1.00, 0.25, 0.50 },
+		PRIEST = {			0.50, 0.75, 0.25, 0.50 },
+		WARLOCK = {			0.75, 1.00, 0.25, 0.50 },
 		PALADIN = {			0.00, 0.25, 0.50, 0.75 },
-		DEATHKNIGHT = {	0.25, 0.50, 0.50, 0.75 },
+		DEATHKNIGHT = {		0.25, 0.50, 0.50, 0.75 },
+		MONK = {			0.50, 0.75, 0.50, 0.75 },
 		DEFAULT = {			0.75, 1.00, 0.75, 1.00 },
 	};
 	local Update = function(self,event,unit)
@@ -42,18 +43,18 @@ do -- ClassIcon as an oUF module
 			self:UnregisterEvent("UNIT_PET", Update);
 		end
 	end
-	oUF:AddElement('SUI_ClassIcon', Update,Enable,Disable);
+	oUF:AddElement('SUI_ClassIcon',Update,Enable,Disable);
 end
+
 do -- AFK / DND status text, as an oUF module
-	if not oUF.Tags["[afkdnd]"] then
-		oUF.Tags["[afkdnd]"] = function(unit)
-			if unit then
-				return UnitIsAFK(unit) and "AFK" or UnitIsDND(unit) and "DND" or "";
-			end
-		end;
-		oUF.TagEvents["[afkdnd]"] = "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET";		
+	oUF.Tags.Events['afkdnd'] = "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET";
+	oUF.Tags.Methods['afkdnd'] = function (unit)
+		if unit then
+			return UnitIsAFK(unit) and "AFK" or UnitIsDND(unit) and "DND" or "";
+		end
 	end
 end
+
 do -- Level Skull as an oUF module
 	local Update = function(self,event,unit)
 		if (self.unit ~= unit) then return; end
@@ -73,6 +74,7 @@ do -- Level Skull as an oUF module
 	local Disable = function(self) return; end
 	oUF:AddElement('LevelSkull', Update,Enable,Disable);
 end
+
 do -- Rare / Elite dragon graphic as an oUF module
 	local Update = function(self,event,unit)
 		if (self.unit ~= unit) then return; end
@@ -95,11 +97,18 @@ do -- Rare / Elite dragon graphic as an oUF module
 	local Disable = function(self) return; end
 	oUF:AddElement('RareElite', Update,Enable,Disable);
 end
-do -- fix SET_FOCUS errors
-	UnitPopupMenus["SELF"] = { "PVP_FLAG", "LOOT_METHOD", "LOOT_THRESHOLD", "OPT_OUT_LOOT_TITLE", "LOOT_PROMOTE", "DUNGEON_DIFFICULTY", "RAID_DIFFICULTY", "RESET_INSTANCES", "RAID_TARGET_ICON", "LEAVE", "CANCEL" };
-	UnitPopupMenus["PET"] = { "PET_PAPERDOLL", "PET_RENAME", "PET_ABANDON", "PET_DISMISS", "CANCEL" };
-	UnitPopupMenus["PLAYER"] = { "WHISPER", "INSPECT", "INVITE", "ACHIEVEMENTS", "TRADE", "FOLLOW", "DUEL", "RAID_TARGET_ICON", "RAF_SUMMON", "RAF_GRANT_LEVEL", "CANCEL" };
-	UnitPopupMenus["TARGET"] = { "RAID_TARGET_ICON", "CANCEL" };
-	UnitPopupMenus["ARENAENEMY"] = { "CANCEL" };
+
+do -- fix SET_FOCUS & CLEAR_FOCUS errors
+	for k,v in pairs(UnitPopupMenus) do
+		if k ~= "RAID" and k ~= "RAID_PLAYER" then
+			for x,y in pairs(UnitPopupMenus[k]) do
+				if y == "SET_FOCUS" then
+					table.remove(UnitPopupMenus[k],x)
+				elseif y == "CLEAR_FOCUS" then
+					table.remove(UnitPopupMenus[k],x)
+				end
+			end
+		end
+	end
 	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
 end
