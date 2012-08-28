@@ -1,0 +1,10 @@
+## Interface: 50001
+## Title: SpartanUI |CFF0070DDCore|r
+## Notes: User Interface combining elegant artwork with well designed features.
+## Version: 3.0.0
+## Author: Atriace, Beladona, Zilver, Wutname1
+## OptionalDeps: Ace3, Bartender4
+## SavedVariablesPerCharacter: suiChar
+
+scripts\Embed-Libraries.xml
+scripts\Global-Framework.xml
