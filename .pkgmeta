@@ -1,0 +1,31 @@
+package-as: SpartanUI
+
+move-folders:
+  SpartanUI/Modules/PartyFrames: SpartanUI_PartyFrames
+  SpartanUI/Modules/FilmEffects: SpartanUI_FilmEffects
+  SpartanUI/Modules/PlayerFrames: SpartanUI_PlayerFrames
+  SpartanUI/Modules/SpinCam: SpartanUI_SpinCam
+
+externals:
+    libs/LibStub:
+        url: svn://svn.wowace.com/wow/libstub/mainline/trunk
+        tag: latest
+    libs/CallbackHandler-1.0:
+        url: svn://svn.wowace.com/wow/callbackhandler/mainline/trunk
+        tag: latest
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfigCmd-3.0
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfigRegistry-3.0
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConsole-3.0
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
+    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceHook-3.0
