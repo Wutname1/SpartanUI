@@ -163,7 +163,6 @@ function module:MergeData(target,source)
 end
 
 function module:OnInitialize()
-	DB = addon.db.profile
 	do -- create bar plate and masks
 		plate = CreateFrame("Frame","SUI_ActionBarPlate",SpartanUI,"SUI_ActionBarsTemplate");
 		plate:SetFrameStrata("BACKGROUND"); plate:SetFrameLevel(1);

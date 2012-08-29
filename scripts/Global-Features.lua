@@ -48,6 +48,26 @@ local DBdefaults = {
 			popup2alpha = 100,
 			popup1anim = true,
 			popup2anim = true
+		},
+		XPBar = {
+			GainedColor	= "Light_Blue",
+			GainedRed	= 0,
+			GainedBlue	= 1,
+			GainedGreen	= .5,
+			GainedBrightness= .7,
+			RestedRed	= 0,
+			RestedBlue	= .6,
+			RestedGreen	= 1,
+			RestedBrightness= .07,
+			RestedMatchColor= false
+		},
+		RepBar = {
+			GainedColor	= "AUTO",
+			GainedRed	= 0,
+			GainedBlue	= 0,
+			GainedGreen	= 1,
+			GainedBrightness= .6,
+			AutoDefined	= true
 		}
 	}
 }
@@ -58,6 +78,7 @@ end
 	
 function addon:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
+	DB = addon.db.profile
 	addon.Optionsprofile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
 	addon.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	addon.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
