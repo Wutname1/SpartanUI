@@ -247,9 +247,6 @@ function module:OnEnable()
 		module:SetXPColors()
 		xpframe:SetScript("OnEvent",function()
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
-			addon:Print(rested);
-			addon:Print(now);
-			addon:Print(goal);
 			if now == 0 then
 				SUI_ExperienceBarFill:SetWidth(0.1);
 				SUI_ExperienceBarFillGlow:SetWidth(.1);

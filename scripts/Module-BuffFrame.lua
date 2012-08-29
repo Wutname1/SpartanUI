@@ -18,24 +18,15 @@ function module:OnInitialize()
 					if val == true then module:UpdateBuffPosition(); end
 				end
 			},
-			offset = {
-				type = "range",
-				name = "Configure Offset",
+			offset = {name = "Configure Offset", type = "range", order = 2,
 				desc = "offsets the bottom bar automatically, or set value",
-				order = 2,
-				width="double",
-				min=0,
-				max=200,
-				step=.1,
+				width="double", min=0, max=200, step=.1,
 				get = function(info) return addon.db.profile.BuffSettings.offset; end,
 				set = function(info,val)
 					if addon.db.profile.BuffSettings.Manualoffset == true then addon.db.profile.BuffSettings.offset = val; end
 				end
 			},
-			ManualOffset = {
-				name="Manual Offset",
-				type="toggle",
-				order = 3,
+			ManualOffset = {name="Manual Offset", type="toggle", order = 3,
 				get	= function(info) return addon.db.profile.BuffSettings.Manualoffset; end,
 				set = function(info,val)
 					addon.db.profile.BuffSettings.Manualoffset = val;
@@ -44,6 +35,10 @@ function module:OnInitialize()
 						module:UpdateBuffPosition();
 					end
 				end
+			},
+			BarsEnabled = {name="Manual Offset", type="toggle", order = 3,
+				get	= function(info) return addon.db.profile.BuffSettings.BarsEnabled; end,
+				set = function(info,val) addon.db.profile.BuffSettings.BarsEnabled = val; end
 			}
 		}
 	}
@@ -54,7 +49,7 @@ function module:OnEnable()
 		local BuffHandle = CreateFrame("Frame")
 		-- Fix CPU leak, use UpdateInterval
 		BuffHandle.UpdateInterval = 0.5
-		BuffHandle.TimeSinceLastUpdate = 0
+		BuffHandle.TimeSinceLastUpdateTimeSinceLastUpdate = 0
 		BuffHandle:SetScript("OnUpdate",function(self,...)
 			local elapsed = select(1,...)
 			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
@@ -97,7 +92,7 @@ function module:UpdateBuffPosition()
 end
 
 function module:updateBuffOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	local fubar,titan,offset = 0,0;
+	local fubar,titan,ChocolateBar,offset = 0,0,0;
 	for i = 1,4 do
 		if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
 			local bar = _G["FuBarFrame"..i];
@@ -105,27 +100,29 @@ function module:updateBuffOffset() -- handles SpartanUI offset based on setting 
 			if point == "TOPLEFT" then fubar = fubar + bar:GetHeight(); 	end
 		end
 	end
-					
-	--2012.08.05 - med - titan panel exists. Calc off set for buff frame.
+	for i = 1,100 do
+		if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
+			local bar = _G["ChocolateBar"..i];
+			local point = bar:GetPoint(1);
+			if point == "TOPLEFT" then fubar = fubar + bar:GetHeight(); 	end
+			addon:Print("1");
+		end
+	end
+	
 	if _G["TitanPanelBarButton"] ~= nil then
-		-- local fullversion = GetAddOnMetadata("Titan", "Version")
 		local nTitleBarCnt = TitanPanelGetVar("DoubleBar")
 		local PanelScale = TitanPanelGetVar("Scale") or 1
 		local bar = _G["TitanPanelBarButton"];
 		local pos = TitanPanelGetVar("Position");
-		-- addon:DebugPrint("height: "..bar:GetHeight());	
-		-- addon:Print("pos: "..pos);	
-		-- addon:Print("Addon: Titan_Panel not nil");	
-			
+		
 		if nTitleBarCnt == 1 and pos == 1 then
 			titan = PanelScale * bar:GetHeight();
 		elseif nTitleBarCnt == 2 and pos == 1 then
 			titan = PanelScale * (bar:GetHeight() * 2);
 		end
-		
 	end
 	
-	offset = max(fubar + titan,1);
+	offset = max(fubar + titan + ChocolateBar,1);
 	
 	return offset;
 end

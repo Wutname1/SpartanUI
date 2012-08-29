@@ -27,7 +27,7 @@ local updateSpartanScale = function() -- scales SpartanUI based on setting or sc
 end;
 
 local updateSpartanOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
-	local fubar,titan,offset = 0,0;
+	local fubar,ChocolateBar,titan,offset = 0,0,0;
 	if suiChar.offset then
 		offset = max(suiChar.offset,1);
 	else
@@ -36,6 +36,13 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 				local bar = _G["FuBarFrame"..i];
 				local point = bar:GetPoint(1);
 				if point == "BOTTOMLEFT" then fubar = fubar + bar:GetHeight(); end
+			end
+		end
+		for i = 1,100 do
+			if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
+				local bar = _G["ChocolateBar"..i];
+				local point = bar:GetPoint(1);
+				if point == "BOTTOMLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); end
 			end
 		end
 		if (_G["Titan_Bar__Display_AuxBar"] and TitanPanelGetVar("AuxBar_Show")) then
@@ -48,7 +55,7 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 			local bar = _G["Titan_Bar__Display_AuxBar2"]
 			titan = titan + (PanelScale * bar:GetHeight());
 		end
-		offset = max(fubar + titan,1);
+		offset = max(fubar + titan + ChocolateBar,1);
 	end
 	if (round(offset) ~= round(anchor:GetHeight())) then anchor:SetHeight(offset); end
 	if (party) then

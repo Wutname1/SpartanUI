@@ -55,10 +55,11 @@ local DBdefaults = {
 			GainedBlue	= 1,
 			GainedGreen	= .5,
 			GainedBrightness= .7,
+			RestedColor	= "Light_Blue",
 			RestedRed	= 0,
-			RestedBlue	= .6,
-			RestedGreen	= 1,
-			RestedBrightness= .07,
+			RestedBlue	= 1,
+			RestedGreen	= .5,
+			RestedBrightness= .7,
 			RestedMatchColor= false
 		},
 		RepBar = {
