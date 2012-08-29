@@ -1,62 +1,101 @@
-if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then return; end
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local module = addon:NewModule("ChatFrame");
 ---------------------------------------------------------------------------
-local ChatHoverFunc = function(self,...)
-	local elapsed = select(1,...)
-	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-	if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-		-- Debug
---		print(self.TimeSinceLastUpdate)
-		if MouseIsOver(self) or MouseIsOver(self.ButtonFrame)then
-			self.UpButton:Show();
-			self.DownButton:Show();
-			if self ~= DEFAULT_CHAT_FRAME then self.MinimizeButton:Show(); end
-			if self == DEFAULT_CHAT_FRAME then ChatFrameMenuButton:Show(); end
-		else
-			self.UpButton:Hide();
-			self.DownButton:Hide();
-			if self ~= DEFAULT_CHAT_FRAME then self.MinimizeButton:Hide(); end
-			if self == DEFAULT_CHAT_FRAME then ChatFrameMenuButton:Hide(); end
-		end
-		if self:AtBottom() then
-			self.BottomButton:Hide();
-		else
-			self.BottomButton:Show();
-		end
-		self.TimeSinceLastUpdate = 0
-	end
-end;
 
--- local noop = function() return; end;
-local hide = function(this) this:Hide(); end;
-local NUM_SCROLL_LINES = 3;
 
-local scroll = function(this, arg1)
-	if arg1 > 0 then
-		if IsShiftKeyDown() then
-			this:ScrollToTop()
-		elseif IsControlKeyDown() then
-			this:PageUp()
-		else
-			for i = 1, NUM_SCROLL_LINES do
-				this:ScrollUp()
-			end
-		end
-	elseif arg1 < 0 then
-		if IsShiftKeyDown() then
-			this:ScrollToBottom()
-		elseif IsControlKeyDown() then
-			this:PageDown()
-		else
-			for i = 1, NUM_SCROLL_LINES do
-				this:ScrollDown()
-			end
-		end
-	end
-end;
+function module:OnInitialize()
+	addon.optionsGeneral.args["ChatSettings"] = {
+		name = "Chat Settings",
+		desc = "configure Chat Settings",
+		type = "group", args = {
+			enabled = {
+				name = "Enable Chat tweaks",
+				desc = "ReloadUI required to take affect",
+				type="toggle",
+				get = function(info) return addon.db.profile.ChatSettings.enabled; end,
+				set = function(info,val)
+					if (val == true) then
+					addon.db.profile.ChatSettings.enabled = true;
+						if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
+							-- Chat Mod Detected, disable and exit
+							addon.db.profile.ChatSettings.enabled = false
+							return;
+						end
+					else
+						addon.db.profile.ChatSettings.enabled = false;
+					end
+				end
+			}
+		}
+	}
+end
 
 function module:OnEnable()
+
+	if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
+		-- Chat Mod Detected, disable and exit
+		addon.db.profile.ChatSettings.enabled = false
+		return;
+	end
+	--exit if not enabled
+	if (addon.db.profile.ChatSettings.enabled ~= true) then
+		return;
+	end
+
+	local ChatHoverFunc = function(self,...)
+		local elapsed = select(1,...)
+		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
+		if (self.TimeSinceLastUpdate > self.UpdateInterval) then
+			-- Debug
+	--		print(self.TimeSinceLastUpdate)
+			if MouseIsOver(self) or MouseIsOver(self.ButtonFrame)then
+				self.UpButton:Show();
+				self.DownButton:Show();
+				if self ~= DEFAULT_CHAT_FRAME then self.MinimizeButton:Show(); end
+				if self == DEFAULT_CHAT_FRAME then ChatFrameMenuButton:Show(); end
+			else
+				self.UpButton:Hide();
+				self.DownButton:Hide();
+				if self ~= DEFAULT_CHAT_FRAME then self.MinimizeButton:Hide(); end
+				if self == DEFAULT_CHAT_FRAME then ChatFrameMenuButton:Hide(); end
+			end
+			if self:AtBottom() then
+				self.BottomButton:Hide();
+			else
+				self.BottomButton:Show();
+			end
+			self.TimeSinceLastUpdate = 0
+		end
+	end;
+
+	-- local noop = function() return; end;
+	local hide = function(this) this:Hide(); end;
+	local NUM_SCROLL_LINES = 3;
+
+	local scroll = function(this, arg1)
+		if arg1 > 0 then
+			if IsShiftKeyDown() then
+				this:ScrollToTop()
+			elseif IsControlKeyDown() then
+				this:PageUp()
+			else
+				for i = 1, NUM_SCROLL_LINES do
+					this:ScrollUp()
+				end
+			end
+		elseif arg1 < 0 then
+			if IsShiftKeyDown() then
+				this:ScrollToBottom()
+			elseif IsControlKeyDown() then
+				this:PageDown()
+			else
+				for i = 1, NUM_SCROLL_LINES do
+					this:ScrollDown()
+				end
+			end
+		end
+	end;
+
 	for i = 1,10 do
 		local frame = _G["ChatFrame"..i];
 		frame:SetMinResize(64,40); frame:SetFading(0);
@@ -95,10 +134,10 @@ function module:OnEnable()
 		frame:HookScript("OnUpdate",ChatHoverFunc);
 	end
 	
---	ChatFrameMenuButton:SetParent(DEFAULT_CHAT_FRAME);
---	ChatFrameMenuButton:ClearAllPoints();
---	ChatFrameMenuButton:SetScale(0.8);
---	ChatFrameMenuButton:SetPoint("TOPRIGHT",DEFAULT_CHAT_FRAME,"TOPRIGHT",4,4);
+	-- ChatFrameMenuButton:SetParent(DEFAULT_CHAT_FRAME);
+	-- ChatFrameMenuButton:ClearAllPoints();
+	-- ChatFrameMenuButton:SetScale(0.8);
+	-- ChatFrameMenuButton:SetPoint("TOPRIGHT",DEFAULT_CHAT_FRAME,"TOPRIGHT",4,4);
 --	FCF_SetButtonSide = noop;
 	
 end

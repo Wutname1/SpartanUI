@@ -5,6 +5,7 @@
 ## Author: Atriace, Beladona, Zilver, Wutname1
 ## OptionalDeps: Ace3, Bartender4
 ## SavedVariablesPerCharacter: suiChar
+## SavedVariables: SpartanUIDB
 
 #@no-lib-strip@
 libs\LibStub\LibStub.lua
@@ -14,6 +15,9 @@ libs\Ace3\AceConfig-3.0.lua
 libs\Ace3\AceConfigCmd-3.0.lua
 libs\Ace3\AceConfigRegistry-3.0.lua
 libs\Ace3\AceConsole-3.0.lua
+libs\Ace3\AceHook-3.0.lua
+libs\Ace3\AceDB-3.0.lua
+libs\Ace3\AceDBOptions-3.0.lua
 #@end-no-lib-strip@
 
 

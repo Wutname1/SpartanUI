@@ -13,78 +13,103 @@ setmetatable(suiChar.PlayerFrames.Castbar,{__index = castbardefault});
 -- /spartanui castbar player
 
 function addon:OnInitialize()
-	spartan.options.args["auras"] = {
-		name = "Unitframe Auras",
-		desc = "unitframe aura settings",
+	spartan.optionsPlayerFrames.args["auras"] = {
+		name = "Unitframe Buffs & Debuffs",
+		desc = "Buff & Debuff display settings",
 		type = "group", args = {
-			player = {name = "toggle player auras", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.player; end,
+			player = {
+				name = "Display player buffs",
+				type = "toggle",
+				get = function(info)
+					if suiChar.PlayerFrames.player == 0 then return false else return true end
+				end,
 				set = function(info,val)
-					if suiChar.PlayerFrames.player == 0 then
-						suiChar.PlayerFrames.player = 1;
-						spartan:Print("Player Auras Enabled. Default buffs are NOT disabled with this command. You will need a third-party addon such as HideBlizzard to hide them");
-					else
+					if val == false then
 						suiChar.PlayerFrames.player = 0;
-						spartan:Print("Player Auras Disabled");
+					elseif (val == true) or (val == nil) then
+						suiChar.PlayerFrames.player = 1;
 					end
 					addon.player.Auras:PostUpdate("player");
 				end
 			},
-			target = {name = "toggle target auras", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.target; end,
+			target = {
+				name = "Display target buffs",
+				type = "toggle",
+				get = function(info)
+					if suiChar.PlayerFrames.target == 0 then return false else return true end
+				end,
 				set = function(info,val)
-					if suiChar.PlayerFrames.target == 0 then
-						suiChar.PlayerFrames.target = 1;
-						spartan:Print("Target Auras Enabled");
-					else
+					if val == false then
 						suiChar.PlayerFrames.target = 0;
-						spartan:Print("Target Auras Disabled");
+					else
+						suiChar.PlayerFrames.target = 1;
 					end
 					addon.target.Auras:PostUpdate("target");
 				end
 			},
-			targettarget = {name = "toggle target of target auras", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.targettarget; end,
+			targettarget = {
+				name = "Display target of target buffs",
+				type = "toggle",
+				get = function(info)
+					if suiChar.PlayerFrames.targettarget == 0 then return false else return true end
+				end,
 				set = function(info,val)
-					if suiChar.PlayerFrames.targettarget == 0 then
-						suiChar.PlayerFrames.targettarget = 1;
-						spartan:Print("Target of Target Auras Enabled");
-					else
+					if val == false then
 						suiChar.PlayerFrames.targettarget = 0;
-						spartan:Print("Target of Target Auras Disabled");
+					else
+						suiChar.PlayerFrames.targettarget = 1;
 					end
 					addon.targettarget.Auras:PostUpdate("targettarget");
 				end
 			},
-			pet = {name = "toggle pet auras", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.pet; end,
+			pet = {
+				name = "Display pet buffs",
+				type = "toggle",
+				get = function(info)
+					if suiChar.PlayerFrames.pet == 0 then return false else return true end
+				end,
 				set = function(info,val)
-					if suiChar.PlayerFrames.pet == 0 then
-						suiChar.PlayerFrames.pet = 1;
-						spartan:Print("Pet Auras Enabled");
-					else
+					if val == false then
 						suiChar.PlayerFrames.pet = 0;
-						spartan:Print("Pet Auras Disabled");
+					else
+						suiChar.PlayerFrames.pet = 1;
 					end
 					addon.pet.Auras:PostUpdate("pet");
 				end
 			},
-			focus = {name = "toggle focus auras", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.focus; end,
+			focus = {
+				name = "Display focus buffs",
+				type = "toggle",
+				get = function(info)
+					if suiChar.PlayerFrames.focus == 0 then return false else return true end
+				end,
 				set = function(info,val)
-					if suiChar.PlayerFrames.focus == 0 then
-						suiChar.PlayerFrames.focus = 1;
-						spartan:Print("Focus Auras Enabled");
-					else
+					if val == false then
 						suiChar.PlayerFrames.focus = 0;
-						spartan:Print("Focus Auras Disabled");
+					else
+						suiChar.PlayerFrames.focus = 1;
 					end
 					addon.focus.Auras:PostUpdate("focus");
+				end
+			},
+			focustarget = {
+				name = "Display focus target buffs",
+				type = "toggle",
+				get = function(info)
+					if suiChar.PlayerFrames.focustarget == 0 then return false else return true end
+				end,
+				set = function(info,val)
+					if val == false then
+						suiChar.PlayerFrames.focustarget = 0;
+					else
+						suiChar.PlayerFrames.focustarget = 1;
+					end
+					addon.focustarget.Auras:PostUpdate("focustarget");
 				end
 			}
 		}
 	};
-	spartan.options.args["castbar"] = {
+	spartan.optionsPlayerFrames.args["castbar"] = {
 		name = "Unitframe Castbar",
 		desc = "unitframe castbar settings",
 		type = "group", args = {
@@ -216,8 +241,8 @@ function addon:OnInitialize()
 			},
 		}
 	};
-	spartan.options.args["resetfocus"] = {
-		type = "execute", name = "Reset Focus Frame",
+	spartan.optionsPlayerFrames.args["resetfocus"] = {
+		type = "execute", name = "Reset Focus location",
 		desc = "resets the potion to default",
 		func = function()
 			suiChar.PlayerFrames.focusMoved = false;

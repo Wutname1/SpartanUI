@@ -1,4 +1,5 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local AceHook = LibStub("AceHook-3.0")
 local module = addon:NewModule("BottomBar");
 local party -- for updateSpartanOffset use
 ----------------------------------------------------------------------------------------------------
@@ -47,21 +48,6 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 			local bar = _G["Titan_Bar__Display_AuxBar2"]
 			titan = titan + (PanelScale * bar:GetHeight());
 		end
--- "old way" of adjusting bottom
---		if (_G["TitanPanelAuxBarButton"] and TitanPanelGetVar("BothBars")) then
---			local Double = TitanPanelGetVar("AuxDoubleBar")
---			local PanelScale = TitanPanelGetVar("Scale") or 1
---			local bar = _G["TitanPanelAuxBarButton"]
---			titan = titan + (PanelScale * bar:GetHeight());
---			if Double == 2 then titan = titan + (PanelScale * bar:GetHeight()); end
---		end
---		if (_G["TitanPanelBarButton"] and (TitanPanelGetVar("Position") == 2)) then
---			local Double = TitanPanelGetVar("DoubleBar")
---			local PanelScale = TitanPanelGetVar("Scale") or 1
---			local bar = _G["TitanPanelBarButton"]
---			titan = titan + (PanelScale * bar:GetHeight());
---			if Double == 2 then titan = titan + (PanelScale * bar:GetHeight()); end
---		end
 		offset = max(fubar + titan,1);
 	end
 	if (round(offset) ~= round(anchor:GetHeight())) then anchor:SetHeight(offset); end
@@ -166,10 +152,14 @@ function module:OnInitialize()
 				tooltip:SetPoint("BOTTOMRIGHT","SpartanUI","TOPRIGHT",0,10);
 			end
 		end);
+		
+		AceHook.SecureHook(addon, "PetBattleFrame_Display")
+		AceHook.SecureHook(addon, "PetBattleFrame_Remove")
 	end
-	addon.options.args["maxres"] = {
+	addon.optionsGeneral.args["maxres"] = {
 		type = "execute", name = "Toggle Default Scales",
 		desc = "toggles between widescreen and standard scales",
+		order = 2,
 		func = function()
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
@@ -183,9 +173,13 @@ function module:OnInitialize()
 			end
 		end
 	};
-	addon.options.args["scale"] = {
+	addon.optionsGeneral.args["scale"] = {
 		type = "range", name = "Configure Scale",
 		desc = "sets a specific scale for SpartanUI",
+		order = 1,
+		width = "double",
+		min = 0,
+		max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
@@ -197,29 +191,61 @@ function module:OnInitialize()
 		end,
 		get = function(info) return suiChar.scale; end
 	};
-	addon.options.args["offset"] = {
-		type = "input",
+	addon.optionsGeneral.args["offset"] = {
+		type = "range",
 		name = "Configure Offset",
-		desc = "offsets the bottom bar automatically, or on a set value",
+		desc = "offsets the bottom bar automatically, or set value",
+		order = 3,
+		width="double",
+		min=0,
+		max=200,
+		step=.1,
+		get = function(info) return suiChar.offset end,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
-				if (val == "") or (val == "auto") then
-					suiChar.offset = nil;
-					addon:Print("Panel Offset set to AUTO");
+				if (suiChar.offset == nil) then
+					addon:Print("Offset is set AUTO");
 				else
 					val = tonumber(val);
-					if (type(val) == "number") then
-						val = max(0,val);
-						suiChar.offset = max(val+1,1);
-						addon:Print("Panel Offset set to "..val);
-					end
+					suiChar.offset = val;
+					addon:Print("Panel Offset set to "..val);
 				end
 			end
 		end,
 		get = function(info) return suiChar.offset; end
 	};
+	addon.optionsGeneral.args["offsetauto"] = {
+		type = "toggle",
+		name = "Auto Offset",
+		desc = "offsets the bottom bar automatically",
+		order = 4,
+		get = function(info)
+			if (suiChar.offset == nil) then
+				return true;
+			else
+				return false;
+			end
+		end,
+		set = function(info,val)
+			if (val == true) then
+				suiChar.offset = nil;
+				addon:Print("Offset is set AUTO");
+			else
+				suiChar.offset = 0.1;
+				addon:Print("Offset is set manual");
+			end
+		end,
+	};
+end
+
+function addon:PetBattleFrame_Display()
+	suiChar.alpha = .1
+end
+
+function addon:PetBattleFrame_Remove()
+	suiChar.alpha = 100
 end
 
 function module:OnEnable()

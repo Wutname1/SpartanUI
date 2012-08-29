@@ -2,8 +2,8 @@ local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local module = addon:NewModule("ActionBars");
 ----------------------------------------------------------------------------------------------------
 local default, plate = {
-	popup1 = {anim = 1, alpha = 1, enable = 1},
-	popup2 = {anim = 1, alpha = 1, enable = 1},
+	popup1 = {anim = true, alpha = 1, enable = 1},
+	popup2 = {anim = true, alpha = 1, enable = 1},
 	bar1 = {alpha = 1, enable = 1},
 	bar2 = {alpha = 1, enable = 1},
 	bar3 = {alpha = 1, enable = 1},
@@ -163,6 +163,7 @@ function module:MergeData(target,source)
 end
 
 function module:OnInitialize()
+	DB = addon.db.profile
 	do -- create bar plate and masks
 		plate = CreateFrame("Frame","SUI_ActionBarPlate",SpartanUI,"SUI_ActionBarsTemplate");
 		plate:SetFrameStrata("BACKGROUND"); plate:SetFrameLevel(1);
@@ -176,277 +177,121 @@ function module:OnInitialize()
 		plate.mask2:SetFrameStrata("MEDIUM"); plate.mask2:SetFrameLevel(0);
 		plate.mask2:SetPoint("BOTTOM",SUI_Popup2,"BOTTOM");
 	end
-	addon.options.args["backdrop"] = {
-		name = "ActionBar Backdrops",
+	addon.optionsGeneral.args["backdrop"] = {
+		name = "ActionBar Settings",
 		desc = "configure actionbar backdrops",
 		type = "group", args = {
-			bar1 = {name = "toggle or set the alpha for bar1", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.bar1; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.bar1.enable == 1) or (val == "off") then
-						suiChar.ActionBars.bar1.enable = 0;
-						addon:Print("Backdrop1 Disabled");
-					elseif (val == "" and suiChar.ActionBars.bar1.enable == 0) or (val == "on") then
-						suiChar.ActionBars.bar1.enable = 1;
-						addon:Print("Backdrop1 Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.bar1.alpha = val;
-							addon:Print("Backdrop1 Alpha set to "..val);
-						end
-					end
-				end
+			Allalpha = {name = "Alpha for all bars", type="range", order = 15,
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.Allalpha; end,
+				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i.."alpha"],DB.ActionBars.Allalpha = val,val; end end
 			},
-			bar2 = {name = "toggle or set the alpha for bar2", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.bar2; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.bar2.enable == 1) or (val == "off") then
-						suiChar.ActionBars.bar2.enable = 0;
-						addon:Print("Backdrop2 Disabled");
-					elseif (val == "" and suiChar.ActionBars.bar2.enable == 0) or (val == "on") then
-						suiChar.ActionBars.bar2.enable = 1;
-						addon:Print("Backdrop2 Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.bar2.alpha = val;
-							addon:Print("Backdrop2 Alpha set to "..val);
-						end
-					end
-				end
+			Allenable = {name = "Enable all bars", type="toggle", order= 16,
+				get = function(info) return DB.ActionBars.Allenable; end,
+				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i.."enable"],DB.ActionBars.Allenable = val,val; end end
 			},
-			bar3 = {name = "toggle or set the alpha for bar3", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.bar3; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.bar3.enable == 0) or (val == "off") then
-						suiChar.ActionBars.bar3.enable = 1;
-						addon:Print("Backdrop3 Disabled");
-					elseif (val == "" and suiChar.ActionBars.bar3.enable == 1) or (val == "on") then
-						suiChar.ActionBars.bar3.enable = 0;
-						addon:Print("Backdrop3 Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.bar3.alpha = val;
-							addon:Print("Backdrop3 Alpha set to "..val);
-						end
-					end
-				end
+			bar1alpha = {name = "Alpha for bar 1", type="range", order = 1,
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.bar1alpha; end,
+				set = function(info,val) if DB.ActionBars.bar1enable == true then DB.ActionBars.bar1alpha = val end end
 			},
-			bar4 = {name = "toggle or set the alpha for bar4", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.bar4; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.bar4.enable == 1) or (val == "off") then
-						suiChar.ActionBars.bar4.enable = 0;
-						addon:Print("Backdrop4 Disabled");
-					elseif (val == "" and suiChar.ActionBars.bar4.enable == 0) or (val == "on") then
-						suiChar.ActionBars.bar4.enable = 1;
-						addon:Print("Backdrop4 Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.bar4.alpha = val;
-							addon:Print("Backdrop4 Alpha set to "..val);
-						end
-					end
-				end
+			bar1enable = {name = "Enable bar 1", type="toggle", order= 2,
+				get = function(info) return DB.ActionBars.bar1enable; end,
+				set = function(info,val) DB.ActionBars.bar1enable = val end
 			},
-			bar5 = {name = "toggle or set the alpha for bar5", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.bar5; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.bar5.enable == 1) or (val == "off") then
-						suiChar.ActionBars.bar5.enable = 0;
-						addon:Print("Backdrop5 Disabled");
-					elseif (val == "" and suiChar.ActionBars.bar5.enable == 0) or (val == "on") then
-						suiChar.ActionBars.bar5.enable = 1;
-						addon:Print("Backdrop5 Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.bar5.alpha = val;
-							addon:Print("Backdrop5 Alpha set to "..val);
-						end
-					end
-				end
+			bar2alpha = {name = "Alpha for bar 2", type="range", order = 3,
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.bar2alpha; end,
+				set = function(info,val) if DB.ActionBars.bar2enable == true then DB.ActionBars.bar2alpha = val end end
 			},
-			bar6 = {name = "toggle or set the alpha for bar6", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.bar6; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.bar6.enable == 1) or (val == "off") then
-						suiChar.ActionBars.bar6.enable = 0;
-						addon:Print("Backdrop6 Disabled");
-					elseif (val == "" and suiChar.ActionBars.bar6.enable == 0) or (val == "on") then
-						suiChar.ActionBars.bar6.enable = 1;
-						addon:Print("Backdrop6 Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.bar6.alpha = val;
-							addon:Print("Backdrop6 Alpha set to "..val);
-						end
-					end
-				end
+			bar2enable = {name = "Enable bar 2", type="toggle", order= 4,
+				get = function(info) return DB.ActionBars.bar2enable; end,
+				set = function(info,val) DB.ActionBars.bar2enable = val end
 			},
-			popup1 = {name = "toggle or set the alpha for popup1", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.popup1; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.popup1.enable == 1) or (val == "off") then
-						suiChar.ActionBars.popup1.enable = 0;
-						addon:Print("Popup1 Backdrop Disabled");
-					elseif (val == "" and suiChar.ActionBars.popup1.enable == 0) or (val == "on") then
-						suiChar.ActionBars.popup1.enable = 1;
-						addon:Print("Popup1 Backdrop Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.popup1.alpha = val;
-							addon:Print("Popup1 Alpha set to "..val);
-						end
-					end
-				end
+			bar3alpha = {name = "Alpha for bar 3", type="range", order = 5,
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.bar3alpha; end,
+				set = function(info,val) if DB.ActionBars.bar3enable == true then DB.ActionBars.bar3alpha = val end end
 			},
-			popup2 = {name = "toggle or set the alpha for popup2", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.popup2; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.popup2.enable == 1) or (val == "off") then
-						suiChar.ActionBars.popup2.enable = 0;
-						addon:Print("Popup2 Backdrop Disabled");
-					elseif (val == "" and suiChar.ActionBars.popup2.enable == 0) or (val == "on") then
-						suiChar.ActionBars.popup2.enable = 1;
-						addon:Print("Popup2 Backdrop Enabled");
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							suiChar.ActionBars.popup2.alpha = val;
-							addon:Print("Popup2 Alpha set to "..val);
-					end
-				end
-			end
-		},
-			bars = {name = "toggle or set the alpha for all bars", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars; end,
-				set = function(info,val)
-					if (val == "" or val == "on" or val == "off") then
-						if (val == "off" or suiChar.ActionBars.bar1.enable == 1) then
-							for i = 1,6 do suiChar.ActionBars["bar"..i].enable = 0; end
-							addon:Print("Backdrops for All Bars Disabled");
-						elseif (val == "on" or suiChar.ActionBars.bar1.enable == 0) then
-							for i = 1,6 do suiChar.ActionBars["bar"..i].enable = 1; end
-							addon:Print("Backdrops for All Bars Enabled");
-						end
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							for i = 1,6 do suiChar.ActionBars["bar"..i].alpha = val; end
-							addon:Print("Alpha for All Bar Backdrops set to "..val);
-						end
-					end
-				end
+			bar3enable = {name = "Enable bar 3", type="toggle", order= 6,
+				get = function(info) return DB.ActionBars.bar3enable; end,
+				set = function(info,val) DB.ActionBars.bar3enable = val end
 			},
-			popups = {name = "toggle or set the alpha for all popups", type="input",
-				get = function(info) return suiChar.ActionBars; end,
-				set = function(info,val)
-					if (val == "" or val == "on" or val == "off") then
-						if (val == "off" or suiChar.ActionBars.popup1.enable == 1) then
-							for i = 1,2 do suiChar.ActionBars["popup"..i].enable = 0; end
-							addon:Print("Backdrops for All Popups Disabled");
-						elseif (val == "on" or suiChar.ActionBars.popup1.enable == 0) then
-							for i = 1,2 do suiChar.ActionBars["popup"..i].enable = 1; end
-							addon:Print("Backdrops for All Popups Enabled");
-						end
-					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							for i = 1,2 do suiChar.ActionBars["popup"..i].alpha = val; end
-							addon:Print("Alpha for All Popup Backdrops set to "..val);
-						end
-					end
-				end
+			bar4alpha = {name = "Alpha for bar 4", type="range", order = 7,
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.bar4alpha; end,
+				set = function(info,val) if DB.ActionBars.bar4enable == true then DB.ActionBars.bar4alpha = val end end
 			},
-			all = {name = "toggle or set the alpha for all backdrops", type="input",
-				get = function(info) return suiChar.ActionBars; end,
-				set = function(info,val)
-					if (val == "" or val == "on" or val == "off") then
-						if (val == "off" or suiChar.ActionBars.bar1.enable == 1) then
-							for i = 1,6 do suiChar.ActionBars["bar"..i].enable = 0; end
-							for i = 1,2 do suiChar.ActionBars["popup"..i].enable = 0; end
-							addon:Print("All Backdrops Disabled");
-						elseif (val == "on" or suiChar.ActionBars.bar1.enable == 0) then
-							for i = 1,6 do suiChar.ActionBars["bar"..i].enable = 1; end
-							for i = 1,2 do suiChar.ActionBars["popup"..i].enable = 1; end
-							addon:Print("All Backdrops Enabled");
-						end
+			bar4enable = {name = "Enable bar 4", type="toggle", order= 8,
+				get = function(info) return DB.ActionBars.bar4enable; end,
+				set = function(info,val) DB.ActionBars.bar4enable = val end
+			},
+			bar5alpha = {name = "Alpha for bar 5", type="range", order = 9,
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.bar5alpha; end,
+				set = function(info,val) if DB.ActionBars.bar5enable == true then DB.ActionBars.bar5alpha = val end end
+			},
+			bar5enable = {name = "Enable bar 5", type="toggle", order= 10,
+				get = function(info) return DB.ActionBars.bar5enable; end,
+				set = function(info,val) DB.ActionBars.bar5enable = val end
+			},
+			bar6alpha = {name = "Alpha for bar 6", type="range", order = 11,
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.bar6alpha; end,
+				set = function(info,val) if DB.ActionBars.bar6enable == true then DB.ActionBars.bar6alpha = val end end
+			},
+			bar6enable = {name = "Enable bar 6", type="toggle", order= 12,
+				get = function(info) return DB.ActionBars.bar6enable; end,
+				set = function(info,val) DB.ActionBars.bar6enable = val end
+			},
+			reset = {
+				type = "execute",
+				name = "Reset ActionBars",
+				desc = "resets all ActionBar options to default",
+				order= 99,
+				width= "full",
+				func = function()
+					if (InCombatLockdown()) then 
+						addon:Print(ERR_NOT_IN_COMBAT);
 					else
-						val = tonumber(val);
-						if (type(val) == "number") then
-							for i = 1,6 do suiChar.ActionBars["bar"..i].alpha = val; end
-							for i = 1,2 do suiChar.ActionBars["popup"..i].alpha = val; end
-							addon:Print("Alpha for All Backdrops set to "..val);
-						end
+						suiChar.ActionBars = {};
+						SetupProfile();
+						addon:Print("ActionBar Options Reset");
 					end
 				end
 			}
 		}
 	};
-	addon.options.args["resetbars"] = {
-		type = "execute",
-		name = "Reset ActionBars",
-		desc = "resets all ActionBar options to default",
-		func = function()
-			if (InCombatLockdown()) then 
-				addon:Print(ERR_NOT_IN_COMBAT);
-			else
-				suiChar.ActionBars = {};
-				SetupProfile();
-				addon:Print("ActionBar Options Reset");
-			end
-		end
-	};
-	addon.options.args["popup"] = {
-		name = "PopupBar Animations",
-		desc = "toggle popup bar animations",
+	addon.optionsGeneral.args["popup"] = {
+		name = "Popup Animations",
+		desc = "Toggle popup bar animations",
 		type = "group", args = {
-			["1"] = {name = "toggle animations for popup1", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.popup1 and suiChar.ActionBars.popup1.anim; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.popup1.anim == 1) or (val == "off") then
-						suiChar.ActionBars.popup1.anim = 0;
-						addon:Print("Animations for Popup Bar1 Disabled");
-					elseif (val == "" and suiChar.ActionBars.popup1.anim == 0) or (val == "on") then
-						suiChar.ActionBars.popup1.anim = 1;
-						addon:Print("Animations for Popup Bar1 Enabled");
-					end
-				end
+			popup1anim = {	name = "Animate left popup",	type="toggle",	order=1, width="full",
+				get = function(info) return DB.PopUP.popup1anim; end,
+				set = function(info,val) DB.PopUP.popup1anim = val; end
 			},
-			["2"] = {name = "toggle animations for popup2", type="input",
-				get = function(info) return suiChar and suiChar.ActionBars and suiChar.ActionBars.popup2 and suiChar.ActionBars.popup2.anim; end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.popup2.anim == 1) or (val == "off") then
-						suiChar.ActionBars.popup2.anim = 0;
-						addon:Print("Animations for Popup Bar2 Disabled");
-					elseif (val == "" and suiChar.ActionBars.popup2.anim == 0) or (val == "on") then
-						suiChar.ActionBars.popup2.anim = 1;
-						addon:Print("Animations for Popup Bar2 Enabled");
-					end
-				end
+			popup1alpha = {	name = "Alpha left popup",		type="range",	order=2,
+				min=0, max=100, step=1,
+				get = function(info) return DB.PopUP.popup1alpha; end,
+				set = function(info,val) if DB.PopUP.popup1enable == true then DB.PopUP.popup1alpha = val end end
 			},
-			all = {name = "toggle all popup animations", type = "input", 
-				get = function(info)
-					return suiChar.ActionBars;
-				end,
-				set = function(info,val)
-					if (val == "" and suiChar.ActionBars.popup1.anim == 1) or (val == "off") then
-						suiChar.ActionBars.popup1.anim = 0;
-						suiChar.ActionBars.popup2.anim = 0;
-						addon:Print("Animations for All Popup Bars Disabled");
-					elseif (val == "" and suiChar.ActionBars.popup1.anim == 0) or (val == "on") then
-						suiChar.ActionBars.popup1.anim = 1;
-						suiChar.ActionBars.popup2.anim = 1;
-						addon:Print("Animations for All Popup Bars Enabled");
-					end
-				end
+			popup1enable = {name = "Enable left popup",		type="toggle",	order=3,
+				get = function(info) return DB.PopUP.popup1enable; end,
+				set = function(info,val) DB.PopUP.popup1enable = val end
 			},
+			popup2anim = {	name = "Animate right popup",	type="toggle",	order=4, width="full",
+				get = function(info) return DB.PopUP.popup2anim; end,
+				set = function(info,val) DB.PopUP.popup2anim = val; end
+			},
+			popup2alpha = {	name = "Alpha right popup",		type="range",	order=5,
+				min=0, max=100, step=1,
+				get = function(info) return DB.PopUP.popup2alpha; end,
+				set = function(info,val) if DB.PopUP.popup2enable == true then DB.PopUP.popup2alpha = val end end
+			},
+			popup2enable = {name = "Enable right popup",	type="toggle",	order=6,
+				get = function(info) return DB.PopUP.popup2enable; end,
+				set = function(info,val) DB.PopUP.popup2enable = val end
+			}
 		}
 	};
 	SetupBartender();
@@ -463,18 +308,18 @@ function module:OnEnable()
 			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
 				-- Debug
 --				print(self.TimeSinceLastUpdate)
-				if (suiChar.ActionBars) then
+				if (DB.ActionBars) then
 					for b = 1,6 do -- for each backdrop
-						if suiChar.ActionBars["bar"..b].enable == 1 then -- backdrop enabled
-							_G["SUI_Bar"..b]:SetAlpha(suiChar.ActionBars["bar"..b].alpha or 1); -- apply alpha
+						if DB.ActionBars["bar"..b.."enable"] then -- backdrop enabled
+							_G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b.."alpha"]/100 or 1); -- apply alpha
 						else -- backdrop disabled
 							_G["SUI_Bar"..b]:SetAlpha(0);
 						end
 					end
 					for p = 1,2 do -- for each popup
-						if suiChar.ActionBars["popup"..p].enable == 1 then -- popup enabled
-							_G["SUI_Popup"..p]:SetAlpha(suiChar.ActionBars["popup"..p].alpha or 1); -- apply alpha
-							if suiChar.ActionBars["popup"..p].anim == 1 then --- animation enabled
+						if (DB.PopUP["popup"..p.."enable"]) then -- popup enabled
+							_G["SUI_Popup"..p]:SetAlpha(DB.PopUP["popup"..p.."alpha"]/100 or 1); -- apply alpha
+							if DB.PopUP["popup"..p.."anim"] == true then --- animation enabled
 								_G["SUI_Popup"..p.."MaskBG"]:SetAlpha(1);
 							else -- animation disabled
 								_G["SUI_Popup"..p.."MaskBG"]:SetAlpha(0);

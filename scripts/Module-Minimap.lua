@@ -155,32 +155,46 @@ local createMinimapCoords = function()
 end
 ---------------------------------------------------------------------------
 function module:OnInitialize()
-	addon.options.args["minimap"] = {
-		name = "toggle Minimap Button Hiding", type="input",
-		get = function(info) return suiChar and suiChar.MapButtons; end,
-		set = function(info,val)
-			if (val == "" and suiChar.MapButtons == true) or (val == "off") then
-				suiChar.MapButtons = nil;
-				addon:Print("Minimap Button Hiding Disabled");
-			elseif (val == "" and not suiChar.MapButtons) or (val == "on") then
-				suiChar.MapButtons = true;
-				addon:Print("Minimap Button Hiding Enabled");
-			end
-		end
-	};
-	addon.options.args["minimapzoom"] = {
-		name = "toggle Minimap Zoom Button Hiding", type="input",
-		get = function(info) return suiChar and suiChar.MapZoomButtons; end,
-		set = function(info,val)
-			if (val == "" and suiChar.MapZoomButtons == true) or (val == "off") then
-				suiChar.MapZoomButtons = nil;
-				addon:Print("Minimap ZoomButton Hiding Disabled");
-			elseif (val == "" and not suiChar.MapZoomButtons) or (val == "on") then
-				suiChar.MapZoomButtons = true;
-				addon:Print("Minimap ZoomButton Hiding Enabled");
-			end
-		end
-	};
+	addon.optionsGeneral.args["minimap"] = {
+		name = "Minimap Settings",
+		desc = "configure Minimap settings",
+		type = "group", args = {
+			minimapbuttons = {
+				name = "Hide all minimap buttons",
+				type="toggle",
+				width="full",
+				get = function(info)
+					return suiChar.MapButtons;
+				end,
+				set = function(info,val)
+					if val == false then
+						suiChar.MapButtons = nil;
+						addon:Print("Minimap Button Hiding Disabled");
+					elseif (val == true) or (val == nil) then
+						suiChar.MapButtons = true;
+						addon:Print("Minimap Button Hiding Enabled");
+					end
+				end
+			},
+			minimapzoom = {
+				name = "Hide Zoom Buttons",
+				type="toggle",
+				width="full",
+				get = function(info)
+					return suiChar.MapZoomButtons;
+				end,
+				set = function(info,val)
+					if val == false then
+						suiChar.MapZoomButtons = nil;
+						addon:Print("Minimap Button Hiding Disabled");
+					elseif (val == true) or (val == nil) then
+						suiChar.MapZoomButtons = true;
+						addon:Print("Minimap Button Hiding Enabled");
+					end
+				end
+			}
+		}
+	}
 end
 
 function module:OnEnable()

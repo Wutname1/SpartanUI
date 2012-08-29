@@ -27,20 +27,21 @@ local GetFactionDetails = function(name)
 end
 
 function module:OnInitialize()
-	addon.options.args["tooltip"] = {
-	type = "execute",
-	name = "Change Tooltip Behavior",
-	desc = "toggles between tooltip mechanics for the xp and rep bars",
-	func = function()
-		if (suiChar and suiChar.tipHover == 1) then
-			suiChar.tipHover = 0;
-			addon:Print("Tooltip Behavior set to OnClick");
-		else
-			suiChar.tipHover = 1;
-			addon:Print("Tooltip Behavior set to OnMouseover");
-		end
-	end
-	};
+	-- Mouseover event is broken, removing option for now.
+	-- addon.optionsGeneral.args["tooltip"] = {
+	-- type = "execute",
+	-- name = "Change Tooltip Behavior",
+	-- desc = "toggles between tooltip mechanics for the xp and rep bars",
+	-- func = function()
+		-- if (suiChar and suiChar.tipHover == 1) then
+			-- suiChar.tipHover = 0;
+			-- addon:Print("Tooltip Behavior set to OnClick");
+		-- else
+			-- suiChar.tipHover = 1;
+			-- addon:Print("Tooltip Behavior set to OnMouseover");
+		-- end
+	-- end
+	-- };
 end
 
 function module:OnEnable()
@@ -84,7 +85,8 @@ function module:OnEnable()
 			end
 			tooltip:Show();
 		end
-		xpframe:SetScript("OnEnter",function()
+		xpframe:SetScript("OnEnter",function(self)
+			addon:Print("Mouseover2");
 			if (suiChar and suiChar.tipHover == 1) then showTooltip(); end
 		end);
 		xpframe:SetScript("OnLeave",function()
@@ -102,17 +104,17 @@ function module:OnEnable()
 				SUI_ExperienceBarFill:SetWidth((now/goal)*400);
 			end
 			-- Making some stuff ready for changing color on exp if rested.
---			if rested ~= 0 then
---				SUI_ExperienceBarFill:SetVertexColor(0,1,0.1,0.7);
---				SUI_ExperienceBarFillGlow:SetVertexColor(0,1,0.1,0.5);
---				SUI_ExperienceBarLead:SetVertexColor(0,1,0.1,0.7);
---				SUI_ExperienceBarLeadGlow:SetVertexColor(0,1,0.1,0.5);
---			else
---				SUI_ExperienceBarFill:SetVertexColor(0,0.6,1,0.7);
---				SUI_ExperienceBarFillGlow:SetVertexColor(0,0.6,1,0.5);
---				SUI_ExperienceBarLead:SetVertexColor(0,0.6,1,0.7);
---				SUI_ExperienceBarLeadGlow:SetVertexColor(0,0.6,1,0.5);
---			end
+			if rested ~= 0 then
+				SUI_ExperienceBarFill:SetVertexColor(0,1,0.1,0.7);
+				SUI_ExperienceBarFillGlow:SetVertexColor(0,1,0.1,0.5);
+				SUI_ExperienceBarLead:SetVertexColor(0,1,0.1,0.7);
+				SUI_ExperienceBarLeadGlow:SetVertexColor(0,1,0.1,0.5);
+			else
+				SUI_ExperienceBarFill:SetVertexColor(0,0.6,1,0.7);
+				SUI_ExperienceBarFillGlow:SetVertexColor(0,0.6,1,0.5);
+				SUI_ExperienceBarLead:SetVertexColor(0,0.6,1,0.7);
+				SUI_ExperienceBarLeadGlow:SetVertexColor(0,0.6,1,0.5);
+			end
 		end);
 		xpframe:RegisterEvent("PLAYER_ENTERING_WORLD");
 		xpframe:RegisterEvent("PLAYER_XP_UPDATE");
