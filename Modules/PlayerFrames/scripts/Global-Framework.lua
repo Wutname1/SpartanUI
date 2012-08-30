@@ -1,8 +1,6 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
-suiChar.PlayerFrames = suiChar.PlayerFrames or {};
-suiChar.PlayerFrames.Castbar = suiChar.PlayerFrames.Castbar or {};
 
 local base_plate1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate1]]
 local base_plate2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate2.blp]]
@@ -55,7 +53,7 @@ local name = function(self)
 end
 
 local PostUpdateAura = function(self,unit)
-	if suiChar and suiChar.PlayerFrames and suiChar.PlayerFrames[unit] == 0 then
+	if DBMod.PlayerFrames[unit] == 0 then
 		self:Hide();
 	else
 		self:Show();
@@ -86,13 +84,13 @@ local OnCastbarUpdate = function(self,elapsed)
 		end
 		if self.Time then
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			if suiChar.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
+			if DBMod.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
 				self.Time:SetFormattedText("%.1f",self.max - self.duration);
 			else
 				self.Time:SetFormattedText("%.1f",self.duration);
 			end
 		end
-		if suiChar.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.max-self.duration)
 		else
 			self:SetValue(self.duration)
@@ -109,7 +107,7 @@ local OnCastbarUpdate = function(self,elapsed)
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
 				self.Time:SetFormattedText("%.1f",self.max-self.duration);
 		end
-		if suiChar.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.duration)
 		else
 			self:SetValue(self.max-self.duration)

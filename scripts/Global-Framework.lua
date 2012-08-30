@@ -10,26 +10,25 @@ end;
 
 local updateMinimumScale = function()
 --	local minScale = floor(((UIParent:GetWidth()/2560)*10^2)+1) / (10^2);
---	if suiChar.scale < minScale then suiChar.scale = minScale; end
+--	if DB.scale < minScale then DB.scale = minScale; end
 end;
 
 local updateSpartanScale = function() -- scales SpartanUI based on setting or screen size
-	suiChar = suiChar or {};
-	if (not suiChar.scale) then -- make sure the variable exists, and auto-configured based on screen size
+	if (not DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar("gxResolution"),"(%d+).-(%d+)");
-		if (tonumber(width) / tonumber(height) > 4/3) then suiChar.scale = 0.92;
-		else suiChar.scale = 0.78; end
+		if (tonumber(width) / tonumber(height) > 4/3) then DB.scale = 0.92;
+		else DB.scale = 0.78; end
 	end
 	updateMinimumScale();
-	if (suiChar.scale ~= round(SpartanUI:GetScale())) then
-		frame:SetScale(suiChar.scale);
+	if (DB.scale ~= round(SpartanUI:GetScale())) then
+		frame:SetScale(DB.scale);
 	end
 end;
 
 local updateSpartanOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar,ChocolateBar,titan,offset = 0,0,0;
-	if suiChar.offset then
-		offset = max(suiChar.offset,1);
+	if DB.offset then
+		offset = max(DB.offset,1);
 	else
 		for i = 1,4 do
 			if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
@@ -140,7 +139,7 @@ function module:OnInitialize()
 				frame:SetScale(containerScale)
 				if ( index == 1 ) then
 					-- First bag
-					frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -xOffset, (yOffset + (suiChar.offset or 1)) * (suiChar.scale or 1) )
+					frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -xOffset, (yOffset + (DB.offset or 1)) * (DB.scale or 1) )
 				elseif ( freeScreenHeight < frame:GetHeight() ) then
 					-- Start a new column
 					column = column + 1
@@ -163,73 +162,57 @@ function module:OnInitialize()
 		AceHook.SecureHook(addon, "PetBattleFrame_Display")
 		AceHook.SecureHook(addon, "PetBattleFrame_Remove")
 	end
-	addon.optionsGeneral.args["maxres"] = {
-		type = "execute", name = "Toggle Default Scales",
+	addon.optionsGeneral.args["DefaultScales"] = {name = "Toggle Default Scales",type = "execute",order = 2,
 		desc = "toggles between widescreen and standard scales",
-		order = 2,
 		func = function()
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
-				if (suiChar.scale >= 0.92) or (suiChar.scale < 0.78) then
-					suiChar.scale = 0.78;
+				if (DB.scale >= 0.92) or (DB.scale < 0.78) then
+					DB.scale = 0.78;
 				else
-					suiChar.scale = 0.92;
+					DB.scale = 0.92;
 				end
-				addon:Print("Relative Scale set to "..suiChar.scale);
+				addon:Print("Relative Scale set to "..DB.scale);
 			end
 		end
 	};
-	addon.optionsGeneral.args["scale"] = {
-		type = "range", name = "Configure Scale",
-		desc = "sets a specific scale for SpartanUI",
-		order = 1,
-		width = "double",
-		min = 0,
-		max = 1,
+	addon.optionsGeneral.args["scale"] = {name = "Configure Scale",type = "range",order = 1,width = "double",
+		desc = "sets a specific scale for SpartanUI",min = 0,max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
-				suiChar.scale = min(1,round(val));
+				DB.scale = min(1,round(val));
 				updateMinimumScale();
-				addon:Print("Relative Scale set to "..suiChar.scale);
+				addon:Print("Relative Scale set to "..DB.scale);
 			end
 		end,
-		get = function(info) return suiChar.scale; end
+		get = function(info) return DB.scale; end
 	};
-	addon.optionsGeneral.args["offset"] = {
-		type = "range",
-		name = "Configure Offset",
+	addon.optionsGeneral.args["offset"] = {name = "Configure Offset",type = "range",order = 3,width="double",
 		desc = "offsets the bottom bar automatically, or set value",
-		order = 3,
-		width="double",
-		min=0,
-		max=200,
-		step=.1,
-		get = function(info) return suiChar.offset end,
+		min=0,max=200,step=.1,
+		get = function(info) return DB.offset end,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
-				if (suiChar.offset == nil) then
+				if (DB.offset == nil) then
 					addon:Print("Offset is set AUTO");
 				else
 					val = tonumber(val);
-					suiChar.offset = val;
+					DB.offset = val;
 					addon:Print("Panel Offset set to "..val);
 				end
 			end
 		end,
-		get = function(info) return suiChar.offset; end
+		get = function(info) return DB.offset; end
 	};
-	addon.optionsGeneral.args["offsetauto"] = {
-		type = "toggle",
-		name = "Auto Offset",
+	addon.optionsGeneral.args["offsetauto"] = {name = "Auto Offset",type = "toggle",order = 4,
 		desc = "offsets the bottom bar automatically",
-		order = 4,
 		get = function(info)
-			if (suiChar.offset == nil) then
+			if (DB.offset == nil) then
 				return true;
 			else
 				return false;
@@ -237,10 +220,10 @@ function module:OnInitialize()
 		end,
 		set = function(info,val)
 			if (val == true) then
-				suiChar.offset = nil;
+				DB.offset = nil;
 				addon:Print("Offset is set AUTO");
 			else
-				suiChar.offset = 0.1;
+				DB.offset = 0.1;
 				addon:Print("Offset is set manual");
 			end
 		end,
@@ -248,11 +231,11 @@ function module:OnInitialize()
 end
 
 function addon:PetBattleFrame_Display()
-	suiChar.alpha = .1
+	DB.alpha = .1
 end
 
 function addon:PetBattleFrame_Remove()
-	suiChar.alpha = 100
+	DB.alpha = 100
 end
 
 function module:OnEnable()

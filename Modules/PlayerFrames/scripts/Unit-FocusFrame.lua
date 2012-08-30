@@ -22,7 +22,7 @@ do -- scripts to make it movable
 			ToggleDropDownMenu(1, nil, FocusFrameDropDown, 'cursor');
 		else
 			focus.isMoving = true;
-			suiChar.PlayerFrames.focusMoved = true;
+			DBMod.PlayerFrames.focusMoved = true;
 			focus:SetMovable(true);
 			focus:StartMoving();
 		end
@@ -61,7 +61,7 @@ do -- scripts to make it movable
 	end);
 	
 	function addon:UpdateFocusPosition()
-		if suiChar.PlayerFrames.focusMoved then
+		if DBMod.PlayerFrames.focusMoved then
 			focus:SetMovable(true);
 		else
 			focus:SetMovable(false);

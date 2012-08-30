@@ -1,15 +1,14 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
-suiChar.PlayerFrames = suiChar.PlayerFrames or {};
 local default = {player = 0,target = 1,targettarget = 0,pet = 1,focus = 1};
-for k,v in pairs(default) do if not suiChar.PlayerFrames[k] then suiChar.PlayerFrames[k] = v end end
-setmetatable(suiChar.PlayerFrames,{__index = default});
+for k,v in pairs(default) do if not DBMod.PlayerFrames[k] then DBMod.PlayerFrames[k] = v end end
+setmetatable(DBMod.PlayerFrames,{__index = default});
 
-suiChar.PlayerFrames.Castbar = suiChar.PlayerFrames.Castbar or {};
+DBMod.PlayerFrames.Castbar = DBMod.PlayerFrames.Castbar or {};
 local castbardefault = { player = 1,target = 1,targettarget = 1,pet = 1,focus = 1, text = { player = 1,target = 1,targettarget = 1,pet = 1,focus = 1 } };
-for k,v in pairs(castbardefault) do if not suiChar.PlayerFrames.Castbar[k] then suiChar.PlayerFrames.Castbar[k] = v end end
-setmetatable(suiChar.PlayerFrames.Castbar,{__index = castbardefault});
+for k,v in pairs(castbardefault) do if not DBMod.PlayerFrames.Castbar[k] then DBMod.PlayerFrames.Castbar[k] = v end end
+setmetatable(DBMod.PlayerFrames.Castbar,{__index = castbardefault});
 -- /spartanui castbar player
 
 function addon:OnInitialize()
@@ -21,13 +20,13 @@ function addon:OnInitialize()
 				name = "Display player buffs",
 				type = "toggle",
 				get = function(info)
-					if suiChar.PlayerFrames.player == 0 then return false else return true end
+					if DBMod.PlayerFrames.player == 0 then return false else return true end
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.PlayerFrames.player = 0;
+						DBMod.PlayerFrames.player = 0;
 					elseif (val == true) or (val == nil) then
-						suiChar.PlayerFrames.player = 1;
+						DBMod.PlayerFrames.player = 1;
 					end
 					addon.player.Auras:PostUpdate("player");
 				end
@@ -36,13 +35,13 @@ function addon:OnInitialize()
 				name = "Display target buffs",
 				type = "toggle",
 				get = function(info)
-					if suiChar.PlayerFrames.target == 0 then return false else return true end
+					if DBMod.PlayerFrames.target == 0 then return false else return true end
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.PlayerFrames.target = 0;
+						DBMod.PlayerFrames.target = 0;
 					else
-						suiChar.PlayerFrames.target = 1;
+						DBMod.PlayerFrames.target = 1;
 					end
 					addon.target.Auras:PostUpdate("target");
 				end
@@ -51,13 +50,13 @@ function addon:OnInitialize()
 				name = "Display target of target buffs",
 				type = "toggle",
 				get = function(info)
-					if suiChar.PlayerFrames.targettarget == 0 then return false else return true end
+					if DBMod.PlayerFrames.targettarget == 0 then return false else return true end
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.PlayerFrames.targettarget = 0;
+						DBMod.PlayerFrames.targettarget = 0;
 					else
-						suiChar.PlayerFrames.targettarget = 1;
+						DBMod.PlayerFrames.targettarget = 1;
 					end
 					addon.targettarget.Auras:PostUpdate("targettarget");
 				end
@@ -66,13 +65,13 @@ function addon:OnInitialize()
 				name = "Display pet buffs",
 				type = "toggle",
 				get = function(info)
-					if suiChar.PlayerFrames.pet == 0 then return false else return true end
+					if DBMod.PlayerFrames.pet == 0 then return false else return true end
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.PlayerFrames.pet = 0;
+						DBMod.PlayerFrames.pet = 0;
 					else
-						suiChar.PlayerFrames.pet = 1;
+						DBMod.PlayerFrames.pet = 1;
 					end
 					addon.pet.Auras:PostUpdate("pet");
 				end
@@ -81,13 +80,13 @@ function addon:OnInitialize()
 				name = "Display focus buffs",
 				type = "toggle",
 				get = function(info)
-					if suiChar.PlayerFrames.focus == 0 then return false else return true end
+					if DBMod.PlayerFrames.focus == 0 then return false else return true end
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.PlayerFrames.focus = 0;
+						DBMod.PlayerFrames.focus = 0;
 					else
-						suiChar.PlayerFrames.focus = 1;
+						DBMod.PlayerFrames.focus = 1;
 					end
 					addon.focus.Auras:PostUpdate("focus");
 				end
@@ -96,13 +95,13 @@ function addon:OnInitialize()
 				name = "Display focus target buffs",
 				type = "toggle",
 				get = function(info)
-					if suiChar.PlayerFrames.focustarget == 0 then return false else return true end
+					if DBMod.PlayerFrames.focustarget == 0 then return false else return true end
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.PlayerFrames.focustarget = 0;
+						DBMod.PlayerFrames.focustarget = 0;
 					else
-						suiChar.PlayerFrames.focustarget = 1;
+						DBMod.PlayerFrames.focustarget = 1;
 					end
 					addon.focustarget.Auras:PostUpdate("focustarget");
 				end
@@ -113,130 +112,65 @@ function addon:OnInitialize()
 		name = "Unitframe Castbar",
 		desc = "unitframe castbar settings",
 		type = "group", args = {
-			player = {name = "toggle player castbar style", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.Castbar.player; end,
-				set = function(info,val)
-					if suiChar.PlayerFrames.Castbar.player == 0 then
-						suiChar.PlayerFrames.Castbar.player = 1;
-						spartan:Print("Player Castbar SpartanUI style");
-					else
-						suiChar.PlayerFrames.Castbar.player = 0;
-						spartan:Print("Player Castbar oUF style");
-					end
-				end
+			player = { name = "Player style", type = "select", style="radio",
+				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+				get = function(info) return DBMod.PlayerFrames.Castbar.player; end,
+				set = function(info,val) DBMod.PlayerFrames.Castbar.player = val; end
 			},
-			target = {name = "toggle target castbar style", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.Castbar.target; end,
-				set = function(info,val)
-					if suiChar.PlayerFrames.Castbar.target == 0 then
-						suiChar.PlayerFrames.Castbar.target = 1;
-						spartan:Print("Target Castbar SpartanUI style");
-					else
-						suiChar.PlayerFrames.Castbar.target = 0;
-						spartan:Print("Target Castbar oUF style");
-					end
-				end
+			target = { name = "Target style", type = "select", style="radio",
+				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+				get = function(info) return DBMod.PlayerFrames.Castbar.target; end,
+				set = function(info,val) DBMod.PlayerFrames.Castbar.target = val; end
 			},
-			targettarget = {name = "toggle targetargett castbar style", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.Castbar.targettarget; end,
-				set = function(info,val)
-					if suiChar.PlayerFrames.Castbar.targettarget == 0 then
-						suiChar.PlayerFrames.Castbar.targettarget = 1;
-						spartan:Print("Targettarget Castbar SpartanUI style");
-					else
-						suiChar.PlayerFrames.Castbar.targettarget = 0;
-						spartan:Print("Targettarget Castbar oUF style");
-					end
-				end
+			targettarget = { name = "Target of Target style", type = "select", style="radio",
+				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+				get = function(info) return DBMod.PlayerFrames.Castbar.targettarget; end,
+				set = function(info,val) DBMod.PlayerFrames.Castbar.targettarget = val; end
 			},
-			pet = {name = "toggle pet castbar style", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.Castbar.pet; end,
-				set = function(info,val)
-					if suiChar.PlayerFrames.Castbar.pet == 0 then
-						suiChar.PlayerFrames.Castbar.pet = 1;
-						spartan:Print("Pet Castbar SpartanUI style");
-					else
-						suiChar.PlayerFrames.Castbar.pet = 0;
-						spartan:Print("Pet Castbar oUF style");
-					end
-				end
+			pet = { name = "Pet style", type = "select", style="radio",
+				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+				get = function(info) return DBMod.PlayerFrames.Castbar.pet; end,
+				set = function(info,val) DBMod.PlayerFrames.Castbar.pet = val; end
 			},
-			focus = {name = "toggle focus castbar style", type = "toggle",
-				get = function(info) return suiChar.PlayerFrames.Castbar.focus; end,
-				set = function(info,val)
-					if suiChar.PlayerFrames.Castbar.focus == 0 then
-						suiChar.PlayerFrames.Castbar.focus = 1;
-						spartan:Print("Focus Castbar SpartanUI style");
-					else
-						suiChar.PlayerFrames.Castbar.focus = 0;
-						spartan:Print("Focus Castbar oUF style");
-					end
-				end
+			focus = { name = "Focus style", type = "select", style="radio",
+				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+				get = function(info) return DBMod.PlayerFrames.Castbar.focus; end,
+				set = function(info,val) DBMod.PlayerFrames.Castbar.focus = val; end
 			},
 			text = {
 				name = "Unitframe Castbar Text",
 				desc = "unitframe castbar text settings",
 				type = "group", args = {
-					player = {name = "toggle player castbar text style", type = "toggle",
-						get = function(info) return suiChar.PlayerFrames.Castbar.text.player; end,
-						set = function(info,val)
-							if suiChar.PlayerFrames.Castbar.text.player == 0 then
-								suiChar.PlayerFrames.Castbar.text.player = 1;
-								spartan:Print("Player Castbar Text SpartanUI style");
-							else
-								suiChar.PlayerFrames.Castbar.text.player = 0;
-								spartan:Print("Player Castbar Text oUF style");
-							end
-						end
+					player = {
+						name = "Text style", type = "select", style="radio",
+						values = {[0]="Count up",[1]="Count down"},
+						get = function(info) return DBMod.PlayerFrames.Castbar.text.player; end,
+						set = function(info,val) DBMod.PlayerFrames.Castbar.text.player = val; end
 					},
-					target = {name = "toggle target castbar text style", type = "toggle",
-						get = function(info) return suiChar.PlayerFrames.Castbar.text.target; end,
-						set = function(info,val)
-							if suiChar.PlayerFrames.Castbar.text.target == 0 then
-								suiChar.PlayerFrames.Castbar.text.target = 1;
-								spartan:Print("Target Castbar Text SpartanUI style");
-							else
-								suiChar.PlayerFrames.Castbar.text.target = 0;
-								spartan:Print("Target Castbar Text oUF style");
-							end
-						end
+					target = {
+						name = "Text style", type = "select", style="radio",
+						values = {[0]="Count up",[1]="Count down"},
+						get = function(info) return DBMod.PlayerFrames.Castbar.text.target; end,
+						set = function(info,val) DBMod.PlayerFrames.Castbar.text.target = val; end
 					},
-					targettarget = {name = "toggle targetargett castbar text style", type = "toggle",
-						get = function(info) return suiChar.PlayerFrames.Castbar.text.targettarget; end,
-						set = function(info,val)
-							if suiChar.PlayerFrames.Castbar.text.targettarget == 0 then
-								suiChar.PlayerFrames.Castbar.text.targettarget = 1;
-								spartan:Print("Targettarget Castbar Text SpartanUI style");
-							else
-								suiChar.PlayerFrames.Castbar.text.targettarget = 0;
-								spartan:Print("Targettarget Castbar Text oUF style");
-							end
-						end
+					targettarget = {
+						name = "Text style", type = "select", style="radio",
+						values = {[0]="Count up",[1]="Count down"},
+						get = function(info) return DBMod.PlayerFrames.Castbar.text.targettarget; end,
+						set = function(info,val) DBMod.PlayerFrames.Castbar.text.targettarget = val; end
 					},
-					pet = {name = "toggle pet castbar text style", type = "toggle",
-						get = function(info) return suiChar.PlayerFrames.text.Castbar.pet; end,
-						set = function(info,val)
-							if suiChar.PlayerFrames.Castbar.text.pet == 0 then
-								suiChar.PlayerFrames.Castbar.text.pet = 1;
-								spartan:Print("Pet Castbar Text SpartanUI style");
-							else
-								suiChar.PlayerFrames.Castbar.text.pet = 0;
-								spartan:Print("Pet Castbar Text oUF style");
-							end
-						end
+					pet = {
+						name = "Text style", type = "select", style="radio",
+						values = {[0]="Count up",[1]="Count down"},
+						get = function(info) return DBMod.PlayerFrames.Castbar.text.pet; end,
+						set = function(info,val) DBMod.PlayerFrames.Castbar.text.pet = val; end
 					},
-					focus = {name = "toggle focus castbar text style", type = "toggle",
-						get = function(info) return suiChar.PlayerFrames.Castbar.text.focus; end,
-						set = function(info,val)
-							if suiChar.PlayerFrames.Castbar.text.focus == 0 then
-								suiChar.PlayerFrames.Castbar.text.focus = 1;
-								spartan:Print("Focus Castbar Text SpartanUI style");
-							else
-								suiChar.PlayerFrames.Castbar.text.focus = 0;
-								spartan:Print("Focus Castbar Text oUF style");
-							end
-						end
-					},
+					focus = {
+						name = "Text style", type = "select", style="radio",
+						values = {[0]="Count up",[1]="Count down"},
+						get = function(info) return DBMod.PlayerFrames.Castbar.text.focus; end,
+						set = function(info,val) DBMod.PlayerFrames.Castbar.text.focus = val; end
+					}
 				},
 			},
 		}
@@ -245,7 +179,7 @@ function addon:OnInitialize()
 		type = "execute", name = "Reset Focus location",
 		desc = "resets the potion to default",
 		func = function()
-			suiChar.PlayerFrames.focusMoved = false;
+			DBMod.PlayerFrames.focusMoved = false;
 			addon:UpdateFocusPosition();
 		end
 	};

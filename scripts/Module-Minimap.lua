@@ -14,7 +14,7 @@ local checkThirdParty, frame = function()
 			addon:Print('All Clear, SpartanUI is handling Minimap')
 		end
 	end
-	if (SexyMap) then
+	if select(4, GetAddOnInfo("SexyMap")) then
 		addon:Print('SexyMap is loaded, and is handling the Minimap')
 		return true
 	end

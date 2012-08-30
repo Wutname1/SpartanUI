@@ -2,15 +2,23 @@ local addon = LibStub("AceAddon-3.0"):NewAddon("SpartanUI","AceConsole-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 ----------------------------------------------------------------------------------------------------
-suiChar = suiChar or {};
-  
 addon.optionsMain = {name = "SpartanUI Main", type = "group", args = {}};
 addon.optionsGeneral = {name = "SpartanUI General", type = "group", args = {}};
 addon.optionsPlayerFrames = {name = "SpartanUI Player Frames", type = "group", args = {}};
 addon.optionsPartyFrames = {name = "SpartanUI Party Frames", type = "group", args = {}};
-addon.optionsRaidFrames = {name = "SpartanUI Raid Frames", type = "group", args = {comingsoon={name="Raid frames not implemented yet",type="header"}}};
+addon.optionsRaidFrames = {name = "SpartanUI Raid Frames", type = "group", args = {
+							comingsoon1={name="",type="header",order=1},
+							comingsoon2={name="Raid frames not implemented yet",type="header",order=2},comingsoon3={name="Coming in 3.1.0",type="header",order=3},
+							comingsoon4={name="",type="header",order=4}}};
 addon.optionsSpinCam = {name = "SpartanUI Spin Cam", type = "group", args = {}};
 addon.optionsFilmEffects = {name = "SpartanUI Film Effects", type = "group", args = {}};
+
+addon.optionsMain.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
+addon.optionsGeneral.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
+addon.optionsPlayerFrames.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
+addon.optionsPartyFrames.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
+addon.optionsSpinCam.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
+addon.optionsFilmEffects.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
 
 addon.options = {name = "SpartanUI", type = "group", args = {}};
 
@@ -18,6 +26,8 @@ DBdefaults = {
 	profile = {
 		playerName = UnitName("player"),
 		SUIProper = {
+			offset = 0,
+			scale = .92,
 			ChatSettings = {
 				enabled = true
 			},
@@ -101,7 +111,9 @@ DBdefaults = {
 					yOfs = -20
 				},
 			},
-			PlayerFrames = {},
+			PlayerFrames = {
+				focusMoved = false
+			},
 			RaidFrames = {}
 		}
 	}
@@ -134,8 +146,6 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-
-	--AceConfig:RegisterOptionsTable("SpartanUI", addon.options, {"sui", "spartanui"});
 	
     AceConfig:RegisterOptionsTable("SpartanUI Main", addon.optionsMain)
     AceConfig:RegisterOptionsTable("SpartanUI General", addon.optionsGeneral)
@@ -144,20 +154,15 @@ function addon:OnEnable()
     AceConfig:RegisterOptionsTable("SpartanUI Raid Frames", addon.optionsRaidFrames)
     AceConfig:RegisterOptionsTable("SpartanUI Spin Cam", addon.optionsSpinCam)
     AceConfig:RegisterOptionsTable("SpartanUI Film Effects", addon.optionsFilmEffects)
-	addon.options.args["warning1"] = {name="These Settings have yet to be tested and migrated to the new profile system.",type="header",order=0}
-	addon.options.args["warning2"] = {name="They may or may not work.",type="header",order=1}
-	addon.options.args["warning3"] = {name="",type="header",order=2}
-    AceConfig:RegisterOptionsTable("SpartanUI Archive Options", addon.options)
 	AceConfig:RegisterOptionsTable("Profiles", self.Optionsprofile);
 
     AceConfigDialog:AddToBlizOptions("SpartanUI Main", "SpartanUI", nil)
     AceConfigDialog:AddToBlizOptions("SpartanUI General", "General", "SpartanUI")
-    AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", "Player Frames", "SpartanUI")
-    self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI Party Frames", "Party Frames", "SpartanUI")
+    self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", "Player Frames", "SpartanUI")
+    AceConfigDialog:AddToBlizOptions("SpartanUI Party Frames", "Party Frames", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Raid Frames", "Raid Frames", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Spin Cam", "Spin Cam", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Film Effects", "Film Effects", "SpartanUI")
-    AceConfigDialog:AddToBlizOptions("SpartanUI Archive Options", "Archive Options", "SpartanUI")
 	AceConfigDialog:AddToBlizOptions("Profiles", "Profiles", "SpartanUI");
 	
 	
