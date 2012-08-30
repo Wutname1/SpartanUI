@@ -1,35 +1,46 @@
-local f = CreateFrame("Frame", "FilmEffects", WorldFrame);
-	f:SetHeight(64); f:SetWidth(64);
-	f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 256);
-	f:SetFrameStrata("BACKGROUND");
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local addon = spartan:NewModule("FilmEffect");
+
+function addon:OnInitialize()
+	spartan.optionsFilmEffects.args["enable"] = {name="Enable Film Effects",type="toggle",order=1,width="full",
+		get = function(info) return DBMod.FilmEffects.enable end,
+		set = function(info,val) DBMod.FilmEffects.enable = val if val ~= true then addon:FilmEffectDisable() end end
+	}
+	spartan.optionsFilmEffects.args["anim"] = {name="Effect",type="select",order=5,width="full",
+		style="dropdown",values={[""]="",["Vignette"] = "Vignette",["blur"]="blur",["crisp"]="crisp"},
+		get = function(info) return DBMod.FilmEffects.anim end,
+		set = function(info,val) if (val == "") then addon:FilmEffectDisable(); elseif (DBMod.FilmEffects.enable) then DBMod.FilmEffects.anim = val; addon:FilmEffect() end end
+	}
+end
+
+function addon:OnEnable()
+		f = CreateFrame("Frame", "FilmEffects", WorldFrame);
+		f:SetHeight(64); f:SetWidth(64);
+		f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 256);
+		f:SetFrameStrata("BACKGROUND");
+		f:RegisterEvent("PLAYER_ENTERING_WORLD");
+		f:SetScript("OnEvent",function() addon:FilmEffect() end);
+		f:SetScript("OnUpdate", function(self, elapsed) addon:Update(self, elapsed) end);
+--		addon:FilmEffect()
+end
+function addon:FilmEffectDisable()
 	
-	f:RegisterEvent("PLAYER_ENTERING_WORLD");
-	f:SetScript("OnEvent",function(event) FG_OnLoad(event); end);
-	f:SetScript("OnUpdate", function(self, elapsed) FG_OnUpdate(self, elapsed); end);
----------------------------------------------------------------------------
-FEDB = FEDB or {};
-FEDB.Interval = 12.5;
-FEDB.animationInterval = 0;
-FEDB.record = 1;
----------------------------------------------------------------------------
-function FG_OnEvent(self, event, arg1, arg2)
-	if not FE_Vignette and arg1=="vignette" then
+	if FE_Vignette then FE_Vignette:Hide(); end
+	if FG_Fuzzy then FG_Fuzzy:Hide(); end
+	if FG_Fuggly then FG_Fuggly:Hide(); end
+	if FG_Crispy then FG_Crispy:Hide(); end
+	DBMod.FilmEffects.anim = ""
+end
+
+function addon:FilmEffect()
+	if DBMod.FilmEffects.anim=="Vignette" then
 		local t = f:CreateTexture("FE_Vignette", "OVERLAY")
 		t:SetAllPoints(UIParent)
 		t:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\vignette")
 		t:SetBlendMode("MOD")
-		FEDB.vignette = true
-	elseif arg1=="vignette" then
-		if FE_Vignette:IsVisible() then
-			FE_Vignette:Hide()
-			FEDB.vignette = nil
-		else
-			FE_Vignette:Show()
-			FEDB.vignette = true
-		end
 	end
 	
-	if arg1=="film" and arg2=="blur" then
+	if DBMod.FilmEffects.anim=="blur" then
 		if not FG_Fuzzy then
 			local t = f:CreateTexture("FG_Fuzzy", "OVERLAY")
 			local t2 = f:CreateTexture("FG_Fuggly", "OVERLAY")
@@ -50,21 +61,21 @@ function FG_OnEvent(self, event, arg1, arg2)
 			
 			t:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
 			t2:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
-			FEDB.animateGrainFuzzy = true
+			DBMod.FilmEffects.animateGrainFuzzy = true
 		else
 			if FG_Fuzzy:IsVisible() then
 				FG_Fuzzy:Hide()
 				FG_Fuggly:Hide()
-				FEDB.animateGrainFuzzy = nil
+				DBMod.FilmEffects.animateGrainFuzzy = nil
 			else
 				FG_Fuzzy:Show()
 				FG_Fuggly:Show()
-				FEDB.animateGrainFuzzy = true
+				DBMod.FilmEffects.animateGrainFuzzy = true
 			end
 		end
 	end
 	
-	if arg1=="film" and arg2=="crisp" then
+	if DBMod.FilmEffects.anim=="crisp" then
 		if not _G["FG_1_1_Add"] then
 			local resolution =({GetScreenResolutions()})[GetCurrentResolution()];
 			local x, y = strmatch(resolution, "(%d+)x(%d+)")
@@ -118,113 +129,31 @@ function FG_OnEvent(self, event, arg1, arg2)
 				end
 				i = i + 1
 			end
-			FEDB.animateGrainCrispy = true
+			DBMod.FilmEffects.animateGrainCrispy = true
 		else
 			if FG_Crispy:IsVisible() then
 				FG_Crispy:Hide()
-				FEDB.animateGrainCrispy = nil
+				DBMod.FilmEffects.animateGrainCrispy = nil
 			else
 				FG_Crispy:Show()
-				FEDB.animateGrainCrispy = true
+				DBMod.FilmEffects.animateGrainCrispy = true
 			end
 		end
 	end
 	
-	if arg1=="reset" then
-		if FE_Vignette then FE_Vignette:Hide(); end
-		if FG_Fuzzy then FG_Fuzzy:Hide(); end
-		if FG_Fuggly then FG_Fuggly:Hide(); end
-		if FG_Crispy then FG_Crispy:Hide(); end
-		
-		FEDB.vignette = nil;
-		FEDB.animateGrainFuzzy = nil;
-		FEDB.animateGrainCrispy = nil;
-	end
 end
 
-function FG_OnUpdate(self, elapsed)
-	FEDB.animationInterval = FEDB.animationInterval + elapsed
-	if (FEDB.animationInterval > (0.02)) then -- 50 FPS
-		FEDB.animationInterval = 0
+function addon:Update(self, elapsed)
+	DBMod.FilmEffects.animationInterval = DBMod.FilmEffects.animationInterval + elapsed
+	if (DBMod.FilmEffects.animationInterval > (0.02)) then -- 50 FPS
+		DBMod.FilmEffects.animationInterval = 0
 		
 		local yOfs = math.random(0, 256)
 		local xOfs = math.random(-128, 0)
 		
-		if FEDB.animateGrainFuzzy or FEDB.animateGrainCrispy then
+		if DBMod.FilmEffects.anim=="blur" or DBMod.FilmEffects.anim=="crisp" then
 			f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOfs, yOfs)
 		end
 	end
 end
 
-function FG_OnLoad(self, event, ...)
-	if not FEDB then return; end
-	if FEDB.animateGrainCrispy then
-		FG_OnEvent(self, event, "film", "crisp");
-	end
-	if FEDB.animateGrainFuzzy then
-		FG_OnEvent(self, event, "film", "blur");
-	end
-	if FEDB.vignette then
-		FG_OnEvent(self, event, "vignette");
-	end
-end
----------------------------------------------------------------------------
-SlashCmdList["FILMEFF"] = function(msg)
-	local msg = string.lower(msg)
-	local cmd = strsplit(" ",msg);
-	if (cmd == "vignette") then
-		FG_OnEvent(self, event, "vignette");
-		if FEDB.vignette then 
-			DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Vignette Enabled");
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Vignette Disabled");
-		end
-	elseif (cmd == "blur") then
-		FG_OnEvent(self, event, "film", "blur");
-		if FEDB.animateGrainFuzzy then 
-			DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Blurry Film-Grain Enabled");
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Blurry Film-Grain Disabled");
-		end
-	elseif (cmd == "crisp") then
-		FG_OnEvent(self, event, "film", "crisp");
-		if FEDB.animateGrainCrispy then 
-			DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Crisp Film-Grain Enabled");
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Crisp Film-Grain Disabled");
-		end
-	elseif (cmd == "reset") then
-		FG_OnEvent(self, event, "reset");
-		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Everything Disabled");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99FilmEffects|r: Arguments to |cffffff78/film|r");
-		if FEDB.vignette then
-			DEFAULT_CHAT_FRAME:AddMessage("    |cffffff78vignette|r - toggles shadows on the edges of the screen <|cff33ff99ACTIVE|r>");
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("    |cffffff78vignette|r - toggles shadows on the edges of the screen");
-		end
-		if FEDB.animateGrainFuzzy then
-			DEFAULT_CHAT_FRAME:AddMessage("    |cffffff78blur|r - toggles a blurry film-grain to the screen <|cff33ff99ACTIVE|r>");
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("    |cffffff78blur|r - toggles a blurry film-grain to the screen");
-		end
-		if FEDB.animateGrainCrispy then
-			DEFAULT_CHAT_FRAME:AddMessage("    |cffffff78crisp|r - toggles a sharp film-grain to the screen <|cff33ff99ACTIVE|r>");
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("    |cffffff78crisp|r - toggles a sharp film-grain to the screen");
-		end
-		DEFAULT_CHAT_FRAME:AddMessage("    |cffffff78reset|r - disables all active film effects");
-	end
-end;
-SLASH_FILMEFF1 = "/film";
----------------------------------------------------------------------------
-if (IsAddOnLoaded("SpartanUI")) then
-	local options = LibStub("AceAddon-3.0"):GetAddon("SpartanUI").options;
-	options.args["film"] = {
-		name = "Toggle FilmEffects",
-		type = "input", 
-		set = function(info,val)
-			SlashCmdList["FILMEFF"](val);
-		end
-	};
-end

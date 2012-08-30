@@ -12,17 +12,17 @@ function module:OnInitialize()
 				name = "Enable Chat tweaks",
 				desc = "ReloadUI required to take affect",
 				type="toggle",
-				get = function(info) return addon.db.profile.ChatSettings.enabled; end,
+				get = function(info) return DB.ChatSettings.enabled; end,
 				set = function(info,val)
 					if (val == true) then
-					addon.db.profile.ChatSettings.enabled = true;
+					DB.ChatSettings.enabled = true;
 						if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
 							-- Chat Mod Detected, disable and exit
-							addon.db.profile.ChatSettings.enabled = false
+							DB.ChatSettings.enabled = false
 							return;
 						end
 					else
-						addon.db.profile.ChatSettings.enabled = false;
+						DB.ChatSettings.enabled = false;
 					end
 				end
 			}
@@ -34,11 +34,11 @@ function module:OnEnable()
 
 	if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
 		-- Chat Mod Detected, disable and exit
-		addon.db.profile.ChatSettings.enabled = false
+		DB.ChatSettings.enabled = false
 		return;
 	end
 	--exit if not enabled
-	if (addon.db.profile.ChatSettings.enabled ~= true) then
+	if (DB.ChatSettings.enabled ~= true) then
 		return;
 	end
 

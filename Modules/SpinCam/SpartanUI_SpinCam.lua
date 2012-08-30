@@ -1,85 +1,61 @@
-local SpinCamRunning, CameraDistanceMax;
-SpinCamData = SpinCamData or {};
----------------------------------------------------------------------------
-SlashCmdList["SPINCAM"] = function(msg)
-	local msg = string.lower(msg)
-	local cmd,arg1 = strsplit(" ",msg);
-	if (arg1 ~= "on") and (arg1 ~= "off") then
-		if (SpinCamData.Disable) then arg1 = "on"; else arg1 = "off"; end
-	end
-	if (arg1 == "on") then
-		SpinCamData.Disable = nil;
-		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: Feature Enabled");
-	elseif (arg1 == "off") then
-		SpinCamData.Disable = true;
-		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: Feature Disabled");
-	end
-	if (SpinCamData.Disable) and (SpinCamRunning) then
-		MoveViewRightStop();
-		SetCVar("cameraYawMoveSpeed","230");
-		SetCVar("cameraDistanceMax",CameraDistanceMax or 200);
-		SetView(5);
-	end
-			SetCVar("cameraYawMoveSpeed","8");
-			MoveViewRightStart();
-			SpinCamRunning = true;
-			SetView(5);
-end;
-SLASH_SPINCAM1 = "/spincam";
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local addon = spartan:NewModule("SpinCam");
+local SpinCamRunning
 
-SlashCmdList["SPINCAMTOGGLE"] = function(msg)
-	if (SpinCamRunning == nil) then
-		SetCVar("cameraYawMoveSpeed","8");
-		MoveViewRightStart();
-		SpinCamRunning = true;
-		SetView(5);
-		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: Spining, to stop type /spin again");
-	elseif (SpinCamRunning == true) then
+function addon:OnInitialize()
+	spartan.optionsSpinCam.args["enable"] = {name="Enable Spin when AFK",type="toggle",order=1,width="full",
+		get = function(info) return DBMod.SpinCam.enable end,
+		set = function(info,val) DBMod.SpinCam.enable = val end
+	}
+	spartan.optionsSpinCam.args["range"] = {name="Spin Speed",type="range",order=5,width="full",
+		min=1,max=230,step=1,
+		get = function(info) return DBMod.SpinCam.speed end,
+		set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.speed = val; end if SpinCamRunning then addon:SpinToggle("update") end end
+	}
+	spartan.optionsSpinCam.args["spin"] = {name="Toggle Spin",type="execute",order=15,width="double",
+		desc = "You can also toggle spin by using the command /spin",
+		func = function(info,val) addon:SpinToggle(); end
+	}
+end
+
+function addon:OnEnable()
+	CameraDistanceMax = nil,200;
+	SetCVar("cameraDistanceMax",CameraDistanceMax or 200);
+	SetCVar("cameraYawMoveSpeed","230");
+	local frame = CreateFrame("Frame");
+	frame:RegisterEvent("CHAT_MSG_SYSTEM");
+	frame:RegisterEvent("PLAYER_ENTERING_WORLD");
+	frame:SetScript("OnEvent",function(self, event, ...)
+		if event == "CHAT_MSG_SYSTEM" then
+			if (... == format(MARKED_AFK_MESSAGE,DEFAULT_AFK_MESSAGE)) and (DBMod.SpinCam.enable) then
+				addon:SpinToggle("start")
+			elseif (... == CLEARED_AFK) and (SpinCamRunning) then
+				addon:SpinToggle("stop")
+			end
+		elseif event == "PLAYER_LEAVING_WORLD" then
+			addon:SpinToggle("stop")
+		end
+	end);
+end
+
+function addon:SpinToggle(action)
+	if (SpinCamRunning and action == nil) or (action=="stop") then
 		MoveViewRightStop();
 		SetCVar("cameraYawMoveSpeed","230");
 		SpinCamRunning = nil;
 		SetView(5);
+	elseif action == "update" then
+		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
+	else
+		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
+		MoveViewRightStart();
+		SpinCamRunning = true;
+		SetView(5);
 	end
+end
+
+SlashCmdList["SPINCAMTOGGLE"] = function(msg)
+	if (SpinCamRunning == nil) then DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: Spining, to stop type /spin again"); end
+	addon:SpinToggle(action)
 end;
 SLASH_SPINCAMTOGGLE1 = "/spin"
-
----------------------------------------------------------------------------
-SetCVar("cameraYawMoveSpeed","230");
-local frame = CreateFrame("Frame");
-frame:RegisterEvent("CHAT_MSG_SYSTEM");
-frame:RegisterEvent("PLAYER_ENTERING_WORLD");
-frame:SetScript("OnEvent",function(self, event, ...)
-	if event == "CHAT_MSG_SYSTEM" then
-		if (... == format(MARKED_AFK_MESSAGE,DEFAULT_AFK_MESSAGE)) and (not SpinCamData.Disable) then
-			SetCVar("cameraYawMoveSpeed","8");
-			MoveViewRightStart();
-			SpinCamRunning = true;
-			SetView(5);
-		elseif (... == CLEARED_AFK) and (SpinCamRunning) then
-			MoveViewRightStop();
-			SetCVar("cameraYawMoveSpeed","230");
-			SpinCamRunning = nil;
-			SetView(5);
-		end
-	elseif event == "PLAYER_LEAVING_WORLD" then
-		if (SpinCamRunning) then
-			MoveViewRightStop();
-			SetCVar("cameraYawMoveSpeed","230");
-			SpinCamRunning = nil;
-			SetView(5);
-		end
-	end
-end);
----------------------------------------------------------------------------
-if (IsAddOnLoaded("SpartanUI")) then
-	local options = LibStub("AceAddon-3.0"):GetAddon("SpartanUI").options;
-	options.args["spincam"] = {
-		type = "input",
-		name = "Toggle SpinCam",
-		desc = "Toggles SpinCam on and off",
-		set = function(info,val)
-			if val then val = " "..val; end
-			SlashCmdList["SPINCAM"]("spincam"..val);
-		end
-	};
-end

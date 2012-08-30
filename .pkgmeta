@@ -9,24 +9,20 @@ move-folders:
 
 externals:
     libs/LibStub:
-        url: svn://svn.wowace.com/wow/libstub/mainline/trunk
-        tag: latest
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
     libs/CallbackHandler-1.0:
-        url: svn://svn.wowace.com/wow/callbackhandler/mainline/trunk
-        tag: latest
-    libs/Ace3:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/CallbackHandler-1.0
+    libs/AceAddon-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
-    libs/Ace3:
+    libs/AceConfig-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
-    libs/Ace3:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfigCmd-3.0
-    libs/Ace3:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfigRegistry-3.0
-    libs/Ace3:
+    libs/AceConsole-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConsole-3.0
-    libs/Ace3:
+    libs/AceDB-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
-    libs/Ace3:
+    libs/AceDBOptions-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
-    libs/Ace3:
+    libs/AceGUI-3.0:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
+    libs/AceHook-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceHook-3.0

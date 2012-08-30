@@ -12,44 +12,44 @@ function module:OnInitialize()
 				type="toggle",
 				width="full",
 				order = 1,
-				get = function(info) return addon.db.profile.BuffSettings.enabled; end,
+				get = function(info) return DB.BuffSettings.enabled; end,
 				set = function(info,val)
-					addon.db.profile.BuffSettings.enabled = val;
+					DB.BuffSettings.enabled = val;
 					if val == true then module:UpdateBuffPosition(); end
 				end
 			},
 			offset = {name = "Configure Offset", type = "range", order = 2,
 				desc = "offsets the bottom bar automatically, or set value",
 				width="double", min=0, max=200, step=.1,
-				get = function(info) return addon.db.profile.BuffSettings.offset; end,
+				get = function(info) return DB.BuffSettings.offset; end,
 				set = function(info,val)
-					if addon.db.profile.BuffSettings.Manualoffset == true then addon.db.profile.BuffSettings.offset = val; end
+					if DB.BuffSettings.Manualoffset == true then DB.BuffSettings.offset = val; end
 				end
 			},
 			ManualOffset = {name="Manual Offset", type="toggle", order = 3,
-				get	= function(info) return addon.db.profile.BuffSettings.Manualoffset; end,
+				get	= function(info) return DB.BuffSettings.Manualoffset; end,
 				set = function(info,val)
-					addon.db.profile.BuffSettings.Manualoffset = val;
+					DB.BuffSettings.Manualoffset = val;
 					if val ~= true then
-						addon.db.profile.BuffSettings.offset = module:updateBuffOffset();
+						DB.BuffSettings.offset = module:updateBuffOffset();
 						module:UpdateBuffPosition();
 					end
 				end
 			},
 			BarsEnabled = {name="Manual Offset", type="toggle", order = 3,
-				get	= function(info) return addon.db.profile.BuffSettings.BarsEnabled; end,
-				set = function(info,val) addon.db.profile.BuffSettings.BarsEnabled = val; end
+				get	= function(info) return DB.BuffSettings.BarsEnabled; end,
+				set = function(info,val) DB.BuffSettings.BarsEnabled = val; end
 			}
 		}
 	}
 end
 
 function module:OnEnable()
-	if addon.db.profile.BuffSettings.enabled == true then
+	if DB.BuffSettings.enabled == true then
 		local BuffHandle = CreateFrame("Frame")
 		-- Fix CPU leak, use UpdateInterval
 		BuffHandle.UpdateInterval = 0.5
-		BuffHandle.TimeSinceLastUpdateTimeSinceLastUpdate = 0
+		BuffHandle.TimeSinceLastUpdate = 0
 		BuffHandle:SetScript("OnUpdate",function(self,...)
 			local elapsed = select(1,...)
 			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
@@ -66,12 +66,12 @@ function module:OnEnable()
 end
 
 function module:UpdateBuffPosition()
-	if addon.db.profile.BuffSettings.enabled == true then
+	if DB.BuffSettings.enabled == true then
 		if (minimap.handleBuff == true) then
 			BuffFrame:ClearAllPoints();
-			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(addon.db.profile.BuffSettings.offset));
+			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
 			ConsolidatedBuffs:ClearAllPoints();
-			ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(addon.db.profile.BuffSettings.offset));
+			ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
 			if (ConsolidatedBuffs:IsVisible()) then
 				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
 			else
@@ -79,9 +79,9 @@ function module:UpdateBuffPosition()
 			end
 		else
 			BuffFrame:ClearAllPoints();
-			BuffFrame:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(addon.db.profile.BuffSettings.offset))
+			BuffFrame:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
 			ConsolidatedBuffs:ClearAllPoints();
-			ConsolidatedBuffs:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(addon.db.profile.BuffSettings.offset))
+			ConsolidatedBuffs:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
 			if (ConsolidatedBuffs:IsVisible()) then
 				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
 			else

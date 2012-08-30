@@ -13,10 +13,10 @@ local default, plate = {
 };
 
 local UpdateSettings = function()
-	suiChar.ActionBars = suiChar.ActionBars or {};
+	DB.ActionBars = DB.ActionBars or {};
 	for key,val in pairs(default) do
-		if (not suiChar.ActionBars[key]) then suiChar.ActionBars[key] = val; end
-		setmetatable(suiChar.ActionBars[key],{__index = default[key]});
+		if (not DB.ActionBars[key]) then DB.ActionBars[key] = val; end
+		setmetatable(DB.ActionBars[key],{__index = default[key]});
 	end
 end;
 
@@ -110,8 +110,8 @@ local SetupBartender = function()
 		UpdateSettings();
 		addon:Print("Checking for profiles in Bartender")
 		-- New check for updating old profiles
-		if ( not suiChar.ActionBars.SpartanUI_Version) then
-			suiChar.ActionBars.SpartanUI_Version = GetAddOnMetadata("SpartanUI", "Version");
+		if ( not DB.ActionBars.SpartanUI_Version) then
+			DB.ActionBars.SpartanUI_Version = GetAddOnMetadata("SpartanUI", "Version");
 			-- Update Blizzard Art Bar settings on the standard profile
 			if BartenderProfileCheck(standard,false) then
 				for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
@@ -126,9 +126,9 @@ local SetupBartender = function()
 		end
 		print("Using this profile: "..Bartender4.db:GetCurrentProfile())
 		-- Checking for the standard Profile
-		if (not BartenderProfileCheck(standard,true)) then suiChar.ActionBars.Bartender4 = false end
+		if (not BartenderProfileCheck(standard,true)) then DB.ActionBars.Bartender4 = false end
 		-- Fixup setting profile to standard if standard profile exist
-		if suiChar.ActionBars.Bartender4 then if profile == standard then Bartender4.db:SetProfile(standard) end return; end
+		if DB.ActionBars.Bartender4 then if profile == standard then Bartender4.db:SetProfile(standard) end return; end
 		Bartender4.db:SetProfile(standard);
 		for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 			if settings[k] and v.db.profile then
@@ -137,7 +137,7 @@ local SetupBartender = function()
 		end
 		Bartender4:UpdateModuleConfigs(); -- run ApplyConfig for all modules, so that the new settings are applied
 		if BartenderProfileCheck(standard,false) then addon:Print(standard.." Profile generated in Bartender.") end
-		suiChar.ActionBars.Bartender4 = true;
+		DB.ActionBars.Bartender4 = true;
 	end
 	-- Can't use UpdateInterval, due to the way this need to be working -- could this behavior be changed? - Maybe a securehoocfunc on the unlocking
 	plate:HookScript("OnUpdate",function(self,...)
@@ -183,65 +183,65 @@ function module:OnInitialize()
 			Allalpha = {name = "Alpha for all bars", type="range", order = 15,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.Allalpha; end,
-				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i.."alpha"],DB.ActionBars.Allalpha = val,val; end end
+				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].alpha,DB.ActionBars.Allalpha = val,val; end end
 			},
 			Allenable = {name = "Enable all bars", type="toggle", order= 16,
 				get = function(info) return DB.ActionBars.Allenable; end,
-				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i.."enable"],DB.ActionBars.Allenable = val,val; end end
+				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].enable,DB.ActionBars.Allenable = val,val; end end
 			},
 			bar1alpha = {name = "Alpha for bar 1", type="range", order = 1,
 				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar1alpha; end,
-				set = function(info,val) if DB.ActionBars.bar1enable == true then DB.ActionBars.bar1alpha = val end end
+				get = function(info) return DB.ActionBars.bar1.alpha; end,
+				set = function(info,val) if DB.ActionBars.bar1.enable == true then DB.ActionBars.bar1.alpha = val end end
 			},
 			bar1enable = {name = "Enable bar 1", type="toggle", order= 2,
-				get = function(info) return DB.ActionBars.bar1enable; end,
-				set = function(info,val) DB.ActionBars.bar1enable = val end
+				get = function(info) return DB.ActionBars.bar1.enable; end,
+				set = function(info,val) DB.ActionBars.bar1.enable = val end
 			},
 			bar2alpha = {name = "Alpha for bar 2", type="range", order = 3,
 				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar2alpha; end,
-				set = function(info,val) if DB.ActionBars.bar2enable == true then DB.ActionBars.bar2alpha = val end end
+				get = function(info) return DB.ActionBars.bar2.alpha; end,
+				set = function(info,val) if DB.ActionBars.bar2.enable == true then DB.ActionBars.bar2.alpha = val end end
 			},
 			bar2enable = {name = "Enable bar 2", type="toggle", order= 4,
-				get = function(info) return DB.ActionBars.bar2enable; end,
-				set = function(info,val) DB.ActionBars.bar2enable = val end
+				get = function(info) return DB.ActionBars.bar2.enable; end,
+				set = function(info,val) DB.ActionBars.bar2.enable = val end
 			},
 			bar3alpha = {name = "Alpha for bar 3", type="range", order = 5,
 				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar3alpha; end,
-				set = function(info,val) if DB.ActionBars.bar3enable == true then DB.ActionBars.bar3alpha = val end end
+				get = function(info) return DB.ActionBars.bar3.alpha; end,
+				set = function(info,val) if DB.ActionBars.bar3.enable == true then DB.ActionBars.bar3.alpha = val end end
 			},
 			bar3enable = {name = "Enable bar 3", type="toggle", order= 6,
-				get = function(info) return DB.ActionBars.bar3enable; end,
-				set = function(info,val) DB.ActionBars.bar3enable = val end
+				get = function(info) return DB.ActionBars.bar3.enable; end,
+				set = function(info,val) DB.ActionBars.bar3.enable = val end
 			},
 			bar4alpha = {name = "Alpha for bar 4", type="range", order = 7,
 				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar4alpha; end,
-				set = function(info,val) if DB.ActionBars.bar4enable == true then DB.ActionBars.bar4alpha = val end end
+				get = function(info) return DB.ActionBars.bar4.alpha; end,
+				set = function(info,val) if DB.ActionBars.bar4.enable == true then DB.ActionBars.bar4.alpha = val end end
 			},
 			bar4enable = {name = "Enable bar 4", type="toggle", order= 8,
-				get = function(info) return DB.ActionBars.bar4enable; end,
-				set = function(info,val) DB.ActionBars.bar4enable = val end
+				get = function(info) return DB.ActionBars.bar4.enable; end,
+				set = function(info,val) DB.ActionBars.bar4.enable = val end
 			},
 			bar5alpha = {name = "Alpha for bar 5", type="range", order = 9,
 				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar5alpha; end,
-				set = function(info,val) if DB.ActionBars.bar5enable == true then DB.ActionBars.bar5alpha = val end end
+				get = function(info) return DB.ActionBars.bar5.alpha; end,
+				set = function(info,val) if DB.ActionBars.bar5.enable == true then DB.ActionBars.bar5.alpha = val end end
 			},
 			bar5enable = {name = "Enable bar 5", type="toggle", order= 10,
-				get = function(info) return DB.ActionBars.bar5enable; end,
-				set = function(info,val) DB.ActionBars.bar5enable = val end
+				get = function(info) return DB.ActionBars.bar5.enable; end,
+				set = function(info,val) DB.ActionBars.bar5.enable = val end
 			},
 			bar6alpha = {name = "Alpha for bar 6", type="range", order = 11,
 				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar6alpha; end,
-				set = function(info,val) if DB.ActionBars.bar6enable == true then DB.ActionBars.bar6alpha = val end end
+				get = function(info) return DB.ActionBars.bar6.alpha; end,
+				set = function(info,val) if DB.ActionBars.bar6.enable == true then DB.ActionBars.bar6.alpha = val end end
 			},
 			bar6enable = {name = "Enable bar 6", type="toggle", order= 12,
-				get = function(info) return DB.ActionBars.bar6enable; end,
-				set = function(info,val) DB.ActionBars.bar6enable = val end
+				get = function(info) return DB.ActionBars.bar6.enable; end,
+				set = function(info,val) DB.ActionBars.bar6.enable = val end
 			},
 			reset = {
 				type = "execute",
@@ -253,7 +253,7 @@ function module:OnInitialize()
 					if (InCombatLockdown()) then 
 						addon:Print(ERR_NOT_IN_COMBAT);
 					else
-						suiChar.ActionBars = {};
+						DB.ActionBars = {};
 						SetupProfile();
 						addon:Print("ActionBar Options Reset");
 					end
@@ -266,30 +266,30 @@ function module:OnInitialize()
 		desc = "Toggle popup bar animations",
 		type = "group", args = {
 			popup1anim = {	name = "Animate left popup",	type="toggle",	order=1, width="full",
-				get = function(info) return DB.PopUP.popup1anim; end,
-				set = function(info,val) DB.PopUP.popup1anim = val; end
+				get = function(info) return DB.ActionBars.popup1.anim; end,
+				set = function(info,val) DB.ActionBars.popup1.anim = val; end
 			},
 			popup1alpha = {	name = "Alpha left popup",		type="range",	order=2,
 				min=0, max=100, step=1,
-				get = function(info) return DB.PopUP.popup1alpha; end,
-				set = function(info,val) if DB.PopUP.popup1enable == true then DB.PopUP.popup1alpha = val end end
+				get = function(info) return DB.ActionBars.popup1.alpha; end,
+				set = function(info,val) if DB.ActionBars.popup1.enable == true then DB.ActionBars.popup1.alpha = val end end
 			},
 			popup1enable = {name = "Enable left popup",		type="toggle",	order=3,
-				get = function(info) return DB.PopUP.popup1enable; end,
-				set = function(info,val) DB.PopUP.popup1enable = val end
+				get = function(info) return DB.ActionBars.popup1.enable; end,
+				set = function(info,val) DB.ActionBars.popup1.enable = val end
 			},
 			popup2anim = {	name = "Animate right popup",	type="toggle",	order=4, width="full",
-				get = function(info) return DB.PopUP.popup2anim; end,
-				set = function(info,val) DB.PopUP.popup2anim = val; end
+				get = function(info) return DB.ActionBars.popup2.anim; end,
+				set = function(info,val) DB.ActionBars.popup2.anim = val; end
 			},
 			popup2alpha = {	name = "Alpha right popup",		type="range",	order=5,
 				min=0, max=100, step=1,
-				get = function(info) return DB.PopUP.popup2alpha; end,
-				set = function(info,val) if DB.PopUP.popup2enable == true then DB.PopUP.popup2alpha = val end end
+				get = function(info) return DB.ActionBars.popup2.alpha; end,
+				set = function(info,val) if DB.ActionBars.popup2.enable == true then DB.ActionBars.popup2.alpha = val end end
 			},
 			popup2enable = {name = "Enable right popup",	type="toggle",	order=6,
-				get = function(info) return DB.PopUP.popup2enable; end,
-				set = function(info,val) DB.PopUP.popup2enable = val end
+				get = function(info) return DB.ActionBars.popup2.enable; end,
+				set = function(info,val) DB.ActionBars.popup2.enable = val end
 			}
 		}
 	};
@@ -309,16 +309,16 @@ function module:OnEnable()
 --				print(self.TimeSinceLastUpdate)
 				if (DB.ActionBars) then
 					for b = 1,6 do -- for each backdrop
-						if DB.ActionBars["bar"..b.."enable"] then -- backdrop enabled
-							_G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b.."alpha"]/100 or 1); -- apply alpha
+						if DB.ActionBars["bar"..b].enable then -- backdrop enabled
+							_G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
 						else -- backdrop disabled
 							_G["SUI_Bar"..b]:SetAlpha(0);
 						end
 					end
 					for p = 1,2 do -- for each popup
-						if (DB.PopUP["popup"..p.."enable"]) then -- popup enabled
-							_G["SUI_Popup"..p]:SetAlpha(DB.PopUP["popup"..p.."alpha"]/100 or 1); -- apply alpha
-							if DB.PopUP["popup"..p.."anim"] == true then --- animation enabled
+						if (DB.ActionBars["popup"..p].enable) then -- popup enabled
+							_G["SUI_Popup"..p]:SetAlpha(DB.ActionBars["popup"..p].alpha/100 or 1); -- apply alpha
+							if DB.ActionBars["popup"..p].anim == true then --- animation enabled
 								_G["SUI_Popup"..p.."MaskBG"]:SetAlpha(1);
 							else -- animation disabled
 								_G["SUI_Popup"..p.."MaskBG"]:SetAlpha(0);

@@ -23,13 +23,8 @@ local checkThirdParty, frame = function()
 --	return true
 end;
 
-local CheckDefaults = function()
-	if suiChar.MapButtons ~= false and suiChar.MapButtons ~= true then suiChar.MapButtons = false end
-	if suiChar.MapZoomButtons ~= false and suiChar.MapZoomButtons ~= true then suiChar.MapZoomButtons = true end
-end
-
 local updateButtons = function()
-	if (not MouseIsOver(Minimap)) and (suiChar.MapButtons) then
+	if (not MouseIsOver(Minimap)) and (DB.MiniMap.MapButtons) then
 		GameTimeFrame:Hide();
 		MiniMapTracking:Hide();
 		MiniMapWorldMapButton:Hide();
@@ -39,7 +34,7 @@ local updateButtons = function()
 		GameTimeFrame:Show();
 		MiniMapTracking:Show();
 		MiniMapWorldMapButton:Show();
-		if (suiChar.MapZoomButtons) then
+		if (DB.MiniMap.MapZoomButtons) then
 			MinimapZoomIn:Hide();
 			MinimapZoomOut:Hide();
 		else
@@ -47,8 +42,8 @@ local updateButtons = function()
 			MinimapZoomOut:Show();
 		end
 	end
-	if (not MouseIsOver(Minimap)) and (not suiChar.MapButtons) then
-		if  (suiChar.MapZoomButtons) then
+	if (not MouseIsOver(Minimap)) and (not DB.MiniMap.MapButtons) then
+		if  (DB.MiniMap.MapZoomButtons) then
 			MinimapZoomIn:Hide();
 			MinimapZoomOut:Hide();
 		end
@@ -164,15 +159,13 @@ function module:OnInitialize()
 				type="toggle",
 				width="full",
 				get = function(info)
-					return suiChar.MapButtons;
+					return DB.MiniMap.MapButtons;
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.MapButtons = nil;
-						addon:Print("Minimap Button Hiding Disabled");
+						DB.MiniMap.MapButtons = nil;
 					elseif (val == true) or (val == nil) then
-						suiChar.MapButtons = true;
-						addon:Print("Minimap Button Hiding Enabled");
+						DB.MiniMap.MapButtons = true;
 					end
 				end
 			},
@@ -181,15 +174,13 @@ function module:OnInitialize()
 				type="toggle",
 				width="full",
 				get = function(info)
-					return suiChar.MapZoomButtons;
+					return DB.MiniMap.MapZoomButtons;
 				end,
 				set = function(info,val)
 					if val == false then
-						suiChar.MapZoomButtons = nil;
-						addon:Print("Minimap Button Hiding Disabled");
+						DB.MiniMap.MapZoomButtons = nil;
 					elseif (val == true) or (val == nil) then
-						suiChar.MapZoomButtons = true;
-						addon:Print("Minimap Button Hiding Enabled");
+						DB.MiniMap.MapZoomButtons = true;
 					end
 				end
 			}
@@ -213,7 +204,6 @@ function module:OnEnable()
 	end);
 	modifyMinimapLayout();
 	createMinimapCoords();
-	CheckDefaults();
 	-- LFGSearchStatus:ClearAllPoints();
 	-- LFGSearchStatus:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	module.handleBuff = true

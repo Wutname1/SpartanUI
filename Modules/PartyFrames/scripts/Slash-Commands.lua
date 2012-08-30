@@ -10,161 +10,83 @@ function addon:UpdateAuraVisibility()
 	end
 end
 function addon:OnInitialize()
-	if not spartan.options.args.auras then
-		spartan.options.args["auras"] = {
-			name = "Unitframe Auras",
-			desc = "unitframe aura settings",
-			type = "group", args = {}
-		};
-	end
-	if not spartan.options.args.castbar then
-		spartan.options.args["castbar"] = {
-			name = "Unitframe Castbar",
-			desc = "unitframe castbar settings",
-			type = "group", args = {}
-		};
-	end
-	if not spartan.options.args.castbar.args.text then
-		spartan.options.args["castbar"] = {
-			name = "Unitframe Castbar Text",
-			desc = "unitframe castbar text settings",
-			type = "group", args = {}
-		};
-	end
-	spartan.options.args.auras.args.party = {
-		name = "toggle party auras", type = "toggle", 
-		get = function(info) return suiChar.PartyFrames.showAuras; end,
+	spartan.optionsPartyFrames.args["auras"] = { name = "Party Auras", type = "group", order = 1,
+		desc = "Aura settings", args = {}
+	};
+
+	spartan.optionsPartyFrames.args["toggleraid"] = {name = "Show party while in raid", type = "toggle", order=1,
+		get = function(info) return DBMod.PartyFrames.showPartyInRaid; end,
+		set = function(info,val) DBMod.PartyFrames.showPartyInRaid = val; addon:UpdateParty("FORCE_UPDATE") end
+	};
+	spartan.optionsPartyFrames.args["toggleparty"] = {name = "Show party frames when in party", type = "toggle", order = 2, width="double",
+		get = function(info) return DBMod.PartyFrames.showParty; end,
+		set = function(info,val) DBMod.PartyFrames.showParty = val; addon:UpdateParty("FORCE_UPDATE") end
+	};
+	spartan.optionsPartyFrames.args["toggleplayer"] = { name = "Display self in Party", type = "toggle", order=3,
+		get = function(info) return DBMod.PartyFrames.showPlayer; end,
+		set = function(info,val) DBMod.PartyFrames.showPlayer = val; addon:UpdateParty("FORCE_UPDATE"); end
+	};
+	spartan.optionsPartyFrames.args["togglesolo"] = {name = "Show party while solo", type = "toggle", order=4,
+		get = function(info) return DBMod.PartyFrames.showSolo; end,
 		set = function(info,val)
-			if suiChar.PartyFrames.showAuras == 0 then
-				suiChar.PartyFrames.showAuras = 1;
-				spartan:Print("Party Auras Enabled");
-			else
-				suiChar.PartyFrames.showAuras = 0;
-				spartan:Print("Party Auras Disabled");
-			end
-			addon:UpdateAuraVisibility();
+			DBMod.PartyFrames.showSolo = val;
+			addon:UpdateParty("FORCE_UPDATE");
 		end
 	};
-	spartan.options.args.castbar.args.party = {
-		name = "toggle party castbar style", type = "toggle", 
-		get = function(info) return suiChar.PartyFrames.castbar; end,
-		set = function(info,val)
-			if suiChar.PartyFrames.castbar == 0 then
-				suiChar.PartyFrames.castbar = 1;
-				spartan:Print("Party Castbar SpartanUI style");
-			else
-				suiChar.PartyFrames.castbar = 0;
-				spartan:Print("Party Castbar oUF style");
-			end
-		end
-	};
-	spartan.options.args.castbar.args.party = {
-		name = "toggle party castbar text style", type = "toggle", 
-		get = function(info) return suiChar.PartyFrames.castbartext; end,
-		set = function(info,val)
-			if suiChar.PartyFrames.castbartext == 0 then
-				suiChar.PartyFrames.castbartext = 1;
-				spartan:Print("Party Castbar Text SpartanUI style");
-			else
-				suiChar.PartyFrames.castbartext = 0;
-				spartan:Print("Party Castbar Text oUF style");
-			end
-		end
-	};
-	spartan.options.args["party"] = {
-		type = "input",
-		name = "lock, unlock or reset party frame positioning",
-		set = function(info,val)
+
+	spartan.optionsPartyFrames.args["partyLock"] = {name = "Lock/Unlock Party frame position", type = "execute", width="double", order=11,
+		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
 			else
-				if (val == "" and addon.locked == 1) or (val == "unlock") then
-					addon.locked = 0;
+				if DBMod.PartyFrames.partyLock then
+					DBMod.PartyFrames.partyLock = false;
 					SUI_PartyFrameHeader.mover:Show();
-					spartan:Print("Party Position Unlocked");
-				elseif (val == "" and addon.locked == 0) or (val == "lock") then
-					addon.locked = 1;
+				else
+					DBMod.PartyFrames.partyLock = true;
 					SUI_PartyFrameHeader.mover:Hide();
-					spartan:Print("Party Position Locked");
-				elseif val == "reset" then
-					suiChar.PartyFrames.partyMoved = false;
-					addon.locked = 1;
-					SUI_PartyFrameHeader.mover:Hide();
-					SUI_PartyFrameHeader:SetMovable(true);
-					SUI_PartyFrameHeader:SetUserPlaced(false)
-					addon:UpdatePartyPosition();
-					spartan:Print("Party Position Reset");
 				end
 			end
-		end,
-		get = function(info) return suiChar and suiChar.PartyFrames and suiChar.PartyFrames.partyLock; end
-	};
-	spartan.options.args["toggleraid"] = {
-		name = "toggle showing party unitframe while in raid",
-		type = "toggle", 
-		get = function(info) return suiChar.PartyFrames.HidePartyInRaid; end,
-		set = function(info,val)
-			if suiChar.PartyFrames.HidePartyInRaid == 0 then
-				suiChar.PartyFrames.HidePartyInRaid = 1;
-				spartan:Print("Party UnitFrame will now hide while in a raid");
-				SUI_PartyFrameHeader:SetAttribute("showRaid",false)
-			else
-				suiChar.PartyFrames.HidePartyInRaid = 0;
-				spartan:Print("Party UnitFrame will now show while in a raid");
-				SUI_PartyFrameHeader:SetAttribute("showRaid",true)
-			end
-			addon:UpdateParty("FORCE_UPDATE")
 		end
 	};
-	spartan.options.args["toggleparty"] = {
-		name = "toggle party showing party unitframe",
-		type = "toggle", 
-		get = function(info) return suiChar.PartyFrames.HideParty; end,
-		set = function(info,val)
-			if suiChar.PartyFrames.HideParty == 0 then
-				suiChar.PartyFrames.HideParty = 1;
-				spartan:Print("Party UnitFrame Hidden");
-				SUI_PartyFrameHeader:SetAttribute("showParty",false)
+	spartan.optionsPartyFrames.args["partyLockReset"] = {name = "Reset Party poition", type = "execute", order=12,
+		func = function()
+			if (InCombatLockdown()) then 
+				spartan:Print(ERR_NOT_IN_COMBAT);
 			else
-				suiChar.PartyFrames.HideParty = 0;
-				spartan:Print("Party UnitFrame Shown");
-				SUI_PartyFrameHeader:SetAttribute("showParty",true)
+				DBMod.PartyFrames.partyMoved = false;
+				DBMod.PartyFrames.partyLock = true;
+				SUI_PartyFrameHeader.mover:Hide();
+				SUI_PartyFrameHeader:SetMovable(true);
+				SUI_PartyFrameHeader:SetUserPlaced(false)
+				addon:UpdatePartyPosition();
 			end
-			addon:UpdateParty("FORCE_UPDATE")
 		end
 	};
-	spartan.options.args["toggleplayer"] = {
-		name = "toggle player showing party unitframe",
-		type = "toggle", 
-		get = function(info) return suiChar.PartyFrames.HidePlayer; end,
+	
+	spartan.optionsPartyFrames.args.auras.args.party = {name = "Display party auras", type = "toggle", 
+		get = function(info) return DBMod.PartyFrames.showAuras; end,
 		set = function(info,val)
-			if suiChar.PartyFrames.HidePlayer == 0 then
-				suiChar.PartyFrames.HidePlayer = 1;
-				spartan:Print("Player disabled in Party UnitFrame");
-				SUI_PartyFrameHeader:SetAttribute("showPlayer",false)
-			else
-				suiChar.PartyFrames.HidePlayer = 0;
-				spartan:Print("Player enabled in Party UnitFrame");
-				SUI_PartyFrameHeader:SetAttribute("showPlayer",true)
-			end
-			addon:UpdateParty("FORCE_UPDATE")
+			DBMod.PartyFrames.showAuras = val
+			addon:UpdateAuraVisibility();
 		end
 	};
-	spartan.options.args["togglesolo"] = {
-		name = "toggle showing party unitframe while solo",
-		type = "toggle", 
-		get = function(info) return suiChar.PartyFrames.HideSolo; end,
-		set = function(info,val)
-			if suiChar.PartyFrames.HideSolo == 0 then
-				suiChar.PartyFrames.HideSolo = 1;
-				spartan:Print("Disabled showing Party UnitFrame while solo");
-				SUI_PartyFrameHeader:SetAttribute("showSolo",false)
-			else
-				suiChar.PartyFrames.HideSolo = 0;
-				spartan:Print("Enabled showing Party UnitFrame while solo");
-				SUI_PartyFrameHeader:SetAttribute("showSolo",true)
-			end
-			addon:UpdateParty("FORCE_UPDATE")
-		end
+
+	spartan.optionsPartyFrames.args["castbar"] = { name = "Party Castbar", type = "group", order = 2,
+		desc = "Party castbar settings", args = {
+			castbar = { name = "Fill Direction", type = "select", style="radio",
+				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+				get = function(info) return DBMod.PartyFrames.castbar; end,
+				set = function(info,val) DBMod.PartyFrames.castbar = val; end
+			},
+			castbartext = {
+				name = "Text style", type = "select", style="radio",
+				values = {[0]="Count up",[1]="Count down"},
+				get = function(info) return DBMod.PartyFrames.castbartext; end,
+				set = function(info,val) DBMod.PartyFrames.castbartext = val; end
+			}
+		}
 	};
+
+	
 end

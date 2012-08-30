@@ -14,6 +14,7 @@ do -- ClassIcon as an oUF module
 		WARLOCK = {			0.75, 1.00, 0.25, 0.50 },
 		PALADIN = {			0.00, 0.25, 0.50, 0.75 },
 		DEATHKNIGHT = {		0.25, 0.50, 0.50, 0.75 },
+		MONK = {			0.50, 0.75, 0.50, 0.75 },
 		DEFAULT = {			0.75, 1.00, 0.75, 1.00 },
 	};
 	local Update = function(self,event,unit)
@@ -43,17 +44,15 @@ do -- ClassIcon as an oUF module
 			self:UnregisterEvent("UNIT_PET", Update);
 		end
 	end
-	oUF:AddElement('SUI_ClassIcon', Update,Enable,Disable);
+	oUF:AddElement('SUI_ClassIcon',Update,Enable,Disable);
 end
 
 do -- AFK / DND status text, as an oUF module
-	if not oUF.Tags['[afkdnd]'] then
-		oUF.Tags['[afkdnd]'] = function(unit)
-			if unit then
-				return UnitIsAFK(unit) and "AFK" or UnitIsDND(unit) and "DND" or "";
-			end
-		end;
-		oUF.TagEvents['[afkdnd]'] = "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET";
+	oUF.Tags.Events['afkdnd'] = "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET";
+	oUF.Tags.Methods['afkdnd'] = function (unit)
+		if unit then
+			return UnitIsAFK(unit) and "AFK" or UnitIsDND(unit) and "DND" or "";
+		end
 	end
 end
 
@@ -69,4 +68,5 @@ do -- fix SET_FOCUS & CLEAR_FOCUS errors
 			end
 		end
 	end
+	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
 end

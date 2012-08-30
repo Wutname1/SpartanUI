@@ -35,7 +35,7 @@ do -- scripts to make it movable
 	
 	party.mover:SetScript("OnMouseDown",function()
 		party.isMoving = true;
-		suiChar.PartyFrames.partyMoved = true;
+		DBMod.PartyFrames.partyMoved = true;
 		party:SetMovable(true);
 		party:StartMoving();
 	end);
@@ -46,7 +46,7 @@ do -- scripts to make it movable
 			local Anchors = {}
 			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = party:GetPoint()
 			for k,v in pairs(Anchors) do
-				suiChar.PartyFrames.Anchors[k] = v
+				DBMod.PartyFrames.Anchors[k] = v
 			end
 			party:SetUserPlaced(false);
 		end
@@ -93,14 +93,14 @@ do -- scripts to make it movable
 		-- Debug
 --		print("update")
 		addon.offset = addon:updatePartyOffset()
-		if suiChar.PartyFrames.partyMoved then
+		if DBMod.PartyFrames.partyMoved then
 			party:SetMovable(true);
 			party:SetUserPlaced(false);
 		else
 			party:SetMovable(false);
 		end
 		-- User Moved the PartyFrame, so we shouldn't be moving it
-		if not suiChar.PartyFrames.partyMoved then
+		if not DBMod.PartyFrames.partyMoved then
 			party:ClearAllPoints();
 			-- SpartanUI_PlayerFrames are loaded
 			if spartan:GetModule("PlayerFrames",true) then
@@ -111,7 +111,7 @@ do -- scripts to make it movable
 			end
 		else
 			local Anchors = {}
-			for k,v in pairs(suiChar.PartyFrames.Anchors) do
+			for k,v in pairs(DBMod.PartyFrames.Anchors) do
 				Anchors[k] = v
 			end
 			party:ClearAllPoints();
@@ -160,32 +160,25 @@ do -- hide party frame in raid, if option enabled
 		local inParty = IsInGroup()  -- ( numGroupMembers () > 0 )
 		local bDebug_ShowFrame = true;
 
-		local HideInRaid = suiChar.PartyFrames.HidePartyInRaid;
-		if HideInRaid == 1 then party:SetAttribute('showRaid',false) end
-		local HideParty = suiChar.PartyFrames.HideParty;
-		if HideParty == 1 then party:SetAttribute('showParty',false) end
-		local HidePlayer = suiChar.PartyFrames.HidePlayer;
-		if HidePlayer == 1 then party:SetAttribute('showPlayer',false) end
-		local HideSolo = suiChar.PartyFrames.HideSolo;
-		if HideSolo == 1 then party:SetAttribute('showSolo',false) end
+		party:SetAttribute('showRaid',DBMod.PartyFrames.showPartyInRaid)
+		party:SetAttribute('showParty',DBMod.PartyFrames.showParty)
+		party:SetAttribute('showPlayer',DBMod.PartyFrames.showPlayer)
+		party:SetAttribute('showSolo',DBMod.PartyFrames.showSolo)
 
 		local showRaid = party:GetAttribute('showRaid')
 		local showParty = party:GetAttribute('showParty')
 		local showPlayer = party:GetAttribute('showPlayer')
-		local showSolo = party:GetAttribute('showSolo')
 		-- Debug
 --		print('inRaid '..tostring(inRaid)..', HideInRaid '..HideInRaid..', showRaid '.. tostring(showRaid))
 --		print('inParty '..tostring(inParty)..', HideParty '..HideParty..', showParty '..tostring(showParty))
---		print('HidePlayer '..HidePlayer..', showPlayer '..tostring(showPlayer))
---		print('HideSolo '..HideSolo..', showSolo '..tostring(showSolo))
 
 	-- if bDebug_ShowFrame then
 	-- 	party:Show();
 	--else
-		if showParty then
+		if showParty or DBMod.PartyFrames.showSolo then
 			if inRaid then if showRaid then party:Show() else party:Hide() end
 			elseif inParty then party:Show()
-			elseif showSolo then party:Show()
+			elseif DBMod.PartyFrames.showSolo then party:Show()
 			else if party:IsShown() then party:Hide() end
 			end
 		else

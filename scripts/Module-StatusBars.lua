@@ -1,7 +1,6 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local module = addon:NewModule("StatusBars");
 ----------------------------------------------------------------------------------------------------
-suiChar.tipHover = suiChar.tipHover or 0;
 
 local xpframe, repframe;
 local FACTION_BAR_COLORS = {
@@ -186,17 +185,18 @@ function module:OnInitialize()
 end
 
 function module:SetRepColors()
-	if DB.RepBar.AutoDefined then
+	local name,reaction,low,high,current = GetWatchedFactionInfo();
+	if DB.RepBar.AutoDefined == true then
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
 		SUI_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
 		SUI_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
 		SUI_ReputationBarLead:SetVertexColor	(color.r, color.g, color.b, 0.7);
 		SUI_ReputationBarLeadGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
 	else
-		r = DB.XPBar.GainedRed
-		b = DB.XPBar.GainedBlue
-		g = DB.XPBar.GainedGreen
-		a = DB.XPBar.GainedBrightness
+		r = DB.RepBar.GainedRed
+		b = DB.RepBar.GainedBlue
+		g = DB.RepBar.GainedGreen
+		a = DB.RepBar.GainedBrightness
 		SUI_ReputationBarFill:SetVertexColor	(r, g, b, a);
 		SUI_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
 		SUI_ReputationBarLead:SetVertexColor	(r, g, b, a);

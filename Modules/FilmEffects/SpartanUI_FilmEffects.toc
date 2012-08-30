@@ -3,7 +3,7 @@
 ## Notes: Adds film grain and other special effects to the gameplay screen
 ## Version: 3.0.0
 ## Author: Atriace, Beladona, Wutname1
-## OptionalDeps: SpartanUI
+## RequiredDeps: SpartanUI
 ## SavedVariablesPerCharacter: FEDB
 
 SpartanUI_FilmEffects.lua

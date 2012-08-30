@@ -1,11 +1,6 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
-local default = {showAuras = 1,partyLock = 1,castbar = 1, castbartext = 1, HidePartyInRaid = 1, HideParty = 0, HidePlayer = 1, HideSolo = 1, Anchors = { point = "TOPLEFT", relativeTo = "UIParent", relativePoint = "TOPLEFT", xOfs = 10, yOfs = -20 }, };
-suiChar.PartyFrames = suiChar.PartyFrames or {};
-for k,v in pairs(default) do if not suiChar.PartyFrames[k] then suiChar.PartyFrames[k] = v end end
-setmetatable(suiChar.PartyFrames,{__index = default});
-
 local colors = setmetatable({},{__index = oUF.colors});
 for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
 colors.health = {0/255,255/255,50/255};
@@ -56,10 +51,10 @@ local petinfo = function(self,event)
 end
 
 local PostUpdateAura = function(self,unit)
-	if suiChar and suiChar.PartyFrames and suiChar.PartyFrames.showAuras == 0 then
-		self:Hide();
-	else
+	if DBMod.PartyFrames.showAuras then
 		self:Show();
+	else
+		self:Hide();
 	end
 end
 
@@ -120,13 +115,13 @@ local OnCastbarUpdate = function(self,elapsed)
 		end
 		if self.Time then
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			if suiChar.PartyFrames.castbartext == 1 then
+			if DBMod.PartyFrames.castbartext == 1 then
 				self.Time:SetFormattedText("%.1f",self.max - self.duration);
 			else
 				self.Time:SetFormattedText("%.1f",self.duration);
 			end
 		end
-		if suiChar.PartyFrames.castbar == 1 then
+		if DBMod.PartyFrames.castbar == 1 then
 			self:SetValue(self.max-self.duration)
 		else
 			self:SetValue(self.duration)
@@ -141,9 +136,14 @@ local OnCastbarUpdate = function(self,elapsed)
 		end
 		if self.Time then
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			self.Time:SetFormattedText("%.1f",self.max-self.duration);
+			--self.Time:SetFormattedText("%.1f",self.max-self.duration);
+			if DBMod.PartyFrames.castbartext == 0 then
+				self.Time:SetFormattedText("%.1f",self.max-self.duration);
+			else
+				self.Time:SetFormattedText("%.1f",self.duration);
+			end
 		end
-		if suiChar.PartyFrames.castbar == 1 then
+		if DBMod.PartyFrames.castbar == 1 then
 			self:SetValue(self.duration)
 		else
 			self:SetValue(self.max-self.duration)
