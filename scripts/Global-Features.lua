@@ -24,7 +24,7 @@ addon.options = {name = "SpartanUI", type = "group", args = {}};
 
 DBdefaults = {
 	profile = {
-		playerName = UnitName("player"),
+		Version = nil,
 		SUIProper = {
 			offset = 0,
 			scale = .92,
@@ -119,6 +119,8 @@ DBdefaults = {
 	}
 }
 
+DBGlobals = { }
+
 function addon:ResetConfig()
 	addon.db:ResetProfile(false,true);
 	ReloadUI();
@@ -126,6 +128,8 @@ end
 
 function addon:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
+	addon.db.profile.playerName = UnitName("player")
+	DBGlobal = addon.db.global
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
 	addon.Optionsprofile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
@@ -157,8 +161,8 @@ function addon:OnEnable()
 	AceConfig:RegisterOptionsTable("Profiles", self.Optionsprofile);
 
     AceConfigDialog:AddToBlizOptions("SpartanUI Main", "SpartanUI", nil)
-    AceConfigDialog:AddToBlizOptions("SpartanUI General", "General", "SpartanUI")
-    self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", "Player Frames", "SpartanUI")
+    self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI General", "General", "SpartanUI")
+    AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", "Player Frames", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Party Frames", "Party Frames", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Raid Frames", "Raid Frames", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Spin Cam", "Spin Cam", "SpartanUI")
@@ -167,14 +171,15 @@ function addon:OnEnable()
 	
 	
     self:RegisterChatCommand("sui", "ChatCommand")
-    self:RegisterChatCommand("spartanui", "ChatCommand")
 	
 end
 
 function addon:ChatCommand(input)
     if not input or input:trim() == "" then
         InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
-    else
+    elseif input == "version" then
+		addon:Print("Version "..GetAddOnMetadata("SpartanUI", "Version"))
+	else
         LibStub("AceConfigCmd-3.0").HandleCommand(addon, "sui", "spartanui", input)
     end
 end

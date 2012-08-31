@@ -36,8 +36,8 @@ function p()
 end
 
 local SetupBartender = function()
-	if (not Bartender4) then return; end
-	local standard = "SpartanUI 3.0.1";
+	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
+	local standard = "SpartanUI 3.0.2";
 	local settings = { -- actual settings being inserted into our custom profile
 			ActionBars = {
 				actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
