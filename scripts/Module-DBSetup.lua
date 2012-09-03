@@ -52,25 +52,27 @@ function module:OnInitialize()
 	}
 	
 	-- DB Updates for 3.0.2 to 3.0.3
-	if DB.Version == nil and DBGlobal.Version <= "3.0.3" then
-		-- spartan:Print("Converting DB from 3.0.2 settings")
-		unitlist = {player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
-		for k,v in pairs(unitlist) do
-			tmp = true;
-			if DBMod.PlayerFrames[k] == 0 then tmp = false end;
-			DBMod.PlayerFrames[k] = {AuraDisplay = tmp, display = true};
+	if DBGlobal.Version then
+		if DB.Version == nil and DBGlobal.Version <= "3.0.4" then
+			-- spartan:Print("Converting DB from 3.0.2 settings")
+			unitlist = {player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
+			for k,v in pairs(unitlist) do
+				tmp = true;
+				if DBMod.PlayerFrames[k] == 0 then tmp = false end;
+				DBMod.PlayerFrames[k] = {AuraDisplay = tmp, display = true};
+			end
+			--Update XP Bar Colors
+			if DB.XPBar.GainedColor == DB.XPBar.RestedColor then
+				DB.XPBar.GainedColor = "Blue";
+			end
+			
+			DB.XPBar.ToolTip = true;
+			if UnitXP("player") == 0 then DB.XPBar.text = false; else DB.XPBar.text = true; end
+			DB.RepBar.text = false;
+			DB.RepBar.ToolTip = true;
+			
+			DB.Version = SpartanVer;
 		end
-		--Update XP Bar Colors
-		if DB.XPBar.GainedColor == DB.XPBar.RestedColor then
-			DB.XPBar.GainedColor = "Blue";
-		end
-		
-		DB.XPBar.ToolTip = true;
-		if UnitXP("player") == 0 then DB.XPBar.text = false; else DB.XPBar.text = true; end
-		DB.RepBar.text = false;
-		DB.RepBar.ToolTip = true;
-		
-		DB.Version = SpartanVer;
 	end
 end
 

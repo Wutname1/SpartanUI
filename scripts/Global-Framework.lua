@@ -318,6 +318,7 @@ function module:OnEnable()
 		
 		UIDropDownMenu_Initialize( VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, "MENU");
 	end
+	updateSpartanScale();
 	-- VEHICLE Exit button will need this
 --	if (event == "UNIT_EXITED_VEHICLE") then
 --		print(event)
