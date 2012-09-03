@@ -45,7 +45,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if DB.BuffSettings.enabled == true then
+	if DB.BuffSettings.enabled then
 		local BuffHandle = CreateFrame("Frame")
 		-- Fix CPU leak, use UpdateInterval
 		BuffHandle.UpdateInterval = 0.5
@@ -66,8 +66,8 @@ function module:OnEnable()
 end
 
 function module:UpdateBuffPosition()
-	if DB.BuffSettings.enabled == true then
-		if (minimap.handleBuff == true) then
+	if DB.BuffSettings.enabled then
+		if minimap.handleBuff then
 			BuffFrame:ClearAllPoints();
 			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
 			ConsolidatedBuffs:ClearAllPoints();

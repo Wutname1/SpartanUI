@@ -27,7 +27,7 @@ end;
 local BartenderProfileCheck = function(Input,Report)
 	local profiles, r = Bartender4.db:GetProfiles(), false
 	for k,v in pairs(profiles) do if v == Input then r = true end end
-	if Report then if r == true then addon:Print(Input.." Profile found in Bartender") else addon:Print(Input.." Profile not found, generating one.") end end
+	if Report then if r ~= true then addon:Print(Input.." Profile not found, generating one.") end end
 	return r
 end
 
@@ -83,7 +83,6 @@ local SetupBartender = function()
 	end
 	SetupProfile = function() -- apply default settings into a custom BT4 profile
 		UpdateSettings();
-		addon:Print("Checking for profiles in Bartender")
 		-- New check for updating old profiles
 		if ( not DB.ActionBars.SpartanUI_Version) then
 			DB.ActionBars.SpartanUI_Version = GetAddOnMetadata("SpartanUI", "Version");
@@ -99,7 +98,7 @@ local SetupBartender = function()
 				end
 			end
 		end
-		print("Using this profile: "..Bartender4.db:GetCurrentProfile())
+		--print("Using this profile: "..Bartender4.db:GetCurrentProfile())
 		-- Checking for the standard Profile
 		if (not BartenderProfileCheck(standard,true)) then DB.ActionBars.Bartender4 = false end
 		-- Fixup setting profile to standard if standard profile exist

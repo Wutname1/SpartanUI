@@ -4,7 +4,8 @@ local addon = spartan:GetModule("PartyFrames");
 local colors = setmetatable({},{__index = oUF.colors});
 for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
 colors.health = {0/255,255/255,50/255};
-local base_plate = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate1]]
+local base_plate1 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate1]]
+local base_plate4 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate4]]
 local base_ring = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_ring1]]
 
 local menu = function(self)
@@ -165,7 +166,7 @@ local CreatePartyFrame = function(self,unit)
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
 		artwork.bg:SetPoint("TOPLEFT",artwork,"TOPLEFT",-2,10);
-		artwork.bg:SetTexture(base_plate);
+		artwork.bg:SetTexture(base_plate1);
 		
 		self.Portrait = artwork:CreateTexture(nil,"BORDER");
 		self.Portrait:SetWidth(55); self.Portrait:SetHeight(55);
@@ -305,7 +306,6 @@ local CreatePartyFrame = function(self,unit)
 		self.Auras.numBuffs = 7;
 		self.Auras.numDebuffs = 4;
 		
---		self.Auras.PreUpdate = PreUpdateAura;
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
 	return self;
@@ -320,7 +320,7 @@ local CreatePetFrame = function(self,unit)
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
 		artwork.bg:SetSize(179, 128);
-		artwork.bg:SetTexture(base_plate); artwork.bg:SetTexCoord(0.30078125,1,0,1);
+		artwork.bg:SetTexture(base_plate1); artwork.bg:SetTexCoord(0.30078125,1,0,1);
 		artwork.bg:SetPoint("LEFT",artwork,"LEFT",-44,-22);
 		
 	end
@@ -417,7 +417,6 @@ local CreatePetFrame = function(self,unit)
 		self.Auras.numBuffs = 6;
 		self.Auras.numDebuffs = 3;
 		
---		self.Auras.PreUpdate = PreUpdateAura;
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
 	self:SetScale(0.8);

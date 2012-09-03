@@ -1,8 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
-local default = {player = 0,target = 1,targettarget = 0,pet = 1,focus = 1};
-for k,v in pairs(default) do if not DBMod.PlayerFrames[k] then DBMod.PlayerFrames[k] = v end end
+local default = {player = 0,target = 1,targettarget = 0,pet = 1,focus = 0,focustarget=0};
 setmetatable(DBMod.PlayerFrames,{__index = default});
 
 DBMod.PlayerFrames.Castbar = DBMod.PlayerFrames.Castbar or {};
@@ -12,106 +11,90 @@ setmetatable(DBMod.PlayerFrames.Castbar,{__index = castbardefault});
 -- /spartanui castbar player
 
 function addon:OnInitialize()
-	spartan.optionsPlayerFrames.args["auras"] = {
-		name = "Unitframe Buffs & Debuffs",
+	spartan.optionsPlayerFrames.args["frameDisplay"] = {name = "Unitframe Display",type = "group",order=1,
+		desc = "unitframe display settings",
+		args = {
+			player = {name = "Display player",type = "toggle",order=1,
+				get = function(info) return DBMod.PlayerFrames.player.display; end,
+				set = function(info,val)
+					DBMod.PlayerFrames.player.display = val;
+					if DBMod.PlayerFrames.player.display then addon.player:Enable(); else addon.player:Disable(); end
+				end
+			},
+			pet = {name = "Display pet",type = "toggle",order=2,
+				get = function(info) return DBMod.PlayerFrames.pet.display; end,
+				set = function(info,val)
+					DBMod.PlayerFrames.pet.display = val;
+					if DBMod.PlayerFrames.pet.display then addon.pet:Enable(); else addon.pet:Disable(); end
+				end
+			},
+			target = {name = "Display Target",type = "toggle",order=3,
+				get = function(info) return DBMod.PlayerFrames.target.display; end,
+				set = function(info,val)
+					DBMod.PlayerFrames.target.display = val;
+					if DBMod.PlayerFrames.target.display then addon.target:Enable(); else addon.target:Disable(); end
+				end
+			},
+			targettarget = {name = "Display Target of Target",type = "toggle",order=4,
+				get = function(info) return DBMod.PlayerFrames.targettarget.display; end,
+				set = function(info,val)
+					DBMod.PlayerFrames.targettarget.display = val;
+					if DBMod.PlayerFrames.targettarget.display then addon.targettarget:Enable(); else addon.targettarget:Disable(); end
+				end
+			},
+			focustarget = {name = "Display focus target",type = "toggle",order=5,
+				get = function(info) return DBMod.PlayerFrames.focustarget.display; end,
+				set = function(info,val)
+					DBMod.PlayerFrames.focustarget.display = val;
+					if DBMod.PlayerFrames.focustarget.display then addon.focustarget:Enable(); else addon.focustarget:Disable(); end
+				end
+			}
+		}
+	}
+	spartan.optionsPlayerFrames.args["auras"] = {name = "Unitframe Buffs & Debuffs",type = "group",order=2,
 		desc = "Buff & Debuff display settings",
-		type = "group", args = {
+		args = {
 			player = {
 				name = "Display player buffs",
 				type = "toggle",
-				get = function(info)
-					if DBMod.PlayerFrames.player == 0 then return false else return true end
-				end,
-				set = function(info,val)
-					if val == false then
-						DBMod.PlayerFrames.player = 0;
-					elseif (val == true) or (val == nil) then
-						DBMod.PlayerFrames.player = 1;
-					end
-					addon.player.Auras:PostUpdate("player");
-				end
+				get = function(info) return DBMod.PlayerFrames.player.AuraDisplay end,
+				set = function(info,val) DBMod.PlayerFrames.player.AuraDisplay = val; addon.player.Auras:PostUpdate("player"); end
 			},
 			target = {
 				name = "Display target buffs",
 				type = "toggle",
-				get = function(info)
-					if DBMod.PlayerFrames.target == 0 then return false else return true end
-				end,
-				set = function(info,val)
-					if val == false then
-						DBMod.PlayerFrames.target = 0;
-					else
-						DBMod.PlayerFrames.target = 1;
-					end
-					addon.target.Auras:PostUpdate("target");
-				end
+				get = function(info) return DBMod.PlayerFrames.target.AuraDisplay end,
+				set = function(info,val) DBMod.PlayerFrames.target.AuraDisplay = val; addon.target.Auras:PostUpdate("target"); end
 			},
 			targettarget = {
 				name = "Display target of target buffs",
 				type = "toggle",
-				get = function(info)
-					if DBMod.PlayerFrames.targettarget == 0 then return false else return true end
-				end,
-				set = function(info,val)
-					if val == false then
-						DBMod.PlayerFrames.targettarget = 0;
-					else
-						DBMod.PlayerFrames.targettarget = 1;
-					end
-					addon.targettarget.Auras:PostUpdate("targettarget");
-				end
+				get = function(info) return DBMod.PlayerFrames.targettarget.AuraDisplay end,
+				set = function(info,val) DBMod.PlayerFrames.targettarget.AuraDisplay = val; addon.targettarget.Auras:PostUpdate("targettarget"); end
 			},
 			pet = {
 				name = "Display pet buffs",
 				type = "toggle",
-				get = function(info)
-					if DBMod.PlayerFrames.pet == 0 then return false else return true end
-				end,
-				set = function(info,val)
-					if val == false then
-						DBMod.PlayerFrames.pet = 0;
-					else
-						DBMod.PlayerFrames.pet = 1;
-					end
-					addon.pet.Auras:PostUpdate("pet");
-				end
+				get = function(info) return DBMod.PlayerFrames.pet.AuraDisplay end,
+				set = function(info,val) DBMod.PlayerFrames.pet.AuraDisplay = val; addon.pet.Auras:PostUpdate("pet"); end
 			},
 			focus = {
 				name = "Display focus buffs",
 				type = "toggle",
-				get = function(info)
-					if DBMod.PlayerFrames.focus == 0 then return false else return true end
-				end,
-				set = function(info,val)
-					if val == false then
-						DBMod.PlayerFrames.focus = 0;
-					else
-						DBMod.PlayerFrames.focus = 1;
-					end
-					addon.focus.Auras:PostUpdate("focus");
-				end
+				get = function(info) return DBMod.PlayerFrames.focus.AuraDisplay end,
+				set = function(info,val) DBMod.PlayerFrames.focus.AuraDisplay = val; addon.focus.Auras:PostUpdate("focus"); end
 			},
 			focustarget = {
 				name = "Display focus target buffs",
 				type = "toggle",
-				get = function(info)
-					if DBMod.PlayerFrames.focustarget == 0 then return false else return true end
-				end,
-				set = function(info,val)
-					if val == false then
-						DBMod.PlayerFrames.focustarget = 0;
-					else
-						DBMod.PlayerFrames.focustarget = 1;
-					end
-					addon.focustarget.Auras:PostUpdate("focustarget");
-				end
+				get = function(info) return DBMod.PlayerFrames.focustarget.AuraDisplay end,
+				set = function(info,val) DBMod.PlayerFrames.focustarget.AuraDisplay = val; addon.focustarget.Auras:PostUpdate("focustarget"); end
 			}
 		}
 	};
-	spartan.optionsPlayerFrames.args["castbar"] = {
-		name = "Unitframe Castbar",
+	spartan.optionsPlayerFrames.args["castbar"] = {name = "Unitframe Castbar",type = "group",order=3,
 		desc = "unitframe castbar settings",
-		type = "group", args = {
+		args = {
 			player = { name = "Player style", type = "select", style="radio",
 				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
 				get = function(info) return DBMod.PlayerFrames.Castbar.player; end,
@@ -175,8 +158,8 @@ function addon:OnInitialize()
 			},
 		}
 	};
-	spartan.optionsPlayerFrames.args["resetfocus"] = {
-		type = "execute", name = "Reset Focus location",
+	
+	spartan.optionsPlayerFrames.args["resetfocus"] = {name = "Reset Focus location",type = "execute",order=1,
 		desc = "resets the potion to default",
 		func = function()
 			DBMod.PlayerFrames.focusMoved = false;
@@ -186,5 +169,6 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-	for k,v in pairs(default) do addon[k].Auras:PostUpdate(k); end
+	for k,v in pairs(default) do if DBMod.PlayerFrames[k].AuraDisplay then addon[k].Auras:PostUpdate(k); end end
+	for k,v in pairs(default) do if DBMod.PlayerFrames[k].display then addon[k]:Enable(); else addon[k]:Disable(); end end
 end

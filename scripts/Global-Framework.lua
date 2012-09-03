@@ -158,9 +158,6 @@ function module:OnInitialize()
 				tooltip:SetPoint("BOTTOMRIGHT","SpartanUI","TOPRIGHT",0,10);
 			end
 		end);
-		
-		AceHook.SecureHook(addon, "PetBattleFrame_Display")
-		AceHook.SecureHook(addon, "PetBattleFrame_Remove")
 	end
 	addon.optionsGeneral.args["DefaultScales"] = {name = "Toggle Default Scales",type = "execute",order = 2,
 		desc = "toggles between widescreen and standard scales",
@@ -230,14 +227,6 @@ function module:OnInitialize()
 	};
 end
 
-function addon:PetBattleFrame_Display()
-	DB.alpha = .1
-end
-
-function addon:PetBattleFrame_Remove()
-	DB.alpha = 100
-end
-
 function module:OnEnable()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
@@ -263,6 +252,8 @@ function module:OnEnable()
 	end);
 	hooksecurefunc("ToggleBattlefieldMinimap",updateBattlefieldMinimap);
 	
+	RegisterStateDriver(frame, "visibility", "[petbattle] [vehicleui] hide; show")
+
 	updateSpartanScale();
 	updateSpartanOffset();
 	updateSpartanViewport();

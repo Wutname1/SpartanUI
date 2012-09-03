@@ -53,10 +53,18 @@ local name = function(self)
 end
 
 local PostUpdateAura = function(self,unit)
-	if DBMod.PlayerFrames[unit] == 0 then
-		self:Hide();
-	else
+	if DBMod.PlayerFrames[unit].AuraDisplay then
 		self:Show();
+	else
+		self:Hide();
+	end
+end
+
+local ChangeFrameStatus = function(self,unit)
+	if DBMod.PlayerFrames[unit].display then
+		self:Show();
+	else
+		self:Hide();
 	end
 end
 
@@ -119,6 +127,7 @@ local OnCastbarUpdate = function(self,elapsed)
 		self:Hide();
 	end
 end
+
 
 local CreatePlayerFrame = function(self,unit)
 	self:SetWidth(280); self:SetHeight(80);
@@ -907,7 +916,7 @@ local CreateUnitFrame = function(self,unit)
 	self:RegisterForClicks("anyup");
 	self:SetAttribute("*type2", "menu");
 	self.colors = addon.colors;
-
+	
 	return (unit == "target" and CreateTargetFrame(self,unit)) or (unit == "targettarget" and CreateToTFrame(self,unit)) or (unit == "player" and CreatePlayerFrame(self,unit)) or (unit == "focus" and CreateFocusFrame(self,unit)) or (unit == "focustarget" and CreateFocusFrame(self,unit)) or (unit == "pet" and CreatePetFrame(self,unit) or CreateFocusFrame(self,unit));
 end
 

@@ -258,6 +258,7 @@
 	</Frame>
 	
 	<Script file="Global-Framework.lua" />
+	<Script file="Module-DBSetup.lua" />
 	<Script file="Module-ChatFrame.lua" />
 	<Script file="Module-StatusBars.lua" />
 	<Script file="Module-Minimap.lua" />

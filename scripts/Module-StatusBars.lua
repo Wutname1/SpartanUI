@@ -39,7 +39,15 @@ function module:OnInitialize()
 		name = "XP Bar Settings",
 		desc = "configure XP Bar Settings",
 		type = "group", args = {
-			header1 = {name="Gained XP Bar Settings",type="header",order=0},
+			tooltip = {name="Display tooltip",type="toggle",order=.1,
+				get = function(info) return DB.XPBar.ToolTip; end,
+				set = function(info,val) DB.XPBar.ToolTip = val; end
+			},
+			displaytext = {name="Display text",type="toggle",order=.1,
+				get = function(info) return DB.XPBar.text; end,
+				set = function(info,val) DB.XPBar.text = val; module:SetXPColors(); end
+			},
+			header1 = {name="Gained XP Bar Color Settings",type="header",order=.2},
 			GainedColor = {name="Gained Color",type="select",style="dropdown",order=1,width="full",
 				values = {
 					["Custom"]	= "Custom",
@@ -81,7 +89,7 @@ function module:OnInitialize()
 				get = function(info) return (DB.XPBar.GainedBrightness*100); end,
 				set = function(info,val) if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedBrightness = (val/100); module:SetXPColors(); end
 			},
-			header2 = {name="Rested XP Bar Settings",type="header",order=10},
+			header2 = {name="Rested XP Bar Color Settings",type="header",order=10},
 			RestedColor = {name="Rested Color",type="select",style="dropdown",order=11,width="full",
 				values = {
 					["Custom"]	= "Custom",
@@ -133,7 +141,16 @@ function module:OnInitialize()
 		name = "Rep Bar Settings",
 		desc = "configure Rep Bar Settings",
 		type = "group", args = {
-			AutoDefined = {name="Let Spartan decide",type="toggle",order=1,desc="The color will change based on yoru standing, red being hated, green being friendly",
+			tooltip = {name="Display tooltip",type="toggle",order=.1,
+				get = function(info) return DB.RepBar.ToolTip; end,
+				set = function(info,val) DB.RepBar.ToolTip = val; end
+			},
+			displaytext = {name="Display text",type="toggle",order=.2,
+				get = function(info) return DB.RepBar.text; end,
+				set = function(info,val) DB.RepBar.text = val; module:SetRepColors(); end
+			},
+			header1 = {name="Rep Bar Color Settings",type="header",order=.2},
+			AutoDefined = {name="Let Spartan decide color",type="toggle",order=1,desc="The color will change based on yoru standing, red being hated, green being friendly",
 			width="full",
 				get = function(info) return DB.RepBar.AutoDefined; end,
 				set = function(info,val) DB.RepBar.AutoDefined = val; module:SetRepColors(); end
@@ -185,7 +202,7 @@ function module:OnInitialize()
 end
 
 function module:SetRepColors()
-	local name,reaction,low,high,current = GetWatchedFactionInfo();
+	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 	if DB.RepBar.AutoDefined == true then
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
 		SUI_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
@@ -202,6 +219,9 @@ function module:SetRepColors()
 		SUI_ReputationBarLead:SetVertexColor	(r, g, b, a);
 		SUI_ReputationBarLeadGlow:SetVertexColor(r, g, b, a);
 	end
+
+	-- Set Text if needed
+	if DB.RepBar.text then repframe.Text:SetFormattedText("(%d / %d) %d%%",current-low,high-low,ratio*100) else repframe.Text:SetText("") end
 end
 
 function module:SetXPColors()
@@ -218,6 +238,7 @@ function module:SetXPColors()
 	a = DB.XPBar.GainedBrightness
 	SUI_ExperienceBarFill:SetVertexColor	(r,g,b,a);
 	SUI_ExperienceBarFillGlow:SetVertexColor(r,g,b,(a-.2));
+
 	-- Set Rested Color
 	if DB.XPBar.RestedMatchColor then
 		DB.XPBar.RestedRed 			= DB.XPBar.GainedRed
@@ -237,50 +258,114 @@ function module:SetXPColors()
 	a = DB.XPBar.RestedBrightness
 	SUI_ExperienceBarLead:SetVertexColor	(r,g,b,a);
 	SUI_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.1));
+
+	-- Update Text if needed
+	if DB.XPBar.text then xpframe.Text:SetFormattedText("(%d / %d) %d%%", UnitXP("player"),UnitXPMax("player"),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 end
 
-
 function module:OnEnable()
+	do -- create the tooltip
+		tooltip = CreateFrame("Frame","SUI_StatusBarTooltip",SpartanUI,"SUI_StatusBars_TooltipTemplate");
+		SUI_StatusBarTooltipHeader:SetJustifyH("LEFT");
+		SUI_StatusBarTooltipText:SetJustifyH("LEFT");
+		SUI_StatusBarTooltipText:SetJustifyV("TOP");
+	end
 	do -- experience bar
+		local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
+		local XP_LEVEL_TEMPLATE = "(%d / %d) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
+		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
+
 		xpframe = CreateFrame("Frame","SUI_ExperienceBar",SpartanUI,"SUI_StatusBars_XPTemplate");
 		xpframe:SetPoint("BOTTOMRIGHT","SpartanUI","BOTTOM",-80,0);
-		module:SetXPColors()
+		
 		xpframe:SetScript("OnEvent",function()
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 			if now == 0 then
 				SUI_ExperienceBarFill:SetWidth(0.1);
 				SUI_ExperienceBarFillGlow:SetWidth(.1);
+				SUI_ExperienceBarLead:SetWidth(0.1);
 			else
 				SUI_ExperienceBarFill:SetWidth((now/goal)*400);
 				rested = (rested/goal)*400;
 				if rested > 400 then rested = 400-((now/goal)*400); end
-				SUI_ExperienceBarFillGlow:SetWidth(rested);
+				SUI_ExperienceBarLead:SetWidth(rested);
 			end
-			-- Making some stuff ready for changing color on exp if rested.
+			if DB.XPBar.text then xpframe.Text:SetFormattedText("(%d / %d) %d%%", now,goal,(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 			module:SetXPColors()
 		end);
+		local showXPTooltip = function()
+			tooltip:ClearAllPoints();
+			tooltip:SetPoint("BOTTOM",xpframe,"TOP",6,-1);
+			a = format("Level %s ",UnitLevel("player"))
+			b = format(XP_LEVEL_TEMPLATE,UnitXP("player"),UnitXPMax("player"),(UnitXP("player")/UnitXPMax("player")*100))
+			SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
+			local rested,text = GetXPExhaustion() or 0;
+			if (rested > 0) then
+				text = format(xptip1,format(xprest,(rested/UnitXPMax("player"))*100),200);
+				SUI_StatusBarTooltipText:SetText(text); -- Rested (15%) - 200% of normal experience gained from monsters.
+			else
+				SUI_StatusBarTooltipText:SetText(format(xptip1,EXHAUST_TOOLTIP2,100)); -- You should rest at an Inn. 100% of normal experience gained from monsters.
+			end
+			tooltip:Show();
+		end
+		
+		xpframe.Text = xpframe:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+		xpframe.Text:SetSize(250, 30);
+		xpframe.Text:SetJustifyH("MIDDLE"); xpframe.Text:SetJustifyV("MIDDLE");
+		xpframe.Text:SetPoint("TOP",xpframe,"TOP",4,0);
+		
+		xpframe:SetScript("OnEnter",function() if DB.XPBar.ToolTip then showXPTooltip(); end end);
+		xpframe:SetScript("OnLeave",function() tooltip:Hide(); end);
+		
 		xpframe:RegisterEvent("PLAYER_ENTERING_WORLD");
 		xpframe:RegisterEvent("PLAYER_XP_UPDATE");
 		xpframe:RegisterEvent("PLAYER_LEVEL_UP");
 		
 		xpframe:SetFrameStrata("BACKGROUND");
 		xpframe:SetFrameLevel(2);
+		module:SetXPColors();
 	end
 	do -- reputation bar
 		repframe = CreateFrame("Frame","SUI_ReputationBar",SpartanUI,"SUI_StatusBars_RepTemplate");
 		repframe:SetPoint("BOTTOMLEFT",SpartanUI,"BOTTOM",78,0);
 		
-		module:SetRepColors()
 		repframe:SetScript("OnEvent",function()
 			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 			if name then ratio = (current-low)/(high-low); end
+			SUI_StatusBarTooltipHeader:SetText(name);
 			if ratio == 0 then
 				SUI_ReputationBarFill:SetWidth(0.1);
 			else
 				SUI_ReputationBarFill:SetWidth(ratio*400);
 				module:SetRepColors()
 			end
+			
+			if DB.RepBar.text then repframe.Text:SetFormattedText("(%d / %d) %d%%",current-low,high-low,ratio*100) else repframe.Text:SetText("") end
 		end);
+		local showRepTooltip = function()
+			tooltip:ClearAllPoints();
+			tooltip:SetPoint("BOTTOM",SUI_ReputationBar,"TOP",-2,-1);
+			local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
+			if name then
+				text = GetFactionDetails(name);
+				ratio = (current-low)/(high-low);
+				SUI_StatusBarTooltipHeader:SetText(format("%s (%d / %d) %d%% %s",name,current-low,high-low,ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+				SUI_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
+			else
+				SUI_StatusBarTooltipHeader:SetText(REPUTATION);
+				SUI_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
+			end
+			tooltip:Show();
+		end
+		
+		repframe.Text = repframe:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+		repframe.Text:SetSize(250, 30);
+		repframe.Text:SetJustifyH("MIDDLE"); repframe.Text:SetJustifyV("MIDDLE");
+		repframe.Text:SetPoint("TOP",repframe,"TOP",4,0);
+		
+		repframe:SetScript("OnEnter",function() showRepTooltip(); end);
+		repframe:SetScript("OnLeave",function() tooltip:Hide(); end);
+		
 		repframe:RegisterEvent("PLAYER_ENTERING_WORLD");
 		repframe:RegisterEvent("UPDATE_FACTION");
 		repframe:RegisterEvent("PLAYER_LEVEL_UP");
@@ -288,5 +373,6 @@ function module:OnEnable()
 		
 		repframe:SetFrameStrata("BACKGROUND");
 		repframe:SetFrameLevel(2);
+		module:SetRepColors();
 	end
 end

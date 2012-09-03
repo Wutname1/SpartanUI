@@ -24,7 +24,6 @@ addon.options = {name = "SpartanUI", type = "group", args = {}};
 
 DBdefaults = {
 	profile = {
-		Version = nil,
 		SUIProper = {
 			offset = 0,
 			scale = .92,
@@ -45,7 +44,9 @@ DBdefaults = {
 				popup2anim = true
 			},
 			XPBar = {
-				GainedColor	= "Light_Blue",
+				text = true,
+				ToolTip = true,
+				GainedColor	= "Blue",
 				GainedRed	= 0,
 				GainedBlue	= 1,
 				GainedGreen	= .5,
@@ -58,6 +59,8 @@ DBdefaults = {
 				RestedMatchColor= false
 			},
 			RepBar = {
+				text = false,
+				ToolTip = true,
 				GainedColor	= "AUTO",
 				GainedRed	= 0,
 				GainedBlue	= 0,
@@ -94,6 +97,8 @@ DBdefaults = {
 				vignette = nil
 			},
 			PartyFrames  = {
+				DisplayPets = true,
+				FrameStyle = "large",
 				showAuras = true,
 				partyLock = true,
 				partyMoved = false,
@@ -112,7 +117,31 @@ DBdefaults = {
 				},
 			},
 			PlayerFrames = {
-				focusMoved = false
+				focusMoved = false,
+				player = {
+					AuraDisplay = false,
+					display = true
+				},
+				target = {
+					AuraDisplay = true,
+					display = true
+				},
+				targettarget = {
+					AuraDisplay = true,
+					display = true
+				},
+				pet = {
+					AuraDisplay = true,
+					display = true
+				},
+				focus = {
+					AuraDisplay = true,
+					display = true
+				},
+				focustarget = {
+					AuraDisplay = true,
+					display = true
+				}
 			},
 			RaidFrames = {}
 		}
@@ -132,6 +161,7 @@ function addon:OnInitialize()
 	DBGlobal = addon.db.global
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
+	SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 	addon.Optionsprofile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
 	addon.optionsMain.args["version"] = {name = "SpartanUI Version: "..GetAddOnMetadata("SpartanUI", "Version"),order=0,type = "header"};
 	addon.optionsMain.args["reset"] = {
@@ -147,6 +177,23 @@ function addon:OnInitialize()
 			end
 		end
 	};
+	-- Add dual-spec support
+	local LibDualSpec = LibStub('LibDualSpec-1.0')
+	LibDualSpec:EnhanceDatabase(self.db, "SpartanUI")
+	LibDualSpec:EnhanceOptions(addon.Optionsprofile, self.db)
+	-- Spec Setup
+	addon.db.RegisterCallback(self, "OnNewProfile", "InitializeProfile")
+	addon.db.RegisterCallback(self, "OnProfileChanged", "UpdateModuleConfigs")
+	addon.db.RegisterCallback(self, "OnProfileCopied", "UpdateModuleConfigs")
+	addon.db.RegisterCallback(self, "OnProfileReset", "UpdateModuleConfigs")
+end
+
+function addon:InitializeProfile()
+	self.db:RegisterDefaults(DBdefaults)
+end
+
+function addon:UpdateModuleConfigs()
+	self.db:RegisterDefaults(DBdefaults)
 end
 
 function addon:OnEnable()

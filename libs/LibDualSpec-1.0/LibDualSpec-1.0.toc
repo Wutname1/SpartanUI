@@ -1,0 +1,12 @@
+## Interface: 50100
+## LoadOnDemand: 1
+## Title: Lib: DualSpec-1.0
+## Version: @project-version@
+## X-Date: @project-date@
+## Notes: Adds dual spec support to individual AceDB-3.0 databases
+## Author: Adirelle
+## OptionalDeps: LibStub, Ace3
+
+LibStub.lua
+LibDualSpec-1.0.lua
+

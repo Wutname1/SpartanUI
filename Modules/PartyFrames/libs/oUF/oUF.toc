@@ -6,5 +6,9 @@
 ## X-eMail: troeks@gmail.com
 ## X-oUF: oUF
 ## Notes: Unit frame framework. Does nothing by itself.
+## X-Curse-Packaged-Version: 3.0.2
+## X-Curse-Project-Name: SpartanUI
+## X-Curse-Project-ID: spartan-ui
+## X-Curse-Repository-ID: wow/spartan-ui/mainline
 
 oUF.xml
