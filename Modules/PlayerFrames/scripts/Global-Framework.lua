@@ -193,7 +193,6 @@ local CreatePlayerFrame = function(self,unit)
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
 			
-			--self.colors.smooth = {.8,.2,.2, .7,.4,.4, .5,.5,.5}
 			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorSmooth = true;
 			
@@ -388,7 +387,8 @@ local CreateTargetFrame = function(self,unit)
 			self.Health.colorTapping = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
-			self.Health.colorReaction = true;
+			
+			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorSmooth = true;
 			
 			-- Position and size
@@ -594,6 +594,9 @@ local CreatePetFrame = function(self,unit)
 			self.Health = health;
 			self.Health.colorHealth = true;
 			self.Health.colorSmooth = true;
+			
+			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
+			self.Health.colorSmooth = true;
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
@@ -743,7 +746,8 @@ local CreateToTFrame = function(self,unit)
 			self.Health.colorTapping = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
-			self.Health.colorReaction = true;
+			
+			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorSmooth = true;
 		end
 		do -- power bar
@@ -870,6 +874,8 @@ local CreateFocusFrame = function(self,unit)
 			self.Health.colorTapping = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
+			
+			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorSmooth = true;
 		end
 		do -- power bar

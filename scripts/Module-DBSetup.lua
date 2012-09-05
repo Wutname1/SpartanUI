@@ -70,8 +70,9 @@ function module:OnInitialize()
 			if UnitXP("player") == 0 then DB.XPBar.text = false; else DB.XPBar.text = true; end
 			DB.RepBar.text = false;
 			DB.RepBar.ToolTip = true;
+			DB.Version = "3.0.3"
 		end
-		if DB.Version < "3.0.4" then -- DB updates for 3.0.4
+		if (DB.Version < "3.0.4") then -- DB updates for 3.0.4
 			spartan:Print("DB updated from 3.0.3 settings")
 			if DB.offset >= 2 then 
 				DB.offsetAuto = false
@@ -87,6 +88,7 @@ function module:OnInitialize()
 			if DB.XPBar.ToolTip then DB.XPBar.ToolTip = "click" else DB.XPBar.ToolTip = "disabled" end
 			if DB.RepBar.ToolTip then DB.RepBar.ToolTip = "click" else DB.RepBar.ToolTip = "disabled" end
 			DBMod.PlayerFrames.target.Debuffs = "all"
+			DB.Version = "3.0.4"
 		end
 	end
 end
