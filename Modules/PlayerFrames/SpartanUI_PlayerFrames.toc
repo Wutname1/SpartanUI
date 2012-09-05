@@ -1,7 +1,7 @@
 ## Interface: 50001
 ## Title: SpartanUI: |CFF0070DDPlayer Frames|r
 ## Notes: Player and Target Frames designed to complement SpartanUI
-## Version: 3.0.4
+## Version: 3.0.5
 ## Author: Wutname1
 ## Former-Authors: Atriace, Beladona
 ## X-Category: User Interfaces
