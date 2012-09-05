@@ -54,41 +54,36 @@ function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["auras"] = {name = "Unitframe Buffs & Debuffs",type = "group",order=2,
 		desc = "Buff & Debuff display settings",
 		args = {
-			player = {
-				name = "Display player buffs",
-				type = "toggle",
+			player = {name = "Display player buffs",type = "toggle",order=1,
 				get = function(info) return DBMod.PlayerFrames.player.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.player.AuraDisplay = val; addon.player.Auras:PostUpdate("player"); end
 			},
-			target = {
-				name = "Display target buffs",
-				type = "toggle",
+			target = {name = "Display target buffs",type = "toggle",order=2,
 				get = function(info) return DBMod.PlayerFrames.target.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.target.AuraDisplay = val; addon.target.Auras:PostUpdate("target"); end
 			},
-			targettarget = {
-				name = "Display target of target buffs",
-				type = "toggle",
+			targettarget = {name = "Display target of target buffs",type = "toggle",order=3,
 				get = function(info) return DBMod.PlayerFrames.targettarget.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.targettarget.AuraDisplay = val; addon.targettarget.Auras:PostUpdate("targettarget"); end
 			},
-			pet = {
-				name = "Display pet buffs",
-				type = "toggle",
+			pet = {name = "Display pet buffs",type = "toggle",order=4,
 				get = function(info) return DBMod.PlayerFrames.pet.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.pet.AuraDisplay = val; addon.pet.Auras:PostUpdate("pet"); end
 			},
-			focus = {
-				name = "Display focus buffs",
-				type = "toggle",
+			focus = {name = "Display focus buffs",type = "toggle",order=5,
 				get = function(info) return DBMod.PlayerFrames.focus.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.focus.AuraDisplay = val; addon.focus.Auras:PostUpdate("focus"); end
 			},
-			focustarget = {
-				name = "Display focus target buffs",
-				type = "toggle",
+			focustarget = {name = "Display focus target buffs",type = "toggle",order=6,
 				get = function(info) return DBMod.PlayerFrames.focustarget.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.focustarget.AuraDisplay = val; addon.focustarget.Auras:PostUpdate("focustarget"); end
+			},
+			header2 = {name="Buff & Debuff Display Settings",type="header",order=20},
+			header3 = {name="This will be expanded more in 3.1.0",type="header",order=20.1},
+			TargetAuras = {name="Target display style",type="select",order=22,
+				values = {["all"]="Display All",["self"]="Applied by you"},
+				get = function(info) return DBMod.PlayerFrames.target.Debuffs end,
+				set = function(info,val) DBMod.PlayerFrames.target.Debuffs = val; if DBMod.PlayerFrames.target.Debuffs then addon.target.Auras.onlyShowPlayer = true; else DBMod.PlayerFrames.target.Debuffs = false; end end
 			}
 		}
 	};

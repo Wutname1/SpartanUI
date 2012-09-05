@@ -4,6 +4,7 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 ----------------------------------------------------------------------------------------------------
 addon.optionsMain = {name = "SpartanUI Main", type = "group", args = {}};
 addon.optionsGeneral = {name = "SpartanUI General", type = "group", args = {}};
+addon.optionsFont = {name = "SpartanUI Font Settings", type = "group", args = {}};
 addon.optionsPlayerFrames = {name = "SpartanUI Player Frames", type = "group", args = {}};
 addon.optionsPartyFrames = {name = "SpartanUI Party Frames", type = "group", args = {}};
 addon.optionsRaidFrames = {name = "SpartanUI Raid Frames", type = "group", args = {
@@ -17,15 +18,16 @@ addon.optionsMain.args.label = {name="More Options coming in SpartanUI 3.1.0",ty
 addon.optionsGeneral.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
 addon.optionsPlayerFrames.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
 addon.optionsPartyFrames.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
-addon.optionsSpinCam.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
-addon.optionsFilmEffects.args.label = {name="More Options coming in SpartanUI 3.1.0",type="header",order=0}
 
 addon.options = {name = "SpartanUI", type = "group", args = {}};
+
+fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
 
 DBdefaults = {
 	profile = {
 		SUIProper = {
 			offset = 0,
+			offsetAuto = true,
 			scale = .92,
 			ChatSettings = {
 				enabled = true
@@ -45,7 +47,7 @@ DBdefaults = {
 			},
 			XPBar = {
 				text = true,
-				ToolTip = true,
+				ToolTip = "click",
 				GainedColor	= "Blue",
 				GainedRed	= 0,
 				GainedBlue	= 1,
@@ -60,7 +62,7 @@ DBdefaults = {
 			},
 			RepBar = {
 				text = false,
-				ToolTip = true,
+				ToolTip = "click",
 				GainedColor	= "AUTO",
 				GainedRed	= 0,
 				GainedBlue	= 0,
@@ -83,6 +85,13 @@ DBdefaults = {
 				bar4 = {alpha = 100, enable = true},
 				bar5 = {alpha = 100, enable = true},
 				bar6 = {alpha = 100, enable = true},
+			},
+			font = {
+				Primary = fontdefault,
+				Core = fontdefault,
+				Player = fontdefault,
+				Party = fontdefault,
+				Raid = fontdefault,
 			}
 		},
 		Modules = {
@@ -124,7 +133,8 @@ DBdefaults = {
 				},
 				target = {
 					AuraDisplay = true,
-					display = true
+					display = true,
+					Debuffs = "all"
 				},
 				targettarget = {
 					AuraDisplay = true,
@@ -200,6 +210,7 @@ function addon:OnEnable()
 	
     AceConfig:RegisterOptionsTable("SpartanUI Main", addon.optionsMain)
     AceConfig:RegisterOptionsTable("SpartanUI General", addon.optionsGeneral)
+    AceConfig:RegisterOptionsTable("SpartanUI Font Settings", addon.optionsFont)
     AceConfig:RegisterOptionsTable("SpartanUI Player Frames", addon.optionsPlayerFrames)
     AceConfig:RegisterOptionsTable("SpartanUI Party Frames", addon.optionsPartyFrames)
     AceConfig:RegisterOptionsTable("SpartanUI Raid Frames", addon.optionsRaidFrames)
@@ -209,6 +220,7 @@ function addon:OnEnable()
 
     AceConfigDialog:AddToBlizOptions("SpartanUI Main", "SpartanUI", nil)
     self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI General", "General", "SpartanUI")
+    AceConfigDialog:AddToBlizOptions("SpartanUI Font Settings", "Font Settings", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", "Player Frames", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Party Frames", "Party Frames", "SpartanUI")
     AceConfigDialog:AddToBlizOptions("SpartanUI Raid Frames", "Raid Frames", "SpartanUI")

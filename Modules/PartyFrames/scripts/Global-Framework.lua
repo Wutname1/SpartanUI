@@ -208,17 +208,19 @@ local CreatePartyFrame = function(self,unit)
 			health.value:SetWidth(110); health.value:SetHeight(11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
+			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(40); health.ratio:SetHeight(11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
 			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
+			self:Tag(health.ratio, '[perhp]%')
 			
 			self.Health = health;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
-			self.Health.PostUpdate = PostUpdateHealth;
+			self.Health.colorSmooth = true;
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
@@ -250,7 +252,8 @@ local CreatePartyFrame = function(self,unit)
 		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-2);
 		ring.bg:SetTexture(base_ring);
 		
-		self.Name = ring:CreateFontString(nil, "BORDER","SUI_FontOutline11");
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 11, "Party")
 		self.Name:SetWidth(150); self.Name:SetHeight(12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-8);
@@ -357,17 +360,19 @@ local CreatePetFrame = function(self,unit)
 			health.value:SetSize(95, 11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
+			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(40, 11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
 			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
+			self:Tag(health.ratio, '[perhp]%')
 			
 			self.Health = health;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
-			self.Health.PostUpdate = PostUpdateHealth;
+			self.Health.colorSmooth = true;
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
@@ -397,7 +402,8 @@ local CreatePetFrame = function(self,unit)
 		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
 		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-2);
 		
-		self.Name = ring:CreateFontString(nil, "BORDER","SUI_FontOutline11");
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 11, "Party")
 		self.Name:SetSize(150, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",-30,-12);

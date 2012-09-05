@@ -51,10 +51,10 @@ function module:OnInitialize()
 		hideOnEscape = false
 	}
 	
-	-- DB Updates for 3.0.2 to 3.0.3
+	-- DB Updates
 	if DBGlobal.Version then
-		if DB.Version == nil and DBGlobal.Version <= "3.0.4" then
-			-- spartan:Print("Converting DB from 3.0.2 settings")
+		if DB.Version == nil then -- DB Updates from 3.0.2 to 3.0.3 this variable was not set in 3.0.2
+			spartan:Print("DB updated from 3.0.2 settings")
 			unitlist = {player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
 			for k,v in pairs(unitlist) do
 				tmp = true;
@@ -70,14 +70,30 @@ function module:OnInitialize()
 			if UnitXP("player") == 0 then DB.XPBar.text = false; else DB.XPBar.text = true; end
 			DB.RepBar.text = false;
 			DB.RepBar.ToolTip = true;
-			
-			DB.Version = SpartanVer;
+		end
+		if DB.Version < "3.0.4" then -- DB updates for 3.0.4
+			spartan:Print("DB updated from 3.0.3 settings")
+			if DB.offset >= 2 then 
+				DB.offsetAuto = false
+			else
+				DB.offsetAuto = true
+			end
+			fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
+			DB.font.Primary = fontdefault
+			DB.font.Core = fontdefault
+			DB.font.Player = fontdefault
+			DB.font.Party = fontdefault
+			DB.font.Raid = fontdefault
+			if DB.XPBar.ToolTip then DB.XPBar.ToolTip = "click" else DB.XPBar.ToolTip = "disabled" end
+			if DB.RepBar.ToolTip then DB.RepBar.ToolTip = "click" else DB.RepBar.ToolTip = "disabled" end
+			DBMod.PlayerFrames.target.Debuffs = "all"
 		end
 	end
 end
 
 function module:OnEnable()
 	if (not DBGlobal.Version) then
+		spartan:Print("Welcome to SpartanUI")
 		spartan.db:ResetProfile(false,true);
 		StaticPopup_Show ("FirstLaunchNotice")
 	end
@@ -86,5 +102,6 @@ function module:OnEnable()
 	elseif Bartender4Version < BartenderMin then
 			if SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
 	end
+	DB.Version = SpartanVer;
 	DBGlobal.Version = SpartanVer;
 end

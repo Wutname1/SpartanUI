@@ -5,6 +5,9 @@
 	<Script file="Global-Features.lua" />
 	
 	<!-- SUI_Font's -->
+	<Font name="SUI_FontOutline22custom"  font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
+		<FontHeight><AbsValue val="22"/></FontHeight>
+	</Font>
 	<Font name="SUI_FontOutline22"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
 		<FontHeight><AbsValue val="22"/></FontHeight>
 	</Font>
@@ -259,6 +262,7 @@
 	
 	<Script file="Global-Framework.lua" />
 	<Script file="Module-DBSetup.lua" />
+	<Script file="Module-FontSettings.lua" />
 	<Script file="Module-ChatFrame.lua" />
 	<Script file="Module-StatusBars.lua" />
 	<Script file="Module-Minimap.lua" />

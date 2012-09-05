@@ -39,15 +39,16 @@ function module:OnInitialize()
 		name = "XP Bar Settings",
 		desc = "configure XP Bar Settings",
 		type = "group", args = {
-			tooltip = {name="Display tooltip",type="toggle",order=.1,
-				get = function(info) return DB.XPBar.ToolTip; end,
-				set = function(info,val) DB.XPBar.ToolTip = val; end
-			},
 			displaytext = {name="Display text",type="toggle",order=.1,
 				get = function(info) return DB.XPBar.text; end,
 				set = function(info,val) DB.XPBar.text = val; module:SetXPColors(); end
 			},
-			header1 = {name="Gained XP Bar Color Settings",type="header",order=.2},
+			tooltip = {name="Display tooltip",type="select",order=.2,
+				values = {["hover"]="Mouse Over",["click"]="On Click",["off"]="Disabled"},
+				get = function(info) return DB.XPBar.ToolTip; end,
+				set = function(info,val) DB.XPBar.ToolTip = val; end
+			},
+			header1 = {name="Gained XP Bar Color Settings",type="header",order=.9},
 			GainedColor = {name="Gained Color",type="select",style="dropdown",order=1,width="full",
 				values = {
 					["Custom"]	= "Custom",
@@ -141,15 +142,16 @@ function module:OnInitialize()
 		name = "Rep Bar Settings",
 		desc = "configure Rep Bar Settings",
 		type = "group", args = {
-			tooltip = {name="Display tooltip",type="toggle",order=.1,
-				get = function(info) return DB.RepBar.ToolTip; end,
-				set = function(info,val) DB.RepBar.ToolTip = val; end
-			},
-			displaytext = {name="Display text",type="toggle",order=.2,
+			displaytext = {name="Display text",type="toggle",order=.1,
 				get = function(info) return DB.RepBar.text; end,
 				set = function(info,val) DB.RepBar.text = val; module:SetRepColors(); end
 			},
-			header1 = {name="Rep Bar Color Settings",type="header",order=.2},
+			tooltip = {name="Display tooltip",type="select",order=.2,
+				values = {["hover"]="Mouse Over",["click"]="On Click",["off"]="Disabled"},
+				get = function(info) return DB.RepBar.ToolTip; end,
+				set = function(info,val) DB.RepBar.ToolTip = val; end
+			},
+			header1 = {name="Rep Bar Color Settings",type="header",order=.9},
 			AutoDefined = {name="Let Spartan decide color",type="toggle",order=1,desc="The color will change based on yoru standing, red being hated, green being friendly",
 			width="full",
 				get = function(info) return DB.RepBar.AutoDefined; end,
@@ -269,6 +271,8 @@ function module:OnEnable()
 		SUI_StatusBarTooltipHeader:SetJustifyH("LEFT");
 		SUI_StatusBarTooltipText:SetJustifyH("LEFT");
 		SUI_StatusBarTooltipText:SetJustifyV("TOP");
+		addon:FormatFont(SUI_StatusBarTooltipHeader, 12, "Core")
+		addon:FormatFont(SUI_StatusBarTooltipText, 10, "Core")
 	end
 	do -- experience bar
 		local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
@@ -296,8 +300,8 @@ function module:OnEnable()
 		local showXPTooltip = function()
 			tooltip:ClearAllPoints();
 			tooltip:SetPoint("BOTTOM",xpframe,"TOP",6,-1);
-			a = format("Level %s ",UnitLevel("player"))
-			b = format(XP_LEVEL_TEMPLATE,UnitXP("player"),UnitXPMax("player"),(UnitXP("player")/UnitXPMax("player")*100))
+			local a = format("Level %s ",UnitLevel("player"))
+			local b = format(XP_LEVEL_TEMPLATE,UnitXP("player"),UnitXPMax("player"),(UnitXP("player")/UnitXPMax("player")*100))
 			SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
 			local rested,text = GetXPExhaustion() or 0;
 			if (rested > 0) then
@@ -309,12 +313,15 @@ function module:OnEnable()
 			tooltip:Show();
 		end
 		
-		xpframe.Text = xpframe:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+		xpframe.Text = xpframe:CreateFontString();
+		addon:FormatFont(xpframe.Text, 10, "Core")
+		xpframe.Text:SetDrawLayer("OVERLAY");
 		xpframe.Text:SetSize(250, 30);
 		xpframe.Text:SetJustifyH("MIDDLE"); xpframe.Text:SetJustifyV("MIDDLE");
 		xpframe.Text:SetPoint("TOP",xpframe,"TOP",4,0);
 		
-		xpframe:SetScript("OnEnter",function() if DB.XPBar.ToolTip then showXPTooltip(); end end);
+		xpframe:SetScript("OnEnter",function() if DB.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
+		xpframe:SetScript("OnMouseDown",function() if DB.XPBar.ToolTip == "click" then showXPTooltip(); end end);
 		xpframe:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
 		xpframe:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -358,12 +365,15 @@ function module:OnEnable()
 			tooltip:Show();
 		end
 		
-		repframe.Text = repframe:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+		repframe.Text = repframe:CreateFontString();
+		addon:FormatFont(repframe.Text, 10, "Core")
+		repframe.Text:SetDrawLayer("OVERLAY");
 		repframe.Text:SetSize(250, 30);
 		repframe.Text:SetJustifyH("MIDDLE"); repframe.Text:SetJustifyV("MIDDLE");
 		repframe.Text:SetPoint("TOP",repframe,"TOP",4,0);
 		
-		repframe:SetScript("OnEnter",function() showRepTooltip(); end);
+		repframe:SetScript("OnEnter",function() if DB.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
+		repframe:SetScript("OnMouseDown",function() if DB.RepBar.ToolTip == "click" then showRepTooltip(); end end);
 		repframe:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
 		repframe:RegisterEvent("PLAYER_ENTERING_WORLD");

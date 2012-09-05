@@ -128,7 +128,6 @@ local OnCastbarUpdate = function(self,elapsed)
 	end
 end
 
-
 local CreatePlayerFrame = function(self,unit)
 	self:SetWidth(280); self:SetHeight(80);
 	do -- setup base artwork
@@ -176,11 +175,12 @@ local CreatePlayerFrame = function(self,unit)
 			health:SetSize(150, 16);
 			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
 			
+			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetSize(135, 11);
 			health.value:SetJustifyH("RIGHT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("LEFT",health,"LEFT",4,0);
-			self:Tag(health.value, '[curhp]/[maxhp]')
+			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(90, 11);
@@ -192,6 +192,11 @@ local CreatePlayerFrame = function(self,unit)
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
+			
+			--self.colors.smooth = {.8,.2,.2, .7,.4,.4, .5,.5,.5}
+			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
+			self.Health.colorSmooth = true;
+			
 			
 			-- Position and size
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
@@ -248,7 +253,8 @@ local CreatePlayerFrame = function(self,unit)
 		ring.bg:SetPoint("CENTER",ring,"CENTER",-80,-3);
 		ring.bg:SetTexture(base_ring1);
 		
-		self.Name = ring:CreateFontString(nil, "BORDER","SUI_FontOutline12");
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetHeight(12); self.Name:SetWidth(170); self.Name:SetJustifyH("RIGHT");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",5,-6);
 		self:Tag(self.Name, "[name]");
@@ -369,7 +375,7 @@ local CreateTargetFrame = function(self,unit)
 			health.value:SetWidth(135); health.value:SetHeight(11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
-			self:Tag(health.value, '[curhp]/[maxhp]')	
+			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')	
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(90); health.ratio:SetHeight(11);
@@ -383,6 +389,8 @@ local CreateTargetFrame = function(self,unit)
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
 			self.Health.colorReaction = true;
+			self.Health.colorSmooth = true;
+			
 			-- Position and size
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
 			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
@@ -439,7 +447,8 @@ local CreateTargetFrame = function(self,unit)
 		ring.bg:SetTexture(base_ring1);
 		ring.bg:SetTexCoord(1,0,0,1);
 		
-		self.Name = ring:CreateFontString(nil, "BORDER","SUI_FontOutline12");
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetWidth(170); self.Name:SetHeight(12); 
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-5,-6);
@@ -511,9 +520,11 @@ local CreateTargetFrame = function(self,unit)
 		self.Auras.initialAnchor = "BOTTOMRIGHT";
 		self.Auras["growth-x"] = "LEFT";
 		self.Auras["growth-y"] = "UP";
-		self.Auras.gap = false;
+		self.Auras.gap = true;
 		self.Auras.numBuffs = 10;
 		self.Auras.numDebuffs = 10;
+		if DBMod.PlayerFrames.target.Debuffs == "self" then self.Auras.onlyShowPlayer = true; end
+		--self.Debuffs.onlyShowPlayer = true;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
@@ -572,7 +583,7 @@ local CreatePetFrame = function(self,unit)
 			health.value:SetWidth(110); health.value:SetHeight(11);
 			health.value:SetJustifyH("RIGHT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("LEFT",health,"LEFT",4,0);
-			self:Tag(health.value, '[curhp]/[maxhp]')
+			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -582,7 +593,7 @@ local CreatePetFrame = function(self,unit)
 			
 			self.Health = health;
 			self.Health.colorHealth = true;
-			self.Health.PostUpdate = PostUpdateHealth;
+			self.Health.colorSmooth = true;
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
@@ -616,7 +627,8 @@ local CreatePetFrame = function(self,unit)
 		ring.bg:SetTexture(base_ring3);
 		ring.bg:SetTexCoord(1,0,0,1);
 		
-		self.Name = ring:CreateFontString(nil, "BORDER","SUI_FontOutline12");
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("RIGHT");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",3,-5);
 		self:Tag(self.Name,"[name]");
@@ -719,7 +731,7 @@ local CreateToTFrame = function(self,unit)
 			health.value:SetWidth(110); health.value:SetHeight(11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
-			self:Tag(health.value, '[curhp]/[maxhp]')
+			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -732,6 +744,7 @@ local CreateToTFrame = function(self,unit)
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
 			self.Health.colorReaction = true;
+			self.Health.colorSmooth = true;
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
@@ -764,7 +777,8 @@ local CreateToTFrame = function(self,unit)
 		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-3);
 		ring.bg:SetTexture(base_ring3);
 		
-		self.Name = ring:CreateFontString(nil, "BORDER","SUI_FontOutline12");
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("LEFT");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-3,-5);
 		self:Tag(self.Name,"[name]");
@@ -843,7 +857,7 @@ local CreateFocusFrame = function(self,unit)
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			if unit == "focus" then health.value:SetPoint("RIGHT",health,"RIGHT",0,0) end
 			if unit == "focustarget" then health.value:SetPoint("LEFT",health,"LEFT",0,0) end
-			self:Tag(health.value, '[curhp]/[maxhp]')
+			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(40, 11);
@@ -856,6 +870,7 @@ local CreateFocusFrame = function(self,unit)
 			self.Health.colorTapping = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
+			self.Health.colorSmooth = true;
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
@@ -887,7 +902,8 @@ local CreateFocusFrame = function(self,unit)
 		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
 		ring.bg:SetPoint("LEFT",ring,"LEFT",-2,-3);
 		
-		self.Name = ring:CreateFontString(nil, "BORDER","SUI_FontOutline12");
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetSize(110, 12); self.Name:SetJustifyH("LEFT");
 		if unit == "focus" then
 			self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",20,-6);

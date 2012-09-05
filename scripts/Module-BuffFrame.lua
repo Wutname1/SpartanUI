@@ -36,10 +36,6 @@ function module:OnInitialize()
 					end
 				end
 			},
-			BarsEnabled = {name="Manual Offset", type="toggle", order = 3,
-				get	= function(info) return DB.BuffSettings.BarsEnabled; end,
-				set = function(info,val) DB.BuffSettings.BarsEnabled = val; end
-			}
 		}
 	}
 end
@@ -58,6 +54,7 @@ function module:OnEnable()
 	--			print(self.TimeSinceLastUpdate)
 				if (InCombatLockdown()) then return; end
 				-- this can be improved      if offset have changed then update position - no reason to constantly update the position
+				module:updateBuffOffset()
 				module:UpdateBuffPosition()
 				self.TimeSinceLastUpdate = 0
 			end
@@ -104,25 +101,21 @@ function module:updateBuffOffset() -- handles SpartanUI offset based on setting 
 		if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
 			local bar = _G["ChocolateBar"..i];
 			local point = bar:GetPoint(1);
-			if point == "TOPLEFT" then fubar = fubar + bar:GetHeight(); 	end
-			addon:Print("1");
+			if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
+			--if point == "RIGHT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end-- bottom bars
 		end
 	end
-	
-	if _G["TitanPanelBarButton"] ~= nil then
-		local nTitleBarCnt = TitanPanelGetVar("DoubleBar")
-		local PanelScale = TitanPanelGetVar("Scale") or 1
-		local bar = _G["TitanPanelBarButton"];
-		local pos = TitanPanelGetVar("Position");
 		
-		if nTitleBarCnt == 1 and pos == 1 then
-			titan = PanelScale * bar:GetHeight();
-		elseif nTitleBarCnt == 2 and pos == 1 then
-			titan = PanelScale * (bar:GetHeight() * 2);
+	TitanBarOrder = {[1]="Bar", [2]="Bar2"} -- Top 2 bar names
+	for i=1,2 do
+		if (_G["Titan_Bar__Display_"..TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i].."_Show")) then
+			local PanelScale = TitanPanelGetVar("Scale") or 1
+			local bar = _G["Titan_Bar__Display_"..TitanBarOrder[i]]
+			titan = titan + (PanelScale * bar:GetHeight());
 		end
 	end
 	
 	offset = max(fubar + titan + ChocolateBar,1);
-	
+	DB.BuffSettings.offset = offset
 	return offset;
 end

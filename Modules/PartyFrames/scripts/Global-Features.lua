@@ -1,6 +1,6 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:NewModule("PartyFrames");
-if (spartan:GetModule("PlayerFrames",true)) then return; end
+--if (spartan:GetModule("PlayerFrames",true)) then return; end
 ----------------------------------------------------------------------------------------------------
 do -- ClassIcon as an oUF module
 	local ClassIconCoord = {
@@ -69,4 +69,41 @@ do -- fix SET_FOCUS & CLEAR_FOCUS errors
 		end
 	end
 	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
+end
+
+do -- Current Health Formatted, as an oUF module
+	oUF.Tags.Events['curhpformatted'] = "UNIT_HEALTH";
+	oUF.Tags.Methods['curhpformatted'] = function (unit)
+		local tmp = UnitHealth(unit);
+		if tmp >= 1000000 then
+			return addon:round(tmp/1000000, 1).."M ";
+		else
+			return addon:comma_value(tmp);
+		end
+	end
+end
+
+do -- Total Health Formatted, as an oUF module
+	oUF.Tags.Events['maxhpformatted'] = "UNIT_HEALTH";
+	oUF.Tags.Methods['maxhpformatted'] = function (unit)
+		local tmp = UnitHealthMax(unit);
+		if tmp >= 1000000 then
+			return addon:round(tmp/1000000, 1).."M ";
+		else
+			return addon:comma_value(tmp);
+		end
+	end
+end
+
+function addon:round(val, decimal)
+  if (decimal) then
+    return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
+  else
+    return math.floor(val+0.5)
+  end
+end
+
+function addon:comma_value(n)
+	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
+	return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 end

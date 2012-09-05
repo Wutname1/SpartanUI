@@ -1,4 +1,4 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:NewModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 do -- ClassIcon as an oUF module
@@ -53,6 +53,43 @@ do -- AFK / DND status text, as an oUF module
 			return UnitIsAFK(unit) and "AFK" or UnitIsDND(unit) and "DND" or "";
 		end
 	end
+end
+
+do -- Current Health Formatted, as an oUF module
+	oUF.Tags.Events['curhpformatted'] = "UNIT_HEALTH";
+	oUF.Tags.Methods['curhpformatted'] = function (unit)
+		local tmp = UnitHealth(unit);
+		if tmp >= 1000000 then
+			return addon:round(tmp/1000000, 1).."M ";
+		else
+			return addon:comma_value(tmp);
+		end
+	end
+end
+
+do -- Total Health Formatted, as an oUF module
+	oUF.Tags.Events['maxhpformatted'] = "UNIT_HEALTH";
+	oUF.Tags.Methods['maxhpformatted'] = function (unit)
+		local tmp = UnitHealthMax(unit);
+		if tmp >= 1000000 then
+			return addon:round(tmp/1000000, 1).."M ";
+		else
+			return addon:comma_value(tmp);
+		end
+	end
+end
+
+function addon:round(val, decimal)
+  if (decimal) then
+    return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
+  else
+    return math.floor(val+0.5)
+  end
+end
+
+function addon:comma_value(n)
+	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
+	return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 end
 
 do -- Level Skull as an oUF module

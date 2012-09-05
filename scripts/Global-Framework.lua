@@ -4,6 +4,7 @@ local module = addon:NewModule("BottomBar");
 local party -- for updateSpartanOffset use
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = SUI_AnchorFrame, SpartanUI;
+
 local round = function(num) -- rounds a number to 2 decimal places
 	return floor( (num*10^2)+0.5) / (10^2);
 end;
@@ -27,7 +28,8 @@ end;
 
 local updateSpartanOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar,ChocolateBar,titan,offset = 0,0,0;
-	if DB.offset then
+
+	if not DB.offsetAuto then
 		offset = max(DB.offset,1);
 	else
 		for i = 1,4 do
@@ -37,23 +39,25 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 				if point == "BOTTOMLEFT" then fubar = fubar + bar:GetHeight(); end
 			end
 		end
+
 		for i = 1,100 do
 			if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
 				local bar = _G["ChocolateBar"..i];
 				local point = bar:GetPoint(1);
-				if point == "BOTTOMLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); end
+				--if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
+				if point == "RIGHT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end-- bottom bars
 			end
 		end
-		if (_G["Titan_Bar__Display_AuxBar"] and TitanPanelGetVar("AuxBar_Show")) then
-			local PanelScale = TitanPanelGetVar("Scale") or 1
-			local bar = _G["Titan_Bar__Display_AuxBar"]
-			titan = titan + (PanelScale * bar:GetHeight());
+
+		TitanBarOrder = {[1]="AuxBar2", [2]="AuxBar"} -- Bottom 2 Bar names
+		for i=1,2 do
+			if (_G["Titan_Bar__Display_"..TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i].."_Show")) then
+				local PanelScale = TitanPanelGetVar("Scale") or 1
+				local bar = _G["Titan_Bar__Display_"..TitanBarOrder[i]]
+				titan = titan + (PanelScale * bar:GetHeight());
+			end
 		end
-		if (_G["Titan_Bar__Display_AuxBar2"] and TitanPanelGetVar("AuxBar2_Show")) then
-			local PanelScale = TitanPanelGetVar("Scale") or 1
-			local bar = _G["Titan_Bar__Display_AuxBar2"]
-			titan = titan + (PanelScale * bar:GetHeight());
-		end
+		
 		offset = max(fubar + titan + ChocolateBar,1);
 	end
 	if (round(offset) ~= round(anchor:GetHeight())) then anchor:SetHeight(offset); end
@@ -67,6 +71,7 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 		--end
 --		print("party")
 	end
+	DB.offset = offset
 end;
 
 local updateSpartanViewport = function(state) -- handles viewport offset based on settings
@@ -195,7 +200,7 @@ function module:OnInitialize()
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
-				if (DB.offset == nil) then
+				if DB.offsetAuto then
 					addon:Print("Offset is set AUTO");
 				else
 					val = tonumber(val);
@@ -208,22 +213,8 @@ function module:OnInitialize()
 	};
 	addon.optionsGeneral.args["offsetauto"] = {name = "Auto Offset",type = "toggle",order = 4,
 		desc = "offsets the bottom bar automatically",
-		get = function(info)
-			if (DB.offset == nil) then
-				return true;
-			else
-				return false;
-			end
-		end,
-		set = function(info,val)
-			if (val == true) then
-				DB.offset = nil;
-				addon:Print("Offset is set AUTO");
-			else
-				DB.offset = 0.1;
-				addon:Print("Offset is set manual");
-			end
-		end,
+		get = function(info) return DB.offsetAuto end,
+		set = function(info,val) DB.offsetAuto = val end,
 	};
 end
 
@@ -252,7 +243,7 @@ function module:OnEnable()
 	end);
 	hooksecurefunc("ToggleBattlefieldMinimap",updateBattlefieldMinimap);
 	
-	RegisterStateDriver(frame, "visibility", "[petbattle] [vehicleui] hide; show")
+	RegisterStateDriver(frame, "visibility", "[petbattle] hide; show")
 
 	updateSpartanScale();
 	updateSpartanOffset();

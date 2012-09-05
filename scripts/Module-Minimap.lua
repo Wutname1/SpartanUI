@@ -102,7 +102,7 @@ end;
 local createMinimapCoords = function()
 	local map = CreateFrame("Frame",nil,SpartanUI);
 	map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
-	map.coords:SetWidth(128); map.coords:SetHeight(12);
+	map.coords:SetSize(128, 12);
 	map.coords:SetPoint("TOP","MinimapZoneTextButton","BOTTOM",0,-6);
 	-- Fix CPU leak, use UpdateInterval
 	map.UpdateInterval = 0.5
@@ -207,28 +207,5 @@ function module:OnEnable()
 	-- LFGSearchStatus:ClearAllPoints();
 	-- LFGSearchStatus:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	module.handleBuff = true
-	-- MinimapWorldMapButton
 
---	hooksecurefunc("WorldStateFrame_CanShowBattlefieldMinimap",function() -- battle field frame
---		if (( _G[BattlefieldMinimap]:IsShown() ) and (_G[BattlefieldMinimap]:GetScale() ~= "1.5")) then _G[BattlefieldMinimap]:SetScale(1.5); end end);
 end
-
---[[ Debug code for Minimap SetPoint hooksecurefunc
-		--Debug
-			print(self:GetName());
-			if point then print(point) end
-			if relativeTo then print(relativeTo) end
-			if relativePoint then print(relativePoint) end
-			if xOffset then print(xOffset) end
-			if yOffset then print(yOffset) end
-			if self:GetParent() then print(self:GetParent():GetName()) end
---			print(relativeTo..' is trying to SetPoint on the Minimap')
-			if Minimap:GetParent():GetName() == "MinimapCluster" then
-				local point, relativeTo, relativePoint, x, y = MinimapCluster:GetPoint();
-				print(point)
-				print(relativeTo:GetName())
-				print(relativePoint)
-				print(x)
-				print(y)
-			end
---]]

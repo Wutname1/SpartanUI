@@ -1,11 +1,11 @@
 ## Interface: 50001
 ## Title: SpartanUI: |CFF0070DDRaid Frames|r
 ## Notes: Raid Frames designed to complement SpartanUI
-## Version: 3.0.2
+## Version: 3.0.4
 ## Author: Wutname1
 ## X-Category: User Interfaces
+## X-oUF: oUF
 ## RequiredDeps: SpartanUI
 ## OptionalDeps: SpartanUI_PlayerFrames
-## X-oUF: oUF
 
 libs\oUF\oUF.xml
