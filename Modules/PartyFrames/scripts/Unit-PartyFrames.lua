@@ -123,35 +123,26 @@ end
 do -- hide party frame in raid, if option enabled
 	function addon:UpdateParty(event,...)
 
-		local inRaid = IsInRaid()  -- ( numGroupMembers () > 0 )
 		local inParty = IsInGroup()  -- ( numGroupMembers () > 0 )
 		local bDebug_ShowFrame = true;
 
-		party:SetAttribute('showRaid',DBMod.PartyFrames.showPartyInRaid)
 		party:SetAttribute('showParty',DBMod.PartyFrames.showParty)
 		party:SetAttribute('showPlayer',DBMod.PartyFrames.showPlayer)
 		party:SetAttribute('showSolo',DBMod.PartyFrames.showSolo)
 
-		local showRaid = party:GetAttribute('showRaid')
-		local showParty = party:GetAttribute('showParty')
-		local showPlayer = party:GetAttribute('showPlayer')
-		-- Debug
---		print('inRaid '..tostring(inRaid)..', HideInRaid '..HideInRaid..', showRaid '.. tostring(showRaid))
---		print('inParty '..tostring(inParty)..', HideParty '..HideParty..', showParty '..tostring(showParty))
-
-	-- if bDebug_ShowFrame then
-	-- 	party:Show();
-	--else
-		if showParty or DBMod.PartyFrames.showSolo then
-			if inRaid then if showRaid then party:Show() else party:Hide() end
-			elseif inParty then party:Show()
-			elseif DBMod.PartyFrames.showSolo then party:Show()
-			else if party:IsShown() then party:Hide() end
+		if DBMod.PartyFrames.showParty or DBMod.PartyFrames.showSolo then
+			if IsInRaid() then
+				if DBMod.PartyFrames.showPartyInRaid then party:Show() else party:Hide() end
+			elseif inParty then
+					party:Show()
+			elseif DBMod.PartyFrames.showSolo then
+					party:Show()
+			elseif party:IsShown() then
+					party:Hide()
 			end
 		else
 			party:Hide();
 		end
-	--end
 		
 		if ( addon.offset ~= addon:updatePartyOffset() ) then addon:UpdatePartyPosition() end
 	end

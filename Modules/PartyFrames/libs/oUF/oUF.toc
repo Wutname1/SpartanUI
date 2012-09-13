@@ -14,5 +14,9 @@
 ## X-Curse-Project-Name: SpartanUI
 ## X-Curse-Project-ID: spartan-ui
 ## X-Curse-Repository-ID: wow/spartan-ui/mainline
+## X-Curse-Packaged-Version: v3.0.5a
+## X-Curse-Project-Name: SpartanUI
+## X-Curse-Project-ID: spartan-ui
+## X-Curse-Repository-ID: wow/spartan-ui/mainline
 
 oUF.xml

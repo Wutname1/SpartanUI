@@ -5,13 +5,85 @@ local default = {player = 0,target = 1,targettarget = 0,pet = 1,focus = 0,focust
 setmetatable(DBMod.PlayerFrames,{__index = default});
 
 DBMod.PlayerFrames.Castbar = DBMod.PlayerFrames.Castbar or {};
+local Units = {[1]="player",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="pet"}
 local castbardefault = { player = 1,target = 1,targettarget = 1,pet = 1,focus = 1, text = { player = 1,target = 1,targettarget = 1,pet = 1,focus = 1 } };
 for k,v in pairs(castbardefault) do if not DBMod.PlayerFrames.Castbar[k] then DBMod.PlayerFrames.Castbar[k] = v end end
 setmetatable(DBMod.PlayerFrames.Castbar,{__index = castbardefault});
 -- /spartanui castbar player
 
 function addon:OnInitialize()
-	spartan.optionsPlayerFrames.args["frameDisplay"] = {name = "Unitframe Display",type = "group",order=1,
+	spartan.optionsPlayerFrames.args["FrameStyle"] = {name="Frame Style",type="group",order=1,
+		desc="Customize health and mana bar display",
+		args = {
+			targettargetStyle = {name="Target of Target Frame Style",type="select",order=11,
+				values = {["large"]="Large Frame",["medium"]="Hide Picture",["small"]="Name & Health Only"},
+				get = function(info) return DBMod.PlayerFrames.targettarget.style; end,
+				set = function(info,val) DBMod.PlayerFrames.targettarget.style = val; end
+			},
+			targettargetinfo = {name="Reload UI Required.",type="description",order=12},
+
+			bars = {name="Bar Options",type="group",order=1,desc="Customize health and mana bar display",
+				args = {
+					bar1 = {name="Health bar color",type="header",order=10},
+					healthPlayerColor = {name="Player Health Color",type="select",order=11,
+						values = {["reaction"]="Green",["dynamic"]="Dynamic"},
+						get = function(info) return DBMod.PlayerFrames.bars.player.color; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.player.color = val; addon.player:ColorUpdate("player") end
+					},
+					healthTargetColor = {name="Target Health Color",type="select",order=12,
+						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						get = function(info) return DBMod.PlayerFrames.bars.target.color; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.target.color = val; addon.player:ColorUpdate("target") end
+					},
+					healthToTColor = {name="Target of Target Health Color",type="select",order=13,
+						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						get = function(info) return DBMod.PlayerFrames.bars.targettarget.color; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.targettarget.color = val; addon.player:ColorUpdate("targettarget") end
+					},
+					healthPetColor = {name="Pet Health Color",type="select",order=14,
+						values = {["class"]="class",["dynamic"]="Dynamic",["happiness"]="Happiness"},
+						get = function(info) return DBMod.PlayerFrames.bars.pet.color; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.pet.color = val; addon.player:ColorUpdate("pet") end
+					},
+					healthFocusColor = {name="Focus Health Color",type="select",order=15,
+						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						get = function(info) return DBMod.PlayerFrames.bars.focus.color; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.focus.color = val; addon.player:ColorUpdate("focus") end
+					},
+					healthFocusTargetColor = {name="Focus Target Health Color",type="select",order=16,
+						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						get = function(info) return DBMod.PlayerFrames.bars.focustarget.color; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.focustarget.color = val; addon.player:ColorUpdate("focustarget") end
+					},
+					
+					bar2 = {name="Text style",type="header",order=20},
+					healthtextstyle = {name="Health Text style",type="select",order=21,
+						desc = "Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed",
+						values = {["long"]="Long",["longfor"]="Long Formatted",["dynamic"]="Dynamic"},
+						get = function(info) return DBMod.PlayerFrames.bars.health.textstyle; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.health.textstyle = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
+					},
+					healthtextmode = {name="Health Text mode",type="select",order=22,
+						values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
+						get = function(info) return DBMod.PlayerFrames.bars.health.textmode; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.health.textmode = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
+					},
+					manatextstyle = {name="Mana Text style",type="select",order=23,
+						desc = "Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed",
+						values = {["long"]="Long",["longfor"]="Long Formatted",["dynamic"]="Dynamic"},
+						get = function(info) return DBMod.PlayerFrames.bars.mana.textstyle; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.mana.textstyle = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
+					},
+					manatextmode = {name="Mana Text mode",type="select",order=24,
+						values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
+						get = function(info) return DBMod.PlayerFrames.bars.mana.textmode; end,
+						set = function(info,val) DBMod.PlayerFrames.bars.mana.textmode = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
+					}
+				}
+			}
+		}
+	}
+	spartan.optionsPlayerFrames.args["frameDisplay"] = {name = "Disable Frames",type = "group",order=2,desc="Enable and Disable Specific frames",
 		desc = "unitframe display settings",
 		args = {
 			player = {name = "Display player",type = "toggle",order=1,
@@ -51,7 +123,7 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	spartan.optionsPlayerFrames.args["auras"] = {name = "Unitframe Buffs & Debuffs",type = "group",order=2,
+	spartan.optionsPlayerFrames.args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,
 		desc = "Buff & Debuff display settings",
 		args = {
 			player = {name = "Display player buffs",type = "toggle",order=1,
@@ -87,7 +159,7 @@ function addon:OnInitialize()
 			}
 		}
 	};
-	spartan.optionsPlayerFrames.args["castbar"] = {name = "Unitframe Castbar",type = "group",order=3,
+	spartan.optionsPlayerFrames.args["castbar"] = {name = "Castbar",type = "group",order=4,
 		desc = "unitframe castbar settings",
 		args = {
 			player = { name = "Player style", type = "select", style="radio",
@@ -116,8 +188,8 @@ function addon:OnInitialize()
 				set = function(info,val) DBMod.PlayerFrames.Castbar.focus = val; end
 			},
 			text = {
-				name = "Unitframe Castbar Text",
-				desc = "unitframe castbar text settings",
+				name = "Castbar Text",
+				desc = "Castbar text settings",
 				type = "group", args = {
 					player = {
 						name = "Text style", type = "select", style="radio",

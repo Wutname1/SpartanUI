@@ -280,7 +280,9 @@ function module:OnEnable()
 		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
 
 		xpframe = CreateFrame("Frame","SUI_ExperienceBar",SpartanUI,"SUI_StatusBars_XPTemplate");
-		xpframe:SetPoint("BOTTOMRIGHT","SpartanUI","BOTTOM",-80,0);
+		xpframe:SetPoint("BOTTOMRIGHT","SpartanUI","BOTTOM",-100,0);
+		--SUI_ExperienceBarPlate:SetSize(400, 32);
+		SUI_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
 		
 		xpframe:SetScript("OnEvent",function()
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
@@ -292,6 +294,7 @@ function module:OnEnable()
 				SUI_ExperienceBarFill:SetWidth((now/goal)*400);
 				rested = (rested/goal)*400;
 				if rested > 400 then rested = 400-((now/goal)*400); end
+				if rested == 0 then rested = .001 end
 				SUI_ExperienceBarLead:SetWidth(rested);
 			end
 			if DB.XPBar.text then xpframe.Text:SetFormattedText("(%d / %d) %d%%", now,goal,(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
@@ -331,10 +334,23 @@ function module:OnEnable()
 		xpframe:SetFrameStrata("BACKGROUND");
 		xpframe:SetFrameLevel(2);
 		module:SetXPColors();
+		
+	-- SUI_ExperienceBarFill:SetAlpha(0);
+	-- SUI_ExperienceBarFill:SetAlpha(0);
+	-- SUI_ExperienceBarFillGlow:SetAlpha(0);
+	-- SUI_ExperienceBarLeadGlow:SetAlpha(0);
+	-- SUI_ExperienceBar:SetAlpha(DB.alpha);
+	-- SUI_ExperienceBarBase:SetAlpha(DB.alpha);
+	-- SUI_ExperienceBarPlate:SetAlpha(DB.alpha);
+	-- xpframe:SetAlpha(DB.alpha);
+	-- SUI_ExperienceBarLead:SetAlpha((DB.alpha-.3));
+	-- SUI_ExperienceBarFill:SetAlpha(0);
+	
 	end
 	do -- reputation bar
 		repframe = CreateFrame("Frame","SUI_ReputationBar",SpartanUI,"SUI_StatusBars_RepTemplate");
-		repframe:SetPoint("BOTTOMLEFT",SpartanUI,"BOTTOM",78,0);
+		repframe:SetPoint("BOTTOMLEFT",SpartanUI,"BOTTOM",100,0);
+		SUI_ReputationBarPlate:SetTexCoord(0.035,0.83,0,1);
 		
 		repframe:SetScript("OnEvent",function()
 			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
@@ -385,4 +401,5 @@ function module:OnEnable()
 		repframe:SetFrameLevel(2);
 		module:SetRepColors();
 	end
+
 end

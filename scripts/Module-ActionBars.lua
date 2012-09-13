@@ -281,7 +281,7 @@ function module:OnEnable()
 			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
 				-- Debug
 --				print(self.TimeSinceLastUpdate)
-				if (DB.ActionBars) then
+				if (DB.ActionBars.bar1) then
 					for b = 1,6 do -- for each backdrop
 						if DB.ActionBars["bar"..b].enable then -- backdrop enabled
 							_G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha

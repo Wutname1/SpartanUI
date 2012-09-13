@@ -6,7 +6,7 @@ local party -- for updateSpartanOffset use
 local anchor, frame = SUI_AnchorFrame, SpartanUI;
 
 local round = function(num) -- rounds a number to 2 decimal places
-	return floor( (num*10^2)+0.5) / (10^2);
+	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;
 
 local updateMinimumScale = function()
@@ -24,23 +24,43 @@ local updateSpartanScale = function() -- scales SpartanUI based on setting or sc
 	if (DB.scale ~= round(SpartanUI:GetScale())) then
 		frame:SetScale(DB.scale);
 	end
+	if DB.scale <= .75 then
+		SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
+		SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
+	else
+		SpartanUI_Base3:ClearAllPoints();
+		SpartanUI_Base5:ClearAllPoints();
+		SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
+		SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
+	end
+end;
+
+local updateSpartanAlpha = function() -- scales SpartanUI based on setting or screen size
+	if DB.alpha then
+		SpartanUI_Base1:SetAlpha(DB.alpha);
+		SpartanUI_Base2:SetAlpha(DB.alpha);
+		SpartanUI_Base3:SetAlpha(DB.alpha);
+		SpartanUI_Base4:SetAlpha(DB.alpha);
+		SpartanUI_Base5:SetAlpha(DB.alpha);
+		SUI_Popup1Mask:SetAlpha(DB.alpha);
+		SUI_Popup2Mask:SetAlpha(DB.alpha);
+	end
 end;
 
 local updateSpartanOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar,ChocolateBar,titan,offset = 0,0,0;
 
-	if not DB.offsetAuto then
-		offset = max(DB.offset,1);
+	if not DB.yoffsetAuto then
+		offset = max(DB.yoffset,1);
 	else
-		for i = 1,4 do
+		for i = 1,4 do -- FuBar Offset
 			if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
 				local bar = _G["FuBarFrame"..i];
 				local point = bar:GetPoint(1);
 				if point == "BOTTOMLEFT" then fubar = fubar + bar:GetHeight(); end
 			end
 		end
-
-		for i = 1,100 do
+		for i = 1,100 do -- Chocolate Bar Offset
 			if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
 				local bar = _G["ChocolateBar"..i];
 				local point = bar:GetPoint(1);
@@ -48,9 +68,8 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 				if point == "RIGHT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end-- bottom bars
 			end
 		end
-
 		TitanBarOrder = {[1]="AuxBar2", [2]="AuxBar"} -- Bottom 2 Bar names
-		for i=1,2 do
+		for i=1,2 do -- Titan Bar Offset
 			if (_G["Titan_Bar__Display_"..TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i].."_Show")) then
 				local PanelScale = TitanPanelGetVar("Scale") or 1
 				local bar = _G["Titan_Bar__Display_"..TitanBarOrder[i]]
@@ -61,17 +80,24 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 		offset = max(fubar + titan + ChocolateBar,1);
 	end
 	if (round(offset) ~= round(anchor:GetHeight())) then anchor:SetHeight(offset); end
-	if (party) then
-		
-		-- --------------------
-		--    NEED TO REVISIT CODE BELOW
-		-- --------------------
-		--if party.offset ~= party:updatePartyOffset() then
-		--	party:UpdatePartyPosition()
-		--end
---		print("party")
+	DB.yoffset = offset
+end;
+
+local updateSpartanXOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
+	if not DB.xOffset then return 0; end
+	local offset = DB.xOffset
+	if round(offset) <= -300 then
+		SpartanUI_Base5:ClearAllPoints();
+		SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
+		SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
+	elseif round(offset) >= 300 then
+		SpartanUI_Base3:ClearAllPoints();
+		SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
+		SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
 	end
-	DB.offset = offset
+	SpartanUI:SetPoint("LEFT", SUI_AnchorFrame, "LEFT", offset, 0)
+	if (round(offset) ~= round(anchor:GetWidth())) then anchor:SetWidth(offset); end
+	DB.xOffset = offset
 end;
 
 local updateSpartanViewport = function(state) -- handles viewport offset based on settings
@@ -82,12 +108,6 @@ local updateSpartanViewport = function(state) -- handles viewport offset based o
 	end
 end;
 
-local updateBattlefieldMinimap = function()
-	if ( BattlefieldMinimapTab and not BattlefieldMinimapTab:IsUserPlaced() ) then
-		BattlefieldMinimapTab:ClearAllPoints()
-		BattlefieldMinimapTab:SetPoint("RIGHT", "UIParent", "RIGHT",-144,150);
-	end
-end
 ----------------------------------------------------------------------------------------------------
 function module:OnInitialize()
 	do -- default interface modifications
@@ -144,7 +164,7 @@ function module:OnInitialize()
 				frame:SetScale(containerScale)
 				if ( index == 1 ) then
 					-- First bag
-					frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -xOffset, (yOffset + (DB.offset or 1)) * (DB.scale or 1) )
+					frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -xOffset, (yOffset + (DB.yoffset or 1)) * (DB.scale or 1) )
 				elseif ( freeScreenHeight < frame:GetHeight() ) then
 					-- Start a new column
 					column = column + 1
@@ -187,7 +207,6 @@ function module:OnInitialize()
 			else
 				DB.scale = min(1,round(val));
 				updateMinimumScale();
-				addon:Print("Relative Scale set to "..DB.scale);
 			end
 		end,
 		get = function(info) return DB.scale; end
@@ -195,63 +214,69 @@ function module:OnInitialize()
 	addon.optionsGeneral.args["offset"] = {name = "Configure Offset",type = "range",order = 3,width="double",
 		desc = "offsets the bottom bar automatically, or set value",
 		min=0,max=200,step=.1,
-		get = function(info) return DB.offset end,
+		get = function(info) return DB.yoffset end,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
-				if DB.offsetAuto then
+				if DB.yoffsetAuto then
 					addon:Print("Offset is set AUTO");
 				else
 					val = tonumber(val);
-					DB.offset = val;
-					addon:Print("Panel Offset set to "..val);
+					DB.yoffset = val;
 				end
 			end
 		end,
-		get = function(info) return DB.offset; end
+		get = function(info) return DB.yoffset; end
 	};
 	addon.optionsGeneral.args["offsetauto"] = {name = "Auto Offset",type = "toggle",order = 4,
 		desc = "offsets the bottom bar automatically",
-		get = function(info) return DB.offsetAuto end,
-		set = function(info,val) DB.offsetAuto = val end,
+		get = function(info) return DB.yoffsetAuto end,
+		set = function(info,val) DB.yoffsetAuto = val end,
 	};
+	addon.optionsGeneral.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
+		args = {
+			alpha = {name="Transparency",type="range",order=1,width="full",
+				min=0,max=100,step=1,desc="XP and Rep Bars are known issues and need a redesign to look right",
+				get = function(info) return (DB.alpha*100); end,
+				set = function(info,val) DB.alpha = (val/100); updateSpartanAlpha(); end
+			},
+			xOffset = {name = "Move Sideways",type = "range",order = 3,width="full",
+				desc = "offsets the bottom bar automatically, or set value",
+				min=-200,max=200,step=.1,
+				get = function(info) return DB.xOffset/6.25 end,
+				set = function(info,val) DB.xOffset = val*6.25; updateSpartanXOffset(); end,
+			}
+		}
+	}
 end
 
 function module:OnEnable()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
 	
-	-- Problem is due to Outfitter
-	-- local FrameLevel = LFDQueueFrameRandom:GetFrameLevel();
-	-- LFDQueueFrameCooldownFrame:SetFrameLevel(FrameLevel + 1)
-	
 	hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
-		if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",UIParent,"CENTER"); end
+		if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",SpartanUI,"TOP",0,100); end
 	end);
 	hooksecurefunc("UIParent_ManageFramePositions",function()
-		updateBattlefieldMinimap();
-		if ( ArenaEnemyFrames ) then
-			ArenaEnemyFrames:ClearAllPoints();
-			ArenaEnemyFrames:SetPoint("RIGHT", UIParent, "RIGHT",0,40);
-		end
 		TutorialFrameAlertButton:SetParent(Minimap);
 		TutorialFrameAlertButton:ClearAllPoints();
 		TutorialFrameAlertButton:SetPoint("CENTER",Minimap,"TOP",-2,30);
 		CastingBarFrame:ClearAllPoints();
 		CastingBarFrame:SetPoint("BOTTOM",frame,"TOP",0,90);
 	end);
-	hooksecurefunc("ToggleBattlefieldMinimap",updateBattlefieldMinimap);
 	
 	RegisterStateDriver(frame, "visibility", "[petbattle] hide; show")
 
 	updateSpartanScale();
 	updateSpartanOffset();
+	updateSpartanXOffset();
 	updateSpartanViewport();
+	updateSpartanAlpha();
 	
 	party = addon:GetModule("PartyFrames","PartyFrames",true);
 	-- Fix CPU leak, use UpdateInterval
-	anchor.UpdateInterval = 0.5
+	anchor.UpdateInterval = 2
 	anchor.TimeSinceLastUpdate = 0
 	anchor:SetScript("OnUpdate",function(self,...)
 		local elapsed = select(1,...)
@@ -263,6 +288,7 @@ function module:OnEnable()
 			-- Count this be hooked in another way ... event CVar_UPDATE
 			updateSpartanScale();
 			updateSpartanOffset();
+			updateSpartanXOffset();
 			self.TimeSinceLastUpdate = 0
 		end
 	end);
@@ -309,11 +335,5 @@ function module:OnEnable()
 		
 		UIDropDownMenu_Initialize( VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, "MENU");
 	end
-	updateSpartanScale();
-	-- VEHICLE Exit button will need this
---	if (event == "UNIT_EXITED_VEHICLE") then
---		print(event)
---	end
---	self:RegisterEvent("UNIT_EXITED_VEHICLE", Update);
---	VehicleExit();
+	
 end

@@ -7,11 +7,16 @@ function addon:OnInitialize()
 		get = function(info) return DBMod.SpinCam.enable end,
 		set = function(info,val) DBMod.SpinCam.enable = val end
 	}
-	spartan.optionsSpinCam.args["range"] = {name="Spin Speed",type="range",order=5,width="full",
+	spartan.optionsSpinCam.args["speed"] = {name="Spin Speed",type="range",order=5,width="full",
 		min=1,max=230,step=1,
 		get = function(info) return DBMod.SpinCam.speed end,
 		set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.speed = val; end if SpinCamRunning then addon:SpinToggle("update") end end
 	}
+	-- spartan.optionsSpinCam.args["range"] = {name="Spin range",type="range",order=6,width="full",
+		-- min=15,max=24,step=.1,
+		-- get = function(info) return DBMod.SpinCam.range end,
+		-- set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.range = val; end if SpinCamRunning then addon:SpinToggle("update") end end
+	-- }
 	spartan.optionsSpinCam.args["spin"] = {name="Toggle Spin",type="execute",order=15,width="double",
 		desc = "You can also toggle spin by using the command /spin",
 		func = function(info,val) addon:SpinToggle(); end

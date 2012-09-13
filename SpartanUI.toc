@@ -6,6 +6,7 @@
 ## Former-Authors: Atriace, Beladona, Zilver
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
+## X-Curse-Packaged-Version: r12
 
 #@no-lib-strip@
 libs\LibStub\LibStub.lua

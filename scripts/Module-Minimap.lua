@@ -108,18 +108,20 @@ local createMinimapCoords = function()
 	map.UpdateInterval = 0.5
 	map.TimeSinceLastUpdate = 0
 	map:HookScript("OnUpdate", function(self,...)
-		local elapsed = select(1,...)
-		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-		if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-			-- Debug
---			print(self.TimeSinceLastUpdate)
-			updateButtons();
-			do -- update minimap coordinates
-				local x,y = GetPlayerMapPosition("player");
-				if (not x) or (not y) then return; end
-				map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
+		if DB.MiniMap then
+			local elapsed = select(1,...)
+			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
+			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
+				-- Debug
+	--			print(self.TimeSinceLastUpdate)
+				updateButtons();
+				do -- update minimap coordinates
+					local x,y = GetPlayerMapPosition("player");
+					if (not x) or (not y) then return; end
+					map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
+				end
+				self.TimeSinceLastUpdate = 0
 			end
-			self.TimeSinceLastUpdate = 0
 		end
 	end);
 	map:HookScript("OnEvent",function(self,event,...)
@@ -154,35 +156,13 @@ function module:OnInitialize()
 		name = "Minimap Settings",
 		desc = "configure Minimap settings",
 		type = "group", args = {
-			minimapbuttons = {
-				name = "Hide all minimap buttons",
-				type="toggle",
-				width="full",
-				get = function(info)
-					return DB.MiniMap.MapButtons;
-				end,
-				set = function(info,val)
-					if val == false then
-						DB.MiniMap.MapButtons = nil;
-					elseif (val == true) or (val == nil) then
-						DB.MiniMap.MapButtons = true;
-					end
-				end
+			minimapbuttons = {name = "Hide all minimap buttons", type="toggle", width="full",
+				get = function(info) return DB.MiniMap.MapButtons; end,
+				set = function(info,val) DB.MiniMap.MapButtons = val; end
 			},
-			minimapzoom = {
-				name = "Hide Zoom Buttons",
-				type="toggle",
-				width="full",
-				get = function(info)
-					return DB.MiniMap.MapZoomButtons;
-				end,
-				set = function(info,val)
-					if val == false then
-						DB.MiniMap.MapZoomButtons = nil;
-					elseif (val == true) or (val == nil) then
-						DB.MiniMap.MapZoomButtons = true;
-					end
-				end
+			minimapzoom = {name = "Hide Zoom Buttons", type="toggle", width="full",
+				get = function(info) return DB.MiniMap.MapZoomButtons; end,
+				set = function(info,val) DB.MiniMap.MapZoomButtons = val; end
 			}
 		}
 	}

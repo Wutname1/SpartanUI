@@ -12,9 +12,5 @@ libs\oUF\oUF.xml
 
 scripts\Global-Framework.xml
 scripts\Unit-PlayerFrame.lua
-scripts\Unit-PlayerPetFrame.lua
-scripts\Unit-TargetFrame.lua
-scripts\Unit-TargetTargetFrame.lua
-scripts\Unit-FocusFrame.lua
-scripts\Unit-FocusTargetFrame.lua
-scripts\Slash-Commands.lua
+scripts\Unit-FrameSpawn.lua
+scripts\Options.lua
