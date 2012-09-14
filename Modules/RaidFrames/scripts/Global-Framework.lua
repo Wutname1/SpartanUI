@@ -168,9 +168,9 @@ local CreatePartyFrame = function(self,unit)
 		artwork.bg:SetPoint("TOPLEFT",artwork,"TOPLEFT",-2,10);
 		artwork.bg:SetTexture(base_plate1);
 		
-		self.Portrait = artwork:CreateTexture(nil,"BORDER");
-		self.Portrait:SetWidth(55); self.Portrait:SetHeight(55);
-		self.Portrait:SetPoint("LEFT",self,"LEFT",15,0);
+		-- self.Portrait = artwork:CreateTexture(nil,"BORDER");
+		-- self.Portrait:SetWidth(55); self.Portrait:SetHeight(55);
+		-- self.Portrait:SetPoint("LEFT",self,"LEFT",15,0);
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -247,10 +247,10 @@ local CreatePartyFrame = function(self,unit)
 	do -- setup text and icons	
 		local ring = CreateFrame("Frame",nil,self);
 		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self.Portrait); ring:SetFrameLevel(3);
-		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
-		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-2);
-		ring.bg:SetTexture(base_ring);
+		ring:SetAllPoints(self); ring:SetFrameLevel(3);
+		-- ring.bg = ring:CreateTexture(nil,"BACKGROUND");
+		-- ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-2);
+		-- ring.bg:SetTexture(base_ring);
 		
 		self.Name = ring:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
@@ -262,24 +262,24 @@ local CreatePartyFrame = function(self,unit)
 		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
 		self.Level:SetWidth(40); self.Level:SetHeight(12);
 		self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("BOTTOM");
-		self.Level:SetPoint("CENTER",self.Portrait,"CENTER",-27,27);
+		self.Level:SetPoint("CENTER",self,"CENTER",-27,27);
 		self:Tag(self.Level, "[level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
 		self.SUI_ClassIcon:SetWidth(20); self.SUI_ClassIcon:SetHeight(20);
-		self.SUI_ClassIcon:SetPoint("CENTER",self.Portrait,"CENTER",23,24);
+		self.SUI_ClassIcon:SetPoint("CENTER",self,"CENTER",23,24);
 		
 		self.Leader = ring:CreateTexture(nil,"BORDER");
 		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
-		self.Leader:SetPoint("CENTER",self.Portrait,"TOP",-1,6);
+		self.Leader:SetPoint("CENTER",self,"TOP",-1,6);
 		
 		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
 		self.MasterLooter:SetWidth(18); self.MasterLooter:SetHeight(18);
-		self.MasterLooter:SetPoint("CENTER",self.Portrait,"LEFT",-10,0);
+		self.MasterLooter:SetPoint("CENTER",self,"LEFT",-10,0);
 		
 		self.PvP = ring:CreateTexture(nil,"BORDER");
 		self.PvP:SetWidth(50); self.PvP:SetHeight(50);
-		self.PvP:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",5,-10);
+		self.PvP:SetPoint("CENTER",self,"BOTTOMLEFT",5,-10);
 		
 		self.LFDRole = ring:CreateTexture(nil,"BORDER");
 		self.LFDRole:SetWidth(28); self.LFDRole:SetHeight(28);
@@ -288,10 +288,10 @@ local CreatePartyFrame = function(self,unit)
 		
 		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
 		self.RaidIcon:SetWidth(24); self.RaidIcon:SetHeight(24);
-		self.RaidIcon:SetPoint("CENTER",self.Portrait,"CENTER");
+		self.RaidIcon:SetPoint("CENTER",self,"CENTER");
 		
 		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline18");
-		self.StatusText:SetPoint("CENTER",self.Portrait,"CENTER");
+		self.StatusText:SetPoint("CENTER",self,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, '[afkdnd]');
 	end

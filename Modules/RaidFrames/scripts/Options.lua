@@ -11,7 +11,7 @@ function addon:UpdateAuraVisibility()
 end
 
 function addon:OnInitialize()
-	spartan.optionsPartyFrames.args["DisplayOpts"] = {name = "Display Options",type="group",order=1,
+	spartan.optionsRaidFrames.args["DisplayOpts"] = {name = "Display Options",type="group",order=1,
 		args = {
 			toggleraid =  {name = "Show party in raid", type = "toggle", order=1,
 				get = function(info) return DBMod.PartyFrames.showPartyInRaid; end,
@@ -38,7 +38,7 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	spartan.optionsPartyFrames.args["auras"] = { name = "Party Auras", type = "group", order = 2,
+	spartan.optionsRaidFrames.args["auras"] = { name = "Party Auras", type = "group", order = 2,
 		desc = "Aura settings", args = {
 			party = {name = "Display party auras", type = "toggle", 
 				get = function(info) return DBMod.PartyFrames.showAuras; end,
@@ -49,7 +49,7 @@ function addon:OnInitialize()
 			}
 		}
 	};
-	spartan.optionsPartyFrames.args["castbar"] = { name = "Party Castbar", type = "group", order = 3,
+	spartan.optionsRaidFrames.args["castbar"] = { name = "Party Castbar", type = "group", order = 3,
 		desc = "Party castbar settings", args = {
 			castbar = { name = "Fill Direction", type = "select", style="radio",
 				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
@@ -65,7 +65,7 @@ function addon:OnInitialize()
 		}
 	};
 
-	spartan.optionsPartyFrames.args["partyLock"] = {name = "Lock/Unlock Party frame position", type = "execute", width="double", order=11,
+	spartan.optionsRaidFrames.args["partyLock"] = {name = "Lock/Unlock Party frame position", type = "execute", width="double", order=11,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
@@ -80,7 +80,7 @@ function addon:OnInitialize()
 			end
 		end
 	};
-	spartan.optionsPartyFrames.args["partyLockReset"] = {name = "Reset Party poition", type = "execute", order=12,
+	spartan.optionsRaidFrames.args["partyLockReset"] = {name = "Reset Party poition", type = "execute", order=12,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
@@ -95,14 +95,14 @@ function addon:OnInitialize()
 		end
 	};
 	
-	spartan.optionsPartyFrames.args["FrameStyle"] = {name = "Frame Style", type = "select", order=.2,disabled=true,
+	spartan.optionsRaidFrames.args["FrameStyle"] = {name = "Frame Style", type = "select", order=.2,disabled=true,
 		values = {["large"]="Large",["medium"]="Medium",["small"]="Small"},
 		get = function(info) return DBMod.PartyFrames.FrameStyle; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.PartyFrames.FrameStyle = val; end
 		end
 	};
-	spartan.optionsPartyFrames.args["FramePreSets"] = {name = "Frame Pre-Sets", type = "select", order=.1,disabled=true,
+	spartan.optionsRaidFrames.args["FramePreSets"] = {name = "Frame Pre-Sets", type = "select", order=.1,disabled=true,
 		values = {["custom"]="Custom",["dps"]="DPS",["healer"]="Healer"},
 		get = function(info) return DBMod.PartyFrames.Presets; end,
 		set = function(info,val)

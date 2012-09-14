@@ -64,7 +64,7 @@ function module:OnInitialize()
 		text = '|cff33ff99SpartanUI Alpha '..CurseVersion..'|n|r|n|nWarning: Alpha version detected|n|nThank you for your help in testing SpartanUI. Please report any issues experienced.|n|nThis is an Alpha Build for 3.1.0|n|n',
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.AlphaWarning = SpartanVer
+			DBGlobal.AlphaWarning = CurseVersion
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -141,7 +141,6 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	DBGlobal.AlphaWarning = nil
 	if (not DBGlobal.Version) then
 		spartan:Print("Welcome to SpartanUI")
 		spartan.db:ResetProfile(false,true);

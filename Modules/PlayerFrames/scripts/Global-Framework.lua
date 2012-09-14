@@ -69,7 +69,6 @@ end
 local menu = function(self)
 	local unit = string.gsub(self.unit,"(.)",string.upper,1);
 	if (_G[unit..'FrameDropDown']) then
-		spartan:Print(unit..'FrameDropDown')
 		ToggleDropDownMenu(1, nil, _G[unit..'FrameDropDown'], 'cursor')
 	end
 end
