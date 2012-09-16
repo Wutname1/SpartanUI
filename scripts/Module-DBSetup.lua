@@ -133,6 +133,12 @@ function module:OnInitialize()
 					focustarget = {color="dynamic"},
 				}
 			end
+			if not DBMod.PartyFrames.display then
+				DBMod.PartyFrames.display = {};
+				DBMod.PartyFrames.display.pet = DBMod.PartyFrames.DisplayPets; spartan:Print("Pet Display DB converted");
+				DBMod.PartyFrames.display.target = true; spartan:Print("Party Target Enabled.");
+			end
+			if DBMod.PlayerFrames.focus.moved == nil then DBMod.PlayerFrames.focus.moved = false; spartan:Print("Focus Frame position reset"); end
 			if not spartan.db.char.Version then spartan:Print("Setup char DB"); spartan.db.char = DBdefault; spartan.db.char.Version = SpartanVer; end
 			if not spartan.db.realm.Version then spartan:Print("Setup realm DB"); spartan.db.realm = DBdefault; spartan.db.realm.Version = SpartanVer; end
 			if not spartan.db.class.Version then spartan:Print("Setup class DB"); spartan.db.class = DBdefault; spartan.db.class.Version = SpartanVer; end

@@ -12,7 +12,7 @@ addon.optionsFilmEffects = {name = "SpartanUI Film Effects", type = "group", arg
 --addon.ChangeLog = {name = "SpartanUI Change Log", type = "group", args = {}};
 
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
-local frameDefault = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large"}
+local frameDefault = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large"}
 
 DBdefault = {
 	SUIProper = {

@@ -13,4 +13,4 @@ libs\oUF\oUF.xml
 
 scripts\Global-Framework.xml
 scripts\Unit-PartyFrames.lua
-scripts\Slash-Commands.lua
+scripts\Options.lua

@@ -1489,7 +1489,7 @@ local CreateUnitFrame = function(self,unit)
 		self:EnableMouse(enable)
 		self:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.focusMoved = true;
+				DBMod.PlayerFrames.focus.moved = true;
 				self:SetMovable(true);
 				self:StartMoving();
 			end
@@ -1497,6 +1497,9 @@ local CreateUnitFrame = function(self,unit)
 		
 		self:SetScript("OnMouseUp",function(self,button)
 			self:StopMovingOrSizing();
+			local point,relativeTo,relativePoint,xOffset,yOffset = self:GetPoint(self:GetNumPoints())
+			DBMod.PlayerFrames.focus.xOffset = xOffset
+			DBMod.PlayerFrames.focus.yOffset = yOffset
 		end);
 		end
 	end

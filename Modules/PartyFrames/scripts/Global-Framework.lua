@@ -5,6 +5,7 @@ local colors = setmetatable({},{__index = oUF.colors});
 for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
 colors.health = {0/255,255/255,50/255};
 local base_plate1 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate1]]
+local base_plate2 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate2]]
 local base_plate4 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate4]]
 local base_ring = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_ring1]]
 
@@ -158,7 +159,7 @@ local OnCastbarUpdate = function(self,elapsed)
 end
 
 local CreatePartyFrame = function(self,unit)
-	self:SetWidth(250); self:SetHeight(80);
+	self:SetSize(250, 80);
 	do -- setup base artwork
 		local artwork = CreateFrame("Frame",nil,self);
 		artwork:SetFrameStrata("BACKGROUND");
@@ -169,7 +170,7 @@ local CreatePartyFrame = function(self,unit)
 		artwork.bg:SetTexture(base_plate1);
 		
 		self.Portrait = artwork:CreateTexture(nil,"BORDER");
-		self.Portrait:SetWidth(55); self.Portrait:SetHeight(55);
+		self.Portrait:SetSize(55, 55);
 		self.Portrait:SetPoint("LEFT",self,"LEFT",15,0);
 		
 		self.Threat = CreateFrame("Frame",nil,self);
@@ -179,16 +180,18 @@ local CreatePartyFrame = function(self,unit)
 		do -- cast bar
 			local cast = CreateFrame("StatusBar",nil,self);
 			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
-			cast:SetWidth(119); cast:SetHeight(16);
+			cast:SetSize(119, 16);
 			cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-24);
 			
-			cast.Text = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Text:SetWidth(110); cast.Text:SetHeight(11);
+			cast.Text = cast:CreateFontString();
+			spartan:FormatFont(cast.Text, 10, "Party")
+			cast.Text:SetSize(110, 11);
 			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("BOTTOM");
 			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-2,0);
 			
-			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Time:SetWidth(40); cast.Time:SetHeight(11);
+			cast.Time = cast:CreateFontString();
+			spartan:FormatFont(cast.Time, 10, "Party")
+			cast.Time:SetSize(40, 11);
 			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("BOTTOM");
 			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
 			
@@ -201,17 +204,19 @@ local CreatePartyFrame = function(self,unit)
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
-			health:SetWidth(121); health:SetHeight(15);
+			health:SetSize(121, 15);
 			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
 			
-			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetWidth(110); health.value:SetHeight(11);
+			health.value = health:CreateFontString();
+			spartan:FormatFont(health.value, 10, "Party")
+			health.value:SetSize(110, 11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
 			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
-			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.ratio:SetWidth(40); health.ratio:SetHeight(11);
+			health.ratio = health:CreateFontString();
+			spartan:FormatFont(health.ratio, 10, "Party")
+			health.ratio:SetSize(40, 11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
 			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
 			self:Tag(health.ratio, '[perhp]%')
@@ -225,16 +230,18 @@ local CreatePartyFrame = function(self,unit)
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
 			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
-			power:SetWidth(136); power:SetHeight(14);
+			power:SetSize(136, 14);
 			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
 			
-			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.value:SetWidth(110); power.value:SetHeight(11);
+			power.value = power:CreateFontString();
+			spartan:FormatFont(power.value, 10, "Party")
+			power.value:SetSize(110, 11);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("BOTTOM");
 			power.value:SetPoint("RIGHT",power,"RIGHT",-2,0);
 			
-			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.ratio:SetWidth(40); power.ratio:SetHeight(11);
+			power.ratio = power:CreateFontString();
+			spartan:FormatFont(power.ratio, 10, "Party")
+			power.ratio:SetSize(40, 11);
 			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
 			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
 			
@@ -254,50 +261,52 @@ local CreatePartyFrame = function(self,unit)
 		
 		self.Name = ring:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
-		self.Name:SetWidth(150); self.Name:SetHeight(12);
+		self.Name:SetSize(150, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-8);
 		self:Tag(self.Name, "[name]");
 		
-		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
-		self.Level:SetWidth(40); self.Level:SetHeight(12);
+		self.Level = ring:CreateFontString();
+		spartan:FormatFont(self.Level, 10, "Party")
+		self.Level:SetSize(40, 12);
 		self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("BOTTOM");
 		self.Level:SetPoint("CENTER",self.Portrait,"CENTER",-27,27);
 		self:Tag(self.Level, "[level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		self.SUI_ClassIcon:SetWidth(20); self.SUI_ClassIcon:SetHeight(20);
+		self.SUI_ClassIcon:SetSize(20, 20);
 		self.SUI_ClassIcon:SetPoint("CENTER",self.Portrait,"CENTER",23,24);
 		
 		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
+		self.Leader:SetSize(20, 20);
 		self.Leader:SetPoint("CENTER",self.Portrait,"TOP",-1,6);
 		
 		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetWidth(18); self.MasterLooter:SetHeight(18);
+		self.MasterLooter:SetSize(18, 18);
 		self.MasterLooter:SetPoint("CENTER",self.Portrait,"LEFT",-10,0);
 		
 		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetWidth(50); self.PvP:SetHeight(50);
+		self.PvP:SetSize(50, 50);
 		self.PvP:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",5,-10);
 		
 		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetWidth(28); self.LFDRole:SetHeight(28);
+		self.LFDRole:SetSize(28, 28);
 		self.LFDRole:SetPoint("CENTER",ring,"BOTTOM",-3,-10);
 		self.LFDRole:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
 		
 		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetWidth(24); self.RaidIcon:SetHeight(24);
+		self.RaidIcon:SetSize(24, 24);
 		self.RaidIcon:SetPoint("CENTER",self.Portrait,"CENTER");
 		
-		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline18");
+		self.StatusText = ring:CreateFontString();
+		spartan:FormatFont(self.StatusText, 18, "Party")
 		self.StatusText:SetPoint("CENTER",self.Portrait,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, '[afkdnd]');
 	end
 	do -- setup buffs and debuffs
 		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetWidth(17*11); self.Auras:SetHeight(17*1);
+		self.Auras:SetSize(17*11, 17);
 		self.Auras:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",-6,2);
 		self.Auras:SetFrameStrata("BACKGROUND");
 		self.Auras:SetFrameLevel(4);
@@ -314,58 +323,40 @@ local CreatePartyFrame = function(self,unit)
 	return self;
 end
 
-local CreatePetFrame = function(self,unit)
-	self:SetSize(173, 75);
+local CreateSubFrame = function(self,unit)
+	self:SetSize(150, 35);
 	do -- setup base artwork
-		local artwork = CreateFrame("Frame",nil,self);
-		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(0); artwork:SetAllPoints(self);
+		self.artwork = CreateFrame("Frame",nil,self);
+		self.artwork:SetFrameStrata("BACKGROUND");
+		self.artwork:SetFrameLevel(0.9); self.artwork:SetAllPoints(self);
 		
-		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
-		artwork.bg:SetSize(179, 128);
-		artwork.bg:SetTexture(base_plate1); artwork.bg:SetTexCoord(0.30078125,1,0,1);
-		artwork.bg:SetPoint("LEFT",artwork,"LEFT",-44,-22);
+		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
+		self.artwork.bg:SetAllPoints(self);
+		self.artwork.bg:SetTexture(base_plate2);
+		self.artwork.bg:SetTexCoord(.3,1,.01,.55);
 		
+		self.Threat = CreateFrame("Frame",nil,self);
+		self.Threat.Override = threat;
 	end
 	do -- setup status bars
-		do -- cast bar
-			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(1);
-			cast:SetSize(90, 15);
-			cast:SetPoint("LEFT",self,"LEFT",2,4);
-			
-			cast.Text = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Text:SetSize(120, 11);
-			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("BOTTOM");
-			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-2,0);
-			
-			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Time:SetSize(40, 11);
-			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("BOTTOM");
-			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
-			
-			self.Castbar = cast;
-			self.Castbar.OnUpdate = OnCastbarUpdate;
-			self.Castbar.PostCastStart = PostCastStart;
-			self.Castbar.PostChannelStart = PostChannelStart;
-			self.Castbar.PostCastStop = PostCastStop;
-		end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
-			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(0);
-			health:SetSize(108, 16);
-			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",-17,-4);
+			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(.95);
+			health:SetSize(88, 12);
+			health:SetPoint("BOTTOMLEFT",self.artwork.bg,"BOTTOMLEFT",11,2);
 			
-			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetSize(95, 11);
+			health.value = health:CreateFontString();
+			spartan:FormatFont(health.value, 10, "Party")
+			health.value:SetSize(80, 11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
-			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
+			health.value:SetPoint("RIGHT",health,"RIGHT",0,1);
 			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
 			
-			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			health.ratio = health:CreateFontString();
+			spartan:FormatFont(health.ratio, 10, "Party")
 			health.ratio:SetSize(40, 11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
-			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
+			health.ratio:SetPoint("LEFT",health,"RIGHT",4,0);
 			self:Tag(health.ratio, '[perhp]%')
 			
 			self.Health = health;
@@ -374,59 +365,15 @@ local CreatePetFrame = function(self,unit)
 			self.Health.colorHealth = true;
 			self.Health.colorSmooth = true;
 		end
-		do -- power bar
-			local power = CreateFrame("StatusBar",nil,self);
-			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(0);
-			power:SetSize(105, 14);
-			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
-			
-			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.value:SetSize(75, 11);
-			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("BOTTOM");
-			power.value:SetPoint("RIGHT",power,"RIGHT",-2,0);
-			
-			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.ratio:SetSize(40, 11);
-			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
-			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
-			
-			self.Power = power;
-			self.Power.colorPower = true;
-			self.Power.frequentUpdates = true;
-			self.Power.PostUpdate = PostUpdatePower;
-		end
 	end
 	do -- setup text and icons
-		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
-		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
-		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-2);
-		
-		self.Name = ring:CreateFontString();
+		self.Name = self:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
-		self.Name:SetSize(150, 12);
+		self.Name:SetSize(135, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
-		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",-30,-12);
+		self.Name:SetPoint("TOPRIGHT",self.artwork.bg,"TOPRIGHT",0,-4);
 		self:Tag(self.Name, "[level] [name]");
 	end
-	do -- setup buffs and debuffs
-		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetSize(17*9, 17*1);
-		self.Auras:SetPoint("LEFT",self,"BOTTOMLEFT",-10,-20);
-		self.Auras:SetFrameStrata("BACKGROUND");
-		self.Auras:SetFrameLevel(4);
-		-- settings
-		self.Auras.size = 16;
-		self.Auras.spacing = 1;
-		self.Auras.initialAnchor = "TOPLEFT";
-		self.Auras.gap = true; -- adds an empty spacer between buffs and debuffs
-		self.Auras.numBuffs = 6;
-		self.Auras.numDebuffs = 3;
-		
-		self.Auras.PostUpdate = PostUpdateAura;
-	end
-	self:SetScale(0.8);
-	self:RegisterEvent("UNIT_PET",petinfo);
 	return self;
 end
 
@@ -435,11 +382,35 @@ local CreateUnitFrame = function(self,unit)
 	self:SetScript("OnEnter", UnitFrame_OnEnter)
 	self:SetScript("OnLeave", UnitFrame_OnLeave)
 	self:RegisterForClicks("AnyDown");
---	self:SetAttribute("*type1", "target")
---	self:SetAttribute("*type2", "menu")
 	self.colors = colors;
 	self:SetClampedToScreen(true)
-	return (self:GetAttribute("unitsuffix") == "pet" and CreatePetFrame(self,unit)) or (CreatePartyFrame(self,unit));
+	
+	self:EnableMouse(enable)
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			party.mover:Show();
+			DBMod.PartyFrames.moved = true;
+			party:SetMovable(true);
+			party:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		party.mover:Hide();
+		party:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = party:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.PartyFrames.Anchors[k] = v
+		end
+	end);
+	
+	if (self:GetAttribute("unitsuffix") == "target") and (DBMod.PartyFrames.FrameStyle == "xlarge" or DBMod.PartyFrames.FrameStyle == "large") and DBMod.PartyFrames.display.target then
+		return CreateSubFrame(self,unit);
+	elseif (self:GetAttribute("unitsuffix") == "pet") and (DBMod.PartyFrames.FrameStyle == "xlarge" or DBMod.PartyFrames.FrameStyle == "large") and DBMod.PartyFrames.display.pet then
+		return CreateSubFrame(self,unit);
+	elseif (unit == "party") then
+		return CreatePartyFrame(self,unit);
+	end
 end
 
 oUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);

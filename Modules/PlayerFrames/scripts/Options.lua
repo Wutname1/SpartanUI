@@ -229,7 +229,7 @@ function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["resetfocus"] = {name = "Reset Focus location",type = "execute",order=1,
 		desc = "resets the potion to default",
 		func = function()
-			DBMod.PlayerFrames.focusMoved = false;
+			DBMod.PlayerFrames.focus.moved = false;
 			addon:UpdateFocusPosition();
 		end
 	};

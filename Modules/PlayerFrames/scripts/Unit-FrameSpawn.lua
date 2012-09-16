@@ -23,8 +23,9 @@ end
 
 do -- Setup Dynamic Position
 	function addon:UpdateFocusPosition()
-		if DBMod.PlayerFrames.focusMoved then
+		if DBMod.PlayerFrames.focus.moved then
 			addon.focus:SetMovable(true);
+			addon.focus:SetPoint("CENTER",nil,"CENTER",DBMod.PlayerFrames.focus.xOffset,DBMod.PlayerFrames.focus.yOffset);
 		else
 			addon.focus:SetMovable(false);
 			addon.focus:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",170,110);

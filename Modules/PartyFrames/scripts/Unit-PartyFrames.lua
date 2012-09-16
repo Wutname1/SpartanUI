@@ -4,7 +4,7 @@ local addon = spartan:GetModule("PartyFrames");
 oUF:SetActiveStyle("Spartan_PartyFrames");
 
 -- local party = oUF:SpawnHeader("SUI_PartyFrameHeader", nil, "party,solo",
-local party = oUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
+party = oUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 	"showRaid", false,
 	"showParty", true,
 	"showPlayer", true,
@@ -33,31 +33,6 @@ do -- scripts to make it movable
 	party.bg:SetAllPoints(party.mover);
 	party.bg:SetTexture(1,1,1,0.5);
 	
-	party.mover:SetScript("OnMouseDown",function()
-		party.isMoving = true;
-		DBMod.PartyFrames.partyMoved = true;
-		party:SetMovable(true);
-		party:StartMoving();
-	end);
-	party.mover:SetScript("OnMouseUp",function()
-		if party.isMoving then
-			party.isMoving = nil;
-			party:StopMovingOrSizing();
-			local Anchors = {}
-			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = party:GetPoint()
-			for k,v in pairs(Anchors) do
-				DBMod.PartyFrames.Anchors[k] = v
-			end
-			party:SetUserPlaced(false);
-		end
-	end);
-	party.mover:SetScript("OnHide",function()
-		party.isMoving = nil;
-		party:StopMovingOrSizing();
-		party:SetMovable(true);
-		party:SetUserPlaced(false);
-		party:SetMovable(false);
-	end);
 	party.mover:SetScript("OnEvent",function()
 		addon.locked = 1;
 		party.mover:Hide();
@@ -65,42 +40,16 @@ do -- scripts to make it movable
 	party.mover:RegisterEvent("VARIABLES_LOADED");
 	party.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
 	
-	addon.offset = 0;
-	function addon:updatePartyOffset() -- handles SpartanUI offset based on setting or fubar / titan
-		local fubar,titan,offset = 0,0;
-		for i = 1,4 do
-			if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
-				local bar = _G["FuBarFrame"..i];
-				local point = bar:GetPoint(1);
-				if point == "TOPLEFT" then fubar = fubar + bar:GetHeight(); end
-			end
-		end
-		if (_G["Titan_Bar__Display_Bar"] and TitanPanelGetVar("Bar_Show")) then
-			local PanelScale = TitanPanelGetVar("Scale") or 1
-			local bar = _G["Titan_Bar__Display_Bar"]
-			titan = titan + (PanelScale * bar:GetHeight());
-		end
-		if (_G["Titan_Bar__Display_Bar2"] and TitanPanelGetVar("Bar2_Show")) then
-			local PanelScale = TitanPanelGetVar("Scale") or 1
-			local bar = _G["Titan_Bar__Display_Bar2"]
-			titan = titan + (PanelScale * bar:GetHeight());
-		end
-		offset = max(fubar + titan,1);
-		return offset;
-	end
-	
 	function addon:UpdatePartyPosition()
-		-- Debug
---		print("update")
-		addon.offset = addon:updatePartyOffset()
-		if DBMod.PartyFrames.partyMoved then
+		addon.offset = DB.yoffset
+		if DBMod.PartyFrames.moved then
 			party:SetMovable(true);
 			party:SetUserPlaced(false);
 		else
 			party:SetMovable(false);
 		end
 		-- User Moved the PartyFrame, so we shouldn't be moving it
-		if not DBMod.PartyFrames.partyMoved then
+		if not DBMod.PartyFrames.moved then
 			party:ClearAllPoints();
 			-- SpartanUI_PlayerFrames are loaded
 			if spartan:GetModule("PlayerFrames",true) then
@@ -115,7 +64,7 @@ do -- scripts to make it movable
 				Anchors[k] = v
 			end
 			party:ClearAllPoints();
-			party:SetPoint(Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+			party:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 		end
 	end
 end
@@ -144,7 +93,7 @@ do -- hide party frame in raid, if option enabled
 			party:Hide();
 		end
 		
-		if ( addon.offset ~= addon:updatePartyOffset() ) then addon:UpdatePartyPosition() end
+		addon:UpdatePartyPosition()
 	end
 	
 	local partyWatch = CreateFrame("Frame");
