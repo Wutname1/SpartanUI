@@ -142,6 +142,13 @@ function module:OnInitialize()
 			if not spartan.db.char.Version then spartan:Print("Setup char DB"); spartan.db.char = DBdefault; spartan.db.char.Version = SpartanVer; end
 			if not spartan.db.realm.Version then spartan:Print("Setup realm DB"); spartan.db.realm = DBdefault; spartan.db.realm.Version = SpartanVer; end
 			if not spartan.db.class.Version then spartan:Print("Setup class DB"); spartan.db.class = DBdefault; spartan.db.class.Version = SpartanVer; end
+			if not DBMod.PartyFrames.Auras then DBMod.PartyFrames.Auras = {} end
+			if not DBMod.PartyFrames.Auras.NumBuffs then DBMod.PartyFrames.Auras.NumBuffs = 0 end
+			if not DBMod.PartyFrames.Auras.NumDebuffs then DBMod.PartyFrames.Auras.NumDebuffs = 10 end
+			if not DBMod.PartyFrames.Auras.size then DBMod.PartyFrames.Auras.size = 16 end
+			if not DBMod.PartyFrames.Auras.spacing then DBMod.PartyFrames.Auras.spacing = 1 end
+			if DBMod.PartyFrames.Auras.showType == nil then DBMod.PartyFrames.Auras.showType = true end
+			if DBMod.PartyFrames.Portrait == nil then DBMod.PartyFrames.Portrait = true end
 		end
 	end
 end

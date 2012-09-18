@@ -6,30 +6,30 @@
 	<!-- SUI_PartyMemberTemplate -->
 	<Button name="SUI_PartyMemberTemplate" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
 		<Frames>
-			<Button name="$parentPet" inherits="SecureUnitButtonTemplate">
-				<Anchors>
-					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
-						<Offset>
-							<AbsDimension x="-15" y="-17"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Attributes>
-					<Attribute name="unitsuffix" type="string" value="pet"/>
-					<Attribute name="useparent-unit" type="boolean" value="true"/>
-				</Attributes>
-			</Button>
-			
 			<Button name="$parentTarget" inherits="SecureUnitButtonTemplate" >
 				<Anchors>
-					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parent">
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent">
 						<Offset>
-							<AbsDimension x="-22" y="18"/>
+							<AbsDimension x="-25" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Attributes>
 					<Attribute name="unitsuffix" type="string" value="target"/>
+					<Attribute name="useparent-unit" type="boolean" value="true"/>
+				</Attributes>
+			</Button>
+			
+			<Button name="$parentPet" inherits="SecureUnitButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent">
+						<Offset>
+							<AbsDimension x="-15" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Attributes>
+					<Attribute name="unitsuffix" type="string" value="pet"/>
 					<Attribute name="useparent-unit" type="boolean" value="true"/>
 				</Attributes>
 			</Button>
