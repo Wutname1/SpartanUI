@@ -1,6 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:NewModule("PartyFrames");
---if (spartan:GetModule("PlayerFrames",true)) then return; end
 ----------------------------------------------------------------------------------------------------
 do -- ClassIcon as an oUF module
 	local ClassIconCoord = {
@@ -56,23 +55,8 @@ do -- AFK / DND status text, as an oUF module
 	end
 end
 
-do -- fix SET_FOCUS & CLEAR_FOCUS errors
-	for k,v in pairs(UnitPopupMenus) do
-		if k ~= "RAID" and k ~= "RAID_PLAYER" then
-			for x,y in pairs(UnitPopupMenus[k]) do
-				if y == "SET_FOCUS" then
-					table.remove(UnitPopupMenus[k],x)
-				elseif y == "CLEAR_FOCUS" then
-					table.remove(UnitPopupMenus[k],x)
-				end
-			end
-		end
-	end
-	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
-end
-
 do --Health Formatting Tags
--- Current Health Dynamic, as an oUF module
+-- Current Health Short, as an oUF module
 	oUF.Tags.Events['curhpshort'] = "UNIT_HEALTH";
 	oUF.Tags.Methods['curhpshort'] = function (unit)
 		local tmp = UnitHealth(unit);
@@ -87,7 +71,7 @@ do --Health Formatting Tags
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
--- Total Health Dynamic, as an oUF module
+-- Total Health Short, as an oUF module
 	oUF.Tags.Events['maxhpshort'] = "UNIT_HEALTH";
 	oUF.Tags.Methods['maxhpshort'] = function (unit)
 		local tmp = UnitHealthMax(unit);

@@ -1,4 +1,4 @@
- local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:NewModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 do -- ClassIcon as an oUF module
@@ -56,12 +56,28 @@ do -- AFK / DND status text, as an oUF module
 end
 
 do --Health Formatting Tags
+-- Current Health Short, as an oUF module
+	oUF.Tags.Events['curhpshort'] = "UNIT_HEALTH";
+	oUF.Tags.Methods['curhpshort'] = function (unit)
+		local tmp = UnitHealth(unit);
+		if tmp >= 1000000 then return addon:round(tmp/1000000, 0).."M"; end
+		if tmp >= 1000 then return addon:round(tmp/1000, 0).."K"; end
+		return addon:comma_value(tmp);
+	end
 -- Current Health Dynamic, as an oUF module
 	oUF.Tags.Events['curhpdynamic'] = "UNIT_HEALTH";
 	oUF.Tags.Methods['curhpdynamic'] = function (unit)
 		local tmp = UnitHealth(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
+	end
+-- Total Health Short, as an oUF module
+	oUF.Tags.Events['maxhpshort'] = "UNIT_HEALTH";
+	oUF.Tags.Methods['maxhpshort'] = function (unit)
+		local tmp = UnitHealthMax(unit);
+		if tmp >= 1000000 then return addon:round(tmp/1000000, 0).."M"; end
+		if tmp >= 1000 then return addon:round(tmp/1000, 0).."K"; end
+		return addon:comma_value(tmp);
 	end
 -- Total Health Dynamic, as an oUF module
 	oUF.Tags.Events['maxhpdynamic'] = "UNIT_HEALTH";

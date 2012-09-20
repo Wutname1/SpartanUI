@@ -25,7 +25,7 @@ end
 
 do -- scripts to make it movable
 	party.mover = CreateFrame("Frame");
-	party.mover:SetWidth(205); party.mover:SetHeight(332);
+	party.mover:SetSize(205, 332);
 	party.mover:SetPoint("TOPLEFT",party,"TOPLEFT");
 	party.mover:EnableMouse(true);
 	

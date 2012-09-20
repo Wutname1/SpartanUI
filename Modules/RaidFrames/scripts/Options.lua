@@ -3,10 +3,14 @@ local addon = spartan:GetModule("RaidFrames");
 ----------------------------------------------------------------------------------------------------
 function addon:UpdateAuraVisibility()
 	for i = 1,4 do
-		local pet = _G["SUI_PartyFrameHeaderUnitButton"..i.."Pet"];
-		local unit = _G["SUI_PartyFrameHeaderUnitButton"..i];
-		if pet and pet.Auras then pet.Auras:PostUpdate(); end
-		if unit and unit.Auras then unit.Auras:PostUpdate(); end
+		local unit = _G["SUI_RaidFrameHeaderUnitButton"..i];
+		if unit and unit.Auras then unit.Auras:PostUpdateDebuffs(); end
+	end
+end
+function addon:UpdateText()
+	for i = 1,40 do
+		local unit = _G["SUI_RaidFrameHeaderUnitButton"..i];
+		if unit then unit:TextUpdate(); end
 	end
 end
 
@@ -14,32 +18,26 @@ function addon:OnInitialize()
 	spartan.optionsRaidFrames.args["DisplayOpts"] = {name = "Display Options",type="group",order=1,
 		args = {
 			toggleraid =  {name = "Show party in raid", type = "toggle", order=1,
-				get = function(info) return DBMod.PartyFrames.showPartyInRaid; end,
-				set = function(info,val) DBMod.PartyFrames.showPartyInRaid = val; addon:UpdateParty("FORCE_UPDATE") end
+				get = function(info) return DBMod.PartyFrames.showRaid; end,
+				set = function(info,val) DBMod.PartyFrames.showRaid = val; end
 			},
-			toggleparty = {name = "Show while in party", type = "toggle", order = 2,
-				get = function(info) return DBMod.PartyFrames.showParty; end,
-				set = function(info,val) DBMod.PartyFrames.showParty = val; addon:UpdateParty("FORCE_UPDATE") end
+			
+			bar3 = {name="Text style",type="header",order=20},
+			healthtextstyle = {name="Health Text style",type="select",order=21,
+				desc = "Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed",
+				values = {["long"]="Long",["longfor"]="Long Formatted",["dynamic"]="Dynamic",["disabled"]="Disabled"},
+				get = function(info) return DBMod.RaidFrames.bars.health.textstyle; end,
+				set = function(info,val) DBMod.RaidFrames.bars.health.textstyle = val; addon:UpdateText(); end
 			},
-			toggleplayer = { name = "Display self in Party", type = "toggle", order=3,
-				get = function(info) return DBMod.PartyFrames.showPlayer; end,
-				set = function(info,val) DBMod.PartyFrames.showPlayer = val; addon:UpdateParty("FORCE_UPDATE"); end
-			},
-			togglesolo = {name = "Show party while solo", type = "toggle", order=4,
-				get = function(info) return DBMod.PartyFrames.showSolo; end,
-				set = function(info,val)
-					DBMod.PartyFrames.showSolo = val;
-					addon:UpdateParty("FORCE_UPDATE");
-				end
-			},
-			DisplayPets = {name = "Display Pets", type = "toggle", order=21,disabled=true,
-				get = function(info) return DBMod.PartyFrames.DisplayPets; end,
-				set = function(info,val) DBMod.PartyFrames.DisplayPets = val; end
+			healthtextmode = {name="Health Text mode",type="select",order=22,
+				values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
+				get = function(info) return DBMod.RaidFrames.bars.health.textmode; end,
+				set = function(info,val) DBMod.RaidFrames.bars.health.textmode = val; addon:UpdateText(); end
 			}
 		}
 	}
-	spartan.optionsRaidFrames.args["auras"] = { name = "Party Auras", type = "group", order = 2,
-		desc = "Aura settings", args = {
+	spartan.optionsRaidFrames.args["debuffs"] = { name = "Debuffs", type = "group", order = 2,
+		args = {
 			party = {name = "Display party auras", type = "toggle", 
 				get = function(info) return DBMod.PartyFrames.showAuras; end,
 				set = function(info,val)
@@ -49,47 +47,12 @@ function addon:OnInitialize()
 			}
 		}
 	};
-	spartan.optionsRaidFrames.args["castbar"] = { name = "Party Castbar", type = "group", order = 3,
-		desc = "Party castbar settings", args = {
-			castbar = { name = "Fill Direction", type = "select", style="radio",
-				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
-				get = function(info) return DBMod.PartyFrames.castbar; end,
-				set = function(info,val) DBMod.PartyFrames.castbar = val; end
-			},
-			castbartext = {
-				name = "Text style", type = "select", style="radio",
-				values = {[0]="Count up",[1]="Count down"},
-				get = function(info) return DBMod.PartyFrames.castbartext; end,
-				set = function(info,val) DBMod.PartyFrames.castbartext = val; end
-			}
-		}
-	};
-
-	spartan.optionsRaidFrames.args["partyLock"] = {name = "Lock/Unlock Party frame position", type = "execute", width="double", order=11,
+	spartan.optionsRaidFrames.args["partyLockReset"] = {name = "Reset Raid poition", type = "execute", order=12,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
 			else
-				if DBMod.PartyFrames.partyLock then
-					DBMod.PartyFrames.partyLock = false;
-					SUI_PartyFrameHeader.mover:Show();
-				else
-					DBMod.PartyFrames.partyLock = true;
-					SUI_PartyFrameHeader.mover:Hide();
-				end
-			end
-		end
-	};
-	spartan.optionsRaidFrames.args["partyLockReset"] = {name = "Reset Party poition", type = "execute", order=12,
-		func = function()
-			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
-			else
-				DBMod.PartyFrames.partyMoved = false;
-				DBMod.PartyFrames.partyLock = true;
-				SUI_PartyFrameHeader.mover:Hide();
-				SUI_PartyFrameHeader:SetMovable(true);
-				SUI_PartyFrameHeader:SetUserPlaced(false)
+				DBMod.RaidFrames.raidMoved = false;
 				addon:UpdatePartyPosition();
 			end
 		end
@@ -103,7 +66,8 @@ function addon:OnInitialize()
 		end
 	};
 	spartan.optionsRaidFrames.args["FramePreSets"] = {name = "Frame Pre-Sets", type = "select", order=.1,disabled=true,
-		values = {["custom"]="Custom",["dps"]="DPS",["healer"]="Healer"},
+		values = {["custom"]="Custom",["tank"]="Tank",["dps"]="DPS",["healer"]="Healer"},
+		desc="Tank: Smaller bars, aggro very noticible|n|nDPS:Smaller bars|n|nHealer: Large bars, draws attention to those with aggo.",
 		get = function(info) return DBMod.PartyFrames.Presets; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.PartyFrames.Presets = val; end

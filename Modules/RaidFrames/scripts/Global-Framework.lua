@@ -4,9 +4,55 @@ local addon = spartan:GetModule("RaidFrames");
 local colors = setmetatable({},{__index = oUF.colors});
 for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
 colors.health = {0/255,255/255,50/255};
-local base_plate1 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate1]]
-local base_plate4 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_plate4]]
-local base_ring = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_ring1]]
+local base_plate2 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_2_dual.blp]]
+local base_plate3 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_3_single.blp]]
+local base_ring = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_ring1.blp]]
+
+--	Formatting functions
+local TextFormat = function(text)
+	local textstyle = DBMod.RaidFrames.bars[text].textstyle
+	local textmode = DBMod.RaidFrames.bars[text].textmode
+	local a,m,t,z
+	if text == "mana" then z = "pp" else z = "hp" end
+	
+	-- textstyle
+	-- "Long: 			 Displays all numbers."
+	-- "Long Formatted: Displays all numbers with commas."
+	-- "Dynamic: 		 Abbriviates and formats as needed"
+	if textstyle == "long" then
+		a = "[cur"..z.."]";
+		m = "[missing"..z.."]";
+		t = "[max"..z.."]";
+	elseif textstyle == "longfor" then
+		a = "[cur"..z.."formatted]";
+		m = "[missing"..z.."formatted]";
+		t = "[max"..z.."formatted]";
+	elseif textstyle == "dynamic" then
+		a = "[cur"..z.."dynamic]";
+		m = "[missing"..z.."dynamic]";
+		t = "[max"..z.."dynamic]";
+	elseif textstyle == "disabled" then
+		return "";
+	end
+	-- textmode
+	-- [1]="Avaliable / Total",
+	-- [2]="(Missing) Avaliable / Total",
+	-- [3]="(Missing) Avaliable"
+	
+	if textmode == 1 then
+		return a .. " / " .. t
+	elseif textmode == 2 then
+		return "("..m..") "..a.." / "..t
+	elseif textmode == 3 then
+		return "("..m..") "..a
+	end
+end
+
+local PostUpdateText = function(self,unit)
+	self:Untag(self.Health.value)
+	self:Tag(self.Health.value, TextFormat("health"))
+	if self.Power then self:Untag(self.Power.value); self:Tag(self.Power.value, TextFormat("mana")); end
+end
 
 local menu = function(self)
 	if (not self.id) then self.id = self.unit:match"^.-(%d+)" end
@@ -20,14 +66,6 @@ local menu = function(self)
 		FriendsDropDown.id = self.id
 		FriendsDropDown.initialize = RaidFrameDropDown_Initialize
 		ToggleDropDownMenu(1, nil, FriendsDropDown, 'cursor')
-	end
-end
-
-local simple = function(val)
-	if (val >= 1e6) then -- 1 million
-		return ("%.1f m"):format(val/1e6);
-	else
-		return val
 	end
 end
 
@@ -51,382 +89,154 @@ local petinfo = function(self,event)
 	if self.Level then self.Level:UpdateTag(self.unit); end
 end
 
-local PostUpdateAura = function(self,unit)
-	if DBMod.PartyFrames.showAuras then
+local PostUpdateDebuffs = function(self,unit)
+	if DBMod.PartyFrames.showDebuffs then
 		self:Show();
 	else
 		self:Hide();
 	end
 end
 
-local PostUpdateHealth = function(bar, unit, min, max)
-	if(UnitIsDead(unit)) then
-		bar:SetValue(0);
-		bar.value:SetText"Dead"
-		bar.ratio:SetText""
-	elseif(UnitIsGhost(unit)) then
-		bar:SetValue(0)
-		bar.value:SetText"Ghost"
-		bar.ratio:SetText""
-	else
-		if ( unit:match('partypet') ) then
-			bar.value:SetFormattedText("%s", simple(min))
-		else
-			bar.value:SetFormattedText("%s / %s", min,max)
-		end
-		bar.ratio:SetFormattedText("%d%%",(min/max)*100);
-	end
-end
-
-local PostUpdatePower = function(bar, unit, min, max)
-	if (UnitIsDead(unit) or UnitIsGhost(unit) or not UnitIsConnected(unit) or max == 0) then
-		bar.value:SetText""
-		bar.ratio:SetText""
-	else
-		if ( unit:match('partypet') ) then
-			bar.value:SetFormattedText("%s", simple(min));
-		else
-			bar.value:SetFormattedText("%s / %s", min,max)
-		end
-		bar.ratio:SetFormattedText("%d%%",(min/max)*100);
-	end
-end
-
-local PostCastStop = function(self)
-	if self.Time then self.Time:SetTextColor(1,1,1); end
-end
-
-local PostCastStart = function(self,unit,name,rank,text,castid)
-	self:SetStatusBarColor(1,0.7,0);
-end
-
-local PostChannelStart = function(self,unit,name,rank,text,castid)
-	self:SetStatusBarColor(1,0.2,0.7);
-	-- self:SetStatusBarColor(0,1,0); --B3
-end
-
-local OnCastbarUpdate = function(self,elapsed)
-	if self.casting then
-		self.duration = self.duration + elapsed
-		if (self.duration >= self.max) then
-			self.casting = nil;
-			self:Hide();
-			if PostCastStop then PostCastStop(self:GetParent()); end
-			return;
-		end
-		if self.Time then
-			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			if DBMod.PartyFrames.castbartext == 1 then
-				self.Time:SetFormattedText("%.1f",self.max - self.duration);
-			else
-				self.Time:SetFormattedText("%.1f",self.duration);
-			end
-		end
-		if DBMod.PartyFrames.castbar == 1 then
-			self:SetValue(self.max-self.duration)
-		else
-			self:SetValue(self.duration)
-		end
-	elseif self.channeling then
-		self.duration = self.duration - elapsed;
-		if (self.duration <= 0) then
-			self.channeling = nil;
-			self:Hide();
-			if PostChannelStop then PostChannelStop(self:GetParent()); end
-			return;
-		end
-		if self.Time then
-			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			--self.Time:SetFormattedText("%.1f",self.max-self.duration);
-			if DBMod.PartyFrames.castbartext == 0 then
-				self.Time:SetFormattedText("%.1f",self.max-self.duration);
-			else
-				self.Time:SetFormattedText("%.1f",self.duration);
-			end
-		end
-		if DBMod.PartyFrames.castbar == 1 then
-			self:SetValue(self.duration)
-		else
-			self:SetValue(self.max-self.duration)
-		end
-	else
-		self.unitName = nil;
-		self.channeling = nil;
-		self:SetValue(1);
-		self:Hide();
-	end
-end
-
-local CreatePartyFrame = function(self,unit)
-	self:SetWidth(250); self:SetHeight(80);
+local CreateFrame = function(self,unit)
+	self:SetSize(140, 35);
 	do -- setup base artwork
-		local artwork = CreateFrame("Frame",nil,self);
-		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(1); artwork:SetAllPoints(self);
+		self.artwork = CreateFrame("Frame",nil,self);
+		self.artwork:SetFrameStrata("BACKGROUND");
+		self.artwork:SetFrameLevel(1); self.artwork:SetAllPoints(self);
 		
-		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
-		artwork.bg:SetPoint("TOPLEFT",artwork,"TOPLEFT",-2,10);
-		artwork.bg:SetTexture(base_plate1);
-		
-		-- self.Portrait = artwork:CreateTexture(nil,"BORDER");
-		-- self.Portrait:SetWidth(55); self.Portrait:SetHeight(55);
-		-- self.Portrait:SetPoint("LEFT",self,"LEFT",15,0);
+		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
+		self.artwork.bg:SetAllPoints(self);
+		self.artwork.bg:SetTexture(base_plate3);
+		self.artwork.bg:SetTexCoord(.3,.95,0.015,.56);
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
 	end
 	do -- setup status bars
-		do -- cast bar
-			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
-			cast:SetWidth(119); cast:SetHeight(16);
-			cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-24);
-			
-			cast.Text = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Text:SetWidth(110); cast.Text:SetHeight(11);
-			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("BOTTOM");
-			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-2,0);
-			
-			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Time:SetWidth(40); cast.Time:SetHeight(11);
-			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("BOTTOM");
-			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
-			
-			self.Castbar = cast;
-			self.Castbar.OnUpdate = OnCastbarUpdate;
-			self.Castbar.PostCastStart = PostCastStart;
-			self.Castbar.PostChannelStart = PostChannelStart;
-			self.Castbar.PostCastStop = PostCastStop;
-		end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
-			health:SetWidth(121); health:SetHeight(15);
-			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
+			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			health:SetSize(self:GetWidth()/1.5, 13);
+			health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-self:GetWidth()/2.9,-20);
 			
-			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetWidth(110); health.value:SetHeight(11);
-			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
+			health.value = health:CreateFontString();
+			spartan:FormatFont(health.value, 10, "Raid")
+			health.value:SetSize(health:GetWidth()/1.5, 11);
+			health.value:SetJustifyH("CENTER"); health.value:SetJustifyV("BOTTOM");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
-			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
-			
-			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.ratio:SetWidth(40); health.ratio:SetHeight(11);
-			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
-			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
-			self:Tag(health.ratio, '[perhp]%')
-			
-			self.Health = health;
-			self.Health.frequentUpdates = true;
-			self.Health.colorDisconnected = true;
-			self.Health.colorHealth = true;
-			self.Health.colorSmooth = true;
-		end
-		do -- power bar
-			local power = CreateFrame("StatusBar",nil,self);
-			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
-			power:SetWidth(136); power:SetHeight(14);
-			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
-			
-			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.value:SetWidth(110); power.value:SetHeight(11);
-			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("BOTTOM");
-			power.value:SetPoint("RIGHT",power,"RIGHT",-2,0);
-			
-			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.ratio:SetWidth(40); power.ratio:SetHeight(11);
-			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
-			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
-			
-			self.Power = power;
-			self.Power.colorPower = true;
-			self.Power.frequentUpdates = true;
-			self.Power.PostUpdate = PostUpdatePower;
-		end
-	end
-	do -- setup text and icons	
-		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self); ring:SetFrameLevel(3);
-		-- ring.bg = ring:CreateTexture(nil,"BACKGROUND");
-		-- ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-2);
-		-- ring.bg:SetTexture(base_ring);
-		
-		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 11, "Party")
-		self.Name:SetWidth(150); self.Name:SetHeight(12);
-		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
-		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-8);
-		self:Tag(self.Name, "[name]");
-		
-		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
-		self.Level:SetWidth(40); self.Level:SetHeight(12);
-		self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("BOTTOM");
-		self.Level:SetPoint("CENTER",self,"CENTER",-27,27);
-		self:Tag(self.Level, "[level]");
-		
-		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		self.SUI_ClassIcon:SetWidth(20); self.SUI_ClassIcon:SetHeight(20);
-		self.SUI_ClassIcon:SetPoint("CENTER",self,"CENTER",23,24);
-		
-		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
-		self.Leader:SetPoint("CENTER",self,"TOP",-1,6);
-		
-		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetWidth(18); self.MasterLooter:SetHeight(18);
-		self.MasterLooter:SetPoint("CENTER",self,"LEFT",-10,0);
-		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetWidth(50); self.PvP:SetHeight(50);
-		self.PvP:SetPoint("CENTER",self,"BOTTOMLEFT",5,-10);
-		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetWidth(28); self.LFDRole:SetHeight(28);
-		self.LFDRole:SetPoint("CENTER",ring,"BOTTOM",-3,-10);
-		self.LFDRole:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
-		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetWidth(24); self.RaidIcon:SetHeight(24);
-		self.RaidIcon:SetPoint("CENTER",self,"CENTER");
-		
-		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline18");
-		self.StatusText:SetPoint("CENTER",self,"CENTER");
-		self.StatusText:SetJustifyH("CENTER");
-		self:Tag(self.StatusText, '[afkdnd]');
-	end
-	do -- setup buffs and debuffs
-		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetWidth(17*11); self.Auras:SetHeight(17*1);
-		self.Auras:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",-6,2);
-		self.Auras:SetFrameStrata("BACKGROUND");
-		self.Auras:SetFrameLevel(4);
-		-- settings
-		self.Auras.size = 16;
-		self.Auras.spacing = 1;
-		self.Auras.initialAnchor = "TOPLEFT";
-		self.Auras.gap = true; -- adds an empty spacer between buffs and debuffs
-		self.Auras.numBuffs = 7;
-		self.Auras.numDebuffs = 4;
-		
-		self.Auras.PostUpdate = PostUpdateAura;
-	end
-	return self;
-end
-
-local CreatePetFrame = function(self,unit)
-	self:SetSize(173, 75);
-	do -- setup base artwork
-		local artwork = CreateFrame("Frame",nil,self);
-		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(0); artwork:SetAllPoints(self);
-		
-		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
-		artwork.bg:SetSize(179, 128);
-		artwork.bg:SetTexture(base_plate1); artwork.bg:SetTexCoord(0.30078125,1,0,1);
-		artwork.bg:SetPoint("LEFT",artwork,"LEFT",-44,-22);
-		
-	end
-	do -- setup status bars
-		do -- cast bar
-			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(1);
-			cast:SetSize(90, 15);
-			cast:SetPoint("LEFT",self,"LEFT",2,4);
-			
-			cast.Text = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Text:SetSize(120, 11);
-			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("BOTTOM");
-			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-2,0);
-			
-			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Time:SetSize(40, 11);
-			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("BOTTOM");
-			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
-			
-			self.Castbar = cast;
-			self.Castbar.OnUpdate = OnCastbarUpdate;
-			self.Castbar.PostCastStart = PostCastStart;
-			self.Castbar.PostChannelStart = PostChannelStart;
-			self.Castbar.PostCastStop = PostCastStop;
-		end
-		do -- health bar
-			local health = CreateFrame("StatusBar",nil,self);
-			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(0);
-			health:SetSize(108, 16);
-			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",-17,-4);
-			
-			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetSize(95, 11);
-			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
-			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
-			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
+			self:Tag(health.value, TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(40, 11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
-			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
+			health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
 			self:Tag(health.ratio, '[perhp]%')
+
+			local Background = health:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(health)
+			Background:SetTexture(1, 1, 1, .08)
 			
 			self.Health = health;
+			self.Health.bg = Background;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
 			self.Health.colorSmooth = true;
+			
+			-- Position and size
+			local myBars = CreateFrame('StatusBar', nil, self.Health)
+			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarColor(0, 1, 0.5, 0.45)
+
+			local otherBars = CreateFrame('StatusBar', nil, myBars)
+			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarColor(0, 0.5, 1, 0.35)
+
+			myBars:SetSize(150, 16)
+			otherBars:SetSize(150, 16)
+			
+			self.HealPrediction = {
+				myBar = myBars,
+				otherBar = otherBars,
+				maxOverflow = 3,
+			}
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
-			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(0);
-			power:SetSize(105, 14);
-			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
-			
-			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.value:SetSize(75, 11);
-			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("BOTTOM");
-			power.value:SetPoint("RIGHT",power,"RIGHT",-2,0);
-			
-			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.ratio:SetSize(40, 11);
-			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
-			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
+			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
+			power:SetSize(self.Health:GetWidth(), 3);
+			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-1);
 			
 			self.Power = power;
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
-			self.Power.PostUpdate = PostUpdatePower;
 		end
 	end
 	do -- setup text and icons
-		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
-		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
-		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-2);
-		
-		self.Name = ring:CreateFontString();
+		self.Name = self:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
-		self.Name:SetSize(150, 12);
+		self.Name:SetSize(self:GetWidth()/1.3, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
-		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",-30,-12);
-		self:Tag(self.Name, "[level] [name]");
-	end
-	do -- setup buffs and debuffs
-		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetSize(17*9, 17*1);
-		self.Auras:SetPoint("LEFT",self,"BOTTOMLEFT",-10,-20);
-		self.Auras:SetFrameStrata("BACKGROUND");
-		self.Auras:SetFrameLevel(4);
-		-- settings
-		self.Auras.size = 16;
-		self.Auras.spacing = 1;
-		self.Auras.initialAnchor = "TOPLEFT";
-		self.Auras.gap = true; -- adds an empty spacer between buffs and debuffs
-		self.Auras.numBuffs = 6;
-		self.Auras.numDebuffs = 3;
+		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-3);
+		self:Tag(self.Name, "[name]");
 		
-		self.Auras.PostUpdate = PostUpdateAura;
+		self.Leader = self:CreateTexture(nil,"BORDER");
+		self.Leader:SetSize(15, 15);
+		self.Leader:SetPoint("CENTER",self,"TOP",0,0);
+		
+		self.LFDRole = self:CreateTexture(nil,"BORDER");
+		self.LFDRole:SetSize(13, 13);
+		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
+		
+		self.RaidIcon = self:CreateTexture(nil,"ARTWORK");
+		self.RaidIcon:SetSize(24, 24);
+		self.RaidIcon:SetPoint("CENTER",self,"CENTER");
 	end
-	self:SetScale(0.8);
-	self:RegisterEvent("UNIT_PET",petinfo);
+	do -- setup debuffs
+		self.Debuffs = CreateFrame("Frame",nil,self);
+		self.Debuffs:SetWidth(17*11); self.Debuffs:SetHeight(17*1);
+		self.Debuffs:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",-6,2);
+		self.Debuffs:SetFrameStrata("BACKGROUND");
+		self.Debuffs:SetFrameLevel(4);
+		-- settings
+		self.Debuffs.size = 10;
+		self.Debuffs.spacing = 1;
+		self.Debuffs.showType = true;
+		self.Debuffs.initialAnchor = "BOTTOMRIGHT";
+		self.Debuffs.num = 5;
+		
+		self.Debuffs.PostUpdate = PostUpdateDebuffs;
+	end
+	do -- Threat, SpellRange, and Ready Check
+		self.Range = {
+			insideAlpha = 1,
+			outsideAlpha = 1/2,
+		}
+		
+		local Threat = self:CreateTexture(nil, 'OVERLAY')
+		Threat:SetSize(16, 16)
+		Threat:SetPoint("RIGHT", self,"RIGHT",0,0)
+		self.Threat = Threat
+
+		local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
+		ResurrectIcon:SetSize(25, 25)
+		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ResurrectIcon = ResurrectIcon
+
+		local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
+		ReadyCheck:SetSize(30, 30)
+		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ReadyCheck = ReadyCheck
+	   
+		-- self.Threat = CreateFrame("Frame",nil,self);
+		-- self.Threat.Override = threat;
+	end
+	self.TextUpdate = PostUpdateText;
 	return self;
 end
 
@@ -435,11 +245,29 @@ local CreateUnitFrame = function(self,unit)
 	self:SetScript("OnEnter", UnitFrame_OnEnter)
 	self:SetScript("OnLeave", UnitFrame_OnLeave)
 	self:RegisterForClicks("AnyDown");
---	self:SetAttribute("*type1", "target")
---	self:SetAttribute("*type2", "menu")
+	
+	self:EnableMouse(enable)
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			raid.mover:Show();
+			DBMod.RaidFrames.moved = true;
+			raid:SetMovable(true);
+			raid:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		raid.mover:Hide();
+		raid:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = raid:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.RaidFrames.Anchors[k] = v
+		end
+	end);
+	
 	self.colors = colors;
 	self:SetClampedToScreen(true)
-	return (self:GetAttribute("unitsuffix") == "pet" and CreatePetFrame(self,unit)) or (CreatePartyFrame(self,unit));
+	return CreateFrame(self,unit);
 end
 
-oUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);
+oUF:RegisterStyle("Spartan_RaidFrames", CreateUnitFrame);

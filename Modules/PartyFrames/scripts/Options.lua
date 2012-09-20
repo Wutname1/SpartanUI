@@ -1,16 +1,24 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
-function addon:UpdateAuraVisibility()
+function addon:UpdateAura()
 	for i = 1,4 do
 		local unit = _G["SUI_PartyFrameHeaderUnitButton"..i];
 		if unit and unit.Auras then unit.Auras:PostUpdate(); end
+	end
+end
+function addon:UpdateText()
+	for i = 1,4 do
+		local unit = _G["SUI_PartyFrameHeaderUnitButton"..i];
+		if unit then unit:TextUpdate(); end
 	end
 end
 
 function addon:OnInitialize()
 	spartan.optionsPartyFrames.args["DisplayOpts"] = {name="Display Options",type="group",order=1,
 		desc="Select when to show and when not to show your party",args = {
+		
+			bar1 = {name="When to show Party",type="header",order=0},
 			toggleraid =  {name="Show party in raid",type="toggle",order=1,
 				get = function(info) return DBMod.PartyFrames.showPartyInRaid; end,
 				set = function(info,val) DBMod.PartyFrames.showPartyInRaid = val; addon:UpdateParty("FORCE_UPDATE") end
@@ -30,22 +38,74 @@ function addon:OnInitialize()
 					addon:UpdateParty("FORCE_UPDATE");
 				end
 			},
-			DisplayPet = {name="Display Pets",type="toggle",order=21,
+			
+			bar2 = {name="Sub Frame Display",type="header",order=10},
+			DisplayPet = {name="Display Pets",type="toggle",order=11,
 				get = function(info) return DBMod.PartyFrames.display.pet; end,
 				set = function(info,val) DBMod.PartyFrames.display.pet = val; end
 			},
-			DisplayTarget = {name="Display Target",type="toggle",order=21,
+			DisplayTarget = {name="Display Target",type="toggle",order=12,
 				get = function(info) return DBMod.PartyFrames.display.target; end,
 				set = function(info,val) DBMod.PartyFrames.display.target = val; end
+			},
+		
+			bar3 = {name="Text style",type="header",order=20},
+			healthtextstyle = {name="Health Text style",type="select",order=21,
+				desc = "Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed",
+				values = {["long"]="Long",["longfor"]="Long Formatted",["dynamic"]="Dynamic",["disabled"]="Disabled"},
+				get = function(info) return DBMod.PartyFrames.bars.health.textstyle; end,
+				set = function(info,val) DBMod.PartyFrames.bars.health.textstyle = val; addon:UpdateText(); end
+			},
+			healthtextmode = {name="Health Text mode",type="select",order=22,
+				values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
+				get = function(info) return DBMod.PartyFrames.bars.health.textmode; end,
+				set = function(info,val) DBMod.PartyFrames.bars.health.textmode = val; addon:UpdateText(); end
+			},
+			manatextstyle = {name="Mana Text style",type="select",order=23,
+				desc = "Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed",
+				values = {["long"]="Long",["longfor"]="Long Formatted",["dynamic"]="Dynamic"},
+				get = function(info) return DBMod.PartyFrames.bars.mana.textstyle; end,
+				set = function(info,val) DBMod.PartyFrames.bars.mana.textstyle = val; addon:UpdateText(); end
+			},
+			manatextmode = {name="Mana Text mode",type="select",order=24,
+				values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
+				get = function(info) return DBMod.PartyFrames.bars.mana.textmode; end,
+				set = function(info,val) DBMod.PartyFrames.bars.mana.textmode = val; addon:UpdateText(); end
 			}
 		}
 	}
 	spartan.optionsPartyFrames.args["auras"] = {name="Buff & Debuffs",type="group",order=2,
 		args = {
-			party = {name="Display Buffs & Debuffs",type="toggle", 
+			display = {name="Display Buffs & Debuffs",type="toggle", order=1,
 				get = function(info) return DBMod.PartyFrames.showAuras; end,
-				set = function(info,val) DBMod.PartyFrames.showAuras = val; addon:UpdateAuraVisibility(); end
-			}
+				set = function(info,val) DBMod.PartyFrames.showAuras = val; addon:UpdateAura(); end
+			},
+			showType = {name="Show the Type",type="toggle", order=2,
+				get = function(info) return DBMod.PartyFrames.Auras.showType; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.showType = val; addon:UpdateAura(); end
+			},
+			numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+				min=0,max=50,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.NumBuffs; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.NumBuffs = val; addon:UpdateAura(); end
+			},
+			numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+				min=0,max=50,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.NumDebuffs; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.NumDebuffs = val; addon:UpdateAura(); end
+			},
+			size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+				min=0,max=60,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.size; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.size = val; addon:UpdateAura(); end
+			},
+			sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+			spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+				min=0,max=50,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.spacing; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.spacing = val; addon:UpdateAura(); end
+			},
+			
 		}
 	};
 	spartan.optionsPartyFrames.args["castbar"] = {name="Party Castbar",type="group",order=3,
@@ -77,7 +137,7 @@ function addon:OnInitialize()
 		end
 	};
 	spartan.optionsPartyFrames.args["FramePreSets"] = {name="Frame Pre-Sets",type="select",order=.1,
-		values = {["custom"]="Custom",["dps"]="DPS",["healer"]="Healer"},
+		values = {["custom"]="Custom",["tank"]="Tank",["dps"]="DPS",["healer"]="Healer"},
 		get = function(info) return DBMod.PartyFrames.Presets; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.PartyFrames.Presets = val; end

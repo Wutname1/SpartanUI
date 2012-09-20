@@ -9,6 +9,53 @@ local base_plate2 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_2_dual.b
 local base_plate3 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_3_single.blp]]
 local base_ring = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_ring1.blp]]
 
+--	Formatting functions
+local TextFormat = function(text)
+	local textstyle = DBMod.PartyFrames.bars[text].textstyle
+	local textmode = DBMod.PartyFrames.bars[text].textmode
+	local a,m,t,z
+	if text == "mana" then z = "pp" else z = "hp" end
+	
+	-- textstyle
+	-- "Long: 			 Displays all numbers."
+	-- "Long Formatted: Displays all numbers with commas."
+	-- "Dynamic: 		 Abbriviates and formats as needed"
+	if textstyle == "long" then
+		a = "[cur"..z.."]";
+		m = "[missing"..z.."]";
+		t = "[max"..z.."]";
+	elseif textstyle == "longfor" then
+		a = "[cur"..z.."formatted]";
+		m = "[missing"..z.."formatted]";
+		t = "[max"..z.."formatted]";
+	elseif textstyle == "dynamic" then
+		a = "[cur"..z.."dynamic]";
+		m = "[missing"..z.."dynamic]";
+		t = "[max"..z.."dynamic]";
+	elseif textstyle == "disabled" then
+		return "";
+	end
+	-- textmode
+	-- [1]="Avaliable / Total",
+	-- [2]="(Missing) Avaliable / Total",
+	-- [3]="(Missing) Avaliable"
+	
+	if textmode == 1 then
+		return a .. " / " .. t
+	elseif textmode == 2 then
+		return "("..m..") "..a.." / "..t
+	elseif textmode == 3 then
+		return "("..m..") "..a
+	end
+end
+
+local PostUpdateText = function(self,unit)
+	self:Untag(self.Health.value)
+	self:Tag(self.Health.value, TextFormat("health"))
+	if self.Power then self:Untag(self.Power.value) end
+	if self.Power then self:Tag(self.Power.value, TextFormat("mana")) end
+end
+
 local menu = function(self)
 	if (not self.id) then self.id = self.unit:match"^.-(%d+)" end
 	local unit = string.gsub(self.unit,"(.)",string.upper,1);
@@ -24,21 +71,12 @@ local menu = function(self)
 	end
 end
 
-local simple = function(val)
-	if (val >= 1e6) then -- 1 million
-		return ("%.1f m"):format(val/1e6);
-	else
-		return val
-	end
-end
-
 local threat = function(self,event,unit)
 	if (not self.Portrait) then return; end
 	if (not self.Portrait:IsObjectType("Texture")) then return; end
 	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	local status
 	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
---	print(unit..' '..status) -- Debug code
 	if (status and status > 0) then
 		local r,g,b = GetThreatStatusColor(status);
 		self.Portrait:SetVertexColor(r,g,b);
@@ -47,49 +85,16 @@ local threat = function(self,event,unit)
 	end
 end
 
-local petinfo = function(self,event)
-	if self.Name then self.Name:UpdateTag(self.unit); end
-	if self.Level then self.Level:UpdateTag(self.unit); end
-end
-
 local PostUpdateAura = function(self,unit)
 	if DBMod.PartyFrames.showAuras then
 		self:Show();
+		self.size = DBMod.PartyFrames.Auras.size;
+		self.spacing = DBMod.PartyFrames.Auras.spacing;
+		self.showType = DBMod.PartyFrames.Auras.showType;
+		self.numBuffs = DBMod.PartyFrames.Auras.NumBuffs;
+		self.numDebuffs = DBMod.PartyFrames.Auras.NumDebuffs;
 	else
 		self:Hide();
-	end
-end
-
-local PostUpdateHealth = function(bar, unit, min, max)
-	if(UnitIsDead(unit)) then
-		bar:SetValue(0);
-		bar.value:SetText"Dead"
-		bar.ratio:SetText""
-	elseif(UnitIsGhost(unit)) then
-		bar:SetValue(0)
-		bar.value:SetText"Ghost"
-		bar.ratio:SetText""
-	else
-		if ( unit:match('partypet') ) then
-			bar.value:SetFormattedText("%s", simple(min))
-		else
-			bar.value:SetFormattedText("%s / %s", min,max)
-		end
-		bar.ratio:SetFormattedText("%d%%",(min/max)*100);
-	end
-end
-
-local PostUpdatePower = function(bar, unit, min, max)
-	if (UnitIsDead(unit) or UnitIsGhost(unit) or not UnitIsConnected(unit) or max == 0) then
-		bar.value:SetText""
-		bar.ratio:SetText""
-	else
-		if ( unit:match('partypet') ) then
-			bar.value:SetFormattedText("%s", simple(min));
-		else
-			bar.value:SetFormattedText("%s / %s", min,max)
-		end
-		bar.ratio:SetFormattedText("%d%%",(min/max)*100);
 	end
 end
 
@@ -201,9 +206,6 @@ local CreatePartyFrame = function(self,unit)
 			self.Portrait:SetSize(55, 55);
 			self.Portrait:SetPoint("TOPLEFT",self,"TOPLEFT",15,-8);
 		end
-		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -235,6 +237,7 @@ local CreatePartyFrame = function(self,unit)
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
+			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			if DBMod.PartyFrames.FrameStyle == "large" then
 				health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
@@ -259,7 +262,7 @@ local CreatePartyFrame = function(self,unit)
 			end
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
-			self:Tag(health.value, '[curhpformatted]/[maxhpformatted]')
+			self:Tag(health.value, TextFormat("health"))
 			
 			health.ratio = health:CreateFontString();
 			spartan:FormatFont(health.ratio, 10, "Party")
@@ -273,6 +276,28 @@ local CreatePartyFrame = function(self,unit)
 			self.Health.colorDisconnected = true;
 			self.Health.colorHealth = true;
 			self.Health.colorSmooth = true;
+			
+			-- Position and size
+			local myBars = CreateFrame('StatusBar', nil, self.Health)
+			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
+
+			local otherBars = CreateFrame('StatusBar', nil, myBars)
+			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
+
+			myBars:SetSize(150, 16)
+			otherBars:SetSize(150, 16)
+			
+			self.HealPrediction = {
+				myBar = myBars,
+				otherBar = otherBars,
+				maxOverflow = 3,
+			}
 		end
 		do -- power bar
 		if DBMod.PartyFrames.FrameStyle == "large" or DBMod.PartyFrames.FrameStyle == "medium" then
@@ -294,17 +319,18 @@ local CreatePartyFrame = function(self,unit)
 			end
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("BOTTOM");
 			power.value:SetPoint("RIGHT",power,"RIGHT",-2,0);
+			self:Tag(power.value, TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString();
 			spartan:FormatFont(power.ratio, 10, "Party")
 			power.ratio:SetSize(40, 11);
 			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
 			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
+			self:Tag(power.ratio, '[perpp]%')
 			
 			self.Power = power;
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
-			self.Power.PostUpdate = PostUpdatePower;
 		end
 		end
 	end
@@ -390,6 +416,36 @@ local CreatePartyFrame = function(self,unit)
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
+	do --Threat, SpellRange, and Ready Check
+		self.Range = {
+			insideAlpha = 1,
+			outsideAlpha = 1/2,
+		}
+		
+		if DBMod.PartyFrames.Portrait then
+			self.Threat = CreateFrame("Frame",nil,self);
+			self.Threat.Override = threat;
+		else
+			local Threat = self:CreateTexture(nil, 'OVERLAY')
+			Threat:SetSize(16, 16)
+			Threat:SetPoint("RIGHT", self,"RIGHT",0,0)
+			self.Threat = Threat
+		end
+
+		local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
+		ResurrectIcon:SetSize(25, 25)
+		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ResurrectIcon = ResurrectIcon
+
+		local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
+		ReadyCheck:SetSize(30, 30)
+		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ReadyCheck = ReadyCheck
+	   
+		-- self.Threat = CreateFrame("Frame",nil,self);
+		-- self.Threat.Override = threat;
+	end
+	self.TextUpdate = PostUpdateText;
 	return self;
 end
 

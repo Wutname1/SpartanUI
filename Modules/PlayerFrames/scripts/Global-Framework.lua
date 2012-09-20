@@ -265,9 +265,9 @@ local CreatePlayerFrame = function(self,unit)
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
+			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			health:SetSize(150, 16);
 			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetSize(135, 11);
@@ -321,7 +321,7 @@ local CreatePlayerFrame = function(self,unit)
 			self.HealPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
-				maxOverflow = 4,
+				maxOverflow = 3,
 			}
 		end
 		do -- power bar

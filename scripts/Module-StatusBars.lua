@@ -334,18 +334,6 @@ function module:OnEnable()
 		xpframe:SetFrameStrata("BACKGROUND");
 		xpframe:SetFrameLevel(2);
 		module:SetXPColors();
-		
-	-- SUI_ExperienceBarFill:SetAlpha(0);
-	-- SUI_ExperienceBarFill:SetAlpha(0);
-	-- SUI_ExperienceBarFillGlow:SetAlpha(0);
-	-- SUI_ExperienceBarLeadGlow:SetAlpha(0);
-	-- SUI_ExperienceBar:SetAlpha(DB.alpha);
-	-- SUI_ExperienceBarBase:SetAlpha(DB.alpha);
-	-- SUI_ExperienceBarPlate:SetAlpha(DB.alpha);
-	-- xpframe:SetAlpha(DB.alpha);
-	-- SUI_ExperienceBarLead:SetAlpha((DB.alpha-.3));
-	-- SUI_ExperienceBarFill:SetAlpha(0);
-	
 	end
 	do -- reputation bar
 		repframe = CreateFrame("Frame","SUI_ReputationBar",SpartanUI,"SUI_StatusBars_RepTemplate");
