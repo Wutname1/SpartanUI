@@ -129,6 +129,12 @@ function module:OnInitialize()
 					mana = {textstyle="dynamic", textmode=1}
 				}
 			end
+			if not DBMod.PartyFrames.bars then 
+				DBMod.PartyFrames.bars = {
+					health = {textstyle="dynamic", textmode=1},
+					mana = {textstyle="dynamic", textmode=1}
+				}
+			end
 			if not DBMod.PartyFrames.display then
 				DBMod.PartyFrames.display = {};
 				DBMod.PartyFrames.display.pet = DBMod.PartyFrames.DisplayPets; spartan:Print("Pet Display DB converted");
