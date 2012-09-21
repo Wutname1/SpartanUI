@@ -98,7 +98,7 @@ DBdefault = {
 			vignette = nil
 		},
 		PartyFrames  = {
-			DisplayPets = true,
+			preset = "dps",
 			FrameStyle = "large",
 			showAuras = true,
 			partyLock = true,
@@ -109,6 +109,15 @@ DBdefault = {
 			showParty = true,
 			showPlayer = true,
 			showSolo = false,
+			Portrait = true,
+			scale=0,
+			Auras = {
+				NumBuffs = 0,
+				NumDebuffs = 10,
+				size = 16,
+				spacing = 1,
+				showType = true
+			},
 			Anchors = {
 				point = "TOPLEFT",
 				relativeTo = "UIParent",
@@ -116,6 +125,7 @@ DBdefault = {
 				xOfs = 10,
 				yOfs = -20
 			},
+			display = {pet = true,target=true,mana=true},
 		},
 		PlayerFrames = {
 			focusMoved = false,
@@ -130,24 +140,19 @@ DBdefault = {
 				mana = {textstyle = "longfor",textmode=1},
 				player = {color="dynamic"},
 				target = {color="reaction"},
-				targettarget = {color="dynamic"},
+				targettarget = {color="dynamic",style="large"},
 				pet = {color="happiness"},
 				focus = {color="dynamic"},
 				focustarget = {color="dynamic"},
 			}
 		},
 		RaidFrames  = {
-			DisplayPets = true,
+			mode = "name",
+			preset = "dps",
 			FrameStyle = "large",
 			showAuras = true,
-			raidLock = true,
-			raidMoved = false,
-			castbar = true,
-			castbartext = true,
-			hideRaid = false,
-			showParty = true,
-			showPlayer = true,
-			showSolo = false,
+			moved = false,
+			showRaid = true,
 			Anchors = {
 				point = "TOPLEFT",
 				relativeTo = "UIParent",
@@ -155,6 +160,11 @@ DBdefault = {
 				xOfs = 10,
 				yOfs = -20
 			},
+			bars = {
+				health = {textstyle="dynamic", textmode=1},
+				mana = {textstyle="dynamic", textmode=1}
+			},
+			debuffs = {display=true}
 		}
 	}
 }

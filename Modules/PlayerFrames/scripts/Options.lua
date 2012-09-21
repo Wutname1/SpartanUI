@@ -225,6 +225,18 @@ function addon:OnInitialize()
 			},
 		}
 	};
+	spartan.optionsPlayerFrames.args["bossarena"] = {name = "Boss & Arena frames",type = "group",order=5,
+		args = {
+			boss = { name = "Show Boss Frames", type = "toggle",order=1,disabled=true,
+				get = function(info) return DBMod.PlayerFrames.BossFrame.display; end,
+				set = function(info,val) DBMod.PlayerFrames.BossFrame.display = val; end
+			},
+			arena = { name = "Show Arena Frames", type = "toggle",order=20,disabled=true,
+				get = function(info) return DBMod.PlayerFrames.ArenaFrame.display; end,
+				set = function(info,val) DBMod.PlayerFrames.ArenaFrame.display = val; end
+			},
+		}
+	};
 	
 	spartan.optionsPlayerFrames.args["resetfocus"] = {name = "Reset Focus location",type = "execute",order=1,
 		desc = "resets the potion to default",

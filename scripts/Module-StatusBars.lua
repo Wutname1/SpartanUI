@@ -293,7 +293,7 @@ function module:OnEnable()
 			else
 				SUI_ExperienceBarFill:SetWidth((now/goal)*400);
 				rested = (rested/goal)*400;
-				if rested > 400 then rested = 400-((now/goal)*400); end
+				if (rested+SUI_ExperienceBarFill:GetWidth()) > 399 then rested = 400-SUI_ExperienceBarFill:GetWidth(); end
 				if rested == 0 then rested = .001 end
 				SUI_ExperienceBarLead:SetWidth(rested);
 			end

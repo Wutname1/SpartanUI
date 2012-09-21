@@ -123,43 +123,61 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.optionsPartyFrames.args["FrameStyle"] = {name="Frame Style",type="select",order=.2,
+	spartan.optionsPartyFrames.args["FramePreSets"] = {name="Frame Pre-Sets",type="select",order=1,
+		values = {["custom"]="Custom",["tank"]="Tank",["dps"]="DPS",["healer"]="Healer"},
+		get = function(info) return DBMod.PartyFrames.preset; end,
+		set = function(info,val)
+			DBMod.PartyFrames.preset = val;
+			if val == "tank" then
+				DBMod.PartyFrames.FrameStyle = "medium";
+				DBMod.PartyFrames.Portrait = true;
+			elseif val == "dps" then
+				DBMod.PartyFrames.FrameStyle = "xsmall";
+				DBMod.PartyFrames.Portrait = false;
+				DBMod.PartyFrames.showAuras = false;
+			elseif val == "healer" then
+				DBMod.PartyFrames.FrameStyle = "small";
+				DBMod.PartyFrames.Portrait = true;
+			end
+		end
+	};
+	spartan.optionsPartyFrames.args["FrameStyle"] = {name="Frame Style",type="select",order=2,
 		values = {["large"]="Castbar & Health & Mana",["medium"]="Health & Mana",["small"]="Health",["xsmall"]="Health Narrow"},
 		get = function(info) return DBMod.PartyFrames.FrameStyle; end,
 		set = function(info,val)
-			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.FrameStyle = val;
+			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.FrameStyle = val; DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.optionsPartyFrames.args["Portrait"] = {name="Display Portrait",type="toggle",order=.3,
+	spartan.optionsPartyFrames.args["mana"] = {name="Display Mana",type="toggle",order=2.5,
+		hidden = function(info)
+			if DBMod.PartyFrames.FrameStyle == "xsmall" or DBMod.PartyFrames.FrameStyle == "small" then return false; else return true; end
+		end,
+		get = function(info) return DBMod.PartyFrames.display.mana; end,
+		set = function(info,val)
+			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.display.mana = val; DBMod.PartyFrames.preset = "custom";
+		end
+	};
+	spartan.optionsPartyFrames.args["Portrait"] = {name="Display Portrait",type="toggle",order=3,
 		get = function(info) return DBMod.PartyFrames.Portrait; end,
 		set = function(info,val)
-			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.Portrait = val;
+			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.Portrait = val; DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.optionsPartyFrames.args["FramePreSets"] = {name="Frame Pre-Sets",type="select",order=.1,
-		values = {["custom"]="Custom",["tank"]="Tank",["dps"]="DPS",["healer"]="Healer"},
-		get = function(info) return DBMod.PartyFrames.Presets; end,
+	spartan.optionsPartyFrames.args["scale"] = {name = "Scale Size", type = "range", order=4,width="full",
+		step=.01,min = .01,max = 2,
+		get = function(info) return DBMod.PartyFrames.scale; end,
 		set = function(info,val)
-			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.PartyFrames.Presets = val; end
+			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.PartyFrames.scale = val; addon:UpdateParty("FORCE_UPDATE"); end
 		end
 	};
 
-	spartan.optionsPartyFrames.args["partyLockReset"] = {name="Reset Party poition",type="execute",order=12,
+	spartan.optionsPartyFrames.args["partyReset"] = {name="Reset Party poition",type="execute",order=12,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
 			else
 				DBMod.PartyFrames.moved = false;
 				addon:UpdatePartyPosition();
-			end
-		end
-	};
-	spartan.optionsPartyFrames.args["test"] = {name="test",type="execute",order=12,
-		func = function()
-			if (addon.party1:IsShown()) then
-				addon.party1:hide()
-			else
-				addon.party1:show()
 			end
 		end
 	};

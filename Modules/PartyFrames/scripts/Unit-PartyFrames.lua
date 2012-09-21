@@ -94,6 +94,7 @@ do -- hide party frame in raid, if option enabled
 		end
 		
 		addon:UpdatePartyPosition()
+		party:SetScale(DBMod.PartyFrames.scale);
 	end
 	
 	local partyWatch = CreateFrame("Frame");

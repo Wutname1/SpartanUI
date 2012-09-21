@@ -146,6 +146,14 @@ function module:OnInitialize()
 			if DBMod.PartyFrames.Auras.showType == nil then DBMod.PartyFrames.Auras.showType = true end
 			if DBMod.PartyFrames.Portrait == nil then DBMod.PartyFrames.Portrait = true end
 			if DBMod.RaidFrames.moved == nil then DBMod.RaidFrames.moved = false end
+			if not DBMod.RaidFrames.mode then DBMod.RaidFrames.mode = "name" end
+			if not DBMod.RaidFrames.scale or DBMod.RaidFrames.scale == 0 then DBMod.RaidFrames.scale = 1 end
+			if not DBMod.PartyFrames.scale or DBMod.PartyFrames.scale == 0 then DBMod.PartyFrames.scale = 1 end
+			if not DBMod.RaidFrames.preset then DBMod.RaidFrames.preset = "dps" end
+			if not DBMod.PlayerFrames.ArenaFrame then DBMod.PlayerFrames.ArenaFrame={display=false,moved=false,style="medium",scale=0,bars={textstyle="dynamic",textmode=1,color="class"}} end
+			if not DBMod.PlayerFrames.BossFrame then DBMod.PlayerFrames.BossFrame={display=false,moved=false,style="medium",scale=0,bars={textstyle="dynamic",textmode=1}} end
+			if not DBMod.RaidFrames.Auras then DBMod.RaidFrames.Auras={size=10,spacing=1,showType=true} end
+			if not DBMod.RaidFrames.showRaid then DBMod.RaidFrames.showRaid = true; end
 		end
 	end
 end

@@ -300,33 +300,36 @@ local CreatePartyFrame = function(self,unit)
 			}
 		end
 		do -- power bar
-		if DBMod.PartyFrames.FrameStyle == "large" or DBMod.PartyFrames.FrameStyle == "medium" then
+		if DBMod.PartyFrames.FrameStyle == "large" or DBMod.PartyFrames.FrameStyle == "medium" or DBMod.PartyFrames.display.mana == true then
 			local power = CreateFrame("StatusBar",nil,self);
 			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
 			
-			if DBMod.PartyFrames.Portrait then power:SetSize(123, 14); else power:SetSize(110, 14); end
+			if DBMod.PartyFrames.Portrait then power:SetSize(123, 14); else power:SetSize(self.Health:GetWidth(), 14); end
 			
-			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
 			
-			power.value = power:CreateFontString();
-			spartan:FormatFont(power.value, 10, "Party")
-			if DBMod.PartyFrames.FrameStyle == "large" then
-				power.value:SetSize(100, 11);
-			elseif DBMod.PartyFrames.FrameStyle == "small" then
-				power.value:SetSize(100, 22);
+			if DBMod.PartyFrames.FrameStyle ~= "small" and DBMod.PartyFrames.FrameStyle ~= "xsmall" then
+				power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
+				power.value = power:CreateFontString();
+				spartan:FormatFont(power.value, 10, "Party")
+				if DBMod.PartyFrames.FrameStyle == "large" then
+					power.value:SetSize(100, 11);
+				else
+					power.value:SetSize(100, 10);
+				end
+				power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("BOTTOM");
+				power.value:SetPoint("RIGHT",power,"RIGHT",-2,0);
+				self:Tag(power.value, TextFormat("mana"))
+				
+				power.ratio = power:CreateFontString();
+				spartan:FormatFont(power.ratio, 10, "Party")
+				power.ratio:SetSize(40, 11);
+				power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
+				power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
+				self:Tag(power.ratio, '[perpp]%')
 			else
-				power.value:SetSize(100, 10);
+				power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,0);
+				power:SetHeight(3);
 			end
-			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("BOTTOM");
-			power.value:SetPoint("RIGHT",power,"RIGHT",-2,0);
-			self:Tag(power.value, TextFormat("mana"))
-			
-			power.ratio = power:CreateFontString();
-			spartan:FormatFont(power.ratio, 10, "Party")
-			power.ratio:SetSize(40, 11);
-			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
-			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
-			self:Tag(power.ratio, '[perpp]%')
 			
 			self.Power = power;
 			self.Power.colorPower = true;
@@ -389,6 +392,7 @@ local CreatePartyFrame = function(self,unit)
 			self.SUI_ClassIcon:SetPoint("CENTER",self.Portrait,"CENTER",23,24);
 			self.Leader:SetPoint("CENTER",self.Portrait,"TOP",-1,6);
 			self.MasterLooter:SetPoint("CENTER",self.Portrait,"LEFT",-10,0);
+			self.LFDRole:SetPoint("CENTER",self.Portrait,"BOTTOM",0,-10);
 		else
 			ring:SetAllPoints(self); ring:SetFrameLevel(3);
 			self.SUI_ClassIcon:SetPoint("CENTER",self,"TOPLEFT",5,-5);
@@ -401,7 +405,7 @@ local CreatePartyFrame = function(self,unit)
 	end
 	do -- setup buffs and debuffs
 		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetSize(187, 17);
+		self.Auras:SetSize(self:GetWidth(), 17);
 		self.Auras:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",-3,-5);
 		self.Auras:SetFrameStrata("BACKGROUND");
 		self.Auras:SetFrameLevel(4);
@@ -415,6 +419,40 @@ local CreatePartyFrame = function(self,unit)
 		self.Auras.numDebuffs = DBMod.PartyFrames.Auras.NumDebuffs;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
+	end
+	do -- HoTs Display
+		local auras = {}
+		local class, classFileName = UnitClass("player");
+		local spellIDs ={}
+		if classFileName == "DRUID" then
+			spellIDs = {
+				774, -- Rejuvenation
+				94447, -- Lifebloom
+				48438, -- Wild Growth
+				8936, -- Regrowth
+			}
+		elseif classFileName == "PRIEST" then
+			spellIDs = {
+				139, -- Renew
+				17, -- sheild
+				33076, -- Prayer of Mending
+			}
+		end
+		auras.presentAlpha = 1
+		auras.onlyShowPresent = true
+		auras.PostCreateIcon = myCustomIconSkinnerFunction
+		-- Set any other AuraWatch settings
+		auras.icons = {}
+		for i, sid in pairs(spellIDs) do
+			local icon = CreateFrame("Frame", nil, self)
+			icon.spellID = sid
+			-- set the dimensions and positions
+			icon:SetSize(DBMod.PartyFrames.Auras.size, DBMod.PartyFrames.Auras.size)
+			icon:SetPoint("TOPRIGHT",self,"TOPRIGHT", (-icon:GetWidth()*i)-2, -2)
+			auras.icons[sid] = icon
+			-- Set any other AuraWatch icon settings
+		end
+		self.AuraWatch = auras
 	end
 	do --Threat, SpellRange, and Ready Check
 		self.Range = {

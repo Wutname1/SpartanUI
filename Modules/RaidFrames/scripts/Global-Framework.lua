@@ -92,13 +92,16 @@ end
 local PostUpdateDebuffs = function(self,unit)
 	if DBMod.PartyFrames.showDebuffs then
 		self:Show();
+		self.size = DBMod.RaidFrames.Auras.size;
+		self.spacing = DBMod.RaidFrames.Auras.spacing;
+		self.showType = DBMod.RaidFrames.Auras.showType;
 	else
 		self:Hide();
 	end
 end
 
 local CreateFrame = function(self,unit)
-	self:SetSize(140, 35);
+	self:SetSize(140, 35); -- Setup inital Size
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -107,31 +110,63 @@ local CreateFrame = function(self,unit)
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
 		self.artwork.bg:SetAllPoints(self);
 		self.artwork.bg:SetTexture(base_plate3);
-		self.artwork.bg:SetTexCoord(.3,.95,0.015,.56);
+		if DBMod.RaidFrames.FrameStyle == "large" then
+			self:SetSize(165, 48);
+			self.artwork.bg:SetTexCoord(.3,.95,0.015,.77);
+		elseif DBMod.RaidFrames.FrameStyle == "medium" then
+			self:SetSize(140, 35);
+			self.artwork.bg:SetTexCoord(.3,.95,0.015,.56);
+		elseif DBMod.RaidFrames.FrameStyle == "small" then
+			self:SetSize(90, 30);
+			self.artwork.bg:SetTexCoord(.3,.70,0.3,.7);
+		end
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		-- self.Threat = CreateFrame("Frame",nil,self);
+		-- self.Threat.Override = threat;
 	end
 	do -- setup status bars
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-			health:SetSize(self:GetWidth()/1.5, 13);
-			health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-self:GetWidth()/2.9,-20);
+			
+			
+			if DBMod.RaidFrames.FrameStyle == "large" then
+				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-19);
+				health:SetSize(110, 27);
+			elseif DBMod.RaidFrames.FrameStyle == "medium" then
+				health:SetSize(self:GetWidth()/1.5, 13);
+				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-self:GetWidth()/3,-20);
+			elseif DBMod.RaidFrames.FrameStyle == "small" then
+				health:SetSize(self:GetWidth(), self:GetHeight());
+				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,0);
+			end
 			
 			health.value = health:CreateFontString();
 			spartan:FormatFont(health.value, 10, "Raid")
-			health.value:SetSize(health:GetWidth()/1.5, 11);
 			health.value:SetJustifyH("CENTER"); health.value:SetJustifyV("BOTTOM");
-			health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
 			self:Tag(health.value, TextFormat("health"))
 			
-			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.ratio:SetSize(40, 11);
+			health.ratio = health:CreateFontString();
+			spartan:FormatFont(health.ratio, 10, "Raid")
+			health.ratio:SetSize(35, 11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
-			health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
 			self:Tag(health.ratio, '[perhp]%')
+			
+			if DBMod.RaidFrames.FrameStyle == "large" then
+				health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
+				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
+				health.value:SetSize(health:GetWidth()/1.1, 11);
+			elseif DBMod.RaidFrames.FrameStyle == "medium" then
+				health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
+				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
+				health.value:SetSize(health:GetWidth()/1.5, 11);
+			elseif DBMod.RaidFrames.FrameStyle == "small" then
+				health.ratio:SetPoint("BOTTOMRIGHT",health,"BOTTOMRIGHT",0,2);
+				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
+				health.value:SetSize(health:GetWidth()/1.5, 11);
+				health.value:Hide();
+			end
 
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
@@ -157,8 +192,8 @@ local CreateFrame = function(self,unit)
 			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.35)
 
-			myBars:SetSize(150, 16)
-			otherBars:SetSize(150, 16)
+			myBars:SetSize(150, health:GetHeight())
+			otherBars:SetSize(150, health:GetHeight())
 			
 			self.HealPrediction = {
 				myBar = myBars,
@@ -180,7 +215,7 @@ local CreateFrame = function(self,unit)
 	do -- setup text and icons
 		self.Name = self:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
-		self.Name:SetSize(self:GetWidth()/1.3, 12);
+		self.Name:SetSize(self:GetWidth()-40, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-3);
 		self:Tag(self.Name, "[name]");
@@ -204,13 +239,47 @@ local CreateFrame = function(self,unit)
 		self.Debuffs:SetFrameStrata("BACKGROUND");
 		self.Debuffs:SetFrameLevel(4);
 		-- settings
-		self.Debuffs.size = 10;
-		self.Debuffs.spacing = 1;
-		self.Debuffs.showType = true;
+		self.Debuffs.size = DBMod.RaidFrames.Auras.size;
+		self.Debuffs.spacing = DBMod.RaidFrames.Auras.spacing;
+		self.Debuffs.showType = DBMod.RaidFrames.Auras.showType;
 		self.Debuffs.initialAnchor = "BOTTOMRIGHT";
 		self.Debuffs.num = 5;
 		
 		self.Debuffs.PostUpdate = PostUpdateDebuffs;
+	end
+	do -- HoTs Display
+		local auras = {}
+		local class, classFileName = UnitClass("player");
+		local spellIDs ={}
+		if classFileName == "DRUID" then
+			spellIDs = {
+				774, -- Rejuvenation
+				94447, -- Lifebloom
+				48438, -- Wild Growth
+				8936, -- Regrowth
+			}
+		elseif classFileName == "PRIEST" then
+			spellIDs = {
+				139, -- Renew
+				17, -- sheild
+				33076, -- Prayer of Mending
+			}
+		end
+		auras.presentAlpha = 1
+		auras.onlyShowPresent = true
+		auras.PostCreateIcon = myCustomIconSkinnerFunction
+		-- Set any other AuraWatch settings
+		auras.icons = {}
+		for i, sid in pairs(spellIDs) do
+			local icon = CreateFrame("Frame", nil, self)
+			icon.spellID = sid
+			-- set the dimensions and positions
+			icon:SetSize(DBMod.RaidFrames.Auras.size, DBMod.RaidFrames.Auras.size)
+			icon:SetPoint("TOPRIGHT",self,"TOPRIGHT", (-icon:GetWidth()*i)-2, -2)
+			auras.icons[sid] = icon
+			-- Set any other AuraWatch icon settings
+		end
+		self.AuraWatch = auras
 	end
 	do -- Threat, SpellRange, and Ready Check
 		self.Range = {
