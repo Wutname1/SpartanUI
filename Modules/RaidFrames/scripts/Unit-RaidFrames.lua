@@ -3,7 +3,7 @@ local addon = spartan:GetModule("RaidFrames");
 ----------------------------------------------------------------------------------------------------
 oUF:SetActiveStyle("Spartan_RaidFrames");
 
-if DBMod.RaidFrames.mode == "name" then
+if DBMod.RaidFrames.mode == "group" then
 	raid = oUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
 		'showPlayer', true,
 		'showRaid', true,
@@ -13,12 +13,12 @@ if DBMod.RaidFrames.mode == "name" then
 		'yOffset', -5,
 		'point', 'TOP',
 		'groupFilter', '1,2,3,4,5,6,7,8',
-		'groupBy', 'ROLE',
+		'groupBy', 'GROUP',
 		'groupingOrder', '1,2,3,4,5,6,7,8',
 		'sortMethod', 'name',
-		'maxColumns', 8,
-		'unitsPerColumn', 5,
-		'columnSpacing', 5,
+		'maxColumns', DBMod.RaidFrames.maxColumns,
+		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
+		'columnSpacing', DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint', 'LEFT'
 	)
 else
@@ -34,9 +34,9 @@ else
 		'groupBy', 'ROLE',
 		'groupingOrder', '1,2,3,4,5,6,7,8',
 		'sortMethod', 'name',
-		'maxColumns', 8,
-		'unitsPerColumn', 5,
-		'columnSpacing', 5,
+		'maxColumns', DBMod.RaidFrames.maxColumns,
+		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
+		'columnSpacing', DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint', 'TOP'
 	)
 end

@@ -1,6 +1,7 @@
 local addon = LibStub("AceAddon-3.0"):NewAddon("SpartanUI","AceConsole-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
+SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 ----------------------------------------------------------------------------------------------------
 addon.optionsMain = {name = "SpartanUI Main", type = "group", args = {}};
 addon.optionsGeneral = {name = "SpartanUI General", type = "group", args = {}};
@@ -12,10 +13,11 @@ addon.optionsFilmEffects = {name = "SpartanUI Film Effects", type = "group", arg
 --addon.ChangeLog = {name = "SpartanUI Change Log", type = "group", args = {}};
 
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
-local frameDefault = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large"}
+local frameDefault = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=10,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=true}}
 
 DBdefault = {
 	SUIProper = {
+		Version = SpartanVer,
 		yoffset = 0,
 		xOffset = 0,
 		yoffsetAuto = true,
@@ -110,7 +112,7 @@ DBdefault = {
 			showPlayer = true,
 			showSolo = false,
 			Portrait = true,
-			scale=0,
+			scale=1,
 			Auras = {
 				NumBuffs = 0,
 				NumDebuffs = 10,
@@ -125,10 +127,12 @@ DBdefault = {
 				xOfs = 10,
 				yOfs = -20
 			},
+			bars = {health={textstyle="dynamic", textmode=1},mana={textstyle="dynamic", textmode=1}},
 			display = {pet = true,target=true,mana=true},
 		},
 		PlayerFrames = {
 			focusMoved = false,
+			global = frameDefault,
 			player = frameDefault,
 			target = frameDefault,
 			targettarget = frameDefault,
@@ -144,15 +148,20 @@ DBdefault = {
 				pet = {color="happiness"},
 				focus = {color="dynamic"},
 				focustarget = {color="dynamic"},
-			}
+			},
+			Castbar = {player=1,target=1,targettarget=1,pet=1,focus=1,text={player=1,target=1,targettarget=1,pet=1,focus=1}},
 		},
 		RaidFrames  = {
 			mode = "name",
 			preset = "dps",
-			FrameStyle = "large",
+			FrameStyle = "medium",
 			showAuras = true,
 			moved = false,
 			showRaid = true,
+			maxColumns = 8,
+			unitsPerColumn = 5,
+			columnSpacing = 5,
+			scale=1,
 			Anchors = {
 				point = "TOPLEFT",
 				relativeTo = "UIParent",
@@ -169,7 +178,7 @@ DBdefault = {
 	}
 }
 DBdefaults = {char = DBdefault,realm = DBdefault,class = DBdefault,profile = DBdefault}
-DBGlobals = { }
+DBGlobals = {Version = SpartanVer}
 
 function addon:ResetConfig()
 	addon.db:ResetProfile(false,true);
@@ -182,7 +191,6 @@ function addon:OnInitialize()
 	DBGlobal = addon.db.global
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
-	SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 	addon.Optionsprofile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
 	addon.optionsMain.args["version"] = {name = "SpartanUI Version: "..GetAddOnMetadata("SpartanUI", "Version"),order=0,type = "header"};
 	addon.optionsMain.args["reset"] = {name = "Reset Database",type = "execute",order=100,width="full",

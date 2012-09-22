@@ -60,12 +60,11 @@ function module:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
-	
 	-- DB Updates
 	if DBGlobal.Version then
 		if DB.Version == nil then -- DB Updates from 3.0.2 to 3.0.3 this variable was not set in 3.0.2
 			spartan:Print("DB updated from 3.0.2 settings")
-			unitlist = {player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
+			local unitlist = {player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
 			for k,v in pairs(unitlist) do
 				tmp = true;
 				if DBMod.PlayerFrames[k] == 0 then tmp = false end;
@@ -152,7 +151,7 @@ function module:OnInitialize()
 			if DBMod.PartyFrames.Auras.showType == nil then DBMod.PartyFrames.Auras.showType = true end
 			if DBMod.PartyFrames.Portrait == nil then DBMod.PartyFrames.Portrait = true end
 			if DBMod.RaidFrames.moved == nil then DBMod.RaidFrames.moved = false end
-			if not DBMod.RaidFrames.mode then DBMod.RaidFrames.mode = "name" end
+			DBMod.RaidFrames.mode = "group";
 			if not DBMod.RaidFrames.scale or DBMod.RaidFrames.scale == 0 then DBMod.RaidFrames.scale = 1 end
 			if not DBMod.PartyFrames.scale or DBMod.PartyFrames.scale == 0 then DBMod.PartyFrames.scale = 1 end
 			if not DBMod.RaidFrames.preset then DBMod.RaidFrames.preset = "dps" end
@@ -160,6 +159,21 @@ function module:OnInitialize()
 			if not DBMod.PlayerFrames.BossFrame then DBMod.PlayerFrames.BossFrame={display=false,moved=false,style="medium",scale=0,bars={textstyle="dynamic",textmode=1}} end
 			if not DBMod.RaidFrames.Auras then DBMod.RaidFrames.Auras={size=10,spacing=1,showType=true} end
 			if not DBMod.RaidFrames.showRaid then DBMod.RaidFrames.showRaid = true; end
+			if not DBMod.RaidFrames.maxColumns then DBMod.RaidFrames.maxColumns = 8; end
+			if not DBMod.RaidFrames.unitsPerColumn then DBMod.RaidFrames.unitsPerColumn = 5; end
+			if not DBMod.RaidFrames.columnSpacing then DBMod.RaidFrames.columnSpacing = 5; end
+			
+			local unitlist={player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
+			local Auras={NumBuffs = 10,NumDebuffs = 10,size = 16,spacing = 1,showType = true,onlyShowPlayer=true}
+			for k,v in pairs(unitlist) do
+				tmp = true;
+				if not DBMod.PlayerFrames[k].Auras then
+					spartan:Print("Updates Auras for "..k);
+					DBMod.PlayerFrames[k].Auras = Auras;
+					if k == "focus" or k == "focustarget" then DBMod.PlayerFrames[k].Auras.NumBuffs = 0; end
+				end;
+			end
+			if not DBMod.PlayerFrames.global then DBMod.PlayerFrames.global = {Auras = Auras}; end
 		end
 	end
 end
@@ -179,6 +193,8 @@ function module:OnEnable()
 	DBGlobal.Version = SpartanVer;
 	if (CurseVersion) then
 		if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
+			spartan:Print("Curse Version"..CurseVersion);
+			spartan:Print("Spartan Version"..SpartanVer);
 			StaticPopup_Show ("AlphaWarning")
 		end
 	end

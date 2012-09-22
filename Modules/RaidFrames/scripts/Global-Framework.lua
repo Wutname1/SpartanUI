@@ -215,7 +215,7 @@ local CreateFrame = function(self,unit)
 	do -- setup text and icons
 		self.Name = self:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
-		self.Name:SetSize(self:GetWidth()-40, 12);
+		self.Name:SetSize(self:GetWidth()-30, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-3);
 		self:Tag(self.Name, "[name]");
@@ -288,17 +288,17 @@ local CreateFrame = function(self,unit)
 		}
 		
 		local Threat = self:CreateTexture(nil, 'OVERLAY')
-		Threat:SetSize(16, 16)
+		Threat:SetSize(self:GetWidth()/1.4, self:GetWidth()/1.4)
 		Threat:SetPoint("RIGHT", self,"RIGHT",0,0)
 		self.Threat = Threat
 
 		local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
-		ResurrectIcon:SetSize(25, 25)
+		ResurrectIcon:SetSize(self:GetWidth()/1.4, self:GetWidth()/1.4)
 		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ResurrectIcon = ResurrectIcon
 
 		local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
-		ReadyCheck:SetSize(30, 30)
+		ReadyCheck:SetSize(self:GetWidth()/1.3, self:GetWidth()/1.3)
 		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ReadyCheck = ReadyCheck
 	   

@@ -121,6 +121,12 @@ local PostUpdateAura = function(self,unit)
 	if DBMod.PlayerFrames[unit] then
 		if DBMod.PlayerFrames[unit].AuraDisplay then
 			self:Show();
+			self.size = DBMod.PlayerFrames[unit].Auras.size;
+			self.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+			self.showType = DBMod.PlayerFrames[unit].Auras.showType;
+			self.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
+			self.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+			self.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
 		else
 			self:Hide();
 		end
@@ -413,13 +419,16 @@ local CreatePlayerFrame = function(self,unit)
 		self.Auras:SetFrameStrata("BACKGROUND");
 		self.Auras:SetFrameLevel(4);
 		-- settings
-		self.Auras.size = 20; self.Auras.spacing = 1;
 		self.Auras.initialAnchor = "BOTTOMLEFT";
 		self.Auras["growth-x"] = "RIGHT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = true;
-		self.Auras.numBuffs = 10;
-		self.Auras.numDebuffs = 10;
+		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
+		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
@@ -636,15 +645,16 @@ local CreateTargetFrame = function(self,unit)
 		self.Auras:SetFrameStrata("BACKGROUND");
 		self.Auras:SetFrameLevel(5);
 		-- settings
-		self.Auras.size = 20; self.Auras.spacing = 1;
 		self.Auras.initialAnchor = "BOTTOMRIGHT";
 		self.Auras["growth-x"] = "LEFT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = true;
-		self.Auras.numBuffs = 10;
-		self.Auras.numDebuffs = 10;
-		if DBMod.PlayerFrames.target.Debuffs == "self" then self.Auras.onlyShowPlayer = true; end
-		--self.Debuffs.onlyShowPlayer = true;
+		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
+		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
@@ -828,14 +838,16 @@ local CreatePetFrame = function(self,unit)
 		self.Auras:SetFrameStrata("BACKGROUND");
 		self.Auras:SetFrameLevel(4);
 		-- settings
-		self.Auras.size = 16;
-		self.Auras.spacing = 1;
 		self.Auras.initialAnchor = "BOTTOMLEFT";
 		self.Auras["growth-x"] = "RIGHT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = true;
-		self.Auras.numBuffs = 8;
-		self.Auras.numDebuffs = 3;
+		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
+		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
@@ -1013,24 +1025,6 @@ local CreateToTFrame = function(self,unit)
 			self:Tag(self.StatusText, "[afkdnd]");
 
 		end
-		do -- setup buffs and debuffs
-			self.Auras = CreateFrame("Frame",nil,self);
-			self.Auras:SetSize(170, 16);
-			self.Auras:SetPoint("BOTTOM",self,"TOP",-10,0);
-			self.Auras:SetFrameStrata("BACKGROUND");
-			self.Auras:SetFrameLevel(4);
-			-- settings
-			self.Auras.size = 16;
-			self.Auras.spacing = 1;
-			self.Auras.initialAnchor = "BOTTOMRIGHT";
-			self.Auras["growth-x"] = "LEFT";
-			self.Auras["growth-y"] = "UP";
-			self.Auras.gap = false;
-			self.Auras.numBuffs = 8;
-			self.Auras.numDebuffs = 3;
-			
-			self.Auras.PostUpdate = PostUpdateAura;
-		end
 		self.TextUpdate = PostUpdateText;
 		self.ColorUpdate = PostUpdateColor;
 	end
@@ -1179,24 +1173,6 @@ local CreateToTFrame = function(self,unit)
 			self.PvP:SetWidth(40); self.PvP:SetHeight(40);
 			self.PvP:SetPoint("LEFT",self,"RIGHT",-5,24);
 		end
-		do -- setup buffs and debuffs
-			self.Auras = CreateFrame("Frame",nil,self);
-			self.Auras:SetSize(160, 16);
-			self.Auras:SetPoint("BOTTOM",self,"TOP",-20,1);
-			self.Auras:SetFrameStrata("BACKGROUND");
-			self.Auras:SetFrameLevel(4);
-			-- settings
-			self.Auras.size = 16;
-			self.Auras.spacing = 1;
-			self.Auras.initialAnchor = "BOTTOMRIGHT";
-			self.Auras["growth-x"] = "LEFT";
-			self.Auras["growth-y"] = "UP";
-			self.Auras.gap = false;
-			self.Auras.numBuffs = 8;
-			self.Auras.numDebuffs = 3;
-			
-			self.Auras.PostUpdate = PostUpdateAura;
-		end
 		self.TextUpdate = PostUpdateText;
 		self.ColorUpdate = PostUpdateColor;
 	end
@@ -1300,27 +1276,29 @@ local CreateToTFrame = function(self,unit)
 			self.PvP:SetSize(30, 30);
 			self.PvP:SetPoint("RIGHT",self,"RIGHT",0,20);
 		end
-		do -- setup buffs and debuffs
-			self.Auras = CreateFrame("Frame",nil,self);
-			self.Auras:SetSize(170, 16);
-			self.Auras:SetPoint("BOTTOM",self,"TOP",-10,0);
-			self.Auras:SetFrameStrata("BACKGROUND");
-			self.Auras:SetFrameLevel(4);
-			-- settings
-			self.Auras.size = 16;
-			self.Auras.spacing = 1;
-			self.Auras.initialAnchor = "BOTTOMRIGHT";
-			self.Auras["growth-x"] = "LEFT";
-			self.Auras["growth-y"] = "UP";
-			self.Auras.gap = false;
-			self.Auras.numBuffs = 8;
-			self.Auras.numDebuffs = 3;
-			
-			self.Auras.PostUpdate = PostUpdateAura;
-		end
 		self.TextUpdate = PostUpdateText;
 		self.ColorUpdate = PostUpdateColor;
 	end
+	end
+	do -- setup buffs and debuffs
+		self.Auras = CreateFrame("Frame",nil,self);
+		self.Auras:SetSize(self:GetWidth()/1.3, 16);
+		self.Auras:SetPoint("BOTTOM",self,"TOP",-10,0);
+		self.Auras:SetFrameStrata("BACKGROUND");
+		self.Auras:SetFrameLevel(4);
+		-- settings
+		self.Auras.initialAnchor = "BOTTOMRIGHT";
+		self.Auras["growth-x"] = "LEFT";
+		self.Auras["growth-y"] = "UP";
+		self.Auras.gap = false;
+		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
+		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+		
+		self.Auras.PostUpdate = PostUpdateAura;
 	end
 	return self;
 end
@@ -1458,14 +1436,16 @@ local CreateFocusFrame = function(self,unit)
 		self.Auras:SetFrameStrata("BACKGROUND");
 		self.Auras:SetFrameLevel(4);
 		-- settings
-		self.Auras.size = 15;
-		self.Auras.spacing = 1;
 		self.Auras.initialAnchor = "BOTTOMLEFT";
 		self.Auras["growth-x"] = "RIGHT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = true;
-		self.Auras.numBuffs = 0;
-		self.Auras.numDebuffs = 10;
+		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
+		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end

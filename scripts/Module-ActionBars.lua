@@ -58,8 +58,8 @@ local SetupBartender = function()
 			PetBar		= {	enabled = true, padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=5,	y=-6,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
 			StanceBar	= {	enabled = true,	padding = 1, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-605,	y=-2,	scale = 0.85,	growHorizontal="LEFT"},		rows = 1},
 			MultiCast	= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
-			Vehicle		= {	enabled = true,	padding = 3,		position = {point = "LEFT",			parent = "SUI_ActionBarPlate",	x=364,	y=-1,	scale = 0.85}},
-			ExtraActionBar = {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,y=240}},
+			Vehicle		= {	enabled = true,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
+			ExtraActionBar = {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
 			BlizzardArt	= {	enabled = false,	},
 		};
 	
@@ -119,7 +119,7 @@ local SetupBartender = function()
 		if (Bartender4.db:GetCurrentProfile() == standard) or (Bartender4.db:GetCurrentProfile() == newtest) then
 			if Bartender4.Locked then return; end
 			addon:Print("The ability to unlock your bars is disabled when using the SpartanUI Default profile in Bartender4. Please change profiles to enable this functionality.");
-			--Bartender4:Lock();
+			Bartender4:Lock();
 		end
 	end);
 end;

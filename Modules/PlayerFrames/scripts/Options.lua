@@ -1,15 +1,8 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
-local default = {player = 0,target = 1,targettarget = 0,pet = 1,focus = 0,focustarget=0};
-setmetatable(DBMod.PlayerFrames,{__index = default});
-
-DBMod.PlayerFrames.Castbar = DBMod.PlayerFrames.Castbar or {};
 local Units = {[1]="player",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="pet"}
-local castbardefault = { player = 1,target = 1,targettarget = 1,pet = 1,focus = 1, text = { player = 1,target = 1,targettarget = 1,pet = 1,focus = 1 } };
-for k,v in pairs(castbardefault) do if not DBMod.PlayerFrames.Castbar[k] then DBMod.PlayerFrames.Castbar[k] = v end end
-setmetatable(DBMod.PlayerFrames.Castbar,{__index = castbardefault});
--- /spartanui castbar player
+function addon:UpdateAura() for k,v in pairs(Units) do addon[v].Auras:PostUpdate(v); end end
 
 function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["FrameStyle"] = {name="Frame Style",type="group",order=1,
@@ -126,37 +119,296 @@ function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,
 		desc = "Buff & Debuff display settings",
 		args = {
-			player = {name = "Display player buffs",type = "toggle",order=1,
+			header0 = {name="Buffs & DeBuffs to Display",type="header",order=0},
+			dplayer = {name = "Player",type = "toggle",order=1,
 				get = function(info) return DBMod.PlayerFrames.player.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.player.AuraDisplay = val; addon.player.Auras:PostUpdate("player"); end
 			},
-			target = {name = "Display target buffs",type = "toggle",order=2,
+			dtarget = {name = "Target",type = "toggle",order=2,
 				get = function(info) return DBMod.PlayerFrames.target.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.target.AuraDisplay = val; addon.target.Auras:PostUpdate("target"); end
 			},
-			targettarget = {name = "Display target of target buffs",type = "toggle",order=3,
+			dtargettarget = {name = "Target of Target",type = "toggle",order=3,
 				get = function(info) return DBMod.PlayerFrames.targettarget.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.targettarget.AuraDisplay = val; addon.targettarget.Auras:PostUpdate("targettarget"); end
 			},
-			pet = {name = "Display pet buffs",type = "toggle",order=4,
+			dpet = {name = "Pet",type = "toggle",order=4,
 				get = function(info) return DBMod.PlayerFrames.pet.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.pet.AuraDisplay = val; addon.pet.Auras:PostUpdate("pet"); end
 			},
-			focus = {name = "Display focus buffs",type = "toggle",order=5,
+			dfocus = {name = "Focus",type = "toggle",order=5,
 				get = function(info) return DBMod.PlayerFrames.focus.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.focus.AuraDisplay = val; addon.focus.Auras:PostUpdate("focus"); end
 			},
-			focustarget = {name = "Display focus target buffs",type = "toggle",order=6,
+			dfocustarget = {name = "Focus target",type = "toggle",order=6,
 				get = function(info) return DBMod.PlayerFrames.focustarget.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.focustarget.AuraDisplay = val; addon.focustarget.Auras:PostUpdate("focustarget"); end
 			},
+			
 			header2 = {name="Buff & Debuff Display Settings",type="header",order=20},
-			header3 = {name="This will be expanded more in 3.1.0",type="header",order=20.1},
 			TargetAuras = {name="Target display style",type="select",order=22,
 				values = {["all"]="Display All",["self"]="Applied by you"},
 				get = function(info) return DBMod.PlayerFrames.target.Debuffs end,
 				set = function(info,val) DBMod.PlayerFrames.target.Debuffs = val; if DBMod.PlayerFrames.target.Debuffs then addon.target.Auras.onlyShowPlayer = true; else DBMod.PlayerFrames.target.Debuffs = false; end end
-			}
+			},
+
+			global = {name="Global",type="group",order=1,
+				args = {
+					showType = {name="Show the Type",type="toggle", order=2,
+						get = function(info) return DBMod.PlayerFrames.global.Auras.showType; end,
+						set = function(info,val) DBMod.PlayerFrames.global.Auras.showType = val; addon:UpdateAura(); end
+					},
+					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+						get = function(info) return DBMod.PlayerFrames.global.Auras.onlyShowPlayer; end,
+						set = function(info,val) DBMod.PlayerFrames.global.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
+					},
+					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.global.Auras.NumBuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.global.Auras.NumBuffs = val; addon:UpdateAura(); end
+					},
+					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.global.Auras.NumDebuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.global.Auras.NumDebuffs = val; addon:UpdateAura(); end
+					},
+					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+						min=0,max=60,step=1,
+						get = function(info) return DBMod.PlayerFrames.global.Auras.size; end,
+						set = function(info,val) DBMod.PlayerFrames.global.Auras.size = val; addon:UpdateAura(); end
+					},
+					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.global.Auras.spacing; end,
+						set = function(info,val) DBMod.PlayerFrames.global.Auras.spacing = val; addon:UpdateAura(); end
+					},
+
+					line1 = {name="",type="header",order=20},
+					ApplyToPlayer = {name = "Apply to player", type="execute", order = 21,
+						func = function() DBMod.PlayerFrames.player.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
+					},
+					ApplyTotarget = {name = "Apply to target", type="execute", order = 22,
+						func = function() DBMod.PlayerFrames.target.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
+					},
+					ApplyTotargettarget = {name = "Apply to target of target", type="execute", order = 23,
+						func = function() DBMod.PlayerFrames.targettarget.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
+					},
+					ApplyTopet = {name = "Apply to pet", type="execute", order = 24,
+						func = function() DBMod.PlayerFrames.pet.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
+					},
+					ApplyTofocus = {name = "Apply to focus", type="execute", order = 25,
+						func = function() DBMod.PlayerFrames.focus.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
+					},
+					ApplyTofocustarget = {name = "Apply to focus target", type="execute", order = 26,
+						func = function() DBMod.PlayerFrames.focustarget.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
+					},
+					ApplyToAll = {name = "Apply Global to All", type="execute", order = 28,width="double",
+						func = function()
+							for k,v in pairs(Units) do DBMod.PlayerFrames[v].Auras = DBMod.PlayerFrames.global.Auras; end
+							addon:UpdateAura();
+						end
+					},
+				}
+			},
+			player = {name="Player",type="group",order=1,
+				args = {
+					showType = {name="Show the Type",type="toggle", order=2,
+						get = function(info) return DBMod.PlayerFrames.player.Auras.showType; end,
+						set = function(info,val) DBMod.PlayerFrames.player.Auras.showType = val; addon:UpdateAura(); end
+					},
+					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+						get = function(info) return DBMod.PlayerFrames.player.Auras.onlyShowPlayer; end,
+						set = function(info,val) DBMod.PlayerFrames.player.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
+					},
+					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.player.Auras.NumBuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.player.Auras.NumBuffs = val; addon:UpdateAura(); end
+					},
+					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.player.Auras.NumDebuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.player.Auras.NumDebuffs = val; addon:UpdateAura(); end
+					},
+					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+						min=0,max=60,step=1,
+						get = function(info) return DBMod.PlayerFrames.player.Auras.size; end,
+						set = function(info,val) DBMod.PlayerFrames.player.Auras.size = val; addon:UpdateAura(); end
+					},
+					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.player.Auras.spacing; end,
+						set = function(info,val) DBMod.PlayerFrames.player.Auras.spacing = val; addon:UpdateAura(); end
+					},
+				}
+			},
+			target = {name="Target",type="group",order=2,
+				args = {
+					showType = {name="Show the Type",type="toggle", order=2,
+						get = function(info) return DBMod.PlayerFrames.target.Auras.showType; end,
+						set = function(info,val) DBMod.PlayerFrames.target.Auras.showType = val; addon:UpdateAura(); end
+					},
+					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+						get = function(info) return DBMod.PlayerFrames.target.Auras.onlyShowPlayer; end,
+						set = function(info,val) DBMod.PlayerFrames.target.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
+					},
+					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.target.Auras.NumBuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.target.Auras.NumBuffs = val; addon:UpdateAura(); end
+					},
+					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.target.Auras.NumDebuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.target.Auras.NumDebuffs = val; addon:UpdateAura(); end
+					},
+					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+						min=0,max=60,step=1,
+						get = function(info) return DBMod.PlayerFrames.target.Auras.size; end,
+						set = function(info,val) DBMod.PlayerFrames.target.Auras.size = val; addon:UpdateAura(); end
+					},
+					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.target.Auras.spacing; end,
+						set = function(info,val) DBMod.PlayerFrames.target.Auras.spacing = val; addon:UpdateAura(); end
+					},
+				}
+			},
+			targettarget = {name="Target of Target",type="group",order=3,
+				args = {
+					showType = {name="Show the Type",type="toggle", order=2,
+						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.showType; end,
+						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.showType = val; addon:UpdateAura(); end
+					},
+					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.onlyShowPlayer; end,
+						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
+					},
+					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.NumBuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.NumBuffs = val; addon:UpdateAura(); end
+					},
+					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.NumDebuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.NumDebuffs = val; addon:UpdateAura(); end
+					},
+					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+						min=0,max=60,step=1,
+						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.size; end,
+						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.size = val; addon:UpdateAura(); end
+					},
+					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.spacing; end,
+						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.spacing = val; addon:UpdateAura(); end
+					},
+				}
+			},
+			pet = {name="Pet",type="group",order=4,
+				args = {
+					showType = {name="Show the Type",type="toggle", order=2,
+						get = function(info) return DBMod.PlayerFrames.pet.Auras.showType; end,
+						set = function(info,val) DBMod.PlayerFrames.pet.Auras.showType = val; addon:UpdateAura(); end
+					},
+					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+						get = function(info) return DBMod.PlayerFrames.pet.Auras.onlyShowPlayer; end,
+						set = function(info,val) DBMod.PlayerFrames.pet.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
+					},
+					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.pet.Auras.NumBuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.pet.Auras.NumBuffs = val; addon:UpdateAura(); end
+					},
+					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.pet.Auras.NumDebuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.pet.Auras.NumDebuffs = val; addon:UpdateAura(); end
+					},
+					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+						min=0,max=60,step=1,
+						get = function(info) return DBMod.PlayerFrames.pet.Auras.size; end,
+						set = function(info,val) DBMod.PlayerFrames.pet.Auras.size = val; addon:UpdateAura(); end
+					},
+					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.pet.Auras.spacing; end,
+						set = function(info,val) DBMod.PlayerFrames.pet.Auras.spacing = val; addon:UpdateAura(); end
+					},
+				}
+			},
+			focus = {name="Focus",type="group",order=5,
+				args = {
+					showType = {name="Show the Type",type="toggle", order=2,
+						get = function(info) return DBMod.PlayerFrames.focus.Auras.showType; end,
+						set = function(info,val) DBMod.PlayerFrames.focus.Auras.showType = val; addon:UpdateAura(); end
+					},
+					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.focus.Auras.NumBuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.focus.Auras.NumBuffs = val; addon:UpdateAura(); end
+					},
+					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.focus.Auras.NumDebuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.focus.Auras.NumDebuffs = val; addon:UpdateAura(); end
+					},
+					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+						min=0,max=60,step=1,
+						get = function(info) return DBMod.PlayerFrames.focus.Auras.size; end,
+						set = function(info,val) DBMod.PlayerFrames.focus.Auras.size = val; addon:UpdateAura(); end
+					},
+					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.focus.Auras.spacing; end,
+						set = function(info,val) DBMod.PlayerFrames.focus.Auras.spacing = val; addon:UpdateAura(); end
+					},
+					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+						get = function(info) return DBMod.PlayerFrames.focus.Auras.onlyShowPlayer; end,
+						set = function(info,val) DBMod.PlayerFrames.focus.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
+					},
+				}
+			},
+			focustarget = {name="Focus Target",type="group",order=6,
+				args = {
+					showType = {name="Show the Type",type="toggle", order=2,
+						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.showType; end,
+						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.showType = val; addon:UpdateAura(); end
+					},
+					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.NumBuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.NumBuffs = val; addon:UpdateAura(); end
+					},
+					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.NumDebuffs; end,
+						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.NumDebuffs = val; addon:UpdateAura(); end
+					},
+					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+						min=0,max=60,step=1,
+						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.size; end,
+						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.size = val; addon:UpdateAura(); end
+					},
+					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
+					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+						min=0,max=50,step=1,
+						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.spacing; end,
+						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.spacing = val; addon:UpdateAura(); end
+					},
+					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.onlyShowPlayer; end,
+						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
+					},
+				}
+			},
 		}
 	};
 	spartan.optionsPlayerFrames.args["castbar"] = {name = "Castbar",type = "group",order=4,
@@ -248,6 +500,6 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-	for k,v in pairs(default) do if DBMod.PlayerFrames[k].AuraDisplay then addon[k].Auras:PostUpdate(k); end end
-	for k,v in pairs(default) do if DBMod.PlayerFrames[k].display then addon[k]:Enable(); else addon[k]:Disable(); end end
+	for k,v in pairs(Units) do if DBMod.PlayerFrames[v].AuraDisplay then addon[v].Auras:PostUpdate(v); end end
+	for k,v in pairs(Units) do if DBMod.PlayerFrames[v].display then addon[v]:Enable(); else addon[v]:Disable(); end end
 end
