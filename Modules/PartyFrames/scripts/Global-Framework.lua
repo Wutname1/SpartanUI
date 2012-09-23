@@ -72,16 +72,24 @@ local menu = function(self)
 end
 
 local threat = function(self,event,unit)
-	if (not self.Portrait) then return; end
-	if (not self.Portrait:IsObjectType("Texture")) then return; end
-	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	local status
+	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
-	if (status and status > 0) then
-		local r,g,b = GetThreatStatusColor(status);
-		self.Portrait:SetVertexColor(r,g,b);
-	else
-		self.Portrait:SetVertexColor(1,1,1);
+	if self.Portrait and DBMod.PartyFrames.threat then
+		if (not self.Portrait:IsObjectType("Texture")) then return; end
+		if (status and status > 0) then
+			local r,g,b = GetThreatStatusColor(status);
+			self.Portrait:SetVertexColor(r,g,b);
+		else
+			self.Portrait:SetVertexColor(1,1,1);
+		end
+	elseif self.ThreatOverlay and DBMod.PartyFrames.threat then
+		if ( status and status > 0 ) then
+			self.ThreatOverlay:SetVertexColor(GetThreatStatusColor(status));
+			self.ThreatOverlay:Show();
+		else
+			self.ThreatOverlay:Hide();
+		end
 	end
 end
 
@@ -460,16 +468,19 @@ local CreatePartyFrame = function(self,unit)
 			outsideAlpha = 1/2,
 		}
 		
-		if DBMod.PartyFrames.Portrait then
-			self.Threat = CreateFrame("Frame",nil,self);
-			self.Threat.Override = threat;
-		else
-			local Threat = self:CreateTexture(nil, 'OVERLAY')
-			Threat:SetSize(16, 16)
-			Threat:SetPoint("RIGHT", self,"RIGHT",0,0)
-			self.Threat = Threat
+		if not DBMod.PartyFrames.Portrait then
+			local overlay = self:CreateTexture(nil, "OVERLAY")
+			overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
+			overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
+			overlay:SetAllPoints(self)
+			overlay:SetVertexColor(1, 0, 0)
+			overlay:Hide();
+			self.ThreatOverlay = overlay
 		end
 
+		self.Threat = CreateFrame("Frame",nil,self);
+		self.Threat.Override = threat;
+			
 		local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
 		ResurrectIcon:SetSize(25, 25)
 		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
@@ -479,9 +490,6 @@ local CreatePartyFrame = function(self,unit)
 		ReadyCheck:SetSize(30, 30)
 		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ReadyCheck = ReadyCheck
-	   
-		-- self.Threat = CreateFrame("Frame",nil,self);
-		-- self.Threat.Override = threat;
 	end
 	self.TextUpdate = PostUpdateText;
 	return self;

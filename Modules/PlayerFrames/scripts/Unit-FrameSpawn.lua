@@ -35,6 +35,45 @@ do -- Setup Dynamic Position
 	addon.focus.UpdatePosition = addon:UpdateFocusPosition();
 end
 
+if DBMod.PlayerFrames.BossFrame.display == true then
+	local boss = {}
+	for i = 1, MAX_BOSS_FRAMES do
+		boss[i] = oUF:Spawn('boss'..i, 'SUI_Boss'..i)
+		if i == 1 then
+			if DBMod.PlayerFrames.BossFrame.moved then
+				boss[i]:SetMovable(true);
+				boss[i]:SetPoint("CENTER",nil,"CENTER",DBMod.PlayerFrames.BossFrame.xOffset,DBMod.PlayerFrames.BossFrame.yOffset);
+			else
+				boss[i]:SetMovable(false);
+				boss[i]:SetPoint('TOPRIGHT', UIParent, -14, -490)
+			end
+		else
+			boss[i]:SetPoint('BOTTOM', boss[i-1], 'TOP', 0, 62)             
+		end
+		boss[i]:SetSize(200, 27)
+		boss[i]:SetScale(DBMod.PlayerFrames.BossFrame.scale)
+	end
+	function addon:UpdateBossFramePosition()
+		local i = 1
+		if DBMod.PlayerFrames.BossFrame.moved then
+			boss[i]:SetMovable(true);
+			boss[i]:SetPoint("CENTER",nil,"CENTER",DBMod.PlayerFrames.BossFrame.xOffset,DBMod.PlayerFrames.BossFrame.yOffset);
+		else
+			boss[i]:SetMovable(false);
+			boss[i]:SetPoint('TOPRIGHT', UIParent, -14, -490)
+		end
+	end
+end
+
+	function addon:UpdateArenaFramePosition()
+		if DBMod.PlayerFrames.focus.moved then
+			addon.focus:SetMovable(true);
+			addon.focus:SetPoint("CENTER",nil,"CENTER",DBMod.PlayerFrames.focus.xOffset,DBMod.PlayerFrames.focus.yOffset);
+		else
+			addon.focus:SetMovable(false);
+			addon.focus:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",170,110);
+		end
+	end
 -- Watch for Pet name or level changes (may not be needed any more keeping just incase)
 -- local Update = function(self,event)
 	-- if self.Name then self.Name:UpdateTag(self.unit); end

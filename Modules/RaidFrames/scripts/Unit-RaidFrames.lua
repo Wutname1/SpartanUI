@@ -54,16 +54,21 @@ end
 
 do -- scripts to make it movable
 	raid.mover = CreateFrame("Frame");
+	local width, height = 0,0
 	if DBMod.RaidFrames.FrameStyle == "large" then
 		--self:SetSize(140, 50);
-		raid.mover:SetSize(205, 332);
+		height = (50+DBMod.RaidFrames.columnSpacing) * DBMod.RaidFrames.unitsPerColumn
+		width = (140+DBMod.RaidFrames.columnSpacing) * (40/DBMod.RaidFrames.unitsPerColumn)
 	elseif DBMod.RaidFrames.FrameStyle == "medium" then
 		--self:SetSize(140, 35);
-		raid.mover:SetSize(205, 332);
+		height = (35+DBMod.RaidFrames.columnSpacing) * DBMod.RaidFrames.unitsPerColumn
+		width = (140+DBMod.RaidFrames.columnSpacing) * (40/DBMod.RaidFrames.unitsPerColumn)
 	elseif DBMod.RaidFrames.FrameStyle == "small" then
 		--self:SetSize(90, 30);
-		raid.mover:SetSize(205, 332);
+		height = (30+DBMod.RaidFrames.columnSpacing) * DBMod.RaidFrames.unitsPerColumn
+		width = (90+DBMod.RaidFrames.columnSpacing) * (40/DBMod.RaidFrames.unitsPerColumn)
 	end
+	raid.mover:SetSize(width, height);
 	raid.mover:SetPoint("TOPLEFT",raid,"TOPLEFT");
 	raid.mover:EnableMouse(true);
 	

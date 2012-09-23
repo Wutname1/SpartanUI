@@ -7,14 +7,19 @@ function module:OnInitialize()
 		name = "Buff Settings",
 		desc = "configure Buff Settings",
 		type = "group", args = {
-			enabled = {
-				name= "Enable Buff tweaks",
-				type="toggle",
-				width="full",
-				order = 1,
+			enabled = {name= "Enable Buff offset",type="toggle",width="full",order = 1,
+				desc= "Enabled the offset (moving) of the stock blizzard buffs",
 				get = function(info) return DB.BuffSettings.enabled; end,
 				set = function(info,val)
 					DB.BuffSettings.enabled = val;
+					if val == true then module:UpdateBuffPosition(); end
+				end
+			},
+			disableblizz = {name= "Hide Blizzard buffs",type="toggle",width="full",order = 1,
+				desc= "Enabled the offset (moving) of the stock blizzard buffs",
+				get = function(info) return DB.BuffSettings.disableblizz; end,
+				set = function(info,val)
+					DB.BuffSettings.disableblizz = val;
 					if val == true then module:UpdateBuffPosition(); end
 				end
 			},
@@ -85,6 +90,17 @@ function module:UpdateBuffPosition()
 				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
 			end
 		end
+	end
+	if DB.BuffSettings.disableblizz then
+		BuffFrame:UnregisterEvent("UNIT_AURA")
+		BuffFrame:Hide()
+		ConsolidatedBuffs:Hide()
+		TemporaryEnchantFrame:Hide()
+	elseif not BuffFrame:IsVisible() and not DB.BuffSettings.disableblizz then
+		BuffFrame:RegisterEvent("UNIT_AURA")
+		BuffFrame:Show()
+		BuffFrame_Update()
+		TemporaryEnchantFrame:Show()
 	end
 end
 

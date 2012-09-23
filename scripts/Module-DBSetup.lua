@@ -155,8 +155,8 @@ function module:OnInitialize()
 			if not DBMod.RaidFrames.scale or DBMod.RaidFrames.scale == 0 then DBMod.RaidFrames.scale = 1 end
 			if not DBMod.PartyFrames.scale or DBMod.PartyFrames.scale == 0 then DBMod.PartyFrames.scale = 1 end
 			if not DBMod.RaidFrames.preset then DBMod.RaidFrames.preset = "dps" end
-			if not DBMod.PlayerFrames.ArenaFrame then DBMod.PlayerFrames.ArenaFrame={display=false,moved=false,style="medium",scale=0,bars={textstyle="dynamic",textmode=1,color="class"}} end
-			if not DBMod.PlayerFrames.BossFrame then DBMod.PlayerFrames.BossFrame={display=false,moved=false,style="medium",scale=0,bars={textstyle="dynamic",textmode=1}} end
+			if DBMod.PlayerFrames.BossFrame then DBMod.PlayerFrames.BossFrame = {display=false,moved=false,scale=1} end
+			if DBMod.PlayerFrames.ArenaFrame then DBMod.PlayerFrames.ArenaFrame = {display=false,moved=false,scale=1} end
 			if not DBMod.RaidFrames.Auras then DBMod.RaidFrames.Auras={size=10,spacing=1,showType=true} end
 			if not DBMod.RaidFrames.showRaid then DBMod.RaidFrames.showRaid = true; end
 			if not DBMod.RaidFrames.maxColumns then DBMod.RaidFrames.maxColumns = 8; end
@@ -174,6 +174,11 @@ function module:OnInitialize()
 				end;
 			end
 			if not DBMod.PlayerFrames.global then DBMod.PlayerFrames.global = {Auras = Auras}; end
+			if not DB.BuffSettings.disableblizz then DB.BuffSettings.disableblizz = true; end
+			if not DB.XPBar.enabled then DB.XPBar.enabled = true; end
+			if not DB.RepBar.enabled then DB.RepBar.enabled = true; end
+			if not DBMod.RaidFrames.threat then DBMod.RaidFrames.threat = true end
+			if not DBMod.PartyFrames.threat then DBMod.PartyFrames.threat = true end
 		end
 	end
 end

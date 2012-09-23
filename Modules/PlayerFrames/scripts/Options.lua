@@ -479,23 +479,41 @@ function addon:OnInitialize()
 	};
 	spartan.optionsPlayerFrames.args["bossarena"] = {name = "Boss & Arena frames",type = "group",order=5,
 		args = {
-			boss = { name = "Show Boss Frames", type = "toggle",order=1,disabled=true,
+			bar0 = {name="Boss Frames",type="header",order=0},
+			boss = { name = "Show Frames", type = "toggle",order=1,disabled=true,
 				get = function(info) return DBMod.PlayerFrames.BossFrame.display; end,
 				set = function(info,val) DBMod.PlayerFrames.BossFrame.display = val; end
 			},
-			arena = { name = "Show Arena Frames", type = "toggle",order=20,disabled=true,
+			bossreset = {name = "Reset location",type = "execute",order=2,disabled=true,
+				desc = "resets the potion to default",
+				func = function() BMod.PlayerFrames.BossFrame.moved = false; addon:UpdateBossFramePosition(); end
+			},
+			bossscale = { name = "Scale Frames", type = "range",order=3,width="full",disabled=true,
+				min=.01,max=2,step=.01,
+				get = function(info) return DBMod.PlayerFrames.BossFrame.scale; end,
+				set = function(info,val) DBMod.PlayerFrames.BossFrame.scale = val; end
+			},
+			
+			bar2 = {name="Arena Frames",type="header",order=20},
+			arena = { name = "Show Frames", type = "toggle",order=21,disabled=true,
 				get = function(info) return DBMod.PlayerFrames.ArenaFrame.display; end,
 				set = function(info,val) DBMod.PlayerFrames.ArenaFrame.display = val; end
+			},
+			arenareset = {name = "Reset location",type = "execute",order=22,disabled=true,
+				desc = "resets the potion to default",
+				func = function() BMod.PlayerFrames.ArenaFrame.moved = false; addon:UpdateArenaFramePosition(); end
+			},
+			arenascale = { name = "Scale Frames", type = "range",order=23,width="full",disabled=true,
+				min=.01,max=2,step=.01,
+				get = function(info) return DBMod.PlayerFrames.ArenaFrame.scale; end,
+				set = function(info,val) DBMod.PlayerFrames.ArenaFrame.scale = val; end
 			},
 		}
 	};
 	
 	spartan.optionsPlayerFrames.args["resetfocus"] = {name = "Reset Focus location",type = "execute",order=1,
 		desc = "resets the potion to default",
-		func = function()
-			DBMod.PlayerFrames.focus.moved = false;
-			addon:UpdateFocusPosition();
-		end
+		func = function() BMod.PlayerFrames.focus.moved = false; addon:UpdateFocusPosition(); end
 	};
 end
 

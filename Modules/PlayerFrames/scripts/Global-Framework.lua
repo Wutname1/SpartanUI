@@ -1351,15 +1351,15 @@ local CreateFocusFrame = function(self,unit)
 			
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			if DBMod.PlayerFrames.bars[unit].color == "reaction" then
-				self.Health.colorReaction = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
-				self.Health.colorHappiness = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "class" then
-				self.Health.colorClass = true;
-			else
-				self.Health.colorSmooth = true;
-			end
+			-- if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+				-- self.Health.colorReaction = true;
+			-- elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+				-- self.Health.colorHappiness = true;
+			-- elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+				-- self.Health.colorClass = true;
+			-- else
+				-- self.Health.colorSmooth = true;
+			-- end
 			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorHealth = true;
 			
@@ -1483,23 +1483,8 @@ local CreateUnitFrame = function(self,unit)
 		end);
 		end
 	end
-
+	spartan:Print(unit)
 	return (unit == "target" and CreateTargetFrame(self,unit)) or (unit == "targettarget" and CreateToTFrame(self,unit)) or (unit == "player" and CreatePlayerFrame(self,unit)) or (unit == "focus" and CreateFocusFrame(self,unit)) or (unit == "focustarget" and CreateFocusFrame(self,unit)) or (unit == "pet" and CreatePetFrame(self,unit) or CreateFocusFrame(self,unit));
 end
 
 oUF:RegisterStyle("Spartan_PlayerFrames", CreateUnitFrame);
-
-
-if DBMod.PlayerFrames.bossframes == true then
-	local boss = {}
-	for i = 1, MAX_BOSS_FRAMES do
-		boss[i] = oUF:Spawn('boss'..i, 'oUF_AftermathhBoss'..i)
-		if i == 1 then
-			boss[i]:SetPoint('TOPRIGHT', UIParent, -14, -490)
-		else
-			boss[i]:SetPoint('BOTTOM', boss[i-1], 'TOP', 0, 62)             
-		end
-		boss[i]:SetSize(200, 27)
-		boss[i]:SetScale(0.93)
-	end
-end

@@ -70,17 +70,24 @@ local menu = function(self)
 end
 
 local threat = function(self,event,unit)
-	if (not self.Portrait) then return; end
-	if (not self.Portrait:IsObjectType("Texture")) then return; end
-	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	local status
+	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
---	print(unit..' '..status) -- Debug code
-	if (status and status > 0) then
-		local r,g,b = GetThreatStatusColor(status);
-		self.Portrait:SetVertexColor(r,g,b);
-	else
-		self.Portrait:SetVertexColor(1,1,1);
+	if self.Portrait and DBMod.RaidFrames.threat then
+		if (not self.Portrait:IsObjectType("Texture")) then return; end
+		if (status and status > 0) then
+			local r,g,b = GetThreatStatusColor(status);
+			self.Portrait:SetVertexColor(r,g,b);
+		else
+			self.Portrait:SetVertexColor(1,1,1);
+		end
+	elseif self.ThreatOverlay and DBMod.RaidFrames.threat then
+		if ( status and status > 0 ) then
+			self.ThreatOverlay:SetVertexColor(GetThreatStatusColor(status));
+			self.ThreatOverlay:Show();
+		else
+			self.ThreatOverlay:Hide();
+		end
 	end
 end
 
@@ -120,9 +127,6 @@ local CreateFrame = function(self,unit)
 			self:SetSize(90, 30);
 			self.artwork.bg:SetTexCoord(.3,.70,0.3,.7);
 		end
-		
-		-- self.Threat = CreateFrame("Frame",nil,self);
-		-- self.Threat.Override = threat;
 	end
 	do -- setup status bars
 		do -- health bar
@@ -205,7 +209,7 @@ local CreateFrame = function(self,unit)
 			local power = CreateFrame("StatusBar",nil,self);
 			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
 			power:SetSize(self.Health:GetWidth(), 3);
-			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-1);
+			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,0);
 			
 			self.Power = power;
 			self.Power.colorPower = true;
@@ -213,18 +217,21 @@ local CreateFrame = function(self,unit)
 		end
 	end
 	do -- setup text and icons
-		self.Name = self:CreateFontString();
+		local layer5 = CreateFrame("Frame",nil,self);
+		layer5:SetFrameLevel(5);
+		
+		self.Name = layer5:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
 		self.Name:SetSize(self:GetWidth()-30, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-3);
 		self:Tag(self.Name, "[name]");
 		
-		self.Leader = self:CreateTexture(nil,"BORDER");
+		self.Leader = layer5:CreateTexture(nil,"ARTWORK");
 		self.Leader:SetSize(15, 15);
 		self.Leader:SetPoint("CENTER",self,"TOP",0,0);
 		
-		self.LFDRole = self:CreateTexture(nil,"BORDER");
+		self.LFDRole = layer5:CreateTexture(nil,"ARTWORK");
 		self.LFDRole:SetSize(13, 13);
 		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
 		
@@ -275,7 +282,7 @@ local CreateFrame = function(self,unit)
 			icon.spellID = sid
 			-- set the dimensions and positions
 			icon:SetSize(DBMod.RaidFrames.Auras.size, DBMod.RaidFrames.Auras.size)
-			icon:SetPoint("TOPRIGHT",self,"TOPRIGHT", (-icon:GetWidth()*i)-2, -2)
+			icon:SetPoint("TOPRIGHT",self,"TOPRIGHT", ((-icon:GetWidth()*i)+icon:GetWidth())-2, -2)
 			auras.icons[sid] = icon
 			-- Set any other AuraWatch icon settings
 		end
@@ -287,23 +294,26 @@ local CreateFrame = function(self,unit)
 			outsideAlpha = 1/2,
 		}
 		
-		local Threat = self:CreateTexture(nil, 'OVERLAY')
-		Threat:SetSize(self:GetWidth()/1.4, self:GetWidth()/1.4)
-		Threat:SetPoint("RIGHT", self,"RIGHT",0,0)
-		self.Threat = Threat
-
 		local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
-		ResurrectIcon:SetSize(self:GetWidth()/1.4, self:GetWidth()/1.4)
+		ResurrectIcon:SetSize(30, 30)
 		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ResurrectIcon = ResurrectIcon
 
 		local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
-		ReadyCheck:SetSize(self:GetWidth()/1.3, self:GetWidth()/1.3)
+		ReadyCheck:SetSize(30, 30)
 		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ReadyCheck = ReadyCheck
 	   
-		-- self.Threat = CreateFrame("Frame",nil,self);
-		-- self.Threat.Override = threat;
+		local overlay = self:CreateTexture(nil, "OVERLAY")
+		overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
+		overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
+		overlay:SetAllPoints(self)
+		overlay:SetVertexColor(1, 0, 0)
+		overlay:Hide();
+		self.ThreatOverlay = overlay
+			
+		self.Threat = CreateFrame("Frame",nil,self);
+		self.Threat.Override = threat;
 	end
 	self.TextUpdate = PostUpdateText;
 	return self;

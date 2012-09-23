@@ -163,15 +163,11 @@ function addon:OnInitialize()
 			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.Portrait = val; DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.optionsPartyFrames.args["scale"] = {name = "Scale Size", type = "range", order=4,width="full",
-		step=.01,min = .01,max = 2,
-		get = function(info) return DBMod.PartyFrames.scale; end,
-		set = function(info,val)
-			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.PartyFrames.scale = val; addon:UpdateParty("FORCE_UPDATE"); end
-		end
+	spartan.optionsPartyFrames.args["threat"] = {name="Display Threat",type="toggle",order=4,
+		get = function(info) return DBMod.PartyFrames.threat; end,
+		set = function(info,val) DBMod.PartyFrames.threat = val; DBMod.PartyFrames.preset = "custom"; end
 	};
-
-	spartan.optionsPartyFrames.args["partyReset"] = {name="Reset Party poition",type="execute",order=12,
+	spartan.optionsPartyFrames.args["partyReset"] = {name="Reset Party poition",type="execute",order=5,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
@@ -179,6 +175,13 @@ function addon:OnInitialize()
 				DBMod.PartyFrames.moved = false;
 				addon:UpdatePartyPosition();
 			end
+		end
+	};
+	spartan.optionsPartyFrames.args["scale"] = {name = "Scale Size", type = "range", order=11,width="full",
+		step=.01,min = .01,max = 2,
+		get = function(info) return DBMod.PartyFrames.scale; end,
+		set = function(info,val)
+			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.PartyFrames.scale = val; addon:UpdateParty("FORCE_UPDATE"); end
 		end
 	};
 

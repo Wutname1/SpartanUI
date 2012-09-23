@@ -1,12 +1,12 @@
 ## Interface: 50001
 ## Title: SpartanUI |CFF0070DDCore|r
 ## Notes: User Interface combining elegant artwork with well designed features.
-## Version: 3.0.5
+## Version: 3.1.0
 ## Author: Wutname1
 ## Former-Authors: Atriace, Beladona, Zilver
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
-## X-Curse-Packaged-Version: r12
+## X-Curse-Packaged-Version: 3.1.0
 
 #@no-lib-strip@
 libs\LibStub\LibStub.lua

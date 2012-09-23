@@ -104,7 +104,7 @@ local updateSpartanViewport = function(state) -- handles viewport offset based o
 	if ( state ) then
 		WorldFrame:ClearAllPoints(); WorldFrame:SetPoint("TOPLEFT", 0, 0); WorldFrame:SetPoint("BOTTOMRIGHT", 0, 0);
 	else
-		WorldFrame:SetPoint("BOTTOMRIGHT");
+		if not InCombatLockdown() then WorldFrame:SetPoint("BOTTOMRIGHT"); end
 	end
 end;
 

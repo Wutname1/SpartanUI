@@ -36,10 +36,14 @@ end
 
 function module:OnInitialize()
 	addon.optionsGeneral.args["XPBar"] = {
-		name = "XP Bar Settings",
+		name = "XP Bar",
 		desc = "configure XP Bar Settings",
 		type = "group", args = {
-			displaytext = {name="Display text",type="toggle",order=.1,
+			display = {name="XP Bar Enabled",type="toggle",order=.1,
+				get = function(info) return DB.XPBar.enabled; end,
+				set = function(info,val) DB.XPBar.enabled = val; if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end end
+			},
+			displaytext = {name="Display text",type="toggle",order=.15,
 				get = function(info) return DB.XPBar.text; end,
 				set = function(info,val) DB.XPBar.text = val; module:SetXPColors(); end
 			},
@@ -139,10 +143,14 @@ function module:OnInitialize()
 		}
 	}
 	addon.optionsGeneral.args["RepBar"] = {
-		name = "Rep Bar Settings",
+		name = "Rep Bar",
 		desc = "configure Rep Bar Settings",
 		type = "group", args = {
-			displaytext = {name="Display text",type="toggle",order=.1,
+			display = {name="Rep Bar Enabled",type="toggle",order=.1,
+				get = function(info) return DB.RepBar.enabled; end,
+				set = function(info,val) DB.RepBar.enabled = val; if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end end
+			},
+			displaytext = {name="Display text",type="toggle",order=.15,
 				get = function(info) return DB.RepBar.text; end,
 				set = function(info,val) DB.RepBar.text = val; module:SetRepColors(); end
 			},
@@ -285,6 +293,7 @@ function module:OnEnable()
 		SUI_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
 		
 		xpframe:SetScript("OnEvent",function()
+			if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 			if now == 0 then
 				SUI_ExperienceBarFill:SetWidth(0.1);
@@ -341,6 +350,7 @@ function module:OnEnable()
 		SUI_ReputationBarPlate:SetTexCoord(0.035,0.83,0,1);
 		
 		repframe:SetScript("OnEvent",function()
+			if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
 			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 			if name then ratio = (current-low)/(high-low); end
 			SUI_StatusBarTooltipHeader:SetText(name);
@@ -389,5 +399,4 @@ function module:OnEnable()
 		repframe:SetFrameLevel(2);
 		module:SetRepColors();
 	end
-
 end

@@ -26,6 +26,7 @@ function addon:OnInitialize()
 				get = function(info) return DBMod.RaidFrames.scale; end,
 				set = function(info,val) if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.scale = val; addon:UpdateRaid("FORCE_UPDATE"); end end
 			},
+			
 			bar1 = {name="Layout Configuration",type="header",order=20},
 			maxColumns = {name="Max Columns",type="range",order=21,width="full",
 				step=1,min = 1,max = 40,
@@ -48,7 +49,7 @@ function addon:OnInitialize()
 					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.columnSpacing = val; end
 				end
 			},
-			desc1={name="All above options require a /reload",type="description",order=29.9},
+			desc1={name="Layout Configuration options require a /reload",type="description",order=29.9},
 			
 			bar3 = {name="Text style",type="header",order=30},
 			healthtextstyle = {name="Health Text style",type="select",order=31,
@@ -101,7 +102,11 @@ function addon:OnInitialize()
 		get = function(info) return DBMod.RaidFrames.mode; end,
 		set = function(info,val) DBMod.RaidFrames.mode = val; addon:UpdateRaid("FORCE_UPDATE"); end
 	};
-	spartan.optionsRaidFrames.args["partyLockReset"] = {name = "Reset Raid poition", type = "execute", order=11,
+	spartan.optionsRaidFrames.args["threat"] = {name="Display Threat",type="toggle",order=4,
+		get = function(info) return DBMod.RaidFrames.threat; end,
+		set = function(info,val) DBMod.RaidFrames.threat = val; DBMod.RaidFrames.preset = "custom"; end
+	};
+	spartan.optionsRaidFrames.args["raidLockReset"] = {name = "Reset Raid poition", type = "execute", order=11,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);

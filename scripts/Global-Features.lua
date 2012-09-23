@@ -13,7 +13,8 @@ addon.optionsFilmEffects = {name = "SpartanUI Film Effects", type = "group", arg
 --addon.ChangeLog = {name = "SpartanUI Change Log", type = "group", args = {}};
 
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
-local frameDefault = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=10,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=true}}
+local frameDefault1 = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false}}
+local frameDefault2 = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",Auras={NumBuffs=0,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false}}
 
 DBdefault = {
 	SUIProper = {
@@ -27,6 +28,7 @@ DBdefault = {
 			enabled = true
 		},
 		BuffSettings = {
+			disableblizz = true,
 			enabled = true,
 			Manualoffset = false,
 			offset = 0
@@ -40,6 +42,7 @@ DBdefault = {
 			popup2anim = true
 		},
 		XPBar = {
+			enabled = true,
 			text = true,
 			ToolTip = "click",
 			GainedColor	= "Blue",
@@ -55,6 +58,7 @@ DBdefault = {
 			RestedMatchColor= false
 		},
 		RepBar = {
+			enabled = true,
 			text = false,
 			ToolTip = "click",
 			GainedColor	= "AUTO",
@@ -100,6 +104,7 @@ DBdefault = {
 			vignette = nil
 		},
 		PartyFrames  = {
+			threat = true,
 			preset = "dps",
 			FrameStyle = "large",
 			showAuras = true,
@@ -132,13 +137,13 @@ DBdefault = {
 		},
 		PlayerFrames = {
 			focusMoved = false,
-			global = frameDefault,
-			player = frameDefault,
-			target = frameDefault,
-			targettarget = frameDefault,
-			pet = frameDefault,
-			focus = frameDefault,
-			focustarget = frameDefault,
+			global = frameDefault1,
+			player = frameDefault1,
+			target = frameDefault1,
+			targettarget = frameDefault2,
+			pet = frameDefault2,
+			focus = frameDefault2,
+			focustarget = frameDefault2,
 			bars = {
 				health = {textstyle = "dynamic",textmode=1},
 				mana = {textstyle = "longfor",textmode=1},
@@ -150,9 +155,12 @@ DBdefault = {
 				focustarget = {color="dynamic"},
 			},
 			Castbar = {player=1,target=1,targettarget=1,pet=1,focus=1,text={player=1,target=1,targettarget=1,pet=1,focus=1}},
+			BossFrame = {display=false,moved=false,scale=1},
+			ArenaFrame = {display=false,moved=false,scale=1},
 		},
 		RaidFrames  = {
-			mode = "name",
+			threat = true,
+			mode = "group",
 			preset = "dps",
 			FrameStyle = "medium",
 			showAuras = true,
@@ -173,7 +181,8 @@ DBdefault = {
 				health = {textstyle="dynamic", textmode=1},
 				mana = {textstyle="dynamic", textmode=1}
 			},
-			debuffs = {display=true}
+			debuffs = {display=true},
+			Auras={size=10,spacing=1,showType=true}
 		}
 	}
 }
