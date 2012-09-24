@@ -94,30 +94,6 @@
 		</Layers>
 	</Frame>
 	
-	<!-- SUI_Minimap_Overlay -->
-	<Frame name="SUI_Minimap_Overlay" frameStrata="BACKGROUND" parent="SpartanUI">
-		<Size><AbsDimension x="256" y="256"/></Size>
-		<Anchors>
-			<Anchor point="BOTTOM" relativeTo="SpartanUI_Base1" relativePoint="BOTTOM">
-				<Offset>
-					<AbsDimension x="0" y="0"/>
-				</Offset>
-			</Anchor>
-		</Anchors>
-		<Layers>	
-			<Layer level="OVERLAY">
-				<Texture name="SUI_MapOverlay" file="Interface\AddOns\SpartanUI\Media\Object_Minimap_Overlay" toplevel="true">
-					<Size><AbsDimension x="256" y="256" /></Size>
-					<Anchors>
-						<Anchor point="BOTTOM" relativePoint="BOTTOM">
-							<Offset><AbsDimension x="0" y="0" /></Offset>
-						</Anchor>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-	</Frame>
-	
 	<!-- SUI_StatusBars_XPTemplate -->
 	<Frame name="SUI_StatusBars_XPTemplate" frameStrata="BACKGROUND" enableMouse="true" virtual="true">
 		<Size><AbsDimension x="400" y="32" /></Size>
