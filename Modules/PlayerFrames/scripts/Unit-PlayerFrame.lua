@@ -115,6 +115,18 @@ do -- relocate the warlock bars
 	end);
 end
 
+do -- relocate the Monk MonkHarmonyBar
+	hooksecurefunc(MonkHarmonyBar,"SetPoint",function(_,_,parent)
+		if (parent ~= addon.player) then
+			MonkHarmonyBar:ClearAllPoints();
+			MonkHarmonyBar:SetPoint("BOTTOMLEFT",addon.player,"BOTTOMLEFT",40,-40);
+		end
+	end);
+	MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
+	MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7); MonkHarmonyBar:ClearAllPoints();
+	MonkHarmonyBar:SetPoint("BOTTOMLEFT",addon.player,"BOTTOMLEFT",40,-40);
+end
+
 do -- relocate the Priest PriestBarFrame
 	hooksecurefunc(PriestBarFrame,"SetPoint",function(_,_,parent)
 		if (parent ~= addon.player) then
