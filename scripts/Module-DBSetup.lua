@@ -196,11 +196,11 @@ function module:OnEnable()
 	end
 	DB.Version = SpartanVer;
 	DBGlobal.Version = SpartanVer;
-	if (CurseVersion) then
-		if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
-			spartan:Print("Curse Version"..CurseVersion);
-			spartan:Print("Spartan Version"..SpartanVer);
-			StaticPopup_Show ("AlphaWarning")
-		end
-	end
+	-- if (CurseVersion) then
+		-- if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
+			-- spartan:Print("Curse Version"..CurseVersion);
+			-- spartan:Print("Spartan Version"..SpartanVer);
+			-- StaticPopup_Show ("AlphaWarning")
+		-- end
+	-- end
 end
