@@ -1482,7 +1482,6 @@ local CreateUnitFrame = function(self,unit)
 		end);
 		end
 	end
-	spartan:Print(unit)
 	return (unit == "target" and CreateTargetFrame(self,unit)) or (unit == "targettarget" and CreateToTFrame(self,unit)) or (unit == "player" and CreatePlayerFrame(self,unit)) or (unit == "focus" and CreateFocusFrame(self,unit)) or (unit == "focustarget" and CreateFocusFrame(self,unit)) or (unit == "pet" and CreatePetFrame(self,unit) or CreateFocusFrame(self,unit));
 end
 
