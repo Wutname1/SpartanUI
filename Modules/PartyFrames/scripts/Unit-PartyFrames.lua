@@ -53,10 +53,10 @@ do -- scripts to make it movable
 			party:ClearAllPoints();
 			-- SpartanUI_PlayerFrames are loaded
 			if spartan:GetModule("PlayerFrames",true) then
-				party:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(addon.offset));
+				party:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(DB.BuffSettings.offset));
 			-- SpartanUI_PlayerFrames isn't loaded
 			else
-				party:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(addon.offset));
+				party:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(DB.BuffSettings.offset));
 			end
 		else
 			local Anchors = {}
@@ -105,18 +105,14 @@ do -- hide party frame in raid, if option enabled
 	partyWatch:RegisterEvent('PARTY_MEMBERS_CHANGED');
 	partyWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
 	partyWatch:RegisterEvent('CVAR_UPDATE');
+	partyWatch:RegisterEvent('PLAYER_REGEN_ENABLED');
 	partyWatch:RegisterEvent('FORCE_UPDATE'); -- Used by slash-commands
 	-- Debug
 --	partyWatch:RegisterAllEvents()
 --	partyWatch:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED');
 	partyWatch:SetScript('OnEvent',function(self,event,...)
 		if InCombatLockdown() then
-			self:RegisterEvent('PLAYER_REGEN_ENABLED')
 			return;
-		end
-		if (event == 'PLAYER_REGEN_ENABLED') then
-			-- we aren't in combat
-			self:UnregisterEvent('PLAYER_REGEN_ENABLED')
 		end
 		addon:UpdateParty(event)
 	end);

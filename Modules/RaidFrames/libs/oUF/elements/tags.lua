@@ -246,10 +246,6 @@ local tagStrings = {
 		end
 	end]],
 
-	["afkdnd"] = [[function(unit)
-		return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
-	end]],
-
 	["deficit:name"] = [[function(u)
 		local missinghp = _TAGS['missinghp'](u)
 		if(missinghp) then
@@ -364,14 +360,13 @@ local tagEvents = {
 	["pvp"]                 = "UNIT_FACTION",
 	["resting"]             = "PLAYER_UPDATE_RESTING",
 	["smartlevel"]          = "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
-	["afkdnd"]				= "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET",
 	["threat"]              = "UNIT_THREAT_SITUATION_UPDATE",
 	["threatcolor"]         = "UNIT_THREAT_SITUATION_UPDATE",
 	['cpoints']             = 'UNIT_COMBO_POINTS PLAYER_TARGET_CHANGED',
 	['rare']                = 'UNIT_CLASSIFICATION_CHANGED',
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
-	["group"]               = "RAID_ROSTER_UPDATE",
+	["group"]               = "GROUP_ROSTER_UPDATE",
 	["curpp"]               = 'UNIT_POWER',
 	["maxpp"]               = 'UNIT_MAXPOWER',
 	["missingpp"]           = 'UNIT_MAXPOWER UNIT_POWER',
@@ -394,7 +389,7 @@ local unitlessEvents = {
 
 	PARTY_LEADER_CHANGED = true,
 
-	RAID_ROSTER_UPDATE = true,
+	GROUP_ROSTER_UPDATE = true,
 
 	UNIT_COMBO_POINTS = true
 }

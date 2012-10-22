@@ -46,10 +46,10 @@ do -- raid header configuration
 --	raid:SetPoint("TOPLEFT", 0, -26)
 	raid:SetParent("SpartanUI");
 	raid:SetClampedToScreen(false);
-	CompactRaidFrameManager:UnregisterAllEvents()
-	CompactRaidFrameManager:Hide()
-	CompactRaidFrameContainer:UnregisterAllEvents()
-	CompactRaidFrameContainer:Hide()
+	-- CompactRaidFrameManager:UnregisterAllEvents()
+	-- CompactRaidFrameManager:Hide()
+	-- CompactRaidFrameContainer:UnregisterAllEvents()
+	-- CompactRaidFrameContainer:Hide()
 end
 
 do -- scripts to make it movable

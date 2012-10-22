@@ -87,13 +87,16 @@ do -- relocate the shaman TotemFrame
 			TotemFrame:ClearAllPoints();
 			TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,18);
 			if (class == MONK) then
-				TotemFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",-15,-105);
+				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,5);
 			end
 		end
 	end);
 	TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
 	TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7); TotemFrame:ClearAllPoints();
 	TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",55,11);
+	if (class == MONK) then
+		TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,5);
+	end
 end
 
 do -- relocate the warlock bars
@@ -139,6 +142,18 @@ do -- relocate the Priest PriestBarFrame
 	PriestBarFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",-4,-2);
 end
 
+do -- relocate the PlayerPowerBarAlt
+	hooksecurefunc(PlayerPowerBarAlt,"SetPoint",function(_,_,parent)
+		if (parent ~= addon.player) then
+			PlayerPowerBarAlt:ClearAllPoints();
+			PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
+		end
+	end);
+	PlayerPowerBarAlt:SetParent(addon.player); PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
+	PlayerPowerBarAlt:SetFrameLevel(4); PlayerPowerBarAlt:SetScale(1); PlayerPowerBarAlt:ClearAllPoints();
+	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
+end
+	
 do -- create a LFD cooldown frame
 	local GetLFGDeserter = GetLFGDeserterExpiration
 	local GetLFGRandomCooldown = GetLFGRandomCooldownExpiration

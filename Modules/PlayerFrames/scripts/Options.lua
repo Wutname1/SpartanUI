@@ -217,15 +217,6 @@ function addon:OnInitialize()
 						get = function(info) return DBMod.PlayerFrames.player.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.player.Auras.showType = val; addon:UpdateAura(); end
 					},
-					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
-						get = function(info) return DBMod.PlayerFrames.player.Auras.onlyShowPlayer; end,
-						set = function(info,val) DBMod.PlayerFrames.player.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
-					},
-					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
-						min=0,max=50,step=1,
-						get = function(info) return DBMod.PlayerFrames.player.Auras.NumBuffs; end,
-						set = function(info,val) DBMod.PlayerFrames.player.Auras.NumBuffs = val; addon:UpdateAura(); end
-					},
 					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.player.Auras.NumDebuffs; end,

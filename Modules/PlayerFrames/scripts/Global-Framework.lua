@@ -426,9 +426,8 @@ local CreatePlayerFrame = function(self,unit)
 		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
 		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
 		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
+		self.Auras.numBuffs = 1;
 		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end

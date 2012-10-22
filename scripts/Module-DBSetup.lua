@@ -3,6 +3,7 @@ local module = spartan:NewModule("DBSetup");
 local Bartender4Version, BartenderMin = "","4.5.3"
 if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
 local CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
+if (CurseVersion == nil) then CurseVersion = "" end
 
 function module:OnInitialize()
 	-- StaticPopupDialogs["AlphaNotice"] = {

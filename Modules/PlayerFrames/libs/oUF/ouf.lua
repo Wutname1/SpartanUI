@@ -575,9 +575,9 @@ oUF.version = _VERSION
 oUF.objects = objects
 
 if(global) then
-	--if(parent ~= 'oUF' and global == 'oUF') then
-	--	error("%s is doing it wrong and setting its global to oUF.", parent)
-	--else
+	-- if(parent ~= 'oUF' and global == 'oUF') then
+		-- error("%s is doing it wrong and setting its global to oUF.", parent)
+	-- else
 		_G[global] = oUF
-	--end
+	-- end
 end

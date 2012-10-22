@@ -217,8 +217,6 @@ function module:SetRepColors()
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
 		SUI_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
 		SUI_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
-		SUI_ReputationBarLead:SetVertexColor	(color.r, color.g, color.b, 0.7);
-		SUI_ReputationBarLeadGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
 	else
 		r = DB.RepBar.GainedRed
 		b = DB.RepBar.GainedBlue
@@ -226,8 +224,6 @@ function module:SetRepColors()
 		a = DB.RepBar.GainedBrightness
 		SUI_ReputationBarFill:SetVertexColor	(r, g, b, a);
 		SUI_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
-		SUI_ReputationBarLead:SetVertexColor	(r, g, b, a);
-		SUI_ReputationBarLeadGlow:SetVertexColor(r, g, b, a);
 	end
 
 	-- Set Text if needed

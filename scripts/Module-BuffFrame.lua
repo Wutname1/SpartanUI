@@ -15,14 +15,6 @@ function module:OnInitialize()
 					if val == true then module:UpdateBuffPosition(); end
 				end
 			},
-			disableblizz = {name= "Hide Blizzard buffs",type="toggle",width="full",order = 1,
-				desc= "Enabled the offset (moving) of the stock blizzard buffs",
-				get = function(info) return DB.BuffSettings.disableblizz; end,
-				set = function(info,val)
-					DB.BuffSettings.disableblizz = val;
-					if val == true then module:UpdateBuffPosition(); end
-				end
-			},
 			offset = {name = "Configure Offset", type = "range", order = 2,
 				desc = "offsets the bottom bar automatically, or set value",
 				width="double", min=0, max=200, step=.1,
@@ -90,17 +82,6 @@ function module:UpdateBuffPosition()
 				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
 			end
 		end
-	end
-	if DB.BuffSettings.disableblizz then
-		BuffFrame:UnregisterEvent("UNIT_AURA")
-		BuffFrame:Hide()
-		ConsolidatedBuffs:Hide()
-		TemporaryEnchantFrame:Hide()
-	elseif not BuffFrame:IsVisible() and not DB.BuffSettings.disableblizz then
-		BuffFrame:RegisterEvent("UNIT_AURA")
-		BuffFrame:Show()
-		BuffFrame_Update()
-		TemporaryEnchantFrame:Show()
 	end
 end
 

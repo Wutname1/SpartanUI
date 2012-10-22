@@ -101,7 +101,7 @@ local updateSpartanXOffset = function() -- handles SpartanUI offset based on set
 end;
 
 local updateSpartanViewport = function(state) -- handles viewport offset based on settings
-	if ( state ) then
+	if ( state ) and not InCombatLockdown() then
 		WorldFrame:ClearAllPoints(); WorldFrame:SetPoint("TOPLEFT", 0, 0); WorldFrame:SetPoint("BOTTOMRIGHT", 0, 0);
 	else
 		if not InCombatLockdown() then WorldFrame:SetPoint("BOTTOMRIGHT"); end

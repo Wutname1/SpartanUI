@@ -153,22 +153,12 @@
 					<Size><AbsDimension x="400" y="32" /></Size>
 					<Anchors><Anchor point="LEFT"/></Anchors>
 				</Texture>
-				<Texture name="$parentLead" file="Interface\AddOns\SpartanUI\media\status-lead">
-					<Size><AbsDimension x="25" y="32" /></Size>
-					<Anchors><Anchor point="LEFT" relativeTo="$parentFill" relativePoint="RIGHT"/></Anchors>
-				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
 				<Texture name="$parentFillGlow" file="Interface\AddOns\SpartanUI\media\status-glow" alphaMode="ADD">
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentFill" relativePoint="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT" relativeTo="$parentFill" relativePoint="BOTTOMRIGHT"/>
-					</Anchors>
-				</Texture>
-				<Texture name="$parentLeadGlow" file="Interface\AddOns\SpartanUI\media\status-lead" alphaMode="ADD">
-					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo="$parentLead" relativePoint="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT" relativeTo="$parentLead" relativePoint="BOTTOMRIGHT"/>
 					</Anchors>
 				</Texture>
 			</Layer>
