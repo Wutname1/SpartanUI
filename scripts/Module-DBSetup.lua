@@ -181,6 +181,10 @@ function module:OnInitialize()
 			if not DBMod.RaidFrames.threat then DBMod.RaidFrames.threat = true end
 			if not DBMod.PartyFrames.threat then DBMod.PartyFrames.threat = true end
 		end
+		if (DB.Version < "3.1.3") then -- DB Updates for 3.1.3
+			if DBMod.RaidFrames.maxColumns == 8 then DBMod.RaidFrames.maxColumns = 4 end
+			if DBMod.RaidFrames.unitsPerColumn == 5 then DBMod.RaidFrames.unitsPerColumn = 10 end
+		end
 	end
 end
 
