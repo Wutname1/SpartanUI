@@ -130,15 +130,12 @@ do	-- Hide Frame
 	raidWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
 	raidWatch:RegisterEvent('CVAR_UPDATE');
 	raidWatch:RegisterEvent('FORCE_UPDATE');
-
+	raidWatch:RegisterEvent('ZONE_CHANGED_NEW_AREA');
+	raidWatch:RegisterEvent('PLAYER_REGEN_ENABLED')
+	
 	raidWatch:SetScript('OnEvent',function(self,event,...)
 		if InCombatLockdown() then
-			self:RegisterEvent('PLAYER_REGEN_ENABLED')
 			return;
-		end
-		if (event == 'PLAYER_REGEN_ENABLED') then
-			-- we aren't in combat
-			self:UnregisterEvent('PLAYER_REGEN_ENABLED')
 		end
 		addon:UpdateRaid(event)
 	end);

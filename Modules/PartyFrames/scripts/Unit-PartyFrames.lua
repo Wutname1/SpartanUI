@@ -71,7 +71,6 @@ end
 
 do -- hide party frame in raid, if option enabled
 	function addon:UpdateParty(event,...)
-
 		local inParty = IsInGroup()  -- ( numGroupMembers () > 0 )
 		local bDebug_ShowFrame = true;
 
@@ -106,10 +105,9 @@ do -- hide party frame in raid, if option enabled
 	partyWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
 	partyWatch:RegisterEvent('CVAR_UPDATE');
 	partyWatch:RegisterEvent('PLAYER_REGEN_ENABLED');
-	partyWatch:RegisterEvent('FORCE_UPDATE'); -- Used by slash-commands
-	-- Debug
---	partyWatch:RegisterAllEvents()
---	partyWatch:UnregisterEvent('COMBAT_LOG_EVENT_UNFILTERED');
+	partyWatch:RegisterEvent('ZONE_CHANGED_NEW_AREA');
+	partyWatch:RegisterEvent('FORCE_UPDATE');
+	
 	partyWatch:SetScript('OnEvent',function(self,event,...)
 		if InCombatLockdown() then
 			return;
