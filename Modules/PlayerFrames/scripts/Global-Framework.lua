@@ -413,23 +413,25 @@ local CreatePlayerFrame = function(self,unit)
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
 	do -- setup buffs and debuffs
-		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetWidth(22*10); self.Auras:SetHeight(22*2);
-		self.Auras:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
-		self.Auras:SetFrameStrata("BACKGROUND");
-		self.Auras:SetFrameLevel(4);
+		self.Debuffs = CreateFrame("Frame",nil,self);
+		self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
+		self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
+		self.Debuffs:SetFrameStrata("BACKGROUND");
+		self.Debuffs:SetFrameLevel(4);
 		-- settings
-		self.Auras.initialAnchor = "BOTTOMLEFT";
-		self.Auras["growth-x"] = "RIGHT";
-		self.Auras["growth-y"] = "UP";
-		self.Auras.gap = true;
-		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
-		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		self.Auras.numBuffs = 0;
-		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Debuffs.initialAnchor = "BOTTOMLEFT";
+		self.Debuffs["growth-x"] = "RIGHT";
+		self.Debuffs["growth-y"] = "UP";
+		--self.Auras.gap = true;
+		self.Debuffs.size = DBMod.PlayerFrames[unit].Auras.size;
+		self.Debuffs.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		self.Debuffs.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		--self.Auras.numBuffs = 1;
+		--self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Debuffs.num = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
 		
-		self.Auras.PostUpdate = PostUpdateAura;
+		--self.Auras.PostUpdate = PostUpdateAura;
+		self.Debuffs.PostUpdate = PostUpdateAura;
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;

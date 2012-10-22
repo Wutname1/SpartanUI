@@ -2,7 +2,12 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 local Units = {[1]="player",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="pet"}
-function addon:UpdateAura() for k,v in pairs(Units) do addon[v].Auras:PostUpdate(v); end end
+function addon:UpdateAura()
+	for k,v in pairs(Units) do
+		if addon[v].Auras then addon[v].Auras:PostUpdate(v); end
+		if addon[v].Debuffs then addon[v].Debuffs:PostUpdate(v); end
+	end
+end
 
 function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["FrameStyle"] = {name="Frame Style",type="group",order=1,
@@ -509,6 +514,9 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-	for k,v in pairs(Units) do if DBMod.PlayerFrames[v].AuraDisplay then addon[v].Auras:PostUpdate(v); end end
+	for k,v in pairs(Units) do if DBMod.PlayerFrames[v].AuraDisplay then
+		if addon[v].Auras then addon[v].Auras:PostUpdate(v); end
+		if addon[v].Debuffs then addon[v].Debuffs:PostUpdate(v); end
+	end end
 	for k,v in pairs(Units) do if DBMod.PlayerFrames[v].display then addon[v]:Enable(); else addon[v]:Disable(); end end
 end
