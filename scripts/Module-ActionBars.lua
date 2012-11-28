@@ -37,7 +37,7 @@ end
 
 local SetupBartender = function()
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
-	local standard = "SpartanUI 3.0.2";
+	local standard = "SpartanUI 3.1.4";
 	local settings = { -- actual settings being inserted into our custom profile
 			ActionBars = {
 				actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
@@ -58,7 +58,7 @@ local SetupBartender = function()
 			PetBar		= {	enabled = true, padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=5,	y=-6,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
 			StanceBar	= {	enabled = true,	padding = 1, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-605,	y=-2,	scale = 0.85,	growHorizontal="LEFT"},		rows = 1},
 			MultiCast	= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
-			Vehicle		= {	enabled = true,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
+			Vehicle		= {	enabled = false,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
 			ExtraActionBar = {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
 			BlizzardArt	= {	enabled = false,	},
 		};

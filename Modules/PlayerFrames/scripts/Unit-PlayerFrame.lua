@@ -152,6 +152,7 @@ do -- relocate the PlayerPowerBarAlt
 	PlayerPowerBarAlt:SetParent(addon.player); PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
 	PlayerPowerBarAlt:SetFrameLevel(4); PlayerPowerBarAlt:SetScale(1); PlayerPowerBarAlt:ClearAllPoints();
 	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
+	spartan:Print(GetZoneText())
 end
 	
 do -- create a LFD cooldown frame
