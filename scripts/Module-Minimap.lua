@@ -184,8 +184,8 @@ function module:OnEnable()
 	end);
 	modifyMinimapLayout();
 	createMinimapCoords();
-	-- LFGSearchStatus:ClearAllPoints();
-	-- LFGSearchStatus:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
+	QueueStatusFrame:ClearAllPoints();
+	QueueStatusFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	module.handleBuff = true
 
 end
