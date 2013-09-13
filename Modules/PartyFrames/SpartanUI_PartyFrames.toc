@@ -1,4 +1,4 @@
-## Interface: 50300
+## Interface: 50400
 ## Title: SpartanUI: |CFF0070DDParty Frames|r
 ## Notes: Party Frames designed to complement SpartanUI
 ## Version: 3.1.4
