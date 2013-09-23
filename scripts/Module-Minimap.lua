@@ -11,7 +11,7 @@ local checkThirdParty, frame = function()
 		if (NxData.NXGOpts.MapMMOwn == true)
 			then addon:Print(NXTITLELOW..' is handling the Minimap') return true;
 		else
-			addon:Print('All Clear, SpartanUI is handling Minimap')
+			addon:Print('SpartanUI is handling Minimap')
 		end
 	end
 	if select(4, GetAddOnInfo("SexyMap")) then

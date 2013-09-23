@@ -1,16 +1,17 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = addon:NewModule("ChatFrame");
 ---------------------------------------------------------------------------
 
 
 function module:OnInitialize()
 	addon.optionsGeneral.args["ChatSettings"] = {
-		name = "Chat Settings",
-		desc = "configure Chat Settings",
+		name = L["ChatSettings"],
+		desc = L["ChatSettingsDesc"],
 		type = "group", args = {
 			enabled = {
-				name = "Enable Chat tweaks",
-				desc = "ReloadUI required to take affect",
+				name = L["ChatSettingsEnabled"],
+				desc = L["ChatSettingsEnabledDesc"],
 				type="toggle",
 				get = function(info) return DB.ChatSettings.enabled; end,
 				set = function(info,val)

@@ -1,4 +1,5 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = addon:NewModule("ActionBars");
 ----------------------------------------------------------------------------------------------------
 local default, plate = {
@@ -27,7 +28,7 @@ end;
 local BartenderProfileCheck = function(Input,Report)
 	local profiles, r = Bartender4.db:GetProfiles(), false
 	for k,v in pairs(profiles) do if v == Input then r = true end end
-	if Report then if r ~= true then addon:Print(Input.." Profile not found, generating one.") end end
+	if Report then if r ~= true then addon:Print(Input.." "..L["BartenderProfileCheckFail"]) end end
 	return r
 end
 
@@ -110,7 +111,7 @@ local SetupBartender = function()
 			end
 		end
 		Bartender4:UpdateModuleConfigs(); -- run ApplyConfig for all modules, so that the new settings are applied
-		if BartenderProfileCheck(standard,false) then addon:Print(standard.." Profile generated in Bartender.") end
+		if BartenderProfileCheck(standard,false) then addon:Print(standard.." "..L["BartenderProfileCreated"]) end
 		DB.ActionBars.Bartender4 = true;
 	end
 	-- Can't use UpdateInterval, due to the way this need to be working -- could this behavior be changed? - Maybe a securehoocfunc on the unlocking
@@ -118,7 +119,7 @@ local SetupBartender = function()
 		if (InCombatLockdown()) then return; end
 		if (Bartender4.db:GetCurrentProfile() == standard) or (Bartender4.db:GetCurrentProfile() == newtest) then
 			if Bartender4.Locked then return; end
-			addon:Print("The ability to unlock your bars is disabled when using the SpartanUI Default profile in Bartender4. Please change profiles to enable this functionality.");
+			addon:Print(L["BartenderProfileLocked"]);
 			Bartender4:Lock();
 		end
 	end);
@@ -152,68 +153,68 @@ function module:OnInitialize()
 	end
 	addon.optionsGeneral.args["backdrop"] = {
 		name = "ActionBar Settings",
-		desc = "configure actionbar backdrops",
+		desc = L["ActionBarConfDesc"],
 		type = "group", args = {
-			Allalpha = {name = "Alpha for all bars", type="range", order = 15,
+			Allalpha = {name = L["AllBarAlpha"], type="range", order = 15,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.Allalpha; end,
 				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].alpha,DB.ActionBars.Allalpha = val,val; end end
 			},
-			Allenable = {name = "Enable all bars", type="toggle", order= 16,
+			Allenable = {name = L["AllBarEnable"], type="toggle", order= 16,
 				get = function(info) return DB.ActionBars.Allenable; end,
 				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].enable,DB.ActionBars.Allenable = val,val; end end
 			},
-			bar1alpha = {name = "Alpha for bar 1", type="range", order = 1,
+			bar1alpha = {name = L["BarAlpha"].." 1", type="range", order = 1,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.bar1.alpha; end,
 				set = function(info,val) if DB.ActionBars.bar1.enable == true then DB.ActionBars.bar1.alpha = val end end
 			},
-			bar1enable = {name = "Enable bar 1", type="toggle", order= 2,
+			bar1enable = {name = L["BarEnable"].." 1", type="toggle", order= 2,
 				get = function(info) return DB.ActionBars.bar1.enable; end,
 				set = function(info,val) DB.ActionBars.bar1.enable = val end
 			},
-			bar2alpha = {name = "Alpha for bar 2", type="range", order = 3,
+			bar2alpha = {name = L["BarAlpha"].." 2", type="range", order = 3,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.bar2.alpha; end,
 				set = function(info,val) if DB.ActionBars.bar2.enable == true then DB.ActionBars.bar2.alpha = val end end
 			},
-			bar2enable = {name = "Enable bar 2", type="toggle", order= 4,
+			bar2enable = {name = L["BarEnable"].." 2", type="toggle", order= 4,
 				get = function(info) return DB.ActionBars.bar2.enable; end,
 				set = function(info,val) DB.ActionBars.bar2.enable = val end
 			},
-			bar3alpha = {name = "Alpha for bar 3", type="range", order = 5,
+			bar3alpha = {name = L["BarAlpha"].." 3", type="range", order = 5,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.bar3.alpha; end,
 				set = function(info,val) if DB.ActionBars.bar3.enable == true then DB.ActionBars.bar3.alpha = val end end
 			},
-			bar3enable = {name = "Enable bar 3", type="toggle", order= 6,
+			bar3enable = {name = L["BarEnable"].." 3", type="toggle", order= 6,
 				get = function(info) return DB.ActionBars.bar3.enable; end,
 				set = function(info,val) DB.ActionBars.bar3.enable = val end
 			},
-			bar4alpha = {name = "Alpha for bar 4", type="range", order = 7,
+			bar4alpha = {name = L["BarAlpha"].." 4", type="range", order = 7,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.bar4.alpha; end,
 				set = function(info,val) if DB.ActionBars.bar4.enable == true then DB.ActionBars.bar4.alpha = val end end
 			},
-			bar4enable = {name = "Enable bar 4", type="toggle", order= 8,
+			bar4enable = {name = L["BarEnable"].." 4", type="toggle", order= 8,
 				get = function(info) return DB.ActionBars.bar4.enable; end,
 				set = function(info,val) DB.ActionBars.bar4.enable = val end
 			},
-			bar5alpha = {name = "Alpha for bar 5", type="range", order = 9,
+			bar5alpha = {name = L["BarAlpha"].." 5", type="range", order = 9,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.bar5.alpha; end,
 				set = function(info,val) if DB.ActionBars.bar5.enable == true then DB.ActionBars.bar5.alpha = val end end
 			},
-			bar5enable = {name = "Enable bar 5", type="toggle", order= 10,
+			bar5enable = {name = L["BarEnable"].." 5", type="toggle", order= 10,
 				get = function(info) return DB.ActionBars.bar5.enable; end,
 				set = function(info,val) DB.ActionBars.bar5.enable = val end
 			},
-			bar6alpha = {name = "Alpha for bar 6", type="range", order = 11,
+			bar6alpha = {name = L["BarAlpha"].." 6", type="range", order = 11,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.bar6.alpha; end,
 				set = function(info,val) if DB.ActionBars.bar6.enable == true then DB.ActionBars.bar6.alpha = val end end
 			},
-			bar6enable = {name = "Enable bar 6", type="toggle", order= 12,
+			bar6enable = {name = L["BarEnable"].." 6", type="toggle", order= 12,
 				get = function(info) return DB.ActionBars.bar6.enable; end,
 				set = function(info,val) DB.ActionBars.bar6.enable = val end
 			},
@@ -229,39 +230,38 @@ function module:OnInitialize()
 					else
 						DB.ActionBars = {};
 						SetupProfile();
-						addon:Print("ActionBar Options Reset");
 					end
 				end
 			}
 		}
 	};
 	addon.optionsGeneral.args["popup"] = {
-		name = "Popup Animations",
-		desc = "Toggle popup bar animations",
+		name = L["PopupAnimConf"],
+		desc = L["PopupAnimConfDesc"],
 		type = "group", args = {
-			popup1anim = {	name = "Animate left popup",	type="toggle",	order=1, width="full",
+			popup1anim = {	name = L["LPopupAnimate"], type="toggle", order=1, width="full",
 				get = function(info) return DB.ActionBars.popup1.anim; end,
 				set = function(info,val) DB.ActionBars.popup1.anim = val; end
 			},
-			popup1alpha = {	name = "Alpha left popup",		type="range",	order=2,
+			popup1alpha = {	name = L["LPopupAlpha"], type="range", order=2,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.popup1.alpha; end,
 				set = function(info,val) if DB.ActionBars.popup1.enable == true then DB.ActionBars.popup1.alpha = val end end
 			},
-			popup1enable = {name = "Enable left popup",		type="toggle",	order=3,
+			popup1enable = {name = L["LPopupEnable"], type="toggle", order=3,
 				get = function(info) return DB.ActionBars.popup1.enable; end,
 				set = function(info,val) DB.ActionBars.popup1.enable = val end
 			},
-			popup2anim = {	name = "Animate right popup",	type="toggle",	order=4, width="full",
+			popup2anim = {	name = L["RPopupAnimate"], type="toggle", order=4, width="full",
 				get = function(info) return DB.ActionBars.popup2.anim; end,
 				set = function(info,val) DB.ActionBars.popup2.anim = val; end
 			},
-			popup2alpha = {	name = "Alpha right popup",		type="range",	order=5,
+			popup2alpha = {	name = L["RPopupAlpha"], type="range", order=5,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.popup2.alpha; end,
 				set = function(info,val) if DB.ActionBars.popup2.enable == true then DB.ActionBars.popup2.alpha = val end end
 			},
-			popup2enable = {name = "Enable right popup",	type="toggle",	order=6,
+			popup2enable = {name = L["RPopupEnable"], type="toggle", order=6,
 				get = function(info) return DB.ActionBars.popup2.enable; end,
 				set = function(info,val) DB.ActionBars.popup2.enable = val end
 			}

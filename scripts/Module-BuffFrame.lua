@@ -1,29 +1,30 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = addon:NewModule("Buffframe");
 local minimap = addon:GetModule("Minimap");
 ----------------------------------------------------------------------------------------------------
 function module:OnInitialize()
 	addon.optionsGeneral.args["BuffSettings"] = {
-		name = "Buff Settings",
-		desc = "configure Buff Settings",
+		name = L["BuffOffsetSetting"],
+		desc = L["BuffOffsetSettingDesc"],
 		type = "group", args = {
-			enabled = {name= "Enable Buff offset",type="toggle",width="full",order = 1,
-				desc= "Enabled the offset (moving) of the stock blizzard buffs",
+			enabled = {name= L["BuffOffsetEnable"],type="toggle",width="full",order = 1,
+				desc= L["BuffOffsetEnableDesc"],
 				get = function(info) return DB.BuffSettings.enabled; end,
 				set = function(info,val)
 					DB.BuffSettings.enabled = val;
 					if val == true then module:UpdateBuffPosition(); end
 				end
 			},
-			offset = {name = "Configure Offset", type = "range", order = 2,
-				desc = "offsets the bottom bar automatically, or set value",
+			offset = {name = L["BuffOffsetConf"], type = "range", order = 2,
+				desc = L["BuffOffsetConfDesc"],
 				width="double", min=0, max=200, step=.1,
 				get = function(info) return DB.BuffSettings.offset; end,
 				set = function(info,val)
 					if DB.BuffSettings.Manualoffset == true then DB.BuffSettings.offset = val; end
 				end
 			},
-			ManualOffset = {name="Manual Offset", type="toggle", order = 3,
+			ManualOffset = {name=L["BuffOffsetManual"], type="toggle", order = 3,
 				get	= function(info) return DB.BuffSettings.Manualoffset; end,
 				set = function(info,val)
 					DB.BuffSettings.Manualoffset = val;

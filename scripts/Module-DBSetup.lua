@@ -1,4 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = spartan:NewModule("DBSetup");
 local Bartender4Version, BartenderMin = "","4.5.12"
 if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
@@ -6,23 +7,8 @@ local CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 if (CurseVersion == nil) then CurseVersion = "" end
 
 function module:OnInitialize()
-	StaticPopupDialogs["AlphaNotice"] = {
-		text = '|cff33ff99SpartanUI|r|nv '..SpartanVer..'|n|r|n|nIt'.."'"..'s recomended to reset |cff33ff99SpartanUI|r.|n|nClick "|cff33ff99Yes|r" to Reset |cff33ff99SpartanUI|r & ReloadUI.|n|nAfter this you will need to setup |cff33ff99SpartanUI'.."'"..'s|r custom settings again.|n|nDo you want to reset & ReloadUI ?',
-		button1 = "|cff33ff99Yes|r",
-		button2 = "No",
-		OnAccept = function()
-			ReloadUI();
-		end,
-		OnCancel = function (_,reason)
-			spartan:Print("Leaving old profile intact by user's choice, issues might occur due to this.")
-		end,
-		sound = "igPlayerInvite",
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false,
-	}
 	StaticPopupDialogs["FirstLaunchNotice"] = {
-		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|nWelcome to SpartanUI, Please take a moment and go over some of the settings in the interface window by typing /sui|n|n',
+		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|n'..L["WelcomeMSG"]..' /sui|n|n',
 		button1 = "Ok",
 		OnAccept = function()
 			DBGlobal.Version = SpartanVer;
@@ -32,7 +18,7 @@ function module:OnInitialize()
 		hideOnEscape = false
 	}
 	StaticPopupDialogs["BartenderVerWarning"] = {
-		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|nWarning: Your bartender version of '..Bartender4Version..' may be out of date.|n|nSpartanUI requires '..BartenderMin..' or higher.',
+		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
 		button1 = "Ok",
 		OnAccept = function()
 			DBGlobal.BartenderVerWarning = SpartanVer;
@@ -42,7 +28,7 @@ function module:OnInitialize()
 		hideOnEscape = false
 	}
 	StaticPopupDialogs["BartenderInstallWarning"] = {
-		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|nWarning: Bartender not detected|nUI Issues may be experienced.',
+		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
 		button1 = "Ok",
 		OnAccept = function()
 			DBGlobal.BartenderInstallWarning = SpartanVer
@@ -52,7 +38,7 @@ function module:OnInitialize()
 		hideOnEscape = false
 	}
 	StaticPopupDialogs["AlphaWarning"] = {
-		text = '|cff33ff99SpartanUI Alpha '..CurseVersion..'|n|r|n|nWarning: Alpha version detected|n|nThank you for your help in testing SpartanUI. Please report any issues experienced.|n|nThis is an Alpha Build for 3.1.0|n|n',
+		text = '|cff33ff99SpartanUI Alpha '..CurseVersion..'|n|r|n|n'..L["Warning"]..': '..L["AplhaDetectedMSG1"]..'|n|n'..L["AplhaDetectedMSG2"],
 		button1 = "Ok",
 		OnAccept = function()
 			DBGlobal.AlphaWarning = CurseVersion
@@ -64,7 +50,7 @@ function module:OnInitialize()
 	-- DB Updates
 	if DBGlobal.Version then
 		if DB.Version == nil then -- DB Updates from 3.0.2 to 3.0.3 this variable was not set in 3.0.2
-			spartan:Print("DB updated from 3.0.2 settings")
+			spartan:Print(L["DBUpdate"].." 3.0.2 "..L["settings"])
 			local unitlist = {player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
 			for k,v in pairs(unitlist) do
 				tmp = true;
@@ -83,7 +69,7 @@ function module:OnInitialize()
 			DB.Version = "3.0.3"
 		end
 		if (DB.Version < "3.0.4") then -- DB updates for 3.0.5
-			spartan:Print("DB updated from 3.0.3 settings")
+			spartan:Print(L["DBUpdate"].." 3.0.4 "..L["settings"])
 			DB.offsetAuto = true
 			if DB.offset then
 				if DB.offset >= 2 then 
@@ -104,7 +90,7 @@ function module:OnInitialize()
 			DB.Version = "3.0.4"
 		end
 		if (DB.Version < "3.1.0") then -- DB Updates for 3.1.0
-			spartan:Print("DB updated from 3.0.5 settings")
+			spartan:Print(L["DBUpdate"].." 3.1.0 "..L["settings"])
 			DB.yoffsetAuto = DB.offsetAuto;
 			if not DB.offset then DB.offset = 0 end
 			if not DB.yoffset then DB.yoffset = DB.offset; end
@@ -182,10 +168,12 @@ function module:OnInitialize()
 			if not DBMod.PartyFrames.threat then DBMod.PartyFrames.threat = true end
 		end
 		if (DB.Version < "3.1.3") then -- DB Updates for 3.1.3
+			spartan:Print(L["DBUpdate"].." 3.1.3 "..L["settings"])
 			if DBMod.RaidFrames.maxColumns == 8 then DBMod.RaidFrames.maxColumns = 4 end
 			if DBMod.RaidFrames.unitsPerColumn == 5 then DBMod.RaidFrames.unitsPerColumn = 10 end
 		end
 		if (DB.Version < "3.2.1") then -- DB Updates for 3.1.3
+			spartan:Print(L["DBUpdate"].." 3.2.1 "..L["settings"])
 			if not DBMod.PlayerFrames.AltManaBar then
 				DBMod.PlayerFrames.AltManaBar = {movement={moved=false;point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}}
 			end
@@ -211,7 +199,6 @@ end
 
 function module:OnEnable()
 	if (not DBGlobal.Version) then
-		spartan:Print("Welcome to SpartanUI")
 		spartan.db:ResetProfile(false,true);
 		StaticPopup_Show ("FirstLaunchNotice")
 	end
