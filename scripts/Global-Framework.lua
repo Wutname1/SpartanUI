@@ -1,4 +1,5 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
 local AceHook = LibStub("AceHook-3.0")
 local module = addon:NewModule("BottomBar");
 local party -- for updateSpartanOffset use
@@ -184,8 +185,8 @@ function module:OnInitialize()
 			end
 		end);
 	end
-	addon.optionsGeneral.args["DefaultScales"] = {name = "Toggle Default Scales",type = "execute",order = 2,
-		desc = "toggles between widescreen and standard scales",
+	addon.optionsGeneral.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+		desc = L["DefScalesDesc"],
 		func = function()
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
@@ -195,12 +196,11 @@ function module:OnInitialize()
 				else
 					DB.scale = 0.92;
 				end
-				addon:Print("Relative Scale set to "..DB.scale);
 			end
 		end
 	};
-	addon.optionsGeneral.args["scale"] = {name = "Configure Scale",type = "range",order = 1,width = "double",
-		desc = "sets a specific scale for SpartanUI",min = 0,max = 1,
+	addon.optionsGeneral.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+		desc = L["ConfScaleDesc"],min = 0,max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);
@@ -211,8 +211,8 @@ function module:OnInitialize()
 		end,
 		get = function(info) return DB.scale; end
 	};
-	addon.optionsGeneral.args["offset"] = {name = "Configure Offset",type = "range",order = 3,width="double",
-		desc = "offsets the bottom bar automatically, or set value",
+	addon.optionsGeneral.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
+		desc = L["ConfOffsetDesc"],
 		min=0,max=200,step=.1,
 		get = function(info) return DB.yoffset end,
 		set = function(info,val)
@@ -220,7 +220,7 @@ function module:OnInitialize()
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
 				if DB.yoffsetAuto then
-					addon:Print("Offset is set AUTO");
+					addon:Print(L["confOffsetAuto"]);
 				else
 					val = tonumber(val);
 					DB.yoffset = val;
@@ -229,20 +229,20 @@ function module:OnInitialize()
 		end,
 		get = function(info) return DB.yoffset; end
 	};
-	addon.optionsGeneral.args["offsetauto"] = {name = "Auto Offset",type = "toggle",order = 4,
-		desc = "offsets the bottom bar automatically",
+	addon.optionsGeneral.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
+		desc = L["AutoOffsetDesc"],
 		get = function(info) return DB.yoffsetAuto end,
 		set = function(info,val) DB.yoffsetAuto = val end,
 	};
 	addon.optionsGeneral.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
 		args = {
-			alpha = {name="Transparency",type="range",order=1,width="full",
-				min=0,max=100,step=1,desc="XP and Rep Bars are known issues and need a redesign to look right",
+			alpha = {name=L["Transparency"],type="range",order=1,width="full",
+				min=0,max=100,step=1,desc=L["TransparencyDesc"],
 				get = function(info) return (DB.alpha*100); end,
 				set = function(info,val) DB.alpha = (val/100); updateSpartanAlpha(); end
 			},
-			xOffset = {name = "Move Sideways",type = "range",order = 3,width="full",
-				desc = "offsets the bottom bar automatically, or set value",
+			xOffset = {name = L["MoveSideways"],type = "range",order = 3,width="full",
+				desc = L["MoveSidewaysDesc"],
 				min=-200,max=200,step=.1,
 				get = function(info) return DB.xOffset/6.25 end,
 				set = function(info,val) DB.xOffset = val*6.25; updateSpartanXOffset(); end,

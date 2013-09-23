@@ -5,7 +5,16 @@ oUF:SetActiveStyle("Spartan_PlayerFrames");
 
 local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget"}
 
-do --color
+do --Color name by Class
+	local function hex(r, g, b)
+		if r then
+			if (type(r) == "table") then
+				if(r.r) then r, g, b = r.r, r.g, r.b else r, g, b = unpack(r) end
+			end
+			return ("|cff%02x%02x%02x"):format(r * 255, g * 255, b * 255)
+		end
+	end
+	
 	oUF.Tags.Events["SUI_ColorClass"] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
 	oUF.Tags.Methods["SUI_ColorClass"] = function(u)
 		local _, class = UnitClass(u)
@@ -52,11 +61,6 @@ do -- Dynamic Position Functions
 	end
 	addon:UpdateFocusPosition();
 	
-	function addon:ResetAltBarPositions()
-		DBMod.PlayerFrames.AltManaBar.movement.moved = false;
-		DBMod.PlayerFrames.ClassBar.movement.moved = false; 
-		addon:UpdateAltBarPositions();
-	end
 	function addon:UpdateAltBarPositions()
 		local classname, classFileName = UnitClass("player");	
 		-- Druid EclipseBar
@@ -147,6 +151,11 @@ do -- Dynamic Position Functions
 		end
 	end
 	
+	function addon:ResetAltBarPositions()
+		DBMod.PlayerFrames.AltManaBar.movement.moved = false;
+		DBMod.PlayerFrames.ClassBar.movement.moved = false; 
+		addon:UpdateAltBarPositions();
+	end
 	function WarlockPowerFrame_Relocate() -- Sets the location of the warlock bars based on spec
 		local spec = GetSpecialization();
 		if ( spec == SPEC_WARLOCK_AFFLICTION ) then
