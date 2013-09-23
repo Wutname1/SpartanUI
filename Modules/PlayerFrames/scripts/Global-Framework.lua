@@ -13,7 +13,6 @@ local Smoothv2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga]]
 local texture = [[Interface\AddOns\SpartanUI_PlayerFrames\media\texture.tga]]
 local metal = [[Interface\AddOns\SpartanUI_PlayerFrames\media\metal.tga]]
 
-local MovableFrames = {[1]="focus"}
 local colors = setmetatable({},{__index = oUF.colors});
 for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
 do -- setup custom colors that we want to use
@@ -1452,8 +1451,208 @@ local CreateFocusFrame = function(self,unit)
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
+	
+	--Make Focus Movable
+	self:EnableMouse(enable)
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.focus.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.focus.movement.point,
+		DBMod.PlayerFrames.focus.movement.relativeTo,
+		DBMod.PlayerFrames.focus.movement.relativePoint,
+		DBMod.PlayerFrames.focus.movement.xOffset,
+		DBMod.PlayerFrames.focus.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
 	return self;
 end
+
+local CreateBossFrame = function(self,unit)
+	self:SetSize(145, 80);
+	do --setup base artwork
+		local artwork = CreateFrame("Frame",nil,self);
+		artwork:SetFrameStrata("BACKGROUND");
+		artwork:SetFrameLevel(2); artwork:SetAllPoints(self);
+		
+		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
+		artwork.bg:SetPoint("CENTER");
+		artwork.bg:SetTexture(base_plate1);
+		artwork.bg:SetTexCoord(.57,.2,.2,1);
+		artwork.bg:SetAllPoints(self);
+		
+		self.Threat = CreateFrame("Frame",nil,self);
+		self.Threat.Override = threat;
+		
+		local Bossartwork = CreateFrame("Frame",nil,self);
+		Bossartwork:SetFrameStrata("BACKGROUND");
+		Bossartwork:SetFrameLevel(1); Bossartwork:SetAllPoints(self);
+		
+		self.BossGraphic = Bossartwork:CreateTexture(nil,"ARTWORK");
+		self.BossGraphic:SetSize(130, 125);
+		self.BossGraphic:SetPoint("TOP",self,"TOPRIGHT",-25,36);
+		
+	end
+	do -- setup status bars
+		do -- cast bar
+			local cast = CreateFrame("StatusBar",nil,self);
+			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
+			cast:SetSize(105, 12);
+			cast:SetPoint("TOPLEFT",self,"TOPLEFT",0,-17);
+			
+			cast.Text = cast:CreateFontString();
+			spartan:FormatFont(cast.Text, 10, "Player")
+			cast.Text:SetSize(97, 10);
+			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("MIDDLE");
+			cast.Text:SetPoint("LEFT",cast,"LEFT",4,0);
+			
+			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			cast.Time:SetSize(50, 10);
+			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
+			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
+			
+			self.Castbar = cast;
+			self.Castbar.OnUpdate = OnCastbarUpdate;
+			self.Castbar.PostCastStart = PostCastStart;
+			self.Castbar.PostChannelStart = PostChannelStart;
+			self.Castbar.PostCastStop = PostCastStop;
+		end
+		do -- health bar
+			local health = CreateFrame("StatusBar",nil,self);
+			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(3);
+			health:SetSize(105, 12);
+			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
+			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			
+			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			health.value:SetSize(97, 10);
+			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
+			health.value:SetPoint("LEFT",health,"LEFT",4,0);
+			self:Tag(health.value, TextFormat("health"))	
+			
+			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			health.ratio:SetSize(50, 10);
+			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("MIDDLE");
+			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
+			self:Tag(health.ratio, '[perhp]%')
+			
+			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
+			-- Background:SetAllPoints(health)
+			-- Background:SetTexture(1, 1, 1, .08)
+			
+			self.Health = health;
+			--self.Health.bg = Background;
+			self.Health.colorTapping = true;
+			self.Health.frequentUpdates = true;
+			self.Health.colorDisconnected = true;
+			self.Health.colorReaction = true;
+			
+			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
+			self.Health.colorHealth = true;
+			
+			-- Position and size
+			local myBars = CreateFrame('StatusBar', nil, self.Health)
+			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
+
+			local otherBars = CreateFrame('StatusBar', nil, myBars)
+			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
+
+			myBars:SetSize(105, 12)
+			otherBars:SetSize(105, 12)
+			
+			self.HealPrediction = {
+				myBar = myBars,
+				otherBar = otherBars,
+				maxOverflow = 4,
+			}
+		end
+		do -- power bar
+			local power = CreateFrame("StatusBar",nil,self);
+			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(3);
+			power:SetWidth(105); power:SetHeight(12);
+			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
+			
+			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			power.value:SetSize(70, 10);
+			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
+			power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
+			self:Tag(power.value, TextFormat("mana"))
+			
+			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			power.ratio:SetSize(50, 10);
+			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("MIDDLE");
+			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
+			self:Tag(power.ratio, '[perpp]%')
+			
+			self.Power = power;
+			self.Power.colorPower = true;
+			self.Power.frequentUpdates = true;
+			
+		end
+	end
+	do -- setup ring, icons, and text
+		local ring = CreateFrame("Frame",nil,self);
+		ring:SetFrameLevel(4); ring:SetFrameStrata("BACKGROUND");
+		ring:SetSize(50, 50);
+		ring:SetPoint("CENTER",self,"CENTER",-80,3);
+		
+		self.Name = ring:CreateFontString();
+		spartan:FormatFont(self.Name, 10, "Player")
+		self.Name:SetSize(127, 10); 
+		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
+		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",8,-2);
+		self:Tag(self.Name,"[name]");
+		
+		self.LevelSkull = ring:CreateTexture(nil,"ARTWORK");
+		self.LevelSkull:SetSize(16, 16);
+		self.LevelSkull:SetPoint("RIGHT",self.Name ,"LEFT",2,0);
+		
+		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidIcon:SetSize(24, 24);
+		self.RaidIcon:SetPoint("CENTER",self,"BOTTOMLEFT",0,23);
+	end
+	self.TextUpdate = PostUpdateText;
+	self.ColorUpdate = PostUpdateColor;
+	
+	--Make Boss Frames Movable
+	self:EnableMouse(enable)
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			-- addon.boss.mover:Show();
+			-- DBMod.PlayerFrames.BossFrame.movement.moved = true;
+			-- addon.boss.mover:SetMovable(true);
+			-- addon.boss.mover:StartMoving();
+			
+			addon.boss.mover:Show();
+			DBMod.PlayerFrames.BossFrame.movement.moved = true;
+			SUI_Boss1:SetMovable(true);
+			SUI_Boss1:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		addon.boss.mover:Hide();
+		SUI_Boss1:StopMovingOrSizing();
+		DBMod.PlayerFrames.BossFrame.movement.point,
+		DBMod.PlayerFrames.BossFrame.movement.relativeTo,
+		DBMod.PlayerFrames.BossFrame.movement.relativePoint,
+		DBMod.PlayerFrames.BossFrame.movement.xOffset,
+		DBMod.PlayerFrames.BossFrame.movement.yOffset = SUI_Boss1:GetPoint(SUI_Boss1:GetNumPoints())
+		addon:UpdateBossFramePosition();
+	end);
+	
+	return self;
+end
+
 
 local CreateUnitFrame = function(self,unit)
 	self.menu = menu;
@@ -1464,27 +1663,14 @@ local CreateUnitFrame = function(self,unit)
 	self:RegisterForClicks("anyup");
 	self:SetAttribute("*type2", "menu");
 	self.colors = addon.colors;
-
-	for a,b in pairs(MovableFrames) do -- If in the MovableFrames table above then make it moveable
-		if b == unit then
-		self:EnableMouse(enable)
-		self:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.focus.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		
-		self:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			local point,relativeTo,relativePoint,xOffset,yOffset = self:GetPoint(self:GetNumPoints())
-			DBMod.PlayerFrames.focus.xOffset = xOffset
-			DBMod.PlayerFrames.focus.yOffset = yOffset
-		end);
-		end
-	end
-	return (unit == "target" and CreateTargetFrame(self,unit)) or (unit == "targettarget" and CreateToTFrame(self,unit)) or (unit == "player" and CreatePlayerFrame(self,unit)) or (unit == "focus" and CreateFocusFrame(self,unit)) or (unit == "focustarget" and CreateFocusFrame(self,unit)) or (unit == "pet" and CreatePetFrame(self,unit) or CreateFocusFrame(self,unit));
+	
+	return ((unit == "target" and CreateTargetFrame(self,unit))
+	or (unit == "targettarget" and CreateToTFrame(self,unit))
+	or (unit == "player" and CreatePlayerFrame(self,unit))
+	or (unit == "focus" and CreateFocusFrame(self,unit))
+	or (unit == "focustarget" and CreateFocusFrame(self,unit))
+	or (unit == "pet" and CreatePetFrame(self,unit))
+	or CreateBossFrame(self,unit));
 end
 
 oUF:RegisterStyle("Spartan_PlayerFrames", CreateUnitFrame);

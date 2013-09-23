@@ -103,6 +103,7 @@ do --Health Formatting Tags
 	oUF.Tags.Events['missinghpformatted'] = "UNIT_HEALTH";
 	oUF.Tags.Methods['missinghpformatted'] = function (unit) return addon:comma_value(UnitHealthMax(unit) - UnitHealth(unit)); end
 end
+
 do -- Mana Formatting Tags
 -- Current Mana Dynamic, as an oUF module
 	oUF.Tags.Events['curppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
@@ -134,6 +135,31 @@ do -- Mana Formatting Tags
 -- Total Mana formatted, as an oUF module
 	oUF.Tags.Events['missingppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
 	oUF.Tags.Methods['missingppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit)); end
+end
+
+do --Color name by Class
+	local function hex(r, g, b)
+		if r then
+			if (type(r) == "table") then
+				if(r.r) then r, g, b = r.r, r.g, r.b else r, g, b = unpack(r) end
+			end
+			return ("|cff%02x%02x%02x"):format(r * 255, g * 255, b * 255)
+		end
+	end
+	
+	oUF.Tags.Events["SUI_ColorClass"] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
+	oUF.Tags.Methods["SUI_ColorClass"] = function(u)
+		local _, class = UnitClass(u)
+		local reaction = UnitReaction(u, "player")
+		
+		if (u == "pet") then
+			return hex(oUF.colors.class[class])
+		elseif (UnitIsPlayer(u)) then
+			return hex(oUF.colors.class[class])
+		else
+			return hex(1, 1, 1)
+		end
+	end
 end
 
 function addon:round(val, decimal)

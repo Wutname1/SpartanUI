@@ -71,6 +71,10 @@ function addon:OnInitialize()
 				values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
 				get = function(info) return DBMod.PartyFrames.bars.mana.textmode; end,
 				set = function(info,val) DBMod.PartyFrames.bars.mana.textmode = val; addon:UpdateText(); end
+			},
+			toggleclasscolorname =  {name = "Color Name by class", type = "toggle", order=25,
+				get = function(info) return DBMod.PartyFrames.showClass; end,
+				set = function(info,val) DBMod.PartyFrames.showClass = val; addon:UpdateParty("FORCE_UPDATE"); end
 			}
 		}
 	}

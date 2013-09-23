@@ -6,77 +6,212 @@ oUF:SetActiveStyle("Spartan_PlayerFrames");
 addon.player = oUF:Spawn("player","SUI_PlayerFrame");
 addon.player:SetPoint("BOTTOMRIGHT",SpartanUI,"TOP",-72,-3);
 
-function WarlockPowerFrame_Relocate() -- Sets the location of the warlock bars based on spec
-	local spec = GetSpecialization();
-	if ( spec == SPEC_WARLOCK_AFFLICTION ) then
-		-- set up Affliction
-		WarlockPowerFrame:SetScale(.85);
-		WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",8,-2);
-	elseif ( spec == SPEC_WARLOCK_DESTRUCTION ) then
-			-- set up Destruction
-			WarlockPowerFrame:SetScale(0.85);
-			WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",14,-2);
-	elseif ( spec == SPEC_WARLOCK_DEMONOLOGY ) then
-		-- set up Demonic
-		WarlockPowerFrame:SetScale(1);
-		WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"TOPRIGHT",15,15);
-	else
-		-- no spec
-	end
-end
-
 do -- relocate the AlternatePowerBar
-	hooksecurefunc(PlayerFrameAlternateManaBar,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			PlayerFrameAlternateManaBar:ClearAllPoints();
-			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
-		end
-	end);
-	PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
-	PlayerFrameAlternateManaBar:SetFrameLevel(4); PlayerFrameAlternateManaBar:SetScale(1); PlayerFrameAlternateManaBar:ClearAllPoints();
-	if (class == MONK) then
-		PlayerFrameAlternateManaBar:SetScale(1.1);
+	local classname, classFileName = UnitClass("player")
+	if classFileName == "MONK" then
+		--Align and shrink to fit under CHI, not movable
+		PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
+		PlayerFrameAlternateManaBar:SetFrameLevel(6); PlayerFrameAlternateManaBar:SetScale(.7); PlayerFrameAlternateManaBar:ClearAllPoints();
+		hooksecurefunc(PlayerFrameAlternateManaBar,"SetPoint",function(_,_,parent)
+			if (parent ~= addon.player) then
+				PlayerFrameAlternateManaBar:ClearAllPoints();
+				PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",-5,-17);
+			end
+		end);
+		PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",-5,-17);
+	else
+		--Make it look like a smaller, movable mana bar.
+		hooksecurefunc(PlayerFrameAlternateManaBar,"SetPoint",function(_,_,parent)
+			if (parent ~= addon.player) and (DBMod.PlayerFrames.AltManaBar.movement.moved == false) then
+				PlayerFrameAlternateManaBar:ClearAllPoints();
+				PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
+			end
+		end);
+		PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
+		PlayerFrameAlternateManaBar:SetFrameLevel(4); PlayerFrameAlternateManaBar:SetScale(1); PlayerFrameAlternateManaBar:EnableMouse(enable);
+		PlayerFrameAlternateManaBar:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.AltManaBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		PlayerFrameAlternateManaBar:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.AltManaBar.movement.point,
+			DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
+			DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
+			DBMod.PlayerFrames.AltManaBar.movement.xOffset,
+			DBMod.PlayerFrames.AltManaBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
 	end
-	PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
-end
-
-do -- relocate the druid EclipseBar
-	hooksecurefunc(EclipseBarFrame,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			EclipseBarFrame:ClearAllPoints();
-			EclipseBarFrame:SetPoint("TOPRIGHT",addon.player,"TOPRIGHT",155,10);
-		end
-	end);
+	
+	-- Druid EclipseBar
 	EclipseBarFrame:SetParent(addon.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
-	EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8); EclipseBarFrame:ClearAllPoints();
-	EclipseBarFrame:SetPoint("TOPRIGHT",addon.player,"TOPRIGHT",157,12);
-end
-
-do -- relocate the death knight RuneFrame
-	hooksecurefunc(RuneFrame,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			RuneFrame:ClearAllPoints();
-			RuneFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,10);
+	EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8); EclipseBarFrame:EnableMouse(enable);
+	EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
 		end
 	end);
-	RuneFrame:SetParent(addon.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
-	RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97); RuneFrame:ClearAllPoints();
-	RuneFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,7);
-end
-
-do -- relocate the paladin PaladinPowerBar
-	hooksecurefunc(PaladinPowerBar,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			PaladinPowerBar:ClearAllPoints();
-			PaladinPowerBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,14);
+	EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+	
+	-- Monk Chi Bar (Hard to move but it is doable.)
+	MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
+	MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7); MonkHarmonyBar:EnableMouse(enable);
+	MonkHarmonyBar:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
 		end
 	end);
+	MonkHarmonyBar:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+
+ -- Paladin Holy Power
 	PaladinPowerBar:SetParent(addon.player); PaladinPowerBar_OnLoad(PaladinPowerBar); PaladinPowerBar:SetFrameStrata("MEDIUM");
-	PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77); PaladinPowerBar:ClearAllPoints();
-	PaladinPowerBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,12);
-end
+	PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77); PaladinPowerBar:EnableMouse(enable);
+	PaladinPowerBar:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	PaladinPowerBar:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
 
-do -- relocate the shaman TotemFrame
+	-- PriestBarFrame
+	PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
+	PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7); PriestBarFrame:EnableMouse(enable);
+	PriestBarFrame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	PriestBarFrame:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+	
+ -- relocate the warlock bars
+	WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
+	WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1); WarlockPowerFrame:EnableMouse(enable);
+	ShardBarFrame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	ShardBarFrame:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+	BurningEmbersBarFrame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	BurningEmbersBarFrame:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+	DemonicFuryBarFrame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	DemonicFuryBarFrame:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+	local WarlockSpecWatcher = CreateFrame("Frame");
+	WarlockSpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
+	WarlockSpecWatcher:SetScript("OnEvent",function()
+		addon:UpdateAltBarPositions();
+	end);
+
+ -- Rune Frame
+	RuneFrame:SetParent(addon.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
+	RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97); RuneFrame:EnableMouse(enable);
+	RuneButtonIndividual1:EnableMouse(enable);
+	RuneFrame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	RuneFrame:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+	RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			DBMod.PlayerFrames.ClassBar.movement.moved = true;
+			self:SetMovable(true);
+			self:StartMoving();
+		end
+	end);
+	RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
+		self:StopMovingOrSizing();
+		DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+	end);
+
+	-- Totem Frame (Pally Concentration, Shaman Totems, Monk Statues)
 	for i = 1,4 do
 		local timer = _G["TotemFrameTotem"..i.."Duration"];
 		timer.Show = function() return; end
@@ -85,64 +220,19 @@ do -- relocate the shaman TotemFrame
 	hooksecurefunc(TotemFrame,"SetPoint",function(_,_,parent)
 		if (parent ~= addon.player) then
 			TotemFrame:ClearAllPoints();
-			TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,18);
-			if (class == MONK) then
-				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,5);
+			if classFileName == "MONK" then
+				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,8);
+			elseif classFileName == "PALADIN" then
+				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",15,8);
+			else
+				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
 			end
 		end
 	end);
 	TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
 	TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7); TotemFrame:ClearAllPoints();
-	TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",55,11);
-	if (class == MONK) then
-		TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,5);
-	end
-end
-
-do -- relocate the warlock bars
-	hooksecurefunc(WarlockPowerFrame,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			WarlockPowerFrame:ClearAllPoints();
-			WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",2,-2);
-		end
-	end);
-	WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
-	WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1); WarlockPowerFrame:ClearAllPoints();
-	WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",2,-2);
-	WarlockPowerFrame_Relocate();
-	local WarlockSpecWatcher = CreateFrame("Frame");
-	WarlockSpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
-	--WarlockSpecWatcher:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");
-	WarlockSpecWatcher:SetScript("OnEvent",function()
-		WarlockPowerFrame_Relocate();
-	end);
-end
-
-do -- relocate the Monk MonkHarmonyBar
-	hooksecurefunc(MonkHarmonyBar,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			MonkHarmonyBar:ClearAllPoints();
-			MonkHarmonyBar:SetPoint("BOTTOMLEFT",addon.player,"BOTTOMLEFT",40,-40);
-		end
-	end);
-	MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
-	MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7); MonkHarmonyBar:ClearAllPoints();
-	MonkHarmonyBar:SetPoint("BOTTOMLEFT",addon.player,"BOTTOMLEFT",40,-40);
-end
-
-do -- relocate the Priest PriestBarFrame
-	hooksecurefunc(PriestBarFrame,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			PriestBarFrame:ClearAllPoints();
-			PriestBarFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",2,-2);
-		end
-	end);
-	PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
-	PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7); PriestBarFrame:ClearAllPoints();
-	PriestBarFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",-4,-2);
-end
-
-do -- relocate the PlayerPowerBarAlt
+	
+	-- relocate the PlayerPowerBarAlt
 	hooksecurefunc(PlayerPowerBarAlt,"SetPoint",function(_,_,parent)
 		if (parent ~= addon.player) then
 			PlayerPowerBarAlt:ClearAllPoints();
@@ -152,9 +242,10 @@ do -- relocate the PlayerPowerBarAlt
 	PlayerPowerBarAlt:SetParent(addon.player); PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
 	PlayerPowerBarAlt:SetFrameLevel(4); PlayerPowerBarAlt:SetScale(1); PlayerPowerBarAlt:ClearAllPoints();
 	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
-	spartan:Print(GetZoneText())
-end
-	
+
+	addon:UpdateAltBarPositions();
+end 
+
 do -- create a LFD cooldown frame
 	local GetLFGDeserter = GetLFGDeserterExpiration
 	local GetLFGRandomCooldown = GetLFGRandomCooldownExpiration
@@ -182,49 +273,49 @@ do -- create a LFD cooldown frame
 	return mode
 end
 
-local StartAnimating = EyeTemplate_StartAnimating
-local StopAnimating = EyeTemplate_StopAnimating
+	local StartAnimating = EyeTemplate_StartAnimating
+	local StopAnimating = EyeTemplate_StopAnimating
 
-local UpdateIsShown = function(self)
---	local mode, submode = GetLFGMode();
-	local mode = UpdateCooldown(self);
-	if ( mode ) then
-		self:Show();
-		if ( mode == "time" ) then
-			StartAnimating(self);
-		else
-			StopAnimating(self);
-		end
-	else
-		self:Hide();
-	end
-end
-
-local OnEnter = function(self)
-	local mode = UpdateCooldown(self);
-	local DESERTER = "You recently deserted a Dungeon Finder group|nand may not queue again for:"
-	local RANDOM_COOLDOWN = LFG_RANDOM_COOLDOWN_YOU
-	if ( mode ) then
-		GameTooltip:SetOwner(self, "ANCHOR_LEFT");
-		GameTooltip:SetText(LOOKING_FOR_DUNGEON);
-		local timeRemaining = self.myExpirationTime - GetTime();
-		if ( timeRemaining > 0 ) then
-			if ( mode == "deserter" ) then
-				GameTooltip:AddLine(string.format(DESERTER.." %s","|CFFEE0000"..SecondsToTime(ceil(timeRemaining)).."|r"));
+	local UpdateIsShown = function(self)
+	--	local mode, submode = GetLFGMode();
+		local mode = UpdateCooldown(self);
+		if ( mode ) then
+			self:Show();
+			if ( mode == "time" ) then
+				StartAnimating(self);
 			else
-				GameTooltip:AddLine(string.format(RANDOM_COOLDOWN.." %s","|CFFEE0000"..SecondsToTime(ceil(timeRemaining)).."|r"));
+				StopAnimating(self);
 			end
 		else
-			GameTooltip:AddLine("Ready")
+			self:Hide();
 		end
-		GameTooltip:Show();
 	end
-end
 
-local OnLeave = function(self)
-	GameTooltip:Hide();
-end
-	
+	local OnEnter = function(self)
+		local mode = UpdateCooldown(self);
+		local DESERTER = "You recently deserted a Dungeon Finder group|nand may not queue again for:"
+		local RANDOM_COOLDOWN = LFG_RANDOM_COOLDOWN_YOU
+		if ( mode ) then
+			GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+			GameTooltip:SetText(LOOKING_FOR_DUNGEON);
+			local timeRemaining = self.myExpirationTime - GetTime();
+			if ( timeRemaining > 0 ) then
+				if ( mode == "deserter" ) then
+					GameTooltip:AddLine(string.format(DESERTER.." %s","|CFFEE0000"..SecondsToTime(ceil(timeRemaining)).."|r"));
+				else
+					GameTooltip:AddLine(string.format(RANDOM_COOLDOWN.." %s","|CFFEE0000"..SecondsToTime(ceil(timeRemaining)).."|r"));
+				end
+			else
+				GameTooltip:AddLine("Ready")
+			end
+			GameTooltip:Show();
+		end
+	end
+
+	local OnLeave = function(self)
+		GameTooltip:Hide();
+	end
+		
 	LFDCooldown = CreateFrame("Frame",nil,addon.player)
 	LFDCooldown:SetFrameStrata("BACKGROUND")
 	LFDCooldown:SetFrameLevel(10);

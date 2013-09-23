@@ -22,7 +22,7 @@ function module:OnInitialize()
 		-- hideOnEscape = false,
 	-- }
 	StaticPopupDialogs["FirstLaunchNotice"] = {
-		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|nSettings are no longer done with slash commands they are now accessed by typing /sui|n|n',
+		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|nWelcome to SpartanUI, Please take a moment and go over some of the settings in the interface window by typing /sui|n|n',
 		button1 = "Ok",
 		OnAccept = function()
 			DBGlobal.Version = SpartanVer;
@@ -184,6 +184,26 @@ function module:OnInitialize()
 		if (DB.Version < "3.1.3") then -- DB Updates for 3.1.3
 			if DBMod.RaidFrames.maxColumns == 8 then DBMod.RaidFrames.maxColumns = 4 end
 			if DBMod.RaidFrames.unitsPerColumn == 5 then DBMod.RaidFrames.unitsPerColumn = 10 end
+		end
+		if (DB.Version < "3.2.1") then -- DB Updates for 3.1.3
+			if not DBMod.PlayerFrames.AltManaBar then
+				DBMod.PlayerFrames.AltManaBar = {movement={moved=false;point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}}
+			end
+			if not DBMod.PlayerFrames.ClassBar then
+				DBMod.PlayerFrames.ClassBar = {movement={moved=false;point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}}
+			end
+			if not DBMod.PlayerFrames.focus.movement then
+				DBMod.PlayerFrames.focus = {movement={moved=DBMod.PlayerFrames.focus.moved;point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}}
+			end
+			if not DBMod.PlayerFrames.BossFrame.movement then
+				DBMod.PlayerFrames.BossFrame.movement = {moved=false,point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}
+				DBMod.PlayerFrames.BossFrame.display = true;
+			end
+			if not DBMod.PlayerFrames.ArenaFrame.movement then
+				DBMod.PlayerFrames.ArenaFrame.movement = {moved=false,point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}
+			end
+			if DBMod.RaidFrames.showClass == nil then DBMod.RaidFrames.showClass = true end
+			if DBMod.PartyFrames.showClass == nil then DBMod.PartyFrames.showClass = true end
 		end
 	end
 end

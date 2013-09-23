@@ -3,7 +3,6 @@ local addon = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
 oUF:SetActiveStyle("Spartan_PartyFrames");
 
--- local party = oUF:SpawnHeader("SUI_PartyFrameHeader", nil, "party,solo",
 party = oUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 	"showRaid", false,
 	"showParty", true,

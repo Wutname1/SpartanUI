@@ -13,8 +13,9 @@ addon.optionsFilmEffects = {name = "SpartanUI Film Effects", type = "group", arg
 --addon.ChangeLog = {name = "SpartanUI Change Log", type = "group", args = {}};
 
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
-local frameDefault1 = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false}}
-local frameDefault2 = {moved=false;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",Auras={NumBuffs=0,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false}}
+local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
+local frameDefault1 = {movement=MovedDefault;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false}}
+local frameDefault2 = {movement=MovedDefault;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",Auras={NumBuffs=0,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false}}
 
 DBdefault = {
 	SUIProper = {
@@ -109,6 +110,7 @@ DBdefault = {
 			FrameStyle = "large",
 			showAuras = true,
 			partyLock = true,
+			showClass = true,
 			partyMoved = false,
 			castbar = true,
 			castbartext = true,
@@ -155,8 +157,11 @@ DBdefault = {
 				focustarget = {color="dynamic"},
 			},
 			Castbar = {player=1,target=1,targettarget=1,pet=1,focus=1,text={player=1,target=1,targettarget=1,pet=1,focus=1}},
-			BossFrame = {display=false,moved=false,scale=1},
-			ArenaFrame = {display=false,moved=false,scale=1},
+			BossFrame = {movement=MovedDefault,display=true,scale=1},
+			ArenaFrame = {movement=MovedDefault,display=false,scale=1},
+			ClassBar = {movement=MovedDefault},
+			TotemFrame = {movement=MovedDefault},
+			AltManaBar = {movement=MovedDefault},
 		},
 		RaidFrames  = {
 			threat = true,
@@ -164,6 +169,7 @@ DBdefault = {
 			preset = "dps",
 			FrameStyle = "small",
 			showAuras = true,
+			showClass = true,
 			moved = false,
 			showRaid = true,
 			maxColumns = 4,

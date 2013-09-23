@@ -171,6 +171,16 @@ local OnCastbarUpdate = function(self,elapsed)
 	end
 end
 
+local ClassFontColor = function(self,event,unit)
+	local name = self.Name;
+	if (name) then
+		local _,class = UnitClass(self.unit);
+		local coords = RAID_CLASS_COLORS[class or "DEFAULT"];
+		name:SetTextColor(coords[1], coords[2], coords[3], 1);
+		--name:Show();
+	end
+end
+
 local CreatePartyFrame = function(self,unit)
 	--self:SetSize(250, 70); -- just make it we will adjust later
 	do -- setup base artwork
@@ -206,7 +216,10 @@ local CreatePartyFrame = function(self,unit)
 			self.artwork.bg:SetTexture(base_plate2);
 			self:SetSize(165+Portrait.Size, 35);
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize,.95,0.015,.56);
-			
+		elseif DBMod.PartyFrames.FrameStyle == "raidsmall" then
+			self.artwork.bg:SetTexture(base_plate2);
+			self:SetSize(165+Portrait.Size, 35);
+			self.artwork.bg:SetTexCoord(Portrait.XTexSize,.95,0.015,.56);
 		end
 		
 		if DBMod.PartyFrames.Portrait then
@@ -354,8 +367,11 @@ local CreatePartyFrame = function(self,unit)
 		self.Name:SetSize(140, 10);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-10,-6);
-		self:Tag(self.Name, "[name]");
-		
+		if DBMod.PartyFrames.showClass then
+			self:Tag(self.Name, "[SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[name]");
+		end
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
 		self.SUI_ClassIcon:SetSize(20, 20);
@@ -544,7 +560,11 @@ local CreateSubFrame = function(self,unit)
 		self.Name:SetSize(135, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self.artwork.bg,"TOPRIGHT",0,-4);
-		self:Tag(self.Name, "[level] [name]");
+		if DBMod.PartyFrames.showClass then
+			self:Tag(self.Name, "[level][SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[level][name]");
+		end
 	end
 	return self;
 end

@@ -21,6 +21,10 @@ function addon:OnInitialize()
 				get = function(info) return DBMod.RaidFrames.showRaid; end,
 				set = function(info,val) DBMod.RaidFrames.showRaid = val; addon:UpdateRaid("FORCE_UPDATE"); end
 			},
+			toggleclassname =  {name = "Color Name by class", type = "toggle", order=1,
+				get = function(info) return DBMod.RaidFrames.showClass; end,
+				set = function(info,val) DBMod.RaidFrames.showClass = val; addon:UpdateRaid("FORCE_UPDATE"); end
+			},
 			scale = {name="Scale Size",type="range",order=5,width="full",
 				step=.01,min = .01,max = 2,
 				get = function(info) return DBMod.RaidFrames.scale; end,

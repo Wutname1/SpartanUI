@@ -167,7 +167,10 @@ function addon:FormatFont(element, size, Module)
 	--Set Font Outline
 	flags = ""
 	if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
-	if DB.font[Module].Type == "outline" then flags = flags.."outline " end
+	
+	-- Outline was deemed to thick, it is not a slight drop shadow done below
+	--if DB.font[Module].Type == "outline" then flags = flags.."outline " end
+	
 	if DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
 	--Set Size
 	sizeFinal = size + DB.font[Module].Size;
@@ -182,6 +185,10 @@ function addon:FormatFont(element, size, Module)
 		element:SetFont("Fonts\\skurri.TTF", sizeFinal, flags)
 	elseif DB.font[Module].Face == "Morpheus" then
 		element:SetFont("Fonts\\MORPHEUS.TTF", sizeFinal, flags)
+	end
+	if DB.font[Module].Type == "outline" then
+		element:SetShadowColor(0,0,0,.9)
+		element:SetShadowOffset(1,-1)
 	end
 	--Add Item to the Array
 	local count = 0

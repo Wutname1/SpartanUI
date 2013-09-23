@@ -476,15 +476,15 @@ function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["bossarena"] = {name = "Boss & Arena frames",type = "group",order=5,
 		args = {
 			bar0 = {name="Boss Frames",type="header",order=0},
-			boss = { name = "Show Frames", type = "toggle",order=1,disabled=true,
+			boss = { name = "Show Frames", type = "toggle",order=1,--disabled=true,
 				get = function(info) return DBMod.PlayerFrames.BossFrame.display; end,
 				set = function(info,val) DBMod.PlayerFrames.BossFrame.display = val; end
 			},
-			bossreset = {name = "Reset location",type = "execute",order=2,disabled=true,
+			bossreset = {name = "Reset location",type = "execute",order=2,--disabled=true,
 				desc = "resets the potion to default",
-				func = function() BMod.PlayerFrames.BossFrame.moved = false; addon:UpdateBossFramePosition(); end
+				func = function() DBMod.PlayerFrames.BossFrame.movement.moved = false; addon:UpdateBossFramePosition(); end
 			},
-			bossscale = { name = "Scale Frames", type = "range",order=3,width="full",disabled=true,
+			bossscale = { name = "Scale Frames", type = "range",order=3,width="full",--disabled=true,
 				min=.01,max=2,step=.01,
 				get = function(info) return DBMod.PlayerFrames.BossFrame.scale; end,
 				set = function(info,val) DBMod.PlayerFrames.BossFrame.scale = val; end
@@ -497,7 +497,7 @@ function addon:OnInitialize()
 			},
 			arenareset = {name = "Reset location",type = "execute",order=22,disabled=true,
 				desc = "resets the potion to default",
-				func = function() BMod.PlayerFrames.ArenaFrame.moved = false; addon:UpdateArenaFramePosition(); end
+				func = function() DBMod.PlayerFrames.ArenaFrame.moved = false; addon:UpdateArenaFramePosition(); end
 			},
 			arenascale = { name = "Scale Frames", type = "range",order=23,width="full",disabled=true,
 				min=.01,max=2,step=.01,
@@ -508,8 +508,12 @@ function addon:OnInitialize()
 	};
 	
 	spartan.optionsPlayerFrames.args["resetfocus"] = {name = "Reset Focus location",type = "execute",order=1,
-		desc = "resets the potion to default",
-		func = function() BMod.PlayerFrames.focus.moved = false; addon:UpdateFocusPosition(); end
+		desc = "resets the focus frame to the default position",
+		func = function() DBMod.PlayerFrames.focus.movement.moved = false; addon:UpdateFocusPosition(); end
+	};
+	spartan.optionsPlayerFrames.args["resetSpecialBar"] = {name = "Reset Special Bar location",type = "execute",order=1,
+		desc = "Resets the Special Bar(s) (Eclipse meter, Alt Power, Runes, totems, etc...) to the default position",
+		func = function() addon:ResetAltBarPositions(); end
 	};
 end
 

@@ -220,20 +220,24 @@ local CreateFrame = function(self,unit)
 		local layer5 = CreateFrame("Frame",nil,self);
 		layer5:SetFrameLevel(5);
 		
+		self.LFDRole = layer5:CreateTexture(nil,"ARTWORK");
+		self.LFDRole:SetSize(13, 13);
+		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
+		
 		self.Name = layer5:CreateFontString();
-		spartan:FormatFont(self.Name, 11, "Party")
+		spartan:FormatFont(self.Name, 11, "Raid")
 		self.Name:SetSize(self:GetWidth()-30, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
-		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-20,-3);
-		self:Tag(self.Name, "[name]");
+		self.Name:SetPoint("TOPLEFT",self.LFDRole,"TOPRIGHT",1,1);
+		if DBMod.RaidFrames.showClass then
+			self:Tag(self.Name, "[SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[name]");
+		end
 		
 		self.Leader = layer5:CreateTexture(nil,"ARTWORK");
 		self.Leader:SetSize(15, 15);
 		self.Leader:SetPoint("CENTER",self,"TOP",0,0);
-		
-		self.LFDRole = layer5:CreateTexture(nil,"ARTWORK");
-		self.LFDRole:SetSize(13, 13);
-		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
 		
 		self.RaidIcon = self:CreateTexture(nil,"ARTWORK");
 		self.RaidIcon:SetSize(24, 24);

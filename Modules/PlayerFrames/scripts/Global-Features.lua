@@ -192,6 +192,22 @@ do -- Rare / Elite dragon graphic as an oUF module
 	oUF:AddElement('RareElite', Update,Enable,Disable);
 end
 
+do -- Boss graphic as an oUF module
+	local Update = function(self,event,unit)
+		if (self.unit ~= unit) then return; end
+		if (not self.BossGraphic) then return; end
+		local c = UnitClassification(unit);
+		self.BossGraphic:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\elite_rare]];
+		self.BossGraphic:SetTexCoord(1,0,0,1);
+		self.BossGraphic:SetVertexColor(1,0.9,0,1);
+	end
+	local Enable = function(self)
+		if (self.BossGraphic) then return true; end
+	end
+	local Disable = function(self) return; end
+	oUF:AddElement('BossGraphic', Update,Enable,Disable);
+end
+
 do -- fix SET_FOCUS & CLEAR_FOCUS errors
 	for k,v in pairs(UnitPopupMenus) do
 		if k ~= "RAID" and k ~= "RAID_PLAYER" then
