@@ -138,6 +138,7 @@ DBdefault = {
 			display = {pet = true,target=true,mana=true},
 		},
 		PlayerFrames = {
+			showClass = true,
 			focusMoved = false,
 			global = frameDefault1,
 			player = frameDefault1,

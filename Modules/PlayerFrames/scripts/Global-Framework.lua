@@ -365,7 +365,11 @@ local CreatePlayerFrame = function(self,unit)
 		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetSize(170, 12); self.Name:SetJustifyH("RIGHT");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",5,-6);
-		self:Tag(self.Name, "[name]");
+		if DBMod.PlayerFrames.showClass then
+			self:Tag(self.Name, "[SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[name]");
+		end
 		
 		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
 		self.Level:SetWidth(40); self.Level:SetHeight(11);
@@ -581,7 +585,11 @@ local CreateTargetFrame = function(self,unit)
 		self.Name:SetWidth(170); self.Name:SetHeight(12); 
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-5,-6);
-		self:Tag(self.Name,"[name]");
+		if DBMod.PlayerFrames.showClass then
+			self:Tag(self.Name, "[SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[name]");
+		end
 		
 		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
 		self.Level:SetWidth(40); self.Level:SetHeight(11);
@@ -804,7 +812,11 @@ local CreatePetFrame = function(self,unit)
 		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("RIGHT");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",3,-5);
-		self:Tag(self.Name,"[name]");
+		if DBMod.PlayerFrames.showClass then
+			self:Tag(self.Name, "[SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[name]");
+		end
 		
 		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
 		self.Level:SetWidth(36); self.Level:SetHeight(11);
@@ -999,7 +1011,11 @@ local CreateToTFrame = function(self,unit)
 			spartan:FormatFont(self.Name, 12, "Player")
 			self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("LEFT");
 			self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-3,-5);
-			self:Tag(self.Name,"[name]");
+			if DBMod.PlayerFrames.showClass then
+				self:Tag(self.Name, "[SUI_ColorClass][name]");
+			else
+				self:Tag(self.Name, "[name]");
+			end
 			
 			self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
 			self.Level:SetWidth(36); self.Level:SetHeight(11);
@@ -1163,7 +1179,11 @@ local CreateToTFrame = function(self,unit)
 			spartan:FormatFont(self.Name, 12, "Player")
 			self.Name:SetHeight(12); self.Name:SetWidth(132); self.Name:SetJustifyH("LEFT");
 			self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,-5);
-			self:Tag(self.Name,"[difficulty][level] [name]");
+			if DBMod.PlayerFrames.showClass then
+				self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
+			else
+				self:Tag(self.Name, "[difficulty][level] [name]");
+			end
 			
 			self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
 			self.RaidIcon:SetWidth(20); self.RaidIcon:SetHeight(20);
@@ -1266,7 +1286,11 @@ local CreateToTFrame = function(self,unit)
 			spartan:FormatFont(self.Name, 12, "Player")
 			self.Name:SetSize(132, 12); self.Name:SetJustifyH("LEFT");
 			self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-50,-5);
-			self:Tag(self.Name,"[difficulty][level] [name]");
+			if DBMod.PlayerFrames.showClass then
+				self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
+			else
+				self:Tag(self.Name, "[difficulty][level] [name]");
+			end
 			
 			self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
 			self.RaidIcon:SetSize(15, 15);
@@ -1423,7 +1447,11 @@ local CreateFocusFrame = function(self,unit)
 		elseif unit == "focustarget" then
 			self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",2,-6);
 		end
-		self:Tag(self.Name,"[difficulty][level] [name]");
+		if DBMod.PlayerFrames.showClass then
+			self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[difficulty][level] [name]");
+		end
 		
 		self.LevelSkull = ring:CreateTexture(nil,"ARTWORK");
 		self.LevelSkull:SetSize(16, 16);
@@ -1611,7 +1639,11 @@ local CreateBossFrame = function(self,unit)
 		self.Name:SetSize(127, 10); 
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",8,-2);
-		self:Tag(self.Name,"[name]");
+		if DBMod.PlayerFrames.showClass then
+			self:Tag(self.Name, "[SUI_ColorClass][name]");
+		else
+			self:Tag(self.Name, "[name]");
+		end
 		
 		self.LevelSkull = ring:CreateTexture(nil,"ARTWORK");
 		self.LevelSkull:SetSize(16, 16);

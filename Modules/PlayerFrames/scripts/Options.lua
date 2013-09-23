@@ -13,12 +13,17 @@ function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["FrameStyle"] = {name="Frame Style",type="group",order=1,
 		desc="Customize health and mana bar display",
 		args = {
-			targettargetStyle = {name="Target of Target Frame Style",type="select",order=11,
+			targettargetStyle = {name="Target of Target Frame Style",type="select",order=1,
 				values = {["large"]="Large Frame",["medium"]="Hide Picture",["small"]="Name & Health Only"},
 				get = function(info) return DBMod.PlayerFrames.targettarget.style; end,
 				set = function(info,val) DBMod.PlayerFrames.targettarget.style = val; end
 			},
-			targettargetinfo = {name="Reload UI Required.",type="description",order=12},
+			targettargetinfo = {name="Reload UI Required.",type="description",order=2},
+			toggleclassname =  {name = "Color Name by class", type = "toggle", order=3,
+				get = function(info) return DBMod.PlayerFrames.showClass; end,
+				set = function(info,val) DBMod.PlayerFrames.showClass = val; end
+			},
+			targettargetinfo = {name="Reload UI Required.",type="description",order=4},
 
 			bars = {name="Bar Options",type="group",order=1,desc="Customize health and mana bar display",
 				args = {

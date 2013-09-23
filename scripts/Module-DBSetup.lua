@@ -202,6 +202,7 @@ function module:OnInitialize()
 			if not DBMod.PlayerFrames.ArenaFrame.movement then
 				DBMod.PlayerFrames.ArenaFrame.movement = {moved=false,point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}
 			end
+			if DBMod.PlayerFrames.showClass == nil then DBMod.PlayerFrames.showClass = true end
 			if DBMod.RaidFrames.showClass == nil then DBMod.RaidFrames.showClass = true end
 			if DBMod.PartyFrames.showClass == nil then DBMod.PartyFrames.showClass = true end
 		end
