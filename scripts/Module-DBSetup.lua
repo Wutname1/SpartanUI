@@ -6,21 +6,21 @@ local CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 if (CurseVersion == nil) then CurseVersion = "" end
 
 function module:OnInitialize()
-	-- StaticPopupDialogs["AlphaNotice"] = {
-		-- text = '|cff33ff99SpartanUI|r|nv '..SpartanVer..'|n|r|n|nIt'.."'"..'s recomended to reset |cff33ff99SpartanUI|r.|n|nClick "|cff33ff99Yes|r" to Reset |cff33ff99SpartanUI|r & ReloadUI.|n|nAfter this you will need to setup |cff33ff99SpartanUI'.."'"..'s|r custom settings again.|n|nDo you want to reset & ReloadUI ?',
-		-- button1 = "|cff33ff99Yes|r",
-		-- button2 = "No",
-		-- OnAccept = function()
-			-- ReloadUI();
-		-- end,
-		-- OnCancel = function (_,reason)
-			-- spartan:Print("Leaving old profile intact by user's choice, issues might occur due to this.")
-		-- end,
-		-- sound = "igPlayerInvite",
-		-- timeout = 0,
-		-- whileDead = true,
-		-- hideOnEscape = false,
-	-- }
+	StaticPopupDialogs["AlphaNotice"] = {
+		text = '|cff33ff99SpartanUI|r|nv '..SpartanVer..'|n|r|n|nIt'.."'"..'s recomended to reset |cff33ff99SpartanUI|r.|n|nClick "|cff33ff99Yes|r" to Reset |cff33ff99SpartanUI|r & ReloadUI.|n|nAfter this you will need to setup |cff33ff99SpartanUI'.."'"..'s|r custom settings again.|n|nDo you want to reset & ReloadUI ?',
+		button1 = "|cff33ff99Yes|r",
+		button2 = "No",
+		OnAccept = function()
+			ReloadUI();
+		end,
+		OnCancel = function (_,reason)
+			spartan:Print("Leaving old profile intact by user's choice, issues might occur due to this.")
+		end,
+		sound = "igPlayerInvite",
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = false,
+	}
 	StaticPopupDialogs["FirstLaunchNotice"] = {
 		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|nWelcome to SpartanUI, Please take a moment and go over some of the settings in the interface window by typing /sui|n|n',
 		button1 = "Ok",
@@ -222,11 +222,11 @@ function module:OnEnable()
 	end
 	DB.Version = SpartanVer;
 	DBGlobal.Version = SpartanVer;
-	-- if (CurseVersion) then
-		-- if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
-			-- spartan:Print("Curse Version"..CurseVersion);
-			-- spartan:Print("Spartan Version"..SpartanVer);
-			-- StaticPopup_Show ("AlphaWarning")
-		-- end
-	-- end
+	if (CurseVersion) then
+		if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
+			spartan:Print("Curse Version"..CurseVersion);
+			spartan:Print("Spartan Version"..SpartanVer);
+			StaticPopup_Show ("AlphaWarning")
+		end
+	end
 end
