@@ -255,11 +255,11 @@ function addon:OnEnable()
 	AceConfigDialog:AddToBlizOptions("SpartanUI Main", "SpartanUI", nil)
     self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI General", L["General"], "SpartanUI")
     
-	if addon:GetModule("FilmEffect", true) then	AceConfigDialog:AddToBlizOptions("SpartanUI Film Effects", L["Film Effects"], "SpartanUI") end
-    if addon:GetModule("PartyFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Party Frames", L["Party Frames"], "SpartanUI") end
-    if addon:GetModule("PlayerFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", L["Player Frames"], "SpartanUI") end
-    if addon:GetModule("RaidFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Raid Frames", L["Raid Frames"], "SpartanUI") end
-    if addon:GetModule("SpinCam", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Spin Cam", L["Spin Cam"], "SpartanUI") end
+	if addon:GetModule("FilmEffect", true) then	AceConfigDialog:AddToBlizOptions("SpartanUI Film Effects", L["FilmEffects"], "SpartanUI") end
+    if addon:GetModule("PartyFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Party Frames", L["PartyFrames"], "SpartanUI") end
+    if addon:GetModule("PlayerFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", L["PlayerFrames"], "SpartanUI") end
+    if addon:GetModule("RaidFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Raid Frames", L["RaidFrames"], "SpartanUI") end
+    if addon:GetModule("SpinCam", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Spin Cam", L["SpinCam"], "SpartanUI") end
     --AceConfigDialog:AddToBlizOptions("SpartanUI Change Log", "Change Log", "SpartanUI")
 	
 	AceConfigDialog:AddToBlizOptions("Profiles", "Profiles", "SpartanUI");
