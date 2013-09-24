@@ -6,6 +6,7 @@ local base_plate1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate1.
 local base_plate2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate2.blp]] -- Focus and Focus Target
 local base_plate3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate3.tga]] -- Pet TargetTarget Large, Medium
 local base_plate4 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate4.blp]] -- TargetTarget small
+local circle = [[Interface\AddOns\SpartanUI_PlayerFrames\media\circle.tga]]
 --local base_plate5 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate5.blp]] -- Not Used at this time, is long version of base_plate2
 local base_ring1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring1]]
 local base_ring3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring3]]
@@ -372,7 +373,7 @@ local CreatePlayerFrame = function(self,unit)
 		end
 		
 		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
-		self.Level:SetWidth(40); self.Level:SetHeight(11);
+		self.Level:SetSize(40, 11);
 		self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("MIDDLE");
 		self.Level:SetPoint("CENTER",ring,"CENTER",51,12);
 		self:Tag(self.Level, "[level]");
@@ -388,6 +389,17 @@ local CreatePlayerFrame = function(self,unit)
 		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
 		self.MasterLooter:SetWidth(18); self.MasterLooter:SetHeight(18);
 		self.MasterLooter:SetPoint("CENTER",ring,"TOPRIGHT",-6,-6);
+		
+		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
+		self.SUI_RaidGroup:SetSize(32, 32);
+		self.SUI_RaidGroup:SetPoint("RIGHT",self.MasterLooter,"LEFT",-1,12);
+		self.SUI_RaidGroup:SetTexture(circle);
+		
+		self.SUI_RaidGroup.Text = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
+		self.SUI_RaidGroup.Text:SetSize(40, 11);
+		self.SUI_RaidGroup.Text:SetJustifyH("CENTER"); self.Level:SetJustifyV("MIDDLE");
+		self.SUI_RaidGroup.Text:SetPoint("CENTER",self.SUI_RaidGroup,"CENTER",0,0);
+		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
 		self.PvP = ring:CreateTexture(nil,"BORDER");
 		self.PvP:SetWidth(48); self.PvP:SetHeight(48);

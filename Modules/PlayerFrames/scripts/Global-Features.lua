@@ -46,6 +46,28 @@ do -- ClassIcon as an oUF module
 	oUF:AddElement('SUI_ClassIcon',Update,Enable,Disable);
 end
 
+do -- ClassIcon as an oUF module
+	local Update = function(self,event,unit)
+		if IsInRaid() then
+			self.SUI_RaidGroup:Show();
+		else
+			self.SUI_RaidGroup:Hide();
+		end
+	end
+	local Enable = function(self)
+		if (self.SUI_RaidGroup) then
+			self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
+			return true;
+		end
+	end
+	local Disable = function(self)
+		if (self.SUI_RaidGroup) then
+			self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update);
+		end
+	end
+	oUF:AddElement('SUI_RaidGroup',Update,Enable,Disable);
+end
+
 do -- AFK / DND status text, as an oUF module
 	oUF.Tags.Events['afkdnd'] = "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET";
 	oUF.Tags.Methods['afkdnd'] = function (unit)
