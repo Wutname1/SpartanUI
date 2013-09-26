@@ -1,4 +1,5 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = addon:NewModule("Minimap");
 ---------------------------------------------------------------------------
 -- Minimap warning msg of potential conflict
@@ -10,12 +11,10 @@ local checkThirdParty, frame = function()
 		addon:Print(NXTITLELOW..' is loaded ...Checking settings ...');
 		if (NxData.NXGOpts.MapMMOwn == true)
 			then addon:Print(NXTITLELOW..' is handling the Minimap') return true;
-		else
-			addon:Print('SpartanUI is handling Minimap')
 		end
 	end
 	if select(4, GetAddOnInfo("SexyMap")) then
-		addon:Print('SexyMap is loaded, and is handling the Minimap')
+		addon:Print(L["SexyMapLoaded"])
 		return true
 	end
 	if (relativeTo ~= UIParent) then return true; end -- a third party minimap manager is involved
@@ -153,14 +152,14 @@ end
 ---------------------------------------------------------------------------
 function module:OnInitialize()
 	addon.optionsGeneral.args["minimap"] = {
-		name = "Minimap Settings",
-		desc = "configure Minimap settings",
+		name = L["MinMapSet"],
+		desc = L["MinMapSetConf"],
 		type = "group", args = {
-			minimapbuttons = {name = "Hide all minimap buttons", type="toggle", width="full",
+			minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
 				get = function(info) return DB.MiniMap.MapButtons; end,
 				set = function(info,val) DB.MiniMap.MapButtons = val; end
 			},
-			minimapzoom = {name = "Hide Zoom Buttons", type="toggle", width="full",
+			minimapzoom = {name = L["MinMapHideZoom"], type="toggle", width="full",
 				get = function(info) return DB.MiniMap.MapZoomButtons; end,
 				set = function(info,val) DB.MiniMap.MapZoomButtons = val; end
 			}
