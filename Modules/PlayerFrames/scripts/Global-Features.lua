@@ -56,13 +56,13 @@ do -- ClassIcon as an oUF module
 	end
 	local Enable = function(self)
 		if (self.SUI_RaidGroup) then
-			self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
+			self:RegisterEvent("GROUP_ROSTER_UPDATE", Update);
 			return true;
 		end
 	end
 	local Disable = function(self)
 		if (self.SUI_RaidGroup) then
-			self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update);
+			self:UnregisterEvent("GROUP_ROSTER_UPDATE", Update);
 		end
 	end
 	oUF:AddElement('SUI_RaidGroup',Update,Enable,Disable);

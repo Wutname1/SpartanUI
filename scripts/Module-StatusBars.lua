@@ -96,7 +96,7 @@ function module:OnInitialize()
 				set = function(info,val) if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedBrightness = (val/100); module:SetXPColors(); end
 			},
 			header2 = {name=L["ClrRested"],type="header",order=10},
-			RestedColor = {name=L"RestedColor"],type="select",style="dropdown",order=11,width="full",
+			RestedColor = {name=L["RestedColor"],type="select",style="dropdown",order=11,width="full",
 				values = {
 					["Custom"]	= "Custom",
 					["Orange"]	= "Orange",

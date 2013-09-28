@@ -20,10 +20,10 @@ libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 #@end-no-lib-strip@
 
-lang\deDE.lua
 lang\enUS.lua
 lang\esES.lua
-lang\frFR.lua
+lang\deDE.lua
+lang\koKR.lua
 lang\zhCN.lua
 
 scripts\Global-Framework.xml
