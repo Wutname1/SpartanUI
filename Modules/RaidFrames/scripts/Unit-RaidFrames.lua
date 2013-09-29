@@ -108,22 +108,17 @@ do	-- Hide Frame
 		raid:SetScale(DBMod.RaidFrames.scale);
 	end
 	
+	
 	local raidWatch = CreateFrame("Frame");
-	raidWatch:RegisterEvent('PLAYER_LOGIN');
+	raidWatch:RegisterEvent('GROUP_ROSTER_UPDATE');
 	raidWatch:RegisterEvent('PLAYER_ENTERING_WORLD');
-	raidWatch:RegisterEvent('RAID_ROSTER_UPDATE');
-	raidWatch:RegisterEvent('PARTY_LEADER_CHANGED');
-	raidWatch:RegisterEvent('PARTY_MEMBERS_CHANGED');
-	raidWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
-	raidWatch:RegisterEvent('CVAR_UPDATE');
-	raidWatch:RegisterEvent('FORCE_UPDATE');
-	raidWatch:RegisterEvent('ZONE_CHANGED_NEW_AREA');
-	raidWatch:RegisterEvent('PLAYER_REGEN_ENABLED')
 	
 	raidWatch:SetScript('OnEvent',function(self,event,...)
-		if InCombatLockdown() then
-			return;
+		if(InCombatLockdown()) then
+			self:RegisterEvent('PLAYER_REGEN_ENABLED');
+		else
+			self:UnregisterEvent('PLAYER_REGEN_ENABLED');
+			addon:UpdateRaid(event);
 		end
-		addon:UpdateRaid(event)
 	end);
 end

@@ -1,4 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 local Units = {[1]="player",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="pet"}
@@ -10,75 +11,75 @@ function addon:UpdateAura()
 end
 
 function addon:OnInitialize()
-	spartan.optionsPlayerFrames.args["FrameStyle"] = {name="Frame Style",type="group",order=1,
-		desc="Customize health and mana bar display",
+	spartan.optionsPlayerFrames.args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="group",order=1,
+		desc=L["Frames/BarOptDesc"],
 		args = {
-			targettargetStyle = {name="Target of Target Frame Style",type="select",order=1,
-				values = {["large"]="Large Frame",["medium"]="Hide Picture",["small"]="Name & Health Only"},
+			targettargetStyle = {name=L["Frames/ToTFrameStyle"],type="select",order=1,
+				values = {["large"]=L["Frames/LargeFrame"],["medium"]=L["Frames/HidePicture"],["small"]=L["Frames/NameHealthOnly"]},
 				get = function(info) return DBMod.PlayerFrames.targettarget.style; end,
 				set = function(info,val) DBMod.PlayerFrames.targettarget.style = val; end
 			},
-			targettargetinfo = {name="Reload UI Required.",type="description",order=2},
-			toggleclassname =  {name = "Color Name by class", type = "toggle", order=3,
+			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=2},
+			toggleclassname =  {name = L["Frames/ClrNameClass"], type = "toggle", order=3,
 				get = function(info) return DBMod.PlayerFrames.showClass; end,
 				set = function(info,val) DBMod.PlayerFrames.showClass = val; end
 			},
-			targettargetinfo = {name="Reload UI Required.",type="description",order=4},
+			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=4},
 
-			bars = {name="Bar Options",type="group",order=1,desc="Customize health and mana bar display",
+			bars = {name=L["Frames/BarOpt"],type="group",order=1,desc=L["Frames/BarOptDesc"],
 				args = {
-					bar1 = {name="Health bar color",type="header",order=10},
-					healthPlayerColor = {name="Player Health Color",type="select",order=11,
-						values = {["reaction"]="Green",["dynamic"]="Dynamic"},
+					bar1 = {name=L["Frames/HBarClr"],type="header",order=10},
+					healthPlayerColor = {name=L["Frames/PlayerHClr"],type="select",order=11,
+						values = {["reaction"]=L["Frames/Green"],["dynamic"]=L["Frames/TextStyle3"]},
 						get = function(info) return DBMod.PlayerFrames.bars.player.color; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.player.color = val; addon.player:ColorUpdate("player") end
 					},
 					healthTargetColor = {name="Target Health Color",type="select",order=12,
-						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						values = {["class"]=L["Frames/ClrByClass"],["dynamic"]=L["Frames/TextStyle3"],["reaction"]=L["Frames/ClrByReac"]},
 						get = function(info) return DBMod.PlayerFrames.bars.target.color; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.target.color = val; addon.player:ColorUpdate("target") end
 					},
 					healthToTColor = {name="Target of Target Health Color",type="select",order=13,
-						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						values = {["class"]=L["Frames/ClrByClass"],["dynamic"]=L["Frames/TextStyle3"],["reaction"]=L["Frames/ClrByReac"]},
 						get = function(info) return DBMod.PlayerFrames.bars.targettarget.color; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.targettarget.color = val; addon.player:ColorUpdate("targettarget") end
 					},
 					healthPetColor = {name="Pet Health Color",type="select",order=14,
-						values = {["class"]="class",["dynamic"]="Dynamic",["happiness"]="Happiness"},
+						values = {["class"]=L["Frames/ClrByClass"],["dynamic"]=L["Frames/TextStyle3"],["happiness"]="Happiness"},
 						get = function(info) return DBMod.PlayerFrames.bars.pet.color; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.pet.color = val; addon.player:ColorUpdate("pet") end
 					},
 					healthFocusColor = {name="Focus Health Color",type="select",order=15,
-						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						values = {["class"]=L["Frames/ClrByClass"],["dynamic"]=L["Frames/TextStyle3"],["reaction"]=L["Frames/ClrByReac"]},
 						get = function(info) return DBMod.PlayerFrames.bars.focus.color; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.focus.color = val; addon.player:ColorUpdate("focus") end
 					},
 					healthFocusTargetColor = {name="Focus Target Health Color",type="select",order=16,
-						values = {["class"]="Class",["dynamic"]="Dynamic",["reaction"]="Reaction"},
+						values = {["class"]=L["Frames/ClrByClass"],["dynamic"]=L["Frames/TextStyle3"],["reaction"]=L["Frames/ClrByReac"]},
 						get = function(info) return DBMod.PlayerFrames.bars.focustarget.color; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.focustarget.color = val; addon.player:ColorUpdate("focustarget") end
 					},
 					
-					bar2 = {name="Text style",type="header",order=20},
-					healthtextstyle = {name="Health Text style",type="select",order=21,
+					bar2 = {name=L["Frames/TextStyle"],type="header",order=20},
+					healthtextstyle = {name=L["Frames/HTextStyle"],type="select",order=21,
 						desc = "Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed",
-						values = {["long"]="Long",["longfor"]="Long Formatted",["dynamic"]="Dynamic"},
+						values = {["long"]=L["Frames/TextStyle1"],["longfor"]=L["Frames/TextStyle2"],["dynamic"]=L["Frames/TextStyle3"]},
 						get = function(info) return DBMod.PlayerFrames.bars.health.textstyle; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.health.textstyle = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
 					},
-					healthtextmode = {name="Health Text mode",type="select",order=22,
-						values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
+					healthtextmode = {name=L["Frames/HTextMode"],type="select",order=22,
+						values = {[1]=L["Frames/HTextMode1"],[2]=L["Frames/HTextMode2"],[3]=L["Frames/HTextMode3"]},
 						get = function(info) return DBMod.PlayerFrames.bars.health.textmode; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.health.textmode = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
 					},
-					manatextstyle = {name="Mana Text style",type="select",order=23,
+					manatextstyle = {name=L["Frames/MTextStyle"],type="select",order=23,
 						desc = "Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed",
-						values = {["long"]="Long",["longfor"]="Long Formatted",["dynamic"]="Dynamic"},
+						values = {["long"]=L["Frames/TextStyle1"],["longfor"]=L["Frames/TextStyle2"],["dynamic"]=L["Frames/TextStyle3"]},
 						get = function(info) return DBMod.PlayerFrames.bars.mana.textstyle; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.mana.textstyle = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
 					},
-					manatextmode = {name="Mana Text mode",type="select",order=24,
-						values = {[1]="Avaliable / Total",[2]="(Missing) Avaliable / Total",[3]="(Missing) Avaliable"},
+					manatextmode = {name=L["Frames/MTextMode"],type="select",order=24,
+						values = {[1]=L["Frames/HTextMode1"],[2]=L["Frames/HTextMode2"],[3]=L["Frames/HTextMode3"]},
 						get = function(info) return DBMod.PlayerFrames.bars.mana.textmode; end,
 						set = function(info,val) DBMod.PlayerFrames.bars.mana.textmode = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
 					}
@@ -87,37 +88,36 @@ function addon:OnInitialize()
 		}
 	}
 	spartan.optionsPlayerFrames.args["frameDisplay"] = {name = "Disable Frames",type = "group",order=2,desc="Enable and Disable Specific frames",
-		desc = "unitframe display settings",
 		args = {
-			player = {name = "Display player",type = "toggle",order=1,
+			player = {name = L["Frames/DispPlayer"],type = "toggle",order=1,
 				get = function(info) return DBMod.PlayerFrames.player.display; end,
 				set = function(info,val)
 					DBMod.PlayerFrames.player.display = val;
 					if DBMod.PlayerFrames.player.display then addon.player:Enable(); else addon.player:Disable(); end
 				end
 			},
-			pet = {name = "Display pet",type = "toggle",order=2,
+			pet = {name = L["Frames/DispPet"],type = "toggle",order=2,
 				get = function(info) return DBMod.PlayerFrames.pet.display; end,
 				set = function(info,val)
 					DBMod.PlayerFrames.pet.display = val;
 					if DBMod.PlayerFrames.pet.display then addon.pet:Enable(); else addon.pet:Disable(); end
 				end
 			},
-			target = {name = "Display Target",type = "toggle",order=3,
+			target = {name = L["Frames/DispTarget"],type = "toggle",order=3,
 				get = function(info) return DBMod.PlayerFrames.target.display; end,
 				set = function(info,val)
 					DBMod.PlayerFrames.target.display = val;
 					if DBMod.PlayerFrames.target.display then addon.target:Enable(); else addon.target:Disable(); end
 				end
 			},
-			targettarget = {name = "Display Target of Target",type = "toggle",order=4,
+			targettarget = {name = L["Frames/DispToT"],type = "toggle",order=4,
 				get = function(info) return DBMod.PlayerFrames.targettarget.display; end,
 				set = function(info,val)
 					DBMod.PlayerFrames.targettarget.display = val;
 					if DBMod.PlayerFrames.targettarget.display then addon.targettarget:Enable(); else addon.targettarget:Disable(); end
 				end
 			},
-			focustarget = {name = "Display focus target",type = "toggle",order=5,
+			focustarget = {name = L["Frames/DispFocusTar"],type = "toggle",order=5,
 				get = function(info) return DBMod.PlayerFrames.focustarget.display; end,
 				set = function(info,val)
 					DBMod.PlayerFrames.focustarget.display = val;
@@ -130,27 +130,27 @@ function addon:OnInitialize()
 		desc = "Buff & Debuff display settings",
 		args = {
 			header0 = {name="Buffs & DeBuffs to Display",type="header",order=0},
-			dplayer = {name = "Player",type = "toggle",order=1,
+			dplayer = {name = L["Frames/Player"],type = "toggle",order=1,
 				get = function(info) return DBMod.PlayerFrames.player.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.player.AuraDisplay = val; addon.player.Auras:PostUpdate("player"); end
 			},
-			dtarget = {name = "Target",type = "toggle",order=2,
+			dtarget = {name = L["Frames/Target"],type = "toggle",order=2,
 				get = function(info) return DBMod.PlayerFrames.target.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.target.AuraDisplay = val; addon.target.Auras:PostUpdate("target"); end
 			},
-			dtargettarget = {name = "Target of Target",type = "toggle",order=3,
+			dtargettarget = {name = L["Frames/TargetTarget"],type = "toggle",order=3,
 				get = function(info) return DBMod.PlayerFrames.targettarget.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.targettarget.AuraDisplay = val; addon.targettarget.Auras:PostUpdate("targettarget"); end
 			},
-			dpet = {name = "Pet",type = "toggle",order=4,
+			dpet = {name = L["Frames/Pet"],type = "toggle",order=4,
 				get = function(info) return DBMod.PlayerFrames.pet.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.pet.AuraDisplay = val; addon.pet.Auras:PostUpdate("pet"); end
 			},
-			dfocus = {name = "Focus",type = "toggle",order=5,
+			dfocus = {name = L["Frames/Focus"],type = "toggle",order=5,
 				get = function(info) return DBMod.PlayerFrames.focus.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.focus.AuraDisplay = val; addon.focus.Auras:PostUpdate("focus"); end
 			},
-			dfocustarget = {name = "Focus target",type = "toggle",order=6,
+			dfocustarget = {name = L["Frames/FocusTarget"],type = "toggle",order=6,
 				get = function(info) return DBMod.PlayerFrames.focustarget.AuraDisplay end,
 				set = function(info,val) DBMod.PlayerFrames.focustarget.AuraDisplay = val; addon.focustarget.Auras:PostUpdate("focustarget"); end
 			},
@@ -162,58 +162,58 @@ function addon:OnInitialize()
 				set = function(info,val) DBMod.PlayerFrames.target.Debuffs = val; if DBMod.PlayerFrames.target.Debuffs then addon.target.Auras.onlyShowPlayer = true; else DBMod.PlayerFrames.target.Debuffs = false; end end
 			},
 
-			global = {name="Global",type="group",order=1,
+			global = {name=L["Frames/Global"],type="group",order=1,
 				args = {
-					showType = {name="Show the Type",type="toggle", order=2,
+					showType = {name=L["Frames/ShowType"],type="toggle", order=2,
 						get = function(info) return DBMod.PlayerFrames.global.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.global.Auras.showType = val; addon:UpdateAura(); end
 					},
-					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+					onlyShowPlayer = {name=L["Frames/OnlyYourBuffDebuff"],type="toggle", order=3,
 						get = function(info) return DBMod.PlayerFrames.global.Auras.onlyShowPlayer; end,
 						set = function(info,val) DBMod.PlayerFrames.global.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
 					},
-					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+					numBufs = {name=L["Frames/NumBuffs"],type="range",width="full",order=11,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.global.Auras.NumBuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.global.Auras.NumBuffs = val; addon:UpdateAura(); end
 					},
-					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+					numDebuffs = {name=L["Frames/NumDebuff"],type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.global.Auras.NumDebuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.global.Auras.NumDebuffs = val; addon:UpdateAura(); end
 					},
-					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+					size = {name=L["Frames/SizeBuff"],type="range",width="full",order=13,
 						min=0,max=60,step=1,
 						get = function(info) return DBMod.PlayerFrames.global.Auras.size; end,
 						set = function(info,val) DBMod.PlayerFrames.global.Auras.size = val; addon:UpdateAura(); end
 					},
-					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
-					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+					sizedesc={name=L["Frames/sizedesc"],type="description",order=13.5},
+					spacing = {name=L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.global.Auras.spacing; end,
 						set = function(info,val) DBMod.PlayerFrames.global.Auras.spacing = val; addon:UpdateAura(); end
 					},
 
 					line1 = {name="",type="header",order=20},
-					ApplyToPlayer = {name = "Apply to player", type="execute", order = 21,
+					ApplyToPlayer = {name = L["Frames/ApplyPlayer"], type="execute", order = 21,
 						func = function() DBMod.PlayerFrames.player.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
 					},
-					ApplyTotarget = {name = "Apply to target", type="execute", order = 22,
+					ApplyTotarget = {name = L["Frames/ApplyTarget"], type="execute", order = 22,
 						func = function() DBMod.PlayerFrames.target.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
 					},
-					ApplyTotargettarget = {name = "Apply to target of target", type="execute", order = 23,
+					ApplyTotargettarget = {name = L["Frames/ApplyToT"], type="execute", order = 23,
 						func = function() DBMod.PlayerFrames.targettarget.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
 					},
-					ApplyTopet = {name = "Apply to pet", type="execute", order = 24,
+					ApplyTopet = {name = L["Frames/ApplyPet"], type="execute", order = 24,
 						func = function() DBMod.PlayerFrames.pet.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
 					},
-					ApplyTofocus = {name = "Apply to focus", type="execute", order = 25,
+					ApplyTofocus = {name = L["Frames/ApplyFocus"], type="execute", order = 25,
 						func = function() DBMod.PlayerFrames.focus.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
 					},
-					ApplyTofocustarget = {name = "Apply to focus target", type="execute", order = 26,
+					ApplyTofocustarget = {name = L["Frames/ApplyFocusTar"], type="execute", order = 26,
 						func = function() DBMod.PlayerFrames.focustarget.Auras = DBMod.PlayerFrames.global.Auras; addon:UpdateAura(); end
 					},
-					ApplyToAll = {name = "Apply Global to All", type="execute", order = 28,width="double",
+					ApplyToAll = {name = L["Frames/ApplyGlobAll"], type="execute", order = 28,width="double",
 						func = function()
 							for k,v in pairs(Units) do DBMod.PlayerFrames[v].Auras = DBMod.PlayerFrames.global.Auras; end
 							addon:UpdateAura();
@@ -221,190 +221,184 @@ function addon:OnInitialize()
 					},
 				}
 			},
-			player = {name="Player",type="group",order=1,
+			player = {name=L["Frames/Player"],type="group",order=1,
 				args = {
-					showType = {name="Show the Type",type="toggle", order=2,
+					showType = {name=L["Frames/ShowType"],type="toggle", order=2,
 						get = function(info) return DBMod.PlayerFrames.player.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.player.Auras.showType = val; addon:UpdateAura(); end
 					},
-					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+					numDebuffs = {name=L["Frames/NumDebuff"],type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.player.Auras.NumDebuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.player.Auras.NumDebuffs = val; addon:UpdateAura(); end
 					},
-					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+					size = {name=L["Frames/SizeBuff"],type="range",width="full",order=13,
 						min=0,max=60,step=1,
 						get = function(info) return DBMod.PlayerFrames.player.Auras.size; end,
 						set = function(info,val) DBMod.PlayerFrames.player.Auras.size = val; addon:UpdateAura(); end
 					},
-					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
-					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+					spacing = {name=L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.player.Auras.spacing; end,
 						set = function(info,val) DBMod.PlayerFrames.player.Auras.spacing = val; addon:UpdateAura(); end
 					},
 				}
 			},
-			target = {name="Target",type="group",order=2,
+			target = {name=L["Frames/Target"],type="group",order=2,
 				args = {
-					showType = {name="Show the Type",type="toggle", order=2,
+					showType = {name=L["Frames/ShowType"],type="toggle", order=2,
 						get = function(info) return DBMod.PlayerFrames.target.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.target.Auras.showType = val; addon:UpdateAura(); end
 					},
-					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+					onlyShowPlayer = {name=L["Frames/OnlyYourBuffDebuff"],type="toggle", order=3,
 						get = function(info) return DBMod.PlayerFrames.target.Auras.onlyShowPlayer; end,
 						set = function(info,val) DBMod.PlayerFrames.target.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
 					},
-					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+					numBufs = {name=L["Frames/NumBuffs"],type="range",width="full",order=11,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.target.Auras.NumBuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.target.Auras.NumBuffs = val; addon:UpdateAura(); end
 					},
-					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+					numDebuffs = {name=L["Frames/NumDebuff"],type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.target.Auras.NumDebuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.target.Auras.NumDebuffs = val; addon:UpdateAura(); end
 					},
-					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+					size = {name=L["Frames/SizeBuff"],type="range",width="full",order=13,
 						min=0,max=60,step=1,
 						get = function(info) return DBMod.PlayerFrames.target.Auras.size; end,
 						set = function(info,val) DBMod.PlayerFrames.target.Auras.size = val; addon:UpdateAura(); end
 					},
-					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
-					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+					spacing = {name=L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.target.Auras.spacing; end,
 						set = function(info,val) DBMod.PlayerFrames.target.Auras.spacing = val; addon:UpdateAura(); end
 					},
 				}
 			},
-			targettarget = {name="Target of Target",type="group",order=3,
+			targettarget = {name=L["Frames/TargetTarget"],type="group",order=3,
 				args = {
-					showType = {name="Show the Type",type="toggle", order=2,
+					showType = {name=L["Frames/ShowType"],type="toggle", order=2,
 						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.showType = val; addon:UpdateAura(); end
 					},
-					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+					onlyShowPlayer = {name=L["Frames/OnlyYourBuffDebuff"],type="toggle", order=3,
 						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.onlyShowPlayer; end,
 						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
 					},
-					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+					numBufs = {name=L["Frames/NumBuffs"],type="range",width="full",order=11,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.NumBuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.NumBuffs = val; addon:UpdateAura(); end
 					},
-					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+					numDebuffs = {name=L["Frames/NumDebuff"],type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.NumDebuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.NumDebuffs = val; addon:UpdateAura(); end
 					},
-					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+					size = {name=L["Frames/SizeBuff"],type="range",width="full",order=13,
 						min=0,max=60,step=1,
 						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.size; end,
 						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.size = val; addon:UpdateAura(); end
 					},
-					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
-					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+					spacing = {name=L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.targettarget.Auras.spacing; end,
 						set = function(info,val) DBMod.PlayerFrames.targettarget.Auras.spacing = val; addon:UpdateAura(); end
 					},
 				}
 			},
-			pet = {name="Pet",type="group",order=4,
+			pet = {name=L["Frames/Pet"],type="group",order=4,
 				args = {
-					showType = {name="Show the Type",type="toggle", order=2,
+					showType = {name=L["Frames/ShowType"],type="toggle", order=2,
 						get = function(info) return DBMod.PlayerFrames.pet.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.pet.Auras.showType = val; addon:UpdateAura(); end
 					},
-					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+					onlyShowPlayer = {name=L["Frames/OnlyYourBuffDebuff"],type="toggle", order=3,
 						get = function(info) return DBMod.PlayerFrames.pet.Auras.onlyShowPlayer; end,
 						set = function(info,val) DBMod.PlayerFrames.pet.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
 					},
-					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+					numBufs = {name=L["Frames/NumBuffs"],type="range",width="full",order=11,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.pet.Auras.NumBuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.pet.Auras.NumBuffs = val; addon:UpdateAura(); end
 					},
-					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+					numDebuffs = {name=L["Frames/NumDebuff"],type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.pet.Auras.NumDebuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.pet.Auras.NumDebuffs = val; addon:UpdateAura(); end
 					},
-					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+					size = {name=L["Frames/SizeBuff"],type="range",width="full",order=13,
 						min=0,max=60,step=1,
 						get = function(info) return DBMod.PlayerFrames.pet.Auras.size; end,
 						set = function(info,val) DBMod.PlayerFrames.pet.Auras.size = val; addon:UpdateAura(); end
 					},
-					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
-					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+					spacing = {name=L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.pet.Auras.spacing; end,
 						set = function(info,val) DBMod.PlayerFrames.pet.Auras.spacing = val; addon:UpdateAura(); end
 					},
 				}
 			},
-			focus = {name="Focus",type="group",order=5,
+			focus = {name=L["Frames/Focus"],type="group",order=5,
 				args = {
-					showType = {name="Show the Type",type="toggle", order=2,
+					showType = {name=L["Frames/ShowType"],type="toggle", order=2,
 						get = function(info) return DBMod.PlayerFrames.focus.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.focus.Auras.showType = val; addon:UpdateAura(); end
 					},
-					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+					numBufs = {name=L["Frames/NumBuffs"],type="range",width="full",order=11,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.focus.Auras.NumBuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.focus.Auras.NumBuffs = val; addon:UpdateAura(); end
 					},
-					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+					numDebuffs = {name=L["Frames/NumDebuff"],type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.focus.Auras.NumDebuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.focus.Auras.NumDebuffs = val; addon:UpdateAura(); end
 					},
-					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+					size = {name=L["Frames/SizeBuff"],type="range",width="full",order=13,
 						min=0,max=60,step=1,
 						get = function(info) return DBMod.PlayerFrames.focus.Auras.size; end,
 						set = function(info,val) DBMod.PlayerFrames.focus.Auras.size = val; addon:UpdateAura(); end
 					},
-					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
-					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+					spacing = {name=L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.focus.Auras.spacing; end,
 						set = function(info,val) DBMod.PlayerFrames.focus.Auras.spacing = val; addon:UpdateAura(); end
 					},
-					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+					onlyShowPlayer = {name=L["Frames/OnlyYourBuffDebuff"],type="toggle", order=3,
 						get = function(info) return DBMod.PlayerFrames.focus.Auras.onlyShowPlayer; end,
 						set = function(info,val) DBMod.PlayerFrames.focus.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
 					},
 				}
 			},
-			focustarget = {name="Focus Target",type="group",order=6,
+			focustarget = {name=L["Frames/FocusTarget"],type="group",order=6,
 				args = {
-					showType = {name="Show the Type",type="toggle", order=2,
+					showType = {name=L["Frames/ShowType"],type="toggle", order=2,
 						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.showType; end,
 						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.showType = val; addon:UpdateAura(); end
 					},
-					numBufs = {name="Number of Buffs to show",type="range",width="full",order=11,
+					numBufs = {name=L["Frames/NumBuffs"],type="range",width="full",order=11,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.NumBuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.NumBuffs = val; addon:UpdateAura(); end
 					},
-					numDebuffs = {name="Number of DeBuffs to show",type="range",width="full",order=12,
+					numDebuffs = {name=L["Frames/NumDebuff"],type="range",width="full",order=12,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.NumDebuffs; end,
 						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.NumDebuffs = val; addon:UpdateAura(); end
 					},
-					size = {name="Size of Buffs/Debuffs",type="range",width="full",order=13,
+					size = {name=L["Frames/SizeBuff"],type="range",width="full",order=13,
 						min=0,max=60,step=1,
 						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.size; end,
 						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.size = val; addon:UpdateAura(); end
 					},
-					sizedesc={name="You will have control of Buff vs Debuff Size in a latter verison",type="description",order=13.5},
-					spacing = {name="Spacing between Buffs/Debuffs",type="range",width="full",order=14,
+					spacing = {name=L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 						min=0,max=50,step=1,
 						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.spacing; end,
 						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.spacing = val; addon:UpdateAura(); end
 					},
-					onlyShowPlayer = {name="Only Show your buffs/debuffs",type="toggle", order=3,
+					onlyShowPlayer = {name=L["Frames/OnlyYourBuffDebuff"],type="toggle", order=3,
 						get = function(info) return DBMod.PlayerFrames.focustarget.Auras.onlyShowPlayer; end,
 						set = function(info,val) DBMod.PlayerFrames.focustarget.Auras.onlyShowPlayer = val; addon:UpdateAura(); end
 					},
@@ -412,65 +406,65 @@ function addon:OnInitialize()
 			},
 		}
 	};
-	spartan.optionsPlayerFrames.args["castbar"] = {name = "Castbar",type = "group",order=4,
-		desc = "unitframe castbar settings",
+	spartan.optionsPlayerFrames.args["castbar"] = {name = L["Frames/castbar"],type = "group",order=4,
+		desc = L["Frames/UnitCastSet"],
 		args = {
-			player = { name = "Player style", type = "select", style="radio",
-				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+			player = { name = L["Frames/PlayerStyle"], type = "select", style="radio",
+				values = {[0]=L["Frames/FillLR"],[1]=L["Frames/DepRL"]},
 				get = function(info) return DBMod.PlayerFrames.Castbar.player; end,
 				set = function(info,val) DBMod.PlayerFrames.Castbar.player = val; end
 			},
-			target = { name = "Target style", type = "select", style="radio",
-				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+			target = { name = L["Frames/TargetStyle"], type = "select", style="radio",
+				values = {[0]=L["Frames/FillLR"],[1]=L["Frames/DepRL"]},
 				get = function(info) return DBMod.PlayerFrames.Castbar.target; end,
 				set = function(info,val) DBMod.PlayerFrames.Castbar.target = val; end
 			},
-			targettarget = { name = "Target of Target style", type = "select", style="radio",
-				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+			targettarget = { name = L["Frames/ToTStyle"], type = "select", style="radio",
+				values = {[0]=L["Frames/FillLR"],[1]=L["Frames/DepRL"]},
 				get = function(info) return DBMod.PlayerFrames.Castbar.targettarget; end,
 				set = function(info,val) DBMod.PlayerFrames.Castbar.targettarget = val; end
 			},
-			pet = { name = "Pet style", type = "select", style="radio",
-				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+			pet = { name = L["Frames/PetStyle"], type = "select", style="radio",
+				values = {[0]=L["Frames/FillLR"],[1]=L["Frames/DepRL"]},
 				get = function(info) return DBMod.PlayerFrames.Castbar.pet; end,
 				set = function(info,val) DBMod.PlayerFrames.Castbar.pet = val; end
 			},
-			focus = { name = "Focus style", type = "select", style="radio",
-				values = {[0]="Fill left to right",[1]="Deplete Right to Left"},
+			focus = { name = L["Frames/FocusStyle"], type = "select", style="radio",
+				values = {[0]=L["Frames/FillLR"],[1]=L["Frames/DepRL"]},
 				get = function(info) return DBMod.PlayerFrames.Castbar.focus; end,
 				set = function(info,val) DBMod.PlayerFrames.Castbar.focus = val; end
 			},
 			text = {
-				name = "Castbar Text",
-				desc = "Castbar text settings",
+				name = L["Frames/CastText"],
+				desc = L["Frames/CastTextDesc"],
 				type = "group", args = {
 					player = {
-						name = "Text style", type = "select", style="radio",
-						values = {[0]="Count up",[1]="Count down"},
+						name = L["Frames/TextStyle"], type = "select", style="radio",
+						values = {[0]=L["Frames/CountUp"],[1]=L["Frames/CountDown"]},
 						get = function(info) return DBMod.PlayerFrames.Castbar.text.player; end,
 						set = function(info,val) DBMod.PlayerFrames.Castbar.text.player = val; end
 					},
 					target = {
-						name = "Text style", type = "select", style="radio",
-						values = {[0]="Count up",[1]="Count down"},
+						name = L["Frames/TextStyle"], type = "select", style="radio",
+						values = {[0]=L["Frames/CountUp"],[1]=L["Frames/CountDown"]},
 						get = function(info) return DBMod.PlayerFrames.Castbar.text.target; end,
 						set = function(info,val) DBMod.PlayerFrames.Castbar.text.target = val; end
 					},
 					targettarget = {
-						name = "Text style", type = "select", style="radio",
-						values = {[0]="Count up",[1]="Count down"},
+						name = L["Frames/TextStyle"], type = "select", style="radio",
+						values = {[0]=L["Frames/CountUp"],[1]=L["Frames/CountDown"]},
 						get = function(info) return DBMod.PlayerFrames.Castbar.text.targettarget; end,
 						set = function(info,val) DBMod.PlayerFrames.Castbar.text.targettarget = val; end
 					},
 					pet = {
-						name = "Text style", type = "select", style="radio",
-						values = {[0]="Count up",[1]="Count down"},
+						name = L["Frames/TextStyle"], type = "select", style="radio",
+						values = {[0]=L["Frames/CountUp"],[1]=L["Frames/CountDown"]},
 						get = function(info) return DBMod.PlayerFrames.Castbar.text.pet; end,
 						set = function(info,val) DBMod.PlayerFrames.Castbar.text.pet = val; end
 					},
 					focus = {
-						name = "Text style", type = "select", style="radio",
-						values = {[0]="Count up",[1]="Count down"},
+						name = L["Frames/TextStyle"], type = "select", style="radio",
+						values = {[0]=L["Frames/CountUp"],[1]=L["Frames/CountDown"]},
 						get = function(info) return DBMod.PlayerFrames.Castbar.text.focus; end,
 						set = function(info,val) DBMod.PlayerFrames.Castbar.text.focus = val; end
 					}
@@ -478,33 +472,33 @@ function addon:OnInitialize()
 			},
 		}
 	};
-	spartan.optionsPlayerFrames.args["bossarena"] = {name = "Boss & Arena frames",type = "group",order=5,
+	spartan.optionsPlayerFrames.args["bossarena"] = {name = L["Frames/BossArenaFrames"],type = "group",order=5,
 		args = {
-			bar0 = {name="Boss Frames",type="header",order=0},
-			boss = { name = "Show Frames", type = "toggle",order=1,--disabled=true,
+			bar0 = {name=L["Frames/BossFrames"],type="header",order=0},
+			boss = { name = L["Frames/ShowFrames"], type = "toggle",order=1,--disabled=true,
 				get = function(info) return DBMod.PlayerFrames.BossFrame.display; end,
 				set = function(info,val) DBMod.PlayerFrames.BossFrame.display = val; end
 			},
-			bossreset = {name = "Reset location",type = "execute",order=2,--disabled=true,
-				desc = "resets the potion to default",
+			bossreset = {name = L["Frames/ResetLoc"],type = "execute",order=2,--disabled=true,
+				desc = L["Frames/ResetLocDesc"],
 				func = function() DBMod.PlayerFrames.BossFrame.movement.moved = false; addon:UpdateBossFramePosition(); end
 			},
-			bossscale = { name = "Scale Frames", type = "range",order=3,width="full",--disabled=true,
+			bossscale = { name = L["Frames/ScaleFrames"], type = "range",order=3,width="full",--disabled=true,
 				min=.01,max=2,step=.01,
 				get = function(info) return DBMod.PlayerFrames.BossFrame.scale; end,
 				set = function(info,val) DBMod.PlayerFrames.BossFrame.scale = val; end
 			},
 			
-			bar2 = {name="Arena Frames",type="header",order=20},
-			arena = { name = "Show Frames", type = "toggle",order=21,disabled=true,
+			bar2 = {name=L["Frames/ArenaFrames"],type="header",order=20},
+			arena = { name = L["Frames/ShowFrames"], type = "toggle",order=21,disabled=true,
 				get = function(info) return DBMod.PlayerFrames.ArenaFrame.display; end,
 				set = function(info,val) DBMod.PlayerFrames.ArenaFrame.display = val; end
 			},
-			arenareset = {name = "Reset location",type = "execute",order=22,disabled=true,
-				desc = "resets the potion to default",
+			arenareset = {name = L["Frames/ResetLoc"],type = "execute",order=22,disabled=true,
+				desc = L["Frames/ResetLocDesc"],
 				func = function() DBMod.PlayerFrames.ArenaFrame.moved = false; addon:UpdateArenaFramePosition(); end
 			},
-			arenascale = { name = "Scale Frames", type = "range",order=23,width="full",disabled=true,
+			arenascale = { name = L["Frames/ScaleFrames"], type = "range",order=23,width="full",disabled=true,
 				min=.01,max=2,step=.01,
 				get = function(info) return DBMod.PlayerFrames.ArenaFrame.scale; end,
 				set = function(info,val) DBMod.PlayerFrames.ArenaFrame.scale = val; end
@@ -512,12 +506,12 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.optionsPlayerFrames.args["resetfocus"] = {name = "Reset Focus location",type = "execute",order=1,
-		desc = "resets the focus frame to the default position",
+	spartan.optionsPlayerFrames.args["resetfocus"] = {name = L["Frames/resetfocus"],type = "execute",order=1,
+		desc = L["Frames/resetfocusDesc"],
 		func = function() DBMod.PlayerFrames.focus.movement.moved = false; addon:UpdateFocusPosition(); end
 	};
-	spartan.optionsPlayerFrames.args["resetSpecialBar"] = {name = "Reset Special Bar location",type = "execute",order=1,
-		desc = "Resets the Special Bar(s) (Eclipse meter, Alt Power, Runes, totems, etc...) to the default position",
+	spartan.optionsPlayerFrames.args["resetSpecialBar"] = {name = L["Frames/resetSpecialBar"],type = "execute",order=1,
+		desc = L["Frames/resetSpecialBarDesc"],
 		func = function() addon:ResetAltBarPositions(); end
 	};
 end
