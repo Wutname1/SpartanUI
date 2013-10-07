@@ -46,12 +46,14 @@ do -- ClassIcon as an oUF module
 	oUF:AddElement('SUI_ClassIcon',Update,Enable,Disable);
 end
 
-do -- ClassIcon as an oUF module
+do -- SUI_RaidGroup as an oUF module
 	local Update = function(self,event,unit)
 		if IsInRaid() then
 			self.SUI_RaidGroup:Show();
+			self.SUI_RaidGroup.Text:Show();
 		else
 			self.SUI_RaidGroup:Hide();
+			self.SUI_RaidGroup.Text:Hide();
 		end
 	end
 	local Enable = function(self)
