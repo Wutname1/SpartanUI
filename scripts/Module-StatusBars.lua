@@ -228,7 +228,7 @@ function module:SetRepColors()
 	end
 
 	-- Set Text if needed
-	if DB.RepBar.text then repframe.Text:SetFormattedText("(%d / %d) %d%%",current-low,high-low,ratio*100) else repframe.Text:SetText("") end
+	if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(current-low), addon:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
 end
 
 function module:SetXPColors()
@@ -267,7 +267,7 @@ function module:SetXPColors()
 	SUI_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.1));
 
 	-- Update Text if needed
-	if DB.XPBar.text then xpframe.Text:SetFormattedText("(%d / %d) %d%%", UnitXP("player"),UnitXPMax("player"),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+	if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(UnitXP("player")), addon:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 end
 
 function module:OnEnable()
@@ -281,7 +281,7 @@ function module:OnEnable()
 	end
 	do -- experience bar
 		local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
-		local XP_LEVEL_TEMPLATE = "(%d / %d) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
+		local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
 		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
 
 		xpframe = CreateFrame("Frame","SUI_ExperienceBar",SpartanUI,"SUI_StatusBars_XPTemplate");
@@ -303,14 +303,14 @@ function module:OnEnable()
 				if rested == 0 then rested = .001 end
 				SUI_ExperienceBarLead:SetWidth(rested);
 			end
-			if DB.XPBar.text then xpframe.Text:SetFormattedText("(%d / %d) %d%%", now,goal,(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+			if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(now), addon:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 			module:SetXPColors()
 		end);
 		local showXPTooltip = function()
 			tooltip:ClearAllPoints();
 			tooltip:SetPoint("BOTTOM",xpframe,"TOP",6,-1);
 			local a = format("Level %s ",UnitLevel("player"))
-			local b = format(XP_LEVEL_TEMPLATE,UnitXP("player"),UnitXPMax("player"),(UnitXP("player")/UnitXPMax("player")*100))
+			local b = format(XP_LEVEL_TEMPLATE, addon:comma_value(UnitXP("player")), addon:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
 			SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
 			local rested,text = GetXPExhaustion() or 0;
 			if (rested > 0) then
@@ -358,7 +358,7 @@ function module:OnEnable()
 				module:SetRepColors()
 			end
 			
-			if DB.RepBar.text then repframe.Text:SetFormattedText("(%d / %d) %d%%",current-low,high-low,ratio*100) else repframe.Text:SetText("") end
+			if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(current-low), addon:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
 		end);
 		local showRepTooltip = function()
 			tooltip:ClearAllPoints();
@@ -367,7 +367,7 @@ function module:OnEnable()
 			if name then
 				text = GetFactionDetails(name);
 				ratio = (current-low)/(high-low);
-				SUI_StatusBarTooltipHeader:SetText(format("%s (%d / %d) %d%% %s",name,current-low,high-low,ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+				SUI_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, addon:comma_value(current-low), addon:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
 				SUI_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
 			else
 				SUI_StatusBarTooltipHeader:SetText(REPUTATION);
@@ -396,4 +396,9 @@ function module:OnEnable()
 		repframe:SetFrameLevel(2);
 		module:SetRepColors();
 	end
+end
+
+function addon:comma_value(n)
+	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
+	return left..(num:reverse():gsub('(%d%d%d)','%1' .. _G.LARGE_NUMBER_SEPERATOR):reverse())..right
 end
