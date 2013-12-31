@@ -15,7 +15,7 @@ local checkThirdParty, frame = function()
 	end
 	if select(4, GetAddOnInfo("SexyMap")) then
 		addon:Print(L["SexyMapLoaded"])
-		return true
+		--return true
 	end
 	if (relativeTo ~= UIParent) then return true; end -- a third party minimap manager is involved
 	--Debug
