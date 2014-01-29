@@ -9,7 +9,7 @@ local checkThirdParty, frame = function()
 	local point, relativeTo, relativePoint, x, y = MinimapCluster:GetPoint();
 	if (NXTITLELOW) then -- Carbonite is loaded, is it using the minimap?
 		addon:Print(NXTITLELOW..' is loaded ...Checking settings ...');
-		if (NxData.NXGOpts.MapMMOwn == true)
+		if (Nx.db.profile.MiniMap.Own == true)
 			then addon:Print(NXTITLELOW..' is handling the Minimap') return true;
 		end
 	end
