@@ -1,9 +1,8 @@
-## Interface: 50400
+## Interface: 60000
 ## Title: SpartanUI |CFF0070DDCore|r
 ## Notes: User Interface combining elegant artwork with well designed features.
-## Version: 3.2.1
+## Version: 3.3.0
 ## Author: Wutname1
-## Former-Authors: Atriace, Beladona, Zilver
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
 
@@ -18,6 +17,7 @@ libs\AceConsole-3.0\AceConsole-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
+libs\AceLocale-3.0\AceLocale-3.0.xml
 #@end-no-lib-strip@
 
 lang\enUS.lua

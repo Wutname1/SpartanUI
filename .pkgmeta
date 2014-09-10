@@ -1,10 +1,11 @@
 package-as: SpartanUI
 
 move-folders:
+  SpartanUI/Modules/Artwork: SpartanUI_Artwork
+  SpartanUI/Modules/PlayerFrames: SpartanUI_PlayerFrames
   SpartanUI/Modules/RaidFrames: SpartanUI_RaidFrames
   SpartanUI/Modules/PartyFrames: SpartanUI_PartyFrames
   SpartanUI/Modules/FilmEffects: SpartanUI_FilmEffects
-  SpartanUI/Modules/PlayerFrames: SpartanUI_PlayerFrames
   SpartanUI/Modules/SpinCam: SpartanUI_SpinCam
 
 externals:

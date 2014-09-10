@@ -1,9 +1,8 @@
-## Interface: 50400
+## Interface: 60000
 ## Title: SpartanUI: |CFF0070DDParty Frames|r
 ## Notes: Party Frames designed to complement SpartanUI
-## Version: 3.2.1
+## Version: 3.3.0
 ## Author: Wutname1
-## Former-Authors: Atriace, Beladona
 ## X-Category: User Interfaces
 ## RequiredDeps: SpartanUI
 ## OptionalDeps: SpartanUI_PlayerFrames

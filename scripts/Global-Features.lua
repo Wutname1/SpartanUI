@@ -11,7 +11,7 @@ addon.optionsPartyFrames = {name = "SpartanUI Party Frames", type = "group", arg
 addon.optionsRaidFrames = {name = "SpartanUI Raid Frames", type = "group", args = {}};
 addon.optionsSpinCam = {name = "SpartanUI Spin Cam", type = "group", args = {}};
 addon.optionsFilmEffects = {name = "SpartanUI Film Effects", type = "group", args = {}};
---addon.ChangeLog = {name = "SpartanUI Change Log", type = "group", args = {}};
+addon.Artwork = {name = "SpartanUI Change Log", type = "group", args = {}};
 
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
 local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
@@ -95,6 +95,9 @@ DBdefault = {
 		}
 	},
 	Modules = {
+		Artwork = {
+			Theme = "Classic"
+		},
 		SpinCam = {
 			enable = true,
 			speed = 8
@@ -244,12 +247,12 @@ function addon:OnEnable()
 	
     AceConfig:RegisterOptionsTable("SpartanUI Main", addon.optionsMain)
     AceConfig:RegisterOptionsTable("SpartanUI General", addon.optionsGeneral)
+    AceConfig:RegisterOptionsTable("SpartanUI Artwork", addon.Artwork)
     AceConfig:RegisterOptionsTable("SpartanUI Player Frames", addon.optionsPlayerFrames)
     AceConfig:RegisterOptionsTable("SpartanUI Party Frames", addon.optionsPartyFrames)
     AceConfig:RegisterOptionsTable("SpartanUI Raid Frames", addon.optionsRaidFrames)
     AceConfig:RegisterOptionsTable("SpartanUI Spin Cam", addon.optionsSpinCam)
     AceConfig:RegisterOptionsTable("SpartanUI Film Effects", addon.optionsFilmEffects)
-    --AceConfig:RegisterOptionsTable("SpartanUI Change Log", addon.ChangeLog)
 	AceConfig:RegisterOptionsTable("Profiles", self.Optionsprofile);
 
 	AceConfigDialog:AddToBlizOptions("SpartanUI Main", "SpartanUI", nil)
@@ -260,7 +263,7 @@ function addon:OnEnable()
     if addon:GetModule("PlayerFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", L["PlayerFrames"], "SpartanUI") end
     if addon:GetModule("RaidFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Raid Frames", L["RaidFrames"], "SpartanUI") end
     if addon:GetModule("SpinCam", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Spin Cam", L["SpinCam"], "SpartanUI") end
-    --AceConfigDialog:AddToBlizOptions("SpartanUI Change Log", "Change Log", "SpartanUI")
+    AceConfigDialog:AddToBlizOptions("SpartanUI Artwork", "Artwork", "SpartanUI")
 	
 	AceConfigDialog:AddToBlizOptions("Profiles", "Profiles", "SpartanUI");
 	

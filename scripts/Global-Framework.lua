@@ -10,18 +10,12 @@ local round = function(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;
 
-local updateMinimumScale = function()
---	local minScale = floor(((UIParent:GetWidth()/2560)*10^2)+1) / (10^2);
---	if DB.scale < minScale then DB.scale = minScale; end
-end;
-
 local updateSpartanScale = function() -- scales SpartanUI based on setting or screen size
 	if (not DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar("gxResolution"),"(%d+).-(%d+)");
 		if (tonumber(width) / tonumber(height) > 4/3) then DB.scale = 0.92;
 		else DB.scale = 0.78; end
 	end
-	updateMinimumScale();
 	if (DB.scale ~= round(SpartanUI:GetScale())) then
 		frame:SetScale(DB.scale);
 	end
@@ -206,7 +200,6 @@ function module:OnInitialize()
 				addon:Print(ERR_NOT_IN_COMBAT);
 			else
 				DB.scale = min(1,round(val));
-				updateMinimumScale();
 			end
 		end,
 		get = function(info) return DB.scale; end
