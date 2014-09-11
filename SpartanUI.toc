@@ -3,7 +3,6 @@
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: 3.3.0
 ## Author: Wutname1
-## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
 
 #@no-lib-strip@

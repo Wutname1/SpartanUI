@@ -14,17 +14,22 @@ function addon:OnInitialize()
 	spartan.optionsPlayerFrames.args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="group",order=1,
 		desc=L["Frames/BarOptDesc"],
 		args = {
-			targettargetStyle = {name=L["Frames/ToTFrameStyle"],type="select",order=1,
+			toggle3DPortrait =  {name = L["Frames/Portrait3D"], type = "toggle", order=1,
+				get = function(info) return DBMod.PlayerFrames.Portrait3D; end,
+				set = function(info,val) DBMod.PlayerFrames.Portrait3D = val; end
+			},
+			toggleclassname =  {name = L["Frames/ClrNameClass"], type = "toggle", order=2,
+				get = function(info) return DBMod.PlayerFrames.showClass; end,
+				set = function(info,val) DBMod.PlayerFrames.showClass = val; end
+			},
+			targettargetStyle = {name=L["Frames/ToTFrameStyle"],type="select",order=3,
 				values = {["large"]=L["Frames/LargeFrame"],["medium"]=L["Frames/HidePicture"],["small"]=L["Frames/NameHealthOnly"]},
 				get = function(info) return DBMod.PlayerFrames.targettarget.style; end,
 				set = function(info,val) DBMod.PlayerFrames.targettarget.style = val; end
 			},
-			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=2},
-			toggleclassname =  {name = L["Frames/ClrNameClass"], type = "toggle", order=3,
-				get = function(info) return DBMod.PlayerFrames.showClass; end,
-				set = function(info,val) DBMod.PlayerFrames.showClass = val; end
-			},
 			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=4},
+
+			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=5},
 
 			bars = {name=L["Frames/BarOpt"],type="group",order=1,desc=L["Frames/BarOptDesc"],
 				args = {

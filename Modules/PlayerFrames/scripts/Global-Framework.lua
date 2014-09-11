@@ -109,6 +109,17 @@ local name = function(self)
 	end
 end
 
+function CreatePortrait(self)
+	if DBMod.PlayerFrames.Portrait3D then			
+		local Portrait = CreateFrame('PlayerModel', nil, self)
+		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
+		Portrait.type = "3D"
+		return Portrait;
+	else
+		return self:CreateTexture(nil,"BORDER");
+	end
+end
+
 --	Updating functions
 local PostUpdateText = function(self,unit)
 	self:Untag(self.Health.value)
@@ -236,8 +247,8 @@ local CreatePlayerFrame = function(self,unit)
 		artwork.bg:SetTexture(base_plate1);
 		if unit == "target" then artwork.bg:SetTexCoord(1,0,0,1); end
 		
-		self.Portrait = self:CreateTexture(nil,"BORDER");
-		self.Portrait:SetSize(64, 64);
+		self.Portrait = CreatePortrait(self);
+		self.Portrait:SetSize(55, 55);
 		if unit == "player" then self.Portrait:SetPoint("CENTER",self,"CENTER",80,3); end
 		if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
 		
@@ -465,7 +476,7 @@ local CreateTargetFrame = function(self,unit)
 		artwork.bg:SetTexture(base_plate1);
 		artwork.bg:SetTexCoord(1,0,0,1);
 		
-		self.Portrait = self:CreateTexture(nil,"BORDER");
+		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetWidth(64); self.Portrait:SetHeight(64);
 		self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3);
 		
@@ -695,7 +706,7 @@ local CreatePetFrame = function(self,unit)
 		artwork.bg:SetWidth(256); artwork.bg:SetHeight(85);
 		artwork.bg:SetTexCoord(0,1,0,85/128);
 		
-		self.Portrait = self:CreateTexture(nil,"BACKGROUND");
+		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
 		self.Portrait:SetPoint("CENTER",self,"CENTER",87,-8);
 		
@@ -894,7 +905,7 @@ local CreateToTFrame = function(self,unit)
 			artwork.bg:SetSize(256, 85);
 			artwork.bg:SetTexCoord(1,0,0,85/128);
 			
-			self.Portrait = self:CreateTexture(nil,"BACKGROUND");
+			self.Portrait = CreatePortrait(self);
 			self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
 			self.Portrait:SetPoint("CENTER",self,"CENTER",-83,-8);
 			

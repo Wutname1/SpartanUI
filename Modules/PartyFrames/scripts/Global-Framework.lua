@@ -451,7 +451,7 @@ local CreatePartyFrame = function(self,unit)
 		if classFileName == "DRUID" then
 			spellIDs = {
 				774, -- Rejuvenation
-				94447, -- Lifebloom
+				48438, -- Lifebloom
 				48438, -- Wild Growth
 				8936, -- Regrowth
 			}

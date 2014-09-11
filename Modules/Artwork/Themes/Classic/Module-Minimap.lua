@@ -82,10 +82,8 @@ local Minimap_Conflict_msg = true
 		MiniMapWorldMapButton:SetHighlightTexture(nil)
 	--	-- Create new textures
 		
-		-- MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI\\media\\UI-World-Icon.png")
-		-- MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI\\media\\UI-World-Icon-Pushed.png")
-		MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI\\media\\WorldMap-Icon.png")
-		MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI\\media\\WorldMap-Icon-Pushed.png")
+		MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon.png")
+		MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon-Pushed.png")
 		MiniMapWorldMapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 		
 		MiniMapWorldMapButton:ClearAllPoints(); MiniMapWorldMapButton:SetPoint("TOPRIGHT",MinimapBackdrop,-20,12)
@@ -93,12 +91,10 @@ local Minimap_Conflict_msg = true
 		GameTimeFrame:ClearAllPoints(); GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16)
 		MiniMapTracking:ClearAllPoints(); MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
 		MiniMapTrackingButton:ClearAllPoints(); MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
-		-- Commented out the below as the MiniMapBattlefieldIcon XML entry was removed in MOP
-		-- MiniMapBattlefieldFrame:ClearAllPoints(); MiniMapBattlefieldFrame:SetPoint("BOTTOMLEFT",Minimap,"BOTTOMLEFT",13,-13)
 		
 		Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
 		Minimap.overlay:SetWidth(250); Minimap.overlay:SetHeight(250); 
-		Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\media\\map-overlay");
+		Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay");
 		Minimap.overlay:SetPoint("CENTER"); Minimap.overlay:SetBlendMode("ADD");
 		
 		frame:EnableMouse(true);

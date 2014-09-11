@@ -194,6 +194,10 @@ function module:OnInitialize()
 			if DBMod.RaidFrames.showClass == nil then DBMod.RaidFrames.showClass = true end
 			if DBMod.PartyFrames.showClass == nil then DBMod.PartyFrames.showClass = true end
 		end
+		if (DB.Version < "3.3.0") then
+			if not DBMod.PlayerFrames.Portrait3D then DBMod.PlayerFrames.Portrait3D = false end
+			if not DBMod.PartyFrames.Portrait3D then DBMod.PartyFrames.Portrait3D = false end
+		end
 	end
 end
 
@@ -211,8 +215,8 @@ function module:OnEnable()
 	DBGlobal.Version = SpartanVer;
 	if (CurseVersion) then
 		if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
-			spartan:Print("Curse Version"..CurseVersion);
-			spartan:Print("Spartan Version"..SpartanVer);
+			spartan:Print("Curse Version: "..CurseVersion);
+			spartan:Print("Spartan Version: "..SpartanVer);
 			StaticPopup_Show ("AlphaWarning")
 		end
 	end

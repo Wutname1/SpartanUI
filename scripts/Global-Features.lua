@@ -26,6 +26,7 @@ DBdefault = {
 		yoffsetAuto = true,
 		scale = .92,
 		alpha = 1,
+		viewport = true,
 		ChatSettings = {
 			enabled = true
 		},
@@ -109,6 +110,7 @@ DBdefault = {
 			vignette = nil
 		},
 		PartyFrames  = {
+			Portrait3D = true,
 			threat = true,
 			preset = "dps",
 			FrameStyle = "large",
@@ -142,6 +144,7 @@ DBdefault = {
 			display = {pet = true,target=true,mana=true},
 		},
 		PlayerFrames = {
+			Portrait3D = true,
 			showClass = true,
 			focusMoved = false,
 			global = frameDefault1,

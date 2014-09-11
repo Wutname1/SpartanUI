@@ -257,7 +257,7 @@ do -- Boss graphic as an oUF module
 	oUF:AddElement('BossGraphic', Update,Enable,Disable);
 end
 
-do -- fix SET_FOCUS & CLEAR_FOCUS errors
+do -- Remove SET_FOCUS CLEAR_FOCUS
 	for k,v in pairs(UnitPopupMenus) do
 		if k ~= "RAID" and k ~= "RAID_PLAYER" then
 			for x,y in pairs(UnitPopupMenus[k]) do
@@ -269,5 +269,5 @@ do -- fix SET_FOCUS & CLEAR_FOCUS errors
 			end
 		end
 	end
-	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
+	UnitPopupMenus["FOCUS"] = { "RAID_TARGET_ICON", "CANCEL" };
 end
