@@ -2,9 +2,8 @@ local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local AceHook = LibStub("AceHook-3.0")
 local module = addon:NewModule("BottomBar");
-local party -- for updateSpartanOffset use
 ----------------------------------------------------------------------------------------------------
-local anchor, frame = SUI_AnchorFrame, SpartanUI;
+local anchor, frame = SUI_AnchorFrame, SpartanUI, CurScale;
 
 local round = function(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
@@ -15,24 +14,40 @@ local updateMinimumScale = function()
 --	if DB.scale < minScale then DB.scale = minScale; end
 end;
 
+local updateSpartanViewport = function() -- handles viewport offset based on settings
+	if not InCombatLockdown() and (SpartanUI_Base5:GetHeight() ~= 0) and (DB.viewport) then
+		WorldFrame:ClearAllPoints();
+		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
+		if SpartanUI_Base5:IsVisible() then
+			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, (SpartanUI_Base5:GetHeight() * DB.scale/2.3));
+		else
+			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
+		end
+	end
+end;
+
 local updateSpartanScale = function() -- scales SpartanUI based on setting or screen size
 	if (not DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar("gxResolution"),"(%d+).-(%d+)");
 		if (tonumber(width) / tonumber(height) > 4/3) then DB.scale = 0.92;
 		else DB.scale = 0.78; end
 	end
-	updateMinimumScale();
-	if (DB.scale ~= round(SpartanUI:GetScale())) then
-		frame:SetScale(DB.scale);
-	end
-	if DB.scale <= .75 then
-		SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
-		SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
-	else
-		SpartanUI_Base3:ClearAllPoints();
-		SpartanUI_Base5:ClearAllPoints();
-		SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
-		SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
+	if DB.scale ~= CurScale then
+		updateMinimumScale();
+		updateSpartanViewport();
+		if (DB.scale ~= round(SpartanUI:GetScale())) then
+			frame:SetScale(DB.scale);
+		end
+		if DB.scale <= .75 then
+			SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
+			SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
+		else
+			SpartanUI_Base3:ClearAllPoints();
+			SpartanUI_Base5:ClearAllPoints();
+			SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
+			SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
+		end
+		CurScale = DB.scale
 	end
 end;
 
@@ -101,21 +116,13 @@ local updateSpartanXOffset = function() -- handles SpartanUI offset based on set
 	DB.xOffset = offset
 end;
 
-local updateSpartanViewport = function(state) -- handles viewport offset based on settings
-	if ( state ) and not InCombatLockdown() then
-		WorldFrame:ClearAllPoints(); WorldFrame:SetPoint("TOPLEFT", 0, 0); WorldFrame:SetPoint("BOTTOMRIGHT", 0, 0);
-	else
-		if not InCombatLockdown() then WorldFrame:SetPoint("BOTTOMRIGHT"); end
-	end
-end;
-
 ----------------------------------------------------------------------------------------------------
 function module:OnInitialize()
 	do -- default interface modifications
 		FramerateLabel:ClearAllPoints(); FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
 		MainMenuBar:Hide();
-		hooksecurefunc(UIParent,"Hide",function() updateSpartanViewport(false); end);
-		hooksecurefunc(UIParent,"Show",function() updateSpartanViewport(true); end);
+		hooksecurefunc(SpartanUI,"Hide",function() updateSpartanViewport(); end);
+		hooksecurefunc(SpartanUI,"Show",function() updateSpartanViewport(); end);
 		hooksecurefunc("UpdateContainerFrameAnchors",function() -- fix bag offsets
 			local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
 			local screenWidth = GetScreenWidth()
@@ -274,24 +281,24 @@ function module:OnEnable()
 	updateSpartanViewport();
 	updateSpartanAlpha();
 	
-	party = addon:GetModule("PartyFrames","PartyFrames",true);
-	-- Fix CPU leak, use UpdateInterval
-	anchor.UpdateInterval = 2
+	-- Limit updates via interval
+	anchor.UpdateInterval = 5 --Seconds
 	anchor.TimeSinceLastUpdate = 0
 	anchor:SetScript("OnUpdate",function(self,...)
 		local elapsed = select(1,...)
 		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
 		if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-			-- Debug
---			print(self.TimeSinceLastUpdate)
 			if (InCombatLockdown()) then return; end
-			-- Count this be hooked in another way ... event CVar_UPDATE
+			
 			updateSpartanScale();
 			updateSpartanOffset();
 			updateSpartanXOffset();
+			updateSpartanViewport();
 			self.TimeSinceLastUpdate = 0
 		end
 	end);
+	
+
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID;
@@ -335,5 +342,4 @@ function module:OnEnable()
 		
 		UIDropDownMenu_Initialize( VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, "MENU");
 	end
-	
 end

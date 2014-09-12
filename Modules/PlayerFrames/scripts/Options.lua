@@ -29,8 +29,6 @@ function addon:OnInitialize()
 			},
 			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=4},
 
-			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=5},
-
 			bars = {name=L["Frames/BarOpt"],type="group",order=1,desc=L["Frames/BarOptDesc"],
 				args = {
 					bar1 = {name=L["Frames/HBarClr"],type="header",order=10},

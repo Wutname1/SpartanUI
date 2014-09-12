@@ -172,6 +172,7 @@ DBdefault = {
 			AltManaBar = {movement=MovedDefault},
 		},
 		RaidFrames  = {
+			HideBlizzFrames = true,
 			threat = true,
 			mode = "group",
 			preset = "dps",

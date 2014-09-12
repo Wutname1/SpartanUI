@@ -4,9 +4,7 @@
 ## Version: 3.3.0
 ## Author: Wutname1
 ## X-Category: User Interfaces
-## RequiredDeps: SpartanUI
-## OptionalDeps: SpartanUI_PlayerFrames
-## X-oUF: oUF
+## RequiredDeps: SpartanUI, SpartanUI_PlayerFrames
 
 libs\oUF\oUF.xml
 libs\oUF_AuraWatch.lua

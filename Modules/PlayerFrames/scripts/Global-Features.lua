@@ -1,7 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:NewModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
-do -- ClassIcon as an oUF module
+do -- ClassIcon as an SpartanoUF module
 	local ClassIconCoord = {
 		WARRIOR = {			0.00, 0.25, 0.00, 0.25 },
 		MAGE = {			0.25, 0.50, 0.00, 0.25 },
@@ -43,10 +43,10 @@ do -- ClassIcon as an oUF module
 			self:UnregisterEvent("UNIT_PET", Update);
 		end
 	end
-	oUF:AddElement('SUI_ClassIcon',Update,Enable,Disable);
+	SpartanoUF:AddElement('SUI_ClassIcon',Update,Enable,Disable);
 end
 
-do -- SUI_RaidGroup as an oUF module
+do -- SUI_RaidGroup as an SpartanoUF module
 	local Update = function(self,event,unit)
 		if IsInRaid() then
 			self.SUI_RaidGroup:Show();
@@ -67,12 +67,12 @@ do -- SUI_RaidGroup as an oUF module
 			self:UnregisterEvent("GROUP_ROSTER_UPDATE", Update);
 		end
 	end
-	oUF:AddElement('SUI_RaidGroup',Update,Enable,Disable);
+	SpartanoUF:AddElement('SUI_RaidGroup',Update,Enable,Disable);
 end
 
-do -- AFK / DND status text, as an oUF module
-	oUF.Tags.Events['afkdnd'] = "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET";
-	oUF.Tags.Methods['afkdnd'] = function (unit)
+do -- AFK / DND status text, as an SpartanoUF module
+	SpartanoUF.Tags.Events['afkdnd'] = "PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET";
+	SpartanoUF.Tags.Methods['afkdnd'] = function (unit)
 		if unit then
 			return UnitIsAFK(unit) and "AFK" or UnitIsDND(unit) and "DND" or "";
 		end
@@ -80,84 +80,84 @@ do -- AFK / DND status text, as an oUF module
 end
 
 do --Health Formatting Tags
--- Current Health Short, as an oUF module
-	oUF.Tags.Events['curhpshort'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['curhpshort'] = function (unit)
+-- Current Health Short, as an SpartanoUF module
+	SpartanoUF.Tags.Events['curhpshort'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['curhpshort'] = function (unit)
 		local tmp = UnitHealth(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 0).."M"; end
 		if tmp >= 1000 then return addon:round(tmp/1000, 0).."K"; end
 		return addon:comma_value(tmp);
 	end
--- Current Health Dynamic, as an oUF module
-	oUF.Tags.Events['curhpdynamic'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['curhpdynamic'] = function (unit)
+-- Current Health Dynamic, as an SpartanoUF module
+	SpartanoUF.Tags.Events['curhpdynamic'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['curhpdynamic'] = function (unit)
 		local tmp = UnitHealth(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
--- Total Health Short, as an oUF module
-	oUF.Tags.Events['maxhpshort'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['maxhpshort'] = function (unit)
+-- Total Health Short, as an SpartanoUF module
+	SpartanoUF.Tags.Events['maxhpshort'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['maxhpshort'] = function (unit)
 		local tmp = UnitHealthMax(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 0).."M"; end
 		if tmp >= 1000 then return addon:round(tmp/1000, 0).."K"; end
 		return addon:comma_value(tmp);
 	end
--- Total Health Dynamic, as an oUF module
-	oUF.Tags.Events['maxhpdynamic'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['maxhpdynamic'] = function (unit)
+-- Total Health Dynamic, as an SpartanoUF module
+	SpartanoUF.Tags.Events['maxhpdynamic'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['maxhpdynamic'] = function (unit)
 		local tmp = UnitHealthMax(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
--- Missing Health Dynamic, as an oUF module
-	oUF.Tags.Events['missinghpdynamic'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['missinghpdynamic'] = function (unit)
+-- Missing Health Dynamic, as an SpartanoUF module
+	SpartanoUF.Tags.Events['missinghpdynamic'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['missinghpdynamic'] = function (unit)
 		local tmp = UnitHealthMax(unit) - UnitHealth(unit)
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
--- Current Health formatted, as an oUF module
-	oUF.Tags.Events['curhpformatted'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['curhpformatted'] = function (unit) return addon:comma_value(UnitHealth(unit)); end
--- Total Health formatted, as an oUF module
-	oUF.Tags.Events['maxhpformatted'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['maxhpformatted'] = function (unit) return addon:comma_value(UnitHealthMax(unit)); end
--- Missing Health formatted, as an oUF module
-	oUF.Tags.Events['missinghpformatted'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['missinghpformatted'] = function (unit) return addon:comma_value(UnitHealthMax(unit) - UnitHealth(unit)); end
+-- Current Health formatted, as an SpartanoUF module
+	SpartanoUF.Tags.Events['curhpformatted'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['curhpformatted'] = function (unit) return addon:comma_value(UnitHealth(unit)); end
+-- Total Health formatted, as an SpartanoUF module
+	SpartanoUF.Tags.Events['maxhpformatted'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['maxhpformatted'] = function (unit) return addon:comma_value(UnitHealthMax(unit)); end
+-- Missing Health formatted, as an SpartanoUF module
+	SpartanoUF.Tags.Events['missinghpformatted'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['missinghpformatted'] = function (unit) return addon:comma_value(UnitHealthMax(unit) - UnitHealth(unit)); end
 end
 do -- Mana Formatting Tags
--- Current Mana Dynamic, as an oUF module
-	oUF.Tags.Events['curppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
-	oUF.Tags.Methods['curppdynamic'] = function (unit)
+-- Current Mana Dynamic, as an SpartanoUF module
+	SpartanoUF.Tags.Events['curppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Methods['curppdynamic'] = function (unit)
 		local tmp = UnitPower(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
--- Total Mana Dynamic, as an oUF module
-	oUF.Tags.Events['maxppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
-	oUF.Tags.Methods['maxppdynamic'] = function (unit)
+-- Total Mana Dynamic, as an SpartanoUF module
+	SpartanoUF.Tags.Events['maxppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Methods['maxppdynamic'] = function (unit)
 		local tmp = UnitPowerMax(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
--- Missing Mana Dynamic, as an oUF module
-	oUF.Tags.Events['missinghpdynamic'] = "UNIT_HEALTH";
-	oUF.Tags.Methods['missinghpdynamic'] = function (unit)
+-- Missing Mana Dynamic, as an SpartanoUF module
+	SpartanoUF.Tags.Events['missinghpdynamic'] = "UNIT_HEALTH";
+	SpartanoUF.Tags.Methods['missinghpdynamic'] = function (unit)
 		local tmp = UnitPowerMax(unit) - UnitPower(unit)
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
--- Current Mana formatted, as an oUF module
-	oUF.Tags.Events['curppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
-	oUF.Tags.Methods['curppformatted'] = function (unit) return addon:comma_value(UnitPower(unit)); end
--- Total Mana formatted, as an oUF module
-	oUF.Tags.Events['maxppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
-	oUF.Tags.Methods['maxppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit)); end
--- Total Mana formatted, as an oUF module
-	oUF.Tags.Events['missingppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
-	oUF.Tags.Methods['missingppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit)); end
+-- Current Mana formatted, as an SpartanoUF module
+	SpartanoUF.Tags.Events['curppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Methods['curppformatted'] = function (unit) return addon:comma_value(UnitPower(unit)); end
+-- Total Mana formatted, as an SpartanoUF module
+	SpartanoUF.Tags.Events['maxppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Methods['maxppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit)); end
+-- Total Mana formatted, as an SpartanoUF module
+	SpartanoUF.Tags.Events['missingppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Methods['missingppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit)); end
 end
 
 do --Color name by Class
@@ -170,15 +170,15 @@ do --Color name by Class
 		end
 	end
 	
-	oUF.Tags.Events["SUI_ColorClass"] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
-	oUF.Tags.Methods["SUI_ColorClass"] = function(u)
+	SpartanoUF.Tags.Events["SUI_ColorClass"] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
+	SpartanoUF.Tags.Methods["SUI_ColorClass"] = function(u)
 		local _, class = UnitClass(u)
 		local reaction = UnitReaction(u, "player")
 		
 		if (u == "pet") then
-			return hex(oUF.colors.class[class])
+			return hex(SpartanoUF.colors.class[class])
 		elseif (UnitIsPlayer(u)) then
-			return hex(oUF.colors.class[class])
+			return hex(SpartanoUF.colors.class[class])
 		else
 			return hex(1, 1, 1)
 		end
@@ -198,7 +198,7 @@ function addon:comma_value(n)
 	return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 end
 
-do -- Level Skull as an oUF module
+do -- Level Skull as an SpartanoUF module
 	local Update = function(self,event,unit)
 		if (self.unit ~= unit) then return; end
 		if (not self.LevelSkull) then return; end
@@ -215,10 +215,10 @@ do -- Level Skull as an oUF module
 		if (self.LevelSkull) then return true; end
 	end
 	local Disable = function(self) return; end
-	oUF:AddElement('LevelSkull', Update,Enable,Disable);
+	SpartanoUF:AddElement('LevelSkull', Update,Enable,Disable);
 end
 
-do -- Rare / Elite dragon graphic as an oUF module
+do -- Rare / Elite dragon graphic as an SpartanoUF module
 	local Update = function(self,event,unit)
 		if (self.unit ~= unit) then return; end
 		if (not self.RareElite) then return; end
@@ -238,10 +238,10 @@ do -- Rare / Elite dragon graphic as an oUF module
 		if (self.RareElite) then return true; end
 	end
 	local Disable = function(self) return; end
-	oUF:AddElement('RareElite', Update,Enable,Disable);
+	SpartanoUF:AddElement('RareElite', Update,Enable,Disable);
 end
 
-do -- Boss graphic as an oUF module
+do -- Boss graphic as an SpartanoUF module
 	local Update = function(self,event,unit)
 		if (self.unit ~= unit) then return; end
 		if (not self.BossGraphic) then return; end
@@ -254,10 +254,10 @@ do -- Boss graphic as an oUF module
 		if (self.BossGraphic) then return true; end
 	end
 	local Disable = function(self) return; end
-	oUF:AddElement('BossGraphic', Update,Enable,Disable);
+	SpartanoUF:AddElement('BossGraphic', Update,Enable,Disable);
 end
 
-do -- Remove SET_FOCUS CLEAR_FOCUS
+do -- fix SET_FOCUS & CLEAR_FOCUS errors
 	for k,v in pairs(UnitPopupMenus) do
 		if k ~= "RAID" and k ~= "RAID_PLAYER" then
 			for x,y in pairs(UnitPopupMenus[k]) do
@@ -269,5 +269,5 @@ do -- Remove SET_FOCUS CLEAR_FOCUS
 			end
 		end
 	end
-	UnitPopupMenus["FOCUS"] = { "RAID_TARGET_ICON", "CANCEL" };
+	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
 end

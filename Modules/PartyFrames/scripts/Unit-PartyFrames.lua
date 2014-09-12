@@ -1,9 +1,9 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
-oUF:SetActiveStyle("Spartan_PartyFrames");
+SpartanoUF:SetActiveStyle("Spartan_PartyFrames");
 
-party = oUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
+party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 	"showRaid", false,
 	"showParty", true,
 	"showPlayer", true,

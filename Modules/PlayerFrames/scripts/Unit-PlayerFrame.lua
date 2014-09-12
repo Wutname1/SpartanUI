@@ -1,9 +1,9 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
-oUF:SetActiveStyle("Spartan_PlayerFrames");
+SpartanoUF:SetActiveStyle("Spartan_PlayerFrames");
 
-addon.player = oUF:Spawn("player","SUI_PlayerFrame");
+addon.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
 addon.player:SetPoint("BOTTOMRIGHT",SpartanUI,"TOP",-72,-3);
 
 do -- relocate the AlternatePowerBar
@@ -239,10 +239,14 @@ do -- relocate the AlternatePowerBar
 			PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
 		end
 	end);
-	PlayerPowerBarAlt:SetParent(addon.player); PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
-	PlayerPowerBarAlt:SetFrameLevel(4); PlayerPowerBarAlt:SetScale(1); PlayerPowerBarAlt:ClearAllPoints();
+	PlayerPowerBarAlt:SetParent(addon.player);
+	PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
+	PlayerPowerBarAlt:SetFrameLevel(4);
+	PlayerPowerBarAlt:SetScale(1);
+	PlayerPowerBarAlt:ClearAllPoints();
 	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
 
+	
 	--addon:UpdateAltBarPositions();
 end 
 

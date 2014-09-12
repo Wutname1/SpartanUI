@@ -14,8 +14,8 @@ local Smoothv2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga]]
 local texture = [[Interface\AddOns\SpartanUI_PlayerFrames\media\texture.tga]]
 local metal = [[Interface\AddOns\SpartanUI_PlayerFrames\media\metal.tga]]
 
-local colors = setmetatable({},{__index = oUF.colors});
-for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
+local colors = setmetatable({},{__index = SpartanoUF.colors});
+for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 do -- setup custom colors that we want to use
 	colors.health 		= {0,1,50/255};			-- the color of health bars
 	colors.reaction[1]	= {1, 50/255, 0};		-- Hated
@@ -1728,4 +1728,4 @@ local CreateUnitFrame = function(self,unit)
 	or CreateBossFrame(self,unit));
 end
 
-oUF:RegisterStyle("Spartan_PlayerFrames", CreateUnitFrame);
+SpartanoUF:RegisterStyle("Spartan_PlayerFrames", CreateUnitFrame);

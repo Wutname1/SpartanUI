@@ -121,4 +121,8 @@ function addon:OnInitialize()
 			end
 		end
 	};
+	spartan.optionsRaidFrames.args["HideBlizz"] = {name=L["Frames/HideBlizzFrames"],type="toggle",order=4,
+		get = function(info) return DBMod.RaidFrames.HideBlizzFrames; end,
+		set = function(info,val) DBMod.RaidFrames.HideBlizzFrames = val; end
+	};
 end

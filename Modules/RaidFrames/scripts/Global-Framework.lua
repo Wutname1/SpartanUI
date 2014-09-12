@@ -1,8 +1,8 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local addon = spartan:GetModule("RaidFrames");
+local addon = spartan:NewModule("RaidFrames");
 ----------------------------------------------------------------------------------------------------
-local colors = setmetatable({},{__index = oUF.colors});
-for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
+local colors = setmetatable({},{__index = SpartanoUF.colors});
+for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 colors.health = {0/255,255/255,50/255};
 local base_plate2 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_2_dual.blp]]
 local base_plate3 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_3_single.blp]]
@@ -265,7 +265,7 @@ local CreateFrame = function(self,unit)
 		if classFileName == "DRUID" then
 			spellIDs = {
 				774, -- Rejuvenation
-				94447, -- Lifebloom
+				33763, -- Lifebloom
 				48438, -- Wild Growth
 				8936, -- Regrowth
 			}
@@ -353,4 +353,4 @@ local CreateUnitFrame = function(self,unit)
 	return CreateFrame(self,unit);
 end
 
-oUF:RegisterStyle("Spartan_RaidFrames", CreateUnitFrame);
+SpartanoUF:RegisterStyle("Spartan_RaidFrames", CreateUnitFrame);

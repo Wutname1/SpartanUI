@@ -1,7 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
-oUF:SetActiveStyle("Spartan_PlayerFrames");
+SpartanoUF:SetActiveStyle("Spartan_PlayerFrames");
 
 local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget"}
 
@@ -15,15 +15,15 @@ do --Color name by Class
 		end
 	end
 	
-	oUF.Tags.Events["SUI_ColorClass"] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
-	oUF.Tags.Methods["SUI_ColorClass"] = function(u)
+	SpartanoUF.Tags.Events["SUI_ColorClass"] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
+	SpartanoUF.Tags.Methods["SUI_ColorClass"] = function(u)
 		local _, class = UnitClass(u)
 		local reaction = UnitReaction(u, "player")
 		
 		if (u == "pet") then
-			return hex(oUF.colors.class[class])
+			return hex(SpartanoUF.colors.class[class])
 		elseif (UnitIsPlayer(u)) then
-			return hex(oUF.colors.class[class])
+			return hex(SpartanoUF.colors.class[class])
 		else
 			return hex(1, 1, 1)
 		end
@@ -31,7 +31,7 @@ do --Color name by Class
 end
 
 for a,b in pairs(FramesList) do
-	addon[b] = oUF:Spawn(b,"SUI_"..b.."Frame");
+	addon[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
 end
 
 do -- Position Static Frames
@@ -179,7 +179,7 @@ end
 if DBMod.PlayerFrames.BossFrame.display == true then
 	local boss = {}
 	for i = 1, MAX_BOSS_FRAMES do
-		boss[i] = oUF:Spawn('boss'..i, 'SUI_Boss'..i)
+		boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
 		if i == 1 then
 			boss[i]:SetMovable(true);
 			if DBMod.PlayerFrames.BossFrame.movement.moved then

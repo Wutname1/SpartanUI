@@ -1,10 +1,10 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("RaidFrames");
 ----------------------------------------------------------------------------------------------------
-oUF:SetActiveStyle("Spartan_RaidFrames");
+SpartanoUF:SetActiveStyle("Spartan_RaidFrames");
 
 if DBMod.RaidFrames.mode == "group" then
-	raid = oUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+	raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
 		'showPlayer', true,
 		'showRaid', true,
 		'showParty', false,
@@ -22,7 +22,7 @@ if DBMod.RaidFrames.mode == "group" then
 		'columnAnchorPoint', 'LEFT'
 	)
 else
-	raid = oUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+	raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
 		'showPlayer', true,
 		'showRaid', true,
 		'showParty', false,
@@ -43,13 +43,28 @@ end
 raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
 	
 do -- raid header configuration
---	raid:SetPoint("TOPLEFT", 0, -26)
 	raid:SetParent("SpartanUI");
 	raid:SetClampedToScreen(false);
-	-- CompactRaidFrameManager:UnregisterAllEvents()
-	-- CompactRaidFrameManager:Hide()
-	-- CompactRaidFrameContainer:UnregisterAllEvents()
-	-- CompactRaidFrameContainer:Hide()
+	if DBMod.PartyFrames.HideBlizzFrames then
+		CompactRaidFrameContainer:UnregisterAllEvents()
+		CompactRaidFrameContainer:Hide()
+
+		local function hideRaid()
+			CompactRaidFrameContainer:UnregisterAllEvents()
+			if( InCombatLockdown() ) then return end
+			local shown = CompactRaidFrameManager_GetSetting("IsShown")
+			if( shown and shown ~= "0" ) then
+				CompactRaidFrameManager_SetSetting("IsShown", "0")
+			end
+		end
+
+		hooksecurefunc("CompactRaidFrameManager_UpdateShown", function()
+			hideRaid()
+		end)
+
+		hideRaid();
+		CompactRaidFrameContainer:HookScript("OnShow", hideRaid)
+	end
 end
 
 do -- scripts to make it movable

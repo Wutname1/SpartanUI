@@ -1,8 +1,8 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local addon = spartan:GetModule("PartyFrames");
+local addon = spartan:NewModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
-local colors = setmetatable({},{__index = oUF.colors});
-for k,v in pairs(oUF.colors) do if not colors[k] then colors[k] = v end end
+local colors = setmetatable({},{__index = SpartanoUF.colors});
+for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 colors.health = {0/255,255/255,50/255};
 local base_plate1 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_1_full.blp]]
 local base_plate2 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_2_dual.blp]]
@@ -68,6 +68,17 @@ local menu = function(self)
 		FriendsDropDown.id = self.id
 		FriendsDropDown.initialize = RaidFrameDropDown_Initialize
 		ToggleDropDownMenu(1, nil, FriendsDropDown, 'cursor')
+	end
+end
+
+function CreatePortrait(self)
+	if DBMod.PartyFrames.Portrait3D then
+		local Portrait = CreateFrame('PlayerModel', nil, self)
+		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
+		Portrait.type = "3D"
+		return Portrait;
+	else
+		return self.artwork:CreateTexture(nil,"BORDER");
 	end
 end
 
@@ -186,7 +197,8 @@ local CreatePartyFrame = function(self,unit)
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(1); self.artwork:SetAllPoints(self);
+		self.artwork:SetFrameLevel(1);
+		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
 		self.artwork.bg:SetAllPoints(self);
@@ -223,37 +235,44 @@ local CreatePartyFrame = function(self,unit)
 		end
 		
 		if DBMod.PartyFrames.Portrait then
-			self.Portrait = self.artwork:CreateTexture(nil,"BORDER");
+		
+			-- local Portrait = CreateFrame('PlayerModel', nil, self)
+			-- Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
+			-- Portrait.type = "3D"
+			self.Portrait = CreatePortrait(self);
 			self.Portrait:SetSize(55, 55);
 			self.Portrait:SetPoint("TOPLEFT",self,"TOPLEFT",15,-8);
+			
+			--self.artwork.ring = self.artwork:CreateTexture(nil,"BORDER");
+			--self.artwork.ring:SetPoint("TOPLEFT",self,"TOPLEFT",15,-8);
 		end
 	end
 	do -- setup status bars
 		do -- cast bar
-		if DBMod.PartyFrames.FrameStyle == "large" then
-			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
-			cast:SetSize(110, 16);
-			cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-17);
-			
-			cast.Text = cast:CreateFontString();
-			spartan:FormatFont(cast.Text, 10, "Party")
-			cast.Text:SetSize(100, 11);
-			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("BOTTOM");
-			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-2,0);
-			
-			cast.Time = cast:CreateFontString();
-			spartan:FormatFont(cast.Time, 10, "Party")
-			cast.Time:SetSize(40, 11);
-			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("BOTTOM");
-			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
-			
-			self.Castbar = cast;
-			self.Castbar.OnUpdate = OnCastbarUpdate;
-			self.Castbar.PostCastStart = PostCastStart;
-			self.Castbar.PostChannelStart = PostChannelStart;
-			self.Castbar.PostCastStop = PostCastStop;
-		end
+			if DBMod.PartyFrames.FrameStyle == "large" then
+				local cast = CreateFrame("StatusBar",nil,self);
+				cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
+				cast:SetSize(110, 16);
+				cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-17);
+				
+				cast.Text = cast:CreateFontString();
+				spartan:FormatFont(cast.Text, 10, "Party")
+				cast.Text:SetSize(100, 11);
+				cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("BOTTOM");
+				cast.Text:SetPoint("RIGHT",cast,"RIGHT",-2,0);
+				
+				cast.Time = cast:CreateFontString();
+				spartan:FormatFont(cast.Time, 10, "Party")
+				cast.Time:SetSize(40, 11);
+				cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("BOTTOM");
+				cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
+				
+				self.Castbar = cast;
+				self.Castbar.OnUpdate = OnCastbarUpdate;
+				self.Castbar.PostCastStart = PostCastStart;
+				self.Castbar.PostChannelStart = PostChannelStart;
+				self.Castbar.PostCastStop = PostCastStop;
+			end
 		end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
@@ -361,7 +380,7 @@ local CreatePartyFrame = function(self,unit)
 	do -- setup text and icons	
 		local ring = CreateFrame("Frame",nil,self);
 		ring:SetFrameStrata("BACKGROUND");
-		
+
 		self.Name = ring:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Party")
 		self.Name:SetSize(140, 10);
@@ -411,7 +430,8 @@ local CreatePartyFrame = function(self,unit)
 			self.StatusText:SetJustifyH("CENTER");
 			self:Tag(self.StatusText, '[afkdnd]');
 			
-			ring:SetAllPoints(self.Portrait); ring:SetFrameLevel(3);
+			ring:SetAllPoints(self.Portrait);
+			ring:SetFrameLevel(5);
 			self.RaidIcon:SetPoint("CENTER",self.Portrait,"CENTER");
 			self.SUI_ClassIcon:SetPoint("CENTER",self.Portrait,"CENTER",23,24);
 			self.Leader:SetPoint("CENTER",self.Portrait,"TOP",-1,6);
@@ -451,7 +471,7 @@ local CreatePartyFrame = function(self,unit)
 		if classFileName == "DRUID" then
 			spellIDs = {
 				774, -- Rejuvenation
-				48438, -- Lifebloom
+				33763, -- Lifebloom
 				48438, -- Wild Growth
 				8936, -- Regrowth
 			}
@@ -605,4 +625,4 @@ local CreateUnitFrame = function(self,unit)
 	end
 end
 
-oUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);
+SpartanoUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);

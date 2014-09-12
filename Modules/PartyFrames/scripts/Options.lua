@@ -166,6 +166,10 @@ function addon:OnInitialize()
 			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.Portrait = val; DBMod.PartyFrames.preset = "custom";
 		end
 	};
+	spartan.optionsPartyFrames.args["Portrait3D"] =  {name = L["Frames/Portrait3D"], type = "toggle", order=3.1,
+		get = function(info) return DBMod.PartyFrames.Portrait3D; end,
+		set = function(info,val) DBMod.PartyFrames.Portrait3D = val; end
+	};
 	spartan.optionsPartyFrames.args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
 		get = function(info) return DBMod.PartyFrames.threat; end,
 		set = function(info,val) DBMod.PartyFrames.threat = val; DBMod.PartyFrames.preset = "custom"; end

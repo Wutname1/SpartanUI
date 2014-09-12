@@ -4,7 +4,7 @@
 ## Version: 3.3.0
 ## Author: Wutname1
 ## X-Category: User Interfaces
-## X-oUF: oUF
+## X-oUF: SpartanoUF
 ## RequiredDeps: SpartanUI
 
 libs\oUF\oUF.xml

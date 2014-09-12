@@ -36,6 +36,5 @@
 		</Frames>
 	</Button>
 	
-	<Script file="Global-Features.lua" />
 	<Script file="Global-Framework.lua" />
 </Ui>
