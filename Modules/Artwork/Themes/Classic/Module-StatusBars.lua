@@ -397,8 +397,3 @@ function module:OnEnable()
 		module:SetRepColors();
 	end
 end
-
-function addon:comma_value(n)
-	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
-	return left..(num:reverse():gsub('(%d%d%d)','%1' .. _G.LARGE_NUMBER_SEPERATOR):reverse())..right
-end
