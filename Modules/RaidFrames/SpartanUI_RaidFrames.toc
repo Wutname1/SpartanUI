@@ -6,9 +6,6 @@
 ## X-Category: User Interfaces
 ## RequiredDeps: SpartanUI, SpartanUI_PlayerFrames
 
-libs\oUF\oUF.xml
-libs\oUF_AuraWatch.lua
-
 scripts\Global-Framework.xml
 scripts\Unit-RaidFrames.lua
 scripts\Options.lua

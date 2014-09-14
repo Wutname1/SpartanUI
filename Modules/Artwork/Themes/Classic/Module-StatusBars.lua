@@ -1,8 +1,8 @@
-local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local module = addon:NewModule("StatusBars");
+local Artwork_Core = spartan:GetModule("Artwork_Core");
+local module = spartan:GetModule("Artwork_Classic");
 ----------------------------------------------------------------------------------------------------
-
 local xpframe, repframe;
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1,	g = 0.2,	b = 0},
@@ -35,181 +35,7 @@ local GetFactionDetails = function(name)
 	return description;
 end
 
-function module:OnInitialize()
-	addon.optionsGeneral.args["XPBar"] = {
-		name = L["BarXP"],
-		desc = L["BarXPDesc"],
-		type = "group", args = {
-			display = {name=L["BarXPEnabled"],type="toggle",order=.1,
-				get = function(info) return DB.XPBar.enabled; end,
-				set = function(info,val) DB.XPBar.enabled = val; if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end end
-			},
-			displaytext = {name=L["DisplayText"],type="toggle",order=.15,
-				get = function(info) return DB.XPBar.text; end,
-				set = function(info,val) DB.XPBar.text = val; module:SetXPColors(); end
-			},
-			tooltip = {name=L["DisplayTooltip"],type="select",order=.2,
-				values = {["hover"]="Mouse Over",["click"]="On Click",["off"]="Disabled"},
-				get = function(info) return DB.XPBar.ToolTip; end,
-				set = function(info,val) DB.XPBar.ToolTip = val; end
-			},
-			header1 = {name=L["ClrGained"],type="header",order=.9},
-			GainedColor = {name=L["GainedColor"],type="select",style="dropdown",order=1,width="full",
-				values = {
-					["Custom"]	= "Custom",
-					["Orange"]	= "Orange",
-					["Yellow"]	= "Yellow",
-					["Green"]	= "Green",
-					["Pink"]	= "Pink",
-					["Purple"]	= "Purple",
-					["Blue"]	= "Blue",
-					["Red"]	= "Red",
-					["Light_Blue"]	= "Light Blue",
-				},
-				get = function(info) return DB.XPBar.GainedColor; end,
-				set = function(info,val) DB.XPBar.GainedColor = val; module:SetXPColors(); end
-			},
-			GainedRed = {name=L["Red"],type="range",order=2,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedRed*100); end,
-				set = function(info,val)
-					if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedRed = (val/100); module:SetXPColors();
-				end
-			},
-			GainedGreen = {name=L["Green"],type="range",order=3,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedGreen*100); end,
-				set = function(info,val)
-					if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedGreen = (val/100);  module:SetXPColors();
-				end
-			},
-			GainedBlue = {name=L["Blue"],type="range",order=4,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedBlue*100); end,
-				set = function(info,val)
-					if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedBlue = (val/100); module:SetXPColors();
-				end
-			},
-			GainedBrightness = {name=L["Brightness"],type="range",order=5,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedBrightness*100); end,
-				set = function(info,val) if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedBrightness = (val/100); module:SetXPColors(); end
-			},
-			header2 = {name=L["ClrRested"],type="header",order=10},
-			RestedColor = {name=L["RestedColor"],type="select",style="dropdown",order=11,width="full",
-				values = {
-					["Custom"]	= "Custom",
-					["Orange"]	= "Orange",
-					["Yellow"]	= "Yellow",
-					["Green"]	= "Green",
-					["Pink"]	= "Pink",
-					["Purple"]	= "Purple",
-					["Blue"]	= "Blue",
-					["Red"]	= "Red",
-					["Light_Blue"]	= "Light Blue",
-				},
-				get = function(info) return DB.XPBar.RestedColor; end,
-				set = function(info,val) DB.XPBar.RestedColor = val; module:SetXPColors(); end
-			},
-			RestedRed = {name=L["Red"],type="range",order=12,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedRed*100); end,
-				set = function(info,val)
-					if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedRed = (val/100); module:SetXPColors();
-				end
-			},
-			RestedGreen = {name=L["Green"],type="range",order=13,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedGreen*100); end,
-				set = function(info,val)
-					if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedGreen = (val/100); module:SetXPColors();
-				end
-			},
-			RestedBlue = {name=L["Blue"],type="range",order=14,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedBlue*100); end,
-				set = function(info,val)
-					if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedBlue = (val/100); module:SetXPColors();
-				end
-			},
-			RestedBrightness = {name=L["Brightness"],type="range",order=15,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedBrightness*100); end,
-				set = function(info,val) if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedBrightness = (val/100); module:SetXPColors(); end
-			},
-			RestedMatchColor = {name=L["MatchRestedClr"],type="toggle",order=21,
-				get = function(info) return DB.XPBar.RestedMatchColor; end,
-				set = function(info,val) DB.XPBar.RestedMatchColor = val; module:SetXPColors(); end
-			}
-		}
-	}
-	addon.optionsGeneral.args["RepBar"] = {
-		name = L["BarRep"],
-		desc = L["BarRepDesc"],
-		type = "group", args = {
-			display = {name=L["BarRepEnabled"],type="toggle",order=.1,
-				get = function(info) return DB.RepBar.enabled; end,
-				set = function(info,val) DB.RepBar.enabled = val; if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end end
-			},
-			displaytext = {name=L["DisplayText"],type="toggle",order=.15,
-				get = function(info) return DB.RepBar.text; end,
-				set = function(info,val) DB.RepBar.text = val; module:SetRepColors(); end
-			},
-			tooltip = {name=L["DisplayTooltip"],type="select",order=.2,
-				values = {["hover"]="Mouse Over",["click"]="On Click",["off"]="Disabled"},
-				get = function(info) return DB.RepBar.ToolTip; end,
-				set = function(info,val) DB.RepBar.ToolTip = val; end
-			},
-			header1 = {name=L["ClrRep"],type="header",order=.9},
-			AutoDefined = {name=L["AutoRepClr"],type="toggle",order=1,desc=L["AutoRepClrDesc"],
-			width="full",
-				get = function(info) return DB.RepBar.AutoDefined; end,
-				set = function(info,val) DB.RepBar.AutoDefined = val; module:SetRepColors(); end
-			},
-			RepColor = {name=L["Color"],type="select",style="dropdown",order=2,width="full",
-				values = {
-					["AUTO"]	= L["AUTO"],
-					["Custom"]	= L["Custom"],
-					["Orange"]	= L["Orange"],
-					["Yellow"]	= L["Yellow"],
-					["Green"]	= L["Green"],
-					["Pink"]	= L["Pink"],
-					["Purple"]	= L["Purple"],
-					["Blue"]	= L["Blue"],
-					["Red"]	= L["Red"],
-					["Light_Blue"]	= L["LightBlue"],
-				},
-				get = function(info) return DB.RepBar.GainedColor; end,
-				set = function(info,val) DB.RepBar.GainedColor = val; if val == "AUTO" then DB.RepBar.AutoDefined = true end module:SetRepColors(); end
-			},
-			RepRed = {name=L["Red"],type="range",order=3,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedRed*100); end,
-				set = function(info,val)
-					if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedRed = (val/100); module:SetRepColors();
-				end
-			},
-			RepGreen = {name=L["Green"],type="range",order=4,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedGreen*100); end,
-				set = function(info,val)
-					if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedGreen = (val/100);  module:SetRepColors();
-				end
-			},
-			RepBlue = {name=L["Blue"],type="range",order=5,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedBlue*100); end,
-				set = function(info,val)
-					if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedBlue = (val/100); module:SetRepColors();
-				end
-			},
-			RepBrightness = {name=L["Brightness"],type="range",order=6,
-				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedBrightness*100); end,
-				set = function(info,val) if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedBrightness = (val/100); module:SetRepColors(); end
-			}
-		}
-	}
+function module:InitStatusBars()
 end
 
 function module:SetRepColors()
@@ -228,7 +54,7 @@ function module:SetRepColors()
 	end
 
 	-- Set Text if needed
-	if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(current-low), addon:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+	if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
 end
 
 function module:SetXPColors()
@@ -267,17 +93,17 @@ function module:SetXPColors()
 	SUI_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.1));
 
 	-- Update Text if needed
-	if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(UnitXP("player")), addon:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+	if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 end
 
-function module:OnEnable()
+function module:EnableStatusBars()
 	do -- create the tooltip
 		tooltip = CreateFrame("Frame","SUI_StatusBarTooltip",SpartanUI,"SUI_StatusBars_TooltipTemplate");
 		SUI_StatusBarTooltipHeader:SetJustifyH("LEFT");
 		SUI_StatusBarTooltipText:SetJustifyH("LEFT");
 		SUI_StatusBarTooltipText:SetJustifyV("TOP");
-		addon:FormatFont(SUI_StatusBarTooltipHeader, 12, "Core")
-		addon:FormatFont(SUI_StatusBarTooltipText, 10, "Core")
+		spartan:FormatFont(SUI_StatusBarTooltipHeader, 12, "Core")
+		spartan:FormatFont(SUI_StatusBarTooltipText, 10, "Core")
 	end
 	do -- experience bar
 		local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
@@ -303,14 +129,14 @@ function module:OnEnable()
 				if rested == 0 then rested = .001 end
 				SUI_ExperienceBarLead:SetWidth(rested);
 			end
-			if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(now), addon:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+			if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 			module:SetXPColors()
 		end);
 		local showXPTooltip = function()
 			tooltip:ClearAllPoints();
 			tooltip:SetPoint("BOTTOM",xpframe,"TOP",6,-1);
 			local a = format("Level %s ",UnitLevel("player"))
-			local b = format(XP_LEVEL_TEMPLATE, addon:comma_value(UnitXP("player")), addon:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
+			local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
 			SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
 			local rested,text = GetXPExhaustion() or 0;
 			if (rested > 0) then
@@ -323,7 +149,7 @@ function module:OnEnable()
 		end
 		
 		xpframe.Text = xpframe:CreateFontString();
-		addon:FormatFont(xpframe.Text, 10, "Core")
+		spartan:FormatFont(xpframe.Text, 10, "Core")
 		xpframe.Text:SetDrawLayer("OVERLAY");
 		xpframe.Text:SetSize(250, 30);
 		xpframe.Text:SetJustifyH("MIDDLE"); xpframe.Text:SetJustifyV("MIDDLE");
@@ -358,7 +184,7 @@ function module:OnEnable()
 				module:SetRepColors()
 			end
 			
-			if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", addon:comma_value(current-low), addon:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+			if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
 		end);
 		local showRepTooltip = function()
 			tooltip:ClearAllPoints();
@@ -367,7 +193,7 @@ function module:OnEnable()
 			if name then
 				text = GetFactionDetails(name);
 				ratio = (current-low)/(high-low);
-				SUI_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, addon:comma_value(current-low), addon:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+				SUI_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
 				SUI_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
 			else
 				SUI_StatusBarTooltipHeader:SetText(REPUTATION);
@@ -377,7 +203,7 @@ function module:OnEnable()
 		end
 		
 		repframe.Text = repframe:CreateFontString();
-		addon:FormatFont(repframe.Text, 10, "Core")
+		spartan:FormatFont(repframe.Text, 10, "Core")
 		repframe.Text:SetDrawLayer("OVERLAY");
 		repframe.Text:SetSize(250, 30);
 		repframe.Text:SetJustifyH("MIDDLE"); repframe.Text:SetJustifyV("MIDDLE");

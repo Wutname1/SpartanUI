@@ -35,15 +35,33 @@ for a,b in pairs(FramesList) do
 end
 
 do -- Position Static Frames
-	addon.pet:SetPoint("BOTTOMRIGHT",SpartanUI,"TOP",-370,12);
-	addon.target:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",72,-3);
-	addon.focustarget:SetPoint("TOPLEFT", "SUI_focusFrame", "TOPRIGHT", -51, 0);
 	
-	if DBMod.PlayerFrames.targettarget.style == "small" then
-		addon.targettarget:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",360,-15);
+	if (SUI_FramesAnchor:GetParent() == UIParent) then
+		addon.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
+		addon.pet:SetPoint("BOTTOMRIGHT",addon.player,"BOTTOMLEFT",-10,12);
+		
+		addon.target:SetPoint("LEFT",addon.player,"RIGHT",100,0);
+		if DBMod.PlayerFrames.targettarget.style == "small" then
+			addon.targettarget:SetPoint("BOTTOMLEFT",addon.target,"BOTTOMRIGHT",8,-11);
+		else
+			addon.targettarget:SetPoint("BOTTOMLEFT",addon.target,"BOTTOMRIGHT",19,15);
+		end
+		addon.player:SetScale(DB.scale);
+		for a,b in pairs(FramesList) do
+			_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+		end
 	else
-		addon.targettarget:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",370,12);
+		addon.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+		addon.pet:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-370,12);
+		addon.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
+		if DBMod.PlayerFrames.targettarget.style == "small" then
+			addon.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15);
+		else
+			addon.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12);
+		end
 	end
+	
+	addon.focustarget:SetPoint("TOPLEFT", "SUI_focusFrame", "TOPRIGHT", -51, 0);
 end
 
 do -- Dynamic Position Functions
@@ -56,7 +74,7 @@ do -- Dynamic Position Functions
 			DBMod.PlayerFrames.focus.movement.xOffset,
 			DBMod.PlayerFrames.focus.movement.yOffset);
 		else
-			addon.focus:SetPoint("BOTTOMLEFT",SpartanUI,"TOP",170,110);
+			addon.focus:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",170,110);
 		end
 	end
 	addon:UpdateFocusPosition();

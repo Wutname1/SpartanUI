@@ -37,6 +37,7 @@
 	<Script file='elements\resurrect.lua' />
 	<Script file='elements\druidmana.lua' />
 	<Script file='elements\classicons.lua' />
+	<Script file='elements\stagger.lua' />
 
 	<!-- Clique support -->
 	<Button name="oUF_ClickCastUnitTemplate" virtual="true" inherits="SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate">
@@ -45,6 +46,15 @@
 			<Attribute name="_onleave" type="string" value="local snippet = self:GetAttribute('clickcast_onleave'); if snippet then self:Run(snippet) end"/>
 		</Attributes>
 	</Button>
+
+	<!-- Pet Battle Hider Frame -->
+	<Frame name="oUF_PetBattleFrameHider" inherits="SecureHandlerStateTemplate" parent="UIParent" setAllPoints="true">
+		<Scripts>
+			<OnLoad>
+				RegisterStateDriver(self, "visibility", "[petbattle] hide; show")
+			</OnLoad>
+		</Scripts>
+	</Frame>
 
 	<!--
 		Sub-object as a child of the parent unit frame:

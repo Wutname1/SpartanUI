@@ -4,7 +4,12 @@ local addon = spartan:GetModule("PlayerFrames");
 SpartanoUF:SetActiveStyle("Spartan_PlayerFrames");
 
 addon.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
-addon.player:SetPoint("BOTTOMRIGHT",SpartanUI,"TOP",-72,-3);
+if (SUI_FramesAnchor:GetParent() == UIParent) then
+	addon.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-80,150);
+else
+	addon.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+end
+
 
 do -- relocate the AlternatePowerBar
 	local classname, classFileName = UnitClass("player")
@@ -231,6 +236,7 @@ do -- relocate the AlternatePowerBar
 	end);
 	TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
 	TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7); TotemFrame:ClearAllPoints();
+	TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
 	
 	-- relocate the PlayerPowerBarAlt
 	hooksecurefunc(PlayerPowerBarAlt,"SetPoint",function(_,_,parent)

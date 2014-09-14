@@ -8,6 +8,8 @@
 ## RequiredDeps: SpartanUI
 
 libs\oUF\oUF.xml
+libs\oUF_Plugins\oUF_AuraWatch.lua
+libs\oUF_Plugins\oUF_RaidDebuffs.lua
 
 scripts\Global-Framework.xml
 scripts\Unit-PlayerFrame.lua

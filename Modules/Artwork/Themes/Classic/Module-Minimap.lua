@@ -1,164 +1,146 @@
-local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local module = addon:NewModule("minimap");
+local Artwork_Core = spartan:GetModule("Artwork_Core");
+local module = spartan:GetModule("Artwork_Classic");
 ---------------------------------------------------------------------------
--- Minimap warning msg of potential conflict
 local Minimap_Conflict_msg = true
 
-	local checkThirdParty, frame = function()
-		local point, relativeTo, relativePoint, x, y = MinimapCluster:GetPoint();
-		if (NXTITLELOW) then -- Carbonite is loaded, is it using the minimap?
-			addon:Print(NXTITLELOW..' is loaded ...Checking settings ...');
-			if (Nx.db.profile.MiniMap.Own == true)
-				then addon:Print(NXTITLELOW..' is handling the Minimap') return true;
-			end
-		end
-		if select(4, GetAddOnInfo("SexyMap")) then
-			addon:Print(L["SexyMapLoaded"])
-			--return true
-		end
-		if (relativeTo ~= UIParent) then return true; end -- a third party minimap manager is involved
-		--Debug
-	--	return true
-	end;
-
-	local updateButtons = function()
-		if (not MouseIsOver(Minimap)) and (DB.MiniMap.MapButtons) then
-			GameTimeFrame:Hide();
-			MiniMapTracking:Hide();
-			MiniMapWorldMapButton:Hide();
+local updateButtons = function()
+	if (not MouseIsOver(Minimap)) and (DB.MiniMap.MapButtons) then
+		GameTimeFrame:Hide();
+		MiniMapTracking:Hide();
+		MiniMapWorldMapButton:Hide();
+		MinimapZoomIn:Hide();
+		MinimapZoomOut:Hide();
+	else
+		GameTimeFrame:Show();
+		MiniMapTracking:Show();
+		MiniMapWorldMapButton:Show();
+		if (DB.MiniMap.MapZoomButtons) then
 			MinimapZoomIn:Hide();
 			MinimapZoomOut:Hide();
 		else
-			GameTimeFrame:Show();
-			MiniMapTracking:Show();
-			MiniMapWorldMapButton:Show();
-			if (DB.MiniMap.MapZoomButtons) then
-				MinimapZoomIn:Hide();
-				MinimapZoomOut:Hide();
-			else
-				MinimapZoomIn:Show();
-				MinimapZoomOut:Show();
-			end
-		end
-		if (not MouseIsOver(Minimap)) and (not DB.MiniMap.MapButtons) then
-			if  (DB.MiniMap.MapZoomButtons) then
-				MinimapZoomIn:Hide();
-				MinimapZoomOut:Hide();
-			end
+			MinimapZoomIn:Show();
+			MinimapZoomOut:Show();
 		end
 	end
-
-	local modifyMinimapLayout = function()
-		frame = CreateFrame("Frame","SUI_Minimap",SpartanUI);
-		frame:SetSize(158, 158);
-		frame:SetPoint("CENTER",0,54);
-		
-		Minimap:SetParent(frame);
-		Minimap:SetSize(158, 158);
-		Minimap:ClearAllPoints();
-		Minimap:SetPoint("CENTER","SUI_Minimap","CENTER",0,0);
-		
-		MinimapBackdrop:ClearAllPoints(); MinimapBackdrop:SetPoint("CENTER",frame,"CENTER",-10,-24);
-		
-		MinimapZoneTextButton:SetParent(frame);
-		MinimapZoneTextButton:ClearAllPoints();
-		MinimapZoneTextButton:SetPoint("TOP",frame,"BOTTOM",0,-6);
-		
-		MinimapBorderTop:Hide();
-		MinimapBorder:SetAlpha(0);
-		
-		MiniMapInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
-		GuildInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
-		
-		GarrisonLandingPageMinimapButton:ClearAllPoints();
-		GarrisonLandingPageMinimapButton:SetSize(35,35);
-		GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT",frame,0,0);
-
-		-- Do modifications to MiniMapWorldMapButton
-	--	-- remove current textures
-		MiniMapWorldMapButton:SetNormalTexture(nil)
-		MiniMapWorldMapButton:SetPushedTexture(nil)
-		MiniMapWorldMapButton:SetHighlightTexture(nil)
-	--	-- Create new textures
-		
-		MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon.png")
-		MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon-Pushed.png")
-		MiniMapWorldMapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-		
-		MiniMapWorldMapButton:ClearAllPoints(); MiniMapWorldMapButton:SetPoint("TOPRIGHT",MinimapBackdrop,-20,12)
-		MiniMapMailFrame:ClearAllPoints(); MiniMapMailFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",21,-53)
-		GameTimeFrame:ClearAllPoints(); GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16)
-		MiniMapTracking:ClearAllPoints(); MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
-		MiniMapTrackingButton:ClearAllPoints(); MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
-		
-		Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
-		Minimap.overlay:SetWidth(250); Minimap.overlay:SetHeight(250); 
-		Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay");
-		Minimap.overlay:SetPoint("CENTER"); Minimap.overlay:SetBlendMode("ADD");
-		
-		frame:EnableMouse(true);
-		frame:EnableMouseWheel(true);
-		frame:SetScript("OnMouseWheel",function(self,delta)
-			if (delta > 0) then Minimap_ZoomIn()
-			else Minimap_ZoomOut() end
-		end);
-	end;
-
-	local createMinimapCoords = function()
-		local map = CreateFrame("Frame",nil,SpartanUI);
-		map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
-		map.coords:SetSize(128, 12);
-		map.coords:SetPoint("TOP","MinimapZoneTextButton","BOTTOM",0,-6);
-		-- Fix CPU leak, use UpdateInterval
-		map.UpdateInterval = 0.5
-		map.TimeSinceLastUpdate = 0
-		map:HookScript("OnUpdate", function(self,...)
-			if DB.MiniMap then
-				local elapsed = select(1,...)
-				self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-				if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-					-- Debug
-		--			print(self.TimeSinceLastUpdate)
-					updateButtons();
-					do -- update minimap coordinates
-						local x,y = GetPlayerMapPosition("player");
-						if (not x) or (not y) then return; end
-						map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
-					end
-					self.TimeSinceLastUpdate = 0
-				end
-			end
-		end);
-		map:HookScript("OnEvent",function(self,event,...)
-			if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
-				if IsInInstance() then map.coords:Hide() else map.coords:Show() end
-				if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
-			elseif (event == "ADDON_LOADED") then
-				print(select(1,...));
-			end
-			local LastFrame = UIErrorsFrame;
-			for i = 1, NUM_EXTENDED_UI_FRAMES do
-				local bar = _G["WorldStateCaptureBar"..i];
-				if (bar and bar:IsShown()) then
-					bar:ClearAllPoints();
-					bar:SetPoint("TOP",LastFrame,"BOTTOM");
-					LastFrame = self;
-				end
-			end
-		end);
-		map:RegisterEvent("ZONE_CHANGED");
-		map:RegisterEvent("ZONE_CHANGED_INDOORS");
-		map:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-		map:RegisterEvent("UPDATE_WORLD_STATES");
-		map:RegisterEvent("UPDATE_BATTLEFIELD_SCORE");
-		map:RegisterEvent("PLAYER_ENTERING_WORLD");
-		map:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
-		map:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
+	if (not MouseIsOver(Minimap)) and (not DB.MiniMap.MapButtons) then
+		if  (DB.MiniMap.MapZoomButtons) then
+			MinimapZoomIn:Hide();
+			MinimapZoomOut:Hide();
+		end
 	end
+end
+
+local modifyMinimapLayout = function()
+	frame = CreateFrame("Frame","SUI_Minimap",SpartanUI);
+	frame:SetSize(158, 158);
+	frame:SetPoint("CENTER",0,54);
+	
+	Minimap:SetParent(frame);
+	Minimap:SetSize(250, 250);
+	Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay.tga")
+	Minimap:ClearAllPoints();
+	Minimap:SetPoint("CENTER","SUI_Minimap","CENTER",0,0);
+	
+	MinimapBackdrop:ClearAllPoints(); MinimapBackdrop:SetPoint("CENTER",frame,"CENTER",-10,-24);
+	
+	MinimapZoneTextButton:SetParent(frame);
+	MinimapZoneTextButton:ClearAllPoints();
+	MinimapZoneTextButton:SetPoint("TOP",frame,"BOTTOM",0,-6);
+	
+	MinimapBorderTop:Hide();
+	MinimapBorder:SetAlpha(0);
+	
+	MiniMapInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
+	GuildInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
+	
+	GarrisonLandingPageMinimapButton:ClearAllPoints();
+	GarrisonLandingPageMinimapButton:SetSize(35,35);
+	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT",frame,0,0);
+
+	-- Do modifications to MiniMapWorldMapButton
+--	-- remove current textures
+	MiniMapWorldMapButton:SetNormalTexture(nil)
+	MiniMapWorldMapButton:SetPushedTexture(nil)
+	MiniMapWorldMapButton:SetHighlightTexture(nil)
+--	-- Create new textures
+	
+	MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon.png")
+	MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon-Pushed.png")
+	MiniMapWorldMapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+	
+	MiniMapWorldMapButton:ClearAllPoints(); MiniMapWorldMapButton:SetPoint("TOPRIGHT",MinimapBackdrop,-20,12)
+	MiniMapMailFrame:ClearAllPoints(); MiniMapMailFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",21,-53)
+	GameTimeFrame:ClearAllPoints(); GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16)
+	MiniMapTracking:ClearAllPoints(); MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
+	MiniMapTrackingButton:ClearAllPoints(); MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
+	
+	-- Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
+	-- Minimap.overlay:SetWidth(250); Minimap.overlay:SetHeight(250); 
+	-- Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay");
+	-- Minimap.overlay:SetPoint("CENTER"); Minimap.overlay:SetBlendMode("ADD");
+	
+	frame:EnableMouse(true);
+	frame:EnableMouseWheel(true);
+	frame:SetScript("OnMouseWheel",function(self,delta)
+		if (delta > 0) then Minimap_ZoomIn()
+		else Minimap_ZoomOut() end
+	end);
+end;
+
+local createMinimapCoords = function()
+	local map = CreateFrame("Frame",nil,SpartanUI);
+	map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
+	map.coords:SetSize(128, 12);
+	map.coords:SetPoint("TOP","MinimapZoneTextButton","BOTTOM",0,-6);
+	-- Fix CPU leak, use UpdateInterval
+	map.UpdateInterval = 2
+	map.TimeSinceLastUpdate = 0
+	map:HookScript("OnUpdate", function(self,...)
+		if DB.MiniMap then
+			local elapsed = select(1,...)
+			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
+			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
+				-- Debug
+				updateButtons();
+				do -- update minimap coordinates
+					local x,y = GetPlayerMapPosition("player");
+					if (not x) or (not y) then return; end
+					map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
+				end
+				self.TimeSinceLastUpdate = 0
+			end
+		end
+	end);
+	map:HookScript("OnEvent",function(self,event,...)
+		if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
+			if IsInInstance() then map.coords:Hide() else map.coords:Show() end
+			if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
+		elseif (event == "ADDON_LOADED") then
+			print(select(1,...));
+		end
+		local LastFrame = UIErrorsFrame;
+		for i = 1, NUM_EXTENDED_UI_FRAMES do
+			local bar = _G["WorldStateCaptureBar"..i];
+			if (bar and bar:IsShown()) then
+				bar:ClearAllPoints();
+				bar:SetPoint("TOP",LastFrame,"BOTTOM");
+				LastFrame = self;
+			end
+		end
+	end);
+	map:RegisterEvent("ZONE_CHANGED");
+	map:RegisterEvent("ZONE_CHANGED_INDOORS");
+	map:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+	map:RegisterEvent("UPDATE_WORLD_STATES");
+	map:RegisterEvent("UPDATE_BATTLEFIELD_SCORE");
+	map:RegisterEvent("PLAYER_ENTERING_WORLD");
+	map:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
+	map:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
+end
 
 local MiniMap = function()
-	if (checkThirdParty()) then return; end
 	hooksecurefunc(Minimap,"SetPoint",function(self,input1,input2,input3,input4,input5) -- Check for Changes
 		local point, relativeTo, relativePoint, xOffset, yOffset = false
 		if input1 then point = input1 end
@@ -166,7 +148,7 @@ local MiniMap = function()
 		if input3 then if type(input3) == "number" then yOffset = input3 else relativePoint = input3 end end
 		if (Minimap_Conflict_msg) then
 			if (self:GetParent():GetName() ~= 'SUI_Minimap' or relativeTo ~= 'SUI_Minimap') then
-				addon:Print('|cffff0000SetPoint/SetParent was used on Minimap, potential conflict.|r')
+				spartan:Print('|cffff0000SetPoint/SetParent was used on Minimap, potential conflict.|r')
 				Minimap_Conflict_msg = false
 			end
 		end
@@ -306,141 +288,11 @@ local Buffs = function()
 	end
 end
 
-function module:UpdateBuffPosition()
-	if DB.BuffSettings.enabled then
-		if module.handleBuff then
-			BuffFrame:ClearAllPoints();
-			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-			ConsolidatedBuffs:ClearAllPoints();
-			ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-			if (ConsolidatedBuffs:IsVisible()) then
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
-			else
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
-			end
-		else
-			BuffFrame:ClearAllPoints();
-			BuffFrame:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
-			ConsolidatedBuffs:ClearAllPoints();
-			ConsolidatedBuffs:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
-			if (ConsolidatedBuffs:IsVisible()) then
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
-			else
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
-			end
-		end
-	end
+function module:InitMinimap()
+
 end
 
-function module:updateBuffOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	local fubar,titan,ChocolateBar,offset = 0,0,0;
-	for i = 1,4 do
-		if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
-			local bar = _G["FuBarFrame"..i];
-			local point = bar:GetPoint(1);
-			if point == "TOPLEFT" then fubar = fubar + bar:GetHeight(); 	end
-		end
-	end
-	for i = 1,100 do
-		if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
-			local bar = _G["ChocolateBar"..i];
-			local point = bar:GetPoint(1);
-			if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
-			--if point == "RIGHT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end-- bottom bars
-		end
-	end
-		
-	TitanBarOrder = {[1]="Bar", [2]="Bar2"} -- Top 2 bar names
-	for i=1,2 do
-		if (_G["Titan_Bar__Display_"..TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i].."_Show")) then
-			local PanelScale = TitanPanelGetVar("Scale") or 1
-			local bar = _G["Titan_Bar__Display_"..TitanBarOrder[i]]
-			titan = titan + (PanelScale * bar:GetHeight());
-		end
-	end
-	
-	offset = max(fubar + titan + ChocolateBar,1);
-	DB.BuffSettings.offset = offset
-	return offset;
-end
-
-
-
-
-function module:OnInitialize()
-	addon.optionsGeneral.args["minimap"] = {
-		name = L["MinMapSet"],
-		desc = L["MinMapSetConf"],
-		type = "group", args = {
-			minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
-				get = function(info) return DB.MiniMap.MapButtons; end,
-				set = function(info,val) DB.MiniMap.MapButtons = val; end
-			},
-			minimapzoom = {name = L["MinMapHideZoom"], type="toggle", width="full",
-				get = function(info) return DB.MiniMap.MapZoomButtons; end,
-				set = function(info,val) DB.MiniMap.MapZoomButtons = val; end
-			}
-		}
-	}
-	addon.optionsGeneral.args["ChatSettings"] = {
-		name = L["ChatSettings"],
-		desc = L["ChatSettingsDesc"],
-		type = "group", args = {
-			enabled = {
-				name = L["ChatSettingsEnabled"],
-				desc = L["ChatSettingsEnabledDesc"],
-				type="toggle",
-				get = function(info) return DB.ChatSettings.enabled; end,
-				set = function(info,val)
-					if (val == true) then
-					DB.ChatSettings.enabled = true;
-						if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
-							-- Chat Mod Detected, disable and exit
-							DB.ChatSettings.enabled = false
-							return;
-						end
-					else
-						DB.ChatSettings.enabled = false;
-					end
-				end
-			}
-		}
-	}
-	addon.optionsGeneral.args["BuffSettings"] = {
-		name = L["BuffOffsetSetting"],
-		desc = L["BuffOffsetSettingDesc"],
-		type = "group", args = {
-			enabled = {name= L["BuffOffsetEnable"],type="toggle",width="full",order = 1,
-				desc= L["BuffOffsetEnableDesc"],
-				get = function(info) return DB.BuffSettings.enabled; end,
-				set = function(info,val)
-					DB.BuffSettings.enabled = val;
-					if val == true then module:UpdateBuffPosition(); end
-				end
-			},
-			offset = {name = L["BuffOffsetConf"], type = "range", order = 2,
-				desc = L["BuffOffsetConfDesc"],
-				width="double", min=0, max=200, step=.1,
-				get = function(info) return DB.BuffSettings.offset; end,
-				set = function(info,val)
-					if DB.BuffSettings.Manualoffset == true then DB.BuffSettings.offset = val; end
-				end
-			},
-			ManualOffset = {name=L["BuffOffsetManual"], type="toggle", order = 3,
-				get	= function(info) return DB.BuffSettings.Manualoffset; end,
-				set = function(info,val)
-					DB.BuffSettings.Manualoffset = val;
-					if val ~= true then
-						DB.BuffSettings.offset = module:updateBuffOffset();
-						module:UpdateBuffPosition();
-					end
-				end
-			},
-		}
-	}
-end
-
-function module:OnEnable()
+function module:EnableMinimap()
 	MiniMap();
 	ChatBox();
 	Buffs();

@@ -198,7 +198,6 @@ function module:OnInitialize()
 			if not DBMod.PlayerFrames.Portrait3D then DBMod.PlayerFrames.Portrait3D = false end
 			if not DBMod.PartyFrames.Portrait3D then DBMod.PartyFrames.Portrait3D = false end
 			if not DBMod.PartyFrames.HideBlizzFrames then DBMod.PartyFrames.HideBlizzFrames = true end
-			if not DB.viewport then DB.viewport = true end
 		end
 	end
 end

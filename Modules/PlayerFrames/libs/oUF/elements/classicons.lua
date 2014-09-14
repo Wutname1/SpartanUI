@@ -4,7 +4,7 @@
 
  Widget
 
- ClassIcons - An array consisting of five UI widgets.
+ ClassIcons - An array consisting of five UI Textures.
 
  Notes
 
@@ -38,6 +38,7 @@ local PlayerClass = select(2, UnitClass'player')
 -- Holds the class specific stuff.
 local ClassPowerType, ClassPowerTypes
 local ClassPowerEnable, ClassPowerDisable
+local RequireSpec, RequireSpell
 
 local UpdateTexture = function(element)
 	local red, green, blue, desaturated
@@ -58,6 +59,7 @@ local UpdateTexture = function(element)
 		if(element[i].SetDesaturated) then
 			element[i]:SetDesaturated(desaturated)
 		end
+
 		element[i]:SetVertexColor(red, green, blue)
 	end
 end
@@ -147,43 +149,33 @@ local ForceUpdate = function(element)
 end
 
 do
+	local _ClassPowerEnable = function(self)
+		self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
+		self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+	end
+
+	local _ClassPowerDisable = function(self)
+		self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
+		self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+	end
+
 	if(PlayerClass == 'MONK') then
-		ClassPowerType = SPELL_POWER_LIGHT_FORCE
+		ClassPowerType = SPELL_POWER_CHI
 		ClassPowerTypes = {
-			LIGHT_FORCE = true,
-			DARK_FORCE = true,
+			['CHI'] = true,
+			['DARK_FORCE'] = true,
 		}
 
-		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-			element.__max = 4
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
-		end
+		ClassPowerEnable = _ClassPowerEnable
+		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'PALADIN') then
 		ClassPowerType = SPELL_POWER_HOLY_POWER
 		ClassPowerTypes = {
 			HOLY_POWER = true,
 		}
 
-		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-			element.__max = HOLY_POWER_FULL
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER', Update)
-		end
-
-		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER', Update)
-		end
+		ClassPowerEnable = _ClassPowerEnable
+		ClassPowerDisable = _ClassPowerDisable
 	elseif(PlayerClass == 'PRIEST') then
 		ClassPowerType = SPELL_POWER_SHADOW_ORBS
 		ClassPowerTypes = {
@@ -192,16 +184,13 @@ do
 		RequireSpec = SPEC_PRIEST_SHADOW
 
 		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-			element.__max = PRIEST_BAR_NUM_ORBS
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
+			return _ClassPowerEnable(self)
 		end
 
 		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
+			return _ClassPowerDisable(self)
 		end
 	elseif(PlayerClass == 'WARLOCK') then
 		ClassPowerType = SPELL_POWER_SOUL_SHARDS
@@ -211,16 +200,13 @@ do
 		RequireSpell = WARLOCK_SOULBURN
 
 		ClassPowerEnable = function(self)
-			local element = self.ClassIcons
-			element.__max = 3
-
-			self:RegisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:RegisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
+			return _ClassPowerEnable(self)
 		end
 
 		ClassPowerDisable = function(self)
-			self:UnregisterEvent('UNIT_DISPLAYPOWER', Update)
-			self:UnregisterEvent('UNIT_POWER_FREQUENT', Update)
+			self:UnregisterEvent('SPELLS_CHANGED', Visibility)
+			return _ClassPowerDisable(self)
 		end
 	end
 end
@@ -230,14 +216,10 @@ local Enable = function(self, unit)
 	if(not element) then return end
 
 	element.__owner = self
+	element.__max = 0
 	element.ForceUpdate = ForceUpdate
 
 	if(ClassPowerEnable) then
-		if(PlayerClass == 'PRIEST') then
-			self:RegisterEvent('PLAYER_TALENT_UPDATE', Visibility, true)
-		elseif(PlayerClass == 'WARLOCK') then
-			self:RegisterEvent('SPELLS_CHANGED', Visibility, true)
-		end
 		ClassPowerEnable(self)
 
 		for i=1, 5 do
@@ -258,8 +240,6 @@ local Disable = function(self)
 	local element = self.ClassIcons
 	if(not element) then return end
 
-	self:UnregisterEvent('SPELLS_CHANGED', Visibility)
-	self:UnregisterEvent('PLAYER_TALENT_UPDATE', Visibility)
 	ClassPowerDisable(self)
 end
 

@@ -1,6 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:NewModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
+
 do -- ClassIcon as an SpartanoUF module
 	local ClassIconCoord = {
 		WARRIOR = {			0.00, 0.25, 0.00, 0.25 },

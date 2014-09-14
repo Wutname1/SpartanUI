@@ -1,11 +1,12 @@
 ## Interface: 60000
 ## Title: SpartanUI: |CFF0070DDArtwork|r
-## Notes: Adds film grain and other special effects to the gameplay screen
+## Notes: Manages the Artwork and layout that SpartanUI uses
 ## Version: 3.3.0
 ## Author: Wutname1
 ## OptionalDeps: Bartender4
 ## RequiredDeps: SpartanUI
 
-SpartanUI_Artwork.lua
+SpartanUI_Artwork.xml
 
 Themes\Classic\Style.xml
+Themes\SciFi\Style.xml

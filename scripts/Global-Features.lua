@@ -72,7 +72,7 @@ DBdefault = {
 			AutoDefined	= true
 		},
 		MiniMap = {
-			MapButtons = false,
+			MapButtons = true,
 			MapZoomButtons = true
 		},
 		ActionBars = {

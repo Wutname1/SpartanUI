@@ -1,7 +1,7 @@
-local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local AceHook = LibStub("AceHook-3.0")
-local module = addon:NewModule("BottomBar");
+local Artwork_Core = spartan:GetModule("Artwork_Core");
+local module = spartan:NewModule("Artwork_Classic");
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = SUI_AnchorFrame, SpartanUI, CurScale;
 
@@ -15,7 +15,7 @@ local updateMinimumScale = function()
 end;
 
 local updateSpartanViewport = function() -- handles viewport offset based on settings
-	if not InCombatLockdown() and (SpartanUI_Base5:GetHeight() ~= 0) and (DB.viewport) then
+	if not InCombatLockdown() and (SpartanUI_Base5:GetHeight() ~= 0) then
 		WorldFrame:ClearAllPoints();
 		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
 		if SpartanUI_Base5:IsVisible() then
@@ -117,9 +117,77 @@ local updateSpartanXOffset = function() -- handles SpartanUI offset based on set
 end;
 
 ----------------------------------------------------------------------------------------------------
-function module:OnInitialize()
+
+function module:UpdateBuffPosition()
+	if DB.BuffSettings.enabled then
+		if module.handleBuff then
+			BuffFrame:ClearAllPoints();
+			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
+			ConsolidatedBuffs:ClearAllPoints();
+			ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
+			if (ConsolidatedBuffs:IsVisible()) then
+				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
+			else
+				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
+			end
+		else
+			BuffFrame:ClearAllPoints();
+			BuffFrame:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
+			ConsolidatedBuffs:ClearAllPoints();
+			ConsolidatedBuffs:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
+			if (ConsolidatedBuffs:IsVisible()) then
+				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
+			else
+				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
+			end
+		end
+	end
+end
+
+function module:updateBuffOffset() -- handles SpartanUI offset based on setting or fubar / titan
+	local fubar,titan,ChocolateBar,offset = 0,0,0;
+	for i = 1,4 do
+		if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
+			local bar = _G["FuBarFrame"..i];
+			local point = bar:GetPoint(1);
+			if point == "TOPLEFT" then fubar = fubar + bar:GetHeight(); 	end
+		end
+	end
+	for i = 1,100 do
+		if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
+			local bar = _G["ChocolateBar"..i];
+			local point = bar:GetPoint(1);
+			if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
+			--if point == "RIGHT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end-- bottom bars
+		end
+	end
+		
+	TitanBarOrder = {[1]="Bar", [2]="Bar2"} -- Top 2 bar names
+	for i=1,2 do
+		if (_G["Titan_Bar__Display_"..TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i].."_Show")) then
+			local PanelScale = TitanPanelGetVar("Scale") or 1
+			local bar = _G["Titan_Bar__Display_"..TitanBarOrder[i]]
+			titan = titan + (PanelScale * bar:GetHeight());
+		end
+	end
+	
+	offset = max(fubar + titan + ChocolateBar,1);
+	DB.BuffSettings.offset = offset
+	return offset;
+end
+
+function module:InitFramework()
 	do -- default interface modifications
-		FramerateLabel:ClearAllPoints(); FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
+		SUI_FramesAnchor:SetFrameStrata("BACKGROUND");
+		SUI_FramesAnchor:SetFrameLevel(1);
+		SUI_FramesAnchor:SetParent(SpartanUI);
+		SUI_FramesAnchor:ClearAllPoints();
+		SUI_FramesAnchor:SetPoint("BOTTOMLEFT", "SUI_AnchorFrame", "TOPLEFT", 0, 0);
+		SUI_FramesAnchor:SetPoint("TOPRIGHT", "SUI_AnchorFrame", "TOPRIGHT", 0, 153);
+		
+		FramerateLabel:ClearAllPoints();
+		FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
+		
 		MainMenuBar:Hide();
 		hooksecurefunc(SpartanUI,"Hide",function() updateSpartanViewport(); end);
 		hooksecurefunc(SpartanUI,"Show",function() updateSpartanViewport(); end);
@@ -192,73 +260,9 @@ function module:OnInitialize()
 			end
 		end);
 	end
-	addon.optionsGeneral.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
-		desc = L["DefScalesDesc"],
-		func = function()
-			if (InCombatLockdown()) then 
-				addon:Print(ERR_NOT_IN_COMBAT);
-			else
-				if (DB.scale >= 0.92) or (DB.scale < 0.78) then
-					DB.scale = 0.78;
-				else
-					DB.scale = 0.92;
-				end
-			end
-		end
-	};
-	addon.optionsGeneral.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
-		desc = L["ConfScaleDesc"],min = 0,max = 1,
-		set = function(info,val)
-			if (InCombatLockdown()) then 
-				addon:Print(ERR_NOT_IN_COMBAT);
-			else
-				DB.scale = min(1,round(val));
-				updateMinimumScale();
-			end
-		end,
-		get = function(info) return DB.scale; end
-	};
-	addon.optionsGeneral.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
-		desc = L["ConfOffsetDesc"],
-		min=0,max=200,step=.1,
-		get = function(info) return DB.yoffset end,
-		set = function(info,val)
-			if (InCombatLockdown()) then 
-				addon:Print(ERR_NOT_IN_COMBAT);
-			else
-				if DB.yoffsetAuto then
-					addon:Print(L["confOffsetAuto"]);
-				else
-					val = tonumber(val);
-					DB.yoffset = val;
-				end
-			end
-		end,
-		get = function(info) return DB.yoffset; end
-	};
-	addon.optionsGeneral.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
-		desc = L["AutoOffsetDesc"],
-		get = function(info) return DB.yoffsetAuto end,
-		set = function(info,val) DB.yoffsetAuto = val end,
-	};
-	addon.optionsGeneral.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
-		args = {
-			alpha = {name=L["Transparency"],type="range",order=1,width="full",
-				min=0,max=100,step=1,desc=L["TransparencyDesc"],
-				get = function(info) return (DB.alpha*100); end,
-				set = function(info,val) DB.alpha = (val/100); updateSpartanAlpha(); end
-			},
-			xOffset = {name = L["MoveSideways"],type = "range",order = 3,width="full",
-				desc = L["MoveSidewaysDesc"],
-				min=-200,max=200,step=.1,
-				get = function(info) return DB.xOffset/6.25 end,
-				set = function(info,val) DB.xOffset = val*6.25; updateSpartanXOffset(); end,
-			}
-		}
-	}
 end
 
-function module:OnEnable()
+function module:EnableFramework()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
 	
@@ -273,7 +277,7 @@ function module:OnEnable()
 		CastingBarFrame:SetPoint("BOTTOM",frame,"TOP",0,90);
 	end);
 	
-	RegisterStateDriver(frame, "visibility", "[petbattle] hide; show")
+	RegisterStateDriver(SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
 
 	updateSpartanScale();
 	updateSpartanOffset();

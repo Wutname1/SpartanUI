@@ -17,20 +17,23 @@
 
  Examples
 
+   local EclipseBar = CreateFrame('Frame', nil, self)
+   EclipseBar:SetPoint('BOTTOM', self, 'TOP')
+   EclipseBar:SetSize(160, 20)
+   
    -- Position and size
-   local LunarBar = CreateFrame('StatusBar', nil, self)
+   local LunarBar = CreateFrame('StatusBar', nil, EclipseBar)
    LunarBar:SetPoint('LEFT')
    LunarBar:SetSize(160, 20)
    
-   local SolarBar = CreateFrame('StatusBar', nil, self)
+   local SolarBar = CreateFrame('StatusBar', nil, EclipseBar)
    SolarBar:SetPoint('LEFT', LunarBar:GetStatusBarTexture(), 'RIGHT')
    SolarBar:SetSize(160, 20)
    
    -- Register with oUF
-   self.EclipseBar = {
-      LunarBar = LunarBar,
-      SolarBar = SolarBar,
-   }
+   EclipseBar.LunarBar = LunarBar
+   EclipseBar.SolarBar = SolarBar
+   self.EclipseBar = EclipseBar
 
  Hooks and Callbacks
 
@@ -44,8 +47,8 @@ if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 local parent, ns = ...
 local oUF = ns.oUF
 
-local ECLIPSE_BAR_SOLAR_BUFF_ID = ECLIPSE_BAR_SOLAR_BUFF_ID
-local ECLIPSE_BAR_LUNAR_BUFF_ID = ECLIPSE_BAR_LUNAR_BUFF_ID
+local ECLIPSE_BAR_SOLAR_BUFF = GetSpellInfo(ECLIPSE_BAR_SOLAR_BUFF_ID)
+local ECLIPSE_BAR_LUNAR_BUFF = GetSpellInfo(ECLIPSE_BAR_LUNAR_BUFF_ID)
 local SPELL_POWER_ECLIPSE = SPELL_POWER_ECLIPSE
 local MOONKIN_FORM = MOONKIN_FORM
 
@@ -76,8 +79,10 @@ local UNIT_POWER = function(self, event, unit, powerType)
 
 		 self - The widget that holds the eclipse frame.
 		 unit - The unit that has the widget.
+		 power - The unit's current power.
+		 maxPower - The unit's maximum power.
 		]]
-		return eb:PostUpdatePower(unit)
+		return eb:PostUpdatePower(unit, power, maxPower)
 	end
 end
 
@@ -94,6 +99,10 @@ local UPDATE_VISIBILITY = function(self, event)
 		end
 	elseif(form == MOONKIN_FORM) then
 		showBar = true
+	end
+
+	if(UnitHasVehicleUI'player') then
+		showBar = false
 	end
 
 	if(showBar) then
@@ -118,22 +127,13 @@ end
 
 local UNIT_AURA = function(self, event, unit)
 	if(self.unit ~= unit) then return end
-
-	local i = 1
-	local hasSolarEclipse, hasLunarEclipse
-	repeat
-		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
-
-		if(spellID == ECLIPSE_BAR_SOLAR_BUFF_ID) then
-			hasSolarEclipse = true
-		elseif(spellID == ECLIPSE_BAR_LUNAR_BUFF_ID) then
-			hasLunarEclipse = true
-		end
-
-		i = i + 1
-	until not spellID
-
 	local eb = self.EclipseBar
+
+	local hasSolarEclipse = not not UnitBuff(unit, ECLIPSE_BAR_SOLAR_BUFF)
+	local hasLunarEclipse = not not UnitBuff(unit, ECLIPSE_BAR_LUNAR_BUFF)
+
+	if(eb.hasSolarEclipse == hasSolarEclipse and eb.hasLunarEclipse == hasLunarEclipse) then return end
+
 	eb.hasSolarEclipse = hasSolarEclipse
 	eb.hasLunarEclipse = hasLunarEclipse
 
@@ -170,10 +170,11 @@ local ECLIPSE_DIRECTION_CHANGE = function(self, event, isLunar)
 	end
 end
 
-local Update = function(self, ...)
-	UNIT_POWER(self, ...)
-	UNIT_AURA(self, ...)
-	return UPDATE_VISIBILITY(self, ...)
+local Update = function(self, event, ...)
+	UNIT_POWER(self, event, ...)
+	UNIT_AURA(self, event, ...)
+	ECLIPSE_DIRECTION_CHANGE(self, event)
+	return UPDATE_VISIBILITY(self, event)
 end
 
 local ForceUpdate = function(element)
@@ -206,6 +207,7 @@ end
 local function Disable(self)
 	local eb = self.EclipseBar
 	if(eb) then
+		eb:Hide()
 		self:UnregisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE)
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', UPDATE_VISIBILITY)
 		self:UnregisterEvent('UNIT_AURA', UNIT_AURA)

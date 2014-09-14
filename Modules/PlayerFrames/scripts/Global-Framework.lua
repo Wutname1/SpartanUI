@@ -283,6 +283,7 @@ local CreatePlayerFrame = function(self,unit)
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			-- health:AnimateTexCoords([[Interface\AddOns\SpartanUI_PlayerFrames\media\HealthBar.blp]], 256, 256, 80, 16, 40, elapsed, 0.08);
 			health:SetSize(150, 16);
 			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
 			
@@ -1711,7 +1712,13 @@ end
 
 local CreateUnitFrame = function(self,unit)
 	self.menu = menu;
-	self:SetParent("SpartanUI");
+	
+	if (SUI_FramesAnchor:GetParent() == UIParent) then
+		self:SetParent(UIParent);
+	else
+		self:SetParent(SUI_FramesAnchor);
+	end
+	
 	self:SetFrameStrata("BACKGROUND"); self:SetFrameLevel(1);
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);

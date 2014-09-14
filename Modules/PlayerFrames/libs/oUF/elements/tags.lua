@@ -52,6 +52,10 @@ local tagStrings = {
 
 	["level"] = [[function(u)
 		local l = UnitLevel(u)
+		if(UnitIsWildBattlePet(u) or UnitIsBattlePetCompanion(u)) then
+			l = UnitBattlePetLevel(u)
+		end
+
 		if(l > 0) then
 			return l
 		else
@@ -210,12 +214,14 @@ local tagStrings = {
 		local c = UnitClassification(u)
 		if(c == 'rare') then
 			return 'Rare'
-		elseif(c == 'eliterare') then
+		elseif(c == 'rareelite') then
 			return 'Rare Elite'
 		elseif(c == 'elite') then
 			return 'Elite'
 		elseif(c == 'worldboss') then
 			return 'Boss'
+		elseif(c == 'minus') then
+			return 'Affix'
 		end
 	end]],
 
@@ -223,12 +229,14 @@ local tagStrings = {
 		local c = UnitClassification(u)
 		if(c == 'rare') then
 			return 'R'
-		elseif(c == 'eliterare') then
+		elseif(c == 'rareelite') then
 			return 'R+'
 		elseif(c == 'elite') then
 			return '+'
 		elseif(c == 'worldboss') then
 			return 'B'
+		elseif(c == 'minus') then
+			return '-'
 		end
 	end]],
 
@@ -287,7 +295,7 @@ local tagStrings = {
 	end]],
 
 	['chi'] = [[function()
-		local num = UnitPower('player', SPELL_POWER_LIGHT_FORCE)
+		local num = UnitPower('player', SPELL_POWER_CHI)
 		if(num > 0) then
 			return num
 		end
@@ -297,6 +305,13 @@ local tagStrings = {
 		local num = UnitPower('player', SPELL_POWER_SHADOW_ORBS)
 		if(num > 0) then
 			return num
+		end
+	end]],
+
+	['affix'] = [[function(u)
+		local c = UnitClassification(u)
+		if(c == 'minus') then
+			return 'Affix'
 		end
 	end]],
 }
@@ -363,6 +378,8 @@ local tagEvents = {
 	["threat"]              = "UNIT_THREAT_SITUATION_UPDATE",
 	["threatcolor"]         = "UNIT_THREAT_SITUATION_UPDATE",
 	['cpoints']             = 'UNIT_COMBO_POINTS PLAYER_TARGET_CHANGED',
+	['affix']				= 'UNIT_CLASSIFICATION_CHANGED',
+	['plus']				= 'UNIT_CLASSIFICATION_CHANGED',
 	['rare']                = 'UNIT_CLASSIFICATION_CHANGED',
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
