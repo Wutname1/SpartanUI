@@ -4,14 +4,16 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
 SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 ----------------------------------------------------------------------------------------------------
-addon.optionsMain = {name = "SpartanUI Main", type = "group", args = {}};
-addon.optionsGeneral = {name = "SpartanUI General", type = "group", args = {}};
-addon.optionsPlayerFrames = {name = "SpartanUI Player Frames", type = "group", args = {}};
-addon.optionsPartyFrames = {name = "SpartanUI Party Frames", type = "group", args = {}};
-addon.optionsRaidFrames = {name = "SpartanUI Raid Frames", type = "group", args = {}};
-addon.optionsSpinCam = {name = "SpartanUI Spin Cam", type = "group", args = {}};
-addon.optionsFilmEffects = {name = "SpartanUI Film Effects", type = "group", args = {}};
-addon.Artwork = {name = "SpartanUI Change Log", type = "group", args = {}};
+addon.opt = {
+	Main = {name = "Main", type = "group", args = {}};
+	General = {name = "General", type = "group", args = {}};
+	Artwork = {name = "Artwork", type = "group", args = {}};
+	PlayerFrames = {name = "Player Frames", type = "group", args = {}};
+	PartyFrames = {name = "Party Frames", type = "group", args = {}};
+	RaidFrames = {name = "Raid Frames", type = "group", args = {}};
+	SpinCam = {name = "Spin Cam", type = "group", args = {}};
+	FilmEffects = {name = "Film Effects", type = "group", args = {}};
+}
 
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
 local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
@@ -72,6 +74,9 @@ DBdefault = {
 			AutoDefined	= true
 		},
 		MiniMap = {
+			ManualAllowUse = false,
+			ManualAllowPrompt = "",
+			AutoDetectAllowUse = true,
 			MapButtons = true,
 			MapZoomButtons = true
 		},
@@ -220,9 +225,9 @@ function addon:OnInitialize()
 	DBGlobal = addon.db.global
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
-	addon.Optionsprofile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
-	addon.optionsMain.args["version"] = {name = "SpartanUI "..L["Version"]..": "..GetAddOnMetadata("SpartanUI", "Version"),order=0,type = "header"};
-	addon.optionsMain.args["reset"] = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
+	addon.opt.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
+	addon.opt.Main.args["version"] = {name = "SpartanUI "..L["Version"]..": "..GetAddOnMetadata("SpartanUI", "Version"),order=0,type = "header"};
+	addon.opt.Main.args["reset"] = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
 		desc = L["ResetDatabaseDesc"],
 		func = function()
 			if (InCombatLockdown()) then 
@@ -236,7 +241,7 @@ function addon:OnInitialize()
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
 	LibDualSpec:EnhanceDatabase(self.db, "SpartanUI")
-	LibDualSpec:EnhanceOptions(addon.Optionsprofile, self.db)
+	LibDualSpec:EnhanceOptions(addon.opt.profile, self.db)
 	-- Spec Setup
 	addon.db.RegisterCallback(self, "OnNewProfile", "InitializeProfile")
 	addon.db.RegisterCallback(self, "OnProfileChanged", "UpdateModuleConfigs")
@@ -253,40 +258,32 @@ function addon:UpdateModuleConfigs()
 end
 
 function addon:OnEnable()
-	
-    AceConfig:RegisterOptionsTable("SpartanUI Main", addon.optionsMain)
-    AceConfig:RegisterOptionsTable("SpartanUI General", addon.optionsGeneral)
-    AceConfig:RegisterOptionsTable("SpartanUI Artwork", addon.Artwork)
-    AceConfig:RegisterOptionsTable("SpartanUI Player Frames", addon.optionsPlayerFrames)
-    AceConfig:RegisterOptionsTable("SpartanUI Party Frames", addon.optionsPartyFrames)
-    AceConfig:RegisterOptionsTable("SpartanUI Raid Frames", addon.optionsRaidFrames)
-    AceConfig:RegisterOptionsTable("SpartanUI Spin Cam", addon.optionsSpinCam)
-    AceConfig:RegisterOptionsTable("SpartanUI Film Effects", addon.optionsFilmEffects)
-	AceConfig:RegisterOptionsTable("Profiles", self.Optionsprofile);
-
-	AceConfigDialog:AddToBlizOptions("SpartanUI Main", "SpartanUI", nil)
-    self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI General", L["General"], "SpartanUI")
+    AceConfig:RegisterOptionsTable("SpartanUI", addon.opt.Main)
+	self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI")
+	addon:AddOption("General", addon.opt.General, L["General"])
+	if addon:GetModule("Artwork_Core", true) then addon:AddOption("Artwork", addon.opt.Artwork, "Artwork") end --Localization Needed
+	if addon:GetModule("FilmEffect", true) then addon:AddOption("Film Effects", addon.opt.FilmEffects, L["FilmEffects"]) end
+    if addon:GetModule("PartyFrames", true) then addon:AddOption("Party Frames", addon.opt.PartyFrames, L["PartyFrames"]) end
+    if addon:GetModule("PlayerFrames", true) then addon:AddOption("Player Frames", addon.opt.PlayerFrames, L["PlayerFrames"]) end
+    if addon:GetModule("RaidFrames", true) then addon:AddOption("Raid Frames", addon.opt.RaidFrames, L["RaidFrames"]) end
+    if addon:GetModule("SpinCam", true) then addon:AddOption("Spin Cam", addon.opt.SpinCam, L["SpinCam"]) end
+	addon:AddOption("Profiles", addon.opt.profile, "Profiles"); --Localization Needed
     
-	if addon:GetModule("FilmEffect", true) then	AceConfigDialog:AddToBlizOptions("SpartanUI Film Effects", L["FilmEffects"], "SpartanUI") end
-    if addon:GetModule("PartyFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Party Frames", L["PartyFrames"], "SpartanUI") end
-    if addon:GetModule("PlayerFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Player Frames", L["PlayerFrames"], "SpartanUI") end
-    if addon:GetModule("RaidFrames", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Raid Frames", L["RaidFrames"], "SpartanUI") end
-    if addon:GetModule("SpinCam", true) then AceConfigDialog:AddToBlizOptions("SpartanUI Spin Cam", L["SpinCam"], "SpartanUI") end
-    AceConfigDialog:AddToBlizOptions("SpartanUI Artwork", "Artwork", "SpartanUI")
-	
-	AceConfigDialog:AddToBlizOptions("Profiles", "Profiles", "SpartanUI");
-	
-	
     self:RegisterChatCommand("sui", "ChatCommand")
-	
+    self:RegisterChatCommand("spartanui", "ChatCommand")
+end
+
+function addon:AddOption(name, Table, displayName)
+	AceConfig:RegisterOptionsTable("SpartanUI"..name, Table)
+	AceConfigDialog:AddToBlizOptions("SpartanUI"..name, displayName, "SpartanUI")
 end
 
 function addon:ChatCommand(input)
-    if not input or input:trim() == "" then
-        InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
-    elseif input == "version" then
+	if input == "version" then
 		addon:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))
 	else
-        LibStub("AceConfigCmd-3.0").HandleCommand(addon, "sui", "spartanui", input)
+		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
+		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
+        --LibStub("AceConfigCmd-3.0").HandleCommand(addon, "sui", "spartanui", input)
     end
 end

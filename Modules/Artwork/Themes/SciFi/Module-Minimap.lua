@@ -308,7 +308,7 @@ function module:InitMinimap()
 end
 
 function module:EnableMinimap()
-	SciFi_MiniMapCreate();
+	if (DB.MiniMap.AutoDetectAllowUse) or (DB.MiniMap.ManualAllowUse) then SciFi_MiniMapCreate() end
 	SciFi_ChatBox();
 	SciFi_Buffs();
 end

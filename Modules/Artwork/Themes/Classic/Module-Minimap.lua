@@ -5,7 +5,7 @@ local module = spartan:GetModule("Artwork_Classic");
 ---------------------------------------------------------------------------
 local Minimap_Conflict_msg = true
 
-local updateButtons = function()
+function module:updateButtons()
 	if (not MouseIsOver(Minimap)) and (DB.MiniMap.MapButtons) then
 		GameTimeFrame:Hide();
 		MiniMapTracking:Hide();
@@ -32,13 +32,13 @@ local updateButtons = function()
 	end
 end
 
-local modifyMinimapLayout = function()
+function module:modifyMinimapLayout()
 	frame = CreateFrame("Frame","SUI_Minimap",SpartanUI);
-	frame:SetSize(158, 158);
+	frame:SetSize(156, 156);
 	frame:SetPoint("CENTER",0,54);
 	
 	Minimap:SetParent(frame);
-	Minimap:SetSize(250, 250);
+	Minimap:SetSize(frame:GetSize());
 	Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay.tga")
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("CENTER","SUI_Minimap","CENTER",0,0);
@@ -77,9 +77,10 @@ local modifyMinimapLayout = function()
 	MiniMapTrackingButton:ClearAllPoints(); MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
 	
 	-- Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
-	-- Minimap.overlay:SetWidth(250); Minimap.overlay:SetHeight(250); 
+	-- Minimap.overlay:SetSize(158, 158); 
 	-- Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay");
-	-- Minimap.overlay:SetPoint("CENTER"); Minimap.overlay:SetBlendMode("ADD");
+	-- Minimap.overlay:SetPoint("CENTER");
+	-- Minimap.overlay:SetBlendMode("ADD");
 	
 	frame:EnableMouse(true);
 	frame:EnableMouseWheel(true);
@@ -89,7 +90,7 @@ local modifyMinimapLayout = function()
 	end);
 end;
 
-local createMinimapCoords = function()
+function module:createMinimapCoords()
 	local map = CreateFrame("Frame",nil,SpartanUI);
 	map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
 	map.coords:SetSize(128, 12);
@@ -103,7 +104,7 @@ local createMinimapCoords = function()
 			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
 			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
 				-- Debug
-				updateButtons();
+				module:updateButtons();
 				do -- update minimap coordinates
 					local x,y = GetPlayerMapPosition("player");
 					if (not x) or (not y) then return; end
@@ -140,7 +141,7 @@ local createMinimapCoords = function()
 	map:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
 end
 
-local MiniMap = function()
+function module:MiniMap()
 	hooksecurefunc(Minimap,"SetPoint",function(self,input1,input2,input3,input4,input5) -- Check for Changes
 		local point, relativeTo, relativePoint, xOffset, yOffset = false
 		if input1 then point = input1 end
@@ -153,14 +154,14 @@ local MiniMap = function()
 			end
 		end
 	end);
-	modifyMinimapLayout();
-	createMinimapCoords();
+	module:modifyMinimapLayout();
+	module:createMinimapCoords();
 	QueueStatusFrame:ClearAllPoints();
 	QueueStatusFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	module.handleBuff = true
 end
 
-local ChatBox = function()
+function module:ChatBox()
 
 	if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
 		-- Chat Mod Detected, disable and exit
@@ -266,7 +267,7 @@ local ChatBox = function()
 
 end
 
-local Buffs = function()
+function module:Buffs()
 	if DB.BuffSettings.enabled then
 		local BuffHandle = CreateFrame("Frame")
 		-- Fix CPU leak, use UpdateInterval
@@ -293,7 +294,7 @@ function module:InitMinimap()
 end
 
 function module:EnableMinimap()
-	MiniMap();
-	ChatBox();
-	Buffs();
+	if (DB.MiniMap.AutoDetectAllowUse) or (DB.MiniMap.ManualAllowUse) then module:MiniMap() end
+	module:ChatBox();
+	module:Buffs();
 end

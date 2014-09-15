@@ -5,4 +5,5 @@
 
 	
 	<Script file="SpartanUI_Artwork.lua" />
+	<Script file="Options.lua" />
 </Ui>

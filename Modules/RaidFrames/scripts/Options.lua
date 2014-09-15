@@ -16,7 +16,7 @@ function addon:UpdateText()
 end
 
 function addon:OnInitialize()
-	spartan.optionsRaidFrames.args["DisplayOpts"] = {name = L["Frames/DisplayOpts"],type="group",order=1,
+	spartan.opt.RaidFrames.args["DisplayOpts"] = {name = L["Frames/DisplayOpts"],type="group",order=1,
 		args = {
 			toggleraid =  {name = L["Frames/ShowRFrames"], type = "toggle", order=1,
 				get = function(info) return DBMod.RaidFrames.showRaid; end,
@@ -70,7 +70,7 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	spartan.optionsRaidFrames.args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
+	spartan.opt.RaidFrames.args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
 		args = {
 			party = {name = L["Frames/ShowAuras"], type = "toggle",order=1,
 				get = function(info) return DBMod.RaidFrames.showAuras; end,
@@ -87,7 +87,7 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.optionsRaidFrames.args["FramePreSets"] = {name = L["Frames/PreSets"], type = "select", order=1,disabled=true,
+	spartan.opt.RaidFrames.args["FramePreSets"] = {name = L["Frames/PreSets"], type = "select", order=1,disabled=true,
 		values = {["custom"]=L["Frames/Custom"],["tank"]=L["Frames/Tank"],["dps"]=L["Frames/DPS"],["healer"]=L["Frames/Healer"]},
 		desc=L["Frames/SetTankDesc"].."|n|n"..L["Frames/SetDPSDesc"].."|n|n"..L["Frames/SetHealDesc"],
 		get = function(info) return DBMod.RaidFrames.preset; end,
@@ -95,23 +95,23 @@ function addon:OnInitialize()
 			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.preset = val; end
 		end
 	};
-	spartan.optionsRaidFrames.args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
+	spartan.opt.RaidFrames.args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
 		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
 		get = function(info) return DBMod.RaidFrames.FrameStyle; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.FrameStyle = val; end
 		end
 	};
-	spartan.optionsRaidFrames.args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,disabled=true,
+	spartan.opt.RaidFrames.args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,disabled=true,
 		values = {["name"]=L["Frames/LayName"],["group"]=L["Frames/LayGrp"],["role"]=L["Frames/LayRole"]},
 		get = function(info) return DBMod.RaidFrames.mode; end,
 		set = function(info,val) DBMod.RaidFrames.mode = val; addon:UpdateRaid("FORCE_UPDATE"); end
 	};
-	spartan.optionsRaidFrames.args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
+	spartan.opt.RaidFrames.args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
 		get = function(info) return DBMod.RaidFrames.threat; end,
 		set = function(info,val) DBMod.RaidFrames.threat = val; DBMod.RaidFrames.preset = "custom"; end
 	};
-	spartan.optionsRaidFrames.args["raidLockReset"] = {name = L["Frames/ResetRaidPos"], type = "execute", order=11,
+	spartan.opt.RaidFrames.args["raidLockReset"] = {name = L["Frames/ResetRaidPos"], type = "execute", order=11,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
@@ -121,7 +121,7 @@ function addon:OnInitialize()
 			end
 		end
 	};
-	spartan.optionsRaidFrames.args["HideBlizz"] = {name=L["Frames/HideBlizzFrames"],type="toggle",order=4,
+	spartan.opt.RaidFrames.args["HideBlizz"] = {name=L["Frames/HideBlizzFrames"],type="toggle",order=4,
 		get = function(info) return DBMod.RaidFrames.HideBlizzFrames; end,
 		set = function(info,val) DBMod.RaidFrames.HideBlizzFrames = val; end
 	};

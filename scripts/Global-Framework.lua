@@ -181,7 +181,7 @@ function module:OnInitialize()
 			end
 		end);
 	end
-	addon.optionsGeneral.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+	addon.opt.General.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
 		desc = L["DefScalesDesc"],
 		func = function()
 			if (InCombatLockdown()) then 
@@ -195,7 +195,7 @@ function module:OnInitialize()
 			end
 		end
 	};
-	addon.optionsGeneral.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+	addon.opt.General.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
 		desc = L["ConfScaleDesc"],min = 0,max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
@@ -206,7 +206,7 @@ function module:OnInitialize()
 		end,
 		get = function(info) return DB.scale; end
 	};
-	addon.optionsGeneral.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
+	addon.opt.General.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
 		desc = L["ConfOffsetDesc"],
 		min=0,max=200,step=.1,
 		get = function(info) return DB.yoffset end,
@@ -224,12 +224,12 @@ function module:OnInitialize()
 		end,
 		get = function(info) return DB.yoffset; end
 	};
-	addon.optionsGeneral.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
+	addon.opt.General.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
 		desc = L["AutoOffsetDesc"],
 		get = function(info) return DB.yoffsetAuto end,
 		set = function(info,val) DB.yoffsetAuto = val end,
 	};
-	addon.optionsGeneral.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
+	addon.opt.General.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],

@@ -47,6 +47,23 @@ function module:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
+	
+	StaticPopupDialogs["MiniMapNotice"] = {
+		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
+		button1 = "Yes",
+		button2 = "No",
+		OnAccept = function()
+			DB.MiniMap.ManualAllowPrompt = DB.Version
+			DB.MiniMap.ManualAllowUse = true
+			ReloadUI();
+		end,
+		OnCancel = function()
+			DB.MiniMap.ManualAllowPrompt = DB.Version
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = false
+	}
 	-- DB Updates
 	if DBGlobal.Version then
 		if DB.Version == nil then -- DB Updates from 3.0.2 to 3.0.3 this variable was not set in 3.0.2
@@ -198,22 +215,31 @@ function module:OnInitialize()
 			if not DBMod.PlayerFrames.Portrait3D then DBMod.PlayerFrames.Portrait3D = false end
 			if not DBMod.PartyFrames.Portrait3D then DBMod.PartyFrames.Portrait3D = false end
 			if not DBMod.PartyFrames.HideBlizzFrames then DBMod.PartyFrames.HideBlizzFrames = true end
+			
+			if not DB.MiniMap.ManualAllowUse then DB.MiniMap.ManualAllowUse = false end
+			if not DB.MiniMap.ManualAllowPrompt then DB.MiniMap.ManualAllowUse = "" end
+			if not DB.MiniMap.AutoDetectAllowUse then DB.MiniMap.AutoDetectAllowUse = true end
 		end
 	end
 end
 
 function module:OnEnable()
+	-- First Launch Notication
 	if (not DBGlobal.Version) then
 		spartan.db:ResetProfile(false,true);
 		StaticPopup_Show ("FirstLaunchNotice")
 	end
+	-- No Bartender/out of date Notification
 	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= SpartanVer)) then
 		if SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
 	elseif Bartender4Version < BartenderMin then
 			if SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
 	end
-	DB.Version = SpartanVer;
-	DBGlobal.Version = SpartanVer;
+	-- MiniMap Modification
+	if (((not DB.MiniMap.AutoDetectAllowUse) and (not DB.MiniMap.ManualAllowUse)) and DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
+		StaticPopup_Show("MiniMapNotice")
+	end
+	--Alpha Warning
 	if (CurseVersion) then
 		if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
 			spartan:Print("Curse Version: "..CurseVersion);
@@ -221,4 +247,8 @@ function module:OnEnable()
 			StaticPopup_Show ("AlphaWarning")
 		end
 	end
+	
+	-- Update DB Version
+	DB.Version = SpartanVer;
+	DBGlobal.Version = SpartanVer;
 end

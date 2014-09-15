@@ -6,7 +6,7 @@ local module = spartan:GetModule("Artwork_SciFi");
 local InitRan = false
 
 function module:SetupMenus()
-	spartan.optionsGeneral.args["backdrop"] = {
+	spartan.opt.General.args["backdrop"] = {
 		name = "ActionBar Settings",
 		desc = L["ActionBarConfDesc"],
 		type = "group", args = {
@@ -90,7 +90,7 @@ function module:SetupMenus()
 			}
 		}
 	};
-	spartan.optionsGeneral.args["popup"] = {
+	spartan.opt.General.args["popup"] = {
 		name = L["PopupAnimConf"],
 		desc = L["PopupAnimConfDesc"],
 		type = "group", args = {
@@ -122,7 +122,7 @@ function module:SetupMenus()
 			}
 		}
 	};
-	spartan.optionsGeneral.args["minimap"] = {
+	spartan.opt.General.args["minimap"] = {
 		name = L["MinMapSet"],
 		desc = L["MinMapSetConf"],
 		type = "group", args = {
@@ -136,7 +136,7 @@ function module:SetupMenus()
 			}
 		}
 	}
-	spartan.optionsGeneral.args["ChatSettings"] = {
+	spartan.opt.General.args["ChatSettings"] = {
 		name = L["ChatSettings"],
 		desc = L["ChatSettingsDesc"],
 		type = "group", args = {
@@ -160,7 +160,7 @@ function module:SetupMenus()
 			}
 		}
 	}
-	spartan.optionsGeneral.args["BuffSettings"] = {
+	spartan.opt.General.args["BuffSettings"] = {
 		name = L["BuffOffsetSetting"],
 		desc = L["BuffOffsetSettingDesc"],
 		type = "group", args = {
@@ -192,7 +192,7 @@ function module:SetupMenus()
 			},
 		}
 	}
-	spartan.optionsGeneral.args["XPBar"] = {
+	spartan.opt.General.args["XPBar"] = {
 		name = L["BarXP"],
 		desc = L["BarXPDesc"],
 		type = "group", args = {
@@ -299,7 +299,7 @@ function module:SetupMenus()
 			}
 		}
 	}
-	spartan.optionsGeneral.args["RepBar"] = {
+	spartan.opt.General.args["RepBar"] = {
 		name = L["BarRep"],
 		desc = L["BarRepDesc"],
 		type = "group", args = {
@@ -366,7 +366,7 @@ function module:SetupMenus()
 			}
 		}
 	}
-	spartan.optionsGeneral.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+	spartan.opt.General.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
 		desc = L["DefScalesDesc"],
 		func = function()
 			if (InCombatLockdown()) then 
@@ -380,7 +380,7 @@ function module:SetupMenus()
 			end
 		end
 	};
-	spartan.optionsGeneral.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+	spartan.opt.General.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
 		desc = L["ConfScaleDesc"],min = 0,max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
@@ -392,7 +392,7 @@ function module:SetupMenus()
 		end,
 		get = function(info) return DB.scale; end
 	};
-	spartan.optionsGeneral.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
+	spartan.opt.General.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
 		desc = L["ConfOffsetDesc"],
 		min=0,max=200,step=.1,
 		get = function(info) return DB.yoffset end,
@@ -410,12 +410,12 @@ function module:SetupMenus()
 		end,
 		get = function(info) return DB.yoffset; end
 	};
-	spartan.optionsGeneral.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
+	spartan.opt.General.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
 		desc = L["AutoOffsetDesc"],
 		get = function(info) return DB.yoffsetAuto end,
 		set = function(info,val) DB.yoffsetAuto = val end,
 	};
-	spartan.optionsGeneral.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
+	spartan.opt.General.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],

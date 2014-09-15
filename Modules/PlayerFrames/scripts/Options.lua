@@ -11,7 +11,7 @@ function addon:UpdateAura()
 end
 
 function addon:OnInitialize()
-	spartan.optionsPlayerFrames.args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="group",order=1,
+	spartan.opt.PlayerFrames.args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="group",order=1,
 		desc=L["Frames/BarOptDesc"],
 		args = {
 			toggle3DPortrait =  {name = L["Frames/Portrait3D"], type = "toggle", order=1,
@@ -90,7 +90,7 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	spartan.optionsPlayerFrames.args["frameDisplay"] = {name = "Disable Frames",type = "group",order=2,desc="Enable and Disable Specific frames",
+	spartan.opt.PlayerFrames.args["frameDisplay"] = {name = "Disable Frames",type = "group",order=2,desc="Enable and Disable Specific frames",
 		args = {
 			player = {name = L["Frames/DispPlayer"],type = "toggle",order=1,
 				get = function(info) return DBMod.PlayerFrames.player.display; end,
@@ -129,7 +129,7 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	spartan.optionsPlayerFrames.args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,
+	spartan.opt.PlayerFrames.args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,
 		desc = "Buff & Debuff display settings",
 		args = {
 			header0 = {name="Buffs & DeBuffs to Display",type="header",order=0},
@@ -409,7 +409,7 @@ function addon:OnInitialize()
 			},
 		}
 	};
-	spartan.optionsPlayerFrames.args["castbar"] = {name = L["Frames/castbar"],type = "group",order=4,
+	spartan.opt.PlayerFrames.args["castbar"] = {name = L["Frames/castbar"],type = "group",order=4,
 		desc = L["Frames/UnitCastSet"],
 		args = {
 			player = { name = L["Frames/PlayerStyle"], type = "select", style="radio",
@@ -475,7 +475,7 @@ function addon:OnInitialize()
 			},
 		}
 	};
-	spartan.optionsPlayerFrames.args["bossarena"] = {name = L["Frames/BossArenaFrames"],type = "group",order=5,
+	spartan.opt.PlayerFrames.args["bossarena"] = {name = L["Frames/BossArenaFrames"],type = "group",order=5,
 		args = {
 			bar0 = {name=L["Frames/BossFrames"],type="header",order=0},
 			boss = { name = L["Frames/ShowFrames"], type = "toggle",order=1,--disabled=true,
@@ -509,11 +509,11 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.optionsPlayerFrames.args["resetfocus"] = {name = L["Frames/resetfocus"],type = "execute",order=1,
+	spartan.opt.PlayerFrames.args["resetfocus"] = {name = L["Frames/resetfocus"],type = "execute",order=1,
 		desc = L["Frames/resetfocusDesc"],
 		func = function() DBMod.PlayerFrames.focus.movement.moved = false; addon:UpdateFocusPosition(); end
 	};
-	spartan.optionsPlayerFrames.args["resetSpecialBar"] = {name = L["Frames/resetSpecialBar"],type = "execute",order=1,
+	spartan.opt.PlayerFrames.args["resetSpecialBar"] = {name = L["Frames/resetSpecialBar"],type = "execute",order=1,
 		desc = L["Frames/resetSpecialBarDesc"],
 		func = function() addon:ResetAltBarPositions(); end
 	};

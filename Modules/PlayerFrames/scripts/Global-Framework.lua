@@ -384,10 +384,10 @@ local CreatePlayerFrame = function(self,unit)
 			self:Tag(self.Name, "[name]");
 		end
 		
-		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
+		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
 		self.Level:SetSize(40, 11);
 		self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("MIDDLE");
-		self.Level:SetPoint("CENTER",ring,"CENTER",51,12);
+		self.Level:SetPoint("CENTER",ring,"CENTER",53,12);
 		self:Tag(self.Level, "[level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
@@ -615,10 +615,10 @@ local CreateTargetFrame = function(self,unit)
 			self:Tag(self.Name, "[name]");
 		end
 		
-		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
+		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
 		self.Level:SetWidth(40); self.Level:SetHeight(11);
 		self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("MIDDLE");
-		self.Level:SetPoint("CENTER",ring,"CENTER",-50,12);
+		self.Level:SetPoint("CENTER",ring,"CENTER",-49,12);
 		self:Tag(self.Level, "[difficulty][level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");

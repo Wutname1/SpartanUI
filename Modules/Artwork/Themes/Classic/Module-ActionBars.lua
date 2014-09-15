@@ -28,7 +28,7 @@ local BartenderSettings = { -- actual settings being inserted into our custom pr
 	ExtraActionBar = {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
 	BlizzardArt	= {	enabled = false,	},
 };
-	
+
 local default, plate = {
 	popup1 = {anim = true, alpha = 1, enable = 1},
 	popup2 = {anim = true, alpha = 1, enable = 1},
@@ -40,39 +40,11 @@ local default, plate = {
 	bar6 = {alpha = 1, enable = 1},
 };
 
--- function module:UpdateSettings()
-	-- DB.ActionBars = DB.ActionBars or {};
-	-- for key,val in pairs(default) do
-		-- if (not DB.ActionBars[key]) then DB.ActionBars[key] = val; end
-		-- setmetatable(DB.ActionBars[key],{__index = default[key]});
-	-- end
--- end;
-
 function module:SetupProfile()
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
-	--Remove below function?
-	--module:UpdateSettings();
-	
-	-- Below Should not be needed anymore
-	-- Update Bartender Settings every new SpartanUI Version
-	-- if ( not DB.ActionBars.SpartanUI_Version) then
-		-- DB.ActionBars.SpartanUI_Version = GetAddOnMetadata("SpartanUI", "Version");
-		-- -- Update Blizzard Art Bar settings on the standard profile
-		-- if module:BartenderProfileCheck(ProfileName,false) then
-			-- for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-				-- if v.db and v.db.profile then
-					-- --Fixup Blizzard Art Bar
-					-- v.db.profile["BlizzardArt"] = module:MergeData(v.db.profile["BlizzardArt"],BartenderSettings["BlizzardArt"])
-					-- -- Fixup Vehicle Bar
-					-- v.db.profile["Vehicle"] = module:MergeData(v.db.profile["Vehicle"],BartenderSettings["Vehicle"])
-				-- end
-			-- end
-		-- end
-	-- end
-	
-	--print("Using this profile: "..Bartender4.db:GetCurrentProfile())
+	print("Using this profile: "..Bartender4.db:GetCurrentProfile())
 	
 	-- Checking for our Profile
 	if (not module:BartenderProfileCheck(ProfileName,true)) then DB.ActionBars.Bartender4 = false end
@@ -126,6 +98,9 @@ function module:MergeData(target,source)
 end
 
 function module:InitActionBars()
+
+	Artwork_Core:ActionBarPlates("SUI_ActionBarPlate");
+
 	do -- create bar plate and masks
 		plate = CreateFrame("Frame","SUI_ActionBarPlate",SpartanUI,"SUI_ActionBarsTemplate");
 		plate:SetFrameStrata("BACKGROUND"); plate:SetFrameLevel(1);
@@ -139,7 +114,6 @@ function module:InitActionBars()
 		plate.mask2:SetFrameStrata("MEDIUM"); plate.mask2:SetFrameLevel(0);
 		plate.mask2:SetPoint("BOTTOM",SUI_Popup2,"BOTTOM");
 	end
-	Artwork_Core:ActionBarPlates("SUI_ActionBarPlate");
 end
 
 function module:EnableActionBars()

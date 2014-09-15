@@ -6,7 +6,7 @@ local FontItems = {Primary={},Core={},Party={},Player={},Raid={}}
 local FontItemsSize = {Primary={},Core={},Party={},Player={},Raid={}}
 
 function module:OnInitialize()
-	addon.optionsGeneral.args["font"] = {name = L["FontSizeStyle"], type = "group",
+	addon.opt.General.args["font"] = {name = L["FontSizeStyle"], type = "group",
 		args = {
 			line0 = {name=L["GFontSet"],type="header",order=20},
 			GFace = {name = L["FontType"], type="select", order = 1,

@@ -16,7 +16,7 @@ function addon:UpdateText()
 end
 
 function addon:OnInitialize()
-	spartan.optionsPartyFrames.args["DisplayOpts"] = {name=L["Frames/DisplayOpts"],type="group",order=1,
+	spartan.opt.PartyFrames.args["DisplayOpts"] = {name=L["Frames/DisplayOpts"],type="group",order=1,
 		desc=L["Frames/DisplayOptsPartyDesc"],args = {
 			bar1 = {name=L["Frames/WhenDisplayParty"],type="header",order=0},
 			toggleraid =  {name=L["Frames/PartyDispRaid"],type="toggle",order=1,
@@ -78,7 +78,7 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	spartan.optionsPartyFrames.args["auras"] = {name=L["Frames/BuffDebuff"],type="group",order=2,
+	spartan.opt.PartyFrames.args["auras"] = {name=L["Frames/BuffDebuff"],type="group",order=2,
 		args = {
 			display = {name=L["Frames/DispBuffDebuff"],type="toggle", order=1,
 				get = function(info) return DBMod.PartyFrames.showAuras; end,
@@ -111,7 +111,7 @@ function addon:OnInitialize()
 			
 		}
 	};
-	spartan.optionsPartyFrames.args["castbar"] = {name=L["Frames/PrtyCast"],type="group",order=3,
+	spartan.opt.PartyFrames.args["castbar"] = {name=L["Frames/PrtyCast"],type="group",order=3,
 		desc = L["Frames/PrtyCastDesc"], args = {
 			castbar = {name=L["Frames/FillDir"],type="select", style="radio",
 				values = {[0]=L["Frames/FillLR"],[1]=L["Frames/DepRL"]},
@@ -126,7 +126,7 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.optionsPartyFrames.args["FramePreSets"] = {name=L["Frames/PreSets"],type="select",order=1,
+	spartan.opt.PartyFrames.args["FramePreSets"] = {name=L["Frames/PreSets"],type="select",order=1,
 		values = {["custom"]=L["Frames/Custom"],["tank"]=L["Frames/Tank"],["dps"]=L["Frames/DPS"],["healer"]=L["Frames/Healer"]},
 		get = function(info) return DBMod.PartyFrames.preset; end,
 		set = function(info,val)
@@ -144,14 +144,14 @@ function addon:OnInitialize()
 			end
 		end
 	};
-	spartan.optionsPartyFrames.args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="select",order=2,
+	spartan.opt.PartyFrames.args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="select",order=2,
 		values = {[L["Frames/Large"]]=L["Frames/StyleLarge"],[L["Frames/Medium"]]=L["Frames/StyleMed"],[L["Frames/Small"]]=L["Frames/StyleSmall"],["xsmall"]=L["Frames/StyleXSmall"]},
 		get = function(info) return DBMod.PartyFrames.FrameStyle; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.FrameStyle = val; DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.optionsPartyFrames.args["mana"] = {name=L["Frames/DispMana"],type="toggle",order=2.5,
+	spartan.opt.PartyFrames.args["mana"] = {name=L["Frames/DispMana"],type="toggle",order=2.5,
 		hidden = function(info)
 			if DBMod.PartyFrames.FrameStyle == "xsmall" or DBMod.PartyFrames.FrameStyle == "small" then return false; else return true; end
 		end,
@@ -160,21 +160,21 @@ function addon:OnInitialize()
 			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.display.mana = val; DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.optionsPartyFrames.args["Portrait"] = {name=L["Frames/DispPort"],type="toggle",order=3,
+	spartan.opt.PartyFrames.args["Portrait"] = {name=L["Frames/DispPort"],type="toggle",order=3,
 		get = function(info) return DBMod.PartyFrames.Portrait; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.Portrait = val; DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.optionsPartyFrames.args["Portrait3D"] =  {name = L["Frames/Portrait3D"], type = "toggle", order=3.1,
+	spartan.opt.PartyFrames.args["Portrait3D"] =  {name = L["Frames/Portrait3D"], type = "toggle", order=3.1,
 		get = function(info) return DBMod.PartyFrames.Portrait3D; end,
 		set = function(info,val) DBMod.PartyFrames.Portrait3D = val; end
 	};
-	spartan.optionsPartyFrames.args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
+	spartan.opt.PartyFrames.args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
 		get = function(info) return DBMod.PartyFrames.threat; end,
 		set = function(info,val) DBMod.PartyFrames.threat = val; DBMod.PartyFrames.preset = "custom"; end
 	};
-	spartan.optionsPartyFrames.args["partyReset"] = {name=L["Frames/ResetPartyPos"],type="execute",order=5,
+	spartan.opt.PartyFrames.args["partyReset"] = {name=L["Frames/ResetPartyPos"],type="execute",order=5,
 		func = function()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
@@ -184,7 +184,7 @@ function addon:OnInitialize()
 			end
 		end
 	};
-	spartan.optionsPartyFrames.args["scale"] = {name = L["Frames/ScaleSize"], type = "range", order=11,width="full",
+	spartan.opt.PartyFrames.args["scale"] = {name = L["Frames/ScaleSize"], type = "range", order=11,width="full",
 		step=.01,min = .01,max = 2,
 		get = function(info) return DBMod.PartyFrames.scale; end,
 		set = function(info,val)

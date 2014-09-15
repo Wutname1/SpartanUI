@@ -27,6 +27,30 @@ function Artwork_Core:ActionBarPlates(plate)
 end
 
 function Artwork_Core:OnInitialize()
-	-- DBMod.Artwork.Theme = "SciFi"
-	DBMod.Artwork.Theme = "Classic"
+	Artwork_Core:CheckMiniMap();
+	Artwork_Core:SetupOptions();
+end
+
+function Artwork_Core:CheckMiniMap()
+	-- Check for Carbonite dinking with the minimap.
+	if (NXTITLELOW) then
+		spartan:Print(NXTITLELOW..' is loaded ...Checking settings ...');
+		if (Nx.db.profile.MiniMap.Own == true) then
+			spartan:Print(NXTITLELOW..' is controlling the Minimap');
+			spartan:Print("SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap");
+			DB.MiniMap.AutoDetectAllowUse = false;
+		end
+	end
+	
+	if select(4, GetAddOnInfo("SexyMap")) then
+		spartan:Print(L["SexyMapLoaded"])
+		DB.MiniMap.AutoDetectAllowUse = false;
+	end
+	
+	local point, relativeTo, relativePoint, x, y = MinimapCluster:GetPoint();
+	if (relativeTo ~= UIParent) then
+		spartan:Print('A unknown addon is controlling the Minimap');
+		spartan:Print("SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.");
+		DB.MiniMap.AutoDetectAllowUse = false;
+	end
 end
