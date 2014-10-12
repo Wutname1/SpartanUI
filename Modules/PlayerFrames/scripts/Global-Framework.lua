@@ -7,7 +7,6 @@ local base_plate2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate2.
 local base_plate3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate3.tga]] -- Pet TargetTarget Large, Medium
 local base_plate4 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate4.blp]] -- TargetTarget small
 local circle = [[Interface\AddOns\SpartanUI_PlayerFrames\media\circle.tga]]
---local base_plate5 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate5.blp]] -- Not Used at this time, is long version of base_plate2
 local base_ring1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring1]]
 local base_ring3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring3]]
 local Smoothv2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga]]

@@ -15,10 +15,15 @@ function Artwork_Core:SetupOptions()
 		set = function(info,val) 
 			DBMod.Artwork.Theme = val;
 			newtheme = spartan:GetModule("Artwork_"..val)
-			newtheme:SetupProfile();
+			newtheme:CreateProfile();
 			ReloadUI();
-		end	}
-	spartan.opt.Artwork.args["Global"] = {name = "Theme Options",type="group",order=1,
+		end
+	}
+	spartan.opt.Artwork.args["Reload"] = {name = "ReloadUI",type = "execute",order=2,
+		desc = L["ResetDatabaseDesc"],
+		func = function() ReloadUI(); end
+	};
+	spartan.opt.Artwork.args["Global"] = {name = "Artwork Options",type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],

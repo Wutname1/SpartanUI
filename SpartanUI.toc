@@ -3,6 +3,8 @@
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: 3.3.0
 ## Author: Wutname1
+## X-oUF: SpartanoUF
+## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
 
 #@no-lib-strip@
@@ -18,6 +20,10 @@ libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\AceLocale-3.0\AceLocale-3.0.xml
 #@end-no-lib-strip@
+
+libs\oUF\oUF.xml
+libs\oUF_Plugins\oUF_AuraWatch.lua
+libs\oUF_Plugins\oUF_RaidDebuffs.lua
 
 lang\enUS.lua
 lang\esES.lua

@@ -6,14 +6,10 @@ local module = spartan:NewModule("Artwork_SciFi");
 local anchor, frame = SciFi_AnchorFrame, SciFi_SpartanUI, CurScale;
 
 local SciFi_updateSpartanViewport = function() -- handles viewport offset based on settings
-	if not InCombatLockdown() and (SciFi_SpartanUI_Base5:GetHeight() ~= 0) then
+	if not InCombatLockdown() then
 		WorldFrame:ClearAllPoints();
-		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
-		if SciFi_SpartanUI_Base5:IsVisible() then
-			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
-		else
-			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
-		end
+		WorldFrame:SetPoint("TOPLEFT", UIParent);
+		WorldFrame:SetPoint("BOTTOMRIGHT", UIParent);
 	end
 end;
 
@@ -28,28 +24,15 @@ local SciFi_updateSpartanScale = function() -- scales SpartanUI based on setting
 		if (DB.scale ~= Artwork_Core:round(SciFi_SpartanUI:GetScale())) then
 			frame:SetScale(DB.scale);
 		end
-		if DB.scale <= .75 then
-			SciFi_SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
-			SciFi_SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
-		else
-			SciFi_SpartanUI_Base3:ClearAllPoints();
-			SciFi_SpartanUI_Base5:ClearAllPoints();
-			SciFi_SpartanUI_Base3:SetPoint("RIGHT", SciFi_SpartanUI_Base2, "LEFT");
-			SciFi_SpartanUI_Base5:SetPoint("LEFT", SciFi_SpartanUI_Base4, "RIGHT");
-		end
 		CurScale = DB.scale
 	end
 end;
 
 local SciFi_updateSpartanAlpha = function() -- scales SpartanUI based on setting or screen size
 	if DB.alpha then
-		SciFi_SpartanUI_Base1:SetAlpha(DB.alpha);
-		SciFi_SpartanUI_Base2:SetAlpha(DB.alpha);
-		SciFi_SpartanUI_Base3:SetAlpha(DB.alpha);
-		SciFi_SpartanUI_Base4:SetAlpha(DB.alpha);
-		SciFi_SpartanUI_Base5:SetAlpha(DB.alpha);
-		SciFi_Popup1Mask:SetAlpha(DB.alpha);
-		SciFi_Popup2Mask:SetAlpha(DB.alpha);
+		SciFi_SpartanUI_Center:SetAlpha(DB.alpha);
+		-- SciFi_Popup1Mask:SetAlpha(DB.alpha);
+		-- SciFi_Popup2Mask:SetAlpha(DB.alpha);
 	end
 end;
 
@@ -92,15 +75,6 @@ end;
 local SciFi_updateSpartanXOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
 	if not DB.xOffset then return 0; end
 	local offset = DB.xOffset
-	if Artwork_Core:round(offset) <= -300 then
-		SciFi_SpartanUI_Base5:ClearAllPoints();
-		SciFi_SpartanUI_Base5:SetPoint("LEFT", SciFi_SpartanUI_Base4, "RIGHT");
-		SciFi_SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
-	elseif Artwork_Core:round(offset) >= 300 then
-		SciFi_SpartanUI_Base3:ClearAllPoints();
-		SciFi_SpartanUI_Base3:SetPoint("RIGHT", SciFi_SpartanUI_Base2, "LEFT");
-		SciFi_SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
-	end
 	SciFi_SpartanUI:SetPoint("LEFT", SciFi_AnchorFrame, "LEFT", offset, 0)
 	if (Artwork_Core:round(offset) ~= Artwork_Core:round(anchor:GetWidth())) then anchor:SetWidth(offset); end
 	DB.xOffset = offset
@@ -257,7 +231,7 @@ end
 
 function module:EnableFramework()
 	for i = 1,5 do
-		_G["SciFi_SpartanUI_Base" ..i]:SetVertexColor(0,.8,.9,.7)
+--		_G["SciFi_SpartanUI_Base" ..i]:SetVertexColor(0,.8,.9,.7)
 	end
 	--SciFi_Popup1Mask:SetVertexColor(0,.8,.9,.7)
 	--SciFi_Popup2Mask:SetVertexColor(0,.8,.9,.7)
@@ -282,7 +256,7 @@ function module:EnableFramework()
 	SciFi_updateSpartanOffset();
 	SciFi_updateSpartanXOffset();
 	SciFi_updateSpartanViewport();
-	SciFi_updateSpartanAlpha();
+	-- SciFi_updateSpartanAlpha();
 	
 	-- Limit updates via interval
 	anchor.UpdateInterval = 5 --Seconds

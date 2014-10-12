@@ -3,10 +3,11 @@
 ## Notes: Manages the Artwork and layout that SpartanUI uses
 ## Version: 3.3.0
 ## Author: Wutname1
-## OptionalDeps: Bartender4
 ## RequiredDeps: SpartanUI
+## OptionalDeps: Bartender4
 
 SpartanUI_Artwork.xml
 
 Themes\Classic\Style.xml
-Themes\SciFi\Style.xml
+## Themes\SciFi\Style.xml
+## Themes\Transparent\Style.xml

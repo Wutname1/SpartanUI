@@ -149,6 +149,7 @@ DBdefault = {
 			display = {pet = true,target=true,mana=true},
 		},
 		PlayerFrames = {
+			style = "theme",
 			Portrait3D = true,
 			showClass = true,
 			focusMoved = false,
@@ -261,7 +262,7 @@ function addon:OnEnable()
     AceConfig:RegisterOptionsTable("SpartanUI", addon.opt.Main)
 	self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI")
 	addon:AddOption("General", addon.opt.General, L["General"])
-	if addon:GetModule("Artwork_Core", true) then addon:AddOption("Artwork", addon.opt.Artwork, "Artwork") end --Localization Needed
+	if addon:GetModule("Artwork_Core", true) then addon:AddOption("Artwork", addon.opt.Artwork, "Artwork") end
 	if addon:GetModule("FilmEffect", true) then addon:AddOption("Film Effects", addon.opt.FilmEffects, L["FilmEffects"]) end
     if addon:GetModule("PartyFrames", true) then addon:AddOption("Party Frames", addon.opt.PartyFrames, L["PartyFrames"]) end
     if addon:GetModule("PlayerFrames", true) then addon:AddOption("Player Frames", addon.opt.PlayerFrames, L["PlayerFrames"]) end

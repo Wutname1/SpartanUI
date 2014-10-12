@@ -40,21 +40,21 @@ end
 
 function module:SetRepColors()
 	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-	if DB.RepBar.AutoDefined == true then
-		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
-		SciFi_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
-		SciFi_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
-	else
-		r = DB.RepBar.GainedRed
-		b = DB.RepBar.GainedBlue
-		g = DB.RepBar.GainedGreen
-		a = DB.RepBar.GainedBrightness
-		SciFi_ReputationBarFill:SetVertexColor	(r, g, b, a);
-		SciFi_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
-	end
+	-- if DB.RepBar.AutoDefined == true then
+		-- local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
+		-- SciFi_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
+		-- SciFi_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
+	-- else
+		-- r = DB.RepBar.GainedRed
+		-- b = DB.RepBar.GainedBlue
+		-- g = DB.RepBar.GainedGreen
+		-- a = DB.RepBar.GainedBrightness
+		-- SciFi_ReputationBarFill:SetVertexColor	(r, g, b, a);
+		-- SciFi_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
+	-- end
 
 	-- Set Text if needed
-	if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+	-- if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
 end
 
 function module:SetXPColors()
@@ -111,7 +111,7 @@ function module:EnableStatusBars()
 		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
 
 		xpframe = CreateFrame("Frame","SciFi_ExperienceBar",SciFi_SpartanUI,"SciFi_StatusBars_XPTemplate");
-		xpframe:SetPoint("BOTTOMRIGHT","SciFi_SpartanUI","BOTTOM",-100,0);
+		xpframe:SetPoint("BOTTOMRIGHT","SciFi_SpartanUI_Center","BOTTOMLEFT",-50,-50);
 		--SciFi_ExperienceBarPlate:SetSize(400, 32);
 		SciFi_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
 		
@@ -168,58 +168,58 @@ function module:EnableStatusBars()
 		module:SetXPColors();
 	end
 	do -- reputation bar
-		repframe = CreateFrame("Frame","SciFi_ReputationBar",SciFi_SpartanUI,"SciFi_StatusBars_RepTemplate");
-		repframe:SetPoint("BOTTOMLEFT",SciFi_SpartanUI,"BOTTOM",100,0);
-		SciFi_ReputationBarPlate:SetTexCoord(0.035,0.83,0,1);
+		-- repframe = CreateFrame("Frame","SciFi_ReputationBar",SciFi_SpartanUI,"SciFi_StatusBars_RepTemplate");
+		-- repframe:SetPoint("BOTTOMRIGHT","SciFi_SpartanUI_Center","BOTTOMLEFT",-50,40);
+		-- SciFi_ReputationBarPlate:SetTexCoord(0.035,0.83,0,1);
 		
-		repframe:SetScript("OnEvent",function()
-			if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
-			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-			if name then ratio = (current-low)/(high-low); end
-			SciFi_StatusBarTooltipHeader:SetText(name);
-			if ratio == 0 then
-				SciFi_ReputationBarFill:SetWidth(0.1);
-			else
-				SciFi_ReputationBarFill:SetWidth(ratio*400);
-				module:SetRepColors()
-			end
+		-- repframe:SetScript("OnEvent",function()
+			-- if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
+			-- local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
+			-- if name then ratio = (current-low)/(high-low); end
+			-- SciFi_StatusBarTooltipHeader:SetText(name);
+			-- if ratio == 0 then
+				-- SciFi_ReputationBarFill:SetWidth(0.1);
+			-- else
+				-- SciFi_ReputationBarFill:SetWidth(ratio*400);
+				-- module:SetRepColors()
+			-- end
 			
-			if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
-		end);
-		local showRepTooltip = function()
-			tooltip:ClearAllPoints();
-			tooltip:SetPoint("BOTTOM",SciFi_ReputationBar,"TOP",-2,-1);
-			local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
-			if name then
-				text = GetFactionDetails(name);
-				ratio = (current-low)/(high-low);
-				SciFi_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
-				SciFi_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
-			else
-				SciFi_StatusBarTooltipHeader:SetText(REPUTATION);
-				SciFi_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
-			end
-			tooltip:Show();
-		end
+			-- if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+		-- end);
+		-- local showRepTooltip = function()
+			-- tooltip:ClearAllPoints();
+			-- tooltip:SetPoint("BOTTOM",SciFi_ReputationBar,"TOP",-2,-1);
+			-- local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
+			-- if name then
+				-- text = GetFactionDetails(name);
+				-- ratio = (current-low)/(high-low);
+				-- SciFi_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+				-- SciFi_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
+			-- else
+				-- SciFi_StatusBarTooltipHeader:SetText(REPUTATION);
+				-- SciFi_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
+			-- end
+			-- tooltip:Show();
+		-- end
 		
-		repframe.Text = repframe:CreateFontString();
-		spartan:FormatFont(repframe.Text, 10, "Core")
-		repframe.Text:SetDrawLayer("OVERLAY");
-		repframe.Text:SetSize(250, 30);
-		repframe.Text:SetJustifyH("MIDDLE"); repframe.Text:SetJustifyV("MIDDLE");
-		repframe.Text:SetPoint("TOP",repframe,"TOP",4,0);
+		-- repframe.Text = repframe:CreateFontString();
+		-- spartan:FormatFont(repframe.Text, 10, "Core")
+		-- repframe.Text:SetDrawLayer("OVERLAY");
+		-- repframe.Text:SetSize(250, 30);
+		-- repframe.Text:SetJustifyH("MIDDLE"); repframe.Text:SetJustifyV("MIDDLE");
+		-- repframe.Text:SetPoint("TOP",repframe,"TOP",4,0);
 		
-		repframe:SetScript("OnEnter",function() if DB.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
-		repframe:SetScript("OnMouseDown",function() if DB.RepBar.ToolTip == "click" then showRepTooltip(); end end);
-		repframe:SetScript("OnLeave",function() tooltip:Hide(); end);
+		-- repframe:SetScript("OnEnter",function() if DB.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
+		-- repframe:SetScript("OnMouseDown",function() if DB.RepBar.ToolTip == "click" then showRepTooltip(); end end);
+		-- repframe:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
-		repframe:RegisterEvent("PLAYER_ENTERING_WORLD");
-		repframe:RegisterEvent("UPDATE_FACTION");
-		repframe:RegisterEvent("PLAYER_LEVEL_UP");
-		repframe:RegisterEvent("CVAR_UPDATE");
+		-- repframe:RegisterEvent("PLAYER_ENTERING_WORLD");
+		-- repframe:RegisterEvent("UPDATE_FACTION");
+		-- repframe:RegisterEvent("PLAYER_LEVEL_UP");
+		-- repframe:RegisterEvent("CVAR_UPDATE");
 		
-		repframe:SetFrameStrata("BACKGROUND");
-		repframe:SetFrameLevel(2);
+		-- repframe:SetFrameStrata("BACKGROUND");
+		-- repframe:SetFrameLevel(2);
 		module:SetRepColors();
 	end
 end

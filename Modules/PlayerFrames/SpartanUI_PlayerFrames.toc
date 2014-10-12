@@ -4,14 +4,7 @@
 ## Version: 3.3.0
 ## Author: Wutname1
 ## X-Category: User Interfaces
-## X-oUF: SpartanoUF
 ## RequiredDeps: SpartanUI
-
-libs\oUF\oUF.xml
-libs\oUF_Plugins\oUF_AuraWatch.lua
-libs\oUF_Plugins\oUF_RaidDebuffs.lua
+## OptionalDeps: SpartanUI_Artwork
 
 scripts\Global-Framework.xml
-scripts\Unit-PlayerFrame.lua
-scripts\Unit-FrameSpawn.lua
-scripts\Options.lua

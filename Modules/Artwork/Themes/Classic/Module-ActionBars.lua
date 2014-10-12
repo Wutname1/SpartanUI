@@ -73,6 +73,27 @@ function module:SetupProfile()
 		end
 	end);
 end;
+function module:CreateProfile()
+	--Exit if Bartender4 is not loaded
+	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
+	
+	print("Using this profile: "..Bartender4.db:GetCurrentProfile())
+	
+	-- Checking for our Profile
+	if (not module:BartenderProfileCheck(ProfileName,true)) then DB.ActionBars.Bartender4 = false end
+	
+	-- Set to our Profile
+	if DB.ActionBars.Bartender4 then
+		if Bartender4.db:GetCurrentProfile() ~= ProfileName then Bartender4.db:SetProfile(ProfileName) end return;
+	end
+	
+	--Load the Profile Data
+	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+		if BartenderSettings[k] and v.db.profile then
+			v.db.profile = module:MergeData(v.db.profile,BartenderSettings[k])
+		end
+	end
+end
 
 function module:BartenderProfileCheck(Input,Report)
 	local profiles, r = Bartender4.db:GetProfiles(), false

@@ -509,20 +509,25 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.opt.PlayerFrames.args["resetfocus"] = {name = L["Frames/resetfocus"],type = "execute",order=1,
+	spartan.opt.PlayerFrames.args["UnitFrameMode"] = {name = "Unit Frame Mode",type="select",order=1,
+		values = {["theme"]="Theme Frames",["classic"]="Classic Style",["plain"]="Minimal Frames"},
+		get = function(info) return DBMod.PlayerFrames.style; end,
+		set = function(info,val) DBMod.PlayerFrames.style = val; end
+	};
+	spartan.opt.PlayerFrames.args["resetfocus"] = {name = L["Frames/resetfocus"],type = "execute",order=2,
 		desc = L["Frames/resetfocusDesc"],
 		func = function() DBMod.PlayerFrames.focus.movement.moved = false; addon:UpdateFocusPosition(); end
 	};
-	spartan.opt.PlayerFrames.args["resetSpecialBar"] = {name = L["Frames/resetSpecialBar"],type = "execute",order=1,
+	spartan.opt.PlayerFrames.args["resetSpecialBar"] = {name = L["Frames/resetSpecialBar"],type = "execute",order=3,
 		desc = L["Frames/resetSpecialBarDesc"],
 		func = function() addon:ResetAltBarPositions(); end
 	};
 end
 
 function addon:OnEnable()
-	for k,v in pairs(Units) do if DBMod.PlayerFrames[v].AuraDisplay then
-		if addon[v].Auras then addon[v].Auras:PostUpdate(v); end
-		if addon[v].Debuffs then addon[v].Debuffs:PostUpdate(v); end
-	end end
-	for k,v in pairs(Units) do if DBMod.PlayerFrames[v].display then addon[v]:Enable(); else addon[v]:Disable(); end end
+	-- for k,v in pairs(Units) do if DBMod.PlayerFrames[v].AuraDisplay then
+		-- if addon[v].Auras then addon[v].Auras:PostUpdate(v); end
+		-- if addon[v].Debuffs then addon[v].Debuffs:PostUpdate(v); end
+	-- end end
+	-- for k,v in pairs(Units) do if DBMod.PlayerFrames[v].display then addon[v]:Enable(); else addon[v]:Disable(); end end
 end

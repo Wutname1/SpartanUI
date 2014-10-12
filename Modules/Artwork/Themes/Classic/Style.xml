@@ -224,5 +224,6 @@
 	<Script file="Module-ActionBars.lua" />
 	<Script file="Module-Minimap.lua" />
 	<Script file="Module-StatusBars.lua" />
+	<Script file="Module-UnitFrames.lua" />
 	<Script file="Style.lua" />
 </Ui>

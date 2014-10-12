@@ -32,10 +32,9 @@ function Init()
 end
 
 function SetupMenus()
-	spartan.opt.General.args["backdrop"] = {
-		name = "ActionBar Settings",
+	spartan.opt.Artwork.args["backdrop"] = { name = "ActionBar Settings", type = "group",
 		desc = L["ActionBarConfDesc"],
-		type = "group", args = {
+		args = {
 			Allalpha = {name = L["AllBarAlpha"], type="range", order = 15,
 				min=0, max=100, step=1,
 				get = function(info) return DB.ActionBars.Allalpha; end,
@@ -116,10 +115,9 @@ function SetupMenus()
 			}
 		}
 	};
-	spartan.opt.General.args["popup"] = {
-		name = L["PopupAnimConf"],
+	spartan.opt.Artwork.args["popup"] = { name = L["PopupAnimConf"], type = "group",
 		desc = L["PopupAnimConfDesc"],
-		type = "group", args = {
+		args = {
 			popup1anim = {	name = L["LPopupAnimate"], type="toggle", order=1, width="full",
 				get = function(info) return DB.ActionBars.popup1.anim; end,
 				set = function(info,val) DB.ActionBars.popup1.anim = val; end
@@ -148,7 +146,7 @@ function SetupMenus()
 			}
 		}
 	};
-	spartan.opt.General.args["minimap"] = {
+	spartan.opt.Artwork.args["minimap"] = {
 		name = L["MinMapSet"],
 		desc = L["MinMapSetConf"],
 		type = "group", args = {
@@ -162,7 +160,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.General.args["ChatSettings"] = {
+	spartan.opt.Artwork.args["ChatSettings"] = {
 		name = L["ChatSettings"],
 		desc = L["ChatSettingsDesc"],
 		type = "group", args = {
@@ -186,7 +184,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.General.args["BuffSettings"] = {
+	spartan.opt.Artwork.args["BuffSettings"] = {
 		name = L["BuffOffsetSetting"],
 		desc = L["BuffOffsetSettingDesc"],
 		type = "group", args = {
@@ -218,7 +216,7 @@ function SetupMenus()
 			},
 		}
 	}
-	spartan.opt.General.args["XPBar"] = {
+	spartan.opt.Artwork.args["XPBar"] = {
 		name = L["BarXP"],
 		desc = L["BarXPDesc"],
 		type = "group", args = {
@@ -325,7 +323,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.General.args["RepBar"] = {
+	spartan.opt.Artwork.args["RepBar"] = {
 		name = L["BarRep"],
 		desc = L["BarRepDesc"],
 		type = "group", args = {
@@ -392,7 +390,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.General.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+	spartan.opt.Artwork.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
 		desc = L["DefScalesDesc"],
 		func = function()
 			if (InCombatLockdown()) then 
@@ -406,7 +404,7 @@ function SetupMenus()
 			end
 		end
 	};
-	spartan.opt.General.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+	spartan.opt.Artwork.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
 		desc = L["ConfScaleDesc"],min = 0,max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
@@ -418,7 +416,7 @@ function SetupMenus()
 		end,
 		get = function(info) return DB.scale; end
 	};
-	spartan.opt.General.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
+	spartan.opt.Artwork.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
 		desc = L["ConfOffsetDesc"],
 		min=0,max=200,step=.1,
 		get = function(info) return DB.yoffset end,
@@ -436,12 +434,12 @@ function SetupMenus()
 		end,
 		get = function(info) return DB.yoffset; end
 	};
-	spartan.opt.General.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
+	spartan.opt.Artwork.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
 		desc = L["AutoOffsetDesc"],
 		get = function(info) return DB.yoffsetAuto end,
 		set = function(info,val) DB.yoffsetAuto = val end,
 	};
-	spartan.opt.General.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
+	spartan.opt.Artwork.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],

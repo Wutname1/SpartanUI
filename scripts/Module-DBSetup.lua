@@ -212,6 +212,8 @@ function module:OnInitialize()
 			if DBMod.PartyFrames.showClass == nil then DBMod.PartyFrames.showClass = true end
 		end
 		if (DB.Version < "3.3.0") then
+			if not DBMod.PlayerFrames.style then DBMod.PlayerFrames.style = "theme" end
+			
 			if not DBMod.PlayerFrames.Portrait3D then DBMod.PlayerFrames.Portrait3D = false end
 			if not DBMod.PartyFrames.Portrait3D then DBMod.PartyFrames.Portrait3D = false end
 			if not DBMod.PartyFrames.HideBlizzFrames then DBMod.PartyFrames.HideBlizzFrames = true end

@@ -35,13 +35,20 @@ end
 function SciFi_modifyMinimapLayout()
 	frame = CreateFrame("Frame","SciFi_Minimap",SciFi_SpartanUI);
 	frame:SetSize(140, 140);
-	frame:SetPoint("CENTER",0,50);
+	frame:SetPoint("BOTTOMLEFT",SciFi_SpartanUI_Center,"BOTTOMRIGHT",10,40);
 	
 	Minimap:SetParent(frame);
 	Minimap:SetSize(140, 140);
 	Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("CENTER","SciFi_Minimap","CENTER",0,0);
+	
+	TimeManagerClockButton:GetRegions():Hide() -- Hide the border
+	TimeManagerClockButton:SetBackdrop(nil)
+	TimeManagerClockButton:ClearAllPoints()
+	TimeManagerClockButton:SetPoint("TOP", Minimap, "BOTTOM", 0, 20)
+	TimeManagerClockButton:SetBackdropColor(0, 0, 0, 1)
+	TimeManagerClockButton:SetBackdropBorderColor(0, 0, 0, 1)
 	
 	MinimapBackdrop:ClearAllPoints(); MinimapBackdrop:SetPoint("CENTER",frame,"CENTER",-10,-24);
 	

@@ -21,20 +21,8 @@
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI_Artwork\Themes\SciFi\Images\base-center">
+				<Texture name="$parent_Center" file="Interface\AddOns\SpartanUI_Artwork\Themes\SciFi\Images\base-center">
 					<Anchors><Anchor point="BOTTOM" relativePoint="BOTTOM"/></Anchors>
-				</Texture>
-				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI_Artwork\Themes\SciFi\Images\base-left1">
-					<Anchors><Anchor point="RIGHT" relativeTo="$parent_Base1" relativePoint="LEFT"/></Anchors>
-				</Texture>
-				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI_Artwork\Themes\SciFi\Images\base-left1" tile="true">
-					<Anchors><Anchor point="RIGHT" relativeTo="$parent_Base2" relativePoint="LEFT"/></Anchors>
-				</Texture>
-				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI_Artwork\Themes\SciFi\Images\base-left1" >
-					<Anchors><Anchor point="LEFT" relativeTo="$parent_Base1" relativePoint="RIGHT"/></Anchors>
-				</Texture>
-				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI_Artwork\Themes\SciFi\Images\base-left1" tile="true">
-					<Anchors><Anchor point="LEFT" relativeTo="$parent_Base4" relativePoint="RIGHT"/></Anchors>
 				</Texture>
 			</Layer>
 		</Layers>
@@ -141,7 +129,7 @@
 	</Frame>
 	
 	<!-- SciFi_PopTemplate -->
-	<Frame name="SciFi_PopTemplate" frameStrata="BACKGROUND" virtual="true">
+<!-- 	<Frame name="SciFi_PopTemplate" frameStrata="BACKGROUND" virtual="true">
 		<Size><AbsDimension x="400" y="32" /></Size>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -151,7 +139,7 @@
 				</Texture>
 			</Layer>
 		</Layers>
-	</Frame>
+	</Frame> -->
 	
 	<!-- SciFi_BarTemplate1 -->
 	<Frame name="SciFi_BarTemplate1" frameStrata="BACKGROUND" virtual="true">
@@ -183,19 +171,19 @@
 	<Frame name="SciFi_ActionBarsTemplate" parent="SciFi_SpartanUI" frameStrata="BACKGROUND" virtual="true">
 		<Size><AbsDimension x="1002" y="139"/></Size>
 		<Frames>
-			<Frame name="SciFi_Bar1" inherits="SciFi_BarTemplate1"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="70" /></Offset></Anchor></Anchors></Frame>
+<!-- 			<Frame name="SciFi_Bar1" inherits="SciFi_BarTemplate1"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="70" /></Offset></Anchor></Anchors></Frame>
 			<Frame name="SciFi_Bar2" inherits="SciFi_BarTemplate1"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="31" /></Offset></Anchor></Anchors></Frame>
 			<Frame name="SciFi_Bar3" inherits="SciFi_BarTemplate1"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="70" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="SciFi_Bar4" inherits="SciFi_BarTemplate1"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="31" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="SciFi_Bar5" inherits="SciFi_BarTemplate3"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-502" y="5" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="SciFi_Bar6" inherits="SciFi_BarTemplate3"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="502" y="5" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="SciFi_Popup1" inherits="SciFi_PopTemplate"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="105" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="SciFi_Popup2" inherits="SciFi_PopTemplate"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="105" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="SciFi_Bar4" inherits="SciFi_BarTemplate1"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="31" /></Offset></Anchor></Anchors></Frame> -->
+		<!-- 	<Frame name="SciFi_Bar5" inherits="SciFi_BarTemplate3"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-502" y="5" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="SciFi_Bar6" inherits="SciFi_BarTemplate3"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="502" y="5" /></Offset></Anchor></Anchors></Frame> -->
+			<!-- <Frame name="SciFi_Popup1" inherits="SciFi_PopTemplate"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="105" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="SciFi_Popup2" inherits="SciFi_PopTemplate"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="105" /></Offset></Anchor></Anchors></Frame> -->
 		</Frames>
 	</Frame>
 	
 	<!-- SciFi_Popup1MaskTemplate -->
-	<Frame name="SciFi_Popup1MaskTemplate" parent="SciFi_SpartanUI" frameStrata="MEDIUM" virtual="true">
+<!-- 	<Frame name="SciFi_Popup1MaskTemplate" parent="SciFi_SpartanUI" frameStrata="MEDIUM" virtual="true">
 		<Size><AbsDimension x="400" y="34"/></Size>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -205,10 +193,10 @@
 				</Texture>
 			</Layer>
 		</Layers>
-	</Frame>
+	</Frame> -->
 	
 	<!-- SciFi_Popup2MaskTemplate -->
-	<Frame name="SciFi_Popup2MaskTemplate" parent="SciFi_SpartanUI" frameStrata="MEDIUM" virtual="true">
+<!-- 	<Frame name="SciFi_Popup2MaskTemplate" parent="SciFi_SpartanUI" frameStrata="MEDIUM" virtual="true">
 		<Size><AbsDimension x="400" y="34"/></Size>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -218,11 +206,12 @@
 				</Texture>
 			</Layer>
 		</Layers>
-	</Frame>
+	</Frame> -->
 
 	<Script file="Global-Framework.lua" />
 	<Script file="Module-ActionBars.lua" />
  	<Script file="Module-Minimap.lua" />
 	<Script file="Module-StatusBars.lua" />
+	<Script file="Module-UnitFrames.lua" />
 	<Script file="Style.lua" />
 </Ui>
