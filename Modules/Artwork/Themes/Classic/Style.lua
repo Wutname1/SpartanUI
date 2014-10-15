@@ -410,8 +410,12 @@ function SetupMenus()
 			if (InCombatLockdown()) then 
 				spartan:Print(ERR_NOT_IN_COMBAT);
 			else
-				DB.scale = min(1,round(val));
-				updateMinimumScale();
+				DB.scale = min(1,Artwork_Core:round(val));
+				module:updateSpartanScale();
+				module:updateSpartanOffset();
+				module:updateSpartanXOffset();
+				module:updateSpartanViewport();
+				module:updateSpartanAlpha();
 			end
 		end,
 		get = function(info) return DB.scale; end

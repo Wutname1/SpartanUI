@@ -9,12 +9,12 @@ local round = function(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;
 
-local updateMinimumScale = function()
+function module:updateMinimumScale()
 --	local minScale = floor(((UIParent:GetWidth()/2560)*10^2)+1) / (10^2);
 --	if DB.scale < minScale then DB.scale = minScale; end
 end;
 
-local updateSpartanViewport = function() -- handles viewport offset based on settings
+function module:updateSpartanViewport() -- handles viewport offset based on settings
 	if not InCombatLockdown() and (SpartanUI_Base5:GetHeight() ~= 0) then
 		WorldFrame:ClearAllPoints();
 		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
@@ -26,15 +26,15 @@ local updateSpartanViewport = function() -- handles viewport offset based on set
 	end
 end;
 
-local updateSpartanScale = function() -- scales SpartanUI based on setting or screen size
+function module:updateSpartanScale() -- scales SpartanUI based on setting or screen size
 	if (not DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar("gxResolution"),"(%d+).-(%d+)");
 		if (tonumber(width) / tonumber(height) > 4/3) then DB.scale = 0.92;
 		else DB.scale = 0.78; end
 	end
 	if DB.scale ~= CurScale then
-		updateMinimumScale();
-		updateSpartanViewport();
+		--module:updateMinimumScale();
+		module:updateSpartanViewport();
 		if (DB.scale ~= round(SpartanUI:GetScale())) then
 			frame:SetScale(DB.scale);
 		end
@@ -51,7 +51,7 @@ local updateSpartanScale = function() -- scales SpartanUI based on setting or sc
 	end
 end;
 
-local updateSpartanAlpha = function() -- scales SpartanUI based on setting or screen size
+function module:updateSpartanAlpha() -- scales SpartanUI based on setting or screen size
 	if DB.alpha then
 		SpartanUI_Base1:SetAlpha(DB.alpha);
 		SpartanUI_Base2:SetAlpha(DB.alpha);
@@ -63,7 +63,7 @@ local updateSpartanAlpha = function() -- scales SpartanUI based on setting or sc
 	end
 end;
 
-local updateSpartanOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
+function module:updateSpartanOffset() -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar,ChocolateBar,titan,offset = 0,0,0;
 
 	if not DB.yoffsetAuto then
@@ -99,7 +99,7 @@ local updateSpartanOffset = function() -- handles SpartanUI offset based on sett
 	DB.yoffset = offset
 end;
 
-local updateSpartanXOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
+function module:updateSpartanXOffset() -- handles SpartanUI offset based on setting or fubar / titan
 	if not DB.xOffset then return 0; end
 	local offset = DB.xOffset
 	if round(offset) <= -300 then
@@ -189,8 +189,8 @@ function module:InitFramework()
 		FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
 		
 		MainMenuBar:Hide();
-		hooksecurefunc(SpartanUI,"Hide",function() updateSpartanViewport(); end);
-		hooksecurefunc(SpartanUI,"Show",function() updateSpartanViewport(); end);
+		hooksecurefunc(SpartanUI,"Hide",function() module:updateSpartanViewport(); end);
+		hooksecurefunc(SpartanUI,"Show",function() module:updateSpartanViewport(); end);
 		hooksecurefunc("UpdateContainerFrameAnchors",function() -- fix bag offsets
 			local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
 			local screenWidth = GetScreenWidth()
@@ -279,11 +279,11 @@ function module:EnableFramework()
 	
 	RegisterStateDriver(SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
 
-	updateSpartanScale();
-	updateSpartanOffset();
-	updateSpartanXOffset();
-	updateSpartanViewport();
-	updateSpartanAlpha();
+	module:updateSpartanScale();
+	module:updateSpartanOffset();
+	module:updateSpartanXOffset();
+	module:updateSpartanViewport();
+	module:updateSpartanAlpha();
 	
 	-- Limit updates via interval
 	anchor.UpdateInterval = 5 --Seconds
@@ -294,10 +294,10 @@ function module:EnableFramework()
 		if (self.TimeSinceLastUpdate > self.UpdateInterval) then
 			if (InCombatLockdown()) then return; end
 			
-			updateSpartanScale();
-			updateSpartanOffset();
-			updateSpartanXOffset();
-			updateSpartanViewport();
+			module:updateSpartanScale();
+			module:updateSpartanOffset();
+			module:updateSpartanXOffset();
+			module:updateSpartanViewport();
 			self.TimeSinceLastUpdate = 0
 		end
 	end);
