@@ -13,6 +13,7 @@ function Artwork_Core:SetupOptions()
 		values=Profiles,
 		get = function(info) return DBMod.Artwork.Theme end,
 		set = function(info,val) 
+			DBMod.Artwork.FirstLoad = true
 			DBMod.Artwork.Theme = val;
 			newtheme = spartan:GetModule("Artwork_"..val)
 			newtheme:CreateProfile();
@@ -25,7 +26,7 @@ function Artwork_Core:SetupOptions()
 	};
 	spartan.opt.Artwork.args["Global"] = {name = "Base Options",type="group",order=0,
 		args = {
-			viewport = {name = "Viewport", type = "toggle",order=2,
+			viewport = {name = "Viewport", type = "toggle",order=1,
 				desc="Allow SpartanUI To manage the viewport",
 				get = function(info) return DB.viewport end,
 				set = function(info,val)
@@ -37,6 +38,29 @@ function Artwork_Core:SetupOptions()
 					end
 					DB.viewport = val
 				end,
+			},
+			viewportoffsets = {
+				name = "Viewport offset",order=2,type = "description", fontSize = "large"
+			},
+			viewportoffsetTop = {name = "Top",type = "range",width="normal",order=2.1,
+				min=-100,max=100,step=.1,
+				get = function(info) return DBMod.Artwork.Viewport.offset.top end,
+				set = function(info,val) DBMod.Artwork.Viewport.offset.top = val; end,
+			},
+			viewportoffsetBottom = {name = "Bottom",type = "range",width="normal",order=2.2,
+				min=-100,max=100,step=.1,
+				get = function(info) return DBMod.Artwork.Viewport.offset.bottom end,
+				set = function(info,val) DBMod.Artwork.Viewport.offset.bottom = val; end,
+			},
+			viewportoffsetLeft = {name = "Left",type = "range",width="normal",order=2.3,
+				min=-100,max=100,step=.1,
+				get = function(info) return DBMod.Artwork.Viewport.offset.left end,
+				set = function(info,val) DBMod.Artwork.Viewport.offset.left = val; end,
+			},
+			viewportoffsetRight = {name = "Right",type = "range",width="normal",order=2.4,
+				min=-100,max=100,step=.1,
+				get = function(info) return DBMod.Artwork.Viewport.offset.right end,
+				set = function(info,val) DBMod.Artwork.Viewport.offset.right = val; end,
 			},
 		}
 	}

@@ -24,11 +24,17 @@ end
 
 function Init()
 	SetupMenus();
+	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
 	module:InitFramework();
 	module:InitActionBars();
 	module:InitMinimap();
 	module:InitStatusBars();
 	InitRan = true;
+end
+
+function module:FirstLoad()
+	DBMod.Artwork.FirstLoad = false
+	DBMod.Artwork.Viewport.offset.bottom = 2.8
 end
 
 function SetupMenus()

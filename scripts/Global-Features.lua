@@ -23,6 +23,7 @@ local frameDefault2 = {movement=MovedDefault;AuraDisplay=true,display=true,Debuf
 DBdefault = {
 	SUIProper = {
 		Version = SpartanVer,
+		HVer = "",
 		yoffset = 0,
 		xOffset = 0,
 		yoffsetAuto = true,
@@ -102,6 +103,15 @@ DBdefault = {
 	},
 	Modules = {
 		Artwork = {
+			Viewport = 
+			{
+				enabled = true,
+				offset = 
+				{
+					top = 0,bottom = 2.3,left = 0,right = 0
+				}
+			},
+			FirstLoad = true,
 			Theme = "Classic"
 		},
 		SpinCam = {

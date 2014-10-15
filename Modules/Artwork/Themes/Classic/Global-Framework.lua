@@ -17,9 +17,9 @@ end;
 function module:updateSpartanViewport() -- handles viewport offset based on settings
 	if not InCombatLockdown() and DB.viewport and (SpartanUI_Base5:GetHeight() ~= 0) then
 		WorldFrame:ClearAllPoints();
-		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
+		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", DBMod.Artwork.Viewport.offset.left, DBMod.Artwork.Viewport.offset.top);
 		if SpartanUI_Base5:IsVisible() then
-			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, (SpartanUI_Base5:GetHeight() * DB.scale/2.3));
+			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", DBMod.Artwork.Viewport.offset.right, (SpartanUI_Base5:GetHeight() * DB.scale/DBMod.Artwork.Viewport.offset.bottom));
 		else
 			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
 		end

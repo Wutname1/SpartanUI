@@ -221,6 +221,19 @@ function module:OnInitialize()
 			if not DB.MiniMap.ManualAllowUse then DB.MiniMap.ManualAllowUse = false end
 			if not DB.MiniMap.ManualAllowPrompt then DB.MiniMap.ManualAllowUse = "" end
 			if not DB.MiniMap.AutoDetectAllowUse then DB.MiniMap.AutoDetectAllowUse = true end
+			if not DB.MiniMap.AutoDetectAllowUse then DB.MiniMap.AutoDetectAllowUse = true end
+		end
+		if (not DB.HVer) or (DB.HVer ~= (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", "")) and DB.Version == "3.3.0") then
+			DB.HVer = (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", ""))
+			DBMod.Artwork.Viewport = 
+			{
+				enabled = true,
+				offset = 
+				{
+					top = 0,bottom = 0,left = 0,right = 0
+				}
+			}
+			DBMod.Artwork.FirstLoad = true
 		end
 	end
 end
@@ -252,5 +265,6 @@ function module:OnEnable()
 	
 	-- Update DB Version
 	DB.Version = SpartanVer;
+	DB.HVer = (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", ""))
 	DBGlobal.Version = SpartanVer;
 end
