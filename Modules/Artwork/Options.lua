@@ -23,6 +23,7 @@ function Artwork_Core:SetupOptions()
 		desc = L["ResetDatabaseDesc"],
 		func = function() ReloadUI(); end
 	};
+	
 	spartan.opt.Artwork.args["Global"] = {name = "Artwork Options",type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
