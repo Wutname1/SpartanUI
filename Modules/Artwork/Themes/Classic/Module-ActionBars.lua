@@ -50,9 +50,11 @@ function module:SetupProfile()
 	if (not module:BartenderProfileCheck(ProfileName,true)) then DB.ActionBars.Bartender4 = false end
 	
 	-- Set to our Profile
-	if DB.ActionBars.Bartender4 then
-		if Bartender4.db:GetCurrentProfile() ~= ProfileName then Bartender4.db:SetProfile(ProfileName) end return;
+	--if DB.ActionBars.Bartender4 then
+	if Bartender4.db:GetCurrentProfile() ~= ProfileName then
+		Bartender4.db:SetProfile(ProfileName);
 	end
+	--end
 	
 	--Load the Profile Data
 	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
@@ -61,7 +63,7 @@ function module:SetupProfile()
 		end
 	end
 	Bartender4:UpdateModuleConfigs(); -- run ApplyConfig for all modules, so that the new BartenderSettings are applied
-	if module:BartenderProfileCheck(ProfileName,false) then addon:Print(ProfileName.." "..L["BartenderProfileCreated"]) end
+	--if module:BartenderProfileCheck(ProfileName,false) then addon:Print(ProfileName.." "..L["BartenderProfileCreated"]) end
 	DB.ActionBars.Bartender4 = true;
 	-- Can't use UpdateInterval, due to the way this need to be working -- could this behavior be changed? - Maybe a securehoocfunc on the unlocking
 	plate:HookScript("OnUpdate",function(self,...)

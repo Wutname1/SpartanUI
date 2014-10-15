@@ -23,20 +23,21 @@ function Artwork_Core:SetupOptions()
 		desc = L["ResetDatabaseDesc"],
 		func = function() ReloadUI(); end
 	};
-	
-	spartan.opt.Artwork.args["Global"] = {name = "Artwork Options",type="group",order=10,
+	spartan.opt.Artwork.args["Global"] = {name = "Base Options",type="group",order=0,
 		args = {
-			alpha = {name=L["Transparency"],type="range",order=1,width="full",
-				min=0,max=100,step=1,desc=L["TransparencyDesc"],
-				get = function(info) return (DB.alpha*100); end,
-				set = function(info,val) DB.alpha = (val/100); updateSpartanAlpha(); end
+			viewport = {name = "Viewport", type = "toggle",order=2,
+				desc="Allow SpartanUI To manage the viewport",
+				get = function(info) return DB.viewport end,
+				set = function(info,val)
+					if (not val) then
+						--Since we are disabling reset the viewport
+						WorldFrame:ClearAllPoints();
+						WorldFrame:SetPoint("TOPLEFT", 0, 0);
+						WorldFrame:SetPoint("BOTTOMRIGHT", 0, 0);
+					end
+					DB.viewport = val
+				end,
 			},
-			xOffset = {name = L["MoveSideways"],type = "range",order = 3,width="full",
-				desc = L["MoveSidewaysDesc"],
-				min=-200,max=200,step=.1,
-				get = function(info) return DB.xOffset/6.25 end,
-				set = function(info,val) DB.xOffset = val*6.25; updateSpartanXOffset(); end,
-			}
 		}
 	}
 end

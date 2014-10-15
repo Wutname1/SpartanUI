@@ -402,6 +402,11 @@ function SetupMenus()
 					DB.scale = 0.92;
 				end
 			end
+			module:updateSpartanScale();
+			module:updateSpartanOffset();
+			module:updateSpartanXOffset();
+			module:updateSpartanViewport();
+			module:updateSpartanAlpha();
 		end
 	};
 	spartan.opt.Artwork.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
@@ -448,13 +453,13 @@ function SetupMenus()
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],
 				get = function(info) return (DB.alpha*100); end,
-				set = function(info,val) DB.alpha = (val/100); updateSpartanAlpha(); end
+				set = function(info,val) DB.alpha = (val/100); module:updateSpartanAlpha(); end
 			},
 			xOffset = {name = L["MoveSideways"],type = "range",order = 3,width="full",
 				desc = L["MoveSidewaysDesc"],
 				min=-200,max=200,step=.1,
 				get = function(info) return DB.xOffset/6.25 end,
-				set = function(info,val) DB.xOffset = val*6.25; updateSpartanXOffset(); end,
+				set = function(info,val) DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
 			}
 		}
 	}

@@ -15,7 +15,7 @@ function module:updateMinimumScale()
 end;
 
 function module:updateSpartanViewport() -- handles viewport offset based on settings
-	if not InCombatLockdown() and (SpartanUI_Base5:GetHeight() ~= 0) then
+	if not InCombatLockdown() and DB.viewport and (SpartanUI_Base5:GetHeight() ~= 0) then
 		WorldFrame:ClearAllPoints();
 		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
 		if SpartanUI_Base5:IsVisible() then
