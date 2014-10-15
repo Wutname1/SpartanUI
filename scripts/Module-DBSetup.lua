@@ -243,7 +243,7 @@ function module:OnEnable()
 	end
 	--Alpha Warning
 	if (CurseVersion) then
-		if (DBGlobal.AlphaWarning ~= CurseVersion) and (CurseVersion ~= SpartanVer) then
+		if (DBGlobal.AlphaWarning ~= CurseVersion) and (string.gsub(CurseVersion, "[a-z]", "") ~= SpartanVer) then
 			spartan:Print("Curse Version: "..CurseVersion);
 			spartan:Print("Spartan Version: "..SpartanVer);
 			StaticPopup_Show ("AlphaWarning")
