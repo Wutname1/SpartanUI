@@ -425,29 +425,7 @@ function SetupMenus()
 		end,
 		get = function(info) return DB.scale; end
 	};
-	spartan.opt.Artwork.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
-		desc = L["ConfOffsetDesc"],
-		min=0,max=200,step=.1,
-		get = function(info) return DB.yoffset end,
-		set = function(info,val)
-			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
-			else
-				if DB.yoffsetAuto then
-					spartan:Print(L["confOffsetAuto"]);
-				else
-					val = tonumber(val);
-					DB.yoffset = val;
-				end
-			end
-		end,
-		get = function(info) return DB.yoffset; end
-	};
-	spartan.opt.Artwork.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
-		desc = L["AutoOffsetDesc"],
-		get = function(info) return DB.yoffsetAuto end,
-		set = function(info,val) DB.yoffsetAuto = val end,
-	};
+
 	spartan.opt.Artwork.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
@@ -456,15 +434,36 @@ function SetupMenus()
 				set = function(info,val) DB.alpha = (val/100); module:updateSpartanAlpha(); module:AddNotice(); print(DB.alpha); end
 			},
 			TransparencyNotice = {
-				name = "If you do not want the black bar on the bottom of your screen you can disable the Viewport setting under Base Options to the left", type = "description", fontSize = "small",hidden=true
+				name = "If you do not want the black bar on the bottom of your screen you can disable the Viewport setting under Base Options to the left",order=1.1,type = "description", fontSize = "small",hidden=true
 			},
-			xOffset = {name = L["MoveSideways"],type = "range",width="full",
+			xOffset = {name = L["MoveSideways"],type = "range",width="full",order=2,
 				desc = L["MoveSidewaysDesc"],
 				min=-200,max=200,step=.1,
 				get = function(info) return DB.xOffset/6.25 end,
 				set = function(info,val) DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
+			},
+			offset = {name = L["ConfOffset"],type = "range",width="normal",disabled=true,order=3,
+				desc = L["ConfOffsetDesc"],min=0,max=200,step=.1,
+				get = function(info) return DB.yoffset end,
+				set = function(info,val)
+					if (InCombatLockdown()) then 
+						spartan:Print(ERR_NOT_IN_COMBAT);
+					else
+						if DB.yoffsetAuto then
+							spartan:Print(L["confOffsetAuto"]);
+						else
+							val = tonumber(val);
+							DB.yoffset = val;
+						end
+					end
+				end,
+				get = function(info) return DB.yoffset; end
+			},
+			offsetauto = {name = L["AutoOffset"],type = "toggle",disabled=true,desc = L["AutoOffsetDesc"],order=3.1,
+				get = function(info) return DB.yoffsetAuto end,
+				set = function(info,val) DB.yoffsetAuto = val end,
 			}
-		}
+		},
 	}
 	if (DB.alpha ~= 1) then
 		module:AddNotice();
