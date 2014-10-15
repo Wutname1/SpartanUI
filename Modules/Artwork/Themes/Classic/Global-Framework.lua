@@ -112,6 +112,11 @@ function module:updateSpartanXOffset() -- handles SpartanUI offset based on sett
 		SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
 	end
 	SpartanUI:SetPoint("LEFT", SUI_AnchorFrame, "LEFT", offset, 0)
+	
+	SUI_FramesAnchor:ClearAllPoints();
+	SUI_FramesAnchor:SetPoint("BOTTOMLEFT", SUI_AnchorFrame, "BOTTOMLEFT", (offset/2), 0);
+	SUI_FramesAnchor:SetPoint("TOPRIGHT", SUI_AnchorFrame, "TOPRIGHT", (offset/2), 153);
+	
 	if (round(offset) ~= round(anchor:GetWidth())) then anchor:SetWidth(offset); end
 	DB.xOffset = offset
 end;
