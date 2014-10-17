@@ -223,7 +223,7 @@ function module:OnInitialize()
 			if not DB.MiniMap.AutoDetectAllowUse then DB.MiniMap.AutoDetectAllowUse = true end
 			if not DB.MiniMap.AutoDetectAllowUse then DB.MiniMap.AutoDetectAllowUse = true end
 		end
-		if (not DB.HVer) or (DB.HVer ~= (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", "")) and DB.Version == "3.3.0") then
+		if (not DB.HVer) or (DB.HVer ~= (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", "")) and DB.Version == "3.3.0" and DB.HVer == "b") then
 			DB.HVer = (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", ""))
 			DBMod.Artwork.Viewport = 
 			{
@@ -235,6 +235,7 @@ function module:OnInitialize()
 			}
 			DBMod.Artwork.FirstLoad = true
 		end
+		
 	end
 end
 

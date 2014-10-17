@@ -113,6 +113,13 @@ function CreatePortrait(self)
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
 		Portrait.type = "3D"
+		if DBMod.PlayerFrames.Portrait3D then
+			Portrait.bg2 = Portrait:CreateTexture(nil,"BACKGROUND");
+			Portrait.bg2:SetTexture(circle);
+			Portrait.bg2:SetPoint("TOPLEFT",Portrait,"TOPLEFT",-10,10);
+			Portrait.bg2:SetPoint("BOTTOMRIGHT",Portrait,"BOTTOMRIGHT",10,-10);
+		end
+		Portrait:SetFrameLevel(1);
 		return Portrait;
 	else
 		return self:CreateTexture(nil,"BORDER");
