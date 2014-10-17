@@ -26,7 +26,7 @@ function Artwork_Core:SetupOptions()
 	};
 	spartan.opt.Artwork.args["Global"] = {name = "Base Options",type="group",order=0,
 		args = {
-			viewport = {name = "Viewport", type = "toggle",order=1,
+			viewport = {name = "Viewport Enabled", type = "toggle",order=1,
 				desc="Allow SpartanUI To manage the viewport",
 				get = function(info) return DB.viewport end,
 				set = function(info,val)
@@ -37,6 +37,17 @@ function Artwork_Core:SetupOptions()
 						WorldFrame:SetPoint("BOTTOMRIGHT", 0, 0);
 					end
 					DB.viewport = val
+					if (not DB.viewport) then
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetTop"].disabled = true;
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetBottom"].disabled = true;
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetLeft"].disabled = true;
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetRight"].disabled = true;
+					else
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetTop"].disabled = false;
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetBottom"].disabled = false;
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetLeft"].disabled = false;
+						spartan.opt.Artwork.args["Global"].args["viewportoffsetRight"].disabled = false;
+					end
 				end,
 			},
 			viewportoffsets = {
@@ -64,4 +75,11 @@ function Artwork_Core:SetupOptions()
 			},
 		}
 	}
+	
+	if (not DB.viewport) then
+		spartan.opt.Artwork.args["Global"].args["viewportoffsetTop"].disabled = true;
+		spartan.opt.Artwork.args["Global"].args["viewportoffsetBottom"].disabled = true;
+		spartan.opt.Artwork.args["Global"].args["viewportoffsetLeft"].disabled = true;
+		spartan.opt.Artwork.args["Global"].args["viewportoffsetRight"].disabled = true;
+	end
 end

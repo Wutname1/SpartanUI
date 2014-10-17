@@ -484,8 +484,8 @@ function addon:UpdateFocusPosition()
 	end
 end
 
-function addon:SetupFrames()
-	SpartanoUF:SetActiveStyle("Spartan_PlayerFrames");
+function addon:SUI_PlayerFrames_Classic()
+	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Classic");
 
 	addon.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
@@ -588,12 +588,16 @@ function addon:SetupFrames()
 
 end
 
+function addon:SUI_PlayerFrames_Plain()
+	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Plain");
+	
+end
 
 if (DBMod.PlayerFrames.style == "theme") then
 	local CurTheme = spartan:GetModule("Artwork_" .. DBMod.Artwork.Theme);
 	CurTheme:UnitFrames();
 elseif (DBMod.PlayerFrames.style == "classic") then
-	addon:SetupFrames();
+	addon:SUI_PlayerFrames_Classic();
 elseif (DBMod.PlayerFrames.style == "plain") then
-	addon:SetupPlainFrames();
+	addon:SUI_PlayerFrames_Plain();
 end

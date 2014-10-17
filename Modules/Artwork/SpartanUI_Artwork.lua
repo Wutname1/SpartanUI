@@ -1,6 +1,28 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local Artwork_Core = spartan:NewModule("Artwork_Core");
 
+function Artwork_Core:isPartialMatch(frameName, tab)
+	local result = false
+
+	for k,v in ipairs(tab) do
+		startpos, endpos = strfind(strlower(frameName), strlower(v))
+		if (startpos == 1) then
+			result = true;
+		end
+	end
+
+	return result;
+end
+
+function Artwork_Core:isInTable(tab, frameName)
+	for k,v in ipairs(tab) do
+		if (strlower(v) == strlower(frameName)) then
+			return true;
+		end
+	end
+	return false;
+end
+
 function Artwork_Core:round(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;

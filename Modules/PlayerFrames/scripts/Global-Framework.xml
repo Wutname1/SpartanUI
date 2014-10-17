@@ -3,9 +3,14 @@
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
 	
+	<!-- Load Core Functions -->
 	<Script file="Global-Features.lua"	/>
-	<Script file="Global-Framework.lua"	/>
+	
+	<!-- Load Styles -->
+	<Script file="FrameStyle_Classic.lua"	/>
+	<Script file="FrameStyle_Plain.lua"	/>
+	
+	<!-- Load rest of core functionality -->
 	<Script file="Unit-FrameSpawn.lua"	/>
-	<Script file="Unit-PlayerFrame.lua"	/>
 	<Script file="Options.lua"	/>
 </Ui>

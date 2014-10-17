@@ -6,7 +6,7 @@ local module = spartan:GetModule("Artwork_Classic");
 
 function module:UnitFrames()
 	local addon = spartan:GetModule("PlayerFrames");
-	SpartanoUF:SetActiveStyle("Spartan_PlayerFrames");
+	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Classic");
 
 	addon.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
 	if (SUI_FramesAnchor:GetParent() == UIParent) then

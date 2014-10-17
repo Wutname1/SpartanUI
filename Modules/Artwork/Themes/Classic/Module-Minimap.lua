@@ -5,29 +5,57 @@ local module = spartan:GetModule("Artwork_Classic");
 ---------------------------------------------------------------------------
 local Minimap_Conflict_msg = true
 
+local BlizzButtons = { "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
+local BlizzUI = { "ActionBar", "BonusActionButton", "MainMenu", "ShapeshiftButton", "MultiBar", "KeyRingButton", "PlayerFrame", "TargetFrame", "PartyMemberFrame", "ChatFrame", "ExhaustionTick", "TargetofTargetFrame", "WorldFrame", "ActionButton", "CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "QuestLogMicroButton", "SocialsMicroButton", "LFGMicroButton", "HelpMicroButton", "CharacterBag", "PetFrame",  "MinimapCluster", "MinimapBackdrop", "UIParent", "WorldFrame", "Minimap", "BuffButton", "BuffFrame", "TimeManagerClockButton", "CharacterFrame" };
+local BlizzParentStop = { "WorldFrame", "Minimap", "MinimapBackdrop", "UIParent", "MinimapCluster" }
+
+local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBackdrop", "MiniMapVoiceChatFrame","TimeManagerClockButton", "MinimapButtonFrameDragButton", "GameTimeFrame", "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
+
 function module:updateButtons()
+	local ZoomHide = true
+	local AllHide = true
+	
 	if (not MouseIsOver(Minimap)) and (DB.MiniMap.MapButtons) then
+		AllHide = true
+		ZoomHide = true
+	else
+		AllHide = false
+		if (not DB.MiniMap.MapZoomButtons) then ZoomHide = false end
+	end
+	
+	if (not MouseIsOver(Minimap)) and (not DB.MiniMap.MapButtons) and (DB.MiniMap.MapZoomButtons) then
+		ZoomHide = true;
+	end
+	
+	if (ZoomHide) then
+		MinimapZoomIn:Hide();
+		MinimapZoomOut:Hide();
+	else
+		MinimapZoomIn:Show();
+		MinimapZoomOut:Show();
+	end
+	
+	if (AllHide) then
 		GameTimeFrame:Hide();
 		MiniMapTracking:Hide();
 		MiniMapWorldMapButton:Hide();
-		MinimapZoomIn:Hide();
-		MinimapZoomOut:Hide();
+		for i, child in ipairs({Minimap:GetChildren()}) do
+			buttonName = child:GetName();
+			buttonType = child:GetObjectType();
+			if buttonName and buttonType == "Button" and (not Artwork_Core:isInTable(SkinProtect, buttonName)) then
+				child:Hide();
+			end
+		end
 	else
 		GameTimeFrame:Show();
 		MiniMapTracking:Show();
 		MiniMapWorldMapButton:Show();
-		if (DB.MiniMap.MapZoomButtons) then
-			MinimapZoomIn:Hide();
-			MinimapZoomOut:Hide();
-		else
-			MinimapZoomIn:Show();
-			MinimapZoomOut:Show();
-		end
-	end
-	if (not MouseIsOver(Minimap)) and (not DB.MiniMap.MapButtons) then
-		if  (DB.MiniMap.MapZoomButtons) then
-			MinimapZoomIn:Hide();
-			MinimapZoomOut:Hide();
+		for i, child in ipairs({Minimap:GetChildren()}) do
+			buttonName = child:GetName();
+			buttonType = child:GetObjectType();
+			if buttonName and buttonType == "Button" and (not Artwork_Core:isInTable(SkinProtect, buttonName)) then
+				child:Show();
+			end
 		end
 	end
 end
@@ -102,7 +130,7 @@ function module:createMinimapCoords()
 		if DB.MiniMap then
 			local elapsed = select(1,...)
 			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
+			if ((self.TimeSinceLastUpdate > self.UpdateInterval) or MouseIsOver(Minimap)) then
 				-- Debug
 				module:updateButtons();
 				do -- update minimap coordinates

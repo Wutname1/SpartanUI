@@ -51,10 +51,16 @@ function module:SetupProfile()
 	
 	-- Set to our Profile
 	--if DB.ActionBars.Bartender4 then
-	if Bartender4.db:GetCurrentProfile() ~= ProfileName then
+	if ((Bartender4.db:GetCurrentProfile() ~= ProfileName) and (DBMod.Artwork.FirstLoad)) then
 		Bartender4.db:SetProfile(ProfileName);
 	end
 	--end
+	
+	--If our profile exists and this is not the themes first load then dont do any other bar setup
+	--We do not want to overwrite custom profiles...
+	if ((not DBMod.Artwork.FirstLoad) and (module:BartenderProfileCheck(ProfileName,true))) then
+		return;
+	end
 	
 	--Load the Profile Data
 	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
@@ -85,9 +91,9 @@ function module:CreateProfile()
 	if (not module:BartenderProfileCheck(ProfileName,true)) then DB.ActionBars.Bartender4 = false end
 	
 	-- Set to our Profile
-	if DB.ActionBars.Bartender4 then
-		if Bartender4.db:GetCurrentProfile() ~= ProfileName then Bartender4.db:SetProfile(ProfileName) end return;
-	end
+	-- if DB.ActionBars.Bartender4 then
+		-- if Bartender4.db:GetCurrentProfile() ~= ProfileName then Bartender4.db:SetProfile(ProfileName) end return;
+	-- end
 	
 	--Load the Profile Data
 	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)

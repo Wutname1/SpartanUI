@@ -19,6 +19,7 @@ function module:OnEnable()
 		module:EnableActionBars();
 		module:EnableMinimap();
 		module:EnableStatusBars();
+		if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end -- We want to do this last
 	end
 end
 
@@ -33,7 +34,6 @@ function Init()
 end
 
 function module:FirstLoad()
-	DBMod.Artwork.FirstLoad = false
 	DBMod.Artwork.Viewport.offset.bottom = 2.8
 end
 
@@ -437,7 +437,7 @@ function SetupMenus()
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],
 				get = function(info) return (DB.alpha*100); end,
-				set = function(info,val) DB.alpha = (val/100); module:updateSpartanAlpha(); module:AddNotice(); print(DB.alpha); end
+				set = function(info,val) DB.alpha = (val/100); module:updateSpartanAlpha(); module:AddNotice(); end
 			},
 			TransparencyNotice = {
 				name = "If you do not want the black bar on the bottom of your screen you can disable the Viewport setting under Base Options to the left",order=1.1,type = "description", fontSize = "small",hidden=true
