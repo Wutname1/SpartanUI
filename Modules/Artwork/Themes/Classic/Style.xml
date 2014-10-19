@@ -36,6 +36,9 @@
 				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\base-right2" tile="true">
 					<Anchors><Anchor point="LEFT" relativeTo="$parent_Base4" relativePoint="RIGHT"/></Anchors>
 				</Texture>
+				<!-- <Texture name="$parent_Tribal" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\tribal">
+					<Anchors><Anchor point="BOTTOM" relativePoint="BOTTOM"/></Anchors>
+				</Texture> -->
 			</Layer>
 		</Layers>
 	</Frame>

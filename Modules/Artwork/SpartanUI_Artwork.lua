@@ -1,4 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = spartan:NewModule("Artwork_Core");
 
 function Artwork_Core:isPartialMatch(frameName, tab)

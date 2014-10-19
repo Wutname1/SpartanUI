@@ -4,7 +4,7 @@ local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Artwork_Classic");
 ---------------------------------------------------------------------------
 local Minimap_Conflict_msg = true
-
+local TribalArt
 local BlizzButtons = { "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
 local BlizzUI = { "ActionBar", "BonusActionButton", "MainMenu", "ShapeshiftButton", "MultiBar", "KeyRingButton", "PlayerFrame", "TargetFrame", "PartyMemberFrame", "ChatFrame", "ExhaustionTick", "TargetofTargetFrame", "WorldFrame", "ActionButton", "CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "QuestLogMicroButton", "SocialsMicroButton", "LFGMicroButton", "HelpMicroButton", "CharacterBag", "PetFrame",  "MinimapCluster", "MinimapBackdrop", "UIParent", "WorldFrame", "Minimap", "BuffButton", "BuffFrame", "TimeManagerClockButton", "CharacterFrame" };
 local BlizzParentStop = { "WorldFrame", "Minimap", "MinimapBackdrop", "UIParent", "MinimapCluster" }
@@ -119,6 +119,7 @@ function module:modifyMinimapLayout()
 end;
 
 function module:createMinimapCoords()
+	-- SpartanUI_Tribal:SetVertexColor(1, 0, 0);
 	local map = CreateFrame("Frame",nil,SpartanUI);
 	map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
 	map.coords:SetSize(128, 12);
@@ -138,6 +139,7 @@ function module:createMinimapCoords()
 					if (not x) or (not y) then return; end
 					map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
 				end
+				
 				self.TimeSinceLastUpdate = 0
 			end
 		end

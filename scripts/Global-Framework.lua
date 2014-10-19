@@ -196,7 +196,7 @@ function module:OnInitialize()
 		end
 	};
 	addon.opt.General.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
-		desc = L["ConfScaleDesc"],min = 0,max = 1,
+		desc = L["ConfScaleDesc"],min = .1,max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
 				addon:Print(ERR_NOT_IN_COMBAT);

@@ -3,6 +3,7 @@ local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
 SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
+local CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
 addon.opt = {
 	Main = {name = "Main", type = "group", args = {}};
@@ -237,7 +238,10 @@ function addon:OnInitialize()
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
 	addon.opt.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
-	addon.opt.Main.args["version"] = {name = "SpartanUI "..L["Version"]..": "..GetAddOnMetadata("SpartanUI", "Version"),order=0,type = "header"};
+	addon.opt.Main.args["SuiVersion"] = {name = "SpartanUI "..L["Version"]..": "..SpartanVer,order=1,type = "header"};
+	if (SpartanVer ~= CurseVersion) then
+		addon.opt.Main.args["CurseVersion"] = {name = "Build "..CurseVersion,order=1.1,type = "header"};
+	end
 	addon.opt.Main.args["reset"] = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
 		desc = L["ResetDatabaseDesc"],
 		func = function()

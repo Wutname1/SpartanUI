@@ -2,16 +2,13 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local addon = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 
-local base_plate1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate1.tga]] -- Player and Target
-local base_plate2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate2.blp]] -- Focus and Focus Target
-local base_plate3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate3.tga]] -- Pet TargetTarget Large, Medium
-local base_plate4 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_plate4.blp]] -- TargetTarget small
+local base_plate1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate1.tga]] -- Player and Target
+local base_plate2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate2.blp]] -- Focus and Focus Target
+local base_plate3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate3.tga]] -- Pet, TargetTarget (Large, Medium)
+local base_plate4 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate4.blp]] -- TargetTarget small
+local base_ring1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring1]] -- Player and Target
+local base_ring3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring3]] -- Pet and TargetTarget
 local circle = [[Interface\AddOns\SpartanUI_PlayerFrames\media\circle.tga]]
-local base_ring1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring1]]
-local base_ring3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring3]]
-local Smoothv2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga]]
-local texture = [[Interface\AddOns\SpartanUI_PlayerFrames\media\texture.tga]]
-local metal = [[Interface\AddOns\SpartanUI_PlayerFrames\media\metal.tga]]
 
 local colors = setmetatable({},{__index = SpartanoUF.colors});
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
@@ -97,6 +94,11 @@ local threat = function(self,event,unit)
 			self.Portrait:SetVertexColor(1,1,1);
 		end
 	end
+	-- if ((self.TimeSinceLastUpdate < .5) or ((self.TimeSinceLastUpdate > 1) and (self.TimeSinceLastUpdate < 1.5))) then
+		-- SpartanUI_Tribal:SetAlpha((SpartanUI_Tribal:GetAlpha()-.1)); 
+	-- else
+		-- SpartanUI_Tribal:SetAlpha((SpartanUI_Tribal:GetAlpha()+.1)); 
+	-- end
 end
 
 local name = function(self)

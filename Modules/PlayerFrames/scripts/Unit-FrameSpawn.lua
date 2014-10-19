@@ -21,7 +21,6 @@ function addon:SUI_PlayerFrames_Classic()
 	end
 
 	do -- Position Static Frames
-		
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
 			addon.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
 			addon.pet:SetPoint("BOTTOMRIGHT",addon.player,"BOTTOMLEFT",-10,12);
@@ -109,6 +108,46 @@ end
 function addon:SUI_PlayerFrames_Plain()
 	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Plain");
 	
+	addon.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
+	if (SUI_FramesAnchor:GetParent() == UIParent) then
+		addon.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-80,150);
+	else
+		addon.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+	end
+	
+	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget"}
+
+	for a,b in pairs(FramesList) do
+		addon[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
+	end
+	do -- Position Static Frames
+		if (SUI_FramesAnchor:GetParent() == UIParent) then
+			addon.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
+			addon.pet:SetPoint("BOTTOMRIGHT",addon.player,"BOTTOMLEFT",-10,12);
+			
+			addon.target:SetPoint("LEFT",addon.player,"RIGHT",100,0);
+			if DBMod.PlayerFrames.targettarget.style == "small" then
+				addon.targettarget:SetPoint("BOTTOMLEFT",addon.target,"BOTTOMRIGHT",8,-11);
+			else
+				addon.targettarget:SetPoint("BOTTOMLEFT",addon.target,"BOTTOMRIGHT",19,15);
+			end
+			addon.player:SetScale(DB.scale);
+			for a,b in pairs(FramesList) do
+				_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+			end
+		else
+			addon.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+			addon.pet:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-370,12);
+			addon.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
+			if DBMod.PlayerFrames.targettarget.style == "small" then
+				addon.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15);
+			else
+				addon.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12);
+			end
+		end
+		
+		addon.focustarget:SetPoint("TOPLEFT", "SUI_focusFrame", "TOPRIGHT", -51, 0);
+	end
 end
 
 if (DBMod.PlayerFrames.style == "theme") then
