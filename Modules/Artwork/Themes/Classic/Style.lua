@@ -488,3 +488,7 @@ end
 function module:OnDisable()
 	SpartanUI:Hide();
 end
+
+function module:UnitFrames()
+	spartan:GetModule("PlayerFrames"):SUI_PlayerFrames_Classic()
+end
