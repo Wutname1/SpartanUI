@@ -432,7 +432,7 @@ function SetupMenus()
 		get = function(info) return DB.scale; end
 	};
 
-	spartan.opt.Artwork.args["Artwork"] = {name = "Artwork Options",type="group",order=10,
+	spartan.opt.Artwork.args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],
@@ -440,7 +440,7 @@ function SetupMenus()
 				set = function(info,val) DB.alpha = (val/100); module:updateSpartanAlpha(); module:AddNotice(); end
 			},
 			TransparencyNotice = {
-				name = "If you do not want the black bar on the bottom of your screen you can disable the Viewport setting under Base Options to the left",order=1.1,type = "description", fontSize = "small",hidden=true
+				name = L["TransparencyNotice"],order=1.1,type = "description", fontSize = "small",hidden=true
 			},
 			xOffset = {name = L["MoveSideways"],type = "range",width="full",order=2,
 				desc = L["MoveSidewaysDesc"],

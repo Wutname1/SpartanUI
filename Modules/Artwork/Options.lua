@@ -9,7 +9,7 @@ function Artwork_Core:SetupOptions()
 			Profiles[string.sub(name, 9)] = string.sub(name, 9)
 		end
 	end
-	spartan.opt.Artwork.args["Profile"] = {name="Profile",type="select",order=0,style="dropdown",
+	spartan.opt.Artwork.args["Profile"] = {name=L["Profile"],type="select",order=0,style="dropdown",
 		values=Profiles,
 		get = function(info) return DBMod.Artwork.Theme end,
 		set = function(info,val) 
@@ -24,10 +24,10 @@ function Artwork_Core:SetupOptions()
 		desc = L["ResetDatabaseDesc"],
 		func = function() ReloadUI(); end
 	};
-	spartan.opt.Artwork.args["Global"] = {name = "Base Options",type="group",order=0,
+	spartan.opt.Artwork.args["Global"] = {name = L["BaseOpt"],type="group",order=0,
 		args = {
-			viewport = {name = "Viewport Enabled", type = "toggle",order=1,
-				desc="Allow SpartanUI To manage the viewport",
+			viewport = {name = L["ViewportEnabled"], type = "toggle",order=1,
+				desc=L["SUIManViewport"],
 				get = function(info) return DB.viewport end,
 				set = function(info,val)
 					if (not val) then
@@ -51,24 +51,24 @@ function Artwork_Core:SetupOptions()
 				end,
 			},
 			viewportoffsets = {
-				name = "Viewport offset",order=2,type = "description", fontSize = "large"
+				name = L["Viewportoffset"],order=2,type = "description", fontSize = "large"
 			},
-			viewportoffsetTop = {name = "Top",type = "range",width="normal",order=2.1,
+			viewportoffsetTop = {name = L["Top"],type = "range",width="normal",order=2.1,
 				min=-100,max=100,step=.1,
 				get = function(info) return DBMod.Artwork.Viewport.offset.top end,
 				set = function(info,val) DBMod.Artwork.Viewport.offset.top = val; end,
 			},
-			viewportoffsetBottom = {name = "Bottom",type = "range",width="normal",order=2.2,
+			viewportoffsetBottom = {name = L["Bottom"],type = "range",width="normal",order=2.2,
 				min=-100,max=100,step=.1,
 				get = function(info) return DBMod.Artwork.Viewport.offset.bottom end,
 				set = function(info,val) DBMod.Artwork.Viewport.offset.bottom = val; end,
 			},
-			viewportoffsetLeft = {name = "Left",type = "range",width="normal",order=2.3,
+			viewportoffsetLeft = {name = L["Left"],type = "range",width="normal",order=2.3,
 				min=-100,max=100,step=.1,
 				get = function(info) return DBMod.Artwork.Viewport.offset.left end,
 				set = function(info,val) DBMod.Artwork.Viewport.offset.left = val; end,
 			},
-			viewportoffsetRight = {name = "Right",type = "range",width="normal",order=2.4,
+			viewportoffsetRight = {name = L["Right"],type = "range",width="normal",order=2.4,
 				min=-100,max=100,step=.1,
 				get = function(info) return DBMod.Artwork.Viewport.offset.right end,
 				set = function(info,val) DBMod.Artwork.Viewport.offset.right = val; end,
