@@ -28,12 +28,12 @@ local TextFormat = function(text)
 		a = "[cur"..z.."formatted]";
 		m = "[missing"..z.."formatted]";
 		t = "[max"..z.."formatted]";
-	elseif textstyle == "dynamic" then
+	elseif textstyle == "disabled" then
+		return "";
+	else -- Dynamic & fail-safe for messed up setting
 		a = "[cur"..z.."dynamic]";
 		m = "[missing"..z.."dynamic]";
 		t = "[max"..z.."dynamic]";
-	elseif textstyle == "disabled" then
-		return "";
 	end
 	-- textmode
 	-- [1]="Avaliable / Total",
