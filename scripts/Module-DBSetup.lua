@@ -49,7 +49,7 @@ function module:OnInitialize()
 	}
 	
 	StaticPopupDialogs["MiniMapNotice"] = {
-		text = '|cff33ff99SpartanUI Notice|n|r|n '..L["MiniMapNotice1"]..' |n|n ' .. L["MiniMapNotice2"],
+		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
 		button1 = "Yes",
 		button2 = "No",
 		OnAccept = function()
@@ -235,7 +235,11 @@ function module:OnInitialize()
 			}
 			DBMod.Artwork.FirstLoad = true
 		end
-		
+		if (DB.Version < "3.3.1") then
+			if DBMod.Artwork.VehicleUI == nil then DBMod.Artwork.VehicleUI = true end
+			if DB.MiniMap.OtherStyle == nil then DB.MiniMap.OtherStyle = "mouseover" end
+			if DB.MiniMap.BlizzStyle == nil then DB.MiniMap.BlizzStyle = "mouseover" end
+		end
 	end
 end
 

@@ -267,6 +267,17 @@ function module:InitFramework()
 	end
 end
 
+function module:SetupVehicleUI()
+	if DBMod.Artwork.VehicleUI then
+		RegisterStateDriver(SpartanUI, "visibility", "[petbattle][vehicleui] hide; show");
+	end
+end
+function module:RemoveVehicleUI()
+	if not DBMod.Artwork.VehicleUI then
+		UnRegisterStateDriver(SpartanUI, "visibility");
+	end
+end
+
 function module:EnableFramework()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
@@ -282,8 +293,8 @@ function module:EnableFramework()
 		CastingBarFrame:SetPoint("BOTTOM",frame,"TOP",0,90);
 	end);
 	
-	RegisterStateDriver(SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
-
+	module:SetupVehicleUI();
+	
 	module:updateSpartanScale();
 	module:updateSpartanOffset();
 	module:updateSpartanXOffset();

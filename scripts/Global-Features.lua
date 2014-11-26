@@ -113,6 +113,7 @@ DBdefault = {
 				}
 			},
 			FirstLoad = true,
+			VehicleUI = true,
 			Theme = "Classic"
 		},
 		SpinCam = {
@@ -276,7 +277,7 @@ function addon:OnEnable()
     AceConfig:RegisterOptionsTable("SpartanUI", addon.opt.Main)
 	self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI")
 	addon:AddOption("General", addon.opt.General, L["General"])
-	if addon:GetModule("Artwork_Core", true) then addon:AddOption("Artwork", addon.opt.Artwork, L["Artwork"]) end
+	if addon:GetModule("Artwork_Core", true) then addon:AddOption("Artwork", addon.opt.Artwork, "Artwork") end
 	if addon:GetModule("FilmEffect", true) then addon:AddOption("Film Effects", addon.opt.FilmEffects, L["FilmEffects"]) end
     if addon:GetModule("PartyFrames", true) then addon:AddOption("Party Frames", addon.opt.PartyFrames, L["PartyFrames"]) end
     if addon:GetModule("PlayerFrames", true) then addon:AddOption("Player Frames", addon.opt.PlayerFrames, L["PlayerFrames"]) end

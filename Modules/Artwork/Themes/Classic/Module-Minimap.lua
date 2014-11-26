@@ -8,7 +8,7 @@ local TribalArt
 local BlizzButtons = { "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
 local BlizzUI = { "ActionBar", "BonusActionButton", "MainMenu", "ShapeshiftButton", "MultiBar", "KeyRingButton", "PlayerFrame", "TargetFrame", "PartyMemberFrame", "ChatFrame", "ExhaustionTick", "TargetofTargetFrame", "WorldFrame", "ActionButton", "CharacterMicroButton", "SpellbookMicroButton", "TalentMicroButton", "QuestLogMicroButton", "SocialsMicroButton", "LFGMicroButton", "HelpMicroButton", "CharacterBag", "PetFrame",  "MinimapCluster", "MinimapBackdrop", "UIParent", "WorldFrame", "Minimap", "BuffButton", "BuffFrame", "TimeManagerClockButton", "CharacterFrame" };
 local BlizzParentStop = { "WorldFrame", "Minimap", "MinimapBackdrop", "UIParent", "MinimapCluster" }
-
+local SUIMapChangesActive = false
 local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBackdrop", "MiniMapVoiceChatFrame","TimeManagerClockButton", "MinimapButtonFrameDragButton", "GameTimeFrame", "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
 
 function module:updateButtons()
@@ -35,29 +35,71 @@ function module:updateButtons()
 		MinimapZoomOut:Show();
 	end
 	
-	if (AllHide) then
+	if (AllHide) and (SUI_MiniMapIcon:IsShown()) then
+		DB.MiniMap.SUIMapChangesActive = true
 		GameTimeFrame:Hide();
 		MiniMapTracking:Hide();
 		MiniMapWorldMapButton:Hide();
+		GarrisonLandingPageMinimapButton:Hide();
 		for i, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName();
 			buttonType = child:GetObjectType();
-			if buttonName and buttonType == "Button" and (not Artwork_Core:isInTable(SkinProtect, buttonName)) then
+			
+			if buttonName
+			  and buttonType == "Button"
+			  and (not Artwork_Core:isInTable(SkinProtect, buttonName))
+			  and (not Artwork_Core:isInTable(DB.MiniMap.IgnoredFrames, buttonName)) then
 				child:Hide();
+				if not Artwork_Core:isInTable(DB.MiniMap.frames, buttonName) then
+					table.insert(DB.MiniMap.frames, buttonName)
+					child:HookScript("OnEvent",function(self,event,...)
+						print(event)
+					end);
+					child:HookScript("OnHide",function(self,event,...)
+						if not DB.MiniMap.SUIMapChangesActive then
+							table.insert(DB.MiniMap.IgnoredFrames, self:GetName())
+						end
+					end);
+					child:HookScript("OnShow",function(self,event,...)
+						if not DB.MiniMap.SUIMapChangesActive then
+							local foundat = 9999999
+							for i=1,table.getn(DB.MiniMap.IgnoredFrames) do
+								if DB.MiniMap.IgnoredFrames[i] == child:GetName() then
+									foundat = i
+								end
+							end
+							if foundat ~= 9999999 then
+								table.remove(DB.MiniMap.IgnoredFrames, foundat)
+								DB.MiniMap.SUIMapChangesActive = true
+								--self.Hide()
+								DB.MiniMap.SUIMapChangesActive = false
+							end
+						end
+					end);
+				end
 			end
 		end
-	else
+		DB.MiniMap.SUIMapChangesActive = false
+	elseif (not AllHide) and (not SUI_MiniMapIcon:IsShown()) then
+		DB.MiniMap.SUIMapChangesActive = true
 		GameTimeFrame:Show();
 		MiniMapTracking:Show();
 		MiniMapWorldMapButton:Show();
+		GarrisonLandingPageMinimapButton:Show();
 		for i, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName();
 			buttonType = child:GetObjectType();
-			if buttonName and buttonType == "Button" and (not Artwork_Core:isInTable(SkinProtect, buttonName)) then
+			if buttonName and buttonType == "Button" and (not Artwork_Core:isInTable(SkinProtect, buttonName)) and Artwork_Core:isInTable(DB.MiniMap.frames, buttonName) and (not Artwork_Core:isInTable(DB.MiniMap.IgnoredFrames, buttonName))	then
 				child:Show();
 			end
 		end
+		DB.MiniMap.SUIMapChangesActive = false
+	else
 	end
+	
+	DraenorZoneAbilityFrame:ClearAllPoints();
+	DraenorZoneAbilityFrame:SetScale(.70);
+	DraenorZoneAbilityFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 end
 
 function module:modifyMinimapLayout()
@@ -65,17 +107,21 @@ function module:modifyMinimapLayout()
 	frame:SetSize(156, 156);
 	frame:SetPoint("CENTER",0,54);
 	
+	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
+	SUI_MiniMapIcon:SetSize(35,35);
+	
 	Minimap:SetParent(frame);
 	Minimap:SetSize(frame:GetSize());
 	Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay.tga")
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("CENTER","SUI_Minimap","CENTER",0,0);
 	
-	MinimapBackdrop:ClearAllPoints(); MinimapBackdrop:SetPoint("CENTER",frame,"CENTER",-10,-24);
+	MinimapBackdrop:ClearAllPoints();
+	MinimapBackdrop:SetPoint("CENTER",frame,"CENTER",-10,-24);
 	
 	MinimapZoneTextButton:SetParent(frame);
 	MinimapZoneTextButton:ClearAllPoints();
-	MinimapZoneTextButton:SetPoint("TOP",frame,"BOTTOM",0,-6);
+	MinimapZoneTextButton:SetPoint("TOP",frame,"BOTTOM",0,-7);
 	
 	MinimapBorderTop:Hide();
 	MinimapBorder:SetAlpha(0);
@@ -85,30 +131,30 @@ function module:modifyMinimapLayout()
 	
 	GarrisonLandingPageMinimapButton:ClearAllPoints();
 	GarrisonLandingPageMinimapButton:SetSize(35,35);
-	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT",frame,0,0);
-
-	-- Do modifications to MiniMapWorldMapButton
---	-- remove current textures
+	GarrisonLandingPageMinimapButton:SetPoint("RIGHT",frame,18,-25);
+	
+	-- remove current textures
 	MiniMapWorldMapButton:SetNormalTexture(nil)
 	MiniMapWorldMapButton:SetPushedTexture(nil)
 	MiniMapWorldMapButton:SetHighlightTexture(nil)
---	-- Create new textures
-	
+	-- Create new textures
 	MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon.png")
 	MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon-Pushed.png")
 	MiniMapWorldMapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 	
-	MiniMapWorldMapButton:ClearAllPoints(); MiniMapWorldMapButton:SetPoint("TOPRIGHT",MinimapBackdrop,-20,12)
-	MiniMapMailFrame:ClearAllPoints(); MiniMapMailFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",21,-53)
-	GameTimeFrame:ClearAllPoints(); GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16)
-	MiniMapTracking:ClearAllPoints(); MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
-	MiniMapTrackingButton:ClearAllPoints(); MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
+	MiniMapWorldMapButton:ClearAllPoints();
+	MiniMapWorldMapButton:SetPoint("TOPRIGHT",MinimapBackdrop,-20,12)
 	
-	-- Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
-	-- Minimap.overlay:SetSize(158, 158); 
-	-- Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay");
-	-- Minimap.overlay:SetPoint("CENTER");
-	-- Minimap.overlay:SetBlendMode("ADD");
+	MiniMapMailFrame:ClearAllPoints();
+	MiniMapMailFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",21,-53)
+	
+	GameTimeFrame:ClearAllPoints();
+	GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16)
+	
+	MiniMapTracking:ClearAllPoints();
+	MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
+	MiniMapTrackingButton:ClearAllPoints();
+	MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
 	
 	frame:EnableMouse(true);
 	frame:EnableMouseWheel(true);
@@ -116,7 +162,14 @@ function module:modifyMinimapLayout()
 		if (delta > 0) then Minimap_ZoomIn()
 		else Minimap_ZoomOut() end
 	end);
-end;
+	
+	frame:SetScript("OnEvent",function(self, event, ...)
+		GarrisonLandingPageMinimapButton:Show()
+	end);
+    frame:RegisterEvent("GARRISON_MISSION_FINISHED");
+    frame:RegisterEvent("GARRISON_INVASION_AVAILABLE");
+    frame:RegisterEvent("SHIPMENT_UPDATE");
+end
 
 function module:createMinimapCoords()
 	-- SpartanUI_Tribal:SetVertexColor(1, 0, 0);
@@ -127,6 +180,11 @@ function module:createMinimapCoords()
 	-- Fix CPU leak, use UpdateInterval
 	map.UpdateInterval = 2
 	map.TimeSinceLastUpdate = 0
+	
+	DB.MiniMap.SUIMapChangesActive = false
+	DB.MiniMap.frames = {}
+	DB.MiniMap.IgnoredFrames = {}
+	
 	map:HookScript("OnUpdate", function(self,...)
 		if DB.MiniMap then
 			local elapsed = select(1,...)
@@ -184,8 +242,10 @@ function module:MiniMap()
 			end
 		end
 	end);
+	
 	module:modifyMinimapLayout();
 	module:createMinimapCoords();
+	
 	QueueStatusFrame:ClearAllPoints();
 	QueueStatusFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	module.handleBuff = true

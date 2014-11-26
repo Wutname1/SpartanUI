@@ -160,6 +160,32 @@ function SetupMenus()
 				get = function(info) return DB.MiniMap.MapButtons; end,
 				set = function(info,val) DB.MiniMap.MapButtons = val; end
 			},
+			BlizzStyle = {
+				name="Blizzard Icons",
+				type="select",
+				style="dropdown",
+				width="full",
+				values = {
+					["hide"]	= "Always Hide",
+					["mouseover"]	= "Show on Mouse over",
+					["show"]	= "Always Show",
+				},
+				get = function(info) return DB.MiniMap.BlizzStyle; end,
+				set = function(info,val) DB.MiniMap.BlizzStyle = val; end
+			},
+			OtherStyle = {
+				name="Addon Icons",
+				type="select",
+				style="dropdown",
+				width="full",
+				values = {
+					["hide"]	= "Always Hide",
+					["mouseover"]	= "Show on Mouse over",
+					["show"]	= "Always Show",
+				},
+				get = function(info) return DB.MiniMap.OtherStyle; end,
+				set = function(info,val) DB.MiniMap.OtherStyle = val; end
+			},
 			minimapzoom = {name = L["MinMapHideZoom"], type="toggle", width="full",
 				get = function(info) return DB.MiniMap.MapZoomButtons; end,
 				set = function(info,val) DB.MiniMap.MapZoomButtons = val; end
@@ -431,7 +457,6 @@ function SetupMenus()
 		end,
 		get = function(info) return DB.scale; end
 	};
-
 	spartan.opt.Artwork.args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",

@@ -253,6 +253,17 @@ function module:InitFramework()
 	end
 end
 
+function module:SetupVehicleUI()
+	if DBMod.Artwork.VehicleUI then
+		RegisterStateDriver(Transparent_SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
+	end
+end
+function module:RemoveVehicleUI()
+	if DBMod.Artwork.VehicleUI then
+		UnRegisterStateDriver(Transparent_SpartanUI, "visibility");
+	end
+end
+
 function module:EnableFramework()
 	for i = 1,5 do
 		_G["Transparent_SpartanUI_Base" ..i]:SetVertexColor(0,.8,.9,.7)
@@ -274,7 +285,7 @@ function module:EnableFramework()
 		CastingBarFrame:SetPoint("BOTTOM",frame,"TOP",0,90);
 	end);
 	
-	RegisterStateDriver(Transparent_SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
+	module:SetupVehicleUI();
 
 	Transparent_updateSpartanScale();
 	Transparent_updateSpartanOffset();

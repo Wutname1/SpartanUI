@@ -27,12 +27,12 @@ local TextFormat = function(text)
 		a = "[cur"..z.."formatted]";
 		m = "[missing"..z.."formatted]";
 		t = "[max"..z.."formatted]";
-	elseif textstyle == "dynamic" then
+	elseif textstyle == "disabled" then
+		return "";
+	else
 		a = "[cur"..z.."dynamic]";
 		m = "[missing"..z.."dynamic]";
 		t = "[max"..z.."dynamic]";
-	elseif textstyle == "disabled" then
-		return "";
 	end
 	-- textmode
 	-- [1]="Avaliable / Total",
@@ -266,8 +266,11 @@ local CreateFrame = function(self,unit)
 			spellIDs = {
 				774, -- Rejuvenation
 				33763, -- Lifebloom
-				48438, -- Wild Growth
 				8936, -- Regrowth
+				102351, -- Cenarion Ward
+				48438, -- Wild Growth
+				155777, -- Germination
+				102342, -- Ironbark
 			}
 		elseif classFileName == "PRIEST" then
 			spellIDs = {
