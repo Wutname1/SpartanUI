@@ -244,7 +244,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	-- First Launch Notication
+	-- First Launch Notification
 	if (not DBGlobal.Version) then
 		spartan.db:ResetProfile(false,true);
 		StaticPopup_Show ("FirstLaunchNotice")
@@ -258,14 +258,6 @@ function module:OnEnable()
 	-- MiniMap Modification
 	if (((not DB.MiniMap.AutoDetectAllowUse) and (not DB.MiniMap.ManualAllowUse)) and DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
 		StaticPopup_Show("MiniMapNotice")
-	end
-	--Alpha Warning
-	if (CurseVersion) then
-		if (DBGlobal.AlphaWarning ~= CurseVersion) and (string.gsub(CurseVersion, "[a-z]", "") ~= SpartanVer) then
-			spartan:Print("Curse Version: "..CurseVersion);
-			spartan:Print("Spartan Version: "..SpartanVer);
-			StaticPopup_Show ("AlphaWarning")
-		end
 	end
 	
 	-- Update DB Version
