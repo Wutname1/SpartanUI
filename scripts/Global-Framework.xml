@@ -3,6 +3,7 @@
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
 	<Script file="Global-Features.lua" />
+	<Script file="Global-Options.lua" />
 	
 	<!-- SUI_Font's -->
 	<Font name="SUI_FontOutline22custom"  font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
@@ -51,5 +52,4 @@
 	</Frame>
 	
 	<Script file="Module-DBSetup.lua" />
-	<Script file="Module-FontSettings.lua" />
 </Ui>

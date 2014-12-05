@@ -244,7 +244,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	-- First Launch Notification
+	-- First Launch Notication
 	if (not DBGlobal.Version) then
 		spartan.db:ResetProfile(false,true);
 		StaticPopup_Show ("FirstLaunchNotice")

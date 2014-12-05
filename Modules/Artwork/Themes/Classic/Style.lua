@@ -38,7 +38,7 @@ function module:FirstLoad()
 end
 
 function SetupMenus()
-	spartan.opt.Artwork.args["backdrop"] = { name = "ActionBar Settings", type = "group",
+	spartan.opt.args["Artwork"].args["backdrop"] = { name = "ActionBar Settings", type = "group",
 		desc = L["ActionBarConfDesc"],
 		args = {
 			Allalpha = {name = L["AllBarAlpha"], type="range", order = 15,
@@ -121,7 +121,7 @@ function SetupMenus()
 			}
 		}
 	};
-	spartan.opt.Artwork.args["popup"] = { name = L["PopupAnimConf"], type = "group",
+	spartan.opt.args["Artwork"].args["popup"] = { name = L["PopupAnimConf"], type = "group",
 		desc = L["PopupAnimConfDesc"],
 		args = {
 			popup1anim = {	name = L["LPopupAnimate"], type="toggle", order=1, width="full",
@@ -152,7 +152,7 @@ function SetupMenus()
 			}
 		}
 	};
-	spartan.opt.Artwork.args["minimap"] = {
+	spartan.opt.args["Artwork"].args["minimap"] = {
 		name = L["MinMapSet"],
 		desc = L["MinMapSetConf"],
 		type = "group", args = {
@@ -192,7 +192,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.Artwork.args["ChatSettings"] = {
+	spartan.opt.args["Artwork"].args["ChatSettings"] = {
 		name = L["ChatSettings"],
 		desc = L["ChatSettingsDesc"],
 		type = "group", args = {
@@ -216,7 +216,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.Artwork.args["BuffSettings"] = {
+	spartan.opt.args["Artwork"].args["BuffSettings"] = {
 		name = L["BuffOffsetSetting"],
 		desc = L["BuffOffsetSettingDesc"],
 		type = "group", args = {
@@ -248,7 +248,7 @@ function SetupMenus()
 			},
 		}
 	}
-	spartan.opt.Artwork.args["XPBar"] = {
+	spartan.opt.args["Artwork"].args["XPBar"] = {
 		name = L["BarXP"],
 		desc = L["BarXPDesc"],
 		type = "group", args = {
@@ -355,7 +355,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.Artwork.args["RepBar"] = {
+	spartan.opt.args["Artwork"].args["RepBar"] = {
 		name = L["BarRep"],
 		desc = L["BarRepDesc"],
 		type = "group", args = {
@@ -422,7 +422,7 @@ function SetupMenus()
 			}
 		}
 	}
-	spartan.opt.Artwork.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+	spartan.opt.args["Artwork"].args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
 		desc = L["DefScalesDesc"],
 		func = function()
 			if (InCombatLockdown()) then 
@@ -441,7 +441,7 @@ function SetupMenus()
 			module:updateSpartanAlpha();
 		end
 	};
-	spartan.opt.Artwork.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+	spartan.opt.args["Artwork"].args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
 		desc = L["ConfScaleDesc"],min = 0,max = 1,
 		set = function(info,val)
 			if (InCombatLockdown()) then 
@@ -457,7 +457,7 @@ function SetupMenus()
 		end,
 		get = function(info) return DB.scale; end
 	};
-	spartan.opt.Artwork.args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
+	spartan.opt.args["Artwork"].args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],
@@ -503,11 +503,10 @@ end
 
 function module:AddNotice()
 	if (DB.alpha == 1) then
-		spartan.opt.Artwork.args["Artwork"].args["TransparencyNotice"].hidden = true;
+		spartan.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = true;
 	else
-		spartan.opt.Artwork.args["Artwork"].args["TransparencyNotice"].hidden = false;
+		spartan.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = false;
 	end
-	
 end
 
 function module:OnDisable()

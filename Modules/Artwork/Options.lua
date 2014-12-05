@@ -9,7 +9,7 @@ function Artwork_Core:SetupOptions()
 			Profiles[string.sub(name, 9)] = string.sub(name, 9)
 		end
 	end
-	spartan.opt.Artwork.args["Profile"] = {name="Profile",type="select",order=0,style="dropdown",
+	spartan.opt.args["Artwork"].args["Profile"] = {name="Profile",type="select",order=0,style="dropdown",
 		values=Profiles,
 		get = function(info) return DBMod.Artwork.Theme end,
 		set = function(info,val) 
@@ -20,11 +20,11 @@ function Artwork_Core:SetupOptions()
 			ReloadUI();
 		end
 	}
-	spartan.opt.Artwork.args["Reload"] = {name = "ReloadUI",type = "execute",order=2,
+	spartan.opt.args["Artwork"].args["Reload"] = {name = "ReloadUI",type = "execute",order=2,
 		desc = L["ResetDatabaseDesc"],
 		func = function() ReloadUI(); end
 	};
-	spartan.opt.Artwork.args["Global"] = {name = "Base Options",type="group",order=0,
+	spartan.opt.args["Artwork"].args["Global"] = {name = "Base Options",type="group",order=0,
 		args = {
 			VehicleUI = {name = "Use Blizzard Vehicle UI", type = "toggle",order=0.9,
 				get = function(info) return DBMod.Artwork.VehicleUI end,
@@ -50,15 +50,15 @@ function Artwork_Core:SetupOptions()
 					end
 					DB.viewport = val
 					if (not DB.viewport) then
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetTop"].disabled = true;
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetBottom"].disabled = true;
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetLeft"].disabled = true;
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetRight"].disabled = true;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetTop"].disabled = true;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetBottom"].disabled = true;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetLeft"].disabled = true;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetRight"].disabled = true;
 					else
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetTop"].disabled = false;
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetBottom"].disabled = false;
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetLeft"].disabled = false;
-						spartan.opt.Artwork.args["Global"].args["viewportoffsetRight"].disabled = false;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetTop"].disabled = false;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetBottom"].disabled = false;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetLeft"].disabled = false;
+						spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetRight"].disabled = false;
 					end
 				end,
 			},
@@ -89,9 +89,9 @@ function Artwork_Core:SetupOptions()
 	}
 	
 	if (not DB.viewport) then
-		spartan.opt.Artwork.args["Global"].args["viewportoffsetTop"].disabled = true;
-		spartan.opt.Artwork.args["Global"].args["viewportoffsetBottom"].disabled = true;
-		spartan.opt.Artwork.args["Global"].args["viewportoffsetLeft"].disabled = true;
-		spartan.opt.Artwork.args["Global"].args["viewportoffsetRight"].disabled = true;
+		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetTop"].disabled = true;
+		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetBottom"].disabled = true;
+		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetLeft"].disabled = true;
+		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetRight"].disabled = true;
 	end
 end

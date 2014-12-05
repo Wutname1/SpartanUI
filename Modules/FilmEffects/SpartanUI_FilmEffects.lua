@@ -3,11 +3,11 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local addon = spartan:NewModule("FilmEffect");
 
 function addon:OnInitialize()
-	spartan.opt.FilmEffects.args["enable"] = {name=L["Film/Enabled"],type="toggle",order=1,width="full",
+	spartan.opt.args["FilmEffects"].args["enable"] = {name=L["Film/Enabled"],type="toggle",order=1,width="full",
 		get = function(info) return DBMod.FilmEffects.enable end,
 		set = function(info,val) DBMod.FilmEffects.enable = val if val ~= true then addon:FilmEffectDisable() end end
 	}
-	spartan.opt.FilmEffects.args["anim"] = {name=L["Film/Effect"],type="select",order=5,width="full",
+	spartan.opt.args["FilmEffects"].args["anim"] = {name=L["Film/Effect"],type="select",order=5,width="full",
 		style="dropdown",values={[""]="",["Vignette"] = L["Film/Vignette"],["blur"]=L["Film/Blur"],["crisp"]=L["Film/Crisp"]},
 		get = function(info) return DBMod.FilmEffects.anim end,
 		set = function(info,val) if (val == "") then addon:FilmEffectDisable(); elseif (DBMod.FilmEffects.enable) then DBMod.FilmEffects.anim = val; addon:FilmEffect() end end

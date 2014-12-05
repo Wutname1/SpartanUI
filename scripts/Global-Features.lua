@@ -6,16 +6,20 @@ SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 local CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
 addon.opt = {
-	Main = {name = "Main", type = "group", args = {}};
-	General = {name = "General", type = "group", args = {}};
-	Artwork = {name = "Artwork", type = "group", args = {}};
-	PlayerFrames = {name = "Player Frames", type = "group", args = {}};
-	PartyFrames = {name = "Party Frames", type = "group", args = {}};
-	RaidFrames = {name = "Raid Frames", type = "group", args = {}};
-	SpinCam = {name = "Spin Cam", type = "group", args = {}};
-	FilmEffects = {name = "Film Effects", type = "group", args = {}};
+	name = "SpartanUI", type = "group", childGroups = "tab", args = {
+		General = {name = "General", type = "group",order = 0, args = {}};
+		Artwork = {name = "Artwork", type = "group", args = {}};
+		PlayerFrames = {name = "Player Frames", type = "group", args = {}};
+		PartyFrames = {name = "Party Frames", type = "group", args = {}};
+		RaidFrames = {name = "Raid Frames", type = "group", args = {}};
+		SpinCam = {name = "Spin Cam", type = "group",order = 900, args = {}};
+		FilmEffects = {name = "Film Effects", type = "group", order = 950, args = {}};
+	}
 }
 
+
+local FontItems = {Primary={},Core={},Party={},Player={},Raid={}}
+local FontItemsSize = {Primary={},Core={},Party={},Player={},Raid={}}
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
 local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
 local frameDefault1 = {movement=MovedDefault;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false}}
@@ -232,32 +236,76 @@ function addon:ResetConfig()
 	ReloadUI();
 end
 
+function addon:FormatFont(element, size, Module)
+	--Set Font Outline
+	flags = ""
+	if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
+	
+	-- Outline was deemed to thick, it is not a slight drop shadow done below
+	--if DB.font[Module].Type == "outline" then flags = flags.."outline " end
+	
+	if DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
+	--Set Size
+	sizeFinal = size + DB.font[Module].Size;
+	--Create Font
+	if DB.font[Module].Face == "SpartanUI" then
+		element:SetFont("Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf", sizeFinal, flags)
+	elseif DB.font[Module].Face == "FrizQuadrata" then
+		element:SetFont("Fonts\\FRIZQT__.TTF", sizeFinal, flags)
+	elseif DB.font[Module].Face == "ArialNarrow" then
+		element:SetFont("Fonts\\ARIALN.TTF", sizeFinal, flags)
+	elseif DB.font[Module].Face == "Skurri" then
+		element:SetFont("Fonts\\skurri.TTF", sizeFinal, flags)
+	elseif DB.font[Module].Face == "Morpheus" then
+		element:SetFont("Fonts\\MORPHEUS.TTF", sizeFinal, flags)
+	end
+	if DB.font[Module].Type == "outline" then
+		element:SetShadowColor(0,0,0,.9)
+		element:SetShadowOffset(1,-1)
+	end
+	--Add Item to the Array
+	local count = 0
+	for _ in pairs(FontItems[Module]) do count = count + 1 end
+	FontItems[Module][count+1]=element
+	FontItemsSize[Module][count+1]=size
+end
+
+function addon:FontRefresh(Module)
+	for a,b in pairs(FontItems[Module]) do
+		--Set Font Outline
+		flags = ""
+		if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
+		if DB.font[Module].Type == "outline" then flags = flags.."outline " end
+		if DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
+		--Set Size
+		size = FontItemsSize[Module][a] + DB.font[Module].Size;
+		--Update Font
+		if DB.font[Module].Face == "SpartanUI" then
+			b:SetFont("Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf", size, flags)
+		elseif DB.font[Module].Face == "FrizQuadrata" then
+			b:SetFont("Fonts\\FRIZQT__.TTF", size, flags)
+		elseif DB.font[Module].Face == "ArialNarrow" then
+			b:SetFont("Fonts\\ARIALN.TTF", size, flags)
+		elseif DB.font[Module].Face == "Skurri" then
+			b:SetFont("Fonts\\skurri.TTF", size, flags)
+		elseif DB.font[Module].Face == "Morpheus" then
+			b:SetFont("Fonts\\MORPHEUS.TTF", size, flags)
+		end
+	end
+end
+
 function addon:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
 	addon.db.profile.playerName = UnitName("player")
 	DBGlobal = addon.db.global
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
-	addon.opt.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
-	addon.opt.Main.args["SuiVersion"] = {name = "SpartanUI "..L["Version"]..": "..SpartanVer,order=1,type = "header"};
-	if (SpartanVer ~= CurseVersion) then
-		addon.opt.Main.args["CurseVersion"] = {name = "Build "..CurseVersion,order=1.1,type = "header"};
-	end
-	addon.opt.Main.args["reset"] = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
-		desc = L["ResetDatabaseDesc"],
-		func = function()
-			if (InCombatLockdown()) then 
-				addon:Print(ERR_NOT_IN_COMBAT);
-			else
-				addon.db:ResetDB();
-				ReloadUI();
-			end
-		end
-	};
+	addon.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
 	LibDualSpec:EnhanceDatabase(self.db, "SpartanUI")
-	LibDualSpec:EnhanceOptions(addon.opt.profile, self.db)
+	LibDualSpec:EnhanceOptions(addon.opt.args["Profiles"], self.db)
+	addon.opt.args["Profiles"].order=999
 	-- Spec Setup
 	addon.db.RegisterCallback(self, "OnNewProfile", "InitializeProfile")
 	addon.db.RegisterCallback(self, "OnProfileChanged", "UpdateModuleConfigs")
@@ -274,32 +322,41 @@ function addon:UpdateModuleConfigs()
 end
 
 function addon:OnEnable()
-    AceConfig:RegisterOptionsTable("SpartanUI", addon.opt.Main)
-	self.optionsFrame = AceConfigDialog:AddToBlizOptions("SpartanUI")
-	addon:AddOption("General", addon.opt.General, L["General"])
-	if addon:GetModule("Artwork_Core", true) then addon:AddOption("Artwork", addon.opt.Artwork, "Artwork") end
-	if addon:GetModule("FilmEffect", true) then addon:AddOption("Film Effects", addon.opt.FilmEffects, L["FilmEffects"]) end
-    if addon:GetModule("PartyFrames", true) then addon:AddOption("Party Frames", addon.opt.PartyFrames, L["PartyFrames"]) end
-    if addon:GetModule("PlayerFrames", true) then addon:AddOption("Player Frames", addon.opt.PlayerFrames, L["PlayerFrames"]) end
-    if addon:GetModule("RaidFrames", true) then addon:AddOption("Raid Frames", addon.opt.RaidFrames, L["RaidFrames"]) end
-    if addon:GetModule("SpinCam", true) then addon:AddOption("Spin Cam", addon.opt.SpinCam, L["SpinCam"]) end
-	addon:AddOption("Profiles", addon.opt.profile, "Profiles"); --Localization Needed
+	a={ name = "SpartanUI", type = "group",args={
+		n1={type="description", fontSize="medium", order=1, width="full", name="Options have moved into their own window as this menu was getting a bit crowded."},
+		n3={type="description", fontSize="medium", order=3, width="full", name="Options can be accessed by the button below or by typing /sui or /spartanui"},
+		Close={name = "Launch Options",width="full",type = "execute",order = 50,
+			func = function()
+				InterfaceOptionsFrame:Hide();
+				AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600);
+				AceConfigDialog:Open("SpartanUI");
+			end	}
+		}
+	}
+    AceConfig:RegisterOptionsTable("SpartanUIBliz", a)
+	AceConfigDialog:AddToBlizOptions("SpartanUIBliz", "SpartanUI")
+	
+    AceConfig:RegisterOptionsTable("SpartanUI", addon.opt)
+	if not addon:GetModule("Artwork_Core", true) then addon.opt.args["Artwork"].hidden = true end
+	if not addon:GetModule("FilmEffect", true) then addon.opt.args["FilmEffects"].hidden = true end
+    if not addon:GetModule("PartyFrames", true) then  addon.opt.args["PartyFrames"].hidden = true end
+    if not addon:GetModule("PlayerFrames", true) then addon.opt.args["PlayerFrames"].hidden = true end
+    if not addon:GetModule("RaidFrames", true) then addon.opt.args["RaidFrames"].hidden = true end
+    if not addon:GetModule("SpinCam", true) then addon.opt.args["SpinCam"].hidden = true end
     
     self:RegisterChatCommand("sui", "ChatCommand")
     self:RegisterChatCommand("spartanui", "ChatCommand")
 end
 
-function addon:AddOption(name, Table, displayName)
-	AceConfig:RegisterOptionsTable("SpartanUI"..name, Table)
-	AceConfigDialog:AddToBlizOptions("SpartanUI"..name, displayName, "SpartanUI")
-end
-
 function addon:ChatCommand(input)
 	if input == "version" then
 		addon:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))
+		addon:Print("SpartanUI Curse "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version"))
+	elseif input == "b" then
+		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
+		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
 	else
-		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
-		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
-        --LibStub("AceConfigCmd-3.0").HandleCommand(addon, "sui", "spartanui", input)
+		AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600)
+		AceConfigDialog:Open("SpartanUI")
     end
 end
