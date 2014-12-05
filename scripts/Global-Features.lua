@@ -2,8 +2,8 @@ local addon = LibStub("AceAddon-3.0"):NewAddon("SpartanUI","AceConsole-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
-local CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
+addon.SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
+addon.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
 addon.opt = {
 	name = "SpartanUI", type = "group", childGroups = "tab", args = {
@@ -27,7 +27,7 @@ local frameDefault2 = {movement=MovedDefault;AuraDisplay=true,display=true,Debuf
 
 DBdefault = {
 	SUIProper = {
-		Version = SpartanVer,
+		Version = addon.SpartanVer,
 		HVer = "",
 		yoffset = 0,
 		xOffset = 0,
@@ -224,7 +224,7 @@ DBdefault = {
 	}
 }
 DBdefaults = {char = DBdefault,realm = DBdefault,class = DBdefault,profile = DBdefault}
-DBGlobals = {Version = SpartanVer}
+DBGlobals = {Version = addon.SpartanVer}
 
 function addon:comma_value(n)
 	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')

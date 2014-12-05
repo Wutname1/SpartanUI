@@ -274,7 +274,7 @@ function module:SetupVehicleUI()
 end
 function module:RemoveVehicleUI()
 	if not DBMod.Artwork.VehicleUI then
-		UnRegisterStateDriver(SpartanUI, "visibility");
+		--UnRegisterStateDriver(SpartanUI, "visibility");
 	end
 end
 

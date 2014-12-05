@@ -6,9 +6,9 @@ local module = spartan:NewModule("Options");
 ---------------------------------------------------------------------------
 
 function module:OnInitialize()
-	spartan.opt.args["General"].args["SuiVersion"] = {name = "SpartanUI "..L["Version"]..": "..SpartanVer,order=1,type = "header"};
-	if (SpartanVer ~= CurseVersion) then
-		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..CurseVersion,order=1.1,type = "header"};
+	spartan.opt.args["General"].args["SuiVersion"] = {name = "SpartanUI "..L["Version"]..": "..spartan.SpartanVer,order=1,type = "header"};
+	if (spartan.SpartanVer ~= spartan.CurseVersion) then
+		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
 	spartan.opt.args["General"].args["reset"] = {name = L["ResetDatabase"],type = "execute",order=999,
 		desc = L["ResetDatabaseDesc"],
@@ -21,61 +21,25 @@ function module:OnInitialize()
 			end
 		end
 	};
-	spartan.opt.args["General"].args["font"] = {name = L["FontSizeStyle"], type = "group",
+	spartan.opt.args["General"].args["font"] = {name = L["FontSizeStyle"], type = "group",order = 200,
 		args = {
-			line0 = {name=L["GFontSet"],type="header",order=20},
-			GFace = {name = L["FontType"], type="select", order = 1,
+			a = {name=L["GFontSet"],type="header"},
+			b = {name = L["FontType"], type="select",
 				values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
 				get = function(info) return DB.font.Primary.Face; end,
 				set = function(info,val) DB.font.Primary.Face = val; end
 			},
-			GOutline = {name = L["FontStyle"], type="select", order = 2,
+			c = {name = L["FontStyle"], type="select",
 				values = {["normal"]=L["normal"], ["monochrome"]=L["monochrome"], ["outline"]=L["outline"], ["thickoutline"]=L["thickoutline"]},
 				get = function(info) return DB.font.Primary.Type; end,
 				set = function(info,val) DB.font.Primary.Type = val; end
 			},
-			GSize = {name = L["AdjFontSize"], type="range", order = 3,width="double",
+			d = {name = L["AdjFontSize"], type="range",width="double",
 				min=-3,max=3,step=1,
 				get = function(info) return DB.font.Primary.Size; end,
 				set = function(info,val) DB.font.Primary.Size = val; end
 			},
-			line1 = {name="",type="header",order=20},
-			ApplyToCore = {name = L["AplyGlobal"].." "..L["CoreSet"], type="execute", order = 21,
-				func = function()
-					DB.font.Core.Face = DB.font.Primary.Face;
-					DB.font.Core.Type = DB.font.Primary.Type;
-					DB.font.Core.Size = DB.font.Primary.Size;
-					spartan:FontRefresh("Core");
-				end
-			},
-			ApplyToPlayer = {name = L["AplyGlobal"].." "..L["PlayerSet"], type="execute", order = 22,
-				disabled = function(info) if not spartan:GetModule("PlayerFrames", true) then return true end end,
-				func = function()
-					DB.font.Player.Face = DB.font.Primary.Face;
-					DB.font.Player.Type = DB.font.Primary.Type;
-					DB.font.Player.Size = DB.font.Primary.Size;
-					spartan:FontRefresh("Player");
-				end
-			},
-			ApplyToParty = {name = L["AplyGlobal"].." "..L["PartySet"], type="execute", order = 23,
-				disabled = function(info) if not spartan:GetModule("PartyFrames", true) then return true end end,
-				func = function()
-					DB.font.Party.Face = DB.font.Primary.Face;
-					DB.font.Party.Type = DB.font.Primary.Type;
-					DB.font.Party.Size = DB.font.Primary.Size;
-					spartan:FontRefresh("Party");
-				end
-			},
-			ApplyToRaid = {name = L["AplyGlobal"].." "..L["RaidSet"], type="execute", order = 24,
-				disabled = function(info) if not spartan:GetModule("RaidFrames", true) then return true end end,
-				func = function()
-					DB.font.Raid.Face = DB.font.Primary.Face;
-					DB.font.Raid.Type = DB.font.Primary.Type;
-					DB.font.Raid.Size = DB.font.Primary.Size;
-					spartan:FontRefresh("Raid");
-				end
-			},
-			ApplyToAll = {name = L["AplyGlobal"].." "..L["AllSet"], type="execute", order = 28,width="double",
+			z = {name = L["AplyGlobal"].." "..L["AllSet"], type="execute",width="double",
 				func = function()
 					DB.font.Core.Face = DB.font.Primary.Face;
 					DB.font.Core.Type = DB.font.Primary.Type;
@@ -177,5 +141,71 @@ function module:OnInitialize()
 			},
 		}
 	};
+	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
+		args = {
+			navigationissues = {name="Issues locating a setting?",type="description",order = 100,fontSize="large"},
+			navigationissues2 = {name="    |cff0000ff http://spartan-dev.com/portal/anspress",type="description",order = 101,fontSize="medium"},
+			
+			bugsandfeatures = {name="Bugs & Feature Requests:",type="description",order = 200,fontSize="large"},
+			bugsandfeatures2 = {name="     -|cff0000ff http://spartan-dev.com/portal/products/spartan-ui/spartanui-bugs",type="description",order = 201,fontSize="medium"},
+			bugsandfeatures3 = {name="     -|cff0000ff http://wow.curseforge.com/addons/spartan-ui/tickets/",type="description",order = 202,fontSize="medium"},
+			
+			
+			line = {name="",type="header",order = 900},
+			description = {name="Providing the below string can assist in helping you when you are having issues",type="description",order = 901,fontSize="large"},
+			dataDump = {name="Export",type="input",multiline=10,width="full",order=990,get = function(info) return module:enc(module:ExportData()) end}
+		}
+	};
+	
+end
+function module:ExportData()
+	return "$C."
+		.. "$DB." .. module:FlatenTable(DB)
+		.. "$DBMod." .. module:FlatenTable(DBMod)
 end
 
+function module:FlatenTable(input)
+	returnval = ""
+	for key,value in pairs(input) do
+		if (type(value) == "table") then
+			returnval = returnval .. key .. "= {" .. module:FlatenTable(value) .. "},"
+		elseif (type(value) ~= "string") then
+			returnval = returnval .. key .. "=" .. tostring(value) .. ","
+		else
+			returnval = returnval .. key .. "=" .. value .. ","
+		end
+	end
+	return returnval
+end
+
+local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+-- encoding
+function module:enc(data)
+    return ((data:gsub('.', function(x) 
+        local r,b='',x:byte()
+        for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
+        return r;
+    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+        if (#x < 6) then return '' end
+        local c=0
+        for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
+        return b:sub(c+1,c+1)
+    end)..({ '', '==', '=' })[#data%3+1])
+end
+ 
+-- decoding
+function module:dec(data)
+
+    data = string.gsub(data, '[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if (x == '=') then return '' end
+        local r,f='',(b:find(x)-1)
+        for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
+        return r;
+    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
+        if (#x ~= 8) then return '' end
+        local c=0
+        for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(7-i) or 0) end
+        return string.char(c)
+    end))
+end

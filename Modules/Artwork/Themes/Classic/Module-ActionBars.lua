@@ -27,6 +27,7 @@ local BartenderSettings = { -- actual settings being inserted into our custom pr
 	Vehicle		= {	enabled = false,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
 	ExtraActionBar = {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
 	BlizzardArt	= {	enabled = false,	},
+	blizzardVehicle = false
 };
 
 local default, plate = {

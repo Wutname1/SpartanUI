@@ -3,45 +3,44 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = spartan:NewModule("DBSetup");
 local Bartender4Version, BartenderMin = "","4.5.12"
 if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
-local CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
-if (CurseVersion == nil) then CurseVersion = "" end
+if (spartan.CurseVersion == nil) then spartan.CurseVersion = "" end
 
 function module:OnInitialize()
 	StaticPopupDialogs["FirstLaunchNotice"] = {
-		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|n'..L["WelcomeMSG"]..' /sui|n|n',
+		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["WelcomeMSG"]..' /sui|n|n',
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.Version = SpartanVer;
+			DBGlobal.Version = spartan.SpartanVer;
 		end,
 		timeout = 0,
 		whileDead = true,
 		hideOnEscape = false
 	}
 	StaticPopupDialogs["BartenderVerWarning"] = {
-		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
+		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.BartenderVerWarning = SpartanVer;
+			DBGlobal.BartenderVerWarning = spartan.SpartanVer;
 		end,
 		timeout = 0,
 		whileDead = true,
 		hideOnEscape = false
 	}
 	StaticPopupDialogs["BartenderInstallWarning"] = {
-		text = '|cff33ff99SpartanUI v'..SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
+		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.BartenderInstallWarning = SpartanVer
+			DBGlobal.BartenderInstallWarning = spartan.SpartanVer
 		end,
 		timeout = 0,
 		whileDead = true,
 		hideOnEscape = false
 	}
 	StaticPopupDialogs["AlphaWarning"] = {
-		text = '|cff33ff99SpartanUI Alpha '..CurseVersion..'|n|r|n|n'..L["Warning"]..': '..L["AplhaDetectedMSG1"]..'|n|n'..L["AplhaDetectedMSG2"],
+		text = '|cff33ff99SpartanUI Alpha '..spartan.CurseVersion..'|n|r|n|n'..L["Warning"]..': '..L["AplhaDetectedMSG1"]..'|n|n'..L["AplhaDetectedMSG2"],
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.AlphaWarning = CurseVersion
+			DBGlobal.AlphaWarning = spartan.CurseVersion
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -144,9 +143,9 @@ function module:OnInitialize()
 				DBMod.PartyFrames.display.target = true; spartan:Print("Party Target Enabled.");
 			end
 			if DBMod.PlayerFrames.focus.moved == nil then DBMod.PlayerFrames.focus.moved = false; spartan:Print("Focus Frame position reset"); end
-			if not spartan.db.char.Version then spartan:Print("Setup char DB"); spartan.db.char = DBdefault; spartan.db.char.Version = SpartanVer; end
-			if not spartan.db.realm.Version then spartan:Print("Setup realm DB"); spartan.db.realm = DBdefault; spartan.db.realm.Version = SpartanVer; end
-			if not spartan.db.class.Version then spartan:Print("Setup class DB"); spartan.db.class = DBdefault; spartan.db.class.Version = SpartanVer; end
+			if not spartan.db.char.Version then spartan:Print("Setup char DB"); spartan.db.char = DBdefault; spartan.db.char.Version = spartan.SpartanVer; end
+			if not spartan.db.realm.Version then spartan:Print("Setup realm DB"); spartan.db.realm = DBdefault; spartan.db.realm.Version = spartan.SpartanVer; end
+			if not spartan.db.class.Version then spartan:Print("Setup class DB"); spartan.db.class = DBdefault; spartan.db.class.Version = spartan.SpartanVer; end
 			if not DBMod.PartyFrames.Auras then DBMod.PartyFrames.Auras = {} end
 			if not DBMod.PartyFrames.Auras.NumBuffs then DBMod.PartyFrames.Auras.NumBuffs = 0 end
 			if not DBMod.PartyFrames.Auras.NumDebuffs then DBMod.PartyFrames.Auras.NumDebuffs = 10 end
@@ -223,8 +222,8 @@ function module:OnInitialize()
 			if not DB.MiniMap.AutoDetectAllowUse then DB.MiniMap.AutoDetectAllowUse = true end
 			if not DB.MiniMap.AutoDetectAllowUse then DB.MiniMap.AutoDetectAllowUse = true end
 		end
-		if (not DB.HVer) or (DB.HVer ~= (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", "")) and DB.Version == "3.3.0" and DB.HVer == "b") then
-			DB.HVer = (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", ""))
+		if (not DB.HVer) or (DB.HVer ~= (string.gsub(string.gsub(spartan.CurseVersion, "%.", ""), "[0-9]", "")) and DB.Version == "3.3.0" and DB.HVer == "b") then
+			DB.HVer = (string.gsub(string.gsub(spartan.CurseVersion, "%.", ""), "[0-9]", ""))
 			DBMod.Artwork.Viewport = 
 			{
 				enabled = true,
@@ -250,10 +249,10 @@ function module:OnEnable()
 		StaticPopup_Show ("FirstLaunchNotice")
 	end
 	-- No Bartender/out of date Notification
-	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= SpartanVer)) then
-		if SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
+	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= spartan.SpartanVer)) then
+		if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
 	elseif Bartender4Version < BartenderMin then
-			if SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
+			if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
 	end
 	-- MiniMap Modification
 	if (((not DB.MiniMap.AutoDetectAllowUse) and (not DB.MiniMap.ManualAllowUse)) and DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
@@ -261,7 +260,7 @@ function module:OnEnable()
 	end
 	
 	-- Update DB Version
-	DB.Version = SpartanVer;
-	DB.HVer = (string.gsub(string.gsub(CurseVersion, "%.", ""), "[0-9]", ""))
-	DBGlobal.Version = SpartanVer;
+	DB.Version = spartan.SpartanVer;
+	DB.HVer = (string.gsub(string.gsub(spartan.CurseVersion, "%.", ""), "[0-9]", ""))
+	DBGlobal.Version = spartan.SpartanVer;
 end

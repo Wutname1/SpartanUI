@@ -30,12 +30,24 @@ function Artwork_Core:SetupOptions()
 				get = function(info) return DBMod.Artwork.VehicleUI end,
 				set = function(info,val) 
 					DBMod.Artwork.VehicleUI = val
+					--Make sure bartender knows to do it, or not...
+					if Bartender4 then
+						Bartender4.db.profile.blizzardVehicle = val
+						Bartender4:UpdateBlizzardVehicle()
+					end
 					
 					if DBMod.Artwork.VehicleUI then
 						spartan:GetModule("Artwork_" .. DBMod.Artwork.Theme):SetupVehicleUI()
 					else
 						spartan:GetModule("Artwork_" .. DBMod.Artwork.Theme):RemoveVehicleUI()
 					end
+				end,
+			},
+			LockButtons = {name = "Lock Buttons", type = "toggle",order=0.91,
+				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Global"].args["LockButtons"].disabled=true; return false; end end,
+				set = function(info, value)
+					Bartender4.db.profile.buttonlock = value
+					Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
 				end,
 			},
 			viewport = {name = "Viewport Enabled", type = "toggle",order=1,
