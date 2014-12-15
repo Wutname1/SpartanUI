@@ -143,12 +143,12 @@ function module:OnInitialize()
 	};
 	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
-			navigationissues = {name="Issues locating a setting?",type="description",order = 100,fontSize="large"},
-			navigationissues2 = {name="    |cff0000ff http://spartan-dev.com/portal/anspress",type="description",order = 101,fontSize="medium"},
+			navigationissues = {name="Have a Question?",type="description",order = 100,fontSize="large"},
+			navigationissues2 = {name="    -|cff6666FF http://faq.spartanui.net/",type="description",order = 101,fontSize="medium"},
 			
 			bugsandfeatures = {name="Bugs & Feature Requests:",type="description",order = 200,fontSize="large"},
-			bugsandfeatures2 = {name="     -|cff0000ff http://spartan-dev.com/portal/products/spartan-ui/spartanui-bugs",type="description",order = 201,fontSize="medium"},
-			bugsandfeatures3 = {name="     -|cff0000ff http://wow.curseforge.com/addons/spartan-ui/tickets/",type="description",order = 202,fontSize="medium"},
+			bugsandfeatures2 = {name="     -|cff6666FF http://bugs.spartanui.net/",type="description",order = 201,fontSize="medium"},
+			bugsandfeatures3 = {name="     -|cff6666FF http://wow.curseforge.com/addons/spartan-ui/tickets/",type="description",order = 202,fontSize="medium"},
 			
 			
 			line = {name="",type="header",order = 900},
