@@ -239,6 +239,10 @@ function module:OnInitialize()
 			if DB.MiniMap.OtherStyle == nil then DB.MiniMap.OtherStyle = "mouseover" end
 			if DB.MiniMap.BlizzStyle == nil then DB.MiniMap.BlizzStyle = "mouseover" end
 		end
+		if (DB.Version < "3.3.2") then
+			if DBMod.Artwork.Style == nil or DBMod.Artwork.Style == "Default" then DBMod.Artwork.Style = "Classic" end
+			if DB.Styles == nil then DB.Styles = {Classic = {Artwork = true,PlayerFrames = true,PartyFrames = true,RaidFrames = true}} end
+		end
 	end
 end
 

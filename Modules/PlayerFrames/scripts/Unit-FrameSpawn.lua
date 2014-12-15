@@ -151,7 +151,7 @@ function addon:SUI_PlayerFrames_Plain()
 end
 
 if (DBMod.PlayerFrames.style == "theme") then
-	local CurTheme = spartan:GetModule("Artwork_" .. DBMod.Artwork.Theme);
+	local CurTheme = spartan:GetModule("Artwork_" .. DBMod.Artwork.Style);
 	CurTheme:UnitFrames();
 elseif (DBMod.PlayerFrames.style == "classic") then
 	addon:SUI_PlayerFrames_Classic();

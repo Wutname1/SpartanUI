@@ -35,6 +35,14 @@ DBdefault = {
 		scale = .92,
 		alpha = 1,
 		viewport = true,
+		Styles = {
+			Classic = {
+				Artwork = true,
+				PlayerFrames = true,
+				PartyFrames = true,
+				RaidFrames = true
+			}
+		},
 		ChatSettings = {
 			enabled = true
 		},
@@ -108,6 +116,9 @@ DBdefault = {
 	},
 	Modules = {
 		Artwork = {
+			Style = "Default",
+			FirstLoad = true,
+			VehicleUI = true,
 			Viewport = 
 			{
 				enabled = true,
@@ -115,10 +126,7 @@ DBdefault = {
 				{
 					top = 0,bottom = 2.3,left = 0,right = 0
 				}
-			},
-			FirstLoad = true,
-			VehicleUI = true,
-			Theme = "Classic"
+			}
 		},
 		SpinCam = {
 			enable = true,

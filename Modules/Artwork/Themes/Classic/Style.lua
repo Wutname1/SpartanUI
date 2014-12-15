@@ -5,7 +5,7 @@ local module = spartan:GetModule("Artwork_Classic");
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
-	if (DBMod.Artwork.Theme == "Classic") then
+	if (DBMod.Artwork.Style == "Classic") then
 		Init();
 	else
 		module:Disable();
@@ -13,7 +13,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (DBMod.Artwork.Theme == "Classic") then
+	if (DBMod.Artwork.Style == "Classic") then
 		if (not InitRan) then Init(); end
 		module:EnableFramework();
 		module:EnableActionBars();

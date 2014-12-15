@@ -11,10 +11,10 @@ function Artwork_Core:SetupOptions()
 	end
 	spartan.opt.args["Artwork"].args["Profile"] = {name="Profile",type="select",order=0,style="dropdown",
 		values=Profiles,
-		get = function(info) return DBMod.Artwork.Theme end,
+		get = function(info) return DBMod.Artwork.Style end,
 		set = function(info,val) 
 			DBMod.Artwork.FirstLoad = true
-			DBMod.Artwork.Theme = val;
+			DBMod.Artwork.Style = val;
 			newtheme = spartan:GetModule("Artwork_"..val)
 			newtheme:CreateProfile();
 			ReloadUI();
