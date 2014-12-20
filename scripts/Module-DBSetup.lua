@@ -241,7 +241,8 @@ function module:OnInitialize()
 		end
 		if (DB.Version < "3.3.2") then
 			if DBMod.Artwork.Style == nil or DBMod.Artwork.Style == "Default" then DBMod.Artwork.Style = "Classic" end
-			if DB.Styles == nil then DB.Styles = {Classic = {Artwork = true,PlayerFrames = true,PartyFrames = true,RaidFrames = true}} end
+			if DB.Styles == nil then DB.Styles = {Classic = {Artwork = true,PlayerFrames = true,PartyFrames = true,RaidFrames = true,BartenderProfile = "SpartanUI - Classic"}} end
+			if DB.Styles.Classic.BartenderProfile == nil then DB.Styles.Classic.BartenderProfile = "SpartanUI - Classic" end
 		end
 	end
 end

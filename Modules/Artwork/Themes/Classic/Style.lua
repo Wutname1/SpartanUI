@@ -6,26 +6,15 @@ local module = spartan:GetModule("Artwork_Classic");
 local InitRan = false
 function module:OnInitialize()
 	if (DBMod.Artwork.Style == "Classic") then
-		Init();
+		module:Init();
 	else
 		module:Disable();
 	end
 end
 
-function module:OnEnable()
-	if (DBMod.Artwork.Style == "Classic") then
-		if (not InitRan) then Init(); end
-		module:EnableFramework();
-		module:EnableActionBars();
-		module:EnableMinimap();
-		module:EnableStatusBars();
-		if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end -- We want to do this last
-	end
-end
-
-function Init()
-	SetupMenus();
+function module:Init()
 	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
+	module:SetupMenus();
 	module:InitFramework();
 	module:InitActionBars();
 	module:InitMinimap();
@@ -35,9 +24,23 @@ end
 
 function module:FirstLoad()
 	DBMod.Artwork.Viewport.offset.bottom = 2.8
+	--If our profile exists activate it.
+	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile); end
 end
 
-function SetupMenus()
+function module:OnEnable()
+	if (DBMod.Artwork.Style == "Classic") then
+		if (not InitRan) then module:Init(); end
+		if (not module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then module:CreateProfile(); end
+		module:EnableFramework();
+		module:EnableActionBars();
+		module:EnableMinimap();
+		module:EnableStatusBars();
+		if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end -- We want to do this last
+	end
+end
+
+function module:SetupMenus()
 	spartan.opt.args["Artwork"].args["backdrop"] = { name = "ActionBar Settings", type = "group",
 		desc = L["ActionBarConfDesc"],
 		args = {

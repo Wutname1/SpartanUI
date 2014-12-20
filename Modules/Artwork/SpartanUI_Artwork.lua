@@ -51,6 +51,9 @@ end
 
 function Artwork_Core:OnInitialize()
 	Artwork_Core:CheckMiniMap();
+end
+
+function Artwork_Core:OnEnable()
 	Artwork_Core:SetupOptions();
 end
 

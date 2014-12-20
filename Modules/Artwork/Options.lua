@@ -16,7 +16,7 @@ function Artwork_Core:SetupOptions()
 			DBMod.Artwork.FirstLoad = true
 			DBMod.Artwork.Style = val;
 			newtheme = spartan:GetModule("Artwork_"..val)
-			newtheme:CreateProfile();
+			newtheme:SetupProfile();
 			ReloadUI();
 		end
 	}
@@ -29,6 +29,7 @@ function Artwork_Core:SetupOptions()
 			VehicleUI = {name = "Use Blizzard Vehicle UI", type = "toggle",order=0.9,
 				get = function(info) return DBMod.Artwork.VehicleUI end,
 				set = function(info,val) 
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
 					DBMod.Artwork.VehicleUI = val
 					--Make sure bartender knows to do it, or not...
 					if Bartender4 then
@@ -54,6 +55,7 @@ function Artwork_Core:SetupOptions()
 				desc="Allow SpartanUI To manage the viewport",
 				get = function(info) return DB.viewport end,
 				set = function(info,val)
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
 					if (not val) then
 						--Since we are disabling reset the viewport
 						WorldFrame:ClearAllPoints();

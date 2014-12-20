@@ -41,6 +41,11 @@ function module:updateButtons()
 		MiniMapTracking:Hide();
 		MiniMapWorldMapButton:Hide();
 		GarrisonLandingPageMinimapButton:Hide();
+		--Fix for DBM making its icon even if its not needed
+		if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
+			table.insert(DB.MiniMap.IgnoredFrames, "DBMMinimapButton")
+		end
+		
 		for i, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName();
 			buttonType = child:GetObjectType();
@@ -52,9 +57,9 @@ function module:updateButtons()
 				child:Hide();
 				if not Artwork_Core:isInTable(DB.MiniMap.frames, buttonName) then
 					table.insert(DB.MiniMap.frames, buttonName)
-					child:HookScript("OnEvent",function(self,event,...)
-						print(event)
-					end);
+					
+					
+					--Hook into the buttons show and hide events to catch for the button being enabled/disabled
 					child:HookScript("OnHide",function(self,event,...)
 						if not DB.MiniMap.SUIMapChangesActive then
 							table.insert(DB.MiniMap.IgnoredFrames, self:GetName())

@@ -524,10 +524,10 @@ function addon:OnInitialize()
 	};
 end
 
-function addon:OnEnable()
+--function addon:OnEnable()
 	-- for k,v in pairs(Units) do if DBMod.PlayerFrames[v].AuraDisplay then
 		-- if addon[v].Auras then addon[v].Auras:PostUpdate(v); end
 		-- if addon[v].Debuffs then addon[v].Debuffs:PostUpdate(v); end
 	-- end end
 	-- for k,v in pairs(Units) do if DBMod.PlayerFrames[v].display then addon[v]:Enable(); else addon[v]:Disable(); end end
-end
+--end

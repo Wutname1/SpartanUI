@@ -3,7 +3,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = addon:GetModule("Artwork_Core");
 local module = addon:GetModule("Artwork_Classic");
 ----------------------------------------------------------------------------------------------------
-local ProfileName = "SpartanUI 3.3.0 - Classic";
+local ProfileName = DB.Styles.Classic.BartenderProfile;
 local BartenderSettings = { -- actual settings being inserted into our custom profile
 	ActionBars = {
 		actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
@@ -45,23 +45,8 @@ function module:SetupProfile()
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
-	print("Using this profile: "..Bartender4.db:GetCurrentProfile())
-	
-	-- Checking for our Profile
-	if (not module:BartenderProfileCheck(ProfileName,true)) then DB.ActionBars.Bartender4 = false end
-	
-	-- Set to our Profile
-	--if DB.ActionBars.Bartender4 then
-	if ((Bartender4.db:GetCurrentProfile() ~= ProfileName) and (DBMod.Artwork.FirstLoad)) then
-		Bartender4.db:SetProfile(ProfileName);
-	end
-	--end
-	
-	--If our profile exists and this is not the themes first load then dont do any other bar setup
-	--We do not want to overwrite custom profiles...
-	if ((not DBMod.Artwork.FirstLoad) and (module:BartenderProfileCheck(ProfileName,true))) then
-		return;
-	end
+	-- Set/Create our Profile
+	Bartender4.db:SetProfile(ProfileName);
 	
 	--Load the Profile Data
 	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
@@ -69,32 +54,14 @@ function module:SetupProfile()
 			v.db.profile = module:MergeData(v.db.profile,BartenderSettings[k])
 		end
 	end
-	Bartender4:UpdateModuleConfigs(); -- run ApplyConfig for all modules, so that the new BartenderSettings are applied
-	--if module:BartenderProfileCheck(ProfileName,false) then addon:Print(ProfileName.." "..L["BartenderProfileCreated"]) end
-	DB.ActionBars.Bartender4 = true;
-	-- Can't use UpdateInterval, due to the way this need to be working -- could this behavior be changed? - Maybe a securehoocfunc on the unlocking
-	plate:HookScript("OnUpdate",function(self,...)
-		if (InCombatLockdown()) then return; end
-		if (Bartender4.db:GetCurrentProfile() == ProfileName) or (Bartender4.db:GetCurrentProfile() == newtest) then
-			if Bartender4.Locked then return; end
-			addon:Print(L["BartenderProfileLocked"]);
-			Bartender4:Lock();
-		end
-	end);
 end;
+
 function module:CreateProfile()
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
-	print("Using this profile: "..Bartender4.db:GetCurrentProfile())
-	
-	-- Checking for our Profile
-	if (not module:BartenderProfileCheck(ProfileName,true)) then DB.ActionBars.Bartender4 = false end
-	
-	-- Set to our Profile
-	-- if DB.ActionBars.Bartender4 then
-		-- if Bartender4.db:GetCurrentProfile() ~= ProfileName then Bartender4.db:SetProfile(ProfileName) end return;
-	-- end
+	-- Set/Create our Profile
+	Bartender4.db:SetProfile(ProfileName);
 	
 	--Load the Profile Data
 	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
@@ -102,6 +69,8 @@ function module:CreateProfile()
 			v.db.profile = module:MergeData(v.db.profile,BartenderSettings[k])
 		end
 	end
+	
+	Bartender4:UpdateModuleConfigs();
 end
 
 function module:BartenderProfileCheck(Input,Report)
@@ -128,9 +97,8 @@ function module:MergeData(target,source)
 end
 
 function module:InitActionBars()
-
-	Artwork_Core:ActionBarPlates("SUI_ActionBarPlate");
-
+	if (Bartender4.db:GetCurrentProfile() == DB.Styles.Classic.BartenderProfile) then Artwork_Core:ActionBarPlates("SUI_ActionBarPlate"); end
+	
 	do -- create bar plate and masks
 		plate = CreateFrame("Frame","SUI_ActionBarPlate",SpartanUI,"SUI_ActionBarsTemplate");
 		plate:SetFrameStrata("BACKGROUND"); plate:SetFrameLevel(1);
@@ -203,7 +171,7 @@ function module:EnableActionBars()
 			_G["SUI_Popup"..i]:SetFrameLevel(3);
 		end
 	end
-	module:SetupProfile();
+	--module:SetupProfile();
 	-- Do what Bartender isn't - Make the Bag buttons the same size
 	do -- modify CharacterBag(0-3) Scale
 		for i = 1,4 do

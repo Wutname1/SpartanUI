@@ -1,5 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local addon = spartan:NewModule("PlayerFrames");
+local PlayerFrames = spartan:NewModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 
 do -- ClassIcon as an SpartanoUF module
@@ -85,80 +85,80 @@ do --Health Formatting Tags
 	SpartanoUF.Tags.Events['curhpshort'] = "UNIT_HEALTH";
 	SpartanoUF.Tags.Methods['curhpshort'] = function (unit)
 		local tmp = UnitHealth(unit);
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 0).."M"; end
-		if tmp >= 1000 then return addon:round(tmp/1000, 0).."K"; end
-		return addon:comma_value(tmp);
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 0).."M"; end
+		if tmp >= 1000 then return PlayerFrames:round(tmp/1000, 0).."K"; end
+		return PlayerFrames:comma_value(tmp);
 	end
 -- Current Health Dynamic, as an SpartanoUF module
 	SpartanoUF.Tags.Events['curhpdynamic'] = "UNIT_HEALTH";
 	SpartanoUF.Tags.Methods['curhpdynamic'] = function (unit)
 		local tmp = UnitHealth(unit);
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
-		else return addon:comma_value(tmp); end
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 1).."M ";
+		else return PlayerFrames:comma_value(tmp); end
 	end
 -- Total Health Short, as an SpartanoUF module
 	SpartanoUF.Tags.Events['maxhpshort'] = "UNIT_HEALTH";
 	SpartanoUF.Tags.Methods['maxhpshort'] = function (unit)
 		local tmp = UnitHealthMax(unit);
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 0).."M"; end
-		if tmp >= 1000 then return addon:round(tmp/1000, 0).."K"; end
-		return addon:comma_value(tmp);
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 0).."M"; end
+		if tmp >= 1000 then return PlayerFrames:round(tmp/1000, 0).."K"; end
+		return PlayerFrames:comma_value(tmp);
 	end
 -- Total Health Dynamic, as an SpartanoUF module
 	SpartanoUF.Tags.Events['maxhpdynamic'] = "UNIT_HEALTH";
 	SpartanoUF.Tags.Methods['maxhpdynamic'] = function (unit)
 		local tmp = UnitHealthMax(unit);
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
-		else return addon:comma_value(tmp); end
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 1).."M ";
+		else return PlayerFrames:comma_value(tmp); end
 	end
 -- Missing Health Dynamic, as an SpartanoUF module
 	SpartanoUF.Tags.Events['missinghpdynamic'] = "UNIT_HEALTH";
 	SpartanoUF.Tags.Methods['missinghpdynamic'] = function (unit)
 		local tmp = UnitHealthMax(unit) - UnitHealth(unit)
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
-		else return addon:comma_value(tmp); end
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 1).."M ";
+		else return PlayerFrames:comma_value(tmp); end
 	end
 -- Current Health formatted, as an SpartanoUF module
 	SpartanoUF.Tags.Events['curhpformatted'] = "UNIT_HEALTH";
-	SpartanoUF.Tags.Methods['curhpformatted'] = function (unit) return addon:comma_value(UnitHealth(unit)); end
+	SpartanoUF.Tags.Methods['curhpformatted'] = function (unit) return PlayerFrames:comma_value(UnitHealth(unit)); end
 -- Total Health formatted, as an SpartanoUF module
 	SpartanoUF.Tags.Events['maxhpformatted'] = "UNIT_HEALTH";
-	SpartanoUF.Tags.Methods['maxhpformatted'] = function (unit) return addon:comma_value(UnitHealthMax(unit)); end
+	SpartanoUF.Tags.Methods['maxhpformatted'] = function (unit) return PlayerFrames:comma_value(UnitHealthMax(unit)); end
 -- Missing Health formatted, as an SpartanoUF module
 	SpartanoUF.Tags.Events['missinghpformatted'] = "UNIT_HEALTH";
-	SpartanoUF.Tags.Methods['missinghpformatted'] = function (unit) return addon:comma_value(UnitHealthMax(unit) - UnitHealth(unit)); end
+	SpartanoUF.Tags.Methods['missinghpformatted'] = function (unit) return PlayerFrames:comma_value(UnitHealthMax(unit) - UnitHealth(unit)); end
 end
 do -- Mana Formatting Tags
 -- Current Mana Dynamic, as an SpartanoUF module
 	SpartanoUF.Tags.Events['curppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
 	SpartanoUF.Tags.Methods['curppdynamic'] = function (unit)
 		local tmp = UnitPower(unit);
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
-		else return addon:comma_value(tmp); end
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 1).."M ";
+		else return PlayerFrames:comma_value(tmp); end
 	end
 -- Total Mana Dynamic, as an SpartanoUF module
 	SpartanoUF.Tags.Events['maxppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
 	SpartanoUF.Tags.Methods['maxppdynamic'] = function (unit)
 		local tmp = UnitPowerMax(unit);
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
-		else return addon:comma_value(tmp); end
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 1).."M ";
+		else return PlayerFrames:comma_value(tmp); end
 	end
 -- Missing Mana Dynamic, as an SpartanoUF module
 	SpartanoUF.Tags.Events['missinghpdynamic'] = "UNIT_HEALTH";
 	SpartanoUF.Tags.Methods['missinghpdynamic'] = function (unit)
 		local tmp = UnitPowerMax(unit) - UnitPower(unit)
-		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
-		else return addon:comma_value(tmp); end
+		if tmp >= 1000000 then return PlayerFrames:round(tmp/1000000, 1).."M ";
+		else return PlayerFrames:comma_value(tmp); end
 	end
 -- Current Mana formatted, as an SpartanoUF module
 	SpartanoUF.Tags.Events['curppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
-	SpartanoUF.Tags.Methods['curppformatted'] = function (unit) return addon:comma_value(UnitPower(unit)); end
+	SpartanoUF.Tags.Methods['curppformatted'] = function (unit) return PlayerFrames:comma_value(UnitPower(unit)); end
 -- Total Mana formatted, as an SpartanoUF module
 	SpartanoUF.Tags.Events['maxppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
-	SpartanoUF.Tags.Methods['maxppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit)); end
+	SpartanoUF.Tags.Methods['maxppformatted'] = function (unit) return PlayerFrames:comma_value(UnitPowerMax(unit)); end
 -- Total Mana formatted, as an SpartanoUF module
 	SpartanoUF.Tags.Events['missingppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
-	SpartanoUF.Tags.Methods['missingppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit)); end
+	SpartanoUF.Tags.Methods['missingppformatted'] = function (unit) return PlayerFrames:comma_value(UnitPowerMax(unit) - UnitPower(unit)); end
 end
 
 do --Color name by Class
@@ -186,7 +186,7 @@ do --Color name by Class
 	end
 end
 
-function addon:round(val, decimal)
+function PlayerFrames:round(val, decimal)
   if (decimal) then
     return math.floor( (val * 10^decimal) + 0.5) / (10^decimal)
   else
@@ -194,7 +194,7 @@ function addon:round(val, decimal)
   end
 end
 
-function addon:comma_value(n)
+function PlayerFrames:comma_value(n)
 	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
 	return left..(num:reverse():gsub('(%d%d%d)','%1,'):reverse())..right
 end
@@ -272,3 +272,4 @@ do -- fix SET_FOCUS & CLEAR_FOCUS errors
 	end
 	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
 end
+

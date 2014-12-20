@@ -40,7 +40,8 @@ DBdefault = {
 				Artwork = true,
 				PlayerFrames = true,
 				PartyFrames = true,
-				RaidFrames = true
+				RaidFrames = true,
+				BartenderProfile = "SpartanUI - Classic"
 			}
 		},
 		ChatSettings = {
@@ -116,7 +117,7 @@ DBdefault = {
 	},
 	Modules = {
 		Artwork = {
-			Style = "Classic",
+			Style = "Default",
 			FirstLoad = true,
 			VehicleUI = true,
 			Viewport = 
