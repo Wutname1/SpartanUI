@@ -243,6 +243,7 @@ function module:OnInitialize()
 			if DBMod.Artwork.Style == nil or DBMod.Artwork.Style == "Default" then DBMod.Artwork.Style = "Classic" end
 			if DB.Styles == nil then DB.Styles = {Classic = {Artwork = true,PlayerFrames = true,PartyFrames = true,RaidFrames = true,BartenderProfile = "SpartanUI - Classic"}} end
 			if DB.Styles.Classic.BartenderProfile == nil then DB.Styles.Classic.BartenderProfile = "SpartanUI - Classic" end
+			if Bartender4.db:GetCurrentProfile() == "SpartanUI 3.3.1 - Classic" then Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile); end
 		end
 	end
 end

@@ -2,6 +2,7 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local addon = spartan:NewModule("SpinCam");
 local SpinCamRunning
+local userCameraYawMoveSpeed
 
 function addon:OnInitialize()
 	spartan.opt.args["SpinCam"].args["enable"] = {name=L["Spin/AFKOn"],type="toggle",order=1,width="full",
@@ -22,12 +23,13 @@ function addon:OnInitialize()
 		desc = L["Spin/ToggleDesc"],
 		func = function(info,val) addon:SpinToggle(); end
 	}
+	userCameraYawMoveSpeed = (GetCVar("cameraYawMoveSpeed"))
 end
 
 function addon:OnEnable()
 	CameraDistanceMax = nil,200;
 	SetCVar("cameraDistanceMax",CameraDistanceMax or 200);
-	SetCVar("cameraYawMoveSpeed","230");
+	SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
 	local frame = CreateFrame("Frame");
 	frame:RegisterEvent("CHAT_MSG_SYSTEM");
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -47,12 +49,13 @@ end
 function addon:SpinToggle(action)
 	if (SpinCamRunning and action == nil) or (action=="stop") then
 		MoveViewRightStop();
-		SetCVar("cameraYawMoveSpeed","230");
+		SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
 		SpinCamRunning = nil;
 		SetView(5);
 	elseif action == "update" then
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
 	else
+		userCameraYawMoveSpeed = (GetCVar("cameraYawMoveSpeed"))
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
 		MoveViewRightStart();
 		SpinCamRunning = true;

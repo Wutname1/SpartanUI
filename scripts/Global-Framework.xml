@@ -33,6 +33,9 @@
 	<Font name="SUI_FontOutline8"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
 		<FontHeight><AbsValue val="8"/></FontHeight>
 	</Font>
+	<Font name="SUI_Font10"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="MONOCHROME" virtual="true">
+		<FontHeight><AbsValue val="10"/></FontHeight>
+	</Font>
 	
 	<!-- SUI_AncherFrame -->
 	<Frame name="SUI_FramesBase" frameStrata="BACKGROUND" parent="UIParent">

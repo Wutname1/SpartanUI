@@ -97,7 +97,9 @@ function module:MergeData(target,source)
 end
 
 function module:InitActionBars()
-	if (Bartender4.db:GetCurrentProfile() == DB.Styles.Classic.BartenderProfile) then Artwork_Core:ActionBarPlates("SUI_ActionBarPlate"); end
+	--if (Bartender4.db:GetCurrentProfile() == DB.Styles.Classic.BartenderProfile) then
+		Artwork_Core:ActionBarPlates("SUI_ActionBarPlate");
+	--end
 	
 	do -- create bar plate and masks
 		plate = CreateFrame("Frame","SUI_ActionBarPlate",SpartanUI,"SUI_ActionBarsTemplate");
