@@ -1824,7 +1824,6 @@ function addon:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-		spartan:Print("Runes");
 	else
 		RuneFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,7);
 	end
