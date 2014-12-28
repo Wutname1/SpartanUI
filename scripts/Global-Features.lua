@@ -117,7 +117,7 @@ DBdefault = {
 	},
 	Modules = {
 		Artwork = {
-			Style = "Default",
+			Style = "Classic",
 			FirstLoad = true,
 			VehicleUI = true,
 			Viewport = 

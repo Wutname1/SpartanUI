@@ -13,6 +13,7 @@ function module:OnInitialize()
 end
 
 function module:Init()
+	DBMod.Artwork.FirstLoad = true
 	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
 	module:SetupMenus();
 	module:InitFramework();
@@ -25,13 +26,20 @@ end
 function module:FirstLoad()
 	DBMod.Artwork.Viewport.offset.bottom = 2.8
 	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile); end
+	-- if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then
+		-- Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
+	-- end
 end
 
 function module:OnEnable()
 	if (DBMod.Artwork.Style == "Classic") then
 		if (not InitRan) then module:Init(); end
+		--If our profile exists activate it.
+		if (DBMod.Artwork.FirstLoad and (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then
+			Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
+		end
 		if (not module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then module:CreateProfile(); end
+		
 		module:EnableFramework();
 		module:EnableActionBars();
 		module:EnableMinimap();
@@ -41,87 +49,88 @@ function module:OnEnable()
 end
 
 function module:SetupMenus()
-	spartan.opt.args["Artwork"].args["backdrop"] = { name = "ActionBar Settings", type = "group",
-		desc = L["ActionBarConfDesc"],
+	spartan.opt.args["Artwork"].args["ActionBar"] = { name = "ActionBar Settings", type = "group",desc = L["ActionBarConfDesc"],
 		args = {
-			Allalpha = {name = L["AllBarAlpha"], type="range", order = 15,
-				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.Allalpha; end,
-				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].alpha,DB.ActionBars.Allalpha = val,val; end end
-			},
-			Allenable = {name = L["AllBarEnable"], type="toggle", order= 16,
-				get = function(info) return DB.ActionBars.Allenable; end,
-				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].enable,DB.ActionBars.Allenable = val,val; end end
-			},
-			bar1alpha = {name = L["BarAlpha"].." 1", type="range", order = 1,
-				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar1.alpha; end,
-				set = function(info,val) if DB.ActionBars.bar1.enable == true then DB.ActionBars.bar1.alpha = val end end
-			},
-			bar1enable = {name = L["BarEnable"].." 1", type="toggle", order= 2,
-				get = function(info) return DB.ActionBars.bar1.enable; end,
-				set = function(info,val) DB.ActionBars.bar1.enable = val end
-			},
-			bar2alpha = {name = L["BarAlpha"].." 2", type="range", order = 3,
-				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar2.alpha; end,
-				set = function(info,val) if DB.ActionBars.bar2.enable == true then DB.ActionBars.bar2.alpha = val end end
-			},
-			bar2enable = {name = L["BarEnable"].." 2", type="toggle", order= 4,
-				get = function(info) return DB.ActionBars.bar2.enable; end,
-				set = function(info,val) DB.ActionBars.bar2.enable = val end
-			},
-			bar3alpha = {name = L["BarAlpha"].." 3", type="range", order = 5,
-				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar3.alpha; end,
-				set = function(info,val) if DB.ActionBars.bar3.enable == true then DB.ActionBars.bar3.alpha = val end end
-			},
-			bar3enable = {name = L["BarEnable"].." 3", type="toggle", order= 6,
-				get = function(info) return DB.ActionBars.bar3.enable; end,
-				set = function(info,val) DB.ActionBars.bar3.enable = val end
-			},
-			bar4alpha = {name = L["BarAlpha"].." 4", type="range", order = 7,
-				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar4.alpha; end,
-				set = function(info,val) if DB.ActionBars.bar4.enable == true then DB.ActionBars.bar4.alpha = val end end
-			},
-			bar4enable = {name = L["BarEnable"].." 4", type="toggle", order= 8,
-				get = function(info) return DB.ActionBars.bar4.enable; end,
-				set = function(info,val) DB.ActionBars.bar4.enable = val end
-			},
-			bar5alpha = {name = L["BarAlpha"].." 5", type="range", order = 9,
-				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar5.alpha; end,
-				set = function(info,val) if DB.ActionBars.bar5.enable == true then DB.ActionBars.bar5.alpha = val end end
-			},
-			bar5enable = {name = L["BarEnable"].." 5", type="toggle", order= 10,
-				get = function(info) return DB.ActionBars.bar5.enable; end,
-				set = function(info,val) DB.ActionBars.bar5.enable = val end
-			},
-			bar6alpha = {name = L["BarAlpha"].." 6", type="range", order = 11,
-				min=0, max=100, step=1,
-				get = function(info) return DB.ActionBars.bar6.alpha; end,
-				set = function(info,val) if DB.ActionBars.bar6.enable == true then DB.ActionBars.bar6.alpha = val end end
-			},
-			bar6enable = {name = L["BarEnable"].." 6", type="toggle", order= 12,
-				get = function(info) return DB.ActionBars.bar6.enable; end,
-				set = function(info,val) DB.ActionBars.bar6.enable = val end
-			},
-			reset = {
-				type = "execute",
-				name = "Reset ActionBars",
-				desc = "resets all ActionBar options to default",
-				order= 99,
-				width= "full",
+			reset = {name = "Reset ActionBars", type = "execute", width= "double",order=1,
 				func = function()
 					if (InCombatLockdown()) then 
 						spartan:Print(ERR_NOT_IN_COMBAT);
 					else
-						DB.ActionBars = {};
-						SetupProfile();
+						module:CreateProfile();
+						ReloadUI();
 					end
 				end
-			}
+			},
+			header1 = {name="",type="header",order=1.1},
+			Allenable = {name = L["AllBarEnable"], type="toggle",order=2,
+				get = function(info) return DB.ActionBars.Allenable; end,
+				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].enable,DB.ActionBars.Allenable = val,val; end end
+			},
+			Allalpha = {name = L["AllBarAlpha"], type="range",order=2.1,width="double",
+				min=0, max=100, step=1,
+				get = function(info) return DB.ActionBars.Allalpha; end,
+				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].alpha,DB.ActionBars.Allalpha = val,val; end end
+			},
+			Bar1 = { name = "Bar 1", type = "group", inline=true, args = {
+				bar1alpha = {name = L["BarAlpha"].." 1", type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.ActionBars.bar1.alpha; end,
+					set = function(info,val) if DB.ActionBars.bar1.enable == true then DB.ActionBars.bar1.alpha = val end end
+				},
+				bar1enable = {name = L["BarEnable"].." 1", type="toggle",
+					get = function(info) return DB.ActionBars.bar1.enable; end,
+					set = function(info,val) DB.ActionBars.bar1.enable = val end
+				},
+			}},
+			Bar2 = { name = "Bar 2", type = "group", inline=true, args = {
+				bar2alpha = {name = L["BarAlpha"].." 2", type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.ActionBars.bar2.alpha; end,
+					set = function(info,val) if DB.ActionBars.bar2.enable == true then DB.ActionBars.bar2.alpha = val end end
+				},
+				bar2enable = {name = L["BarEnable"].." 2", type="toggle",
+				get = function(info) return DB.ActionBars.bar2.enable; end,
+					set = function(info,val) DB.ActionBars.bar2.enable = val end
+				}
+			}},
+			Bar3 = { name = "Bar 3", type = "group", inline=true, args = {
+				bar3alpha = {name = L["BarAlpha"].." 3", type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.ActionBars.bar3.alpha; end,
+					set = function(info,val) if DB.ActionBars.bar3.enable == true then DB.ActionBars.bar3.alpha = val end end
+				},
+				bar3enable = {name = L["BarEnable"].." 3", type="toggle",
+					get = function(info) return DB.ActionBars.bar3.enable; end,
+					set = function(info,val) DB.ActionBars.bar3.enable = val end
+				}
+			}},
+			Bar4 = { name = "Bar 4", type = "group", inline=true, args = {
+				bar4alpha = {name = L["BarAlpha"].." 4", type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.ActionBars.bar4.alpha; end,
+					set = function(info,val) if DB.ActionBars.bar4.enable == true then DB.ActionBars.bar4.alpha = val end end
+				},
+				bar4enable = {name = L["BarEnable"].." 4", type="toggle",
+					get = function(info) return DB.ActionBars.bar4.enable; end,
+					set = function(info,val) DB.ActionBars.bar4.enable = val end
+				}
+			}},
+			Bar5 = { name = "Bar 5", type = "group", inline=true, args = {
+				bar5alpha = {name = L["BarAlpha"].." 5", type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.ActionBars.bar5.alpha; end,
+					set = function(info,val) if DB.ActionBars.bar5.enable == true then DB.ActionBars.bar5.alpha = val end end
+				},
+				bar5enable = {name = L["BarEnable"].." 5", type="toggle",
+					get = function(info) return DB.ActionBars.bar5.enable; end,
+					set = function(info,val) DB.ActionBars.bar5.enable = val end
+				}
+			}},
+			Bar6 = { name = "Bar 6", type = "group", inline=true, args = {
+				bar6alpha = {name = L["BarAlpha"].." 6", type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.ActionBars.bar6.alpha; end,
+					set = function(info,val) if DB.ActionBars.bar6.enable == true then DB.ActionBars.bar6.alpha = val end end
+				},
+				bar6enable = {name = L["BarEnable"].." 6", type="toggle",
+					get = function(info) return DB.ActionBars.bar6.enable; end,
+					set = function(info,val) DB.ActionBars.bar6.enable = val end
+				}
+			}},
 		}
 	};
 	spartan.opt.args["Artwork"].args["popup"] = { name = L["PopupAnimConf"], type = "group",

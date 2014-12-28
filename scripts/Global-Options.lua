@@ -10,17 +10,17 @@ function module:OnInitialize()
 	if (spartan.SpartanVer ~= spartan.CurseVersion) then
 		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
-	spartan.opt.args["General"].args["reset"] = {name = L["ResetDatabase"],type = "execute",order=999,
-		desc = L["ResetDatabaseDesc"],
-		func = function()
-			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
-			else
-				spartan.db:ResetDB();
-				ReloadUI();
-			end
-		end
-	};
+	-- spartan.opt.args["General"].args["reset"] = {name = ,type = "execute",order=999,
+		-- desc = ,
+		-- func = function()
+			-- if (InCombatLockdown()) then 
+				-- spartan:Print(ERR_NOT_IN_COMBAT);
+			-- else
+				-- spartan.db:ResetDB();
+				-- ReloadUI();
+			-- end
+		-- end
+	-- };
 	spartan.opt.args["General"].args["font"] = {name = L["FontSizeStyle"], type = "group",order = 200,
 		args = {
 			a = {name=L["GFontSet"],type="header"},
@@ -143,6 +143,9 @@ function module:OnInitialize()
 	};
 	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
+			ResetDB			= {name = L["ResetDatabase"], type = "execute", width= "double",order=1, func = function() spartan.db:ResetDB(); ReloadUI(); end},
+			ResetArtwork	= {name = "Reset ActionBars", type = "execute", width= "double",order=2, func = function() DBMod.Artwork.FirstLoad = true; spartan:GetModule("Artwork_"..DBMod.Artwork.Style):SetupProfile(); ReloadUI(); end},
+			
 			navigationissues = {name="Have a Question?",type="description",order = 100,fontSize="large"},
 			navigationissues2 = {name="    -|cff6666FF http://faq.spartanui.net/",type="description",order = 101,fontSize="medium"},
 			
@@ -153,13 +156,25 @@ function module:OnInitialize()
 			
 			line = {name="",type="header",order = 900},
 			description = {name="Providing the below string can assist in helping you when you are having issues",type="description",order = 901,fontSize="large"},
-			dataDump = {name="Export",type="input",multiline=10,width="full",order=990,get = function(info) return module:enc(module:ExportData()) end}
+			dataDump = {name="Export",type="input",multiline=10,width="full",order=990,get = function(info) return module:enc(module:ExportData()) end},
+			description = {name="This string contains your Spec, Region, SpartanUI Settings, and a list of running addons.",type="description",order = 999,fontSize="small"},
+			}
 		}
-	};
+	-- };
 	
 end
+
 function module:ExportData()
-	return "$C."
+
+    CharData = {
+		Region = GetCurrentRegion(),
+		PlayerName = UnitName("player"),
+		PlayerLevel = UnitLevel("player"),
+		ActiveSpec = GetSpecializationInfo(GetSpecialization())
+	}
+	
+	return "$SUI." .. spartan.SpartanVer .. "-" .. spartan.CurseVersion
+		.. "$C." .. module:FlatenTable(CharData)
 		.. "$DB." .. module:FlatenTable(DB)
 		.. "$DBMod." .. module:FlatenTable(DBMod)
 end
