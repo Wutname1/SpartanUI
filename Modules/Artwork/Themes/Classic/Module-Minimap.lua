@@ -42,8 +42,10 @@ function module:updateButtons()
 		MiniMapWorldMapButton:Hide();
 		GarrisonLandingPageMinimapButton:Hide();
 		--Fix for DBM making its icon even if its not needed
-		if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
-			table.insert(DB.MiniMap.IgnoredFrames, "DBMMinimapButton")
+		if DBM ~= nil then 
+			if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
+				table.insert(DB.MiniMap.IgnoredFrames, "DBMMinimapButton")
+			end
 		end
 		
 		for i, child in ipairs({Minimap:GetChildren()}) do
