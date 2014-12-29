@@ -1841,6 +1841,13 @@ function addon:UpdateAltBarPositions()
 			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
 		end
 	end
+
+	--Watch for Spec Changes
+	local SpecWatcher = CreateFrame("Frame");
+	SpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
+	SpecWatcher:SetScript("OnEvent",function()
+		addon:UpdateAltBarPositions();
+	end);
 end
 
 function addon:ResetAltBarPositions()
@@ -2034,11 +2041,6 @@ do -- relocate the AlternatePowerBar
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 	end);
-	local WarlockSpecWatcher = CreateFrame("Frame");
-	WarlockSpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
-	WarlockSpecWatcher:SetScript("OnEvent",function()
-		addon:UpdateAltBarPositions();
-	end);
 
  -- Rune Frame
 	RuneFrame:SetParent(addon.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
@@ -2112,7 +2114,7 @@ do -- relocate the AlternatePowerBar
 	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
 
 	
-	--addon:UpdateAltBarPositions();
+	addon:UpdateAltBarPositions();
 end 
 
 do -- create a LFD cooldown frame
