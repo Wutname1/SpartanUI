@@ -266,7 +266,7 @@ function module:SetupMenus()
 		type = "group", args = {
 			display = {name=L["BarXPEnabled"],type="toggle",order=.1,
 				get = function(info) return DB.XPBar.enabled; end,
-				set = function(info,val) DB.XPBar.enabled = val; if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end end
+				set = function(info,val) DB.XPBar.enabled = val; module:UpdateStatusBars(); end
 			},
 			displaytext = {name=L["DisplayText"],type="toggle",order=.15,
 				get = function(info) return DB.XPBar.text; end,
@@ -373,7 +373,7 @@ function module:SetupMenus()
 		type = "group", args = {
 			display = {name=L["BarRepEnabled"],type="toggle",order=.1,
 				get = function(info) return DB.RepBar.enabled; end,
-				set = function(info,val) DB.RepBar.enabled = val; if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end end
+				set = function(info,val) DB.RepBar.enabled = val; module:UpdateStatusBars() end
 			},
 			displaytext = {name=L["DisplayText"],type="toggle",order=.15,
 				get = function(info) return DB.RepBar.text; end,
@@ -485,7 +485,7 @@ function module:SetupMenus()
 				get = function(info) return DB.xOffset/6.25 end,
 				set = function(info,val) DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
 			},
-			offset = {name = L["ConfOffset"],type = "range",width="normal",disabled=true,order=3,
+			offset = {name = L["ConfOffset"],type = "range",width="normal",order=3,
 				desc = L["ConfOffsetDesc"],min=0,max=200,step=.1,
 				get = function(info) return DB.yoffset end,
 				set = function(info,val)
@@ -502,7 +502,7 @@ function module:SetupMenus()
 				end,
 				get = function(info) return DB.yoffset; end
 			},
-			offsetauto = {name = L["AutoOffset"],type = "toggle",disabled=true,desc = L["AutoOffsetDesc"],order=3.1,
+			offsetauto = {name = L["AutoOffset"],type = "toggle",desc = L["AutoOffsetDesc"],order=3.1,
 				get = function(info) return DB.yoffsetAuto end,
 				set = function(info,val) DB.yoffsetAuto = val end,
 			}

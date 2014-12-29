@@ -223,3 +223,8 @@ function module:EnableStatusBars()
 		module:SetRepColors();
 	end
 end
+
+function module:UpdateStatusBars()
+	if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end
+	if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
+end
