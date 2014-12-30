@@ -346,12 +346,12 @@ function addon:OnEnable()
 	AceConfigDialog:AddToBlizOptions("SpartanUIBliz", "SpartanUI")
 	
     AceConfig:RegisterOptionsTable("SpartanUI", addon.opt)
-	if not addon:GetModule("Artwork_Core", true) then addon.opt.args["Artwork"].hidden = true end
-	if not addon:GetModule("FilmEffect", true) then addon.opt.args["FilmEffects"].hidden = true end
-    if not addon:GetModule("PartyFrames", true) then  addon.opt.args["PartyFrames"].hidden = true end
-    if not addon:GetModule("PlayerFrames", true) then addon.opt.args["PlayerFrames"].hidden = true end
-    if not addon:GetModule("RaidFrames", true) then addon.opt.args["RaidFrames"].hidden = true end
-    if not addon:GetModule("SpinCam", true) then addon.opt.args["SpinCam"].hidden = true end
+	if not addon:GetModule("Artwork_Core", true) then addon.opt.args["Artwork"].disabled = true end
+	if not addon:GetModule("FilmEffect", true) then addon.opt.args["FilmEffects"].disabled = true end
+    if not addon:GetModule("PartyFrames", true) then  addon.opt.args["PartyFrames"].disabled = true end
+    if not addon:GetModule("PlayerFrames", true) then addon.opt.args["PlayerFrames"].disabled = true end
+    if not addon:GetModule("RaidFrames", true) then addon.opt.args["RaidFrames"].disabled = true end
+    if not addon:GetModule("SpinCam", true) then addon.opt.args["SpinCam"].disabled = true end
     
     self:RegisterChatCommand("sui", "ChatCommand")
     self:RegisterChatCommand("spartanui", "ChatCommand")

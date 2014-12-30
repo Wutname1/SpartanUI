@@ -10,17 +10,28 @@ function module:OnInitialize()
 	if (spartan.SpartanVer ~= spartan.CurseVersion) then
 		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
-	-- spartan.opt.args["General"].args["reset"] = {name = ,type = "execute",order=999,
-		-- desc = ,
-		-- func = function()
-			-- if (InCombatLockdown()) then 
-				-- spartan:Print(ERR_NOT_IN_COMBAT);
-			-- else
-				-- spartan.db:ResetDB();
-				-- ReloadUI();
-			-- end
-		-- end
-	-- };
+
+	spartan.opt.args["General"].args["style"] = {name = "Style Settings", type = "group",order = 100,
+		args = {
+			description = {type="header",name="Overall Style",order=1},
+			OverallStyle = { name = "", type = "group", inline=true,order=10, args = {
+				Classic = {name = "Classic", type="execute",
+					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
+					--imageCoords=function() return {0,1,0,1} end,
+					func = function() DBMod.Artwork.Style = "Classic"; newtheme = spartan:GetModule("Artwork_Classic") newtheme:SetupProfile(); ReloadUI(); end
+				},
+			}},
+			PlayerFrames = {type="group",name="Unit Frames",order=100,args = {
+			}},
+			
+			PartyFrames = {type="group",name="Party",order=200,args = {
+			}},
+			
+			RaidFrames = {type="group",name="Raid Frame",order=300,args = {
+			}},
+			
+		}
+	};
 	spartan.opt.args["General"].args["font"] = {name = L["FontSizeStyle"], type = "group",order = 200,
 		args = {
 			a = {name=L["GFontSet"],type="header"},
@@ -160,12 +171,56 @@ function module:OnInitialize()
 			description = {name="This string contains your Spec, Region, SpartanUI Settings, and a list of running addons.",type="description",order = 999,fontSize="small"},
 			}
 		}
-	-- };
 	
+	spartan.opt.args["General"].args["ModSetting"] = {name = "Modules", type = "group", order = 800,
+		args = {
+			description = {type="description",name="Here you can enable and disable the modules contained in or related to SpartanUI",order=1,fontSize="medium"},
+			Artwork = {name = "Artwork",type = "toggle",order=10,
+				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_Artwork") return enabled end,
+				set = function(info,val) if val then EnableAddOn("SpartanUI_Artwork") elseif val ~= true then DisableAddOn("SpartanUI_Artwork") end end
+			},
+			PlayerFrames = {name = "Player Frames",type = "toggle",order=20,
+				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_PlayerFrames") return enabled end,
+				set = function(info,val) if val then EnableAddOn("SpartanUI_PlayerFrames") elseif val ~= true then DisableAddOn("SpartanUI_PlayerFrames") end end
+			},
+			PartyFrames = {name = "Party Frames",type = "toggle",order=30,
+				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_PartyFrames") return enabled end,
+				set = function(info,val) if val then EnableAddOn("SpartanUI_PartyFrames") elseif val ~= true then DisableAddOn("SpartanUI_FilmEffects") end end,
+			},
+			RaidFrames = {name = "Raid Frames",type = "toggle",order=40,
+				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_RaidFrames") return enabled end,
+				set = function(info,val) if val then EnableAddOn("SpartanUI_RaidFrames") elseif val ~= true then DisableAddOn("SpartanUI_RaidFrames") end end,
+			},
+			SpinCam = {name = "Spin Cam",type = "toggle",order=50,
+				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_SpinCam") return enabled end,
+				set = function(info,val) if val then EnableAddOn("SpartanUI_SpinCam") elseif val ~= true then DisableAddOn("SpartanUI_SpinCam") end end,
+			},
+			FilmEffects = {name = "Film Effects",type = "toggle",order=60,
+				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_FilmEffects") return enabled end,
+				set = function(info,val) if val then EnableAddOn("SpartanUI_FilmEffects") elseif val ~= true then DisableAddOn("SpartanUI_FilmEffects") end end,
+			},
+			Styles = {name = "Styles",type = "group",order=100,inline=true,args={}},
+		}
+	}
+end
+
+function module:OnEnable()
+	for name, module in spartan:IterateModules() do
+		if (string.match(name, "Artwork_") and name ~= "Artwork_Core") then
+			spartan.opt.args["General"].args["ModSetting"].args["Styles"].args[string.sub(name, 9)] = {
+			name = string.sub(name, 9),type = "toggle",order=40,
+				get = function(info) return DB.yoffsetAuto end,
+				set = function(info,val) DB.yoffsetAuto = val end,
+			}
+		end
+	end
+	if not spartan:GetModule("Artwork_Core", true) then
+		spartan.opt.args["General"].args["style"].args["OverallStyle"].disabled = true
+	end
 end
 
 function module:ExportData()
-
+	--Get Character Data
     CharData = {
 		Region = GetCurrentRegion(),
 		PlayerName = UnitName("player"),
@@ -173,10 +228,21 @@ function module:ExportData()
 		ActiveSpec = GetSpecializationInfo(GetSpecialization())
 	}
 	
+	--Generate List of Addons
+	AddonsInstalled = {}
+	
+	for i = 1, GetNumAddOns() do
+		local name, title, notes, enabled,loadable = GetAddOnInfo(i)
+		if enabled == true then
+			AddonsInstalled[i] = name
+		end
+	end
+	
 	return "$SUI." .. spartan.SpartanVer .. "-" .. spartan.CurseVersion
 		.. "$C." .. module:FlatenTable(CharData)
 		.. "$DB." .. module:FlatenTable(DB)
 		.. "$DBMod." .. module:FlatenTable(DBMod)
+		.. "$Addons." .. module:FlatenTable(AddonsInstalled)
 end
 
 function module:FlatenTable(input)
