@@ -47,13 +47,13 @@ if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 local parent, ns = ...
 local oUF = ns.oUF
 
-local ECLIPSE_BAR_SOLAR_BUFF = GetSpellInfo(ECLIPSE_BAR_SOLAR_BUFF_ID)
-local ECLIPSE_BAR_LUNAR_BUFF = GetSpellInfo(ECLIPSE_BAR_LUNAR_BUFF_ID)
+local ECLIPSE_BAR_SOLAR_BUFF = GetSpellInfo(171744)
+local ECLIPSE_BAR_LUNAR_BUFF = GetSpellInfo(171743)
 local SPELL_POWER_ECLIPSE = SPELL_POWER_ECLIPSE
 local MOONKIN_FORM = MOONKIN_FORM
 
 local UNIT_POWER = function(self, event, unit, powerType)
-	if(self.unit ~= unit or (event == 'UNIT_POWER' and powerType ~= 'ECLIPSE')) then return end
+	if(self.unit ~= unit or (event == 'UNIT_POWER_FREQUENT' and powerType ~= 'ECLIPSE')) then return end
 
 	local eb = self.EclipseBar
 
@@ -151,10 +151,11 @@ local UNIT_AURA = function(self, event, unit)
 	end
 end
 
-local ECLIPSE_DIRECTION_CHANGE = function(self, event, isLunar)
+local ECLIPSE_DIRECTION_CHANGE = function(self, event, direction)
 	local eb = self.EclipseBar
 
-	eb.directionIsLunar = isLunar
+	eb.directionIsLunar = direction == "moon"
+	eb.direction = direction
 
 	if(eb.PostDirectionChange) then
 		--[[ :PostDirectionChange(unit)
@@ -197,7 +198,7 @@ local function Enable(self)
 		self:RegisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE, true)
 		self:RegisterEvent('PLAYER_TALENT_UPDATE', UPDATE_VISIBILITY, true)
 		self:RegisterEvent('UNIT_AURA', UNIT_AURA)
-		self:RegisterEvent('UNIT_POWER', UNIT_POWER)
+		self:RegisterEvent('UNIT_POWER_FREQUENT', UNIT_POWER)
 		self:RegisterEvent('UPDATE_SHAPESHIFT_FORM', UPDATE_VISIBILITY, true)
 
 		return true
@@ -211,7 +212,7 @@ local function Disable(self)
 		self:UnregisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE)
 		self:UnregisterEvent('PLAYER_TALENT_UPDATE', UPDATE_VISIBILITY)
 		self:UnregisterEvent('UNIT_AURA', UNIT_AURA)
-		self:UnregisterEvent('UNIT_POWER', UNIT_POWER)
+		self:UnregisterEvent('UNIT_POWER_FREQUENT', UNIT_POWER)
 		self:UnregisterEvent('UPDATE_SHAPESHIFT_FORM', UPDATE_VISIBILITY)
 	end
 end
