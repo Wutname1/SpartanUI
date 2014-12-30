@@ -1843,11 +1843,11 @@ function addon:UpdateAltBarPositions()
 	end
 
 	--Watch for Spec Changes
-	local SpecWatcher = CreateFrame("Frame");
-	SpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
-	SpecWatcher:SetScript("OnEvent",function()
-		addon:UpdateAltBarPositions();
-	end);
+	-- local SpecWatcher = CreateFrame("Frame");
+	-- SpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
+	-- SpecWatcher:SetScript("OnEvent",function()
+		-- addon:UpdateAltBarPositions();
+	-- end);
 end
 
 function addon:ResetAltBarPositions()
