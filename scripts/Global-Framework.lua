@@ -263,7 +263,7 @@ function module:OnEnable()
 		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
 		if (self.TimeSinceLastUpdate > self.UpdateInterval) then
 			-- Debug
---			print(self.TimeSinceLastUpdate)
+			-- print(self.TimeSinceLastUpdate)
 			if (InCombatLockdown()) then return; end
 			-- Count this be hooked in another way ... event CVar_UPDATE
 			updateSpartanScale();

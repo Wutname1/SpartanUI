@@ -330,6 +330,11 @@ function addon:UpdateModuleConfigs()
 	self.db:RegisterDefaults(DBdefaults)
 end
 
+function addon:reloadui()
+	DB.OpenOptions = true;
+	ReloadUI();
+end
+
 function addon:OnEnable()
 	a={ name = "SpartanUI", type = "group",args={
 		n1={type="description", fontSize="medium", order=1, width="full", name="Options have moved into their own window as this menu was getting a bit crowded."},
@@ -355,6 +360,15 @@ function addon:OnEnable()
     
     self:RegisterChatCommand("sui", "ChatCommand")
     self:RegisterChatCommand("spartanui", "ChatCommand")
+	
+	LaunchOpt = CreateFrame("Frame");
+	LaunchOpt:SetScript("OnEvent",function(self,...)
+		if DB.OpenOptions then
+			addon:ChatCommand()
+			DB.OpenOptions = false;
+		end
+	end);
+	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
 end
 
 function addon:ChatCommand(input)

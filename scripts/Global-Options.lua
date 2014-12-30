@@ -177,43 +177,48 @@ function module:OnInitialize()
 			description = {type="description",name="Here you can enable and disable the modules contained in or related to SpartanUI",order=1,fontSize="medium"},
 			Artwork = {name = "Artwork",type = "toggle",order=10,
 				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_Artwork") return enabled end,
-				set = function(info,val) if val then EnableAddOn("SpartanUI_Artwork") elseif val ~= true then DisableAddOn("SpartanUI_Artwork") end end
+				set = function(info,val) spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; if val then EnableAddOn("SpartanUI_Artwork") elseif val ~= true then DisableAddOn("SpartanUI_Artwork") end end
 			},
 			PlayerFrames = {name = "Player Frames",type = "toggle",order=20,
 				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_PlayerFrames") return enabled end,
-				set = function(info,val) if val then EnableAddOn("SpartanUI_PlayerFrames") elseif val ~= true then DisableAddOn("SpartanUI_PlayerFrames") end end
+				set = function(info,val) spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; if val then EnableAddOn("SpartanUI_PlayerFrames") elseif val ~= true then DisableAddOn("SpartanUI_PlayerFrames") end end
 			},
 			PartyFrames = {name = "Party Frames",type = "toggle",order=30,
 				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_PartyFrames") return enabled end,
-				set = function(info,val) if val then EnableAddOn("SpartanUI_PartyFrames") elseif val ~= true then DisableAddOn("SpartanUI_FilmEffects") end end,
+				set = function(info,val) spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; if val then EnableAddOn("SpartanUI_PartyFrames") elseif val ~= true then DisableAddOn("SpartanUI_FilmEffects") end end,
 			},
 			RaidFrames = {name = "Raid Frames",type = "toggle",order=40,
 				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_RaidFrames") return enabled end,
-				set = function(info,val) if val then EnableAddOn("SpartanUI_RaidFrames") elseif val ~= true then DisableAddOn("SpartanUI_RaidFrames") end end,
+				set = function(info,val) spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; if val then EnableAddOn("SpartanUI_RaidFrames") elseif val ~= true then DisableAddOn("SpartanUI_RaidFrames") end end,
 			},
 			SpinCam = {name = "Spin Cam",type = "toggle",order=50,
 				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_SpinCam") return enabled end,
-				set = function(info,val) if val then EnableAddOn("SpartanUI_SpinCam") elseif val ~= true then DisableAddOn("SpartanUI_SpinCam") end end,
+				set = function(info,val) spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; if val then EnableAddOn("SpartanUI_SpinCam") elseif val ~= true then DisableAddOn("SpartanUI_SpinCam") end end,
 			},
 			FilmEffects = {name = "Film Effects",type = "toggle",order=60,
 				get = function(info) local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_FilmEffects") return enabled end,
-				set = function(info,val) if val then EnableAddOn("SpartanUI_FilmEffects") elseif val ~= true then DisableAddOn("SpartanUI_FilmEffects") end end,
+				set = function(info,val) spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; if val then EnableAddOn("SpartanUI_FilmEffects") elseif val ~= true then DisableAddOn("SpartanUI_FilmEffects") end end,
 			},
 			Styles = {name = "Styles",type = "group",order=100,inline=true,args={}},
+			Reload = {name = "ReloadUI", type = "execute",order=200,disabled=true, func = function() spartan:reloadui(); end},
 		}
 	}
 end
 
 function module:OnEnable()
-	for name, module in spartan:IterateModules() do
-		if (string.match(name, "Artwork_") and name ~= "Artwork_Core") then
+	for i = 1, GetNumAddOns() do
+		local name, title, notes, enabled,loadable = GetAddOnInfo(i)
+		
+		if (string.match(name, "SpartanUI_Style_")) then
 			spartan.opt.args["General"].args["ModSetting"].args["Styles"].args[string.sub(name, 9)] = {
-			name = string.sub(name, 9),type = "toggle",order=40,
-				get = function(info) return DB.yoffsetAuto end,
-				set = function(info,val) DB.yoffsetAuto = val end,
+			name = string.sub(name, 17),type = "toggle",order=40,
+				get = function(info) local name2, title, notes, enabled,loadable = GetAddOnInfo(name) return enabled end,
+				set = function(info,val) spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; if val then EnableAddOn(name) elseif val ~= true then DisableAddOn(name) end end,
 			}
 		end
+		
 	end
+	
 	if not spartan:GetModule("Artwork_Core", true) then
 		spartan.opt.args["General"].args["style"].args["OverallStyle"].disabled = true
 	end
