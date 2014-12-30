@@ -1842,12 +1842,6 @@ function addon:UpdateAltBarPositions()
 		end
 	end
 
-	--Watch for Spec Changes
-	-- local SpecWatcher = CreateFrame("Frame");
-	-- SpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
-	-- SpecWatcher:SetScript("OnEvent",function()
-		-- addon:UpdateAltBarPositions();
-	-- end);
 end
 
 function addon:ResetAltBarPositions()
@@ -2113,8 +2107,14 @@ do -- relocate the AlternatePowerBar
 	PlayerPowerBarAlt:ClearAllPoints();
 	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
 
-	
 	addon:UpdateAltBarPositions();
+	
+	--Watch for Spec Changes
+	local SpecWatcher = CreateFrame("Frame");
+	SpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
+	SpecWatcher:SetScript("OnEvent",function()
+		addon:UpdateAltBarPositions();
+	end);
 end 
 
 do -- create a LFD cooldown frame
