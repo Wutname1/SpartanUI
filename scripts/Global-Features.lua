@@ -260,7 +260,7 @@ function addon:GetFontFace(Module)
 			return "Fonts\\skurri.TTF"
 		elseif DB.font[Module].Face == "Morpheus" then
 			return "Fonts\\MORPHEUS.TTF"
-		elseif DB.font[Module].Face == "Custom" then
+		elseif DB.font[Module].Face == "Custom" and DB.font.Path ~= "" then
 			return DB.font.Path
 		end
 	end
