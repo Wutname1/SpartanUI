@@ -108,6 +108,7 @@ DBdefault = {
 			bar6 = {alpha = 100, enable = true},
 		},
 		font = {
+			Path = "",
 			Primary = fontdefault,
 			Core = fontdefault,
 			Player = fontdefault,
@@ -245,6 +246,46 @@ function addon:ResetConfig()
 	ReloadUI();
 end
 
+function addon:GetFontFace(Module)
+	if Module then
+		if DB.font[Module].Face == "SpartanUI" then
+			return "Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf"
+		elseif DB.font[Module].Face == "SUI4" then
+			return "Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf"
+		elseif DB.font[Module].Face == "FrizQuadrata" then
+			return "Fonts\\FRIZQT__.TTF"
+		elseif DB.font[Module].Face == "ArialNarrow" then
+			return "Fonts\\ARIALN.TTF"
+		elseif DB.font[Module].Face == "Skurri" then
+			return "Fonts\\skurri.TTF"
+		elseif DB.font[Module].Face == "Morpheus" then
+			return "Fonts\\MORPHEUS.TTF"
+		elseif DB.font[Module].Face == "Custom" then
+			return DB.font.Path
+		end
+	end
+	
+	return "Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf"
+end
+
+function addon:FontSetup()
+	local OutlineSizes = {22, 18, 13, 12,11,10,9,8}
+	local Sizes = {10}
+	for i,v in ipairs(OutlineSizes) do
+		local filename, fontHeight, flags = _G["SUI_FontOutline" .. v]:GetFont()
+		if filename ~= addon:GetFontFace("Primary") then
+			_G["SUI_FontOutline" .. v] = _G["SUI_FontOutline" .. v]:SetFont(addon:GetFontFace("Primary"), v)
+		end
+	end	
+	
+	for i,v in ipairs(Sizes) do
+		local filename, fontHeight, flags = _G["SUI_Font" .. v]:GetFont()
+		if filename ~= addon:GetFontFace("Primary") then
+			_G["SUI_Font" .. v] = _G["SUI_Font" .. v]:SetFont(addon:GetFontFace("Primary"), v)
+		end
+	end
+end
+
 function addon:FormatFont(element, size, Module)
 	--Set Font Outline
 	flags = ""
@@ -257,17 +298,8 @@ function addon:FormatFont(element, size, Module)
 	--Set Size
 	sizeFinal = size + DB.font[Module].Size;
 	--Create Font
-	if DB.font[Module].Face == "SpartanUI" then
-		element:SetFont("Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf", sizeFinal, flags)
-	elseif DB.font[Module].Face == "FrizQuadrata" then
-		element:SetFont("Fonts\\FRIZQT__.TTF", sizeFinal, flags)
-	elseif DB.font[Module].Face == "ArialNarrow" then
-		element:SetFont("Fonts\\ARIALN.TTF", sizeFinal, flags)
-	elseif DB.font[Module].Face == "Skurri" then
-		element:SetFont("Fonts\\skurri.TTF", sizeFinal, flags)
-	elseif DB.font[Module].Face == "Morpheus" then
-		element:SetFont("Fonts\\MORPHEUS.TTF", sizeFinal, flags)
-	end
+	element:SetFont(addon:GetFontFace(Module), sizeFinal, flags)
+	
 	if DB.font[Module].Type == "outline" then
 		element:SetShadowColor(0,0,0,.9)
 		element:SetShadowOffset(1,-1)
@@ -289,17 +321,7 @@ function addon:FontRefresh(Module)
 		--Set Size
 		size = FontItemsSize[Module][a] + DB.font[Module].Size;
 		--Update Font
-		if DB.font[Module].Face == "SpartanUI" then
-			b:SetFont("Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf", size, flags)
-		elseif DB.font[Module].Face == "FrizQuadrata" then
-			b:SetFont("Fonts\\FRIZQT__.TTF", size, flags)
-		elseif DB.font[Module].Face == "ArialNarrow" then
-			b:SetFont("Fonts\\ARIALN.TTF", size, flags)
-		elseif DB.font[Module].Face == "Skurri" then
-			b:SetFont("Fonts\\skurri.TTF", size, flags)
-		elseif DB.font[Module].Face == "Morpheus" then
-			b:SetFont("Fonts\\MORPHEUS.TTF", size, flags)
-		end
+		b:SetFont(addon:GetFontFace(Module), size, flags)
 	end
 end
 
@@ -320,6 +342,8 @@ function addon:OnInitialize()
 	addon.db.RegisterCallback(self, "OnProfileChanged", "UpdateModuleConfigs")
 	addon.db.RegisterCallback(self, "OnProfileCopied", "UpdateModuleConfigs")
 	addon.db.RegisterCallback(self, "OnProfileReset", "UpdateModuleConfigs")
+	
+	addon:FontSetup()
 end
 
 function addon:InitializeProfile()

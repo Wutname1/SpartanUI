@@ -245,6 +245,16 @@ function module:OnInitialize()
 			if DB.Styles.Classic.BartenderProfile == nil then DB.Styles.Classic.BartenderProfile = "SpartanUI - Classic" end
 			if Bartender4.db:GetCurrentProfile() == "SpartanUI 3.3.1 - Classic" then Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile); end
 		end
+		if (DB.Version < "4.0.0") then
+			if DB.font.Path == nil then
+				if DB.font.Primary.Face == "SpartanUI" then DB.font.Primary.Face = "SUI4" end
+				if DB.font.Core.Face == "SpartanUI" then DB.font.Core.Face = "SUI4" end
+				if DB.font.Player.Face == "SpartanUI" then DB.font.Player.Face = "SUI4" end
+				if DB.font.Party.Face == "SpartanUI" then DB.font.Party.Face = "SUI4" end
+				if DB.font.Raid.Face == "SpartanUI" then DB.font.Raid.Face = "SUI4" end
+				DB.font.Path = ""
+			end
+		end
 	end
 end
 

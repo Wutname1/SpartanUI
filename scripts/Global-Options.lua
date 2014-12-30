@@ -11,9 +11,9 @@ function module:OnInitialize()
 		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
 
-	spartan.opt.args["General"].args["style"] = {name = "Style Settings", type = "group",order = 100,
+	spartan.opt.args["General"].args["style"] = {name = L["StyleSettings"], type = "group",order = 100,
 		args = {
-			description = {type="header",name="Overall Style",order=1},
+			description = {type="header",name=L["OverallStyle"],order=1},
 			OverallStyle = { name = "", type = "group", inline=true,order=10, args = {
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
@@ -21,13 +21,13 @@ function module:OnInitialize()
 					func = function() DBMod.Artwork.Style = "Classic"; newtheme = spartan:GetModule("Artwork_Classic") newtheme:SetupProfile(); ReloadUI(); end
 				},
 			}},
-			PlayerFrames = {type="group",name="Unit Frames",order=100,args = {
+			PlayerFrames = {type="group",name=L["PlayerFrames"],order=100,args = {
 			}},
 			
-			PartyFrames = {type="group",name="Party",order=200,args = {
+			PartyFrames = {type="group",name=L["PartyFrames"],order=200,args = {
 			}},
 			
-			RaidFrames = {type="group",name="Raid Frame",order=300,args = {
+			RaidFrames = {type="group",name=L["RaidFrames"],order=300,args = {
 			}},
 			
 		}
@@ -36,7 +36,7 @@ function module:OnInitialize()
 		args = {
 			a = {name=L["GFontSet"],type="header"},
 			b = {name = L["FontType"], type="select",
-				values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
+				values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
 				get = function(info) return DB.font.Primary.Face; end,
 				set = function(info,val) DB.font.Primary.Face = val; end
 			},

@@ -9,31 +9,39 @@
 	<Font name="SUI_FontOutline22custom"  font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
 		<FontHeight><AbsValue val="22"/></FontHeight>
 	</Font>
-	<Font name="SUI_FontOutline22"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline22"  font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="22"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_FontOutline18"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline18"  font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="18"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_FontOutline13" font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline13" font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="13"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_FontOutline12" font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline12" font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="12"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_FontOutline11"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline11"  font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="11"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_FontOutline10"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline10"  font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="10"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_FontOutline9"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline9"  font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="9"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_FontOutline8"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline8"  font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="8"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	<Font name="SUI_Font10"  font="Interface\AddOns\SpartanUI\media\font-cognosis.ttf" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_Font10" font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="10"/></FontHeight>
 	</Font>
 	
