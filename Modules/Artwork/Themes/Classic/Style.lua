@@ -13,7 +13,6 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	DBMod.Artwork.FirstLoad = true
 	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
 	module:SetupMenus();
 	module:InitFramework();
