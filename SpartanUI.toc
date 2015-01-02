@@ -1,7 +1,7 @@
 ## Interface: 60000
 ## Title: SpartanUI |CFF0070DDCore|r
 ## Notes: User Interface combining elegant artwork with well designed features.
-## Version: 3.3.3b
+## Version: 3.3.4
 ## Author: Wutname1
 ## X-oUF: SpartanoUF
 ## OptionalDeps: Bartender4
