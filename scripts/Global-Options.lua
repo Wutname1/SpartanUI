@@ -11,27 +11,27 @@ function module:OnInitialize()
 		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
 
-	-- spartan.opt.args["General"].args["style"] = {name = L["StyleSettings"], type = "group",order = 100,
-		-- args = {
-			-- description = {type="header",name=L["OverallStyle"],order=1},
-			-- OverallStyle = { name = "", type = "group", inline=true,order=10, args = {
-				-- Classic = {name = "Classic", type="execute",
-					-- image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
-					-- -- imageCoords=function() return {0,1,0,1} end,
-					-- func = function() DBMod.Artwork.Style = "Classic"; newtheme = spartan:GetModule("Artwork_Classic") newtheme:SetupProfile(); ReloadUI(); end
-				-- },
-			-- }},
-			-- PlayerFrames = {type="group",name=L["PlayerFrames"],order=100,args = {
-			-- }},
+	spartan.opt.args["General"].args["style"] = {name = L["StyleSettings"], type = "group",order = 100,
+		args = {
+			description = {type="header",name=L["OverallStyle"],order=1},
+			OverallStyle = { name = "", type = "group", inline=true,order=10, args = {
+				Classic = {name = "Classic", type="execute",
+					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
+					-- imageCoords=function() return {0,1,0,1} end,
+					func = function() DBMod.Artwork.Style = "Classic"; newtheme = spartan:GetModule("Artwork_Classic") newtheme:SetupProfile(); ReloadUI(); end
+				},
+			}},
+			PlayerFrames = {type="group",name=L["PlayerFrames"],order=100,args = {
+			}},
 			
-			-- PartyFrames = {type="group",name=L["PartyFrames"],order=200,args = {
-			-- }},
+			PartyFrames = {type="group",name=L["PartyFrames"],order=200,args = {
+			}},
 			
-			-- RaidFrames = {type="group",name=L["RaidFrames"],order=300,args = {
-			-- }},
+			RaidFrames = {type="group",name=L["RaidFrames"],order=300,args = {
+			}},
 			
-		-- }
-	-- };
+		}
+	};
 	spartan.opt.args["General"].args["font"] = {name = L["FontSizeStyle"], type = "group",order = 200,
 		args = {
 			a = {name=L["GFontSet"],type="header"},
@@ -219,9 +219,9 @@ function module:OnEnable()
 		
 	end
 	
-	-- if not spartan:GetModule("Artwork_Core", true) then
-		-- spartan.opt.args["General"].args["style"].args["OverallStyle"].disabled = true
-	-- end
+	if not spartan:GetModule("Artwork_Core", true) then
+		spartan.opt.args["General"].args["style"].args["OverallStyle"].disabled = true
+	end
 end
 
 function module:ExportData()
