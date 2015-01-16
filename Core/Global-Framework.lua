@@ -1,57 +1,36 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local Artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:NewModule("Style_Classic");
+local AceHook = LibStub("AceHook-3.0")
+local module = addon:NewModule("BottomBar");
+local party -- for updateSpartanOffset use
 ----------------------------------------------------------------------------------------------------
-local anchor, frame = SUI_AnchorFrame, SpartanUI, CurScale;
+local anchor, frame = SUI_AnchorFrame, SpartanUI;
 
 local round = function(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;
 
-function module:updateMinimumScale()
---	local minScale = floor(((UIParent:GetWidth()/2560)*10^2)+1) / (10^2);
---	if DB.scale < minScale then DB.scale = minScale; end
-end;
-
-function module:updateSpartanViewport() -- handles viewport offset based on settings
-	if not InCombatLockdown() and DB.viewport and (SpartanUI_Base5:GetHeight() ~= 0) then
-		WorldFrame:ClearAllPoints();
-		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", DBMod.Artwork.Viewport.offset.left, DBMod.Artwork.Viewport.offset.top);
-		if SpartanUI_Base5:IsVisible() then
-			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", DBMod.Artwork.Viewport.offset.right, (SpartanUI_Base5:GetHeight() * DB.scale/DBMod.Artwork.Viewport.offset.bottom));
-		else
-			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
-		end
-	end
-end;
-
-function module:updateSpartanScale() -- scales SpartanUI based on setting or screen size
+local updateSpartanScale = function() -- scales SpartanUI based on setting or screen size
 	if (not DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar("gxResolution"),"(%d+).-(%d+)");
 		if (tonumber(width) / tonumber(height) > 4/3) then DB.scale = 0.92;
 		else DB.scale = 0.78; end
 	end
-	if DB.scale ~= CurScale then
-		--module:updateMinimumScale();
-		module:updateSpartanViewport();
-		if (DB.scale ~= round(SpartanUI:GetScale())) then
-			frame:SetScale(DB.scale);
-		end
-		if DB.scale <= .75 then
-			SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
-			SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
-		else
-			SpartanUI_Base3:ClearAllPoints();
-			SpartanUI_Base5:ClearAllPoints();
-			SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
-			SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
-		end
-		CurScale = DB.scale
+	if (DB.scale ~= round(SpartanUI:GetScale())) then
+		frame:SetScale(DB.scale);
+	end
+	if DB.scale <= .75 then
+		SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
+		SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
+	else
+		SpartanUI_Base3:ClearAllPoints();
+		SpartanUI_Base5:ClearAllPoints();
+		SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
+		SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
 	end
 end;
 
-function module:updateSpartanAlpha() -- scales SpartanUI based on setting or screen size
+local updateSpartanAlpha = function() -- scales SpartanUI based on setting or screen size
 	if DB.alpha then
 		SpartanUI_Base1:SetAlpha(DB.alpha);
 		SpartanUI_Base2:SetAlpha(DB.alpha);
@@ -63,7 +42,7 @@ function module:updateSpartanAlpha() -- scales SpartanUI based on setting or scr
 	end
 end;
 
-function module:updateSpartanOffset() -- handles SpartanUI offset based on setting or fubar / titan
+local updateSpartanOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar,ChocolateBar,titan,offset = 0,0,0;
 
 	if not DB.yoffsetAuto then
@@ -99,7 +78,7 @@ function module:updateSpartanOffset() -- handles SpartanUI offset based on setti
 	DB.yoffset = offset
 end;
 
-function module:updateSpartanXOffset() -- handles SpartanUI offset based on setting or fubar / titan
+local updateSpartanXOffset = function() -- handles SpartanUI offset based on setting or fubar / titan
 	if not DB.xOffset then return 0; end
 	local offset = DB.xOffset
 	if round(offset) <= -300 then
@@ -112,90 +91,27 @@ function module:updateSpartanXOffset() -- handles SpartanUI offset based on sett
 		SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
 	end
 	SpartanUI:SetPoint("LEFT", SUI_AnchorFrame, "LEFT", offset, 0)
-	
-	SUI_FramesAnchor:ClearAllPoints();
-	SUI_FramesAnchor:SetPoint("BOTTOMLEFT", SUI_AnchorFrame, "BOTTOMLEFT", (offset/2), 0);
-	SUI_FramesAnchor:SetPoint("TOPRIGHT", SUI_AnchorFrame, "TOPRIGHT", (offset/2), 153);
-	
 	if (round(offset) ~= round(anchor:GetWidth())) then anchor:SetWidth(offset); end
 	DB.xOffset = offset
 end;
 
+local updateSpartanViewport = function(state) -- handles viewport offset based on settings
+	if ( state and DB.viewport ) and not InCombatLockdown() then
+		WorldFrame:ClearAllPoints();
+		WorldFrame:SetPoint("TOPLEFT", 0, 0);
+		WorldFrame:SetPoint("BOTTOMRIGHT", 0, 0);
+	else
+		if not InCombatLockdown() then WorldFrame:SetPoint("BOTTOMRIGHT"); end
+	end
+end;
+
 ----------------------------------------------------------------------------------------------------
-
-function module:UpdateBuffPosition()
-	if DB.BuffSettings.enabled then
-		if module.handleBuff then
-			BuffFrame:ClearAllPoints();
-			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-			ConsolidatedBuffs:ClearAllPoints();
-			ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-			if (ConsolidatedBuffs:IsVisible()) then
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
-			else
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
-			end
-		else
-			BuffFrame:ClearAllPoints();
-			BuffFrame:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
-			ConsolidatedBuffs:ClearAllPoints();
-			ConsolidatedBuffs:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-205,-13-(DB.BuffSettings.offset))
-			if (ConsolidatedBuffs:IsVisible()) then
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
-			else
-				TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
-			end
-		end
-	end
-end
-
-function module:updateBuffOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	local fubar,titan,ChocolateBar,offset = 0,0,0;
-	for i = 1,4 do
-		if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
-			local bar = _G["FuBarFrame"..i];
-			local point = bar:GetPoint(1);
-			if point == "TOPLEFT" then fubar = fubar + bar:GetHeight(); 	end
-		end
-	end
-	for i = 1,100 do
-		if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
-			local bar = _G["ChocolateBar"..i];
-			local point = bar:GetPoint(1);
-			if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
-			--if point == "RIGHT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end-- bottom bars
-		end
-	end
-		
-	TitanBarOrder = {[1]="Bar", [2]="Bar2"} -- Top 2 bar names
-	for i=1,2 do
-		if (_G["Titan_Bar__Display_"..TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i].."_Show")) then
-			local PanelScale = TitanPanelGetVar("Scale") or 1
-			local bar = _G["Titan_Bar__Display_"..TitanBarOrder[i]]
-			titan = titan + (PanelScale * bar:GetHeight());
-		end
-	end
-	
-	offset = max(fubar + titan + ChocolateBar,1);
-	DB.BuffSettings.offset = offset
-	return offset;
-end
-
-function module:InitFramework()
+function module:OnInitialize()
 	do -- default interface modifications
-		SUI_FramesAnchor:SetFrameStrata("BACKGROUND");
-		SUI_FramesAnchor:SetFrameLevel(1);
-		SUI_FramesAnchor:SetParent(SpartanUI);
-		SUI_FramesAnchor:ClearAllPoints();
-		SUI_FramesAnchor:SetPoint("BOTTOMLEFT", "SUI_AnchorFrame", "TOPLEFT", 0, 0);
-		SUI_FramesAnchor:SetPoint("TOPRIGHT", "SUI_AnchorFrame", "TOPRIGHT", 0, 153);
-		
-		FramerateLabel:ClearAllPoints();
-		FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
-		
+		FramerateLabel:ClearAllPoints(); FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
 		MainMenuBar:Hide();
-		hooksecurefunc(SpartanUI,"Hide",function() module:updateSpartanViewport(); end);
-		hooksecurefunc(SpartanUI,"Show",function() module:updateSpartanViewport(); end);
+		hooksecurefunc(UIParent,"Hide",function() updateSpartanViewport(false); end);
+		hooksecurefunc(UIParent,"Show",function() updateSpartanViewport(true); end);
 		hooksecurefunc("UpdateContainerFrameAnchors",function() -- fix bag offsets
 			local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
 			local screenWidth = GetScreenWidth()
@@ -265,20 +181,57 @@ function module:InitFramework()
 			end
 		end);
 	end
+	addon.opt.General.args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+		desc = L["DefScalesDesc"],
+		func = function()
+			if (InCombatLockdown()) then 
+				addon:Print(ERR_NOT_IN_COMBAT);
+			else
+				if (DB.scale >= 0.92) or (DB.scale < 0.78) then
+					DB.scale = 0.78;
+				else
+					DB.scale = 0.92;
+				end
+			end
+		end
+	};
+	addon.opt.General.args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+		desc = L["ConfScaleDesc"],min = .1,max = 1,
+		set = function(info,val)
+			if (InCombatLockdown()) then 
+				addon:Print(ERR_NOT_IN_COMBAT);
+			else
+				DB.scale = min(1,round(val));
+			end
+		end,
+		get = function(info) return DB.scale; end
+	};
+	addon.opt.General.args["offset"] = {name = L["ConfOffset"],type = "range",order = 3,width="double",
+		desc = L["ConfOffsetDesc"],
+		min=0,max=200,step=.1,
+		get = function(info) return DB.yoffset end,
+		set = function(info,val)
+			if (InCombatLockdown()) then 
+				addon:Print(ERR_NOT_IN_COMBAT);
+			else
+				if DB.yoffsetAuto then
+					addon:Print(L["confOffsetAuto"]);
+				else
+					val = tonumber(val);
+					DB.yoffset = val;
+				end
+			end
+		end,
+		get = function(info) return DB.yoffset; end
+	};
+	addon.opt.General.args["offsetauto"] = {name = L["AutoOffset"],type = "toggle",order = 4,
+		desc = L["AutoOffsetDesc"],
+		get = function(info) return DB.yoffsetAuto end,
+		set = function(info,val) DB.yoffsetAuto = val end,
+	};
 end
 
-function module:SetupVehicleUI()
-	if DBMod.Artwork.VehicleUI then
-		RegisterStateDriver(SpartanUI, "visibility", "[petbattle][vehicleui] hide; show");
-	end
-end
-function module:RemoveVehicleUI()
-	if not DBMod.Artwork.VehicleUI then
-		--UnRegisterStateDriver(SpartanUI, "visibility");
-	end
-end
-
-function module:EnableFramework()
+function module:OnEnable()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
 	
@@ -293,32 +246,32 @@ function module:EnableFramework()
 		CastingBarFrame:SetPoint("BOTTOM",frame,"TOP",0,90);
 	end);
 	
-	module:SetupVehicleUI();
+	RegisterStateDriver(frame, "visibility", "[petbattle] hide; show")
+
+	updateSpartanScale();
+	updateSpartanOffset();
+	updateSpartanXOffset();
+	updateSpartanViewport();
+	updateSpartanAlpha();
 	
-	module:updateSpartanScale();
-	module:updateSpartanOffset();
-	module:updateSpartanXOffset();
-	module:updateSpartanViewport();
-	module:updateSpartanAlpha();
-	
-	-- Limit updates via interval
-	anchor.UpdateInterval = 5 --Seconds
+	party = addon:GetModule("PartyFrames","PartyFrames",true);
+	-- Fix CPU leak, use UpdateInterval
+	anchor.UpdateInterval = 2
 	anchor.TimeSinceLastUpdate = 0
 	anchor:SetScript("OnUpdate",function(self,...)
 		local elapsed = select(1,...)
 		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
 		if (self.TimeSinceLastUpdate > self.UpdateInterval) then
+			-- Debug
+			-- print(self.TimeSinceLastUpdate)
 			if (InCombatLockdown()) then return; end
-			
-			module:updateSpartanScale();
-			module:updateSpartanOffset();
-			module:updateSpartanXOffset();
-			module:updateSpartanViewport();
+			-- Count this be hooked in another way ... event CVar_UPDATE
+			updateSpartanScale();
+			updateSpartanOffset();
+			updateSpartanXOffset();
 			self.TimeSinceLastUpdate = 0
 		end
 	end);
-	
-
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID;
@@ -362,4 +315,5 @@ function module:EnableFramework()
 		
 		UIDropDownMenu_Initialize( VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, "MENU");
 	end
+	
 end

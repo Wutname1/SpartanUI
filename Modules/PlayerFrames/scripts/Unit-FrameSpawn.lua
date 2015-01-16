@@ -154,7 +154,7 @@ end
 
 function PlayerFrames:OnEnable()
 	if (DBMod.PlayerFrames.style == "theme") then
-		local CurTheme = spartan:GetModule("Artwork_" .. DBMod.Artwork.Style);
+		local CurTheme = spartan:GetModule("Style_" .. DBMod.Artwork.Style);
 		CurTheme:UnitFrames();
 	elseif (DBMod.PlayerFrames.style == "classic") then
 		PlayerFrames:SUI_PlayerFrames_Classic();

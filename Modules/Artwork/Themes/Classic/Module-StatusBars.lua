@@ -1,7 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:GetModule("Artwork_Classic");
+local module = spartan:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 local xpframe, repframe;
 local FACTION_BAR_COLORS = {

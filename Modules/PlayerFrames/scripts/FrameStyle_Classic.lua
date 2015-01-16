@@ -327,6 +327,7 @@ local CreatePlayerFrame = function(self,unit)
 			end
 			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorHealth = true;
+			self.Health.Smooth = true
 			
 			-- Position and size
 			local myBars = CreateFrame('StatusBar', nil, self.Health)

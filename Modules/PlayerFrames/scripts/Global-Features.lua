@@ -32,7 +32,7 @@ do -- ClassIcon as an SpartanoUF module
 			self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:RegisterEvent("PLAYER_TARGET_CHANGED", Update);
 			self:RegisterEvent("UNIT_PET", Update);
-			icon:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_class]]
+			icon:SetTexture[[Interface\AddOns\SpartanUI\media\icon_class]]
 			return true;
 		end
 	end
@@ -225,14 +225,18 @@ do -- Rare / Elite dragon graphic as an SpartanoUF module
 		if (not self.RareElite) then return; end
 		local c = UnitClassification(unit);
 		self.RareElite:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\elite_rare]];
+		self.RareElite:SetTexCoord(0,1,0,1);
+		self.RareElite:SetAlpha(.75);
+		if self.RareElite.short == true then
+			self.RareElite:SetTexCoord(0,1,0,.7);
+		end
+		
 		if c == "worldboss" or c == "elite" or c == "rareelite" then
-			self.RareElite:SetTexCoord(0,1,0,1);
 			self.RareElite:SetVertexColor(1,0.9,0,1);
 		elseif c == "rare" then
-			self.RareElite:SetTexCoord(0,1,0,1);
 			self.RareElite:SetVertexColor(1,1,1,1);
 		else
-			self.RareElite:SetTexCoord(0,0.1,0,0.1);
+			self.RareElite:SetAlpha(0);
 		end
 	end
 	local Enable = function(self)
@@ -258,7 +262,7 @@ do -- Boss graphic as an SpartanoUF module
 	SpartanoUF:AddElement('BossGraphic', Update,Enable,Disable);
 end
 
-do -- fix SET_FOCUS & CLEAR_FOCUS errors
+do -- Remove SET_FOCUS & CLEAR_FOCUS errors
 	for k,v in pairs(UnitPopupMenus) do
 		if k ~= "RAID" and k ~= "RAID_PLAYER" then
 			for x,y in pairs(UnitPopupMenus[k]) do

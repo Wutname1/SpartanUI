@@ -1,7 +1,7 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = addon:GetModule("Artwork_Core");
-local module = addon:GetModule("Artwork_Classic");
+local module = addon:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 local ProfileName = DB.Styles.Classic.BartenderProfile;
 local BartenderSettings = { -- actual settings being inserted into our custom profile

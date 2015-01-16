@@ -22,8 +22,7 @@ libs\AceLocale-3.0\AceLocale-3.0.xml
 #@end-no-lib-strip@
 
 libs\oUF\oUF.xml
-libs\oUF_Plugins\oUF_AuraWatch.lua
-libs\oUF_Plugins\oUF_RaidDebuffs.lua
+libs\oUF_Plugins\LoadAll.xml
 
 lang\enUS.lua
 lang\esES.lua
@@ -31,4 +30,5 @@ lang\deDE.lua
 lang\koKR.lua
 lang\zhCN.lua
 
-scripts\Global-Framework.xml
+Core\Framework.xml
+Components\LoadAll.xml
