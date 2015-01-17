@@ -42,12 +42,15 @@ DBdefault = {
 				PartyFrames = true,
 				RaidFrames = true,
 				BartenderProfile = "SpartanUI - Classic",
-				MinimapShape = "Circle",
 				Movable = {
-					Minimap = true,
+					Minimap = false,
 					PlayerFrames = true,
 					PartyFrames = true,
 					RaidFrames = true,
+				},
+				Minimap = {
+					shape = "circle",
+					size = {width = 140, height = 140}
 				},
 			}
 		},

@@ -71,7 +71,21 @@ function module:ModifyMinimapLayout()
 	
 	-- Minimap:SetParent(frame);
 	Minimap:SetSize(140,140);
-	Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+	if DB.Styles[DBMod.Artwork.Style].Minimap ~= nil then
+		if DB.Styles[DBMod.Artwork.Style].Minimap.shape == "square" then
+			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+			Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
+			Minimap.overlay:SetSize(Minimap:GetSize()); 
+			Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay");
+			Minimap.overlay:SetPoint("CENTER");
+			Minimap.overlay:SetBlendMode("ADD");
+		else
+			--do nothing
+			Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI\\Media\\map-circle-overlay")
+		end
+	else
+		
+	end
 	-- Minimap:ClearAllPoints();
 	-- Minimap:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-30,-30);
 	
@@ -126,11 +140,6 @@ function module:ModifyMinimapLayout()
 	
 	MiniMapTracking:ClearAllPoints(); MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
 	MiniMapTrackingButton:ClearAllPoints(); MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
-	
-	Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
-	Minimap.overlay:SetSize(230, 230); 
-	Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\map-overlay");
-	Minimap.overlay:SetPoint("CENTER"); Minimap.overlay:SetBlendMode("ADD");
 	
 	-- frame:EnableMouse(true);
 	-- frame:EnableMouseWheel(true);

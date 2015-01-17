@@ -255,6 +255,31 @@ function module:OnInitialize()
 				DB.font.Path = ""
 			end
 		end
+		if (DB.Version < "4.0.0") then
+			if DB.MiniMap.Moved == nil then
+				DB.MiniMap.Shape = "square"
+				DB.MiniMap.Moved = false
+				DB.MiniMap.Position = nil
+			end
+			if DB.Styles.Classic.Artwork == nil then DB.Styles.Classic.Artwork = true end
+			if DB.Styles.Classic.PlayerFrames == nil then DB.Styles.Classic.PlayerFrames = true end
+			if DB.Styles.Classic.PartyFrames == nil then DB.Styles.Classic.PartyFrames = true end
+			if DB.Styles.Classic.RaidFrames == nil then DB.Styles.Classic.RaidFrames = false end
+			if DB.Styles.Classic.Movable == nil then
+				DB.Styles.Classic.Movable = {
+					Minimap = false,
+					PlayerFrames = true,
+					PartyFrames = true,
+					RaidFrames = true,
+				}
+			end
+			if DB.Styles.Classic.Minimap == nil then
+				Minimap = {
+					shape = "circle",
+					size = {width = 140, height = 140}
+				}
+			end
+		end
 	end
 end
 
@@ -262,7 +287,7 @@ function module:OnEnable()
 	-- First Launch Notication
 	if (not DBGlobal.Version) then
 		spartan.db:ResetProfile(false,true);
-		StaticPopup_Show ("FirstLaunchNotice")
+		StaticPopup_Show("FirstLaunchNotice")
 	end
 	-- No Bartender/out of date Notification
 	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= spartan.SpartanVer)) then
