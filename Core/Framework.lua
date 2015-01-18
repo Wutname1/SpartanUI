@@ -6,7 +6,8 @@ addon.SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 addon.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
 addon.opt = {
-	name = "SpartanUI", type = "group", childGroups = "tab", args = {
+	-- name = "SpartanUI "..L["Version"]..": "..spartan.SpartanVer, type = "group", childGroups = "tab", args = {
+	name = "SpartanUI 4.0 Alpha", type = "group", childGroups = "tab", args = {
 		General = {name = "General", type = "group",order = 0, args = {}};
 		Artwork = {name = "Artwork", type = "group", args = {}};
 		PlayerFrames = {name = "Player Frames", type = "group", args = {}};

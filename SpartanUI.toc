@@ -30,5 +30,6 @@ lang\deDE.lua
 lang\koKR.lua
 lang\zhCN.lua
 
-Core\Framework.xml
-Components\LoadAll.xml
+core\Framework.lua
+components\LoadAll.xml
+core\Framework.xml

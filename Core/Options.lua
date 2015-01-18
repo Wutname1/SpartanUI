@@ -27,7 +27,6 @@ function module:OnInitialize()
 	local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_FilmEffects")
 	ModsLoaded.FilmEffects = enabled
 	
-	spartan.opt.args["General"].args["SuiVersion"] = {name = "SpartanUI "..L["Version"]..": "..spartan.SpartanVer,order=1,type = "header"};
 	if (spartan.SpartanVer ~= spartan.CurseVersion) and (spartan.CurseVersion ~= "") then
 		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
