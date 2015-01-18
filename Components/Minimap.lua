@@ -8,7 +8,6 @@ local BlizzUI = { "ActionBar", "BonusActionButton", "MainMenu", "ShapeshiftButto
 local BlizzParentStop = { "WorldFrame", "Minimap", "MinimapBackdrop", "UIParent", "MinimapCluster" }
 local SUIMapChangesActive = false
 local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBackdrop", "MiniMapVoiceChatFrame","TimeManagerClockButton", "MinimapButtonFrameDragButton", "GameTimeFrame", "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
-local frame
 
 function module:OnEnable()
 	-- Minimap.SUI = CreateFrame("Frame");
@@ -63,25 +62,38 @@ function module:OnEnable()
 end
 
 function module:ModifyMinimapLayout()
+	local frame = CreateFrame("Frame","SUI_Minimap",Minimap);
+	frame:SetSize(140,140);
+	frame:SetPoint("CENTER");
+	
+	
+	-- Minimap:SetParent(frame);
+	-- Minimap:SetSize(frame:GetSize());
+	-- Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay.tga")
+	-- Minimap:ClearAllPoints();
+	-- Minimap:SetPoint("CENTER","SUI_Minimap","CENTER",0,0);
+	
 	-- frame:SetSize(140, 140);
 	-- frame:SetPoint("CENTER",0,-5);
 	
 	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
+	-- SUI_MiniMapIcon = CreateFrame("Frame","SUI_Minimap",SpartanUI);
 	SUI_MiniMapIcon:SetSize(35,35);
 	
 	-- Minimap:SetParent(frame);
 	Minimap:SetSize(140,140);
+	-- Minimap:SetSize(frame:GetSize());
+	
 	if DB.Styles[DBMod.Artwork.Style].Minimap ~= nil then
 		if DB.Styles[DBMod.Artwork.Style].Minimap.shape == "square" then
 			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
-			Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
-			Minimap.overlay:SetSize(Minimap:GetSize()); 
-			Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay");
-			Minimap.overlay:SetPoint("CENTER");
-			Minimap.overlay:SetBlendMode("ADD");
+			-- Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
+			-- Minimap.overlay:SetSize(Minimap:GetSize()); 
+			-- Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay");
+			-- Minimap.overlay:SetPoint("CENTER");
+			-- Minimap.overlay:SetBlendMode("ADD");
 		else
-			--do nothing
-			Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI\\Media\\map-circle-overlay")
+			Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay")
 		end
 	else
 		
@@ -99,25 +111,26 @@ function module:ModifyMinimapLayout()
 	MinimapBackdrop:ClearAllPoints();
 	MinimapBackdrop:SetPoint("CENTER",Minimap,"CENTER",-10,-24);
 	
-	MinimapZoneTextButton:SetParent(Minimap);
-	MinimapZoneTextButton:ClearAllPoints();
-	MinimapZoneTextButton:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,4);
+	-- MinimapZoneTextButton:SetParent(Minimap);
+	-- MinimapZoneTextButton:ClearAllPoints();
+	-- MinimapZoneTextButton:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,4);
+	
 	-- MinimapZoneText:SetJustifyH("LEFT");
-	MinimapZoneText:Hide();
+	-- MinimapZoneText:Hide();
 	
 	MinimapBorderTop:Hide();
 	MinimapBorder:SetAlpha(0);
 	
-	MiniMapInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
-	GuildInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
+	MiniMapInstanceDifficulty:SetPoint("TOPLEFT",Minimap,4,22);
+	GuildInstanceDifficulty:SetPoint("TOPLEFT",Minimap,4,22);
 	
 	GarrisonLandingPageMinimapButton:ClearAllPoints();
 	GarrisonLandingPageMinimapButton:SetSize(35,35);
-	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT",frame,0,0);
+	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT",Minimap,0,0);
 
 	ExtraActionButton1:ClearAllPoints();
 	ExtraActionButton1:SetSize(35,35);
-	ExtraActionButton1:SetPoint("BOTTOMLEFT",frame,0,0);
+	ExtraActionButton1:SetPoint("BOTTOMLEFT",Minimap,0,0);
 	
 	-- Do modifications to MiniMapWorldMapButton
 --	-- remove current textures
@@ -138,16 +151,25 @@ function module:ModifyMinimapLayout()
 	GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16);
 	GameTimeFrame:Hide();
 	
-	MiniMapTracking:ClearAllPoints(); MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
-	MiniMapTrackingButton:ClearAllPoints(); MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
+	MiniMapTracking:ClearAllPoints();
+	MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
+
+	MiniMapTrackingButton:ClearAllPoints();
+	MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
 	
-	-- frame:EnableMouse(true);
-	-- frame:EnableMouseWheel(true);
-	-- frame:SetScript("OnMouseWheel",function(self,delta)
-		-- if (delta > 0) then Minimap_ZoomIn()
-		-- else Minimap_ZoomOut() end
-	-- end);
+	frame:EnableMouse(true);
+	frame:EnableMouseWheel(true);
+	frame:SetScript("OnMouseWheel",function(self,delta)
+		if (delta > 0) then Minimap_ZoomIn()
+		else Minimap_ZoomOut() end
+	end);
 	
+	frame:SetScript("OnEvent",function(self, event, ...)
+		GarrisonLandingPageMinimapButton:Show()
+	end);
+    frame:RegisterEvent("GARRISON_MISSION_FINISHED");
+    frame:RegisterEvent("GARRISON_INVASION_AVAILABLE");
+    frame:RegisterEvent("SHIPMENT_UPDATE");
 	module.frame = frame
 end;
 

@@ -6,78 +6,12 @@ local module = spartan:GetModule("Style_Classic");
 local Minimap_Conflict_msg = true
 local TribalArt
 
-function module:modifyMinimapLayout()
-	frame = CreateFrame("Frame","SUI_Minimap",SpartanUI);
-	frame:SetSize(156, 156);
-	frame:SetPoint("CENTER",0,54);
-	
-	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
-	SUI_MiniMapIcon:SetSize(35,35);
-	
-	Minimap:SetSize(frame:GetSize());
-	Minimap:ClearAllPoints();
-	Minimap:SetPoint("CENTER","SUI_Minimap","CENTER",0,0);
-	
-	MinimapBackdrop:ClearAllPoints();
-	MinimapBackdrop:SetPoint("CENTER",frame,"CENTER",-10,-24);
-	
-	MinimapZoneTextButton:SetParent(frame);
-	MinimapZoneTextButton:ClearAllPoints();
-	MinimapZoneTextButton:SetPoint("TOP",frame,"BOTTOM",0,-7);
-	
-	MinimapBorderTop:Hide();
-	MinimapBorder:SetAlpha(0);
-	
-	MiniMapInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
-	GuildInstanceDifficulty:SetPoint("TOPLEFT",frame,4,22);
-	
-	GarrisonLandingPageMinimapButton:ClearAllPoints();
-	GarrisonLandingPageMinimapButton:SetSize(35,35);
-	GarrisonLandingPageMinimapButton:SetPoint("RIGHT",frame,18,-25);
-	
-	-- remove current textures
-	MiniMapWorldMapButton:SetNormalTexture(nil)
-	MiniMapWorldMapButton:SetPushedTexture(nil)
-	MiniMapWorldMapButton:SetHighlightTexture(nil)
-	-- Create new textures
-	MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon.png")
-	MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\WorldMap-Icon-Pushed.png")
-	MiniMapWorldMapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-	
-	MiniMapWorldMapButton:ClearAllPoints();
-	MiniMapWorldMapButton:SetPoint("TOPRIGHT",MinimapBackdrop,-20,12)
-	
-	MiniMapMailFrame:ClearAllPoints();
-	MiniMapMailFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",21,-53)
-	
-	GameTimeFrame:ClearAllPoints();
-	GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16)
-	
-	MiniMapTracking:ClearAllPoints();
-	MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
-	MiniMapTrackingButton:ClearAllPoints();
-	MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
-	
-	frame:EnableMouse(true);
-	frame:EnableMouseWheel(true);
-	frame:SetScript("OnMouseWheel",function(self,delta)
-		if (delta > 0) then Minimap_ZoomIn()
-		else Minimap_ZoomOut() end
-	end);
-	
-	frame:SetScript("OnEvent",function(self, event, ...)
-		GarrisonLandingPageMinimapButton:Show()
-	end);
-    frame:RegisterEvent("GARRISON_MISSION_FINISHED");
-    frame:RegisterEvent("GARRISON_INVASION_AVAILABLE");
-    frame:RegisterEvent("SHIPMENT_UPDATE");
-end
-
 function module:MinimapCoords()
 	-- SpartanUI_Tribal:SetVertexColor(1, 0, 0);
 	local map = CreateFrame("Frame",nil,SpartanUI);
 	map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
 	map.coords:SetSize(128, 12);
+	-- map.coords:SetPoint("BOTTOM",SpartanUI,"BOTTOM",0,15);
 	map.coords:SetPoint("TOP","MinimapZoneTextButton","BOTTOM",0,-6);
 	
 	-- Fix CPU leak, use UpdateInterval
@@ -116,12 +50,18 @@ function module:MinimapCoords()
 end
 
 function module:MiniMap()
-	module:modifyMinimapLayout();
-	module:MinimapCoords();
+	-- spartan:GetModule("Component_Minimap").frame
+	Minimap:ClearAllPoints();
+	Minimap:SetPoint("CENTER",SpartanUI,"CENTER",0,50);
+	
+	-- MinimapZoneTextButton:SetParent(frame);
+	MinimapZoneTextButton:ClearAllPoints();
+	MinimapZoneTextButton:SetPoint("TOP",Minimap,"BOTTOM",5,-7);
 	
 	QueueStatusFrame:ClearAllPoints();
 	QueueStatusFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
-	module.handleBuff = true
+	
+	module:MinimapCoords();
 end
 
 function module:ChatBox()
