@@ -6,6 +6,8 @@ local module = spartan:NewModule("Component_WorkOrders");
 local QueueMax
 
 function module:OnEnable()
+	if not DB.EnabledComponents.WorkOrders then return end
+	
 	QueueMax = CreateFrame('Frame', 'QueueMax', UIParent);
 	QueueMax.button = CreateFrame('Button', 'MaxQueue', QueueMax, "MagicButtonTemplate");
 	QueueMax.button:SetSize(100, 22);

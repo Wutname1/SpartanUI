@@ -7,6 +7,7 @@ local Minimap_Conflict_msg = true
 local TribalArt
 
 function module:MinimapCoords()
+	
 	-- SpartanUI_Tribal:SetVertexColor(1, 0, 0);
 	local map = CreateFrame("Frame",nil,SpartanUI);
 	map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
@@ -50,7 +51,10 @@ function module:MinimapCoords()
 end
 
 function module:MiniMap()
-	-- spartan:GetModule("Component_Minimap").frame
+	Minimap:SetSize(140, 140);
+	MinimapZoneText:Show()
+	Minimap.coords:Hide()
+	
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("CENTER",SpartanUI,"CENTER",0,50);
 	
@@ -62,6 +66,7 @@ function module:MiniMap()
 	QueueStatusFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	
 	module:MinimapCoords();
+	Minimap.coords:Hide()
 end
 
 function module:ChatBox()

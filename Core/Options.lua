@@ -28,7 +28,7 @@ function module:OnInitialize()
 	ModsLoaded.FilmEffects = enabled
 	
 	spartan.opt.args["General"].args["SuiVersion"] = {name = "SpartanUI "..L["Version"]..": "..spartan.SpartanVer,order=1,type = "header"};
-	if (spartan.SpartanVer ~= spartan.CurseVersion) then
+	if (spartan.SpartanVer ~= spartan.CurseVersion) and (spartan.CurseVersion ~= "") then
 		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
 
@@ -41,6 +41,24 @@ function module:OnInitialize()
 					-- imageCoords=function() return {0,1,0,1} end,
 					func = function() DBMod.Artwork.Style = "Classic"; newtheme = spartan:GetModule("Style_Classic") newtheme:SetupProfile(); ReloadUI(); end
 				},
+				Transparent = {name = "Transparent", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
+					func = function() 
+						DBMod.Artwork.Style = "Transparent";
+						newtheme = spartan:GetModule("Style_Transparent")
+						newtheme:SetupProfile();
+						ReloadUI();
+					end
+				},
+				Minimal = {name = "Minimal", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
+					func = function() 
+						DBMod.Artwork.Style = "Minimal";
+						newtheme = spartan:GetModule("Style_Minimal")
+						newtheme:SetupProfile();
+						ReloadUI();
+					end
+				}
 			}},
 			PlayerFrames = {type="group",name=L["PlayerFrames"],order=100,args = {
 			}},
@@ -193,7 +211,7 @@ function module:OnInitialize()
 			}
 		}
 	
-	spartan.opt.args["General"].args["ModSetting"] = {name = "Modules", type = "group", order = 800,
+	spartan.opt.args["General"].args["ModSetting"] = {name = "Enabled modules", type = "group", order = 800,
 		args = {
 			description = {type="description",name="Here you can enable and disable the modules contained in or related to SpartanUI",order=1,fontSize="medium"},
 			Artwork = {name = "Artwork",type = "toggle",order=10,
@@ -245,17 +263,18 @@ function module:OnInitialize()
 				end,
 			},
 			Styles = {name = "Styles",type = "group",order=100,inline=true,args={}},
+			Components = {name = "Components",type = "group",order=200,inline=true,args={}},
 			Reload = {name = "ReloadUI", type = "execute",order=200,disabled=true, func = function() spartan:reloadui(); end},
 		}
 	}
 
+	-- List Styles
 	for i = 1, GetNumAddOns() do
 		local name, title, notes, enabled,loadable = GetAddOnInfo(i)
 		ModsLoaded[name] = enabled
-		
 		if (string.match(name, "SpartanUI_Style_")) then
 			spartan.opt.args["General"].args["ModSetting"].args["Styles"].args[string.sub(name, 9)] = {
-			name = string.sub(name, 17),type = "toggle",order=40,
+				name = string.sub(name, 17),type = "toggle",
 				get = function(info) return ModsLoaded[name] end,
 				set = function(info,val)
 					if ModsLoaded[name] then ModsLoaded[name] = false else ModsLoaded[name] = true end
@@ -264,7 +283,23 @@ function module:OnInitialize()
 				end,
 			}
 		end
-		
+	end
+
+	-- List Components
+	for name, module in spartan:IterateModules() do
+		if (string.match(name, "Component_")) then
+			local RealName = string.sub(name, 11)
+			if DB.EnabledComponents == nil then DB.EnabledComponents = {} end
+			if DB.EnabledComponents[RealName] == nil then
+				DB.EnabledComponents[RealName] = true
+			end
+			
+			spartan.opt.args["General"].args["ModSetting"].args["Components"].args[RealName] = {
+				name = string.sub(name, 11),type = "toggle",
+				get = function(info) return DB.EnabledComponents[RealName] end,
+				set = function(info,val) DB.EnabledComponents[RealName] = val; spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; end,
+			}
+		end
 	end
 end
 

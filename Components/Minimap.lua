@@ -10,6 +10,8 @@ local SUIMapChangesActive = false
 local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBackdrop", "MiniMapVoiceChatFrame","TimeManagerClockButton", "MinimapButtonFrameDragButton", "GameTimeFrame", "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
 
 function module:OnEnable()
+	if not DB.EnabledComponents.Minimap then return end
+	
 	-- Minimap.SUI = CreateFrame("Frame");
 	-- Minimap.SUI:EnableMouse(true);
 	-- Minimap.SUI:Hide()
@@ -62,44 +64,36 @@ function module:OnEnable()
 end
 
 function module:ModifyMinimapLayout()
-	local frame = CreateFrame("Frame","SUI_Minimap",Minimap);
-	frame:SetSize(140,140);
-	frame:SetPoint("CENTER");
+	Minimap:EnableMouseWheel(true);
+	Minimap:SetScript("OnMouseWheel",function(self,delta)
+		if (delta > 0) then Minimap_ZoomIn()
+		else Minimap_ZoomOut() end
+	end);
 	
-	
-	-- Minimap:SetParent(frame);
-	-- Minimap:SetSize(frame:GetSize());
-	-- Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\map-overlay.tga")
-	-- Minimap:ClearAllPoints();
-	-- Minimap:SetPoint("CENTER","SUI_Minimap","CENTER",0,0);
-	
-	-- frame:SetSize(140, 140);
-	-- frame:SetPoint("CENTER",0,-5);
-	
-	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
-	-- SUI_MiniMapIcon = CreateFrame("Frame","SUI_Minimap",SpartanUI);
-	SUI_MiniMapIcon:SetSize(35,35);
-	
-	-- Minimap:SetParent(frame);
 	Minimap:SetSize(140,140);
-	-- Minimap:SetSize(frame:GetSize());
-	
+	-- Minimap:SetParent(frame);
 	if DB.Styles[DBMod.Artwork.Style].Minimap ~= nil then
 		if DB.Styles[DBMod.Artwork.Style].Minimap.shape == "square" then
 			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
-			-- Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
-			-- Minimap.overlay:SetSize(Minimap:GetSize()); 
-			-- Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay");
-			-- Minimap.overlay:SetPoint("CENTER");
-			-- Minimap.overlay:SetBlendMode("ADD");
+			
+			Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
+			Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay");
+			Minimap.overlay:SetAllPoints(Minimap);
+			Minimap.overlay:SetBlendMode("ADD");
+			
+			MinimapZoneTextButton:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,4);
+			MinimapZoneTextButton:SetPoint("BOTTOMRIGHT",Minimap,"TOPRIGHT",0,4);
+			MinimapZoneText:SetTextColor(1,1,1,1);
+			MinimapZoneText:SetShadowColor(0,0,0,1);
+			MinimapZoneText:SetShadowOffset(1,-1);
 		else
 			Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay")
 		end
 	else
 		
 	end
-	-- Minimap:ClearAllPoints();
-	-- Minimap:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-30,-30);
+	Minimap:ClearAllPoints();
+	Minimap:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-30,-30);
 	
 	TimeManagerClockButton:GetRegions():Hide() -- Hide the border
 	TimeManagerClockButton:SetBackdrop(nil)
@@ -116,7 +110,7 @@ function module:ModifyMinimapLayout()
 	-- MinimapZoneTextButton:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,4);
 	
 	-- MinimapZoneText:SetJustifyH("LEFT");
-	-- MinimapZoneText:Hide();
+	MinimapZoneText:Hide();
 	
 	MinimapBorderTop:Hide();
 	MinimapBorder:SetAlpha(0);
@@ -142,7 +136,7 @@ function module:ModifyMinimapLayout()
 	MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\WorldMap-Icon-Pushed.png")
 	MiniMapWorldMapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 	MiniMapWorldMapButton:ClearAllPoints();
-	MiniMapWorldMapButton:SetPoint("TOPRIGHT",MinimapBackdrop,-20,12)
+	MiniMapWorldMapButton:SetPoint("TOPRIGHT",Minimap,-20,12)
 	
 	MiniMapMailFrame:ClearAllPoints();
 	MiniMapMailFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",21,-53)
@@ -152,27 +146,81 @@ function module:ModifyMinimapLayout()
 	GameTimeFrame:Hide();
 	
 	MiniMapTracking:ClearAllPoints();
-	MiniMapTracking:SetPoint("TOPLEFT",MinimapBackdrop,"TOPLEFT",13,-40)
+	MiniMapTracking:SetPoint("TOPLEFT",Minimap,"TOPLEFT",13,-40)
 
 	MiniMapTrackingButton:ClearAllPoints();
-	MiniMapTrackingButton:SetPoint("TOPLEFT",MiniMapTracking,"TOPLEFT",0,0)
+	MiniMapTrackingButton:SetPoint("TOPLEFT",Minimap,"TOPLEFT",0,0)
 	
-	frame:EnableMouse(true);
-	frame:EnableMouseWheel(true);
-	frame:SetScript("OnMouseWheel",function(self,delta)
-		if (delta > 0) then Minimap_ZoomIn()
-		else Minimap_ZoomOut() end
-	end);
-	
-	frame:SetScript("OnEvent",function(self, event, ...)
+	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
+	SUI_MiniMapIcon:SetSize(35,35);
+	SUI_MiniMapIcon:SetScript("OnEvent",function(self, event, ...)
 		GarrisonLandingPageMinimapButton:Show()
 	end);
-    frame:RegisterEvent("GARRISON_MISSION_FINISHED");
-    frame:RegisterEvent("GARRISON_INVASION_AVAILABLE");
-    frame:RegisterEvent("SHIPMENT_UPDATE");
-	module.frame = frame
+    SUI_MiniMapIcon:RegisterEvent("GARRISON_MISSION_FINISHED");
+    SUI_MiniMapIcon:RegisterEvent("GARRISON_INVASION_AVAILABLE");
+    SUI_MiniMapIcon:RegisterEvent("SHIPMENT_UPDATE");
+	
+	module:MinimapCoords()
 end;
 
+function module:MinimapCoords()
+	local map = CreateFrame("Frame",nil,SpartanUI);
+	Minimap.coords = Minimap:CreateFontString(nil,"BACKGROUND","SUI_Font10");
+	Minimap.coords:SetSize(140, 12);
+	Minimap.coords:SetJustifyH("MIDDLE");
+	Minimap.coords:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,1);
+	Minimap.coords:SetPoint("BOTTOMRIGHT",Minimap,"TOPRIGHT",0,1);
+	-- Fix CPU leak, use UpdateInterval
+	Minimap.UpdateInterval = 2
+	Minimap.TimeSinceLastUpdate = 0
+	Minimap:HookScript("OnUpdate", function(self,...)
+		if DB.MiniMap then
+			local elapsed = select(1,...)
+			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
+			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
+				do -- update minimap coordinates
+					local x,y = GetPlayerMapPosition("player");
+					if (not x) or (not y) then return; end
+					Minimap.coords:SetShadowColor(0,0,0,1);
+					Minimap.coords:SetShadowOffset(1,-1);
+					Minimap.coords:SetText(GetMinimapZoneText() .. " " .. format("%.1f, %.1f",x*100,y*100));
+				end
+				self.TimeSinceLastUpdate = 0
+			end
+		end
+	end);
+	Minimap:HookScript("OnEvent",function(self,event,...)
+		if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
+			if IsInInstance() then Minimap.coords:Hide() else Minimap.coords:Show() end
+			if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
+		elseif (event == "ADDON_LOADED") then
+			--print(select(1,...));
+		end
+		local LastFrame = UIErrorsFrame;
+		for i = 1, NUM_EXTENDED_UI_FRAMES do
+			local bar = _G["WorldStateCaptureBar"..i];
+			if (bar and bar:IsShown()) then
+				bar:ClearAllPoints();
+				bar:SetPoint("TOP",LastFrame,"BOTTOM");
+				LastFrame = self;
+			end
+		end
+		hasVehicle = UnitHasVehicleUI("player") or UnitHasVehicleUI("player");
+	end);
+	Minimap:RegisterEvent("ZONE_CHANGED");
+	Minimap:RegisterEvent("ZONE_CHANGED_INDOORS");
+	Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+	Minimap:RegisterEvent("UPDATE_WORLD_STATES");
+	Minimap:RegisterEvent("UPDATE_BATTLEFIELD_SCORE");
+	Minimap:RegisterEvent("PLAYER_ENTERING_WORLD");
+	Minimap:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
+	Minimap:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
+	Minimap:RegisterEvent("UNIT_ENTERING_VEHICLE");
+	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
+	
+	Minimap:RegisterEvent("UNIT_ENTERING_VEHICLE");
+	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
+end
 
 function module:MiniMapButtons()
 	-- Fix CPU leak, use UpdateInterval

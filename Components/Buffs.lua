@@ -6,5 +6,5 @@ local module = spartan:NewModule("Component_Buffs");
 
 
 function module:OnEnable()
-
+	if not DB.EnabledComponents.Buffs then return end
 end

@@ -279,6 +279,7 @@ function module:OnInitialize()
 					size = {width = 140, height = 140}
 				}
 			end
+			if DB.EnabledComponents == nil then DB.EnabledComponents = {} end
 		end
 	end
 end

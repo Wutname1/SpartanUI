@@ -2,7 +2,6 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Framework.lua" />
 	<Script file="Options.lua" />
 	<!-- <Script file="Shared-Functions.lua" /> -->
 	
