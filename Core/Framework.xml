@@ -63,5 +63,6 @@
 		</Anchors>
 	</Frame>
 	
+	<Script file="Shared-Functions.lua" />
 	<Script file="DBSetup.lua" />
 </Ui>
