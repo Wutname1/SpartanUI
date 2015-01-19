@@ -66,6 +66,7 @@ function module:OnInitialize()
 	-- DB Updates
 	if DBGlobal.Version then
 		if DB.Version == nil then -- DB Updates from 3.0.2 to 3.0.3 this variable was not set in 3.0.2
+			spartan:Print(L["DBUpdate"].." 3.0.2 "..L["settings"])
 			local unitlist = {player=0,target=0,targettarget=0,pet=0,focus=0,focustarget=0};
 			for k,v in pairs(unitlist) do
 				tmp = true;
@@ -84,6 +85,7 @@ function module:OnInitialize()
 			DB.Version = "3.0.3"
 		end
 		if (DB.Version < "3.0.4") then -- DB updates for 3.0.5
+			spartan:Print(L["DBUpdate"].." 3.0.4 "..L["settings"])
 			DB.offsetAuto = true
 			if DB.offset then
 				if DB.offset >= 2 then 
@@ -104,6 +106,7 @@ function module:OnInitialize()
 			DB.Version = "3.0.4"
 		end
 		if (DB.Version < "3.1.0") then -- DB Updates for 3.1.0
+			spartan:Print(L["DBUpdate"].." 3.1.0 "..L["settings"])
 			DB.yoffsetAuto = DB.offsetAuto;
 			if not DB.offset then DB.offset = 0 end
 			if not DB.yoffset then DB.yoffset = DB.offset; end
@@ -136,13 +139,13 @@ function module:OnInitialize()
 			end
 			if not DBMod.PartyFrames.display then
 				DBMod.PartyFrames.display = {};
-				DBMod.PartyFrames.display.pet = DBMod.PartyFrames.DisplayPets;
-				DBMod.PartyFrames.display.target = true;
+				DBMod.PartyFrames.display.pet = DBMod.PartyFrames.DisplayPets; spartan:Print("Pet Display DB converted");
+				DBMod.PartyFrames.display.target = true; spartan:Print("Party Target Enabled.");
 			end
-			if DBMod.PlayerFrames.focus.moved == nil then DBMod.PlayerFrames.focus.moved = false; end
-			if not spartan.db.char.Version then spartan.db.char = DBdefault; spartan.db.char.Version = spartan.SpartanVer; end
-			if not spartan.db.realm.Version then spartan.db.realm = DBdefault; spartan.db.realm.Version = spartan.SpartanVer; end
-			if not spartan.db.class.Version then spartan.db.class = DBdefault; spartan.db.class.Version = spartan.SpartanVer; end
+			if DBMod.PlayerFrames.focus.moved == nil then DBMod.PlayerFrames.focus.moved = false; spartan:Print("Focus Frame position reset"); end
+			if not spartan.db.char.Version then spartan:Print("Setup char DB"); spartan.db.char = DBdefault; spartan.db.char.Version = spartan.SpartanVer; end
+			if not spartan.db.realm.Version then spartan:Print("Setup realm DB"); spartan.db.realm = DBdefault; spartan.db.realm.Version = spartan.SpartanVer; end
+			if not spartan.db.class.Version then spartan:Print("Setup class DB"); spartan.db.class = DBdefault; spartan.db.class.Version = spartan.SpartanVer; end
 			if not DBMod.PartyFrames.Auras then DBMod.PartyFrames.Auras = {} end
 			if not DBMod.PartyFrames.Auras.NumBuffs then DBMod.PartyFrames.Auras.NumBuffs = 0 end
 			if not DBMod.PartyFrames.Auras.NumDebuffs then DBMod.PartyFrames.Auras.NumDebuffs = 10 end
@@ -168,6 +171,7 @@ function module:OnInitialize()
 			for k,v in pairs(unitlist) do
 				tmp = true;
 				if not DBMod.PlayerFrames[k].Auras then
+					spartan:Print("Updates Auras for "..k);
 					DBMod.PlayerFrames[k].Auras = Auras;
 					if k == "focus" or k == "focustarget" then DBMod.PlayerFrames[k].Auras.NumBuffs = 0; end
 				end;
@@ -180,10 +184,12 @@ function module:OnInitialize()
 			if not DBMod.PartyFrames.threat then DBMod.PartyFrames.threat = true end
 		end
 		if (DB.Version < "3.1.3") then -- DB Updates for 3.1.3
+			spartan:Print(L["DBUpdate"].." 3.1.3 "..L["settings"])
 			if DBMod.RaidFrames.maxColumns == 8 then DBMod.RaidFrames.maxColumns = 4 end
 			if DBMod.RaidFrames.unitsPerColumn == 5 then DBMod.RaidFrames.unitsPerColumn = 10 end
 		end
 		if (DB.Version < "3.2.1") then -- DB Updates for 3.1.3
+			spartan:Print(L["DBUpdate"].." 3.2.1 "..L["settings"])
 			if not DBMod.PlayerFrames.AltManaBar then
 				DBMod.PlayerFrames.AltManaBar = {movement={moved=false;point = "",relativeTo = "",relativePoint = "",xOffset = 0,yOffset = 0}}
 			end

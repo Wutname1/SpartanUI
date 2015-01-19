@@ -129,7 +129,11 @@ function module:EnableStatusBars()
 				if rested == 0 then rested = .001 end
 				SUI_ExperienceBarLead:SetWidth(rested);
 			end
-			if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+			if DB.XPBar.text then
+				xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
+			else
+				xpframe.Text:SetText("")
+			end
 			module:SetXPColors()
 		end);
 		local showXPTooltip = function()
