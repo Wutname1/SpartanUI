@@ -132,8 +132,8 @@ function module:ModifyMinimapLayout()
 	MiniMapWorldMapButton:SetPushedTexture(nil)
 	MiniMapWorldMapButton:SetHighlightTexture(nil)
 --	-- Create new textures
-	MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\WorldMap-Icon.png")
-	MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\WorldMap-Icon-Pushed.png")
+	MiniMapWorldMapButton:SetNormalTexture("Interface\\AddOns\\SpartanUI\\media\\WorldMap-Icon.png")
+	MiniMapWorldMapButton:SetPushedTexture("Interface\\AddOns\\SpartanUI\\media\\WorldMap-Icon-Pushed.png")
 	MiniMapWorldMapButton:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 	MiniMapWorldMapButton:ClearAllPoints();
 	MiniMapWorldMapButton:SetPoint("TOPRIGHT",Minimap,-20,12)
