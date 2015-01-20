@@ -38,13 +38,13 @@ function module:OnInitialize()
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
 					-- imageCoords=function() return {0,1,0,1} end,
-					func = function() DBMod.Artwork.Style = "Classic"; newtheme = spartan:GetModule("Style_Classic") newtheme:SetupProfile(); ReloadUI(); end
+					func = function() DBMod.Artwork.Style = "Classic"; local newtheme = spartan:GetModule("Style_Classic") newtheme:SetupProfile(); ReloadUI(); end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function() 
 						DBMod.Artwork.Style = "Transparent";
-						newtheme = spartan:GetModule("Style_Transparent")
+						local newtheme = spartan:GetModule("Style_Transparent")
 						newtheme:SetupProfile();
 						ReloadUI();
 					end
@@ -53,7 +53,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function() 
 						DBMod.Artwork.Style = "Minimal";
-						newtheme = spartan:GetModule("Style_Minimal")
+						local newtheme = spartan:GetModule("Style_Minimal")
 						newtheme:SetupProfile();
 						ReloadUI();
 					end
@@ -311,7 +311,7 @@ end
 
 function module:ExportData()
 	--Get Character Data
-    CharData = {
+    local CharData = {
 		Region = GetCurrentRegion(),
 		PlayerName = UnitName("player"),
 		PlayerLevel = UnitLevel("player"),
@@ -319,7 +319,7 @@ function module:ExportData()
 	}
 	
 	--Generate List of Addons
-	AddonsInstalled = {}
+	local AddonsInstalled = {}
 	
 	for i = 1, GetNumAddOns() do
 		local name, title, notes, enabled,loadable = GetAddOnInfo(i)
@@ -336,7 +336,7 @@ function module:ExportData()
 end
 
 function module:FlatenTable(input)
-	returnval = ""
+	local returnval = ""
 	for key,value in pairs(input) do
 		if (type(value) == "table") then
 			returnval = returnval .. key .. "= {" .. module:FlatenTable(value) .. "},"

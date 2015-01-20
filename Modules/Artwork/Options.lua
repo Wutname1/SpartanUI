@@ -3,7 +3,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = spartan:GetModule("Artwork_Core");
 
 function Artwork_Core:SetupOptions()
-	Profiles = {}
+	local Profiles = {}
 	for name, module in spartan:IterateModules() do
 		if (string.match(name, "Style_")) then
 			Profiles[string.sub(name, 7)] = string.sub(name, 7)
@@ -15,7 +15,7 @@ function Artwork_Core:SetupOptions()
 		set = function(info,val) 
 			DBMod.Artwork.FirstLoad = true
 			DBMod.Artwork.Style = val;
-			newtheme = spartan:GetModule("Style_"..val)
+			local newtheme = spartan:GetModule("Style_"..val)
 			newtheme:SetupProfile();
 			ReloadUI();
 		end

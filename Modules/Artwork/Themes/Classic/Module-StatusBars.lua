@@ -45,6 +45,8 @@ function module:SetRepColors()
 		SUI_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
 		SUI_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
 	else
+        local r,b,g,a
+
 		r = DB.RepBar.GainedRed
 		b = DB.RepBar.GainedBlue
 		g = DB.RepBar.GainedGreen
@@ -65,6 +67,8 @@ function module:SetXPColors()
 		DB.XPBar.GainedGreen 		= COLORS[DB.XPBar.GainedColor].g
 		DB.XPBar.GainedBrightness	= COLORS[DB.XPBar.GainedColor].a
 	end
+    
+    local r,b,g,a
 	r = DB.XPBar.GainedRed
 	b = DB.XPBar.GainedBlue
 	g = DB.XPBar.GainedGreen

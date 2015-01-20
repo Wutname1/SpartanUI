@@ -89,24 +89,6 @@ local name = function(self)
 	end
 end
 
-function CreatePortrait(self)
-	if DBMod.PlayerFrames.Portrait3D then			
-		local Portrait = CreateFrame('PlayerModel', nil, self)
-		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
-		Portrait.type = "3D"
-		if DBMod.PlayerFrames.Portrait3D then
-			Portrait.bg2 = Portrait:CreateTexture(nil,"BACKGROUND");
-			Portrait.bg2:SetTexture(circle);
-			Portrait.bg2:SetPoint("TOPLEFT",Portrait,"TOPLEFT",-10,10);
-			Portrait.bg2:SetPoint("BOTTOMRIGHT",Portrait,"BOTTOMRIGHT",10,-10);
-		end
-		Portrait:SetFrameLevel(1);
-		return Portrait;
-	else
-		return self:CreateTexture(nil,"BORDER");
-	end
-end
-
 local CreateFrame = function(self,unit)
 	base_plate = Smoothv2
 	self:SetSize(280, 80);
@@ -123,11 +105,6 @@ local CreateFrame = function(self,unit)
 		artwork.bg:SetPoint("TOPRIGHT", artwork, "TOPRIGHT", 0, 0);
 		artwork.bg:SetPoint("BOTTOM", artwork, "BOTTOM", 0, 0);
 		if unit == "target" then artwork.bg:SetTexCoord(1,0,0,1); end
-		
-		self.Portrait = CreatePortrait(self);
-		self.Portrait:SetSize(55, 55);
-		if unit == "player" then self.Portrait:SetPoint("CENTER",self,"CENTER",80,3); end
-		if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;

@@ -15,7 +15,7 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-		f = CreateFrame("Frame", "FilmEffects", WorldFrame);
+		local f = CreateFrame("Frame", "FilmEffects", WorldFrame);
 		f:SetHeight(64); f:SetWidth(64);
 		f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 256);
 		f:SetFrameStrata("BACKGROUND");

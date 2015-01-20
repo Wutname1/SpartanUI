@@ -71,7 +71,7 @@ local menu = function(self)
 	end
 end
 
-function CreatePortrait(self)
+local function CreatePortrait(self)
 	if DBMod.PartyFrames.Portrait3D then
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)

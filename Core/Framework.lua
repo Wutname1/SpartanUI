@@ -313,7 +313,7 @@ function addon:OnEnable()
     self:RegisterChatCommand("sui", "ChatCommand")
     self:RegisterChatCommand("spartanui", "ChatCommand")
 	
-	LaunchOpt = CreateFrame("Frame");
+	local LaunchOpt = CreateFrame("Frame");
 	LaunchOpt:SetScript("OnEvent",function(self,...)
 		if DB.OpenOptions then
 			addon:ChatCommand()
@@ -419,7 +419,7 @@ function addon:FormatFont(element, size, Module)
 		DB.font[Module] = spartan.fontdefault;
 	end
 	--Set Font Outline
-	flags = ""
+	local flags, sizeFinal
 	if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
 	
 	-- Outline was deemed to thick, it is not a slight drop shadow done below
@@ -445,7 +445,7 @@ end
 function addon:FontRefresh(Module)
 	for a,b in pairs(FontItems[Module]) do
 		--Set Font Outline
-		flags = ""
+		local flags, size
 		if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
 		if DB.font[Module].Type == "outline" then flags = flags.."outline " end
 		if DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
