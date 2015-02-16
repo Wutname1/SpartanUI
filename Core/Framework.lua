@@ -106,7 +106,10 @@ DBdefault = {
 			MapZoomButtons = true,
 			Shape = "square",
 			Moved = false,
-			Position = nil
+			Position = nil,
+			frames = {},
+			IgnoredFrames = {},
+			SUIMapChangesActive = false
 		},
 		ActionBars = {
 			Allalpha = 100,

@@ -256,6 +256,9 @@ function module:OnInitialize()
 			end
 		end
 		if (DB.Version < "4.0.0") then
+			if DB.MiniMap.frames == nil then DB.MiniMap.frames = {} end
+			if DB.MiniMap.IgnoredFrames == nil then DB.MiniMap.IgnoredFrames = {} end
+			if DB.MiniMap.SUIMapChangesActive == nil then DB.MiniMap.SUIMapChangesActive = false end
 			if DB.MiniMap.Moved == nil then
 				DB.MiniMap.Shape = "square"
 				DB.MiniMap.Moved = false

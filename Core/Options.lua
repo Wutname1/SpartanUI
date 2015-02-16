@@ -330,9 +330,10 @@ function module:ExportData()
 	
 	return "$SUI." .. spartan.SpartanVer .. "-" .. spartan.CurseVersion
 		.. "$C." .. module:FlatenTable(CharData)
-		.. "$DB." .. module:FlatenTable(DB)
+		-- .. "$DB." .. module:FlatenTable(DB)
 		.. "$DBMod." .. module:FlatenTable(DBMod)
 		.. "$Addons." .. module:FlatenTable(AddonsInstalled)
+		.. "..$END$.."
 end
 
 function module:FlatenTable(input)

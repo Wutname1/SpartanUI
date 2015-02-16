@@ -86,12 +86,19 @@ function module:ModifyMinimapLayout()
 			MinimapZoneText:SetTextColor(1,1,1,1);
 			MinimapZoneText:SetShadowColor(0,0,0,1);
 			MinimapZoneText:SetShadowOffset(1,-1);
+			
+			MiniMapTracking:ClearAllPoints();
+			MiniMapTracking:SetPoint("TOPLEFT",Minimap,"TOPLEFT",0,0)
 		else
 			Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay")
+			
+			MiniMapTracking:ClearAllPoints();
+			MiniMapTracking:SetPoint("TOPLEFT",Minimap,"TOPLEFT",-5,-5)
 		end
 	else
 		
 	end
+	
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("TOPRIGHT",UIParent,"TOPRIGHT",-30,-30);
 	
@@ -144,12 +151,6 @@ function module:ModifyMinimapLayout()
 	GameTimeFrame:ClearAllPoints();
 	GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16);
 	GameTimeFrame:Hide();
-	
-	MiniMapTracking:ClearAllPoints();
-	MiniMapTracking:SetPoint("TOPLEFT",Minimap,"TOPLEFT",13,-40)
-
-	MiniMapTrackingButton:ClearAllPoints();
-	MiniMapTrackingButton:SetPoint("TOPLEFT",Minimap,"TOPLEFT",0,0)
 	
 	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
 	SUI_MiniMapIcon:SetSize(35,35);
@@ -283,7 +284,8 @@ function module:updateButtons()
 			if buttonName
 			  and buttonType == "Button"
 			  and (not spartan:isInTable(SkinProtect, buttonName))
-			  and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName)) then
+			  and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))
+			  then
 				child:Hide();
 				if not spartan:isInTable(DB.MiniMap.frames, buttonName) then
 					table.insert(DB.MiniMap.frames, buttonName)
