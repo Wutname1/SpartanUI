@@ -44,7 +44,14 @@
 		<FontHeight><AbsValue val="10"/></FontHeight>
         <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
-	
+	<Font name="SUI_Font9" font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
+		<FontHeight><AbsValue val="9"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
+	</Font>
+	<Font name="SUI_Font8" font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
+		<FontHeight><AbsValue val="8"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
+	</Font>	
 	<!-- SUI_AncherFrame -->
 	<Frame name="SUI_FramesBase" frameStrata="BACKGROUND" parent="UIParent">
 		<Anchors>

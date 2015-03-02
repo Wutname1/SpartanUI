@@ -6,49 +6,48 @@ local module = spartan:GetModule("Style_Classic");
 local Minimap_Conflict_msg = true
 local TribalArt
 
-function module:MinimapCoords()
-	
+-- function module:MinimapCoords()
 	-- SpartanUI_Tribal:SetVertexColor(1, 0, 0);
-	local map = CreateFrame("Frame",nil,SpartanUI);
-	map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
-	map.coords:SetSize(128, 12);
+	-- local map = CreateFrame("Frame",nil,SpartanUI);
+	-- map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
+	-- map.coords:SetSize(128, 12);
 	-- map.coords:SetPoint("BOTTOM",SpartanUI,"BOTTOM",0,15);
-	map.coords:SetPoint("TOP","MinimapZoneTextButton","BOTTOM",0,-6);
+	-- map.coords:SetPoint("TOP","MinimapZoneTextButton","BOTTOM",0,-6);
 	
 	-- Fix CPU leak, use UpdateInterval
-	map.UpdateInterval = 2
-	map.TimeSinceLastUpdate = 0
-	map:HookScript("OnUpdate", function(self,...)
-		if DB.MiniMap then
-			local elapsed = select(1,...)
-			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-			if ((self.TimeSinceLastUpdate > self.UpdateInterval) or MouseIsOver(Minimap)) then
+	-- map.UpdateInterval = 2
+	-- map.TimeSinceLastUpdate = 0
+	-- map:HookScript("OnUpdate", function(self,...)
+		-- if DB.MiniMap then
+			-- local elapsed = select(1,...)
+			-- self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
+			-- if ((self.TimeSinceLastUpdate > self.UpdateInterval) or MouseIsOver(Minimap)) then
 				-- Debug
-				do -- update minimap coordinates
-					local x,y = GetPlayerMapPosition("player");
-					if (not x) or (not y) then return; end
-					map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
-				end
-				self.TimeSinceLastUpdate = 0
-			end
-		end
-	end);
+				-- do -- update minimap coordinates
+					-- local x,y = GetPlayerMapPosition("player");
+					-- if (not x) or (not y) then return; end
+					-- map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
+				-- end
+				-- self.TimeSinceLastUpdate = 0
+			-- end
+		-- end
+	-- end);
 	
-	map:HookScript("OnEvent",function(self,event,...)
-		if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
-			if IsInInstance() then map.coords:Hide() else map.coords:Show() end
-			if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
-		end
-	end);
-	map:RegisterEvent("ZONE_CHANGED");
-	map:RegisterEvent("ZONE_CHANGED_INDOORS");
-	map:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-	map:RegisterEvent("UPDATE_WORLD_STATES");
-	map:RegisterEvent("UPDATE_BATTLEFIELD_SCORE");
-	map:RegisterEvent("PLAYER_ENTERING_WORLD");
-	map:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
-	map:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
-end
+	-- map:HookScript("OnEvent",function(self,event,...)
+		-- if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
+			-- if IsInInstance() then map.coords:Hide() else map.coords:Show() end
+			-- if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
+		-- end
+	-- end);
+	-- map:RegisterEvent("ZONE_CHANGED");
+	-- map:RegisterEvent("ZONE_CHANGED_INDOORS");
+	-- map:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+	-- map:RegisterEvent("UPDATE_WORLD_STATES");
+	-- map:RegisterEvent("UPDATE_BATTLEFIELD_SCORE");
+	-- map:RegisterEvent("PLAYER_ENTERING_WORLD");
+	-- map:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
+	-- map:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
+-- end
 
 function module:MiniMap()
 	Minimap:SetSize(140, 140);
@@ -57,15 +56,17 @@ function module:MiniMap()
 	
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("CENTER",SpartanUI,"CENTER",0,50);
+
+	Minimap.ZoneText:ClearAllPoints();
+	Minimap.ZoneText:SetPoint("TOP",Minimap,"BOTTOM",5,-7);
+	-- Minimap.ZoneText:SetPoint("BOTTOM",SpartanUI,"BOTTOM",0,15);
+	Minimap.ZoneText:SetTextColor(1,.82,0,1);
 	
-	-- MinimapZoneTextButton:SetParent(frame);
-	MinimapZoneTextButton:ClearAllPoints();
-	MinimapZoneTextButton:SetPoint("TOP",Minimap,"BOTTOM",5,-7);
+	Minimap.coords:SetTextColor(1,.82,0,1);
 	
 	QueueStatusFrame:ClearAllPoints();
 	QueueStatusFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	
-	module:MinimapCoords();
 	Minimap.coords:Hide()
 end
 

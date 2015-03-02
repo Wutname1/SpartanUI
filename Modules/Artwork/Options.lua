@@ -103,6 +103,22 @@ function Artwork_Core:SetupOptions()
 			}
 		}
 	}
+	spartan.opt.args["Artwork"].args["Minimap"] = {name = "Minimap Options",type="group",order=0,
+		args = {
+			NorthIndicator = {name = "Show North Indicator on Minimap", type = "toggle",order=0.9,
+				get = function(info) return DB.MiniMap.northTag end,
+				set = function(info,val) 
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
+					DB.MiniMap.northTag = val;
+					if DB.MiniMap.northTag then
+						MinimapNorthTag:Show()
+					else
+						MinimapNorthTag:Hide()
+					end
+				end,
+			}
+		}
+	}
 	
 	if (not DB.viewport) then
 		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetTop"].disabled = true;
