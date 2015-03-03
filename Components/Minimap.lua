@@ -9,6 +9,8 @@ local BlizzParentStop = { "WorldFrame", "Minimap", "MinimapBackdrop", "UIParent"
 local SUIMapChangesActive = false
 local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBackdrop", "MiniMapVoiceChatFrame","TimeManagerClockButton", "MinimapButtonFrameDragButton", "GameTimeFrame", "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
 
+local MinimapUpdater = CreateFrame("Frame")
+
 function module:OnEnable()
 	if not DB.EnabledComponents.Minimap then return end
 	
@@ -61,6 +63,17 @@ function module:OnEnable()
 	
 	module:ModifyMinimapLayout()
 	module:MiniMapButtons()
+	
+	MinimapUpdater:SetScript("OnEvent", function()
+		if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
+			DB.MiniMap.MouseIsOver = false
+			module:updateButtons();
+		end
+	end)
+	MinimapUpdater:RegisterEvent("ADDON_LOADED")
+	MinimapUpdater:RegisterEvent("ZONE_CHANGED")
+	MinimapUpdater:RegisterEvent("ZONE_CHANGED_INDOORS")
+	MinimapUpdater:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 end
 
 function module:ModifyMinimapLayout()
@@ -101,9 +114,7 @@ function module:ModifyMinimapLayout()
 	else
 		
 	end
-	print (DB.MiniMap.northTag)
-	if not DB.MiniMap.northTag then 
-		print ("hide")
+	if not DB.MiniMap.northTag then
 		MinimapNorthTag:Hide()
 		MinimapNorthTag.oldShow = MinimapNorthTag.Show
 		MinimapNorthTag.Show = MinimapNorthTag.Hide
@@ -247,20 +258,22 @@ function module:MinimapCoords()
 end
 
 local OnEnter = function()
-	print("OnEnter")
+	-- print("OnEnter")
+	if DB.MiniMap.MouseIsOver then return end
 	
 	module:updateButtons();
 end
 
 local OnLeave = function()
-	print("OnLeave")
+	-- print("OnLeave")
 	local MouseFocus = GetMouseFocus()
 	if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
-		print("OnLeave-Cancelled")
+		-- print("OnLeave-Cancelled")
+		DB.MiniMap.MouseIsOver = true
 		return
 	end
-	print("OnLeave-Exec")
-	
+	-- print("OnLeave-Exec")
+	DB.MiniMap.MouseIsOver = false
 	module:updateButtons();
 end
 

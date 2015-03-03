@@ -277,6 +277,7 @@ function module:OnInitialize()
 					RaidFrames = true,
 				}
 			end
+			if DB.MiniMap.MouseIsOver == nil then DB.MiniMap.MouseIsOver = false; end
 			if DB.Styles.Classic.Minimap == nil then
 				Minimap = {
 					shape = "circle",
