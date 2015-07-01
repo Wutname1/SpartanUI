@@ -358,8 +358,10 @@ end
 
 function addon:isInTable(tab, frameName)
 	for k,v in ipairs(tab) do
-		if (strlower(v) == strlower(frameName)) then
-			return true;
+		if v ~= nil and frameName ~= nil then
+			if (strlower(v) == strlower(frameName)) then
+				return true;
+			end
 		end
 	end
 	return false;
