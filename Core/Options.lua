@@ -193,27 +193,27 @@ function module:OnInitialize()
 	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
 			ResetDB			= {name = L["ResetDatabase"], type = "execute", width= "double",order=1, func = function() spartan.db:ResetDB(); ReloadUI(); end},
-			ResetArtwork	= {name = "Reset ActionBars", type = "execute", width= "double",order=2, func = function() DBMod.Artwork.FirstLoad = true; spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile(); ReloadUI(); end},
+			ResetArtwork	= {name = L["Reset ActionBars"], type = "execute", width= "double",order=2, func = function() DBMod.Artwork.FirstLoad = true; spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile(); ReloadUI(); end},
 			
-			navigationissues = {name="Have a Question?",type="description",order = 100,fontSize="large"},
+			navigationissues = {name=L["HaveQuestion"],type="description",order = 100,fontSize="large"},
 			navigationissues2 = {name="    -|cff6666FF http://faq.spartanui.net/",type="description",order = 101,fontSize="medium"},
 			
-			bugsandfeatures = {name="Bugs & Feature Requests:",type="description",order = 200,fontSize="large"},
+			bugsandfeatures = {name=L["Bugs and Feature Requests"] .. ":",type="description",order = 200,fontSize="large"},
 			bugsandfeatures2 = {name="     -|cff6666FF http://bugs.spartanui.net/",type="description",order = 201,fontSize="medium"},
 			bugsandfeatures3 = {name="     -|cff6666FF http://wow.curseforge.com/addons/spartan-ui/tickets/",type="description",order = 202,fontSize="medium"},
 			
 			
 			line = {name="",type="header",order = 900},
-			description = {name="Providing the below string can assist in helping you when you are having issues",type="description",order = 901,fontSize="large"},
-			dataDump = {name="Export",type="input",multiline=10,width="full",order=990,get = function(info) return module:enc(module:ExportData()) end},
-			description = {name="This string contains your Spec, Region, SpartanUI Settings, and a list of running addons.",type="description",order = 999,fontSize="small"},
+			description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
+			dataDump = {name=L["Export"],type="input",multiline=10,width="full",order=990,get = function(info) return module:enc(module:ExportData()) end},
+			description = {name=L["HelpStringDesc2"],type="description",order = 999,fontSize="small"},
 			}
 		}
 	
-	spartan.opt.args["General"].args["ModSetting"] = {name = "Enabled modules", type = "group", order = 800,
+	spartan.opt.args["General"].args["ModSetting"] = {name = L["Enabledmodules"], type = "group", order = 800,
 		args = {
-			description = {type="description",name="Here you can enable and disable the modules contained in or related to SpartanUI",order=1,fontSize="medium"},
-			Artwork = {name = "Artwork",type = "toggle",order=10,
+			description = {type="description",name=L["ModulesDesc"],order=1,fontSize="medium"},
+			Artwork = {name = L["Artwork"],type = "toggle",order=10,
 				get = function(info) return ModsLoaded.Artwork end,
 				set = function(info,val)
 					if ModsLoaded.Artwork then ModsLoaded.Artwork = false else ModsLoaded.Artwork = true end
@@ -221,7 +221,7 @@ function module:OnInitialize()
 					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
 				end,
 			},
-			PlayerFrames = {name = "Player Frames",type = "toggle",order=20,
+			PlayerFrames = {name = L["PlayerFrames"],type = "toggle",order=20,
 				get = function(info) return ModsLoaded.PlayerFrames end,
 				set = function(info,val)
 					if ModsLoaded.PlayerFrames then ModsLoaded.PlayerFrames = false else ModsLoaded.PlayerFrames = true end
@@ -229,7 +229,7 @@ function module:OnInitialize()
 					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
 				end,
 			},
-			PartyFrames = {name = "Party Frames",type = "toggle",order=30,
+			PartyFrames = {name = L["PartyFrames"],type = "toggle",order=30,
 				get = function(info) return ModsLoaded.PartyFrames end,
 				set = function(info,val)
 					if ModsLoaded.PartyFrames then ModsLoaded.PartyFrames = false else ModsLoaded.PartyFrames = true end
@@ -237,7 +237,7 @@ function module:OnInitialize()
 					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
 				end,
 			},
-			RaidFrames = {name = "Raid Frames",type = "toggle",order=40,
+			RaidFrames = {name = L["RaidFrames"],type = "toggle",order=40,
 				get = function(info) return ModsLoaded.RaidFrames end,
 				set = function(info,val)
 					if ModsLoaded.RaidFrames then ModsLoaded.RaidFrames = false else ModsLoaded.RaidFrames = true end
@@ -245,7 +245,7 @@ function module:OnInitialize()
 					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
 				end,
 			},
-			SpinCam = {name = "Spin Cam",type = "toggle",order=50,
+			SpinCam = {name = L["SpinCam"],type = "toggle",order=50,
 				get = function(info) return ModsLoaded.SpinCam end,
 				set = function(info,val)
 					if ModsLoaded.SpinCam then ModsLoaded.SpinCam = false else ModsLoaded.SpinCam = true end
@@ -253,7 +253,7 @@ function module:OnInitialize()
 					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
 				end,
 			},
-			FilmEffects = {name = "Film Effects",type = "toggle",order=60,
+			FilmEffects = {name = L["FilmEffects"],type = "toggle",order=60,
 				get = function(info) return ModsLoaded.FilmEffects end,
 				set = function(info,val)
 					if ModsLoaded.FilmEffects then ModsLoaded.FilmEffects = false else ModsLoaded.FilmEffects = true end
@@ -261,7 +261,7 @@ function module:OnInitialize()
 					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
 				end,
 			},
-			Styles = {name = "Styles",type = "group",order=100,inline=true,args={}},
+			Styles = {name = L["Styles"],type = "group",order=100,inline=true,args={}},
 			Components = {name = "Components",type = "group",order=200,inline=true,args={}},
 			Reload = {name = "ReloadUI", type = "execute",order=200,disabled=true, func = function() spartan:reloadui(); end},
 		}
