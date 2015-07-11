@@ -17,7 +17,6 @@ function module:Init()
 	module:SetupMenus();
 	module:InitFramework();
 	module:InitActionBars();
-	module:InitMinimap();
 	module:InitStatusBars();
 	InitRan = true;
 end

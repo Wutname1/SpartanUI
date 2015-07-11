@@ -256,6 +256,7 @@ function module:OnInitialize()
 			end
 		end
 		if (DB.Version < "4.0.0") then
+			if DBMod.PlayerFrames.ClassBar.scale == nil then DBMod.PlayerFrames.ClassBar.scale = 1 end
 			if DB.MiniMap.northTag == nil then DB.MiniMap.northTag = false end
 			if DB.MiniMap.frames == nil then DB.MiniMap.frames = {} end
 			if DB.MiniMap.IgnoredFrames == nil then DB.MiniMap.IgnoredFrames = {} end

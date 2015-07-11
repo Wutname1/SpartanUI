@@ -28,7 +28,6 @@ function addon:OnInitialize()
 				set = function(info,val) DBMod.PlayerFrames.targettarget.style = val; end
 			},
 			targettargetinfo = {name=L["Frames/ReloadRequired"],type="description",order=4},
-
 			bars = {name=L["Frames/BarOpt"],type="group",order=1,desc=L["Frames/BarOptDesc"],
 				args = {
 					bar1 = {name=L["Frames/HBarClr"],type="header",order=10},
@@ -87,7 +86,12 @@ function addon:OnInitialize()
 						set = function(info,val) DBMod.PlayerFrames.bars.mana.textmode = val; for a,b in pairs(Units) do addon[b]:TextUpdate(b); end	end
 					}
 				}
-			}
+			},
+			ClassBarScale = { name = "Class bar scale", type = "range",order=6,width="full",
+				min=.01,max=2,step=.01,
+				get = function(info) return DBMod.PlayerFrames.ClassBar.scale; end,
+				set = function(info,val) DBMod.PlayerFrames.ClassBar.scale = val; spartan:GetModule("PlayerFrames"):SetupExtras(); end
+			},
 		}
 	}
 	spartan.opt.args["PlayerFrames"].args["frameDisplay"] = {name = "Disable Frames",type = "group",order=2,desc="Enable and Disable Specific frames",

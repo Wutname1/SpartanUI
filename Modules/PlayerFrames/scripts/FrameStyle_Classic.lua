@@ -1913,186 +1913,200 @@ do -- relocate the AlternatePowerBar
 	end
 	
 	-- Druid EclipseBar
-	EclipseBarFrame:SetParent(addon.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
-	EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8); EclipseBarFrame:EnableMouse(enable);
-	EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
+	if classname == "Druid" then
+		EclipseBarFrame:SetParent(addon.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
+		EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
+		EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+	end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
-	MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
-	MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7); MonkHarmonyBar:EnableMouse(enable);
-	MonkHarmonyBar:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	MonkHarmonyBar:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
+	if classname == "Monk" then
+		MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
+		MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); MonkHarmonyBar:EnableMouse(enable);
+		MonkHarmonyBar:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		MonkHarmonyBar:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+	end
 
- -- Paladin Holy Power
-	PaladinPowerBar:SetParent(addon.player); PaladinPowerBar_OnLoad(PaladinPowerBar); PaladinPowerBar:SetFrameStrata("MEDIUM");
-	PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77); PaladinPowerBar:EnableMouse(enable);
-	PaladinPowerBar:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	PaladinPowerBar:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
+	-- Paladin Holy Power
+	if classname == "Paladin" then
+		PaladinPowerBar:SetParent(addon.player); PaladinPowerBar_OnLoad(PaladinPowerBar); PaladinPowerBar:SetFrameStrata("MEDIUM");
+		PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77 * DBMod.PlayerFrames.ClassBar.scale); PaladinPowerBar:EnableMouse(enable);
+		PaladinPowerBar:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		PaladinPowerBar:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+	end
 
 	-- PriestBarFrame
-	PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
-	PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7); PriestBarFrame:EnableMouse(enable);
-	PriestBarFrame:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	PriestBarFrame:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
-	
- -- relocate the warlock bars
-	WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
-	WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1); WarlockPowerFrame:EnableMouse(enable);
-	ShardBarFrame:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	ShardBarFrame:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
-	BurningEmbersBarFrame:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	BurningEmbersBarFrame:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
-	DemonicFuryBarFrame:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	DemonicFuryBarFrame:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
-
- -- Rune Frame
-	RuneFrame:SetParent(addon.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
-	RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97); RuneFrame:EnableMouse(enable);
-	RuneButtonIndividual1:EnableMouse(enable);
-	RuneFrame:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	RuneFrame:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
-	RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.ClassBar.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
-
-	-- Totem Frame (Pally Concentration, Shaman Totems, Monk Statues)
-	for i = 1,4 do
-		local timer = _G["TotemFrameTotem"..i.."Duration"];
-		timer.Show = function() return; end
-		timer:Hide();
-	end
-	hooksecurefunc(TotemFrame,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
-			TotemFrame:ClearAllPoints();
-			if classFileName == "MONK" then
-				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,8);
-			elseif classFileName == "PALADIN" then
-				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",15,8);
-			else
-				TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
+	if classname == "Priest" then
+		PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
+		PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); PriestBarFrame:EnableMouse(enable);
+		PriestBarFrame:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
 			end
+		end);
+		PriestBarFrame:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+	end
+	
+	-- relocate the warlock bars
+	if classname == "Warlock" then
+		WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
+		WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale); WarlockPowerFrame:EnableMouse(enable);
+		ShardBarFrame:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		ShardBarFrame:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+		BurningEmbersBarFrame:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		BurningEmbersBarFrame:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+		DemonicFuryBarFrame:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		DemonicFuryBarFrame:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+	end
+	
+	-- Rune Frame
+	if classname == "DeathKnight" then
+		RuneFrame:SetParent(addon.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
+		RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97 * DBMod.PlayerFrames.ClassBar.scale); RuneFrame:EnableMouse(enable);
+		RuneButtonIndividual1:EnableMouse(enable);
+		RuneFrame:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		RuneFrame:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+		RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				self:SetMovable(true);
+				self:StartMoving();
+			end
+		end);
+		RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
+			self:StopMovingOrSizing();
+			DBMod.PlayerFrames.ClassBar.movement.point,
+			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		end);
+	end
+	
+	if classname == "Shaman" then
+		-- Totem Frame (Pally Concentration, Shaman Totems, Monk Statues)
+		for i = 1,4 do
+			local timer = _G["TotemFrameTotem"..i.."Duration"];
+			timer.Show = function() return; end
+			timer:Hide();
 		end
-	end);
-	TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
-	TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7); TotemFrame:ClearAllPoints();
-	TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
+		hooksecurefunc(TotemFrame,"SetPoint",function(_,_,parent)
+			if (parent ~= addon.player) then
+				TotemFrame:ClearAllPoints();
+				if classFileName == "MONK" then
+					TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,8);
+				elseif classFileName == "PALADIN" then
+					TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",15,8);
+				else
+					TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
+				end
+			end
+		end);
+		TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
+		TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7 * DBMod.PlayerFrames.ClassBar.scale); TotemFrame:ClearAllPoints();
+		TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
+	end
 	
 	-- relocate the PlayerPowerBarAlt
 	hooksecurefunc(PlayerPowerBarAlt,"SetPoint",function(_,_,parent)
@@ -2104,10 +2118,10 @@ do -- relocate the AlternatePowerBar
 	PlayerPowerBarAlt:SetParent(addon.player);
 	PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
 	PlayerPowerBarAlt:SetFrameLevel(4);
-	PlayerPowerBarAlt:SetScale(1);
+	PlayerPowerBarAlt:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale);
 	PlayerPowerBarAlt:ClearAllPoints();
 	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
-
+	
 	addon:UpdateAltBarPositions();
 	
 	--Watch for Spec Changes
