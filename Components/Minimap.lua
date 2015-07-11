@@ -14,6 +14,8 @@ local MinimapUpdater = CreateFrame("Frame")
 function module:OnEnable()
 	if not DB.EnabledComponents.Minimap then return end
 	
+	DB.MiniMap.frames = {}
+	
 	-- Minimap.SUI = CreateFrame("Frame");
 	-- Minimap.SUI:EnableMouse(true);
 	-- Minimap.SUI:Hide()
@@ -67,6 +69,7 @@ function module:OnEnable()
 	MinimapUpdater:SetScript("OnEvent", function()
 		if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
 			DB.MiniMap.MouseIsOver = false
+			module:MiniMapBtnScrape();
 			module:updateButtons();
 		end
 	end)
@@ -74,6 +77,11 @@ function module:OnEnable()
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED")
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED_INDOORS")
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+	MinimapUpdater:RegisterEvent("MINIMAP_UPDATE_ZOOM")
+	MinimapUpdater:RegisterEvent("MINIMAP_UPDATE_TRACKING")
+	MinimapUpdater:RegisterEvent("MINIMAP_PING")
+	MinimapUpdater:RegisterEvent("PLAYER_REGEN_DISABLED")
+	MinimapUpdater:RegisterEvent("PLAYER_REGEN_ENABLED")
 end
 
 function module:ModifyMinimapLayout()
@@ -209,6 +217,7 @@ function module:MinimapCoords()
 	-- Fix CPU leak, use UpdateInterval
 	Minimap.UpdateInterval = 2
 	Minimap.TimeSinceLastUpdate = 0
+	
 	Minimap:HookScript("OnUpdate", function(self,...)
 		if DB.MiniMap then
 			local elapsed = select(1,...)
@@ -221,6 +230,8 @@ function module:MinimapCoords()
 					Minimap.coords:SetText(format("%.1f, %.1f",x*100,y*100));
 				end
 				self.TimeSinceLastUpdate = 0
+				module:MiniMapBtnScrape();
+				module:updateButtons();
 			end
 		end
 	end);
@@ -242,6 +253,7 @@ function module:MinimapCoords()
 		end
 		hasVehicle = UnitHasVehicleUI("player") or UnitHasVehicleUI("player");
 	end);
+	
 	Minimap:RegisterEvent("ZONE_CHANGED");
 	Minimap:RegisterEvent("ZONE_CHANGED_INDOORS");
 	Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA");
@@ -252,7 +264,6 @@ function module:MinimapCoords()
 	Minimap:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
 	Minimap:RegisterEvent("UNIT_ENTERING_VEHICLE");
 	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
-	
 	Minimap:RegisterEvent("UNIT_ENTERING_VEHICLE");
 	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
 end
@@ -261,19 +272,26 @@ local OnEnter = function()
 	-- print("OnEnter")
 	if DB.MiniMap.MouseIsOver then return end
 	
+	module:MiniMapBtnScrape();
 	module:updateButtons();
 end
 
 local OnLeave = function()
 	-- print("OnLeave")
 	local MouseFocus = GetMouseFocus()
-	if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
+	if MouseFocus
+		and not MouseFocus:IsForbidden()
+		and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent()
+		and MouseFocus:GetParent():GetName()
+		and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
 		-- print("OnLeave-Cancelled")
 		DB.MiniMap.MouseIsOver = true
 		return
 	end
 	-- print("OnLeave-Exec")
 	DB.MiniMap.MouseIsOver = false
+	
+	module:MiniMapBtnScrape();
 	module:updateButtons();
 end
 
@@ -281,30 +299,33 @@ function module:SetupButton(btn)
 	buttonName = btn:GetName();
 	buttonType = btn:GetObjectType();
 	
-	-- Hook Mouse Events
-	btn:HookScript("OnEnter", OnEnter)
-	btn:HookScript("OnLeave", OnLeave)
-	
-	-- Add Fade in and out
-	btn.FadeIn = btn:CreateAnimationGroup()
-	local FadeIn = btn.FadeIn:CreateAnimation("Alpha")
-	FadeIn:SetOrder(1)
-	FadeIn:SetDuration(0.2)
-	FadeIn:SetFromAlpha(0)
-	FadeIn:SetToAlpha(1)
-	btn.FadeIn:SetToFinalAlpha(true)
-
-	btn.FadeOut = btn:CreateAnimationGroup()
-	local FadeOut = btn.FadeOut:CreateAnimation("Alpha")
-	FadeOut:SetOrder(1)
-	FadeOut:SetDuration(0.3)
-	FadeOut:SetFromAlpha(1)
-	FadeOut:SetToAlpha(0)
-	FadeOut:SetStartDelay(.5)
-	btn.FadeOut:SetToFinalAlpha(true)
-	
+	--Avoid duplicates make sure it's not in the tracking table
 	if not spartan:isInTable(DB.MiniMap.frames, buttonName) then
+		-- Hook Mouse Events
+		btn:HookScript("OnEnter", OnEnter)
+		btn:HookScript("OnLeave", OnLeave)
+		
+		-- Add Fade in and out
+		btn.FadeIn = btn:CreateAnimationGroup()
+		local FadeIn = btn.FadeIn:CreateAnimation("Alpha")
+		FadeIn:SetOrder(1)
+		FadeIn:SetDuration(0.2)
+		FadeIn:SetFromAlpha(0)
+		FadeIn:SetToAlpha(1)
+		btn.FadeIn:SetToFinalAlpha(true)
+
+		btn.FadeOut = btn:CreateAnimationGroup()
+		local FadeOut = btn.FadeOut:CreateAnimation("Alpha")
+		FadeOut:SetOrder(1)
+		FadeOut:SetDuration(0.3)
+		FadeOut:SetFromAlpha(1)
+		FadeOut:SetToAlpha(0)
+		FadeOut:SetStartDelay(.5)
+		btn.FadeOut:SetToFinalAlpha(true)
+		
+		--Insert into tracking table
 		table.insert(DB.MiniMap.frames, buttonName)
+		
 		--Hook into the buttons show and hide events to catch for the button being enabled/disabled
 		btn:HookScript("OnHide",function(self,event,...)
 			if not DB.MiniMap.SUIMapChangesActive then
@@ -330,11 +351,18 @@ function module:SetupButton(btn)
 	end
 end
 
-function module:MiniMapButtons()
+function module:MiniMapBtnScrape()
 	-- Hook Minimap Icons
 	for i, child in ipairs({Minimap:GetChildren()}) do
 		module:SetupButton(child)
 	end
+	if CensusButton ~= nil then
+		module:SetupButton(CensusButton);
+	end
+end
+
+function module:MiniMapButtons()
+	module:MiniMapBtnScrape();
 	
 	-- Fix CPU leak, use UpdateInterval
 	Minimap.UpdateInterval = 2
@@ -372,11 +400,6 @@ function module:updateButtons()
 	
 	DB.MiniMap.SUIMapChangesActive = true
 	if (AllHide) then
-		-- GameTimeFrame:Hide();
-		-- MiniMapTracking:Hide();
-		-- MiniMapWorldMapButton:Hide();
-		-- GarrisonLandingPageMinimapButton:Hide();
-		
 		--Fix for DBM making its icon even if its not needed
 		if DBM ~= nil then 
 			if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
@@ -384,18 +407,26 @@ function module:updateButtons()
 			end
 		end
 		
+		if CensusButton ~= nil and CensusButton:GetAlpha() == 1 then
+			CensusButton.FadeIn:Stop();
+			CensusButton.FadeOut:Stop();
+			CensusButton.FadeOut:Play();
+		end
+		
 		for i, child in ipairs({Minimap:GetChildren()}) do
-			-- buttonName = child:GetName();
+			buttonName = child:GetName();
 			-- buttonType = child:GetObjectType();
 			
-			-- if buttonName
+			if buttonName
 			  -- and buttonType == "Button"
+			  and spartan:isInTable(DB.MiniMap.frames, buttonName)
 			  -- and (not spartan:isInTable(SkinProtect, buttonName))
-			  -- and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))
-			  -- then
+			  and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))
+			  and child:GetAlpha() == 1
+			  then
 				-- child.FadeOut:Play();
 			-- end
-			if child.FadeIn ~= nil then
+			-- if child.FadeIn ~= nil then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 				
@@ -403,26 +434,32 @@ function module:updateButtons()
 			end
 		end
 	else
+		if CensusButton ~= nil and CensusButton:GetAlpha() == 0 then
+			CensusButton.FadeIn:Stop();
+			CensusButton.FadeOut:Stop();
+			CensusButton.FadeIn:Play();
+		end
+	
 		for i, child in ipairs({Minimap:GetChildren()}) do
-			if child.FadeIn ~= nil then
+			buttonName = child:GetName();
+			-- buttonType = child:GetObjectType();
+			
+			if buttonName
+			  -- and buttonType == "Button"
+			  and spartan:isInTable(DB.MiniMap.frames, buttonName)
+			  -- and (not spartan:isInTable(SkinProtect, buttonName))
+			  and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))
+			  and child:GetAlpha() == 0
+			  then
+				-- child.FadeOut:Play();
+			-- end
+			-- if child.FadeIn ~= nil then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 				
 				child.FadeIn:Play()
 			end
 		end
-		
-		-- GameTimeFrame:Show();
-		-- MiniMapTracking:Show();
-		-- MiniMapWorldMapButton:Show();
-		-- GarrisonLandingPageMinimapButton:Show();
-		-- for i, child in ipairs({Minimap:GetChildren()}) do
-			-- buttonName = child:GetName();
-			-- buttonType = child:GetObjectType();
-			-- if buttonName and buttonType == "Button" and (not spartan:isInTable(SkinProtect, buttonName)) and spartan:isInTable(DB.MiniMap.frames, buttonName) and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))	then
-				-- child:Show();
-			-- end
-		-- end
 	end
 	DB.MiniMap.SUIMapChangesActive = false
 end

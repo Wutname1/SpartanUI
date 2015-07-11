@@ -6,49 +6,6 @@ local module = spartan:GetModule("Style_Classic");
 local Minimap_Conflict_msg = true
 local TribalArt
 
--- function module:MinimapCoords()
-	-- SpartanUI_Tribal:SetVertexColor(1, 0, 0);
-	-- local map = CreateFrame("Frame",nil,SpartanUI);
-	-- map.coords = map:CreateFontString(nil,"BACKGROUND","GameFontNormalSmall");
-	-- map.coords:SetSize(128, 12);
-	-- map.coords:SetPoint("BOTTOM",SpartanUI,"BOTTOM",0,15);
-	-- map.coords:SetPoint("TOP","MinimapZoneTextButton","BOTTOM",0,-6);
-	
-	-- Fix CPU leak, use UpdateInterval
-	-- map.UpdateInterval = 2
-	-- map.TimeSinceLastUpdate = 0
-	-- map:HookScript("OnUpdate", function(self,...)
-		-- if DB.MiniMap then
-			-- local elapsed = select(1,...)
-			-- self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-			-- if ((self.TimeSinceLastUpdate > self.UpdateInterval) or MouseIsOver(Minimap)) then
-				-- Debug
-				-- do -- update minimap coordinates
-					-- local x,y = GetPlayerMapPosition("player");
-					-- if (not x) or (not y) then return; end
-					-- map.coords:SetText(format("%.1f, %.1f",x*100,y*100));
-				-- end
-				-- self.TimeSinceLastUpdate = 0
-			-- end
-		-- end
-	-- end);
-	
-	-- map:HookScript("OnEvent",function(self,event,...)
-		-- if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
-			-- if IsInInstance() then map.coords:Hide() else map.coords:Show() end
-			-- if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
-		-- end
-	-- end);
-	-- map:RegisterEvent("ZONE_CHANGED");
-	-- map:RegisterEvent("ZONE_CHANGED_INDOORS");
-	-- map:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-	-- map:RegisterEvent("UPDATE_WORLD_STATES");
-	-- map:RegisterEvent("UPDATE_BATTLEFIELD_SCORE");
-	-- map:RegisterEvent("PLAYER_ENTERING_WORLD");
-	-- map:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
-	-- map:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
--- end
-
 function module:MiniMap()
 	Minimap:SetSize(140, 140);
 	MinimapZoneText:Show()
@@ -59,7 +16,6 @@ function module:MiniMap()
 
 	Minimap.ZoneText:ClearAllPoints();
 	Minimap.ZoneText:SetPoint("TOP",Minimap,"BOTTOM",5,-7);
-	-- Minimap.ZoneText:SetPoint("BOTTOM",SpartanUI,"BOTTOM",0,15);
 	Minimap.ZoneText:SetTextColor(1,.82,0,1);
 	
 	Minimap.coords:SetTextColor(1,.82,0,1);
@@ -71,7 +27,6 @@ function module:MiniMap()
 end
 
 function module:ChatBox()
-
 	if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
 		-- Chat Mod Detected, disable and exit
 		DB.ChatSettings.enabled = false
@@ -146,34 +101,17 @@ function module:ChatBox()
 		frame:SetFrameLevel(2);
 		
 		frame.ButtonFrame = _G["ChatFrame"..i.."ButtonFrame"];
-		
 		frame.UpButton = _G["ChatFrame"..i.."ButtonFrameUpButton"];
---		frame.UpButton:ClearAllPoints(); frame.UpButton:SetScale(0.8);
---		frame.UpButton:SetPoint("BOTTOMRIGHT",frame,"RIGHT",4,0);
-		
 		frame.DownButton = _G["ChatFrame"..i.."ButtonFrameDownButton"];
---		frame.DownButton:ClearAllPoints(); frame.DownButton:SetScale(0.8);
---		frame.DownButton:SetPoint("TOPRIGHT",frame,"RIGHT",4,0);
-		
 		frame.BottomButton = _G["ChatFrame"..i.."ButtonFrameBottomButton"];
---		frame.BottomButton:ClearAllPoints(); frame.BottomButton:SetScale(0.8);
---		frame.BottomButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 4, -10);
-		
 		frame.MinimizeButton = _G["ChatFrame"..i.."ButtonFrameMinimizeButton"];
---		frame.MinimizeButton:ClearAllPoints(); frame.MinimizeButton:SetScale(0.8);
---		frame.MinimizeButton:SetPoint("BOTTOMRIGHT", frame, "TOPRIGHT", 4, -30);
-		
 		frame.EditBox = _G["ChatFrame"..i.."EditBox"];
---		ChatFrame1EditBox:ClearAllPoints();
---		ChatFrame1EditBox:SetPoint("BOTTOMLEFT",  ChatFrame1, "TOPLEFT", 0, 20);
---		ChatFrame1EditBox:SetPoint("BOTTOMRIGHT", ChatFrame1, "TOPRIGHT", 0, 20);
 
 		-- Fix CPU leak, use UpdateInterval
 		frame.UpdateInterval = 0.5
 		frame.TimeSinceLastUpdate = 0
 		frame:HookScript("OnUpdate",ChatHoverFunc);
 	end
-
 end
 
 function module:Buffs()
