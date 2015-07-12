@@ -11,14 +11,51 @@ local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBa
 
 local MinimapUpdater = CreateFrame("Frame")
 
+local IsMouseOver = function()
+	local MouseFocus = GetMouseFocus()
+	if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
+		DB.MiniMap.MouseIsOver = true
+	else
+		DB.MiniMap.MouseIsOver = false
+	end
+	return DB.MiniMap.MouseIsOver
+end
+
+local MiniMapBtnScrape = function()
+	-- Hook Minimap Icons
+	for i, child in ipairs({Minimap:GetChildren()}) do
+		module:SetupButton(child)
+	end
+	if CensusButton ~= nil then
+		module:SetupButton(CensusButton);
+	end
+	
+end
+
+local PerformFullBtnUpdate = function()
+	IsMouseOver() --update mouse location
+	MiniMapBtnScrape(); --look for new icons
+	module:updateButtons(); --update existing
+end
+
+local OnEnter = function()
+	-- print("OnEnter")
+	if DB.MiniMap.MouseIsOver then return end
+	
+	--don't use PerformFullBtnUpdate as we want to perform the actions in reverse. since any new unknown icons will already be shown.
+	module:updateButtons();
+	MiniMapBtnScrape();
+end
+
+local OnLeave = function()
+	--Check in half a second that the mouse actually left
+	C_Timer.After(.5, PerformFullBtnUpdate)
+end
+
 function module:OnEnable()
 	if not DB.EnabledComponents.Minimap then return end
-	
+	--Reset the List of frames
 	DB.MiniMap.frames = {}
-	
-	-- Minimap.SUI = CreateFrame("Frame");
-	-- Minimap.SUI:EnableMouse(true);
-	-- Minimap.SUI:Hide()
 	
 	if DB.Styles[DBMod.Artwork.Style].Movable.Minimap or (not spartan:GetModule("Artwork_Core", true)) then
 		Minimap.mover = CreateFrame("Frame");
@@ -64,14 +101,22 @@ function module:OnEnable()
 	end
 	
 	module:ModifyMinimapLayout()
-	module:MiniMapButtons()
+	
+	--Look for existing buttons
+	MiniMapBtnScrape();
+	
+	-- Fix CPU leak, use UpdateInterval
+	Minimap:HookScript("OnEnter", OnEnter)
+	Minimap:HookScript("OnLeave", OnLeave)
+	
+	--Initialize Buttons
+	module:updateButtons()
 	
 	MinimapUpdater:SetScript("OnEvent", function()
-		if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
-			DB.MiniMap.MouseIsOver = false
-			module:MiniMapBtnScrape();
-			module:updateButtons();
-		end
+		-- if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
+			-- DB.MiniMap.MouseIsOver = false
+			C_Timer.After(2, PerformFullBtnUpdate)
+		-- end
 	end)
 	MinimapUpdater:RegisterEvent("ADDON_LOADED")
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED")
@@ -154,10 +199,6 @@ function module:ModifyMinimapLayout()
 	GarrisonLandingPageMinimapButton:ClearAllPoints();
 	GarrisonLandingPageMinimapButton:SetSize(35,35);
 	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT",Minimap,0,0);
-
-	ExtraActionButton1:ClearAllPoints();
-	ExtraActionButton1:SetSize(35,35);
-	ExtraActionButton1:SetPoint("BOTTOMLEFT",Minimap,0,0);
 	
 	-- Do modifications to MiniMapWorldMapButton
 --	-- remove current textures
@@ -176,7 +217,6 @@ function module:ModifyMinimapLayout()
 	
 	GameTimeFrame:ClearAllPoints();
 	GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16);
-	GameTimeFrame:Hide();
 	
 	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
 	SUI_MiniMapIcon:SetSize(35,35);
@@ -203,6 +243,8 @@ function module:MinimapCoords()
 	Minimap.ZoneText:SetShadowColor(0,0,0,1);
 	Minimap.ZoneText:SetShadowOffset(1,-1);
 	
+	MinimapZoneText:ClearAllPoints();
+	MinimapZoneText:SetAllPoints(Minimap.ZoneText);
 	MinimapZoneTextButton:ClearAllPoints();
 	MinimapZoneTextButton:SetAllPoints(Minimap.ZoneText);
 	
@@ -214,33 +256,21 @@ function module:MinimapCoords()
 	Minimap.coords:SetShadowColor(0,0,0,1);
 	Minimap.coords:SetShadowOffset(1,-1);
 	
-	-- Fix CPU leak, use UpdateInterval
-	Minimap.UpdateInterval = 2
-	Minimap.TimeSinceLastUpdate = 0
+	local Timer = C_Timer.After
+	local function UpdateCoords()
+		Timer(0.2, UpdateCoords)
+		-- update minimap coordinates
+		local x,y = GetPlayerMapPosition("player");
+		if (not x) or (not y) then return; end
+		Minimap.ZoneText:SetText(GetMinimapZoneText());
+		Minimap.coords:SetText(format("%.1f, %.1f",x*100,y*100));
+	end
+	UpdateCoords()
 	
-	Minimap:HookScript("OnUpdate", function(self,...)
-		if DB.MiniMap then
-			local elapsed = select(1,...)
-			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-				do -- update minimap coordinates
-					local x,y = GetPlayerMapPosition("player");
-					if (not x) or (not y) then return; end
-					Minimap.ZoneText:SetText(GetMinimapZoneText());
-					Minimap.coords:SetText(format("%.1f, %.1f",x*100,y*100));
-				end
-				self.TimeSinceLastUpdate = 0
-				module:MiniMapBtnScrape();
-				module:updateButtons();
-			end
-		end
-	end);
 	Minimap:HookScript("OnEvent",function(self,event,...)
 		if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
 			-- if IsInInstance() then Minimap.coords:Hide() else Minimap.coords:Show() end
 			-- if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
-		elseif (event == "ADDON_LOADED") then
-			--print(select(1,...));
 		end
 		local LastFrame = UIErrorsFrame;
 		for i = 1, NUM_EXTENDED_UI_FRAMES do
@@ -266,33 +296,6 @@ function module:MinimapCoords()
 	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
 	Minimap:RegisterEvent("UNIT_ENTERING_VEHICLE");
 	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
-end
-
-local OnEnter = function()
-	-- print("OnEnter")
-	if DB.MiniMap.MouseIsOver then return end
-	
-	module:MiniMapBtnScrape();
-	module:updateButtons();
-end
-
-local OnLeave = function()
-	-- print("OnLeave")
-	local MouseFocus = GetMouseFocus()
-	if MouseFocus
-		and not MouseFocus:IsForbidden()
-		and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent()
-		and MouseFocus:GetParent():GetName()
-		and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
-		-- print("OnLeave-Cancelled")
-		DB.MiniMap.MouseIsOver = true
-		return
-	end
-	-- print("OnLeave-Exec")
-	DB.MiniMap.MouseIsOver = false
-	
-	module:MiniMapBtnScrape();
-	module:updateButtons();
 end
 
 function module:SetupButton(btn)
@@ -351,34 +354,11 @@ function module:SetupButton(btn)
 	end
 end
 
-function module:MiniMapBtnScrape()
-	-- Hook Minimap Icons
-	for i, child in ipairs({Minimap:GetChildren()}) do
-		module:SetupButton(child)
-	end
-	if CensusButton ~= nil then
-		module:SetupButton(CensusButton);
-	end
-end
-
-function module:MiniMapButtons()
-	module:MiniMapBtnScrape();
-	
-	-- Fix CPU leak, use UpdateInterval
-	Minimap.UpdateInterval = 2
-	Minimap.TimeSinceLastUpdate = 0
-	Minimap:HookScript("OnEnter", OnEnter)
-	Minimap:HookScript("OnLeave", OnLeave)
-	
-	--Initialize Buttons
-	module:updateButtons()
-end
-
 function module:updateButtons()
 	local ZoomHide = true
 	local AllHide = true
 	
-	if (not MouseIsOver(Minimap)) and (DB.MiniMap.MapButtons) then
+	if (not IsMouseOver()) and (DB.MiniMap.MapButtons) then
 		AllHide = true
 		ZoomHide = true
 	else
@@ -386,7 +366,7 @@ function module:updateButtons()
 		if (not DB.MiniMap.MapZoomButtons) then ZoomHide = false end
 	end
 	
-	if (not MouseIsOver(Minimap)) and (not DB.MiniMap.MapButtons) and (DB.MiniMap.MapZoomButtons) then
+	if (not IsMouseOver()) and (not DB.MiniMap.MapButtons) and (DB.MiniMap.MapZoomButtons) then
 		ZoomHide = true;
 	end
 	
