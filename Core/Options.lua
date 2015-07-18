@@ -38,14 +38,22 @@ function module:OnInitialize()
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
 					-- imageCoords=function() return {0,1,0,1} end,
-					func = function() DBMod.Artwork.Style = "Classic"; local newtheme = spartan:GetModule("Style_Classic") newtheme:SetupProfile(); ReloadUI(); end
+					func = function()
+						DBMod.Artwork.Style = "Classic";
+						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
+						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
+						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						spartan:GetModule("Style_Classic"):SetupProfile();
+						ReloadUI(); end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function() 
 						DBMod.Artwork.Style = "Transparent";
-						local newtheme = spartan:GetModule("Style_Transparent")
-						newtheme:SetupProfile();
+						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
+						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
+						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						spartan:GetModule("Style_Transparent"):SetupProfile();
 						ReloadUI();
 					end
 				},
@@ -53,8 +61,10 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function() 
 						DBMod.Artwork.Style = "Minimal";
-						local newtheme = spartan:GetModule("Style_Minimal")
-						newtheme:SetupProfile();
+						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
+						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
+						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						spartan:GetModule("Style_Minimal"):SetupProfile();
 						ReloadUI();
 					end
 				}

@@ -1743,7 +1743,7 @@ local CreateUnitFrame = function(self,unit)
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	self:RegisterForClicks("anyup");
-	self:SetAttribute("*type2", "menu");
+	-- self:SetAttribute("*type2", "menu");
 	self.colors = addon.colors;
 	
 	return ((unit == "target" and CreateTargetFrame(self,unit))
@@ -1913,7 +1913,7 @@ do -- relocate the AlternatePowerBar
 	end
 	
 	-- Druid EclipseBar
-	if classname == "Druid" then
+	-- if classname == "Druid" then
 		EclipseBarFrame:SetParent(addon.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
 		EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
 		EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
@@ -1931,10 +1931,10 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-	end
+	-- end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
-	if classname == "Monk" then
+	-- if classname == "Monk" then
 		MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
 		MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); MonkHarmonyBar:EnableMouse(enable);
 		MonkHarmonyBar:SetScript("OnMouseDown",function(self,button)
@@ -1952,10 +1952,10 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-	end
+	-- end
 
 	-- Paladin Holy Power
-	if classname == "Paladin" then
+	-- if classname == "Paladin" then
 		PaladinPowerBar:SetParent(addon.player); PaladinPowerBar_OnLoad(PaladinPowerBar); PaladinPowerBar:SetFrameStrata("MEDIUM");
 		PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77 * DBMod.PlayerFrames.ClassBar.scale); PaladinPowerBar:EnableMouse(enable);
 		PaladinPowerBar:SetScript("OnMouseDown",function(self,button)
@@ -1973,10 +1973,10 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-	end
+	-- end
 
 	-- PriestBarFrame
-	if classname == "Priest" then
+	-- if classname == "Priest" then
 		PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
 		PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); PriestBarFrame:EnableMouse(enable);
 		PriestBarFrame:SetScript("OnMouseDown",function(self,button)
@@ -1994,10 +1994,10 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-	end
+	-- end
 	
 	-- relocate the warlock bars
-	if classname == "Warlock" then
+	-- if classname == "Warlock" then
 		WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
 		WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale); WarlockPowerFrame:EnableMouse(enable);
 		ShardBarFrame:SetScript("OnMouseDown",function(self,button)
@@ -2045,10 +2045,10 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-	end
+	-- end
 	
 	-- Rune Frame
-	if classname == "DeathKnight" then
+	-- if classname == "DeathKnight" then
 		RuneFrame:SetParent(addon.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
 		RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97 * DBMod.PlayerFrames.ClassBar.scale); RuneFrame:EnableMouse(enable);
 		RuneButtonIndividual1:EnableMouse(enable);
@@ -2082,9 +2082,9 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-	end
+	-- end
 	
-	if classname == "Shaman" then
+	-- if classname == "Shaman" then
 		-- Totem Frame (Pally Concentration, Shaman Totems, Monk Statues)
 		for i = 1,4 do
 			local timer = _G["TotemFrameTotem"..i.."Duration"];
@@ -2106,7 +2106,7 @@ do -- relocate the AlternatePowerBar
 		TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
 		TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7 * DBMod.PlayerFrames.ClassBar.scale); TotemFrame:ClearAllPoints();
 		TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
-	end
+	-- end
 	
 	-- relocate the PlayerPowerBarAlt
 	hooksecurefunc(PlayerPowerBarAlt,"SetPoint",function(_,_,parent)

@@ -11,8 +11,9 @@ party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 	"yOffset", -16,
 	"xOffset", 0,
 	"columnAnchorPoint", "TOPLEFT",
-	"initial-anchor", "TOPLEFT",
-	"template", "SUI_PartyMemberTemplate");
+	"initial-anchor", "TOPLEFT"
+	,"template", "SUI_PartyMemberTemplate"
+	);
 
 do -- party header configuration
 --	party:SetPoint("TOPLEFT", 0, -26)

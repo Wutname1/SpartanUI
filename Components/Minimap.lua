@@ -336,18 +336,9 @@ function module:SetupButton(btn)
 			end
 		end);
 		btn:HookScript("OnShow",function(self,event,...)
-			if not DB.MiniMap.SUIMapChangesActive then
-				local foundat = 9999999
-				for i=1,table.getn(DB.MiniMap.IgnoredFrames) do
-					if DB.MiniMap.IgnoredFrames[i] == btn:GetName() then
-						foundat = i
-					end
-				end
-				if foundat ~= 9999999 then
-					table.remove(DB.MiniMap.IgnoredFrames, foundat)
-					DB.MiniMap.SUIMapChangesActive = true
-					--self.Hide()
-					DB.MiniMap.SUIMapChangesActive = false
+			for i=1,table.getn(DB.MiniMap.IgnoredFrames) do
+				if DB.MiniMap.IgnoredFrames[i] == btn:GetName() then
+					table.remove(DB.MiniMap.IgnoredFrames, i)
 				end
 			end
 		end);

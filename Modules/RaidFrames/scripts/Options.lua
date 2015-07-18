@@ -1,35 +1,23 @@
-	local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local addon = spartan:GetModule("RaidFrames");
+local RaidFrames = spartan:GetModule("RaidFrames");
 ----------------------------------------------------------------------------------------------------
-function addon:UpdateAura()
-	for i = 1,40 do
-		local unit = _G["SUI_RaidFrameHeaderUnitButton"..i];
-		if unit and unit.Auras then unit.Auras:PostUpdateDebuffs(); end
-	end
-end
-function addon:UpdateText()
-	for i = 1,40 do
-		local unit = _G["SUI_RaidFrameHeaderUnitButton"..i];
-		if unit then unit:TextUpdate(); end
-	end
-end
 
-function addon:OnInitialize()
+function RaidFrames:OnInitialize()
 	spartan.opt.args["RaidFrames"].args["DisplayOpts"] = {name = L["Frames/DisplayOpts"],type="group",order=1,
 		args = {
 			toggleraid =  {name = L["Frames/ShowRFrames"], type = "toggle", order=1,
 				get = function(info) return DBMod.RaidFrames.showRaid; end,
-				set = function(info,val) DBMod.RaidFrames.showRaid = val; addon:UpdateRaid("FORCE_UPDATE"); end
+				set = function(info,val) DBMod.RaidFrames.showRaid = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 			},
 			toggleclassname =  {name = L["Frames/ClrNameClass"], type = "toggle", order=1,
 				get = function(info) return DBMod.RaidFrames.showClass; end,
-				set = function(info,val) DBMod.RaidFrames.showClass = val; addon:UpdateRaid("FORCE_UPDATE"); end
+				set = function(info,val) DBMod.RaidFrames.showClass = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 			},
 			scale = {name=L["Frames/ScaleSize"],type="range",order=5,width="full",
 				step=.01,min = .01,max = 2,
 				get = function(info) return DBMod.RaidFrames.scale; end,
-				set = function(info,val) if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.scale = val; addon:UpdateRaid("FORCE_UPDATE"); end end
+				set = function(info,val) if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.scale = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end end
 			},
 			
 			bar1 = {name=L["Frames/LayoutConf"],type="header",order=20},
@@ -61,12 +49,12 @@ function addon:OnInitialize()
 				desc = L["Frames/TextStyle1Desc"].."|n"..L["Frames/TextStyle2Desc"].."|n"..L["Frames/TextStyle3Desc"],
 				values = {["long"]=L["Frames/TextStyle1"],["longfor"]=L["Frames/TextStyle2"],["dynamic"]=L["Frames/TextStyle3"],["disabled"]=L["Frames/Disabled"]},
 				get = function(info) return DBMod.RaidFrames.bars.health.textstyle; end,
-				set = function(info,val) DBMod.RaidFrames.bars.health.textstyle = val; addon:UpdateText(); end
+				set = function(info,val) DBMod.RaidFrames.bars.health.textstyle = val; RaidFrames:UpdateText(); end
 			},
 			healthtextmode = {name=L["Frames/HTextMode"],type="select",order=32,
 				values = {[1]=L["Frames/HTextMode1"],[2]=L["Frames/HTextMode2"],[3]=L["Frames/HTextMode3"]},
 				get = function(info) return DBMod.RaidFrames.bars.health.textmode; end,
-				set = function(info,val) DBMod.RaidFrames.bars.health.textmode = val; addon:UpdateText(); end
+				set = function(info,val) DBMod.RaidFrames.bars.health.textmode = val; RaidFrames:UpdateText(); end
 			}
 		}
 	}
@@ -76,13 +64,13 @@ function addon:OnInitialize()
 				get = function(info) return DBMod.RaidFrames.showAuras; end,
 				set = function(info,val)
 					DBMod.RaidFrames.showAuras = val
-					addon:UpdateAura();
+					RaidFrames:UpdateAura();
 				end
 			},
 			size = {name = L["Frames/BuffSize"], type = "range",order=2,
 				min=1,max=30,step=1,
 				get = function(info) return DBMod.RaidFrames.Auras.size; end,
-				set = function(info,val) DBMod.RaidFrames.Auras.size = val; addon:UpdateAura(); end
+				set = function(info,val) DBMod.RaidFrames.Auras.size = val; RaidFrames:UpdateAura(); end
 			}
 		}
 	};
@@ -105,7 +93,7 @@ function addon:OnInitialize()
 	spartan.opt.args["RaidFrames"].args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,disabled=true,
 		values = {["name"]=L["Frames/LayName"],["group"]=L["Frames/LayGrp"],["role"]=L["Frames/LayRole"]},
 		get = function(info) return DBMod.RaidFrames.mode; end,
-		set = function(info,val) DBMod.RaidFrames.mode = val; addon:UpdateRaid("FORCE_UPDATE"); end
+		set = function(info,val) DBMod.RaidFrames.mode = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 	};
 	spartan.opt.args["RaidFrames"].args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
 		get = function(info) return DBMod.RaidFrames.threat; end,
@@ -117,7 +105,7 @@ function addon:OnInitialize()
 				spartan:Print(ERR_NOT_IN_COMBAT);
 			else
 				DBMod.RaidFrames.moved = false;
-				addon:UpdateRaidPosition();
+				RaidFrames:UpdateRaidPosition();
 			end
 		end
 	};

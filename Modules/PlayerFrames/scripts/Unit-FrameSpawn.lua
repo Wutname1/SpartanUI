@@ -150,15 +150,14 @@ function PlayerFrames:SUI_PlayerFrames_Plain()
 	end
 end
 
---PlayerFrames:SUI_PlayerFrames_Classic();
-
 function PlayerFrames:OnEnable()
-	if (DBMod.PlayerFrames.style == "theme") then
-		local CurTheme = spartan:GetModule("Style_" .. DBMod.Artwork.Style);
-		CurTheme:UnitFrames();
-	elseif (DBMod.PlayerFrames.style == "classic") then
+	if (DBMod.PlayerFrames.Style == "theme") and (DBMod.Artwork.Style ~= "Classic") then
+		spartan:GetModule("Style_" .. DBMod.Artwork.Style):PlayerFrames();
+	elseif (DBMod.PlayerFrames.Style == "Classic") or (DBMod.Artwork.Style == "Classic") then
 		PlayerFrames:SUI_PlayerFrames_Classic();
-	elseif (DBMod.PlayerFrames.style == "plain") then
+	elseif (DBMod.PlayerFrames.Style == "plain") then
 		PlayerFrames:SUI_PlayerFrames_Plain();
+	else
+		spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PlayerFrames();
 	end
 end 
