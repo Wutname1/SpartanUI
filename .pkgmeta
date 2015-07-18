@@ -7,6 +7,8 @@ move-folders:
   SpartanUI/Modules/PartyFrames: SpartanUI_PartyFrames
   SpartanUI/Modules/FilmEffects: SpartanUI_FilmEffects
   SpartanUI/Modules/SpinCam: SpartanUI_SpinCam
+  SpartanUI/Modules/Style_Minimal: SpartanUI_Style_Minimal
+  SpartanUI/Modules/Style_Transparent: SpartanUI_Style_Transparent
 
 externals:
     libs/LibStub:

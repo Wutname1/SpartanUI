@@ -9,14 +9,17 @@ function module:MiniMap()
 	
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("CENTER",SpartanUI,"CENTER",0,50);
-
-	Minimap.ZoneText:ClearAllPoints();
-	Minimap.ZoneText:SetPoint("TOPLEFT",Minimap,"BOTTOMLEFT",0,-5);
-	Minimap.ZoneText:SetPoint("TOPRIGHT",Minimap,"BOTTOMRIGHT",0,-5);
-	Minimap.ZoneText:Hide();
-	MinimapZoneText:Show();
 	
-	Minimap.coords:SetTextColor(1,.82,0,1);
+	if Minimap.ZoneText ~= nil then
+		Minimap.ZoneText:ClearAllPoints();
+		Minimap.ZoneText:SetPoint("TOPLEFT",Minimap,"BOTTOMLEFT",0,-5);
+		Minimap.ZoneText:SetPoint("TOPRIGHT",Minimap,"BOTTOMRIGHT",0,-5);
+		Minimap.ZoneText:Hide();
+		MinimapZoneText:Show();
+		
+		Minimap.coords:SetTextColor(1,.82,0,1);
+	end
+	
 	-- Minimap.coords:Hide()
 	
 	QueueStatusFrame:ClearAllPoints();
