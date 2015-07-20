@@ -250,7 +250,6 @@ local SpawnUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	-- self.menu = RaidFrames:menu();
 	self:RegisterForClicks("AnyDown");
 	
 	self:EnableMouse(enable)

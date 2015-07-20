@@ -36,7 +36,7 @@ do -- Remove SET_FOCUS & CLEAR_FOCUS errors
 		if k ~= "RAID" and k ~= "RAID_PLAYER" then
 			for button,name in pairs(UnitPopupMenus[k]) do
 				if(name == 'SET_FOCUS') then
-					-- table.remove(UnitPopupMenus[k], button)
+					table.remove(UnitPopupMenus[k], button)
 				elseif(name == 'CLEAR_FOCUS') then
 					table.remove(UnitPopupMenus[k], button)
 				elseif(name == 'MOVE_PLAYER_FRAME') then

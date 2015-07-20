@@ -1391,7 +1391,7 @@ function module:UpdateAltBarPositions()
 end
 
 function module:PlayerFrames()
-	PFrame = spartan:GetModule("PlayerFrames");
+	local PFrame = spartan:GetModule("PlayerFrames");
 	SpartanoUF:RegisterStyle("Spartan_TransparentPlayerFrames", CreateUnitFrame);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPlayerFrames");
 	
@@ -1505,7 +1505,7 @@ function module:RaidFrames()
 	SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateRaidFrames);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
 	
-	raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
 		'showPlayer', true,
 		'showRaid', true,
 		'showParty', true,
@@ -1527,4 +1527,45 @@ function module:RaidFrames()
 	
 	
 	return (raid)
+end
+
+function module:RaidFrames()
+	local RaidFrames = spartan:GetModule("RaidFrames");
+	SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateRaidFrames);
+	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
+	
+	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+		'showPlayer', true,
+		'showRaid', true,
+		'showParty', true,
+		'showSolo', true,
+		'xoffset', 3,
+		'yOffset', -5,
+		'point', 'TOP',
+		'groupFilter', '1,2,3,4,5,6,7,8',
+		'groupBy', 'ROLE',
+		'groupingOrder', 'TANK,HEALER,DAMAGER,NONE',
+		'sortMethod', 'name',
+		'maxColumns', DBMod.RaidFrames.maxColumns,
+		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
+		'columnSpacing', DBMod.RaidFrames.columnSpacing,
+		'columnAnchorPoint', 'LEFT'
+	)
+	
+	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
+	
+	
+	return (raid)
+end
+
+function module:PartyFrames()
+	party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
+		"showRaid", false,
+		"showParty", true,
+		"showPlayer", true,
+		"showSolo", true,
+		"yOffset", -16,
+		"xOffset", 0,
+		"columnAnchorPoint", "TOPLEFT",
+		"initial-anchor", "TOPLEFT");
 end

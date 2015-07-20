@@ -436,7 +436,7 @@ function module:SetupMenus()
 				spartan:Print(ERR_NOT_IN_COMBAT);
 			else
 				if DB.yoffsetAuto then
-					spartan:Print(L["confOffsetAuto"]);
+					-- spartan:Print(L["confOffsetAuto"]);
 				else
 					val = tonumber(val);
 					DB.yoffset = val;

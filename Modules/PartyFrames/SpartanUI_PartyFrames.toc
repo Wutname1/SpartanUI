@@ -5,7 +5,9 @@
 ## Author: Wutname1
 ## X-Category: User Interfaces
 ## RequiredDeps: SpartanUI
+## X-Curse-Packaged-Version: r167
+## X-Curse-Project-Name: SpartanUI
+## X-Curse-Project-ID: spartan-ui
+## X-Curse-Repository-ID: wow/spartan-ui/mainline
 
 scripts\Global-Framework.xml
-scripts\Unit-PartyFrames.lua
-scripts\Options.lua

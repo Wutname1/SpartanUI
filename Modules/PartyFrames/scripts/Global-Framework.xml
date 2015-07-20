@@ -36,5 +36,13 @@
 		</Frames>
 	</Button>
 	
-	<Script file="Global-Framework.lua" />
+	<!-- Load Core Functions -->
+	<Script file="Global-Features.lua"	/>
+	
+	<!-- Load Styles -->
+	<Script file="FrameStyle_Classic.lua" />
+	
+	<!-- Load rest of core functionality -->	
+	<Script file="Spawn-Frames.lua" />
+	<Script file="Options.lua" />
 </Ui>

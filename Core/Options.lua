@@ -317,6 +317,8 @@ function module:OnEnable()
 	if not spartan:GetModule("Artwork_Core", true) then
 		spartan.opt.args["General"].args["style"].args["OverallStyle"].disabled = true
 	end
+	
+	print(ModsLoaded.Artwork)
 end
 
 function module:ExportData()
