@@ -716,9 +716,11 @@ local CreatePetFrame = function(self,unit)
 		artwork.bg:SetWidth(256); artwork.bg:SetHeight(85);
 		artwork.bg:SetTexCoord(0,1,0,85/128);
 		
-		self.Portrait = CreatePortrait(self);
-		self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
-		self.Portrait:SetPoint("CENTER",self,"CENTER",87,-8);
+		if DBMod.PlayerFrames.PetPortrait then
+			self.Portrait = CreatePortrait(self);
+			self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
+			self.Portrait:SetPoint("CENTER",self,"CENTER",87,-8);
+		end
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -835,7 +837,8 @@ local CreatePetFrame = function(self,unit)
 	do -- setup ring, icons, and text
 		local ring = CreateFrame("Frame",nil,self);
 		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self.Portrait); ring:SetFrameLevel(3);
+		ring:SetAllPoints(self.Portrait);
+		ring:SetFrameLevel(3);
 		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
 		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-3);
 		ring.bg:SetTexture(base_ring3);

@@ -276,7 +276,7 @@ local OnCastbarUpdate = function(self,elapsed)
 end
 
 local MakeSmallFrame = function(self,unit)
-	self:SetSize(140, 40);
+	self:SetSize(100, 40);
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -292,41 +292,42 @@ local MakeSmallFrame = function(self,unit)
 		self.Threat.Override = threat;
 	end
 	do -- setup status bars
-		do -- cast bar
-			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
-			cast:SetSize(self:GetWidth(), 5);
-			cast:SetPoint("TOP",self,"TOP",0,-1);
-			cast:SetStatusBarTexture(Smoothv2)
+		-- do -- cast bar
+			-- local cast = CreateFrame("StatusBar",nil,self);
+			-- cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
+			-- cast:SetSize(self:GetWidth(), 5);
+			-- cast:SetPoint("TOP",self,"TOP",0,-1);
+			-- cast:SetStatusBarTexture(Smoothv2)
 			
-			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Time:SetSize(20,8);
-			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
-			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
+			-- cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			-- cast.Time:SetSize(20,8);
+			-- cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
+			-- cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
 			
-			local Background = cast:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(cast)
-			Background:SetTexture(1, 1, 1, .2)
+			-- local Background = cast:CreateTexture(nil, 'BACKGROUND')
+			-- Background:SetAllPoints(cast)
+			-- Background:SetTexture(1, 1, 1, .2)
 			
-			self.Castbar = cast;
-			self.Castbar.bg = Background;
-			self.Castbar.OnUpdate = OnCastbarUpdate;
-			self.Castbar.PostCastStart = PostCastStart;
-			self.Castbar.PostChannelStart = PostChannelStart;
-			self.Castbar.PostCastStop = PostCastStop;
-		end
+			-- self.Castbar = cast;
+			-- self.Castbar.bg = Background;
+			-- self.Castbar.OnUpdate = OnCastbarUpdate;
+			-- self.Castbar.PostCastStart = PostCastStart;
+			-- self.Castbar.PostChannelStart = PostChannelStart;
+			-- self.Castbar.PostCastStop = PostCastStop;
+		-- end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(3);
 			health:SetSize(self:GetWidth(), 30);
-			health:SetPoint("TOP",self.Castbar,"BOTTOM",0,0);
+			health:SetPoint("TOP",self,"TOP",0,0);
 			health:SetStatusBarTexture(Smoothv2)
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetAllPoints(health);
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
-			self:Tag(health.value, TextFormat("health"))	
+			-- self:Tag(health.value, TextFormat("health"))
+			self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
@@ -381,11 +382,11 @@ local MakeSmallFrame = function(self,unit)
 			power:SetPoint("TOP",self.Health,"BOTTOM",0,0);
 			power:SetStatusBarTexture(Smoothv2)
 			
-			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.value:SetAllPoints(power);
-			power.value:SetJustifyH("CENTER");
-			power.value:SetJustifyV("MIDDLE");
-			self:Tag(power.value, TextFormat("mana"))
+			-- power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			-- power.value:SetAllPoints(power);
+			-- power.value:SetJustifyH("CENTER");
+			-- power.value:SetJustifyV("MIDDLE");
+			-- self:Tag(power.value, TextFormat("mana"))
 			
 			local Background = power:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(power)
@@ -398,106 +399,83 @@ local MakeSmallFrame = function(self,unit)
 			
 		end
 	end
-	do -- setup ring, icons, and text
-		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self.Portrait);
-		ring:SetFrameLevel(4);
-		ring.low = CreateFrame("Frame",nil,self);
-		ring.low:SetFrameStrata("BACKGROUND");
-		ring.low:SetAllPoints(self.Portrait);
-		ring.low:SetFrameLevel(1);
+	do -- setup items, icons, and text
+		local items = CreateFrame("Frame",nil,self);
+		items:SetFrameStrata("BACKGROUND");
+		items:SetAllPoints(self);
+		items:SetFrameLevel(4);
+		items.low = CreateFrame("Frame",nil,self);
+		items.low:SetFrameStrata("BACKGROUND");
+		items.low:SetAllPoints(self);
+		items.low:SetFrameLevel(1);
 		
-		self.Name = ring:CreateFontString();
+		self.Name = items:CreateFontString();
 		spartan:FormatFont(self.Name, 10, "Player")
-		self.Name:SetSize(self:GetWidth(), 10);
+		self.Name:SetHeight(10);
 		self.Name:SetJustifyH("CENTER");
 		self.Name:SetJustifyV("BOTTOM");
-		self.Name:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,0);
-		self.Name:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0);
+		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",0,0);
+		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,0);
 		self:Tag(self.Name, "[SUI_ColorClass][name]");
 		
-		self.RareElite = ring.low:CreateTexture(nil,"ARTWORK", nil, -5);
-		self.RareElite:SetSize(150, 110);
-		self.RareElite:SetPoint("CENTER",ring,"CENTER",-12,25);
-		self.RareElite.short = true
-		
-		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
+		self.LFDRole = items:CreateTexture(nil,"BORDER");
 		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",ring,"TOP",-20,7);
+		self.LFDRole:SetPoint("CENTER",items,"TOP",-20,7);
 		self.LFDRole:SetTexture(lfdrole);
 		self.LFDRole:SetAlpha(.75);
 		
-		-- self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		-- self.SUI_ClassIcon:SetSize(18,18);
-		-- self.SUI_ClassIcon:SetPoint("RIGHT",self.Name,"LEFT");
-		-- self.SUI_ClassIcon:SetAlpha(.75);
-		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
+		self.PvP = items:CreateTexture(nil,"BORDER");
 		self.PvP:SetSize(25, 25);
 		self.PvP:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",0,0);
 		self.PvP.Override = pvpIcon
 		
-		self.LevelSkull = ring:CreateTexture(nil,"ARTWORK");
+		self.LevelSkull = items:CreateTexture(nil,"ARTWORK");
 		self.LevelSkull:SetSize(16, 16);
 		self.LevelSkull:SetPoint("LEFT",self.Name,"LEFT");
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(24, 24);
-		self.RaidIcon:SetPoint("CENTER",ring,"RIGHT",2,-4);
+		self.RaidIcon = items:CreateTexture(nil,"ARTWORK");
+		self.RaidIcon:SetSize(20, 20);
+		self.RaidIcon:SetPoint("CENTER",self,"RIGHT",2,-4);
 		
-		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
-		self.StatusText:SetPoint("CENTER",ring,"CENTER");
+		self.ResurrectIcon = items:CreateTexture(nil, 'OVERLAY')
+		self.ResurrectIcon:SetSize(30, 30)
+		self.ResurrectIcon:SetPoint("CENTER",self,"CENTER",0,0)
+		self.ResurrectIcon = ResurrectIcon
+
+		self.ReadyCheck = items:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheck:SetSize(30, 30)
+		self.ReadyCheck:SetPoint("CENTER",self,"CENTER",0,0)
+		self.ReadyCheck = ReadyCheck
+		
+		self.StatusText = items:CreateFontString(nil, "OVERLAY", "SUI_FontOutline12");
+		self.StatusText:SetPoint("TOP",self.Name,"BOTTOM");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 		
-		self.CPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.CPoints:SetPoint("TOPLEFT",ring,"BOTTOMRIGHT",8,-4);
+		self.CPoints = items:CreateFontString(nil, "BORDER","SUI_FontOutline13");
+		self.CPoints:SetPoint("TOPLEFT",items,"BOTTOMRIGHT",8,-4);
 		for i = 1, 5 do
-			self.CPoints[i] = ring:CreateTexture(nil,"OVERLAY");
+			self.CPoints[i] = items:CreateTexture(nil,"OVERLAY");
 			self.CPoints[i]:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
 			if (i == 1) then self.CPoints[1]:SetPoint("LEFT",self.CPoints,"RIGHT",1,-1); else 
 				self.CPoints[i]:SetPoint("LEFT",self.CPoints[i-1],"RIGHT",-2,0);
 			end
 		end
-		ring:SetScript("OnUpdate",function()
+		items:SetScript("OnUpdate",function()
 			if self.CPoints then
 				local cp = GetComboPoints("player","target");
 				self.CPoints:SetText( (cp > 0 and cp) or "");
 			end
 		end);
 	end
-	do -- setup buffs and debuffs
-		if DBMod.PlayerFrames[unit] then
-			self.Auras = CreateFrame("Frame",nil,self);
-			self.Auras:SetSize(220, 44);
-			self.Auras:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-10,0);
-			self.Auras:SetFrameStrata("BACKGROUND");
-			self.Auras:SetFrameLevel(5);
-			-- settings
-			self.Auras.initialAnchor = "BOTTOMRIGHT";
-			self.Auras["growth-x"] = "LEFT";
-			self.Auras["growth-y"] = "UP";
-			self.Auras.gap = true;
-		
-			self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
-			self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-			self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-			self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-			self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-			self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
-		
-			self.Auras.PostUpdate = PostUpdateAura;
-		end
-	end
+
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	return self;
 end
 
 local MakeLargeFrame = function(self,unit)
-	self:SetSize(240, 40);
+	self:SetSize(200, 40);
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -541,7 +519,8 @@ local MakeLargeFrame = function(self,unit)
 			health.value:SetAllPoints(health);
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
-			self:Tag(health.value, TextFormat("health"))	
+			-- self:Tag(health.value, TextFormat("health"))
+			self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
@@ -600,7 +579,7 @@ local MakeLargeFrame = function(self,unit)
 			power.value:SetAllPoints(power);
 			power.value:SetJustifyH("CENTER");
 			power.value:SetJustifyV("MIDDLE");
-			self:Tag(power.value, TextFormat("mana"))
+			self:Tag(power.value, "[perpp]%")	
 			
 			local Background = power:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(power)
@@ -638,17 +617,17 @@ local MakeLargeFrame = function(self,unit)
 			end	
 		end
 	end
-	do -- setup ring, icons, and text
-		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self);
-		ring:SetFrameLevel(4);
-		ring.low = CreateFrame("Frame",nil,self);
-		ring.low:SetFrameStrata("BACKGROUND");
-		ring.low:SetAllPoints(self.Portrait);
-		ring.low:SetFrameLevel(1);
+	do -- setup items, icons, and text
+		local items = CreateFrame("Frame",nil,self);
+		items:SetFrameStrata("BACKGROUND");
+		items:SetAllPoints(self);
+		items:SetFrameLevel(4);
+		items.low = CreateFrame("Frame",nil,self);
+		items.low:SetFrameStrata("BACKGROUND");
+		items.low:SetAllPoints(self.Portrait);
+		items.low:SetFrameLevel(1);
 		
-		self.Name = ring:CreateFontString();
+		self.Name = items:CreateFontString();
 		spartan:FormatFont(self.Name, 12, "Player")
 		self.Name:SetSize(self:GetWidth(), 12);
 		self.Name:SetJustifyH("CENTER");
@@ -657,80 +636,58 @@ local MakeLargeFrame = function(self,unit)
 		self.Name:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0);
 		self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
 		
-		self.RareElite = ring.low:CreateTexture(nil,"ARTWORK", nil, -5);
+		self.RareElite = items.low:CreateTexture(nil,"ARTWORK", nil, -5);
 		self.RareElite:SetSize(150, 110);
-		self.RareElite:SetPoint("CENTER",ring,"CENTER",-12,25);
+		self.RareElite:SetPoint("CENTER",items,"CENTER",-12,25);
 		self.RareElite.short = true
 		
 		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
+		self.LFDRole = items:CreateTexture(nil,"BORDER");
 		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",ring,"TOP",-20,7);
+		self.LFDRole:SetPoint("CENTER",items,"TOP",-20,7);
 		self.LFDRole:SetTexture(lfdrole);
 		self.LFDRole:SetAlpha(.75);
 		
-		-- self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
+		-- self.SUI_ClassIcon = items:CreateTexture(nil,"BORDER");
 		-- self.SUI_ClassIcon:SetSize(18,18);
 		-- self.SUI_ClassIcon:SetPoint("RIGHT",self.Name,"LEFT");
 		-- self.SUI_ClassIcon:SetAlpha(.75);
 		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
+		self.PvP = items:CreateTexture(nil,"BORDER");
 		self.PvP:SetSize(25, 25);
 		self.PvP:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",0,0);
 		self.PvP.Override = pvpIcon
 		
-		self.LevelSkull = ring:CreateTexture(nil,"ARTWORK");
+		self.LevelSkull = items:CreateTexture(nil,"ARTWORK");
 		self.LevelSkull:SetSize(16, 16);
 		self.LevelSkull:SetPoint("LEFT",self.Name,"LEFT");
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidIcon = items:CreateTexture(nil,"ARTWORK");
 		self.RaidIcon:SetSize(24, 24);
-		self.RaidIcon:SetPoint("CENTER",ring,"RIGHT",2,-4);
+		self.RaidIcon:SetPoint("CENTER",items,"RIGHT",2,-4);
 		
-		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
-		self.StatusText:SetPoint("CENTER",ring,"CENTER");
+		self.StatusText = items:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
+		self.StatusText:SetPoint("CENTER",items,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 		
-		self.CPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.CPoints:SetPoint("TOPLEFT",ring,"BOTTOMRIGHT",8,-4);
+		self.CPoints = items:CreateFontString(nil, "BORDER","SUI_FontOutline13");
+		self.CPoints:SetPoint("TOPLEFT",items,"BOTTOMRIGHT",8,-4);
 		for i = 1, 5 do
-			self.CPoints[i] = ring:CreateTexture(nil,"OVERLAY");
+			self.CPoints[i] = items:CreateTexture(nil,"OVERLAY");
 			self.CPoints[i]:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
 			if (i == 1) then self.CPoints[1]:SetPoint("LEFT",self.CPoints,"RIGHT",1,-1); else 
 				self.CPoints[i]:SetPoint("LEFT",self.CPoints[i-1],"RIGHT",-2,0);
 			end
 		end
-		ring:SetScript("OnUpdate",function()
+		items:SetScript("OnUpdate",function()
 			if self.CPoints then
 				local cp = GetComboPoints("player","target");
 				self.CPoints:SetText( (cp > 0 and cp) or "");
 			end
 		end);
 	end
-	do -- setup buffs and debuffs
-		if DBMod.PlayerFrames[unit] then
-			self.Auras = CreateFrame("Frame",nil,self);
-			self.Auras:SetSize(220, 44);
-			self.Auras:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-10,0);
-			self.Auras:SetFrameStrata("BACKGROUND");
-			self.Auras:SetFrameLevel(5);
-			-- settings
-			self.Auras.initialAnchor = "BOTTOMRIGHT";
-			self.Auras["growth-x"] = "LEFT";
-			self.Auras["growth-y"] = "UP";
-			self.Auras.gap = true;
-		
-			self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
-			self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-			self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-			self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-			self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-			self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
-		
-			self.Auras.PostUpdate = PostUpdateAura;
-		end
-	end
+
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	return self;
@@ -754,10 +711,6 @@ local CreateUnitFrame = function(self,unit)
 	
 	return ((unit == "player" and MakeLargeFrame(self,unit))
 	or (unit == "target" and MakeLargeFrame(self,unit))
-	-- or (unit == "targettarget" and MakeSmallFrame(self,unit))
-	-- or (unit == "focus" and MakeSmallFrame(self,unit))
-	-- or (unit == "focustarget" and MakeSmallFrame(self,unit))
-	-- or (unit == "pet" and MakeSmallFrame(self,unit))
 	or MakeSmallFrame(self,unit));
 end
 
@@ -852,7 +805,7 @@ function module:UpdateAltBarPositions()
 	end
 end
 
-function module:UnitFrames()
+function module:PlayerFrames()
 	PFrame = spartan:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
 	
@@ -860,27 +813,45 @@ function module:UnitFrames()
 
 	for a,b in pairs(FramesList) do
 		PFrame[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
+		if b == "player" then
+			PFrame:SetupExtras()
+		end
 	end
-	PFrame:SetupExtras()
-	-- PFrame.pet:SetScale(0.5)
-	-- PFrame.targettarget:SetScale(0.5)
 	
 	do -- Position Static Frames
+		-- if (SUI_FramesAnchor:GetParent() == UIParent) then
+			PFrame.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,170);
+			PFrame.pet:SetPoint("BOTTOMRIGHT",PFrame.player,"BOTTOMLEFT",-6,4);
+			
+			PFrame.target:SetPoint("LEFT",PFrame.player,"RIGHT",120,0);
+			-- if DBMod.PlayerFrames.targettarget.style == "small" then
+				PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",6,-6);
+			-- else
+				-- PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",-20,0);
+			-- end
+			PFrame.player:SetScale(DB.scale);
+			for a,b in pairs(FramesList) do
+				_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+			end
+		-- else
+			-- PFrame.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+			-- PFrame.pet:SetPoint("BOTTOMRIGHT",PFrame.player,"BOTTOMLEFT",-6,4);
+			-- PFrame.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
+			-- if DBMod.PlayerFrames.targettarget.style == "small" then
+				-- PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",8,-11);
+			-- else
+				-- PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",6,4);
+			-- end
+		-- end
 		
-		PFrame.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,200);
-		PFrame.pet:SetPoint("BOTTOMRIGHT",PFrame.player,"BOTTOMLEFT",-2,0);
-		
-		PFrame.target:SetPoint("BOTTOM",UIParent,"BOTTOM",220,200);
-		
-		PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",2,0);
-		
-		PFrame.focustarget:SetPoint("BOTTOM", PFrame.targettarget, "TOP", 0, 80);
+		PFrame.focustarget:SetPoint("BOTTOMLEFT", "SUI_focusFrame", "BOTTOMRIGHT", 5, 0);
 	end
 
 	PFrame:UpdateFocusPosition();
 	module:UpdateAltBarPositions();
 	
 	if DBMod.PlayerFrames.BossFrame.display == true then
+		if (InCombatLockdown()) then return; end
 		local boss = {}
 		for i = 1, MAX_BOSS_FRAMES do
 			boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
@@ -909,15 +880,12 @@ function module:UnitFrames()
 		boss.mover:SetPoint("BOTTOMRIGHT",'SUI_Boss'..MAX_BOSS_FRAMES,"BOTTOMRIGHT");
 		boss.mover:EnableMouse(true);
 		
-		boss.bg = boss.mover:CreateTexture(nil,"BACKGROUND");
-		boss.bg:SetAllPoints(boss.mover);
-		boss.bg:SetTexture(1,1,1,0.5);
-		
 		boss.mover:Hide();
 		boss.mover:RegisterEvent("VARIABLES_LOADED");
 		boss.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
 		
 		function PFrame:UpdateBossFramePosition()
+			if (InCombatLockdown()) then return; end
 			if DBMod.PlayerFrames.BossFrame.movement.moved then
 				SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
 				DBMod.PlayerFrames.BossFrame.movement.relativeTo,
@@ -934,3 +902,44 @@ function module:UnitFrames()
 	spartan.PFrame = PFrame
 end
 
+function module:RaidFrames()
+	local RaidFrames = spartan:GetModule("RaidFrames");
+	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
+	
+	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+		'showPlayer', true,
+		'showRaid', true,
+		'showParty', true,
+		'showSolo', true,
+		'xoffset', 3,
+		'yOffset', -10,
+		'point', 'TOP',
+		'groupFilter', '1,2,3,4,5,6,7,8',
+		'groupBy', 'ROLE',
+		'groupingOrder', 'TANK,HEALER,DAMAGER,NONE',
+		'sortMethod', 'name',
+		'maxColumns', DBMod.RaidFrames.maxColumns,
+		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
+		'columnSpacing', DBMod.RaidFrames.columnSpacing,
+		'columnAnchorPoint', 'LEFT'
+	)
+	
+	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
+	
+	
+	return (raid)
+end
+
+function module:PartyFrames()
+	local PartyFrames = spartan:GetModule("PartyFrames");
+	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
+	party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
+		"showRaid", false,
+		"showParty", true,
+		"showPlayer", true,
+		"showSolo", true,
+		"yOffset", -16,
+		"xOffset", 0,
+		"columnAnchorPoint", "TOPLEFT",
+		"initial-anchor", "TOPLEFT");
+end

@@ -1232,14 +1232,14 @@ local CreateRaidFrame = function(self,unit)
 		self.RaidIcon:SetSize(18, 18);
 		self.RaidIcon:SetPoint("CENTER",self,"RIGHT",0,0);
 		
-		local ResurrectIcon = items:CreateTexture(nil, 'OVERLAY')
-		ResurrectIcon:SetSize(30, 30)
-		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ResurrectIcon = items:CreateTexture(nil, 'OVERLAY')
+		self.ResurrectIcon:SetSize(30, 30)
+		self.ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ResurrectIcon = ResurrectIcon
 
-		local ReadyCheck = items:CreateTexture(nil, 'OVERLAY')
-		ReadyCheck:SetSize(30, 30)
-		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ReadyCheck = items:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheck:SetSize(30, 30)
+		self.ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ReadyCheck = ReadyCheck
 	   
 		local overlay = items:CreateTexture(nil, "OVERLAY")
@@ -1498,35 +1498,6 @@ function module:PlayerFrames()
 		PFrame.boss = boss;
 	end
 	spartan.PFrame = PFrame
-end
-
-function module:RaidFrames()
-	local RaidFrames = spartan:GetModule("RaidFrames");
-	SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateRaidFrames);
-	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
-	
-	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-		'showPlayer', true,
-		'showRaid', true,
-		'showParty', true,
-		'showSolo', true,
-		'xoffset', 3,
-		'yOffset', -5,
-		'point', 'TOP',
-		'groupFilter', '1,2,3,4,5,6,7,8',
-		'groupBy', 'ROLE',
-		'groupingOrder', 'TANK,HEALER,DAMAGER,NONE',
-		'sortMethod', 'name',
-		'maxColumns', DBMod.RaidFrames.maxColumns,
-		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
-		'columnSpacing', DBMod.RaidFrames.columnSpacing,
-		'columnAnchorPoint', 'LEFT'
-	)
-	
-	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
-	
-	
-	return (raid)
 end
 
 function module:RaidFrames()
