@@ -558,52 +558,6 @@ function PartyFrames:Classic()
 		PartyMemberBackground:Hide();
 	end
 
-	do -- scripts to make it movable
-		party.mover = CreateFrame("Frame");
-		party.mover:SetSize(205, 332);
-		party.mover:SetPoint("TOPLEFT",party,"TOPLEFT");
-		party.mover:EnableMouse(true);
-		
-		party.bg = party.mover:CreateTexture(nil,"BACKGROUND");
-		party.bg:SetAllPoints(party.mover);
-		party.bg:SetTexture(1,1,1,0.5);
-		
-		party.mover:SetScript("OnEvent",function()
-			PartyFrames.locked = 1;
-			party.mover:Hide();
-		end);
-		party.mover:RegisterEvent("VARIABLES_LOADED");
-		party.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
-		party.mover:Hide();
-		
-		function PartyFrames:UpdatePartyPosition()
-			PartyFrames.offset = DB.yoffset
-			if DBMod.PartyFrames.moved then
-				party:SetMovable(true);
-				party:SetUserPlaced(false);
-			else
-				party:SetMovable(false);
-			end
-			-- User Moved the PartyFrame, so we shouldn't be moving it
-			if not DBMod.PartyFrames.moved then
-				party:ClearAllPoints();
-				-- SpartanUI_PlayerFrames are loaded
-				if spartan:GetModule("PlayerFrames",true) then
-					party:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(DB.BuffSettings.offset));
-				-- SpartanUI_PlayerFrames isn't loaded
-				else
-					party:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(DB.BuffSettings.offset));
-				end
-			else
-				local Anchors = {}
-				for k,v in pairs(DBMod.PartyFrames.Anchors) do
-					Anchors[k] = v
-				end
-				party:ClearAllPoints();
-				party:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-			end
-		end
-	end
 
 	do -- hide party frame in raid, if option enabled
 		function PartyFrames:UpdateParty(event,...)

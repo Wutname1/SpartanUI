@@ -5,38 +5,38 @@ local RaidFrames = spartan:GetModule("RaidFrames");
 function RaidFrames:UpdateRaidPosition()
 	RaidFrames.offset = DB.yoffset
 	if DBMod.RaidFrames.moved then
-		spartan.RFrame:SetMovable(true);
-		spartan.RFrame:SetUserPlaced(false);
+		spartan.RaidFrames:SetMovable(true);
+		spartan.RaidFrames:SetUserPlaced(false);
 	else
-		spartan.RFrame:SetMovable(false);
+		spartan.RaidFrames:SetMovable(false);
 	end
 	if not DBMod.RaidFrames.moved then
-		spartan.RFrame:ClearAllPoints();
+		spartan.RaidFrames:ClearAllPoints();
 		if spartan:GetModule("PartyFrames",true) then
-			spartan.RFrame:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(RaidFrames.offset));
+			spartan.RaidFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(RaidFrames.offset));
 		else
-			spartan.RFrame:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(RaidFrames.offset));
+			spartan.RaidFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(RaidFrames.offset));
 		end
 	else
 		local Anchors = {}
 		for k,v in pairs(DBMod.RaidFrames.Anchors) do
 			Anchors[k] = v;
 		end
-		spartan.RFrame:ClearAllPoints();
-		spartan.RFrame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
+		spartan.RaidFrames:ClearAllPoints();
+		spartan.RaidFrames:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
 	end
 end
 
 function RaidFrames:UpdateRaid(event,...)
-	if spartan.RFrame == nil then return end
+	if spartan.RaidFrames == nil then return end
 	if DBMod.RaidFrames.showRaid and IsInRaid() then
-		spartan.RFrame:Show();
+		spartan.RaidFrames:Show();
 	else
-		spartan.RFrame:Hide();
+		spartan.RaidFrames:Hide();
 	end
 	RaidFrames:UpdateRaidPosition()
-	spartan.RFrame:SetAttribute('showRaid',DBMod.RaidFrames.showRaid);
-	spartan.RFrame:SetScale(DBMod.RaidFrames.scale);
+	spartan.RaidFrames:SetAttribute('showRaid',DBMod.RaidFrames.showRaid);
+	spartan.RaidFrames:SetScale(DBMod.RaidFrames.scale);
 end
 
 function RaidFrames:OnEnable()
@@ -62,32 +62,32 @@ function RaidFrames:OnEnable()
 	end
 	
 	if (DBMod.RaidFrames.Style == "theme") and (DBMod.Artwork.Style ~= "Classic") then
-		spartan.RFrame = spartan:GetModule("Style_" .. DBMod.Artwork.Style):RaidFrames();
+		spartan.RaidFrames = spartan:GetModule("Style_" .. DBMod.Artwork.Style):RaidFrames();
 	elseif (DBMod.RaidFrames.Style == "Classic") or (DBMod.Artwork.Style == "Classic") then
-		spartan.RFrame = RaidFrames:Classic()
+		spartan.RaidFrames = RaidFrames:Classic()
 	elseif (DBMod.RaidFrames.Style == "plain") then
-		spartan.RFrame = RaidFrames:Plain();
+		spartan.RaidFrames = RaidFrames:Plain();
 	else
-		spartan.RFrame = spartan:GetModule("Style_" .. DBMod.RaidFrames.Style):RaidFrames();
+		spartan.RaidFrames = spartan:GetModule("Style_" .. DBMod.RaidFrames.Style):RaidFrames();
 	end
 	
-	spartan.RFrame.mover = CreateFrame("Frame");
-	spartan.RFrame.mover:SetSize(20, 20);
-	spartan.RFrame.mover:SetPoint("TOPLEFT",spartan.RFrame,"TOPLEFT");
-	spartan.RFrame.mover:SetPoint("BOTTOMRIGHT",spartan.RFrame,"BOTTOMRIGHT");
-	spartan.RFrame.mover:EnableMouse(true);
+	spartan.RaidFrames.mover = CreateFrame("Frame");
+	spartan.RaidFrames.mover:SetSize(20, 20);
+	spartan.RaidFrames.mover:SetPoint("TOPLEFT",spartan.RaidFrames,"TOPLEFT");
+	spartan.RaidFrames.mover:SetPoint("BOTTOMRIGHT",spartan.RaidFrames,"BOTTOMRIGHT");
+	spartan.RaidFrames.mover:EnableMouse(true);
 	
-	spartan.RFrame.bg = spartan.RFrame.mover:CreateTexture(nil,"BACKGROUND");
-	spartan.RFrame.bg:SetAllPoints(spartan.RFrame.mover);
-	spartan.RFrame.bg:SetTexture(1,1,1,0.5);
+	spartan.RaidFrames.bg = spartan.RaidFrames.mover:CreateTexture(nil,"BACKGROUND");
+	spartan.RaidFrames.bg:SetAllPoints(spartan.RaidFrames.mover);
+	spartan.RaidFrames.bg:SetTexture(1,1,1,0.5);
 	
-	spartan.RFrame.mover:SetScript("OnEvent",function()
+	spartan.RaidFrames.mover:SetScript("OnEvent",function()
 		RaidFrames.locked = 1;
-		spartan.RFrame.mover:Hide();
+		spartan.RaidFrames.mover:Hide();
 	end);
-	spartan.RFrame.mover:RegisterEvent("VARIABLES_LOADED");
-	spartan.RFrame.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
-	spartan.RFrame.mover:Hide();
+	spartan.RaidFrames.mover:RegisterEvent("VARIABLES_LOADED");
+	spartan.RaidFrames.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
+	spartan.RaidFrames.mover:Hide();
 	
 	local raidWatch = CreateFrame("Frame");
 	raidWatch:RegisterEvent('GROUP_ROSTER_UPDATE');

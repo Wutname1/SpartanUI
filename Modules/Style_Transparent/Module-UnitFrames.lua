@@ -1525,12 +1525,13 @@ function module:RaidFrames()
 	
 	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
 	
-	
 	return (raid)
 end
 
 function module:PartyFrames()
-	party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
+	SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateRaidFrames);
+	SpartanoUF:SetActiveStyle("Spartan_TransparentPartyFrames");
+	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", false,
 		"showParty", true,
 		"showPlayer", true,
@@ -1539,4 +1540,8 @@ function module:PartyFrames()
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",
 		"initial-anchor", "TOPLEFT");
+	
+	party:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -60)
+	
+	return (party)
 end

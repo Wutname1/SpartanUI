@@ -292,29 +292,6 @@ local MakeSmallFrame = function(self,unit)
 		self.Threat.Override = threat;
 	end
 	do -- setup status bars
-		-- do -- cast bar
-			-- local cast = CreateFrame("StatusBar",nil,self);
-			-- cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
-			-- cast:SetSize(self:GetWidth(), 5);
-			-- cast:SetPoint("TOP",self,"TOP",0,-1);
-			-- cast:SetStatusBarTexture(Smoothv2)
-			
-			-- cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			-- cast.Time:SetSize(20,8);
-			-- cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
-			-- cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
-			
-			-- local Background = cast:CreateTexture(nil, 'BACKGROUND')
-			-- Background:SetAllPoints(cast)
-			-- Background:SetTexture(1, 1, 1, .2)
-			
-			-- self.Castbar = cast;
-			-- self.Castbar.bg = Background;
-			-- self.Castbar.OnUpdate = OnCastbarUpdate;
-			-- self.Castbar.PostCastStart = PostCastStart;
-			-- self.Castbar.PostChannelStart = PostChannelStart;
-			-- self.Castbar.PostCastStop = PostCastStop;
-		-- end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(3);
@@ -323,7 +300,12 @@ local MakeSmallFrame = function(self,unit)
 			health:SetStatusBarTexture(Smoothv2)
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetAllPoints(health);
+			-- health.value:SetAllPoints(health);
+			health.value:SetPoint("TOPLEFT",health,"TOPLEFT",0,-5);
+			health.value:SetPoint("TOPRIGHT",health,"TOPRIGHT",0,-5);
+			health.value:SetPoint("BOTTOMLEFT",health,"BOTTOMLEFT",0,0);
+			health.value:SetPoint("BOTTOMRIGHT",health,"BOTTOMRIGHT",0,0);
+
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
 			-- self:Tag(health.value, TextFormat("health"))
@@ -378,7 +360,7 @@ local MakeSmallFrame = function(self,unit)
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
 			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(3);
-			power:SetSize(self:GetWidth(), 8);
+			power:SetSize(self:GetWidth(), 4);
 			power:SetPoint("TOP",self.Health,"BOTTOM",0,0);
 			power:SetStatusBarTexture(Smoothv2)
 			
@@ -419,8 +401,8 @@ local MakeSmallFrame = function(self,unit)
 		self:Tag(self.Name, "[SUI_ColorClass][name]");
 		
 		self.LFDRole = items:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",items,"TOP",-20,7);
+		self.LFDRole:SetSize(15, 15);
+		self.LFDRole:SetPoint("CENTER",items,"TOPLEFT",0,0);
 		self.LFDRole:SetTexture(lfdrole);
 		self.LFDRole:SetAlpha(.75);
 		
@@ -435,17 +417,15 @@ local MakeSmallFrame = function(self,unit)
 		
 		self.RaidIcon = items:CreateTexture(nil,"ARTWORK");
 		self.RaidIcon:SetSize(20, 20);
-		self.RaidIcon:SetPoint("CENTER",self,"RIGHT",2,-4);
+		self.RaidIcon:SetPoint("CENTER",self,"RIGHT",2,-2);
 		
 		self.ResurrectIcon = items:CreateTexture(nil, 'OVERLAY')
 		self.ResurrectIcon:SetSize(30, 30)
 		self.ResurrectIcon:SetPoint("CENTER",self,"CENTER",0,0)
-		self.ResurrectIcon = ResurrectIcon
 
 		self.ReadyCheck = items:CreateTexture(nil, 'OVERLAY')
 		self.ReadyCheck:SetSize(30, 30)
 		self.ReadyCheck:SetPoint("CENTER",self,"CENTER",0,0)
-		self.ReadyCheck = ReadyCheck
 		
 		self.StatusText = items:CreateFontString(nil, "OVERLAY", "SUI_FontOutline12");
 		self.StatusText:SetPoint("TOP",self.Name,"BOTTOM");
@@ -644,7 +624,7 @@ local MakeLargeFrame = function(self,unit)
 		
 		self.LFDRole = items:CreateTexture(nil,"BORDER");
 		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",items,"TOP",-20,7);
+		self.LFDRole:SetPoint("CENTER",items,"TOPLEFT",0,0);
 		self.LFDRole:SetTexture(lfdrole);
 		self.LFDRole:SetAlpha(.75);
 		
@@ -912,7 +892,7 @@ function module:RaidFrames()
 		'showParty', true,
 		'showSolo', true,
 		'xoffset', 3,
-		'yOffset', -10,
+		'yOffset', -6,
 		'point', 'TOP',
 		'groupFilter', '1,2,3,4,5,6,7,8',
 		'groupBy', 'ROLE',
@@ -926,20 +906,22 @@ function module:RaidFrames()
 	
 	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
 	
-	
 	return (raid)
 end
 
 function module:PartyFrames()
-	local PartyFrames = spartan:GetModule("PartyFrames");
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
-	party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
-		"showRaid", false,
+	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
+		"showRaid", true,
 		"showParty", true,
 		"showPlayer", true,
 		"showSolo", true,
-		"yOffset", -16,
+		"yOffset", -15,
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",
 		"initial-anchor", "TOPLEFT");
+		
+	party:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -60)
+	
+	return (party)
 end
