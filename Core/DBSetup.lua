@@ -289,6 +289,7 @@ function module:OnInitialize()
 			if DBMod.PlayerFrames.Style == nil then DBMod.PlayerFrames.Style = DBMod.Artwork.Style; end
 			if DBMod.PartyFrames.Style == nil then DBMod.PartyFrames.Style = DBMod.Artwork.Style; end
 			if DBMod.RaidFrames.Style == nil then DBMod.RaidFrames.Style = DBMod.Artwork.Style; end
+			if DBMod.PlayerFrames.PetPortrait == nil then DBMod.PlayerFrames.PetPortrait = true end
 		end
 	end
 end

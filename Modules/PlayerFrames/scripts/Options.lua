@@ -11,7 +11,7 @@ function addon:OnInitialize()
 				get = function(info) return DBMod.PlayerFrames.Portrait3D; end,
 				set = function(info,val) DBMod.PlayerFrames.Portrait3D = val; end
 			},
-			showPetPortrait =  {name = L["Frames/Portrait3D"], type = "toggle", order=1,
+			showPetPortrait =  {name = "Show pet portrait", type = "toggle", order=1,
 				get = function(info) return DBMod.PlayerFrames.PetPortrait; end,
 				set = function(info,val) DBMod.PlayerFrames.PetPortrait = val; end
 			},

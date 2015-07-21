@@ -57,4 +57,57 @@ function PartyFrames:OnEnable()
 			spartan.PartyFrame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 		end
 	end
+	
+
+--	spartan.PartyFrame:SetPoint("TOPLEFT", 0, -26)
+	spartan.PartyFrame:SetParent("SpartanUI");
+	spartan.PartyFrame:SetClampedToScreen(true);
+	PartyMemberBackground.Show = function() return; end
+	PartyMemberBackground:Hide();
+
+
+	function PartyFrames:UpdateParty(event,...)
+		local inParty = IsInGroup()  -- ( numGroupMembers () > 0 )
+		local bDebug_ShowFrame = true;
+
+		spartan.PartyFrame:SetAttribute('showParty',DBMod.PartyFrames.showParty)
+		spartan.PartyFrame:SetAttribute('showPlayer',DBMod.PartyFrames.showPlayer)
+		spartan.PartyFrame:SetAttribute('showSolo',DBMod.PartyFrames.showSolo)
+
+		if DBMod.PartyFrames.showParty or DBMod.PartyFrames.showSolo then
+			if IsInRaid() then
+				if DBMod.PartyFrames.showPartyInRaid then spartan.PartyFrame:Show() else spartan.PartyFrame:Hide() end
+			elseif inParty then
+					spartan.PartyFrame:Show()
+			elseif DBMod.PartyFrames.showSolo then
+					spartan.PartyFrame:Show()
+			elseif spartan.PartyFrame:IsShown() then
+					spartan.PartyFrame:Hide()
+			end
+		else
+			spartan.PartyFrame:Hide();
+		end
+		
+		PartyFrames:UpdatePartyPosition()
+		spartan.PartyFrame:SetScale(DBMod.PartyFrames.scale);
+	end
+	
+	local partyWatch = CreateFrame("Frame");
+	partyWatch:RegisterEvent('PLAYER_LOGIN');
+	partyWatch:RegisterEvent('PLAYER_ENTERING_WORLD');
+	partyWatch:RegisterEvent('RAID_ROSTER_UPDATE');
+	partyWatch:RegisterEvent('PARTY_LEADER_CHANGED');
+	partyWatch:RegisterEvent('PARTY_MEMBERS_CHANGED');
+	partyWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
+	partyWatch:RegisterEvent('CVAR_UPDATE');
+	partyWatch:RegisterEvent('PLAYER_REGEN_ENABLED');
+	partyWatch:RegisterEvent('ZONE_CHANGED_NEW_AREA');
+	partyWatch:RegisterEvent('FORCE_UPDATE');
+	
+	partyWatch:SetScript('OnEvent',function(self,event,...)
+		if InCombatLockdown() then
+			return;
+		end
+		PartyFrames:UpdateParty(event)
+	end);
 end

@@ -539,10 +539,10 @@ function PartyFrames:Classic()
 	SpartanoUF:SetActiveStyle("Spartan_PartyFrames");
 	
 	party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
-		"showRaid", false,
-		"showParty", true,
-		"showPlayer", true,
-		"showSolo", true,
+		"showRaid", DBMod.PartyFrames.showRaid,
+		"showParty", DBMod.PartyFrames.showParty,
+		"showPlayer", DBMod.PartyFrames.showPlayer,
+		"showSolo", DBMod.PartyFrames.showSolo,
 		"yOffset", -16,
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",
@@ -550,61 +550,6 @@ function PartyFrames:Classic()
 		,"template", "SUI_PartyMemberTemplate"
 	);
 
-	do -- party header configuration
-	--	party:SetPoint("TOPLEFT", 0, -26)
-		party:SetParent("SpartanUI");
-		party:SetClampedToScreen(true);
-		PartyMemberBackground.Show = function() return; end
-		PartyMemberBackground:Hide();
-	end
-
-
-	do -- hide party frame in raid, if option enabled
-		function PartyFrames:UpdateParty(event,...)
-			local inParty = IsInGroup()  -- ( numGroupMembers () > 0 )
-			local bDebug_ShowFrame = true;
-
-			party:SetAttribute('showParty',DBMod.PartyFrames.showParty)
-			party:SetAttribute('showPlayer',DBMod.PartyFrames.showPlayer)
-			party:SetAttribute('showSolo',DBMod.PartyFrames.showSolo)
-
-			if DBMod.PartyFrames.showParty or DBMod.PartyFrames.showSolo then
-				if IsInRaid() then
-					if DBMod.PartyFrames.showPartyInRaid then party:Show() else party:Hide() end
-				elseif inParty then
-						party:Show()
-				elseif DBMod.PartyFrames.showSolo then
-						party:Show()
-				elseif party:IsShown() then
-						party:Hide()
-				end
-			else
-				party:Hide();
-			end
-			
-			PartyFrames:UpdatePartyPosition()
-			party:SetScale(DBMod.PartyFrames.scale);
-		end
-		
-		local partyWatch = CreateFrame("Frame");
-		partyWatch:RegisterEvent('PLAYER_LOGIN');
-		partyWatch:RegisterEvent('PLAYER_ENTERING_WORLD');
-		partyWatch:RegisterEvent('RAID_ROSTER_UPDATE');
-		partyWatch:RegisterEvent('PARTY_LEADER_CHANGED');
-		partyWatch:RegisterEvent('PARTY_MEMBERS_CHANGED');
-		partyWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
-		partyWatch:RegisterEvent('CVAR_UPDATE');
-		partyWatch:RegisterEvent('PLAYER_REGEN_ENABLED');
-		partyWatch:RegisterEvent('ZONE_CHANGED_NEW_AREA');
-		partyWatch:RegisterEvent('FORCE_UPDATE');
-		
-		partyWatch:SetScript('OnEvent',function(self,event,...)
-			if InCombatLockdown() then
-				return;
-			end
-			PartyFrames:UpdateParty(event)
-		end);
-	end
 
 	return (party)
 end

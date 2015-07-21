@@ -2,7 +2,9 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Transparent");
-local PFrame,RFrame,PtyFrame;
+local RaidFrames = spartan:GetModule("RaidFrames");
+local PlayerFrames = spartan:GetModule("PlayerFrames");
+local PartyFrames = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
 
 local base_plate1 = [[Interface\AddOns\SpartanUI_Style_Transparent\Images\base_plate1.tga]] -- Player and Target
@@ -1105,26 +1107,26 @@ local CreateBossFrame = function(self,unit)
 	self:EnableMouse(enable)
 	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
-			-- PFrame.boss.mover:Show();
+			-- PlayerFrames.boss.mover:Show();
 			-- DBMod.PlayerFrames.BossFrame.movement.moved = true;
-			-- PFrame.boss.mover:SetMovable(true);
-			-- PFrame.boss.mover:StartMoving();
+			-- PlayerFrames.boss.mover:SetMovable(true);
+			-- PlayerFrames.boss.mover:StartMoving();
 			
-			PFrame.boss.mover:Show();
+			PlayerFrames.boss.mover:Show();
 			DBMod.PlayerFrames.BossFrame.movement.moved = true;
 			SUI_Boss1:SetMovable(true);
 			SUI_Boss1:StartMoving();
 		end
 	end);
 	self:SetScript("OnMouseUp",function(self,button)
-		PFrame.boss.mover:Hide();
+		PlayerFrames.boss.mover:Hide();
 		SUI_Boss1:StopMovingOrSizing();
 		DBMod.PlayerFrames.BossFrame.movement.point,
 		DBMod.PlayerFrames.BossFrame.movement.relativeTo,
 		DBMod.PlayerFrames.BossFrame.movement.relativePoint,
 		DBMod.PlayerFrames.BossFrame.movement.xOffset,
 		DBMod.PlayerFrames.BossFrame.movement.yOffset = SUI_Boss1:GetPoint(SUI_Boss1:GetNumPoints())
-		PFrame:UpdateBossFramePosition();
+		PlayerFrames:UpdateBossFramePosition();
 	end);
 	
 	return self;
@@ -1312,7 +1314,7 @@ function module:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		EclipseBarFrame:SetPoint("TOPRIGHT",PFrame.player,"TOPRIGHT",157,12);
+		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
 	end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
@@ -1324,7 +1326,7 @@ function module:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		MonkHarmonyBar:SetPoint("BOTTOMLEFT",PFrame.player,"BOTTOMLEFT",40,-40);
+		MonkHarmonyBar:SetPoint("BOTTOMLEFT",PlayerFrames.player,"BOTTOMLEFT",40,-40);
 	end
 	
 	--Paladin Holy Power
@@ -1336,7 +1338,7 @@ function module:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		PaladinPowerBar:SetPoint("TOPLEFT",PFrame.player,"BOTTOMLEFT",60,12);
+		PaladinPowerBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",60,12);
 	end
 	
 	--Priest Power Frame
@@ -1348,7 +1350,7 @@ function module:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		PriestBarFrame:SetPoint("TOPLEFT",PFrame.player,"TOPLEFT",-4,-2);
+		PriestBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPLEFT",-4,-2);
 	end
 	
 	--Warlock Power Frame
@@ -1360,7 +1362,7 @@ function module:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		PFrame:WarlockPowerFrame_Relocate();
+		PlayerFrames:WarlockPowerFrame_Relocate();
 	end
 	
 	--Death Knight Runes
@@ -1372,7 +1374,7 @@ function module:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		RuneFrame:SetPoint("BOTTOM",PFrame.player,"TOP",0,20);
+		RuneFrame:SetPoint("BOTTOM",PlayerFrames.player,"TOP",0,20);
 	end
 			
 	-- relocate the AlternatePowerBar
@@ -1385,62 +1387,61 @@ function module:UpdateAltBarPositions()
 			DBMod.PlayerFrames.AltManaBar.movement.xOffset,
 			DBMod.PlayerFrames.AltManaBar.movement.yOffset);
 		else
-			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PFrame.player,"BOTTOMLEFT",40,0);
+			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,0);
 		end
 	end
 end
 
 function module:PlayerFrames()
-	local PFrame = spartan:GetModule("PlayerFrames");
 	SpartanoUF:RegisterStyle("Spartan_TransparentPlayerFrames", CreateUnitFrame);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPlayerFrames");
 	
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 
 	for a,b in pairs(FramesList) do
-		PFrame[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
+		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
 		if b == "player" then
 			if (SUI_FramesAnchor:GetParent() == UIParent) then
-				PFrame.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-80,150);
+				PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-80,150);
 			else
-				PFrame.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+				PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
 			end
-			PFrame:SetupExtras()
+			PlayerFrames:SetupExtras()
 		end
-		PFrame[b].artwork.bg:SetVertexColor(0,.8,.9,.9)
+		PlayerFrames[b].artwork.bg:SetVertexColor(0,.8,.9,.9)
 	end
 	
 	do -- Position Static Frames
 		
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
-			PFrame.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
-			PFrame.pet:SetPoint("BOTTOMRIGHT",PFrame.player,"BOTTOMLEFT",-6,4);
+			PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
+			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
 			
-			PFrame.target:SetPoint("LEFT",PFrame.player,"RIGHT",100,0);
+			PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
 			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",8,-11);
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
 			else
-				PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",-20,0);
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",-20,0);
 			end
-			PFrame.player:SetScale(DB.scale);
+			PlayerFrames.player:SetScale(DB.scale);
 			for a,b in pairs(FramesList) do
 				_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
 			end
 		else
-			PFrame.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-			PFrame.pet:SetPoint("BOTTOMRIGHT",PFrame.player,"BOTTOMLEFT",-6,4);
-			PFrame.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
+			PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
+			PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
 			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",8,-11);
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
 			else
-				PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",6,4);
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",6,4);
 			end
 		end
 		
-		PFrame.focustarget:SetPoint("BOTTOMLEFT", "SUI_focusFrame", "BOTTOMRIGHT", 5, 0);
+		PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", "SUI_focusFrame", "BOTTOMRIGHT", 5, 0);
 	end
 
-	PFrame:UpdateFocusPosition();
+	PlayerFrames:UpdateFocusPosition();
 	module:UpdateAltBarPositions();
 	
 	if DBMod.PlayerFrames.BossFrame.display == true then
@@ -1482,7 +1483,7 @@ function module:PlayerFrames()
 		boss.mover:RegisterEvent("VARIABLES_LOADED");
 		boss.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
 		
-		function PFrame:UpdateBossFramePosition()
+		function PlayerFrames:UpdateBossFramePosition()
 			if (InCombatLockdown()) then return; end
 			if DBMod.PlayerFrames.BossFrame.movement.moved then
 				SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
@@ -1495,13 +1496,12 @@ function module:PlayerFrames()
 			end
 		end
 		
-		PFrame.boss = boss;
+		PlayerFrames.boss = boss;
 	end
-	spartan.PFrame = PFrame
+	spartan.PlayerFrames = PlayerFrames
 end
 
 function module:RaidFrames()
-	local RaidFrames = spartan:GetModule("RaidFrames");
 	SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateRaidFrames);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
 	

@@ -798,32 +798,16 @@ function module:PlayerFrames()
 		end
 	end
 	
-	do -- Position Static Frames
-		-- if (SUI_FramesAnchor:GetParent() == UIParent) then
-			PFrame.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,170);
-			PFrame.pet:SetPoint("BOTTOMRIGHT",PFrame.player,"BOTTOMLEFT",-6,4);
-			
-			PFrame.target:SetPoint("LEFT",PFrame.player,"RIGHT",120,0);
-			-- if DBMod.PlayerFrames.targettarget.style == "small" then
-				PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",6,-6);
-			-- else
-				-- PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",-20,0);
-			-- end
-			PFrame.player:SetScale(DB.scale);
-			for a,b in pairs(FramesList) do
-				_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
-			end
-		-- else
-			-- PFrame.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-			-- PFrame.pet:SetPoint("BOTTOMRIGHT",PFrame.player,"BOTTOMLEFT",-6,4);
-			-- PFrame.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
-			-- if DBMod.PlayerFrames.targettarget.style == "small" then
-				-- PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",8,-11);
-			-- else
-				-- PFrame.targettarget:SetPoint("BOTTOMLEFT",PFrame.target,"BOTTOMRIGHT",6,4);
-			-- end
-		-- end
+	do -- Position Frames
+		PFrame.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,170);
+		PFrame.pet:SetPoint("RIGHT",PFrame.player,"BOTTOMLEFT",-4,0);
 		
+		PFrame.target:SetPoint("LEFT",PFrame.player,"RIGHT",120,0);
+		PFrame.targettarget:SetPoint("LEFT",PFrame.target,"BOTTOMRIGHT",4,0);
+		PFrame.player:SetScale(DB.scale);
+		for a,b in pairs(FramesList) do
+			_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+		end
 		PFrame.focustarget:SetPoint("BOTTOMLEFT", "SUI_focusFrame", "BOTTOMRIGHT", 5, 0);
 	end
 
@@ -921,6 +905,11 @@ function module:PartyFrames()
 		"columnAnchorPoint", "TOPLEFT",
 		"initial-anchor", "TOPLEFT");
 		
+	party:SetParent("SpartanUI");
+	party:SetClampedToScreen(true);
+	PartyMemberBackground.Show = function() return; end
+	PartyMemberBackground:Hide();
+	
 	party:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -60)
 	
 	return (party)

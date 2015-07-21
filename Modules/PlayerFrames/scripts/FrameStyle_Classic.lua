@@ -248,7 +248,7 @@ local CreatePlayerFrame = function(self,unit)
 	do -- setup base artwork
 		local artwork = CreateFrame("Frame",nil,self);
 		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(0); artwork:SetAllPoints(self);
+		artwork:SetFrameLevel(1); artwork:SetAllPoints(self);
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
 		artwork.bg:SetPoint("CENTER");
@@ -705,16 +705,18 @@ local CreateTargetFrame = function(self,unit)
 end
 
 local CreatePetFrame = function(self,unit)
-	self:SetWidth(210); self:SetHeight(60);
+	self:SetSize(210, 60);
 	do -- setup base artwork
 		local artwork = CreateFrame("Frame",nil,self);
 		artwork:SetFrameStrata("BACKGROUND");
 		artwork:SetFrameLevel(0); artwork:SetAllPoints(self);
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
-		artwork.bg:SetPoint("CENTER"); artwork.bg:SetTexture(base_plate3);
-		artwork.bg:SetWidth(256); artwork.bg:SetHeight(85);
+		artwork.bg:SetPoint("LEFT",self,"LEFT",-23,0);
+		artwork.bg:SetTexture(base_plate3);
+		artwork.bg:SetSize(256, 85);
 		artwork.bg:SetTexCoord(0,1,0,85/128);
+		self.artwork = artwork
 		
 		if DBMod.PlayerFrames.PetPortrait then
 			self.Portrait = CreatePortrait(self);
@@ -729,12 +731,14 @@ local CreatePetFrame = function(self,unit)
 		do -- cast bar
 			local cast = CreateFrame("StatusBar",nil,self);
 			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
-			cast:SetWidth(120); cast:SetHeight(15);
+			cast:SetSize(120,15);
 			cast:SetPoint("TOPLEFT",self,"TOPLEFT",36,-23);
 			
 			cast.Text = cast:CreateFontString();
 			spartan:FormatFont(cast.Text, 10, "Player")
-			cast.Text:SetWidth(110); cast.Text:SetHeight(11);
+			cast.Text:SetHeight(11);
+			cast.Text:SetPoint("LEFT",cast,"LEFT",0,0);
+			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-10,0);
 			cast.Text:SetJustifyH("RIGHT"); cast.Text:SetJustifyV("MIDDLE");
 			cast.Text:SetPoint("LEFT",cast,"LEFT",4,0);
 			
@@ -752,14 +756,16 @@ local CreatePetFrame = function(self,unit)
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
-			health:SetWidth(120); health:SetHeight(16);
+			health:SetSize(120, 16);
 			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetWidth(110); health.value:SetHeight(11);
-			health.value:SetJustifyH("RIGHT"); health.value:SetJustifyV("MIDDLE");
-			health.value:SetPoint("LEFT",health,"LEFT",4,0);
+			health.value:SetHeight(11);
+			health.value:SetPoint("LEFT",health,"LEFT",0,0);
+			health.value:SetPoint("RIGHT",health,"RIGHT",-8,0);
+			health.value:SetJustifyH("RIGHT");
+			health.value:SetJustifyV("MIDDLE");
 			self:Tag(health.value, TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
@@ -818,7 +824,9 @@ local CreatePetFrame = function(self,unit)
 			power:SetPoint("TOPLEFT",self.Health,"BOTTOMLEFT",0,-1);
 			
 			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.value:SetWidth(110); power.value:SetHeight(11);
+			power.value:SetHeight(11);
+			power.value:SetPoint("LEFT",power,"LEFT",0,0);
+			power.value:SetPoint("RIGHT",power,"RIGHT",-17,0);
 			power.value:SetJustifyH("RIGHT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("LEFT",power,"LEFT",4,0);
 			self:Tag(power.value, TextFormat("mana"))
@@ -835,49 +843,60 @@ local CreatePetFrame = function(self,unit)
 		end
 	end
 	do -- setup ring, icons, and text
-		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self.Portrait);
-		ring:SetFrameLevel(3);
-		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
-		ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-3);
-		ring.bg:SetTexture(base_ring3);
-		ring.bg:SetTexCoord(1,0,0,1);
-		
-		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 12, "Player")
-		self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("RIGHT");
-		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",3,-5);
-		if DBMod.PlayerFrames.showClass then
-			self:Tag(self.Name, "[SUI_ColorClass][name]");
+		if DBMod.PlayerFrames.PetPortrait then
+			local ring = CreateFrame("Frame",nil,self);
+			ring:SetFrameStrata("BACKGROUND");
+			ring:SetAllPoints(self.Portrait);
+			ring:SetFrameLevel(3);
+			ring.bg = ring:CreateTexture(nil,"BACKGROUND");
+			ring.bg:SetPoint("CENTER",ring,"CENTER",-2,-3);
+			ring.bg:SetTexture(base_ring3);
+			ring.bg:SetTexCoord(1,0,0,1);
+			
+			self.Name = ring:CreateFontString();
+			spartan:FormatFont(self.Name, 12, "Player")
+			self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("RIGHT");
+			self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",3,-5);
+			if DBMod.PlayerFrames.showClass then
+				self:Tag(self.Name, "[SUI_ColorClass][name]");
+			else
+				self:Tag(self.Name, "[name]");
+			end
+			
+			self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
+			self.Level:SetWidth(36); self.Level:SetHeight(11);
+			self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("MIDDLE");
+			self.Level:SetPoint("CENTER",ring,"CENTER",24,25);
+			self:Tag(self.Level, "[level]");
+			
+			self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
+			self.SUI_ClassIcon:SetWidth(22); self.SUI_ClassIcon:SetHeight(22);
+			self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-27,24);
+			
+			self.PvP = ring:CreateTexture(nil,"BORDER");
+			self.PvP:SetWidth(48); self.PvP:SetHeight(48);
+			self.PvP:SetPoint("CENTER",ring,"CENTER",30,-36);
+			
+			self.Happiness = ring:CreateTexture(nil,"ARTWORK");
+			self.Happiness:SetWidth(22); self.Happiness:SetHeight(22);
+			self.Happiness:SetPoint("CENTER",ring,"CENTER",-27,24);
+			
+			self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
+			self.RaidIcon:SetWidth(20); self.RaidIcon:SetHeight(20);
+			self.RaidIcon:SetAllPoints(self.Portrait);
 		else
-			self:Tag(self.Name, "[name]");
+			self.Name = self.artwork:CreateFontString();
+			spartan:FormatFont(self.Name, 12, "Player")
+			self.Name:SetHeight(12);
+			self.Name:SetJustifyH("RIGHT");
+			self.Name:SetPoint("BOTTOMLEFT",self.Castbar,"TOPLEFT",0,5);
+			self.Name:SetPoint("BOTTOMRIGHT",self.Castbar,"TOPRIGHT",0,5);
+			if DBMod.PlayerFrames.showClass then
+				self:Tag(self.Name, "[level] [SUI_ColorClass][name]");
+			else
+				self:Tag(self.Name, "[level] [name]");
+			end
 		end
-		
-		self.Level = ring:CreateFontString(nil,"BORDER","SUI_FontOutline10");
-		self.Level:SetWidth(36); self.Level:SetHeight(11);
-		self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("MIDDLE");
-		self.Level:SetPoint("CENTER",ring,"CENTER",24,25);
-		self:Tag(self.Level, "[level]");
-		
-		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		self.SUI_ClassIcon:SetWidth(22); self.SUI_ClassIcon:SetHeight(22);
-		self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-27,24);
-		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetWidth(48); self.PvP:SetHeight(48);
-		self.PvP:SetPoint("CENTER",ring,"CENTER",30,-36);
-		
-		self.Happiness = ring:CreateTexture(nil,"ARTWORK");
-		self.Happiness:SetWidth(22); self.Happiness:SetHeight(22);
-		self.Happiness:SetPoint("CENTER",ring,"CENTER",-27,24);
-		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetAllPoints(self.Portrait);
-		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetWidth(20); self.RaidIcon:SetHeight(20);
-		self.RaidIcon:SetPoint("CENTER",ring,"LEFT",-5,0);
 	end
 	do -- setup buffs and debuffs
 		self.Auras = CreateFrame("Frame",nil,self);
@@ -901,6 +920,15 @@ local CreatePetFrame = function(self,unit)
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
+	if not DBMod.PlayerFrames.PetPortrait then
+		self.artwork.bg:SetTexCoord(0,.7,0,85/128);
+		self.artwork.bg:SetSize(180, 85);
+		self:SetSize(135, 60);
+		self.Castbar:SetWidth(100)
+		self.Health:SetWidth(99)
+		self.Power:SetWidth(98)
+	end
+	self:SetScale(.87)
 	return self;
 end
 

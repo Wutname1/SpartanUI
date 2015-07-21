@@ -6,12 +6,6 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Classic");
 
 	PlayerFrames.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
-	if (SUI_FramesAnchor:GetParent() == UIParent) then
-		PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-80,150);
-	else
-		PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-	end
-	
 	PlayerFrames:SetupExtras()
 
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget"}
@@ -23,7 +17,7 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 	do -- Position Static Frames
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
 			PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-10,12);
+			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12);
 			
 			PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
 			if DBMod.PlayerFrames.targettarget.style == "small" then
@@ -37,7 +31,7 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 			end
 		else
 			PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-370,12);
+			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12);
 			PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
 			if DBMod.PlayerFrames.targettarget.style == "small" then
 				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15);
@@ -160,4 +154,4 @@ function PlayerFrames:OnEnable()
 	else
 		spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PlayerFrames();
 	end
-end 
+end
