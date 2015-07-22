@@ -949,6 +949,11 @@ local CreateToTFrame = function(self,unit)
 		end
 	end
 	do -- setup ring, icons, and text
+		self.Range = {
+			insideAlpha = 1,
+			outsideAlpha = 1/2,
+		}
+		
 		local ring = CreateFrame("Frame",nil,self);
 		ring:SetFrameStrata("BACKGROUND");
 		ring:SetPoint("TOPLEFT",self.artwork,"TOPLEFT",0,0);
@@ -1102,6 +1107,11 @@ local CreateBossFrame = function(self,unit)
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
+
+	self.Range = {
+		insideAlpha = 1,
+		outsideAlpha = 1/2,
+	}
 	
 	--Make Boss Frames Movable
 	self:EnableMouse(enable)
@@ -1210,6 +1220,11 @@ local CreateRaidFrame = function(self,unit)
 		end
 	end
 	do -- setup icons, and text
+		self.Range = {
+			insideAlpha = 1,
+			outsideAlpha = 1/2,
+		}
+		
 		local items = CreateFrame("Frame",nil,self);
 		items:SetFrameStrata("BACKGROUND");
 		items:SetAllPoints(self);
@@ -1506,10 +1521,10 @@ function module:RaidFrames()
 	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
 	
 	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-		'showPlayer', true,
-		'showRaid', true,
-		'showParty', true,
-		'showSolo', true,
+		"showRaid", DBMod.RaidFrames.showRaid,
+		"showParty", DBMod.RaidFrames.showParty,
+		"showPlayer", DBMod.RaidFrames.showPlayer,
+		"showSolo", DBMod.RaidFrames.showSolo,
 		'xoffset', 3,
 		'yOffset', -5,
 		'point', 'TOP',
@@ -1532,10 +1547,10 @@ function module:PartyFrames()
 	SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateRaidFrames);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPartyFrames");
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
-		"showRaid", false,
-		"showParty", true,
-		"showPlayer", true,
-		"showSolo", true,
+		"showRaid", DBMod.PartyFrames.showRaid,
+		"showParty", DBMod.PartyFrames.showParty,
+		"showPlayer", DBMod.PartyFrames.showPlayer,
+		"showSolo", DBMod.PartyFrames.showSolo,
 		"yOffset", -16,
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",

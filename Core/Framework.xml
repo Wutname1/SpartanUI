@@ -75,5 +75,6 @@
 		</Anchors>
 	</Frame>
 	
+	<Script file="oUF.lua" />
 	<Script file="DBSetup.lua" />
 </Ui>

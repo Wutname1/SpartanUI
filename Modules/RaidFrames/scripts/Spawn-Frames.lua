@@ -81,6 +81,25 @@ function RaidFrames:OnEnable()
 	spartan.RaidFrames.bg:SetAllPoints(spartan.RaidFrames.mover);
 	spartan.RaidFrames.bg:SetTexture(1,1,1,0.5);
 	
+	spartan.RaidFrames:EnableMouse(enable)
+	spartan.RaidFrames:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			spartan.RaidFrames.mover:Show();
+			DBMod.RaidFrames.moved = true;
+			spartan.RaidFrames:SetMovable(true);
+			spartan.RaidFrames:StartMoving();
+		end
+	end);
+	spartan.RaidFrames:SetScript("OnMouseUp",function(self,button)
+		spartan.RaidFrames.mover:Hide();
+		spartan.RaidFrames:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.RaidFrames.Anchors[k] = v
+		end
+	end);
+	
 	spartan.RaidFrames.mover:SetScript("OnEvent",function()
 		RaidFrames.locked = 1;
 		spartan.RaidFrames.mover:Hide();

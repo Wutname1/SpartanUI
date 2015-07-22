@@ -679,6 +679,9 @@ do -- Rare / Elite dragon graphic as an SpartanoUF module
 		if self.RareElite.short == true then
 			self.RareElite:SetTexCoord(0,1,0,.7);
 		end
+		if self.RareElite.small == true then
+			self.RareElite:SetTexCoord(0,1,0,.4);
+		end
 		
 		if c == "worldboss" or c == "elite" or c == "rareelite" then
 			self.RareElite:SetVertexColor(1,0.9,0,1);

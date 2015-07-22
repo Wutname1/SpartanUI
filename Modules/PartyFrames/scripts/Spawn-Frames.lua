@@ -30,6 +30,25 @@ function PartyFrames:OnEnable()
 	spartan.PartyFrame.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
 	spartan.PartyFrame.mover:Hide();
 	
+	spartan.PartyFrame:EnableMouse(enable)
+	spartan.PartyFrame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			spartan.PartyFrame.mover:Show();
+			DBMod.PartyFrames.moved = true;
+			spartan.PartyFrame:SetMovable(true);
+			spartan.PartyFrame:StartMoving();
+		end
+	end);
+	spartan.PartyFrame:SetScript("OnMouseUp",function(self,button)
+		spartan.PartyFrame.mover:Hide();
+		spartan.PartyFrame:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.PartyFrame:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.PartyFrames.Anchors[k] = v
+		end
+	end);
+	
 	function PartyFrames:UpdatePartyPosition()
 		PartyFrames.offset = DB.yoffset
 		if DBMod.PartyFrames.moved then

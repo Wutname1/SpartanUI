@@ -382,6 +382,11 @@ local MakeSmallFrame = function(self,unit)
 		end
 	end
 	do -- setup items, icons, and text
+		self.Range = {
+			insideAlpha = 1,
+			outsideAlpha = 1/2,
+		}
+		
 		local items = CreateFrame("Frame",nil,self);
 		items:SetFrameStrata("BACKGROUND");
 		items:SetAllPoints(self);
@@ -598,6 +603,11 @@ local MakeLargeFrame = function(self,unit)
 		end
 	end
 	do -- setup items, icons, and text
+		self.Range = {
+			insideAlpha = 1,
+			outsideAlpha = 1/2,
+		}
+		
 		local items = CreateFrame("Frame",nil,self);
 		items:SetFrameStrata("BACKGROUND");
 		items:SetAllPoints(self);
@@ -617,21 +627,15 @@ local MakeLargeFrame = function(self,unit)
 		self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
 		
 		self.RareElite = items.low:CreateTexture(nil,"ARTWORK", nil, -5);
-		self.RareElite:SetSize(150, 110);
-		self.RareElite:SetPoint("CENTER",items,"CENTER",-12,25);
-		self.RareElite.short = true
-		
+		self.RareElite:SetSize(150, 70);
+		self.RareElite:SetPoint("BOTTOM",self.Health,"TOP",0,0);
+		self.RareElite.small = true
 		
 		self.LFDRole = items:CreateTexture(nil,"BORDER");
 		self.LFDRole:SetSize(18, 18);
 		self.LFDRole:SetPoint("CENTER",items,"TOPLEFT",0,0);
 		self.LFDRole:SetTexture(lfdrole);
 		self.LFDRole:SetAlpha(.75);
-		
-		-- self.SUI_ClassIcon = items:CreateTexture(nil,"BORDER");
-		-- self.SUI_ClassIcon:SetSize(18,18);
-		-- self.SUI_ClassIcon:SetPoint("RIGHT",self.Name,"LEFT");
-		-- self.SUI_ClassIcon:SetAlpha(.75);
 		
 		self.PvP = items:CreateTexture(nil,"BORDER");
 		self.PvP:SetSize(25, 25);
@@ -871,10 +875,10 @@ function module:RaidFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
 	
 	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-		'showPlayer', true,
-		'showRaid', true,
-		'showParty', true,
-		'showSolo', true,
+		"showRaid", DBMod.RaidFrames.showRaid,
+		"showParty", DBMod.RaidFrames.showParty,
+		"showPlayer", DBMod.RaidFrames.showPlayer,
+		"showSolo", DBMod.RaidFrames.showSolo,
 		'xoffset', 3,
 		'yOffset', -6,
 		'point', 'TOP',
@@ -896,10 +900,10 @@ end
 function module:PartyFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
-		"showRaid", true,
-		"showParty", true,
-		"showPlayer", true,
-		"showSolo", true,
+		"showRaid", DBMod.PartyFrames.showRaid,
+		"showParty", DBMod.PartyFrames.showParty,
+		"showPlayer", DBMod.PartyFrames.showPlayer,
+		"showSolo", DBMod.PartyFrames.showSolo,
 		"yOffset", -15,
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",
