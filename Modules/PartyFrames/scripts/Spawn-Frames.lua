@@ -17,6 +17,7 @@ function PartyFrames:OnEnable()
 	spartan.PartyFrame.mover:SetPoint("TOPLEFT",spartan.PartyFrame,"TOPLEFT");
 	spartan.PartyFrame.mover:SetPoint("BOTTOMRIGHT",spartan.PartyFrame,"BOTTOMRIGHT");
 	spartan.PartyFrame.mover:EnableMouse(true);
+	spartan.PartyFrame.mover:SetFrameStrata("LOW");
 	
 	spartan.PartyFrame.bg = spartan.PartyFrame.mover:CreateTexture(nil,"BACKGROUND");
 	spartan.PartyFrame.bg:SetAllPoints(spartan.PartyFrame.mover);

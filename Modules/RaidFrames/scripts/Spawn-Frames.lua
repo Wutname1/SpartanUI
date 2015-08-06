@@ -76,10 +76,7 @@ function RaidFrames:OnEnable()
 	spartan.RaidFrames.mover:SetPoint("TOPLEFT",spartan.RaidFrames,"TOPLEFT");
 	spartan.RaidFrames.mover:SetPoint("BOTTOMRIGHT",spartan.RaidFrames,"BOTTOMRIGHT");
 	spartan.RaidFrames.mover:EnableMouse(true);
-	
-	spartan.RaidFrames.bg = spartan.RaidFrames.mover:CreateTexture(nil,"BACKGROUND");
-	spartan.RaidFrames.bg:SetAllPoints(spartan.RaidFrames.mover);
-	spartan.RaidFrames.bg:SetTexture(1,1,1,0.5);
+	spartan.RaidFrames.mover:SetFrameStrata("LOW");
 	
 	spartan.RaidFrames:EnableMouse(enable)
 	spartan.RaidFrames:SetScript("OnMouseDown",function(self,button)
@@ -99,6 +96,10 @@ function RaidFrames:OnEnable()
 			DBMod.RaidFrames.Anchors[k] = v
 		end
 	end);
+	
+	spartan.RaidFrames.mover.bg = spartan.RaidFrames.mover:CreateTexture(nil,"BACKGROUND");
+	spartan.RaidFrames.mover.bg:SetAllPoints(spartan.RaidFrames.mover);
+	spartan.RaidFrames.mover.bg:SetTexture(1,1,1,0.5);
 	
 	spartan.RaidFrames.mover:SetScript("OnEvent",function()
 		RaidFrames.locked = 1;

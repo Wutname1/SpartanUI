@@ -92,8 +92,9 @@ function module:OnEnable()
 		end);
 
 		if spartan:GetModule("Artwork_Core", true) and DB.Styles[DBMod.Artwork.Style].Movable.MinimapMoved and DB.Styles[DBMod.Artwork.Style].Movable.Minimap and DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords ~= nil then
+			local a,b,c,d,e = unpack(DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords) -- do this as the parent can get corrupted
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint(unpack(DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords))
+			Minimap:SetPoint(a,UIParent,c,d,e)
 		elseif DB.MiniMap.Position ~= nil then
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint(unpack(DB.MiniMap.Position))
@@ -127,6 +128,7 @@ function module:OnEnable()
 	MinimapUpdater:RegisterEvent("MINIMAP_PING")
 	MinimapUpdater:RegisterEvent("PLAYER_REGEN_DISABLED")
 	MinimapUpdater:RegisterEvent("PLAYER_REGEN_ENABLED")
+	module:BuildOptions()
 end
 
 function module:ModifyMinimapLayout()
@@ -435,4 +437,13 @@ function module:updateButtons()
 	DB.MiniMap.SUIMapChangesActive = false
 end
 
+function module:BuildOptions()
+	spartan.opt.args["General"].args["ModSetting"].args["Minimap"] = {type="group",name=L["Minimap"],
+		args = {
+		}
+	}
+end
 
+function module:HideOptions()
+	spartan.opt.args["General"].args["ModSetting"].args["Minimap"].disabled = true
+end

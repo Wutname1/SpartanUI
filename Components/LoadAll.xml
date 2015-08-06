@@ -3,4 +3,5 @@
 	<Script file="Buffs.lua" />
 	<Script file="Chatbox.lua" />
 	<Script file="Minimap.lua" />
+	<Script file="Objectives.lua" />
 </Ui>

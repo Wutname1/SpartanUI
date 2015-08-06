@@ -295,7 +295,7 @@ function module:OnInitialize()
 	end
 
 	-- List Components
-	for name, module in spartan:IterateModules() do
+	for name, submodule in spartan:IterateModules() do
 		if (string.match(name, "Component_")) then
 			local RealName = string.sub(name, 11)
 			if DB.EnabledComponents == nil then DB.EnabledComponents = {} end
@@ -308,6 +308,7 @@ function module:OnInitialize()
 				get = function(info) return DB.EnabledComponents[RealName] end,
 				set = function(info,val) DB.EnabledComponents[RealName] = val; spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; end,
 			}
+			
 		end
 	end
 end

@@ -103,6 +103,7 @@ local SpawnUnitFrame = function(self,unit)
 			self.Health.bg = Background;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
+			self.Health.colorClass = true;
 			self.Health.colorHealth = true;
 			self.Health.colorSmooth = true;
 			

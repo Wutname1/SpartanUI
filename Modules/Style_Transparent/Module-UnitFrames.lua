@@ -2,7 +2,6 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Transparent");
-local RaidFrames = spartan:GetModule("RaidFrames");
 local PlayerFrames = spartan:GetModule("PlayerFrames");
 local PartyFrames = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
