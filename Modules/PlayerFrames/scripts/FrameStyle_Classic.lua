@@ -113,7 +113,7 @@ end
 local function CreatePortrait(self)
 	if DBMod.PlayerFrames.Portrait3D then			
 		local Portrait = CreateFrame('PlayerModel', nil, self)
-		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
+		Portrait:SetScript("OnShow", function(self) self:SetCamera(1) end)
 		Portrait.type = "3D"
 		if DBMod.PlayerFrames.Portrait3D then
 			Portrait.bg2 = Portrait:CreateTexture(nil,"BACKGROUND");
@@ -1770,7 +1770,8 @@ local CreateUnitFrame = function(self,unit)
 		self:SetParent(SUI_FramesAnchor);
 	end
 	
-	self:SetFrameStrata("BACKGROUND"); self:SetFrameLevel(1);
+	self:SetFrameStrata("BACKGROUND");
+	self:SetFrameLevel(1);
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	self:RegisterForClicks("anyup");

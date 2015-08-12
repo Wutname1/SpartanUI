@@ -51,6 +51,10 @@ local ObjTrackerUpdate = function()
 		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:Show()
 		ObjectiveTrackerFrame.BlocksFrame.FadeOut:Stop();
 		ObjectiveTrackerFrame.BlocksFrame.FadeIn:Play();
+		
+		for i, child in ipairs({ObjectiveTrackerFrame.BlocksFrame:GetChildren()}) do
+			-- print(child)
+		end
 	end
 end
 

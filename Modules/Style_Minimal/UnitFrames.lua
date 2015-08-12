@@ -679,9 +679,52 @@ end
 
 local CreateUnitFrame = function(self,unit)
 	self.menu = menu;
-	self:RegisterForClicks("AnyDown");
 	
+	self:RegisterForClicks("anyup");
+	self:SetAttribute("*type2", "menu");
 	self:EnableMouse(enable)
+	
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	self:RegisterForClicks("anyup");
+	
+	self.colors = module.colors;
+	
+	return ((unit == "player" and MakeLargeFrame(self,unit))
+	or (unit == "target" and MakeLargeFrame(self,unit))
+	or MakeSmallFrame(self,unit));
+end
+
+local CreateUnitFrameParty = function(self,unit)
+	frame = CreateUnitFrame(self,unit)
+	-- frame.menu = menu;
+	frame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			spartan.PartyFrames.mover:Show();
+			DBMod.PartyFrames.moved = true;
+			spartan.PartyFrames:SetMovable(true);
+			spartan.PartyFrames:StartMoving();
+		end
+	end);
+	frame:SetScript("OnMouseUp",function(self,button)
+		spartan.PartyFrames.mover:Hide();
+		spartan.PartyFrames:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.PartyFrames:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.PartyFrames.Anchors[k] = v
+		end
+	end);
+	
+	return frame
+end
+
+local CreateUnitFrameRaid = function(self,unit)
+	self = MakeSmallFrame(self,unit)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	
 	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
 			spartan.RaidFrames.mover:Show();
@@ -700,15 +743,12 @@ local CreateUnitFrame = function(self,unit)
 		end
 	end);
 	
-	self:SetAttribute("*type2", "menu");
-	self.colors = module.colors;
-	
-	return ((unit == "player" and MakeLargeFrame(self,unit))
-	or (unit == "target" and MakeLargeFrame(self,unit))
-	or MakeSmallFrame(self,unit));
+	return self
 end
 
 SpartanoUF:RegisterStyle("Spartan_MinimalFrames", CreateUnitFrame);
+SpartanoUF:RegisterStyle("Spartan_MinimalFrames_Party", CreateUnitFrameParty);
+SpartanoUF:RegisterStyle("Spartan_MinimalFrames_Raid", CreateUnitFrameRaid);
 
 function module:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
@@ -850,18 +890,6 @@ function module:PlayerFrames()
 			end
 		end
 		
-		-- boss.mover = CreateFrame("Frame");
-		-- boss.mover:SetSize(5, 5);
-		-- boss.mover:SetPoint("TOPLEFT",SUI_Boss1,"TOPLEFT");
-		-- boss.mover:SetPoint("TOPRIGHT",SUI_Boss1,"TOPRIGHT");
-		-- boss.mover:SetPoint("BOTTOMLEFT",'SUI_Boss'..MAX_BOSS_FRAMES,"BOTTOMLEFT");
-		-- boss.mover:SetPoint("BOTTOMRIGHT",'SUI_Boss'..MAX_BOSS_FRAMES,"BOTTOMRIGHT");
-		-- boss.mover:EnableMouse(true);
-		
-		-- boss.mover:Hide();
-		-- boss.mover:RegisterEvent("VARIABLES_LOADED");
-		-- boss.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
-		
 		function PFrame:UpdateBossFramePosition()
 			if (InCombatLockdown()) then return; end
 			if DBMod.PlayerFrames.BossFrame.movement.moved then
@@ -881,7 +909,7 @@ function module:PlayerFrames()
 end
 
 function module:RaidFrames()
-	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
+	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames_Raid");
 	
 	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
 		"showRaid", DBMod.RaidFrames.showRaid,
@@ -907,7 +935,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
-	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
+	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames_Party");
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,
 		"showParty", DBMod.PartyFrames.showParty,

@@ -283,10 +283,10 @@ function RaidFrames:Classic()
 	SpartanoUF:SetActiveStyle("Spartan_RaidFrames_Classic");
 	if DBMod.RaidFrames.mode == "group" then
 		raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-			'showPlayer', true,
-			'showRaid', true,
-			'showParty', false,
-			'showSolo', true,
+			"showRaid", DBMod.RaidFrames.showRaid,
+			"showParty", DBMod.RaidFrames.showParty,
+			"showPlayer", DBMod.RaidFrames.showPlayer,
+			"showSolo", DBMod.RaidFrames.showSolo,
 			'xoffset', 3,
 			'yOffset', -5,
 			'point', 'TOP',

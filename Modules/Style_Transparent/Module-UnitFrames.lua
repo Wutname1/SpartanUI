@@ -1273,7 +1273,6 @@ local CreateRaidFrame = function(self,unit)
 	return self;
 end
 
-
 local CreateUnitFrame = function(self,unit)
 	self.menu = menu;
 	
@@ -1298,8 +1297,11 @@ local CreateUnitFrame = function(self,unit)
 	or CreateBossFrame(self,unit));
 end
 
-local CreateRaidFrames = function(self,unit)
+local CreatespecFrames = function(self,unit)
 	self.menu = menu;
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
 	
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
 		self:SetParent(UIParent);
@@ -1309,13 +1311,58 @@ local CreateRaidFrames = function(self,unit)
 	
 	self:SetFrameStrata("BACKGROUND");
 	self:SetFrameLevel(1);
-	self:RegisterForClicks("anyup");
-	self:SetAttribute("*type2", "menu");
-	self.colors = module.colors;
 	
 	return CreateRaidFrame(self,unit);
 end
 
+local CreateUnitFrameParty = function(self,unit)	
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			spartan.PartyFrames.mover:Show();
+			DBMod.PartyFrames.moved = true;
+			spartan.PartyFrames:SetMovable(true);
+			spartan.PartyFrames:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		spartan.PartyFrames.mover:Hide();
+		spartan.PartyFrames:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.PartyFrames:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.PartyFrames.Anchors[k] = v
+		end
+	end);
+	
+	return CreatespecFrames(self,unit)
+end
+
+local CreateUnitFrameRaid = function(self,unit)
+	self = CreateRaidFrame(self,unit)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			spartan.RaidFrames.mover:Show();
+			DBMod.RaidFrames.moved = true;
+			spartan.RaidFrames:SetMovable(true);
+			spartan.RaidFrames:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		spartan.RaidFrames.mover:Hide();
+		spartan.RaidFrames:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.RaidFrames.Anchors[k] = v
+		end
+	end);
+	
+	return self
+end
 
 function module:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
@@ -1516,7 +1563,7 @@ function module:PlayerFrames()
 end
 
 function module:RaidFrames()
-	SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateRaidFrames);
+	SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateUnitFrameRaid);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
 	
 	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
@@ -1543,7 +1590,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
-	SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateRaidFrames);
+	SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateUnitFrameParty);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPartyFrames");
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,
