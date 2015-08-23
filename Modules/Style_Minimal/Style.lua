@@ -6,6 +6,10 @@ local module = spartan:GetModule("Style_Minimal");
 local InitRan = false
 function module:OnInitialize()
 	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["Minimal"].disabled = false
+	spartan.opt.args["General"].args["style"].args["Artwork"].args["Minimal"].disabled = false
+	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Minimal"].disabled = false
+	spartan.opt.args["General"].args["style"].args["PartyFrames"].args["Minimal"].disabled = false
+	spartan.opt.args["General"].args["style"].args["RaidFrames"].args["Minimal"].disabled = false
 	if (DBMod.Artwork.Style == "Minimal") then
 		module:Init()
 	end

@@ -8,7 +8,6 @@ local RuleList = {"Rule1", "Rule2", "Rule3"}
 
 local HideFrame = function()
 	if ObjectiveTrackerFrame.BlocksFrame:GetAlpha() == 0 then
-		ObjectiveTrackerFrame.BlocksFrame:Hide()
 		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:Hide()
 	end
 end
@@ -47,14 +46,9 @@ local ObjTrackerUpdate = function()
 		ObjectiveTrackerFrame.BlocksFrame.FadeOut:Play();
 		C_Timer.After(1, HideFrame)
 	elseif FadeIn and ObjectiveTrackerFrame.BlocksFrame:GetAlpha() == 0 and not FadeOut then
-		ObjectiveTrackerFrame.BlocksFrame:Show()
 		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:Show()
 		ObjectiveTrackerFrame.BlocksFrame.FadeOut:Stop();
 		ObjectiveTrackerFrame.BlocksFrame.FadeIn:Play();
-		
-		for i, child in ipairs({ObjectiveTrackerFrame.BlocksFrame:GetChildren()}) do
-			-- print(child)
-		end
 	end
 end
 

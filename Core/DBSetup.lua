@@ -291,6 +291,7 @@ function module:OnInitialize()
 			if DBMod.RaidFrames.Style == nil then DBMod.RaidFrames.Style = DBMod.Artwork.Style; end
 			if DBMod.PlayerFrames.PetPortrait == nil then DBMod.PlayerFrames.PetPortrait = true end
 			if DBMod.PlayerFrames.ClassBar.scale == nil then DBMod.PlayerFrames.ClassBar.scale = 1 end
+			if DBMod.PlayerFrames.Style == "theme" then DBMod.PlayerFrames.Style = DBMod.Artwork.Style end
 		end
 	end
 end

@@ -7,6 +7,10 @@ local module = spartan:GetModule("Style_Transparent");
 local InitRan = false
 function module:OnInitialize()
 	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["Transparent"].disabled = false
+	spartan.opt.args["General"].args["style"].args["Artwork"].args["Transparent"].disabled = false
+	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Transparent"].disabled = false
+	spartan.opt.args["General"].args["style"].args["PartyFrames"].args["Transparent"].disabled = false
+	spartan.opt.args["General"].args["style"].args["RaidFrames"].args["Transparent"].disabled = false
 	if (DBMod.Artwork.Style == "Transparent") then
 		module:Init()
 	end

@@ -37,7 +37,6 @@ function module:OnInitialize()
 			OverallStyle = { name = "", type = "group", inline=true,order=10, args = {
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
-					-- imageCoords=function() return {0,1,0,1} end,
 					func = function()
 						DBMod.Artwork.Style = "Classic";
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
@@ -69,13 +68,109 @@ function module:OnInitialize()
 					end
 				}
 			}},
+			
+			Artwork = {type="group",name=L["Artwork"],order=100,args = {
+				Classic = {name = "Classic", type="execute",
+					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
+					func = function()
+						DBMod.Artwork.Style = "Classic";
+						spartan:GetModule("Style_Classic"):SetupProfile();
+						ReloadUI(); end
+				},
+				Transparent = {name = "Transparent", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
+					func = function()
+						DBMod.Artwork.Style = "Transparent";
+						spartan:GetModule("Style_Transparent"):SetupProfile();
+						ReloadUI();
+					end
+				},
+				Minimal = {name = "Minimal", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
+					func = function()
+						DBMod.Artwork.Style = "Minimal";
+						spartan:GetModule("Style_Minimal"):SetupProfile();
+						ReloadUI();
+					end
+				}
+			}},
+			
 			PlayerFrames = {type="group",name=L["PlayerFrames"],order=100,args = {
+				Classic = {name = "Classic", type="execute",
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_PlayerFrames", 120, 60 end,
+					imageCoords=function() return {0,.5,.5,1} end,
+					func = function()
+						DBMod.PlayerFrames.Style = "Classic";
+						ReloadUI(); end
+				},
+				Transparent = {name = "Transparent", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_PlayerFrames", 120, 60 end,
+					imageCoords=function() return {.5,1,0,.5} end,
+					func = function()
+						DBMod.PlayerFrames.Style = "Transparent";
+						ReloadUI();
+					end
+				},
+				Minimal = {name = "Minimal", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_PlayerFrames", 120, 60 end,
+					imageCoords=function() return {0,.5,0,.5} end,
+					func = function()
+						DBMod.PlayerFrames.Style = "Minimal";
+						ReloadUI();
+					end
+				}
 			}},
 			
 			PartyFrames = {type="group",name=L["PartyFrames"],order=200,args = {
+				Classic = {name = "Classic", type="execute",
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_PlayerFrames", 120, 60 end,
+					imageCoords=function() return {0,.5,.5,1} end,
+					func = function()
+						DBMod.PartyFrames.Style = "Classic";
+						ReloadUI(); end
+				},
+				Transparent = {name = "Transparent", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_PlayerFrames", 120, 60 end,
+					imageCoords=function() return {.5,1,0,.5} end,
+					func = function()
+						DBMod.PartyFrames.Style = "Transparent";
+						ReloadUI();
+					end
+				},
+				Minimal = {name = "Minimal", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal_LargeFrame", 120, 60 end,
+					-- imageCoords=function() return {0,.5,0,.5} end,
+					func = function()
+						DBMod.PartyFrames.Style = "Minimal";
+						ReloadUI();
+					end
+				}
 			}},
 			
 			RaidFrames = {type="group",name=L["RaidFrames"],order=300,args = {
+				Classic = {name = "Classic", type="execute",
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_PlayerFrames", 120, 60 end,
+					imageCoords=function() return {0,.5,.5,1} end,
+					func = function()
+						DBMod.RaidFrames.Style = "Classic";
+						ReloadUI(); end
+				},
+				Transparent = {name = "Transparent", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent_RaidFrame", 120, 60 end,
+					imageCoords=function() return {.25,.75,.25,.75} end,
+					func = function()
+						DBMod.RaidFrames.Style = "Transparent";
+						ReloadUI();
+					end
+				},
+				Minimal = {name = "Minimal", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal_SmallFrame", 120, 60 end,
+					imageCoords=function() return {.25,.75,.25,.75} end,
+					func = function()
+						DBMod.RaidFrames.Style = "Minimal";
+						ReloadUI();
+					end
+				}
 			}},
 			
 		}

@@ -145,13 +145,52 @@ function PlayerFrames:SUI_PlayerFrames_Plain()
 end
 
 function PlayerFrames:OnEnable()
-	if (DBMod.PlayerFrames.Style == "theme") and (DBMod.Artwork.Style ~= "Classic") then
-		spartan:GetModule("Style_" .. DBMod.Artwork.Style):PlayerFrames();
-	elseif (DBMod.PlayerFrames.Style == "Classic") or (DBMod.Artwork.Style == "Classic") then
+	if (DBMod.PlayerFrames.Style == "Classic") then
 		PlayerFrames:SUI_PlayerFrames_Classic();
 	elseif (DBMod.PlayerFrames.Style == "plain") then
 		PlayerFrames:SUI_PlayerFrames_Plain();
 	else
 		spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PlayerFrames();
+	end
+	
+	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
+	for a,b in pairs(FramesList) do
+		PlayerFrames[b].mover = CreateFrame("Frame");
+		PlayerFrames[b].mover:SetSize(20, 20);
+		PlayerFrames[b].mover:SetPoint("TOPLEFT",PlayerFrames[b],"TOPLEFT");
+		PlayerFrames[b].mover:SetPoint("BOTTOMRIGHT",PlayerFrames[b],"BOTTOMRIGHT");
+		PlayerFrames[b].mover:EnableMouse(true);
+		PlayerFrames[b].mover:SetFrameStrata("LOW");
+		
+		PlayerFrames[b]:EnableMouse(enable)
+		PlayerFrames[b]:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" and IsAltKeyDown() then
+				PlayerFrames[b].mover:Show();
+				DBMod.PlayerFrames[b].moved = true;
+				PlayerFrames[b]:SetMovable(true);
+				PlayerFrames[b]:StartMoving();
+			end
+		end);
+		PlayerFrames[b]:SetScript("OnMouseUp",function(self,button)
+			PlayerFrames[b].mover:Hide();
+			PlayerFrames[b]:StopMovingOrSizing();
+			local Anchors = {}
+			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PlayerFrames[b]:GetPoint()
+			for k,v in pairs(Anchors) do
+				DBMod.PlayerFrames[b].Anchors[k] = v
+			end
+		end);
+		
+		PlayerFrames[b].mover.bg = PlayerFrames[b].mover:CreateTexture(nil,"BACKGROUND");
+		PlayerFrames[b].mover.bg:SetAllPoints(PlayerFrames[b].mover);
+		PlayerFrames[b].mover.bg:SetTexture(1,1,1,0.5);
+		
+		PlayerFrames[b].mover:SetScript("OnEvent",function()
+			PlayerFrames.locked = 1;
+			PlayerFrames[b].mover:Hide();
+		end);
+		PlayerFrames[b].mover:RegisterEvent("VARIABLES_LOADED");
+		PlayerFrames[b].mover:RegisterEvent("PLAYER_REGEN_DISABLED");
+		PlayerFrames[b].mover:Hide();
 	end
 end
