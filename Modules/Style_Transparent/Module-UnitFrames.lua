@@ -416,6 +416,18 @@ local CreatePlayerFrame = function(self,unit)
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 			
+		   local DruidMana = CreateFrame("StatusBar", nil, self)
+			DruidMana:SetSize(self:GetWidth(), 3);
+			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
+		   
+		   -- Add a background
+		   local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+		   Background:SetAllPoints(DruidMana)
+		   Background:SetTexture(1, 1, 1, .5)
+		   
+		   -- Register it with oUF
+		   self.DruidMana = DruidMana
+		   self.DruidMana.bg = Background
 		end
 		do --Special Icons/Bars
 			local playerClass = select(2, UnitClass("player"))

@@ -266,10 +266,12 @@ function module:OnInitialize()
 				DB.MiniMap.Moved = false
 				DB.MiniMap.Position = nil
 			end
-			if DB.Styles.Classic.Artwork == nil then DB.Styles.Classic.Artwork = true end
-			if DB.Styles.Classic.PlayerFrames == nil then DB.Styles.Classic.PlayerFrames = true end
-			if DB.Styles.Classic.PartyFrames == nil then DB.Styles.Classic.PartyFrames = true end
-			if DB.Styles.Classic.RaidFrames == nil then DB.Styles.Classic.RaidFrames = false end
+			if DB.Styles.Classic.Artwork == true then
+				DB.Styles.Classic.Artwork = {}
+				DB.Styles.Classic.PlayerFrames = {}
+				DB.Styles.Classic.PartyFrames = {}
+				DB.Styles.Classic.RaidFrames = {}
+			end
 			if DB.Styles.Classic.Movable == nil then
 				DB.Styles.Classic.Movable = {
 					Minimap = false,
@@ -278,13 +280,13 @@ function module:OnInitialize()
 					RaidFrames = true,
 				}
 			end
-			if DB.MiniMap.MouseIsOver == nil then DB.MiniMap.MouseIsOver = false; end
 			if DB.Styles.Classic.Minimap == nil then
 				Minimap = {
 					shape = "circle",
 					size = {width = 140, height = 140}
 				}
 			end
+			if DB.MiniMap.MouseIsOver == nil then DB.MiniMap.MouseIsOver = false; end
 			if DB.EnabledComponents == nil then DB.EnabledComponents = {} end
 			if DBMod.PlayerFrames.Style == nil then DBMod.PlayerFrames.Style = DBMod.Artwork.Style; end
 			if DBMod.PartyFrames.Style == nil then DBMod.PartyFrames.Style = DBMod.Artwork.Style; end
@@ -292,6 +294,15 @@ function module:OnInitialize()
 			if DBMod.PlayerFrames.PetPortrait == nil then DBMod.PlayerFrames.PetPortrait = true end
 			if DBMod.PlayerFrames.ClassBar.scale == nil then DBMod.PlayerFrames.ClassBar.scale = 1 end
 			if DBMod.PlayerFrames.Style == "theme" then DBMod.PlayerFrames.Style = DBMod.Artwork.Style end
+			if DBMod.PlayerFrames.pet.moved == nil then
+				DBMod.PlayerFrames.pet.moved=false
+				DBMod.PlayerFrames.target.moved=false
+				DBMod.PlayerFrames.targettarget.moved=false
+				DBMod.PlayerFrames.focus.moved=false
+				DBMod.PlayerFrames.focustarget.moved=false
+				DBMod.PlayerFrames.player.moved=false
+			end
+			if DBMod.PlayerFrames.boss == nil then DBMod.PlayerFrames.boss.moved=false end
 		end
 	end
 end

@@ -9,10 +9,10 @@ local module = spartan:NewModule("Style_Minimal");
 --Now lets setup the initial Database settings
 if DB.Styles.Minimal == nil then
 	DB.Styles.Minimal = {
-		Artwork = true,
-		PlayerFrames = true,
-		PartyFrames = true,
-		RaidFrames = false,
+		Artwork = {},
+		PlayerFrames = {},
+		PartyFrames = {},
+		RaidFrames = {},
 		Movable = {
 			Minimap = true,
 			PlayerFrames = true,
@@ -28,6 +28,12 @@ if DB.Styles.Minimal == nil then
 end
 
 --Update from old versions
+if DB.Styles.Minimal == true then
+		DB.Styles.Minimal.Artwork = {}
+		DB.Styles.Minimal.PlayerFrames = {}
+		DB.Styles.Minimal.PartyFrames = {}
+		DB.Styles.Minimal.RaidFrames = {}
+end
 if DB.Styles.Minimal.Movable == nil then
 	DB.Styles.Minimal.Movable = {
 		Minimap = true,

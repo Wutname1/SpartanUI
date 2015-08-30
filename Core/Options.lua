@@ -297,21 +297,28 @@ function module:OnInitialize()
 	};
 	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
-			ResetDB			= {name = L["ResetDatabase"], type = "execute", width= "double",order=1, func = function() spartan.db:ResetDB(); ReloadUI(); end},
-			ResetArtwork	= {name = L["Reset ActionBars"], type = "execute", width= "double",order=2, func = function() DBMod.Artwork.FirstLoad = true; spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile(); ReloadUI(); end},
+			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() spartan.db:ResetDB(); ReloadUI(); end},
+			ResetArtwork	= {name = L["Reset ActionBars"], type = "execute", order=2, func = function() DBMod.Artwork.FirstLoad = true; spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile(); ReloadUI(); end},
+			ResetMovedFrames	= {name = L["Reset ActionBars"], type = "execute", order=3, func = function()
 			
+			end},
+			
+			line1 = {name="",type="header",order = 49},
+			ver1 = {name="SUI Version: " .. spartan.SpartanVer,type="description",order = 50,fontSize="large"},
+			ver2 = {name="SUI Build: " .. spartan.CurseVersion,type="description",order = 51,fontSize="large"},
+			
+			line2 = {name="",type="header",order = 99},
 			navigationissues = {name=L["HaveQuestion"],type="description",order = 100,fontSize="large"},
 			navigationissues2 = {name="    -|cff6666FF http://faq.spartanui.net/",type="description",order = 101,fontSize="medium"},
 			
 			bugsandfeatures = {name=L["Bugs and Feature Requests"] .. ":",type="description",order = 200,fontSize="large"},
 			bugsandfeatures2 = {name="     -|cff6666FF http://bugs.spartanui.net/",type="description",order = 201,fontSize="medium"},
-			bugsandfeatures3 = {name="     -|cff6666FF http://wow.curseforge.com/addons/spartan-ui/tickets/",type="description",order = 202,fontSize="medium"},
 			
 			
-			line = {name="",type="header",order = 900},
+			line3 = {name="",type="header",order = 900},
 			description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
-			dataDump = {name=L["Export"],type="input",multiline=10,width="full",order=990,get = function(info) return module:enc(module:ExportData()) end},
-			description = {name=L["HelpStringDesc2"],type="description",order = 999,fontSize="small"},
+			description = {name=L["HelpStringDesc2"],type="description",order = 902,fontSize="small"},
+			dataDump = {name=L["Export"],type="input",multiline=15,width="full",order=993,get = function(info) return module:enc(module:ExportData()) end},
 			}
 		}
 	
@@ -409,21 +416,21 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	
 	if not spartan:GetModule("Artwork_Core", true) then
 		spartan.opt.args["General"].args["style"].args["OverallStyle"].disabled = true
 	end
-	
-	print(ModsLoaded.Artwork)
 end
 
 function module:ExportData()
 	--Get Character Data
     local CharData = {
 		Region = GetCurrentRegion(),
+		class = UnitClass("player"),
+		Faction = UnitFactionGroup("player"),
 		PlayerName = UnitName("player"),
 		PlayerLevel = UnitLevel("player"),
-		ActiveSpec = GetSpecializationInfo(GetSpecialization())
+		ActiveSpec = GetSpecializationInfo(GetSpecialization()),
+		Zone = GetRealZoneText() ..  " - " .. GetSubZoneText()
 	}
 	
 	--Generate List of Addons
@@ -438,10 +445,14 @@ function module:ExportData()
 	
 	return "$SUI." .. spartan.SpartanVer .. "-" .. spartan.CurseVersion
 		.. "$C." .. module:FlatenTable(CharData)
-		-- .. "$DB." .. module:FlatenTable(DB)
-		.. "$DBMod." .. module:FlatenTable(DBMod)
+		.. "$Artwork.Style." .. DBMod.Artwork.Style
+		.. "$PlayerFrames.Style." .. DBMod.PlayerFrames.Style
+		.. "$PartyFrames.Style." .. DBMod.PartyFrames.Style
+		.. "$RaidFrames.Style." .. DBMod.RaidFrames.Style
 		.. "$Addons." .. module:FlatenTable(AddonsInstalled)
 		.. "..$END$.."
+		-- .. "$DB." .. module:FlatenTable(DB)
+		-- .. "$DBMod." .. module:FlatenTable(DBMod)
 end
 
 function module:FlatenTable(input)

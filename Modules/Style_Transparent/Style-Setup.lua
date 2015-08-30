@@ -9,10 +9,10 @@ local module = spartan:NewModule("Style_Transparent");
 --Now lets setup the initial Database settings
 if DB.Styles.Transparent == nil then
 	DB.Styles.Transparent = {
-		Artwork = true,
-		PlayerFrames = true,
-		PartyFrames = true,
-		RaidFrames = false,
+		Artwork = {},
+		PlayerFrames = {},
+		PartyFrames = {},
+		RaidFrames = {},
 		Movable = {
 			Minimap = false,
 			PlayerFrames = true,
@@ -28,6 +28,12 @@ if DB.Styles.Transparent == nil then
 end
 
 --Update from old versions
+if DB.Styles.Minimal == true then
+		DB.Styles.Minimal.Artwork = {}
+		DB.Styles.Minimal.PlayerFrames = {}
+		DB.Styles.Minimal.PartyFrames = {}
+		DB.Styles.Minimal.RaidFrames = {}
+end
 if DB.Styles.Transparent.Movable == nil or DB.Styles.Transparent.Movable then
 	DB.Styles.Transparent.Movable = {
 		Minimap = Minimap,

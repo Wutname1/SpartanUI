@@ -1544,23 +1544,6 @@ local CreateFocusFrame = function(self,unit)
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	
-	--Make Focus Movable
-	self:EnableMouse(enable)
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			DBMod.PlayerFrames.focus.movement.moved = true;
-			self:SetMovable(true);
-			self:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		self:StopMovingOrSizing();
-		DBMod.PlayerFrames.focus.movement.point,
-		DBMod.PlayerFrames.focus.movement.relativeTo,
-		DBMod.PlayerFrames.focus.movement.relativePoint,
-		DBMod.PlayerFrames.focus.movement.xOffset,
-		DBMod.PlayerFrames.focus.movement.yOffset = self:GetPoint(self:GetNumPoints())
-	end);
 	return self;
 end
 
@@ -1721,45 +1704,40 @@ local CreateBossFrame = function(self,unit)
 	self.ColorUpdate = PostUpdateColor;
 	
 	--Make Boss Frames Movable
-	self:EnableMouse(enable)
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
+	-- self:EnableMouse(enable)
+	-- self:SetScript("OnMouseDown",function(self,button)
+		-- if button == "LeftButton" and IsAltKeyDown() then
 			-- addon.boss.mover:Show();
 			-- DBMod.PlayerFrames.BossFrame.movement.moved = true;
-			-- addon.boss.mover:SetMovable(true);
-			-- addon.boss.mover:StartMoving();
-			
-			addon.boss.mover:Show();
-			DBMod.PlayerFrames.BossFrame.movement.moved = true;
-			SUI_Boss1:SetMovable(true);
-			SUI_Boss1:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		addon.boss.mover:Hide();
-		SUI_Boss1:StopMovingOrSizing();
-		DBMod.PlayerFrames.BossFrame.movement.point,
-		DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-		DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-		DBMod.PlayerFrames.BossFrame.movement.xOffset,
-		DBMod.PlayerFrames.BossFrame.movement.yOffset = SUI_Boss1:GetPoint(SUI_Boss1:GetNumPoints())
-		addon:UpdateBossFramePosition();
-	end);
+			-- SUI_Boss1:SetMovable(true);
+			-- SUI_Boss1:StartMoving();
+		-- end
+	-- end);
+	-- self:SetScript("OnMouseUp",function(self,button)
+		-- addon.boss.mover:Hide();
+		-- SUI_Boss1:StopMovingOrSizing();
+		-- DBMod.PlayerFrames.BossFrame.movement.point,
+		-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
+		-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
+		-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
+		-- DBMod.PlayerFrames.BossFrame.movement.yOffset = SUI_Boss1:GetPoint(SUI_Boss1:GetNumPoints())
+		-- addon:UpdateBossFramePosition();
+	-- end);
 	
 	return self;
 end
 
-function addon:UpdateBossFramePosition()
-	if DBMod.PlayerFrames.BossFrame.movement.moved then
-		SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
-		DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-		DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-		DBMod.PlayerFrames.BossFrame.movement.xOffset,
-		DBMod.PlayerFrames.BossFrame.movement.yOffset);
-	else
-		SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
-	end
-end
+-- function addon:UpdateBossFramePosition()
+	-- if DBMod.PlayerFrames.BossFrame.movement.moved then
+		-- SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
+		-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
+		-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
+		-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
+		-- DBMod.PlayerFrames.BossFrame.movement.yOffset);
+	-- else
+		-- SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
+	-- end
+-- end
 
 local CreateUnitFrame = function(self,unit)
 	self.menu = menu;
@@ -2271,17 +2249,5 @@ end
 end
 end
 
-function addon:UpdateFocusPosition()
-	addon.focus:ClearAllPoints();
-	if DBMod.PlayerFrames.focus.movement.moved then
-		addon.focus:SetPoint(DBMod.PlayerFrames.focus.movement.point,
-		DBMod.PlayerFrames.focus.movement.relativeTo,
-		DBMod.PlayerFrames.focus.movement.relativePoint,
-		DBMod.PlayerFrames.focus.movement.xOffset,
-		DBMod.PlayerFrames.focus.movement.yOffset);
-	else
-		addon.focus:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",170,110);
-	end
-end
 
 SpartanoUF:RegisterStyle("SUI_PlayerFrames_Classic", CreateUnitFrame);

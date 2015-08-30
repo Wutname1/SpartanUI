@@ -2,7 +2,7 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Minimal");
-local PFrame;
+local PFrame = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 local square = [[Interface\AddOns\SpartanUI\media\map-overlay.tga]]
 
@@ -575,6 +575,18 @@ local MakeLargeFrame = function(self,unit)
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 			
+		   local DruidMana = CreateFrame("StatusBar", nil, self)
+			DruidMana:SetSize(self:GetWidth(), 3);
+			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
+		   
+		   -- Add a background
+		   local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+		   Background:SetAllPoints(DruidMana)
+		   Background:SetTexture(1, 1, 1, .5)
+		   
+		   -- Register it with oUF
+		   self.DruidMana = DruidMana
+		   self.DruidMana.bg = Background
 		end
 		do --Special Icons/Bars
 			local playerClass = select(2, UnitClass("player"))
@@ -840,7 +852,6 @@ function module:UpdateAltBarPositions()
 end
 
 function module:PlayerFrames()
-	PFrame = spartan:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
 	
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
@@ -865,47 +876,47 @@ function module:PlayerFrames()
 		PFrame.focustarget:SetPoint("BOTTOMLEFT", "SUI_focusFrame", "BOTTOMRIGHT", 5, 0);
 	end
 
-	PFrame:UpdateFocusPosition();
+	PFrame:UpdatePosition();
 	module:UpdateAltBarPositions();
 	
 	if DBMod.PlayerFrames.BossFrame.display == true then
 		if (InCombatLockdown()) then return; end
-		local boss = {}
+		-- local boss = {}
 		for i = 1, MAX_BOSS_FRAMES do
-			boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
+			PFrame.boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
 		
-			if i == 1 then
-				boss[i]:SetMovable(true);
-				if DBMod.PlayerFrames.BossFrame.movement.moved then
-					boss[i]:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
-					DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-					DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-					DBMod.PlayerFrames.BossFrame.movement.xOffset,
-					DBMod.PlayerFrames.BossFrame.movement.yOffset);
-				else
-					boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
-				end
-			else
-				boss[i]:SetPoint('TOP', boss[i-1], 'BOTTOM', 0, -10)             
-			end
+			-- if i == 1 then
+				-- boss[i]:SetMovable(true);
+				-- if DBMod.PlayerFrames.BossFrame.movement.moved then
+					-- boss[i]:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
+					-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
+					-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
+					-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
+					-- DBMod.PlayerFrames.BossFrame.movement.yOffset);
+				-- else
+					-- boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
+				-- end
+			-- else
+				-- boss[i]:SetPoint('TOP', boss[i-1], 'BOTTOM', 0, -10)             
+			-- end
 		end
 		
-		function PFrame:UpdateBossFramePosition()
-			if (InCombatLockdown()) then return; end
-			if DBMod.PlayerFrames.BossFrame.movement.moved then
-				SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
-				DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-				DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-				DBMod.PlayerFrames.BossFrame.movement.xOffset,
-				DBMod.PlayerFrames.BossFrame.movement.yOffset);
-			else
-				SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
-			end
-		end
+		-- function PFrame:UpdateBossFramePosition()
+			-- if (InCombatLockdown()) then return; end
+			-- if DBMod.PlayerFrames.BossFrame.movement.moved then
+				-- SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
+				-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
+				-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
+				-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
+				-- DBMod.PlayerFrames.BossFrame.movement.yOffset);
+			-- else
+				-- SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
+			-- end
+		-- end
 		
-		PFrame.boss = boss;
+		-- PFrame.boss = boss;
 	end
-	spartan.PFrame = PFrame
+	-- spartan.PFrame = PFrame
 end
 
 function module:RaidFrames()

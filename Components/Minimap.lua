@@ -39,7 +39,6 @@ local PerformFullBtnUpdate = function()
 end
 
 local OnEnter = function()
-	-- print("OnEnter")
 	if DB.MiniMap.MouseIsOver then return end
 	
 	--don't use PerformFullBtnUpdate as we want to perform the actions in reverse. since any new unknown icons will already be shown.

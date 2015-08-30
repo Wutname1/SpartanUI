@@ -6,8 +6,7 @@ addon.SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 addon.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
 addon.opt = {
-	-- name = "SpartanUI "..L["Version"]..": "..spartan.SpartanVer, type = "group", childGroups = "tab", args = {
-	name = "SpartanUI 4.0 Alpha", type = "group", childGroups = "tab", args = {
+	name = "SpartanUI ".. addon.SpartanVer, type = "group", childGroups = "tab", args = {
 		General = {name = "General", type = "group",order = 0, args = {}};
 		Artwork = {name = "Artwork", type = "group", args = {}};
 		PlayerFrames = {name = "Player Frames", type = "group", args = {}};
@@ -22,8 +21,8 @@ local FontItems = {Primary={},Core={},Party={},Player={},Raid={}}
 local FontItemsSize = {Primary={},Core={},Party={},Player={},Raid={}}
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
 local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
-local frameDefault1 = {movement=MovedDefault;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false}}
-local frameDefault2 = {movement=MovedDefault;AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",Auras={NumBuffs=0,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false}}
+local frameDefault1 = {movement=MovedDefault,AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},moved=false,Anchors={}}
+local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",Auras={NumBuffs=0,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false},moved=false,Anchors={}}
 
 DBdefault = {
 	SUIProper = {
@@ -35,6 +34,7 @@ DBdefault = {
 		scale = .92,
 		alpha = 1,
 		viewport = true,
+		EnabledComponents = {},
 		Styles = {
 			Classic = {
 				Artwork = true,
@@ -99,10 +99,12 @@ DBdefault = {
 			AutoDefined	= true
 		},
 		MiniMap = {
+			northTag = false,
 			ManualAllowUse = false,
 			ManualAllowPrompt = "",
 			AutoDetectAllowUse = true,
 			MapButtons = true,
+			MouseIsOver = false,
 			MapZoomButtons = true,
 			Shape = "square",
 			Moved = false,
@@ -130,6 +132,9 @@ DBdefault = {
 			Player = fontdefault,
 			Party = fontdefault,
 			Raid = fontdefault,
+		},
+		Components = {
+		
 		}
 	},
 	Modules = {
@@ -157,6 +162,7 @@ DBdefault = {
 			vignette = nil
 		},
 		PartyFrames  = {
+			Style = "Classic",
 			Portrait3D = true,
 			threat = true,
 			preset = "dps",
@@ -191,10 +197,11 @@ DBdefault = {
 			display = {pet = true,target=true,mana=true},
 		},
 		PlayerFrames = {
-			style = "theme",
+			Style = "Classic",
 			Portrait3D = true,
 			showClass = true,
 			focusMoved = false,
+			PetPortrait = true,
 			global = frameDefault1,
 			player = frameDefault1,
 			target = frameDefault1,
@@ -202,6 +209,7 @@ DBdefault = {
 			pet = frameDefault2,
 			focus = frameDefault2,
 			focustarget = frameDefault2,
+			boss = frameDefault2,
 			bars = {
 				health = {textstyle = "dynamic",textmode=1},
 				mana = {textstyle = "longfor",textmode=1},
@@ -215,11 +223,12 @@ DBdefault = {
 			Castbar = {player=1,target=1,targettarget=1,pet=1,focus=1,text={player=1,target=1,targettarget=1,pet=1,focus=1}},
 			BossFrame = {movement=MovedDefault,display=true,scale=1},
 			ArenaFrame = {movement=MovedDefault,display=false,scale=1},
-			ClassBar = {movement=MovedDefault},
+			ClassBar = {scale = 1,movement=MovedDefault},
 			TotemFrame = {movement=MovedDefault},
 			AltManaBar = {movement=MovedDefault},
 		},
 		RaidFrames  = {
+			Style = "Classic",
 			HideBlizzFrames = true,
 			threat = true,
 			mode = "group",
@@ -249,8 +258,8 @@ DBdefault = {
 		}
 	}
 }
-DBdefaults = {char = DBdefault,realm = DBdefault,class = DBdefault,profile = DBdefault}
-DBGlobals = {Version = addon.SpartanVer}
+local DBdefaults = {char = DBdefault,realm = DBdefault,class = DBdefault,profile = DBdefault}
+local DBGlobals = {Version = addon.SpartanVer}
 
 function addon:ResetConfig()
 	addon.db:ResetProfile(false,true);
@@ -314,6 +323,7 @@ function addon:OnEnable()
     if not addon:GetModule("SpinCam", true) then addon.opt.args["SpinCam"].disabled = true end
     
     self:RegisterChatCommand("sui", "ChatCommand")
+    self:RegisterChatCommand("suihelp", "suihelp")
     self:RegisterChatCommand("spartanui", "ChatCommand")
 	
 	local LaunchOpt = CreateFrame("Frame");
@@ -326,6 +336,11 @@ function addon:OnEnable()
 	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
 end
 
+function addon:suihelp(input)
+	AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600)
+	AceConfigDialog:Open("SpartanUI", "General", "Help")
+	-- AceConfigDialog:SelectGroup("SpartanUI", spartan.opt.args["General"].args["Help"])
+end
 function addon:ChatCommand(input)
 	if input == "version" then
 		addon:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))
