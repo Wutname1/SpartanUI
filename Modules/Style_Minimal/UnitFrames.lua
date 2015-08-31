@@ -575,18 +575,23 @@ local MakeLargeFrame = function(self,unit)
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 			
-		   local DruidMana = CreateFrame("StatusBar", nil, self)
-			DruidMana:SetSize(self:GetWidth(), 3);
-			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
-		   
-		   -- Add a background
-		   local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-		   Background:SetAllPoints(DruidMana)
-		   Background:SetTexture(1, 1, 1, .5)
-		   
-		   -- Register it with oUF
-		   self.DruidMana = DruidMana
-		   self.DruidMana.bg = Background
+			if unit == "player" then
+				local DruidMana = CreateFrame("StatusBar", nil, self)
+				DruidMana:SetSize(self:GetWidth(), 4);
+				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
+				-- DruidMana.colorSmooth = true
+				DruidMana.colorPower = true
+				DruidMana:SetStatusBarTexture(Smoothv2)
+
+				-- Add a background
+				local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+				Background:SetAllPoints(DruidMana)
+				Background:SetTexture(1, 1, 1, .2)
+
+				-- Register it with oUF
+				self.DruidMana = DruidMana
+				self.DruidMana.bg = Background
+			end
 		end
 		do --Special Icons/Bars
 			local playerClass = select(2, UnitClass("player"))
@@ -837,7 +842,10 @@ function module:UpdateAltBarPositions()
 	end
 			
 	-- relocate the AlternatePowerBar
-	if classFileName ~= "MONK" then
+	if classFileName == "DRUID" then
+		PlayerFrameAlternateManaBar:Hide()
+		PlayerFrameAlternateManaBar:SetAlpha(0)
+	elseif classFileName ~= "MONK" then
 		PlayerFrameAlternateManaBar:ClearAllPoints();
 		if DBMod.PlayerFrames.AltManaBar.movement.moved then
 			PlayerFrameAlternateManaBar:SetPoint(DBMod.PlayerFrames.AltManaBar.movement.point,

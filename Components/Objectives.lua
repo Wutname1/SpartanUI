@@ -56,16 +56,16 @@ function module:OnInitialize()
 	if DBMod.Objectives == nil then
 		DBMod.Objectives = {
 			Rule1 = {
-				Status = "Group",
-				Combat = false
+				Status = "All",
+				Combat = true
 			},
 			Rule2 = {
 				Status = "Raid",
 				Combat = false
 			},
 			Rule3 = {
-				Status = "All",
-				Combat = true
+				Status = "Disabled",
+				Combat = false
 			}
 		}
 	end
