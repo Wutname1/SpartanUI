@@ -1727,18 +1727,6 @@ local CreateBossFrame = function(self,unit)
 	return self;
 end
 
--- function addon:UpdateBossFramePosition()
-	-- if DBMod.PlayerFrames.BossFrame.movement.moved then
-		-- SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
-		-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-		-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-		-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
-		-- DBMod.PlayerFrames.BossFrame.movement.yOffset);
-	-- else
-		-- SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
-	-- end
--- end
-
 local CreateUnitFrame = function(self,unit)
 	self.menu = menu;
 	

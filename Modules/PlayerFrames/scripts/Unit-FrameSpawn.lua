@@ -40,67 +40,22 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 			end
 		end
 		
-		PlayerFrames.focustarget:SetPoint("TOPLEFT", "SUI_focusFrame", "TOPRIGHT", -51, 0);
+		PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
+		PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0);
 	end
 
 	if DBMod.PlayerFrames.BossFrame.display == true then
-		-- PlayerFrames.BossFrame = {}
 		for i = 1, MAX_BOSS_FRAMES do
 			PlayerFrames.boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
 			if i == 1 then
 				PlayerFrames.boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
-				-- boss[i]:SetMovable(true);
-				-- if DBMod.PlayerFrames.BossFrame.moved then
-					-- boss[i]:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
-					-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-					-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-					-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
-					-- DBMod.PlayerFrames.BossFrame.movement.yOffset);
-				-- else
-					PlayerFrames.boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
-				-- end
+				PlayerFrames.boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 			else
 				PlayerFrames.boss[i]:SetPoint('TOP', PlayerFrames.boss[i-1], 'BOTTOM', 0, -10)             
 			end
 		end
-		
-		-- boss.mover = CreateFrame("Frame");
-		-- boss.mover:SetSize(5, 5);
-		-- boss.mover:SetPoint("TOPLEFT",SUI_Boss1,"TOPLEFT");
-		-- boss.mover:SetPoint("TOPRIGHT",SUI_Boss1,"TOPRIGHT");
-		-- boss.mover:SetPoint("BOTTOMLEFT",'SUI_Boss'..MAX_BOSS_FRAMES,"BOTTOMLEFT");
-		-- boss.mover:SetPoint("BOTTOMRIGHT",'SUI_Boss'..MAX_BOSS_FRAMES,"BOTTOMRIGHT");
-		-- boss.mover:EnableMouse(true);
-		
-		-- boss.bg = boss.mover:CreateTexture(nil,"BACKGROUND");
-		-- boss.bg:SetAllPoints(boss.mover);
-		-- boss.bg:SetTexture(1,1,1,0.5);
-		
-		-- boss.mover:Hide();
-		-- boss.mover:RegisterEvent("VARIABLES_LOADED");
-		-- boss.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
-		
-		-- function PlayerFrames:UpdateBossFramePosition()
-			-- if DBMod.PlayerFrames.BossFrame.moved then
-				-- SUI_Boss1:SetPoint(DBMod.PlayerFrames.BossFrame.movement.point,
-				-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-				-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-				-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
-				-- DBMod.PlayerFrames.BossFrame.movement.yOffset);
-			-- else
-				-- SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
-			-- end
-		-- end
-		
-		-- PlayerFrames.BossFrame = boss;
-		
 	end
-
-	PlayerFrames:UpdatePosition();
-	-- PlayerFrames.boss[1]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
-	-- for i = 1, MAX_BOSS_FRAMES do
-		-- PlayerFrames.boss[i].mover:Show()
-	-- end
+	
 end
 
 function PlayerFrames:SUI_PlayerFrames_Plain()
@@ -244,7 +199,6 @@ function PlayerFrames:OnEnable()
 	
 	if DB.Styles[DBMod.PlayerFrames.Style].Movable.PlayerFrames == true then 
 		local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
-		
 		for a,b in pairs(FramesList) do
 			PlayerFrames:MakeMovable(PlayerFrames[b], b)
 		end
@@ -255,4 +209,6 @@ function PlayerFrames:OnEnable()
 			end
 		end
 	end
+	
+	PlayerFrames:UpdatePosition();
 end

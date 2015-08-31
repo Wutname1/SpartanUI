@@ -1510,11 +1510,10 @@ function module:PlayerFrames()
 				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",6,4);
 			end
 		end
-		
-		PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", "SUI_focusFrame", "BOTTOMRIGHT", 5, 0);
 	end
+	PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
+	PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0);
 
-	PlayerFrames:UpdateFocusPosition();
 	module:UpdateAltBarPositions();
 	
 	if DBMod.PlayerFrames.BossFrame.display == true then
