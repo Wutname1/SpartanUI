@@ -162,46 +162,6 @@ function module:SetupMenus()
 			}
 		}
 	};
-	spartan.opt.args["Artwork"].args["minimap"] = {
-		name = L["MinMapSet"],
-		desc = L["MinMapSetConf"],
-		type = "group", args = {
-			minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
-				get = function(info) return DB.MiniMap.MapButtons; end,
-				set = function(info,val) DB.MiniMap.MapButtons = val; end
-			},
-			BlizzStyle = {
-				name="Blizzard Icons",
-				type="select",
-				style="dropdown",
-				width="full",
-				values = {
-					["hide"]	= "Always Hide",
-					["mouseover"]	= "Show on Mouse over",
-					["show"]	= "Always Show",
-				},
-				get = function(info) return DB.MiniMap.BlizzStyle; end,
-				set = function(info,val) DB.MiniMap.BlizzStyle = val; end
-			},
-			OtherStyle = {
-				name="Addon Icons",
-				type="select",
-				style="dropdown",
-				width="full",
-				values = {
-					["hide"]	= "Always Hide",
-					["mouseover"]	= "Show on Mouse over",
-					["show"]	= "Always Show",
-				},
-				get = function(info) return DB.MiniMap.OtherStyle; end,
-				set = function(info,val) DB.MiniMap.OtherStyle = val; end
-			},
-			minimapzoom = {name = L["MinMapHideZoom"], type="toggle", width="full",
-				get = function(info) return DB.MiniMap.MapZoomButtons; end,
-				set = function(info,val) DB.MiniMap.MapZoomButtons = val; end
-			}
-		}
-	}
 	spartan.opt.args["Artwork"].args["ChatSettings"] = {
 		name = L["ChatSettings"],
 		desc = L["ChatSettingsDesc"],
@@ -432,41 +392,6 @@ function module:SetupMenus()
 			}
 		}
 	}
-	spartan.opt.args["Artwork"].args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
-		desc = L["DefScalesDesc"],
-		func = function()
-			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
-			else
-				if (DB.scale >= 0.92) or (DB.scale < 0.78) then
-					DB.scale = 0.78;
-				else
-					DB.scale = 0.92;
-				end
-			end
-			module:updateSpartanScale();
-			module:updateSpartanOffset();
-			module:updateSpartanXOffset();
-			module:updateSpartanViewport();
-			module:updateSpartanAlpha();
-		end
-	};
-	spartan.opt.args["Artwork"].args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
-		desc = L["ConfScaleDesc"],min = 0,max = 1,
-		set = function(info,val)
-			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
-			else
-				DB.scale = min(1,Artwork_Core:round(val));
-				module:updateSpartanScale();
-				module:updateSpartanOffset();
-				module:updateSpartanXOffset();
-				module:updateSpartanViewport();
-				module:updateSpartanAlpha();
-			end
-		end,
-		get = function(info) return DB.scale; end
-	};
 	spartan.opt.args["Artwork"].args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
@@ -506,6 +431,7 @@ function module:SetupMenus()
 			}
 		},
 	}
+
 	if (DB.alpha ~= 1) then
 		module:AddNotice();
 	end

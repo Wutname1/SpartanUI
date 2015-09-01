@@ -3,6 +3,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Minimal");
 local PlayerFrames = spartan:GetModule("PlayerFrames");
+local PartyFrames = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
 local square = [[Interface\AddOns\SpartanUI\media\map-overlay.tga]]
 
@@ -436,22 +437,6 @@ local MakeSmallFrame = function(self,unit)
 		self.StatusText:SetPoint("TOP",self.Name,"BOTTOM");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
-		
-		self.CPoints = items:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.CPoints:SetPoint("TOPLEFT",items,"BOTTOMRIGHT",8,-4);
-		for i = 1, 5 do
-			self.CPoints[i] = items:CreateTexture(nil,"OVERLAY");
-			self.CPoints[i]:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			if (i == 1) then self.CPoints[1]:SetPoint("LEFT",self.CPoints,"RIGHT",1,-1); else 
-				self.CPoints[i]:SetPoint("LEFT",self.CPoints[i-1],"RIGHT",-2,0);
-			end
-		end
-		items:SetScript("OnUpdate",function()
-			if self.CPoints then
-				local cp = GetComboPoints("player","target");
-				self.CPoints:SetText( (cp > 0 and cp) or "");
-			end
-		end);
 	end
 
 	self.TextUpdate = PostUpdateText;
@@ -713,27 +698,30 @@ local CreateUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	frame = CreateUnitFrame(self,unit)
-	-- frame.menu = menu;
-	frame:SetScript("OnMouseDown",function(self,button)
+	self:SetScript("OnEnter", UnitFrame_OnEnter)
+	self:SetScript("OnLeave", UnitFrame_OnLeave)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	
+	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.PartyFrames.mover:Show();
+			PartyFrames.party.mover:Show();
 			DBMod.PartyFrames.moved = true;
-			spartan.PartyFrames:SetMovable(true);
-			spartan.PartyFrames:StartMoving();
+			PartyFrames.party:SetMovable(true);
+			PartyFrames.party:StartMoving();
 		end
 	end);
-	frame:SetScript("OnMouseUp",function(self,button)
-		spartan.PartyFrames.mover:Hide();
-		spartan.PartyFrames:StopMovingOrSizing();
+	self:SetScript("OnMouseUp",function(self,button)
+		PartyFrames.party.mover:Hide();
+		PartyFrames.party:StopMovingOrSizing();
 		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.PartyFrames:GetPoint()
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
 		for k,v in pairs(Anchors) do
 			DBMod.PartyFrames.Anchors[k] = v
 		end
 	end);
 	
-	return frame
+	return CreateUnitFrame(self,unit)
 end
 
 local CreateUnitFrameRaid = function(self,unit)
@@ -742,7 +730,7 @@ local CreateUnitFrameRaid = function(self,unit)
 	self:EnableMouse(enable)
 	self:SetClampedToScreen(true)
 	
-	self:SetScript("OnMouseDown",function(self,button)
+	self:HookScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
 			spartan.RaidFrames.mover:Show();
 			DBMod.RaidFrames.moved = true;
@@ -750,7 +738,7 @@ local CreateUnitFrameRaid = function(self,unit)
 			spartan.RaidFrames:StartMoving();
 		end
 	end);
-	self:SetScript("OnMouseUp",function(self,button)
+	self:HookScript("OnMouseUp",function(self,button)
 		spartan.RaidFrames.mover:Hide();
 		spartan.RaidFrames:StopMovingOrSizing();
 		local Anchors = {}
@@ -922,8 +910,6 @@ function module:RaidFrames()
 		'columnAnchorPoint', 'LEFT'
 	)
 	
-	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
-	
 	return (raid)
 end
 
@@ -939,12 +925,12 @@ function module:PartyFrames()
 		"columnAnchorPoint", "TOPLEFT",
 		"initial-anchor", "TOPLEFT");
 		
-	party:SetParent("SpartanUI");
-	party:SetClampedToScreen(true);
-	PartyMemberBackground.Show = function() return; end
-	PartyMemberBackground:Hide();
+	-- party:SetParent("SpartanUI");
+	-- party:SetClampedToScreen(true);
+	-- PartyMemberBackground.Show = function() return; end
+	-- PartyMemberBackground:Hide();
 	
-	party:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -60)
+	-- party:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -60)
 	
 	return (party)
 end

@@ -508,17 +508,17 @@ local CreateUnitFrame = function(self,unit)
 	self:EnableMouse(enable)
 	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
-			party.mover:Show();
+			PartyFrames.party.mover:Show();
 			DBMod.PartyFrames.moved = true;
-			party:SetMovable(true);
-			party:StartMoving();
+			PartyFrames.party:SetMovable(true);
+			PartyFrames.party:StartMoving();
 		end
 	end);
 	self:SetScript("OnMouseUp",function(self,button)
-		party.mover:Hide();
-		party:StopMovingOrSizing();
+		PartyFrames.party.mover:Hide();
+		PartyFrames.party:StopMovingOrSizing();
 		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = party:GetPoint()
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
 		for k,v in pairs(Anchors) do
 			DBMod.PartyFrames.Anchors[k] = v
 		end
@@ -538,7 +538,7 @@ SpartanoUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);
 function PartyFrames:Classic()
 	SpartanoUF:SetActiveStyle("Spartan_PartyFrames");
 	
-	party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
+	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,
 		"showParty", DBMod.PartyFrames.showParty,
 		"showPlayer", DBMod.PartyFrames.showPlayer,

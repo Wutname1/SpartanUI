@@ -90,10 +90,7 @@ end;
 ----------------------------------------------------------------------------------------------------
 
 function module:SetColor()
-	local r = 0.6156862745098039
-	local b = 0.1215686274509804
-	local g = 0.1215686274509804
-	local a = .9
+	local r,b,g,a = unpack(DB.Styles.Minimal.Color)
 	
 	for i = 1,2 do
 		_G["Minimal_Top_Bar" ..i.. "BG"]:SetVertexColor(r,b,g,a)
@@ -198,6 +195,7 @@ function module:SetupVehicleUI()
 		RegisterStateDriver(Minimal_SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
 	end
 end
+
 function module:RemoveVehicleUI()
 	if DBMod.Artwork.VehicleUI then
 		UnRegisterStateDriver(Minimal_SpartanUI, "visibility");

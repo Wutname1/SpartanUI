@@ -9,17 +9,6 @@ function Artwork_Core:SetupOptions()
 			Profiles[string.sub(name, 7)] = string.sub(name, 7)
 		end
 	end
-	spartan.opt.args["Artwork"].args["Profile"] = {name="Profile",type="select",order=0,style="dropdown",
-		values=Profiles,
-		get = function(info) return DBMod.Artwork.Style end,
-		set = function(info,val) 
-			DBMod.Artwork.FirstLoad = true
-			DBMod.Artwork.Style = val;
-			local newtheme = spartan:GetModule("Style_"..val)
-			newtheme:SetupProfile();
-			ReloadUI();
-		end
-	}
 	spartan.opt.args["Artwork"].args["Base"] = {name = "Base Options",type="group",order=0,
 		args = {
 			VehicleUI = {name = "Use Blizzard Vehicle UI", type = "toggle",order=0.9,
@@ -103,23 +92,33 @@ function Artwork_Core:SetupOptions()
 			}
 		}
 	}
-	spartan.opt.args["Artwork"].args["Minimap"] = {name = "Minimap Options",type="group",order=0,
-		args = {
-			NorthIndicator = {name = "Show North Indicator on Minimap", type = "toggle",order=0.9,
-				get = function(info) return DB.MiniMap.northTag end,
-				set = function(info,val) 
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
-					DB.MiniMap.northTag = val;
-					if DB.MiniMap.northTag then
-						MinimapNorthTag:Show()
-					else
-						MinimapNorthTag:Hide()
-					end
-				end,
-			}
-		}
-	}
-	
+	spartan.opt.args["Artwork"].args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+			desc = L["ConfScaleDesc"],min = 0,max = 1,
+			set = function(info,val)
+				if (InCombatLockdown()) then 
+					spartan:Print(ERR_NOT_IN_COMBAT);
+				else
+					DB.scale = min(1,round(val));
+					updateMinimumScale();
+				end
+			end,
+			get = function(info) return DB.scale; end
+	};
+	spartan.opt.args["Artwork"].args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+		desc = L["DefScalesDesc"],
+		func = function()
+			if (InCombatLockdown()) then 
+				spartan:Print(ERR_NOT_IN_COMBAT);
+			else
+				if (DB.scale >= 0.92) or (DB.scale < 0.78) then
+					DB.scale = 0.78;
+				else
+					DB.scale = 0.92;
+				end
+			end
+		end
+	};
+
 	if (not DB.viewport) then
 		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetTop"].disabled = true;
 		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetBottom"].disabled = true;

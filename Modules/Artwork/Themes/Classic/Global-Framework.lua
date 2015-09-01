@@ -9,6 +9,10 @@ local round = function(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;
 
+function module:updateColor()
+
+end
+
 function module:updateMinimumScale()
 --	local minScale = floor(((UIParent:GetWidth()/2560)*10^2)+1) / (10^2);
 --	if DB.scale < minScale then DB.scale = minScale; end

@@ -439,6 +439,52 @@ end
 function module:BuildOptions()
 	spartan.opt.args["General"].args["ModSetting"].args["Minimap"] = {type="group",name=L["Minimap"],
 		args = {
+			NorthIndicator = {name = "Show North Indicator on Minimap", type = "toggle",order=0.9,
+				get = function(info) return DB.MiniMap.northTag end,
+				set = function(info,val) 
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
+					DB.MiniMap.northTag = val;
+					if DB.MiniMap.northTag then
+						MinimapNorthTag:Show()
+					else
+						MinimapNorthTag:Hide()
+					end
+				end,
+			},
+			minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
+				get = function(info) return DB.MiniMap.MapButtons; end,
+				set = function(info,val) DB.MiniMap.MapButtons = val; end
+			},
+			BlizzStyle = {
+				name="Blizzard Icons",
+				type="select",
+				style="dropdown",
+				width="full",
+				values = {
+					["hide"]	= "Always Hide",
+					["mouseover"]	= "Show on Mouse over",
+					["show"]	= "Always Show",
+				},
+				get = function(info) return DB.MiniMap.BlizzStyle; end,
+				set = function(info,val) DB.MiniMap.BlizzStyle = val; end
+			},
+			OtherStyle = {
+				name="Addon Icons",
+				type="select",
+				style="dropdown",
+				width="full",
+				values = {
+					["hide"]	= "Always Hide",
+					["mouseover"]	= "Show on Mouse over",
+					["show"]	= "Always Show",
+				},
+				get = function(info) return DB.MiniMap.OtherStyle; end,
+				set = function(info,val) DB.MiniMap.OtherStyle = val; end
+			},
+			minimapzoom = {name = L["MinMapHideZoom"], type="toggle", width="full",
+				get = function(info) return DB.MiniMap.MapZoomButtons; end,
+				set = function(info,val) DB.MiniMap.MapZoomButtons = val; end
+			}
 		}
 	}
 end

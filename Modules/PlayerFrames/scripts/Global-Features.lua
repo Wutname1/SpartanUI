@@ -67,7 +67,6 @@ function PlayerFrames:UpdatePosition()
 			local Anchors = {}
 			for k,v in pairs(DBMod.PlayerFrames[b].Anchors) do
 				Anchors[k] = v
-				print (k..v)
 			end
 			PlayerFrames[b]:ClearAllPoints();
 			PlayerFrames[b]:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)

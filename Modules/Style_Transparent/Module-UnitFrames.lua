@@ -418,7 +418,7 @@ local CreatePlayerFrame = function(self,unit)
 			
 			if unit == "player" then
 				local DruidMana = CreateFrame("StatusBar", nil, self)
-				DruidMana:SetSize(self:GetWidth(), 4);
+				DruidMana:SetSize(self.Power:GetWidth(), 4);
 				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,-1);
 				-- DruidMana.colorSmooth = true
 				DruidMana.colorPower = true
@@ -1325,26 +1325,31 @@ local CreatespecFrames = function(self,unit)
 	return CreateRaidFrame(self,unit);
 end
 
-local CreateUnitFrameParty = function(self,unit)	
+local CreateUnitFrameParty = function(self,unit)
+	self:SetScript("OnEnter", UnitFrame_OnEnter)
+	self:SetScript("OnLeave", UnitFrame_OnLeave)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	
 	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.PartyFrames.mover:Show();
+			PartyFrames.party.mover:Show();
 			DBMod.PartyFrames.moved = true;
-			spartan.PartyFrames:SetMovable(true);
-			spartan.PartyFrames:StartMoving();
+			PartyFrames.party:SetMovable(true);
+			PartyFrames.party:StartMoving();
 		end
 	end);
 	self:SetScript("OnMouseUp",function(self,button)
-		spartan.PartyFrames.mover:Hide();
-		spartan.PartyFrames:StopMovingOrSizing();
+		PartyFrames.party.mover:Hide();
+		PartyFrames.party:StopMovingOrSizing();
 		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.PartyFrames:GetPoint()
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
 		for k,v in pairs(Anchors) do
 			DBMod.PartyFrames.Anchors[k] = v
 		end
 	end);
 	
-	return CreatespecFrames(self,unit)
+	return CreateRaidFrame(self,unit)
 end
 
 local CreateUnitFrameRaid = function(self,unit)
@@ -1374,6 +1379,10 @@ local CreateUnitFrameRaid = function(self,unit)
 	return self
 end
 
+SpartanoUF:RegisterStyle("Spartan_TransparentPlayerFrames", CreateUnitFrame);
+SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateUnitFrameParty);
+SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateUnitFrameRaid);
+	
 function module:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
 	-- Druid EclipseBar
@@ -1466,7 +1475,6 @@ function module:UpdateAltBarPositions()
 end
 
 function module:PlayerFrames()
-	SpartanoUF:RegisterStyle("Spartan_TransparentPlayerFrames", CreateUnitFrame);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPlayerFrames");
 	
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
@@ -1574,7 +1582,6 @@ function module:PlayerFrames()
 end
 
 function module:RaidFrames()
-	SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateUnitFrameRaid);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
 	
 	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
@@ -1601,8 +1608,8 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
-	SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateUnitFrameParty);
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPartyFrames");
+	
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,
 		"showParty", DBMod.PartyFrames.showParty,
@@ -1612,8 +1619,6 @@ function module:PartyFrames()
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",
 		"initial-anchor", "TOPLEFT");
-	
-	party:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -60)
 	
 	return (party)
 end
