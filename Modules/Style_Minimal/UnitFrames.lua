@@ -7,6 +7,7 @@ local PartyFrames = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
 local square = [[Interface\AddOns\SpartanUI\media\map-overlay.tga]]
 
+local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 local Smoothv2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga]]
 local texture = [[Interface\AddOns\SpartanUI_PlayerFrames\media\texture.tga]]
 local metal = [[Interface\AddOns\SpartanUI_PlayerFrames\media\metal.tga]]
@@ -26,44 +27,6 @@ do -- setup custom colors that we want to use
 	colors.reaction[6]	= colors.health;		-- Honored
 	colors.reaction[7]	= colors.health;		-- Revered
 	colors.reaction[8]	= colors.health;		-- Exalted
-end
-
---	Formatting functions
-local TextFormat = function(text)
-	local textstyle = DBMod.PlayerFrames.bars[text].textstyle
-	local textmode = DBMod.PlayerFrames.bars[text].textmode
-	local a,m,t,z
-	if text == "mana" then z = "pp" else z = "hp" end
-	
-	-- textstyle
-	-- "Long: 			 Displays all numbers."
-	-- "Long Formatted: Displays all numbers with commas."
-	-- "Dynamic: 		 Abbriviates and formats as needed"
-	if textstyle == "long" then
-		a = "[cur"..z.."]";
-		m = "[missing"..z.."]";
-		t = "[max"..z.."]";
-	elseif textstyle == "longfor" then
-		a = "[cur"..z.."formatted]";
-		m = "[missing"..z.."formatted]";
-		t = "[max"..z.."formatted]";
-	elseif textstyle == "dynamic" then
-		a = "[cur"..z.."dynamic]";
-		m = "[missing"..z.."dynamic]";
-		t = "[max"..z.."dynamic]";
-	end
-	-- textmode
-	-- [1]="Avaliable / Total",
-	-- [2]="(Missing) Avaliable / Total",
-	-- [3]="(Missing) Avaliable"
-	
-	if textmode == 1 then
-		return a .. " / " .. t
-	elseif textmode == 2 then
-		return "("..m..") "..a.." / "..t
-	elseif textmode == 3 then
-		return "("..m..") "..a
-	end
 end
 
 local menu = function(self)
@@ -166,8 +129,8 @@ end
 local PostUpdateText = function(self,unit)
 	self:Untag(self.Health.value)
 	if self.Power then self:Untag(self.Power.value) end
-	self:Tag(self.Health.value, TextFormat("health"))
-	if self.Power then self:Tag(self.Power.value, TextFormat("mana")) end
+	self:Tag(self.Health.value, PlayerFrames:TextFormat("health"))
+	if self.Power then self:Tag(self.Power.value, PlayerFrames:TextFormat("mana")) end
 end
 
 local PostUpdateAura = function(self,unit)
@@ -309,8 +272,8 @@ local MakeSmallFrame = function(self,unit)
 
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
-			-- self:Tag(health.value, TextFormat("health"))
-			self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))
+			-- self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
@@ -489,8 +452,8 @@ local MakeLargeFrame = function(self,unit)
 			health.value:SetAllPoints(health);
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
-			-- self:Tag(health.value, TextFormat("health"))
-			self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))
+			-- self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
@@ -560,11 +523,13 @@ local MakeLargeFrame = function(self,unit)
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 			
-			if unit == "player" then
+		end
+		do --Special Icons/Bars
+			local playerClass = select(2, UnitClass("player"))
+			if unit == "player" and playerClass == "DRUID" then
 				local DruidMana = CreateFrame("StatusBar", nil, self)
 				DruidMana:SetSize(self:GetWidth(), 4);
 				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
-				-- DruidMana.colorSmooth = true
 				DruidMana.colorPower = true
 				DruidMana:SetStatusBarTexture(Smoothv2)
 
@@ -576,11 +541,7 @@ local MakeLargeFrame = function(self,unit)
 				-- Register it with oUF
 				self.DruidMana = DruidMana
 				self.DruidMana.bg = Background
-			end
-		end
-		do --Special Icons/Bars
-			local playerClass = select(2, UnitClass("player"))
-			if unit == "player" and playerClass =="DEATHKNIGHT" then	
+			elseif unit == "player" and playerClass =="DEATHKNIGHT" then	
 				self.Runes = CreateFrame("Frame", nil, self)
 				
 				for i = 1, 6 do
@@ -850,8 +811,6 @@ end
 function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
 	
-	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
-
 	for a,b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
 		if b == "player" then
@@ -859,20 +818,7 @@ function module:PlayerFrames()
 		end
 	end
 	
-	do -- Position Frames
-		PlayerFrames.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,170);
-		PlayerFrames.pet:SetPoint("RIGHT",PlayerFrames.player,"BOTTOMLEFT",-4,0);
-		
-		PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",120,0);
-		PlayerFrames.targettarget:SetPoint("LEFT",PlayerFrames.target,"BOTTOMRIGHT",4,0);
-		PlayerFrames.player:SetScale(DB.scale);
-		for a,b in pairs(FramesList) do
-			_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
-		end
-		PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", "SUI_focusFrame", "BOTTOMRIGHT", 5, 0);
-		PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
-		PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0);
-	end
+	module:PositionFrame()
 
 	module:UpdateAltBarPositions();
 	
@@ -887,6 +833,24 @@ function module:PlayerFrames()
 			end
 		end
 	end
+end
+
+function module:PositionFrame(b)
+		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,170); end
+		if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("RIGHT",PlayerFrames.player,"BOTTOMLEFT",-4,0); end
+		
+		if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",120,0); end
+		if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("LEFT",PlayerFrames.target,"BOTTOMRIGHT",4,0); end
+		
+		if b == "focus" or b == nil then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
+		if b == "focustarget" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
+		
+		
+		-- PlayerFrames.player:SetScale(DB.scale);
+		for a,b in pairs(FramesList) do
+			PlayerFrames[b]:SetScale(DB.scale);
+			-- _G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+		end
 end
 
 function module:RaidFrames()

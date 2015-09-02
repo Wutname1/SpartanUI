@@ -5,44 +5,14 @@ local PlayerFrames = spartan:GetModule("PlayerFrames");
 function PlayerFrames:SUI_PlayerFrames_Classic()
 	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Classic");
 
-	PlayerFrames.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
-	PlayerFrames:SetupExtras()
-
-	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget"}
+	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 
 	for a,b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
+		if b == "player" then PlayerFrames:SetupExtras() end
 	end
 
-	do -- Position Static Frames
-		if (SUI_FramesAnchor:GetParent() == UIParent) then
-			PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12);
-			
-			PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
-			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
-			else
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",19,15);
-			end
-			PlayerFrames.player:SetScale(DB.scale);
-			for a,b in pairs(FramesList) do
-				_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
-			end
-		else
-			PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12);
-			PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
-			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15);
-			else
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12);
-			end
-		end
-		
-		PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
-		PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0);
-	end
+	PlayerFrames:PositionFrame_Classic()
 
 	if DBMod.PlayerFrames.BossFrame.display == true then
 		for i = 1, MAX_BOSS_FRAMES do
@@ -56,6 +26,39 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 		end
 	end
 	
+end
+
+function PlayerFrames:PositionFrame_Classic(b)
+	do -- Position Static Frames
+		if (SUI_FramesAnchor:GetParent() == UIParent) then
+			if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150); end
+			if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12); end
+			
+			if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0); end
+			if DBMod.PlayerFrames.targettarget.style == "small" and (b == "targettarget" or b == nil) then
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
+			elseif b == "targettarget" or b == nil then
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",19,15);
+			end
+			
+			PlayerFrames.player:SetScale(DB.scale);
+			for a,b in pairs(FramesList) do
+				PlayerFrames[b]:SetScale(DB.scale);
+			end
+		else
+			if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3); end
+			if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12); end
+			if b == "target" or b == nil then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3); end
+			if DBMod.PlayerFrames.targettarget.style == "small" and (b == "targettarget" or b == nil) then
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15);
+			elseif b == "targettarget" or b == nil then
+				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12);
+			end
+		end
+		
+		if b == "focus" or b == nil then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
+		if b == "focus" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
+	end
 end
 
 function PlayerFrames:SUI_PlayerFrames_Plain()
@@ -104,7 +107,9 @@ function PlayerFrames:SUI_PlayerFrames_Plain()
 end
 
 function PlayerFrames:MakeMovable(frame, framename)
-	if frame ~= nil then
+	if frame == nil then
+		spartan:Err("PlayerFrames", "Style did not spawn " .. framename)
+	else
 		frame.mover = CreateFrame("Frame");
 		frame.mover:SetSize(20, 20);
 		
@@ -210,5 +215,6 @@ function PlayerFrames:OnEnable()
 		end
 	end
 	
-	PlayerFrames:UpdatePosition();
+	PlayerFrames:SetupStaticOptions()
+	PlayerFrames:UpdatePosition()
 end

@@ -56,6 +56,58 @@ do -- Remove Menu items that error
 	UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
 end
 
+function PlayerFrames:SetupStaticOptions()
+	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
+	for a,unit in pairs(FramesList) do
+		--Health Bar Color
+		if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			PlayerFrames[unit].Health.colorReaction = true;
+		elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+			PlayerFrames[unit].Health.colorHappiness = true;
+		elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+			PlayerFrames[unit].Health.colorClass = true;
+		else
+			PlayerFrames[unit].Health.colorSmooth = true;
+		end
+	end
+end
+
+function PlayerFrames:TextFormat(text)
+	local textstyle = DBMod.PlayerFrames.bars[text].textstyle
+	local textmode = DBMod.PlayerFrames.bars[text].textmode
+	local a,m,t,z
+	if text == "mana" then z = "pp" else z = "hp" end
+	
+	-- textstyle
+	-- "Long: 			 Displays all numbers."
+	-- "Long Formatted: Displays all numbers with commas."
+	-- "Dynamic: 		 Abbriviates and formats as needed"
+	if textstyle == "long" then
+		a = "[cur"..z.."]";
+		m = "[missing"..z.."]";
+		t = "[max"..z.."]";
+	elseif textstyle == "longfor" then
+		a = "[cur"..z.."formatted]";
+		m = "[missing"..z.."formatted]";
+		t = "[max"..z.."formatted]";
+	elseif textstyle == "dynamic" then
+		a = "[cur"..z.."dynamic]";
+		m = "[missing"..z.."dynamic]";
+		t = "[max"..z.."dynamic]";
+	end
+	-- textmode
+	-- [1]="Avaliable / Total",
+	-- [2]="(Missing) Avaliable / Total",
+	-- [3]="(Missing) Avaliable"
+	
+	if textmode == 1 then
+		return a .. " / " .. t
+	elseif textmode == 2 then
+		return "("..m..") "..a.." / "..t
+	elseif textmode == 3 then
+		return "("..m..") "..a
+	end
+end
 
 function PlayerFrames:UpdatePosition()
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
@@ -72,6 +124,14 @@ function PlayerFrames:UpdatePosition()
 			PlayerFrames[b]:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 		elseif DBMod.PlayerFrames[b] ~= nil then
 			PlayerFrames[b]:SetMovable(false);
+			PlayerFrames[b]:ClearAllPoints();
+			if (DBMod.PlayerFrames.Style == "Classic") then
+				PlayerFrames:PositionFrame_Classic(b);
+			elseif (DBMod.PlayerFrames.Style == "plain") then
+				PlayerFrames:PositionFrame_Plain(b);
+			else
+				spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PositionFrame(b);
+			end
 		else
 			print(b .. " Frame has not been spawned by your theme")
 		end
@@ -93,5 +153,4 @@ function PlayerFrames:UpdatePosition()
 			PlayerFrames.boss[1]:SetMovable(false);
 		end
 	-- end
-	
 end

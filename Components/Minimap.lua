@@ -299,12 +299,12 @@ function module:MinimapCoords()
 	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
 end
 
-function module:SetupButton(btn)
+function module:SetupButton(btn, force)
 	buttonName = btn:GetName();
 	buttonType = btn:GetObjectType();
 	
 	--Avoid duplicates make sure it's not in the tracking table
-	if not spartan:isInTable(DB.MiniMap.frames, buttonName) then
+	if not spartan:isInTable(DB.MiniMap.frames, buttonName) or force then
 		-- Hook Mouse Events
 		btn:HookScript("OnEnter", OnEnter)
 		btn:HookScript("OnLeave", OnLeave)
@@ -396,13 +396,17 @@ function module:updateButtons()
 			  and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))
 			  and child:GetAlpha() == 1
 			  then
-				-- child.FadeOut:Play();
-			-- end
-			-- if child.FadeIn ~= nil then
-				child.FadeIn:Stop()
-				child.FadeOut:Stop()
+				--catch buttons not playing nice.
+				if child.FadeIn == nil then module:SetupButton(child, true) end
 				
-				child.FadeOut:Play();
+				--if they still fail print a error and continue with our lives.
+				if child.FadeIn == nil then
+					spartan.Err("Minimap", buttonName .. " is not fading")
+				else
+					child.FadeIn:Stop()
+					child.FadeOut:Stop()
+					child.FadeOut:Play();
+				end
 			end
 		end
 	else

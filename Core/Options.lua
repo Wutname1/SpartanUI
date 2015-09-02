@@ -299,8 +299,14 @@ function module:OnInitialize()
 		args = {
 			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() spartan.db:ResetDB(); ReloadUI(); end},
 			ResetArtwork	= {name = L["Reset ActionBars"], type = "execute", order=2, func = function() DBMod.Artwork.FirstLoad = true; spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile(); ReloadUI(); end},
-			ResetMovedFrames	= {name = L["Reset ActionBars"], type = "execute", order=3, func = function()
-			
+			ResetMovedFrames	= {name = L["ResetMovableFrames"], type = "execute", order=3, func = function()
+				local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player",[7]="boss"}
+				for a,b in pairs(FramesList) do
+					DBMod.PlayerFrames[b].moved = false
+				end
+				DBMod.PartyFrames.moved = false
+				DBMod.RaidFrames.moved = false
+				spartan:GetModule("PlayerFrames"):UpdatePosition()
 			end},
 			
 			line1 = {name="",type="header",order = 49},

@@ -24,44 +24,6 @@ do -- setup custom colors that we want to use
 	colors.reaction[8]	= colors.health;		-- Exalted
 end
 
---	Formatting functions
-local TextFormat = function(text)
-	local textstyle = DBMod.PlayerFrames.bars[text].textstyle
-	local textmode = DBMod.PlayerFrames.bars[text].textmode
-	local a,m,t,z
-	if text == "mana" then z = "pp" else z = "hp" end
-	
-	-- textstyle
-	-- "Long: 			 Displays all numbers."
-	-- "Long Formatted: Displays all numbers with commas."
-	-- "Dynamic: 		 Abbriviates and formats as needed"
-	if textstyle == "long" then
-		a = "[cur"..z.."]";
-		m = "[missing"..z.."]";
-		t = "[max"..z.."]";
-	elseif textstyle == "longfor" then
-		a = "[cur"..z.."formatted]";
-		m = "[missing"..z.."formatted]";
-		t = "[max"..z.."formatted]";
-	elseif textstyle == "dynamic" then
-		a = "[cur"..z.."dynamic]";
-		m = "[missing"..z.."dynamic]";
-		t = "[max"..z.."dynamic]";
-	end
-	-- textmode
-	-- [1]="Avaliable / Total",
-	-- [2]="(Missing) Avaliable / Total",
-	-- [3]="(Missing) Avaliable"
-	
-	if textmode == 1 then
-		return a .. " / " .. t
-	elseif textmode == 2 then
-		return "("..m..") "..a.." / "..t
-	elseif textmode == 3 then
-		return "("..m..") "..a
-	end
-end
-
 local menu = function(self)
 	local unit = string.gsub(self.unit,"(.)",string.upper,1);
 	if (_G[unit..'FrameDropDown']) then
@@ -102,8 +64,10 @@ local threat = function(self,event,unit)
 end
 
 local name = function(self)
-	if (UnitIsEnemy(self.unit,"player")) then self.Name:SetTextColor(1, 50/255, 0);
-	elseif (UnitIsUnit(self.unit,"player")) then self.Name:SetTextColor(1, 1, 1); 
+	if (UnitIsEnemy(self.unit,"player")) then
+		self.Name:SetTextColor(1, 50/255, 0);
+	elseif (UnitIsUnit(self.unit,"player")) then
+		self.Name:SetTextColor(1, 1, 1); 
 	else
 		local r,g,b = unpack(colors.reaction[UnitReaction(self.unit,"player")] or {1,1,1});
 		self.Name:SetTextColor(r,g,b);
@@ -132,8 +96,8 @@ end
 local PostUpdateText = function(self,unit)
 	self:Untag(self.Health.value)
 	if self.Power then self:Untag(self.Power.value) end
-	self:Tag(self.Health.value, TextFormat("health"))
-	if self.Power then self:Tag(self.Power.value, TextFormat("mana")) end
+	self:Tag(self.Health.value, addon:TextFormat("health"))
+	if self.Power then self:Tag(self.Power.value, addon:TextFormat("mana")) end
 end
 
 local PostUpdateAura = function(self,unit)
@@ -299,7 +263,7 @@ local CreatePlayerFrame = function(self,unit)
 			health.value:SetSize(135, 11);
 			health.value:SetJustifyH("RIGHT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("LEFT",health,"LEFT",4,0);
-			self:Tag(health.value, TextFormat("health"))
+			self:Tag(health.value, addon:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(90, 11);
@@ -361,7 +325,7 @@ local CreatePlayerFrame = function(self,unit)
 			power.value:SetWidth(135); power.value:SetHeight(11);
 			power.value:SetJustifyH("RIGHT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("LEFT",power,"LEFT",4,0);
-			self:Tag(power.value, TextFormat("mana"))
+			self:Tag(power.value, addon:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetWidth(90); power.ratio:SetHeight(11);
@@ -528,7 +492,7 @@ local CreateTargetFrame = function(self,unit)
 			health.value:SetWidth(135); health.value:SetHeight(11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
-			self:Tag(health.value, TextFormat("health"))	
+			self:Tag(health.value, addon:TextFormat("health"))	
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(90); health.ratio:SetHeight(11);
@@ -590,7 +554,7 @@ local CreateTargetFrame = function(self,unit)
 			power.value:SetWidth(135); power.value:SetHeight(11);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-			self:Tag(power.value, TextFormat("mana"))
+			self:Tag(power.value, addon:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetWidth(90); power.ratio:SetHeight(11);
@@ -766,7 +730,7 @@ local CreatePetFrame = function(self,unit)
 			health.value:SetPoint("RIGHT",health,"RIGHT",-8,0);
 			health.value:SetJustifyH("RIGHT");
 			health.value:SetJustifyV("MIDDLE");
-			self:Tag(health.value, TextFormat("health"))
+			self:Tag(health.value, addon:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -829,7 +793,7 @@ local CreatePetFrame = function(self,unit)
 			power.value:SetPoint("RIGHT",power,"RIGHT",-17,0);
 			power.value:SetJustifyH("RIGHT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("LEFT",power,"LEFT",4,0);
-			self:Tag(power.value, TextFormat("mana"))
+			self:Tag(power.value, addon:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetWidth(40); power.ratio:SetHeight(11);
@@ -989,7 +953,7 @@ local CreateToTFrame = function(self,unit)
 				health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 				health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
 				
-				self:Tag(health.value, TextFormat("health"))
+				self:Tag(health.value, addon:TextFormat("health"))
 				
 				health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -1050,7 +1014,7 @@ local CreateToTFrame = function(self,unit)
 				power.value:SetWidth(110); power.value:SetHeight(11);
 				power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 				power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-				self:Tag(power.value, TextFormat("mana"))
+				self:Tag(power.value, addon:TextFormat("mana"))
 				
 				power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				power.ratio:SetWidth(40); power.ratio:SetHeight(11);
@@ -1160,7 +1124,7 @@ local CreateToTFrame = function(self,unit)
 				health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 				health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
 				
-				self:Tag(health.value, TextFormat("health"))
+				self:Tag(health.value, addon:TextFormat("health"))
 				
 				health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -1221,7 +1185,7 @@ local CreateToTFrame = function(self,unit)
 				power.value:SetSize(85, 11);
 				power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 				power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-				self:Tag(power.value, TextFormat("mana"))
+				self:Tag(power.value, addon:TextFormat("mana"))
 				
 				power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				power.ratio:SetSize(40, 11);
@@ -1289,7 +1253,7 @@ local CreateToTFrame = function(self,unit)
 				health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 				health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
 				
-				self:Tag(health.value, TextFormat("health"))
+				self:Tag(health.value, addon:TextFormat("health"))
 				
 				health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.ratio:SetWidth(50); health.ratio:SetHeight(11);
@@ -1421,7 +1385,7 @@ local CreateFocusFrame = function(self,unit)
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			if unit == "focus" then health.value:SetPoint("RIGHT",health,"RIGHT",0,0) end
 			if unit == "focustarget" then health.value:SetPoint("LEFT",health,"LEFT",0,0) end
-			self:Tag(health.value, TextFormat("health"))
+			self:Tag(health.value, addon:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(40, 11);
@@ -1483,7 +1447,7 @@ local CreateFocusFrame = function(self,unit)
 			power.value:SetSize(85, 11);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("TOP",self.Health.value,"BOTTOM",-1,-6);
-			self:Tag(power.value, TextFormat("mana"))
+			self:Tag(power.value, addon:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.value:SetSize(40, 11);
@@ -1607,7 +1571,7 @@ local CreateBossFrame = function(self,unit)
 			health.value:SetSize(97, 10);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("LEFT",health,"LEFT",4,0);
-			self:Tag(health.value, TextFormat("health"))	
+			self:Tag(health.value, addon:TextFormat("health"))	
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(50, 10);
@@ -1661,7 +1625,7 @@ local CreateBossFrame = function(self,unit)
 			power.value:SetSize(70, 10);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-			self:Tag(power.value, TextFormat("mana"))
+			self:Tag(power.value, addon:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetSize(50, 10);

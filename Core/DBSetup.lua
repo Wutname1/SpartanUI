@@ -1,7 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = spartan:NewModule("DBSetup");
-local Bartender4Version, BartenderMin = "","4.5.12"
+local Bartender4Version, BartenderMin = "","4.6.10"
 if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
 if (spartan.CurseVersion == nil) then spartan.CurseVersion = "" end
 

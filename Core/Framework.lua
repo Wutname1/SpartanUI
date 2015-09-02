@@ -345,15 +345,19 @@ function addon:ChatCommand(input)
 	if input == "version" then
 		addon:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))
 		addon:Print("SpartanUI Curse "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version"))
-	elseif input == "b" then
-		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
-		InterfaceOptionsFrame_OpenToCategory("SpartanUI")
 	elseif input == "map" then
 		Minimap.mover:Show();
 	else
 		AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600)
 		AceConfigDialog:Open("SpartanUI")
     end
+end
+
+function addon:Err(mod, err)
+	addon:Print("|cffff0000Error detected")
+	addon:Print("An error has been captured in the Component '" .. mod .. "'")
+	addon:Print("Details: " .. err)
+	addon:Print("Please submit a bug at |cff3370FFhttp://spartanui.net/bugs")
 end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------

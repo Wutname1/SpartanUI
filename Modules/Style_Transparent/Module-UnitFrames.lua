@@ -415,21 +415,25 @@ local CreatePlayerFrame = function(self,unit)
 			self.Power = power;
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
-			
-			if unit == "player" then
-				local DruidMana = CreateFrame("StatusBar", nil, self)
-				DruidMana:SetSize(self.Power:GetWidth(), 4);
-				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,-1);
-				-- DruidMana.colorSmooth = true
-				DruidMana.colorPower = true
-				DruidMana:SetStatusBarTexture(Smoothv2)
-				-- Register it with oUF
-				self.DruidMana = DruidMana
-			end
 		end
 		do --Special Icons/Bars
 			local playerClass = select(2, UnitClass("player"))
-			if playerClass =="DEATHKNIGHT" then	
+			if unit == "player" and playerClass == "DRUID" then
+				local DruidMana = CreateFrame("StatusBar", nil, self)
+				DruidMana:SetSize(self:GetWidth(), 4);
+				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
+				DruidMana.colorPower = true
+				DruidMana:SetStatusBarTexture(Smoothv2)
+
+				-- Add a background
+				local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+				Background:SetAllPoints(DruidMana)
+				Background:SetTexture(1, 1, 1, .2)
+
+				-- Register it with oUF
+				self.DruidMana = DruidMana
+				self.DruidMana.bg = Background
+			elseif unit == "player" and playerClass =="DEATHKNIGHT" then	
 				self.Runes = CreateFrame("Frame", nil, self)
 				
 				for i = 1, 6 do
@@ -1474,6 +1478,37 @@ function module:UpdateAltBarPositions()
 	end
 end
 
+function module:PositionFrame(b)
+	if (SUI_FramesAnchor:GetParent() == UIParent) then
+		if b == nil or b == "player" then PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150); end
+		if b == nil or b == "pet" then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4); end
+		if b == nil or b == "target" then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0); end
+		
+		-- if DBMod.PlayerFrames.targettarget.style == "small" then
+		if b == nil or b == "targettarget" then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11); end
+		-- else
+			-- PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",-20,0);
+		-- end
+		
+		PlayerFrames.player:SetScale(DB.scale);
+		for a,b in pairs(FramesList) do
+			_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+		end
+	else
+		if b == nil or b == "player" then PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3); end
+		if b == nil or b == "pet" then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4); end
+		if b == nil or b == "target" then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3); end
+		-- if DBMod.PlayerFrames.targettarget.style == "small" then
+			-- PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
+		-- else
+		if b == nil or b == "targettarget" then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",6,4); end
+		-- end
+	end
+	
+	if b == nil or b == "focus" then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
+	if b == nil or b == "focustarget" then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
+end
+
 function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPlayerFrames");
 	
@@ -1481,47 +1516,11 @@ function module:PlayerFrames()
 
 	for a,b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
-		if b == "player" then
-			if (SUI_FramesAnchor:GetParent() == UIParent) then
-				PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-80,150);
-			else
-				PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-			end
-			PlayerFrames:SetupExtras()
-		end
+		if b == "player" then PlayerFrames:SetupExtras() end
 		PlayerFrames[b].artwork.bg:SetVertexColor(0,.8,.9,.9)
 	end
 	
-	do -- Position Static Frames
-		
-		if (SUI_FramesAnchor:GetParent() == UIParent) then
-			PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
-			
-			PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
-			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
-			else
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",-20,0);
-			end
-			PlayerFrames.player:SetScale(DB.scale);
-			for a,b in pairs(FramesList) do
-				_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
-			end
-		else
-			PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
-			PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
-			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
-			else
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",6,4);
-			end
-		end
-	end
-	PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
-	PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0);
-
+	module:PositionFrame()
 	module:UpdateAltBarPositions();
 	
 	if DBMod.PlayerFrames.BossFrame.display == true then
