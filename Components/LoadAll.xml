@@ -4,4 +4,5 @@
 	<Script file="Chatbox.lua" />
 	<Script file="Minimap.lua" />
 	<Script file="Objectives.lua" />
+	<Script file="Nameplates.lua" />
 </Ui>

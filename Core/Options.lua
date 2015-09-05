@@ -433,7 +433,7 @@ function module:ExportData()
 		Region = GetCurrentRegion(),
 		class = UnitClass("player"),
 		Faction = UnitFactionGroup("player"),
-		PlayerName = UnitName("player"),
+		-- PlayerName = UnitName("player"),
 		PlayerLevel = UnitLevel("player"),
 		ActiveSpec = GetSpecializationInfo(GetSpecialization()),
 		Zone = GetRealZoneText() ..  " - " .. GetSubZoneText()

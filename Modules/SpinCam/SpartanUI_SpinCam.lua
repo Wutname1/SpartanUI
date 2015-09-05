@@ -1,7 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local addon = spartan:NewModule("SpinCam");
-local SpinCamRunning
+local SpinCamRunning = false
 local userCameraYawMoveSpeed
 
 function addon:OnInitialize()
@@ -50,11 +50,12 @@ function addon:SpinToggle(action)
 	if (SpinCamRunning and action == nil) or (action=="stop") then
 		MoveViewRightStop();
 		SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
-		SpinCamRunning = nil;
-		SetView(5);
+		SpinCamRunning = false;
+		SetView(1);
 	elseif action == "update" then
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
 	else
+		SaveView(1)
 		userCameraYawMoveSpeed = (GetCVar("cameraYawMoveSpeed"))
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
 		MoveViewRightStart();
@@ -64,7 +65,7 @@ function addon:SpinToggle(action)
 end
 
 SlashCmdList["SPINCAMTOGGLE"] = function(msg)
-	if (SpinCamRunning == nil) then DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["Spin/StopMSG"]); end
+	if (SpinCamRunning) then DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["Spin/StopMSG"]); end
 	addon:SpinToggle(action)
 end;
 SLASH_SPINCAMTOGGLE1 = "/spin"
