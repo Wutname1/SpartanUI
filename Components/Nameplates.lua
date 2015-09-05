@@ -16,6 +16,7 @@ end
 function module:OnEnable()
 
 	module:BuildOptions()
+	module:HideOptions()
 end
 
 function module:BuildOptions()
