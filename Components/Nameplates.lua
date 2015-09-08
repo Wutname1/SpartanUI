@@ -5,7 +5,7 @@ local module = spartan:NewModule("Component_Nameplates");
 ----------------------------------------------------------------------------------------------------
 
 function module:OnInitialize()
-	if DBMod.Objectives == nil then
+	if DBMod.Nameplates == nil then
 		DBMod.Nameplates = {
 			showThreat = true,
 			healthMode = "detailed"

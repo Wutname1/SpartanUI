@@ -1592,7 +1592,7 @@ function module:RaidFrames()
 		'yOffset', -5,
 		'point', 'TOP',
 		'groupFilter', '1,2,3,4,5,6,7,8',
-		'groupBy', 'ROLE',
+		'groupBy', DBMod.RaidFrames.mode,
 		'groupingOrder', 'TANK,HEALER,DAMAGER,NONE',
 		'sortMethod', 'name',
 		'maxColumns', DBMod.RaidFrames.maxColumns,

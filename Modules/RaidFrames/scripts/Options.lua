@@ -75,14 +75,6 @@ function RaidFrames:OnInitialize()
 		}
 	};
 	
-	spartan.opt.args["RaidFrames"].args["FramePreSets"] = {name = L["Frames/PreSets"], type = "select", order=1,disabled=true,
-		values = {["custom"]=L["Frames/Custom"],["tank"]=L["Frames/Tank"],["dps"]=L["Frames/DPS"],["healer"]=L["Frames/Healer"]},
-		desc=L["Frames/SetTankDesc"].."|n|n"..L["Frames/SetDPSDesc"].."|n|n"..L["Frames/SetHealDesc"],
-		get = function(info) return DBMod.RaidFrames.preset; end,
-		set = function(info,val)
-			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.preset = val; end
-		end
-	};
 	spartan.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
 		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
 		get = function(info) return DBMod.RaidFrames.FrameStyle; end,
@@ -90,8 +82,8 @@ function RaidFrames:OnInitialize()
 			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.FrameStyle = val; end
 		end
 	};
-	spartan.opt.args["RaidFrames"].args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,disabled=true,
-		values = {["name"]=L["Frames/LayName"],["group"]=L["Frames/LayGrp"],["role"]=L["Frames/LayRole"]},
+	spartan.opt.args["RaidFrames"].args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,
+		values = {["NAME"]=L["Frames/LayName"],["GROUP"]=L["Frames/LayGrp"],["ROLE"]=L["Frames/LayRole"]},
 		get = function(info) return DBMod.RaidFrames.mode; end,
 		set = function(info,val) DBMod.RaidFrames.mode = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 	};

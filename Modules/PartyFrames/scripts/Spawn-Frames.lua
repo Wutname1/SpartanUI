@@ -33,7 +33,7 @@ end
 function PartyFrames:OnEnable()
 	if (DBMod.PartyFrames.Style == "theme") and (DBMod.Artwork.Style ~= "Classic") then
 		PartyFrames.party = spartan:GetModule("Style_" .. DBMod.Artwork.Style):PartyFrames();
-	elseif (DBMod.PartyFrames.Style == "Classic") or (DBMod.Artwork.Style == "Classic") then
+	elseif (DBMod.PartyFrames.Style == "Classic") then
 		PartyFrames.party = PartyFrames:Classic()
 		PartyFrames:ClassicOptions()
 	elseif (DBMod.PartyFrames.Style == "plain") then

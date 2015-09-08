@@ -5,4 +5,5 @@
 	<Script file="Minimap.lua" />
 	<Script file="Objectives.lua" />
 	<Script file="Nameplates.lua" />
+	<Script file="Tooltips.lua" />
 </Ui>

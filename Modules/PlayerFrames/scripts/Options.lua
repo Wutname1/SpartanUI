@@ -231,11 +231,6 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.opt.args["PlayerFrames"].args["UnitFrameMode"] = {name = "Unit Frame Mode",type="select",order=1,
-		values = {["theme"]="Theme Frames",["classic"]="Classic Style",["plain"]="Minimal Frames"},
-		get = function(info) return DBMod.PlayerFrames.style; end,
-		set = function(info,val) DBMod.PlayerFrames.style = val; end
-	};
 	spartan.opt.args["PlayerFrames"].args["resetfocus"] = {name = L["Frames/resetfocus"],type = "execute",order=2,
 		desc = L["Frames/resetfocusDesc"],
 		func = function() DBMod.PlayerFrames.focus.movement.moved = false; addon:UpdateFocusPosition(); end

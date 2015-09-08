@@ -77,4 +77,5 @@
 	
 	<Script file="oUF.lua" />
 	<Script file="DBSetup.lua" />
+	<Script file="Installer.lua" />
 </Ui>
