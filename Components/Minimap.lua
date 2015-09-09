@@ -8,8 +8,11 @@ local BlizzUI = { "ActionBar", "BonusActionButton", "MainMenu", "ShapeshiftButto
 local BlizzParentStop = { "WorldFrame", "Minimap", "MinimapBackdrop", "UIParent", "MinimapCluster" }
 local SUIMapChangesActive = false
 local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBackdrop", "MiniMapVoiceChatFrame","TimeManagerClockButton", "MinimapButtonFrameDragButton", "GameTimeFrame", "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
-
+local ChangesTimer = nil
 local MinimapUpdater = CreateFrame("Frame")
+local IgnoredFrames = {}
+local LastUpdateStatus = nil
+
 
 local IsMouseOver = function()
 	local MouseFocus = GetMouseFocus()
@@ -24,31 +27,29 @@ end
 local MiniMapBtnScrape = function()
 	-- Hook Minimap Icons
 	for i, child in ipairs({Minimap:GetChildren()}) do
-		module:SetupButton(child)
+		if child.FadeIn == nil then module:SetupButton(child) end
 	end
-	if CensusButton ~= nil then
+	if CensusButton ~= nil and CensusButton.FadeIn == nil then
 		module:SetupButton(CensusButton);
 	end
-	
 end
 
 local PerformFullBtnUpdate = function()
 	IsMouseOver() --update mouse location
-	MiniMapBtnScrape(); --look for new icons
-	module:updateButtons(); --update existing
+	MiniMapBtnScrape();
+	if LastUpdateStatus ~= IsMouseOver() then module:updateButtons(); end --update visibility
 end
 
 local OnEnter = function()
 	if DB.MiniMap.MouseIsOver then return end
-	
 	--don't use PerformFullBtnUpdate as we want to perform the actions in reverse. since any new unknown icons will already be shown.
-	module:updateButtons();
+	if LastUpdateStatus ~= IsMouseOver() then module:updateButtons(); end --update visibility
 	MiniMapBtnScrape();
 end
 
 local OnLeave = function()
 	--Check in half a second that the mouse actually left
-	C_Timer.After(.5, PerformFullBtnUpdate)
+	if ChangesTimer == nil then ChangesTimer = C_Timer.After(.5, PerformFullBtnUpdate) end
 end
 
 function module:OnEnable()
@@ -115,8 +116,9 @@ function module:OnEnable()
 	MinimapUpdater:SetScript("OnEvent", function()
 		-- if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
 			-- DB.MiniMap.MouseIsOver = false
-			C_Timer.After(2, PerformFullBtnUpdate)
-		-- end
+		if not InCombatLockdown() then
+			if ChangesTimer == nil then ChangesTimer = C_Timer.After(2, PerformFullBtnUpdate) end
+		end
 	end)
 	MinimapUpdater:RegisterEvent("ADDON_LOADED")
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED")
@@ -304,7 +306,7 @@ function module:SetupButton(btn, force)
 	buttonType = btn:GetObjectType();
 	
 	--Avoid duplicates make sure it's not in the tracking table
-	if not spartan:isInTable(DB.MiniMap.frames, buttonName) or force then
+	if btn.FadeIn == nil or force then
 		-- Hook Mouse Events
 		btn:HookScript("OnEnter", OnEnter)
 		btn:HookScript("OnLeave", OnLeave)
@@ -327,19 +329,16 @@ function module:SetupButton(btn, force)
 		FadeOut:SetStartDelay(.5)
 		btn.FadeOut:SetToFinalAlpha(true)
 		
-		--Insert into tracking table
-		table.insert(DB.MiniMap.frames, buttonName)
-		
 		--Hook into the buttons show and hide events to catch for the button being enabled/disabled
 		btn:HookScript("OnHide",function(self,event,...)
 			if not DB.MiniMap.SUIMapChangesActive then
-				table.insert(DB.MiniMap.IgnoredFrames, self:GetName())
+				table.insert(IgnoredFrames, self:GetName())
 			end
 		end);
 		btn:HookScript("OnShow",function(self,event,...)
-			for i=1,table.getn(DB.MiniMap.IgnoredFrames) do
-				if DB.MiniMap.IgnoredFrames[i] == btn:GetName() then
-					table.remove(DB.MiniMap.IgnoredFrames, i)
+			for i=1,table.getn(IgnoredFrames) do
+				if IgnoredFrames[i] == btn:GetName() then
+					table.remove(IgnoredFrames, i)
 				end
 			end
 		end);
@@ -347,22 +346,7 @@ function module:SetupButton(btn, force)
 end
 
 function module:updateButtons()
-	local ZoomHide = true
-	local AllHide = true
-	
-	if (not IsMouseOver()) and (DB.MiniMap.MapButtons) then
-		AllHide = true
-		ZoomHide = true
-	else
-		AllHide = false
-		if (not DB.MiniMap.MapZoomButtons) then ZoomHide = false end
-	end
-	
-	if (not IsMouseOver()) and (not DB.MiniMap.MapButtons) and (DB.MiniMap.MapZoomButtons) then
-		ZoomHide = true;
-	end
-	
-	if (ZoomHide) then
+	if (DB.MiniMap.MapZoomButtons) then
 		MinimapZoomIn:Hide();
 		MinimapZoomOut:Hide();
 	else
@@ -371,11 +355,11 @@ function module:updateButtons()
 	end
 	
 	DB.MiniMap.SUIMapChangesActive = true
-	if (AllHide) then
+	if not IsMouseOver() and (DB.MiniMap.MapButtons) then
 		--Fix for DBM making its icon even if its not needed
 		if DBM ~= nil then 
 			if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
-				table.insert(DB.MiniMap.IgnoredFrames, "DBMMinimapButton")
+				table.insert(IgnoredFrames, "DBMMinimapButton")
 			end
 		end
 		
@@ -387,26 +371,24 @@ function module:updateButtons()
 		
 		for i, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName();
-			-- buttonType = child:GetObjectType();
+			
+			--catch buttons not playing nice.
+			if child.FadeOut == nil then
+				module:SetupButton(child, true)
+			end
 			
 			if buttonName
 			  -- and buttonType == "Button"
-			  and spartan:isInTable(DB.MiniMap.frames, buttonName)
-			  -- and (not spartan:isInTable(SkinProtect, buttonName))
-			  and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))
+			  and child.FadeOut ~= nil
+			  and (not spartan:isInTable(IgnoredFrames, buttonName))
 			  and child:GetAlpha() == 1
 			  then
-				--catch buttons not playing nice.
-				if child.FadeIn == nil then module:SetupButton(child, true) end
-				
+				child.FadeIn:Stop()
+				child.FadeOut:Stop()
+				child.FadeOut:Play();
+			elseif child.FadeIn == nil then
 				--if they still fail print a error and continue with our lives.
-				if child.FadeIn == nil then
-					spartan.Err("Minimap", buttonName .. " is not fading")
-				else
-					child.FadeIn:Stop()
-					child.FadeOut:Stop()
-					child.FadeOut:Play();
-				end
+				spartan.Err("Minimap", buttonName .. " is not fading")
 			end
 		end
 	else
@@ -421,15 +403,10 @@ function module:updateButtons()
 			-- buttonType = child:GetObjectType();
 			
 			if buttonName
-			  -- and buttonType == "Button"
-			  and spartan:isInTable(DB.MiniMap.frames, buttonName)
-			  -- and (not spartan:isInTable(SkinProtect, buttonName))
-			  and (not spartan:isInTable(DB.MiniMap.IgnoredFrames, buttonName))
+			  and child.FadeIn ~= nil
+			  and (not spartan:isInTable(IgnoredFrames, buttonName))
 			  and child:GetAlpha() == 0
 			  then
-				-- child.FadeOut:Play();
-			-- end
-			-- if child.FadeIn ~= nil then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 				
@@ -437,6 +414,7 @@ function module:updateButtons()
 			end
 		end
 	end
+	LastUpdateStatus = IsMouseOver()
 	DB.MiniMap.SUIMapChangesActive = false
 end
 

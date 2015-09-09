@@ -112,7 +112,7 @@ DBdefault = {
 			Moved = false,
 			Position = nil,
 			frames = {},
-			IgnoredFrames = {},
+			-- IgnoredFrames = {},
 			SUIMapChangesActive = false
 		},
 		ActionBars = {
@@ -378,6 +378,12 @@ function addon:isPartialMatch(frameName, tab)
 end
 
 function addon:isInTable(tab, frameName)
+	-- local Count = 0
+	-- for Index, Value in pairs( tab ) do
+	  -- Count = Count + 1
+	-- end
+	-- print (Count)
+	if tab == nil or frameName == nil then return false end
 	for k,v in ipairs(tab) do
 		if v ~= nil and frameName ~= nil then
 			if (strlower(v) == strlower(frameName)) then
