@@ -7,16 +7,6 @@ if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetada
 if (spartan.CurseVersion == nil) then spartan.CurseVersion = "" end
 
 function module:OnInitialize()
-	StaticPopupDialogs["FirstLaunchNotice"] = {
-		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["WelcomeMSG"]..' /sui|n|n',
-		button1 = "Ok",
-		OnAccept = function()
-			DBGlobal.Version = spartan.SpartanVer;
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
 	StaticPopupDialogs["BartenderVerWarning"] = {
 		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
 		button1 = "Ok",
@@ -32,16 +22,6 @@ function module:OnInitialize()
 		button1 = "Ok",
 		OnAccept = function()
 			DBGlobal.BartenderInstallWarning = spartan.SpartanVer
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
-	StaticPopupDialogs["AlphaWarning"] = {
-		text = '|cff33ff99SpartanUI Alpha '..spartan.CurseVersion..'|n|r|n|n'..L["Warning"]..': '..L["AplhaDetectedMSG1"]..'|n|n'..L["AplhaDetectedMSG2"],
-		button1 = "Ok",
-		OnAccept = function()
-			DBGlobal.AlphaWarning = spartan.CurseVersion
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -312,11 +292,6 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	-- First Launch Notication
-	if (not DBGlobal.Version) then
-		spartan.db:ResetProfile(false,true);
-		StaticPopup_Show("FirstLaunchNotice")
-	end
 	-- No Bartender/out of date Notification
 	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= spartan.SpartanVer)) then
 		if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end

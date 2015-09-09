@@ -241,12 +241,12 @@ local TooltipSetUnit = function(self)
 			local groupedUnit = IsInRaid() and "raid"..i or "party"..i
 			if UnitIsUnit(groupedUnit.."target", unit) and not UnitIsUnit(groupedUnit, "player") then
 				local _, classToken = UnitClass(groupedUnit)
-				tinsert(targetList, format("|c%s%s|r", RAID_CLASS_COLORS[classToken].colorStr, UnitName(groupedUnit)))
+				_G.tinsert(targetList, format("|c%s%s|r", RAID_CLASS_COLORS[classToken].colorStr, UnitName(groupedUnit)))
 			end
 		end
 		local maxTargets = #targetList
-		if maxTargets > 0 then
-			self:AddLine(format("%s (|cffffffff%d|r): %s", L["Targeted By"], maxTargets, tconcat(targetList, ", ")), nil, nil, nil, true)
+		if maxTargets > 0 and targetList ~= nil then
+			self:AddLine(format("%s (|cffffffff%d|r): %s", L["Targeted By"], maxTargets, table.concat(targetList, ", ")), nil, nil, nil, true)
 			wipe(targetList)
 		end
 	end
