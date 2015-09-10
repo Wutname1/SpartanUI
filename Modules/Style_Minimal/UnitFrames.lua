@@ -240,6 +240,7 @@ local OnCastbarUpdate = function(self,elapsed)
 end
 
 local MakeSmallFrame = function(self,unit)
+	self:RegisterForClicks("AnyDown");
 	self:SetSize(100, 40);
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
@@ -401,7 +402,8 @@ local MakeSmallFrame = function(self,unit)
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
-
+	-- self.AuraWatch = spartan:oUF_Buffs(self)
+	
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	return self;
@@ -523,6 +525,28 @@ local MakeLargeFrame = function(self,unit)
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 			
+		end
+		do -- setup buffs and debuffs
+			local tmp = 0
+			if unit == "player" and (playerClass =="DEATHKNIGHT" or playerClass =="DRUID") then tmp = -5 end
+			
+			self.Debuffs = CreateFrame("Frame",nil,self);
+			self.Debuffs:SetSize(self:GetWidth(), 17);
+			self.Debuffs:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",0,-5 + tmp);
+			self.Debuffs:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-5 + tmp);
+			self.Debuffs:SetFrameStrata("BACKGROUND");
+			self.Debuffs:SetFrameLevel(4);
+			-- settings
+			self.Debuffs.size = DBMod.PartyFrames.Auras.size;
+			self.Debuffs.spacing = DBMod.PartyFrames.Auras.spacing;
+			self.Debuffs.showType = DBMod.PartyFrames.Auras.showType;
+			self.Debuffs.initialAnchor = "TOPLEFT";
+			self.Debuffs.num = 12;
+			self.Debuffs.gap = true; -- adds an empty spacer between buffs and debuffs
+			self.Debuffs.numBuffs = DBMod.PartyFrames.Auras.NumBuffs;
+			self.Debuffs.numDebuffs = DBMod.PartyFrames.Auras.NumDebuffs;
+			
+			self.Debuffs.PostUpdate = PartyFrames:PostUpdateAura(self,unit);
 		end
 		do --Special Icons/Bars
 			local playerClass = select(2, UnitClass("player"))
@@ -698,6 +722,7 @@ local CreateUnitFrameRaid = function(self,unit)
 			spartan.RaidFrames:SetMovable(true);
 			spartan.RaidFrames:StartMoving();
 		end
+		print("click")
 	end);
 	self:HookScript("OnMouseUp",function(self,button)
 		spartan.RaidFrames.mover:Hide();

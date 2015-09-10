@@ -371,41 +371,7 @@ local CreatePartyFrame = function(self,unit)
 		self.Auras.PostUpdate = PartyFrames:PostUpdateAura(self,unit);
 	end
 	do -- HoTs Display
-		local auras = {}
-		local class, classFileName = UnitClass("player");
-		local spellIDs ={}
-		if classFileName == "DRUID" then
-			spellIDs = {
-				774, -- Rejuvenation
-				33763, -- Lifebloom
-				8936, -- Regrowth
-				102351, -- Cenarion Ward
-				48438, -- Wild Growth
-				155777, -- Germination
-				102342, -- Ironbark
-			}
-		elseif classFileName == "PRIEST" then
-			spellIDs = {
-				139, -- Renew
-				17, -- sheild
-				33076, -- Prayer of Mending
-			}
-		end
-		auras.presentAlpha = 1
-		auras.onlyShowPresent = true
-		auras.PostCreateIcon = myCustomIconSkinnerFunction
-		-- Set any other AuraWatch settings
-		auras.icons = {}
-		for i, sid in pairs(spellIDs) do
-			local icon = CreateFrame("Frame", nil, self)
-			icon.spellID = sid
-			-- set the dimensions and positions
-			icon:SetSize(DBMod.PartyFrames.Auras.size, DBMod.PartyFrames.Auras.size)
-			icon:SetPoint("TOPRIGHT",self,"TOPRIGHT", (-icon:GetWidth()*i)-2, -2)
-			auras.icons[sid] = icon
-			-- Set any other AuraWatch icon settings
-		end
-		self.AuraWatch = auras
+		self.AuraWatch = spartan:oUF_Buffs(self, "BOTTOMRIGHT", "TOPRIGHT", 0)
 	end
 	do --Threat, SpellRange, and Ready Check
 		self.Range = {

@@ -176,7 +176,7 @@ function PlayerFrames:BossMoveScripts(frame)
 	frame:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
 			PlayerFrames.boss[1].mover:Show();
-			DBMod.PlayerFrames[framename].moved = true;
+			DBMod.PlayerFrames.boss.moved = true;
 			PlayerFrames.boss[1]:SetMovable(true);
 			PlayerFrames.boss[1]:StartMoving();
 		end
@@ -187,7 +187,7 @@ function PlayerFrames:BossMoveScripts(frame)
 		local Anchors = {}
 		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PlayerFrames.boss[1]:GetPoint()
 		for k,v in pairs(Anchors) do
-			DBMod.PlayerFrames[framename].Anchors[k] = v
+			DBMod.PlayerFrames.boss.Anchors[k] = v
 		end
 	end);
 end

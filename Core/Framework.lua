@@ -111,7 +111,7 @@ DBdefault = {
 			OtherStyle = "mouseover",
 			Moved = false,
 			Position = nil,
-			frames = {},
+			-- frames = {},
 			-- IgnoredFrames = {},
 			SUIMapChangesActive = false
 		},

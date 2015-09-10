@@ -54,8 +54,6 @@ end
 
 function module:OnEnable()
 	if not DB.EnabledComponents.Minimap then return end
-	--Reset the List of frames
-	DB.MiniMap.frames = {}
 	
 	if DB.Styles[DBMod.Artwork.Style].Movable.Minimap or (not spartan:GetModule("Artwork_Core", true)) then
 		Minimap.mover = CreateFrame("Frame");
@@ -416,6 +414,12 @@ function module:updateButtons()
 	end
 	LastUpdateStatus = IsMouseOver()
 	DB.MiniMap.SUIMapChangesActive = false
+
+	if DB.MiniMap.northTag then
+		MinimapNorthTag:Show()
+	else
+		MinimapNorthTag:Hide()
+	end
 end
 
 function module:BuildOptions()
