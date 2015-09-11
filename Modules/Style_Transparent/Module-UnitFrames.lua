@@ -454,7 +454,26 @@ local CreatePlayerFrame = function(self,unit)
 					self.Runes[i].bg.multiplier = 0.34
 					
 				end
-			end	
+			elseif unit == "player" and (playerClass =="MONK" or playerClass =="PALADIN" or playerClass =="PRIEST" or playerClass =="WARLOCK") then
+				local ClassIcons = {}
+				for index = 1, 6 do
+					local Icon = self:CreateTexture(nil, 'BORDER')
+
+					-- Position and size.
+					Icon:SetSize(16, 16)
+					Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+					Icon:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Icon:GetWidth(), -3)
+					
+					
+					Icon.bg = self:CreateTexture(nil, "BACKGROUND")
+					Icon.bg:SetSize(16, 16)
+					Icon.bg:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+					Icon.bg:SetVertexColor(.4, .4, .4, .7)
+					Icon.bg:SetAllPoints(Icon)
+
+					ClassIcons[index] = Icon
+				end
+			end
 		end
 	end
 	do -- setup ring, icons, and text
@@ -1338,6 +1357,8 @@ local CreateUnitFrame = function(self,unit)
 	self:RegisterForClicks("anyup");
 	self:SetAttribute("*type2", "menu");
 	self.colors = module.colors;
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	
 	return ((unit == "target" and CreateTargetFrame(self,unit))
 	or (unit == "targettarget" and CreateToTFrame(self,unit))
@@ -1398,6 +1419,8 @@ local CreateUnitFrameRaid = function(self,unit)
 	self:RegisterForClicks("AnyDown");
 	self:EnableMouse(enable)
 	self:SetClampedToScreen(true)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	
 	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
@@ -1439,68 +1462,25 @@ function module:UpdateAltBarPositions()
 	end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
-	MonkHarmonyBar:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		MonkHarmonyBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		MonkHarmonyBar:SetPoint("BOTTOMLEFT",PlayerFrames.player,"BOTTOMLEFT",40,-40);
-	end
+	MonkHarmonyBar.Show = MonkHarmonyBar.Hide
+	MonkHarmonyBar:Hide()
 	
 	--Paladin Holy Power
-	PaladinPowerBar:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		PaladinPowerBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		PaladinPowerBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",60,12);
-	end
+	PaladinPowerBar.Show = MonkHarmonyBar.Hide
+	PaladinPowerBar:Hide()
 	
 	--Priest Power Frame
-	PriestBarFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		PriestBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		PriestBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPLEFT",-4,-2);
-	end
+	PriestBarFrame.Show = MonkHarmonyBar.Hide
+	PriestBarFrame:Hide()
 	
 	--Warlock Power Frame
-	WarlockPowerFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		WarlockPowerFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		PlayerFrames:WarlockPowerFrame_Relocate();
-	end
+	WarlockPowerFrame.Show = MonkHarmonyBar.Hide
+	WarlockPowerFrame:Hide()
 	
-	--Death Knight Runes
-	RuneFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		RuneFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		RuneFrame:SetPoint("BOTTOM",PlayerFrames.player,"TOP",0,20);
-	end
-			
 	-- relocate the AlternatePowerBar
-	if classFileName ~= "DRUID" then
-		PlayerFrameAlternateManaBar:ClearAllPoints();
+	if classFileName == "DRUID" then
+		PlayerFrameAlternateManaBar:Hide()
+		PlayerFrameAlternateManaBar.Show = PlayerFrameAlternateManaBar.Hide
 	elseif classFileName ~= "MONK" then
 		PlayerFrameAlternateManaBar:ClearAllPoints();
 		if DBMod.PlayerFrames.AltManaBar.movement.moved then

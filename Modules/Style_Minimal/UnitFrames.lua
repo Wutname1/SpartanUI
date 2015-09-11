@@ -240,7 +240,13 @@ local OnCastbarUpdate = function(self,elapsed)
 end
 
 local MakeSmallFrame = function(self,unit)
+	self.menu = menu;
 	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	
 	self:SetSize(100, 40);
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
@@ -410,6 +416,13 @@ local MakeSmallFrame = function(self,unit)
 end
 
 local MakeLargeFrame = function(self,unit)
+	self.menu = menu;
+	self:RegisterForClicks("anyup");
+	self:SetAttribute("*type2", "menu");
+	self:EnableMouse(enable)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	
 	self:SetSize(200, 40);
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
@@ -565,7 +578,25 @@ local MakeLargeFrame = function(self,unit)
 				-- Register it with oUF
 				self.DruidMana = DruidMana
 				self.DruidMana.bg = Background
-			elseif unit == "player" and playerClass =="DEATHKNIGHT" then	
+				
+				-- local EclipseBar = CreateFrame('Frame', nil, self)
+				-- EclipseBar:SetPoint('BOTTOM', self, 'TOP')
+				-- EclipseBar:SetSize(self:GetWidth(), 20)
+
+				-- Position and size
+				-- local LunarBar = CreateFrame('StatusBar', nil, EclipseBar)
+				-- LunarBar:SetPoint('LEFT')
+				-- LunarBar:SetSize(self:GetWidth(), 20)
+
+				-- local SolarBar = CreateFrame('StatusBar', nil, EclipseBar)
+				-- SolarBar:SetPoint('LEFT', LunarBar:GetStatusBarTexture(), 'RIGHT')
+				-- SolarBar:SetSize(self:GetWidth(), 20)
+
+				-- Register with oUF
+				-- EclipseBar.LunarBar = LunarBar
+				-- EclipseBar.SolarBar = SolarBar
+				-- self.EclipseBar = EclipseBar
+			elseif unit == "player" and playerClass =="DEATHKNIGHT" then
 				self.Runes = CreateFrame("Frame", nil, self)
 				
 				for i = 1, 6 do
@@ -584,9 +615,27 @@ local MakeLargeFrame = function(self,unit)
 					self.Runes[i].bg:SetPoint("BOTTOMRIGHT", self.Runes[i], "BOTTOMRIGHT", 0, -0)				
 					self.Runes[i].bg:SetTexture(Smoothv2)
 					self.Runes[i].bg.multiplier = 0.34
-					
 				end
-			end	
+			elseif unit == "player" and (playerClass =="MONK" or playerClass =="PALADIN" or playerClass =="PRIEST" or playerClass =="WARLOCK") then
+				local ClassIcons = {}
+				for index = 1, 6 do
+					local Icon = self:CreateTexture(nil, 'BORDER')
+
+					-- Position and size.
+					Icon:SetSize(16, 16)
+					Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+					Icon:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Icon:GetWidth(), -3)
+					
+					
+					Icon.bg = self:CreateTexture(nil, "BACKGROUND")
+					Icon.bg:SetSize(16, 16)
+					Icon.bg:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+					Icon.bg:SetVertexColor(.4, .4, .4, .7)
+					Icon.bg:SetAllPoints(Icon)
+
+					ClassIcons[index] = Icon
+				end
+			end
 		end
 	end
 	do -- setup items, icons, and text
@@ -665,16 +714,6 @@ local MakeLargeFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self.menu = menu;
-	
-	self:RegisterForClicks("anyup");
-	self:SetAttribute("*type2", "menu");
-	self:EnableMouse(enable)
-	
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	self:RegisterForClicks("anyup");
-	
 	self.colors = module.colors;
 	
 	return ((unit == "player" and MakeLargeFrame(self,unit))
@@ -683,12 +722,7 @@ local CreateUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	self:SetScript("OnEnter", UnitFrame_OnEnter)
-	self:SetScript("OnLeave", UnitFrame_OnLeave)
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	
-	self:SetScript("OnMouseDown",function(self,button)
+	self:HookScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
 			PartyFrames.party.mover:Show();
 			DBMod.PartyFrames.moved = true;
@@ -696,7 +730,7 @@ local CreateUnitFrameParty = function(self,unit)
 			PartyFrames.party:StartMoving();
 		end
 	end);
-	self:SetScript("OnMouseUp",function(self,button)
+	self:HookScript("OnMouseUp",function(self,button)
 		PartyFrames.party.mover:Hide();
 		PartyFrames.party:StopMovingOrSizing();
 		local Anchors = {}
@@ -706,15 +740,10 @@ local CreateUnitFrameParty = function(self,unit)
 		end
 	end);
 	
-	return CreateUnitFrame(self,unit)
+	return MakeSmallFrame(self,unit)
 end
 
 local CreateUnitFrameRaid = function(self,unit)
-	self = MakeSmallFrame(self,unit)
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	self:SetClampedToScreen(true)
-	
 	self:HookScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
 			spartan.RaidFrames.mover:Show();
@@ -722,7 +751,6 @@ local CreateUnitFrameRaid = function(self,unit)
 			spartan.RaidFrames:SetMovable(true);
 			spartan.RaidFrames:StartMoving();
 		end
-		print("click")
 	end);
 	self:HookScript("OnMouseUp",function(self,button)
 		spartan.RaidFrames.mover:Hide();
@@ -734,7 +762,7 @@ local CreateUnitFrameRaid = function(self,unit)
 		end
 	end);
 	
-	return self
+	return MakeSmallFrame(self,unit)
 end
 
 SpartanoUF:RegisterStyle("Spartan_MinimalFrames", CreateUnitFrame);
@@ -756,69 +784,25 @@ function module:UpdateAltBarPositions()
 	end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
-	MonkHarmonyBar:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		MonkHarmonyBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		MonkHarmonyBar:SetPoint("BOTTOMLEFT",PlayerFrames.player,"BOTTOMLEFT",40,-40);
-	end
+	MonkHarmonyBar.Show = MonkHarmonyBar.Hide
+	MonkHarmonyBar:Hide()
 	
 	--Paladin Holy Power
-	PaladinPowerBar:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		PaladinPowerBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		PaladinPowerBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",60,12);
-	end
+	PaladinPowerBar.Show = MonkHarmonyBar.Hide
+	PaladinPowerBar:Hide()
 	
 	--Priest Power Frame
-	PriestBarFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		PriestBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		PriestBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPLEFT",-4,-2);
-	end
+	PriestBarFrame.Show = MonkHarmonyBar.Hide
+	PriestBarFrame:Hide()
 	
 	--Warlock Power Frame
-	WarlockPowerFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		WarlockPowerFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		PlayerFrames:WarlockPowerFrame_Relocate();
-	end
+	WarlockPowerFrame.Show = MonkHarmonyBar.Hide
+	WarlockPowerFrame:Hide()
 	
-	--Death Knight Runes
-	RuneFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		RuneFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		RuneFrame:SetPoint("BOTTOM",PlayerFrames.player,"TOP",0,20);
-	end
-			
 	-- relocate the AlternatePowerBar
 	if classFileName == "DRUID" then
 		PlayerFrameAlternateManaBar:Hide()
-		PlayerFrameAlternateManaBar:SetAlpha(0)
+		PlayerFrameAlternateManaBar.Show = PlayerFrameAlternateManaBar.Hide
 	elseif classFileName ~= "MONK" then
 		PlayerFrameAlternateManaBar:ClearAllPoints();
 		if DBMod.PlayerFrames.AltManaBar.movement.moved then
