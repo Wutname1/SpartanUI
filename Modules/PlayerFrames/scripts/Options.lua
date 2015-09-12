@@ -231,10 +231,6 @@ function addon:OnInitialize()
 		}
 	};
 	
-	spartan.opt.args["PlayerFrames"].args["resetfocus"] = {name = L["Frames/resetfocus"],type = "execute",order=2,
-		desc = L["Frames/resetfocusDesc"],
-		func = function() DBMod.PlayerFrames.focus.movement.moved = false; addon:UpdateFocusPosition(); end
-	};
 	spartan.opt.args["PlayerFrames"].args["resetSpecialBar"] = {name = L["Frames/resetSpecialBar"],type = "execute",order=3,
 		desc = L["Frames/resetSpecialBarDesc"],
 		func = function() addon:ResetAltBarPositions(); end
