@@ -10,6 +10,15 @@ function RaidFrames:OnInitialize()
 				get = function(info) return DBMod.RaidFrames.showRaid; end,
 				set = function(info,val) DBMod.RaidFrames.showRaid = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 			},
+			toggleparty = {name=L["Frames/PartyDispParty"],type="toggle",order=2,
+				get = function(info) return DBMod.RaidFrames.showParty; end,
+				set = function(info,val) DBMod.RaidFrames.showParty = val; RaidFrames:UpdateRaid("FORCE_UPDATE") end
+			},
+			togglesolo = {name=L["Frames/PartyDispSolo"],type="toggle",order=4,
+				get = function(info) return DBMod.RaidFrames.showSolo; end,
+				set = function(info,val) DBMod.RaidFrames.showSolo = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+			},
+			
 			toggleclassname =  {name = L["Frames/ClrNameClass"], type = "toggle", order=1,
 				get = function(info) return DBMod.RaidFrames.showClass; end,
 				set = function(info,val) DBMod.RaidFrames.showClass = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
@@ -25,21 +34,21 @@ function RaidFrames:OnInitialize()
 				step=1,min = 1,max = 40,
 				get = function(info) return DBMod.RaidFrames.maxColumns; end,
 				set = function(info,val)
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.maxColumns = val; end
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.maxColumns = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 				end
 			},
 			unitsPerColumn = {name=L["Frames/UnitPerCol"],type="range",order=22,width="full",
 				step=1,min = 1,max = 40,
 				get = function(info) return DBMod.RaidFrames.unitsPerColumn; end,
 				set = function(info,val)
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.unitsPerColumn = val; end
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.unitsPerColumn = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 				end
 			},
 			columnSpacing = {name=L["Frames/ColSpacing"],type="range",order=23,width="full",
 				step=1,min = 0,max = 200,
 				get = function(info) return DBMod.RaidFrames.columnSpacing; end,
 				set = function(info,val)
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.columnSpacing = val; end
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.columnSpacing = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 				end
 			},
 			desc1={name=L["Frames/LayoutConfDesc"],type="description",order=29.9},
@@ -83,7 +92,7 @@ function RaidFrames:OnInitialize()
 		end
 	};
 	spartan.opt.args["RaidFrames"].args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,
-		values = {["NAME"]=L["Frames/LayName"],["GROUP"]=L["Frames/LayGrp"],["ROLE"]=L["Frames/LayRole"]},
+		values = {["NAME"]=L["Frames/LayName"],["GROUP"]=L["Frames/LayGrp"],["ASSIGNEDROLE"]=L["Frames/LayRole"]},
 		get = function(info) return DBMod.RaidFrames.mode; end,
 		set = function(info,val) DBMod.RaidFrames.mode = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 	};

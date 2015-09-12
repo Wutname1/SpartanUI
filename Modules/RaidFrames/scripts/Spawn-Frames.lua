@@ -29,13 +29,24 @@ end
 
 function RaidFrames:UpdateRaid(event,...)
 	if spartan.RaidFrames == nil then return end
+	
 	if DBMod.RaidFrames.showRaid and IsInRaid() then
 		spartan.RaidFrames:Show();
 	else
 		spartan.RaidFrames:Hide();
 	end
 	RaidFrames:UpdateRaidPosition()
+	
 	spartan.RaidFrames:SetAttribute('showRaid',DBMod.RaidFrames.showRaid);
+	spartan.RaidFrames:SetAttribute('showParty',DBMod.RaidFrames.showParty);
+	spartan.RaidFrames:SetAttribute('showPlayer',DBMod.RaidFrames.showPlayer);
+	spartan.RaidFrames:SetAttribute('showSolo',DBMod.RaidFrames.showSolo);
+	spartan.RaidFrames:SetAttribute('groupBy',DBMod.RaidFrames.mode);
+	
+	spartan.RaidFrames:SetAttribute('maxColumns', DBMod.RaidFrames.maxColumns);
+	spartan.RaidFrames:SetAttribute('unitsPerColumn', DBMod.RaidFrames.unitsPerColumn);
+	spartan.RaidFrames:SetAttribute('columnSpacing', DBMod.RaidFrames.columnSpacing);
+		
 	spartan.RaidFrames:SetScale(DBMod.RaidFrames.scale);
 end
 

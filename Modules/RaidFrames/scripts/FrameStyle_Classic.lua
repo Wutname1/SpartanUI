@@ -205,7 +205,7 @@ local SpawnUnitFrame = function(self,unit)
 		end
 		auras.presentAlpha = 1
 		auras.onlyShowPresent = true
-		auras.PostCreateIcon = myCustomIconSkinnerFunction
+		-- auras.PostCreateIcon = myCustomIconSkinnerFunction
 		-- Set any other AuraWatch settings
 		auras.icons = {}
 		for i, sid in pairs(spellIDs) do
@@ -281,7 +281,7 @@ SpartanoUF:RegisterStyle("Spartan_RaidFrames_Classic", CreateUnitFrame);
 
 function RaidFrames:Classic()
 	SpartanoUF:SetActiveStyle("Spartan_RaidFrames_Classic");
-	if DBMod.RaidFrames.mode == "group" then
+	if DBMod.RaidFrames.mode == "GROUP" then
 		raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
 			"showRaid", DBMod.RaidFrames.showRaid,
 			"showParty", DBMod.RaidFrames.showParty,

@@ -80,12 +80,12 @@ function addon:OnInitialize()
 	}
 	spartan.opt.args["PartyFrames"].args["partyReset"] = {name=L["Frames/ResetPartyPos"],type="execute",order=5,
 		func = function()
-			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
-			else
+			-- if (InCombatLockdown()) then 
+				-- spartan:Print(ERR_NOT_IN_COMBAT);
+			-- else
 				DBMod.PartyFrames.moved = false;
 				addon:UpdatePartyPosition();
-			end
+			-- end
 		end
 	};
 	spartan.opt.args["PartyFrames"].args["scale"] = {name = L["Frames/ScaleSize"], type = "range", order=11,width="full",

@@ -10,22 +10,26 @@ function module:OnInitialize()
 	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Minimal"].disabled = false
 	spartan.opt.args["General"].args["style"].args["PartyFrames"].args["Minimal"].disabled = false
 	spartan.opt.args["General"].args["style"].args["RaidFrames"].args["Minimal"].disabled = false
+	--Setup our DB items
+	if DB.Styles.Minimal == nil then
+		DB.Styles.Minimal = {
+			Color = {
+				0.6156862745098039,
+				0.1215686274509804,
+				0.1215686274509804,
+				0.9
+			},
+			PartyFramesSize = "large"
+		}
+	end
+	if DB.Styles.Minimal.PartyFramesSize == nil then DB.Styles.Minimal.PartyFramesSize = "large" end
+	--Init if needed
 	if (DBMod.Artwork.Style == "Minimal") then
 		module:Init()
 	end
 end
 
 function module:Init()
-	if DB.Styles.Minimal == nil then DB.Styles.Minimal = {} end
-	if DB.Styles.Minimal.Color == nil then
-		DB.Styles.Minimal.Color = {
-			0.6156862745098039,
-			0.1215686274509804,
-			0.1215686274509804,
-			0.9
-		}
-	end
-	
 	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
 	module:SetupMenus();
 	module:InitFramework();
@@ -65,4 +69,12 @@ end
 function module:OnDisable()
 	Minimal_SpartanUI:Hide();
 	Minimal_AnchorFrame:Hide();
+end
+
+function module:Options_PartyFrames()
+	spartan.opt.args["PartyFrames"].args["MinimalFrameStyle"] = {name=L["Frames/FrameStyle"],type="select",order=5,
+		values = {["large"]=L["Frames/Large"],["small"]=L["Frames/Small"]},
+		get = function(info) return DB.Styles.Minimal.PartyFramesSize; end,
+		set = function(info,val) DB.Styles.Minimal.PartyFramesSize = val; end
+	};
 end

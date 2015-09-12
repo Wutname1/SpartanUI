@@ -415,7 +415,7 @@ local MakeSmallFrame = function(self,unit)
 	return self;
 end
 
-local MakeLargeFrame = function(self,unit)
+local MakeLargeFrame = function(self,unit,width)
 	self.menu = menu;
 	self:RegisterForClicks("anyup");
 	self:SetAttribute("*type2", "menu");
@@ -423,7 +423,12 @@ local MakeLargeFrame = function(self,unit)
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	
-	self:SetSize(200, 40);
+	if width then
+		self:SetSize(width, 40);
+	else
+		self:SetSize(200, 40);
+	end
+	
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -539,14 +544,61 @@ local MakeLargeFrame = function(self,unit)
 			self.Power.frequentUpdates = true;
 			
 		end
+		do -- HoTs Display
+			local class, classFileName = UnitClass("player");
+			local spellIDs ={}
+			if classFileName == "DRUID" then
+				spellIDs = {
+					774, -- Rejuvenation
+					33763, -- Lifebloom
+					8936, -- Regrowth
+					102351, -- Cenarion Ward
+					48438, -- Wild Growth
+					155777, -- Germination
+					102342, -- Ironbark
+				}
+			elseif classFileName == "PRIEST" then
+				spellIDs = {
+					139, -- Renew
+					17, -- sheild
+					33076, -- Prayer of Mending
+				}
+			end
+			self.Buffs = CreateFrame("Frame",nil,self);
+			self.Buffs:SetSize(self:GetWidth(), DBMod.PartyFrames.Auras.size+2);
+				if unit == "player" or unit == "target" then
+					self.Buffs:SetPoint("BOTTOM",self,"TOP", 0, 14)
+				else
+					self.Buffs:SetPoint("TOPLEFT",self,"TOPRIGHT", 2, 0)
+				end
+			self.Buffs.onlyShowPlayer = true
+			self.Buffs.filter = spellIDs
+			self.Buffs.size = DBMod.PartyFrames.Auras.size;
+			self.Buffs.spacing = DBMod.PartyFrames.Auras.spacing;
+			self.Buffs.showType = DBMod.PartyFrames.Auras.showType;
+			self.Buffs.size = DBMod.PartyFrames.Auras.size;
+			local FilterType = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
+				for i, sid in pairs(spellIDs) do
+					if sid == spellID then return true end
+				end
+				return false
+			end
+			self.Buffs.CustomFilter = FilterType
+		end
 		do -- setup buffs and debuffs
 			local tmp = 0
 			if unit == "player" and (playerClass =="DEATHKNIGHT" or playerClass =="DRUID") then tmp = -5 end
 			
 			self.Debuffs = CreateFrame("Frame",nil,self);
 			self.Debuffs:SetSize(self:GetWidth(), 17);
-			self.Debuffs:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",0,-5 + tmp);
-			self.Debuffs:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-5 + tmp);
+			if unit == "player" or unit == "target" then
+				self.Debuffs:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",0,-5 + tmp);
+				self.Debuffs:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-5 + tmp);
+				self.Debuffs.num = 12;
+			else
+				self.Debuffs:SetPoint("BOTTOMLEFT",self,"BOTTOMRIGHT",0,0 + tmp);
+				self.Debuffs.num = 4;
+			end
 			self.Debuffs:SetFrameStrata("BACKGROUND");
 			self.Debuffs:SetFrameLevel(4);
 			-- settings
@@ -554,7 +606,6 @@ local MakeLargeFrame = function(self,unit)
 			self.Debuffs.spacing = DBMod.PartyFrames.Auras.spacing;
 			self.Debuffs.showType = DBMod.PartyFrames.Auras.showType;
 			self.Debuffs.initialAnchor = "TOPLEFT";
-			self.Debuffs.num = 12;
 			self.Debuffs.gap = true; -- adds an empty spacer between buffs and debuffs
 			self.Debuffs.numBuffs = DBMod.PartyFrames.Auras.NumBuffs;
 			self.Debuffs.numDebuffs = DBMod.PartyFrames.Auras.NumDebuffs;
@@ -740,7 +791,11 @@ local CreateUnitFrameParty = function(self,unit)
 		end
 	end);
 	
-	return MakeSmallFrame(self,unit)
+	if DB.Styles.Minimal.PartyFramesSize ~= nil and DB.Styles.Minimal.PartyFramesSize == "small" then
+		return MakeSmallFrame(self,unit)
+	else
+		return MakeLargeFrame(self,unit,150)
+	end
 end
 
 local CreateUnitFrameRaid = function(self,unit)
@@ -865,28 +920,39 @@ end
 function module:RaidFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames_Raid");
 	
-	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+	local xoffset = 3
+	local yOffset = -5
+	local point = 'TOP'
+	local columnAnchorPoint = 'LEFT'
+	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
+	
+	if DBMod.RaidFrames.mode == "GROUP" then
+		groupingOrder = '1,2,3,4,5,6,7,8'
+	end
+	-- print(DBMod.RaidFrames.mode)
+	-- print(groupingOrder)
+	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
 		"showRaid", DBMod.RaidFrames.showRaid,
 		"showParty", DBMod.RaidFrames.showParty,
 		"showPlayer", DBMod.RaidFrames.showPlayer,
 		"showSolo", DBMod.RaidFrames.showSolo,
-		'xoffset', 3,
-		'yOffset', -6,
-		'point', 'TOP',
-		'groupFilter', '1,2,3,4,5,6,7,8',
-		'groupBy', DBMod.RaidFrames.mode,
-		'groupingOrder', 'TANK,HEALER,DAMAGER,NONE',
-		'sortMethod', 'name',
+		'xoffset', xoffset,
+		'yOffset', yOffset,
+		'point', point,
+		'groupBy', 'ASSIGNEDROLE',
+		'groupingOrder', groupingOrder,
+		'sortMethod', 'index',
 		'maxColumns', DBMod.RaidFrames.maxColumns,
 		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
 		'columnSpacing', DBMod.RaidFrames.columnSpacing,
-		'columnAnchorPoint', 'LEFT'
+		'columnAnchorPoint', columnAnchorPoint
 	)
 	
 	return (raid)
 end
 
 function module:PartyFrames()
+	module:Options_PartyFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames_Party");
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,

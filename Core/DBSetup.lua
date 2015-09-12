@@ -287,6 +287,9 @@ function module:OnInitialize()
 			if DBMod.RaidFrames.mode == "group" then DBMod.RaidFrames.mode = "GROUP" end
 			if DB.MiniMap.OtherStyle == nil then DB.MiniMap.OtherStyle = "mouseover" end
 			if DB.MiniMap.BlizzStyle == nil then DB.MiniMap.BlizzStyle = "mouseover" end
+			if DBMod.RaidFrames.mode == "group" then DBMod.RaidFrames.mode = "GROUP" end
+			if DBMod.RaidFrames.mode == "role" then DBMod.RaidFrames.mode = "ASSIGNEDROLE" end
+
 		end
 	end
 end
