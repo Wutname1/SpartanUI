@@ -939,7 +939,7 @@ function module:RaidFrames()
 		'xoffset', xoffset,
 		'yOffset', yOffset,
 		'point', point,
-		'groupBy', 'ASSIGNEDROLE',
+		'groupBy', DBMod.RaidFrames.mode,
 		'groupingOrder', groupingOrder,
 		'sortMethod', 'index',
 		'maxColumns', DBMod.RaidFrames.maxColumns,

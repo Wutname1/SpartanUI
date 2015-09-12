@@ -1600,22 +1600,31 @@ end
 function module:RaidFrames()
 	SpartanoUF:SetActiveStyle("Spartan_TransparentRaidFrames");
 	
-	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+	local xoffset = 3
+	local yOffset = -5
+	local point = 'TOP'
+	local columnAnchorPoint = 'LEFT'
+	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
+	
+	if DBMod.RaidFrames.mode == "GROUP" then
+		groupingOrder = '1,2,3,4,5,6,7,8'
+	end
+	
+	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
 		"showRaid", DBMod.RaidFrames.showRaid,
 		"showParty", DBMod.RaidFrames.showParty,
 		"showPlayer", DBMod.RaidFrames.showPlayer,
 		"showSolo", DBMod.RaidFrames.showSolo,
-		'xoffset', 3,
-		'yOffset', -5,
-		'point', 'TOP',
-		'groupFilter', '1,2,3,4,5,6,7,8',
+		'xoffset', xoffset,
+		'yOffset', yOffset,
+		'point', point,
 		'groupBy', DBMod.RaidFrames.mode,
-		'groupingOrder', 'TANK,HEALER,DAMAGER,NONE',
-		'sortMethod', 'name',
+		'groupingOrder', groupingOrder,
+		'sortMethod', 'index',
 		'maxColumns', DBMod.RaidFrames.maxColumns,
 		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
 		'columnSpacing', DBMod.RaidFrames.columnSpacing,
-		'columnAnchorPoint', 'LEFT'
+		'columnAnchorPoint', columnAnchorPoint
 	)
 	
 	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)

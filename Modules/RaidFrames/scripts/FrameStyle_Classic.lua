@@ -31,6 +31,13 @@ local threat = function(self,event,unit)
 end
 
 local SpawnUnitFrame = function(self,unit)
+	self.menu = menu;
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	
 	self:SetSize(140, 35) -- Setup initial Size
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
@@ -251,22 +258,19 @@ local SpawnUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self:RegisterForClicks("AnyDown");
-	
-	self:EnableMouse(enable)
-	self:SetScript("OnMouseDown",function(self,button)
+	self:HookScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
-			raid.mover:Show();
+			spartan.RaidFrames.mover:Show();
 			DBMod.RaidFrames.moved = true;
-			raid:SetMovable(true);
-			raid:StartMoving();
+			spartan.RaidFrames:SetMovable(true);
+			spartan.RaidFrames:StartMoving();
 		end
 	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		raid.mover:Hide();
-		raid:StopMovingOrSizing();
+	self:HookScript("OnMouseUp",function(self,button)
+		spartan.RaidFrames.mover:Hide();
+		spartan.RaidFrames:StopMovingOrSizing();
 		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = raid:GetPoint()
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
 		for k,v in pairs(Anchors) do
 			DBMod.RaidFrames.Anchors[k] = v
 		end
@@ -281,43 +285,70 @@ SpartanoUF:RegisterStyle("Spartan_RaidFrames_Classic", CreateUnitFrame);
 
 function RaidFrames:Classic()
 	SpartanoUF:SetActiveStyle("Spartan_RaidFrames_Classic");
+	local xoffset = 3
+	local yOffset = -5
+	local point = 'TOP'
+	local columnAnchorPoint = 'LEFT'
+	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
+	
 	if DBMod.RaidFrames.mode == "GROUP" then
-		raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-			"showRaid", DBMod.RaidFrames.showRaid,
-			"showParty", DBMod.RaidFrames.showParty,
-			"showPlayer", DBMod.RaidFrames.showPlayer,
-			"showSolo", DBMod.RaidFrames.showSolo,
-			'xoffset', 3,
-			'yOffset', -5,
-			'point', 'TOP',
-			'groupFilter', '1,2,3,4,5,6,7,8',
-			'groupBy', DBMod.RaidFrames.mode,
-			'groupingOrder', '1,2,3,4,5,6,7,8',
-			'sortMethod', 'name',
-			'maxColumns', DBMod.RaidFrames.maxColumns,
-			'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
-			'columnSpacing', DBMod.RaidFrames.columnSpacing,
-			'columnAnchorPoint', 'LEFT'
-		)
-	else
-		raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-			'showPlayer', true,
-			'showRaid', true,
-			'showParty', false,
-			'showSolo', true,
-			'xoffset', 3,
-			'yOffset', 0,
-			'point', 'LEFT',
-			'groupFilter', '1,2,3,4,5,6,7,8',
-			'groupBy', DBMod.RaidFrames.mode,
-			'groupingOrder', '1,2,3,4,5,6,7,8',
-			'sortMethod', 'name',
-			'maxColumns', DBMod.RaidFrames.maxColumns,
-			'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
-			'columnSpacing', DBMod.RaidFrames.columnSpacing,
-			'columnAnchorPoint', 'TOP'
-		)
+		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
+	-- print(DBMod.RaidFrames.mode)
+	-- print(groupingOrder)
+	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
+		"showRaid", DBMod.RaidFrames.showRaid,
+		"showParty", DBMod.RaidFrames.showParty,
+		"showPlayer", DBMod.RaidFrames.showPlayer,
+		"showSolo", DBMod.RaidFrames.showSolo,
+		'xoffset', xoffset,
+		'yOffset', yOffset,
+		'point', point,
+		'groupBy', DBMod.RaidFrames.mode,
+		'groupingOrder', groupingOrder,
+		'sortMethod', 'index',
+		'maxColumns', DBMod.RaidFrames.maxColumns,
+		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
+		'columnSpacing', DBMod.RaidFrames.columnSpacing,
+		'columnAnchorPoint', columnAnchorPoint
+	)
+	-- if DBMod.RaidFrames.mode == "GROUP" then
+		-- raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+			-- "showRaid", DBMod.RaidFrames.showRaid,
+			-- "showParty", DBMod.RaidFrames.showParty,
+			-- "showPlayer", DBMod.RaidFrames.showPlayer,
+			-- "showSolo", DBMod.RaidFrames.showSolo,
+			-- 'xoffset', 3,
+			-- 'yOffset', -5,
+			-- 'point', 'TOP',
+			-- 'groupFilter', '1,2,3,4,5,6,7,8',
+			-- 'groupBy', DBMod.RaidFrames.mode,
+			-- 'groupingOrder', '1,2,3,4,5,6,7,8',
+			-- 'sortMethod', 'name',
+			-- 'maxColumns', DBMod.RaidFrames.maxColumns,
+			-- 'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
+			-- 'columnSpacing', DBMod.RaidFrames.columnSpacing,
+			-- 'columnAnchorPoint', 'LEFT'
+		-- )
+	-- else
+		-- raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
+			-- 'showPlayer', true,
+			-- 'showRaid', true,
+			-- 'showParty', false,
+			-- 'showSolo', true,
+			-- 'xoffset', 3,
+			-- 'yOffset', 0,
+			-- 'point', 'LEFT',
+			-- 'groupFilter', '1,2,3,4,5,6,7,8',
+			-- 'groupBy', DBMod.RaidFrames.mode,
+			-- 'groupingOrder', '1,2,3,4,5,6,7,8',
+			-- 'sortMethod', 'name',
+			-- 'maxColumns', DBMod.RaidFrames.maxColumns,
+			-- 'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
+			-- 'columnSpacing', DBMod.RaidFrames.columnSpacing,
+			-- 'columnAnchorPoint', 'TOP'
+		-- )
+	-- end
 	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
 	
 	raid:SetParent("SpartanUI");
