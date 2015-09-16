@@ -289,7 +289,7 @@ function module:OnInitialize()
 			if DB.MiniMap.BlizzStyle == nil then DB.MiniMap.BlizzStyle = "mouseover" end
 			if DBMod.RaidFrames.mode == "group" then DBMod.RaidFrames.mode = "GROUP" end
 			if DBMod.RaidFrames.mode == "role" then DBMod.RaidFrames.mode = "ASSIGNEDROLE" end
-
+			if DB.Styles.Classic.TooltipLoc == nil then DB.Styles.Classic.TooltipLoc = true end
 		end
 	end
 end

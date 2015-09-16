@@ -19,11 +19,19 @@ if DB.Styles.Minimal == nil then
 			PartyFrames = true,
 			RaidFrames = true,
 		},
+		TooltipLoc = true,
 		Minimap = {
 			shape = "square",
 			size = {width = 140, height = 140}
 		},
-		BartenderProfile = "SpartanUI - Minimal"
+		BartenderProfile = "SpartanUI - Minimal",
+		Color = {
+				0.6156862745098039,
+				0.1215686274509804,
+				0.1215686274509804,
+				0.9
+			},
+		PartyFramesSize = "large"
 	}
 end
 
@@ -48,3 +56,9 @@ if DB.Styles.Minimal.Minimap == nil then
 		size = {width = 140, height = 140}
 	}
 end
+if DB.Styles.Minimal.Color == nil then
+	DB.Styles.Minimal.Color = {0.6156862745098039,0.1215686274509804,0.1215686274509804,0.9}
+	DB.Styles.Minimal.PartyFramesSize = "large"
+end
+if DB.Styles.Minimal.PartyFramesSize == nil then DB.Styles.Minimal.PartyFramesSize = "large" end
+if DB.Styles.Transparent.TooltipLoc == nil then DB.Styles.Classic.TooltipLoc = true end

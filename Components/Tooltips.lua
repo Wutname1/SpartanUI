@@ -37,6 +37,36 @@ function module:OnInitialize()
 			Color = {0,0,0,0.7}
 		}
 	end
+	if DB.Tooltips.Anchor == nil then
+		DB.Tooltips.Anchor = {
+			onMouse=false,
+			Moved = false,
+			AnchorPos = {}
+		}
+	end
+end
+
+-- local setPoint = function(self,point,parent,rpoint)
+local setPoint = function(self, parent)
+	if parent then
+		if(DB.Tooltips.Anchor.onMouse) then
+			self:SetOwner(parent, "ANCHOR_CURSOR")
+			return
+		else
+			self:SetOwner(parent, "ANCHOR_NONE")
+		end
+	
+		--See If the theme has an anchor and if we are allowed to use it
+		if DB.Styles[DBMod.Artwork.Style].TooltipLoc and not DB.Tooltips.OverrideLoc then
+			spartan:GetModule("Style_" .. DBMod.Artwork.Style):TooltipLoc(self, parent);
+		else
+			if DB.Tooltips.Anchor.Moved then
+			
+			else
+			
+			end
+		end
+	end
 end
 
 local onShow = function(self)
@@ -253,7 +283,6 @@ local TooltipSetUnit = function(self)
 end
 
 local function ApplyTooltipSkins()
-	
 	for i, tooltip in pairs(tooltips) do
 		if(not tooltip) then return end
 		
@@ -310,6 +339,7 @@ local function ApplyTooltipSkins()
 			tooltip:HookScript("OnShow", onShow)
 			tooltip:HookScript("OnHide", onHide)
 			tremove(tooltips, i)
+			
 		end
 	end
 end
@@ -336,13 +366,35 @@ function module:UpdateBG()
 end
 
 function module:OnEnable()
+	--Create Anchor point	
+	-- local anchor = CreateFrame("Frame",nil)
+	-- anchor:SetSize(150, 20)
+	-- anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
+	-- anchor.bg:SetAllPoints(anchor)
+	-- anchor.bg:SetTexture(0,0,0)
+	
+	-- module.anchor = anchor
+	
+	-- module.anchor:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
+	--Do Setup
 	ApplyTooltipSkins()
 	
 	GameTooltip:HookScript("OnTooltipCleared", TipCleared)
 	GameTooltip:HookScript("OnTooltipSetItem", TooltipSetItem)
 	GameTooltip:HookScript("OnTooltipSetUnit", TooltipSetUnit)
+	-- GameTooltip:HookScript("SetPoint", setPoint)
+	-- hooksecurefunc(GameTooltip,"SetPoint",setPoint);
+	hooksecurefunc("GameTooltip_SetDefaultAnchor", setPoint)
 	
 	module:BuildOptions()
+end
+
+local UpdateOverrideThemeLoc = function()
+	if DB.Tooltips.Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
+		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["OverrideThemeLoc"].disabled = true
+	else
+		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["OverrideThemeLoc"].disabled = false
+	end
 end
 
 function module:BuildOptions()
@@ -368,10 +420,19 @@ function module:BuildOptions()
 			ColorOverlay = {name=L["Color Overlay"],type="toggle",order=11,desc=L["ColorOverlayDesc"],
 					get = function(info) return DB.Tooltips.ColorOverlay end,
 					set = function(info,val) DB.Tooltips.ColorOverlay = val module:UpdateBG()end
-			}
+			},
+			OnMouse = {name="Display on mouse?",type="toggle",order=21,desc=L["TooltipOverrideDesc"],
+					get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.Anchor.onMouse end,
+					set = function(info,val) DB.Tooltips.Anchor.onMouse = val; UpdateOverrideThemeLoc(); end
+			},
+			OverrideThemeLoc = {name=L["OverrideTheme"],type="toggle",order=22,desc=L["TooltipOverrideDesc"],
+					get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.OverrideLoc end,
+					set = function(info,val) DB.Tooltips.OverrideLoc = val; end
+			},
 		}
 	}
 end
+
 
 function module:HideOptions()
 	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].disabled = true

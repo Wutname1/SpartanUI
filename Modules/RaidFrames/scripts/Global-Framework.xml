@@ -8,7 +8,6 @@
 	
 	<!-- Load Styles -->
 	<Script file="FrameStyle_Classic.lua" />
-	<Script file="FrameStyle_Plain.lua"	/>
 	
 	<!-- Load rest of core functionality -->
 	<Script file="Spawn-Frames.lua" />

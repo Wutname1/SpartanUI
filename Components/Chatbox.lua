@@ -5,7 +5,7 @@ local module = spartan:NewModule("Component_Chatbox");
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame("Frame", nil, UIParent)
 
-function module:Popup(text)
+function module:SetPopupText(text)
 	popup.editBox:SetText(text)
 	popup.editBox:HighlightText(0)
 	popup.editBox:GetParent():Show()
@@ -21,7 +21,13 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	--module:SetupLinks()
+	module:BuildOptions()
+	module:HideOptions()
 	
+end
+
+function module:SetupLinks()
 	local filterFunc = function(_, _, msg, ...)
 		local newMsg, found = gsub(msg,
 			"[^ \"£%^`¬{}%[%]\\|<>]*[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d]%.[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ \"£%^`¬{}%[%]\\|<>]*",
@@ -59,9 +65,7 @@ function module:OnEnable()
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", filterFunc)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_CONVERSATION", filterFunc)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_INLINE_TOAST_BROADCAST", filterFunc)
-
-	module:BuildOptions()
-	module:HideOptions()
+	
 	
 	-- popup:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
 		-- edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
@@ -89,15 +93,15 @@ function module:OnEnable()
 	-- popup.close:SetScript("OnClick", hide)
 end
 
-local SetHyperlink = ItemRefTooltip.SetHyperlink
-function ItemRefTooltip:SetHyperlink(data, ...)
-	local isURL, link = strsplit("~", data)
-	if isURL and isURL == "bcmurl" then
-		BCM:Popup(link)
-	else
-		SetHyperlink(self, data, ...)
-	end
-end
+-- local SetHyperlink = ItemRefTooltip.SetHyperlink
+-- function ItemRefTooltip:SetHyperlink(data, ...)
+	-- local isURL, link = strsplit("~", data)
+	-- if isURL and isURL == "bcmurl" then
+		-- module:SetPopupText(link)
+	-- else
+		-- SetHyperlink(self, data, ...)
+	-- end
+-- end
 
 function module:BuildOptions()
 	spartan.opt.args["General"].args["ModSetting"].args["Chatbox"] = {type="group",name="Chatbox",

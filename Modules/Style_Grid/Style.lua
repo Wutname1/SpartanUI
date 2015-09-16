@@ -10,6 +10,19 @@ function module:OnInitialize()
 	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Minimal"].disabled = false
 	spartan.opt.args["General"].args["style"].args["PartyFrames"].args["Minimal"].disabled = false
 	spartan.opt.args["General"].args["style"].args["RaidFrames"].args["Minimal"].disabled = false
+	--Setup our DB items
+	if DB.Styles.Minimal == nil then
+		DB.Styles.Minimal = {
+			Color = {
+				0.6156862745098039,
+				0.1215686274509804,
+				0.1215686274509804,
+				0.9
+			},
+			PartyFramesSize = "large"
+		}
+	end
+	if DB.Styles.Minimal.PartyFramesSize == nil then DB.Styles.Minimal.PartyFramesSize = "large" end
 	--Init if needed
 	if (DBMod.Artwork.Style == "Minimal") then
 		module:Init()

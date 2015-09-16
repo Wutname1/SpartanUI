@@ -3,7 +3,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Transparent");
 ----------------------------------------------------------------------------------------------------
-
 local InitRan = false
 function module:OnInitialize()
 	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["Transparent"].disabled = false
@@ -11,6 +10,7 @@ function module:OnInitialize()
 	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Transparent"].disabled = false
 	spartan.opt.args["General"].args["style"].args["PartyFrames"].args["Transparent"].disabled = false
 	spartan.opt.args["General"].args["style"].args["RaidFrames"].args["Transparent"].disabled = false
+	--Init if needed
 	if (DBMod.Artwork.Style == "Transparent") then
 		module:Init()
 	end

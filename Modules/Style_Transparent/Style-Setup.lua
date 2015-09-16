@@ -23,11 +23,13 @@ if DB.Styles.Transparent == nil then
 			shape = "square",
 			size = {width = 140, height = 140}
 		},
-		BartenderProfile = "SpartanUI - Transparent"
+		BartenderProfile = "SpartanUI - Transparent",
+		TooltipLoc = true
 	}
 end
 
 --Update from old versions
+if DB.Styles.Transparent.TooltipLoc == nil then DB.Styles.Classic.TooltipLoc = true end
 if DB.Styles.Minimal == true then
 		DB.Styles.Minimal.Artwork = {}
 		DB.Styles.Minimal.PlayerFrames = {}
