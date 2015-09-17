@@ -4,7 +4,9 @@
 	<Script file='oUF_DispelHighlight.lua' />
 	<Script file='oUF_Smooth.lua'/>
 	<Script file='oUF_Trinkets.lua'/>
-	<Script file='oUF_DruidMana.lua'/>
 	<Script file='oUF_MovableFrames.lua'/>
-	<!-- <Script file='oUF_boring_totembar.lua'/> -->
+	<!-- 
+	<Script file='oUF_DruidMana.lua'/>
+	<Script file='oUF_boring_totembar.lua'/>
+	-->
 </Ui>

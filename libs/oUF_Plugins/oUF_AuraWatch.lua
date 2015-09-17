@@ -13,13 +13,6 @@ you can specify, as explained below.
 		such that values are icon frames, but the keys can be anything.
 		
 		Note each icon can have several options set as well. See below.
-	strictMatching
-		Default: false
-		If true, AuraWatch will only show an icon if the specific aura
-		with the specified spell id is on the unit. If false, AuraWatch
-		will show the icon if any aura with the same name and icon texture
-		is on the unit. Strict matching can be undesireable because most
-		ranks of an aura have different spell ids.
 	missingAlpha
 		Default 0.75
 		The alpha value for icons of auras which have faded from the unit.
@@ -48,7 +41,7 @@ you can specify, as explained below.
 		Default nil
 		A function to call when an icon is created to modify it, such as adding
 		a border or repositioning the count fontstring. Leave as nil to ignore.
-		The arguements are: AuraWatch table, icon, auraSpellID, auraName, unitFrame
+		The arguments are: AuraWatch table, icon, auraSpellID, auraName, unitFrame
 	PostResetIcon
 		Default nil
 		A function to call when an icon is reset, that is an aura has been applied
@@ -147,11 +140,11 @@ do
 	end
 end
 
-local function DefaultResetIcon(watch, icon, count, duration, remaining)
+local function DefaultResetIcon(watch, icon, count, duration, expire)
 	if not icon.onlyShowMissing then
 		if icon.cd then
 			if duration and duration > 0 then
-				icon.cd:SetCooldown(remaining - duration, duration)
+				icon.cd:SetCooldown(expire - duration, duration)
 				icon.cd:Show()
 			else
 				icon.cd:Hide()
@@ -209,7 +202,7 @@ do
 		if frame.unit ~= unit then return end
 		local watch = frame.AuraWatch
 		local index, icons = 1, watch.watched
-		local _, name, texture, count, duration, remaining, caster, key, icon, spellid 
+		local _, name, texture, count, duration, expire, caster, key, icon, spellid 
 		local filter = "HELPFUL"
 		local guid = UnitGUID(unit)
 		if not GUIDs[guid] then SetupGUID(guid) end
@@ -219,7 +212,7 @@ do
 		end
 		
 		while true do
-			name, _, texture, count, _, duration, remaining, caster, _, _, spellid = UnitAura(unit, index, filter)
+			name, _, texture, count, _, duration, expire, caster, _, _, spellid = UnitAura(unit, index, filter)
 			if not name then 
 				if filter == "HELPFUL" then
 					filter = "HARMFUL"
@@ -228,14 +221,10 @@ do
 					break
 				end
 			else
-				if watch.strictMatching then
-					key = spellid
-				else
-					key = name..texture
-				end
+				key = spellid
 				icon = icons[key]
-				if icon and (icon.anyUnit or (caster and icon.fromUnits[caster])) then
-					ResetIcon(watch, icon, count, duration, remaining)
+				if icon and not icon.ignore and (icon.anyUnit or (caster and icon.fromUnits[caster])) then
+					ResetIcon(watch, icon, count, duration, expire)
 					GUIDs[guid][key] = true
 					found[key] = true
 				end
@@ -244,7 +233,7 @@ do
 		end
 		
 		for key in pairs(GUIDs[guid]) do
-			if icons[key] and not found[key] then
+			if icons[key] and not found[key] and not icons[key].ignore then
 				ExpireIcon(watch, icons[key])
 			end
 		end
@@ -266,7 +255,6 @@ local function SetupIcons(self)
 		local name, _, image = GetSpellInfo(icon.spellID)
 		if not name then error("oUF_AuraWatch error: no spell with "..tostring(icon.spellID).." spell ID exists") end
 		icon.name = name
-	
 		if not watch.customIcons then
 			local cd = CreateFrame("Cooldown", nil, icon)
 			cd:SetAllPoints(icon)
@@ -303,18 +291,14 @@ local function SetupIcons(self)
 			icon.anyUnit = watch.anyUnit
 		end
 		
-		if watch.strictMatching then
-			watch.watched[icon.spellID] = icon
-		else
-			watch.watched[name..image] = icon
-		end
+		watch.watched[icon.spellID] = icon
 
 		if watch.PostCreateIcon then watch:PostCreateIcon(icon, icon.spellID, name, self) end
 	end
 end
 
 local function ForceUpdate(element)
-	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	return Update(element.__owner, "ForceUpdate", element.__owner.unit)
 end
 
 local function Enable(self)

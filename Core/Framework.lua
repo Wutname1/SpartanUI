@@ -52,6 +52,7 @@ DBdefault = {
 					shape = "circle",
 					size = {width = 140, height = 140}
 				},
+				TooltipLoc = true
 			}
 		},
 		ChatSettings = {

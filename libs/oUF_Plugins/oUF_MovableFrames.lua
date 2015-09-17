@@ -960,7 +960,7 @@ end
 
 
 function addon:OnEnable()
-	self:RegisterChatCommand("move", "SlashCmd")
+	self:RegisterChatCommand("suimove", "SlashCmd")
 end
 
 function addon:SlashCmd(input)

@@ -5,6 +5,7 @@ local module = spartan:NewModule("Component_Tooltips")
 ----------------------------------------------------------------------------------------------------
 local class, classFileName = UnitClass("player")
 local targetList, inspectCache = {}, {}
+local RuleList = {"Rule1", "Rule2", "Rule3"}
 local tooltips = {
 	GameTooltip, ItemRefTooltip, ItemRefShoppingTooltip1,ItemRefShoppingTooltip2, ItemRefShoppingTooltip3, AutoCompleteBox,FriendsTooltip, ConsolidatedBuffsTooltip, ShoppingTooltip1,
 	ShoppingTooltip2, ShoppingTooltip3, WorldMapTooltip,WorldMapCompareTooltip1, WorldMapCompareTooltip2,WorldMapCompareTooltip3, DropDownList1MenuBackdrop,
@@ -38,38 +39,91 @@ function module:OnInitialize()
 			Color = {0,0,0,0.4}
 		}
 	end
-	if DB.Tooltips.Anchor == nil then
-		DB.Tooltips.Anchor = {
-			onMouse=false,
-			Moved = false,
-			AnchorPos = {}
-		}
+	
+	if DB.Tooltips.Rule1 == nil then
+		for k,v in ipairs(RuleList) do
+			DB.Tooltips[v] = {
+				Status = "Disabled",
+				Combat = false,
+				OverrideLoc=false,
+				Anchor = {onMouse=false,Moved = false,AnchorPos = {}}
+				}
+		end
+		if DB.Tooltips.OverrideLoc then
+			DB.Tooltips.Rule1 = {
+				Status = "All",
+				Combat = false,
+				OverrideLoc=DB.Tooltips.OverrideLoc,
+				Anchor = {onMouse=DB.Tooltips.Anchor.onMouse,Moved = DB.Tooltips.Anchor.Moved,AnchorPos = DB.Tooltips.Anchor.AnchorPos}
+			}
+			DB.Tooltips.Anchor = nil
+		else
+			DB.Tooltips.Rule1 = {
+				Status = "All",
+				Combat = false,
+				OverrideLoc=false,
+				Anchor = {onMouse=false,Moved = false,AnchorPos = {}}
+			}
+		end
 	end
+	
 	local a,b,c,d = unpack(DB.Tooltips.Color)
 	if a == 0 and b==0 and c==0 and d==0.7 then DB.Tooltips.Color = {0,0,0,0.4} end
+end
+
+local function ActiveRule()
+	for k,v in ipairs(RuleList) do
+		if DB.Tooltips[v].Status ~= "Disabled" then
+			local CombatRule = false
+			if InCombatLockdown() and DB.Tooltips[v].Combat then
+				CombatRule = true
+			elseif not InCombatLockdown() and not DB.Tooltips[v].Combat then
+				CombatRule = true
+			end
+			
+			if DB.Tooltips[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
+				return v
+			elseif DB.Tooltips[v].Status == "Raid" and IsInRaid() and CombatRule then
+				return v
+			elseif DB.Tooltips[v].Status == "Instance" and IsInInstance() then
+				return v
+			elseif DB.Tooltips[v].Status == "All" and CombatRule then
+				return v
+			else
+				return v
+			end
+		end
+	end
 end
 
 -- local setPoint = function(self,point,parent,rpoint)
 local setPoint = function(self, parent)
 	if parent then
-		if(DB.Tooltips.Anchor.onMouse) then
+		if(DB.Tooltips[ActiveRule()].Anchor.onMouse) then
 			self:SetOwner(parent, "ANCHOR_CURSOR")
 			return
 		else
 			self:SetOwner(parent, "ANCHOR_NONE")
 		end
 	
+		self:ClearAllPoints();
 		--See If the theme has an anchor and if we are allowed to use it
-		if DB.Styles[DBMod.Artwork.Style].TooltipLoc and not DB.Tooltips.OverrideLoc then
+		if DB.Styles[DBMod.Artwork.Style].TooltipLoc and not DB.Tooltips[ActiveRule()].OverrideLoc then
 			spartan:GetModule("Style_" .. DBMod.Artwork.Style):TooltipLoc(self, parent);
 		else
-			if DB.Tooltips.Anchor.Moved then
+			if DB.Tooltips[ActiveRule()].Anchor.Moved then
 				local Anchors = {}
-				for k,v in pairs(DB.Tooltips.Anchor.AnchorPos) do
-					Anchors[k] = v
+				for key,val in pairs(DB.Tooltips[ActiveRule()].Anchor.AnchorPos) do
+					Anchors[key] = val
 				end
-				self:ClearAllPoints();
-				self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+				-- self:ClearAllPoints();
+				if Anchors.point == nil then 
+					--Error Catch
+					self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
+					DB.Tooltips[ActiveRule()].Anchor.Moved = false
+				else
+					self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+				end
 			else
 				self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
 			end
@@ -337,7 +391,7 @@ local function ApplyTooltipSkins()
 		    tmp[4]:SetWidth(3)
 		    tmp[4]:SetTexture(0,0,0)
 
-		    if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
+		    if (DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil) and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
 				tmp:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
 			else
 				tmp:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
@@ -382,38 +436,58 @@ local function ReStyle()
 end
 
 function module:OnEnable()
+	if not DB.EnabledComponents.Tooltips then return end
 	--Create Anchor point
-	local anchor = CreateFrame("Frame",nil)
-	anchor:SetSize(150, 20)
-	anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
-	anchor.bg:SetAllPoints(anchor)
-	anchor.bg:SetTexture(0,0,0)
-	
-	-- anchor:SetScript("OnMouseDown",function(self,button)
-		-- if button == "LeftButton" then
-			-- DB.Tooltips.Anchor.Moved = true;
-			-- module.anchor:SetMovable(true);
-			-- module.anchor:StartMoving();
-		-- end
-	-- end);
-	
-	-- anchor:SetScript("OnMouseUp",function(self,button)
-		-- module.anchor:Hide();
-		-- module.anchor:StopMovingOrSizing();
-		-- local Anchors = {}
-		-- Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module.anchor:GetPoint()
-		-- for k,v in pairs(Anchors) do
-			-- DB.Tooltips.Anchor.AnchorPos[k] = v
-		-- end
-	-- end);
-	
-	-- anchor:SetScript("OnEvent",function()
-		-- module.anchor:Hide();
-	-- end);
-	-- anchor:RegisterEvent("PLAYER_REGEN_DISABLED");
-	-- anchor:Hide();
-	
-	module.anchor = anchor
+	for k,v in ipairs(RuleList) do
+		local anchor = CreateFrame("Frame",nil)
+		anchor:SetSize(150, 20)
+		anchor:EnableMouse(enable)
+		anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
+		anchor.bg:SetAllPoints(anchor)
+		anchor.bg:SetTexture(0,0,0)
+		anchor.lbl = anchor:CreateFontString(nil,"OVERLAY", "SUI_Font10")
+		anchor.lbl:SetText("Anchor for Rule " .. k);
+		anchor.lbl:SetAllPoints(anchor)
+		
+		anchor:SetScript("OnMouseDown",function(self,button)
+			if button == "LeftButton" then
+				DB.Tooltips[v].Anchor.Moved = true;
+				module[v].anchor:SetMovable(true);
+				module[v].anchor:StartMoving();
+			end
+		end);
+		
+		anchor:SetScript("OnMouseUp",function(self,button)
+			module[v].anchor:Hide();
+			module[v].anchor:StopMovingOrSizing();
+			local Anchors = {}
+			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module[v].anchor:GetPoint()
+			for k,val in pairs(Anchors) do
+				DB.Tooltips[v].Anchor.AnchorPos[k] = val
+			end
+		end);
+		
+		anchor:SetScript("OnShow", function(self)
+			if DB.Tooltips[v].Anchor.Moved then
+				local Anchors = {}
+				for key,val in pairs(DB.Tooltips[v].Anchor.AnchorPos) do
+					Anchors[key] = val
+				end
+				self:ClearAllPoints();
+				self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+			else
+				self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
+			end
+		end)
+		
+		anchor:SetScript("OnEvent",function(self, event, ...)
+			module[v].anchor:Hide();
+		end);
+		anchor:RegisterEvent("PLAYER_REGEN_DISABLED");
+		
+		module[v] = {anchor = anchor}
+		module[v].anchor:Hide()
+	end
 	
 	--Do Setup
 	ApplyTooltipSkins()
@@ -430,16 +504,11 @@ function module:OnEnable()
 	module:BuildOptions()
 end
 
-local UpdateOverrideThemeLoc = function()
-	if DB.Tooltips.Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
-		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"].args["OverrideTheme"].disabled = true
+local UpdateOverrideThemeLoc = function(v)
+	if DB.Tooltips[v].Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
+		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = true
 	else
-		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"].args["OverrideTheme"].disabled = false
-	end
-	if DB.Tooltips.Anchor.onMouse then
-	
-	else
-	
+		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = false
 	end
 end
 
@@ -466,21 +535,35 @@ function module:BuildOptions()
 			ColorOverlay = {name=L["Color Overlay"],type="toggle",order=11,desc=L["ColorOverlayDesc"],
 					get = function(info) return DB.Tooltips.ColorOverlay end,
 					set = function(info,val) DB.Tooltips.ColorOverlay = val module:UpdateBG()end
-			},
-			DisplayLocation = {name="Display Location",type="group",inline=true,order=20,width="full", args = {
-				OnMouse = {name="Display on mouse?",type="toggle",order=21,desc=L["TooltipOverrideDesc"],
-						get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.Anchor.onMouse end,
-						set = function(info,val) DB.Tooltips.Anchor.onMouse = val; UpdateOverrideThemeLoc(); end
-				},
-				OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=22,
-						get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.OverrideLoc end,
-						set = function(info,val) DB.Tooltips.OverrideLoc = val; end
-				},
-				MoveAnchor = {name="Move anchor",type="execute",order=23,disabled=true,func = function(info,val) module.anchor:Show() end}
-			}
 			}
 		}
 	}
+	
+	for k,v in ipairs(RuleList) do
+		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v] = {
+			name="Display Location " .. v,type="group",inline=true,order=k + 20.1,width="full", args = {
+			Condition = {name ="Condition", type="select",order=k + 20.2,
+				values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
+				get = function(info) return DB.Tooltips[v].Status; end,
+				set = function(info,val) DB.Tooltips[v].Status = val; ObjTrackerUpdate() end
+			},
+			Combat = {name="only if in combat",type="toggle",order=k + 20.3,
+			get = function(info) return DB.Tooltips[v].Combat end,
+			set = function(info,val) DB.Tooltips[v].Combat = val; ObjTrackerUpdate() end
+			},
+			OnMouse = {name="Display on mouse?",type="toggle",order=k + 20.4,desc=L["TooltipOverrideDesc"],
+					get = function(info) UpdateOverrideThemeLoc(v); return DB.Tooltips[v].Anchor.onMouse end,
+					set = function(info,val) DB.Tooltips[v].Anchor.onMouse = val; UpdateOverrideThemeLoc(v); end
+			},
+			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=k + 20.5,
+					get = function(info) UpdateOverrideThemeLoc(v); return DB.Tooltips[v].OverrideLoc end,
+					set = function(info,val) DB.Tooltips[v].OverrideLoc = val; end
+			},
+			MoveAnchor = {name="Move anchor",type="execute",order=k + 20.6,width="half",func = function(info,val) module[v].anchor:Show() end},
+			ResetAnchor = {name="Reset anchor",type="execute",order=k + 20.7,width="half",func = function(info,val) DB.Tooltips[v].Anchor.Moved = false end}
+		}
+		}
+	end
 end
 
 function module:HideOptions()
