@@ -170,12 +170,12 @@ function module:ModifyMinimapLayout()
 	end
 	if not DB.MiniMap.northTag then
 		MinimapNorthTag:Hide()
-		MinimapNorthTag.oldShow = MinimapNorthTag.Show
-		MinimapNorthTag.Show = MinimapNorthTag.Hide
+		-- MinimapNorthTag.oldShow = MinimapNorthTag.Show
+		-- MinimapNorthTag.Show = MinimapNorthTag.Hide
 	else
 		MinimapNorthTag:Show()
-		MinimapNorthTag.Show = MinimapNorthTag.oldShow
-		MinimapNorthTag.oldShow = nil
+		-- MinimapNorthTag.Show = MinimapNorthTag.oldShow
+		-- MinimapNorthTag.oldShow = nil
 	end
 	
 	Minimap:ClearAllPoints();
@@ -353,7 +353,7 @@ function module:updateButtons()
 	end
 	
 	DB.MiniMap.SUIMapChangesActive = true
-	if not IsMouseOver() and (DB.MiniMap.MapButtons) then
+	if not IsMouseOver() and (DB.MiniMap.MapButtons) and (DB.MiniMap.OtherStyle == "mouseover" or DB.MiniMap.OtherStyle == "hide")  then
 		--Fix for DBM making its icon even if its not needed
 		if DBM ~= nil then 
 			if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
@@ -389,7 +389,7 @@ function module:updateButtons()
 				spartan.Err("Minimap", buttonName .. " is not fading")
 			end
 		end
-	else
+	elseif DB.MiniMap.OtherStyle ~= "hide" then
 		if CensusButton ~= nil and CensusButton:GetAlpha() == 0 then
 			CensusButton.FadeIn:Stop();
 			CensusButton.FadeOut:Stop();
@@ -430,32 +430,28 @@ function module:BuildOptions()
 				set = function(info,val) 
 					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
 					DB.MiniMap.northTag = val;
-					if DB.MiniMap.northTag then
-						MinimapNorthTag:Show()
-					else
-						MinimapNorthTag:Hide()
-					end
+					if val then MinimapNorthTag:Show() else MinimapNorthTag:Hide() end
 				end,
 			},
-			minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
-				get = function(info) return DB.MiniMap.MapButtons; end,
-				set = function(info,val) DB.MiniMap.MapButtons = val; end
-			},
-			BlizzStyle = {
-				name="Blizzard Icons",
-				type="select",
-				style="dropdown",
-				width="full",
-				values = {
-					["hide"]	= "Always Hide",
-					["mouseover"]	= "Show on Mouse over",
-					["show"]	= "Always Show",
-				},
-				get = function(info) return DB.MiniMap.BlizzStyle; end,
-				set = function(info,val) DB.MiniMap.BlizzStyle = val; end
-			},
+			-- minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
+				-- get = function(info) return DB.MiniMap.MapButtons; end,
+				-- set = function(info,val) DB.MiniMap.MapButtons = val;  end
+			-- },
+			-- BlizzStyle = {
+				-- name="Blizzard Icons",
+				-- type="select",
+				-- style="dropdown",
+				-- width="full",
+				-- values = {
+					-- ["hide"]	= "Always Hide",
+					-- ["mouseover"]	= "Show on Mouse over",
+					-- ["show"]	= "Always Show",
+				-- },
+				-- get = function(info) return DB.MiniMap.BlizzStyle; end,
+				-- set = function(info,val) DB.MiniMap.BlizzStyle = val; end
+			-- },
 			OtherStyle = {
-				name="Addon Icons",
+				name="Display mode",
 				type="select",
 				style="dropdown",
 				width="full",
@@ -465,11 +461,11 @@ function module:BuildOptions()
 					["show"]	= "Always Show",
 				},
 				get = function(info) return DB.MiniMap.OtherStyle; end,
-				set = function(info,val) DB.MiniMap.OtherStyle = val; end
+				set = function(info,val) DB.MiniMap.OtherStyle = val; module:updateButtons() end
 			},
 			minimapzoom = {name = L["MinMapHideZoom"], type="toggle", width="full",
 				get = function(info) return DB.MiniMap.MapZoomButtons; end,
-				set = function(info,val) DB.MiniMap.MapZoomButtons = val; end
+				set = function(info,val) DB.MiniMap.MapZoomButtons = val; module:updateButtons() end
 			}
 		}
 	}

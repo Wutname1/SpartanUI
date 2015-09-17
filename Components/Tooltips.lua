@@ -73,6 +73,7 @@ end
 
 local function ActiveRule()
 	for k,v in ipairs(RuleList) do
+		
 		if DB.Tooltips[v].Status ~= "Disabled" then
 			local CombatRule = false
 			if InCombatLockdown() and DB.Tooltips[v].Combat then
@@ -88,8 +89,6 @@ local function ActiveRule()
 			elseif DB.Tooltips[v].Status == "Instance" and IsInInstance() then
 				return v
 			elseif DB.Tooltips[v].Status == "All" and CombatRule then
-				return v
-			else
 				return v
 			end
 		end
