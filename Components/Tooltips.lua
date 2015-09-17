@@ -179,11 +179,14 @@ local TooltipSetUnit = function(self)
 		local nameString = UnitPVPName(unit) or uName
 			
 		if uRealm and uRealm ~= "" then
-			if(realmRelation == LE_REALM_RELATION_COALESCED) then
-				nameString = nameString..FOREIGN_SERVER_LABEL
-			elseif(realmRelation == LE_REALM_RELATION_VIRTUAL) then
-				nameString = nameString..INTERACTIVE_SERVER_LABEL
-			else
+			local tmp = ""
+			if gRealm ~= uRealm then tmp = " " .. uRealm end
+			
+			if (realmRelation == LE_REALM_RELATION_COALESCED) then
+				nameString = nameString..FOREIGN_SERVER_LABEL..tmp
+			elseif (realmRelation == LE_REALM_RELATION_VIRTUAL) then
+				nameString = nameString..INTERACTIVE_SERVER_LABEL..tmp
+			elseif gRealm ~= uRealm then
 				nameString = nameString.."-"..uRealm
 			end
 		end
