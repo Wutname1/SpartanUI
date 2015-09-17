@@ -12,6 +12,7 @@ local tooltips = {
 	FloatingPetBattleAbilityTooltip, FloatingGarrisonFollowerTooltip,GarrisonMissionMechanicTooltip, GarrisonFollowerTooltip,GarrisonMissionMechanicFollowerCounterTooltip, GarrisonFollowerAbilityTooltip,
 	SmallTextTooltip, BrowserSettingsTooltip, QueueStatusFrame, EventTraceTooltip,ItemSocketingDescription
 }
+local whitebg = {bgFile = [[Interface\AddOns\SpartanUI\media\blank.tga]],tile=false,edgeSize=3}
 
 function module:OnInitialize()
 	if DB.Tooltips == nil then
@@ -34,7 +35,7 @@ function module:OnInitialize()
 			ActiveStyle="smoke",
 			Override = {},
 			ColorOverlay = true,
-			Color = {0,0,0,0.7}
+			Color = {0,0,0,0.4}
 		}
 	end
 	if DB.Tooltips.Anchor == nil then
@@ -44,6 +45,8 @@ function module:OnInitialize()
 			AnchorPos = {}
 		}
 	end
+	local a,b,c,d = unpack(DB.Tooltips.Color)
+	if a == 0 and b==0 and c==0 and d==0.7 then DB.Tooltips.Color = {0,0,0,0.4} end
 end
 
 -- local setPoint = function(self,point,parent,rpoint)
@@ -75,19 +78,20 @@ local setPoint = function(self, parent)
 end
 
 local onShow = function(self)
-	local r1 = self:GetBackdropColor()
-	local r2 = self.SUIBorder:GetBackdropColor()
+	self:SetBackdrop(whitebg)
+	if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
+		self.SUIBorder:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
+	else
+		self.SUIBorder:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
+	end
 	
 	if (DB.Tooltips.ActiveStyle == "none" or DB.Tooltips.ColorOverlay) or (not self.SUIBorder) then
 		self:SetBackdropColor(unpack(DB.Tooltips.Color))
-		if r2 ~= 1 then self.SUIBorder:SetBackdropColor(1,1,1,1) end
+		self.SUIBorder:SetBackdropColor(1,1,1,1)
 	else
 		self.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
-		if r1 ~= 1 then self:SetBackdropColor(0,0,0,0) end
 		self:SetBackdropColor(0, 0, 0, 0)
 	end
-	self:SetBackdropBorderColor(0, 0, 0, 0)
-	
 	
 	if(self.SUIBorder) and (not GameTooltipStatusBar:IsShown()) then
 		self.SUIBorder:ClearAllPoints()
@@ -114,14 +118,11 @@ end
 local Override_Color = function(self, r, g, b, a)
 	local r2,b2,g2,a2 = unpack(DB.Tooltips.Color)
 	if((r ~= r2) and (g ~= g2) and (b ~= b2)) then
-		-- if not DB.Tooltips.ColorOverlay then
-			-- self.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
-		-- else
-			-- self:SetBackdropColor(unpack(DB.Tooltips.Color))
-		-- end
-		-- self.SUIBorder:SetBackdropBorderColor(0, 0, 0, 0)
-		local r1 = self:GetBackdropBorderColor()
-		if r1 ~= 0 then self:SetBackdropBorderColor(0, 0, 0, 0) end
+		if not DB.Tooltips.ColorOverlay then
+			self.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
+		else
+			self:SetBackdropColor(unpack(DB.Tooltips.Color))
+		end
 	end
 end
 
@@ -313,26 +314,26 @@ local function ApplyTooltipSkins()
 			
 		    --TOP
 		    tmp[1] = tmp:CreateTexture(nil, "OVERLAY")
-		    tmp[1]:SetPoint("TOPLEFT", tmp, "TOPLEFT", 0, 0)
-		    tmp[1]:SetPoint("TOPRIGHT", tmp, "TOPRIGHT", 0, 0)
+		    tmp[1]:SetPoint("BOTTOMLEFT", tmp, "TOPLEFT", -3, 0)
+		    tmp[1]:SetPoint("BOTTOMRIGHT", tmp, "TOPRIGHT", 3, 0)
 		    tmp[1]:SetHeight(3)
 		    tmp[1]:SetTexture(0,0,0)
 		    --BOTTOM
 		    tmp[2] = tmp:CreateTexture(nil, "OVERLAY")
-		    tmp[2]:SetPoint("BOTTOMLEFT", tmp, "BOTTOMLEFT", 0, 0)
-		    tmp[2]:SetPoint("BOTTOMRIGHT", tmp, "BOTTOMRIGHT", 0, 0)
+		    tmp[2]:SetPoint("TOPLEFT", tmp, "BOTTOMLEFT", -3, 0)
+		    tmp[2]:SetPoint("TOPRIGHT", tmp, "BOTTOMRIGHT", 3, 0)
 		    tmp[2]:SetHeight(3)
 		    tmp[2]:SetTexture(0,0,0)
 		    --RIGHT
 		    tmp[3] = tmp:CreateTexture(nil, "OVERLAY")
-		    tmp[3]:SetPoint("TOPRIGHT", tmp, "TOPRIGHT", 0, 0)
-		    tmp[3]:SetPoint("BOTTOMRIGHT", tmp, "BOTTOMRIGHT", 0, 0)
+		    tmp[3]:SetPoint("TOPLEFT", tmp, "TOPRIGHT", 0, 3)
+		    tmp[3]:SetPoint("BOTTOMLEFT", tmp, "BOTTOMRIGHT", 0, -3)
 		    tmp[3]:SetWidth(3)
 		    tmp[3]:SetTexture(0,0,0)
 		    --LEFT
 		    tmp[4] = tmp:CreateTexture(nil, "OVERLAY")
-		    tmp[4]:SetPoint("TOPLEFT", tmp, "TOPLEFT", 0, 0)
-		    tmp[4]:SetPoint("BOTTOMLEFT", tmp, "BOTTOMLEFT", 0, 0)
+		    tmp[4]:SetPoint("TOPRIGHT", tmp, "TOPLEFT", 0, 3)
+		    tmp[4]:SetPoint("BOTTOMRIGHT", tmp, "BOTTOMLEFT", 0, -3)
 		    tmp[4]:SetWidth(3)
 		    tmp[4]:SetTexture(0,0,0)
 
@@ -341,19 +342,17 @@ local function ApplyTooltipSkins()
 			else
 				tmp:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
 			end
-		    tmp:SetBackdropBorderColor(0, 0, 0, 0)
 
 		    tmp.SetBorderColor = SetBorderColor
 			tmp.ClearColors = ClearColors
 
 			tooltip.SUIBorder = tmp
+			tooltip:SetBackdrop(nil)
 			
 			hooksecurefunc(tooltip, "SetBackdropColor", Override_Color)
-			hooksecurefunc(tooltip, "SetBackdropBorderColor", Override_Color)
 			tooltip:HookScript("OnShow", onShow)
 			tooltip:HookScript("OnHide", onHide)
-			tremove(tooltips, i)
-			
+			_G.tremove(tooltips, i)			
 		end
 	end
 end
@@ -370,13 +369,16 @@ function module:UpdateBG()
 				if DB.Tooltips.ActiveStyle ~= "none" then
 					tooltip.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
 				else
-					tooltip.SUIBorder:SetBackdrop(nil)
 					tooltip.SUIBorder:SetBackdropColor(0,0,0,0)
 					tooltip:SetBackdropColor(unpack(DB.Tooltips.Color))
 				end
 			end
 		end
 	end
+end
+
+local function ReStyle()
+	if(#tooltips > 0) then ApplyTooltipSkins() end
 end
 
 function module:OnEnable()
@@ -419,9 +421,11 @@ function module:OnEnable()
 	GameTooltip:HookScript("OnTooltipCleared", TipCleared)
 	GameTooltip:HookScript("OnTooltipSetItem", TooltipSetItem)
 	GameTooltip:HookScript("OnTooltipSetUnit", TooltipSetUnit)
+	hooksecurefunc("GameTooltip_SetDefaultAnchor", setPoint)
+	hooksecurefunc("GameTooltip_ShowCompareItem", ReStyle)
+	
 	-- GameTooltip:HookScript("SetPoint", setPoint)
 	-- hooksecurefunc(GameTooltip,"SetPoint",setPoint);
-	hooksecurefunc("GameTooltip_SetDefaultAnchor", setPoint)
 	
 	module:BuildOptions()
 end
@@ -442,7 +446,7 @@ end
 function module:BuildOptions()
 	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"] = {type="group",name="Tooltips",
 		args = {
-			Background = {name=L["Background"],type="select",order=1,desc=L["Frames/ReloadRequired"],
+			Background = {name=L["Background"],type="select",order=1,
 				values = {
 				["metal"]="metal",
 				["smooth"]="smooth",
