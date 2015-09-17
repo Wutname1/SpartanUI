@@ -1,46 +1,17 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:GetModule("Style_Minimal");
+local module = spartan:GetModule("Style_Grid");
 ----------------------------------------------------------------------------------------------------
-local InitRan = false
 function module:OnInitialize()
-	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["Minimal"].disabled = false
-	spartan.opt.args["General"].args["style"].args["Artwork"].args["Minimal"].disabled = false
-	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Minimal"].disabled = false
 	spartan.opt.args["General"].args["style"].args["PartyFrames"].args["Minimal"].disabled = false
 	spartan.opt.args["General"].args["style"].args["RaidFrames"].args["Minimal"].disabled = false
-	--Setup our DB items
-	if DB.Styles.Minimal == nil then
-		DB.Styles.Minimal = {
-			Color = {
-				0.6156862745098039,
-				0.1215686274509804,
-				0.1215686274509804,
-				0.9
-			},
-			PartyFramesSize = "large"
-		}
-	end
-	if DB.Styles.Minimal.PartyFramesSize == nil then DB.Styles.Minimal.PartyFramesSize = "large" end
-	--Init if needed
-	if (DBMod.Artwork.Style == "Minimal") then
-		module:Init()
-	end
 end
 
 function module:Init()
-	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
 	module:SetupMenus();
-	module:InitFramework();
-	module:InitActionBars();
-	InitRan = true;
 end
 
-function module:FirstLoad()
-	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Minimal.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Minimal.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Minimal.BartenderProfile); end
-end
 
 function module:OnEnable()
 	if (DBMod.Artwork.Style ~= "Minimal") then module:Disable(); return end

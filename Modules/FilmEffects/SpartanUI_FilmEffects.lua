@@ -1,149 +1,155 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local addon = spartan:NewModule("FilmEffect");
+local Container
+local EffectList = {"vignette", "blur", "crisp"}
+
+local FilmEffectEvent = function(self, event, ...)
+	for k,v in ipairs(EffectList) do
+		if not DBMod.FilmEffects.enable then
+			Container[v]:Hide()
+		elseif event == "CHAT_MSG_SYSTEM" then
+			if (... == format(MARKED_AFK_MESSAGE,DEFAULT_AFK_MESSAGE)) and (DBMod.FilmEffects.Effects[v].afk) then
+				Container[v]:Show()
+			elseif (... == CLEARED_AFK) then
+				Container[v]:Hide()
+			end
+		else
+			if DBMod.FilmEffects.Effects[v].always then
+				Container[v]:Show()
+			else
+				Container[v]:Hide()
+			end
+		end
+	end
+end
 
 function addon:OnInitialize()
+	if DBMod.FilmEffects.Effects == nil then
+		DBMod.FilmEffects.Effects = {
+			vignette = {always = false, afk = true},
+			blur = {always = false, afk = false},
+			crisp = {always = false, afk = true}
+		}
+	end
+	
 	spartan.opt.args["FilmEffects"].args["enable"] = {name=L["Film/Enabled"],type="toggle",order=1,width="full",
 		get = function(info) return DBMod.FilmEffects.enable end,
-		set = function(info,val) DBMod.FilmEffects.enable = val if val ~= true then addon:FilmEffectDisable() end end
+		set = function(info,val)
+			if InCombatLockdown() then spartan:Print("Please leave combat first.") return end
+			DBMod.FilmEffects.enable = val;
+			FilmEffectEvent(nil,nil,nil)
+			for k,v in ipairs(EffectList) do
+			spartan.opt.args["FilmEffects"].args[v .. "always"].disabled = val
+			spartan.opt.args["FilmEffects"].args[v .. "AFK"].disabled = val
+			end
+		end
 	}
-	spartan.opt.args["FilmEffects"].args["anim"] = {name=L["Film/Effect"],type="select",order=5,width="full",
-		style="dropdown",values={[""]="",["Vignette"] = L["Film/Vignette"],["blur"]=L["Film/Blur"],["crisp"]=L["Film/Crisp"]},
-		get = function(info) return DBMod.FilmEffects.anim end,
-		set = function(info,val) if (val == "") then addon:FilmEffectDisable(); elseif (DBMod.FilmEffects.enable) then DBMod.FilmEffects.anim = val; addon:FilmEffect() end end
-	}
+	
+	
+	for k,v in ipairs(EffectList) do
+		spartan.opt.args["FilmEffects"].args[v .. "Title"] = {name=v,type="header",order=k+1,width="full"}
+		spartan.opt.args["FilmEffects"].args[v .. "always"] = {name="Always show",type="toggle",order=k + 1.2,
+			get = function(info) return DBMod.FilmEffects.Effects[v].always end,
+			set = function(info,val) if InCombatLockdown() then spartan:Print("Please leave combat first.") return end DBMod.FilmEffects.Effects[v].always = val; FilmEffectEvent(nil,nil,nil) end
+		}
+		spartan.opt.args["FilmEffects"].args[v .. "AFK"] = {name="Show if AFK",type="toggle",order=k + 1.4,
+			get = function(info) if InCombatLockdown() then spartan:Print("Please leave combat first.") return end return DBMod.FilmEffects.Effects[v].afk end,
+			set = function(info,val) DBMod.FilmEffects.Effects[v].afk = val; end
+		}
+	end
 end
 
 function addon:OnEnable()
-		local f = CreateFrame("Frame", "FilmEffects", WorldFrame);
-		f:SetHeight(64); f:SetWidth(64);
-		f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 256);
-		f:SetFrameStrata("BACKGROUND");
-		f:RegisterEvent("PLAYER_ENTERING_WORLD");
-		f:SetScript("OnEvent",function() addon:FilmEffect() end);
-		f:SetScript("OnUpdate", function(self, elapsed) addon:Update(self, elapsed) end);
---		addon:FilmEffect()
-end
-function addon:FilmEffectDisable()
-	
-	if FE_Vignette then FE_Vignette:Hide(); end
-	if FG_Fuzzy then FG_Fuzzy:Hide(); end
-	if FG_Fuggly then FG_Fuggly:Hide(); end
-	if FG_Crispy then FG_Crispy:Hide(); end
-	DBMod.FilmEffects.anim = ""
-end
-
-function addon:FilmEffect()
-	if DBMod.FilmEffects.anim=="Vignette" then
-		local t = f:CreateTexture("FE_Vignette", "OVERLAY")
-		t:SetAllPoints(UIParent)
-		t:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\vignette")
-		t:SetBlendMode("MOD")
-	end
-	
-	if DBMod.FilmEffects.anim=="blur" then
-		if not FG_Fuzzy then
-			local t = f:CreateTexture("FG_Fuzzy", "OVERLAY")
-			local t2 = f:CreateTexture("FG_Fuggly", "OVERLAY")
-			t:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Add")
-			t2:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Mod")
-			t:SetBlendMode("ADD")
-			t2:SetBlendMode("MOD")
-			t:SetAlpha(.2)
-			t2:SetAlpha(.05)
+		Container = CreateFrame("Frame", "FilmEffects", WorldFrame);
+		Container:SetSize(1,1);
+		Container:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 128);
+		Container:SetFrameStrata("BACKGROUND");
+		Container:RegisterEvent("CHAT_MSG_SYSTEM");
+		Container:RegisterEvent("PLAYER_ENTERING_WORLD");
+		Container:SetScript("OnEvent", FilmEffectEvent);
+		Container:SetScript("OnUpdate", function(self, elapsed) addon:Update(self, elapsed) end);
+		
+		Container.vignette = Container:CreateTexture("FE_Vignette", "OVERLAY")
+		Container.vignette:SetAllPoints(UIParent)
+		Container.vignette:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\vignette")
+		Container.vignette:SetBlendMode("MOD")
+		
+		Container.vignette:Hide()
+		
+		--blur
+		Container.blur = CreateFrame("Frame", "FG_Crispy", Container)
+		Container.blur.layer1 = Container.blur:CreateTexture("FG_Fuzzy", "OVERLAY")
+		Container.blur.layer2 = Container.blur:CreateTexture("FG_Fuggly", "OVERLAY")
+		Container.blur.layer1:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Add")
+		Container.blur.layer2:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Mod")
+		Container.blur.layer1:SetBlendMode("ADD")
+		Container.blur.layer2:SetBlendMode("MOD")
+		Container.blur.layer1:SetAlpha(.2)
+		Container.blur.layer2:SetAlpha(.05)
+		local x, y = strmatch(({GetScreenResolutions()})[GetCurrentResolution()], "(%d+)x(%d+)")
+		Container.blur.layer1:SetSize((tonumber(y))+500, (tonumber(x))+500)
+		Container.blur.layer2:SetSize((tonumber(y))+500, (tonumber(x))+500)
+		Container.blur.layer1:SetPoint("TOPLEFT", Container, "TOPLEFT", 0, 0)
+		Container.blur.layer2:SetPoint("TOPLEFT", Container, "TOPLEFT", 0, 0)
+		
+		Container.blur:Hide()
+		
+		--crisp
+		local x, y = strmatch(({GetScreenResolutions()})[GetCurrentResolution()], "(%d+)x(%d+)")
+		local i = 1
+		local ix = 1
+		local iy = 1
+		local xLimit = math.floor((tonumber(x))/512 + 1)
+		local yLimit = math.floor((tonumber(y))/512 + 1)
+		local iLimit = xLimit * yLimit
+		local intensity = 1
+		Container.crisp = CreateFrame("Frame", "FG_Crispy", Container)
+		while i <= iLimit do
+			local nameAdd = "FG_"..ix.."_"..iy.."_Add"
+			local nameMod = "FG_"..ix.."_"..iy.."_Mod"
+			Container.crisp[nameAdd] = Container.crisp:CreateTexture(nameAdd, "OVERLAY")
+			Container.crisp[nameMod] = Container.crisp:CreateTexture(nameMod, "OVERLAY")
 			
-			local resolution =({GetScreenResolutions()})[GetCurrentResolution()];
-			local x, y = strmatch(resolution, "(%d+)x(%d+)")
+			Container.crisp[nameAdd]:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Add")
+			Container.crisp[nameMod]:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Mod")
 			
-			t:SetHeight((tonumber(y))+256)
-			t:SetWidth((tonumber(x))+256)
-			t2:SetHeight((tonumber(y))+256)
-			t2:SetWidth((tonumber(x))+256)
+			Container.crisp[nameAdd]:SetSize(512,512)
+			Container.crisp[nameMod]:SetSize(512,512)
 			
-			t:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
-			t2:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
-			DBMod.FilmEffects.animateGrainFuzzy = true
-		else
-			if FG_Fuzzy:IsVisible() then
-				FG_Fuzzy:Hide()
-				FG_Fuggly:Hide()
-				DBMod.FilmEffects.animateGrainFuzzy = nil
+			Container.crisp[nameAdd]:SetBlendMode("ADD")
+			Container.crisp[nameMod]:SetBlendMode("MOD")
+			Container.crisp[nameAdd]:SetAlpha(intensity * .45)
+			Container.crisp[nameMod]:SetAlpha(intensity * .3)
+			
+			local father, anchor
+			father = _G["FG_"..(ix-1).."_"..iy.."_Add"] or _G["FG_"..ix.."_"..(iy-1).."_Add"] or Container
+			
+			if _G["FG_"..(ix-1).."_"..iy.."_Add"] then
+				anchor = "TOPRIGHT"
+			elseif _G["FG_"..ix.."_"..(iy-1).."_Add"] then
+				anchor = "BOTTOMLEFT"
 			else
-				FG_Fuzzy:Show()
-				FG_Fuggly:Show()
-				DBMod.FilmEffects.animateGrainFuzzy = true
+				anchor = "TOPLEFT"
 			end
-		end
-	end
-	
-	if DBMod.FilmEffects.anim=="crisp" then
-		if not _G["FG_1_1_Add"] then
-			local resolution =({GetScreenResolutions()})[GetCurrentResolution()];
-			local x, y = strmatch(resolution, "(%d+)x(%d+)")
 			
-			local i = 1
-			local ix = 1
-			local iy = 1
-			local xLimit = math.floor((tonumber(x))/512 + 1)
-			local yLimit = math.floor((tonumber(y))/512 + 1)
-			local iLimit = xLimit * yLimit
-			local intensity = 1
+			Container.crisp[nameAdd]:SetPoint("TOPLEFT", father, anchor, 0, 0)
+			Container.crisp[nameMod]:SetPoint("TOPLEFT", Container.crisp[nameAdd], "TOPLEFT", 0, 0)
 			
-			local fatherF = CreateFrame("Frame", "FG_Crispy", f)
-			while i <= iLimit do
-				local nameAdd = "FG_"..ix.."_"..iy.."_Add"
-				local nameMod = "FG_"..ix.."_"..iy.."_Mod"
-				local t = fatherF:CreateTexture(nameAdd, "OVERLAY")
-				local t2 = fatherF:CreateTexture(nameMod, "OVERLAY")
-				
-				t:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Add")
-				t2:SetTexture("Interface\\AddOns\\SpartanUI_FilmEffects\\media\\25ASA_Mod")
-				
-				t:SetWidth(512)
-				t:SetHeight(512)
-				t2:SetWidth(512)
-				t2:SetHeight(512)
-				
-				t:SetBlendMode("ADD")
-				t2:SetBlendMode("MOD")
-				t:SetAlpha(intensity * .45)
-				t2:SetAlpha(intensity * .3)
-				
-				local father, anchor
-				father = _G["FG_"..(ix-1).."_"..iy.."_Add"] or _G["FG_"..ix.."_"..(iy-1).."_Add"] or f
-				
-				if _G["FG_"..(ix-1).."_"..iy.."_Add"] then
-					anchor = "TOPRIGHT"
-				elseif _G["FG_"..ix.."_"..(iy-1).."_Add"] then
-					anchor = "BOTTOMLEFT"
-				else
-					anchor = "TOPLEFT"
-				end
-				
-				t:SetPoint("TOPLEFT", father, anchor, 0, 0)
-				t2:SetPoint("TOPLEFT", t, "TOPLEFT", 0, 0)
-				
-				ix = ix + 1
-				if ix > xLimit then
-					ix = 1
-					iy = iy + 1
-				end
-				i = i + 1
+			ix = ix + 1
+			if ix > xLimit then
+				ix = 1
+				iy = iy + 1
 			end
-			DBMod.FilmEffects.animateGrainCrispy = true
-		else
-			if FG_Crispy:IsVisible() then
-				FG_Crispy:Hide()
-				DBMod.FilmEffects.animateGrainCrispy = nil
-			else
-				FG_Crispy:Show()
-				DBMod.FilmEffects.animateGrainCrispy = true
-			end
+			i = i + 1
 		end
-	end
-	
+		
+		Container.crisp:Hide()
 end
+function addon:tmp()
 
+
+end
 function addon:Update(self, elapsed)
 	DBMod.FilmEffects.animationInterval = DBMod.FilmEffects.animationInterval + elapsed
 	if (DBMod.FilmEffects.animationInterval > (0.02)) then -- 50 FPS
@@ -153,7 +159,7 @@ function addon:Update(self, elapsed)
 		local xOfs = math.random(-128, 0)
 		
 		if DBMod.FilmEffects.anim=="blur" or DBMod.FilmEffects.anim=="crisp" then
-			f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOfs, yOfs)
+			Container:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOfs, yOfs)
 		end
 	end
 end

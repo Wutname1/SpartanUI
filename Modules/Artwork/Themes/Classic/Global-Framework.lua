@@ -219,6 +219,7 @@ function module:SetupVehicleUI()
 		RegisterStateDriver(SpartanUI, "visibility", "[petbattle][vehicleui] hide; show");
 	end
 end
+
 function module:RemoveVehicleUI()
 	if not DBMod.Artwork.VehicleUI then
 		--UnRegisterStateDriver(SpartanUI, "visibility");

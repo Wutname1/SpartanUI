@@ -61,9 +61,14 @@ local setPoint = function(self, parent)
 			spartan:GetModule("Style_" .. DBMod.Artwork.Style):TooltipLoc(self, parent);
 		else
 			if DB.Tooltips.Anchor.Moved then
-			
+				local Anchors = {}
+				for k,v in pairs(DB.Tooltips.Anchor.AnchorPos) do
+					Anchors[k] = v
+				end
+				self:ClearAllPoints();
+				self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 			else
-			
+				self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
 			end
 		end
 	end
@@ -366,16 +371,39 @@ function module:UpdateBG()
 end
 
 function module:OnEnable()
-	--Create Anchor point	
-	-- local anchor = CreateFrame("Frame",nil)
-	-- anchor:SetSize(150, 20)
-	-- anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
-	-- anchor.bg:SetAllPoints(anchor)
-	-- anchor.bg:SetTexture(0,0,0)
+	--Create Anchor point
+	local anchor = CreateFrame("Frame",nil)
+	anchor:SetSize(150, 20)
+	anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
+	anchor.bg:SetAllPoints(anchor)
+	anchor.bg:SetTexture(0,0,0)
 	
-	-- module.anchor = anchor
+	-- anchor:SetScript("OnMouseDown",function(self,button)
+		-- if button == "LeftButton" then
+			-- DB.Tooltips.Anchor.Moved = true;
+			-- module.anchor:SetMovable(true);
+			-- module.anchor:StartMoving();
+		-- end
+	-- end);
 	
-	-- module.anchor:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
+	-- anchor:SetScript("OnMouseUp",function(self,button)
+		-- module.anchor:Hide();
+		-- module.anchor:StopMovingOrSizing();
+		-- local Anchors = {}
+		-- Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module.anchor:GetPoint()
+		-- for k,v in pairs(Anchors) do
+			-- DB.Tooltips.Anchor.AnchorPos[k] = v
+		-- end
+	-- end);
+	
+	-- anchor:SetScript("OnEvent",function()
+		-- module.anchor:Hide();
+	-- end);
+	-- anchor:RegisterEvent("PLAYER_REGEN_DISABLED");
+	-- anchor:Hide();
+	
+	module.anchor = anchor
+	
 	--Do Setup
 	ApplyTooltipSkins()
 	
@@ -391,9 +419,14 @@ end
 
 local UpdateOverrideThemeLoc = function()
 	if DB.Tooltips.Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
-		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["OverrideThemeLoc"].disabled = true
+		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"].args["OverrideTheme"].disabled = true
 	else
-		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["OverrideThemeLoc"].disabled = false
+		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"].args["OverrideTheme"].disabled = false
+	end
+	if DB.Tooltips.Anchor.onMouse then
+	
+	else
+	
 	end
 end
 
@@ -421,18 +454,21 @@ function module:BuildOptions()
 					get = function(info) return DB.Tooltips.ColorOverlay end,
 					set = function(info,val) DB.Tooltips.ColorOverlay = val module:UpdateBG()end
 			},
-			OnMouse = {name="Display on mouse?",type="toggle",order=21,desc=L["TooltipOverrideDesc"],
-					get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.Anchor.onMouse end,
-					set = function(info,val) DB.Tooltips.Anchor.onMouse = val; UpdateOverrideThemeLoc(); end
-			},
-			OverrideThemeLoc = {name=L["OverrideTheme"],type="toggle",order=22,desc=L["TooltipOverrideDesc"],
-					get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.OverrideLoc end,
-					set = function(info,val) DB.Tooltips.OverrideLoc = val; end
-			},
+			DisplayLocation = {name="Display Location",type="group",inline=true,order=20,width="full", args = {
+				OnMouse = {name="Display on mouse?",type="toggle",order=21,desc=L["TooltipOverrideDesc"],
+						get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.Anchor.onMouse end,
+						set = function(info,val) DB.Tooltips.Anchor.onMouse = val; UpdateOverrideThemeLoc(); end
+				},
+				OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=22,
+						get = function(info) UpdateOverrideThemeLoc(); return DB.Tooltips.OverrideLoc end,
+						set = function(info,val) DB.Tooltips.OverrideLoc = val; end
+				},
+				MoveAnchor = {name="Move anchor",type="execute",order=23,disabled=true,func = function(info,val) module.anchor:Show() end}
+			}
+			}
 		}
 	}
 end
-
 
 function module:HideOptions()
 	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].disabled = true

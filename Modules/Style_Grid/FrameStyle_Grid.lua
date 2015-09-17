@@ -4,10 +4,6 @@ local RaidFrames = spartan:GetModule("RaidFrames");
 local colors = setmetatable({},{__index = SpartanoUF.colors});
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 colors.health = {0/255,255/255,50/255};
-local base_plate2 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_2_dual.blp]]
-local base_plate3 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_3_single.blp]]
-local base_ring = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_ring1.blp]]
-
 
 local CreateFrame = function(self,unit)
 	self:SetSize(140, 35); -- Setup inital Size

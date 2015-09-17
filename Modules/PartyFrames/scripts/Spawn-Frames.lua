@@ -70,6 +70,7 @@ function PartyFrames:OnEnable()
 
 
 	function PartyFrames:UpdateParty(event,...)
+		if InCombatLockdown() then return end
 		local inParty = IsInGroup()  -- ( numGroupMembers () > 0 )
 		local bDebug_ShowFrame = true;
 
