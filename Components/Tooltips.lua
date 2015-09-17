@@ -75,11 +75,15 @@ local setPoint = function(self, parent)
 end
 
 local onShow = function(self)
+	local r1 = self:GetBackdropColor()
+	local r2 = self.SUIBorder:GetBackdropColor()
+	
 	if (DB.Tooltips.ActiveStyle == "none" or DB.Tooltips.ColorOverlay) or (not self.SUIBorder) then
 		self:SetBackdropColor(unpack(DB.Tooltips.Color))
-		self.SUIBorder:SetBackdropColor(1,1,1,1)
+		if r2 ~= 1 then self.SUIBorder:SetBackdropColor(1,1,1,1) end
 	else
 		self.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
+		if r1 ~= 1 then self:SetBackdropColor(0,0,0,0) end
 		self:SetBackdropColor(0, 0, 0, 0)
 	end
 	self:SetBackdropBorderColor(0, 0, 0, 0)
@@ -90,6 +94,7 @@ local onShow = function(self)
 		self.SUIBorder:SetPoint("TOPLEFT", self, "TOPLEFT", -1, 1)
 		self.SUIBorder:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 1, -1)
 	end
+	--check if theme has a location
 	if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.Custom then
 		spartan:GetModule("Style_" .. DBMod.Artwork.Style):Tooltip()
 	end
@@ -115,7 +120,8 @@ local Override_Color = function(self, r, g, b, a)
 			-- self:SetBackdropColor(unpack(DB.Tooltips.Color))
 		-- end
 		-- self.SUIBorder:SetBackdropBorderColor(0, 0, 0, 0)
-		self:SetBackdropBorderColor(0, 0, 0, 0)
+		local r1 = self:GetBackdropBorderColor()
+		if r1 ~= 0 then self:SetBackdropBorderColor(0, 0, 0, 0) end
 	end
 end
 
@@ -355,11 +361,11 @@ end
 function module:UpdateBG()
 	for i, tooltip in pairs(tooltips) do
 		if (tooltip.SUIBorder) then
-		    if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
-				tooltip.SUIBorder:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
-			else
-				tooltip.SUIBorder:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
-			end
+		    -- if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
+				-- tooltip.SUIBorder:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
+			-- else
+				-- tooltip.SUIBorder:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
+			-- end
 			if not DB.Tooltips.ColorOverlay then
 				if DB.Tooltips.ActiveStyle ~= "none" then
 					tooltip.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
@@ -436,18 +442,18 @@ end
 function module:BuildOptions()
 	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"] = {type="group",name="Tooltips",
 		args = {
-			Background = {name=L["Background"],type="select",order=1,
+			Background = {name=L["Background"],type="select",order=1,desc=L["Frames/ReloadRequired"],
 				values = {
 				["metal"]="metal",
 				["smooth"]="smooth",
 				["smoke"]="smoke",
 				["none"]=L["none"]},
 				get = function(info) return DB.Tooltips.ActiveStyle end,
-				set = function(info,val) DB.Tooltips.ActiveStyle = val module:UpdateBG() end
+				set = function(info,val) DB.Tooltips.ActiveStyle = val end
 			},
 			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=2,desc=L["TooltipOverrideDesc"],
 					get = function(info) return DB.Tooltips.Override[DBMod.Artwork.Style] end,
-					set = function(info,val) DB.Tooltips.Override[DBMod.Artwork.Style] = val module:UpdateBG() end
+					set = function(info,val) DB.Tooltips.Override[DBMod.Artwork.Style] = val end
 			},
 			color = {name=L["Color"],type="color",hasAlpha=true,order=10,width="full",
 				get = function(info) return unpack(DB.Tooltips.Color) end,
