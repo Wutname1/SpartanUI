@@ -36,7 +36,8 @@ function module:OnInitialize()
 			ActiveStyle="smoke",
 			Override = {},
 			ColorOverlay = true,
-			Color = {0,0,0,0.4}
+			Color = {0,0,0,0.4},
+			SuppressNoMatch = true
 		}
 	end
 	
@@ -66,7 +67,7 @@ function module:OnInitialize()
 			}
 		end
 	end
-	
+	if DB.Tooltips.SuppressNoMatch == nil then DB.Tooltips.SuppressNoMatch = true end
 	local a,b,c,d = unpack(DB.Tooltips.Color)
 	if a == 0 and b==0 and c==0 and d==0.7 then DB.Tooltips.Color = {0,0,0,0.4} end
 end
@@ -93,6 +94,12 @@ local function ActiveRule()
 			end
 		end
 	end
+	--Failback of Rule1
+	if not DB.Tooltips.SuppressNoMatch then
+		spartan:Print("|cffff0000Error detected")
+		spartan:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
+	end
+	return "Rule1"
 end
 
 -- local setPoint = function(self,point,parent,rpoint)
@@ -537,6 +544,10 @@ function module:BuildOptions()
 			ColorOverlay = {name=L["Color Overlay"],type="toggle",order=11,desc=L["ColorOverlayDesc"],
 					get = function(info) return DB.Tooltips.ColorOverlay end,
 					set = function(info,val) DB.Tooltips.ColorOverlay = val module:UpdateBG()end
+			},
+			SuppressNoMatch = {name="Suppress no rule match error",type="toggle",order=11,desc=L["ColorOverlayDesc"],
+					get = function(info) return DB.Tooltips.SuppressNoMatch end,
+					set = function(info,val) DB.Tooltips.SuppressNoMatch = val end
 			}
 		}
 	}
@@ -547,11 +558,11 @@ function module:BuildOptions()
 			Condition = {name ="Condition", type="select",order=k + 20.2,
 				values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
 				get = function(info) return DB.Tooltips[v].Status; end,
-				set = function(info,val) DB.Tooltips[v].Status = val; ObjTrackerUpdate() end
+				set = function(info,val) DB.Tooltips[v].Status = val; end
 			},
 			Combat = {name="only if in combat",type="toggle",order=k + 20.3,
 			get = function(info) return DB.Tooltips[v].Combat end,
-			set = function(info,val) DB.Tooltips[v].Combat = val; ObjTrackerUpdate() end
+			set = function(info,val) DB.Tooltips[v].Combat = val; end
 			},
 			OnMouse = {name="Display on mouse?",type="toggle",order=k + 20.4,desc=L["TooltipOverrideDesc"],
 					get = function(info) OnMouseOpt(v); return DB.Tooltips[v].Anchor.onMouse end,
