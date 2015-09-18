@@ -503,12 +503,15 @@ function module:OnEnable()
 	module:BuildOptions()
 end
 
-local UpdateOverrideThemeLoc = function(v)
+local OnMouseOpt = function(v)
 	if DB.Tooltips[v].Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
 		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = true
 	else
 		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = false
 	end
+	
+	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["MoveAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
+	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["ResetAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
 end
 
 function module:BuildOptions()
@@ -551,11 +554,11 @@ function module:BuildOptions()
 			set = function(info,val) DB.Tooltips[v].Combat = val; ObjTrackerUpdate() end
 			},
 			OnMouse = {name="Display on mouse?",type="toggle",order=k + 20.4,desc=L["TooltipOverrideDesc"],
-					get = function(info) UpdateOverrideThemeLoc(v); return DB.Tooltips[v].Anchor.onMouse end,
-					set = function(info,val) DB.Tooltips[v].Anchor.onMouse = val; UpdateOverrideThemeLoc(v); end
+					get = function(info) OnMouseOpt(v); return DB.Tooltips[v].Anchor.onMouse end,
+					set = function(info,val) DB.Tooltips[v].Anchor.onMouse = val; OnMouseOpt(v); end
 			},
 			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=k + 20.5,
-					get = function(info) UpdateOverrideThemeLoc(v); return DB.Tooltips[v].OverrideLoc end,
+					get = function(info) return DB.Tooltips[v].OverrideLoc end,
 					set = function(info,val) DB.Tooltips[v].OverrideLoc = val; end
 			},
 			MoveAnchor = {name="Move anchor",type="execute",order=k + 20.6,width="half",func = function(info,val) module[v].anchor:Show() end},

@@ -29,24 +29,4 @@ if DB.Styles.Transparent == nil then
 end
 
 --Update from old versions
-if DB.Styles.Transparent.TooltipLoc == nil then DB.Styles.Classic.TooltipLoc = true end
-if DB.Styles.Minimal == true then
-		DB.Styles.Minimal.Artwork = {}
-		DB.Styles.Minimal.PlayerFrames = {}
-		DB.Styles.Minimal.PartyFrames = {}
-		DB.Styles.Minimal.RaidFrames = {}
-end
-if DB.Styles.Transparent.Movable == nil or DB.Styles.Transparent.Movable then
-	DB.Styles.Transparent.Movable = {
-		Minimap = Minimap,
-		PlayerFrames = true,
-		PartyFrames = true,
-		RaidFrames = true,
-	}
-end
-if DB.Styles.Transparent.Minimap == nil then
-	DB.Styles.Transparent.Minimap = {
-		shape = "square",
-		size = {width = 140, height = 140}
-	}
-end
+if DB.Styles.Transparent.TooltipLoc == nil then DB.Styles.Transparent.TooltipLoc = true end

@@ -452,7 +452,7 @@ function addon:FormatFont(element, size, Module)
 		DB.font[Module] = spartan.fontdefault;
 	end
 	--Set Font Outline
-	local flags, sizeFinal
+	local flags, sizeFinal = ""
 	if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
 	
 	-- Outline was deemed to thick, it is not a slight drop shadow done below

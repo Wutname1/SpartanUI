@@ -353,7 +353,7 @@ function module:updateButtons()
 	end
 	
 	DB.MiniMap.SUIMapChangesActive = true
-	if not IsMouseOver() and (DB.MiniMap.MapButtons) and (DB.MiniMap.OtherStyle == "mouseover" or DB.MiniMap.OtherStyle == "hide")  then
+	if not IsMouseOver() and (DB.MiniMap.OtherStyle == "mouseover" or DB.MiniMap.OtherStyle == "hide")  then
 		--Fix for DBM making its icon even if its not needed
 		if DBM ~= nil then 
 			if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 

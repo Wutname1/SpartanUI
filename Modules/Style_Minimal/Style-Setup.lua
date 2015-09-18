@@ -36,29 +36,9 @@ if DB.Styles.Minimal == nil then
 end
 
 --Update from old versions
-if DB.Styles.Minimal == true then
-		DB.Styles.Minimal.Artwork = {}
-		DB.Styles.Minimal.PlayerFrames = {}
-		DB.Styles.Minimal.PartyFrames = {}
-		DB.Styles.Minimal.RaidFrames = {}
-end
-if DB.Styles.Minimal.Movable == nil then
-	DB.Styles.Minimal.Movable = {
-		Minimap = true,
-		PlayerFrames = true,
-		PartyFrames = true,
-		RaidFrames = true,
-	}
-end
-if DB.Styles.Minimal.Minimap == nil then
-	DB.Styles.Minimal.Minimap = {
-		shape = "square",
-		size = {width = 140, height = 140}
-	}
-end
 if DB.Styles.Minimal.Color == nil then
 	DB.Styles.Minimal.Color = {0.6156862745098039,0.1215686274509804,0.1215686274509804,0.9}
 	DB.Styles.Minimal.PartyFramesSize = "large"
 end
 if DB.Styles.Minimal.PartyFramesSize == nil then DB.Styles.Minimal.PartyFramesSize = "large" end
-if DB.Styles.Transparent.TooltipLoc == nil then DB.Styles.Classic.TooltipLoc = true end
+if DB.Styles.Minimal.TooltipLoc == nil then DB.Styles.Minimal.TooltipLoc = true end
