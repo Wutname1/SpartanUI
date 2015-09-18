@@ -72,6 +72,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	if not DB.EnabledComponents.Objectives then return end
 	-- Add Fade in and out
 	ObjectiveTrackerFrame.BlocksFrame.FadeIn = ObjectiveTrackerFrame.BlocksFrame:CreateAnimationGroup()
 	local FadeIn = ObjectiveTrackerFrame.BlocksFrame.FadeIn:CreateAnimation("Alpha")
