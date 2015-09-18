@@ -33,7 +33,16 @@ end
 local SpawnUnitFrame = function(self,unit)
 	self.menu = menu;
 	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
+	
+	if not InCombatLockdown() then
+		self:EnableMouse(enable)
+	end
+
+	-- self:HookScript("OnEvent", function(self,event)
+		-- if not self:IsMouseEnabled() then self:EnableMouse(enable) end
+	-- end)
+	-- self:RegisterEvent("PLAYER_REGEN_ENABLED");
+	
 	self:SetClampedToScreen(true)
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);
