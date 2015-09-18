@@ -51,7 +51,7 @@ function RaidFrames:UpdateRaid(event,...)
 end
 
 function RaidFrames:OnEnable()
-	if DBMod.RaidFrames.HideBlizzFrames then
+	if DBMod.RaidFrames.HideBlizzFrames and CompactRaidFrameContainer ~= nil then
 		CompactRaidFrameContainer:UnregisterAllEvents()
 		CompactRaidFrameContainer:Hide()
 
