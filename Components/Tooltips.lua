@@ -325,7 +325,7 @@ local TooltipSetUnit = function(self)
 			else
 				qColor = GetQuestDifficultyColor(unitLevel)
 			end
-
+			if creatureType == nil then creatureType = "" end
 
 			lvlLine:SetFormattedText("|cff%02x%02x%02x%s|r %s %s", qColor.r * 255, qColor.g * 255, qColor.b * 255, unitLevel > 0 and unitLevel or "??", creatureClassColors[creatureClassification] or "", creatureType)
 		end
