@@ -106,7 +106,6 @@ local Update = function(self, event, unit, powerType)
 	if(event ~= 'ClassPowerDisable') then
 		cur = UnitPower('player', ClassPowerID)
 		max = UnitPowerMax('player', ClassPowerID)
-		print(cur .. "-"..max)
 		for i = 1, max do
 			if(i <= cur) then
 				element[i]:Show()
