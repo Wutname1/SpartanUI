@@ -139,6 +139,7 @@ function PlayerFrames:UpdatePosition()
 	
 
 	-- for i = 1, MAX_BOSS_FRAMES do
+	if DBMod.PlayerFrames.BossFrame.display then
 		if DBMod.PlayerFrames.boss.moved then
 			PlayerFrames.boss[1]:SetMovable(true);
 			PlayerFrames.boss[1]:SetUserPlaced(false);
@@ -152,5 +153,6 @@ function PlayerFrames:UpdatePosition()
 			PlayerFrames.boss[1]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 			PlayerFrames.boss[1]:SetMovable(false);
 		end
+	end
 	-- end
 end

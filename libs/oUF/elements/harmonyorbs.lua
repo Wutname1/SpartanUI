@@ -39,6 +39,7 @@ local oUF = ns.oUF
 local SPELL_POWER_LIGHT_FORCE = SPELL_POWER_LIGHT_FORCE
 
 local Update = function(self, event, unit)
+print("update")
 	if(unit ~= 'player') then return end
 
 	local element = self.Harmony

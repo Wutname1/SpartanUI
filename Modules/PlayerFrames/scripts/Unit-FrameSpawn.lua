@@ -106,7 +106,7 @@ end
 
 function PlayerFrames:MakeMovable(frame, framename)
 	if frame == nil then
-		spartan:Err("PlayerFrames", "Style did not spawn " .. framename)
+		spartan:Err("PlayerFrames", DBMod.PlayerFrames.Style .. " did not spawn " .. framename)
 	else
 		frame.mover = CreateFrame("Frame");
 		frame.mover:SetSize(20, 20);
@@ -205,10 +205,12 @@ function PlayerFrames:OnEnable()
 		for a,b in pairs(FramesList) do
 			PlayerFrames:MakeMovable(PlayerFrames[b], b)
 		end
-		PlayerFrames:MakeMovable(PlayerFrames.boss[1], "boss")
-		for i = 2, MAX_BOSS_FRAMES do
-			if PlayerFrames.boss[i] ~= nil then
-				PlayerFrames:BossMoveScripts(PlayerFrames.boss[i])
+		if DBMod.PlayerFrames.BossFrame.display then
+			PlayerFrames:MakeMovable(PlayerFrames.boss[1], "boss")
+			for i = 2, MAX_BOSS_FRAMES do
+				if PlayerFrames.boss[i] ~= nil then
+					PlayerFrames:BossMoveScripts(PlayerFrames.boss[i])
+				end
 			end
 		end
 	end

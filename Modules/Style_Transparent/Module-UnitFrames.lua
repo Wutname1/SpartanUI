@@ -473,6 +473,7 @@ local CreatePlayerFrame = function(self,unit)
 
 					ClassIcons[index] = Icon
 				end
+				self.ClassIcons = ClassIcons
 			end
 		end
 	end

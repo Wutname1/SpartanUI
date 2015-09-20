@@ -686,6 +686,7 @@ local MakeLargeFrame = function(self,unit,width)
 
 					ClassIcons[index] = Icon
 				end
+				self.ClassIcons = ClassIcons
 			end
 		end
 	end
