@@ -5,10 +5,11 @@ local module = spartan:GetModule("Style_Classic");
 ---------------------------------------------------------------------------
 
 function module:MiniMap()
-	Minimap:SetSize(140, 140);
+	Minimap:SetSize(156, 156);
 	
 	Minimap:ClearAllPoints();
-	Minimap:SetPoint("CENTER",SpartanUI,"CENTER",0,50);
+	Minimap:SetPoint("CENTER",SpartanUI,"CENTER",0,54);
+	Minimap:SetParent(SpartanUI);
 	
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints();

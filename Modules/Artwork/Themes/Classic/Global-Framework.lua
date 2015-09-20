@@ -13,11 +13,6 @@ function module:updateColor()
 
 end
 
-function module:updateMinimumScale()
---	local minScale = floor(((UIParent:GetWidth()/2560)*10^2)+1) / (10^2);
---	if DB.scale < minScale then DB.scale = minScale; end
-end;
-
 function module:updateSpartanViewport() -- handles viewport offset based on settings
 	if not InCombatLockdown() and DB.viewport and (SpartanUI_Base5:GetHeight() ~= 0) then
 		WorldFrame:ClearAllPoints();

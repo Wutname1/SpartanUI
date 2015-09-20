@@ -34,7 +34,7 @@ function Artwork_Core:SetupOptions()
 				end,
 			},
 			LockButtons = {name = "Lock Buttons", type = "toggle",order=0.91,
-				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Global"].args["LockButtons"].disabled=true; return false; end end,
+				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
 				set = function(info, value)
 					Bartender4.db.profile.buttonlock = value
 					Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
@@ -98,8 +98,7 @@ function Artwork_Core:SetupOptions()
 				if (InCombatLockdown()) then 
 					spartan:Print(ERR_NOT_IN_COMBAT);
 				else
-					DB.scale = min(1,round(val));
-					updateMinimumScale();
+					DB.scale = min(1,spartan:round(val));
 				end
 			end,
 			get = function(info) return DB.scale; end
@@ -120,9 +119,9 @@ function Artwork_Core:SetupOptions()
 	};
 
 	if (not DB.viewport) then
-		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetTop"].disabled = true;
-		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetBottom"].disabled = true;
-		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetLeft"].disabled = true;
-		spartan.opt.args["Artwork"].args["Global"].args["viewportoffsetRight"].disabled = true;
+		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetTop"].disabled = true;
+		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetBottom"].disabled = true;
+		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetLeft"].disabled = true;
+		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetRight"].disabled = true;
 	end
 end

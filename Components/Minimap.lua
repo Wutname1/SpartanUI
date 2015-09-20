@@ -110,7 +110,8 @@ function module:OnEnable()
 	
 	--Initialize Buttons
 	module:updateButtons()
-	
+	MinimapUpdater:SetSize(1,1)
+	MinimapUpdater:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 128);
 	MinimapUpdater:SetScript("OnEvent", function()
 		-- if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
 			-- DB.MiniMap.MouseIsOver = false
@@ -199,7 +200,7 @@ function module:ModifyMinimapLayout()
 	
 	GarrisonLandingPageMinimapButton:ClearAllPoints();
 	GarrisonLandingPageMinimapButton:SetSize(35,35);
-	GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT",Minimap,0,0);
+	GarrisonLandingPageMinimapButton:SetPoint("RIGHT",Minimap,18,-25);
 	
 	-- Do modifications to MiniMapWorldMapButton
 --	-- remove current textures
@@ -220,7 +221,7 @@ function module:ModifyMinimapLayout()
 	GameTimeFrame:SetPoint("TOPRIGHT",Minimap,"TOPRIGHT",20,-16);
 	
 	SUI_MiniMapIcon = CreateFrame("Button","SUI_MiniMapIcon",Minimap);
-	SUI_MiniMapIcon:SetSize(35,35);
+	SUI_MiniMapIcon:SetSize(1,1);
 	SUI_MiniMapIcon:SetScript("OnEvent",function(self, event, ...)
 		GarrisonLandingPageMinimapButton:Show()
 		GarrisonLandingPageMinimapButton:SetAlpha(1)
