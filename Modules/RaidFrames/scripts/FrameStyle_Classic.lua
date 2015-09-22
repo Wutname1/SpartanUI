@@ -304,16 +304,15 @@ function RaidFrames:Classic()
 	end
 	-- print(DBMod.RaidFrames.mode)
 	-- print(groupingOrder)
+	local w = 30
+	local h = 90
 	
 		if DBMod.RaidFrames.FrameStyle == "large" then
-			self:SetSize(165, 48);
-			self.artwork.bg:SetTexCoord(.3,.95,0.015,.77);
+			w = 165
+			h = 48
 		elseif DBMod.RaidFrames.FrameStyle == "medium" then
-			self:SetSize(140, 35);
-			self.artwork.bg:SetTexCoord(.3,.95,0.015,.56);
-		elseif DBMod.RaidFrames.FrameStyle == "small" then
-			self:SetSize(90, 30);
-			self.artwork.bg:SetTexCoord(.3,.70,0.3,.7);
+			w = 140
+			h = 35
 		end
 		
 	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
