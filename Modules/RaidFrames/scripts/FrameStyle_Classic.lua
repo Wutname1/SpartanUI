@@ -47,7 +47,7 @@ local SpawnUnitFrame = function(self,unit)
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	
-	self:SetSize(140, 35) -- Setup initial Size
+	-- self:SetSize(140, 35) -- Setup initial Size
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -81,8 +81,7 @@ local SpawnUnitFrame = function(self,unit)
 				health:SetSize(self:GetWidth()/1.5, 13);
 				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-self:GetWidth()/3,-20);
 			elseif DBMod.RaidFrames.FrameStyle == "small" then
-				health:SetSize(self:GetWidth(), self:GetHeight());
-				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,0);
+				health:SetAllPoints(self);
 			end
 			
 			health.value = health:CreateFontString();
@@ -305,6 +304,18 @@ function RaidFrames:Classic()
 	end
 	-- print(DBMod.RaidFrames.mode)
 	-- print(groupingOrder)
+	
+		if DBMod.RaidFrames.FrameStyle == "large" then
+			self:SetSize(165, 48);
+			self.artwork.bg:SetTexCoord(.3,.95,0.015,.77);
+		elseif DBMod.RaidFrames.FrameStyle == "medium" then
+			self:SetSize(140, 35);
+			self.artwork.bg:SetTexCoord(.3,.95,0.015,.56);
+		elseif DBMod.RaidFrames.FrameStyle == "small" then
+			self:SetSize(90, 30);
+			self.artwork.bg:SetTexCoord(.3,.70,0.3,.7);
+		end
+		
 	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
 		"showRaid", DBMod.RaidFrames.showRaid,
 		"showParty", DBMod.RaidFrames.showParty,
@@ -319,7 +330,11 @@ function RaidFrames:Classic()
 		'maxColumns', DBMod.RaidFrames.maxColumns,
 		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
 		'columnSpacing', DBMod.RaidFrames.columnSpacing,
-		'columnAnchorPoint', columnAnchorPoint
+		'columnAnchorPoint', columnAnchorPoint,
+		'oUF-initialConfigFunction', [[
+			self:SetHeight(23)
+			self:SetWidth(220)
+		]]
 	)
 	-- if DBMod.RaidFrames.mode == "GROUP" then
 		-- raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
