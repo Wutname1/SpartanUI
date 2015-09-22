@@ -51,7 +51,8 @@ local SpawnUnitFrame = function(self,unit)
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(1); self.artwork:SetAllPoints(self);
+		self.artwork:SetFrameLevel(1);
+		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
 		self.artwork.bg:SetAllPoints(self);
@@ -63,14 +64,14 @@ local SpawnUnitFrame = function(self,unit)
 			self:SetSize(140, 35);
 			self.artwork.bg:SetTexCoord(.3,.95,0.015,.56);
 		elseif DBMod.RaidFrames.FrameStyle == "small" then
-			self:SetSize(90, 30);
 			self.artwork.bg:SetTexCoord(.3,.70,0.3,.7);
 		end
 	end
 	do -- setup status bars
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
-			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
+			health:SetFrameStrata("BACKGROUND");
+			health:SetFrameLevel(2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			
@@ -91,22 +92,24 @@ local SpawnUnitFrame = function(self,unit)
 			
 			health.ratio = health:CreateFontString();
 			spartan:FormatFont(health.ratio, 10, "Raid")
-			health.ratio:SetSize(35, 11);
-			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
+			-- health.ratio:SetSize(35, 11);
+			health.ratio:SetJustifyH("LEFT");
+			health.ratio:SetJustifyV("BOTTOM");
 			self:Tag(health.ratio, '[perhp]%')
 			
 			if DBMod.RaidFrames.FrameStyle == "large" then
 				health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
+				health.ratio:SetPoint("TOPLEFT",health,"BOTTOMRIGHT",-29,13);
 				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
 				health.value:SetSize(health:GetWidth()/1.1, 11);
 			elseif DBMod.RaidFrames.FrameStyle == "medium" then
 				health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
+				health.ratio:SetPoint("TOPLEFT",health,"BOTTOMRIGHT",-29,13);
 				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
 				health.value:SetSize(health:GetWidth()/1.5, 11);
 			elseif DBMod.RaidFrames.FrameStyle == "small" then
 				health.ratio:SetPoint("BOTTOMRIGHT",health,"BOTTOMRIGHT",0,2);
-				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
-				health.value:SetSize(health:GetWidth()/1.5, 11);
+				health.ratio:SetPoint("TOPLEFT",health,"BOTTOMRIGHT",-35,13);
 				health.value:Hide();
 			end
 
@@ -135,8 +138,8 @@ local SpawnUnitFrame = function(self,unit)
 			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.35)
 
-			myBars:SetSize(150, health:GetHeight())
-			otherBars:SetSize(150, health:GetHeight())
+			-- myBars:SetSize(150, health:GetHeight())
+			-- otherBars:SetSize(150, health:GetHeight())
 			
 			self.HealPrediction = {
 				myBar = myBars,
@@ -146,9 +149,11 @@ local SpawnUnitFrame = function(self,unit)
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
-			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
-			power:SetSize(self.Health:GetWidth(), 3);
+			power:SetFrameStrata("BACKGROUND");
+			power:SetFrameLevel(2);
+			-- power:SetSize(self.Health:GetWidth(), 3);
 			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,0);
+			power:SetPoint("BOTTOMLEFT",self.Health,"BOTTOMLEFT",0,-3);
 			
 			self.Power = power;
 			self.Power.colorPower = true;
@@ -157,17 +162,21 @@ local SpawnUnitFrame = function(self,unit)
 	end
 	do -- setup text and icons
 		local layer5 = CreateFrame("Frame",nil,self);
+		layer5:SetAllPoints(self)
 		layer5:SetFrameLevel(5);
 		
 		self.LFDRole = layer5:CreateTexture(nil,"ARTWORK");
 		self.LFDRole:SetSize(13, 13);
 		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
+		-- self.LFDRole:SetPoint("BOTTOMRIGHT",self,"TOPLEFT",14,9);
 		
 		self.Name = layer5:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Raid")
 		self.Name:SetSize(self:GetWidth()-30, 12);
-		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
+		self.Name:SetJustifyH("LEFT");
+		self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPLEFT",self.LFDRole,"TOPRIGHT",1,1);
+		-- self.Name:SetPoint("BOTTOMRIGHT",self.LFDRole,"TOPRIGHT",-12,self:GetWidth()-30);
 		if DBMod.RaidFrames.showClass then
 			self:Tag(self.Name, "[SUI_ColorClass][name]");
 		else
@@ -307,13 +316,13 @@ function RaidFrames:Classic()
 	local w = 30
 	local h = 90
 	
-		if DBMod.RaidFrames.FrameStyle == "large" then
-			w = 165
-			h = 48
-		elseif DBMod.RaidFrames.FrameStyle == "medium" then
-			w = 140
-			h = 35
-		end
+	if DBMod.RaidFrames.FrameStyle == "large" then
+		w = 165
+		h = 48
+	elseif DBMod.RaidFrames.FrameStyle == "medium" then
+		w = 140
+		h = 35
+	end
 		
 	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
 		"showRaid", DBMod.RaidFrames.showRaid,
@@ -331,47 +340,10 @@ function RaidFrames:Classic()
 		'columnSpacing', DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint', columnAnchorPoint,
 		'oUF-initialConfigFunction', [[
-			self:SetHeight(23)
-			self:SetWidth(220)
+			self:SetHeight(35)
+			self:SetWidth(90)
 		]]
 	)
-	-- if DBMod.RaidFrames.mode == "GROUP" then
-		-- raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-			-- "showRaid", DBMod.RaidFrames.showRaid,
-			-- "showParty", DBMod.RaidFrames.showParty,
-			-- "showPlayer", DBMod.RaidFrames.showPlayer,
-			-- "showSolo", DBMod.RaidFrames.showSolo,
-			-- 'xoffset', 3,
-			-- 'yOffset', -5,
-			-- 'point', 'TOP',
-			-- 'groupFilter', '1,2,3,4,5,6,7,8',
-			-- 'groupBy', DBMod.RaidFrames.mode,
-			-- 'groupingOrder', '1,2,3,4,5,6,7,8',
-			-- 'sortMethod', 'name',
-			-- 'maxColumns', DBMod.RaidFrames.maxColumns,
-			-- 'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
-			-- 'columnSpacing', DBMod.RaidFrames.columnSpacing,
-			-- 'columnAnchorPoint', 'LEFT'
-		-- )
-	-- else
-		-- raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
-			-- 'showPlayer', true,
-			-- 'showRaid', true,
-			-- 'showParty', false,
-			-- 'showSolo', true,
-			-- 'xoffset', 3,
-			-- 'yOffset', 0,
-			-- 'point', 'LEFT',
-			-- 'groupFilter', '1,2,3,4,5,6,7,8',
-			-- 'groupBy', DBMod.RaidFrames.mode,
-			-- 'groupingOrder', '1,2,3,4,5,6,7,8',
-			-- 'sortMethod', 'name',
-			-- 'maxColumns', DBMod.RaidFrames.maxColumns,
-			-- 'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
-			-- 'columnSpacing', DBMod.RaidFrames.columnSpacing,
-			-- 'columnAnchorPoint', 'TOP'
-		-- )
-	-- end
 	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
 	
 	raid:SetParent("SpartanUI");
