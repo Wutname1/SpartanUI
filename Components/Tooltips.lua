@@ -294,7 +294,7 @@ local TooltipSetUnit = function(self)
 				local gender = GENDER[UnitSex(unit)]
 				if(gender) then race = race .. " " .. gender end
 			end
-			lvlLine:SetFormattedText("|cff%02x%02x%02x%s|r %s |c%s%s|r", qColor.r * 255, qColor.g * 255, qColor.b * 255, unitLevel > 0 and unitLevel or SKULL_ICON, race or "", colors.colorStr, className)
+			lvlLine:SetFormattedText("|cff%02x%02x%02x%s|r %s |c%s%s|r", qColor.r * 255, qColor.g * 255, qColor.b * 255, unitLevel > 0 and unitLevel or "|TInterface\\TARGETINGFRAME\\UI-TargetingFrame-Skull.blp:16:16|t", race or "", colors.colorStr, className)
 		end
 
 	else
@@ -442,7 +442,8 @@ local function ReStyle()
 end
 
 function module:OnEnable()
-	if not DB.EnabledComponents.Tooltips then return end
+	module:BuildOptions()
+	if not DB.EnabledComponents.Tooltips then module:HideOptions() return end
 	--Create Anchor point
 	for k,v in ipairs(RuleList) do
 		local anchor = CreateFrame("Frame",nil)
@@ -507,7 +508,6 @@ function module:OnEnable()
 	-- GameTooltip:HookScript("SetPoint", setPoint)
 	-- hooksecurefunc(GameTooltip,"SetPoint",setPoint);
 	
-	module:BuildOptions()
 end
 
 local OnMouseOpt = function(v)

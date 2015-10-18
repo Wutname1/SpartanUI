@@ -168,7 +168,7 @@ local SpawnUnitFrame = function(self,unit)
 		self.LFDRole = layer5:CreateTexture(nil,"ARTWORK");
 		self.LFDRole:SetSize(13, 13);
 		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
-		-- self.LFDRole:SetPoint("BOTTOMRIGHT",self,"TOPLEFT",14,9);
+		-- self.LFDRole:SetPoint("BOTTOMRIGHT",self,"TOPLEFT",14,-17);
 		
 		self.Name = layer5:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Raid")
@@ -313,8 +313,8 @@ function RaidFrames:Classic()
 	end
 	-- print(DBMod.RaidFrames.mode)
 	-- print(groupingOrder)
-	local w = 30
-	local h = 90
+	local w = 90
+	local h = 30
 	
 	if DBMod.RaidFrames.FrameStyle == "large" then
 		w = 165
@@ -324,6 +324,11 @@ function RaidFrames:Classic()
 		h = 35
 	end
 		
+	local initialConfigFunction = [[
+		self:SetWidth(%d)
+		self:SetHeight(%d)
+	]]
+	
 	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
 		"showRaid", DBMod.RaidFrames.showRaid,
 		"showParty", DBMod.RaidFrames.showParty,
@@ -339,10 +344,11 @@ function RaidFrames:Classic()
 		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
 		'columnSpacing', DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint', columnAnchorPoint,
-		'oUF-initialConfigFunction', [[
-			self:SetHeight(35)
-			self:SetWidth(90)
-		]]
+		"oUF-initialConfigFunction", format(initialConfigFunction, w, h)
+		-- 'oUF-initialConfigFunction', [[
+			-- self:SetHeight(35)
+			-- self:SetWidth(90)
+		-- ]]
 	)
 	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
 	

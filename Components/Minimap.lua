@@ -10,6 +10,7 @@ local SUIMapChangesActive = false
 local SkinProtect = { "TutorialFrameAlertButton", "MiniMapMailFrame", "MinimapBackdrop", "MiniMapVoiceChatFrame","TimeManagerClockButton", "MinimapButtonFrameDragButton", "GameTimeFrame", "MiniMapTracking", "MiniMapVoiceChatFrame", "MiniMapWorldMapButton", "QueueStatusMinimapButton", "MinimapZoomIn", "MinimapZoomOut", "MiniMapMailFrame", "MiniMapBattlefieldFrame", "GameTimeFrame", "FeedbackUIButton" };
 local ChangesTimer = nil
 local MinimapUpdater = CreateFrame("Frame")
+local SUI_MiniMapIcon
 local IgnoredFrames = {}
 local LastUpdateStatus = nil
 
@@ -49,7 +50,7 @@ end
 
 local OnLeave = function()
 	--Check in half a second that the mouse actually left
-	if ChangesTimer == nil then ChangesTimer = C_Timer.After(.5, PerformFullBtnUpdate) end
+	if ChangesTimer == nil then ChangesTimer = C_Timer.After(1, PerformFullBtnUpdate) end
 end
 
 function module:OnEnable()
@@ -113,8 +114,6 @@ function module:OnEnable()
 	MinimapUpdater:SetSize(1,1)
 	MinimapUpdater:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 128);
 	MinimapUpdater:SetScript("OnEvent", function()
-		-- if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
-			-- DB.MiniMap.MouseIsOver = false
 		if not InCombatLockdown() then
 			if ChangesTimer == nil then ChangesTimer = C_Timer.After(2, PerformFullBtnUpdate) end
 		end
@@ -195,7 +194,9 @@ function module:ModifyMinimapLayout()
 	MinimapBorderTop:Hide();
 	MinimapBorder:Hide();
 	
+	MiniMapInstanceDifficulty:ClearAllPoints();
 	MiniMapInstanceDifficulty:SetPoint("TOPLEFT",Minimap,4,22);
+	GuildInstanceDifficulty:ClearAllPoints();
 	GuildInstanceDifficulty:SetPoint("TOPLEFT",Minimap,4,22);
 	
 	GarrisonLandingPageMinimapButton:ClearAllPoints();
@@ -268,36 +269,6 @@ function module:MinimapCoords()
 		Minimap.coords:SetText(format("%.1f, %.1f",x*100,y*100));
 	end
 	UpdateCoords()
-	
-	Minimap:HookScript("OnEvent",function(self,event,...)
-		if (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA") then
-			-- if IsInInstance() then Minimap.coords:Hide() else Minimap.coords:Show() end
-			-- if (WorldMapFrame:IsVisible()) then SetMapToCurrentZone(); end
-		end
-		local LastFrame = UIErrorsFrame;
-		for i = 1, NUM_EXTENDED_UI_FRAMES do
-			local bar = _G["WorldStateCaptureBar"..i];
-			if (bar and bar:IsShown()) then
-				bar:ClearAllPoints();
-				bar:SetPoint("TOP",LastFrame,"BOTTOM");
-				LastFrame = self;
-			end
-		end
-		hasVehicle = UnitHasVehicleUI("player") or UnitHasVehicleUI("player");
-	end);
-	
-	Minimap:RegisterEvent("ZONE_CHANGED");
-	Minimap:RegisterEvent("ZONE_CHANGED_INDOORS");
-	Minimap:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-	Minimap:RegisterEvent("UPDATE_WORLD_STATES");
-	Minimap:RegisterEvent("UPDATE_BATTLEFIELD_SCORE");
-	Minimap:RegisterEvent("PLAYER_ENTERING_WORLD");
-	Minimap:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND");
-	Minimap:RegisterEvent("WORLD_STATE_UI_TIMER_UPDATE");
-	Minimap:RegisterEvent("UNIT_ENTERING_VEHICLE");
-	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
-	Minimap:RegisterEvent("UNIT_ENTERING_VEHICLE");
-	Minimap:RegisterEvent("UNIT_ENTERED_VEHICLE");
 end
 
 function module:SetupButton(btn, force)
