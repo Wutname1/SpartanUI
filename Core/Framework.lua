@@ -1,4 +1,4 @@
-local addon = LibStub("AceAddon-3.0"):NewAddon("SpartanUI","AceConsole-3.0");
+local addon = LibStub("AceAddon-3.0"):NewAddon("SpartanUI","AceEvent-3.0", "AceConsole-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)

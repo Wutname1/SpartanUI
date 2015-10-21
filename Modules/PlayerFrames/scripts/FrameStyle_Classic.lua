@@ -1705,7 +1705,6 @@ local CreateUnitFrame = function(self,unit)
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	self:RegisterForClicks("anyup");
-	-- self:RegisterForClicks"AnyUp"
 	-- self:SetAttribute("*type2", "menu");
 	self.colors = addon.colors;
 	
