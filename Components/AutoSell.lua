@@ -10,11 +10,16 @@ local iSellCount = 0
 local Timer = nil
 local bag = 0
 local OnlyCount = true
+local inSet = {}
 
 function module:OnInitialize()
 	if not DB.AutoSell then
 		DB.AutoSell = {
 			FirstLaunch = true,
+			NotCrafting = true,
+			NotConsumables = true,
+			NotInGearset = true,
+			MaxILVL = 649,
 			Gray = true,
 			White = false,
 			Green = false,
@@ -22,6 +27,13 @@ function module:OnInitialize()
 			Purple = false
 		}
 	end
+	if not DB.AutoSell.NotCrafting then
+		DB.AutoSell.NotCrafting = true
+		DB.AutoSell.NotConsumables = true
+		DB.AutoSell.NotInGearset = true
+		DB.AutoSell.MaxILVL = 649
+	end
+	if not DB.AutoSell.NotConsumables then DB.AutoSell.NotConsumables = true end
 end
 
 function module:FirstTime()
@@ -51,8 +63,8 @@ function module:SellTrashInBag()
 	
 	local solditem = 0;
 	for slot = 1, GetContainerNumSlots(bag) do
-		local iLink = GetContainerItemLink(bag, slot);
-		if module:IsGray(iLink) then
+		local iLink = GetContainerItemID(bag, slot);
+		if module:IsSellable(iLink) then
 			if OnlyCount then
 				iCount = iCount + 1
 			elseif solditem ~= 5 then
@@ -74,18 +86,72 @@ function module:SellTrashInBag()
 	else
 		--Everything sold
 		if (totalValue > 0) then
-			spartan:Print("Sold items for " .. module:GetFormattedTrashValue(totalValue));
+			spartan:Print("Sold items for " .. module:GetFormattedValue(totalValue));
 			totalValue = 0
 		end
 		module:CancelAllTimers()
 	end
 end
 
-function module:IsGray(item)
-	return item and select(3, GetItemInfo(item)) == 0;
+function module:IsSellable(item)
+	if not item then return false end
+	local name, link, quality, iLevel, reqLevel, itemType, itemSubType, maxStack, equipSlot, texture, vendorPrice = GetItemInfo(item)
+	if vendorPrice == 0 then return false end
+	
+	-- 0. Poor (gray): Broken I.W.I.N. Button
+	-- 1. Common (white): Archmage Vargoth's Staff
+	-- 2. Uncommon (green): X-52 Rocket Helmet
+	-- 3. Rare / Superior (blue): Onyxia Scale Cloak
+	-- 4. Epic (purple): Talisman of Ephemeral Power
+	-- 5. Legendary (orange): Fragment of Val'anyr
+	-- 6. Artifact (golden yellow): The Twin Blades of Azzinoth
+	-- 7. Heirloom (light yellow): Bloodied Arcanite Reaper
+	local ilvlsellable = false
+	local qualitysellable = false
+	local Craftablesellable = false
+	local NotInGearset = true
+	local NotConsumable = true
+	
+	if (not iLevel) or (iLevel < DB.AutoSell.MaxILVL) then ilvlsellable = true end
+	
+	--Crafting Items
+	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods")
+	or (itemType == "Miscellaneous" and itemSubType == "Reagent"))
+	then
+		if not DB.AutoSell.NotCrafting then Craftablesellable = true end
+	else
+		Craftablesellable = true
+	end
+	
+	--Gearset detection
+	if inSet[item] and DB.AutoSell.NotInGearset then
+		NotInGearset = false
+	end
+	
+	--Consumable
+	if DB.AutoSell.NotConsumables and itemType == "Consumable" then
+		NotConsumable = false
+	end
+	
+	if quality == 0 and  DB.AutoSell.Gray then qualitysellable = true end
+	if quality == 1 and  DB.AutoSell.White then qualitysellable = true end
+	if quality == 2 and  DB.AutoSell.Green then qualitysellable = true end
+	if quality == 3 and  DB.AutoSell.Blue then qualitysellable = true end
+	if quality == 4 and  DB.AutoSell.Purple then qualitysellable = true end
+	
+	if qualitysellable
+	and ilvlsellable
+	and Craftablesellable
+	and NotInGearset
+	and NotConsumable
+	and itemType ~= "Quest"
+	and itemType ~= "Container"
+	then return true end
+	
+	return false
 end
 
-function module:GetFormattedTrashValue(rawValue)
+function module:GetFormattedValue(rawValue)
 	local gold = math.floor(rawValue / 10000);
 	local silver = math.floor((rawValue % 10000) / 100);
 	local copper = (rawValue % 10000) % 100;
@@ -101,6 +167,15 @@ function module:SellTrash()
 	Timer = nil
 	bag = 0
 	
+	--Populate Gearsets
+	for i=1,GetNumEquipmentSets() do
+		local name, _ = GetEquipmentSetInfo(i)
+		local items = GetEquipmentSetItemIDs(name)
+		for slot,item in pairs(items) do
+			inSet[item] = name
+		end
+	end
+	
 	--Count Items to sell
     OnlyCount=true
 	for b = 0, 4 do
@@ -111,13 +186,12 @@ function module:SellTrash()
 		spartan:Print("No items are to be auto sold")
 	else
 		spartan:Print("Need to sell " .. iCount .. " item(s)")
+		--Start Loop to sell, reset locals
+		OnlyCount=false
+		bag = 0
+		-- C_Timer.After(.2, SellTrashInBag)
+		self.SellTimer = self:ScheduleRepeatingTimer("SellTrashInBag", .3)
 	end
-	
-	--Start Loop to sell, reset locals
-	OnlyCount=false
-	bag = 0
-	-- C_Timer.After(.2, SellTrashInBag)
-	self.SellTimer = self:ScheduleRepeatingTimer("SellTrashInBag", .3)
 end
 
 function module:OnEnable()
@@ -132,10 +206,54 @@ function module:OnEnable()
 		else
 			module:CancelAllTimers()
 			if (totalValue > 0) then
-				spartan:Print("Sold items for " .. module:GetFormattedTrashValue(totalValue));
+				spartan:Print("Sold items for " .. module:GetFormattedValue(totalValue));
 				totalValue = 0
 			end
 		end
 	end
 	frame:SetScript("OnEvent", MerchantEventHandler);
+	module:BuildOptions()
+end
+
+function module:BuildOptions()
+	spartan.opt.args["General"].args["ModSetting"].args["AutoSell"] = {type="group",name="Auto Sell",
+		args = {
+			NotCrafting = {name="Don't Sell crafting items",type="toggle",order=1,width = "full",
+					get = function(info) return DB.AutoSell.NotCrafting end,
+					set = function(info,val) DB.AutoSell.NotCrafting = val end
+			},
+			NotConsumables = {name="Don't Sell Consumables",type="toggle",order=1,width = "full",
+					get = function(info) return DB.AutoSell.NotConsumables end,
+					set = function(info,val) DB.AutoSell.NotConsumables = val end
+			},
+			NotInGearset = {name="Don't Sell items in a equipment set",type="toggle",order=2,width = "full",
+					get = function(info) return DB.AutoSell.NotInGearset end,
+					set = function(info,val) DB.AutoSell.NotInGearset = val end
+			},
+			MaxILVL ={name = "Maximum iLVL to sell",type = "range",order = 10,width = "full",min = 1,max = 900,step=1,
+				set = function(info,val) DB.AutoSell.MaxILVL = val; end,
+				get = function(info) return DB.AutoSell.MaxILVL; end
+			},
+			Gray = {name="Sell Gray",type="toggle",order=20,width="double",
+					get = function(info) return DB.AutoSell.Gray end,
+					set = function(info,val) DB.AutoSell.Gray = val end
+			},
+			White = {name="Sell White",type="toggle",order=21,width="double",
+					get = function(info) return DB.AutoSell.White end,
+					set = function(info,val) DB.AutoSell.White = val end
+			},
+			Green = {name="Sell Green",type="toggle",order=22,width="double",
+					get = function(info) return DB.AutoSell.Green end,
+					set = function(info,val) DB.AutoSell.Green = val end
+			},
+			Blue = {name="Sell Blue",type="toggle",order=23,width="double",
+					get = function(info) return DB.AutoSell.Blue end,
+					set = function(info,val) DB.AutoSell.Blue = val end
+			},
+			Purple = {name="Sell Purple",type="toggle",order=24,width="double",
+					get = function(info) return DB.AutoSell.Purple end,
+					set = function(info,val) DB.AutoSell.Purple = val end
+			}
+		}
+	}
 end
