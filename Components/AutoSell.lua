@@ -19,7 +19,7 @@ function module:OnInitialize()
 			NotCrafting = true,
 			NotConsumables = true,
 			NotInGearset = true,
-			MaxILVL = 649,
+			MaxILVL = 600,
 			Gray = true,
 			White = false,
 			Green = false,
@@ -31,7 +31,7 @@ function module:OnInitialize()
 		DB.AutoSell.NotCrafting = true
 		DB.AutoSell.NotConsumables = true
 		DB.AutoSell.NotInGearset = true
-		DB.AutoSell.MaxILVL = 649
+		DB.AutoSell.MaxILVL = 600
 	end
 	if not DB.AutoSell.NotConsumables then DB.AutoSell.NotConsumables = true end
 end
