@@ -24,7 +24,7 @@ local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = ""
 local frameDefault1 = {movement=MovedDefault,AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},moved=false,Anchors={}}
 local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",Auras={NumBuffs=0,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false},moved=false,Anchors={}}
 
-DBdefault = {
+local DBdefault = {
 	SUIProper = {
 		Version = addon.SpartanVer,
 		HVer = "",
@@ -36,6 +36,23 @@ DBdefault = {
 		viewport = true,
 		EnabledComponents = {},
 		Styles = {
+			['**'] = {
+				Artwork = false,
+				PlayerFrames = false,
+				PartyFrames = false,
+				RaidFrames = false,
+				Movable = {
+					Minimap = true,
+					PlayerFrames = true,
+					PartyFrames = true,
+					RaidFrames = true,
+				},
+				Minimap = {
+					shape = "circle",
+					size = {width = 140, height = 140}
+				},
+				TooltipLoc = false
+			},
 			Classic = {
 				Artwork = true,
 				PlayerFrames = true,
@@ -137,7 +154,6 @@ DBdefault = {
 			Raid = fontdefault,
 		},
 		Components = {
-		
 		}
 	},
 	Modules = {
@@ -261,8 +277,8 @@ DBdefault = {
 		}
 	}
 }
-local DBdefaults = {char = DBdefault,realm = DBdefault,class = DBdefault,profile = DBdefault}
-local DBGlobals = {Version = addon.SpartanVer}
+local DBdefaults = {char = DBdefault,profile = DBdefault}
+-- local DBGlobals = {Version = addon.SpartanVer}
 
 function addon:ResetConfig()
 	addon.db:ResetProfile(false,true);
@@ -271,31 +287,54 @@ end
 
 function addon:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
-	addon.db.profile.playerName = UnitName("player")
+	-- addon.db.profile.playerName = UnitName("player")
 	DBGlobal = addon.db.global
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
 	addon.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
+	
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
 	LibDualSpec:EnhanceDatabase(self.db, "SpartanUI")
 	LibDualSpec:EnhanceOptions(addon.opt.args["Profiles"], self.db)
 	addon.opt.args["Profiles"].order=999
-	-- Spec Setup
-	addon.db.RegisterCallback(self, "OnNewProfile", "InitializeProfile")
-	addon.db.RegisterCallback(self, "OnProfileChanged", "UpdateModuleConfigs")
-	addon.db.RegisterCallback(self, "OnProfileCopied", "UpdateModuleConfigs")
-	addon.db.RegisterCallback(self, "OnProfileReset", "UpdateModuleConfigs")
 	
+	-- Spec Setup
+	addon.db.RegisterCallback(addon, "OnNewProfile", "InitializeProfile")
+	addon.db.RegisterCallback(addon, "OnProfileChanged", "UpdateModuleConfigs")
+	addon.db.RegisterCallback(addon, "OnProfileCopied", "UpdateModuleConfigs")
+	addon.db.RegisterCallback(addon, "OnProfileReset", "UpdateModuleConfigs")
+	
+	--Bartender4 Hooks
+	if Bartender4 then
+		--Update to the current profile
+		DB.BT4Profile = Bartender4.db:GetCurrentProfile()
+		Bartender4.db.RegisterCallback(addon, "OnProfileChanged", "BT4RefreshConfig")
+		Bartender4.db.RegisterCallback(addon, "OnProfileCopied", "BT4RefreshConfig")
+		Bartender4.db.RegisterCallback(addon, "OnProfileReset", "BT4RefreshConfig")
+	end
+
 	addon:FontSetup()
 end
 
 function addon:InitializeProfile()
-	self.db:RegisterDefaults(DBdefaults)
+	addon.db:RegisterDefaults(DBdefaults)
+end
+
+function addon:BT4RefreshConfig()
+	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 end
 
 function addon:UpdateModuleConfigs()
-	self.db:RegisterDefaults(DBdefaults)
+	addon.db:RegisterDefaults(DBdefaults)
+	
+	DB = addon.db.profile.SUIProper
+	DBMod = addon.db.profile.Modules
+	
+	addon:DBUpdates() -- Make sure the profile we loaded is up to date
+	
+	Bartender4.db:SetProfile(DB.BT4Profile);
+	addon:reloadui()
 end
 
 function addon:reloadui()
@@ -344,6 +383,7 @@ function addon:suihelp(input)
 	AceConfigDialog:Open("SpartanUI", "General", "Help")
 	-- AceConfigDialog:SelectGroup("SpartanUI", spartan.opt.args["General"].args["Help"])
 end
+
 function addon:ChatCommand(input)
 	if input == "version" then
 		addon:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))

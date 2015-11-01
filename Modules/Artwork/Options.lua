@@ -33,13 +33,13 @@ function Artwork_Core:SetupOptions()
 					end
 				end,
 			},
-			MoveBars={name = "Move Bars", type = "toggle",order=0.91,
-				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
-				set = function(info, value)
-					Bartender4.db.profile.buttonlock = value
-					Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
-				end,
-			},
+			-- MoveBars={name = "Move Bars", type = "toggle",order=0.91,
+				-- get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
+				-- set = function(info, value)
+					-- Bartender4.db.profile.buttonlock = value
+					-- Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
+				-- end,
+			-- },
 			LockButtons = {name = "Lock Buttons", type = "toggle",order=0.91,
 				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
 				set = function(info, value)

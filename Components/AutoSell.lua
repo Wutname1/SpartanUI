@@ -86,7 +86,7 @@ function module:SellTrashInBag()
 	else
 		--Everything sold
 		if (totalValue > 0) then
-			spartan:Print("Sold items for " .. module:GetFormattedValue(totalValue));
+			spartan:Print("Sold item(s) for " .. module:GetFormattedValue(totalValue));
 			totalValue = 0
 		end
 		module:CancelAllTimers()

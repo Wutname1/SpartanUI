@@ -45,6 +45,10 @@ function module:OnInitialize()
 		hideOnEscape = false
 	}
 	-- DB Updates
+	spartan:DBUpdates()
+end
+
+function spartan:DBUpdates()
 	if DBGlobal.Version then
 		if DB.Version == nil then -- DB Updates from 3.0.2 to 3.0.3 this variable was not set in 3.0.2
 			spartan:Print(L["DBUpdate"].." 3.0.2 "..L["settings"])
