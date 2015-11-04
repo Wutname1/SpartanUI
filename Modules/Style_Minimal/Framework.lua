@@ -107,8 +107,8 @@ function module:InitFramework()
 		SUI_FramesAnchor:SetFrameLevel(1);
 		SUI_FramesAnchor:SetParent(Minimal_SpartanUI);
 		SUI_FramesAnchor:ClearAllPoints();
-		SUI_FramesAnchor:SetPoint("BOTTOMLEFT", "Minimal_AnchorFrame", "TOPLEFT", 0, 0);
-		SUI_FramesAnchor:SetPoint("TOPRIGHT", "Minimal_AnchorFrame", "TOPRIGHT", 0, 155);
+		SUI_FramesAnchor:SetPoint("BOTTOMLEFT", "Minimal_AnchorFrame", "BOTTOMLEFT", 0, 0);
+		SUI_FramesAnchor:SetPoint("TOPRIGHT", "Minimal_AnchorFrame", "BOTTOMRIGHT", 0, 150);
 		
 		FramerateLabel:ClearAllPoints();
 		FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
