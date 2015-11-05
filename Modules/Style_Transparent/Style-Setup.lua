@@ -7,7 +7,7 @@ local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:NewModule("Style_Transparent");
 
 --Now lets setup the initial Database settings
-if DB.Styles.Transparent == nil then
+if DB.Styles.Transparent.BartenderProfile == nil then
 	DB.Styles.Transparent = {
 		Artwork = {},
 		PlayerFrames = {},

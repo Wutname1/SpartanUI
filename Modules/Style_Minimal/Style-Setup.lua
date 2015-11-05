@@ -7,7 +7,7 @@ local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:NewModule("Style_Minimal");
 
 --Now lets setup the initial Database settings
-if DB.Styles.Minimal == nil then
+if DB.Styles.Minimal.BartenderProfile == nil then
 	DB.Styles.Minimal = {
 		Artwork = {},
 		PlayerFrames = {},
