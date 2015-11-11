@@ -24,9 +24,11 @@ if DB.Styles.Transparent.BartenderProfile == nil then
 			size = {width = 140, height = 140}
 		},
 		BartenderProfile = "SpartanUI - Transparent",
-		TooltipLoc = true
+		TooltipLoc = true,
+		BuffLoc = true
 	}
 end
 
 --Update from old versions
 if DB.Styles.Transparent.TooltipLoc == nil then DB.Styles.Transparent.TooltipLoc = true end
+if DB.Styles.Transparent.BuffLoc == nil then DB.Styles.Transparent.BuffLoc = true end

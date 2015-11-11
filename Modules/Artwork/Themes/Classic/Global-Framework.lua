@@ -209,6 +209,18 @@ function module:TooltipLoc(self, parent)
 	end
 end
 
+function module:BuffLoc(self, parent)
+	BuffFrame:ClearAllPoints();
+	BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
+	ConsolidatedBuffs:ClearAllPoints();
+	ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
+	if (ConsolidatedBuffs:IsVisible()) then
+		TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
+	else
+		TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
+	end
+end
+
 function module:SetupVehicleUI()
 	if DBMod.Artwork.VehicleUI then
 		RegisterStateDriver(SpartanUI, "visibility", "[petbattle][vehicleui] hide; show");

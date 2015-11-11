@@ -3,6 +3,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
+if DB.Styles.Classic.BuffLoc == nil then DB.Styles.Classic.BuffLoc = true end
+
 local InitRan = false
 function module:OnInitialize()
 	if (DBMod.Artwork.Style == "Classic") then
