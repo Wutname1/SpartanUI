@@ -8,10 +8,7 @@ local BuffWatcher = CreateFrame("Frame")
 
 function module:OnInitialize()
 	if DB.Buffs == nil then
-		DB.Buffs = 
-		{
-			Override = {}
-		}
+		DB.Buffs =  { Override = {} }
 	end
 	
 	if DB.Buffs.Rule1 == nil then
