@@ -298,7 +298,8 @@ local TooltipSetUnit = function(self)
 		end
 
 	else
-		if UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) then
+	
+		if UnitIsTapDenied(unit) then
 			colors = TAPPED_COLOR
 		else
 			colors = FACTION_BAR_COLORS[UnitReaction(unit, "player")]

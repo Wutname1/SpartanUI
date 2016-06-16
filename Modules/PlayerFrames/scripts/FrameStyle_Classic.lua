@@ -1732,28 +1732,28 @@ function addon:UpdateAltBarPositions()
 	end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
-	MonkHarmonyBar:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		MonkHarmonyBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		MonkHarmonyBar:SetPoint("BOTTOMLEFT",addon.player,"BOTTOMLEFT",40,-40);
-	end
+	-- MonkHarmonyBar:ClearAllPoints();
+	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- MonkHarmonyBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- else
+		-- MonkHarmonyBar:SetPoint("BOTTOMLEFT",addon.player,"BOTTOMLEFT",40,-40);
+	-- end
 	
 	--Paladin Holy Power
-	PaladinPowerBar:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		PaladinPowerBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		PaladinPowerBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,12);
-	end
+	-- PaladinPowerBar:ClearAllPoints();
+	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- PaladinPowerBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- else
+		-- PaladinPowerBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,12);
+	-- end
 	
 	--Priest Power Frame
 	PriestBarFrame:ClearAllPoints();
@@ -1768,16 +1768,16 @@ function addon:UpdateAltBarPositions()
 	end
 	
 	--Warlock Power Frame
-	WarlockPowerFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		WarlockPowerFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		addon:WarlockPowerFrame_Relocate();
-	end
+	-- WarlockPowerFrame:ClearAllPoints();
+	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- WarlockPowerFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- else
+		-- addon:WarlockPowerFrame_Relocate();
+	-- end
 	
 	--Death Knight Runes
 	RuneFrame:ClearAllPoints();
@@ -1897,44 +1897,46 @@ do -- relocate the AlternatePowerBar
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
 	-- if classname == "Monk" then
-		MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
-		MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); MonkHarmonyBar:EnableMouse(enable);
-		MonkHarmonyBar:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		MonkHarmonyBar:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		end);
+		-- MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
+		-- MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); MonkHarmonyBar:EnableMouse(enable);
+		-- MonkHarmonyBar:SetScript("OnMouseDown",function(self,button)
+			-- if button == "LeftButton" and IsAltKeyDown() then
+				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- self:SetMovable(true);
+				-- self:StartMoving();
+			-- end
+		-- end);
+		-- MonkHarmonyBar:SetScript("OnMouseUp",function(self,button)
+			-- self:StopMovingOrSizing();
+			-- DBMod.PlayerFrames.ClassBar.movement.point,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- end);
 	-- end
 
 	-- Paladin Holy Power
 	-- if classname == "Paladin" then
-		PaladinPowerBar:SetParent(addon.player); PaladinPowerBar_OnLoad(PaladinPowerBar); PaladinPowerBar:SetFrameStrata("MEDIUM");
-		PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77 * DBMod.PlayerFrames.ClassBar.scale); PaladinPowerBar:EnableMouse(enable);
-		PaladinPowerBar:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		PaladinPowerBar:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		end);
+		-- PaladinPowerBar:SetParent(addon.player);
+		-- PaladinPowerBar_OnLoad(PaladinPowerBar);
+		-- PaladinPowerBar:SetFrameStrata("MEDIUM");
+		-- PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77 * DBMod.PlayerFrames.ClassBar.scale); PaladinPowerBar:EnableMouse(enable);
+		-- PaladinPowerBar:SetScript("OnMouseDown",function(self,button)
+			-- if button == "LeftButton" and IsAltKeyDown() then
+				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- self:SetMovable(true);
+				-- self:StartMoving();
+			-- end
+		-- end);
+		-- PaladinPowerBar:SetScript("OnMouseUp",function(self,button)
+			-- self:StopMovingOrSizing();
+			-- DBMod.PlayerFrames.ClassBar.movement.point,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- end);
 	-- end
 
 	-- PriestBarFrame
@@ -1960,53 +1962,53 @@ do -- relocate the AlternatePowerBar
 	
 	-- relocate the warlock bars
 	-- if classname == "Warlock" then
-		WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
-		WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale); WarlockPowerFrame:EnableMouse(enable);
-		ShardBarFrame:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		ShardBarFrame:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		end);
-		BurningEmbersBarFrame:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		BurningEmbersBarFrame:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		end);
-		DemonicFuryBarFrame:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		DemonicFuryBarFrame:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		end);
+		-- WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
+		-- WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale); WarlockPowerFrame:EnableMouse(enable);
+		-- ShardBarFrame:SetScript("OnMouseDown",function(self,button)
+			-- if button == "LeftButton" and IsAltKeyDown() then
+				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- self:SetMovable(true);
+				-- self:StartMoving();
+			-- end
+		-- end);
+		-- ShardBarFrame:SetScript("OnMouseUp",function(self,button)
+			-- self:StopMovingOrSizing();
+			-- DBMod.PlayerFrames.ClassBar.movement.point,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- end);
+		-- BurningEmbersBarFrame:SetScript("OnMouseDown",function(self,button)
+			-- if button == "LeftButton" and IsAltKeyDown() then
+				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- self:SetMovable(true);
+				-- self:StartMoving();
+			-- end
+		-- end);
+		-- BurningEmbersBarFrame:SetScript("OnMouseUp",function(self,button)
+			-- self:StopMovingOrSizing();
+			-- DBMod.PlayerFrames.ClassBar.movement.point,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- end);
+		-- DemonicFuryBarFrame:SetScript("OnMouseDown",function(self,button)
+			-- if button == "LeftButton" and IsAltKeyDown() then
+				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- self:SetMovable(true);
+				-- self:StartMoving();
+			-- end
+		-- end);
+		-- DemonicFuryBarFrame:SetScript("OnMouseUp",function(self,button)
+			-- self:StopMovingOrSizing();
+			-- DBMod.PlayerFrames.ClassBar.movement.point,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- end);
 	-- end
 	
 	-- Rune Frame

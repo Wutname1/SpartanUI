@@ -71,8 +71,9 @@ end
 
 function addon:OnEnable()
 		Container = CreateFrame("Frame", "FilmEffects", WorldFrame);
-		Container:SetSize(1,1);
-		Container:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -128, 128);
+		-- Container:SetSize(1,1);
+		Container:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
+		Container:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
 		Container:SetFrameStrata("BACKGROUND");
 		Container:RegisterEvent("CHAT_MSG_SYSTEM");
 		Container:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -96,21 +97,17 @@ function addon:OnEnable()
 		Container.blur.layer2:SetBlendMode("MOD")
 		Container.blur.layer1:SetAlpha(.2)
 		Container.blur.layer2:SetAlpha(.05)
-		local x, y = strmatch(({GetScreenResolutions()})[GetCurrentResolution()], "(%d+)x(%d+)")
-		Container.blur.layer1:SetSize((tonumber(y))+500, (tonumber(x))+500)
-		Container.blur.layer2:SetSize((tonumber(y))+500, (tonumber(x))+500)
-		Container.blur.layer1:SetPoint("TOPLEFT", Container, "TOPLEFT", 0, 0)
-		Container.blur.layer2:SetPoint("TOPLEFT", Container, "TOPLEFT", 0, 0)
-		
+		Container.blur.layer1:SetAllPoints(UIParent)
+		Container.blur.layer2:SetAllPoints(UIParent)
 		Container.blur:Hide()
 		
 		--crisp
-		local x, y = strmatch(({GetScreenResolutions()})[GetCurrentResolution()], "(%d+)x(%d+)")
+		-- local x, y = strmatch(({GetScreenResolutions()})[GetCurrentResolution()], "(%d+)x(%d+)")
 		local i = 1
 		local ix = 1
 		local iy = 1
-		local xLimit = math.floor((tonumber(x))/512 + 1)
-		local yLimit = math.floor((tonumber(y))/512 + 1)
+		local xLimit = math.floor((tonumber(Container:GetWidth()))/512 + 1)
+		local yLimit = math.floor((tonumber(Container:GetHeight()))/512 + 1)
 		local iLimit = xLimit * yLimit
 		local intensity = 1
 		Container.crisp = CreateFrame("Frame", "FG_Crispy", Container)
