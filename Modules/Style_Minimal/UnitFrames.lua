@@ -839,22 +839,6 @@ function module:UpdateAltBarPositions()
 		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
 	end
 	
-	-- Monk Chi Bar (Hard to move but it is doable.)
-	MonkHarmonyBar.Show = MonkHarmonyBar.Hide
-	MonkHarmonyBar:Hide()
-	
-	--Paladin Holy Power
-	PaladinPowerBar.Show = MonkHarmonyBar.Hide
-	PaladinPowerBar:Hide()
-	
-	--Priest Power Frame
-	PriestBarFrame.Show = MonkHarmonyBar.Hide
-	PriestBarFrame:Hide()
-	
-	--Warlock Power Frame
-	WarlockPowerFrame.Show = MonkHarmonyBar.Hide
-	WarlockPowerFrame:Hide()
-	
 	-- relocate the AlternatePowerBar
 	if classFileName == "DRUID" then
 		PlayerFrameAlternateManaBar:Hide()

@@ -199,13 +199,13 @@ end
 function module:BuffLoc(self, parent)
 	BuffFrame:ClearAllPoints();
 	BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-	ConsolidatedBuffs:ClearAllPoints();
-	ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-	if (ConsolidatedBuffs:IsVisible()) then
-		TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
-	else
-		TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
-	end
+	-- ConsolidatedBuffs:ClearAllPoints();
+	-- ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
+	-- if (ConsolidatedBuffs:IsVisible()) then
+		-- TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
+	-- else
+		-- TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
+	-- end
 end
 
 function module:SetupVehicleUI()
@@ -229,9 +229,9 @@ function module:EnableFramework()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
 	
-	hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
-		if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Transparent_SpartanUI,"TOP",0,100); end
-	end);
+	-- hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
+		-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Transparent_SpartanUI,"TOP",0,100); end
+	-- end);
 	hooksecurefunc("UIParent_ManageFramePositions",function()
 		TutorialFrameAlertButton:SetParent(Minimap);
 		TutorialFrameAlertButton:ClearAllPoints();

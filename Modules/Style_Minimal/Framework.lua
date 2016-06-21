@@ -218,9 +218,9 @@ function module:EnableFramework()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
 	
-	hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
-		if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Minimal_SpartanUI,"TOP",0,100); end
-	end);
+	-- hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
+		-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Minimal_SpartanUI,"TOP",0,100); end
+	-- end);
 	hooksecurefunc("UIParent_ManageFramePositions",function()
 		TutorialFrameAlertButton:SetParent(Minimap);
 		TutorialFrameAlertButton:ClearAllPoints();
