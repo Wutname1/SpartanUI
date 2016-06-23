@@ -220,9 +220,11 @@ local CreatePlayerFrame = function(self,unit)
 		if unit == "target" then artwork.bg:SetTexCoord(1,0,0,1); end
 		
 		self.Portrait = CreatePortrait(self);
-		self.Portrait:SetSize(55, 55);
-		if unit == "player" then self.Portrait:SetPoint("CENTER",self,"CENTER",80,3); end
-		if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
+		self.Portrait:SetSize(64, 64);
+		self.Portrait:SetPoint("CENTER",self,"CENTER",80,3);
+		
+		--if unit == "player" then  end
+		--if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -342,10 +344,13 @@ local CreatePlayerFrame = function(self,unit)
 	do -- setup ring, icons, and text
 		local ring = CreateFrame("Frame",nil,self);
 		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self.Portrait); ring:SetFrameLevel(3);
+		ring:SetAllPoints(self.Portrait);
+		ring:SetFrameLevel(4);
 		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
 		ring.bg:SetPoint("CENTER",ring,"CENTER",-80,-3);
 		ring.bg:SetTexture(base_ring1);
+		
+		
 		
 		self.Name = ring:CreateFontString();
 		spartan:FormatFont(self.Name, 12, "Player")
@@ -451,7 +456,7 @@ local CreateTargetFrame = function(self,unit)
 		artwork.bg:SetTexCoord(1,0,0,1);
 		
 		self.Portrait = CreatePortrait(self);
-		self.Portrait:SetWidth(64); self.Portrait:SetHeight(64);
+		self.Portrait:SetSize(64, 64);
 		self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3);
 		
 		self.Threat = CreateFrame("Frame",nil,self);
@@ -571,7 +576,8 @@ local CreateTargetFrame = function(self,unit)
 	do -- setup ring, icons, and text
 		local ring = CreateFrame("Frame",nil,self);
 		ring:SetFrameStrata("BACKGROUND");
-		ring:SetAllPoints(self.Portrait); ring:SetFrameLevel(4);
+		ring:SetAllPoints(self.Portrait);
+		ring:SetFrameLevel(4);
 		ring.bg = ring:CreateTexture(nil,"BACKGROUND");
 		ring.bg:SetPoint("CENTER",ring,"CENTER",80,-3);
 		ring.bg:SetTexture(base_ring1);

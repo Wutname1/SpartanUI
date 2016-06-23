@@ -40,3 +40,5 @@ externals:
 		url: git://git.wowace.com/wow/libdualspec-1-0/mainline.git
 	libs/oUF:
 		url: https://github.com/Wutname1/oUF.git
+		
+enable-nolib-creation: no

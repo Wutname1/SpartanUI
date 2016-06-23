@@ -208,5 +208,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].disabled = true
+	spartan.opt.args["General"].args["ModSetting"].args["Buffs"].disabled = true
 end
