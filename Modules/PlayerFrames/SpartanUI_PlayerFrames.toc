@@ -1,5 +1,4 @@
-## Interface: 60200
-## Title: SpartanUI: |CFF0070DDPlayer Frames|r
+## Interface: 70000## Title: SpartanUI: |CFF0070DDPlayer Frames|r
 ## Notes: Player and Target Frames designed to complement SpartanUI
 ## Version: 3.3.0
 ## Author: Wutname1

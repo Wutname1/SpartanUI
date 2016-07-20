@@ -1,5 +1,4 @@
-## Interface: 60200
-## Title: SpartanUI: |CFF0070DDParty Frames|r
+## Interface: 70000## Title: SpartanUI: |CFF0070DDParty Frames|r
 ## Notes: Party Frames designed to complement SpartanUI
 ## Version: 3.3.0
 ## Author: Wutname1

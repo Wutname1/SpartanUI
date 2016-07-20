@@ -1,5 +1,4 @@
-## Interface: 60200
-## Title: SpartanUI: |CFF0070DDFilmEffects|r
+## Interface: 70000## Title: SpartanUI: |CFF0070DDFilmEffects|r
 ## Notes: Adds film grain and other special effects to the gameplay screen
 ## Version: 3.1.4
 ## Author: Wutname1
