@@ -1,4 +1,5 @@
-## Interface: 70000## Title: SpartanUI: |CFF0070DDArtwork - Minimal|r
+## Interface: 70000
+## Title: SpartanUI: |CFF0070DDArtwork - Minimal|r
 ## Notes: Minimal style and layout for SpartanUI
 ## Version: 3.3.0
 ## Author: Wutname1

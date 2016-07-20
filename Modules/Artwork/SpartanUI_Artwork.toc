@@ -1,4 +1,4 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: SpartanUI: |CFF0070DDArtwork|r
 ## Notes: Manages the Artwork and layout that SpartanUI uses
 ## Version: 3.3.0

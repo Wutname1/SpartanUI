@@ -1,4 +1,5 @@
-## Interface: 70000## Title: SpartanUI: |CFF0070DDRaid Frames|r
+## Interface: 70000
+## Title: SpartanUI: |CFF0070DDRaid Frames|r
 ## Notes: Raid Frames designed to complement SpartanUI
 ## Version: 3.3.0
 ## Author: Wutname1

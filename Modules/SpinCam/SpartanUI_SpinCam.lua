@@ -27,8 +27,6 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
-	CameraDistanceMax = nil,200;
-	SetCVar("cameraDistanceMax",CameraDistanceMax or 200);
 	SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
 	local frame = CreateFrame("Frame");
 	frame:RegisterEvent("CHAT_MSG_SYSTEM");
