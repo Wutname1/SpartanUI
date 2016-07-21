@@ -188,38 +188,6 @@ function module:SetupMenus()
 			}
 		}
 	}
-	spartan.opt.args["Artwork"].args["BuffSettings"] = {
-		name = L["BuffOffsetSetting"],
-		desc = L["BuffOffsetSettingDesc"],
-		type = "group", args = {
-			enabled = {name= L["BuffOffsetEnable"],type="toggle",width="full",order = 1,
-				desc= L["BuffOffsetEnableDesc"],
-				get = function(info) return DB.BuffSettings.enabled; end,
-				set = function(info,val)
-					DB.BuffSettings.enabled = val;
-					if val == true then module:UpdateBuffPosition(); end
-				end
-			},
-			offset = {name = L["BuffOffsetConf"], type = "range", order = 2,
-				desc = L["BuffOffsetConfDesc"],
-				width="double", min=0, max=200, step=.1,
-				get = function(info) return DB.BuffSettings.offset; end,
-				set = function(info,val)
-					if DB.BuffSettings.Manualoffset == true then DB.BuffSettings.offset = val; end
-				end
-			},
-			ManualOffset = {name=L["BuffOffsetManual"], type="toggle", order = 3,
-				get	= function(info) return DB.BuffSettings.Manualoffset; end,
-				set = function(info,val)
-					DB.BuffSettings.Manualoffset = val;
-					if val ~= true then
-						DB.BuffSettings.offset = module:updateBuffOffset();
-						module:UpdateBuffPosition();
-					end
-				end
-			},
-		}
-	}
 	spartan.opt.args["Artwork"].args["XPBar"] = {
 		name = L["BarXP"],
 		desc = L["BarXPDesc"],

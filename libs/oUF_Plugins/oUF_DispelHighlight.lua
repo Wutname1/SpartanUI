@@ -167,46 +167,28 @@ f:SetScript("OnEvent", function(self, event)
 
 	-- print("DispelHighlight", event, "Checking capabilities...")
 
-	if playerClass == "DEATHKNIGHT" then
-		for i = 1, GetNumGlyphSockets() do
-			local enabled, _, _, id = GetGlyphSocketInfo(i)
-			if id == 58631 then
-				canPurge = true -- Glyph of Icy Touch
-				break
-			end
-		end
-
-	elseif playerClass == "DRUID" then
+	if playerClass == "DRUID" then
 		canDispel.Curse   = IsPlayerSpell(88423) or IsPlayerSpell(2782) -- Remove Corruption
 		canDispel.Magic   = IsPlayerSpell(88423) -- Nature's Cure
 		canDispel.Poison  = canDispel.Curse
-		canTranq = IsPlayerSpell(2908) -- Soothe
-
-	elseif playerClass == "HUNTER" then
-		canPurge          = IsPlayerSpell(19801) -- Tranquilizing Shot
-		canTranq          = canPurge
 
 	elseif playerClass == "MAGE" then
-		canDispel.Curse   = IsPlayerSpell(475) -- Remove Curse
 		canSteal          = IsPlayerSpell(30449) -- Spellsteal
 
 	elseif playerClass == "MONK" then
 		canDispel.Disease = IsPlayerSpell(115450) -- Detox
-		canDispel.Magic   = IsPlayerSpell(115451) -- Internal Medicine
+		canDispel.Magic   = IsPlayerSpell(115450) -- Detox
 		canDispel.Poison  = canDispel.Disease
 
 	elseif playerClass == "PALADIN" then
 		canDispel.Disease = IsPlayerSpell(4987) -- Cleanse
-		canDispel.Magic   = IsPlayerSpell(53551) -- Sacred Cleansing
+		canDispel.Magic   = IsPlayerSpell(4987) -- Cleanse
 		canDispel.Poison  = canDispel.Disease
 
 	elseif playerClass == "PRIEST" then
 		canDispel.Disease = IsPlayerSpell(527) -- Purify
 		canDispel.Magic   = IsPlayerSpell(527) or IsPlayerSpell(32375) -- Mass Dispel
 		canPurge          = IsPlayerSpell(528) -- Dispel Magic
-
-	elseif playerClass == "ROGUE" then
-		canTranq          = IsPlayerSpell(5938) -- Shiv
 
 	elseif playerClass == "SHAMAN" then
 		canDispel.Curse   = IsPlayerSpell(51886) -- Cleanse Spirit (upgrades to Purify Spirit)
@@ -215,11 +197,7 @@ f:SetScript("OnEvent", function(self, event)
 
 	elseif playerClass == "WARLOCK" then
 		canDispel.Magic   = IsPlayerSpell(115276, true) or IsPlayerSpell(89808, true) -- Sear Magic (Fel Imp) or Singe Magic (Imp)
-		canPurge          = IsPlayerSpell(19505, true) -- Devour Magic (Felhunter)
-
-	elseif playerClass == "WARRIOR" then
-		canPurge          = IsPlayerSpell(23922) -- Shield Slam
-		canShatter        = IsPlayerSpell(64382) -- Shattering Throw
+		
 	end
 
 	wipe(ClassDispelPriority)

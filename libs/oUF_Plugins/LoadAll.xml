@@ -6,7 +6,6 @@
 	<Script file='oUF_Trinkets.lua'/>
 	<Script file='oUF_MovableFrames.lua'/>
 	<!-- 
-	<Script file='oUF_DruidMana.lua'/>
 	<Script file='oUF_boring_totembar.lua'/>
 	-->
 </Ui>

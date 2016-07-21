@@ -69,13 +69,15 @@ do
 			['Magic'] = true,
 			['Disease'] = true,
 		},
-		['MAGE'] = {
-			['Curse'] = true,
-		},
 		['DRUID'] = {
 			['Curse'] = true,
 			['Poison'] = true,
-			['Magic'] = false,
+			['Magic'] = true,
+		},
+		['MONK'] = {
+			['Curse'] = true,
+			['Poison'] = true,
+			['Magic'] = true,
 		},
 	}
 	
@@ -92,29 +94,6 @@ local function CheckSpec(self, event, levels)
 	-- Not interested in gained points from leveling	
 	if event == "CHARACTER_POINTS_CHANGED" and levels > 0 then return end
 	
-	--Check for certain talents to see if we can dispel magic or not
-	if select(2, UnitClass('player')) == "PALADIN" then
-		--Check to see if we have the 'Sacred Cleansing' talent.
-		if CheckForKnownTalent(53551) then
-			DispellFilter.Magic = true
-		else
-			DispellFilter.Magic = false	
-		end
-	elseif select(2, UnitClass('player')) == "SHAMAN" then
-		--Check to see if we have the 'Improved Cleanse Spirit' talent.
-		if CheckForKnownTalent(77130) then
-			DispellFilter.Magic = true
-		else
-			DispellFilter.Magic = false	
-		end
-	elseif select(2, UnitClass('player')) == "DRUID" then
-		--Check to see if we have the 'Nature's Cure' talent.
-		if CheckForKnownTalent(88423) then
-			DispellFilter.Magic = true
-		else
-			DispellFilter.Magic = false	
-		end
-	end
 end
 
 local function UpdateDebuff(self, name, icon, count, debuffType, duration, endTime)
