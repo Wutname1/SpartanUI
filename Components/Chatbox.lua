@@ -104,11 +104,11 @@ end
 -- end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Chatbox"] = {type="group",name="Chatbox",
+	spartan.opt.args["ModSetting"].args["Chatbox"] = {type="group",name="Chatbox",
 		args = {}
 	}
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Chatbox"].disabled = true
+	spartan.opt.args["ModSetting"].args["Chatbox"].disabled = true
 end

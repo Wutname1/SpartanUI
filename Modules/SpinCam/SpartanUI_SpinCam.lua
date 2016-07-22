@@ -5,23 +5,29 @@ local SpinCamRunning = false
 local userCameraYawMoveSpeed
 
 function addon:OnInitialize()
-	spartan.opt.args["SpinCam"].args["enable"] = {name=L["Spin/AFKOn"],type="toggle",order=1,width="full",
-		get = function(info) return DBMod.SpinCam.enable end,
-		set = function(info,val) DBMod.SpinCam.enable = val end
-	}
-	spartan.opt.args["SpinCam"].args["speed"] = {name=L["Spin/Speed"],type="range",order=5,width="full",
-		min=1,max=230,step=1,
-		get = function(info) return DBMod.SpinCam.speed end,
-		set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.speed = val; end if SpinCamRunning then addon:SpinToggle("update") end end
-	}
-	-- spartan.opt.args["SpinCam"].args["range"] = {name="Spin range",type="range",order=6,width="full",
-		-- min=15,max=24,step=.1,
-		-- get = function(info) return DBMod.SpinCam.range end,
-		-- set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.range = val; end if SpinCamRunning then addon:SpinToggle("update") end end
-	-- }
-	spartan.opt.args["SpinCam"].args["spin"] = {name=L["Spin/Toggle"],type="execute",order=15,width="double",
-		desc = L["Spin/ToggleDesc"],
-		func = function(info,val) addon:SpinToggle(); end
+	spartan.opt.args["ModSetting"].args["SpinCam"] = {
+		name = L["SpinCam"],
+		type = "group",
+		args = {
+			enable = {name=L["Spin/AFKOn"],type="toggle",order=1,width="full",
+				get = function(info) return DBMod.SpinCam.enable end,
+				set = function(info,val) DBMod.SpinCam.enable = val end
+			},
+			speed = {name=L["Spin/Speed"],type="range",order=5,width="full",
+				min=1,max=230,step=1,
+				get = function(info) return DBMod.SpinCam.speed end,
+				set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.speed = val; end if SpinCamRunning then addon:SpinToggle("update") end end
+			},
+			-- spartan.opt.args["SpinCam"].args["range"] = {name="Spin range",type="range",order=6,width="full",
+				-- min=15,max=24,step=.1,
+				-- get = function(info) return DBMod.SpinCam.range end,
+				-- set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.range = val; end if SpinCamRunning then addon:SpinToggle("update") end end
+			-- }
+			spin = {name=L["Spin/Toggle"],type="execute",order=15,width="double",
+				desc = L["Spin/ToggleDesc"],
+				func = function(info,val) addon:SpinToggle(); end
+			}
+		}
 	}
 	userCameraYawMoveSpeed = (GetCVar("cameraYawMoveSpeed"))
 end

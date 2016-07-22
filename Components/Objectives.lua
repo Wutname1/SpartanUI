@@ -113,18 +113,18 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Objectives"] = {type="group",name=L["Objectives"],
+	spartan.opt.args["ModSetting"].args["Objectives"] = {type="group",name=L["Objectives"],
 		args = {}
 	}
 	for k,v in ipairs(RuleList) do
-		spartan.opt.args["General"].args["ModSetting"].args["Objectives"].args[v .. "Title"] = {name=v,type="header",order=k,width="full"}
-		spartan.opt.args["General"].args["ModSetting"].args["Objectives"].args[v .. "Status"] = {name ="When to hide", type="select",order=k + .2,
+		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Title"] = {name=v,type="header",order=k,width="full"}
+		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Status"] = {name ="When to hide", type="select",order=k + .2,
 			values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Boss"]="Boss Fight",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
 			get = function(info) return DBMod.Objectives[v].Status; end,
 			set = function(info,val) DBMod.Objectives[v].Status = val; ObjTrackerUpdate() end
 		}
-		spartan.opt.args["General"].args["ModSetting"].args["Objectives"].args[v .. "Text"] = {name="",type="description",order=k + .3,width="half"}
-		spartan.opt.args["General"].args["ModSetting"].args["Objectives"].args[v .. "Combat"] = {name="only if in combat",type="toggle",order=k + .4,
+		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Text"] = {name="",type="description",order=k + .3,width="half"}
+		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Combat"] = {name="only if in combat",type="toggle",order=k + .4,
 			get = function(info) return DBMod.Objectives[v].Combat end,
 			set = function(info,val) DBMod.Objectives[v].Combat = val; ObjTrackerUpdate() end
 		}
@@ -132,5 +132,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Objectives"].disabled = true
+	spartan.opt.args["ModSetting"].args["Objectives"].disabled = true
 end

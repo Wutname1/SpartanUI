@@ -513,17 +513,17 @@ end
 
 local OnMouseOpt = function(v)
 	if DB.Tooltips[v].Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
-		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = true
+		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = true
 	else
-		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = false
+		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = false
 	end
 	
-	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["MoveAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
-	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["ResetAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
+	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["MoveAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
+	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["ResetAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
 end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"] = {type="group",name="Tooltips",
+	spartan.opt.args["ModSetting"].args["Tooltips"] = {type="group",name="Tooltips",
 		args = {
 			Background = {name=L["Background"],type="select",order=1,
 				values = {
@@ -554,7 +554,7 @@ function module:BuildOptions()
 	}
 	
 	for k,v in ipairs(RuleList) do
-		spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v] = {
+		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v] = {
 			name="Display Location " .. v,type="group",inline=true,order=k + 20.1,width="full", args = {
 			Condition = {name ="Condition", type="select",order=k + 20.2,
 				values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
@@ -581,5 +581,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Tooltips"].disabled = true
+	spartan.opt.args["ModSetting"].args["Tooltips"].disabled = true
 end

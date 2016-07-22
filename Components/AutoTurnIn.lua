@@ -555,7 +555,7 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["AutoTurnIn"] = {type="group",name="Auto TurnIn",
+	spartan.opt.args["ModSetting"].args["AutoTurnIn"] = {type="group",name="Auto TurnIn",
 		args = {
 			debugMode = {name="Debug Mode",type="toggle",order=1,
 					get = function(info) return DB.AutoTurnIn.debug end,
@@ -586,5 +586,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["AutoTurnIn"].disabled = true
+	spartan.opt.args["ModSetting"].args["AutoTurnIn"].disabled = true
 end

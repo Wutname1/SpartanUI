@@ -178,14 +178,14 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Buffs"] = {type="group",name="Buffs",
+	spartan.opt.args["ModSetting"].args["Buffs"] = {type="group",name="Buffs",
 		args = {
 		
 		}
 	}
 	
 	for k,v in ipairs(RuleList) do
-		spartan.opt.args["General"].args["ModSetting"].args["Buffs"].args["DisplayLocation"..v] = {
+		spartan.opt.args["ModSetting"].args["Buffs"].args["DisplayLocation"..v] = {
 			name="Display Location " .. v,type="group",inline=true,order=k + 20.1,width="full", args = {
 			Condition = {name ="Condition", type="select",order=k + 20.2,
 				values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
@@ -208,5 +208,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Buffs"].disabled = true
+	spartan.opt.args["ModSetting"].args["Buffs"].disabled = true
 end

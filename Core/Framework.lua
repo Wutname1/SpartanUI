@@ -7,13 +7,11 @@ addon.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
 addon.opt = {
 	name = "SpartanUI ".. addon.SpartanVer, type = "group", childGroups = "tab", args = {
-		General = {name = "General", type = "group",order = 0, args = {}};
-		Artwork = {name = "Artwork", type = "group", args = {}};
-		PlayerFrames = {name = "Player Frames", type = "group", args = {}};
-		PartyFrames = {name = "Party Frames", type = "group", args = {}};
-		RaidFrames = {name = "Raid Frames", type = "group", args = {}};
-		SpinCam = {name = "Spin Cam", type = "group",order = 900, args = {}};
-		FilmEffects = {name = "Film Effects", type = "group", order = 950, args = {}};
+		General = {name = L["General"], type = "group",order = 0, args = {}};
+		Artwork = {name = L["Artwork"], type = "group", args = {}};
+		PlayerFrames = {name = L["PlayerFrames"], type = "group", args = {}};
+		PartyFrames = {name = L["PartyFrames"], type = "group", args = {}};
+		RaidFrames = {name = L["RaidFrames"], type = "group", args = {}};
 	}
 }
 
@@ -358,11 +356,9 @@ function addon:OnEnable()
 	
     AceConfig:RegisterOptionsTable("SpartanUI", addon.opt)
 	if not addon:GetModule("Artwork_Core", true) then addon.opt.args["Artwork"].disabled = true end
-	if not addon:GetModule("FilmEffect", true) then addon.opt.args["FilmEffects"].disabled = true end
     if not addon:GetModule("PartyFrames", true) then  addon.opt.args["PartyFrames"].disabled = true end
     if not addon:GetModule("PlayerFrames", true) then addon.opt.args["PlayerFrames"].disabled = true end
     if not addon:GetModule("RaidFrames", true) then addon.opt.args["RaidFrames"].disabled = true end
-    if not addon:GetModule("SpinCam", true) then addon.opt.args["SpinCam"].disabled = true end
     
     self:RegisterChatCommand("sui", "ChatCommand")
     self:RegisterChatCommand("suihelp", "suihelp")

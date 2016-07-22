@@ -328,75 +328,83 @@ function module:OnInitialize()
 			}
 		}
 	
-	spartan.opt.args["General"].args["ModSetting"] = {name = L["Enabledmodules"], type = "group", order = 800,
+	spartan.opt.args["ModSetting"] = {name = L["Modules"], type = "group",
 		args = {
-			description = {type="description",name=L["ModulesDesc"],order=1,fontSize="medium"},
-			Artwork = {name = L["Artwork"],type = "toggle",order=10,
-				get = function(info) return ModsLoaded.Artwork end,
-				set = function(info,val)
-					if ModsLoaded.Artwork then ModsLoaded.Artwork = false else ModsLoaded.Artwork = true end
-					if ModsLoaded.Artwork then EnableAddOn("SpartanUI_Artwork") else DisableAddOn("SpartanUI_Artwork") end
-					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
-				end,
-			},
-			PlayerFrames = {name = L["PlayerFrames"],type = "toggle",order=20,
-				get = function(info) return ModsLoaded.PlayerFrames end,
-				set = function(info,val)
-					if ModsLoaded.PlayerFrames then ModsLoaded.PlayerFrames = false else ModsLoaded.PlayerFrames = true end
-					if ModsLoaded.PlayerFrames then EnableAddOn("SpartanUI_PlayerFrames") else DisableAddOn("SpartanUI_PlayerFrames") end
-					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
-				end,
-			},
-			PartyFrames = {name = L["PartyFrames"],type = "toggle",order=30,
-				get = function(info) return ModsLoaded.PartyFrames end,
-				set = function(info,val)
-					if ModsLoaded.PartyFrames then ModsLoaded.PartyFrames = false else ModsLoaded.PartyFrames = true end
-					if ModsLoaded.PartyFrames then EnableAddOn("SpartanUI_PartyFrames") else DisableAddOn("SpartanUI_PartyFrames") end
-					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
-				end,
-			},
-			RaidFrames = {name = L["RaidFrames"],type = "toggle",order=40,
-				get = function(info) return ModsLoaded.RaidFrames end,
-				set = function(info,val)
-					if ModsLoaded.RaidFrames then ModsLoaded.RaidFrames = false else ModsLoaded.RaidFrames = true end
-					if ModsLoaded.RaidFrames then EnableAddOn("SpartanUI_RaidFrames") else DisableAddOn("SpartanUI_RaidFrames") end
-					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
-				end,
-			},
-			SpinCam = {name = L["SpinCam"],type = "toggle",order=50,
-				get = function(info) return ModsLoaded.SpinCam end,
-				set = function(info,val)
-					if ModsLoaded.SpinCam then ModsLoaded.SpinCam = false else ModsLoaded.SpinCam = true end
-					if ModsLoaded.SpinCam then EnableAddOn("SpartanUI_SpinCam") else DisableAddOn("SpartanUI_SpinCam") end
-					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
-				end,
-			},
-			FilmEffects = {name = L["FilmEffects"],type = "toggle",order=60,
-				get = function(info) return ModsLoaded.FilmEffects end,
-				set = function(info,val)
-					if ModsLoaded.FilmEffects then ModsLoaded.FilmEffects = false else ModsLoaded.FilmEffects = true end
-					if ModsLoaded.FilmEffects then EnableAddOn("SpartanUI_FilmEffects") else DisableAddOn("SpartanUI_FilmEffects") end
-					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
-				end,
-			},
-			Styles = {name = L["Styles"],type = "group",order=100,inline=true,args={}},
-			Components = {name = "Components",type = "group",order=200,inline=true,args={}},
-			Reload = {name = "ReloadUI", type = "execute",order=200,disabled=true, func = function() spartan:reloadui(); end},
+		
+		Enabled = {
+		name = L["Enabled Modules"],
+		order = 0.1,
+		type = "group",
+		args = {
+				description = {type="description",name=L["ModulesDesc"],order=1,fontSize="medium"},
+				Artwork = {name = L["Artwork"],type = "toggle",order=10,
+					get = function(info) return ModsLoaded.Artwork end,
+					set = function(info,val)
+						if ModsLoaded.Artwork then ModsLoaded.Artwork = false else ModsLoaded.Artwork = true end
+						if ModsLoaded.Artwork then EnableAddOn("SpartanUI_Artwork") else DisableAddOn("SpartanUI_Artwork") end
+						spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false;
+					end,
+				},
+				PlayerFrames = {name = L["PlayerFrames"],type = "toggle",order=20,
+					get = function(info) return ModsLoaded.PlayerFrames end,
+					set = function(info,val)
+						if ModsLoaded.PlayerFrames then ModsLoaded.PlayerFrames = false else ModsLoaded.PlayerFrames = true end
+						if ModsLoaded.PlayerFrames then EnableAddOn("SpartanUI_PlayerFrames") else DisableAddOn("SpartanUI_PlayerFrames") end
+						spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false;
+					end,
+				},
+				PartyFrames = {name = L["PartyFrames"],type = "toggle",order=30,
+					get = function(info) return ModsLoaded.PartyFrames end,
+					set = function(info,val)
+						if ModsLoaded.PartyFrames then ModsLoaded.PartyFrames = false else ModsLoaded.PartyFrames = true end
+						if ModsLoaded.PartyFrames then EnableAddOn("SpartanUI_PartyFrames") else DisableAddOn("SpartanUI_PartyFrames") end
+						spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false;
+					end,
+				},
+				RaidFrames = {name = L["RaidFrames"],type = "toggle",order=40,
+					get = function(info) return ModsLoaded.RaidFrames end,
+					set = function(info,val)
+						if ModsLoaded.RaidFrames then ModsLoaded.RaidFrames = false else ModsLoaded.RaidFrames = true end
+						if ModsLoaded.RaidFrames then EnableAddOn("SpartanUI_RaidFrames") else DisableAddOn("SpartanUI_RaidFrames") end
+						spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false;
+					end,
+				},
+				SpinCam = {name = L["SpinCam"],type = "toggle",order=50,
+					get = function(info) return ModsLoaded.SpinCam end,
+					set = function(info,val)
+						if ModsLoaded.SpinCam then ModsLoaded.SpinCam = false else ModsLoaded.SpinCam = true end
+						if ModsLoaded.SpinCam then EnableAddOn("SpartanUI_SpinCam") else DisableAddOn("SpartanUI_SpinCam") end
+						spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false;
+					end,
+				},
+				FilmEffects = {name = L["FilmEffects"],type = "toggle",order=60,
+					get = function(info) return ModsLoaded.FilmEffects end,
+					set = function(info,val)
+						if ModsLoaded.FilmEffects then ModsLoaded.FilmEffects = false else ModsLoaded.FilmEffects = true end
+						if ModsLoaded.FilmEffects then EnableAddOn("SpartanUI_FilmEffects") else DisableAddOn("SpartanUI_FilmEffects") end
+						spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false;
+					end,
+				},
+				Styles = {name = L["Styles"],type = "group",order=100,inline=true,args={}},
+				Components = {name = "Components",type = "group",order=200,inline=true,args={}},
+				Reload = {name = "ReloadUI", type = "execute",order=200,disabled=true, func = function() spartan:reloadui(); end},
+			}
+		}
 		}
 	}
-
+	
 	-- List Styles
 	for i = 1, GetNumAddOns() do
 		local name, title, notes, enabled,loadable = GetAddOnInfo(i)
 		ModsLoaded[name] = enabled
 		if (string.match(name, "SpartanUI_Style_")) then
-			spartan.opt.args["General"].args["ModSetting"].args["Styles"].args[string.sub(name, 9)] = {
+			spartan.opt.args["ModSetting"].args["Enabled"].args["Styles"].args[string.sub(name, 9)] = {
 				name = string.sub(name, 17),type = "toggle",
 				get = function(info) return ModsLoaded[name] end,
 				set = function(info,val)
 					if ModsLoaded[name] then ModsLoaded[name] = false else ModsLoaded[name] = true end
 					if ModsLoaded[name] then EnableAddOn(name) else DisableAddOn(name) end
-					spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false;
+					spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false;
 				end,
 			}
 		end
@@ -411,10 +419,10 @@ function module:OnInitialize()
 				DB.EnabledComponents[RealName] = true
 			end
 			
-			spartan.opt.args["General"].args["ModSetting"].args["Components"].args[RealName] = {
+			spartan.opt.args["ModSetting"].args["Enabled"].args["Components"].args[RealName] = {
 				name = string.sub(name, 11),type = "toggle",
 				get = function(info) return DB.EnabledComponents[RealName] end,
-				set = function(info,val) DB.EnabledComponents[RealName] = val; spartan.opt.args["General"].args["ModSetting"].args["Reload"].disabled = false; end,
+				set = function(info,val) DB.EnabledComponents[RealName] = val; spartan.opt.args["ModSetting"].args["Enabled"].args["Reload"].disabled = false; end,
 			}
 			
 		end

@@ -20,11 +20,11 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Nameplates"] = {type="group",name=L["Nameplates"],
+	spartan.opt.args["ModSetting"].args["Nameplates"] = {type="group",name=L["Nameplates"],
 		args = {}
 	}
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Nameplates"].disabled = true
+	spartan.opt.args["ModSetting"].args["Nameplates"].disabled = true
 end
