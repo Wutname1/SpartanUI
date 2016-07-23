@@ -54,11 +54,11 @@ local function ActiveRule()
 end
 
 local BuffPosUpdate = function(self, parent)
+	BuffFrame:ClearAllPoints();
+	BuffFrame:SetParent(UIParent)
+	BuffFrame:SetFrameStrata("MEDIUM")
+	
 	if parent then
-		BuffFrame:ClearAllPoints();
-		-- ConsolidatedBuffs:ClearAllPoints();
-		BuffFrame:SetParent(UIParent)
-		-- ConsolidatedBuffs:SetParent(UIParent)
 		setdefault = false
 		
 		--See If the theme has an anchor and if we are allowed to use it
@@ -77,14 +77,7 @@ local BuffPosUpdate = function(self, parent)
 					DB.Buffs[ActiveRule()].Anchor.Moved = false
 				else
 					--Set the Buff location
-					-- self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 					BuffFrame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
-					-- ConsolidatedBuffs:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
-					-- if (ConsolidatedBuffs:IsVisible()) then
-						-- TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
-					-- else
-						-- TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
-					-- end
 				end
 			else
 				setdefault = true
@@ -93,12 +86,6 @@ local BuffPosUpdate = function(self, parent)
 		
 		if setdefault then
 			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-			-- ConsolidatedBuffs:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-			-- if (ConsolidatedBuffs:IsVisible()) then
-				-- TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",-5,0);
-			-- else
-				-- TemporaryEnchantFrame:SetPoint("TOPRIGHT","ConsolidatedBuffs","TOPLEFT",30,0);
-			-- end
 		end
 	end
 end
