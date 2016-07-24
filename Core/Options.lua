@@ -3,6 +3,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local module = spartan:NewModule("Options");
+
+local LDBIcon = LibStub("LibDBIcon-1.0", true)
+
 ---------------------------------------------------------------------------
 local ModsLoaded =  {
 	Artwork = nil,
@@ -295,10 +298,81 @@ function module:OnInitialize()
 			},
 		}
 	};
+	spartan.opt.args["General"].args["Bartender"] = {name = "Bartender", type = "group", order = 500,
+		args = {
+			MoveBars={name = L["Move ActionBars"], type = "execute",order=1,
+				func = function() Bartender4:Unlock() end
+			},
+			ResetActionBars	= {name = L["Reset ActionBars"], type = "execute", order=2,
+			func = function()
+				--Tell SUI to reload config
+				DBMod.Artwork.FirstLoad = true;
+				spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
+				--Reset Moved bars
+				local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
+				for k,v in ipairs(FrameList) do
+					if DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] then
+						DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
+					end
+				end
+				--go!
+				ReloadUI();
+			end
+			},
+			line1 = {name="",type="header",order = 2.5},
+			LockButtons = {name = L["Lock Buttons"], type = "toggle",order=3,
+				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
+				set = function(info, value)
+					Bartender4.db.profile.buttonlock = value
+					Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
+				end,
+			},
+			kb = {
+				order = 4,
+				type = "execute",
+				name = L["Key Bindings"],
+				func = function()
+					LibStub("LibKeyBound-1.0"):Toggle()
+					AceConfigDialog:Close("Bartender4")
+				end,
+			},
+			line2 = {name="",type="header",order = 5.5},
+			VehicleUI = {name = L["Use Blizzard Vehicle UI"], type = "toggle",order=6,
+				get = function(info) return DBMod.Artwork.VehicleUI end,
+				set = function(info,val) 
+					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
+					DBMod.Artwork.VehicleUI = val
+					--Make sure bartender knows to do it, or not...
+					if Bartender4 then
+						Bartender4.db.profile.blizzardVehicle = val
+						Bartender4:UpdateBlizzardVehicle()
+					end
+					
+					if DBMod.Artwork.VehicleUI then
+						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
+							spartan:GetModule("Style_" .. DBMod.Artwork.Style):SetupVehicleUI()
+						end
+					else
+						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
+							spartan:GetModule("Style_" .. DBMod.Artwork.Style):RemoveVehicleUI()
+						end
+					end
+				end,
+			},
+			minimapIcon = {
+				order = 7,
+				type = "toggle",
+				name = L["Minimap Icon"],
+				get = function() return not Bartender4.db.profile.minimapIcon.hide end,
+				set = function(info, value) Bartender4.db.profile.minimapIcon.hide = not value; LDBIcon[value and "Show" or "Hide"](LDBIcon, "Bartender4") end,
+				disabled = function() return not LDBIcon end,
+			}
+		}
+	}
 	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
 			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() spartan.db:ResetDB(); ReloadUI(); end},
-			ResetArtwork	= {name = L["Reset ActionBars"], type = "execute", order=2, func = function() DBMod.Artwork.FirstLoad = true; spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile(); ReloadUI(); end},
+			ResetActionBars	= spartan.opt.args["General"].args["Bartender"].args["ResetActionBars"],
 			ResetMovedFrames	= {name = L["ResetMovableFrames"], type = "execute", order=3, func = function()
 				local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player",[7]="boss"}
 				for a,b in pairs(FramesList) do
