@@ -240,13 +240,6 @@ local OnCastbarUpdate = function(self,elapsed)
 end
 
 local MakeSmallFrame = function(self,unit)
-	self.menu = menu;
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	self:SetClampedToScreen(true)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
 	self:SetSize(100, 40);
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
@@ -284,7 +277,8 @@ local MakeSmallFrame = function(self,unit)
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
-			Background:SetTexture(1, 1, 1, .2)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
 			
 			self.Health = health;
 			self.Health.bg = Background;
@@ -477,7 +471,8 @@ local MakeLargeFrame = function(self,unit,width)
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
-			Background:SetTexture(1, 1, 1, .2)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
 			
 			self.Health = health;
 			self.Health.bg = Background;
@@ -833,7 +828,14 @@ local CreateUnitFrameParty = function(self,unit)
 end
 
 local CreateUnitFrameRaid = function(self,unit)
-	self:HookScript("OnMouseDown",function(self,button)
+	self = MakeSmallFrame(self,unit)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	
+	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
 			spartan.RaidFrames.mover:Show();
 			DBMod.RaidFrames.moved = true;
@@ -841,7 +843,7 @@ local CreateUnitFrameRaid = function(self,unit)
 			spartan.RaidFrames:StartMoving();
 		end
 	end);
-	self:HookScript("OnMouseUp",function(self,button)
+	self:SetScript("OnMouseUp",function(self,button)
 		spartan.RaidFrames.mover:Hide();
 		spartan.RaidFrames:StopMovingOrSizing();
 		local Anchors = {}
@@ -851,7 +853,7 @@ local CreateUnitFrameRaid = function(self,unit)
 		end
 	end);
 	
-	return MakeSmallFrame(self,unit)
+	return self
 end
 
 SpartanoUF:RegisterStyle("Spartan_MinimalFrames", CreateUnitFrame);
