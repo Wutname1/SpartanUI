@@ -11,6 +11,8 @@ local base_ring3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring3]] 
 local circle = [[Interface\AddOns\SpartanUI_PlayerFrames\media\circle.tga]]
 
 local colors = setmetatable({},{__index = SpartanoUF.colors});
+local classname, classFileName = UnitClass("player")
+
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 do -- setup custom colors that we want to use
 	colors.health 		= {0,1,50/255};			-- the color of health bars
@@ -416,6 +418,52 @@ local CreatePlayerFrame = function(self,unit)
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
+		
+		self.ComboPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
+		self.ComboPoints:SetPoint("BOTTOMLEFT",self.Name,"TOPLEFT",12,-2);
+		
+		local ClassIcons = {}
+		for i = 1, 6 do
+			local Icon = self:CreateTexture(nil, "OVERLAY")
+			Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+			
+			if (i == 1) then
+				Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
+			else 
+				Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
+			end
+			
+			ClassIcons[i] = Icon
+		end
+		self.ClassIcons = ClassIcons
+		
+		ring:SetScript("OnEvent",function()
+			local ClassPowerID = "";
+			if(classFileName == 'MONK') then
+				ClassPowerID = SPELL_POWER_CHI
+			elseif(classFileName == 'PALADIN') then
+				ClassPowerID = SPELL_POWER_HOLY_POWER
+			elseif(classFileName == 'PRIEST' and not isBetaClient) then
+				ClassPowerID = SPELL_POWER_SHADOW_ORBS
+			elseif(classFileName == 'WARLOCK') then
+				ClassPowerID = SPELL_POWER_SOUL_SHARDS
+			elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+				ClassPowerID = SPELL_POWER_COMBO_POINTS
+			elseif(classFileName == 'MAGE' and isBetaClient) then
+				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+			end
+			if(unit == 'vehicle') then
+				cur = GetComboPoints('vehicle', 'target')
+			else
+				cur = UnitPower('player', ClassPowerID)
+				-- print(classFileName)
+			end
+			self.ComboPoints:SetText((cur > 0 and cur) or "");
+		end);
+		ring:RegisterEvent('UNIT_DISPLAYPOWER')
+		ring:RegisterEvent('PLAYER_ENTERING_WORLD')
+		ring:RegisterEvent('UNIT_POWER_FREQUENT')
+		ring:RegisterEvent('UNIT_MAXPOWER')
 	end
 	do -- setup buffs and debuffs
 		self.Debuffs = CreateFrame("Frame",nil,self);
@@ -632,22 +680,6 @@ local CreateTargetFrame = function(self,unit)
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
-		
-		self.CPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.CPoints:SetPoint("TOPLEFT",ring,"BOTTOMRIGHT",8,-4);
-		for i = 1, 5 do
-			self.CPoints[i] = ring:CreateTexture(nil,"OVERLAY");
-			self.CPoints[i]:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			if (i == 1) then self.CPoints[1]:SetPoint("LEFT",self.CPoints,"RIGHT",1,-1); else 
-				self.CPoints[i]:SetPoint("LEFT",self.CPoints[i-1],"RIGHT",-2,0);
-			end
-		end
-		ring:SetScript("OnUpdate",function()
-			if self.CPoints then
-				local cp = GetComboPoints("player","target");
-				self.CPoints:SetText( (cp > 0 and cp) or "");
-			end
-		end);
 	end
 	do -- setup buffs and debuffs
 		self.Auras = CreateFrame("Frame",nil,self);
@@ -1841,7 +1873,6 @@ end
 function addon:SetupExtras()
 
 do -- relocate the AlternatePowerBar
-	local classname, classFileName = UnitClass("player")
 	if classFileName == "MONK" then
 		--Align and shrink to fit under CHI, not movable
 		PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
