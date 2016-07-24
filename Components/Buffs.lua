@@ -53,46 +53,64 @@ local function ActiveRule()
 	return "Rule1"
 end
 
-local BuffPosUpdate = function(self, parent)
+local BuffPosUpdate = function()
 	BuffFrame:ClearAllPoints();
 	BuffFrame:SetParent(UIParent)
 	BuffFrame:SetFrameStrata("MEDIUM")
+	local setdefault = false
 	
-	if parent then
-		setdefault = false
-		
-		--See If the theme has an anchor and if we are allowed to use it
-		if DB.Styles[DBMod.Artwork.Style].BuffLoc and not DB.Buffs[ActiveRule()].OverrideLoc then
-			spartan:GetModule("Style_" .. DBMod.Artwork.Style):BuffLoc(self, parent);
-		else
-			if DB.Buffs[ActiveRule()].Anchor.Moved then
-				local Anchors = {}
-				for key,val in pairs(DB.Buffs[ActiveRule()].Anchor.AnchorPos) do
-					Anchors[key] = val
-				end
-				
-				if Anchors.point == nil then 
-					--Error Catch
-					setdefault = true
-					DB.Buffs[ActiveRule()].Anchor.Moved = false
-				else
-					--Set the Buff location
-					BuffFrame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
-				end
-			else
-				setdefault = true
+	--See If the theme has an anchor and if we are allowed to use it
+	if DB.Styles[DBMod.Artwork.Style].BuffLoc and not DB.Buffs[ActiveRule()].OverrideLoc then
+		spartan:GetModule("Style_" .. DBMod.Artwork.Style):BuffLoc(nil, nil);
+	else
+		if DB.Buffs[ActiveRule()].Anchor.Moved then
+			local Anchors = {}
+			for key,val in pairs(DB.Buffs[ActiveRule()].Anchor.AnchorPos) do
+				Anchors[key] = val
 			end
+			
+			if Anchors.point == nil then 
+				--Error Catch
+				setdefault = true
+				DB.Buffs[ActiveRule()].Anchor.Moved = false
+			else
+				--Set the Buff location
+				BuffFrame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
+			end
+		else
+			setdefault = true
 		end
-		
-		if setdefault then
-			BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
-		end
+	end
+	
+	if setdefault then
+		BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
 	end
 end
 
 function module:OnEnable()
 	module:BuildOptions()
 	if not DB.EnabledComponents.Buffs then module:HideOptions() return end
+
+	BuffWatcher:SetScript("OnEvent", BuffPosUpdate)
+	BuffWatcher:RegisterEvent("ZONE_CHANGED")
+	BuffWatcher:RegisterEvent("ZONE_CHANGED_INDOORS")
+	BuffWatcher:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+	BuffWatcher:RegisterEvent("PLAYER_ENTERING_WORLD")
+	BuffWatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
+	BuffWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
+	BuffWatcher:RegisterEvent("UNIT_AURA")
+	BuffWatcher:RegisterEvent("COMBAT_LOG_EVENT")
+	BuffWatcher:RegisterEvent("GROUP_JOINED")
+	BuffWatcher:RegisterEvent("GROUP_ROSTER_UPDATE")
+	BuffWatcher:RegisterEvent("RAID_INSTANCE_WELCOME")
+	BuffWatcher:RegisterEvent("PARTY_CONVERTED_TO_RAID")
+	BuffWatcher:RegisterEvent("RAID_INSTANCE_WELCOME")
+	BuffWatcher:RegisterEvent("ENCOUNTER_START")
+	BuffWatcher:RegisterEvent("ENCOUNTER_END")
+	
+	--The Frame is not ready to be moved yet, wait a second first.
+	C_Timer.After(1, BuffPosUpdate)
+	
 	for k,v in ipairs(RuleList) do
 		local anchor = CreateFrame("Frame",nil)
 		anchor:SetSize(150, 25)
@@ -120,7 +138,7 @@ function module:OnEnable()
 			for k,val in pairs(Anchors) do
 				DB.Buffs[v].Anchor.AnchorPos[k] = val
 			end
-			BuffPosUpdate(nil, nil)
+			BuffPosUpdate()
 		end);
 		
 		anchor:SetScript("OnShow", function(self)
@@ -137,31 +155,16 @@ function module:OnEnable()
 		end)
 		
 		anchor:SetScript("OnEvent",function(self, event, ...)
-			module[v].anchor:Hide();
-			BuffPosUpdate(nil, nil)
+			self:Hide();
+			BuffPosUpdate()
 		end);
 		anchor:RegisterEvent("PLAYER_REGEN_DISABLED");
-		
-		BuffWatcher:SetScript("OnEvent", BuffPosUpdate)
-	
-		BuffWatcher:RegisterEvent("ZONE_CHANGED")
-		BuffWatcher:RegisterEvent("ZONE_CHANGED_INDOORS")
-		BuffWatcher:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-		BuffWatcher:RegisterEvent("PLAYER_REGEN_DISABLED")
-		BuffWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
-		BuffWatcher:RegisterEvent("PLAYER_ENTERING_WORLD")
-		BuffWatcher:RegisterEvent("COMBAT_LOG_EVENT")
-		BuffWatcher:RegisterEvent("GROUP_JOINED")
-		BuffWatcher:RegisterEvent("GROUP_ROSTER_UPDATE")
-		BuffWatcher:RegisterEvent("RAID_INSTANCE_WELCOME")
-		BuffWatcher:RegisterEvent("PARTY_CONVERTED_TO_RAID")
-		BuffWatcher:RegisterEvent("RAID_INSTANCE_WELCOME")
-		BuffWatcher:RegisterEvent("ENCOUNTER_START")
-		BuffWatcher:RegisterEvent("ENCOUNTER_END")
 		
 		module[v] = {anchor = anchor}
 		module[v].anchor:Hide()
 	end
+	
+	BuffPosUpdate()
 end
 
 function module:BuildOptions()
@@ -177,18 +180,18 @@ function module:BuildOptions()
 			Condition = {name ="Condition", type="select",order=k + 20.2,
 				values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
 				get = function(info) return DB.Buffs[v].Status; end,
-				set = function(info,val) DB.Buffs[v].Status = val; BuffPosUpdate(nil, nil);  end
+				set = function(info,val) DB.Buffs[v].Status = val; BuffPosUpdate();  end
 			},
 			Combat = {name="only if in combat",type="toggle",order=k + 20.3,
 			get = function(info) return DB.Buffs[v].Combat end,
-			set = function(info,val) DB.Buffs[v].Combat = val; BuffPosUpdate(nil, nil); end
+			set = function(info,val) DB.Buffs[v].Combat = val; BuffPosUpdate(); end
 			},
 			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=k + 20.5,
 					get = function(info) return DB.Buffs[v].OverrideLoc end,
-					set = function(info,val) DB.Buffs[v].OverrideLoc = val; BuffPosUpdate(nil, nil); end
+					set = function(info,val) DB.Buffs[v].OverrideLoc = val; BuffPosUpdate(); end
 			},
 			MoveAnchor = {name="Move anchor",type="execute",order=k + 20.6,width="half",func = function(info,val) module[v].anchor:Show() end},
-			ResetAnchor = {name="Reset anchor",type="execute",order=k + 20.7,width="half",func = function(info,val) DB.Buffs[v].Anchor.Moved = false; BuffPosUpdate(nil, nil); end}
+			ResetAnchor = {name="Reset anchor",type="execute",order=k + 20.7,width="half",func = function(info,val) DB.Buffs[v].Anchor.Moved = false; BuffPosUpdate(); end}
 		}
 		}
 	end
