@@ -216,7 +216,7 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["AutoSell"] = {type="group",name="Auto Sell",
+	spartan.opt.args["ModSetting"].args["AutoSell"] = {type="group",name="Auto Sell",
 		args = {
 			NotCrafting = {name="Don't Sell crafting items",type="toggle",order=1,width = "full",
 					get = function(info) return DB.AutoSell.NotCrafting end,

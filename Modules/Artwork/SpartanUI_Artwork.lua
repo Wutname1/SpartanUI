@@ -37,24 +37,47 @@ function Artwork_Core:ActionBarPlates(plate)
 		end
 		lib.windowData[frame].names = names
 		lib.windowData[frame].storage = storage
-		local parent = frame:GetParent();
-		if (storage.parent) then
-			frame:SetParent(storage.parent);
-			if storage.parent == plate then
-				frame:SetFrameStrata("LOW");
+		
+		if(frame:GetName():match("BT4Bar")) and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+			local parent = frame:GetParent();
+			if (storage.parent) then
+				frame:SetParent(storage.parent);
+				if storage.parent == plate then
+					frame:SetFrameStrata("LOW");
+				end
+			elseif (parent and parent:GetName() == plate) then
+				frame:SetParent(UIParent);
 			end
-		elseif (parent and parent:GetName() == plate) then
-			frame:SetParent(UIParent);
+		else
+			storage.parent = UIParent
 		end
 	end
+	
 end
 
 function Artwork_Core:OnInitialize()
+	if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 	Artwork_Core:CheckMiniMap();
 end
 
 function Artwork_Core:OnEnable()
 	Artwork_Core:SetupOptions();
+	
+	local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4Bar7, BT4Bar8, BT4Bar9, BT4Bar10, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
+	
+	for k,v in ipairs(FrameList) do	
+		if v then
+			v.SavePosition = function()
+				if not DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent" then
+					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = true
+					LibStub("LibWindow-1.1").windowData[v].storage.parent = UIParent
+					v:SetParent(UIParent)
+				end
+				
+				LibStub("LibWindow-1.1").SavePosition(v)
+			end
+		end
+	end
 end
 
 function Artwork_Core:CheckMiniMap()

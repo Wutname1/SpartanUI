@@ -395,9 +395,9 @@ function module:updateButtons()
 end
 
 function module:BuildOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Minimap"] = {type="group",name=L["Minimap"],
+	spartan.opt.args["ModSetting"].args["Minimap"] = {type="group",name=L["Minimap"],
 		args = {
-			NorthIndicator = {name = "Show North Indicator on Minimap", type = "toggle",order=0.9,
+			NorthIndicator = {name = "Show North Indicator", type = "toggle",order=0.1,
 				get = function(info) return DB.MiniMap.northTag end,
 				set = function(info,val) 
 					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
@@ -405,6 +405,24 @@ function module:BuildOptions()
 					if val then MinimapNorthTag:Show() else MinimapNorthTag:Hide() end
 				end,
 			},
+			minimapzoom = {name = L["MinMapHideZoom"], type="toggle",order=0.5,
+				get = function(info) return DB.MiniMap.MapZoomButtons; end,
+				set = function(info,val) DB.MiniMap.MapZoomButtons = val; module:updateButtons() end
+			},
+			OtherStyle = {
+				name="Button display mode",
+				order=0.9,
+				type="select",
+				style="dropdown",
+				width="double",
+				values = {
+					["hide"]	= "Always Hide",
+					["mouseover"]	= "Show on Mouse over",
+					["show"]	= "Always Show",
+				},
+				get = function(info) return DB.MiniMap.OtherStyle; end,
+				set = function(info,val) DB.MiniMap.OtherStyle = val; module:updateButtons() end
+			}
 			-- minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
 				-- get = function(info) return DB.MiniMap.MapButtons; end,
 				-- set = function(info,val) DB.MiniMap.MapButtons = val;  end
@@ -422,27 +440,10 @@ function module:BuildOptions()
 				-- get = function(info) return DB.MiniMap.BlizzStyle; end,
 				-- set = function(info,val) DB.MiniMap.BlizzStyle = val; end
 			-- },
-			OtherStyle = {
-				name="Display mode",
-				type="select",
-				style="dropdown",
-				width="full",
-				values = {
-					["hide"]	= "Always Hide",
-					["mouseover"]	= "Show on Mouse over",
-					["show"]	= "Always Show",
-				},
-				get = function(info) return DB.MiniMap.OtherStyle; end,
-				set = function(info,val) DB.MiniMap.OtherStyle = val; module:updateButtons() end
-			},
-			minimapzoom = {name = L["MinMapHideZoom"], type="toggle", width="full",
-				get = function(info) return DB.MiniMap.MapZoomButtons; end,
-				set = function(info,val) DB.MiniMap.MapZoomButtons = val; module:updateButtons() end
-			}
 		}
 	}
 end
 
 function module:HideOptions()
-	spartan.opt.args["General"].args["ModSetting"].args["Minimap"].disabled = true
+	spartan.opt.args["ModSetting"].args["Minimap"].disabled = true
 end

@@ -28,8 +28,8 @@ local function updateopts()
 	local disabled = true
 	if DBMod.FilmEffects.enable then disabled = false end
 	for k,v in ipairs(EffectList) do
-		spartan.opt.args["FilmEffects"].args[v .. "always"].disabled = disabled
-		spartan.opt.args["FilmEffects"].args[v .. "AFK"].disabled = disabled
+		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "always"].disabled = disabled
+		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "AFK"].disabled = disabled
 	end
 end
 
@@ -47,22 +47,32 @@ function addon:OnInitialize()
 		}
 	end
 	
-	spartan.opt.args["FilmEffects"].args["enable"] = {name=L["Film/Enabled"],type="toggle",order=1,width="full",
-		get = function(info) updateopts(); return DBMod.FilmEffects.enable end,
-		set = function(info,val)
-			if InCombatLockdown() then spartan:Print("Please leave combat first.") return end
-			DBMod.FilmEffects.enable = val; FilmEffectEvent(nil,nil,nil); updateopts();
-			end
+	spartan.opt.args["ModSetting"].args["FilmEffects"] = {
+		name = L["FilmEffects"],
+		type = "group",
+		args = {
+			enable = {
+			name=L["Film/Enabled"],
+			type="toggle",
+			order=1,
+			width="full",
+			get = function(info) updateopts(); return DBMod.FilmEffects.enable end,
+			set = function(info,val)
+				if InCombatLockdown() then spartan:Print("Please leave combat first.") return end
+				DBMod.FilmEffects.enable = val; FilmEffectEvent(nil,nil,nil); updateopts();
+				end
+			}
+		}
 	}
 	
 	
 	for k,v in ipairs(EffectList) do
-		spartan.opt.args["FilmEffects"].args[v .. "Title"] = {name=v,type="header",order=k+1,width="full"}
-		spartan.opt.args["FilmEffects"].args[v .. "always"] = {name="Always show",type="toggle",order=k + 1.2,
+		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "Title"] = {name=v,type="header",order=k+1,width="full"}
+		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "always"] = {name="Always show",type="toggle",order=k + 1.2,
 			get = function(info) return DBMod.FilmEffects.Effects[v].always end,
 			set = function(info,val) if InCombatLockdown() then spartan:Print("Please leave combat first.") return end DBMod.FilmEffects.Effects[v].always = val; FilmEffectEvent(nil,nil,nil) end
 		}
-		spartan.opt.args["FilmEffects"].args[v .. "AFK"] = {name="Show if AFK",type="toggle",order=k + 1.4,
+		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "AFK"] = {name="Show if AFK",type="toggle",order=k + 1.4,
 			get = function(info) if InCombatLockdown() then spartan:Print("Please leave combat first.") return end return DBMod.FilmEffects.Effects[v].afk end,
 			set = function(info,val) DBMod.FilmEffects.Effects[v].afk = val; end
 		}
@@ -152,10 +162,7 @@ function addon:OnEnable()
 		
 		Container.crisp:Hide()
 end
-function addon:tmp()
 
-
-end
 function addon:Update(self, elapsed)
 	DBMod.FilmEffects.animationInterval = DBMod.FilmEffects.animationInterval + elapsed
 	if (DBMod.FilmEffects.animationInterval > (0.02)) then -- 50 FPS
