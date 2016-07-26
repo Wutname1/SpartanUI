@@ -7,6 +7,15 @@ if DB.Styles.Classic.BuffLoc == nil then DB.Styles.Classic.BuffLoc = true end
 
 local InitRan = false
 function module:OnInitialize()
+	if DB.Styles.Classic.TalkingHeadUI == nil then
+		DB.Styles.Classic.TalkingHeadUI = {
+			point = "BOTTOM",
+			relPoint = "TOP",
+			x = 0,
+			y = -30,
+			scale = .8
+		}
+	end
 	if (DBMod.Artwork.Style == "Classic") then
 		module:Init();
 	else

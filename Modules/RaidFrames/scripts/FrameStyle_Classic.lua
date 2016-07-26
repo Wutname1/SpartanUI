@@ -96,12 +96,12 @@ local SpawnUnitFrame = function(self,unit)
 				health.value:Hide();
 			end
 
-			local Background = health:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(health)
-			Background:SetTexture(1, 1, 1, .08)
+			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
+			-- Background:SetAllPoints(health)
+			-- Background:SetTexture(1, 1, 1, .08)
 			
 			self.Health = health;
-			self.Health.bg = Background;
+			-- self.Health.bg = Background;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorClass = true;

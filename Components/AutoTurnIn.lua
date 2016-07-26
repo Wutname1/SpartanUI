@@ -246,7 +246,7 @@ function module:TurnInQuest(rewardIndex)
 		if (link) then
 			spartan:Print("Debug: item to loot=", link)
 		elseif (GetNumQuestChoices() == 0) then
-			spartan:Print("Debug: turning quest in, no choice required")
+			-- spartan:Print("Debug: turning quest in, no choice required")
 		end
     -- else
 		GetQuestReward(rewardIndex)

@@ -371,15 +371,15 @@ local CreatePlayerFrame = function(self,unit)
 		self:Tag(self.Level, "[level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		self.SUI_ClassIcon:SetWidth(22); self.SUI_ClassIcon:SetHeight(22);
+		self.SUI_ClassIcon:SetSize(22, 22);
 		self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-29,21);
 		
 		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
+		self.Leader:SetSize(20, 20);
 		self.Leader:SetPoint("CENTER",ring,"TOP");
 		
 		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetWidth(18); self.MasterLooter:SetHeight(18);
+		self.MasterLooter:SetSize(18, 18);
 		self.MasterLooter:SetPoint("CENTER",ring,"TOPRIGHT",-6,-6);
 		
 		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
@@ -394,24 +394,24 @@ local CreatePlayerFrame = function(self,unit)
 		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
 		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetWidth(48); self.PvP:SetHeight(48);
+		self.PvP:SetSize(48, 48);
 		self.PvP:SetPoint("CENTER",ring,"CENTER",32,-40);
 		
 		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetWidth(28); self.LFDRole:SetHeight(28);
+		self.LFDRole:SetSize(28, 28);
 		self.LFDRole:SetPoint("CENTER",ring,"CENTER",-20,-35);
 		self.LFDRole:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
 		
 		self.Resting = ring:CreateTexture(nil,"ARTWORK");
-		self.Resting:SetWidth(32); self.Resting:SetHeight(30);
+		self.Resting:SetSize(32, 30);
 		self.Resting:SetPoint("CENTER",self.SUI_ClassIcon,"CENTER");
 		
 		self.Combat = ring:CreateTexture(nil,"ARTWORK");
-		self.Combat:SetWidth(32); self.Combat:SetHeight(32);
+		self.Combat:SetSize(32, 32);
 		self.Combat:SetPoint("CENTER",self.Level,"CENTER");
 		
 		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetWidth(24); self.RaidIcon:SetHeight(24);
+		self.RaidIcon:SetSize(24, 24);
 		self.RaidIcon:SetPoint("CENTER",ring,"LEFT",-2,-3);
 		
 		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");

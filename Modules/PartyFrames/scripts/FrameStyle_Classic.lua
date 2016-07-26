@@ -182,7 +182,8 @@ local CreatePartyFrame = function(self,unit)
 		end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
-			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
+			health:SetFrameStrata("BACKGROUND");
+			health:SetFrameLevel(2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			if DBMod.PartyFrames.FrameStyle == "large" then

@@ -444,12 +444,13 @@ local MakeLargeFrame = function(self,unit,width)
 			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
 			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
 			
-			local Background = cast:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(cast)
-			Background:SetTexture(1, 1, 1, .2)
+			-- local Background = cast:CreateTexture(nil, 'BACKGROUND')
+			-- Background:SetAllPoints(cast)
+			-- Background:SetTexture(Smoothv2)
+			-- Background:SetTexture(1, 1, 1, .2)
 			
 			self.Castbar = cast;
-			self.Castbar.bg = Background;
+			-- self.Castbar.bg = Background;
 			self.Castbar.OnUpdate = OnCastbarUpdate;
 			self.Castbar.PostCastStart = PostCastStart;
 			self.Castbar.PostChannelStart = PostChannelStart;
@@ -758,7 +759,7 @@ local MakeLargeFrame = function(self,unit,width)
 			self.ClassIcons = ClassIcons
 			
 			local ClassPowerID = nil;
-			ring:SetScript("OnEvent",function()
+			items:SetScript("OnEvent",function()
 				local cur, max
 				if(unit == 'vehicle') then
 					cur = GetComboPoints('vehicle', 'target')
@@ -770,7 +771,7 @@ local MakeLargeFrame = function(self,unit,width)
 				self.ComboPoints:SetText((cur > 0 and cur) or "");
 			end);
 			
-			ring:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
+			items:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
 				ClassPowerID = nil;
 				if(classFileName == 'MONK') then
 					ClassPowerID = SPELL_POWER_CHI
@@ -784,10 +785,10 @@ local MakeLargeFrame = function(self,unit,width)
 					ClassPowerID = SPELL_POWER_ARCANE_CHARGES
 				end
 				if ClassPowerID ~= nil then 
-					ring:RegisterEvent('UNIT_DISPLAYPOWER')
-					ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-					ring:RegisterEvent('UNIT_POWER_FREQUENT')
-					ring:RegisterEvent('UNIT_MAXPOWER')
+					items:RegisterEvent('UNIT_DISPLAYPOWER')
+					items:RegisterEvent('PLAYER_ENTERING_WORLD')
+					items:RegisterEvent('UNIT_POWER_FREQUENT')
+					items:RegisterEvent('UNIT_MAXPOWER')
 				end
 			end)
 			
@@ -803,10 +804,10 @@ local MakeLargeFrame = function(self,unit,width)
 				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
 			end
 			if ClassPowerID ~= nil then 
-				ring:RegisterEvent('UNIT_DISPLAYPOWER')
-				ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-				ring:RegisterEvent('UNIT_POWER_FREQUENT')
-				ring:RegisterEvent('UNIT_MAXPOWER')
+				items:RegisterEvent('UNIT_DISPLAYPOWER')
+				items:RegisterEvent('PLAYER_ENTERING_WORLD')
+				items:RegisterEvent('UNIT_POWER_FREQUENT')
+				items:RegisterEvent('UNIT_MAXPOWER')
 			end
 		end
 	end
