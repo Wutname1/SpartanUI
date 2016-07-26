@@ -113,7 +113,6 @@ function module:IsSellable(item)
 	local NotConsumable = true
 	
 	if (not iLevel) or (iLevel < DB.AutoSell.MaxILVL) then ilvlsellable = true end
-	
 	--Crafting Items
 	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods")
 	or (itemType == "Miscellaneous" and itemSubType == "Reagent"))
@@ -129,7 +128,8 @@ function module:IsSellable(item)
 	end
 	
 	--Consumable
-	if DB.AutoSell.NotConsumables and itemType == "Consumable" then
+	--Tome of the Tranquil Mind is consumable but is identified as Other.
+	if DB.AutoSell.NotConsumables and (itemType == "Consumable" or item == 141446) then 
 		NotConsumable = false
 	end
 	
@@ -146,7 +146,9 @@ function module:IsSellable(item)
 	and NotConsumable
 	and itemType ~= "Quest"
 	and itemType ~= "Container"
-	then return true end
+	then
+		return true
+	end
 	
 	return false
 end

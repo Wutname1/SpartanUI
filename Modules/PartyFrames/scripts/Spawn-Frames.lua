@@ -49,9 +49,10 @@ function PartyFrames:OnEnable()
 		PartyFrames.party.mover:EnableMouse(true);
 		PartyFrames.party.mover:SetFrameStrata("LOW");
 		
-		PartyFrames.party.bg = PartyFrames.party.mover:CreateTexture(nil,"BACKGROUND");
-		PartyFrames.party.bg:SetAllPoints(PartyFrames.party.mover);
-		PartyFrames.party.bg:SetTexture(1,1,1,0.5);
+		PartyFrames.party.mover.bg = PartyFrames.party.mover:CreateTexture(nil,"BACKGROUND");
+		PartyFrames.party.mover.bg:SetAllPoints(PartyFrames.party.mover);
+		PartyFrames.party.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]]);
+		PartyFrames.party.mover.bg:SetVertexColor(1,1,1,0.5);
 		
 		PartyFrames.party.mover:SetScript("OnEvent",function()
 			PartyFrames.locked = 1;

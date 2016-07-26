@@ -32,17 +32,22 @@ function RaidFrames:UpdateRaid(event,...)
 	
 	if DBMod.RaidFrames.showRaid and IsInRaid() then
 		spartan.RaidFrames:Show();
-	else
-		spartan.RaidFrames:Hide();
+	elseif DBMod.RaidFrames.showParty and inParty then
+		spartan.RaidFrames:Show()
+	elseif DBMod.RaidFrames.showSolo and not inParty and not IsInRaid() then
+		spartan.RaidFrames:Show()
+	elseif spartan.RaidFrames:IsShown() then
+		spartan.RaidFrames:Hide()
 	end
+	
 	RaidFrames:UpdateRaidPosition()
 	
 	spartan.RaidFrames:SetAttribute('showRaid',DBMod.RaidFrames.showRaid);
 	spartan.RaidFrames:SetAttribute('showParty',DBMod.RaidFrames.showParty);
 	spartan.RaidFrames:SetAttribute('showPlayer',DBMod.RaidFrames.showPlayer);
 	spartan.RaidFrames:SetAttribute('showSolo',DBMod.RaidFrames.showSolo);
-	spartan.RaidFrames:SetAttribute('groupBy',DBMod.RaidFrames.mode);
 	
+	spartan.RaidFrames:SetAttribute('groupBy',DBMod.RaidFrames.mode);
 	spartan.RaidFrames:SetAttribute('maxColumns', DBMod.RaidFrames.maxColumns);
 	spartan.RaidFrames:SetAttribute('unitsPerColumn', DBMod.RaidFrames.unitsPerColumn);
 	spartan.RaidFrames:SetAttribute('columnSpacing', DBMod.RaidFrames.columnSpacing);
@@ -110,7 +115,8 @@ function RaidFrames:OnEnable()
 	
 	spartan.RaidFrames.mover.bg = spartan.RaidFrames.mover:CreateTexture(nil,"BACKGROUND");
 	spartan.RaidFrames.mover.bg:SetAllPoints(spartan.RaidFrames.mover);
-	spartan.RaidFrames.mover.bg:SetTexture(1,1,1,0.5);
+	spartan.RaidFrames.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]]);
+	spartan.RaidFrames.mover.bg:SetVertexColor(1,1,1,0.5);
 	
 	spartan.RaidFrames.mover:SetScript("OnEvent",function()
 		RaidFrames.locked = 1;
