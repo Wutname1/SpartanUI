@@ -410,13 +410,6 @@ local MakeSmallFrame = function(self,unit)
 end
 
 local MakeLargeFrame = function(self,unit,width)
-	self.menu = menu;
-	self:RegisterForClicks("anyup");
-	self:SetAttribute("*type2", "menu");
-	self:EnableMouse(enable)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
 	if width then
 		self:SetSize(width, 40);
 	else
@@ -818,65 +811,26 @@ local MakeLargeFrame = function(self,unit,width)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self.colors = module.colors;
-	
-	return ((unit == "player" and MakeLargeFrame(self,unit))
+	self = ((unit == "player" and MakeLargeFrame(self,unit))
 	or (unit == "target" and MakeLargeFrame(self,unit))
 	or MakeSmallFrame(self,unit));
+	self = PlayerFrames:MakeMovable(self,unit)
+	return self
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	self:HookScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			PartyFrames.party.mover:Show();
-			DBMod.PartyFrames.moved = true;
-			PartyFrames.party:SetMovable(true);
-			PartyFrames.party:StartMoving();
-		end
-	end);
-	self:HookScript("OnMouseUp",function(self,button)
-		PartyFrames.party.mover:Hide();
-		PartyFrames.party:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.PartyFrames.Anchors[k] = v
-		end
-	end);
-	
 	if DB.Styles.Minimal.PartyFramesSize ~= nil and DB.Styles.Minimal.PartyFramesSize == "small" then
-		return MakeSmallFrame(self,unit)
+		self = MakeSmallFrame(self,unit)
 	else
-		return MakeLargeFrame(self,unit,150)
+		self = MakeLargeFrame(self,unit,150)
 	end
+	self = PartyFrames:MakeMovable(self)
+	return self
 end
 
 local CreateUnitFrameRaid = function(self,unit)
 	self = MakeSmallFrame(self,unit)
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	self:SetClampedToScreen(true)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.RaidFrames.mover:Show();
-			DBMod.RaidFrames.moved = true;
-			spartan.RaidFrames:SetMovable(true);
-			spartan.RaidFrames:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		spartan.RaidFrames.mover:Hide();
-		spartan.RaidFrames:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.RaidFrames.Anchors[k] = v
-		end
-	end);
-	
+	self = spartan:GetModule("RaidFrames"):MakeMovable()
 	return self
 end
 

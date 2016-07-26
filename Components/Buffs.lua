@@ -117,7 +117,8 @@ function module:OnEnable()
 		anchor:EnableMouse(enable)
 		anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
 		anchor.bg:SetAllPoints(anchor)
-		anchor.bg:SetTexture(0,0,0)
+		anchor.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]]);
+		anchor.bg:SetAlpha(0.9);
 		anchor.lbl = anchor:CreateFontString(nil,"OVERLAY", "SUI_Font10")
 		anchor.lbl:SetText("Anchor for Rule " .. k);
 		anchor.lbl:SetAllPoints(anchor)

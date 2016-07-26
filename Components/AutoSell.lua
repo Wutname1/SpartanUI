@@ -114,7 +114,7 @@ function module:IsSellable(item)
 	
 	if (not iLevel) or (iLevel < DB.AutoSell.MaxILVL) then ilvlsellable = true end
 	--Crafting Items
-	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods")
+	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods" or itemType == "Tradeskill")
 	or (itemType == "Miscellaneous" and itemSubType == "Reagent"))
 	then
 		if not DB.AutoSell.NotCrafting then Craftablesellable = true end

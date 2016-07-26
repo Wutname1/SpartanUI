@@ -63,7 +63,8 @@ function module:OnEnable()
 		Minimap.mover:SetPoint("BOTTOMRIGHT",Minimap,"BOTTOMRIGHT");
 		Minimap.mover.bg = Minimap.mover:CreateTexture(nil,"BACKGROUND");
 		Minimap.mover.bg:SetAllPoints(Minimap.mover);
-		Minimap.mover.bg:SetTexture(1,1,1,0.5);
+		Minimap.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]]);
+		Minimap.mover.bg:SetVertexColor(1,1,1,0.8);
 		Minimap.mover:EnableMouse(true);
 		Minimap.mover:Hide()
 	

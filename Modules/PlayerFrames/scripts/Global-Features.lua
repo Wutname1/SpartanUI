@@ -156,3 +156,12 @@ function PlayerFrames:UpdatePosition()
 	end
 	-- end
 end
+
+function PlayerFrames:MakeMovable(self,unit)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	return self
+end

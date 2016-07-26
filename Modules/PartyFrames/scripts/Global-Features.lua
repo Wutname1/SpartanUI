@@ -87,3 +87,31 @@ function PartyFrames:PostUpdateAura(self,unit)
 		self:Hide();
 	end
 end
+
+function PartyFrames:MakeMovable(self)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			spartan.PartyFrames.mover:Show();
+			DBMod.PartyFrames.moved = true;
+			spartan.PartyFrames:SetMovable(true);
+			spartan.PartyFrames:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		spartan.PartyFrames.mover:Hide();
+		spartan.PartyFrames:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.PartyFrames:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.PartyFrames.Anchors[k] = v
+		end
+	end);
+	
+	return self
+end

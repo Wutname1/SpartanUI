@@ -1400,29 +1400,23 @@ local CreateRaidFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self.menu = menu;
-	
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
 		self:SetParent(UIParent);
 	else
 		self:SetParent(SUI_FramesAnchor);
 	end
 	
-	self:SetFrameStrata("BACKGROUND");
-	self:SetFrameLevel(1);
-	self:RegisterForClicks("anyup");
-	self:SetAttribute("*type2", "menu");
-	self.colors = module.colors;
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
-	return ((unit == "target" and CreateTargetFrame(self,unit))
+	self = ((unit == "target" and CreateTargetFrame(self,unit))
 	or (unit == "targettarget" and CreateToTFrame(self,unit))
 	or (unit == "player" and CreatePlayerFrame(self,unit))
 	or (unit == "focus" and CreateBossFrame(self,unit))
 	or (unit == "focustarget" and CreateToTFrame(self,unit))
 	or (unit == "pet" and CreatePetFrame(self,unit))
 	or CreateBossFrame(self,unit));
+	
+	self = PlayerFrames:MakeMovable(self,unit)
+	
+	return self
 end
 
 local CreatespecFrames = function(self,unit)
@@ -1444,58 +1438,14 @@ local CreatespecFrames = function(self,unit)
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	self:SetScript("OnEnter", UnitFrame_OnEnter)
-	self:SetScript("OnLeave", UnitFrame_OnLeave)
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			PartyFrames.party.mover:Show();
-			DBMod.PartyFrames.moved = true;
-			PartyFrames.party:SetMovable(true);
-			PartyFrames.party:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		PartyFrames.party.mover:Hide();
-		PartyFrames.party:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.PartyFrames.Anchors[k] = v
-		end
-	end);
-	
-	return CreateRaidFrame(self,unit)
+	self = CreateRaidFrame(self,unit)
+	self = PartyFrames:MakeMovable(self)
+	return self
 end
 
 local CreateUnitFrameRaid = function(self,unit)
 	self = CreateRaidFrame(self,unit)
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	self:SetClampedToScreen(true)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.RaidFrames.mover:Show();
-			DBMod.RaidFrames.moved = true;
-			spartan.RaidFrames:SetMovable(true);
-			spartan.RaidFrames:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		spartan.RaidFrames.mover:Hide();
-		spartan.RaidFrames:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.RaidFrames.Anchors[k] = v
-		end
-	end);
-	
+	self = spartan:GetModule("RaidFrames"):MakeMovable(self)
 	return self
 end
 

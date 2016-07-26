@@ -104,7 +104,7 @@ function PlayerFrames:SUI_PlayerFrames_Plain()
 	end
 end
 
-function PlayerFrames:MakeMovable(frame, framename)
+function PlayerFrames:AddMover(frame, framename)
 	if frame == nil then
 		spartan:Err("PlayerFrames", DBMod.PlayerFrames.Style .. " did not spawn " .. framename)
 	else
@@ -204,10 +204,10 @@ function PlayerFrames:OnEnable()
 	if DB.Styles[DBMod.PlayerFrames.Style].Movable.PlayerFrames == true then 
 		local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 		for a,b in pairs(FramesList) do
-			PlayerFrames:MakeMovable(PlayerFrames[b], b)
+			PlayerFrames:AddMover(PlayerFrames[b], b)
 		end
 		if DBMod.PlayerFrames.BossFrame.display then
-			PlayerFrames:MakeMovable(PlayerFrames.boss[1], "boss")
+			PlayerFrames:AddMover(PlayerFrames.boss[1], "boss")
 			for i = 2, MAX_BOSS_FRAMES do
 				if PlayerFrames.boss[i] ~= nil then
 					PlayerFrames:BossMoveScripts(PlayerFrames.boss[i])

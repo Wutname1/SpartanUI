@@ -87,3 +87,31 @@ function RaidFrames:UpdateText()
 		if unit then unit:TextUpdate(); end
 	end
 end
+
+function RaidFrames:MakeMovable(self)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	
+	self:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			spartan.RaidFrames.mover:Show();
+			DBMod.RaidFrames.moved = true;
+			spartan.RaidFrames:SetMovable(true);
+			spartan.RaidFrames:StartMoving();
+		end
+	end);
+	self:SetScript("OnMouseUp",function(self,button)
+		spartan.RaidFrames.mover:Hide();
+		spartan.RaidFrames:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.RaidFrames.Anchors[k] = v
+		end
+	end);
+	
+	return self
+end
