@@ -6,12 +6,11 @@ local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="f
 function PlayerFrames:SUI_PlayerFrames_Classic()
 	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Classic");
 
-
 	for a,b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
 		if b == "player" then PlayerFrames:SetupExtras() end
 	end
-
+	
 	PlayerFrames:PositionFrame_Classic()
 
 	if DBMod.PlayerFrames.BossFrame.display == true then

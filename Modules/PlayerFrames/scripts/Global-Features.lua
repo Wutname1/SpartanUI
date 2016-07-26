@@ -136,6 +136,16 @@ function PlayerFrames:MakeMovable(self,unit)
 	self:RegisterForClicks("AnyDown");
 	self:EnableMouse(enable)
 	self:SetClampedToScreen(true)
+	
+	if self.artwork then
+		self.artwork:SetScript("OnEnter", function()
+			UnitFrame_OnEnter(self, unit)
+		end);
+		self.artwork:SetScript("OnLeave", function()
+			UnitFrame_OnLeave(self, unit)
+		end);
+	end
+	
 	self:SetScript("OnEnter", UnitFrame_OnEnter);
 	self:SetScript("OnLeave", UnitFrame_OnLeave);
 	return self

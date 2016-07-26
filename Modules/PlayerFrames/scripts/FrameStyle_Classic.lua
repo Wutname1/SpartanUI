@@ -214,19 +214,18 @@ local CreatePlayerFrame = function(self,unit)
 	do -- setup base artwork
 		local artwork = CreateFrame("Frame",nil,self);
 		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(1); artwork:SetAllPoints(self);
+		artwork:SetFrameLevel(1);
+		artwork:SetAllPoints(self);
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
 		artwork.bg:SetPoint("CENTER");
 		artwork.bg:SetTexture(base_plate1);
 		if unit == "target" then artwork.bg:SetTexCoord(1,0,0,1); end
+		self.artwork = artwork
 		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(64, 64);
 		self.Portrait:SetPoint("CENTER",self,"CENTER",80,3);
-		
-		--if unit == "player" then  end
-		--if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -526,6 +525,7 @@ local CreateTargetFrame = function(self,unit)
 		artwork.bg:SetPoint("CENTER");
 		artwork.bg:SetTexture(base_plate1);
 		artwork.bg:SetTexCoord(1,0,0,1);
+		self.artwork = artwork
 		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(64, 64);
@@ -971,6 +971,7 @@ local CreateToTFrame = function(self,unit)
 			artwork.bg:SetPoint("CENTER"); artwork.bg:SetTexture(base_plate3);
 			artwork.bg:SetSize(256, 85);
 			artwork.bg:SetTexCoord(1,0,0,85/128);
+			self.artwork = artwork
 			
 			self.Portrait = CreatePortrait(self);
 			self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
@@ -1136,7 +1137,7 @@ local CreateToTFrame = function(self,unit)
 	end
 	elseif DBMod.PlayerFrames.targettarget.style == "medium" then
 	do -- medium
-		self:SetWidth(124); self:SetHeight(55);
+		self:SetSize(124, 55);
 		do -- setup base artwork
 			self.artwork = CreateFrame("Frame",nil,self);
 			self.artwork:SetFrameStrata("BACKGROUND");
@@ -1146,6 +1147,7 @@ local CreateToTFrame = function(self,unit)
 			self.artwork.bg:SetPoint("CENTER"); self.artwork.bg:SetTexture(base_plate3);
 			self.artwork.bg:SetSize(170, 80);
 			self.artwork.bg:SetTexCoord(.68,0,0,0.6640625);
+			self.artwork = artwork
 			
 			self.Threat = CreateFrame("Frame",nil,self);
 			self.Threat.Override = threat;
@@ -1298,6 +1300,7 @@ local CreateToTFrame = function(self,unit)
 			self.artwork.bg:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT"); self.artwork.bg:SetTexture(base_plate4);
 			self.artwork.bg:SetSize(200, 65);
 			self.artwork.bg:SetTexCoord(.24,1,0,1);
+			self.artwork = artwork
 			
 			self.Threat = CreateFrame("Frame",nil,self);
 			self.Threat.Override = threat;
@@ -1429,6 +1432,7 @@ local CreateFocusFrame = function(self,unit)
 		artwork.bg:SetWidth(180); artwork.bg:SetHeight(60);
 		if unit == "focus" then artwork.bg:SetTexCoord(0, 1, 0, 0.4) end
 		if unit == "focustarget" then artwork.bg:SetTexCoord(0, 1, .5, .9) end
+		self.artwork = artwork
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -1585,6 +1589,7 @@ local CreateBossFrame = function(self,unit)
 		artwork.bg:SetTexture(base_plate1);
 		artwork.bg:SetTexCoord(.57,.2,.2,1);
 		artwork.bg:SetAllPoints(self);
+		self.artwork = artwork
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -1728,27 +1733,6 @@ local CreateBossFrame = function(self,unit)
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
-	
-	--Make Boss Frames Movable
-	-- self:EnableMouse(enable)
-	-- self:SetScript("OnMouseDown",function(self,button)
-		-- if button == "LeftButton" and IsAltKeyDown() then
-			-- addon.boss.mover:Show();
-			-- DBMod.PlayerFrames.BossFrame.movement.moved = true;
-			-- SUI_Boss1:SetMovable(true);
-			-- SUI_Boss1:StartMoving();
-		-- end
-	-- end);
-	-- self:SetScript("OnMouseUp",function(self,button)
-		-- addon.boss.mover:Hide();
-		-- SUI_Boss1:StopMovingOrSizing();
-		-- DBMod.PlayerFrames.BossFrame.movement.point,
-		-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-		-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-		-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
-		-- DBMod.PlayerFrames.BossFrame.movement.yOffset = SUI_Boss1:GetPoint(SUI_Boss1:GetNumPoints())
-		-- addon:UpdateBossFramePosition();
-	-- end);
 	
 	return self;
 end

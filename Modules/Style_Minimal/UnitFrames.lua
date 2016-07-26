@@ -244,7 +244,8 @@ local MakeSmallFrame = function(self,unit)
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(2); self.artwork:SetAllPoints(self);
+		self.artwork:SetFrameLevel(2);
+		self.artwork:SetAllPoints(self);
 		
 		-- if DBMod.PartyFrames.Portrait then
 			-- self.Portrait = CreatePortrait(self);
@@ -419,7 +420,8 @@ local MakeLargeFrame = function(self,unit,width)
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(2); self.artwork:SetAllPoints(self);
+		self.artwork:SetFrameLevel(2);
+		self.artwork:SetAllPoints(self);
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
