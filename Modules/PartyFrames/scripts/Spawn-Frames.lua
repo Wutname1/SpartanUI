@@ -55,7 +55,7 @@ function PartyFrames:OnEnable()
 		pf.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]]);
 		pf.mover.bg:SetVertexColor(1,1,1,0.5);
 		
-		pf.mover:SetScript("OnEvent",function()
+		pf.mover:SetScript("OnEvent",function(self, event, ...)
 			PartyFrames.locked = 1;
 			self:Hide();
 		end);
