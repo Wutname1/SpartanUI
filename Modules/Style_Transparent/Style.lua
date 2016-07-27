@@ -5,6 +5,7 @@ local module = spartan:GetModule("Style_Transparent");
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
+	--Enable the in the Core options screen
 	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["Transparent"].disabled = false
 	spartan.opt.args["General"].args["style"].args["Artwork"].args["Transparent"].disabled = false
 	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Transparent"].disabled = false

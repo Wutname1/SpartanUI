@@ -1,17 +1,16 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local PlayerFrames = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
+local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 
 function PlayerFrames:SUI_PlayerFrames_Classic()
 	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Classic");
-
-	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 
 	for a,b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
 		if b == "player" then PlayerFrames:SetupExtras() end
 	end
-
+	
 	PlayerFrames:PositionFrame_Classic()
 
 	if DBMod.PlayerFrames.BossFrame.display == true then
@@ -59,52 +58,7 @@ function PlayerFrames:PositionFrame_Classic(b)
 	if b == "focustarget" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", -35, 0); end
 end
 
-function PlayerFrames:SUI_PlayerFrames_Plain()
-	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Plain");
-	
-	PlayerFrames.player = SpartanoUF:Spawn("player","SUI_PlayerFrame");
-	if (SUI_FramesAnchor:GetParent() == UIParent) then
-		PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-80,150);
-	else
-		PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-	end
-	
-	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget"}
-
-	for a,b in pairs(FramesList) do
-		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
-	end
-	do -- Position Static Frames
-		if (SUI_FramesAnchor:GetParent() == UIParent) then
-			PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-10,12);
-			
-			PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
-			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
-			else
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",19,15);
-			end
-			PlayerFrames.player:SetScale(DB.scale);
-			for a,b in pairs(FramesList) do
-				_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
-			end
-		else
-			PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-			PlayerFrames.pet:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-370,12);
-			PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
-			if DBMod.PlayerFrames.targettarget.style == "small" then
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15);
-			else
-				PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12);
-			end
-		end
-		
-		PlayerFrames.focustarget:SetPoint("TOPLEFT", "SUI_focusFrame", "TOPRIGHT", -51, 0);
-	end
-end
-
-function PlayerFrames:MakeMovable(frame, framename)
+function PlayerFrames:AddMover(frame, framename)
 	if frame == nil then
 		spartan:Err("PlayerFrames", DBMod.PlayerFrames.Style .. " did not spawn " .. framename)
 	else
@@ -143,7 +97,8 @@ function PlayerFrames:MakeMovable(frame, framename)
 		
 		frame.mover.bg = frame.mover:CreateTexture(nil,"BACKGROUND");
 		frame.mover.bg:SetAllPoints(frame.mover);
-		frame.mover.bg:SetTexture(1,1,1,0.5);
+		frame.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]]);
+		frame.mover.bg:SetVertexColor(1,1,1,0.5);
 		
 		frame.mover:SetScript("OnEvent",function()
 			PlayerFrames.locked = 1;
@@ -194,8 +149,6 @@ function PlayerFrames:OnEnable()
 	PlayerFrames.boss = {}
 	if (DBMod.PlayerFrames.Style == "Classic") then
 		PlayerFrames:SUI_PlayerFrames_Classic();
-	elseif (DBMod.PlayerFrames.Style == "plain") then
-		PlayerFrames:SUI_PlayerFrames_Plain();
 	else
 		spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PlayerFrames();
 	end
@@ -203,10 +156,10 @@ function PlayerFrames:OnEnable()
 	if DB.Styles[DBMod.PlayerFrames.Style].Movable.PlayerFrames == true then 
 		local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 		for a,b in pairs(FramesList) do
-			PlayerFrames:MakeMovable(PlayerFrames[b], b)
+			PlayerFrames:AddMover(PlayerFrames[b], b)
 		end
 		if DBMod.PlayerFrames.BossFrame.display then
-			PlayerFrames:MakeMovable(PlayerFrames.boss[1], "boss")
+			PlayerFrames:AddMover(PlayerFrames.boss[1], "boss")
 			for i = 2, MAX_BOSS_FRAMES do
 				if PlayerFrames.boss[i] ~= nil then
 					PlayerFrames:BossMoveScripts(PlayerFrames.boss[i])

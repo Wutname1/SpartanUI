@@ -11,6 +11,8 @@ local base_ring3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring3]] 
 local circle = [[Interface\AddOns\SpartanUI_PlayerFrames\media\circle.tga]]
 
 local colors = setmetatable({},{__index = SpartanoUF.colors});
+local classname, classFileName = UnitClass("player")
+
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 do -- setup custom colors that we want to use
 	colors.health 		= {0,1,50/255};			-- the color of health bars
@@ -212,19 +214,18 @@ local CreatePlayerFrame = function(self,unit)
 	do -- setup base artwork
 		local artwork = CreateFrame("Frame",nil,self);
 		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(1); artwork:SetAllPoints(self);
+		artwork:SetFrameLevel(1);
+		artwork:SetAllPoints(self);
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
 		artwork.bg:SetPoint("CENTER");
 		artwork.bg:SetTexture(base_plate1);
 		if unit == "target" then artwork.bg:SetTexCoord(1,0,0,1); end
+		self.artwork = artwork
 		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(64, 64);
 		self.Portrait:SetPoint("CENTER",self,"CENTER",80,3);
-		
-		--if unit == "player" then  end
-		--if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -369,15 +370,15 @@ local CreatePlayerFrame = function(self,unit)
 		self:Tag(self.Level, "[level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		self.SUI_ClassIcon:SetWidth(22); self.SUI_ClassIcon:SetHeight(22);
+		self.SUI_ClassIcon:SetSize(22, 22);
 		self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-29,21);
 		
 		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
+		self.Leader:SetSize(20, 20);
 		self.Leader:SetPoint("CENTER",ring,"TOP");
 		
 		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetWidth(18); self.MasterLooter:SetHeight(18);
+		self.MasterLooter:SetSize(18, 18);
 		self.MasterLooter:SetPoint("CENTER",ring,"TOPRIGHT",-6,-6);
 		
 		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
@@ -392,30 +393,100 @@ local CreatePlayerFrame = function(self,unit)
 		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
 		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetWidth(48); self.PvP:SetHeight(48);
+		self.PvP:SetSize(48, 48);
 		self.PvP:SetPoint("CENTER",ring,"CENTER",32,-40);
 		
 		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetWidth(28); self.LFDRole:SetHeight(28);
+		self.LFDRole:SetSize(28, 28);
 		self.LFDRole:SetPoint("CENTER",ring,"CENTER",-20,-35);
 		self.LFDRole:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
 		
 		self.Resting = ring:CreateTexture(nil,"ARTWORK");
-		self.Resting:SetWidth(32); self.Resting:SetHeight(30);
+		self.Resting:SetSize(32, 30);
 		self.Resting:SetPoint("CENTER",self.SUI_ClassIcon,"CENTER");
 		
 		self.Combat = ring:CreateTexture(nil,"ARTWORK");
-		self.Combat:SetWidth(32); self.Combat:SetHeight(32);
+		self.Combat:SetSize(32, 32);
 		self.Combat:SetPoint("CENTER",self.Level,"CENTER");
 		
 		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetWidth(24); self.RaidIcon:SetHeight(24);
+		self.RaidIcon:SetSize(24, 24);
 		self.RaidIcon:SetPoint("CENTER",ring,"LEFT",-2,-3);
 		
 		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
+		
+		self.ComboPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
+		self.ComboPoints:SetPoint("BOTTOMLEFT",self.Name,"TOPLEFT",12,-2);
+		
+		local ClassIcons = {}
+		for i = 1, 6 do
+			local Icon = self:CreateTexture(nil, "OVERLAY")
+			Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+			
+			if (i == 1) then
+				Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
+			else 
+				Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
+			end
+			
+			ClassIcons[i] = Icon
+		end
+		self.ClassIcons = ClassIcons
+		
+		local ClassPowerID = nil;
+		ring:SetScript("OnEvent",function()
+			local cur, max
+			if(unit == 'vehicle') then
+				cur = GetComboPoints('vehicle', 'target')
+				max = MAX_COMBO_POINTS
+			else
+				cur = UnitPower('player', ClassPowerID)
+				max = UnitPowerMax('player', ClassPowerID)
+			end
+			self.ComboPoints:SetText((cur > 0 and cur) or "");
+		end);
+		
+		ring:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
+			ClassPowerID = nil;
+			if(classFileName == 'MONK') then
+				ClassPowerID = SPELL_POWER_CHI
+			elseif(classFileName == 'PALADIN') then
+				ClassPowerID = SPELL_POWER_HOLY_POWER
+			elseif(classFileName == 'WARLOCK') then
+				ClassPowerID = SPELL_POWER_SOUL_SHARDS
+			elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+				ClassPowerID = SPELL_POWER_COMBO_POINTS
+			elseif(classFileName == 'MAGE') then
+				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+			end
+			if ClassPowerID ~= nil then 
+				ring:RegisterEvent('UNIT_DISPLAYPOWER')
+				ring:RegisterEvent('PLAYER_ENTERING_WORLD')
+				ring:RegisterEvent('UNIT_POWER_FREQUENT')
+				ring:RegisterEvent('UNIT_MAXPOWER')
+			end
+		end)
+		
+		if(classFileName == 'MONK') then
+			ClassPowerID = SPELL_POWER_CHI
+		elseif(classFileName == 'PALADIN') then
+			ClassPowerID = SPELL_POWER_HOLY_POWER
+		elseif(classFileName == 'WARLOCK') then
+			ClassPowerID = SPELL_POWER_SOUL_SHARDS
+		elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+			ClassPowerID = SPELL_POWER_COMBO_POINTS
+		elseif(classFileName == 'MAGE') then
+			ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+		end
+		if ClassPowerID ~= nil then 
+			ring:RegisterEvent('UNIT_DISPLAYPOWER')
+			ring:RegisterEvent('PLAYER_ENTERING_WORLD')
+			ring:RegisterEvent('UNIT_POWER_FREQUENT')
+			ring:RegisterEvent('UNIT_MAXPOWER')
+		end
 	end
 	do -- setup buffs and debuffs
 		self.Debuffs = CreateFrame("Frame",nil,self);
@@ -454,6 +525,7 @@ local CreateTargetFrame = function(self,unit)
 		artwork.bg:SetPoint("CENTER");
 		artwork.bg:SetTexture(base_plate1);
 		artwork.bg:SetTexCoord(1,0,0,1);
+		self.artwork = artwork
 		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(64, 64);
@@ -632,22 +704,6 @@ local CreateTargetFrame = function(self,unit)
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
-		
-		self.CPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.CPoints:SetPoint("TOPLEFT",ring,"BOTTOMRIGHT",8,-4);
-		for i = 1, 5 do
-			self.CPoints[i] = ring:CreateTexture(nil,"OVERLAY");
-			self.CPoints[i]:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			if (i == 1) then self.CPoints[1]:SetPoint("LEFT",self.CPoints,"RIGHT",1,-1); else 
-				self.CPoints[i]:SetPoint("LEFT",self.CPoints[i-1],"RIGHT",-2,0);
-			end
-		end
-		ring:SetScript("OnUpdate",function()
-			if self.CPoints then
-				local cp = GetComboPoints("player","target");
-				self.CPoints:SetText( (cp > 0 and cp) or "");
-			end
-		end);
 	end
 	do -- setup buffs and debuffs
 		self.Auras = CreateFrame("Frame",nil,self);
@@ -915,6 +971,7 @@ local CreateToTFrame = function(self,unit)
 			artwork.bg:SetPoint("CENTER"); artwork.bg:SetTexture(base_plate3);
 			artwork.bg:SetSize(256, 85);
 			artwork.bg:SetTexCoord(1,0,0,85/128);
+			self.artwork = artwork
 			
 			self.Portrait = CreatePortrait(self);
 			self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
@@ -1080,7 +1137,7 @@ local CreateToTFrame = function(self,unit)
 	end
 	elseif DBMod.PlayerFrames.targettarget.style == "medium" then
 	do -- medium
-		self:SetWidth(124); self:SetHeight(55);
+		self:SetSize(124, 55);
 		do -- setup base artwork
 			self.artwork = CreateFrame("Frame",nil,self);
 			self.artwork:SetFrameStrata("BACKGROUND");
@@ -1090,6 +1147,7 @@ local CreateToTFrame = function(self,unit)
 			self.artwork.bg:SetPoint("CENTER"); self.artwork.bg:SetTexture(base_plate3);
 			self.artwork.bg:SetSize(170, 80);
 			self.artwork.bg:SetTexCoord(.68,0,0,0.6640625);
+			self.artwork = artwork
 			
 			self.Threat = CreateFrame("Frame",nil,self);
 			self.Threat.Override = threat;
@@ -1242,6 +1300,7 @@ local CreateToTFrame = function(self,unit)
 			self.artwork.bg:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT"); self.artwork.bg:SetTexture(base_plate4);
 			self.artwork.bg:SetSize(200, 65);
 			self.artwork.bg:SetTexCoord(.24,1,0,1);
+			self.artwork = artwork
 			
 			self.Threat = CreateFrame("Frame",nil,self);
 			self.Threat.Override = threat;
@@ -1373,6 +1432,7 @@ local CreateFocusFrame = function(self,unit)
 		artwork.bg:SetWidth(180); artwork.bg:SetHeight(60);
 		if unit == "focus" then artwork.bg:SetTexCoord(0, 1, 0, 0.4) end
 		if unit == "focustarget" then artwork.bg:SetTexCoord(0, 1, .5, .9) end
+		self.artwork = artwork
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -1529,6 +1589,7 @@ local CreateBossFrame = function(self,unit)
 		artwork.bg:SetTexture(base_plate1);
 		artwork.bg:SetTexCoord(.57,.2,.2,1);
 		artwork.bg:SetAllPoints(self);
+		self.artwork = artwork
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -1673,54 +1734,27 @@ local CreateBossFrame = function(self,unit)
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	
-	--Make Boss Frames Movable
-	-- self:EnableMouse(enable)
-	-- self:SetScript("OnMouseDown",function(self,button)
-		-- if button == "LeftButton" and IsAltKeyDown() then
-			-- addon.boss.mover:Show();
-			-- DBMod.PlayerFrames.BossFrame.movement.moved = true;
-			-- SUI_Boss1:SetMovable(true);
-			-- SUI_Boss1:StartMoving();
-		-- end
-	-- end);
-	-- self:SetScript("OnMouseUp",function(self,button)
-		-- addon.boss.mover:Hide();
-		-- SUI_Boss1:StopMovingOrSizing();
-		-- DBMod.PlayerFrames.BossFrame.movement.point,
-		-- DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-		-- DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-		-- DBMod.PlayerFrames.BossFrame.movement.xOffset,
-		-- DBMod.PlayerFrames.BossFrame.movement.yOffset = SUI_Boss1:GetPoint(SUI_Boss1:GetNumPoints())
-		-- addon:UpdateBossFramePosition();
-	-- end);
-	
 	return self;
 end
 
 local CreateUnitFrame = function(self,unit)
-	self.menu = menu;
-	
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
 		self:SetParent(UIParent);
 	else
 		self:SetParent(SUI_FramesAnchor);
 	end
 	
-	self:SetFrameStrata("BACKGROUND");
-	self:SetFrameLevel(1);
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	self:RegisterForClicks("anyup");
-	-- self:SetAttribute("*type2", "menu");
-	self.colors = addon.colors;
-	
-	return ((unit == "target" and CreateTargetFrame(self,unit))
+	self = ((unit == "target" and CreateTargetFrame(self,unit))
 	or (unit == "targettarget" and CreateToTFrame(self,unit))
 	or (unit == "player" and CreatePlayerFrame(self,unit))
 	or (unit == "focus" and CreateFocusFrame(self,unit))
 	or (unit == "focustarget" and CreateFocusFrame(self,unit))
 	or (unit == "pet" and CreatePetFrame(self,unit))
 	or CreateBossFrame(self,unit));
+	
+	self = addon:MakeMovable(self,unit)
+	
+	return self
 end
 
 function addon:UpdateAltBarPositions()
@@ -1750,15 +1784,15 @@ function addon:UpdateAltBarPositions()
 	-- end
 	
 	--Paladin Holy Power
-	-- PaladinPowerBar:ClearAllPoints();
+	-- PaladinPowerBarFrame:ClearAllPoints();
 	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
-		-- PaladinPowerBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
+		-- PaladinPowerBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
 		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
 		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
 		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
-		-- PaladinPowerBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,12);
+		-- PaladinPowerBarFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,12);
 	-- end
 	
 	--Priest Power Frame
@@ -1841,7 +1875,6 @@ end
 function addon:SetupExtras()
 
 do -- relocate the AlternatePowerBar
-	local classname, classFileName = UnitClass("player")
 	if classFileName == "MONK" then
 		--Align and shrink to fit under CHI, not movable
 		PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");

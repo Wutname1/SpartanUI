@@ -28,6 +28,25 @@ function Artwork_Core:round(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;
 
+function Artwork_Core:MoveTalkingHeadUI()
+	local THUDB = DB.Styles[DBMod.Artwork.Style].TalkingHeadUI
+	local MoveTalkingHead = CreateFrame("Frame")
+	MoveTalkingHead:RegisterEvent("ADDON_LOADED")
+	MoveTalkingHead:SetScript("OnEvent", function(self, event, ...)
+		local addonName = ...;
+		if addonName and addonName == "Blizzard_TalkingHeadUI" then
+			TalkingHeadFrame:SetMovable(true)
+			TalkingHeadFrame:SetClampedToScreen(true)
+			TalkingHeadFrame.ignoreFramePositionManager = true
+			TalkingHeadFrame:ClearAllPoints()
+			TalkingHeadFrame:SetPoint(THUDB.point, UIParent, THUDB.relPoint, THUDB.x, THUDB.y)
+			if THUDB.scale then -- set scale
+				TalkingHeadFrame:SetScale(THUDB.scale)
+			end
+		end
+	end)
+end
+
 function Artwork_Core:ActionBarPlates(plate)
 	local lib = LibStub("LibWindow-1.1",true);
 	if not lib then return; end

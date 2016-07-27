@@ -22,6 +22,10 @@
 		<FontHeight><AbsValue val="18"/></FontHeight>
         <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
 	</Font>
+	<Font name="SUI_FontOutline16"  font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
+		<FontHeight><AbsValue val="16"/></FontHeight>
+        <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>
+	</Font>
 	<Font name="SUI_FontOutline13" font="Interface\AddOns\SpartanUI\media\NotoSans-Bold.ttf" outline="MONOCHROME" virtual="true">
 		<FontHeight><AbsValue val="13"/></FontHeight>
         <Shadow><Color a="1" r="0" g="0" b="0"/><Offset x="1" y="-1"/></Shadow>

@@ -28,6 +28,15 @@ if DB.Styles.Transparent.BartenderProfile == nil then
 		BuffLoc = true
 	}
 end
+if DB.Styles.Transparent.TalkingHeadUI == nil then
+	DB.Styles.Transparent.TalkingHeadUI = {
+		point = "BOTTOM",
+		relPoint = "TOP",
+		x = 0,
+		y = -30,
+		scale = .8
+	}
+end
 
 --Update from old versions
 if DB.Styles.Transparent.TooltipLoc == nil then DB.Styles.Transparent.TooltipLoc = true end

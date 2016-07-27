@@ -182,7 +182,8 @@ local CreatePartyFrame = function(self,unit)
 		end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
-			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
+			health:SetFrameStrata("BACKGROUND");
+			health:SetFrameLevel(2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			if DBMod.PartyFrames.FrameStyle == "large" then
@@ -465,38 +466,17 @@ local CreateSubFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self:SetScript("OnEnter", UnitFrame_OnEnter)
-	self:SetScript("OnLeave", UnitFrame_OnLeave)
-	self:RegisterForClicks("AnyDown");
-	self.colors = colors;
-	self:SetClampedToScreen(true)
-	
-	self:EnableMouse(enable)
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			PartyFrames.party.mover:Show();
-			DBMod.PartyFrames.moved = true;
-			PartyFrames.party:SetMovable(true);
-			PartyFrames.party:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		PartyFrames.party.mover:Hide();
-		PartyFrames.party:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.PartyFrames.Anchors[k] = v
-		end
-	end);
-	
 	if (self:GetAttribute("unitsuffix") == "target") and DBMod.PartyFrames.display.target then
-		return CreateSubFrame(self,unit);
+		self = CreateSubFrame(self,unit);
 	elseif (self:GetAttribute("unitsuffix") == "pet") and (DBMod.PartyFrames.FrameStyle == "large" or (not DBMod.PartyFrames.display.target)) and DBMod.PartyFrames.display.pet then
-		return CreateSubFrame(self,unit);
+		self = CreateSubFrame(self,unit);
 	elseif (unit == "party") then
-		return CreatePartyFrame(self,unit);
+		self = CreatePartyFrame(self,unit);
 	end
+	
+	self = PartyFrames:MakeMovable(self)
+	
+	return self
 end
 
 SpartanoUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);

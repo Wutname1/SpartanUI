@@ -31,31 +31,6 @@ do -- Boss graphic as an SpartanoUF module
 	SpartanoUF:AddElement('BossGraphic', Update,Enable,Disable);
 end
 
--- do -- Remove Menu items that error
-	-- for k,v in pairs(UnitPopupMenus) do
-		-- if k ~= "RAID" and k ~= "RAID_PLAYER" then
-			-- for button,name in pairs(UnitPopupMenus[k]) do
-				-- if(name == 'SET_FOCUS') then
-					-- table.remove(UnitPopupMenus[k], button)
-				-- elseif(name == 'CLEAR_FOCUS') then
-					-- table.remove(UnitPopupMenus[k], button)
-				-- elseif(name == 'MOVE_PLAYER_FRAME') then
-					-- table.remove(UnitPopupMenus[k], button)
-				-- elseif(name == 'MOVE_TARGET_FRAME') then
-					-- table.remove(UnitPopupMenus[k], button)
-				-- elseif(name == 'LOCK_FOCUS_FRAME') then
-					-- table.remove(UnitPopupMenus[k], button)
-				-- elseif(name == 'UNLOCK_FOCUS_FRAME') then
-					-- table.remove(UnitPopupMenus[k], button)
-				-- elseif(name == 'PET_DISMISS') then
-					-- table.remove(UnitPopupMenus[k], button)
-				-- end
-			-- end
-		-- end
-	-- end
-	-- UnitPopupMenus["FOCUS"] = { "LOCK_FOCUS_FRAME", "UNLOCK_FOCUS_FRAME", "RAID_TARGET_ICON", "CANCEL" };
--- end
-
 function PlayerFrames:SetupStaticOptions()
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 	for a,unit in pairs(FramesList) do
@@ -155,4 +130,23 @@ function PlayerFrames:UpdatePosition()
 		end
 	end
 	-- end
+end
+
+function PlayerFrames:MakeMovable(self,unit)
+	self:RegisterForClicks("AnyDown");
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	
+	if self.artwork then
+		self.artwork:SetScript("OnEnter", function()
+			UnitFrame_OnEnter(self, unit)
+		end);
+		self.artwork:SetScript("OnLeave", function()
+			UnitFrame_OnLeave(self, unit)
+		end);
+	end
+	
+	self:SetScript("OnEnter", UnitFrame_OnEnter);
+	self:SetScript("OnLeave", UnitFrame_OnLeave);
+	return self
 end

@@ -37,22 +37,65 @@ function module:OnInitialize()
 end
 
 function module:FirstTime()
-	StaticPopupDialogs["AutoSell1"] = {
-		text = '|cff33ff99SpartanUI Notice: |cffff3333AutoSell|n|r|n A new SpartanUI Module has been added that can automatically sell gray items. |n|r|n Would you like to enable this new Module?',
-		button1 = "Yes",
-		button2 = "No",
-		OnAccept = function()
-			DB.AutoSell.FirstLaunch = false
+	local PageData = {
+		SubTitle = "Auto Sell",
+		Desc1 = "Automatically vendor items when you visit a merchant.",
+		Display = function()
+			--Container
+			SUI_Win.AutoSell = CreateFrame("Frame", nil)
+			SUI_Win.AutoSell:SetParent(SUI_Win.content)
+			SUI_Win.AutoSell:SetAllPoints(SUI_Win.content)
+			
+			--TurnInEnabled
+			SUI_Win.AutoSell.Enabled = CreateFrame("CheckButton", "SUI_AutoSell_Enabled", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
+			SUI_Win.AutoSell.Enabled:SetPoint("TOP", SUI_Win.AutoSell, "TOP", -90, -30)
+			SUI_AutoSell_EnabledText:SetText("Auto Vendor Enabled")
+			SUI_Win.AutoSell.Enabled:HookScript("OnClick", function(this)
+				if this:GetChecked() == true then
+					SUI_AutoSell_SellGray:Enable()
+					SUI_AutoSell_SellGray:SetChecked(true)
+					SUI_AutoSell_SellWhite:Enable()
+					SUI_AutoSell_SellGreen:Enable()
+				else
+					SUI_AutoSell_SellGray:Disable()
+					SUI_AutoSell_SellWhite:Disable()
+					SUI_AutoSell_SellGreen:Disable()
+				end
+			end)
+			
+			--SellGray
+			SUI_Win.AutoSell.SellGray = CreateFrame("CheckButton", "SUI_AutoSell_SellGray", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
+			SUI_Win.AutoSell.SellGray:SetPoint("TOP", SUI_Win.AutoSell.Enabled, "TOP", -90, -40)
+			SUI_Win.AutoSell.SellGray:Disable()
+			SUI_AutoSell_SellGrayText:SetText("Sell gray items")
+			
+			--SellWhite
+			SUI_Win.AutoSell.SellWhite = CreateFrame("CheckButton", "SUI_AutoSell_SellWhite", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
+			SUI_Win.AutoSell.SellWhite:SetPoint("TOP", SUI_Win.AutoSell.SellGray, "BOTTOM", 0, -5)
+			SUI_Win.AutoSell.SellWhite:Disable()
+			SUI_AutoSell_SellWhiteText:SetText("Sell white items")
+			
+			--SellGreen
+			SUI_Win.AutoSell.SellGreen = CreateFrame("CheckButton", "SUI_AutoSell_SellGreen", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
+			SUI_Win.AutoSell.SellGreen:SetPoint("TOP", SUI_Win.AutoSell.SellWhite, "BOTTOM", 0, -5)
+			SUI_Win.AutoSell.SellGreen:Disable()
+			SUI_AutoSell_SellGreenText:SetText("Sell green items")
 		end,
-		OnCancel = function()
-			DB.EnabledComponents.AutoSell = false
+		Next = function()
 			DB.AutoSell.FirstLaunch = false
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
+			
+			DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
+			DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
+			DB.AutoSell.White = (SUI_Win.AutoSell.SellWhite:GetChecked() == true or false)
+			DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
+			
+			SUI_Win.AutoSell:Hide()
+			SUI_Win.AutoSell = nil
+		end
 	}
-	StaticPopup_Show("AutoSell1")
+	local SetupWindow = spartan:GetModule("SetupWindow")
+	SetupWindow:AddPage(PageData)
+	SetupWindow:DisplayPage()
 end
 
 -- Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.
@@ -113,9 +156,8 @@ function module:IsSellable(item)
 	local NotConsumable = true
 	
 	if (not iLevel) or (iLevel < DB.AutoSell.MaxILVL) then ilvlsellable = true end
-	
 	--Crafting Items
-	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods")
+	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods" or itemType == "Tradeskill")
 	or (itemType == "Miscellaneous" and itemSubType == "Reagent"))
 	then
 		if not DB.AutoSell.NotCrafting then Craftablesellable = true end
@@ -129,7 +171,8 @@ function module:IsSellable(item)
 	end
 	
 	--Consumable
-	if DB.AutoSell.NotConsumables and itemType == "Consumable" then
+	--Tome of the Tranquil Mind is consumable but is identified as Other.
+	if DB.AutoSell.NotConsumables and (itemType == "Consumable" or item == 141446) then 
 		NotConsumable = false
 	end
 	
@@ -146,7 +189,9 @@ function module:IsSellable(item)
 	and NotConsumable
 	and itemType ~= "Quest"
 	and itemType ~= "Container"
-	then return true end
+	then
+		return true
+	end
 	
 	return false
 end
@@ -195,11 +240,12 @@ function module:SellTrash()
 end
 
 function module:OnEnable()
+	if DB.AutoSell.FirstLaunch then module:FirstTime() end
 	-- if not DB.EnabledComponents.AutoSell then return end
+	
 	frame:RegisterEvent("MERCHANT_SHOW");
 	frame:RegisterEvent("MERCHANT_CLOSED");
 	local function MerchantEventHandler(self, event, ...)
-		if DB.AutoSell.FirstLaunch then module:FirstTime() return end
 		if not DB.EnabledComponents.AutoSell then return end
 		if event == "MERCHANT_SHOW" then
 			module:SellTrash();

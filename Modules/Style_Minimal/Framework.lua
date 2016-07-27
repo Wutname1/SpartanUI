@@ -110,8 +110,10 @@ function module:InitFramework()
 		SUI_FramesAnchor:SetPoint("BOTTOMLEFT", "Minimal_AnchorFrame", "BOTTOMLEFT", 0, 0);
 		SUI_FramesAnchor:SetPoint("TOPRIGHT", "Minimal_AnchorFrame", "BOTTOMRIGHT", 0, 150);
 		
-		FramerateLabel:ClearAllPoints();
-		FramerateLabel:SetPoint("TOP", "WorldFrame", "TOP", -15, -50);
+		Artwork_Core:MoveTalkingHeadUI()
+		
+		FramerateText:ClearAllPoints();
+		FramerateText:SetPoint("TOP", UIParent, "TOP", 0, -20);
 		
 		MainMenuBar:Hide();
 		hooksecurefunc(Minimal_SpartanUI,"Hide",function() module:updateViewport(); end);

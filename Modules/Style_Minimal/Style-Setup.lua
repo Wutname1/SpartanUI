@@ -34,6 +34,15 @@ if DB.Styles.Minimal.BartenderProfile == nil then
 		PartyFramesSize = "large"
 	}
 end
+if DB.Styles.Transparent.TalkingHeadUI == nil then
+	DB.Styles.Transparent.TalkingHeadUI = {
+		point = "BOTTOM",
+		relPoint = "TOP",
+		x = 0,
+		y = -30,
+		scale = .8
+	}
+end
 
 --Update from old versions
 if DB.Styles.Minimal.Color == nil then

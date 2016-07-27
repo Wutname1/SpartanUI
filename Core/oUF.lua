@@ -58,6 +58,7 @@ do -- ClassIcon as an SpartanoUF module
 		PALADIN = {			0.00, 0.25, 0.50, 0.75 },
 		DEATHKNIGHT = {		0.25, 0.50, 0.50, 0.75 },
 		MONK = {			0.50, 0.75, 0.50, 0.75 },
+		DEMONHUNTER = {		0.75, 1.00, 0.50, 0.75 },
 		DEFAULT = {			0.75, 1.00, 0.75, 1.00 },
 	};
 	local Update = function(self,event,unit)

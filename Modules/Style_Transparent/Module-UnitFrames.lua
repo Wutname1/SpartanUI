@@ -18,6 +18,7 @@ local metal = [[Interface\AddOns\SpartanUI_PlayerFrames\media\metal.tga]]
 --Interface/WorldStateFrame/ICONS-CLASSES
 local lfdrole = [[Interface\AddOns\SpartanUI\media\icon_role.tga]]
 
+local classname, classFileName = UnitClass("player")
 local colors = setmetatable({},{__index = SpartanoUF.colors});
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 do -- setup custom colors that we want to use
@@ -418,22 +419,7 @@ local CreatePlayerFrame = function(self,unit)
 		end
 		do --Special Icons/Bars
 			local playerClass = select(2, UnitClass("player"))
-			if unit == "player" and playerClass == "DRUID" then
-				local DruidMana = CreateFrame("StatusBar", nil, self)
-				DruidMana:SetSize(self:GetWidth(), 4);
-				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
-				DruidMana.colorPower = true
-				DruidMana:SetStatusBarTexture(Smoothv2)
-
-				-- Add a background
-				local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-				Background:SetAllPoints(DruidMana)
-				Background:SetTexture(1, 1, 1, .2)
-
-				-- Register it with oUF
-				self.DruidMana = DruidMana
-				self.DruidMana.bg = Background
-			elseif unit == "player" and playerClass =="DEATHKNIGHT" then	
+			if unit == "player" and playerClass =="DEATHKNIGHT" then	
 				self.Runes = CreateFrame("Frame", nil, self)
 				
 				for i = 1, 6 do
@@ -454,27 +440,21 @@ local CreatePlayerFrame = function(self,unit)
 					self.Runes[i].bg.multiplier = 0.34
 					
 				end
-			elseif unit == "player" and (playerClass =="MONK" or playerClass =="PALADIN" or playerClass =="PRIEST" or playerClass =="WARLOCK") then
-				local ClassIcons = {}
-				for index = 1, 6 do
-					local Icon = self:CreateTexture(nil, 'BORDER')
-
-					-- Position and size.
-					Icon:SetSize(16, 16)
-					Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-					Icon:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Icon:GetWidth(), -3)
-					
-					
-					Icon.bg = self:CreateTexture(nil, "BACKGROUND")
-					Icon.bg:SetSize(16, 16)
-					Icon.bg:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-					Icon.bg:SetVertexColor(.4, .4, .4, .7)
-					Icon.bg:SetAllPoints(Icon)
-
-					ClassIcons[index] = Icon
-				end
-				self.ClassIcons = ClassIcons
 			end
+			local DruidMana = CreateFrame("StatusBar", nil, self)
+			DruidMana:SetSize(self:GetWidth(), 4);
+			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
+			DruidMana.colorPower = true
+			DruidMana:SetStatusBarTexture(Smoothv2)
+
+			-- Add a background
+			local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(DruidMana)
+			Background:SetTexture(1, 1, 1, .2)
+
+			-- Register it with oUF
+			self.DruidMana = DruidMana
+			self.DruidMana.bg = Background
 		end
 	end
 	do -- setup ring, icons, and text
@@ -538,6 +518,76 @@ local CreatePlayerFrame = function(self,unit)
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
+		
+		self.ComboPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
+		self.ComboPoints:SetPoint("BOTTOMLEFT",self.Name,"TOPLEFT",40,6);
+		
+		local ClassIcons = {}
+		for i = 1, 6 do
+			local Icon = self:CreateTexture(nil, "OVERLAY")
+			Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+			
+			if (i == 1) then
+				Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
+			else 
+				Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
+			end
+			
+			ClassIcons[i] = Icon
+		end
+		self.ClassIcons = ClassIcons
+		
+		local ClassPowerID = nil;
+		ring:SetScript("OnEvent",function()
+			local cur, max
+			if(unit == 'vehicle') then
+				cur = GetComboPoints('vehicle', 'target')
+				max = MAX_COMBO_POINTS
+			else
+				cur = UnitPower('player', ClassPowerID)
+				max = UnitPowerMax('player', ClassPowerID)
+			end
+			self.ComboPoints:SetText((cur > 0 and cur) or "");
+		end);
+		
+		ring:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
+			ClassPowerID = nil;
+			if(classFileName == 'MONK') then
+				ClassPowerID = SPELL_POWER_CHI
+			elseif(classFileName == 'PALADIN') then
+				ClassPowerID = SPELL_POWER_HOLY_POWER
+			elseif(classFileName == 'WARLOCK') then
+				ClassPowerID = SPELL_POWER_SOUL_SHARDS
+			elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+				ClassPowerID = SPELL_POWER_COMBO_POINTS
+			elseif(classFileName == 'MAGE') then
+				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+			end
+			if ClassPowerID ~= nil then 
+				ring:RegisterEvent('UNIT_DISPLAYPOWER')
+				ring:RegisterEvent('PLAYER_ENTERING_WORLD')
+				ring:RegisterEvent('UNIT_POWER_FREQUENT')
+				ring:RegisterEvent('UNIT_MAXPOWER')
+			end
+		end)
+		
+		if(classFileName == 'MONK') then
+			ClassPowerID = SPELL_POWER_CHI
+		elseif(classFileName == 'PALADIN') then
+			ClassPowerID = SPELL_POWER_HOLY_POWER
+		elseif(classFileName == 'WARLOCK') then
+			ClassPowerID = SPELL_POWER_SOUL_SHARDS
+		elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+			ClassPowerID = SPELL_POWER_COMBO_POINTS
+		elseif(classFileName == 'MAGE') then
+			ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+		end
+		if ClassPowerID ~= nil then 
+			ring:RegisterEvent('UNIT_DISPLAYPOWER')
+			ring:RegisterEvent('PLAYER_ENTERING_WORLD')
+			ring:RegisterEvent('UNIT_POWER_FREQUENT')
+			ring:RegisterEvent('UNIT_MAXPOWER')
+		end
 	end
 	do -- setup buffs and debuffs
 		self.Debuffs = CreateFrame("Frame",nil,self);
@@ -755,22 +805,6 @@ local CreateTargetFrame = function(self,unit)
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
-		
-		self.CPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.CPoints:SetPoint("TOPLEFT",ring,"BOTTOMRIGHT",8,-4);
-		for i = 1, 5 do
-			self.CPoints[i] = ring:CreateTexture(nil,"OVERLAY");
-			self.CPoints[i]:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			if (i == 1) then self.CPoints[1]:SetPoint("LEFT",self.CPoints,"RIGHT",1,-1); else 
-				self.CPoints[i]:SetPoint("LEFT",self.CPoints[i-1],"RIGHT",-2,0);
-			end
-		end
-		ring:SetScript("OnUpdate",function()
-			if self.CPoints then
-				local cp = GetComboPoints("player","target");
-				self.CPoints:SetText( (cp > 0 and cp) or "");
-			end
-		end);
 	end
 	do -- setup buffs and debuffs
 		self.Auras = CreateFrame("Frame",nil,self);
@@ -1345,29 +1379,23 @@ local CreateRaidFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self.menu = menu;
-	
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
 		self:SetParent(UIParent);
 	else
 		self:SetParent(SUI_FramesAnchor);
 	end
 	
-	self:SetFrameStrata("BACKGROUND");
-	self:SetFrameLevel(1);
-	self:RegisterForClicks("anyup");
-	self:SetAttribute("*type2", "menu");
-	self.colors = module.colors;
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
-	return ((unit == "target" and CreateTargetFrame(self,unit))
+	self = ((unit == "target" and CreateTargetFrame(self,unit))
 	or (unit == "targettarget" and CreateToTFrame(self,unit))
 	or (unit == "player" and CreatePlayerFrame(self,unit))
 	or (unit == "focus" and CreateBossFrame(self,unit))
 	or (unit == "focustarget" and CreateToTFrame(self,unit))
 	or (unit == "pet" and CreatePetFrame(self,unit))
 	or CreateBossFrame(self,unit));
+	
+	self = PlayerFrames:MakeMovable(self,unit)
+	
+	return self
 end
 
 local CreatespecFrames = function(self,unit)
@@ -1389,58 +1417,14 @@ local CreatespecFrames = function(self,unit)
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	self:SetScript("OnEnter", UnitFrame_OnEnter)
-	self:SetScript("OnLeave", UnitFrame_OnLeave)
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			PartyFrames.party.mover:Show();
-			DBMod.PartyFrames.moved = true;
-			PartyFrames.party:SetMovable(true);
-			PartyFrames.party:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		PartyFrames.party.mover:Hide();
-		PartyFrames.party:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.PartyFrames.Anchors[k] = v
-		end
-	end);
-	
-	return CreateRaidFrame(self,unit)
+	self = CreateRaidFrame(self,unit)
+	self = PartyFrames:MakeMovable(self)
+	return self
 end
 
 local CreateUnitFrameRaid = function(self,unit)
 	self = CreateRaidFrame(self,unit)
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	self:SetClampedToScreen(true)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
-	self:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.RaidFrames.mover:Show();
-			DBMod.RaidFrames.moved = true;
-			spartan.RaidFrames:SetMovable(true);
-			spartan.RaidFrames:StartMoving();
-		end
-	end);
-	self:SetScript("OnMouseUp",function(self,button)
-		spartan.RaidFrames.mover:Hide();
-		spartan.RaidFrames:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.RaidFrames.Anchors[k] = v
-		end
-	end);
-	
+	self = spartan:GetModule("RaidFrames"):MakeMovable(self)
 	return self
 end
 

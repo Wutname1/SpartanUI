@@ -31,23 +31,6 @@ local threat = function(self,event,unit)
 end
 
 local SpawnUnitFrame = function(self,unit)
-	self.menu = menu;
-	self:RegisterForClicks("AnyDown");
-	
-	if not InCombatLockdown() then
-		self:EnableMouse(enable)
-	end
-
-	-- self:HookScript("OnEvent", function(self,event)
-		-- if not self:IsMouseEnabled() then self:EnableMouse(enable) end
-	-- end)
-	-- self:RegisterEvent("PLAYER_REGEN_ENABLED");
-	
-	self:SetClampedToScreen(true)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
-	-- self:SetSize(140, 35) -- Setup initial Size
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -113,12 +96,12 @@ local SpawnUnitFrame = function(self,unit)
 				health.value:Hide();
 			end
 
-			local Background = health:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(health)
-			Background:SetTexture(1, 1, 1, .08)
+			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
+			-- Background:SetAllPoints(health)
+			-- Background:SetTexture(1, 1, 1, .08)
 			
 			self.Health = health;
-			self.Health.bg = Background;
+			-- self.Health.bg = Background;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
 			self.Health.colorClass = true;
@@ -275,27 +258,9 @@ local SpawnUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self:HookScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.RaidFrames.mover:Show();
-			DBMod.RaidFrames.moved = true;
-			spartan.RaidFrames:SetMovable(true);
-			spartan.RaidFrames:StartMoving();
-		end
-	end);
-	self:HookScript("OnMouseUp",function(self,button)
-		spartan.RaidFrames.mover:Hide();
-		spartan.RaidFrames:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.RaidFrames.Anchors[k] = v
-		end
-	end);
-	
-	self.colors = colors;
-	self:SetClampedToScreen(true)
-	return SpawnUnitFrame(self,unit);
+	self = SpawnUnitFrame(self,unit)
+	self = RaidFrames:MakeMovable(self)
+	return self
 end
 
 SpartanoUF:RegisterStyle("Spartan_RaidFrames_Classic", CreateUnitFrame);

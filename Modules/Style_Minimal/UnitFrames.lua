@@ -240,18 +240,12 @@ local OnCastbarUpdate = function(self,elapsed)
 end
 
 local MakeSmallFrame = function(self,unit)
-	self.menu = menu;
-	self:RegisterForClicks("AnyDown");
-	self:EnableMouse(enable)
-	self:SetClampedToScreen(true)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
 	self:SetSize(100, 40);
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(2); self.artwork:SetAllPoints(self);
+		self.artwork:SetFrameLevel(2);
+		self.artwork:SetAllPoints(self);
 		
 		-- if DBMod.PartyFrames.Portrait then
 			-- self.Portrait = CreatePortrait(self);
@@ -284,7 +278,8 @@ local MakeSmallFrame = function(self,unit)
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
-			Background:SetTexture(1, 1, 1, .2)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
 			
 			self.Health = health;
 			self.Health.bg = Background;
@@ -416,13 +411,6 @@ local MakeSmallFrame = function(self,unit)
 end
 
 local MakeLargeFrame = function(self,unit,width)
-	self.menu = menu;
-	self:RegisterForClicks("anyup");
-	self:SetAttribute("*type2", "menu");
-	self:EnableMouse(enable)
-	self:SetScript("OnEnter", UnitFrame_OnEnter);
-	self:SetScript("OnLeave", UnitFrame_OnLeave);
-	
 	if width then
 		self:SetSize(width, 40);
 	else
@@ -432,7 +420,8 @@ local MakeLargeFrame = function(self,unit,width)
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(2); self.artwork:SetAllPoints(self);
+		self.artwork:SetFrameLevel(2);
+		self.artwork:SetAllPoints(self);
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -450,12 +439,13 @@ local MakeLargeFrame = function(self,unit,width)
 			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
 			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
 			
-			local Background = cast:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(cast)
-			Background:SetTexture(1, 1, 1, .2)
+			-- local Background = cast:CreateTexture(nil, 'BACKGROUND')
+			-- Background:SetAllPoints(cast)
+			-- Background:SetTexture(Smoothv2)
+			-- Background:SetTexture(1, 1, 1, .2)
 			
 			self.Castbar = cast;
-			self.Castbar.bg = Background;
+			-- self.Castbar.bg = Background;
 			self.Castbar.OnUpdate = OnCastbarUpdate;
 			self.Castbar.PostCastStart = PostCastStart;
 			self.Castbar.PostChannelStart = PostChannelStart;
@@ -477,7 +467,8 @@ local MakeLargeFrame = function(self,unit,width)
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(health)
-			Background:SetTexture(1, 1, 1, .2)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
 			
 			self.Health = health;
 			self.Health.bg = Background;
@@ -743,21 +734,77 @@ local MakeLargeFrame = function(self,unit,width)
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 		
-		self.CPoints = items:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.CPoints:SetPoint("TOPLEFT",items,"BOTTOMRIGHT",8,-4);
-		for i = 1, 5 do
-			self.CPoints[i] = items:CreateTexture(nil,"OVERLAY");
-			self.CPoints[i]:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			if (i == 1) then self.CPoints[1]:SetPoint("LEFT",self.CPoints,"RIGHT",1,-1); else 
-				self.CPoints[i]:SetPoint("LEFT",self.CPoints[i-1],"RIGHT",-2,0);
+		if unit == "player" then
+			self.ComboPoints = items:CreateFontString(nil, "BORDER","SUI_FontOutline13");
+			self.ComboPoints:SetPoint("TOPLEFT",self.Power,"BOTTOMLEFT",50,-2);
+		
+			local ClassIcons = {}
+			for i = 1, 6 do
+				local Icon = self:CreateTexture(nil, "OVERLAY")
+				Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+				
+				if (i == 1) then
+					Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
+				else 
+					Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
+				end
+				
+				ClassIcons[i] = Icon
+			end
+			self.ClassIcons = ClassIcons
+			
+			local ClassPowerID = nil;
+			items:SetScript("OnEvent",function()
+				local cur, max
+				if(unit == 'vehicle') then
+					cur = GetComboPoints('vehicle', 'target')
+					max = MAX_COMBO_POINTS
+				else
+					cur = UnitPower('player', ClassPowerID)
+					max = UnitPowerMax('player', ClassPowerID)
+				end
+				self.ComboPoints:SetText((cur > 0 and cur) or "");
+			end);
+			
+			items:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
+				ClassPowerID = nil;
+				if(classFileName == 'MONK') then
+					ClassPowerID = SPELL_POWER_CHI
+				elseif(classFileName == 'PALADIN') then
+					ClassPowerID = SPELL_POWER_HOLY_POWER
+				elseif(classFileName == 'WARLOCK') then
+					ClassPowerID = SPELL_POWER_SOUL_SHARDS
+				elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+					ClassPowerID = SPELL_POWER_COMBO_POINTS
+				elseif(classFileName == 'MAGE') then
+					ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+				end
+				if ClassPowerID ~= nil then 
+					items:RegisterEvent('UNIT_DISPLAYPOWER')
+					items:RegisterEvent('PLAYER_ENTERING_WORLD')
+					items:RegisterEvent('UNIT_POWER_FREQUENT')
+					items:RegisterEvent('UNIT_MAXPOWER')
+				end
+			end)
+			
+			if(classFileName == 'MONK') then
+				ClassPowerID = SPELL_POWER_CHI
+			elseif(classFileName == 'PALADIN') then
+				ClassPowerID = SPELL_POWER_HOLY_POWER
+			elseif(classFileName == 'WARLOCK') then
+				ClassPowerID = SPELL_POWER_SOUL_SHARDS
+			elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+				ClassPowerID = SPELL_POWER_COMBO_POINTS
+			elseif(classFileName == 'MAGE') then
+				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+			end
+			if ClassPowerID ~= nil then 
+				items:RegisterEvent('UNIT_DISPLAYPOWER')
+				items:RegisterEvent('PLAYER_ENTERING_WORLD')
+				items:RegisterEvent('UNIT_POWER_FREQUENT')
+				items:RegisterEvent('UNIT_MAXPOWER')
 			end
 		end
-		items:SetScript("OnUpdate",function()
-			if self.CPoints then
-				local cp = GetComboPoints("player","target");
-				self.CPoints:SetText( (cp > 0 and cp) or "");
-			end
-		end);
 	end
 
 	self.TextUpdate = PostUpdateText;
@@ -766,59 +813,27 @@ local MakeLargeFrame = function(self,unit,width)
 end
 
 local CreateUnitFrame = function(self,unit)
-	self.colors = module.colors;
-	
-	return ((unit == "player" and MakeLargeFrame(self,unit))
+	self = ((unit == "player" and MakeLargeFrame(self,unit))
 	or (unit == "target" and MakeLargeFrame(self,unit))
 	or MakeSmallFrame(self,unit));
+	self = PlayerFrames:MakeMovable(self,unit)
+	return self
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	self:HookScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			PartyFrames.party.mover:Show();
-			DBMod.PartyFrames.moved = true;
-			PartyFrames.party:SetMovable(true);
-			PartyFrames.party:StartMoving();
-		end
-	end);
-	self:HookScript("OnMouseUp",function(self,button)
-		PartyFrames.party.mover:Hide();
-		PartyFrames.party:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PartyFrames.party:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.PartyFrames.Anchors[k] = v
-		end
-	end);
-	
 	if DB.Styles.Minimal.PartyFramesSize ~= nil and DB.Styles.Minimal.PartyFramesSize == "small" then
-		return MakeSmallFrame(self,unit)
+		self = MakeSmallFrame(self,unit)
 	else
-		return MakeLargeFrame(self,unit,150)
+		self = MakeLargeFrame(self,unit,150)
 	end
+	self = PartyFrames:MakeMovable(self)
+	return self
 end
 
 local CreateUnitFrameRaid = function(self,unit)
-	self:HookScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.RaidFrames.mover:Show();
-			DBMod.RaidFrames.moved = true;
-			spartan.RaidFrames:SetMovable(true);
-			spartan.RaidFrames:StartMoving();
-		end
-	end);
-	self:HookScript("OnMouseUp",function(self,button)
-		spartan.RaidFrames.mover:Hide();
-		spartan.RaidFrames:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.RaidFrames.Anchors[k] = v
-		end
-	end);
-	
-	return MakeSmallFrame(self,unit)
+	self = MakeSmallFrame(self,unit)
+	self = spartan:GetModule("RaidFrames"):MakeMovable()
+	return self
 end
 
 SpartanoUF:RegisterStyle("Spartan_MinimalFrames", CreateUnitFrame);
