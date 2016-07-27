@@ -1,0 +1,233 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
+	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
+	<Script file="Style-Setup.lua" />
+	<Script file="Style.lua" />
+
+	<!-- Classic_AnchorFrame -->
+	<Frame name="Classic_AnchorFrame" frameStrata="BACKGROUND" parent="UIParent">
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"><Offset><AbsDimension x="0" y="-1"/></Offset></Anchor>
+			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"><Offset><AbsDimension x="0" y="-1"/></Offset></Anchor>
+		</Anchors>
+	</Frame>
+	
+	<!-- SpartanUI -->
+	<Frame name="Classic_SpartanUI" frameStrata="BACKGROUND" parent="UIParent">
+		<Anchors>
+			<Anchor point="BOTTOMLEFT" relativeTo="Classic_AnchorFrame" relativePoint="TOPLEFT" />
+			<Anchor point="TOPRIGHT" relativeTo="Classic_AnchorFrame" relativePoint="TOPRIGHT">
+				<Offset><AbsDimension x="0" y="153"/></Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI_Style_Classic\Images\base-center">
+					<Anchors><Anchor point="BOTTOM" relativePoint="BOTTOM"/></Anchors>
+				</Texture>
+				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI_Style_Classic\Images\base-sides">
+					<Anchors><Anchor point="RIGHT" relativeTo="$parent_Base1" relativePoint="LEFT"/></Anchors>
+				</Texture>
+				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI_Style_Classic\Images\base-sides" tile="true">
+					<Anchors><Anchor point="RIGHT" relativeTo="$parent_Base2" relativePoint="LEFT"/></Anchors>
+				</Texture>
+				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI_Style_Classic\Images\base-sides" >
+					<Anchors><Anchor point="LEFT" relativeTo="$parent_Base1" relativePoint="RIGHT"/></Anchors>
+				</Texture>
+				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI_Style_Classic\Images\base-sides" tile="true">
+					<Anchors><Anchor point="LEFT" relativeTo="$parent_Base4" relativePoint="RIGHT"/></Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_StatusBars_TooltipTemplate -->
+	<Frame name="Classic_StatusBars_TooltipTemplate" frameStrata="TOOLTIP" virtual="true">
+		<Size><AbsDimension x="374" y="70"/></Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-tooltip">
+					<Anchors><Anchor point="CENTER"/></Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentHeader" inherits="Classic_FontOutline12">
+					<Size><AbsDimension x="390" y="16" /></Size>
+					<Anchors><Anchor point="TOP"/></Anchors>
+				</FontString>
+				<FontString name="$parentText" inherits="Classic_FontOutline10">
+					<Size><AbsDimension x="378" y="46" /></Size>
+					<Anchors><Anchor point="TOP" relativeTo="$parentHeader" relativePoint="BOTTOM">
+						<Offset><AbsDimension x="0" y="-2"/></Offset>
+					</Anchor></Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_StatusBars_XPTemplate -->
+	<Frame name="Classic_StatusBars_XPTemplate" frameStrata="BACKGROUND" enableMouse="true" virtual="true">
+		<Size><AbsDimension x="400" y="10" /></Size>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentPlate" file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-plate-rep">
+					<Size><AbsDimension x="400" y="10" /></Size>
+					<Anchors><Anchor point="RIGHT"/></Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture name="$parentFill" file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-glow">
+					<Size><AbsDimension x="400" y="10" /></Size>
+					<Anchors><Anchor point="RIGHT" /></Anchors>
+				</Texture>
+				<Texture name="$parentLead" file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-glow">
+					<Size><AbsDimension x=".1" y="10" /></Size>
+					<Anchors><Anchor point="RIGHT" relativeTo="$parentFill" relativePoint="LEFT"/></Anchors>
+					<TexCoords left="1" right="0" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentFillGlow" file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-glow" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentFill" relativePoint="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentFill" relativePoint="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentLeadGlow" file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-glow" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentLead" relativePoint="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentLead" relativePoint="BOTTOMRIGHT"/>
+					</Anchors>
+					<TexCoords left="1" right="0" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentPlate" file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-plate-rep">
+					<Size><AbsDimension x="400" y="10" /></Size>
+					<Anchors><Anchor point="LEFT"/></Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_StatusBars_RepTemplate -->
+	<Frame name="Classic_StatusBars_RepTemplate" frameStrata="BACKGROUND" enableMouse="true" virtual="true">
+		<Size><AbsDimension x="400" y="32" /></Size>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentPlate" file="Interface\AddOns\SpartanUI_Style_Classic\Images\status-plate-rep">
+					<Size><AbsDimension x="400" y="32" /></Size>
+					<Anchors><Anchor point="LEFT"/></Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture name="$parentFill" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow">
+					<Size><AbsDimension x="400" y="32" /></Size>
+					<Anchors><Anchor point="LEFT"/></Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentFillGlow" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentFill" relativePoint="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentFill" relativePoint="BOTTOMRIGHT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBase" setAllPoints="true">
+					<Color r="0" g="0" b="0" a="0.95"/>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_PopTemplate -->
+	<Frame name="Classic_PopTemplate" frameStrata="BACKGROUND" virtual="true">
+		<Size><AbsDimension x="400" y="32" /></Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Classic\Images\bar-backdrop0">
+					<Size><AbsDimension x="512" y="64" /></Size>
+					<Anchors><Anchor point="BOTTOM" relativePoint="BOTTOM"/></Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_BarTemplate1 -->
+	<Frame name="Classic_BarTemplate1" frameStrata="BACKGROUND" virtual="true">
+		<Size><AbsDimension x="400" y="32" /></Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Classic\Images\bar-backdrop1">
+					<Size><AbsDimension x="512" y="64" /></Size>
+					<Anchors><Anchor point="CENTER" relativePoint="CENTER"/></Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_BarTemplate3 -->
+	<Frame name="Classic_BarTemplate3" frameStrata="BACKGROUND" virtual="true">
+		<Size><AbsDimension x="135" y="100" /></Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Classic\Images\bar-backdrop3">
+					<Size><AbsDimension x="256" y="128" /></Size>
+					<Anchors><Anchor point="CENTER" relativePoint="CENTER"/></Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_ActionBarsTemplate -->
+	<Frame name="Classic_ActionBarsTemplate" parent="Classic_SpartanUI" frameStrata="BACKGROUND" virtual="true">
+		<Size><AbsDimension x="1002" y="139"/></Size>
+		<Frames>
+			<Frame name="Classic_Bar1" inherits="Classic_BarTemplate1"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="50" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="Classic_Bar2" inherits="Classic_BarTemplate1"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="5" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="Classic_Bar3" inherits="Classic_BarTemplate1"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="50" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="Classic_Bar4" inherits="Classic_BarTemplate1"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="5" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="Classic_Bar5" inherits="Classic_BarTemplate3"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-502" y="0" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="Classic_Bar6" inherits="Classic_BarTemplate3"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="502" y="0" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="Classic_Popup1" inherits="Classic_PopTemplate"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="95" /></Offset></Anchor></Anchors></Frame>
+			<Frame name="Classic_Popup2" inherits="Classic_PopTemplate"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="95" /></Offset></Anchor></Anchors></Frame>
+		</Frames>
+	</Frame>
+	
+	<!-- Classic_Popup1MaskTemplate -->
+	<Frame name="Classic_Popup1MaskTemplate" parent="Classic_SpartanUI" frameStrata="MEDIUM" virtual="true">
+		<Size><AbsDimension x="400" y="34"/></Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Classic\Images\bar-popup1">
+					<Size><AbsDimension x="512" y="64" /></Size>
+					<Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/></Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+	
+	<!-- Classic_Popup2MaskTemplate -->
+	<Frame name="Classic_Popup2MaskTemplate" parent="Classic_SpartanUI" frameStrata="MEDIUM" virtual="true">
+		<Size><AbsDimension x="400" y="34"/></Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Classic\Images\bar-popup2">
+					<Size><AbsDimension x="512" y="64" /></Size>
+					<Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"/></Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<Script file="Artwork\Framework.lua" />
+	<Script file="Artwork\ActionBars.lua" />
+ 	<Script file="Artwork\Minimap.lua" />
+	<Script file="Artwork\StatusBars.lua" />
+	<Script file="Artwork\Style.lua" />
+	
+	<Script file="Mod-UnitFrames.lua" />
+</Ui>
