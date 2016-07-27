@@ -386,90 +386,38 @@ function module:VarArgForAvailableQuests(...)
 end
 
 function module:FirstLaunch()
-	-- PopUps = {
-		-- name = "AutoTurnIn",
-		-- 1 = {
-			-- text = 'A new SpartanUI Module has been added that can auto accept and complete quests. |n|r|n Would you like to enable this new Module?',
-			-- OnAccept = function()
-				-- DB.EnabledComponents.AutoTurnIn = true
-				-- DB.AutoTurnIn.FirstLaunch = false
-				-- StaticPopup_Show("AutoTurnIn2")
-			-- end,
-			-- OnCancel = function()
-				-- DB.EnabledComponents.AutoTurnIn = false
-				-- DB.AutoTurnIn.FirstLaunch = false
-			-- end
-		-- }
-		-- 2 = {
-			-- text = 'Would you like to enable turning in quests?',
-			-- OnAccept = function()
-				-- DB.EnabledComponents.TurnInEnabled = true
-				-- StaticPopup_Show("AutoTurnIn3")
-			-- end,
-			-- OnCancel = function()
-				-- DB.EnabledComponents.TurnInEnabled = false
-				-- StaticPopup_Show("AutoTurnIn3")
-			-- end
-		-- }
-		-- 3 = {
-			-- text = 'Would you like to enable accepting quests?',
-			-- OnAccept = function()
-				-- DB.EnabledComponents.AcceptGeneralQuests = true
-			-- end,
-			-- OnCancel = function()
-				-- DB.EnabledComponents.AcceptGeneralQuests = false
-			-- end
-		-- }
-	-- }
-	StaticPopupDialogs["AutoTurnIn1"] = {
-		text = '|cff33ff99SpartanUI Notice: |cffff3333AutoTurnIn|n|r|n A new SpartanUI Module has been added that can auto accept and complete quests. |n|r|n Would you like to enable this new Module?',
-		button1 = "Yes",
-		button2 = "No",
-		OnAccept = function()
-			DB.EnabledComponents.AutoTurnIn = true
+	local PageData = {
+		SubTitle = "Auto Turn In",
+		Desc1 = "Automatically accept and turn in quests.",
+		Display = function()
+			--Container
+			SUI_Win.ATI = CreateFrame("Frame", nil)
+			SUI_Win.ATI:SetParent(SUI_Win.content)
+			SUI_Win.ATI:SetAllPoints(SUI_Win.content)
+			
+			--TurnInEnabled
+			SUI_Win.ATI.TurnInEnabled = CreateFrame("CheckButton", "SUI_ATI_TurnInEnabled", SUI_Win.ATI, "OptionsCheckButtonTemplate")
+			SUI_Win.ATI.TurnInEnabled:SetPoint("TOP", SUI_Win.ATI, "TOP", -90, -90)
+			SUI_ATI_TurnInEnabledText:SetText("Enable turning in quests")
+			
+			--AcceptGeneralQuests
+			SUI_Win.ATI.AcceptGeneralQuests = CreateFrame("CheckButton", "SUI_ATI_AcceptGeneralQuests", SUI_Win.ATI, "OptionsCheckButtonTemplate")
+			SUI_Win.ATI.AcceptGeneralQuests:SetPoint("TOP", SUI_Win.ATI.TurnInEnabled, "BOTTOM", 0, -15)
+			SUI_ATI_AcceptGeneralQuestsText:SetText("Enable accepting quests")
+		end,
+		Next = function()
 			DB.AutoTurnIn.FirstLaunch = false
-			StaticPopup_Show("AutoTurnIn2")
-		end,
-		OnCancel = function()
-			DB.EnabledComponents.AutoTurnIn = false
-			DB.AutoTurnIn.FirstLaunch = false
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
+			
+			DB.AutoTurnIn.TurnInEnabled = (SUI_ATI_TurnInEnabled:GetChecked() == true or false)
+			DB.AutoTurnIn.AcceptGeneralQuests = (SUI_ATI_AcceptGeneralQuests:GetChecked() == true or false)
+			
+			SUI_Win.ATI:Hide()
+			SUI_Win.ATI = nil
+		end
 	}
-	StaticPopupDialogs["AutoTurnIn2"] = {
-		text = '|cff33ff99SpartanUI Notice: |cffff3333AutoTurnIn|n|r|n  Would you like to enable turning in quests?',
-		button1 = "Yes",
-		button2 = "No",
-		OnAccept = function()
-			DB.EnabledComponents.TurnInEnabled = true
-			StaticPopup_Show("AutoTurnIn3")
-		end,
-		OnCancel = function()
-			DB.EnabledComponents.TurnInEnabled = false
-			StaticPopup_Show("AutoTurnIn3")
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
-	StaticPopupDialogs["AutoTurnIn3"] = {
-		text = '|cff33ff99SpartanUI Notice: |cffff3333AutoTurnIn|n|r|n  Would you like to enable accepting quests?',
-		button1 = "Yes",
-		button2 = "No",
-		OnAccept = function()
-			DB.EnabledComponents.AcceptGeneralQuests = true
-		end,
-		OnCancel = function()
-			DB.EnabledComponents.AcceptGeneralQuests = false
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
-	
-	StaticPopup_Show("AutoTurnIn1")
+	local SetupWindow = spartan:GetModule("SetupWindow")
+	SetupWindow:AddPage(PageData)
+	SetupWindow:DisplayPage()
 end
 
 function module.GOSSIP_SHOW()
@@ -530,14 +478,11 @@ end
 function module:OnEnable()
 	module:BuildOptions()
 	-- if not DB.EnabledComponents.AutoTurnIn then module:HideOptions() return end
-	
+	if DB.AutoTurnIn.FirstLaunch then module:FirstLaunch() end
+		
 	ATI_Container:SetScript("OnEvent", function(_, event)
 		if not DB.EnabledComponents.AutoTurnIn then return end
 		if DB.AutoTurnIn.debug then print(event) end
-		
-		if DB.AutoTurnIn.FirstLaunch and event ~= "QUEST_LOG_UPDATE" then
-			module:FirstLaunch()
-		end
 		
 		if module[event] then 
 			module[event]()

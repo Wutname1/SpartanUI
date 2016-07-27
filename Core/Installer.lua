@@ -1,129 +1,136 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local module = spartan:NewModule("Installer");
+local module = spartan:NewModule("SetupWindow");
 ---------------------------------------------------------------------------
 local Page_Cur = 1
-local Pages = 1
+local PageCnt = 0
+local PageList = {}
+local Win = nil
 -- local module
 
+function module:AddPage(PageData)
+	PageCnt = PageCnt+1
+	PageList[PageCnt] = PageData
+	
+	--If something already displayed the window update the text
+	if SUI_Win:IsVisible() then
+		SUI_Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
+	end
+end
+
 function module:OnInitialize()
+	module:CreateInstallWindow()
 end
 
 function module:OnEnable()
-    -- if not OBJECT.RemoveTextures then META.RemoveTextures = RemoveTextures end
-	-- module:CreateInstallWindow()
+
 end
 
-local RemoveTextures = function(self, option)
-    if((not self.GetNumRegions) or (self.Panel and (not self.Panel.CanBeRemoved))) then return end
-    local region, layer, texture
-    for i = 1, self:GetNumRegions()do
-        region = select(i, self:GetRegions())
-        if(region and (region:GetObjectType() == "Texture")) then
+function module:DisplayPage()
+	if PageList[Page_Cur] == nil then return end
+	
+	Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
+	if Page_Cur == PageCnt then
+		Win.Next:SetText("FINISH")
+	else
+		Win.Next:SetText("CONTINUE")
+	end
+	
+	if SUI_Win:IsVisible() and PageList[Page_Cur].Displayed ~= nil then return end
+	local data = PageList[Page_Cur]
 
-            layer = region:GetDrawLayer()
-            texture = region:GetTexture()
-			region:SetTexture("")
-        end
-    end
+	Win.SubTitle:SetText(data.SubTitle)
+	if data.Desc1 ~= nil then Win.Desc1:SetText(data.Desc1) end
+	if data.Display ~= nil then data.Display() end
+	data.Displayed = true
+	Win:Show()
+end
+
+local ClearPage = function()
+	Win.Desc1:SetText("")
 end
 
 function module:CreateInstallWindow()
-	if DB.Installer == nil then
-		local frame = CreateFrame("Button", "SUI_InstallerFrame", UIParent)
-		frame:SetSize(550, 400)
-		-- frame:SetStyle("Frame", "Window2")
-		frame:SetPoint("TOP", UIParent, "TOP", 0, -150)
-		frame:SetFrameStrata("TOOLTIP")
-		-- frame:SetVertexColor(0,0,0,1)
-		
-		frame.bg = frame:CreateTexture(nil, "BORDER")
-		-- frame.bg:SetSize(110, 75)
-		frame.bg:SetAllPoints(frame)
-		frame.bg:SetTexture([[Interface\AddOns\SpartanUI\media\smoke.tga]])
-		frame.bg:SetVertexColor(0, 0, 0, 1)
-		
-		frame.border = frame:CreateTexture(nil, "BORDER")
-		-- frame.bg:SetSize(110, 75)
-		frame.border:SetPoint("TOP", 0, 10)
-		frame.border:SetPoint("LEFT", -10, 0)
-		frame.border:SetPoint("RIGHT", 10, 0)
-		frame.border:SetPoint("BOTTOM", 0, -10)
-		frame.border:SetTexture([[Interface\AddOns\SpartanUI\media\smoke.tga]])
-		frame.border:SetVertexColor(0, 0, 0, .7)
+	Win = CreateFrame("Frame", "SUI_Win", UIParent)
+	Win:SetSize(550, 400)
+	Win:SetPoint("TOP", UIParent, "TOP", 0, -150)
+	Win:SetFrameStrata("TOOLTIP")
+	
+	Win.bg = Win:CreateTexture(nil, "BORDER")
+	Win.bg:SetAllPoints(Win)
+	Win.bg:SetTexture([[Interface\AddOns\SpartanUI\media\Smoothv2.tga]])
+	Win.bg:SetVertexColor(0, 0, 0, .7)
+	
+	Win.border = Win:CreateTexture(nil, "BORDER")
+	Win.border:SetPoint("TOP", 0, 10)
+	Win.border:SetPoint("LEFT", -10, 0)
+	Win.border:SetPoint("RIGHT", 10, 0)
+	Win.border:SetPoint("BOTTOM", 0, -10)
+	Win.border:SetTexture([[Interface\AddOns\SpartanUI\media\smoke.tga]])
+	Win.border:SetVertexColor(0, 0, 0, .7)
+	
+	
+	Win.Status = Win:CreateFontString(nil,"OVERLAY","SUI_FontOutline12");
+	Win.Status:SetSize(100, 15);
+	Win.Status:SetJustifyH("RIGHT");
+	Win.Status:SetJustifyV("CENTER");
+	Win.Status:SetPoint("TOPRIGHT", Win, "TOPRIGHT", -2, -2)
 
-		frame.SetPage = InstallerFrame_SetPage;
+	Win.titleHolder = Win:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22")
+	Win.titleHolder:SetPoint("TOP", Win, "TOP", 0, -5)
+	Win.titleHolder:SetSize(350, 20)
+	Win.titleHolder:SetText("SpartanUI setup assistant")
+	Win.titleHolder:SetTextColor(.76, .03, .03, 1)
+
+	Win.SubTitle = Win:CreateFontString(nil, "OVERLAY", "SUI_FontOutline16")
+	Win.SubTitle:SetPoint("TOP", Win.titleHolder, "BOTTOM", 0, -5)
+	Win.SubTitle:SetTextColor(.29, .18, .96, 1)
+
+	Win.Desc1 = Win:CreateFontString(nil, "OVERLAY", "SUI_FontOutline13")
+	Win.Desc1:SetPoint("TOP",Win.SubTitle,"BOTTOM", 0, -5)
+	Win.Desc1:SetTextColor(1, 1, 1, .8)
+	Win.Desc1:SetWidth(Win:GetWidth()-40)
+	
+	--Holder for items
+	Win.content = CreateFrame("Frame", "SUI_Win_Content", Win)
+	Win.content:SetPoint("BOTTOMLEFT", Win, "BOTTOMLEFT", 0, 30)
+	Win.content:SetPoint("BOTTOMRIGHT", Win, "BOTTOMRIGHT", 0, 30)
+	Win.content:SetPoint("TOP", Win.Desc1, "BOTTOM", 0, -5)
+	
+	--Buttons
+	Win.Next = CreateFrame("Button", nil, Win, "UIPanelButtonTemplate")
+	Win.Next:SetSize(90, 25)
+	Win.Next:SetPoint("BOTTOMRIGHT", -5, 5)
+	Win.Next:SetNormalTexture("")
+	Win.Next:SetHighlightTexture("")
+	Win.Next:SetPushedTexture("")
+	Win.Next:SetDisabledTexture("")
+	Win.Next:SetFrameLevel(Win.Next:GetFrameLevel() + 1)
+	Win.Next:SetText("CONTINUE")
+	
+	Win.Next.texture = Win.Next:CreateTexture(nil, "BORDER")
+	Win.Next.texture:SetAllPoints(Win.Next)
+	Win.Next.texture:SetTexture([[Interface\AddOns\SpartanUI\media\Smoothv2.tga]])
+	Win.Next.texture:SetVertexColor(0, 0.5, 1)
+	
+	-- Win.Next.parent = frame
+	Win.Next:SetScript("OnClick", function(this)
+		if PageList[Page_Cur].Next ~= nil then PageList[Page_Cur].Next() end
 		
-		--Create the text areas
-		local statusFrame = CreateFrame("Frame", nil, frame)
-		statusFrame:SetFrameLevel(statusFrame:GetFrameLevel() + 2)
-		statusFrame:SetSize(150, 30)
-		statusFrame:SetPoint("BOTTOM", frame, "TOP", 0, 2)
-
-		frame.Status = statusFrame:CreateFontString(nil, "OVERLAY")
-		frame.Status:SetFont(DB.font.Primary.Face, 22, "OUTLINE")
-		frame.Status:SetPoint("CENTER")
-		frame.Status:SetText(Page_Cur.."  /  ".. Pages)
-
-		frame.titleHolder = frame:CreateFontString(nil, "OVERLAY")
-		frame.titleHolder:SetFont(DB.font.Primary.Face, 22, "OUTLINE")
-		frame.titleHolder:SetPoint("TOP", frame, "TOP", 0, -5)
-		frame.titleHolder:SetSize(350, 20)
-		frame.titleHolder:SetText("SpartanUI Installation")
-		frame.titleHolder:SetTextColor(0, 0, 0, 1)
-
-		frame.SubTitle = frame:CreateFontString(nil, "OVERLAY")
-		frame.SubTitle:SetFont(DB.font.Primary.Face, 16, "OUTLINE")
-		frame.SubTitle:SetPoint("TOP", frame, "TOP", 0, -40)
-
-		frame.Desc1 = frame:CreateFontString(nil, "OVERLAY")
-		frame.Desc1:SetFont(DB.font.Primary.Face, 14, "OUTLINE")
-		frame.Desc1:SetPoint("TOPLEFT", 20, -75)
-		frame.Desc1:SetWidth(frame:GetWidth()-40)
-
-		--Make the Options
-		
-		
-		--Buttons
-		frame.Next = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-		frame.Next.RemoveTextures = RemoveTextures
-		frame.Next.RemoveTextures(frame.Next)
-		-- frame.Next:RemoveTextures()
-		frame.Next:SetSize(110, 25)
-		frame.Next:SetPoint("BOTTOMRIGHT", 40, 5)
-		frame.Next.Left:SetAlpha(0)
-		frame.Next.Middle:SetAlpha(0)
-		frame.Next.Right:SetAlpha(0)
-		frame.Next:SetNormalTexture("")
-		frame.Next:SetPushedTexture("")
-		frame.Next:SetPushedTexture("")
-		frame.Next:SetDisabledTexture("")
-		frame.Next:SetFrameLevel(frame.Next:GetFrameLevel() + 1)
-		
-		frame.Next.texture = frame.Next:CreateTexture(nil, "BORDER")
-		frame.Next.texture:SetSize(135, 100)
-		frame.Next.texture:SetPoint("RIGHT")
-		frame.Next.texture:SetTexture([[Interface\AddOns\SpartanUI\media\arrow.tga]])
-		frame.Next.texture:SetVertexColor(0, 0.5, 1)
-		frame.Next.text = frame.Next:CreateFontString(nil, "OVERLAY")
-		frame.Next.text:SetFont(DB.font.Primary.Face, 18, "OUTLINE")
-		frame.Next.text:SetPoint("CENTER")
-		frame.Next.text:SetText(CONTINUE)
-		-- frame.Next:Disable()
-		frame.Next.parent = frame
-		frame.Next:SetScript("OnClick", function(this)
-			if Page_Cur == Pages then
-				frame:Hide()
-			end
-		end)
-		frame.Next:SetScript("OnEnter", function(this)
-			this.texture:SetVertexColor(.7, .7, 1, 1)
-		end)
-		frame.Next:SetScript("OnLeave", function(this)
-			this.texture:SetVertexColor(0, 0.5, 1)
-		end)
-	end
-	if DB.Installer == nil then
-		SUI_InstallerFrame:Show()
-	end
+		if Page_Cur == PageCnt then
+			Win:Hide()
+		else
+			Page_Cur = Page_Cur + 1
+			ClearPage()
+			module:DisplayPage()
+		end
+	end)
+	Win.Next:SetScript("OnEnter", function(this)
+		this.texture:SetVertexColor(.5, .5, 1, 1)
+	end)
+	Win.Next:SetScript("OnLeave", function(this)
+		this.texture:SetVertexColor(0, 0.5, 1)
+	end)
+	
+	Win:Hide()
 end

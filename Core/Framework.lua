@@ -443,7 +443,7 @@ end
 ---------------		FONT FUNCTIONS		---------------------------------------------
 
 function addon:FontSetup()
-	local OutlineSizes = {22, 18, 13, 12,11,10,9,8}
+	local OutlineSizes = {22, 18,16,13, 12,11,10,9,8}
 	local Sizes = {10}
 	for i,v in ipairs(OutlineSizes) do
 		local filename, fontHeight, flags = _G["SUI_FontOutline" .. v]:GetFont()
