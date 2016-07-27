@@ -419,22 +419,7 @@ local CreatePlayerFrame = function(self,unit)
 		end
 		do --Special Icons/Bars
 			local playerClass = select(2, UnitClass("player"))
-			if unit == "player" and playerClass == "DRUID" then
-				local DruidMana = CreateFrame("StatusBar", nil, self)
-				DruidMana:SetSize(self:GetWidth(), 4);
-				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
-				DruidMana.colorPower = true
-				DruidMana:SetStatusBarTexture(Smoothv2)
-
-				-- Add a background
-				local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-				Background:SetAllPoints(DruidMana)
-				Background:SetTexture(1, 1, 1, .2)
-
-				-- Register it with oUF
-				self.DruidMana = DruidMana
-				self.DruidMana.bg = Background
-			elseif unit == "player" and playerClass =="DEATHKNIGHT" then	
+			if unit == "player" and playerClass =="DEATHKNIGHT" then	
 				self.Runes = CreateFrame("Frame", nil, self)
 				
 				for i = 1, 6 do
@@ -455,27 +440,21 @@ local CreatePlayerFrame = function(self,unit)
 					self.Runes[i].bg.multiplier = 0.34
 					
 				end
-			elseif unit == "player" and (playerClass =="MONK" or playerClass =="PALADIN" or playerClass =="PRIEST" or playerClass =="WARLOCK") then
-				local ClassIcons = {}
-				for index = 1, 6 do
-					local Icon = self:CreateTexture(nil, 'BORDER')
-
-					-- Position and size.
-					Icon:SetSize(16, 16)
-					Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-					Icon:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Icon:GetWidth(), -3)
-					
-					
-					Icon.bg = self:CreateTexture(nil, "BACKGROUND")
-					Icon.bg:SetSize(16, 16)
-					Icon.bg:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-					Icon.bg:SetVertexColor(.4, .4, .4, .7)
-					Icon.bg:SetAllPoints(Icon)
-
-					ClassIcons[index] = Icon
-				end
-				self.ClassIcons = ClassIcons
 			end
+			local DruidMana = CreateFrame("StatusBar", nil, self)
+			DruidMana:SetSize(self:GetWidth(), 4);
+			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
+			DruidMana.colorPower = true
+			DruidMana:SetStatusBarTexture(Smoothv2)
+
+			-- Add a background
+			local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(DruidMana)
+			Background:SetTexture(1, 1, 1, .2)
+
+			-- Register it with oUF
+			self.DruidMana = DruidMana
+			self.DruidMana.bg = Background
 		end
 	end
 	do -- setup ring, icons, and text
