@@ -117,6 +117,11 @@ function module:InitFramework()
 		
 		Artwork_Core:MoveTalkingHeadUI()
 		
+		MainMenuBarVehicleLeaveButton:HookScript("OnShow", function() 
+			MainMenuBarVehicleLeaveButton:ClearAllPoints()
+			MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM",Transparent_SpartanUI,"TOP",0,20)
+		end)
+		
 		FramerateText:ClearAllPoints();
 		FramerateText:SetPoint("BOTTOM", "Transparent_SpartanUI_Base1", "TOP", 0, 0);
 		
@@ -215,6 +220,7 @@ function module:SetupVehicleUI()
 		RegisterStateDriver(Transparent_SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
 	end
 end
+
 function module:RemoveVehicleUI()
 	if DBMod.Artwork.VehicleUI then
 		UnRegisterStateDriver(Transparent_SpartanUI, "visibility");
@@ -272,7 +278,6 @@ function module:EnableFramework()
 		end
 	end);
 	
-
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID;

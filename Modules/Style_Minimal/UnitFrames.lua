@@ -275,6 +275,8 @@ local MakeSmallFrame = function(self,unit)
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
 			self:Tag(health.value, PlayerFrames:TextFormat("health"))
+			
+			-- self:Tag(health.value, RaidFrames:TextFormat("health"))
 			-- self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
 			
 			local Background = health:CreateTexture(nil, 'BACKGROUND')

@@ -1214,6 +1214,8 @@ local CreateBossFrame = function(self,unit)
 end
 
 local CreateRaidFrame = function(self,unit)
+	local RaidFrames = spartan:GetModule("RaidFrames");
+	
 	self:SetSize(95, 40);
 	self:SetAlpha(.8)
 	do --setup base artwork
@@ -1242,8 +1244,8 @@ local CreateRaidFrame = function(self,unit)
 			health.value:SetAllPoints(health);
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
-			-- self:Tag(health.value, TextFormat("health"))	
-			self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
+			self:Tag(health.value, RaidFrames:TextFormat("health"))	
+			-- self:Tag(health.value, "[perhp]% ([missinghpdynamic])")	
 			
 			self.Health = health;
 			self.Health.colorTapping = true;

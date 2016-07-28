@@ -133,6 +133,11 @@ function module:InitFramework()
 		
 		Artwork_Core:MoveTalkingHeadUI()
 		
+		MainMenuBarVehicleLeaveButton:HookScript("OnShow", function() 
+			MainMenuBarVehicleLeaveButton:ClearAllPoints()
+			MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM",SpartanUI,"TOP",0,80)
+		end)
+	
 		FramerateText:ClearAllPoints();
 		FramerateText:SetPoint("BOTTOM", "SpartanUI_Base1", "TOP", 0, 0);
 		
@@ -268,7 +273,6 @@ function module:EnableFramework()
 		end
 	end);
 	
-
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID;
