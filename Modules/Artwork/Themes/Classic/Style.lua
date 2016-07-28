@@ -53,7 +53,15 @@ function module:OnEnable()
 		module:EnableActionBars();
 		module:EnableMinimap();
 		module:EnableStatusBars();
-		if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end -- We want to do this last
+		 -- We want to do this last
+		
+		C_Timer.After(1, function()
+			if DBMod.Artwork.FirstLoad and Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile then
+				Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
+				if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end
+			end
+		end)
+		
 	end
 end
 

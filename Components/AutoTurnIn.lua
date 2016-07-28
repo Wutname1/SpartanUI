@@ -404,6 +404,11 @@ function module:FirstLaunch()
 			SUI_Win.ATI.AcceptGeneralQuests = CreateFrame("CheckButton", "SUI_ATI_AcceptGeneralQuests", SUI_Win.ATI, "OptionsCheckButtonTemplate")
 			SUI_Win.ATI.AcceptGeneralQuests:SetPoint("TOP", SUI_Win.ATI.TurnInEnabled, "BOTTOM", 0, -15)
 			SUI_ATI_AcceptGeneralQuestsText:SetText("Enable accepting quests")
+			
+			
+			--Defaults
+			SUI_ATI_TurnInEnabled:SetChecked(true)
+			SUI_ATI_AcceptGeneralQuests:SetChecked(true)
 		end,
 		Next = function()
 			DB.AutoTurnIn.FirstLaunch = false
@@ -413,6 +418,9 @@ function module:FirstLaunch()
 			
 			SUI_Win.ATI:Hide()
 			SUI_Win.ATI = nil
+		end,
+		Skip = function()
+			DB.AutoTurnIn.FirstLaunch = false
 		end
 	}
 	local SetupWindow = spartan:GetModule("SetupWindow")

@@ -6,11 +6,14 @@ local Page_Cur = 1
 local PageCnt = 0
 local PageList = {}
 local Win = nil
+local RequireReload = false
 -- local module
 
 function module:AddPage(PageData)
 	PageCnt = PageCnt+1
 	PageList[PageCnt] = PageData
+	
+	if PageData.RequireReload then RequireReload = true; end
 	
 	--If something already displayed the window update the text
 	if SUI_Win:IsVisible() then
@@ -30,7 +33,7 @@ function module:DisplayPage()
 	if PageList[Page_Cur] == nil then return end
 	
 	Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
-	if Page_Cur == PageCnt then
+	if Page_Cur == PageCnt and not RequireReload then
 		Win.Next:SetText("FINISH")
 	else
 		Win.Next:SetText("CONTINUE")
@@ -41,13 +44,33 @@ function module:DisplayPage()
 
 	Win.SubTitle:SetText(data.SubTitle)
 	if data.Desc1 ~= nil then Win.Desc1:SetText(data.Desc1) end
+	if data.Desc2 ~= nil then Win.Desc2:SetText(data.Desc2) end
 	if data.Display ~= nil then data.Display() end
 	data.Displayed = true
 	Win:Show()
 end
 
+function module:ReloadPage()
+	Win.Status:SetText("")
+	Win.Next:SetText("FINISH")
+	
+	Win.SubTitle:SetText("Setup Finished!")
+	Win.Desc1:SetText("A Reload of the UI is required to finalize your selections. Click FINISH to reload the UI.")
+	
+	Win.Desc1:ClearAllPoints()
+	Win.Desc1:SetPoint("CENTER", 0, 50)
+	
+	Win.Next:ClearAllPoints()
+	Win.Next:SetPoint("CENTER", 0, -50)
+	
+	Win.Next:SetScript("OnClick", function(this)
+		ReloadUI()
+	end)
+end
+
 local ClearPage = function()
 	Win.Desc1:SetText("")
+	Win.Desc2:SetText("")
 end
 
 function module:CreateInstallWindow()
@@ -91,11 +114,16 @@ function module:CreateInstallWindow()
 	Win.Desc1:SetTextColor(1, 1, 1, .8)
 	Win.Desc1:SetWidth(Win:GetWidth()-40)
 	
+	Win.Desc2 = Win:CreateFontString(nil, "OVERLAY", "SUI_FontOutline13")
+	Win.Desc2:SetPoint("TOP",Win.Desc1,"BOTTOM", 0, -3)
+	Win.Desc2:SetTextColor(1, 1, 1, .8)
+	Win.Desc2:SetWidth(Win:GetWidth()-40)
+	
 	--Holder for items
 	Win.content = CreateFrame("Frame", "SUI_Win_Content", Win)
 	Win.content:SetPoint("BOTTOMLEFT", Win, "BOTTOMLEFT", 0, 30)
 	Win.content:SetPoint("BOTTOMRIGHT", Win, "BOTTOMRIGHT", 0, 30)
-	Win.content:SetPoint("TOP", Win.Desc1, "BOTTOM", 0, -5)
+	Win.content:SetPoint("TOP", Win.Desc2, "BOTTOM", 0, -5)
 	
 	--Buttons
 	Win.Next = CreateFrame("Button", nil, Win, "UIPanelButtonTemplate")
@@ -115,10 +143,13 @@ function module:CreateInstallWindow()
 	
 	-- Win.Next.parent = frame
 	Win.Next:SetScript("OnClick", function(this)
-		if PageList[Page_Cur].Next ~= nil then PageList[Page_Cur].Next() end
+		if PageList[Page_Cur]~= nil and PageList[Page_Cur].Next ~= nil then PageList[Page_Cur].Next() end
 		
-		if Page_Cur == PageCnt then
+		if Page_Cur == PageCnt and not RequireReload then
 			Win:Hide()
+		elseif Page_Cur == PageCnt and RequireReload then
+			ClearPage()
+			module:ReloadPage()
 		else
 			Page_Cur = Page_Cur + 1
 			ClearPage()

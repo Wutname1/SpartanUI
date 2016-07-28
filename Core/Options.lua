@@ -50,7 +50,7 @@ function module:OnInitialize()
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
-					func = function() 
+					func = function()
 						DBMod.Artwork.Style = "Transparent";
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
@@ -61,7 +61,7 @@ function module:OnInitialize()
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
-					func = function() 
+					func = function()
 						DBMod.Artwork.Style = "Minimal";
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;

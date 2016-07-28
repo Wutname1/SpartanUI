@@ -97,7 +97,6 @@ function module:MergeData(target,source)
 end
 
 function module:InitActionBars()
-	--module:SetupProfile();
 	--if (Bartender4.db:GetCurrentProfile() == DB.Styles.Transparent.BartenderProfile or not module:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then
 	Artwork_Core:ActionBarPlates("Transparent_ActionBarPlate");
 	--end

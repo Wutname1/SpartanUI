@@ -97,7 +97,6 @@ function module:MergeData(target,source)
 end
 
 function module:InitActionBars()
-	--module:SetupProfile();
 	--if (Bartender4.db:GetCurrentProfile() == DB.Styles.Minimal.BartenderProfile or not module:BartenderProfileCheck(DB.Styles.Minimal.BartenderProfile,true)) then
 	-- Artwork_Core:ActionBarPlates("Minimal_ActionBarPlate");
 	--end
