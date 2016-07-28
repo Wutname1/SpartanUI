@@ -794,7 +794,7 @@ end
 
 local CreateUnitFrameRaid = function(self,unit)
 	self = MakeSmallFrame(self,unit)
-	self = spartan:GetModule("RaidFrames"):MakeMovable()
+	self = spartan:GetModule("RaidFrames"):MakeMovable(self)
 	return self
 end
 

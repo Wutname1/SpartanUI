@@ -16,9 +16,9 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 			774, -- Rejuvenation
 			33763, -- Lifebloom
 			8936, -- Regrowth
-			102351, -- Cenarion Ward
 			48438, -- Wild Growth
 			155777, -- Germination
+			102351, -- Cenarion Ward
 			102342, -- Ironbark
 		}
 	elseif classFileName == "PRIEST" then

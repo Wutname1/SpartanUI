@@ -459,7 +459,7 @@ local CreatePlayerFrame = function(self,unit)
 	end
 	do -- setup ring, icons, and text
 		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
+		ring:SetFrameStrata("LOW");
 		ring:SetAllPoints(self.Portrait);
 		ring:SetFrameLevel(3);
 		
@@ -737,7 +737,7 @@ local CreateTargetFrame = function(self,unit)
 	end
 	do -- setup ring, icons, and text
 		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("BACKGROUND");
+		ring:SetFrameStrata("LOW");
 		ring:SetAllPoints(self.Portrait);
 		ring:SetFrameLevel(4);
 		ring.low = CreateFrame("Frame",nil,self);
