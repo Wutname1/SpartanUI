@@ -15,6 +15,7 @@ local metal = [[Interface\AddOns\SpartanUI_PlayerFrames\media\metal.tga]]
 --Interface/WorldStateFrame/ICONS-CLASSES
 local lfdrole = [[Interface\AddOns\SpartanUI\media\icon_role.tga]]
 
+local classname, classFileName = UnitClass("player")
 local colors = setmetatable({},{__index = SpartanoUF.colors});
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 do -- setup custom colors that we want to use
@@ -330,18 +331,12 @@ local MakeSmallFrame = function(self,unit)
 			power:SetPoint("TOP",self.Health,"BOTTOM",0,0);
 			power:SetStatusBarTexture(Smoothv2)
 			
-			-- power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			-- power.value:SetAllPoints(power);
-			-- power.value:SetJustifyH("CENTER");
-			-- power.value:SetJustifyV("MIDDLE");
-			-- self:Tag(power.value, TextFormat("mana"))
-			
 			local Background = power:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(power)
-			Background:SetTexture(1, 1, 1, .2)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(0, 0, 0, .2)
 			
 			self.Power = power;
-			self.Power.bg = Background;
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 			
@@ -439,13 +434,12 @@ local MakeLargeFrame = function(self,unit,width)
 			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
 			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
 			
-			-- local Background = cast:CreateTexture(nil, 'BACKGROUND')
-			-- Background:SetAllPoints(cast)
-			-- Background:SetTexture(Smoothv2)
-			-- Background:SetTexture(1, 1, 1, .2)
+			local Background = cast:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(cast)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(0, 0, 0, .2)
 			
 			self.Castbar = cast;
-			-- self.Castbar.bg = Background;
 			self.Castbar.OnUpdate = OnCastbarUpdate;
 			self.Castbar.PostCastStart = PostCastStart;
 			self.Castbar.PostChannelStart = PostChannelStart;
@@ -523,14 +517,14 @@ local MakeLargeFrame = function(self,unit,width)
 			power.value:SetAllPoints(power);
 			power.value:SetJustifyH("CENTER");
 			power.value:SetJustifyV("MIDDLE");
-			self:Tag(power.value, "[perpp]%")	
+			self:Tag(power.value, "[perpp]%")
 			
 			local Background = power:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(power)
-			Background:SetTexture(1, 1, 1, .2)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(0, 0, 0, .2)
 			
 			self.Power = power;
-			self.Power.bg = Background;
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 			
@@ -604,41 +598,45 @@ local MakeLargeFrame = function(self,unit,width)
 			self.Debuffs.PostUpdate = PartyFrames:PostUpdateAura(self,unit);
 		end
 		do --Special Icons/Bars
-			local DruidMana = CreateFrame("StatusBar", nil, self)
-			DruidMana:SetSize(self:GetWidth(), 4);
-			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
-			DruidMana.colorPower = true
-			DruidMana:SetStatusBarTexture(Smoothv2)
-
-			-- Add a background
-			local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(DruidMana)
-			Background:SetTexture(1, 1, 1, .2)
-
-			-- Register it with oUF
-			self.DruidMana = DruidMana
-			self.DruidMana.bg = Background
-			
 			local playerClass = select(2, UnitClass("player"))
-			if unit == "player" and playerClass =="DEATHKNIGHT" then
-				self.Runes = CreateFrame("Frame", nil, self)
+			if unit == "player" then
+				local DruidMana = CreateFrame("StatusBar", nil, self)
+				DruidMana:SetSize(self:GetWidth(), 4);
+				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,-1.2);
+				DruidMana.colorPower = true
+				DruidMana:SetStatusBarTexture(Smoothv2)
+
+				-- Add a background
+				local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+				Background:SetAllPoints(DruidMana)
+				Background:SetTexture(Smoothv2)
+				Background:SetVertexColor(1, 1, 1, .2)
+
+				-- Register it with oUF
+				self.DruidMana = DruidMana
+				self.DruidMana.bg = Background
 				
+				
+				self.Runes = CreateFrame("Frame", nil, self)
 				for i = 1, 6 do
 					self.Runes[i] = CreateFrame("StatusBar", self:GetName().."_Runes"..i, self)
 					self.Runes[i]:SetHeight(6)
-					self.Runes[i]:SetWidth((self:GetWidth() - 6) / 6)
+					self.Runes[i]:SetWidth((self:GetWidth() - 7) / 6)
 					if (i == 1) then
-						self.Runes[i]:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -3)
+						self.Runes[i]:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -1.5)
 					else
-						self.Runes[i]:SetPoint("TOPLEFT", self.Runes[i-1], "TOPRIGHT", 1, 0)
+						self.Runes[i]:SetPoint("TOPLEFT", self.Runes[i-1], "TOPRIGHT", 1.5, 0)
 					end
 					self.Runes[i]:SetStatusBarTexture(Smoothv2)
+					self.Runes[i]:SetStatusBarColor(0,.39,.63,1)
 
 					self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, "BORDER")
 					self.Runes[i].bg:SetPoint("TOPLEFT", self.Runes[i], "TOPLEFT", -0, 0)
 					self.Runes[i].bg:SetPoint("BOTTOMRIGHT", self.Runes[i], "BOTTOMRIGHT", 0, -0)				
 					self.Runes[i].bg:SetTexture(Smoothv2)
-					self.Runes[i].bg.multiplier = 0.34
+					self.Runes[i].bg:SetVertexColor(0,0,0,1)
+					self.Runes[i].bg.multiplier = 0.64
+					self.Runes[i]:Hide()
 				end
 			end
 		end
@@ -710,21 +708,19 @@ local MakeLargeFrame = function(self,unit,width)
 				else 
 					Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
 				end
+				Icon:Hide()
 				
 				ClassIcons[i] = Icon
 			end
 			self.ClassIcons = ClassIcons
 			
 			local ClassPowerID = nil;
-			items:SetScript("OnEvent",function()
+			items:SetScript("OnEvent",function(a,b)
+				if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
 				local cur, max
-				if(unit == 'vehicle') then
-					cur = GetComboPoints('vehicle', 'target')
-					max = MAX_COMBO_POINTS
-				else
-					cur = UnitPower('player', ClassPowerID)
-					max = UnitPowerMax('player', ClassPowerID)
-				end
+				cur = UnitPower('player', ClassPowerID)
+				max = UnitPowerMax('player', ClassPowerID)
+				
 				self.ComboPoints:SetText((cur > 0 and cur) or "");
 			end);
 			
@@ -816,21 +812,12 @@ function module:UpdateAltBarPositions()
 		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
 	end
 	
-	-- relocate the AlternatePowerBar
-	if classFileName == "DRUID" then
+	if RuneFrame then RuneFrame:Hide() end
+	
+	-- Hide the AlternatePowerBar
+	if PlayerFrameAlternateManaBar then
 		PlayerFrameAlternateManaBar:Hide()
 		PlayerFrameAlternateManaBar.Show = PlayerFrameAlternateManaBar.Hide
-	elseif classFileName ~= "MONK" then
-		PlayerFrameAlternateManaBar:ClearAllPoints();
-		if DBMod.PlayerFrames.AltManaBar.movement.moved then
-			PlayerFrameAlternateManaBar:SetPoint(DBMod.PlayerFrames.AltManaBar.movement.point,
-			DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
-			DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
-			DBMod.PlayerFrames.AltManaBar.movement.xOffset,
-			DBMod.PlayerFrames.AltManaBar.movement.yOffset);
-		else
-			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,0);
-		end
 	end
 end
 

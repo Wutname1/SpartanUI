@@ -432,17 +432,20 @@ local CreatePlayerFrame = function(self,unit)
 						self.Runes[i]:SetPoint("TOPLEFT", self.Runes[i-1], "TOPRIGHT", 1, 0)
 					end
 					self.Runes[i]:SetStatusBarTexture(Smoothv2)
+					self.Runes[i]:SetStatusBarColor(0,.39,.63,1)
 
 					self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, "BORDER")
 					self.Runes[i].bg:SetPoint("TOPLEFT", self.Runes[i], "TOPLEFT", -0, 0)
 					self.Runes[i].bg:SetPoint("BOTTOMRIGHT", self.Runes[i], "BOTTOMRIGHT", 0, -0)				
 					self.Runes[i].bg:SetTexture(Smoothv2)
-					self.Runes[i].bg.multiplier = 0.34
-					
+					self.Runes[i].bg:SetVertexColor(0,0,0,1)
+					self.Runes[i].bg.multiplier = 0.64
+					self.Runes[i]:Hide()
 				end
 			end
+			
 			local DruidMana = CreateFrame("StatusBar", nil, self)
-			DruidMana:SetSize(self:GetWidth(), 4);
+			DruidMana:SetSize(self.Power:GetWidth(), 4);
 			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
 			DruidMana.colorPower = true
 			DruidMana:SetStatusBarTexture(Smoothv2)
@@ -538,7 +541,8 @@ local CreatePlayerFrame = function(self,unit)
 		self.ClassIcons = ClassIcons
 		
 		local ClassPowerID = nil;
-		ring:SetScript("OnEvent",function()
+		ring:SetScript("OnEvent",function(a,b)
+			if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
 			local cur, max
 			if(unit == 'vehicle') then
 				cur = GetComboPoints('vehicle', 'target')
@@ -1446,37 +1450,12 @@ function module:UpdateAltBarPositions()
 		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
 	end
 	
-	-- Monk Chi Bar (Hard to move but it is doable.)
-	-- MonkHarmonyBar.Show = MonkHarmonyBar.Hide
-	-- MonkHarmonyBar:Hide()
+	if RuneFrame then RuneFrame:Hide() end
 	
-	--Paladin Holy Power
-	-- PaladinPowerBar.Show = MonkHarmonyBar.Hide
-	-- PaladinPowerBar:Hide()
-	
-	--Priest Power Frame
-	-- PriestBarFrame.Show = MonkHarmonyBar.Hide
-	-- PriestBarFrame:Hide()
-	
-	--Warlock Power Frame
-	-- WarlockPowerFrame.Show = MonkHarmonyBar.Hide
-	-- WarlockPowerFrame:Hide()
-	
-	-- relocate the AlternatePowerBar
-	if classFileName == "DRUID" then
+	-- Hide the AlternatePowerBar
+	if PlayerFrameAlternateManaBar then
 		PlayerFrameAlternateManaBar:Hide()
 		PlayerFrameAlternateManaBar.Show = PlayerFrameAlternateManaBar.Hide
-	elseif classFileName ~= "MONK" then
-		PlayerFrameAlternateManaBar:ClearAllPoints();
-		if DBMod.PlayerFrames.AltManaBar.movement.moved then
-			PlayerFrameAlternateManaBar:SetPoint(DBMod.PlayerFrames.AltManaBar.movement.point,
-			DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
-			DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
-			DBMod.PlayerFrames.AltManaBar.movement.xOffset,
-			DBMod.PlayerFrames.AltManaBar.movement.yOffset);
-		else
-			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,0);
-		end
 	end
 end
 

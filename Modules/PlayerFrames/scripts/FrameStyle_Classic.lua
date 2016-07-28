@@ -437,7 +437,8 @@ local CreatePlayerFrame = function(self,unit)
 		self.ClassIcons = ClassIcons
 		
 		local ClassPowerID = nil;
-		ring:SetScript("OnEvent",function()
+		ring:SetScript("OnEvent",function(a,b)
+			if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
 			local cur, max
 			if(unit == 'vehicle') then
 				cur = GetComboPoints('vehicle', 'target')
