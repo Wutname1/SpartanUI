@@ -11,6 +11,10 @@ local Timer = nil
 local bag = 0
 local OnlyCount = true
 local inSet = {}
+local ExcludedItems = {
+	137642, --Mark Of Honor
+	141446 --Tome of the Tranquil Mind
+}
 
 function module:OnInitialize()
 	if not DB.AutoSell then
@@ -204,7 +208,7 @@ function module:IsSellable(item)
 	
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if DB.AutoSell.NotConsumables and (itemType == "Consumable" or item == 141446) then 
+	if DB.AutoSell.NotConsumables and itemType == "Consumable" then 
 		NotConsumable = false
 	end
 	
@@ -219,6 +223,7 @@ function module:IsSellable(item)
 	and Craftablesellable
 	and NotInGearset
 	and NotConsumable
+	and not spartan:isInTable(ExcludedItems, item)
 	and itemType ~= "Quest"
 	and itemType ~= "Container"
 	then
