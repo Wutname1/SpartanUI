@@ -106,6 +106,10 @@ function spartan:DBUpdates()
 			if DB.Styles.Classic.TooltipLoc == nil then DB.Styles.Classic.TooltipLoc = true end
 		end
 	end
+	--Setup Assistant Skip
+	if DB.Version ~= nil then 
+		DBMod.Artwork.SetupWin = true
+	end
 end
 
 function module:OnEnable()
