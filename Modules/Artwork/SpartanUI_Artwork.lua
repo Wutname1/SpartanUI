@@ -6,7 +6,7 @@ function Artwork_Core:isPartialMatch(frameName, tab)
 	local result = false
 
 	for k,v in ipairs(tab) do
-		startpos, endpos = strfind(strlower(frameName), strlower(v))
+		local startpos, endpos = strfind(strlower(frameName), strlower(v))
 		if (startpos == 1) then
 			result = true;
 		end
@@ -57,7 +57,8 @@ function Artwork_Core:ActionBarPlates(plate)
 		lib.windowData[frame].names = names
 		lib.windowData[frame].storage = storage
 		
-		if(frame:GetName():match("BT4Bar")) and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+		if (frame:GetName() == nil) then return end
+		if (frame:GetName():match("BT4Bar")) and storage.parent and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
 			local parent = frame:GetParent();
 			if (storage.parent) and _G[storage.parent] then
 				frame:SetParent(storage.parent);
