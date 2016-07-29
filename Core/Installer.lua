@@ -9,7 +9,10 @@ local Win = nil
 local RequireReload = false
 -- local module
 
+
 function module:AddPage(PageData)
+	if Win == nil then module:CreateInstallWindow() end
+	
 	PageCnt = PageCnt+1
 	PageList[PageCnt] = PageData
 	
@@ -22,7 +25,6 @@ function module:AddPage(PageData)
 end
 
 function module:OnInitialize()
-	module:CreateInstallWindow()
 end
 
 function module:OnEnable()
@@ -42,7 +44,7 @@ function module:DisplayPage()
 	if SUI_Win:IsVisible() and PageList[Page_Cur].Displayed ~= nil then return end
 	local data = PageList[Page_Cur]
 
-	Win.SubTitle:SetText(data.SubTitle)
+	if data.SubTitle ~= nil then Win.SubTitle:SetText(data.SubTitle) end
 	if data.Desc1 ~= nil then Win.Desc1:SetText(data.Desc1) end
 	if data.Desc2 ~= nil then Win.Desc2:SetText(data.Desc2) end
 	if data.Display ~= nil then data.Display() end

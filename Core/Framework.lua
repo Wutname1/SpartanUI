@@ -285,7 +285,10 @@ end
 
 function addon:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
-	-- addon.db.profile.playerName = UnitName("player")
+	--If we have not played in a long time reset the database, make sure it is all good.
+	local ver = addon.db.profile.SUIProper.Version
+	if (ver ~= nil and ver < "3.3.4") then addon.db:ResetDB(); end
+	
 	DBGlobal = addon.db.global
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
@@ -317,6 +320,11 @@ end
 
 function addon:InitializeProfile()
 	addon.db:RegisterDefaults(DBdefaults)
+	
+	DB = addon.db.profile.SUIProper
+	DBMod = addon.db.profile.Modules
+	
+	addon:reloadui()
 end
 
 function addon:BT4RefreshConfig()
@@ -329,10 +337,26 @@ function addon:UpdateModuleConfigs()
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
 	
-	addon:DBUpdates() -- Make sure the profile we loaded is up to date
-	
 	Bartender4.db:SetProfile(DB.BT4Profile);
-	addon:reloadui()
+	
+	PageData = {
+		Desc1 = "A reload of your UI is required.",
+		width = 400,
+		height = 150,
+		Display = function()
+			SUI_Win:SetSize(400, 150)
+			SUI_Win.Status:Hide()
+			SUI_Win.Next:SetText("RELOADUI")
+			SUI_Win.Next:ClearAllPoints()
+			SUI_Win.Next:SetPoint("BOTTOM", 0, 30)
+		end,
+		Next = function()
+			ReloadUI()
+		end
+	}
+	local SetupWindow = addon:GetModule("SetupWindow")
+	SetupWindow:AddPage(PageData)
+	SetupWindow:DisplayPage()
 end
 
 function addon:reloadui()

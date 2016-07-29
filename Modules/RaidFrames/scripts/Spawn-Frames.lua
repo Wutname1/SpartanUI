@@ -35,8 +35,15 @@ function RaidFrames:UpdateRaid(event,...)
 	elseif DBMod.RaidFrames.showParty and inParty then
 		spartan.RaidFrames:Show()
 	elseif DBMod.RaidFrames.showSolo and not inParty and not IsInRaid() then
+		--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
+		spartan.RaidFrames.HideTmp = spartan.RaidFrames.Hide
+		spartan.RaidFrames.Hide = spartan.RaidFrames.Show
+		--Now Display
 		spartan.RaidFrames:Show()
 	elseif spartan.RaidFrames:IsShown() then
+		--Swap back hide function if needed
+		if spartan.RaidFrames.HideTmp then spartan.RaidFrames.Hide = spartan.RaidFrames.HideTmp end
+		
 		spartan.RaidFrames:Hide()
 	end
 	
