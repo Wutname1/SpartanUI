@@ -1,60 +1,21 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = spartan:NewModule("DBSetup");
----------------------------------------------------------------------------
-local Bartender4Version, BartenderMin = "","4.6.10"
-if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
+-----------------------------------
+--	This File is being Phased out.
+-----------------------------------
 if (spartan.CurseVersion == nil) then spartan.CurseVersion = "" end
 
 function module:OnInitialize()
-	StaticPopupDialogs["BartenderVerWarning"] = {
-		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
-		button1 = "Ok",
-		OnAccept = function()
-			DBGlobal.BartenderVerWarning = spartan.SpartanVer;
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
-	StaticPopupDialogs["BartenderInstallWarning"] = {
-		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
-		button1 = "Ok",
-		OnAccept = function()
-			DBGlobal.BartenderInstallWarning = spartan.SpartanVer
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
-	
-	StaticPopupDialogs["MiniMapNotice"] = {
-		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
-		button1 = "Yes",
-		button2 = "No",
-		OnAccept = function()
-			DB.MiniMap.ManualAllowPrompt = DB.Version
-			DB.MiniMap.ManualAllowUse = true
-			ReloadUI();
-		end,
-		OnCancel = function()
-			DB.MiniMap.ManualAllowPrompt = DB.Version
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
 	-- DB Updates
 	spartan:DBUpdates()
 end
-
+local artdetup
 function spartan:DBUpdates()
-	if DBGlobal.Version then
+	if DBGlobal.Version and DB.Version then
 		if (DB.Version < "4.0.0") then
 			if DBMod.PlayerFrames.ClassBar.scale == nil then DBMod.PlayerFrames.ClassBar.scale = 1 end
 			if DB.MiniMap.northTag == nil then DB.MiniMap.northTag = false end
-			-- if DB.MiniMap.frames == nil then DB.MiniMap.frames = {} end
-			-- if DB.MiniMap.IgnoredFrames == nil then DB.MiniMap.IgnoredFrames = {} end
 			if DB.MiniMap.SUIMapChangesActive == nil then DB.MiniMap.SUIMapChangesActive = false end
 			if DB.MiniMap.Moved == nil then
 				DB.MiniMap.Shape = "square"
@@ -106,24 +67,9 @@ function spartan:DBUpdates()
 			if DB.Styles.Classic.TooltipLoc == nil then DB.Styles.Classic.TooltipLoc = true end
 		end
 	end
-	--Setup Assistant Skip
-	if DB.Version ~= nil then 
-		DBMod.Artwork.SetupWin = true
-	end
 end
 
 function module:OnEnable()
-	-- No Bartender/out of date Notification
-	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= spartan.SpartanVer)) then
-		if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
-	elseif Bartender4Version < BartenderMin then
-			if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
-	end
-	-- MiniMap Modification
-	if (((not DB.MiniMap.AutoDetectAllowUse) and (not DB.MiniMap.ManualAllowUse)) and DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
-		StaticPopup_Show("MiniMapNotice")
-	end
-	
 	-- Update DB Version
 	DB.Version = spartan.SpartanVer;
 	DB.HVer = (string.gsub(string.gsub(spartan.CurseVersion, "%.", ""), "[0-9]", ""))

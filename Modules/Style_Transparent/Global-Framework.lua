@@ -128,8 +128,6 @@ function module:InitFramework()
 		MainMenuBar:Hide();
 		hooksecurefunc(Transparent_SpartanUI,"Hide",function() module:updateViewport(); end);
 		hooksecurefunc(Transparent_SpartanUI,"Show",function() module:updateViewport(); end);
-		--Transparent_SpartanUI:SetAlpha(.5);
-		--Transparent_SpartanUI:SetVertexColor(0,.8,.9,.1)
 		
 		hooksecurefunc("UpdateContainerFrameAnchors",function() -- fix bag offsets
 			local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
@@ -227,13 +225,22 @@ function module:RemoveVehicleUI()
 	end
 end
 
-function module:EnableFramework()
-	for i = 1,5 do
-		_G["Transparent_SpartanUI_Base" ..i]:SetVertexColor(0,.8,.9,.7)
+function module:SetColor()
+	local r,b,g,a = unpack(DB.Styles.Transparent.Color.Art)
+	for i = 1,6 do
+		if _G["Transparent_SpartanUI_Base" ..i] then 
+			_G["Transparent_SpartanUI_Base" ..i]:SetVertexColor(r,b,g,a)
+		end
+		if DB.ActionBars["bar"..i].enable then
+			_G["Transparent_Bar"..i.."BG"]:SetVertexColor(r,b,g,a)
+		end
+		if _G["Transparent_Popup"..i.."BG"] then
+			_G["Transparent_Popup"..i.."BG"]:SetVertexColor(r,b,g,a)
+		end
 	end
-	--Transparent_Popup1Mask:SetVertexColor(0,.8,.9,.7)
-	--Transparent_Popup2Mask:SetVertexColor(0,.8,.9,.7)
-	
+end
+
+function module:EnableFramework()
 	anchor:SetFrameStrata("BACKGROUND"); anchor:SetFrameLevel(1);
 	frame:SetFrameStrata("BACKGROUND"); frame:SetFrameLevel(1);
 	
@@ -255,6 +262,7 @@ function module:EnableFramework()
 	module:updateXOffset();
 	module:updateViewport();
 	module:updateAlpha();
+	module:SetColor();
 	
 	-- Limit updates via interval
 	anchor.UpdateInterval = 5 --Seconds

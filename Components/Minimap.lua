@@ -53,7 +53,30 @@ local OnLeave = function()
 	if ChangesTimer == nil then ChangesTimer = C_Timer.After(1, PerformFullBtnUpdate) end
 end
 
+function module:OnInitialize()
+	StaticPopupDialogs["MiniMapNotice"] = {
+		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
+		button1 = "Yes",
+		button2 = "No",
+		OnAccept = function()
+			DB.MiniMap.ManualAllowPrompt = DB.Version
+			DB.MiniMap.ManualAllowUse = true
+			ReloadUI();
+		end,
+		OnCancel = function()
+			DB.MiniMap.ManualAllowPrompt = DB.Version
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = false
+	}
+end
+
 function module:OnEnable()
+	-- MiniMap Modification
+	if (((not DB.MiniMap.AutoDetectAllowUse) and (not DB.MiniMap.ManualAllowUse)) and DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
+		StaticPopup_Show("MiniMapNotice")
+	end
 	if not DB.EnabledComponents.Minimap then return end
 	
 	if DB.Styles[DBMod.Artwork.Style].Movable.Minimap or (not spartan:GetModule("Artwork_Core", true)) then

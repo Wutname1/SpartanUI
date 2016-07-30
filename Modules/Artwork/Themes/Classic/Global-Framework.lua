@@ -122,6 +122,28 @@ end;
 
 ----------------------------------------------------------------------------------------------------
 
+function module:SetColor()
+	if not DB.Styles.Classic.Color.Art then return end
+	
+	local r,b,g,a = unpack(DB.Styles.Classic.Color.Art)
+	for i = 1,6 do
+		if _G["SpartanUI_Base" ..i] then 
+			_G["SpartanUI_Base" ..i]:SetVertexColor(r,b,g,a)
+		end
+		if _G["Bar"..i.."BG"] then
+			_G["Bar"..i.."BG"]:SetVertexColor(r,b,g,a)
+		end
+		if _G["Popup"..i.."BG"] then
+			_G["Popup"..i.."BG"]:SetVertexColor(r,b,g,a)
+		end
+		if _G["SUI_Popup"..i.."MaskBG"] then
+			_G["SUI_Popup"..i.."MaskBG"]:SetVertexColor(r,b,g,a)
+		end
+	end
+	if _G["SUI_ExperienceBarPlate"] then _G["SUI_ExperienceBarPlate"]:SetVertexColor(r,b,g,a) end
+	if _G["SUI_ReputationBarPlate"] then _G["SUI_ReputationBarPlate"]:SetVertexColor(r,b,g,a) end
+end
+
 function module:InitFramework()
 	do -- default interface modifications
 		SUI_FramesAnchor:SetFrameStrata("BACKGROUND");
@@ -273,6 +295,10 @@ function module:EnableFramework()
 		end
 	end);
 	
+	if DB.Styles.Classic.Color.Art then
+		--Use a timer since we have to wait for everything to get loaded.
+		C_Timer.After(1, function() module:SetColor() end)
+	end
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID;

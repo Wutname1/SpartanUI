@@ -23,9 +23,18 @@ if DB.Styles.Transparent.BartenderProfile == nil then
 			shape = "square",
 			size = {width = 140, height = 140}
 		},
+		Color = {0,.8,.9,.7},
 		BartenderProfile = "SpartanUI - Transparent",
 		TooltipLoc = true,
 		BuffLoc = true
+	}
+end
+if DB.Styles.Transparent.Color == nil then
+	DB.Styles.Transparent.Color = {
+		Art = {0,.8,.9,.7},
+		PlayerFrames = {0,.8,.9,.7},
+		PartyFrames = {0,.8,.9,.7},
+		RaidFrames = {0,.8,.9,.7}
 	}
 end
 if DB.Styles.Transparent.TalkingHeadUI == nil then

@@ -4,8 +4,8 @@ local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 if DB.Styles.Classic.BuffLoc == nil then DB.Styles.Classic.BuffLoc = true end
-
 local InitRan = false
+
 function module:OnInitialize()
 	if DB.Styles.Classic.TalkingHeadUI == nil then
 		DB.Styles.Classic.TalkingHeadUI = {
@@ -381,6 +381,14 @@ function module:SetupMenus()
 	}
 	spartan.opt.args["Artwork"].args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
+			Color = {name=L["ArtColor"],type="color",hasAlpha=true,order=.5,
+				get = function(info) if not DB.Styles.Classic.Color.Art then return {0,0,0,1} end return unpack(DB.Styles.Classic.Color.Art) end,
+				set = function(info,r,b,g,a) DB.Styles.Classic.Color.Art = {r,b,g,a}; module:SetColor(); end
+			},
+			ColorEnabled = {name="Color enabled",type="toggle",order=.6,
+				get = function(info) print(DB.Styles.Classic.Color.Art) return (DB.Styles.Classic.Color.Art == true or false) end,
+				set = function(info,r,b,g,a) DB.Styles.Classic.Color.Art = {0,0,0,1}; module:SetColor(); end
+			},
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],
 				get = function(info) return (DB.alpha*100); end,
@@ -434,4 +442,15 @@ end
 
 function module:OnDisable()
 	SpartanUI:Hide();
+end
+
+do -- Style Setup
+	if DB.Styles.Classic.Color == nil then
+		DB.Styles.Classic.Color = {
+			Art = false,
+			PlayerFrames = false,
+			PartyFrames = false,
+			RaidFrames = false
+		}
+	end
 end

@@ -1,6 +1,8 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local Artwork_Core = spartan:NewModule("Artwork_Core");
+local Bartender4Version, BartenderMin = "","4.7.1"
+if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
 
 function Artwork_Core:isPartialMatch(frameName, tab)
 	local result = false
@@ -76,12 +78,34 @@ function Artwork_Core:ActionBarPlates(plate)
 end
 
 function Artwork_Core:OnInitialize()
-	if DBMod.Artwork.SetupWin == nil then Artwork_Core:FirstTime() end
+	StaticPopupDialogs["BartenderVerWarning"] = {
+		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
+		button1 = "Ok",
+		OnAccept = function()
+			DBGlobal.BartenderVerWarning = spartan.SpartanVer;
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = false
+	}
+	StaticPopupDialogs["BartenderInstallWarning"] = {
+		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
+		button1 = "Ok",
+		OnAccept = function()
+			DBGlobal.BartenderInstallWarning = spartan.SpartanVer
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = false
+	}
+	
+	if not DBMod.Artwork.SetupDone then Artwork_Core:FirstTime() end
 	if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 	Artwork_Core:CheckMiniMap();
 end
 
 function Artwork_Core:FirstTime()
+	DBMod.Artwork.SetupDone = false
 	local PageData = {
 		SubTitle = "Art Style",
 		Desc1 = "Please pick an art style from the options below.",
@@ -175,7 +199,7 @@ function Artwork_Core:FirstTime()
 			
 		end,
 		Next = function()
-			DBMod.Artwork.SetupWin = true
+			DBMod.Artwork.SetupDone = true
 			
 			if (SUI_Win.Artwork.Classic.radio:GetValue()) then DBMod.Artwork.Style = "Classic"; end
 			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then DBMod.Artwork.Style = "Transparent"; end
@@ -202,8 +226,10 @@ function Artwork_Core:FirstTime()
 		end,
 		RequireReload = true,
 		Priority = 1,
+		Skipable = true,
+		NoReloadOnSkip = true,
 		Skip = function()
-			DBMod.Artwork.SetupWin = true
+			DBMod.Artwork.SetupDone = true
 		end
 	}
 	local SetupWindow = spartan:GetModule("SetupWindow")
@@ -212,6 +238,13 @@ function Artwork_Core:FirstTime()
 end
 
 function Artwork_Core:OnEnable()
+	-- No Bartender/out of date Notification
+	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= spartan.SpartanVer)) then
+		if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
+	elseif Bartender4Version < BartenderMin then
+			if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
+	end
+	
 	Artwork_Core:SetupOptions();
 	
 	local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4Bar7, BT4Bar8, BT4Bar9, BT4Bar10, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}

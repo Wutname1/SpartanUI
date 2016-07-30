@@ -283,6 +283,59 @@ function addon:ResetConfig()
 	ReloadUI();
 end
 
+function addon:FirstTimeSetup()
+	--Hide Bartender4 Minimap icon.
+	Bartender4.db.profile.minimapIcon.hide = true;
+	local LDBIcon = LibStub("LibDBIcon-1.0", true);
+	LDBIcon["Hide"](LDBIcon, "Bartender4")
+	
+	DB.SetupDone = false
+	local PageData = {
+		SubTitle = "Welcome",
+		Desc1 = "Thank you for installing SpartanUI.",
+		Desc2 = "If you would like to copy the configuration from another character you may do so below.",
+		Display = function()
+			--Container
+			SUI_Win.Core = CreateFrame("Frame", nil)
+			SUI_Win.Core:SetParent(SUI_Win.content)
+			SUI_Win.Core:SetAllPoints(SUI_Win.content)
+			
+			local gui = LibStub("AceGUI-3.0")
+			
+			--Classic
+			local control = gui:Create("Icon")
+			control:SetImage("interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center")
+			control:SetImageSize(120, 60)
+			control:SetPoint("TOP", SUI_Win.Core, "TOP", 0, -30)
+			control.frame:SetParent(SUI_Win.Core)
+			control.frame:Show()
+			SUI_Win.Core.Classic = control
+			
+			SUI_Win.Core.Minimal = control
+			
+		end,
+		Next = function()
+			DB.SetupDone = true
+			
+			SUI_Win.Core:Hide()
+			SUI_Win.Core = nil
+		end,
+		-- RequireReload = true,
+		-- Priority = 1,
+		-- Skipable = true,
+		-- NoReloadOnSkip = true,
+		Skip = function() DB.SetupDone = true; end
+	}
+	-- Uncomment this when the time is right.
+	-- local SetupWindow = spartan:GetModule("SetupWindow")
+	-- SetupWindow:AddPage(PageData)
+	-- SetupWindow:DisplayPage()
+	
+	-- This will be moved once we put the setup page in place.
+	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
+	DB.SetupDone = true
+end
+
 function addon:OnInitialize()
 	addon.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
 	--If we have not played in a long time reset the database, make sure it is all good.
@@ -314,7 +367,7 @@ function addon:OnInitialize()
 		Bartender4.db.RegisterCallback(addon, "OnProfileCopied", "BT4RefreshConfig")
 		Bartender4.db.RegisterCallback(addon, "OnProfileReset", "BT4RefreshConfig")
 	end
-
+	
 	addon:FontSetup()
 end
 
@@ -396,6 +449,9 @@ function addon:OnEnable()
 		end
 	end);
 	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
+	
+	--First Time Setup Actions
+	if not DB.SetupRan then addon:FirstTimeSetup() end
 end
 
 function addon:suihelp(input)

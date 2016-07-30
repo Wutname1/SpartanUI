@@ -6,9 +6,21 @@ local Page_Cur = 1
 local PageCnt = 0
 local PageList = {}
 local Win = nil
-local RequireReload = false
--- local module
+local RequireReload = 0
+local CurData = nil
 
+local ReloadNeeded = function(mode)
+	if mode == "add" then
+		RequireReload = RequireReload + 1
+	elseif mode == "remove" then
+		RequireReload = RequireReload - 1
+	end
+	if RequireReload ~= 0 then
+		return true
+	else
+		return false
+	end
+end
 
 function module:AddPage(PageData)
 	if Win == nil then module:CreateInstallWindow() end
@@ -16,39 +28,38 @@ function module:AddPage(PageData)
 	PageCnt = PageCnt+1
 	PageList[PageCnt] = PageData
 	
-	if PageData.RequireReload then RequireReload = true; end
-	
 	--If something already displayed the window update the text
 	if SUI_Win:IsVisible() then
 		SUI_Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
 	end
 end
 
-function module:OnInitialize()
-end
-
-function module:OnEnable()
-
-end
-
 function module:DisplayPage()
 	if PageList[Page_Cur] == nil then return end
 	
 	Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
-	if Page_Cur == PageCnt and not RequireReload then
+	if Page_Cur == PageCnt and not ReloadNeeded() then
 		Win.Next:SetText("FINISH")
 	else
 		Win.Next:SetText("CONTINUE")
 	end
 	
 	if SUI_Win:IsVisible() and PageList[Page_Cur].Displayed ~= nil then return end
-	local data = PageList[Page_Cur]
+	CurData = PageList[Page_Cur]
 
-	if data.SubTitle ~= nil then Win.SubTitle:SetText(data.SubTitle) end
-	if data.Desc1 ~= nil then Win.Desc1:SetText(data.Desc1) end
-	if data.Desc2 ~= nil then Win.Desc2:SetText(data.Desc2) end
-	if data.Display ~= nil then data.Display() end
-	data.Displayed = true
+	if CurData.RequireReload ~= nil and CurData.RequireReload then ReloadNeeded("add") end
+	if CurData.SubTitle ~= nil then Win.SubTitle:SetText(CurData.SubTitle) end
+	if CurData.Desc1 ~= nil then Win.Desc1:SetText(CurData.Desc1) end
+	if CurData.Desc2 ~= nil then Win.Desc2:SetText(CurData.Desc2) end
+	if CurData.Display ~= nil then CurData.Display() end
+	
+	if CurData.Skip ~= nil and CurData.Skipable then
+		Win.Skip:Show()
+	else
+		Win.Skip:Hide()
+	end
+	
+	CurData.Displayed = true
 	Win:Show()
 end
 
@@ -147,9 +158,9 @@ function module:CreateInstallWindow()
 	Win.Next:SetScript("OnClick", function(this)
 		if PageList[Page_Cur]~= nil and PageList[Page_Cur].Next ~= nil then PageList[Page_Cur].Next() end
 		
-		if Page_Cur == PageCnt and not RequireReload then
+		if Page_Cur == PageCnt and not ReloadNeeded() then
 			Win:Hide()
-		elseif Page_Cur == PageCnt and RequireReload then
+		elseif Page_Cur == PageCnt and ReloadNeeded() then
 			ClearPage()
 			module:ReloadPage()
 		else
@@ -158,12 +169,46 @@ function module:CreateInstallWindow()
 			module:DisplayPage()
 		end
 	end)
-	Win.Next:SetScript("OnEnter", function(this)
-		this.texture:SetVertexColor(.5, .5, 1, 1)
+	Win.Next:SetScript("OnEnter", function(this) this.texture:SetVertexColor(.5, .5, 1, 1) end)
+	Win.Next:SetScript("OnLeave", function(this) this.texture:SetVertexColor(0, 0.5, 1) end)
+	
+	Win.Skip = CreateFrame("Button", nil, Win, "UIPanelButtonTemplate")
+	Win.Skip:SetSize(90, 25)
+	Win.Skip:SetPoint("BOTTOMLEFT", 5, 5)
+	Win.Skip:SetNormalTexture("")
+	Win.Skip:SetHighlightTexture("")
+	Win.Skip:SetPushedTexture("")
+	Win.Skip:SetDisabledTexture("")
+	Win.Skip:SetFrameLevel(Win.Skip:GetFrameLevel() + 1)
+	Win.Skip:SetText("SKIP")
+	
+	Win.Skip.texture = Win.Skip:CreateTexture(nil, "BORDER")
+	Win.Skip.texture:SetAllPoints(Win.Skip)
+	Win.Skip.texture:SetTexture([[Interface\AddOns\SpartanUI\media\Smoothv2.tga]])
+	Win.Skip.texture:SetVertexColor(.75, 0, 0)
+	
+	-- Win.Skip.parent = frame
+	Win.Skip:SetScript("OnClick", function(this)
+		if PageList[Page_Cur]~= nil and PageList[Page_Cur].Next ~= nil then PageList[Page_Cur].Next() end
+		
+		if CurData.RequireReload ~= nil and CurData.RequireReload then
+			ReloadNeeded("remove")
+		end
+		
+		if Page_Cur == PageCnt and not ReloadNeeded() then
+			Win:Hide()
+		elseif Page_Cur == PageCnt and ReloadNeeded() then
+			ClearPage()
+			module:ReloadPage()
+		else
+			Page_Cur = Page_Cur + 1
+			ClearPage()
+			module:DisplayPage()
+		end
 	end)
-	Win.Next:SetScript("OnLeave", function(this)
-		this.texture:SetVertexColor(0, 0.5, 1)
-	end)
+	Win.Skip:SetScript("OnEnter", function(this) this.texture:SetVertexColor(.9,.2,.2, 1) end)
+	Win.Skip:SetScript("OnLeave", function(this) this.texture:SetVertexColor(.75, 0, 0) end)
+	Win.Skip:Hide()
 	
 	Win:Hide()
 end
