@@ -131,7 +131,7 @@ function module:EnableActionBars()
 					for b = 1,6 do -- for each backdrop
 						if DB.ActionBars["bar"..b].enable then -- backdrop enabled
 							_G["SUI_Bar"..b]:Show(); -- apply alpha
-							_G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
+							-- _G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
 						else -- backdrop disabled
 							_G["SUI_Bar"..b]:Hide();
 						end
@@ -149,15 +149,15 @@ function module:EnableActionBars()
 							_G["SUI_Popup"..p.."MaskBG"]:Hide();
 						end
 					end
-					if (MouseIsOver(SUI_Popup1Mask)) then -- popup1 animation
+					if not MouseIsOver(SUI_Popup1Mask) and not MouseIsOver(SUI_Popup1) and DB.ActionBars["popup1"].anim then -- popup1 animation
+						SUI_Popup1MaskBG:Show();
+					else
 						SUI_Popup1MaskBG:Hide();
+					end
+					if not MouseIsOver(SUI_Popup2Mask) and not MouseIsOver(SUI_Popup2) and DB.ActionBars["popup2"].anim then -- popup2 animation
 						SUI_Popup2MaskBG:Show();
-					elseif (MouseIsOver(SUI_Popup2Mask)) then -- popup2 animation
+					else
 						SUI_Popup2MaskBG:Hide();
-						SUI_Popup1MaskBG:Show();
-					else -- animation at rest
-						SUI_Popup1MaskBG:Show();
-						SUI_Popup2MaskBG:Show();
 					end
 				end
 				self.TimeSinceLastUpdate = 0
