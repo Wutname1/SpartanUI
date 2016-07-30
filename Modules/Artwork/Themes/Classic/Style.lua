@@ -382,12 +382,26 @@ function module:SetupMenus()
 	spartan.opt.args["Artwork"].args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
 			Color = {name=L["ArtColor"],type="color",hasAlpha=true,order=.5,
-				get = function(info) if not DB.Styles.Classic.Color.Art then return {0,0,0,1} end return unpack(DB.Styles.Classic.Color.Art) end,
+				get = function(info) if not DB.Styles.Classic.Color.Art then return {1,1,1,1} end return unpack(DB.Styles.Classic.Color.Art) end,
 				set = function(info,r,b,g,a) DB.Styles.Classic.Color.Art = {r,b,g,a}; module:SetColor(); end
 			},
 			ColorEnabled = {name="Color enabled",type="toggle",order=.6,
-				get = function(info) print(DB.Styles.Classic.Color.Art) return (DB.Styles.Classic.Color.Art == true or false) end,
-				set = function(info,r,b,g,a) DB.Styles.Classic.Color.Art = {0,0,0,1}; module:SetColor(); end
+				get = function(info)
+					if DB.Styles.Classic.Color.Art then
+						return true
+					else
+						return false
+					end
+				end,
+				set = function(info,val)
+					if val then 
+						DB.Styles.Classic.Color.Art = {1,1,1,1}
+						module:SetColor()
+					else
+						DB.Styles.Classic.Color.Art = false
+						module:SetColor()
+					end
+				end
 			},
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],

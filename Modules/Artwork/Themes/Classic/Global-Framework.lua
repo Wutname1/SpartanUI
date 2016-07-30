@@ -123,9 +123,13 @@ end;
 ----------------------------------------------------------------------------------------------------
 
 function module:SetColor()
-	if not DB.Styles.Classic.Color.Art then return end
+	local r,b,g,a
+	if not DB.Styles.Classic.Color.Art then
+		r,b,g,a = 1,1,1,1
+	else
+		r,b,g,a = unpack(DB.Styles.Classic.Color.Art)
+	end
 	
-	local r,b,g,a = unpack(DB.Styles.Classic.Color.Art)
 	for i = 1,6 do
 		if _G["SpartanUI_Base" ..i] then 
 			_G["SpartanUI_Base" ..i]:SetVertexColor(r,b,g,a)
@@ -140,6 +144,7 @@ function module:SetColor()
 			_G["SUI_Popup"..i.."MaskBG"]:SetVertexColor(r,b,g,a)
 		end
 	end
+	
 	if _G["SUI_ExperienceBarPlate"] then _G["SUI_ExperienceBarPlate"]:SetVertexColor(r,b,g,a) end
 	if _G["SUI_ReputationBarPlate"] then _G["SUI_ReputationBarPlate"]:SetVertexColor(r,b,g,a) end
 end
