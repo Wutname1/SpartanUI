@@ -43,7 +43,7 @@ local default, plate = {
 
 function module:SetupProfile()
 	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles.Transparent.BT4Profile then return end
+	if DB.Styles.Transparent.BT4Profile and DB.Styles.Transparent.BT4Profile ~= ProfileName then return end
 	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
@@ -61,7 +61,7 @@ end;
 
 function module:CreateProfile()
 	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles.Transparent.BT4Profile then return end
+	if DB.Styles.Transparent.BT4Profile and DB.Styles.Transparent.BT4Profile ~= ProfileName then return end
 	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
