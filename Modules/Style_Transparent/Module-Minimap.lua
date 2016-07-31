@@ -15,6 +15,17 @@ function Transparent_MiniMapCreate()
 	Minimap:ClearAllPoints();
 	Minimap:SetPoint("CENTER","Transparent_SpartanUI","CENTER",0,-5);
 	
+	
+	Transparent_SpartanUI:HookScript("OnHide", function(this, event)
+		Minimap:ClearAllPoints();
+		Minimap:SetPoint("TOP",UIParent,"TOP",0,-15);
+	end)
+	
+	Transparent_SpartanUI:HookScript("OnShow", function(this, event)
+		Minimap:ClearAllPoints();
+		Minimap:SetPoint("CENTER","Transparent_SpartanUI","CENTER",0,-5);
+	end)
+	
 	module.handleBuff = true
 end
 

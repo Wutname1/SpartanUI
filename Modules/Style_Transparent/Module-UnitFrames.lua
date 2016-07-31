@@ -287,7 +287,7 @@ local CreatePlayerFrame = function(self,unit)
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(0);
+		self.artwork:SetFrameLevel(2);
 		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
@@ -308,7 +308,7 @@ local CreatePlayerFrame = function(self,unit)
 	do -- setup status bars
 		do -- cast bar
 			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
+			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
 			cast:SetSize(185, 15);
 			cast:SetPoint("TOPLEFT",self,"TOPLEFT",1,-24);
 			cast:SetStatusBarTexture(Smoothv2)
@@ -624,7 +624,8 @@ local CreateTargetFrame = function(self,unit)
 	do --setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(2); self.artwork:SetAllPoints(self);
+		self.artwork:SetFrameLevel(2);
+		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
 		self.artwork.bg:SetPoint("CENTER");
@@ -841,7 +842,7 @@ local CreatePetFrame = function(self,unit)
 		do -- setup base artwork
 			self.artwork = CreateFrame("Frame",nil,self);
 			self.artwork:SetFrameStrata("BACKGROUND");
-			self.artwork:SetFrameLevel(0);
+			self.artwork:SetFrameLevel(1);
 			self.artwork:SetAllPoints(self);
 			
 			self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
@@ -854,7 +855,8 @@ local CreatePetFrame = function(self,unit)
 		do -- setup status bars
 			do -- health bar
 				local health = CreateFrame("StatusBar",nil,self);
-				health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
+				health:SetFrameStrata("BACKGROUND");
+				health:SetFrameLevel(3);
 				health:SetSize(135, 16);
 				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",6,-28);
 				health:SetStatusBarTexture(Smoothv2)
@@ -930,7 +932,7 @@ local CreateToTFrame = function(self,unit)
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(0);
+		self.artwork:SetFrameLevel(2);
 		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
@@ -1461,35 +1463,25 @@ function module:UpdateAltBarPositions()
 	end
 end
 
-function module:PositionFrame(b)
+function module:PositionFrame()
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
-		if b == nil or b == "player" then PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150); end
-		if b == nil or b == "pet" then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4); end
-		if b == nil or b == "target" then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0); end
+		PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
+		PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
+		PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
+		PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
 		
-		-- if DBMod.PlayerFrames.targettarget.style == "small" then
-		if b == nil or b == "targettarget" then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11); end
-		-- else
-			-- PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",-20,0);
-		-- end
-		
-		PlayerFrames.player:SetScale(DB.scale);
 		for a,b in pairs(FramesList) do
 			_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
 		end
 	else
-		if b == nil or b == "player" then PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3); end
-		if b == nil or b == "pet" then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4); end
-		if b == nil or b == "target" then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3); end
-		-- if DBMod.PlayerFrames.targettarget.style == "small" then
-			-- PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
-		-- else
-		if b == nil or b == "targettarget" then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",6,4); end
-		-- end
+		PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
+		PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
+		PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
+		PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",6,4);
 	end
 	
-	if b == nil or b == "focus" then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
-	if b == nil or b == "focustarget" then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
+	PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
+	PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0);
 end
 
 function module:PlayerFrames()
@@ -1561,6 +1553,21 @@ function module:PlayerFrames()
 		PlayerFrames.boss = boss;
 	end
 	spartan.PlayerFrames = PlayerFrames
+	
+	local unattached = false
+	Transparent_SpartanUI:HookScript("OnHide", function(this, event)
+		if UnitUsingVehicle("player") then
+			SUI_FramesAnchor:SetParent(UIParent)
+			unattached = true
+		end
+	end)
+	
+	Transparent_SpartanUI:HookScript("OnShow", function(this, event)
+		if unattached then
+			SUI_FramesAnchor:SetParent(Transparent_SpartanUI)
+			module:PositionFrame()
+		end
+	end)
 end
 
 function module:RaidFrames()

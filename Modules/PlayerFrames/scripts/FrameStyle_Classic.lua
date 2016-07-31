@@ -736,7 +736,8 @@ local CreatePetFrame = function(self,unit)
 	do -- setup base artwork
 		local artwork = CreateFrame("Frame",nil,self);
 		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(0); artwork:SetAllPoints(self);
+		artwork:SetFrameLevel(0);
+		artwork:SetAllPoints(self);
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
 		artwork.bg:SetPoint("LEFT",self,"LEFT",-23,0);
@@ -747,7 +748,7 @@ local CreatePetFrame = function(self,unit)
 		
 		if DBMod.PlayerFrames.PetPortrait then
 			self.Portrait = CreatePortrait(self);
-			self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
+			self.Portrait:SetSize(56, 50);
 			self.Portrait:SetPoint("CENTER",self,"CENTER",87,-8);
 		end
 		
@@ -757,7 +758,9 @@ local CreatePetFrame = function(self,unit)
 	do -- setup status bars
 		do -- cast bar
 			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
+			cast:SetFrameStrata("BACKGROUND");
+			cast:SetFrameLevel(2);
+			cast:SetParent(self)
 			cast:SetSize(120,15);
 			cast:SetPoint("TOPLEFT",self,"TOPLEFT",36,-23);
 			
@@ -872,6 +875,7 @@ local CreatePetFrame = function(self,unit)
 	do -- setup ring, icons, and text
 		if DBMod.PlayerFrames.PetPortrait then
 			local ring = CreateFrame("Frame",nil,self);
+			ring:SetParent(self)
 			ring:SetFrameStrata("BACKGROUND");
 			ring:SetAllPoints(self.Portrait);
 			ring:SetFrameLevel(3);
@@ -1935,50 +1939,6 @@ do -- relocate the AlternatePowerBar
 		end);
 	-- end
 	
-	-- Monk Chi Bar (Hard to move but it is doable.)
-	-- if classname == "Monk" then
-		-- MonkHarmonyBar:SetParent(addon.player); MonkHarmonyBar_OnLoad(MonkHarmonyBar); MonkHarmonyBar:SetFrameStrata("MEDIUM");
-		-- MonkHarmonyBar:SetFrameLevel(4); MonkHarmonyBar:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); MonkHarmonyBar:EnableMouse(enable);
-		-- MonkHarmonyBar:SetScript("OnMouseDown",function(self,button)
-			-- if button == "LeftButton" and IsAltKeyDown() then
-				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				-- self:SetMovable(true);
-				-- self:StartMoving();
-			-- end
-		-- end);
-		-- MonkHarmonyBar:SetScript("OnMouseUp",function(self,button)
-			-- self:StopMovingOrSizing();
-			-- DBMod.PlayerFrames.ClassBar.movement.point,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		-- end);
-	-- end
-
-	-- Paladin Holy Power
-	-- if classname == "Paladin" then
-		-- PaladinPowerBar:SetParent(addon.player);
-		-- PaladinPowerBar_OnLoad(PaladinPowerBar);
-		-- PaladinPowerBar:SetFrameStrata("MEDIUM");
-		-- PaladinPowerBar:SetFrameLevel(4); PaladinPowerBar:SetScale(0.77 * DBMod.PlayerFrames.ClassBar.scale); PaladinPowerBar:EnableMouse(enable);
-		-- PaladinPowerBar:SetScript("OnMouseDown",function(self,button)
-			-- if button == "LeftButton" and IsAltKeyDown() then
-				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				-- self:SetMovable(true);
-				-- self:StartMoving();
-			-- end
-		-- end);
-		-- PaladinPowerBar:SetScript("OnMouseUp",function(self,button)
-			-- self:StopMovingOrSizing();
-			-- DBMod.PlayerFrames.ClassBar.movement.point,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		-- end);
-	-- end
-
 	-- PriestBarFrame
 	-- if classname == "Priest" then
 		PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
@@ -1998,57 +1958,6 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-	-- end
-	
-	-- relocate the warlock bars
-	-- if classname == "Warlock" then
-		-- WarlockPowerFrame:SetParent(addon.player); WarlockPowerFrame_OnLoad(WarlockPowerFrame); WarlockPowerFrame:SetFrameStrata("MEDIUM");
-		-- WarlockPowerFrame:SetFrameLevel(4); WarlockPowerFrame:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale); WarlockPowerFrame:EnableMouse(enable);
-		-- ShardBarFrame:SetScript("OnMouseDown",function(self,button)
-			-- if button == "LeftButton" and IsAltKeyDown() then
-				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				-- self:SetMovable(true);
-				-- self:StartMoving();
-			-- end
-		-- end);
-		-- ShardBarFrame:SetScript("OnMouseUp",function(self,button)
-			-- self:StopMovingOrSizing();
-			-- DBMod.PlayerFrames.ClassBar.movement.point,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		-- end);
-		-- BurningEmbersBarFrame:SetScript("OnMouseDown",function(self,button)
-			-- if button == "LeftButton" and IsAltKeyDown() then
-				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				-- self:SetMovable(true);
-				-- self:StartMoving();
-			-- end
-		-- end);
-		-- BurningEmbersBarFrame:SetScript("OnMouseUp",function(self,button)
-			-- self:StopMovingOrSizing();
-			-- DBMod.PlayerFrames.ClassBar.movement.point,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		-- end);
-		-- DemonicFuryBarFrame:SetScript("OnMouseDown",function(self,button)
-			-- if button == "LeftButton" and IsAltKeyDown() then
-				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				-- self:SetMovable(true);
-				-- self:StartMoving();
-			-- end
-		-- end);
-		-- DemonicFuryBarFrame:SetScript("OnMouseUp",function(self,button)
-			-- self:StopMovingOrSizing();
-			-- DBMod.PlayerFrames.ClassBar.movement.point,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		-- end);
 	-- end
 	
 	-- Rune Frame

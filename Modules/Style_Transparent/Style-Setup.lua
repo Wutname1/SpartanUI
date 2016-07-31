@@ -24,10 +24,10 @@ if DB.Styles.Transparent.BartenderProfile == nil then
 			size = {width = 140, height = 140}
 		},
 		Color = {
-		Art = {0,.8,.9,.7},
-		PlayerFrames = {0,.8,.9,.7},
-		PartyFrames = {0,.8,.9,.7},
-		RaidFrames = {0,.8,.9,.7}
+			Art = {0,.8,.9,.7},
+			PlayerFrames = {0,.8,.9,.7},
+			PartyFrames = {0,.8,.9,.7},
+			RaidFrames = {0,.8,.9,.7}
 		},
 		TalkingHeadUI = { point = "BOTTOM", relPoint = "TOP", x = 0, y = -30, scale = .8 },
 		BartenderProfile = "SpartanUI - Transparent",
@@ -35,7 +35,7 @@ if DB.Styles.Transparent.BartenderProfile == nil then
 		BuffLoc = true
 	}
 end
-if DB.Styles.Transparent.Color == nil then
+if DB.Styles.Transparent.Color == nil or DB.Styles.Transparent.Color.Art == nil then
 	DB.Styles.Transparent.Color = {
 		Art = {0,.8,.9,.7},
 		PlayerFrames = {0,.8,.9,.7},
