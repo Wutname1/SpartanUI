@@ -47,6 +47,7 @@ function module:DisplayPage()
 	if SUI_Win:IsVisible() and PageList[Page_Cur].Displayed ~= nil then return end
 	CurData = PageList[Page_Cur]
 
+	if CurData.title ~= nil then Win.titleHolder:SetText(CurData.title) end
 	if CurData.RequireReload ~= nil and CurData.RequireReload then ReloadNeeded("add") end
 	if CurData.SubTitle ~= nil then Win.SubTitle:SetText(CurData.SubTitle) end
 	if CurData.Desc1 ~= nil then Win.Desc1:SetText(CurData.Desc1) end

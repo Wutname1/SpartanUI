@@ -234,8 +234,8 @@ function module:SetupMenus()
 				set = function(info,val) DB.xOffset = val*6.25; module:updateXOffset(); end,
 			},
 			Color = {name=L["ArtColor"],type="color",hasAlpha=true,order=1,width="full",
-				get = function(info) return unpack(DB.Styles.Transparent.Color) end,
-				set = function(info,r,b,g,a) DB.Styles.Transparent.Color = {r,b,g,a}; module:SetColor(); end
+				get = function(info) return unpack(DB.Styles.Transparent.Color.Art) end,
+				set = function(info,r,b,g,a) DB.Styles.Transparent.Color.Art = {r,b,g,a}; module:SetColor(); end
 			}
 		}
 	}

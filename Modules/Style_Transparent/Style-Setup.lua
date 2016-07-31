@@ -23,7 +23,13 @@ if DB.Styles.Transparent.BartenderProfile == nil then
 			shape = "square",
 			size = {width = 140, height = 140}
 		},
-		Color = {0,.8,.9,.7},
+		Color = {
+		Art = {0,.8,.9,.7},
+		PlayerFrames = {0,.8,.9,.7},
+		PartyFrames = {0,.8,.9,.7},
+		RaidFrames = {0,.8,.9,.7}
+		},
+		TalkingHeadUI = { point = "BOTTOM", relPoint = "TOP", x = 0, y = -30, scale = .8 },
 		BartenderProfile = "SpartanUI - Transparent",
 		TooltipLoc = true,
 		BuffLoc = true

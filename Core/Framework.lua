@@ -381,7 +381,9 @@ function addon:InitializeProfile()
 end
 
 function addon:BT4RefreshConfig()
+	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
 	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
+	addon:Print("Bartender4 Profile changed to: ".. Bartender4.db:GetCurrentProfile())
 end
 
 function addon:UpdateModuleConfigs()
@@ -390,13 +392,20 @@ function addon:UpdateModuleConfigs()
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
 	
-	Bartender4.db:SetProfile(DB.BT4Profile);
+	if DB.Styles[DBMod.Artwork.Style].BT4Profile then
+		Bartender4.db:SetProfile(DB.Styles[DBMod.Artwork.Style].BT4Profile);
+	else
+		Bartender4.db:SetProfile(DB.BT4Profile);
+	end
 	
 	PageData = {
+		title = "SpartanUI",
 		Desc1 = "A reload of your UI is required.",
 		width = 400,
 		height = 150,
 		Display = function()
+			SUI_Win:ClearAllPoints()
+			SUI_Win:SetPoint("TOP", 0, -20)
 			SUI_Win:SetSize(400, 150)
 			SUI_Win.Status:Hide()
 			SUI_Win.Next:SetText("RELOADUI")

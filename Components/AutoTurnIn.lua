@@ -258,6 +258,7 @@ function module:CacheAsDaily(questname)
 end
 
 function module.QUEST_DETAIL()
+	local name = GetTitleText()
 	if (QuestIsDaily() or QuestIsWeekly()) then
 		module:CacheAsDaily(name)
 	end
@@ -302,7 +303,7 @@ function module.QUEST_COMPLETE()
 				return
 			end
 
-			-- if (DB.AutoTurnIn.lootreward > 1) then -- Auto Loot enabled!
+			-- if (DB.AutoTurnIn.lootreward > 1) then
 				-- self.forceGreed = false
 				-- if (DB.AutoTurnIn.lootreward == 3) then -- 3 == Need
 					-- self.forceGreed = (not self:Need() ) and DB.AutoTurnIn.greedifnothingfound
