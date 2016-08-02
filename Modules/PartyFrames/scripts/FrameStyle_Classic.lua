@@ -484,6 +484,8 @@ SpartanoUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);
 function PartyFrames:Classic()
 	SpartanoUF:SetActiveStyle("Spartan_PartyFrames");
 	
+	if DBMod.PartyFrames.FrameStyle == "Large" then DBMod.PartyFrames.FrameStyle = "large" end
+	
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,
 		"showParty", DBMod.PartyFrames.showParty,

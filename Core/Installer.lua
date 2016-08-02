@@ -34,8 +34,14 @@ function module:AddPage(PageData)
 	end
 end
 
-function module:DisplayPage()
-	if PageList[Page_Cur] == nil then return end
+function module:DisplayPage(PageData)
+	if PageList[Page_Cur] == nil and not PageData then return end
+	
+	if PageData	then
+		if Win == nil then module:CreateInstallWindow() end
+		PageCnt = 1
+		PageList[1] = PageData
+	end
 	
 	Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
 	if Page_Cur == PageCnt and not ReloadNeeded() then
@@ -43,9 +49,9 @@ function module:DisplayPage()
 	else
 		Win.Next:SetText("CONTINUE")
 	end
-	
 	if SUI_Win:IsVisible() and PageList[Page_Cur].Displayed ~= nil then return end
 	CurData = PageList[Page_Cur]
+	
 
 	if CurData.title ~= nil then Win.titleHolder:SetText(CurData.title) end
 	if CurData.RequireReload ~= nil and CurData.RequireReload then ReloadNeeded("add") end
@@ -60,6 +66,7 @@ function module:DisplayPage()
 		Win.Skip:Hide()
 	end
 	
+	--Track that we are showing this window.
 	CurData.Displayed = true
 	Win:Show()
 end
@@ -159,8 +166,11 @@ function module:CreateInstallWindow()
 	Win.Next:SetScript("OnClick", function(this)
 		if PageList[Page_Cur]~= nil and PageList[Page_Cur].Next ~= nil then PageList[Page_Cur].Next() end
 		
+		PageList[Page_Cur].Displayed = false
 		if Page_Cur == PageCnt and not ReloadNeeded() then
 			Win:Hide()
+			--Clear Page List
+			PageList = {}
 		elseif Page_Cur == PageCnt and ReloadNeeded() then
 			ClearPage()
 			module:ReloadPage()

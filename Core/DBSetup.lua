@@ -12,7 +12,7 @@ function module:OnInitialize()
 end
 local artdetup
 function spartan:DBUpdates()
-	if DBGlobal.Version and DB.Version then
+	if SUI.DBG.Version and DB.Version then
 		if (DB.Version < "4.0.0") then
 			if DBMod.PlayerFrames.ClassBar.scale == nil then DBMod.PlayerFrames.ClassBar.scale = 1 end
 			if DB.MiniMap.northTag == nil then DB.MiniMap.northTag = false end
@@ -73,5 +73,5 @@ function module:OnEnable()
 	-- Update DB Version
 	DB.Version = spartan.SpartanVer;
 	DB.HVer = (string.gsub(string.gsub(spartan.CurseVersion, "%.", ""), "[0-9]", ""))
-	DBGlobal.Version = spartan.SpartanVer;
+	SUI.DBG.Version = spartan.SpartanVer;
 end

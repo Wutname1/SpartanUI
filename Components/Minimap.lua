@@ -13,6 +13,7 @@ local MinimapUpdater = CreateFrame("Frame")
 local SUI_MiniMapIcon
 local IgnoredFrames = {}
 local LastUpdateStatus = nil
+local IsMouseDown = false
 
 
 local IsMouseOver = function()
@@ -36,9 +37,13 @@ local MiniMapBtnScrape = function()
 end
 
 local PerformFullBtnUpdate = function()
-	IsMouseOver() --update mouse location
-	MiniMapBtnScrape();
-	if LastUpdateStatus ~= IsMouseOver() then module:updateButtons(); end --update visibility
+	if LastUpdateStatus ~= IsMouseOver() then
+		MiniMapBtnScrape();
+		--update visibility
+		module:updateButtons();
+	else
+		--Do nothing, we might be moving a button
+	end
 end
 
 local OnEnter = function()
@@ -49,8 +54,21 @@ local OnEnter = function()
 end
 
 local OnLeave = function()
-	--Check in half a second that the mouse actually left
-	if ChangesTimer == nil then ChangesTimer = C_Timer.After(1, PerformFullBtnUpdate) end
+	local i = 1.5 -- Default wait time before updating button location
+	
+	if IsMouseDown then
+		-- A mouse button was clicked on lets give some extra time incase the user is moving the button.
+		IsMouseDown = false 
+		i = 10
+	end
+	
+	-- Set a timer to check that the mouse actually left and we did not just mouse away for a second
+	-- Overwrite if we are giving extra time
+	if ChangesTimer == nil or i == 10 then ChangesTimer = C_Timer.After(i, PerformFullBtnUpdate) end
+end
+
+local OnMouseDown = function()
+	IsMouseDown = true
 end
 
 function module:OnInitialize()
@@ -133,6 +151,8 @@ function module:OnEnable()
 	Minimap:HookScript("OnEnter", OnEnter)
 	Minimap:HookScript("OnLeave", OnLeave)
 	
+	Minimap:HookScript("OnMouseDown", OnMouseDown)
+	
 	--Initialize Buttons
 	module:updateButtons()
 	MinimapUpdater:SetSize(1,1)
@@ -146,10 +166,9 @@ function module:OnEnable()
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED")
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED_INDOORS")
 	MinimapUpdater:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-	MinimapUpdater:RegisterEvent("MINIMAP_UPDATE_ZOOM")
+	-- MinimapUpdater:RegisterEvent("MINIMAP_UPDATE_ZOOM")
 	MinimapUpdater:RegisterEvent("MINIMAP_UPDATE_TRACKING")
 	MinimapUpdater:RegisterEvent("MINIMAP_PING")
-	MinimapUpdater:RegisterEvent("PLAYER_REGEN_DISABLED")
 	MinimapUpdater:RegisterEvent("PLAYER_REGEN_ENABLED")
 	module:BuildOptions()
 end
@@ -304,6 +323,8 @@ function module:SetupButton(btn, force)
 		-- Hook Mouse Events
 		btn:HookScript("OnEnter", OnEnter)
 		btn:HookScript("OnLeave", OnLeave)
+		
+		btn:HookScript("OnMouseDown", OnMouseDown)
 		
 		-- Add Fade in and out
 		btn.FadeIn = btn:CreateAnimationGroup()

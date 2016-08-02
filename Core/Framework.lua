@@ -1,4 +1,6 @@
 local addon = LibStub("AceAddon-3.0"):NewAddon("SpartanUI","AceEvent-3.0", "AceConsole-3.0");
+_G.SUI = addon
+
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
@@ -276,7 +278,7 @@ local DBdefault = {
 	}
 }
 local DBdefaults = {char = DBdefault,profile = DBdefault}
--- local DBGlobals = {Version = addon.SpartanVer}
+-- local SUI.DBGs = {Version = addon.SpartanVer}
 
 function addon:ResetConfig()
 	addon.db:ResetProfile(false,true);
@@ -342,7 +344,10 @@ function addon:OnInitialize()
 	local ver = addon.db.profile.SUIProper.Version
 	if (ver ~= nil and ver < "3.3.4") then addon.db:ResetDB(); end
 	
-	DBGlobal = addon.db.global
+	SUI.DBG = addon.db.global
+	SUI.DBP = addon.db.profile.SUIProper
+	SUI.DBMod = addon.db.profile.Modules
+	
 	DB = addon.db.profile.SUIProper
 	DBMod = addon.db.profile.Modules
 	addon.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
@@ -382,7 +387,41 @@ end
 
 function addon:BT4RefreshConfig()
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
-	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
+	SUI.DBP.BT4Profile = Bartender4.db:GetCurrentProfile()
+	
+	if SUI.DBG.Bartender4[SUI.DBP.BT4Profile] then
+		-- We know this profile.
+		if SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style == SUI.DBMod.Artwork.Style then
+			--Profile is for this style, prompt to ReloadUI
+			SUI:reloadui()
+		else
+			--Ask if we should change to the correct profile or if we should change the profile to be for this style
+		end
+	else
+		-- We do not know this profile, ask if we should attach it to this style.
+		PageData = {
+			title = "SpartanUI",
+			Desc1 = "A reload of your UI is required.",
+			Desc2 = Desc2,
+			width = 400,
+			height = 150,
+			Display = function()
+				SUI_Win:ClearAllPoints()
+				SUI_Win:SetPoint("TOP", 0, -20)
+				SUI_Win:SetSize(400, 150)
+				SUI_Win.Status:Hide()
+				SUI_Win.Next:SetText("RELOADUI")
+				SUI_Win.Next:ClearAllPoints()
+				SUI_Win.Next:SetPoint("BOTTOM", 0, 30)
+			end,
+			Next = function()
+				ReloadUI()
+			end
+		}
+		local SetupWindow = addon:GetModule("SetupWindow")
+		SetupWindow:DisplayPage(PageData)
+	end
+	
 	addon:Print("Bartender4 Profile changed to: ".. Bartender4.db:GetCurrentProfile())
 end
 
@@ -398,9 +437,15 @@ function addon:UpdateModuleConfigs()
 		Bartender4.db:SetProfile(DB.BT4Profile);
 	end
 	
+	SUI:reloadui()
+end
+
+function addon:reloadui(Desc2)
+	-- DB.OpenOptions = true;
 	PageData = {
 		title = "SpartanUI",
 		Desc1 = "A reload of your UI is required.",
+		Desc2 = Desc2,
 		width = 400,
 		height = 150,
 		Display = function()
@@ -417,13 +462,7 @@ function addon:UpdateModuleConfigs()
 		end
 	}
 	local SetupWindow = addon:GetModule("SetupWindow")
-	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
-end
-
-function addon:reloadui()
-	DB.OpenOptions = true;
-	ReloadUI();
+	SetupWindow:DisplayPage(PageData)
 end
 
 function addon:OnEnable()

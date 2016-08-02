@@ -4,14 +4,18 @@ local addon = spartan:GetModule("PartyFrames");
 ----------------------------------------------------------------------------------------------------
 function addon:UpdateAura()
 	for i = 1,4 do
-		local unit = _G["SUI_PartyFrameHeaderUnitButton"..i];
-		if unit and unit.Auras then unit.Auras:PostUpdate(); end
+		if _G["SUI_PartyFrameHeaderUnitButton"..i] then
+			local unit = _G["SUI_PartyFrameHeaderUnitButton"..i];
+			if unit and unit.Auras then unit.Auras:PostUpdate(); end
+		end
 	end
 end
 function addon:UpdateText()
-	for i = 1,4 do
-		local unit = _G["SUI_PartyFrameHeaderUnitButton"..i];
-		if unit then unit:TextUpdate(); end
+	for i = 1,5 do
+		if _G["SUI_PartyFrameHeaderUnitButton"..i] then
+			local unit = _G["SUI_PartyFrameHeaderUnitButton"..i];
+			if unit then unit:TextUpdate(); end
+		end
 	end
 end
 
@@ -154,19 +158,19 @@ function addon:ClassicOptions()
 			DBMod.PartyFrames.preset = val;
 			if val == "tank" then
 				DBMod.PartyFrames.FrameStyle = "medium";
-				DBMod.PartyFrames.Portrait = true;
+				DBMod.PartyFrames.Portrait = false;
 			elseif val == "dps" then
 				DBMod.PartyFrames.FrameStyle = "xsmall";
 				DBMod.PartyFrames.Portrait = false;
 				DBMod.PartyFrames.showAuras = false;
 			elseif val == "healer" then
 				DBMod.PartyFrames.FrameStyle = "small";
-				DBMod.PartyFrames.Portrait = true;
+				DBMod.PartyFrames.Portrait = false;
 			end
 		end
 	};
 	spartan.opt.args["PartyFrames"].args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="select",order=2,
-		values = {[L["Frames/Large"]]=L["Frames/StyleLarge"],[L["Frames/Medium"]]=L["Frames/StyleMed"],[L["Frames/Small"]]=L["Frames/StyleSmall"],["xsmall"]=L["Frames/StyleXSmall"]},
+		values = {["large"]=L["Frames/StyleLarge"],["medium"]=L["Frames/StyleMed"],["small"]=L["Frames/StyleSmall"],["xsmall"]=L["Frames/StyleXSmall"]},
 		get = function(info) return DBMod.PartyFrames.FrameStyle; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.FrameStyle = val; DBMod.PartyFrames.preset = "custom";
