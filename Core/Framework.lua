@@ -1,14 +1,20 @@
-local addon = LibStub("AceAddon-3.0"):NewAddon("SpartanUI","AceEvent-3.0", "AceConsole-3.0");
-_G.SUI = addon
+local _, SUI = ...
+SUI = LibStub("AceAddon-3.0"):NewAddon(SUI, "SpartanUI","AceEvent-3.0", "AceConsole-3.0");
+_G.SUI = SUI
 
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-addon.SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
-addon.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
+SUI.L = L
+
+local _G = _G
+local type, pairs, hooksecurefunc = type, pairs, hooksecurefunc
+
+SUI.SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
+SUI.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
-addon.opt = {
-	name = "SpartanUI ".. addon.SpartanVer, type = "group", childGroups = "tab", args = {
+SUI.opt = {
+	name = "SpartanUI ".. SUI.SpartanVer, type = "group", childGroups = "tab", args = {
 		General = {name = L["General"], type = "group",order = 0, args = {}};
 		Artwork = {name = L["Artwork"], type = "group", args = {}};
 		PlayerFrames = {name = L["PlayerFrames"], type = "group", args = {}};
@@ -26,7 +32,7 @@ local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",s
 
 local DBdefault = {
 	SUIProper = {
-		Version = addon.SpartanVer,
+		Version = SUI.SpartanVer,
 		HVer = "",
 		yoffset = 0,
 		xOffset = 0,
@@ -153,8 +159,7 @@ local DBdefault = {
 			Party = fontdefault,
 			Raid = fontdefault,
 		},
-		Components = {
-		}
+		Components = {}
 	},
 	Modules = {
 		Artwork = {
@@ -164,10 +169,7 @@ local DBdefault = {
 			Viewport = 
 			{
 				enabled = true,
-				offset = 
-				{
-					top = 0,bottom = 2.3,left = 0,right = 0
-				}
+				offset =  { top = 0,bottom = 2.3,left = 0,right = 0 }
 			}
 		},
 		SpinCam = {
@@ -278,14 +280,14 @@ local DBdefault = {
 	}
 }
 local DBdefaults = {char = DBdefault,profile = DBdefault}
--- local SUI.DBGs = {Version = addon.SpartanVer}
+-- local SUI.DBGs = {Version = SUI.SpartanVer}
 
-function addon:ResetConfig()
-	addon.db:ResetProfile(false,true);
+function SUI:ResetConfig()
+	SUI.db:ResetProfile(false,true);
 	ReloadUI();
 end
 
-function addon:FirstTimeSetup()
+function SUI:FirstTimeSetup()
 	--Hide Bartender4 Minimap icon.
 	Bartender4.db.profile.minimapIcon.hide = true;
 	local LDBIcon = LibStub("LibDBIcon-1.0", true);
@@ -338,54 +340,54 @@ function addon:FirstTimeSetup()
 	DB.SetupDone = true
 end
 
-function addon:OnInitialize()
-	addon.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
+function SUI:OnInitialize()
+	SUI.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
 	--If we have not played in a long time reset the database, make sure it is all good.
-	local ver = addon.db.profile.SUIProper.Version
-	if (ver ~= nil and ver < "3.3.4") then addon.db:ResetDB(); end
+	local ver = SUI.db.profile.SUIProper.Version
+	if (ver ~= nil and ver < "3.3.4") then SUI.db:ResetDB(); end
 	
-	SUI.DBG = addon.db.global
-	SUI.DBP = addon.db.profile.SUIProper
-	SUI.DBMod = addon.db.profile.Modules
+	SUI.DBG = SUI.db.global
+	SUI.DBP = SUI.db.profile.SUIProper
+	SUI.DBMod = SUI.db.profile.Modules
 	
-	DB = addon.db.profile.SUIProper
-	DBMod = addon.db.profile.Modules
-	addon.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);
+	DB = SUI.db.profile.SUIProper
+	DBMod = SUI.db.profile.Modules
+	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.db);
 	
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
 	LibDualSpec:EnhanceDatabase(self.db, "SpartanUI")
-	LibDualSpec:EnhanceOptions(addon.opt.args["Profiles"], self.db)
-	addon.opt.args["Profiles"].order=999
+	LibDualSpec:EnhanceOptions(SUI.opt.args["Profiles"], self.db)
+	SUI.opt.args["Profiles"].order=999
 	
 	-- Spec Setup
-	addon.db.RegisterCallback(addon, "OnNewProfile", "InitializeProfile")
-	addon.db.RegisterCallback(addon, "OnProfileChanged", "UpdateModuleConfigs")
-	addon.db.RegisterCallback(addon, "OnProfileCopied", "UpdateModuleConfigs")
-	addon.db.RegisterCallback(addon, "OnProfileReset", "UpdateModuleConfigs")
+	SUI.db.RegisterCallback(SUI, "OnNewProfile", "InitializeProfile")
+	SUI.db.RegisterCallback(SUI, "OnProfileChanged", "UpdateModuleConfigs")
+	SUI.db.RegisterCallback(SUI, "OnProfileCopied", "UpdateModuleConfigs")
+	SUI.db.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
 	
 	--Bartender4 Hooks
 	if Bartender4 then
 		--Update to the current profile
 		DB.BT4Profile = Bartender4.db:GetCurrentProfile()
-		Bartender4.db.RegisterCallback(addon, "OnProfileChanged", "BT4RefreshConfig")
-		Bartender4.db.RegisterCallback(addon, "OnProfileCopied", "BT4RefreshConfig")
-		Bartender4.db.RegisterCallback(addon, "OnProfileReset", "BT4RefreshConfig")
+		Bartender4.db.RegisterCallback(SUI, "OnProfileChanged", "BT4RefreshConfig")
+		Bartender4.db.RegisterCallback(SUI, "OnProfileCopied", "BT4RefreshConfig")
+		Bartender4.db.RegisterCallback(SUI, "OnProfileReset", "BT4RefreshConfig")
 	end
 	
-	addon:FontSetup()
+	SUI:FontSetup()
 end
 
-function addon:InitializeProfile()
-	addon.db:RegisterDefaults(DBdefaults)
+function SUI:InitializeProfile()
+	SUI.db:RegisterDefaults(DBdefaults)
 	
-	DB = addon.db.profile.SUIProper
-	DBMod = addon.db.profile.Modules
+	DB = SUI.db.profile.SUIProper
+	DBMod = SUI.db.profile.Modules
 	
-	addon:reloadui()
+	SUI:reloadui()
 end
 
-function addon:BT4RefreshConfig()
+function SUI:BT4RefreshConfig()
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
 	SUI.DBP.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
@@ -418,18 +420,18 @@ function addon:BT4RefreshConfig()
 				ReloadUI()
 			end
 		}
-		local SetupWindow = addon:GetModule("SetupWindow")
+		local SetupWindow = SUI:GetModule("SetupWindow")
 		SetupWindow:DisplayPage(PageData)
 	end
 	
-	addon:Print("Bartender4 Profile changed to: ".. Bartender4.db:GetCurrentProfile())
+	SUI:Print("Bartender4 Profile changed to: ".. Bartender4.db:GetCurrentProfile())
 end
 
-function addon:UpdateModuleConfigs()
-	addon.db:RegisterDefaults(DBdefaults)
+function SUI:UpdateModuleConfigs()
+	SUI.db:RegisterDefaults(DBdefaults)
 	
-	DB = addon.db.profile.SUIProper
-	DBMod = addon.db.profile.Modules
+	DB = SUI.db.profile.SUIProper
+	DBMod = SUI.db.profile.Modules
 	
 	if DB.Styles[DBMod.Artwork.Style].BT4Profile then
 		Bartender4.db:SetProfile(DB.Styles[DBMod.Artwork.Style].BT4Profile);
@@ -440,7 +442,7 @@ function addon:UpdateModuleConfigs()
 	SUI:reloadui()
 end
 
-function addon:reloadui(Desc2)
+function SUI:reloadui(Desc2)
 	-- DB.OpenOptions = true;
 	PageData = {
 		title = "SpartanUI",
@@ -461,11 +463,11 @@ function addon:reloadui(Desc2)
 			ReloadUI()
 		end
 	}
-	local SetupWindow = addon:GetModule("SetupWindow")
+	local SetupWindow = SUI:GetModule("SetupWindow")
 	SetupWindow:DisplayPage(PageData)
 end
 
-function addon:OnEnable()
+function SUI:OnEnable()
     AceConfig:RegisterOptionsTable("SpartanUIBliz", { name = "SpartanUI", type = "group",args={
 		n1={type="description", fontSize="medium", order=1, width="full", name="Options have moved into their own window as this menu was getting a bit crowded."},
 		n3={type="description", fontSize="medium", order=3, width="full", name="Options can be accessed by the button below or by typing /sui or /spartanui"},
@@ -479,11 +481,11 @@ function addon:OnEnable()
 	})
 	AceConfigDialog:AddToBlizOptions("SpartanUIBliz", "SpartanUI")
 	
-    AceConfig:RegisterOptionsTable("SpartanUI", addon.opt)
-	if not addon:GetModule("Artwork_Core", true) then addon.opt.args["Artwork"].disabled = true end
-    if not addon:GetModule("PartyFrames", true) then  addon.opt.args["PartyFrames"].disabled = true end
-    if not addon:GetModule("PlayerFrames", true) then addon.opt.args["PlayerFrames"].disabled = true end
-    if not addon:GetModule("RaidFrames", true) then addon.opt.args["RaidFrames"].disabled = true end
+    AceConfig:RegisterOptionsTable("SpartanUI", SUI.opt)
+	if not SUI:GetModule("Artwork_Core", true) then SUI.opt.args["Artwork"].disabled = true end
+    if not SUI:GetModule("PartyFrames", true) then  SUI.opt.args["PartyFrames"].disabled = true end
+    if not SUI:GetModule("PlayerFrames", true) then SUI.opt.args["PlayerFrames"].disabled = true end
+    if not SUI:GetModule("RaidFrames", true) then SUI.opt.args["RaidFrames"].disabled = true end
     
     self:RegisterChatCommand("sui", "ChatCommand")
     self:RegisterChatCommand("suihelp", "suihelp")
@@ -492,26 +494,26 @@ function addon:OnEnable()
 	local LaunchOpt = CreateFrame("Frame");
 	LaunchOpt:SetScript("OnEvent",function(self,...)
 		if DB.OpenOptions then
-			addon:ChatCommand()
+			SUI:ChatCommand()
 			DB.OpenOptions = false;
 		end
 	end);
 	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
 	
 	--First Time Setup Actions
-	if not DB.SetupRan then addon:FirstTimeSetup() end
+	if not DB.SetupRan then SUI:FirstTimeSetup() end
 end
 
-function addon:suihelp(input)
+function SUI:suihelp(input)
 	AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600)
 	AceConfigDialog:Open("SpartanUI", "General", "Help")
 	-- AceConfigDialog:SelectGroup("SpartanUI", spartan.opt.args["General"].args["Help"])
 end
 
-function addon:ChatCommand(input)
+function SUI:ChatCommand(input)
 	if input == "version" then
-		addon:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))
-		addon:Print("SpartanUI Curse "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version"))
+		SUI:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))
+		SUI:Print("SpartanUI Curse "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version"))
 	elseif input == "map" then
 		Minimap.mover:Show();
 	else
@@ -520,16 +522,16 @@ function addon:ChatCommand(input)
     end
 end
 
-function addon:Err(mod, err)
-	addon:Print("|cffff0000Error detected")
-	addon:Print("An error has been captured in the Component '" .. mod .. "'")
-	addon:Print("Details: " .. err)
-	addon:Print("Please submit a bug at |cff3370FFhttp://spartanui.net/bugs")
+function SUI:Err(mod, err)
+	SUI:Print("|cffff0000Error detected")
+	SUI:Print("An error has been captured in the Component '" .. mod .. "'")
+	SUI:Print("Details: " .. err)
+	SUI:Print("Please submit a bug at |cff3370FFhttp://spartanui.net/bugs")
 end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
 
-function addon:isPartialMatch(frameName, tab)
+function SUI:isPartialMatch(frameName, tab)
 	local result = false
 
 	for k,v in ipairs(tab) do
@@ -542,7 +544,7 @@ function addon:isPartialMatch(frameName, tab)
 	return result;
 end
 
-function addon:isInTable(tab, frameName)
+function SUI:isInTable(tab, frameName)
 	-- local Count = 0
 	-- for Index, Value in pairs( tab ) do
 	  -- Count = Count + 1
@@ -559,36 +561,36 @@ function addon:isInTable(tab, frameName)
 	return false;
 end
 
-function addon:round(num) -- rounds a number to 2 decimal places
+function SUI:round(num) -- rounds a number to 2 decimal places
 	if num then return floor( (num*10^2)+0.5) / (10^2); end
 end;
 
-function addon:comma_value(n)
+function SUI:comma_value(n)
 	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
 	return left..(num:reverse():gsub('(%d%d%d)','%1' .. _G.LARGE_NUMBER_SEPERATOR):reverse())..right
 end
 
 ---------------		FONT FUNCTIONS		---------------------------------------------
 
-function addon:FontSetup()
+function SUI:FontSetup()
 	local OutlineSizes = {22, 18,16,13, 12,11,10,9,8}
 	local Sizes = {10}
 	for i,v in ipairs(OutlineSizes) do
 		local filename, fontHeight, flags = _G["SUI_FontOutline" .. v]:GetFont()
-		if filename ~= addon:GetFontFace("Primary") then
-			_G["SUI_FontOutline" .. v] = _G["SUI_FontOutline" .. v]:SetFont(addon:GetFontFace("Primary"), v)
+		if filename ~= SUI:GetFontFace("Primary") then
+			_G["SUI_FontOutline" .. v] = _G["SUI_FontOutline" .. v]:SetFont(SUI:GetFontFace("Primary"), v)
 		end
 	end	
 	
 	for i,v in ipairs(Sizes) do
 		local filename, fontHeight, flags = _G["SUI_Font" .. v]:GetFont()
-		if filename ~= addon:GetFontFace("Primary") then
-			_G["SUI_Font" .. v] = _G["SUI_Font" .. v]:SetFont(addon:GetFontFace("Primary"), v)
+		if filename ~= SUI:GetFontFace("Primary") then
+			_G["SUI_Font" .. v] = _G["SUI_Font" .. v]:SetFont(SUI:GetFontFace("Primary"), v)
 		end
 	end
 end
 
-function addon:GetFontFace(Module)
+function SUI:GetFontFace(Module)
 	if Module then
 		if DB.font[Module].Face == "SpartanUI" then
 			return "Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf"
@@ -610,7 +612,7 @@ function addon:GetFontFace(Module)
 	return "Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf"
 end
 
-function addon:FormatFont(element, size, Module)
+function SUI:FormatFont(element, size, Module)
 	--Adaptive Modules
 	if DB.font[Module] == nil then
 		DB.font[Module] = spartan.fontdefault;
@@ -626,7 +628,7 @@ function addon:FormatFont(element, size, Module)
 	--Set Size
 	sizeFinal = size + DB.font[Module].Size;
 	--Create Font
-	element:SetFont(addon:GetFontFace(Module), sizeFinal, flags)
+	element:SetFont(SUI:GetFontFace(Module), sizeFinal, flags)
 	
 	if DB.font[Module].Type == "outline" then
 		element:SetShadowColor(0,0,0,.9)
@@ -639,7 +641,7 @@ function addon:FormatFont(element, size, Module)
 	FontItemsSize[Module][count+1]=size
 end
 
-function addon:FontRefresh(Module)
+function SUI:FontRefresh(Module)
 	for a,b in pairs(FontItems[Module]) do
 		--Set Font Outline
 		local flags, size
@@ -649,7 +651,7 @@ function addon:FontRefresh(Module)
 		--Set Size
 		size = FontItemsSize[Module][a] + DB.font[Module].Size;
 		--Update Font
-		b:SetFont(addon:GetFontFace(Module), size, flags)
+		b:SetFont(SUI:GetFontFace(Module), size, flags)
 	end
 end
 
