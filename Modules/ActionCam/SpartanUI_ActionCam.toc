@@ -1,0 +1,8 @@
+## Interface: 70000
+## Title: SpartanUI: |CFF0070DDActionCam|r
+## Notes: Adds options to manage hidden camera options note: Film effects and spin cam will be migrated to here.
+## Version: 3.1.4
+## Author: Wutname1
+## RequiredDeps: SpartanUI
+
+SpartanUI_ActionCam.lua
