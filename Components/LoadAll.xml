@@ -3,11 +3,9 @@
 	<Script file="AutoTurnIn.lua" />
 	<Script file="AutoSell.lua" />
 	<Script file="Buffs.lua" />
+	<Script file="Chatbox.lua" />
 	<Script file="Minimap.lua" />
+	<Script file="Nameplates.lua" />
 	<Script file="Objectives.lua" />
 	<Script file="Tooltips.lua" />
-	<!-- WIP Modules
-	<Script file="Chatbox.lua" />
-	<Script file="Nameplates.lua" />
-	-->
 </Ui>
