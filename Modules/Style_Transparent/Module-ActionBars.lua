@@ -42,6 +42,9 @@ local default, plate = {
 };
 
 function module:SetupProfile()
+	--If this is set then we have already setup the bars once, and the user changed them
+	if DB.Styles.Transparent.BT4Profile and DB.Styles.Transparent.BT4Profile ~= ProfileName then return end
+	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
@@ -57,6 +60,9 @@ function module:SetupProfile()
 end;
 
 function module:CreateProfile()
+	--If this is set then we have already setup the bars once, and the user changed them
+	if DB.Styles.Transparent.BT4Profile and DB.Styles.Transparent.BT4Profile ~= ProfileName then return end
+	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
@@ -97,51 +103,19 @@ function module:MergeData(target,source)
 end
 
 function module:InitActionBars()
-	--module:SetupProfile();
 	--if (Bartender4.db:GetCurrentProfile() == DB.Styles.Transparent.BartenderProfile or not module:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then
 	Artwork_Core:ActionBarPlates("Transparent_ActionBarPlate");
 	--end
 
 	do -- create bar anchor
 		plate = CreateFrame("Frame","Transparent_ActionBarPlate",Transparent_SpartanUI,"Transparent_ActionBarsTemplate");
-		plate:SetFrameStrata("BACKGROUND"); plate:SetFrameLevel(1);
+		plate:SetFrameStrata("BACKGROUND");
+		plate:SetFrameLevel(1);
 		plate:SetPoint("BOTTOM");
 	end
 end
 
 function module:EnableActionBars()
-	do -- create base module frames
-		-- Fix CPU leak, use UpdateInterval
-		plate.UpdateInterval = 0.5
-		plate.TimeSinceLastUpdate = 0
-		plate:HookScript("OnUpdate",function(self,...) -- backdrop and popup visibility changes (alpha, animation, hide/show)
-			local elapsed = select(1,...)
-			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 
-			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-				-- Debug
---				print(self.TimeSinceLastUpdate)
-				if (DB.ActionBars.bar1) then
-					for b = 1,6 do -- for each backdrop
-						if DB.ActionBars["bar"..b].enable then -- backdrop enabled
-							_G["Transparent_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
-							_G["Transparent_Bar"..b.."BG"]:SetVertexColor(nil, nil, nil, nil)
-							_G["Transparent_Bar"..b.."BG"]:SetVertexColor(0,.8,.9,.7)
-						else -- backdrop disabled
-							_G["Transparent_Bar"..b]:SetAlpha(0);
-						end
-					end
-					for p = 1,2 do -- for each popup
-						if (DB.ActionBars["popup"..p].enable) then -- popup enabled
-							_G["Transparent_Popup"..p]:SetAlpha((DB.ActionBars["popup"..p].alpha/100)/4 or 1); -- apply alpha
-							_G["Transparent_Popup"..p.."BG"]:SetVertexColor(nil, nil, nil, nil)
-							_G["Transparent_Popup"..p.."BG"]:SetVertexColor(0,.8,.9,.7)
-						end
-					end
-				end
-				self.TimeSinceLastUpdate = 0
-			end
-		end);
-	end
 	do -- modify strata / levels of backdrops
 		for i = 1,6 do
 			_G["Transparent_Bar"..i]:SetFrameStrata("BACKGROUND");
@@ -152,7 +126,7 @@ function module:EnableActionBars()
 			_G["Transparent_Popup"..i]:SetFrameLevel(3);
 		end
 	end
-	--module:SetupProfile();
+	
 	-- Do what Bartender isn't - Make the Bag buttons the same size
 	do -- modify CharacterBag(0-3) Scale
 		for i = 1,4 do

@@ -112,6 +112,11 @@ function module:InitFramework()
 		
 		Artwork_Core:MoveTalkingHeadUI()
 		
+		MainMenuBarVehicleLeaveButton:HookScript("OnShow", function() 
+			MainMenuBarVehicleLeaveButton:ClearAllPoints()
+			MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM",Minimal_SpartanUI_Base1,"TOP",0,-100)
+		end)
+		
 		FramerateText:ClearAllPoints();
 		FramerateText:SetPoint("TOP", UIParent, "TOP", 0, -20);
 		

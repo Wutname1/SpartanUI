@@ -4,8 +4,8 @@ local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 if DB.Styles.Classic.BuffLoc == nil then DB.Styles.Classic.BuffLoc = true end
-
 local InitRan = false
+
 function module:OnInitialize()
 	if DB.Styles.Classic.TalkingHeadUI == nil then
 		DB.Styles.Classic.TalkingHeadUI = {
@@ -35,25 +35,20 @@ end
 function module:FirstLoad()
 	DBMod.Artwork.Viewport.offset.bottom = 2.8
 	--If our profile exists activate it.
-	-- if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then
-		-- Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
-	-- end
+	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then
+		Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
+	end
 end
 
 function module:OnEnable()
 	if (DBMod.Artwork.Style == "Classic") then
 		if (not InitRan) then module:Init(); end
-		--If our profile exists activate it.
-		if (DBMod.Artwork.FirstLoad and (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then
-			Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
-		end
 		if (not module:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then module:CreateProfile(); end
 		
 		module:EnableFramework();
 		module:EnableActionBars();
 		module:EnableMinimap();
 		module:EnableStatusBars();
-		if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end -- We want to do this last
 	end
 end
 
@@ -373,6 +368,28 @@ function module:SetupMenus()
 	}
 	spartan.opt.args["Artwork"].args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
+			Color = {name=L["ArtColor"],type="color",hasAlpha=true,order=.5,
+				get = function(info) if not DB.Styles.Classic.Color.Art then return {1,1,1,1} end return unpack(DB.Styles.Classic.Color.Art) end,
+				set = function(info,r,b,g,a) DB.Styles.Classic.Color.Art = {r,b,g,a}; module:SetColor(); end
+			},
+			ColorEnabled = {name="Color enabled",type="toggle",order=.6,
+				get = function(info)
+					if DB.Styles.Classic.Color.Art then
+						return true
+					else
+						return false
+					end
+				end,
+				set = function(info,val)
+					if val then 
+						DB.Styles.Classic.Color.Art = {1,1,1,1}
+						module:SetColor()
+					else
+						DB.Styles.Classic.Color.Art = false
+						module:SetColor()
+					end
+				end
+			},
 			alpha = {name=L["Transparency"],type="range",order=1,width="full",
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],
 				get = function(info) return (DB.alpha*100); end,
@@ -426,4 +443,15 @@ end
 
 function module:OnDisable()
 	SpartanUI:Hide();
+end
+
+do -- Style Setup
+	if DB.Styles.Classic.Color == nil then
+		DB.Styles.Classic.Color = {
+			Art = false,
+			PlayerFrames = false,
+			PartyFrames = false,
+			RaidFrames = false
+		}
+	end
 end

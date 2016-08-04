@@ -46,28 +46,29 @@ function module:OnInitialize()
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 						spartan:GetModule("Style_Classic"):SetupProfile();
-						ReloadUI(); end
+						spartan:UpdateModuleConfigs()
+						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
-					func = function() 
+					func = function()
 						DBMod.Artwork.Style = "Transparent";
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 						spartan:GetModule("Style_Transparent"):SetupProfile();
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
-					func = function() 
+					func = function()
 						DBMod.Artwork.Style = "Minimal";
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 						spartan:GetModule("Style_Minimal"):SetupProfile();
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				}
 			}},
@@ -78,14 +79,15 @@ function module:OnInitialize()
 					func = function()
 						DBMod.Artwork.Style = "Classic";
 						spartan:GetModule("Style_Classic"):SetupProfile();
-						ReloadUI(); end
+						spartan:UpdateModuleConfigs()
+						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Transparent";
 						spartan:GetModule("Style_Transparent"):SetupProfile();
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
@@ -93,7 +95,7 @@ function module:OnInitialize()
 					func = function()
 						DBMod.Artwork.Style = "Minimal";
 						spartan:GetModule("Style_Minimal"):SetupProfile();
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				}
 			}},
@@ -104,14 +106,15 @@ function module:OnInitialize()
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
 						DBMod.PlayerFrames.Style = "Classic";
-						ReloadUI(); end
+						spartan:UpdateModuleConfigs()
+						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
 						DBMod.PlayerFrames.Style = "Transparent";
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
@@ -119,7 +122,7 @@ function module:OnInitialize()
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
 						DBMod.PlayerFrames.Style = "Minimal";
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				}
 			}},
@@ -130,14 +133,15 @@ function module:OnInitialize()
 					imageCoords=function() return {0,.5,.5,1} end,
 					func = function()
 						DBMod.PartyFrames.Style = "Classic";
-						ReloadUI(); end
+						spartan:UpdateModuleConfigs()
+					end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
 						DBMod.PartyFrames.Style = "Transparent";
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
@@ -145,7 +149,7 @@ function module:OnInitialize()
 					imageCoords=function() return {0,.5,.5,1} end,
 					func = function()
 						DBMod.PartyFrames.Style = "Minimal";
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				}
 			}},
@@ -156,14 +160,15 @@ function module:OnInitialize()
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
 						DBMod.RaidFrames.Style = "Classic";
-						ReloadUI(); end
+						spartan:UpdateModuleConfigs()
+					end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
 						DBMod.RaidFrames.Style = "Transparent";
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
@@ -171,7 +176,7 @@ function module:OnInitialize()
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
 						DBMod.RaidFrames.Style = "Minimal";
-						ReloadUI();
+						spartan:UpdateModuleConfigs()
 					end
 				}
 			}},
@@ -307,7 +312,13 @@ function module:OnInitialize()
 			func = function()
 				--Tell SUI to reload config
 				DBMod.Artwork.FirstLoad = true;
+				
+				--Strip custom BT4 Profile from config
+				if DB.Styles[DBMod.Artwork.Style].BT4Profile then DB.Styles[DBMod.Artwork.Style].BT4Profile = nil end
+				
+				--Force REbuild of primary bar profile
 				spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
+				
 				--Reset Moved bars
 				local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 				for k,v in ipairs(FrameList) do
@@ -315,6 +326,7 @@ function module:OnInitialize()
 						DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 					end
 				end
+				
 				--go!
 				ReloadUI();
 			end

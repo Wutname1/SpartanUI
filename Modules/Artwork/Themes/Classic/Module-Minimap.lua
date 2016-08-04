@@ -26,6 +26,49 @@ function module:MiniMap()
 	QueueStatusFrame:ClearAllPoints();
 	QueueStatusFrame:SetPoint("BOTTOM",SpartanUI,"TOP",0,100);
 	
+	--Shape Change
+	local shapechange = function(shape)
+		if shape == "square" then
+			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+			
+			-- Minimap:SetArchBlobRingScalar(0)
+			-- Minimap:SetQuestBlobRingScalar(0)
+			
+			Minimap.overlay = Minimap:CreateTexture(nil,"OVERLAY");
+			Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay");
+			Minimap.overlay:SetAllPoints(Minimap);
+			Minimap.overlay:SetBlendMode("ADD");
+			
+			-- MinimapZoneTextButton:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,4);
+			-- MinimapZoneTextButton:SetPoint("BOTTOMRIGHT",Minimap,"TOPRIGHT",0,4);
+			-- MinimapZoneText:SetTextColor(1,1,1,1);
+			-- MinimapZoneText:SetShadowColor(0,0,0,1);
+			-- MinimapZoneText:SetShadowOffset(1,-1);
+			
+			MiniMapTracking:ClearAllPoints();
+			MiniMapTracking:SetPoint("TOPLEFT",Minimap,"TOPLEFT",0,0)
+		else
+			Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay")
+			MiniMapTracking:ClearAllPoints();
+			MiniMapTracking:SetPoint("TOPLEFT",Minimap,"TOPLEFT",-5,-5)
+			if Minimap.overlay then Minimap.overlay:Hide() end
+		end
+	end
+
+	SpartanUI:HookScript("OnHide", function(this, event)
+		Minimap:ClearAllPoints();
+		Minimap:SetParent(UIParent);
+		Minimap:SetPoint("TOP",UIParent,"TOP",0,-20);
+		shapechange("square")
+	end)
+	
+	SpartanUI:HookScript("OnShow", function(this, event)
+		Minimap:ClearAllPoints();
+		Minimap:SetPoint("CENTER",SpartanUI,"CENTER",0,54);
+		Minimap:SetParent(SpartanUI);
+		shapechange("circle")
+	end)
+	
 end
 
 function module:EnableMinimap()

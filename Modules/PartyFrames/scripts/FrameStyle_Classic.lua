@@ -481,9 +481,114 @@ end
 
 SpartanoUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);
 
-function PartyFrames:Classic()
-	SpartanoUF:SetActiveStyle("Spartan_PartyFrames");
+local OptionsSetup = function()
+	spartan.opt.args["PartyFrames"].args["auras"] = {name=SUI.L["Frames/BuffDebuff"],type="group",order=2,
+		args = {
+			display = {name=SUI.L["Frames/DispBuffDebuff"],type="toggle", order=1,
+				get = function(info) return DBMod.PartyFrames.showAuras; end,
+				set = function(info,val) DBMod.PartyFrames.showAuras = val; addon:UpdateAura(); end
+			},
+			showType = {name=SUI.L["Frames/ShowType"],type="toggle", order=2,
+				get = function(info) return DBMod.PartyFrames.Auras.showType; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.showType = val; addon:UpdateAura(); end
+			},
+			numBufs = {name=SUI.L["Frames/NumBuffs"],type="range",width="full",order=11,
+				min=0,max=50,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.NumBuffs; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.NumBuffs = val; addon:UpdateAura(); end
+			},
+			numDebuffs = {name=SUI.L["Frames/NumDebuff"],type="range",width="full",order=12,
+				min=0,max=50,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.NumDebuffs; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.NumDebuffs = val; addon:UpdateAura(); end
+			},
+			size = {name=SUI.L["Frames/SizeBuff"],type="range",width="full",order=13,
+				min=0,max=60,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.size; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.size = val; addon:UpdateAura(); end
+			},
+			spacing = {name=SUI.L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
+				min=0,max=50,step=1,
+				get = function(info) return DBMod.PartyFrames.Auras.spacing; end,
+				set = function(info,val) DBMod.PartyFrames.Auras.spacing = val; addon:UpdateAura(); end
+			},
+			
+		}
+	};
+	spartan.opt.args["PartyFrames"].args["castbar"] = {name=SUI.L["Frames/PrtyCast"],type="group",order=3,
+		desc = SUI.L["Frames/PrtyCastDesc"], args = {
+			castbar = {name=SUI.L["Frames/FillDir"],type="select", style="radio",
+				values = {[0]=SUI.L["Frames/FillLR"],[1]=SUI.L["Frames/DepRL"]},
+				get = function(info) return DBMod.PartyFrames.castbar; end,
+				set = function(info,val) DBMod.PartyFrames.castbar = val; end
+			},
+			castbartext = {name=SUI.L["Frames/TextStyle"],type="select", style="radio",
+				values = {[0]=SUI.L["Frames/CountUp"],[1]=SUI.L["Frames/CountDown"]},
+				get = function(info) return DBMod.PartyFrames.castbartext; end,
+				set = function(info,val) DBMod.PartyFrames.castbartext = val; end
+			}
+		}
+	};
 	
+	spartan.opt.args["PartyFrames"].args["FramePreSets"] = {name=SUI.L["Frames/PreSets"],type="select",order=1,
+		values = {["custom"]=SUI.L["Frames/Custom"],["tank"]=SUI.L["Frames/Tank"],["dps"]=SUI.L["Frames/DPS"],["healer"]=SUI.L["Frames/Healer"]},
+		get = function(info) return DBMod.PartyFrames.preset; end,
+		set = function(info,val)
+			DBMod.PartyFrames.preset = val;
+			if val == "tank" then
+				DBMod.PartyFrames.FrameStyle = "medium";
+				DBMod.PartyFrames.Portrait = false;
+			elseif val == "dps" then
+				DBMod.PartyFrames.FrameStyle = "xsmall";
+				DBMod.PartyFrames.Portrait = false;
+				DBMod.PartyFrames.showAuras = false;
+			elseif val == "healer" then
+				DBMod.PartyFrames.FrameStyle = "small";
+				DBMod.PartyFrames.Portrait = false;
+			end
+		end
+	};
+	spartan.opt.args["PartyFrames"].args["FrameStyle"] = {name=SUI.L["Frames/FrameStyle"],type="select",order=2,
+		values = {["large"]=SUI.L["Frames/StyleLarge"],["medium"]=SUI.L["Frames/StyleMed"],["small"]=SUI.L["Frames/StyleSmall"],["xsmall"]=SUI.L["Frames/StyleXSmall"]},
+		get = function(info) return DBMod.PartyFrames.FrameStyle; end,
+		set = function(info,val)
+			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.FrameStyle = val; DBMod.PartyFrames.preset = "custom";
+		end
+	};
+	spartan.opt.args["PartyFrames"].args["mana"] = {name=SUI.L["Frames/DispMana"],type="toggle",order=2.5,
+		hidden = function(info)
+			if DBMod.PartyFrames.FrameStyle == "xsmall" or DBMod.PartyFrames.FrameStyle == "small" then return false; else return true; end
+		end,
+		get = function(info) return DBMod.PartyFrames.display.mana; end,
+		set = function(info,val)
+			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.display.mana = val; DBMod.PartyFrames.preset = "custom";
+		end
+	};
+	spartan.opt.args["PartyFrames"].args["Portrait"] = {name=SUI.L["Frames/DispPort"],type="toggle",order=3,
+		get = function(info) return DBMod.PartyFrames.Portrait; end,
+		set = function(info,val)
+			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.Portrait = val; DBMod.PartyFrames.preset = "custom";
+		end
+	};
+	spartan.opt.args["PartyFrames"].args["Portrait3D"] =  {name = SUI.L["Frames/Portrait3D"], type = "toggle", order=3.1,
+		get = function(info) return DBMod.PartyFrames.Portrait3D; end,
+		set = function(info,val) DBMod.PartyFrames.Portrait3D = val; end
+	};
+	spartan.opt.args["PartyFrames"].args["threat"] = {name=SUI.L["Frames/DispThreat"],type="toggle",order=4,
+		get = function(info) return DBMod.PartyFrames.threat; end,
+		set = function(info,val) DBMod.PartyFrames.threat = val; DBMod.PartyFrames.preset = "custom"; end
+	};
+end
+
+function PartyFrames:Classic()
+	--Create the options
+	OptionsSetup()
+	--DB Fix
+	if DBMod.PartyFrames.FrameStyle == "Large" then DBMod.PartyFrames.FrameStyle = "large" end
+	
+	--Set the style
+	SpartanoUF:SetActiveStyle("Spartan_PartyFrames");
+	--Create the frames
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,
 		"showParty", DBMod.PartyFrames.showParty,
@@ -499,3 +604,4 @@ function PartyFrames:Classic()
 
 	return (party)
 end
+

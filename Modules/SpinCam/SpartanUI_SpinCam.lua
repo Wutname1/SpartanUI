@@ -58,7 +58,7 @@ function addon:SpinToggle(action)
 		SetView(1);
 	elseif action == "update" then
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
-	else
+	elseif not SpinCamRunning then
 		SaveView(1)
 		userCameraYawMoveSpeed = (GetCVar("cameraYawMoveSpeed"))
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);

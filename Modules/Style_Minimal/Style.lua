@@ -41,16 +41,14 @@ function module:OnEnable()
 end
 
 function module:SetupMenus()
-	if (DBMod.Artwork.Style == "Minimal") then
-		spartan.opt.args["Artwork"].args["Art"] = {name = L["ArtworkOpt"],type="group",order=10,
-			args = {
-				alpha = {name=L["ArtColor"],type="color",hasAlpha=true,order=1,width="full",desc=L["TransparencyDesc"],
-					get = function(info) return unpack(DB.Styles.Minimal.Color) end,
-					set = function(info,r,b,g,a) DB.Styles.Minimal.Color = {r,b,g,a}; module:SetColor(); end
-				}
+	spartan.opt.args["Artwork"].args["Art"] = {name = L["ArtworkOpt"],type="group",order=10,
+		args = {
+			alpha = {name=L["ArtColor"],type="color",hasAlpha=true,order=1,width="full",desc=L["TransparencyDesc"],
+				get = function(info) return unpack(DB.Styles.Minimal.Color) end,
+				set = function(info,r,b,g,a) DB.Styles.Minimal.Color = {r,b,g,a}; module:SetColor(); end
 			}
 		}
-	end
+	}
 end
 
 function module:OnDisable()

@@ -42,6 +42,9 @@ local default, plate = {
 };
 
 function module:SetupProfile()
+	--If this is set then we have already setup the bars once, and the user changed them
+	if DB.Styles.Classic.BT4Profile and DB.Styles.Classic.BT4Profile ~= ProfileName then return end
+	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
@@ -57,6 +60,9 @@ function module:SetupProfile()
 end;
 
 function module:CreateProfile()
+	--If this is set then we have already setup the bars once, and the user changed them
+	if DB.Styles.Classic.BT4Profile and DB.Styles.Classic.BT4Profile ~= ProfileName then return end
+	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
@@ -130,33 +136,34 @@ function module:EnableActionBars()
 				if (DB.ActionBars.bar1) then
 					for b = 1,6 do -- for each backdrop
 						if DB.ActionBars["bar"..b].enable then -- backdrop enabled
-							_G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
+							_G["SUI_Bar"..b]:Show(); -- apply alpha
+							-- _G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
 						else -- backdrop disabled
-							_G["SUI_Bar"..b]:SetAlpha(0);
+							_G["SUI_Bar"..b]:Hide();
 						end
 					end
 					for p = 1,2 do -- for each popup
 						if (DB.ActionBars["popup"..p].enable) then -- popup enabled
 							_G["SUI_Popup"..p]:SetAlpha(DB.ActionBars["popup"..p].alpha/100 or 1); -- apply alpha
 							if DB.ActionBars["popup"..p].anim == true then --- animation enabled
-								_G["SUI_Popup"..p.."MaskBG"]:SetAlpha(1);
+								_G["SUI_Popup"..p.."MaskBG"]:Show()
 							else -- animation disabled
-								_G["SUI_Popup"..p.."MaskBG"]:SetAlpha(0);
+								_G["SUI_Popup"..p.."MaskBG"]:Hide()
 							end
 						else -- popup disabled
-							_G["SUI_Popup"..p]:SetAlpha(0);
-							_G["SUI_Popup"..p.."MaskBG"]:SetAlpha(0);
+							_G["SUI_Popup"..p]:Hide();
+							_G["SUI_Popup"..p.."MaskBG"]:Hide();
 						end
 					end
-					if (MouseIsOver(SUI_Popup1Mask)) then -- popup1 animation
+					if not MouseIsOver(SUI_Popup1Mask) and not MouseIsOver(SUI_Popup1) and DB.ActionBars["popup1"].anim then -- popup1 animation
+						SUI_Popup1MaskBG:Show();
+					else
 						SUI_Popup1MaskBG:Hide();
+					end
+					if not MouseIsOver(SUI_Popup2Mask) and not MouseIsOver(SUI_Popup2) and DB.ActionBars["popup2"].anim then -- popup2 animation
 						SUI_Popup2MaskBG:Show();
-					elseif (MouseIsOver(SUI_Popup2Mask)) then -- popup2 animation
+					else
 						SUI_Popup2MaskBG:Hide();
-						SUI_Popup1MaskBG:Show();
-					else -- animation at rest
-						SUI_Popup1MaskBG:Show();
-						SUI_Popup2MaskBG:Show();
 					end
 				end
 				self.TimeSinceLastUpdate = 0

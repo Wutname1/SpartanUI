@@ -11,6 +11,10 @@ local Timer = nil
 local bag = 0
 local OnlyCount = true
 local inSet = {}
+local ExcludedItems = {
+	137642, --Mark Of Honor
+	141446 --Tome of the Tranquil Mind
+}
 
 function module:OnInitialize()
 	if not DB.AutoSell then
@@ -40,20 +44,21 @@ function module:FirstTime()
 	local PageData = {
 		SubTitle = "Auto Sell",
 		Desc1 = "Automatically vendor items when you visit a merchant.",
+		Desc2 = "Crafting, consumables, and gearset items will not be sold by default.",
 		Display = function()
+			local gui = LibStub("AceGUI-3.0")
 			--Container
 			SUI_Win.AutoSell = CreateFrame("Frame", nil)
 			SUI_Win.AutoSell:SetParent(SUI_Win.content)
 			SUI_Win.AutoSell:SetAllPoints(SUI_Win.content)
-			
+
 			--TurnInEnabled
 			SUI_Win.AutoSell.Enabled = CreateFrame("CheckButton", "SUI_AutoSell_Enabled", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
-			SUI_Win.AutoSell.Enabled:SetPoint("TOP", SUI_Win.AutoSell, "TOP", -90, -30)
+			SUI_Win.AutoSell.Enabled:SetPoint("TOP", SUI_Win.AutoSell, "TOP", -90, -10)
 			SUI_AutoSell_EnabledText:SetText("Auto Vendor Enabled")
 			SUI_Win.AutoSell.Enabled:HookScript("OnClick", function(this)
 				if this:GetChecked() == true then
 					SUI_AutoSell_SellGray:Enable()
-					SUI_AutoSell_SellGray:SetChecked(true)
 					SUI_AutoSell_SellWhite:Enable()
 					SUI_AutoSell_SellGreen:Enable()
 				else
@@ -66,20 +71,45 @@ function module:FirstTime()
 			--SellGray
 			SUI_Win.AutoSell.SellGray = CreateFrame("CheckButton", "SUI_AutoSell_SellGray", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
 			SUI_Win.AutoSell.SellGray:SetPoint("TOP", SUI_Win.AutoSell.Enabled, "TOP", -90, -40)
-			SUI_Win.AutoSell.SellGray:Disable()
 			SUI_AutoSell_SellGrayText:SetText("Sell gray items")
 			
 			--SellWhite
 			SUI_Win.AutoSell.SellWhite = CreateFrame("CheckButton", "SUI_AutoSell_SellWhite", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
 			SUI_Win.AutoSell.SellWhite:SetPoint("TOP", SUI_Win.AutoSell.SellGray, "BOTTOM", 0, -5)
-			SUI_Win.AutoSell.SellWhite:Disable()
 			SUI_AutoSell_SellWhiteText:SetText("Sell white items")
 			
 			--SellGreen
 			SUI_Win.AutoSell.SellGreen = CreateFrame("CheckButton", "SUI_AutoSell_SellGreen", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
 			SUI_Win.AutoSell.SellGreen:SetPoint("TOP", SUI_Win.AutoSell.SellWhite, "BOTTOM", 0, -5)
-			SUI_Win.AutoSell.SellGreen:Disable()
 			SUI_AutoSell_SellGreenText:SetText("Sell green items")
+			
+			--SellBlue
+			SUI_Win.AutoSell.SellBlue = CreateFrame("CheckButton", "SUI_AutoSell_SellBlue", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
+			SUI_Win.AutoSell.SellBlue:SetPoint("TOP", SUI_Win.AutoSell.SellGreen, "BOTTOM", 0, -5)
+			SUI_AutoSell_SellBlueText:SetText("Sell blue items")
+			
+			--SellPurple
+			SUI_Win.AutoSell.SellPurple = CreateFrame("CheckButton", "SUI_AutoSell_SellPurple", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
+			SUI_Win.AutoSell.SellPurple:SetPoint("TOP", SUI_Win.AutoSell.SellBlue, "BOTTOM", 0, -5)
+			SUI_AutoSell_SellPurpleText:SetText("Sell purple items")
+			
+			--Max iLVL
+			control = gui:Create("Slider")
+			control:SetLabel("Max iLVL to sell")
+			control:SetSliderValues(1, 900, 1)
+			-- control:SetIsPercent(v.isPercent)
+			control:SetValue(600)
+			control:SetPoint("TOPLEFT", SUI_Win.AutoSell.SellPurple, "BOTTOMLEFT", 0, -15)
+			control:SetWidth(SUI_Win:GetWidth()/1.3)
+			-- control:SetCallback("OnValueChanged",function(self) print(self:GetValue()) end)
+			-- control:SetCallback("OnMouseUp",ActivateSlider)
+			control.frame:SetParent(SUI_Win.AutoSell)
+			control.frame:Show()
+			SUI_Win.AutoSell.iLVL = control
+			
+			--Defaults
+			SUI_AutoSell_Enabled:SetChecked(true)
+			SUI_AutoSell_SellGray:SetChecked(true)
 		end,
 		Next = function()
 			DB.AutoSell.FirstLaunch = false
@@ -88,9 +118,15 @@ function module:FirstTime()
 			DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
 			DB.AutoSell.White = (SUI_Win.AutoSell.SellWhite:GetChecked() == true or false)
 			DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
+			DB.AutoSell.Blue = (SUI_Win.AutoSell.SellBlue:GetChecked() == true or false)
+			DB.AutoSell.Purple = (SUI_Win.AutoSell.SellPurple:GetChecked() == true or false)
+			DB.AutoSell.MaxILVL = SUI_Win.AutoSell.iLVL:GetValue()
 			
 			SUI_Win.AutoSell:Hide()
 			SUI_Win.AutoSell = nil
+		end,
+		Skip = function()
+			DB.AutoSell.FirstLaunch = true
 		end
 	}
 	local SetupWindow = spartan:GetModule("SetupWindow")
@@ -172,7 +208,7 @@ function module:IsSellable(item)
 	
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if DB.AutoSell.NotConsumables and (itemType == "Consumable" or item == 141446) then 
+	if DB.AutoSell.NotConsumables and itemType == "Consumable" then 
 		NotConsumable = false
 	end
 	
@@ -187,6 +223,7 @@ function module:IsSellable(item)
 	and Craftablesellable
 	and NotInGearset
 	and NotConsumable
+	and not spartan:isInTable(ExcludedItems, item)
 	and itemType ~= "Quest"
 	and itemType ~= "Container"
 	then
