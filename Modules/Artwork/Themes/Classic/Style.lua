@@ -1,5 +1,6 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
+local _, SUI
+spartan = _G["SUI"]
+local L = spartan.L;
 local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
@@ -168,30 +169,6 @@ function module:SetupMenus()
 			}
 		}
 	};
-	spartan.opt.args["Artwork"].args["ChatSettings"] = {
-		name = L["ChatSettings"],
-		desc = L["ChatSettingsDesc"],
-		type = "group", args = {
-			enabled = {
-				name = L["ChatSettingsEnabled"],
-				desc = L["ChatSettingsEnabledDesc"],
-				type="toggle",
-				get = function(info) return DB.ChatSettings.enabled; end,
-				set = function(info,val)
-					if (val == true) then
-					DB.ChatSettings.enabled = true;
-						if (Prat or ChatMOD_Loaded or ChatSync or Chatter or PhanxChatDB) then
-							-- Chat Mod Detected, disable and exit
-							DB.ChatSettings.enabled = false
-							return;
-						end
-					else
-						DB.ChatSettings.enabled = false;
-					end
-				end
-			}
-		}
-	}
 	spartan.opt.args["Artwork"].args["XPBar"] = {
 		name = L["BarXP"],
 		desc = L["BarXPDesc"],

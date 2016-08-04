@@ -1,5 +1,6 @@
-local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
+local _, SUI
+addon = _G["SUI"]
+local L = spartan.L;
 local Artwork_Core = addon:GetModule("Artwork_Core");
 local module = addon:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------

@@ -214,20 +214,20 @@ function addon:OnInitialize()
 				set = function(info,val) DBMod.PlayerFrames.BossFrame.scale = val; end
 			},
 			
-			bar2 = {name=L["Frames/ArenaFrames"],type="header",order=20},
-			arena = { name = L["Frames/ShowFrames"], type = "toggle",order=21,disabled=true,
-				get = function(info) return DBMod.PlayerFrames.ArenaFrame.display; end,
-				set = function(info,val) DBMod.PlayerFrames.ArenaFrame.display = val; end
-			},
-			arenareset = {name = L["Frames/ResetLoc"],type = "execute",order=22,disabled=true,
-				desc = L["Frames/ResetLocDesc"],
-				func = function() DBMod.PlayerFrames.ArenaFrame.moved = false; addon:UpdateArenaFramePosition(); end
-			},
-			arenascale = { name = L["Frames/ScaleFrames"], type = "range",order=23,width="full",disabled=true,
-				min=.01,max=2,step=.01,
-				get = function(info) return DBMod.PlayerFrames.ArenaFrame.scale; end,
-				set = function(info,val) DBMod.PlayerFrames.ArenaFrame.scale = val; end
-			},
+			-- bar2 = {name=L["Frames/ArenaFrames"],type="header",order=20},
+			-- arena = { name = L["Frames/ShowFrames"], type = "toggle",order=21,disabled=true,
+				-- get = function(info) return DBMod.PlayerFrames.ArenaFrame.display; end,
+				-- set = function(info,val) DBMod.PlayerFrames.ArenaFrame.display = val; end
+			-- },
+			-- arenareset = {name = L["Frames/ResetLoc"],type = "execute",order=22,disabled=true,
+				-- desc = L["Frames/ResetLocDesc"],
+				-- func = function() DBMod.PlayerFrames.ArenaFrame.moved = false; addon:UpdateArenaFramePosition(); end
+			-- },
+			-- arenascale = { name = L["Frames/ScaleFrames"], type = "range",order=23,width="full",disabled=true,
+				-- min=.01,max=2,step=.01,
+				-- get = function(info) return DBMod.PlayerFrames.ArenaFrame.scale; end,
+				-- set = function(info,val) DBMod.PlayerFrames.ArenaFrame.scale = val; end
+			-- },
 		}
 	};
 	

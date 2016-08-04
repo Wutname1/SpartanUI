@@ -1,5 +1,6 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
+local _, SUI
+spartan = _G["SUI"]
+local L = spartan.L;
 local Artwork_Core = spartan:NewModule("Artwork_Core");
 local Bartender4Version, BartenderMin = "","4.7.1"
 if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
