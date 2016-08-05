@@ -389,9 +389,11 @@ end
 
 function SUI:BT4RefreshConfig()
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
-	SUI.DBP.BT4Profile = Bartender4.db:GetCurrentProfile()
+	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
-	if SUI.DBG.Bartender4[SUI.DBP.BT4Profile] then
+	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
+
+	if SUI.DBG.Bartender4[DB.BT4Profile] then
 		-- We know this profile.
 		if SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style == SUI.DBMod.Artwork.Style then
 			--Profile is for this style, prompt to ReloadUI
@@ -401,27 +403,27 @@ function SUI:BT4RefreshConfig()
 		end
 	else
 		-- We do not know this profile, ask if we should attach it to this style.
-		PageData = {
-			title = "SpartanUI",
-			Desc1 = "A reload of your UI is required.",
-			Desc2 = Desc2,
-			width = 400,
-			height = 150,
-			Display = function()
-				SUI_Win:ClearAllPoints()
-				SUI_Win:SetPoint("TOP", 0, -20)
-				SUI_Win:SetSize(400, 150)
-				SUI_Win.Status:Hide()
-				SUI_Win.Next:SetText("RELOADUI")
-				SUI_Win.Next:ClearAllPoints()
-				SUI_Win.Next:SetPoint("BOTTOM", 0, 30)
-			end,
-			Next = function()
-				ReloadUI()
-			end
-		}
-		local SetupWindow = SUI:GetModule("SetupWindow")
-		SetupWindow:DisplayPage(PageData)
+		-- PageData = {
+			-- title = "SpartanUI",
+			-- Desc1 = "A reload of your UI is required.",
+			-- Desc2 = Desc2,
+			-- width = 400,
+			-- height = 150,
+			-- Display = function()
+				-- SUI_Win:ClearAllPoints()
+				-- SUI_Win:SetPoint("TOP", 0, -20)
+				-- SUI_Win:SetSize(400, 150)
+				-- SUI_Win.Status:Hide()
+				-- SUI_Win.Next:SetText("RELOADUI")
+				-- SUI_Win.Next:ClearAllPoints()
+				-- SUI_Win.Next:SetPoint("BOTTOM", 0, 30)
+			-- end,
+			-- Next = function()
+				-- ReloadUI()
+			-- end
+		-- }
+		-- local SetupWindow = SUI:GetModule("SetupWindow")
+		-- SetupWindow:DisplayPage(PageData)
 	end
 	
 	SUI:Print("Bartender4 Profile changed to: ".. Bartender4.db:GetCurrentProfile())
