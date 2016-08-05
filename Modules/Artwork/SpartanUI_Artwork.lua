@@ -288,3 +288,69 @@ function Artwork_Core:CheckMiniMap()
 		DB.MiniMap.AutoDetectAllowUse = false;
 	end
 end
+
+-- Bartender4 Items
+function Artwork_Core:SetupProfile()
+	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
+	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
+	--If this is set then we have already setup the bars once, and the user changed them
+	if DB.Styles[DBMod.Artwork.Style].BT4Profile and DB.Styles[DBMod.Artwork.Style].BT4Profile ~= ProfileName then return end
+	
+	--Exit if Bartender4 is not loaded
+	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
+	
+	-- Set/Create our Profile
+	Bartender4.db:SetProfile(ProfileName);
+	
+	--Load the Profile Data
+	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+		if BartenderSettings[k] and v.db.profile then
+			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
+		end
+	end
+end;
+
+function Artwork_Core:BartenderProfileCheck(Input,Report)
+	local profiles, r = Bartender4.db:GetProfiles(), false
+	for k,v in pairs(profiles) do
+		if v == Input then r = true end
+	end
+	if (Report) and (r ~= true) then
+		addon:Print(Input.." "..L["BartenderProfileCheckFail"])
+	end
+	return r
+end
+
+function Artwork_Core:MergeData(target,source)
+	if type(target) ~= "table" then target = {} end
+	for k,v in pairs(source) do
+		if type(v) == "table" then
+			target[k] = self:MergeData(target[k], v);
+		else
+			target[k] = v;
+		end
+	end
+	return target;
+end
+
+function Artwork_Core:CreateProfile()
+	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
+	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
+	--If this is set then we have already setup the bars once, and the user changed them
+	if DB.Styles[DBMod.Artwork.Style].BT4Profile and DB.Styles[DBMod.Artwork.Style].BT4Profile ~= ProfileName then return end
+	
+	--Exit if Bartender4 is not loaded
+	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
+	
+	-- Set/Create our Profile
+	Bartender4.db:SetProfile(ProfileName);
+	
+	--Load the Profile Data
+	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+		if BartenderSettings[k] and v.db.profile then
+			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
+		end
+	end
+	
+	Bartender4:UpdateModuleConfigs();
+end

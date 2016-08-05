@@ -55,7 +55,7 @@ function module:SetupProfile()
 	--Load the Profile Data
 	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = module:MergeData(v.db.profile,BartenderSettings[k])
+			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
 		end
 	end
 end;
@@ -73,34 +73,11 @@ function module:CreateProfile()
 	--Load the Profile Data
 	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = module:MergeData(v.db.profile,BartenderSettings[k])
+			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
 		end
 	end
 	
 	Bartender4:UpdateModuleConfigs();
-end
-
-function module:BartenderProfileCheck(Input,Report)
-	local profiles, r = Bartender4.db:GetProfiles(), false
-	for k,v in pairs(profiles) do
-		if v == Input then r = true end
-	end
-	if (Report) and (r ~= true) then
-		addon:Print(Input.." "..L["BartenderProfileCheckFail"])
-	end
-	return r
-end
-
-function module:MergeData(target,source)
-	if type(target) ~= "table" then target = {} end
-	for k,v in pairs(source) do
-		if type(v) == "table" then
-			target[k] = self:MergeData(target[k], v);
-		else
-			target[k] = v;
-		end
-	end
-	return target;
 end
 
 function module:InitActionBars()

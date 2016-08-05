@@ -106,12 +106,12 @@ local PostUpdateAura = function(self,unit)
 	if DBMod.PlayerFrames[unit] then
 		if DBMod.PlayerFrames[unit].AuraDisplay then
 			self:Show();
-			self.size = DBMod.PlayerFrames[unit].Auras.size;
-			self.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-			self.showType = DBMod.PlayerFrames[unit].Auras.showType;
-			self.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-			self.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-			self.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+			self.size = DB.Styles.Classic.Frames[unit].Auras.size;
+			self.spacing = DB.Styles.Classic.Frames[unit].Auras.spacing;
+			self.showType = DB.Styles.Classic.Frames[unit].Auras.showType;
+			self.numBuffs = DB.Styles.Classic.Frames[unit].Auras.NumBuffs;
+			self.numDebuffs = DB.Styles.Classic.Frames[unit].Auras.NumDebuffs;
+			self.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Auras.onlyShowPlayer;
 		else
 			self:Hide();
 		end
@@ -500,12 +500,12 @@ local CreatePlayerFrame = function(self,unit)
 		self.Debuffs["growth-x"] = "RIGHT";
 		self.Debuffs["growth-y"] = "UP";
 		--self.Auras.gap = true;
-		self.Debuffs.size = DBMod.PlayerFrames[unit].Auras.size;
-		self.Debuffs.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		self.Debuffs.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		self.Debuffs.size = DB.Styles.Classic.Frames[unit].Auras.size;
+		self.Debuffs.spacing = DB.Styles.Classic.Frames[unit].Auras.spacing;
+		self.Debuffs.showType = DB.Styles.Classic.Frames[unit].Auras.showType;
 		--self.Auras.numBuffs = 1;
-		--self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		self.Debuffs.num = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		--self.Auras.numDebuffs = DB.Styles.Classic.Frames[unit].Auras.NumDebuffs;
+		self.Debuffs.num = DB.Styles.Classic.Frames[unit].Auras.NumDebuffs;
 		
 		--self.Auras.PostUpdate = PostUpdateAura;
 		self.Debuffs.PostUpdate = PostUpdateAura;
@@ -717,12 +717,12 @@ local CreateTargetFrame = function(self,unit)
 		self.Auras["growth-x"] = "LEFT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = true;
-		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
-		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+		self.Auras.size = DB.Styles.Classic.Frames[unit].Auras.size;
+		self.Auras.spacing = DB.Styles.Classic.Frames[unit].Auras.spacing;
+		self.Auras.showType = DB.Styles.Classic.Frames[unit].Auras.showType;
+		self.Auras.numBuffs = DB.Styles.Classic.Frames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DB.Styles.Classic.Frames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
@@ -940,12 +940,12 @@ local CreatePetFrame = function(self,unit)
 		self.Auras["growth-x"] = "RIGHT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = true;
-		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
-		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+		self.Auras.size = DB.Styles.Classic.Frames[unit].Auras.size;
+		self.Auras.spacing = DB.Styles.Classic.Frames[unit].Auras.spacing;
+		self.Auras.showType = DB.Styles.Classic.Frames[unit].Auras.showType;
+		self.Auras.numBuffs = DB.Styles.Classic.Frames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DB.Styles.Classic.Frames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
@@ -1413,12 +1413,12 @@ local CreateToTFrame = function(self,unit)
 		self.Auras["growth-x"] = "LEFT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = false;
-		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
-		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+		self.Auras.size = DB.Styles.Classic.Frames[unit].Auras.size;
+		self.Auras.spacing = DB.Styles.Classic.Frames[unit].Auras.spacing;
+		self.Auras.showType = DB.Styles.Classic.Frames[unit].Auras.showType;
+		self.Auras.numBuffs = DB.Styles.Classic.Frames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DB.Styles.Classic.Frames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end
@@ -1567,12 +1567,12 @@ local CreateFocusFrame = function(self,unit)
 		self.Auras["growth-x"] = "RIGHT";
 		self.Auras["growth-y"] = "UP";
 		self.Auras.gap = true;
-		self.Auras.size = DBMod.PlayerFrames[unit].Auras.size;
-		self.Auras.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		self.Auras.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		self.Auras.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-		self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		self.Auras.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+		self.Auras.size = DB.Styles.Classic.Frames[unit].Auras.size;
+		self.Auras.spacing = DB.Styles.Classic.Frames[unit].Auras.spacing;
+		self.Auras.showType = DB.Styles.Classic.Frames[unit].Auras.showType;
+		self.Auras.numBuffs = DB.Styles.Classic.Frames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DB.Styles.Classic.Frames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Auras.onlyShowPlayer;
 		
 		self.Auras.PostUpdate = PostUpdateAura;
 	end

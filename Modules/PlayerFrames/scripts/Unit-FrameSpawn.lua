@@ -1,4 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local PlayerFrames = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
@@ -39,7 +40,6 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 			PlayerFrames:PositionFrame_Classic()
 		end
 	end)
-	
 	
 end
 
@@ -168,6 +168,7 @@ function PlayerFrames:OnEnable()
 	PlayerFrames.boss = {}
 	if (DBMod.PlayerFrames.Style == "Classic") then
 		PlayerFrames:SUI_PlayerFrames_Classic();
+		PlayerFrames:BuffOptions()
 	else
 		spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PlayerFrames();
 	end
@@ -189,4 +190,47 @@ function PlayerFrames:OnEnable()
 	
 	PlayerFrames:SetupStaticOptions()
 	PlayerFrames:UpdatePosition()
+end
+
+function PlayerFrames:BuffOptions()
+	spartan.opt.args["PlayerFrames"].args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,desc = "Buff & Debuff display settings", args={}};
+	local Units = {[1]="player",[2]="pet",[3]="target",[4]="targettarget",[5]="focus",[6]="focustarget"}
+	for k,unit in pairs(Units) do if DB.Styles.Classic.Frames[unit].Auras.AuraDisplay then
+		spartan.opt.args["PlayerFrames"].args["auras"].args[unit] = {name=unit,type = "group",inline=true,order=k,
+		args = {
+			AuraDisplay={name = L["Display Buffs"], type = "toggle", order=10,
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.AuraDisplay; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.AuraDisplay = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+			},
+			NumBuffs={name = L["Number of buffs"], type = "range", order=20,
+			min=1,max=30,step=1,
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.NumBuffs; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.NumBuffs = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+			},
+			NumDebuffs = {name = L["Number of debuffs"], type = "range", order=30,
+			min=1,max=30,step=1,
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.NumDebuffs; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.NumDebuffs = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+			},
+			size = {name = L["Size"], type = "range", order=40,
+			min=1,max=30,step=1,
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.size; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.size = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+			},
+			spacing = {name = L["Spacing"], type = "range", order=50,
+			min=1,max=30,step=1,
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.spacing; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.spacing = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+			},
+			showType={name = L["Show type"], type = "toggle", order=60,
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.showType; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.showType = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+			},
+			onlyShowPlayer={name = L["Only show players"], type = "toggle", order=70,
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.onlyShowPlayer; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.onlyShowPlayer = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+			}
+		}
+	}
+	end end
 end

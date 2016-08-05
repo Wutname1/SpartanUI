@@ -1,6 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Transparent");
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
@@ -29,14 +28,14 @@ end
 
 function module:FirstLoad()
 	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Transparent.BartenderProfile) and module:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Transparent.BartenderProfile); end
+	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Transparent.BartenderProfile) and Artwork_Core:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Transparent.BartenderProfile); end
 end
 
 function module:OnEnable()
 	if (DBMod.Artwork.Style ~= "Transparent") then module:Disable(); return end
 	if (DBMod.Artwork.Style == "Transparent") then
 		if (not InitRan) then module:Init(); end
-		if (not module:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then module:CreateProfile(); end
+		if (not Artwork_Core:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then module:CreateProfile(); end
 		module:EnableFramework();
 		module:EnableActionBars();
 		module:EnableMinimap();

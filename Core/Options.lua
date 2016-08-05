@@ -49,7 +49,7 @@ function module:OnInitialize()
 						spartan:UpdateModuleConfigs()
 						end
 				},
-				Fel = {name = "Fel", type="execute",
+				Fel = {name = "Fel", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Fel";

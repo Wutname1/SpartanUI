@@ -27,8 +27,8 @@ local FontItems = {Primary={},Core={},Party={},Player={},Raid={}}
 local FontItemsSize = {Primary={},Core={},Party={},Player={},Raid={}}
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
 local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
-local frameDefault1 = {movement=MovedDefault,AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",Auras={NumBuffs=5,NumDebuffs = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},moved=false,Anchors={}}
-local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",Auras={NumBuffs=0,NumDebuffs = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false},moved=false,Anchors={}}
+local frameDefault1 = {movement=MovedDefault,AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",moved=false,Anchors={}}
+local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",moved=false,Anchors={}}
 
 local DBdefault = {
 	SUIProper = {
@@ -74,6 +74,70 @@ local DBdefault = {
 				Minimap = {
 					shape = "circle",
 					size = {width = 140, height = 140}
+				},
+				Frames = {
+					player = {
+						Auras={
+						AuraDisplay=true,
+						NumBuffs=5,
+						NumDebuffs = 10,
+						size = 20,
+						spacing = 1,
+						showType=true,
+						onlyShowPlayer=false
+						}
+					},
+					target = {
+						Auras={
+						AuraDisplay=true,
+						NumBuffs=5,
+						NumDebuffs = 10,
+						size = 20,
+						spacing = 1,
+						showType=true,
+						onlyShowPlayer=false
+						}
+					},
+					targettarget = {
+						Auras={
+							AuraDisplay=false,
+							NumBuffs=0,
+							NumDebuffs = 10,
+							size = 15,
+							spacing = 1,
+							showType=true,
+							onlyShowPlayer=false}
+					},
+					pet = {
+						Auras={
+							AuraDisplay=false,
+							NumBuffs=0,
+							NumDebuffs = 10,
+							size = 15,
+							spacing = 1,
+							showType=true,
+							onlyShowPlayer=false}
+					},
+					focus = {
+						Auras={
+							AuraDisplay=true,
+							NumBuffs=5,
+							NumDebuffs = 5,
+							size = 15,
+							spacing = 1,
+							showType=true,
+							onlyShowPlayer=true}
+					},
+					focustarget = {
+						Auras={
+							AuraDisplay=false,
+							NumBuffs=0,
+							NumDebuffs = 10,
+							size = 15,
+							spacing = 1,
+							showType=true,
+							onlyShowPlayer=false}
+					},
 				},
 				TooltipLoc = true
 			}

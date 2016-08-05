@@ -1,9 +1,9 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local addon = spartan:GetModule("PlayerFrames");
+local PlayerFrames = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 
-function addon:OnInitialize()
+function PlayerFrames:OnInitialize()
 	spartan.opt.args["PlayerFrames"].args["FrameStyle"] = {name=L["Frames/FrameStyle"],type="group",order=1,
 		desc=L["Frames/BarOptDesc"],
 		args = {
@@ -130,7 +130,7 @@ function addon:OnInitialize()
 			}
 		}
 	}
-
+	
 	spartan.opt.args["PlayerFrames"].args["castbar"] = {name = L["Frames/castbar"],type = "group",order=4,
 		desc = L["Frames/UnitCastSet"],
 		args = {
@@ -237,10 +237,11 @@ function addon:OnInitialize()
 	};
 end
 
---function addon:OnEnable()
+-- function PlayerFrames:OnEnable()
+	-- local Units = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 	-- for k,v in pairs(Units) do if DBMod.PlayerFrames[v].AuraDisplay then
-		-- if addon[v].Auras then addon[v].Auras:PostUpdate(v); end
-		-- if addon[v].Debuffs then addon[v].Debuffs:PostUpdate(v); end
+		-- if PlayerFrames[v].Auras then PlayerFrames[v].Auras:PostUpdate(v); end
+		-- if PlayerFrames[v].Debuffs then PlayerFrames[v].Debuffs:PostUpdate(v); end
 	-- end end
-	-- for k,v in pairs(Units) do if DBMod.PlayerFrames[v].display then addon[v]:Enable(); else addon[v]:Disable(); end end
---end
+	-- for k,v in pairs(Units) do if DBMod.PlayerFrames[v].display then PlayerFrames[v]:Enable(); else PlayerFrames[v]:Disable(); end end
+-- end
