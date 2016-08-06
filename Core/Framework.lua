@@ -354,9 +354,11 @@ end
 
 function SUI:FirstTimeSetup()
 	--Hide Bartender4 Minimap icon.
-	Bartender4.db.profile.minimapIcon.hide = true;
-	local LDBIcon = LibStub("LibDBIcon-1.0", true);
-	LDBIcon["Hide"](LDBIcon, "Bartender4")
+	if Bartender4 then 
+		Bartender4.db.profile.minimapIcon.hide = true;
+		local LDBIcon = LibStub("LibDBIcon-1.0", true);
+		LDBIcon["Hide"](LDBIcon, "Bartender4")
+	end
 	
 	DB.SetupDone = false
 	local PageData = {
@@ -500,10 +502,12 @@ function SUI:UpdateModuleConfigs()
 	DB = SUI.db.profile.SUIProper
 	DBMod = SUI.db.profile.Modules
 	
-	if DB.Styles[DBMod.Artwork.Style].BT4Profile then
-		Bartender4.db:SetProfile(DB.Styles[DBMod.Artwork.Style].BT4Profile);
-	else
-		Bartender4.db:SetProfile(DB.BT4Profile);
+	if Bartender4 then
+		if DB.Styles[DBMod.Artwork.Style].BT4Profile then
+			Bartender4.db:SetProfile(DB.Styles[DBMod.Artwork.Style].BT4Profile);
+		else
+			Bartender4.db:SetProfile(DB.BT4Profile);
+		end
 	end
 	
 	SUI:reloadui()
