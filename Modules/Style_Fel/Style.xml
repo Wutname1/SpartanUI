@@ -7,9 +7,13 @@
 	<!-- SpartanUI -->
 	<Frame name="Fel_SpartanUI" frameStrata="BACKGROUND" parent="UIParent">
 		<Anchors>
-			<Anchor point="BOTTOM" relativeTo="UIParent" relativePoint="BOTTOM" />
+			<Anchor point="BOTTOM" relativePoint="BOTTOM" />
+			<Anchor point="TOP" relativePoint="BOTTOM">
+				<Offset><AbsDimension x="0" y="153"/></Offset>
+			</Anchor>
+			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" />
+			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" />
 		</Anchors>
-		<Size><AbsDimension y="153" /></Size>
 	</Frame>
 	
 	<!-- Fel_StatusBars_TooltipTemplate -->
@@ -86,9 +90,10 @@
 		<Size><AbsDimension x="400" y="32" /></Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\bar-backdrop1">
-					<Size><AbsDimension x="512" y="64" /></Size>
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Fel\Images\Fel-Box" alpha=".5">
+					<Size><AbsDimension x="400" y="32" /></Size>
 					<Anchors><Anchor point="CENTER" relativePoint="CENTER"/></Anchors>
+					<TexCoords left="0.07421875" right="0.92578125" top="0.359375" bottom="0.6796875"/>
 				</Texture>
 			</Layer>
 		</Layers>
@@ -98,10 +103,38 @@
 	<Frame name="Fel_ActionBarsTemplate" parent="Fel_SpartanUI" frameStrata="BACKGROUND" virtual="true">
 		<Size><AbsDimension x="1002" y="139"/></Size>
 		<Frames>
-			<Frame name="Fel_Bar1" inherits="Fel_BarTemplate1"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="50" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="Fel_Bar2" inherits="Fel_BarTemplate1"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="5" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="Fel_Bar3" inherits="Fel_BarTemplate1"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="50" /></Offset></Anchor></Anchors></Frame>
-			<Frame name="Fel_Bar4" inherits="Fel_BarTemplate1"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="5" /></Offset></Anchor></Anchors></Frame>
+			<!-- Action Bars -->
+			<Frame name="Fel_Bar1" inherits="Fel_BarTemplate1">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-110" y="70" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="Fel_Bar2" inherits="Fel_BarTemplate1">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-110" y="25" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="Fel_Bar3" inherits="Fel_BarTemplate1">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="110" y="70" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="Fel_Bar4" inherits="Fel_BarTemplate1">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="110" y="25" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<!-- Misc Bars -->
+			<Frame name="Fel_MenuBar" inherits="Fel_BarTemplate1">
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="Fel_Bar3" relativePoint="TOP"><Offset><AbsDimension x="0" y="10" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="Fel_StanceBar" inherits="Fel_BarTemplate1">
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="Fel_Bar1" relativePoint="TOP"><Offset><AbsDimension x="0" y="10" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
 		</Frames>
 	</Frame>
 	

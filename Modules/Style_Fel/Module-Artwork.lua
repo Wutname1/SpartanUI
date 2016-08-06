@@ -58,7 +58,7 @@ function module:InitArtwork()
 	--end
 
 	do -- create bar anchor
-		plate = CreateFrame("Frame","Fel_ActionBarPlate",Fel_SpartanUI,"Fel_ActionBarsTemplate");
+		plate = CreateFrame("Frame","Fel_ActionBarPlate",UIParent,"Fel_ActionBarsTemplate");
 		plate:SetFrameStrata("BACKGROUND");
 		plate:SetFrameLevel(1);
 		plate:SetPoint("BOTTOM");
@@ -82,6 +82,10 @@ function module:EnableArtwork()
 	Fel_SpartanUI.Right = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Right", "BORDER")
 	Fel_SpartanUI.Right:SetPoint("LEFT", Fel_SpartanUI.Left, "RIGHT", 0, 0)
 	Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right]])
+	
+	for i=1,4 do
+		-- _G["Fel_Bar"..i.."BG"]:SetVertexColor(0, 0, 0, .5)
+	end
 	-- Win.bg:SetVertexColor(0, 0, 0, .7)
 	
 	hooksecurefunc("UIParent_ManageFramePositions",function()

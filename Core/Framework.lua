@@ -33,6 +33,7 @@ local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",s
 local DBdefault = {
 	SUIProper = {
 		Version = SUI.SpartanVer,
+		SetupDone = false,
 		HVer = "",
 		yoffset = 0,
 		xOffset = 0,
@@ -359,7 +360,7 @@ function SUI:FirstTimeSetup()
 		local LDBIcon = LibStub("LibDBIcon-1.0", true);
 		LDBIcon["Hide"](LDBIcon, "Bartender4")
 	end
-	
+	--Setup page
 	DB.SetupDone = false
 	local PageData = {
 		SubTitle = "Welcome",
@@ -373,16 +374,25 @@ function SUI:FirstTimeSetup()
 			
 			local gui = LibStub("AceGUI-3.0")
 			
-			--Classic
-			local control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center")
-			control:SetImageSize(120, 60)
+			--Profiles
+			local control = gui:Create("Dropdown")
+			control:SetLabel("Exsisting profiles")
+			local tmpprofiles = {}
+			local profiles = {}
+			-- copy existing profiles into the table
+			local currentProfile = SUI.db:GetCurrentProfile()
+			for i,v in pairs(SUI.db:GetProfiles(tmpprofiles)) do 
+				if not (nocurrent and v == currentProfile) then 
+					profiles[v] = v 
+				end 
+			end
+			control:SetList(profiles)
 			control:SetPoint("TOP", SUI_Win.Core, "TOP", 0, -30)
 			control.frame:SetParent(SUI_Win.Core)
 			control.frame:Show()
-			SUI_Win.Core.Classic = control
+			SUI_Win.Core.Profiles = control
 			
-			SUI_Win.Core.Minimal = control
+			
 			
 		end,
 		Next = function()
@@ -398,9 +408,9 @@ function SUI:FirstTimeSetup()
 		Skip = function() DB.SetupDone = true; end
 	}
 	-- Uncomment this when the time is right.
-	-- local SetupWindow = spartan:GetModule("SetupWindow")
-	-- SetupWindow:AddPage(PageData)
-	-- SetupWindow:DisplayPage()
+	local SetupWindow = spartan:GetModule("SetupWindow")
+	SetupWindow:AddPage(PageData)
+	SetupWindow:DisplayPage()
 	
 	-- This will be moved once we put the setup page in place.
 	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
@@ -443,6 +453,15 @@ function SUI:OnInitialize()
 	end
 	
 	SUI:FontSetup()
+	
+	--First Time Setup Actions
+	local class, classFileName = UnitClass("player")
+	if not DB.SetupRan and classFileName == "DEMONHUNTER" then 
+		DBMod.Artwork.Style = "Fel";
+		DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
+		DBMod.PartyFrames.Style = DBMod.Artwork.Style;
+		DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+	end
 end
 
 function SUI:InitializeProfile()
