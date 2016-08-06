@@ -14,7 +14,11 @@ local Images = {
 	},
 	flair = {
 		Texture =  [[Interface\Scenarios\LegionInvasion]],
-		Coords = {0.140625,0.615234375,0,0.265625}
+		Coords = {0.140625, 0.615234375, 0, 0.265625}
+	},
+	flair2 = {
+		Texture =  [[Interface\Addons\SpartanUI_Style_Fel\Images\Party-Frame]],
+		Coords = {0.1953125, 0.8046875, 0.1328125, 0.859375}
 	}
 }
 
@@ -64,28 +68,12 @@ local menu = function(self)
 end
 
 local threat = function(self,event,unit)
-	if (not self.Portrait) then -- no Portrait color artwork if possible
-		if (not self.artwork) then return end
-		-- if (not self.artwork.bg:IsObjectType("Texture")) then return; end
-		-- unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
-		-- local status
-		-- if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
-		-- if (status and status > 0) then
-			-- local r,g,b = GetThreatStatusColor(status);
-			-- self.artwork.bg:SetVertexColor(r,g,b);
-		-- else
-			-- self.artwork.bg:SetVertexColor(1,1,1);
-		-- end
-	else -- Portrait exsits color picture for threat
-		if (not self.Portrait:IsObjectType("Texture")) then return; end
-		unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
-		local status
-		if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
-		if (status and status > 0) then
-			local r,g,b = GetThreatStatusColor(status);
-			self.Portrait:SetVertexColor(r,g,b);
+	if self.ThreatOverlay then
+		if ( status and status > 0 ) then
+			self.ThreatOverlay:SetVertexColor(GetThreatStatusColor(status));
+			self.ThreatOverlay:Show();
 		else
-			self.Portrait:SetVertexColor(1,1,1);
+			self.ThreatOverlay:Hide();
 		end
 	end
 end
@@ -289,7 +277,7 @@ local CreateLargeFrame = function(self,unit)
 		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(58, 58);
-		self.Portrait:SetPoint("RIGHT",self,"LEFT",0,0);
+		self.Portrait:SetPoint("RIGHT",self,"LEFT",-1,0);
 		
 		self.Threat = CreateFrame("Frame",nil,self);
 		self.Threat.Override = threat;
@@ -586,47 +574,64 @@ local CreateLargeFrame = function(self,unit)
 	return self;
 end
 
-local CreateSmallFrame = function(self,unit)
-	self:SetSize(280, 80);
+local CreateMediumFrame = function(self,unit)
+	self:SetSize(120, 45);
+	
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
-		self.artwork:SetFrameLevel(2);
+		self.artwork:SetFrameLevel(1);
 		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
-		self.artwork.bg:SetPoint("CENTER");
-		self.artwork.bg:SetTexture(base_plate1);
-		if unit == "target" then self.artwork.bg:SetTexCoord(1,0,0,1); end
+		self.artwork.bg:SetPoint("CENTER", self);
+		self.artwork.bg:SetTexture(Images.bg.Texture);
+		self.artwork.bg:SetTexCoord(unpack(Images.bg.Coords))
+		self.artwork.bg:SetSize(self:GetSize());
 		
-		self.Portrait = CreatePortrait(self);
-		self.Portrait:SetSize(58, 58);
-		self.Portrait:SetPoint("TOPRIGHT",self,"TOPRIGHT",-35,-15);
-		--self.Portrait:SetPoint("BOTTOM",self,"BOTTOM",0,4);
-		--if unit == "player" then self.Portrait:SetPoint("RIGHT",self,"RIGHT",-35,0); end
-		--if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
+		self.artwork.flair = CreateFrame("Frame",nil,self);
+		self.artwork.flair:SetFrameStrata("BACKGROUND");
+		self.artwork.flair:SetFrameLevel(2);
+		self.artwork.flair:SetAllPoints(self);
+		
+		self.artwork.flair.bg = self.artwork.flair:CreateTexture(nil,"BACKGROUND");
+		-- self.artwork.flair:SetBlendMode("ADD");
+		-- self.artwork.flair:SetParent(self.artwork.bg)
+		self.artwork.flair.bg:SetPoint("RIGHT", self, "RIGHT", 0, 0);
+		self.artwork.flair.bg:SetTexture(Images.flair2.Texture);
+		self.artwork.flair.bg:SetTexCoord(unpack(Images.flair2.Coords))
+		self.artwork.flair.bg:SetSize(self:GetWidth(), self:GetHeight()+20);
+		
 		
 		self.Threat = CreateFrame("Frame",nil,self);
+		local overlay = self:CreateTexture(nil, "OVERLAY")
+		overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
+		overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
+		overlay:SetAllPoints(self)
+		overlay:SetVertexColor(1, 0, 0)
+		overlay:Hide();
+		self.ThreatOverlay = overlay
 		self.Threat.Override = threat;
 	end
 	do -- setup status bars
 		do -- cast bar
 			local cast = CreateFrame("StatusBar",nil,self);
-			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
-			cast:SetSize(185, 15);
-			cast:SetPoint("TOPLEFT",self,"TOPLEFT",1,-24);
+			cast:SetFrameStrata("BACKGROUND");
+			cast:SetFrameLevel(3);
+			cast:SetSize(self:GetWidth(), 8);
+			cast:SetPoint("TOPLEFT",self,"TOPLEFT",0,-2);
 			cast:SetStatusBarTexture(Smoothv2)
 			
 			cast.Text = cast:CreateFontString();
-			spartan:FormatFont(cast.Text, 10, "Player")
-			cast.Text:SetSize(135, 11);
-			cast.Text:SetJustifyH("RIGHT"); cast.Text:SetJustifyV("MIDDLE");
-			cast.Text:SetPoint("LEFT",cast,"LEFT",4,0);
+			spartan:FormatFont(cast.Text, 8, "Player")
+			cast.Text:SetAllPoints(cast);
+			cast.Text:SetJustifyH("CENTER");
+			cast.Text:SetJustifyV("MIDDLE");
 			
-			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Time:SetSize(90, 11);
-			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
-			cast.Time:SetPoint("LEFT",cast,"LEFT",2,0);
+			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline8");
+			cast.Time:SetAllPoints(cast);
+			cast.Time:SetJustifyH("LEFT");
+			cast.Time:SetJustifyV("MIDDLE");
 			
 			self.Castbar = cast;
 			self.Castbar.OnUpdate = OnCastbarUpdate;
@@ -636,42 +641,25 @@ local CreateSmallFrame = function(self,unit)
 		end
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
-			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
+			health:SetFrameStrata("BACKGROUND");
+			health:SetFrameLevel(2);
 			health:SetStatusBarTexture(Smoothv2)
-			-- health:AnimateTexCoords([[Interface\AddOns\SpartanUI_PlayerFrames\media\HealthBar.blp]], 256, 256, 80, 16, 40, elapsed, 0.08);
 			health:SetSize(self.Castbar:GetWidth(), 24);
 			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
+			health:SetAlpha(.7)
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetSize(135, 11);
-			health.value:SetJustifyH("RIGHT"); health.value:SetJustifyV("MIDDLE");
-			health.value:SetPoint("LEFT",health,"LEFT",4,0);
+			health.value:SetSize(self:GetWidth(), 11);
+			health.value:SetJustifyH("CENTER");
+			health.value:SetJustifyV("MIDDLE");
+			health.value:SetAllPoints(health)
 			self:Tag(health.value, TextFormat("health"))
-			
-			-- health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			-- health.ratio:SetSize(90, 11);
-			-- health.ratio:SetJustifyH("RIGHT"); health.ratio:SetJustifyV("MIDDLE");
-			-- health.ratio:SetPoint("RIGHT",health,"LEFT",-2,0);
-			-- self:Tag(health.ratio, '[perhp]%')
-			
-			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
-			-- Background:SetAllPoints(health)
-			-- Background:SetTexture(1, 1, 1, .08)
-			
 			self.Health = health;
-			--self.Health.bg = Background;
 			
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			-- if DBMod.PlayerFrames.bars[unit].color == "reaction" then
-				-- self.Health.colorReaction = true;
-			-- elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
-				-- self.Health.colorHappiness = true;
-			-- elseif DBMod.PlayerFrames.bars[unit].color == "class" then
-				self.Health.colorClass = true;
-			-- else
-				-- self.Health.colorSmooth = true;
-			-- end
+			-- self.Health.colorClass = true;
+			self.Health.colorSmooth = true;
 			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorHealth = true;
 			
@@ -679,17 +667,17 @@ local CreateSmallFrame = function(self,unit)
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
 			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture(Smoothv2)
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 			local otherBars = CreateFrame('StatusBar', nil, myBars)
 			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture(Smoothv2)
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
-			myBars:SetSize(150, 16)
-			otherBars:SetSize(150, 16)
+			myBars:SetSize(self.Health:GetSize())
+			otherBars:SetSize(self.Health:GetSize())
 			
 			self.HealPrediction = {
 				myBar = myBars,
@@ -699,203 +687,72 @@ local CreateSmallFrame = function(self,unit)
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
-			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
+			power:SetFrameStrata("BACKGROUND");
+			power:SetFrameLevel(2);
 			power:SetSize(self.Castbar:GetWidth(), 8);
-			power:SetPoint("TOPLEFT",self.Health,"BOTTOMLEFT",0,-2);
+			power:SetPoint("TOPLEFT",self.Health,"BOTTOMLEFT",0,-1);
 			power:SetStatusBarTexture(Smoothv2)
-			
-			-- power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			-- power.value:SetWidth(135); power.value:SetHeight(11);
-			-- power.value:SetJustifyH("RIGHT"); power.value:SetJustifyV("MIDDLE");
-			-- power.value:SetPoint("LEFT",power,"LEFT",4,0);
-			-- self:Tag(power.value, TextFormat("mana"))
+			power:SetAlpha(.7)
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline8");
-			power.ratio:SetSize(power:GetSize());
-			power.ratio:SetJustifyH("CENTER"); power.ratio:SetJustifyV("MIDDLE");
+			power.ratio:SetJustifyH("CENTER");
+			power.ratio:SetJustifyV("MIDDLE");
 			power.ratio:SetAllPoints(power);
-			--power.ratio:SetPoint("RIGHT",power,"LEFT",-2,0);
 			self:Tag(power.ratio, '[perpp]%')
 			
 			self.Power = power;
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 		end
-		do --Special Icons/Bars
-			local playerClass = select(2, UnitClass("player"))
-			if unit == "player" and playerClass =="DEATHKNIGHT" then	
-				self.Runes = CreateFrame("Frame", nil, self)
-				
-				for i = 1, 6 do
-					self.Runes[i] = CreateFrame("StatusBar", self:GetName().."_Runes"..i, self)
-					self.Runes[i]:SetHeight(6)
-					self.Runes[i]:SetWidth((245 - 5) / 6)
-					if (i == 1) then
-						self.Runes[i]:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -3)
-					else
-						self.Runes[i]:SetPoint("TOPLEFT", self.Runes[i-1], "TOPRIGHT", 1, 0)
-					end
-					self.Runes[i]:SetStatusBarTexture(Smoothv2)
-					self.Runes[i]:SetStatusBarColor(0,.39,.63,1)
-
-					self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, "BORDER")
-					self.Runes[i].bg:SetPoint("TOPLEFT", self.Runes[i], "TOPLEFT", -0, 0)
-					self.Runes[i].bg:SetPoint("BOTTOMRIGHT", self.Runes[i], "BOTTOMRIGHT", 0, -0)				
-					self.Runes[i].bg:SetTexture(Smoothv2)
-					self.Runes[i].bg:SetVertexColor(0,0,0,1)
-					self.Runes[i].bg.multiplier = 0.64
-					self.Runes[i]:Hide()
-				end
-			end
-			
-			local DruidMana = CreateFrame("StatusBar", nil, self)
-			DruidMana:SetSize(self.Power:GetWidth(), 4);
-			DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
-			DruidMana.colorPower = true
-			DruidMana:SetStatusBarTexture(Smoothv2)
-
-			-- Add a background
-			local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(DruidMana)
-			Background:SetTexture(1, 1, 1, .2)
-
-			-- Register it with oUF
-			self.DruidMana = DruidMana
-			self.DruidMana.bg = Background
-		end
 	end
 	do -- setup ring, icons, and text
-		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("LOW");
-		ring:SetAllPoints(self.Portrait);
-		ring:SetFrameLevel(3);
-		
-		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 12, "Player")
-		self.Name:SetSize(135, 12);
-		self.Name:SetJustifyH("RIGHT");
-		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",47,-7);
+		self.Name = self:CreateFontString();
+		spartan:FormatFont(self.Name, 8, "Player")
+		self.Name:SetSize(self:GetWidth(), 10);
+		self.Name:SetJustifyH("LEFT");
+		self.Name:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-2);
 		self:Tag(self.Name, "[level] [SUI_ColorClass][name]");
 		
-		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
-		self.Leader:SetPoint("CENTER",ring,"TOP");
+		self.Leader = self:CreateTexture(nil,"BORDER");
+		self.Leader:SetSize(12, 12);
+		self.Leader:SetPoint("RIGHT",self.Name,"LEFT");
 		
-		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetSize(18, 18);
-		self.MasterLooter:SetPoint("CENTER",self.Portrait,"BOTTOM",0,0);
+		self.MasterLooter = self:CreateTexture(nil,"BORDER");
+		self.MasterLooter:SetSize(12, 12);
+		self.MasterLooter:SetPoint("RIGHT",self.Leader,"LEFT");
 		
-		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
-		self.SUI_RaidGroup:SetSize(15, 15);
-		self.SUI_RaidGroup:SetPoint("CENTER",self.Portrait,"TOP",0,7);
+		self.SUI_RaidGroup = self:CreateTexture(nil,"BORDER");
+		self.SUI_RaidGroup:SetSize(12, 12);
+		self.SUI_RaidGroup:SetPoint("TOPLEFT",self,"TOPLEFT")
 		self.SUI_RaidGroup:SetTexture(square);
 		self.SUI_RaidGroup:SetVertexColor(0,.8,.9,.9)
 		
-		self.SUI_RaidGroup.Text = ring:CreateFontString(nil,"BORDER","SUI_Font10");
-		self.SUI_RaidGroup.Text:SetSize(15, 15);
-		self.SUI_RaidGroup.Text:SetJustifyH("CENTER"); self.SUI_RaidGroup.Text:SetJustifyV("MIDDLE");
+		self.SUI_RaidGroup.Text = self:CreateFontString(nil,"BORDER","SUI_Font10");
+		self.SUI_RaidGroup.Text:SetSize(12, 12);
+		self.SUI_RaidGroup.Text:SetJustifyH("CENTER");
+		self.SUI_RaidGroup.Text:SetJustifyV("MIDDLE");
 		self.SUI_RaidGroup.Text:SetPoint("CENTER",self.SUI_RaidGroup,"CENTER",0,1);
 		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetSize(25, 25);
-		self.PvP:SetPoint("CENTER",ring,"BOTTOMRIGHT",0,0);
+		self.PvP = self:CreateTexture(nil,"BORDER");
+		self.PvP:SetSize(25,25);
+		self.PvP:SetPoint("CENTER",self,"BOTTOMRIGHT",0,-3);
 		self.PvP.Override = pvpIcon
 		
-		self.Resting = ring:CreateTexture(nil,"ARTWORK");
-		self.Resting:SetSize(25, 25);
-		self.Resting:SetPoint("CENTER",ring,"TOPLEFT");
-		self.Resting:SetTexCoord(0.15,0.86,0.15,0.86)
-		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
+		self.LFDRole = self:CreateTexture(nil,"BORDER");
 		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",ring,"TOP",20,7);
+		self.LFDRole:SetPoint("CENTER",self,"LEFT",0,0);
 		self.LFDRole:SetTexture(lfdrole);
 		self.LFDRole:SetAlpha(.75);
 		
-		self.Combat = ring:CreateTexture(nil,"ARTWORK");
-		self.Combat:SetSize(30,30);
-		self.Combat:SetPoint("CENTER",ring,"RIGHT");
+		self.Combat = self:CreateTexture(nil,"ARTWORK");
+		self.Combat:SetSize(20,20);
+		self.Combat:SetPoint("CENTER",self.Resting,"CENTER");
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(20,20);
-		self.RaidIcon:SetPoint("CENTER",ring,"CENTER",0,20);
-		
-		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
-		self.StatusText:SetPoint("CENTER",ring,"CENTER");
+		self.StatusText = self:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
+		self.StatusText:SetPoint("CENTER",self,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
-		
-		self.ComboPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.ComboPoints:SetPoint("BOTTOMLEFT",self.Name,"TOPLEFT",40,6);
-		
-		local ClassIcons = {}
-		for i = 1, 6 do
-			local Icon = self:CreateTexture(nil, "OVERLAY")
-			Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			
-			if (i == 1) then
-				Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
-			else 
-				Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
-			end
-			
-			ClassIcons[i] = Icon
-		end
-		self.ClassIcons = ClassIcons
-		
-		local ClassPowerID = nil;
-		ring:SetScript("OnEvent",function(a,b)
-			if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
-			local cur, max
-			if(unit == 'vehicle') then
-				cur = GetComboPoints('vehicle', 'target')
-				max = MAX_COMBO_POINTS
-			else
-				cur = UnitPower('player', ClassPowerID)
-				max = UnitPowerMax('player', ClassPowerID)
-			end
-			self.ComboPoints:SetText((cur > 0 and cur) or "");
-		end);
-		
-		ring:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
-			ClassPowerID = nil;
-			if(classFileName == 'MONK') then
-				ClassPowerID = SPELL_POWER_CHI
-			elseif(classFileName == 'PALADIN') then
-				ClassPowerID = SPELL_POWER_HOLY_POWER
-			elseif(classFileName == 'WARLOCK') then
-				ClassPowerID = SPELL_POWER_SOUL_SHARDS
-			elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
-				ClassPowerID = SPELL_POWER_COMBO_POINTS
-			elseif(classFileName == 'MAGE') then
-				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-			end
-			if ClassPowerID ~= nil then 
-				ring:RegisterEvent('UNIT_DISPLAYPOWER')
-				ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-				ring:RegisterEvent('UNIT_POWER_FREQUENT')
-				ring:RegisterEvent('UNIT_MAXPOWER')
-			end
-		end)
-		
-		if(classFileName == 'MONK') then
-			ClassPowerID = SPELL_POWER_CHI
-		elseif(classFileName == 'PALADIN') then
-			ClassPowerID = SPELL_POWER_HOLY_POWER
-		elseif(classFileName == 'WARLOCK') then
-			ClassPowerID = SPELL_POWER_SOUL_SHARDS
-		elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
-			ClassPowerID = SPELL_POWER_COMBO_POINTS
-		elseif(classFileName == 'MAGE') then
-			ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-		end
-		if ClassPowerID ~= nil then 
-			ring:RegisterEvent('UNIT_DISPLAYPOWER')
-			ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-			ring:RegisterEvent('UNIT_POWER_FREQUENT')
-			ring:RegisterEvent('UNIT_MAXPOWER')
-		end
 	end
 
 	self.TextUpdate = PostUpdateText;
@@ -903,8 +760,91 @@ local CreateSmallFrame = function(self,unit)
 	return self;
 end
 
-local CreateRaidFrame = function(self,unit)
+local CreateSmallFrame = function(self,unit)
+	self:SetSize(95, 30);
 
+	do -- setup base artwork
+		self.artwork = CreateFrame("Frame",nil,self);
+		self.artwork:SetFrameStrata("BACKGROUND");
+		self.artwork:SetFrameLevel(2);
+		self.artwork:SetAllPoints(self);
+		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
+		self.artwork.bg:SetPoint("CENTER", self);
+		self.artwork.bg:SetTexture([[Interface\Scenarios\LegionInvasion]]);
+		self.artwork.bg:SetTexCoord(0.017578125, 0.3203125, 0.4609375, 0.564453125)
+		self.artwork.bg:SetSize(self:GetSize());
+		
+		self.Threat = CreateFrame("Frame",nil,self);
+		local overlay = self:CreateTexture(nil, "OVERLAY")
+		overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
+		overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
+		overlay:SetAllPoints(self)
+		overlay:SetVertexColor(1, 0, 0)
+		overlay:Hide();
+		self.ThreatOverlay = overlay
+		self.Threat.Override = threat;
+	end
+	do -- setup status bars
+		do -- health bar
+			local health = CreateFrame("StatusBar",nil,self);
+			health:SetFrameStrata("BACKGROUND");
+			health:SetFrameLevel(2);
+			health:SetStatusBarTexture(Smoothv2)
+			health:SetSize(self:GetWidth(), 25);
+			health:SetPoint("TOPLEFT",self,"TOPLEFT",0,0);
+			health:SetAlpha(.7)
+			
+			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
+			health.value:SetSize(self:GetWidth(), 11);
+			health.value:SetJustifyH("CENTER");
+			health.value:SetJustifyV("MIDDLE");
+			health.value:SetAllPoints(health)
+			self:Tag(health.value, '[perhp]%')
+			self.Health = health;
+			
+			self.Health.frequentUpdates = true;
+			self.Health.colorDisconnected = true;
+			self.Health.colorClass = true;
+			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
+			self.Health.colorHealth = true;
+		end
+		do -- power bar
+			local power = CreateFrame("StatusBar",nil,self);
+			power:SetFrameStrata("BACKGROUND");
+			power:SetFrameLevel(2);
+			power:SetSize(self:GetWidth(), 5);
+			power:SetPoint("TOPLEFT",self.Health,"BOTTOMLEFT",0,0);
+			power:SetStatusBarTexture(Smoothv2)
+			power:SetAlpha(.7)
+			
+			self.Power = power;
+			self.Power.colorPower = true;
+			self.Power.frequentUpdates = true;
+		end
+	end
+	do -- setup ring, icons, and text
+		self.Name = self:CreateFontString();
+		spartan:FormatFont(self.Name, 10, "Player")
+		self.Name:SetSize(self:GetWidth(), 10);
+		self.Name:SetJustifyV("TOP");
+		self.Name:SetJustifyH("CENTER");
+		self.Name:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,0);
+		self:Tag(self.Name, "[SUI_ColorClass][name]");
+		
+		self.PvP = self:CreateTexture(nil,"BORDER");
+		self.PvP:SetSize(25,25);
+		self.PvP:SetPoint("CENTER",self,"RIGHT",0,0);
+		self.PvP.Override = pvpIcon
+		
+		self.StatusText = self:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
+		self.StatusText:SetPoint("CENTER",self,"CENTER");
+		self.StatusText:SetJustifyH("CENTER");
+		self:Tag(self.StatusText, "[afkdnd]");
+	end
+	
+	self.TextUpdate = PostUpdateText;
+	self.ColorUpdate = PostUpdateColor;
+	return self;
 end
 
 local CreateUnitFrame = function(self,unit)
@@ -916,10 +856,10 @@ local CreateUnitFrame = function(self,unit)
 	
 	self = ((unit == "target" and CreateLargeFrame(self,unit))
 	or (unit == "player" and CreateLargeFrame(self,unit))
-	or (unit == "targettarget" and CreateRaidFrame(self,unit))
-	or (unit == "focus" and CreateRaidFrame(self,unit))
-	or (unit == "focustarget" and CreateRaidFrame(self,unit))
-	or (unit == "pet" and CreateRaidFrame(self,unit))
+	or (unit == "targettarget" and CreateSmallFrame(self,unit))
+	or (unit == "focus" and CreateMediumFrame(self,unit))
+	or (unit == "focustarget" and CreateSmallFrame(self,unit))
+	or (unit == "pet" and CreateSmallFrame(self,unit))
 	or CreateSmallFrame(self,unit));
 	
 	self = PlayerFrames:MakeMovable(self,unit)
@@ -928,13 +868,13 @@ local CreateUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	self = CreateSmallFrame(self,unit)
+	self = CreateMediumFrame(self,unit)
 	self = PartyFrames:MakeMovable(self)
 	return self
 end
 
 local CreateUnitFrameRaid = function(self,unit)
-	self = CreateRaidFrame(self,unit)
+	self = CreateSmallFrame(self,unit)
 	self = spartan:GetModule("RaidFrames"):MakeMovable(self)
 	return self
 end
@@ -951,7 +891,7 @@ function module:PlayerFrames()
 	for a,b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b,"SUI_"..b.."Frame");
 		if b == "player" then PlayerFrames:SetupExtras() end
-		PlayerFrames[b].artwork.bg:SetVertexColor(0,.8,.9,.9)
+		-- PlayerFrames[b].artwork.bg:SetVertexColor(0,.8,.9,.9)
 	end
 	
 	module:PositionFrame()
@@ -962,7 +902,7 @@ function module:PlayerFrames()
 		local boss = {}
 		for i = 1, MAX_BOSS_FRAMES do
 			boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
-			boss[i].artwork.bg:SetVertexColor(0,.8,.9,.9)
+			-- boss[i].artwork.bg:SetVertexColor(0,.8,.9,.9)
 		
 			if i == 1 then
 				boss[i]:SetMovable(true);

@@ -121,6 +121,7 @@ local DBdefault = {
 					shape = "circle",
 					size = {width = 140, height = 140}
 				},
+				MovedBars = {},
 				TooltipLoc = false
 			},
 			Classic = {

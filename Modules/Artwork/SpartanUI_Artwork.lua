@@ -60,17 +60,22 @@ function Artwork_Core:ActionBarPlates(plate)
 		lib.windowData[frame].names = names
 		lib.windowData[frame].storage = storage
 		
+		-- If no name return, helps avoid other addons that use the library
 		if (frame:GetName() == nil) then return end
+		
+		-- Catch if Movedbars is not initalized
 		if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+		
+		-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
 		if (frame:GetName():match("BT4Bar")) and storage.parent and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
-			local parent = frame:GetParent();
 			if (storage.parent) and _G[storage.parent] then
 				frame:SetParent(storage.parent);
+				frame:SetParent(plate);
 				if storage.parent == plate then
 					frame:SetFrameStrata("LOW");
 				end
-			elseif (parent and parent:GetName() == plate) then
-				frame:SetParent(UIParent);
+			-- elseif (parent and parent:GetName() == plate) then
+				-- frame:SetParent(UIParent);
 			end
 		else
 			storage.parent = UIParent

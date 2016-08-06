@@ -25,7 +25,7 @@ local default = {
 	BartenderProfile = "SpartanUI - Minimal",
 	BartenderSettings = {
 		ActionBars = {
-			actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
+			actionbars = {
 				{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=-200,	y=102,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 1
 				{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=-200,	y=70,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 2
 				{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=-200,	y=35,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 3
