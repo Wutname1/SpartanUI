@@ -44,6 +44,12 @@ function module:OnDisable()
 end
 
 function module:SetupMenus()
-
-
+	spartan.opt.args["Artwork"].args["Artwork"] = {name = "Fel Options",type="group",order=10,
+		args = {
+			MinimapEngulfed = {name=L["Douse the flames"],type="toggle",order=.1,
+				get = function(info) return (DB.Styles.Fel.Minimap.Engulfed ~= true or false); end,
+				set = function(info,val) DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false) Minimap.FelUpdate(Minimap) end
+			}
+		}
+	}
 end

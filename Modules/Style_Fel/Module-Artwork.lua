@@ -110,8 +110,6 @@ function module:CreateProfile()
 end
 
 -- Minimap
-
-
 function module:MiniMap()
 	Minimap:SetSize(156, 156);
 	
@@ -133,7 +131,22 @@ function module:MiniMap()
 	
 	QueueStatusFrame:ClearAllPoints();
 	QueueStatusFrame:SetPoint("BOTTOM",Fel_SpartanUI,"TOP",0,100);
-
+	
+	Minimap.FelUpdate = function(self)
+		if self.FelBG then self.FelBG:ClearAllPoints() end
+		if DB.Styles.Fel.Minimap.Engulfed then
+			self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
+			self.FelBG:SetPoint("CENTER", self, "CENTER", 7, 37)
+			self.FelBG:SetSize(330, 330)
+			self.FelBG:SetBlendMode("ADD");
+		else
+			self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Calmed]])
+			self.FelBG:SetPoint("CENTER", self, "CENTER", 5, -1)
+			self.FelBG:SetSize(256, 256)
+			self.FelBG:SetBlendMode("ADD");
+		end
+	end
+	
 	Minimap.FelBG = Minimap:CreateTexture(nil, "BACKGROUND")
 	if DB.Styles.Fel.Minimap.Engulfed then
 		Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
