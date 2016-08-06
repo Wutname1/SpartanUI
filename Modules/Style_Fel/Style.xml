@@ -10,16 +10,6 @@
 			<Anchor point="BOTTOM" relativeTo="UIParent" relativePoint="BOTTOM" />
 		</Anchors>
 		<Size><AbsDimension y="153" /></Size>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Left.tga">
-					<Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"/></Anchors>
-				</Texture>
-				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right">
-					<Anchors><Anchor point="RIGHT" relativeTo="$parent_Base1" relativePoint="LEFT"/></Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
 	</Frame>
 	
 	<!-- Fel_StatusBars_TooltipTemplate -->

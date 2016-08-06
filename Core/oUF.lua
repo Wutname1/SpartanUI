@@ -45,6 +45,48 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 	return auras
 end
 
+function addon:pvpIcon(self, event, unit)
+	if(unit ~= self.unit) then return end
+	
+	local pvp = self.PvP
+	if(pvp.PreUpdate) then
+		pvp:PreUpdate()
+	end
+	pvp:SetFrameStrata("LOW")
+	
+	if pvp.shadow == nil then
+		pvp.shadow = self:CreateTexture(nil,"BACKGROUND");
+		pvp.shadow:SetSize(pvp:GetSize());
+		pvp.shadow:SetParent(pvp)
+		pvp.shadow:SetPoint("CENTER",pvp,"CENTER",2,-2);
+		pvp.shadow:SetVertexColor(0,0,0,.9)
+	end
+	
+	local status
+	local factionGroup = UnitFactionGroup(unit)
+	if(UnitIsPVPFreeForAll(unit)) then
+		pvp:SetTexture[[Interface\FriendsFrame\UI-Toast-FriendOnlineIcon]]
+		status = 'ffa'
+	-- XXX - WoW5: UnitFactionGroup() can return Neutral as well.
+	elseif(factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
+		pvp:SetTexture([[Interface\FriendsFrame\PlusManz-]]..factionGroup)
+		pvp.shadow:SetTexture([[Interface\FriendsFrame\PlusManz-]]..factionGroup)
+		status = factionGroup
+	end
+
+	if(status) then
+		pvp:Show()
+		-- pvp.shadow:Show()
+	else
+		pvp:Hide()
+		-- pvp.shadow:Hide()
+	end
+
+	if(pvp.PostUpdate) then
+		return pvp:PostUpdate(status)
+	end
+end
+
 do -- ClassIcon as an SpartanoUF module
 	local ClassIconCoord = {
 		WARRIOR = {			0.00, 0.25, 0.00, 0.25 },

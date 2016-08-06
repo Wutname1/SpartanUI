@@ -138,12 +138,12 @@ local PostUpdateAura = function(self,unit)
 	if DBMod.PlayerFrames[unit] then
 		if DBMod.PlayerFrames[unit].AuraDisplay then
 			self:Show();
-			self.size = DBMod.PlayerFrames[unit].Auras.size;
-			self.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-			self.showType = DBMod.PlayerFrames[unit].Auras.showType;
-			self.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-			self.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-			self.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+			self.size = DB.Styles.Minimal.Frames[unit].Auras.size;
+			self.spacing = DB.Styles.Minimal.Frames[unit].Auras.spacing;
+			self.showType = DB.Styles.Minimal.Frames[unit].Auras.showType;
+			self.numBuffs = DB.Styles.Minimal.Frames[unit].Auras.NumBuffs;
+			self.numDebuffs = DB.Styles.Minimal.Frames[unit].Auras.NumDebuffs;
+			self.onlyShowPlayer = DB.Styles.Minimal.Frames[unit].Auras.onlyShowPlayer;
 		else
 			self:Hide();
 		end

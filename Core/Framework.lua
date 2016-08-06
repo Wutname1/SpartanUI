@@ -53,28 +53,6 @@ local DBdefault = {
 					PartyFrames = true,
 					RaidFrames = true,
 				},
-				Minimap = {
-					shape = "circle",
-					size = {width = 140, height = 140}
-				},
-				TooltipLoc = false
-			},
-			Classic = {
-				Artwork = true,
-				PlayerFrames = true,
-				PartyFrames = true,
-				RaidFrames = true,
-				BartenderProfile = "SpartanUI - Classic",
-				Movable = {
-					Minimap = false,
-					PlayerFrames = true,
-					PartyFrames = true,
-					RaidFrames = true,
-				},
-				Minimap = {
-					shape = "circle",
-					size = {width = 140, height = 140}
-				},
 				Frames = {
 					player = {
 						Auras={
@@ -138,6 +116,28 @@ local DBdefault = {
 							showType=true,
 							onlyShowPlayer=false}
 					},
+				},
+				Minimap = {
+					shape = "circle",
+					size = {width = 140, height = 140}
+				},
+				TooltipLoc = false
+			},
+			Classic = {
+				Artwork = true,
+				PlayerFrames = true,
+				PartyFrames = true,
+				RaidFrames = true,
+				BartenderProfile = "SpartanUI - Classic",
+				Movable = {
+					Minimap = false,
+					PlayerFrames = true,
+					PartyFrames = true,
+					RaidFrames = true,
+				},
+				Minimap = {
+					shape = "circle",
+					size = {width = 140, height = 140}
 				},
 				TooltipLoc = true
 			}

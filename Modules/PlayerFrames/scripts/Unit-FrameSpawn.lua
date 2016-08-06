@@ -204,23 +204,23 @@ function PlayerFrames:BuffOptions()
 			},
 			NumBuffs={name = L["Number of buffs"], type = "range", order=20,
 			min=1,max=30,step=1,
-				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.NumBuffs; end,
-				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.NumBuffs = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.NumBuffs; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.NumBuffs = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
 			},
 			NumDebuffs = {name = L["Number of debuffs"], type = "range", order=30,
 			min=1,max=30,step=1,
-				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.NumDebuffs; end,
-				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.NumDebuffs = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.NumDebuffs; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.NumDebuffs = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
 			},
 			size = {name = L["Size"], type = "range", order=40,
 			min=1,max=30,step=1,
-				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.size; end,
-				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.size = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.size; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.size = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
 			},
 			spacing = {name = L["Spacing"], type = "range", order=50,
 			min=1,max=30,step=1,
-				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.Auras.spacing; end,
-				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.Auras.spacing = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
+				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.spacing; end,
+				set = function(info,val) DB.Styles.Classic.Frames[unit].Auras.spacing = val; PlayerFrames[unit].Auras:PostUpdate(unit); end
 			},
 			showType={name = L["Show type"], type = "toggle", order=60,
 				get = function(info) return DB.Styles.Classic.Frames[unit].Auras.showType; end,

@@ -13,8 +13,8 @@ function module:updateScale()
 		else DB.scale = 0.78; end
 	end
 	if DB.scale ~= CurScale then
-		if (DB.scale ~= Artwork_Core:round(Fel_AnchorFrame:GetScale())) then
-			Fel_AnchorFrame:SetScale(DB.scale);
+		if (DB.scale ~= Artwork_Core:round(Fel_SpartanUI:GetScale())) then
+			Fel_SpartanUI:SetScale(DB.scale);
 		end
 		CurScale = DB.scale
 	end
@@ -66,22 +66,20 @@ function module:InitArtwork()
 end
 
 function module:EnableArtwork()
-	-- Fel_AnchorFrame:SetFrameStrata("BACKGROUND");
-	-- Fel_AnchorFrame:SetFrameLevel(1);
 	Fel_SpartanUI:SetFrameStrata("BACKGROUND");
 	Fel_SpartanUI:SetFrameLevel(1);
-	
+	-- module:SetupProfile()
 	
 	-- local Win = CreateFrame("Frame", "SUI_Win", UIParent)
 	-- Win:SetSize(550, 400)
 	-- Win:SetPoint("TOP", UIParent, "TOP", 0, -150)
 	-- Win:SetFrameStrata("TOOLTIP")
 	
-	Fel_SpartanUI.Left = Fel_SpartanUI:CreateTexture(nil, "BORDER")
+	Fel_SpartanUI.Left = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Left", "BORDER")
 	Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
 	Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Left]])
 	
-	Fel_SpartanUI.Right = Fel_SpartanUI:CreateTexture(nil, "BORDER")
+	Fel_SpartanUI.Right = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Right", "BORDER")
 	Fel_SpartanUI.Right:SetPoint("LEFT", Fel_SpartanUI.Left, "RIGHT", 0, 0)
 	Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right]])
 	-- Win.bg:SetVertexColor(0, 0, 0, .7)
@@ -118,7 +116,7 @@ function module:MiniMap()
 	Minimap:SetSize(156, 156);
 	
 	Minimap:ClearAllPoints();
-	Minimap:SetPoint("CENTER",Fel_SpartanUI.Left,"RIGHT",0,0);
+	Minimap:SetPoint("CENTER",Fel_SpartanUI.Left,"RIGHT",0,-10);
 	Minimap:SetParent(Fel_SpartanUI);
 	
 	if Minimap.ZoneText ~= nil then

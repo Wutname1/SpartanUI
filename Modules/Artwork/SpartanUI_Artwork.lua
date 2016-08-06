@@ -61,6 +61,7 @@ function Artwork_Core:ActionBarPlates(plate)
 		lib.windowData[frame].storage = storage
 		
 		if (frame:GetName() == nil) then return end
+		if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 		if (frame:GetName():match("BT4Bar")) and storage.parent and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
 			local parent = frame:GetParent();
 			if (storage.parent) and _G[storage.parent] then
