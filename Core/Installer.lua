@@ -55,9 +55,9 @@ function module:DisplayPage(PageData)
 
 	if CurData.title ~= nil then Win.titleHolder:SetText(CurData.title) end
 	if CurData.RequireReload ~= nil and CurData.RequireReload then ReloadNeeded("add") end
-	if CurData.SubTitle ~= nil then Win.SubTitle:SetText(CurData.SubTitle) end
-	if CurData.Desc1 ~= nil then Win.Desc1:SetText(CurData.Desc1) end
-	if CurData.Desc2 ~= nil then Win.Desc2:SetText(CurData.Desc2) end
+	if CurData.SubTitle ~= nil then Win.SubTitle:SetText(CurData.SubTitle) else Win.SubTitle:SetText("") end
+	if CurData.Desc1 ~= nil then Win.Desc1:SetText(CurData.Desc1) else Win.Desc1:SetText("") end
+	if CurData.Desc2 ~= nil then Win.Desc2:SetText(CurData.Desc2) else Win.Desc2:SetText("") end
 	if CurData.Display ~= nil then CurData.Display() end
 	
 	if CurData.Skip ~= nil and CurData.Skipable then

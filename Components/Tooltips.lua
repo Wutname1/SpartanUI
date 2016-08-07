@@ -114,7 +114,8 @@ local setPoint = function(self, parent)
 	
 		--See If the theme has an anchor and if we are allowed to use it
 		if DB.Styles[DBMod.Artwork.Style].TooltipLoc and not DB.Tooltips[ActiveRule()].OverrideLoc then
-			spartan:GetModule("Style_" .. DBMod.Artwork.Style):TooltipLoc(self, parent);
+			local style = spartan:GetModule("Style_" .. DBMod.Artwork.Style);
+			if style then style:TooltipLoc(self, parent) end
 		else
 			self:ClearAllPoints();
 			if DB.Tooltips[ActiveRule()].Anchor.Moved then

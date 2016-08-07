@@ -1,18 +1,10 @@
 local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 
 --------------   oUF Functions   ------------------------------------
-
-function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
-	if self == nil then return end
-	if point == nil then point = "TOPRIGHT" end
-	if relativePoint == nil then relativePoint = "TOPRIGHT" end
-	if SizeModifier == nil then SizeModifier = 0 end
-	
-	local auras = {}
+function addon:HotsListing()
 	local class, classFileName = UnitClass("player");
-	local spellIDs ={}
 	if classFileName == "DRUID" then
-		spellIDs = {
+		return {
 			774, -- Rejuvenation
 			33763, -- Lifebloom
 			8936, -- Regrowth
@@ -22,23 +14,39 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 			102342, -- Ironbark
 		}
 	elseif classFileName == "PRIEST" then
-		spellIDs = {
+		return {
 			139, -- Renew
 			17, -- sheild
 			33076, -- Prayer of Mending
 		}
 	end
+	return nil
+end
+
+function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
+	if self == nil then return end
+	if point == nil then point = "TOPRIGHT" end
+	if relativePoint == nil then relativePoint = "TOPRIGHT" end
+	if SizeModifier == nil then SizeModifier = 0 end
+	
+	local auras = {}
+	local spellIDs = addon:HotsListing()
 	auras.presentAlpha = 1
 	auras.onlyShowPresent = true
 	auras.PostCreateIcon = myCustomIconSkinnerFunction
+	
+	-- Make icons table if needed
+	if auras.icons == nil then auras.icons = {} end
+	
 	-- Set any other AuraWatch settings
-	auras.icons = {}
+	
 	for i, sid in pairs(spellIDs) do
 		local icon = CreateFrame("Frame", nil, self)
 		icon.spellID = sid
 		-- set the dimensions and positions
-		icon:SetSize(DBMod.PartyFrames.Auras.size, DBMod.PartyFrames.Auras.size)
-		icon:SetPoint(point, self, relativePoint, (-icon:GetWidth()*i)-2, -2)
+		local size = DBMod.PartyFrames.Auras.size + SizeModifier
+		icon:SetSize(size, size)
+		icon:SetPoint(point, self, relativePoint, (-icon:GetWidth()*(i-1))-2, -2)
 		auras.icons[sid] = icon
 		-- Set any other AuraWatch icon settings
 	end

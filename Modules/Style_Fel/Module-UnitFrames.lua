@@ -549,6 +549,8 @@ local CreateLargeFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
+		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
+		
 		-- self.Debuffs = CreateFrame("Frame",nil,self);
 		-- self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
 		-- self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
@@ -569,6 +571,8 @@ local CreateLargeFrame = function(self,unit)
 		--self.Auras.PostUpdate = PostUpdateAura;
 		-- self.Debuffs.PostUpdate = PostUpdateAura;
 	end
+	
+	self.Range = {insideAlpha = 1, outsideAlpha = .3}
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	return self;
@@ -645,8 +649,8 @@ local CreateMediumFrame = function(self,unit)
 			health:SetFrameLevel(2);
 			health:SetStatusBarTexture(Smoothv2)
 			health:SetSize(self.Castbar:GetWidth(), 24);
-			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
-			health:SetAlpha(.7)
+			health:SetPoint("TOPLEFT",self,"TOPLEFT",0,-12);
+			health:SetAlpha(.8)
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetSize(self:GetWidth(), 11);
@@ -754,7 +758,31 @@ local CreateMediumFrame = function(self,unit)
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
-
+	do -- setup buffs and debuffs
+		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
+		
+		-- self.Debuffs = CreateFrame("Frame",nil,self);
+		-- self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
+		-- self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
+		-- self.Debuffs:SetFrameStrata("BACKGROUND");
+		-- self.Debuffs:SetFrameLevel(4);
+		-- settings
+		-- self.Debuffs.initialAnchor = "BOTTOMLEFT";
+		-- self.Debuffs["growth-x"] = "RIGHT";
+		-- self.Debuffs["growth-y"] = "UP";
+		--self.Auras.gap = true;
+		-- self.Debuffs.size = DBMod.PlayerFrames[unit].Auras.size;
+		-- self.Debuffs.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		-- self.Debuffs.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		--self.Auras.numBuffs = 1;
+		--self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		-- self.Debuffs.num = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		
+		--self.Auras.PostUpdate = PostUpdateAura;
+		-- self.Debuffs.PostUpdate = PostUpdateAura;
+	end
+	
+	self.Range = {insideAlpha = 1, outsideAlpha = .3}
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	return self;
@@ -762,7 +790,6 @@ end
 
 local CreateSmallFrame = function(self,unit)
 	self:SetSize(95, 30);
-
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -798,7 +825,12 @@ local CreateSmallFrame = function(self,unit)
 			health.value:SetSize(self:GetWidth(), 11);
 			health.value:SetJustifyH("CENTER");
 			health.value:SetJustifyV("MIDDLE");
-			health.value:SetAllPoints(health)
+			health.value:SetPoint("BOTTOMLEFT", health, "BOTTOMLEFT")
+			if unit == "raid" then
+				health.value:SetPoint("TOPRIGHT",health,"TOPRIGHT",0,-8);
+			else
+				health.value:SetPoint("TOPRIGHT",health,"TOPRIGHT",0,0);
+			end
 			self:Tag(health.value, '[perhp]%')
 			self.Health = health;
 			
@@ -807,6 +839,28 @@ local CreateSmallFrame = function(self,unit)
 			self.Health.colorClass = true;
 			self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 			self.Health.colorHealth = true;
+			
+			-- Position and size
+			local myBars = CreateFrame('StatusBar', nil, self.Health)
+			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			myBars:SetStatusBarTexture(Smoothv2)
+			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
+
+			local otherBars = CreateFrame('StatusBar', nil, myBars)
+			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+			otherBars:SetStatusBarTexture(Smoothv2)
+			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
+
+			myBars:SetSize(self.Health:GetSize())
+			otherBars:SetSize(self.Health:GetSize())
+			
+			self.HealPrediction = {
+				myBar = myBars,
+				otherBar = otherBars,
+				maxOverflow = 3,
+			}
 		end
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
@@ -828,7 +882,11 @@ local CreateSmallFrame = function(self,unit)
 		self.Name:SetSize(self:GetWidth(), 10);
 		self.Name:SetJustifyV("TOP");
 		self.Name:SetJustifyH("CENTER");
-		self.Name:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,0);
+		if unit == "raid" then
+			self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",0,0);
+		else
+			self.Name:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,0);
+		end
 		self:Tag(self.Name, "[SUI_ColorClass][name]");
 		
 		self.PvP = self:CreateTexture(nil,"BORDER");
@@ -841,7 +899,31 @@ local CreateSmallFrame = function(self,unit)
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
+	do -- setup buffs and debuffs
+		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
+		
+		-- self.Debuffs = CreateFrame("Frame",nil,self);
+		-- self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
+		-- self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
+		-- self.Debuffs:SetFrameStrata("BACKGROUND");
+		-- self.Debuffs:SetFrameLevel(4);
+		-- settings
+		-- self.Debuffs.initialAnchor = "BOTTOMLEFT";
+		-- self.Debuffs["growth-x"] = "RIGHT";
+		-- self.Debuffs["growth-y"] = "UP";
+		--self.Auras.gap = true;
+		-- self.Debuffs.size = DBMod.PlayerFrames[unit].Auras.size;
+		-- self.Debuffs.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
+		-- self.Debuffs.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		--self.Auras.numBuffs = 1;
+		--self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		-- self.Debuffs.num = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		
+		--self.Auras.PostUpdate = PostUpdateAura;
+		-- self.Debuffs.PostUpdate = PostUpdateAura;
+	end
 	
+	self.Range = {insideAlpha = 1, outsideAlpha = .3}
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
 	return self;
@@ -1017,7 +1099,7 @@ function module:RaidFrames()
 	SpartanoUF:SetActiveStyle("Spartan_FelRaidFrames");
 	
 	local xoffset = 3
-	local yOffset = -5
+	local yOffset = -10
 	local point = 'TOP'
 	local columnAnchorPoint = 'LEFT'
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'

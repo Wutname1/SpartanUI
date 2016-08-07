@@ -126,6 +126,7 @@ function Artwork_Core:FirstTime()
 				SUI_Win.Artwork.Classic.radio:SetValue(false)
 				SUI_Win.Artwork.Transparent.radio:SetValue(false)
 				SUI_Win.Artwork.Minimal.radio:SetValue(false)
+				SUI_Win.Artwork.Fel.radio:SetValue(false)
 				self.radio:SetValue(true)
 			end
 			
@@ -204,6 +205,7 @@ function Artwork_Core:FirstTime()
 			
 			SUI_Win.Artwork.Minimal = control
 			
+			SUI_Win.Artwork[DBMod.Artwork.Style].radio:SetValue(true)
 		end,
 		Next = function()
 			DBMod.Artwork.SetupDone = true

@@ -51,7 +51,7 @@ function RaidFrames:UpdateRaid(event,...)
 		--Swap back hide function if needed
 		if spartan.RaidFrames.HideTmp then spartan.RaidFrames.Hide = spartan.RaidFrames.HideTmp end
 		
-		spartan.RaidFrames:Hide()
+		-- spartan.RaidFrames:Hide()
 	end
 	
 	RaidFrames:UpdateRaidPosition()

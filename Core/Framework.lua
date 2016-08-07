@@ -407,6 +407,7 @@ function SUI:FirstTimeSetup()
 		-- NoReloadOnSkip = true,
 		Skip = function() DB.SetupDone = true; end
 	}
+	
 	-- Uncomment this when the time is right.
 	local SetupWindow = spartan:GetModule("SetupWindow")
 	SetupWindow:AddPage(PageData)
@@ -456,7 +457,7 @@ function SUI:OnInitialize()
 	
 	--First Time Setup Actions
 	local class, classFileName = UnitClass("player")
-	if not DB.SetupRan and classFileName == "DEMONHUNTER" then 
+	if not DB.SetupDone and classFileName == "DEMONHUNTER" then 
 		DBMod.Artwork.Style = "Fel";
 		DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 		DBMod.PartyFrames.Style = DBMod.Artwork.Style;
@@ -591,7 +592,7 @@ function SUI:OnEnable()
 	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
 	
 	--First Time Setup Actions
-	if not DB.SetupRan then SUI:FirstTimeSetup() end
+	if not DB.SetupDone then SUI:FirstTimeSetup() end
 end
 
 function SUI:suihelp(input)
