@@ -26,12 +26,16 @@ end
 
 function module:FirstLoad()
 	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Minimal.BartenderProfile) and not Artwork_Core:BartenderProfileCheck(DB.Styles.Minimal.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Minimal.BartenderProfile); end
+	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Minimal.BartenderProfile) and Artwork_Core:BartenderProfileCheck(DB.Styles.Minimal.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Minimal.BartenderProfile); end
 end
 
 function module:OnEnable()
-	if (DBMod.Artwork.Style ~= "Minimal") then module:Disable(); return end
-	if (DBMod.Artwork.Style == "Minimal") then
+	if (DBMod.Artwork.Style ~= "Minimal") then
+		module:Disable();
+	else
+		if (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Minimal.BartenderProfile) and DBMod.Artwork.FirstLoad then
+			Bartender4.db:SetProfile(DB.Styles.Minimal.BartenderProfile);
+		end
 		if (not InitRan) then module:Init(); end
 		if (not Artwork_Core:BartenderProfileCheck(DB.Styles.Minimal.BartenderProfile,true)) then module:CreateProfile(); end
 		module:EnableFramework();

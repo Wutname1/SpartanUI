@@ -23,7 +23,7 @@ local module = spartan:NewModule("Style_Fel");
 			Engulfed = true
 		},
 		TalkingHeadUI = {
-			point = "BOTTOM",
+			point = "TOP",
 			relPoint = "TOP",
 			x = 0,
 			y = -30,
