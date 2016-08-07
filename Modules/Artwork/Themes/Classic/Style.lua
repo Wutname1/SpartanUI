@@ -35,13 +35,13 @@ end
 
 function module:FirstLoad()
 	DBMod.Artwork.Viewport.offset.bottom = 2.8
-	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and Artwork_Core:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then
-		Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
-	end
 end
 
 function module:OnEnable()
+	--If our profile exists activate it.
+	if (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and DBMod.Artwork.FirstLoad then
+		Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
+	end
 	if (DBMod.Artwork.Style == "Classic") then
 		if (not InitRan) then module:Init(); end
 		if (not Artwork_Core:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then module:CreateProfile(); end
@@ -50,6 +50,8 @@ function module:OnEnable()
 		module:EnableActionBars();
 		module:EnableMinimap();
 		module:EnableStatusBars();
+		
+		if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end -- We want to do this last
 	end
 end
 

@@ -31,6 +31,9 @@ function module:OnEnable()
 	if (DBMod.Artwork.Style ~= "Fel") then
 		module:Disable(); 
 	else
+		if (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Fel.BartenderProfile) and DBMod.Artwork.FirstLoad then
+			Bartender4.db:SetProfile(DB.Styles.Fel.BartenderProfile);
+		end
 		if (not InitRan) then module:Init(); end
 		if (not Artwork_Core:BartenderProfileCheck(DB.Styles.Fel.BartenderProfile,true)) then module:CreateProfile(); end
 		module:EnableArtwork();

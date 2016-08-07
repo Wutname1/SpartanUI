@@ -30,7 +30,7 @@ local BartenderSettings = {
 }
 
 --Now lets setup the initial Database settings
-if DB.Styles.Transparent == nil then
+if DB.Styles.Transparent.BartenderProfile == nil then
 	DB.Styles.Transparent = {
 		Artwork = {},
 		PlayerFrames = {},

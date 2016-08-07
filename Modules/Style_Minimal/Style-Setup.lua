@@ -63,7 +63,7 @@ local default = {
 	},
 	PartyFramesSize = "large"
 }
-if DB.Styles.Minimal == nil then DB.Styles.Minimal = default end
+if DB.Styles.Minimal.BartenderProfile == nil then DB.Styles.Minimal = default end
 
 --Update from old versions
 if DB.Styles.Transparent.TalkingHeadUI == nil then

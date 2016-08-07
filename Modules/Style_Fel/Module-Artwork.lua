@@ -128,6 +128,7 @@ function module:EnableArtwork()
 		CastingBarFrame:SetPoint("BOTTOM",Fel_SpartanUI,"TOP",0,90);
 	end);
 	
+	Artwork_Core:MoveTalkingHeadUI()
 	module:SetupVehicleUI();
 	
 	if (DB.MiniMap.AutoDetectAllowUse) or (DB.MiniMap.ManualAllowUse) then module:MiniMap() end

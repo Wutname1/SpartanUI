@@ -29,7 +29,7 @@ end
 
 function module:FirstLoad()
 	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Transparent.BartenderProfile) and Artwork_Core:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Transparent.BartenderProfile); end
+	if ((Bartender4.db:GetCurrentProfile() ~= DB.Styles.Transparent.BartenderProfile) and not Artwork_Core:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then Bartender4.db:SetProfile(DB.Styles.Transparent.BartenderProfile); end
 end
 
 function module:OnEnable()
