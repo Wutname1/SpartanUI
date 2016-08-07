@@ -123,7 +123,8 @@ local DBdefault = {
 					size = {width = 140, height = 140}
 				},
 				MovedBars = {},
-				TooltipLoc = false
+				TooltipLoc = false,
+				BuffLoc = false
 			},
 			Classic = {
 				Artwork = true,

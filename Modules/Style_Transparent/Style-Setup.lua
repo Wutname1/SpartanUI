@@ -52,7 +52,7 @@ if DB.Styles.Transparent.BartenderProfile == nil then
 			PartyFrames = {0,.8,.9,.7},
 			RaidFrames = {0,.8,.9,.7}
 		},
-		TalkingHeadUI = { point = "BOTTOM", relPoint = "TOP", x = 0, y = -30, scale = .8 },
+		TalkingHeadUI = { point = "TOP", relPoint = "TOP", x = 0, y = -30, scale = .8 },
 		BartenderProfile = "SpartanUI - Transparent",
 		BartenderSettings = BartenderSettings,
 		TooltipLoc = true,

@@ -149,15 +149,15 @@ local PostUpdateText = function(self,unit)
 end
 
 local PostUpdateAura = function(self,unit)
-	if DBMod.PlayerFrames[unit] then
-		if DBMod.PlayerFrames[unit].AuraDisplay then
+	if DB.Styles.Fel.Frames[unit] then
+		if DB.Styles.Fel.Frames[unit].AuraDisplay then
 			self:Show();
-			self.size = DBMod.PlayerFrames[unit].Auras.size;
-			self.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-			self.showType = DBMod.PlayerFrames[unit].Auras.showType;
-			self.numBuffs = DBMod.PlayerFrames[unit].Auras.NumBuffs;
-			self.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-			self.onlyShowPlayer = DBMod.PlayerFrames[unit].Auras.onlyShowPlayer;
+			self.size = DB.Styles.Fel.Frames[unit].Auras.size;
+			self.spacing = DB.Styles.Fel.Frames[unit].Auras.spacing;
+			self.showType = DB.Styles.Fel.Frames[unit].Auras.showType;
+			self.numBuffs = DB.Styles.Fel.Frames[unit].Auras.NumBuffs;
+			self.numDebuffs = DB.Styles.Fel.Frames[unit].Auras.NumDebuffs;
+			self.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Auras.onlyShowPlayer;
 		else
 			self:Hide();
 		end
@@ -187,7 +187,7 @@ local PostUpdateColor = function(self,unit)
 end
 
 local ChangeFrameStatus = function(self,unit)
-	if DBMod.PlayerFrames[unit].display then
+	if DB.Styles.Fel.Frames[unit].display then
 		self:Show();
 	else
 		self:Hide();
@@ -550,26 +550,25 @@ local CreateLargeFrame = function(self,unit)
 	end
 	do -- setup buffs and debuffs
 		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
-		
-		-- self.Debuffs = CreateFrame("Frame",nil,self);
-		-- self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
-		-- self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
-		-- self.Debuffs:SetFrameStrata("BACKGROUND");
-		-- self.Debuffs:SetFrameLevel(4);
+	
+		self.Auras = CreateFrame("Frame",nil,self);
+		self.Auras:SetWidth(22*10); self.Auras:SetHeight(22*2);
+		self.Auras:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-10,0);
+		self.Auras:SetFrameStrata("BACKGROUND");
+		self.Auras:SetFrameLevel(5);
 		-- settings
-		-- self.Debuffs.initialAnchor = "BOTTOMLEFT";
-		-- self.Debuffs["growth-x"] = "RIGHT";
-		-- self.Debuffs["growth-y"] = "UP";
-		--self.Auras.gap = true;
-		-- self.Debuffs.size = DBMod.PlayerFrames[unit].Auras.size;
-		-- self.Debuffs.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		-- self.Debuffs.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		--self.Auras.numBuffs = 1;
-		--self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		-- self.Debuffs.num = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		self.Auras.initialAnchor = "BOTTOMRIGHT";
+		self.Auras["growth-x"] = "LEFT";
+		self.Auras["growth-y"] = "UP";
+		self.Auras.gap = true;
+		self.Auras.size = DB.Styles.Fel.Frames[unit].Auras.size;
+		self.Auras.spacing = DB.Styles.Fel.Frames[unit].Auras.spacing;
+		self.Auras.showType = DB.Styles.Fel.Frames[unit].Auras.showType;
+		self.Auras.numBuffs = DB.Styles.Fel.Frames[unit].Auras.NumBuffs;
+		self.Auras.numDebuffs = DB.Styles.Fel.Frames[unit].Auras.NumDebuffs;
+		self.Auras.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Auras.onlyShowPlayer;
 		
-		--self.Auras.PostUpdate = PostUpdateAura;
-		-- self.Debuffs.PostUpdate = PostUpdateAura;
+		self.Auras.PostUpdate = PostUpdateAura;
 	end
 	
 	self.Range = {insideAlpha = 1, outsideAlpha = .3}
@@ -771,12 +770,12 @@ local CreateMediumFrame = function(self,unit)
 		-- self.Debuffs["growth-x"] = "RIGHT";
 		-- self.Debuffs["growth-y"] = "UP";
 		--self.Auras.gap = true;
-		-- self.Debuffs.size = DBMod.PlayerFrames[unit].Auras.size;
-		-- self.Debuffs.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		-- self.Debuffs.showType = DBMod.PlayerFrames[unit].Auras.showType;
+		-- self.Debuffs.size = DB.Styles.Fel.Frames[unit].size;
+		-- self.Debuffs.spacing = DB.Styles.Fel.Frames[unit].spacing;
+		-- self.Debuffs.showType = DB.Styles.Fel.Frames[unit].showType;
 		--self.Auras.numBuffs = 1;
-		--self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		-- self.Debuffs.num = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
+		--self.Auras.numDebuffs = DB.Styles.Fel.Frames[unit].NumDebuffs;
+		-- self.Debuffs.num = DB.Styles.Fel.Frames[unit].NumDebuffs;
 		
 		--self.Auras.PostUpdate = PostUpdateAura;
 		-- self.Debuffs.PostUpdate = PostUpdateAura;
@@ -900,27 +899,7 @@ local CreateSmallFrame = function(self,unit)
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
-		
-		-- self.Debuffs = CreateFrame("Frame",nil,self);
-		-- self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
-		-- self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
-		-- self.Debuffs:SetFrameStrata("BACKGROUND");
-		-- self.Debuffs:SetFrameLevel(4);
-		-- settings
-		-- self.Debuffs.initialAnchor = "BOTTOMLEFT";
-		-- self.Debuffs["growth-x"] = "RIGHT";
-		-- self.Debuffs["growth-y"] = "UP";
-		--self.Auras.gap = true;
-		-- self.Debuffs.size = DBMod.PlayerFrames[unit].Auras.size;
-		-- self.Debuffs.spacing = DBMod.PlayerFrames[unit].Auras.spacing;
-		-- self.Debuffs.showType = DBMod.PlayerFrames[unit].Auras.showType;
-		--self.Auras.numBuffs = 1;
-		--self.Auras.numDebuffs = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		-- self.Debuffs.num = DBMod.PlayerFrames[unit].Auras.NumDebuffs;
-		
-		--self.Auras.PostUpdate = PostUpdateAura;
-		-- self.Debuffs.PostUpdate = PostUpdateAura;
+		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", -5)
 	end
 	
 	self.Range = {insideAlpha = 1, outsideAlpha = .3}

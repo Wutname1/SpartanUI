@@ -1,25 +1,20 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
+local Artwork_Core = spartan:GetModule("Artwork_Core");
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
 local module = spartan:NewModule("Style_Fel");
 
 --Now lets setup the initial Database settings
--- if DB.Styles.Fel == nil then
-	DB.Styles.Fel = {
-		Artwork = {},
-		PlayerFrames = {},
-		PartyFrames = {},
-		RaidFrames = {},
+-- if DB.Styles.Fel.BartenderProfile == nil then
+	local Defaults = {
+		Artwork = true,
+		PlayerFrames = true,
+		PartyFrames = true,
+		RaidFrames = true,
 		Movable = {
-			Minimap = true,
-			PlayerFrames = true,
-			PartyFrames = true,
-			RaidFrames = true,
+			Minimap = true
 		},
 		Minimap = {
-			shape = "circle",
-			size = {width = 140, height = 140},
 			Engulfed = true
 		},
 		TalkingHeadUI = {
@@ -58,4 +53,5 @@ local module = spartan:NewModule("Style_Fel");
 		TooltipLoc = true,
 		BuffLoc = true
 	}
+	DB.Styles.Fel = Artwork_Core:MergeData(DB.Styles.Default, Defaults)
 -- end
