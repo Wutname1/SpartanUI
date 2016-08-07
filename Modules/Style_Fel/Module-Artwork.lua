@@ -250,7 +250,7 @@ function module:StatusBars()
 		xpframe:SetFrameLevel(2);
 		module:SetXPColors();
 	end
-	do -- experience bar
+	do -- Reputation bar
 		-- local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
 		-- local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
 		-- local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
@@ -313,6 +313,7 @@ function module:StatusBars()
 		
 		repframe:SetFrameStrata("BACKGROUND");
 		repframe:SetFrameLevel(2);
+		repframe:Hide()
 	end
 end
 

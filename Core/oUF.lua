@@ -20,7 +20,7 @@ function addon:HotsListing()
 			33076, -- Prayer of Mending
 		}
 	end
-	return nil
+	return {}
 end
 
 function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
