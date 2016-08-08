@@ -592,7 +592,7 @@ local MakeLargeFrame = function(self,unit,width)
 				local Debuffsize = DB.Styles.Minimal.Frames[unit].Buffs.size
 				-- Position and size
 				local Buffs = CreateFrame("Frame", nil, self)
-				Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+				Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 0)
 				Buffs.size = Buffsize;
 				Buffs["growth-y"] = "UP";
 				Buffs.spacing = DB.Styles.Minimal.Frames[unit].Buffs.spacing;
@@ -605,7 +605,7 @@ local MakeLargeFrame = function(self,unit,width)
 				
 				-- Position and size
 				local Debuffs = CreateFrame("Frame", nil, self)
-				Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+				Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0)
 				Debuffs.size = Debuffsize;
 				Debuffs.initialAnchor = "BOTTOMRIGHT";
 				Debuffs["growth-x"] = "LEFT";

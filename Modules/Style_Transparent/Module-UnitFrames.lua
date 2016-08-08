@@ -613,7 +613,7 @@ local CreatePlayerFrame = function(self,unit)
 			local Debuffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
-			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 0)
 			Buffs.size = Buffsize;
 			Buffs["growth-y"] = "UP";
 			Buffs.spacing = DB.Styles.Transparent.Frames[unit].Buffs.spacing;
@@ -626,7 +626,7 @@ local CreatePlayerFrame = function(self,unit)
 			
 			-- Position and size
 			local Debuffs = CreateFrame("Frame", nil, self)
-			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0)
 			Debuffs.size = Debuffsize;
 			Debuffs.initialAnchor = "BOTTOMRIGHT";
 			Debuffs["growth-x"] = "LEFT";
@@ -845,7 +845,7 @@ local CreateTargetFrame = function(self,unit)
 			local Debuffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
-			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
 			Buffs.size = Buffsize;
 			Buffs["growth-y"] = "UP";
 			Buffs.spacing = DB.Styles.Transparent.Frames[unit].Buffs.spacing;
@@ -858,7 +858,7 @@ local CreateTargetFrame = function(self,unit)
 			
 			-- Position and size
 			local Debuffs = CreateFrame("Frame", nil, self)
-			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0)
 			Debuffs.size = Debuffsize;
 			Debuffs.initialAnchor = "BOTTOMRIGHT";
 			Debuffs["growth-x"] = "LEFT";
