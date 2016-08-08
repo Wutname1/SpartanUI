@@ -587,6 +587,21 @@ function SUI:Err(mod, err)
 	SUI:Print("Please submit a bug at |cff3370FFhttp://spartanui.net/bugs")
 end
 
+function SUI:MergeData(target,source,override)
+	if type(target) ~= "table" then target = {} end
+	for k,v in pairs(source) do
+		if type(v) == "table" then
+			target[k] = self:MergeData(target[k], v);
+		else
+			if override and target[k] ~= nil then
+				target[k] = v;
+			elseif target[k] == nil then
+				target[k] = v;
+			end
+		end
+	end
+	return target;
+end
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
 
 function SUI:isPartialMatch(frameName, tab)

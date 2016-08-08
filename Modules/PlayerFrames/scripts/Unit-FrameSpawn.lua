@@ -201,7 +201,7 @@ function PlayerFrames:BuffOptions()
 				Notice = {type="description", order=.5, fontSize="medium", name=L["possiblereloadneeded"]},
 				Buffs = {name="Buffs",type = "group",inline=true,order=1,
 					args = {
-						Display={name = L["Display Buffs"], type = "toggle", order=1, width="full",
+						Display={name = L["Display Buffs"], type = "toggle", order=10, width="full",
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Display; end,
 							set = function(info,val)
 								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Display = val;
@@ -215,7 +215,7 @@ function PlayerFrames:BuffOptions()
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Number; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Number = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						},
-						size = {name = L["Size"], type = "range", order=40,
+						size = {name = L["Size"], type = "range", order=30,
 						min=1,max=30,step=1,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.size; end,
 							set = function(info,val)
@@ -223,16 +223,16 @@ function PlayerFrames:BuffOptions()
 								if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end
 							end
 						},
-						spacing = {name = L["Spacing"], type = "range", order=50,
+						spacing = {name = L["Spacing"], type = "range", order=40,
 						min=1,max=30,step=1,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.spacing; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.spacing = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						},
-						showType={name = L["Show type"], type = "toggle", order=60,
+						showType={name = L["Show type"], type = "toggle", order=50,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.showType; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.showType = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						},
-						onlyShowPlayer={name = L["Only show players"], type = "toggle", order=70,
+						onlyShowPlayer={name = L["Only show players"], type = "toggle", order=60,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.onlyShowPlayer; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.onlyShowPlayer = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						}
@@ -240,33 +240,33 @@ function PlayerFrames:BuffOptions()
 				},
 				Debuffs = {name="Debuffs",type = "group",inline=true,order=2,
 					args = {
-						Display={name = L["Display DeBuffs"], type = "toggle", order=2, width="full",
+						Display={name = L["Display DeBuffs"], type = "toggle", order=10, width="full",
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Display; end,
 							set = function(info,val)
 								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Display = val;
 								if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end
 							end
 						},
-						Number = {name = L["Number to show"], type = "range", order=30,
+						Number = {name = L["Number to show"], type = "range", order=20,
 						min=1,max=30,step=1,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Number; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Number = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
-						size = {name = L["Size"], type = "range", order=40,
+						size = {name = L["Size"], type = "range", order=30,
 						min=1,max=30,step=1,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.size; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.size = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
-						spacing = {name = L["Spacing"], type = "range", order=50,
+						spacing = {name = L["Spacing"], type = "range", order=40,
 						min=1,max=30,step=1,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.spacing; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.spacing = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
-						showType={name = L["Show type"], type = "toggle", order=60,
+						showType={name = L["Show type"], type = "toggle", order=50,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.showType; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.showType = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
-						onlyShowPlayer={name = L["Only show players"], type = "toggle", order=70,
+						onlyShowPlayer={name = L["Only show players"], type = "toggle", order=60,
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.onlyShowPlayer; end,
 							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.onlyShowPlayer = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						}
@@ -274,5 +274,21 @@ function PlayerFrames:BuffOptions()
 				}
 			}
 		}
+		if DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode then
+			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Display"].width="double"
+			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Mode"] = {name = L["Display mode"], type = "select", order=15,
+				values = {["bars"]=L["Bars"],["icons"]=L["Icons"]},
+				get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode; end,
+				set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode = val; spartan:reloadui() end
+			}
+		end
+		if DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode then
+			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Display"].width="double"
+			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Mode"] = {name = L["Display mode"], type = "select", order=15, 
+				values = {["bars"]=L["Bars"],["icons"]=L["Icons"]},
+				get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode; end,
+				set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode = val; spartan:reloadui() end
+			}
+		end
 	end
 end

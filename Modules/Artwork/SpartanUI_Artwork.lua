@@ -235,6 +235,7 @@ function Artwork_Core:FirstTime()
 			DBMod.Artwork.SetupDone = true
 			
 			if (SUI_Win.Artwork.Classic.radio:GetValue()) then DBMod.Artwork.Style = "Classic"; end
+			if (SUI_Win.Artwork.Fel.radio:GetValue()) then DBMod.Artwork.Style = "Fel"; end
 			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then DBMod.Artwork.Style = "Transparent"; end
 			if (SUI_Win.Artwork.Minimal.radio:GetValue()) then DBMod.Artwork.Style = "Minimal"; end
 			

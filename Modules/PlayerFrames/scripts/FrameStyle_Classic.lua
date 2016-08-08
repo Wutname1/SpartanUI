@@ -506,10 +506,9 @@ local CreatePlayerFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		
 		if DB.Styles.Classic.Frames[unit] then
+			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
@@ -738,10 +737,9 @@ local CreateTargetFrame = function(self,unit)
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
 	do -- setup buffs and debuffs
-		local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		
 		if DB.Styles.Classic.Frames[unit] then
+			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
@@ -977,10 +975,9 @@ local CreatePetFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		
 		if DB.Styles.Classic.Frames[unit] then
+			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
@@ -1466,10 +1463,9 @@ local CreateToTFrame = function(self,unit)
 	end
 	end
 	do -- setup buffs and debuffs
-		local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		
 		if DB.Styles.Classic.Frames[unit] then
+			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
@@ -1636,10 +1632,9 @@ local CreateFocusFrame = function(self,unit)
 		self.LevelSkull:SetPoint("CENTER",self.Name,"LEFT",8,0);
 	end
 	do -- setup buffs and debuffs
-		local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-		
 		if DB.Styles.Classic.Frames[unit] then
+			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)

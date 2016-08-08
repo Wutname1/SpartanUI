@@ -175,16 +175,30 @@ local PostUpdateText = function(self,unit)
 	if self.Power then self:Tag(self.Power.value, TextFormat("mana")) end
 end
 
-local PostUpdateAura = function(self,unit)
-	if DBMod.PlayerFrames[unit] then
-		if DBMod.PlayerFrames[unit].AuraDisplay then
+local PostUpdateAura = function(self,unit,mode)
+	-- Buffs
+	if mode == "Buffs" then
+		if DB.Styles.Transparent.Frames[unit].Buffs.Display then
+			self.size = DB.Styles.Transparent.Frames[unit].Buffs.size;
+			self.spacing = DB.Styles.Transparent.Frames[unit].Buffs.spacing;
+			self.showType = DB.Styles.Transparent.Frames[unit].Buffs.showType;
+			self.numBuffs = DB.Styles.Transparent.Frames[unit].Buffs.Number;
+			self.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Buffs.onlyShowPlayer;
 			self:Show();
-			self.size = DB.Styles.Transparent.Frames[unit].Auras.size;
-			self.spacing = DB.Styles.Transparent.Frames[unit].Auras.spacing;
-			self.showType = DB.Styles.Transparent.Frames[unit].Auras.showType;
-			self.numBuffs = DB.Styles.Transparent.Frames[unit].Auras.NumBuffs;
-			self.numDebuffs = DB.Styles.Transparent.Frames[unit].Auras.NumDebuffs;
-			self.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Auras.onlyShowPlayer;
+		else
+			self:Hide();
+		end
+	end
+	
+	-- Debuffs
+	if mode == "Debuffs" then
+		if DB.Styles.Transparent.Frames[unit].Debuffs.Display then
+			self.size = DB.Styles.Transparent.Frames[unit].Debuffs.size;
+			self.spacing = DB.Styles.Transparent.Frames[unit].Debuffs.spacing;
+			self.showType = DB.Styles.Transparent.Frames[unit].Debuffs.showType;
+			self.numDebuffs = DB.Styles.Transparent.Frames[unit].Debuffs.Number;
+			self.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Debuffs.onlyShowPlayer;
+			self:Show();
 		else
 			self:Hide();
 		end
@@ -594,25 +608,39 @@ local CreatePlayerFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		self.Debuffs = CreateFrame("Frame",nil,self);
-		self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
-		self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
-		self.Debuffs:SetFrameStrata("BACKGROUND");
-		self.Debuffs:SetFrameLevel(4);
-		-- settings
-		self.Debuffs.initialAnchor = "BOTTOMLEFT";
-		self.Debuffs["growth-x"] = "RIGHT";
-		self.Debuffs["growth-y"] = "UP";
-		--self.Auras.gap = true;
-		self.Debuffs.size = DB.Styles.Transparent.Frames[unit].Auras.size;
-		self.Debuffs.spacing = DB.Styles.Transparent.Frames[unit].Auras.spacing;
-		self.Debuffs.showType = DB.Styles.Transparent.Frames[unit].Auras.showType;
-		--self.Auras.numBuffs = 1;
-		--self.Auras.numDebuffs = DB.Styles.Transparent.Frames[unit].Auras.NumDebuffs;
-		self.Debuffs.num = DB.Styles.Transparent.Frames[unit].Auras.NumDebuffs;
-		
-		--self.Auras.PostUpdate = PostUpdateAura;
-		self.Debuffs.PostUpdate = PostUpdateAura;
+		if DB.Styles.Transparent.Frames[unit] then
+			local Buffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
+			local Debuffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
+			-- Position and size
+			local Buffs = CreateFrame("Frame", nil, self)
+			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			Buffs.size = Buffsize;
+			Buffs["growth-y"] = "UP";
+			Buffs.spacing = DB.Styles.Transparent.Frames[unit].Buffs.spacing;
+			Buffs.showType = DB.Styles.Transparent.Frames[unit].Buffs.showType;
+			Buffs.numBuffs = DB.Styles.Transparent.Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Buffs.onlyShowPlayer;
+			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
+			Buffs.PostUpdate = PostUpdateAura;
+			self.Buffs = Buffs
+			
+			-- Position and size
+			local Debuffs = CreateFrame("Frame", nil, self)
+			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+			Debuffs.size = Debuffsize;
+			Debuffs.initialAnchor = "BOTTOMRIGHT";
+			Debuffs["growth-x"] = "LEFT";
+			Debuffs["growth-y"] = "UP";
+			Debuffs.spacing = DB.Styles.Transparent.Frames[unit].Debuffs.spacing;
+			Debuffs.showType = DB.Styles.Transparent.Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = DB.Styles.Transparent.Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
+			Debuffs.PostUpdate = PostUpdateAura;
+			self.Debuffs = Debuffs
+			
+			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+		end
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
@@ -812,24 +840,39 @@ local CreateTargetFrame = function(self,unit)
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
 	do -- setup buffs and debuffs
-		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetWidth(22*10); self.Auras:SetHeight(22*2);
-		self.Auras:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-10,0);
-		self.Auras:SetFrameStrata("BACKGROUND");
-		self.Auras:SetFrameLevel(5);
-		-- settings
-		self.Auras.initialAnchor = "BOTTOMRIGHT";
-		self.Auras["growth-x"] = "LEFT";
-		self.Auras["growth-y"] = "UP";
-		self.Auras.gap = true;
-		self.Auras.size = DB.Styles.Transparent.Frames[unit].Auras.size;
-		self.Auras.spacing = DB.Styles.Transparent.Frames[unit].Auras.spacing;
-		self.Auras.showType = DB.Styles.Transparent.Frames[unit].Auras.showType;
-		self.Auras.numBuffs = DB.Styles.Transparent.Frames[unit].Auras.NumBuffs;
-		self.Auras.numDebuffs = DB.Styles.Transparent.Frames[unit].Auras.NumDebuffs;
-		self.Auras.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Auras.onlyShowPlayer;
-		
-		self.Auras.PostUpdate = PostUpdateAura;
+		if DB.Styles.Transparent.Frames[unit] then
+			local Buffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
+			local Debuffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
+			-- Position and size
+			local Buffs = CreateFrame("Frame", nil, self)
+			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			Buffs.size = Buffsize;
+			Buffs["growth-y"] = "UP";
+			Buffs.spacing = DB.Styles.Transparent.Frames[unit].Buffs.spacing;
+			Buffs.showType = DB.Styles.Transparent.Frames[unit].Buffs.showType;
+			Buffs.numBuffs = DB.Styles.Transparent.Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Buffs.onlyShowPlayer;
+			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
+			Buffs.PostUpdate = PostUpdateAura;
+			self.Buffs = Buffs
+			
+			-- Position and size
+			local Debuffs = CreateFrame("Frame", nil, self)
+			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+			Debuffs.size = Debuffsize;
+			Debuffs.initialAnchor = "BOTTOMRIGHT";
+			Debuffs["growth-x"] = "LEFT";
+			Debuffs["growth-y"] = "UP";
+			Debuffs.spacing = DB.Styles.Transparent.Frames[unit].Debuffs.spacing;
+			Debuffs.showType = DB.Styles.Transparent.Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = DB.Styles.Transparent.Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
+			Debuffs.PostUpdate = PostUpdateAura;
+			self.Debuffs = Debuffs
+			
+			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+		end
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
@@ -1486,6 +1529,7 @@ end
 
 function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPlayerFrames");
+	PlayerFrames:BuffOptions()
 	
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 
