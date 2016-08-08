@@ -67,38 +67,11 @@ function RaidFrames:OnInitialize()
 			}
 		}
 	}
-	spartan.opt.args["RaidFrames"].args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
-		args = {
-			party = {name = L["Frames/ShowAuras"], type = "toggle",order=1,
-				get = function(info) return DBMod.RaidFrames.showAuras; end,
-				set = function(info,val)
-					DBMod.RaidFrames.showAuras = val
-					RaidFrames:UpdateAura();
-				end
-			},
-			size = {name = L["Frames/BuffSize"], type = "range",order=2,
-				min=1,max=30,step=1,
-				get = function(info) return DBMod.RaidFrames.Auras.size; end,
-				set = function(info,val) DBMod.RaidFrames.Auras.size = val; RaidFrames:UpdateAura(); end
-			}
-		}
-	};
 	
-	spartan.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
-		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
-		get = function(info) return DBMod.RaidFrames.FrameStyle; end,
-		set = function(info,val)
-			if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.FrameStyle = val; end
-		end
-	};
 	spartan.opt.args["RaidFrames"].args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,
 		values = {["NAME"]=L["Frames/LayName"],["GROUP"]=L["Frames/LayGrp"],["ASSIGNEDROLE"]=L["Frames/LayRole"]},
 		get = function(info) return DBMod.RaidFrames.mode; end,
 		set = function(info,val) DBMod.RaidFrames.mode = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
-	};
-	spartan.opt.args["RaidFrames"].args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
-		get = function(info) return DBMod.RaidFrames.threat; end,
-		set = function(info,val) DBMod.RaidFrames.threat = val; DBMod.RaidFrames.preset = "custom"; end
 	};
 	spartan.opt.args["RaidFrames"].args["raidLockReset"] = {name = L["Frames/ResetRaidPos"], type = "execute", order=11,
 		func = function()

@@ -5,12 +5,16 @@ local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:NewModule("Style_Fel");
 
 --Now lets setup the initial Database settings
--- if DB.Styles.Fel.BartenderProfile == nil then
+if DB.Styles.Fel.BartenderProfile == nil then
 	local Defaults = {
-		Artwork = true,
-		PlayerFrames = true,
-		PartyFrames = true,
-		RaidFrames = true,
+		Artwork = {},
+		PlayerFrames = {},
+		PartyFrames = {
+			FrameStyle = "medium"
+			},
+		RaidFrames = {
+			FrameStyle = "small"
+			},
 		Movable = {
 			Minimap = true
 		},
@@ -54,4 +58,4 @@ local module = spartan:NewModule("Style_Fel");
 		BuffLoc = true
 	}
 	DB.Styles.Fel = Artwork_Core:MergeData(DB.Styles.Default, Defaults)
--- end
+end

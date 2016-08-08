@@ -232,6 +232,7 @@ end
 SpartanoUF:RegisterStyle("Spartan_RaidFrames_Classic", CreateUnitFrame);
 
 function RaidFrames:Classic()
+	RaidFrames:ClassicOptions();
 	SpartanoUF:SetActiveStyle("Spartan_RaidFrames_Classic");
 	local xoffset = 3
 	local yOffset = -5
@@ -290,3 +291,27 @@ function RaidFrames:Classic()
 	return (raid)
 end
 
+
+function RaidFrames:ClassicOptions()
+	spartan.opt.args["RaidFrames"].args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
+		args = {
+			party = {name = L["Frames/ShowAuras"], type = "toggle",order=1,
+				get = function(info) return DBMod.RaidFrames.showAuras; end,
+				set = function(info,val)
+					DBMod.RaidFrames.showAuras = val
+					RaidFrames:UpdateAura();
+				end
+			},
+			size = {name = L["Frames/BuffSize"], type = "range",order=2,
+				min=1,max=30,step=1,
+				get = function(info) return DBMod.RaidFrames.Auras.size; end,
+				set = function(info,val) DBMod.RaidFrames.Auras.size = val; RaidFrames:UpdateAura(); end
+			}
+		}
+	};
+	spartan.opt.args["RaidFrames"].args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
+		get = function(info) return DBMod.RaidFrames.threat; end,
+		set = function(info,val) DBMod.RaidFrames.threat = val; DBMod.RaidFrames.preset = "custom"; end
+	};
+
+end

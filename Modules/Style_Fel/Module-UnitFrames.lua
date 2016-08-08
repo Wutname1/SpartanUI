@@ -68,6 +68,10 @@ local menu = function(self)
 end
 
 local threat = function(self,event,unit)
+	local status
+	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
+	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
+	
 	if self.ThreatOverlay then
 		if ( status and status > 0 ) then
 			self.ThreatOverlay:SetVertexColor(GetThreatStatusColor(status));
@@ -75,6 +79,7 @@ local threat = function(self,event,unit)
 		else
 			self.ThreatOverlay:Hide();
 		end
+		if self.artwork.flair then self.artwork.flair.bg:SetVertexColor(GetThreatStatusColor(status)) end
 	end
 end
 
@@ -263,6 +268,13 @@ local CreateLargeFrame = function(self,unit)
 		self.artwork:SetFrameLevel(2);
 		self.artwork:SetAllPoints(self);
 		
+		self.RareElite = self.artwork:CreateTexture(nil,"BACKGROUND", nil, -5);
+		self.RareElite:SetTexture[[Interface\Scenarios\Objective-Lineglow]]
+		self.RareElite:SetAlpha(.6);
+		self.RareElite:SetTexCoord(0,1,1,0)
+		self.RareElite:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, -20);
+		self.RareElite:SetSize(self:GetWidth()+60, self:GetHeight()+40);
+		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
 		self.artwork.bg:SetPoint("CENTER", self);
 		self.artwork.bg:SetTexture(Images.bg.Texture);
@@ -275,12 +287,15 @@ local CreateLargeFrame = function(self,unit)
 		self.artwork.flair:SetTexCoord(unpack(Images.flair.Coords))
 		self.artwork.flair:SetSize(self:GetWidth()+60, self:GetHeight()+75);
 		
+		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(58, 58);
 		self.Portrait:SetPoint("RIGHT",self,"LEFT",-1,0);
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		local Threat = self:CreateTexture(nil, 'OVERLAY')
+		Threat:SetSize(25, 25)
+		Threat:SetPoint("CENTER", self, "RIGHT")
+		self.Threat = Threat
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -606,15 +621,13 @@ local CreateMediumFrame = function(self,unit)
 		self.artwork.flair.bg:SetSize(self:GetWidth(), self:GetHeight()+20);
 		
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		local overlay = self:CreateTexture(nil, "OVERLAY")
-		overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
-		overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
-		overlay:SetAllPoints(self)
-		overlay:SetVertexColor(1, 0, 0)
-		overlay:Hide();
-		self.ThreatOverlay = overlay
-		self.Threat.Override = threat;
+		self.Threat = self.artwork:CreateTexture(nil,"BACKGROUND", nil, -5);
+		self.Threat:SetTexture[[Interface\Scenarios\Objective-Lineglow]]
+		self.Threat:SetAlpha(.6);
+		self.Threat:SetTexCoord(0,1,1,0)
+		self.Threat:SetVertexColor(1, 0, 0)
+		self.Threat:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 3, -15);
+		self.Threat:SetSize(self:GetWidth()+6, self:GetHeight()+15);
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -929,21 +942,57 @@ local CreateUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	self = CreateMediumFrame(self,unit)
+	if DB.Styles.Fel.PartyFrames.FrameStyle == "small" then
+		self = CreateSmallFrame(self,unit)
+	elseif DB.Styles.Fel.PartyFrames.FrameStyle == "medium" then
+		self = CreateMediumFrame(self,unit)
+	elseif DB.Styles.Fel.PartyFrames.FrameStyle == "large" then
+		self = CreateLargeFrame(self,unit)
+	end
 	self = PartyFrames:MakeMovable(self)
 	return self
 end
 
 local CreateUnitFrameRaid = function(self,unit)
-	self = CreateSmallFrame(self,unit)
+	if DB.Styles.Fel.RaidFrames.FrameStyle == "small" then
+		self = CreateSmallFrame(self,unit)
+	elseif DB.Styles.Fel.RaidFrames.FrameStyle == "medium" then
+		self = CreateMediumFrame(self,unit)
+	elseif DB.Styles.Fel.RaidFrames.FrameStyle == "large" then
+		self = CreateLargeFrame(self,unit)
+	end
 	self = spartan:GetModule("RaidFrames"):MakeMovable(self)
 	return self
+end
+
+function module:UpdateAltBarPositions()
+	local classname, classFileName = UnitClass("player");	
+	-- Druid EclipseBar
+	EclipseBarFrame:ClearAllPoints();
+	if DBMod.PlayerFrames.ClassBar.movement.moved then
+		EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
+		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	else
+		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
+	end
+	
+	if RuneFrame then RuneFrame:Hide() end
+	
+	-- Hide the AlternatePowerBar
+	if PlayerFrameAlternateManaBar then
+		PlayerFrameAlternateManaBar:Hide()
+		PlayerFrameAlternateManaBar.Show = PlayerFrameAlternateManaBar.Hide
+	end
 end
 
 SpartanoUF:RegisterStyle("Spartan_FelPlayerFrames", CreateUnitFrame);
 SpartanoUF:RegisterStyle("Spartan_FelPartyFrames", CreateUnitFrameParty);
 SpartanoUF:RegisterStyle("Spartan_FelRaidFrames", CreateUnitFrameRaid);
 	
+-- Module Calls
 function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_FelPlayerFrames");
 	
@@ -1030,29 +1079,6 @@ function module:PlayerFrames()
 	end)
 end
 
-function module:UpdateAltBarPositions()
-	local classname, classFileName = UnitClass("player");	
-	-- Druid EclipseBar
-	EclipseBarFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
-	end
-	
-	if RuneFrame then RuneFrame:Hide() end
-	
-	-- Hide the AlternatePowerBar
-	if PlayerFrameAlternateManaBar then
-		PlayerFrameAlternateManaBar:Hide()
-		PlayerFrameAlternateManaBar.Show = PlayerFrameAlternateManaBar.Hide
-	end
-end
-
 function module:PositionFrame(b)
 	if Fel_SpartanUI_Left then
 		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",Fel_SpartanUI_Left,"TOPLEFT",-60,10); end
@@ -1076,6 +1102,7 @@ end
 
 function module:RaidFrames()
 	SpartanoUF:SetActiveStyle("Spartan_FelRaidFrames");
+	module:RaidOptions();
 	
 	local xoffset = 3
 	local yOffset = -10
@@ -1087,7 +1114,9 @@ function module:RaidFrames()
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
 	
-	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
+	if _G["SUI_RaidFrameHeader"] then _G["SUI_RaidFrameHeader"] = nil end
+	
+	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, nil,
 		"showRaid", DBMod.RaidFrames.showRaid,
 		"showParty", DBMod.RaidFrames.showParty,
 		"showPlayer", DBMod.RaidFrames.showPlayer,
@@ -1111,6 +1140,9 @@ end
 
 function module:PartyFrames()
 	SpartanoUF:SetActiveStyle("Spartan_FelPartyFrames");
+	module:PartyOptions()
+	
+	if _G["SUI_PartyFrameHeader"] then _G["SUI_PartyFrameHeader"] = nil end
 	
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
 		"showRaid", DBMod.PartyFrames.showRaid,
@@ -1123,4 +1155,28 @@ function module:PartyFrames()
 		"initial-anchor", "TOPLEFT");
 	
 	return (party)
+end
+
+-- Options Builders
+
+function module:RaidOptions()
+	spartan.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
+		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
+		get = function(info) return DB.Styles.Fel.RaidFrames.FrameStyle; end,
+		set = function(info,val)
+			DB.Styles.Fel.RaidFrames.FrameStyle = val;
+			spartan:reloadui()
+		end
+	};
+end
+
+function module:PartyOptions()
+	spartan.opt.args["PartyFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
+		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
+		get = function(info) return DB.Styles.Fel.PartyFrames.FrameStyle; end,
+		set = function(info,val)
+			DB.Styles.Fel.PartyFrames.FrameStyle = val;
+			spartan:reloadui()
+		end
+	};
 end
