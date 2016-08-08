@@ -79,61 +79,61 @@ function module:SetupMenus()
 				set = function(info,val) for i = 1,6 do DB.ActionBars["bar"..i].alpha,DB.ActionBars.Allalpha = val,val; end end
 			},
 			Bar1 = { name = "Bar 1", type = "group", inline=true, args = {
-				bar1alpha = {name = L["BarAlpha"].." 1", type="range",min=0, max=100, step=1, width="double",
+				bar1alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
 					get = function(info) return DB.ActionBars.bar1.alpha; end,
 					set = function(info,val) if DB.ActionBars.bar1.enable == true then DB.ActionBars.bar1.alpha = val end end
 				},
-				bar1enable = {name = L["BarEnable"].." 1", type="toggle",
+				bar1enable = {name = L["Enabled"], type="toggle",
 					get = function(info) return DB.ActionBars.bar1.enable; end,
 					set = function(info,val) DB.ActionBars.bar1.enable = val end
 				},
 			}},
 			Bar2 = { name = "Bar 2", type = "group", inline=true, args = {
-				bar2alpha = {name = L["BarAlpha"].." 2", type="range",min=0, max=100, step=1, width="double",
+				bar2alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
 					get = function(info) return DB.ActionBars.bar2.alpha; end,
 					set = function(info,val) if DB.ActionBars.bar2.enable == true then DB.ActionBars.bar2.alpha = val end end
 				},
-				bar2enable = {name = L["BarEnable"].." 2", type="toggle",
+				bar2enable = {name = L["Enabled"], type="toggle",
 				get = function(info) return DB.ActionBars.bar2.enable; end,
 					set = function(info,val) DB.ActionBars.bar2.enable = val end
 				}
 			}},
 			Bar3 = { name = "Bar 3", type = "group", inline=true, args = {
-				bar3alpha = {name = L["BarAlpha"].." 3", type="range",min=0, max=100, step=1, width="double",
+				bar3alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
 					get = function(info) return DB.ActionBars.bar3.alpha; end,
 					set = function(info,val) if DB.ActionBars.bar3.enable == true then DB.ActionBars.bar3.alpha = val end end
 				},
-				bar3enable = {name = L["BarEnable"].." 3", type="toggle",
+				bar3enable = {name = L["Enabled"], type="toggle",
 					get = function(info) return DB.ActionBars.bar3.enable; end,
 					set = function(info,val) DB.ActionBars.bar3.enable = val end
 				}
 			}},
 			Bar4 = { name = "Bar 4", type = "group", inline=true, args = {
-				bar4alpha = {name = L["BarAlpha"].." 4", type="range",min=0, max=100, step=1, width="double",
+				bar4alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
 					get = function(info) return DB.ActionBars.bar4.alpha; end,
 					set = function(info,val) if DB.ActionBars.bar4.enable == true then DB.ActionBars.bar4.alpha = val end end
 				},
-				bar4enable = {name = L["BarEnable"].." 4", type="toggle",
+				bar4enable = {name = L["Enabled"], type="toggle",
 					get = function(info) return DB.ActionBars.bar4.enable; end,
 					set = function(info,val) DB.ActionBars.bar4.enable = val end
 				}
 			}},
 			Bar5 = { name = "Bar 5", type = "group", inline=true, args = {
-				bar5alpha = {name = L["BarAlpha"].." 5", type="range",min=0, max=100, step=1, width="double",
+				bar5alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
 					get = function(info) return DB.ActionBars.bar5.alpha; end,
 					set = function(info,val) if DB.ActionBars.bar5.enable == true then DB.ActionBars.bar5.alpha = val end end
 				},
-				bar5enable = {name = L["BarEnable"].." 5", type="toggle",
+				bar5enable = {name = L["Enabled"], type="toggle",
 					get = function(info) return DB.ActionBars.bar5.enable; end,
 					set = function(info,val) DB.ActionBars.bar5.enable = val end
 				}
 			}},
 			Bar6 = { name = "Bar 6", type = "group", inline=true, args = {
-				bar6alpha = {name = L["BarAlpha"].." 6", type="range",min=0, max=100, step=1, width="double",
+				bar6alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
 					get = function(info) return DB.ActionBars.bar6.alpha; end,
 					set = function(info,val) if DB.ActionBars.bar6.enable == true then DB.ActionBars.bar6.alpha = val end end
 				},
-				bar6enable = {name = L["BarEnable"].." 6", type="toggle",
+				bar6enable = {name = L["Enabled"], type="toggle",
 					get = function(info) return DB.ActionBars.bar6.enable; end,
 					set = function(info,val) DB.ActionBars.bar6.enable = val end
 				}

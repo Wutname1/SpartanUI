@@ -153,16 +153,30 @@ local PostUpdateText = function(self,unit)
 	if self.Power then self:Tag(self.Power.value, TextFormat("mana")) end
 end
 
-local PostUpdateAura = function(self,unit)
-	if DB.Styles.Fel.Frames[unit] then
-		if DB.Styles.Fel.Frames[unit].AuraDisplay then
+local PostUpdateAura = function(self,unit,mode)
+	-- Buffs
+	if mode == "Buffs" then
+		if DB.Styles.Fel.Frames[unit].Buffs.Display then
+			self.size = DB.Styles.Fel.Frames[unit].Buffs.size;
+			self.spacing = DB.Styles.Fel.Frames[unit].Buffs.spacing;
+			self.showType = DB.Styles.Fel.Frames[unit].Buffs.showType;
+			self.numBuffs = DB.Styles.Fel.Frames[unit].Buffs.Number;
+			self.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer;
 			self:Show();
-			self.size = DB.Styles.Fel.Frames[unit].Auras.size;
-			self.spacing = DB.Styles.Fel.Frames[unit].Auras.spacing;
-			self.showType = DB.Styles.Fel.Frames[unit].Auras.showType;
-			self.numBuffs = DB.Styles.Fel.Frames[unit].Auras.NumBuffs;
-			self.numDebuffs = DB.Styles.Fel.Frames[unit].Auras.NumDebuffs;
-			self.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Auras.onlyShowPlayer;
+		else
+			self:Hide();
+		end
+	end
+	
+	-- Debuffs
+	if mode == "Debuffs" then
+		if DB.Styles.Fel.Frames[unit].Debuffs.Display then
+			self.size = DB.Styles.Fel.Frames[unit].Debuffs.size;
+			self.spacing = DB.Styles.Fel.Frames[unit].Debuffs.spacing;
+			self.showType = DB.Styles.Fel.Frames[unit].Debuffs.showType;
+			self.numDebuffs = DB.Styles.Fel.Frames[unit].Debuffs.Number;
+			self.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer;
+			self:Show();
 		else
 			self:Hide();
 		end
@@ -564,26 +578,40 @@ local CreateLargeFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
-	
-		self.Auras = CreateFrame("Frame",nil,self);
-		self.Auras:SetWidth(22*10); self.Auras:SetHeight(22*2);
-		self.Auras:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-10,0);
-		self.Auras:SetFrameStrata("BACKGROUND");
-		self.Auras:SetFrameLevel(5);
-		-- settings
-		self.Auras.initialAnchor = "BOTTOMRIGHT";
-		self.Auras["growth-x"] = "LEFT";
-		self.Auras["growth-y"] = "UP";
-		self.Auras.gap = true;
-		self.Auras.size = DB.Styles.Fel.Frames[unit].Auras.size;
-		self.Auras.spacing = DB.Styles.Fel.Frames[unit].Auras.spacing;
-		self.Auras.showType = DB.Styles.Fel.Frames[unit].Auras.showType;
-		self.Auras.numBuffs = DB.Styles.Fel.Frames[unit].Auras.NumBuffs;
-		self.Auras.numDebuffs = DB.Styles.Fel.Frames[unit].Auras.NumDebuffs;
-		self.Auras.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Auras.onlyShowPlayer;
+		local Buffsize = DB.Styles.Fel.Frames[unit].Buffs.size
+		local Debuffsize = DB.Styles.Fel.Frames[unit].Buffs.size
 		
-		self.Auras.PostUpdate = PostUpdateAura;
+		if DB.Styles.Fel.Frames[unit] then
+			-- Position and size
+			local Buffs = CreateFrame("Frame", nil, self)
+			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			Buffs.size = Buffsize;
+			Buffs["growth-y"] = "UP";
+			Buffs.spacing = DB.Styles.Fel.Frames[unit].Buffs.spacing;
+			Buffs.showType = DB.Styles.Fel.Frames[unit].Buffs.showType;
+			Buffs.numBuffs = DB.Styles.Fel.Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer;
+			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
+			Buffs.PostUpdate = PostUpdateAura;
+			self.Buffs = Buffs
+			
+			-- Position and size
+			local Debuffs = CreateFrame("Frame", nil, self)
+			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+			Debuffs.size = Debuffsize;
+			Debuffs.initialAnchor = "BOTTOMRIGHT";
+			Debuffs["growth-x"] = "LEFT";
+			Debuffs["growth-y"] = "UP";
+			Debuffs.spacing = DB.Styles.Fel.Frames[unit].Debuffs.spacing;
+			Debuffs.showType = DB.Styles.Fel.Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = DB.Styles.Fel.Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
+			Debuffs.PostUpdate = PostUpdateAura;
+			self.Debuffs = Debuffs
+			
+			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+		end
 	end
 	
 	self.Range = {insideAlpha = 1, outsideAlpha = .3}
@@ -936,6 +964,9 @@ local CreateUnitFrame = function(self,unit)
 	or (unit == "pet" and CreateSmallFrame(self,unit))
 	or CreateSmallFrame(self,unit));
 	
+	if self.Buffs and self.Buffs.PostUpdate then self.Buffs:PostUpdate(unit,"Buffs"); end
+	if self.Debuffs and self.Debuffs.PostUpdate then self.Debuffs:PostUpdate(unit,"Debuffs"); end
+	
 	self = PlayerFrames:MakeMovable(self,unit)
 	
 	return self
@@ -995,6 +1026,7 @@ SpartanoUF:RegisterStyle("Spartan_FelRaidFrames", CreateUnitFrameRaid);
 -- Module Calls
 function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_FelPlayerFrames");
+	PlayerFrames:BuffOptions()
 	
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 
@@ -1005,7 +1037,7 @@ function module:PlayerFrames()
 	end
 	
 	module:PositionFrame()
-	module:UpdateAltBarPositions();
+	module:UpdateAltBarPositions()
 	
 	if DBMod.PlayerFrames.BossFrame.display == true then
 		if (InCombatLockdown()) then return; end

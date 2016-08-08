@@ -30,6 +30,8 @@ local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = ""
 local frameDefault1 = {movement=MovedDefault,AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",moved=false,Anchors={}}
 local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",moved=false,Anchors={}}
 
+---------------		Database		-------------------------------
+
 local DBdefault = {
 	SUIProper = {
 		Version = SUI.SpartanVer,
@@ -56,67 +58,29 @@ local DBdefault = {
 				},
 				Frames = {
 					player = {
-						Auras={
-						AuraDisplay=true,
-						NumBuffs=5,
-						NumDebuffs = 10,
-						size = 20,
-						spacing = 1,
-						showType=true,
-						onlyShowPlayer=false
-						}
+						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
 					},
 					target = {
-						Auras={
-						AuraDisplay=true,
-						NumBuffs=5,
-						NumDebuffs = 10,
-						size = 20,
-						spacing = 1,
-						showType=true,
-						onlyShowPlayer=false
-						}
+						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
 					},
 					targettarget = {
-						Auras={
-							AuraDisplay=false,
-							NumBuffs=0,
-							NumDebuffs = 10,
-							size = 15,
-							spacing = 1,
-							showType=true,
-							onlyShowPlayer=false}
+						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
 					},
 					pet = {
-						Auras={
-							AuraDisplay=false,
-							NumBuffs=0,
-							NumDebuffs = 10,
-							size = 15,
-							spacing = 1,
-							showType=true,
-							onlyShowPlayer=false}
+						Buffs=	{Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false},
+						Debuffs={Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false}
 					},
 					focus = {
-						Auras={
-							AuraDisplay=true,
-							NumBuffs=5,
-							NumDebuffs = 5,
-							size = 15,
-							spacing = 1,
-							showType=true,
-							onlyShowPlayer=true}
+						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
 					},
 					focustarget = {
-						Auras={
-							AuraDisplay=false,
-							NumBuffs=0,
-							NumDebuffs = 10,
-							size = 15,
-							spacing = 1,
-							showType=true,
-							onlyShowPlayer=false}
-					},
+						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
+						Debuffs={Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
+					}
 				},
 				Minimap = {
 					shape = "circle",
@@ -410,9 +374,9 @@ function SUI:FirstTimeSetup()
 	}
 	
 	-- Uncomment this when the time is right.
-	local SetupWindow = spartan:GetModule("SetupWindow")
-	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
+	-- local SetupWindow = spartan:GetModule("SetupWindow")
+	-- SetupWindow:AddPage(PageData)
+	-- SetupWindow:DisplayPage()
 	
 	-- This will be moved once we put the setup page in place.
 	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
@@ -474,6 +438,8 @@ function SUI:InitializeProfile()
 	
 	SUI:reloadui()
 end
+
+---------------		Misc Backend		-------------------------------
 
 function SUI:BT4RefreshConfig()
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()

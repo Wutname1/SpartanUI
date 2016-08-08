@@ -49,10 +49,101 @@ end
 function module:SetupMenus()
 	spartan.opt.args["Artwork"].args["Artwork"] = {name = "Fel Options",type="group",order=10,
 		args = {
-			MinimapEngulfed = {name=L["Douse the flames"],type="toggle",order=.1,
+			MinimapEngulfed = {name=L["Douse the flames"],type="toggle",order=.1,desc=L["Is it getting hot in here?"],
 				get = function(info) return (DB.Styles.Fel.Minimap.Engulfed ~= true or false); end,
 				set = function(info,val) DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false) Minimap.FelUpdate(Minimap) end
+			},
+			alpha = {name=L["Transparency"],type="range",order=1,width="full",
+				min=0,max=100,step=1,desc=L["TransparencyDesc"],
+				get = function(info) return (DB.alpha*100); end,
+				set = function(info,val) DB.alpha = (val/100); module:updateAlpha() end
 			}
 		}
 	}
+	
+	spartan.opt.args["Artwork"].args["ActionBar"] = { name = "Bar backgrounds", type = "group",desc = L["ActionBarConfDesc"],
+		args = {
+			header1 = {name="",type="header",order=1.1},
+			Allenable = {name = L["AllBarEnable"], type="toggle",order=1,
+				get = function(info) return DB.Styles.Fel.Artwork.Allenable; end,
+				set = function(info,val)
+					for i = 1,4 do DB.Styles.Fel.Artwork["bar"..i].enable,DB.Styles.Fel.Artwork.Allenable = val,val; end
+					DB.Styles.Fel.Artwork.Stance.enable = val;
+					DB.Styles.Fel.Artwork.MenuBar.enable = val;
+					module:updateAlpha()
+				end
+			},
+			Allalpha = {name = L["AllBarAlpha"], type="range",order=2,width="double",
+				min=0, max=100, step=1,
+				get = function(info) return DB.Styles.Fel.Artwork.Allalpha; end,
+				set = function(info,val)
+					for i = 1,4 do DB.Styles.Fel.Artwork["bar"..i].alpha,DB.Styles.Fel.Artwork.Allalpha = val,val; end
+					DB.Styles.Fel.Artwork.Stance.alpha = val;
+					DB.Styles.Fel.Artwork.MenuBar.alpha = val;
+					module:updateAlpha()
+				end
+			},
+			
+			Stance = { name = L["Stance and Pet bar"], type = "group", inline=true, order=10, args = {
+				bar5alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.Styles.Fel.Artwork.Stance.alpha; end,
+					set = function(info,val) if DB.Styles.Fel.Artwork.Stance.enable == true then DB.Styles.Fel.Artwork.Stance.alpha = val; module:updateAlpha(); end end
+				},
+				bar5enable = {name = L["Enabled"], type="toggle",
+					get = function(info) return DB.Styles.Fel.Artwork.Stance.enable; end,
+					set = function(info,val) DB.Styles.Fel.Artwork.Stance.enable = val; module:updateAlpha(); end
+				}
+			}},
+			MenuBar = { name = L["Bag and Menu bar"], type = "group", inline=true, order=20, args = {
+				bar6alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.Styles.Fel.Artwork.MenuBar.alpha; end,
+					set = function(info,val) if DB.Styles.Fel.Artwork.MenuBar.enable == true then DB.Styles.Fel.Artwork.MenuBar.alpha = val; module:updateAlpha(); end end
+				},
+				bar6enable = {name = L["Enabled"], type="toggle",
+					get = function(info) return DB.Styles.Fel.Artwork.MenuBar.enable; end,
+					set = function(info,val) DB.Styles.Fel.Artwork.MenuBar.enable = val; module:updateAlpha(); end
+				}
+			}},
+			Bar1 = { name = L["Bar 1"], type = "group", inline=true, order=30, args = {
+				bar1alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.Styles.Fel.Artwork.bar1.alpha; end,
+					set = function(info,val) if DB.Styles.Fel.Artwork.bar1.enable == true then DB.Styles.Fel.Artwork.bar1.alpha = val; module:updateAlpha(); end end
+				},
+				bar1enable = {name = L["Enabled"], type="toggle",
+					get = function(info) return DB.Styles.Fel.Artwork.bar1.enable; end,
+					set = function(info,val) DB.Styles.Fel.Artwork.bar1.enable = val; module:updateAlpha(); end
+				},
+			}},
+			Bar2 = { name = L["Bar 2"], type = "group", inline=true, order=40, args = {
+				bar2alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.Styles.Fel.Artwork.bar2.alpha; end,
+					set = function(info,val) if DB.Styles.Fel.Artwork.bar2.enable == true then DB.Styles.Fel.Artwork.bar2.alpha = val; module:updateAlpha(); end end
+				},
+				bar2enable = {name = L["Enabled"], type="toggle",
+				get = function(info) return DB.Styles.Fel.Artwork.bar2.enable; end,
+					set = function(info,val) DB.Styles.Fel.Artwork.bar2.enable = val; module:updateAlpha(); end
+				}
+			}},
+			Bar3 = { name = L["Bar 3"], type = "group", inline=true, order=50, args = {
+				bar3alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.Styles.Fel.Artwork.bar3.alpha; end,
+					set = function(info,val) if DB.Styles.Fel.Artwork.bar3.enable == true then DB.Styles.Fel.Artwork.bar3.alpha = val; module:updateAlpha(); end end
+				},
+				bar3enable = {name = L["Enabled"], type="toggle",
+					get = function(info) return DB.Styles.Fel.Artwork.bar3.enable; end,
+					set = function(info,val) DB.Styles.Fel.Artwork.bar3.enable = val; module:updateAlpha(); end
+				}
+			}},
+			Bar4 = { name = L["Bar 4"], type = "group", inline=true, order=60, args = {
+				bar4alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
+					get = function(info) return DB.Styles.Fel.Artwork.bar4.alpha; end,
+					set = function(info,val) if DB.Styles.Fel.Artwork.bar4.enable == true then DB.Styles.Fel.Artwork.bar4.alpha = val; module:updateAlpha(); end end
+				},
+				bar4enable = {name = L["Enabled"], type="toggle",
+					get = function(info) return DB.Styles.Fel.Artwork.bar4.enable; end,
+					set = function(info,val) DB.Styles.Fel.Artwork.bar4.enable = val; module:updateAlpha(); end
+				}
+			}},
+		}
+	};
 end

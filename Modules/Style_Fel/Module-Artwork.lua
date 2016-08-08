@@ -57,7 +57,29 @@ function module:updateAlpha()
 		Transparent_SpartanUI_Base1:SetAlpha(DB.alpha);
 		Transparent_SpartanUI_Base2:SetAlpha(DB.alpha);
 	end
+	-- Update Action bar backgrounds
+	for i = 1,4 do
+		if DB.Styles.Fel.Artwork["bar"..i].enable then
+			_G["Fel_Bar"..i]:Show()
+			_G["Fel_Bar"..i]:SetAlpha(DB.Styles.Fel.Artwork["bar"..i].alpha)
+		else
+			_G["Fel_Bar"..i]:Hide()
+		end
+		if DB.Styles.Fel.Artwork.Stance.enable then
+			_G["Fel_StanceBar"]:Show()
+			_G["Fel_StanceBar"]:SetAlpha(DB.Styles.Fel.Artwork.Stance.alpha)
+		else
+			_G["Fel_StanceBar"]:Hide()
+		end
+		if DB.Styles.Fel.Artwork.MenuBar.enable then
+			_G["Fel_MenuBar"]:Show()
+			_G["Fel_MenuBar"]:SetAlpha(DB.Styles.Fel.Artwork.MenuBar.alpha)
+		else
+			_G["Fel_MenuBar"]:Hide()
+		end
+	end
 end;
+
 
 --	Module Calls
 function module:TooltipLoc(self, parent)
