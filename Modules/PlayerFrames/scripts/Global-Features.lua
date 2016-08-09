@@ -97,7 +97,6 @@ function PlayerFrames:UpdatePosition()
 			end
 			PlayerFrames[b]:ClearAllPoints();
 			PlayerFrames[b]:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-			print(b .. " has beem moved")
 		elseif DBMod.PlayerFrames[b] ~= nil then
 			PlayerFrames[b]:SetMovable(false);
 			PlayerFrames[b]:ClearAllPoints();

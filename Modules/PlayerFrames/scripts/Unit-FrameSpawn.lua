@@ -205,8 +205,6 @@ function PlayerFrames:BuffOptions()
 							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Display; end,
 							set = function(info,val)
 								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Display = val;
-								print(PlayerFrames[unit].Buffs)
-								print(PlayerFrames[unit].Buffs.PostUpdate)
 								if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end
 							end
 						},
