@@ -18,41 +18,11 @@ local default, plate = {
 };
 
 function module:SetupProfile()
-	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles.Transparent.BT4Profile and DB.Styles.Transparent.BT4Profile ~= ProfileName then return end
-	
-	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
-	
-	-- Set/Create our Profile
-	Bartender4.db:SetProfile(ProfileName);
-	
-	--Load the Profile Data
-	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
-		end
-	end
+	Artwork_Core:SetupProfile()
 end;
 
 function module:CreateProfile()
-	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles.Transparent.BT4Profile and DB.Styles.Transparent.BT4Profile ~= ProfileName then return end
-	
-	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
-	
-	-- Set/Create our Profile
-	Bartender4.db:SetProfile(ProfileName);
-	
-	--Load the Profile Data
-	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
-		end
-	end
-	
-	Bartender4:UpdateModuleConfigs();
+	Artwork_Core:CreateProfile()
 end
 
 function module:InitActionBars()

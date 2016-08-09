@@ -5,31 +5,6 @@ local Artwork_Core = addon:GetModule("Artwork_Core");
 local module = addon:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 local ProfileName = DB.Styles.Classic.BartenderProfile;
-local BartenderSettings = { -- actual settings being inserted into our custom profile
-	ActionBars = {
-		actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
-			{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=0,	y=36,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 1
-			{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=0,	y=-4,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 2
-			{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=-402,	y=36,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 3
-			{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=-402,	y=-4,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 4
-			{enabled = true,	buttons = 12,	rows = 3,	padding = 4,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=-135,	y=36,	scale = 0.80,	growHorizontal="RIGHT"}}, -- 5
-			{enabled = true,	buttons = 12,	rows = 3,	padding = 4,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=3,	y=36,	scale = 0.80,	growHorizontal="RIGHT"}}, -- 6
-			{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 7
-			{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 8
-			{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 9
-			{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}} -- 10
-		}
-	},
-	BagBar			= {	enabled = true, padding = 0, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-6,	y=-2,	scale = 0.70,	growHorizontal="LEFT"},		rows = 1, onebag = false, keyring = true},
-	MicroMenu		= {	enabled = true,	padding = -3,		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=603,	y=0,	scale = 0.80,	growHorizontal="RIGHT"}},
-	PetBar			= {	enabled = true, padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=5,	y=-6,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
-	StanceBar		= {	enabled = true,	padding = 1, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-605,	y=-2,	scale = 0.85,	growHorizontal="LEFT"},		rows = 1},
-	MultiCast		= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
-	Vehicle			= {	enabled = false,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
-	ExtraActionBar 	= {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
-	BlizzardArt		= {	enabled = false,	},
-	blizzardVehicle = true
-};
 
 local default, plate = {
 	popup1 = {anim = true, alpha = 1, enable = 1},
@@ -43,41 +18,11 @@ local default, plate = {
 };
 
 function module:SetupProfile()
-	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles.Classic.BT4Profile and DB.Styles.Classic.BT4Profile ~= ProfileName then return end
-	
-	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
-	
-	-- Set/Create our Profile
-	Bartender4.db:SetProfile(ProfileName);
-	
-	--Load the Profile Data
-	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
-		end
-	end
+	Artwork_Core:SetupProfile()
 end;
 
 function module:CreateProfile()
-	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles.Classic.BT4Profile and DB.Styles.Classic.BT4Profile ~= ProfileName then return end
-	
-	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
-	
-	-- Set/Create our Profile
-	Bartender4.db:SetProfile(ProfileName);
-	
-	--Load the Profile Data
-	for k,v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
-		end
-	end
-	
-	Bartender4:UpdateModuleConfigs();
+	Artwork_Core:CreateProfile()
 end
 
 function module:InitActionBars()

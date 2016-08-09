@@ -248,9 +248,7 @@ function Artwork_Core:FirstTime()
 			if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 			local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 			for k,v in ipairs(FrameList) do
-				if DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] then
-					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
-				end
+				DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 			end;
 			
 			spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
@@ -324,6 +322,7 @@ end
 
 -- Bartender4 Items
 function Artwork_Core:SetupProfile()
+	spartan.DBG.BartenderChangesActive = true
 	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
 	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
 	--If this is set then we have already setup the bars once, and the user changed them
@@ -341,6 +340,7 @@ function Artwork_Core:SetupProfile()
 			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
 		end
 	end
+	spartan.DBG.BartenderChangesActive = false
 end;
 
 function Artwork_Core:BartenderProfileCheck(Input,Report)
@@ -367,6 +367,7 @@ function Artwork_Core:MergeData(target,source)
 end
 
 function Artwork_Core:CreateProfile()
+	spartan.DBG.BartenderChangesActive = true
 	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
 	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
 	--If this is set then we have already setup the bars once, and the user changed them
@@ -386,4 +387,5 @@ function Artwork_Core:CreateProfile()
 	end
 	
 	Bartender4:UpdateModuleConfigs();
+	spartan.DBG.BartenderChangesActive = false
 end

@@ -96,6 +96,31 @@ local DBdefault = {
 				PartyFrames = true,
 				RaidFrames = true,
 				BartenderProfile = "SpartanUI - Classic",
+				BartenderSettings = { -- actual settings being inserted into our custom profile
+					ActionBars = {
+						actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
+							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=0,	y=36,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 1
+							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=0,	y=-4,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 2
+							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=-402,	y=36,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 3
+							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=-402,	y=-4,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 4
+							{enabled = true,	buttons = 12,	rows = 3,	padding = 4,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=-135,	y=36,	scale = 0.80,	growHorizontal="RIGHT"}}, -- 5
+							{enabled = true,	buttons = 12,	rows = 3,	padding = 4,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=3,	y=36,	scale = 0.80,	growHorizontal="RIGHT"}}, -- 6
+							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 7
+							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 8
+							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 9
+							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}} -- 10
+						}
+					},
+					BagBar			= {	enabled = true, padding = 0, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-6,	y=-2,	scale = 0.70,	growHorizontal="LEFT"},		rows = 1, onebag = false, keyring = true},
+					MicroMenu		= {	enabled = true,	padding = -3,		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=603,	y=0,	scale = 0.80,	growHorizontal="RIGHT"}},
+					PetBar			= {	enabled = true, padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=5,	y=-6,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
+					StanceBar		= {	enabled = true,	padding = 1, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-605,	y=-2,	scale = 0.85,	growHorizontal="LEFT"},		rows = 1},
+					MultiCast		= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
+					Vehicle			= {	enabled = false,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
+					ExtraActionBar 	= {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
+					BlizzardArt		= {	enabled = false,	},
+					blizzardVehicle = true
+				},
 				Movable = {
 					Minimap = false,
 					PlayerFrames = true,
@@ -387,12 +412,15 @@ function SUI:OnInitialize()
 	SUI.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
 	--If we have not played in a long time reset the database, make sure it is all good.
 	local ver = SUI.db.profile.SUIProper.Version
-	if (ver ~= nil and ver < "3.3.4") then SUI.db:ResetDB(); end
+	if (ver ~= nil and ver < "4.0.0") then SUI.db:ResetDB(); end
+	if not SUI.CurseVersion then SUI.CurseVersion = "" end
 	
+	-- New DB Access
 	SUI.DBG = SUI.db.global
 	SUI.DBP = SUI.db.profile.SUIProper
 	SUI.DBMod = SUI.db.profile.Modules
 	
+	-- Legacy, need to phase these globals out it was messy 
 	DB = SUI.db.profile.SUIProper
 	DBMod = SUI.db.profile.Modules
 	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.db);
@@ -428,6 +456,9 @@ function SUI:OnInitialize()
 		DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 		DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 	end
+	
+	--First Time Setup Actions
+	if not DB.SetupDone then SUI:FirstTimeSetup() end
 end
 
 function SUI:InitializeProfile()
@@ -442,6 +473,7 @@ end
 ---------------		Misc Backend		-------------------------------
 
 function SUI:BT4RefreshConfig()
+	if SUI.DBG.BartenderChangesActive then return end
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
 	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
@@ -557,9 +589,6 @@ function SUI:OnEnable()
 		end
 	end);
 	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
-	
-	--First Time Setup Actions
-	if not DB.SetupDone then SUI:FirstTimeSetup() end
 end
 
 function SUI:suihelp(input)
