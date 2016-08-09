@@ -68,4 +68,8 @@ local Defaults = {
 	TooltipLoc = true,
 	BuffLoc = true
 }
-DB.Styles.Fel = spartan:MergeData(DB.Styles.Default, Defaults, false)
+if not DB.Styles.Fel.Artwork then
+	DB.Styles.Fel = spartan:MergeData(DB.Styles.Fel, Defaults, true)
+else
+	DB.Styles.Fel = spartan:MergeData(DB.Styles.Fel, Defaults, false)
+end

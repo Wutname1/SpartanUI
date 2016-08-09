@@ -429,7 +429,7 @@ function module:OnInitialize()
 	}
 	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
-			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() spartan.db:ResetDB(); ReloadUI(); end},
+			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() SUI.DB:ResetDB(); ReloadUI(); end},
 			ResetActionBars	= spartan.opt.args["General"].args["Bartender"].args["ResetActionBars"],
 			ResetMovedFrames	= {name = L["ResetMovableFrames"], type = "execute", order=3, func = function()
 				local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player",[7]="boss"}

@@ -339,7 +339,7 @@ local DBdefaults = {char = DBdefault,profile = DBdefault}
 -- local SUI.DBGs = {Version = SUI.SpartanVer}
 
 function SUI:ResetConfig()
-	SUI.db:ResetProfile(false,true);
+	SUI.DB:ResetProfile(false,true);
 	ReloadUI();
 end
 
@@ -370,8 +370,8 @@ function SUI:FirstTimeSetup()
 			local tmpprofiles = {}
 			local profiles = {}
 			-- copy existing profiles into the table
-			local currentProfile = SUI.db:GetCurrentProfile()
-			for i,v in pairs(SUI.db:GetProfiles(tmpprofiles)) do 
+			local currentProfile = SUI.DB:GetCurrentProfile()
+			for i,v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do 
 				if not (nocurrent and v == currentProfile) then 
 					profiles[v] = v 
 				end 
@@ -409,33 +409,33 @@ function SUI:FirstTimeSetup()
 end
 
 function SUI:OnInitialize()
-	SUI.db = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
+	SUI.DB = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
 	--If we have not played in a long time reset the database, make sure it is all good.
-	local ver = SUI.db.profile.SUIProper.Version
-	if (ver ~= nil and ver < "4.0.0") then SUI.db:ResetDB(); end
+	local ver = SUI.DB.profile.SUIProper.Version
+	if (ver ~= nil and ver < "4.0.0") then SUI.DB:ResetDB(); end
 	if not SUI.CurseVersion then SUI.CurseVersion = "" end
 	
 	-- New DB Access
-	SUI.DBG = SUI.db.global
-	SUI.DBP = SUI.db.profile.SUIProper
-	SUI.DBMod = SUI.db.profile.Modules
+	SUI.DBG = SUI.DB.global
+	SUI.DBP = SUI.DB.profile.SUIProper
+	SUI.DBMod = SUI.DB.profile.Modules
 	
 	-- Legacy, need to phase these globals out it was messy 
-	DB = SUI.db.profile.SUIProper
-	DBMod = SUI.db.profile.Modules
-	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.db);
+	DB = SUI.DB.profile.SUIProper
+	DBMod = SUI.DB.profile.Modules
+	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.DB);
 	
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
-	LibDualSpec:EnhanceDatabase(self.db, "SpartanUI")
-	LibDualSpec:EnhanceOptions(SUI.opt.args["Profiles"], self.db)
+	LibDualSpec:EnhanceDatabase(self.DB, "SpartanUI")
+	LibDualSpec:EnhanceOptions(SUI.opt.args["Profiles"], self.DB)
 	SUI.opt.args["Profiles"].order=999
 	
 	-- Spec Setup
-	SUI.db.RegisterCallback(SUI, "OnNewProfile", "InitializeProfile")
-	SUI.db.RegisterCallback(SUI, "OnProfileChanged", "UpdateModuleConfigs")
-	SUI.db.RegisterCallback(SUI, "OnProfileCopied", "UpdateModuleConfigs")
-	SUI.db.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
+	SUI.DB.RegisterCallback(SUI, "OnNewProfile", "InitializeProfile")
+	SUI.DB.RegisterCallback(SUI, "OnProfileChanged", "UpdateModuleConfigs")
+	SUI.DB.RegisterCallback(SUI, "OnProfileCopied", "UpdateModuleConfigs")
+	SUI.DB.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
 	
 	--Bartender4 Hooks
 	if Bartender4 then
@@ -462,10 +462,10 @@ function SUI:OnInitialize()
 end
 
 function SUI:InitializeProfile()
-	SUI.db:RegisterDefaults(DBdefaults)
+	SUI.DB:RegisterDefaults(DBdefaults)
 	
-	DB = SUI.db.profile.SUIProper
-	DBMod = SUI.db.profile.Modules
+	DB = SUI.DB.profile.SUIProper
+	DBMod = SUI.DB.profile.Modules
 	
 	SUI:reloadui()
 end
@@ -516,10 +516,10 @@ function SUI:BT4RefreshConfig()
 end
 
 function SUI:UpdateModuleConfigs()
-	SUI.db:RegisterDefaults(DBdefaults)
+	SUI.DB:RegisterDefaults(DBdefaults)
 	
-	DB = SUI.db.profile.SUIProper
-	DBMod = SUI.db.profile.Modules
+	DB = SUI.DB.profile.SUIProper
+	DBMod = SUI.DB.profile.Modules
 	
 	if Bartender4 then
 		if DB.Styles[DBMod.Artwork.Style].BT4Profile then
@@ -620,9 +620,9 @@ function SUI:MergeData(target,source,override)
 	if type(target) ~= "table" then target = {} end
 	for k,v in pairs(source) do
 		if type(v) == "table" then
-			target[k] = self:MergeData(target[k], v);
+			target[k] = self:MergeData(target[k], v, override);
 		else
-			if override and target[k] ~= nil then
+			if override then
 				target[k] = v;
 			elseif target[k] == nil then
 				target[k] = v;

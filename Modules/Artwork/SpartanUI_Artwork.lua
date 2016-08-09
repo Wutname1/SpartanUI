@@ -243,16 +243,17 @@ function Artwork_Core:FirstTime()
 			DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 			DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 			DBMod.Artwork.FirstLoad = true;
+			spartan.DBG.BartenderChangesActive = true
+			spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
 			
 			--Reset Moved bars
+			spartan.DBG.BartenderChangesActive = true
 			if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 			local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 			for k,v in ipairs(FrameList) do
 				DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 			end;
-			
-			spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
-			
+			spartan.DBG.BartenderChangesActive = false
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
 		end,
@@ -284,7 +285,7 @@ function Artwork_Core:OnEnable()
 	for k,v in ipairs(FrameList) do	
 		if v then
 			v.SavePosition = function()
-				if not DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent" then
+				if (not DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent") and not spartan.DBG.BartenderChangesActive then
 					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = true
 					LibStub("LibWindow-1.1").windowData[v].storage.parent = UIParent
 					v:SetParent(UIParent)

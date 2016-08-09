@@ -4,7 +4,7 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local module = spartan:NewModule("Style_Minimal");
 
 --Now lets setup the initial Database settings
-local default = {
+local Defaults = {
 	Artwork = {},
 	PlayerFrames = {},
 	PartyFrames = {},
@@ -61,4 +61,8 @@ local default = {
 	},
 	PartyFramesSize = "large"
 }
-DB.Styles.Minimal = spartan:MergeData(DB.Styles.Default, default, false)
+if not DB.Styles.Minimal.Artwork then
+	DB.Styles.Minimal = spartan:MergeData(DB.Styles.Minimal, Defaults, true)
+else
+	DB.Styles.Minimal = spartan:MergeData(DB.Styles.Minimal, Defaults, false)
+end

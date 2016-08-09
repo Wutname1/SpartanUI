@@ -4,7 +4,7 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local module = spartan:NewModule("Style_Transparent");
 
 --Now lets setup the initial Database settings
-local default = {
+local Defaults = {
 	Artwork = {},
 	PlayerFrames = {},
 	PartyFrames = {},
@@ -55,4 +55,8 @@ local default = {
 	TooltipLoc = true,
 	BuffLoc = true
 }
-DB.Styles.Transparent = spartan:MergeData(DB.Styles.Default, default, false)
+if not DB.Styles.Transparent.Artwork then
+	DB.Styles.Transparent = spartan:MergeData(DB.Styles.Transparent, Defaults, true)
+else
+	DB.Styles.Transparent = spartan:MergeData(DB.Styles.Transparent, Defaults, false)
+end
