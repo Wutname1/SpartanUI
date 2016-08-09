@@ -403,50 +403,6 @@ local CreateLargeFrame = function(self,unit)
 			self.Power.colorPower = true;
 			self.Power.frequentUpdates = true;
 		end
-		do --Special Icons/Bars
-			if unit == "player" then
-				local playerClass = select(2, UnitClass("player"))
-				if unit == "player" and playerClass =="DEATHKNIGHT" then	
-					self.Runes = CreateFrame("Frame", nil, self)
-					
-					for i = 1, 6 do
-						self.Runes[i] = CreateFrame("StatusBar", self:GetName().."_Runes"..i, self)
-						self.Runes[i]:SetHeight(6)
-						self.Runes[i]:SetWidth((245 - 5) / 6)
-						if (i == 1) then
-							self.Runes[i]:SetPoint("TOPLEFT", self.Power, "BOTTOMLEFT", 0, -3)
-						else
-							self.Runes[i]:SetPoint("TOPLEFT", self.Runes[i-1], "TOPRIGHT", 1, 0)
-						end
-						self.Runes[i]:SetStatusBarTexture(Smoothv2)
-						self.Runes[i]:SetStatusBarColor(0,.39,.63,1)
-
-						self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, "BORDER")
-						self.Runes[i].bg:SetPoint("TOPLEFT", self.Runes[i], "TOPLEFT", -0, 0)
-						self.Runes[i].bg:SetPoint("BOTTOMRIGHT", self.Runes[i], "BOTTOMRIGHT", 0, -0)				
-						self.Runes[i].bg:SetTexture(Smoothv2)
-						self.Runes[i].bg:SetVertexColor(0,0,0,1)
-						self.Runes[i].bg.multiplier = 0.64
-						self.Runes[i]:Hide()
-					end
-				end
-				
-				local DruidMana = CreateFrame("StatusBar", nil, self)
-				DruidMana:SetSize(self.Power:GetWidth(), 4);
-				DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
-				DruidMana.colorPower = true
-				DruidMana:SetStatusBarTexture(Smoothv2)
-
-				-- Add a background
-				local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-				Background:SetAllPoints(DruidMana)
-				Background:SetTexture(1, 1, 1, .2)
-
-				-- Register it with oUF
-				self.DruidMana = DruidMana
-				self.DruidMana.bg = Background
-			end
-		end
 	end
 	do -- setup ring, icons, and text
 		local ring = CreateFrame("Frame",nil,self);
@@ -577,6 +533,123 @@ local CreateLargeFrame = function(self,unit)
 			end
 		end
 	end
+	do --Special Icons/Bars
+	if unit == "player" then
+		local classname, classFileName = UnitClass("player");
+		--Runes
+		local playerClass = select(2, UnitClass("player"))
+		if unit == "player" and playerClass =="DEATHKNIGHT" then	
+			self.Runes = CreateFrame("Frame", nil, self)
+			
+			for i = 1, 6 do
+				self.Runes[i] = CreateFrame("StatusBar", self:GetName().."_Runes"..i, self)
+				self.Runes[i]:SetHeight(6)
+				self.Runes[i]:SetWidth((245 - 5) / 6)
+				if (i == 1) then
+					self.Runes[i]:SetPoint("TOPLEFT", self.Name, "BOTTOMLEFT", 0, -3)
+				else
+					self.Runes[i]:SetPoint("TOPLEFT", self.Runes[i-1], "TOPRIGHT", 1, 0)
+				end
+				self.Runes[i]:SetStatusBarTexture(Smoothv2)
+				self.Runes[i]:SetStatusBarColor(0,.39,.63,1)
+
+				self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, "BORDER")
+				self.Runes[i].bg:SetPoint("TOPLEFT", self.Runes[i], "TOPLEFT", -0, 0)
+				self.Runes[i].bg:SetPoint("BOTTOMRIGHT", self.Runes[i], "BOTTOMRIGHT", 0, -0)				
+				self.Runes[i].bg:SetTexture(Smoothv2)
+				self.Runes[i].bg:SetVertexColor(0,0,0,1)
+				self.Runes[i].bg.multiplier = 0.64
+				self.Runes[i]:Hide()
+			end
+		end
+				
+		--Combo Points & Special unit power itemsitems = CreateFrame("Frame",nil,self);
+		local items = CreateFrame("Frame",nil,self);
+		items:SetFrameStrata("BACKGROUND");
+		items:SetSize(1,1);
+		items:SetFrameLevel(4);
+		items:SetPoint("TOPLEFT",self)
+		
+		self.ComboPoints = items:CreateFontString(nil, "BORDER","SUI_FontOutline13");
+		self.ComboPoints:SetPoint("TOPLEFT",self.Name,"BOTTOMLEFT",40,-5);
+	
+		local ClassIcons = {}
+		for i = 1, 6 do
+			local Icon = self:CreateTexture(nil, "OVERLAY")
+			Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+			
+			if (i == 1) then
+				Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
+			else 
+				Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
+			end
+			Icon:Hide()
+			
+			ClassIcons[i] = Icon
+		end
+		self.ClassIcons = ClassIcons
+		
+		local ClassPowerID = nil;
+		items:SetScript("OnEvent",function(a,b)
+			if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
+			local cur, max
+			cur = UnitPower('player', ClassPowerID)
+			max = UnitPowerMax('player', ClassPowerID)
+			self.ComboPoints:SetText((cur > 0 and cur) or "");
+		end);
+		
+		items:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
+			ClassPowerID = nil;
+			if(classFileName == 'MONK') then
+				ClassPowerID = SPELL_POWER_CHI
+			elseif(classFileName == 'PALADIN') then
+				ClassPowerID = SPELL_POWER_HOLY_POWER
+			elseif(classFileName == 'WARLOCK') then
+				ClassPowerID = SPELL_POWER_SOUL_SHARDS
+			elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+				ClassPowerID = SPELL_POWER_COMBO_POINTS
+			elseif(classFileName == 'MAGE') then
+				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+			end
+			if ClassPowerID ~= nil then 
+				items:RegisterEvent('UNIT_DISPLAYPOWER')
+				items:RegisterEvent('PLAYER_ENTERING_WORLD')
+				items:RegisterEvent('UNIT_POWER_FREQUENT')
+				items:RegisterEvent('UNIT_MAXPOWER')
+			end
+		end)
+		
+		if(classFileName == 'MONK') then
+			ClassPowerID = SPELL_POWER_CHI
+		elseif(classFileName == 'PALADIN') then
+			ClassPowerID = SPELL_POWER_HOLY_POWER
+		elseif(classFileName == 'WARLOCK') then
+			ClassPowerID = SPELL_POWER_SOUL_SHARDS
+		elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+			ClassPowerID = SPELL_POWER_COMBO_POINTS
+		elseif(classFileName == 'MAGE') then
+			ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+		end
+		if ClassPowerID ~= nil then 
+			items:RegisterEvent('UNIT_DISPLAYPOWER')
+			items:RegisterEvent('PLAYER_ENTERING_WORLD')
+			items:RegisterEvent('UNIT_POWER_FREQUENT')
+			items:RegisterEvent('UNIT_MAXPOWER')
+		end
+		
+		-- Druid Mana
+		local DruidMana = CreateFrame("StatusBar", nil, self)
+		DruidMana:SetSize(self.Power:GetWidth(), 4);
+		DruidMana:SetPoint("TOP",self.Power,"BOTTOM",0,0);
+		DruidMana.colorPower = true
+		DruidMana:SetStatusBarTexture(Smoothv2)
+		local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+		Background:SetAllPoints(DruidMana)
+		Background:SetTexture(1, 1, 1, .2)
+		self.DruidMana = DruidMana
+		self.DruidMana.bg = Background
+	end
+end
 	do -- setup buffs and debuffs
 		if DB.Styles.Fel.Frames[unit] then
 			local Buffsize = DB.Styles.Fel.Frames[unit].Buffs.size
@@ -1031,7 +1104,7 @@ local CreateUnitFrameRaid = function(self,unit)
 end
 
 function module:UpdateAltBarPositions()
-	local classname, classFileName = UnitClass("player");	
+	local classname, classFileName = UnitClass("player");
 	-- Druid EclipseBar
 	EclipseBarFrame:ClearAllPoints();
 	if DBMod.PlayerFrames.ClassBar.movement.moved then
