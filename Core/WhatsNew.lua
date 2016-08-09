@@ -28,14 +28,15 @@ function spartan:WhatsNew()
 				DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 				DBMod.Artwork.FirstLoad = true;
 				
-				--Reset Moved bars
+				spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
+				
+				--Reset Moved bars; Setting up profile triggers movment
 				if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 				local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 				for k,v in ipairs(FrameList) do
 					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 				end;
 				
-				spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
 				ReloadUI()
 			end)
 			control.frame:SetParent(SUI_Win.WhatsNew)
