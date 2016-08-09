@@ -45,7 +45,7 @@ function spartan:WhatsNew()
 			SUI_Win.WhatsNew.Buffs = SUI_Win.WhatsNew:CreateFontString(nil, "OVERLAY", "SUI_FontOutline13")
 			SUI_Win.WhatsNew.Buffs:SetPoint("TOP",SUI_Win.WhatsNew.Fel.frame,"BOTTOM", 0, -15)
 			SUI_Win.WhatsNew.Buffs:SetWidth(SUI_Win.WhatsNew:GetWidth()-40)
-			SUI_Win.WhatsNew.Buffs:SetText("The buff system for player fames has been redesigned in 4.3. While it is still a work in progress all the options have been revamed. I strongly encourage you to preview the new Fel Unit frames to see some of the improvments that will be making their way to the other styles. If you have any questions or suggestions please let me know via the SpartanUI.net forums")
+			SUI_Win.WhatsNew.Buffs:SetText("The buff system for player fames has been redesigned in 4.3. While it is still a work in progress all the options have been revamped. I strongly encourage you to preview the new Fel Unit frames to see some of the improvements that will be making their way to the other styles. If you have any questions or suggestions please let me know via the SpartanUI.net forums")
 			
 			-- Sad face
 			SUI_Win.WhatsNew.NeverEverAgain = CreateFrame("CheckButton", "SUI_WhatsNew_NeverEverAgain", SUI_Win.WhatsNew, "OptionsCheckButtonTemplate")
