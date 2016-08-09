@@ -105,7 +105,6 @@ end
 local PostUpdateAura = function(self,unit,mode)
 	-- Buffs
 	if mode == "Buffs" then
-		print(DB.Styles.Classic.Frames[unit].Buffs.Display)
 		if DB.Styles.Classic.Frames[unit].Buffs.Display then
 			self.size = DB.Styles.Classic.Frames[unit].Buffs.size;
 			self.spacing = DB.Styles.Classic.Frames[unit].Buffs.spacing;
@@ -114,7 +113,6 @@ local PostUpdateAura = function(self,unit,mode)
 			self.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
 			self:Show();
 		else
-			print("hide")
 			self:Hide();
 		end
 	end

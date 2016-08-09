@@ -69,11 +69,9 @@ function spartan:WhatsNew()
 end
 
 function module:OnInitialize()
-	print(SUI.DBG.WhatsNew)
 	if SUI.DBG.WhatsNew == nil then SUI.DBG.WhatsNew = true end
 	--Only display if the setup has been done, and the DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 	
-	print(SUI.DBG.WhatsNew)
 	if SUI.DBG.Version and SUI.DBG.Version < "4.3.0" and DB.SetupDone and SUI.DBG.WhatsNew then
 		spartan:WhatsNew()
 	end
