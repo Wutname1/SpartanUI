@@ -275,6 +275,7 @@ end
 
 -- Create Frames
 local CreateLargeFrame = function(self,unit)
+	-- if self:GetWidth() ~= 180 then self:SetSize(180, 58); end
 	self:SetSize(180, 58);
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
@@ -301,8 +302,9 @@ local CreateLargeFrame = function(self,unit)
 		self.artwork.flair:SetTexCoord(unpack(Images.flair.Coords))
 		self.artwork.flair:SetSize(self:GetWidth()+60, self:GetHeight()+75);
 		
-		
 		self.Portrait = CreatePortrait(self);
+		self.Portrait:SetFrameStrata("BACKGROUND");
+		self.Portrait:SetFrameLevel(2);
 		self.Portrait:SetSize(58, 58);
 		self.Portrait:SetPoint("RIGHT",self,"LEFT",-1,0);
 		
@@ -458,6 +460,16 @@ local CreateLargeFrame = function(self,unit)
 		self.Combat:SetSize(20,20);
 		self.Combat:SetPoint("CENTER",self.Resting,"CENTER");
 		
+		if unit ~= "player" then
+			self.SUI_ClassIcon = self:CreateTexture(nil,"BORDER");
+			self.SUI_ClassIcon:SetSize(20, 20);
+			self.SUI_ClassIcon:SetPoint("CENTER",self.Resting,"CENTER",0,0);
+			
+			self.RaidIcon = self:CreateTexture(nil,"ARTWORK");
+			self.RaidIcon:SetSize(20, 20);
+			self.RaidIcon:SetPoint("CENTER",self,"BOTTOMLEFT",-27,0);
+		end
+		
 		self.StatusText = self:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",self,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
@@ -533,7 +545,7 @@ local CreateLargeFrame = function(self,unit)
 			end
 		end
 	end
-	do --Special Icons/Bars
+	do -- Special Icons/Bars
 	if unit == "player" then
 		local classname, classFileName = UnitClass("player");
 		--Runes
@@ -544,7 +556,7 @@ local CreateLargeFrame = function(self,unit)
 			for i = 1, 6 do
 				self.Runes[i] = CreateFrame("StatusBar", self:GetName().."_Runes"..i, self)
 				self.Runes[i]:SetHeight(6)
-				self.Runes[i]:SetWidth((245 - 5) / 6)
+				self.Runes[i]:SetWidth((180 - 5) / 6)
 				if (i == 1) then
 					self.Runes[i]:SetPoint("TOPLEFT", self.Name, "BOTTOMLEFT", 0, -3)
 				else
@@ -729,8 +741,7 @@ end
 end
 
 local CreateMediumFrame = function(self,unit)
-	self:SetSize(120, 45);
-	
+	if self:GetWidth() ~= 120 then self:SetSize(120, 45); end
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -937,7 +948,7 @@ local CreateMediumFrame = function(self,unit)
 end
 
 local CreateSmallFrame = function(self,unit)
-	self:SetSize(95, 30);
+	if self:GetWidth() ~= 95 then self:SetSize(95, 30); end
 	do -- setup base artwork
 		self.artwork = CreateFrame("Frame",nil,self);
 		self.artwork:SetFrameStrata("BACKGROUND");
@@ -1131,6 +1142,25 @@ SpartanoUF:RegisterStyle("Spartan_FelPartyFrames", CreateUnitFrameParty);
 SpartanoUF:RegisterStyle("Spartan_FelRaidFrames", CreateUnitFrameRaid);
 	
 -- Module Calls
+function module:FrameSize(size)
+	--small
+	local w = 95
+	local h = 30
+	if size == "medium" then
+		w = 120
+		h = 45
+	elseif size == "large" then
+		w = 180
+		h = 58
+	end
+		
+	local initialConfigFunction = [[
+		self:SetWidth(%d)
+		self:SetHeight(%d)
+	]]
+	 return format(initialConfigFunction, w, h)
+end
+
 function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_FelPlayerFrames");
 	PlayerFrames:BuffOptions()
@@ -1225,7 +1255,7 @@ function module:PositionFrame(b)
 		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,250); end
 	end
 	
-	if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("RIGHT",PlayerFrames.player,"BOTTOMLEFT",-4,0); end
+	if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("RIGHT",PlayerFrames.player,"BOTTOMLEFT",-60,0); end
 	
 	if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",150,0); end
 	if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("LEFT",PlayerFrames.target,"BOTTOMRIGHT",4,0); end
@@ -1243,8 +1273,8 @@ function module:RaidFrames()
 	SpartanoUF:SetActiveStyle("Spartan_FelRaidFrames");
 	module:RaidOptions();
 	
-	local xoffset = 3
-	local yOffset = -10
+	local xoffset = 1
+	local yOffset = -1
 	local point = 'TOP'
 	local columnAnchorPoint = 'LEFT'
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
@@ -1255,10 +1285,10 @@ function module:RaidFrames()
 	
 	if _G["SUI_RaidFrameHeader"] then _G["SUI_RaidFrameHeader"] = nil end
 	
-	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, nil,
+	local raid = SpartanoUF:SpawnHeader("SUI_RaidFrameHeader", nil, 'raid',
 		"showRaid", DBMod.RaidFrames.showRaid,
 		"showParty", DBMod.RaidFrames.showParty,
-		"showPlayer", DBMod.RaidFrames.showPlayer,
+		"showPlayer", true,
 		"showSolo", DBMod.RaidFrames.showSolo,
 		'xoffset', xoffset,
 		'yOffset', yOffset,
@@ -1269,7 +1299,8 @@ function module:RaidFrames()
 		'maxColumns', DBMod.RaidFrames.maxColumns,
 		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
 		'columnSpacing', DBMod.RaidFrames.columnSpacing,
-		'columnAnchorPoint', columnAnchorPoint
+		'columnAnchorPoint', columnAnchorPoint,
+		"oUF-initialConfigFunction", module:FrameSize(DB.Styles.Fel.RaidFrames.FrameStyle)
 	)
 	
 	raid:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 20, -40)
@@ -1291,7 +1322,8 @@ function module:PartyFrames()
 		"yOffset", -16,
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",
-		"initial-anchor", "TOPLEFT");
+		"initial-anchor", "TOPLEFT",
+		"oUF-initialConfigFunction", module:FrameSize(DB.Styles.Fel.PartyFrames.FrameStyle));
 	
 	return (party)
 end

@@ -438,6 +438,7 @@ function SUI:OnInitialize()
 	SUI.DB.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
 	
 	--Bartender4 Hooks
+	if SUI.DBG.BartenderChangesActive then SUI.DBG.BartenderChangesActive = false end
 	if Bartender4 then
 		--Update to the current profile
 		DB.BT4Profile = Bartender4.db:GetCurrentProfile()

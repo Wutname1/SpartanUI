@@ -117,17 +117,14 @@ function module:InitArtwork()
 		plate:SetFrameLevel(1);
 		plate:SetPoint("BOTTOM");
 	end
+	
+	FramerateText:ClearAllPoints();
+	FramerateText:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 10, -10);
 end
 
 function module:EnableArtwork()
 	Fel_SpartanUI:SetFrameStrata("BACKGROUND");
 	Fel_SpartanUI:SetFrameLevel(1);
-	-- module:SetupProfile()
-	
-	-- local Win = CreateFrame("Frame", "SUI_Win", UIParent)
-	-- Win:SetSize(550, 400)
-	-- Win:SetPoint("TOP", UIParent, "TOP", 0, -150)
-	-- Win:SetFrameStrata("TOOLTIP")
 	
 	Fel_SpartanUI.Left = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Left", "BORDER")
 	Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
@@ -137,11 +134,6 @@ function module:EnableArtwork()
 	Fel_SpartanUI.Right:SetPoint("LEFT", Fel_SpartanUI.Left, "RIGHT", 0, 0)
 	Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right]])
 	
-	for i=1,4 do
-		-- _G["Fel_Bar"..i.."BG"]:SetVertexColor(0, 0, 0, .5)
-	end
-	-- Win.bg:SetVertexColor(0, 0, 0, .7)
-	
 	hooksecurefunc("UIParent_ManageFramePositions",function()
 		TutorialFrameAlertButton:SetParent(Minimap);
 		TutorialFrameAlertButton:ClearAllPoints();
@@ -149,6 +141,11 @@ function module:EnableArtwork()
 		CastingBarFrame:ClearAllPoints();
 		CastingBarFrame:SetPoint("BOTTOM",Fel_SpartanUI,"TOP",0,90);
 	end);
+	
+	MainMenuBarVehicleLeaveButton:HookScript("OnShow", function() 
+		MainMenuBarVehicleLeaveButton:ClearAllPoints()
+		MainMenuBarVehicleLeaveButton:SetPoint("LEFT",SUI_playerFrame,"RIGHT",15,0)
+	end)
 	
 	Artwork_Core:MoveTalkingHeadUI()
 	module:SetupVehicleUI();
