@@ -55,12 +55,13 @@ end
 function module:OnInitialize()
 	if DBMod.Objectives == nil then
 		DBMod.Objectives = {
+			SetupDone = false,
 			Rule1 = {
-				Status = "All",
-				Combat = true
+				Status = "Raid",
+				Combat = false
 			},
 			Rule2 = {
-				Status = "Raid",
+				Status = "Disabled",
 				Combat = false
 			},
 			Rule3 = {
@@ -69,6 +70,8 @@ function module:OnInitialize()
 			}
 		}
 	end
+	if DBMod.Artwork.SetupDone then DBMod.Objectives.SetupDone = true end
+	if not DBMod.Objectives.SetupDone then module:FirstTimeSetup() end
 end
 
 function module:OnEnable()
@@ -133,4 +136,76 @@ end
 
 function module:HideOptions()
 	spartan.opt.args["ModSetting"].args["Objectives"].disabled = true
+end
+
+function module:FirstTimeSetup()
+	local PageData = {
+		SubTitle = "Objectives",
+		Desc1 = "",
+		Display = function()
+			local gui = LibStub("AceGUI-3.0")
+			--Container
+			SUI_Win.Objectives = CreateFrame("Frame", nil)
+			SUI_Win.Objectives:SetParent(SUI_Win.content)
+			SUI_Win.Objectives:SetAllPoints(SUI_Win.content)
+
+			--TurnInEnabled
+			SUI_Win.Objectives.Enabled = CreateFrame("CheckButton", "SUI_Objectives_Enabled", SUI_Win.Objectives, "OptionsCheckButtonTemplate")
+			SUI_Win.Objectives.Enabled:SetPoint("TOP", SUI_Win.Objectives, "TOP", -90, -10)
+			SUI_Objectives_EnabledText:SetText("Auto Vendor Enabled")
+			SUI_Win.Objectives.Enabled:HookScript("OnClick", function(this)
+				if this:GetChecked() == true then
+					SUI_Objectives_SellGray:Enable()
+					SUI_Objectives_SellWhite:Enable()
+					SUI_Objectives_SellGreen:Enable()
+				else
+					SUI_Objectives_SellGray:Disable()
+					SUI_Objectives_SellWhite:Disable()
+					SUI_Objectives_SellGreen:Disable()
+				end
+			end)
+			
+			--Profiles
+			local control = gui:Create("Dropdown")
+			control:SetLabel("Exsisting profiles")
+			local tmpprofiles = {}
+			local profiles = {}
+			-- copy existing profiles into the table
+			local currentProfile = SUI.DB:GetCurrentProfile()
+			for i,v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do 
+				if not (nocurrent and v == currentProfile) then 
+					profiles[v] = v 
+				end 
+			end
+			control:SetList(profiles)
+			control:SetPoint("TOP", SUI_Win.Core, "TOP", 0, -30)
+			control.frame:SetParent(SUI_Win.Core)
+			control.frame:Show()
+			SUI_Win.Core.Profiles = control
+			
+			--SellGray
+			SUI_Win.Objectives.SellGray = CreateFrame("CheckButton", "SUI_Objectives_SellGray", SUI_Win.Objectives, "OptionsCheckButtonTemplate")
+			SUI_Win.Objectives.SellGray:SetPoint("TOP", SUI_Win.Objectives.Enabled, "TOP", -90, -40)
+			SUI_Objectives_SellGrayText:SetText("Sell gray items")
+			
+			--Defaults
+			SUI_Objectives_Enabled:SetChecked(true)
+			SUI_Objectives_SellGray:SetChecked(true)
+		end,
+		Next = function()
+			DB.Objectives.FirstLaunch = false
+			
+			DB.EnabledComponents.Objectives = (SUI_Win.Objectives.Enabled:GetChecked() == true or false)
+			DB.Objectives.MaxILVL = SUI_Win.Objectives.iLVL:GetValue()
+			
+			SUI_Win.Objectives:Hide()
+			SUI_Win.Objectives = nil
+		end,
+		Skip = function()
+			DB.Objectives.FirstLaunch = true
+		end
+	}
+	-- local SetupWindow = spartan:GetModule("SetupWindow")
+	-- SetupWindow:AddPage(PageData)
+	-- SetupWindow:DisplayPage()
 end

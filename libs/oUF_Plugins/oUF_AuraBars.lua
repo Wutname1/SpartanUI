@@ -190,7 +190,7 @@ end
 --[[
 		Default filter
 ]]--
-local function DefaultFilter(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
+local function DefaultFilter(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
 	if unitCaster == 'player' then
 		return true
 	end
@@ -207,16 +207,26 @@ end
 ]]--
 local function Update(self, event, unit)
 	if self.unit ~= unit then return end
-	local helpOrHarm = UnitIsFriend('player', unit) and 'HELPFUL' or 'HARMFUL'
+	local helpOrHarm = UnitIsFriend('player', unit) and 'HELPFUL|RAID|PLAYER' or 'HARMFUL|PLAYER'
+	-- local helpOrHarm = 'HELPFUL|PLAYER'
+	-- local helpOrHarm = ""
+	-- if self.Buffs and self.Debuffs then
+	-- local helpOrHarm = 'HELPFUL' or 'HARMFUL'
+	-- elseif self.Buffs then 
+		-- helpOrHarm = 'HELPFUL'
+	-- elseif self.Debuffs then
+		-- helpOrHarm = 'HARMFUL'
+	-- end
 
 	-- Create a table of auras to display
 	local auras = {}
 	local lastAuraIndex = 0
 	for index = 1, 40 do
-		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unit, index, helpOrHarm)
+		-- local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unit, index, helpOrHarm)
+		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff = UnitAura(unit, index, helpOrHarm)
 		if not name then break end
 		
-		if (self.AuraBars.filter or DefaultFilter)(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable) then
+		if (self.AuraBars.filter or DefaultFilter)(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID) then
 			lastAuraIndex = lastAuraIndex + 1
 			auras[lastAuraIndex] = {}
 			auras[lastAuraIndex].name = name

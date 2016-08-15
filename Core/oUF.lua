@@ -33,7 +33,7 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 	local spellIDs = addon:HotsListing()
 	auras.presentAlpha = 1
 	auras.onlyShowPresent = true
-	auras.PostCreateIcon = myCustomIconSkinnerFunction
+	-- auras.PostCreateIcon = myCustomIconSkinnerFunction
 	
 	-- Make icons table if needed
 	if auras.icons == nil then auras.icons = {} end
@@ -47,6 +47,11 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 		local size = DBMod.PartyFrames.Auras.size + SizeModifier
 		icon:SetSize(size, size)
 		icon:SetPoint(point, self, relativePoint, (-icon:GetWidth()*(i-1))-2, -2)
+		
+		local cd = CreateFrame("Cooldown", nil, icon)
+		cd:SetAllPoints(icon)
+		icon.cd = cd
+		
 		auras.icons[sid] = icon
 		-- Set any other AuraWatch icon settings
 	end

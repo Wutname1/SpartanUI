@@ -256,7 +256,7 @@ local function SetupIcons(self)
 		if not name then error("oUF_AuraWatch error: no spell with "..tostring(icon.spellID).." spell ID exists") end
 		icon.name = name
 		if not watch.customIcons then
-			local cd = CreateFrame("Cooldown", nil, icon)
+			local cd = CreateFrame("Cooldown", "$parentCooldown", icon, "CooldownFrameTemplate")
 			cd:SetAllPoints(icon)
 			icon.cd = cd
 

@@ -54,8 +54,8 @@ end;
 
 function module:updateAlpha()
 	if DB.alpha then
-		Transparent_SpartanUI_Base1:SetAlpha(DB.alpha);
-		Transparent_SpartanUI_Base2:SetAlpha(DB.alpha);
+		Fel_SpartanUI.Left:SetAlpha(DB.alpha);
+		Fel_SpartanUI.Right:SetAlpha(DB.alpha);
 	end
 	-- Update Action bar backgrounds
 	for i = 1,4 do

@@ -663,73 +663,121 @@ local CreateLargeFrame = function(self,unit)
 	end
 end
 	do -- setup buffs and debuffs
+		self.DispelHighlight = self.Health:CreateTexture(nil, "OVERLAY")
+		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
+		self.DispelHighlight:SetTexture(Smoothv2)
+		self.DispelHighlight:Hide()
+		
 		if DB.Styles.Fel.Frames[unit] then
 			local Buffsize = DB.Styles.Fel.Frames[unit].Buffs.size
 			local Debuffsize = DB.Styles.Fel.Frames[unit].Buffs.size
-			-- Position and size
-			if unit == "player" and DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" then
-				self.AuraBars = CreateFrame("Frame", nil, self)
-				self.AuraBars:SetHeight(1)
-				self.AuraBars.auraBarTexture = Smoothv2
-				self.AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", -55, 5)
-				self.AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", -55, 5)
-				self.AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-					if ((unitCaster == "player" and DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer) or (not DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer)) and not IsHarmfulSpell(name) then
-						return true
-					end
-				end
-				self.AuraBars.PostUpdate = PostUpdateAura;
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled=true
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled=true
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled=true
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled=true
-			else
-				local Buffs = CreateFrame("Frame", nil, self)
-				Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
-				Buffs.size = Buffsize;
-				Buffs["growth-y"] = "UP";
-				Buffs.spacing = DB.Styles.Fel.Frames[unit].Buffs.spacing;
-				Buffs.showType = DB.Styles.Fel.Frames[unit].Buffs.showType;
-				Buffs.numBuffs = DB.Styles.Fel.Frames[unit].Buffs.Number;
-				Buffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer;
-				Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-				Buffs.PostUpdate = PostUpdateAura;
-				self.Buffs = Buffs
-			end
 			
-			if unit == "target" and DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
-				self.AuraBars = CreateFrame("Frame", nil, self)
-				self.AuraBars:SetHeight(1)
-				self.AuraBars.auraBarTexture = Smoothv2
-				self.AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-				self.AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 0, 5)
-				self.AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-					if ((unitCaster == "player" and DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer) or (not DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer)) and IsHarmfulSpell(name) then
-						return true
+			--Buff Icons
+			local Buffs = CreateFrame("Frame", nil, self)
+			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			Buffs.size = Buffsize;
+			Buffs["growth-y"] = "UP";
+			Buffs.spacing = DB.Styles.Fel.Frames[unit].Buffs.spacing;
+			Buffs.showType = DB.Styles.Fel.Frames[unit].Buffs.showType;
+			Buffs.numBuffs = DB.Styles.Fel.Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer;
+			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
+			Buffs.PostUpdate = PostUpdateAura;
+			
+			--Debuff Icons
+			local Debuffs = CreateFrame("Frame", nil, self)
+			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+			Debuffs.size = Debuffsize;
+			Debuffs.initialAnchor = "BOTTOMRIGHT";
+			Debuffs["growth-x"] = "LEFT";
+			Debuffs["growth-y"] = "UP";
+			Debuffs.spacing = DB.Styles.Fel.Frames[unit].Debuffs.spacing;
+			Debuffs.showType = DB.Styles.Fel.Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = DB.Styles.Fel.Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
+			Debuffs.PostUpdate = PostUpdateAura;
+			
+			--Bars
+			local AuraBars = CreateFrame("Frame", nil, self)
+			AuraBars:SetHeight(1)
+			AuraBars.auraBarTexture = Smoothv2
+			AuraBars.PostUpdate = PostUpdateAura
+			
+			if (unit == "player" or unit == "target") then
+				if DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" and DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
+					--Set Bars to do all
+					AuraBars.Buffs = true
+					AuraBars.Debuffs = true
+					AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
+					AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", -55, 5)
+					-- AuraBars.helpOrHarm = function(unit)
+						-- return UnitIsFriend('player', unit) and 'HELPFUL' or 'HARMFUL'
+					-- end
+					AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
+						-- print("----")
+						-- print(name)
+						-- print(unitCaster)
+						-- print(spellID)
+						-- print(duration)
+						-- print(expirationTime)
+						-- print("--")
+						-- if IsHarmfulSpell(name) then print("IsHarmfulSpell") end
+						-- if IsHelpfulSpell(name) then print("IsHelpfulSpell") end
+						-- if IsPassiveSpell(name) then print("IsPassiveSpell") end
+						-- if IsTalentSpell(name) then print("IsTalentSpell") end
+						-- if IsPlayerSpell(spellID) then print("IsPlayerSpell: true") else  print("IsPlayerSpell: false") end
+						-- print("----")
+						if duration > 0 then
+							return true
+						end
+						end
+					self.AuraBars = AuraBars
+				else
+					if DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" then
+						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", -55, 5)
+						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", -55, 5)
+						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
+							if ((unitCaster == "player" and DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer) or (not DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer)) and not IsHarmfulSpell(name) then
+								return true
+							end
+						end
+						self.AuraBars = AuraBars
+					else
+						self.Buffs = Buffs
+					end
+					if DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
+						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
+						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 0, 5)
+						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
+							if ((unitCaster == "player" and DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer) or (not DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer)) and IsHarmfulSpell(name) then
+								return true
+							end
+						end
+						self.AuraBars = AuraBars
+					else
+						self.Debuffs = Debuffs
 					end
 				end
-				self.AuraBars.PostUpdate = PostUpdateAura;
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled=true
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled=true
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled=true
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["showType"].disabled=true
+				
+				--Change options if needed
+				if DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" then
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled=true
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled=true
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled=true
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled=true
+				end
+				if DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled=true
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled=true
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled=true
+					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["showType"].disabled=true
+				end
 			else
-				-- Position and size
-				local Debuffs = CreateFrame("Frame", nil, self)
-				Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
-				Debuffs.size = Debuffsize;
-				Debuffs.initialAnchor = "BOTTOMRIGHT";
-				Debuffs["growth-x"] = "LEFT";
-				Debuffs["growth-y"] = "UP";
-				Debuffs.spacing = DB.Styles.Fel.Frames[unit].Debuffs.spacing;
-				Debuffs.showType = DB.Styles.Fel.Frames[unit].Debuffs.showType;
-				Debuffs.numDebuffs = DB.Styles.Fel.Frames[unit].Debuffs.Number;
-				Debuffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer;
-				Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-				Debuffs.PostUpdate = PostUpdateAura;
+				self.Buffs = Buffs
 				self.Debuffs = Debuffs
 			end
-
+			
 			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
 		end
 	end
@@ -920,25 +968,10 @@ local CreateMediumFrame = function(self,unit)
 	do -- setup buffs and debuffs
 		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
 		
-		-- self.Debuffs = CreateFrame("Frame",nil,self);
-		-- self.Debuffs:SetWidth(22*10); self.Debuffs:SetHeight(22*2);
-		-- self.Debuffs:SetPoint("BOTTOMLEFT",self,"TOPLEFT",10,0);
-		-- self.Debuffs:SetFrameStrata("BACKGROUND");
-		-- self.Debuffs:SetFrameLevel(4);
-		-- settings
-		-- self.Debuffs.initialAnchor = "BOTTOMLEFT";
-		-- self.Debuffs["growth-x"] = "RIGHT";
-		-- self.Debuffs["growth-y"] = "UP";
-		--self.Auras.gap = true;
-		-- self.Debuffs.size = DB.Styles.Fel.Frames[unit].size;
-		-- self.Debuffs.spacing = DB.Styles.Fel.Frames[unit].spacing;
-		-- self.Debuffs.showType = DB.Styles.Fel.Frames[unit].showType;
-		--self.Auras.numBuffs = 1;
-		--self.Auras.numDebuffs = DB.Styles.Fel.Frames[unit].NumDebuffs;
-		-- self.Debuffs.num = DB.Styles.Fel.Frames[unit].NumDebuffs;
-		
-		--self.Auras.PostUpdate = PostUpdateAura;
-		-- self.Debuffs.PostUpdate = PostUpdateAura;
+		self.DispelHighlight = self.Health:CreateTexture(nil, "OVERLAY")
+		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
+		self.DispelHighlight:SetTexture(Smoothv2)
+		self.DispelHighlight:Hide()
 	end
 	
 	self.Range = {insideAlpha = 1, outsideAlpha = .3}
@@ -1059,6 +1092,11 @@ local CreateSmallFrame = function(self,unit)
 	end
 	do -- setup buffs and debuffs
 		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", -5)
+		
+		self.DispelHighlight = self.Health:CreateTexture(nil, "OVERLAY")
+		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
+		self.DispelHighlight:SetTexture(Smoothv2)
+		self.DispelHighlight:Hide()
 	end
 	
 	self.Range = {insideAlpha = 1, outsideAlpha = .3}

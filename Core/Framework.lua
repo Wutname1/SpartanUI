@@ -121,6 +121,16 @@ local DBdefault = {
 					BlizzardArt		= {	enabled = false,	},
 					blizzardVehicle = true
 				},
+				Frames = {
+					player = {
+						Buffs=	{Mode="icons"},
+						Debuffs={Mode="icons"}
+					},
+					target = {
+						Buffs=	{Mode="icons"},
+						Debuffs={Mode="bars"}
+					}
+				},
 				Movable = {
 					Minimap = false,
 					PlayerFrames = true,
