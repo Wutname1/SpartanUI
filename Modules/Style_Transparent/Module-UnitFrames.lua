@@ -1423,7 +1423,11 @@ local CreateRaidFrame = function(self,unit)
 		end
 		self.AuraWatch = auras
 	end
-	self.TextUpdate = PostUpdateText;
+	if unit == "party" then 
+		self.TextUpdate = PartyFrames.PostUpdateText
+	else
+		self.TextUpdate = PostUpdateText;
+	end
 	self.ColorUpdate = PostUpdateColor;
 	
 	return self;

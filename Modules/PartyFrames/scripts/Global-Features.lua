@@ -42,11 +42,22 @@ function PartyFrames:TextFormat(text)
 	end
 end
 
-function PartyFrames:PostUpdateText(self,unit)
-	self:Untag(self.Health.value)
-	self:Tag(self.Health.value, PartyFrames:TextFormat("health"))
-	if self.Power then self:Untag(self.Power.value) end
-	if self.Power then self:Tag(self.Power.value, PartyFrames:TextFormat("mana")) end
+-- function PartyFrames:PostUpdateText(self)
+	-- self:Untag(self.Health.value)
+	-- self:Tag(self.Health.value, PartyFrames:TextFormat("health"))
+	-- if self.Power then self:Untag(self.Power.value) end
+	-- if self.Power then self:Tag(self.Power.value, PartyFrames:TextFormat("mana")) end
+-- end
+
+PartyFrames.PostUpdateText = function (self)
+	if self.Health and self.Health.value then
+		self:Untag(self.Health.value)
+		self:Tag(self.Health.value, PartyFrames:TextFormat("health"))
+	end
+	if self.Power and self.Power.value then
+		self:Untag(self.Power.value)
+		self:Tag(self.Power.value, PartyFrames:TextFormat("mana"))
+	end
 end
 
 function PartyFrames:menu(self)

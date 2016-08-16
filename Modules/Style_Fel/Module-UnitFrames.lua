@@ -975,7 +975,11 @@ local CreateMediumFrame = function(self,unit)
 	end
 	
 	self.Range = {insideAlpha = 1, outsideAlpha = .3}
-	self.TextUpdate = PostUpdateText;
+	if unit == "party" then 
+		self.TextUpdate = PartyFrames.PostUpdateText
+	else
+		self.TextUpdate = PostUpdateText;
+	end
 	self.ColorUpdate = PostUpdateColor;
 	return self;
 end

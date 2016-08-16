@@ -416,7 +416,11 @@ local MakeSmallFrame = function(self,unit)
 	end
 	-- self.AuraWatch = spartan:oUF_Buffs(self)
 	
-	self.TextUpdate = PostUpdateText;
+	if unit == "party" then 
+		self.TextUpdate = PartyFrames.PostUpdateText
+	else
+		self.TextUpdate = PostUpdateText;
+	end
 	self.ColorUpdate = PostUpdateColor;
 	return self;
 end
@@ -789,7 +793,11 @@ local MakeLargeFrame = function(self,unit,width)
 		end
 	end
 
-	self.TextUpdate = PostUpdateText;
+	if unit == "party" then 
+		self.TextUpdate = PartyFrames.PostUpdateText
+	else
+		self.TextUpdate = PostUpdateText;
+	end
 	self.ColorUpdate = PostUpdateColor;
 	return self;
 end

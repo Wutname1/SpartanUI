@@ -403,7 +403,13 @@ local CreatePartyFrame = function(self,unit)
 		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
 		self.ReadyCheck = ReadyCheck
 	end
-	self.TextUpdate = PartyFrames:PostUpdateText(self,unit);
+	self.TextUpdate = PartyFrames.PostUpdateText
+	-- self.TextUpdate = function (self)
+		-- self:Untag(self.Health.value)
+		-- self:Tag(self.Health.value, PartyFrames:TextFormat("health"))
+		-- if self.Power then self:Untag(self.Power.value) end
+		-- if self.Power then self:Tag(self.Power.value, PartyFrames:TextFormat("mana")) end
+	-- end 
 	return self;
 end
 
