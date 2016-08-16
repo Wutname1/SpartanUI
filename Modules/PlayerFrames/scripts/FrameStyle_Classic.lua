@@ -546,7 +546,6 @@ local CreatePlayerFrame = function(self,unit)
 					AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
 					AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 0, 5)
 					AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
 						if duration > 0 then
 							return true
 						end
@@ -838,8 +837,7 @@ local CreateTargetFrame = function(self,unit)
 					--Set Bars to do all
 					AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
 					AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 20, 5)
-					AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
+					AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
 						if duration > 0 then
 							return true
 						end

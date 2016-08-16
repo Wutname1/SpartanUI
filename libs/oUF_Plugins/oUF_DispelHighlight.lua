@@ -114,10 +114,8 @@ function Update(self, event, unit)
 	if debuffType and (dispellable or not element.filter) then
 		element:SetVertexColor(unpack(colors[debuffType]))
 		element:Show()
-		print("show")
 	else
 		element:Hide()
-		print("Hide")
 	end
 
 	if element.PostUpdate then
