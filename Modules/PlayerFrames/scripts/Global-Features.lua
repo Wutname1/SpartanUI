@@ -132,6 +132,22 @@ function PlayerFrames:UpdatePosition()
 	-- end
 end
 
+function PlayerFrames:CreatePortrait(self)
+	if DBMod.PlayerFrames.Portrait3D then			
+		local Portrait = CreateFrame('PlayerModel', nil, self)
+		Portrait:SetScript("OnShow", function(self) self:SetCamera(1) end)
+		Portrait.type = "3D"
+		-- Portrait.bg2 = Portrait:CreateTexture(nil,"BACKGROUND");
+		-- Portrait.bg2:SetTexture(circle);
+		-- Portrait.bg2:SetPoint("TOPLEFT",Portrait,"TOPLEFT",-10,10);
+		-- Portrait.bg2:SetPoint("BOTTOMRIGHT",Portrait,"BOTTOMRIGHT",10,-10);
+		Portrait:SetFrameLevel(1);
+		return Portrait;
+	else
+		return self:CreateTexture(nil,"BORDER");
+	end
+end
+
 function PlayerFrames:MakeMovable(self,unit)
 	self:RegisterForClicks("AnyDown");
 	self:EnableMouse(enable)

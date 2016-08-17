@@ -5,7 +5,7 @@ local module = spartan:NewModule("SetupWindow");
 local Page_Cur = 1
 local PageCnt = 0
 local PageList = {}
-local Win = nil
+local NoCombat, WinShow, Win = true, false, nil
 local RequireReload = 0
 local CurData = nil
 
@@ -68,6 +68,7 @@ function module:DisplayPage(PageData)
 	
 	--Track that we are showing this window.
 	CurData.Displayed = true
+	WinShow = true
 	Win:Show()
 end
 
@@ -98,7 +99,7 @@ function module:CreateInstallWindow()
 	Win = CreateFrame("Frame", "SUI_Win", UIParent)
 	Win:SetSize(550, 400)
 	Win:SetPoint("TOP", UIParent, "TOP", 0, -150)
-	Win:SetFrameStrata("TOOLTIP")
+	Win:SetFrameStrata("DIALOG")
 	
 	Win.bg = Win:CreateTexture(nil, "BORDER")
 	Win.bg:SetAllPoints(Win)
@@ -169,6 +170,7 @@ function module:CreateInstallWindow()
 		PageList[Page_Cur].Displayed = false
 		if Page_Cur == PageCnt and not ReloadNeeded() then
 			Win:Hide()
+			WinShow = false
 			--Clear Page List
 			PageList = {}
 		elseif Page_Cur == PageCnt and ReloadNeeded() then
@@ -208,6 +210,7 @@ function module:CreateInstallWindow()
 		
 		if Page_Cur == PageCnt and not ReloadNeeded() then
 			Win:Hide()
+			WinShow = false
 		elseif Page_Cur == PageCnt and ReloadNeeded() then
 			ClearPage()
 			module:ReloadPage()
@@ -221,5 +224,18 @@ function module:CreateInstallWindow()
 	Win.Skip:SetScript("OnLeave", function(this) this.texture:SetVertexColor(.75, 0, 0) end)
 	Win.Skip:Hide()
 	
+	Win:SetScript("OnEvent", function(self, event)
+		if not InCombatLockdown() and Win:IsShown() then
+			spartan:Print(L["Hiding setup due to combat"])
+			Win:Hide()
+		elseif not InCombatLockdown() and not Win:IsShown() and WinShow then
+			Win:Show()
+		end
+	end)
+	
+	Win:RegisterEvent("PLAYER_REGEN_DISABLED")
+	Win:RegisterEvent("PLAYER_REGEN_ENABLED")
+	
 	Win:Hide()
+	WinShow = false
 end

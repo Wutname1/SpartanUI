@@ -132,19 +132,6 @@ local pvpIcon = function (self, event, unit)
 	end
 end
 
-function CreatePortrait(self)
-	if DBMod.PlayerFrames.Portrait3D then			
-		local Portrait = CreateFrame('PlayerModel', nil, self)
-		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
-		Portrait.type = "3D"
-		return Portrait;
-	else
-		local tmp = self:CreateTexture(nil,"BORDER");
-		tmp:SetTexCoord(0.15,0.86,0.15,0.86)
-		return tmp;
-	end
-end
-
 --	Updating functions
 local PostUpdateText = function(self,unit)
 	self:Untag(self.Health.value)
@@ -302,9 +289,9 @@ local CreateLargeFrame = function(self,unit)
 		self.artwork.flair:SetTexCoord(unpack(Images.flair.Coords))
 		self.artwork.flair:SetSize(self:GetWidth()+60, self:GetHeight()+75);
 		
-		self.Portrait = CreatePortrait(self);
-		self.Portrait:SetFrameStrata("BACKGROUND");
-		self.Portrait:SetFrameLevel(2);
+		self.Portrait = PlayerFrames:CreatePortrait(self);
+		-- self.Portrait:SetFrameStrata("BACKGROUND");
+		-- self.Portrait:SetFrameLevel(2);
 		self.Portrait:SetSize(58, 58);
 		self.Portrait:SetPoint("RIGHT",self,"LEFT",-1,0);
 		

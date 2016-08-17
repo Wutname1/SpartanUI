@@ -562,7 +562,8 @@ function SUI:reloadui(Desc2)
 		end,
 		Next = function()
 			ReloadUI()
-		end
+		end,
+		Skip = function() end
 	}
 	local SetupWindow = SUI:GetModule("SetupWindow")
 	SetupWindow:DisplayPage(PageData)

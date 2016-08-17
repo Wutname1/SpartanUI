@@ -145,6 +145,7 @@ local CreatePartyFrame = function(self,unit)
 			-- local Portrait = CreateFrame('PlayerModel', nil, self)
 			-- Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
 			-- Portrait.type = "3D"
+
 			self.Portrait = PartyFrames:CreatePortrait(self);
 			self.Portrait:SetSize(55, 55);
 			self.Portrait:SetPoint("TOPLEFT",self,"TOPLEFT",15,-8);
