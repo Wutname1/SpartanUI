@@ -17,27 +17,23 @@ local ExcludedItems = {
 }
 
 function module:OnInitialize()
+	local Defaults = {
+		FirstLaunch = true,
+		NotCrafting = true,
+		NotConsumables = true,
+		NotInGearset = true,
+		MaxILVL = 700,
+		Gray = true,
+		White = false,
+		Green = false,
+		Blue = false,
+		Purple = false
+	}
 	if not DB.AutoSell then
-		DB.AutoSell = {
-			FirstLaunch = true,
-			NotCrafting = true,
-			NotConsumables = true,
-			NotInGearset = true,
-			MaxILVL = 600,
-			Gray = true,
-			White = false,
-			Green = false,
-			Blue = false,
-			Purple = false
-		}
+		DB.AutoSell = Defaults
+	else
+		DB.AutoSell = spartan:MergeData(DB.AutoSell, Defaults, false)
 	end
-	if not DB.AutoSell.NotCrafting then
-		DB.AutoSell.NotCrafting = true
-		DB.AutoSell.NotConsumables = true
-		DB.AutoSell.NotInGearset = true
-		DB.AutoSell.MaxILVL = 600
-	end
-	if not DB.AutoSell.NotConsumables then DB.AutoSell.NotConsumables = true end
 end
 
 function module:FirstTime()
@@ -96,9 +92,9 @@ function module:FirstTime()
 			--Max iLVL
 			control = gui:Create("Slider")
 			control:SetLabel("Max iLVL to sell")
-			control:SetSliderValues(1, 900, 1)
+			control:SetSliderValues(1, 1100, 1)
 			-- control:SetIsPercent(v.isPercent)
-			control:SetValue(600)
+			control:SetValue(700)
 			control:SetPoint("TOPLEFT", SUI_Win.AutoSell.SellPurple, "BOTTOMLEFT", 0, -15)
 			control:SetWidth(SUI_Win:GetWidth()/1.3)
 			-- control:SetCallback("OnValueChanged",function(self) print(self:GetValue()) end)
@@ -146,11 +142,11 @@ function module:SellTrashInBag()
 		if module:IsSellable(iLink) then
 			if OnlyCount then
 				iCount = iCount + 1
+				totalValue = totalValue + (select(11, GetItemInfo(iLink)) * select(2, GetContainerItemInfo(bag, slot)));
 			elseif solditem ~= 5 then
 				solditem = solditem + 1
 				iSellCount = iSellCount + 1
 				UseContainerItem(bag, slot);
-				totalValue = totalValue + (select(11, GetItemInfo(iLink)) * select(2, GetContainerItemInfo(bag, slot)));
 			end
 		end
 	end
@@ -165,7 +161,7 @@ function module:SellTrashInBag()
 	else
 		--Everything sold
 		if (totalValue > 0) then
-			spartan:Print("Sold item(s) for " .. module:GetFormattedValue(totalValue));
+			spartan:Print("Sold item(s)");
 			totalValue = 0
 		end
 		module:CancelAllTimers()
@@ -191,7 +187,7 @@ function module:IsSellable(item)
 	local NotInGearset = true
 	local NotConsumable = true
 	
-	if (not iLevel) or (iLevel < DB.AutoSell.MaxILVL) then ilvlsellable = true end
+	if (not iLevel) or (iLevel <= DB.AutoSell.MaxILVL) then ilvlsellable = true end
 	--Crafting Items
 	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods" or itemType == "Tradeskill")
 	or (itemType == "Miscellaneous" and itemSubType == "Reagent"))
@@ -267,7 +263,7 @@ function module:SellTrash()
 	if iCount == 0 then
 		spartan:Print("No items are to be auto sold")
 	else
-		spartan:Print("Need to sell " .. iCount .. " item(s)")
+		spartan:Print("Need to sell " .. iCount .. " item(s) for " .. module:GetFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
 		OnlyCount=false
 		bag = 0
@@ -289,7 +285,7 @@ function module:OnEnable()
 		else
 			module:CancelAllTimers()
 			if (totalValue > 0) then
-				spartan:Print("Sold items for " .. module:GetFormattedValue(totalValue));
+				-- spartan:Print("Sold items for " .. module:GetFormattedValue(totalValue));
 				totalValue = 0
 			end
 		end
@@ -313,7 +309,7 @@ function module:BuildOptions()
 					get = function(info) return DB.AutoSell.NotInGearset end,
 					set = function(info,val) DB.AutoSell.NotInGearset = val end
 			},
-			MaxILVL ={name = "Maximum iLVL to sell",type = "range",order = 10,width = "full",min = 1,max = 900,step=1,
+			MaxILVL ={name = "Maximum iLVL to sell",type = "range",order = 10,width = "full",min = 1,max = 1100,step=1,
 				set = function(info,val) DB.AutoSell.MaxILVL = val; end,
 				get = function(info) return DB.AutoSell.MaxILVL; end
 			},

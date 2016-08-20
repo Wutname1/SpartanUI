@@ -67,17 +67,22 @@ function Artwork_Core:ActionBarPlates(plate)
 		if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 		
 		-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
-		if (frame:GetName():match("BT4Bar")) and storage.parent and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
-			if (storage.parent) and _G[storage.parent] then
-				frame:SetParent(storage.parent);
+		-- if (frame:GetName():match("BT4Bar")) and storage.parent and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+		if (frame:GetName():match("BT4Bar")) and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+			-- if (storage.parent) and _G[storage.parent] then
+				-- frame:SetParent(storage.parent);
 				frame:SetParent(plate);
-				if storage.parent == plate then
+				-- if storage.parent == plate then
 					frame:SetFrameStrata("LOW");
-				end
-			-- elseif (parent and parent:GetName() == plate) then
-				-- frame:SetParent(UIParent);
-			end
+				-- end
+			-- end
 		else
+			-- print("---")
+			-- print(frame:GetName())
+			-- print(DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()])
+			-- print(storage.parent)
+			-- print(plate)
+			-- print("---")
 			storage.parent = UIParent
 		end
 	end
@@ -112,6 +117,7 @@ function Artwork_Core:OnInitialize()
 end
 
 function Artwork_Core:FirstTime()
+print(DBMod.Artwork.SetupDone)
 	DBMod.Artwork.SetupDone = false
 	local PageData = {
 		SubTitle = "Art Style",
@@ -244,7 +250,7 @@ function Artwork_Core:FirstTime()
 			DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 			DBMod.Artwork.FirstLoad = true;
 			spartan.DBG.BartenderChangesActive = true
-			spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
+			Artwork_Core:SetupProfile();
 			
 			--Reset Moved bars
 			spartan.DBG.BartenderChangesActive = true
@@ -263,6 +269,8 @@ function Artwork_Core:FirstTime()
 		NoReloadOnSkip = true,
 		Skip = function()
 			DBMod.Artwork.SetupDone = true
+			SUI_Win.Artwork:Hide()
+			SUI_Win.Artwork = nil
 		end
 	}
 	local SetupWindow = spartan:GetModule("SetupWindow")
@@ -322,12 +330,13 @@ function Artwork_Core:CheckMiniMap()
 end
 
 -- Bartender4 Items
-function Artwork_Core:SetupProfile()
+function Artwork_Core:SetupProfile(ProfileOverride)
 	spartan.DBG.BartenderChangesActive = true
 	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
+	if ProfileOverride then ProfileName = ProfileOverride end
 	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
 	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles[DBMod.Artwork.Style].BT4Profile and DB.Styles[DBMod.Artwork.Style].BT4Profile ~= ProfileName then return end
+	if DB.Styles[DBMod.Artwork.Style].BT4Profile and DB.Styles[DBMod.Artwork.Style].BT4Profile ~= ProfileName and not ProfileOverride then return end
 	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end

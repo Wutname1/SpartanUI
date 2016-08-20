@@ -60,3 +60,6 @@ if not DB.Styles.Transparent.Artwork then
 else
 	DB.Styles.Transparent = spartan:MergeData(DB.Styles.Transparent, Defaults, false)
 end
+if not SUI.DBG.Bartender4[DB.Styles.Transparent.BartenderProfile] then
+	SUI.DBG.Bartender4[DB.Styles.Transparent.BartenderProfile] = {Style = "Transparent"}
+end

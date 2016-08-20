@@ -43,6 +43,11 @@ local ObjTrackerUpdate = function()
 		end
 	end
 	
+	if not DB.EnabledComponents.Objectives then
+		FadeIn = true
+		FadeOut = false
+	end
+	
 	if FadeOut and ObjectiveTrackerFrame.BlocksFrame:GetAlpha() == 1 then
 		ObjectiveTrackerFrame.BlocksFrame.FadeOut:Play();
 		C_Timer.After(1, HideFrame)
@@ -72,11 +77,11 @@ function module:OnInitialize()
 		}
 	end
 	if DBMod.Artwork.SetupDone then DBMod.Objectives.SetupDone = true end
-	if not DBMod.Objectives.SetupDone then module:FirstTimeSetup() end
 end
 
 function module:OnEnable()
-	if not DB.EnabledComponents.Objectives then return end
+	if not DBMod.Objectives.SetupDone then module:FirstTimeSetup() end
+	-- if not DB.EnabledComponents.Objectives then return end
 	-- Add Fade in and out
 	ObjectiveTrackerFrame.BlocksFrame.FadeIn = ObjectiveTrackerFrame.BlocksFrame:CreateAnimationGroup()
 	local FadeIn = ObjectiveTrackerFrame.BlocksFrame.FadeIn:CreateAnimation("Alpha")

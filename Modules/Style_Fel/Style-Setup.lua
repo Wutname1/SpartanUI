@@ -73,3 +73,6 @@ if not DB.Styles.Fel.Artwork then
 else
 	DB.Styles.Fel = spartan:MergeData(DB.Styles.Fel, Defaults, false)
 end
+if not SUI.DBG.Bartender4[DB.Styles.Fel.BartenderProfile] then
+	SUI.DBG.Bartender4[DB.Styles.Fel.BartenderProfile] = {Style = "Fel"}
+end

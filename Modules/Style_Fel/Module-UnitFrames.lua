@@ -694,8 +694,7 @@ end
 			if (unit == "player" or unit == "target") then
 				if DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" and DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
 					--Set Bars to do all
-					AuraBars.Buffs = true
-					AuraBars.Debuffs = true
+					AuraBars.ShowAll = true
 					AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
 					AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", -55, 5)
 					-- AuraBars.helpOrHarm = function(unit)

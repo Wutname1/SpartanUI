@@ -483,6 +483,46 @@ end
 
 ---------------		Misc Backend		-------------------------------
 
+function SUI:BT4ProfileAttach(msg)
+	PageData = {
+		title = "SpartanUI",
+		Desc1 = msg,
+		-- Desc2 = Desc2,
+		width = 400,
+		height = 150,
+		Display = function()
+			SUI_Win:ClearAllPoints()
+			SUI_Win:SetPoint("TOP", 0, -20)
+			SUI_Win:SetSize(400, 150)
+			SUI_Win.Status:Hide()
+			
+			SUI_Win.Skip:SetText("DO NOT ATTACH")
+			SUI_Win.Skip:SetSize(110, 25)
+			SUI_Win.Skip:ClearAllPoints()
+			SUI_Win.Skip:SetPoint("BOTTOMRIGHT", SUI_Win, "BOTTOM", -15, 15)
+			
+			SUI_Win.Next:SetText("ATTACH")
+			SUI_Win.Next:ClearAllPoints()
+			SUI_Win.Next:SetPoint("BOTTOMLEFT", SUI_Win, "BOTTOM", 15, 15)
+		end,
+		Next = function()
+			SUI.DBG.Bartender4[SUI.DBP.BT4Profile] = {
+				Style = DBMod.Artwork.Style
+			}
+			-- Catch if Movedbars is not initalized
+			if DB.Styles[DBMod.Artwork.Style].MovedBars then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+			--Setup profile
+			SUI:GetModule("Artwork_Core"):SetupProfile(Bartender4.db:GetCurrentProfile())
+			ReloadUI()
+		end,
+		Skip = function()
+			-- ReloadUI()
+		end
+	}
+	local SetupWindow = SUI:GetModule("SetupWindow")
+	SetupWindow:DisplayPage(PageData)
+end
+
 function SUI:BT4RefreshConfig()
 	if SUI.DBG.BartenderChangesActive then return end
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
@@ -493,34 +533,17 @@ function SUI:BT4RefreshConfig()
 	if SUI.DBG.Bartender4[DB.BT4Profile] then
 		-- We know this profile.
 		if SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style == SUI.DBMod.Artwork.Style then
+			-- Catch if Movedbars is not initalized
+			if DB.Styles[DBMod.Artwork.Style].MovedBars then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 			--Profile is for this style, prompt to ReloadUI
 			SUI:reloadui()
 		else
 			--Ask if we should change to the correct profile or if we should change the profile to be for this style
+			SUI:BT4ProfileAttach("This bartender profile is currently attached to the style '"..SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style.."' you are currently using "..SUI.DBMod.Artwork.Style.." would you like to reassign the profile to this art skin? ")
 		end
 	else
 		-- We do not know this profile, ask if we should attach it to this style.
-		-- PageData = {
-			-- title = "SpartanUI",
-			-- Desc1 = "A reload of your UI is required.",
-			-- Desc2 = Desc2,
-			-- width = 400,
-			-- height = 150,
-			-- Display = function()
-				-- SUI_Win:ClearAllPoints()
-				-- SUI_Win:SetPoint("TOP", 0, -20)
-				-- SUI_Win:SetSize(400, 150)
-				-- SUI_Win.Status:Hide()
-				-- SUI_Win.Next:SetText("RELOADUI")
-				-- SUI_Win.Next:ClearAllPoints()
-				-- SUI_Win.Next:SetPoint("BOTTOM", 0, 30)
-			-- end,
-			-- Next = function()
-				-- ReloadUI()
-			-- end
-		-- }
-		-- local SetupWindow = SUI:GetModule("SetupWindow")
-		-- SetupWindow:DisplayPage(PageData)
+		SUI:BT4ProfileAttach("This bartender profile is currently NOT attached to any style you are currently using the "..SUI.DBMod.Artwork.Style.." style would you like to assign the profile to this art skin? ")
 	end
 	
 	SUI:Print("Bartender4 Profile changed to: ".. Bartender4.db:GetCurrentProfile())
@@ -563,6 +586,7 @@ function SUI:reloadui(Desc2)
 		Next = function()
 			ReloadUI()
 		end,
+		Skipable = true,
 		Skip = function() end
 	}
 	local SetupWindow = SUI:GetModule("SetupWindow")
@@ -643,6 +667,7 @@ function SUI:MergeData(target,source,override)
 	end
 	return target;
 end
+
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
 
 function SUI:isPartialMatch(frameName, tab)

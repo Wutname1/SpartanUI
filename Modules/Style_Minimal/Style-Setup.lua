@@ -66,3 +66,6 @@ if not DB.Styles.Minimal.Artwork then
 else
 	DB.Styles.Minimal = spartan:MergeData(DB.Styles.Minimal, Defaults, false)
 end
+if not SUI.DBG.Bartender4[DB.Styles.Minimal.BartenderProfile] then
+	SUI.DBG.Bartender4[DB.Styles.Minimal.BartenderProfile] = {Style = "Minimal"}
+end

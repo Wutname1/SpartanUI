@@ -44,6 +44,14 @@ function module:DisplayPage(PageData)
 	end
 	
 	Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
+	-- Reset Buttons just incase
+	Win.Skip:SetSize(90, 25)
+	Win.Skip:SetPoint("BOTTOMLEFT", 5, 5)
+	Win.Skip:SetText("SKIP")
+	Win.Next:SetSize(90, 25)
+	Win.Next:SetPoint("BOTTOMRIGHT", -5, 5)
+	Win.Next:SetText("CONTINUE")
+	--modify next button
 	if Page_Cur == PageCnt and not ReloadNeeded() then
 		Win.Next:SetText("FINISH")
 	else
@@ -60,7 +68,7 @@ function module:DisplayPage(PageData)
 	if CurData.Desc2 ~= nil then Win.Desc2:SetText(CurData.Desc2) else Win.Desc2:SetText("") end
 	if CurData.Display ~= nil then CurData.Display() end
 	
-	if CurData.Skip ~= nil and CurData.Skipable then
+	if CurData.Skip ~= nil then
 		Win.Skip:Show()
 	else
 		Win.Skip:Hide()
@@ -141,6 +149,11 @@ function module:CreateInstallWindow()
 	Win.Desc2:SetTextColor(1, 1, 1, .8)
 	Win.Desc2:SetWidth(Win:GetWidth()-40)
 	
+	Win:HookScript("OnSizeChanged", function(self)
+		self.Desc1:SetWidth(self:GetWidth()-40)
+		self.Desc2:SetWidth(self:GetWidth()-40)
+	end)
+	
 	--Holder for items
 	Win.content = CreateFrame("Frame", "SUI_Win_Content", Win)
 	Win.content:SetPoint("BOTTOMLEFT", Win, "BOTTOMLEFT", 0, 30)
@@ -202,7 +215,7 @@ function module:CreateInstallWindow()
 	
 	-- Win.Skip.parent = frame
 	Win.Skip:SetScript("OnClick", function(this)
-		if PageList[Page_Cur]~= nil and PageList[Page_Cur].Next ~= nil then PageList[Page_Cur].Next() end
+		if PageList[Page_Cur]~= nil and PageList[Page_Cur].Skip ~= nil then PageList[Page_Cur].Skip() end
 		
 		if CurData.RequireReload ~= nil and CurData.RequireReload then
 			ReloadNeeded("remove")

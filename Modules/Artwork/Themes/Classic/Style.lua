@@ -433,4 +433,7 @@ do -- Style Setup
 			RaidFrames = false
 		}
 	end
+	if not spartan.DBG.Bartender4[DB.Styles.Classic.BartenderProfile] then
+		spartan.DBG.Bartender4[DB.Styles.Classic.BartenderProfile] = {Style = "Classic"}
+	end
 end
