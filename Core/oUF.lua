@@ -6,7 +6,7 @@ function addon:HotsListing()
 	if classFileName == "DRUID" then
 		return {
 			774, -- Rejuvenation
-			33763, -- Lifebloom
+			188550, -- Lifebloom
 			8936, -- Regrowth
 			48438, -- Wild Growth
 			155777, -- Germination

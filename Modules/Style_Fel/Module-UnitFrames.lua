@@ -1,8 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = spartan:GetModule("Style_Fel");
-local PlayerFrames = spartan:GetModule("PlayerFrames");
-local PartyFrames = spartan:GetModule("PartyFrames");
+local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga]]
 local square = [[Interface\AddOns\SpartanUI_Style_Transparent\Images\square.tga]]
@@ -655,116 +654,13 @@ end
 		self.DispelHighlight:SetTexture(Smoothv2)
 		self.DispelHighlight:Hide()
 		
-		if DB.Styles.Fel.Frames[unit] then
-			local Buffsize = DB.Styles.Fel.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Fel.Frames[unit].Buffs.size
+		if unit == "player" or unit == "target" then
+			self.BuffAnchor = CreateFrame("Frame", nil, self)
+			self.BuffAnchor:SetHeight(1)
+			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 5)
 			
-			--Buff Icons
-			local Buffs = CreateFrame("Frame", nil, self)
-			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
-			Buffs.size = Buffsize;
-			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Fel.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Fel.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Fel.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer;
-			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-			Buffs.PostUpdate = PostUpdateAura;
-			
-			--Debuff Icons
-			local Debuffs = CreateFrame("Frame", nil, self)
-			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
-			Debuffs.size = Debuffsize;
-			Debuffs.initialAnchor = "BOTTOMRIGHT";
-			Debuffs["growth-x"] = "LEFT";
-			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Fel.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Fel.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Fel.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer;
-			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-			Debuffs.PostUpdate = PostUpdateAura;
-			
-			--Bars
-			local AuraBars = CreateFrame("Frame", nil, self)
-			AuraBars:SetHeight(1)
-			AuraBars.auraBarTexture = Smoothv2
-			AuraBars.PostUpdate = PostUpdateAura
-			
-			if (unit == "player" or unit == "target") then
-				if DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" and DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
-					--Set Bars to do all
-					AuraBars.ShowAll = true
-					AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-					AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", -55, 5)
-					-- AuraBars.helpOrHarm = function(unit)
-						-- return UnitIsFriend('player', unit) and 'HELPFUL' or 'HARMFUL'
-					-- end
-					AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
-						-- print("----")
-						-- print(name)
-						-- print(unitCaster)
-						-- print(spellID)
-						-- print(duration)
-						-- print(expirationTime)
-						-- print("--")
-						-- if IsHarmfulSpell(name) then print("IsHarmfulSpell") end
-						-- if IsHelpfulSpell(name) then print("IsHelpfulSpell") end
-						-- if IsPassiveSpell(name) then print("IsPassiveSpell") end
-						-- if IsTalentSpell(name) then print("IsTalentSpell") end
-						-- if IsPlayerSpell(spellID) then print("IsPlayerSpell: true") else  print("IsPlayerSpell: false") end
-						-- print("----")
-						if duration > 0 then
-							return true
-						end
-						end
-					self.AuraBars = AuraBars
-				else
-					if DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" then
-						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", -55, 5)
-						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", -55, 5)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-							if ((unitCaster == "player" and DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer) or (not DB.Styles.Fel.Frames[unit].Buffs.onlyShowPlayer)) and not IsHarmfulSpell(name) then
-								return true
-							end
-						end
-						self.AuraBars = AuraBars
-					else
-						self.Buffs = Buffs
-					end
-					if DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
-						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 0, 5)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-							if ((unitCaster == "player" and DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer) or (not DB.Styles.Fel.Frames[unit].Debuffs.onlyShowPlayer)) and IsHarmfulSpell(name) then
-								return true
-							end
-						end
-						self.AuraBars = AuraBars
-					else
-						self.Debuffs = Debuffs
-					end
-				end
-				
-				--Change options if needed
-				if DB.Styles.Fel.Frames[unit].Buffs.Mode == "bars" then
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled=true
-				end
-				if DB.Styles.Fel.Frames[unit].Debuffs.Mode == "bars" then
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["showType"].disabled=true
-				end
-			else
-				self.Buffs = Buffs
-				self.Debuffs = Debuffs
-			end
-			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			self = PlayerFrames:Buffs(self,unit)
 		end
 	end
 	
@@ -1190,6 +1086,7 @@ function module:FrameSize(size)
 end
 
 function module:PlayerFrames()
+	PlayerFrames = spartan:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_FelPlayerFrames");
 	PlayerFrames:BuffOptions()
 	
@@ -1277,8 +1174,11 @@ function module:PlayerFrames()
 end
 
 function module:PositionFrame(b)
-	if Fel_SpartanUI_Left then
-		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",Fel_SpartanUI_Left,"TOPLEFT",-60,10); end
+	--Clear Point
+	if b ~= nil and PlayerFrames[b] then PlayerFrames[b]:ClearAllPoints() end
+	--Set Position
+	if Fel_SpartanUI.Left then
+		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",Fel_SpartanUI.Left,"TOPLEFT",-60,10); end
 	else
 		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,250); end
 	end
@@ -1337,6 +1237,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
+	PartyFrames = spartan:GetModule("PartyFrames");
 	SpartanoUF:SetActiveStyle("Spartan_FelPartyFrames");
 	module:PartyOptions()
 	

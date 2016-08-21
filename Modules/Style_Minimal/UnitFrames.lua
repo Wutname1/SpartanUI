@@ -2,8 +2,7 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Minimal");
-local PlayerFrames = spartan:GetModule("PlayerFrames");
-local PartyFrames = spartan:GetModule("PartyFrames");
+local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
 local square = [[Interface\AddOns\SpartanUI\media\map-overlay.tga]]
 
@@ -854,6 +853,7 @@ function module:UpdateAltBarPositions()
 end
 
 function module:PlayerFrames()
+	PlayerFrames = spartan:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
 	PlayerFrames:BuffOptions()
 	
@@ -934,6 +934,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
+	PartyFrames = spartan:GetModule("PartyFrames");
 	module:Options_PartyFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames_Party");
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,

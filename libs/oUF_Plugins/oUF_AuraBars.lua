@@ -92,6 +92,25 @@ local function FormatTime(timeInSec)
 		return s .. "s"
 	end
 end
+
+--[[
+		Tooltip functions
+]]--
+local UpdateTooltip = function(self)
+	GameTooltip:SetUnitAura(self.unit, self:GetID(), self.filter)
+end
+
+local OnEnter = function(self)
+	if(not self:IsVisible()) then return end
+
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+	self:UpdateTooltip()
+end
+
+local OnLeave = function()
+	GameTooltip:Hide()
+end
+
 --[[
 		Creates a bar to represent an aura
 ]]--
@@ -106,6 +125,11 @@ local function CreateAuraBar(oUF, anchor)
 	statusBar:SetStatusBarColor(0, .5, 0)
 	statusBar:SetAlpha(auraBarParent.fgalpha or 1)
 
+	--Tooltip
+	statusBar.UpdateTooltip = UpdateTooltip
+	statusBar:SetScript("OnEnter", OnEnter)
+	statusBar:SetScript("OnLeave", OnLeave)
+	
 	-- the background
 	statusBar.bg = statusBar:CreateTexture(nil, "BORDER")
 	statusBar.bg:SetAllPoints(statusBar)
@@ -133,7 +157,7 @@ local function CreateAuraBar(oUF, anchor)
 	statusBar.icon:SetTexCoord(.07, .93, .07, .93)
 	statusBar.icon:SetPoint'TOP'
 	statusBar.icon:SetPoint('LEFT', auraBarParent)
-
+	
 	statusBar.spelltime = statusBar:CreateFontString(nil, 'ARTWORK')
 	if auraBarParent.spellTimeObject then
 		statusBar.spelltime:SetFontObject(auraBarParent.spellTimeObject)
@@ -207,7 +231,7 @@ end
 ]]--
 local function Update(self, event, unit)
 	if self.unit ~= unit then return end
-	local helpOrHarm = UnitIsFriend('player', unit) and 'HELPFUL|RAID|PLAYER' or 'HARMFUL|PLAYER'
+	local helpOrHarm = UnitIsFriend('player', unit) and 'HELPFUL|PLAYER' or 'HARMFUL|PLAYER'
 	-- local helpOrHarm = 'HELPFUL|PLAYER'
 	-- local helpOrHarm = ""
 	-- if self.Buffs and self.Debuffs then
@@ -229,6 +253,7 @@ local function Update(self, event, unit)
 		if (self.AuraBars.filter or DefaultFilter)(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID) then
 			lastAuraIndex = lastAuraIndex + 1
 			auras[lastAuraIndex] = {}
+			auras[lastAuraIndex].index = index
 			auras[lastAuraIndex].name = name
 			auras[lastAuraIndex].rank = rank
 			auras[lastAuraIndex].icon = icon
@@ -254,11 +279,16 @@ local function Update(self, event, unit)
 		
 		if not bar then
 			bar = CreateAuraBar(self, index == 1 and self.AuraBars or bars[index - 1])
+			bar.unit = unit
 			bars[index] = bar
 		end
 
 		-- Backup the details of the aura onto the bar, so the OnUpdate function can use it
 		bar.aura = aura
+		--Tooltip information
+		bar:EnableMouse(true)
+		bar.filter = helpOrHarm
+		bar:SetID(bar.aura.index)
 
 		-- Configure
 		if bar.aura.noTime then

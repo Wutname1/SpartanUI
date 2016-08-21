@@ -2,8 +2,7 @@ local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Transparent");
-local PlayerFrames = spartan:GetModule("PlayerFrames");
-local PartyFrames = spartan:GetModule("PartyFrames");
+local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
 
 local base_plate1 = [[Interface\AddOns\SpartanUI_Style_Transparent\Images\base_plate1.tga]] -- Player and Target
@@ -1532,6 +1531,7 @@ function module:PositionFrame()
 end
 
 function module:PlayerFrames()
+	PlayerFrames = spartan:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPlayerFrames");
 	PlayerFrames:BuffOptions()
 	
@@ -1654,6 +1654,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
+	PartyFrames = spartan:GetModule("PartyFrames");
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPartyFrames");
 	
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,

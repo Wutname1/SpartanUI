@@ -1,5 +1,5 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local PlayerFrames = spartan:NewModule("PlayerFrames");
+local SUI = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local PlayerFrames = SUI:NewModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 
 function PlayerFrames:round(val, decimal)
@@ -84,6 +84,110 @@ function PlayerFrames:TextFormat(text)
 	end
 end
 
+function PlayerFrames:Buffs(self,unit)
+	--Make sure there is an anchor for buffs
+	if not self.BuffAnchor then return self end
+	local CurStyle = SUI.DBMod.PlayerFrames.Style
+	
+	-- Build buffs
+	if DB.Styles[CurStyle].Frames[unit] then
+		local Buffsize = DB.Styles[CurStyle].Frames[unit].Buffs.size
+		local Debuffsize = DB.Styles[CurStyle].Frames[unit].Buffs.size
+		
+		--Buff Icons
+		local Buffs = CreateFrame("Frame", nil, self)
+		Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+		Buffs.size = Buffsize;
+		Buffs["growth-y"] = "UP";
+		Buffs.spacing = DB.Styles[CurStyle].Frames[unit].Buffs.spacing;
+		Buffs.showType = DB.Styles[CurStyle].Frames[unit].Buffs.showType;
+		Buffs.numBuffs = DB.Styles[CurStyle].Frames[unit].Buffs.Number;
+		Buffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer;
+		Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
+		Buffs.PostUpdate = PostUpdateAura;
+		
+		--Debuff Icons
+		local Debuffs = CreateFrame("Frame", nil, self)
+		Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
+		Debuffs.size = Debuffsize;
+		Debuffs.initialAnchor = "BOTTOMRIGHT";
+		Debuffs["growth-x"] = "LEFT";
+		Debuffs["growth-y"] = "UP";
+		Debuffs.spacing = DB.Styles[CurStyle].Frames[unit].Debuffs.spacing;
+		Debuffs.showType = DB.Styles[CurStyle].Frames[unit].Debuffs.showType;
+		Debuffs.numDebuffs = DB.Styles[CurStyle].Frames[unit].Debuffs.Number;
+		Debuffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer;
+		Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
+		Debuffs.PostUpdate = PostUpdateAura;
+		
+		--Bars
+		local AuraBars = CreateFrame("Frame", nil, self)
+		AuraBars:SetHeight(1)
+		AuraBars.auraBarTexture = Smoothv2
+		AuraBars.PostUpdate = PostUpdateAura
+		
+		
+		if DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" and DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
+			--Set Bars to do all
+			AuraBars.ShowAll = true
+			AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 5)
+			AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 5)
+			-- AuraBars.helpOrHarm = function(unit)
+				-- return UnitIsFriend('player', unit) and 'HELPFUL' or 'HARMFUL'
+			-- end
+			AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
+				--Only Show HOTS and DOTS
+				if duration > 0 then
+					return true
+				end
+			end
+			self.AuraBars = AuraBars
+		else
+			if DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" then
+				AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 5)
+				AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 5)
+				AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
+					if ((unitCaster == "player" and DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer) or (not DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer)) and not IsHarmfulSpell(name) then
+						return true
+					end
+				end
+				self.AuraBars = AuraBars
+			else
+				self.Buffs = Buffs
+			end
+			if DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
+				AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 5)
+				AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 5)
+				AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
+					if ((unitCaster == "player" and DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer) or (not DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer)) and IsHarmfulSpell(name) then
+						return true
+					end
+				end
+				self.AuraBars = AuraBars
+			else
+				self.Debuffs = Debuffs
+			end
+		end
+		
+		--Change options if needed
+		if DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" then
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled=true
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled=true
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled=true
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled=true
+		end
+		if DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled=true
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled=true
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled=true
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["showType"].disabled=true
+		end
+	
+		SUI.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+	end
+	return self
+end
+
 function PlayerFrames:UpdatePosition()
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 	
@@ -105,7 +209,7 @@ function PlayerFrames:UpdatePosition()
 			elseif (DBMod.PlayerFrames.Style == "plain") then
 				PlayerFrames:PositionFrame_Plain(b);
 			else
-				spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PositionFrame(b);
+				SUI:GetModule("Style_" .. DBMod.PlayerFrames.Style):PositionFrame(b);
 			end
 		else
 			print(b .. " Frame has not been spawned by your theme")
@@ -282,7 +386,7 @@ function PlayerFrames:FirstTime()
 				end
 			end;
 			
-			spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
+			SUI:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
 			
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
@@ -294,7 +398,7 @@ function PlayerFrames:FirstTime()
 		Skip = function() DBMod.PlayerFrames.SetupDone = true end
 	}
 	
-	-- local SetupWindow = spartan:GetModule("SetupWindow")
+	-- local SetupWindow = SUI:GetModule("SetupWindow")
 	-- SetupWindow:AddPage(PageData)
 	-- SetupWindow:DisplayPage()
 	
