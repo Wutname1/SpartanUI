@@ -16,8 +16,8 @@ local Defaults = {
 		MenuBar = {enable=true, alpha=100}
 	},
 	Frames = {
-		player = {Buffs={Mode="icons"},Debuffs={Mode="bars"}},
-		target = {Buffs={Mode="bars",onlyShowPlayer=true},Debuffs={Mode="bars"}}
+		player = {Buffs={Mode="both"},Debuffs={Mode="both"}},
+		target = {Buffs={Mode="both",onlyShowPlayer=true},Debuffs={Mode="bars"}}
 	},
 	PlayerFrames = {},
 	PartyFrames = {

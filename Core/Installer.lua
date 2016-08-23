@@ -34,13 +34,14 @@ function module:AddPage(PageData)
 	end
 end
 
-function module:DisplayPage(PageData)
-	if PageList[Page_Cur] == nil and not PageData then return end
+function module:DisplayPage(CurData)
+	if Win == nil then module:CreateInstallWindow() end
+	if (PageList[Page_Cur] == nil and not CurData) or (CurData and Win:IsVisible()) then return end
 	
-	if PageData	then
-		if Win == nil then module:CreateInstallWindow() end
-		PageCnt = 1
-		PageList[1] = PageData
+	if not CurData then
+		CurData = PageList[Page_Cur]
+	else
+		PageList[Page_Cur] = CurData
 	end
 	
 	Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)
@@ -58,9 +59,7 @@ function module:DisplayPage(PageData)
 		Win.Next:SetText("CONTINUE")
 	end
 	if SUI_Win:IsVisible() and PageList[Page_Cur].Displayed ~= nil then return end
-	CurData = PageList[Page_Cur]
 	
-
 	if CurData.title ~= nil then Win.titleHolder:SetText(CurData.title) end
 	if CurData.RequireReload ~= nil and CurData.RequireReload then ReloadNeeded("add") end
 	if CurData.SubTitle ~= nil then Win.SubTitle:SetText(CurData.SubTitle) else Win.SubTitle:SetText("") end

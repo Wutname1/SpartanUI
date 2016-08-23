@@ -195,17 +195,20 @@ end
 function PlayerFrames:BuffOptions()
 	spartan.opt.args["PlayerFrames"].args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,desc = "Buff & Debuff display settings", args={}};
 	local Units = {[1]="player",[2]="pet",[3]="target",[4]="targettarget",[5]="focus",[6]="focustarget"}
+	local values = {["bars"]=L["Bars"],["icons"]=L["Icons"],["both"]=L["Both"],["disabled"]=L["Disabled"]}
+	
 	for k,unit in pairs(Units) do
 		spartan.opt.args["PlayerFrames"].args["auras"].args[unit] = {name=unit, type = "group", order=k, disabled=true,
 			args = {
 				Notice = {type="description", order=.5, fontSize="medium", name=L["possiblereloadneeded"]},
 				Buffs = {name="Buffs",type = "group",inline=true,order=1,
 					args = {
-						Display={name = L["Display Buffs"], type = "toggle", order=10, width="full",
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Display; end,
+						Display={name = L["Display mode"], type = "select", order=15,
+							values = values,
+							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode; end,
 							set = function(info,val)
-								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Display = val;
-								if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end
+								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode = val;
+								spartan:reloadui()
 							end
 						},
 						Number={name = L["Number to show"], type = "range", order=20,
@@ -238,11 +241,12 @@ function PlayerFrames:BuffOptions()
 				},
 				Debuffs = {name="Debuffs",type = "group",inline=true,order=2,
 					args = {
-						Display={name = L["Display DeBuffs"], type = "toggle", order=10, width="full",
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Display; end,
+						Display={name = L["Display mode"], type = "select", order=15, 
+							values = values,
+							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode; end,
 							set = function(info,val)
-								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Display = val;
-								if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end
+								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode = val;
+								spartan:reloadui()
 							end
 						},
 						Number = {name = L["Number to show"], type = "range", order=20,
@@ -272,21 +276,5 @@ function PlayerFrames:BuffOptions()
 				}
 			}
 		}
-		if DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode then
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Display"].width="double"
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Mode"] = {name = L["Display mode"], type = "select", order=15,
-				values = {["bars"]=L["Bars"],["icons"]=L["Icons"]},
-				get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode; end,
-				set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode = val; spartan:reloadui() end
-			}
-		end
-		if DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode then
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Display"].width="double"
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Mode"] = {name = L["Display mode"], type = "select", order=15, 
-				values = {["bars"]=L["Bars"],["icons"]=L["Icons"]},
-				get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode; end,
-				set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode = val; spartan:reloadui() end
-			}
-		end
 	end
 end

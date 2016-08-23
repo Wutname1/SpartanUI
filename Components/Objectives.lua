@@ -45,7 +45,7 @@ local ObjTrackerUpdate = function()
 	
 	--Scenario Detection
 	local ScenarioActive = false
-	if ScenarioBlocksFrame:IsVisible() then print("ScenarioActive") ScenarioActive = true end
+	if ScenarioBlocksFrame:IsVisible() then ScenarioActive = true end
 	
 	-- Always Shown logic
 	if (not DB.EnabledComponents.Objectives) or (SUI.DBMod.Objectives.AlwaysShowScenario and ScenarioActive) then

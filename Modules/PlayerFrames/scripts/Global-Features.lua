@@ -88,86 +88,163 @@ function PlayerFrames:Buffs(self,unit)
 	--Make sure there is an anchor for buffs
 	if not self.BuffAnchor then return self end
 	local CurStyle = SUI.DBMod.PlayerFrames.Style
-	
 	-- Build buffs
 	if DB.Styles[CurStyle].Frames[unit] then
 		local Buffsize = DB.Styles[CurStyle].Frames[unit].Buffs.size
-		local Debuffsize = DB.Styles[CurStyle].Frames[unit].Buffs.size
+		local Debuffsize = DB.Styles[CurStyle].Frames[unit].Debuffs.size
+		
+		--Determine how many we can fit for Hybrid Display
+		local split = 4
+		local Spacer = 3
+		local BuffWidth = 0
+		local BuffWidth2 = 0
+		local DeBuffWidth = 0
+		local DeBuffWidth2 = 0
+		for index = 1, 10 do
+			if ((index * (Buffsize + DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / split)) then
+				BuffWidth = index
+			end
+			if ((index * (Buffsize + DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
+				BuffWidth2 = index
+			end
+		end
+		for index = 1, 10 do
+			if ((index * (Debuffsize + DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / split)) then
+				DeBuffWidth = index
+			end
+			if ((index * (Debuffsize + DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
+				DeBuffWidth2 = index
+			end
+		end
+		local BuffWidthActual = (Buffsize + DB.Styles[CurStyle].Frames[unit].Buffs.spacing) * BuffWidth
+		local DeBuffWidthActual = (Debuffsize + DB.Styles[CurStyle].Frames[unit].Debuffs.spacing) * DeBuffWidth
+		
+		-- Position Bar
+		local BarPosition = function(self, pos)
+			-- Reminder on how position is defined
+			-- * = Icons 
+			-- - = Bars
+			--Pos1 -------**
+			--Pos2 **-----**
+			--Pos3 **-------
+			if pos == 1 then
+				self.AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 0)
+				self.AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", ((DeBuffWidthActual+Spacer)*-1), 0)
+			elseif pos == 2 then
+				self.AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", (BuffWidthActual+Spacer), 0)
+				self.AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", ((DeBuffWidthActual+Spacer)*-1), 0)
+			else --pos 3
+				self.AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", (BuffWidthActual+Spacer), 0)
+				self.AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 0)
+			end
+			return self
+		end
 		
 		--Buff Icons
 		local Buffs = CreateFrame("Frame", nil, self)
-		Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
-		Buffs.size = Buffsize;
-		Buffs["growth-y"] = "UP";
-		Buffs.spacing = DB.Styles[CurStyle].Frames[unit].Buffs.spacing;
-		Buffs.showType = DB.Styles[CurStyle].Frames[unit].Buffs.showType;
-		Buffs.numBuffs = DB.Styles[CurStyle].Frames[unit].Buffs.Number;
-		Buffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer;
-		Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-		Buffs.PostUpdate = PostUpdateAura;
-		
 		--Debuff Icons
 		local Debuffs = CreateFrame("Frame", nil, self)
-		Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
-		Debuffs.size = Debuffsize;
-		Debuffs.initialAnchor = "BOTTOMRIGHT";
-		Debuffs["growth-x"] = "LEFT";
-		Debuffs["growth-y"] = "UP";
-		Debuffs.spacing = DB.Styles[CurStyle].Frames[unit].Debuffs.spacing;
-		Debuffs.showType = DB.Styles[CurStyle].Frames[unit].Debuffs.showType;
-		Debuffs.numDebuffs = DB.Styles[CurStyle].Frames[unit].Debuffs.Number;
-		Debuffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer;
-		Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-		Debuffs.PostUpdate = PostUpdateAura;
+		-- Setup icons if needed
+		if BuffsMode ~= "bars" and BuffsMode ~= "disabled" then
+			Buffs:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", 0, 0)
+			Buffs.size = Buffsize;
+			Buffs["growth-x"] = "RIGHT";
+			Buffs["growth-y"] = "UP";
+			Buffs.spacing = DB.Styles[CurStyle].Frames[unit].Buffs.spacing;
+			Buffs.showType = DB.Styles[CurStyle].Frames[unit].Buffs.showType;
+			Buffs.numBuffs = DB.Styles[CurStyle].Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer;
+			Buffs:SetSize(BuffWidthActual, (Buffsize * (Buffs.numBuffs / BuffWidth)))
+			Buffs.PostUpdate = PostUpdateAura;
+			if BuffsMode ~= "icons" then
+				Buffs.CustomFilter = customFilter
+			end
+			self.Buffs = Buffs
+		end
+		if DebuffsMode ~= "bars" and DebuffsMode ~= "disabled" then
+			Debuffs:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", 0, 0)
+			Debuffs.size = Debuffsize;
+			Debuffs.initialAnchor = "BOTTOMRIGHT";
+			Debuffs["growth-x"] = "LEFT";
+			Debuffs["growth-y"] = "UP";
+			Debuffs.spacing = DB.Styles[CurStyle].Frames[unit].Debuffs.spacing;
+			Debuffs.showType = DB.Styles[CurStyle].Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = DB.Styles[CurStyle].Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs:SetSize(DeBuffWidthActual, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth)))
+			Debuffs.PostUpdate = PostUpdateAura;
+			if DebuffsMode ~= "icons" then
+				Debuffs.CustomFilter = customFilter
+			end
+			self.Debuffs = Debuffs
+		end
 		
 		--Bars
 		local AuraBars = CreateFrame("Frame", nil, self)
 		AuraBars:SetHeight(1)
 		AuraBars.auraBarTexture = Smoothv2
 		AuraBars.PostUpdate = PostUpdateAura
+
+		--Hots and Dots Filter
+		local Barfilter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
+			--Only Show things with a SHORT durration (HOTS and DOTS)
+			if duration > 0 and duration < 60 then return true end
+		end
 		
+		local BuffsMode	 = DB.Styles[CurStyle].Frames[unit].Buffs.Mode
+		local DebuffsMode= DB.Styles[CurStyle].Frames[unit].Debuffs.Mode
 		
-		if DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" and DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
-			--Set Bars to do all
+		-- Determine Buff Bar locaion
+		if BuffsMode == "bars" and DebuffsMode == "icons" then
+			AuraBars.Buffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 1)
+		elseif BuffsMode == "bars" and DebuffsMode == "both" then
 			AuraBars.ShowAll = true
-			AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 5)
-			AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 5)
-			-- AuraBars.helpOrHarm = function(unit)
-				-- return UnitIsFriend('player', unit) and 'HELPFUL' or 'HARMFUL'
-			-- end
-			AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
-				--Only Show HOTS and DOTS
-				if duration > 0 then
+			self.AuraBars = AuraBars
+			BarPosition(self, 1)
+		elseif BuffsMode == "bars" and DebuffsMode == "bars" then
+			AuraBars.ShowAll = true
+			AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 0)
+			AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 0)
+			self.AuraBars = AuraBars
+		elseif BuffsMode == "icons" and DebuffsMode == "icons" then
+			Buffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Buffsize * (Buffs.numBuffs / BuffWidth2)))
+			Debuffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth2)))
+		elseif BuffsMode == "icons" and DebuffsMode == "both" then
+			AuraBars.Debuffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 2)
+		elseif BuffsMode == "icons" and DebuffsMode == "bars" then
+			AuraBars.Debuffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 3)
+		elseif BuffsMode == "both" and DebuffsMode == "icons" then
+			AuraBars.Buffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 2)
+		elseif BuffsMode == "both" and DebuffsMode == "both" then
+			AuraBars.ShowAll = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 2)
+		elseif BuffsMode == "both" and DebuffsMode == "bars" then
+			AuraBars.ShowAll = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 3)
+		end
+		
+		local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+			if((icons.onlyShowPlayer and icon.isPlayer) or (not icons.onlyShowPlayer and name)) then
+				if caster == "player" and not (duration > 0 and duration < 60) then --Do not show DOTS & HOTS
+					return true
+				elseif caster ~= "player" then
 					return true
 				end
 			end
-			self.AuraBars = AuraBars
-		else
-			if DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" then
-				AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 5)
-				AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 5)
-				AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-					if ((unitCaster == "player" and DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer) or (not DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer)) and not IsHarmfulSpell(name) then
-						return true
-					end
-				end
-				self.AuraBars = AuraBars
-			else
-				self.Buffs = Buffs
-			end
-			if DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
-				AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 5)
-				AuraBars:SetPoint("BOTTOMLEFT",self.BuffAnchor,"TOPLEFT", 0, 5)
-				AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-					if ((unitCaster == "player" and DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer) or (not DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer)) and IsHarmfulSpell(name) then
-						return true
-					end
-				end
-				self.AuraBars = AuraBars
-			else
-				self.Debuffs = Debuffs
-			end
 		end
+		
+		--Buff Filter for bars
+		if self.AuraBars then AuraBars.filter = Barfilter end
 		
 		--Change options if needed
 		if DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" then

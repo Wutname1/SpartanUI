@@ -392,7 +392,7 @@ local CreateLargeFrame = function(self,unit)
 			self.Power.frequentUpdates = true;
 		end
 	end
-	do -- setup ring, icons, and text
+	do -- setup icons, and text
 		local ring = CreateFrame("Frame",nil,self);
 		ring:SetFrameStrata("LOW");
 		ring:SetAllPoints(self.Portrait);
@@ -403,7 +403,7 @@ local CreateLargeFrame = function(self,unit)
 		self.Name:SetSize(self:GetWidth(), 12);
 		self.Name:SetJustifyH("LEFT");
 		self.Name:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-5);
-		self:Tag(self.Name, "[level] [SUI_ColorClass][name]");
+		self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
 		
 		self.Leader = self:CreateTexture(nil,"BORDER");
 		self.Leader:SetSize(12, 12);
@@ -457,7 +457,8 @@ local CreateLargeFrame = function(self,unit)
 		end
 		
 		self.StatusText = self:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
-		self.StatusText:SetPoint("CENTER",self,"CENTER");
+		-- self.StatusText:SetPoint("CENTER",self,"CENTER");
+		self.StatusText:SetAllPoints(self.Portrait)
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 		
@@ -656,8 +657,8 @@ end
 		
 		if unit == "player" or unit == "target" then
 			self.BuffAnchor = CreateFrame("Frame", nil, self)
-			self.BuffAnchor:SetHeight(1)
-			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -55, 5)
+			self.BuffAnchor:SetSize(self:GetWidth()+60, 1)
+			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", -60, 5)
 			self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 5)
 			
 			self = PlayerFrames:Buffs(self,unit)

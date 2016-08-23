@@ -16,6 +16,13 @@ local ModsLoaded =  {
 	FilmEffects = nil
 }
 
+function module:ArtSetup()
+	SUI.DBG.BartenderChangesActive = true
+	spartan:GetModule("Artwork_Core"):SetupProfile();
+	spartan:UpdateModuleConfigs()
+	SUI.DBG.BartenderChangesActive = false
+end
+
 function module:OnInitialize()
 	local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_Artwork")
 	ModsLoaded.Artwork = enabled
@@ -45,8 +52,7 @@ function module:OnInitialize()
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-						spartan:GetModule("Style_Classic"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 						end
 				},
 				Fel = {name = "Fel", type="execute",disabled=true,
@@ -56,8 +62,7 @@ function module:OnInitialize()
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-						spartan:GetModule("Artwork_Core"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
@@ -67,8 +72,7 @@ function module:OnInitialize()
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-						spartan:GetModule("Style_Transparent"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
@@ -78,8 +82,7 @@ function module:OnInitialize()
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-						spartan:GetModule("Style_Minimal"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 					end
 				}
 			}},
@@ -89,32 +92,28 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Classic";
-						spartan:GetModule("Style_Classic"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 						end
 				},
 				Fel = {name = "Fel", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Fel";
-						spartan:GetModule("Style_Fel"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Transparent";
-						spartan:GetModule("Style_Transparent"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Minimal";
-						spartan:GetModule("Style_Minimal"):SetupProfile();
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 					end
 				}
 			}},
@@ -125,7 +124,7 @@ function module:OnInitialize()
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
 						DBMod.PlayerFrames.Style = "Classic";
-						spartan:UpdateModuleConfigs()
+						module:ArtSetup()
 						end
 				},
 				Fel = {name = "Fel", type="execute",disabled=true,
@@ -133,7 +132,6 @@ function module:OnInitialize()
 					imageCoords=function() return {.1,.5,.1,.5} end,
 					func = function()
 						DBMod.PlayerFrames.Style = "Fel";
-						spartan:GetModule("Style_Fel"):SetupProfile();
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -169,7 +167,6 @@ function module:OnInitialize()
 					imageCoords=function() return {0,.5,.5,1} end,
 					func = function()
 						DBMod.PartyFrames.Style = "Fel";
-						spartan:GetModule("Style_Fel"):SetupProfile();
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -205,7 +202,6 @@ function module:OnInitialize()
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
 						DBMod.RaidFrames.Style = "Fel";
-						spartan:GetModule("Style_Fel"):SetupProfile();
 						spartan:UpdateModuleConfigs()
 						end
 				},

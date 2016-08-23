@@ -590,38 +590,13 @@ local MakeLargeFrame = function(self,unit,width)
 			self.Buffs.CustomFilter = FilterType
 		end
 		do -- setup buffs and debuffs
-			if DB.Styles.Minimal.Frames[unit] then
-				local Buffsize = DB.Styles.Minimal.Frames[unit].Buffs.size
-				local Debuffsize = DB.Styles.Minimal.Frames[unit].Buffs.size
-				-- Position and size
-				local Buffs = CreateFrame("Frame", nil, self)
-				Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 0)
-				Buffs.size = Buffsize;
-				Buffs["growth-y"] = "UP";
-				Buffs.spacing = DB.Styles.Minimal.Frames[unit].Buffs.spacing;
-				Buffs.showType = DB.Styles.Minimal.Frames[unit].Buffs.showType;
-				Buffs.numBuffs = DB.Styles.Minimal.Frames[unit].Buffs.Number;
-				Buffs.onlyShowPlayer = DB.Styles.Minimal.Frames[unit].Buffs.onlyShowPlayer;
-				Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-				Buffs.PostUpdate = PostUpdateAura;
-				self.Buffs = Buffs
+			if DB.Styles.Minimal.Frames[unit] and PlayerFrames then
+				self.BuffAnchor = CreateFrame("Frame", nil, self)
+				self.BuffAnchor:SetSize(self:GetWidth(), 1)
+				self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
+				self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
 				
-				-- Position and size
-				local Debuffs = CreateFrame("Frame", nil, self)
-				Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0)
-				Debuffs.size = Debuffsize;
-				Debuffs.initialAnchor = "BOTTOMRIGHT";
-				Debuffs["growth-x"] = "LEFT";
-				Debuffs["growth-y"] = "UP";
-				Debuffs.spacing = DB.Styles.Minimal.Frames[unit].Debuffs.spacing;
-				Debuffs.showType = DB.Styles.Minimal.Frames[unit].Debuffs.showType;
-				Debuffs.numDebuffs = DB.Styles.Minimal.Frames[unit].Debuffs.Number;
-				Debuffs.onlyShowPlayer = DB.Styles.Minimal.Frames[unit].Debuffs.onlyShowPlayer;
-				Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-				Debuffs.PostUpdate = PostUpdateAura;
-				self.Debuffs = Debuffs
-				
-				spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+				self = PlayerFrames:Buffs(self,unit)
 			end
 		end
 		do --Special Icons/Bars

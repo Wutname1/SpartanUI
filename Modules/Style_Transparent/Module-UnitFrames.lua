@@ -607,38 +607,13 @@ local CreatePlayerFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Transparent.Frames[unit] then
-			local Buffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
-			-- Position and size
-			local Buffs = CreateFrame("Frame", nil, self)
-			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 0)
-			Buffs.size = Buffsize;
-			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Transparent.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Transparent.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Transparent.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Buffs.onlyShowPlayer;
-			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-			Buffs.PostUpdate = PostUpdateAura;
-			self.Buffs = Buffs
+		if DB.Styles.Transparent.Frames[unit] and PlayerFrames then
+			self.BuffAnchor = CreateFrame("Frame", nil, self)
+			self.BuffAnchor:SetSize(self:GetWidth(), 1)
+			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
+			self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
 			
-			-- Position and size
-			local Debuffs = CreateFrame("Frame", nil, self)
-			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0)
-			Debuffs.size = Debuffsize;
-			Debuffs.initialAnchor = "BOTTOMRIGHT";
-			Debuffs["growth-x"] = "LEFT";
-			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Transparent.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Transparent.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Transparent.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Debuffs.onlyShowPlayer;
-			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-			Debuffs.PostUpdate = PostUpdateAura;
-			self.Debuffs = Debuffs
-			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			self = PlayerFrames:Buffs(self,unit)
 		end
 	end
 	self.TextUpdate = PostUpdateText;
@@ -839,38 +814,13 @@ local CreateTargetFrame = function(self,unit)
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Transparent.Frames[unit] then
-			local Buffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Transparent.Frames[unit].Buffs.size
-			-- Position and size
-			local Buffs = CreateFrame("Frame", nil, self)
-			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
-			Buffs.size = Buffsize;
-			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Transparent.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Transparent.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Transparent.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Buffs.onlyShowPlayer;
-			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-			Buffs.PostUpdate = PostUpdateAura;
-			self.Buffs = Buffs
+		if DB.Styles.Transparent.Frames[unit] and PlayerFrames then
+			self.BuffAnchor = CreateFrame("Frame", nil, self)
+			self.BuffAnchor:SetSize(self:GetWidth(), 1)
+			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
+			self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
 			
-			-- Position and size
-			local Debuffs = CreateFrame("Frame", nil, self)
-			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",0,0)
-			Debuffs.size = Debuffsize;
-			Debuffs.initialAnchor = "BOTTOMRIGHT";
-			Debuffs["growth-x"] = "LEFT";
-			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Transparent.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Transparent.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Transparent.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Transparent.Frames[unit].Debuffs.onlyShowPlayer;
-			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-			Debuffs.PostUpdate = PostUpdateAura;
-			self.Debuffs = Debuffs
-			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			self = PlayerFrames:Buffs(self,unit)
 		end
 	end
 	self.TextUpdate = PostUpdateText;

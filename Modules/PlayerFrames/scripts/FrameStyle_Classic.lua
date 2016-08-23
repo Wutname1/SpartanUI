@@ -1,5 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local addon = spartan:GetModule("PlayerFrames");
+local PlayerFrames = spartan:GetModule("PlayerFrames");
 ----------------------------------------------------------------------------------------------------
 
 local base_plate1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate1.tga]] -- Player and Target
@@ -98,8 +98,8 @@ end
 local PostUpdateText = function(self,unit)
 	self:Untag(self.Health.value)
 	if self.Power then self:Untag(self.Power.value) end
-	self:Tag(self.Health.value, addon:TextFormat("health"))
-	if self.Power then self:Tag(self.Power.value, addon:TextFormat("mana")) end
+	self:Tag(self.Health.value, PlayerFrames:TextFormat("health"))
+	if self.Power then self:Tag(self.Power.value, PlayerFrames:TextFormat("mana")) end
 end
 
 local PostUpdateAura = function(self,unit,mode)
@@ -280,7 +280,7 @@ local CreatePlayerFrame = function(self,unit)
 			health.value:SetSize(135, 11);
 			health.value:SetJustifyH("RIGHT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("LEFT",health,"LEFT",4,0);
-			self:Tag(health.value, addon:TextFormat("health"))
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(90, 11);
@@ -342,7 +342,7 @@ local CreatePlayerFrame = function(self,unit)
 			power.value:SetWidth(135); power.value:SetHeight(11);
 			power.value:SetJustifyH("RIGHT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("LEFT",power,"LEFT",4,0);
-			self:Tag(power.value, addon:TextFormat("mana"))
+			self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetWidth(90); power.ratio:SetHeight(11);
@@ -504,99 +504,13 @@ local CreatePlayerFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Classic.Frames[unit] then
-			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+		if DB.Styles.Classic.Frames[unit] and PlayerFrames then
+			self.BuffAnchor = CreateFrame("Frame", nil, self)
+			self.BuffAnchor:SetSize(self:GetWidth()-10, 1)
+			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 10, 0)
+			self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
 			
-			--Buff Icons
-			local Buffs = CreateFrame("Frame", nil, self)
-			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 5)
-			Buffs.size = Buffsize;
-			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Classic.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Classic.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Classic.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
-			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-			Buffs.PostUpdate = PostUpdateAura;
-			
-			--Debuff Icons
-			local Debuffs = CreateFrame("Frame", nil, self)
-			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
-			Debuffs.size = Debuffsize;
-			Debuffs.initialAnchor = "BOTTOMRIGHT";
-			Debuffs["growth-x"] = "LEFT";
-			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Classic.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Classic.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Classic.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
-			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-			Debuffs.PostUpdate = PostUpdateAura;
-			
-			--Bars
-			local AuraBars = CreateFrame("Frame", nil, self)
-			AuraBars:SetHeight(1)
-			AuraBars.auraBarTexture = Smoothv2
-			AuraBars.PostUpdate = PostUpdateAura
-			
-			if (unit == "player" or unit == "target") then
-				if DB.Styles.Classic.Frames[unit].Buffs.Mode == "bars" and DB.Styles.Classic.Frames[unit].Debuffs.Mode == "bars" then
-					--Set Bars to do all
-					AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-					AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 0, 5)
-					AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-						if duration > 0 then
-							return true
-						end
-					end
-					self.AuraBars = AuraBars
-				else
-					if DB.Styles.Classic.Frames[unit].Buffs.Mode == "bars" then
-						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 0, 5)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-							if ((unitCaster == "player" and DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer) or (not DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer)) and not IsHarmfulSpell(name) then
-								return true
-							end
-						end
-						self.AuraBars = AuraBars
-					else
-						self.Buffs = Buffs
-					end
-					if DB.Styles.Classic.Frames[unit].Debuffs.Mode == "bars" then
-						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 0, 5)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-							if ((unitCaster == "player" and DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer) or (not DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer)) and IsHarmfulSpell(name) then
-								return true
-							end
-						end
-						self.AuraBars = AuraBars
-					else
-						self.Debuffs = Debuffs
-					end
-				end
-				
-				--Change options if needed
-				if DB.Styles.Classic.Frames[unit].Buffs.Mode == "bars" then
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled=true
-				end
-				if DB.Styles.Classic.Frames[unit].Debuffs.Mode == "bars" then
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["showType"].disabled=true
-				end
-			else
-				self.Buffs = Buffs
-				self.Debuffs = Debuffs
-			end
-			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			self = PlayerFrames:Buffs(self,unit)
 		end
 	end
 	self.TextUpdate = PostUpdateText;
@@ -659,7 +573,7 @@ local CreateTargetFrame = function(self,unit)
 			health.value:SetWidth(135); health.value:SetHeight(11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
-			self:Tag(health.value, addon:TextFormat("health"))	
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))	
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(90); health.ratio:SetHeight(11);
@@ -721,7 +635,7 @@ local CreateTargetFrame = function(self,unit)
 			power.value:SetWidth(135); power.value:SetHeight(11);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-			self:Tag(power.value, addon:TextFormat("mana"))
+			self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetWidth(90); power.ratio:SetHeight(11);
@@ -796,99 +710,13 @@ local CreateTargetFrame = function(self,unit)
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Classic.Frames[unit] then
-			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+		if DB.Styles.Classic.Frames[unit] and PlayerFrames then
+			self.BuffAnchor = CreateFrame("Frame", nil, self)
+			self.BuffAnchor:SetSize(self:GetWidth()-35, 1)
+			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
+			self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -5, 0)
 			
-			--Buff Icons
-			local Buffs = CreateFrame("Frame", nil, self)
-			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 20, 5)
-			Buffs.size = Buffsize;
-			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Classic.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Classic.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Classic.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
-			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
-			Buffs.PostUpdate = PostUpdateAura;
-			
-			--Debuff Icons
-			local Debuffs = CreateFrame("Frame", nil, self)
-			Debuffs:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT",-5,5)
-			Debuffs.size = Debuffsize;
-			Debuffs.initialAnchor = "BOTTOMRIGHT";
-			Debuffs["growth-x"] = "LEFT";
-			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Classic.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Classic.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Classic.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
-			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
-			Debuffs.PostUpdate = PostUpdateAura;
-			
-			--Bars
-			local AuraBars = CreateFrame("Frame", nil, self)
-			AuraBars:SetHeight(1)
-			AuraBars.auraBarTexture = Smoothv2
-			AuraBars.PostUpdate = PostUpdateAura
-			
-			if (unit == "player" or unit == "target") then
-				if DB.Styles.Classic.Frames[unit].Buffs.Mode == "bars" and DB.Styles.Classic.Frames[unit].Debuffs.Mode == "bars" then
-					--Set Bars to do all
-					AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-					AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 20, 5)
-					AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
-						if duration > 0 then
-							return true
-						end
-					end
-					self.AuraBars = AuraBars
-				else
-					if DB.Styles.Classic.Frames[unit].Buffs.Mode == "bars" then
-						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 20, 5)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-							if ((unitCaster == "player" and DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer) or (not DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer)) and not IsHarmfulSpell(name) then
-								return true
-							end
-						end
-						self.AuraBars = AuraBars
-					else
-						self.Buffs = Buffs
-					end
-					if DB.Styles.Classic.Frames[unit].Debuffs.Mode == "bars" then
-						AuraBars:SetPoint("BOTTOMRIGHT",self,"TOPRIGHT", 0, 5)
-						AuraBars:SetPoint("BOTTOMLEFT",self,"TOPLEFT", 60, 5)
-						AuraBars.filter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
-							if ((unitCaster == "player" and DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer) or (not DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer)) and IsHarmfulSpell(name) then
-								return true
-							end
-						end
-						self.AuraBars = AuraBars
-					else
-						self.Debuffs = Debuffs
-					end
-				end
-				
-				--Change options if needed
-				if DB.Styles.Classic.Frames[unit].Buffs.Mode == "bars" then
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled=true
-				end
-				if DB.Styles.Classic.Frames[unit].Debuffs.Mode == "bars" then
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled=true
-					spartan.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["showType"].disabled=true
-				end
-			else
-				self.Buffs = Buffs
-				self.Debuffs = Debuffs
-			end
-			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			self = PlayerFrames:Buffs(self,unit)
 		end
 	end
 	self.TextUpdate = PostUpdateText;
@@ -961,7 +789,7 @@ local CreatePetFrame = function(self,unit)
 			health.value:SetPoint("RIGHT",health,"RIGHT",-8,0);
 			health.value:SetJustifyH("RIGHT");
 			health.value:SetJustifyV("MIDDLE");
-			self:Tag(health.value, addon:TextFormat("health"))
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -1024,7 +852,7 @@ local CreatePetFrame = function(self,unit)
 			power.value:SetPoint("RIGHT",power,"RIGHT",-17,0);
 			power.value:SetJustifyH("RIGHT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("LEFT",power,"LEFT",4,0);
-			self:Tag(power.value, addon:TextFormat("mana"))
+			self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetWidth(40); power.ratio:SetHeight(11);
@@ -1201,7 +1029,7 @@ local CreateToTFrame = function(self,unit)
 				health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 				health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
 				
-				self:Tag(health.value, addon:TextFormat("health"))
+				self:Tag(health.value, PlayerFrames:TextFormat("health"))
 				
 				health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -1262,7 +1090,7 @@ local CreateToTFrame = function(self,unit)
 				power.value:SetWidth(110); power.value:SetHeight(11);
 				power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 				power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-				self:Tag(power.value, addon:TextFormat("mana"))
+				self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 				
 				power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				power.ratio:SetWidth(40); power.ratio:SetHeight(11);
@@ -1373,7 +1201,7 @@ local CreateToTFrame = function(self,unit)
 				health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 				health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
 				
-				self:Tag(health.value, addon:TextFormat("health"))
+				self:Tag(health.value, PlayerFrames:TextFormat("health"))
 				
 				health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.ratio:SetWidth(40); health.ratio:SetHeight(11);
@@ -1434,7 +1262,7 @@ local CreateToTFrame = function(self,unit)
 				power.value:SetSize(85, 11);
 				power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 				power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-				self:Tag(power.value, addon:TextFormat("mana"))
+				self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 				
 				power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				power.ratio:SetSize(40, 11);
@@ -1503,7 +1331,7 @@ local CreateToTFrame = function(self,unit)
 				health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 				health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
 				
-				self:Tag(health.value, addon:TextFormat("health"))
+				self:Tag(health.value, PlayerFrames:TextFormat("health"))
 				
 				health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.ratio:SetWidth(50); health.ratio:SetHeight(11);
@@ -1651,7 +1479,7 @@ local CreateFocusFrame = function(self,unit)
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			if unit == "focus" then health.value:SetPoint("RIGHT",health,"RIGHT",0,0) end
 			if unit == "focustarget" then health.value:SetPoint("LEFT",health,"LEFT",0,0) end
-			self:Tag(health.value, addon:TextFormat("health"))
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(40, 11);
@@ -1713,7 +1541,7 @@ local CreateFocusFrame = function(self,unit)
 			power.value:SetSize(85, 11);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("TOP",self.Health.value,"BOTTOM",-1,-6);
-			self:Tag(power.value, addon:TextFormat("mana"))
+			self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.value:SetSize(40, 11);
@@ -1853,7 +1681,7 @@ local CreateBossFrame = function(self,unit)
 			health.value:SetSize(97, 10);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("LEFT",health,"LEFT",4,0);
-			self:Tag(health.value, addon:TextFormat("health"))	
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))	
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(50, 10);
@@ -1907,7 +1735,7 @@ local CreateBossFrame = function(self,unit)
 			power.value:SetSize(70, 10);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
-			self:Tag(power.value, addon:TextFormat("mana"))
+			self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.ratio:SetSize(50, 10);
@@ -1970,12 +1798,12 @@ local CreateUnitFrame = function(self,unit)
 	if self.Buffs and self.Buffs.PostUpdate then self.Buffs:PostUpdate(unit,"Buffs"); end
 	if self.Debuffs and self.Debuffs.PostUpdate then self.Debuffs:PostUpdate(unit,"Debuffs"); end
 	
-	self = addon:MakeMovable(self,unit)
+	self = PlayerFrames:MakeMovable(self,unit)
 	
 	return self
 end
 
-function addon:UpdateAltBarPositions()
+function PlayerFrames:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
 	-- Druid EclipseBar
 	EclipseBarFrame:ClearAllPoints();
@@ -1986,7 +1814,7 @@ function addon:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		EclipseBarFrame:SetPoint("TOPRIGHT",addon.player,"TOPRIGHT",157,12);
+		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
 	end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
@@ -1998,7 +1826,7 @@ function addon:UpdateAltBarPositions()
 		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
-		-- MonkHarmonyBar:SetPoint("BOTTOMLEFT",addon.player,"BOTTOMLEFT",40,-40);
+		-- MonkHarmonyBar:SetPoint("BOTTOMLEFT",PlayerFrames.player,"BOTTOMLEFT",40,-40);
 	-- end
 	
 	--Paladin Holy Power
@@ -2010,7 +1838,7 @@ function addon:UpdateAltBarPositions()
 		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
-		-- PaladinPowerBarFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",60,12);
+		-- PaladinPowerBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",60,12);
 	-- end
 	
 	--Priest Power Frame
@@ -2022,7 +1850,7 @@ function addon:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		PriestBarFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",-4,-2);
+		PriestBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPLEFT",-4,-2);
 	end
 	
 	--Warlock Power Frame
@@ -2034,7 +1862,7 @@ function addon:UpdateAltBarPositions()
 		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
-		-- addon:WarlockPowerFrame_Relocate();
+		-- PlayerFrames:WarlockPowerFrame_Relocate();
 	-- end
 	
 	--Death Knight Runes
@@ -2046,7 +1874,7 @@ function addon:UpdateAltBarPositions()
 		DBMod.PlayerFrames.ClassBar.movement.xOffset,
 		DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
-		RuneFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,7);
+		RuneFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,7);
 	end
 			
 	-- relocate the AlternatePowerBar
@@ -2059,60 +1887,60 @@ function addon:UpdateAltBarPositions()
 			DBMod.PlayerFrames.AltManaBar.movement.xOffset,
 			DBMod.PlayerFrames.AltManaBar.movement.yOffset);
 		else
-			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
+			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,0);
 		end
 	end
 
 end
 
-function addon:ResetAltBarPositions()
+function PlayerFrames:ResetAltBarPositions()
 	DBMod.PlayerFrames.AltManaBar.movement.moved = false;
 	DBMod.PlayerFrames.ClassBar.movement.moved = false; 
-	addon:UpdateAltBarPositions();
+	PlayerFrames:UpdateAltBarPositions();
 end
 
-function addon:WarlockPowerFrame_Relocate() -- Sets the location of the warlock bars based on spec
+function PlayerFrames:WarlockPowerFrame_Relocate() -- Sets the location of the warlock bars based on spec
 	local spec = GetSpecialization();
 	if ( spec == SPEC_WARLOCK_AFFLICTION ) then
 		-- set up Affliction
 		WarlockPowerFrame:SetScale(.85);
-		WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",8,-2);
+		WarlockPowerFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPLEFT",8,-2);
 	elseif ( spec == SPEC_WARLOCK_DESTRUCTION ) then
 		-- set up Destruction
 		WarlockPowerFrame:SetScale(0.85);
-		WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"TOPLEFT",14,-2);
+		WarlockPowerFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPLEFT",14,-2);
 	elseif ( spec == SPEC_WARLOCK_DEMONOLOGY ) then
 		-- set up Demonic
 		WarlockPowerFrame:SetScale(1);
-		WarlockPowerFrame:SetPoint("TOPLEFT",addon.player,"TOPRIGHT",15,15);
+		WarlockPowerFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPRIGHT",15,15);
 	else
 		-- no spec
 	end
 end
 
-function addon:SetupExtras()
+function PlayerFrames:SetupExtras()
 
 do -- relocate the AlternatePowerBar
 	if classFileName == "MONK" then
 		--Align and shrink to fit under CHI, not movable
-		PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
+		PlayerFrameAlternateManaBar:SetParent(PlayerFrames.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
 		PlayerFrameAlternateManaBar:SetFrameLevel(6); PlayerFrameAlternateManaBar:SetScale(.7); PlayerFrameAlternateManaBar:ClearAllPoints();
 		hooksecurefunc(PlayerFrameAlternateManaBar,"SetPoint",function(_,_,parent)
-			if (parent ~= addon.player) then
+			if (parent ~= PlayerFrames.player) then
 				PlayerFrameAlternateManaBar:ClearAllPoints();
-				PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",-5,-17);
+				PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",-5,-17);
 			end
 		end);
-		PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",-5,-17);
+		PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",-5,-17);
 	else
 		--Make it look like a smaller, movable mana bar.
 		hooksecurefunc(PlayerFrameAlternateManaBar,"SetPoint",function(_,_,parent)
-			if (parent ~= addon.player) and (DBMod.PlayerFrames.AltManaBar.movement.moved == false) then
+			if (parent ~= PlayerFrames.player) and (DBMod.PlayerFrames.AltManaBar.movement.moved == false) then
 				PlayerFrameAlternateManaBar:ClearAllPoints();
-				PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",40,0);
+				PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,0);
 			end
 		end);
-		PlayerFrameAlternateManaBar:SetParent(addon.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
+		PlayerFrameAlternateManaBar:SetParent(PlayerFrames.player); AlternatePowerBar_OnLoad(PlayerFrameAlternateManaBar); PlayerFrameAlternateManaBar:SetFrameStrata("MEDIUM");
 		PlayerFrameAlternateManaBar:SetFrameLevel(4); PlayerFrameAlternateManaBar:SetScale(1); PlayerFrameAlternateManaBar:EnableMouse(enable);
 		PlayerFrameAlternateManaBar:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
@@ -2133,7 +1961,7 @@ do -- relocate the AlternatePowerBar
 	
 	-- Druid EclipseBar
 	-- if classname == "Druid" then
-		EclipseBarFrame:SetParent(addon.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
+		EclipseBarFrame:SetParent(PlayerFrames.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
 		EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
 		EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
@@ -2154,7 +1982,7 @@ do -- relocate the AlternatePowerBar
 	
 	-- PriestBarFrame
 	-- if classname == "Priest" then
-		PriestBarFrame:SetParent(addon.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
+		PriestBarFrame:SetParent(PlayerFrames.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
 		PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); PriestBarFrame:EnableMouse(enable);
 		PriestBarFrame:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
@@ -2175,7 +2003,7 @@ do -- relocate the AlternatePowerBar
 	
 	-- Rune Frame
 	-- if classname == "DeathKnight" then
-		RuneFrame:SetParent(addon.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
+		RuneFrame:SetParent(PlayerFrames.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
 		RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97 * DBMod.PlayerFrames.ClassBar.scale); RuneFrame:EnableMouse(enable);
 		RuneButtonIndividual1:EnableMouse(enable);
 		RuneFrame:SetScript("OnMouseDown",function(self,button)
@@ -2218,43 +2046,43 @@ do -- relocate the AlternatePowerBar
 			timer:Hide();
 		end
 		hooksecurefunc(TotemFrame,"SetPoint",function(_,_,parent)
-			if (parent ~= addon.player) then
+			if (parent ~= PlayerFrames.player) then
 				TotemFrame:ClearAllPoints();
 				if classFileName == "MONK" then
-					TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",100,8);
+					TotemFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",100,8);
 				elseif classFileName == "PALADIN" then
-					TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",15,8);
+					TotemFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",15,8);
 				else
-					TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
+					TotemFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",70,8);
 				end
 			end
 		end);
-		TotemFrame:SetParent(addon.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
+		TotemFrame:SetParent(PlayerFrames.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
 		TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7 * DBMod.PlayerFrames.ClassBar.scale); TotemFrame:ClearAllPoints();
-		TotemFrame:SetPoint("TOPLEFT",addon.player,"BOTTOMLEFT",70,8);
+		TotemFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",70,8);
 	-- end
 	
 	-- relocate the PlayerPowerBarAlt
 	hooksecurefunc(PlayerPowerBarAlt,"SetPoint",function(_,_,parent)
-		if (parent ~= addon.player) then
+		if (parent ~= PlayerFrames.player) then
 			PlayerPowerBarAlt:ClearAllPoints();
-			PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
+			PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",PlayerFrames.player,"TOPLEFT",10,40);
 		end
 	end);
-	PlayerPowerBarAlt:SetParent(addon.player);
+	PlayerPowerBarAlt:SetParent(PlayerFrames.player);
 	PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
 	PlayerPowerBarAlt:SetFrameLevel(4);
 	PlayerPowerBarAlt:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale);
 	PlayerPowerBarAlt:ClearAllPoints();
-	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",addon.player,"TOPLEFT",10,40);
+	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",PlayerFrames.player,"TOPLEFT",10,40);
 	
-	addon:UpdateAltBarPositions();
+	PlayerFrames:UpdateAltBarPositions();
 	
 	--Watch for Spec Changes
 	local SpecWatcher = CreateFrame("Frame");
 	SpecWatcher:RegisterEvent("PLAYER_TALENT_UPDATE");
 	SpecWatcher:SetScript("OnEvent",function()
-		addon:UpdateAltBarPositions();
+		PlayerFrames:UpdateAltBarPositions();
 	end);
 end 
 
@@ -2328,7 +2156,7 @@ end
 		GameTooltip:Hide();
 	end
 		
-	LFDCooldown = CreateFrame("Frame",nil,addon.player)
+	LFDCooldown = CreateFrame("Frame",nil,PlayerFrames.player)
 	LFDCooldown:SetFrameStrata("BACKGROUND")
 	LFDCooldown:SetFrameLevel(10);
 	LFDCooldown:SetWidth(38) -- Set these to whatever height/width is needed 
@@ -2352,7 +2180,7 @@ end
 	LFDCooldown.text:SetText""
 	
 --	LFDCooldown.myExpirationTime = "";
-	LFDCooldown:SetPoint("CENTER",addon.player,"CENTER",85,-30)
+	LFDCooldown:SetPoint("CENTER",PlayerFrames.player,"CENTER",85,-30)
 	LFDCooldown:RegisterEvent("PLAYER_ENTERING_WORLD");
 	LFDCooldown:RegisterEvent("UNIT_AURA");
 	LFDCooldown:EnableMouse()
@@ -2361,7 +2189,7 @@ end
 	LFDCooldown:SetScript("OnLeave", OnLeave)
 --	LFDCooldown.text:SetText"|CFFEE0000X|r" -- deserter
 --	LFDCooldown:Show() -- on cooldown
---	addon.player.LFDRole:SetTexCoord(20/64, 39/64, 22/64, 41/64) -- set dps lfdrole icon
+--	PlayerFrames.player.LFDRole:SetTexCoord(20/64, 39/64, 22/64, 41/64) -- set dps lfdrole icon
 end
 end
 
