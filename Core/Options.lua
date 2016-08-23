@@ -56,7 +56,7 @@ function module:OnInitialize()
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-						spartan:GetModule("Style_Fel"):SetupProfile();
+						spartan:GetModule("Artwork_Core"):SetupProfile();
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -429,6 +429,7 @@ function module:OnInitialize()
 	}
 	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
+			ResetProfileDB			= {name = L["Reset profile"], type = "execute", order=0, func = function() SUI.DB:ResetProfile(); ReloadUI(); end},
 			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() SUI.DB:ResetDB(); ReloadUI(); end},
 			ResetActionBars	= spartan.opt.args["General"].args["Bartender"].args["ResetActionBars"],
 			ResetMovedFrames	= {name = L["ResetMovableFrames"], type = "execute", order=3, func = function()
@@ -453,10 +454,18 @@ function module:OnInitialize()
 			bugsandfeatures2 = {name="     -|cff6666FF http://bugs.spartanui.net/",type="description",order = 201,fontSize="medium"},
 			
 			
-			line3 = {name="",type="header",order = 900},
-			description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
-			description = {name=L["HelpStringDesc2"],type="description",order = 902,fontSize="small"},
-			dataDump = {name=L["Export"],type="input",multiline=15,width="full",order=993,get = function(info) return module:enc(module:ExportData()) end},
+			line3 = {name="",type="header",order = 500},
+			FAQ = {name="F.A.Q",type="description",order = 501,fontSize="large"},
+			FAQQ1 = {name="How do I move _________",type="description",order = 510,fontSize="medium"},
+			FAQQ1A1 = {name="- Unit frames can be moved by holding alt down and draging.",type="description",order = 511,fontSize="small"},
+			FAQQ1A2 = {name="- If the skin allows it the minimap can be moved by holding alt and dragging.",type="description",order = 512,fontSize="small"},
+			
+			FAQQ2 = {name="Actionbars are appearing in the wrong place",type="description",order = 520,fontSize="medium"},
+			FAQQ2A1 = {name="- Most issues can be fixed by reseting the action bars above.",type="description",order = 521,fontSize="small"},
+			
+			-- description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
+			-- description = {name=L["HelpStringDesc2"],type="description",order = 902,fontSize="small"},
+			-- dataDump = {name=L["Export"],type="input",multiline=15,width="full",order=993,get = function(info) return module:enc(module:ExportData()) end},
 			}
 		}
 	

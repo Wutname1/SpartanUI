@@ -19,23 +19,23 @@ local ObjTrackerUpdate = function()
 
 	--Figure out if we need to hide objectives
 	for k,v in ipairs(RuleList) do
-		if DBMod.Objectives[v].Status ~= "Disabled" then
+		if SUI.DBMod.Objectives[v].Status ~= "Disabled" then
 			local CombatRule = false
-			if InCombatLockdown() and DBMod.Objectives[v].Combat then
+			if InCombatLockdown() and SUI.DBMod.Objectives[v].Combat then
 				CombatRule = true
-			elseif not InCombatLockdown() and not DBMod.Objectives[v].Combat then
+			elseif not InCombatLockdown() and not SUI.DBMod.Objectives[v].Combat then
 				CombatRule = true
 			end
 			
-			if DBMod.Objectives[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
+			if SUI.DBMod.Objectives[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
 				FadeOut = true
-			elseif DBMod.Objectives[v].Status == "Raid" and IsInRaid() and CombatRule then
+			elseif SUI.DBMod.Objectives[v].Status == "Raid" and IsInRaid() and CombatRule then
 				FadeOut = true
-			elseif DBMod.Objectives[v].Status == "Boss" and event == "ENCOUNTER_START" then
+			elseif SUI.DBMod.Objectives[v].Status == "Boss" and event == "ENCOUNTER_START" then
 				FadeOut = true
-			elseif DBMod.Objectives[v].Status == "Instance" and IsInInstance() then
+			elseif SUI.DBMod.Objectives[v].Status == "Instance" and IsInInstance() then
 				FadeOut = true
-			elseif DBMod.Objectives[v].Status == "All" and CombatRule then
+			elseif SUI.DBMod.Objectives[v].Status == "All" and CombatRule then
 				FadeOut = true
 			else
 				FadeIn = true
@@ -43,7 +43,12 @@ local ObjTrackerUpdate = function()
 		end
 	end
 	
-	if not DB.EnabledComponents.Objectives then
+	--Scenario Detection
+	local ScenarioActive = false
+	if ScenarioBlocksFrame:IsVisible() then print("ScenarioActive") ScenarioActive = true end
+	
+	-- Always Shown logic
+	if (not DB.EnabledComponents.Objectives) or (SUI.DBMod.Objectives.AlwaysShowScenario and ScenarioActive) then
 		FadeIn = true
 		FadeOut = false
 	end
@@ -59,29 +64,33 @@ local ObjTrackerUpdate = function()
 end
 
 function module:OnInitialize()
-	if DBMod.Objectives == nil then
-		DBMod.Objectives = {
-			SetupDone = false,
-			Rule1 = {
-				Status = "Raid",
-				Combat = false
-			},
-			Rule2 = {
-				Status = "Disabled",
-				Combat = false
-			},
-			Rule3 = {
-				Status = "Disabled",
-				Combat = false
-			}
+	local Defaults = {
+		SetupDone = false,
+		AlwaysShowScenario = true,
+		Rule1 = {
+			Status = "Raid",
+			Combat = false
+		},
+		Rule2 = {
+			Status = "Disabled",
+			Combat = false
+		},
+		Rule3 = {
+			Status = "Disabled",
+			Combat = false
 		}
+	}
+	if not SUI.DBMod.Objectives then
+		SUI.DBMod.Objectives = Defaults
+	else
+		SUI.DBMod.Objectives = spartan:MergeData(SUI.DBMod.Objectives, Defaults, false)
 	end
-	if DBMod.Artwork.SetupDone then DBMod.Objectives.SetupDone = true end
+	if SUI.DBMod.Artwork.SetupDone then SUI.DBMod.Objectives.SetupDone = true end
 end
 
 function module:OnEnable()
-	if not DBMod.Objectives.SetupDone then module:FirstTimeSetup() end
-	-- if not DB.EnabledComponents.Objectives then return end
+	if not SUI.DBMod.Objectives.SetupDone then module:FirstTimeSetup() end
+	
 	-- Add Fade in and out
 	ObjectiveTrackerFrame.BlocksFrame.FadeIn = ObjectiveTrackerFrame.BlocksFrame:CreateAnimationGroup()
 	local FadeIn = ObjectiveTrackerFrame.BlocksFrame.FadeIn:CreateAnimation("Alpha")
@@ -117,25 +126,34 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent("RAID_INSTANCE_WELCOME")
 	ObjectiveTrackerWatcher:RegisterEvent("ENCOUNTER_START")
 	ObjectiveTrackerWatcher:RegisterEvent("ENCOUNTER_END")
+	--Scenarios
+	ObjectiveTrackerWatcher:RegisterEvent("SCENARIO_COMPLETED")
+	ObjectiveTrackerWatcher:RegisterEvent("SCENARIO_CRITERIA_UPDATE")
+	ObjectiveTrackerWatcher:RegisterEvent("SCENARIO_UPDATE")
 	
 	module:BuildOptions()
 end
 
 function module:BuildOptions()
 	spartan.opt.args["ModSetting"].args["Objectives"] = {type="group",name=L["Objectives"],
-		args = {}
+		args = {
+			AlwaysShowScenario = {name=L["Always show in a scenario"],type="toggle",order=0,width="full",
+				get = function(info) return SUI.DBMod.Objectives.AlwaysShowScenario end,
+				set = function(info,val) SUI.DBMod.Objectives.AlwaysShowScenario = val; ObjTrackerUpdate() end
+			}
+		}
 	}
 	for k,v in ipairs(RuleList) do
 		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Title"] = {name=v,type="header",order=k,width="full"}
 		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Status"] = {name ="When to hide", type="select",order=k + .2,
 			values = Conditions,
-			get = function(info) return DBMod.Objectives[v].Status; end,
-			set = function(info,val) DBMod.Objectives[v].Status = val; ObjTrackerUpdate() end
+			get = function(info) return SUI.DBMod.Objectives[v].Status; end,
+			set = function(info,val) SUI.DBMod.Objectives[v].Status = val; ObjTrackerUpdate() end
 		}
 		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Text"] = {name="",type="description",order=k + .3,width="half"}
 		spartan.opt.args["ModSetting"].args["Objectives"].args[v .. "Combat"] = {name=L["Only if in combat"],type="toggle",order=k + .4,
-			get = function(info) return DBMod.Objectives[v].Combat end,
-			set = function(info,val) DBMod.Objectives[v].Combat = val; ObjTrackerUpdate() end
+			get = function(info) return SUI.DBMod.Objectives[v].Combat end,
+			set = function(info,val) SUI.DBMod.Objectives[v].Combat = val; ObjTrackerUpdate() end
 		}
 	end
 end
@@ -156,15 +174,34 @@ function module:FirstTimeSetup()
 			SUI_Win.Objectives:SetParent(SUI_Win.content)
 			SUI_Win.Objectives:SetAllPoints(SUI_Win.content)
 			
+			--scenario
+			local line = gui:Create("Heading")
+			line:SetText(L["Frames/Global"])
+			line:SetPoint("TOP", SUI_Win.Objectives, "TOP", 0, 0)
+			line:SetPoint("LEFT", SUI_Win.Objectives, "LEFT")
+			line:SetPoint("RIGHT", SUI_Win.Objectives, "RIGHT")
+			line.frame:SetParent(SUI_Win.Objectives)
+			line.frame:Show()
+			SUI_Win.Objectives.GlobalLine = line
+			
+			local AlwaysShowScenario = gui:Create("CheckBox")
+			AlwaysShowScenario:SetLabel(L["Always show in a scenario"])
+			AlwaysShowScenario:SetPoint("TOP", SUI_Win.Objectives, "TOP", 0, -15)
+			AlwaysShowScenario.frame:SetParent(SUI_Win.Objectives)
+			AlwaysShowScenario.frame:Show()
+			AlwaysShowScenario:SetValue(true)
+			SUI_Win.Objectives.AlwaysShowScenario = AlwaysShowScenario
+			
+		
 			for k,v in ipairs(RuleList) do
 				SUI_Win.Objectives[k] = {}
 				--Rule 1
 				local line = gui:Create("Heading")
 				line:SetText(L["Rule"]..k)
 				if k == 1 then
-					line:SetPoint("TOP", SUI_Win.Objectives, "TOP", 0, -10)
+					line:SetPoint("TOP", SUI_Win.Objectives.AlwaysShowScenario.frame, "TOP", 0, -30)
 				else
-					line:SetPoint("TOP", SUI_Win.Objectives[(k-1)].InCombat, "BOTTOM", 0, -20)
+					line:SetPoint("TOP", SUI_Win.Objectives[(k-1)].InCombat, "BOTTOM", 0, -5)
 				end
 				line:SetPoint("LEFT", SUI_Win.Objectives, "LEFT")
 				line:SetPoint("RIGHT", SUI_Win.Objectives, "RIGHT")
@@ -177,7 +214,7 @@ function module:FirstTimeSetup()
 				control:SetLabel("When to hide")
 				control:SetList(Conditions)
 				control:SetValue("Disabled")
-				control:SetPoint("TOP", SUI_Win.Objectives[k].line.frame, "BOTTOM", -55, -10)
+				control:SetPoint("TOP", SUI_Win.Objectives[k].line.frame, "BOTTOM", -55, 0)
 				control.frame:SetParent(SUI_Win.Objectives)
 				control.frame:Show()
 				SUI_Win.Objectives[k].Condition = control
@@ -197,10 +234,11 @@ function module:FirstTimeSetup()
 			end
 		end,
 		Next = function()
-			DBMod.Objectives.SetupDone = true
+			SUI.DBMod.Objectives.SetupDone = true
+			SUI.DBMod.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 			
 			for k,v in ipairs(RuleList) do
-				DBMod.Objectives[v] = {
+				SUI.DBMod.Objectives[v] = {
 					Status = SUI_Win.Objectives[k].Condition:GetValue(),
 					Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
 				}

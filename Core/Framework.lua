@@ -524,7 +524,7 @@ function SUI:BT4ProfileAttach(msg)
 end
 
 function SUI:BT4RefreshConfig()
-	if SUI.DBG.BartenderChangesActive then return end
+	if SUI.DBG.BartenderChangesActive or DBMod.Artwork.FirstLoad then return end
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
 	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
