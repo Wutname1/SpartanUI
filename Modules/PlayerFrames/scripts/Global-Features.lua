@@ -145,6 +145,15 @@ function PlayerFrames:Buffs(self,unit)
 		--Debuff Icons
 		local Debuffs = CreateFrame("Frame", nil, self)
 		-- Setup icons if needed
+		local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+			if((icons.onlyShowPlayer and icon.isPlayer) or (not icons.onlyShowPlayer and name)) then
+				if caster == "player" and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
+					return true
+				elseif caster ~= "player" then
+					return true
+				end
+			end
+		end
 		if BuffsMode ~= "bars" and BuffsMode ~= "disabled" then
 			Buffs:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", 0, 0)
 			Buffs.size = Buffsize;
@@ -231,16 +240,6 @@ function PlayerFrames:Buffs(self,unit)
 			AuraBars.ShowAll = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 3)
-		end
-		
-		local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-			if((icons.onlyShowPlayer and icon.isPlayer) or (not icons.onlyShowPlayer and name)) then
-				if caster == "player" and not (duration > 0 and duration < 60) then --Do not show DOTS & HOTS
-					return true
-				elseif caster ~= "player" then
-					return true
-				end
-			end
 		end
 		
 		--Buff Filter for bars

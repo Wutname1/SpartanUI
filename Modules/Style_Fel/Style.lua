@@ -18,6 +18,7 @@ end
 function module:Init()
 	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
 	module:SetupMenus();
+	Artwork_Core:StatusBarOptions()
 	module:InitArtwork();
 	InitRan = true;
 end

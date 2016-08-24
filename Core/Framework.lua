@@ -58,28 +58,28 @@ local DBdefault = {
 				},
 				Frames = {
 					player = {
-						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
+						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="both"},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="both"}
 					},
 					target = {
-						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
+						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="both"},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="bars"}
 					},
 					targettarget = {
-						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
+						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="disabled"},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="icons"}
 					},
 					pet = {
-						Buffs=	{Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false},
-						Debuffs={Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false}
+						Buffs=	{Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false,Mode="icons"},
+						Debuffs={Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false,Mode="icons"}
 					},
 					focus = {
-						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
+						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="icons"},
+						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="icons"}
 					},
 					focustarget = {
-						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false},
-						Debuffs={Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true}
+						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="disabled"},
+						Debuffs={Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="disabled"}
 					}
 				},
 				Minimap = {
@@ -536,7 +536,7 @@ function SUI:BT4RefreshConfig()
 			-- Catch if Movedbars is not initalized
 			if DB.Styles[DBMod.Artwork.Style].MovedBars then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 			--Profile is for this style, prompt to ReloadUI
-			SUI:reloadui()
+			SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
 		else
 			--Ask if we should change to the correct profile or if we should change the profile to be for this style
 			SUI:BT4ProfileAttach("This bartender profile is currently attached to the style '"..SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style.."' you are currently using "..SUI.DBMod.Artwork.Style.." would you like to reassign the profile to this art skin? ")

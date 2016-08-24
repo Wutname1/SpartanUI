@@ -34,14 +34,15 @@ function module:AddPage(PageData)
 	end
 end
 
-function module:DisplayPage(CurData)
+function module:DisplayPage(CustomData)
 	if Win == nil then module:CreateInstallWindow() end
 	if (PageList[Page_Cur] == nil and not CurData) or (CurData and Win:IsVisible()) then return end
 	
-	if not CurData then
+	if not CustomData then
 		CurData = PageList[Page_Cur]
 	else
-		PageList[Page_Cur] = CurData
+		PageList[Page_Cur] = CustomData
+		CurData = CustomData
 	end
 	
 	Win.Status:SetText(Page_Cur.."  /  ".. PageCnt)

@@ -199,6 +199,27 @@ function module:SetXPColors()
 	if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 end
 
+function module:SetRepColors()
+	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
+	if DB.RepBar.AutoDefined == true then
+		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
+		Fel_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
+		Fel_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
+	else
+        local r,b,g,a
+
+		r = DB.RepBar.GainedRed
+		b = DB.RepBar.GainedBlue
+		g = DB.RepBar.GainedGreen
+		a = DB.RepBar.GainedBrightness
+		Fel_ReputationBarFill:SetVertexColor	(r, g, b, a);
+		Fel_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
+	end
+
+	-- Set Text if needed
+	if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+end
+
 function module:StatusBars()
 	do -- create the tooltip
 		tooltip = CreateFrame("Frame","Fel_StatusBarTooltip",SpartanUI,"Fel_StatusBars_TooltipTemplate");
@@ -214,7 +235,7 @@ function module:StatusBars()
 		xpframe:SetPoint("BOTTOMRIGHT",SpartanUI_Fel,"BOTTOM",-100,0);
 		
 		xpframe:SetScript("OnEvent",function()
-			if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end
+			if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); return end
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 			if now == 0 then
 				Fel_ExperienceBarFill:SetWidth(0.1);
@@ -270,70 +291,63 @@ function module:StatusBars()
 		xpframe:SetFrameLevel(2);
 		module:SetXPColors();
 	end
-	do -- Reputation bar
-		-- local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
-		-- local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
-		-- local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
-
-		repframe = CreateFrame("Frame","Fel_RepFrame",SpartanUI,"Fel_StatusBar_Template");
+	do -- reputation bar
+		repframe = CreateFrame("Frame","Fel_ReputationBar",SpartanUI_Fel,"Fel_StatusBar_Template");
 		repframe:SetPoint("BOTTOMLEFT",SpartanUI_Fel,"BOTTOM",100,0);
+		-- Fel_ReputationBarPlate:SetTexCoord(0.035,0.83,0,1);
 		
-		-- repframe:SetScript("OnEvent",function()
-			-- if DB.XPBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.XPBar.enabled then repframe:Hide(); end
-			-- local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
-			-- if now == 0 then
-				-- Fel_RepFrameFill:SetWidth(0.1);
-				-- Fel_RepFrameFillGlow:SetWidth(.1);
-				-- Fel_RepFrameLead:SetWidth(0.1);
-			-- else
-				-- Fel_RepFrameFill:SetWidth((now/goal)*400);
-				-- rested = (rested/goal)*400;
-				-- if (rested+Fel_RepFrameFill:GetWidth()) > 399 then rested = 400-Fel_RepFrameFill:GetWidth(); end
-				-- if rested == 0 then rested = .001 end
-				-- Fel_RepFrameLead:SetWidth(rested);
-			-- end
-			-- if DB.XPBar.text then
-				-- repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
-			-- else
-				-- repframe.Text:SetText("")
-			-- end
-			-- module:SetXPColors()
-		-- end);
-		-- local showXPTooltip = function()
-			-- tooltip:ClearAllPoints();
-			-- tooltip:SetPoint("BOTTOM",repframe,"TOP",6,-1);
-			-- local a = format("Level %s ",UnitLevel("player"))
-			-- local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
-			-- Fel_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
-			-- local rested,text = GetXPExhaustion() or 0;
-			-- if (rested > 0) then
-				-- text = format(xptip1,format(xprest,(rested/UnitXPMax("player"))*100),200);
-				-- Fel_StatusBarTooltipText:SetText(text); -- Rested (15%) - 200% of normal experience gained from monsters.
-			-- else
-				-- Fel_StatusBarTooltipText:SetText(format(xptip1,EXHAUST_TOOLTIP2,100)); -- You should rest at an Inn. 100% of normal experience gained from monsters.
-			-- end
-			-- tooltip:Show();
-		-- end
+		repframe:SetScript("OnEvent",function()
+			if DB.RepBar.enabled and not repframe:IsVisible() then
+				repframe:Show();
+			elseif not DB.RepBar.enabled then
+				repframe:Hide();
+				return
+			end
+			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
+			if name then ratio = (current-low)/(high-low); end
+			Fel_StatusBarTooltipHeader:SetText(name);
+			if ratio == 0 then
+				Fel_ReputationBarFill:SetWidth(0.1);
+			else
+				Fel_ReputationBarFill:SetWidth(ratio*400);
+				module:SetRepColors()
+			end
+			
+			if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+		end);
+		local showRepTooltip = function()
+			tooltip:ClearAllPoints();
+			tooltip:SetPoint("BOTTOM",Fel_ReputationBar,"TOP",-2,-1);
+			local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
+			if name then
+				text = GetFactionDetails(name);
+				ratio = (current-low)/(high-low);
+				Fel_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+				Fel_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
+			else
+				Fel_StatusBarTooltipHeader:SetText(REPUTATION);
+				Fel_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
+			end
+			tooltip:Show();
+		end
 		
 		repframe.Text = repframe:CreateFontString();
-		spartan:FormatFont(repframe.Text, 8, "Core")
+		spartan:FormatFont(repframe.Text, 10, "Core")
 		repframe.Text:SetDrawLayer("OVERLAY");
-		repframe.Text:SetSize(repframe:GetWidth(), repframe:GetHeight());
-		repframe.Text:SetJustifyH("MIDDLE");
-		repframe.Text:SetJustifyV("MIDDLE");
-		repframe.Text:SetPoint("TOP",repframe,"TOP",0,1);
+		repframe.Text:SetSize(250, 30);
+		repframe.Text:SetJustifyH("MIDDLE"); repframe.Text:SetJustifyV("MIDDLE");
+		repframe.Text:SetPoint("TOP",repframe,"TOP",4,0);
 		
-		-- repframe:SetScript("OnEnter",function() if DB.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
-		-- repframe:SetScript("OnMouseDown",function() if DB.XPBar.ToolTip == "click" then showXPTooltip(); end end);
-		-- repframe:SetScript("OnLeave",function() tooltip:Hide(); end);
+		repframe:SetScript("OnEnter",function() if DB.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
+		repframe:SetScript("OnMouseDown",function() if DB.RepBar.ToolTip == "click" then showRepTooltip(); end end);
+		repframe:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
-		-- repframe:RegisterEvent("PLAYER_ENTERING_WORLD");
-		-- repframe:RegisterEvent("PLAYER_XP_UPDATE");
-		-- repframe:RegisterEvent("PLAYER_LEVEL_UP");
+		repframe:RegisterEvent("PLAYER_ENTERING_WORLD");
+		repframe:RegisterEvent("UPDATE_FACTION");
 		
 		repframe:SetFrameStrata("BACKGROUND");
 		repframe:SetFrameLevel(2);
-		repframe:Hide()
+		module:SetRepColors();
 	end
 end
 
