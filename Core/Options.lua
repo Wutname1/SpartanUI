@@ -559,7 +559,18 @@ function module:OnInitialize()
 			spartan.opt.args["ModSetting"].args["Enabled"].args["Components"].args[RealName] = {
 				name = string.sub(name, 11),type = "toggle",
 				get = function(info) return DB.EnabledComponents[RealName] end,
-				set = function(info,val) DB.EnabledComponents[RealName] = val; spartan:reloadui(); end,
+				set = function(info,val)
+					DB.EnabledComponents[RealName] = val;
+					if submodule.Disable then
+						if val then
+							submodule:Enable()
+						else
+							submodule:Disable()
+						end
+					else
+						spartan:reloadui();
+					end
+				end,
 			}
 			
 		end

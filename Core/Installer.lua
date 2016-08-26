@@ -36,11 +36,13 @@ end
 
 function module:DisplayPage(CustomData)
 	if Win == nil then module:CreateInstallWindow() end
-	if (PageList[Page_Cur] == nil and not CurData) or (CurData and Win:IsVisible()) then return end
+	if (PageList[Page_Cur] == nil and not CustomData) or (CurData and Win:IsVisible()) then return end
 	
 	if not CustomData then
 		CurData = PageList[Page_Cur]
 	else
+		Page_Cur = 1
+		PageCnt = 1
 		PageList[Page_Cur] = CustomData
 		CurData = CustomData
 	end
@@ -213,7 +215,6 @@ function module:CreateInstallWindow()
 	Win.Skip.texture:SetTexture([[Interface\AddOns\SpartanUI\media\Smoothv2.tga]])
 	Win.Skip.texture:SetVertexColor(.75, 0, 0)
 	
-	-- Win.Skip.parent = frame
 	Win.Skip:SetScript("OnClick", function(this)
 		if PageList[Page_Cur]~= nil and PageList[Page_Cur].Skip ~= nil then PageList[Page_Cur].Skip() end
 		

@@ -274,10 +274,15 @@ end
 
 function module:OnEnable()
 	if DB.AutoSell.FirstLaunch then module:FirstTime() end
-	-- if not DB.EnabledComponents.AutoSell then return end
-	
-	frame:RegisterEvent("MERCHANT_SHOW");
-	frame:RegisterEvent("MERCHANT_CLOSED");
+	module:BuildOptions()
+	if DB.EnabledComponents.AutoSell then
+		module:Enable()
+	else
+		return
+	end
+end
+
+function module:Enable()
 	local function MerchantEventHandler(self, event, ...)
 		if not DB.EnabledComponents.AutoSell then return end
 		if event == "MERCHANT_SHOW" then
@@ -291,7 +296,14 @@ function module:OnEnable()
 		end
 	end
 	frame:SetScript("OnEvent", MerchantEventHandler);
-	module:BuildOptions()
+	frame:RegisterEvent("MERCHANT_SHOW");
+	frame:RegisterEvent("MERCHANT_CLOSED");
+end
+
+function module:Disable()
+	spartan:Print("Autosell disabled")
+	frame:UnregisterEvent("MERCHANT_SHOW");
+	frame:UnregisterEvent("MERCHANT_CLOSED");
 end
 
 function module:BuildOptions()

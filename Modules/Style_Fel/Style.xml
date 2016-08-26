@@ -48,17 +48,17 @@
 	
 	<!-- Fel_StatusBar_Template -->
 	<Frame name="Fel_StatusBar_Template" frameStrata="BACKGROUND" enableMouse="true" virtual="true">
-		<Size><AbsDimension x="400" y="20" /></Size>
+		<Size><AbsDimension x="370" y="20" /></Size>
 		<Layers>
 			<Layer level="OVERLAY">
 				<Texture name="$parentPlate" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-plate-exp">
-					<Size><AbsDimension x="400" y="20" /></Size>
-					<Anchors><Anchor point="RIGHT"/></Anchors>
+					<Anchors><Anchor point="LEFT"/><Anchor point="RIGHT"/></Anchors>
+					<TexCoords left="0.150390625" right="1" top="0" bottom="1" />
 				</Texture>
 			</Layer>
 			<Layer level="BORDER">
 				<Texture name="$parentFill" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow">
-					<Size><AbsDimension x="400" y="20" /></Size>
+					<Size><AbsDimension x=".1" y="20" /></Size>
 					<Anchors><Anchor point="RIGHT" /></Anchors>
 				</Texture>
 				<Texture name="$parentLead" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow">
@@ -69,12 +69,14 @@
 			</Layer>
 			<Layer level="ARTWORK">
 				<Texture name="$parentFillGlow" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow" alphaMode="ADD">
+					<Size><AbsDimension x=".1" y="20" /></Size>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentFill" relativePoint="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT" relativeTo="$parentFill" relativePoint="BOTTOMRIGHT"/>
 					</Anchors>
 				</Texture>
 				<Texture name="$parentLeadGlow" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow" alphaMode="ADD">
+					<Size><AbsDimension x=".1" y="20" /></Size>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentLead" relativePoint="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT" relativeTo="$parentLead" relativePoint="BOTTOMRIGHT"/>
@@ -84,9 +86,17 @@
 			</Layer>
 			<Layer level="BACKGROUND">
 				<Texture name="$parentPlate" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-plate-exp">
-					<Size><AbsDimension x="400" y="20" /></Size>
-					<Anchors><Anchor point="LEFT"/></Anchors>
+					<Anchors><Anchor point="LEFT"/><Anchor point="RIGHT"/></Anchors>
+					<TexCoords left="0.150390625" right="1" top="0" bottom="1" />
 				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" inherits="SUI_FontOutline8" justifyH="CENTER">
+					<Size><AbsDimension x="300" y="15" /></Size>
+					<Anchors>
+						<Anchor point="TOP"><Offset><AbsDimension x="0" y="-2"/></Offset></Anchor>
+					</Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
 	</Frame>
@@ -139,6 +149,17 @@
 			<Frame name="Fel_StanceBar" inherits="Fel_BarTemplate1">
 				<Anchors>
 					<Anchor point="BOTTOM" relativeTo="Fel_Bar1" relativePoint="TOP"><Offset><AbsDimension x="0" y="10" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<!-- Status Bars -->
+			<Frame name="Fel_ExperienceBar" inherits="Fel_StatusBar_Template">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-110" y="0" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="Fel_ReputationBar" inherits="Fel_StatusBar_Template">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="110" y="0" /></Offset></Anchor>
 				</Anchors>
 			</Frame>
 		</Frames>

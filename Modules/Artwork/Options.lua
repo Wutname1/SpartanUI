@@ -135,6 +135,7 @@ function Artwork_Core:SetupOptions()
 end
 
 function Artwork_Core:StatusBarOptions()
+	local module = spartan:GetModule("Style_"..DBMod.Artwork.Style)
 	spartan.opt.args["Artwork"].args["XPBar"] = {
 		name = L["BarXP"],
 		desc = L["BarXPDesc"],
@@ -221,7 +222,11 @@ function Artwork_Core:StatusBarOptions()
 				min=0,max=100,step=1,
 				get = function(info) return (DB.XPBar.RestedGreen*100); end,
 				set = function(info,val)
-					if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedGreen = (val/100); module:SetXPColors();
+					if (DB.XPBar.RestedColor ~= "Custom") then
+						DB.XPBar.RestedColor = "Custom";
+					end
+					DB.XPBar.RestedGreen = (val/100);
+					module:SetXPColors();
 				end
 			},
 			RestedBlue = {name=L["Blue"],type="range",order=14,
