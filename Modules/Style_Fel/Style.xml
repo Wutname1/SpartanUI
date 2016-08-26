@@ -91,10 +91,9 @@
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
-				<FontString name="$parentText" inherits="SUI_FontOutline8" justifyH="CENTER">
-					<Size><AbsDimension x="300" y="15" /></Size>
-					<Anchors>
-						<Anchor point="TOP"><Offset><AbsDimension x="0" y="-2"/></Offset></Anchor>
+				<FontString name="$parentText" inherits="SUI_FontOutline10" justifyH="CENTER">
+					<Size><AbsDimension x="300" y="26" /></Size>
+					<Anchors><Anchor point="TOP"/></Anchors>
 					</Anchors>
 				</FontString>
 			</Layer>
@@ -161,6 +160,17 @@
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="110" y="0" /></Offset></Anchor>
 				</Anchors>
+			</Frame>
+			<Frame name="Fel_ArtifactBar" inherits="Fel_StatusBar_Template">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="110" y="0" /></Offset></Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						local name = self:GetName();
+						_G[name.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
+					</OnLoad>
+				</Scripts>
 			</Frame>
 		</Frames>
 	</Frame>

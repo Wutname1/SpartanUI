@@ -5,6 +5,7 @@ local module = spartan:GetModule("Style_Fel");
 ----------------------------------------------------------------------------------------------------
 local CurScale
 local petbattle = CreateFrame("Frame")
+local apframe
 local xpframe
 local rframe
 local FACTION_BAR_COLORS = {
@@ -237,6 +238,20 @@ function module:SetRepColors()
 	end
 end
 
+function module:UpdateAPBar()
+	-- Set Text if needed
+	if DB.APBar.text then
+		local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+		local ratio = (xp/xpForNextPoint);
+		Fel_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+	else
+		Fel_ArtifactBarText:SetText("")
+	end
+	-- Update Visibility
+	module:UpdateStatusBars()
+end
+
 function module:StatusBars()
 	do -- create the tooltip
 		tooltip = CreateFrame("Frame","Fel_StatusBarTooltip",SpartanUI,"Fel_StatusBars_TooltipTemplate");
@@ -343,6 +358,44 @@ function module:StatusBars()
 		
 		module:SetRepColors();
 	end
+	do -- Artifact Power bar
+		Fel_ArtifactBar:SetScript("OnEvent",function()
+			--Clear Text
+			Fel_ArtifactBarText:SetText("")
+			--Update if needed
+			if HasArtifactEquipped() then
+				local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+				-- local currentArtifactPurchasableTraits = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, xp);
+				local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+				local ratio = (xp/xpForNextPoint);
+				
+				if ratio == 0 then
+					Fel_ArtifactBarFill:SetWidth(0.1);
+				else
+					if (ratio*Fel_ArtifactBar:GetWidth()) > Fel_ArtifactBar:GetWidth() then
+						Fel_ArtifactBarFill:SetWidth(Fel_ArtifactBar:GetWidth())
+					else
+						Fel_ArtifactBarFill:SetWidth(ratio*Fel_ArtifactBar:GetWidth());
+					end
+				end
+				
+				if DB.APBar.text then
+					Fel_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+				end
+			end
+		end);
+		
+		Fel_ArtifactBarFill:SetVertexColor(1,0.8,0,.7)
+		Fel_ArtifactBar:RegisterEvent("PLAYER_ENTERING_WORLD");
+		Fel_ArtifactBar:RegisterEvent("ARTIFACT_XP_UPDATE");
+		Fel_ArtifactBar:RegisterEvent("UNIT_INVENTORY_CHANGED");
+	end
+end
+
+function module:UpdateStatusBars()
+	if DB.XPBar.enabled and not Fel_ExperienceBar:IsVisible() then Fel_ExperienceBar:Show(); elseif not DB.XPBar.enabled then Fel_ExperienceBar:Hide(); end
+	if DB.RepBar.enabled and not Fel_ReputationBar:IsVisible() then Fel_ReputationBar:Show(); elseif not DB.RepBar.enabled then Fel_ReputationBar:Hide(); end
+	if DB.APBar.enabled and not Fel_ArtifactBar:IsVisible() then Fel_ArtifactBar:Show(); elseif not DB.APBar.enabled then Fel_ArtifactBar:Hide(); end
 end
 
 -- Bartender Stuff

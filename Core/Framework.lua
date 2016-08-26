@@ -188,6 +188,17 @@ local DBdefault = {
 			GainedBrightness= .6,
 			AutoDefined	= true
 		},
+		APBar = {
+			enabled = true,
+			text = true,
+			ToolTip = "click",
+			GainedColor	= "AUTO",
+			GainedRed	= 0,
+			GainedBlue	= 0,
+			GainedGreen	= 1,
+			GainedBrightness= .6,
+			AutoDefined	= true
+		},
 		MiniMap = {
 			northTag = false,
 			ManualAllowUse = false,

@@ -101,6 +101,20 @@ function module:SetXPColors()
 	if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 end
 
+function module:UpdateAPBar()
+	-- Set Text if needed
+	if DB.APBar.text then
+		local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+		local ratio = (xp/xpForNextPoint);
+		SUI_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+	else
+		SUI_ArtifactBarText:SetText("")
+	end
+	-- Update Visibility
+	module:UpdateStatusBars()
+end
+
 function module:EnableStatusBars()
 	do -- create the tooltip
 		tooltip = CreateFrame("Frame","SUI_StatusBarTooltip",SpartanUI,"SUI_StatusBars_TooltipTemplate");
@@ -117,7 +131,6 @@ function module:EnableStatusBars()
 
 		xpframe = CreateFrame("Frame","SUI_ExperienceBar",SpartanUI,"SUI_StatusBars_XPTemplate");
 		xpframe:SetPoint("BOTTOMRIGHT","SpartanUI","BOTTOM",-100,0);
-		--SUI_ExperienceBarPlate:SetSize(400, 32);
 		SUI_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
 		
 		xpframe:SetScript("OnEvent",function()
@@ -179,7 +192,6 @@ function module:EnableStatusBars()
 	do -- reputation bar
 		repframe = CreateFrame("Frame","SUI_ReputationBar",SpartanUI,"SUI_StatusBars_RepTemplate");
 		repframe:SetPoint("BOTTOMLEFT",SpartanUI,"BOTTOM",100,0);
-		SUI_ReputationBarPlate:SetTexCoord(0.035,0.83,0,1);
 		
 		repframe:SetScript("OnEvent",function()
 			if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
@@ -231,9 +243,44 @@ function module:EnableStatusBars()
 		repframe:SetFrameLevel(2);
 		module:SetRepColors();
 	end
+	do -- Artifact Power bar
+		SUI_ArtifactBar:SetScript("OnEvent",function()
+			--Clear Text
+			SUI_ArtifactBarText:SetText("")
+			--Update if needed
+			if HasArtifactEquipped() then
+				local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+				-- local currentArtifactPurchasableTraits = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, xp);
+				local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+				local ratio = (xp/xpForNextPoint);
+				
+				if ratio == 0 then
+					SUI_ArtifactBarFill:SetWidth(0.1);
+				else
+					if (ratio*SUI_ArtifactBar:GetWidth()) > SUI_ArtifactBar:GetWidth() then
+						SUI_ArtifactBarFill:SetWidth(SUI_ArtifactBar:GetWidth())
+					else
+						SUI_ArtifactBarFill:SetWidth(ratio*SUI_ArtifactBar:GetWidth());
+					end
+				end
+				
+				if DB.APBar.text then
+					SUI_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+				else
+					SUI_ArtifactBarText:SetText("")
+				end
+			end
+		end);
+		
+		SUI_ArtifactBarFill:SetVertexColor()
+		SUI_ArtifactBar:RegisterEvent("PLAYER_ENTERING_WORLD");
+		SUI_ArtifactBar:RegisterEvent("ARTIFACT_XP_UPDATE");
+		SUI_ArtifactBar:RegisterEvent("UNIT_INVENTORY_CHANGED");
+	end
 end
 
 function module:UpdateStatusBars()
 	if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end
 	if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
+	if DB.APBar.enabled and not SUI_ArtifactBar:IsVisible() then SUI_ArtifactBar:Show(); elseif not DB.APBar.enabled then SUI_ArtifactBar:Hide(); end
 end

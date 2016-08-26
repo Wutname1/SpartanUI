@@ -248,29 +248,59 @@ function Artwork_Core:StatusBarOptions()
 		}
 	}
 	spartan.opt.args["Artwork"].args["RepBar"] = {
-		name = L["BarRep"],
-		desc = L["BarRepDesc"],
+		name = L["RepandAPBar"],
 		type = "group", args = {
-			display = {name=L["BarRepEnabled"],type="toggle",order=.1,
-				get = function(info) return DB.RepBar.enabled; end,
-				set = function(info,val) DB.RepBar.enabled = val; module:UpdateStatusBars() end
+			display = {name=L["Display mode"],type="select",order=.1,
+				values = {["rep"] = L["Reputation"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]},
+				get = function(info)
+					if DB.RepBar.enabled then
+						return "rep";
+					elseif DB.APBar.enabled then
+						return "ap";
+					else
+						return "disabled"
+					end
+				end,
+				set = function(info,val)
+					DB.RepBar.enabled = false
+					DB.APBar.enabled = false
+					if val == "rep" then DB.RepBar.enabled = true
+					elseif val == "ap" then DB.APBar.enabled = true end
+					module:UpdateStatusBars()
+				end
 			},
 			displaytext = {name=L["DisplayText"],type="toggle",order=.15,
-				get = function(info) return DB.RepBar.text; end,
-				set = function(info,val) DB.RepBar.text = val; module:SetRepColors(); end
+				get = function(info)
+					if DB.RepBar.enabled then
+						return DB.RepBar.text;
+					elseif DB.APBar.enabled then
+						return DB.APBar.text;
+					else 
+						return false
+					end
+				end,
+				set = function(info,val)
+					if DB.RepBar.enabled then
+						DB.RepBar.text = val;
+						module:SetRepColors();
+					elseif DB.APBar.enabled then
+						DB.APBar.text = val;
+						module:UpdateAPBar()
+					end
+				end
 			},
-			tooltip = {name=L["DisplayTooltip"],type="select",order=.2,
+			header1 = {name=L["ClrRep"],type="header",order=.9},
+			tooltip = {name=L["DisplayTooltip"],type="select",order=.95,
 				values = {["hover"]="Mouse Over",["click"]="On Click",["off"]="Disabled"},
 				get = function(info) return DB.RepBar.ToolTip; end,
 				set = function(info,val) DB.RepBar.ToolTip = val; end
 			},
-			header1 = {name=L["ClrRep"],type="header",order=.9},
 			AutoDefined = {name=L["AutoRepClr"],type="toggle",order=1,desc=L["AutoRepClrDesc"],
 			width="full",
 				get = function(info) return DB.RepBar.AutoDefined; end,
 				set = function(info,val) DB.RepBar.AutoDefined = val; module:SetRepColors(); end
 			},
-			RepColor = {name=L["Color"],type="select",style="dropdown",order=2,width="full",
+			RepColor = {name=L["Color"],type="select",style="dropdown",order=2,
 				values = {
 					["AUTO"]	= L["AUTO"],
 					["Custom"]	= L["Custom"],
