@@ -27,7 +27,8 @@ function module:OnInitialize()
 		White = false,
 		Green = false,
 		Blue = false,
-		Purple = false
+		Purple = false,
+		GearTokens = false
 	}
 	if not DB.AutoSell then
 		DB.AutoSell = Defaults
@@ -186,6 +187,7 @@ function module:IsSellable(item)
 	local Craftablesellable = false
 	local NotInGearset = true
 	local NotConsumable = true
+	local IsGearToken = false
 	
 	if (not iLevel) or (iLevel <= DB.AutoSell.MaxILVL) then ilvlsellable = true end
 	--Crafting Items
@@ -208,6 +210,11 @@ function module:IsSellable(item)
 		NotConsumable = false
 	end
 	
+	-- Gear Tokens
+	if quality == 4 and itemType == "Miscellaneous" and itemSubType == "Junk" and equipSlot == "" and not DB.AutoSell.GearTokens then
+		IsGearToken = true
+	end
+	
 	if quality == 0 and  DB.AutoSell.Gray then qualitysellable = true end
 	if quality == 1 and  DB.AutoSell.White then qualitysellable = true end
 	if quality == 2 and  DB.AutoSell.Green then qualitysellable = true end
@@ -219,6 +226,7 @@ function module:IsSellable(item)
 	and Craftablesellable
 	and NotInGearset
 	and NotConsumable
+	and not IsGearToken
 	and not spartan:isInTable(ExcludedItems, item)
 	and itemType ~= "Quest"
 	and itemType ~= "Container"
@@ -313,13 +321,17 @@ function module:BuildOptions()
 					get = function(info) return DB.AutoSell.NotCrafting end,
 					set = function(info,val) DB.AutoSell.NotCrafting = val end
 			},
-			NotConsumables = {name="Don't Sell Consumables",type="toggle",order=1,width = "full",
+			NotConsumables = {name="Don't Sell Consumables",type="toggle",order=2,width = "full",
 					get = function(info) return DB.AutoSell.NotConsumables end,
 					set = function(info,val) DB.AutoSell.NotConsumables = val end
 			},
-			NotInGearset = {name="Don't Sell items in a equipment set",type="toggle",order=2,width = "full",
+			NotInGearset = {name="Don't Sell items in a equipment set",type="toggle",order=3,width = "full",
 					get = function(info) return DB.AutoSell.NotInGearset end,
 					set = function(info,val) DB.AutoSell.NotInGearset = val end
+			},
+			GearTokens = {name="Sell tier tokens",type="toggle",order=4,width = "full",
+					get = function(info) return DB.AutoSell.GearTokens end,
+					set = function(info,val) DB.AutoSell.GearTokens = val end
 			},
 			MaxILVL ={name = "Maximum iLVL to sell",type = "range",order = 10,width = "full",min = 1,max = 1100,step=1,
 				set = function(info,val) DB.AutoSell.MaxILVL = val; end,
