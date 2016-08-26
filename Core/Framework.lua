@@ -189,7 +189,7 @@ local DBdefault = {
 			AutoDefined	= true
 		},
 		APBar = {
-			enabled = true,
+			enabled = false,
 			text = true,
 			ToolTip = "click",
 			GainedColor	= "AUTO",
