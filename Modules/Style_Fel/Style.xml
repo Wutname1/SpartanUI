@@ -92,7 +92,7 @@
 			</Layer>
 			<Layer level="OVERLAY">
 				<FontString name="$parentText" inherits="SUI_FontOutline10" justifyH="CENTER">
-					<Size><AbsDimension x="300" y="26" /></Size>
+					<Size><AbsDimension x="300" y="24" /></Size>
 					<Anchors><Anchor point="TOP"/></Anchors>
 				</FontString>
 			</Layer>

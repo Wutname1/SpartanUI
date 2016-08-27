@@ -4,7 +4,6 @@ local L = spartan.L;
 local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
-local xpframe, repframe;
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1,	g = 0.2,	b = 0},
 	[2] = {r = 0.8,	g = 0.3,	b = 0},
@@ -57,7 +56,13 @@ function module:SetRepColors()
 	end
 
 	-- Set Text if needed
-	if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+	if DB.RepBar.text then
+		SUI_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
+	else
+		SUI_ReputationBarText:SetText("")
+	end
+	-- Update Visibility
+	module:UpdateStatusBars()
 end
 
 function module:SetXPColors()
@@ -98,7 +103,13 @@ function module:SetXPColors()
 	SUI_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.1));
 
 	-- Update Text if needed
-	if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+	if DB.XPBar.text then
+		SUI_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
+	else
+		SUI_ExperienceBarText:SetText("")
+	end
+	-- Update Visibility
+	module:UpdateStatusBars()
 end
 
 function module:UpdateAPBar()
@@ -129,12 +140,10 @@ function module:EnableStatusBars()
 		local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
 		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
 
-		xpframe = CreateFrame("Frame","SUI_ExperienceBar",SpartanUI,"SUI_StatusBars_XPTemplate");
-		xpframe:SetPoint("BOTTOMRIGHT","SpartanUI","BOTTOM",-100,0);
 		SUI_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
 		
-		xpframe:SetScript("OnEvent",function()
-			if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end
+		SUI_ExperienceBar:SetScript("OnEvent",function()
+			if DB.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 			if now == 0 then
 				SUI_ExperienceBarFill:SetWidth(0.1);
@@ -148,15 +157,15 @@ function module:EnableStatusBars()
 				SUI_ExperienceBarLead:SetWidth(rested);
 			end
 			if DB.XPBar.text then
-				xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
+				SUI_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
 			else
-				xpframe.Text:SetText("")
+				SUI_ExperienceBarText:SetText("")
 			end
 			module:SetXPColors()
 		end);
 		local showXPTooltip = function()
 			tooltip:ClearAllPoints();
-			tooltip:SetPoint("BOTTOM",xpframe,"TOP",6,-1);
+			tooltip:SetPoint("BOTTOM",SUI_ExperienceBar,"TOP",6,-1);
 			local a = format("Level %s ",UnitLevel("player"))
 			local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
 			SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
@@ -170,31 +179,19 @@ function module:EnableStatusBars()
 			tooltip:Show();
 		end
 		
-		xpframe.Text = xpframe:CreateFontString();
-		spartan:FormatFont(xpframe.Text, 10, "Core")
-		xpframe.Text:SetDrawLayer("OVERLAY");
-		xpframe.Text:SetSize(250, 30);
-		xpframe.Text:SetJustifyH("MIDDLE"); xpframe.Text:SetJustifyV("MIDDLE");
-		xpframe.Text:SetPoint("TOP",xpframe,"TOP",4,0);
+		SUI_ExperienceBar:SetScript("OnEnter",function() if DB.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
+		SUI_ExperienceBar:SetScript("OnMouseDown",function() if DB.XPBar.ToolTip == "click" then showXPTooltip(); end end);
+		SUI_ExperienceBar:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
-		xpframe:SetScript("OnEnter",function() if DB.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
-		xpframe:SetScript("OnMouseDown",function() if DB.XPBar.ToolTip == "click" then showXPTooltip(); end end);
-		xpframe:SetScript("OnLeave",function() tooltip:Hide(); end);
+		SUI_ExperienceBar:RegisterEvent("PLAYER_ENTERING_WORLD");
+		SUI_ExperienceBar:RegisterEvent("PLAYER_XP_UPDATE");
+		SUI_ExperienceBar:RegisterEvent("PLAYER_LEVEL_UP");
 		
-		xpframe:RegisterEvent("PLAYER_ENTERING_WORLD");
-		xpframe:RegisterEvent("PLAYER_XP_UPDATE");
-		xpframe:RegisterEvent("PLAYER_LEVEL_UP");
-		
-		xpframe:SetFrameStrata("BACKGROUND");
-		xpframe:SetFrameLevel(2);
 		module:SetXPColors();
 	end
 	do -- reputation bar
-		repframe = CreateFrame("Frame","SUI_ReputationBar",SpartanUI,"SUI_StatusBars_RepTemplate");
-		repframe:SetPoint("BOTTOMLEFT",SpartanUI,"BOTTOM",100,0);
-		
-		repframe:SetScript("OnEvent",function()
-			if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
+		SUI_ReputationBar:SetScript("OnEvent",function()
+			if DB.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
 			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 			if name then ratio = (current-low)/(high-low); end
 			SUI_StatusBarTooltipHeader:SetText(name);
@@ -205,7 +202,11 @@ function module:EnableStatusBars()
 				module:SetRepColors()
 			end
 			
-			if DB.RepBar.text then repframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100) else repframe.Text:SetText("") end
+			if DB.RepBar.text then
+				SUI_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
+			else
+				SUI_ReputationBarText:SetText("")
+			end
 		end);
 		local showRepTooltip = function()
 			tooltip:ClearAllPoints();
@@ -223,24 +224,13 @@ function module:EnableStatusBars()
 			tooltip:Show();
 		end
 		
-		repframe.Text = repframe:CreateFontString();
-		spartan:FormatFont(repframe.Text, 10, "Core")
-		repframe.Text:SetDrawLayer("OVERLAY");
-		repframe.Text:SetSize(250, 30);
-		repframe.Text:SetJustifyH("MIDDLE"); repframe.Text:SetJustifyV("MIDDLE");
-		repframe.Text:SetPoint("TOP",repframe,"TOP",4,0);
+		SUI_ReputationBar:SetScript("OnEnter",function() if DB.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
+		SUI_ReputationBar:SetScript("OnMouseDown",function() if DB.RepBar.ToolTip == "click" then showRepTooltip(); end end);
+		SUI_ReputationBar:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
-		repframe:SetScript("OnEnter",function() if DB.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
-		repframe:SetScript("OnMouseDown",function() if DB.RepBar.ToolTip == "click" then showRepTooltip(); end end);
-		repframe:SetScript("OnLeave",function() tooltip:Hide(); end);
+		SUI_ReputationBar:RegisterEvent("PLAYER_ENTERING_WORLD");
+		SUI_ReputationBar:RegisterEvent("UPDATE_FACTION");
 		
-		repframe:RegisterEvent("PLAYER_ENTERING_WORLD");
-		repframe:RegisterEvent("UPDATE_FACTION");
-		repframe:RegisterEvent("PLAYER_LEVEL_UP");
-		repframe:RegisterEvent("CVAR_UPDATE");
-		
-		repframe:SetFrameStrata("BACKGROUND");
-		repframe:SetFrameLevel(2);
 		module:SetRepColors();
 	end
 	do -- Artifact Power bar
@@ -280,7 +270,7 @@ function module:EnableStatusBars()
 end
 
 function module:UpdateStatusBars()
-	if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end
-	if DB.RepBar.enabled and not repframe:IsVisible() then repframe:Show(); elseif not DB.RepBar.enabled then repframe:Hide(); end
-	if DB.APBar.enabled and not SUI_ArtifactBar:IsVisible() then SUI_ArtifactBar:Show(); elseif not DB.APBar.enabled then SUI_ArtifactBar:Hide(); end
+	if DB.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
+	if DB.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
+	if DB.APBar.enabled then SUI_ArtifactBar:Show(); else SUI_ArtifactBar:Hide(); end
 end

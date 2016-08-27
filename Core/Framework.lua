@@ -536,6 +536,7 @@ end
 
 function SUI:BT4RefreshConfig()
 	if SUI.DBG.BartenderChangesActive or DBMod.Artwork.FirstLoad then return end
+	-- if DB.Styles[DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
 	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
 	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
@@ -546,8 +547,8 @@ function SUI:BT4RefreshConfig()
 		if SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style == SUI.DBMod.Artwork.Style then
 			-- Catch if Movedbars is not initalized
 			if DB.Styles[DBMod.Artwork.Style].MovedBars then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
-			--Profile is for this style, prompt to ReloadUI
-			SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
+			--Profile is for this style, prompt to ReloadUI; usually un needed can uncomment if needed latter
+			-- SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
 		else
 			--Ask if we should change to the correct profile or if we should change the profile to be for this style
 			SUI:BT4ProfileAttach("This bartender profile is currently attached to the style '"..SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style.."' you are currently using "..SUI.DBMod.Artwork.Style.." would you like to reassign the profile to this art skin? ")

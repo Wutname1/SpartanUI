@@ -108,6 +108,12 @@
 					<Color r="0" g="0" b="0" a=".95"/>
 				</Texture>
 			</Layer>
+			<Layer level="OVERLAY">
+				<FontString name="$parentText" inherits="SUI_FontOutline10" justifyH="CENTER">
+					<Size><AbsDimension x="300" y="24" /></Size>
+					<Anchors><Anchor point="TOP"/></Anchors>
+				</FontString>
+			</Layer>
 		</Layers>
 	</Frame>
 	
@@ -124,12 +130,13 @@
 			</Layer>
 			<Layer level="BORDER">
 				<Texture name="$parentFill" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow">
-					<Size><AbsDimension x="400" y="32" /></Size>
+					<Size><AbsDimension x=".1" y="20" /></Size>
 					<Anchors><Anchor point="LEFT"/></Anchors>
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
 				<Texture name="$parentFillGlow" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow" alphaMode="ADD">
+					<Size><AbsDimension x=".1" y="20" /></Size>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentFill" relativePoint="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT" relativeTo="$parentFill" relativePoint="BOTTOMRIGHT"/>
@@ -203,6 +210,16 @@
 			<Frame name="SUI_Popup1" inherits="SUI_PopTemplate"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="105" /></Offset></Anchor></Anchors></Frame>
 			<Frame name="SUI_Popup2" inherits="SUI_PopTemplate"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="105" /></Offset></Anchor></Anchors></Frame>
 			<!-- Status Bars -->
+			<Frame name="SUI_ExperienceBar" inherits="SUI_StatusBars_XPTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="0" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
+			<Frame name="SUI_ReputationBar" inherits="SUI_StatusBars_RepTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="0" /></Offset></Anchor>
+				</Anchors>
+			</Frame>
 			<Frame name="SUI_ArtifactBar" inherits="SUI_StatusBars_RepTemplate">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="0" /></Offset></Anchor>

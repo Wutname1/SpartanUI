@@ -204,6 +204,8 @@ function module:SetXPColors()
 
 	-- Update Text if needed
 	if DB.XPBar.text then Fel_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else Fel_ExperienceBarText:SetText("") end
+	-- Update Visibility
+	module:UpdateStatusBars()
 end
 
 function module:SetRepColors()
@@ -236,6 +238,8 @@ function module:SetRepColors()
 	else
 		Fel_ReputationBarText:SetText("")
 	end
+	-- Update Visibility
+	module:UpdateStatusBars()
 end
 
 function module:UpdateAPBar()
@@ -390,12 +394,13 @@ function module:StatusBars()
 		Fel_ArtifactBar:RegisterEvent("ARTIFACT_XP_UPDATE");
 		Fel_ArtifactBar:RegisterEvent("UNIT_INVENTORY_CHANGED");
 	end
+	module:UpdateStatusBars()
 end
 
 function module:UpdateStatusBars()
-	if DB.XPBar.enabled and not Fel_ExperienceBar:IsVisible() then Fel_ExperienceBar:Show(); elseif not DB.XPBar.enabled then Fel_ExperienceBar:Hide(); end
-	if DB.RepBar.enabled and not Fel_ReputationBar:IsVisible() then Fel_ReputationBar:Show(); elseif not DB.RepBar.enabled then Fel_ReputationBar:Hide(); end
-	if DB.APBar.enabled and not Fel_ArtifactBar:IsVisible() then Fel_ArtifactBar:Show(); elseif not DB.APBar.enabled then Fel_ArtifactBar:Hide(); end
+	if DB.XPBar.enabled then Fel_ExperienceBar:Show(); else Fel_ExperienceBar:Hide(); end
+	if DB.RepBar.enabled then Fel_ReputationBar:Show(); else Fel_ReputationBar:Hide(); end
+	if DB.APBar.enabled then Fel_ArtifactBar:Show(); else Fel_ArtifactBar:Hide(); end
 end
 
 -- Bartender Stuff
