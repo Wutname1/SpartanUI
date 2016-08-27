@@ -628,6 +628,36 @@ function SUI:OnEnable()
     self:RegisterChatCommand("suihelp", "suihelp")
     self:RegisterChatCommand("spartanui", "ChatCommand")
 	
+	local CountUnit = function(t,strict)
+		if t == nil or t == "" then
+			SUI:Print('Nothing to search for. Please enter a unit name, search is not case-sensitive.')
+			SUI:Print('For a general search use /countunit Auctioneer')
+			SUI:Print('For a specific unit use /countunitstrict Dark rune guardian')
+			return
+		end
+		t = string.lower(t)
+		local c = 0
+		local p = nil
+		for i=1,10000 do
+			p=_G["NamePlate"..i.."UnitFrame"]
+			if p and p:IsVisible() then
+				local name = string.lower(p.name:GetText())
+				if strict then
+					c = c+(name==t and 1 or 0)
+				else
+					c = c+(string.match(name, t) and 1 or 0)
+				end
+			elseif not p and i == 1 then
+				SUI:Print("No nameplates detected")
+				return
+			end
+		end
+		SUI:Print(t,": ",c)
+	end
+	
+    self:RegisterChatCommand("countunitstrict", function(t) CountUnit(t,true) end)
+    self:RegisterChatCommand("countunit", function(t) CountUnit(t) end)
+
 	local LaunchOpt = CreateFrame("Frame");
 	LaunchOpt:SetScript("OnEvent",function(self,...)
 		if DB.OpenOptions then

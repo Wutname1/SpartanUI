@@ -459,6 +459,9 @@ function module:OnInitialize()
 			FAQQ2 = {name="Actionbars are appearing in the wrong place",type="description",order = 520,fontSize="medium"},
 			FAQQ2A1 = {name="- Most issues can be fixed by reseting the action bars above.",type="description",order = 521,fontSize="small"},
 			
+			FAQQ3 = {name="Does SpartanUI have hidden features?",type="description",order = 530,fontSize="medium"},
+			FAQQ3A1 = {name="- But of course! Did you know SpartanUI can help you with achivements that involve killing X Number of a mob? Make sure your nameplates are displayed and use /countunit",type="description",order = 531,fontSize="small"},
+			
 			-- description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
 			-- description = {name=L["HelpStringDesc2"],type="description",order = 902,fontSize="small"},
 			-- dataDump = {name=L["Export"],type="input",multiline=15,width="full",order=993,get = function(info) return module:enc(module:ExportData()) end},

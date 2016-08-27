@@ -99,8 +99,8 @@ end
 
 function module:SetupVehicleUI()
 	if DBMod.Artwork.VehicleUI then
-		petbattle:HookScript("OnHide", function() SpartanUI_Fel:Hide() Minimap:Hide()  end)
-		petbattle:HookScript("OnShow", function() SpartanUI_Fel:Show() Minimap:Show()  end)
+		petbattle:HookScript("OnHide", function() Fel_SpartanUI:Hide() Minimap:Hide()  end)
+		petbattle:HookScript("OnShow", function() Fel_SpartanUI:Show() Minimap:Show()  end)
 		RegisterStateDriver(petbattle, "visibility", "[petbattle] hide; show");
 		RegisterStateDriver(Fel_SpartanUI, "visibility", "[overridebar][vehicleui] hide; show");
 	end

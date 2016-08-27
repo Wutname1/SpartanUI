@@ -65,6 +65,7 @@ function module:SetRepColors()
 	module:UpdateStatusBars()
 end
 
+
 function module:SetXPColors()
 	-- Set Gained Color
 	if DB.XPBar.GainedColor ~= "Custom" then

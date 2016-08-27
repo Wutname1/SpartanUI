@@ -4,6 +4,8 @@ local L = spartan.L;
 local Artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Classic");
 ---------------------------------------------------------------------------
+local PetBattleActive = false
+local petbattleWatcher = CreateFrame("Frame")
 
 function module:MiniMap()
 	Minimap:SetSize(156, 156);
@@ -57,6 +59,7 @@ function module:MiniMap()
 	end
 
 	SpartanUI:HookScript("OnHide", function(this, event)
+		if PetBattleActive then return end
 		Minimap:ClearAllPoints();
 		Minimap:SetParent(UIParent);
 		Minimap:SetPoint("TOP",UIParent,"TOP",0,-20);
@@ -70,6 +73,17 @@ function module:MiniMap()
 		shapechange("circle")
 	end)
 	
+	petbattleWatcher:SetScript("OnEvent", function(self, event)
+		if event == "PET_BATTLE_CLOSE" then
+			PetBattleActive = false
+		else
+			PetBattleActive = true
+		end
+	end)
+	petbattleWatcher:RegisterEvent("PET_BATTLE_OPENING_START")
+	petbattleWatcher:RegisterEvent("PET_BATTLE_TURN_STARTED")
+	petbattleWatcher:RegisterEvent("PET_BATTLE_OPENING_DONE")
+	petbattleWatcher:RegisterEvent("PET_BATTLE_CLOSE")
 end
 
 function module:EnableMinimap()
