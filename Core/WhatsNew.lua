@@ -1,6 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local module = spartan:NewModule("WhatsNew");
+local ArtifactWatcher, loginlevel
 
 function spartan:WhatsNew()
 	local PageData = {
@@ -68,14 +69,105 @@ function spartan:WhatsNew()
 	SetupWindow:DisplayPage()
 end
 
+function module:FirstArtifact()
+	local PageData = {
+		title = L["Congratulations"],
+		SubTitle = L["You have equiped your first artifact weapon"],
+		Desc1 = L["Your artifact weapon levels up just like your character through a resource called Artifact Power. Would you like to track your artifact power as a status bar?"].. "|r",
+		Desc2 = L["This will replace your reputation bar and you can switch between the two at any time via the SpartanUI settings."],
+		Display = function()
+			-- Track have been displayed
+			SUI.DBG.HasEquipedArtifact = true
+			
+			--Container
+			SUI_Win.WhatsNew = CreateFrame("Frame", nil)
+			SUI_Win.WhatsNew:SetParent(SUI_Win.content)
+			SUI_Win.WhatsNew:SetAllPoints(SUI_Win.content)
+			
+			-- Buttons
+			SUI_Win:SetSize(550, 170)
+			SUI_Win:ClearAllPoints()
+			SUI_Win:SetPoint("TOP", UIParent, "TOP", 0, -50)
+			SUI_Win.Status:Hide()
+			SUI_Win.Skip:SetSize(130, 25)
+			SUI_Win.Skip:SetPoint("BOTTOMRIGHT", SUI_Win, "BOTTOM", -10, 5)
+			SUI_Win.Skip:SetText("LEAVE IT AS IS")
+			SUI_Win.Next:SetSize(130, 25)
+			SUI_Win.Next:SetPoint("BOTTOMLEFT", SUI_Win, "BOTTOM", 10, 5)
+			SUI_Win.Next:SetText("TRACK ARTIFACT POWER")
+		end,
+		Next = function()
+			DB.RepBar.enabled = false
+			DB.APBar.enabled = true
+			spartan:GetModule("Style_"..SUI.DBMod.Artwork.Style):UpdateStatusBars()
+		end,
+		Skip = function() end
+	}
+	local SetupWindow = spartan:GetModule("SetupWindow")
+	
+	SetupWindow:AddPage(PageData)
+	SetupWindow:DisplayPage()
+end
+
 function module:OnInitialize()
 	if SUI.DBG.WhatsNew == nil then SUI.DBG.WhatsNew = true end
+	if SUI.DBG.HasEquipedArtifact == nil then SUI.DBG.HasEquipedArtifact = false end
 	--Only display if the setup has been done, and the DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 	
 	if SUI.DBG.Version and SUI.DBG.Version < "4.3.0" and DB.SetupDone and SUI.DBG.WhatsNew then
 		spartan:WhatsNew()
 	end
+	
 	-- Update DB Version
 	DB.Version = spartan.SpartanVer;
 	SUI.DBG.Version = spartan.SpartanVer;
+end
+
+function module:FirstAtrifactNotice()
+	loginlevel = UnitLevel("player")
+	
+	--Only process if we are not 110; allowed to show new featues; have never used an artifact; The style allows tracking
+	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DBP.Styles[DBMod.Artwork.Style].StatusBars.AP and not SUI.DBP.APBar.enabled then
+		--Detect if user already has a artifact
+		if HasArtifactEquipped() then
+			SUI.DBG.HasEquipedArtifact = true
+			return
+		end
+		
+		--Create Watcher
+		ArtifactWatcher = CreateFrame("Frame")
+		ArtifactWatcher:SetScript("OnEvent", function(self, event)
+			-- Add the hooks for inventory if player logged in sub 100
+			if loginlevel < 100 and UnitLevel("player") >= 100 then
+				if UnitLevel("player") >= 100 then
+					ArtifactWatcher = CreateFrame("Frame")
+					ArtifactWatcher:RegisterEvent("ARTIFACT_XP_UPDATE");
+					ArtifactWatcher:RegisterEvent("UNIT_INVENTORY_CHANGED");
+				end
+			end
+			if HasArtifactEquipped() and not SUI.DBP.APBar.enabled then
+				module:FirstArtifact()
+				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
+				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
+				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")
+				ArtifactWatcher = nil
+			elseif SUI.DBP.APBar.enabled then
+				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
+				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
+				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")
+			end
+		end)
+		
+		--Setup update events
+		if UnitLevel("player") >= 100 then
+			ArtifactWatcher:RegisterEvent("ARTIFACT_XP_UPDATE");
+			ArtifactWatcher:RegisterEvent("UNIT_INVENTORY_CHANGED");
+		end
+		ArtifactWatcher:RegisterEvent("PLAYER_LEVEL_UP");
+	end
+end
+
+function module:OnEnable()
+	SUI.DBG.HasEquipedArtifact = false
+	module:FirstAtrifactNotice()
 end

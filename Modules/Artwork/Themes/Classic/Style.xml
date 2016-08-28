@@ -110,7 +110,7 @@
 			</Layer>
 			<Layer level="OVERLAY">
 				<FontString name="$parentText" inherits="SUI_FontOutline10" justifyH="CENTER">
-					<Size><AbsDimension x="300" y="24" /></Size>
+					<Size><AbsDimension x="300" y="30" /></Size>
 					<Anchors><Anchor point="TOP"/></Anchors>
 				</FontString>
 			</Layer>
@@ -150,7 +150,7 @@
 			</Layer>
 			<Layer level="OVERLAY">
 				<FontString name="$parentText" inherits="SUI_FontOutline10" justifyH="CENTER">
-					<Size><AbsDimension x="300" y="30" /></Size>
+					<Size><AbsDimension x="300" y="24" /></Size>
 					<Anchors><Anchor point="TOP"/></Anchors>
 				</FontString>
 			</Layer>
@@ -229,6 +229,37 @@
 						local name = self:GetName();
 						_G[name.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
 					</OnLoad>
+					<OnEnter>
+						if SUI.DBP.APBar.ToolTip == "hover" then SUI_ArtifactBarTooltip:Show() end
+					</OnEnter>
+					<OnMouseDown>
+						if SUI.DBP.APBar.ToolTip == "click" then SUI_ArtifactBarTooltip:Show() end
+					</OnMouseDown>
+					<OnLeave>
+						SUI_ArtifactBarTooltip:Hide()
+					</OnLeave>
+				</Scripts>
+			</Frame>
+			<Frame name="SUI_ArtifactBarTooltip" hidden="true" inherits="SUI_StatusBars_TooltipTemplate">
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="SUI_ArtifactBar" relativePoint="TOP"><Offset><AbsDimension x="6" y="-1" /></Offset></Anchor>
+				</Anchors>
+				<Scripts>
+					<OnShow>
+						local FrameName = self:GetName();
+						if HasArtifactEquipped() then
+							local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
+							local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+							local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+							local ratio = (xp/xpForNextPoint);
+							
+							_G[FrameName.."Header"]:SetText(name);							
+							_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+						else
+							_G[FrameName.."Header"]:SetText("No Artifact equiped");
+							_G[FrameName.."Text"]:SetText("")
+						end
+					</OnShow>
 				</Scripts>
 			</Frame>
 		</Frames>

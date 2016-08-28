@@ -36,7 +36,7 @@ end
 
 function module:DisplayPage(CustomData)
 	if Win == nil then module:CreateInstallWindow() end
-	if (PageList[Page_Cur] == nil and not CustomData) or (CurData and Win:IsVisible()) then return end
+	if (PageList[Page_Cur] == nil and not CustomData) then return end
 	
 	if not CustomData then
 		CurData = PageList[Page_Cur]

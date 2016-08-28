@@ -137,10 +137,6 @@ function module:EnableStatusBars()
 		spartan:FormatFont(SUI_StatusBarTooltipText, 10, "Core")
 	end
 	do -- experience bar
-		local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
-		local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
-		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
-
 		SUI_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
 		
 		SUI_ExperienceBar:SetScript("OnEvent",function()
@@ -165,6 +161,9 @@ function module:EnableStatusBars()
 			module:SetXPColors()
 		end);
 		local showXPTooltip = function()
+			local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
+			local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
+			local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
 			tooltip:ClearAllPoints();
 			tooltip:SetPoint("BOTTOM",SUI_ExperienceBar,"TOP",6,-1);
 			local a = format("Level %s ",UnitLevel("player"))

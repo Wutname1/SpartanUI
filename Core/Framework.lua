@@ -86,6 +86,11 @@ local DBdefault = {
 					shape = "circle",
 					size = {width = 140, height = 140}
 				},
+				StatusBars = {
+					XP = false,
+					REP = false,
+					AP = false
+				},
 				MovedBars = {},
 				TooltipLoc = false,
 				BuffLoc = false
@@ -141,6 +146,11 @@ local DBdefault = {
 					shape = "circle",
 					size = {width = 140, height = 140}
 				},
+				StatusBars = {
+					XP = true,
+					REP = true,
+					AP = true
+				},
 				TooltipLoc = true
 			}
 		},
@@ -191,7 +201,7 @@ local DBdefault = {
 		APBar = {
 			enabled = false,
 			text = true,
-			ToolTip = "click",
+			ToolTip = "hover",
 			GainedColor	= "AUTO",
 			GainedRed	= 0,
 			GainedBlue	= 0,

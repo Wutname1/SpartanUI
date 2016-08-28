@@ -66,6 +66,11 @@ local Defaults = {
 		blizzardVehicle = DBMod.Artwork.VehicleUI
 	},
 	TooltipLoc = true,
+	StatusBars = {
+		XP = true,
+		REP = true,
+		AP = true
+	},
 	BuffLoc = true
 }
 if not DB.Styles.Fel.Artwork then
