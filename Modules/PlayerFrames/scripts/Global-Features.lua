@@ -92,6 +92,8 @@ function PlayerFrames:Buffs(self,unit)
 	if DB.Styles[CurStyle].Frames[unit] then
 		local Buffsize = DB.Styles[CurStyle].Frames[unit].Buffs.size
 		local Debuffsize = DB.Styles[CurStyle].Frames[unit].Debuffs.size
+		local BuffsMode	 = DB.Styles[CurStyle].Frames[unit].Buffs.Mode
+		local DebuffsMode= DB.Styles[CurStyle].Frames[unit].Debuffs.Mode
 		
 		--Determine how many we can fit for Hybrid Display
 		local split = 4
@@ -145,13 +147,11 @@ function PlayerFrames:Buffs(self,unit)
 		--Debuff Icons
 		local Debuffs = CreateFrame("Frame", nil, self)
 		-- Setup icons if needed
-		local customFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-			if((icons.onlyShowPlayer and icon.isPlayer) or (not icons.onlyShowPlayer and name)) then
-				if caster == "player" and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
-					return true
-				elseif caster ~= "player" then
-					return true
-				end
+		local iconFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+			if caster == "player" and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
+				return true
+			elseif caster ~= "player" then
+				return true
 			end
 		end
 		if BuffsMode ~= "bars" and BuffsMode ~= "disabled" then
@@ -166,7 +166,7 @@ function PlayerFrames:Buffs(self,unit)
 			Buffs:SetSize(BuffWidthActual, (Buffsize * (Buffs.numBuffs / BuffWidth)))
 			Buffs.PostUpdate = PostUpdateAura;
 			if BuffsMode ~= "icons" then
-				Buffs.CustomFilter = customFilter
+				Buffs.CustomFilter = iconFilter
 			end
 			self.Buffs = Buffs
 		end
@@ -183,7 +183,7 @@ function PlayerFrames:Buffs(self,unit)
 			Debuffs:SetSize(DeBuffWidthActual, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth)))
 			Debuffs.PostUpdate = PostUpdateAura;
 			if DebuffsMode ~= "icons" then
-				Debuffs.CustomFilter = customFilter
+				Debuffs.CustomFilter = iconFilter
 			end
 			self.Debuffs = Debuffs
 		end
@@ -199,9 +199,6 @@ function PlayerFrames:Buffs(self,unit)
 			--Only Show things with a SHORT durration (HOTS and DOTS)
 			if duration > 0 and duration < 60 then return true end
 		end
-		
-		local BuffsMode	 = DB.Styles[CurStyle].Frames[unit].Buffs.Mode
-		local DebuffsMode= DB.Styles[CurStyle].Frames[unit].Debuffs.Mode
 		
 		-- Determine Buff Bar locaion
 		if BuffsMode == "bars" and DebuffsMode == "icons" then

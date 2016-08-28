@@ -231,17 +231,12 @@ end
 ]]--
 local function Update(self, event, unit)
 	if self.unit ~= unit then return end
+	--Default to Show All
 	local helpOrHarm = UnitIsFriend('player', unit) and 'HELPFUL|PLAYER' or 'HARMFUL|PLAYER'
-	-- local helpOrHarm = 'HELPFUL|PLAYER'
-	-- local helpOrHarm = ""
-	-- if self.Buffs and self.Debuffs then
-	-- local helpOrHarm = 'HELPFUL' or 'HARMFUL'
-	-- elseif self.Buffs then 
-		-- helpOrHarm = 'HELPFUL'
-	-- elseif self.Debuffs then
-		-- helpOrHarm = 'HARMFUL'
-	-- end
-
+	
+	if self.AuraBars.Buffs then helpOrHarm = UnitIsFriend('player', unit) and 'HELPFUL|PLAYER' end
+	if self.AuraBars.Debuffs then helpOrHarm = 'HARMFUL|PLAYER' end
+	
 	-- Create a table of auras to display
 	local auras = {}
 	local lastAuraIndex = 0
