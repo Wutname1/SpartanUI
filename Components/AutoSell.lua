@@ -230,6 +230,7 @@ function module:IsSellable(item)
 	and not spartan:isInTable(ExcludedItems, item)
 	and itemType ~= "Quest"
 	and itemType ~= "Container"
+	or (quality == 0 and  DB.AutoSell.Gray) --Legion identified some junk as consumable
 	then
 		return true
 	end
