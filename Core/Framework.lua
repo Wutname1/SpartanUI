@@ -469,6 +469,7 @@ function SUI:OnInitialize()
 	SUI.DB.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
 	
 	--Bartender4 Hooks
+	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
 	if SUI.DBG.BartenderChangesActive then SUI.DBG.BartenderChangesActive = false end
 	if Bartender4 then
 		--Update to the current profile
