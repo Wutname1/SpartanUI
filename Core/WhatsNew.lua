@@ -168,6 +168,5 @@ function module:FirstAtrifactNotice()
 end
 
 function module:OnEnable()
-	SUI.DBG.HasEquipedArtifact = false
 	module:FirstAtrifactNotice()
 end
