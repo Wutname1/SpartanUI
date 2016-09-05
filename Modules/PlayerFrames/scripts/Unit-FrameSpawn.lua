@@ -109,6 +109,7 @@ function PlayerFrames:AddMover(frame, framename)
 			frame:StopMovingOrSizing();
 			local Anchors = {}
 			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = frame:GetPoint()
+			Anchors.relativeTo = "UIParent"
 			for k,v in pairs(Anchors) do
 				DBMod.PlayerFrames[framename].Anchors[k] = v
 			end
@@ -136,7 +137,7 @@ function PlayerFrames:AddMover(frame, framename)
 				Anchors[k] = v
 			end
 			frame:ClearAllPoints();
-			frame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+			frame:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 		else
 			frame:SetMovable(false);
 		end
