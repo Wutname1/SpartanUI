@@ -230,10 +230,10 @@
 						_G[name.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
 					</OnLoad>
 					<OnEnter>
-						if SUI.DBP.APBar.ToolTip == "hover" then SUI_ArtifactBarTooltip:Show() end
+						if SUI.DBP.StatusBars.APBar.ToolTip == "hover" then SUI_ArtifactBarTooltip:Show() end
 					</OnEnter>
 					<OnMouseDown>
-						if SUI.DBP.APBar.ToolTip == "click" then SUI_ArtifactBarTooltip:Show() end
+						if SUI.DBP.StatusBars.APBar.ToolTip == "click" then SUI_ArtifactBarTooltip:Show() end
 					</OnMouseDown>
 					<OnLeave>
 						SUI_ArtifactBarTooltip:Hide()

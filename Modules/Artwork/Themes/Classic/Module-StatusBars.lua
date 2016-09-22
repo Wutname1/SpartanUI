@@ -40,23 +40,23 @@ end
 
 function module:SetRepColors()
 	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-	if DB.RepBar.AutoDefined == true then
+	if DB.StatusBars.RepBar.AutoDefined == true then
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
 		SUI_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
 		SUI_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
 	else
         local r,b,g,a
 
-		r = DB.RepBar.GainedRed
-		b = DB.RepBar.GainedBlue
-		g = DB.RepBar.GainedGreen
-		a = DB.RepBar.GainedBrightness
+		r = DB.StatusBars.RepBar.GainedRed
+		b = DB.StatusBars.RepBar.GainedBlue
+		g = DB.StatusBars.RepBar.GainedGreen
+		a = DB.StatusBars.RepBar.GainedBrightness
 		SUI_ReputationBarFill:SetVertexColor	(r, g, b, a);
 		SUI_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
 	end
 
 	-- Set Text if needed
-	if DB.RepBar.text then
+	if DB.StatusBars.RepBar.text then
 		SUI_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
 	else
 		SUI_ReputationBarText:SetText("")
@@ -68,43 +68,43 @@ end
 
 function module:SetXPColors()
 	-- Set Gained Color
-	if DB.XPBar.GainedColor ~= "Custom" then
-		DB.XPBar.GainedRed 			= COLORS[DB.XPBar.GainedColor].r
-		DB.XPBar.GainedBlue 		= COLORS[DB.XPBar.GainedColor].b
-		DB.XPBar.GainedGreen 		= COLORS[DB.XPBar.GainedColor].g
-		DB.XPBar.GainedBrightness	= COLORS[DB.XPBar.GainedColor].a
+	if DB.StatusBars.XPBar.GainedColor ~= "Custom" then
+		DB.StatusBars.XPBar.GainedRed 			= COLORS[DB.StatusBars.XPBar.GainedColor].r
+		DB.StatusBars.XPBar.GainedBlue 		= COLORS[DB.StatusBars.XPBar.GainedColor].b
+		DB.StatusBars.XPBar.GainedGreen 		= COLORS[DB.StatusBars.XPBar.GainedColor].g
+		DB.StatusBars.XPBar.GainedBrightness	= COLORS[DB.StatusBars.XPBar.GainedColor].a
 	end
     
     local r,b,g,a
-	r = DB.XPBar.GainedRed
-	b = DB.XPBar.GainedBlue
-	g = DB.XPBar.GainedGreen
-	a = DB.XPBar.GainedBrightness
+	r = DB.StatusBars.XPBar.GainedRed
+	b = DB.StatusBars.XPBar.GainedBlue
+	g = DB.StatusBars.XPBar.GainedGreen
+	a = DB.StatusBars.XPBar.GainedBrightness
 	SUI_ExperienceBarFill:SetVertexColor	(r,g,b,a);
 	SUI_ExperienceBarFillGlow:SetVertexColor(r,g,b,(a-.2));
 
 	-- Set Rested Color
-	if DB.XPBar.RestedMatchColor then
-		DB.XPBar.RestedRed 			= DB.XPBar.GainedRed
-		DB.XPBar.RestedBlue 		= DB.XPBar.GainedBlue
-		DB.XPBar.RestedGreen 		= DB.XPBar.GainedGreen
-		DB.XPBar.RestedBrightness	= 1
-		DB.XPBar.RestedColor		= DB.XPBar.GainedColor
-	elseif DB.XPBar.RestedColor ~= "Custom" then
-		DB.XPBar.RestedRed 			= COLORS[DB.XPBar.RestedColor].r
-		DB.XPBar.RestedBlue 		= COLORS[DB.XPBar.RestedColor].b
-		DB.XPBar.RestedGreen 		= COLORS[DB.XPBar.RestedColor].g
-		DB.XPBar.RestedBrightness	= COLORS[DB.XPBar.RestedColor].a
+	if DB.StatusBars.XPBar.RestedMatchColor then
+		DB.StatusBars.XPBar.RestedRed 			= DB.StatusBars.XPBar.GainedRed
+		DB.StatusBars.XPBar.RestedBlue 		= DB.StatusBars.XPBar.GainedBlue
+		DB.StatusBars.XPBar.RestedGreen 		= DB.StatusBars.XPBar.GainedGreen
+		DB.StatusBars.XPBar.RestedBrightness	= 1
+		DB.StatusBars.XPBar.RestedColor		= DB.StatusBars.XPBar.GainedColor
+	elseif DB.StatusBars.XPBar.RestedColor ~= "Custom" then
+		DB.StatusBars.XPBar.RestedRed 			= COLORS[DB.StatusBars.XPBar.RestedColor].r
+		DB.StatusBars.XPBar.RestedBlue 		= COLORS[DB.StatusBars.XPBar.RestedColor].b
+		DB.StatusBars.XPBar.RestedGreen 		= COLORS[DB.StatusBars.XPBar.RestedColor].g
+		DB.StatusBars.XPBar.RestedBrightness	= COLORS[DB.StatusBars.XPBar.RestedColor].a
 	end
-	r = DB.XPBar.RestedRed
-	b = DB.XPBar.RestedBlue
-	g = DB.XPBar.RestedGreen
-	a = DB.XPBar.RestedBrightness
+	r = DB.StatusBars.XPBar.RestedRed
+	b = DB.StatusBars.XPBar.RestedBlue
+	g = DB.StatusBars.XPBar.RestedGreen
+	a = DB.StatusBars.XPBar.RestedBrightness
 	SUI_ExperienceBarLead:SetVertexColor	(r,g,b,a);
 	SUI_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.1));
 
 	-- Update Text if needed
-	if DB.XPBar.text then
+	if DB.StatusBars.XPBar.text then
 		SUI_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
 	else
 		SUI_ExperienceBarText:SetText("")
@@ -115,7 +115,7 @@ end
 
 function module:UpdateAPBar()
 	-- Set Text if needed
-	if DB.APBar.text then
+	if DB.StatusBars.APBar.text then
 		local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
 		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
 		local ratio = (xp/xpForNextPoint);
@@ -140,7 +140,7 @@ function module:EnableStatusBars()
 		SUI_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
 		
 		SUI_ExperienceBar:SetScript("OnEvent",function()
-			if DB.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
+			if DB.StatusBars.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 			if now == 0 then
 				SUI_ExperienceBarFill:SetWidth(0.1);
@@ -153,7 +153,7 @@ function module:EnableStatusBars()
 				if rested == 0 then rested = .001 end
 				SUI_ExperienceBarLead:SetWidth(rested);
 			end
-			if DB.XPBar.text then
+			if DB.StatusBars.XPBar.text then
 				SUI_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
 			else
 				SUI_ExperienceBarText:SetText("")
@@ -179,8 +179,8 @@ function module:EnableStatusBars()
 			tooltip:Show();
 		end
 		
-		SUI_ExperienceBar:SetScript("OnEnter",function() if DB.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
-		SUI_ExperienceBar:SetScript("OnMouseDown",function() if DB.XPBar.ToolTip == "click" then showXPTooltip(); end end);
+		SUI_ExperienceBar:SetScript("OnEnter",function() if DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
+		SUI_ExperienceBar:SetScript("OnMouseDown",function() if DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(); end end);
 		SUI_ExperienceBar:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
 		SUI_ExperienceBar:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -191,7 +191,7 @@ function module:EnableStatusBars()
 	end
 	do -- reputation bar
 		SUI_ReputationBar:SetScript("OnEvent",function()
-			if DB.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
+			if DB.StatusBars.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
 			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 			if name then ratio = (current-low)/(high-low); end
 			SUI_StatusBarTooltipHeader:SetText(name);
@@ -202,7 +202,7 @@ function module:EnableStatusBars()
 				module:SetRepColors()
 			end
 			
-			if DB.RepBar.text then
+			if DB.StatusBars.RepBar.text then
 				SUI_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
 			else
 				SUI_ReputationBarText:SetText("")
@@ -224,8 +224,8 @@ function module:EnableStatusBars()
 			tooltip:Show();
 		end
 		
-		SUI_ReputationBar:SetScript("OnEnter",function() if DB.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
-		SUI_ReputationBar:SetScript("OnMouseDown",function() if DB.RepBar.ToolTip == "click" then showRepTooltip(); end end);
+		SUI_ReputationBar:SetScript("OnEnter",function() if DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
+		SUI_ReputationBar:SetScript("OnMouseDown",function() if DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(); end end);
 		SUI_ReputationBar:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
 		SUI_ReputationBar:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -254,7 +254,7 @@ function module:EnableStatusBars()
 					end
 				end
 				
-				if DB.APBar.text then
+				if DB.StatusBars.APBar.text then
 					SUI_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
 				else
 					SUI_ArtifactBarText:SetText("")
@@ -270,7 +270,7 @@ function module:EnableStatusBars()
 end
 
 function module:UpdateStatusBars()
-	if DB.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
-	if DB.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
-	if DB.APBar.enabled then SUI_ArtifactBar:Show(); else SUI_ArtifactBar:Hide(); end
+	if DB.StatusBars.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
+	if DB.StatusBars.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
+	if DB.StatusBars.APBar.enabled then SUI_ArtifactBar:Show(); else SUI_ArtifactBar:Hide(); end
 end

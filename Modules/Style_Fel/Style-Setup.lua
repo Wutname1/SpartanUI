@@ -69,7 +69,8 @@ local Defaults = {
 	StatusBars = {
 		XP = true,
 		REP = true,
-		AP = true
+		AP = true,
+		HONOR = true
 	},
 	BuffLoc = true
 }

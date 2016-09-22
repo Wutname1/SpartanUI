@@ -97,8 +97,8 @@ function module:FirstArtifact()
 			SUI_Win.Next:SetText("TRACK ARTIFACT POWER")
 		end,
 		Next = function()
-			DB.RepBar.enabled = false
-			DB.APBar.enabled = true
+			DB.StatusBars.RepBar.enabled = false
+			DB.StatusBars.APBar.enabled = true
 			spartan:GetModule("Style_"..SUI.DBMod.Artwork.Style):UpdateStatusBars()
 		end,
 		Skip = function() end
@@ -127,7 +127,7 @@ function module:FirstAtrifactNotice()
 	loginlevel = UnitLevel("player")
 	
 	--Only process if we are not 110; allowed to show new featues; have never used an artifact; The style allows tracking
-	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DBP.Styles[DBMod.Artwork.Style].StatusBars.AP and not SUI.DBP.APBar.enabled then
+	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DBP.Styles[DBMod.Artwork.Style].StatusBars.AP and not SUI.DBP.StatusBars.APBar.enabled then
 		--Detect if user already has a artifact
 		if HasArtifactEquipped() then
 			SUI.DBG.HasEquipedArtifact = true
@@ -145,13 +145,13 @@ function module:FirstAtrifactNotice()
 					ArtifactWatcher:RegisterEvent("UNIT_INVENTORY_CHANGED");
 				end
 			end
-			if HasArtifactEquipped() and not SUI.DBP.APBar.enabled then
+			if HasArtifactEquipped() and not SUI.DBP.StatusBars.APBar.enabled then
 				module:FirstArtifact()
 				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
 				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
 				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")
 				ArtifactWatcher = nil
-			elseif SUI.DBP.APBar.enabled then
+			elseif SUI.DBP.StatusBars.APBar.enabled then
 				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
 				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
 				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")

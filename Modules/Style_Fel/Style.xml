@@ -18,7 +18,7 @@
 	
 	<!-- Fel_StatusBars_TooltipTemplate -->
 	<Frame name="Fel_StatusBars_TooltipTemplate" frameStrata="TOOLTIP" virtual="true">
-		<Size><AbsDimension x="360" y="80"/></Size>
+		<Size><AbsDimension x="380" y="100"/></Size>
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Fel\Images\Fel-Box">
@@ -30,16 +30,22 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString name="$parentHeader" inherits="SUI_FontOutline10" justifyH="CENTER">
-					<Size><AbsDimension x="300" y="15" /></Size>
+				<FontString name="$parentHeader" inherits="SUI_FontOutline16" justifyH="CENTER">
+					<Size><AbsDimension x="300" y="20" /></Size>
 					<Anchors>
-						<Anchor point="TOP"><Offset><AbsDimension x="0" y="-15"/></Offset></Anchor>
+						<Anchor point="TOP"><Offset><AbsDimension x="0" y="-20"/></Offset></Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentText" inherits="SUI_FontOutline8" justifyV="TOP">
+				<FontString name="$parentText" inherits="SUI_FontOutline12" justifyV="TOP">
 					<Size><AbsDimension x="300" y="46" /></Size>
 					<Anchors>
 						<Anchor point="TOP" relativeTo="$parentHeader" relativePoint="BOTTOM"><Offset><AbsDimension x="0" y="-2"/></Offset></Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentText2" inherits="SUI_FontOutline12" justifyV="TOP">
+					<Size><AbsDimension x="300" y="46" /></Size>
+					<Anchors>
+						<Anchor point="TOP" relativeTo="$parentText" relativePoint="BOTTOM"><Offset><AbsDimension x="0" y="-2"/></Offset></Anchor>
 					</Anchors>
 				</FontString>
 			</Layer>
@@ -157,7 +163,7 @@
 			</Frame>
 			<Frame name="Fel_ReputationBar" inherits="Fel_StatusBar_Template">
 				<Anchors>
-					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="110" y="0" /></Offset></Anchor>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-110" y="0" /></Offset></Anchor>
 				</Anchors>
 			</Frame>
 			<Frame name="Fel_ArtifactBar" inherits="Fel_StatusBar_Template">
@@ -170,14 +176,34 @@
 						_G[name.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
 					</OnLoad>
 					<OnEnter>
-						if SUI.DBP.APBar.ToolTip == "hover" then Fel_ArtifactBarTooltip:Show() end
+						if SUI.DBP.StatusBars.APBar.ToolTip == "hover" then Fel_ArtifactBarTooltip:Show() end
 					</OnEnter>
 					<OnMouseDown>
-						if SUI.DBP.APBar.ToolTip == "click" then Fel_ArtifactBarTooltip:Show() end
+						if SUI.DBP.StatusBars.APBar.ToolTip == "click" then Fel_ArtifactBarTooltip:Show() end
 					</OnMouseDown>
 					<OnLeave>
 						Fel_ArtifactBarTooltip:Hide()
 					</OnLeave>
+				</Scripts>
+			</Frame>
+			<Frame name="Fel_HonorBar" inherits="Fel_StatusBar_Template">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-110" y="0" /></Offset></Anchor>
+				</Anchors>
+ 				<Scripts>
+					<OnLoad>
+						local name = self:GetName();
+						_G[name.."Fill"]:SetVertexColor(1, 0.2, 0);
+					</OnLoad><!-- 
+					<OnEnter>
+						if SUI.DBP.HonorBar.ToolTip == "hover" then Fel_ArtifactBarTooltip:Show() end
+					</OnEnter>
+					<OnMouseDown>
+						if SUI.DBP.HonorBar.ToolTip == "click" then Fel_ArtifactBarTooltip:Show() end
+					</OnMouseDown>
+					<OnLeave>
+						Fel_ArtifactBarTooltip:Hide()
+					</OnLeave> -->
 				</Scripts>
 			</Frame>
 			<Frame name="Fel_ArtifactBarTooltip" hidden="true" inherits="Fel_StatusBars_TooltipTemplate">
@@ -194,7 +220,9 @@
 							local ratio = (xp/xpForNextPoint);
 							
 							_G[FrameName.."Header"]:SetText(name);							
-							_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+							_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%.", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+							_G[FrameName.."Text2"]:SetFormattedText("Ammount required for next level: %s", spartan:comma_value(xpForNextPoint-xp))
+							
 						else
 							_G[FrameName.."Header"]:SetText("No Artifact equiped");
 							_G[FrameName.."Text"]:SetText("")

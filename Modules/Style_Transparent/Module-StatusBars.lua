@@ -40,41 +40,41 @@ end
 
 function module:SetXPColors()
 	-- Set Gained Color
-	if DB.XPBar.GainedColor ~= "Custom" then
-		DB.XPBar.GainedRed 			= COLORS[DB.XPBar.GainedColor].r
-		DB.XPBar.GainedBlue 		= COLORS[DB.XPBar.GainedColor].b
-		DB.XPBar.GainedGreen 		= COLORS[DB.XPBar.GainedColor].g
-		DB.XPBar.GainedBrightness	= COLORS[DB.XPBar.GainedColor].a
+	if DB.StatusBars.XPBar.GainedColor ~= "Custom" then
+		DB.StatusBars.XPBar.GainedRed 			= COLORS[DB.StatusBars.XPBar.GainedColor].r
+		DB.StatusBars.XPBar.GainedBlue 		= COLORS[DB.StatusBars.XPBar.GainedColor].b
+		DB.StatusBars.XPBar.GainedGreen 		= COLORS[DB.StatusBars.XPBar.GainedColor].g
+		DB.StatusBars.XPBar.GainedBrightness	= COLORS[DB.StatusBars.XPBar.GainedColor].a
 	end
-	r = DB.XPBar.GainedRed
-	b = DB.XPBar.GainedBlue
-	g = DB.XPBar.GainedGreen
-	a = DB.XPBar.GainedBrightness
+	r = DB.StatusBars.XPBar.GainedRed
+	b = DB.StatusBars.XPBar.GainedBlue
+	g = DB.StatusBars.XPBar.GainedGreen
+	a = DB.StatusBars.XPBar.GainedBrightness
 	Transparent_ExperienceBarFill:SetVertexColor	(r,g,b,a);
 	Transparent_ExperienceBarFillGlow:SetVertexColor(r,g,b,(a-.3));
 
 	-- Set Rested Color
-	if DB.XPBar.RestedMatchColor then
-		DB.XPBar.RestedRed 			= DB.XPBar.GainedRed
-		DB.XPBar.RestedBlue 		= DB.XPBar.GainedBlue
-		DB.XPBar.RestedGreen 		= DB.XPBar.GainedGreen
-		DB.XPBar.RestedBrightness	= 1
-		DB.XPBar.RestedColor		= DB.XPBar.GainedColor
-	elseif DB.XPBar.RestedColor ~= "Custom" then
-		DB.XPBar.RestedRed 			= COLORS[DB.XPBar.RestedColor].r
-		DB.XPBar.RestedBlue 		= COLORS[DB.XPBar.RestedColor].b
-		DB.XPBar.RestedGreen 		= COLORS[DB.XPBar.RestedColor].g
-		DB.XPBar.RestedBrightness	= COLORS[DB.XPBar.RestedColor].a
+	if DB.StatusBars.XPBar.RestedMatchColor then
+		DB.StatusBars.XPBar.RestedRed 			= DB.StatusBars.XPBar.GainedRed
+		DB.StatusBars.XPBar.RestedBlue 		= DB.StatusBars.XPBar.GainedBlue
+		DB.StatusBars.XPBar.RestedGreen 		= DB.StatusBars.XPBar.GainedGreen
+		DB.StatusBars.XPBar.RestedBrightness	= 1
+		DB.StatusBars.XPBar.RestedColor		= DB.StatusBars.XPBar.GainedColor
+	elseif DB.StatusBars.XPBar.RestedColor ~= "Custom" then
+		DB.StatusBars.XPBar.RestedRed 			= COLORS[DB.StatusBars.XPBar.RestedColor].r
+		DB.StatusBars.XPBar.RestedBlue 		= COLORS[DB.StatusBars.XPBar.RestedColor].b
+		DB.StatusBars.XPBar.RestedGreen 		= COLORS[DB.StatusBars.XPBar.RestedColor].g
+		DB.StatusBars.XPBar.RestedBrightness	= COLORS[DB.StatusBars.XPBar.RestedColor].a
 	end
-	r = DB.XPBar.RestedRed
-	b = DB.XPBar.RestedBlue
-	g = DB.XPBar.RestedGreen
-	a = DB.XPBar.RestedBrightness
+	r = DB.StatusBars.XPBar.RestedRed
+	b = DB.StatusBars.XPBar.RestedBlue
+	g = DB.StatusBars.XPBar.RestedGreen
+	a = DB.StatusBars.XPBar.RestedBrightness
 	Transparent_ExperienceBarLead:SetVertexColor	(r,g,b,a);
 	Transparent_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.2));
 
 	-- Update Text if needed
-	if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+	if DB.StatusBars.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 end
 
 function module:EnableStatusBars()
@@ -95,7 +95,7 @@ function module:EnableStatusBars()
 		xpframe:SetPoint("BOTTOMRIGHT","Transparent_SpartanUI","BOTTOM",-100,0);
 		
 		xpframe:SetScript("OnEvent",function()
-			if DB.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.XPBar.enabled then xpframe:Hide(); end
+			if DB.StatusBars.XPBar.enabled and not xpframe:IsVisible() then xpframe:Show(); elseif not DB.StatusBars.XPBar.enabled then xpframe:Hide(); end
 			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 			if now == 0 then
 				Transparent_ExperienceBarFill:SetWidth(0.1);
@@ -108,7 +108,7 @@ function module:EnableStatusBars()
 				if rested == 0 then rested = .001 end
 				Transparent_ExperienceBarLead:SetWidth(rested);
 			end
-			if DB.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
+			if DB.StatusBars.XPBar.text then xpframe.Text:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100)) else xpframe.Text:SetText("") end
 			module:SetXPColors()
 		end);
 		local showXPTooltip = function()
@@ -134,8 +134,8 @@ function module:EnableStatusBars()
 		xpframe.Text:SetJustifyH("MIDDLE"); xpframe.Text:SetJustifyV("MIDDLE");
 		xpframe.Text:SetPoint("TOP",xpframe,"TOP",0,0);
 		
-		xpframe:SetScript("OnEnter",function() if DB.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
-		xpframe:SetScript("OnMouseDown",function() if DB.XPBar.ToolTip == "click" then showXPTooltip(); end end);
+		xpframe:SetScript("OnEnter",function() if DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
+		xpframe:SetScript("OnMouseDown",function() if DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(); end end);
 		xpframe:SetScript("OnLeave",function() tooltip:Hide(); end);
 		
 		xpframe:RegisterEvent("PLAYER_ENTERING_WORLD");

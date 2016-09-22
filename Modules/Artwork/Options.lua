@@ -136,22 +136,53 @@ end
 
 function Artwork_Core:StatusBarOptions()
 	local module = spartan:GetModule("Style_"..DBMod.Artwork.Style)
+	local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["honor"] = L["Honor"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
+	spartan.opt.args["Artwork"].args["StatusBars"] = {
+		name = L["BarXP"],
+		desc = L["BarXPDesc"],
+		type = "group", args = {
+			left = {name=L["Display mode"],type="select",order=.1,
+				values = StatusBars,
+				get = function(info)
+					return DB.StatusBars.left
+				end,
+				set = function(info,val)
+					if DB.StatusBars.right == val then return end
+					DB.StatusBars.left = val
+					module:UpdateStatusBars()
+				end
+			},
+			right = {name=L["Display mode"],type="select",order=.1,
+				values = StatusBars,
+				get = function(info)
+					return DB.StatusBars.right
+				end,
+				set = function(info,val)
+					if DB.StatusBars.left == val then return end
+					DB.StatusBars.right = val
+					module:UpdateStatusBars()
+				end
+			},
+		}
+	}
+	
+	
 	spartan.opt.args["Artwork"].args["XPBar"] = {
 		name = L["BarXP"],
 		desc = L["BarXPDesc"],
 		type = "group", args = {
 			display = {name=L["BarXPEnabled"],type="toggle",order=.1,
-				get = function(info) return DB.XPBar.enabled; end,
-				set = function(info,val) DB.XPBar.enabled = val; module:UpdateStatusBars(); end
+				get = function(info) return DB.StatusBars.XPBar.enabled; end,
+				set = function(info,val) DB.StatusBars.XPBar.enabled = val; module:UpdateStatusBars(); end
 			},
 			displaytext = {name=L["DisplayText"],type="toggle",order=.15,
-				get = function(info) return DB.XPBar.text; end,
-				set = function(info,val) DB.XPBar.text = val; module:SetXPColors(); end
+				get = function(info) return DB.StatusBars.XPBar.text; end,
+				set = function(info,val) DB.StatusBars.XPBar.text = val; module:SetXPColors(); end
 			},
 			tooltip = {name=L["DisplayTooltip"],type="select",order=.2,
 				values = {["hover"]="Mouse Over",["click"]="On Click",["off"]="Disabled"},
-				get = function(info) return DB.XPBar.ToolTip; end,
-				set = function(info,val) DB.XPBar.ToolTip = val; end
+				get = function(info) return DB.StatusBars.XPBar.ToolTip; end,
+				set = function(info,val) DB.StatusBars.XPBar.ToolTip = val; end
 			},
 			header1 = {name=L["ClrGained"],type="header",order=.9},
 			GainedColor = {name=L["GainedColor"],type="select",style="dropdown",order=1,width="full",
@@ -166,34 +197,34 @@ function Artwork_Core:StatusBarOptions()
 					["Red"]	= "Red",
 					["Light_Blue"]	= "Light Blue",
 				},
-				get = function(info) return DB.XPBar.GainedColor; end,
-				set = function(info,val) DB.XPBar.GainedColor = val; module:SetXPColors(); end
+				get = function(info) return DB.StatusBars.XPBar.GainedColor; end,
+				set = function(info,val) DB.StatusBars.XPBar.GainedColor = val; module:SetXPColors(); end
 			},
 			GainedRed = {name=L["Red"],type="range",order=2,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedRed*100); end,
+				get = function(info) return (DB.StatusBars.XPBar.GainedRed*100); end,
 				set = function(info,val)
-					if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedRed = (val/100); module:SetXPColors();
+					if (DB.StatusBars.XPBar.GainedColor ~= "Custom") then DB.StatusBars.XPBar.GainedColor = "Custom"; end DB.StatusBars.XPBar.GainedRed = (val/100); module:SetXPColors();
 				end
 			},
 			GainedGreen = {name=L["Green"],type="range",order=3,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedGreen*100); end,
+				get = function(info) return (DB.StatusBars.XPBar.GainedGreen*100); end,
 				set = function(info,val)
-					if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedGreen = (val/100);  module:SetXPColors();
+					if (DB.StatusBars.XPBar.GainedColor ~= "Custom") then DB.StatusBars.XPBar.GainedColor = "Custom"; end DB.StatusBars.XPBar.GainedGreen = (val/100);  module:SetXPColors();
 				end
 			},
 			GainedBlue = {name=L["Blue"],type="range",order=4,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedBlue*100); end,
+				get = function(info) return (DB.StatusBars.XPBar.GainedBlue*100); end,
 				set = function(info,val)
-					if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedBlue = (val/100); module:SetXPColors();
+					if (DB.StatusBars.XPBar.GainedColor ~= "Custom") then DB.StatusBars.XPBar.GainedColor = "Custom"; end DB.StatusBars.XPBar.GainedBlue = (val/100); module:SetXPColors();
 				end
 			},
 			GainedBrightness = {name=L["Brightness"],type="range",order=5,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.GainedBrightness*100); end,
-				set = function(info,val) if (DB.XPBar.GainedColor ~= "Custom") then DB.XPBar.GainedColor = "Custom"; end DB.XPBar.GainedBrightness = (val/100); module:SetXPColors(); end
+				get = function(info) return (DB.StatusBars.XPBar.GainedBrightness*100); end,
+				set = function(info,val) if (DB.StatusBars.XPBar.GainedColor ~= "Custom") then DB.StatusBars.XPBar.GainedColor = "Custom"; end DB.StatusBars.XPBar.GainedBrightness = (val/100); module:SetXPColors(); end
 			},
 			header2 = {name=L["ClrRested"],type="header",order=10},
 			RestedColor = {name=L["RestedColor"],type="select",style="dropdown",order=11,width="full",
@@ -208,42 +239,42 @@ function Artwork_Core:StatusBarOptions()
 					["Red"]	= "Red",
 					["Light_Blue"]	= "Light Blue",
 				},
-				get = function(info) return DB.XPBar.RestedColor; end,
-				set = function(info,val) DB.XPBar.RestedColor = val; module:SetXPColors(); end
+				get = function(info) return DB.StatusBars.XPBar.RestedColor; end,
+				set = function(info,val) DB.StatusBars.XPBar.RestedColor = val; module:SetXPColors(); end
 			},
 			RestedRed = {name=L["Red"],type="range",order=12,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedRed*100); end,
+				get = function(info) return (DB.StatusBars.XPBar.RestedRed*100); end,
 				set = function(info,val)
-					if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedRed = (val/100); module:SetXPColors();
+					if (DB.StatusBars.XPBar.RestedColor ~= "Custom") then DB.StatusBars.XPBar.RestedColor = "Custom"; end DB.StatusBars.XPBar.RestedRed = (val/100); module:SetXPColors();
 				end
 			},
 			RestedGreen = {name=L["Green"],type="range",order=13,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedGreen*100); end,
+				get = function(info) return (DB.StatusBars.XPBar.RestedGreen*100); end,
 				set = function(info,val)
-					if (DB.XPBar.RestedColor ~= "Custom") then
-						DB.XPBar.RestedColor = "Custom";
+					if (DB.StatusBars.XPBar.RestedColor ~= "Custom") then
+						DB.StatusBars.XPBar.RestedColor = "Custom";
 					end
-					DB.XPBar.RestedGreen = (val/100);
+					DB.StatusBars.XPBar.RestedGreen = (val/100);
 					module:SetXPColors();
 				end
 			},
 			RestedBlue = {name=L["Blue"],type="range",order=14,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedBlue*100); end,
+				get = function(info) return (DB.StatusBars.XPBar.RestedBlue*100); end,
 				set = function(info,val)
-					if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedBlue = (val/100); module:SetXPColors();
+					if (DB.StatusBars.XPBar.RestedColor ~= "Custom") then DB.StatusBars.XPBar.RestedColor = "Custom"; end DB.StatusBars.XPBar.RestedBlue = (val/100); module:SetXPColors();
 				end
 			},
 			RestedBrightness = {name=L["Brightness"],type="range",order=15,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.XPBar.RestedBrightness*100); end,
-				set = function(info,val) if (DB.XPBar.RestedColor ~= "Custom") then DB.XPBar.RestedColor = "Custom"; end DB.XPBar.RestedBrightness = (val/100); module:SetXPColors(); end
+				get = function(info) return (DB.StatusBars.XPBar.RestedBrightness*100); end,
+				set = function(info,val) if (DB.StatusBars.XPBar.RestedColor ~= "Custom") then DB.StatusBars.XPBar.RestedColor = "Custom"; end DB.StatusBars.XPBar.RestedBrightness = (val/100); module:SetXPColors(); end
 			},
 			RestedMatchColor = {name=L["MatchRestedClr"],type="toggle",order=21,
-				get = function(info) return DB.XPBar.RestedMatchColor; end,
-				set = function(info,val) DB.XPBar.RestedMatchColor = val; module:SetXPColors(); end
+				get = function(info) return DB.StatusBars.XPBar.RestedMatchColor; end,
+				set = function(info,val) DB.StatusBars.XPBar.RestedMatchColor = val; module:SetXPColors(); end
 			}
 		}
 	}
@@ -253,38 +284,38 @@ function Artwork_Core:StatusBarOptions()
 			display = {name=L["Display mode"],type="select",order=.1,
 				values = {["rep"] = L["Reputation"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]},
 				get = function(info)
-					if DB.RepBar.enabled then
+					if DB.StatusBars.RepBar.enabled then
 						return "rep";
-					elseif DB.APBar.enabled then
+					elseif DB.StatusBars.APBar.enabled then
 						return "ap";
 					else
 						return "disabled"
 					end
 				end,
 				set = function(info,val)
-					DB.RepBar.enabled = false
-					DB.APBar.enabled = false
-					if val == "rep" then DB.RepBar.enabled = true
-					elseif val == "ap" then DB.APBar.enabled = true end
+					DB.StatusBars.RepBar.enabled = false
+					DB.StatusBars.APBar.enabled = false
+					if val == "rep" then DB.StatusBars.RepBar.enabled = true
+					elseif val == "ap" then DB.StatusBars.APBar.enabled = true end
 					module:UpdateStatusBars()
 				end
 			},
 			displaytext = {name=L["DisplayText"],type="toggle",order=.15,
 				get = function(info)
-					if DB.RepBar.enabled then
-						return DB.RepBar.text;
-					elseif DB.APBar.enabled then
-						return DB.APBar.text;
+					if DB.StatusBars.RepBar.enabled then
+						return DB.StatusBars.RepBar.text;
+					elseif DB.StatusBars.APBar.enabled then
+						return DB.StatusBars.APBar.text;
 					else 
 						return false
 					end
 				end,
 				set = function(info,val)
-					if DB.RepBar.enabled then
-						DB.RepBar.text = val;
+					if DB.StatusBars.RepBar.enabled then
+						DB.StatusBars.RepBar.text = val;
 						module:SetRepColors();
-					elseif DB.APBar.enabled then
-						DB.APBar.text = val;
+					elseif DB.StatusBars.APBar.enabled then
+						DB.StatusBars.APBar.text = val;
 						module:UpdateAPBar()
 					end
 				end
@@ -292,13 +323,13 @@ function Artwork_Core:StatusBarOptions()
 			header1 = {name=L["ClrRep"],type="header",order=.9},
 			tooltip = {name=L["DisplayTooltip"],type="select",order=.95,
 				values = {["hover"]="Mouse Over",["click"]="On Click",["off"]="Disabled"},
-				get = function(info) return DB.RepBar.ToolTip; end,
-				set = function(info,val) DB.RepBar.ToolTip = val; end
+				get = function(info) return DB.StatusBars.RepBar.ToolTip; end,
+				set = function(info,val) DB.StatusBars.RepBar.ToolTip = val; end
 			},
 			AutoDefined = {name=L["AutoRepClr"],type="toggle",order=1,desc=L["AutoRepClrDesc"],
 			width="full",
-				get = function(info) return DB.RepBar.AutoDefined; end,
-				set = function(info,val) DB.RepBar.AutoDefined = val; module:SetRepColors(); end
+				get = function(info) return DB.StatusBars.RepBar.AutoDefined; end,
+				set = function(info,val) DB.StatusBars.RepBar.AutoDefined = val; module:SetRepColors(); end
 			},
 			RepColor = {name=L["Color"],type="select",style="dropdown",order=2,
 				values = {
@@ -313,34 +344,34 @@ function Artwork_Core:StatusBarOptions()
 					["Red"]	= L["Red"],
 					["Light_Blue"]	= L["LightBlue"],
 				},
-				get = function(info) return DB.RepBar.GainedColor; end,
-				set = function(info,val) DB.RepBar.GainedColor = val; if val == "AUTO" then DB.RepBar.AutoDefined = true end module:SetRepColors(); end
+				get = function(info) return DB.StatusBars.RepBar.GainedColor; end,
+				set = function(info,val) DB.StatusBars.RepBar.GainedColor = val; if val == "AUTO" then DB.StatusBars.RepBar.AutoDefined = true end module:SetRepColors(); end
 			},
 			RepRed = {name=L["Red"],type="range",order=3,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedRed*100); end,
+				get = function(info) return (DB.StatusBars.RepBar.GainedRed*100); end,
 				set = function(info,val)
-					if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedRed = (val/100); module:SetRepColors();
+					if (DB.StatusBars.RepBar.AutoDefined) then return end if (DB.StatusBars.RepBar.GainedColor ~= "Custom") then DB.StatusBars.RepBar.GainedColor = "Custom"; end DB.StatusBars.RepBar.GainedRed = (val/100); module:SetRepColors();
 				end
 			},
 			RepGreen = {name=L["Green"],type="range",order=4,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedGreen*100); end,
+				get = function(info) return (DB.StatusBars.RepBar.GainedGreen*100); end,
 				set = function(info,val)
-					if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedGreen = (val/100);  module:SetRepColors();
+					if (DB.StatusBars.RepBar.AutoDefined) then return end if (DB.StatusBars.RepBar.GainedColor ~= "Custom") then DB.StatusBars.RepBar.GainedColor = "Custom"; end DB.StatusBars.RepBar.GainedGreen = (val/100);  module:SetRepColors();
 				end
 			},
 			RepBlue = {name=L["Blue"],type="range",order=5,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedBlue*100); end,
+				get = function(info) return (DB.StatusBars.RepBar.GainedBlue*100); end,
 				set = function(info,val)
-					if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedBlue = (val/100); module:SetRepColors();
+					if (DB.StatusBars.RepBar.AutoDefined) then return end if (DB.StatusBars.RepBar.GainedColor ~= "Custom") then DB.StatusBars.RepBar.GainedColor = "Custom"; end DB.StatusBars.RepBar.GainedBlue = (val/100); module:SetRepColors();
 				end
 			},
 			RepBrightness = {name=L["Brightness"],type="range",order=6,
 				min=0,max=100,step=1,
-				get = function(info) return (DB.RepBar.GainedBrightness*100); end,
-				set = function(info,val) if (DB.RepBar.AutoDefined) then return end if (DB.RepBar.GainedColor ~= "Custom") then DB.RepBar.GainedColor = "Custom"; end DB.RepBar.GainedBrightness = (val/100); module:SetRepColors(); end
+				get = function(info) return (DB.StatusBars.RepBar.GainedBrightness*100); end,
+				set = function(info,val) if (DB.StatusBars.RepBar.AutoDefined) then return end if (DB.StatusBars.RepBar.GainedColor ~= "Custom") then DB.StatusBars.RepBar.GainedColor = "Custom"; end DB.StatusBars.RepBar.GainedBrightness = (val/100); module:SetRepColors(); end
 			}
 		}
 	}

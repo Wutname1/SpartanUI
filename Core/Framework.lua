@@ -171,43 +171,45 @@ local DBdefault = {
 			popup1anim = true,
 			popup2anim = true
 		},
-		XPBar = {
-			enabled = true,
-			text = true,
-			ToolTip = "click",
-			GainedColor	= "Blue",
-			GainedRed	= 0,
-			GainedBlue	= 1,
-			GainedGreen	= .5,
-			GainedBrightness= .7,
-			RestedColor	= "Light_Blue",
-			RestedRed	= 0,
-			RestedBlue	= 1,
-			RestedGreen	= .5,
-			RestedBrightness= .7,
-			RestedMatchColor= false
-		},
-		RepBar = {
-			enabled = true,
-			text = false,
-			ToolTip = "click",
-			GainedColor	= "AUTO",
-			GainedRed	= 0,
-			GainedBlue	= 0,
-			GainedGreen	= 1,
-			GainedBrightness= .6,
-			AutoDefined	= true
-		},
-		APBar = {
-			enabled = false,
-			text = true,
-			ToolTip = "hover",
-			GainedColor	= "AUTO",
-			GainedRed	= 0,
-			GainedBlue	= 0,
-			GainedGreen	= 1,
-			GainedBrightness= .6,
-			AutoDefined	= true
+		StatusBars = {
+			left = "xp",
+			right = "rep",
+			XPBar = {
+				enabled = true,
+				text = true,
+				ToolTip = "click",
+				GainedColor	= "Blue",
+				GainedRed	= 0,
+				GainedBlue	= 1,
+				GainedGreen	= .5,
+				GainedBrightness= .7,
+				RestedColor	= "Light_Blue",
+				RestedRed	= 0,
+				RestedBlue	= 1,
+				RestedGreen	= .5,
+				RestedBrightness= .7,
+				RestedMatchColor= false
+			},
+			RepBar = {
+				enabled = true,
+				text = false,
+				ToolTip = "click",
+				GainedColor	= "AUTO",
+				GainedRed	= 0,
+				GainedBlue	= 0,
+				GainedGreen	= 1,
+				GainedBrightness= .6,
+				AutoDefined	= true
+			},
+			APBar = {
+				enabled = false,
+				text = true,
+				ToolTip = "hover"
+			},
+			HonorBar = {
+				enabled = false,
+				text = true
+			}
 		},
 		MiniMap = {
 			northTag = false,
