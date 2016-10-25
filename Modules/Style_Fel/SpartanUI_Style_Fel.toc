@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 70100
 ## Title: SpartanUI: |CFF0070DDStyle - |r|CFF259A0EFel|r
 ## Notes: Fel style and layout for SpartanUI
 ## Version: 1.0.0
