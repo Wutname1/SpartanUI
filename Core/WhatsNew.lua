@@ -74,7 +74,7 @@ function module:FirstArtifact()
 		title = L["Congratulations"],
 		SubTitle = L["You have equiped your first artifact weapon"],
 		Desc1 = L["Your artifact weapon levels up just like your character through a resource called Artifact Power. Would you like to track your artifact power as a status bar?"].. "|r",
-		Desc2 = L["This will replace your reputation bar and you can switch between the two at any time via the SpartanUI settings."],
+		Desc2 = L["This will replace in the bottom right status bar and you can switch between the two at any time via the SpartanUI settings."],
 		Display = function()
 			-- Track have been displayed
 			SUI.DBG.HasEquipedArtifact = true
@@ -97,8 +97,7 @@ function module:FirstArtifact()
 			SUI_Win.Next:SetText("TRACK ARTIFACT POWER")
 		end,
 		Next = function()
-			DB.StatusBars.RepBar.enabled = false
-			DB.StatusBars.APBar.enabled = true
+			DB.StatusBars.right = "ap"
 			spartan:GetModule("Style_"..SUI.DBMod.Artwork.Style):UpdateStatusBars()
 		end,
 		Skip = function() end
@@ -127,7 +126,7 @@ function module:FirstAtrifactNotice()
 	loginlevel = UnitLevel("player")
 	
 	--Only process if we are not 110; allowed to show new featues; have never used an artifact; The style allows tracking
-	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DBP.Styles[DBMod.Artwork.Style].StatusBars.AP and not SUI.DBP.StatusBars.APBar.enabled then
+	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DBP.Styles[DBMod.Artwork.Style].StatusBars.AP and not (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
 		--Detect if user already has a artifact
 		if HasArtifactEquipped() then
 			SUI.DBG.HasEquipedArtifact = true
@@ -145,13 +144,13 @@ function module:FirstAtrifactNotice()
 					ArtifactWatcher:RegisterEvent("UNIT_INVENTORY_CHANGED");
 				end
 			end
-			if HasArtifactEquipped() and not SUI.DBP.StatusBars.APBar.enabled then
+			if HasArtifactEquipped() and not (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
 				module:FirstArtifact()
 				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
 				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
 				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")
 				ArtifactWatcher = nil
-			elseif SUI.DBP.StatusBars.APBar.enabled then
+			elseif (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
 				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
 				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
 				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")

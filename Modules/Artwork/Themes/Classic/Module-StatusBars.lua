@@ -96,18 +96,19 @@ end
 
 local updateText = function(self, side)
 	local FrameName = self:GetName();
+	-- Reset graphically to avoid issues
+	_G[FrameName.."Fill"]:SetWidth(0.1);
+	_G[FrameName.."FillGlow"]:SetWidth(.1);
+	_G[FrameName.."Lead"]:SetWidth(0.1);
+	--Reset Text
 	_G[FrameName.."Text"]:SetText("")
 	
 	if (DB.StatusBars.left == "xp" and side == "left") or (DB.StatusBars.right == "xp" and side == "right") then
 		local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
-		if now == 0 then
-			_G[FrameName.."Fill"]:SetWidth(0.1);
-			_G[FrameName.."FillGlow"]:SetWidth(.1);
-			_G[FrameName.."Lead"]:SetWidth(0.1);
-		else
-			_G[FrameName.."Fill"]:SetWidth((now/goal)*_G[FrameName]:GetWidth());
-			rested = (rested/goal)*_G[FrameName]:GetWidth();
-			if (rested+_G[FrameName.."Fill"]:GetWidth()) > 399 then rested = _G[FrameName]:GetWidth()-_G[FrameName.."Fill"]:GetWidth(); end
+		if now ~= 0 then
+			_G[FrameName.."Fill"]:SetWidth((now/goal)*self:GetWidth());
+			rested = (rested/goal)*400;
+			if (rested+_G[FrameName.."Fill"]:GetWidth()) > 399 then rested = self:GetWidth()-_G[FrameName.."Fill"]:GetWidth(); end
 			if rested == 0 then rested = .001 end
 			_G[FrameName.."Lead"]:SetWidth(rested);
 		end
@@ -118,13 +119,12 @@ local updateText = function(self, side)
 		end
 		SetXPColors(self);
 	elseif (DB.StatusBars.left == "rep" and side == "left") or (DB.StatusBars.right == "rep" and side == "right") then
-		if DB.StatusBars.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
 		local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 		if name then ratio = (current-low)/(high-low); end
 		if ratio == 0 then
 			_G[FrameName.."Fill"]:SetWidth(0.1);
 		else
-			_G[FrameName.."Fill"]:SetWidth(ratio*_G[FrameName]:GetWidth());
+			_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
 		end
 		if DB.StatusBars.RepBar.text then
 			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
@@ -141,10 +141,10 @@ local updateText = function(self, side)
 			if ratio == 0 then
 				_G[FrameName.."Fill"]:SetWidth(0.1);
 			else
-				if (ratio*_G[FrameName]:GetWidth()) > _G[FrameName]:GetWidth() then
-					_G[FrameName.."Fill"]:SetWidth(_G[FrameName]:GetWidth())
+				if (ratio*self:GetWidth()) > self:GetWidth() then
+					_G[FrameName.."Fill"]:SetWidth(self:GetWidth())
 				else
-					_G[FrameName.."Fill"]:SetWidth(ratio*_G[FrameName]:GetWidth());
+					_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
 				end
 			end
 			if DB.StatusBars.APBar.text then

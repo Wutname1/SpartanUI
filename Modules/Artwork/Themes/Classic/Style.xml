@@ -135,7 +135,7 @@
 				</Texture>
 				<Texture name="$parentLead" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow">
 					<Size><AbsDimension x=".1" y="32" /></Size>
-					<Anchors><Anchor point="RIGHT" relativeTo="$parentFill" relativePoint="LEFT"/></Anchors>
+					<Anchors><Anchor point="LEFT" relativeTo="$parentFill" relativePoint="RIGHT"/></Anchors>
 					<TexCoords left="1" right="0" top="0" bottom="1" />
 				</Texture>
 			</Layer>

@@ -136,7 +136,8 @@ end
 
 function Artwork_Core:StatusBarOptions()
 	local module = spartan:GetModule("Style_"..DBMod.Artwork.Style)
-	local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["honor"] = L["Honor"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
+	-- local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["honor"] = L["Honor"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
+	local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
 	spartan.opt.args["Artwork"].args["StatusBars"] = {
 		name = L["Status bars"],
 		desc = L["BarXPDesc"],
