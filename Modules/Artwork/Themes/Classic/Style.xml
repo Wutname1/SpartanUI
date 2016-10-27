@@ -133,6 +133,11 @@
 					<Size><AbsDimension x=".1" y="20" /></Size>
 					<Anchors><Anchor point="LEFT"/></Anchors>
 				</Texture>
+				<Texture name="$parentLead" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow">
+					<Size><AbsDimension x=".1" y="32" /></Size>
+					<Anchors><Anchor point="RIGHT" relativeTo="$parentFill" relativePoint="LEFT"/></Anchors>
+					<TexCoords left="1" right="0" top="0" bottom="1" />
+				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
 				<Texture name="$parentFillGlow" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow" alphaMode="ADD">
@@ -141,6 +146,13 @@
 						<Anchor point="TOPLEFT" relativeTo="$parentFill" relativePoint="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT" relativeTo="$parentFill" relativePoint="BOTTOMRIGHT"/>
 					</Anchors>
+				</Texture>
+				<Texture name="$parentLeadGlow" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\status-glow" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentLead" relativePoint="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentLead" relativePoint="BOTTOMRIGHT"/>
+					</Anchors>
+					<TexCoords left="1" right="0" top="0" bottom="1" />
 				</Texture>
 			</Layer>
 			<Layer level="BACKGROUND">
@@ -210,57 +222,15 @@
 			<Frame name="SUI_Popup1" inherits="SUI_PopTemplate"><Anchors><Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="105" /></Offset></Anchor></Anchors></Frame>
 			<Frame name="SUI_Popup2" inherits="SUI_PopTemplate"><Anchors><Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="105" /></Offset></Anchor></Anchors></Frame>
 			<!-- Status Bars -->
-			<Frame name="SUI_ExperienceBar" inherits="SUI_StatusBars_XPTemplate">
+			<Frame name="SUI_StatusBar_Left" inherits="SUI_StatusBars_XPTemplate">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM"><Offset><AbsDimension x="-100" y="0" /></Offset></Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="SUI_ReputationBar" inherits="SUI_StatusBars_RepTemplate">
+			<Frame name="SUI_StatusBar_Right" inherits="SUI_StatusBars_RepTemplate">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="0" /></Offset></Anchor>
 				</Anchors>
-			</Frame>
-			<Frame name="SUI_ArtifactBar" inherits="SUI_StatusBars_RepTemplate">
-				<Anchors>
-					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="100" y="0" /></Offset></Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						local name = self:GetName();
-						_G[name.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
-					</OnLoad>
-					<OnEnter>
-						if SUI.DBP.StatusBars.APBar.ToolTip == "hover" then SUI_ArtifactBarTooltip:Show() end
-					</OnEnter>
-					<OnMouseDown>
-						if SUI.DBP.StatusBars.APBar.ToolTip == "click" then SUI_ArtifactBarTooltip:Show() end
-					</OnMouseDown>
-					<OnLeave>
-						SUI_ArtifactBarTooltip:Hide()
-					</OnLeave>
-				</Scripts>
-			</Frame>
-			<Frame name="SUI_ArtifactBarTooltip" hidden="true" inherits="SUI_StatusBars_TooltipTemplate">
-				<Anchors>
-					<Anchor point="BOTTOM" relativeTo="SUI_ArtifactBar" relativePoint="TOP"><Offset><AbsDimension x="6" y="-1" /></Offset></Anchor>
-				</Anchors>
-				<Scripts>
-					<OnShow>
-						local FrameName = self:GetName();
-						if HasArtifactEquipped() then
-							local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
-							local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
-							local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
-							local ratio = (xp/xpForNextPoint);
-							
-							_G[FrameName.."Header"]:SetText(name);							
-							_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
-						else
-							_G[FrameName.."Header"]:SetText("No Artifact equiped");
-							_G[FrameName.."Text"]:SetText("")
-						end
-					</OnShow>
-				</Scripts>
 			</Frame>
 		</Frames>
 	</Frame>

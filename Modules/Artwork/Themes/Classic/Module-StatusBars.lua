@@ -38,61 +38,34 @@ end
 function module:InitStatusBars()
 end
 
-function module:SetRepColors()
-	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-	if DB.StatusBars.RepBar.AutoDefined == true then
-		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
-		SUI_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
-		SUI_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
-	else
-        local r,b,g,a
-
-		r = DB.StatusBars.RepBar.GainedRed
-		b = DB.StatusBars.RepBar.GainedBlue
-		g = DB.StatusBars.RepBar.GainedGreen
-		a = DB.StatusBars.RepBar.GainedBrightness
-		SUI_ReputationBarFill:SetVertexColor	(r, g, b, a);
-		SUI_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
-	end
-
-	-- Set Text if needed
-	if DB.StatusBars.RepBar.text then
-		SUI_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
-	else
-		SUI_ReputationBarText:SetText("")
-	end
-	-- Update Visibility
-	module:UpdateStatusBars()
-end
-
-
-function module:SetXPColors()
+local SetXPColors = function(self)
+	local FrameName = self:GetName();
 	-- Set Gained Color
 	if DB.StatusBars.XPBar.GainedColor ~= "Custom" then
 		DB.StatusBars.XPBar.GainedRed 			= COLORS[DB.StatusBars.XPBar.GainedColor].r
-		DB.StatusBars.XPBar.GainedBlue 		= COLORS[DB.StatusBars.XPBar.GainedColor].b
+		DB.StatusBars.XPBar.GainedBlue 			= COLORS[DB.StatusBars.XPBar.GainedColor].b
 		DB.StatusBars.XPBar.GainedGreen 		= COLORS[DB.StatusBars.XPBar.GainedColor].g
 		DB.StatusBars.XPBar.GainedBrightness	= COLORS[DB.StatusBars.XPBar.GainedColor].a
 	end
-    
-    local r,b,g,a
+	
+	local r,b,g,a
 	r = DB.StatusBars.XPBar.GainedRed
 	b = DB.StatusBars.XPBar.GainedBlue
 	g = DB.StatusBars.XPBar.GainedGreen
 	a = DB.StatusBars.XPBar.GainedBrightness
-	SUI_ExperienceBarFill:SetVertexColor	(r,g,b,a);
-	SUI_ExperienceBarFillGlow:SetVertexColor(r,g,b,(a-.2));
+	_G[FrameName.."Fill"]:SetVertexColor	(r,g,b,a);
+	_G[FrameName.."FillGlow"]:SetVertexColor(r,g,b,(a-.2));
 
 	-- Set Rested Color
 	if DB.StatusBars.XPBar.RestedMatchColor then
 		DB.StatusBars.XPBar.RestedRed 			= DB.StatusBars.XPBar.GainedRed
-		DB.StatusBars.XPBar.RestedBlue 		= DB.StatusBars.XPBar.GainedBlue
+		DB.StatusBars.XPBar.RestedBlue 			= DB.StatusBars.XPBar.GainedBlue
 		DB.StatusBars.XPBar.RestedGreen 		= DB.StatusBars.XPBar.GainedGreen
 		DB.StatusBars.XPBar.RestedBrightness	= 1
 		DB.StatusBars.XPBar.RestedColor		= DB.StatusBars.XPBar.GainedColor
 	elseif DB.StatusBars.XPBar.RestedColor ~= "Custom" then
 		DB.StatusBars.XPBar.RestedRed 			= COLORS[DB.StatusBars.XPBar.RestedColor].r
-		DB.StatusBars.XPBar.RestedBlue 		= COLORS[DB.StatusBars.XPBar.RestedColor].b
+		DB.StatusBars.XPBar.RestedBlue 			= COLORS[DB.StatusBars.XPBar.RestedColor].b
 		DB.StatusBars.XPBar.RestedGreen 		= COLORS[DB.StatusBars.XPBar.RestedColor].g
 		DB.StatusBars.XPBar.RestedBrightness	= COLORS[DB.StatusBars.XPBar.RestedColor].a
 	end
@@ -100,31 +73,97 @@ function module:SetXPColors()
 	b = DB.StatusBars.XPBar.RestedBlue
 	g = DB.StatusBars.XPBar.RestedGreen
 	a = DB.StatusBars.XPBar.RestedBrightness
-	SUI_ExperienceBarLead:SetVertexColor	(r,g,b,a);
-	SUI_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.1));
-
-	-- Update Text if needed
-	if DB.StatusBars.XPBar.text then
-		SUI_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
+	_G[FrameName.."Lead"]:SetVertexColor	(r,g,b,a);
+	_G[FrameName.."LeadGlow"]:SetVertexColor(r,g,b,(a+.1));
+end
+local SetRepColors = function(self)
+	local FrameName = self:GetName();
+	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
+	if DB.StatusBars.RepBar.AutoDefined == true then
+		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
+		_G[FrameName.."Fill"]:SetVertexColor	(color.r, color.g, color.b, 0.7);
+		_G[FrameName.."FillGlow"]:SetVertexColor(color.r, color.g, color.b, 0.2);
 	else
-		SUI_ExperienceBarText:SetText("")
+		local r,b,g,a
+		r = DB.StatusBars.RepBar.GainedRed
+		b = DB.StatusBars.RepBar.GainedBlue
+		g = DB.StatusBars.RepBar.GainedGreen
+		a = DB.StatusBars.RepBar.GainedBrightness
+		_G[FrameName.."Fill"]:SetVertexColor	(r, g, b, a);
+		_G[FrameName.."FillGlow"]:SetVertexColor(r, g, b, a);
 	end
-	-- Update Visibility
-	module:UpdateStatusBars()
 end
 
-function module:UpdateAPBar()
-	-- Set Text if needed
-	if DB.StatusBars.APBar.text then
-		local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
-		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
-		local ratio = (xp/xpForNextPoint);
-		SUI_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
-	else
-		SUI_ArtifactBarText:SetText("")
+local updateText = function(self, side)
+	local FrameName = self:GetName();
+	_G[FrameName.."Text"]:SetText("")
+	
+	if (DB.StatusBars.left == "xp" and side == "left") or (DB.StatusBars.right == "xp" and side == "right") then
+		local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
+		if now == 0 then
+			_G[FrameName.."Fill"]:SetWidth(0.1);
+			_G[FrameName.."FillGlow"]:SetWidth(.1);
+			_G[FrameName.."Lead"]:SetWidth(0.1);
+		else
+			_G[FrameName.."Fill"]:SetWidth((now/goal)*_G[FrameName]:GetWidth());
+			rested = (rested/goal)*_G[FrameName]:GetWidth();
+			if (rested+_G[FrameName.."Fill"]:GetWidth()) > 399 then rested = _G[FrameName]:GetWidth()-_G[FrameName.."Fill"]:GetWidth(); end
+			if rested == 0 then rested = .001 end
+			_G[FrameName.."Lead"]:SetWidth(rested);
+		end
+		if DB.StatusBars.XPBar.text then
+			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
+		else
+			_G[FrameName.."Text"]:SetText("")
+		end
+		SetXPColors(self);
+	elseif (DB.StatusBars.left == "rep" and side == "left") or (DB.StatusBars.right == "rep" and side == "right") then
+		if DB.StatusBars.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
+		local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
+		if name then ratio = (current-low)/(high-low); end
+		if ratio == 0 then
+			_G[FrameName.."Fill"]:SetWidth(0.1);
+		else
+			_G[FrameName.."Fill"]:SetWidth(ratio*_G[FrameName]:GetWidth());
+		end
+		if DB.StatusBars.RepBar.text then
+			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
+		else
+			_G[FrameName.."Text"]:SetText("")
+		end
+		SetRepColors(self);
+	elseif (DB.StatusBars.left == "ap" and side == "left") or (DB.StatusBars.right == "ap" and side == "right") then
+		_G[FrameName.."Text"]:SetText("")
+		if HasArtifactEquipped() then
+			local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+			local ratio = (xp/xpForNextPoint);
+			if ratio == 0 then
+				_G[FrameName.."Fill"]:SetWidth(0.1);
+			else
+				if (ratio*_G[FrameName]:GetWidth()) > _G[FrameName]:GetWidth() then
+					_G[FrameName.."Fill"]:SetWidth(_G[FrameName]:GetWidth())
+				else
+					_G[FrameName.."Fill"]:SetWidth(ratio*_G[FrameName]:GetWidth());
+				end
+			end
+			if DB.StatusBars.APBar.text then
+				_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+			else
+				_G[FrameName.."Text"]:SetText("")
+			end
+			_G[FrameName.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
+		end
+	-- elseif (DB.StatusBars.left == "honor" and side == "left") or (DB.StatusBars.right == "honor" and side == "right") then
+		-- if DB.StatusBars.HonorBar.text then
+			-- local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
+			-- local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);
+			-- local ratio = (xp/xpForNextPoint);
+			-- _G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+		-- else
+			-- _G[FrameName.."Text"]:SetText("")
+		-- end
 	end
-	-- Update Visibility
-	module:UpdateStatusBars()
 end
 
 function module:EnableStatusBars()
@@ -136,141 +175,106 @@ function module:EnableStatusBars()
 		spartan:FormatFont(SUI_StatusBarTooltipHeader, 12, "Core")
 		spartan:FormatFont(SUI_StatusBarTooltipText, 10, "Core")
 	end
-	do -- experience bar
-		SUI_ExperienceBarPlate:SetTexCoord(0.17,0.97,0,1);
-		
-		SUI_ExperienceBar:SetScript("OnEvent",function()
-			if DB.StatusBars.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
-			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
-			if now == 0 then
-				SUI_ExperienceBarFill:SetWidth(0.1);
-				SUI_ExperienceBarFillGlow:SetWidth(.1);
-				SUI_ExperienceBarLead:SetWidth(0.1);
-			else
-				SUI_ExperienceBarFill:SetWidth((now/goal)*400);
-				rested = (rested/goal)*400;
-				if (rested+SUI_ExperienceBarFill:GetWidth()) > 399 then rested = 400-SUI_ExperienceBarFill:GetWidth(); end
-				if rested == 0 then rested = .001 end
-				SUI_ExperienceBarLead:SetWidth(rested);
-			end
-			if DB.StatusBars.XPBar.text then
-				SUI_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
-			else
-				SUI_ExperienceBarText:SetText("")
-			end
-			module:SetXPColors()
-		end);
-		local showXPTooltip = function()
-			local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
-			local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
-			local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
-			tooltip:ClearAllPoints();
-			tooltip:SetPoint("BOTTOM",SUI_ExperienceBar,"TOP",6,-1);
-			local a = format("Level %s ",UnitLevel("player"))
-			local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
-			SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
-			local rested,text = GetXPExhaustion() or 0;
-			if (rested > 0) then
-				text = format(xptip1,format(xprest,(rested/UnitXPMax("player"))*100),200);
-				SUI_StatusBarTooltipText:SetText(text); -- Rested (15%) - 200% of normal experience gained from monsters.
-			else
-				SUI_StatusBarTooltipText:SetText(format(xptip1,EXHAUST_TOOLTIP2,100)); -- You should rest at an Inn. 100% of normal experience gained from monsters.
-			end
-			tooltip:Show();
+
+	local showXPTooltip = function(self)
+		local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
+		local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
+		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
+		local a = format("Level %s ",UnitLevel("player"))
+		local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
+		SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
+		local rested,text = GetXPExhaustion() or 0;
+		if (rested > 0) then
+			text = format(xptip1,format(xprest,(rested/UnitXPMax("player"))*100),200);
+			SUI_StatusBarTooltipText:SetText(text); -- Rested (15%) - 200% of normal experience gained from monsters.
+		else
+			SUI_StatusBarTooltipText:SetText(format(xptip1,EXHAUST_TOOLTIP2,100)); -- You should rest at an Inn. 100% of normal experience gained from monsters.
 		end
-		
-		SUI_ExperienceBar:SetScript("OnEnter",function() if DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
-		SUI_ExperienceBar:SetScript("OnMouseDown",function() if DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(); end end);
-		SUI_ExperienceBar:SetScript("OnLeave",function() tooltip:Hide(); end);
-		
-		SUI_ExperienceBar:RegisterEvent("PLAYER_ENTERING_WORLD");
-		SUI_ExperienceBar:RegisterEvent("PLAYER_XP_UPDATE");
-		SUI_ExperienceBar:RegisterEvent("PLAYER_LEVEL_UP");
-		
-		module:SetXPColors();
+		tooltip:Show();
 	end
-	do -- reputation bar
-		SUI_ReputationBar:SetScript("OnEvent",function()
-			if DB.StatusBars.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
-			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-			if name then ratio = (current-low)/(high-low); end
-			SUI_StatusBarTooltipHeader:SetText(name);
-			if ratio == 0 then
-				SUI_ReputationBarFill:SetWidth(0.1);
-			else
-				SUI_ReputationBarFill:SetWidth(ratio*400);
-				module:SetRepColors()
-			end
+	local showRepTooltip = function(self)
+		local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
+		if name then
+			text = GetFactionDetails(name);
+			ratio = (current-low)/(high-low);
+			SUI_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+			SUI_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
+		else
+			SUI_StatusBarTooltipHeader:SetText(REPUTATION);
+			SUI_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
+		end
+		tooltip:Show();
+	end
+	local showAPTooltip = function(self)
+		local FrameName = self:GetName();
+		if HasArtifactEquipped() then
+			local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
+			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+			local ratio = (xp/xpForNextPoint);
 			
-			if DB.StatusBars.RepBar.text then
-				SUI_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
-			else
-				SUI_ReputationBarText:SetText("")
-			end
-		end);
-		local showRepTooltip = function()
-			tooltip:ClearAllPoints();
-			tooltip:SetPoint("BOTTOM",SUI_ReputationBar,"TOP",-2,-1);
-			local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
-			if name then
-				text = GetFactionDetails(name);
-				ratio = (current-low)/(high-low);
-				SUI_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
-				SUI_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
-			else
-				SUI_StatusBarTooltipHeader:SetText(REPUTATION);
-				SUI_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
-			end
-			tooltip:Show();
+			SUI_StatusBarTooltipHeader:SetText(name);							
+			SUI_StatusBarTooltipText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+		else
+			SUI_StatusBarTooltipHeader:SetText("No Artifact equiped");
+			SUI_StatusBarTooltipText:SetText("")
 		end
-		
-		SUI_ReputationBar:SetScript("OnEnter",function() if DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
-		SUI_ReputationBar:SetScript("OnMouseDown",function() if DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(); end end);
-		SUI_ReputationBar:SetScript("OnLeave",function() tooltip:Hide(); end);
-		
-		SUI_ReputationBar:RegisterEvent("PLAYER_ENTERING_WORLD");
-		SUI_ReputationBar:RegisterEvent("UPDATE_FACTION");
-		
-		module:SetRepColors();
+		tooltip:Show();
 	end
-	do -- Artifact Power bar
-		SUI_ArtifactBar:SetScript("OnEvent",function()
-			--Clear Text
-			SUI_ArtifactBarText:SetText("")
-			--Update if needed
-			if HasArtifactEquipped() then
-				local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
-				-- local currentArtifactPurchasableTraits = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, xp);
-				local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
-				local ratio = (xp/xpForNextPoint);
-				
-				if ratio == 0 then
-					SUI_ArtifactBarFill:SetWidth(0.1);
-				else
-					if (ratio*SUI_ArtifactBar:GetWidth()) > SUI_ArtifactBar:GetWidth() then
-						SUI_ArtifactBarFill:SetWidth(SUI_ArtifactBar:GetWidth())
-					else
-						SUI_ArtifactBarFill:SetWidth(ratio*SUI_ArtifactBar:GetWidth());
-					end
-				end
-				
-				if DB.StatusBars.APBar.text then
-					SUI_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
-				else
-					SUI_ArtifactBarText:SetText("")
-				end
-			end
-		end);
+	
+	SUI_StatusBar_LeftPlate:SetTexCoord(0.17,0.97,0,1);
+	SUI_StatusBar_Left:RegisterEvent("PLAYER_ENTERING_WORLD");
+	SUI_StatusBar_Left:RegisterEvent("ARTIFACT_XP_UPDATE");
+	SUI_StatusBar_Left:RegisterEvent("UNIT_INVENTORY_CHANGED");
+	SUI_StatusBar_Left:RegisterEvent("PLAYER_ENTERING_WORLD");
+	SUI_StatusBar_Left:RegisterEvent("PLAYER_XP_UPDATE");
+	SUI_StatusBar_Left:RegisterEvent("PLAYER_LEVEL_UP");
+	SUI_StatusBar_Left:RegisterEvent("PLAYER_ENTERING_WORLD");
+	SUI_StatusBar_Left:RegisterEvent("UPDATE_FACTION");
+	SUI_StatusBar_Left:SetScript("OnEnter",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Left,"TOP",-2,-1);
+		if DB.StatusBars.left == "rep" and DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
+		if DB.StatusBars.left == "xp" and DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
+		if DB.StatusBars.left == "ap" and DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+	end);
+	SUI_StatusBar_Left:SetScript("OnMouseDown",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Left,"TOP",-2,-1);
+		if DB.StatusBars.left == "rep" and DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
+		if DB.StatusBars.left == "xp" and DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
+		if DB.StatusBars.left == "ap" and DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+	end);
+	SUI_StatusBar_Left:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
+	SUI_StatusBar_Left:SetScript("OnEvent",function(self) updateText(self, "left") end)
 		
-		SUI_ArtifactBarFill:SetVertexColor()
-		SUI_ArtifactBar:RegisterEvent("PLAYER_ENTERING_WORLD");
-		SUI_ArtifactBar:RegisterEvent("ARTIFACT_XP_UPDATE");
-		SUI_ArtifactBar:RegisterEvent("UNIT_INVENTORY_CHANGED");
-	end
+	SUI_StatusBar_Right:RegisterEvent("PLAYER_ENTERING_WORLD");
+	SUI_StatusBar_Right:RegisterEvent("ARTIFACT_XP_UPDATE");
+	SUI_StatusBar_Right:RegisterEvent("UNIT_INVENTORY_CHANGED");
+	SUI_StatusBar_Right:RegisterEvent("PLAYER_ENTERING_WORLD");
+	SUI_StatusBar_Right:RegisterEvent("PLAYER_XP_UPDATE");
+	SUI_StatusBar_Right:RegisterEvent("PLAYER_LEVEL_UP");
+	SUI_StatusBar_Right:RegisterEvent("PLAYER_ENTERING_WORLD");
+	SUI_StatusBar_Right:RegisterEvent("UPDATE_FACTION");
+	SUI_StatusBar_Right:SetScript("OnEnter",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Right,"TOP",-2,-1);
+		if DB.StatusBars.right == "rep" and DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
+		if DB.StatusBars.right == "xp" and DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
+		if DB.StatusBars.right == "ap" and DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+	end);
+	SUI_StatusBar_Right:SetScript("OnMouseDown",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Right,"TOP",-2,-1);
+		if DB.StatusBars.right == "rep" and DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
+		if DB.StatusBars.right == "xp" and DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
+		if DB.StatusBars.right == "ap" and DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+	end);
+	SUI_StatusBar_Right:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
+	SUI_StatusBar_Right:SetScript("OnEvent",function(self) updateText(self, "right") end)
+	module:UpdateStatusBars()
 end
 
 function module:UpdateStatusBars()
-	if DB.StatusBars.XPBar.enabled then SUI_ExperienceBar:Show(); else SUI_ExperienceBar:Hide(); end
-	if DB.StatusBars.RepBar.enabled then SUI_ReputationBar:Show(); else SUI_ReputationBar:Hide(); end
-	if DB.StatusBars.APBar.enabled then SUI_ArtifactBar:Show(); else SUI_ArtifactBar:Hide(); end
+	if DB.StatusBars.left ~= "disabled" then SUI_StatusBar_Left:Show(); updateText(SUI_StatusBar_Left, "left") else SUI_StatusBar_Left:Hide(); end
+	if DB.StatusBars.right ~= "disabled" then SUI_StatusBar_Right:Show(); updateText(SUI_StatusBar_Right, "left") else SUI_StatusBar_Right:Hide(); end
 end

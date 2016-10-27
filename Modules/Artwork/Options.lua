@@ -141,7 +141,7 @@ function Artwork_Core:StatusBarOptions()
 		name = L["Status bars"],
 		desc = L["BarXPDesc"],
 		type = "group", args = {
-			left = {name=L["Display mode"],type="select",order=.1,
+			left = {name=L["Left status bar"],type="select",order=.1,
 				values = StatusBars,
 				get = function(info)
 					return DB.StatusBars.left
@@ -152,7 +152,7 @@ function Artwork_Core:StatusBarOptions()
 					module:UpdateStatusBars()
 				end
 			},
-			right = {name=L["Display mode"],type="select",order=.1,
+			right = {name=L["Right status bar"],type="select",order=.2,
 				values = StatusBars,
 				get = function(info)
 					return DB.StatusBars.right
