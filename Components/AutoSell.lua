@@ -139,11 +139,11 @@ function module:SellTrashInBag()
 	
 	local solditem = 0;
 	for slot = 1, GetContainerNumSlots(bag) do
-		local iLink = GetContainerItemID(bag, slot);
-		if module:IsSellable(iLink) then
+		local texture, count, locked, quality, readable, lootable, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(bag, slot);
+		if module:IsSellable(itemID, link) then
 			if OnlyCount then
 				iCount = iCount + 1
-				totalValue = totalValue + (select(11, GetItemInfo(iLink)) * select(2, GetContainerItemInfo(bag, slot)));
+				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)));
 			elseif solditem ~= 5 then
 				solditem = solditem + 1
 				iSellCount = iSellCount + 1
@@ -169,9 +169,9 @@ function module:SellTrashInBag()
 	end
 end
 
-function module:IsSellable(item)
+function module:IsSellable(item, ilink)
 	if not item then return false end
-	local name, link, quality, iLevel, reqLevel, itemType, itemSubType, maxStack, equipSlot, texture, vendorPrice = GetItemInfo(item)
+	local name, link, quality, iLevel, reqLevel, itemType, itemSubType, maxStack, equipSlot, texture, vendorPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, isCraftingReagent = GetItemInfo(ilink)
 	if vendorPrice == 0 then return false end
 	
 	-- 0. Poor (gray): Broken I.W.I.N. Button
@@ -189,10 +189,18 @@ function module:IsSellable(item)
 	local NotConsumable = true
 	local IsGearToken = false
 	
+	if quality == 0 and  DB.AutoSell.Gray then qualitysellable = true end
+	if quality == 1 and  DB.AutoSell.White then qualitysellable = true end
+	if quality == 2 and  DB.AutoSell.Green then qualitysellable = true end
+	if quality == 3 and  DB.AutoSell.Blue then qualitysellable = true end
+	if quality == 4 and  DB.AutoSell.Purple then qualitysellable = true end
+	
 	if (not iLevel) or (iLevel <= DB.AutoSell.MaxILVL) then ilvlsellable = true end
 	--Crafting Items
 	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods" or itemType == "Tradeskill")
 	or (itemType == "Miscellaneous" and itemSubType == "Reagent"))
+	or (itemType == "Item Enhancement")
+	or isCraftingReagent
 	then
 		if not DB.AutoSell.NotCrafting then Craftablesellable = true end
 	else
@@ -200,7 +208,7 @@ function module:IsSellable(item)
 	end
 	
 	--Gearset detection
-	if inSet[item] and DB.AutoSell.NotInGearset then
+	if (inSet[item] or itemSetID) and DB.AutoSell.NotInGearset then
 		NotInGearset = false
 	end
 	
@@ -215,11 +223,10 @@ function module:IsSellable(item)
 		IsGearToken = true
 	end
 	
-	if quality == 0 and  DB.AutoSell.Gray then qualitysellable = true end
-	if quality == 1 and  DB.AutoSell.White then qualitysellable = true end
-	if quality == 2 and  DB.AutoSell.Green then qualitysellable = true end
-	if quality == 3 and  DB.AutoSell.Blue then qualitysellable = true end
-	if quality == 4 and  DB.AutoSell.Purple then qualitysellable = true end
+	
+	if string.find(name, "Treasure Map") and quality == 1 then
+		qualitysellable = false
+	end
 	
 	if qualitysellable
 	and ilvlsellable
@@ -232,6 +239,14 @@ function module:IsSellable(item)
 	and itemType ~= "Container"
 	or (quality == 0 and  DB.AutoSell.Gray) --Legion identified some junk as consumable
 	then
+		if DB.AutoSell.debug then
+			spartan:Print("--Selling--")
+			spartan:Print(name)
+			spartan:Print(ilink)
+			spartan:Print("ilvl:     " .. iLevel)
+			spartan:Print("type:     " .. itemType)
+			spartan:Print("sub type: " .. itemSubType)
+		end
 		return true
 	end
 	
@@ -357,6 +372,10 @@ function module:BuildOptions()
 			Purple = {name="Sell Purple",type="toggle",order=24,width="double",
 					get = function(info) return DB.AutoSell.Purple end,
 					set = function(info,val) DB.AutoSell.Purple = val end
+			},
+			debug = {name="Enable debug messages",type="toggle",order=600,width="full",
+					get = function(info) return DB.AutoSell.debug end,
+					set = function(info,val) DB.AutoSell.debug = val end
 			}
 		}
 	}
