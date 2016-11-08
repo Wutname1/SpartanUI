@@ -204,10 +204,6 @@ function PlayerFrames:OnInitialize()
 				get = function(info) return DBMod.PlayerFrames.BossFrame.display; end,
 				set = function(info,val) DBMod.PlayerFrames.BossFrame.display = val; end
 			},
-			bossreset = {name = L["Frames/ResetLoc"],type = "execute",order=2,--disabled=true,
-				desc = L["Frames/ResetLocDesc"],
-				func = function() DBMod.PlayerFrames.BossFrame.movement.moved = false; addon:UpdateBossFramePosition(); end
-			},
 			bossscale = { name = L["Frames/ScaleFrames"], type = "range",order=3,width="full",--disabled=true,
 				min=.01,max=2,step=.01,
 				get = function(info) return DBMod.PlayerFrames.BossFrame.scale; end,

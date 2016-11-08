@@ -8,6 +8,7 @@ local petbattle = CreateFrame("Frame")
 local apframe
 local xpframe
 local rframe
+local tooltip
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1,	g = 0.2,	b = 0},
 	[2] = {r = 0.8,	g = 0.3,	b = 0},

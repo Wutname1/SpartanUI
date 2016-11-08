@@ -44,7 +44,7 @@ function addon:OnEnable()
 			elseif (... == CLEARED_AFK) and (SpinCamRunning) then
 				addon:SpinToggle("stop")
 			end
-		elseif event == "PLAYER_LEAVING_WORLD" then
+		elseif event == "PLAYER_LEAVING_WORLD" or event == "PLAYER_ENTERING_WORLD" then
 			addon:SpinToggle("stop")
 		end
 	end);

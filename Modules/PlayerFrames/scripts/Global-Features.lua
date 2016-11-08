@@ -230,7 +230,7 @@ function PlayerFrames:Buffs(self,unit)
 			self.AuraBars = AuraBars
 			BarPosition(self, 3)
 		elseif BuffsMode == "icons" and DebuffsMode == "disabled" then
-			Buffs:SetSize(self.BuffAnchor:GetWidth())
+			Buffs:SetSize(self.BuffAnchor:GetWidth(), (Buffsize * (Buffs.numBuffs / self.BuffAnchor:GetWidth())))
 		elseif BuffsMode == "both" and DebuffsMode == "icons" then
 			AuraBars.Buffs = true
 			self.AuraBars = AuraBars
@@ -254,7 +254,7 @@ function PlayerFrames:Buffs(self,unit)
 			AuraBars:SetPoint("BOTTOMRIGHT",self.BuffAnchor,"TOPRIGHT", 0, 0)
 			self.AuraBars = AuraBars
 		elseif BuffsMode == "disabled" and DebuffsMode == "icons" then
-			Debuffs:SetSize(self.BuffAnchor:GetWidth())
+			Debuffs:SetSize(self.BuffAnchor:GetWidth(), (Debuffsize * (Debuffs.numDebuffs / self.BuffAnchor:GetWidth())))
 		elseif BuffsMode == "disabled" and DebuffsMode == "both" then
 			AuraBars.Debuffs = true
 			self.AuraBars = AuraBars

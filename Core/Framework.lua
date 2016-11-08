@@ -837,7 +837,7 @@ end
 function SUI:FontRefresh(Module)
 	for a,b in pairs(FontItems[Module]) do
 		--Set Font Outline
-		local flags, size
+		local flags, size = ""
 		if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
 		if DB.font[Module].Type == "outline" then flags = flags.."outline " end
 		if DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
