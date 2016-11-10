@@ -51,7 +51,7 @@ function addon:OnEnable()
 end
 
 function addon:SpinToggle(action)
-	if (SpinCamRunning and action == nil) or (action=="stop") then
+	if (SpinCamRunning and action == nil) or (action=="stop") and userCameraYawMoveSpeed then
 		MoveViewRightStop();
 		SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
 		SpinCamRunning = false;
