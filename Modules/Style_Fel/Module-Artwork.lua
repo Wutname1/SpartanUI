@@ -84,6 +84,47 @@ function module:updateAlpha()
 	end
 end;
 
+function module:updateOffset()
+	local offset = 0
+	if not DB.yoffsetAuto then
+		offset = max(DB.yoffset,1);
+	else
+		for i = 1,4 do -- FuBar Offset
+			if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
+				local bar = _G["FuBarFrame"..i];
+				local point = bar:GetPoint(1);
+				if point == "BOTTOMLEFT" then fubar = fubar + bar:GetHeight(); end
+			end
+		end
+		for i = 1,100 do -- Chocolate Bar Offset
+			if (_G["ChocolateBar"..i] and _G["ChocolateBar"..i]:IsVisible()) then
+				local bar = _G["ChocolateBar"..i];
+				local point = bar:GetPoint(1);
+				--if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
+				if point == "RIGHT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end-- bottom bars
+			end
+		end
+		TitanBarOrder = {[1]="AuxBar2", [2]="AuxBar"} -- Bottom 2 Bar names
+		for i=1,2 do -- Titan Bar Offset
+			if (_G["Titan_Bar__Display_"..TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i].."_Show")) then
+				local PanelScale = TitanPanelGetVar("Scale") or 1
+				local bar = _G["Titan_Bar__Display_"..TitanBarOrder[i]]
+				titan = titan + (PanelScale * bar:GetHeight());
+			end
+		end
+		
+		offset = max(fubar + titan + ChocolateBar,1);
+	end
+	if offset ~= 0 then
+		Fel_SpartanUI.Left:ClearAllPoints()
+		Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, DB.yoffset)
+		
+		Fel_ActionBarPlate:ClearAllPoints()
+		Fel_ActionBarPlate:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, DB.yoffset+6)
+	end
+	DB.yoffset = offset
+	
+end
 
 --	Module Calls
 function module:TooltipLoc(self, parent)
@@ -141,6 +182,8 @@ function module:EnableArtwork()
 	Fel_SpartanUI.Right = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Right", "BORDER")
 	Fel_SpartanUI.Right:SetPoint("LEFT", Fel_SpartanUI.Left, "RIGHT", 0, 0)
 	Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right]])
+	
+	module:updateOffset();
 	
 	hooksecurefunc("UIParent_ManageFramePositions",function()
 		TutorialFrameAlertButton:SetParent(Minimap);

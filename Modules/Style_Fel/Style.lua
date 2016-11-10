@@ -58,6 +58,34 @@ function module:SetupMenus()
 				min=0,max=100,step=1,desc=L["TransparencyDesc"],
 				get = function(info) return (DB.alpha*100); end,
 				set = function(info,val) DB.alpha = (val/100); module:updateAlpha() end
+			},
+			-- xOffset = {name = L["MoveSideways"],type = "range",width="full",order=2,
+				-- desc = L["MoveSidewaysDesc"],
+				-- min=-200,max=200,step=.1,
+				-- get = function(info) return DB.xOffset/6.25 end,
+				-- set = function(info,val) DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
+			-- },
+			offset = {name = L["ConfOffset"],type = "range",width="normal",order=3,
+				desc = L["ConfOffsetDesc"],min=0,max=200,step=.1,
+				get = function(info) return DB.yoffset end,
+				set = function(info,val)
+					if (InCombatLockdown()) then 
+						spartan:Print(ERR_NOT_IN_COMBAT);
+					else
+						if DB.yoffsetAuto then
+							spartan:Print(L["confOffsetAuto"]);
+						else
+							val = tonumber(val);
+							DB.yoffset = val;
+							module:updateOffset();
+						end
+					end
+				end,
+				get = function(info) return DB.yoffset; end
+			},
+			offsetauto = {name = L["AutoOffset"],type = "toggle",desc = L["AutoOffsetDesc"],order=3.1,
+				get = function(info) return DB.yoffsetAuto end,
+				set = function(info,val) DB.yoffsetAuto = val end,
 			}
 		}
 	}
