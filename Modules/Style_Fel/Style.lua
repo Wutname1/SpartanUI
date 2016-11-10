@@ -85,7 +85,7 @@ function module:SetupMenus()
 			},
 			offsetauto = {name = L["AutoOffset"],type = "toggle",desc = L["AutoOffsetDesc"],order=3.1,
 				get = function(info) return DB.yoffsetAuto end,
-				set = function(info,val) DB.yoffsetAuto = val end,
+				set = function(info,val) DB.yoffsetAuto = val; module:updateOffset(); end,
 			}
 		}
 	}

@@ -85,7 +85,8 @@ function module:updateAlpha()
 end;
 
 function module:updateOffset()
-	local offset = 0
+	local fubar,ChocolateBar,titan,offset = 0,0,0,0;
+	
 	if not DB.yoffsetAuto then
 		offset = max(DB.yoffset,1);
 	else
