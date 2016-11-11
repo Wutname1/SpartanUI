@@ -3,6 +3,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 local addon = spartan:NewModule("SpinCam");
 local SpinCamRunning = false
 local userCameraYawMoveSpeed
+local usercameraCustomViewSmoothing
 
 function addon:OnInitialize()
 	spartan.opt.args["ModSetting"].args["SpinCam"] = {
@@ -29,11 +30,12 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	userCameraYawMoveSpeed = (GetCVar("cameraYawMoveSpeed"))
 end
 
 function addon:OnEnable()
-	SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
+	userCameraYawMoveSpeed = tonumber(GetCVar("cameraYawMoveSpeed"))
+	usercameraCustomViewSmoothing = tonumber(GetCVar("cameraCustomViewSmoothing"))
+	
 	local frame = CreateFrame("Frame");
 	frame:RegisterEvent("CHAT_MSG_SYSTEM");
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -47,29 +49,45 @@ function addon:OnEnable()
 		elseif event == "PLAYER_LEAVING_WORLD" or event == "PLAYER_ENTERING_WORLD" then
 			addon:SpinToggle("stop")
 		end
+		if DBMod.SpinCam.speed == GetCVar("cameraYawMoveSpeed") and not SpinCamRunning then
+			SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
+			SetCVar("cameraCustomViewSmoothing",usercameraCustomViewSmoothing);
+		end
 	end);
 end
 
 function addon:SpinToggle(action)
-	if (SpinCamRunning and action == nil) or (action=="stop") and userCameraYawMoveSpeed then
+	if SpinCamRunning and action=="stop" then
+		SetView(4); -- restore saved position
 		MoveViewRightStop();
 		SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
+		SetCVar("cameraCustomViewSmoothing",usercameraCustomViewSmoothing);
 		SpinCamRunning = false;
-		SetView(1);
 	elseif action == "update" then
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
-	elseif not SpinCamRunning then
-		SaveView(1)
-		userCameraYawMoveSpeed = (GetCVar("cameraYawMoveSpeed"))
+	elseif not SpinCamRunning and action=="start" then
+		--Update settings
+		userCameraYawMoveSpeed = tonumber(GetCVar("cameraYawMoveSpeed"))
+		usercameraCustomViewSmoothing = tonumber(GetCVar("cameraCustomViewSmoothing"))
+		
+		--Save camera position, activate new save slot
+		SaveView(4) -- Save current settings as 4
+		SetView(5); -- activate view 5 for spin cam
+		
+		--Start spin
 		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
 		MoveViewRightStart();
 		SpinCamRunning = true;
-		SetView(5);
 	end
 end
 
 SlashCmdList["SPINCAMTOGGLE"] = function(msg)
-	if (SpinCamRunning) then DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["Spin/StopMSG"]); end
-	addon:SpinToggle(action)
+	print(userCameraYawMoveSpeed)
+	print(SpinCamRunning)
+	-- userCameraYawMoveSpeed = GetCVar("cameraYawMoveSpeed")
+	-- local a = GetCVar("cameraYawMoveSpeed")
+	-- print(a)
+	-- if (SpinCamRunning) then DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["Spin/StopMSG"]); end
+	-- addon:SpinToggle(action)
 end;
 SLASH_SPINCAMTOGGLE1 = "/spin"
