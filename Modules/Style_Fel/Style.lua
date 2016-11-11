@@ -32,6 +32,10 @@ function module:OnEnable()
 	if (DBMod.Artwork.Style ~= "Fel") then
 		module:Disable(); 
 	else
+		if DB.Styles.Fel.SubTheme then
+			spartan.opt.args["Artwork"].args["Artwork"].name = DB.Styles.Fel.SubTheme .. " Options"
+		end
+		
 		if (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Fel.BartenderProfile) and DBMod.Artwork.FirstLoad then
 			Bartender4.db:SetProfile(DB.Styles.Fel.BartenderProfile);
 		end

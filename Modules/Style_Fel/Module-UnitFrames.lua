@@ -289,7 +289,7 @@ local CreateLargeFrame = function(self,unit)
 		self.artwork.flair:SetSize(self:GetWidth()+60, self:GetHeight()+75);
 		
 		self.Portrait = PlayerFrames:CreatePortrait(self);
-		self.Portrait:SetFrameStrata("BACKGROUND");
+		self.Portrait:SetFrameStrata("LOW");
 		-- self.Portrait:SetFrameLevel(2);
 		self.Portrait:SetSize(58, 58);
 		self.Portrait:SetPoint("RIGHT",self,"LEFT",-1,0);
@@ -394,7 +394,7 @@ local CreateLargeFrame = function(self,unit)
 	end
 	do -- setup icons, and text
 		local ring = CreateFrame("Frame",nil,self);
-		ring:SetFrameStrata("HIGH");
+		ring:SetFrameStrata("MEDIUM");
 		ring:SetAllPoints(self.Portrait);
 		ring:SetFrameLevel(3);
 		
