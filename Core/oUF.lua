@@ -120,9 +120,20 @@ do -- ClassIcon as an SpartanoUF module
 		local icon = self.SUI_ClassIcon;
 		if (icon) then
 			local _,class = UnitClass(self.unit);
-			local coords = ClassIconCoord[class or "DEFAULT"];
-			icon:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
-			icon:Show();
+			if class then
+				-- local coords = ClassIconCoord[class or "DEFAULT"];
+				-- icon:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
+				local path = "Interface\\AddOns\\SpartanUI\\media\\flat_classicons\\wow_flat_"..(string.lower(class))
+				icon:SetTexture(path)
+				icon:Show();
+				if icon.shadow then 
+					icon.shadow:SetTexture(path)
+					icon.shadow:Show()
+				end
+			else
+				icon:Hide();
+				icon.shadow:Hide()
+			end
 		end
 	end
 	local Enable = function(self)
@@ -132,6 +143,12 @@ do -- ClassIcon as an SpartanoUF module
 			self:RegisterEvent("PLAYER_TARGET_CHANGED", Update);
 			self:RegisterEvent("UNIT_PET", Update);
 			icon:SetTexture[[Interface\AddOns\SpartanUI\media\icon_class]]
+			if icon.shadow == nil then
+				icon.shadow = self:CreateTexture(nil,"BACKGROUND");
+				icon.shadow:SetSize(icon:GetSize());
+				icon.shadow:SetPoint("CENTER",icon,"CENTER",2,-2);
+				icon.shadow:SetVertexColor(0,0,0,.9)
+			end
 			return true;
 		end
 	end

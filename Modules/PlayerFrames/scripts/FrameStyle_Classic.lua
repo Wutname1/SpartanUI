@@ -384,7 +384,7 @@ local CreatePlayerFrame = function(self,unit)
 		self:Tag(self.Level, "[level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		self.SUI_ClassIcon:SetSize(22, 22);
+		self.SUI_ClassIcon:SetSize(19, 19);
 		self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-29,21);
 		
 		self.Leader = ring:CreateTexture(nil,"BORDER");
@@ -677,7 +677,7 @@ local CreateTargetFrame = function(self,unit)
 		self:Tag(self.Level, "[difficulty][level]");
 		
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-		self.SUI_ClassIcon:SetWidth(22); self.SUI_ClassIcon:SetHeight(22);
+		self.SUI_ClassIcon:SetSize(19, 19)
 		self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",29,21);
 		
 		self.Leader = ring:CreateTexture(nil,"BORDER");
@@ -894,7 +894,7 @@ local CreatePetFrame = function(self,unit)
 			self:Tag(self.Level, "[level]");
 			
 			self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-			self.SUI_ClassIcon:SetWidth(22); self.SUI_ClassIcon:SetHeight(22);
+			self.SUI_ClassIcon:SetSize(19, 19)
 			self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-27,24);
 			
 			self.PvP = ring:CreateTexture(nil,"BORDER");
@@ -1128,7 +1128,7 @@ local CreateToTFrame = function(self,unit)
 			self:Tag(self.Level, "[difficulty][level]");
 			
 			self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
-			self.SUI_ClassIcon:SetWidth(22); self.SUI_ClassIcon:SetHeight(22);
+			self.SUI_ClassIcon:SetSize(19, 19)
 			self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",23,24);
 			
 			self.PvP = ring:CreateTexture(nil,"BORDER");

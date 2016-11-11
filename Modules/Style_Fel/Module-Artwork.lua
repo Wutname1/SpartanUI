@@ -116,12 +116,18 @@ function module:updateOffset()
 		
 		offset = max(fubar + titan + ChocolateBar,1);
 	end
-	if offset ~= 0 then
+	if offset > 1 then
 		Fel_SpartanUI.Left:ClearAllPoints()
 		Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, DB.yoffset)
 		
 		Fel_ActionBarPlate:ClearAllPoints()
 		Fel_ActionBarPlate:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, DB.yoffset+6)
+	else
+		Fel_SpartanUI.Left:ClearAllPoints()
+		Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
+		
+		Fel_ActionBarPlate:ClearAllPoints()
+		Fel_ActionBarPlate:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
 	end
 	DB.yoffset = offset
 	
