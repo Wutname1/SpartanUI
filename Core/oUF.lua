@@ -19,6 +19,11 @@ function addon:HotsListing()
 			17, -- sheild
 			33076, -- Prayer of Mending
 		}
+	elseif classFileName == "MONK" then
+		return {
+			119611, -- Renewing Mist
+			227345, -- Enveloping Mist
+		}
 	end
 	return {}
 end
