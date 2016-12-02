@@ -1211,6 +1211,9 @@ function module:RaidFrames()
 	if DBMod.RaidFrames.mode == "GROUP" then
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
+	if DB.Styles.Fel.RaidFrames.FrameStyle == "medium" then
+		xoffset = 10
+	end
 	
 	if _G["SUI_RaidFrameHeader"] then _G["SUI_RaidFrameHeader"] = nil end
 	

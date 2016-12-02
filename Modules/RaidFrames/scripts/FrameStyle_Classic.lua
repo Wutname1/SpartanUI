@@ -294,6 +294,14 @@ end
 
 
 function RaidFrames:ClassicOptions()
+	spartan.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
+		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
+		get = function(info) return DBMod.RaidFrames.FrameStyle; end,
+		set = function(info,val)
+			DBMod.RaidFrames.FrameStyle = val;
+			spartan:reloadui()
+		end
+	};
 	spartan.opt.args["RaidFrames"].args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
 		args = {
 			party = {name = L["Frames/ShowAuras"], type = "toggle",order=1,
