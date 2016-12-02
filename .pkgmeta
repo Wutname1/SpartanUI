@@ -9,7 +9,6 @@ move-folders:
   SpartanUI/Modules/SpinCam: SpartanUI_SpinCam
   SpartanUI/Modules/Style_Minimal: SpartanUI_Style_Minimal
   SpartanUI/Modules/Style_Transparent: SpartanUI_Style_Transparent
-  SpartanUI/Modules/Style_Grid: SpartanUI_Style_Grid
   SpartanUI/Modules/Style_Fel: SpartanUI_Style_Fel
 
 externals:
