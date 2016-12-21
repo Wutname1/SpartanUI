@@ -92,7 +92,6 @@ function module:MAIL_SHOW()
 		button:Show()
 		module:CancelAllTimers()
 	end
-	print("Mail Show " .. mailIndex .. " " .. b)
 	
 	self:RegisterEvent("MAIL_CLOSED", "Reset")
 	self:RegisterEvent("PLAYER_LEAVING_WORLD", "Reset")
