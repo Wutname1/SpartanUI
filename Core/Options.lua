@@ -559,8 +559,13 @@ function module:OnInitialize()
 				DB.EnabledComponents[RealName] = true
 			end
 			
+			local Displayname = string.sub(name, 11)
+			if submodule.DisplayName then
+				Displayname = submodule.DisplayName
+			end
+			
 			spartan.opt.args["ModSetting"].args["Enabled"].args["Components"].args[RealName] = {
-				name = string.sub(name, 11),type = "toggle",
+				name = Displayname,type = "toggle",
 				get = function(info) return DB.EnabledComponents[RealName] end,
 				set = function(info,val)
 					DB.EnabledComponents[RealName] = val;
