@@ -184,12 +184,23 @@ function module:EnableArtwork()
 	
 	Fel_SpartanUI.Left = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Left", "BORDER")
 	Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-	Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Left]])
 	
 	Fel_SpartanUI.Right = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Right", "BORDER")
 	Fel_SpartanUI.Right:SetPoint("LEFT", Fel_SpartanUI.Left, "RIGHT", 0, 0)
-	Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right]])
 	
+	if DB.Styles.Fel.SubTheme == "Digital" then
+		Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Base_Bar_Left]])
+		Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Base_Bar_Right]])
+		Fel_Bar1BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_Bar2BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_Bar3BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_Bar4BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_MenuBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_StanceBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+	else
+		Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Left]])
+		Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right]])
+	end
 	module:updateOffset();
 	
 	hooksecurefunc("UIParent_ManageFramePositions",function()
@@ -582,30 +593,46 @@ function module:MiniMap()
 	
 	Minimap.FelUpdate = function(self)
 		if self.FelBG then self.FelBG:ClearAllPoints() end
-		if DB.Styles.Fel.Minimap.Engulfed then
-			self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
-			self.FelBG:SetPoint("CENTER", self, "CENTER", 7, 37)
-			self.FelBG:SetSize(330, 330)
-			self.FelBG:SetBlendMode("ADD");
-		else
-			self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Calmed]])
+		
+		if DB.Styles.Fel.SubTheme == "Digital" then
+			self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Minimap]])
 			self.FelBG:SetPoint("CENTER", self, "CENTER", 5, -1)
 			self.FelBG:SetSize(256, 256)
 			self.FelBG:SetBlendMode("ADD");
+		else
+			if DB.Styles.Fel.Minimap.Engulfed then
+				self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
+				self.FelBG:SetPoint("CENTER", self, "CENTER", 7, 37)
+				self.FelBG:SetSize(330, 330)
+				self.FelBG:SetBlendMode("ADD");
+			else
+				self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Calmed]])
+				self.FelBG:SetPoint("CENTER", self, "CENTER", 5, -1)
+				self.FelBG:SetSize(256, 256)
+				self.FelBG:SetBlendMode("ADD");
+			end
 		end
 	end
 	
 	Minimap.FelBG = Minimap:CreateTexture(nil, "BACKGROUND")
-	if DB.Styles.Fel.Minimap.Engulfed then
-		Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
-		Minimap.FelBG:SetPoint("CENTER", Minimap, "CENTER", 7, 37)
-		Minimap.FelBG:SetSize(330, 330)
-		Minimap.FelBG:SetBlendMode("ADD");
-	else
-		Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Calmed]])
+	
+	if DB.Styles.Fel.SubTheme == "Digital" then
+		Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Minimap]])
 		Minimap.FelBG:SetPoint("CENTER", Minimap, "CENTER", 5, -1)
 		Minimap.FelBG:SetSize(256, 256)
 		Minimap.FelBG:SetBlendMode("ADD");
+	else
+		if DB.Styles.Fel.Minimap.Engulfed then
+			Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
+			Minimap.FelBG:SetPoint("CENTER", Minimap, "CENTER", 7, 37)
+			Minimap.FelBG:SetSize(330, 330)
+			Minimap.FelBG:SetBlendMode("ADD");
+		else
+			Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Calmed]])
+			Minimap.FelBG:SetPoint("CENTER", Minimap, "CENTER", 5, -1)
+			Minimap.FelBG:SetSize(256, 256)
+			Minimap.FelBG:SetBlendMode("ADD");
+		end
 	end
 	
 	--Shape Change

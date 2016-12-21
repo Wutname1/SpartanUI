@@ -11,6 +11,8 @@ function module:OnInitialize()
 	spartan.opt.args["General"].args["style"].args["PlayerFrames"].args["Fel"].disabled = false
 	spartan.opt.args["General"].args["style"].args["PartyFrames"].args["Fel"].disabled = false
 	spartan.opt.args["General"].args["style"].args["RaidFrames"].args["Fel"].disabled = false
+	
+	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["Digital"].disabled = false
 	--Init if needed
 	if (DBMod.Artwork.Style == "Fel") then module:Init() end
 end

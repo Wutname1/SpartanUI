@@ -1087,6 +1087,22 @@ function module:FrameSize(size)
 end
 
 function module:PlayerFrames()
+	if DB.Styles.Fel.SubTheme == "Digital" then
+		Images = {
+		bg = {
+			Texture =  [[Interface\addons\SpartanUI_Style_Fel\Digital\Fel-Box]],
+			Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
+		},
+		flair = {
+			Texture =  [[Interface\addons\SpartanUI_Style_Fel\Digital\Fel-Box]],
+			Coords = {0, 0.1, 0, 0.2}
+		},
+		flair2 = {
+			Texture =  [[Interface\addons\SpartanUI_Style_Fel\Digital\Fel-Box]],
+			Coords = {0, 0.1, 0, 0.2}
+		}
+	}
+	end
 	PlayerFrames = spartan:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_FelPlayerFrames");
 	PlayerFrames:BuffOptions()

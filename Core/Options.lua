@@ -59,6 +59,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Fel";
+						DB.Styles.Fel.SubTheme = "Fel";
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
@@ -79,6 +80,17 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function()
 						DBMod.Artwork.Style = "Minimal";
+						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
+						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
+						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						module:ArtSetup()
+					end
+				},
+				Digital = {name = "Digital", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Digital", 120, 60 end,
+					func = function()
+						DBMod.Artwork.Style = "Fel";
+						DB.Styles.Fel.SubTheme = "Digital";
 						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 						DBMod.RaidFrames.Style = DBMod.Artwork.Style;

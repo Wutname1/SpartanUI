@@ -66,6 +66,7 @@ local Defaults = {
 		blizzardVehicle = DBMod.Artwork.VehicleUI
 	},
 	TooltipLoc = true,
+	SubTheme = "Fel",
 	StatusBars = {
 		XP = true,
 		REP = true,
