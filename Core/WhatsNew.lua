@@ -5,9 +5,9 @@ local ArtifactWatcher, loginlevel
 
 function spartan:WhatsNew()
 	local PageData = {
-		title = "What's new in SpartanUI 4.3",
+		title = "What's new in SpartanUI 4.4",
 		SubTitle = "",
-		Desc1 = "Introducing a new Style: 'Fel' with the legions invasion Fel magic has infected SpartanUI, if you would like to try this new Skin you may click on the graphic below.",
+		Desc1 = "Introducing a new style 'Digital' this is the first fan submitted style. Special thanks to Vargor of Stormrage, if you would like to try this new Skin you may click on the graphic below.",
 		Display = function()
 			--Container
 			SUI_Win.WhatsNew = CreateFrame("Frame", nil)
@@ -17,13 +17,14 @@ function spartan:WhatsNew()
 			
 			-- Fel Style
 			local control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Fel")
+			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Digital")
 			control:SetImageSize(240, 120)
 			control:SetPoint("TOP", SUI_Win.Desc1, "BOTTOM", 0, -15)
 			control:SetCallback("OnClick", function()
 				SUI.DBG.WhatsNew = (SUI_Win.WhatsNew.NeverEverAgain:GetChecked() ~= true or false)
 				
-				DBMod.Artwork.Style = "Fel"
+				DBMod.Artwork.Style = "Fel";
+				DB.Styles.Fel.SubTheme = "Digital";
 				DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
 				DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 				DBMod.RaidFrames.Style = DBMod.Artwork.Style;
@@ -47,7 +48,7 @@ function spartan:WhatsNew()
 			SUI_Win.WhatsNew.Buffs = SUI_Win.WhatsNew:CreateFontString(nil, "OVERLAY", "SUI_FontOutline13")
 			SUI_Win.WhatsNew.Buffs:SetPoint("TOP",SUI_Win.WhatsNew.Fel.frame,"BOTTOM", 0, -15)
 			SUI_Win.WhatsNew.Buffs:SetWidth(SUI_Win.WhatsNew:GetWidth()-40)
-			SUI_Win.WhatsNew.Buffs:SetText("The buff system for player fames has been redesigned in 4.3. While it is still a work in progress all the options have been revamped. I strongly encourage you to preview the new Fel Unit frames to see some of the improvements that will be making their way to the other styles. If you have any questions or suggestions please let me know via the SpartanUI.net forums")
+			SUI_Win.WhatsNew.Buffs:SetText("A new component has been added called 'Open all mail' this Component adds a button to the top of the mailbox window that allows you to open all mail with 1 click.")
 			
 			-- Sad face
 			SUI_Win.WhatsNew.NeverEverAgain = CreateFrame("CheckButton", "SUI_WhatsNew_NeverEverAgain", SUI_Win.WhatsNew, "OptionsCheckButtonTemplate")
@@ -59,8 +60,7 @@ function spartan:WhatsNew()
 			SUI.DBG.WhatsNew = (SUI_Win.WhatsNew.NeverEverAgain:GetChecked() ~= true or false)
 			SUI_Win.WhatsNew:Hide();
 			SUI_Win.WhatsNew = nil;
-		end,
-		Skip = function() end
+		end
 	}
 	
 	local SetupWindow = spartan:GetModule("SetupWindow")
@@ -113,7 +113,7 @@ function module:OnInitialize()
 	if SUI.DBG.HasEquipedArtifact == nil then SUI.DBG.HasEquipedArtifact = false end
 	--Only display if the setup has been done, and the DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 	
-	if SUI.DBG.Version and SUI.DBG.Version < "4.3.0" and DB.SetupDone and SUI.DBG.WhatsNew then
+	if SUI.DBG.Version and SUI.DBG.Version < "4.4.0" and DB.SetupDone and SUI.DBG.WhatsNew then
 		spartan:WhatsNew()
 	end
 	

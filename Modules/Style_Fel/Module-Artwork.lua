@@ -335,6 +335,13 @@ end
 function module:StatusBars()
 	do -- create the tooltip
 		tooltip = CreateFrame("Frame","Fel_StatusBarTooltip",SpartanUI,"Fel_StatusBars_TooltipTemplate");
+		if DB.Styles.Fel.SubTheme == "Digital" then
+			Fel_StatusBarTooltipBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+			Fel_StatusBarTooltipBG:SetAlpha(.9)
+			
+			Fel_ArtifactBarTooltipBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+			Fel_ArtifactBarTooltipBG:SetAlpha(.9)
+		end
 		spartan:FormatFont(Fel_StatusBarTooltipHeader, 10, "Core")
 		spartan:FormatFont(Fel_StatusBarTooltipText, 8, "Core")
 	end

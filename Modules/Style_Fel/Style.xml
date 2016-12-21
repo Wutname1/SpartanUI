@@ -221,6 +221,7 @@
 							
 							_G[FrameName.."Header"]:SetText(name);							
 							_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%.", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+							_G[FrameName.."Text"]:SetSize(300, 18)
 							_G[FrameName.."Text2"]:SetFormattedText("Ammount required for next level: %s", spartan:comma_value(xpForNextPoint-xp))
 							
 						else
