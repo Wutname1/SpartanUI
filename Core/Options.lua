@@ -523,7 +523,7 @@ function module:OnInitialize()
 				},
 				Styles = {name = L["Styles"],type = "group",order=100,inline=true,args={}},
 				Components = {name = "Components",type = "group",order=200,inline=true,args={
-					SpinCam = {name = L["SpinCam"],type = "toggle",order=50,
+					SpinCam = {name = L["Spin cam"],type = "toggle",order=50,
 						get = function(info) return ModsLoaded.SpinCam end,
 						set = function(info,val)
 							if ModsLoaded.SpinCam then ModsLoaded.SpinCam = false else ModsLoaded.SpinCam = true end
@@ -531,7 +531,7 @@ function module:OnInitialize()
 							spartan:reloadui();
 						end,
 					},
-					FilmEffects = {name = L["FilmEffects"],type = "toggle",order=60,
+					FilmEffects = {name = L["Film Effects"],type = "toggle",order=60,
 						get = function(info) return ModsLoaded.FilmEffects end,
 						set = function(info,val)
 							if ModsLoaded.FilmEffects then ModsLoaded.FilmEffects = false else ModsLoaded.FilmEffects = true end

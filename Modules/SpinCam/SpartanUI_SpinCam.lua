@@ -26,7 +26,14 @@ function addon:OnInitialize()
 			-- }
 			spin = {name=L["Toggle spin"],type="execute",order=15,width="double",
 				desc = L["SpinToggleDesc"],
-				func = function(info,val) addon:SpinToggle(); end
+				func = function(info,val) 
+					if SpinCamRunning then
+						addon:SpinToggle("stop")
+					else
+						DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["SpinStopMSG"]);
+						addon:SpinToggle("start")
+					end
+				end
 			}
 		}
 	}
@@ -82,11 +89,10 @@ function addon:SpinToggle(action)
 end
 
 SlashCmdList["SPINCAMTOGGLE"] = function(msg)
-	if (SpinCamRunning) then  end
 	if SpinCamRunning then
-		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["SpinStopMSG"]);
 		addon:SpinToggle("stop")
 	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["SpinStopMSG"]);
 		addon:SpinToggle("start")
 	end
 end;
