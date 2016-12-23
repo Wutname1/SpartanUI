@@ -7,14 +7,14 @@ local usercameraCustomViewSmoothing
 
 function addon:OnInitialize()
 	spartan.opt.args["ModSetting"].args["SpinCam"] = {
-		name = L["SpinCam"],
+		name = L["Spin cam"],
 		type = "group",
 		args = {
-			enable = {name=L["Spin/AFKOn"],type="toggle",order=1,width="full",
+			enable = {name=L["Enable Spin when AFK"],type="toggle",order=1,width="full",
 				get = function(info) return DBMod.SpinCam.enable end,
 				set = function(info,val) DBMod.SpinCam.enable = val end
 			},
-			speed = {name=L["Spin/Speed"],type="range",order=5,width="full",
+			speed = {name=L["Spin speed"],type="range",order=5,width="full",
 				min=1,max=230,step=1,
 				get = function(info) return DBMod.SpinCam.speed end,
 				set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.speed = val; end if SpinCamRunning then addon:SpinToggle("update") end end
@@ -24,8 +24,8 @@ function addon:OnInitialize()
 				-- get = function(info) return DBMod.SpinCam.range end,
 				-- set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.range = val; end if SpinCamRunning then addon:SpinToggle("update") end end
 			-- }
-			spin = {name=L["Spin/Toggle"],type="execute",order=15,width="double",
-				desc = L["Spin/ToggleDesc"],
+			spin = {name=L["Toggle spin"],type="execute",order=15,width="double",
+				desc = L["SpinToggleDesc"],
 				func = function(info,val) addon:SpinToggle(); end
 			}
 		}
@@ -82,12 +82,12 @@ function addon:SpinToggle(action)
 end
 
 SlashCmdList["SPINCAMTOGGLE"] = function(msg)
-	print(userCameraYawMoveSpeed)
-	print(SpinCamRunning)
-	-- userCameraYawMoveSpeed = GetCVar("cameraYawMoveSpeed")
-	-- local a = GetCVar("cameraYawMoveSpeed")
-	-- print(a)
-	-- if (SpinCamRunning) then DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["Spin/StopMSG"]); end
-	-- addon:SpinToggle(action)
+	if (SpinCamRunning) then  end
+	if SpinCamRunning then
+		DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99SpinCam|r: "..L["SpinStopMSG"]);
+		addon:SpinToggle("stop")
+	else
+		addon:SpinToggle("start")
+	end
 end;
 SLASH_SPINCAMTOGGLE1 = "/spin"
