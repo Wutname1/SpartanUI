@@ -451,9 +451,9 @@ function module:StatusBars()
 			Fel_ArtifactBarText:SetText("")
 			--Update if needed
 			if HasArtifactEquipped() then
-				local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
-				-- local currentArtifactPurchasableTraits = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, xp);
-				local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+				local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
+				--local currentArtifactPurchasableTraits = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, xp, artifactTier);
+				local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 				local ratio = (xp/xpForNextPoint);
 				
 				if ratio == 0 then

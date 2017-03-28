@@ -135,8 +135,8 @@ local updateText = function(self, side)
 	elseif (DB.StatusBars.left == "ap" and side == "left") or (DB.StatusBars.right == "ap" and side == "right") then
 		_G[FrameName.."Text"]:SetText("")
 		if HasArtifactEquipped() then
-			local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
-			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
+			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 			local ratio = (xp/xpForNextPoint);
 			if ratio == 0 then
 				_G[FrameName.."Fill"]:SetWidth(0.1);
