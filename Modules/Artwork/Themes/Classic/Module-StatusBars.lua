@@ -208,8 +208,8 @@ function module:EnableStatusBars()
 	local showAPTooltip = function(self)
 		local FrameName = self:GetName();
 		if HasArtifactEquipped() then
-			local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
-			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
+			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
+			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
 			local ratio = (xp/xpForNextPoint);
 			
 			SUI_StatusBarTooltipHeader:SetText(name);							
