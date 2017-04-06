@@ -1,4 +1,4 @@
-﻿local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 local module = spartan:NewModule("Component_MailOpenAll", "AceEvent-3.0", "AceTimer-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
 module.DisplayName = "Open all mail"

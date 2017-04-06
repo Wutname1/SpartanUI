@@ -227,33 +227,34 @@ function module:EnableArtwork()
 end
 
 -- Status Bars
-function module:SetXPColors()
+local SetXPColors = function(self)
+	local FrameName = self:GetName();
 	-- Set Gained Color
 	if DB.StatusBars.XPBar.GainedColor ~= "Custom" then
 		DB.StatusBars.XPBar.GainedRed 			= COLORS[DB.StatusBars.XPBar.GainedColor].r
-		DB.StatusBars.XPBar.GainedBlue 		= COLORS[DB.StatusBars.XPBar.GainedColor].b
+		DB.StatusBars.XPBar.GainedBlue 			= COLORS[DB.StatusBars.XPBar.GainedColor].b
 		DB.StatusBars.XPBar.GainedGreen 		= COLORS[DB.StatusBars.XPBar.GainedColor].g
 		DB.StatusBars.XPBar.GainedBrightness	= COLORS[DB.StatusBars.XPBar.GainedColor].a
 	end
-    
-    local r,b,g,a
+	
+	local r,b,g,a
 	r = DB.StatusBars.XPBar.GainedRed
 	b = DB.StatusBars.XPBar.GainedBlue
 	g = DB.StatusBars.XPBar.GainedGreen
 	a = DB.StatusBars.XPBar.GainedBrightness
-	Fel_ExperienceBarFill:SetVertexColor	(r,g,b,a);
-	Fel_ExperienceBarFillGlow:SetVertexColor(r,g,b,(a-.2));
+	_G[FrameName.."Fill"]:SetVertexColor	(r,g,b,a);
+	_G[FrameName.."FillGlow"]:SetVertexColor(r,g,b,(a-.2));
 
 	-- Set Rested Color
 	if DB.StatusBars.XPBar.RestedMatchColor then
 		DB.StatusBars.XPBar.RestedRed 			= DB.StatusBars.XPBar.GainedRed
-		DB.StatusBars.XPBar.RestedBlue 		= DB.StatusBars.XPBar.GainedBlue
+		DB.StatusBars.XPBar.RestedBlue 			= DB.StatusBars.XPBar.GainedBlue
 		DB.StatusBars.XPBar.RestedGreen 		= DB.StatusBars.XPBar.GainedGreen
 		DB.StatusBars.XPBar.RestedBrightness	= 1
 		DB.StatusBars.XPBar.RestedColor		= DB.StatusBars.XPBar.GainedColor
 	elseif DB.StatusBars.XPBar.RestedColor ~= "Custom" then
 		DB.StatusBars.XPBar.RestedRed 			= COLORS[DB.StatusBars.XPBar.RestedColor].r
-		DB.StatusBars.XPBar.RestedBlue 		= COLORS[DB.StatusBars.XPBar.RestedColor].b
+		DB.StatusBars.XPBar.RestedBlue 			= COLORS[DB.StatusBars.XPBar.RestedColor].b
 		DB.StatusBars.XPBar.RestedGreen 		= COLORS[DB.StatusBars.XPBar.RestedColor].g
 		DB.StatusBars.XPBar.RestedBrightness	= COLORS[DB.StatusBars.XPBar.RestedColor].a
 	end
@@ -261,310 +262,212 @@ function module:SetXPColors()
 	b = DB.StatusBars.XPBar.RestedBlue
 	g = DB.StatusBars.XPBar.RestedGreen
 	a = DB.StatusBars.XPBar.RestedBrightness
-	Fel_ExperienceBarLead:SetVertexColor	(r,g,b,a);
-	Fel_ExperienceBarLeadGlow:SetVertexColor(r,g,b,(a+.1));
-
-	-- Update Text if needed
-	if DB.StatusBars.XPBar.text then Fel_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100)) else Fel_ExperienceBarText:SetText("") end
-	-- Update Visibility
-	module:UpdateStatusBars()
+	_G[FrameName.."Lead"]:SetVertexColor	(r,g,b,a);
+	_G[FrameName.."LeadGlow"]:SetVertexColor(r,g,b,(a+.1));
 end
-
-function module:SetRepColors()
+local SetRepColors = function(self)
+	local FrameName = self:GetName();
 	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-	
-	if DB.StatusBars.RepBar.enabled and not Fel_ReputationBar:IsVisible() then
-		Fel_ReputationBar:Show();
-	elseif not DB.StatusBars.RepBar.enabled then
-		Fel_ReputationBar:Hide();
-		return
-	end
 	if DB.StatusBars.RepBar.AutoDefined == true then
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
-		Fel_ReputationBarFill:SetVertexColor	(color.r, color.g, color.b, 0.7);
-		Fel_ReputationBarFillGlow:SetVertexColor(color.r, color.g, color.b, 0.2);
+		_G[FrameName.."Fill"]:SetVertexColor	(color.r, color.g, color.b, 0.7);
+		_G[FrameName.."FillGlow"]:SetVertexColor(color.r, color.g, color.b, 0.2);
 	else
-        local r,b,g,a
-
+		local r,b,g,a
 		r = DB.StatusBars.RepBar.GainedRed
 		b = DB.StatusBars.RepBar.GainedBlue
 		g = DB.StatusBars.RepBar.GainedGreen
 		a = DB.StatusBars.RepBar.GainedBrightness
-		Fel_ReputationBarFill:SetVertexColor	(r, g, b, a);
-		Fel_ReputationBarFillGlow:SetVertexColor(r, g, b, a);
+		_G[FrameName.."Fill"]:SetVertexColor	(r, g, b, a);
+		_G[FrameName.."FillGlow"]:SetVertexColor(r, g, b, a);
 	end
-
-	-- Set Text if needed
-	if DB.StatusBars.RepBar.text then
-		Fel_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
-	else
-		Fel_ReputationBarText:SetText("")
-	end
-	-- Update Visibility
-	module:UpdateStatusBars()
 end
 
-function module:UpdateAPBar()
-	-- Set Text if needed
-	if DB.StatusBars.APBar.text then
-		local itemID, altItemID, name, icon, xp, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_ArtifactUI.GetEquippedArtifactInfo();
-		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent);
-		local ratio = (xp/xpForNextPoint);
-		Fel_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
-	else
-		Fel_ArtifactBarText:SetText("")
+local updateText = function(self, side)
+	local FrameName = self:GetName();
+	-- Reset graphically to avoid issues
+	_G[FrameName.."Fill"]:SetWidth(0.1);
+	_G[FrameName.."FillGlow"]:SetWidth(.1);
+	_G[FrameName.."Lead"]:SetWidth(0.1);
+	--Reset Text
+	_G[FrameName.."Text"]:SetText("")
+	
+	if (DB.StatusBars.left == "xp" and side == "left") or (DB.StatusBars.right == "xp" and side == "right") then
+		local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
+		if now ~= 0 then
+			_G[FrameName.."Fill"]:SetWidth((now/goal)*self:GetWidth());
+			rested = (rested/goal)*400;
+			if (rested+_G[FrameName.."Fill"]:GetWidth()) > 399 then rested = self:GetWidth()-_G[FrameName.."Fill"]:GetWidth(); end
+			if rested == 0 then rested = .001 end
+			_G[FrameName.."Lead"]:SetWidth(rested);
+		end
+		if DB.StatusBars.XPBar.text then
+			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
+		else
+			_G[FrameName.."Text"]:SetText("")
+		end
+		SetXPColors(self);
+	elseif (DB.StatusBars.left == "rep" and side == "left") or (DB.StatusBars.right == "rep" and side == "right") then
+		local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
+		if name then ratio = (current-low)/(high-low); end
+		if ratio == 0 then
+			_G[FrameName.."Fill"]:SetWidth(0.1);
+		else
+			_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
+		end
+		if DB.StatusBars.RepBar.text then
+			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
+		else
+			_G[FrameName.."Text"]:SetText("")
+		end
+		SetRepColors(self);
+	elseif (DB.StatusBars.left == "ap" and side == "left") or (DB.StatusBars.right == "ap" and side == "right") then
+		_G[FrameName.."Text"]:SetText("")
+		if HasArtifactEquipped() then
+			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
+			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+			local ratio = (xp/xpForNextPoint);
+			if ratio == 0 then
+				_G[FrameName.."Fill"]:SetWidth(0.1);
+			else
+				if (ratio*self:GetWidth()) > self:GetWidth() then
+					_G[FrameName.."Fill"]:SetWidth(self:GetWidth())
+				else
+					_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
+				end
+			end
+			if DB.StatusBars.APBar.text then
+				_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+			else
+				_G[FrameName.."Text"]:SetText("")
+			end
+			_G[FrameName.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
+		end
+	-- elseif (DB.StatusBars.left == "honor" and side == "left") or (DB.StatusBars.right == "honor" and side == "right") then
+		-- if DB.StatusBars.HonorBar.text then
+			-- local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
+			-- local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);
+			-- local ratio = (xp/xpForNextPoint);
+			-- _G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+		-- else
+			-- _G[FrameName.."Text"]:SetText("")
+		-- end
 	end
-	-- Update Visibility
-	module:UpdateStatusBars()
-end
-
-function module:UpdateHonorBar()
-	-- Set Text if needed
-	if DB.StatusBars.HonorBar.text then
-		local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
-		local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);
-		local ratio = (xp/xpForNextPoint);
-		Fel_HonorBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
-	else
-		Fel_HonorBarText:SetText("")
-	end
-	-- Update Visibility
-	module:UpdateStatusBars()
 end
 
 function module:StatusBars()
 	do -- create the tooltip
 		tooltip = CreateFrame("Frame","Fel_StatusBarTooltip",SpartanUI,"Fel_StatusBars_TooltipTemplate");
-		if DB.Styles.Fel.SubTheme == "Digital" then
-			Fel_StatusBarTooltipBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-			Fel_StatusBarTooltipBG:SetAlpha(.9)
-			
-			Fel_ArtifactBarTooltipBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-			Fel_ArtifactBarTooltipBG:SetAlpha(.9)
-		end
-		spartan:FormatFont(Fel_StatusBarTooltipHeader, 10, "Core")
-		spartan:FormatFont(Fel_StatusBarTooltipText, 8, "Core")
+		Fel_StatusBarTooltipHeader:SetJustifyH("LEFT");
+		Fel_StatusBarTooltipText:SetJustifyH("LEFT");
+		Fel_StatusBarTooltipText:SetJustifyV("TOP");
+		spartan:FormatFont(Fel_StatusBarTooltipHeader, 12, "Core")
+		spartan:FormatFont(Fel_StatusBarTooltipText, 10, "Core")
 	end
-	do -- experience bar
-		Fel_ExperienceBar:SetScript("OnEvent",function()
-			if DB.StatusBars.XPBar.enabled and not Fel_ExperienceBar:IsVisible() then
-				Fel_ExperienceBar:Show();
-			elseif not DB.StatusBars.XPBar.enabled then
-				Fel_ExperienceBar:Hide();
-				return
-			end
-			
-			local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
-			if now == 0 then
-				Fel_ExperienceBarFill:SetWidth(0.1);
-				Fel_ExperienceBarFillGlow:SetWidth(.1);
-				Fel_ExperienceBarLead:SetWidth(0.1);
-			else
-				Fel_ExperienceBarFill:SetWidth((now/goal)*Fel_ExperienceBar:GetWidth());
-				rested = (rested/goal)*Fel_ExperienceBar:GetWidth();
-				if (rested+Fel_ExperienceBarFill:GetWidth()) > (Fel_ExperienceBar:GetWidth()-1) then rested = Fel_ExperienceBar:GetWidth()-Fel_ExperienceBarFill:GetWidth(); end
-				if rested == 0 then rested = .001 end
-				Fel_ExperienceBarLead:SetWidth(rested);
-			end
-			if DB.StatusBars.XPBar.text then
-				Fel_ExperienceBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
-			else
-				Fel_ExperienceBarText:SetText("")
-			end
-			module:SetXPColors()
-		end);
-		local showXPTooltip = function()
-			local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
-			local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
-			local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
-			tooltip:ClearAllPoints();
-			tooltip:SetPoint("BOTTOM",Fel_ExperienceBar,"TOP",6,-1);
-			local a = format("Level %s ",UnitLevel("player"))
-			local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
-			Fel_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
-			local rested,text = GetXPExhaustion() or 0;
-			if (rested > 0) then
-				text = format(xptip1,format(xprest,(rested/UnitXPMax("player"))*100),200);
-				Fel_StatusBarTooltipText:SetText(text); -- Rested (15%) - 200% of normal experience gained from monsters.
-			else
-				Fel_StatusBarTooltipText:SetText(format(xptip1,EXHAUST_TOOLTIP2,100)); -- You should rest at an Inn. 100% of normal experience gained from monsters.
-			end
-			tooltip:Show();
-		end
-		
-		Fel_ExperienceBar:SetScript("OnEnter",function() if DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(); end end);
-		Fel_ExperienceBar:SetScript("OnMouseDown",function() if DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(); end end);
-		Fel_ExperienceBar:SetScript("OnLeave",function() tooltip:Hide(); end);
-		
-		Fel_ExperienceBar:RegisterEvent("PLAYER_ENTERING_WORLD");
-		Fel_ExperienceBar:RegisterEvent("PLAYER_XP_UPDATE");
-		Fel_ExperienceBar:RegisterEvent("PLAYER_LEVEL_UP");
-		
-		module:SetXPColors();
-	end
-	do -- reputation bar
-		Fel_ReputationBar:SetScript("OnEvent",function()
-			local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-			if name then ratio = (current-low)/(high-low); end
-			Fel_StatusBarTooltipHeader:SetText(name);
-			if ratio == 0 then
-				Fel_ReputationBarFill:SetWidth(0.1);
-			else
-				Fel_ReputationBarFill:SetWidth(ratio*Fel_ReputationBar:GetWidth());
-			end
-			module:SetRepColors()
-			
-			if DB.StatusBars.RepBar.text then
-				Fel_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
-			else
-				Fel_ReputationBarText:SetText("")
-			end
-		end);
-		local showRepTooltip = function()
-			tooltip:ClearAllPoints();
-			tooltip:SetPoint("BOTTOM",Fel_ReputationBar,"TOP",-2,-1);
-			local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
-			if name then
-				text = GetFactionDetails(name);
-				ratio = (current-low)/(high-low);
-				Fel_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
-				Fel_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
-			else
-				Fel_StatusBarTooltipHeader:SetText(REPUTATION);
-				Fel_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
-			end
-			tooltip:Show();
-		end
-		
-		Fel_ReputationBar:SetScript("OnEnter",function() if DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(); end end);
-		Fel_ReputationBar:SetScript("OnMouseDown",function() if DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(); end end);
-		Fel_ReputationBar:SetScript("OnLeave",function() tooltip:Hide(); end);
-		
-		Fel_ReputationBar:RegisterEvent("PLAYER_ENTERING_WORLD");
-		Fel_ReputationBar:RegisterEvent("UPDATE_FACTION");
-		
-		module:SetRepColors();
-	end
-	do -- Artifact Power bar
-		Fel_ArtifactBar:SetScript("OnEvent",function()
-			--Clear Text
-			Fel_ArtifactBarText:SetText("")
-			--Update if needed
-			if HasArtifactEquipped() then
-				local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
-				--local currentArtifactPurchasableTraits = MainMenuBar_GetNumArtifactTraitsPurchasableFromXP(pointsSpent, xp, artifactTier);
-				local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
-				local ratio = (xp/xpForNextPoint);
-				
-				if ratio == 0 then
-					Fel_ArtifactBarFill:SetWidth(0.1);
-				else
-					if (ratio*Fel_ArtifactBar:GetWidth()) > Fel_ArtifactBar:GetWidth() then
-						Fel_ArtifactBarFill:SetWidth(Fel_ArtifactBar:GetWidth())
-					else
-						Fel_ArtifactBarFill:SetWidth(ratio*Fel_ArtifactBar:GetWidth());
-					end
-				end
-				
-				if DB.StatusBars.APBar.text then
-					Fel_ArtifactBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
-				end
-			end
-		end);
-		
-		Fel_ArtifactBarFill:SetVertexColor(1,0.8,0,.7)
-		Fel_ArtifactBar:RegisterEvent("PLAYER_ENTERING_WORLD");
-		Fel_ArtifactBar:RegisterEvent("ARTIFACT_XP_UPDATE");
-		Fel_ArtifactBar:RegisterEvent("UNIT_INVENTORY_CHANGED");
-	end
-	do -- Honor bar
-		Fel_HonorBar:SetScript("OnEvent",function(self)
-			local current = UnitHonor("player");
-			local max = UnitHonorMax("player");
 
-			local level = UnitHonorLevel("player");
-			local levelmax = GetMaxPlayerHonorLevel();
-			
-			
-			-- if DB.StatusBars.RepBar.text then
-				-- Fel_ReputationBarText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
-			-- else
-				-- Fel_ReputationBarText:SetText("")
-			-- end
-			
-			
-			if (level == levelmax) then
-				-- Force the bar to full for the max level
-				Fel_HonorBarFill:SetWidth(Fel_HonorBar:GetWidth());
-			else
-				local ratio = current/max;
-				if ratio == 0 then
-					Fel_HonorBarFill:SetWidth(0.1);
-				else
-					Fel_HonorBarFill:SetWidth(ratio*Fel_ReputationBar:GetWidth());
-				end
-			end
-			
-			-- local exhaustionStateID = GetHonorRestState();
-			-- if (exhaustionStateID == 1) then
-				-- Fel_HonorBarLead:SetWidth(rested);
-			-- else
-				-- Fel_HonorBarLead:SetWidth(0.1);
-			-- end
-		end)
-		
-		Fel_HonorBar:RegisterEvent("PLAYER_ENTERING_WORLD");
-		Fel_HonorBar:RegisterEvent("HONOR_XP_UPDATE");
-		Fel_HonorBar:RegisterEvent("HONOR_LEVEL_UPDATE");
-		Fel_HonorBar:RegisterEvent("HONOR_PRESTIGE_UPDATE");
+	local showXPTooltip = function(self)
+		local xptip1 = string.gsub(EXHAUST_TOOLTIP1,"\n"," "); -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
+		local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
+		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
+		local a = format("Level %s ",UnitLevel("player"))
+		local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
+		Fel_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
+		local rested,text = GetXPExhaustion() or 0;
+		if (rested > 0) then
+			text = format(xptip1,format(xprest,(rested/UnitXPMax("player"))*100),200);
+			Fel_StatusBarTooltipText:SetText(text); -- Rested (15%) - 200% of normal experience gained from monsters.
+		else
+			Fel_StatusBarTooltipText:SetText(format(xptip1,EXHAUST_TOOLTIP2,100)); -- You should rest at an Inn. 100% of normal experience gained from monsters.
+		end
+		tooltip:Show();
 	end
+	local showRepTooltip = function(self)
+		local name,react,low,high,current,text,ratio = GetWatchedFactionInfo();
+		if name then
+			text = GetFactionDetails(name);
+			ratio = (current-low)/(high-low);
+			Fel_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+			Fel_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
+		else
+			Fel_StatusBarTooltipHeader:SetText(REPUTATION);
+			Fel_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION);
+		end
+		tooltip:Show();
+	end
+	local showAPTooltip = function(self)
+		local FrameName = self:GetName();
+		if HasArtifactEquipped() then
+			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
+			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+			local ratio = (xp/xpForNextPoint);
+			
+			Fel_StatusBarTooltipHeader:SetText(name);							
+			Fel_StatusBarTooltipText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+		else
+			Fel_StatusBarTooltipHeader:SetText("No Artifact equiped");
+			Fel_StatusBarTooltipText:SetText("")
+		end
+		tooltip:Show();
+	end
+	
+	Fel_StatusBar_LeftPlate:SetTexCoord(0.17,0.97,0,1);
+	Fel_StatusBar_Left:RegisterEvent("PLAYER_ENTERING_WORLD");
+	Fel_StatusBar_Left:RegisterEvent("ARTIFACT_XP_UPDATE");
+	Fel_StatusBar_Left:RegisterEvent("UNIT_INVENTORY_CHANGED");
+	Fel_StatusBar_Left:RegisterEvent("PLAYER_ENTERING_WORLD");
+	Fel_StatusBar_Left:RegisterEvent("PLAYER_XP_UPDATE");
+	Fel_StatusBar_Left:RegisterEvent("PLAYER_LEVEL_UP");
+	Fel_StatusBar_Left:RegisterEvent("PLAYER_ENTERING_WORLD");
+	Fel_StatusBar_Left:RegisterEvent("UPDATE_FACTION");
+	Fel_StatusBar_Left:SetScript("OnEnter",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",Fel_StatusBar_Left,"TOP",-2,-1);
+		if DB.StatusBars.left == "rep" and DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
+		if DB.StatusBars.left == "xp" and DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
+		if DB.StatusBars.left == "ap" and DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+	end);
+	Fel_StatusBar_Left:SetScript("OnMouseDown",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",Fel_StatusBar_Left,"TOP",-2,-1);
+		if DB.StatusBars.left == "rep" and DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
+		if DB.StatusBars.left == "xp" and DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
+		if DB.StatusBars.left == "ap" and DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+	end);
+	Fel_StatusBar_Left:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
+	Fel_StatusBar_Left:SetScript("OnEvent",function(self) updateText(self, "left") end)
+		
+	Fel_StatusBar_Right:RegisterEvent("PLAYER_ENTERING_WORLD");
+	Fel_StatusBar_Right:RegisterEvent("ARTIFACT_XP_UPDATE");
+	Fel_StatusBar_Right:RegisterEvent("UNIT_INVENTORY_CHANGED");
+	Fel_StatusBar_Right:RegisterEvent("PLAYER_ENTERING_WORLD");
+	Fel_StatusBar_Right:RegisterEvent("PLAYER_XP_UPDATE");
+	Fel_StatusBar_Right:RegisterEvent("PLAYER_LEVEL_UP");
+	Fel_StatusBar_Right:RegisterEvent("PLAYER_ENTERING_WORLD");
+	Fel_StatusBar_Right:RegisterEvent("UPDATE_FACTION");
+	Fel_StatusBar_Right:SetScript("OnEnter",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",Fel_StatusBar_Right,"TOP",-2,-1);
+		if DB.StatusBars.right == "rep" and DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
+		if DB.StatusBars.right == "xp" and DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
+		if DB.StatusBars.right == "ap" and DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+	end);
+	Fel_StatusBar_Right:SetScript("OnMouseDown",function(self)
+		tooltip:ClearAllPoints();
+		tooltip:SetPoint("BOTTOM",Fel_StatusBar_Right,"TOP",-2,-1);
+		if DB.StatusBars.right == "rep" and DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
+		if DB.StatusBars.right == "xp" and DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
+		if DB.StatusBars.right == "ap" and DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+	end);
+	Fel_StatusBar_Right:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
+	Fel_StatusBar_Right:SetScript("OnEvent",function(self) updateText(self, "right") end)
 	module:UpdateStatusBars()
 end
 
 function module:UpdateStatusBars()
-	-- XP
-	if DB.StatusBars.left == "xp" or DB.StatusBars.right == "xp" then
-		Fel_ExperienceBar:Show();
-		if DB.StatusBars.right == "xp" then 
-			Fel_ExperienceBar:ClearAllPoints()
-			Fel_ExperienceBar:SetPoint("BOTTOMLEFT", Fel_ActionBarPlate, "BOTTOM", 110, 0)
-		end
-	else
-		Fel_ExperienceBar:Hide();
-	end
-	--Rep
-	if DB.StatusBars.left == "rep" or DB.StatusBars.right == "rep" then
-		Fel_ReputationBar:Show();
-		if DB.StatusBars.right == "rep" then 
-			Fel_ReputationBar:ClearAllPoints()
-			Fel_ReputationBar:SetPoint("BOTTOMLEFT", Fel_ActionBarPlate, "BOTTOM", 110)
-		end
-	else
-		Fel_ReputationBar:Hide();
-	end
-	--Artifact Power
-	if DB.StatusBars.left == "ap" or DB.StatusBars.right == "ap" then
-		Fel_ArtifactBar:Show();
-		if DB.StatusBars.right == "ap" then 
-			-- Fel_ArtifactBar:ClearAllPoints()
-			-- Fel_ArtifactBar:SetPoint("BOTTOMLEFT", Fel_ActionBarPlate, "BOTTOM", 110)
-		else
-			Fel_ArtifactBar:SetPoint("BOTTOMRIGHT", Fel_ActionBarPlate, "BOTTOM", -110)
-		end
-	else
-		Fel_ArtifactBar:Hide();
-	end
-	--Honor
-	if DB.StatusBars.left == "honor" or DB.StatusBars.right == "honor" then
-		Fel_HonorBar:Show();
-		if DB.StatusBars.right == "honor" then 
-			Fel_HonorBar:ClearAllPoints()
-			Fel_HonorBar:SetPoint("BOTTOMLEFT", Fel_ActionBarPlate, "BOTTOM", 110)
-		end
-	else
-		Fel_HonorBar:Hide();
-	end
+	if DB.StatusBars.left ~= "disabled" then Fel_StatusBar_Left:Show(); updateText(Fel_StatusBar_Left, "left") else Fel_StatusBar_Left:Hide(); end
+	if DB.StatusBars.right ~= "disabled" then Fel_StatusBar_Right:Show(); updateText(Fel_StatusBar_Right, "left") else Fel_StatusBar_Right:Hide(); end
 end
+
 
 -- Bartender Stuff
 function module:SetupProfile()
