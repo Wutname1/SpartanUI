@@ -1806,16 +1806,16 @@ end
 function PlayerFrames:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
 	-- Druid EclipseBar
-	EclipseBarFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
-	end
+	-- EclipseBarFrame:ClearAllPoints();
+	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- else
+		-- EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
+	-- end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
 	-- MonkHarmonyBar:ClearAllPoints();
@@ -1961,23 +1961,23 @@ do -- relocate the AlternatePowerBar
 	
 	-- Druid EclipseBar
 	-- if classname == "Druid" then
-		EclipseBarFrame:SetParent(PlayerFrames.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
-		EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
-		EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		end);
+		-- EclipseBarFrame:SetParent(PlayerFrames.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
+		-- EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
+		-- EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
+			-- if button == "LeftButton" and IsAltKeyDown() then
+				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- self:SetMovable(true);
+				-- self:StartMoving();
+			-- end
+		-- end);
+		-- EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
+			-- self:StopMovingOrSizing();
+			-- DBMod.PlayerFrames.ClassBar.movement.point,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- end);
 	-- end
 	
 	-- PriestBarFrame
@@ -2003,9 +2003,11 @@ do -- relocate the AlternatePowerBar
 	
 	-- Rune Frame
 	-- if classname == "DeathKnight" then
-		RuneFrame:SetParent(PlayerFrames.player); RuneFrame_OnLoad(RuneFrame); RuneFrame:SetFrameStrata("MEDIUM");
+		RuneFrame:SetParent(PlayerFrames.player);
+		-- RuneFrame_OnLoad(RuneFrame);
+		RuneFrame:SetFrameStrata("MEDIUM");
 		RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97 * DBMod.PlayerFrames.ClassBar.scale); RuneFrame:EnableMouse(enable);
-		RuneButtonIndividual1:EnableMouse(enable);
+		-- RuneButtonIndividual1:EnableMouse(enable);
 		RuneFrame:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
 				DBMod.PlayerFrames.ClassBar.movement.moved = true;
@@ -2021,21 +2023,21 @@ do -- relocate the AlternatePowerBar
 			DBMod.PlayerFrames.ClassBar.movement.xOffset,
 			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
-		RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
-			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
-				self:SetMovable(true);
-				self:StartMoving();
-			end
-		end);
-		RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
-			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		end);
+		-- RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
+			-- if button == "LeftButton" and IsAltKeyDown() then
+				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- self:SetMovable(true);
+				-- self:StartMoving();
+			-- end
+		-- end);
+		-- RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
+			-- self:StopMovingOrSizing();
+			-- DBMod.PlayerFrames.ClassBar.movement.point,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- end);
 	-- end
 	
 	-- if classname == "Shaman" then

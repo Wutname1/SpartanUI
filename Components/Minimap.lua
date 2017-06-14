@@ -26,10 +26,20 @@ local IsMouseOver = function()
 	return DB.MiniMap.MouseIsOver
 end
 
+local IgnoreCheck = function(item)
+	local DoNotIgnore = true
+	if item:GetName() ~= nil then 
+		if string.match(item:GetName(), "HandyNotes") then
+			DoNotIgnore = false
+		end
+	end
+	return DoNotIgnore
+end
+
 local MiniMapBtnScrape = function()
 	-- Hook Minimap Icons
 	for i, child in ipairs({Minimap:GetChildren()}) do
-		if child.FadeIn == nil then module:SetupButton(child) end
+		if child.FadeIn == nil and IgnoreCheck(child) then module:SetupButton(child) end
 	end
 	if CensusButton ~= nil and CensusButton.FadeIn == nil then
 		module:SetupButton(CensusButton);
@@ -388,7 +398,7 @@ function module:updateButtons()
 			buttonName = child:GetName();
 			
 			--catch buttons not playing nice.
-			if child.FadeOut == nil then
+			if child.FadeOut == nil and IgnoreCheck(child) then
 				module:SetupButton(child, true)
 			end
 			
@@ -401,7 +411,7 @@ function module:updateButtons()
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 				child.FadeOut:Play();
-			elseif child.FadeIn == nil then
+			elseif child.FadeIn == nil and IgnoreCheck(child) then
 				--if they still fail print a error and continue with our lives.
 				spartan.Err("Minimap", buttonName .. " is not fading")
 			end

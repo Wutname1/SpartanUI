@@ -182,6 +182,12 @@ function module:EnableArtwork()
 	Fel_SpartanUI:SetFrameStrata("BACKGROUND");
 	Fel_SpartanUI:SetFrameLevel(1);
 	
+	-- Fel_SpartanUI.Harambe = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Harambe", "BORDER")
+	-- Fel_SpartanUI.Harambe:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
+	-- Fel_SpartanUI.Harambe:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
+	-- Fel_SpartanUI.Harambe:SetTexture([[interface\addons\SpartanUI_Artwork\Themes\harambe\glory]])
+	-- Fel_SpartanUI.Harambe:SetAlpha(.45)
+	
 	Fel_SpartanUI.Left = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Left", "BORDER")
 	Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
 	

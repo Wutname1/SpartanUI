@@ -1439,18 +1439,26 @@ SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateUnitFrameRaid);
 function module:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
 	-- Druid EclipseBar
-	EclipseBarFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
-	end
+	-- EclipseBarFrame:ClearAllPoints();
+	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- else
+		-- EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
+	-- end
 	
-	if RuneFrame then RuneFrame:Hide() end
+	if RuneFrame then
+		RuneFrame:Hide()
+		RuneFrame.Rune1:Hide()
+		RuneFrame.Rune2:Hide()
+		RuneFrame.Rune3:Hide()
+		RuneFrame.Rune4:Hide()
+		RuneFrame.Rune5:Hide()
+		RuneFrame.Rune6:Hide()
+	end
 	
 	-- Hide the AlternatePowerBar
 	if PlayerFrameAlternateManaBar then
