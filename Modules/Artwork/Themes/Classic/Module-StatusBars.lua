@@ -126,7 +126,7 @@ local updateText = function(self, side)
 		else
 			_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
 		end
-		if DB.StatusBars.RepBar.text then
+		if DB.StatusBars.RepBar.text and current ~= high then
 			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
 		else
 			_G[FrameName.."Text"]:SetText("")
