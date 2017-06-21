@@ -172,7 +172,7 @@ end
 function module:IsSellable(item, ilink)
 	if not item then return false end
 	local name, link, quality, iLevel, reqLevel, itemType, itemSubType, maxStack, equipSlot, texture, vendorPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, isCraftingReagent = GetItemInfo(ilink)
-	if vendorPrice == 0 then return false end
+	if vendorPrice == 0 or name == nil then return false end
 	
 	-- 0. Poor (gray): Broken I.W.I.N. Button
 	-- 1. Common (white): Archmage Vargoth's Staff
