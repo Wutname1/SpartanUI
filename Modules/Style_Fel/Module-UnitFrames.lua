@@ -289,8 +289,10 @@ local CreateLargeFrame = function(self,unit)
 		self.artwork.flair:SetSize(self:GetWidth()+60, self:GetHeight()+75);
 		
 		self.Portrait = PlayerFrames:CreatePortrait(self);
-		self.Portrait:SetFrameStrata("LOW");
-		-- self.Portrait:SetFrameLevel(2);
+		if DBMod.PlayerFrames.Portrait3D then
+			self.Portrait:SetFrameStrata("LOW");
+			self.Portrait:SetFrameLevel(2);
+		end
 		self.Portrait:SetSize(58, 58);
 		self.Portrait:SetPoint("RIGHT",self,"LEFT",-1,0);
 		
