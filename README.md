@@ -1,10 +1,9 @@
 # SpartanUI
 
-<p align="center">
 [![Discord](https://img.shields.io/discord/265564257347829771.svg?logo=discord)](https://discord.gg/J8wJGtz)
 [![GitHub release](https://img.shields.io/github/release/qubyte/rubidium.svg)](https://wow.curseforge.com/projects/spartan-ui)
 [![GitHub issues](https://img.shields.io/github/issues-raw/badges/shields.svg?logo=github)](https://github.com/Wutname1/SpartanUI/issues)
-</p>
+
 
 
 
