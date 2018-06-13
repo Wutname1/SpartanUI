@@ -12,34 +12,35 @@ move-folders:
   SpartanUI/Modules/Style_Fel: SpartanUI_Style_Fel
 
 externals:
-    libs/LibStub:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
-    libs/CallbackHandler-1.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/CallbackHandler-1.0
-    libs/AceAddon-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
-    libs/AceConfig-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
-    libs/AceConsole-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConsole-3.0
-    libs/AceDB-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
-    libs/AceDBOptions-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
-    libs/AceGUI-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
-    libs/AceHook-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceHook-3.0
-    libs/AceEvent-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
-    libs/AceTimer-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
-    libs/AceLocale-3.0:
-        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
-	libs/LibDualSpec-1.0:
-		url: git://git.wowace.com/wow/libdualspec-1-0/mainline.git
-	libs/oUF:
-		url: https://github.com/Wutname1/oUF.git
+  libs/LibStub:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/LibStub
+  libs/CallbackHandler-1.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/CallbackHandler-1.0
+  libs/AceAddon-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceAddon-3.0
+  libs/AceConfig-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
+  libs/AceConsole-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConsole-3.0
+  libs/AceDB-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
+  libs/AceDBOptions-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
+  libs/AceGUI-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
+  libs/AceHook-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceHook-3.0
+  libs/AceEvent-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
+  libs/AceTimer-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
+  libs/AceLocale-3.0:
+    url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
+  libs/LibDualSpec-1.0:
+    url: git://git.wowace.com/wow/libdualspec-1-0/mainline.git
+  libs/oUF:
+    url: https://github.com/Wutname1/oUF.git
+
 ignore:
     README.md
 
