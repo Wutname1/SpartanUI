@@ -81,7 +81,7 @@ function module:MiniMap()
 		end
 	end)
 	petbattleWatcher:RegisterEvent("PET_BATTLE_OPENING_START")
-	petbattleWatcher:RegisterEvent("PET_BATTLE_TURN_STARTED")
+	--petbattleWatcher:RegisterEvent("PET_BATTLE_TURN_STARTED")
 	petbattleWatcher:RegisterEvent("PET_BATTLE_OPENING_DONE")
 	petbattleWatcher:RegisterEvent("PET_BATTLE_CLOSE")
 end

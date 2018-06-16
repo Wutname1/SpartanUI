@@ -314,12 +314,12 @@ function module:MinimapCoords()
 	
 	local Timer = C_Timer.After
 	local function UpdateCoords()
-		Timer(0.2, UpdateCoords)
+		--Timer(0.2, UpdateCoords)
 		-- update minimap coordinates
-		local x,y = GetPlayerMapPosition("player");
-		if (not x) or (not y) then return; end
-		Minimap.ZoneText:SetText(GetMinimapZoneText());
-		Minimap.coords:SetText(format("%.1f, %.1f",x*100,y*100));
+		--local x,y = GetPlayerMapPosition("player");
+		--if (not x) or (not y) then return; end
+		--Minimap.ZoneText:SetText(GetMinimapZoneText());
+		--Minimap.coords:SetText(format("%.1f, %.1f",x*100,y*100));
 	end
 	UpdateCoords()
 end

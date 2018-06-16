@@ -144,7 +144,7 @@ do -- ClassIcon as an SpartanoUF module
 	local Enable = function(self)
 		local icon = self.SUI_ClassIcon;
 		if (icon) then
-			self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
+			--self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:RegisterEvent("PLAYER_TARGET_CHANGED", Update);
 			self:RegisterEvent("UNIT_PET", Update);
 			icon:SetTexture[[Interface\AddOns\SpartanUI\media\icon_class]]
@@ -160,7 +160,7 @@ do -- ClassIcon as an SpartanoUF module
 	local Disable = function(self)
 		local icon = self.SUI_ClassIcon;
 		if (icon) then
-			self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update);
+			--self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:UnregisterEvent("PLAYER_TARGET_CHANGED", Update);
 			self:UnregisterEvent("UNIT_PET", Update);
 		end
@@ -252,14 +252,14 @@ end
 
 do -- Mana Formatting Tags
 -- Current Mana Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['curppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Events['curppdynamic'] = "UNIT_MAXPOWER UNIT_POWER_FREQUENT";
 	SpartanoUF.Tags.Methods['curppdynamic'] = function (unit)
 		local tmp = UnitPower(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
 		else return addon:comma_value(tmp); end
 	end
 -- Total Mana Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['maxppdynamic'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Events['maxppdynamic'] = "UNIT_MAXPOWER UNIT_POWER_FREQUENT";
 	SpartanoUF.Tags.Methods['maxppdynamic'] = function (unit)
 		local tmp = UnitPowerMax(unit);
 		if tmp >= 1000000 then return addon:round(tmp/1000000, 1).."M ";
@@ -273,13 +273,13 @@ do -- Mana Formatting Tags
 		else return addon:comma_value(tmp); end
 	end
 -- Current Mana formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['curppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Events['curppformatted'] = "UNIT_MAXPOWER UNIT_POWER_FREQUENT";
 	SpartanoUF.Tags.Methods['curppformatted'] = function (unit) return addon:comma_value(UnitPower(unit)); end
 -- Total Mana formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['maxppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Events['maxppformatted'] = "UNIT_MAXPOWER UNIT_POWER_FREQUENT";
 	SpartanoUF.Tags.Methods['maxppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit)); end
 -- Total Mana formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['missingppformatted'] = "UNIT_MAXPOWER UNIT_POWER";
+	SpartanoUF.Tags.Events['missingppformatted'] = "UNIT_MAXPOWER UNIT_POWER_FREQUENT";
 	SpartanoUF.Tags.Methods['missingppformatted'] = function (unit) return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit)); end
 end
 
@@ -293,7 +293,7 @@ do --Color name by Class
 		end
 	end
 	
-	SpartanoUF.Tags.Events["SUI_ColorClass"] = 'UNIT_REACTION UNIT_HEALTH UNIT_HAPPINESS'
+	SpartanoUF.Tags.Events["SUI_ColorClass"] = 'UNIT_HEALTH'
 	SpartanoUF.Tags.Methods["SUI_ColorClass"] = function(u)
 		local _, class = UnitClass(u)
 		local reaction = UnitReaction(u, "player")

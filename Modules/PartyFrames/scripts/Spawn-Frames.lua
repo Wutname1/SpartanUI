@@ -101,12 +101,12 @@ function PartyFrames:OnEnable()
 	partyWatch:RegisterEvent('PLAYER_ENTERING_WORLD');
 	partyWatch:RegisterEvent('RAID_ROSTER_UPDATE');
 	partyWatch:RegisterEvent('PARTY_LEADER_CHANGED');
-	partyWatch:RegisterEvent('PARTY_MEMBERS_CHANGED');
-	partyWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
+	--partyWatch:RegisterEvent('PARTY_MEMBERS_CHANGED');
+	--partyWatch:RegisterEvent('PARTY_CONVERTED_TO_RAID');
 	partyWatch:RegisterEvent('CVAR_UPDATE');
 	partyWatch:RegisterEvent('PLAYER_REGEN_ENABLED');
 	partyWatch:RegisterEvent('ZONE_CHANGED_NEW_AREA');
-	partyWatch:RegisterEvent('FORCE_UPDATE');
+	--partyWatch:RegisterEvent('FORCE_UPDATE');
 	
 	partyWatch:SetScript('OnEvent',function(self,event,...)
 		if InCombatLockdown() then
