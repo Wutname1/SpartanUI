@@ -43,7 +43,10 @@ local Defaults = {
 		MultiCast		= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true,						position = {point = "TOPRIGHT",			x=-777,	y=-4,	scale = 0.75}},
 		Vehicle			= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = false,	padding = 3,	position = {point = "BOTTOM",			x=-200,	y=155,	scale = 0.85}},
 		ExtraActionBar	= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true,						position = {point = "BOTTOM",			x=-32,	y=275}},
-		BlizzardArt		= {	enabled = false,	},
+		BlizzardArt		= {	enabled = false },
+		XPBar			= {	enabled = false },
+		RepBar			= {	enabled = false },
+		APBar			= {	enabled = false },
 		blizzardVehicle = true
 	},
 	Color = {

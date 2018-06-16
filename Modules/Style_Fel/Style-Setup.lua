@@ -62,7 +62,10 @@ local Defaults = {
 		MultiCast		= {	fadeoutalpha = .6,	version = 3,	fadeout = true,	enabled = true,						position = {point = "TOPRIGHT",		parent = "Fel_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
 		Vehicle			= {	fadeoutalpha = .6,	version = 3,	fadeout = true,	enabled = false,	padding = 3,	position = {point = "CENTER",		parent = "Fel_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
 		ExtraActionBar	= {	fadeoutalpha = .6,	version = 3,	fadeout = true,	enabled = true,						position = {point = "CENTER",		parent = "Fel_ActionBarPlate",	x=-32,	y=240}},
-		BlizzardArt		= {	enabled = false,	},
+		BlizzardArt		= {	enabled = false },
+		XPBar			= {	enabled = false },
+		RepBar			= {	enabled = false },
+		APBar			= {	enabled = false },
 		blizzardVehicle = DBMod.Artwork.VehicleUI
 	},
 	TooltipLoc = true,

@@ -235,7 +235,7 @@ print(DBMod.Artwork.SetupDone)
 			
 			SUI_Win.Artwork.Minimal = control
 			
-			SUI_Win.Artwork[DBMod.Artwork.Style].radio:SetValue(true)
+			SUI_Win.Artwork.Classic.radio:SetValue(true)
 		end,
 		Next = function()
 			DBMod.Artwork.SetupDone = true

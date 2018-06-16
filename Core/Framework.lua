@@ -123,7 +123,10 @@ local DBdefault = {
 					MultiCast		= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
 					Vehicle			= {	enabled = false,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
 					ExtraActionBar 	= {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
-					BlizzardArt		= {	enabled = false,	},
+					BlizzardArt		= {	enabled = false },
+					XPBar			= {	enabled = false },
+					RepBar			= {	enabled = false },
+					APBar			= {	enabled = false },
 					blizzardVehicle = true
 				},
 				Frames = {
@@ -252,7 +255,7 @@ local DBdefault = {
 	},
 	Modules = {
 		Artwork = {
-			Style = "Classic",
+			Style = "",
 			FirstLoad = true,
 			VehicleUI = true,
 			Viewport = 
