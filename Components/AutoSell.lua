@@ -270,13 +270,14 @@ function module:SellTrash()
 	bag = 0
 	
 	--Populate Gearsets
-	for i=1,GetNumEquipmentSets() do
-		local name, _ = GetEquipmentSetInfo(i)
-		local items = GetEquipmentSetItemIDs(name)
-		for slot,item in pairs(items) do
-			inSet[item] = name
-		end
-	end
+	-- TODO ERROR: "attempt to call global 'GetNumEquipmentSets' (a nil value)" on level 5 druid. Gearsets are not enabled until level 15.
+	-- for i=1,GetNumEquipmentSets() do
+		-- local name, _ = GetEquipmentSetInfo(i)
+		-- local items = GetEquipmentSetItemIDs(name)
+		-- for slot,item in pairs(items) do
+			-- inSet[item] = name
+		-- end
+	-- end
 	
 	--Count Items to sell
     OnlyCount=true
