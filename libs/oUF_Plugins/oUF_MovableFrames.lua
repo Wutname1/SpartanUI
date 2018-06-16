@@ -68,14 +68,14 @@ local getPoint = function(obj, anchor)
 		end
 
 		return string.format(
-			'%s\031%s\031%d\031%d\031\%.3f',
+			'%s\031%s\031%d\031%d\031%.3f',
 			point, 'UIParent', x,  y, OS
 		)
 	else
 		local point, parent, _, x, y = anchor:GetPoint()
 
 		return string.format(
-			'%s\031%s\031%d\031%d\031\%.3f',
+			'%s\031%s\031%d\031%d\031%.3f',
 			point, 'UIParent', x, y, obj:GetScale()
 		)
 	end
@@ -219,7 +219,7 @@ local saveCustomPosition = function(style, ident, point, x, y, scale)
 	if(not _DB[style]) then _DB[style] = {} end
 
 	_DB[style][ident] = string.format(
-		'%s\031%s\031%d\031%d\031\%.3f',
+		'%s\031%s\031%d\031%d\031%.3f',
 		point, 'UIParent', x,  y, scale
 	)
 end
