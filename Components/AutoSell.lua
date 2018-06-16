@@ -269,10 +269,10 @@ function module:SellTrash()
 	Timer = nil
 	bag = 0
 	
-	--Populate Gearsets
-	for i=1,GetNumEquipmentSets() do
-		local name, _ = GetEquipmentSetInfo(i)
-		local items = GetEquipmentSetItemIDs(name)
+	--Populate Gearsets so they are not sold
+	for i=1,C_EquipmentSet.GetNumEquipmentSets() do
+		local name, _ = C_EquipmentSet.GetEquipmentSetInfo(i)
+		local items = C_EquipmentSet.GetEquipmentSetItemIDs(name)
 		for slot,item in pairs(items) do
 			inSet[item] = name
 		end
