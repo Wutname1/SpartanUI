@@ -6,6 +6,7 @@
 	<Script file="Minimap.lua" />
 	<Script file="Objectives.lua" />
 	<Script file="Tooltips.lua" />
+	<Script file="MailOpenAll.lua" />
 	<!-- WIP Modules
 	<Script file="Chatbox.lua" />
 	-->
