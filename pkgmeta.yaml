@@ -42,6 +42,9 @@ externals:
     url: https://github.com/Wutname1/oUF.git
 
 ignore:
-    README.md
+  - README.md
+
+required-dependencies:
+  - bartender4
 
 enable-nolib-creation: no
