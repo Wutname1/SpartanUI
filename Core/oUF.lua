@@ -3,10 +3,11 @@ local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
 --------------   oUF Functions   ------------------------------------
 function addon:HotsListing()
 	local class, classFileName = UnitClass("player");
+	local _, _, _, _, _, _, LifebloomSpellId = GetSpellInfo("Lifebloom")
 	if classFileName == "DRUID" then
 		return {
 			774, -- Rejuvenation
-			188550, -- Lifebloom
+			LifebloomSpellId, -- Lifebloom
 			8936, -- Regrowth
 			48438, -- Wild Growth
 			155777, -- Germination

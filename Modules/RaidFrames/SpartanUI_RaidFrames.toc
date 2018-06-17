@@ -7,5 +7,3 @@
 ## RequiredDeps: SpartanUI
 
 scripts\Global-Framework.xml
-scripts\Unit-RaidFrames.lua
-scripts\Options.lua
