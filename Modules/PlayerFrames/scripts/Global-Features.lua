@@ -195,9 +195,13 @@ function PlayerFrames:Buffs(self,unit)
 		AuraBars.PostUpdate = PostUpdateAura
 
 		--Hots and Dots Filter
-		local Barfilter = function(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
+		local Barfilter = function(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
 			--Only Show things with a SHORT durration (HOTS and DOTS)
-			if duration > 0 and duration < 60 then return true end
+			if duration > 0 and duration < 60 then
+				return true
+				else
+				print(duration);
+			end
 		end
 		
 		-- Determine Buff Bar locaion

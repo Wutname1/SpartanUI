@@ -31,7 +31,7 @@
 	Options regarding functionality:
 	 -	<element>.down
 			Will let the aurabars grow downwards.
-	 -	<element>.filter(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
+	 -	<element>.filter(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable)
 			Use this to filter out specific casts.
 	 -	<element>.sort
 			Will enable sorting if set to true or 1 (or whatever). See
@@ -214,7 +214,7 @@ end
 --[[
 		Default filter
 ]]--
-local function DefaultFilter(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
+local function DefaultFilter(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
 	if unitCaster == 'player' then
 		return true
 	end
@@ -241,16 +241,15 @@ local function Update(self, event, unit)
 	local auras = {}
 	local lastAuraIndex = 0
 	for index = 1, 40 do
-		-- local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unit, index, helpOrHarm)
-		local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff = UnitAura(unit, index, helpOrHarm)
+		-- local name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unit, index, helpOrHarm)
+		local name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff = UnitAura(unit, index, helpOrHarm)
 		if not name then break end
 		
-		if (self.AuraBars.filter or DefaultFilter)(name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID) then
+		if (self.AuraBars.filter or DefaultFilter)(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID) then
 			lastAuraIndex = lastAuraIndex + 1
 			auras[lastAuraIndex] = {}
 			auras[lastAuraIndex].index = index
 			auras[lastAuraIndex].name = name
-			auras[lastAuraIndex].rank = rank
 			auras[lastAuraIndex].icon = icon
 			auras[lastAuraIndex].count = count
 			auras[lastAuraIndex].debuffType = debuffType
