@@ -199,8 +199,6 @@ function PlayerFrames:Buffs(self,unit)
 			--Only Show things with a SHORT durration (HOTS and DOTS)
 			if duration > 0 and duration < 60 then
 				return true
-				else
-				print(duration);
 			end
 		end
 		
