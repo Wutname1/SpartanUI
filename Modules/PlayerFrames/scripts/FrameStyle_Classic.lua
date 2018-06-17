@@ -241,8 +241,8 @@ local CreatePlayerFrame = function(self,unit)
 		self.Portrait:SetSize(64, 64);
 		self.Portrait:SetPoint("CENTER",self,"CENTER",80,3);
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -326,7 +326,7 @@ local CreatePlayerFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 3,
@@ -387,17 +387,12 @@ local CreatePlayerFrame = function(self,unit)
 		self.SUI_ClassIcon:SetSize(19, 19);
 		self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-29,21);
 		
-		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetSize(20, 20);
-		self.Leader:SetPoint("CENTER",ring,"TOP");
-		
-		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetSize(18, 18);
-		self.MasterLooter:SetPoint("CENTER",ring,"TOPRIGHT",-6,-6);
+		self.HLeaderIndicator = ring:CreateTexture(nil,"BORDER");
+		self.HLeaderIndicator:SetSize(20, 20);
+		self.HLeaderIndicator:SetPoint("CENTER",ring,"TOP");
 		
 		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
 		self.SUI_RaidGroup:SetSize(32, 32);
-		self.SUI_RaidGroup:SetPoint("RIGHT",self.MasterLooter,"LEFT",-1,12);
 		self.SUI_RaidGroup:SetTexture(circle);
 		
 		self.SUI_RaidGroup.Text = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
@@ -406,102 +401,126 @@ local CreatePlayerFrame = function(self,unit)
 		self.SUI_RaidGroup.Text:SetPoint("CENTER",self.SUI_RaidGroup,"CENTER",0,0);
 		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetSize(48, 48);
-		self.PvP:SetPoint("CENTER",ring,"CENTER",32,-40);
+		self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+		self.PvPIndicator:SetSize(48, 48);
+		self.PvPIndicator:SetPoint("CENTER",ring,"CENTER",32,-40);
 		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(28, 28);
-		self.LFDRole:SetPoint("CENTER",ring,"CENTER",-20,-35);
-		self.LFDRole:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
+		self.GroupRoleIndicator = ring:CreateTexture(nil,"BORDER");
+		self.GroupRoleIndicator:SetSize(28, 28);
+		self.GroupRoleIndicator:SetPoint("CENTER",ring,"CENTER",-20,-35);
+		self.GroupRoleIndicator:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
 		
-		self.Resting = ring:CreateTexture(nil,"ARTWORK");
-		self.Resting:SetSize(32, 30);
-		self.Resting:SetPoint("CENTER",self.SUI_ClassIcon,"CENTER");
+		self.RestingIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RestingIndicator:SetSize(32, 30);
+		self.RestingIndicator:SetPoint("CENTER",self.SUI_ClassIcon,"CENTER");
 		
-		self.Combat = ring:CreateTexture(nil,"ARTWORK");
-		self.Combat:SetSize(32, 32);
-		self.Combat:SetPoint("CENTER",self.Level,"CENTER");
+		self.CombatIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.CombatIndicator:SetSize(32, 32);
+		self.CombatIndicator:SetPoint("CENTER",self.Level,"CENTER");
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(24, 24);
-		self.RaidIcon:SetPoint("CENTER",ring,"LEFT",-2,-3);
+		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(24, 24);
+		self.RaidTargetIndicator:SetPoint("CENTER",ring,"LEFT",-2,-3);
 		
 		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 		
+		
 		self.ComboPoints = ring:CreateFontString(nil, "BORDER","SUI_FontOutline13");
 		self.ComboPoints:SetPoint("BOTTOMLEFT",self.Name,"TOPLEFT",12,-2);
 		
-		local ClassIcons = {}
-		for i = 1, 6 do
-			local Icon = self:CreateTexture(nil, "OVERLAY")
-			Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			
-			if (i == 1) then
-				Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
+		local Icon = self:CreateTexture(nil, "OVERLAY")
+		Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+		
+		local ClassPower = {}
+		for index = 1, 10 do
+			local Bar = CreateFrame('StatusBar', nil, self)
+			Bar.bg = Icon
+
+			-- Position and size.
+			Bar:SetSize(16, 16)
+			if (index == 1) then
+				Bar:SetPoint("LEFT",self.ComboPoints,"RIGHT",(index - 1) * Bar:GetWidth(),-1);
 			else 
-				Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
+				Bar:SetPoint("LEFT",ClassPower[index-1],"RIGHT",-2,0);
 			end
+			-- Bar:SetPoint('LEFT', self, 'RIGHT', , 0)
+
+			ClassPower[index] = Bar
+		end
+
+		-- Register with oUF
+		self.ClassPower = ClassPower
+		
+		-- local ClassIcons = {}
+		-- for i = 1, 6 do
+			-- local Icon = self:CreateTexture(nil, "OVERLAY")
+			-- Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
 			
-			ClassIcons[i] = Icon
-		end
-		self.ClassIcons = ClassIcons
+			-- if (i == 1) then
+				-- Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
+			-- else 
+				-- Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
+			-- end
+			
+			-- ClassIcons[i] = Icon
+		-- end
+		-- self.ClassPower = ClassIcons
 		
-		local ClassPowerID = nil;
-		ring:SetScript("OnEvent",function(a,b)
-			if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
-			local cur, max
-			if(unit == 'vehicle') then
-				cur = GetComboPoints('vehicle', 'target')
-				max = MAX_COMBO_POINTS
-			else
-				cur = UnitPower('player', ClassPowerID)
-				max = UnitPowerMax('player', ClassPowerID)
-			end
-			self.ComboPoints:SetText((cur > 0 and cur) or "");
-		end);
+		-- local ClassPowerID = nil;
+		-- ring:SetScript("OnEvent",function(a,b)
+			-- if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
+			-- local cur, max
+			-- if(unit == 'vehicle') then
+				-- cur = GetComboPoints('vehicle', 'target')
+				-- max = MAX_COMBO_POINTS
+			-- else
+				-- cur = UnitPower('player', ClassPowerID)
+				-- max = UnitPowerMax('player', ClassPowerID)
+			-- end
+			-- self.ComboPoints:SetText((cur > 0 and cur) or "");
+		-- end);
 		
-		ring:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
-			ClassPowerID = nil;
-			if(classFileName == 'MONK') then
-				ClassPowerID = SPELL_POWER_CHI
-			elseif(classFileName == 'PALADIN') then
-				ClassPowerID = SPELL_POWER_HOLY_POWER
-			elseif(classFileName == 'WARLOCK') then
-				ClassPowerID = SPELL_POWER_SOUL_SHARDS
-			elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
-				ClassPowerID = SPELL_POWER_COMBO_POINTS
-			elseif(classFileName == 'MAGE') then
-				ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-			end
-			if ClassPowerID ~= nil then 
-				ring:RegisterEvent('UNIT_DISPLAYPOWER')
-				ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-				ring:RegisterEvent('UNIT_POWER_FREQUENT')
-				ring:RegisterEvent('UNIT_MAXPOWER')
-			end
-		end)
+		-- ring:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
+			-- ClassPowerID = nil;
+			-- if(classFileName == 'MONK') then
+				-- ClassPowerID = SPELL_POWER_CHI
+			-- elseif(classFileName == 'PALADIN') then
+				-- ClassPowerID = SPELL_POWER_HOLY_POWER
+			-- elseif(classFileName == 'WARLOCK') then
+				-- ClassPowerID = SPELL_POWER_SOUL_SHARDS
+			-- elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+				-- ClassPowerID = SPELL_POWER_COMBO_POINTS
+			-- elseif(classFileName == 'MAGE') then
+				-- ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+			-- end
+			-- if ClassPowerID ~= nil then 
+				-- ring:RegisterEvent('UNIT_DISPLAYPOWER')
+				-- ring:RegisterEvent('PLAYER_ENTERING_WORLD')
+				-- ring:RegisterEvent('UNIT_POWER_FREQUENT')
+				-- ring:RegisterEvent('UNIT_MAXPOWER')
+			-- end
+		-- end)
 		
-		if(classFileName == 'MONK') then
-			ClassPowerID = SPELL_POWER_CHI
-		elseif(classFileName == 'PALADIN') then
-			ClassPowerID = SPELL_POWER_HOLY_POWER
-		elseif(classFileName == 'WARLOCK') then
-			ClassPowerID = SPELL_POWER_SOUL_SHARDS
-		elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
-			ClassPowerID = SPELL_POWER_COMBO_POINTS
-		elseif(classFileName == 'MAGE') then
-			ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-		end
-		if ClassPowerID ~= nil then 
-			ring:RegisterEvent('UNIT_DISPLAYPOWER')
-			ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-			ring:RegisterEvent('UNIT_POWER_FREQUENT')
-			ring:RegisterEvent('UNIT_MAXPOWER')
-		end
+		-- if(classFileName == 'MONK') then
+			-- ClassPowerID = SPELL_POWER_CHI
+		-- elseif(classFileName == 'PALADIN') then
+			-- ClassPowerID = SPELL_POWER_HOLY_POWER
+		-- elseif(classFileName == 'WARLOCK') then
+			-- ClassPowerID = SPELL_POWER_SOUL_SHARDS
+		-- elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
+			-- ClassPowerID = SPELL_POWER_COMBO_POINTS
+		-- elseif(classFileName == 'MAGE') then
+			-- ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+		-- end
+		-- if ClassPowerID ~= nil then 
+			-- ring:RegisterEvent('UNIT_DISPLAYPOWER')
+			-- ring:RegisterEvent('PLAYER_ENTERING_WORLD')
+			-- ring:RegisterEvent('UNIT_POWER_FREQUENT')
+			-- ring:RegisterEvent('UNIT_MAXPOWER')
+		-- end
 	end
 	do -- setup buffs and debuffs
 		if DB.Styles.Classic.Frames[unit] and PlayerFrames then
@@ -535,8 +554,8 @@ local CreateTargetFrame = function(self,unit)
 		self.Portrait:SetSize(64, 64);
 		self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3);
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -619,7 +638,7 @@ local CreateTargetFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -680,17 +699,13 @@ local CreateTargetFrame = function(self,unit)
 		self.SUI_ClassIcon:SetSize(19, 19)
 		self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",29,21);
 		
-		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
-		self.Leader:SetPoint("CENTER",ring,"TOP");
+		self.HLeaderIndicator = ring:CreateTexture(nil,"BORDER");
+		self.HLeaderIndicator:SetWidth(20); self.HLeaderIndicator:SetHeight(20);
+		self.HLeaderIndicator:SetPoint("CENTER",ring,"TOP");
 		
-		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetWidth(18); self.MasterLooter:SetHeight(18);
-		self.MasterLooter:SetPoint("CENTER",ring,"TOPLEFT",6,-6);
-		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetWidth(48); self.PvP:SetHeight(48);
-		self.PvP:SetPoint("CENTER",ring,"CENTER",-16,-40);
+		self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+		self.PvPIndicator:SetWidth(48); self.PvPIndicator:SetHeight(48);
+		self.PvPIndicator:SetPoint("CENTER",ring,"CENTER",-16,-40);
 		
 		self.LevelSkull = ring:CreateTexture(nil,"ARTWORK");
 		self.LevelSkull:SetWidth(16); self.LevelSkull:SetHeight(16);
@@ -700,9 +715,9 @@ local CreateTargetFrame = function(self,unit)
 		self.RareElite:SetWidth(150); self.RareElite:SetHeight(150);
 		self.RareElite:SetPoint("CENTER",ring,"CENTER",-12,-4);
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetWidth(24); self.RaidIcon:SetHeight(24);
-		self.RaidIcon:SetPoint("CENTER",ring,"RIGHT",2,-4);
+		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetWidth(24); self.RaidTargetIndicator:SetHeight(24);
+		self.RaidTargetIndicator:SetPoint("CENTER",ring,"RIGHT",2,-4);
 		
 		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
@@ -745,8 +760,8 @@ local CreatePetFrame = function(self,unit)
 			self.Portrait:SetPoint("CENTER",self,"CENTER",87,-8);
 		end
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -834,7 +849,7 @@ local CreatePetFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -897,17 +912,17 @@ local CreatePetFrame = function(self,unit)
 			self.SUI_ClassIcon:SetSize(19, 19)
 			self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",-27,24);
 			
-			self.PvP = ring:CreateTexture(nil,"BORDER");
-			self.PvP:SetWidth(48); self.PvP:SetHeight(48);
-			self.PvP:SetPoint("CENTER",ring,"CENTER",30,-36);
+			self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+			self.PvPIndicator:SetWidth(48); self.PvPIndicator:SetHeight(48);
+			self.PvPIndicator:SetPoint("CENTER",ring,"CENTER",30,-36);
 			
 			self.Happiness = ring:CreateTexture(nil,"ARTWORK");
 			self.Happiness:SetWidth(22); self.Happiness:SetHeight(22);
 			self.Happiness:SetPoint("CENTER",ring,"CENTER",-27,24);
 			
-			self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-			self.RaidIcon:SetWidth(20); self.RaidIcon:SetHeight(20);
-			self.RaidIcon:SetAllPoints(self.Portrait);
+			self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+			self.RaidTargetIndicator:SetWidth(20); self.RaidTargetIndicator:SetHeight(20);
+			self.RaidTargetIndicator:SetAllPoints(self.Portrait);
 		else
 			self.Name = self.artwork:CreateFontString();
 			spartan:FormatFont(self.Name, 12, "Player")
@@ -990,8 +1005,8 @@ local CreateToTFrame = function(self,unit)
 			self.Portrait:SetWidth(56); self.Portrait:SetHeight(50);
 			self.Portrait:SetPoint("CENTER",self,"CENTER",-83,-8);
 			
-			self.Threat = CreateFrame("Frame",nil,self);
-			self.Threat.Override = threat;
+			self.ThreatIndicator = CreateFrame("Frame",nil,self);
+			self.ThreatIndicator.Override = threat;
 		end
 		do -- setup status bars
 			do -- cast bar
@@ -1074,7 +1089,7 @@ local CreateToTFrame = function(self,unit)
 				myBars:SetSize(150, 16)
 				otherBars:SetSize(150, 16)
 				
-				self.HealPrediction = {
+				self.HealthPrediction = {
 					myBar = myBars,
 					otherBar = otherBars,
 					maxOverflow = 4,
@@ -1131,13 +1146,13 @@ local CreateToTFrame = function(self,unit)
 			self.SUI_ClassIcon:SetSize(19, 19)
 			self.SUI_ClassIcon:SetPoint("CENTER",ring,"CENTER",23,24);
 			
-			self.PvP = ring:CreateTexture(nil,"BORDER");
-			self.PvP:SetWidth(48); self.PvP:SetHeight(48);
-			self.PvP:SetPoint("CENTER",ring,"CENTER",-14,-36);
+			self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+			self.PvPIndicator:SetWidth(48); self.PvPIndicator:SetHeight(48);
+			self.PvPIndicator:SetPoint("CENTER",ring,"CENTER",-14,-36);
 			
-			self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-			self.RaidIcon:SetWidth(20); self.RaidIcon:SetHeight(20);
-			self.RaidIcon:SetPoint("CENTER",ring,"RIGHT",1,-1);
+			self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+			self.RaidTargetIndicator:SetWidth(20); self.RaidTargetIndicator:SetHeight(20);
+			self.RaidTargetIndicator:SetPoint("CENTER",ring,"RIGHT",1,-1);
 			
 			self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline18");
 			self.StatusText:SetPoint("CENTER",ring,"CENTER");
@@ -1162,8 +1177,8 @@ local CreateToTFrame = function(self,unit)
 			self.artwork.bg:SetTexCoord(.68,0,0,0.6640625);
 			self.artwork = artwork
 			
-			self.Threat = CreateFrame("Frame",nil,self);
-			self.Threat.Override = threat;
+			self.ThreatIndicator = CreateFrame("Frame",nil,self);
+			self.ThreatIndicator.Override = threat;
 		end
 		do -- setup status bars
 			do -- cast bar
@@ -1246,7 +1261,7 @@ local CreateToTFrame = function(self,unit)
 				myBars:SetSize(150, 16)
 				otherBars:SetSize(150, 16)
 				
-				self.HealPrediction = {
+				self.HealthPrediction = {
 					myBar = myBars,
 					otherBar = otherBars,
 					maxOverflow = 4,
@@ -1290,13 +1305,13 @@ local CreateToTFrame = function(self,unit)
 				self:Tag(self.Name, "[difficulty][level] [name]");
 			end
 			
-			self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-			self.RaidIcon:SetWidth(20); self.RaidIcon:SetHeight(20);
-			self.RaidIcon:SetPoint("LEFT",self,"RIGHT",3,0);
+			self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+			self.RaidTargetIndicator:SetWidth(20); self.RaidTargetIndicator:SetHeight(20);
+			self.RaidTargetIndicator:SetPoint("LEFT",self,"RIGHT",3,0);
 			
-			self.PvP = ring:CreateTexture(nil,"BORDER");
-			self.PvP:SetWidth(40); self.PvP:SetHeight(40);
-			self.PvP:SetPoint("LEFT",self,"RIGHT",-5,24);
+			self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+			self.PvPIndicator:SetWidth(40); self.PvPIndicator:SetHeight(40);
+			self.PvPIndicator:SetPoint("LEFT",self,"RIGHT",-5,24);
 		end
 		self.TextUpdate = PostUpdateText;
 		self.ColorUpdate = PostUpdateColor;
@@ -1315,8 +1330,8 @@ local CreateToTFrame = function(self,unit)
 			self.artwork.bg:SetTexCoord(.24,1,0,1);
 			self.artwork = artwork
 			
-			self.Threat = CreateFrame("Frame",nil,self);
-			self.Threat.Override = threat;
+			self.ThreatIndicator = CreateFrame("Frame",nil,self);
+			self.ThreatIndicator.Override = threat;
 		end
 		do -- setup status bars
 			do -- health bar
@@ -1376,7 +1391,7 @@ local CreateToTFrame = function(self,unit)
 				myBars:SetSize(150, 16)
 				otherBars:SetSize(150, 16)
 				
-				self.HealPrediction = {
+				self.HealthPrediction = {
 					myBar = myBars,
 					otherBar = otherBars,
 					maxOverflow = 4,
@@ -1398,13 +1413,13 @@ local CreateToTFrame = function(self,unit)
 				self:Tag(self.Name, "[difficulty][level] [name]");
 			end
 			
-			self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-			self.RaidIcon:SetSize(15, 15);
-			self.RaidIcon:SetPoint("RIGHT",self,"RIGHT",-5,0);
+			self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+			self.RaidTargetIndicator:SetSize(15, 15);
+			self.RaidTargetIndicator:SetPoint("RIGHT",self,"RIGHT",-5,0);
 			
-			self.PvP = ring:CreateTexture(nil,"BORDER");
-			self.PvP:SetSize(30, 30);
-			self.PvP:SetPoint("RIGHT",self,"RIGHT",0,20);
+			self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+			self.PvPIndicator:SetSize(30, 30);
+			self.PvPIndicator:SetPoint("RIGHT",self,"RIGHT",0,20);
 		end
 		self.TextUpdate = PostUpdateText;
 		self.ColorUpdate = PostUpdateColor;
@@ -1462,8 +1477,8 @@ local CreateFocusFrame = function(self,unit)
 		if unit == "focustarget" then artwork.bg:SetTexCoord(0, 1, .5, .9) end
 		self.artwork = artwork
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- health bar
@@ -1525,7 +1540,7 @@ local CreateFocusFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -1634,8 +1649,8 @@ local CreateBossFrame = function(self,unit)
 		artwork.bg:SetAllPoints(self);
 		self.artwork = artwork
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 		
 		local Bossartwork = CreateFrame("Frame",nil,self);
 		Bossartwork:SetFrameStrata("BACKGROUND");
@@ -1719,7 +1734,7 @@ local CreateBossFrame = function(self,unit)
 			myBars:SetSize(105, 12)
 			otherBars:SetSize(105, 12)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -1770,9 +1785,9 @@ local CreateBossFrame = function(self,unit)
 		self.LevelSkull:SetSize(16, 16);
 		self.LevelSkull:SetPoint("RIGHT",self.Name ,"LEFT",2,0);
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(24, 24);
-		self.RaidIcon:SetPoint("CENTER",self,"BOTTOMLEFT",0,23);
+		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(24, 24);
+		self.RaidTargetIndicator:SetPoint("CENTER",self,"BOTTOMLEFT",0,23);
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;

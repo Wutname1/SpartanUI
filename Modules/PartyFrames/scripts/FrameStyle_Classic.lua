@@ -75,12 +75,12 @@ local threat = function(self,event,unit)
 		else
 			self.Portrait:SetVertexColor(1,1,1);
 		end
-	elseif self.ThreatOverlay and DBMod.PartyFrames.threat then
+	elseif self.ThreatIndicatorOverlay and DBMod.PartyFrames.threat then
 		if ( status and status > 0 ) then
-			self.ThreatOverlay:SetVertexColor(GetThreatStatusColor(status));
-			self.ThreatOverlay:Show();
+			self.ThreatIndicatorOverlay:SetVertexColor(GetThreatStatusColor(status));
+			self.ThreatIndicatorOverlay:Show();
 		else
-			self.ThreatOverlay:Hide();
+			self.ThreatIndicatorOverlay:Hide();
 		end
 	end
 end
@@ -241,7 +241,7 @@ local CreatePartyFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 3,
@@ -303,18 +303,15 @@ local CreatePartyFrame = function(self,unit)
 		self.SUI_ClassIcon = ring:CreateTexture(nil,"BORDER");
 		self.SUI_ClassIcon:SetSize(20, 20);
 		
-		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetSize(20, 20);
+		self.HLeaderIndicator = ring:CreateTexture(nil,"BORDER");
+		self.HLeaderIndicator:SetSize(20, 20);
 		
-		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetSize(18, 18);
+		self.GroupRoleIndicator = ring:CreateTexture(nil,"BORDER");
+		self.GroupRoleIndicator:SetSize(25, 25);
+		self.GroupRoleIndicator:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
 		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(25, 25);
-		self.LFDRole:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
-		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(20, 20);
+		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(20, 20);
 		
 		if DBMod.PartyFrames.Portrait then
 			ring.bg = ring:CreateTexture(nil,"BACKGROUND");
@@ -328,9 +325,9 @@ local CreatePartyFrame = function(self,unit)
 			self.Level:SetPoint("CENTER",self.Portrait,"CENTER",-27,27);
 			self:Tag(self.Level, "[level]");
 			
-			self.PvP = ring:CreateTexture(nil,"BORDER");
-			self.PvP:SetSize(50, 50);
-			self.PvP:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",5,-10);
+			self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+			self.PvPIndicator:SetSize(50, 50);
+			self.PvPIndicator:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",5,-10);
 			
 			self.StatusText = ring:CreateFontString();
 			spartan:FormatFont(self.StatusText, 18, "Party")
@@ -340,18 +337,16 @@ local CreatePartyFrame = function(self,unit)
 			
 			ring:SetAllPoints(self.Portrait);
 			ring:SetFrameLevel(5);
-			self.RaidIcon:SetPoint("CENTER",self.Portrait,"CENTER");
+			self.RaidTargetIndicator:SetPoint("CENTER",self.Portrait,"CENTER");
 			self.SUI_ClassIcon:SetPoint("CENTER",self.Portrait,"CENTER",23,24);
-			self.Leader:SetPoint("CENTER",self.Portrait,"TOP",-1,6);
-			self.MasterLooter:SetPoint("CENTER",self.Portrait,"LEFT",-10,0);
-			self.LFDRole:SetPoint("CENTER",self.Portrait,"BOTTOM",0,-10);
+			self.HLeaderIndicator:SetPoint("CENTER",self.Portrait,"TOP",-1,6);
+			self.GroupRoleIndicator:SetPoint("CENTER",self.Portrait,"BOTTOM",0,-10);
 		else
 			ring:SetAllPoints(self); ring:SetFrameLevel(3);
 			self.SUI_ClassIcon:SetPoint("CENTER",self,"TOPLEFT",5,-5);
-			self.Leader:SetPoint("CENTER",self,"LEFT",0,0);
-			self.MasterLooter:SetPoint("CENTER",self,"LEFT",0,-24);
-			self.LFDRole:SetPoint("CENTER",self,"TOPRIGHT",-25,0);
-			self.RaidIcon:SetPoint("CENTER",self,"TOPRIGHT",-15,-15);
+			self.HLeaderIndicator:SetPoint("CENTER",self,"LEFT",0,0);
+			self.GroupRoleIndicator:SetPoint("CENTER",self,"TOPRIGHT",-25,0);
+			self.RaidTargetIndicator:SetPoint("CENTER",self,"TOPRIGHT",-15,-15);
 		end
 		
 	end
@@ -388,21 +383,21 @@ local CreatePartyFrame = function(self,unit)
 			overlay:SetAllPoints(self)
 			overlay:SetVertexColor(1, 0, 0)
 			overlay:Hide();
-			self.ThreatOverlay = overlay
+			self.ThreatIndicatorOverlay = overlay
 		end
 
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 			
 		local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
 		ResurrectIcon:SetSize(25, 25)
 		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
-		self.ResurrectIcon = ResurrectIcon
+		self.ResurrectIndicator = ResurrectIcon
 
 		local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
 		ReadyCheck:SetSize(30, 30)
 		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
-		self.ReadyCheck = ReadyCheck
+		self.ReadyCheckIndicator = ReadyCheck
 	end
 	self.TextUpdate = PartyFrames.PostUpdateText
 	-- self.TextUpdate = function (self)
@@ -426,8 +421,8 @@ local CreateSubFrame = function(self,unit)
 		self.artwork.bg:SetTexture(base_plate2);
 		self.artwork.bg:SetTexCoord(.3,1,.01,.55);
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- health bar

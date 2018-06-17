@@ -21,12 +21,12 @@ local threat = function(self,event,unit)
 		else
 			self.Portrait:SetVertexColor(1,1,1);
 		end
-	elseif self.ThreatOverlay and DBMod.RaidFrames.threat then
+	elseif self.ThreatIndicatorOverlay and DBMod.RaidFrames.threat then
 		if ( status and status > 0 ) then
-			self.ThreatOverlay:SetVertexColor(GetThreatStatusColor(status));
-			self.ThreatOverlay:Show();
+			self.ThreatIndicatorOverlay:SetVertexColor(GetThreatStatusColor(status));
+			self.ThreatIndicatorOverlay:Show();
 		else
-			self.ThreatOverlay:Hide();
+			self.ThreatIndicatorOverlay:Hide();
 		end
 	end
 end
@@ -125,7 +125,7 @@ local SpawnUnitFrame = function(self,unit)
 			-- myBars:SetSize(150, health:GetHeight())
 			-- otherBars:SetSize(150, health:GetHeight())
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 3,
@@ -149,31 +149,31 @@ local SpawnUnitFrame = function(self,unit)
 		layer5:SetAllPoints(self)
 		layer5:SetFrameLevel(5);
 		
-		self.LFDRole = layer5:CreateTexture(nil,"ARTWORK");
-		self.LFDRole:SetSize(13, 13);
-		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
-		-- self.LFDRole:SetPoint("BOTTOMRIGHT",self,"TOPLEFT",14,-17);
+		self.GroupRoleIndicator = layer5:CreateTexture(nil,"ARTWORK");
+		self.GroupRoleIndicator:SetSize(13, 13);
+		self.GroupRoleIndicator:SetPoint("TOPLEFT",self,"TOPLEFT",1,-4);
+		-- self.GroupRoleIndicator:SetPoint("BOTTOMRIGHT",self,"TOPLEFT",14,-17);
 		
 		self.Name = layer5:CreateFontString();
 		spartan:FormatFont(self.Name, 11, "Raid")
 		self.Name:SetSize(self:GetWidth()-30, 12);
 		self.Name:SetJustifyH("LEFT");
 		self.Name:SetJustifyV("BOTTOM");
-		self.Name:SetPoint("TOPLEFT",self.LFDRole,"TOPRIGHT",1,1);
-		-- self.Name:SetPoint("BOTTOMRIGHT",self.LFDRole,"TOPRIGHT",-12,self:GetWidth()-30);
+		self.Name:SetPoint("TOPLEFT",self.GroupRoleIndicator,"TOPRIGHT",1,1);
+		-- self.Name:SetPoint("BOTTOMRIGHT",self.GroupRoleIndicator,"TOPRIGHT",-12,self:GetWidth()-30);
 		if DBMod.RaidFrames.showClass then
 			self:Tag(self.Name, "[SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[name]");
 		end
 		
-		self.Leader = layer5:CreateTexture(nil,"ARTWORK");
-		self.Leader:SetSize(15, 15);
-		self.Leader:SetPoint("CENTER",self,"TOP",0,0);
+		self.HLeaderIndicator = layer5:CreateTexture(nil,"ARTWORK");
+		self.HLeaderIndicator:SetSize(15, 15);
+		self.HLeaderIndicator:SetPoint("CENTER",self,"TOP",0,0);
 		
-		self.RaidIcon = self:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(24, 24);
-		self.RaidIcon:SetPoint("CENTER",self,"CENTER");
+		self.RaidTargetIndicator = self:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(24, 24);
+		self.RaidTargetIndicator:SetPoint("CENTER",self,"CENTER");
 	end
 	do -- setup debuffs
 		self.Debuffs = CreateFrame("Frame",nil,self);
@@ -202,12 +202,12 @@ local SpawnUnitFrame = function(self,unit)
 		local ResurrectIcon = self:CreateTexture(nil, 'OVERLAY')
 		ResurrectIcon:SetSize(30, 30)
 		ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
-		self.ResurrectIcon = ResurrectIcon
+		self.ResurrectIndicator = ResurrectIcon
 
 		local ReadyCheck = self:CreateTexture(nil, 'OVERLAY')
 		ReadyCheck:SetSize(30, 30)
 		ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
-		self.ReadyCheck = ReadyCheck
+		self.ReadyCheckIndicator = ReadyCheck
 	   
 		local overlay = self:CreateTexture(nil, "OVERLAY")
 		overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
@@ -215,10 +215,10 @@ local SpawnUnitFrame = function(self,unit)
 		overlay:SetAllPoints(self)
 		overlay:SetVertexColor(1, 0, 0)
 		overlay:Hide();
-		self.ThreatOverlay = overlay
+		self.ThreatIndicatorOverlay = overlay
 			
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	self.TextUpdate = RaidFrames:PostUpdateText(self,unit);
 	return self;

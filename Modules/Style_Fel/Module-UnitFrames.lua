@@ -71,12 +71,12 @@ local threat = function(self,event,unit)
 	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
 	
-	if self.ThreatOverlay then
+	if self.ThreatIndicatorOverlay then
 		if ( status and status > 0 ) then
-			self.ThreatOverlay:SetVertexColor(GetThreatStatusColor(status));
-			self.ThreatOverlay:Show();
+			self.ThreatIndicatorOverlay:SetVertexColor(GetThreatStatusColor(status));
+			self.ThreatIndicatorOverlay:Show();
 		else
-			self.ThreatOverlay:Hide();
+			self.ThreatIndicatorOverlay:Hide();
 		end
 		if self.artwork.flair then self.artwork.flair.bg:SetVertexColor(GetThreatStatusColor(status)) end
 	end
@@ -94,7 +94,7 @@ end
 local pvpIcon = function (self, event, unit)
 	if(unit ~= self.unit) then return end
 	
-	local pvp = self.PvP
+	local pvp = self.PvPIndicator
 	if(pvp.PreUpdate) then
 		pvp:PreUpdate()
 	end
@@ -299,7 +299,7 @@ local CreateLargeFrame = function(self,unit)
 		local Threat = self:CreateTexture(nil, 'OVERLAY')
 		Threat:SetSize(25, 25)
 		Threat:SetPoint("CENTER", self, "RIGHT")
-		self.Threat = Threat
+		self.ThreatIndicator = Threat
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -369,7 +369,7 @@ local CreateLargeFrame = function(self,unit)
 			myBars:SetSize(self.Health:GetSize())
 			otherBars:SetSize(self.Health:GetSize())
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 3,
@@ -407,13 +407,9 @@ local CreateLargeFrame = function(self,unit)
 		self.Name:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-5);
 		self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
 		
-		self.Leader = self:CreateTexture(nil,"BORDER");
-		self.Leader:SetSize(12, 12);
-		self.Leader:SetPoint("RIGHT",self.Name,"LEFT");
-		
-		self.MasterLooter = self:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetSize(12, 12);
-		self.MasterLooter:SetPoint("RIGHT",self.Leader,"LEFT");
+		self.HLeaderIndicator = self:CreateTexture(nil,"BORDER");
+		self.HLeaderIndicator:SetSize(12, 12);
+		self.HLeaderIndicator:SetPoint("RIGHT",self.Name,"LEFT");
 		
 		self.SUI_RaidGroup = self:CreateTexture(nil,"BORDER");
 		self.SUI_RaidGroup:SetSize(12, 12);
@@ -428,34 +424,34 @@ local CreateLargeFrame = function(self,unit)
 		self.SUI_RaidGroup.Text:SetPoint("CENTER",self.SUI_RaidGroup,"CENTER",0,1);
 		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
-		self.PvP = self:CreateTexture(nil,"BORDER");
-		self.PvP:SetSize(25,25);
-		self.PvP:SetPoint("CENTER",self,"BOTTOMRIGHT",0,-3);
-		self.PvP.Override = pvpIcon
+		self.PvPIndicator = self:CreateTexture(nil,"BORDER");
+		self.PvPIndicator:SetSize(25,25);
+		self.PvPIndicator:SetPoint("CENTER",self,"BOTTOMRIGHT",0,-3);
+		self.PvPIndicator.Override = pvpIcon
 		
-		self.Resting = self:CreateTexture(nil,"ARTWORK");
-		self.Resting:SetSize(20,20);
-		self.Resting:SetPoint("CENTER",self,"TOPLEFT");
-		self.Resting:SetTexCoord(0.15,0.86,0.15,0.86)
+		self.RestingIndicator = self:CreateTexture(nil,"ARTWORK");
+		self.RestingIndicator:SetSize(20,20);
+		self.RestingIndicator:SetPoint("CENTER",self,"TOPLEFT");
+		self.RestingIndicator:SetTexCoord(0.15,0.86,0.15,0.86)
 		
-		self.LFDRole = self:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",self,"LEFT",0,0);
-		self.LFDRole:SetTexture(lfdrole);
-		self.LFDRole:SetAlpha(.75);
+		self.GroupRoleIndicator = self:CreateTexture(nil,"BORDER");
+		self.GroupRoleIndicator:SetSize(18, 18);
+		self.GroupRoleIndicator:SetPoint("CENTER",self,"LEFT",0,0);
+		self.GroupRoleIndicator:SetTexture(lfdrole);
+		self.GroupRoleIndicator:SetAlpha(.75);
 		
-		self.Combat = self:CreateTexture(nil,"ARTWORK");
-		self.Combat:SetSize(20,20);
-		self.Combat:SetPoint("CENTER",self.Resting,"CENTER");
+		self.CombatIndicator = self:CreateTexture(nil,"ARTWORK");
+		self.CombatIndicator:SetSize(20,20);
+		self.CombatIndicator:SetPoint("CENTER",self.RestingIndicator,"CENTER");
 		
 		if unit ~= "player" then
 			self.SUI_ClassIcon = self:CreateTexture(nil,"BORDER");
 			self.SUI_ClassIcon:SetSize(20, 20);
-			self.SUI_ClassIcon:SetPoint("CENTER",self.Resting,"CENTER",0,0);
+			self.SUI_ClassIcon:SetPoint("CENTER",self.RestingIndicator,"CENTER",0,0);
 			
-			self.RaidIcon = self:CreateTexture(nil,"ARTWORK");
-			self.RaidIcon:SetSize(20, 20);
-			self.RaidIcon:SetPoint("CENTER",self,"BOTTOMLEFT",-27,0);
+			self.RaidTargetIndicator = self:CreateTexture(nil,"ARTWORK");
+			self.RaidTargetIndicator:SetSize(20, 20);
+			self.RaidTargetIndicator:SetPoint("CENTER",self,"BOTTOMLEFT",-27,0);
 		end
 		
 		self.StatusText = self:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
@@ -647,8 +643,8 @@ local CreateLargeFrame = function(self,unit)
 		local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
 		Background:SetAllPoints(DruidMana)
 		Background:SetTexture(1, 1, 1, .2)
-		self.DruidMana = DruidMana
-		self.DruidMana.bg = Background
+		self.AdditionalPower = DruidMana
+		self.AdditionalPower.bg = Background
 	end
 end
 	do -- setup buffs and debuffs
@@ -701,13 +697,13 @@ local CreateMediumFrame = function(self,unit)
 		self.artwork.flair.bg:SetSize(self:GetWidth(), self:GetHeight()+20);
 		
 		
-		self.Threat = self.artwork:CreateTexture(nil,"BACKGROUND", nil, -5);
-		self.Threat:SetTexture[[Interface\Scenarios\Objective-Lineglow]]
-		self.Threat:SetAlpha(.6);
-		self.Threat:SetTexCoord(0,1,1,0)
-		self.Threat:SetVertexColor(1, 0, 0)
-		self.Threat:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 3, -15);
-		self.Threat:SetSize(self:GetWidth()+6, self:GetHeight()+15);
+		self.ThreatIndicator = self.artwork:CreateTexture(nil,"BACKGROUND", nil, -5);
+		self.ThreatIndicator:SetTexture[[Interface\Scenarios\Objective-Lineglow]]
+		self.ThreatIndicator:SetAlpha(.6);
+		self.ThreatIndicator:SetTexCoord(0,1,1,0)
+		self.ThreatIndicator:SetVertexColor(1, 0, 0)
+		self.ThreatIndicator:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 3, -15);
+		self.ThreatIndicator:SetSize(self:GetWidth()+6, self:GetHeight()+15);
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -775,7 +771,7 @@ local CreateMediumFrame = function(self,unit)
 			myBars:SetSize(self.Health:GetSize())
 			otherBars:SetSize(self.Health:GetSize())
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 3,
@@ -809,13 +805,9 @@ local CreateMediumFrame = function(self,unit)
 		self.Name:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-2);
 		self:Tag(self.Name, "[level] [SUI_ColorClass][name]");
 		
-		self.Leader = self:CreateTexture(nil,"BORDER");
-		self.Leader:SetSize(12, 12);
-		self.Leader:SetPoint("RIGHT",self.Name,"LEFT");
-		
-		self.MasterLooter = self:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetSize(12, 12);
-		self.MasterLooter:SetPoint("RIGHT",self.Leader,"LEFT");
+		self.HLeaderIndicator = self:CreateTexture(nil,"BORDER");
+		self.HLeaderIndicator:SetSize(12, 12);
+		self.HLeaderIndicator:SetPoint("RIGHT",self.Name,"LEFT");
 		
 		self.SUI_RaidGroup = self:CreateTexture(nil,"BORDER");
 		self.SUI_RaidGroup:SetSize(12, 12);
@@ -830,20 +822,20 @@ local CreateMediumFrame = function(self,unit)
 		self.SUI_RaidGroup.Text:SetPoint("CENTER",self.SUI_RaidGroup,"CENTER",0,1);
 		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
-		self.PvP = self:CreateTexture(nil,"BORDER");
-		self.PvP:SetSize(25,25);
-		self.PvP:SetPoint("CENTER",self,"BOTTOMRIGHT",0,-3);
-		self.PvP.Override = pvpIcon
+		self.PvPIndicator = self:CreateTexture(nil,"BORDER");
+		self.PvPIndicator:SetSize(25,25);
+		self.PvPIndicator:SetPoint("CENTER",self,"BOTTOMRIGHT",0,-3);
+		self.PvPIndicator.Override = pvpIcon
 		
-		self.LFDRole = self:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",self,"LEFT",0,0);
-		self.LFDRole:SetTexture(lfdrole);
-		self.LFDRole:SetAlpha(.75);
+		self.GroupRoleIndicator = self:CreateTexture(nil,"BORDER");
+		self.GroupRoleIndicator:SetSize(18, 18);
+		self.GroupRoleIndicator:SetPoint("CENTER",self,"LEFT",0,0);
+		self.GroupRoleIndicator:SetTexture(lfdrole);
+		self.GroupRoleIndicator:SetAlpha(.75);
 		
-		self.Combat = self:CreateTexture(nil,"ARTWORK");
-		self.Combat:SetSize(20,20);
-		self.Combat:SetPoint("CENTER",self.Resting,"CENTER");
+		self.CombatIndicator = self:CreateTexture(nil,"ARTWORK");
+		self.CombatIndicator:SetSize(20,20);
+		self.CombatIndicator:SetPoint("CENTER",self.RestingIndicator,"CENTER");
 		
 		self.StatusText = self:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",self,"CENTER");
@@ -882,15 +874,15 @@ local CreateSmallFrame = function(self,unit)
 		self.artwork.bg:SetTexCoord(0.017578125, 0.3203125, 0.4609375, 0.564453125)
 		self.artwork.bg:SetSize(self:GetSize());
 		
-		self.Threat = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
 		local overlay = self:CreateTexture(nil, "OVERLAY")
 		overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
 		overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
 		overlay:SetAllPoints(self)
 		overlay:SetVertexColor(1, 0, 0)
 		overlay:Hide();
-		self.ThreatOverlay = overlay
-		self.Threat.Override = threat;
+		self.ThreatIndicatorOverlay = overlay
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- health bar
@@ -937,7 +929,7 @@ local CreateSmallFrame = function(self,unit)
 			myBars:SetSize(self.Health:GetSize())
 			otherBars:SetSize(self.Health:GetSize())
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 3,
@@ -970,9 +962,9 @@ local CreateSmallFrame = function(self,unit)
 		end
 		self:Tag(self.Name, "[SUI_ColorClass][name]");
 		
-		self.RaidIcon = self:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(20, 20);
-		self.RaidIcon:SetPoint("BOTTOMLEFT",self);
+		self.RaidTargetIndicator = self:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(20, 20);
+		self.RaidTargetIndicator:SetPoint("BOTTOMLEFT",self);
 		
 		self.StatusText = self:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",self,"CENTER");

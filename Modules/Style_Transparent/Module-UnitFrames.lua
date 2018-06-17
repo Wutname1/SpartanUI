@@ -116,7 +116,7 @@ end
 local pvpIcon = function (self, event, unit)
 	if(unit ~= self.unit) then return end
 	
-	local pvp = self.PvP
+	local pvp = self.PvPIndicator
 	if(pvp.PreUpdate) then
 		pvp:PreUpdate()
 	end
@@ -315,8 +315,8 @@ local CreatePlayerFrame = function(self,unit)
 		--if unit == "player" then self.Portrait:SetPoint("RIGHT",self,"RIGHT",-35,0); end
 		--if unit == "target" then self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3); end
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -400,7 +400,7 @@ local CreatePlayerFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 3,
@@ -469,8 +469,8 @@ local CreatePlayerFrame = function(self,unit)
 			Background:SetTexture(1, 1, 1, .2)
 
 			-- Register it with oUF
-			self.DruidMana = DruidMana
-			self.DruidMana.bg = Background
+			self.AdditionalPower = DruidMana
+			self.AdditionalPower.bg = Background
 		end
 	end
 	do -- setup ring, icons, and text
@@ -486,13 +486,9 @@ local CreatePlayerFrame = function(self,unit)
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",47,-7);
 		self:Tag(self.Name, "[level] [SUI_ColorClass][name]");
 		
-		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetWidth(20); self.Leader:SetHeight(20);
-		self.Leader:SetPoint("CENTER",ring,"TOP");
-		
-		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetSize(18, 18);
-		self.MasterLooter:SetPoint("CENTER",self.Portrait,"BOTTOM",0,0);
+		self.HLeaderIndicator = ring:CreateTexture(nil,"BORDER");
+		self.HLeaderIndicator:SetWidth(20); self.HLeaderIndicator:SetHeight(20);
+		self.HLeaderIndicator:SetPoint("CENTER",ring,"TOP");
 		
 		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
 		self.SUI_RaidGroup:SetSize(15, 15);
@@ -506,29 +502,29 @@ local CreatePlayerFrame = function(self,unit)
 		self.SUI_RaidGroup.Text:SetPoint("CENTER",self.SUI_RaidGroup,"CENTER",0,1);
 		self:Tag(self.SUI_RaidGroup.Text, "[group]");
 		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetSize(25, 25);
-		self.PvP:SetPoint("CENTER",ring,"BOTTOMRIGHT",0,0);
-		self.PvP.Override = pvpIcon
+		self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+		self.PvPIndicator:SetSize(25, 25);
+		self.PvPIndicator:SetPoint("CENTER",ring,"BOTTOMRIGHT",0,0);
+		self.PvPIndicator.Override = pvpIcon
 		
-		self.Resting = ring:CreateTexture(nil,"ARTWORK");
-		self.Resting:SetSize(25, 25);
-		self.Resting:SetPoint("CENTER",ring,"TOPLEFT");
-		self.Resting:SetTexCoord(0.15,0.86,0.15,0.86)
+		self.RestingIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RestingIndicator:SetSize(25, 25);
+		self.RestingIndicator:SetPoint("CENTER",ring,"TOPLEFT");
+		self.RestingIndicator:SetTexCoord(0.15,0.86,0.15,0.86)
 		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",ring,"TOP",20,7);
-		self.LFDRole:SetTexture(lfdrole);
-		self.LFDRole:SetAlpha(.75);
+		self.GroupRoleIndicator = ring:CreateTexture(nil,"BORDER");
+		self.GroupRoleIndicator:SetSize(18, 18);
+		self.GroupRoleIndicator:SetPoint("CENTER",ring,"TOP",20,7);
+		self.GroupRoleIndicator:SetTexture(lfdrole);
+		self.GroupRoleIndicator:SetAlpha(.75);
 		
-		self.Combat = ring:CreateTexture(nil,"ARTWORK");
-		self.Combat:SetSize(30,30);
-		self.Combat:SetPoint("CENTER",ring,"RIGHT");
+		self.CombatIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.CombatIndicator:SetSize(30,30);
+		self.CombatIndicator:SetPoint("CENTER",ring,"RIGHT");
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(20,20);
-		self.RaidIcon:SetPoint("CENTER",ring,"CENTER",0,20);
+		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(20,20);
+		self.RaidTargetIndicator:SetPoint("CENTER",ring,"CENTER",0,20);
 		
 		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
@@ -638,8 +634,8 @@ local CreateTargetFrame = function(self,unit)
 		self.Portrait:SetSize(58, 58);
 		self.Portrait:SetPoint("TOPLEFT",self,"TOPLEFT",35,-15);
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -717,7 +713,7 @@ local CreateTargetFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -764,11 +760,11 @@ local CreateTargetFrame = function(self,unit)
 		self.RareElite:SetPoint("CENTER",ring,"CENTER",-12,25);
 		self.RareElite.short = true
 		
-		self.LFDRole = ring:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(18, 18);
-		self.LFDRole:SetPoint("CENTER",ring,"TOP",-20,7);
-		self.LFDRole:SetTexture(lfdrole);
-		self.LFDRole:SetAlpha(.75);
+		self.GroupRoleIndicator = ring:CreateTexture(nil,"BORDER");
+		self.GroupRoleIndicator:SetSize(18, 18);
+		self.GroupRoleIndicator:SetPoint("CENTER",ring,"TOP",-20,7);
+		self.GroupRoleIndicator:SetTexture(lfdrole);
+		self.GroupRoleIndicator:SetAlpha(.75);
 		
 		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
 		self.SUI_RaidGroup:SetSize(15, 15);
@@ -787,26 +783,22 @@ local CreateTargetFrame = function(self,unit)
 		self.SUI_ClassIcon:SetPoint("RIGHT",self.Name,"LEFT");
 		self.SUI_ClassIcon:SetAlpha(.75);
 		
-		self.Leader = ring:CreateTexture(nil,"BORDER");
-		self.Leader:SetSize(18,18);
-		self.Leader:SetPoint("CENTER",ring,"TOP");
+		self.HLeaderIndicator = ring:CreateTexture(nil,"BORDER");
+		self.HLeaderIndicator:SetSize(18,18);
+		self.HLeaderIndicator:SetPoint("CENTER",ring,"TOP");
 		
-		self.MasterLooter = ring:CreateTexture(nil,"BORDER");
-		self.MasterLooter:SetSize(18,18);
-		self.MasterLooter:SetPoint("CENTER",self.Portrait,"BOTTOM",0,0);
-		
-		self.PvP = ring:CreateTexture(nil,"BORDER");
-		self.PvP:SetSize(25, 25);
-		self.PvP:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",0,0);
-		self.PvP.Override = pvpIcon
+		self.PvPIndicator = ring:CreateTexture(nil,"BORDER");
+		self.PvPIndicator:SetSize(25, 25);
+		self.PvPIndicator:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",0,0);
+		self.PvPIndicator.Override = pvpIcon
 		
 		self.LevelSkull = ring:CreateTexture(nil,"ARTWORK");
 		self.LevelSkull:SetSize(16, 16);
 		self.LevelSkull:SetPoint("LEFT",self.Name,"LEFT");
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(24, 24);
-		self.RaidIcon:SetPoint("CENTER",ring,"RIGHT",2,-4);
+		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(24, 24);
+		self.RaidTargetIndicator:SetPoint("CENTER",ring,"RIGHT",2,-4);
 		
 		self.StatusText = ring:CreateFontString(nil, "OVERLAY", "SUI_FontOutline22");
 		self.StatusText:SetPoint("CENTER",ring,"CENTER");
@@ -841,8 +833,8 @@ local CreatePetFrame = function(self,unit)
 			self.artwork.bg:SetPoint("CENTER");
 			self.artwork.bg:SetTexture(base_plate2);
 			
-			self.Threat = CreateFrame("Frame",nil,self);
-			self.Threat.Override = threat;
+			self.ThreatIndicator = CreateFrame("Frame",nil,self);
+			self.ThreatIndicator.Override = threat;
 		end
 		do -- setup status bars
 			do -- health bar
@@ -934,8 +926,8 @@ local CreateToTFrame = function(self,unit)
 		-- self.artwork.bg:SetSize(170, 80);
 		-- self.artwork.bg:SetTexCoord(.68,0,0,0.6640625);
 		
-		self.Threat = CreateFrame("Frame",nil,self);
-		self.Threat.Override = threat;
+		self.ThreatIndicator = CreateFrame("Frame",nil,self);
+		self.ThreatIndicator.Override = threat;
 	end
 	do -- setup status bars
 		do -- health bar
@@ -989,7 +981,7 @@ local CreateToTFrame = function(self,unit)
 			myBars:SetSize(150, 16)
 			otherBars:SetSize(150, 16)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -1035,9 +1027,9 @@ local CreateToTFrame = function(self,unit)
 			self:Tag(self.Name, "[difficulty][level] [name]");
 		end
 		
-		self.RaidIcon = ring:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(20, 20);
-		self.RaidIcon:SetPoint("LEFT",self,"RIGHT",3,0);
+		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(20, 20);
+		self.RaidTargetIndicator:SetPoint("LEFT",self,"RIGHT",3,0);
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
@@ -1122,7 +1114,7 @@ local CreateBossFrame = function(self,unit)
 			myBars:SetSize(105, 12)
 			otherBars:SetSize(105, 12)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -1166,9 +1158,9 @@ local CreateBossFrame = function(self,unit)
 		self.LevelSkull:SetSize(16, 16);
 		self.LevelSkull:SetPoint("RIGHT",self.Name ,"LEFT",2,0);
 		
-		self.RaidIcon = items:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(18, 18);
-		self.RaidIcon:SetPoint("CENTER",self,"RIGHT",0,0);
+		self.RaidTargetIndicator = items:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(18, 18);
+		self.RaidTargetIndicator:SetPoint("CENTER",self,"RIGHT",0,0);
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
@@ -1266,7 +1258,7 @@ local CreateRaidFrame = function(self,unit)
 			myBars:SetSize(105, 12)
 			otherBars:SetSize(105, 12)
 			
-			self.HealPrediction = {
+			self.HealthPrediction = {
 				myBar = myBars,
 				otherBar = otherBars,
 				maxOverflow = 4,
@@ -1306,25 +1298,25 @@ local CreateRaidFrame = function(self,unit)
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",20,0);
 		self:Tag(self.Name, "[SUI_ColorClass][name]");
 		
-		self.LFDRole = items:CreateTexture(nil,"BORDER");
-		self.LFDRole:SetSize(15, 15);
-		self.LFDRole:SetPoint("TOPLEFT",self,"TOPLEFT",-1,-2);
-		self.LFDRole:SetTexture(lfdrole);
-		self.LFDRole:SetAlpha(.75);
+		self.GroupRoleIndicator = items:CreateTexture(nil,"BORDER");
+		self.GroupRoleIndicator:SetSize(15, 15);
+		self.GroupRoleIndicator:SetPoint("TOPLEFT",self,"TOPLEFT",-1,-2);
+		self.GroupRoleIndicator:SetTexture(lfdrole);
+		self.GroupRoleIndicator:SetAlpha(.75);
 		
-		self.RaidIcon = items:CreateTexture(nil,"ARTWORK");
-		self.RaidIcon:SetSize(18, 18);
-		self.RaidIcon:SetPoint("CENTER",self,"RIGHT",0,0);
+		self.RaidTargetIndicator = items:CreateTexture(nil,"ARTWORK");
+		self.RaidTargetIndicator:SetSize(18, 18);
+		self.RaidTargetIndicator:SetPoint("CENTER",self,"RIGHT",0,0);
 		
-		self.ResurrectIcon = items:CreateTexture(nil, 'OVERLAY')
-		self.ResurrectIcon:SetSize(30, 30)
-		self.ResurrectIcon:SetPoint("RIGHT",self,"CENTER",0,0)
-		self.ResurrectIcon = ResurrectIcon
+		self.ResurrectIndicator = items:CreateTexture(nil, 'OVERLAY')
+		self.ResurrectIndicator:SetSize(30, 30)
+		self.ResurrectIndicator:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ResurrectIndicator = ResurrectIcon
 
-		self.ReadyCheck = items:CreateTexture(nil, 'OVERLAY')
-		self.ReadyCheck:SetSize(30, 30)
-		self.ReadyCheck:SetPoint("RIGHT",self,"CENTER",0,0)
-		self.ReadyCheck = ReadyCheck
+		self.ReadyCheckIndicator = items:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheckIndicator:SetSize(30, 30)
+		self.ReadyCheckIndicator:SetPoint("RIGHT",self,"CENTER",0,0)
+		self.ReadyCheckIndicator = ReadyCheck
 	   
 		local overlay = items:CreateTexture(nil, "OVERLAY")
 		overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
@@ -1332,7 +1324,7 @@ local CreateRaidFrame = function(self,unit)
 		overlay:SetAllPoints(self)
 		overlay:SetVertexColor(1, 0, 0)
 		overlay:Hide();
-		self.ThreatOverlay = overlay
+		self.ThreatIndicatorOverlay = overlay
 			
 	end
 	do --Hots Displays
@@ -1437,18 +1429,7 @@ SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateUnitFrameParty)
 SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateUnitFrameRaid);
 	
 function module:UpdateAltBarPositions()
-	local classname, classFileName = UnitClass("player");	
-	-- Druid EclipseBar
-	-- EclipseBarFrame:ClearAllPoints();
-	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
-		-- EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	-- else
-		-- EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
-	-- end
+	local classname, classFileName = UnitClass("player");
 	
 	if RuneFrame then
 		RuneFrame:Hide()
