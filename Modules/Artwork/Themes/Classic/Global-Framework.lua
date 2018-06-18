@@ -39,8 +39,8 @@ function module:updateSpartanScale() -- scales SpartanUI based on setting or scr
 			frame:SetScale(DB.scale);
 		end
 		if DB.scale <= .75 then
-			SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
-			SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
+			SpartanUI_Base3:SetPoint("BOTTOMLEFT", SUI_AnchorFrame, "TOPLEFT");
+			SpartanUI_Base5:SetPoint("BOTTOMRIGHT", SUI_AnchorFrame, "TOPRIGHT");
 		else
 			SpartanUI_Base3:ClearAllPoints();
 			SpartanUI_Base5:ClearAllPoints();
@@ -105,11 +105,11 @@ function module:updateSpartanXOffset() -- handles SpartanUI offset based on sett
 	if round(offset) <= -300 then
 		SpartanUI_Base5:ClearAllPoints();
 		SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
-		SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT");
+		SpartanUI_Base5:SetPoint("BOTTOMRIGHT", SUI_AnchorFrame, "TOPRIGHT");
 	elseif round(offset) >= 300 then
 		SpartanUI_Base3:ClearAllPoints();
 		SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
-		SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT");
+		SpartanUI_Base3:SetPoint("BOTTOMLEFT", SUI_AnchorFrame, "TOPLEFT");
 	end
 	SpartanUI:SetPoint("LEFT", SUI_AnchorFrame, "LEFT", offset, 0)
 	
