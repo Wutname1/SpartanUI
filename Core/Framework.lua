@@ -456,6 +456,9 @@ function SUI:OnInitialize()
 	SUI.DBP = SUI.DB.profile.SUIProper
 	SUI.DBMod = SUI.DB.profile.Modules
 	
+	--Check for any DB changes
+	if SUI.DBP.SetupDone then SUI:DBUpgrades() print("up") end
+	
 	-- Legacy, need to phase these globals out it was messy 
 	DB = SUI.DB.profile.SUIProper
 	DBMod = SUI.DB.profile.Modules
@@ -497,6 +500,10 @@ function SUI:OnInitialize()
 	
 	--First Time Setup Actions
 	if not DB.SetupDone then SUI:FirstTimeSetup() end
+end
+
+function SUI:DBUpgrades()
+	if SUI.DBMod.Artwork.Style == "" and SUI.DBMod.Artwork.SetupDone then print("stuff") SUI.DBMod.Artwork.Style = "Classic" end
 end
 
 function SUI:InitializeProfile()
