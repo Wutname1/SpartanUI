@@ -4,7 +4,7 @@ local artwork_Core = spartan:GetModule("Artwork_Core");
 local module = spartan:GetModule("Style_Transparent");
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
-
+local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 local base_plate1 = [[Interface\AddOns\SpartanUI_Style_Transparent\Images\base_plate1.tga]] -- Player and Target
 local base_plate2 = [[Interface\AddOns\SpartanUI_Style_Transparent\Images\base_plate2.blp]] -- Focus and Focus Target
 local base_plate4 = [[Interface\AddOns\SpartanUI_Style_Transparent\Images\base_plate4.blp]] -- TargetTarget small
@@ -1467,25 +1467,24 @@ function module:UpdateAltBarPositions()
 	end
 end
 
-function module:PositionFrame()
+function module:PositionFrame(b)
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
-		PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
-		PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
-		PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
-		PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
+		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150); end
+		if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0); end
 		
-		for a,b in pairs(FramesList) do
-			_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
-		end
 	else
-		PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-		PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4);
-		PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
-		PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",6,4);
+		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3); end
+		if b == "target" or b == nil then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3); end
 	end
 	
-	PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
-	PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0);
+	if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-6,4); end
+	if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11); end
+	if b == "focus" or b == nil then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
+	if b == "focustarget" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
+	
+	for a,b in pairs(FramesList) do
+		_G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+	end
 end
 
 function module:PlayerFrames()

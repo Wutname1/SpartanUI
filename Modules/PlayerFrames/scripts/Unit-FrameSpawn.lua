@@ -43,38 +43,38 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 	
 end
 
-function PlayerFrames:PositionFrame_Classic()
+function PlayerFrames:PositionFrame_Classic(b)
 	PlayerFrames.pet:SetParent(PlayerFrames.player)
 	PlayerFrames.targettarget:SetParent(PlayerFrames.target)
 	
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
-		PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150);
-		PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12);
-		PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0);
+		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOM",UIParent,"BOTTOM",-220,150); end
+		if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12); end
+		if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0); end
 		
 		if DBMod.PlayerFrames.targettarget.style == "small" then
-			PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11);
+			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11); end
 		else
-			PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",19,15);
+			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",19,15); end
 		end
 		
 		for a,b in pairs(FramesList) do
 			PlayerFrames[b]:SetScale(DB.scale);
 		end
 	else
-		PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3);
-		PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12)
-		PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3);
+		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3); end
+		if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12) end
+		if b == "target" or b == nil then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3); end
 		
 		if DBMod.PlayerFrames.targettarget.style == "small" then
-			PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15);
+			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15); end
 		else
-			PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12);
+			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12); end
 		end
 	end
 	
-	PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30);
-	PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", -35, 0);
+	if b == "focus" or b == nil then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
+	if b == "focustarget" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", -35, 0); end
 end
 
 function PlayerFrames:AddMover(frame, framename)
