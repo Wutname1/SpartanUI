@@ -593,8 +593,8 @@ local MakeLargeFrame = function(self,unit,width)
 			if DB.Styles.Minimal.Frames[unit] and PlayerFrames then
 				self.BuffAnchor = CreateFrame("Frame", nil, self)
 				self.BuffAnchor:SetSize(self:GetWidth(), 1)
-				self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
-				self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
+				self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 12)
+				self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 12)
 				
 				self = PlayerFrames:Buffs(self,unit)
 			end
@@ -846,21 +846,20 @@ function module:PlayerFrames()
 end
 
 function module:PositionFrame(b)
-		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,170); end
-		if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("RIGHT",PlayerFrames.player,"BOTTOMLEFT",-4,0); end
-		
-		if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",120,0); end
-		if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("LEFT",PlayerFrames.target,"BOTTOMRIGHT",4,0); end
-		
-		if b == "focus" or b == nil then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
-		if b == "focustarget" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
-		
-		
-		-- PlayerFrames.player:SetScale(DB.scale);
-		for a,b in pairs(FramesList) do
-			PlayerFrames[b]:SetScale(DB.scale);
-			-- _G["SUI_"..b.."Frame"]:SetScale(DB.scale);
-		end
+	if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",UIParent,"BOTTOM",-60,170); end
+	if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("RIGHT",PlayerFrames.player,"BOTTOMLEFT",-4,0); end
+	
+	if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",120,0); end
+	if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("LEFT",PlayerFrames.target,"BOTTOMRIGHT",4,0); end
+	
+	if b == "focus" or b == nil then PlayerFrames.focus:SetPoint("BOTTOMLEFT",PlayerFrames.target,"TOP",0,30); end
+	if b == "focustarget" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
+	
+	
+	-- PlayerFrames.player:SetScale(DB.scale);
+	for a,b in pairs(FramesList) do
+		PlayerFrames[b]:SetScale(DB.scale);
+	end
 end
 
 function module:RaidFrames()
