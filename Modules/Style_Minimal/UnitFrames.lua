@@ -593,8 +593,8 @@ local MakeLargeFrame = function(self,unit,width)
 			if DB.Styles.Minimal.Frames[unit] and PlayerFrames then
 				self.BuffAnchor = CreateFrame("Frame", nil, self)
 				self.BuffAnchor:SetSize(self:GetWidth(), 1)
-				self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
-				self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 0)
+				self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 12)
+				self.BuffAnchor:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", 0, 12)
 				
 				self = PlayerFrames:Buffs(self,unit)
 			end
@@ -806,17 +806,6 @@ SpartanoUF:RegisterStyle("Spartan_MinimalFrames_Raid", CreateUnitFrameRaid);
 
 function module:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
-	-- Druid EclipseBar
-	EclipseBarFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
-	else
-		EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
-	end
 	
 	if RuneFrame then RuneFrame:Hide() end
 	
