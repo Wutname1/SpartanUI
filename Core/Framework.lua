@@ -14,7 +14,7 @@ SUI.SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
 SUI.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = "SpartanUI ".. SUI.SpartanVer, type = "group", childGroups = "tab", args = {
+	name = "SpartanUI ".. SUI.SpartanVer, type = "group", childGroups = "tree", args = {
 		General = {name = L["General"], type = "group",order = 0, args = {}};
 		Artwork = {name = L["Artwork"], type = "group", args = {}};
 		PlayerFrames = {name = L["PlayerFrames"], type = "group", args = {}};

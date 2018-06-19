@@ -82,4 +82,5 @@
 	<Script file="oUF.lua" />
 	<Script file="WhatsNew.lua" />
 	<Script file="Installer.lua" />
+	<Script file="Skin-Options.lua" />
 </Ui>
