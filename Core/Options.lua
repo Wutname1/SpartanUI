@@ -48,52 +48,52 @@ function module:OnInitialize()
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Classic";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Classic";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 						end
 				},
 				Fel = {name = "Fel", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Fel";
+						SUI.DBMod.Artwork.Style = "Fel";
 						DB.Styles.Fel.SubTheme = "Fel";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Transparent";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Transparent";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Minimal";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Minimal";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
 				},
 				Digital = {name = "Digital", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Digital", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Fel";
+						SUI.DBMod.Artwork.Style = "Fel";
 						DB.Styles.Fel.SubTheme = "Digital";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
 				}
@@ -103,28 +103,28 @@ function module:OnInitialize()
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Classic";
+						SUI.DBMod.Artwork.Style = "Classic";
 						module:ArtSetup()
 						end
 				},
 				Fel = {name = "Fel", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Fel";
+						SUI.DBMod.Artwork.Style = "Fel";
 						module:ArtSetup()
 						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Transparent";
+						SUI.DBMod.Artwork.Style = "Transparent";
 						module:ArtSetup()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Minimal";
+						SUI.DBMod.Artwork.Style = "Minimal";
 						module:ArtSetup()
 					end
 				}
@@ -135,7 +135,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Classic", 120, 60 end,
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Classic";
+						SUI.DBMod.PlayerFrames.Style = "Classic";
 						module:ArtSetup()
 						end
 				},
@@ -143,7 +143,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Fel", 120, 60 end,
 					imageCoords=function() return {.1,.5,.1,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Fel";
+						SUI.DBMod.PlayerFrames.Style = "Fel";
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -151,7 +151,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Transparent";
+						SUI.DBMod.PlayerFrames.Style = "Transparent";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -159,7 +159,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal", 120, 60 end,
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Minimal";
+						SUI.DBMod.PlayerFrames.Style = "Minimal";
 						spartan:UpdateModuleConfigs()
 					end
 				}
@@ -170,7 +170,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Classic", 120, 60 end,
 					imageCoords=function() return {.1,.5,.5,1} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Classic";
+						SUI.DBMod.PartyFrames.Style = "Classic";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -178,7 +178,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Fel", 120, 60 end,
 					imageCoords=function() return {0,.5,.5,1} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Fel";
+						SUI.DBMod.PartyFrames.Style = "Fel";
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -186,7 +186,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Transparent";
+						SUI.DBMod.PartyFrames.Style = "Transparent";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -194,7 +194,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal", 120, 60 end,
 					imageCoords=function() return {0,.5,.5,1} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Minimal";
+						SUI.DBMod.PartyFrames.Style = "Minimal";
 						spartan:UpdateModuleConfigs()
 					end
 				}
@@ -205,7 +205,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Classic", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Classic";
+						SUI.DBMod.RaidFrames.Style = "Classic";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -213,7 +213,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Fel", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Fel";
+						SUI.DBMod.RaidFrames.Style = "Fel";
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -221,7 +221,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Transparent";
+						SUI.DBMod.RaidFrames.Style = "Transparent";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -229,7 +229,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Minimal";
+						SUI.DBMod.RaidFrames.Style = "Minimal";
 						spartan:UpdateModuleConfigs()
 					end
 				}
@@ -365,19 +365,19 @@ function module:OnInitialize()
 			ResetActionBars	= {name = L["Reset ActionBars"], type = "execute", order=2,
 			func = function()
 				--Tell SUI to reload config
-				DBMod.Artwork.FirstLoad = true;
+				SUI.DBMod.Artwork.FirstLoad = true;
 				
 				--Strip custom BT4 Profile from config
-				if DB.Styles[DBMod.Artwork.Style].BT4Profile then DB.Styles[DBMod.Artwork.Style].BT4Profile = nil end
+				if DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = nil end
 				
 				--Force REbuild of primary bar profile
-				spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
+				spartan:GetModule("Style_"..SUI.DBMod.Artwork.Style):SetupProfile();
 				
 				--Reset Moved bars
 				local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 				for k,v in ipairs(FrameList) do
-					if DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] then
-						DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
+					if DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
+						DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 					end
 				end
 				
@@ -404,23 +404,23 @@ function module:OnInitialize()
 			},
 			line2 = {name="",type="header",order = 5.5},
 			VehicleUI = {name = L["Use Blizzard Vehicle UI"], type = "toggle",order=6,
-				get = function(info) return DBMod.Artwork.VehicleUI end,
+				get = function(info) return SUI.DBMod.Artwork.VehicleUI end,
 				set = function(info,val) 
 					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
-					DBMod.Artwork.VehicleUI = val
+					SUI.DBMod.Artwork.VehicleUI = val
 					--Make sure bartender knows to do it, or not...
 					if Bartender4 then
 						Bartender4.db.profile.blizzardVehicle = val
 						Bartender4:UpdateBlizzardVehicle()
 					end
 					
-					if DBMod.Artwork.VehicleUI then
-						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
-							spartan:GetModule("Style_" .. DBMod.Artwork.Style):SetupVehicleUI()
+					if SUI.DBMod.Artwork.VehicleUI then
+						if spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
+							spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style):SetupVehicleUI()
 						end
 					else
-						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
-							spartan:GetModule("Style_" .. DBMod.Artwork.Style):RemoveVehicleUI()
+						if spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
+							spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style):RemoveVehicleUI()
 						end
 					end
 				end,
@@ -443,10 +443,10 @@ function module:OnInitialize()
 			ResetMovedFrames	= {name = L["ResetMovableFrames"], type = "execute", order=3, func = function()
 				local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player",[7]="boss"}
 				for a,b in pairs(FramesList) do
-					DBMod.PlayerFrames[b].moved = false
+					SUI.DBMod.PlayerFrames[b].moved = false
 				end
-				DBMod.PartyFrames.moved = false
-				DBMod.RaidFrames.moved = false
+				SUI.DBMod.PartyFrames.moved = false
+				SUI.DBMod.RaidFrames.moved = false
 				spartan:GetModule("PlayerFrames"):UpdatePosition()
 			end},
 			
@@ -627,14 +627,14 @@ function module:ExportData()
 	
 	return "$SUI." .. spartan.SpartanVer .. "-" .. spartan.CurseVersion
 		.. "$C." .. module:FlatenTable(CharData)
-		.. "$Artwork.Style." .. DBMod.Artwork.Style
-		.. "$PlayerFrames.Style." .. DBMod.PlayerFrames.Style
-		.. "$PartyFrames.Style." .. DBMod.PartyFrames.Style
-		.. "$RaidFrames.Style." .. DBMod.RaidFrames.Style
+		.. "$Artwork.Style." .. SUI.DBMod.Artwork.Style
+		.. "$PlayerFrames.Style." .. SUI.DBMod.PlayerFrames.Style
+		.. "$PartyFrames.Style." .. SUI.DBMod.PartyFrames.Style
+		.. "$RaidFrames.Style." .. SUI.DBMod.RaidFrames.Style
 		.. "$Addons." .. module:FlatenTable(AddonsInstalled)
 		.. "..$END$.."
 		-- .. "$DB." .. module:FlatenTable(DB)
-		-- .. "$DBMod." .. module:FlatenTable(DBMod)
+		-- .. "$SUI.DBMod." .. module:FlatenTable(SUI.DBMod)
 end
 
 function module:FlatenTable(input)
