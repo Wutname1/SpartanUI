@@ -345,8 +345,7 @@ function Artwork_Core:SetupProfile(ProfileOverride)
 	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
 	
 	--If this is set then we have already setup the bars once, and the user changed them
-	if spartan.DBG.Bartender4[spartan.DBP.BT4Profile].Style and spartan.DBG.Bartender4[spartan.DBP.BT4Profile].Style ~= ProfileName and not ProfileOverride then return end
-	
+	if DB.Styles[DBMod.Artwork.Style].BT4Profile and DB.Styles[DBMod.Artwork.Style].BT4Profile ~= ProfileName and not ProfileOverride then return end
 	
 	-- Set/Create our Profile
 	Bartender4.db:SetProfile(ProfileName);
