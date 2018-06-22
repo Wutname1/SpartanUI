@@ -126,7 +126,7 @@ function module:FirstAtrifactNotice()
 	loginlevel = UnitLevel("player")
 	
 	--Only process if we are not 110; allowed to show new featues; have never used an artifact; The style allows tracking
-	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DBP.Styles[DBMod.Artwork.Style].StatusBars.AP and not (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
+	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DB.Styles[DBMod.Artwork.Style].StatusBars.AP and not (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
 		--Detect if user already has a artifact
 		if HasArtifactEquipped() then
 			SUI.DBG.HasEquipedArtifact = true

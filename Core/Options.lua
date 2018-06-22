@@ -437,8 +437,8 @@ function module:OnInitialize()
 	}
 	spartan.opt.args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
-			ResetProfileDB			= {name = L["Reset profile"], type = "execute", order=0, func = function() SUI.DB:ResetProfile(); ReloadUI(); end},
-			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() SUI.DB:ResetDB(); ReloadUI(); end},
+			ResetProfileDB			= {name = L["Reset profile"], type = "execute", order=0, func = function() SUI.SpartanUIDB:ResetProfile(); ReloadUI(); end},
+			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() SUI.SpartanUIDB:ResetDB(); ReloadUI(); end},
 			ResetActionBars	= spartan.opt.args["General"].args["Bartender"].args["ResetActionBars"],
 			ResetMovedFrames	= {name = L["ResetMovableFrames"], type = "execute", order=3, func = function()
 				local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player",[7]="boss"}

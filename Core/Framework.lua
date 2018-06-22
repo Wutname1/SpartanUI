@@ -11,7 +11,8 @@ local _G = _G
 local type, pairs, hooksecurefunc = type, pairs, hooksecurefunc
 
 SUI.Version = GetAddOnMetadata("SpartanUI", "Version")
-SUI.BuildNum = GetAddOnMetadata("SpartanUI", "Build")
+SUI.BuildNum = GetAddOnMetadata("SpartanUI", "X-Build")
+if not SUI.BuildNum then SUI.BuildNum = 0 end
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
 	name = "SpartanUI ".. SUI.Version, type = "group", childGroups = "tree", args = {
@@ -445,36 +446,36 @@ function SUI:FirstTimeSetup()
 end
 
 function SUI:OnInitialize()
-	SUI.DB = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
+	SUI.SpartanUIDB = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
 	--If we have not played in a long time reset the database, make sure it is all good.
-	local ver = SUI.DB.profile.SUIProper.Version
-	if (ver ~= nil and ver < "4.0.0") then SUI.DB:ResetDB(); end
+	local ver = SUI.SpartanUIDB.profile.SUIProper.Version
+	if (ver ~= nil and ver < "4.0.0") then SUI.SpartanUIDB:ResetDB(); end
 	if not SUI.CurseVersion then SUI.CurseVersion = "" end
 	
 	-- New DB Access
-	SUI.DBG = SUI.DB.global
-	SUI.DBP = SUI.DB.profile.SUIProper
-	SUI.DBMod = SUI.DB.profile.Modules
+	SUI.DBG = SUI.SpartanUIDB.global
+	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
+	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 	
 	--Check for any DB changes
-	if SUI.DBP.SetupDone then SUI:DBUpgrades() end
+	if SUI.DB.SetupDone then SUI:DBUpgrades() end
 	
 	-- Legacy, need to phase these globals out it was messy 
-	DB = SUI.DB.profile.SUIProper
-	DBMod = SUI.DB.profile.Modules
-	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.DB);
+	DB = SUI.SpartanUIDB.profile.SUIProper
+	DBMod = SUI.SpartanUIDB.profile.Modules
+	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.SpartanUIDB);
 	
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
-	LibDualSpec:EnhanceDatabase(self.DB, "SpartanUI")
-	LibDualSpec:EnhanceOptions(SUI.opt.args["Profiles"], self.DB)
+	LibDualSpec:EnhanceDatabase(self.SpartanUIDB, "SpartanUI")
+	LibDualSpec:EnhanceOptions(SUI.opt.args["Profiles"], self.SpartanUIDB)
 	SUI.opt.args["Profiles"].order=999
 	
 	-- Spec Setup
-	SUI.DB.RegisterCallback(SUI, "OnNewProfile", "InitializeProfile")
-	SUI.DB.RegisterCallback(SUI, "OnProfileChanged", "UpdateModuleConfigs")
-	SUI.DB.RegisterCallback(SUI, "OnProfileCopied", "UpdateModuleConfigs")
-	SUI.DB.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
+	SUI.SpartanUIDB.RegisterCallback(SUI, "OnNewProfile", "InitializeProfile")
+	SUI.SpartanUIDB.RegisterCallback(SUI, "OnProfileChanged", "UpdateModuleConfigs")
+	SUI.SpartanUIDB.RegisterCallback(SUI, "OnProfileCopied", "UpdateModuleConfigs")
+	SUI.SpartanUIDB.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
 	
 	--Bartender4
 	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
@@ -540,7 +541,7 @@ function SUI:BT4ProfileAttach(msg)
 			SUI_Win.Next:SetPoint("BOTTOMLEFT", SUI_Win, "BOTTOM", 15, 15)
 		end,
 		Next = function()
-			SUI.DBG.Bartender4[SUI.DBP.BT4Profile] = {
+			SUI.DBG.Bartender4[SUI.DB.BT4Profile] = {
 				Style = DBMod.Artwork.Style
 			}
 			-- Catch if Movedbars is not initalized
@@ -567,14 +568,14 @@ function SUI:BT4RefreshConfig()
 
 	if SUI.DBG.Bartender4[DB.BT4Profile] then
 		-- We know this profile.
-		if SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style == SUI.DBMod.Artwork.Style then
+		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style == SUI.DBMod.Artwork.Style then
 			-- Catch if Movedbars is not initalized
 			if DB.Styles[DBMod.Artwork.Style].MovedBars then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 			--Profile is for this style, prompt to ReloadUI; usually un needed can uncomment if needed latter
 			-- SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
 		else
 			--Ask if we should change to the correct profile or if we should change the profile to be for this style
-			SUI:BT4ProfileAttach("This bartender profile is currently attached to the style '"..SUI.DBG.Bartender4[SUI.DBP.BT4Profile].Style.."' you are currently using "..SUI.DBMod.Artwork.Style.." would you like to reassign the profile to this art skin? ")
+			SUI:BT4ProfileAttach("This bartender profile is currently attached to the style '"..SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style.."' you are currently using "..SUI.DBMod.Artwork.Style.." would you like to reassign the profile to this art skin? ")
 		end
 	else
 		-- We do not know this profile, ask if we should attach it to this style.

@@ -1,7 +1,7 @@
 local _, SUI
-spartan = _G["SUI"]
-local L = spartan.L;
-local Artwork_Core = spartan:NewModule("Artwork_Core");
+SUI = _G["SUI"]
+local L = SUI.L;
+local Artwork_Core = SUI:NewModule("Artwork_Core");
 local Bartender4Version, BartenderMin = "","4.7.1"
 if select(4, GetAddOnInfo("Bartender4")) then Bartender4Version = GetAddOnMetadata("Bartender4", "Version") end
 
@@ -249,17 +249,17 @@ print(DBMod.Artwork.SetupDone)
 			DBMod.PartyFrames.Style = DBMod.Artwork.Style;
 			DBMod.RaidFrames.Style = DBMod.Artwork.Style;
 			DBMod.Artwork.FirstLoad = true;
-			spartan.DBG.BartenderChangesActive = true
+			SUI.DBG.BartenderChangesActive = true
 			Artwork_Core:SetupProfile();
 			
 			--Reset Moved bars
-			spartan.DBG.BartenderChangesActive = true
+			SUI.DBG.BartenderChangesActive = true
 			if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
 			local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 			for k,v in ipairs(FrameList) do
 				DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 			end;
-			spartan.DBG.BartenderChangesActive = false
+			SUI.DBG.BartenderChangesActive = false
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
 		end,
@@ -273,7 +273,7 @@ print(DBMod.Artwork.SetupDone)
 			SUI_Win.Artwork = nil
 		end
 	}
-	local SetupWindow = spartan:GetModule("SetupWindow")
+	local SetupWindow = SUI:GetModule("SetupWindow")
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
 end
@@ -293,7 +293,7 @@ function Artwork_Core:OnEnable()
 	for k,v in ipairs(FrameList) do	
 		if v then
 			v.SavePosition = function()
-				if (not DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent") and not spartan.DBG.BartenderChangesActive then
+				if (not DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent") and not SUI.DBG.BartenderChangesActive then
 					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = true
 					LibStub("LibWindow-1.1").windowData[v].storage.parent = UIParent
 					v:SetParent(UIParent)
@@ -308,30 +308,30 @@ end
 function Artwork_Core:CheckMiniMap()
 	-- Check for Carbonite dinking with the minimap.
 	if (NXTITLELOW) then
-		spartan:Print(NXTITLELOW..' is loaded ...Checking settings ...');
+		SUI:Print(NXTITLELOW..' is loaded ...Checking settings ...');
 		if (Nx.db.profile.MiniMap.Own == true) then
-			spartan:Print(NXTITLELOW..' is controlling the Minimap');
-			spartan:Print("SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap");
+			SUI:Print(NXTITLELOW..' is controlling the Minimap');
+			SUI:Print("SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap");
 			DB.MiniMap.AutoDetectAllowUse = false;
 		end
 	end
 	
 	if select(4, GetAddOnInfo("SexyMap")) then
-		spartan:Print(L["SexyMapLoaded"])
+		SUI:Print(L["SexyMapLoaded"])
 		DB.MiniMap.AutoDetectAllowUse = false;
 	end
 	
 	local point, relativeTo, relativePoint, x, y = MinimapCluster:GetPoint();
 	if (relativeTo ~= UIParent) then
-		spartan:Print('A unknown addon is controlling the Minimap');
-		spartan:Print("SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.");
+		SUI:Print('A unknown addon is controlling the Minimap');
+		SUI:Print("SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.");
 		DB.MiniMap.AutoDetectAllowUse = false;
 	end
 end
 
 -- Bartender4 Items
 function Artwork_Core:SetupProfile(ProfileOverride)
-	spartan.DBG.BartenderChangesActive = true
+	SUI.DBG.BartenderChangesActive = true
 	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
 	if ProfileOverride then ProfileName = ProfileOverride end
 	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
@@ -350,7 +350,7 @@ function Artwork_Core:SetupProfile(ProfileOverride)
 			v.db.profile = Artwork_Core:MergeData(v.db.profile,BartenderSettings[k])
 		end
 	end
-	spartan.DBG.BartenderChangesActive = false
+	SUI.DBG.BartenderChangesActive = false
 end;
 
 function Artwork_Core:BartenderProfileCheck(Input,Report)
@@ -377,7 +377,7 @@ function Artwork_Core:MergeData(target,source)
 end
 
 function Artwork_Core:CreateProfile()
-	spartan.DBG.BartenderChangesActive = true
+	SUI.DBG.BartenderChangesActive = true
 	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
 	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
 	--If this is set then we have already setup the bars once, and the user changed them
@@ -397,5 +397,5 @@ function Artwork_Core:CreateProfile()
 	end
 	
 	Bartender4:UpdateModuleConfigs();
-	spartan.DBG.BartenderChangesActive = false
+	SUI.DBG.BartenderChangesActive = false
 end

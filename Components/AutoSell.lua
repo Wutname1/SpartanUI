@@ -30,10 +30,10 @@ function module:OnInitialize()
 		Purple = false,
 		GearTokens = false
 	}
-	if not DB.AutoSell then
-		DB.AutoSell = Defaults
+	if not SUI.DB.AutoSell then
+		SUI.DB.AutoSell = Defaults
 	else
-		DB.AutoSell = spartan:MergeData(DB.AutoSell, Defaults, false)
+		SUI.DB.AutoSell = spartan:MergeData(SUI.DB.AutoSell, Defaults, false)
 	end
 end
 
@@ -109,21 +109,21 @@ function module:FirstTime()
 			SUI_AutoSell_SellGray:SetChecked(true)
 		end,
 		Next = function()
-			DB.AutoSell.FirstLaunch = false
+			SUI.DB.AutoSell.FirstLaunch = false
 			
 			DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
-			DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
-			DB.AutoSell.White = (SUI_Win.AutoSell.SellWhite:GetChecked() == true or false)
-			DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
-			DB.AutoSell.Blue = (SUI_Win.AutoSell.SellBlue:GetChecked() == true or false)
-			DB.AutoSell.Purple = (SUI_Win.AutoSell.SellPurple:GetChecked() == true or false)
-			DB.AutoSell.MaxILVL = SUI_Win.AutoSell.iLVL:GetValue()
+			SUI.DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
+			SUI.DB.AutoSell.White = (SUI_Win.AutoSell.SellWhite:GetChecked() == true or false)
+			SUI.DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
+			SUI.DB.AutoSell.Blue = (SUI_Win.AutoSell.SellBlue:GetChecked() == true or false)
+			SUI.DB.AutoSell.Purple = (SUI_Win.AutoSell.SellPurple:GetChecked() == true or false)
+			SUI.DB.AutoSell.MaxILVL = SUI_Win.AutoSell.iLVL:GetValue()
 			
 			SUI_Win.AutoSell:Hide()
 			SUI_Win.AutoSell = nil
 		end,
 		Skip = function()
-			DB.AutoSell.FirstLaunch = true
+			SUI.DB.AutoSell.FirstLaunch = true
 		end
 	}
 	local SetupWindow = spartan:GetModule("SetupWindow")
@@ -189,37 +189,37 @@ function module:IsSellable(item, ilink)
 	local NotConsumable = true
 	local IsGearToken = false
 	
-	if quality == 0 and  DB.AutoSell.Gray then qualitysellable = true end
-	if quality == 1 and  DB.AutoSell.White then qualitysellable = true end
-	if quality == 2 and  DB.AutoSell.Green then qualitysellable = true end
-	if quality == 3 and  DB.AutoSell.Blue then qualitysellable = true end
-	if quality == 4 and  DB.AutoSell.Purple then qualitysellable = true end
+	if quality == 0 and  SUI.DB.AutoSell.Gray then qualitysellable = true end
+	if quality == 1 and  SUI.DB.AutoSell.White then qualitysellable = true end
+	if quality == 2 and  SUI.DB.AutoSell.Green then qualitysellable = true end
+	if quality == 3 and  SUI.DB.AutoSell.Blue then qualitysellable = true end
+	if quality == 4 and  SUI.DB.AutoSell.Purple then qualitysellable = true end
 	
-	if (not iLevel) or (iLevel <= DB.AutoSell.MaxILVL) then ilvlsellable = true end
+	if (not iLevel) or (iLevel <= SUI.DB.AutoSell.MaxILVL) then ilvlsellable = true end
 	--Crafting Items
 	if ((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods" or itemType == "Tradeskill")
 	or (itemType == "Miscellaneous" and itemSubType == "Reagent"))
 	or (itemType == "Item Enhancement")
 	or isCraftingReagent
 	then
-		if not DB.AutoSell.NotCrafting then Craftablesellable = true end
+		if not SUI.DB.AutoSell.NotCrafting then Craftablesellable = true end
 	else
 		Craftablesellable = true
 	end
 	
 	--Gearset detection
-	if (inSet[item] or itemSetID) and DB.AutoSell.NotInGearset then
+	if (inSet[item] or itemSetID) and SUI.DB.AutoSell.NotInGearset then
 		NotInGearset = false
 	end
 	
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if DB.AutoSell.NotConsumables and itemType == "Consumable" then 
+	if SUI.DB.AutoSell.NotConsumables and itemType == "Consumable" then 
 		NotConsumable = false
 	end
 	
 	-- Gear Tokens
-	if quality == 4 and itemType == "Miscellaneous" and itemSubType == "Junk" and equipSlot == "" and not DB.AutoSell.GearTokens then
+	if quality == 4 and itemType == "Miscellaneous" and itemSubType == "Junk" and equipSlot == "" and not SUI.DB.AutoSell.GearTokens then
 		IsGearToken = true
 	end
 	
@@ -237,9 +237,9 @@ function module:IsSellable(item, ilink)
 	and not spartan:isInTable(ExcludedItems, item)
 	and itemType ~= "Quest"
 	and itemType ~= "Container"
-	or (quality == 0 and  DB.AutoSell.Gray) --Legion identified some junk as consumable
+	or (quality == 0 and  SUI.DB.AutoSell.Gray) --Legion identified some junk as consumable
 	then
-		if DB.AutoSell.debug then
+		if SUI.DB.AutoSell.debug then
 			spartan:Print("--Selling--")
 			spartan:Print(name)
 			spartan:Print(ilink)
@@ -297,7 +297,7 @@ function module:SellTrash()
 end
 
 function module:OnEnable()
-	if DB.AutoSell.FirstLaunch then module:FirstTime() end
+	if SUI.DB.AutoSell.FirstLaunch then module:FirstTime() end
 	module:BuildOptions()
 	if DB.EnabledComponents.AutoSell then
 		module:Enable()
@@ -334,48 +334,48 @@ function module:BuildOptions()
 	spartan.opt.args["ModSetting"].args["AutoSell"] = {type="group",name="Auto Sell",
 		args = {
 			NotCrafting = {name="Don't Sell crafting items",type="toggle",order=1,width = "full",
-					get = function(info) return DB.AutoSell.NotCrafting end,
-					set = function(info,val) DB.AutoSell.NotCrafting = val end
+					get = function(info) return SUI.DB.AutoSell.NotCrafting end,
+					set = function(info,val) SUI.DB.AutoSell.NotCrafting = val end
 			},
 			NotConsumables = {name="Don't Sell Consumables",type="toggle",order=2,width = "full",
-					get = function(info) return DB.AutoSell.NotConsumables end,
-					set = function(info,val) DB.AutoSell.NotConsumables = val end
+					get = function(info) return SUI.DB.AutoSell.NotConsumables end,
+					set = function(info,val) SUI.DB.AutoSell.NotConsumables = val end
 			},
 			NotInGearset = {name="Don't Sell items in a equipment set",type="toggle",order=3,width = "full",
-					get = function(info) return DB.AutoSell.NotInGearset end,
-					set = function(info,val) DB.AutoSell.NotInGearset = val end
+					get = function(info) return SUI.DB.AutoSell.NotInGearset end,
+					set = function(info,val) SUI.DB.AutoSell.NotInGearset = val end
 			},
 			GearTokens = {name="Sell tier tokens",type="toggle",order=4,width = "full",
-					get = function(info) return DB.AutoSell.GearTokens end,
-					set = function(info,val) DB.AutoSell.GearTokens = val end
+					get = function(info) return SUI.DB.AutoSell.GearTokens end,
+					set = function(info,val) SUI.DB.AutoSell.GearTokens = val end
 			},
 			MaxILVL ={name = "Maximum iLVL to sell",type = "range",order = 10,width = "full",min = 1,max = 1100,step=1,
-				set = function(info,val) DB.AutoSell.MaxILVL = val; end,
-				get = function(info) return DB.AutoSell.MaxILVL; end
+				set = function(info,val) SUI.DB.AutoSell.MaxILVL = val; end,
+				get = function(info) return SUI.DB.AutoSell.MaxILVL; end
 			},
 			Gray = {name="Sell Gray",type="toggle",order=20,width="double",
-					get = function(info) return DB.AutoSell.Gray end,
-					set = function(info,val) DB.AutoSell.Gray = val end
+					get = function(info) return SUI.DB.AutoSell.Gray end,
+					set = function(info,val) SUI.DB.AutoSell.Gray = val end
 			},
 			White = {name="Sell White",type="toggle",order=21,width="double",
-					get = function(info) return DB.AutoSell.White end,
-					set = function(info,val) DB.AutoSell.White = val end
+					get = function(info) return SUI.DB.AutoSell.White end,
+					set = function(info,val) SUI.DB.AutoSell.White = val end
 			},
 			Green = {name="Sell Green",type="toggle",order=22,width="double",
-					get = function(info) return DB.AutoSell.Green end,
-					set = function(info,val) DB.AutoSell.Green = val end
+					get = function(info) return SUI.DB.AutoSell.Green end,
+					set = function(info,val) SUI.DB.AutoSell.Green = val end
 			},
 			Blue = {name="Sell Blue",type="toggle",order=23,width="double",
-					get = function(info) return DB.AutoSell.Blue end,
-					set = function(info,val) DB.AutoSell.Blue = val end
+					get = function(info) return SUI.DB.AutoSell.Blue end,
+					set = function(info,val) SUI.DB.AutoSell.Blue = val end
 			},
 			Purple = {name="Sell Purple",type="toggle",order=24,width="double",
-					get = function(info) return DB.AutoSell.Purple end,
-					set = function(info,val) DB.AutoSell.Purple = val end
+					get = function(info) return SUI.DB.AutoSell.Purple end,
+					set = function(info,val) SUI.DB.AutoSell.Purple = val end
 			},
 			debug = {name="Enable debug messages",type="toggle",order=600,width="full",
-					get = function(info) return DB.AutoSell.debug end,
-					set = function(info,val) DB.AutoSell.debug = val end
+					get = function(info) return SUI.DB.AutoSell.debug end,
+					set = function(info,val) SUI.DB.AutoSell.debug = val end
 			}
 		}
 	}
