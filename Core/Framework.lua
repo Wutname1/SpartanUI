@@ -10,11 +10,11 @@ SUI.L = L
 local _G = _G
 local type, pairs, hooksecurefunc = type, pairs, hooksecurefunc
 
-SUI.SpartanVer = GetAddOnMetadata("SpartanUI", "Version")
-SUI.CurseVersion = GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version")
+SUI.Version = GetAddOnMetadata("SpartanUI", "Version")
+SUI.BuildNum = GetAddOnMetadata("SpartanUI", "Build")
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = "SpartanUI ".. SUI.SpartanVer, type = "group", childGroups = "tree", args = {
+	name = "SpartanUI ".. SUI.Version, type = "group", childGroups = "tree", args = {
 		General = {name = L["General"], type = "group",order = 0, args = {}};
 		Artwork = {name = L["Artwork"], type = "group", args = {}};
 		PlayerFrames = {name = L["PlayerFrames"], type = "group", args = {}};
@@ -34,7 +34,7 @@ local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",s
 
 local DBdefault = {
 	SUIProper = {
-		Version = SUI.SpartanVer,
+		Version = SUI.Version,
 		SetupDone = false,
 		HVer = "",
 		yoffset = 0,
@@ -372,7 +372,7 @@ local DBdefault = {
 	}
 }
 local DBdefaults = {char = DBdefault,profile = DBdefault}
--- local SUI.DBGs = {Version = SUI.SpartanVer}
+-- local SUI.DBGs = {Version = SUI.Version}
 
 function SUI:ResetConfig()
 	SUI.DB:ResetProfile(false,true);

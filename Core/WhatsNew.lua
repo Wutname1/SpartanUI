@@ -118,8 +118,8 @@ function module:OnInitialize()
 	end
 	
 	-- Update DB Version
-	DB.Version = spartan.SpartanVer;
-	SUI.DBG.Version = spartan.SpartanVer;
+	DB.Version = SUI.Version;
+	SUI.DBG.Version = SUI.Version;
 end
 
 function module:FirstAtrifactNotice()

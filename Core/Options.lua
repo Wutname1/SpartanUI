@@ -37,7 +37,7 @@ function module:OnInitialize()
 	local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_FilmEffects")
 	ModsLoaded.FilmEffects = enabled
 	
-	if (spartan.SpartanVer ~= SUI.DBG.CurseVersion) and (spartan.CurseVersion) then
+	if (SUI.Version ~= SUI.DBG.CurseVersion) and (spartan.CurseVersion) then
 		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
 	end
 
@@ -435,7 +435,7 @@ function module:OnInitialize()
 			}
 		}
 	}
-	spartan.opt.args["General"].args["Help"] = {name = "Help", type = "group", order = 900,
+	spartan.opt.args["Help"] = {name = "Help", type = "group", order = 900,
 		args = {
 			ResetProfileDB			= {name = L["Reset profile"], type = "execute", order=0, func = function() SUI.DB:ResetProfile(); ReloadUI(); end},
 			ResetDB			= {name = L["ResetDatabase"], type = "execute", order=1, func = function() SUI.DB:ResetDB(); ReloadUI(); end},
@@ -451,8 +451,8 @@ function module:OnInitialize()
 			end},
 			
 			line1 = {name="",type="header",order = 49},
-			ver1 = {name="SUI Version: " .. spartan.SpartanVer,type="description",order = 50,fontSize="large"},
-			ver2 = {name="SUI Build: " .. spartan.CurseVersion,type="description",order = 51,fontSize="large"},
+			ver1 = {name="SUI Version: " .. SUI.Version,type="description",order = 50,fontSize="large"},
+			ver2 = {name="SUI Build: " .. SUI.BuildNum,type="description",order = 51,fontSize="large"},
 			
 			line2 = {name="",type="header",order = 99},
 			navigationissues = {name=L["HaveQuestion"],type="description",order = 100,fontSize="large"},
@@ -625,7 +625,7 @@ function module:ExportData()
 		end
 	end
 	
-	return "$SUI." .. spartan.SpartanVer .. "-" .. spartan.CurseVersion
+	return "$SUI." .. SUI.Version .. "-" .. spartan.CurseVersion
 		.. "$C." .. module:FlatenTable(CharData)
 		.. "$Artwork.Style." .. DBMod.Artwork.Style
 		.. "$PlayerFrames.Style." .. DBMod.PlayerFrames.Style

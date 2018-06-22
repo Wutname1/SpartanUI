@@ -91,20 +91,20 @@ end
 
 function Artwork_Core:OnInitialize()
 	StaticPopupDialogs["BartenderVerWarning"] = {
-		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
+		text = '|cff33ff99SpartanUI v'..SUI.Version..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.BartenderVerWarning = spartan.SpartanVer;
+			DBGlobal.BartenderVerWarning = SUI.Version;
 		end,
 		timeout = 0,
 		whileDead = true,
 		hideOnEscape = false
 	}
 	StaticPopupDialogs["BartenderInstallWarning"] = {
-		text = '|cff33ff99SpartanUI v'..spartan.SpartanVer..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
+		text = '|cff33ff99SpartanUI v'..SUI.Version..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.BartenderInstallWarning = spartan.SpartanVer
+			DBGlobal.BartenderInstallWarning = SUI.Version
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -280,10 +280,10 @@ end
 
 function Artwork_Core:OnEnable()
 	-- No Bartender/out of date Notification
-	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= spartan.SpartanVer)) then
-		if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
+	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= SUI.Version)) then
+		if SUI.Version ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
 	elseif Bartender4Version < BartenderMin then
-			if spartan.SpartanVer ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
+			if SUI.Version ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
 	end
 	
 	Artwork_Core:SetupOptions();
