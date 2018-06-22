@@ -393,6 +393,7 @@ local CreatePlayerFrame = function(self,unit)
 		
 		self.SUI_RaidGroup = ring:CreateTexture(nil,"BORDER");
 		self.SUI_RaidGroup:SetSize(32, 32);
+		self.SUI_RaidGroup:SetPoint("CENTER",ring,"TOPRIGHT",-6,-6);
 		self.SUI_RaidGroup:SetTexture(circle);
 		
 		self.SUI_RaidGroup.Text = ring:CreateFontString(nil,"BORDER","SUI_FontOutline11");
@@ -453,74 +454,6 @@ local CreatePlayerFrame = function(self,unit)
 
 		-- Register with oUF
 		self.ClassPower = ClassPower
-		
-		-- local ClassIcons = {}
-		-- for i = 1, 6 do
-			-- local Icon = self:CreateTexture(nil, "OVERLAY")
-			-- Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
-			
-			-- if (i == 1) then
-				-- Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
-			-- else 
-				-- Icon:SetPoint("LEFT",ClassIcons[i-1],"RIGHT",-2,0);
-			-- end
-			
-			-- ClassIcons[i] = Icon
-		-- end
-		-- self.ClassPower = ClassIcons
-		
-		-- local ClassPowerID = nil;
-		-- ring:SetScript("OnEvent",function(a,b)
-			-- if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
-			-- local cur, max
-			-- if(unit == 'vehicle') then
-				-- cur = GetComboPoints('vehicle', 'target')
-				-- max = MAX_COMBO_POINTS
-			-- else
-				-- cur = UnitPower('player', ClassPowerID)
-				-- max = UnitPowerMax('player', ClassPowerID)
-			-- end
-			-- self.ComboPoints:SetText((cur > 0 and cur) or "");
-		-- end);
-		
-		-- ring:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', function()
-			-- ClassPowerID = nil;
-			-- if(classFileName == 'MONK') then
-				-- ClassPowerID = SPELL_POWER_CHI
-			-- elseif(classFileName == 'PALADIN') then
-				-- ClassPowerID = SPELL_POWER_HOLY_POWER
-			-- elseif(classFileName == 'WARLOCK') then
-				-- ClassPowerID = SPELL_POWER_SOUL_SHARDS
-			-- elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
-				-- ClassPowerID = SPELL_POWER_COMBO_POINTS
-			-- elseif(classFileName == 'MAGE') then
-				-- ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-			-- end
-			-- if ClassPowerID ~= nil then 
-				-- ring:RegisterEvent('UNIT_DISPLAYPOWER')
-				-- ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-				-- ring:RegisterEvent('UNIT_POWER_FREQUENT')
-				-- ring:RegisterEvent('UNIT_MAXPOWER')
-			-- end
-		-- end)
-		
-		-- if(classFileName == 'MONK') then
-			-- ClassPowerID = SPELL_POWER_CHI
-		-- elseif(classFileName == 'PALADIN') then
-			-- ClassPowerID = SPELL_POWER_HOLY_POWER
-		-- elseif(classFileName == 'WARLOCK') then
-			-- ClassPowerID = SPELL_POWER_SOUL_SHARDS
-		-- elseif(classFileName == 'ROGUE' or classFileName == 'DRUID') then
-			-- ClassPowerID = SPELL_POWER_COMBO_POINTS
-		-- elseif(classFileName == 'MAGE') then
-			-- ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-		-- end
-		-- if ClassPowerID ~= nil then 
-			-- ring:RegisterEvent('UNIT_DISPLAYPOWER')
-			-- ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-			-- ring:RegisterEvent('UNIT_POWER_FREQUENT')
-			-- ring:RegisterEvent('UNIT_MAXPOWER')
-		-- end
 	end
 	do -- setup buffs and debuffs
 		if DB.Styles.Classic.Frames[unit] and PlayerFrames then

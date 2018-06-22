@@ -17,6 +17,7 @@ function module:OnInitialize()
 				Status = "Disabled",
 				Combat = false,
 				OverrideLoc=false,
+				offset = 0,
 				Anchor = {Moved = false,AnchorPos = {}}
 				}
 		end
@@ -83,7 +84,7 @@ local BuffPosUpdate = function()
 	end
 	
 	if setdefault then
-		BuffFrame:SetPoint("TOPRIGHT",-13,-13-(SUI.DB.Buffsettings.offset));
+		BuffFrame:SetPoint("TOPRIGHT",-13,-13-(SUI.DB.BuffSettings.offset));
 	end
 end
 

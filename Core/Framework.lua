@@ -542,10 +542,10 @@ function SUI:BT4ProfileAttach(msg)
 		end,
 		Next = function()
 			SUI.DBG.Bartender4[SUI.DB.BT4Profile] = {
-				Style = DBMod.Artwork.Style
+				Style = SUI.DBMod.Artwork.Style
 			}
 			-- Catch if Movedbars is not initalized
-			if DB.Styles[DBMod.Artwork.Style].MovedBars then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 			--Setup profile
 			SUI:GetModule("Artwork_Core"):SetupProfile(Bartender4.db:GetCurrentProfile())
 			ReloadUI()
@@ -559,9 +559,9 @@ function SUI:BT4ProfileAttach(msg)
 end
 
 function SUI:BT4RefreshConfig()
-	if SUI.DBG.BartenderChangesActive or DBMod.Artwork.FirstLoad then return end
-	-- if DB.Styles[DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
-	DB.Styles[DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
+	if SUI.DBG.BartenderChangesActive or SUI.DBMod.Artwork.FirstLoad then return end
+	-- if DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
+	DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
 	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
 	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
@@ -570,7 +570,7 @@ function SUI:BT4RefreshConfig()
 		-- We know this profile.
 		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style == SUI.DBMod.Artwork.Style then
 			-- Catch if Movedbars is not initalized
-			if DB.Styles[DBMod.Artwork.Style].MovedBars then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+			if DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 			--Profile is for this style, prompt to ReloadUI; usually un needed can uncomment if needed latter
 			-- SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
 		else
@@ -586,16 +586,16 @@ function SUI:BT4RefreshConfig()
 end
 
 function SUI:UpdateModuleConfigs()
-	SUI.DB:RegisterDefaults(DBdefaults)
+	SUI.SpartanUIDB:RegisterDefaults(DBdefaults)
 	
-	DB = SUI.DB.profile.SUIProper
-	DBMod = SUI.DB.profile.Modules
+	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
+	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 	
 	if Bartender4 then
-		if DB.Styles[DBMod.Artwork.Style].BT4Profile then
-			Bartender4.db:SetProfile(DB.Styles[DBMod.Artwork.Style].BT4Profile);
+		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
+			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile);
 		else
-			Bartender4.db:SetProfile(DB.BT4Profile);
+			Bartender4.db:SetProfile(SUI.DB.BT4Profile);
 		end
 	end
 	

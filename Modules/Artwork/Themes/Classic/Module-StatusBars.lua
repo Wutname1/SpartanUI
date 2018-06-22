@@ -102,7 +102,7 @@ local updateText = function(self, side)
 	--Reset Text
 	_G[FrameName.."Text"]:SetText("")
 	
-	if (SUI.DB..StatusBars.left == "xp" and side == "left") or (SUI.DB..StatusBars.right == "xp" and side == "right") then
+	if (SUI.DB.StatusBars.left == "xp" and side == "left") or (SUI.DB.StatusBars.right == "xp" and side == "right") then
 		local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 		if now ~= 0 then
 			_G[FrameName.."Fill"]:SetWidth((now/goal)*self:GetWidth());
@@ -117,7 +117,7 @@ local updateText = function(self, side)
 			_G[FrameName.."Text"]:SetText("")
 		end
 		SetXPColors(self);
-	elseif (SUI.DB..StatusBars.left == "rep" and side == "left") or (SUI.DB..StatusBars.right == "rep" and side == "right") then
+	elseif (SUI.DB.StatusBars.left == "rep" and side == "left") or (SUI.DB.StatusBars.right == "rep" and side == "right") then
 		local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 		if name then ratio = (current-low)/(high-low); end
 		if ratio == 0 then
@@ -131,7 +131,7 @@ local updateText = function(self, side)
 			_G[FrameName.."Text"]:SetText("")
 		end
 		SetRepColors(self);
-	elseif (SUI.DB..StatusBars.left == "ap" and side == "left") or (SUI.DB..StatusBars.right == "ap" and side == "right") then
+	elseif (SUI.DB.StatusBars.left == "ap" and side == "left") or (SUI.DB.StatusBars.right == "ap" and side == "right") then
 		_G[FrameName.."Text"]:SetText("")
 		if HasArtifactEquipped() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
@@ -153,7 +153,7 @@ local updateText = function(self, side)
 			end
 			_G[FrameName.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
 		end
-	-- elseif (SUI.DB..StatusBars.left == "honor" and side == "left") or (SUI.DB..StatusBars.right == "honor" and side == "right") then
+	-- elseif (SUI.DB.StatusBars.left == "honor" and side == "left") or (SUI.DB.StatusBars.right == "honor" and side == "right") then
 		-- if SUI.DB.StatusBars.HonorBar.text then
 			-- local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
 			-- local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);

@@ -55,18 +55,18 @@ function module:EnableActionBars()
 			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
 				-- Debug
 --				print(self.TimeSinceLastUpdate)
-				if (SUI.DB..ActionBars.bar1) then
+				if (SUI.DB.ActionBars.bar1) then
 					for b = 1,6 do -- for each backdrop
 						if SUI.DB.ActionBars["bar"..b].enable then -- backdrop enabled
 							_G["SUI_Bar"..b]:Show(); -- apply alpha
-							-- _G["SUI_Bar"..b]:SetAlpha(SUI.DB..ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
+							-- _G["SUI_Bar"..b]:SetAlpha(SUI.DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
 						else -- backdrop disabled
 							_G["SUI_Bar"..b]:Hide();
 						end
 					end
 					for p = 1,2 do -- for each popup
-						if (SUI.DB..ActionBars["popup"..p].enable) then -- popup enabled
-							_G["SUI_Popup"..p]:SetAlpha(SUI.DB..ActionBars["popup"..p].alpha/100 or 1); -- apply alpha
+						if (SUI.DB.ActionBars["popup"..p].enable) then -- popup enabled
+							_G["SUI_Popup"..p]:SetAlpha(SUI.DB.ActionBars["popup"..p].alpha/100 or 1); -- apply alpha
 							if SUI.DB.ActionBars["popup"..p].anim == true then --- animation enabled
 								_G["SUI_Popup"..p.."MaskBG"]:Show()
 							else -- animation disabled
