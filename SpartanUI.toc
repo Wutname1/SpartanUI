@@ -29,16 +29,7 @@ libs\AceTimer-3.0\AceTimer-3.0.xml
 libs\oUF\oUF.xml
 libs\oUF_Plugins\LoadAll.xml
 
-lang\enUS.lua
-lang\esES.lua
-lang\esMX.lua
-lang\frFR.lua
-lang\itIT.lua
-lang\ruRU.lua
-lang\deDE.lua
-lang\koKR.lua
-lang\zhCN.lua
-lang\zhTW.lua
+lang\localization.xml
 
 core\Framework.lua
 components\LoadAll.xml
