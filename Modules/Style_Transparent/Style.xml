@@ -51,11 +51,11 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<FontString name="$parentHeader" inherits="Transparent_FontOutline12">
+				<FontString name="$parentHeader" inherits="SUI_FontOutline12">
 					<Size><AbsDimension x="390" y="16" /></Size>
 					<Anchors><Anchor point="TOP"/></Anchors>
 				</FontString>
-				<FontString name="$parentText" inherits="Transparent_FontOutline10">
+				<FontString name="$parentText" inherits="SUI_FontOutline10">
 					<Size><AbsDimension x="378" y="46" /></Size>
 					<Anchors><Anchor point="TOP" relativeTo="$parentHeader" relativePoint="BOTTOM">
 						<Offset><AbsDimension x="0" y="-2"/></Offset>

@@ -234,7 +234,6 @@ local CreatePlayerFrame = function(self,unit)
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
 		artwork.bg:SetPoint("CENTER");
 		artwork.bg:SetTexture(base_plate1);
-		if unit == "target" then artwork.bg:SetTexCoord(1,0,0,1); end
 		self.artwork = artwork
 		
 		self.Portrait = CreatePortrait(self);
