@@ -1,8 +1,7 @@
-local _, SUI
-spartan = _G["SUI"]
-local L = spartan.L;
-local Artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:GetModule("Style_Classic");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local Artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:GetModule("Style_Classic");
 ---------------------------------------------------------------------------
 local PetBattleActive = false
 local petbattleWatcher = CreateFrame("Frame")

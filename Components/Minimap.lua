@@ -19,11 +19,11 @@ local IsMouseDown = false
 local IsMouseOver = function()
 	local MouseFocus = GetMouseFocus()
 	if MouseFocus and not MouseFocus:IsForbidden() and ((MouseFocus:GetName() == "Minimap") or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find("Mini[Mm]ap"))) then		
-		DB.MiniMap.MouseIsOver = true
+		SUI.DB.MiniMap.MouseIsOver = true
 	else
-		DB.MiniMap.MouseIsOver = false
+		SUI.DB.MiniMap.MouseIsOver = false
 	end
-	return DB.MiniMap.MouseIsOver
+	return SUI.DB.MiniMap.MouseIsOver
 end
 
 local IgnoreCheck = function(item)
@@ -57,7 +57,7 @@ local PerformFullBtnUpdate = function()
 end
 
 local OnEnter = function()
-	if DB.MiniMap.MouseIsOver then return end
+	if SUI.DB.MiniMap.MouseIsOver then return end
 	--don't use PerformFullBtnUpdate as we want to perform the actions in reverse. since any new unknown icons will already be shown.
 	if LastUpdateStatus ~= IsMouseOver() then module:updateButtons(); end --update visibility
 	MiniMapBtnScrape();
@@ -87,12 +87,12 @@ function module:OnInitialize()
 		button1 = "Yes",
 		button2 = "No",
 		OnAccept = function()
-			DB.MiniMap.ManualAllowPrompt = DB.Version
-			DB.MiniMap.ManualAllowUse = true
+			SUI.DB.MiniMap.ManualAllowPrompt = DB.Version
+			SUI.DB.MiniMap.ManualAllowUse = true
 			ReloadUI();
 		end,
 		OnCancel = function()
-			DB.MiniMap.ManualAllowPrompt = DB.Version
+			SUI.DB.MiniMap.ManualAllowPrompt = DB.Version
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -102,7 +102,7 @@ end
 
 function module:OnEnable()
 	-- MiniMap Modification
-	if (((not DB.MiniMap.AutoDetectAllowUse) and (not DB.MiniMap.ManualAllowUse)) and DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
+	if (((not SUI.DB.MiniMap.AutoDetectAllowUse) and (not SUI.DB.MiniMap.ManualAllowUse)) and SUI.DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
 		StaticPopup_Show("MiniMapNotice")
 	end
 	if not DB.EnabledComponents.Minimap then return end
@@ -125,7 +125,7 @@ function module:OnEnable()
 				if spartan:GetModule("Artwork_Core", true) then
 					DB.Styles[DBMod.Artwork.Style].Movable.MinimapMoved = true
 				else
-					DB.MiniMap.Moved = true
+					SUI.DB.MiniMap.Moved = true
 				end
 				Minimap:SetMovable(true);
 				Minimap:StartMoving();
@@ -138,7 +138,7 @@ function module:OnEnable()
 			if spartan:GetModule("Artwork_Core", true) then
 				DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(Minimap:GetNumPoints())}
 			else
-				DB.MiniMap.Position = {Minimap:GetPoint(Minimap:GetNumPoints())}
+				SUI.DB.MiniMap.Position = {Minimap:GetPoint(Minimap:GetNumPoints())}
 			end
 		end);
 
@@ -146,9 +146,9 @@ function module:OnEnable()
 			local a,b,c,d,e = unpack(DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords) -- do this as the parent can get corrupted
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint(a,UIParent,c,d,e)
-		elseif DB.MiniMap.Position ~= nil then
+		elseif SUI.DB.MiniMap.Position ~= nil then
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint(unpack(DB.MiniMap.Position))
+			Minimap:SetPoint(unpack(SUI.DB.MiniMap.Position))
 		end
 	end
 	
@@ -221,7 +221,7 @@ function module:ModifyMinimapLayout()
 	else
 		
 	end
-	if not DB.MiniMap.northTag then
+	if not SUI.DB.MiniMap.northTag then
 		MinimapNorthTag:Hide()
 		-- MinimapNorthTag.oldShow = MinimapNorthTag.Show
 		-- MinimapNorthTag.Show = MinimapNorthTag.Hide
@@ -361,7 +361,7 @@ function module:SetupButton(btn, force)
 		
 		--Hook into the buttons show and hide events to catch for the button being enabled/disabled
 		btn:HookScript("OnHide",function(self,event,...)
-			if not DB.MiniMap.SUIMapChangesActive then
+			if not SUI.DB.MiniMap.SUIMapChangesActive then
 				table.insert(IgnoredFrames, self:GetName())
 			end
 		end);
@@ -376,7 +376,7 @@ function module:SetupButton(btn, force)
 end
 
 function module:updateButtons()
-	if (DB.MiniMap.MapZoomButtons) then
+	if (SUI.DB.MiniMap.MapZoomButtons) then
 		MinimapZoomIn:Hide();
 		MinimapZoomOut:Hide();
 	else
@@ -384,8 +384,8 @@ function module:updateButtons()
 		MinimapZoomOut:Show();
 	end
 	
-	DB.MiniMap.SUIMapChangesActive = true
-	if not IsMouseOver() and (DB.MiniMap.OtherStyle == "mouseover" or DB.MiniMap.OtherStyle == "hide")  then
+	SUI.DB.MiniMap.SUIMapChangesActive = true
+	if not IsMouseOver() and (SUI.DB.MiniMap.OtherStyle == "mouseover" or SUI.DB.MiniMap.OtherStyle == "hide")  then
 		--Fix for DBM making its icon even if its not needed
 		if DBM ~= nil and DBM.Options ~= nil then 
 			if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
@@ -421,7 +421,7 @@ function module:updateButtons()
 				spartan.Err("Minimap", buttonName .. " is not fading")
 			end
 		end
-	elseif DB.MiniMap.OtherStyle ~= "hide" then
+	elseif SUI.DB.MiniMap.OtherStyle ~= "hide" then
 		if CensusButton ~= nil and CensusButton:GetAlpha() == 0 then
 			CensusButton.FadeIn:Stop();
 			CensusButton.FadeOut:Stop();
@@ -445,9 +445,9 @@ function module:updateButtons()
 		end
 	end
 	LastUpdateStatus = IsMouseOver()
-	DB.MiniMap.SUIMapChangesActive = false
+	SUI.DB.MiniMap.SUIMapChangesActive = false
 
-	if DB.MiniMap.northTag then
+	if SUI.DB.MiniMap.northTag then
 		MinimapNorthTag:Show()
 	else
 		MinimapNorthTag:Hide()
@@ -458,16 +458,16 @@ function module:BuildOptions()
 	spartan.opt.args["ModSetting"].args["Minimap"] = {type="group",name=L["Minimap"],
 		args = {
 			NorthIndicator = {name = "Show North Indicator", type = "toggle",order=0.1,
-				get = function(info) return DB.MiniMap.northTag end,
+				get = function(info) return SUI.DB.MiniMap.northTag end,
 				set = function(info,val) 
 					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
-					DB.MiniMap.northTag = val;
+					SUI.DB.MiniMap.northTag = val;
 					if val then MinimapNorthTag:Show() else MinimapNorthTag:Hide() end
 				end,
 			},
 			minimapzoom = {name = L["MinMapHideZoom"], type="toggle",order=0.5,
-				get = function(info) return DB.MiniMap.MapZoomButtons; end,
-				set = function(info,val) DB.MiniMap.MapZoomButtons = val; module:updateButtons() end
+				get = function(info) return SUI.DB.MiniMap.MapZoomButtons; end,
+				set = function(info,val) SUI.DB.MiniMap.MapZoomButtons = val; module:updateButtons() end
 			},
 			OtherStyle = {
 				name="Button display mode",
@@ -480,12 +480,12 @@ function module:BuildOptions()
 					["mouseover"]	= "Show on Mouse over",
 					["show"]	= "Always Show",
 				},
-				get = function(info) return DB.MiniMap.OtherStyle; end,
-				set = function(info,val) DB.MiniMap.OtherStyle = val; module:updateButtons() end
+				get = function(info) return SUI.DB.MiniMap.OtherStyle; end,
+				set = function(info,val) SUI.DB.MiniMap.OtherStyle = val; module:updateButtons() end
 			}
 			-- minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
-				-- get = function(info) return DB.MiniMap.MapButtons; end,
-				-- set = function(info,val) DB.MiniMap.MapButtons = val;  end
+				-- get = function(info) return SUI.DB.MiniMap.MapButtons; end,
+				-- set = function(info,val) SUI.DB.MiniMap.MapButtons = val;  end
 			-- },
 			-- BlizzStyle = {
 				-- name="Blizzard Icons",
@@ -497,8 +497,8 @@ function module:BuildOptions()
 					-- ["mouseover"]	= "Show on Mouse over",
 					-- ["show"]	= "Always Show",
 				-- },
-				-- get = function(info) return DB.MiniMap.BlizzStyle; end,
-				-- set = function(info,val) DB.MiniMap.BlizzStyle = val; end
+				-- get = function(info) return SUI.DB.MiniMap.BlizzStyle; end,
+				-- set = function(info,val) SUI.DB.MiniMap.BlizzStyle = val; end
 			-- },
 		}
 	}

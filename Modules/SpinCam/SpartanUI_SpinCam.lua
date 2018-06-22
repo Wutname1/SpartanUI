@@ -1,28 +1,28 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local addon = spartan:NewModule("SpinCam");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local addon = SUI:NewModule("SpinCam");
 local SpinCamRunning = false
 local userCameraYawMoveSpeed
 local usercameraCustomViewSmoothing
 
 function addon:OnInitialize()
-	spartan.opt.args["ModSetting"].args["SpinCam"] = {
+	SUI.opt.args["ModSetting"].args["SpinCam"] = {
 		name = L["Spin cam"],
 		type = "group",
 		args = {
 			enable = {name=L["Enable Spin when AFK"],type="toggle",order=1,width="full",
-				get = function(info) return DBMod.SpinCam.enable end,
-				set = function(info,val) DBMod.SpinCam.enable = val end
+				get = function(info) return SUI.DBMod.SpinCam.enable end,
+				set = function(info,val) SUI.DBMod.SpinCam.enable = val end
 			},
 			speed = {name=L["Spin speed"],type="range",order=5,width="full",
 				min=1,max=230,step=1,
-				get = function(info) return DBMod.SpinCam.speed end,
-				set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.speed = val; end if SpinCamRunning then addon:SpinToggle("update") end end
+				get = function(info) return SUI.DBMod.SpinCam.speed end,
+				set = function(info,val) if SUI.DBMod.SpinCam.enable then SUI.DBMod.SpinCam.speed = val; end if SpinCamRunning then addon:SpinToggle("update") end end
 			},
-			-- spartan.opt.args["SpinCam"].args["range"] = {name="Spin range",type="range",order=6,width="full",
+			-- SUI.opt.args["SpinCam"].args["range"] = {name="Spin range",type="range",order=6,width="full",
 				-- min=15,max=24,step=.1,
-				-- get = function(info) return DBMod.SpinCam.range end,
-				-- set = function(info,val) if DBMod.SpinCam.enable then DBMod.SpinCam.range = val; end if SpinCamRunning then addon:SpinToggle("update") end end
+				-- get = function(info) return SUI.DBMod.SpinCam.range end,
+				-- set = function(info,val) if SUI.DBMod.SpinCam.enable then SUI.DBMod.SpinCam.range = val; end if SpinCamRunning then addon:SpinToggle("update") end end
 			-- }
 			spin = {name=L["Toggle spin"],type="execute",order=15,width="double",
 				desc = L["SpinToggleDesc"],
@@ -48,7 +48,7 @@ function addon:OnEnable()
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD");
 	frame:SetScript("OnEvent",function(self, event, ...)
 		if event == "CHAT_MSG_SYSTEM" then
-			if (... == format(MARKED_AFK_MESSAGE,DEFAULT_AFK_MESSAGE)) and (DBMod.SpinCam.enable) then
+			if (... == format(MARKED_AFK_MESSAGE,DEFAULT_AFK_MESSAGE)) and (SUI.DBMod.SpinCam.enable) then
 				addon:SpinToggle("start")
 			elseif (... == CLEARED_AFK) and (SpinCamRunning) then
 				addon:SpinToggle("stop")
@@ -56,7 +56,7 @@ function addon:OnEnable()
 		elseif event == "PLAYER_LEAVING_WORLD" or event == "PLAYER_ENTERING_WORLD" then
 			addon:SpinToggle("stop")
 		end
-		if DBMod.SpinCam.speed == GetCVar("cameraYawMoveSpeed") and not SpinCamRunning then
+		if SUI.DBMod.SpinCam.speed == GetCVar("cameraYawMoveSpeed") and not SpinCamRunning then
 			SetCVar("cameraYawMoveSpeed",userCameraYawMoveSpeed);
 			SetCVar("cameraCustomViewSmoothing",usercameraCustomViewSmoothing);
 		end
@@ -71,7 +71,7 @@ function addon:SpinToggle(action)
 		SetCVar("cameraCustomViewSmoothing",usercameraCustomViewSmoothing);
 		SpinCamRunning = false;
 	elseif action == "update" then
-		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
+		SetCVar("cameraYawMoveSpeed", SUI.DBMod.SpinCam.speed);
 	elseif not SpinCamRunning and action=="start" then
 		--Update settings
 		userCameraYawMoveSpeed = tonumber(GetCVar("cameraYawMoveSpeed"))
@@ -82,7 +82,7 @@ function addon:SpinToggle(action)
 		SetView(5); -- activate view 5 for spin cam
 		
 		--Start spin
-		SetCVar("cameraYawMoveSpeed", DBMod.SpinCam.speed);
+		SetCVar("cameraYawMoveSpeed", SUI.DBMod.SpinCam.speed);
 		MoveViewRightStart();
 		SpinCamRunning = true;
 	end

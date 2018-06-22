@@ -1,8 +1,7 @@
-local _, SUI
-spartan = _G["SUI"]
-local L = spartan.L;
-local Artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:NewModule("Style_Classic");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local Artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:NewModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = SUI_AnchorFrame, SpartanUI, CurScale;
 
@@ -15,11 +14,11 @@ function module:updateColor()
 end
 
 function module:updateSpartanViewport() -- handles viewport offset based on settings
-	if not InCombatLockdown() and DB.viewport and (SpartanUI_Base5:GetHeight() ~= 0) then
+	if not InCombatLockdown() and SUI.DB.viewport and (SpartanUI_Base5:GetHeight() ~= 0) then
 		WorldFrame:ClearAllPoints();
-		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", DBMod.Artwork.Viewport.offset.left, DBMod.Artwork.Viewport.offset.top);
+		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT",SUI.DBMod.Artwork.Viewport.offset.left,SUI.DBMod.Artwork.Viewport.offset.top);
 		if SpartanUI_Base5:IsVisible() then
-			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", DBMod.Artwork.Viewport.offset.right, (SpartanUI_Base5:GetHeight() * DB.scale/DBMod.Artwork.Viewport.offset.bottom));
+			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT",SUI.DBMod.Artwork.Viewport.offset.right, (SpartanUI_Base5:GetHeight() * SUI.DB.scale/DBMod.Artwork.Viewport.offset.bottom));
 		else
 			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
 		end
@@ -27,18 +26,18 @@ function module:updateSpartanViewport() -- handles viewport offset based on sett
 end;
 
 function module:updateSpartanScale() -- scales SpartanUI based on setting or screen size
-	if (not DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
+	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar("gxResolution"),"(%d+).-(%d+)");
-		if (tonumber(width) / tonumber(height) > 4/3) then DB.scale = 0.92;
-		else DB.scale = 0.78; end
+		if (tonumber(width) / tonumber(height) > 4/3) then SUI.DB.scale = 0.92;
+		else SUI.DB.scale = 0.78; end
 	end
-	if DB.scale ~= CurScale then
+	if SUI.DB.scale ~= CurScale then
 		--module:updateMinimumScale();
 		module:updateSpartanViewport();
-		if (DB.scale ~= round(SpartanUI:GetScale())) then
-			frame:SetScale(DB.scale);
+		if (SUI.DB.scale ~= round(SpartanUI:GetScale())) then
+			frame:SetScale(SUI.DB.scale);
 		end
-		if DB.scale <= .75 then
+		if SUI.DB.scale <= .75 then
 			SpartanUI_Base3:SetPoint("BOTTOMLEFT", SUI_AnchorFrame, "TOPLEFT");
 			SpartanUI_Base5:SetPoint("BOTTOMRIGHT", SUI_AnchorFrame, "TOPRIGHT");
 		else
@@ -47,27 +46,27 @@ function module:updateSpartanScale() -- scales SpartanUI based on setting or scr
 			SpartanUI_Base3:SetPoint("RIGHT", SpartanUI_Base2, "LEFT");
 			SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
 		end
-		CurScale = DB.scale
+		CurScale = SUI.DB.scale
 	end
 end;
 
 function module:updateSpartanAlpha() -- scales SpartanUI based on setting or screen size
-	if DB.alpha then
-		SpartanUI_Base1:SetAlpha(DB.alpha);
-		SpartanUI_Base2:SetAlpha(DB.alpha);
-		SpartanUI_Base3:SetAlpha(DB.alpha);
-		SpartanUI_Base4:SetAlpha(DB.alpha);
-		SpartanUI_Base5:SetAlpha(DB.alpha);
-		SUI_Popup1Mask:SetAlpha(DB.alpha);
-		SUI_Popup2Mask:SetAlpha(DB.alpha);
+	if SUI.DB.alpha then
+		SpartanUI_Base1:SetAlpha(SUI.DB.alpha);
+		SpartanUI_Base2:SetAlpha(SUI.DB.alpha);
+		SpartanUI_Base3:SetAlpha(SUI.DB.alpha);
+		SpartanUI_Base4:SetAlpha(SUI.DB.alpha);
+		SpartanUI_Base5:SetAlpha(SUI.DB.alpha);
+		SUI_Popup1Mask:SetAlpha(SUI.DB.alpha);
+		SUI_Popup2Mask:SetAlpha(SUI.DB.alpha);
 	end
 end;
 
 function module:updateSpartanOffset() -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar,ChocolateBar,titan,offset = 0,0,0;
 
-	if not DB.yoffsetAuto then
-		offset = max(DB.yoffset,1);
+	if not SUI.DB.yoffsetAuto then
+		offset = max(SUI.DB.yoffset,1);
 	else
 		for i = 1,4 do -- FuBar Offset
 			if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
@@ -96,12 +95,12 @@ function module:updateSpartanOffset() -- handles SpartanUI offset based on setti
 		offset = max(fubar + titan + ChocolateBar,1);
 	end
 	if (round(offset) ~= round(anchor:GetHeight())) then anchor:SetHeight(offset); end
-	DB.yoffset = offset
+	SUI.DB.yoffset = offset
 end;
 
 function module:updateSpartanXOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	if not DB.xOffset then return 0; end
-	local offset = DB.xOffset
+	if not SUI.DB.xOffset then return 0; end
+	local offset = SUI.DB.xOffset
 	if round(offset) <= -300 then
 		SpartanUI_Base5:ClearAllPoints();
 		SpartanUI_Base5:SetPoint("LEFT", SpartanUI_Base4, "RIGHT");
@@ -118,17 +117,17 @@ function module:updateSpartanXOffset() -- handles SpartanUI offset based on sett
 	SUI_FramesAnchor:SetPoint("TOPRIGHT", SUI_AnchorFrame, "TOPRIGHT", (offset/2), 153);
 	
 	if (round(offset) ~= round(anchor:GetWidth())) then anchor:SetWidth(offset); end
-	DB.xOffset = offset
+	SUI.DB.xOffset = offset
 end;
 
 ----------------------------------------------------------------------------------------------------
 
 function module:SetColor()
 	local r,b,g,a
-	if not DB.Styles.Classic.Color.Art then
+	if not SUI.DB.Styles.Classic.Color.Art then
 		r,b,g,a = 1,1,1,1
 	else
-		r,b,g,a = unpack(DB.Styles.Classic.Color.Art)
+		r,b,g,a = unpack(SUI.DB.Styles.Classic.Color.Art)
 	end
 	
 	for i = 1,6 do
@@ -221,7 +220,7 @@ function module:InitFramework()
 				frame:SetScale(containerScale)
 				if ( index == 1 ) then
 					-- First bag
-					frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -xOffset, (yOffset + (DB.yoffset or 1)) * (DB.scale or 1) )
+					frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -xOffset, (yOffset + (SUI.DB.yoffset or 1)) * (SUI.DB.scale or 1) )
 				elseif ( freeScreenHeight < frame:GetHeight() ) then
 					-- Start a new column
 					column = column + 1
@@ -246,17 +245,17 @@ end
 
 function module:BuffLoc(self, parent)
 	BuffFrame:ClearAllPoints();
-	BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
+	BuffFrame:SetPoint("TOPRIGHT",-13,-13-(SUI.DB.BuffSettings.offset));
 end
 
 function module:SetupVehicleUI()
-	if DBMod.Artwork.VehicleUI then
+	if SUI.DBMod.Artwork.VehicleUI then
 		RegisterStateDriver(SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show");
 	end
 end
 
 function module:RemoveVehicleUI()
-	if not DBMod.Artwork.VehicleUI then
+	if not SUI.DBMod.Artwork.VehicleUI then
 		UnRegisterStateDriver(SpartanUI, "visibility");
 	end
 end
@@ -301,7 +300,7 @@ function module:EnableFramework()
 		end
 	end);
 	
-	if DB.Styles.Classic.Color.Art then
+	if SUI.DB.Styles.Classic.Color.Art then
 		--Use a timer since we have to wait for everything to get loaded.
 		C_Timer.After(1, function() module:SetColor() end)
 	end

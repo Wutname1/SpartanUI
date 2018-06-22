@@ -1,9 +1,8 @@
 --Cache global variables and Lua functions
-local _G = _G
+local _G, SUI = _G, SUI
 local unpack, select, pairs = unpack, select, pairs
 local CreateFrame = CreateFrame
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local module = spartan:NewModule("Skinning", 'AceTimer-3.0', 'AceHook-3.0', 'AceEvent-3.0');
+local module = SUI:NewModule("Skinning", 'AceTimer-3.0', 'AceHook-3.0', 'AceEvent-3.0');
 
 --Global variables that we don't cache, list them here for mikk's FindGlobals script
 -- GLOBALS: SquareButton_SetIcon, LibStub
@@ -137,5 +136,5 @@ local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", attemptSkin)
 
-spartan.callbacks = LibStub("CallbackHandler-1.0"):New(spartan)
-spartan:RegisterCallback("Ace3", attemptSkin)
+SUI.callbacks = LibStub("CallbackHandler-1.0"):New(SUI)
+SUI:RegisterCallback("Ace3", attemptSkin)

@@ -200,7 +200,7 @@ local LignoreList = {
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
-	if (DB.AutoTurnIn.showrewardtext) then
+	if (SUI.DB.AutoTurnIn.showrewardtext) then
 		spartan:Print((UnitName("target") and  UnitName("target") or '')..'\n', GetRewardText())
 	end
 
@@ -210,7 +210,7 @@ function module:TurnInQuest(rewardIndex)
 		end
 	else
 		local name = GetQuestItemInfo("choice", (GetNumQuestChoices() == 1) and 1 or rewardIndex)
-		if (DB.AutoTurnIn.autoequip and (strlen(name) > 0)) then
+		if (SUI.DB.AutoTurnIn.autoequip and (strlen(name) > 0)) then
 			local lootLevel, _, _, _, _, equipSlot = select(4, GetItemInfo(GetQuestItemLink("choice", rewardIndex)))
 
 			-- Compares reward and already equipped item levels. If reward level is greater than equipped item, auto equip reward
@@ -241,7 +241,7 @@ function module:TurnInQuest(rewardIndex)
 		end
 	end
 
-	-- if (DB.AutoTurnIn.debug) then
+	-- if (SUI.DB.AutoTurnIn.debug) then
 		local link = GetQuestItemLink("choice", rewardIndex)
 		if (link) then
 			spartan:Print("Debug: item to loot=", link)
@@ -263,7 +263,7 @@ function module.QUEST_DETAIL()
 		module:CacheAsDaily(name)
 	end
 
-	if (DB.AutoTurnIn.AcceptGeneralQuests) then
+	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
 		AcceptQuest()
@@ -271,14 +271,14 @@ function module.QUEST_DETAIL()
 end
 
 function module.QUEST_ACCEPTED(event, index)
-	if DB.AutoTurnIn.questshare and GetQuestLogPushable() and GetNumGroupMembers() >= 1 then
+	if SUI.DB.AutoTurnIn.questshare and GetQuestLogPushable() and GetNumGroupMembers() >= 1 then
 		SelectQuestLogEntry(index);
 		QuestLogPushQuest();
 	end
 end
 
 function module.QUEST_COMPLETE()
-	if not DB.AutoTurnIn.TurnInEnabled then return end
+	if not SUI.DB.AutoTurnIn.TurnInEnabled then return end
 	--/script faction = (GameTooltip:NumLines() > 2 and not UnitIsPlayer(select(2,GameTooltip:GetUnit()))) and
     -- getglobal("GameTooltipTextLeft"..GameTooltip:NumLines()):GetText() DEFAULT_CHAT_FRAME:AddMessage(faction or "NIL")
 	local name = GetTitleText()
@@ -299,16 +299,16 @@ function module.QUEST_COMPLETE()
 			end
 			-- Tournament quest found
 			if (itemID == "46114" or itemID == "45724") then 
-				-- module:TurnInQuest(DB.AutoTurnIn.tournament)
+				-- module:TurnInQuest(SUI.DB.AutoTurnIn.tournament)
 				return
 			end
 
-			-- if (DB.AutoTurnIn.lootreward > 1) then
+			-- if (SUI.DB.AutoTurnIn.lootreward > 1) then
 				-- self.forceGreed = false
-				-- if (DB.AutoTurnIn.lootreward == 3) then -- 3 == Need
-					-- self.forceGreed = (not self:Need() ) and DB.AutoTurnIn.greedifnothingfound
+				-- if (SUI.DB.AutoTurnIn.lootreward == 3) then -- 3 == Need
+					-- self.forceGreed = (not self:Need() ) and SUI.DB.AutoTurnIn.greedifnothingfound
 				-- end
-				-- if (DB.AutoTurnIn.lootreward == 2 or self.forceGreed) then -- 2 == Greed
+				-- if (SUI.DB.AutoTurnIn.lootreward == 2 or self.forceGreed) then -- 2 == Greed
 					-- self:Greed()
 				-- end
 			-- end
@@ -412,16 +412,16 @@ function module:FirstLaunch()
 			SUI_ATI_AcceptGeneralQuests:SetChecked(true)
 		end,
 		Next = function()
-			DB.AutoTurnIn.FirstLaunch = false
+			SUI.DB.AutoTurnIn.FirstLaunch = false
 			
-			DB.AutoTurnIn.TurnInEnabled = (SUI_ATI_TurnInEnabled:GetChecked() == true or false)
-			DB.AutoTurnIn.AcceptGeneralQuests = (SUI_ATI_AcceptGeneralQuests:GetChecked() == true or false)
+			SUI.DB.AutoTurnIn.TurnInEnabled = (SUI_ATI_TurnInEnabled:GetChecked() == true or false)
+			SUI.DB.AutoTurnIn.AcceptGeneralQuests = (SUI_ATI_AcceptGeneralQuests:GetChecked() == true or false)
 			
 			SUI_Win.ATI:Hide()
 			SUI_Win.ATI = nil
 		end,
 		Skip = function()
-			DB.AutoTurnIn.FirstLaunch = false
+			SUI.DB.AutoTurnIn.FirstLaunch = false
 		end
 	}
 	local SetupWindow = spartan:GetModule("SetupWindow")
@@ -430,12 +430,12 @@ function module:FirstLaunch()
 end
 
 function module.GOSSIP_SHOW()
-	if not DB.AutoTurnIn.AutoGossip then
+	if not SUI.DB.AutoTurnIn.AutoGossip then
 		return
 	end
 	
 	local questCount = GetNumGossipActiveQuests() > 0
-	if DB.AutoTurnIn.debug then print(questCount) end
+	if SUI.DB.AutoTurnIn.debug then print(questCount) end
 	if questCount then
 		local options = {GetGossipOptions()}
 		for k, v in pairs(options) do
@@ -443,7 +443,7 @@ function module.GOSSIP_SHOW()
 				local opcount = GetNumGossipOptions()
 				-- SelectGossipOption((opcount == 1) and 1 or  math.floor(k / GetNumGossipOptions()) + 1)
 				BlackList[v] = true
-				if DB.AutoTurnIn.debug then print(v .. "---BLACKLISTED") end
+				if SUI.DB.AutoTurnIn.debug then print(v .. "---BLACKLISTED") end
 			end
 		end
 	end
@@ -460,8 +460,8 @@ function module.QUEST_PROGRESS()
 end
 
 function module:OnInitialize()
-	if not DB.AutoTurnIn then
-		DB.AutoTurnIn = {
+	if not SUI.DB.AutoTurnIn then
+		SUI.DB.AutoTurnIn = {
 			FirstLaunch = true,
 			debug = false,
 			TurnInEnabled = true,
@@ -487,11 +487,11 @@ end
 function module:OnEnable()
 	module:BuildOptions()
 	-- if not DB.EnabledComponents.AutoTurnIn then module:HideOptions() return end
-	if DB.AutoTurnIn.FirstLaunch then module:FirstLaunch() end
+	if SUI.DB.AutoTurnIn.FirstLaunch then module:FirstLaunch() end
 		
 	ATI_Container:SetScript("OnEvent", function(_, event)
 		if not DB.EnabledComponents.AutoTurnIn then return end
-		if DB.AutoTurnIn.debug then print(event) end
+		if SUI.DB.AutoTurnIn.debug then print(event) end
 		
 		if module[event] then 
 			module[event]()
@@ -512,28 +512,28 @@ function module:BuildOptions()
 	spartan.opt.args["ModSetting"].args["AutoTurnIn"] = {type="group",name="Auto TurnIn",
 		args = {
 			debugMode = {name="Debug Mode",type="toggle",order=1,
-					get = function(info) return DB.AutoTurnIn.debug end,
-					set = function(info,val) DB.AutoTurnIn.debug = val end
+					get = function(info) return SUI.DB.AutoTurnIn.debug end,
+					set = function(info,val) SUI.DB.AutoTurnIn.debug = val end
 			},
 			TurnInEnabled = {name="Turn in Quests",type="toggle",order=10,
-					get = function(info) return DB.AutoTurnIn.TurnInEnabled end,
-					set = function(info,val) DB.AutoTurnIn.TurnInEnabled = val end
+					get = function(info) return SUI.DB.AutoTurnIn.TurnInEnabled end,
+					set = function(info,val) SUI.DB.AutoTurnIn.TurnInEnabled = val end
 			},
 			AutoGossip = {name="Auto Gossip",type="toggle",order=15,
-					get = function(info) return DB.AutoTurnIn.AutoGossip end,
-					set = function(info,val) DB.AutoTurnIn.AutoGossip = val end
+					get = function(info) return SUI.DB.AutoTurnIn.AutoGossip end,
+					set = function(info,val) SUI.DB.AutoTurnIn.AutoGossip = val end
 			},
 			AcceptGeneralQuests = {name="Accept Quests",type="toggle",order=20,
-					get = function(info) return DB.AutoTurnIn.AcceptGeneralQuests end,
-					set = function(info,val) DB.AutoTurnIn.AcceptGeneralQuests = val end
+					get = function(info) return SUI.DB.AutoTurnIn.AcceptGeneralQuests end,
+					set = function(info,val) SUI.DB.AutoTurnIn.AcceptGeneralQuests = val end
 			},
 			AcceptDaily = {name="Accept Daily",type="toggle",order=30,disabled=true,
-					get = function(info) return DB.AutoTurnIn.AcceptDaily end,
-					set = function(info,val) DB.AutoTurnIn.AcceptDaily = val end
+					get = function(info) return SUI.DB.AutoTurnIn.AcceptDaily end,
+					set = function(info,val) SUI.DB.AutoTurnIn.AcceptDaily = val end
 			},
 			AcceptLowLevel = {name="Accept Low Level",type="toggle",order=40,disabled=true,
-					get = function(info) return DB.AutoTurnIn.trivial end,
-					set = function(info,val) DB.AutoTurnIn.trivial = val end
+					get = function(info) return SUI.DB.AutoTurnIn.trivial end,
+					set = function(info,val) SUI.DB.AutoTurnIn.trivial = val end
 			}
 		}
 	}

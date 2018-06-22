@@ -17,10 +17,10 @@ function module:OnInitialize()
 		Silent = false,
 		FreeSpace = 0
 	}
-	if not DB.MailOpenAll then
-		DB.MailOpenAll = Defaults
+	if not SUI.DB.MailOpenAll then
+		SUI.DB.MailOpenAll = Defaults
 	else
-		DB.MailOpenAll = spartan:MergeData(DB.MailOpenAll, Defaults, false)
+		SUI.DB.MailOpenAll = spartan:MergeData(SUI.DB.MailOpenAll, Defaults, false)
 	end
 end
 
@@ -164,7 +164,7 @@ function module:ProcessNext()
 			return self:ProcessNext() -- tail call
 		end
 		
-		if (not invFull or msgMoney > 0) and not DB.MailOpenAll.Silent then
+		if (not invFull or msgMoney > 0) and not SUI.DB.MailOpenAll.Silent then
 			local moneyString = msgMoney > 0 and " ["..module:FormatMoney(msgMoney).."]" or ""
 			local playerName
 			if (mailType == "AHSuccess" or mailType == "AHWon") then
@@ -180,7 +180,7 @@ function module:ProcessNext()
 		end
 
 		-- bag space check
-		if attachIndex > 0 and not invFull and DB.MailOpenAll.FreeSpace > 0 then
+		if attachIndex > 0 and not invFull and SUI.DB.MailOpenAll.FreeSpace > 0 then
 			local free=0
 			for bag=0,NUM_BAG_SLOTS do
 				local bagFree,bagFam = GetContainerNumFreeSlots(bag)
@@ -188,11 +188,11 @@ function module:ProcessNext()
 					free = free + bagFree
 				end
 			end
-			if free <= DB.MailOpenAll.FreeSpace then
+			if free <= SUI.DB.MailOpenAll.FreeSpace then
 				invFull = true
 				invAlmostFull = nil
 				spartan:Print(format(L["Auto open disabled. There is only %d bagslots free."], free))
-			elseif free <= DB.MailOpenAll.FreeSpace + 1 then
+			elseif free <= SUI.DB.MailOpenAll.FreeSpace + 1 then
 				invAlmostFull = true
 			end
 		end
@@ -323,12 +323,12 @@ function module:BuildOptions()
 	spartan.opt.args["ModSetting"].args["MailOpenAll"] = {type="group",name="Open all mail",
 		args = {
 			Silent = {name="Silently open mail",type="toggle",order=1,width = "full",
-					get = function(info) return DB.MailOpenAll.Silent end,
-					set = function(info,val) DB.MailOpenAll.Silent = val end
+					get = function(info) return SUI.DB.MailOpenAll.Silent end,
+					set = function(info,val) SUI.DB.MailOpenAll.Silent = val end
 			},
 			FreeSpace ={name = "Bag free space to maintain",type = "range",order = 10,width = "full",min = 0,max = 50,step=1,
-				set = function(info,val) DB.MailOpenAll.FreeSpace = val; end,
-				get = function(info) return DB.MailOpenAll.FreeSpace; end
+				set = function(info,val) SUI.DB.MailOpenAll.FreeSpace = val; end,
+				get = function(info) return SUI.DB.MailOpenAll.FreeSpace; end
 			}
 		}
 	}

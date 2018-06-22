@@ -493,10 +493,10 @@ function SUI:OnInitialize()
 	--First Time Setup Actions
 	local class, classFileName = UnitClass("player")
 	if not DB.SetupDone and classFileName == "DEMONHUNTER" then 
-		DBMod.Artwork.Style = "Fel";
-		DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-		DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-		DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+		SUI.DBMod.Artwork.Style = "Fel";
+		SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+		SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+		SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 	end
 	
 	--First Time Setup Actions

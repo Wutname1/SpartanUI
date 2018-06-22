@@ -1,10 +1,9 @@
-local _, SUI
-addon = _G["SUI"]
-local L = spartan.L;
-local Artwork_Core = addon:GetModule("Artwork_Core");
-local module = addon:GetModule("Style_Classic");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local Artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
-local ProfileName = DB.Styles.Classic.BartenderProfile;
+local ProfileName = SUI.DB.Styles.Classic.BartenderProfile;
 
 local default, plate = {
 	popup1 = {anim = true, alpha = 1, enable = 1},
@@ -26,7 +25,7 @@ function module:CreateProfile()
 end
 
 function module:InitActionBars()
-	--if (Bartender4.db:GetCurrentProfile() == DB.Styles.Classic.BartenderProfile) then
+	--if (Bartender4.db:GetCurrentProfile() == SUI.DB.Styles.Classic.BartenderProfile) then
 		Artwork_Core:ActionBarPlates("SUI_ActionBarPlate");
 	--end
 	
@@ -56,19 +55,19 @@ function module:EnableActionBars()
 			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
 				-- Debug
 --				print(self.TimeSinceLastUpdate)
-				if (DB.ActionBars.bar1) then
+				if (SUI.DB..ActionBars.bar1) then
 					for b = 1,6 do -- for each backdrop
-						if DB.ActionBars["bar"..b].enable then -- backdrop enabled
+						if SUI.DB.ActionBars["bar"..b].enable then -- backdrop enabled
 							_G["SUI_Bar"..b]:Show(); -- apply alpha
-							-- _G["SUI_Bar"..b]:SetAlpha(DB.ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
+							-- _G["SUI_Bar"..b]:SetAlpha(SUI.DB..ActionBars["bar"..b].alpha/100 or 1); -- apply alpha
 						else -- backdrop disabled
 							_G["SUI_Bar"..b]:Hide();
 						end
 					end
 					for p = 1,2 do -- for each popup
-						if (DB.ActionBars["popup"..p].enable) then -- popup enabled
-							_G["SUI_Popup"..p]:SetAlpha(DB.ActionBars["popup"..p].alpha/100 or 1); -- apply alpha
-							if DB.ActionBars["popup"..p].anim == true then --- animation enabled
+						if (SUI.DB..ActionBars["popup"..p].enable) then -- popup enabled
+							_G["SUI_Popup"..p]:SetAlpha(SUI.DB..ActionBars["popup"..p].alpha/100 or 1); -- apply alpha
+							if SUI.DB.ActionBars["popup"..p].anim == true then --- animation enabled
 								_G["SUI_Popup"..p.."MaskBG"]:Show()
 							else -- animation disabled
 								_G["SUI_Popup"..p.."MaskBG"]:Hide()
@@ -78,12 +77,12 @@ function module:EnableActionBars()
 							_G["SUI_Popup"..p.."MaskBG"]:Hide();
 						end
 					end
-					if not MouseIsOver(SUI_Popup1Mask) and not MouseIsOver(SUI_Popup1) and DB.ActionBars["popup1"].anim then -- popup1 animation
+					if not MouseIsOver(SUI_Popup1Mask) and not MouseIsOver(SUI_Popup1) and SUI.DB.ActionBars["popup1"].anim then -- popup1 animation
 						SUI_Popup1MaskBG:Show();
 					else
 						SUI_Popup1MaskBG:Hide();
 					end
-					if not MouseIsOver(SUI_Popup2Mask) and not MouseIsOver(SUI_Popup2) and DB.ActionBars["popup2"].anim then -- popup2 animation
+					if not MouseIsOver(SUI_Popup2Mask) and not MouseIsOver(SUI_Popup2) and SUI.DB.ActionBars["popup2"].anim then -- popup2 animation
 						SUI_Popup2MaskBG:Show();
 					else
 						SUI_Popup2MaskBG:Hide();

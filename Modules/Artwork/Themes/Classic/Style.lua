@@ -1,8 +1,7 @@
-local _, SUI
-spartan = _G["SUI"]
-local L = spartan.L;
-local Artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:GetModule("Style_Classic");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local Artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 if DB.Styles.Classic.BuffLoc == nil then DB.Styles.Classic.BuffLoc = true end
 local InitRan = false
@@ -17,7 +16,7 @@ function module:OnInitialize()
 			scale = .8
 		}
 	end
-	if (DBMod.Artwork.Style == "Classic") then
+	if (SUI.DBMod.Artwork.Style == "Classic") then
 		module:Init();
 	else
 		module:Disable();
@@ -25,7 +24,7 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	if (DBMod.Artwork.FirstLoad) then module:FirstLoad() end
+	if (SUI.DBMod.Artwork.FirstLoad) then module:FirstLoad() end
 	module:SetupMenus();
 	module:InitFramework();
 	module:InitActionBars();
@@ -34,15 +33,15 @@ function module:Init()
 end
 
 function module:FirstLoad()
-	DBMod.Artwork.Viewport.offset.bottom = 2.8
+	SUI.DBMod.Artwork.Viewport.offset.bottom = 2.8
 end
 
 function module:OnEnable()
 	--If our profile exists activate it.
-	if (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and DBMod.Artwork.FirstLoad then
+	if (Bartender4.db:GetCurrentProfile() ~= DB.Styles.Classic.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
 		Bartender4.db:SetProfile(DB.Styles.Classic.BartenderProfile);
 	end
-	if (DBMod.Artwork.Style == "Classic") then
+	if (SUI.DBMod.Artwork.Style == "Classic") then
 		if (not InitRan) then module:Init(); end
 		if (not Artwork_Core:BartenderProfileCheck(DB.Styles.Classic.BartenderProfile,true)) then module:CreateProfile(); end
 		
@@ -51,17 +50,17 @@ function module:OnEnable()
 		module:EnableMinimap();
 		module:EnableStatusBars();
 		
-		if (DBMod.Artwork.FirstLoad) then DBMod.Artwork.FirstLoad = false end -- We want to do this last
+		if (SUI.DBMod.Artwork.FirstLoad) then SUI.DBMod.Artwork.FirstLoad = false end -- We want to do this last
 	end
 end
 
 function module:SetupMenus()
-	spartan.opt.args["Artwork"].args["ActionBar"] = { name = "ActionBar Settings", type = "group",desc = L["ActionBarConfDesc"],
+	SUI.opt.args["Artwork"].args["ActionBar"] = { name = "ActionBar Settings", type = "group",desc = L["ActionBarConfDesc"],
 		args = {
 			reset = {name = "Reset ActionBars", type = "execute", width= "double",order=1,
 				func = function()
 					if (InCombatLockdown()) then 
-						spartan:Print(ERR_NOT_IN_COMBAT);
+						SUI:Print(ERR_NOT_IN_COMBAT);
 					else
 						module:CreateProfile();
 						ReloadUI();
@@ -140,7 +139,7 @@ function module:SetupMenus()
 			}},
 		}
 	};
-	spartan.opt.args["Artwork"].args["popup"] = { name = L["PopupAnimConf"], type = "group",
+	SUI.opt.args["Artwork"].args["popup"] = { name = L["PopupAnimConf"], type = "group",
 		desc = L["PopupAnimConfDesc"],
 		args = {
 			popup1anim = {	name = L["LPopupAnimate"], type="toggle", order=1, width="full",
@@ -171,7 +170,7 @@ function module:SetupMenus()
 			}
 		}
 	};
-	spartan.opt.args["Artwork"].args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
+	SUI.opt.args["Artwork"].args["Artwork"] = {name = L["ArtworkOpt"],type="group",order=10,
 		args = {
 			Color = {name=L["ArtColor"],type="color",hasAlpha=true,order=.5,
 				get = function(info) if not DB.Styles.Classic.Color.Art then return {1,1,1,1} end return unpack(DB.Styles.Classic.Color.Art) end,
@@ -214,10 +213,10 @@ function module:SetupMenus()
 				get = function(info) return DB.yoffset end,
 				set = function(info,val)
 					if (InCombatLockdown()) then 
-						spartan:Print(ERR_NOT_IN_COMBAT);
+						SUI:Print(ERR_NOT_IN_COMBAT);
 					else
 						if DB.yoffsetAuto then
-							spartan:Print(L["confOffsetAuto"]);
+							SUI:Print(L["confOffsetAuto"]);
 						else
 							val = tonumber(val);
 							DB.yoffset = val;
@@ -242,9 +241,9 @@ end
 
 function module:AddNotice()
 	if (DB.alpha == 1) then
-		spartan.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = true;
+		SUI.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = true;
 	else
-		spartan.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = false;
+		SUI.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = false;
 	end
 end
 
@@ -261,7 +260,7 @@ do -- Style Setup
 			RaidFrames = false
 		}
 	end
-	if not spartan.DBG.Bartender4[DB.Styles.Classic.BartenderProfile] then
-		spartan.DBG.Bartender4[DB.Styles.Classic.BartenderProfile] = {Style = "Classic"}
+	if not SUI.DBG.Bartender4[DB.Styles.Classic.BartenderProfile] then
+		SUI.DBG.Bartender4[DB.Styles.Classic.BartenderProfile] = {Style = "Classic"}
 	end
 end

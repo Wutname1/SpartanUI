@@ -7,13 +7,13 @@ local RuleList = {"Rule1", "Rule2", "Rule3"}
 local BuffWatcher = CreateFrame("Frame")
 
 function module:OnInitialize()
-	if DB.Buffs == nil then
-		DB.Buffs =  { Override = {} }
+	if SUI.DB.Buffs == nil then
+		SUI.DB.Buffs =  { Override = {} }
 	end
 	
-	if DB.Buffs.Rule1 == nil then
+	if SUI.DB.Buffs.Rule1 == nil then
 		for k,v in ipairs(RuleList) do
-			DB.Buffs[v] = {
+			SUI.DB.Buffs[v] = {
 				Status = "Disabled",
 				Combat = false,
 				OverrideLoc=false,
@@ -25,28 +25,28 @@ end
 
 local function ActiveRule()
 	for k,v in ipairs(RuleList) do
-		if DB.Buffs[v].Status ~= "Disabled" then
+		if SUI.DB.Buffs[v].Status ~= "Disabled" then
 			local CombatRule = false
-			if InCombatLockdown() and DB.Buffs[v].Combat then
+			if InCombatLockdown() and SUI.DB.Buffs[v].Combat then
 				CombatRule = true
-			elseif not InCombatLockdown() and not DB.Buffs[v].Combat then
+			elseif not InCombatLockdown() and not SUI.DB.Buffs[v].Combat then
 				CombatRule = true
 			end
 			
-			if DB.Buffs[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
+			if SUI.DB.Buffs[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
 				return v
-			elseif DB.Buffs[v].Status == "Raid" and IsInRaid() and CombatRule then
+			elseif SUI.DB.Buffs[v].Status == "Raid" and IsInRaid() and CombatRule then
 				return v
-			elseif DB.Buffs[v].Status == "Instance" and IsInInstance() then
+			elseif SUI.DB.Buffs[v].Status == "Instance" and IsInInstance() then
 				return v
-			elseif DB.Buffs[v].Status == "All" and CombatRule then
+			elseif SUI.DB.Buffs[v].Status == "All" and CombatRule then
 				return v
 			end
 		end
 	end
 	
 	--Failback of Rule1
-	if not DB.Buffs.SuppressNoMatch and not DB.Styles[DBMod.Artwork.Style].BuffLoc then
+	if not SUI.DB.Buffs.SuppressNoMatch and not DB.Styles[DBMod.Artwork.Style].BuffLoc then
 		-- spartan:Print("|cffff0000Error detected")
 		-- spartan:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
 	end
@@ -60,19 +60,19 @@ local BuffPosUpdate = function()
 	local setdefault = false
 	
 	--See If the theme has an anchor and if we are allowed to use it
-	if DB.Styles[DBMod.Artwork.Style].BuffLoc and not DB.Buffs[ActiveRule()].OverrideLoc then
+	if DB.Styles[DBMod.Artwork.Style].BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
 		spartan:GetModule("Style_" .. DBMod.Artwork.Style):BuffLoc(nil, nil);
 	else
-		if DB.Buffs[ActiveRule()].Anchor.Moved then
+		if SUI.DB.Buffs[ActiveRule()].Anchor.Moved then
 			local Anchors = {}
-			for key,val in pairs(DB.Buffs[ActiveRule()].Anchor.AnchorPos) do
+			for key,val in pairs(SUI.DB.Buffs[ActiveRule()].Anchor.AnchorPos) do
 				Anchors[key] = val
 			end
 			
 			if Anchors.point == nil then 
 				--Error Catch
 				setdefault = true
-				DB.Buffs[ActiveRule()].Anchor.Moved = false
+				SUI.DB.Buffs[ActiveRule()].Anchor.Moved = false
 			else
 				--Set the Buff location
 				BuffFrame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
@@ -83,7 +83,7 @@ local BuffPosUpdate = function()
 	end
 	
 	if setdefault then
-		BuffFrame:SetPoint("TOPRIGHT",-13,-13-(DB.BuffSettings.offset));
+		BuffFrame:SetPoint("TOPRIGHT",-13,-13-(SUI.DB.Buffsettings.offset));
 	end
 end
 
@@ -125,7 +125,7 @@ function module:OnEnable()
 		
 		anchor:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" then
-				DB.Buffs[v].Anchor.Moved = true;
+				SUI.DB.Buffs[v].Anchor.Moved = true;
 				module[v].anchor:SetMovable(true);
 				module[v].anchor:StartMoving();
 			end
@@ -137,15 +137,15 @@ function module:OnEnable()
 			local Anchors = {}
 			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module[v].anchor:GetPoint()
 			for k,val in pairs(Anchors) do
-				DB.Buffs[v].Anchor.AnchorPos[k] = val
+				SUI.DB.Buffs[v].Anchor.AnchorPos[k] = val
 			end
 			BuffPosUpdate()
 		end);
 		
 		anchor:SetScript("OnShow", function(self)
-			if DB.Buffs[v].Anchor.Moved then
+			if SUI.DB.Buffs[v].Anchor.Moved then
 				local Anchors = {}
-				for key,val in pairs(DB.Buffs[v].Anchor.AnchorPos) do
+				for key,val in pairs(SUI.DB.Buffs[v].Anchor.AnchorPos) do
 					Anchors[key] = val
 				end
 				self:ClearAllPoints();
@@ -180,19 +180,19 @@ function module:BuildOptions()
 			name="Display Location " .. v,type="group",inline=true,order=k + 20.1,width="full", args = {
 			Condition = {name ="Condition", type="select",order=k + 20.2,
 				values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
-				get = function(info) return DB.Buffs[v].Status; end,
-				set = function(info,val) DB.Buffs[v].Status = val; BuffPosUpdate();  end
+				get = function(info) return SUI.DB.Buffs[v].Status; end,
+				set = function(info,val) SUI.DB.Buffs[v].Status = val; BuffPosUpdate();  end
 			},
 			Combat = {name="only if in combat",type="toggle",order=k + 20.3,
-			get = function(info) return DB.Buffs[v].Combat end,
-			set = function(info,val) DB.Buffs[v].Combat = val; BuffPosUpdate(); end
+			get = function(info) return SUI.DB.Buffs[v].Combat end,
+			set = function(info,val) SUI.DB.Buffs[v].Combat = val; BuffPosUpdate(); end
 			},
 			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=k + 20.5,
-					get = function(info) return DB.Buffs[v].OverrideLoc end,
-					set = function(info,val) DB.Buffs[v].OverrideLoc = val; BuffPosUpdate(); end
+					get = function(info) return SUI.DB.Buffs[v].OverrideLoc end,
+					set = function(info,val) SUI.DB.Buffs[v].OverrideLoc = val; BuffPosUpdate(); end
 			},
 			MoveAnchor = {name="Move anchor",type="execute",order=k + 20.6,width="half",func = function(info,val) module[v].anchor:Show() end},
-			ResetAnchor = {name="Reset anchor",type="execute",order=k + 20.7,width="half",func = function(info,val) DB.Buffs[v].Anchor.Moved = false; BuffPosUpdate(); end}
+			ResetAnchor = {name="Reset anchor",type="execute",order=k + 20.7,width="half",func = function(info,val) SUI.DB.Buffs[v].Anchor.Moved = false; BuffPosUpdate(); end}
 		}
 		}
 	end

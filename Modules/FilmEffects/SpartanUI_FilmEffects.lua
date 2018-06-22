@@ -1,21 +1,21 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local addon = spartan:NewModule("FilmEffect");
+local _G, SUI = _G, SUI
+local L = SUI.L
+local addon = SUI:NewModule("FilmEffect");
 local Container
 local EffectList = {"vignette", "blur", "crisp"}
 
 local FilmEffectEvent = function(self, event, ...)
 	for k,v in ipairs(EffectList) do
-		if not DBMod.FilmEffects.enable then
+		if not SUI.DBMod.FilmEffects.enable then
 			Container[v]:Hide()
 		elseif event == "CHAT_MSG_SYSTEM" then
-			if (... == format(MARKED_AFK_MESSAGE,DEFAULT_AFK_MESSAGE)) and (DBMod.FilmEffects.Effects[v].afk) then
+			if (... == format(MARKED_AFK_MESSAGE,DEFAULT_AFK_MESSAGE)) and (SUI.DBMod.FilmEffects.Effects[v].afk) then
 				Container[v]:Show()
 			elseif (... == CLEARED_AFK) then
 				Container[v]:Hide()
 			end
 		else
-			if DBMod.FilmEffects.Effects[v].always then
+			if SUI.DBMod.FilmEffects.Effects[v].always then
 				Container[v]:Show()
 			else
 				Container[v]:Hide()
@@ -26,16 +26,16 @@ end
 
 local function updateopts()
 	local disabled = true
-	if DBMod.FilmEffects.enable then disabled = false end
+	if SUI.DBMod.FilmEffects.enable then disabled = false end
 	for k,v in ipairs(EffectList) do
-		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "always"].disabled = disabled
-		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "AFK"].disabled = disabled
+		SUI.opt.args["ModSetting"].args["FilmEffects"].args[v .. "always"].disabled = disabled
+		SUI.opt.args["ModSetting"].args["FilmEffects"].args[v .. "AFK"].disabled = disabled
 	end
 end
 
 function addon:OnInitialize()
-	if DBMod.FilmEffects.Effects == nil then
-		DBMod.FilmEffects = 
+	if SUI.DBMod.FilmEffects.Effects == nil then
+		SUI.DBMod.FilmEffects = 
 		{
 			animationInterval = 0,
 			enable = true,
@@ -47,7 +47,7 @@ function addon:OnInitialize()
 		}
 	end
 	
-	spartan.opt.args["ModSetting"].args["FilmEffects"] = {
+	SUI.opt.args["ModSetting"].args["FilmEffects"] = {
 		name = L["Film Effects"],
 		type = "group",
 		args = {
@@ -56,10 +56,10 @@ function addon:OnInitialize()
 			type="toggle",
 			order=1,
 			width="full",
-			get = function(info) updateopts(); return DBMod.FilmEffects.enable end,
+			get = function(info) updateopts(); return SUI.DBMod.FilmEffects.enable end,
 			set = function(info,val)
-				if InCombatLockdown() then spartan:Print(L["Please leave combat first."]) return end
-				DBMod.FilmEffects.enable = val; FilmEffectEvent(nil,nil,nil); updateopts();
+				if InCombatLockdown() then SUI:Print(L["Please leave combat first."]) return end
+				SUI.DBMod.FilmEffects.enable = val; FilmEffectEvent(nil,nil,nil); updateopts();
 				end
 			}
 		}
@@ -67,14 +67,14 @@ function addon:OnInitialize()
 	
 	
 	for k,v in ipairs(EffectList) do
-		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "Title"] = {name=v,type="header",order=k+1,width="full"}
-		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "always"] = {name=L["Always show"],type="toggle",order=k + 1.2,
-			get = function(info) return DBMod.FilmEffects.Effects[v].always end,
-			set = function(info,val) if InCombatLockdown() then spartan:Print(L["Please leave combat first."]) return end DBMod.FilmEffects.Effects[v].always = val; FilmEffectEvent(nil,nil,nil) end
+		SUI.opt.args["ModSetting"].args["FilmEffects"].args[v .. "Title"] = {name=v,type="header",order=k+1,width="full"}
+		SUI.opt.args["ModSetting"].args["FilmEffects"].args[v .. "always"] = {name=L["Always show"],type="toggle",order=k + 1.2,
+			get = function(info) return SUI.DBMod.FilmEffects.Effects[v].always end,
+			set = function(info,val) if InCombatLockdown() then SUI:Print(L["Please leave combat first."]) return end SUI.DBMod.FilmEffects.Effects[v].always = val; FilmEffectEvent(nil,nil,nil) end
 		}
-		spartan.opt.args["ModSetting"].args["FilmEffects"].args[v .. "AFK"] = {name=L["Show if AFK"],type="toggle",order=k + 1.4,
-			get = function(info) if InCombatLockdown() then spartan:Print(L["Please leave combat first."]) return end return DBMod.FilmEffects.Effects[v].afk end,
-			set = function(info,val) DBMod.FilmEffects.Effects[v].afk = val; end
+		SUI.opt.args["ModSetting"].args["FilmEffects"].args[v .. "AFK"] = {name=L["Show if AFK"],type="toggle",order=k + 1.4,
+			get = function(info) if InCombatLockdown() then SUI:Print(L["Please leave combat first."]) return end return SUI.DBMod.FilmEffects.Effects[v].afk end,
+			set = function(info,val) SUI.DBMod.FilmEffects.Effects[v].afk = val; end
 		}
 	end
 end
@@ -164,14 +164,14 @@ function addon:OnEnable()
 end
 
 function addon:Update(self, elapsed)
-	DBMod.FilmEffects.animationInterval = DBMod.FilmEffects.animationInterval + elapsed
-	if (DBMod.FilmEffects.animationInterval > (0.02)) then -- 50 FPS
-		DBMod.FilmEffects.animationInterval = 0
+	SUI.DBMod.FilmEffects.animationInterval = SUI.DBMod.FilmEffects.animationInterval + elapsed
+	if (SUI.DBMod.FilmEffects.animationInterval > (0.02)) then -- 50 FPS
+		SUI.DBMod.FilmEffects.animationInterval = 0
 		
 		local yOfs = math.random(0, 256)
 		local xOfs = math.random(-128, 0)
 		
-		if DBMod.FilmEffects.anim=="blur" or DBMod.FilmEffects.anim=="crisp" then
+		if SUI.DBMod.FilmEffects.anim=="blur" or SUI.DBMod.FilmEffects.anim=="crisp" then
 			Container:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xOfs, yOfs)
 		end
 	end

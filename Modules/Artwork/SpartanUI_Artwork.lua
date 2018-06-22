@@ -1,5 +1,4 @@
-local _, SUI
-SUI = _G["SUI"]
+local _G, SUI = _G, SUI
 local L = SUI.L;
 local Artwork_Core = SUI:NewModule("Artwork_Core");
 local Bartender4Version, BartenderMin = "","4.7.1"
@@ -111,14 +110,13 @@ function Artwork_Core:OnInitialize()
 		hideOnEscape = false
 	}
 	
-	if not DBMod.Artwork.SetupDone then Artwork_Core:FirstTime() end
-	if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+	if not SUI.DBMod.Artwork.SetupDone then Artwork_Core:FirstTime() end
+	if DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 	Artwork_Core:CheckMiniMap();
 end
 
 function Artwork_Core:FirstTime()
-print(DBMod.Artwork.SetupDone)
-	DBMod.Artwork.SetupDone = false
+	SUI.DBMod.Artwork.SetupDone = false
 	local PageData = {
 		SubTitle = "Art Style",
 		Desc1 = "Please pick an art style from the options below.",
@@ -238,17 +236,17 @@ print(DBMod.Artwork.SetupDone)
 			SUI_Win.Artwork.Classic.radio:SetValue(true)
 		end,
 		Next = function()
-			DBMod.Artwork.SetupDone = true
+			SUI.DBMod.Artwork.SetupDone = true
 			
-			if (SUI_Win.Artwork.Classic.radio:GetValue()) then DBMod.Artwork.Style = "Classic"; end
-			if (SUI_Win.Artwork.Fel.radio:GetValue()) then DBMod.Artwork.Style = "Fel"; end
-			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then DBMod.Artwork.Style = "Transparent"; end
-			if (SUI_Win.Artwork.Minimal.radio:GetValue()) then DBMod.Artwork.Style = "Minimal"; end
+			if (SUI_Win.Artwork.Classic.radio:GetValue()) then SUI.DBMod.Artwork.Style = "Classic"; end
+			if (SUI_Win.Artwork.Fel.radio:GetValue()) then SUI.DBMod.Artwork.Style = "Fel"; end
+			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then SUI.DBMod.Artwork.Style = "Transparent"; end
+			if (SUI_Win.Artwork.Minimal.radio:GetValue()) then SUI.DBMod.Artwork.Style = "Minimal"; end
 			
-			DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-			DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-			DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-			DBMod.Artwork.FirstLoad = true;
+			SUI.DBMod.PlayerFrames.Style =SUI.DBMod.Artwork.Style;
+			SUI.DBMod.PartyFrames.Style =SUI.DBMod.Artwork.Style;
+			SUI.DBMod.RaidFrames.Style =SUI.DBMod.Artwork.Style;
+			SUI.DBMod.Artwork.FirstLoad = true;
 			SUI.DBG.BartenderChangesActive = true
 			Artwork_Core:SetupProfile();
 			
@@ -268,7 +266,7 @@ print(DBMod.Artwork.SetupDone)
 		Skipable = true,
 		NoReloadOnSkip = true,
 		Skip = function()
-			DBMod.Artwork.SetupDone = true
+			SUI.DBMod.Artwork.SetupDone = true
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
 		end

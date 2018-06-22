@@ -1,8 +1,7 @@
-local _, SUI
-spartan = _G["SUI"]
-local L = spartan.L;
-local Artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:GetModule("Style_Classic");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local Artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:GetModule("Style_Classic");
 ----------------------------------------------------------------------------------------------------
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1,	g = 0.2,	b = 0},
@@ -41,54 +40,54 @@ end
 local SetXPColors = function(self)
 	local FrameName = self:GetName();
 	-- Set Gained Color
-	if DB.StatusBars.XPBar.GainedColor ~= "Custom" then
-		DB.StatusBars.XPBar.GainedRed 			= COLORS[DB.StatusBars.XPBar.GainedColor].r
-		DB.StatusBars.XPBar.GainedBlue 			= COLORS[DB.StatusBars.XPBar.GainedColor].b
-		DB.StatusBars.XPBar.GainedGreen 		= COLORS[DB.StatusBars.XPBar.GainedColor].g
-		DB.StatusBars.XPBar.GainedBrightness	= COLORS[DB.StatusBars.XPBar.GainedColor].a
+	if SUI.DB.StatusBars.XPBar.GainedColor ~= "Custom" then
+		SUI.DB.StatusBars.XPBar.GainedRed 			= COLORS[DB.StatusBars.XPBar.GainedColor].r
+		SUI.DB.StatusBars.XPBar.GainedBlue 			= COLORS[DB.StatusBars.XPBar.GainedColor].b
+		SUI.DB.StatusBars.XPBar.GainedGreen 		= COLORS[DB.StatusBars.XPBar.GainedColor].g
+		SUI.DB.StatusBars.XPBar.GainedBrightness	= COLORS[DB.StatusBars.XPBar.GainedColor].a
 	end
 	
 	local r,b,g,a
-	r = DB.StatusBars.XPBar.GainedRed
-	b = DB.StatusBars.XPBar.GainedBlue
-	g = DB.StatusBars.XPBar.GainedGreen
-	a = DB.StatusBars.XPBar.GainedBrightness
+	r = SUI.DB.StatusBars.XPBar.GainedRed
+	b = SUI.DB.StatusBars.XPBar.GainedBlue
+	g = SUI.DB.StatusBars.XPBar.GainedGreen
+	a = SUI.DB.StatusBars.XPBar.GainedBrightness
 	_G[FrameName.."Fill"]:SetVertexColor	(r,g,b,a);
 	_G[FrameName.."FillGlow"]:SetVertexColor(r,g,b,(a-.2));
 
 	-- Set Rested Color
-	if DB.StatusBars.XPBar.RestedMatchColor then
-		DB.StatusBars.XPBar.RestedRed 			= DB.StatusBars.XPBar.GainedRed
-		DB.StatusBars.XPBar.RestedBlue 			= DB.StatusBars.XPBar.GainedBlue
-		DB.StatusBars.XPBar.RestedGreen 		= DB.StatusBars.XPBar.GainedGreen
-		DB.StatusBars.XPBar.RestedBrightness	= 1
-		DB.StatusBars.XPBar.RestedColor		= DB.StatusBars.XPBar.GainedColor
-	elseif DB.StatusBars.XPBar.RestedColor ~= "Custom" then
-		DB.StatusBars.XPBar.RestedRed 			= COLORS[DB.StatusBars.XPBar.RestedColor].r
-		DB.StatusBars.XPBar.RestedBlue 			= COLORS[DB.StatusBars.XPBar.RestedColor].b
-		DB.StatusBars.XPBar.RestedGreen 		= COLORS[DB.StatusBars.XPBar.RestedColor].g
-		DB.StatusBars.XPBar.RestedBrightness	= COLORS[DB.StatusBars.XPBar.RestedColor].a
+	if SUI.DB.StatusBars.XPBar.RestedMatchColor then
+		SUI.DB.StatusBars.XPBar.RestedRed 			= SUI.DB.StatusBars.XPBar.GainedRed
+		SUI.DB.StatusBars.XPBar.RestedBlue 			= SUI.DB.StatusBars.XPBar.GainedBlue
+		SUI.DB.StatusBars.XPBar.RestedGreen 		= SUI.DB.StatusBars.XPBar.GainedGreen
+		SUI.DB.StatusBars.XPBar.RestedBrightness	= 1
+		SUI.DB.StatusBars.XPBar.RestedColor		= SUI.DB.StatusBars.XPBar.GainedColor
+	elseif SUI.DB.StatusBars.XPBar.RestedColor ~= "Custom" then
+		SUI.DB.StatusBars.XPBar.RestedRed 			= COLORS[DB.StatusBars.XPBar.RestedColor].r
+		SUI.DB.StatusBars.XPBar.RestedBlue 			= COLORS[DB.StatusBars.XPBar.RestedColor].b
+		SUI.DB.StatusBars.XPBar.RestedGreen 		= COLORS[DB.StatusBars.XPBar.RestedColor].g
+		SUI.DB.StatusBars.XPBar.RestedBrightness	= COLORS[DB.StatusBars.XPBar.RestedColor].a
 	end
-	r = DB.StatusBars.XPBar.RestedRed
-	b = DB.StatusBars.XPBar.RestedBlue
-	g = DB.StatusBars.XPBar.RestedGreen
-	a = DB.StatusBars.XPBar.RestedBrightness
+	r = SUI.DB.StatusBars.XPBar.RestedRed
+	b = SUI.DB.StatusBars.XPBar.RestedBlue
+	g = SUI.DB.StatusBars.XPBar.RestedGreen
+	a = SUI.DB.StatusBars.XPBar.RestedBrightness
 	_G[FrameName.."Lead"]:SetVertexColor	(r,g,b,a);
 	_G[FrameName.."LeadGlow"]:SetVertexColor(r,g,b,(a+.1));
 end
 local SetRepColors = function(self)
 	local FrameName = self:GetName();
 	local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
-	if DB.StatusBars.RepBar.AutoDefined == true then
+	if SUI.DB.StatusBars.RepBar.AutoDefined == true then
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7];
 		_G[FrameName.."Fill"]:SetVertexColor	(color.r, color.g, color.b, 0.7);
 		_G[FrameName.."FillGlow"]:SetVertexColor(color.r, color.g, color.b, 0.2);
 	else
 		local r,b,g,a
-		r = DB.StatusBars.RepBar.GainedRed
-		b = DB.StatusBars.RepBar.GainedBlue
-		g = DB.StatusBars.RepBar.GainedGreen
-		a = DB.StatusBars.RepBar.GainedBrightness
+		r = SUI.DB.StatusBars.RepBar.GainedRed
+		b = SUI.DB.StatusBars.RepBar.GainedBlue
+		g = SUI.DB.StatusBars.RepBar.GainedGreen
+		a = SUI.DB.StatusBars.RepBar.GainedBrightness
 		_G[FrameName.."Fill"]:SetVertexColor	(r, g, b, a);
 		_G[FrameName.."FillGlow"]:SetVertexColor(r, g, b, a);
 	end
@@ -103,7 +102,7 @@ local updateText = function(self, side)
 	--Reset Text
 	_G[FrameName.."Text"]:SetText("")
 	
-	if (DB.StatusBars.left == "xp" and side == "left") or (DB.StatusBars.right == "xp" and side == "right") then
+	if (SUI.DB..StatusBars.left == "xp" and side == "left") or (SUI.DB..StatusBars.right == "xp" and side == "right") then
 		local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 		if now ~= 0 then
 			_G[FrameName.."Fill"]:SetWidth((now/goal)*self:GetWidth());
@@ -112,13 +111,13 @@ local updateText = function(self, side)
 			if rested == 0 then rested = .001 end
 			_G[FrameName.."Lead"]:SetWidth(rested);
 		end
-		if DB.StatusBars.XPBar.text then
-			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(now), spartan:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
+		if SUI.DB.StatusBars.XPBar.text then
+			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(now), SUI:comma_value(goal),(UnitXP("player")/UnitXPMax("player")*100))
 		else
 			_G[FrameName.."Text"]:SetText("")
 		end
 		SetXPColors(self);
-	elseif (DB.StatusBars.left == "rep" and side == "left") or (DB.StatusBars.right == "rep" and side == "right") then
+	elseif (SUI.DB..StatusBars.left == "rep" and side == "left") or (SUI.DB..StatusBars.right == "rep" and side == "right") then
 		local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 		if name then ratio = (current-low)/(high-low); end
 		if ratio == 0 then
@@ -126,13 +125,13 @@ local updateText = function(self, side)
 		else
 			_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
 		end
-		if DB.StatusBars.RepBar.text and current ~= high then
-			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100)
+		if SUI.DB.StatusBars.RepBar.text and current ~= high then
+			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(current-low), SUI:comma_value(high-low), ratio*100)
 		else
 			_G[FrameName.."Text"]:SetText("")
 		end
 		SetRepColors(self);
-	elseif (DB.StatusBars.left == "ap" and side == "left") or (DB.StatusBars.right == "ap" and side == "right") then
+	elseif (SUI.DB..StatusBars.left == "ap" and side == "left") or (SUI.DB..StatusBars.right == "ap" and side == "right") then
 		_G[FrameName.."Text"]:SetText("")
 		if HasArtifactEquipped() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
@@ -147,19 +146,19 @@ local updateText = function(self, side)
 					_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
 				end
 			end
-			if DB.StatusBars.APBar.text then
-				_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+			if SUI.DB.StatusBars.APBar.text then
+				_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(xp), SUI:comma_value(xpForNextPoint), ratio*100)
 			else
 				_G[FrameName.."Text"]:SetText("")
 			end
 			_G[FrameName.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
 		end
-	-- elseif (DB.StatusBars.left == "honor" and side == "left") or (DB.StatusBars.right == "honor" and side == "right") then
-		-- if DB.StatusBars.HonorBar.text then
+	-- elseif (SUI.DB..StatusBars.left == "honor" and side == "left") or (SUI.DB..StatusBars.right == "honor" and side == "right") then
+		-- if SUI.DB.StatusBars.HonorBar.text then
 			-- local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
 			-- local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);
 			-- local ratio = (xp/xpForNextPoint);
-			-- _G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+			-- _G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(xp), SUI:comma_value(xpForNextPoint), ratio*100)
 		-- else
 			-- _G[FrameName.."Text"]:SetText("")
 		-- end
@@ -172,8 +171,8 @@ function module:EnableStatusBars()
 		SUI_StatusBarTooltipHeader:SetJustifyH("LEFT");
 		SUI_StatusBarTooltipText:SetJustifyH("LEFT");
 		SUI_StatusBarTooltipText:SetJustifyV("TOP");
-		spartan:FormatFont(SUI_StatusBarTooltipHeader, 12, "Core")
-		spartan:FormatFont(SUI_StatusBarTooltipText, 10, "Core")
+		SUI:FormatFont(SUI_StatusBarTooltipHeader, 12, "Core")
+		SUI:FormatFont(SUI_StatusBarTooltipText, 10, "Core")
 	end
 
 	local showXPTooltip = function(self)
@@ -181,7 +180,7 @@ function module:EnableStatusBars()
 		local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% "..COMBAT_XP_GAIN; -- use Global Strings and regex to make the level string work in any locale
 		local xprest = TUTORIAL_TITLE26.." (%d%%) -"; -- Rested (%d%%) -
 		local a = format("Level %s ",UnitLevel("player"))
-		local b = format(XP_LEVEL_TEMPLATE, spartan:comma_value(UnitXP("player")), spartan:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
+		local b = format(XP_LEVEL_TEMPLATE, SUI:comma_value(UnitXP("player")), SUI:comma_value(UnitXPMax("player")), (UnitXP("player")/UnitXPMax("player")*100))
 		SUI_StatusBarTooltipHeader:SetText(a..b); -- Level 99 (9999 / 9999) 100% Experience
 		local rested,text = GetXPExhaustion() or 0;
 		if (rested > 0) then
@@ -197,7 +196,7 @@ function module:EnableStatusBars()
 		if name then
 			text = GetFactionDetails(name);
 			ratio = (current-low)/(high-low);
-			SUI_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, spartan:comma_value(current-low), spartan:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
+			SUI_StatusBarTooltipHeader:SetText(format("%s ( %s / %s ) %d%% %s", name, SUI:comma_value(current-low), SUI:comma_value(high-low), ratio*100,_G["FACTION_STANDING_LABEL"..react]));
 			SUI_StatusBarTooltipText:SetText("|cffffd200"..text.."|r");
 		else
 			SUI_StatusBarTooltipHeader:SetText(REPUTATION);
@@ -213,7 +212,7 @@ function module:EnableStatusBars()
 			local ratio = (xp/xpForNextPoint);
 			
 			SUI_StatusBarTooltipHeader:SetText(name);							
-			SUI_StatusBarTooltipText:SetFormattedText("( %s / %s ) %d%%", spartan:comma_value(xp), spartan:comma_value(xpForNextPoint), ratio*100)
+			SUI_StatusBarTooltipText:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(xp), SUI:comma_value(xpForNextPoint), ratio*100)
 		else
 			SUI_StatusBarTooltipHeader:SetText("No Artifact equiped");
 			SUI_StatusBarTooltipText:SetText("")
@@ -233,16 +232,16 @@ function module:EnableStatusBars()
 	SUI_StatusBar_Left:SetScript("OnEnter",function(self)
 		tooltip:ClearAllPoints();
 		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Left,"TOP",-2,-1);
-		if DB.StatusBars.left == "rep" and DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
-		if DB.StatusBars.left == "xp" and DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
-		if DB.StatusBars.left == "ap" and DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.left == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
+		if SUI.DB.StatusBars.left == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
+		if SUI.DB.StatusBars.left == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
 	end);
 	SUI_StatusBar_Left:SetScript("OnMouseDown",function(self)
 		tooltip:ClearAllPoints();
 		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Left,"TOP",-2,-1);
-		if DB.StatusBars.left == "rep" and DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
-		if DB.StatusBars.left == "xp" and DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
-		if DB.StatusBars.left == "ap" and DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.left == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
+		if SUI.DB.StatusBars.left == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
+		if SUI.DB.StatusBars.left == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
 	end);
 	SUI_StatusBar_Left:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
 	SUI_StatusBar_Left:SetScript("OnEvent",function(self) updateText(self, "left") end)
@@ -258,16 +257,16 @@ function module:EnableStatusBars()
 	SUI_StatusBar_Right:SetScript("OnEnter",function(self)
 		tooltip:ClearAllPoints();
 		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Right,"TOP",-2,-1);
-		if DB.StatusBars.right == "rep" and DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
-		if DB.StatusBars.right == "xp" and DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
-		if DB.StatusBars.right == "ap" and DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.right == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
+		if SUI.DB.StatusBars.right == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
+		if SUI.DB.StatusBars.right == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
 	end);
 	SUI_StatusBar_Right:SetScript("OnMouseDown",function(self)
 		tooltip:ClearAllPoints();
 		tooltip:SetPoint("BOTTOM",SUI_StatusBar_Right,"TOP",-2,-1);
-		if DB.StatusBars.right == "rep" and DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
-		if DB.StatusBars.right == "xp" and DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
-		if DB.StatusBars.right == "ap" and DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.right == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
+		if SUI.DB.StatusBars.right == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
+		if SUI.DB.StatusBars.right == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
 	end);
 	SUI_StatusBar_Right:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
 	SUI_StatusBar_Right:SetScript("OnEvent",function(self) updateText(self, "right") end)
@@ -275,6 +274,6 @@ function module:EnableStatusBars()
 end
 
 function module:UpdateStatusBars()
-	if DB.StatusBars.left ~= "disabled" then SUI_StatusBar_Left:Show(); updateText(SUI_StatusBar_Left, "left") else SUI_StatusBar_Left:Hide(); end
-	if DB.StatusBars.right ~= "disabled" then SUI_StatusBar_Right:Show(); updateText(SUI_StatusBar_Right, "left") else SUI_StatusBar_Right:Hide(); end
+	if SUI.DB.StatusBars.left ~= "disabled" then SUI_StatusBar_Left:Show(); updateText(SUI_StatusBar_Left, "left") else SUI_StatusBar_Left:Hide(); end
+	if SUI.DB.StatusBars.right ~= "disabled" then SUI_StatusBar_Right:Show(); updateText(SUI_StatusBar_Right, "left") else SUI_StatusBar_Right:Hide(); end
 end

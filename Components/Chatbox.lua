@@ -12,8 +12,8 @@ function module:SetPopupText(text)
 end
 
 function module:OnInitialize()
-	if DBMod.Chatbox == nil then
-		DBMod.Chatbox = {
+	if SUI.DBMod.Chatbox == nil then
+		SUI.DBMod.Chatbox = {
 			showThreat = true,
 			healthMode = "detailed"
 		}

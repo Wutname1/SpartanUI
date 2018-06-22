@@ -1,48 +1,47 @@
-local _, SUI
-spartan = _G["SUI"]
-local L = spartan.L;
-local Artwork_Core = spartan:GetModule("Artwork_Core");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local Artwork_Core = SUI:GetModule("Artwork_Core");
 
 function Artwork_Core:SetupOptions()
 	local Profiles = {}
-	for name, module in spartan:IterateModules() do
+	for name, module in SUI:IterateModules() do
 		if (string.match(name, "Style_")) then
 			Profiles[string.sub(name, 7)] = string.sub(name, 7)
 		end
 	end
-	spartan.opt.args["Artwork"].args["Base"] = {name = "Base Options",type="group",order=0,
+	SUI.opt.args["Artwork"].args["Base"] = {name = "Base Options",type="group",order=0,
 		args = {
 			VehicleUI = {name = "Use Blizzard Vehicle UI", type = "toggle",order=0.9,
-				get = function(info) return DBMod.Artwork.VehicleUI end,
+				get = function(info) return SUI.DBMod.Artwork.VehicleUI end,
 				set = function(info,val) 
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
-					DBMod.Artwork.VehicleUI = val
+					if (InCombatLockdown()) then SUI:Print(ERR_NOT_IN_COMBAT); return; end
+					SUI.DBMod.Artwork.VehicleUI = val
 					--Make sure bartender knows to do it, or not...
 					if Bartender4 then
 						Bartender4.db.profile.blizzardVehicle = val
 						Bartender4:UpdateBlizzardVehicle()
 					end
 					
-					if DBMod.Artwork.VehicleUI then
-						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
-							spartan:GetModule("Style_" .. DBMod.Artwork.Style):SetupVehicleUI()
+					if SUI.DBMod.Artwork.VehicleUI then
+						if SUI:GetModule("Style_" ..SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
+							SUI:GetModule("Style_" ..SUI.DBMod.Artwork.Style):SetupVehicleUI()
 						end
 					else
-						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
-							spartan:GetModule("Style_" .. DBMod.Artwork.Style):RemoveVehicleUI()
+						if SUI:GetModule("Style_" ..SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
+							SUI:GetModule("Style_" ..SUI.DBMod.Artwork.Style):RemoveVehicleUI()
 						end
 					end
 				end,
 			},
 			-- MoveBars={name = "Move Bars", type = "toggle",order=0.91,
-				-- get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
+				-- get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else SUI.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
 				-- set = function(info, value)
 					-- Bartender4.db.profile.buttonlock = value
 					-- Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
 				-- end,
 			-- },
 			LockButtons = {name = "Lock Buttons", type = "toggle",order=0.91,
-				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else spartan.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
+				get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else SUI.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
 				set = function(info, value)
 					Bartender4.db.profile.buttonlock = value
 					Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
@@ -54,7 +53,7 @@ function Artwork_Core:SetupOptions()
 					desc="Allow SpartanUI To manage the viewport",
 					get = function(info) return DB.viewport end,
 					set = function(info,val)
-						if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
+						if (InCombatLockdown()) then SUI:Print(ERR_NOT_IN_COMBAT); return; end
 						if (not val) then
 							--Since we are disabling reset the viewport
 							WorldFrame:ClearAllPoints();
@@ -63,59 +62,59 @@ function Artwork_Core:SetupOptions()
 						end
 						DB.viewport = val
 						if (not DB.viewport) then
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetTop"].disabled = true;
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetBottom"].disabled = true;
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetLeft"].disabled = true;
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetRight"].disabled = true;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetTop"].disabled = true;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetBottom"].disabled = true;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetLeft"].disabled = true;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetRight"].disabled = true;
 						else
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetTop"].disabled = false;
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetBottom"].disabled = false;
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetLeft"].disabled = false;
-							spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetRight"].disabled = false;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetTop"].disabled = false;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetBottom"].disabled = false;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetLeft"].disabled = false;
+							SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetRight"].disabled = false;
 						end
 					end,
 				},
 				viewportoffsets = {name = "Offset",order=2,type = "description",fontSize = "large"},
 				viewportoffsetTop = {name = "Top",type = "range",order=2.1,
 					min=-100,max=100,step=.1,
-					get = function(info) return DBMod.Artwork.Viewport.offset.top end,
-					set = function(info,val) DBMod.Artwork.Viewport.offset.top = val; end,
+					get = function(info) return SUI.DBMod.Artwork.Viewport.offset.top end,
+					set = function(info,val) SUI.DBMod.Artwork.Viewport.offset.top = val; end,
 				},
 				viewportoffsetBottom = {name = "Bottom",type = "range",order=2.2,
 					min=-100,max=100,step=.1,
-					get = function(info) return DBMod.Artwork.Viewport.offset.bottom end,
-					set = function(info,val) DBMod.Artwork.Viewport.offset.bottom = val; end,
+					get = function(info) return SUI.DBMod.Artwork.Viewport.offset.bottom end,
+					set = function(info,val) SUI.DBMod.Artwork.Viewport.offset.bottom = val; end,
 				},
 				viewportoffsetLeft = {name = "Left",type = "range",order=2.3,
 					min=-100,max=100,step=.1,
-					get = function(info) return DBMod.Artwork.Viewport.offset.left end,
-					set = function(info,val) DBMod.Artwork.Viewport.offset.left = val; end,
+					get = function(info) return SUI.DBMod.Artwork.Viewport.offset.left end,
+					set = function(info,val) SUI.DBMod.Artwork.Viewport.offset.left = val; end,
 				},
 				viewportoffsetRight = {name = "Right",type = "range",order=2.4,
 				min=-100,max=100,step=.1,
-				get = function(info) return DBMod.Artwork.Viewport.offset.right end,
-				set = function(info,val) DBMod.Artwork.Viewport.offset.right = val; end,
+				get = function(info) return SUI.DBMod.Artwork.Viewport.offset.right end,
+				set = function(info,val) SUI.DBMod.Artwork.Viewport.offset.right = val; end,
 			},
 			}
 			}
 		}
 	}
-	spartan.opt.args["Artwork"].args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
+	SUI.opt.args["Artwork"].args["scale"] = {name = L["ConfScale"],type = "range",order = 1,width = "double",
 			desc = L["ConfScaleDesc"],min = 0,max = 1,
 			set = function(info,val)
 				if (InCombatLockdown()) then 
-					spartan:Print(ERR_NOT_IN_COMBAT);
+					SUI:Print(ERR_NOT_IN_COMBAT);
 				else
-					DB.scale = min(1,spartan:round(val));
+					DB.scale = min(1,SUI:round(val));
 				end
 			end,
 			get = function(info) return DB.scale; end
 	};
-	spartan.opt.args["Artwork"].args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
+	SUI.opt.args["Artwork"].args["DefaultScales"] = {name = L["DefScales"],type = "execute",order = 2,
 		desc = L["DefScalesDesc"],
 		func = function()
 			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
+				SUI:Print(ERR_NOT_IN_COMBAT);
 			else
 				if (DB.scale >= 0.92) or (DB.scale < 0.78) then
 					DB.scale = 0.78;
@@ -127,18 +126,18 @@ function Artwork_Core:SetupOptions()
 	};
 
 	if (not DB.viewport) then
-		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetTop"].disabled = true;
-		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetBottom"].disabled = true;
-		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetLeft"].disabled = true;
-		spartan.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetRight"].disabled = true;
+		SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetTop"].disabled = true;
+		SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetBottom"].disabled = true;
+		SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetLeft"].disabled = true;
+		SUI.opt.args["Artwork"].args["Base"].args["Viewport"].args["viewportoffsetRight"].disabled = true;
 	end
 end
 
 function Artwork_Core:StatusBarOptions()
-	local module = spartan:GetModule("Style_"..DBMod.Artwork.Style)
+	local module = SUI:GetModule("Style_"..SUI.DBMod.Artwork.Style)
 	-- local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["honor"] = L["Honor"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
 	local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
-	spartan.opt.args["Artwork"].args["StatusBars"] = {
+	SUI.opt.args["Artwork"].args["StatusBars"] = {
 		name = L["Status bars"],
 		desc = L["BarXPDesc"],
 		type = "group", args = {

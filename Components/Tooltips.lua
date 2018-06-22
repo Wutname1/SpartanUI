@@ -16,8 +16,8 @@ local tooltips = {
 local whitebg = {bgFile = [[Interface\AddOns\SpartanUI\media\blank.tga]],tile=false,edgeSize=3}
 
 function module:OnInitialize()
-	if DB.Tooltips == nil then
-		DB.Tooltips = 
+	if SUI.DB.Tooltips == nil then
+		SUI.DB.Tooltips = 
 		{
 			Styles={
 				metal = {
@@ -41,25 +41,25 @@ function module:OnInitialize()
 		}
 	end
 	
-	if DB.Tooltips.Rule1 == nil then
+	if SUI.DB.Tooltips.Rule1 == nil then
 		for k,v in ipairs(RuleList) do
-			DB.Tooltips[v] = {
+			SUI.DB.Tooltips[v] = {
 				Status = "Disabled",
 				Combat = false,
 				OverrideLoc=false,
 				Anchor = {onMouse=false,Moved = false,AnchorPos = {}}
 				}
 		end
-		if DB.Tooltips.OverrideLoc then
-			DB.Tooltips.Rule1 = {
+		if SUI.DB.Tooltips.OverrideLoc then
+			SUI.DB.Tooltips.Rule1 = {
 				Status = "All",
 				Combat = false,
-				OverrideLoc=DB.Tooltips.OverrideLoc,
-				Anchor = {onMouse=DB.Tooltips.Anchor.onMouse,Moved = DB.Tooltips.Anchor.Moved,AnchorPos = DB.Tooltips.Anchor.AnchorPos}
+				OverrideLoc=SUI.DB.Tooltips.OverrideLoc,
+				Anchor = {onMouse=SUI.DB.Tooltips.Anchor.onMouse,Moved = SUI.DB.Tooltips.Anchor.Moved,AnchorPos = SUI.DB.Tooltips.Anchor.AnchorPos}
 			}
-			DB.Tooltips.Anchor = nil
+			SUI.DB.Tooltips.Anchor = nil
 		else
-			DB.Tooltips.Rule1 = {
+			SUI.DB.Tooltips.Rule1 = {
 				Status = "All",
 				Combat = false,
 				OverrideLoc=false,
@@ -67,35 +67,35 @@ function module:OnInitialize()
 			}
 		end
 	end
-	if DB.Tooltips.SuppressNoMatch == nil then DB.Tooltips.SuppressNoMatch = true end
-	local a,b,c,d = unpack(DB.Tooltips.Color)
-	if a == 0 and b==0 and c==0 and d==0.7 then DB.Tooltips.Color = {0,0,0,0.4} end
+	if SUI.DB.Tooltips.SuppressNoMatch == nil then SUI.DB.Tooltips.SuppressNoMatch = true end
+	local a,b,c,d = unpack(SUI.DB.Tooltips.Color)
+	if a == 0 and b==0 and c==0 and d==0.7 then SUI.DB.Tooltips.Color = {0,0,0,0.4} end
 end
 
 local function ActiveRule()
 	for k,v in ipairs(RuleList) do
 		
-		if DB.Tooltips[v].Status ~= "Disabled" then
+		if SUI.DB.Tooltips[v].Status ~= "Disabled" then
 			local CombatRule = false
-			if InCombatLockdown() and DB.Tooltips[v].Combat then
+			if InCombatLockdown() and SUI.DB.Tooltips[v].Combat then
 				CombatRule = true
-			elseif not InCombatLockdown() and not DB.Tooltips[v].Combat then
+			elseif not InCombatLockdown() and not SUI.DB.Tooltips[v].Combat then
 				CombatRule = true
 			end
 			
-			if DB.Tooltips[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
+			if SUI.DB.Tooltips[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
 				return v
-			elseif DB.Tooltips[v].Status == "Raid" and IsInRaid() and CombatRule then
+			elseif SUI.DB.Tooltips[v].Status == "Raid" and IsInRaid() and CombatRule then
 				return v
-			elseif DB.Tooltips[v].Status == "Instance" and IsInInstance() then
+			elseif SUI.DB.Tooltips[v].Status == "Instance" and IsInInstance() then
 				return v
-			elseif DB.Tooltips[v].Status == "All" and CombatRule then
+			elseif SUI.DB.Tooltips[v].Status == "All" and CombatRule then
 				return v
 			end
 		end
 	end
 	--Failback of Rule1
-	if not DB.Tooltips.SuppressNoMatch then
+	if not SUI.DB.Tooltips.SuppressNoMatch then
 		spartan:Print("|cffff0000Error detected")
 		spartan:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
 	end
@@ -105,7 +105,7 @@ end
 -- local setPoint = function(self,point,parent,rpoint)
 local setPoint = function(self, parent)
 	if parent then
-		if(DB.Tooltips[ActiveRule()].Anchor.onMouse) then
+		if(SUI.DB.Tooltips[ActiveRule()].Anchor.onMouse) then
 			self:SetOwner(parent, "ANCHOR_CURSOR")
 			return
 		else
@@ -113,21 +113,21 @@ local setPoint = function(self, parent)
 		end
 	
 		--See If the theme has an anchor and if we are allowed to use it
-		if DB.Styles[DBMod.Artwork.Style].TooltipLoc and not DB.Tooltips[ActiveRule()].OverrideLoc then
+		if DB.Styles[DBMod.Artwork.Style].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
 			local style = spartan:GetModule("Style_" .. DBMod.Artwork.Style);
 			if style then style:TooltipLoc(self, parent) end
 		else
 			self:ClearAllPoints();
-			if DB.Tooltips[ActiveRule()].Anchor.Moved then
+			if SUI.DB.Tooltips[ActiveRule()].Anchor.Moved then
 				local Anchors = {}
-				for key,val in pairs(DB.Tooltips[ActiveRule()].Anchor.AnchorPos) do
+				for key,val in pairs(SUI.DB.Tooltips[ActiveRule()].Anchor.AnchorPos) do
 					Anchors[key] = val
 				end
 				-- self:ClearAllPoints();
 				if Anchors.point == nil then 
 					--Error Catch
 					self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
-					DB.Tooltips[ActiveRule()].Anchor.Moved = false
+					SUI.DB.Tooltips[ActiveRule()].Anchor.Moved = false
 				else
 					self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 				end
@@ -143,14 +143,14 @@ local onShow = function(self)
 	if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
 		self.SUIBorder:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
 	else
-		self.SUIBorder:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
+		self.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 	end
 	
-	if (DB.Tooltips.ActiveStyle == "none" or DB.Tooltips.ColorOverlay) or (not self.SUIBorder) then
-		self:SetBackdropColor(unpack(DB.Tooltips.Color))
+	if (SUI.DB.Tooltips.ActiveStyle == "none" or SUI.DB.Tooltips.ColorOverlay) or (not self.SUIBorder) then
+		self:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 		self.SUIBorder:SetBackdropColor(1,1,1,1)
 	else
-		self.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
+		self.SUIBorder:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 		self:SetBackdropColor(0, 0, 0, 0)
 	end
 	
@@ -177,12 +177,12 @@ local TipCleared = function(self)
 end
 
 local Override_Color = function(self, r, g, b, a)
-	local r2,b2,g2,a2 = unpack(DB.Tooltips.Color)
+	local r2,b2,g2,a2 = unpack(SUI.DB.Tooltips.Color)
 	if((r ~= r2) and (g ~= g2) and (b ~= b2)) then
-		if not DB.Tooltips.ColorOverlay then
-			self.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
+		if not SUI.DB.Tooltips.ColorOverlay then
+			self.SUIBorder:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 		else
-			self:SetBackdropColor(unpack(DB.Tooltips.Color))
+			self:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 		end
 	end
 end
@@ -402,7 +402,7 @@ local function ApplyTooltipSkins()
 		    if (DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil) and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
 				tmp:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
 			else
-				tmp:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
+				tmp:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 			end
 
 		    tmp.SetBorderColor = SetBorderColor
@@ -425,14 +425,14 @@ function module:UpdateBG()
 		    -- if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
 				-- tooltip.SUIBorder:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
 			-- else
-				-- tooltip.SUIBorder:SetBackdrop(DB.Tooltips.Styles[DB.Tooltips.ActiveStyle])
+				-- tooltip.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 			-- end
-			if not DB.Tooltips.ColorOverlay then
-				if DB.Tooltips.ActiveStyle ~= "none" then
-					tooltip.SUIBorder:SetBackdropColor(unpack(DB.Tooltips.Color))
+			if not SUI.DB.Tooltips.ColorOverlay then
+				if SUI.DB.Tooltips.ActiveStyle ~= "none" then
+					tooltip.SUIBorder:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 				else
 					tooltip.SUIBorder:SetBackdropColor(0,0,0,0)
-					tooltip:SetBackdropColor(unpack(DB.Tooltips.Color))
+					tooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 				end
 			end
 		end
@@ -461,7 +461,7 @@ function module:OnEnable()
 		
 		anchor:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" then
-				DB.Tooltips[v].Anchor.Moved = true;
+				SUI.DB.Tooltips[v].Anchor.Moved = true;
 				module[v].anchor:SetMovable(true);
 				module[v].anchor:StartMoving();
 			end
@@ -473,14 +473,14 @@ function module:OnEnable()
 			local Anchors = {}
 			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module[v].anchor:GetPoint()
 			for k,val in pairs(Anchors) do
-				DB.Tooltips[v].Anchor.AnchorPos[k] = val
+				SUI.DB.Tooltips[v].Anchor.AnchorPos[k] = val
 			end
 		end);
 		
 		anchor:SetScript("OnShow", function(self)
-			if DB.Tooltips[v].Anchor.Moved then
+			if SUI.DB.Tooltips[v].Anchor.Moved then
 				local Anchors = {}
-				for key,val in pairs(DB.Tooltips[v].Anchor.AnchorPos) do
+				for key,val in pairs(SUI.DB.Tooltips[v].Anchor.AnchorPos) do
 					Anchors[key] = val
 				end
 				self:ClearAllPoints();
@@ -514,14 +514,14 @@ function module:OnEnable()
 end
 
 local OnMouseOpt = function(v)
-	if DB.Tooltips[v].Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
+	if SUI.DB.Tooltips[v].Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
 		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = true
 	else
 		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = false
 	end
 	
-	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["MoveAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
-	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["ResetAnchor"].disabled = DB.Tooltips[v].Anchor.onMouse
+	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["MoveAnchor"].disabled = SUI.DB.Tooltips[v].Anchor.onMouse
+	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["ResetAnchor"].disabled = SUI.DB.Tooltips[v].Anchor.onMouse
 end
 
 function module:BuildOptions()
@@ -533,24 +533,24 @@ function module:BuildOptions()
 				["smooth"]="smooth",
 				["smoke"]="smoke",
 				["none"]=L["none"]},
-				get = function(info) return DB.Tooltips.ActiveStyle end,
-				set = function(info,val) DB.Tooltips.ActiveStyle = val end
+				get = function(info) return SUI.DB.Tooltips.ActiveStyle end,
+				set = function(info,val) SUI.DB.Tooltips.ActiveStyle = val end
 			},
 			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=2,desc=L["TooltipOverrideDesc"],
-					get = function(info) return DB.Tooltips.Override[DBMod.Artwork.Style] end,
-					set = function(info,val) DB.Tooltips.Override[DBMod.Artwork.Style] = val end
+					get = function(info) return SUI.DB.Tooltips.Override[DBMod.Artwork.Style] end,
+					set = function(info,val) SUI.DB.Tooltips.Override[DBMod.Artwork.Style] = val end
 			},
 			color = {name=L["Color"],type="color",hasAlpha=true,order=10,width="full",
-				get = function(info) return unpack(DB.Tooltips.Color) end,
-				set = function(info,r,g,b,a) DB.Tooltips.Color = {r,g,b,a} module:UpdateBG() end
+				get = function(info) return unpack(SUI.DB.Tooltips.Color) end,
+				set = function(info,r,g,b,a) SUI.DB.Tooltips.Color = {r,g,b,a} module:UpdateBG() end
 			},
 			ColorOverlay = {name=L["Color Overlay"],type="toggle",order=11,desc=L["ColorOverlayDesc"],
-					get = function(info) return DB.Tooltips.ColorOverlay end,
-					set = function(info,val) DB.Tooltips.ColorOverlay = val module:UpdateBG()end
+					get = function(info) return SUI.DB.Tooltips.ColorOverlay end,
+					set = function(info,val) SUI.DB.Tooltips.ColorOverlay = val module:UpdateBG()end
 			},
 			SuppressNoMatch = {name="Suppress no rule match error",type="toggle",order=11,desc=L["ColorOverlayDesc"],
-					get = function(info) return DB.Tooltips.SuppressNoMatch end,
-					set = function(info,val) DB.Tooltips.SuppressNoMatch = val end
+					get = function(info) return SUI.DB.Tooltips.SuppressNoMatch end,
+					set = function(info,val) SUI.DB.Tooltips.SuppressNoMatch = val end
 			}
 		}
 	}
@@ -560,23 +560,23 @@ function module:BuildOptions()
 			name="Display Location " .. v,type="group",inline=true,order=k + 20.1,width="full", args = {
 			Condition = {name ="Condition", type="select",order=k + 20.2,
 				values = {["Group"]="In a Group",["Raid"]="In a Raid Group",["Instance"]="In a instance",["All"]="All the time",["Disabled"]="Disabled"},
-				get = function(info) return DB.Tooltips[v].Status; end,
-				set = function(info,val) DB.Tooltips[v].Status = val; end
+				get = function(info) return SUI.DB.Tooltips[v].Status; end,
+				set = function(info,val) SUI.DB.Tooltips[v].Status = val; end
 			},
 			Combat = {name="only if in combat",type="toggle",order=k + 20.3,
-			get = function(info) return DB.Tooltips[v].Combat end,
-			set = function(info,val) DB.Tooltips[v].Combat = val; end
+			get = function(info) return SUI.DB.Tooltips[v].Combat end,
+			set = function(info,val) SUI.DB.Tooltips[v].Combat = val; end
 			},
 			OnMouse = {name="Display on mouse?",type="toggle",order=k + 20.4,desc=L["TooltipOverrideDesc"],
-					get = function(info) OnMouseOpt(v); return DB.Tooltips[v].Anchor.onMouse end,
-					set = function(info,val) DB.Tooltips[v].Anchor.onMouse = val; OnMouseOpt(v); end
+					get = function(info) OnMouseOpt(v); return SUI.DB.Tooltips[v].Anchor.onMouse end,
+					set = function(info,val) SUI.DB.Tooltips[v].Anchor.onMouse = val; OnMouseOpt(v); end
 			},
 			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=k + 20.5,
-					get = function(info) return DB.Tooltips[v].OverrideLoc end,
-					set = function(info,val) DB.Tooltips[v].OverrideLoc = val; end
+					get = function(info) return SUI.DB.Tooltips[v].OverrideLoc end,
+					set = function(info,val) SUI.DB.Tooltips[v].OverrideLoc = val; end
 			},
 			MoveAnchor = {name="Move anchor",type="execute",order=k + 20.6,width="half",func = function(info,val) module[v].anchor:Show() end},
-			ResetAnchor = {name="Reset anchor",type="execute",order=k + 20.7,width="half",func = function(info,val) DB.Tooltips[v].Anchor.Moved = false end}
+			ResetAnchor = {name="Reset anchor",type="execute",order=k + 20.7,width="half",func = function(info,val) SUI.DB.Tooltips[v].Anchor.Moved = false end}
 		}
 		}
 	end
