@@ -241,7 +241,7 @@ function module:OnInitialize()
 		args = {
 			a = {name=L["GFontSet"],type="header"},
 			b = {name = L["FontType"], type="select",
-				values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
+				values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["Arial"]="Arial",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
 				get = function(info) return SUI.DB.font.Primary.Face; end,
 				set = function(info,val) SUI.DB.font.Primary.Face = val; end
 			},
@@ -279,7 +279,7 @@ function module:OnInitialize()
 			Core = {name = L["CoreSet"],type = "group",
 				args = {
 					CFace = {name = L["FontType"], type="select", order = 1,
-						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
+						values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["Arial"]="Arial",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
 						get = function(info) return SUI.DB.font.Core.Face; end,
 						set = function(info,val) SUI.DB.font.Core.Face = val; spartan:FontRefresh("Core") end
 					},
@@ -299,7 +299,7 @@ function module:OnInitialize()
 				disabled = function(info) if not spartan:GetModule("PlayerFrames", true) then return true end end,
 				args = {
 					PlFace = {name = L["FontType"], type="select", order = 1,
-						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
+						values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["Arial"]="Arial",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
 						get = function(info) return SUI.DB.font.Player.Face; end,
 						set = function(info,val) SUI.DB.font.Player.Face = val; spartan:FontRefresh("Player") end
 					},
@@ -319,7 +319,7 @@ function module:OnInitialize()
 				disabled = function(info) if not spartan:GetModule("PartyFrames", true) then return true end end,
 				args = {
 					PaFace = {name = L["FontType"], type="select", order = 1,
-						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
+						values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["Arial"]="Arial",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
 						get = function(info) return SUI.DB.font.Party.Face; end,
 						set = function(info,val) SUI.DB.font.Party.Face = val; spartan:FontRefresh("Party") end
 					},
@@ -339,7 +339,7 @@ function module:OnInitialize()
 				disabled = function(info) if not spartan:GetModule("RaidFrames", true) then return true end end,
 				args = {
 					RFace = {name = L["FontType"], type="select", order = 1,
-						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
+						values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["Arial"]="Arial",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
 						get = function(info) return SUI.DB.font.Raid.Face; end,
 						set = function(info,val) SUI.DB.font.Raid.Face = val; spartan:FontRefresh("Raid") end
 					},

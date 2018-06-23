@@ -796,6 +796,8 @@ function SUI:GetFontFace(Module)
 			return "Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf"
 		elseif SUI.DB.font[Module].Face == "FrizQuadrata" then
 			return "Fonts\\FRIZQT__.TTF"
+		elseif SUI.DB.font[Module].Face == "Arial" then
+			return "Fonts\\ARIAL.TTF"
 		elseif SUI.DB.font[Module].Face == "ArialNarrow" then
 			return "Fonts\\ARIALN.TTF"
 		elseif SUI.DB.font[Module].Face == "Skurri" then
