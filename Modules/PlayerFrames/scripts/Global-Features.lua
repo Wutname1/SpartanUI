@@ -194,6 +194,8 @@ function PlayerFrames:Buffs(self,unit)
 		AuraBars:SetHeight(1)
 		AuraBars.auraBarTexture = Smoothv2
 		AuraBars.PostUpdate = PostUpdateAura
+		AuraBars.spellTimeFont = SUI:GetFontFace("Player")
+		AuraBars.spellNameFont = SUI:GetFontFace("Player")
 
 		--Hots and Dots Filter
 		local Barfilter = function(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
