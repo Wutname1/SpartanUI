@@ -55,7 +55,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if DB.EnabledComponents.MailOpenAll then
+	if SUI.DB.EnabledComponents.MailOpenAll then
 		module:Enable()
 	else
 		return

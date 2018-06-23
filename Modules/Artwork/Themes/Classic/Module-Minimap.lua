@@ -86,5 +86,5 @@ function module:MiniMap()
 end
 
 function module:EnableMinimap()
-	if (DB.MiniMap.AutoDetectAllowUse) or (DB.MiniMap.ManualAllowUse) then module:MiniMap() end
+	if (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then module:MiniMap() end
 end

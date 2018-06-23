@@ -48,52 +48,52 @@ function module:OnInitialize()
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Classic";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Classic";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 						end
 				},
 				Fel = {name = "Fel", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Fel";
-						DB.Styles.Fel.SubTheme = "Fel";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Fel";
+						SUI.DB.Styles.Fel.SubTheme = "Fel";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Transparent";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Transparent";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Minimal";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Minimal";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
 				},
 				Digital = {name = "Digital", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Digital", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Fel";
-						DB.Styles.Fel.SubTheme = "Digital";
-						DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-						DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-						DBMod.RaidFrames.Style = DBMod.Artwork.Style;
+						SUI.DBMod.Artwork.Style = "Fel";
+						SUI.DB.Styles.Fel.SubTheme = "Digital";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
 				}
@@ -103,28 +103,28 @@ function module:OnInitialize()
 				Classic = {name = "Classic", type="execute",
 					image=function() return "interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Classic";
+						SUI.DBMod.Artwork.Style = "Classic";
 						module:ArtSetup()
 						end
 				},
 				Fel = {name = "Fel", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Fel";
+						SUI.DBMod.Artwork.Style = "Fel";
 						module:ArtSetup()
 						end
 				},
 				Transparent = {name = "Transparent", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Transparent", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Transparent";
+						SUI.DBMod.Artwork.Style = "Transparent";
 						module:ArtSetup()
 					end
 				},
 				Minimal = {name = "Minimal", type="execute",disabled=true,
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function()
-						DBMod.Artwork.Style = "Minimal";
+						SUI.DBMod.Artwork.Style = "Minimal";
 						module:ArtSetup()
 					end
 				}
@@ -135,7 +135,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Classic", 120, 60 end,
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Classic";
+						SUI.DBMod.PlayerFrames.Style = "Classic";
 						module:ArtSetup()
 						end
 				},
@@ -143,7 +143,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Fel", 120, 60 end,
 					imageCoords=function() return {.1,.5,.1,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Fel";
+						SUI.DBMod.PlayerFrames.Style = "Fel";
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -151,7 +151,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Transparent";
+						SUI.DBMod.PlayerFrames.Style = "Transparent";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -159,7 +159,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal", 120, 60 end,
 					imageCoords=function() return {0,.5,0,.5} end,
 					func = function()
-						DBMod.PlayerFrames.Style = "Minimal";
+						SUI.DBMod.PlayerFrames.Style = "Minimal";
 						spartan:UpdateModuleConfigs()
 					end
 				}
@@ -170,7 +170,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Classic", 120, 60 end,
 					imageCoords=function() return {.1,.5,.5,1} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Classic";
+						SUI.DBMod.PartyFrames.Style = "Classic";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -178,7 +178,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Fel", 120, 60 end,
 					imageCoords=function() return {0,.5,.5,1} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Fel";
+						SUI.DBMod.PartyFrames.Style = "Fel";
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -186,7 +186,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Transparent";
+						SUI.DBMod.PartyFrames.Style = "Transparent";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -194,7 +194,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal", 120, 60 end,
 					imageCoords=function() return {0,.5,.5,1} end,
 					func = function()
-						DBMod.PartyFrames.Style = "Minimal";
+						SUI.DBMod.PartyFrames.Style = "Minimal";
 						spartan:UpdateModuleConfigs()
 					end
 				}
@@ -205,7 +205,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Classic", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Classic";
+						SUI.DBMod.RaidFrames.Style = "Classic";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -213,7 +213,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Fel", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Fel";
+						SUI.DBMod.RaidFrames.Style = "Fel";
 						spartan:UpdateModuleConfigs()
 						end
 				},
@@ -221,7 +221,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Transparent";
+						SUI.DBMod.RaidFrames.Style = "Transparent";
 						spartan:UpdateModuleConfigs()
 					end
 				},
@@ -229,7 +229,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal", 120, 60 end,
 					imageCoords=function() return {.6,.9,.1,.4} end,
 					func = function()
-						DBMod.RaidFrames.Style = "Minimal";
+						SUI.DBMod.RaidFrames.Style = "Minimal";
 						spartan:UpdateModuleConfigs()
 					end
 				}
@@ -242,33 +242,33 @@ function module:OnInitialize()
 			a = {name=L["GFontSet"],type="header"},
 			b = {name = L["FontType"], type="select",
 				values = {["SpartanUI"]="Cognosis",["SUI4"]="NotoSans",["SUI4cn"]="NotoSans (zhCN)",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
-				get = function(info) return DB.font.Primary.Face; end,
-				set = function(info,val) DB.font.Primary.Face = val; end
+				get = function(info) return SUI.DB.font.Primary.Face; end,
+				set = function(info,val) SUI.DB.font.Primary.Face = val; end
 			},
 			c = {name = L["FontStyle"], type="select",
 				values = {["normal"]=L["normal"], ["monochrome"]=L["monochrome"], ["outline"]=L["outline"], ["thickoutline"]=L["thickoutline"]},
-				get = function(info) return DB.font.Primary.Type; end,
-				set = function(info,val) DB.font.Primary.Type = val; end
+				get = function(info) return SUI.DB.font.Primary.Type; end,
+				set = function(info,val) SUI.DB.font.Primary.Type = val; end
 			},
 			d = {name = L["AdjFontSize"], type="range",width="double",
 				min=-3,max=3,step=1,
-				get = function(info) return DB.font.Primary.Size; end,
-				set = function(info,val) DB.font.Primary.Size = val; end
+				get = function(info) return SUI.DB.font.Primary.Size; end,
+				set = function(info,val) SUI.DB.font.Primary.Size = val; end
 			},
 			z = {name = L["AplyGlobal"].." "..L["AllSet"], type="execute",width="double",
 				func = function()
-					DB.font.Core.Face = DB.font.Primary.Face;
-					DB.font.Core.Type = DB.font.Primary.Type;
-					DB.font.Core.Size = DB.font.Primary.Size;
-					DB.font.Player.Face = DB.font.Primary.Face;
-					DB.font.Player.Type = DB.font.Primary.Type;
-					DB.font.Player.Size = DB.font.Primary.Size;
-					DB.font.Party.Face = DB.font.Primary.Face;
-					DB.font.Party.Type = DB.font.Primary.Type;
-					DB.font.Party.Size = DB.font.Primary.Size;
-					DB.font.Raid.Face = DB.font.Primary.Face;
-					DB.font.Raid.Type = DB.font.Primary.Type;
-					DB.font.Raid.Size = DB.font.Primary.Size;
+					SUI.DB.font.Core.Face = SUI.DB.font.Primary.Face;
+					SUI.DB.font.Core.Type = SUI.DB.font.Primary.Type;
+					SUI.DB.font.Core.Size = SUI.DB.font.Primary.Size;
+					SUI.DB.font.Player.Face = SUI.DB.font.Primary.Face;
+					SUI.DB.font.Player.Type = SUI.DB.font.Primary.Type;
+					SUI.DB.font.Player.Size = SUI.DB.font.Primary.Size;
+					SUI.DB.font.Party.Face = SUI.DB.font.Primary.Face;
+					SUI.DB.font.Party.Type = SUI.DB.font.Primary.Type;
+					SUI.DB.font.Party.Size = SUI.DB.font.Primary.Size;
+					SUI.DB.font.Raid.Face = SUI.DB.font.Primary.Face;
+					SUI.DB.font.Raid.Type = SUI.DB.font.Primary.Type;
+					SUI.DB.font.Raid.Size = SUI.DB.font.Primary.Size;
 					spartan:FontRefresh("Core");
 					spartan:FontRefresh("Player");
 					spartan:FontRefresh("Party");
@@ -280,18 +280,18 @@ function module:OnInitialize()
 				args = {
 					CFace = {name = L["FontType"], type="select", order = 1,
 						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
-						get = function(info) return DB.font.Core.Face; end,
-						set = function(info,val) DB.font.Core.Face = val; spartan:FontRefresh("Core") end
+						get = function(info) return SUI.DB.font.Core.Face; end,
+						set = function(info,val) SUI.DB.font.Core.Face = val; spartan:FontRefresh("Core") end
 					},
 					COutline = {name = L["FontStyle"], type="select", order = 2,
 						values = {["normal"]=L["normal"], ["monochrome"]=L["monochrome"], ["outline"]=L["outline"], ["thickoutline"]=L["thickoutline"]},
-						get = function(info) return DB.font.Core.Type; end,
-						set = function(info,val) DB.font.Core.Type = val; spartan:FontRefresh("Core") end
+						get = function(info) return SUI.DB.font.Core.Type; end,
+						set = function(info,val) SUI.DB.font.Core.Type = val; spartan:FontRefresh("Core") end
 					},
 					CSize = {name = L["AdjFontSize"], type="range", order = 3,width="full",
 						min=-3,max=3,step=1,
-						get = function(info) return DB.font.Core.Size; end,
-						set = function(info,val) DB.font.Core.Size = val; spartan:FontRefresh("Core") end
+						get = function(info) return SUI.DB.font.Core.Size; end,
+						set = function(info,val) SUI.DB.font.Core.Size = val; spartan:FontRefresh("Core") end
 					}
 				}
 			},
@@ -300,18 +300,18 @@ function module:OnInitialize()
 				args = {
 					PlFace = {name = L["FontType"], type="select", order = 1,
 						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
-						get = function(info) return DB.font.Player.Face; end,
-						set = function(info,val) DB.font.Player.Face = val; spartan:FontRefresh("Player") end
+						get = function(info) return SUI.DB.font.Player.Face; end,
+						set = function(info,val) SUI.DB.font.Player.Face = val; spartan:FontRefresh("Player") end
 					},
 					PlOutline = {name = L["FontStyle"], type="select", order = 2,
 						values = {["normal"]=L["normal"], ["monochrome"]=L["monochrome"], ["outline"]=L["outline"], ["thickoutline"]=L["thickoutline"]},
-						get = function(info) return DB.font.Player.Type; end,
-						set = function(info,val) DB.font.Player.Type = val; spartan:FontRefresh("Player") end
+						get = function(info) return SUI.DB.font.Player.Type; end,
+						set = function(info,val) SUI.DB.font.Player.Type = val; spartan:FontRefresh("Player") end
 					},
 					PlSize = {name = L["AdjFontSize"], type="range", order = 3,width="full",
 						min=-3,max=3,step=1,
-						get = function(info) return DB.font.Player.Size; end,
-						set = function(info,val) DB.font.Player.Size = val; spartan:FontRefresh("Player") end
+						get = function(info) return SUI.DB.font.Player.Size; end,
+						set = function(info,val) SUI.DB.font.Player.Size = val; spartan:FontRefresh("Player") end
 					}
 				}
 			},
@@ -320,18 +320,18 @@ function module:OnInitialize()
 				args = {
 					PaFace = {name = L["FontType"], type="select", order = 1,
 						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
-						get = function(info) return DB.font.Party.Face; end,
-						set = function(info,val) DB.font.Party.Face = val; spartan:FontRefresh("Party") end
+						get = function(info) return SUI.DB.font.Party.Face; end,
+						set = function(info,val) SUI.DB.font.Party.Face = val; spartan:FontRefresh("Party") end
 					},
 					PaOutline = {name = L["FontStyle"], type="select", order = 2,
 						values = {["normal"]=L["normal"], ["monochrome"]=L["monochrome"], ["outline"]=L["outline"], ["thickoutline"]=L["thickoutline"]},
-						get = function(info) return DB.font.Party.Type; end,
-						set = function(info,val) DB.font.Party.Type = val; spartan:FontRefresh("Party") end
+						get = function(info) return SUI.DB.font.Party.Type; end,
+						set = function(info,val) SUI.DB.font.Party.Type = val; spartan:FontRefresh("Party") end
 					},
 					PaSize = {name = L["AdjFontSize"], type="range", order = 3,width="full",
 						min=-3,max=3,step=1,
-						get = function(info) return DB.font.Party.Size; end,
-						set = function(info,val) DB.font.Party.Size = val; spartan:FontRefresh("Party") end
+						get = function(info) return SUI.DB.font.Party.Size; end,
+						set = function(info,val) SUI.DB.font.Party.Size = val; spartan:FontRefresh("Party") end
 					}
 				}
 			},
@@ -340,18 +340,18 @@ function module:OnInitialize()
 				args = {
 					RFace = {name = L["FontType"], type="select", order = 1,
 						values = {["SpartanUI"]="SpartanUI",["FrizQuadrata"]="Friz Quadrata",["ArialNarrow"]="Arial Narrow",["Skurri"]="Skurri",["Morpheus"]="Morpheus"},
-						get = function(info) return DB.font.Raid.Face; end,
-						set = function(info,val) DB.font.Raid.Face = val; spartan:FontRefresh("Raid") end
+						get = function(info) return SUI.DB.font.Raid.Face; end,
+						set = function(info,val) SUI.DB.font.Raid.Face = val; spartan:FontRefresh("Raid") end
 					},
 					ROutline = {name = L["FontStyle"], type="select", order = 2,
 						values = {["normal"]=L["normal"], ["monochrome"]=L["monochrome"], ["outline"]=L["outline"], ["thickoutline"]=L["thickoutline"]},
-						get = function(info) return DB.font.Raid.Type; end,
-						set = function(info,val) DB.font.Raid.Type = val; spartan:FontRefresh("Raid") end
+						get = function(info) return SUI.DB.font.Raid.Type; end,
+						set = function(info,val) SUI.DB.font.Raid.Type = val; spartan:FontRefresh("Raid") end
 					},
 					RSize = {name = L["AdjFontSize"], type="range", order = 3,width="full",
 						min=-3,max=3,step=1,
-						get = function(info) return DB.font.Raid.Size; end,
-						set = function(info,val) DB.font.Raid.Size = val; spartan:FontRefresh("Raid") end
+						get = function(info) return SUI.DB.font.Raid.Size; end,
+						set = function(info,val) SUI.DB.font.Raid.Size = val; spartan:FontRefresh("Raid") end
 					}
 				}
 			},
@@ -365,10 +365,10 @@ function module:OnInitialize()
 			ResetActionBars	= {name = L["Reset ActionBars"], type = "execute", order=2,
 			func = function()
 				--Tell SUI to reload config
-				DBMod.Artwork.FirstLoad = true;
+				SUI.DBMod.Artwork.FirstLoad = true;
 				
 				--Strip custom BT4 Profile from config
-				if DB.Styles[DBMod.Artwork.Style].BT4Profile then DB.Styles[DBMod.Artwork.Style].BT4Profile = nil end
+				if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = nil end
 				
 				--Force REbuild of primary bar profile
 				spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
@@ -376,8 +376,8 @@ function module:OnInitialize()
 				--Reset Moved bars
 				local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 				for k,v in ipairs(FrameList) do
-					if DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] then
-						DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
+					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
+						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 					end
 				end
 				
@@ -404,23 +404,23 @@ function module:OnInitialize()
 			},
 			line2 = {name="",type="header",order = 5.5},
 			VehicleUI = {name = L["Use Blizzard Vehicle UI"], type = "toggle",order=6,
-				get = function(info) return DBMod.Artwork.VehicleUI end,
+				get = function(info) return SUI.DBMod.Artwork.VehicleUI end,
 				set = function(info,val) 
 					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); return; end
-					DBMod.Artwork.VehicleUI = val
+					SUI.DBMod.Artwork.VehicleUI = val
 					--Make sure bartender knows to do it, or not...
 					if Bartender4 then
 						Bartender4.db.profile.blizzardVehicle = val
 						Bartender4:UpdateBlizzardVehicle()
 					end
 					
-					if DBMod.Artwork.VehicleUI then
-						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
-							spartan:GetModule("Style_" .. DBMod.Artwork.Style):SetupVehicleUI()
+					if SUI.DBMod.Artwork.VehicleUI then
+						if spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
+							spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style):SetupVehicleUI()
 						end
 					else
-						if spartan:GetModule("Style_" .. DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
-							spartan:GetModule("Style_" .. DBMod.Artwork.Style):RemoveVehicleUI()
+						if spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
+							spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style):RemoveVehicleUI()
 						end
 					end
 				end,
@@ -443,10 +443,10 @@ function module:OnInitialize()
 			ResetMovedFrames	= {name = L["ResetMovableFrames"], type = "execute", order=3, func = function()
 				local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player",[7]="boss"}
 				for a,b in pairs(FramesList) do
-					DBMod.PlayerFrames[b].moved = false
+					SUI.DBMod.PlayerFrames[b].moved = false
 				end
-				DBMod.PartyFrames.moved = false
-				DBMod.RaidFrames.moved = false
+				SUI.DBMod.PartyFrames.moved = false
+				SUI.DBMod.RaidFrames.moved = false
 				spartan:GetModule("PlayerFrames"):UpdatePosition()
 			end},
 			
@@ -566,9 +566,9 @@ function module:OnInitialize()
 	for name, submodule in spartan:IterateModules() do
 		if (string.match(name, "Component_")) then
 			local RealName = string.sub(name, 11)
-			if DB.EnabledComponents == nil then DB.EnabledComponents = {} end
-			if DB.EnabledComponents[RealName] == nil then
-				DB.EnabledComponents[RealName] = true
+			if SUI.DB.EnabledComponents == nil then SUI.DB.EnabledComponents = {} end
+			if SUI.DB.EnabledComponents[RealName] == nil then
+				SUI.DB.EnabledComponents[RealName] = true
 			end
 			
 			local Displayname = string.sub(name, 11)
@@ -578,9 +578,9 @@ function module:OnInitialize()
 			
 			spartan.opt.args["ModSetting"].args["Enabled"].args["Components"].args[RealName] = {
 				name = Displayname,type = "toggle",
-				get = function(info) return DB.EnabledComponents[RealName] end,
+				get = function(info) return SUI.DB.EnabledComponents[RealName] end,
 				set = function(info,val)
-					DB.EnabledComponents[RealName] = val;
+					SUI.DB.EnabledComponents[RealName] = val;
 					if submodule.Disable then
 						if val then
 							submodule:Enable()
@@ -627,14 +627,14 @@ function module:ExportData()
 	
 	return "$SUI." .. SUI.Version .. "-" .. spartan.CurseVersion
 		.. "$C." .. module:FlatenTable(CharData)
-		.. "$Artwork.Style." .. DBMod.Artwork.Style
-		.. "$PlayerFrames.Style." .. DBMod.PlayerFrames.Style
-		.. "$PartyFrames.Style." .. DBMod.PartyFrames.Style
-		.. "$RaidFrames.Style." .. DBMod.RaidFrames.Style
+		.. "$Artwork.Style." .. SUI.DBMod.Artwork.Style
+		.. "$PlayerFrames.Style." .. SUI.DBMod.PlayerFrames.Style
+		.. "$PartyFrames.Style." .. SUI.DBMod.PartyFrames.Style
+		.. "$RaidFrames.Style." .. SUI.DBMod.RaidFrames.Style
 		.. "$Addons." .. module:FlatenTable(AddonsInstalled)
 		.. "..$END$.."
-		-- .. "$DB." .. module:FlatenTable(DB)
-		-- .. "$DBMod." .. module:FlatenTable(DBMod)
+		-- .. "$DB." .. module:FlatenTable(SUI.DB)
+		-- .. "$DBMod." .. module:FlatenTable(SUI.DBMod)
 end
 
 function module:FlatenTable(input)

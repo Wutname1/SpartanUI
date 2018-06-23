@@ -31,7 +31,7 @@ function Artwork_Core:round(num) -- rounds a number to 2 decimal places
 end;
 
 function Artwork_Core:MoveTalkingHeadUI()
-	local THUDB = DB.Styles[DBMod.Artwork.Style].TalkingHeadUI
+	local THUDB = SUI.DB.Styles[SUI.DBMod.Artwork.Style].TalkingHeadUI
 	local MoveTalkingHead = CreateFrame("Frame")
 	MoveTalkingHead:RegisterEvent("ADDON_LOADED")
 	MoveTalkingHead:SetScript("OnEvent", function(self, event, ...)
@@ -63,11 +63,11 @@ function Artwork_Core:ActionBarPlates(plate)
 		if (frame:GetName() == nil) then return end
 		
 		-- Catch if Movedbars is not initalized
-		if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 		
 		-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
-		-- if (frame:GetName():match("BT4Bar")) and storage.parent and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
-		if (frame:GetName():match("BT4Bar")) and not DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+		-- if (frame:GetName():match("BT4Bar")) and storage.parent and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+		if (frame:GetName():match("BT4Bar")) and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
 			-- if (storage.parent) and _G[storage.parent] then
 				-- frame:SetParent(storage.parent);
 				frame:SetParent(plate);
@@ -78,7 +78,7 @@ function Artwork_Core:ActionBarPlates(plate)
 		else
 			-- print("---")
 			-- print(frame:GetName())
-			-- print(DB.Styles[DBMod.Artwork.Style].MovedBars[frame:GetName()])
+			-- print(SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()])
 			-- print(storage.parent)
 			-- print(plate)
 			-- print("---")
@@ -93,7 +93,7 @@ function Artwork_Core:OnInitialize()
 		text = '|cff33ff99SpartanUI v'..SUI.Version..'|n|r|n|n'..L["Warning"]..': '..L["BartenderOldMSG"]..' '..Bartender4Version..'|n|nSpartanUI requires '..BartenderMin..' or higher.',
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.BartenderVerWarning = SUI.Version;
+			SUI.DBG.BartenderVerWarning = SUI.Version;
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -103,7 +103,7 @@ function Artwork_Core:OnInitialize()
 		text = '|cff33ff99SpartanUI v'..SUI.Version..'|n|r|n|n'..L["Warning"]..': '..L["BartenderNotFoundMSG1"]..'|n'..L["BartenderNotFoundMSG2"],
 		button1 = "Ok",
 		OnAccept = function()
-			DBGlobal.BartenderInstallWarning = SUI.Version
+			SUI.DBG.BartenderInstallWarning = SUI.Version
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -111,7 +111,7 @@ function Artwork_Core:OnInitialize()
 	}
 	
 	if not SUI.DBMod.Artwork.SetupDone then Artwork_Core:FirstTime() end
-	if DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 	Artwork_Core:CheckMiniMap();
 end
 
@@ -252,10 +252,10 @@ function Artwork_Core:FirstTime()
 			
 			--Reset Moved bars
 			SUI.DBG.BartenderChangesActive = true
-			if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 			local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 			for k,v in ipairs(FrameList) do
-				DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
+				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 			end;
 			SUI.DBG.BartenderChangesActive = false
 			SUI_Win.Artwork:Hide()
@@ -278,10 +278,10 @@ end
 
 function Artwork_Core:OnEnable()
 	-- No Bartender/out of date Notification
-	if (not select(4, GetAddOnInfo("Bartender4")) and (DBGlobal.BartenderInstallWarning ~= SUI.Version)) then
-		if SUI.Version ~= DBGlobal.Version then StaticPopup_Show ("BartenderInstallWarning") end
+	if (not select(4, GetAddOnInfo("Bartender4")) and (SUI.DBG.BartenderInstallWarning ~= SUI.Version)) then
+		if SUI.Version ~= SUI.DBG.Version then StaticPopup_Show ("BartenderInstallWarning") end
 	elseif Bartender4Version < BartenderMin then
-			if SUI.Version ~= DBGlobal.Version then StaticPopup_Show ("BartenderVerWarning") end
+			if SUI.Version ~= SUI.DBG.Version then StaticPopup_Show ("BartenderVerWarning") end
 	end
 	
 	Artwork_Core:SetupOptions();
@@ -291,8 +291,8 @@ function Artwork_Core:OnEnable()
 	for k,v in ipairs(FrameList) do	
 		if v then
 			v.SavePosition = function()
-				if (not DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent") and not SUI.DBG.BartenderChangesActive then
-					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = true
+				if (not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent") and not SUI.DBG.BartenderChangesActive then
+					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = true
 					LibStub("LibWindow-1.1").windowData[v].storage.parent = UIParent
 					v:SetParent(UIParent)
 				end
@@ -310,20 +310,20 @@ function Artwork_Core:CheckMiniMap()
 		if (Nx.db.profile.MiniMap.Own == true) then
 			SUI:Print(NXTITLELOW..' is controlling the Minimap');
 			SUI:Print("SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap");
-			DB.MiniMap.AutoDetectAllowUse = false;
+			SUI.DB.MiniMap.AutoDetectAllowUse = false;
 		end
 	end
 	
 	if select(4, GetAddOnInfo("SexyMap")) then
 		SUI:Print(L["SexyMapLoaded"])
-		DB.MiniMap.AutoDetectAllowUse = false;
+		SUI.DB.MiniMap.AutoDetectAllowUse = false;
 	end
 	
 	local point, relativeTo, relativePoint, x, y = MinimapCluster:GetPoint();
 	if (relativeTo ~= UIParent) then
 		SUI:Print('A unknown addon is controlling the Minimap');
 		SUI:Print("SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.");
-		DB.MiniMap.AutoDetectAllowUse = false;
+		SUI.DB.MiniMap.AutoDetectAllowUse = false;
 	end
 end
 
@@ -332,7 +332,7 @@ function Artwork_Core:SetupProfile(ProfileOverride)
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end
 	
-	--Flag the DB that we are making changes
+	--Flag the SUI.DB that we are making changes
 	SUI.DBG.BartenderChangesActive = true
 	--Load the profile name the art style wants
 	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile
@@ -382,10 +382,10 @@ end
 
 function Artwork_Core:CreateProfile()
 	SUI.DBG.BartenderChangesActive = true
-	local ProfileName = DB.Styles[DBMod.Artwork.Style].BartenderProfile
-	local BartenderSettings = DB.Styles[DBMod.Artwork.Style].BartenderSettings
+	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile
+	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
 	--If this is set then we have already setup the bars once, and the user changed them
-	if DB.Styles[DBMod.Artwork.Style].BT4Profile and DB.Styles[DBMod.Artwork.Style].BT4Profile ~= ProfileName then return end
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= ProfileName then return end
 	
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo("Bartender4"))) then return; end

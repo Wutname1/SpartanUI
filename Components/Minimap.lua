@@ -87,12 +87,12 @@ function module:OnInitialize()
 		button1 = "Yes",
 		button2 = "No",
 		OnAccept = function()
-			SUI.DB.MiniMap.ManualAllowPrompt = DB.Version
+			SUI.DB.MiniMap.ManualAllowPrompt = SUI.DB.Version
 			SUI.DB.MiniMap.ManualAllowUse = true
 			ReloadUI();
 		end,
 		OnCancel = function()
-			SUI.DB.MiniMap.ManualAllowPrompt = DB.Version
+			SUI.DB.MiniMap.ManualAllowPrompt = SUI.DB.Version
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -102,12 +102,12 @@ end
 
 function module:OnEnable()
 	-- MiniMap Modification
-	if (((not SUI.DB.MiniMap.AutoDetectAllowUse) and (not SUI.DB.MiniMap.ManualAllowUse)) and SUI.DB.MiniMap.ManualAllowPrompt ~= DB.Version) then
+	if (((not SUI.DB.MiniMap.AutoDetectAllowUse) and (not SUI.DB.MiniMap.ManualAllowUse)) and SUI.DB.MiniMap.ManualAllowPrompt ~= SUI.DB.Version) then
 		StaticPopup_Show("MiniMapNotice")
 	end
-	if not DB.EnabledComponents.Minimap then return end
+	if not SUI.DB.EnabledComponents.Minimap then return end
 	
-	if DB.Styles[DBMod.Artwork.Style].Movable.Minimap or (not spartan:GetModule("Artwork_Core", true)) then
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap or (not spartan:GetModule("Artwork_Core", true)) then
 		Minimap.mover = CreateFrame("Frame");
 		Minimap.mover:SetSize(5, 5);
 		Minimap.mover:SetPoint("TOPLEFT",Minimap,"TOPLEFT");
@@ -123,7 +123,7 @@ function module:OnEnable()
 			if button == "LeftButton" and IsAltKeyDown() then
 				Minimap.mover:Show();
 				if spartan:GetModule("Artwork_Core", true) then
-					DB.Styles[DBMod.Artwork.Style].Movable.MinimapMoved = true
+					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = true
 				else
 					SUI.DB.MiniMap.Moved = true
 				end
@@ -136,14 +136,14 @@ function module:OnEnable()
 			Minimap.mover:Hide();
 			Minimap:StopMovingOrSizing();
 			if spartan:GetModule("Artwork_Core", true) then
-				DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(Minimap:GetNumPoints())}
+				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(Minimap:GetNumPoints())}
 			else
 				SUI.DB.MiniMap.Position = {Minimap:GetPoint(Minimap:GetNumPoints())}
 			end
 		end);
 
-		if spartan:GetModule("Artwork_Core", true) and DB.Styles[DBMod.Artwork.Style].Movable.MinimapMoved and DB.Styles[DBMod.Artwork.Style].Movable.Minimap and DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords ~= nil then
-			local a,b,c,d,e = unpack(DB.Styles[DBMod.Artwork.Style].Movable.MinimapCords) -- do this as the parent can get corrupted
+		if spartan:GetModule("Artwork_Core", true) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords ~= nil then
+			local a,b,c,d,e = unpack(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords) -- do this as the parent can get corrupted
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint(a,UIParent,c,d,e)
 		elseif SUI.DB.MiniMap.Position ~= nil then
@@ -192,8 +192,8 @@ function module:ModifyMinimapLayout()
 	
 	Minimap:SetSize(140,140);
 	-- Minimap:SetParent(frame);
-	if DB.Styles[DBMod.Artwork.Style].Minimap ~= nil then
-		if DB.Styles[DBMod.Artwork.Style].Minimap.shape == "square" then
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap ~= nil then
+		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.shape == "square" then
 			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
 			
 			Minimap:SetArchBlobRingScalar(0)
@@ -386,9 +386,9 @@ function module:updateButtons()
 	
 	SUI.DB.MiniMap.SUIMapChangesActive = true
 	if not IsMouseOver() and (SUI.DB.MiniMap.OtherStyle == "mouseover" or SUI.DB.MiniMap.OtherStyle == "hide")  then
-		--Fix for DBM making its icon even if its not needed
-		if DBM ~= nil and DBM.Options ~= nil then 
-			if DBM.Options.ShowMinimapButton ~= nil and not DBM.Options.ShowMinimapButton then 
+		--Fix for SUI.DBM making its icon even if its not needed
+		if SUI.DBM ~= nil and SUI.DBM.Options ~= nil then 
+			if SUI.DBM.Options.ShowMinimapButton ~= nil and not SUI.DBM.Options.ShowMinimapButton then 
 				table.insert(IgnoredFrames, "DBMMinimapButton")
 			end
 		end

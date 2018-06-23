@@ -113,8 +113,8 @@ local setPoint = function(self, parent)
 		end
 	
 		--See If the theme has an anchor and if we are allowed to use it
-		if DB.Styles[DBMod.Artwork.Style].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
-			local style = spartan:GetModule("Style_" .. DBMod.Artwork.Style);
+		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
+			local style = spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style);
 			if style then style:TooltipLoc(self, parent) end
 		else
 			self:ClearAllPoints();
@@ -140,8 +140,8 @@ end
 
 local onShow = function(self)
 	self:SetBackdrop(whitebg)
-	if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
-		self.SUIBorder:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style] then
+		self.SUIBorder:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
 	else
 		self.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 	end
@@ -160,8 +160,8 @@ local onShow = function(self)
 		self.SUIBorder:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 1, -1)
 	end
 	--check if theme has a location
-	if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.Custom then
-		spartan:GetModule("Style_" .. DBMod.Artwork.Style):Tooltip()
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.Custom then
+		spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style):Tooltip()
 	end
 end
 
@@ -399,8 +399,8 @@ local function ApplyTooltipSkins()
 		    tmp[4]:SetWidth(3)
 		    tmp[4]:SetTexture(0,0,0)
 
-		    if (DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil) and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
-				tmp:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
+		    if (SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style] then
+				tmp:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
 			else
 				tmp:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 			end
@@ -422,8 +422,8 @@ end
 function module:UpdateBG()
 	for i, tooltip in pairs(tooltips) do
 		if (tooltip.SUIBorder) then
-		    -- if DB.Styles[DBMod.Artwork.Style].Tooltip ~= nil and DB.Styles[DBMod.Artwork.Style].Tooltip.BG and not DB.Tooltip.Override[DBMod.Artwork.Style] then
-				-- tooltip.SUIBorder:SetBackdrop(DB.Styles[DBMod.Artwork.Style].Tooltip.BG)
+		    -- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style] then
+				-- tooltip.SUIBorder:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
 			-- else
 				-- tooltip.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 			-- end
@@ -445,7 +445,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if not DB.EnabledComponents.Tooltips then module:HideOptions() return end
+	if not SUI.DB.EnabledComponents.Tooltips then module:HideOptions() return end
 	--Create Anchor point
 	for k,v in ipairs(RuleList) do
 		local anchor = CreateFrame("Frame",nil)
@@ -514,7 +514,7 @@ function module:OnEnable()
 end
 
 local OnMouseOpt = function(v)
-	if SUI.DB.Tooltips[v].Anchor.onMouse or not DB.Styles[DBMod.Artwork.Style].TooltipLoc then
+	if SUI.DB.Tooltips[v].Anchor.onMouse or not SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc then
 		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = true
 	else
 		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation"..v].args["OverrideTheme"].disabled = false
@@ -537,8 +537,8 @@ function module:BuildOptions()
 				set = function(info,val) SUI.DB.Tooltips.ActiveStyle = val end
 			},
 			OverrideTheme = {name=L["OverrideTheme"],type="toggle",order=2,desc=L["TooltipOverrideDesc"],
-					get = function(info) return SUI.DB.Tooltips.Override[DBMod.Artwork.Style] end,
-					set = function(info,val) SUI.DB.Tooltips.Override[DBMod.Artwork.Style] = val end
+					get = function(info) return SUI.DB.Tooltips.Override[SUI.DBMod.Artwork.Style] end,
+					set = function(info,val) SUI.DB.Tooltips.Override[SUI.DBMod.Artwork.Style] = val end
 			},
 			color = {name=L["Color"],type="color",hasAlpha=true,order=10,width="full",
 				get = function(info) return unpack(SUI.DB.Tooltips.Color) end,

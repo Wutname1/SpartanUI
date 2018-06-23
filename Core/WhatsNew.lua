@@ -23,20 +23,20 @@ function spartan:WhatsNew()
 			control:SetCallback("OnClick", function()
 				SUI.DBG.WhatsNew = (SUI_Win.WhatsNew.NeverEverAgain:GetChecked() ~= true or false)
 				
-				DBMod.Artwork.Style = "Fel";
-				DB.Styles.Fel.SubTheme = "Digital";
-				DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-				DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-				DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-				DBMod.Artwork.FirstLoad = true;
+				SUI.DBMod.Artwork.Style = "Fel";
+				SUI.DB.Styles.Fel.SubTheme = "Digital";
+				SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+				SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+				SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
+				SUI.DBMod.Artwork.FirstLoad = true;
 				
 				spartan:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
 				
 				--Reset Moved bars; Setting up profile triggers movment
-				if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+				if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 				local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 				for k,v in ipairs(FrameList) do
-					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
+					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 				end;
 				
 				ReloadUI()
@@ -97,7 +97,7 @@ function module:FirstArtifact()
 			SUI_Win.Next:SetText("TRACK ARTIFACT POWER")
 		end,
 		Next = function()
-			DB.StatusBars.right = "ap"
+			SUI.DB.StatusBars.right = "ap"
 			spartan:GetModule("Style_"..SUI.DBMod.Artwork.Style):UpdateStatusBars()
 		end,
 		Skip = function() end
@@ -111,14 +111,14 @@ end
 function module:OnInitialize()
 	if SUI.DBG.WhatsNew == nil then SUI.DBG.WhatsNew = true end
 	if SUI.DBG.HasEquipedArtifact == nil then SUI.DBG.HasEquipedArtifact = false end
-	--Only display if the setup has been done, and the DB version is lower than release build, AND the user has not told us to never tell them about new stuff
+	--Only display if the setup has been done, and the SUI.DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 	
-	if SUI.DBG.Version and SUI.DBG.Version < "4.4.0" and DB.SetupDone and SUI.DBG.WhatsNew then
+	if SUI.DBG.Version and SUI.DBG.Version < "4.4.0" and SUI.DB.SetupDone and SUI.DBG.WhatsNew then
 		spartan:WhatsNew()
 	end
 	
-	-- Update DB Version
-	DB.Version = SUI.Version;
+	-- Update SUI.DB Version
+	SUI.DB.Version = SUI.Version;
 	SUI.DBG.Version = SUI.Version;
 end
 
@@ -126,7 +126,7 @@ function module:FirstAtrifactNotice()
 	loginlevel = UnitLevel("player")
 	
 	--Only process if we are not 110; allowed to show new featues; have never used an artifact; The style allows tracking
-	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DB.Styles[DBMod.Artwork.Style].StatusBars.AP and not (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
+	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DB.Styles[SUI.DBMod.Artwork.Style].StatusBars.AP and not (SUI.DB.StatusBars.right == "ap" or SUI.DB.StatusBars.left == "ap") then
 		--Detect if user already has a artifact
 		if HasArtifactEquipped() then
 			SUI.DBG.HasEquipedArtifact = true
@@ -144,13 +144,13 @@ function module:FirstAtrifactNotice()
 					ArtifactWatcher:RegisterEvent("UNIT_INVENTORY_CHANGED");
 				end
 			end
-			if HasArtifactEquipped() and not (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
+			if HasArtifactEquipped() and not (SUI.DB.StatusBars.right == "ap" or SUI.DB.StatusBars.left == "ap") then
 				module:FirstArtifact()
 				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
 				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
 				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")
 				ArtifactWatcher = nil
-			elseif (DB.StatusBars.right == "ap" or DB.StatusBars.left == "ap") then
+			elseif (SUI.DB.StatusBars.right == "ap" or SUI.DB.StatusBars.left == "ap") then
 				ArtifactWatcher:UnregisterEvent("ARTIFACT_XP_UPDATE")
 				ArtifactWatcher:UnregisterEvent("UNIT_INVENTORY_CHANGED")
 				ArtifactWatcher:UnregisterEvent("PLAYER_LEVEL_UP")

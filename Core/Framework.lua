@@ -388,7 +388,7 @@ function SUI:FirstTimeSetup()
 		LDBIcon["Hide"](LDBIcon, "Bartender4")
 	end
 	--Setup page
-	DB.SetupDone = false
+	SUI.DB.SetupDone = false
 	local PageData = {
 		SubTitle = "Welcome",
 		Desc1 = "Thank you for installing SpartanUI.",
@@ -423,7 +423,7 @@ function SUI:FirstTimeSetup()
 			
 		end,
 		Next = function()
-			DB.SetupDone = true
+			SUI.DB.SetupDone = true
 			
 			SUI_Win.Core:Hide()
 			SUI_Win.Core = nil
@@ -432,7 +432,7 @@ function SUI:FirstTimeSetup()
 		-- Priority = 1,
 		-- Skipable = true,
 		-- NoReloadOnSkip = true,
-		Skip = function() DB.SetupDone = true; end
+		Skip = function() SUI.DB.SetupDone = true; end
 	}
 	
 	-- Uncomment this when the time is right.
@@ -442,7 +442,7 @@ function SUI:FirstTimeSetup()
 	
 	-- This will be moved once we put the setup page in place.
 	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
-	DB.SetupDone = true
+	SUI.DB.SetupDone = true
 end
 
 function SUI:OnInitialize()
@@ -452,17 +452,17 @@ function SUI:OnInitialize()
 	if (ver ~= nil and ver < "4.0.0") then SUI.SpartanUIDB:ResetDB(); end
 	if not SUI.CurseVersion then SUI.CurseVersion = "" end
 	
-	-- New DB Access
+	-- New SUI.DB Access
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 	
-	--Check for any DB changes
+	--Check for any SUI.DB changes
 	if SUI.DB.SetupDone then SUI:DBUpgrades() end
 	
 	-- Legacy, need to phase these globals out it was messy 
-	DB = SUI.SpartanUIDB.profile.SUIProper
-	DBMod = SUI.SpartanUIDB.profile.Modules
+	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
+	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.SpartanUIDB);
 	
 	-- Add dual-spec support
@@ -482,7 +482,7 @@ function SUI:OnInitialize()
 	if SUI.DBG.BartenderChangesActive then SUI.DBG.BartenderChangesActive = false end
 	if Bartender4 then
 		--Update to the current profile
-		DB.BT4Profile = Bartender4.db:GetCurrentProfile()
+		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 		Bartender4.db.RegisterCallback(SUI, "OnProfileChanged", "BT4RefreshConfig")
 		Bartender4.db.RegisterCallback(SUI, "OnProfileCopied", "BT4RefreshConfig")
 		Bartender4.db.RegisterCallback(SUI, "OnProfileReset", "BT4RefreshConfig")
@@ -491,7 +491,7 @@ function SUI:OnInitialize()
 	SUI:FontSetup()
 	
 	--First Time Setup Actions
-	if not DB.SetupDone then SUI:FirstTimeSetup() end
+	if not SUI.DB.SetupDone then SUI:FirstTimeSetup() end
 end
 
 function SUI:DBUpgrades()
@@ -499,10 +499,11 @@ function SUI:DBUpgrades()
 end
 
 function SUI:InitializeProfile()
-	SUI.DB:RegisterDefaults(DBdefaults)
+	SUI.DB:RegisterDefaults(SUI.DBdefaults)
 	
-	DB = SUI.DB.profile.SUIProper
-	DBMod = SUI.DB.profile.Modules
+	SUI.DBG = SUI.SpartanUIDB.global
+	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
+	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 	
 	SUI:reloadui()
 end
@@ -551,9 +552,9 @@ end
 
 function SUI:BT4RefreshConfig()
 	if SUI.DBG.BartenderChangesActive or SUI.DBMod.Artwork.FirstLoad then return end
-	-- if DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
-	DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
-	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
+	-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
+	SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
+	SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
 	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
 	
@@ -561,7 +562,7 @@ function SUI:BT4RefreshConfig()
 		-- We know this profile.
 		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style == SUI.DBMod.Artwork.Style then
 			-- Catch if Movedbars is not initalized
-			if DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
+			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 			--Profile is for this style, prompt to ReloadUI; usually un needed can uncomment if needed latter
 			-- SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
 		else
@@ -577,7 +578,7 @@ function SUI:BT4RefreshConfig()
 end
 
 function SUI:UpdateModuleConfigs()
-	SUI.SpartanUIDB:RegisterDefaults(DBdefaults)
+	SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
 	
 	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
@@ -585,8 +586,8 @@ function SUI:UpdateModuleConfigs()
 	if Bartender4 then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
 			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile);
-        elseif DB.Styles[DBMod.Artwork.Style].BartenderProfile then
-            Bartender4.db:SetProfile(DB.Styles[DBMod.Artwork.Style].BartenderProfile);
+        elseif SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile then
+            Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile);
 		else
 			Bartender4.db:SetProfile(SUI.DB.BT4Profile);
 		end
@@ -596,7 +597,7 @@ function SUI:UpdateModuleConfigs()
 end
 
 function SUI:reloadui(Desc2)
-	-- DB.OpenOptions = true;
+	-- SUI.DB.OpenOptions = true;
 	PageData = {
 		title = "SpartanUI",
 		Desc1 = "A reload of your UI is required.",
@@ -677,9 +678,9 @@ function SUI:OnEnable()
 
 	local LaunchOpt = CreateFrame("Frame");
 	LaunchOpt:SetScript("OnEvent",function(self,...)
-		if DB.OpenOptions then
+		if SUI.DB.OpenOptions then
 			SUI:ChatCommand()
-			DB.OpenOptions = false;
+			SUI.DB.OpenOptions = false;
 		end
 	end);
 	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -789,20 +790,20 @@ end
 
 function SUI:GetFontFace(Module)
 	if Module then
-		if DB.font[Module].Face == "SpartanUI" then
+		if SUI.DB.font[Module].Face == "SpartanUI" then
 			return "Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf"
-		elseif DB.font[Module].Face == "SUI4" then
+		elseif SUI.DB.font[Module].Face == "SUI4" then
 			return "Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf"
-		elseif DB.font[Module].Face == "FrizQuadrata" then
+		elseif SUI.DB.font[Module].Face == "FrizQuadrata" then
 			return "Fonts\\FRIZQT__.TTF"
-		elseif DB.font[Module].Face == "ArialNarrow" then
+		elseif SUI.DB.font[Module].Face == "ArialNarrow" then
 			return "Fonts\\ARIALN.TTF"
-		elseif DB.font[Module].Face == "Skurri" then
+		elseif SUI.DB.font[Module].Face == "Skurri" then
 			return "Fonts\\skurri.TTF"
-		elseif DB.font[Module].Face == "Morpheus" then
+		elseif SUI.DB.font[Module].Face == "Morpheus" then
 			return "Fonts\\MORPHEUS.TTF"
-		elseif DB.font[Module].Face == "Custom" and DB.font.Path ~= "" then
-			return DB.font.Path
+		elseif SUI.DB.font[Module].Face == "Custom" and SUI.DB.font.Path ~= "" then
+			return SUI.DB.font.Path
 		end
 	end
 	
@@ -811,23 +812,23 @@ end
 
 function SUI:FormatFont(element, size, Module)
 	--Adaptive Modules
-	if DB.font[Module] == nil then
-		DB.font[Module] = spartan.fontdefault;
+	if SUI.DB.font[Module] == nil then
+		SUI.DB.font[Module] = spartan.fontdefault;
 	end
 	--Set Font Outline
 	local flags, sizeFinal = ""
-	if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
+	if SUI.DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
 	
 	-- Outline was deemed to thick, it is not a slight drop shadow done below
-	--if DB.font[Module].Type == "outline" then flags = flags.."outline " end
+	--if SUI.DB.font[Module].Type == "outline" then flags = flags.."outline " end
 	
-	if DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
+	if SUI.DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
 	--Set Size
-	sizeFinal = size + DB.font[Module].Size;
+	sizeFinal = size + SUI.DB.font[Module].Size;
 	--Create Font
 	element:SetFont(SUI:GetFontFace(Module), sizeFinal, flags)
 	
-	if DB.font[Module].Type == "outline" then
+	if SUI.DB.font[Module].Type == "outline" then
 		element:SetShadowColor(0,0,0,.9)
 		element:SetShadowOffset(1,-1)
 	end
@@ -842,11 +843,11 @@ function SUI:FontRefresh(Module)
 	for a,b in pairs(FontItems[Module]) do
 		--Set Font Outline
 		local flags, size = ""
-		if DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
-		if DB.font[Module].Type == "outline" then flags = flags.."outline " end
-		if DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
+		if SUI.DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
+		if SUI.DB.font[Module].Type == "outline" then flags = flags.."outline " end
+		if SUI.DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
 		--Set Size
-		size = FontItemsSize[Module][a] + DB.font[Module].Size;
+		size = FontItemsSize[Module][a] + SUI.DB.font[Module].Size;
 		--Update Font
 		b:SetFont(SUI:GetFontFace(Module), size, flags)
 	end

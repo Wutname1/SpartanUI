@@ -50,7 +50,7 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 		local icon = CreateFrame("Frame", nil, self)
 		icon.spellID = sid
 		-- set the dimensions and positions
-		local size = DBMod.PartyFrames.Auras.size + SizeModifier
+		local size = SUI.DBMod.PartyFrames.Auras.size + SizeModifier
 		icon:SetSize(size, size)
 		icon:SetPoint(point, self, relativePoint, (-icon:GetWidth()*(i-1))-2, -2)
 		

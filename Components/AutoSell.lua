@@ -111,7 +111,7 @@ function module:FirstTime()
 		Next = function()
 			SUI.DB.AutoSell.FirstLaunch = false
 			
-			DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
+			SUI.DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
 			SUI.DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
 			SUI.DB.AutoSell.White = (SUI_Win.AutoSell.SellWhite:GetChecked() == true or false)
 			SUI.DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
@@ -299,7 +299,7 @@ end
 function module:OnEnable()
 	if SUI.DB.AutoSell.FirstLaunch then module:FirstTime() end
 	module:BuildOptions()
-	if DB.EnabledComponents.AutoSell then
+	if SUI.DB.EnabledComponents.AutoSell then
 		module:Enable()
 	else
 		return
@@ -308,7 +308,7 @@ end
 
 function module:Enable()
 	local function MerchantEventHandler(self, event, ...)
-		if not DB.EnabledComponents.AutoSell then return end
+		if not SUI.DB.EnabledComponents.AutoSell then return end
 		if event == "MERCHANT_SHOW" then
 			module:SellTrash();
 		else

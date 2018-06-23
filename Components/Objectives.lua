@@ -48,7 +48,7 @@ local ObjTrackerUpdate = function()
 	if ScenarioBlocksFrame:IsVisible() then ScenarioActive = true end
 	
 	-- Always Shown logic
-	if (not DB.EnabledComponents.Objectives) or (SUI.DBMod.Objectives.AlwaysShowScenario and ScenarioActive) then
+	if (not SUI.DB.EnabledComponents.Objectives) or (SUI.DBMod.Objectives.AlwaysShowScenario and ScenarioActive) then
 		FadeIn = true
 		FadeOut = false
 	end

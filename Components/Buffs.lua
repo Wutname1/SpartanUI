@@ -47,7 +47,7 @@ local function ActiveRule()
 	end
 	
 	--Failback of Rule1
-	if not SUI.DB.Buffs.SuppressNoMatch and not DB.Styles[DBMod.Artwork.Style].BuffLoc then
+	if not SUI.DB.Buffs.SuppressNoMatch and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].BuffLoc then
 		-- spartan:Print("|cffff0000Error detected")
 		-- spartan:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
 	end
@@ -61,8 +61,8 @@ local BuffPosUpdate = function()
 	local setdefault = false
 	
 	--See If the theme has an anchor and if we are allowed to use it
-	if DB.Styles[DBMod.Artwork.Style].BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
-		spartan:GetModule("Style_" .. DBMod.Artwork.Style):BuffLoc(nil, nil);
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
+		spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style):BuffLoc(nil, nil);
 	else
 		if SUI.DB.Buffs[ActiveRule()].Anchor.Moved then
 			local Anchors = {}
@@ -90,7 +90,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if not DB.EnabledComponents.Buffs then module:HideOptions() return end
+	if not SUI.DB.EnabledComponents.Buffs then module:HideOptions() return end
 
 	BuffWatcher:SetScript("OnEvent", BuffPosUpdate)
 	BuffWatcher:RegisterEvent("ZONE_CHANGED")

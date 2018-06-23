@@ -370,7 +370,7 @@ function module:VarArgForAvailableQuests(...)
 		local isDaily  = select(i+3, ...)		
 		-- local triviaAndAllowedOrNotTrivia = (not isTrivial) or AutoTurnInCharacterDB.trivial
 		
-		local quest = Lquests[title] -- this quest exists in addons quest DB. There are mostly daily quests
+		local quest = Lquests[title] -- this quest exists in addons quest SUI.DB. There are mostly daily quests
 		-- local notBlackListed = not (quest and (quest.donotaccept or AutoTurnIn:IsIgnoredQuest(title)))
 
 		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
@@ -486,11 +486,11 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	-- if not DB.EnabledComponents.AutoTurnIn then module:HideOptions() return end
+	-- if not SUI.DB.EnabledComponents.AutoTurnIn then module:HideOptions() return end
 	if SUI.DB.AutoTurnIn.FirstLaunch then module:FirstLaunch() end
 		
 	ATI_Container:SetScript("OnEvent", function(_, event)
-		if not DB.EnabledComponents.AutoTurnIn then return end
+		if not SUI.DB.EnabledComponents.AutoTurnIn then return end
 		if SUI.DB.AutoTurnIn.debug then print(event) end
 		
 		if module[event] then 
@@ -505,7 +505,7 @@ function module:OnEnable()
 	ATI_Container:RegisterEvent("QUEST_ACCEPTED")
 	ATI_Container:RegisterEvent("QUEST_COMPLETE") -- quest turn in screen
 	-- hooksecurefunc("QuestLogQuests_Update", ATI_Container.ShowQuestLevelInLog)
-	-- hooksecurefunc(QuestFrame, "Hide", function() DB.allowed = nil end)
+	-- hooksecurefunc(QuestFrame, "Hide", function() SUI.DB.allowed = nil end)
 end
 
 function module:BuildOptions()

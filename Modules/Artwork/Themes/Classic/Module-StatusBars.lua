@@ -41,10 +41,10 @@ local SetXPColors = function(self)
 	local FrameName = self:GetName();
 	-- Set Gained Color
 	if SUI.DB.StatusBars.XPBar.GainedColor ~= "Custom" then
-		SUI.DB.StatusBars.XPBar.GainedRed 			= COLORS[DB.StatusBars.XPBar.GainedColor].r
-		SUI.DB.StatusBars.XPBar.GainedBlue 			= COLORS[DB.StatusBars.XPBar.GainedColor].b
-		SUI.DB.StatusBars.XPBar.GainedGreen 		= COLORS[DB.StatusBars.XPBar.GainedColor].g
-		SUI.DB.StatusBars.XPBar.GainedBrightness	= COLORS[DB.StatusBars.XPBar.GainedColor].a
+		SUI.DB.StatusBars.XPBar.GainedRed 			= COLORS[SUI.DB.StatusBars.XPBar.GainedColor].r
+		SUI.DB.StatusBars.XPBar.GainedBlue 			= COLORS[SUI.DB.StatusBars.XPBar.GainedColor].b
+		SUI.DB.StatusBars.XPBar.GainedGreen 		= COLORS[SUI.DB.StatusBars.XPBar.GainedColor].g
+		SUI.DB.StatusBars.XPBar.GainedBrightness	= COLORS[SUI.DB.StatusBars.XPBar.GainedColor].a
 	end
 	
 	local r,b,g,a
@@ -63,10 +63,10 @@ local SetXPColors = function(self)
 		SUI.DB.StatusBars.XPBar.RestedBrightness	= 1
 		SUI.DB.StatusBars.XPBar.RestedColor		= SUI.DB.StatusBars.XPBar.GainedColor
 	elseif SUI.DB.StatusBars.XPBar.RestedColor ~= "Custom" then
-		SUI.DB.StatusBars.XPBar.RestedRed 			= COLORS[DB.StatusBars.XPBar.RestedColor].r
-		SUI.DB.StatusBars.XPBar.RestedBlue 			= COLORS[DB.StatusBars.XPBar.RestedColor].b
-		SUI.DB.StatusBars.XPBar.RestedGreen 		= COLORS[DB.StatusBars.XPBar.RestedColor].g
-		SUI.DB.StatusBars.XPBar.RestedBrightness	= COLORS[DB.StatusBars.XPBar.RestedColor].a
+		SUI.DB.StatusBars.XPBar.RestedRed 			= COLORS[SUI.DB.StatusBars.XPBar.RestedColor].r
+		SUI.DB.StatusBars.XPBar.RestedBlue 			= COLORS[SUI.DB.StatusBars.XPBar.RestedColor].b
+		SUI.DB.StatusBars.XPBar.RestedGreen 		= COLORS[SUI.DB.StatusBars.XPBar.RestedColor].g
+		SUI.DB.StatusBars.XPBar.RestedBrightness	= COLORS[SUI.DB.StatusBars.XPBar.RestedColor].a
 	end
 	r = SUI.DB.StatusBars.XPBar.RestedRed
 	b = SUI.DB.StatusBars.XPBar.RestedBlue
