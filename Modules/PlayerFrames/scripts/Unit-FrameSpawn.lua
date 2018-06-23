@@ -1,6 +1,6 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local PlayerFrames = spartan:GetModule("PlayerFrames");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
 local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 
@@ -14,7 +14,7 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 	
 	PlayerFrames:PositionFrame_Classic()
 
-	if DBMod.PlayerFrames.BossFrame.display == true then
+	if SUI.DBMod.PlayerFrames.BossFrame.display == true then
 		for i = 1, MAX_BOSS_FRAMES do
 			PlayerFrames.boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
 			if i == 1 then
@@ -52,21 +52,21 @@ function PlayerFrames:PositionFrame_Classic(b)
 		if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12); end
 		if b == "target" or b == nil then PlayerFrames.target:SetPoint("LEFT",PlayerFrames.player,"RIGHT",100,0); end
 		
-		if DBMod.PlayerFrames.targettarget.style == "small" then
+		if SUI.DBMod.PlayerFrames.targettarget.style == "small" then
 			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",8,-11); end
 		else
 			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",19,15); end
 		end
 		
 		for a,b in pairs(FramesList) do
-			PlayerFrames[b]:SetScale(DB.scale);
+			PlayerFrames[b]:SetScale(SUI.DB.scale);
 		end
 	else
 		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3); end
 		if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12) end
 		if b == "target" or b == nil then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3); end
 		
-		if DBMod.PlayerFrames.targettarget.style == "small" then
+		if SUI.DBMod.PlayerFrames.targettarget.style == "small" then
 			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15); end
 		else
 			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12); end
@@ -79,7 +79,7 @@ end
 
 function PlayerFrames:AddMover(frame, framename)
 	if frame == nil then
-		spartan:Err("PlayerFrames", DBMod.PlayerFrames.Style .. " did not spawn " .. framename)
+		SUI:Err("PlayerFrames", SUI.DBMod.PlayerFrames.Style .. " did not spawn " .. framename)
 	else
 		frame.mover = CreateFrame("Frame");
 		frame.mover:SetSize(20, 20);
@@ -99,7 +99,7 @@ function PlayerFrames:AddMover(frame, framename)
 		frame:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
 				frame.mover:Show();
-				DBMod.PlayerFrames[framename].moved = true;
+				SUI.DBMod.PlayerFrames[framename].moved = true;
 				frame:SetMovable(true);
 				frame:StartMoving();
 			end
@@ -111,7 +111,7 @@ function PlayerFrames:AddMover(frame, framename)
 			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = frame:GetPoint()
 			Anchors.relativeTo = "UIParent"
 			for k,v in pairs(Anchors) do
-				DBMod.PlayerFrames[framename].Anchors[k] = v
+				SUI.DBMod.PlayerFrames[framename].Anchors[k] = v
 			end
 		end);
 		
@@ -129,11 +129,11 @@ function PlayerFrames:AddMover(frame, framename)
 		frame.mover:Hide();
 
 		--Set Position if moved
-		if DBMod.PlayerFrames[framename].moved then
+		if SUI.DBMod.PlayerFrames[framename].moved then
 			frame:SetMovable(true);
 			frame:SetUserPlaced(false);
 			local Anchors = {}
-			for k,v in pairs(DBMod.PlayerFrames[framename].Anchors) do
+			for k,v in pairs(SUI.DBMod.PlayerFrames[framename].Anchors) do
 				Anchors[k] = v
 			end
 			frame:ClearAllPoints();
@@ -149,7 +149,7 @@ function PlayerFrames:BossMoveScripts(frame)
 	frame:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
 			PlayerFrames.boss[1].mover:Show();
-			DBMod.PlayerFrames.boss.moved = true;
+			SUI.DBMod.PlayerFrames.boss.moved = true;
 			PlayerFrames.boss[1]:SetMovable(true);
 			PlayerFrames.boss[1]:StartMoving();
 		end
@@ -160,26 +160,26 @@ function PlayerFrames:BossMoveScripts(frame)
 		local Anchors = {}
 		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PlayerFrames.boss[1]:GetPoint()
 		for k,v in pairs(Anchors) do
-			DBMod.PlayerFrames.boss.Anchors[k] = v
+			SUI.DBMod.PlayerFrames.boss.Anchors[k] = v
 		end
 	end);
 end
 
 function PlayerFrames:OnEnable()
 	PlayerFrames.boss = {}
-	if (DBMod.PlayerFrames.Style == "Classic") then
+	if (SUI.DBMod.PlayerFrames.Style == "Classic") then
 		PlayerFrames:BuffOptions()
 		PlayerFrames:SUI_PlayerFrames_Classic();
 	else
-		spartan:GetModule("Style_" .. DBMod.PlayerFrames.Style):PlayerFrames();
+		SUI:GetModule("Style_" .. SUI.DBMod.PlayerFrames.Style):PlayerFrames();
 	end
 	
-	if DB.Styles[DBMod.PlayerFrames.Style].Movable.PlayerFrames == true then 
+	if SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Movable.PlayerFrames == true then 
 		local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 		for a,b in pairs(FramesList) do
 			PlayerFrames:AddMover(PlayerFrames[b], b)
 		end
-		if DBMod.PlayerFrames.BossFrame.display then
+		if SUI.DBMod.PlayerFrames.BossFrame.display then
 			PlayerFrames:AddMover(PlayerFrames.boss[1], "boss")
 			for i = 2, MAX_BOSS_FRAMES do
 				if PlayerFrames.boss[i] ~= nil then
@@ -194,49 +194,49 @@ function PlayerFrames:OnEnable()
 end
 
 function PlayerFrames:BuffOptions()
-	spartan.opt.args["PlayerFrames"].args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,desc = "Buff & Debuff display settings", args={}};
+	SUI.opt.args["PlayerFrames"].args["auras"] = {name = "Buffs & Debuffs",type = "group",order=3,desc = "Buff & Debuff display settings", args={}};
 	local Units = {[1]="player",[2]="pet",[3]="target",[4]="targettarget",[5]="focus",[6]="focustarget"}
 	local values = {["bars"]=L["Bars"],["icons"]=L["Icons"],["both"]=L["Both"],["disabled"]=L["Disabled"]}
 	
 	for k,unit in pairs(Units) do
-		spartan.opt.args["PlayerFrames"].args["auras"].args[unit] = {name=unit, type = "group", order=k, disabled=true,
+		SUI.opt.args["PlayerFrames"].args["auras"].args[unit] = {name=unit, type = "group", order=k, disabled=true,
 			args = {
 				Notice = {type="description", order=.5, fontSize="medium", name=L["possiblereloadneeded"]},
 				Buffs = {name="Buffs",type = "group",inline=true,order=1,
 					args = {
 						Display={name = L["Display mode"], type = "select", order=15,
 							values = values,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode; end,
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode; end,
 							set = function(info,val)
-								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode = val;
-								spartan:reloadui()
+								SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.Mode = val;
+								SUI:reloadui()
 							end
 						},
 						Number={name = L["Number to show"], type = "range", order=20,
 						min=1,max=30,step=1,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Number; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.Number = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.Number; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.Number = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						},
 						size = {name = L["Size"], type = "range", order=30,
 						min=1,max=30,step=1,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.size; end,
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.size; end,
 							set = function(info,val)
-								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.size = val;
+								SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.size = val;
 								if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end
 							end
 						},
 						spacing = {name = L["Spacing"], type = "range", order=40,
 						min=1,max=30,step=1,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.spacing; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.spacing = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.spacing; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.spacing = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						},
 						showType={name = L["Show type"], type = "toggle", order=50,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.showType; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.showType = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.showType; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.showType = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						},
 						onlyShowPlayer={name = L["Only show players"], type = "toggle", order=60,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.onlyShowPlayer; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Buffs.onlyShowPlayer = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.onlyShowPlayer; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Buffs.onlyShowPlayer = val; if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then PlayerFrames[unit].Buffs:PostUpdate(unit,"Buffs"); end end
 						}
 					}
 				},
@@ -244,34 +244,34 @@ function PlayerFrames:BuffOptions()
 					args = {
 						Display={name = L["Display mode"], type = "select", order=15, 
 							values = values,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode; end,
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode; end,
 							set = function(info,val)
-								DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode = val;
-								spartan:reloadui()
+								SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Mode = val;
+								SUI:reloadui()
 							end
 						},
 						Number = {name = L["Number to show"], type = "range", order=20,
 						min=1,max=30,step=1,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Number; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Number = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Number; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.Number = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
 						size = {name = L["Size"], type = "range", order=30,
 						min=1,max=30,step=1,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.size; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.size = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.size; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.size = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
 						spacing = {name = L["Spacing"], type = "range", order=40,
 						min=1,max=30,step=1,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.spacing; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.spacing = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.spacing; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.spacing = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
 						showType={name = L["Show type"], type = "toggle", order=50,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.showType; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.showType = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.showType; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.showType = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						},
 						onlyShowPlayer={name = L["Only show players"], type = "toggle", order=60,
-							get = function(info) return DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.onlyShowPlayer; end,
-							set = function(info,val) DB.Styles[DBMod.PlayerFrames.Style].Frames[unit].Debuffs.onlyShowPlayer = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
+							get = function(info) return SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.onlyShowPlayer; end,
+							set = function(info,val) SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Frames[unit].Debuffs.onlyShowPlayer = val; if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then PlayerFrames[unit].Debuffs:PostUpdate(unit,"Debuffs"); end end
 						}
 					}
 				}

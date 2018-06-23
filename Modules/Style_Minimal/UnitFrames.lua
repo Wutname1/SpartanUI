@@ -1,7 +1,6 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local artwork_Core = spartan:GetModule("Artwork_Core");
-local module = spartan:GetModule("Style_Minimal");
+local _G, SUI = _G, SUI
+local artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:GetModule("Style_Minimal");
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
 local square = [[Interface\AddOns\SpartanUI\media\map-overlay.tga]]
@@ -113,7 +112,7 @@ local pvpIcon = function (self, event, unit)
 end
 
 function CreatePortrait(self)
-	if DBMod.PlayerFrames.Portrait3D then			
+	if SUI.DBMod.PlayerFrames.Portrait3D then			
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
 		Portrait.type = "3D"
@@ -136,12 +135,12 @@ end
 local PostUpdateAura = function(self,unit,mode)
 	-- Buffs
 	if mode == "Buffs" then
-		if DB.Styles.Minimal.Frames[unit].Buffs.Display then
-			self.size = DB.Styles.Minimal.Frames[unit].Buffs.size;
-			self.spacing = DB.Styles.Minimal.Frames[unit].Buffs.spacing;
-			self.showType = DB.Styles.Minimal.Frames[unit].Buffs.showType;
-			self.numBuffs = DB.Styles.Minimal.Frames[unit].Buffs.Number;
-			self.onlyShowPlayer = DB.Styles.Minimal.Frames[unit].Buffs.onlyShowPlayer;
+		if SUI.DB.Styles.Minimal.Frames[unit].Buffs.Display then
+			self.size = SUI.DB.Styles.Minimal.Frames[unit].Buffs.size;
+			self.spacing = SUI.DB.Styles.Minimal.Frames[unit].Buffs.spacing;
+			self.showType = SUI.DB.Styles.Minimal.Frames[unit].Buffs.showType;
+			self.numBuffs = SUI.DB.Styles.Minimal.Frames[unit].Buffs.Number;
+			self.onlyShowPlayer = SUI.DB.Styles.Minimal.Frames[unit].Buffs.onlyShowPlayer;
 			self:Show();
 		else
 			self:Hide();
@@ -150,12 +149,12 @@ local PostUpdateAura = function(self,unit,mode)
 	
 	-- Debuffs
 	if mode == "Debuffs" then
-		if DB.Styles.Minimal.Frames[unit].Debuffs.Display then
-			self.size = DB.Styles.Minimal.Frames[unit].Debuffs.size;
-			self.spacing = DB.Styles.Minimal.Frames[unit].Debuffs.spacing;
-			self.showType = DB.Styles.Minimal.Frames[unit].Debuffs.showType;
-			self.numDebuffs = DB.Styles.Minimal.Frames[unit].Debuffs.Number;
-			self.onlyShowPlayer = DB.Styles.Minimal.Frames[unit].Debuffs.onlyShowPlayer;
+		if SUI.DB.Styles.Minimal.Frames[unit].Debuffs.Display then
+			self.size = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.size;
+			self.spacing = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.spacing;
+			self.showType = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.showType;
+			self.numDebuffs = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.Number;
+			self.onlyShowPlayer = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.onlyShowPlayer;
 			self:Show();
 		else
 			self:Hide();
@@ -166,14 +165,14 @@ end
 local PostUpdateColor = function(self,unit)
 	self.Health.frequentUpdates = true;
 	self.Health.colorDisconnected = true;
-	if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+	if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 		self.Health.colorReaction = true;
 		self.Health.colorClass = false;
-	elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+	elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 		self.Health.colorHappiness = true;
 		self.Health.colorReaction = false;
 		self.Health.colorClass = false;
-	elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+	elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 		self.Health.colorClass = true;
 		self.Health.colorReaction = false;
 	else
@@ -186,7 +185,7 @@ local PostUpdateColor = function(self,unit)
 end
 
 local ChangeFrameStatus = function(self,unit)
-	if DBMod.PlayerFrames[unit].display then
+	if SUI.DBMod.PlayerFrames[unit].display then
 		self:Show();
 	else
 		self:Hide();
@@ -217,13 +216,13 @@ local OnCastbarUpdate = function(self,elapsed)
 		end
 		if self.Time then
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			if DBMod.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
+			if SUI.DBMod.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
 				self.Time:SetFormattedText("%.1f",self.max - self.duration);
 			else
 				self.Time:SetFormattedText("%.1f",self.duration);
 			end
 		end
-		if DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if SUI.DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.max-self.duration)
 		else
 			self:SetValue(self.duration)
@@ -240,7 +239,7 @@ local OnCastbarUpdate = function(self,elapsed)
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
 				self.Time:SetFormattedText("%.1f",self.max-self.duration);
 		end
-		if DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if SUI.DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.duration)
 		else
 			self:SetValue(self.max-self.duration)
@@ -261,7 +260,7 @@ local MakeSmallFrame = function(self,unit)
 		self.artwork:SetFrameLevel(2);
 		self.artwork:SetAllPoints(self);
 		
-		-- if DBMod.PartyFrames.Portrait then
+		-- if SUI.DBMod.PartyFrames.Portrait then
 			-- self.Portrait = CreatePortrait(self);
 			-- self.Portrait:SetSize(60, 60);
 			-- self.Portrait:SetPoint("TOPLEFT",self,"TOPLEFT",35,-15);
@@ -302,12 +301,12 @@ local MakeSmallFrame = function(self,unit)
 			self.Health.colorTapping = true;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			if DBMod.PlayerFrames.bars[unit] then
-				if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			if SUI.DBMod.PlayerFrames.bars[unit] then
+				if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 					self.Health.colorReaction = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 					self.Health.colorHappiness = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 					self.Health.colorClass = true;
 				end
 			else
@@ -373,7 +372,7 @@ local MakeSmallFrame = function(self,unit)
 		items.low:SetFrameLevel(1);
 		
 		self.Name = items:CreateFontString();
-		spartan:FormatFont(self.Name, 10, "Player")
+		SUI:FormatFont(self.Name, 10, "Player")
 		self.Name:SetHeight(10);
 		self.Name:SetJustifyH("CENTER");
 		self.Name:SetJustifyV("BOTTOM");
@@ -413,7 +412,7 @@ local MakeSmallFrame = function(self,unit)
 		self.StatusText:SetJustifyH("CENTER");
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
-	-- self.AuraWatch = spartan:oUF_Buffs(self)
+	-- self.AuraWatch = SUI:oUF_Buffs(self)
 	
 	if unit == "party" then 
 		self.TextUpdate = PartyFrames.PostUpdateText
@@ -488,12 +487,12 @@ local MakeLargeFrame = function(self,unit,width)
 			self.Health.colorTapping = true;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			if DBMod.PlayerFrames.bars[unit] then
-				if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			if SUI.DBMod.PlayerFrames.bars[unit] then
+				if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 					self.Health.colorReaction = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 					self.Health.colorHappiness = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 					self.Health.colorClass = true;
 				end
 			else
@@ -569,7 +568,7 @@ local MakeLargeFrame = function(self,unit,width)
 				}
 			end
 			self.Buffs = CreateFrame("Frame",nil,self);
-			self.Buffs:SetSize(self:GetWidth(), DBMod.PartyFrames.Auras.size+2);
+			self.Buffs:SetSize(self:GetWidth(), SUI.DBMod.PartyFrames.Auras.size+2);
 				if unit == "player" or unit == "target" then
 					self.Buffs:SetPoint("BOTTOM",self,"TOP", 0, 14)
 				else
@@ -577,10 +576,10 @@ local MakeLargeFrame = function(self,unit,width)
 				end
 			self.Buffs.onlyShowPlayer = true
 			self.Buffs.filter = spellIDs
-			self.Buffs.size = DBMod.PartyFrames.Auras.size;
-			self.Buffs.spacing = DBMod.PartyFrames.Auras.spacing;
-			self.Buffs.showType = DBMod.PartyFrames.Auras.showType;
-			self.Buffs.size = DBMod.PartyFrames.Auras.size;
+			self.Buffs.size = SUI.DBMod.PartyFrames.Auras.size;
+			self.Buffs.spacing = SUI.DBMod.PartyFrames.Auras.spacing;
+			self.Buffs.showType = SUI.DBMod.PartyFrames.Auras.showType;
+			self.Buffs.size = SUI.DBMod.PartyFrames.Auras.size;
 			local FilterType = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster, isStealable, shouldConsolidate, spellID, canApplyAura, isBossDebuff)
 				for i, sid in pairs(spellIDs) do
 					if sid == spellID then return true end
@@ -590,7 +589,7 @@ local MakeLargeFrame = function(self,unit,width)
 			self.Buffs.CustomFilter = FilterType
 		end
 		do -- setup buffs and debuffs
-			if DB.Styles.Minimal.Frames[unit] and PlayerFrames then
+			if SUI.DB.Styles.Minimal.Frames[unit] and PlayerFrames then
 				self.BuffAnchor = CreateFrame("Frame", nil, self)
 				self.BuffAnchor:SetSize(self:GetWidth(), 1)
 				self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 12)
@@ -659,7 +658,7 @@ local MakeLargeFrame = function(self,unit,width)
 		items.low:SetFrameLevel(1);
 		
 		self.Name = items:CreateFontString();
-		spartan:FormatFont(self.Name, 12, "Player")
+		SUI:FormatFont(self.Name, 12, "Player")
 		self.Name:SetSize(self:GetWidth(), 12);
 		self.Name:SetJustifyH("CENTER");
 		self.Name:SetJustifyV("BOTTOM");
@@ -785,7 +784,7 @@ local CreateUnitFrame = function(self,unit)
 end
 
 local CreateUnitFrameParty = function(self,unit)
-	if DB.Styles.Minimal.PartyFramesSize ~= nil and DB.Styles.Minimal.PartyFramesSize == "small" then
+	if SUI.DB.Styles.Minimal.PartyFramesSize ~= nil and SUI.DB.Styles.Minimal.PartyFramesSize == "small" then
 		self = MakeSmallFrame(self,unit)
 	else
 		self = MakeLargeFrame(self,unit,150)
@@ -796,7 +795,7 @@ end
 
 local CreateUnitFrameRaid = function(self,unit)
 	self = MakeSmallFrame(self,unit)
-	self = spartan:GetModule("RaidFrames"):MakeMovable(self)
+	self = SUI:GetModule("RaidFrames"):MakeMovable(self)
 	return self
 end
 
@@ -817,7 +816,7 @@ function module:UpdateAltBarPositions()
 end
 
 function module:PlayerFrames()
-	PlayerFrames = spartan:GetModule("PlayerFrames");
+	PlayerFrames = SUI:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames");
 	PlayerFrames:BuffOptions()
 	
@@ -832,7 +831,7 @@ function module:PlayerFrames()
 
 	module:UpdateAltBarPositions();
 	
-	if DBMod.PlayerFrames.BossFrame.display == true then
+	if SUI.DBMod.PlayerFrames.BossFrame.display == true then
 		for i = 1, MAX_BOSS_FRAMES do
 			PlayerFrames.boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
 			if i == 1 then
@@ -856,10 +855,10 @@ function module:PositionFrame(b)
 		if b == "focustarget" or b == nil then PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0); end
 		
 		
-		-- PlayerFrames.player:SetScale(DB.scale);
+		-- PlayerFrames.player:SetScale(SUI.DB.scale);
 		for a,b in pairs(FramesList) do
-			PlayerFrames[b]:SetScale(DB.scale);
-			-- _G["SUI_"..b.."Frame"]:SetScale(DB.scale);
+			PlayerFrames[b]:SetScale(SUI.DB.scale);
+			-- _G["SUI_"..b.."Frame"]:SetScale(SUI.DB.scale);
 		end
 end
 
@@ -872,25 +871,25 @@ function module:RaidFrames()
 	local columnAnchorPoint = 'LEFT'
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 	
-	if DBMod.RaidFrames.mode == "GROUP" then
+	if SUI.DBMod.RaidFrames.mode == "GROUP" then
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
-	-- print(DBMod.RaidFrames.mode)
+	-- print(SUI.DBMod.RaidFrames.mode)
 	-- print(groupingOrder)
 	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
-		"showRaid", DBMod.RaidFrames.showRaid,
-		"showParty", DBMod.RaidFrames.showParty,
-		"showPlayer", DBMod.RaidFrames.showPlayer,
-		"showSolo", DBMod.RaidFrames.showSolo,
+		"showRaid", SUI.DBMod.RaidFrames.showRaid,
+		"showParty", SUI.DBMod.RaidFrames.showParty,
+		"showPlayer", SUI.DBMod.RaidFrames.showPlayer,
+		"showSolo", SUI.DBMod.RaidFrames.showSolo,
 		'xoffset', xoffset,
 		'yOffset', yOffset,
 		'point', point,
-		'groupBy', DBMod.RaidFrames.mode,
+		'groupBy', SUI.DBMod.RaidFrames.mode,
 		'groupingOrder', groupingOrder,
 		'sortMethod', 'index',
-		'maxColumns', DBMod.RaidFrames.maxColumns,
-		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
-		'columnSpacing', DBMod.RaidFrames.columnSpacing,
+		'maxColumns', SUI.DBMod.RaidFrames.maxColumns,
+		'unitsPerColumn', SUI.DBMod.RaidFrames.unitsPerColumn,
+		'columnSpacing', SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint', columnAnchorPoint
 	)
 	
@@ -898,14 +897,14 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
-	PartyFrames = spartan:GetModule("PartyFrames");
+	PartyFrames = SUI:GetModule("PartyFrames");
 	module:Options_PartyFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames_Party");
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
-		"showRaid", DBMod.PartyFrames.showRaid,
-		"showParty", DBMod.PartyFrames.showParty,
-		"showPlayer", DBMod.PartyFrames.showPlayer,
-		"showSolo", DBMod.PartyFrames.showSolo,
+		"showRaid", SUI.DBMod.PartyFrames.showRaid,
+		"showParty", SUI.DBMod.PartyFrames.showParty,
+		"showPlayer", SUI.DBMod.PartyFrames.showPlayer,
+		"showSolo", SUI.DBMod.PartyFrames.showSolo,
 		"yOffset", -15,
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",

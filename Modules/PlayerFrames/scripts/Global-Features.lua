@@ -1,5 +1,6 @@
-local SUI = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local _G, SUI = _G, SUI
 local PlayerFrames = SUI:NewModule("PlayerFrames");
+SUI.PlayerFrames = PlayerFrames
 ----------------------------------------------------------------------------------------------------
 
 function PlayerFrames:round(val, decimal)
@@ -35,11 +36,11 @@ function PlayerFrames:SetupStaticOptions()
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 	for a,unit in pairs(FramesList) do
 		--Health Bar Color
-		if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+		if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 			PlayerFrames[unit].Health.colorReaction = true;
-		elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+		elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 			PlayerFrames[unit].Health.colorHappiness = true;
-		elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+		elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 			PlayerFrames[unit].Health.colorClass = true;
 		else
 			PlayerFrames[unit].Health.colorSmooth = true;
@@ -48,8 +49,8 @@ function PlayerFrames:SetupStaticOptions()
 end
 
 function PlayerFrames:TextFormat(text)
-	local textstyle = DBMod.PlayerFrames.bars[text].textstyle
-	local textmode = DBMod.PlayerFrames.bars[text].textmode
+	local textstyle = SUI.DBMod.PlayerFrames.bars[text].textstyle
+	local textmode = SUI.DBMod.PlayerFrames.bars[text].textmode
 	local a,m,t,z
 	if text == "mana" then z = "pp" else z = "hp" end
 	
@@ -89,11 +90,11 @@ function PlayerFrames:Buffs(self,unit)
 	if not self.BuffAnchor then return self end
 	local CurStyle = SUI.DBMod.PlayerFrames.Style
 	-- Build buffs
-	if DB.Styles[CurStyle].Frames[unit] then
-		local Buffsize = DB.Styles[CurStyle].Frames[unit].Buffs.size
-		local Debuffsize = DB.Styles[CurStyle].Frames[unit].Debuffs.size
-		local BuffsMode	 = DB.Styles[CurStyle].Frames[unit].Buffs.Mode
-		local DebuffsMode= DB.Styles[CurStyle].Frames[unit].Debuffs.Mode
+	if SUI.DB.Styles[CurStyle].Frames[unit] then
+		local Buffsize = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.size
+		local Debuffsize = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.size
+		local BuffsMode	 = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode
+		local DebuffsMode= SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode
 		
 		--Determine how many we can fit for Hybrid Display
 		local split = 4
@@ -103,23 +104,23 @@ function PlayerFrames:Buffs(self,unit)
 		local DeBuffWidth = 0
 		local DeBuffWidth2 = 0
 		for index = 1, 10 do
-			if ((index * (Buffsize + DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / split)) then
+			if ((index * (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / split)) then
 				BuffWidth = index
 			end
-			if ((index * (Buffsize + DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
+			if ((index * (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
 				BuffWidth2 = index
 			end
 		end
 		for index = 1, 10 do
-			if ((index * (Debuffsize + DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / split)) then
+			if ((index * (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / split)) then
 				DeBuffWidth = index
 			end
-			if ((index * (Debuffsize + DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
+			if ((index * (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
 				DeBuffWidth2 = index
 			end
 		end
-		local BuffWidthActual = (Buffsize + DB.Styles[CurStyle].Frames[unit].Buffs.spacing) * BuffWidth
-		local DeBuffWidthActual = (Debuffsize + DB.Styles[CurStyle].Frames[unit].Debuffs.spacing) * DeBuffWidth
+		local BuffWidthActual = (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing) * BuffWidth
+		local DeBuffWidthActual = (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing) * DeBuffWidth
 		
 		-- Position Bar
 		local BarPosition = function(self, pos)
@@ -159,10 +160,10 @@ function PlayerFrames:Buffs(self,unit)
 			Buffs.size = Buffsize;
 			Buffs["growth-x"] = "RIGHT";
 			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles[CurStyle].Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles[CurStyle].Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles[CurStyle].Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer;
+			Buffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing;
+			Buffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.showType;
+			Buffs.numBuffs = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer;
 			Buffs:SetSize(BuffWidthActual, (Buffsize * (Buffs.numBuffs / BuffWidth)))
 			Buffs.PostUpdate = PostUpdateAura;
 			if BuffsMode ~= "icons" then
@@ -176,10 +177,10 @@ function PlayerFrames:Buffs(self,unit)
 			Debuffs.initialAnchor = "BOTTOMRIGHT";
 			Debuffs["growth-x"] = "LEFT";
 			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles[CurStyle].Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles[CurStyle].Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles[CurStyle].Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing;
+			Debuffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer;
 			Debuffs:SetSize(DeBuffWidthActual, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth)))
 			Debuffs.PostUpdate = PostUpdateAura;
 			if DebuffsMode ~= "icons" then
@@ -267,13 +268,13 @@ function PlayerFrames:Buffs(self,unit)
 		if self.AuraBars then AuraBars.filter = Barfilter end
 		
 		--Change options if needed
-		if DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" then
+		if SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" then
 			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled=true
 			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled=true
 			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled=true
 			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled=true
 		end
-		if DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
+		if SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
 			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled=true
 			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled=true
 			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled=true
@@ -289,24 +290,24 @@ function PlayerFrames:UpdatePosition()
 	local FramesList = {[1]="pet",[2]="target",[3]="targettarget",[4]="focus",[5]="focustarget",[6]="player"}
 	
 	for a,b in pairs(FramesList) do
-		if DBMod.PlayerFrames[b] ~= nil and DBMod.PlayerFrames[b].moved then
+		if SUI.DBMod.PlayerFrames[b] ~= nil and SUI.DBMod.PlayerFrames[b].moved then
 			PlayerFrames[b]:SetMovable(true);
 			PlayerFrames[b]:SetUserPlaced(false);
 			local Anchors = {}
-			for k,v in pairs(DBMod.PlayerFrames[b].Anchors) do
+			for k,v in pairs(SUI.DBMod.PlayerFrames[b].Anchors) do
 				Anchors[k] = v
 			end
 			PlayerFrames[b]:ClearAllPoints();
 			PlayerFrames[b]:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-		elseif DBMod.PlayerFrames[b] ~= nil then
+		elseif SUI.DBMod.PlayerFrames[b] ~= nil then
 			PlayerFrames[b]:SetMovable(false);
 			PlayerFrames[b]:ClearAllPoints();
-			if (DBMod.PlayerFrames.Style == "Classic") then
+			if (SUI.DBMod.PlayerFrames.Style == "Classic") then
 				PlayerFrames:PositionFrame_Classic(b);
-			elseif (DBMod.PlayerFrames.Style == "plain") then
+			elseif (SUI.DBMod.PlayerFrames.Style == "plain") then
 				PlayerFrames:PositionFrame_Plain(b);
 			else
-				SUI:GetModule("Style_" .. DBMod.PlayerFrames.Style):PositionFrame(b);
+				SUI:GetModule("Style_" .. SUI.DBMod.PlayerFrames.Style):PositionFrame(b);
 			end
 		else
 			print(b .. " Frame has not been spawned by your theme")
@@ -315,12 +316,12 @@ function PlayerFrames:UpdatePosition()
 	
 
 	-- for i = 1, MAX_BOSS_FRAMES do
-	if DBMod.PlayerFrames.BossFrame.display then
-		if DBMod.PlayerFrames.boss.moved then
+	if SUI.DBMod.PlayerFrames.BossFrame.display then
+		if SUI.DBMod.PlayerFrames.boss.moved then
 			PlayerFrames.boss[1]:SetMovable(true);
 			PlayerFrames.boss[1]:SetUserPlaced(false);
 			local Anchors = {}
-			for k,v in pairs(DBMod.PlayerFrames.boss.Anchors) do
+			for k,v in pairs(SUI.DBMod.PlayerFrames.boss.Anchors) do
 				Anchors[k] = v
 			end
 			PlayerFrames.boss[1]:ClearAllPoints();
@@ -334,7 +335,7 @@ function PlayerFrames:UpdatePosition()
 end
 
 function PlayerFrames:CreatePortrait(self)
-	if DBMod.PlayerFrames.Portrait3D then			
+	if SUI.DBMod.PlayerFrames.Portrait3D then			
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript("OnShow", function(self) self:SetCamera(1) end)
 		Portrait.type = "3D"
@@ -369,7 +370,7 @@ function PlayerFrames:MakeMovable(self,unit)
 end
 
 function PlayerFrames:FirstTime()
-	DBMod.PlayerFrames.SetupDone = false
+	SUI.DBMod.PlayerFrames.SetupDone = false
 	local PageData = {
 		SubTitle = "Player Frames style",
 		Desc1 = "Please pick an art style from the options below.",
@@ -463,27 +464,27 @@ function PlayerFrames:FirstTime()
 			
 		end,
 		Next = function()
-			DBMod.Artwork.PlayerFrames = true
+			SUI.DBMod.Artwork.PlayerFrames = true
 			
-			if (SUI_Win.Artwork.Classic.radio:GetValue()) then DBMod.Artwork.Style = "Classic"; end
-			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then DBMod.Artwork.Style = "Transparent"; end
-			if (SUI_Win.Artwork.Minimal.radio:GetValue()) then DBMod.Artwork.Style = "Minimal"; end
+			if (SUI_Win.Artwork.Classic.radio:GetValue()) then SUI.DBMod.Artwork.Style = "Classic"; end
+			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then SUI.DBMod.Artwork.Style = "Transparent"; end
+			if (SUI_Win.Artwork.Minimal.radio:GetValue()) then SUI.DBMod.Artwork.Style = "Minimal"; end
 			
-			DBMod.PlayerFrames.Style = DBMod.Artwork.Style;
-			DBMod.PartyFrames.Style = DBMod.Artwork.Style;
-			DBMod.RaidFrames.Style = DBMod.Artwork.Style;
-			DBMod.Artwork.FirstLoad = true;
+			SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+			SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+			SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
+			SUI.DBMod.Artwork.FirstLoad = true;
 			
 			--Reset Moved bars
-			if DB.Styles[DBMod.Artwork.Style].MovedBars == nil then DB.Styles[DBMod.Artwork.Style].MovedBars = {} end
+			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 			local FrameList = {BT4Bar1, BT4Bar2, BT4Bar3, BT4Bar4, BT4Bar5, BT4Bar6, BT4BarBagBar, BT4BarExtraActionBar, BT4BarStanceBar, BT4BarPetBar, BT4BarMicroMenu}
 			for k,v in ipairs(FrameList) do
-				if DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] then
-					DB.Styles[DBMod.Artwork.Style].MovedBars[v:GetName()] = false
+				if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
+					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 				end
 			end;
 			
-			SUI:GetModule("Style_"..DBMod.Artwork.Style):SetupProfile();
+			SUI:GetModule("Style_"..SUI.DBMod.Artwork.Style):SetupProfile();
 			
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
@@ -492,7 +493,7 @@ function PlayerFrames:FirstTime()
 		Priority = 1,
 		Skipable = true,
 		NoReloadOnSkip = true,
-		Skip = function() DBMod.PlayerFrames.SetupDone = true end
+		Skip = function() SUI.DBMod.PlayerFrames.SetupDone = true end
 	}
 	
 	-- local SetupWindow = SUI:GetModule("SetupWindow")
@@ -500,9 +501,9 @@ function PlayerFrames:FirstTime()
 	-- SetupWindow:DisplayPage()
 	
 	-- Temporary
-	DBMod.PlayerFrames.SetupDone = true
+	SUI.DBMod.PlayerFrames.SetupDone = true
 end
 
 function PlayerFrames:OnInitialize()
-	if not DBMod.PlayerFrames.SetupDone then PlayerFrames:FirstTime() end
+	if not SUI.DBMod.PlayerFrames.SetupDone then PlayerFrames:FirstTime() end
 end

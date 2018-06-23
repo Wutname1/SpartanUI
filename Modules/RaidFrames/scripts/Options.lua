@@ -1,54 +1,54 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local RaidFrames = spartan:GetModule("RaidFrames");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------
 
 function RaidFrames:OnInitialize()
-	spartan.opt.args["RaidFrames"].args["DisplayOpts"] = {name = L["Frames/DisplayOpts"],type="group",order=1,
+	SUI.opt.args["RaidFrames"].args["DisplayOpts"] = {name = L["Frames/DisplayOpts"],type="group",order=1,
 		args = {
 			toggleraid =  {name = L["Frames/ShowRFrames"], type = "toggle", order=1,
-				get = function(info) return DBMod.RaidFrames.showRaid; end,
-				set = function(info,val) DBMod.RaidFrames.showRaid = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+				get = function(info) return SUI.DBMod.RaidFrames.showRaid; end,
+				set = function(info,val) SUI.DBMod.RaidFrames.showRaid = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 			},
 			toggleparty = {name=L["Frames/PartyDispParty"],type="toggle",order=2,
-				get = function(info) return DBMod.RaidFrames.showParty; end,
-				set = function(info,val) DBMod.RaidFrames.showParty = val; RaidFrames:UpdateRaid("FORCE_UPDATE") end
+				get = function(info) return SUI.DBMod.RaidFrames.showParty; end,
+				set = function(info,val) SUI.DBMod.RaidFrames.showParty = val; RaidFrames:UpdateRaid("FORCE_UPDATE") end
 			},
 			togglesolo = {name=L["Frames/PartyDispSolo"],type="toggle",order=4,
-				get = function(info) return DBMod.RaidFrames.showSolo; end,
-				set = function(info,val) DBMod.RaidFrames.showSolo = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+				get = function(info) return SUI.DBMod.RaidFrames.showSolo; end,
+				set = function(info,val) SUI.DBMod.RaidFrames.showSolo = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 			},
 			
 			toggleclassname =  {name = L["Frames/ClrNameClass"], type = "toggle", order=1,
-				get = function(info) return DBMod.RaidFrames.showClass; end,
-				set = function(info,val) DBMod.RaidFrames.showClass = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+				get = function(info) return SUI.DBMod.RaidFrames.showClass; end,
+				set = function(info,val) SUI.DBMod.RaidFrames.showClass = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 			},
 			scale = {name=L["Frames/ScaleSize"],type="range",order=5,width="full",
 				step=.01,min = .01,max = 2,
-				get = function(info) return DBMod.RaidFrames.scale; end,
-				set = function(info,val) if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.scale = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end end
+				get = function(info) return SUI.DBMod.RaidFrames.scale; end,
+				set = function(info,val) if (InCombatLockdown()) then SUI:Print(ERR_NOT_IN_COMBAT); else SUI.DBMod.RaidFrames.scale = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end end
 			},
 			
 			bar1 = {name=L["Frames/LayoutConf"],type="header",order=20},
 			maxColumns = {name=L["Frames/MaxCols"],type="range",order=21,width="full",
 				step=1,min = 1,max = 40,
-				get = function(info) return DBMod.RaidFrames.maxColumns; end,
+				get = function(info) return SUI.DBMod.RaidFrames.maxColumns; end,
 				set = function(info,val)
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.maxColumns = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+					if (InCombatLockdown()) then SUI:Print(ERR_NOT_IN_COMBAT); else SUI.DBMod.RaidFrames.maxColumns = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 				end
 			},
 			unitsPerColumn = {name=L["Frames/UnitPerCol"],type="range",order=22,width="full",
 				step=1,min = 1,max = 40,
-				get = function(info) return DBMod.RaidFrames.unitsPerColumn; end,
+				get = function(info) return SUI.DBMod.RaidFrames.unitsPerColumn; end,
 				set = function(info,val)
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.unitsPerColumn = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+					if (InCombatLockdown()) then SUI:Print(ERR_NOT_IN_COMBAT); else SUI.DBMod.RaidFrames.unitsPerColumn = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 				end
 			},
 			columnSpacing = {name=L["Frames/ColSpacing"],type="range",order=23,width="full",
 				step=1,min = 0,max = 200,
-				get = function(info) return DBMod.RaidFrames.columnSpacing; end,
+				get = function(info) return SUI.DBMod.RaidFrames.columnSpacing; end,
 				set = function(info,val)
-					if (InCombatLockdown()) then spartan:Print(ERR_NOT_IN_COMBAT); else DBMod.RaidFrames.columnSpacing = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+					if (InCombatLockdown()) then SUI:Print(ERR_NOT_IN_COMBAT); else SUI.DBMod.RaidFrames.columnSpacing = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 				end
 			},
 			desc1={name=L["Frames/LayoutConfDesc"],type="description",order=29.9},
@@ -57,34 +57,34 @@ function RaidFrames:OnInitialize()
 			healthtextstyle = {name=L["Frames/HTextStyle"],type="select",order=31,
 				desc = L["Frames/TextStyle1Desc"].."|n"..L["Frames/TextStyle2Desc"].."|n"..L["Frames/TextStyle3Desc"],
 				values = {["long"]=L["Frames/TextStyle1"],["longfor"]=L["Frames/TextStyle2"],["dynamic"]=L["Frames/TextStyle3"],["disabled"]=L["Frames/Disabled"]},
-				get = function(info) return DBMod.RaidFrames.bars.health.textstyle; end,
-				set = function(info,val) DBMod.RaidFrames.bars.health.textstyle = val; RaidFrames:UpdateText(); end
+				get = function(info) return SUI.DBMod.RaidFrames.bars.health.textstyle; end,
+				set = function(info,val) SUI.DBMod.RaidFrames.bars.health.textstyle = val; RaidFrames:UpdateText(); end
 			},
 			healthtextmode = {name=L["Frames/HTextMode"],type="select",order=32,
 				values = {[1]=L["Frames/HTextMode1"],[2]=L["Frames/HTextMode2"],[3]=L["Frames/HTextMode3"]},
-				get = function(info) return DBMod.RaidFrames.bars.health.textmode; end,
-				set = function(info,val) DBMod.RaidFrames.bars.health.textmode = val; RaidFrames:UpdateText(); end
+				get = function(info) return SUI.DBMod.RaidFrames.bars.health.textmode; end,
+				set = function(info,val) SUI.DBMod.RaidFrames.bars.health.textmode = val; RaidFrames:UpdateText(); end
 			}
 		}
 	}
 	
-	spartan.opt.args["RaidFrames"].args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,
+	SUI.opt.args["RaidFrames"].args["mode"] = {name = L["Frames/LayMode"], type = "select", order=3,
 		values = {["NAME"]=L["Frames/LayName"],["GROUP"]=L["Frames/LayGrp"],["ASSIGNEDROLE"]=L["Frames/LayRole"]},
-		get = function(info) return DBMod.RaidFrames.mode; end,
-		set = function(info,val) DBMod.RaidFrames.mode = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
+		get = function(info) return SUI.DBMod.RaidFrames.mode; end,
+		set = function(info,val) SUI.DBMod.RaidFrames.mode = val; RaidFrames:UpdateRaid("FORCE_UPDATE"); end
 	};
-	spartan.opt.args["RaidFrames"].args["raidLockReset"] = {name = L["Frames/ResetRaidPos"], type = "execute", order=11,
+	SUI.opt.args["RaidFrames"].args["raidLockReset"] = {name = L["Frames/ResetRaidPos"], type = "execute", order=11,
 		func = function()
 			if (InCombatLockdown()) then 
-				spartan:Print(ERR_NOT_IN_COMBAT);
+				SUI:Print(ERR_NOT_IN_COMBAT);
 			else
-				DBMod.RaidFrames.moved = false;
+				SUI.DBMod.RaidFrames.moved = false;
 				RaidFrames:UpdateRaidPosition();
 			end
 		end
 	};
-	spartan.opt.args["RaidFrames"].args["HideBlizz"] = {name=L["Frames/HideBlizzFrames"],type="toggle",order=4,
-		get = function(info) return DBMod.RaidFrames.HideBlizzFrames; end,
-		set = function(info,val) DBMod.RaidFrames.HideBlizzFrames = val; end
+	SUI.opt.args["RaidFrames"].args["HideBlizz"] = {name=L["Frames/HideBlizzFrames"],type="toggle",order=4,
+		get = function(info) return SUI.DBMod.RaidFrames.HideBlizzFrames; end,
+		set = function(info,val) SUI.DBMod.RaidFrames.HideBlizzFrames = val; end
 	};
 end

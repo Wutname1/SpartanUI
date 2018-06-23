@@ -1,11 +1,12 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local RaidFrames = spartan:NewModule("RaidFrames");
+local _G, SUI = _G, SUI
+local RaidFrames = SUI:NewModule("RaidFrames");
+SUI.RaidFrames = RaidFrames
 ----------------------------------------------------------------------------------------------------
 
 --	Formatting functions
 function RaidFrames:TextFormat(text)
-	local textstyle = DBMod.RaidFrames.bars[text].textstyle
-	local textmode = DBMod.RaidFrames.bars[text].textmode
+	local textstyle = SUI.DBMod.RaidFrames.bars[text].textstyle
+	local textmode = SUI.DBMod.RaidFrames.bars[text].textmode
 	local a,m,t,z
 	if text == "mana" then z = "pp" else z = "hp" end
 	
@@ -64,11 +65,11 @@ function RaidFrames:menu(self)
 end
 
 function RaidFrames:PostUpdateDebuffs(self,unit)
-	if DBMod.RaidFrames.showDebuffs then
+	if SUI.DBMod.RaidFrames.showDebuffs then
 		self:Show();
-		self.size = DBMod.RaidFrames.Auras.size;
-		self.spacing = DBMod.RaidFrames.Auras.spacing;
-		self.showType = DBMod.RaidFrames.Auras.showType;
+		self.size = SUI.DBMod.RaidFrames.Auras.size;
+		self.spacing = SUI.DBMod.RaidFrames.Auras.spacing;
+		self.showType = SUI.DBMod.RaidFrames.Auras.showType;
 	else
 		self:Hide();
 	end
@@ -97,19 +98,19 @@ function RaidFrames:MakeMovable(self)
 	
 	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.RaidFrames.mover:Show();
-			DBMod.RaidFrames.moved = true;
-			spartan.RaidFrames:SetMovable(true);
-			spartan.RaidFrames:StartMoving();
+			SUI.RaidFrames.mover:Show();
+			SUI.DBMod.RaidFrames.moved = true;
+			SUI.RaidFrames:SetMovable(true);
+			SUI.RaidFrames:StartMoving();
 		end
 	end);
 	self:SetScript("OnMouseUp",function(self,button)
-		spartan.RaidFrames.mover:Hide();
-		spartan.RaidFrames:StopMovingOrSizing();
+		SUI.RaidFrames.mover:Hide();
+		SUI.RaidFrames:StopMovingOrSizing();
 		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = SUI.RaidFrames:GetPoint()
 		for k,v in pairs(Anchors) do
-			DBMod.RaidFrames.Anchors[k] = v
+			SUI.DBMod.RaidFrames.Anchors[k] = v
 		end
 	end);
 	

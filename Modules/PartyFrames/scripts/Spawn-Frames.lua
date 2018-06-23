@@ -1,48 +1,48 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local PartyFrames = spartan:GetModule("PartyFrames");
+local _G, SUI = _G, SUI
+local PartyFrames = SUI.PartyFrames
 ----------------------------------------------------------------------------------------------------
 
 function PartyFrames:UpdatePartyPosition()
-	PartyFrames.offset = DB.yoffset
-	if DBMod.PartyFrames.moved then
-		spartan.PartyFrames:SetMovable(true);
-		spartan.PartyFrames:SetUserPlaced(false);
+	PartyFrames.offset = SUI.DB.yoffset
+	if SUI.DBMod.PartyFrames.moved then
+		SUI.PartyFrames:SetMovable(true);
+		SUI.PartyFrames:SetUserPlaced(false);
 	else
-		spartan.PartyFrames:SetMovable(false);
+		SUI.PartyFrames:SetMovable(false);
 	end
 	-- User Moved the PartyFrame, so we shouldn't be moving it
-	if not DBMod.PartyFrames.moved then
-		spartan.PartyFrames:ClearAllPoints();
+	if not SUI.DBMod.PartyFrames.moved then
+		SUI.PartyFrames:ClearAllPoints();
 		-- SpartanUI_PlayerFrames are loaded
-		if spartan:GetModule("PlayerFrames",true) then
-			spartan.PartyFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(DB.BuffSettings.offset));
+		if SUI:GetModule("PlayerFrames",true) then
+			SUI.PartyFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(SUI.DB.BuffSettings.offset));
 		-- SpartanUI_PlayerFrames isn't loaded
 		else
-			spartan.PartyFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(DB.BuffSettings.offset));
+			SUI.PartyFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(SUI.DB.BuffSettings.offset));
 		end
 	else
 		local Anchors = {}
-		for k,v in pairs(DBMod.PartyFrames.Anchors) do
+		for k,v in pairs(SUI.DBMod.PartyFrames.Anchors) do
 			Anchors[k] = v
 		end
-		spartan.PartyFrames:ClearAllPoints();
-		spartan.PartyFrames:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+		SUI.PartyFrames:ClearAllPoints();
+		SUI.PartyFrames:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 	end
 end
 
 function PartyFrames:OnEnable()
 	local pf
-	if (DBMod.PartyFrames.Style == "theme") and (DBMod.Artwork.Style ~= "Classic") then
-		pf = spartan:GetModule("Style_" .. DBMod.Artwork.Style):PartyFrames();
-	elseif (DBMod.PartyFrames.Style == "Classic") then
+	if (SUI.DBMod.PartyFrames.Style == "theme") and (SUI.DBMod.Artwork.Style ~= "Classic") then
+		pf = SUI:GetModule("Style_" .. SUI.DBMod.Artwork.Style):PartyFrames();
+	elseif (SUI.DBMod.PartyFrames.Style == "Classic") then
 		pf = PartyFrames:Classic()
-	elseif (DBMod.PartyFrames.Style == "plain") then
+	elseif (SUI.DBMod.PartyFrames.Style == "plain") then
 		pf = PartyFrames:Plain();
 	else
-		pf = spartan:GetModule("Style_" .. DBMod.PartyFrames.Style):PartyFrames();
+		pf = SUI:GetModule("Style_" .. SUI.DBMod.PartyFrames.Style):PartyFrames();
 	end
 	
-	if DB.Styles[DBMod.PartyFrames.Style].Movable.PartyFrames then
+	if SUI.DB.Styles[SUI.DBMod.PartyFrames.Style].Movable.PartyFrames then
 		pf.mover = CreateFrame("Frame");
 		pf.mover:SetPoint("TOPLEFT",pf,"TOPLEFT");
 		pf.mover:SetPoint("BOTTOMRIGHT",pf,"BOTTOMRIGHT");
@@ -67,33 +67,33 @@ function PartyFrames:OnEnable()
 	PartyMemberBackground.Show = function() return; end
 	PartyMemberBackground:Hide();
 	
-	spartan.PartyFrames = pf
+	SUI.PartyFrames = pf
 
 	function PartyFrames:UpdateParty(event,...)
 		if InCombatLockdown() then return end
 		local inParty = IsInGroup()  -- ( numGroupMembers () > 0 )
 		local bDebug_ShowFrame = true;
 
-		spartan.PartyFrames:SetAttribute('showParty',DBMod.PartyFrames.showParty)
-		spartan.PartyFrames:SetAttribute('showPlayer',DBMod.PartyFrames.showPlayer)
-		spartan.PartyFrames:SetAttribute('showSolo',DBMod.PartyFrames.showSolo)
+		SUI.PartyFrames:SetAttribute('showParty',SUI.DBMod.PartyFrames.showParty)
+		SUI.PartyFrames:SetAttribute('showPlayer',SUI.DBMod.PartyFrames.showPlayer)
+		SUI.PartyFrames:SetAttribute('showSolo',SUI.DBMod.PartyFrames.showSolo)
 
-		if DBMod.PartyFrames.showParty or DBMod.PartyFrames.showSolo then
+		if SUI.DBMod.PartyFrames.showParty or SUI.DBMod.PartyFrames.showSolo then
 			if IsInRaid() then
-				if DBMod.PartyFrames.showPartyInRaid then spartan.PartyFrames:Show() else spartan.PartyFrames:Hide() end
+				if SUI.DBMod.PartyFrames.showPartyInRaid then SUI.PartyFrames:Show() else SUI.PartyFrames:Hide() end
 			elseif inParty then
-					spartan.PartyFrames:Show()
-			elseif DBMod.PartyFrames.showSolo then
-					spartan.PartyFrames:Show()
-			elseif spartan.PartyFrames:IsShown() then
-					spartan.PartyFrames:Hide()
+					SUI.PartyFrames:Show()
+			elseif SUI.DBMod.PartyFrames.showSolo then
+					SUI.PartyFrames:Show()
+			elseif SUI.PartyFrames:IsShown() then
+					SUI.PartyFrames:Hide()
 			end
 		else
-			spartan.PartyFrames:Hide();
+			SUI.PartyFrames:Hide();
 		end
 		
 		PartyFrames:UpdatePartyPosition()
-		spartan.PartyFrames:SetScale(DBMod.PartyFrames.scale);
+		SUI.PartyFrames:SetScale(SUI.DBMod.PartyFrames.scale);
 	end
 	
 	local partyWatch = CreateFrame("Frame");

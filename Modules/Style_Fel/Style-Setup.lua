@@ -1,7 +1,7 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local _G, SUI = _G, SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-local module = spartan:NewModule("Style_Fel");
+local module = SUI:NewModule("Style_Fel");
 
 --Now lets setup the initial Database settings
 local Defaults = {
@@ -66,7 +66,7 @@ local Defaults = {
 		XPBar			= {	enabled = false },
 		RepBar			= {	enabled = false },
 		APBar			= {	enabled = false },
-		blizzardVehicle = DBMod.Artwork.VehicleUI
+		blizzardVehicle = SUI.DBMod.Artwork.VehicleUI
 	},
 	TooltipLoc = true,
 	SubTheme = "Fel",
@@ -78,11 +78,11 @@ local Defaults = {
 	},
 	BuffLoc = true
 }
-if not DB.Styles.Fel.Artwork then
-	DB.Styles.Fel = spartan:MergeData(DB.Styles.Fel, Defaults, true)
+if not SUI.DB.Styles.Fel.Artwork then
+	SUI.DB.Styles.Fel = SUI:MergeData(SUI.DB.Styles.Fel, Defaults, true)
 else
-	DB.Styles.Fel = spartan:MergeData(DB.Styles.Fel, Defaults, false)
+	SUI.DB.Styles.Fel = SUI:MergeData(SUI.DB.Styles.Fel, Defaults, false)
 end
-if not SUI.DBG.Bartender4[DB.Styles.Fel.BartenderProfile] then
-	SUI.DBG.Bartender4[DB.Styles.Fel.BartenderProfile] = {Style = "Fel"}
+if not SUI.DBG.Bartender4[SUI.DB.Styles.Fel.BartenderProfile] then
+	SUI.DBG.Bartender4[SUI.DB.Styles.Fel.BartenderProfile] = {Style = "Fel"}
 end

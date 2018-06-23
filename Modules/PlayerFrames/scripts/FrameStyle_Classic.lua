@@ -1,5 +1,5 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local PlayerFrames = spartan:GetModule("PlayerFrames");
+local _G, SUI = _G, SUI
+local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
 
 local base_plate1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate1.tga]] -- Player and Target
@@ -77,11 +77,11 @@ local name = function(self)
 end
 
 local function CreatePortrait(self)
-	if DBMod.PlayerFrames.Portrait3D then			
+	if SUI.DBMod.PlayerFrames.Portrait3D then			
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript("OnShow", function(self) self:SetCamera(1) end)
 		Portrait.type = "3D"
-		if DBMod.PlayerFrames.Portrait3D then
+		if SUI.DBMod.PlayerFrames.Portrait3D then
 			Portrait.bg2 = Portrait:CreateTexture(nil,"BACKGROUND");
 			Portrait.bg2:SetTexture(circle);
 			Portrait.bg2:SetPoint("TOPLEFT",Portrait,"TOPLEFT",-10,10);
@@ -105,12 +105,12 @@ end
 local PostUpdateAura = function(self,unit,mode)
 	-- Buffs
 	if mode == "Buffs" then
-		if DB.Styles.Classic.Frames[unit].Buffs.Display then
-			self.size = DB.Styles.Classic.Frames[unit].Buffs.size;
-			self.spacing = DB.Styles.Classic.Frames[unit].Buffs.spacing;
-			self.showType = DB.Styles.Classic.Frames[unit].Buffs.showType;
-			self.numBuffs = DB.Styles.Classic.Frames[unit].Buffs.Number;
-			self.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
+		if SUI.DB.Styles.Classic.Frames[unit].Buffs.Display then
+			self.size = SUI.DB.Styles.Classic.Frames[unit].Buffs.size;
+			self.spacing = SUI.DB.Styles.Classic.Frames[unit].Buffs.spacing;
+			self.showType = SUI.DB.Styles.Classic.Frames[unit].Buffs.showType;
+			self.numBuffs = SUI.DB.Styles.Classic.Frames[unit].Buffs.Number;
+			self.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
 			self:Show();
 		else
 			self:Hide();
@@ -119,12 +119,12 @@ local PostUpdateAura = function(self,unit,mode)
 	
 	-- Debuffs
 	if mode == "Debuffs" then
-		if DB.Styles.Classic.Frames[unit].Debuffs.Display then
-			self.size = DB.Styles.Classic.Frames[unit].Debuffs.size;
-			self.spacing = DB.Styles.Classic.Frames[unit].Debuffs.spacing;
-			self.showType = DB.Styles.Classic.Frames[unit].Debuffs.showType;
-			self.numDebuffs = DB.Styles.Classic.Frames[unit].Debuffs.Number;
-			self.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
+		if SUI.DB.Styles.Classic.Frames[unit].Debuffs.Display then
+			self.size = SUI.DB.Styles.Classic.Frames[unit].Debuffs.size;
+			self.spacing = SUI.DB.Styles.Classic.Frames[unit].Debuffs.spacing;
+			self.showType = SUI.DB.Styles.Classic.Frames[unit].Debuffs.showType;
+			self.numDebuffs = SUI.DB.Styles.Classic.Frames[unit].Debuffs.Number;
+			self.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
 			self:Show();
 		else
 			self:Hide();
@@ -135,14 +135,14 @@ end
 local PostUpdateColor = function(self,unit)
 	self.Health.frequentUpdates = true;
 	self.Health.colorDisconnected = true;
-	if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+	if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 		self.Health.colorReaction = true;
 		self.Health.colorClass = false;
-	elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+	elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 		self.Health.colorHappiness = true;
 		self.Health.colorReaction = false;
 		self.Health.colorClass = false;
-	elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+	elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 		self.Health.colorClass = true;
 		self.Health.colorReaction = false;
 	else
@@ -155,7 +155,7 @@ local PostUpdateColor = function(self,unit)
 end
 
 local ChangeFrameStatus = function(self,unit)
-	if DBMod.PlayerFrames[unit].display then
+	if SUI.DBMod.PlayerFrames[unit].display then
 		self:Show();
 	else
 		self:Hide();
@@ -186,13 +186,13 @@ local OnCastbarUpdate = function(self,elapsed)
 		end
 		if self.Time then
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			if DBMod.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
+			if SUI.DBMod.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
 				self.Time:SetFormattedText("%.1f",self.max - self.duration);
 			else
 				self.Time:SetFormattedText("%.1f",self.duration);
 			end
 		end
-		if DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if SUI.DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.max-self.duration)
 		else
 			self:SetValue(self.duration)
@@ -209,7 +209,7 @@ local OnCastbarUpdate = function(self,elapsed)
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
 				self.Time:SetFormattedText("%.1f",self.max-self.duration);
 		end
-		if DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if SUI.DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.duration)
 		else
 			self:SetValue(self.max-self.duration)
@@ -251,7 +251,7 @@ local CreatePlayerFrame = function(self,unit)
 			cast:SetPoint("TOPLEFT",self,"TOPLEFT",36,-23);
 			
 			cast.Text = cast:CreateFontString();
-			spartan:FormatFont(cast.Text, 10, "Player")
+			SUI:FormatFont(cast.Text, 10, "Player")
 			cast.Text:SetSize(135, 11);
 			cast.Text:SetJustifyH("RIGHT"); cast.Text:SetJustifyV("MIDDLE");
 			cast.Text:SetPoint("LEFT",cast,"LEFT",4,0);
@@ -296,11 +296,11 @@ local CreatePlayerFrame = function(self,unit)
 			
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 				self.Health.colorReaction = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+			elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 				self.Health.colorHappiness = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+			elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 				self.Health.colorClass = true;
 			else
 				self.Health.colorSmooth = true;
@@ -367,10 +367,10 @@ local CreatePlayerFrame = function(self,unit)
 		
 		
 		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 12, "Player")
+		SUI:FormatFont(self.Name, 12, "Player")
 		self.Name:SetSize(170, 12); self.Name:SetJustifyH("RIGHT");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",5,-6);
-		if DBMod.PlayerFrames.showClass then
+		if SUI.DBMod.PlayerFrames.showClass then
 			self:Tag(self.Name, "[SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[name]");
@@ -455,7 +455,7 @@ local CreatePlayerFrame = function(self,unit)
 		self.ClassPower = ClassPower
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Classic.Frames[unit] and PlayerFrames then
+		if SUI.DB.Styles.Classic.Frames[unit] and PlayerFrames then
 			self.BuffAnchor = CreateFrame("Frame", nil, self)
 			self.BuffAnchor:SetSize(self:GetWidth()-10, 1)
 			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 10, 0)
@@ -497,7 +497,7 @@ local CreateTargetFrame = function(self,unit)
 			cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-36,-23);
 			
 			cast.Text = cast:CreateFontString();
-			spartan:FormatFont(cast.Text, 10, "Player")
+			SUI:FormatFont(cast.Text, 10, "Player")
 			cast.Text:SetWidth(135); cast.Text:SetHeight(11);
 			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("MIDDLE");
 			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-4,0);
@@ -541,11 +541,11 @@ local CreateTargetFrame = function(self,unit)
 			self.Health.colorTapping = true;
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 				self.Health.colorReaction = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+			elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 				self.Health.colorHappiness = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+			elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 				self.Health.colorClass = true;
 			else
 				self.Health.colorSmooth = true;
@@ -611,11 +611,11 @@ local CreateTargetFrame = function(self,unit)
 		ring.bg:SetTexCoord(1,0,0,1);
 		
 		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 12, "Player")
+		SUI:FormatFont(self.Name, 12, "Player")
 		self.Name:SetWidth(170); self.Name:SetHeight(12); 
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-5,-6);
-		if DBMod.PlayerFrames.showClass then
+		if SUI.DBMod.PlayerFrames.showClass then
 			self:Tag(self.Name, "[SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[name]");
@@ -657,7 +657,7 @@ local CreateTargetFrame = function(self,unit)
 		self:Tag(self.StatusText, "[afkdnd]");
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Classic.Frames[unit] and PlayerFrames then
+		if SUI.DB.Styles.Classic.Frames[unit] and PlayerFrames then
 			self.BuffAnchor = CreateFrame("Frame", nil, self)
 			self.BuffAnchor:SetSize(self:GetWidth()-35, 1)
 			self.BuffAnchor:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 30, 0)
@@ -686,7 +686,7 @@ local CreatePetFrame = function(self,unit)
 		artwork.bg:SetTexCoord(0,1,0,85/128);
 		self.artwork = artwork
 		
-		if DBMod.PlayerFrames.PetPortrait then
+		if SUI.DBMod.PlayerFrames.PetPortrait then
 			self.Portrait = CreatePortrait(self);
 			self.Portrait:SetSize(56, 50);
 			self.Portrait:SetPoint("CENTER",self,"CENTER",87,-8);
@@ -705,7 +705,7 @@ local CreatePetFrame = function(self,unit)
 			cast:SetPoint("TOPLEFT",self,"TOPLEFT",36,-23);
 			
 			cast.Text = cast:CreateFontString();
-			spartan:FormatFont(cast.Text, 10, "Player")
+			SUI:FormatFont(cast.Text, 10, "Player")
 			cast.Text:SetHeight(11);
 			cast.Text:SetPoint("LEFT",cast,"LEFT",0,0);
 			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-10,0);
@@ -753,11 +753,11 @@ local CreatePetFrame = function(self,unit)
 			
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 				self.Health.colorReaction = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+			elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 				self.Health.colorHappiness = true;
-			elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+			elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 				self.Health.colorClass = true;
 			else
 				self.Health.colorSmooth = true;
@@ -813,7 +813,7 @@ local CreatePetFrame = function(self,unit)
 		end
 	end
 	do -- setup ring, icons, and text
-		if DBMod.PlayerFrames.PetPortrait then
+		if SUI.DBMod.PlayerFrames.PetPortrait then
 			local ring = CreateFrame("Frame",nil,self);
 			ring:SetParent(self)
 			ring:SetFrameStrata("BACKGROUND");
@@ -825,10 +825,10 @@ local CreatePetFrame = function(self,unit)
 			ring.bg:SetTexCoord(1,0,0,1);
 			
 			self.Name = ring:CreateFontString();
-			spartan:FormatFont(self.Name, 12, "Player")
+			SUI:FormatFont(self.Name, 12, "Player")
 			self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("RIGHT");
 			self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",3,-5);
-			if DBMod.PlayerFrames.showClass then
+			if SUI.DBMod.PlayerFrames.showClass then
 				self:Tag(self.Name, "[SUI_ColorClass][name]");
 			else
 				self:Tag(self.Name, "[name]");
@@ -857,12 +857,12 @@ local CreatePetFrame = function(self,unit)
 			self.RaidTargetIndicator:SetAllPoints(self.Portrait);
 		else
 			self.Name = self.artwork:CreateFontString();
-			spartan:FormatFont(self.Name, 12, "Player")
+			SUI:FormatFont(self.Name, 12, "Player")
 			self.Name:SetHeight(12);
 			self.Name:SetJustifyH("RIGHT");
 			self.Name:SetPoint("BOTTOMLEFT",self.Castbar,"TOPLEFT",0,5);
 			self.Name:SetPoint("BOTTOMRIGHT",self.Castbar,"TOPRIGHT",0,5);
-			if DBMod.PlayerFrames.showClass then
+			if SUI.DBMod.PlayerFrames.showClass then
 				self:Tag(self.Name, "[level] [SUI_ColorClass][name]");
 			else
 				self:Tag(self.Name, "[level] [name]");
@@ -870,18 +870,18 @@ local CreatePetFrame = function(self,unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Classic.Frames[unit] then
-			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+		if SUI.DB.Styles.Classic.Frames[unit] then
+			local Buffsize = SUI.DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = SUI.DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 5)
 			Buffs.size = Buffsize;
 			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Classic.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Classic.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Classic.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
+			Buffs.spacing = SUI.DB.Styles.Classic.Frames[unit].Buffs.spacing;
+			Buffs.showType = SUI.DB.Styles.Classic.Frames[unit].Buffs.showType;
+			Buffs.numBuffs = SUI.DB.Styles.Classic.Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
 			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
 			Buffs.PostUpdate = PostUpdateAura;
 			self.Buffs = Buffs
@@ -893,20 +893,20 @@ local CreatePetFrame = function(self,unit)
 			Debuffs.initialAnchor = "BOTTOMRIGHT";
 			Debuffs["growth-x"] = "LEFT";
 			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Classic.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Classic.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Classic.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs.spacing = SUI.DB.Styles.Classic.Frames[unit].Debuffs.spacing;
+			Debuffs.showType = SUI.DB.Styles.Classic.Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = SUI.DB.Styles.Classic.Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
 			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
 			Debuffs.PostUpdate = PostUpdateAura;
 			self.Debuffs = Debuffs
 			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
 		end
 	end
 	self.TextUpdate = PostUpdateText;
 	self.ColorUpdate = PostUpdateColor;
-	if not DBMod.PlayerFrames.PetPortrait then
+	if not SUI.DBMod.PlayerFrames.PetPortrait then
 		self.artwork.bg:SetTexCoord(0,.7,0,85/128);
 		self.artwork.bg:SetSize(180, 85);
 		self:SetSize(135, 60);
@@ -919,7 +919,7 @@ local CreatePetFrame = function(self,unit)
 end
 
 local CreateToTFrame = function(self,unit)
-	if DBMod.PlayerFrames.targettarget.style == "large" then
+	if SUI.DBMod.PlayerFrames.targettarget.style == "large" then
 	do -- large
 		self:SetWidth(210); self:SetHeight(60);
 		do -- setup base artwork
@@ -948,7 +948,7 @@ local CreateToTFrame = function(self,unit)
 				cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-36,-23);
 				
 				cast.Text = cast:CreateFontString();
-				spartan:FormatFont(cast.Text, 10, "Player")
+				SUI:FormatFont(cast.Text, 10, "Player")
 				cast.Text:SetWidth(110); cast.Text:SetHeight(11);
 				cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("MIDDLE");
 				cast.Text:SetPoint("RIGHT",cast,"RIGHT",-4,0);
@@ -993,11 +993,11 @@ local CreateToTFrame = function(self,unit)
 				
 				self.Health.frequentUpdates = true;
 				self.Health.colorDisconnected = true;
-				if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+				if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 					self.Health.colorReaction = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 					self.Health.colorHappiness = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 					self.Health.colorClass = true;
 				else
 					self.Health.colorSmooth = true;
@@ -1059,10 +1059,10 @@ local CreateToTFrame = function(self,unit)
 			ring.bg:SetTexture(base_ring3);
 			
 			self.Name = ring:CreateFontString();
-			spartan:FormatFont(self.Name, 12, "Player")
+			SUI:FormatFont(self.Name, 12, "Player")
 			self.Name:SetHeight(12); self.Name:SetWidth(150); self.Name:SetJustifyH("LEFT");
 			self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-3,-5);
-			if DBMod.PlayerFrames.showClass then
+			if SUI.DBMod.PlayerFrames.showClass then
 				self:Tag(self.Name, "[SUI_ColorClass][name]");
 			else
 				self:Tag(self.Name, "[name]");
@@ -1095,7 +1095,7 @@ local CreateToTFrame = function(self,unit)
 		self.TextUpdate = PostUpdateText;
 		self.ColorUpdate = PostUpdateColor;
 	end
-	elseif DBMod.PlayerFrames.targettarget.style == "medium" then
+	elseif SUI.DBMod.PlayerFrames.targettarget.style == "medium" then
 	do -- medium
 		self:SetSize(124, 55);
 		do -- setup base artwork
@@ -1120,7 +1120,7 @@ local CreateToTFrame = function(self,unit)
 				cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-36,-20);
 				
 				cast.Text = cast:CreateFontString();
-				spartan:FormatFont(cast.Text, 10, "Player")
+				SUI:FormatFont(cast.Text, 10, "Player")
 				cast.Text:SetSize(90, 11);
 				cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("MIDDLE");
 				cast.Text:SetPoint("RIGHT",cast,"RIGHT",-4,0);
@@ -1165,11 +1165,11 @@ local CreateToTFrame = function(self,unit)
 				
 				self.Health.frequentUpdates = true;
 				self.Health.colorDisconnected = true;
-				if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+				if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 					self.Health.colorReaction = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 					self.Health.colorHappiness = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 					self.Health.colorClass = true;
 				else
 					self.Health.colorSmooth = true;
@@ -1228,10 +1228,10 @@ local CreateToTFrame = function(self,unit)
 			ring:SetPoint("TOPLEFT",self.artwork,"TOPLEFT",0,0); ring:SetFrameLevel(3);
 			
 			self.Name = ring:CreateFontString();
-			spartan:FormatFont(self.Name, 12, "Player")
+			SUI:FormatFont(self.Name, 12, "Player")
 			self.Name:SetHeight(12); self.Name:SetWidth(132); self.Name:SetJustifyH("LEFT");
 			self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,-5);
-			if DBMod.PlayerFrames.showClass then
+			if SUI.DBMod.PlayerFrames.showClass then
 				self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
 			else
 				self:Tag(self.Name, "[difficulty][level] [name]");
@@ -1248,7 +1248,7 @@ local CreateToTFrame = function(self,unit)
 		self.TextUpdate = PostUpdateText;
 		self.ColorUpdate = PostUpdateColor;
 	end
-	elseif DBMod.PlayerFrames.targettarget.style == "small" then
+	elseif SUI.DBMod.PlayerFrames.targettarget.style == "small" then
 	do -- small
 		self:SetSize(200, 65);
 		do -- setup base artwork
@@ -1295,11 +1295,11 @@ local CreateToTFrame = function(self,unit)
 				
 				self.Health.frequentUpdates = true;
 				self.Health.colorDisconnected = true;
-				if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+				if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 					self.Health.colorReaction = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 					self.Health.colorHappiness = true;
-				elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+				elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 					self.Health.colorClass = true;
 				else
 					self.Health.colorSmooth = true;
@@ -1336,10 +1336,10 @@ local CreateToTFrame = function(self,unit)
 			ring:SetPoint("TOPLEFT",self.artwork,"TOPLEFT",0,0); ring:SetFrameLevel(3);
 			
 			self.Name = ring:CreateFontString();
-			spartan:FormatFont(self.Name, 12, "Player")
+			SUI:FormatFont(self.Name, 12, "Player")
 			self.Name:SetSize(132, 12); self.Name:SetJustifyH("LEFT");
 			self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-50,-5);
-			if DBMod.PlayerFrames.showClass then
+			if SUI.DBMod.PlayerFrames.showClass then
 				self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
 			else
 				self:Tag(self.Name, "[difficulty][level] [name]");
@@ -1358,18 +1358,18 @@ local CreateToTFrame = function(self,unit)
 	end
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Classic.Frames[unit] then
-			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+		if SUI.DB.Styles.Classic.Frames[unit] then
+			local Buffsize = SUI.DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = SUI.DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 5)
 			Buffs.size = Buffsize;
 			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Classic.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Classic.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Classic.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
+			Buffs.spacing = SUI.DB.Styles.Classic.Frames[unit].Buffs.spacing;
+			Buffs.showType = SUI.DB.Styles.Classic.Frames[unit].Buffs.showType;
+			Buffs.numBuffs = SUI.DB.Styles.Classic.Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
 			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
 			Buffs.PostUpdate = PostUpdateAura;
 			self.Buffs = Buffs
@@ -1381,15 +1381,15 @@ local CreateToTFrame = function(self,unit)
 			Debuffs.initialAnchor = "BOTTOMRIGHT";
 			Debuffs["growth-x"] = "LEFT";
 			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Classic.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Classic.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Classic.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs.spacing = SUI.DB.Styles.Classic.Frames[unit].Debuffs.spacing;
+			Debuffs.showType = SUI.DB.Styles.Classic.Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = SUI.DB.Styles.Classic.Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
 			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
 			Debuffs.PostUpdate = PostUpdateAura;
 			self.Debuffs = Debuffs
 			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
 		end
 	end
 	return self;
@@ -1444,11 +1444,11 @@ local CreateFocusFrame = function(self,unit)
 			
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
-			-- if DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			-- if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 				-- self.Health.colorReaction = true;
-			-- elseif DBMod.PlayerFrames.bars[unit].color == "happiness" then
+			-- elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
 				-- self.Health.colorHappiness = true;
-			-- elseif DBMod.PlayerFrames.bars[unit].color == "class" then
+			-- elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
 				-- self.Health.colorClass = true;
 			-- else
 				-- self.Health.colorSmooth = true;
@@ -1509,14 +1509,14 @@ local CreateFocusFrame = function(self,unit)
 		ring.bg:SetPoint("LEFT",ring,"LEFT",-2,-3);
 		
 		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 12, "Player")
+		SUI:FormatFont(self.Name, 12, "Player")
 		self.Name:SetSize(110, 12); self.Name:SetJustifyH("LEFT");
 		if unit == "focus" then
 			self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",20,-6);
 		elseif unit == "focustarget" then
 			self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",2,-6);
 		end
-		if DBMod.PlayerFrames.showClass then
+		if SUI.DBMod.PlayerFrames.showClass then
 			self:Tag(self.Name, "[difficulty][level] [SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[difficulty][level] [name]");
@@ -1527,18 +1527,18 @@ local CreateFocusFrame = function(self,unit)
 		self.LevelSkull:SetPoint("CENTER",self.Name,"LEFT",8,0);
 	end
 	do -- setup buffs and debuffs
-		if DB.Styles.Classic.Frames[unit] then
-			local Buffsize = DB.Styles.Classic.Frames[unit].Buffs.size
-			local Debuffsize = DB.Styles.Classic.Frames[unit].Buffs.size
+		if SUI.DB.Styles.Classic.Frames[unit] then
+			local Buffsize = SUI.DB.Styles.Classic.Frames[unit].Buffs.size
+			local Debuffsize = SUI.DB.Styles.Classic.Frames[unit].Buffs.size
 			-- Position and size
 			local Buffs = CreateFrame("Frame", nil, self)
 			Buffs:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, 5)
 			Buffs.size = Buffsize;
 			Buffs["growth-y"] = "UP";
-			Buffs.spacing = DB.Styles.Classic.Frames[unit].Buffs.spacing;
-			Buffs.showType = DB.Styles.Classic.Frames[unit].Buffs.showType;
-			Buffs.numBuffs = DB.Styles.Classic.Frames[unit].Buffs.Number;
-			Buffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
+			Buffs.spacing = SUI.DB.Styles.Classic.Frames[unit].Buffs.spacing;
+			Buffs.showType = SUI.DB.Styles.Classic.Frames[unit].Buffs.showType;
+			Buffs.numBuffs = SUI.DB.Styles.Classic.Frames[unit].Buffs.Number;
+			Buffs.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Buffs.onlyShowPlayer;
 			Buffs:SetSize(Buffsize * 4, Buffsize * Buffsize)
 			Buffs.PostUpdate = PostUpdateAura;
 			self.Buffs = Buffs
@@ -1550,15 +1550,15 @@ local CreateFocusFrame = function(self,unit)
 			Debuffs.initialAnchor = "BOTTOMRIGHT";
 			Debuffs["growth-x"] = "LEFT";
 			Debuffs["growth-y"] = "UP";
-			Debuffs.spacing = DB.Styles.Classic.Frames[unit].Debuffs.spacing;
-			Debuffs.showType = DB.Styles.Classic.Frames[unit].Debuffs.showType;
-			Debuffs.numDebuffs = DB.Styles.Classic.Frames[unit].Debuffs.Number;
-			Debuffs.onlyShowPlayer = DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
+			Debuffs.spacing = SUI.DB.Styles.Classic.Frames[unit].Debuffs.spacing;
+			Debuffs.showType = SUI.DB.Styles.Classic.Frames[unit].Debuffs.showType;
+			Debuffs.numDebuffs = SUI.DB.Styles.Classic.Frames[unit].Debuffs.Number;
+			Debuffs.onlyShowPlayer = SUI.DB.Styles.Classic.Frames[unit].Debuffs.onlyShowPlayer;
 			Debuffs:SetSize(Debuffsize * 4, Debuffsize * Debuffsize)
 			Debuffs.PostUpdate = PostUpdateAura;
 			self.Debuffs = Debuffs
 			
-			spartan.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
+			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].disabled=false
 		end
 	end
 	self.TextUpdate = PostUpdateText;
@@ -1601,7 +1601,7 @@ local CreateBossFrame = function(self,unit)
 			cast:SetPoint("TOPLEFT",self,"TOPLEFT",0,-17);
 			
 			cast.Text = cast:CreateFontString();
-			spartan:FormatFont(cast.Text, 10, "Player")
+			SUI:FormatFont(cast.Text, 10, "Player")
 			cast.Text:SetSize(97, 10);
 			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("MIDDLE");
 			cast.Text:SetPoint("LEFT",cast,"LEFT",4,0);
@@ -1703,11 +1703,11 @@ local CreateBossFrame = function(self,unit)
 		ring:SetPoint("CENTER",self,"CENTER",-80,3);
 		
 		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 10, "Player")
+		SUI:FormatFont(self.Name, 10, "Player")
 		self.Name:SetSize(127, 10); 
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",8,-2);
-		if DBMod.PlayerFrames.showClass then
+		if SUI.DBMod.PlayerFrames.showClass then
 			self:Tag(self.Name, "[SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[name]");
@@ -1754,72 +1754,72 @@ function PlayerFrames:UpdateAltBarPositions()
 	local classname, classFileName = UnitClass("player");	
 	-- Druid EclipseBar
 	-- EclipseBarFrame:ClearAllPoints();
-	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
-		-- EclipseBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- EclipseBarFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 		-- EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
 	-- end
 	
 	-- Monk Chi Bar (Hard to move but it is doable.)
 	-- MonkHarmonyBar:ClearAllPoints();
-	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
-		-- MonkHarmonyBar:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- MonkHarmonyBar:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 		-- MonkHarmonyBar:SetPoint("BOTTOMLEFT",PlayerFrames.player,"BOTTOMLEFT",40,-40);
 	-- end
 	
 	--Paladin Holy Power
 	-- PaladinPowerBarFrame:ClearAllPoints();
-	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
-		-- PaladinPowerBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- PaladinPowerBarFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 		-- PaladinPowerBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",60,12);
 	-- end
 	
 	--Priest Power Frame
 	PriestBarFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		PriestBarFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+		PriestBarFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
 		PriestBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPLEFT",-4,-2);
 	end
 	
 	--Warlock Power Frame
 	-- WarlockPowerFrame:ClearAllPoints();
-	-- if DBMod.PlayerFrames.ClassBar.movement.moved then
-		-- WarlockPowerFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+		-- WarlockPowerFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 		-- PlayerFrames:WarlockPowerFrame_Relocate();
 	-- end
 	
 	--Death Knight Runes
 	RuneFrame:ClearAllPoints();
-	if DBMod.PlayerFrames.ClassBar.movement.moved then
-		RuneFrame:SetPoint(DBMod.PlayerFrames.ClassBar.movement.point,
-		DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+		RuneFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+		SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
 	else
 		RuneFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,7);
 	end
@@ -1827,12 +1827,12 @@ function PlayerFrames:UpdateAltBarPositions()
 	-- relocate the AlternatePowerBar
 	if classFileName ~= "MONK" then
 		PlayerFrameAlternateManaBar:ClearAllPoints();
-		if DBMod.PlayerFrames.AltManaBar.movement.moved then
-			PlayerFrameAlternateManaBar:SetPoint(DBMod.PlayerFrames.AltManaBar.movement.point,
-			DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
-			DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
-			DBMod.PlayerFrames.AltManaBar.movement.xOffset,
-			DBMod.PlayerFrames.AltManaBar.movement.yOffset);
+		if SUI.DBMod.PlayerFrames.AltManaBar.movement.moved then
+			PlayerFrameAlternateManaBar:SetPoint(SUI.DBMod.PlayerFrames.AltManaBar.movement.point,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.xOffset,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.yOffset);
 		else
 			PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,0);
 		end
@@ -1841,8 +1841,8 @@ function PlayerFrames:UpdateAltBarPositions()
 end
 
 function PlayerFrames:ResetAltBarPositions()
-	DBMod.PlayerFrames.AltManaBar.movement.moved = false;
-	DBMod.PlayerFrames.ClassBar.movement.moved = false; 
+	SUI.DBMod.PlayerFrames.AltManaBar.movement.moved = false;
+	SUI.DBMod.PlayerFrames.ClassBar.movement.moved = false; 
 	PlayerFrames:UpdateAltBarPositions();
 end
 
@@ -1882,7 +1882,7 @@ do -- relocate the AlternatePowerBar
 	else
 		--Make it look like a smaller, movable mana bar.
 		hooksecurefunc(PlayerFrameAlternateManaBar,"SetPoint",function(_,_,parent)
-			if (parent ~= PlayerFrames.player) and (DBMod.PlayerFrames.AltManaBar.movement.moved == false) then
+			if (parent ~= PlayerFrames.player) and (SUI.DBMod.PlayerFrames.AltManaBar.movement.moved == false) then
 				PlayerFrameAlternateManaBar:ClearAllPoints();
 				PlayerFrameAlternateManaBar:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",40,0);
 			end
@@ -1891,60 +1891,60 @@ do -- relocate the AlternatePowerBar
 		PlayerFrameAlternateManaBar:SetFrameLevel(4); PlayerFrameAlternateManaBar:SetScale(1); PlayerFrameAlternateManaBar:EnableMouse(enable);
 		PlayerFrameAlternateManaBar:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.AltManaBar.movement.moved = true;
+				SUI.DBMod.PlayerFrames.AltManaBar.movement.moved = true;
 				self:SetMovable(true);
 				self:StartMoving();
 			end
 		end);
 		PlayerFrameAlternateManaBar:SetScript("OnMouseUp",function(self,button)
 			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.AltManaBar.movement.point,
-			DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
-			DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
-			DBMod.PlayerFrames.AltManaBar.movement.xOffset,
-			DBMod.PlayerFrames.AltManaBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.point,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.xOffset,
+			SUI.DBMod.PlayerFrames.AltManaBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
 	end
 	
 	-- Druid EclipseBar
 	-- if classname == "Druid" then
 		-- EclipseBarFrame:SetParent(PlayerFrames.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
-		-- EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
+		-- EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * SUI.DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
 		-- EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
 			-- if button == "LeftButton" and IsAltKeyDown() then
-				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
 				-- self:SetMovable(true);
 				-- self:StartMoving();
 			-- end
 		-- end);
 		-- EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
 			-- self:StopMovingOrSizing();
-			-- DBMod.PlayerFrames.ClassBar.movement.point,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		-- end);
 	-- end
 	
 	-- PriestBarFrame
 	-- if classname == "Priest" then
 		PriestBarFrame:SetParent(PlayerFrames.player); PriestBarFrame_OnLoad(PriestBarFrame); PriestBarFrame:SetFrameStrata("MEDIUM");
-		PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7 * DBMod.PlayerFrames.ClassBar.scale); PriestBarFrame:EnableMouse(enable);
+		PriestBarFrame:SetFrameLevel(4); PriestBarFrame:SetScale(.7 * SUI.DBMod.PlayerFrames.ClassBar.scale); PriestBarFrame:EnableMouse(enable);
 		PriestBarFrame:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
 				self:SetMovable(true);
 				self:StartMoving();
 			end
 		end);
 		PriestBarFrame:SetScript("OnMouseUp",function(self,button)
 			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+			SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
 	-- end
 	
@@ -1953,37 +1953,37 @@ do -- relocate the AlternatePowerBar
 		RuneFrame:SetParent(PlayerFrames.player);
 		-- RuneFrame_OnLoad(RuneFrame);
 		RuneFrame:SetFrameStrata("MEDIUM");
-		RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97 * DBMod.PlayerFrames.ClassBar.scale); RuneFrame:EnableMouse(enable);
+		RuneFrame:SetFrameLevel(4); RuneFrame:SetScale(0.97 * SUI.DBMod.PlayerFrames.ClassBar.scale); RuneFrame:EnableMouse(enable);
 		-- RuneButtonIndividual1:EnableMouse(enable);
 		RuneFrame:SetScript("OnMouseDown",function(self,button)
 			if button == "LeftButton" and IsAltKeyDown() then
-				DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
 				self:SetMovable(true);
 				self:StartMoving();
 			end
 		end);
 		RuneFrame:SetScript("OnMouseUp",function(self,button)
 			self:StopMovingOrSizing();
-			DBMod.PlayerFrames.ClassBar.movement.point,
-			DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+			SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		end);
 		-- RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
 			-- if button == "LeftButton" and IsAltKeyDown() then
-				-- DBMod.PlayerFrames.ClassBar.movement.moved = true;
+				-- SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
 				-- self:SetMovable(true);
 				-- self:StartMoving();
 			-- end
 		-- end);
 		-- RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
 			-- self:StopMovingOrSizing();
-			-- DBMod.PlayerFrames.ClassBar.movement.point,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			-- DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			-- DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			-- DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.point,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
+			-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		-- end);
 	-- end
 	
@@ -2007,7 +2007,7 @@ do -- relocate the AlternatePowerBar
 			end
 		end);
 		TotemFrame:SetParent(PlayerFrames.player); TotemFrame_OnLoad(TotemFrame); TotemFrame:SetFrameStrata("MEDIUM");
-		TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7 * DBMod.PlayerFrames.ClassBar.scale); TotemFrame:ClearAllPoints();
+		TotemFrame:SetFrameLevel(4); TotemFrame:SetScale(0.7 * SUI.DBMod.PlayerFrames.ClassBar.scale); TotemFrame:ClearAllPoints();
 		TotemFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",70,8);
 	-- end
 	
@@ -2021,7 +2021,7 @@ do -- relocate the AlternatePowerBar
 	PlayerPowerBarAlt:SetParent(PlayerFrames.player);
 	PlayerPowerBarAlt:SetFrameStrata("MEDIUM");
 	PlayerPowerBarAlt:SetFrameLevel(4);
-	PlayerPowerBarAlt:SetScale(1 * DBMod.PlayerFrames.ClassBar.scale);
+	PlayerPowerBarAlt:SetScale(1 * SUI.DBMod.PlayerFrames.ClassBar.scale);
 	PlayerPowerBarAlt:ClearAllPoints();
 	PlayerPowerBarAlt:SetPoint("BOTTOMLEFT",PlayerFrames.player,"TOPLEFT",10,40);
 	

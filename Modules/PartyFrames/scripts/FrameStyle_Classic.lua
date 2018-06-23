@@ -1,5 +1,5 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local PartyFrames = spartan:GetModule("PartyFrames");
+local _G, SUI = _G, SUI
+local PartyFrames = SUI.PartyFrames
 ----------------------------------------------------------------------------------------------------
 local colors = setmetatable({},{__index = SpartanoUF.colors});
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
@@ -22,13 +22,13 @@ local OnCastbarUpdate = function(self,elapsed)
 		end
 		if self.Time then
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-			if DBMod.PartyFrames.castbartext == 1 then
+			if SUI.DBMod.PartyFrames.castbartext == 1 then
 				self.Time:SetFormattedText("%.1f",self.max - self.duration);
 			else
 				self.Time:SetFormattedText("%.1f",self.duration);
 			end
 		end
-		if DBMod.PartyFrames.castbar == 1 then
+		if SUI.DBMod.PartyFrames.castbar == 1 then
 			self:SetValue(self.max-self.duration)
 		else
 			self:SetValue(self.duration)
@@ -44,13 +44,13 @@ local OnCastbarUpdate = function(self,elapsed)
 		if self.Time then
 			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
 			--self.Time:SetFormattedText("%.1f",self.max-self.duration);
-			if DBMod.PartyFrames.castbartext == 0 then
+			if SUI.DBMod.PartyFrames.castbartext == 0 then
 				self.Time:SetFormattedText("%.1f",self.max-self.duration);
 			else
 				self.Time:SetFormattedText("%.1f",self.duration);
 			end
 		end
-		if DBMod.PartyFrames.castbar == 1 then
+		if SUI.DBMod.PartyFrames.castbar == 1 then
 			self:SetValue(self.duration)
 		else
 			self:SetValue(self.max-self.duration)
@@ -67,7 +67,7 @@ local threat = function(self,event,unit)
 	local status
 	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
-	if self.Portrait and DBMod.PartyFrames.threat then
+	if self.Portrait and SUI.DBMod.PartyFrames.threat then
 		if (not self.Portrait:IsObjectType("Texture")) then return; end
 		if (status and status > 0) then
 			local r,g,b = GetThreatStatusColor(status);
@@ -75,7 +75,7 @@ local threat = function(self,event,unit)
 		else
 			self.Portrait:SetVertexColor(1,1,1);
 		end
-	elseif self.ThreatIndicatorOverlay and DBMod.PartyFrames.threat then
+	elseif self.ThreatIndicatorOverlay and SUI.DBMod.PartyFrames.threat then
 		if ( status and status > 0 ) then
 			self.ThreatIndicatorOverlay:SetVertexColor(GetThreatStatusColor(status));
 			self.ThreatIndicatorOverlay:Show();
@@ -113,34 +113,34 @@ local CreatePartyFrame = function(self,unit)
 		--  Portrait.XTexSize = This is the texcord size of the Portrait it
 		-- 						is set by default for if there is no Portrait
 		local Portrait = {Size=0,XTexSize=.3}
-		if DBMod.PartyFrames.Portrait then
+		if SUI.DBMod.PartyFrames.Portrait then
 			Portrait.Size = 75
 			Portrait.XTexSize = 0
 		end
 		
-		if DBMod.PartyFrames.FrameStyle == "large" then
+		if SUI.DBMod.PartyFrames.FrameStyle == "large" then
 			self.artwork.bg:SetTexture(base_plate1);
 			self:SetSize(165+Portrait.Size, 70);
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize,.95,0.015,.59);
-		elseif DBMod.PartyFrames.FrameStyle == "medium" then
+		elseif SUI.DBMod.PartyFrames.FrameStyle == "medium" then
 			self.artwork.bg:SetTexture(base_plate1);
 			self:SetSize(165+Portrait.Size, 50);
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize,.95,0.015,.44);
-		elseif DBMod.PartyFrames.FrameStyle == "small" then
+		elseif SUI.DBMod.PartyFrames.FrameStyle == "small" then
 			self.artwork.bg:SetTexture(base_plate3);
 			self:SetSize(165+Portrait.Size, 48);
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize,.95,0.015,.77);
-		elseif DBMod.PartyFrames.FrameStyle == "xsmall" then
+		elseif SUI.DBMod.PartyFrames.FrameStyle == "xsmall" then
 			self.artwork.bg:SetTexture(base_plate2);
 			self:SetSize(165+Portrait.Size, 35);
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize,.95,0.015,.56);
-		elseif DBMod.PartyFrames.FrameStyle == "raidsmall" then
+		elseif SUI.DBMod.PartyFrames.FrameStyle == "raidsmall" then
 			self.artwork.bg:SetTexture(base_plate2);
 			self:SetSize(165+Portrait.Size, 35);
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize,.95,0.015,.56);
 		end
 		
-		if DBMod.PartyFrames.Portrait then
+		if SUI.DBMod.PartyFrames.Portrait then
 		
 			-- local Portrait = CreateFrame('PlayerModel', nil, self)
 			-- Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
@@ -156,20 +156,20 @@ local CreatePartyFrame = function(self,unit)
 	end
 	do -- setup status bars
 		do -- cast bar
-			if DBMod.PartyFrames.FrameStyle == "large" then
+			if SUI.DBMod.PartyFrames.FrameStyle == "large" then
 				local cast = CreateFrame("StatusBar",nil,self);
 				cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(2);
 				cast:SetSize(110, 16);
 				cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-17);
 				
 				cast.Text = cast:CreateFontString();
-				spartan:FormatFont(cast.Text, 10, "Party")
+				SUI:FormatFont(cast.Text, 10, "Party")
 				cast.Text:SetSize(100, 11);
 				cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("BOTTOM");
 				cast.Text:SetPoint("RIGHT",cast,"RIGHT",-2,0);
 				
 				cast.Time = cast:CreateFontString();
-				spartan:FormatFont(cast.Time, 10, "Party")
+				SUI:FormatFont(cast.Time, 10, "Party")
 				cast.Time:SetSize(40, 11);
 				cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("BOTTOM");
 				cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
@@ -187,23 +187,23 @@ local CreatePartyFrame = function(self,unit)
 			health:SetFrameLevel(2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
-			if DBMod.PartyFrames.FrameStyle == "large" then
+			if SUI.DBMod.PartyFrames.FrameStyle == "large" then
 				health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
 				health:SetSize(110, 15);
-			elseif DBMod.PartyFrames.FrameStyle == "medium" then
+			elseif SUI.DBMod.PartyFrames.FrameStyle == "medium" then
 				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-19);
 				health:SetSize(110, 15);
-			elseif DBMod.PartyFrames.FrameStyle == "small" then
+			elseif SUI.DBMod.PartyFrames.FrameStyle == "small" then
 				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-19);
 				health:SetSize(110, 27);
-			elseif DBMod.PartyFrames.FrameStyle == "xsmall" then
+			elseif SUI.DBMod.PartyFrames.FrameStyle == "xsmall" then
 				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-20);
 				health:SetSize(110, 13);
 			end
 			
 			health.value = health:CreateFontString();
-			spartan:FormatFont(health.value, 10, "Party")
-			if DBMod.PartyFrames.FrameStyle == "large" then
+			SUI:FormatFont(health.value, 10, "Party")
+			if SUI.DBMod.PartyFrames.FrameStyle == "large" then
 				health.value:SetSize(100, 11);
 			else
 				health.value:SetSize(100, 10);
@@ -213,7 +213,7 @@ local CreatePartyFrame = function(self,unit)
 			self:Tag(health.value, PartyFrames:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString();
-			spartan:FormatFont(health.ratio, 10, "Party")
+			SUI:FormatFont(health.ratio, 10, "Party")
 			health.ratio:SetSize(40, 11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
 			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
@@ -248,18 +248,18 @@ local CreatePartyFrame = function(self,unit)
 			}
 		end
 		do -- power bar
-		if DBMod.PartyFrames.FrameStyle == "large" or DBMod.PartyFrames.FrameStyle == "medium" or DBMod.PartyFrames.display.mana == true then
+		if SUI.DBMod.PartyFrames.FrameStyle == "large" or SUI.DBMod.PartyFrames.FrameStyle == "medium" or SUI.DBMod.PartyFrames.display.mana == true then
 			local power = CreateFrame("StatusBar",nil,self);
 			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(2);
 			
-			if DBMod.PartyFrames.Portrait then power:SetSize(123, 14); else power:SetSize(self.Health:GetWidth(), 14); end
+			if SUI.DBMod.PartyFrames.Portrait then power:SetSize(123, 14); else power:SetSize(self.Health:GetWidth(), 14); end
 			
 			
-			if DBMod.PartyFrames.FrameStyle ~= "small" and DBMod.PartyFrames.FrameStyle ~= "xsmall" then
+			if SUI.DBMod.PartyFrames.FrameStyle ~= "small" and SUI.DBMod.PartyFrames.FrameStyle ~= "xsmall" then
 				power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
 				power.value = power:CreateFontString();
-				spartan:FormatFont(power.value, 10, "Party")
-				if DBMod.PartyFrames.FrameStyle == "large" then
+				SUI:FormatFont(power.value, 10, "Party")
+				if SUI.DBMod.PartyFrames.FrameStyle == "large" then
 					power.value:SetSize(100, 11);
 				else
 					power.value:SetSize(100, 10);
@@ -269,7 +269,7 @@ local CreatePartyFrame = function(self,unit)
 				self:Tag(power.value, PartyFrames:TextFormat("mana"))
 				
 				power.ratio = power:CreateFontString();
-				spartan:FormatFont(power.ratio, 10, "Party")
+				SUI:FormatFont(power.ratio, 10, "Party")
 				power.ratio:SetSize(40, 11);
 				power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("BOTTOM");
 				power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
@@ -290,11 +290,11 @@ local CreatePartyFrame = function(self,unit)
 		ring:SetFrameStrata("BACKGROUND");
 
 		self.Name = ring:CreateFontString();
-		spartan:FormatFont(self.Name, 11, "Party")
+		SUI:FormatFont(self.Name, 11, "Party")
 		self.Name:SetSize(140, 10);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-10,-6);
-		if DBMod.PartyFrames.showClass then
+		if SUI.DBMod.PartyFrames.showClass then
 			self:Tag(self.Name, "[SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[name]");
@@ -313,13 +313,13 @@ local CreatePartyFrame = function(self,unit)
 		self.RaidTargetIndicator = ring:CreateTexture(nil,"ARTWORK");
 		self.RaidTargetIndicator:SetSize(20, 20);
 		
-		if DBMod.PartyFrames.Portrait then
+		if SUI.DBMod.PartyFrames.Portrait then
 			ring.bg = ring:CreateTexture(nil,"BACKGROUND");
 			ring.bg:SetPoint("TOPLEFT",self,"TOPLEFT",-2,4);
 			ring.bg:SetTexture(base_ring);
 			
 			self.Level = ring:CreateFontString();
-			spartan:FormatFont(self.Level, 10, "Party")
+			SUI:FormatFont(self.Level, 10, "Party")
 			self.Level:SetSize(40, 12);
 			self.Level:SetJustifyH("CENTER"); self.Level:SetJustifyV("BOTTOM");
 			self.Level:SetPoint("CENTER",self.Portrait,"CENTER",-27,27);
@@ -330,7 +330,7 @@ local CreatePartyFrame = function(self,unit)
 			self.PvPIndicator:SetPoint("CENTER",self.Portrait,"BOTTOMLEFT",5,-10);
 			
 			self.StatusText = ring:CreateFontString();
-			spartan:FormatFont(self.StatusText, 18, "Party")
+			SUI:FormatFont(self.StatusText, 18, "Party")
 			self.StatusText:SetPoint("CENTER",self.Portrait,"CENTER");
 			self.StatusText:SetJustifyH("CENTER");
 			self:Tag(self.StatusText, '[afkdnd]');
@@ -357,18 +357,18 @@ local CreatePartyFrame = function(self,unit)
 		self.Auras:SetFrameStrata("BACKGROUND");
 		self.Auras:SetFrameLevel(4);
 		-- settings
-		self.Auras.size = DBMod.PartyFrames.Auras.size;
-		self.Auras.spacing = DBMod.PartyFrames.Auras.spacing;
-		self.Auras.showType = DBMod.PartyFrames.Auras.showType;
+		self.Auras.size = SUI.DBMod.PartyFrames.Auras.size;
+		self.Auras.spacing = SUI.DBMod.PartyFrames.Auras.spacing;
+		self.Auras.showType = SUI.DBMod.PartyFrames.Auras.showType;
 		self.Auras.initialAnchor = "TOPLEFT";
 		self.Auras.gap = true; -- adds an empty spacer between buffs and debuffs
-		self.Auras.numBuffs = DBMod.PartyFrames.Auras.NumBuffs;
-		self.Auras.numDebuffs = DBMod.PartyFrames.Auras.NumDebuffs;
+		self.Auras.numBuffs = SUI.DBMod.PartyFrames.Auras.NumBuffs;
+		self.Auras.numDebuffs = SUI.DBMod.PartyFrames.Auras.NumDebuffs;
 		
 		self.Auras.PostUpdate = PartyFrames:PostUpdateAura(self,unit);
 	end
 	do -- HoTs Display
-		self.AuraWatch = spartan:oUF_Buffs(self, "BOTTOMRIGHT", "TOPRIGHT", 0)
+		self.AuraWatch = SUI:oUF_Buffs(self, "BOTTOMRIGHT", "TOPRIGHT", 0)
 	end
 	do --Threat, SpellRange, and Ready Check
 		self.Range = {
@@ -376,7 +376,7 @@ local CreatePartyFrame = function(self,unit)
 			outsideAlpha = 1/2,
 		}
 		
-		if not DBMod.PartyFrames.Portrait then
+		if not SUI.DBMod.PartyFrames.Portrait then
 			local overlay = self:CreateTexture(nil, "OVERLAY")
 			overlay:SetTexture("Interface\\RaidFrame\\Raid-FrameHighlights");
 			overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
@@ -432,14 +432,14 @@ local CreateSubFrame = function(self,unit)
 			health:SetPoint("BOTTOMLEFT",self.artwork.bg,"BOTTOMLEFT",11,2);
 			
 			health.value = health:CreateFontString();
-			spartan:FormatFont(health.value, 10, "Party")
+			SUI:FormatFont(health.value, 10, "Party")
 			health.value:SetSize(self:GetWidth()/2, health:GetHeight()-2);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("BOTTOM");
 			health.value:SetPoint("RIGHT",health,"RIGHT",0,1);
 			self:Tag(health.value, '[curhpshort]/[maxhpshort]')
 			
 			health.ratio = health:CreateFontString();
-			spartan:FormatFont(health.ratio, 10, "Party")
+			SUI:FormatFont(health.ratio, 10, "Party")
 			health.ratio:SetSize(self:GetWidth()/1.85, health:GetHeight()-2);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("BOTTOM");
 			health.ratio:SetPoint("LEFT",health,"RIGHT",4,0);
@@ -454,11 +454,11 @@ local CreateSubFrame = function(self,unit)
 	end
 	do -- setup text and icons
 		self.Name = self:CreateFontString();
-		spartan:FormatFont(self.Name, 11, "Party")
+		SUI:FormatFont(self.Name, 11, "Party")
 		self.Name:SetSize(135, 12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPRIGHT",self.artwork.bg,"TOPRIGHT",0,-4);
-		if DBMod.PartyFrames.showClass then
+		if SUI.DBMod.PartyFrames.showClass then
 			self:Tag(self.Name, "[level][SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[level][name]");
@@ -468,9 +468,9 @@ local CreateSubFrame = function(self,unit)
 end
 
 local CreateUnitFrame = function(self,unit)
-	if (self:GetAttribute("unitsuffix") == "target") and DBMod.PartyFrames.display.target then
+	if (self:GetAttribute("unitsuffix") == "target") and SUI.DBMod.PartyFrames.display.target then
 		self = CreateSubFrame(self,unit);
-	elseif (self:GetAttribute("unitsuffix") == "pet") and (DBMod.PartyFrames.FrameStyle == "large" or (not DBMod.PartyFrames.display.target)) and DBMod.PartyFrames.display.pet then
+	elseif (self:GetAttribute("unitsuffix") == "pet") and (SUI.DBMod.PartyFrames.FrameStyle == "large" or (not SUI.DBMod.PartyFrames.display.target)) and SUI.DBMod.PartyFrames.display.pet then
 		self = CreateSubFrame(self,unit);
 	elseif (unit == "party") then
 		self = CreatePartyFrame(self,unit);
@@ -484,101 +484,101 @@ end
 SpartanoUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);
 
 local OptionsSetup = function()
-	spartan.opt.args["PartyFrames"].args["auras"] = {name=SUI.L["Frames/BuffDebuff"],type="group",order=2,
+	SUI.opt.args["PartyFrames"].args["auras"] = {name=SUI.L["Frames/BuffDebuff"],type="group",order=2,
 		args = {
 			display = {name=SUI.L["Frames/DispBuffDebuff"],type="toggle", order=1,
-				get = function(info) return DBMod.PartyFrames.showAuras; end,
-				set = function(info,val) DBMod.PartyFrames.showAuras = val; addon:UpdateAura(); end
+				get = function(info) return SUI.DBMod.PartyFrames.showAuras; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.showAuras = val; addon:UpdateAura(); end
 			},
 			showType = {name=SUI.L["Frames/ShowType"],type="toggle", order=2,
-				get = function(info) return DBMod.PartyFrames.Auras.showType; end,
-				set = function(info,val) DBMod.PartyFrames.Auras.showType = val; addon:UpdateAura(); end
+				get = function(info) return SUI.DBMod.PartyFrames.Auras.showType; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.Auras.showType = val; addon:UpdateAura(); end
 			},
 			numBufs = {name=SUI.L["Frames/NumBuffs"],type="range",width="full",order=11,
 				min=0,max=50,step=1,
-				get = function(info) return DBMod.PartyFrames.Auras.NumBuffs; end,
-				set = function(info,val) DBMod.PartyFrames.Auras.NumBuffs = val; addon:UpdateAura(); end
+				get = function(info) return SUI.DBMod.PartyFrames.Auras.NumBuffs; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.Auras.NumBuffs = val; addon:UpdateAura(); end
 			},
 			numDebuffs = {name=SUI.L["Frames/NumDebuff"],type="range",width="full",order=12,
 				min=0,max=50,step=1,
-				get = function(info) return DBMod.PartyFrames.Auras.NumDebuffs; end,
-				set = function(info,val) DBMod.PartyFrames.Auras.NumDebuffs = val; addon:UpdateAura(); end
+				get = function(info) return SUI.DBMod.PartyFrames.Auras.NumDebuffs; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.Auras.NumDebuffs = val; addon:UpdateAura(); end
 			},
 			size = {name=SUI.L["Frames/SizeBuff"],type="range",width="full",order=13,
 				min=0,max=60,step=1,
-				get = function(info) return DBMod.PartyFrames.Auras.size; end,
-				set = function(info,val) DBMod.PartyFrames.Auras.size = val; addon:UpdateAura(); end
+				get = function(info) return SUI.DBMod.PartyFrames.Auras.size; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.Auras.size = val; addon:UpdateAura(); end
 			},
 			spacing = {name=SUI.L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
 				min=0,max=50,step=1,
-				get = function(info) return DBMod.PartyFrames.Auras.spacing; end,
-				set = function(info,val) DBMod.PartyFrames.Auras.spacing = val; addon:UpdateAura(); end
+				get = function(info) return SUI.DBMod.PartyFrames.Auras.spacing; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.Auras.spacing = val; addon:UpdateAura(); end
 			},
 			
 		}
 	};
-	spartan.opt.args["PartyFrames"].args["castbar"] = {name=SUI.L["Frames/PrtyCast"],type="group",order=3,
+	SUI.opt.args["PartyFrames"].args["castbar"] = {name=SUI.L["Frames/PrtyCast"],type="group",order=3,
 		desc = SUI.L["Frames/PrtyCastDesc"], args = {
 			castbar = {name=SUI.L["Frames/FillDir"],type="select", style="radio",
 				values = {[0]=SUI.L["Frames/FillLR"],[1]=SUI.L["Frames/DepRL"]},
-				get = function(info) return DBMod.PartyFrames.castbar; end,
-				set = function(info,val) DBMod.PartyFrames.castbar = val; end
+				get = function(info) return SUI.DBMod.PartyFrames.castbar; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.castbar = val; end
 			},
 			castbartext = {name=SUI.L["Frames/TextStyle"],type="select", style="radio",
 				values = {[0]=SUI.L["Frames/CountUp"],[1]=SUI.L["Frames/CountDown"]},
-				get = function(info) return DBMod.PartyFrames.castbartext; end,
-				set = function(info,val) DBMod.PartyFrames.castbartext = val; end
+				get = function(info) return SUI.DBMod.PartyFrames.castbartext; end,
+				set = function(info,val) SUI.DBMod.PartyFrames.castbartext = val; end
 			}
 		}
 	};
 	
-	spartan.opt.args["PartyFrames"].args["FramePreSets"] = {name=SUI.L["Frames/PreSets"],type="select",order=1,
+	SUI.opt.args["PartyFrames"].args["FramePreSets"] = {name=SUI.L["Frames/PreSets"],type="select",order=1,
 		values = {["custom"]=SUI.L["Frames/Custom"],["tank"]=SUI.L["Frames/Tank"],["dps"]=SUI.L["Frames/DPS"],["healer"]=SUI.L["Frames/Healer"]},
-		get = function(info) return DBMod.PartyFrames.preset; end,
+		get = function(info) return SUI.DBMod.PartyFrames.preset; end,
 		set = function(info,val)
-			DBMod.PartyFrames.preset = val;
+			SUI.DBMod.PartyFrames.preset = val;
 			if val == "tank" then
-				DBMod.PartyFrames.FrameStyle = "medium";
-				DBMod.PartyFrames.Portrait = false;
+				SUI.DBMod.PartyFrames.FrameStyle = "medium";
+				SUI.DBMod.PartyFrames.Portrait = false;
 			elseif val == "dps" then
-				DBMod.PartyFrames.FrameStyle = "xsmall";
-				DBMod.PartyFrames.Portrait = false;
-				DBMod.PartyFrames.showAuras = false;
+				SUI.DBMod.PartyFrames.FrameStyle = "xsmall";
+				SUI.DBMod.PartyFrames.Portrait = false;
+				SUI.DBMod.PartyFrames.showAuras = false;
 			elseif val == "healer" then
-				DBMod.PartyFrames.FrameStyle = "small";
-				DBMod.PartyFrames.Portrait = false;
+				SUI.DBMod.PartyFrames.FrameStyle = "small";
+				SUI.DBMod.PartyFrames.Portrait = false;
 			end
 		end
 	};
-	spartan.opt.args["PartyFrames"].args["FrameStyle"] = {name=SUI.L["Frames/FrameStyle"],type="select",order=2,
+	SUI.opt.args["PartyFrames"].args["FrameStyle"] = {name=SUI.L["Frames/FrameStyle"],type="select",order=2,
 		values = {["large"]=SUI.L["Frames/StyleLarge"],["medium"]=SUI.L["Frames/StyleMed"],["small"]=SUI.L["Frames/StyleSmall"],["xsmall"]=SUI.L["Frames/StyleXSmall"]},
-		get = function(info) return DBMod.PartyFrames.FrameStyle; end,
+		get = function(info) return SUI.DBMod.PartyFrames.FrameStyle; end,
 		set = function(info,val)
-			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.FrameStyle = val; DBMod.PartyFrames.preset = "custom";
+			if (InCombatLockdown()) then return SUI:Print(ERR_NOT_IN_COMBAT);end SUI.DBMod.PartyFrames.FrameStyle = val; SUI.DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.opt.args["PartyFrames"].args["mana"] = {name=SUI.L["Frames/DispMana"],type="toggle",order=2.5,
+	SUI.opt.args["PartyFrames"].args["mana"] = {name=SUI.L["Frames/DispMana"],type="toggle",order=2.5,
 		hidden = function(info)
-			if DBMod.PartyFrames.FrameStyle == "xsmall" or DBMod.PartyFrames.FrameStyle == "small" then return false; else return true; end
+			if SUI.DBMod.PartyFrames.FrameStyle == "xsmall" or SUI.DBMod.PartyFrames.FrameStyle == "small" then return false; else return true; end
 		end,
-		get = function(info) return DBMod.PartyFrames.display.mana; end,
+		get = function(info) return SUI.DBMod.PartyFrames.display.mana; end,
 		set = function(info,val)
-			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.display.mana = val; DBMod.PartyFrames.preset = "custom";
+			if (InCombatLockdown()) then return SUI:Print(ERR_NOT_IN_COMBAT);end SUI.DBMod.PartyFrames.display.mana = val; SUI.DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.opt.args["PartyFrames"].args["Portrait"] = {name=SUI.L["Frames/DispPort"],type="toggle",order=3,
-		get = function(info) return DBMod.PartyFrames.Portrait; end,
+	SUI.opt.args["PartyFrames"].args["Portrait"] = {name=SUI.L["Frames/DispPort"],type="toggle",order=3,
+		get = function(info) return SUI.DBMod.PartyFrames.Portrait; end,
 		set = function(info,val)
-			if (InCombatLockdown()) then return spartan:Print(ERR_NOT_IN_COMBAT);end DBMod.PartyFrames.Portrait = val; DBMod.PartyFrames.preset = "custom";
+			if (InCombatLockdown()) then return SUI:Print(ERR_NOT_IN_COMBAT);end SUI.DBMod.PartyFrames.Portrait = val; SUI.DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	spartan.opt.args["PartyFrames"].args["Portrait3D"] =  {name = SUI.L["Frames/Portrait3D"], type = "toggle", order=3.1,
-		get = function(info) return DBMod.PartyFrames.Portrait3D; end,
-		set = function(info,val) DBMod.PartyFrames.Portrait3D = val; end
+	SUI.opt.args["PartyFrames"].args["Portrait3D"] =  {name = SUI.L["Frames/Portrait3D"], type = "toggle", order=3.1,
+		get = function(info) return SUI.DBMod.PartyFrames.Portrait3D; end,
+		set = function(info,val) SUI.DBMod.PartyFrames.Portrait3D = val; end
 	};
-	spartan.opt.args["PartyFrames"].args["threat"] = {name=SUI.L["Frames/DispThreat"],type="toggle",order=4,
-		get = function(info) return DBMod.PartyFrames.threat; end,
-		set = function(info,val) DBMod.PartyFrames.threat = val; DBMod.PartyFrames.preset = "custom"; end
+	SUI.opt.args["PartyFrames"].args["threat"] = {name=SUI.L["Frames/DispThreat"],type="toggle",order=4,
+		get = function(info) return SUI.DBMod.PartyFrames.threat; end,
+		set = function(info,val) SUI.DBMod.PartyFrames.threat = val; SUI.DBMod.PartyFrames.preset = "custom"; end
 	};
 end
 
@@ -586,16 +586,16 @@ function PartyFrames:Classic()
 	--Create the options
 	OptionsSetup()
 	--DB Fix
-	if DBMod.PartyFrames.FrameStyle == "Large" then DBMod.PartyFrames.FrameStyle = "large" end
+	if SUI.DBMod.PartyFrames.FrameStyle == "Large" then SUI.DBMod.PartyFrames.FrameStyle = "large" end
 	
 	--Set the style
 	SpartanoUF:SetActiveStyle("Spartan_PartyFrames");
 	--Create the frames
 	local party = SpartanoUF:SpawnHeader("SUI_PartyFrameHeader", nil, nil,
-		"showRaid", DBMod.PartyFrames.showRaid,
-		"showParty", DBMod.PartyFrames.showParty,
-		"showPlayer", DBMod.PartyFrames.showPlayer,
-		"showSolo", DBMod.PartyFrames.showSolo,
+		"showRaid", SUI.DBMod.PartyFrames.showRaid,
+		"showParty", SUI.DBMod.PartyFrames.showParty,
+		"showPlayer", SUI.DBMod.PartyFrames.showPlayer,
+		"showSolo", SUI.DBMod.PartyFrames.showSolo,
 		"yOffset", -16,
 		"xOffset", 0,
 		"columnAnchorPoint", "TOPLEFT",

@@ -1,11 +1,12 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local PartyFrames = spartan:NewModule("PartyFrames");
+local _G, SUI = _G, SUI
+local PartyFrames = SUI:NewModule("PartyFrames");
+SUI.PartyFrames = PartyFrames
 ----------------------------------------------------------------------------------------------------
 
 --	Formatting functions
 function PartyFrames:TextFormat(text)
-	local textstyle = DBMod.PartyFrames.bars[text].textstyle
-	local textmode = DBMod.PartyFrames.bars[text].textmode
+	local textstyle = SUI.DBMod.PartyFrames.bars[text].textstyle
+	local textmode = SUI.DBMod.PartyFrames.bars[text].textmode
 	local a,m,t,z
 	if text == "mana" then z = "pp" else z = "hp" end
 	
@@ -76,7 +77,7 @@ function PartyFrames:menu(self)
 end
 
 function PartyFrames:CreatePortrait(self)
-	if DBMod.PartyFrames.Portrait3D then
+	if SUI.DBMod.PartyFrames.Portrait3D then
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
 		Portrait.type = "3D"
@@ -87,13 +88,13 @@ function PartyFrames:CreatePortrait(self)
 end
 
 function PartyFrames:PostUpdateAura(self,unit)
-	if DBMod.PartyFrames.showAuras then
+	if SUI.DBMod.PartyFrames.showAuras then
 		self:Show();
-		self.size = DBMod.PartyFrames.Auras.size;
-		self.spacing = DBMod.PartyFrames.Auras.spacing;
-		self.showType = DBMod.PartyFrames.Auras.showType;
-		self.numBuffs = DBMod.PartyFrames.Auras.NumBuffs;
-		self.numDebuffs = DBMod.PartyFrames.Auras.NumDebuffs;
+		self.size = SUI.DBMod.PartyFrames.Auras.size;
+		self.spacing = SUI.DBMod.PartyFrames.Auras.spacing;
+		self.showType = SUI.DBMod.PartyFrames.Auras.showType;
+		self.numBuffs = SUI.DBMod.PartyFrames.Auras.NumBuffs;
+		self.numDebuffs = SUI.DBMod.PartyFrames.Auras.NumDebuffs;
 	else
 		self:Hide();
 	end
@@ -108,19 +109,19 @@ function PartyFrames:MakeMovable(self)
 	
 	self:SetScript("OnMouseDown",function(self,button)
 		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.PartyFrames.mover:Show();
-			DBMod.PartyFrames.moved = true;
-			spartan.PartyFrames:SetMovable(true);
-			spartan.PartyFrames:StartMoving();
+			SUI.PartyFrames.mover:Show();
+			SUI.DBMod.PartyFrames.moved = true;
+			SUI.PartyFrames:SetMovable(true);
+			SUI.PartyFrames:StartMoving();
 		end
 	end);
 	self:SetScript("OnMouseUp",function(self,button)
-		spartan.PartyFrames.mover:Hide();
-		spartan.PartyFrames:StopMovingOrSizing();
+		SUI.PartyFrames.mover:Hide();
+		SUI.PartyFrames:StopMovingOrSizing();
 		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.PartyFrames:GetPoint()
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = SUI.PartyFrames:GetPoint()
 		for k,v in pairs(Anchors) do
-			DBMod.PartyFrames.Anchors[k] = v
+			SUI.DBMod.PartyFrames.Anchors[k] = v
 		end
 	end);
 	

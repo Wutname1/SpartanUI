@@ -1,9 +1,8 @@
-local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local Artwork_Core = addon:GetModule("Artwork_Core");
-local module = addon:GetModule("Style_Minimal");
+local _G, SUI = _G, SUI
+local Artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:GetModule("Style_Minimal");
 ----------------------------------------------------------------------------------------------------
-local ProfileName = DB.Styles.Minimal.BartenderProfile;
+local ProfileName = SUI.DB.Styles.Minimal.BartenderProfile;
 
 local default, plate = {
 	popup1 = {alpha = 1, enable = 1},

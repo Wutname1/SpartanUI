@@ -1,6 +1,6 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local RaidFrames = spartan:GetModule("RaidFrames");
+local _G, SUI = _G, SUI
+local L = SUI.L;
+local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------
 local colors = setmetatable({},{__index = SpartanoUF.colors});
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
@@ -13,7 +13,7 @@ local threat = function(self,event,unit)
 	local status
 	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
 	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
-	if self.Portrait and DBMod.RaidFrames.threat then
+	if self.Portrait and SUI.DBMod.RaidFrames.threat then
 		if (not self.Portrait:IsObjectType("Texture")) then return; end
 		if (status and status > 0) then
 			local r,g,b = GetThreatStatusColor(status);
@@ -21,7 +21,7 @@ local threat = function(self,event,unit)
 		else
 			self.Portrait:SetVertexColor(1,1,1);
 		end
-	elseif self.ThreatIndicatorOverlay and DBMod.RaidFrames.threat then
+	elseif self.ThreatIndicatorOverlay and SUI.DBMod.RaidFrames.threat then
 		if ( status and status > 0 ) then
 			self.ThreatIndicatorOverlay:SetVertexColor(GetThreatStatusColor(status));
 			self.ThreatIndicatorOverlay:Show();
@@ -41,13 +41,13 @@ local SpawnUnitFrame = function(self,unit)
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
 		self.artwork.bg:SetAllPoints(self);
 		self.artwork.bg:SetTexture(base_plate3);
-		if DBMod.RaidFrames.FrameStyle == "large" then
+		if SUI.DBMod.RaidFrames.FrameStyle == "large" then
 			self:SetSize(165, 48);
 			self.artwork.bg:SetTexCoord(.3,.95,0.015,.77);
-		elseif DBMod.RaidFrames.FrameStyle == "medium" then
+		elseif SUI.DBMod.RaidFrames.FrameStyle == "medium" then
 			self:SetSize(140, 35);
 			self.artwork.bg:SetTexCoord(.3,.95,0.015,.56);
-		elseif DBMod.RaidFrames.FrameStyle == "small" then
+		elseif SUI.DBMod.RaidFrames.FrameStyle == "small" then
 			self.artwork.bg:SetTexCoord(.3,.70,0.3,.7);
 		end
 	end
@@ -59,39 +59,39 @@ local SpawnUnitFrame = function(self,unit)
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			
-			if DBMod.RaidFrames.FrameStyle == "large" then
+			if SUI.DBMod.RaidFrames.FrameStyle == "large" then
 				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-55,-19);
 				health:SetSize(110, 27);
-			elseif DBMod.RaidFrames.FrameStyle == "medium" then
+			elseif SUI.DBMod.RaidFrames.FrameStyle == "medium" then
 				health:SetSize(self:GetWidth()/1.5, 13);
 				health:SetPoint("TOPRIGHT",self,"TOPRIGHT",-self:GetWidth()/3,-20);
-			elseif DBMod.RaidFrames.FrameStyle == "small" then
+			elseif SUI.DBMod.RaidFrames.FrameStyle == "small" then
 				health:SetAllPoints(self);
 			end
 			
 			health.value = health:CreateFontString();
-			spartan:FormatFont(health.value, 10, "Raid")
+			SUI:FormatFont(health.value, 10, "Raid")
 			health.value:SetJustifyH("CENTER"); health.value:SetJustifyV("BOTTOM");
 			self:Tag(health.value, RaidFrames:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString();
-			spartan:FormatFont(health.ratio, 10, "Raid")
+			SUI:FormatFont(health.ratio, 10, "Raid")
 			-- health.ratio:SetSize(35, 11);
 			health.ratio:SetJustifyH("LEFT");
 			health.ratio:SetJustifyV("BOTTOM");
 			self:Tag(health.ratio, '[perhp]%')
 			
-			if DBMod.RaidFrames.FrameStyle == "large" then
+			if SUI.DBMod.RaidFrames.FrameStyle == "large" then
 				health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
 				health.ratio:SetPoint("TOPLEFT",health,"BOTTOMRIGHT",-29,13);
 				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
 				health.value:SetSize(health:GetWidth()/1.1, 11);
-			elseif DBMod.RaidFrames.FrameStyle == "medium" then
+			elseif SUI.DBMod.RaidFrames.FrameStyle == "medium" then
 				health.ratio:SetPoint("LEFT",health,"RIGHT",6,0);
 				health.ratio:SetPoint("TOPLEFT",health,"BOTTOMRIGHT",-29,13);
 				health.value:SetPoint("RIGHT",health,"RIGHT",-2,0);
 				health.value:SetSize(health:GetWidth()/1.5, 11);
-			elseif DBMod.RaidFrames.FrameStyle == "small" then
+			elseif SUI.DBMod.RaidFrames.FrameStyle == "small" then
 				health.ratio:SetPoint("BOTTOMRIGHT",health,"BOTTOMRIGHT",0,2);
 				health.ratio:SetPoint("TOPLEFT",health,"BOTTOMRIGHT",-35,13);
 				health.value:Hide();
@@ -155,13 +155,13 @@ local SpawnUnitFrame = function(self,unit)
 		-- self.GroupRoleIndicator:SetPoint("BOTTOMRIGHT",self,"TOPLEFT",14,-17);
 		
 		self.Name = layer5:CreateFontString();
-		spartan:FormatFont(self.Name, 11, "Raid")
+		SUI:FormatFont(self.Name, 11, "Raid")
 		self.Name:SetSize(self:GetWidth()-30, 12);
 		self.Name:SetJustifyH("LEFT");
 		self.Name:SetJustifyV("BOTTOM");
 		self.Name:SetPoint("TOPLEFT",self.GroupRoleIndicator,"TOPRIGHT",1,1);
 		-- self.Name:SetPoint("BOTTOMRIGHT",self.GroupRoleIndicator,"TOPRIGHT",-12,self:GetWidth()-30);
-		if DBMod.RaidFrames.showClass then
+		if SUI.DBMod.RaidFrames.showClass then
 			self:Tag(self.Name, "[SUI_ColorClass][name]");
 		else
 			self:Tag(self.Name, "[name]");
@@ -182,16 +182,16 @@ local SpawnUnitFrame = function(self,unit)
 		self.Debuffs:SetFrameStrata("BACKGROUND");
 		self.Debuffs:SetFrameLevel(4);
 		-- settings
-		self.Debuffs.size = DBMod.RaidFrames.Auras.size;
-		self.Debuffs.spacing = DBMod.RaidFrames.Auras.spacing;
-		self.Debuffs.showType = DBMod.RaidFrames.Auras.showType;
+		self.Debuffs.size = SUI.DBMod.RaidFrames.Auras.size;
+		self.Debuffs.spacing = SUI.DBMod.RaidFrames.Auras.spacing;
+		self.Debuffs.showType = SUI.DBMod.RaidFrames.Auras.showType;
 		self.Debuffs.initialAnchor = "BOTTOMRIGHT";
 		self.Debuffs.num = 5;
 		
 		self.Debuffs.PostUpdate = RaidFrames:PostUpdateDebuffs(self,unit);
 	end
 	do -- HoTs Display
-		self.AuraWatch = spartan:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
+		self.AuraWatch = SUI:oUF_Buffs(self, "TOPRIGHT", "TOPRIGHT", 0)
 	end
 	do -- Threat, SpellRange, and Ready Check
 		self.Range = {
@@ -241,18 +241,18 @@ function RaidFrames:Classic()
 	local columnAnchorPoint = 'LEFT'
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 	
-	if DBMod.RaidFrames.mode == "GROUP" then
+	if SUI.DBMod.RaidFrames.mode == "GROUP" then
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
-	-- print(DBMod.RaidFrames.mode)
+	-- print(SUI.DBMod.RaidFrames.mode)
 	-- print(groupingOrder)
 	local w = 90
 	local h = 30
 	
-	if DBMod.RaidFrames.FrameStyle == "large" then
+	if SUI.DBMod.RaidFrames.FrameStyle == "large" then
 		w = 165
 		h = 48
-	elseif DBMod.RaidFrames.FrameStyle == "medium" then
+	elseif SUI.DBMod.RaidFrames.FrameStyle == "medium" then
 		w = 140
 		h = 35
 	end
@@ -263,19 +263,19 @@ function RaidFrames:Classic()
 	]]
 	
 	local raid = SpartanoUF:SpawnHeader(nil, nil, 'raid',
-		"showRaid", DBMod.RaidFrames.showRaid,
-		"showParty", DBMod.RaidFrames.showParty,
-		"showPlayer", DBMod.RaidFrames.showPlayer,
-		"showSolo", DBMod.RaidFrames.showSolo,
+		"showRaid", SUI.DBMod.RaidFrames.showRaid,
+		"showParty", SUI.DBMod.RaidFrames.showParty,
+		"showPlayer", SUI.DBMod.RaidFrames.showPlayer,
+		"showSolo", SUI.DBMod.RaidFrames.showSolo,
 		'xoffset', xoffset,
 		'yOffset', yOffset,
 		'point', point,
-		'groupBy', DBMod.RaidFrames.mode,
+		'groupBy', SUI.DBMod.RaidFrames.mode,
 		'groupingOrder', groupingOrder,
 		'sortMethod', 'index',
-		'maxColumns', DBMod.RaidFrames.maxColumns,
-		'unitsPerColumn', DBMod.RaidFrames.unitsPerColumn,
-		'columnSpacing', DBMod.RaidFrames.columnSpacing,
+		'maxColumns', SUI.DBMod.RaidFrames.maxColumns,
+		'unitsPerColumn', SUI.DBMod.RaidFrames.unitsPerColumn,
+		'columnSpacing', SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint', columnAnchorPoint,
 		"oUF-initialConfigFunction", format(initialConfigFunction, w, h)
 		-- 'oUF-initialConfigFunction', [[
@@ -294,33 +294,33 @@ end
 
 
 function RaidFrames:ClassicOptions()
-	spartan.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
+	SUI.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
 		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
-		get = function(info) return DBMod.RaidFrames.FrameStyle; end,
+		get = function(info) return SUI.DBMod.RaidFrames.FrameStyle; end,
 		set = function(info,val)
-			DBMod.RaidFrames.FrameStyle = val;
-			spartan:reloadui()
+			SUI.DBMod.RaidFrames.FrameStyle = val;
+			SUI:reloadui()
 		end
 	};
-	spartan.opt.args["RaidFrames"].args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
+	SUI.opt.args["RaidFrames"].args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
 		args = {
 			party = {name = L["Frames/ShowAuras"], type = "toggle",order=1,
-				get = function(info) return DBMod.RaidFrames.showAuras; end,
+				get = function(info) return SUI.DBMod.RaidFrames.showAuras; end,
 				set = function(info,val)
-					DBMod.RaidFrames.showAuras = val
+					SUI.DBMod.RaidFrames.showAuras = val
 					RaidFrames:UpdateAura();
 				end
 			},
 			size = {name = L["Frames/BuffSize"], type = "range",order=2,
 				min=1,max=30,step=1,
-				get = function(info) return DBMod.RaidFrames.Auras.size; end,
-				set = function(info,val) DBMod.RaidFrames.Auras.size = val; RaidFrames:UpdateAura(); end
+				get = function(info) return SUI.DBMod.RaidFrames.Auras.size; end,
+				set = function(info,val) SUI.DBMod.RaidFrames.Auras.size = val; RaidFrames:UpdateAura(); end
 			}
 		}
 	};
-	spartan.opt.args["RaidFrames"].args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
-		get = function(info) return DBMod.RaidFrames.threat; end,
-		set = function(info,val) DBMod.RaidFrames.threat = val; DBMod.RaidFrames.preset = "custom"; end
+	SUI.opt.args["RaidFrames"].args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
+		get = function(info) return SUI.DBMod.RaidFrames.threat; end,
+		set = function(info,val) SUI.DBMod.RaidFrames.threat = val; SUI.DBMod.RaidFrames.preset = "custom"; end
 	};
 
 end

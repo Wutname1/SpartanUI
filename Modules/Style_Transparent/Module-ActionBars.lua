@@ -1,10 +1,9 @@
-local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local Artwork_Core = addon:GetModule("Artwork_Core");
-local module = addon:GetModule("Style_Transparent");
+local _G, SUI = _G, SUI
+local Artwork_Core = SUI:GetModule("Artwork_Core");
+local module = SUI:GetModule("Style_Transparent");
 ----------------------------------------------------------------------------------------------------
-local ProfileName = DB.Styles.Transparent.BartenderProfile;
-local BartenderSettings = DB.Styles.Transparent.BartenderSettings;
+local ProfileName = SUI.DB.Styles.Transparent.BartenderProfile;
+local BartenderSettings = SUI.DB.Styles.Transparent.BartenderSettings;
 
 local default, plate = {
 	popup1 = {alpha = 1, enable = 1},
@@ -26,7 +25,7 @@ function module:CreateProfile()
 end
 
 function module:InitActionBars()
-	--if (Bartender4.db:GetCurrentProfile() == DB.Styles.Transparent.BartenderProfile or not Artwork_Core:BartenderProfileCheck(DB.Styles.Transparent.BartenderProfile,true)) then
+	--if (Bartender4.db:GetCurrentProfile() == SUI.DB.Styles.Transparent.BartenderProfile or not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Transparent.BartenderProfile,true)) then
 	Artwork_Core:ActionBarPlates("Transparent_ActionBarPlate");
 	--end
 

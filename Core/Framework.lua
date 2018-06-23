@@ -491,15 +491,6 @@ function SUI:OnInitialize()
 	SUI:FontSetup()
 	
 	--First Time Setup Actions
-	local class, classFileName = UnitClass("player")
-	if not DB.SetupDone and classFileName == "DEMONHUNTER" then 
-		SUI.DBMod.Artwork.Style = "Fel";
-		SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
-		SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
-		SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
-	end
-	
-	--First Time Setup Actions
 	if not DB.SetupDone then SUI:FirstTimeSetup() end
 end
 
@@ -565,8 +556,8 @@ function SUI:BT4RefreshConfig()
 	DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 	
 	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
-
-	if SUI.DBG.Bartender4[DB.BT4Profile] then
+	
+    if SUI.DBG.Bartender4[SUI.DBP.BT4Profile] then
 		-- We know this profile.
 		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style == SUI.DBMod.Artwork.Style then
 			-- Catch if Movedbars is not initalized
@@ -594,6 +585,8 @@ function SUI:UpdateModuleConfigs()
 	if Bartender4 then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
 			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile);
+        elseif DB.Styles[DBMod.Artwork.Style].BartenderProfile then
+            Bartender4.db:SetProfile(DB.Styles[DBMod.Artwork.Style].BartenderProfile);
 		else
 			Bartender4.db:SetProfile(SUI.DB.BT4Profile);
 		end

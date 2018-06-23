@@ -1,7 +1,7 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local _G, SUI = _G, SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-local module = spartan:NewModule("Style_Minimal");
+local module = SUI:NewModule("Style_Minimal");
 
 --Now lets setup the initial Database settings
 local Defaults = {
@@ -64,11 +64,11 @@ local Defaults = {
 	},
 	PartyFramesSize = "large"
 }
-if not DB.Styles.Minimal.Artwork then
-	DB.Styles.Minimal = spartan:MergeData(DB.Styles.Minimal, Defaults, true)
+if not SUI.DB.Styles.Minimal.Artwork then
+	SUI.DB.Styles.Minimal = SUI:MergeData(SUI.DB.Styles.Minimal, Defaults, true)
 else
-	DB.Styles.Minimal = spartan:MergeData(DB.Styles.Minimal, Defaults, false)
+	SUI.DB.Styles.Minimal = SUI:MergeData(SUI.DB.Styles.Minimal, Defaults, false)
 end
-if not SUI.DBG.Bartender4[DB.Styles.Minimal.BartenderProfile] then
-	SUI.DBG.Bartender4[DB.Styles.Minimal.BartenderProfile] = {Style = "Minimal"}
+if not SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] then
+	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = "Minimal"}
 end

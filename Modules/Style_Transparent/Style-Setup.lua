@@ -1,7 +1,7 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
+local _G, SUI = _G, SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-local module = spartan:NewModule("Style_Transparent");
+local module = SUI:NewModule("Style_Transparent");
 
 --Now lets setup the initial Database settings
 local Defaults = {
@@ -53,16 +53,16 @@ local Defaults = {
 		XPBar			= {	enabled = false },
 		RepBar			= {	enabled = false },
 		APBar			= {	enabled = false },
-		blizzardVehicle = DBMod.Artwork.VehicleUI
+		blizzardVehicle = SUI.DBMod.Artwork.VehicleUI
 	},
 	TooltipLoc = true,
 	BuffLoc = true
 }
-if not DB.Styles.Transparent.Artwork then
-	DB.Styles.Transparent = spartan:MergeData(DB.Styles.Transparent, Defaults, true)
+if not SUI.DB.Styles.Transparent.Artwork then
+	SUI.DB.Styles.Transparent = SUI:MergeData(SUI.DB.Styles.Transparent, Defaults, true)
 else
-	DB.Styles.Transparent = spartan:MergeData(DB.Styles.Transparent, Defaults, false)
+	SUI.DB.Styles.Transparent = SUI:MergeData(SUI.DB.Styles.Transparent, Defaults, false)
 end
-if not SUI.DBG.Bartender4[DB.Styles.Transparent.BartenderProfile] then
-	SUI.DBG.Bartender4[DB.Styles.Transparent.BartenderProfile] = {Style = "Transparent"}
+if not SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] then
+	SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] = {Style = "Transparent"}
 end
