@@ -176,7 +176,7 @@ function module:FirstTimeSetup()
 			
 			--scenario
 			local line = gui:Create("Heading")
-			line:SetText(L["Frames/Global"])
+			line:SetText(L["Global"])
 			line:SetPoint("TOP", SUI_Win.Objectives, "TOP", 0, 0)
 			line:SetPoint("LEFT", SUI_Win.Objectives, "LEFT")
 			line:SetPoint("RIGHT", SUI_Win.Objectives, "RIGHT")

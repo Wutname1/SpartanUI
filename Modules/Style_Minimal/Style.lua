@@ -61,8 +61,8 @@ function module:OnDisable()
 end
 
 function module:Options_PartyFrames()
-	SUI.opt.args["PartyFrames"].args["MinimalFrameStyle"] = {name=L["Frames/FrameStyle"],type="select",order=5,
-		values = {["large"]=L["Frames/Large"],["small"]=L["Frames/Small"]},
+	SUI.opt.args["PartyFrames"].args["MinimalFrameStyle"] = {name=L["FrameStyle"],type="select",order=5,
+		values = {["large"]=L["Large"],["small"]=L["Small"]},
 		get = function(info) return SUI.DB.Styles.Minimal.PartyFramesSize; end,
 		set = function(info,val) SUI.DB.Styles.Minimal.PartyFramesSize = val; end
 	};

@@ -484,32 +484,32 @@ end
 SpartanoUF:RegisterStyle("Spartan_PartyFrames", CreateUnitFrame);
 
 local OptionsSetup = function()
-	SUI.opt.args["PartyFrames"].args["auras"] = {name=SUI.L["Frames/BuffDebuff"],type="group",order=2,
+	SUI.opt.args["PartyFrames"].args["auras"] = {name=SUI.L["BuffDebuff"],type="group",order=2,
 		args = {
-			display = {name=SUI.L["Frames/DispBuffDebuff"],type="toggle", order=1,
+			display = {name=SUI.L["DispBuffDebuff"],type="toggle", order=1,
 				get = function(info) return SUI.DBMod.PartyFrames.showAuras; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.showAuras = val; addon:UpdateAura(); end
 			},
-			showType = {name=SUI.L["Frames/ShowType"],type="toggle", order=2,
+			showType = {name=SUI.L["ShowType"],type="toggle", order=2,
 				get = function(info) return SUI.DBMod.PartyFrames.Auras.showType; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.Auras.showType = val; addon:UpdateAura(); end
 			},
-			numBufs = {name=SUI.L["Frames/NumBuffs"],type="range",width="full",order=11,
+			numBufs = {name=SUI.L["NumBuffs"],type="range",width="full",order=11,
 				min=0,max=50,step=1,
 				get = function(info) return SUI.DBMod.PartyFrames.Auras.NumBuffs; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.Auras.NumBuffs = val; addon:UpdateAura(); end
 			},
-			numDebuffs = {name=SUI.L["Frames/NumDebuff"],type="range",width="full",order=12,
+			numDebuffs = {name=SUI.L["NumDebuff"],type="range",width="full",order=12,
 				min=0,max=50,step=1,
 				get = function(info) return SUI.DBMod.PartyFrames.Auras.NumDebuffs; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.Auras.NumDebuffs = val; addon:UpdateAura(); end
 			},
-			size = {name=SUI.L["Frames/SizeBuff"],type="range",width="full",order=13,
+			size = {name=SUI.L["SizeBuff"],type="range",width="full",order=13,
 				min=0,max=60,step=1,
 				get = function(info) return SUI.DBMod.PartyFrames.Auras.size; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.Auras.size = val; addon:UpdateAura(); end
 			},
-			spacing = {name=SUI.L["Frames/SpacingBuffDebuffs"],type="range",width="full",order=14,
+			spacing = {name=SUI.L["SpacingBuffDebuffs"],type="range",width="full",order=14,
 				min=0,max=50,step=1,
 				get = function(info) return SUI.DBMod.PartyFrames.Auras.spacing; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.Auras.spacing = val; addon:UpdateAura(); end
@@ -517,23 +517,23 @@ local OptionsSetup = function()
 			
 		}
 	};
-	SUI.opt.args["PartyFrames"].args["castbar"] = {name=SUI.L["Frames/PrtyCast"],type="group",order=3,
-		desc = SUI.L["Frames/PrtyCastDesc"], args = {
-			castbar = {name=SUI.L["Frames/FillDir"],type="select", style="radio",
-				values = {[0]=SUI.L["Frames/FillLR"],[1]=SUI.L["Frames/DepRL"]},
+	SUI.opt.args["PartyFrames"].args["castbar"] = {name=SUI.L["PrtyCast"],type="group",order=3,
+		desc = SUI.L["PrtyCastDesc"], args = {
+			castbar = {name=SUI.L["FillDir"],type="select", style="radio",
+				values = {[0]=SUI.L["FillLR"],[1]=SUI.L["DepRL"]},
 				get = function(info) return SUI.DBMod.PartyFrames.castbar; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.castbar = val; end
 			},
-			castbartext = {name=SUI.L["Frames/TextStyle"],type="select", style="radio",
-				values = {[0]=SUI.L["Frames/CountUp"],[1]=SUI.L["Frames/CountDown"]},
+			castbartext = {name=SUI.L["TextStyle"],type="select", style="radio",
+				values = {[0]=SUI.L["CountUp"],[1]=SUI.L["CountDown"]},
 				get = function(info) return SUI.DBMod.PartyFrames.castbartext; end,
 				set = function(info,val) SUI.DBMod.PartyFrames.castbartext = val; end
 			}
 		}
 	};
 	
-	SUI.opt.args["PartyFrames"].args["FramePreSets"] = {name=SUI.L["Frames/PreSets"],type="select",order=1,
-		values = {["custom"]=SUI.L["Frames/Custom"],["tank"]=SUI.L["Frames/Tank"],["dps"]=SUI.L["Frames/DPS"],["healer"]=SUI.L["Frames/Healer"]},
+	SUI.opt.args["PartyFrames"].args["FramePreSets"] = {name=SUI.L["PreSets"],type="select",order=1,
+		values = {["custom"]=SUI.L["Custom"],["tank"]=SUI.L["Tank"],["dps"]=SUI.L["DPS"],["healer"]=SUI.L["Healer"]},
 		get = function(info) return SUI.DBMod.PartyFrames.preset; end,
 		set = function(info,val)
 			SUI.DBMod.PartyFrames.preset = val;
@@ -550,14 +550,14 @@ local OptionsSetup = function()
 			end
 		end
 	};
-	SUI.opt.args["PartyFrames"].args["FrameStyle"] = {name=SUI.L["Frames/FrameStyle"],type="select",order=2,
-		values = {["large"]=SUI.L["Frames/StyleLarge"],["medium"]=SUI.L["Frames/StyleMed"],["small"]=SUI.L["Frames/StyleSmall"],["xsmall"]=SUI.L["Frames/StyleXSmall"]},
+	SUI.opt.args["PartyFrames"].args["FrameStyle"] = {name=SUI.L["FrameStyle"],type="select",order=2,
+		values = {["large"]=SUI.L["StyleLarge"],["medium"]=SUI.L["StyleMed"],["small"]=SUI.L["StyleSmall"],["xsmall"]=SUI.L["StyleXSmall"]},
 		get = function(info) return SUI.DBMod.PartyFrames.FrameStyle; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then return SUI:Print(ERR_NOT_IN_COMBAT);end SUI.DBMod.PartyFrames.FrameStyle = val; SUI.DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	SUI.opt.args["PartyFrames"].args["mana"] = {name=SUI.L["Frames/DispMana"],type="toggle",order=2.5,
+	SUI.opt.args["PartyFrames"].args["mana"] = {name=SUI.L["DispMana"],type="toggle",order=2.5,
 		hidden = function(info)
 			if SUI.DBMod.PartyFrames.FrameStyle == "xsmall" or SUI.DBMod.PartyFrames.FrameStyle == "small" then return false; else return true; end
 		end,
@@ -566,17 +566,17 @@ local OptionsSetup = function()
 			if (InCombatLockdown()) then return SUI:Print(ERR_NOT_IN_COMBAT);end SUI.DBMod.PartyFrames.display.mana = val; SUI.DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	SUI.opt.args["PartyFrames"].args["Portrait"] = {name=SUI.L["Frames/DispPort"],type="toggle",order=3,
+	SUI.opt.args["PartyFrames"].args["Portrait"] = {name=SUI.L["DispPort"],type="toggle",order=3,
 		get = function(info) return SUI.DBMod.PartyFrames.Portrait; end,
 		set = function(info,val)
 			if (InCombatLockdown()) then return SUI:Print(ERR_NOT_IN_COMBAT);end SUI.DBMod.PartyFrames.Portrait = val; SUI.DBMod.PartyFrames.preset = "custom";
 		end
 	};
-	SUI.opt.args["PartyFrames"].args["Portrait3D"] =  {name = SUI.L["Frames/Portrait3D"], type = "toggle", order=3.1,
+	SUI.opt.args["PartyFrames"].args["Portrait3D"] =  {name = SUI.L["Portrait3D"], type = "toggle", order=3.1,
 		get = function(info) return SUI.DBMod.PartyFrames.Portrait3D; end,
 		set = function(info,val) SUI.DBMod.PartyFrames.Portrait3D = val; end
 	};
-	SUI.opt.args["PartyFrames"].args["threat"] = {name=SUI.L["Frames/DispThreat"],type="toggle",order=4,
+	SUI.opt.args["PartyFrames"].args["threat"] = {name=SUI.L["DispThreat"],type="toggle",order=4,
 		get = function(info) return SUI.DBMod.PartyFrames.threat; end,
 		set = function(info,val) SUI.DBMod.PartyFrames.threat = val; SUI.DBMod.PartyFrames.preset = "custom"; end
 	};

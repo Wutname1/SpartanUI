@@ -1272,8 +1272,8 @@ end
 -- Options Builders
 
 function module:RaidOptions()
-	SUI.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
-		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
+	SUI.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["FrameStyle"], type = "select", order=2,
+		values = {["large"]=L["Large"],["medium"]=L["Medium"],["small"]=L["Small"]},
 		get = function(info) return SUI.DB.Styles.Fel.RaidFrames.FrameStyle; end,
 		set = function(info,val)
 			SUI.DB.Styles.Fel.RaidFrames.FrameStyle = val;
@@ -1283,8 +1283,8 @@ function module:RaidOptions()
 end
 
 function module:PartyOptions()
-	SUI.opt.args["PartyFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
-		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
+	SUI.opt.args["PartyFrames"].args["FrameStyle"] = {name = L["FrameStyle"], type = "select", order=2,
+		values = {["large"]=L["Large"],["medium"]=L["Medium"],["small"]=L["Small"]},
 		get = function(info) return SUI.DB.Styles.Fel.PartyFrames.FrameStyle; end,
 		set = function(info,val)
 			SUI.DB.Styles.Fel.PartyFrames.FrameStyle = val;

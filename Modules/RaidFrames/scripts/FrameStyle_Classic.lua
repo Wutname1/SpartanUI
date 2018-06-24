@@ -294,31 +294,31 @@ end
 
 
 function RaidFrames:ClassicOptions()
-	SUI.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["Frames/FrameStyle"], type = "select", order=2,
-		values = {["large"]=L["Frames/Large"],["medium"]=L["Frames/Medium"],["small"]=L["Frames/Small"]},
+	SUI.opt.args["RaidFrames"].args["FrameStyle"] = {name = L["FrameStyle"], type = "select", order=2,
+		values = {["large"]=L["Large"],["medium"]=L["Medium"],["small"]=L["Small"]},
 		get = function(info) return SUI.DBMod.RaidFrames.FrameStyle; end,
 		set = function(info,val)
 			SUI.DBMod.RaidFrames.FrameStyle = val;
 			SUI:reloadui()
 		end
 	};
-	SUI.opt.args["RaidFrames"].args["debuffs"] = { name = L["Frames/Debuffs"], type = "group", order = 2,
+	SUI.opt.args["RaidFrames"].args["debuffs"] = { name = L["Debuffs"], type = "group", order = 2,
 		args = {
-			party = {name = L["Frames/ShowAuras"], type = "toggle",order=1,
+			party = {name = L["ShowAuras"], type = "toggle",order=1,
 				get = function(info) return SUI.DBMod.RaidFrames.showAuras; end,
 				set = function(info,val)
 					SUI.DBMod.RaidFrames.showAuras = val
 					RaidFrames:UpdateAura();
 				end
 			},
-			size = {name = L["Frames/BuffSize"], type = "range",order=2,
+			size = {name = L["BuffSize"], type = "range",order=2,
 				min=1,max=30,step=1,
 				get = function(info) return SUI.DBMod.RaidFrames.Auras.size; end,
 				set = function(info,val) SUI.DBMod.RaidFrames.Auras.size = val; RaidFrames:UpdateAura(); end
 			}
 		}
 	};
-	SUI.opt.args["RaidFrames"].args["threat"] = {name=L["Frames/DispThreat"],type="toggle",order=4,
+	SUI.opt.args["RaidFrames"].args["threat"] = {name=L["DispThreat"],type="toggle",order=4,
 		get = function(info) return SUI.DBMod.RaidFrames.threat; end,
 		set = function(info,val) SUI.DBMod.RaidFrames.threat = val; SUI.DBMod.RaidFrames.preset = "custom"; end
 	};
