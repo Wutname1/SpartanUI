@@ -10,8 +10,13 @@ install: luarocks install --local luacheck
 before_script: /home/travis/.luarocks/bin/luacheck . --no-color -qo "011"
 
     
-script: curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -g 8.0.1
-  #curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh
+script:
+  - |
+    if [[ "$TRAVIS_TAG" == "BFA" ]]; then
+      curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -g 8.0.1
+    else
+      curl -s https://raw.githubusercontent.com/BigWigsMods/packager/master/release.sh | bash -g 8.0.1
+    fi
 
 notifications:
   email:
