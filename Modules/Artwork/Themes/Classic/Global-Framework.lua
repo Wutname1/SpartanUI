@@ -18,7 +18,7 @@ function module:updateSpartanViewport() -- handles viewport offset based on sett
 		WorldFrame:ClearAllPoints();
 		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT",SUI.DBMod.Artwork.Viewport.offset.left,SUI.DBMod.Artwork.Viewport.offset.top);
 		if SpartanUI_Base5:IsVisible() then
-			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT",SUI.DBMod.Artwork.Viewport.offset.right, (SpartanUI_Base5:GetHeight() * SUI.DB.scale/DBMod.Artwork.Viewport.offset.bottom));
+			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT",SUI.DBMod.Artwork.Viewport.offset.right, (SpartanUI_Base5:GetHeight() * SUI.DB.scale/SUI.DBMod.Artwork.Viewport.offset.bottom));
 		else
 			WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0);
 		end

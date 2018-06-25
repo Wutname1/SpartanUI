@@ -578,10 +578,10 @@ function SUI:BT4RefreshConfig()
 end
 
 function SUI:UpdateModuleConfigs()
-	SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
+	-- SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
 	
-	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
+	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
+	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 	
 	if Bartender4 then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
