@@ -119,8 +119,8 @@ end
 
 function Artwork_Core:StatusBarOptions()
 	local module = SUI:GetModule("Style_"..SUI.DBMod.Artwork.Style)
-	-- local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["honor"] = L["Honor"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
-	local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["ap"] = L["Artifact Power"], ["disabled"] = L["Disabled"]}
+	local StatusBars = {["xp"] = L["Experiance"], ["rep"] = L["Reputation"], ["ap"] = L["Artifact Power"], ["honor"] = L["Honor"], ["az"] = L["Azerite Bar"], ["disabled"] = L["Disabled"]}
+
 	SUI.opt.args["Artwork"].args["StatusBars"] = {
 		name = L["Status bars"],
 		desc = L["BarXPDesc"],
@@ -153,6 +153,17 @@ function Artwork_Core:StatusBarOptions()
 						get = function(info) return SUI.DB.StatusBars.APBar.text; end,
 						set = function(info,val)
 							SUI.DB.StatusBars.APBar.text = val;
+							module:UpdateStatusBars()
+						end
+					}
+				}
+			},
+			AzeriteBar = {name = L["Azerite Bar"],type = "group",inline=true,
+				args = {
+					displaytext = {name=L["DisplayText"],type="toggle",order=.15,
+						get = function(info) return SUI.DB.StatusBars.AzeriteBar.text; end,
+						set = function(info,val)
+							SUI.DB.StatusBars.AzeriteBar.text = val;
 							module:UpdateStatusBars()
 						end
 					}

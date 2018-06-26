@@ -349,15 +349,15 @@ local updateText = function(self, side)
 			end
 			_G[FrameName.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
 		end
-	-- elseif (SUI.DB.StatusBars.left == "honor" and side == "left") or (SUI.DB.StatusBars.right == "honor" and side == "right") then
-		-- if SUI.DB.StatusBars.HonorBar.text then
-			-- local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
-			-- local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);
-			-- local ratio = (xp/xpForNextPoint);
-			-- _G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(xp), SUI:comma_value(xpForNextPoint), ratio*100)
-		-- else
-			-- _G[FrameName.."Text"]:SetText("")
-		-- end
+	elseif (SUI.DB.StatusBars.left == "honor" and side == "left") or (SUI.DB.StatusBars.right == "honor" and side == "right") then
+		if SUI.DB.StatusBars.HonorBar.text then
+			local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
+			local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);
+			local ratio = (xp/xpForNextPoint);
+			_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(xp), SUI:comma_value(xpForNextPoint), ratio*100)
+		else
+			_G[FrameName.."Text"]:SetText("")
+		end
 	end
 end
 

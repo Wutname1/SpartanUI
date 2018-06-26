@@ -179,7 +179,6 @@ local DBdefault = {
 			left = "xp",
 			right = "rep",
 			XPBar = {
-				enabled = true,
 				text = true,
 				ToolTip = "click",
 				GainedColor	= "Blue",
@@ -195,7 +194,6 @@ local DBdefault = {
 				RestedMatchColor= false
 			},
 			RepBar = {
-				enabled = true,
 				text = false,
 				ToolTip = "click",
 				GainedColor	= "AUTO",
@@ -206,12 +204,14 @@ local DBdefault = {
 				AutoDefined	= true
 			},
 			APBar = {
-				enabled = false,
+				text = true,
+				ToolTip = "hover"
+			},
+			AzeriteBar = {
 				text = true,
 				ToolTip = "hover"
 			},
 			HonorBar = {
-				enabled = false,
 				text = true
 			}
 		},
