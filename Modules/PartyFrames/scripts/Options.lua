@@ -20,7 +20,7 @@ function PartyFrames:UpdateText()
 end
 
 function PartyFrames:OnInitialize()
-	SUI.opt.args["PartyFrames"].args["DisplayOpts"] = {name=L["DisplayOpts"],type="group",order=1,
+	SUI.opt.args["PartyFrames"].args["DisplayOpts"] = {name=L["DisplayOpts"],type="group",order=100,inline=true,
 		desc=L["DisplayOptsPartyDesc"],args = {
 			bar1 = {name=L["WhenDisplayParty"],type="header",order=0},
 			toggleraid =  {name=L["PartyDispRaid"],type="toggle",order=1,

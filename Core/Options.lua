@@ -36,10 +36,6 @@ function module:OnInitialize()
 	ModsLoaded.SpinCam = enabled
 	local name, title, notes, enabled,loadable = GetAddOnInfo("SpartanUI_FilmEffects")
 	ModsLoaded.FilmEffects = enabled
-	
-	if (SUI.Version ~= SUI.DBG.CurseVersion) and (spartan.CurseVersion) then
-		spartan.opt.args["General"].args["CurseVersion"] = {name = "Build "..spartan.CurseVersion,order=1.1,type = "header"};
-	end
 
 	spartan.opt.args["General"].args["style"] = {name = L["StyleSettings"], type = "group",order = 100,
 		args = {
@@ -425,6 +421,13 @@ function module:OnInitialize()
 					end
 				end,
 			},
+			-- MoveBars={name = "Move Bars", type = "toggle",order=0.91,
+				-- get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else SUI.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
+				-- set = function(info, value)
+					-- Bartender4.db.profile.buttonlock = value
+					-- Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
+				-- end,
+			-- },
 			minimapIcon = {
 				order = 7,
 				type = "toggle",
@@ -456,10 +459,9 @@ function module:OnInitialize()
 			
 			line2 = {name="",type="header",order = 99},
 			navigationissues = {name=L["HaveQuestion"],type="description",order = 100,fontSize="large"},
-			navigationissues2 = {name="    -|cff6666FF http://faq.spartanui.net/",type="description",order = 101,fontSize="medium"},
-			
+			navigationissues2 = {name="",type="input",order = 101,width="full",get = function(info) return "https://discord.gg/J8wJGtz" end, set = function(info, value) end},			
 			bugsandfeatures = {name=L["Bugs and Feature Requests"] .. ":",type="description",order = 200,fontSize="large"},
-			bugsandfeatures2 = {name="     -|cff6666FF http://bugs.spartanui.net/",type="description",order = 201,fontSize="medium"},
+			bugsandfeatures2 = {name="",type="input",order = 201,width="full",get = function(info) return "http://bugs.spartanui.net/" end, set = function(info, value) end},
 			
 			
 			line3 = {name="",type="header",order = 500},
@@ -471,24 +473,27 @@ function module:OnInitialize()
 			FAQQ2 = {name="Actionbars are appearing in the wrong place",type="description",order = 520,fontSize="medium"},
 			FAQQ2A1 = {name="- Most issues can be fixed by reseting the action bars above.",type="description",order = 521,fontSize="small"},
 			
-			FAQQ3 = {name="Does SpartanUI have hidden features?",type="description",order = 530,fontSize="medium"},
-			FAQQ3A1 = {name="- But of course! Did you know SpartanUI can help you with achivements that involve killing X Number of a mob? Make sure your nameplates are displayed and use /countunit",type="description",order = 531,fontSize="small"},
-			
 			-- description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
 			-- description = {name=L["HelpStringDesc2"],type="description",order = 902,fontSize="small"},
 			-- dataDump = {name=L["Export"],type="input",multiline=15,width="full",order=993,get = function(info) return module:enc(module:ExportData()) end},
 			}
 		}
 	
+	spartan.opt.args["General"].args["ver1"] = {name="SUI Version: " .. SUI.Version,type="description",order = 50,fontSize="large"}
+	spartan.opt.args["General"].args["ver2"] = {name="SUI Build: " .. SUI.BuildNum,type="description",order = 51,fontSize="large"}
+	
+	spartan.opt.args["General"].args["line2"] = {name="",type="header",order = 99}
+	spartan.opt.args["General"].args["navigationissues"] = {name=L["HaveQuestion"],type="description",order = 100,fontSize="medium"}
+	spartan.opt.args["General"].args["navigationissues2"] = {name="",type="input",order = 101,width="full",get = function(info) return "https://discord.gg/J8wJGtz" end, set = function(info, value) end}
+	
+	spartan.opt.args["General"].args["bugsandfeatures"] = {name=L["Bugs and Feature Requests"] .. ":",type="description",order = 200,fontSize="medium"}
+	spartan.opt.args["General"].args["bugsandfeatures2"] = {name="",type="input",order = 201,width="full",get = function(info) return "http://bugs.spartanui.net/" end, set = function(info, value) end}
+	
 	spartan.opt.args["ModSetting"] = {name = L["Modules"], type = "group",
 		args = {
-		
-		Enabled = {
-		name = L["Enabled Modules"],
-		order = 0.1,
-		type = "group",
-		args = {
-				description = {type="description",name=L["ModulesDesc"],order=1,fontSize="medium"},
+			-- description = {type="description",name=L["ModulesDesc"],order=1,fontSize="medium"},
+			Styles = {name = L["Styles"],type = "group",order=100,inline=true,args={}},
+			Components = {name = "Components",type = "group",order=200,inline=true,args={
 				Artwork = {name = L["Artwork"],type = "toggle",order=10,
 					get = function(info) return ModsLoaded.Artwork end,
 					set = function(info,val)
@@ -521,27 +526,23 @@ function module:OnInitialize()
 						spartan:reloadui();
 					end,
 				},
-				Styles = {name = L["Styles"],type = "group",order=100,inline=true,args={}},
-				Components = {name = "Components",type = "group",order=200,inline=true,args={
-					SpinCam = {name = L["Spin cam"],type = "toggle",order=50,
-						get = function(info) return ModsLoaded.SpinCam end,
-						set = function(info,val)
-							if ModsLoaded.SpinCam then ModsLoaded.SpinCam = false else ModsLoaded.SpinCam = true end
-							if ModsLoaded.SpinCam then EnableAddOn("SpartanUI_SpinCam") else DisableAddOn("SpartanUI_SpinCam") end
-							spartan:reloadui();
-						end,
-					},
-					FilmEffects = {name = L["Film Effects"],type = "toggle",order=60,
-						get = function(info) return ModsLoaded.FilmEffects end,
-						set = function(info,val)
-							if ModsLoaded.FilmEffects then ModsLoaded.FilmEffects = false else ModsLoaded.FilmEffects = true end
-							if ModsLoaded.FilmEffects then EnableAddOn("SpartanUI_FilmEffects") else DisableAddOn("SpartanUI_FilmEffects") end
-							spartan:reloadui();
-						end,
-					}
-				}},
-			}
-		}
+				SpinCam = {name = L["Spin cam"],type = "toggle",order=50,
+					get = function(info) return ModsLoaded.SpinCam end,
+					set = function(info,val)
+						if ModsLoaded.SpinCam then ModsLoaded.SpinCam = false else ModsLoaded.SpinCam = true end
+						if ModsLoaded.SpinCam then EnableAddOn("SpartanUI_SpinCam") else DisableAddOn("SpartanUI_SpinCam") end
+						spartan:reloadui();
+					end,
+				},
+				FilmEffects = {name = L["Film Effects"],type = "toggle",order=60,
+					get = function(info) return ModsLoaded.FilmEffects end,
+					set = function(info,val)
+						if ModsLoaded.FilmEffects then ModsLoaded.FilmEffects = false else ModsLoaded.FilmEffects = true end
+						if ModsLoaded.FilmEffects then EnableAddOn("SpartanUI_FilmEffects") else DisableAddOn("SpartanUI_FilmEffects") end
+						spartan:reloadui();
+					end,
+				}
+			}},
 		}
 	}
 	
@@ -550,7 +551,7 @@ function module:OnInitialize()
 		local name, title, notes, enabled,loadable = GetAddOnInfo(i)
 		ModsLoaded[name] = enabled
 		if (string.match(name, "SpartanUI_Style_")) then
-			spartan.opt.args["ModSetting"].args["Enabled"].args["Styles"].args[string.sub(name, 9)] = {
+			spartan.opt.args["ModSetting"].args["Styles"].args[string.sub(name, 9)] = {
 				name = string.sub(name, 17),type = "toggle",
 				get = function(info) return ModsLoaded[name] end,
 				set = function(info,val)
@@ -576,7 +577,7 @@ function module:OnInitialize()
 				Displayname = submodule.DisplayName
 			end
 			
-			spartan.opt.args["ModSetting"].args["Enabled"].args["Components"].args[RealName] = {
+			spartan.opt.args["ModSetting"].args["Components"].args[RealName] = {
 				name = Displayname,type = "toggle",
 				get = function(info) return SUI.DB.EnabledComponents[RealName] end,
 				set = function(info,val)

@@ -4,7 +4,7 @@ local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------
 
 function RaidFrames:OnInitialize()
-	SUI.opt.args["RaidFrames"].args["DisplayOpts"] = {name = L["DisplayOpts"],type="group",order=1,
+	SUI.opt.args["RaidFrames"].args["DisplayOpts"] = {name = L["DisplayOpts"],type="group",order=100,inline=true,
 		args = {
 			toggleraid =  {name = L["ShowRFrames"], type = "toggle", order=1,
 				get = function(info) return SUI.DBMod.RaidFrames.showRaid; end,

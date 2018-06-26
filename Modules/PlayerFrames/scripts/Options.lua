@@ -4,7 +4,7 @@ local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
 
 function PlayerFrames:OnInitialize()
-	SUI.opt.args["PlayerFrames"].args["FrameStyle"] = {name=L["FrameStyle"],type="group",order=1,
+	SUI.opt.args["PlayerFrames"].args["FrameStyle"] = {name=L["FrameStyle"],type="group",
 		desc=L["BarOptDesc"],
 		args = {
 			toggle3DPortrait =  {name = L["Portrait3D"], type = "toggle", order=1,
@@ -91,7 +91,7 @@ function PlayerFrames:OnInitialize()
 			},
 		}
 	}
-	SUI.opt.args["PlayerFrames"].args["frameDisplay"] = {name = "Disable Frames",type = "group",order=2,desc="Enable and Disable Specific frames",
+	SUI.opt.args["PlayerFrames"].args["frameDisplay"] = {name = "Disable Frames",type = "group",desc="Enable and Disable Specific frames",
 		args = {
 			player = {name = L["DispPlayer"],type = "toggle",order=1,
 				get = function(info) return SUI.DBMod.PlayerFrames.player.display; end,
@@ -131,7 +131,7 @@ function PlayerFrames:OnInitialize()
 		}
 	}
 	
-	SUI.opt.args["PlayerFrames"].args["castbar"] = {name = L["castbar"],type = "group",order=4,
+	SUI.opt.args["PlayerFrames"].args["castbar"] = {name = L["castbar"],type = "group",
 		desc = L["UnitCastSet"],
 		args = {
 			player = { name = L["PlayerStyle"], type = "select", style="radio",
@@ -197,7 +197,7 @@ function PlayerFrames:OnInitialize()
 			},
 		}
 	};
-	SUI.opt.args["PlayerFrames"].args["bossarena"] = {name = L["BossArenaFrames"],type = "group",order=5,
+	SUI.opt.args["PlayerFrames"].args["bossarena"] = {name = L["BossArenaFrames"],type = "group",
 		args = {
 			bar0 = {name=L["BossFrames"],type="header",order=0},
 			boss = { name = L["ShowFrames"], type = "toggle",order=1,--disabled=true,
@@ -227,7 +227,7 @@ function PlayerFrames:OnInitialize()
 		}
 	};
 	
-	SUI.opt.args["PlayerFrames"].args["resetSpecialBar"] = {name = L["resetSpecialBar"],type = "execute",order=3,
+	SUI.opt.args["PlayerFrames"].args["resetSpecialBar"] = {name = L["resetSpecialBar"],type = "execute",
 		desc = L["resetSpecialBarDesc"],
 		func = function() PlayerFrames:ResetAltBarPositions(); end
 	};
