@@ -298,7 +298,7 @@ local updateText = function(self, side)
 	--Reset Text
 	_G[FrameName.."Text"]:SetText("")
 	
-	if (SUI.DB.StatusBars.left == "xp" and side == "left") or (SUI.DB.StatusBars.right == "xp" and side == "right") then
+	if (SUI.DB.StatusBars[side] == "xp") then
 		local level,rested,now,goal = UnitLevel("player"),GetXPExhaustion() or 0,UnitXP("player"),UnitXPMax("player");
 		if now ~= 0 then
 			_G[FrameName.."Fill"]:SetWidth((now/goal)*self:GetWidth());
@@ -313,7 +313,7 @@ local updateText = function(self, side)
 			_G[FrameName.."Text"]:SetText("")
 		end
 		SetXPColors(self);
-	elseif (SUI.DB.StatusBars.left == "rep" and side == "left") or (SUI.DB.StatusBars.right == "rep" and side == "right") then
+	elseif (SUI.DB.StatusBars[side] == "rep") then
 		local ratio,name,reaction,low,high,current = 0,GetWatchedFactionInfo();
 		if name then ratio = (current-low)/(high-low); end
 		if ratio == 0 then
@@ -327,7 +327,7 @@ local updateText = function(self, side)
 			_G[FrameName.."Text"]:SetText("")
 		end
 		SetRepColors(self);
-	elseif (SUI.DB.StatusBars.left == "ap" and side == "left") or (SUI.DB.StatusBars.right == "ap" and side == "right") then
+	elseif (SUI.DB.StatusBars[side] == "ap") then
 		_G[FrameName.."Text"]:SetText("")
 		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
@@ -350,7 +350,36 @@ local updateText = function(self, side)
 			end
 			_G[FrameName.."Fill"]:SetVertexColor(1, 0.8, 0, 0.7);
 		end
-	elseif (SUI.DB.StatusBars.left == "honor" and side == "left") or (SUI.DB.StatusBars.right == "honor" and side == "right") then
+	elseif (SUI.DB.StatusBars[side] == "az") then
+		_G[FrameName.."Text"]:SetText("")
+		if C_AzeriteItem.HasActiveAzeriteItem() then
+			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem();
+			if (not azeriteItemLocation) then 
+				return; 
+			end
+			-- local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation); 
+			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation);
+			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation); 
+			local xpToNextLevel = totalLevelXP - xp;
+			local ratio = (xp / totalLevelXP)
+			if ratio == 0 then
+				_G[FrameName.."Fill"]:SetWidth(0.1);
+			else
+				if (ratio*self:GetWidth()) > self:GetWidth() then
+					_G[FrameName.."Fill"]:SetWidth(self:GetWidth())
+				else
+					_G[FrameName.."Fill"]:SetWidth(ratio*self:GetWidth());
+				end
+			end
+			
+			if SUI.DB.StatusBars.AzeriteBar.text then
+				_G[FrameName.."Text"]:SetFormattedText("( %s / %s ) %d%%", SUI:comma_value(xp), SUI:comma_value(xpToNextLevel), ratio*100)
+			else
+				_G[FrameName.."Text"]:SetText("")
+			end
+			
+		end
+	elseif (SUI.DB.StatusBars[side] == "honor") then
 		if SUI.DB.StatusBars.HonorBar.text then
 			local itemID, altItemID, name, icon, xp, pointsSpent, quality, HonorAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop = C_HonorUI.GetEquippedHonorInfo();
 			local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent);
@@ -417,6 +446,22 @@ function module:StatusBars()
 		end
 		tooltip:Show();
 	end
+	local showAzeriteTooltip = function(self)
+		if C_AzeriteItem.HasActiveAzeriteItem() then
+			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem(); 
+			if (not azeriteItemLocation) then 
+				return; 
+			end
+			-- local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation); 
+			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation);
+			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation); 
+			local xpToNextLevel = totalLevelXP - xp;
+			local ratio = (xp / totalLevelXP)
+			Fel_StatusBarTooltipHeader:SetText(ARTIFACT_POWER_TOOLTIP_TITLE:format(BreakUpLargeNumbers(arfifactTickParent.totalXP, true), BreakUpLargeNumbers(arfifactTickParent.xp, true), BreakUpLargeNumbers(arfifactTickParent.xpForNextPoint, true)), HIGHLIGHT_FONT_COLOR:GetRGB());
+			Fel_StatusBarTooltipText:SetText(ARTIFACT_POWER_TOOLTIP_BODY:format(arfifactTickParent.numPointsAvailableToSpend), nil, nil, nil, true);
+		end
+		tooltip:Show();
+	end
 	
 	Fel_StatusBar_LeftPlate:SetTexCoord(0.17,0.97,0,1);
 	Fel_StatusBar_Left:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -433,6 +478,7 @@ function module:StatusBars()
 		if SUI.DB.StatusBars.left == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.left == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.left == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.left == "az" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "click" then showAzeriteTooltip(self); end
 	end);
 	Fel_StatusBar_Left:SetScript("OnMouseDown",function(self)
 		tooltip:ClearAllPoints();
@@ -440,6 +486,7 @@ function module:StatusBars()
 		if SUI.DB.StatusBars.left == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.left == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.left == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.left == "az" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "click" then showAzeriteTooltip(self); end
 	end);
 	Fel_StatusBar_Left:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
 	Fel_StatusBar_Left:SetScript("OnEvent",function(self) updateText(self, "left") end)
@@ -458,6 +505,7 @@ function module:StatusBars()
 		if SUI.DB.StatusBars.right == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.right == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.right == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.right == "az" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "click" then showAzeriteTooltip(self); end
 	end);
 	Fel_StatusBar_Right:SetScript("OnMouseDown",function(self)
 		tooltip:ClearAllPoints();
@@ -465,6 +513,7 @@ function module:StatusBars()
 		if SUI.DB.StatusBars.right == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.right == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.right == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
+		if SUI.DB.StatusBars.right == "az" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "click" then showAzeriteTooltip(self); end
 	end);
 	Fel_StatusBar_Right:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
 	Fel_StatusBar_Right:SetScript("OnEvent",function(self) updateText(self, "right") end)

@@ -133,14 +133,11 @@ local updateText = function(self, side)
 		SetRepColors(self);
 	elseif (SUI.DB.StatusBars[side] == "az") then
 		_G[FrameName.."Text"]:SetText("")
-		print("a")
 		if C_AzeriteItem.HasActiveAzeriteItem() then
-			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem(); 
-			print("b")
+			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem();
 			if (not azeriteItemLocation) then 
 				return; 
 			end
-			print("c")
 			-- local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation); 
 			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation);
 			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation); 
@@ -168,6 +165,7 @@ local updateText = function(self, side)
 		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
 			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+			if xpForNextPoint == 0 then return end
 			local ratio = (xp/xpForNextPoint);
 			if ratio == 0 then
 				_G[FrameName.."Fill"]:SetWidth(0.1);
@@ -238,9 +236,10 @@ function module:EnableStatusBars()
 	end
 	local showAPTooltip = function(self)
 		local FrameName = self:GetName();
-		if HasArtifactEquipped() then
+		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
 			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+			if xpForNextPoint == 0 then return end
 			local ratio = (xp/xpForNextPoint);
 			
 			SUI_StatusBarTooltipHeader:SetText(name);							
@@ -252,23 +251,18 @@ function module:EnableStatusBars()
 		tooltip:Show();
 	end
 	local showAzeriteTooltip = function(self)
-		print("a")
 		if C_AzeriteItem.HasActiveAzeriteItem() then
 			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem(); 
-			if (not azeriteItemLocation) then 
-				print("b")
+			if (not azeriteItemLocation) then
 				return; 
 			end
-			print("c")
 			-- local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation); 
 			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation);
 			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation); 
 			local xpToNextLevel = totalLevelXP - xp;
 			local ratio = (xp / totalLevelXP)
-			print("d")
 			SUI_StatusBarTooltipHeader:SetText(ARTIFACT_POWER_TOOLTIP_TITLE:format(BreakUpLargeNumbers(arfifactTickParent.totalXP, true), BreakUpLargeNumbers(arfifactTickParent.xp, true), BreakUpLargeNumbers(arfifactTickParent.xpForNextPoint, true)), HIGHLIGHT_FONT_COLOR:GetRGB());
 			SUI_StatusBarTooltipText:SetText(ARTIFACT_POWER_TOOLTIP_BODY:format(arfifactTickParent.numPointsAvailableToSpend), nil, nil, nil, true);
-		print("e")
 		end
 		tooltip:Show();
 	end
@@ -288,7 +282,7 @@ function module:EnableStatusBars()
 		if SUI.DB.StatusBars.left == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.left == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.left == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
-		if SUI.DB.StatusBars.left == "AzeriteBar" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "hover" then showAzeriteTooltip(self); end
+		if SUI.DB.StatusBars.left == "az" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "hover" then showAzeriteTooltip(self); end
 	end);
 	SUI_StatusBar_Left:SetScript("OnMouseDown",function(self)
 		tooltip:ClearAllPoints();
@@ -296,7 +290,7 @@ function module:EnableStatusBars()
 		if SUI.DB.StatusBars.left == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.left == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.left == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
-		if SUI.DB.StatusBars.left == "AzeriteBar" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "click" then showAzeriteTooltip(self); end
+		if SUI.DB.StatusBars.left == "az" and SUI.DB.StatusBars.AzeriteBar.ToolTip == "click" then showAzeriteTooltip(self); end
 	end);
 	SUI_StatusBar_Left:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
 	SUI_StatusBar_Left:SetScript("OnEvent",function(self) updateText(self, "left") end)
@@ -315,7 +309,7 @@ function module:EnableStatusBars()
 		if SUI.DB.StatusBars.right == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "hover" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.right == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "hover" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.right == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAPTooltip(self); end
-		if SUI.DB.StatusBars.right == "AzeriteBar" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAzeriteTooltip(self); end
+		if SUI.DB.StatusBars.right == "az" and SUI.DB.StatusBars.APBar.ToolTip == "hover" then showAzeriteTooltip(self); end
 	end);
 	SUI_StatusBar_Right:SetScript("OnMouseDown",function(self)
 		tooltip:ClearAllPoints();
@@ -323,7 +317,7 @@ function module:EnableStatusBars()
 		if SUI.DB.StatusBars.right == "rep" and SUI.DB.StatusBars.RepBar.ToolTip == "click" then showRepTooltip(self); end
 		if SUI.DB.StatusBars.right == "xp" and SUI.DB.StatusBars.XPBar.ToolTip == "click" then showXPTooltip(self); end
 		if SUI.DB.StatusBars.right == "ap" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAPTooltip(self); end
-		if SUI.DB.StatusBars.right == "AzeriteBar" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAzeriteTooltip(self); end
+		if SUI.DB.StatusBars.right == "az" and SUI.DB.StatusBars.APBar.ToolTip == "click" then showAzeriteTooltip(self); end
 	end);
 	SUI_StatusBar_Right:SetScript("OnLeave",function() tooltip:Hide(); tooltip:ClearAllPoints(); end);
 	SUI_StatusBar_Right:SetScript("OnEvent",function(self) updateText(self, "right") end)
