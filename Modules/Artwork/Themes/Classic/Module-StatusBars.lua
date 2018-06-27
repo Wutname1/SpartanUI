@@ -256,13 +256,13 @@ function module:EnableStatusBars()
 			if (not azeriteItemLocation) then
 				return; 
 			end
-			-- local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation); 
+			local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation); 
 			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation);
 			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation); 
 			local xpToNextLevel = totalLevelXP - xp;
 			local ratio = (xp / totalLevelXP)
-			SUI_StatusBarTooltipHeader:SetText(ARTIFACT_POWER_TOOLTIP_TITLE:format(BreakUpLargeNumbers(arfifactTickParent.totalXP, true), BreakUpLargeNumbers(arfifactTickParent.xp, true), BreakUpLargeNumbers(arfifactTickParent.xpForNextPoint, true)), HIGHLIGHT_FONT_COLOR:GetRGB());
-			SUI_StatusBarTooltipText:SetText(ARTIFACT_POWER_TOOLTIP_BODY:format(arfifactTickParent.numPointsAvailableToSpend), nil, nil, nil, true);
+			SUI_StatusBarTooltipHeader:SetText(AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel), HIGHLIGHT_FONT_COLOR:GetRGB());
+			SUI_StatusBarTooltipText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()));
 		end
 		tooltip:Show();
 	end
