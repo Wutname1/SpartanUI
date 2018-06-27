@@ -625,13 +625,13 @@ local CreateTargetFrame = function(self,unit)
 		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
-		self.artwork.bg:SetPoint("CENTER");
+		self.artwork.bg:SetAllPoints(self);
 		self.artwork.bg:SetTexture(base_plate1);
-		self.artwork.bg:SetTexCoord(1,0,0,1);
+		self.artwork.bg:SetTexCoord(0.756890625,0.2265625,0.1953125,0.7890625);
 		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(58, 58);
-		self.Portrait:SetPoint("TOPLEFT",self,"TOPLEFT",35,-15);
+		self.Portrait:SetPoint("TOPLEFT",self,"TOPLEFT",27,-19);
 		
 		self.ThreatIndicator = CreateFrame("Frame",nil,self);
 		self.ThreatIndicator.Override = threat;
@@ -640,7 +640,7 @@ local CreateTargetFrame = function(self,unit)
 		do -- cast bar
 			local cast = CreateFrame("StatusBar",nil,self);
 			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
-			cast:SetSize(184, 16);
+			cast:SetSize(189, 16);
 			cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-1,-23);
 			cast:SetStatusBarTexture(Smoothv2)
 			
@@ -665,7 +665,7 @@ local CreateTargetFrame = function(self,unit)
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(3);
 			health:SetSize(self.Castbar:GetWidth(), 24);
-			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
+			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-3);
 			health:SetStatusBarTexture(Smoothv2)
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
@@ -722,7 +722,7 @@ local CreateTargetFrame = function(self,unit)
 			local power = CreateFrame("StatusBar",nil,self);
 			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(3);
 			power:SetSize(self.Castbar:GetWidth(), 8);
-			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
+			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-3);
 			power:SetStatusBarTexture(Smoothv2)
 			
 			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");

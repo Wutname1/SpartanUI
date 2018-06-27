@@ -64,12 +64,12 @@ function PlayerFrames:PositionFrame_Classic(b)
 	else
 		if b == "player" or b == nil then PlayerFrames.player:SetPoint("BOTTOMRIGHT",SUI_FramesAnchor,"TOP",-72,-3); end
 		if b == "pet" or b == nil then PlayerFrames.pet:SetPoint("BOTTOMRIGHT",PlayerFrames.player,"BOTTOMLEFT",-18,12) end
-		if b == "target" or b == nil then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",72,-3); end
+		if b == "target" or b == nil then PlayerFrames.target:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",54,-3); end
 		
 		if SUI.DBMod.PlayerFrames.targettarget.style == "small" then
-			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",360,-15); end
+			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",-5,-15); end
 		else
-			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",SUI_FramesAnchor,"TOP",370,12); end
+			if b == "targettarget" or b == nil then PlayerFrames.targettarget:SetPoint("BOTTOMLEFT",PlayerFrames.target,"BOTTOMRIGHT",7,12); end
 		end
 	end
 	

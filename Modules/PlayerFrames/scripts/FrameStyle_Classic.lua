@@ -470,21 +470,23 @@ local CreatePlayerFrame = function(self,unit)
 end
 
 local CreateTargetFrame = function(self,unit)
-	self:SetSize(280, 80);
+	self:SetSize(295, 80);
 	do --setup base artwork
 		local artwork = CreateFrame("Frame",nil,self);
 		artwork:SetFrameStrata("BACKGROUND");
-		artwork:SetFrameLevel(2); artwork:SetAllPoints(self);
+		artwork:SetFrameLevel(3);
+		artwork:SetAllPoints(self);
 		
 		artwork.bg = artwork:CreateTexture(nil,"BACKGROUND");
-		artwork.bg:SetPoint("CENTER");
+		artwork.bg:SetAllPoints(self);
+		-- artwork.bg:SetPoint("CENTER",self,"CENTER",0,0);
 		artwork.bg:SetTexture(base_plate1);
-		artwork.bg:SetTexCoord(1,0,0,1);
+		artwork.bg:SetTexCoord(0.80859375,0.2,0.1953125,0.8046875);
 		self.artwork = artwork
 		
 		self.Portrait = CreatePortrait(self);
 		self.Portrait:SetSize(64, 64);
-		self.Portrait:SetPoint("CENTER",self,"CENTER",-80,3);
+		self.Portrait:SetPoint("CENTER",self,"CENTER",-70,3);
 		
 		self.ThreatIndicator = CreateFrame("Frame",nil,self);
 		self.ThreatIndicator.Override = threat;
@@ -493,17 +495,17 @@ local CreateTargetFrame = function(self,unit)
 		do -- cast bar
 			local cast = CreateFrame("StatusBar",nil,self);
 			cast:SetFrameStrata("BACKGROUND"); cast:SetFrameLevel(3);
-			cast:SetSize(153, 16);
-			cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-36,-23);
+			cast:SetSize(143, 16);
+			cast:SetPoint("TOPRIGHT",self,"TOPRIGHT",-46,-23);
 			
 			cast.Text = cast:CreateFontString();
 			SUI:FormatFont(cast.Text, 10, "Player")
-			cast.Text:SetWidth(135); cast.Text:SetHeight(11);
+			cast.Text:SetSize(125, 11);
 			cast.Text:SetJustifyH("LEFT"); cast.Text:SetJustifyV("MIDDLE");
 			cast.Text:SetPoint("RIGHT",cast,"RIGHT",-4,0);
 			
 			cast.Time = cast:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			cast.Time:SetWidth(90); cast.Time:SetHeight(11);
+			cast.Time:SetSize(90, 11);
 			cast.Time:SetJustifyH("LEFT"); cast.Time:SetJustifyV("MIDDLE");
 			cast.Time:SetPoint("LEFT",cast,"RIGHT",2,0);
 			
@@ -516,18 +518,18 @@ local CreateTargetFrame = function(self,unit)
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(3);
-			health:SetWidth(150); health:SetHeight(16);
+			health:SetSize(140, 16);
 			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
 			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.value:SetWidth(135); health.value:SetHeight(11);
+			health.value:SetSize(125, 11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
 			self:Tag(health.value, PlayerFrames:TextFormat("health"))	
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			health.ratio:SetWidth(90); health.ratio:SetHeight(11);
+			health.ratio:SetSize(90, 11);
 			health.ratio:SetJustifyH("LEFT"); health.ratio:SetJustifyV("MIDDLE");
 			health.ratio:SetPoint("LEFT",health,"RIGHT",2,0);
 			self:Tag(health.ratio, '[perhp]%')
@@ -579,17 +581,17 @@ local CreateTargetFrame = function(self,unit)
 		do -- power bar
 			local power = CreateFrame("StatusBar",nil,self);
 			power:SetFrameStrata("BACKGROUND"); power:SetFrameLevel(3);
-			power:SetWidth(155); power:SetHeight(14);
+			power:SetSize(145, 14);
 			power:SetPoint("TOPRIGHT",self.Health,"BOTTOMRIGHT",0,-2);
 			
 			power.value = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.value:SetWidth(135); power.value:SetHeight(11);
+			power.value:SetSize(125, 11);
 			power.value:SetJustifyH("LEFT"); power.value:SetJustifyV("MIDDLE");
 			power.value:SetPoint("RIGHT",power,"RIGHT",-4,0);
 			self:Tag(power.value, PlayerFrames:TextFormat("mana"))
 			
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
-			power.ratio:SetWidth(90); power.ratio:SetHeight(11);
+			power.ratio:SetSize(90, 11);
 			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("MIDDLE");
 			power.ratio:SetPoint("LEFT",power,"RIGHT",2,0);
 			self:Tag(power.ratio, '[perpp]%')
@@ -1270,7 +1272,7 @@ local CreateToTFrame = function(self,unit)
 				local health = CreateFrame("StatusBar",nil,self);
 				health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(1);
 				health:SetSize(125, 25);
-				health:SetPoint("BOTTOMLEFT",self.artwork,"BOTTOMLEFT",5,17);
+				health:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",6,17);
 				health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 				
 				health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");

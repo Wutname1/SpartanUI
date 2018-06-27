@@ -123,10 +123,9 @@ function module:OnInitialize()
 end
 
 function module:FirstAtrifactNotice()
-	loginlevel = UnitLevel("player")
 	
-	--Only process if we are not 110; allowed to show new featues; have never used an artifact; The style allows tracking
-	if loginlevel ~= 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and SUI.DB.Styles[SUI.DBMod.Artwork.Style].StatusBars.AP and not (SUI.DB.StatusBars.right == "ap" or SUI.DB.StatusBars.left == "ap") then
+	--Only process if we are below 110; allowed to show new features; have never used an artifact; The style allows tracking
+	if loginlevel < 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and not C_ArtifactUI.IsEquippedArtifactMaxed() and SUI.DB.Styles[SUI.DBMod.Artwork.Style].StatusBars.AP and not (SUI.DB.StatusBars.right == "ap" or SUI.DB.StatusBars.left == "ap") then
 		--Detect if user already has a artifact
 		if HasArtifactEquipped() then
 			SUI.DBG.HasEquipedArtifact = true
@@ -166,6 +165,14 @@ function module:FirstAtrifactNotice()
 	end
 end
 
+function module:FirstAzeriteItem()
+
+
+end
+
 function module:OnEnable()
+	loginlevel = UnitLevel("player")
+	
 	module:FirstAtrifactNotice()
+	module:FirstAzeriteItem()
 end
