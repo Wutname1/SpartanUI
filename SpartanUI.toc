@@ -2,7 +2,10 @@
 ## Title: SpartanUI |CFF0070DDCore|r
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: 4.4.0
+## X-Build: @project-revision@
 ## Author: Wutname1
+## X-Curse-Project-ID: 4575
+## X-WoWI-ID: 18206
 ## X-oUF: SpartanoUF
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
