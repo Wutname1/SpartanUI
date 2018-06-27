@@ -329,9 +329,10 @@ local updateText = function(self, side)
 		SetRepColors(self);
 	elseif (DB.StatusBars.left == "ap" and side == "left") or (DB.StatusBars.right == "ap" and side == "right") then
 		_G[FrameName.."Text"]:SetText("")
-		if HasArtifactEquipped() then
+		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
 			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+			if xpForNextPoint == 0 then return end
 			local ratio = (xp/xpForNextPoint);
 			if ratio == 0 then
 				_G[FrameName.."Fill"]:SetWidth(0.1);
@@ -402,9 +403,10 @@ function module:StatusBars()
 	end
 	local showAPTooltip = function(self)
 		local FrameName = self:GetName();
-		if HasArtifactEquipped() then
+		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
 			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+			if xpForNextPoint == 0 then return end
 			local ratio = (xp/xpForNextPoint);
 			
 			Fel_StatusBarTooltipHeader:SetText(name);							
