@@ -1092,6 +1092,21 @@ function module:PlayerFrames()
 			Coords = {0, 0.1, 0, 0.2}
 		}
 	}
+	elseif SUI.DB.Styles.Fel.SubTheme == "War" then
+		Images = {
+			bg = {
+				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\Fel-Box]],
+				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
+			},
+			flair = {
+				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
+				Coords = {0, 0.1, 0, 0.2}
+			},
+			flair2 = {
+				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
+				Coords = {0, 0.1, 0, 0.2}
+			}
+		}
 	end
 	PlayerFrames = SUI:GetModule("PlayerFrames");
 	SpartanoUF:SetActiveStyle("Spartan_FelPlayerFrames");

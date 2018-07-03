@@ -22,7 +22,7 @@ function module:OnInitialize()
 		NotCrafting = true,
 		NotConsumables = true,
 		NotInGearset = true,
-		MaxILVL = 700,
+		MaxILVL = 200,
 		Gray = true,
 		White = false,
 		Green = false,
@@ -34,6 +34,9 @@ function module:OnInitialize()
 		SUI.DB.AutoSell = Defaults
 	else
 		SUI.DB.AutoSell = spartan:MergeData(SUI.DB.AutoSell, Defaults, false)
+	end
+	if SUI.DB.AutoSell.MaxILVL >= 501 then
+		SUI.DB.AutoSell.MaxILVL = 200
 	end
 end
 
@@ -349,7 +352,7 @@ function module:BuildOptions()
 					get = function(info) return SUI.DB.AutoSell.GearTokens end,
 					set = function(info,val) SUI.DB.AutoSell.GearTokens = val end
 			},
-			MaxILVL ={name = "Maximum iLVL to sell",type = "range",order = 10,width = "full",min = 1,max = 1100,step=1,
+			MaxILVL ={name = "Maximum iLVL to sell",type = "range",order = 10,width = "full",min = 1,max = 500,step=1,
 				set = function(info,val) SUI.DB.AutoSell.MaxILVL = val; end,
 				get = function(info) return SUI.DB.AutoSell.MaxILVL; end
 			},

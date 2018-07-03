@@ -92,6 +92,17 @@ function module:OnInitialize()
 						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
+				},
+				War = {name = "War", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_War", 120, 60 end,
+					func = function()
+						SUI.DBMod.Artwork.Style = "Fel";
+						SUI.DB.Styles.Fel.SubTheme = "War";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
+						module:ArtSetup()
+					end
 				}
 			}},
 			
@@ -107,6 +118,7 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Fel", 120, 60 end,
 					func = function()
 						SUI.DBMod.Artwork.Style = "Fel";
+						SUI.DB.Styles.Fel.SubTheme = "Fel";
 						module:ArtSetup()
 						end
 				},
@@ -121,6 +133,22 @@ function module:OnInitialize()
 					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Minimal", 120, 60 end,
 					func = function()
 						SUI.DBMod.Artwork.Style = "Minimal";
+						module:ArtSetup()
+					end
+				},
+				Digital = {name = "Digital", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_Digital", 120, 60 end,
+					func = function()
+						SUI.DBMod.Artwork.Style = "Minimal";
+						SUI.DB.Styles.Fel.SubTheme = "Digital";
+						module:ArtSetup()
+					end
+				},
+				War = {name = "War", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_War", 120, 60 end,
+					func = function()
+						SUI.DBMod.Artwork.Style = "Minimal";
+						SUI.DB.Styles.Fel.SubTheme = "War";
 						module:ArtSetup()
 					end
 				}
