@@ -96,6 +96,17 @@ function module:OnInitialize()
 						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
 						module:ArtSetup()
 					end
+				},
+				War = {name = "War", type="execute",disabled=true,
+					image=function() return "interface\\addons\\SpartanUI\\media\\Style_War", 120, 60 end,
+					func = function()
+						SUI.DBMod.Artwork.Style = "Fel";
+						DB.Styles.Fel.SubTheme = "War";
+						SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style;
+						SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style;
+						module:ArtSetup()
+					end
 				}
 			}},
 			

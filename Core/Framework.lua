@@ -323,6 +323,7 @@ local DBdefault = {
 			focus = frameDefault2,
 			focustarget = frameDefault2,
 			boss = frameDefault2,
+			arena = frameDefault2,
 			bars = {
 				health = {textstyle = "dynamic",textmode=1},
 				mana = {textstyle = "longfor",textmode=1},
@@ -335,7 +336,7 @@ local DBdefault = {
 			},
 			Castbar = {player=1,target=1,targettarget=1,pet=1,focus=1,text={player=1,target=1,targettarget=1,pet=1,focus=1}},
 			BossFrame = {movement=MovedDefault,display=true,scale=1},
-			ArenaFrame = {movement=MovedDefault,display=false,scale=1},
+			ArenaFrame = {movement=MovedDefault,display=true,scale=1},
 			ClassBar = {scale = 1,movement=MovedDefault},
 			TotemFrame = {movement=MovedDefault},
 			AltManaBar = {movement=MovedDefault},
