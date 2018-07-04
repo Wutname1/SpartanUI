@@ -15,6 +15,15 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 	PlayerFrames:PositionFrame_Classic()
 
 	if SUI.DBMod.PlayerFrames.BossFrame.display == true then
+		for i = 1, MAX_ARENA_ENEMIES do
+			PlayerFrames.arena[i] = SpartanoUF:Spawn('arena'..i, 'SUI_Arena'..i)
+			if i == 1 then
+				PlayerFrames.arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
+				PlayerFrames.arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
+			else
+				PlayerFrames.arena[i]:SetPoint('TOP', PlayerFrames.arena[i-1], 'BOTTOM', 0, -10)             
+			end
+		end
 		for i = 1, MAX_BOSS_FRAMES do
 			PlayerFrames.boss[i] = SpartanoUF:Spawn('boss'..i, 'SUI_Boss'..i)
 			if i == 1 then
@@ -85,6 +94,9 @@ function PlayerFrames:AddMover(frame, framename)
 		frame.mover:SetSize(20, 20);
 		
 		if framename == "boss" then
+			frame.mover:SetPoint("TOPLEFT",PlayerFrames.boss[1],"TOPLEFT");
+			frame.mover:SetPoint("BOTTOMRIGHT",PlayerFrames.boss[MAX_BOSS_FRAMES],"BOTTOMRIGHT");
+		elseif framename == "arena" then
 			frame.mover:SetPoint("TOPLEFT",PlayerFrames.boss[1],"TOPLEFT");
 			frame.mover:SetPoint("BOTTOMRIGHT",PlayerFrames.boss[MAX_BOSS_FRAMES],"BOTTOMRIGHT");
 		else
@@ -165,6 +177,27 @@ function PlayerFrames:BossMoveScripts(frame)
 	end);
 end
 
+function PlayerFrames:ArenaMoveScripts(frame)
+	frame:EnableMouse(enable)
+	frame:SetScript("OnMouseDown",function(self,button)
+		if button == "LeftButton" and IsAltKeyDown() then
+			PlayerFrames.arena[1].mover:Show();
+			DBMod.PlayerFrames.arena.moved = true;
+			PlayerFrames.arena[1]:SetMovable(true);
+			PlayerFrames.arena[1]:StartMoving();
+		end
+	end);
+	frame:SetScript("OnMouseUp",function(self,button)
+		PlayerFrames.arena[1].mover:Hide();
+		PlayerFrames.arena[1]:StopMovingOrSizing();
+		local Anchors = {}
+		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = PlayerFrames.arena[1]:GetPoint()
+		for k,v in pairs(Anchors) do
+			DBMod.PlayerFrames.arena.Anchors[k] = v
+		end
+	end);
+end
+
 function PlayerFrames:OnEnable()
 	PlayerFrames.boss = {}
 	if (SUI.DBMod.PlayerFrames.Style == "Classic") then
@@ -187,6 +220,14 @@ function PlayerFrames:OnEnable()
 				end
 			end
 		end
+		-- if DBMod.PlayerFrames.ArenaFrame.display then
+			PlayerFrames:AddMover(PlayerFrames.arena[1], "arena")
+			for i = 2, 6 do
+				if PlayerFrames.arena[i] ~= nil then
+					PlayerFrames:ArenaMoveScripts(PlayerFrames.arena[i])
+				end
+			end
+		-- end
 	end
 	
 	PlayerFrames:SetupStaticOptions()

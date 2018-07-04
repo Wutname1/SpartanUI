@@ -14,6 +14,7 @@ function module:OnInitialize()
 	
 	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["Digital"].disabled = false
 	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["War"].disabled = false
+	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["War"].disabled = false
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == "Fel") then module:Init() end
 end
