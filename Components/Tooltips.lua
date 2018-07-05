@@ -42,26 +42,26 @@ local tooltips = {
 	EventTraceTooltip,
 	ItemSocketingDescription
 }
-local whitebg = {bgFile = [[Interface\AddOns\SpartanUI\media\blank.tga]], tile = false, edgeSize = 3}
+local whitebg = {bgFile = "Interface\\AddOns\\SpartanUI\\media\\blank.tga", tile = false, edgeSize = 3}
 
 function module:OnInitialize()
 	if SUI.DB.Tooltips == nil then
 		SUI.DB.Tooltips = {
 			Styles = {
 				metal = {
-					bgFile = [[Interface\AddOns\SpartanUI\media\metal.tga]],
+					bgFile = "Interface\\AddOns\\SpartanUI\\media\\metal.tga",
 					tile = false
 				},
 				smooth = {
-					bgFile = [[Interface\AddOns\SpartanUI\media\Smoothv2.tga]],
+					bgFile = "Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga",
 					tile = false
 				},
 				smoke = {
-					bgFile = [[Interface\AddOns\SpartanUI\media\smoke.tga]],
+					bgFile = "Interface\\AddOns\\SpartanUI\\media\\smoke.tga",
 					tile = false
 				},
 				none = {
-					bgFile = [[Interface\AddOns\SpartanUI\media\blank.tga]],
+					bgFile = "Interface\\AddOns\\SpartanUI\\media\\blank.tga",
 					tile = false
 				}
 			},
@@ -541,7 +541,7 @@ function module:OnEnable()
 		anchor:EnableMouse(enable)
 		anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
 		anchor.bg:SetAllPoints(anchor)
-		anchor.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]])
+		anchor.bg:SetTexture("Interface\\BlackMarket\\BlackMarketBackground-Tile")
 		anchor.bg:SetVertexColor(1, 1, 1, 0.8)
 		anchor.lbl = anchor:CreateFontString(nil, "OVERLAY", "SUI_Font10")
 		anchor.lbl:SetText("Anchor for Rule " .. k)
@@ -763,12 +763,24 @@ function module:BuildOptions()
 						SUI.DB.Tooltips[v].OverrideLoc = val
 					end
 				},
-				MoveAnchor = {name = "Move anchor", type = "execute", order = k + 20.6, width = "half", func = function(info, val)
+				MoveAnchor = {
+					name = "Move anchor",
+					type = "execute",
+					order = k + 20.6,
+					width = "half",
+					func = function(info, val)
 						module[v].anchor:Show()
-					end},
-				ResetAnchor = {name = "Reset anchor", type = "execute", order = k + 20.7, width = "half", func = function(info, val)
+					end
+				},
+				ResetAnchor = {
+					name = "Reset anchor",
+					type = "execute",
+					order = k + 20.7,
+					width = "half",
+					func = function(info, val)
 						SUI.DB.Tooltips[v].Anchor.Moved = false
-					end}
+					end
+				}
 			}
 		}
 	end

@@ -141,7 +141,7 @@ function RaidFrames:OnEnable()
 
 	SUI.RaidFrames.mover.bg = SUI.RaidFrames.mover:CreateTexture(nil, "BACKGROUND")
 	SUI.RaidFrames.mover.bg:SetAllPoints(SUI.RaidFrames.mover)
-	SUI.RaidFrames.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]])
+	SUI.RaidFrames.mover.bg:SetTexture("Interface\\BlackMarket\\BlackMarketBackground-Tile")
 	SUI.RaidFrames.mover.bg:SetVertexColor(1, 1, 1, 0.5)
 
 	SUI.RaidFrames.mover:SetScript(

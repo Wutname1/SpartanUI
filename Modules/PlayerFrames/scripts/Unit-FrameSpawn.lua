@@ -173,7 +173,7 @@ function PlayerFrames:AddMover(frame, framename)
 
 		frame.mover.bg = frame.mover:CreateTexture(nil, "BACKGROUND")
 		frame.mover.bg:SetAllPoints(frame.mover)
-		frame.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]])
+		frame.mover.bg:SetTexture("Interface\\BlackMarket\\BlackMarketBackground-Tile")
 		frame.mover.bg:SetVertexColor(1, 1, 1, 0.5)
 
 		frame.mover:SetScript(

@@ -9,9 +9,9 @@ for k, v in pairs(SpartanoUF.colors) do
 	end
 end
 colors.health = {0 / 255, 255 / 255, 50 / 255}
-local base_plate2 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_2_dual.blp]]
-local base_plate3 = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_3_single.blp]]
-local base_ring = [[Interface\AddOns\SpartanUI_RaidFrames\media\base_ring1.blp]]
+local base_plate2 = "Interface\\AddOns\\SpartanUI_RaidFrames\\media\\base_2_dual.blp"
+local base_plate3 = "Interface\\AddOns\\SpartanUI_RaidFrames\\media\\base_3_single.blp"
+local base_ring = "Interface\\AddOns\\SpartanUI_RaidFrames\\media\\base_ring1.blp"
 
 local threat = function(self, event, unit)
 	local status
@@ -66,7 +66,7 @@ local SpawnUnitFrame = function(self, unit)
 			local health = CreateFrame("StatusBar", nil, self)
 			health:SetFrameStrata("BACKGROUND")
 			health:SetFrameLevel(2)
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 
 			if SUI.DBMod.RaidFrames.FrameStyle == "large" then
 				health:SetPoint("TOPRIGHT", self, "TOPRIGHT", -55, -19)
@@ -123,13 +123,13 @@ local SpawnUnitFrame = function(self, unit)
 			local myBars = CreateFrame("StatusBar", nil, self.Health)
 			myBars:SetPoint("TOPLEFT", self.Health:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 			myBars:SetPoint("BOTTOMLEFT", self.Health:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.45)
 
 			local otherBars = CreateFrame("StatusBar", nil, myBars)
 			otherBars:SetPoint("TOPLEFT", myBars:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 			otherBars:SetPoint("BOTTOMLEFT", myBars:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.35)
 
 			-- myBars:SetSize(150, health:GetHeight())

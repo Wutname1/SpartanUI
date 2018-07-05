@@ -192,7 +192,7 @@ function module:OnEnable()
 		Minimap.mover:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMRIGHT")
 		Minimap.mover.bg = Minimap.mover:CreateTexture(nil, "BACKGROUND")
 		Minimap.mover.bg:SetAllPoints(Minimap.mover)
-		Minimap.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]])
+		Minimap.mover.bg:SetTexture("Interface\\BlackMarket\\BlackMarketBackground-Tile")
 		Minimap.mover.bg:SetVertexColor(1, 1, 1, 0.8)
 		Minimap.mover:EnableMouse(true)
 		Minimap.mover:Hide()
@@ -518,8 +518,12 @@ function module:updateButtons()
 				module:SetupButton(child, true)
 			end
 
-			if buttonName and -- and buttonType == "Button"
-					child.FadeOut ~= nil and (not spartan:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 1 then
+			if
+				buttonName and -- and buttonType == "Button"
+					child.FadeOut ~= nil and
+					(not spartan:isInTable(IgnoredFrames, buttonName)) and
+					child:GetAlpha() == 1
+			 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 				child.FadeOut:Play()

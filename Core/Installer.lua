@@ -142,7 +142,7 @@ function module:CreateInstallWindow()
 
 	Win.bg = Win:CreateTexture(nil, "BORDER")
 	Win.bg:SetAllPoints(Win)
-	Win.bg:SetTexture([[Interface\AddOns\SpartanUI\media\Smoothv2.tga]])
+	Win.bg:SetTexture("Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga")
 	Win.bg:SetVertexColor(0, 0, 0, .7)
 
 	Win.border = Win:CreateTexture(nil, "BORDER")
@@ -150,7 +150,7 @@ function module:CreateInstallWindow()
 	Win.border:SetPoint("LEFT", -10, 0)
 	Win.border:SetPoint("RIGHT", 10, 0)
 	Win.border:SetPoint("BOTTOM", 0, -10)
-	Win.border:SetTexture([[Interface\AddOns\SpartanUI\media\smoke.tga]])
+	Win.border:SetTexture("Interface\\AddOns\\SpartanUI\\media\\smoke.tga")
 	Win.border:SetVertexColor(0, 0, 0, .7)
 
 	Win.Status = Win:CreateFontString(nil, "OVERLAY", "SUI_FontOutline12")
@@ -206,7 +206,7 @@ function module:CreateInstallWindow()
 
 	Win.Next.texture = Win.Next:CreateTexture(nil, "BORDER")
 	Win.Next.texture:SetAllPoints(Win.Next)
-	Win.Next.texture:SetTexture([[Interface\AddOns\SpartanUI\media\Smoothv2.tga]])
+	Win.Next.texture:SetTexture("Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga")
 	Win.Next.texture:SetVertexColor(0, 0.5, 1)
 
 	-- Win.Next.parent = frame
@@ -258,7 +258,7 @@ function module:CreateInstallWindow()
 
 	Win.Skip.texture = Win.Skip:CreateTexture(nil, "BORDER")
 	Win.Skip.texture:SetAllPoints(Win.Skip)
-	Win.Skip.texture:SetTexture([[Interface\AddOns\SpartanUI\media\Smoothv2.tga]])
+	Win.Skip.texture:SetTexture("Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga")
 	Win.Skip.texture:SetVertexColor(.75, 0, 0)
 
 	Win.Skip:SetScript(

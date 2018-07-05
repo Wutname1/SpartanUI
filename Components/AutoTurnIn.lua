@@ -19,24 +19,16 @@ local ITEMS = {
 	["Two-Handed Swords"] = weapon[9],
 	["Staves"] = weapon[10],
 	["Fist Weapons"] = weapon[11],
-	--['Miscellaneous'] = select(12, weapon)
 	["Daggers"] = weapon[13],
 	["Thrown"] = weapon[14],
 	["Crossbows"] = weapon[15],
 	["Wands"] = weapon[16],
-	--['Fishing Pole'] = select(17, weapon)
 	-- armor
-	--['Miscellaneous'] = armor[1]
 	["Cloth"] = armor[2],
 	["Leather"] = armor[3],
 	["Mail"] = armor[4],
 	["Plate"] = armor[5],
 	["Shields"] = armor[7] -- from 5.4 '6' is a cosmetic
-	--[[3rd slot
-	['Librams'] = armor[7],
-	['Idols'] = armor[8],
-	['Totems'] = armor[9],
-	]]
  --
 }
 local SLOTS = {
@@ -120,7 +112,7 @@ local Lquests = {
 	["Tarenar's Talisman"] = {donotaccept = true},
 	["Vex'tul's Armbands"] = {donotaccept = true},
 	 --
-	--[[Burning Crusade]] --Lower City
+	--Burning Crusade, Lower City
 	["More Feathers"] = {item = "Arakkoa Feather", amount = 30, currency = false},
 	--Aldor
 	["More Marks of Kil'jaeden"] = {item = "Mark of Kil'jaeden", amount = 10, currency = false},

@@ -8,10 +8,10 @@ for k, v in pairs(SpartanoUF.colors) do
 	end
 end
 colors.health = {0 / 255, 255 / 255, 50 / 255}
-local base_plate1 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_1_full.blp]]
-local base_plate2 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_2_dual.blp]]
-local base_plate3 = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_3_single.blp]]
-local base_ring = [[Interface\AddOns\SpartanUI_PartyFrames\media\base_ring1.blp]]
+local base_plate1 = "Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_1_full.blp"
+local base_plate2 = "Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_2_dual.blp"
+local base_plate3 = "Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_3_single.blp"
+local base_ring = "Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_ring1.blp"
 
 --	Formatting functions
 
@@ -211,7 +211,7 @@ local CreatePartyFrame = function(self, unit)
 			local health = CreateFrame("StatusBar", nil, self)
 			health:SetFrameStrata("BACKGROUND")
 			health:SetFrameLevel(2)
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 
 			if SUI.DBMod.PartyFrames.FrameStyle == "large" then
 				health:SetPoint("TOPRIGHT", self.Castbar, "BOTTOMRIGHT", 0, -2)
@@ -257,13 +257,13 @@ local CreatePartyFrame = function(self, unit)
 			local myBars = CreateFrame("StatusBar", nil, self.Health)
 			myBars:SetPoint("TOPLEFT", self.Health:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 			myBars:SetPoint("BOTTOMLEFT", self.Health:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 			local otherBars = CreateFrame("StatusBar", nil, myBars)
 			otherBars:SetPoint("TOPLEFT", myBars:GetStatusBarTexture(), "TOPRIGHT", 0, 0)
 			otherBars:SetPoint("BOTTOMLEFT", myBars:GetStatusBarTexture(), "BOTTOMRIGHT", 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 			myBars:SetSize(150, 16)
@@ -346,7 +346,7 @@ local CreatePartyFrame = function(self, unit)
 
 		self.GroupRoleIndicator = ring:CreateTexture(nil, "BORDER")
 		self.GroupRoleIndicator:SetSize(25, 25)
-		self.GroupRoleIndicator:SetTexture [[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]]
+		self.GroupRoleIndicator:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_role")
 
 		self.RaidTargetIndicator = ring:CreateTexture(nil, "ARTWORK")
 		self.RaidTargetIndicator:SetSize(20, 20)

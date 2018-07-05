@@ -97,11 +97,11 @@ function addon:pvpIcon(self, event, unit)
 	local factionGroup = UnitFactionGroup(unit)
 	if (UnitIsPVPFreeForAll(unit)) then
 		-- XXX - WoW5: UnitFactionGroup() can return Neutral as well.
-		pvp:SetTexture [[Interface\FriendsFrame\UI-Toast-FriendOnlineIcon]]
+		pvp:SetTexture("Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon")
 		status = "ffa"
 	elseif (factionGroup and factionGroup ~= "Neutral" and UnitIsPVP(unit)) then
-		pvp:SetTexture([[Interface\FriendsFrame\PlusManz-]] .. factionGroup)
-		pvp.shadow:SetTexture([[Interface\FriendsFrame\PlusManz-]] .. factionGroup)
+		pvp:SetTexture("Interface\\FriendsFrame\\PlusManz-" .. factionGroup)
+		pvp.shadow:SetTexture("Interface\\FriendsFrame\\PlusManz-" .. factionGroup)
 		status = factionGroup
 	end
 
@@ -160,7 +160,7 @@ do -- ClassIcon as an SpartanoUF module
 			--self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:RegisterEvent("PLAYER_TARGET_CHANGED", Update)
 			self:RegisterEvent("UNIT_PET", Update)
-			icon:SetTexture [[Interface\AddOns\SpartanUI\media\icon_class]]
+			icon:SetTexture("Interface\\AddOns\\SpartanUI\\media\\icon_class")
 			if icon.shadow == nil then
 				icon.shadow = self:CreateTexture(nil, "BACKGROUND")
 				icon.shadow:SetSize(icon:GetSize())
@@ -372,7 +372,7 @@ do -- Level Skull as an SpartanoUF module
 			return
 		end
 		local level = UnitLevel(unit)
-		self.LevelSkull:SetTexture [[Interface\TargetingFrame\UI-TargetingFrame-Skull]]
+		self.LevelSkull:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
 		if level < 0 then
 			self.LevelSkull:SetTexCoord(0, 1, 0, 1)
 			if self.Level then
@@ -404,7 +404,7 @@ do -- Rare / Elite dragon graphic as an SpartanoUF module
 		local c = UnitClassification(unit)
 
 		if (self.RareElite:IsObjectType "Texture" and not self.RareElite:GetTexture()) then
-			self.RareElite:SetTexture [[Interface\AddOns\SpartanUI_PlayerFrames\media\elite_rare]]
+			self.RareElite:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare")
 			self.RareElite:SetTexCoord(0, 1, 0, 1)
 			self.RareElite:SetAlpha(.75)
 			if self.RareElite.short == true then

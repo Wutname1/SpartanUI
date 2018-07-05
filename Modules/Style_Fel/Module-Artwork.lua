@@ -201,12 +201,6 @@ function module:EnableArtwork()
 	Fel_SpartanUI:SetFrameStrata("BACKGROUND")
 	Fel_SpartanUI:SetFrameLevel(1)
 
-	-- Fel_SpartanUI.Harambe = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Harambe", "BORDER")
-	-- Fel_SpartanUI.Harambe:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
-	-- Fel_SpartanUI.Harambe:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-	-- Fel_SpartanUI.Harambe:SetTexture([[interface\addons\SpartanUI_Artwork\Themes\harambe\glory]])
-	-- Fel_SpartanUI.Harambe:SetAlpha(.45)
-
 	Fel_SpartanUI.Left = Fel_SpartanUI:CreateTexture("Fel_SpartanUI_Left", "BORDER")
 	Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
 
@@ -214,28 +208,28 @@ function module:EnableArtwork()
 	Fel_SpartanUI.Right:SetPoint("LEFT", Fel_SpartanUI.Left, "RIGHT", 0, 0)
 
 	if SUI.DB.Styles.Fel.SubTheme == "Digital" then
-		Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Base_Bar_Left]])
-		Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Base_Bar_Right]])
-		Fel_Bar1BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_Bar2BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_Bar3BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_Bar4BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_MenuBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_StanceBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_SpartanUI.Left:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Left")
+		Fel_SpartanUI.Right:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Right")
+		Fel_Bar1BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_Bar2BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_Bar3BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_Bar4BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_MenuBarBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_StanceBarBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
 	elseif SUI.DB.Styles.Fel.SubTheme == "War" then
-		Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\War\Art]])
+		Fel_SpartanUI.Left:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Art")
 		Fel_SpartanUI.Left:ClearAllPoints()
 		Fel_SpartanUI.Left:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-		-- Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\War\Base_Bar_Horde]])
-		Fel_Bar1BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_Bar2BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_Bar3BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_Bar4BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_MenuBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
-		Fel_StanceBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		-- Fel_SpartanUI.Right:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Horde")
+		Fel_Bar1BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_Bar2BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_Bar3BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_Bar4BG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_MenuBarBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
+		Fel_StanceBarBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box")
 	else
-		Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Left]])
-		Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Base_Bar_Right]])
+		Fel_SpartanUI.Left:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left")
+		Fel_SpartanUI.Right:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right")
 	end
 	module:updateOffset()
 
@@ -749,18 +743,18 @@ function module:MiniMap()
 		end
 
 		if SUI.DB.Styles.Fel.SubTheme == "Digital" then
-			self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Minimap]])
+			self.FelBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap")
 			self.FelBG:SetPoint("CENTER", self, "CENTER", 5, -1)
 			self.FelBG:SetSize(256, 256)
 			self.FelBG:SetBlendMode("ADD")
 		else
 			if SUI.DB.Styles.Fel.Minimap.Engulfed then
-				self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
+				self.FelBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Engulfed")
 				self.FelBG:SetPoint("CENTER", self, "CENTER", 7, 37)
 				self.FelBG:SetSize(330, 330)
 				self.FelBG:SetBlendMode("ADD")
 			else
-				self.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Calmed]])
+				self.FelBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Calmed")
 				self.FelBG:SetPoint("CENTER", self, "CENTER", 5, -1)
 				self.FelBG:SetSize(256, 256)
 				self.FelBG:SetBlendMode("ADD")
@@ -771,18 +765,18 @@ function module:MiniMap()
 	Minimap.FelBG = Minimap:CreateTexture(nil, "BACKGROUND")
 
 	if SUI.DB.Styles.Fel.SubTheme == "Digital" then
-		Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Minimap]])
+		Minimap.FelBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap")
 		Minimap.FelBG:SetPoint("CENTER", Minimap, "CENTER", 5, -1)
 		Minimap.FelBG:SetSize(256, 256)
 		Minimap.FelBG:SetBlendMode("ADD")
 	else
 		if SUI.DB.Styles.Fel.Minimap.Engulfed then
-			Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Engulfed]])
+			Minimap.FelBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Engulfed")
 			Minimap.FelBG:SetPoint("CENTER", Minimap, "CENTER", 7, 37)
 			Minimap.FelBG:SetSize(330, 330)
 			Minimap.FelBG:SetBlendMode("ADD")
 		else
-			Minimap.FelBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Images\Minimap-Calmed]])
+			Minimap.FelBG:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Calmed")
 			Minimap.FelBG:SetPoint("CENTER", Minimap, "CENTER", 5, -1)
 			Minimap.FelBG:SetSize(256, 256)
 			Minimap.FelBG:SetBlendMode("ADD")

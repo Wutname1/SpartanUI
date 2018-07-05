@@ -25,7 +25,7 @@ do -- Boss graphic as an SpartanoUF module
 			return
 		end
 		local c = UnitClassification(unit)
-		self.BossGraphic:SetTexture [[Interface\AddOns\SpartanUI_PlayerFrames\media\elite_rare]]
+		self.BossGraphic:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare")
 		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
 		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
 	end
