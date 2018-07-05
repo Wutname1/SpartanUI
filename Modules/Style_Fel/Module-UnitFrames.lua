@@ -535,7 +535,7 @@ local CreateLargeFrame = function(self,unit)
 			local ClassIcons = {}
 			for i = 1, 6 do
 				local Icon = self:CreateTexture(nil, "OVERLAY")
-				Icon:SetTexture("Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo");
+				Icon:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_combo");
 				
 				if (i == 1) then
 					Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);

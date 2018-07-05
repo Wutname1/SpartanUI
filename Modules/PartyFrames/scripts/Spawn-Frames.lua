@@ -51,7 +51,7 @@ function PartyFrames:OnEnable()
 
 		pf.mover.bg = pf.mover:CreateTexture(nil, "BACKGROUND")
 		pf.mover.bg:SetAllPoints(pf.mover)
-		pf.mover.bg:SetTexture("Interface\BlackMarket\BlackMarketBackground-Tile")
+		pf.mover.bg:SetTexture("Interface\\BlackMarket\\BlackMarketBackground-Tile")
 		pf.mover.bg:SetVertexColor(1, 1, 1, 0.5)
 
 		pf.mover:SetScript(
