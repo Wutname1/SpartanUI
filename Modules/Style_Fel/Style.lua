@@ -1,7 +1,7 @@
 local _G, SUI = _G, SUI
-local L = SUI.L;
-local Artwork_Core = SUI:GetModule("Artwork_Core");
-local module = SUI:GetModule("Style_Fel");
+local L = SUI.L
+local Artwork_Core = SUI:GetModule("Artwork_Core")
+local module = SUI:GetModule("Style_Fel")
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
@@ -11,176 +11,408 @@ function module:OnInitialize()
 	SUI.opt.args["General"].args["style"].args["PlayerFrames"].args["Fel"].disabled = false
 	SUI.opt.args["General"].args["style"].args["PartyFrames"].args["Fel"].disabled = false
 	SUI.opt.args["General"].args["style"].args["RaidFrames"].args["Fel"].disabled = false
-	
+
 	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["Digital"].disabled = false
 	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["War"].disabled = false
 	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["War"].disabled = false
 	--Init if needed
-	if (SUI.DBMod.Artwork.Style == "Fel") then module:Init() end
+	if (SUI.DBMod.Artwork.Style == "Fel") then
+		module:Init()
+	end
 end
 
 function module:Init()
-	if (SUI.DBMod.Artwork.FirstLoad) then module:FirstLoad() end
-	module:SetupMenus();
+	if (SUI.DBMod.Artwork.FirstLoad) then
+		module:FirstLoad()
+	end
+	module:SetupMenus()
 	Artwork_Core:StatusBarOptions()
-	module:InitArtwork();
-	InitRan = true;
+	module:InitArtwork()
+	InitRan = true
 end
 
 function module:FirstLoad()
 	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Fel.BartenderProfile) and Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile,true)) then Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile); end
+	if
+		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Fel.BartenderProfile) and
+			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile, true))
+	 then
+		Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile)
+	end
 end
 
 function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= "Fel") then
-		module:Disable(); 
+		module:Disable()
 	else
-		if SUI.DB.Styles.Fel.SubTheme then
-			SUI.opt.args["Artwork"].args["Artwork"].name = SUI.DB.Styles.Fel.SubTheme .. " Options"
-		end
-		
+		SUI.opt.args["Artwork"].args["Artwork"].name = SUI.DB.Styles.Fel.SubTheme .. " Options"
+
 		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Fel.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-			Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile);
+			Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile)
 		end
-		if (not InitRan) then module:Init(); end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile,true)) then module:CreateProfile(); end
-		module:EnableArtwork();
-		
-		if (SUI.DBMod.Artwork.FirstLoad) then SUI.DBMod.Artwork.FirstLoad = false end -- We want to do this last
+		if (not InitRan) then
+			module:Init()
+		end
+		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile, true)) then
+			module:CreateProfile()
+		end
+		module:EnableArtwork()
+
+		if (SUI.DBMod.Artwork.FirstLoad) then
+			SUI.DBMod.Artwork.FirstLoad = false
+		end -- We want to do this last
 	end
 end
 
 function module:OnDisable()
-	Fel_SpartanUI:Hide();
+	Fel_SpartanUI:Hide()
 end
 
 function module:SetupMenus()
-	SUI.opt.args["Artwork"].args["Artwork"] = {name = "Fel Options",type="group",order=10,
+	SUI.opt.args["Artwork"].args["Artwork"] = {
+		name = "Fel Options",
+		type = "group",
+		order = 10,
 		args = {
-			MinimapEngulfed = {name=L["Douse the flames"],type="toggle",order=.1,desc=L["Is it getting hot in here?"],
-				get = function(info) return (SUI.DB.Styles.Fel.Minimap.Engulfed ~= true or false); end,
-				set = function(info,val) SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false) Minimap.FelUpdate(Minimap) end
+			MinimapEngulfed = {
+				name = L["Douse the flames"],
+				type = "toggle",
+				order = .1,
+				desc = L["Is it getting hot in here?"],
+				get = function(info)
+					return (SUI.DB.Styles.Fel.Minimap.Engulfed ~= true or false)
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
+					Minimap.FelUpdate(Minimap)
+				end
 			},
-			alpha = {name=L["Transparency"],type="range",order=1,width="full",
-				min=0,max=100,step=1,desc=L["TransparencyDesc"],
-				get = function(info) return (SUI.DB.alpha*100); end,
-				set = function(info,val) SUI.DB.alpha = (val/100); module:updateAlpha() end
+			alpha = {
+				name = L["Transparency"],
+				type = "range",
+				order = 1,
+				width = "full",
+				min = 0,
+				max = 100,
+				step = 1,
+				desc = L["TransparencyDesc"],
+				get = function(info)
+					return (SUI.DB.alpha * 100)
+				end,
+				set = function(info, val)
+					SUI.DB.alpha = (val / 100)
+					module:updateAlpha()
+				end
 			},
 			-- xOffset = {name = L["MoveSideways"],type = "range",width="full",order=2,
-				-- desc = L["MoveSidewaysDesc"],
-				-- min=-200,max=200,step=.1,
-				-- get = function(info) return SUI.DB.xOffset/6.25 end,
-				-- set = function(info,val) SUI.DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
+			-- desc = L["MoveSidewaysDesc"],
+			-- min=-200,max=200,step=.1,
+			-- get = function(info) return SUI.DB.xOffset/6.25 end,
+			-- set = function(info,val) SUI.DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
 			-- },
-			offset = {name = L["ConfOffset"],type = "range",width="normal",order=3,
-				desc = L["ConfOffsetDesc"],min=0,max=200,step=.1,
-				get = function(info) return SUI.DB.yoffset end,
-				set = function(info,val)
-					if (InCombatLockdown()) then 
-						SUI:Print(ERR_NOT_IN_COMBAT);
+			offset = {
+				name = L["ConfOffset"],
+				type = "range",
+				width = "normal",
+				order = 3,
+				desc = L["ConfOffsetDesc"],
+				min = 0,
+				max = 200,
+				step = .1,
+				get = function(info)
+					return SUI.DB.yoffset
+				end,
+				set = function(info, val)
+					if (InCombatLockdown()) then
+						SUI:Print(ERR_NOT_IN_COMBAT)
 					else
 						if SUI.DB.yoffsetAuto then
-							SUI:Print(L["confOffsetAuto"]);
+							SUI:Print(L["confOffsetAuto"])
 						else
-							val = tonumber(val);
-							SUI.DB.yoffset = val;
-							module:updateOffset();
+							val = tonumber(val)
+							SUI.DB.yoffset = val
+							module:updateOffset()
 						end
 					end
 				end,
-				get = function(info) return SUI.DB.yoffset; end
+				get = function(info)
+					return SUI.DB.yoffset
+				end
 			},
-			offsetauto = {name = L["AutoOffset"],type = "toggle",desc = L["AutoOffsetDesc"],order=3.1,
-				get = function(info) return SUI.DB.yoffsetAuto end,
-				set = function(info,val) SUI.DB.yoffsetAuto = val; module:updateOffset(); end,
+			offsetauto = {
+				name = L["AutoOffset"],
+				type = "toggle",
+				desc = L["AutoOffsetDesc"],
+				order = 3.1,
+				get = function(info)
+					return SUI.DB.yoffsetAuto
+				end,
+				set = function(info, val)
+					SUI.DB.yoffsetAuto = val
+					module:updateOffset()
+				end
 			}
 		}
 	}
-	
-	SUI.opt.args["Artwork"].args["ActionBar"] = { name = "Bar backgrounds", type = "group",desc = L["ActionBarConfDesc"],
+
+	SUI.opt.args["Artwork"].args["ActionBar"] = {
+		name = "Bar backgrounds",
+		type = "group",
+		desc = L["ActionBarConfDesc"],
 		args = {
-			header1 = {name="",type="header",order=1.1},
-			Allenable = {name = L["AllBarEnable"], type="toggle",order=1,
-				get = function(info) return SUI.DB.Styles.Fel.Artwork.Allenable; end,
-				set = function(info,val)
-					for i = 1,4 do SUI.DB.Styles.Fel.Artwork["bar"..i].enable,SUI.DB.Styles.Fel.Artwork.Allenable = val,val; end
-					SUI.DB.Styles.Fel.Artwork.Stance.enable = val;
-					SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val;
+			header1 = {name = "", type = "header", order = 1.1},
+			Allenable = {
+				name = L["AllBarEnable"],
+				type = "toggle",
+				order = 1,
+				get = function(info)
+					return SUI.DB.Styles.Fel.Artwork.Allenable
+				end,
+				set = function(info, val)
+					for i = 1, 4 do
+						SUI.DB.Styles.Fel.Artwork["bar" .. i].enable, SUI.DB.Styles.Fel.Artwork.Allenable = val, val
+					end
+					SUI.DB.Styles.Fel.Artwork.Stance.enable = val
+					SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val
 					module:updateAlpha()
 				end
 			},
-			Allalpha = {name = L["AllBarAlpha"], type="range",order=2,width="double",
-				min=0, max=100, step=1,
-				get = function(info) return SUI.DB.Styles.Fel.Artwork.Allalpha; end,
-				set = function(info,val)
-					for i = 1,4 do SUI.DB.Styles.Fel.Artwork["bar"..i].alpha,SUI.DB.Styles.Fel.Artwork.Allalpha = val,val; end
-					SUI.DB.Styles.Fel.Artwork.Stance.alpha = val;
-					SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val;
+			Allalpha = {
+				name = L["AllBarAlpha"],
+				type = "range",
+				order = 2,
+				width = "double",
+				min = 0,
+				max = 100,
+				step = 1,
+				get = function(info)
+					return SUI.DB.Styles.Fel.Artwork.Allalpha
+				end,
+				set = function(info, val)
+					for i = 1, 4 do
+						SUI.DB.Styles.Fel.Artwork["bar" .. i].alpha, SUI.DB.Styles.Fel.Artwork.Allalpha = val, val
+					end
+					SUI.DB.Styles.Fel.Artwork.Stance.alpha = val
+					SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val
 					module:updateAlpha()
 				end
 			},
-			
-			Stance = { name = L["Stance and Pet bar"], type = "group", inline=true, order=10, args = {
-				bar5alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.Stance.alpha; end,
-					set = function(info,val) if SUI.DB.Styles.Fel.Artwork.Stance.enable == true then SUI.DB.Styles.Fel.Artwork.Stance.alpha = val; module:updateAlpha(); end end
-				},
-				bar5enable = {name = L["Enabled"], type="toggle",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.Stance.enable; end,
-					set = function(info,val) SUI.DB.Styles.Fel.Artwork.Stance.enable = val; module:updateAlpha(); end
+			Stance = {
+				name = L["Stance and Pet bar"],
+				type = "group",
+				inline = true,
+				order = 10,
+				args = {
+					bar5alpha = {
+						name = L["Alpha"],
+						type = "range",
+						min = 0,
+						max = 100,
+						step = 1,
+						width = "double",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.Stance.alpha
+						end,
+						set = function(info, val)
+							if SUI.DB.Styles.Fel.Artwork.Stance.enable == true then
+								SUI.DB.Styles.Fel.Artwork.Stance.alpha = val
+								module:updateAlpha()
+							end
+						end
+					},
+					bar5enable = {
+						name = L["Enabled"],
+						type = "toggle",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.Stance.enable
+						end,
+						set = function(info, val)
+							SUI.DB.Styles.Fel.Artwork.Stance.enable = val
+							module:updateAlpha()
+						end
+					}
 				}
-			}},
-			MenuBar = { name = L["Bag and Menu bar"], type = "group", inline=true, order=20, args = {
-				bar6alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.MenuBar.alpha; end,
-					set = function(info,val) if SUI.DB.Styles.Fel.Artwork.MenuBar.enable == true then SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val; module:updateAlpha(); end end
-				},
-				bar6enable = {name = L["Enabled"], type="toggle",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.MenuBar.enable; end,
-					set = function(info,val) SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val; module:updateAlpha(); end
+			},
+			MenuBar = {
+				name = L["Bag and Menu bar"],
+				type = "group",
+				inline = true,
+				order = 20,
+				args = {
+					bar6alpha = {
+						name = L["Alpha"],
+						type = "range",
+						min = 0,
+						max = 100,
+						step = 1,
+						width = "double",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.MenuBar.alpha
+						end,
+						set = function(info, val)
+							if SUI.DB.Styles.Fel.Artwork.MenuBar.enable == true then
+								SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val
+								module:updateAlpha()
+							end
+						end
+					},
+					bar6enable = {
+						name = L["Enabled"],
+						type = "toggle",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.MenuBar.enable
+						end,
+						set = function(info, val)
+							SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val
+							module:updateAlpha()
+						end
+					}
 				}
-			}},
-			Bar1 = { name = L["Bar 1"], type = "group", inline=true, order=30, args = {
-				bar1alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.bar1.alpha; end,
-					set = function(info,val) if SUI.DB.Styles.Fel.Artwork.bar1.enable == true then SUI.DB.Styles.Fel.Artwork.bar1.alpha = val; module:updateAlpha(); end end
-				},
-				bar1enable = {name = L["Enabled"], type="toggle",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.bar1.enable; end,
-					set = function(info,val) SUI.DB.Styles.Fel.Artwork.bar1.enable = val; module:updateAlpha(); end
-				},
-			}},
-			Bar2 = { name = L["Bar 2"], type = "group", inline=true, order=40, args = {
-				bar2alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.bar2.alpha; end,
-					set = function(info,val) if SUI.DB.Styles.Fel.Artwork.bar2.enable == true then SUI.DB.Styles.Fel.Artwork.bar2.alpha = val; module:updateAlpha(); end end
-				},
-				bar2enable = {name = L["Enabled"], type="toggle",
-				get = function(info) return SUI.DB.Styles.Fel.Artwork.bar2.enable; end,
-					set = function(info,val) SUI.DB.Styles.Fel.Artwork.bar2.enable = val; module:updateAlpha(); end
+			},
+			Bar1 = {
+				name = L["Bar 1"],
+				type = "group",
+				inline = true,
+				order = 30,
+				args = {
+					bar1alpha = {
+						name = L["Alpha"],
+						type = "range",
+						min = 0,
+						max = 100,
+						step = 1,
+						width = "double",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar1.alpha
+						end,
+						set = function(info, val)
+							if SUI.DB.Styles.Fel.Artwork.bar1.enable == true then
+								SUI.DB.Styles.Fel.Artwork.bar1.alpha = val
+								module:updateAlpha()
+							end
+						end
+					},
+					bar1enable = {
+						name = L["Enabled"],
+						type = "toggle",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar1.enable
+						end,
+						set = function(info, val)
+							SUI.DB.Styles.Fel.Artwork.bar1.enable = val
+							module:updateAlpha()
+						end
+					}
 				}
-			}},
-			Bar3 = { name = L["Bar 3"], type = "group", inline=true, order=50, args = {
-				bar3alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.bar3.alpha; end,
-					set = function(info,val) if SUI.DB.Styles.Fel.Artwork.bar3.enable == true then SUI.DB.Styles.Fel.Artwork.bar3.alpha = val; module:updateAlpha(); end end
-				},
-				bar3enable = {name = L["Enabled"], type="toggle",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.bar3.enable; end,
-					set = function(info,val) SUI.DB.Styles.Fel.Artwork.bar3.enable = val; module:updateAlpha(); end
+			},
+			Bar2 = {
+				name = L["Bar 2"],
+				type = "group",
+				inline = true,
+				order = 40,
+				args = {
+					bar2alpha = {
+						name = L["Alpha"],
+						type = "range",
+						min = 0,
+						max = 100,
+						step = 1,
+						width = "double",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar2.alpha
+						end,
+						set = function(info, val)
+							if SUI.DB.Styles.Fel.Artwork.bar2.enable == true then
+								SUI.DB.Styles.Fel.Artwork.bar2.alpha = val
+								module:updateAlpha()
+							end
+						end
+					},
+					bar2enable = {
+						name = L["Enabled"],
+						type = "toggle",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar2.enable
+						end,
+						set = function(info, val)
+							SUI.DB.Styles.Fel.Artwork.bar2.enable = val
+							module:updateAlpha()
+						end
+					}
 				}
-			}},
-			Bar4 = { name = L["Bar 4"], type = "group", inline=true, order=60, args = {
-				bar4alpha = {name = L["Alpha"], type="range",min=0, max=100, step=1, width="double",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.bar4.alpha; end,
-					set = function(info,val) if SUI.DB.Styles.Fel.Artwork.bar4.enable == true then SUI.DB.Styles.Fel.Artwork.bar4.alpha = val; module:updateAlpha(); end end
-				},
-				bar4enable = {name = L["Enabled"], type="toggle",
-					get = function(info) return SUI.DB.Styles.Fel.Artwork.bar4.enable; end,
-					set = function(info,val) SUI.DB.Styles.Fel.Artwork.bar4.enable = val; module:updateAlpha(); end
+			},
+			Bar3 = {
+				name = L["Bar 3"],
+				type = "group",
+				inline = true,
+				order = 50,
+				args = {
+					bar3alpha = {
+						name = L["Alpha"],
+						type = "range",
+						min = 0,
+						max = 100,
+						step = 1,
+						width = "double",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar3.alpha
+						end,
+						set = function(info, val)
+							if SUI.DB.Styles.Fel.Artwork.bar3.enable == true then
+								SUI.DB.Styles.Fel.Artwork.bar3.alpha = val
+								module:updateAlpha()
+							end
+						end
+					},
+					bar3enable = {
+						name = L["Enabled"],
+						type = "toggle",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar3.enable
+						end,
+						set = function(info, val)
+							SUI.DB.Styles.Fel.Artwork.bar3.enable = val
+							module:updateAlpha()
+						end
+					}
 				}
-			}},
+			},
+			Bar4 = {
+				name = L["Bar 4"],
+				type = "group",
+				inline = true,
+				order = 60,
+				args = {
+					bar4alpha = {
+						name = L["Alpha"],
+						type = "range",
+						min = 0,
+						max = 100,
+						step = 1,
+						width = "double",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar4.alpha
+						end,
+						set = function(info, val)
+							if SUI.DB.Styles.Fel.Artwork.bar4.enable == true then
+								SUI.DB.Styles.Fel.Artwork.bar4.alpha = val
+								module:updateAlpha()
+							end
+						end
+					},
+					bar4enable = {
+						name = L["Enabled"],
+						type = "toggle",
+						get = function(info)
+							return SUI.DB.Styles.Fel.Artwork.bar4.enable
+						end,
+						set = function(info, val)
+							SUI.DB.Styles.Fel.Artwork.bar4.enable = val
+							module:updateAlpha()
+						end
+					}
+				}
+			}
 		}
-	};
+	}
 end

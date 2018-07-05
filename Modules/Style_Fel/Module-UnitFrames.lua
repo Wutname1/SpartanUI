@@ -3,8 +3,8 @@ local L = SUI.L;
 local module = SUI:GetModule("Style_Fel");
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
-local Smoothv2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga]]
-local square = [[Interface\AddOns\SpartanUI_Style_Transparent\Images\square.tga]]
+local Smoothv2 = "Interface\AddOns\SpartanUI_PlayerFrames\media\Smoothv2.tga"
+local square = "Interface\AddOns\SpartanUI_Style_Transparent\Images\square.tga"
 local Images
 
 local function UpdatePowerPrep(self, event, specID)
@@ -1164,7 +1164,7 @@ function module:PlayerFrames()
 				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
 			},
 			smallbg = {
-				Texture =  [[Interface\Scenarios\LegionInvasion]],
+				Texture =  "Interface\Scenarios\LegionInvasion",
 				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
 			},
 			flair = {

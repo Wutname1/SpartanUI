@@ -1,7 +1,7 @@
 local _G, SUI = _G, SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-local module = SUI:NewModule("Style_Minimal");
+local module = SUI:NewModule("Style_Minimal")
 
 --Now lets setup the initial Database settings
 local Defaults = {
@@ -13,7 +13,7 @@ local Defaults = {
 		Minimap = true,
 		PlayerFrames = true,
 		PartyFrames = true,
-		RaidFrames = true,
+		RaidFrames = true
 	},
 	TooltipLoc = true,
 	Minimap = {
@@ -24,29 +24,152 @@ local Defaults = {
 	BartenderSettings = {
 		ActionBars = {
 			actionbars = {
-				{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=-200,	y=102,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 1
-				{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=-200,	y=70,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 2
-				{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=-200,	y=35,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 3
-				{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {										scale = 0.85,	growHorizontal="RIGHT"}}, -- 4
-				{enabled = true,	buttons = 12,	rows = 3,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=-317,	y=98,	scale = 0.75,	growHorizontal="RIGHT"}}, -- 5
-				{enabled = true,	buttons = 12,	rows = 3,	padding = 3,	skin = {Zoom = true},	position = {point = "BOTTOM",		x=199,	y=98,	scale = 0.75,	growHorizontal="RIGHT"}}, -- 6
-				{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {										scale = 0.85,	growHorizontal="RIGHT"}}, -- 7
-				{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {										scale = 0.85,	growHorizontal="RIGHT"}}, -- 8
-				{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {										scale = 0.85,	growHorizontal="RIGHT"}}, -- 9
-				{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {										scale = 0.85,	growHorizontal="RIGHT"}} -- 10
+				{
+					enabled = true,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {point = "BOTTOM", x = -200, y = 102, scale = 0.85, growHorizontal = "RIGHT"}
+				}, -- 1
+				{
+					enabled = true,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {point = "BOTTOM", x = -200, y = 70, scale = 0.85, growHorizontal = "RIGHT"}
+				}, -- 2
+				{
+					enabled = true,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {point = "BOTTOM", x = -200, y = 35, scale = 0.85, growHorizontal = "RIGHT"}
+				}, -- 3
+				{
+					enabled = false,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {scale = 0.85, growHorizontal = "RIGHT"}
+				}, -- 4
+				{
+					enabled = true,
+					buttons = 12,
+					rows = 3,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {point = "BOTTOM", x = -317, y = 98, scale = 0.75, growHorizontal = "RIGHT"}
+				}, -- 5
+				{
+					enabled = true,
+					buttons = 12,
+					rows = 3,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {point = "BOTTOM", x = 199, y = 98, scale = 0.75, growHorizontal = "RIGHT"}
+				}, -- 6
+				{
+					enabled = false,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {scale = 0.85, growHorizontal = "RIGHT"}
+				}, -- 7
+				{
+					enabled = false,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {scale = 0.85, growHorizontal = "RIGHT"}
+				}, -- 8
+				{
+					enabled = false,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {scale = 0.85, growHorizontal = "RIGHT"}
+				}, -- 9
+				{
+					enabled = false,
+					buttons = 12,
+					rows = 1,
+					padding = 3,
+					skin = {Zoom = true},
+					position = {scale = 0.85, growHorizontal = "RIGHT"}
+				} -- 10
 			}
 		},
-		BagBar			= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true, padding = 0, 		position = {point = "TOP",			x=490,	y=-1,	scale = 0.70,	growHorizontal="LEFT"},		rows = 1, onebag = false, keyring = true},
-		MicroMenu		= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true,	padding = -3,		position = {point = "TOP",			x=160,	y=-1,	scale = 0.70,	growHorizontal="RIGHT"}},
-		PetBar			= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true, padding = 1, 		position = {point = "TOP",			x=-492,	y=-1,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
-		StanceBar		= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true,	padding = 1, 		position = {point = "TOP",			x=-163,	y=-1,	scale = 0.70,	growHorizontal="LEFT"},		rows = 1},
-		MultiCast		= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true,						position = {point = "TOPRIGHT",			x=-777,	y=-4,	scale = 0.75}},
-		Vehicle			= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = false,	padding = 3,	position = {point = "BOTTOM",			x=-200,	y=155,	scale = 0.85}},
-		ExtraActionBar	= {	fadeoutalpha = .25,	version = 3,	fadeout = true,	enabled = true,						position = {point = "BOTTOM",			x=-32,	y=275}},
-		BlizzardArt		= {	enabled = false },
-		XPBar			= {	enabled = false },
-		RepBar			= {	enabled = false },
-		APBar			= {	enabled = false },
+		BagBar = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			padding = 0,
+			position = {point = "TOP", x = 490, y = -1, scale = 0.70, growHorizontal = "LEFT"},
+			rows = 1,
+			onebag = false,
+			keyring = true
+		},
+		MicroMenu = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			padding = -3,
+			position = {point = "TOP", x = 160, y = -1, scale = 0.70, growHorizontal = "RIGHT"}
+		},
+		PetBar = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			padding = 1,
+			position = {point = "TOP", x = -492, y = -1, scale = 0.70, growHorizontal = "RIGHT"},
+			rows = 1,
+			skin = {Zoom = true}
+		},
+		StanceBar = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			padding = 1,
+			position = {point = "TOP", x = -163, y = -1, scale = 0.70, growHorizontal = "LEFT"},
+			rows = 1
+		},
+		MultiCast = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			position = {point = "TOPRIGHT", x = -777, y = -4, scale = 0.75}
+		},
+		Vehicle = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = false,
+			padding = 3,
+			position = {point = "BOTTOM", x = -200, y = 155, scale = 0.85}
+		},
+		ExtraActionBar = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			position = {point = "BOTTOM", x = -32, y = 275}
+		},
+		BlizzardArt = {enabled = false},
+		XPBar = {enabled = false},
+		RepBar = {enabled = false},
+		APBar = {enabled = false},
 		blizzardVehicle = true
 	},
 	Color = {

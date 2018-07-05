@@ -1,7 +1,7 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
+local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
+local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
 local AceHook = LibStub("AceHook-3.0")
-local module = spartan:NewModule("Component_Chatbox");
+local module = spartan:NewModule("Component_Chatbox")
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame("Frame", nil, UIParent)
 
@@ -24,28 +24,39 @@ function module:OnEnable()
 	--module:SetupLinks()
 	module:BuildOptions()
 	module:HideOptions()
-	
 end
 
 function module:SetupLinks()
 	local filterFunc = function(_, _, msg, ...)
-		local newMsg, found = gsub(msg,
-			"[^ \"£%^`¬{}%[%]\\|<>]*[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d]%.[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ \"£%^`¬{}%[%]\\|<>]*",
+		local newMsg, found =
+			gsub(
+			msg,
+			'[^ "£%^`¬{}%[%]\\|<>]*[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d]%.[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ "£%^`¬{}%[%]\\|<>]*',
 			"|cffffffff|Hbcmurl~%1|h[%1]|h|r"
 		)
-		if found > 0 then return false, newMsg, ... end
-		newMsg, found = gsub(msg,
+		if found > 0 then
+			return false, newMsg, ...
+		end
+		newMsg, found =
+			gsub(
+			msg,
 			-- This is our IPv4/v6 pattern at the beggining of a sentence.
-			"^%x+[%.:]%x+[%.:]%x+[%.:]%x+[^ \"£%^`¬{}%[%]\\|<>]*",
+			'^%x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
 			"|cffffffff|Hbcmurl~%1|h[%1]|h|r"
 		)
-		if found > 0 then return false, newMsg, ... end
-		newMsg, found = gsub(msg,
+		if found > 0 then
+			return false, newMsg, ...
+		end
+		newMsg, found =
+			gsub(
+			msg,
 			-- Mid-sentence IPv4/v6 pattern
-			" %x+[%.:]%x+[%.:]%x+[%.:]%x+[^ \"£%^`¬{}%[%]\\|<>]*",
+			' %x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
 			"|cffffffff|Hbcmurl~%1|h[%1]|h|r"
 		)
-		if found > 0 then return false, newMsg, ... end
+		if found > 0 then
+			return false, newMsg, ...
+		end
 	end
 
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", filterFunc)
@@ -65,12 +76,11 @@ function module:SetupLinks()
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", filterFunc)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_CONVERSATION", filterFunc)
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_INLINE_TOAST_BROADCAST", filterFunc)
-	
-	
+
 	-- popup:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-		-- edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-		-- tile = true, tileSize = 16, edgeSize = 16,
-		-- insets = {left = 1, right = 1, top = 1, bottom = 1}}
+	-- edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+	-- tile = true, tileSize = 16, edgeSize = 16,
+	-- insets = {left = 1, right = 1, top = 1, bottom = 1}}
 	-- )
 	-- popup:SetSize(650, 40)
 	-- popup:SetPoint("CENTER", UIParent, "CENTER")
@@ -95,16 +105,18 @@ end
 
 -- local SetHyperlink = ItemRefTooltip.SetHyperlink
 -- function ItemRefTooltip:SetHyperlink(data, ...)
-	-- local isURL, link = strsplit("~", data)
-	-- if isURL and isURL == "bcmurl" then
-		-- module:SetPopupText(link)
-	-- else
-		-- SetHyperlink(self, data, ...)
-	-- end
+-- local isURL, link = strsplit("~", data)
+-- if isURL and isURL == "bcmurl" then
+-- module:SetPopupText(link)
+-- else
+-- SetHyperlink(self, data, ...)
+-- end
 -- end
 
 function module:BuildOptions()
-	spartan.opt.args["ModSetting"].args["Chatbox"] = {type="group",name="Chatbox",
+	spartan.opt.args["ModSetting"].args["Chatbox"] = {
+		type = "group",
+		name = "Chatbox",
 		args = {}
 	}
 end

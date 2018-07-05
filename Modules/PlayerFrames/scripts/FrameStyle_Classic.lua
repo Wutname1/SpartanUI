@@ -2,13 +2,13 @@ local _G, SUI = _G, SUI
 local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
 
-local base_plate1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate1.tga]] -- Player and Target
-local base_plate2 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate2.blp]] -- Focus and Focus Target
-local base_plate3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate3.tga]] -- Pet, TargetTarget (Large, Medium)
-local base_plate4 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\classic\base_plate4.blp]] -- TargetTarget small
-local base_ring1 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring1]] -- Player and Target
-local base_ring3 = [[Interface\AddOns\SpartanUI_PlayerFrames\media\base_ring3]] -- Pet and TargetTarget
-local circle = [[Interface\AddOns\SpartanUI_PlayerFrames\media\circle.tga]]
+local base_plate1 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate1.tga" -- Player and Target
+local base_plate2 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate2.blp" -- Focus and Focus Target
+local base_plate3 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate3.tga" -- Pet, TargetTarget (Large, Medium)
+local base_plate4 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate4.blp" -- TargetTarget small
+local base_ring1 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\base_ring1" -- Player and Target
+local base_ring3 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\base_ring3" -- Pet and TargetTarget
+local circle = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\circle.tga"
 
 local colors = setmetatable({},{__index = SpartanoUF.colors});
 local classname, classFileName = UnitClass("player")
@@ -270,8 +270,7 @@ local CreatePlayerFrame = function(self,unit)
 		do -- health bar
 			local health = CreateFrame("StatusBar",nil,self);
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
-			-- health:AnimateTexCoords([[Interface\AddOns\SpartanUI_PlayerFrames\media\HealthBar.blp]], 256, 256, 80, 16, 40, elapsed, 0.08);
+			health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			health:SetSize(150, 16);
 			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
 			
@@ -286,13 +285,8 @@ local CreatePlayerFrame = function(self,unit)
 			health.ratio:SetJustifyH("RIGHT"); health.ratio:SetJustifyV("MIDDLE");
 			health.ratio:SetPoint("RIGHT",health,"LEFT",-2,0);
 			self:Tag(health.ratio, '[perhp]%')
-			
-			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
-			-- Background:SetAllPoints(health)
-			-- Background:SetTexture(1, 1, 1, .08)
-			
+
 			self.Health = health;
-			--self.Health.bg = Background;
 			
 			self.Health.frequentUpdates = true;
 			self.Health.colorDisconnected = true;
@@ -313,13 +307,13 @@ local CreatePlayerFrame = function(self,unit)
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
 			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 			local otherBars = CreateFrame('StatusBar', nil, myBars)
 			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 			myBars:SetSize(150, 16)
@@ -408,7 +402,7 @@ local CreatePlayerFrame = function(self,unit)
 		self.GroupRoleIndicator = ring:CreateTexture(nil,"BORDER");
 		self.GroupRoleIndicator:SetSize(28, 28);
 		self.GroupRoleIndicator:SetPoint("CENTER",ring,"CENTER",-20,-35);
-		self.GroupRoleIndicator:SetTexture[[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_role]];
+		self.GroupRoleIndicator:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_role");
 		
 		self.RestingIndicator = ring:CreateTexture(nil,"ARTWORK");
 		self.RestingIndicator:SetSize(32, 30);
@@ -432,7 +426,7 @@ local CreatePlayerFrame = function(self,unit)
 		self.ComboPoints:SetPoint("BOTTOMLEFT",self.Name,"TOPLEFT",12,-2);
 		
 		local Icon = self:CreateTexture(nil, "OVERLAY")
-		Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+		Icon:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_combo");
 		
 		local ClassPower = {}
 		for index = 1, 10 do
@@ -520,7 +514,7 @@ local CreateTargetFrame = function(self,unit)
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(3);
 			health:SetSize(140, 16);
 			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetSize(125, 11);
@@ -560,13 +554,13 @@ local CreateTargetFrame = function(self,unit)
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
 			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 			local otherBars = CreateFrame('StatusBar', nil, myBars)
 			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 			myBars:SetSize(150, 16)
@@ -730,7 +724,7 @@ local CreatePetFrame = function(self,unit)
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
 			health:SetSize(120, 16);
 			health:SetPoint("TOPLEFT",self.Castbar,"BOTTOMLEFT",0,-2);
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetHeight(11);
@@ -771,13 +765,13 @@ local CreatePetFrame = function(self,unit)
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
 			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 			local otherBars = CreateFrame('StatusBar', nil, myBars)
 			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 			myBars:SetSize(150, 16)
@@ -971,7 +965,7 @@ local CreateToTFrame = function(self,unit)
 				health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
 				health:SetWidth(120); health:SetHeight(16);
 				health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
-				health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				
 				health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.value:SetWidth(110); health.value:SetHeight(11);
@@ -1011,13 +1005,13 @@ local CreateToTFrame = function(self,unit)
 				local myBars = CreateFrame('StatusBar', nil, self.Health)
 				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 				local otherBars = CreateFrame('StatusBar', nil, myBars)
 				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 				myBars:SetSize(150, 16)
@@ -1143,7 +1137,7 @@ local CreateToTFrame = function(self,unit)
 				health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(2);
 				health:SetSize(93, 14);
 				health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
-				health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				
 				health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.value:SetSize(85, 11);
@@ -1183,13 +1177,13 @@ local CreateToTFrame = function(self,unit)
 				local myBars = CreateFrame('StatusBar', nil, self.Health)
 				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 				local otherBars = CreateFrame('StatusBar', nil, myBars)
 				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 				myBars:SetSize(150, 16)
@@ -1273,7 +1267,7 @@ local CreateToTFrame = function(self,unit)
 				health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(1);
 				health:SetSize(125, 25);
 				health:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",6,17);
-				health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				
 				health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 				health.value:SetSize(100, 11);
@@ -1313,13 +1307,13 @@ local CreateToTFrame = function(self,unit)
 				local myBars = CreateFrame('StatusBar', nil, self.Health)
 				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 				local otherBars = CreateFrame('StatusBar', nil, myBars)
 				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+				otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 				myBars:SetSize(150, 16)
@@ -1421,7 +1415,7 @@ local CreateFocusFrame = function(self,unit)
 			health:SetSize(85, 15);
 			if unit == "focus" then health:SetPoint("CENTER",self,"CENTER",-5,-2) end
 			if unit == "focustarget" then health:SetPoint("CENTER",self,"CENTER",-46,-2) end
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetSize(80, 11);
@@ -1462,13 +1456,13 @@ local CreateFocusFrame = function(self,unit)
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
 			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 			local otherBars = CreateFrame('StatusBar', nil, myBars)
 			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 			myBars:SetSize(150, 16)
@@ -1624,7 +1618,7 @@ local CreateBossFrame = function(self,unit)
 			health:SetFrameStrata("BACKGROUND"); health:SetFrameLevel(3);
 			health:SetSize(105, 12);
 			health:SetPoint("TOPRIGHT",self.Castbar,"BOTTOMRIGHT",0,-2);
-			health:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			health:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			
 			health.value = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.value:SetSize(97, 10);
@@ -1656,13 +1650,13 @@ local CreateBossFrame = function(self,unit)
 			local myBars = CreateFrame('StatusBar', nil, self.Health)
 			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			myBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
 			local otherBars = CreateFrame('StatusBar', nil, myBars)
 			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
 			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+			otherBars:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
 			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
 			myBars:SetSize(105, 12)
@@ -2124,7 +2118,6 @@ end
 	txt:SetHeight(22);
 	txt:SetJustifyH("MIDDLE");
 	txt:SetJustifyV("MIDDLE");
-	--txt:SetAllPoints(LFDCooldown)
 	txt:SetPoint("TOPLEFT", LFDCooldown ,"TOPLEFT", 5, 0)
 	txt:SetPoint("BOTTOMRIGHT", LFDCooldown ,"BOTTOMRIGHT", 0, 0)
 	LFDCooldown.text = txt

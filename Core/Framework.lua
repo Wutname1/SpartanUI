@@ -1,9 +1,9 @@
 local _, SUI = ...
-SUI = LibStub("AceAddon-3.0"):NewAddon(SUI, "SpartanUI","AceEvent-3.0", "AceConsole-3.0");
+SUI = LibStub("AceAddon-3.0"):NewAddon(SUI, "SpartanUI", "AceEvent-3.0", "AceConsole-3.0")
 _G.SUI = SUI
 
-local AceConfig = LibStub("AceConfig-3.0");
-local AceConfigDialog = LibStub("AceConfigDialog-3.0");
+local AceConfig = LibStub("AceConfig-3.0")
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
 SUI.L = L
 
@@ -12,24 +12,46 @@ local type, pairs, hooksecurefunc = type, pairs, hooksecurefunc
 
 SUI.Version = GetAddOnMetadata("SpartanUI", "Version")
 SUI.BuildNum = GetAddOnMetadata("SpartanUI", "X-Build")
-if not SUI.BuildNum then SUI.BuildNum = 0 end
+if not SUI.BuildNum then
+	SUI.BuildNum = 0
+end
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = "SpartanUI ".. SUI.Version, type = "group", childGroups = "tree", args = {
-		General = {name = L["General"], type = "group",order = 0, args = {}};
-		Artwork = {name = L["Artwork"], type = "group", args = {}};
-		PlayerFrames = {name = L["PlayerFrames"], type = "group", args = {}};
-		PartyFrames = {name = L["PartyFrames"], type = "group", args = {}};
-		RaidFrames = {name = L["RaidFrames"], type = "group", args = {}};
+	name = "SpartanUI " .. SUI.Version,
+	type = "group",
+	childGroups = "tree",
+	args = {
+		General = {name = L["General"], type = "group", order = 0, args = {}},
+		Artwork = {name = L["Artwork"], type = "group", args = {}},
+		PlayerFrames = {name = L["PlayerFrames"], type = "group", args = {}},
+		PartyFrames = {name = L["PartyFrames"], type = "group", args = {}},
+		RaidFrames = {name = L["RaidFrames"], type = "group", args = {}}
 	}
 }
 
-local FontItems = {Primary={},Core={},Party={},Player={},Raid={}}
-local FontItemsSize = {Primary={},Core={},Party={},Player={},Raid={}}
+local FontItems = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
+local FontItemsSize = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
 local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
-local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
-local frameDefault1 = {movement=MovedDefault,AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",moved=false,Anchors={}}
-local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",moved=false,Anchors={}}
+local MovedDefault = {moved = false, point = "", relativeTo = nil, relativePoint = "", xOffset = 0, yOffset = 0}
+local frameDefault1 = {
+	movement = MovedDefault,
+	AuraDisplay = true,
+	display = true,
+	Debuffs = "all",
+	buffs = "all",
+	style = "large",
+	moved = false,
+	Anchors = {}
+}
+local frameDefault2 = {
+	AuraDisplay = true,
+	display = true,
+	Debuffs = "all",
+	buffs = "all",
+	style = "medium",
+	moved = false,
+	Anchors = {}
+}
 
 ---------------		Database		-------------------------------
 
@@ -46,7 +68,7 @@ local DBdefault = {
 		viewport = true,
 		EnabledComponents = {},
 		Styles = {
-			['**'] = {
+			["**"] = {
 				Artwork = false,
 				PlayerFrames = false,
 				PartyFrames = false,
@@ -55,32 +77,128 @@ local DBdefault = {
 					Minimap = true,
 					PlayerFrames = true,
 					PartyFrames = true,
-					RaidFrames = true,
+					RaidFrames = true
 				},
 				Frames = {
 					player = {
-						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="both"},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="both"}
+						Buffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = "both"
+						},
+						Debuffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = true,
+							Mode = "both"
+						}
 					},
 					target = {
-						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="both"},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="bars"}
+						Buffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = "both"
+						},
+						Debuffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = true,
+							Mode = "bars"
+						}
 					},
 					targettarget = {
-						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="disabled"},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="icons"}
+						Buffs = {
+							Display = false,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = "disabled"
+						},
+						Debuffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = true,
+							Mode = "icons"
+						}
 					},
 					pet = {
-						Buffs=	{Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false,Mode="icons"},
-						Debuffs={Display=true,Number = 10,size = 15,spacing = 1,showType=true,onlyShowPlayer=false,Mode="icons"}
+						Buffs = {
+							Display = true,
+							Number = 10,
+							size = 15,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = "icons"
+						},
+						Debuffs = {
+							Display = true,
+							Number = 10,
+							size = 15,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = "icons"
+						}
 					},
 					focus = {
-						Buffs=	{Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="icons"},
-						Debuffs={Display=true,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="icons"}
+						Buffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = "icons"
+						},
+						Debuffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = true,
+							Mode = "icons"
+						}
 					},
 					focustarget = {
-						Buffs=	{Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=false,Mode="disabled"},
-						Debuffs={Display=false,Number = 10,size = 20,spacing = 1,showType=true,onlyShowPlayer=true,Mode="disabled"}
+						Buffs = {
+							Display = false,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = "disabled"
+						},
+						Debuffs = {
+							Display = false,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = true,
+							Mode = "disabled"
+						}
 					}
 				},
 				Minimap = {
@@ -102,49 +220,220 @@ local DBdefault = {
 				PartyFrames = true,
 				RaidFrames = true,
 				BartenderProfile = "SpartanUI - Classic",
-				BartenderSettings = { -- actual settings being inserted into our custom profile
+				BartenderSettings = {
+					-- actual settings being inserted into our custom profile
 					ActionBars = {
-						actionbars = { -- following settings are bare minimum, so that anything not defined is retained between resets
-							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=0,	y=36,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 1
-							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=0,	y=-4,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 2
-							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=-402,	y=36,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 3
-							{enabled = true,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=-402,	y=-4,	scale = 0.85,	growHorizontal="RIGHT"}}, -- 4
-							{enabled = true,	buttons = 12,	rows = 3,	padding = 4,	skin = {Zoom = true},	position = {point = "LEFT",		parent = "SUI_ActionBarPlate",	x=-135,	y=36,	scale = 0.80,	growHorizontal="RIGHT"}}, -- 5
-							{enabled = true,	buttons = 12,	rows = 3,	padding = 4,	skin = {Zoom = true},	position = {point = "RIGHT",	parent = "SUI_ActionBarPlate",	x=3,	y=36,	scale = 0.80,	growHorizontal="RIGHT"}}, -- 6
-							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 7
-							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 8
-							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}}, -- 9
-							{enabled = false,	buttons = 12,	rows = 1,	padding = 3,	skin = {Zoom = true},	position = {					parent = "SUI_ActionBarPlate",					scale = 0.85,	growHorizontal="RIGHT"}} -- 10
+						actionbars = {
+							-- following settings are bare minimum, so that anything not defined is retained between resets
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = "LEFT",
+									parent = "SUI_ActionBarPlate",
+									x = 0,
+									y = 36,
+									scale = 0.85,
+									growHorizontal = "RIGHT"
+								}
+							}, -- 1
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = "LEFT",
+									parent = "SUI_ActionBarPlate",
+									x = 0,
+									y = -4,
+									scale = 0.85,
+									growHorizontal = "RIGHT"
+								}
+							}, -- 2
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = "RIGHT",
+									parent = "SUI_ActionBarPlate",
+									x = -402,
+									y = 36,
+									scale = 0.85,
+									growHorizontal = "RIGHT"
+								}
+							}, -- 3
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = "RIGHT",
+									parent = "SUI_ActionBarPlate",
+									x = -402,
+									y = -4,
+									scale = 0.85,
+									growHorizontal = "RIGHT"
+								}
+							}, -- 4
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = "LEFT",
+									parent = "SUI_ActionBarPlate",
+									x = -135,
+									y = 36,
+									scale = 0.80,
+									growHorizontal = "RIGHT"
+								}
+							}, -- 5
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = "RIGHT",
+									parent = "SUI_ActionBarPlate",
+									x = 3,
+									y = 36,
+									scale = 0.80,
+									growHorizontal = "RIGHT"
+								}
+							}, -- 6
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = "SUI_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+							}, -- 7
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = "SUI_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+							}, -- 8
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = "SUI_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+							}, -- 9
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = "SUI_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+							} -- 10
 						}
 					},
-					BagBar			= {	enabled = true, padding = 0, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-6,	y=-2,	scale = 0.70,	growHorizontal="LEFT"},		rows = 1, onebag = false, keyring = true},
-					MicroMenu		= {	enabled = true,	padding = -3,		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=603,	y=0,	scale = 0.80,	growHorizontal="RIGHT"}},
-					PetBar			= {	enabled = true, padding = 1, 		position = {point = "TOPLEFT",		parent = "SUI_ActionBarPlate",	x=5,	y=-6,	scale = 0.70,	growHorizontal="RIGHT"},	rows = 1, skin = {Zoom = true}},
-					StanceBar		= {	enabled = true,	padding = 1, 		position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-605,	y=-2,	scale = 0.85,	growHorizontal="LEFT"},		rows = 1},
-					MultiCast		= {	enabled = true,						position = {point = "TOPRIGHT",		parent = "SUI_ActionBarPlate",	x=-777,	y=-4,	scale = 0.75}},
-					Vehicle			= {	enabled = false,	padding = 3,		position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-15,	y=213,	scale = 0.85}},
-					ExtraActionBar 	= {	enabled = true,					position = {point = "CENTER",		parent = "SUI_ActionBarPlate",	x=-32,	y=240}},
-					BlizzardArt		= {	enabled = false },
-					XPBar			= {	enabled = false },
-					RepBar			= {	enabled = false },
-					APBar			= {	enabled = false },
+					BagBar = {
+						enabled = true,
+						padding = 0,
+						position = {
+							point = "TOPRIGHT",
+							parent = "SUI_ActionBarPlate",
+							x = -6,
+							y = -2,
+							scale = 0.70,
+							growHorizontal = "LEFT"
+						},
+						rows = 1,
+						onebag = false,
+						keyring = true
+					},
+					MicroMenu = {
+						enabled = true,
+						padding = -3,
+						position = {
+							point = "TOPLEFT",
+							parent = "SUI_ActionBarPlate",
+							x = 603,
+							y = 0,
+							scale = 0.80,
+							growHorizontal = "RIGHT"
+						}
+					},
+					PetBar = {
+						enabled = true,
+						padding = 1,
+						position = {
+							point = "TOPLEFT",
+							parent = "SUI_ActionBarPlate",
+							x = 5,
+							y = -6,
+							scale = 0.70,
+							growHorizontal = "RIGHT"
+						},
+						rows = 1,
+						skin = {Zoom = true}
+					},
+					StanceBar = {
+						enabled = true,
+						padding = 1,
+						position = {
+							point = "TOPRIGHT",
+							parent = "SUI_ActionBarPlate",
+							x = -605,
+							y = -2,
+							scale = 0.85,
+							growHorizontal = "LEFT"
+						},
+						rows = 1
+					},
+					MultiCast = {
+						enabled = true,
+						position = {point = "TOPRIGHT", parent = "SUI_ActionBarPlate", x = -777, y = -4, scale = 0.75}
+					},
+					Vehicle = {
+						enabled = false,
+						padding = 3,
+						position = {point = "CENTER", parent = "SUI_ActionBarPlate", x = -15, y = 213, scale = 0.85}
+					},
+					ExtraActionBar = {enabled = true, position = {point = "CENTER", parent = "SUI_ActionBarPlate", x = -32, y = 240}},
+					BlizzardArt = {enabled = false},
+					XPBar = {enabled = false},
+					RepBar = {enabled = false},
+					APBar = {enabled = false},
 					blizzardVehicle = true
 				},
 				Frames = {
 					player = {
-						Buffs=	{Mode="icons"},
-						Debuffs={Mode="icons"}
+						Buffs = {Mode = "icons"},
+						Debuffs = {Mode = "icons"}
 					},
 					target = {
-						Buffs=	{Mode="icons"},
-						Debuffs={Mode="bars"}
+						Buffs = {Mode = "icons"},
+						Debuffs = {Mode = "bars"}
 					}
 				},
 				Movable = {
 					Minimap = false,
 					PlayerFrames = true,
 					PartyFrames = true,
-					RaidFrames = true,
+					RaidFrames = true
 				},
 				Minimap = {
 					shape = "circle",
@@ -181,27 +470,27 @@ local DBdefault = {
 			XPBar = {
 				text = true,
 				ToolTip = "click",
-				GainedColor	= "Blue",
-				GainedRed	= 0,
-				GainedBlue	= 1,
-				GainedGreen	= .5,
-				GainedBrightness= .7,
-				RestedColor	= "Light_Blue",
-				RestedRed	= 0,
-				RestedBlue	= 1,
-				RestedGreen	= .5,
-				RestedBrightness= .7,
-				RestedMatchColor= false
+				GainedColor = "Blue",
+				GainedRed = 0,
+				GainedBlue = 1,
+				GainedGreen = .5,
+				GainedBrightness = .7,
+				RestedColor = "Light_Blue",
+				RestedRed = 0,
+				RestedBlue = 1,
+				RestedGreen = .5,
+				RestedBrightness = .7,
+				RestedMatchColor = false
 			},
 			RepBar = {
 				text = false,
 				ToolTip = "click",
-				GainedColor	= "AUTO",
-				GainedRed	= 0,
-				GainedBlue	= 0,
-				GainedGreen	= 1,
-				GainedBrightness= .6,
-				AutoDefined	= true
+				GainedColor = "AUTO",
+				GainedRed = 0,
+				GainedBlue = 0,
+				GainedGreen = 1,
+				GainedBrightness = .6,
+				AutoDefined = true
 			},
 			APBar = {
 				text = true,
@@ -242,7 +531,7 @@ local DBdefault = {
 			bar3 = {alpha = 100, enable = true},
 			bar4 = {alpha = 100, enable = true},
 			bar5 = {alpha = 100, enable = true},
-			bar6 = {alpha = 100, enable = true},
+			bar6 = {alpha = 100, enable = true}
 		},
 		font = {
 			Path = "",
@@ -250,7 +539,7 @@ local DBdefault = {
 			Core = fontdefault,
 			Player = fontdefault,
 			Party = fontdefault,
-			Raid = fontdefault,
+			Raid = fontdefault
 		},
 		Components = {}
 	},
@@ -259,10 +548,9 @@ local DBdefault = {
 			Style = "",
 			FirstLoad = true,
 			VehicleUI = true,
-			Viewport = 
-			{
+			Viewport = {
 				enabled = true,
-				offset =  { top = 0,bottom = 2.3,left = 0,right = 0 }
+				offset = {top = 0, bottom = 2.3, left = 0, right = 0}
 			}
 		},
 		SpinCam = {
@@ -275,7 +563,7 @@ local DBdefault = {
 			anim = "",
 			vignette = nil
 		},
-		PartyFrames  = {
+		PartyFrames = {
 			Style = "Classic",
 			Portrait3D = true,
 			threat = true,
@@ -292,7 +580,7 @@ local DBdefault = {
 			showPlayer = true,
 			showSolo = false,
 			Portrait = true,
-			scale=1,
+			scale = 1,
 			Auras = {
 				NumBuffs = 0,
 				NumDebuffs = 10,
@@ -307,8 +595,8 @@ local DBdefault = {
 				xOfs = 10,
 				yOfs = -20
 			},
-			bars = {health={textstyle="dynamic", textmode=1},mana={textstyle="dynamic", textmode=1}},
-			display = {pet = true,target=true,mana=true},
+			bars = {health = {textstyle = "dynamic", textmode = 1}, mana = {textstyle = "dynamic", textmode = 1}},
+			display = {pet = true, target = true, mana = true}
 		},
 		PlayerFrames = {
 			Style = "Classic",
@@ -326,23 +614,30 @@ local DBdefault = {
 			boss = frameDefault2,
 			arena = frameDefault2,
 			bars = {
-				health = {textstyle = "dynamic",textmode=1},
-				mana = {textstyle = "longfor",textmode=1},
-				player = {color="dynamic"},
-				target = {color="reaction"},
-				targettarget = {color="dynamic",style="large"},
-				pet = {color="happiness"},
-				focus = {color="dynamic"},
-				focustarget = {color="dynamic"},
+				health = {textstyle = "dynamic", textmode = 1},
+				mana = {textstyle = "longfor", textmode = 1},
+				player = {color = "dynamic"},
+				target = {color = "reaction"},
+				targettarget = {color = "dynamic", style = "large"},
+				pet = {color = "happiness"},
+				focus = {color = "dynamic"},
+				focustarget = {color = "dynamic"}
 			},
-			Castbar = {player=1,target=1,targettarget=1,pet=1,focus=1,text={player=1,target=1,targettarget=1,pet=1,focus=1}},
-			BossFrame = {movement=MovedDefault,display=true,scale=1},
-			ArenaFrame = {movement=MovedDefault,display=true,scale=1},
-			ClassBar = {scale = 1,movement=MovedDefault},
-			TotemFrame = {movement=MovedDefault},
-			AltManaBar = {movement=MovedDefault},
+			Castbar = {
+				player = 1,
+				target = 1,
+				targettarget = 1,
+				pet = 1,
+				focus = 1,
+				text = {player = 1, target = 1, targettarget = 1, pet = 1, focus = 1}
+			},
+			BossFrame = {movement = MovedDefault, display = true, scale = 1},
+			ArenaFrame = {movement = MovedDefault, display = true, scale = 1},
+			ClassBar = {scale = 1, movement = MovedDefault},
+			TotemFrame = {movement = MovedDefault},
+			AltManaBar = {movement = MovedDefault}
 		},
-		RaidFrames  = {
+		RaidFrames = {
 			Style = "Classic",
 			HideBlizzFrames = true,
 			threat = true,
@@ -356,7 +651,7 @@ local DBdefault = {
 			maxColumns = 4,
 			unitsPerColumn = 10,
 			columnSpacing = 5,
-			scale=1,
+			scale = 1,
 			Anchors = {
 				point = "TOPLEFT",
 				relativeTo = "UIParent",
@@ -365,27 +660,27 @@ local DBdefault = {
 				yOfs = -20
 			},
 			bars = {
-				health = {textstyle="dynamic", textmode=1},
-				mana = {textstyle="dynamic", textmode=1}
+				health = {textstyle = "dynamic", textmode = 1},
+				mana = {textstyle = "dynamic", textmode = 1}
 			},
-			debuffs = {display=true},
-			Auras={size=10,spacing=1,showType=true}
+			debuffs = {display = true},
+			Auras = {size = 10, spacing = 1, showType = true}
 		}
 	}
 }
-local DBdefaults = {char = DBdefault,profile = DBdefault}
+local DBdefaults = {char = DBdefault, profile = DBdefault}
 -- local SUI.DBGs = {Version = SUI.Version}
 
 function SUI:ResetConfig()
-	SUI.DB:ResetProfile(false,true);
-	ReloadUI();
+	SUI.DB:ResetProfile(false, true)
+	ReloadUI()
 end
 
 function SUI:FirstTimeSetup()
 	--Hide Bartender4 Minimap icon.
-	if Bartender4 then 
-		Bartender4.db.profile.minimapIcon.hide = true;
-		local LDBIcon = LibStub("LibDBIcon-1.0", true);
+	if Bartender4 then
+		Bartender4.db.profile.minimapIcon.hide = true
+		local LDBIcon = LibStub("LibDBIcon-1.0", true)
 		LDBIcon["Hide"](LDBIcon, "Bartender4")
 	end
 	--Setup page
@@ -399,9 +694,9 @@ function SUI:FirstTimeSetup()
 			SUI_Win.Core = CreateFrame("Frame", nil)
 			SUI_Win.Core:SetParent(SUI_Win.content)
 			SUI_Win.Core:SetAllPoints(SUI_Win.content)
-			
+
 			local gui = LibStub("AceGUI-3.0")
-			
+
 			--Profiles
 			local control = gui:Create("Dropdown")
 			control:SetLabel("Exsisting profiles")
@@ -409,23 +704,20 @@ function SUI:FirstTimeSetup()
 			local profiles = {}
 			-- copy existing profiles into the table
 			local currentProfile = SUI.DB:GetCurrentProfile()
-			for i,v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do 
-				if not (nocurrent and v == currentProfile) then 
-					profiles[v] = v 
-				end 
+			for i, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
+				if not (nocurrent and v == currentProfile) then
+					profiles[v] = v
+				end
 			end
 			control:SetList(profiles)
 			control:SetPoint("TOP", SUI_Win.Core, "TOP", 0, -30)
 			control.frame:SetParent(SUI_Win.Core)
 			control.frame:Show()
 			SUI_Win.Core.Profiles = control
-			
-			
-			
 		end,
 		Next = function()
 			SUI.DB.SetupDone = true
-			
+
 			SUI_Win.Core:Hide()
 			SUI_Win.Core = nil
 		end,
@@ -433,54 +725,66 @@ function SUI:FirstTimeSetup()
 		-- Priority = 1,
 		-- Skipable = true,
 		-- NoReloadOnSkip = true,
-		Skip = function() SUI.DB.SetupDone = true; end
+		Skip = function()
+			SUI.DB.SetupDone = true
+		end
 	}
-	
+
 	-- Uncomment this when the time is right.
 	-- local SetupWindow = spartan:GetModule("SetupWindow")
 	-- SetupWindow:AddPage(PageData)
 	-- SetupWindow:DisplayPage()
-	
+
 	-- This will be moved once we put the setup page in place.
 	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
 	SUI.DB.SetupDone = true
 end
 
 function SUI:OnInitialize()
-	SUI.SpartanUIDB = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults);
+	SUI.SpartanUIDB = LibStub("AceDB-3.0"):New("SpartanUIDB", DBdefaults)
 	--If we have not played in a long time reset the database, make sure it is all good.
 	local ver = SUI.SpartanUIDB.profile.SUIProper.Version
-	if (ver ~= nil and ver < "4.0.0") then SUI.SpartanUIDB:ResetDB(); end
-	if not SUI.CurseVersion then SUI.CurseVersion = "" end
-	
+	if (ver ~= nil and ver < "4.0.0") then
+		SUI.SpartanUIDB:ResetDB()
+	end
+	if not SUI.CurseVersion then
+		SUI.CurseVersion = ""
+	end
+
 	-- New SUI.DB Access
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-	
+
 	--Check for any SUI.DB changes
-	if SUI.DB.SetupDone then SUI:DBUpgrades() end
-	
-	-- Legacy, need to phase these globals out it was messy 
+	if SUI.DB.SetupDone then
+		SUI:DBUpgrades()
+	end
+
+	-- Legacy, need to phase these globals out it was messy
 	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.SpartanUIDB);
-	
+	SUI.opt.args["Profiles"] = LibStub("AceDBOptions-3.0"):GetOptionsTable(SUI.SpartanUIDB)
+
 	-- Add dual-spec support
-	local LibDualSpec = LibStub('LibDualSpec-1.0')
+	local LibDualSpec = LibStub("LibDualSpec-1.0")
 	LibDualSpec:EnhanceDatabase(self.SpartanUIDB, "SpartanUI")
 	LibDualSpec:EnhanceOptions(SUI.opt.args["Profiles"], self.SpartanUIDB)
-	SUI.opt.args["Profiles"].order=999
-	
+	SUI.opt.args["Profiles"].order = 999
+
 	-- Spec Setup
 	SUI.SpartanUIDB.RegisterCallback(SUI, "OnNewProfile", "InitializeProfile")
 	SUI.SpartanUIDB.RegisterCallback(SUI, "OnProfileChanged", "UpdateModuleConfigs")
 	SUI.SpartanUIDB.RegisterCallback(SUI, "OnProfileCopied", "UpdateModuleConfigs")
 	SUI.SpartanUIDB.RegisterCallback(SUI, "OnProfileReset", "UpdateModuleConfigs")
-	
+
 	--Bartender4
-	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
-	if SUI.DBG.BartenderChangesActive then SUI.DBG.BartenderChangesActive = false end
+	if SUI.DBG.Bartender4 == nil then
+		SUI.DBG.Bartender4 = {}
+	end
+	if SUI.DBG.BartenderChangesActive then
+		SUI.DBG.BartenderChangesActive = false
+	end
 	if Bartender4 then
 		--Update to the current profile
 		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
@@ -488,24 +792,28 @@ function SUI:OnInitialize()
 		Bartender4.db.RegisterCallback(SUI, "OnProfileCopied", "BT4RefreshConfig")
 		Bartender4.db.RegisterCallback(SUI, "OnProfileReset", "BT4RefreshConfig")
 	end
-	
+
 	SUI:FontSetup()
-	
+
 	--First Time Setup Actions
-	if not SUI.DB.SetupDone then SUI:FirstTimeSetup() end
+	if not SUI.DB.SetupDone then
+		SUI:FirstTimeSetup()
+	end
 end
 
 function SUI:DBUpgrades()
-	if SUI.DBMod.Artwork.Style == "" and SUI.DBMod.Artwork.SetupDone then SUI.DBMod.Artwork.Style = "Classic" end
+	if SUI.DBMod.Artwork.Style == "" and SUI.DBMod.Artwork.SetupDone then
+		SUI.DBMod.Artwork.Style = "Classic"
+	end
 end
 
 function SUI:InitializeProfile()
 	SUI.DB:RegisterDefaults(SUI.DBdefaults)
-	
+
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-	
+
 	SUI:reloadui()
 end
 
@@ -523,12 +831,12 @@ function SUI:BT4ProfileAttach(msg)
 			SUI_Win:SetPoint("TOP", 0, -20)
 			SUI_Win:SetSize(400, 150)
 			SUI_Win.Status:Hide()
-			
+
 			SUI_Win.Skip:SetText("DO NOT ATTACH")
 			SUI_Win.Skip:SetSize(110, 25)
 			SUI_Win.Skip:ClearAllPoints()
 			SUI_Win.Skip:SetPoint("BOTTOMRIGHT", SUI_Win, "BOTTOM", -15, 15)
-			
+
 			SUI_Win.Next:SetText("ATTACH")
 			SUI_Win.Next:ClearAllPoints()
 			SUI_Win.Next:SetPoint("BOTTOMLEFT", SUI_Win, "BOTTOM", 15, 15)
@@ -538,7 +846,9 @@ function SUI:BT4ProfileAttach(msg)
 				Style = SUI.DBMod.Artwork.Style
 			}
 			-- Catch if Movedbars is not initalized
-			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
+			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then
+				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
+			end
 			--Setup profile
 			SUI:GetModule("Artwork_Core"):SetupProfile(Bartender4.db:GetCurrentProfile())
 			ReloadUI()
@@ -552,48 +862,62 @@ function SUI:BT4ProfileAttach(msg)
 end
 
 function SUI:BT4RefreshConfig()
-	if SUI.DBG.BartenderChangesActive or SUI.DBMod.Artwork.FirstLoad then return end
+	if SUI.DBG.BartenderChangesActive or SUI.DBMod.Artwork.FirstLoad then
+		return
+	end
 	-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
 	SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
 	SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
-	
-	if SUI.DBG.Bartender4 == nil then SUI.DBG.Bartender4 = {} end
-	
-    if SUI.DBG.Bartender4[SUI.DBP.BT4Profile] then
+
+	if SUI.DBG.Bartender4 == nil then
+		SUI.DBG.Bartender4 = {}
+	end
+
+	if SUI.DBG.Bartender4[SUI.DBP.BT4Profile] then
 		-- We know this profile.
 		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style == SUI.DBMod.Artwork.Style then
-			-- Catch if Movedbars is not initalized
-			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {} end
 			--Profile is for this style, prompt to ReloadUI; usually un needed can uncomment if needed latter
 			-- SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
+			-- Catch if Movedbars is not initalized
+			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then
+				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
+			end
 		else
 			--Ask if we should change to the correct profile or if we should change the profile to be for this style
-			SUI:BT4ProfileAttach("This bartender profile is currently attached to the style '"..SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style.."' you are currently using "..SUI.DBMod.Artwork.Style.." would you like to reassign the profile to this art skin? ")
+			SUI:BT4ProfileAttach(
+				"This bartender profile is currently attached to the style '" ..
+					SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style ..
+						"' you are currently using " ..
+							SUI.DBMod.Artwork.Style .. " would you like to reassign the profile to this art skin? "
+			)
 		end
 	else
 		-- We do not know this profile, ask if we should attach it to this style.
-		SUI:BT4ProfileAttach("This bartender profile is currently NOT attached to any style you are currently using the "..SUI.DBMod.Artwork.Style.." style would you like to assign the profile to this art skin? ")
+		SUI:BT4ProfileAttach(
+			"This bartender profile is currently NOT attached to any style you are currently using the " ..
+				SUI.DBMod.Artwork.Style .. " style would you like to assign the profile to this art skin? "
+		)
 	end
-	
-	SUI:Print("Bartender4 Profile changed to: ".. Bartender4.db:GetCurrentProfile())
+
+	SUI:Print("Bartender4 Profile changed to: " .. Bartender4.db:GetCurrentProfile())
 end
 
 function SUI:UpdateModuleConfigs()
 	-- SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
-	
+
 	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-	
+
 	if Bartender4 then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
-			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile);
-        elseif SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile then
-            Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile);
+			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile)
+		elseif SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile then
+			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile)
 		else
-			Bartender4.db:SetProfile(SUI.DB.BT4Profile);
+			Bartender4.db:SetProfile(SUI.DB.BT4Profile)
 		end
 	end
-	
+
 	SUI:reloadui()
 end
 
@@ -617,74 +941,119 @@ function SUI:reloadui(Desc2)
 		Next = function()
 			ReloadUI()
 		end,
-		Skip = function() end
+		Skip = function()
+		end
 	}
 	local SetupWindow = SUI:GetModule("SetupWindow")
 	SetupWindow:DisplayPage(PageData)
 end
 
 function SUI:OnEnable()
-    AceConfig:RegisterOptionsTable("SpartanUIBliz", { name = "SpartanUI", type = "group",args={
-		n1={type="description", fontSize="medium", order=1, width="full", name="Options have moved into their own window as this menu was getting a bit crowded."},
-		n3={type="description", fontSize="medium", order=3, width="full", name="Options can be accessed by the button below or by typing /sui or /spartanui"},
-		Close={name = "Launch Options",width="full",type = "execute",order = 50,
-			func = function()
-				InterfaceOptionsFrame:Hide();
-				AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600);
-				AceConfigDialog:Open("SpartanUI");
-			end	}
+	AceConfig:RegisterOptionsTable(
+		"SpartanUIBliz",
+		{
+			name = "SpartanUI",
+			type = "group",
+			args = {
+				n1 = {
+					type = "description",
+					fontSize = "medium",
+					order = 1,
+					width = "full",
+					name = "Options have moved into their own window as this menu was getting a bit crowded."
+				},
+				n3 = {
+					type = "description",
+					fontSize = "medium",
+					order = 3,
+					width = "full",
+					name = "Options can be accessed by the button below or by typing /sui or /spartanui"
+				},
+				Close = {
+					name = "Launch Options",
+					width = "full",
+					type = "execute",
+					order = 50,
+					func = function()
+						InterfaceOptionsFrame:Hide()
+						AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600)
+						AceConfigDialog:Open("SpartanUI")
+					end
+				}
+			}
 		}
-	})
+	)
 	AceConfigDialog:AddToBlizOptions("SpartanUIBliz", "SpartanUI")
-	
-    AceConfig:RegisterOptionsTable("SpartanUI", SUI.opt)
-	if not SUI:GetModule("Artwork_Core", true) then SUI.opt.args["Artwork"].disabled = true end
-    if not SUI:GetModule("PartyFrames", true) then  SUI.opt.args["PartyFrames"].disabled = true end
-    if not SUI:GetModule("PlayerFrames", true) then SUI.opt.args["PlayerFrames"].disabled = true end
-    if not SUI:GetModule("RaidFrames", true) then SUI.opt.args["RaidFrames"].disabled = true end
-    
-    self:RegisterChatCommand("sui", "ChatCommand")
-    self:RegisterChatCommand("suihelp", "suihelp")
-    self:RegisterChatCommand("spartanui", "ChatCommand")
-	
-	local CountUnit = function(t,strict)
+
+	AceConfig:RegisterOptionsTable("SpartanUI", SUI.opt)
+	if not SUI:GetModule("Artwork_Core", true) then
+		SUI.opt.args["Artwork"].disabled = true
+	end
+	if not SUI:GetModule("PartyFrames", true) then
+		SUI.opt.args["PartyFrames"].disabled = true
+	end
+	if not SUI:GetModule("PlayerFrames", true) then
+		SUI.opt.args["PlayerFrames"].disabled = true
+	end
+	if not SUI:GetModule("RaidFrames", true) then
+		SUI.opt.args["RaidFrames"].disabled = true
+	end
+
+	self:RegisterChatCommand("sui", "ChatCommand")
+	self:RegisterChatCommand("suihelp", "suihelp")
+	self:RegisterChatCommand("spartanui", "ChatCommand")
+
+	local CountUnit = function(t, strict)
 		if t == nil or t == "" then
-			SUI:Print('Nothing to search for. Please enter a unit name, search is not case-sensitive.')
-			SUI:Print('For a general search use /countunit Auctioneer')
-			SUI:Print('For a specific unit use /countunitstrict Dark rune guardian')
+			SUI:Print("Nothing to search for. Please enter a unit name, search is not case-sensitive.")
+			SUI:Print("For a general search use /countunit Auctioneer")
+			SUI:Print("For a specific unit use /countunitstrict Dark rune guardian")
 			return
 		end
 		t = string.lower(t)
 		local c = 0
 		local p = nil
-		for i=1,10000 do
-			p=_G["NamePlate"..i.."UnitFrame"]
+		for i = 1, 10000 do
+			p = _G["NamePlate" .. i .. "UnitFrame"]
 			if p and p:IsVisible() then
 				local name = string.lower(p.name:GetText())
 				if strict then
-					c = c+(name==t and 1 or 0)
+					c = c + (name == t and 1 or 0)
 				else
-					c = c+(string.match(name, t) and 1 or 0)
+					c = c + (string.match(name, t) and 1 or 0)
 				end
 			elseif not p and i == 1 then
 				SUI:Print("No nameplates detected")
 				return
 			end
 		end
-		SUI:Print(t,": ",c)
+		SUI:Print(t, ": ", c)
 	end
-	
-    self:RegisterChatCommand("countunitstrict", function(t) CountUnit(t,true) end)
-    self:RegisterChatCommand("countunit", function(t) CountUnit(t) end)
 
-	local LaunchOpt = CreateFrame("Frame");
-	LaunchOpt:SetScript("OnEvent",function(self,...)
-		if SUI.DB.OpenOptions then
-			SUI:ChatCommand()
-			SUI.DB.OpenOptions = false;
+	self:RegisterChatCommand(
+		"countunitstrict",
+		function(t)
+			CountUnit(t, true)
 		end
-	end);
-	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD");
+	)
+	self:RegisterChatCommand(
+		"countunit",
+		function(t)
+			CountUnit(t)
+		end
+	)
+
+	local LaunchOpt = CreateFrame("Frame")
+	LaunchOpt:SetScript(
+		"OnEvent",
+		function(self, ...)
+			if SUI.DB.OpenOptions then
+				SUI:ChatCommand()
+				SUI.DB.OpenOptions = false
+			end
+		end
+	)
+	LaunchOpt:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function SUI:suihelp(input)
@@ -695,14 +1064,14 @@ end
 
 function SUI:ChatCommand(input)
 	if input == "version" then
-		SUI:Print("SpartanUI "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "Version"))
-		SUI:Print("SpartanUI Curse "..L["Version"].." "..GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version"))
+		SUI:Print("SpartanUI " .. L["Version"] .. " " .. GetAddOnMetadata("SpartanUI", "Version"))
+		SUI:Print("SpartanUI Curse " .. L["Version"] .. " " .. GetAddOnMetadata("SpartanUI", "X-Curse-Packaged-Version"))
 	elseif input == "map" then
-		Minimap.mover:Show();
+		Minimap.mover:Show()
 	else
 		AceConfigDialog:SetDefaultSize("SpartanUI", 850, 600)
 		AceConfigDialog:Open("SpartanUI")
-    end
+	end
 end
 
 function SUI:Err(mod, err)
@@ -712,20 +1081,22 @@ function SUI:Err(mod, err)
 	SUI:Print("Please submit a bug at |cff3370FFhttp://spartanui.net/bugs")
 end
 
-function SUI:MergeData(target,source,override)
-	if type(target) ~= "table" then target = {} end
-	for k,v in pairs(source) do
+function SUI:MergeData(target, source, override)
+	if type(target) ~= "table" then
+		target = {}
+	end
+	for k, v in pairs(source) do
 		if type(v) == "table" then
-			target[k] = self:MergeData(target[k], v, override);
+			target[k] = self:MergeData(target[k], v, override)
 		else
 			if override then
-				target[k] = v;
+				target[k] = v
 			elseif target[k] == nil then
-				target[k] = v;
+				target[k] = v
 			end
 		end
 	end
-	return target;
+	return target
 end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
@@ -733,55 +1104,59 @@ end
 function SUI:isPartialMatch(frameName, tab)
 	local result = false
 
-	for k,v in ipairs(tab) do
+	for k, v in ipairs(tab) do
 		startpos, endpos = strfind(strlower(frameName), strlower(v))
 		if (startpos == 1) then
-			result = true;
+			result = true
 		end
 	end
 
-	return result;
+	return result
 end
 
 function SUI:isInTable(tab, frameName)
 	-- local Count = 0
 	-- for Index, Value in pairs( tab ) do
-	  -- Count = Count + 1
+	-- Count = Count + 1
 	-- end
 	-- print (Count)
-	if tab == nil or frameName == nil then return false end
-	for k,v in ipairs(tab) do
+	if tab == nil or frameName == nil then
+		return false
+	end
+	for k, v in ipairs(tab) do
 		if v ~= nil and frameName ~= nil then
 			if (strlower(v) == strlower(frameName)) then
-				return true;
+				return true
 			end
 		end
 	end
-	return false;
+	return false
 end
 
 function SUI:round(num) -- rounds a number to 2 decimal places
-	if num then return floor( (num*10^2)+0.5) / (10^2); end
-end;
+	if num then
+		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+	end
+end
 
 function SUI:comma_value(n)
-	local left,num,right = string.match(n,'^([^%d]*%d)(%d*)(.-)$')
-	return left..(num:reverse():gsub('(%d%d%d)','%1' .. _G.LARGE_NUMBER_SEPERATOR):reverse())..right
+	local left, num, right = string.match(n, "^([^%d]*%d)(%d*)(.-)$")
+	return left .. (num:reverse():gsub("(%d%d%d)", "%1" .. _G.LARGE_NUMBER_SEPERATOR):reverse()) .. right
 end
 
 ---------------		FONT FUNCTIONS		---------------------------------------------
 
 function SUI:FontSetup()
-	local OutlineSizes = {22, 18,16,13, 12,11,10,9,8}
+	local OutlineSizes = {22, 18, 16, 13, 12, 11, 10, 9, 8}
 	local Sizes = {10}
-	for i,v in ipairs(OutlineSizes) do
+	for i, v in ipairs(OutlineSizes) do
 		local filename, fontHeight, flags = _G["SUI_FontOutline" .. v]:GetFont()
 		if filename ~= SUI:GetFontFace("Primary") then
 			_G["SUI_FontOutline" .. v] = _G["SUI_FontOutline" .. v]:SetFont(SUI:GetFontFace("Primary"), v)
 		end
-	end	
-	
-	for i,v in ipairs(Sizes) do
+	end
+
+	for i, v in ipairs(Sizes) do
 		local filename, fontHeight, flags = _G["SUI_Font" .. v]:GetFont()
 		if filename ~= SUI:GetFontFace("Primary") then
 			_G["SUI_Font" .. v] = _G["SUI_Font" .. v]:SetFont(SUI:GetFontFace("Primary"), v)
@@ -809,50 +1184,61 @@ function SUI:GetFontFace(Module)
 			return SUI.DB.font.Path
 		end
 	end
-	
+
 	return "Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf"
 end
 
 function SUI:FormatFont(element, size, Module)
 	--Adaptive Modules
 	if SUI.DB.font[Module] == nil then
-		SUI.DB.font[Module] = spartan.fontdefault;
+		SUI.DB.font[Module] = spartan.fontdefault
 	end
 	--Set Font Outline
 	local flags, sizeFinal = ""
-	if SUI.DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
-	
+	if SUI.DB.font[Module].Type == "monochrome" then
+		flags = flags .. "monochrome "
+	end
+
 	-- Outline was deemed to thick, it is not a slight drop shadow done below
 	--if SUI.DB.font[Module].Type == "outline" then flags = flags.."outline " end
-	
-	if SUI.DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
+
+	if SUI.DB.font[Module].Type == "thickoutline" then
+		flags = flags .. "thickoutline "
+	end
 	--Set Size
-	sizeFinal = size + SUI.DB.font[Module].Size;
+	sizeFinal = size + SUI.DB.font[Module].Size
 	--Create Font
 	element:SetFont(SUI:GetFontFace(Module), sizeFinal, flags)
-	
+
 	if SUI.DB.font[Module].Type == "outline" then
-		element:SetShadowColor(0,0,0,.9)
-		element:SetShadowOffset(1,-1)
+		element:SetShadowColor(0, 0, 0, .9)
+		element:SetShadowOffset(1, -1)
 	end
 	--Add Item to the Array
 	local count = 0
-	for _ in pairs(FontItems[Module]) do count = count + 1 end
-	FontItems[Module][count+1]=element
-	FontItemsSize[Module][count+1]=size
+	for _ in pairs(FontItems[Module]) do
+		count = count + 1
+	end
+	FontItems[Module][count + 1] = element
+	FontItemsSize[Module][count + 1] = size
 end
 
 function SUI:FontRefresh(Module)
-	for a,b in pairs(FontItems[Module]) do
+	for a, b in pairs(FontItems[Module]) do
 		--Set Font Outline
 		local flags, size = ""
-		if SUI.DB.font[Module].Type == "monochrome" then flags = flags.."monochrome " end
-		if SUI.DB.font[Module].Type == "outline" then flags = flags.."outline " end
-		if SUI.DB.font[Module].Type == "thickoutline" then flags = flags.."thickoutline " end
+		if SUI.DB.font[Module].Type == "monochrome" then
+			flags = flags .. "monochrome "
+		end
+		if SUI.DB.font[Module].Type == "outline" then
+			flags = flags .. "outline "
+		end
+		if SUI.DB.font[Module].Type == "thickoutline" then
+			flags = flags .. "thickoutline "
+		end
 		--Set Size
-		size = FontItemsSize[Module][a] + SUI.DB.font[Module].Size;
+		size = FontItemsSize[Module][a] + SUI.DB.font[Module].Size
 		--Update Font
 		b:SetFont(SUI:GetFontFace(Module), size, flags)
 	end
 end
-

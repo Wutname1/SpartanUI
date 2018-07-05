@@ -1,7 +1,7 @@
 local _G, SUI = _G, SUI
-local L = SUI.L;
-local Artwork_Core = SUI:GetModule("Artwork_Core");
-local module = SUI:GetModule("Style_Minimal");
+local L = SUI.L
+local Artwork_Core = SUI:GetModule("Artwork_Core")
+local module = SUI:GetModule("Style_Minimal")
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
@@ -17,53 +17,87 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	if (SUI.DBMod.Artwork.FirstLoad) then module:FirstLoad() end
-	module:SetupMenus();
-	module:InitFramework();
-	module:InitActionBars();
-	InitRan = true;
+	if (SUI.DBMod.Artwork.FirstLoad) then
+		module:FirstLoad()
+	end
+	module:SetupMenus()
+	module:InitFramework()
+	module:InitActionBars()
+	InitRan = true
 end
 
 function module:FirstLoad()
 	--If our profile exists activate it.
-	if ((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Minimal.BartenderProfile) and Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile,true)) then Bartender4.db:SetProfile(SUI.DB.Styles.Minimal.BartenderProfile); end
+	if
+		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Minimal.BartenderProfile) and
+			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile, true))
+	 then
+		Bartender4.db:SetProfile(SUI.DB.Styles.Minimal.BartenderProfile)
+	end
 end
 
 function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= "Minimal") then
-		module:Disable();
+		module:Disable()
 	else
 		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Minimal.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-			Bartender4.db:SetProfile(SUI.DB.Styles.Minimal.BartenderProfile);
+			Bartender4.db:SetProfile(SUI.DB.Styles.Minimal.BartenderProfile)
 		end
-		if (not InitRan) then module:Init(); end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile,true)) then module:CreateProfile(); end
-		module:EnableFramework();
-		module:EnableActionBars();
-		if (SUI.DBMod.Artwork.FirstLoad) then SUI.DBMod.Artwork.FirstLoad = false end -- We want to do this last
+		if (not InitRan) then
+			module:Init()
+		end
+		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile, true)) then
+			module:CreateProfile()
+		end
+		module:EnableFramework()
+		module:EnableActionBars()
+		if (SUI.DBMod.Artwork.FirstLoad) then
+			SUI.DBMod.Artwork.FirstLoad = false
+		end -- We want to do this last
 	end
 end
 
 function module:SetupMenus()
-	SUI.opt.args["Artwork"].args["Art"] = {name = L["ArtworkOpt"],type="group",order=10,
+	SUI.opt.args["Artwork"].args["Art"] = {
+		name = L["ArtworkOpt"],
+		type = "group",
+		order = 10,
 		args = {
-			alpha = {name=L["ArtColor"],type="color",hasAlpha=true,order=1,width="full",desc=L["TransparencyDesc"],
-				get = function(info) return unpack(SUI.DB.Styles.Minimal.Color) end,
-				set = function(info,r,b,g,a) SUI.DB.Styles.Minimal.Color = {r,b,g,a}; module:SetColor(); end
+			alpha = {
+				name = L["ArtColor"],
+				type = "color",
+				hasAlpha = true,
+				order = 1,
+				width = "full",
+				desc = L["TransparencyDesc"],
+				get = function(info)
+					return unpack(SUI.DB.Styles.Minimal.Color)
+				end,
+				set = function(info, r, b, g, a)
+					SUI.DB.Styles.Minimal.Color = {r, b, g, a}
+					module:SetColor()
+				end
 			}
 		}
 	}
 end
 
 function module:OnDisable()
-	Minimal_SpartanUI:Hide();
-	Minimal_AnchorFrame:Hide();
+	Minimal_SpartanUI:Hide()
+	Minimal_AnchorFrame:Hide()
 end
 
 function module:Options_PartyFrames()
-	SUI.opt.args["PartyFrames"].args["MinimalFrameStyle"] = {name=L["FrameStyle"],type="select",order=5,
-		values = {["large"]=L["Large"],["small"]=L["Small"]},
-		get = function(info) return SUI.DB.Styles.Minimal.PartyFramesSize; end,
-		set = function(info,val) SUI.DB.Styles.Minimal.PartyFramesSize = val; end
-	};
+	SUI.opt.args["PartyFrames"].args["MinimalFrameStyle"] = {
+		name = L["FrameStyle"],
+		type = "select",
+		order = 5,
+		values = {["large"] = L["Large"], ["small"] = L["Small"]},
+		get = function(info)
+			return SUI.DB.Styles.Minimal.PartyFramesSize
+		end,
+		set = function(info, val)
+			SUI.DB.Styles.Minimal.PartyFramesSize = val
+		end
+	}
 end
