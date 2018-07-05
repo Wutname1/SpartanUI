@@ -1164,7 +1164,7 @@ function module:PlayerFrames()
 				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
 			},
 			smallbg = {
-				Texture =  "Interface\Scenarios\LegionInvasion",
+				Texture =  "Interface\\Scenarios\\LegionInvasion",
 				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
 			},
 			flair = {
