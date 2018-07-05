@@ -88,7 +88,7 @@ function module:updateOffset()
 	local fubar,ChocolateBar,titan,offset = 0,0,0,0;
 	
 	if not SUI.DB.yoffsetAuto then
-		offset = max(SUI.DB.yoffset,1);
+		offset = max(SUI.DB.yoffset,0);
 	else
 		for i = 1,4 do -- FuBar Offset
 			if (_G["FuBarFrame"..i] and _G["FuBarFrame"..i]:IsVisible()) then
@@ -115,22 +115,20 @@ function module:updateOffset()
 		end
 		
 		offset = max(fubar + titan + ChocolateBar,1);
+		SUI.DB.yoffset = offset
 	end
-	if offset > 1 then
-		Fel_SpartanUI.Left:ClearAllPoints()
-		Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, SUI.DB.yoffset)
-		
-		Fel_ActionBarPlate:ClearAllPoints()
-		Fel_ActionBarPlate:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, SUI.DB.yoffset+6)
-	else
-		Fel_SpartanUI.Left:ClearAllPoints()
-		Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-		
-		Fel_ActionBarPlate:ClearAllPoints()
-		Fel_ActionBarPlate:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-	end
-	SUI.DB.yoffset = offset
 	
+	Fel_SpartanUI.Left:ClearAllPoints()
+	if SUI.DB.Styles.Fel.SubTheme == "War" then
+		Fel_SpartanUI.Left:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, offset)
+		-- Fel_SpartanUI.Left:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, offset)
+		-- Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, offset)
+	else
+		Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, offset)
+	end
+	
+	Fel_ActionBarPlate:ClearAllPoints()
+	Fel_ActionBarPlate:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, offset)
 end
 
 --	Module Calls
@@ -197,6 +195,17 @@ function module:EnableArtwork()
 	if SUI.DB.Styles.Fel.SubTheme == "Digital" then
 		Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Base_Bar_Left]])
 		Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Base_Bar_Right]])
+		Fel_Bar1BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_Bar2BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_Bar3BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_Bar4BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_MenuBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+		Fel_StanceBarBG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
+	elseif SUI.DB.Styles.Fel.SubTheme == "War" then
+		Fel_SpartanUI.Left:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\War\Art]])
+		Fel_SpartanUI.Left:ClearAllPoints()
+		Fel_SpartanUI.Left:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+		-- Fel_SpartanUI.Right:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\War\Base_Bar_Horde]])
 		Fel_Bar1BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
 		Fel_Bar2BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
 		Fel_Bar3BG:SetTexture([[Interface\AddOns\SpartanUI_Style_Fel\Digital\Fel-Box]])
@@ -540,7 +549,11 @@ function module:MiniMap()
 	Minimap:SetSize(156, 156);
 	
 	Minimap:ClearAllPoints();
-	Minimap:SetPoint("CENTER",Fel_SpartanUI.Left,"RIGHT",0,-10);
+	if SUI.DB.Styles.Fel.SubTheme == "War" then
+		Minimap:SetPoint("CENTER",Fel_SpartanUI.Left,"CENTER",0,-10);
+	else
+		Minimap:SetPoint("CENTER",Fel_SpartanUI.Left,"RIGHT",0,-10);
+	end
 	Minimap:SetParent(Fel_SpartanUI);
 	
 	if Minimap.ZoneText ~= nil then

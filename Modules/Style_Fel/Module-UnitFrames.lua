@@ -25,7 +25,9 @@ local TextFormat = function(text)
 	local textstyle = SUI.DBMod.PlayerFrames.bars[text].textstyle
 	local textmode = SUI.DBMod.PlayerFrames.bars[text].textmode
 	local a,m,t,z
-	if text == "mana" then z = "pp" else z = "hp" end
+	if text == "mana" then
+		z = "pp" else z = "hp"
+	end
 	
 	-- textstyle
 	-- "Long: 			 Displays all numbers."
@@ -68,7 +70,9 @@ end
 local threat = function(self,event,unit)
 	local status
 	unit = string.gsub(self.unit,"(.)",string.upper,1) or string.gsub(unit,"(.)",string.upper,1)
-	if UnitExists(unit) then status = UnitThreatSituation(unit) else status = 0; end
+	if UnitExists(unit) then
+		status = UnitThreatSituation(unit) else status = 0;
+	end
 	
 	if self.ThreatIndicatorOverlay then
 		if ( status and status > 0 ) then
@@ -77,13 +81,17 @@ local threat = function(self,event,unit)
 		else
 			self.ThreatIndicatorOverlay:Hide();
 		end
-		if self.artwork.flair then self.artwork.flair.bg:SetVertexColor(GetThreatStatusColor(status)) end
+		if self.artwork.flair then
+			self.artwork.flair.bg:SetVertexColor(GetThreatStatusColor(status))
+		end
 	end
 end
 
 local name = function(self)
-	if (UnitIsEnemy(self.unit,"player")) then self.Name:SetTextColor(1, 50/255, 0);
-	elseif (UnitIsUnit(self.unit,"player")) then self.Name:SetTextColor(1, 1, 1); 
+	if (UnitIsEnemy(self.unit,"player")) then
+		self.Name:SetTextColor(1, 50/255, 0);
+	elseif (UnitIsUnit(self.unit,"player")) then
+		self.Name:SetTextColor(1, 1, 1); 
 	else
 		local r,g,b = unpack(colors.reaction[UnitReaction(self.unit,"player")] or {1,1,1});
 		self.Name:SetTextColor(r,g,b);
@@ -91,7 +99,9 @@ local name = function(self)
 end
 
 local pvpIconWar = function (self, event, unit)
-	if(unit ~= self.unit) then return end
+	if(unit ~= self.unit) then
+		return
+	end
 	
 	self.artwork.bgHorde:Hide()
 	self.artwork.bgAlliance:Hide()
@@ -116,29 +126,24 @@ local pvpIconWar = function (self, event, unit)
 end
 
 local pvpIcon = function (self, event, unit)
-	if(unit ~= self.unit) then return end
+	if(unit ~= self.unit) then
+		return
+	end
 	
 	local pvp = self.PvPIndicator
 	if(pvp.PreUpdate) then
 		pvp:PreUpdate()
 	end
 	
-	-- if pvp.shadow == nil then
-		-- pvp.shadow = self:CreateTexture(nil,"BACKGROUND");
-		-- pvp.shadow:SetSize(pvp:GetSize());
-		-- pvp.shadow:SetPoint("CENTER",pvp,"CENTER",2,-2);
-		-- pvp.shadow:SetVertexColor(0,0,0,.9)
-	-- end
-	
 	local status
 	local factionGroup = UnitFactionGroup(unit)
 	if(UnitIsPVPFreeForAll(unit)) then
-		pvp:SetTexture[[Interface\FriendsFrame\UI-Toast-FriendOnlineIcon]]
+		pvp:SetTexture("Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon")
 		status = 'ffa'
 	-- XXX - WoW5: UnitFactionGroup() can return Neutral as well.
 	elseif(factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
-		pvp:SetTexture([[Interface\FriendsFrame\PlusManz-]]..factionGroup)
-		-- pvp.shadow:SetTexture([[Interface\FriendsFrame\PlusManz-]]..factionGroup)
+		pvp:SetTexture("Interface\\FriendsFrame\\PlusManz-"..factionGroup)
+		-- pvp.shadow:SetTexture("Interface\\FriendsFrame\\PlusManz-"..factionGroup)
 		status = factionGroup
 	end
 
@@ -158,9 +163,11 @@ end
 --	Updating functions
 local PostUpdateText = function(self,unit)
 	self:Untag(self.Health.value)
-	if self.Power then self:Untag(self.Power.value) end
 	self:Tag(self.Health.value, TextFormat("health"))
-	if self.Power then self:Tag(self.Power.value, TextFormat("mana")) end
+	if self.Power then
+		self:Untag(self.Power.value)
+		self:Tag(self.Power.value, TextFormat("mana"))
+	end
 end
 
 local PostUpdateAura = function(self,unit,mode)
@@ -224,7 +231,9 @@ local ChangeFrameStatus = function(self,unit)
 end
 
 local PostCastStop = function(self)
-	if self.Time then self.Time:SetTextColor(1,1,1); end
+	if self.Time then
+		self.Time:SetTextColor(1,1,1);
+	end
 end
 
 local PostCastStart = function(self,unit,name,rank,text,castid)
@@ -241,12 +250,15 @@ local OnCastbarUpdate = function(self,elapsed)
 		if (self.duration >= self.max) then
 			self.casting = nil;
 			self:Hide();
-			if PostCastStop then PostCastStop(self:GetParent()); end
-			if PostCastStop then PostCastStop(self); end
-			return;
+			if PostCastStop then
+				PostCastStop(self:GetParent());
+				PostCastStop(self);
+			end
 		end
 		if self.Time then
-			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
+			if self.delay ~= 0 then
+				self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1);
+			end
 			if SUI.DBMod.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
 				self.Time:SetFormattedText("%.1f",self.max - self.duration);
 			else
@@ -263,12 +275,17 @@ local OnCastbarUpdate = function(self,elapsed)
 		if (self.duration <= 0) then
 			self.channeling = nil;
 			self:Hide();
-			if PostChannelStop then PostChannelStop(self:GetParent()); end
-			return;
+			if PostChannelStop then
+				PostChannelStop(self:GetParent());
+			end
 		end
 		if self.Time then
-			if self.delay ~= 0 then self.Time:SetTextColor(1,0,0); else self.Time:SetTextColor(1,1,1); end
-				self.Time:SetFormattedText("%.1f",self.max-self.duration);
+			if self.delay ~= 0 then
+				self.Time:SetTextColor(1,0,0);
+			else
+				self.Time:SetTextColor(1,1,1);
+			end
+			self.Time:SetFormattedText("%.1f",self.max-self.duration);
 		end
 		if SUI.DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.duration)
@@ -294,13 +311,13 @@ local CreateLargeFrame = function(self,unit)
 		self.artwork:SetAllPoints(self);
 		
 		self.RareElite = self.artwork:CreateTexture(nil,"BACKGROUND", nil, -5);
-		self.RareElite:SetTexture[[Interface\Scenarios\Objective-Lineglow]]
+		self.RareElite:SetTexture("Interface\\Scenarios\\Objective-Lineglow")
 		self.RareElite:SetAlpha(.6);
 		self.RareElite:SetTexCoord(0,1,1,0)
 		self.RareElite:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, -20);
 		self.RareElite:SetSize(self:GetWidth()+60, self:GetHeight()+40);
 		
-		if SUI.DBP.Styles.Fel.SubTheme == "War" then
+		if SUI.DB.Styles.Fel.SubTheme == "War" then
 			self.artwork.bgAlliance = self.artwork:CreateTexture(nil,"BACKGROUND");
 			self.artwork.bgAlliance:SetPoint("CENTER", self);
 			self.artwork.bgAlliance:SetTexture(Images.Alliance.bg.Texture);
@@ -477,7 +494,7 @@ local CreateLargeFrame = function(self,unit)
 		self.PvPIndicator = self:CreateTexture(nil,"BORDER");
 		self.PvPIndicator:SetSize(25,25);
 		self.PvPIndicator:SetPoint("CENTER",self,"BOTTOMRIGHT",0,-3);
-		if SUI.DBP.Styles.Fel.SubTheme == "War" then
+		if SUI.DB.Styles.Fel.SubTheme == "War" then
 			self.PvPIndicator.Override = pvpIconWar
 		else
 			self.PvPIndicator.Override = pvpIcon
@@ -518,7 +535,7 @@ local CreateLargeFrame = function(self,unit)
 			local ClassIcons = {}
 			for i = 1, 6 do
 				local Icon = self:CreateTexture(nil, "OVERLAY")
-				Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+				Icon:SetTexture("Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo");
 				
 				if (i == 1) then
 					Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
@@ -532,9 +549,11 @@ local CreateLargeFrame = function(self,unit)
 		
 			local ClassPowerID = nil;
 			ring:SetScript("OnEvent",function(a,b)
-				if b == "PLAYER_SPECIALIZATION_CHANGED" then return end
+				if b == "PLAYER_SPECIALIZATION_CHANGED" then
+					return
+				end
 				local cur, max
-				if(unit == 'vehicle') then
+				if (unit == 'vehicle') then
 					cur = GetComboPoints('vehicle', 'target')
 					max = MAX_COMBO_POINTS
 				else
@@ -627,7 +646,7 @@ local CreateLargeFrame = function(self,unit)
 		local ClassIcons = {}
 		for i = 1, 6 do
 			local Icon = self:CreateTexture(nil, "OVERLAY")
-			Icon:SetTexture([[Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo]]);
+			Icon:SetTexture("Interface\AddOns\SpartanUI_PlayerFrames\media\icon_combo");
 			
 			if (i == 1) then
 				Icon:SetPoint("LEFT",self.ComboPoints,"RIGHT",1,-1);
@@ -732,7 +751,7 @@ local CreateMediumFrame = function(self,unit)
 		self.artwork:SetAllPoints(self);
 		
 		self.artwork.bg = self.artwork:CreateTexture(nil,"BACKGROUND");
-		self.artwork.bg:SetPoint("CENTER", self, "CENTER", 0, -10);
+		self.artwork.bg:SetPoint("CENTER", self);
 		self.artwork.bg:SetTexture(Images.smallbg.Texture);
 		self.artwork.bg:SetTexCoord(unpack(Images.smallbg.Coords))
 		self.artwork.bg:SetSize(self:GetSize());
@@ -752,7 +771,7 @@ local CreateMediumFrame = function(self,unit)
 		
 		
 		self.ThreatIndicator = self.artwork:CreateTexture(nil,"BACKGROUND", nil, -5);
-		self.ThreatIndicator:SetTexture[[Interface\Scenarios\Objective-Lineglow]]
+		self.ThreatIndicator:SetTexture("Interface\Scenarios\Objective-Lineglow")
 		self.ThreatIndicator:SetAlpha(.6);
 		self.ThreatIndicator:SetTexCoord(0,1,1,0)
 		self.ThreatIndicator:SetVertexColor(1, 0, 0)
@@ -1089,7 +1108,7 @@ local CreateUnitFrameRaid = function(self,unit)
 		self = CreateMediumFrame(self,unit)
 	elseif SUI.DB.Styles.Fel.RaidFrames.FrameStyle == "large" then
 		self = CreateLargeFrame(self,unit)
-	end	
+	end
 	self = SUI:GetModule("RaidFrames"):MakeMovable(self)
 	return self
 end
@@ -1141,7 +1160,7 @@ function module:PlayerFrames()
 	if SUI.DB.Styles.Fel.SubTheme == "Digital" then
 		Images = {
 			bg = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\Digital\Fel-Box]],
+				Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box",
 				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
 			},
 			smallbg = {
@@ -1149,96 +1168,82 @@ function module:PlayerFrames()
 				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
 			},
 			flair = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\Digital\Fel-Box]],
+				Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box",
 				Coords = {0, 0.1, 0, 0.2}
 			},
 			flair2 = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\Digital\Fel-Box]],
+				Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box",
 				Coords = {0, 0.1, 0, 0.2}
 			}
 		}
-	elseif SUI.DBP.Styles.Fel.SubTheme == "War" then
-		Images = {
-			Alliance = { --Alliance
-				bg = {
-					Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-					Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
-				},
-				flair = {
-					Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-					Coords = {0.03125, 0.427734375, 0, 0.421875}
-				}
-			},
-			Horde = { --Horde
-				bg = {
-					Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-					Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
-				},
-				flair = {
-					Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-					Coords = {0.541015625, 1, 0, 0.421875}
-				}
-			}
-		}
-		if UnitFactionGroup("Player") == "Horde" then
-			Images.smallbg = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
-			}
-			Images.flair = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0.03125, 0.427734375, 0, 0.421875}
-			}
-			Images.flair2 = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0.541015625, 1, 0, 0.421875}
-			}
-		else
-			Images.smallbg = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
-			}
-			Images.flair = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0.03125, 0.427734375, 0, 0.421875}
-			}
-			Images.flair2 = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0.03125, 0.427734375, 0, 0.421875}
-			}
-		end
-	else
-	Images = {
-		bg = {
-			Texture =  [[Interface\Scenarios\LegionInvasion]],
-			Coords = {.02, .385, .45, .575} --left, right, top, bottom
-		},
-		smallbg = {
-			Texture =  [[Interface\Scenarios\LegionInvasion]],
-			Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
-		},
-		flair = {
-			Texture =  [[Interface\Scenarios\LegionInvasion]],
-			Coords = {0.140625, 0.615234375, 0, 0.265625}
-		},
-		flair2 = {
-			Texture =  [[Interface\Addons\SpartanUI_Style_Fel\Images\Party-Frame]],
-			Coords = {0.1953125, 0.8046875, 0.1328125, 0.859375}
-		}
-	}
 	elseif SUI.DB.Styles.Fel.SubTheme == "War" then
+        Images = {
+            Alliance = {
+                bg = {
+                    Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                    Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
+                },
+                flair = {
+                    Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                    Coords = {0.03125, 0.427734375, 0, 0.421875}
+                }
+            },
+            Horde = {
+                bg = {
+                    Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                    Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
+                },
+                flair = {
+                    Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                    Coords = {0.541015625, 1, 0, 0.421875}
+                }
+            }
+		}
+
+        if UnitFactionGroup("Player") == "Horde" then
+            Images.smallbg = {
+                Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
+            }
+            Images.flair = {
+                Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                Coords = {0.03125, 0.427734375, 0, 0.421875}
+            }
+            Images.flair2 = {
+                Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                Coords = {0.541015625, 1, 0, 0.421875}
+            }
+        else
+            Images.smallbg = {
+                Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
+            }
+            Images.flair = {
+                Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                Coords = {0.03125, 0.427734375, 0, 0.421875}
+            }
+            Images.flair2 = {
+                Texture =  "Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames",
+                Coords = {0.03125, 0.427734375, 0, 0.421875}
+            }
+        end
+    else
 		Images = {
 			bg = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\Fel-Box]],
-				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
+				Texture =  "Interface\\Scenarios\\LegionInvasion",
+				Coords = {.02, .385, .45, .575} --left, right, top, bottom
+			},
+			smallbg = {
+				Texture =  "Interface\\Scenarios\\LegionInvasion",
+				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
 			},
 			flair = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0, 0.1, 0, 0.2}
+				Texture =  "Interface\\Scenarios\\LegionInvasion",
+				Coords = {0.140625, 0.615234375, 0, 0.265625}
 			},
 			flair2 = {
-				Texture =  [[Interface\addons\SpartanUI_Style_Fel\War\UnitFrames]],
-				Coords = {0, 0.1, 0, 0.2}
+				Texture =  "Interface\\Addons\\SpartanUI_Style_Fel\\Images\\Party-Frame",
+				Coords = {0.1953125, 0.8046875, 0.1328125, 0.859375}
 			}
 		}
 	end
