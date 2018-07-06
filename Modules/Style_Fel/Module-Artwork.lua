@@ -123,15 +123,6 @@ function module:updateOffset()
 		SUI.DB.yoffset = offset
 	end
 
-	Fel_SpartanUI.Left:ClearAllPoints()
-	if SUI.DB.Styles.Fel.SubTheme == 'War' then
-		-- Fel_SpartanUI.Left:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, offset)
-		-- Fel_SpartanUI.Left:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, offset)
-		Fel_SpartanUI.Left:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, offset)
-	else
-		Fel_SpartanUI.Left:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', 0, offset)
-	end
-
 	Fel_ActionBarPlate:ClearAllPoints()
 	Fel_ActionBarPlate:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, offset)
 end
@@ -211,10 +202,10 @@ function module:EnableArtwork()
 		Fel_MenuBarBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
 		Fel_StanceBarBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
 	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
-		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Art')
-		Fel_SpartanUI.Left:ClearAllPoints()
-		Fel_SpartanUI.Left:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 0)
-		-- Fel_SpartanUI.Right:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Horde")
+		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Left.tga')
+		Fel_SpartanUI.Right:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Right.tga")
+		Fel_SpartanUI.Left:SetScale(.75)
+		Fel_SpartanUI.Right:SetScale(.75)
 		Fel_Bar1BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
 		Fel_Bar2BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
 		Fel_Bar3BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
@@ -697,11 +688,8 @@ function module:MiniMap()
 	Minimap:SetSize(156, 156)
 
 	Minimap:ClearAllPoints()
-	if SUI.DB.Styles.Fel.SubTheme == 'War' then
-		Minimap:SetPoint('CENTER', Fel_SpartanUI.Left, 'CENTER', 0, -10)
-	else
+
 		Minimap:SetPoint('CENTER', Fel_SpartanUI.Left, 'RIGHT', 0, -10)
-	end
 	Minimap:SetParent(Fel_SpartanUI)
 
 	if Minimap.ZoneText ~= nil then
@@ -729,6 +717,11 @@ function module:MiniMap()
 			self.FelBG:SetPoint('CENTER', self, 'CENTER', 5, -1)
 			self.FelBG:SetSize(256, 256)
 			self.FelBG:SetBlendMode('ADD')
+		elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
+				self.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap1')
+				self.FelBG:SetPoint('CENTER', self, 'CENTER', 5, -1)
+				self.FelBG:SetSize(256, 256)
+				self.FelBG:SetBlendMode('ADD')
 		else
 			if SUI.DB.Styles.Fel.Minimap.Engulfed then
 				self.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Engulfed')
@@ -749,6 +742,13 @@ function module:MiniMap()
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
 		Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap')
 		Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
+		Minimap.FelBG:SetSize(256, 256)
+		Minimap.FelBG:SetBlendMode('ADD')
+	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
+		Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap1')
+		Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', 0, 3)
+		--Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap2')
+		--Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', -7, 5)
 		Minimap.FelBG:SetSize(256, 256)
 		Minimap.FelBG:SetBlendMode('ADD')
 	else
