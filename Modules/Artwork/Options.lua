@@ -201,7 +201,7 @@ function Artwork_Core:StatusBarOptions()
 					return SUI.DB.StatusBars.left
 				end,
 				set = function(info, val)
-					if SUI.DB.StatusBars.right == val then
+					if SUI.DB.StatusBars.right == val and val ~= "disabled" then
 						return
 					end
 					SUI.DB.StatusBars.left = val
@@ -217,7 +217,7 @@ function Artwork_Core:StatusBarOptions()
 					return SUI.DB.StatusBars.right
 				end,
 				set = function(info, val)
-					if SUI.DB.StatusBars.left == val then
+					if SUI.DB.StatusBars.left == val and val ~= "disabled" then
 						return
 					end
 					SUI.DB.StatusBars.right = val
