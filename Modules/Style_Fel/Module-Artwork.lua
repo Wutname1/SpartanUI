@@ -203,7 +203,7 @@ function module:EnableArtwork()
 		Fel_StanceBarBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
 	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Left.tga')
-		Fel_SpartanUI.Right:SetTexture("Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Right.tga")
+		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Right.tga')
 		Fel_SpartanUI.Left:SetScale(.75)
 		Fel_SpartanUI.Right:SetScale(.75)
 		Fel_Bar1BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
@@ -684,12 +684,52 @@ function module:CreateProfile()
 end
 
 -- Minimap
+function module:MiniMapUpdate()
+	if Minimap.BG then
+		Minimap.BG:ClearAllPoints()
+	end
+
+	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
+		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap')
+		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
+		Minimap.BG:SetSize(256, 256)
+		Minimap.BG:SetBlendMode('ADD')
+	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
+		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap1')
+		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 0, 3)
+		Minimap.BG:SetAlpha(.75)
+		--Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap2')
+		--Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', -7, 5)
+		Minimap.BG:SetSize(256, 256)
+		Minimap.BG:SetBlendMode('ADD')
+	else
+		if SUI.DB.Styles.Fel.Minimap.Engulfed then
+			Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Engulfed')
+			Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 7, 37)
+			Minimap.BG:SetSize(330, 330)
+			Minimap.BG:SetBlendMode('ADD')
+		else
+			Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Calmed')
+			Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
+			Minimap.BG:SetSize(256, 256)
+			Minimap.BG:SetBlendMode('ADD')
+		end
+	end
+end
+
+module.Settings.MiniMap = {
+	size = {
+		156,
+		156
+	},
+	TextLocation = 'BOTTOM',
+	coordsLocation = 'BOTTOM',
+	coords = {
+		TextColor = {1, .82, 0, 1}
+	}
+}
+
 function module:MiniMap()
-	Minimap:SetSize(156, 156)
-
-	Minimap:ClearAllPoints()
-
-		Minimap:SetPoint('CENTER', Fel_SpartanUI.Left, 'RIGHT', 0, -10)
 	Minimap:SetParent(Fel_SpartanUI)
 
 	if Minimap.ZoneText ~= nil then
@@ -702,92 +742,38 @@ function module:MiniMap()
 		Minimap.coords:SetTextColor(1, .82, 0, 1)
 	end
 
-	-- Minimap.coords:Hide()
-
 	QueueStatusFrame:ClearAllPoints()
 	QueueStatusFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 100)
 
-	Minimap.FelUpdate = function(self)
-		if self.FelBG then
-			self.FelBG:ClearAllPoints()
-		end
+	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
 
-		if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
-			self.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap')
-			self.FelBG:SetPoint('CENTER', self, 'CENTER', 5, -1)
-			self.FelBG:SetSize(256, 256)
-			self.FelBG:SetBlendMode('ADD')
-		elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
-				self.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap1')
-				self.FelBG:SetPoint('CENTER', self, 'CENTER', 5, -1)
-				self.FelBG:SetSize(256, 256)
-				self.FelBG:SetBlendMode('ADD')
-		else
-			if SUI.DB.Styles.Fel.Minimap.Engulfed then
-				self.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Engulfed')
-				self.FelBG:SetPoint('CENTER', self, 'CENTER', 7, 37)
-				self.FelBG:SetSize(330, 330)
-				self.FelBG:SetBlendMode('ADD')
-			else
-				self.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Calmed')
-				self.FelBG:SetPoint('CENTER', self, 'CENTER', 5, -1)
-				self.FelBG:SetSize(256, 256)
-				self.FelBG:SetBlendMode('ADD')
-			end
-		end
-	end
 
-	Minimap.FelBG = Minimap:CreateTexture(nil, 'BACKGROUND')
-
-	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
-		Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap')
-		Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
-		Minimap.FelBG:SetSize(256, 256)
-		Minimap.FelBG:SetBlendMode('ADD')
-	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
-		Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap1')
-		Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', 0, 3)
-		--Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap2')
-		--Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', -7, 5)
-		Minimap.FelBG:SetSize(256, 256)
-		Minimap.FelBG:SetBlendMode('ADD')
+	if SUI.DB.Styles.Fel.SubTheme == 'War' then
+		module.Settings.MiniMap.TextLocation = 'TOP'
+		module.Settings.MiniMap.Anchor = {
+			'CENTER',
+			Fel_SpartanUI.Left,
+			'RIGHT',
+			0,
+			5
+		}
+		SUI:GetModule('Component_Minimap'):ShapeChange('square')
 	else
-		if SUI.DB.Styles.Fel.Minimap.Engulfed then
-			Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Engulfed')
-			Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', 7, 37)
-			Minimap.FelBG:SetSize(330, 330)
-			Minimap.FelBG:SetBlendMode('ADD')
-		else
-			Minimap.FelBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Calmed')
-			Minimap.FelBG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
-			Minimap.FelBG:SetSize(256, 256)
-			Minimap.FelBG:SetBlendMode('ADD')
-		end
+		module.Settings.MiniMap.Anchor = {
+			'CENTER',
+			Fel_SpartanUI.Left,
+			'RIGHT',
+			0,
+			-10
+		}
+		SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 	end
 
-	--Shape Change
-	local shapechange = function(shape)
-		if shape == 'square' then
-			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
+	module:MiniMapUpdate()
 
-			Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
-			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay')
-			Minimap.overlay:SetAllPoints(Minimap)
-			Minimap.overlay:SetBlendMode('ADD')
-
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
-			Minimap.FelBG:Hide()
-		else
-			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
-			if Minimap.overlay then
-				Minimap.overlay:Hide()
-			end
-			Minimap.FelBG:Show()
-		end
-	end
+	Minimap.coords:SetTextColor(1, 1, 1, 1)
+	Minimap.coords:SetShadowColor(0, 0, 0, 1)
+	Minimap.coords:SetScale(1.2)
 
 	Fel_SpartanUI:HookScript(
 		'OnHide',
@@ -795,7 +781,7 @@ function module:MiniMap()
 			Minimap:ClearAllPoints()
 			Minimap:SetParent(UIParent)
 			Minimap:SetPoint('TOP', UIParent, 'TOP', 0, -20)
-			shapechange('square')
+			SUI:GetModule('Component_Minimap'):ShapeChange('square')
 		end
 	)
 
@@ -805,7 +791,7 @@ function module:MiniMap()
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint('CENTER', Fel_SpartanUI, 'CENTER', 0, 54)
 			Minimap:SetParent(Fel_SpartanUI)
-			shapechange('circle')
+			SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 		end
 	)
 end

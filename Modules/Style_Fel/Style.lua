@@ -84,7 +84,7 @@ function module:SetupMenus()
 				end,
 				set = function(info, val)
 					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
-					Minimap.FelUpdate(Minimap)
+					module:MiniMapUpdate()
 				end
 			},
 			alpha = {

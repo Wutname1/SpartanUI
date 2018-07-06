@@ -1,7 +1,9 @@
 local SUI = SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-SUI:NewModule('Style_Fel')
+local module = SUI:NewModule('Style_Fel')
+
+module.Settings = {}
 
 --Now lets setup the initial Database settings
 local Defaults = {

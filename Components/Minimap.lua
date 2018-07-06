@@ -150,6 +150,58 @@ local OnMouseDown = function()
 	IsMouseDown = true
 end
 
+function module:ShapeChange(shape)
+	Minimap:SetArchBlobRingScalar(0)
+	Minimap:SetQuestBlobRingScalar(0)
+
+	if shape == 'square' then
+		Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
+		MiniMapTracking:ClearAllPoints()
+		MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, 5)
+	else
+		Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
+		MiniMapTracking:ClearAllPoints()
+		MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
+	end
+
+	local Style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	if Style.Settings.MiniMap.size then
+		Minimap:SetSize(unpack(Style.Settings.MiniMap.size))
+	end
+	if Style.Settings.MiniMap.Anchor then
+		Minimap:ClearAllPoints()
+		Minimap:SetPoint(unpack(Style.Settings.MiniMap.Anchor))
+	end
+
+	Minimap.ZoneText:ClearAllPoints()
+	if Style.Settings.MiniMap.TextLocation == 'TOP' then
+		Minimap.ZoneText:SetPoint('BOTTOMLEFT', Minimap, 'TOPLEFT', 0, 4)
+		Minimap.ZoneText:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 4)
+	else
+		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -4)
+		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -4)
+	end
+
+	Minimap.coords:ClearAllPoints()
+	if
+		(Style.Settings.MiniMap.coordsLocation == 'TOP' and Style.Settings.MiniMap.TextLocation == 'TOP') or
+			(Style.Settings.MiniMap.coordsLocation == 'BOTTOM' and Style.Settings.MiniMap.TextLocation == 'BOTTOM')
+	 then
+		Minimap.coords:SetPoint('TOPLEFT', Minimap.ZoneText, 'BOTTOMLEFT', 0, -4)
+		Minimap.coords:SetPoint('TOPRIGHT', Minimap.ZoneText, 'BOTTOMRIGHT', 0, -4)
+	elseif Style.Settings.MiniMap.TextLocation == 'TOP' and Style.Settings.MiniMap.coordsLocation == 'BOTTOM' then
+		Minimap.coords:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -4)
+		Minimap.coords:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -4)
+	elseif Style.Settings.MiniMap.TextLocation == 'BOTTOM' and Style.Settings.MiniMap.coordsLocation == 'TOP' then
+		Minimap.coords:SetPoint('BOTTOMLEFT', Minimap, 'TOPLEFT', 0, 4)
+		Minimap.coords:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 4)
+	end
+
+	MinimapZoneText:SetTextColor(1, 1, 1, 1)
+	MinimapZoneText:SetShadowColor(0, 0, 0, 1)
+	MinimapZoneText:SetShadowOffset(1, -1)
+end
+
 function module:OnInitialize()
 	StaticPopupDialogs['MiniMapNotice'] = {
 		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
@@ -184,8 +236,7 @@ function module:OnEnable()
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap or (not spartan:GetModule('Artwork_Core', true)) then
 		Minimap.mover = CreateFrame('Frame')
 		Minimap.mover:SetSize(5, 5)
-		Minimap.mover:SetPoint('TOPLEFT', Minimap, 'TOPLEFT')
-		Minimap.mover:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT')
+		Minimap.mover:SetAllPoints(Minimap)
 		Minimap.mover.bg = Minimap.mover:CreateTexture(nil, 'BACKGROUND')
 		Minimap.mover.bg:SetAllPoints(Minimap.mover)
 		Minimap.mover.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
@@ -265,7 +316,6 @@ function module:OnEnable()
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_INDOORS')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-	-- MinimapUpdater:RegisterEvent("MINIMAP_UPDATE_ZOOM")
 	MinimapUpdater:RegisterEvent('MINIMAP_UPDATE_TRACKING')
 	MinimapUpdater:RegisterEvent('MINIMAP_PING')
 	MinimapUpdater:RegisterEvent('PLAYER_REGEN_ENABLED')
@@ -285,8 +335,6 @@ function module:ModifyMinimapLayout()
 		end
 	)
 
-	Minimap:SetSize(140, 140)
-	-- Minimap:SetParent(frame);
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap ~= nil then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.shape == 'square' then
 			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
@@ -315,12 +363,8 @@ function module:ModifyMinimapLayout()
 		end
 	end
 	if not SUI.DB.MiniMap.northTag then
-		-- MinimapNorthTag.oldShow = MinimapNorthTag.Show
-		-- MinimapNorthTag.Show = MinimapNorthTag.Hide
 		MinimapNorthTag:Hide()
 	else
-		-- MinimapNorthTag.Show = MinimapNorthTag.oldShow
-		-- MinimapNorthTag.oldShow = nil
 		MinimapNorthTag:Show()
 	end
 
@@ -381,6 +425,8 @@ function module:ModifyMinimapLayout()
 	SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
 
 	module:MinimapCoords()
+	MinimapZoneText:ClearAllPoints()
+	MinimapZoneText:SetAllPoints(MinimapZoneTextButton)
 end
 
 function module:MinimapCoords()
