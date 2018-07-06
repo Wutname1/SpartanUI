@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local PartyFrames = SUI.PartyFrames
 ----------------------------------------------------------------------------------------------------
 local colors = setmetatable({}, {__index = SpartanoUF.colors})

@@ -1,6 +1,4 @@
 local _G, SUI = _G, SUI
-local L = SUI.L
-local Artwork_Core = SUI:GetModule("Artwork_Core")
 local module = SUI:GetModule("Style_Classic")
 ----------------------------------------------------------------------------------------------------
 local FACTION_BAR_COLORS = {
@@ -79,7 +77,7 @@ local SetXPColors = function(self)
 end
 local SetRepColors = function(self)
 	local FrameName = self:GetName()
-	local ratio, name, reaction, low, high, current = 0, GetWatchedFactionInfo()
+	local _, _, reaction = 0, GetWatchedFactionInfo()
 	if SUI.DB.StatusBars.RepBar.AutoDefined == true then
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7]
 		_G[FrameName .. "Fill"]:SetVertexColor(color.r, color.g, color.b, 0.7)
@@ -105,7 +103,7 @@ local updateText = function(self, side)
 	_G[FrameName .. "Text"]:SetText("")
 
 	if (SUI.DB.StatusBars[side] == "xp") then
-		local level, rested, now, goal = UnitLevel("player"), GetXPExhaustion() or 0, UnitXP("player"), UnitXPMax("player")
+		local _, rested, now, goal = UnitLevel("player"), GetXPExhaustion() or 0, UnitXP("player"), UnitXPMax("player")
 		if now ~= 0 then
 			_G[FrameName .. "Fill"]:SetWidth((now / goal) * self:GetWidth())
 			rested = (rested / goal) * 400
@@ -129,7 +127,7 @@ local updateText = function(self, side)
 		end
 		SetXPColors(self)
 	elseif (SUI.DB.StatusBars[side] == "rep") then
-		local ratio, name, reaction, low, high, current = 0, GetWatchedFactionInfo()
+		local ratio, name, _, low, high, current = 0, GetWatchedFactionInfo()
 		if name then
 			ratio = (current - low) / (high - low)
 		end
@@ -214,18 +212,12 @@ local updateText = function(self, side)
 		end
 	elseif (SUI.DB.StatusBars[side] == "honor") then
 		if SUI.DB.StatusBars.HonorBar.text then
-			local itemID,
-				altItemID,
-				name,
-				icon,
+			local _,
+				_,
+				_,
+				_,
 				xp,
-				pointsSpent,
-				quality,
-				HonorAppearanceID,
-				appearanceModID,
-				itemAppearanceID,
-				altItemAppearanceID,
-				altOnTop = C_HonorUI.GetEquippedHonorInfo()
+				pointsSpent = C_HonorUI.GetEquippedHonorInfo()
 			local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent)
 			local ratio = (xp / xpForNextPoint)
 			_G[FrameName .. "Text"]:SetFormattedText(
@@ -273,7 +265,7 @@ function module:EnableStatusBars()
 		tooltip:Show()
 	end
 	local showRepTooltip = function(self)
-		local name, react, low, high, current, text, ratio = GetWatchedFactionInfo()
+		local name, react, low, high, current = GetWatchedFactionInfo()
 		if name then
 			text = GetFactionDetails(name)
 			ratio = (current - low) / (high - low)
@@ -295,7 +287,6 @@ function module:EnableStatusBars()
 		tooltip:Show()
 	end
 	local showAPTooltip = function(self)
-		local FrameName = self:GetName()
 		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
 			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)

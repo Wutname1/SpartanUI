@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local PartyFrames = SUI.PartyFrames
 ----------------------------------------------------------------------------------------------------
 
@@ -79,7 +79,6 @@ function PartyFrames:OnEnable()
 			return
 		end
 		local inParty = IsInGroup() -- ( numGroupMembers () > 0 )
-		local bDebug_ShowFrame = true
 
 		SUI.PartyFrames:SetAttribute("showParty", SUI.DBMod.PartyFrames.showParty)
 		SUI.PartyFrames:SetAttribute("showPlayer", SUI.DBMod.PartyFrames.showPlayer)

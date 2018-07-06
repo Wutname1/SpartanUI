@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local PlayerFrames = SUI:NewModule("PlayerFrames")
 SUI.PlayerFrames = PlayerFrames
 ----------------------------------------------------------------------------------------------------
@@ -24,7 +24,6 @@ do -- Boss graphic as an SpartanoUF module
 		if (not self.BossGraphic) then
 			return
 		end
-		local c = UnitClassification(unit)
 		self.BossGraphic:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare")
 		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
 		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
@@ -49,7 +48,7 @@ function PlayerFrames:SetupStaticOptions()
 		[5] = "focustarget",
 		[6] = "player"
 	}
-	for a, unit in pairs(FramesList) do
+	for _, unit in pairs(FramesList) do
 		--Health Bar Color
 		if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
 			PlayerFrames[unit].Health.colorReaction = true
@@ -328,7 +327,7 @@ function PlayerFrames:UpdatePosition()
 		[6] = "player"
 	}
 
-	for a, b in pairs(FramesList) do
+	for _, b in pairs(FramesList) do
 		if SUI.DBMod.PlayerFrames[b] ~= nil and SUI.DBMod.PlayerFrames[b].moved then
 			PlayerFrames[b]:SetMovable(true)
 			PlayerFrames[b]:SetUserPlaced(false)
@@ -437,9 +436,10 @@ function PlayerFrames:FirstTime()
 			end
 
 			local gui = LibStub("AceGUI-3.0")
+			local control, radio
 
 			--Classic
-			local control = gui:Create("Icon")
+			control = gui:Create("Icon")
 			control:SetImage("interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center")
 			control:SetImageSize(120, 60)
 			control:SetPoint("TOP", SUI_Win.Artwork, "TOP", 0, -30)
@@ -447,7 +447,7 @@ function PlayerFrames:FirstTime()
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			local radio = gui:Create("CheckBox")
+			radio = gui:Create("CheckBox")
 			radio:SetLabel("Classic")
 			radio:SetUserData("value", "Classic")
 			radio:SetUserData("text", "Classic")
@@ -464,7 +464,7 @@ function PlayerFrames:FirstTime()
 			SUI_Win.Artwork.Classic = control
 
 			--Transparent
-			local control = gui:Create("Icon")
+			control = gui:Create("Icon")
 			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Transparent")
 			control:SetImageSize(120, 60)
 			control:SetPoint("TOPRIGHT", SUI_Win.Artwork.Classic.frame, "BOTTOMLEFT", 0, -60)
@@ -472,7 +472,7 @@ function PlayerFrames:FirstTime()
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			local radio = gui:Create("CheckBox")
+			radio = gui:Create("CheckBox")
 			radio:SetLabel("Transparent")
 			radio:SetUserData("value", "Transparent")
 			radio:SetUserData("text", "Transparent")
@@ -488,7 +488,7 @@ function PlayerFrames:FirstTime()
 			SUI_Win.Artwork.Transparent = control
 
 			--Minimal
-			local control = gui:Create("Icon")
+			control = gui:Create("Icon")
 			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Minimal")
 			control:SetImageSize(120, 60)
 			control:SetPoint("TOPLEFT", SUI_Win.Artwork.Classic.frame, "BOTTOMRIGHT", 0, -60)
@@ -496,7 +496,7 @@ function PlayerFrames:FirstTime()
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			local radio = gui:Create("CheckBox")
+			radio = gui:Create("CheckBox")
 			radio:SetLabel("Minimal")
 			radio:SetUserData("value", "Minimal")
 			radio:SetUserData("text", "Minimal")
@@ -546,7 +546,7 @@ function PlayerFrames:FirstTime()
 				BT4BarPetBar,
 				BT4BarMicroMenu
 			}
-			for k, v in ipairs(FrameList) do
+			for _, v in ipairs(FrameList) do
 				if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
 					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 				end

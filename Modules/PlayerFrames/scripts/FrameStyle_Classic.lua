@@ -11,7 +11,7 @@ local base_ring3 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\base_ring3
 local circle = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\circle.tga"
 
 local colors = setmetatable({},{__index = SpartanoUF.colors});
-local classname, classFileName = UnitClass("player")
+local _, classFileName = UnitClass("player")
 
 for k,v in pairs(SpartanoUF.colors) do if not colors[k] then colors[k] = v end end
 do -- setup custom colors that we want to use
@@ -24,13 +24,6 @@ do -- setup custom colors that we want to use
 	colors.reaction[6]	= colors.health;		-- Honored
 	colors.reaction[7]	= colors.health;		-- Revered
 	colors.reaction[8]	= colors.health;		-- Exalted
-end
-
-local menu = function(self)
-	local unit = string.gsub(self.unit,"(.)",string.upper,1);
-	if (_G[unit..'FrameDropDown']) then
-		ToggleDropDownMenu(1, nil, _G[unit..'FrameDropDown'], 'cursor')
-	end
 end
 
 local threat = function(self,event,unit)
@@ -59,25 +52,14 @@ local threat = function(self,event,unit)
 		end
 	end
 	-- if ((self.TimeSinceLastUpdate < .5) or ((self.TimeSinceLastUpdate > 1) and (self.TimeSinceLastUpdate < 1.5))) then
-		-- SpartanUI_Tribal:SetAlpha((SpartanUI_Tribal:GetAlpha()-.1)); 
+		-- SpartanUI_Tribal:SetAlpha((SpartanUI_Tribal:GetAlpha()-.1));
 	-- else
-		-- SpartanUI_Tribal:SetAlpha((SpartanUI_Tribal:GetAlpha()+.1)); 
+		-- SpartanUI_Tribal:SetAlpha((SpartanUI_Tribal:GetAlpha()+.1));
 	-- end
 end
 
-local name = function(self)
-	if (UnitIsEnemy(self.unit,"player")) then
-		self.Name:SetTextColor(1, 50/255, 0);
-	elseif (UnitIsUnit(self.unit,"player")) then
-		self.Name:SetTextColor(1, 1, 1); 
-	else
-		local r,g,b = unpack(colors.reaction[UnitReaction(self.unit,"player")] or {1,1,1});
-		self.Name:SetTextColor(r,g,b);
-	end
-end
-
 local function CreatePortrait(self)
-	if SUI.DBMod.PlayerFrames.Portrait3D then			
+	if SUI.DBMod.PlayerFrames.Portrait3D then
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript("OnShow", function(self) self:SetCamera(1) end)
 		Portrait.type = "3D"
@@ -152,14 +134,6 @@ local PostUpdateColor = function(self,unit)
 	end
 	self.colors.smooth = {1,0,0, 1,1,0, 0,1,0}
 	self.Health.colorHealth = true;
-end
-
-local ChangeFrameStatus = function(self,unit)
-	if SUI.DBMod.PlayerFrames[unit].display then
-		self:Show();
-	else
-		self:Hide();
-	end
 end
 
 local PostCastStop = function(self)
@@ -437,7 +411,7 @@ local CreatePlayerFrame = function(self,unit)
 			Bar:SetSize(16, 16)
 			if (index == 1) then
 				Bar:SetPoint("LEFT",self.ComboPoints,"RIGHT",(index - 1) * Bar:GetWidth(),-1);
-			else 
+			else
 				Bar:SetPoint("LEFT",ClassPower[index-1],"RIGHT",-2,0);
 			end
 			-- Bar:SetPoint('LEFT', self, 'RIGHT', , 0)
@@ -520,7 +494,7 @@ local CreateTargetFrame = function(self,unit)
 			health.value:SetSize(125, 11);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("RIGHT",health,"RIGHT",-4,0);
-			self:Tag(health.value, PlayerFrames:TextFormat("health"))	
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(90, 11);
@@ -608,7 +582,7 @@ local CreateTargetFrame = function(self,unit)
 		
 		self.Name = ring:CreateFontString();
 		SUI:FormatFont(self.Name, 12, "Player")
-		self.Name:SetWidth(170); self.Name:SetHeight(12); 
+		self.Name:SetWidth(170); self.Name:SetHeight(12);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
 		self.Name:SetPoint("TOPRIGHT",self,"TOPRIGHT",-5,-6);
 		if SUI.DBMod.PlayerFrames.showClass then
@@ -1039,7 +1013,7 @@ local CreateToTFrame = function(self,unit)
 				power.ratio:SetWidth(40); power.ratio:SetHeight(11);
 				power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("MIDDLE");
 				power.ratio:SetPoint("LEFT",power,"RIGHT",4,0);
-				self:Tag(power.ratio, '[perpp]%')		
+				self:Tag(power.ratio, '[perpp]%')
 				
 				self.Power = power;
 				self.Power.colorPower = true;
@@ -1211,7 +1185,7 @@ local CreateToTFrame = function(self,unit)
 				power.ratio:SetSize(40, 11);
 				power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("MIDDLE");
 				power.ratio:SetPoint("LEFT",power,"RIGHT",5,0);
-				self:Tag(power.ratio, '[perpp]%')		
+				self:Tag(power.ratio, '[perpp]%')
 				
 				self.Power = power;
 				self.Power.colorPower = true;
@@ -1489,8 +1463,8 @@ local CreateFocusFrame = function(self,unit)
 			power.ratio = power:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			power.value:SetSize(40, 11);
 			power.ratio:SetJustifyH("LEFT"); power.ratio:SetJustifyV("MIDDLE");
-			power.ratio:SetPoint("TOP",self.Health.ratio,"BOTTOM",-4,-7);	
-			self:Tag(power.ratio, '[perpp]%')		
+			power.ratio:SetPoint("TOP",self.Health.ratio,"BOTTOM",-4,-7);
+			self:Tag(power.ratio, '[perpp]%')
 			
 			self.Power = power;
 			self.Power.colorPower = true;
@@ -1624,7 +1598,7 @@ local CreateBossFrame = function(self,unit)
 			health.value:SetSize(97, 10);
 			health.value:SetJustifyH("LEFT"); health.value:SetJustifyV("MIDDLE");
 			health.value:SetPoint("LEFT",health,"LEFT",4,0);
-			self:Tag(health.value, PlayerFrames:TextFormat("health"))	
+			self:Tag(health.value, PlayerFrames:TextFormat("health"))
 			
 			health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			health.ratio:SetSize(50, 10);
@@ -1700,7 +1674,7 @@ local CreateBossFrame = function(self,unit)
 		
 		self.Name = ring:CreateFontString();
 		SUI:FormatFont(self.Name, 10, "Player")
-		self.Name:SetSize(127, 10); 
+		self.Name:SetSize(127, 10);
 		self.Name:SetJustifyH("LEFT"); self.Name:SetJustifyV("MIDDLE");
 		self.Name:SetPoint("TOPLEFT",self,"TOPLEFT",8,-2);
 		if SUI.DBMod.PlayerFrames.showClass then
@@ -1747,7 +1721,6 @@ local CreateUnitFrame = function(self,unit)
 end
 
 function PlayerFrames:UpdateAltBarPositions()
-	local classname, classFileName = UnitClass("player");	
 	-- Druid EclipseBar
 	-- EclipseBarFrame:ClearAllPoints();
 	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
@@ -1838,7 +1811,7 @@ end
 
 function PlayerFrames:ResetAltBarPositions()
 	SUI.DBMod.PlayerFrames.AltManaBar.movement.moved = false;
-	SUI.DBMod.PlayerFrames.ClassBar.movement.moved = false; 
+	SUI.DBMod.PlayerFrames.ClassBar.movement.moved = false;
 	PlayerFrames:UpdateAltBarPositions();
 end
 
@@ -1856,8 +1829,6 @@ function PlayerFrames:WarlockPowerFrame_Relocate() -- Sets the location of the w
 		-- set up Demonic
 		WarlockPowerFrame:SetScale(1);
 		WarlockPowerFrame:SetPoint("TOPLEFT",PlayerFrames.player,"TOPRIGHT",15,15);
-	else
-		-- no spec
 	end
 end
 
@@ -2029,7 +2000,7 @@ do -- relocate the AlternatePowerBar
 	SpecWatcher:SetScript("OnEvent",function()
 		PlayerFrames:UpdateAltBarPositions();
 	end);
-end 
+end
 
 do -- create a LFD cooldown frame
 	local GetLFGDeserter = GetLFGDeserterExpiration
@@ -2104,7 +2075,7 @@ end
 	LFDCooldown = CreateFrame("Frame",nil,PlayerFrames.player)
 	LFDCooldown:SetFrameStrata("BACKGROUND")
 	LFDCooldown:SetFrameLevel(10);
-	LFDCooldown:SetWidth(38) -- Set these to whatever height/width is needed 
+	LFDCooldown:SetWidth(38) -- Set these to whatever height/width is needed
 	LFDCooldown:SetHeight(38) -- for your Texture
 	
 	local t = LFDCooldown:CreateTexture(nil,"BACKGROUND")

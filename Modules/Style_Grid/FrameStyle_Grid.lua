@@ -168,7 +168,7 @@ local CreateFrame = function(self, unit)
 	end
 	do -- HoTs Display
 		local auras = {}
-		local class, classFileName = UnitClass("player")
+		local _, classFileName = UnitClass("player")
 		local spellIDs = {}
 		if classFileName == "DRUID" then
 			spellIDs = {

@@ -1,9 +1,8 @@
 local _G, SUI = _G, SUI
-local L = SUI.L
 local Artwork_Core = SUI:GetModule("Artwork_Core")
 local module = SUI:NewModule("Style_Classic")
 ----------------------------------------------------------------------------------------------------
-local anchor, frame = SUI_AnchorFrame, SpartanUI, CurScale
+local anchor, frame = SUI_AnchorFrame, SpartanUI
 
 local round = function(num) -- rounds a number to 2 decimal places
 	if num then
@@ -221,7 +220,7 @@ function module:InitFramework()
 			"UpdateContainerFrameAnchors",
 			function()
 				-- fix bag offsets
-				local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
+				local frame2, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
 				local screenWidth = GetScreenWidth()
 				local containerScale = 1
 				local leftLimit = 0
@@ -238,7 +237,7 @@ function module:InitFramework()
 					leftMostPoint = screenWidth - xOffset
 					column = 1
 					local frameHeight
-					for index, frameName in ipairs(ContainerFrame1.bags) do
+					for _, frameName in ipairs(ContainerFrame1.bags) do
 						frameHeight = getglobal(frameName):GetHeight()
 						if (freeScreenHeight < frameHeight) then
 							-- Start a new column
@@ -265,27 +264,27 @@ function module:InitFramework()
 				freeScreenHeight = screenHeight - yOffset
 				column = 0
 				for index, frameName in ipairs(ContainerFrame1.bags) do
-					frame = getglobal(frameName)
-					frame:SetScale(containerScale)
+					frame2 = getglobal(frameName)
+					frame2:SetScale(containerScale)
 					if (index == 1) then
 						-- First bag
-						frame:SetPoint(
+						frame2:SetPoint(
 							"BOTTOMRIGHT",
-							frame:GetParent(),
+							frame2:GetParent(),
 							"BOTTOMRIGHT",
 							-xOffset,
 							(yOffset + (SUI.DB.yoffset or 1)) * (SUI.DB.scale or 1)
 						)
-					elseif (freeScreenHeight < frame:GetHeight()) then
+					elseif (freeScreenHeight < frame2:GetHeight()) then
 						-- Start a new column
 						column = column + 1
 						freeScreenHeight = screenHeight - yOffset
-						frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -(column * CONTAINER_WIDTH) - xOffset, yOffset)
+						frame2:SetPoint("BOTTOMRIGHT", frame2:GetParent(), "BOTTOMRIGHT", -(column * CONTAINER_WIDTH) - xOffset, yOffset)
 					else
 						-- Anchor to the previous bag
-						frame:SetPoint("BOTTOMRIGHT", ContainerFrame1.bags[index - 1], "TOPRIGHT", 0, CONTAINER_SPACING)
+						frame2:SetPoint("BOTTOMRIGHT", ContainerFrame1.bags[index - 1], "TOPRIGHT", 0, CONTAINER_SPACING)
 					end
-					freeScreenHeight = freeScreenHeight - frame:GetHeight() - VISIBLE_CONTAINER_SPACING
+					freeScreenHeight = freeScreenHeight - frame2:GetHeight() - VISIBLE_CONTAINER_SPACING
 				end
 			end
 		)
@@ -378,7 +377,7 @@ function module:EnableFramework()
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID
-			local controlType, occupantName = UnitVehicleSeatInfo("player", seatIndex)
+			local _, occupantName = UnitVehicleSeatInfo("player", seatIndex)
 			if
 				(button == "RightButton" and
 					(CanEjectPassengerFromSeat(seatIndex) or (CanExitVehicle() and (occupantName == UnitName("player")))))
@@ -396,9 +395,6 @@ function module:EnableFramework()
 			end
 		end
 
-		local old_VehicleSeatIndicatorButton_OnClick = VehicleSeatIndicatorButton_OnClick
-		VehicleSeatIndicatorButton_OnClick = My_VehicleSeatIndicatorButton_OnClick
-
 		function My_VehicleSeatIndicatorDropDown_Initialize()
 			local info = UIDropDownMenu_CreateInfo()
 			info.text = EJECT_PASSENGER
@@ -415,9 +411,6 @@ function module:EnableFramework()
 			VehicleExit()
 			PlaySound("UChatScrollButton")
 		end
-
-		local old_VehicleSeatIndicatorDropDown_Initialize = VehicleSeatIndicatorDropDown_Initialize()
-		VehicleSeatIndicatorDropDown_Initialize = My_VehicleSeatIndicatorDropDown_Initialize
 
 		UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, "MENU")
 	end

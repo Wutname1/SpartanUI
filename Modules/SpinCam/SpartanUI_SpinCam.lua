@@ -1,5 +1,4 @@
-local _G, SUI = _G, SUI
-local L = SUI.L
+local SUI, L = SUI, SUI.L
 local addon = SUI:NewModule("SpinCam")
 local SpinCamRunning = false
 local userCameraYawMoveSpeed

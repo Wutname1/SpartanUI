@@ -1,20 +1,9 @@
 local _G, SUI = _G, SUI
-local L = SUI.L
 local Artwork_Core = SUI:GetModule("Artwork_Core")
 local module = SUI:GetModule("Style_Classic")
 ----------------------------------------------------------------------------------------------------
-local ProfileName = SUI.DB.Styles.Classic.BartenderProfile
 
-local default, plate = {
-	popup1 = {anim = true, alpha = 1, enable = 1},
-	popup2 = {anim = true, alpha = 1, enable = 1},
-	bar1 = {alpha = 1, enable = 1},
-	bar2 = {alpha = 1, enable = 1},
-	bar3 = {alpha = 1, enable = 1},
-	bar4 = {alpha = 1, enable = 1},
-	bar5 = {alpha = 1, enable = 1},
-	bar6 = {alpha = 1, enable = 1}
-}
+local plate
 
 function module:SetupProfile()
 	Artwork_Core:SetupProfile()

@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local L = SUI.L
 local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.health.textstyle = val
-							for a, b in pairs(Units) do
+							for _, b in pairs(Units) do
 								addon[b]:TextUpdate(b)
 							end
 						end
@@ -167,7 +167,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.health.textmode = val
-							for a, b in pairs(Units) do
+							for _, b in pairs(Units) do
 								addon[b]:TextUpdate(b)
 							end
 						end
@@ -183,7 +183,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.mana.textstyle = val
-							for a, b in pairs(Units) do
+							for _, b in pairs(Units) do
 								addon[b]:TextUpdate(b)
 							end
 						end
@@ -198,7 +198,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.mana.textmode = val
-							for a, b in pairs(Units) do
+							for _, b in pairs(Units) do
 								addon[b]:TextUpdate(b)
 							end
 						end

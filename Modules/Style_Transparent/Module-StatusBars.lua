@@ -1,18 +1,8 @@
-local _G, SUI = _G, SUI
-local Artwork_Core = SUI:GetModule("Artwork_Core")
+local SUI = SUI
 local module = SUI:GetModule("Style_Transparent")
 ----------------------------------------------------------------------------------------------------
-local xpframe, repframe
-local FACTION_BAR_COLORS = {
-	[1] = {r = 1, g = 0.2, b = 0},
-	[2] = {r = 0.8, g = 0.3, b = 0},
-	[3] = {r = 0.8, g = 0.2, b = 0},
-	[4] = {r = 1, g = 0.8, b = 0},
-	[5] = {r = 0, g = 1, b = 0.1},
-	[6] = {r = 0, g = 1, b = 0.2},
-	[7] = {r = 0, g = 1, b = 0.3},
-	[8] = {r = 0, g = 0.6, b = 0.1}
-}
+local xpframe
+
 local COLORS = {
 	["Orange"] = {r = 1, g = 0.2, b = 0, a = .7},
 	["Yellow"] = {r = 1, g = 0.8, b = 0, a = .7},
@@ -23,18 +13,6 @@ local COLORS = {
 	["Red"] = {r = 1, g = 0, b = .08, a = .7},
 	["Light_Blue"] = {r = 0, g = .5, b = 1, a = .7}
 }
-local GetFactionDetails = function(name)
-	if (not name) then
-		return
-	end
-	local description = " "
-	for i = 1, GetNumFactions() do
-		if name == GetFactionInfo(i) then
-			_, description = GetFactionInfo(i)
-		end
-	end
-	return description
-end
 
 function module:InitStatusBars()
 end
@@ -114,7 +92,7 @@ function module:EnableStatusBars()
 				elseif not SUI.DB.StatusBars.XPBar.enabled then
 					xpframe:Hide()
 				end
-				local level, rested, now, goal = UnitLevel("player"), GetXPExhaustion() or 0, UnitXP("player"), UnitXPMax("player")
+				local _, rested, now, goal = UnitLevel("player"), GetXPExhaustion() or 0, UnitXP("player"), UnitXPMax("player")
 				if now == 0 then
 					Transparent_ExperienceBarFill:SetWidth(0.1)
 					Transparent_ExperienceBarFillGlow:SetWidth(.1)

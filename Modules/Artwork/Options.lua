@@ -3,13 +3,6 @@ local L = SUI.L
 local Artwork_Core = SUI:GetModule("Artwork_Core")
 
 function Artwork_Core:SetupOptions()
-	local Profiles = {}
-	for name, module in SUI:IterateModules() do
-		if (string.match(name, "Style_")) then
-			Profiles[string.sub(name, 7)] = string.sub(name, 7)
-		end
-	end
-
 	SUI.opt.args["Artwork"].args["scale"] = {
 		name = L["ConfScale"],
 		type = "range",

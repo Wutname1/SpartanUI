@@ -9,8 +9,8 @@ end
 function Artwork_Core:isPartialMatch(frameName, tab)
 	local result = false
 
-	for k, v in ipairs(tab) do
-		local startpos, endpos = strfind(strlower(frameName), strlower(v))
+	for _, v in ipairs(tab) do
+		local startpos = strfind(strlower(frameName), strlower(v))
 		if (startpos == 1) then
 			result = true
 		end
@@ -20,7 +20,7 @@ function Artwork_Core:isPartialMatch(frameName, tab)
 end
 
 function Artwork_Core:isInTable(tab, frameName)
-	for k, v in ipairs(tab) do
+	for _, v in ipairs(tab) do
 		if (strlower(v) == strlower(frameName)) then
 			return true
 		end
@@ -157,9 +157,10 @@ function Artwork_Core:FirstTime()
 			end
 
 			local gui = LibStub("AceGUI-3.0")
+			local control, radio
 
 			--Classic
-			local control = gui:Create("Icon")
+			control = gui:Create("Icon")
 			control:SetImage("interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center")
 			control:SetImageSize(120, 60)
 			control:SetPoint("TOPRIGHT", SUI_Win.Artwork, "TOP", -30, -30)
@@ -167,7 +168,7 @@ function Artwork_Core:FirstTime()
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			local radio = gui:Create("CheckBox")
+			radio = gui:Create("CheckBox")
 			radio:SetLabel("Classic")
 			radio:SetUserData("value", "Classic")
 			radio:SetUserData("text", "Classic")
@@ -184,7 +185,7 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork.Classic = control
 
 			--Fel
-			local control = gui:Create("Icon")
+			control = gui:Create("Icon")
 			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Fel")
 			control:SetImageSize(120, 60)
 			control:SetPoint("TOPLEFT", SUI_Win.Artwork, "TOP", 30, -30)
@@ -192,7 +193,7 @@ function Artwork_Core:FirstTime()
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			local radio = gui:Create("CheckBox")
+			radio = gui:Create("CheckBox")
 			radio:SetLabel("Fel")
 			radio:SetUserData("value", "Fel")
 			radio:SetUserData("text", "Fel")
@@ -208,7 +209,7 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork.Fel = control
 
 			--Transparent
-			local control = gui:Create("Icon")
+			control = gui:Create("Icon")
 			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Transparent")
 			control:SetImageSize(120, 60)
 			control:SetPoint("TOP", SUI_Win.Artwork.Classic.frame, "BOTTOM", 0, -60)
@@ -216,7 +217,7 @@ function Artwork_Core:FirstTime()
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			local radio = gui:Create("CheckBox")
+			radio = gui:Create("CheckBox")
 			radio:SetLabel("Transparent")
 			radio:SetUserData("value", "Transparent")
 			radio:SetUserData("text", "Transparent")
@@ -232,7 +233,7 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork.Transparent = control
 
 			--Minimal
-			local control = gui:Create("Icon")
+			control = gui:Create("Icon")
 			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Minimal")
 			control:SetImageSize(120, 60)
 			control:SetPoint("TOP", SUI_Win.Artwork.Fel.frame, "BOTTOM", 0, -60)
@@ -240,7 +241,7 @@ function Artwork_Core:FirstTime()
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			local radio = gui:Create("CheckBox")
+			radio = gui:Create("CheckBox")
 			radio:SetLabel("Minimal")
 			radio:SetUserData("value", "Minimal")
 			radio:SetUserData("text", "Minimal")
@@ -298,7 +299,7 @@ function Artwork_Core:FirstTime()
 				BT4BarPetBar,
 				BT4BarMicroMenu
 			}
-			for k, v in ipairs(FrameList) do
+			for _, v in ipairs(FrameList) do
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 			end
 			SUI.DBG.BartenderChangesActive = false
@@ -352,7 +353,7 @@ function Artwork_Core:OnEnable()
 		BT4BarMicroMenu
 	}
 
-	for k, v in ipairs(FrameList) do
+	for _, v in ipairs(FrameList) do
 		if v then
 			v.SavePosition = function()
 				if
@@ -386,7 +387,7 @@ function Artwork_Core:CheckMiniMap()
 		SUI.DB.MiniMap.AutoDetectAllowUse = false
 	end
 
-	local point, relativeTo, relativePoint, x, y = MinimapCluster:GetPoint()
+	local _, relativeTo = MinimapCluster:GetPoint()
 	if (relativeTo ~= UIParent) then
 		SUI:Print("A unknown addon is controlling the Minimap")
 		SUI:Print("SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.")
@@ -435,7 +436,7 @@ end
 
 function Artwork_Core:BartenderProfileCheck(Input, Report)
 	local profiles, r = Bartender4.db:GetProfiles(), false
-	for k, v in pairs(profiles) do
+	for _, v in pairs(profiles) do
 		if v == Input then
 			r = true
 		end

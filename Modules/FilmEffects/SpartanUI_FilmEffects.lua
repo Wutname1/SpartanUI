@@ -5,7 +5,7 @@ local Container
 local EffectList = {"vignette", "blur", "crisp"}
 
 local FilmEffectEvent = function(self, event, ...)
-	for k, v in ipairs(EffectList) do
+	for _, v in ipairs(EffectList) do
 		if not SUI.DBMod.FilmEffects.enable then
 			Container[v]:Hide()
 		elseif event == "CHAT_MSG_SYSTEM" then
@@ -29,7 +29,7 @@ local function updateopts()
 	if SUI.DBMod.FilmEffects.enable then
 		disabled = false
 	end
-	for k, v in ipairs(EffectList) do
+	for _, v in ipairs(EffectList) do
 		SUI.opt.args["ModSetting"].args["FilmEffects"].args[v .. "always"].disabled = disabled
 		SUI.opt.args["ModSetting"].args["FilmEffects"].args[v .. "AFK"].disabled = disabled
 	end
@@ -127,7 +127,7 @@ function addon:OnEnable()
 	Container:SetScript(
 		"OnUpdate",
 		function(self, elapsed)
-			addon:Update(self, elapsed)
+			addon:Update(elapsed)
 		end
 	)
 
@@ -204,7 +204,7 @@ function addon:OnEnable()
 	Container.crisp:Hide()
 end
 
-function addon:Update(self, elapsed)
+function addon:Update(elapsed)
 	SUI.DBMod.FilmEffects.animationInterval = SUI.DBMod.FilmEffects.animationInterval + elapsed
 	if (SUI.DBMod.FilmEffects.animationInterval > (0.02)) then -- 50 FPS
 		SUI.DBMod.FilmEffects.animationInterval = 0

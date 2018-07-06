@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local L = SUI.L
 local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------

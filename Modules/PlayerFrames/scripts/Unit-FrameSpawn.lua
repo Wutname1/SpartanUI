@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local L = SUI.L
 local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ local FramesList = {
 function PlayerFrames:SUI_PlayerFrames_Classic()
 	SpartanoUF:SetActiveStyle("SUI_PlayerFrames_Classic")
 
-	for a, b in pairs(FramesList) do
+	for _, b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b, "SUI_" .. b .. "Frame")
 		if b == "player" then
 			PlayerFrames:SetupExtras()
@@ -91,8 +91,8 @@ function PlayerFrames:PositionFrame_Classic(b)
 			end
 		end
 
-		for a, b in pairs(FramesList) do
-			PlayerFrames[b]:SetScale(SUI.DB.scale)
+		for _, c in pairs(FramesList) do
+			PlayerFrames[c]:SetScale(SUI.DB.scale)
 		end
 	else
 		if b == "player" or b == nil then
@@ -269,15 +269,7 @@ function PlayerFrames:OnEnable()
 	end
 
 	if SUI.DB.Styles[SUI.DBMod.PlayerFrames.Style].Movable.PlayerFrames == true then
-		local FramesList = {
-			[1] = "pet",
-			[2] = "target",
-			[3] = "targettarget",
-			[4] = "focus",
-			[5] = "focustarget",
-			[6] = "player"
-		}
-		for a, b in pairs(FramesList) do
+		for _, b in pairs(FramesList) do
 			PlayerFrames:AddMover(PlayerFrames[b], b)
 		end
 		if SUI.DBMod.PlayerFrames.BossFrame.display then

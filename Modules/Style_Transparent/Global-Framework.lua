@@ -2,7 +2,7 @@ local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule("Artwork_Core")
 local module = SUI:GetModule("Style_Transparent")
 ----------------------------------------------------------------------------------------------------
-local anchor, frame = Transparent_AnchorFrame, Transparent_SpartanUI, CurScale
+local anchor, frame = Transparent_AnchorFrame, Transparent_SpartanUI
 
 function module:updateViewport() -- handles viewport offset based on settings
 	if not InCombatLockdown() and (Transparent_SpartanUI_Base5:GetHeight() ~= 0) then
@@ -178,7 +178,7 @@ function module:InitFramework()
 					leftMostPoint = screenWidth - xOffset
 					column = 1
 					local frameHeight
-					for index, frameName in ipairs(ContainerFrame1.bags) do
+					for _, frameName in ipairs(ContainerFrame1.bags) do
 						frameHeight = getglobal(frameName):GetHeight()
 						if (freeScreenHeight < frameHeight) then
 							-- Start a new column
@@ -330,7 +330,7 @@ function module:EnableFramework()
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID
-			local controlType, occupantName = UnitVehicleSeatInfo("player", seatIndex)
+			local _, occupantName = UnitVehicleSeatInfo("player", seatIndex)
 			if
 				(button == "RightButton" and
 					(CanEjectPassengerFromSeat(seatIndex) or (CanExitVehicle() and (occupantName == UnitName("player")))))

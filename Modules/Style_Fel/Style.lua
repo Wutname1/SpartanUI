@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:GetModule("Artwork_Core")
 local module = SUI:GetModule("Style_Fel")

@@ -80,13 +80,6 @@ local TextFormat = function(text)
 	end
 end
 
-local menu = function(self)
-	local unit = string.gsub(self.unit, "(.)", string.upper, 1)
-	if (_G[unit .. "FrameDropDown"]) then
-		ToggleDropDownMenu(1, nil, _G[unit .. "FrameDropDown"], "cursor")
-	end
-end
-
 local threat = function(self, event, unit)
 	if (not self.Portrait) then -- no Portrait color artwork if possible
 		-- if (not self.artwork.bg:IsObjectType("Texture")) then return; end
@@ -119,17 +112,6 @@ local threat = function(self, event, unit)
 		else
 			self.Portrait:SetVertexColor(1, 1, 1)
 		end
-	end
-end
-
-local name = function(self)
-	if (UnitIsEnemy(self.unit, "player")) then
-		self.Name:SetTextColor(1, 50 / 255, 0)
-	elseif (UnitIsUnit(self.unit, "player")) then
-		self.Name:SetTextColor(1, 1, 1)
-	else
-		local r, g, b = unpack(colors.reaction[UnitReaction(self.unit, "player")] or {1, 1, 1})
-		self.Name:SetTextColor(r, g, b)
 	end
 end
 
@@ -205,36 +187,6 @@ local PostUpdateText = function(self, unit)
 	end
 end
 
-local PostUpdateAura = function(self, unit, mode)
-	-- Buffs
-	if mode == "Buffs" then
-		if SUI.DB.Styles.Transparent.Frames[unit].Buffs.Display then
-			self.size = SUI.DB.Styles.Transparent.Frames[unit].Buffs.size
-			self.spacing = SUI.DB.Styles.Transparent.Frames[unit].Buffs.spacing
-			self.showType = SUI.DB.Styles.Transparent.Frames[unit].Buffs.showType
-			self.numBuffs = SUI.DB.Styles.Transparent.Frames[unit].Buffs.Number
-			self.onlyShowPlayer = SUI.DB.Styles.Transparent.Frames[unit].Buffs.onlyShowPlayer
-			self:Show()
-		else
-			self:Hide()
-		end
-	end
-
-	-- Debuffs
-	if mode == "Debuffs" then
-		if SUI.DB.Styles.Transparent.Frames[unit].Debuffs.Display then
-			self.size = SUI.DB.Styles.Transparent.Frames[unit].Debuffs.size
-			self.spacing = SUI.DB.Styles.Transparent.Frames[unit].Debuffs.spacing
-			self.showType = SUI.DB.Styles.Transparent.Frames[unit].Debuffs.showType
-			self.numDebuffs = SUI.DB.Styles.Transparent.Frames[unit].Debuffs.Number
-			self.onlyShowPlayer = SUI.DB.Styles.Transparent.Frames[unit].Debuffs.onlyShowPlayer
-			self:Show()
-		else
-			self:Hide()
-		end
-	end
-end
-
 local PostUpdateColor = function(self, unit)
 	self.Health.frequentUpdates = true
 	self.Health.colorDisconnected = true
@@ -255,14 +207,6 @@ local PostUpdateColor = function(self, unit)
 	end
 	self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 	self.Health.colorHealth = true
-end
-
-local ChangeFrameStatus = function(self, unit)
-	if SUI.DBMod.PlayerFrames[unit].display then
-		self:Show()
-	else
-		self:Hide()
-	end
 end
 
 local PostCastStop = function(self)
@@ -614,13 +558,11 @@ local CreatePlayerFrame = function(self, unit)
 				if b == "PLAYER_SPECIALIZATION_CHANGED" then
 					return
 				end
-				local cur, max
+				local cur
 				if (unit == "vehicle") then
 					cur = GetComboPoints("vehicle", "target")
-					max = MAX_COMBO_POINTS
 				else
 					cur = UnitPower("player", ClassPowerID)
-					max = UnitPowerMax("player", ClassPowerID)
 				end
 				self.ComboPoints:SetText((cur > 0 and cur) or "")
 			end
@@ -1416,7 +1358,6 @@ local CreateRaidFrame = function(self, unit)
 	end
 	do --Hots Displays
 		local auras = {}
-		local class, classFileName = UnitClass("player")
 		local spellIDs = {}
 		if classFileName == "DRUID" then
 			spellIDs = {
@@ -1481,24 +1422,6 @@ local CreateUnitFrame = function(self, unit)
 	return self
 end
 
-local CreatespecFrames = function(self, unit)
-	self.menu = menu
-	self:RegisterForClicks("AnyDown")
-	self:EnableMouse(enable)
-	self:SetClampedToScreen(true)
-
-	if (SUI_FramesAnchor:GetParent() == UIParent) then
-		self:SetParent(UIParent)
-	else
-		self:SetParent(SUI_FramesAnchor)
-	end
-
-	self:SetFrameStrata("BACKGROUND")
-	self:SetFrameLevel(1)
-
-	return CreateRaidFrame(self, unit)
-end
-
 local CreateUnitFrameParty = function(self, unit)
 	self = CreateRaidFrame(self, unit)
 	self = PartyFrames:MakeMovable(self)
@@ -1516,8 +1439,6 @@ SpartanoUF:RegisterStyle("Spartan_TransparentPartyFrames", CreateUnitFrameParty)
 SpartanoUF:RegisterStyle("Spartan_TransparentRaidFrames", CreateUnitFrameRaid)
 
 function module:UpdateAltBarPositions()
-	local classname, classFileName = UnitClass("player")
-
 	if RuneFrame then
 		RuneFrame:Hide()
 		RuneFrame.Rune1:Hide()
@@ -1565,8 +1486,8 @@ function module:PositionFrame(b)
 		PlayerFrames.focustarget:SetPoint("BOTTOMLEFT", PlayerFrames.focus, "BOTTOMRIGHT", 5, 0)
 	end
 
-	for a, b in pairs(FramesList) do
-		_G["SUI_" .. b .. "Frame"]:SetScale(SUI.DB.scale)
+	for _, c in pairs(FramesList) do
+		_G["SUI_" .. c .. "Frame"]:SetScale(SUI.DB.scale)
 	end
 end
 
@@ -1575,16 +1496,7 @@ function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_TransparentPlayerFrames")
 	PlayerFrames:BuffOptions()
 
-	local FramesList = {
-		[1] = "pet",
-		[2] = "target",
-		[3] = "targettarget",
-		[4] = "focus",
-		[5] = "focustarget",
-		[6] = "player"
-	}
-
-	for a, b in pairs(FramesList) do
+	for _, b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b, "SUI_" .. b .. "Frame")
 		if b == "player" then
 			PlayerFrames:SetupExtras()

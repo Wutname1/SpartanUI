@@ -507,9 +507,6 @@ function module:SetupMenus()
 							SUI.DB.yoffset = val
 						end
 					end
-				end,
-				get = function(info)
-					return SUI.DB.yoffset
 				end
 			},
 			offsetauto = {

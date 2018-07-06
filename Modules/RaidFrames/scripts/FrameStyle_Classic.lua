@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local L = SUI.L
 local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------
@@ -9,9 +9,7 @@ for k, v in pairs(SpartanoUF.colors) do
 	end
 end
 colors.health = {0 / 255, 255 / 255, 50 / 255}
-local base_plate2 = "Interface\\AddOns\\SpartanUI_RaidFrames\\media\\base_2_dual.blp"
 local base_plate3 = "Interface\\AddOns\\SpartanUI_RaidFrames\\media\\base_3_single.blp"
-local base_ring = "Interface\\AddOns\\SpartanUI_RaidFrames\\media\\base_ring1.blp"
 
 local threat = function(self, event, unit)
 	local status

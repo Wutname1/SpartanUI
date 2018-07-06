@@ -1,9 +1,7 @@
-local _G, SUI = _G, SUI
-local artwork_Core = SUI:GetModule("Artwork_Core")
+local SUI = SUI
 local module = SUI:GetModule("Style_Minimal")
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
-local square = "Interface\\AddOns\\SpartanUI\\media\\map-overlay.tga"
 
 local FramesList = {
 	[1] = "pet",
@@ -14,13 +12,11 @@ local FramesList = {
 	[6] = "player"
 }
 local Smoothv2 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga"
-local texture = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\texture.tga"
-local metal = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\metal.tga"
 
 --Interface/WorldStateFrame/ICONS-CLASSES
 local lfdrole = "Interface\\AddOns\\SpartanUI\\media\\icon_role.tga"
 
-local classname, classFileName = UnitClass("player")
+local classFileName = select(2, UnitClass("player"))
 local colors = setmetatable({}, {__index = SpartanoUF.colors})
 for k, v in pairs(SpartanoUF.colors) do
 	if not colors[k] then
@@ -37,13 +33,6 @@ do -- setup custom colors that we want to use
 	colors.reaction[6] = colors.health -- Honored
 	colors.reaction[7] = colors.health -- Revered
 	colors.reaction[8] = colors.health -- Exalted
-end
-
-local menu = function(self)
-	local unit = string.gsub(self.unit, "(.)", string.upper, 1)
-	if (_G[unit .. "FrameDropDown"]) then
-		ToggleDropDownMenu(1, nil, _G[unit .. "FrameDropDown"], "cursor")
-	end
 end
 
 local threat = function(self, event, unit)
@@ -78,17 +67,6 @@ local threat = function(self, event, unit)
 		else
 			self.Portrait:SetVertexColor(1, 1, 1)
 		end
-	end
-end
-
-local name = function(self)
-	if (UnitIsEnemy(self.unit, "player")) then
-		self.Name:SetTextColor(1, 50 / 255, 0)
-	elseif (UnitIsUnit(self.unit, "player")) then
-		self.Name:SetTextColor(1, 1, 1)
-	else
-		local r, g, b = unpack(colors.reaction[UnitReaction(self.unit, "player")] or {1, 1, 1})
-		self.Name:SetTextColor(r, g, b)
 	end
 end
 
@@ -164,36 +142,6 @@ local PostUpdateText = function(self, unit)
 	end
 end
 
-local PostUpdateAura = function(self, unit, mode)
-	-- Buffs
-	if mode == "Buffs" then
-		if SUI.DB.Styles.Minimal.Frames[unit].Buffs.Display then
-			self.size = SUI.DB.Styles.Minimal.Frames[unit].Buffs.size
-			self.spacing = SUI.DB.Styles.Minimal.Frames[unit].Buffs.spacing
-			self.showType = SUI.DB.Styles.Minimal.Frames[unit].Buffs.showType
-			self.numBuffs = SUI.DB.Styles.Minimal.Frames[unit].Buffs.Number
-			self.onlyShowPlayer = SUI.DB.Styles.Minimal.Frames[unit].Buffs.onlyShowPlayer
-			self:Show()
-		else
-			self:Hide()
-		end
-	end
-
-	-- Debuffs
-	if mode == "Debuffs" then
-		if SUI.DB.Styles.Minimal.Frames[unit].Debuffs.Display then
-			self.size = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.size
-			self.spacing = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.spacing
-			self.showType = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.showType
-			self.numDebuffs = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.Number
-			self.onlyShowPlayer = SUI.DB.Styles.Minimal.Frames[unit].Debuffs.onlyShowPlayer
-			self:Show()
-		else
-			self:Hide()
-		end
-	end
-end
-
 local PostUpdateColor = function(self, unit)
 	self.Health.frequentUpdates = true
 	self.Health.colorDisconnected = true
@@ -214,14 +162,6 @@ local PostUpdateColor = function(self, unit)
 	end
 	self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 	self.Health.colorHealth = true
-end
-
-local ChangeFrameStatus = function(self, unit)
-	if SUI.DBMod.PlayerFrames[unit].display then
-		self:Show()
-	else
-		self:Hide()
-	end
 end
 
 local PostCastStop = function(self)
@@ -600,7 +540,6 @@ local MakeLargeFrame = function(self, unit, width)
 			self.Power.frequentUpdates = true
 		end
 		do -- HoTs Display
-			local class, classFileName = UnitClass("player")
 			local spellIDs = {}
 			if classFileName == "DRUID" then
 				spellIDs = {
@@ -649,7 +588,7 @@ local MakeLargeFrame = function(self, unit, width)
 				spellID,
 				canApplyAura,
 				isBossDebuff)
-				for i, sid in pairs(spellIDs) do
+				for _, sid in pairs(spellIDs) do
 					if sid == spellID then
 						return true
 					end
@@ -669,7 +608,6 @@ local MakeLargeFrame = function(self, unit, width)
 			end
 		end
 		do --Special Icons/Bars
-			local playerClass = select(2, UnitClass("player"))
 			if unit == "player" then
 				local DruidMana = CreateFrame("StatusBar", nil, self)
 				DruidMana:SetSize(self:GetWidth(), 4)
@@ -791,9 +729,8 @@ local MakeLargeFrame = function(self, unit, width)
 					if b == "PLAYER_SPECIALIZATION_CHANGED" then
 						return
 					end
-					local cur, max
+					local cur
 					cur = UnitPower("player", ClassPowerID)
-					max = UnitPowerMax("player", ClassPowerID)
 
 					self.ComboPoints:SetText((cur > 0 and cur) or "")
 				end
@@ -881,8 +818,6 @@ SpartanoUF:RegisterStyle("Spartan_MinimalFrames_Party", CreateUnitFrameParty)
 SpartanoUF:RegisterStyle("Spartan_MinimalFrames_Raid", CreateUnitFrameRaid)
 
 function module:UpdateAltBarPositions()
-	local classname, classFileName = UnitClass("player")
-
 	if RuneFrame then
 		RuneFrame:Hide()
 	end
@@ -899,7 +834,7 @@ function module:PlayerFrames()
 	SpartanoUF:SetActiveStyle("Spartan_MinimalFrames")
 	PlayerFrames:BuffOptions()
 
-	for a, b in pairs(FramesList) do
+	for _, b in pairs(FramesList) do
 		PlayerFrames[b] = SpartanoUF:Spawn(b, "SUI_" .. b .. "Frame")
 		if b == "player" then
 			PlayerFrames:SetupExtras()
@@ -946,9 +881,9 @@ function module:PositionFrame(b)
 	end
 
 	-- PlayerFrames.player:SetScale(SUI.DB.scale);
-	for a, b in pairs(FramesList) do
-		PlayerFrames[b]:SetScale(SUI.DB.scale)
-		-- _G["SUI_"..b.."Frame"]:SetScale(SUI.DB.scale);
+	for _, c in pairs(FramesList) do
+		PlayerFrames[c]:SetScale(SUI.DB.scale)
+		-- _G["SUI_"..c.."Frame"]:SetScale(SUI.DB.scale);
 	end
 end
 
