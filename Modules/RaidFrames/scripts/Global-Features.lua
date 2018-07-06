@@ -1,5 +1,5 @@
 local _G, SUI = _G, SUI
-local RaidFrames = SUI:NewModule("RaidFrames")
+local RaidFrames = SUI:NewModule('RaidFrames')
 SUI.RaidFrames = RaidFrames
 ----------------------------------------------------------------------------------------------------
 
@@ -8,30 +8,30 @@ function RaidFrames:TextFormat(text)
 	local textstyle = SUI.DBMod.RaidFrames.bars[text].textstyle
 	local textmode = SUI.DBMod.RaidFrames.bars[text].textmode
 	local a, m, t, z
-	if text == "mana" then
-		z = "pp"
+	if text == 'mana' then
+		z = 'pp'
 	else
-		z = "hp"
+		z = 'hp'
 	end
 
 	-- textstyle
 	-- "Long: 			 Displays all numbers."
 	-- "Long Formatted: Displays all numbers with commas."
 	-- "Dynamic: 		 Abbriviates and formats as needed"
-	if textstyle == "long" then
-		a = "[cur" .. z .. "]"
-		m = "[missing" .. z .. "]"
-		t = "[max" .. z .. "]"
-	elseif textstyle == "longfor" then
-		a = "[cur" .. z .. "formatted]"
-		m = "[missing" .. z .. "formatted]"
-		t = "[max" .. z .. "formatted]"
-	elseif textstyle == "disabled" then
-		return ""
+	if textstyle == 'long' then
+		a = '[cur' .. z .. ']'
+		m = '[missing' .. z .. ']'
+		t = '[max' .. z .. ']'
+	elseif textstyle == 'longfor' then
+		a = '[cur' .. z .. 'formatted]'
+		m = '[missing' .. z .. 'formatted]'
+		t = '[max' .. z .. 'formatted]'
+	elseif textstyle == 'disabled' then
+		return ''
 	else
-		a = "[cur" .. z .. "dynamic]"
-		m = "[missing" .. z .. "dynamic]"
-		t = "[max" .. z .. "dynamic]"
+		a = '[cur' .. z .. 'dynamic]'
+		m = '[missing' .. z .. 'dynamic]'
+		t = '[max' .. z .. 'dynamic]'
 	end
 	-- textmode
 	-- [1]="Avaliable / Total",
@@ -39,37 +39,37 @@ function RaidFrames:TextFormat(text)
 	-- [3]="(Missing) Avaliable"
 
 	if textmode == 1 then
-		return a .. " / " .. t
+		return a .. ' / ' .. t
 	elseif textmode == 2 then
-		return "(" .. m .. ") " .. a .. " / " .. t
+		return '(' .. m .. ') ' .. a .. ' / ' .. t
 	elseif textmode == 3 then
-		return "(" .. m .. ") " .. a
+		return '(' .. m .. ') ' .. a
 	end
 end
 
 function RaidFrames:PostUpdateText(self, unit)
 	self:Untag(self.Health.value)
-	self:Tag(self.Health.value, RaidFrames:TextFormat("health"))
+	self:Tag(self.Health.value, RaidFrames:TextFormat('health'))
 	if self.Power then
 		self:Untag(self.Power.value)
-		self:Tag(self.Power.value, RaidFrames:TextFormat("mana"))
+		self:Tag(self.Power.value, RaidFrames:TextFormat('mana'))
 	end
 end
 
 function RaidFrames:menu(self)
 	if (not self.id) then
-		self.id = self.unit:match "^.-(%d+)"
+		self.id = self.unit:match '^.-(%d+)'
 	end
-	local unit = string.gsub(self.unit, "(.)", string.upper, 1)
-	if (_G[unit .. "FrameDropDown"]) then
-		ToggleDropDownMenu(1, nil, _G[unit .. "FrameDropDown"], "cursor")
-	elseif ((self.unit:match("party")) and (not self.unit:match("partypet"))) then
-		ToggleDropDownMenu(1, nil, _G["PartyMemberFrame" .. self.id .. "DropDown"], "cursor")
+	local unit = string.gsub(self.unit, '(.)', string.upper, 1)
+	if (_G[unit .. 'FrameDropDown']) then
+		ToggleDropDownMenu(1, nil, _G[unit .. 'FrameDropDown'], 'cursor')
+	elseif ((self.unit:match('party')) and (not self.unit:match('partypet'))) then
+		ToggleDropDownMenu(1, nil, _G['PartyMemberFrame' .. self.id .. 'DropDown'], 'cursor')
 	else
 		FriendsDropDown.unit = self.unit
 		FriendsDropDown.id = self.id
 		FriendsDropDown.initialize = RaidFrameDropDown_Initialize
-		ToggleDropDownMenu(1, nil, FriendsDropDown, "cursor")
+		ToggleDropDownMenu(1, nil, FriendsDropDown, 'cursor')
 	end
 end
 
@@ -86,7 +86,7 @@ end
 
 function RaidFrames:UpdateAura()
 	for i = 1, 40 do
-		local unit = _G["SUI_RaidFrameHeaderUnitButton" .. i]
+		local unit = _G['SUI_RaidFrameHeaderUnitButton' .. i]
 		if unit and unit.Auras then
 			unit.Auras:PostUpdateDebuffs()
 		end
@@ -95,7 +95,7 @@ end
 
 function RaidFrames:UpdateText()
 	for i = 1, 40 do
-		local unit = _G["SUI_RaidFrameHeaderUnitButton" .. i]
+		local unit = _G['SUI_RaidFrameHeaderUnitButton' .. i]
 		if unit then
 			unit:TextUpdate()
 		end
@@ -103,16 +103,16 @@ function RaidFrames:UpdateText()
 end
 
 function RaidFrames:MakeMovable(self)
-	self:RegisterForClicks("AnyDown")
+	self:RegisterForClicks('AnyDown')
 	self:EnableMouse(enable)
 	self:SetClampedToScreen(true)
-	self:SetScript("OnEnter", UnitFrame_OnEnter)
-	self:SetScript("OnLeave", UnitFrame_OnLeave)
+	self:SetScript('OnEnter', UnitFrame_OnEnter)
+	self:SetScript('OnLeave', UnitFrame_OnLeave)
 
 	self:SetScript(
-		"OnMouseDown",
+		'OnMouseDown',
 		function(self, button)
-			if button == "LeftButton" and IsAltKeyDown() then
+			if button == 'LeftButton' and IsAltKeyDown() then
 				SUI.RaidFrames.mover:Show()
 				SUI.DBMod.RaidFrames.moved = true
 				SUI.RaidFrames:SetMovable(true)
@@ -121,7 +121,7 @@ function RaidFrames:MakeMovable(self)
 		end
 	)
 	self:SetScript(
-		"OnMouseUp",
+		'OnMouseUp',
 		function(self, button)
 			SUI.RaidFrames.mover:Hide()
 			SUI.RaidFrames:StopMovingOrSizing()

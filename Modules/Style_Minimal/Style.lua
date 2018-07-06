@@ -1,17 +1,17 @@
 local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:GetModule("Artwork_Core")
-local module = SUI:GetModule("Style_Minimal")
+local Artwork_Core = SUI:GetModule('Artwork_Core')
+local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
-	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["Minimal"].disabled = false
-	SUI.opt.args["General"].args["style"].args["Artwork"].args["Minimal"].disabled = false
-	SUI.opt.args["General"].args["style"].args["PlayerFrames"].args["Minimal"].disabled = false
-	SUI.opt.args["General"].args["style"].args["PartyFrames"].args["Minimal"].disabled = false
-	SUI.opt.args["General"].args["style"].args["RaidFrames"].args["Minimal"].disabled = false
+	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Minimal'].disabled = false
+	SUI.opt.args['General'].args['style'].args['Artwork'].args['Minimal'].disabled = false
+	SUI.opt.args['General'].args['style'].args['PlayerFrames'].args['Minimal'].disabled = false
+	SUI.opt.args['General'].args['style'].args['PartyFrames'].args['Minimal'].disabled = false
+	SUI.opt.args['General'].args['style'].args['RaidFrames'].args['Minimal'].disabled = false
 	--Init if needed
-	if (SUI.DBMod.Artwork.Style == "Minimal") then
+	if (SUI.DBMod.Artwork.Style == 'Minimal') then
 		module:Init()
 	end
 end
@@ -37,7 +37,7 @@ function module:FirstLoad()
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style ~= "Minimal") then
+	if (SUI.DBMod.Artwork.Style ~= 'Minimal') then
 		module:Disable()
 	else
 		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Minimal.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
@@ -58,18 +58,18 @@ function module:OnEnable()
 end
 
 function module:SetupMenus()
-	SUI.opt.args["Artwork"].args["Art"] = {
-		name = L["ArtworkOpt"],
-		type = "group",
+	SUI.opt.args['Artwork'].args['Art'] = {
+		name = L['ArtworkOpt'],
+		type = 'group',
 		order = 10,
 		args = {
 			alpha = {
-				name = L["ArtColor"],
-				type = "color",
+				name = L['ArtColor'],
+				type = 'color',
 				hasAlpha = true,
 				order = 1,
-				width = "full",
-				desc = L["TransparencyDesc"],
+				width = 'full',
+				desc = L['TransparencyDesc'],
 				get = function(info)
 					return unpack(SUI.DB.Styles.Minimal.Color)
 				end,
@@ -88,11 +88,11 @@ function module:OnDisable()
 end
 
 function module:Options_PartyFrames()
-	SUI.opt.args["PartyFrames"].args["MinimalFrameStyle"] = {
-		name = L["FrameStyle"],
-		type = "select",
+	SUI.opt.args['PartyFrames'].args['MinimalFrameStyle'] = {
+		name = L['FrameStyle'],
+		type = 'select',
 		order = 5,
-		values = {["large"] = L["Large"], ["small"] = L["Small"]},
+		values = {['large'] = L['Large'], ['small'] = L['Small']},
 		get = function(info)
 			return SUI.DB.Styles.Minimal.PartyFramesSize
 		end,

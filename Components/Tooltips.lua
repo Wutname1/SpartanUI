@@ -1,9 +1,9 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-local module = spartan:NewModule("Component_Tooltips")
+local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
+local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
+local module = spartan:NewModule('Component_Tooltips')
 ----------------------------------------------------------------------------------------------------
 local targetList = {}
-local RuleList = {"Rule1", "Rule2", "Rule3"}
+local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local tooltips = {
 	GameTooltip,
 	ItemRefTooltip,
@@ -40,30 +40,30 @@ local tooltips = {
 	EventTraceTooltip,
 	ItemSocketingDescription
 }
-local whitebg = {bgFile = "Interface\\AddOns\\SpartanUI\\media\\blank.tga", tile = false, edgeSize = 3}
+local whitebg = {bgFile = 'Interface\\AddOns\\SpartanUI\\media\\blank.tga', tile = false, edgeSize = 3}
 
 function module:OnInitialize()
 	if SUI.DB.Tooltips == nil then
 		SUI.DB.Tooltips = {
 			Styles = {
 				metal = {
-					bgFile = "Interface\\AddOns\\SpartanUI\\media\\metal.tga",
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\metal.tga',
 					tile = false
 				},
 				smooth = {
-					bgFile = "Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga",
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga',
 					tile = false
 				},
 				smoke = {
-					bgFile = "Interface\\AddOns\\SpartanUI\\media\\smoke.tga",
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\smoke.tga',
 					tile = false
 				},
 				none = {
-					bgFile = "Interface\\AddOns\\SpartanUI\\media\\blank.tga",
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\blank.tga',
 					tile = false
 				}
 			},
-			ActiveStyle = "smoke",
+			ActiveStyle = 'smoke',
 			Override = {},
 			ColorOverlay = true,
 			Color = {0, 0, 0, 0.4},
@@ -74,7 +74,7 @@ function module:OnInitialize()
 	if SUI.DB.Tooltips.Rule1 == nil then
 		for _, v in ipairs(RuleList) do
 			SUI.DB.Tooltips[v] = {
-				Status = "Disabled",
+				Status = 'Disabled',
 				Combat = false,
 				OverrideLoc = false,
 				Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
@@ -82,7 +82,7 @@ function module:OnInitialize()
 		end
 		if SUI.DB.Tooltips.OverrideLoc then
 			SUI.DB.Tooltips.Rule1 = {
-				Status = "All",
+				Status = 'All',
 				Combat = false,
 				OverrideLoc = SUI.DB.Tooltips.OverrideLoc,
 				Anchor = {
@@ -94,7 +94,7 @@ function module:OnInitialize()
 			SUI.DB.Tooltips.Anchor = nil
 		else
 			SUI.DB.Tooltips.Rule1 = {
-				Status = "All",
+				Status = 'All',
 				Combat = false,
 				OverrideLoc = false,
 				Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
@@ -112,7 +112,7 @@ end
 
 local function ActiveRule()
 	for _, v in ipairs(RuleList) do
-		if SUI.DB.Tooltips[v].Status ~= "Disabled" then
+		if SUI.DB.Tooltips[v].Status ~= 'Disabled' then
 			local CombatRule = false
 			if InCombatLockdown() and SUI.DB.Tooltips[v].Combat then
 				CombatRule = true
@@ -120,38 +120,38 @@ local function ActiveRule()
 				CombatRule = true
 			end
 
-			if SUI.DB.Tooltips[v].Status == "Group" and (IsInGroup() and not IsInRaid()) and CombatRule then
+			if SUI.DB.Tooltips[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
 				return v
-			elseif SUI.DB.Tooltips[v].Status == "Raid" and IsInRaid() and CombatRule then
+			elseif SUI.DB.Tooltips[v].Status == 'Raid' and IsInRaid() and CombatRule then
 				return v
-			elseif SUI.DB.Tooltips[v].Status == "Instance" and IsInInstance() then
+			elseif SUI.DB.Tooltips[v].Status == 'Instance' and IsInInstance() then
 				return v
-			elseif SUI.DB.Tooltips[v].Status == "All" and CombatRule then
+			elseif SUI.DB.Tooltips[v].Status == 'All' and CombatRule then
 				return v
 			end
 		end
 	end
 	--Failback of Rule1
 	if not SUI.DB.Tooltips.SuppressNoMatch then
-		spartan:Print("|cffff0000Error detected")
-		spartan:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
+		spartan:Print('|cffff0000Error detected')
+		spartan:Print('None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1')
 	end
-	return "Rule1"
+	return 'Rule1'
 end
 
 -- local setPoint = function(self,point,parent,rpoint)
 local setPoint = function(self, parent)
 	if parent then
 		if (SUI.DB.Tooltips[ActiveRule()].Anchor.onMouse) then
-			self:SetOwner(parent, "ANCHOR_CURSOR")
+			self:SetOwner(parent, 'ANCHOR_CURSOR')
 			return
 		else
-			self:SetOwner(parent, "ANCHOR_NONE")
+			self:SetOwner(parent, 'ANCHOR_NONE')
 		end
 
 		--See If the theme has an anchor and if we are allowed to use it
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
-			local style = spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style)
+			local style = spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 			if style then
 				style:TooltipLoc(self, parent)
 			end
@@ -165,13 +165,13 @@ local setPoint = function(self, parent)
 				-- self:ClearAllPoints();
 				if Anchors.point == nil then
 					--Error Catch
-					self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
+					self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
 					SUI.DB.Tooltips[ActiveRule()].Anchor.Moved = false
 				else
 					self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 				end
 			else
-				self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
+				self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
 			end
 		end
 	end
@@ -188,7 +188,7 @@ local onShow = function(self)
 		self.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 	end
 
-	if (SUI.DB.Tooltips.ActiveStyle == "none" or SUI.DB.Tooltips.ColorOverlay) or (not self.SUIBorder) then
+	if (SUI.DB.Tooltips.ActiveStyle == 'none' or SUI.DB.Tooltips.ColorOverlay) or (not self.SUIBorder) then
 		self:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 		self.SUIBorder:SetBackdropColor(1, 1, 1, 1)
 	else
@@ -198,12 +198,12 @@ local onShow = function(self)
 
 	if (self.SUIBorder) and (not GameTooltipStatusBar:IsShown()) then
 		self.SUIBorder:ClearAllPoints()
-		self.SUIBorder:SetPoint("TOPLEFT", self, "TOPLEFT", -1, 1)
-		self.SUIBorder:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 1, -1)
+		self.SUIBorder:SetPoint('TOPLEFT', self, 'TOPLEFT', -1, 1)
+		self.SUIBorder:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 1, -1)
 	end
 	--check if theme has a location
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.Custom then
-		spartan:GetModule("Style_" .. SUI.DBMod.Artwork.Style):Tooltip()
+		spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):Tooltip()
 	end
 end
 
@@ -264,8 +264,8 @@ local TooltipSetUnit = function(self)
 	local unit = select(2, self:GetUnit())
 	if not unit then
 		local mFocus = GetMouseFocus()
-		if mFocus and mFocus:GetAttribute("unit") then
-			unit = mFocus:GetAttribute("unit")
+		if mFocus and mFocus:GetAttribute('unit') then
+			unit = mFocus:GetAttribute('unit')
 		end
 		if not unit or not UnitExists(unit) then
 			return
@@ -275,12 +275,12 @@ local TooltipSetUnit = function(self)
 	local unitLevel = UnitLevel(unit)
 	local colors, qColor, totColor, lvlLine
 	local line = 2
-	local sex = {"", "Male ", "Female "}
+	local sex = {'', 'Male ', 'Female '}
 	local creatureClassColors = {
-		worldboss = format("|cffAF5050World Boss%s|r", BOSS),
-		rareelite = format("|cffAF5050RARE-ELITE%s|r", ITEM_QUALITY3_DESC),
-		elite = "|cffAF5050ELITE|r",
-		rare = format("|cffAF5050RARE%s|r", ITEM_QUALITY3_DESC)
+		worldboss = format('|cffAF5050World Boss%s|r', BOSS),
+		rareelite = format('|cffAF5050RARE-ELITE%s|r', ITEM_QUALITY3_DESC),
+		elite = '|cffAF5050ELITE|r',
+		rare = format('|cffAF5050RARE%s|r', ITEM_QUALITY3_DESC)
 	}
 
 	if UnitIsPlayer(unit) then
@@ -292,10 +292,10 @@ local TooltipSetUnit = function(self)
 		colors = _G.RAID_CLASS_COLORS[classToken]
 		local nameString = UnitPVPName(unit) or uName
 
-		if uRealm and uRealm ~= "" then
-			local tmp = ""
+		if uRealm and uRealm ~= '' then
+			local tmp = ''
 			if gRealm ~= uRealm then
-				tmp = " " .. uRealm
+				tmp = ' ' .. uRealm
 			end
 
 			if (realmRelation == LE_REALM_RELATION_COALESCED) then
@@ -303,28 +303,28 @@ local TooltipSetUnit = function(self)
 			elseif (realmRelation == LE_REALM_RELATION_VIRTUAL) then
 				nameString = nameString .. INTERACTIVE_SERVER_LABEL .. tmp
 			elseif gRealm ~= uRealm then
-				nameString = nameString .. "-" .. uRealm
+				nameString = nameString .. '-' .. uRealm
 			end
 		end
 
 		if (UnitIsAFK(unit)) then
-			GameTooltipTextLeft1:SetFormattedText("|cffFF0000%s|r |c%s%s|r", L["AFK"], colors.colorStr, nameString)
+			GameTooltipTextLeft1:SetFormattedText('|cffFF0000%s|r |c%s%s|r', L['AFK'], colors.colorStr, nameString)
 		elseif (UnitIsDND(unit)) then
-			GameTooltipTextLeft1:SetFormattedText("|cffFFA500%s|r |c%s%s|r", L["DND"], colors.colorStr, nameString)
+			GameTooltipTextLeft1:SetFormattedText('|cffFFA500%s|r |c%s%s|r', L['DND'], colors.colorStr, nameString)
 		else
-			GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", colors.colorStr, nameString)
+			GameTooltipTextLeft1:SetFormattedText('|c%s%s|r', colors.colorStr, nameString)
 		end
 
 		if (gName) then
 			if gRealm then
-				gName = gName .. "-" .. gRealm
+				gName = gName .. '-' .. gRealm
 			end
-			GameTooltipTextLeft2:SetText(("|cff008000%s|r"):format(gName))
+			GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
 			line = line + 1
 		end
 
 		for i = line, self:NumLines() do
-			local tip = _G["GameTooltipTextLeft" .. i]
+			local tip = _G['GameTooltipTextLeft' .. i]
 			if tip:GetText() and tip:GetText():find(LEVEL) then
 				lvlLine = tip
 			end
@@ -335,22 +335,22 @@ local TooltipSetUnit = function(self)
 			local race, englishRace = UnitRace(unit)
 			local _, factionGroup = UnitFactionGroup(unit)
 
-			if (factionGroup and englishRace == "Pandaren") then
-				race = factionGroup .. " " .. race
+			if (factionGroup and englishRace == 'Pandaren') then
+				race = factionGroup .. ' ' .. race
 			end
 
 			if (GENDER_INFO) then
 				if (gender) then
-					race = race .. " " .. gender
+					race = race .. ' ' .. gender
 				end
 			end
 			lvlLine:SetFormattedText(
-				"|cff%02x%02x%02x%s|r %s |c%s%s|r",
+				'|cff%02x%02x%02x%s|r %s |c%s%s|r',
 				qColor.r * 255,
 				qColor.g * 255,
 				qColor.b * 255,
-				unitLevel > 0 and unitLevel or "|TInterface\\TARGETINGFRAME\\UI-TargetingFrame-Skull.blp:16:16|t",
-				race or "",
+				unitLevel > 0 and unitLevel or '|TInterface\\TARGETINGFRAME\\UI-TargetingFrame-Skull.blp:16:16|t',
+				race or '',
 				colors.colorStr,
 				className
 			)
@@ -359,11 +359,11 @@ local TooltipSetUnit = function(self)
 		if UnitIsTapDenied(unit) then
 			colors = TAPPED_COLOR
 		else
-			colors = FACTION_BAR_COLORS[UnitReaction(unit, "player")]
+			colors = FACTION_BAR_COLORS[UnitReaction(unit, 'player')]
 		end
 
 		for i = 2, self:NumLines() do
-			local tip = _G["GameTooltipTextLeft" .. i]
+			local tip = _G['GameTooltipTextLeft' .. i]
 			if tip:GetText() and tip:GetText():find(LEVEL) then
 				lvlLine = tip
 			end
@@ -384,46 +384,46 @@ local TooltipSetUnit = function(self)
 				qColor = GetQuestDifficultyColor(unitLevel)
 			end
 			if creatureType == nil then
-				creatureType = ""
+				creatureType = ''
 			end
 
 			lvlLine:SetFormattedText(
-				"|cff%02x%02x%02x%s|r %s %s",
+				'|cff%02x%02x%02x%s|r %s %s',
 				qColor.r * 255,
 				qColor.g * 255,
 				qColor.b * 255,
-				unitLevel > 0 and unitLevel or "??",
-				creatureClassColors[creatureClassification] or "",
+				unitLevel > 0 and unitLevel or '??',
+				creatureClassColors[creatureClassification] or '',
 				creatureType
 			)
 		end
 	end
 
-	local unitTarget = unit .. "target"
-	if unit ~= "player" and UnitExists(unitTarget) then
+	local unitTarget = unit .. 'target'
+	if unit ~= 'player' and UnitExists(unitTarget) then
 		if UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget) then
 			totColor = RAID_CLASS_COLORS[select(2, UnitClass(unitTarget))]
 		else
-			totColor = FACTION_BAR_COLORS[UnitReaction(unitTarget, "player")]
+			totColor = FACTION_BAR_COLORS[UnitReaction(unitTarget, 'player')]
 		end
 		self:AddDoubleLine(
-			TARGET .. ":",
-			format("|cff%02x%02x%02x%s|r", totColor.r * 255, totColor.g * 255, totColor.b * 255, UnitName(unitTarget))
+			TARGET .. ':',
+			format('|cff%02x%02x%02x%s|r', totColor.r * 255, totColor.g * 255, totColor.b * 255, UnitName(unitTarget))
 		)
 	end
 
 	if IsInGroup() then
 		for i = 1, GetNumGroupMembers() do
-			local groupedUnit = IsInRaid() and "raid" .. i or "party" .. i
-			if UnitIsUnit(groupedUnit .. "target", unit) and not UnitIsUnit(groupedUnit, "player") then
+			local groupedUnit = IsInRaid() and 'raid' .. i or 'party' .. i
+			if UnitIsUnit(groupedUnit .. 'target', unit) and not UnitIsUnit(groupedUnit, 'player') then
 				local _, classToken = UnitClass(groupedUnit)
-				_G.tinsert(targetList, format("|c%s%s|r", RAID_CLASS_COLORS[classToken].colorStr, UnitName(groupedUnit)))
+				_G.tinsert(targetList, format('|c%s%s|r', RAID_CLASS_COLORS[classToken].colorStr, UnitName(groupedUnit)))
 			end
 		end
 		local maxTargets = #targetList
 		if maxTargets > 0 and targetList ~= nil then
 			self:AddLine(
-				format("%s (|cffffffff%d|r): %s", L["Targeted By"], maxTargets, table.concat(targetList, ", ")),
+				format('%s (|cffffffff%d|r): %s', L['Targeted By'], maxTargets, table.concat(targetList, ', ')),
 				nil,
 				nil,
 				nil,
@@ -446,33 +446,33 @@ local function ApplyTooltipSkins()
 				Offset = (GameTooltipStatusBar:GetHeight() + 6) * -1
 			end
 
-			local tmp = CreateFrame("Frame", nil, tooltip)
-			tmp:SetPoint("TOPLEFT", tooltip, "TOPLEFT", -1, 1)
-			tmp:SetPoint("BOTTOMRIGHT", tooltip, "BOTTOMRIGHT", 1, Offset)
+			local tmp = CreateFrame('Frame', nil, tooltip)
+			tmp:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', -1, 1)
+			tmp:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 1, Offset)
 			tmp:SetFrameLevel(0)
 
 			--TOP
-			tmp[1] = tmp:CreateTexture(nil, "OVERLAY")
-			tmp[1]:SetPoint("BOTTOMLEFT", tmp, "TOPLEFT", -3, 0)
-			tmp[1]:SetPoint("BOTTOMRIGHT", tmp, "TOPRIGHT", 3, 0)
+			tmp[1] = tmp:CreateTexture(nil, 'OVERLAY')
+			tmp[1]:SetPoint('BOTTOMLEFT', tmp, 'TOPLEFT', -3, 0)
+			tmp[1]:SetPoint('BOTTOMRIGHT', tmp, 'TOPRIGHT', 3, 0)
 			tmp[1]:SetHeight(3)
 			tmp[1]:SetTexture(0, 0, 0)
 			--BOTTOM
-			tmp[2] = tmp:CreateTexture(nil, "OVERLAY")
-			tmp[2]:SetPoint("TOPLEFT", tmp, "BOTTOMLEFT", -3, 0)
-			tmp[2]:SetPoint("TOPRIGHT", tmp, "BOTTOMRIGHT", 3, 0)
+			tmp[2] = tmp:CreateTexture(nil, 'OVERLAY')
+			tmp[2]:SetPoint('TOPLEFT', tmp, 'BOTTOMLEFT', -3, 0)
+			tmp[2]:SetPoint('TOPRIGHT', tmp, 'BOTTOMRIGHT', 3, 0)
 			tmp[2]:SetHeight(3)
 			tmp[2]:SetTexture(0, 0, 0)
 			--RIGHT
-			tmp[3] = tmp:CreateTexture(nil, "OVERLAY")
-			tmp[3]:SetPoint("TOPLEFT", tmp, "TOPRIGHT", 0, 3)
-			tmp[3]:SetPoint("BOTTOMLEFT", tmp, "BOTTOMRIGHT", 0, -3)
+			tmp[3] = tmp:CreateTexture(nil, 'OVERLAY')
+			tmp[3]:SetPoint('TOPLEFT', tmp, 'TOPRIGHT', 0, 3)
+			tmp[3]:SetPoint('BOTTOMLEFT', tmp, 'BOTTOMRIGHT', 0, -3)
 			tmp[3]:SetWidth(3)
 			tmp[3]:SetTexture(0, 0, 0)
 			--LEFT
-			tmp[4] = tmp:CreateTexture(nil, "OVERLAY")
-			tmp[4]:SetPoint("TOPRIGHT", tmp, "TOPLEFT", 0, 3)
-			tmp[4]:SetPoint("BOTTOMRIGHT", tmp, "BOTTOMLEFT", 0, -3)
+			tmp[4] = tmp:CreateTexture(nil, 'OVERLAY')
+			tmp[4]:SetPoint('TOPRIGHT', tmp, 'TOPLEFT', 0, 3)
+			tmp[4]:SetPoint('BOTTOMRIGHT', tmp, 'BOTTOMLEFT', 0, -3)
 			tmp[4]:SetWidth(3)
 			tmp[4]:SetTexture(0, 0, 0)
 
@@ -491,9 +491,9 @@ local function ApplyTooltipSkins()
 			tooltip.SUIBorder = tmp
 			tooltip:SetBackdrop(nil)
 
-			hooksecurefunc(tooltip, "SetBackdropColor", Override_Color)
-			tooltip:HookScript("OnShow", onShow)
-			tooltip:HookScript("OnHide", onHide)
+			hooksecurefunc(tooltip, 'SetBackdropColor', Override_Color)
+			tooltip:HookScript('OnShow', onShow)
+			tooltip:HookScript('OnHide', onHide)
 			_G.tremove(tooltips, i)
 		end
 	end
@@ -508,7 +508,7 @@ function module:UpdateBG()
 			-- tooltip.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 			-- end
 			if not SUI.DB.Tooltips.ColorOverlay then
-				if SUI.DB.Tooltips.ActiveStyle ~= "none" then
+				if SUI.DB.Tooltips.ActiveStyle ~= 'none' then
 					tooltip.SUIBorder:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 				else
 					tooltip.SUIBorder:SetBackdropColor(0, 0, 0, 0)
@@ -533,21 +533,21 @@ function module:OnEnable()
 	end
 	--Create Anchor point
 	for k, v in ipairs(RuleList) do
-		local anchor = CreateFrame("Frame", nil)
+		local anchor = CreateFrame('Frame', nil)
 		anchor:SetSize(150, 20)
 		anchor:EnableMouse(enable)
-		anchor.bg = anchor:CreateTexture(nil, "OVERLAY")
+		anchor.bg = anchor:CreateTexture(nil, 'OVERLAY')
 		anchor.bg:SetAllPoints(anchor)
-		anchor.bg:SetTexture("Interface\\BlackMarket\\BlackMarketBackground-Tile")
+		anchor.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
 		anchor.bg:SetVertexColor(1, 1, 1, 0.8)
-		anchor.lbl = anchor:CreateFontString(nil, "OVERLAY", "SUI_Font10")
-		anchor.lbl:SetText("Anchor for Rule " .. k)
+		anchor.lbl = anchor:CreateFontString(nil, 'OVERLAY', 'SUI_Font10')
+		anchor.lbl:SetText('Anchor for Rule ' .. k)
 		anchor.lbl:SetAllPoints(anchor)
 
 		anchor:SetScript(
-			"OnMouseDown",
+			'OnMouseDown',
 			function(self, button)
-				if button == "LeftButton" then
+				if button == 'LeftButton' then
 					SUI.DB.Tooltips[v].Anchor.Moved = true
 					module[v].anchor:SetMovable(true)
 					module[v].anchor:StartMoving()
@@ -556,7 +556,7 @@ function module:OnEnable()
 		)
 
 		anchor:SetScript(
-			"OnMouseUp",
+			'OnMouseUp',
 			function(self, button)
 				module[v].anchor:Hide()
 				module[v].anchor:StopMovingOrSizing()
@@ -569,7 +569,7 @@ function module:OnEnable()
 		)
 
 		anchor:SetScript(
-			"OnShow",
+			'OnShow',
 			function(self)
 				if SUI.DB.Tooltips[v].Anchor.Moved then
 					local Anchors = {}
@@ -579,18 +579,18 @@ function module:OnEnable()
 					self:ClearAllPoints()
 					self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 				else
-					self:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -20, 20)
+					self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
 				end
 			end
 		)
 
 		anchor:SetScript(
-			"OnEvent",
+			'OnEvent',
 			function(self, event, ...)
 				module[v].anchor:Hide()
 			end
 		)
-		anchor:RegisterEvent("PLAYER_REGEN_DISABLED")
+		anchor:RegisterEvent('PLAYER_REGEN_DISABLED')
 
 		module[v] = {anchor = anchor}
 		module[v].anchor:Hide()
@@ -599,11 +599,11 @@ function module:OnEnable()
 	--Do Setup
 	ApplyTooltipSkins()
 
-	GameTooltip:HookScript("OnTooltipCleared", TipCleared)
-	GameTooltip:HookScript("OnTooltipSetItem", TooltipSetItem)
-	GameTooltip:HookScript("OnTooltipSetUnit", TooltipSetUnit)
-	hooksecurefunc("GameTooltip_SetDefaultAnchor", setPoint)
-	hooksecurefunc("GameTooltip_ShowCompareItem", ReStyle)
+	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
+	GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
+	GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
+	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
+	hooksecurefunc('GameTooltip_ShowCompareItem', ReStyle)
 
 	-- GameTooltip:HookScript("SetPoint", setPoint)
 	-- hooksecurefunc(GameTooltip,"SetPoint",setPoint);
@@ -611,31 +611,31 @@ end
 
 local OnMouseOpt = function(v)
 	if SUI.DB.Tooltips[v].Anchor.onMouse or not SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc then
-		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation" .. v].args["OverrideTheme"].disabled = true
+		spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = true
 	else
-		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation" .. v].args["OverrideTheme"].disabled = false
+		spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = false
 	end
 
-	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation" .. v].args["MoveAnchor"].disabled =
+	spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled =
 		SUI.DB.Tooltips[v].Anchor.onMouse
-	spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation" .. v].args["ResetAnchor"].disabled =
+	spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled =
 		SUI.DB.Tooltips[v].Anchor.onMouse
 end
 
 function module:BuildOptions()
-	spartan.opt.args["ModSetting"].args["Tooltips"] = {
-		type = "group",
-		name = "Tooltips",
+	spartan.opt.args['ModSetting'].args['Tooltips'] = {
+		type = 'group',
+		name = 'Tooltips',
 		args = {
 			Background = {
-				name = L["Background"],
-				type = "select",
+				name = L['Background'],
+				type = 'select',
 				order = 1,
 				values = {
-					["metal"] = "metal",
-					["smooth"] = "smooth",
-					["smoke"] = "smoke",
-					["none"] = L["none"]
+					['metal'] = 'metal',
+					['smooth'] = 'smooth',
+					['smoke'] = 'smoke',
+					['none'] = L['none']
 				},
 				get = function(info)
 					return SUI.DB.Tooltips.ActiveStyle
@@ -645,10 +645,10 @@ function module:BuildOptions()
 				end
 			},
 			OverrideTheme = {
-				name = L["OverrideTheme"],
-				type = "toggle",
+				name = L['OverrideTheme'],
+				type = 'toggle',
 				order = 2,
-				desc = L["TooltipOverrideDesc"],
+				desc = L['TooltipOverrideDesc'],
 				get = function(info)
 					return SUI.DB.Tooltips.Override[SUI.DBMod.Artwork.Style]
 				end,
@@ -657,11 +657,11 @@ function module:BuildOptions()
 				end
 			},
 			color = {
-				name = L["Color"],
-				type = "color",
+				name = L['Color'],
+				type = 'color',
 				hasAlpha = true,
 				order = 10,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return unpack(SUI.DB.Tooltips.Color)
 				end,
@@ -671,10 +671,10 @@ function module:BuildOptions()
 				end
 			},
 			ColorOverlay = {
-				name = L["Color Overlay"],
-				type = "toggle",
+				name = L['Color Overlay'],
+				type = 'toggle',
 				order = 11,
-				desc = L["ColorOverlayDesc"],
+				desc = L['ColorOverlayDesc'],
 				get = function(info)
 					return SUI.DB.Tooltips.ColorOverlay
 				end,
@@ -684,10 +684,10 @@ function module:BuildOptions()
 				end
 			},
 			SuppressNoMatch = {
-				name = "Suppress no rule match error",
-				type = "toggle",
+				name = 'Suppress no rule match error',
+				type = 'toggle',
 				order = 11,
-				desc = L["ColorOverlayDesc"],
+				desc = L['ColorOverlayDesc'],
 				get = function(info)
 					return SUI.DB.Tooltips.SuppressNoMatch
 				end,
@@ -699,23 +699,23 @@ function module:BuildOptions()
 	}
 
 	for k, v in ipairs(RuleList) do
-		spartan.opt.args["ModSetting"].args["Tooltips"].args["DisplayLocation" .. v] = {
-			name = "Display Location " .. v,
-			type = "group",
+		spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v] = {
+			name = 'Display Location ' .. v,
+			type = 'group',
 			inline = true,
 			order = k + 20.1,
-			width = "full",
+			width = 'full',
 			args = {
 				Condition = {
-					name = "Condition",
-					type = "select",
+					name = 'Condition',
+					type = 'select',
 					order = k + 20.2,
 					values = {
-						["Group"] = "In a Group",
-						["Raid"] = "In a Raid Group",
-						["Instance"] = "In a instance",
-						["All"] = "All the time",
-						["Disabled"] = "Disabled"
+						['Group'] = 'In a Group',
+						['Raid'] = 'In a Raid Group',
+						['Instance'] = 'In a instance',
+						['All'] = 'All the time',
+						['Disabled'] = 'Disabled'
 					},
 					get = function(info)
 						return SUI.DB.Tooltips[v].Status
@@ -725,8 +725,8 @@ function module:BuildOptions()
 					end
 				},
 				Combat = {
-					name = "only if in combat",
-					type = "toggle",
+					name = 'only if in combat',
+					type = 'toggle',
 					order = k + 20.3,
 					get = function(info)
 						return SUI.DB.Tooltips[v].Combat
@@ -736,10 +736,10 @@ function module:BuildOptions()
 					end
 				},
 				OnMouse = {
-					name = "Display on mouse?",
-					type = "toggle",
+					name = 'Display on mouse?',
+					type = 'toggle',
 					order = k + 20.4,
-					desc = L["TooltipOverrideDesc"],
+					desc = L['TooltipOverrideDesc'],
 					get = function(info)
 						OnMouseOpt(v)
 						return SUI.DB.Tooltips[v].Anchor.onMouse
@@ -750,8 +750,8 @@ function module:BuildOptions()
 					end
 				},
 				OverrideTheme = {
-					name = L["OverrideTheme"],
-					type = "toggle",
+					name = L['OverrideTheme'],
+					type = 'toggle',
 					order = k + 20.5,
 					get = function(info)
 						return SUI.DB.Tooltips[v].OverrideLoc
@@ -761,19 +761,19 @@ function module:BuildOptions()
 					end
 				},
 				MoveAnchor = {
-					name = "Move anchor",
-					type = "execute",
+					name = 'Move anchor',
+					type = 'execute',
 					order = k + 20.6,
-					width = "half",
+					width = 'half',
 					func = function(info, val)
 						module[v].anchor:Show()
 					end
 				},
 				ResetAnchor = {
-					name = "Reset anchor",
-					type = "execute",
+					name = 'Reset anchor',
+					type = 'execute',
 					order = k + 20.7,
-					width = "half",
+					width = 'half',
 					func = function(info, val)
 						SUI.DB.Tooltips[v].Anchor.Moved = false
 					end
@@ -784,5 +784,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args["ModSetting"].args["Tooltips"].disabled = true
+	spartan.opt.args['ModSetting'].args['Tooltips'].disabled = true
 end

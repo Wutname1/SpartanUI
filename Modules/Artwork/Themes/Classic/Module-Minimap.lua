@@ -1,20 +1,20 @@
-local _G, SUI = _G, SUI
-local module = SUI:GetModule("Style_Classic")
+local SUI = SUI
+local module = SUI:GetModule('Style_Classic')
 ---------------------------------------------------------------------------
 local PetBattleActive = false
-local petbattleWatcher = CreateFrame("Frame")
+local petbattleWatcher = CreateFrame('Frame')
 
 function module:MiniMap()
 	Minimap:SetSize(156, 156)
 
 	Minimap:ClearAllPoints()
-	Minimap:SetPoint("CENTER", SpartanUI, "CENTER", 0, 54)
+	Minimap:SetPoint('CENTER', SpartanUI, 'CENTER', 0, 54)
 	Minimap:SetParent(SpartanUI)
 
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints()
-		Minimap.ZoneText:SetPoint("TOPLEFT", Minimap, "BOTTOMLEFT", 0, -5)
-		Minimap.ZoneText:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -5)
+		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -5)
+		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -5)
 		Minimap.ZoneText:Hide()
 		MinimapZoneText:Show()
 
@@ -24,20 +24,20 @@ function module:MiniMap()
 	-- Minimap.coords:Hide()
 
 	QueueStatusFrame:ClearAllPoints()
-	QueueStatusFrame:SetPoint("BOTTOM", SpartanUI, "TOP", 0, 100)
+	QueueStatusFrame:SetPoint('BOTTOM', SpartanUI, 'TOP', 0, 100)
 
 	--Shape Change
 	local shapechange = function(shape)
-		if shape == "square" then
-			Minimap:SetMaskTexture("Interface\\BUTTONS\\WHITE8X8")
+		if shape == 'square' then
+			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
 
 			-- Minimap:SetArchBlobRingScalar(0)
 			-- Minimap:SetQuestBlobRingScalar(0)
 
-			Minimap.overlay = Minimap:CreateTexture(nil, "OVERLAY")
-			Minimap.overlay:SetTexture("Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay")
+			Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
+			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay')
 			Minimap.overlay:SetAllPoints(Minimap)
-			Minimap.overlay:SetBlendMode("ADD")
+			Minimap.overlay:SetBlendMode('ADD')
 
 			-- MinimapZoneTextButton:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,4);
 			-- MinimapZoneTextButton:SetPoint("BOTTOMRIGHT",Minimap,"TOPRIGHT",0,4);
@@ -46,11 +46,11 @@ function module:MiniMap()
 			-- MinimapZoneText:SetShadowOffset(1,-1);
 
 			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
+			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
 		else
-			Minimap:SetMaskTexture("Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay")
+			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
 			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -5, -5)
+			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
 			if Minimap.overlay then
 				Minimap.overlay:Hide()
 			end
@@ -58,42 +58,42 @@ function module:MiniMap()
 	end
 
 	SpartanUI:HookScript(
-		"OnHide",
+		'OnHide',
 		function(this, event)
 			if PetBattleActive then
 				return
 			end
 			Minimap:ClearAllPoints()
 			Minimap:SetParent(UIParent)
-			Minimap:SetPoint("TOP", UIParent, "TOP", 0, -20)
-			shapechange("square")
+			Minimap:SetPoint('TOP', UIParent, 'TOP', 0, -20)
+			shapechange('square')
 		end
 	)
 
 	SpartanUI:HookScript(
-		"OnShow",
+		'OnShow',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint("CENTER", SpartanUI, "CENTER", 0, 54)
+			Minimap:SetPoint('CENTER', SpartanUI, 'CENTER', 0, 54)
 			Minimap:SetParent(SpartanUI)
-			shapechange("circle")
+			shapechange('circle')
 		end
 	)
 
 	petbattleWatcher:SetScript(
-		"OnEvent",
+		'OnEvent',
 		function(self, event)
-			if event == "PET_BATTLE_CLOSE" then
+			if event == 'PET_BATTLE_CLOSE' then
 				PetBattleActive = false
 			else
 				PetBattleActive = true
 			end
 		end
 	)
-	petbattleWatcher:RegisterEvent("PET_BATTLE_OPENING_START")
+	petbattleWatcher:RegisterEvent('PET_BATTLE_OPENING_START')
 	--petbattleWatcher:RegisterEvent("PET_BATTLE_TURN_STARTED")
-	petbattleWatcher:RegisterEvent("PET_BATTLE_OPENING_DONE")
-	petbattleWatcher:RegisterEvent("PET_BATTLE_CLOSE")
+	petbattleWatcher:RegisterEvent('PET_BATTLE_OPENING_DONE')
+	petbattleWatcher:RegisterEvent('PET_BATTLE_CLOSE')
 end
 
 function module:EnableMinimap()

@@ -1,5 +1,5 @@
 local SUI = SUI
-local PlayerFrames = SUI:NewModule("PlayerFrames")
+local PlayerFrames = SUI:NewModule('PlayerFrames')
 SUI.PlayerFrames = PlayerFrames
 ----------------------------------------------------------------------------------------------------
 
@@ -12,8 +12,8 @@ function PlayerFrames:round(val, decimal)
 end
 
 function PlayerFrames:comma_value(n)
-	local left, num, right = string.match(n, "^([^%d]*%d)(%d*)(.-)$")
-	return left .. (num:reverse():gsub("(%d%d%d)", "%1,"):reverse()) .. right
+	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
+	return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
 end
 
 do -- Boss graphic as an SpartanoUF module
@@ -24,7 +24,7 @@ do -- Boss graphic as an SpartanoUF module
 		if (not self.BossGraphic) then
 			return
 		end
-		self.BossGraphic:SetTexture("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare")
+		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare')
 		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
 		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
 	end
@@ -36,25 +36,25 @@ do -- Boss graphic as an SpartanoUF module
 	local Disable = function(self)
 		return
 	end
-	SpartanoUF:AddElement("BossGraphic", Update, Enable, Disable)
+	SpartanoUF:AddElement('BossGraphic', Update, Enable, Disable)
 end
 
 function PlayerFrames:SetupStaticOptions()
 	local FramesList = {
-		[1] = "pet",
-		[2] = "target",
-		[3] = "targettarget",
-		[4] = "focus",
-		[5] = "focustarget",
-		[6] = "player"
+		[1] = 'pet',
+		[2] = 'target',
+		[3] = 'targettarget',
+		[4] = 'focus',
+		[5] = 'focustarget',
+		[6] = 'player'
 	}
 	for _, unit in pairs(FramesList) do
 		--Health Bar Color
-		if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
+		if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
 			PlayerFrames[unit].Health.colorReaction = true
-		elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
+		elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
 			PlayerFrames[unit].Health.colorHappiness = true
-		elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
+		elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
 			PlayerFrames[unit].Health.colorClass = true
 		else
 			PlayerFrames[unit].Health.colorSmooth = true
@@ -66,28 +66,28 @@ function PlayerFrames:TextFormat(text)
 	local textstyle = SUI.DBMod.PlayerFrames.bars[text].textstyle
 	local textmode = SUI.DBMod.PlayerFrames.bars[text].textmode
 	local a, m, t, z
-	if text == "mana" then
-		z = "pp"
+	if text == 'mana' then
+		z = 'pp'
 	else
-		z = "hp"
+		z = 'hp'
 	end
 
 	-- textstyle
 	-- "Long: 			 Displays all numbers."
 	-- "Long Formatted: Displays all numbers with commas."
 	-- "Dynamic: 		 Abbriviates and formats as needed"
-	if textstyle == "long" then
-		a = "[cur" .. z .. "]"
-		m = "[missing" .. z .. "]"
-		t = "[max" .. z .. "]"
-	elseif textstyle == "longfor" then
-		a = "[cur" .. z .. "formatted]"
-		m = "[missing" .. z .. "formatted]"
-		t = "[max" .. z .. "formatted]"
-	elseif textstyle == "dynamic" then
-		a = "[cur" .. z .. "dynamic]"
-		m = "[missing" .. z .. "dynamic]"
-		t = "[max" .. z .. "dynamic]"
+	if textstyle == 'long' then
+		a = '[cur' .. z .. ']'
+		m = '[missing' .. z .. ']'
+		t = '[max' .. z .. ']'
+	elseif textstyle == 'longfor' then
+		a = '[cur' .. z .. 'formatted]'
+		m = '[missing' .. z .. 'formatted]'
+		t = '[max' .. z .. 'formatted]'
+	elseif textstyle == 'dynamic' then
+		a = '[cur' .. z .. 'dynamic]'
+		m = '[missing' .. z .. 'dynamic]'
+		t = '[max' .. z .. 'dynamic]'
 	end
 	-- textmode
 	-- [1]="Avaliable / Total",
@@ -95,11 +95,11 @@ function PlayerFrames:TextFormat(text)
 	-- [3]="(Missing) Avaliable"
 
 	if textmode == 1 then
-		return a .. " / " .. t
+		return a .. ' / ' .. t
 	elseif textmode == 2 then
-		return "(" .. m .. ") " .. a .. " / " .. t
+		return '(' .. m .. ') ' .. a .. ' / ' .. t
 	elseif textmode == 3 then
-		return "(" .. m .. ") " .. a
+		return '(' .. m .. ') ' .. a
 	end
 end
 
@@ -158,71 +158,71 @@ function PlayerFrames:Buffs(self, unit)
 			--Pos2 **-----**
 			--Pos3 **-------
 			if pos == 1 then
-				self.AuraBars:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", 0, 0)
-				self.AuraBars:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", ((DeBuffWidthActual + Spacer) * -1), 0)
+				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', ((DeBuffWidthActual + Spacer) * -1), 0)
 			elseif pos == 2 then
-				self.AuraBars:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", (BuffWidthActual + Spacer), 0)
-				self.AuraBars:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", ((DeBuffWidthActual + Spacer) * -1), 0)
+				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', (BuffWidthActual + Spacer), 0)
+				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', ((DeBuffWidthActual + Spacer) * -1), 0)
 			else --pos 3
-				self.AuraBars:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", (BuffWidthActual + Spacer), 0)
-				self.AuraBars:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", 0, 0)
+				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', (BuffWidthActual + Spacer), 0)
+				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
 			end
 			return self
 		end
 
 		--Buff Icons
-		local Buffs = CreateFrame("Frame", nil, self)
+		local Buffs = CreateFrame('Frame', nil, self)
 		--Debuff Icons
-		local Debuffs = CreateFrame("Frame", nil, self)
+		local Debuffs = CreateFrame('Frame', nil, self)
 		-- Setup icons if needed
 		local iconFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-			if caster == "player" and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
+			if caster == 'player' and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
 				return true
-			elseif caster ~= "player" then
+			elseif caster ~= 'player' then
 				return true
 			end
 		end
-		if BuffsMode ~= "bars" and BuffsMode ~= "disabled" then
-			Buffs:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", 0, 0)
+		if BuffsMode ~= 'bars' and BuffsMode ~= 'disabled' then
+			Buffs:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
 			Buffs.size = Buffsize
-			Buffs["growth-x"] = "RIGHT"
-			Buffs["growth-y"] = "UP"
+			Buffs['growth-x'] = 'RIGHT'
+			Buffs['growth-y'] = 'UP'
 			Buffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing
 			Buffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.showType
 			Buffs.numBuffs = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Number
 			Buffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer
 			Buffs:SetSize(BuffWidthActual, (Buffsize * (Buffs.numBuffs / BuffWidth)))
 			Buffs.PostUpdate = PostUpdateAura
-			if BuffsMode ~= "icons" then
+			if BuffsMode ~= 'icons' then
 				Buffs.CustomFilter = iconFilter
 			end
 			self.Buffs = Buffs
 		end
-		if DebuffsMode ~= "bars" and DebuffsMode ~= "disabled" then
-			Debuffs:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", 0, 0)
+		if DebuffsMode ~= 'bars' and DebuffsMode ~= 'disabled' then
+			Debuffs:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
 			Debuffs.size = Debuffsize
-			Debuffs.initialAnchor = "BOTTOMRIGHT"
-			Debuffs["growth-x"] = "LEFT"
-			Debuffs["growth-y"] = "UP"
+			Debuffs.initialAnchor = 'BOTTOMRIGHT'
+			Debuffs['growth-x'] = 'LEFT'
+			Debuffs['growth-y'] = 'UP'
 			Debuffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing
 			Debuffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.showType
 			Debuffs.numDebuffs = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Number
 			Debuffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer
 			Debuffs:SetSize(DeBuffWidthActual, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth)))
 			Debuffs.PostUpdate = PostUpdateAura
-			if DebuffsMode ~= "icons" then
+			if DebuffsMode ~= 'icons' then
 				Debuffs.CustomFilter = iconFilter
 			end
 			self.Debuffs = Debuffs
 		end
 
 		--Bars
-		local AuraBars = CreateFrame("Frame", nil, self)
+		local AuraBars = CreateFrame('Frame', nil, self)
 		AuraBars:SetHeight(1)
 		AuraBars.auraBarTexture = Smoothv2
 		AuraBars.PostUpdate = PostUpdateAura
-		AuraBars.spellTimeFont = SUI:GetFontFace("Player")
-		AuraBars.spellNameFont = SUI:GetFontFace("Player")
+		AuraBars.spellTimeFont = SUI:GetFontFace('Player')
+		AuraBars.spellNameFont = SUI:GetFontFace('Player')
 
 		--Hots and Dots Filter
 		local Barfilter = function(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
@@ -233,61 +233,61 @@ function PlayerFrames:Buffs(self, unit)
 		end
 
 		-- Determine Buff Bar locaion
-		if BuffsMode == "bars" and DebuffsMode == "icons" then
+		if BuffsMode == 'bars' and DebuffsMode == 'icons' then
 			AuraBars.Buffs = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 1)
-		elseif BuffsMode == "bars" and DebuffsMode == "both" then
+		elseif BuffsMode == 'bars' and DebuffsMode == 'both' then
 			AuraBars.ShowAll = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 1)
-		elseif BuffsMode == "bars" and (DebuffsMode == "bars" or DebuffsMode == "disabled") then
-			if DebuffsMode == "disabled" then
+		elseif BuffsMode == 'bars' and (DebuffsMode == 'bars' or DebuffsMode == 'disabled') then
+			if DebuffsMode == 'disabled' then
 				AuraBars.Buffs = true
 			else
 				AuraBars.ShowAll = true
 			end
-			AuraBars:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", 0, 0)
-			AuraBars:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", 0, 0)
+			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
 			self.AuraBars = AuraBars
-		elseif BuffsMode == "icons" and DebuffsMode == "icons" then
+		elseif BuffsMode == 'icons' and DebuffsMode == 'icons' then
 			Buffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Buffsize * (Buffs.numBuffs / BuffWidth2)))
 			Debuffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth2)))
-		elseif BuffsMode == "icons" and DebuffsMode == "both" then
+		elseif BuffsMode == 'icons' and DebuffsMode == 'both' then
 			AuraBars.Debuffs = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 2)
-		elseif BuffsMode == "icons" and DebuffsMode == "bars" then
+		elseif BuffsMode == 'icons' and DebuffsMode == 'bars' then
 			AuraBars.Debuffs = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 3)
-		elseif BuffsMode == "icons" and DebuffsMode == "disabled" then
+		elseif BuffsMode == 'icons' and DebuffsMode == 'disabled' then
 			Buffs:SetSize(self.BuffAnchor:GetWidth(), (Buffsize * (Buffs.numBuffs / self.BuffAnchor:GetWidth())))
-		elseif BuffsMode == "both" and DebuffsMode == "icons" then
+		elseif BuffsMode == 'both' and DebuffsMode == 'icons' then
 			AuraBars.Buffs = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 2)
-		elseif BuffsMode == "both" and DebuffsMode == "both" then
+		elseif BuffsMode == 'both' and DebuffsMode == 'both' then
 			AuraBars.ShowAll = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 2)
-		elseif BuffsMode == "both" and DebuffsMode == "bars" then
+		elseif BuffsMode == 'both' and DebuffsMode == 'bars' then
 			AuraBars.ShowAll = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 3)
-		elseif BuffsMode == "bars" and DebuffsMode == "disabled" then
+		elseif BuffsMode == 'bars' and DebuffsMode == 'disabled' then
 			AuraBars.Buffs = true
-			AuraBars:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", 0, 0)
-			AuraBars:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", 0, 0)
+			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
 			self.AuraBars = AuraBars
-		elseif BuffsMode == "disabled" and DebuffsMode == "bars" then
+		elseif BuffsMode == 'disabled' and DebuffsMode == 'bars' then
 			AuraBars.Debuffs = true
-			AuraBars:SetPoint("BOTTOMLEFT", self.BuffAnchor, "TOPLEFT", 0, 0)
-			AuraBars:SetPoint("BOTTOMRIGHT", self.BuffAnchor, "TOPRIGHT", 0, 0)
+			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
 			self.AuraBars = AuraBars
-		elseif BuffsMode == "disabled" and DebuffsMode == "icons" then
+		elseif BuffsMode == 'disabled' and DebuffsMode == 'icons' then
 			Debuffs:SetSize(self.BuffAnchor:GetWidth(), (Debuffsize * (Debuffs.numDebuffs / self.BuffAnchor:GetWidth())))
-		elseif BuffsMode == "disabled" and DebuffsMode == "both" then
+		elseif BuffsMode == 'disabled' and DebuffsMode == 'both' then
 			AuraBars.Debuffs = true
 			self.AuraBars = AuraBars
 			BarPosition(self, 1)
@@ -299,32 +299,32 @@ function PlayerFrames:Buffs(self, unit)
 		end
 
 		--Change options if needed
-		if SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode == "bars" then
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["Number"].disabled = true
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["size"].disabled = true
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["spacing"].disabled = true
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Buffs"].args["showType"].disabled = true
+		if SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode == 'bars' then
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['Number'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['size'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['spacing'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['showType'].disabled = true
 		end
-		if SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == "bars" then
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["Number"].disabled = true
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["size"].disabled = true
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["spacing"].disabled = true
-			SUI.opt.args["PlayerFrames"].args["auras"].args[unit].args["Debuffs"].args["showType"].disabled = true
+		if SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == 'bars' then
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['Number'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['size'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['spacing'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['showType'].disabled = true
 		end
 
-		SUI.opt.args["PlayerFrames"].args["auras"].args[unit].disabled = false
+		SUI.opt.args['PlayerFrames'].args['auras'].args[unit].disabled = false
 	end
 	return self
 end
 
 function PlayerFrames:UpdatePosition()
 	local FramesList = {
-		[1] = "pet",
-		[2] = "target",
-		[3] = "targettarget",
-		[4] = "focus",
-		[5] = "focustarget",
-		[6] = "player"
+		[1] = 'pet',
+		[2] = 'target',
+		[3] = 'targettarget',
+		[4] = 'focus',
+		[5] = 'focustarget',
+		[6] = 'player'
 	}
 
 	for _, b in pairs(FramesList) do
@@ -340,15 +340,15 @@ function PlayerFrames:UpdatePosition()
 		elseif SUI.DBMod.PlayerFrames[b] ~= nil then
 			PlayerFrames[b]:SetMovable(false)
 			PlayerFrames[b]:ClearAllPoints()
-			if (SUI.DBMod.PlayerFrames.Style == "Classic") then
+			if (SUI.DBMod.PlayerFrames.Style == 'Classic') then
 				PlayerFrames:PositionFrame_Classic(b)
-			elseif (SUI.DBMod.PlayerFrames.Style == "plain") then
+			elseif (SUI.DBMod.PlayerFrames.Style == 'plain') then
 				PlayerFrames:PositionFrame_Plain(b)
 			else
-				SUI:GetModule("Style_" .. SUI.DBMod.PlayerFrames.Style):PositionFrame(b)
+				SUI:GetModule('Style_' .. SUI.DBMod.PlayerFrames.Style):PositionFrame(b)
 			end
 		else
-			print(b .. " Frame has not been spawned by your theme")
+			print(b .. ' Frame has not been spawned by your theme')
 		end
 	end
 
@@ -364,7 +364,7 @@ function PlayerFrames:UpdatePosition()
 			PlayerFrames.boss[1]:ClearAllPoints()
 			PlayerFrames.boss[1]:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 		else
-			PlayerFrames.boss[1]:SetPoint("TOPRIGHT", UIParent, "RIGHT", -50, 60)
+			PlayerFrames.boss[1]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 			PlayerFrames.boss[1]:SetMovable(false)
 		end
 	end
@@ -373,14 +373,14 @@ end
 
 function PlayerFrames:CreatePortrait(self)
 	if SUI.DBMod.PlayerFrames.Portrait3D then
-		local Portrait = CreateFrame("PlayerModel", nil, self)
+		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript(
-			"OnShow",
+			'OnShow',
 			function(self)
 				self:SetCamera(1)
 			end
 		)
-		Portrait.type = "3D"
+		Portrait.type = '3D'
 		-- Portrait.bg2 = Portrait:CreateTexture(nil,"BACKGROUND");
 		-- Portrait.bg2:SetTexture(circle);
 		-- Portrait.bg2:SetPoint("TOPLEFT",Portrait,"TOPLEFT",-10,10);
@@ -388,43 +388,43 @@ function PlayerFrames:CreatePortrait(self)
 		Portrait:SetFrameLevel(1)
 		return Portrait
 	else
-		return self:CreateTexture(nil, "BORDER")
+		return self:CreateTexture(nil, 'BORDER')
 	end
 end
 
 function PlayerFrames:MakeMovable(self, unit)
-	self:RegisterForClicks("AnyDown")
+	self:RegisterForClicks('AnyDown')
 	self:EnableMouse(enable)
 	self:SetClampedToScreen(true)
 
 	if self.artwork then
 		self.artwork:SetScript(
-			"OnEnter",
+			'OnEnter',
 			function()
 				UnitFrame_OnEnter(self, unit)
 			end
 		)
 		self.artwork:SetScript(
-			"OnLeave",
+			'OnLeave',
 			function()
 				UnitFrame_OnLeave(self, unit)
 			end
 		)
 	end
 
-	self:SetScript("OnEnter", UnitFrame_OnEnter)
-	self:SetScript("OnLeave", UnitFrame_OnLeave)
+	self:SetScript('OnEnter', UnitFrame_OnEnter)
+	self:SetScript('OnLeave', UnitFrame_OnLeave)
 	return self
 end
 
 function PlayerFrames:FirstTime()
 	SUI.DBMod.PlayerFrames.SetupDone = false
 	local PageData = {
-		SubTitle = "Player Frames style",
-		Desc1 = "Please pick an art style from the options below.",
+		SubTitle = 'Player Frames style',
+		Desc1 = 'Please pick an art style from the options below.',
 		Display = function()
 			--Container
-			SUI_Win.Artwork = CreateFrame("Frame", nil)
+			SUI_Win.Artwork = CreateFrame('Frame', nil)
 			SUI_Win.Artwork:SetParent(SUI_Win.content)
 			SUI_Win.Artwork:SetAllPoints(SUI_Win.content)
 
@@ -435,28 +435,28 @@ function PlayerFrames:FirstTime()
 				self.radio:SetValue(true)
 			end
 
-			local gui = LibStub("AceGUI-3.0")
+			local gui = LibStub('AceGUI-3.0')
 			local control, radio
 
 			--Classic
-			control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center")
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center')
 			control:SetImageSize(120, 60)
-			control:SetPoint("TOP", SUI_Win.Artwork, "TOP", 0, -30)
-			control:SetCallback("OnClick", RadioButtons)
+			control:SetPoint('TOP', SUI_Win.Artwork, 'TOP', 0, -30)
+			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			radio = gui:Create("CheckBox")
-			radio:SetLabel("Classic")
-			radio:SetUserData("value", "Classic")
-			radio:SetUserData("text", "Classic")
-			radio:SetType("radio")
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Classic')
+			radio:SetUserData('value', 'Classic')
+			radio:SetUserData('text', 'Classic')
+			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.4)
 			radio:SetHeight(16)
-			radio.frame:SetPoint("TOP", control.frame, "BOTTOM", 0, 0)
-			radio:SetCallback("OnClick", RadioButton)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
 			radio.frame:SetParent(control.frame)
 			radio.frame:Show()
 			control.radio = radio
@@ -464,23 +464,23 @@ function PlayerFrames:FirstTime()
 			SUI_Win.Artwork.Classic = control
 
 			--Transparent
-			control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Transparent")
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Transparent')
 			control:SetImageSize(120, 60)
-			control:SetPoint("TOPRIGHT", SUI_Win.Artwork.Classic.frame, "BOTTOMLEFT", 0, -60)
-			control:SetCallback("OnClick", RadioButtons)
+			control:SetPoint('TOPRIGHT', SUI_Win.Artwork.Classic.frame, 'BOTTOMLEFT', 0, -60)
+			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			radio = gui:Create("CheckBox")
-			radio:SetLabel("Transparent")
-			radio:SetUserData("value", "Transparent")
-			radio:SetUserData("text", "Transparent")
-			radio:SetType("radio")
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Transparent')
+			radio:SetUserData('value', 'Transparent')
+			radio:SetUserData('text', 'Transparent')
+			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
 			radio:SetHeight(16)
-			radio.frame:SetPoint("TOP", control.frame, "BOTTOM", 0, 0)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
 			radio.frame:Show()
 			control.radio = radio
@@ -488,23 +488,23 @@ function PlayerFrames:FirstTime()
 			SUI_Win.Artwork.Transparent = control
 
 			--Minimal
-			control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Minimal")
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Minimal')
 			control:SetImageSize(120, 60)
-			control:SetPoint("TOPLEFT", SUI_Win.Artwork.Classic.frame, "BOTTOMRIGHT", 0, -60)
-			control:SetCallback("OnClick", RadioButtons)
+			control:SetPoint('TOPLEFT', SUI_Win.Artwork.Classic.frame, 'BOTTOMRIGHT', 0, -60)
+			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			radio = gui:Create("CheckBox")
-			radio:SetLabel("Minimal")
-			radio:SetUserData("value", "Minimal")
-			radio:SetUserData("text", "Minimal")
-			radio:SetType("radio")
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Minimal')
+			radio:SetUserData('value', 'Minimal')
+			radio:SetUserData('text', 'Minimal')
+			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
 			radio:SetHeight(16)
-			radio.frame:SetPoint("TOP", control.frame, "BOTTOM", 0, 0)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
 			radio.frame:Show()
 			control.radio = radio
@@ -515,13 +515,13 @@ function PlayerFrames:FirstTime()
 			SUI.DBMod.Artwork.PlayerFrames = true
 
 			if (SUI_Win.Artwork.Classic.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = "Classic"
+				SUI.DBMod.Artwork.Style = 'Classic'
 			end
 			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = "Transparent"
+				SUI.DBMod.Artwork.Style = 'Transparent'
 			end
 			if (SUI_Win.Artwork.Minimal.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = "Minimal"
+				SUI.DBMod.Artwork.Style = 'Minimal'
 			end
 
 			SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
@@ -552,7 +552,7 @@ function PlayerFrames:FirstTime()
 				end
 			end
 
-			SUI:GetModule("Style_" .. SUI.DBMod.Artwork.Style):SetupProfile()
+			SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupProfile()
 
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil

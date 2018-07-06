@@ -1,9 +1,9 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:NewModule("Artwork_Core")
-local Bartender4Version, BartenderMin = "", "4.7.1"
-if select(4, GetAddOnInfo("Bartender4")) then
-	Bartender4Version = GetAddOnMetadata("Bartender4", "Version")
+local Artwork_Core = SUI:NewModule('Artwork_Core')
+local Bartender4Version, BartenderMin = '', '4.7.1'
+if select(4, GetAddOnInfo('Bartender4')) then
+	Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
 end
 
 function Artwork_Core:isPartialMatch(frameName, tab)
@@ -36,13 +36,13 @@ end
 
 function Artwork_Core:MoveTalkingHeadUI()
 	local THUDB = SUI.DB.Styles[SUI.DBMod.Artwork.Style].TalkingHeadUI
-	local MoveTalkingHead = CreateFrame("Frame")
-	MoveTalkingHead:RegisterEvent("ADDON_LOADED")
+	local MoveTalkingHead = CreateFrame('Frame')
+	MoveTalkingHead:RegisterEvent('ADDON_LOADED')
 	MoveTalkingHead:SetScript(
-		"OnEvent",
+		'OnEvent',
 		function(self, event, ...)
 			local addonName = ...
-			if addonName and addonName == "Blizzard_TalkingHeadUI" then
+			if addonName and addonName == 'Blizzard_TalkingHeadUI' then
 				TalkingHeadFrame:SetMovable(true)
 				TalkingHeadFrame:SetClampedToScreen(true)
 				TalkingHeadFrame.ignoreFramePositionManager = true
@@ -57,7 +57,7 @@ function Artwork_Core:MoveTalkingHeadUI()
 end
 
 function Artwork_Core:ActionBarPlates(plate)
-	local lib = LibStub("LibWindow-1.1", true)
+	local lib = LibStub('LibWindow-1.1', true)
 	if not lib then
 		return
 	end
@@ -80,14 +80,14 @@ function Artwork_Core:ActionBarPlates(plate)
 
 		-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
 		-- if (frame:GetName():match("BT4Bar")) and storage.parent and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
-		if (frame:GetName():match("BT4Bar")) and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+		if (frame:GetName():match('BT4Bar')) and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
 			-- end
 			-- end
 			-- if (storage.parent) and _G[storage.parent] then
 			-- frame:SetParent(storage.parent);
 			frame:SetParent(plate)
 			-- if storage.parent == plate then
-			frame:SetFrameStrata("LOW")
+			frame:SetFrameStrata('LOW')
 		else
 			-- print("---")
 			-- print(frame:GetName())
@@ -101,14 +101,14 @@ function Artwork_Core:ActionBarPlates(plate)
 end
 
 function Artwork_Core:OnInitialize()
-	StaticPopupDialogs["BartenderVerWarning"] = {
-		text = "|cff33ff99SpartanUI v" ..
+	StaticPopupDialogs['BartenderVerWarning'] = {
+		text = '|cff33ff99SpartanUI v' ..
 			SUI.Version ..
-				"|n|r|n|n" ..
-					L["Warning"] ..
-						": " ..
-							L["BartenderOldMSG"] .. " " .. Bartender4Version .. "|n|nSpartanUI requires " .. BartenderMin .. " or higher.",
-		button1 = "Ok",
+				'|n|r|n|n' ..
+					L['Warning'] ..
+						': ' ..
+							L['BartenderOldMSG'] .. ' ' .. Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
+		button1 = 'Ok',
 		OnAccept = function()
 			SUI.DBG.BartenderVerWarning = SUI.Version
 		end,
@@ -116,10 +116,10 @@ function Artwork_Core:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
-	StaticPopupDialogs["BartenderInstallWarning"] = {
-		text = "|cff33ff99SpartanUI v" ..
-			SUI.Version .. "|n|r|n|n" .. L["Warning"] .. ": " .. L["BartenderNotFoundMSG1"] .. "|n" .. L["BartenderNotFoundMSG2"],
-		button1 = "Ok",
+	StaticPopupDialogs['BartenderInstallWarning'] = {
+		text = '|cff33ff99SpartanUI v' ..
+			SUI.Version .. '|n|r|n|n' .. L['Warning'] .. ': ' .. L['BartenderNotFoundMSG1'] .. '|n' .. L['BartenderNotFoundMSG2'],
+		button1 = 'Ok',
 		OnAccept = function()
 			SUI.DBG.BartenderInstallWarning = SUI.Version
 		end,
@@ -140,11 +140,11 @@ end
 function Artwork_Core:FirstTime()
 	SUI.DBMod.Artwork.SetupDone = false
 	local PageData = {
-		SubTitle = "Art Style",
-		Desc1 = "Please pick an art style from the options below.",
+		SubTitle = 'Art Style',
+		Desc1 = 'Please pick an art style from the options below.',
 		Display = function()
 			--Container
-			SUI_Win.Artwork = CreateFrame("Frame", nil)
+			SUI_Win.Artwork = CreateFrame('Frame', nil)
 			SUI_Win.Artwork:SetParent(SUI_Win.content)
 			SUI_Win.Artwork:SetAllPoints(SUI_Win.content)
 
@@ -156,28 +156,28 @@ function Artwork_Core:FirstTime()
 				self.radio:SetValue(true)
 			end
 
-			local gui = LibStub("AceGUI-3.0")
+			local gui = LibStub('AceGUI-3.0')
 			local control, radio
 
 			--Classic
-			control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center")
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center')
 			control:SetImageSize(120, 60)
-			control:SetPoint("TOPRIGHT", SUI_Win.Artwork, "TOP", -30, -30)
-			control:SetCallback("OnClick", RadioButtons)
+			control:SetPoint('TOPRIGHT', SUI_Win.Artwork, 'TOP', -30, -30)
+			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			radio = gui:Create("CheckBox")
-			radio:SetLabel("Classic")
-			radio:SetUserData("value", "Classic")
-			radio:SetUserData("text", "Classic")
-			radio:SetType("radio")
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Classic')
+			radio:SetUserData('value', 'Classic')
+			radio:SetUserData('text', 'Classic')
+			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.4)
 			radio:SetHeight(16)
-			radio.frame:SetPoint("TOP", control.frame, "BOTTOM", 0, 0)
-			radio:SetCallback("OnClick", RadioButton)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
 			radio.frame:SetParent(control.frame)
 			radio.frame:Show()
 			control.radio = radio
@@ -185,23 +185,23 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork.Classic = control
 
 			--Fel
-			control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Fel")
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Fel')
 			control:SetImageSize(120, 60)
-			control:SetPoint("TOPLEFT", SUI_Win.Artwork, "TOP", 30, -30)
-			control:SetCallback("OnClick", RadioButtons)
+			control:SetPoint('TOPLEFT', SUI_Win.Artwork, 'TOP', 30, -30)
+			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			radio = gui:Create("CheckBox")
-			radio:SetLabel("Fel")
-			radio:SetUserData("value", "Fel")
-			radio:SetUserData("text", "Fel")
-			radio:SetType("radio")
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Fel')
+			radio:SetUserData('value', 'Fel')
+			radio:SetUserData('text', 'Fel')
+			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
 			radio:SetHeight(16)
-			radio.frame:SetPoint("TOP", control.frame, "BOTTOM", 0, 0)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
 			radio.frame:Show()
 			control.radio = radio
@@ -209,23 +209,23 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork.Fel = control
 
 			--Transparent
-			control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Transparent")
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Transparent')
 			control:SetImageSize(120, 60)
-			control:SetPoint("TOP", SUI_Win.Artwork.Classic.frame, "BOTTOM", 0, -60)
-			control:SetCallback("OnClick", RadioButtons)
+			control:SetPoint('TOP', SUI_Win.Artwork.Classic.frame, 'BOTTOM', 0, -60)
+			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			radio = gui:Create("CheckBox")
-			radio:SetLabel("Transparent")
-			radio:SetUserData("value", "Transparent")
-			radio:SetUserData("text", "Transparent")
-			radio:SetType("radio")
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Transparent')
+			radio:SetUserData('value', 'Transparent')
+			radio:SetUserData('text', 'Transparent')
+			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
 			radio:SetHeight(16)
-			radio.frame:SetPoint("TOP", control.frame, "BOTTOM", 0, 0)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
 			radio.frame:Show()
 			control.radio = radio
@@ -233,23 +233,23 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork.Transparent = control
 
 			--Minimal
-			control = gui:Create("Icon")
-			control:SetImage("interface\\addons\\SpartanUI\\media\\Style_Minimal")
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Minimal')
 			control:SetImageSize(120, 60)
-			control:SetPoint("TOP", SUI_Win.Artwork.Fel.frame, "BOTTOM", 0, -60)
-			control:SetCallback("OnClick", RadioButtons)
+			control:SetPoint('TOP', SUI_Win.Artwork.Fel.frame, 'BOTTOM', 0, -60)
+			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
 
-			radio = gui:Create("CheckBox")
-			radio:SetLabel("Minimal")
-			radio:SetUserData("value", "Minimal")
-			radio:SetUserData("text", "Minimal")
-			radio:SetType("radio")
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Minimal')
+			radio:SetUserData('value', 'Minimal')
+			radio:SetUserData('text', 'Minimal')
+			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
 			radio:SetHeight(16)
-			radio.frame:SetPoint("TOP", control.frame, "BOTTOM", 0, 0)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
 			radio.frame:Show()
 			control.radio = radio
@@ -262,16 +262,16 @@ function Artwork_Core:FirstTime()
 			SUI.DBMod.Artwork.SetupDone = true
 
 			if (SUI_Win.Artwork.Classic.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = "Classic"
+				SUI.DBMod.Artwork.Style = 'Classic'
 			end
 			if (SUI_Win.Artwork.Fel.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = "Fel"
+				SUI.DBMod.Artwork.Style = 'Fel'
 			end
 			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = "Transparent"
+				SUI.DBMod.Artwork.Style = 'Transparent'
 			end
 			if (SUI_Win.Artwork.Minimal.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = "Minimal"
+				SUI.DBMod.Artwork.Style = 'Minimal'
 			end
 
 			SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
@@ -316,20 +316,20 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork = nil
 		end
 	}
-	local SetupWindow = SUI:GetModule("SetupWindow")
+	local SetupWindow = SUI:GetModule('SetupWindow')
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
 end
 
 function Artwork_Core:OnEnable()
 	-- No Bartender/out of date Notification
-	if (not select(4, GetAddOnInfo("Bartender4")) and (SUI.DBG.BartenderInstallWarning ~= SUI.Version)) then
+	if (not select(4, GetAddOnInfo('Bartender4')) and (SUI.DBG.BartenderInstallWarning ~= SUI.Version)) then
 		if SUI.Version ~= SUI.DBG.Version then
-			StaticPopup_Show("BartenderInstallWarning")
+			StaticPopup_Show('BartenderInstallWarning')
 		end
 	elseif Bartender4Version < BartenderMin then
 		if SUI.Version ~= SUI.DBG.Version then
-			StaticPopup_Show("BartenderVerWarning")
+			StaticPopup_Show('BartenderVerWarning')
 		end
 	end
 
@@ -357,15 +357,15 @@ function Artwork_Core:OnEnable()
 		if v then
 			v.SavePosition = function()
 				if
-					(not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= "UIParent") and
+					(not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= 'UIParent') and
 						not SUI.DBG.BartenderChangesActive
 				 then
 					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = true
-					LibStub("LibWindow-1.1").windowData[v].storage.parent = UIParent
+					LibStub('LibWindow-1.1').windowData[v].storage.parent = UIParent
 					v:SetParent(UIParent)
 				end
 
-				LibStub("LibWindow-1.1").SavePosition(v)
+				LibStub('LibWindow-1.1').SavePosition(v)
 			end
 		end
 	end
@@ -374,23 +374,23 @@ end
 function Artwork_Core:CheckMiniMap()
 	-- Check for Carbonite dinking with the minimap.
 	if (NXTITLELOW) then
-		SUI:Print(NXTITLELOW .. " is loaded ...Checking settings ...")
+		SUI:Print(NXTITLELOW .. ' is loaded ...Checking settings ...')
 		if (Nx.db.profile.MiniMap.Own == true) then
-			SUI:Print(NXTITLELOW .. " is controlling the Minimap")
-			SUI:Print("SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap")
+			SUI:Print(NXTITLELOW .. ' is controlling the Minimap')
+			SUI:Print('SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap')
 			SUI.DB.MiniMap.AutoDetectAllowUse = false
 		end
 	end
 
-	if select(4, GetAddOnInfo("SexyMap")) then
-		SUI:Print(L["SexyMapLoaded"])
+	if select(4, GetAddOnInfo('SexyMap')) then
+		SUI:Print(L['SexyMapLoaded'])
 		SUI.DB.MiniMap.AutoDetectAllowUse = false
 	end
 
 	local _, relativeTo = MinimapCluster:GetPoint()
 	if (relativeTo ~= UIParent) then
-		SUI:Print("A unknown addon is controlling the Minimap")
-		SUI:Print("SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.")
+		SUI:Print('A unknown addon is controlling the Minimap')
+		SUI:Print('SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.')
 		SUI.DB.MiniMap.AutoDetectAllowUse = false
 	end
 end
@@ -398,7 +398,7 @@ end
 -- Bartender4 Items
 function Artwork_Core:SetupProfile(ProfileOverride)
 	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo("Bartender4"))) then
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
 		return
 	end
 
@@ -426,7 +426,7 @@ function Artwork_Core:SetupProfile(ProfileOverride)
 	Bartender4.db:SetProfile(ProfileName)
 
 	--Load the Profile Data
-	for k, v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
 			v.db.profile = Artwork_Core:MergeData(v.db.profile, BartenderSettings[k])
 		end
@@ -442,17 +442,17 @@ function Artwork_Core:BartenderProfileCheck(Input, Report)
 		end
 	end
 	if (Report) and (r ~= true) then
-		addon:Print(Input .. " " .. L["BartenderProfileCheckFail"])
+		addon:Print(Input .. ' ' .. L['BartenderProfileCheckFail'])
 	end
 	return r
 end
 
 function Artwork_Core:MergeData(target, source)
-	if type(target) ~= "table" then
+	if type(target) ~= 'table' then
 		target = {}
 	end
 	for k, v in pairs(source) do
-		if type(v) == "table" then
+		if type(v) == 'table' then
 			target[k] = self:MergeData(target[k], v)
 		else
 			target[k] = v
@@ -473,7 +473,7 @@ function Artwork_Core:CreateProfile()
 	end
 
 	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo("Bartender4"))) then
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
 		return
 	end
 
@@ -481,7 +481,7 @@ function Artwork_Core:CreateProfile()
 	Bartender4.db:SetProfile(ProfileName)
 
 	--Load the Profile Data
-	for k, v in LibStub("AceAddon-3.0"):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
 			v.db.profile = Artwork_Core:MergeData(v.db.profile, BartenderSettings[k])
 		end

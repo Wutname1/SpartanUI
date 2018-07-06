@@ -1,7 +1,7 @@
-local _G, SUI = _G, SUI
+local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:GetModule("Artwork_Core")
-local module = SUI:GetModule("Style_Classic")
+local Artwork_Core = SUI:GetModule('Artwork_Core')
+local module = SUI:GetModule('Style_Classic')
 ----------------------------------------------------------------------------------------------------
 if SUI.DB.Styles.Classic.BuffLoc == nil then
 	SUI.DB.Styles.Classic.BuffLoc = true
@@ -11,14 +11,14 @@ local InitRan = false
 function module:OnInitialize()
 	if SUI.DB.Styles.Classic.TalkingHeadUI == nil then
 		SUI.DB.Styles.Classic.TalkingHeadUI = {
-			point = "BOTTOM",
-			relPoint = "TOP",
+			point = 'BOTTOM',
+			relPoint = 'TOP',
 			x = 0,
 			y = -30,
 			scale = .8
 		}
 	end
-	if (SUI.DBMod.Artwork.Style == "Classic") then
+	if (SUI.DBMod.Artwork.Style == 'Classic') then
 		module:Init()
 	else
 		module:Disable()
@@ -45,7 +45,7 @@ function module:OnEnable()
 	if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Classic.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
 		Bartender4.db:SetProfile(SUI.DB.Styles.Classic.BartenderProfile)
 	end
-	if (SUI.DBMod.Artwork.Style == "Classic") then
+	if (SUI.DBMod.Artwork.Style == 'Classic') then
 		if (not InitRan) then
 			module:Init()
 		end
@@ -65,15 +65,15 @@ function module:OnEnable()
 end
 
 function module:SetupMenus()
-	SUI.opt.args["Artwork"].args["ActionBar"] = {
-		name = "ActionBar Settings",
-		type = "group",
-		desc = L["ActionBarConfDesc"],
+	SUI.opt.args['Artwork'].args['ActionBar'] = {
+		name = 'ActionBar Settings',
+		type = 'group',
+		desc = L['ActionBarConfDesc'],
 		args = {
 			reset = {
-				name = "Reset ActionBars",
-				type = "execute",
-				width = "double",
+				name = 'Reset ActionBars',
+				type = 'execute',
+				width = 'double',
 				order = 1,
 				func = function()
 					if (InCombatLockdown()) then
@@ -84,25 +84,25 @@ function module:SetupMenus()
 					end
 				end
 			},
-			header1 = {name = "", type = "header", order = 1.1},
+			header1 = {name = '', type = 'header', order = 1.1},
 			Allenable = {
-				name = L["AllBarEnable"],
-				type = "toggle",
+				name = L['AllBarEnable'],
+				type = 'toggle',
 				order = 2,
 				get = function(info)
 					return SUI.DB.ActionBars.Allenable
 				end,
 				set = function(info, val)
 					for i = 1, 6 do
-						SUI.DB.ActionBars["bar" .. i].enable, DB.ActionBars.Allenable = val, val
+						SUI.DB.ActionBars['bar' .. i].enable, DB.ActionBars.Allenable = val, val
 					end
 				end
 			},
 			Allalpha = {
-				name = L["AllBarAlpha"],
-				type = "range",
+				name = L['AllBarAlpha'],
+				type = 'range',
 				order = 2.1,
-				width = "double",
+				width = 'double',
 				min = 0,
 				max = 100,
 				step = 1,
@@ -111,22 +111,22 @@ function module:SetupMenus()
 				end,
 				set = function(info, val)
 					for i = 1, 6 do
-						SUI.DB.ActionBars["bar" .. i].alpha, DB.ActionBars.Allalpha = val, val
+						SUI.DB.ActionBars['bar' .. i].alpha, DB.ActionBars.Allalpha = val, val
 					end
 				end
 			},
 			Bar1 = {
-				name = "Bar 1",
-				type = "group",
+				name = 'Bar 1',
+				type = 'group',
 				inline = true,
 				args = {
 					bar1alpha = {
-						name = L["Alpha"],
-						type = "range",
+						name = L['Alpha'],
+						type = 'range',
 						min = 0,
 						max = 100,
 						step = 1,
-						width = "double",
+						width = 'double',
 						get = function(info)
 							return SUI.DB.ActionBars.bar1.alpha
 						end,
@@ -137,8 +137,8 @@ function module:SetupMenus()
 						end
 					},
 					bar1enable = {
-						name = L["Enabled"],
-						type = "toggle",
+						name = L['Enabled'],
+						type = 'toggle',
 						get = function(info)
 							return SUI.DB.ActionBars.bar1.enable
 						end,
@@ -149,17 +149,17 @@ function module:SetupMenus()
 				}
 			},
 			Bar2 = {
-				name = "Bar 2",
-				type = "group",
+				name = 'Bar 2',
+				type = 'group',
 				inline = true,
 				args = {
 					bar2alpha = {
-						name = L["Alpha"],
-						type = "range",
+						name = L['Alpha'],
+						type = 'range',
 						min = 0,
 						max = 100,
 						step = 1,
-						width = "double",
+						width = 'double',
 						get = function(info)
 							return SUI.DB.ActionBars.bar2.alpha
 						end,
@@ -170,8 +170,8 @@ function module:SetupMenus()
 						end
 					},
 					bar2enable = {
-						name = L["Enabled"],
-						type = "toggle",
+						name = L['Enabled'],
+						type = 'toggle',
 						get = function(info)
 							return SUI.DB.ActionBars.bar2.enable
 						end,
@@ -182,17 +182,17 @@ function module:SetupMenus()
 				}
 			},
 			Bar3 = {
-				name = "Bar 3",
-				type = "group",
+				name = 'Bar 3',
+				type = 'group',
 				inline = true,
 				args = {
 					bar3alpha = {
-						name = L["Alpha"],
-						type = "range",
+						name = L['Alpha'],
+						type = 'range',
 						min = 0,
 						max = 100,
 						step = 1,
-						width = "double",
+						width = 'double',
 						get = function(info)
 							return SUI.DB.ActionBars.bar3.alpha
 						end,
@@ -203,8 +203,8 @@ function module:SetupMenus()
 						end
 					},
 					bar3enable = {
-						name = L["Enabled"],
-						type = "toggle",
+						name = L['Enabled'],
+						type = 'toggle',
 						get = function(info)
 							return SUI.DB.ActionBars.bar3.enable
 						end,
@@ -215,17 +215,17 @@ function module:SetupMenus()
 				}
 			},
 			Bar4 = {
-				name = "Bar 4",
-				type = "group",
+				name = 'Bar 4',
+				type = 'group',
 				inline = true,
 				args = {
 					bar4alpha = {
-						name = L["Alpha"],
-						type = "range",
+						name = L['Alpha'],
+						type = 'range',
 						min = 0,
 						max = 100,
 						step = 1,
-						width = "double",
+						width = 'double',
 						get = function(info)
 							return SUI.DB.ActionBars.bar4.alpha
 						end,
@@ -236,8 +236,8 @@ function module:SetupMenus()
 						end
 					},
 					bar4enable = {
-						name = L["Enabled"],
-						type = "toggle",
+						name = L['Enabled'],
+						type = 'toggle',
 						get = function(info)
 							return SUI.DB.ActionBars.bar4.enable
 						end,
@@ -248,17 +248,17 @@ function module:SetupMenus()
 				}
 			},
 			Bar5 = {
-				name = "Bar 5",
-				type = "group",
+				name = 'Bar 5',
+				type = 'group',
 				inline = true,
 				args = {
 					bar5alpha = {
-						name = L["Alpha"],
-						type = "range",
+						name = L['Alpha'],
+						type = 'range',
 						min = 0,
 						max = 100,
 						step = 1,
-						width = "double",
+						width = 'double',
 						get = function(info)
 							return SUI.DB.ActionBars.bar5.alpha
 						end,
@@ -269,8 +269,8 @@ function module:SetupMenus()
 						end
 					},
 					bar5enable = {
-						name = L["Enabled"],
-						type = "toggle",
+						name = L['Enabled'],
+						type = 'toggle',
 						get = function(info)
 							return SUI.DB.ActionBars.bar5.enable
 						end,
@@ -281,17 +281,17 @@ function module:SetupMenus()
 				}
 			},
 			Bar6 = {
-				name = "Bar 6",
-				type = "group",
+				name = 'Bar 6',
+				type = 'group',
 				inline = true,
 				args = {
 					bar6alpha = {
-						name = L["Alpha"],
-						type = "range",
+						name = L['Alpha'],
+						type = 'range',
 						min = 0,
 						max = 100,
 						step = 1,
-						width = "double",
+						width = 'double',
 						get = function(info)
 							return SUI.DB.ActionBars.bar6.alpha
 						end,
@@ -302,8 +302,8 @@ function module:SetupMenus()
 						end
 					},
 					bar6enable = {
-						name = L["Enabled"],
-						type = "toggle",
+						name = L['Enabled'],
+						type = 'toggle',
 						get = function(info)
 							return SUI.DB.ActionBars.bar6.enable
 						end,
@@ -315,16 +315,16 @@ function module:SetupMenus()
 			}
 		}
 	}
-	SUI.opt.args["Artwork"].args["popup"] = {
-		name = L["PopupAnimConf"],
-		type = "group",
-		desc = L["PopupAnimConfDesc"],
+	SUI.opt.args['Artwork'].args['popup'] = {
+		name = L['PopupAnimConf'],
+		type = 'group',
+		desc = L['PopupAnimConfDesc'],
 		args = {
 			popup1anim = {
-				name = L["LPopupAnimate"],
-				type = "toggle",
+				name = L['LPopupAnimate'],
+				type = 'toggle',
 				order = 1,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return SUI.DB.ActionBars.popup1.anim
 				end,
@@ -333,8 +333,8 @@ function module:SetupMenus()
 				end
 			},
 			popup1alpha = {
-				name = L["LPopupAlpha"],
-				type = "range",
+				name = L['LPopupAlpha'],
+				type = 'range',
 				order = 2,
 				min = 0,
 				max = 100,
@@ -349,8 +349,8 @@ function module:SetupMenus()
 				end
 			},
 			popup1enable = {
-				name = L["LPopupEnable"],
-				type = "toggle",
+				name = L['LPopupEnable'],
+				type = 'toggle',
 				order = 3,
 				get = function(info)
 					return SUI.DB.ActionBars.popup1.enable
@@ -360,10 +360,10 @@ function module:SetupMenus()
 				end
 			},
 			popup2anim = {
-				name = L["RPopupAnimate"],
-				type = "toggle",
+				name = L['RPopupAnimate'],
+				type = 'toggle',
 				order = 4,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return SUI.DB.ActionBars.popup2.anim
 				end,
@@ -372,8 +372,8 @@ function module:SetupMenus()
 				end
 			},
 			popup2alpha = {
-				name = L["RPopupAlpha"],
-				type = "range",
+				name = L['RPopupAlpha'],
+				type = 'range',
 				order = 5,
 				min = 0,
 				max = 100,
@@ -388,8 +388,8 @@ function module:SetupMenus()
 				end
 			},
 			popup2enable = {
-				name = L["RPopupEnable"],
-				type = "toggle",
+				name = L['RPopupEnable'],
+				type = 'toggle',
 				order = 6,
 				get = function(info)
 					return SUI.DB.ActionBars.popup2.enable
@@ -400,14 +400,14 @@ function module:SetupMenus()
 			}
 		}
 	}
-	SUI.opt.args["Artwork"].args["Artwork"] = {
-		name = L["ArtworkOpt"],
-		type = "group",
+	SUI.opt.args['Artwork'].args['Artwork'] = {
+		name = L['ArtworkOpt'],
+		type = 'group',
 		order = 10,
 		args = {
 			Color = {
-				name = L["ArtColor"],
-				type = "color",
+				name = L['ArtColor'],
+				type = 'color',
 				hasAlpha = true,
 				order = .5,
 				get = function(info)
@@ -422,8 +422,8 @@ function module:SetupMenus()
 				end
 			},
 			ColorEnabled = {
-				name = "Color enabled",
-				type = "toggle",
+				name = 'Color enabled',
+				type = 'toggle',
 				order = .6,
 				get = function(info)
 					if SUI.DB.Styles.Classic.Color.Art then
@@ -443,14 +443,14 @@ function module:SetupMenus()
 				end
 			},
 			alpha = {
-				name = L["Transparency"],
-				type = "range",
+				name = L['Transparency'],
+				type = 'range',
 				order = 1,
-				width = "full",
+				width = 'full',
 				min = 0,
 				max = 100,
 				step = 1,
-				desc = L["TransparencyDesc"],
+				desc = L['TransparencyDesc'],
 				get = function(info)
 					return (SUI.DB.alpha * 100)
 				end,
@@ -461,18 +461,18 @@ function module:SetupMenus()
 				end
 			},
 			TransparencyNotice = {
-				name = L["TransparencyNotice"],
+				name = L['TransparencyNotice'],
 				order = 1.1,
-				type = "description",
-				fontSize = "small",
+				type = 'description',
+				fontSize = 'small',
 				hidden = true
 			},
 			xOffset = {
-				name = L["MoveSideways"],
-				type = "range",
-				width = "full",
+				name = L['MoveSideways'],
+				type = 'range',
+				width = 'full',
 				order = 2,
-				desc = L["MoveSidewaysDesc"],
+				desc = L['MoveSidewaysDesc'],
 				min = -200,
 				max = 200,
 				step = .1,
@@ -485,11 +485,11 @@ function module:SetupMenus()
 				end
 			},
 			offset = {
-				name = L["ConfOffset"],
-				type = "range",
-				width = "normal",
+				name = L['ConfOffset'],
+				type = 'range',
+				width = 'normal',
 				order = 3,
-				desc = L["ConfOffsetDesc"],
+				desc = L['ConfOffsetDesc'],
 				min = 0,
 				max = 200,
 				step = .1,
@@ -501,7 +501,7 @@ function module:SetupMenus()
 						SUI:Print(ERR_NOT_IN_COMBAT)
 					else
 						if SUI.DB.yoffsetAuto then
-							SUI:Print(L["confOffsetAuto"])
+							SUI:Print(L['confOffsetAuto'])
 						else
 							val = tonumber(val)
 							SUI.DB.yoffset = val
@@ -510,9 +510,9 @@ function module:SetupMenus()
 				end
 			},
 			offsetauto = {
-				name = L["AutoOffset"],
-				type = "toggle",
-				desc = L["AutoOffsetDesc"],
+				name = L['AutoOffset'],
+				type = 'toggle',
+				desc = L['AutoOffsetDesc'],
 				order = 3.1,
 				get = function(info)
 					return SUI.DB.yoffsetAuto
@@ -533,9 +533,9 @@ end
 
 function module:AddNotice()
 	if (SUI.DB.alpha == 1) then
-		SUI.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = true
+		SUI.opt.args['Artwork'].args['Artwork'].args['TransparencyNotice'].hidden = true
 	else
-		SUI.opt.args["Artwork"].args["Artwork"].args["TransparencyNotice"].hidden = false
+		SUI.opt.args['Artwork'].args['Artwork'].args['TransparencyNotice'].hidden = false
 	end
 end
 
@@ -553,6 +553,6 @@ do -- Style Setup
 		}
 	end
 	if not SUI.DBG.Bartender4[SUI.DB.Styles.Classic.BartenderProfile] then
-		SUI.DBG.Bartender4[SUI.DB.Styles.Classic.BartenderProfile] = {Style = "Classic"}
+		SUI.DBG.Bartender4[SUI.DB.Styles.Classic.BartenderProfile] = {Style = 'Classic'}
 	end
 end

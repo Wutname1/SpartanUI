@@ -1,9 +1,7 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-local AceHook = LibStub("AceHook-3.0")
-local module = spartan:NewModule("Component_Chatbox")
+local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
+local module = spartan:NewModule('Component_Chatbox')
 ----------------------------------------------------------------------------------------------------
-local popup = CreateFrame("Frame", nil, UIParent)
+local popup = CreateFrame('Frame', nil, UIParent)
 
 function module:SetPopupText(text)
 	popup.editBox:SetText(text)
@@ -15,7 +13,7 @@ function module:OnInitialize()
 	if SUI.DBMod.Chatbox == nil then
 		SUI.DBMod.Chatbox = {
 			showThreat = true,
-			healthMode = "detailed"
+			healthMode = 'detailed'
 		}
 	end
 end
@@ -31,8 +29,8 @@ function module:SetupLinks()
 		local newMsg, found =
 			gsub(
 			msg,
-			'[^ "£%^`¬{}%[%]\\|<>]*[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d]%.[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ "£%^`¬{}%[%]\\|<>]*',
-			"|cffffffff|Hbcmurl~%1|h[%1]|h|r"
+			"[^ \"£%^`¬{}%[%]\\|<>]*[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d]%.[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ \"£%^`¬{}%[%]\\|<>]*",
+			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
 		if found > 0 then
 			return false, newMsg, ...
@@ -42,7 +40,7 @@ function module:SetupLinks()
 			msg,
 			-- This is our IPv4/v6 pattern at the beggining of a sentence.
 			'^%x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
-			"|cffffffff|Hbcmurl~%1|h[%1]|h|r"
+			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
 		if found > 0 then
 			return false, newMsg, ...
@@ -52,30 +50,30 @@ function module:SetupLinks()
 			msg,
 			-- Mid-sentence IPv4/v6 pattern
 			' %x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
-			"|cffffffff|Hbcmurl~%1|h[%1]|h|r"
+			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
 		if found > 0 then
 			return false, newMsg, ...
 		end
 	end
 
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_CONVERSATION", filterFunc)
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_INLINE_TOAST_BROADCAST", filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_YELL', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_OFFICER', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_PARTY_LEADER', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_RAID_LEADER', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_INSTANCE_CHAT_LEADER', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_SAY', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_WHISPER', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_WHISPER_INFORM', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_BN_WHISPER', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_BN_WHISPER_INFORM', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_BN_CONVERSATION', filterFunc)
+	ChatFrame_AddMessageEventFilter('CHAT_MSG_BN_INLINE_TOAST_BROADCAST', filterFunc)
 
 	-- popup:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
 	-- edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
@@ -114,13 +112,13 @@ end
 -- end
 
 function module:BuildOptions()
-	spartan.opt.args["ModSetting"].args["Chatbox"] = {
-		type = "group",
-		name = "Chatbox",
+	spartan.opt.args['ModSetting'].args['Chatbox'] = {
+		type = 'group',
+		name = 'Chatbox',
 		args = {}
 	}
 end
 
 function module:HideOptions()
-	spartan.opt.args["ModSetting"].args["Chatbox"].disabled = true
+	spartan.opt.args['ModSetting'].args['Chatbox'].disabled = true
 end

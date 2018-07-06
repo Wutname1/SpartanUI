@@ -1,7 +1,7 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
-local module = spartan:NewModule("Component_AutoSell", "AceTimer-3.0")
+local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
+local module = spartan:NewModule('Component_AutoSell', 'AceTimer-3.0')
 ----------------------------------------------------------------------------------------------------
-local frame = CreateFrame("FRAME")
+local frame = CreateFrame('FRAME')
 local totalValue = 0
 local iCount = 0
 local iSellCount = 0
@@ -39,23 +39,23 @@ end
 
 function module:FirstTime()
 	local PageData = {
-		SubTitle = "Auto Sell",
-		Desc1 = "Automatically vendor items when you visit a merchant.",
-		Desc2 = "Crafting, consumables, and gearset items will not be sold by default.",
+		SubTitle = 'Auto Sell',
+		Desc1 = 'Automatically vendor items when you visit a merchant.',
+		Desc2 = 'Crafting, consumables, and gearset items will not be sold by default.',
 		Display = function()
-			local gui = LibStub("AceGUI-3.0")
+			local gui = LibStub('AceGUI-3.0')
 			--Container
-			SUI_Win.AutoSell = CreateFrame("Frame", nil)
+			SUI_Win.AutoSell = CreateFrame('Frame', nil)
 			SUI_Win.AutoSell:SetParent(SUI_Win.content)
 			SUI_Win.AutoSell:SetAllPoints(SUI_Win.content)
 
 			--TurnInEnabled
 			SUI_Win.AutoSell.Enabled =
-				CreateFrame("CheckButton", "SUI_AutoSell_Enabled", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
-			SUI_Win.AutoSell.Enabled:SetPoint("TOP", SUI_Win.AutoSell, "TOP", -90, -10)
-			SUI_AutoSell_EnabledText:SetText("Auto Vendor Enabled")
+				CreateFrame('CheckButton', 'SUI_AutoSell_Enabled', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
+			SUI_Win.AutoSell.Enabled:SetPoint('TOP', SUI_Win.AutoSell, 'TOP', -90, -10)
+			SUI_AutoSell_EnabledText:SetText('Auto Vendor Enabled')
 			SUI_Win.AutoSell.Enabled:HookScript(
-				"OnClick",
+				'OnClick',
 				function(this)
 					if this:GetChecked() == true then
 						SUI_AutoSell_SellGray:Enable()
@@ -71,41 +71,41 @@ function module:FirstTime()
 
 			--SellGray
 			SUI_Win.AutoSell.SellGray =
-				CreateFrame("CheckButton", "SUI_AutoSell_SellGray", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
-			SUI_Win.AutoSell.SellGray:SetPoint("TOP", SUI_Win.AutoSell.Enabled, "TOP", -90, -40)
-			SUI_AutoSell_SellGrayText:SetText("Sell gray items")
+				CreateFrame('CheckButton', 'SUI_AutoSell_SellGray', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
+			SUI_Win.AutoSell.SellGray:SetPoint('TOP', SUI_Win.AutoSell.Enabled, 'TOP', -90, -40)
+			SUI_AutoSell_SellGrayText:SetText('Sell gray items')
 
 			--SellWhite
 			SUI_Win.AutoSell.SellWhite =
-				CreateFrame("CheckButton", "SUI_AutoSell_SellWhite", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
-			SUI_Win.AutoSell.SellWhite:SetPoint("TOP", SUI_Win.AutoSell.SellGray, "BOTTOM", 0, -5)
-			SUI_AutoSell_SellWhiteText:SetText("Sell white items")
+				CreateFrame('CheckButton', 'SUI_AutoSell_SellWhite', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
+			SUI_Win.AutoSell.SellWhite:SetPoint('TOP', SUI_Win.AutoSell.SellGray, 'BOTTOM', 0, -5)
+			SUI_AutoSell_SellWhiteText:SetText('Sell white items')
 
 			--SellGreen
 			SUI_Win.AutoSell.SellGreen =
-				CreateFrame("CheckButton", "SUI_AutoSell_SellGreen", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
-			SUI_Win.AutoSell.SellGreen:SetPoint("TOP", SUI_Win.AutoSell.SellWhite, "BOTTOM", 0, -5)
-			SUI_AutoSell_SellGreenText:SetText("Sell green items")
+				CreateFrame('CheckButton', 'SUI_AutoSell_SellGreen', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
+			SUI_Win.AutoSell.SellGreen:SetPoint('TOP', SUI_Win.AutoSell.SellWhite, 'BOTTOM', 0, -5)
+			SUI_AutoSell_SellGreenText:SetText('Sell green items')
 
 			--SellBlue
 			SUI_Win.AutoSell.SellBlue =
-				CreateFrame("CheckButton", "SUI_AutoSell_SellBlue", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
-			SUI_Win.AutoSell.SellBlue:SetPoint("TOP", SUI_Win.AutoSell.SellGreen, "BOTTOM", 0, -5)
-			SUI_AutoSell_SellBlueText:SetText("Sell blue items")
+				CreateFrame('CheckButton', 'SUI_AutoSell_SellBlue', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
+			SUI_Win.AutoSell.SellBlue:SetPoint('TOP', SUI_Win.AutoSell.SellGreen, 'BOTTOM', 0, -5)
+			SUI_AutoSell_SellBlueText:SetText('Sell blue items')
 
 			--SellPurple
 			SUI_Win.AutoSell.SellPurple =
-				CreateFrame("CheckButton", "SUI_AutoSell_SellPurple", SUI_Win.AutoSell, "OptionsCheckButtonTemplate")
-			SUI_Win.AutoSell.SellPurple:SetPoint("TOP", SUI_Win.AutoSell.SellBlue, "BOTTOM", 0, -5)
-			SUI_AutoSell_SellPurpleText:SetText("Sell purple items")
+				CreateFrame('CheckButton', 'SUI_AutoSell_SellPurple', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
+			SUI_Win.AutoSell.SellPurple:SetPoint('TOP', SUI_Win.AutoSell.SellBlue, 'BOTTOM', 0, -5)
+			SUI_AutoSell_SellPurpleText:SetText('Sell purple items')
 
 			--Max iLVL
-			control = gui:Create("Slider")
-			control:SetLabel("Max iLVL to sell")
+			control = gui:Create('Slider')
+			control:SetLabel('Max iLVL to sell')
 			control:SetSliderValues(1, 1100, 1)
 			-- control:SetIsPercent(v.isPercent)
 			control:SetValue(700)
-			control:SetPoint("TOPLEFT", SUI_Win.AutoSell.SellPurple, "BOTTOMLEFT", 0, -15)
+			control:SetPoint('TOPLEFT', SUI_Win.AutoSell.SellPurple, 'BOTTOMLEFT', 0, -15)
 			control:SetWidth(SUI_Win:GetWidth() / 1.3)
 			-- control:SetCallback("OnValueChanged",function(self) print(self:GetValue()) end)
 			-- control:SetCallback("OnMouseUp",ActivateSlider)
@@ -135,7 +135,7 @@ function module:FirstTime()
 			SUI.DB.AutoSell.FirstLaunch = true
 		end
 	}
-	local SetupWindow = spartan:GetModule("SetupWindow")
+	local SetupWindow = spartan:GetModule('SetupWindow')
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
 end
@@ -148,8 +148,7 @@ function module:SellTrashInBag()
 
 	local solditem = 0
 	for slot = 1, GetContainerNumSlots(bag) do
-		local _, _, _, _, _, _, link, _, _, itemID =
-			GetContainerItemInfo(bag, slot)
+		local _, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
 		if module:IsSellable(itemID, link) then
 			if OnlyCount then
 				iCount = iCount + 1
@@ -172,7 +171,7 @@ function module:SellTrashInBag()
 	else
 		--Everything sold
 		if (totalValue > 0) then
-			spartan:Print("Sold item(s)")
+			spartan:Print('Sold item(s)')
 			totalValue = 0
 		end
 		module:CancelAllTimers()
@@ -240,9 +239,9 @@ function module:IsSellable(item, ilink)
 	end
 	--Crafting Items
 	if
-		((itemType == "Gem" or itemType == "Reagent" or itemType == "Trade Goods" or itemType == "Tradeskill") or
-			(itemType == "Miscellaneous" and itemSubType == "Reagent")) or
-			(itemType == "Item Enhancement") or
+		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or
+			(itemType == 'Miscellaneous' and itemSubType == 'Reagent')) or
+			(itemType == 'Item Enhancement') or
 			isCraftingReagent
 	 then
 		if not SUI.DB.AutoSell.NotCrafting then
@@ -259,36 +258,36 @@ function module:IsSellable(item, ilink)
 
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if SUI.DB.AutoSell.NotConsumables and itemType == "Consumable" then
+	if SUI.DB.AutoSell.NotConsumables and itemType == 'Consumable' then
 		NotConsumable = false
 	end
 
 	-- Gear Tokens
 	if
-		quality == 4 and itemType == "Miscellaneous" and itemSubType == "Junk" and equipSlot == "" and
+		quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and
 			not SUI.DB.AutoSell.GearTokens
 	 then
 		IsGearToken = true
 	end
 
-	if string.find(name, "Treasure Map") and quality == 1 then
+	if string.find(name, 'Treasure Map') and quality == 1 then
 		qualitysellable = false
 	end
 
 	if
 		qualitysellable and ilvlsellable and Craftablesellable and NotInGearset and NotConsumable and not IsGearToken and
 			not spartan:isInTable(ExcludedItems, item) and
-			itemType ~= "Quest" and
-			itemType ~= "Container" or
+			itemType ~= 'Quest' and
+			itemType ~= 'Container' or
 			(quality == 0 and SUI.DB.AutoSell.Gray)
 	 then --Legion identified some junk as consumable
 		if SUI.DB.AutoSell.debug then
-			spartan:Print("--Selling--")
+			spartan:Print('--Selling--')
 			spartan:Print(name)
 			spartan:Print(ilink)
-			spartan:Print("ilvl:     " .. iLevel)
-			spartan:Print("type:     " .. itemType)
-			spartan:Print("sub type: " .. itemSubType)
+			spartan:Print('ilvl:     ' .. iLevel)
+			spartan:Print('type:     ' .. itemType)
+			spartan:Print('sub type: ' .. itemSubType)
 		end
 		return true
 	end
@@ -302,7 +301,7 @@ function module:GetFormattedValue(rawValue)
 	local copper = (rawValue % 10000) % 100
 
 	return format(
-		GOLD_AMOUNT_TEXTURE .. " " .. SILVER_AMOUNT_TEXTURE .. " " .. COPPER_AMOUNT_TEXTURE,
+		GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
 		gold,
 		0,
 		0,
@@ -339,14 +338,14 @@ function module:SellTrash()
 		module:SellTrashInBag()
 	end
 	if iCount == 0 then
-		spartan:Print("No items are to be auto sold")
+		spartan:Print('No items are to be auto sold')
 	else
-		spartan:Print("Need to sell " .. iCount .. " item(s) for " .. module:GetFormattedValue(totalValue))
+		spartan:Print('Need to sell ' .. iCount .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
 		OnlyCount = false
 		bag = 0
 		-- C_Timer.After(.2, SellTrashInBag)
-		self.SellTimer = self:ScheduleRepeatingTimer("SellTrashInBag", .3)
+		self.SellTimer = self:ScheduleRepeatingTimer('SellTrashInBag', .3)
 	end
 end
 
@@ -367,7 +366,7 @@ function module:Enable()
 		if not SUI.DB.EnabledComponents.AutoSell then
 			return
 		end
-		if event == "MERCHANT_SHOW" then
+		if event == 'MERCHANT_SHOW' then
 			module:SellTrash()
 		else
 			module:CancelAllTimers()
@@ -377,27 +376,27 @@ function module:Enable()
 			end
 		end
 	end
-	frame:SetScript("OnEvent", MerchantEventHandler)
-	frame:RegisterEvent("MERCHANT_SHOW")
-	frame:RegisterEvent("MERCHANT_CLOSED")
+	frame:SetScript('OnEvent', MerchantEventHandler)
+	frame:RegisterEvent('MERCHANT_SHOW')
+	frame:RegisterEvent('MERCHANT_CLOSED')
 end
 
 function module:Disable()
-	spartan:Print("Autosell disabled")
-	frame:UnregisterEvent("MERCHANT_SHOW")
-	frame:UnregisterEvent("MERCHANT_CLOSED")
+	spartan:Print('Autosell disabled')
+	frame:UnregisterEvent('MERCHANT_SHOW')
+	frame:UnregisterEvent('MERCHANT_CLOSED')
 end
 
 function module:BuildOptions()
-	spartan.opt.args["ModSetting"].args["AutoSell"] = {
-		type = "group",
-		name = "Auto Sell",
+	spartan.opt.args['ModSetting'].args['AutoSell'] = {
+		type = 'group',
+		name = 'Auto Sell',
 		args = {
 			NotCrafting = {
 				name = "Don't Sell crafting items",
-				type = "toggle",
+				type = 'toggle',
 				order = 1,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return SUI.DB.AutoSell.NotCrafting
 				end,
@@ -407,9 +406,9 @@ function module:BuildOptions()
 			},
 			NotConsumables = {
 				name = "Don't Sell Consumables",
-				type = "toggle",
+				type = 'toggle',
 				order = 2,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return SUI.DB.AutoSell.NotConsumables
 				end,
@@ -419,9 +418,9 @@ function module:BuildOptions()
 			},
 			NotInGearset = {
 				name = "Don't Sell items in a equipment set",
-				type = "toggle",
+				type = 'toggle',
 				order = 3,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return SUI.DB.AutoSell.NotInGearset
 				end,
@@ -430,10 +429,10 @@ function module:BuildOptions()
 				end
 			},
 			GearTokens = {
-				name = "Sell tier tokens",
-				type = "toggle",
+				name = 'Sell tier tokens',
+				type = 'toggle',
 				order = 4,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return SUI.DB.AutoSell.GearTokens
 				end,
@@ -442,10 +441,10 @@ function module:BuildOptions()
 				end
 			},
 			MaxILVL = {
-				name = "Maximum iLVL to sell",
-				type = "range",
+				name = 'Maximum iLVL to sell',
+				type = 'range',
 				order = 10,
-				width = "full",
+				width = 'full',
 				min = 1,
 				max = 500,
 				step = 1,
@@ -457,10 +456,10 @@ function module:BuildOptions()
 				end
 			},
 			Gray = {
-				name = "Sell Gray",
-				type = "toggle",
+				name = 'Sell Gray',
+				type = 'toggle',
 				order = 20,
-				width = "double",
+				width = 'double',
 				get = function(info)
 					return SUI.DB.AutoSell.Gray
 				end,
@@ -469,10 +468,10 @@ function module:BuildOptions()
 				end
 			},
 			White = {
-				name = "Sell White",
-				type = "toggle",
+				name = 'Sell White',
+				type = 'toggle',
 				order = 21,
-				width = "double",
+				width = 'double',
 				get = function(info)
 					return SUI.DB.AutoSell.White
 				end,
@@ -481,10 +480,10 @@ function module:BuildOptions()
 				end
 			},
 			Green = {
-				name = "Sell Green",
-				type = "toggle",
+				name = 'Sell Green',
+				type = 'toggle',
 				order = 22,
-				width = "double",
+				width = 'double',
 				get = function(info)
 					return SUI.DB.AutoSell.Green
 				end,
@@ -493,10 +492,10 @@ function module:BuildOptions()
 				end
 			},
 			Blue = {
-				name = "Sell Blue",
-				type = "toggle",
+				name = 'Sell Blue',
+				type = 'toggle',
 				order = 23,
-				width = "double",
+				width = 'double',
 				get = function(info)
 					return SUI.DB.AutoSell.Blue
 				end,
@@ -505,10 +504,10 @@ function module:BuildOptions()
 				end
 			},
 			Purple = {
-				name = "Sell Purple",
-				type = "toggle",
+				name = 'Sell Purple',
+				type = 'toggle',
 				order = 24,
-				width = "double",
+				width = 'double',
 				get = function(info)
 					return SUI.DB.AutoSell.Purple
 				end,
@@ -517,10 +516,10 @@ function module:BuildOptions()
 				end
 			},
 			debug = {
-				name = "Enable debug messages",
-				type = "toggle",
+				name = 'Enable debug messages',
+				type = 'toggle',
 				order = 600,
-				width = "full",
+				width = 'full',
 				get = function(info)
 					return SUI.DB.AutoSell.debug
 				end,

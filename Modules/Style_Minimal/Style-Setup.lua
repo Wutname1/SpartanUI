@@ -1,7 +1,7 @@
 local SUI = SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-SUI:NewModule("Style_Minimal")
+SUI:NewModule('Style_Minimal')
 
 --Now lets setup the initial Database settings
 local Defaults = {
@@ -17,10 +17,10 @@ local Defaults = {
 	},
 	TooltipLoc = true,
 	Minimap = {
-		shape = "square",
+		shape = 'square',
 		size = {width = 140, height = 140}
 	},
-	BartenderProfile = "SpartanUI - Minimal",
+	BartenderProfile = 'SpartanUI - Minimal',
 	BartenderSettings = {
 		ActionBars = {
 			actionbars = {
@@ -30,7 +30,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {point = "BOTTOM", x = -200, y = 102, scale = 0.85, growHorizontal = "RIGHT"}
+					position = {point = 'BOTTOM', x = -200, y = 102, scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 1
 				{
 					enabled = true,
@@ -38,7 +38,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {point = "BOTTOM", x = -200, y = 70, scale = 0.85, growHorizontal = "RIGHT"}
+					position = {point = 'BOTTOM', x = -200, y = 70, scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 2
 				{
 					enabled = true,
@@ -46,7 +46,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {point = "BOTTOM", x = -200, y = 35, scale = 0.85, growHorizontal = "RIGHT"}
+					position = {point = 'BOTTOM', x = -200, y = 35, scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 3
 				{
 					enabled = false,
@@ -54,7 +54,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {scale = 0.85, growHorizontal = "RIGHT"}
+					position = {scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 4
 				{
 					enabled = true,
@@ -62,7 +62,7 @@ local Defaults = {
 					rows = 3,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {point = "BOTTOM", x = -317, y = 98, scale = 0.75, growHorizontal = "RIGHT"}
+					position = {point = 'BOTTOM', x = -317, y = 98, scale = 0.75, growHorizontal = 'RIGHT'}
 				}, -- 5
 				{
 					enabled = true,
@@ -70,7 +70,7 @@ local Defaults = {
 					rows = 3,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {point = "BOTTOM", x = 199, y = 98, scale = 0.75, growHorizontal = "RIGHT"}
+					position = {point = 'BOTTOM', x = 199, y = 98, scale = 0.75, growHorizontal = 'RIGHT'}
 				}, -- 6
 				{
 					enabled = false,
@@ -78,7 +78,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {scale = 0.85, growHorizontal = "RIGHT"}
+					position = {scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 7
 				{
 					enabled = false,
@@ -86,7 +86,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {scale = 0.85, growHorizontal = "RIGHT"}
+					position = {scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 8
 				{
 					enabled = false,
@@ -94,7 +94,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {scale = 0.85, growHorizontal = "RIGHT"}
+					position = {scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 9
 				{
 					enabled = false,
@@ -102,7 +102,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {scale = 0.85, growHorizontal = "RIGHT"}
+					position = {scale = 0.85, growHorizontal = 'RIGHT'}
 				} -- 10
 			}
 		},
@@ -112,7 +112,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = 0,
-			position = {point = "TOP", x = 490, y = -1, scale = 0.70, growHorizontal = "LEFT"},
+			position = {point = 'TOP', x = 490, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
 			rows = 1,
 			onebag = false,
 			keyring = true
@@ -123,7 +123,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = -3,
-			position = {point = "TOP", x = 160, y = -1, scale = 0.70, growHorizontal = "RIGHT"}
+			position = {point = 'TOP', x = 160, y = -1, scale = 0.70, growHorizontal = 'RIGHT'}
 		},
 		PetBar = {
 			fadeoutalpha = .25,
@@ -131,7 +131,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = 1,
-			position = {point = "TOP", x = -492, y = -1, scale = 0.70, growHorizontal = "RIGHT"},
+			position = {point = 'TOP', x = -492, y = -1, scale = 0.70, growHorizontal = 'RIGHT'},
 			rows = 1,
 			skin = {Zoom = true}
 		},
@@ -141,7 +141,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = 1,
-			position = {point = "TOP", x = -163, y = -1, scale = 0.70, growHorizontal = "LEFT"},
+			position = {point = 'TOP', x = -163, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
 			rows = 1
 		},
 		MultiCast = {
@@ -149,7 +149,7 @@ local Defaults = {
 			version = 3,
 			fadeout = true,
 			enabled = true,
-			position = {point = "TOPRIGHT", x = -777, y = -4, scale = 0.75}
+			position = {point = 'TOPRIGHT', x = -777, y = -4, scale = 0.75}
 		},
 		Vehicle = {
 			fadeoutalpha = .25,
@@ -157,14 +157,14 @@ local Defaults = {
 			fadeout = true,
 			enabled = false,
 			padding = 3,
-			position = {point = "BOTTOM", x = -200, y = 155, scale = 0.85}
+			position = {point = 'BOTTOM', x = -200, y = 155, scale = 0.85}
 		},
 		ExtraActionBar = {
 			fadeoutalpha = .25,
 			version = 3,
 			fadeout = true,
 			enabled = true,
-			position = {point = "BOTTOM", x = -32, y = 275}
+			position = {point = 'BOTTOM', x = -32, y = 275}
 		},
 		BlizzardArt = {enabled = false},
 		XPBar = {enabled = false},
@@ -179,13 +179,13 @@ local Defaults = {
 		0.9
 	},
 	TalkingHeadUI = {
-		point = "BOTTOM",
-		relPoint = "TOP",
+		point = 'BOTTOM',
+		relPoint = 'TOP',
 		x = 0,
 		y = -30,
 		scale = .8
 	},
-	PartyFramesSize = "large"
+	PartyFramesSize = 'large'
 }
 if not SUI.DB.Styles.Minimal.Artwork then
 	SUI.DB.Styles.Minimal = SUI:MergeData(SUI.DB.Styles.Minimal, Defaults, true)
@@ -193,5 +193,5 @@ else
 	SUI.DB.Styles.Minimal = SUI:MergeData(SUI.DB.Styles.Minimal, Defaults, false)
 end
 if not SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = "Minimal"}
+	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = 'Minimal'}
 end

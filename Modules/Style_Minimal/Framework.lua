@@ -1,20 +1,20 @@
 local _G, SUI = _G, SUI
-local Artwork_Core = SUI:GetModule("Artwork_Core")
-local module = SUI:GetModule("Style_Minimal")
+local Artwork_Core = SUI:GetModule('Artwork_Core')
+local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = Minimal_AnchorFrame, Minimal_SpartanUI
 
 function module:updateViewport() -- handles viewport offset based on settings
 	if not InCombatLockdown() then
 		WorldFrame:ClearAllPoints()
-		WorldFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
-		WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
+		WorldFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
+		WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
 	end
 end
 
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
-		local width, height = string.match(GetCVar("gxResolution"), "(%d+).-(%d+)")
+		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
 		if (tonumber(width) / tonumber(height) > 4 / 3) then
 			SUI.DB.scale = 0.92
 		else
@@ -43,30 +43,30 @@ function module:updateOffset() -- handles SpartanUI offset based on setting or f
 		offset = max(SUI.DB.yoffset, 1)
 	else
 		for i = 1, 4 do -- FuBar Offset
-			if (_G["FuBarFrame" .. i] and _G["FuBarFrame" .. i]:IsVisible()) then
-				local bar = _G["FuBarFrame" .. i]
+			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
+				local bar = _G['FuBarFrame' .. i]
 				local point = bar:GetPoint(1)
-				if point == "BOTTOMLEFT" then
+				if point == 'BOTTOMLEFT' then
 					fubar = fubar + bar:GetHeight()
 				end
 			end
 		end
 		for i = 1, 100 do -- Chocolate Bar Offset
-			if (_G["ChocolateBar" .. i] and _G["ChocolateBar" .. i]:IsVisible()) then
-				local bar = _G["ChocolateBar" .. i]
+			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
+				local bar = _G['ChocolateBar' .. i]
 				local point = bar:GetPoint(1)
 				--if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
-				if point == "RIGHT" then
+				if point == 'RIGHT' then
 					ChocolateBar = ChocolateBar + bar:GetHeight()
 				end
-			 -- bottom bars
+			-- bottom bars
 			end
 		end
-		TitanBarOrder = {[1] = "AuxBar2", [2] = "AuxBar"} -- Bottom 2 Bar names
+		TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
 		for i = 1, 2 do -- Titan Bar Offset
-			if (_G["Titan_Bar__Display_" .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. "_Show")) then
-				local PanelScale = TitanPanelGetVar("Scale") or 1
-				local bar = _G["Titan_Bar__Display_" .. TitanBarOrder[i]]
+			if (_G['Titan_Bar__Display_' .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. '_Show')) then
+				local PanelScale = TitanPanelGetVar('Scale') or 1
+				local bar = _G['Titan_Bar__Display_' .. TitanBarOrder[i]]
 				titan = titan + (PanelScale * bar:GetHeight())
 			end
 		end
@@ -86,14 +86,14 @@ function module:updateXOffset() -- handles SpartanUI offset based on setting or 
 	local offset = SUI.DB.xOffset
 	if Artwork_Core:round(offset) <= -300 then
 		Minimal_SpartanUI_Base5:ClearAllPoints()
-		Minimal_SpartanUI_Base5:SetPoint("LEFT", Minimal_SpartanUI_Base4, "RIGHT")
-		Minimal_SpartanUI_Base5:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT")
+		Minimal_SpartanUI_Base5:SetPoint('LEFT', Minimal_SpartanUI_Base4, 'RIGHT')
+		Minimal_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT')
 	elseif Artwork_Core:round(offset) >= 300 then
 		Minimal_SpartanUI_Base3:ClearAllPoints()
-		Minimal_SpartanUI_Base3:SetPoint("RIGHT", Minimal_SpartanUI_Base2, "LEFT")
-		Minimal_SpartanUI_Base3:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT")
+		Minimal_SpartanUI_Base3:SetPoint('RIGHT', Minimal_SpartanUI_Base2, 'LEFT')
+		Minimal_SpartanUI_Base3:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT')
 	end
-	Minimal_SpartanUI:SetPoint("LEFT", Minimal_AnchorFrame, "LEFT", offset, 0)
+	Minimal_SpartanUI:SetPoint('LEFT', Minimal_AnchorFrame, 'LEFT', offset, 0)
 	if (Artwork_Core:round(offset) ~= Artwork_Core:round(anchor:GetWidth())) then
 		anchor:SetWidth(offset)
 	end
@@ -106,47 +106,47 @@ function module:SetColor()
 	local r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color)
 
 	for i = 1, 2 do
-		_G["Minimal_Top_Bar" .. i .. "BG"]:SetVertexColor(r, b, g, a)
+		_G['Minimal_Top_Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
 	end
 	for i = 1, 5 do
-		_G["Minimal_SpartanUI_Base" .. i]:SetVertexColor(r, b, g, a)
+		_G['Minimal_SpartanUI_Base' .. i]:SetVertexColor(r, b, g, a)
 	end
 	-- Minimal_SpartanUI:SetVertexColor(0,.8,.9,.1)
 end
 
 function module:InitFramework()
 	do -- default interface modifications
-		SUI_FramesAnchor:SetFrameStrata("BACKGROUND")
+		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
 		SUI_FramesAnchor:SetFrameLevel(1)
 		SUI_FramesAnchor:SetParent(Minimal_SpartanUI)
 		SUI_FramesAnchor:ClearAllPoints()
-		SUI_FramesAnchor:SetPoint("BOTTOMLEFT", "Minimal_AnchorFrame", "BOTTOMLEFT", 0, 0)
-		SUI_FramesAnchor:SetPoint("TOPRIGHT", "Minimal_AnchorFrame", "BOTTOMRIGHT", 0, 150)
+		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Minimal_AnchorFrame', 'BOTTOMLEFT', 0, 0)
+		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Minimal_AnchorFrame', 'BOTTOMRIGHT', 0, 150)
 
 		Artwork_Core:MoveTalkingHeadUI()
 
 		MainMenuBarVehicleLeaveButton:HookScript(
-			"OnShow",
+			'OnShow',
 			function()
 				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", Minimal_SpartanUI_Base1, "TOP", 0, -100)
+				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', Minimal_SpartanUI_Base1, 'TOP', 0, -100)
 			end
 		)
 
 		FramerateText:ClearAllPoints()
-		FramerateText:SetPoint("TOP", UIParent, "TOP", 0, -20)
+		FramerateText:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 
 		MainMenuBar:Hide()
 		hooksecurefunc(
 			Minimal_SpartanUI,
-			"Hide",
+			'Hide',
 			function()
 				module:updateViewport()
 			end
 		)
 		hooksecurefunc(
 			Minimal_SpartanUI,
-			"Show",
+			'Show',
 			function()
 				module:updateViewport()
 			end
@@ -155,7 +155,7 @@ function module:InitFramework()
 		--Minimal_SpartanUI:SetVertexColor(0,.8,.9,.1)
 
 		hooksecurefunc(
-			"UpdateContainerFrameAnchors",
+			'UpdateContainerFrameAnchors',
 			function()
 				-- fix bag offsets
 				local frame, xOffset, yOffset, screenHeight, freeScreenHeight, leftMostPoint, column
@@ -207,9 +207,9 @@ function module:InitFramework()
 					if (index == 1) then
 						-- First bag
 						frame:SetPoint(
-							"BOTTOMRIGHT",
+							'BOTTOMRIGHT',
 							frame:GetParent(),
-							"BOTTOMRIGHT",
+							'BOTTOMRIGHT',
 							-xOffset,
 							(yOffset + (SUI.DB.yoffset or 1)) * (SUI.DB.scale or 1)
 						)
@@ -217,10 +217,10 @@ function module:InitFramework()
 						-- Start a new column
 						column = column + 1
 						freeScreenHeight = screenHeight - yOffset
-						frame:SetPoint("BOTTOMRIGHT", frame:GetParent(), "BOTTOMRIGHT", -(column * CONTAINER_WIDTH) - xOffset, yOffset)
+						frame:SetPoint('BOTTOMRIGHT', frame:GetParent(), 'BOTTOMRIGHT', -(column * CONTAINER_WIDTH) - xOffset, yOffset)
 					else
 						-- Anchor to the previous bag
-						frame:SetPoint("BOTTOMRIGHT", ContainerFrame1.bags[index - 1], "TOPRIGHT", 0, CONTAINER_SPACING)
+						frame:SetPoint('BOTTOMRIGHT', ContainerFrame1.bags[index - 1], 'TOPRIGHT', 0, CONTAINER_SPACING)
 					end
 					freeScreenHeight = freeScreenHeight - frame:GetHeight() - VISIBLE_CONTAINER_SPACING
 				end
@@ -230,52 +230,52 @@ function module:InitFramework()
 end
 
 function module:TooltipLoc(self, parent)
-	if (parent == "UIParent") then
+	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
-		tooltip:SetPoint("BOTTOMRIGHT", Minimal_SpartanUI, "BOTTOMRIGHT", -20, 20)
+		tooltip:SetPoint('BOTTOMRIGHT', Minimal_SpartanUI, 'BOTTOMRIGHT', -20, 20)
 	end
 end
 
 function module:SetupVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		RegisterStateDriver(Minimal_SpartanUI, "visibility", "[petbattle][overridebar][vehicleui] hide; show")
+		RegisterStateDriver(Minimal_SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		UnRegisterStateDriver(Minimal_SpartanUI, "visibility")
+		UnRegisterStateDriver(Minimal_SpartanUI, 'visibility')
 	end
 end
 
 function module:EnableFramework()
 	do -- create the tooltip
-		tooltip = CreateFrame("Frame", "Minimal_StatusBarTooltip", Minimal_SpartanUI, "Minimal_StatusBars_TooltipTemplate")
-		Minimal_StatusBarTooltipHeader:SetJustifyH("LEFT")
-		Minimal_StatusBarTooltipText:SetJustifyH("LEFT")
-		Minimal_StatusBarTooltipText:SetJustifyV("TOP")
-		SUI:FormatFont(Minimal_StatusBarTooltipHeader, 12, "Core")
-		SUI:FormatFont(Minimal_StatusBarTooltipText, 10, "Core")
+		tooltip = CreateFrame('Frame', 'Minimal_StatusBarTooltip', Minimal_SpartanUI, 'Minimal_StatusBars_TooltipTemplate')
+		Minimal_StatusBarTooltipHeader:SetJustifyH('LEFT')
+		Minimal_StatusBarTooltipText:SetJustifyH('LEFT')
+		Minimal_StatusBarTooltipText:SetJustifyV('TOP')
+		SUI:FormatFont(Minimal_StatusBarTooltipHeader, 12, 'Core')
+		SUI:FormatFont(Minimal_StatusBarTooltipText, 10, 'Core')
 	end
 
 	module:SetColor()
 
-	anchor:SetFrameStrata("BACKGROUND")
+	anchor:SetFrameStrata('BACKGROUND')
 	anchor:SetFrameLevel(1)
-	frame:SetFrameStrata("BACKGROUND")
+	frame:SetFrameStrata('BACKGROUND')
 	frame:SetFrameLevel(1)
 
 	-- hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
 	-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Minimal_SpartanUI,"TOP",0,100); end
 	-- end);
 	hooksecurefunc(
-		"UIParent_ManageFramePositions",
+		'UIParent_ManageFramePositions',
 		function()
 			TutorialFrameAlertButton:SetParent(Minimap)
 			TutorialFrameAlertButton:ClearAllPoints()
-			TutorialFrameAlertButton:SetPoint("CENTER", Minimap, "TOP", -2, 30)
+			TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			CastingBarFrame:ClearAllPoints()
-			CastingBarFrame:SetPoint("BOTTOM", frame, "TOP", 0, 90)
+			CastingBarFrame:SetPoint('BOTTOM', frame, 'TOP', 0, 90)
 		end
 	)
 
@@ -290,7 +290,7 @@ function module:EnableFramework()
 	anchor.UpdateInterval = 5 --Seconds
 	anchor.TimeSinceLastUpdate = 0
 	anchor:SetScript(
-		"OnUpdate",
+		'OnUpdate',
 		function(self, ...)
 			local elapsed = select(1, ...)
 			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
@@ -316,10 +316,10 @@ function module:EnableFramework()
 	do
 		function My_VehicleSeatIndicatorButton_OnClick(self, button)
 			local seatIndex = self.virtualID
-			local _, occupantName = UnitVehicleSeatInfo("player", seatIndex)
+			local _, occupantName = UnitVehicleSeatInfo('player', seatIndex)
 			if
-				(button == "RightButton" and
-					(CanEjectPassengerFromSeat(seatIndex) or (CanExitVehicle() and (occupantName == UnitName("player")))))
+				(button == 'RightButton' and
+					(CanEjectPassengerFromSeat(seatIndex) or (CanExitVehicle() and (occupantName == UnitName('player')))))
 			 then
 				ToggleDropDownMenu(1, seatIndex, VehicleSeatIndicatorDropDown, self:GetName(), 0, -5)
 				if (CanEjectPassengerFromSeat(seatIndex)) then
@@ -330,7 +330,7 @@ function module:EnableFramework()
 					UIDropDownMenu_EnableButton(1, 2)
 				end
 			else
-				UnitSwitchToVehicleSeat("player", seatIndex)
+				UnitSwitchToVehicleSeat('player', seatIndex)
 			end
 		end
 
@@ -351,12 +351,12 @@ function module:EnableFramework()
 
 		function VehicleSeatLeaveVehicleDropDown_OnClick()
 			VehicleExit()
-			PlaySound("UChatScrollButton")
+			PlaySound('UChatScrollButton')
 		end
 
 		local old_VehicleSeatIndicatorDropDown_Initialize = VehicleSeatIndicatorDropDown_Initialize()
 		VehicleSeatIndicatorDropDown_Initialize = My_VehicleSeatIndicatorDropDown_Initialize
 
-		UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, "MENU")
+		UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, 'MENU')
 	end
 end

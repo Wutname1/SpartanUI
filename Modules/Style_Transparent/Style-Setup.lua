@@ -1,7 +1,7 @@
 local SUI = SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-SUI:NewModule("Style_Transparent")
+SUI:NewModule('Style_Transparent')
 
 --Now lets setup the initial Database settings
 local Defaults = {
@@ -16,7 +16,7 @@ local Defaults = {
 		RaidFrames = true
 	},
 	Minimap = {
-		shape = "square",
+		shape = 'square',
 		size = {width = 140, height = 140}
 	},
 	Color = {
@@ -25,8 +25,8 @@ local Defaults = {
 		PartyFrames = {0, .8, .9, .7},
 		RaidFrames = {0, .8, .9, .7}
 	},
-	TalkingHeadUI = {point = "TOP", relPoint = "TOP", x = 0, y = -30, scale = .8},
-	BartenderProfile = "SpartanUI - Transparent",
+	TalkingHeadUI = {point = 'TOP', relPoint = 'TOP', x = 0, y = -30, scale = .8},
+	BartenderProfile = 'SpartanUI - Transparent',
 	BartenderSettings = {
 		ActionBars = {
 			actionbars = {
@@ -37,12 +37,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Transparent_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Transparent_ActionBarPlate',
 						x = -501,
 						y = 16,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 1
 				{
@@ -52,12 +52,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Transparent_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Transparent_ActionBarPlate',
 						x = -501,
 						y = -29,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 2
 				{
@@ -67,12 +67,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Transparent_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Transparent_ActionBarPlate',
 						x = 98,
 						y = 16,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 3
 				{
@@ -82,12 +82,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Transparent_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Transparent_ActionBarPlate',
 						x = 98,
 						y = -29,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 4
 				{
@@ -97,12 +97,12 @@ local Defaults = {
 					padding = 4,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Transparent_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Transparent_ActionBarPlate',
 						x = -635,
 						y = 35,
 						scale = 0.80,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 5
 				{
@@ -112,12 +112,12 @@ local Defaults = {
 					padding = 4,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Transparent_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Transparent_ActionBarPlate',
 						x = 504,
 						y = 35,
 						scale = 0.80,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 6
 				{
@@ -126,7 +126,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Transparent_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 7
 				{
 					enabled = false,
@@ -134,7 +134,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Transparent_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 8
 				{
 					enabled = false,
@@ -142,7 +142,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Transparent_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 9
 				{
 					enabled = false,
@@ -150,7 +150,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Transparent_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				} -- 10
 			}
 		},
@@ -161,12 +161,12 @@ local Defaults = {
 			enabled = true,
 			padding = 0,
 			position = {
-				point = "TOP",
-				parent = "Transparent_ActionBarPlate",
+				point = 'TOP',
+				parent = 'Transparent_ActionBarPlate',
 				x = 494,
 				y = -15,
 				scale = 0.70,
-				growHorizontal = "LEFT"
+				growHorizontal = 'LEFT'
 			},
 			rows = 1,
 			onebag = false,
@@ -179,12 +179,12 @@ local Defaults = {
 			enabled = true,
 			padding = -3,
 			position = {
-				point = "TOP",
-				parent = "Transparent_ActionBarPlate",
+				point = 'TOP',
+				parent = 'Transparent_ActionBarPlate',
 				x = 105,
 				y = -15,
 				scale = 0.70,
-				growHorizontal = "RIGHT"
+				growHorizontal = 'RIGHT'
 			}
 		},
 		PetBar = {
@@ -194,12 +194,12 @@ local Defaults = {
 			enabled = true,
 			padding = 1,
 			position = {
-				point = "TOP",
-				parent = "Transparent_ActionBarPlate",
+				point = 'TOP',
+				parent = 'Transparent_ActionBarPlate',
 				x = -493,
 				y = -15,
 				scale = 0.70,
-				growHorizontal = "RIGHT"
+				growHorizontal = 'RIGHT'
 			},
 			rows = 1,
 			skin = {Zoom = true}
@@ -211,12 +211,12 @@ local Defaults = {
 			enabled = true,
 			padding = 1,
 			position = {
-				point = "TOP",
-				parent = "Transparent_ActionBarPlate",
+				point = 'TOP',
+				parent = 'Transparent_ActionBarPlate',
 				x = -105,
 				y = -15,
 				scale = 0.70,
-				growHorizontal = "LEFT"
+				growHorizontal = 'LEFT'
 			},
 			rows = 1
 		},
@@ -225,7 +225,7 @@ local Defaults = {
 			version = 3,
 			fadeout = true,
 			enabled = true,
-			position = {point = "TOPRIGHT", parent = "Transparent_ActionBarPlate", x = -777, y = -4, scale = 0.75}
+			position = {point = 'TOPRIGHT', parent = 'Transparent_ActionBarPlate', x = -777, y = -4, scale = 0.75}
 		},
 		Vehicle = {
 			fadeoutalpha = .25,
@@ -233,14 +233,14 @@ local Defaults = {
 			fadeout = true,
 			enabled = false,
 			padding = 3,
-			position = {point = "CENTER", parent = "Transparent_ActionBarPlate", x = -15, y = 213, scale = 0.85}
+			position = {point = 'CENTER', parent = 'Transparent_ActionBarPlate', x = -15, y = 213, scale = 0.85}
 		},
 		ExtraActionBar = {
 			fadeoutalpha = .25,
 			version = 3,
 			fadeout = true,
 			enabled = true,
-			position = {point = "CENTER", parent = "Transparent_ActionBarPlate", x = -32, y = 240}
+			position = {point = 'CENTER', parent = 'Transparent_ActionBarPlate', x = -32, y = 240}
 		},
 		BlizzardArt = {enabled = false},
 		XPBar = {enabled = false},
@@ -257,5 +257,5 @@ else
 	SUI.DB.Styles.Transparent = SUI:MergeData(SUI.DB.Styles.Transparent, Defaults, false)
 end
 if not SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] = {Style = "Transparent"}
+	SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] = {Style = 'Transparent'}
 end

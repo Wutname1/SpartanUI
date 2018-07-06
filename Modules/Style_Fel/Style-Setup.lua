@@ -1,7 +1,7 @@
 local SUI = SUI
 ----------------------------------------------------------------------------------------------------
 --First Lets make the Module
-SUI:NewModule("Style_Fel")
+SUI:NewModule('Style_Fel')
 
 --Now lets setup the initial Database settings
 local Defaults = {
@@ -16,15 +16,15 @@ local Defaults = {
 		MenuBar = {enable = true, alpha = 100}
 	},
 	Frames = {
-		player = {Buffs = {Mode = "both"}, Debuffs = {Mode = "both"}},
-		target = {Buffs = {Mode = "both", onlyShowPlayer = true}, Debuffs = {Mode = "bars"}}
+		player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
+		target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}}
 	},
 	PlayerFrames = {},
 	PartyFrames = {
-		FrameStyle = "medium"
+		FrameStyle = 'medium'
 	},
 	RaidFrames = {
-		FrameStyle = "small"
+		FrameStyle = 'small'
 	},
 	Movable = {
 		Minimap = true
@@ -33,13 +33,13 @@ local Defaults = {
 		Engulfed = true
 	},
 	TalkingHeadUI = {
-		point = "TOP",
-		relPoint = "TOP",
+		point = 'TOP',
+		relPoint = 'TOP',
 		x = 0,
 		y = -30,
 		scale = .8
 	},
-	BartenderProfile = "SpartanUI - Fel",
+	BartenderProfile = 'SpartanUI - Fel',
 	BartenderSettings = {
 		ActionBars = {
 			actionbars = {
@@ -50,12 +50,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Fel_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Fel_ActionBarPlate',
 						x = -510,
 						y = 36,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 1
 				{
@@ -65,12 +65,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Fel_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Fel_ActionBarPlate',
 						x = -510,
 						y = -8,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 2
 				{
@@ -80,12 +80,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Fel_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Fel_ActionBarPlate',
 						x = 108,
 						y = 36,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 3
 				{
@@ -95,12 +95,12 @@ local Defaults = {
 					padding = 3,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Fel_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Fel_ActionBarPlate',
 						x = 108,
 						y = -8,
 						scale = 0.85,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 4
 				{
@@ -110,12 +110,12 @@ local Defaults = {
 					padding = 4,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Fel_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Fel_ActionBarPlate',
 						x = -645,
 						y = 35,
 						scale = 0.80,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 5
 				{
@@ -125,12 +125,12 @@ local Defaults = {
 					padding = 4,
 					skin = {Zoom = true},
 					position = {
-						point = "CENTER",
-						parent = "Fel_ActionBarPlate",
+						point = 'CENTER',
+						parent = 'Fel_ActionBarPlate',
 						x = 514,
 						y = 35,
 						scale = 0.80,
-						growHorizontal = "RIGHT"
+						growHorizontal = 'RIGHT'
 					}
 				}, -- 6
 				{
@@ -139,7 +139,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Fel_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 7
 				{
 					enabled = false,
@@ -147,7 +147,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Fel_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 8
 				{
 					enabled = false,
@@ -155,7 +155,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Fel_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				}, -- 9
 				{
 					enabled = false,
@@ -163,7 +163,7 @@ local Defaults = {
 					rows = 1,
 					padding = 3,
 					skin = {Zoom = true},
-					position = {parent = "Fel_ActionBarPlate", scale = 0.85, growHorizontal = "RIGHT"}
+					position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
 				} -- 10
 			}
 		},
@@ -173,7 +173,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = 0,
-			position = {point = "TOP", parent = "Fel_ActionBarPlate", x = 503, y = 2, scale = 0.70, growHorizontal = "LEFT"},
+			position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = 503, y = 2, scale = 0.70, growHorizontal = 'LEFT'},
 			rows = 1,
 			onebag = false,
 			keyring = true
@@ -184,7 +184,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = -3,
-			position = {point = "TOP", parent = "Fel_ActionBarPlate", x = 114, y = 4, scale = 0.70, growHorizontal = "RIGHT"}
+			position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = 114, y = 4, scale = 0.70, growHorizontal = 'RIGHT'}
 		},
 		PetBar = {
 			fadeoutalpha = .6,
@@ -192,7 +192,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = 1,
-			position = {point = "TOP", parent = "Fel_ActionBarPlate", x = -497, y = 2, scale = 0.70, growHorizontal = "RIGHT"},
+			position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = -497, y = 2, scale = 0.70, growHorizontal = 'RIGHT'},
 			rows = 1,
 			skin = {Zoom = true}
 		},
@@ -202,7 +202,7 @@ local Defaults = {
 			fadeout = true,
 			enabled = true,
 			padding = 1,
-			position = {point = "TOP", parent = "Fel_ActionBarPlate", x = -115, y = 2, scale = 0.70, growHorizontal = "LEFT"},
+			position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = -115, y = 2, scale = 0.70, growHorizontal = 'LEFT'},
 			rows = 1
 		},
 		MultiCast = {
@@ -210,7 +210,7 @@ local Defaults = {
 			version = 3,
 			fadeout = true,
 			enabled = true,
-			position = {point = "TOPRIGHT", parent = "Fel_ActionBarPlate", x = -777, y = -4, scale = 0.75}
+			position = {point = 'TOPRIGHT', parent = 'Fel_ActionBarPlate', x = -777, y = -4, scale = 0.75}
 		},
 		Vehicle = {
 			fadeoutalpha = .6,
@@ -218,14 +218,14 @@ local Defaults = {
 			fadeout = true,
 			enabled = false,
 			padding = 3,
-			position = {point = "CENTER", parent = "Fel_ActionBarPlate", x = -15, y = 213, scale = 0.85}
+			position = {point = 'CENTER', parent = 'Fel_ActionBarPlate', x = -15, y = 213, scale = 0.85}
 		},
 		ExtraActionBar = {
 			fadeoutalpha = .6,
 			version = 3,
 			fadeout = true,
 			enabled = true,
-			position = {point = "CENTER", parent = "Fel_ActionBarPlate", x = -32, y = 240}
+			position = {point = 'CENTER', parent = 'Fel_ActionBarPlate', x = -32, y = 240}
 		},
 		BlizzardArt = {enabled = false},
 		XPBar = {enabled = false},
@@ -234,7 +234,7 @@ local Defaults = {
 		blizzardVehicle = SUI.DBMod.Artwork.VehicleUI
 	},
 	TooltipLoc = true,
-	SubTheme = "Fel",
+	SubTheme = 'Fel',
 	StatusBars = {
 		XP = true,
 		REP = true,
@@ -249,5 +249,5 @@ else
 	SUI.DB.Styles.Fel = SUI:MergeData(SUI.DB.Styles.Fel, Defaults, false)
 end
 if not SUI.DBG.Bartender4[SUI.DB.Styles.Fel.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.Fel.BartenderProfile] = {Style = "Fel"}
+	SUI.DBG.Bartender4[SUI.DB.Styles.Fel.BartenderProfile] = {Style = 'Fel'}
 end
