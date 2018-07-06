@@ -14,7 +14,7 @@ function module:OnInitialize()
 
 	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["Digital"].disabled = false
 	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["War"].disabled = false
-	spartan.opt.args["General"].args["style"].args["OverallStyle"].args["War"].disabled = false
+	SUI.opt.args["General"].args["style"].args["OverallStyle"].args["War"].disabled = false
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == "Fel") then
 		module:Init()
@@ -134,9 +134,6 @@ function module:SetupMenus()
 							module:updateOffset()
 						end
 					end
-				end,
-				get = function(info)
-					return SUI.DB.yoffset
 				end
 			},
 			offsetauto = {

@@ -1,6 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-local AceHook = LibStub("AceHook-3.0")
 local module = spartan:NewModule("Component_Objectives")
 ----------------------------------------------------------------------------------------------------
 local ObjectiveTrackerWatcher = CreateFrame("Frame")
@@ -25,7 +24,7 @@ local ObjTrackerUpdate = function()
 	local FadeOut = false
 
 	--Figure out if we need to hide objectives
-	for k, v in ipairs(RuleList) do
+	for _, v in ipairs(RuleList) do
 		if SUI.DBMod.Objectives[v].Status ~= "Disabled" then
 			local CombatRule = false
 			if InCombatLockdown() and SUI.DBMod.Objectives[v].Combat then
@@ -241,10 +240,10 @@ function module:FirstTimeSetup()
 			AlwaysShowScenario:SetValue(true)
 			SUI_Win.Objectives.AlwaysShowScenario = AlwaysShowScenario
 
-			for k, v in ipairs(RuleList) do
+			for k, _ in ipairs(RuleList) do
 				SUI_Win.Objectives[k] = {}
 				--Rule 1
-				local line = gui:Create("Heading")
+				line = gui:Create("Heading")
 				line:SetText(L["Rule"] .. k)
 				if k == 1 then
 					line:SetPoint("TOP", SUI_Win.Objectives.AlwaysShowScenario.frame, "TOP", 0, -30)

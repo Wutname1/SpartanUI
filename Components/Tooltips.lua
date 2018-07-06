@@ -1,10 +1,8 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-local AceHook = LibStub("AceHook-3.0")
 local module = spartan:NewModule("Component_Tooltips")
 ----------------------------------------------------------------------------------------------------
-local class, classFileName = UnitClass("player")
-local targetList, inspectCache = {}, {}
+local targetList = {}
 local RuleList = {"Rule1", "Rule2", "Rule3"}
 local tooltips = {
 	GameTooltip,
@@ -74,7 +72,7 @@ function module:OnInitialize()
 	end
 
 	if SUI.DB.Tooltips.Rule1 == nil then
-		for k, v in ipairs(RuleList) do
+		for _, v in ipairs(RuleList) do
 			SUI.DB.Tooltips[v] = {
 				Status = "Disabled",
 				Combat = false,
@@ -113,7 +111,7 @@ function module:OnInitialize()
 end
 
 local function ActiveRule()
-	for k, v in ipairs(RuleList) do
+	for _, v in ipairs(RuleList) do
 		if SUI.DB.Tooltips[v].Status ~= "Disabled" then
 			local CombatRule = false
 			if InCombatLockdown() and SUI.DB.Tooltips[v].Combat then
@@ -247,9 +245,9 @@ local ClearColors = function(self)
 end
 
 local TooltipSetItem = function(self)
-	local key, itemLink = self:GetItem()
+	local key = self:GetItem()
 	if (key and (not self.itemCleared)) then
-		local itemName, _, quality, _, _, _, _, _, equipSlot, icon = GetItemInfo(key)
+		local _, _, quality = GetItemInfo(key)
 		if (quality) then
 			local r, g, b = GetItemQualityColor(quality)
 			self.SUIBorder:SetBorderColor(r, g, b)
@@ -275,7 +273,7 @@ local TooltipSetUnit = function(self)
 	end
 
 	local unitLevel = UnitLevel(unit)
-	local colors, burst, qColor, totColor, lvlLine
+	local colors, qColor, totColor, lvlLine
 	local line = 2
 	local sex = {"", "Male ", "Female "}
 	local creatureClassColors = {
@@ -342,7 +340,6 @@ local TooltipSetUnit = function(self)
 			end
 
 			if (GENDER_INFO) then
-				local gender = GENDER[UnitSex(unit)]
 				if (gender) then
 					race = race .. " " .. gender
 				end
@@ -503,7 +500,7 @@ local function ApplyTooltipSkins()
 end
 
 function module:UpdateBG()
-	for i, tooltip in pairs(tooltips) do
+	for _, tooltip in pairs(tooltips) do
 		if (tooltip.SUIBorder) then
 			-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style] then
 			-- tooltip.SUIBorder:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)

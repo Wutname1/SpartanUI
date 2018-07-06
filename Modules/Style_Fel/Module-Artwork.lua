@@ -1,13 +1,9 @@
 local _G, SUI = _G, SUI
-local L = SUI.L
 local Artwork_Core = SUI:GetModule("Artwork_Core")
 local module = SUI:GetModule("Style_Fel")
 ----------------------------------------------------------------------------------------------------
 local CurScale
 local petbattle = CreateFrame("Frame")
-local apframe
-local xpframe
-local rframe
 local tooltip
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1,	g = 0.2,	b = 0},
@@ -89,7 +85,7 @@ function module:updateAlpha()
 end
 
 function module:updateOffset()
-	local fubar, ChocolateBar, titan, offset = 0, 0, 0, 0
+	local fubar, ChocolateBar, titan = 0, 0, 0
 
 	if not SUI.DB.yoffsetAuto then
 		offset = max(SUI.DB.yoffset, 0)
@@ -141,14 +137,14 @@ function module:updateOffset()
 end
 
 --	Module Calls
-function module:TooltipLoc(self, parent)
+function module:TooltipLoc(_, parent)
 	if (parent == "UIParent") then
 		tooltip:ClearAllPoints()
 		tooltip:SetPoint("BOTTOMRIGHT", "Fel_SpartanUI", "TOPRIGHT", 0, 10)
 	end
 end
 
-function module:BuffLoc(self, parent)
+function module:BuffLoc(_, parent)
 	BuffFrame:ClearAllPoints()
 	BuffFrame:SetPoint("TOPRIGHT", -13, -13 - (SUI.DB.BuffSettings.offset))
 end
@@ -182,9 +178,7 @@ function module:RemoveVehicleUI()
 end
 
 function module:InitArtwork()
-	--if (Bartender4.db:GetCurrentProfile() == SUI.DB.Styles.Transparent.BartenderProfile or not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Transparent.BartenderProfile,true)) then
 	Artwork_Core:ActionBarPlates("Fel_ActionBarPlate")
-	--end
 
 	do -- create bar anchor
 		plate = CreateFrame("Frame", "Fel_ActionBarPlate", UIParent, "Fel_ActionBarsTemplate")
@@ -305,7 +299,7 @@ local SetXPColors = function(self)
 end
 local SetRepColors = function(self)
 	local FrameName = self:GetName()
-	local ratio, name, reaction, low, high, current = 0, GetWatchedFactionInfo()
+	local _, _, reaction, _, _, _ = 0, GetWatchedFactionInfo()
 	if SUI.DB.StatusBars.RepBar.AutoDefined == true then
 		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7]
 		_G[FrameName .. "Fill"]:SetVertexColor(color.r, color.g, color.b, 0.7)
@@ -331,7 +325,7 @@ local updateText = function(self, side)
 	_G[FrameName .. "Text"]:SetText("")
 
 	if (SUI.DB.StatusBars[side] == "xp") then
-		local level, rested, now, goal = UnitLevel("player"), GetXPExhaustion() or 0, UnitXP("player"), UnitXPMax("player")
+		local _, rested, now, goal = UnitLevel("player"), GetXPExhaustion() or 0, UnitXP("player"), UnitXPMax("player")
 		if now ~= 0 then
 			_G[FrameName .. "Fill"]:SetWidth((now / goal) * self:GetWidth())
 			rested = (rested / goal) * 400
@@ -355,7 +349,7 @@ local updateText = function(self, side)
 		end
 		SetXPColors(self)
 	elseif (SUI.DB.StatusBars[side] == "rep") then
-		local ratio, name, reaction, low, high, current = 0, GetWatchedFactionInfo()
+		local ratio, name, _, low, high, current = 0, GetWatchedFactionInfo()
 		if name then
 			ratio = (current - low) / (high - low)
 		end
@@ -378,7 +372,7 @@ local updateText = function(self, side)
 	elseif (SUI.DB.StatusBars[side] == "ap") then
 		_G[FrameName .. "Text"]:SetText("")
 		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
-			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+			local _, _, _, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
 			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
 			if xpForNextPoint == 0 then
 				return
@@ -440,18 +434,13 @@ local updateText = function(self, side)
 		end
 	elseif (SUI.DB.StatusBars[side] == "honor") then
 		if SUI.DB.StatusBars.HonorBar.text then
-			local itemID,
-				altItemID,
-				name,
-				icon,
+			local _,
+				_,
+				_,
+				_,
 				xp,
 				pointsSpent,
-				quality,
-				HonorAppearanceID,
-				appearanceModID,
-				itemAppearanceID,
-				altItemAppearanceID,
-				altOnTop = C_HonorUI.GetEquippedHonorInfo()
+				_ = C_HonorUI.GetEquippedHonorInfo()
 			local xpForNextPoint = C_HonorUI.GetCostForPointAtRank(pointsSpent)
 			local ratio = (xp / xpForNextPoint)
 			_G[FrameName .. "Text"]:SetFormattedText(
@@ -477,7 +466,7 @@ function module:StatusBars()
 	end
 
 	local showXPTooltip = function(self)
-		local xptip1 = string.gsub(EXHAUST_TOOLTIP1, "\n", " ") -- %s %d%% of normal experience gained from monsters. (replaced single breaks with space)
+		local xptip1 = string.gsub(EXHAUST_TOOLTIP1, "\n", " ") -- %s %d%% of normal experience gained from monsters.
 		local XP_LEVEL_TEMPLATE = "( %s / %s ) %d%% " .. COMBAT_XP_GAIN -- use Global Strings and regex to make the level string work in any locale
 		local xprest = TUTORIAL_TITLE26 .. " (%d%%) -" -- Rested (%d%%) -
 		local a = format("Level %s ", UnitLevel("player"))
@@ -499,7 +488,7 @@ function module:StatusBars()
 		tooltip:Show()
 	end
 	local showRepTooltip = function(self)
-		local name, react, low, high, current, text, ratio = GetWatchedFactionInfo()
+		local name, react, low, high, current = GetWatchedFactionInfo()
 		if name then
 			text = GetFactionDetails(name)
 			ratio = (current - low) / (high - low)
@@ -521,7 +510,6 @@ function module:StatusBars()
 		tooltip:Show()
 	end
 	local showAPTooltip = function(self)
-		local FrameName = self:GetName()
 		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
 			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)

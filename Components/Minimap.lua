@@ -1,6 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-local AceHook = LibStub("AceHook-3.0")
 local module = spartan:NewModule("Component_Minimap")
 ----------------------------------------------------------------------------------------------------
 local BlizzButtons = {
@@ -50,7 +49,6 @@ local BlizzUI = {
 	"CharacterFrame"
 }
 local BlizzParentStop = {"WorldFrame", "Minimap", "MinimapBackdrop", "UIParent", "MinimapCluster"}
-local SUIMapChangesActive = false
 local SkinProtect = {
 	"TutorialFrameAlertButton",
 	"MiniMapMailFrame",
@@ -103,7 +101,7 @@ end
 
 local MiniMapBtnScrape = function()
 	-- Hook Minimap Icons
-	for i, child in ipairs({Minimap:GetChildren()}) do
+	for _, child in ipairs({Minimap:GetChildren()}) do
 		if child.FadeIn == nil and IgnoreCheck(child) then
 			module:SetupButton(child)
 		end
@@ -118,8 +116,6 @@ local PerformFullBtnUpdate = function()
 		MiniMapBtnScrape()
 		--update visibility
 		module:updateButtons()
-	else
-		--Do nothing, we might be moving a button
 	end
 end
 
@@ -231,7 +227,7 @@ function module:OnEnable()
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap and
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords ~= nil
 		 then
-			local a, b, c, d, e = unpack(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords) -- do this as the parent can get corrupted
+			local a, _, c, d, e = unpack(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords) -- do this as the parent can get corrupted
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint(a, UIParent, c, d, e)
 		elseif SUI.DB.MiniMap.Position ~= nil then
@@ -317,7 +313,6 @@ function module:ModifyMinimapLayout()
 			MiniMapTracking:ClearAllPoints()
 			MiniMapTracking:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -5, -5)
 		end
-	else
 	end
 	if not SUI.DB.MiniMap.northTag then
 		-- MinimapNorthTag.oldShow = MinimapNorthTag.Show
@@ -510,7 +505,7 @@ function module:updateButtons()
 			CensusButton.FadeOut:Play()
 		end
 
-		for i, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName()
 
 			--catch buttons not playing nice.
@@ -539,7 +534,7 @@ function module:updateButtons()
 			CensusButton.FadeIn:Play()
 		end
 
-		for i, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName()
 			-- buttonType = child:GetObjectType();
 

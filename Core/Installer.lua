@@ -5,7 +5,7 @@ local module = spartan:NewModule("SetupWindow")
 local Page_Cur = 1
 local PageCnt = 0
 local PageList = {}
-local NoCombat, WinShow, Win = true, false, nil
+local WinShow, Win = false, nil
 local RequireReload = 0
 local CurData = nil
 

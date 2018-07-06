@@ -8,7 +8,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
 SUI.L = L
 
 local _G = _G
-local type, pairs, hooksecurefunc = type, pairs, hooksecurefunc
+local type, pairs = type, pairs
 
 SUI.Version = GetAddOnMetadata("SpartanUI", "Version")
 SUI.BuildNum = GetAddOnMetadata("SpartanUI", "X-Build")
@@ -704,7 +704,7 @@ function SUI:FirstTimeSetup()
 			local profiles = {}
 			-- copy existing profiles into the table
 			local currentProfile = SUI.DB:GetCurrentProfile()
-			for i, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
+			for _, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
 				if not (nocurrent and v == currentProfile) then
 					profiles[v] = v
 				end
@@ -1012,7 +1012,7 @@ function SUI:OnEnable()
 		end
 		t = string.lower(t)
 		local c = 0
-		local p = nil
+		local p
 		for i = 1, 10000 do
 			p = _G["NamePlate" .. i .. "UnitFrame"]
 			if p and p:IsVisible() then
@@ -1104,7 +1104,7 @@ end
 function SUI:isPartialMatch(frameName, tab)
 	local result = false
 
-	for k, v in ipairs(tab) do
+	for _, v in ipairs(tab) do
 		startpos, endpos = strfind(strlower(frameName), strlower(v))
 		if (startpos == 1) then
 			result = true
@@ -1123,7 +1123,7 @@ function SUI:isInTable(tab, frameName)
 	if tab == nil or frameName == nil then
 		return false
 	end
-	for k, v in ipairs(tab) do
+	for _, v in ipairs(tab) do
 		if v ~= nil and frameName ~= nil then
 			if (strlower(v) == strlower(frameName)) then
 				return true
@@ -1149,15 +1149,15 @@ end
 function SUI:FontSetup()
 	local OutlineSizes = {22, 18, 16, 13, 12, 11, 10, 9, 8}
 	local Sizes = {10}
-	for i, v in ipairs(OutlineSizes) do
-		local filename, fontHeight, flags = _G["SUI_FontOutline" .. v]:GetFont()
+	for _, v in ipairs(OutlineSizes) do
+		local filename = _G["SUI_FontOutline" .. v]:GetFont()
 		if filename ~= SUI:GetFontFace("Primary") then
 			_G["SUI_FontOutline" .. v] = _G["SUI_FontOutline" .. v]:SetFont(SUI:GetFontFace("Primary"), v)
 		end
 	end
 
-	for i, v in ipairs(Sizes) do
-		local filename, fontHeight, flags = _G["SUI_Font" .. v]:GetFont()
+	for _, v in ipairs(Sizes) do
+		local filename = _G["SUI_Font" .. v]:GetFont()
 		if filename ~= SUI:GetFontFace("Primary") then
 			_G["SUI_Font" .. v] = _G["SUI_Font" .. v]:SetFont(SUI:GetFontFace("Primary"), v)
 		end

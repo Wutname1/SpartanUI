@@ -1,10 +1,7 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-local AceHook = LibStub("AceHook-3.0")
 local module = spartan:NewModule("Component_AutoTurnIn")
 ----------------------------------------------------------------------------------------------------
 local ATI_Container = CreateFrame("Frame")
-local questCache = {}
 local weapon = {GetAuctionItemSubClasses(1)}
 local armor = {GetAuctionItemSubClasses(2)}
 local ITEMS = {
@@ -167,26 +164,6 @@ local Lquests = {
 	["Thick Tiger Haunch"] = {item = "Thick Tiger Haunch", amount = 1, currency = false}
 }
 
-local LignoreList = {
-	--MOP Tillers
-	["A Marsh Lily for"] = "",
-	["A Lovely Apple for"] = "",
-	["A Jade Cat for"] = "",
-	["A Blue Feather for"] = "",
-	["A Ruby Shard for"] = ""
-}
--- Available check requires cache
--- Active check query API function Returns true if quest matches options
--- function module:isAppropriate(questname, byCache)
--- local daily
--- if byCache then
--- daily = (not not questCache[questname])
--- else
--- daily = (QuestIsDaily() or QuestIsWeekly())
--- end
--- return daily
--- end
-
 -- turns quest in printing reward text if `showrewardtext` option is set.
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
@@ -236,8 +213,6 @@ function module:TurnInQuest(rewardIndex)
 	local link = GetQuestItemLink("choice", rewardIndex)
 	if (link) then
 		spartan:Print("Debug: item to loot=", link)
-	elseif (GetNumQuestChoices() == 0) then
-	-- spartan:Print("Debug: turning quest in, no choice required")
 	end
 	-- else
 	GetQuestReward(rewardIndex)
@@ -433,7 +408,7 @@ function module.GOSSIP_SHOW()
 	end
 	if questCount then
 		local options = {GetGossipOptions()}
-		for k, v in pairs(options) do
+		for _, v in pairs(options) do
 			if (v ~= "gossip") and (not BlackList[v]) then
 				local opcount = GetNumGossipOptions()
 				-- SelectGossipOption((opcount == 1) and 1 or  math.floor(k / GetNumGossipOptions()) + 1)

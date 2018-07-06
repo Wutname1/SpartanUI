@@ -1,5 +1,4 @@
 local _G, SUI = _G, SUI
-local artwork_Core = SUI:GetModule("Artwork_Core")
 local module = SUI:GetModule("Style_Transparent")
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
@@ -13,17 +12,14 @@ local FramesList = {
 }
 local base_plate1 = "Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\base_plate1.tga" -- Player and Target
 local base_plate2 = "Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\base_plate2.blp" -- Focus and Focus Target
-local base_plate4 = "Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\base_plate4.blp" -- TargetTarget small
 local square = "Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga"
 
 local Smoothv2 = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga"
-local texture = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\texture.tga"
-local metal = "Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\metal.tga"
 
 --Interface/WorldStateFrame/ICONS-CLASSES
 local lfdrole = "Interface\\AddOns\\SpartanUI\\media\\icon_role.tga"
 
-local classname, classFileName = UnitClass("player")
+local _, classFileName = UnitClass("player")
 local colors = setmetatable({}, {__index = SpartanoUF.colors})
 for k, v in pairs(SpartanoUF.colors) do
 	if not colors[k] then

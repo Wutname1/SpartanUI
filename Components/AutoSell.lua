@@ -1,13 +1,10 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
--- local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-local AceHook = LibStub("AceHook-3.0")
 local module = spartan:NewModule("Component_AutoSell", "AceTimer-3.0")
 ----------------------------------------------------------------------------------------------------
 local frame = CreateFrame("FRAME")
 local totalValue = 0
 local iCount = 0
 local iSellCount = 0
-local Timer = nil
 local bag = 0
 local OnlyCount = true
 local inSet = {}
@@ -151,7 +148,7 @@ function module:SellTrashInBag()
 
 	local solditem = 0
 	for slot = 1, GetContainerNumSlots(bag) do
-		local texture, count, locked, quality, readable, lootable, link, isFiltered, hasNoValue, itemID =
+		local _, _, _, _, _, _, link, _, _, itemID =
 			GetContainerItemInfo(bag, slot)
 		if module:IsSellable(itemID, link) then
 			if OnlyCount then
@@ -169,9 +166,7 @@ function module:SellTrashInBag()
 		return
 	end
 
-	if solditem == 5 then
-		--Process this bag again.
-	elseif bag ~= 4 then
+	if bag ~= 4 then
 		--Next bag
 		bag = bag + 1
 	else
@@ -189,20 +184,20 @@ function module:IsSellable(item, ilink)
 		return false
 	end
 	local name,
-		link,
+		_,
 		quality,
 		iLevel,
-		reqLevel,
+		_,
 		itemType,
 		itemSubType,
-		maxStack,
+		_,
 		equipSlot,
-		texture,
+		_,
 		vendorPrice,
-		itemClassID,
-		itemSubClassID,
-		bindType,
-		expacID,
+		_,
+		_,
+		_,
+		_,
 		itemSetID,
 		isCraftingReagent = GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
@@ -332,7 +327,7 @@ function module:SellTrash()
 	for i = 1, C_EquipmentSet.GetNumEquipmentSets() do
 		local name, _ = C_EquipmentSet.GetEquipmentSetInfo(i)
 		local items = C_EquipmentSet.GetEquipmentSetItemIDs(name)
-		for slot, item in pairs(items) do
+		for _, item in pairs(items) do
 			inSet[item] = name
 		end
 	end

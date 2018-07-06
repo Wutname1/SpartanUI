@@ -166,7 +166,7 @@ function module:ProcessNext()
 			end
 		end
 
-		local _, msgSubject, msgMoney, msgCOD, _, msgItem, _, _, msgText, _, isGM = select(3, GetInboxHeaderInfo(mailIndex))
+		local _, msgSubject, msgMoney, msgCOD, _, _, _, _, _, _, isGM = select(3, GetInboxHeaderInfo(mailIndex))
 
 		if (msgCOD and msgCOD > 0) or (isGM) then
 			skipFlag = true
@@ -211,14 +211,14 @@ function module:ProcessNext()
 		-- If inventory is full, check if the item to be looted can stack with an existing stack
 		local lootFlag = false
 		if attachIndex > 0 and invFull then
-			local name, itemID, itemTexture, count, quality, canUse = GetInboxItem(mailIndex, attachIndex)
+			local _, _, _, count = GetInboxItem(mailIndex, attachIndex)
 			local link = GetInboxItemLink(mailIndex, attachIndex)
 			local itemID = strmatch(link, "item:(%d+)")
 			local stackSize = select(8, GetItemInfo(link))
 			if itemID and stackSize and GetItemCount(itemID) > 0 then
 				for bag = 0, NUM_BAG_SLOTS do
 					for slot = 1, GetContainerNumSlots(bag) do
-						local texture2, count2, locked2, quality2, readable2, lootable2, link2 = GetContainerItemInfo(bag, slot)
+						local _, count2, _, _, _, _, link2 = GetContainerItemInfo(bag, slot)
 						if link2 then
 							local itemID2 = strmatch(link2, "item:(%d+)")
 							if itemID == itemID2 and count + count2 <= stackSize then

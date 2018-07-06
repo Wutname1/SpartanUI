@@ -1,6 +1,5 @@
 local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
 local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true)
-local AceConfig = LibStub("AceConfig-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local module = spartan:NewModule("Options")
 
@@ -24,17 +23,18 @@ function module:ArtSetup()
 end
 
 function module:OnInitialize()
-	local name, title, notes, enabled, loadable = GetAddOnInfo("SpartanUI_Artwork")
+	local enabled
+	_, _, _, enabled = GetAddOnInfo("SpartanUI_Artwork")
 	ModsLoaded.Artwork = enabled
-	local name, title, notes, enabled, loadable = GetAddOnInfo("SpartanUI_PlayerFrames")
+	_, _, _, enabled = GetAddOnInfo("SpartanUI_PlayerFrames")
 	ModsLoaded.PlayerFrames = enabled
-	local name, title, notes, enabled, loadable = GetAddOnInfo("SpartanUI_PartyFrames")
+	_, _, _, enabled = GetAddOnInfo("SpartanUI_PartyFrames")
 	ModsLoaded.PartyFrames = enabled
-	local name, title, notes, enabled, loadable = GetAddOnInfo("SpartanUI_RaidFrames")
+	_, _, _, enabled = GetAddOnInfo("SpartanUI_RaidFrames")
 	ModsLoaded.RaidFrames = enabled
-	local name, title, notes, enabled, loadable = GetAddOnInfo("SpartanUI_SpinCam")
+	_, _, _, enabled = GetAddOnInfo("SpartanUI_SpinCam")
 	ModsLoaded.SpinCam = enabled
-	local name, title, notes, enabled, loadable = GetAddOnInfo("SpartanUI_FilmEffects")
+	_, _, _, enabled = GetAddOnInfo("SpartanUI_FilmEffects")
 	ModsLoaded.FilmEffects = enabled
 
 	spartan.opt.args["General"].args["style"] = {
@@ -135,22 +135,6 @@ function module:OnInitialize()
 						func = function()
 							SUI.DBMod.Artwork.Style = "Fel"
 							SUI.DB.Styles.Fel.SubTheme = "War"
-							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
-							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
-							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
-							module:ArtSetup()
-						end
-					},
-					War = {
-						name = "War",
-						type = "execute",
-						disabled = true,
-						image = function()
-							return "interface\\addons\\SpartanUI\\media\\Style_War", 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = "Fel"
-							DB.Styles.Fel.SubTheme = "War"
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
@@ -827,7 +811,7 @@ function module:OnInitialize()
 						BT4BarPetBar,
 						BT4BarMicroMenu
 					}
-					for k, v in ipairs(FrameList) do
+					for _, v in ipairs(FrameList) do
 						if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
 							SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 						end
@@ -947,7 +931,7 @@ function module:OnInitialize()
 						[6] = "player",
 						[7] = "boss"
 					}
-					for a, b in pairs(FramesList) do
+					for _, b in pairs(FramesList) do
 						SUI.DBMod.PlayerFrames[b].moved = false
 					end
 					SUI.DBMod.PartyFrames.moved = false
@@ -1203,7 +1187,7 @@ function module:OnInitialize()
 
 	-- List Styles
 	for i = 1, GetNumAddOns() do
-		local name, title, notes, enabled, loadable = GetAddOnInfo(i)
+		local name = GetAddOnInfo(i)
 		ModsLoaded[name] = enabled
 		if (string.match(name, "SpartanUI_Style_")) then
 			spartan.opt.args["ModSetting"].args["Styles"].args[string.sub(name, 9)] = {
@@ -1290,7 +1274,7 @@ function module:ExportData()
 	local AddonsInstalled = {}
 
 	for i = 1, GetNumAddOns() do
-		local name, title, notes, enabled, loadable = GetAddOnInfo(i)
+		local name, _, _, enabled = GetAddOnInfo(i)
 		if enabled == true then
 			AddonsInstalled[i] = name
 		end
@@ -1328,7 +1312,6 @@ function module:FlatenTable(input)
 	return returnval
 end
 
-local b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 -- encoding
 function module:enc(data)
 	return ((data:gsub(
@@ -1343,6 +1326,7 @@ function module:enc(data)
 	) .. "0000"):gsub(
 		"%d%d%d?%d?%d?%d?",
 		function(x)
+			local b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 			if (#x < 6) then
 				return ""
 			end
@@ -1357,6 +1341,7 @@ end
 
 -- decoding
 function module:dec(data)
+	local b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 	data = string.gsub(data, "[^" .. b .. "=]", "")
 	return (data:gsub(
 		".",

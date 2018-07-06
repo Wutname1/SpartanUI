@@ -2,7 +2,7 @@ local addon = LibStub("AceAddon-3.0"):GetAddon("SpartanUI")
 
 --------------   oUF Functions   ------------------------------------
 function addon:HotsListing()
-	local class, classFileName = UnitClass("player")
+	local _, classFileName = UnitClass("player")
 	local _, _, _, _, _, _, LifebloomSpellId = GetSpellInfo("Lifebloom")
 	if classFileName == "DRUID" then
 		return {
@@ -119,21 +119,6 @@ function addon:pvpIcon(self, event, unit)
 end
 
 do -- ClassIcon as an SpartanoUF module
-	local ClassIconCoord = {
-		WARRIOR = {0.00, 0.25, 0.00, 0.25},
-		MAGE = {0.25, 0.50, 0.00, 0.25},
-		ROGUE = {0.50, 0.75, 0.00, 0.25},
-		DRUID = {0.75, 1.00, 0.00, 0.25},
-		HUNTER = {0.00, 0.25, 0.25, 0.50},
-		SHAMAN = {0.25, 0.50, 0.25, 0.50},
-		PRIEST = {0.50, 0.75, 0.25, 0.50},
-		WARLOCK = {0.75, 1.00, 0.25, 0.50},
-		PALADIN = {0.00, 0.25, 0.50, 0.75},
-		DEATHKNIGHT = {0.25, 0.50, 0.50, 0.75},
-		MONK = {0.50, 0.75, 0.50, 0.75},
-		DEMONHUNTER = {0.75, 1.00, 0.50, 0.75},
-		DEFAULT = {0.75, 1.00, 0.75, 1.00}
-	}
 	local Update = function(self, event, unit)
 		local icon = self.SUI_ClassIcon
 		if (icon) then
@@ -351,7 +336,6 @@ do --Color name by Class
 	SpartanoUF.Tags.Events["SUI_ColorClass"] = "UNIT_HEALTH"
 	SpartanoUF.Tags.Methods["SUI_ColorClass"] = function(u)
 		local _, class = UnitClass(u)
-		local reaction = UnitReaction(u, "player")
 
 		if (u == "pet") then
 			return hex(SpartanoUF.colors.class[class])

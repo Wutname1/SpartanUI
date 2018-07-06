@@ -51,7 +51,7 @@ function spartan:WhatsNew()
 						BT4BarPetBar,
 						BT4BarMicroMenu
 					}
-					for k, v in ipairs(FrameList) do
+					for _, v in ipairs(FrameList) do
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 					end
 
