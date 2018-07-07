@@ -99,23 +99,23 @@ function module:updateOffset()
 				end
 			end
 		end
+
 		for i = 1, 100 do -- Chocolate Bar Offset
 			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
 				local bar = _G['ChocolateBar' .. i]
 				local point = bar:GetPoint(1)
-				--if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
 				if point == 'RIGHT' then
 					ChocolateBar = ChocolateBar + bar:GetHeight()
 				end
-			-- bottom bars
 			end
 		end
+
 		TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
-		for i = 1, 2 do -- Titan Bar Offset
+
+		for i = 1, 2 do
 			if (_G['Titan_Bar__Display_' .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. '_Show')) then
 				local PanelScale = TitanPanelGetVar('Scale') or 1
-				local bar = _G['Titan_Bar__Display_' .. TitanBarOrder[i]]
-				titan = titan + (PanelScale * bar:GetHeight())
+				titan = titan + (PanelScale * _G['Titan_Bar__Display_' .. TitanBarOrder[i]]:GetHeight())
 			end
 		end
 
@@ -171,12 +171,10 @@ end
 function module:InitArtwork()
 	Artwork_Core:ActionBarPlates('Fel_ActionBarPlate')
 
-	do -- create bar anchor
-		plate = CreateFrame('Frame', 'Fel_ActionBarPlate', UIParent, 'Fel_ActionBarsTemplate')
-		plate:SetFrameStrata('BACKGROUND')
-		plate:SetFrameLevel(1)
-		plate:SetPoint('BOTTOM')
-	end
+	plate = CreateFrame('Frame', 'Fel_ActionBarPlate', UIParent, 'Fel_ActionBarsTemplate')
+	plate:SetFrameStrata('BACKGROUND')
+	plate:SetFrameLevel(1)
+	plate:SetPoint('BOTTOM')
 
 	FramerateText:ClearAllPoints()
 	FramerateText:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 10, -10)
@@ -191,30 +189,29 @@ function module:EnableArtwork()
 
 	Fel_SpartanUI.Right = Fel_SpartanUI:CreateTexture('Fel_SpartanUI_Right', 'BORDER')
 	Fel_SpartanUI.Right:SetPoint('LEFT', Fel_SpartanUI.Left, 'RIGHT', 0, 0)
+	local barBG
 
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Right')
-		Fel_Bar1BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_Bar2BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_Bar3BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_Bar4BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_MenuBarBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_StanceBarBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
+		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box'
 	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Left.tga')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Right.tga')
 		Fel_SpartanUI.Left:SetScale(.75)
 		Fel_SpartanUI.Right:SetScale(.75)
-		Fel_Bar1BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_Bar2BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_Bar3BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_Bar4BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_MenuBarBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
-		Fel_StanceBarBG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box')
+		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Barbg-'..UnitFactionGroup('Player')
 	else
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right')
+	end
+	if barBG then
+		Fel_Bar1BG:SetTexture(barBG)
+		Fel_Bar2BG:SetTexture(barBG)
+		Fel_Bar3BG:SetTexture(barBG)
+		Fel_Bar4BG:SetTexture(barBG)
+		Fel_MenuBarBG:SetTexture(barBG)
+		Fel_StanceBarBG:SetTexture(barBG)
 	end
 	module:updateOffset()
 
@@ -288,6 +285,7 @@ local SetXPColors = function(self)
 	_G[FrameName .. 'Lead']:SetVertexColor(r, g, b, a)
 	_G[FrameName .. 'LeadGlow']:SetVertexColor(r, g, b, (a + .1))
 end
+
 local SetRepColors = function(self)
 	local FrameName = self:GetName()
 	local _, _, reaction, _, _, _ = 0, GetWatchedFactionInfo()
@@ -440,101 +438,102 @@ local updateText = function(self, side)
 	end
 end
 
-function module:StatusBars()
-	do -- create the tooltip
-		tooltip = CreateFrame('Frame', 'Fel_StatusBarTooltip', SpartanUI, 'Fel_StatusBars_TooltipTemplate')
-		Fel_StatusBarTooltipHeader:SetJustifyH('LEFT')
-		Fel_StatusBarTooltipText:SetJustifyH('LEFT')
-		Fel_StatusBarTooltipText:SetJustifyV('TOP')
-		SUI:FormatFont(Fel_StatusBarTooltipHeader, 12, 'Core')
-		SUI:FormatFont(Fel_StatusBarTooltipText, 10, 'Core')
+local showXPTooltip = function(self)
+	local xptip1 = string.gsub(EXHAUST_TOOLTIP1, '\n', ' ') -- %s %d%% of normal experience gained from monsters.
+	local XP_LEVEL_TEMPLATE = '( %s / %s ) %d%% ' .. COMBAT_XP_GAIN -- use Global Strings and regex to make the level string work in any locale
+	local xprest = TUTORIAL_TITLE26 .. ' (%d%%) -' -- Rested (%d%%) -
+	local a = format('Level %s ', UnitLevel('player'))
+	local b =
+		format(
+		XP_LEVEL_TEMPLATE,
+		SUI:comma_value(UnitXP('player')),
+		SUI:comma_value(UnitXPMax('player')),
+		(UnitXP('player') / UnitXPMax('player') * 100)
+	)
+	Fel_StatusBarTooltipHeader:SetText(a .. b) -- Level 99 (9999 / 9999) 100% Experience
+	local rested, text = GetXPExhaustion() or 0
+	if (rested > 0) then
+		text = format(xptip1, format(xprest, (rested / UnitXPMax('player')) * 100), 200)
+		Fel_StatusBarTooltipText:SetText(text) -- Rested (15%) - 200% of normal experience gained from monsters.
+	else
+		Fel_StatusBarTooltipText:SetText(format(xptip1, EXHAUST_TOOLTIP2, 100)) -- You should rest at an Inn. 100% of normal experience gained from monsters.
 	end
+	tooltip:Show()
+end
 
-	local showXPTooltip = function(self)
-		local xptip1 = string.gsub(EXHAUST_TOOLTIP1, '\n', ' ') -- %s %d%% of normal experience gained from monsters.
-		local XP_LEVEL_TEMPLATE = '( %s / %s ) %d%% ' .. COMBAT_XP_GAIN -- use Global Strings and regex to make the level string work in any locale
-		local xprest = TUTORIAL_TITLE26 .. ' (%d%%) -' -- Rested (%d%%) -
-		local a = format('Level %s ', UnitLevel('player'))
-		local b =
+local showRepTooltip = function(self)
+	local name, react, low, high, current = GetWatchedFactionInfo()
+	if name then
+		text = GetFactionDetails(name)
+		ratio = (current - low) / (high - low)
+		Fel_StatusBarTooltipHeader:SetText(
 			format(
-			XP_LEVEL_TEMPLATE,
-			SUI:comma_value(UnitXP('player')),
-			SUI:comma_value(UnitXPMax('player')),
-			(UnitXP('player') / UnitXPMax('player') * 100)
+				'%s ( %s / %s ) %d%% %s',
+				name,
+				SUI:comma_value(current - low),
+				SUI:comma_value(high - low),
+				ratio * 100,
+				_G['FACTION_STANDING_LABEL' .. react]
+			)
 		)
-		Fel_StatusBarTooltipHeader:SetText(a .. b) -- Level 99 (9999 / 9999) 100% Experience
-		local rested, text = GetXPExhaustion() or 0
-		if (rested > 0) then
-			text = format(xptip1, format(xprest, (rested / UnitXPMax('player')) * 100), 200)
-			Fel_StatusBarTooltipText:SetText(text) -- Rested (15%) - 200% of normal experience gained from monsters.
-		else
-			Fel_StatusBarTooltipText:SetText(format(xptip1, EXHAUST_TOOLTIP2, 100)) -- You should rest at an Inn. 100% of normal experience gained from monsters.
-		end
-		tooltip:Show()
+		Fel_StatusBarTooltipText:SetText('|cffffd200' .. text .. '|r')
+	else
+		Fel_StatusBarTooltipHeader:SetText(REPUTATION)
+		Fel_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION)
 	end
-	local showRepTooltip = function(self)
-		local name, react, low, high, current = GetWatchedFactionInfo()
-		if name then
-			text = GetFactionDetails(name)
-			ratio = (current - low) / (high - low)
-			Fel_StatusBarTooltipHeader:SetText(
-				format(
-					'%s ( %s / %s ) %d%% %s',
-					name,
-					SUI:comma_value(current - low),
-					SUI:comma_value(high - low),
-					ratio * 100,
-					_G['FACTION_STANDING_LABEL' .. react]
-				)
-			)
-			Fel_StatusBarTooltipText:SetText('|cffffd200' .. text .. '|r')
-		else
-			Fel_StatusBarTooltipHeader:SetText(REPUTATION)
-			Fel_StatusBarTooltipText:SetText(REPUTATION_STANDING_DESCRIPTION)
-		end
-		tooltip:Show()
-	end
-	local showAPTooltip = function(self)
-		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
-			local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
-			local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
-			if xpForNextPoint == 0 then
-				return
-			end
-			local ratio = (xp / xpForNextPoint)
+	tooltip:Show()
+end
 
-			Fel_StatusBarTooltipHeader:SetText(name)
-			Fel_StatusBarTooltipText:SetFormattedText(
-				'( %s / %s ) %d%%',
-				SUI:comma_value(xp),
-				SUI:comma_value(xpForNextPoint),
-				ratio * 100
-			)
-		else
-			Fel_StatusBarTooltipHeader:SetText('No Artifact equiped')
-			Fel_StatusBarTooltipText:SetText('')
+local showAPTooltip = function(self)
+	if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
+		local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
+		if xpForNextPoint == 0 then
+			return
 		end
-		tooltip:Show()
+		local ratio = (xp / xpForNextPoint)
+
+		Fel_StatusBarTooltipHeader:SetText(name)
+		Fel_StatusBarTooltipText:SetFormattedText(
+			'( %s / %s ) %d%%',
+			SUI:comma_value(xp),
+			SUI:comma_value(xpForNextPoint),
+			ratio * 100
+		)
+	else
+		Fel_StatusBarTooltipHeader:SetText('No Artifact equiped')
+		Fel_StatusBarTooltipText:SetText('')
 	end
-	local showAzeriteTooltip = function(self)
-		if C_AzeriteItem.HasActiveAzeriteItem() then
-			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-			if (not azeriteItemLocation) then
-				return
-			end
-			local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
-			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
-			local xpToNextLevel = totalLevelXP - xp
-			local ratio = (xp / totalLevelXP)
-			Fel_StatusBarTooltipHeader:SetText(
-				AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel),
-				HIGHLIGHT_FONT_COLOR:GetRGB()
-			)
-			Fel_StatusBarTooltipText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
+	tooltip:Show()
+end
+
+local showAzeriteTooltip = function(self)
+	if C_AzeriteItem.HasActiveAzeriteItem() then
+		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+		if (not azeriteItemLocation) then
+			return
 		end
-		tooltip:Show()
+		local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
+		local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+		local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+		local xpToNextLevel = totalLevelXP - xp
+		local ratio = (xp / totalLevelXP)
+		Fel_StatusBarTooltipHeader:SetText(
+			AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel),
+			HIGHLIGHT_FONT_COLOR:GetRGB()
+		)
+		Fel_StatusBarTooltipText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
 	end
+	tooltip:Show()
+end
+
+function module:StatusBars()
+	tooltip = CreateFrame('Frame', 'Fel_StatusBarTooltip', SpartanUI, 'Fel_StatusBars_TooltipTemplate')
+	Fel_StatusBarTooltipHeader:SetJustifyH('LEFT')
+	Fel_StatusBarTooltipText:SetJustifyH('LEFT')
+	Fel_StatusBarTooltipText:SetJustifyV('TOP')
+	SUI:FormatFont(Fel_StatusBarTooltipHeader, 12, 'Core')
+	SUI:FormatFont(Fel_StatusBarTooltipText, 10, 'Core')
 
 	Fel_StatusBar_LeftPlate:SetTexCoord(0.17, 0.97, 0, 1)
 	Fel_StatusBar_Left:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -698,8 +697,8 @@ function module:MiniMapUpdate()
 		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap1')
 		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 0, 3)
 		Minimap.BG:SetAlpha(.75)
-		--Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap2')
-		--Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', -7, 5)
+		-- Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap2')
+		-- Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', -7, 5)
 		Minimap.BG:SetSize(256, 256)
 		Minimap.BG:SetBlendMode('ADD')
 	else
@@ -746,7 +745,6 @@ function module:MiniMap()
 	QueueStatusFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 100)
 
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
-
 
 	if SUI.DB.Styles.Fel.SubTheme == 'War' then
 		module.Settings.MiniMap.TextLocation = 'TOP'
