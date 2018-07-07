@@ -198,21 +198,28 @@ function module:EnableArtwork()
 	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Left.tga')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Right.tga')
+		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Barbg-' .. UnitFactionGroup('Player')
+
 		Fel_SpartanUI.Left:SetScale(.75)
 		Fel_SpartanUI.Right:SetScale(.75)
-		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Barbg-'..UnitFactionGroup('Player')
+
+		for i = 1, 4 do
+			_G['Fel_Bar' .. i .. 'BG']:SetAlpha(.25)
+		end
 	else
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right')
 	end
+
 	if barBG then
-		Fel_Bar1BG:SetTexture(barBG)
-		Fel_Bar2BG:SetTexture(barBG)
-		Fel_Bar3BG:SetTexture(barBG)
-		Fel_Bar4BG:SetTexture(barBG)
+		for i = 1, 4 do
+			_G['Fel_Bar' .. i .. 'BG']:SetTexture(barBG)
+		end
+
 		Fel_MenuBarBG:SetTexture(barBG)
 		Fel_StanceBarBG:SetTexture(barBG)
 	end
+
 	module:updateOffset()
 
 	hooksecurefunc(
