@@ -29,6 +29,8 @@ SUI.opt = {
 	}
 }
 
+---------------		Database		-------------------------------
+
 local FontItems = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
 local FontItemsSize = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
 local fontdefault = {Size = 0, Face = 'SpartanUI', Type = 'outline'}
@@ -52,8 +54,35 @@ local frameDefault2 = {
 	moved = false,
 	Anchors = {}
 }
-
----------------		Database		-------------------------------
+local StatusBarsDefaults = {
+	display = 'disabled',
+	ToolTip = 'hover',
+	text = true,
+	AutoColor = true,
+	Color = {0, 0, 0, 1},
+	FontSize = 10,
+	GlowAnchor = 'RIGHT',
+	GlowHeight = 20,
+	texCords = {0, 1, 0, 1}
+}
+local StatusBarsStyleDefaults = {
+	size = {256, 36},
+	Grow = 'LEFT',
+	bgTooltip = 'Interface\\Addons\\SpartanUI_Artwork\\Images\\status-tooltip',
+	texCordsTooltip = {0.1796875, 0.8203125, 0.103515625, 0.8984375},
+	TooltipSize = {300, 100},
+	TooltipTextSize = {230, 60},
+	TooltipTextWidth = 300,
+	tooltipAnchor = 'TOP',
+	FontSize = 9,
+	TextColor = {1, 1, 1, 1},
+	MaxWidth = 0,
+	GlowAnchor = 'RIGHT',
+	GlowPoint = {x = 0, y = 0},
+	GlowHeight = 20,
+	GlowImage = 'Interface\\AddOns\\SpartanUI_Artwork\\Images\\status-glow',
+	texCords = {0, 1, 0, 1}
+}
 
 local DBdefault = {
 	SUIProper = {
@@ -544,6 +573,31 @@ local DBdefault = {
 		Components = {}
 	},
 	Modules = {
+		StatusBars = {
+			default = StatusBarsStyleDefaults,
+			[1] = StatusBarsDefaults,
+			[2] = StatusBarsDefaults,
+			[3] = StatusBarsDefaults,
+			[4] = StatusBarsDefaults,
+			[5] = StatusBarsDefaults,
+			XPBar = {
+				GainedColor = 'Blue',
+				RestedColor = 'Light_Blue'
+			},
+			RepBar = {
+				GainedColor = 'AUTO',
+				AutoDefined = true
+			},
+			APBar = {
+				GainedColor = 'Orange'
+			},
+			AzeriteBar = {
+				GainedColor = 'Orange'
+			},
+			HonorBar = {
+				GainedColor = 'Red'
+			}
+		},
 		Artwork = {
 			Style = '',
 			FirstLoad = true,
@@ -668,6 +722,9 @@ local DBdefault = {
 		}
 	}
 }
+DBdefault.Modules.StatusBars[1].display = 'xp'
+DBdefault.Modules.StatusBars[2].display = 'rep'
+
 local DBdefaults = {char = DBdefault, profile = DBdefault}
 -- local SUI.DBGs = {Version = SUI.Version}
 
@@ -1078,9 +1135,14 @@ function SUI:Err(mod, err)
 	SUI:Print('|cffff0000Error detected')
 	SUI:Print("An error has been captured in the Component '" .. mod .. "'")
 	SUI:Print('Details: ' .. err)
-	SUI:Print('Please submit a bug at |cff3370FFhttp://spartanui.net/bugs')
+	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
 end
 
+--[[
+	Takes a target table and injects data from the source
+	override allows the source to be put into the target
+	even if its already populated
+]]
 function SUI:MergeData(target, source, override)
 	if type(target) ~= 'table' then
 		target = {}
@@ -1190,8 +1252,11 @@ end
 
 function SUI:FormatFont(element, size, Module)
 	--Adaptive Modules
+	if not Module then
+		Module = 'Primary'
+	end
 	if SUI.DB.font[Module] == nil then
-		SUI.DB.font[Module] = spartan.fontdefault
+		SUI.DB.font[Module] = fontdefault
 	end
 	--Set Font Outline
 	local flags, sizeFinal = ''

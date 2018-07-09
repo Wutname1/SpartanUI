@@ -32,7 +32,6 @@ function module:Init()
 	module:SetupMenus()
 	module:InitFramework()
 	module:InitActionBars()
-	module:InitStatusBars()
 	InitRan = true
 end
 
@@ -56,12 +55,48 @@ function module:OnEnable()
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
-		module:EnableStatusBars()
+		module:SetupStatusBars()
 
 		if (SUI.DBMod.Artwork.FirstLoad) then
 			SUI.DBMod.Artwork.FirstLoad = false
 		end -- We want to do this last
 	end
+end
+
+function module:SetupStatusBars()
+	local Settings = {
+		bars = {
+			'SUI_StatusBar_Left',
+			'SUI_StatusBar_Right'
+		},
+		SUI_StatusBar_Left = {
+			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
+			size = {370, 32},
+			TooltipSize = {300, 80},
+			TooltipTextSize = {280, 70},
+			texCords = {0.150390625, 0.96875, 0, 1},
+			-- texCordsTooltip = {0, 1, 0.234375, 0.84},
+			MaxWidth = 15
+		},
+		SUI_StatusBar_Right = {
+			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-rep',
+			Grow = 'RIGHT',
+			size = {370, 32},
+			TooltipSize = {300, 80},
+			TooltipTextSize = {280, 70},
+			texCords = {0, 0.849609375, 0, 1},
+			-- texCordsTooltip = {0, 1, 0.234375, 0.84},
+			GlowPoint = {x = 20},
+			MaxWidth = 50
+			-- bgTooltip = 'Interface\\Addons\\SpartanUI_Artwork\\Images\\status-tooltip'
+		}
+	}
+
+	local StatusBars = SUI:GetModule('Artwork_StatusBars')
+	StatusBars:Initalize(Settings)
+
+	StatusBars.bars.SUI_StatusBar_Left:SetPoint('BOTTOMRIGHT', 'SUI_ActionBarPlate', 'BOTTOM', -92, -2)
+	StatusBars.bars.SUI_StatusBar_Right:SetPoint('BOTTOMLEFT', 'SUI_ActionBarPlate', 'BOTTOM', 70, 0)
 end
 
 function module:SetupMenus()
@@ -523,8 +558,6 @@ function module:SetupMenus()
 			}
 		}
 	}
-
-	Artwork_Core:StatusBarOptions()
 
 	if (SUI.DB.alpha ~= 1) then
 		module:AddNotice()

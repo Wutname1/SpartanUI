@@ -26,7 +26,6 @@ function module:Init()
 		module:FirstLoad()
 	end
 	module:SetupMenus()
-	Artwork_Core:StatusBarOptions()
 	module:InitArtwork()
 	InitRan = true
 end

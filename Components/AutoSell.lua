@@ -19,7 +19,7 @@ function module:OnInitialize()
 		NotCrafting = true,
 		NotConsumables = true,
 		NotInGearset = true,
-		MaxILVL = 200,
+		MaxILVL = 180,
 		Gray = true,
 		White = false,
 		Green = false,
@@ -102,9 +102,9 @@ function module:FirstTime()
 			--Max iLVL
 			control = gui:Create('Slider')
 			control:SetLabel('Max iLVL to sell')
-			control:SetSliderValues(1, 1100, 1)
+			control:SetSliderValues(1, 500, 1)
 			-- control:SetIsPercent(v.isPercent)
-			control:SetValue(700)
+			control:SetValue(180)
 			control:SetPoint('TOPLEFT', SUI_Win.AutoSell.SellPurple, 'BOTTOMLEFT', 0, -15)
 			control:SetWidth(SUI_Win:GetWidth() / 1.3)
 			-- control:SetCallback("OnValueChanged",function(self) print(self:GetValue()) end)
@@ -116,6 +116,7 @@ function module:FirstTime()
 			--Defaults
 			SUI_AutoSell_Enabled:SetChecked(true)
 			SUI_AutoSell_SellGray:SetChecked(true)
+			SUI_AutoSell_SellWhite:SetChecked(true)
 		end,
 		Next = function()
 			SUI.DB.AutoSell.FirstLaunch = false

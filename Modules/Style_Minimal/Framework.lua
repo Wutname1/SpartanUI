@@ -249,15 +249,6 @@ function module:RemoveVehicleUI()
 end
 
 function module:EnableFramework()
-	do -- create the tooltip
-		tooltip = CreateFrame('Frame', 'Minimal_StatusBarTooltip', Minimal_SpartanUI, 'Minimal_StatusBars_TooltipTemplate')
-		Minimal_StatusBarTooltipHeader:SetJustifyH('LEFT')
-		Minimal_StatusBarTooltipText:SetJustifyH('LEFT')
-		Minimal_StatusBarTooltipText:SetJustifyV('TOP')
-		SUI:FormatFont(Minimal_StatusBarTooltipHeader, 12, 'Core')
-		SUI:FormatFont(Minimal_StatusBarTooltipText, 10, 'Core')
-	end
-
 	module:SetColor()
 
 	anchor:SetFrameStrata('BACKGROUND')

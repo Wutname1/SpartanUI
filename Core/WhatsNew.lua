@@ -121,7 +121,7 @@ function module:FirstArtifact()
 			SUI_Win.Next:SetText('TRACK ARTIFACT POWER')
 		end,
 		Next = function()
-			SUI.DB.StatusBars.right = 'ap'
+			SUI.DBMod.StatusBars[2].display = 'ap'
 			spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):UpdateStatusBars()
 		end,
 		Skip = function()
@@ -178,13 +178,13 @@ function module:FirstAtrifactNotice()
 						ArtifactWatcher:RegisterEvent('UNIT_INVENTORY_CHANGED')
 					end
 				end
-				if HasArtifactEquipped() and not (SUI.DB.StatusBars.right == 'ap' or SUI.DB.StatusBars.left == 'ap') then
+				if HasArtifactEquipped() and not (SUI.DBMod.StatusBars[1].display == 'ap' or SUI.DBMod.StatusBars[2].display == 'ap') then
 					module:FirstArtifact()
 					ArtifactWatcher:UnregisterEvent('ARTIFACT_XP_UPDATE')
 					ArtifactWatcher:UnregisterEvent('UNIT_INVENTORY_CHANGED')
 					ArtifactWatcher:UnregisterEvent('PLAYER_LEVEL_UP')
 					ArtifactWatcher = nil
-				elseif (SUI.DB.StatusBars.right == 'ap' or SUI.DB.StatusBars.left == 'ap') then
+				elseif (SUI.DBMod.StatusBars[2].display == 'ap' or SUI.DBMod.StatusBars[2].display == 'ap') then
 					ArtifactWatcher:UnregisterEvent('ARTIFACT_XP_UPDATE')
 					ArtifactWatcher:UnregisterEvent('UNIT_INVENTORY_CHANGED')
 					ArtifactWatcher:UnregisterEvent('PLAYER_LEVEL_UP')

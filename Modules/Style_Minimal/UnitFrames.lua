@@ -856,6 +856,51 @@ function module:PlayerFrames()
 			end
 		end
 	end
+
+	local arena = {}
+	for i = 1, 3 do
+		arena[i] = SpartanoUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
+		if i == 1 then
+			arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
+			arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
+		else
+			arena[i]:SetPoint('TOP', arena[i - 1], 'BOTTOM', 0, -10)
+		end
+	end
+	arena.mover = CreateFrame('Frame')
+	arena.mover:SetSize(5, 5)
+	arena.mover:SetPoint('TOPLEFT', SUI_Arena1, 'TOPLEFT')
+	arena.mover:SetPoint('TOPRIGHT', SUI_Arena1, 'TOPRIGHT')
+	arena.mover:SetPoint('BOTTOMLEFT', 'SUI_Arena3', 'BOTTOMLEFT')
+	arena.mover:SetPoint('BOTTOMRIGHT', 'SUI_Arena3', 'BOTTOMRIGHT')
+	arena.mover:EnableMouse(true)
+
+	arena.bg = arena.mover:CreateTexture(nil, 'BACKGROUND')
+	arena.bg:SetAllPoints(arena.mover)
+	arena.bg:SetTexture(1, 1, 1, 0.5)
+
+	arena.mover:Hide()
+	arena.mover:RegisterEvent('VARIABLES_LOADED')
+	arena.mover:RegisterEvent('PLAYER_REGEN_DISABLED')
+
+	function PlayerFrames:UpdatearenaFramePosition()
+		if (InCombatLockdown()) then
+			return
+		end
+		if DBMod.PlayerFrames.ArenaFrame.movement.moved then
+			SUI_arena1:SetPoint(
+				DBMod.PlayerFrames.ArenaFrame.movement.point,
+				DBMod.PlayerFrames.ArenaFrame.movement.relativeTo,
+				DBMod.PlayerFrames.ArenaFrame.movement.relativePoint,
+				DBMod.PlayerFrames.ArenaFrame.movement.xOffset,
+				DBMod.PlayerFrames.ArenaFrame.movement.yOffset
+			)
+		else
+			SUI_arena1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
+		end
+	end
+
+	PlayerFrames.arena = arena
 end
 
 function module:PositionFrame(b)

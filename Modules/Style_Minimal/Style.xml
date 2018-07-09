@@ -81,29 +81,6 @@
 		</Frames>
 	</Frame>
 	
-	<!-- Minimal_StatusBars_TooltipTemplate -->
-	<Frame name="Minimal_StatusBars_TooltipTemplate" frameStrata="TOOLTIP" virtual="true">
-		<Size><AbsDimension x="374" y="70"/></Size>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture file="Interface\AddOns\SpartanUI_Style_Minimal\Images\status-tooltip">
-					<Anchors><Anchor point="CENTER"/></Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="ARTWORK">
-				<FontString name="$parentHeader" inherits="SUI_FontOutline12">
-					<Size><AbsDimension x="390" y="16" /></Size>
-					<Anchors><Anchor point="TOP"/></Anchors>
-				</FontString>
-				<FontString name="$parentText" inherits="SUI_FontOutline10">
-					<Size><AbsDimension x="378" y="46" /></Size>
-					<Anchors><Anchor point="TOP" relativeTo="$parentHeader" relativePoint="BOTTOM">
-						<Offset><AbsDimension x="0" y="-2"/></Offset>
-					</Anchor></Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-	</Frame>
 	
 	<!-- Minimal_ActionBarsTemplate -->
 	<Frame name="Minimal_ActionBarsTemplate" parent="Minimal_SpartanUI" frameStrata="BACKGROUND" virtual="true">

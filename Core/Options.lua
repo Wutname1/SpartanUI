@@ -795,7 +795,7 @@ function module:OnInitialize()
 					end
 
 					--Force REbuild of primary bar profile
-					spartan:GetModule('Style_' .. DBMod.Artwork.Style):SetupProfile()
+					spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupProfile()
 
 					--Reset Moved bars
 					local FrameList = {

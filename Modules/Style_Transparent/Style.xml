@@ -41,75 +41,6 @@
 		</Layers>
 	</Frame>
 	
-	<!-- Transparent_StatusBars_TooltipTemplate -->
-	<Frame name="Transparent_StatusBars_TooltipTemplate" frameStrata="TOOLTIP" virtual="true">
-		<Size><AbsDimension x="374" y="70"/></Size>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture file="Interface\AddOns\SpartanUI_Style_Transparent\Images\status-tooltip">
-					<Anchors><Anchor point="CENTER"/></Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="ARTWORK">
-				<FontString name="$parentHeader" inherits="SUI_FontOutline12">
-					<Size><AbsDimension x="390" y="16" /></Size>
-					<Anchors><Anchor point="TOP"/></Anchors>
-				</FontString>
-				<FontString name="$parentText" inherits="SUI_FontOutline10">
-					<Size><AbsDimension x="378" y="46" /></Size>
-					<Anchors><Anchor point="TOP" relativeTo="$parentHeader" relativePoint="BOTTOM">
-						<Offset><AbsDimension x="0" y="-2"/></Offset>
-					</Anchor></Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-	</Frame>
-	
-	<!-- Transparent_StatusBars_XPTemplate -->
-	<Frame name="Transparent_StatusBars_XPTemplate" frameStrata="BACKGROUND" enableMouse="true" virtual="true">
-		<Size><AbsDimension x="400" y="10" /></Size>
-		<Layers>
-			<Layer level="OVERLAY">
-				<Texture name="$parentPlate" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\status-plate-rep">
-					<Size><AbsDimension x="400" y="10" /></Size>
-					<Anchors><Anchor point="RIGHT"/></Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="BORDER">
-				<Texture name="$parentFill" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\status-glow">
-					<Size><AbsDimension x="400" y="10" /></Size>
-					<Anchors><Anchor point="RIGHT" /></Anchors>
-				</Texture>
-				<Texture name="$parentLead" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\status-glow">
-					<Size><AbsDimension x=".1" y="10" /></Size>
-					<Anchors><Anchor point="RIGHT" relativeTo="$parentFill" relativePoint="LEFT"/></Anchors>
-					<TexCoords left="1" right="0" top="0" bottom="1" />
-				</Texture>
-			</Layer>
-			<Layer level="ARTWORK">
-				<Texture name="$parentFillGlow" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\status-glow" alphaMode="ADD">
-					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo="$parentFill" relativePoint="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT" relativeTo="$parentFill" relativePoint="BOTTOMRIGHT"/>
-					</Anchors>
-				</Texture>
-				<Texture name="$parentLeadGlow" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\status-glow" alphaMode="ADD">
-					<Anchors>
-						<Anchor point="TOPLEFT" relativeTo="$parentLead" relativePoint="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT" relativeTo="$parentLead" relativePoint="BOTTOMRIGHT"/>
-					</Anchors>
-					<TexCoords left="1" right="0" top="0" bottom="1" />
-				</Texture>
-			</Layer>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentPlate" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\status-plate-rep">
-					<Size><AbsDimension x="400" y="10" /></Size>
-					<Anchors><Anchor point="LEFT"/></Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-	</Frame>
-	
 	<!-- Transparent_PopTemplate -->
 	<Frame name="Transparent_PopTemplate" frameStrata="BACKGROUND" virtual="true">
 		<Size><AbsDimension x="400" y="32" /></Size>
@@ -193,7 +124,6 @@
 	<Script file="Global-Framework.lua" />
 	<Script file="Module-ActionBars.lua" />
  	<Script file="Module-Minimap.lua" />
-	<Script file="Module-StatusBars.lua" />
 	<Script file="Module-UnitFrames.lua" />
 	<Script file="Style.lua" />
 </Ui>

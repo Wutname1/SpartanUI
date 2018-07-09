@@ -197,7 +197,6 @@ function module:ShapeChange(shape)
 		Minimap.coords:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 4)
 	end
 
-	MinimapZoneText:SetTextColor(1, 1, 1, 1)
 	MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 	MinimapZoneText:SetShadowOffset(1, -1)
 end
@@ -349,7 +348,6 @@ function module:ModifyMinimapLayout()
 
 			MinimapZoneTextButton:SetPoint('BOTTOMLEFT', Minimap, 'TOPLEFT', 0, 4)
 			MinimapZoneTextButton:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 4)
-			MinimapZoneText:SetTextColor(1, 1, 1, 1)
 			MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 			MinimapZoneText:SetShadowOffset(1, -1)
 

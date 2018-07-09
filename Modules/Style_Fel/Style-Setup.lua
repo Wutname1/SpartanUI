@@ -237,12 +237,6 @@ local Defaults = {
 	},
 	TooltipLoc = true,
 	SubTheme = 'Fel',
-	StatusBars = {
-		XP = true,
-		REP = true,
-		AP = true,
-		HONOR = true
-	},
 	BuffLoc = true
 }
 if not SUI.DB.Styles.Fel.Artwork then
