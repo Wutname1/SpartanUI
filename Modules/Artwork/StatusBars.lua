@@ -132,18 +132,24 @@ local updateText = function(self)
 	self.Lead:SetWidth(0.1)
 	--Reset Text
 	self.Text:SetText('')
-	
+
 	local side = self.i
 	local valFill, valMax, valPercent
 
 	if (module.DB[side].display == 'xp') then
 		local _, rested, now, goal = UnitLevel('player'), GetXPExhaustion() or 0, UnitXP('player'), UnitXPMax('player')
 		if now ~= 0 then
-			self.Fill:SetWidth((now / goal) * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)))
 			rested = (rested / goal) * 400
-			if (rested + self.Fill:GetWidth()) > (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)) then
-				rested = (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)) - self.Fill:GetWidth()
+
+			if
+				(rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x))) >
+					(self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x))
+			 then
+				rested =
+					(self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)) -
+					(now / goal) * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x))
 			end
+
 			if rested == 0 then
 				rested = .001
 			end
@@ -159,20 +165,13 @@ local updateText = function(self)
 		local repLevelHigh = (high - low)
 
 		if repLevelHigh == 0 and name then
-			self.Fill:SetWidth(self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x))
 			valFill = 42000
 			valMax = 42000
 			valPercent = 100
 		elseif name then
-			local ratio = repLevelLow / repLevelHigh
-			if ratio == 0 then
-				self.Fill:SetWidth(0.1)
-			else
-				self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)))
-			end
 			valFill = repLevelLow
 			valMax = repLevelHigh
-			valPercent = ratio * 100
+			valPercent = (repLevelLow / repLevelHigh) * 100
 		end
 
 		SetRepColors(self)
@@ -184,19 +183,11 @@ local updateText = function(self)
 				return
 			end
 			local ratio = (xp / valMax)
-			if ratio == 0 then
-				self.Fill:SetWidth(0.1)
-			else
-				if (ratio * self:GetWidth()) > self:GetWidth() then
-					self.Fill:SetWidth(self:GetWidth())
-				else
-					self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)))
-				end
-			end
 			valFill = xp
 			valPercent = ratio * 100
 
 			self.Fill:SetVertexColor(1, 0.8, 0, 0.7)
+			self.FillGlow:SetVertexColor(1, 0.8, 0, 0.7)
 		end
 	elseif (module.DB[side].display == 'az') then
 		if C_AzeriteItem.HasActiveAzeriteItem() then
@@ -209,30 +200,31 @@ local updateText = function(self)
 			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 			valMax = totalLevelXP - xp
 			local ratio = (xp / totalLevelXP)
-			if ratio == 0 then
-				self.Fill:SetWidth(0.1)
-			else
-				if (ratio * self:GetWidth()) > self:GetWidth() then
-					self.Fill:SetWidth(self:GetWidth())
-				else
-					self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)))
-				end
-			end
 			valFill = xp
 			percentage = ratio * 100
 
 			self.Fill:SetVertexColor(1, 0.8, 0, 0.7)
+			self.FillGlow:SetVertexColor(1, 0.8, 0, 0.7)
 		end
 	elseif (module.DB[side].display == 'honor') then
-		if module.DB[side].text then
-			local _, _, _, _, xp, pointsSpent = C_HonorUI.GetEquippedHonorInfo()
-			valMax = C_HonorUI.GetCostForPointAtRank(pointsSpent)
-			valFill = xp
-			percentage = (xp / valMax) * 100
-		end
+		-- local honorLevel = UnitHonorLevel("player");
+		valFill = UnitHonor('player')
+		valMax = UnitHonorMax('player')
+		valPercent = ((valFill / valMax) * 100)
+
+		self.Fill:SetVertexColor(1, 0, 0, 0.9)
+		self.FillGlow:SetVertexColor(1, 0, 0, 0.9)
 	end
 
-	if module.DB[side].text then
+	if valPercent ~= 0 then
+		local ratio = (valPercent / 100)
+		if (ratio * self:GetWidth()) > self:GetWidth() then
+			self.Fill:SetWidth(self:GetWidth())
+		else
+			self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)))
+		end
+	end
+	if module.DB[side].text and valFill and valMax and valPercent then
 		self.Text:SetFormattedText('( %s / %s ) %d%%', SUI:comma_value(valFill), SUI:comma_value(valMax), valPercent)
 	end
 end
@@ -314,7 +306,25 @@ local showAPTooltip = function(self)
 	self.tooltip:Show()
 end
 
-local showHonorTooltip = function(args)
+local showHonorTooltip = function(self)
+	local honorLevel = UnitHonorLevel('player')
+	local currentHonor = UnitHonor('player')
+	local maxHonor = UnitHonorMax('player')
+	-- valPercent = (currentHonor / maxHonor)
+
+	local nextRewardInfo = C_PvP.GetHonorRewardInfo(C_PvP.GetNextHonorLevelForReward(honorLevel))
+	print(nextRewardInfo)
+
+	-- self.tooltip.TextFrame.HeaderText:SetText()
+	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, C_PvP.GetNextHonorLevelForReward(honorLevel))
+	self.tooltip.TextFrame.MainText:SetFormattedText(
+		'( %s / %s ) %d%%',
+		SUI:comma_value(currentHonor),
+		SUI:comma_value(maxHonor),
+		((currentHonor / maxHonor) * 100)
+	)
+
+	self.tooltip:Show()
 end
 
 local showAzeriteTooltip = function(self)
@@ -345,7 +355,7 @@ function module:factory()
 	for i, key in ipairs(StyleSettings.bars) do
 		if StyleSettings[key] then
 			local StyleSetting = SUI:MergeData(StyleSettings[key], module.DB.default, false)
-			
+
 			--Status Bar
 			local statusbar = CreateFrame('Frame', nil, UIParent)
 			statusbar:SetSize(unpack(StyleSetting.size))
