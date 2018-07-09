@@ -1060,46 +1060,7 @@ function SUI:OnEnable()
 	self:RegisterChatCommand('suihelp', 'suihelp')
 	self:RegisterChatCommand('spartanui', 'ChatCommand')
 
-	local CountUnit = function(t, strict)
-		if t == nil or t == '' then
-			SUI:Print('Nothing to search for. Please enter a unit name, search is not case-sensitive.')
-			SUI:Print('For a general search use /countunit Auctioneer')
-			SUI:Print('For a specific unit use /countunitstrict Dark rune guardian')
-			return
-		end
-		t = string.lower(t)
-		local c = 0
-		local p
-		for i = 1, 10000 do
-			p = _G['NamePlate' .. i .. 'UnitFrame']
-			if p and p:IsVisible() then
-				local name = string.lower(p.name:GetText())
-				if strict then
-					c = c + (name == t and 1 or 0)
-				else
-					c = c + (string.match(name, t) and 1 or 0)
-				end
-			elseif not p and i == 1 then
-				SUI:Print('No nameplates detected')
-				return
-			end
-		end
-		SUI:Print(t, ': ', c)
-	end
-
-	self:RegisterChatCommand(
-		'countunitstrict',
-		function(t)
-			CountUnit(t, true)
-		end
-	)
-	self:RegisterChatCommand(
-		'countunit',
-		function(t)
-			CountUnit(t)
-		end
-	)
-
+	--Reopen options screen if flagged to do so after a reloadui
 	local LaunchOpt = CreateFrame('Frame')
 	LaunchOpt:SetScript(
 		'OnEvent',
@@ -1116,15 +1077,32 @@ end
 function SUI:suihelp(input)
 	AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 	AceConfigDialog:Open('SpartanUI', 'General', 'Help')
-	-- AceConfigDialog:SelectGroup("SpartanUI", spartan.opt.args["General"].args["Help"])
 end
 
+local ResetDBWarning = false
 function SUI:ChatCommand(input)
-	if input == 'version' then
+	if input == 'resetfulldb' then
+		if ResetDBWarning then
+			Bartender4.db:ResetDB()
+			SUI.SpartanUIDB:ResetDB()
+		else
+			ResetDBWarning = true
+			SUI:Print('|cffff0000Warning')
+			SUI:Print('This will reset the full SpartanUI & Bartender4 Database. If you wish to continue perform the chat command again.')
+		end
+	elseif input == 'resetdb' then
+		if ResetDBWarning then
+			SUI.SpartanUIDB:ResetDB()
+		else
+			ResetDBWarning = true
+			SUI:Print('|cffff0000Warning')
+			SUI:Print('This will reset the SpartanUI Database. If you wish to continue perform the chat command again.')
+		end
+	elseif input == 'help' then
+		SUI:suihelp()
+	elseif input == 'version' then
 		SUI:Print('SpartanUI ' .. L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
-		SUI:Print('SpartanUI Curse ' .. L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Curse-Packaged-Version'))
-	elseif input == 'map' then
-		Minimap.mover:Show()
+		SUI:Print('SpartanUI Build Number ' .. L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Build'))
 	else
 		AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 		AceConfigDialog:Open('SpartanUI')
