@@ -34,6 +34,16 @@ local Defaults = {
 	Minimap = {
 		Engulfed = true
 	},
+	SlidingTrays =  {
+		left = {
+			enabled = true,
+			collapsed = false
+		},
+		right = {
+			enabled = true,
+			collapsed = false
+		}
+	},
 	TalkingHeadUI = {
 		point = 'TOP',
 		relPoint = 'TOP',

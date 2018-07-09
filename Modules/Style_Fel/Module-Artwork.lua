@@ -2,6 +2,7 @@ local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:GetModule('Style_Fel')
 ----------------------------------------------------------------------------------------------------
+module.Trays = {}
 local CurScale
 local petbattle = CreateFrame('Frame')
 
@@ -218,6 +219,7 @@ function module:EnableArtwork()
 	module:updateScale()
 	module:updateAlpha()
 	module:StatusBars()
+	module:SlidingTrays()
 end
 
 function module:StatusBars()
@@ -268,15 +270,57 @@ function module:StatusBars()
 
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
 	StatusBars:Initalize(Settings)
-	
+
 	if SUI.DB.Styles.Fel.SubTheme == 'War' then
 		StatusBars.bars.Fel_StatusBar_Left:SetAlpha(.9)
 		StatusBars.bars.Fel_StatusBar_Right:SetAlpha(.9)
 	end
-	
+
 	-- Position the StatusBars
 	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', Fel_SpartanUI, 'BOTTOM', -100, 0)
 	StatusBars.bars.Fel_StatusBar_Right:SetPoint('BOTTOMLEFT', Fel_SpartanUI, 'BOTTOM', 100, 0)
+end
+
+-- Artwork Stuff
+function module:SlidingTrays()
+	local trayIDs = {'left', 'right'}
+	for _, key in ipairs(trayIDs) do
+		local tray = CreateFrame('Frame', nil, UIParent)
+		tray:SetFrameStrata('BACKGROUND')
+		tray:SetSize(400, 45)
+
+		tray.bg = tray:CreateTexture(nil, 'BACKGROUND')
+		tray.bg:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Trays-' .. UnitFactionGroup('Player'))
+		tray.bg:SetAllPoints(tray)
+		tray.bg:SetTexCoord(0.076171875, 0.92578125, 0, 0.18359375)
+
+		tray.bgCollapsed = tray:CreateTexture(nil, 'BACKGROUND')
+		tray.bgCollapsed:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Trays-' .. UnitFactionGroup('Player'))
+		tray.bgCollapsed:SetPoint('TOPLEFT', tray, 'BOTTOMLEFT')
+		tray.bgCollapsed:SetPoint('TOPRIGHT', tray, 'BOTTOMRIGHT')
+		tray.bgCollapsed:SetHeight(18)
+		tray.bgCollapsed:SetTexCoord(0.076171875, 0.92578125, 1, 0.92578125)
+
+		tray.bgCollapsed:Hide()
+		
+		module.Trays[key] = tray
+	end
+
+	module.Trays.left:SetAlpha(.8)
+	module.Trays.right:SetAlpha(.8)
+	
+	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, 0)
+	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, 0)
+
+	if SUI.DB.Styles.Fel.SlidingTrays.left.collapsed then
+		module.Trays.left:SetPoint('TOP', UIParent, 'TOP', 100, -45)
+		module.Trays.left.bgCollapsed:Show()
+	end
+	if SUI.DB.Styles.Fel.SlidingTrays.right.collapsed then
+		module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 100, -45)
+		module.Trays.right.bgCollapsed:Show()
+	end
+	
 end
 
 -- Bartender Stuff

@@ -723,7 +723,7 @@ local DBdefault = {
 	}
 }
 DBdefault.Modules.StatusBars[1].display = 'xp'
-DBdefault.Modules.StatusBars[2].display = 'rep'
+DBdefault.Modules.StatusBars[2].display = 'honor'
 
 local DBdefaults = {char = DBdefault, profile = DBdefault}
 -- local SUI.DBGs = {Version = SUI.Version}
