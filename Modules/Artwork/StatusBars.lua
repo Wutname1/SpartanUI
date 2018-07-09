@@ -212,8 +212,8 @@ local updateText = function(self)
 		valMax = UnitHonorMax('player')
 		valPercent = ((valFill / valMax) * 100)
 
-		self.Fill:SetVertexColor(1, 0, 0, 0.9)
-		self.FillGlow:SetVertexColor(1, 0, 0, 0.9)
+		self.Fill:SetVertexColor(1, 0, 0, 0.7)
+		self.FillGlow:SetVertexColor(1, 0, 0, 0.7)
 	end
 
 	if valPercent ~= 0 then
@@ -310,12 +310,7 @@ local showHonorTooltip = function(self)
 	local honorLevel = UnitHonorLevel('player')
 	local currentHonor = UnitHonor('player')
 	local maxHonor = UnitHonorMax('player')
-	-- valPercent = (currentHonor / maxHonor)
 
-	local nextRewardInfo = C_PvP.GetHonorRewardInfo(C_PvP.GetNextHonorLevelForReward(honorLevel))
-	print(nextRewardInfo)
-
-	-- self.tooltip.TextFrame.HeaderText:SetText()
 	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, C_PvP.GetNextHonorLevelForReward(honorLevel))
 	self.tooltip.TextFrame.MainText:SetFormattedText(
 		'( %s / %s ) %d%%',
