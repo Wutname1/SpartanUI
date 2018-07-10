@@ -1,6 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
-local module = spartan:NewModule('Component_Objectives')
+local _G, SUI, L = _G, SUI, SUI.L
+local module = SUI:NewModule('Component_Objectives')
 ----------------------------------------------------------------------------------------------------
 local ObjectiveTrackerWatcher = CreateFrame('Frame')
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
@@ -91,7 +90,7 @@ function module:OnInitialize()
 	if not SUI.DBMod.Objectives then
 		SUI.DBMod.Objectives = Defaults
 	else
-		SUI.DBMod.Objectives = spartan:MergeData(SUI.DBMod.Objectives, Defaults, false)
+		SUI.DBMod.Objectives = SUI:MergeData(SUI.DBMod.Objectives, Defaults, false)
 	end
 	if SUI.DBMod.Artwork.SetupDone then
 		SUI.DBMod.Objectives.SetupDone = true
@@ -146,7 +145,7 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['Objectives'] = {
+	SUI.opt.args['ModSetting'].args['Objectives'] = {
 		type = 'group',
 		name = L['Objectives'],
 		args = {
@@ -166,13 +165,13 @@ function module:BuildOptions()
 		}
 	}
 	for k, v in ipairs(RuleList) do
-		spartan.opt.args['ModSetting'].args['Objectives'].args[v .. 'Title'] = {
+		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Title'] = {
 			name = v,
 			type = 'header',
 			order = k,
 			width = 'full'
 		}
-		spartan.opt.args['ModSetting'].args['Objectives'].args[v .. 'Status'] = {
+		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Status'] = {
 			name = 'When to hide',
 			type = 'select',
 			order = k + .2,
@@ -185,13 +184,13 @@ function module:BuildOptions()
 				ObjTrackerUpdate()
 			end
 		}
-		spartan.opt.args['ModSetting'].args['Objectives'].args[v .. 'Text'] = {
+		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Text'] = {
 			name = '',
 			type = 'description',
 			order = k + .3,
 			width = 'half'
 		}
-		spartan.opt.args['ModSetting'].args['Objectives'].args[v .. 'Combat'] = {
+		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Combat'] = {
 			name = L['Only if in combat'],
 			type = 'toggle',
 			order = k + .4,
@@ -207,7 +206,7 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args['ModSetting'].args['Objectives'].disabled = true
+	SUI.opt.args['ModSetting'].args['Objectives'].disabled = true
 end
 
 function module:FirstTimeSetup()
@@ -296,7 +295,7 @@ function module:FirstTimeSetup()
 			SUI_Win.Objectives = nil
 		end
 	}
-	local SetupWindow = spartan:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWindow')
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
 end

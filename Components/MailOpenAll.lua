@@ -1,6 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local module = spartan:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-3.0')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
+local SUI, L = SUI, SUI.L
+local module = SUI:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-3.0')
 module.DisplayName = 'Open all mail'
 
 local MAX_MAIL_SHOWN = 50
@@ -20,7 +19,7 @@ function module:OnInitialize()
 	if not SUI.DB.MailOpenAll then
 		SUI.DB.MailOpenAll = Defaults
 	else
-		SUI.DB.MailOpenAll = spartan:MergeData(SUI.DB.MailOpenAll, Defaults, false)
+		SUI.DB.MailOpenAll = SUI:MergeData(SUI.DB.MailOpenAll, Defaults, false)
 	end
 end
 
@@ -51,7 +50,7 @@ function module:RefreshMail()
 	local current, total = GetInboxNumItems()
 	if current == MAX_MAIL_SHOWN or current == total then
 		self.time = 10
-		spartan:Print(L['Refreshing mailbox'])
+		SUI:Print(L['Refreshing mailbox'])
 		CheckInbox()
 	else
 		self:Hide()
@@ -90,7 +89,7 @@ function module:Enable()
 end
 
 function module:Disable()
-	spartan:Print('Auto open mail disabled')
+	SUI:Print('Auto open mail disabled')
 	self:Reset()
 	button:Hide()
 end
@@ -182,7 +181,7 @@ function module:ProcessNext()
 				playerName = select(3, GetInboxInvoiceInfo(mailIndex))
 				playerName = playerName and (' (' .. playerName .. ')')
 			end
-			spartan:Print(format('%s %d: %s%s%s', L['Mail'], mailIndex, msgSubject or '', moneyString, (playerName or '')))
+			SUI:Print(format('%s %d: %s%s%s', L['Mail'], mailIndex, msgSubject or '', moneyString, (playerName or '')))
 		end
 
 		-- Find next attachment index
@@ -202,7 +201,7 @@ function module:ProcessNext()
 			if free <= SUI.DB.MailOpenAll.FreeSpace then
 				invFull = true
 				invAlmostFull = nil
-				spartan:Print(format(L['Auto open disabled. There is only %d bagslots free.'], free))
+				SUI:Print(format(L['Auto open disabled. There is only %d bagslots free.'], free))
 			elseif free <= SUI.DB.MailOpenAll.FreeSpace + 1 then
 				invAlmostFull = true
 			end
@@ -236,7 +235,7 @@ function module:ProcessNext()
 
 		if attachIndex > 0 and (lootFlag or not invFull) then
 			-- If there's attachments, take the item
-			--spartan:Print("Getting Item from Message "..mailIndex..", "..attachIndex)
+			--SUI:Print("Getting Item from Message "..mailIndex..", "..attachIndex)
 			lastNumAttach, lastNumGold = module:CountAttachments()
 			TakeInboxItem(mailIndex, attachIndex)
 
@@ -253,7 +252,7 @@ function module:ProcessNext()
 			updateFrame:Show()
 		elseif msgMoney > 0 then
 			-- No attachments, but there is money
-			--spartan:Print("Getting Gold from Message "..mailIndex)
+			--SUI:Print("Getting Gold from Message "..mailIndex)
 			lastNumAttach, lastNumGold = module:CountAttachments()
 			TakeInboxMoney(mailIndex)
 
@@ -276,14 +275,14 @@ function module:ProcessNext()
 			return self:OpenAll(true) -- tail call
 		elseif totalItems > numItems and numItems < MAX_MAIL_SHOWN then
 			-- We only want to refresh if there's more items to show
-			spartan:Print(L['Not all messages are shown, refreshing mailbox soon to continue Open All...'])
+			SUI:Print(L['Not all messages are shown, refreshing mailbox soon to continue Open All...'])
 			-- refreshFrame:Show()
 			module.RefreshMailTimer = ScheduleTimer('RefreshMail', 65)
 			return
 		end
 
 		if skipFlag then
-			spartan:Print(L['Some Messages May Have Been Skipped.'])
+			SUI:Print(L['Some Messages May Have Been Skipped.'])
 		end
 		self:Reset()
 	end
@@ -347,7 +346,7 @@ function module:CountAttachments()
 end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['MailOpenAll'] = {
+	SUI.opt.args['ModSetting'].args['MailOpenAll'] = {
 		type = 'group',
 		name = 'Open all mail',
 		args = {

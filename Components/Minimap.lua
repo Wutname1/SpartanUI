@@ -1,6 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
-local module = spartan:NewModule('Component_Minimap')
+local SUI, L = SUI, SUI.L
+local module = SUI:NewModule('Component_Minimap')
 ----------------------------------------------------------------------------------------------------
 local BlizzButtons = {
 	'MiniMapTracking',
@@ -232,7 +231,7 @@ function module:OnEnable()
 		return
 	end
 
-	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap or (not spartan:GetModule('Artwork_Core', true)) then
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap or (not SUI:GetModule('Artwork_Core', true)) then
 		Minimap.mover = CreateFrame('Frame')
 		Minimap.mover:SetSize(5, 5)
 		Minimap.mover:SetAllPoints(Minimap)
@@ -248,7 +247,7 @@ function module:OnEnable()
 			function(self, button)
 				if button == 'LeftButton' and IsAltKeyDown() then
 					Minimap.mover:Show()
-					if spartan:GetModule('Artwork_Core', true) then
+					if SUI:GetModule('Artwork_Core', true) then
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = true
 					else
 						SUI.DB.MiniMap.Moved = true
@@ -264,7 +263,7 @@ function module:OnEnable()
 			function(self, button)
 				Minimap.mover:Hide()
 				Minimap:StopMovingOrSizing()
-				if spartan:GetModule('Artwork_Core', true) then
+				if SUI:GetModule('Artwork_Core', true) then
 					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(Minimap:GetNumPoints())}
 				else
 					SUI.DB.MiniMap.Position = {Minimap:GetPoint(Minimap:GetNumPoints())}
@@ -273,7 +272,7 @@ function module:OnEnable()
 		)
 
 		if
-			spartan:GetModule('Artwork_Core', true) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved and
+			SUI:GetModule('Artwork_Core', true) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved and
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap and
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords ~= nil
 		 then
@@ -560,7 +559,7 @@ function module:updateButtons()
 			if
 				buttonName and -- and buttonType == "Button"
 					child.FadeOut ~= nil and
-					(not spartan:isInTable(IgnoredFrames, buttonName)) and
+					(not SUI:isInTable(IgnoredFrames, buttonName)) and
 					child:GetAlpha() == 1
 			 then
 				child.FadeIn:Stop()
@@ -568,7 +567,7 @@ function module:updateButtons()
 				child.FadeOut:Play()
 			elseif child.FadeIn == nil and IgnoreCheck(child) then
 				--if they still fail print a error and continue with our lives.
-				spartan.Err('Minimap', buttonName .. ' is not fading')
+				SUI.Err('Minimap', buttonName .. ' is not fading')
 			end
 		end
 	elseif SUI.DB.MiniMap.OtherStyle ~= 'hide' then
@@ -583,7 +582,7 @@ function module:updateButtons()
 			-- buttonType = child:GetObjectType();
 
 			if
-				buttonName and child.FadeIn ~= nil and (not spartan:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0
+				buttonName and child.FadeIn ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0
 			 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
@@ -603,7 +602,7 @@ function module:updateButtons()
 end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['Minimap'] = {
+	SUI.opt.args['ModSetting'].args['Minimap'] = {
 		type = 'group',
 		name = L['Minimap'],
 		args = {
@@ -616,7 +615,7 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					if (InCombatLockdown()) then
-						spartan:Print(ERR_NOT_IN_COMBAT)
+						SUI:Print(ERR_NOT_IN_COMBAT)
 						return
 					end
 					SUI.DB.MiniMap.northTag = val
@@ -680,5 +679,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args['ModSetting'].args['Minimap'].disabled = true
+	SUI.opt.args['ModSetting'].args['Minimap'].disabled = true
 end

@@ -1,6 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
-local module = spartan:NewModule('Component_Buffs')
+local _G, SUI, L = _G, SUI, SUI.L
+local module = SUI:NewModule('Component_Buffs')
 ----------------------------------------------------------------------------------------------------
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local BuffWatcher = CreateFrame('Frame')
@@ -47,8 +46,8 @@ local function ActiveRule()
 
 	--Failback of Rule1
 	if not SUI.DB.Buffs.SuppressNoMatch and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].BuffLoc then
-	-- spartan:Print("|cffff0000Error detected")
-	-- spartan:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
+	-- SUI:Print("|cffff0000Error detected")
+	-- SUI:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
 	end
 	return 'Rule1'
 end
@@ -61,7 +60,7 @@ local BuffPosUpdate = function()
 
 	--See If the theme has an anchor and if we are allowed to use it
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
-		spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):BuffLoc(nil, nil)
+		SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):BuffLoc(nil, nil)
 	else
 		if SUI.DB.Buffs[ActiveRule()].Anchor.Moved then
 			local Anchors = {}
@@ -184,14 +183,14 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['Buffs'] = {
+	SUI.opt.args['ModSetting'].args['Buffs'] = {
 		type = 'group',
 		name = 'Buffs',
 		args = {}
 	}
 
 	for k, v in ipairs(RuleList) do
-		spartan.opt.args['ModSetting'].args['Buffs'].args['DisplayLocation' .. v] = {
+		SUI.opt.args['ModSetting'].args['Buffs'].args['DisplayLocation' .. v] = {
 			name = 'Display Location ' .. v,
 			type = 'group',
 			inline = true,
@@ -266,5 +265,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args['ModSetting'].args['Buffs'].disabled = true
+	SUI.opt.args['ModSetting'].args['Buffs'].disabled = true
 end

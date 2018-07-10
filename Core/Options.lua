@@ -1,7 +1,6 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
+local SUI, L = SUI, SUI.L
 local AceConfigDialog = LibStub('AceConfigDialog-3.0')
-local module = spartan:NewModule('Options')
+local module = SUI:NewModule('Options')
 
 local LDBIcon = LibStub('LibDBIcon-1.0', true)
 
@@ -17,8 +16,8 @@ local ModsLoaded = {
 
 function module:ArtSetup()
 	SUI.DBG.BartenderChangesActive = true
-	spartan:GetModule('Artwork_Core'):SetupProfile()
-	spartan:UpdateModuleConfigs()
+	SUI:GetModule('Artwork_Core'):SetupProfile()
+	SUI:UpdateModuleConfigs()
 	SUI.DBG.BartenderChangesActive = false
 end
 
@@ -37,7 +36,7 @@ function module:OnInitialize()
 	_, _, _, enabled = GetAddOnInfo('SpartanUI_FilmEffects')
 	ModsLoaded.FilmEffects = enabled
 
-	spartan.opt.args['General'].args['style'] = {
+	SUI.opt.args['General'].args['style'] = {
 		name = L['StyleSettings'],
 		type = 'group',
 		order = 100,
@@ -255,7 +254,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.PlayerFrames.Style = 'Fel'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Transparent = {
@@ -270,7 +269,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.PlayerFrames.Style = 'Transparent'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Minimal = {
@@ -285,7 +284,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.PlayerFrames.Style = 'Minimal'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					}
 				}
@@ -306,7 +305,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.PartyFrames.Style = 'Classic'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Fel = {
@@ -321,7 +320,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.PartyFrames.Style = 'Fel'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Transparent = {
@@ -336,7 +335,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.PartyFrames.Style = 'Transparent'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Minimal = {
@@ -351,7 +350,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.PartyFrames.Style = 'Minimal'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					}
 				}
@@ -372,7 +371,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.RaidFrames.Style = 'Classic'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Fel = {
@@ -387,7 +386,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.RaidFrames.Style = 'Fel'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Transparent = {
@@ -402,7 +401,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.RaidFrames.Style = 'Transparent'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Minimal = {
@@ -417,14 +416,14 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.RaidFrames.Style = 'Minimal'
-							spartan:UpdateModuleConfigs()
+							SUI:UpdateModuleConfigs()
 						end
 					}
 				}
 			}
 		}
 	}
-	spartan.opt.args['General'].args['font'] = {
+	SUI.opt.args['General'].args['font'] = {
 		name = L['FontSizeStyle'],
 		type = 'group',
 		order = 200,
@@ -497,10 +496,10 @@ function module:OnInitialize()
 					SUI.DB.font.Raid.Face = SUI.DB.font.Primary.Face
 					SUI.DB.font.Raid.Type = SUI.DB.font.Primary.Type
 					SUI.DB.font.Raid.Size = SUI.DB.font.Primary.Size
-					spartan:FontRefresh('Core')
-					spartan:FontRefresh('Player')
-					spartan:FontRefresh('Party')
-					spartan:FontRefresh('Raid')
+					SUI:FontRefresh('Core')
+					SUI:FontRefresh('Player')
+					SUI:FontRefresh('Party')
+					SUI:FontRefresh('Raid')
 				end
 			},
 			Core = {
@@ -526,7 +525,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Core.Face = val
-							spartan:FontRefresh('Core')
+							SUI:FontRefresh('Core')
 						end
 					},
 					COutline = {
@@ -544,7 +543,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Core.Type = val
-							spartan:FontRefresh('Core')
+							SUI:FontRefresh('Core')
 						end
 					},
 					CSize = {
@@ -560,7 +559,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Core.Size = val
-							spartan:FontRefresh('Core')
+							SUI:FontRefresh('Core')
 						end
 					}
 				}
@@ -569,7 +568,7 @@ function module:OnInitialize()
 				name = L['PlayerSet'],
 				type = 'group',
 				disabled = function(info)
-					if not spartan:GetModule('PlayerFrames', true) then
+					if not SUI:GetModule('PlayerFrames', true) then
 						return true
 					end
 				end,
@@ -593,7 +592,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Player.Face = val
-							spartan:FontRefresh('Player')
+							SUI:FontRefresh('Player')
 						end
 					},
 					PlOutline = {
@@ -611,7 +610,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Player.Type = val
-							spartan:FontRefresh('Player')
+							SUI:FontRefresh('Player')
 						end
 					},
 					PlSize = {
@@ -627,7 +626,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Player.Size = val
-							spartan:FontRefresh('Player')
+							SUI:FontRefresh('Player')
 						end
 					}
 				}
@@ -636,7 +635,7 @@ function module:OnInitialize()
 				name = L['PartySet'],
 				type = 'group',
 				disabled = function(info)
-					if not spartan:GetModule('PartyFrames', true) then
+					if not SUI:GetModule('PartyFrames', true) then
 						return true
 					end
 				end,
@@ -660,7 +659,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Party.Face = val
-							spartan:FontRefresh('Party')
+							SUI:FontRefresh('Party')
 						end
 					},
 					PaOutline = {
@@ -678,7 +677,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Party.Type = val
-							spartan:FontRefresh('Party')
+							SUI:FontRefresh('Party')
 						end
 					},
 					PaSize = {
@@ -694,7 +693,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Party.Size = val
-							spartan:FontRefresh('Party')
+							SUI:FontRefresh('Party')
 						end
 					}
 				}
@@ -703,7 +702,7 @@ function module:OnInitialize()
 				name = L['RaidSet'],
 				type = 'group',
 				disabled = function(info)
-					if not spartan:GetModule('RaidFrames', true) then
+					if not SUI:GetModule('RaidFrames', true) then
 						return true
 					end
 				end,
@@ -727,7 +726,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Raid.Face = val
-							spartan:FontRefresh('Raid')
+							SUI:FontRefresh('Raid')
 						end
 					},
 					ROutline = {
@@ -745,7 +744,7 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Raid.Type = val
-							spartan:FontRefresh('Raid')
+							SUI:FontRefresh('Raid')
 						end
 					},
 					RSize = {
@@ -761,14 +760,14 @@ function module:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DB.font.Raid.Size = val
-							spartan:FontRefresh('Raid')
+							SUI:FontRefresh('Raid')
 						end
 					}
 				}
 			}
 		}
 	}
-	spartan.opt.args['General'].args['Bartender'] = {
+	SUI.opt.args['General'].args['Bartender'] = {
 		name = 'Bartender',
 		type = 'group',
 		order = 500,
@@ -795,7 +794,7 @@ function module:OnInitialize()
 					end
 
 					--Force REbuild of primary bar profile
-					spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupProfile()
+					SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupProfile()
 
 					--Reset Moved bars
 					local FrameList = {
@@ -830,7 +829,7 @@ function module:OnInitialize()
 					if Bartender4 then
 						return Bartender4.db.profile.buttonlock
 					else
-						spartan.opt.args['Artwork'].args['Base'].args['LockButtons'].disabled = true
+						SUI.opt.args['Artwork'].args['Base'].args['LockButtons'].disabled = true
 						return false
 					end
 				end,
@@ -858,7 +857,7 @@ function module:OnInitialize()
 				end,
 				set = function(info, val)
 					if (InCombatLockdown()) then
-						spartan:Print(ERR_NOT_IN_COMBAT)
+						SUI:Print(ERR_NOT_IN_COMBAT)
 						return
 					end
 					SUI.DBMod.Artwork.VehicleUI = val
@@ -869,12 +868,12 @@ function module:OnInitialize()
 					end
 
 					if SUI.DBMod.Artwork.VehicleUI then
-						if spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
-							spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupVehicleUI()
+						if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
+							SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupVehicleUI()
 						end
 					else
-						if spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
-							spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):RemoveVehicleUI()
+						if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
+							SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):RemoveVehicleUI()
 						end
 					end
 				end
@@ -903,7 +902,7 @@ function module:OnInitialize()
 			}
 		}
 	}
-	spartan.opt.args['Help'] = {
+	SUI.opt.args['Help'] = {
 		name = 'Help',
 		type = 'group',
 		order = 900,
@@ -926,7 +925,7 @@ function module:OnInitialize()
 					ReloadUI()
 				end
 			},
-			ResetActionBars = spartan.opt.args['General'].args['Bartender'].args['ResetActionBars'],
+			ResetActionBars = SUI.opt.args['General'].args['Bartender'].args['ResetActionBars'],
 			ResetMovedFrames = {
 				name = L['ResetMovableFrames'],
 				type = 'execute',
@@ -946,7 +945,7 @@ function module:OnInitialize()
 					end
 					SUI.DBMod.PartyFrames.moved = false
 					SUI.DBMod.RaidFrames.moved = false
-					spartan:GetModule('PlayerFrames'):UpdatePosition()
+					SUI:GetModule('PlayerFrames'):UpdatePosition()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 49},
@@ -1016,27 +1015,27 @@ function module:OnInitialize()
 		}
 	}
 
-	spartan.opt.args['General'].args['ver1'] = {
+	SUI.opt.args['General'].args['ver1'] = {
 		name = 'SUI Version: ' .. SUI.Version,
 		type = 'description',
 		order = 50,
 		fontSize = 'large'
 	}
-	spartan.opt.args['General'].args['ver2'] = {
+	SUI.opt.args['General'].args['ver2'] = {
 		name = 'SUI Build: ' .. SUI.BuildNum,
 		type = 'description',
 		order = 51,
 		fontSize = 'large'
 	}
 
-	spartan.opt.args['General'].args['line2'] = {name = '', type = 'header', order = 99}
-	spartan.opt.args['General'].args['navigationissues'] = {
+	SUI.opt.args['General'].args['line2'] = {name = '', type = 'header', order = 99}
+	SUI.opt.args['General'].args['navigationissues'] = {
 		name = L['HaveQuestion'],
 		type = 'description',
 		order = 100,
 		fontSize = 'medium'
 	}
-	spartan.opt.args['General'].args['navigationissues2'] = {
+	SUI.opt.args['General'].args['navigationissues2'] = {
 		name = '',
 		type = 'input',
 		order = 101,
@@ -1048,13 +1047,13 @@ function module:OnInitialize()
 		end
 	}
 
-	spartan.opt.args['General'].args['bugsandfeatures'] = {
+	SUI.opt.args['General'].args['bugsandfeatures'] = {
 		name = L['Bugs and Feature Requests'] .. ':',
 		type = 'description',
 		order = 200,
 		fontSize = 'medium'
 	}
-	spartan.opt.args['General'].args['bugsandfeatures2'] = {
+	SUI.opt.args['General'].args['bugsandfeatures2'] = {
 		name = '',
 		type = 'input',
 		order = 201,
@@ -1066,7 +1065,7 @@ function module:OnInitialize()
 		end
 	}
 
-	spartan.opt.args['ModSetting'] = {
+	SUI.opt.args['ModSetting'] = {
 		name = L['Modules'],
 		type = 'group',
 		args = {
@@ -1096,7 +1095,7 @@ function module:OnInitialize()
 							else
 								DisableAddOn('SpartanUI_Artwork')
 							end
-							spartan:reloadui()
+							SUI:reloadui()
 						end
 					},
 					PlayerFrames = {
@@ -1117,7 +1116,7 @@ function module:OnInitialize()
 							else
 								DisableAddOn('SpartanUI_PlayerFrames')
 							end
-							spartan:reloadui()
+							SUI:reloadui()
 						end
 					},
 					PartyFrames = {
@@ -1138,7 +1137,7 @@ function module:OnInitialize()
 							else
 								DisableAddOn('SpartanUI_PartyFrames')
 							end
-							spartan:reloadui()
+							SUI:reloadui()
 						end
 					},
 					RaidFrames = {
@@ -1159,7 +1158,7 @@ function module:OnInitialize()
 							else
 								DisableAddOn('SpartanUI_RaidFrames')
 							end
-							spartan:reloadui()
+							SUI:reloadui()
 						end
 					},
 					SpinCam = {
@@ -1180,7 +1179,7 @@ function module:OnInitialize()
 							else
 								DisableAddOn('SpartanUI_SpinCam')
 							end
-							spartan:reloadui()
+							SUI:reloadui()
 						end
 					},
 					FilmEffects = {
@@ -1201,7 +1200,7 @@ function module:OnInitialize()
 							else
 								DisableAddOn('SpartanUI_FilmEffects')
 							end
-							spartan:reloadui()
+							SUI:reloadui()
 						end
 					}
 				}
@@ -1214,7 +1213,7 @@ function module:OnInitialize()
 		local name = GetAddOnInfo(i)
 		ModsLoaded[name] = enabled
 		if (string.match(name, 'SpartanUI_Style_')) then
-			spartan.opt.args['ModSetting'].args['Styles'].args[string.sub(name, 9)] = {
+			SUI.opt.args['ModSetting'].args['Styles'].args[string.sub(name, 9)] = {
 				name = string.sub(name, 17),
 				type = 'toggle',
 				get = function(info)
@@ -1231,14 +1230,14 @@ function module:OnInitialize()
 					else
 						DisableAddOn(name)
 					end
-					spartan:reloadui()
+					SUI:reloadui()
 				end
 			}
 		end
 	end
 
 	-- List Components
-	for name, submodule in spartan:IterateModules() do
+	for name, submodule in SUI:IterateModules() do
 		if (string.match(name, 'Component_')) then
 			local RealName = string.sub(name, 11)
 			if SUI.DB.EnabledComponents == nil then
@@ -1253,7 +1252,7 @@ function module:OnInitialize()
 				Displayname = submodule.DisplayName
 			end
 
-			spartan.opt.args['ModSetting'].args['Components'].args[RealName] = {
+			SUI.opt.args['ModSetting'].args['Components'].args[RealName] = {
 				name = Displayname,
 				type = 'toggle',
 				get = function(info)
@@ -1268,7 +1267,7 @@ function module:OnInitialize()
 							submodule:Disable()
 						end
 					else
-						spartan:reloadui()
+						SUI:reloadui()
 					end
 				end
 			}
@@ -1277,8 +1276,8 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not spartan:GetModule('Artwork_Core', true) then
-		spartan.opt.args['General'].args['style'].args['OverallStyle'].disabled = true
+	if not SUI:GetModule('Artwork_Core', true) then
+		SUI.opt.args['General'].args['style'].args['OverallStyle'].disabled = true
 	end
 end
 
@@ -1307,7 +1306,7 @@ function module:ExportData()
 	return '$SUI.' ..
 		SUI.Version ..
 			'-' ..
-				spartan.CurseVersion ..
+				SUI.CurseVersion ..
 					'$C.' ..
 						module:FlatenTable(CharData) ..
 							'$Artwork.Style.' ..

@@ -1,6 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
-local module = spartan:NewModule('Component_Tooltips')
+local _G, SUI, L = _G, SUI, SUI.L
+local module = SUI:NewModule('Component_Tooltips')
 ----------------------------------------------------------------------------------------------------
 local targetList = {}
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
@@ -133,8 +132,8 @@ local function ActiveRule()
 	end
 	--Failback of Rule1
 	if not SUI.DB.Tooltips.SuppressNoMatch then
-		spartan:Print('|cffff0000Error detected')
-		spartan:Print('None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1')
+		SUI:Print('|cffff0000Error detected')
+		SUI:Print('None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1')
 	end
 	return 'Rule1'
 end
@@ -151,7 +150,7 @@ local setPoint = function(self, parent)
 
 		--See If the theme has an anchor and if we are allowed to use it
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
-			local style = spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+			local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 			if style then
 				style:TooltipLoc(self, parent)
 			end
@@ -203,7 +202,7 @@ local onShow = function(self)
 	end
 	--check if theme has a location
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.Custom then
-		spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):Tooltip()
+		SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):Tooltip()
 	end
 end
 
@@ -611,19 +610,19 @@ end
 
 local OnMouseOpt = function(v)
 	if SUI.DB.Tooltips[v].Anchor.onMouse or not SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc then
-		spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = true
+		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = true
 	else
-		spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = false
+		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = false
 	end
 
-	spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled =
+	SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled =
 		SUI.DB.Tooltips[v].Anchor.onMouse
-	spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled =
+	SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled =
 		SUI.DB.Tooltips[v].Anchor.onMouse
 end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['Tooltips'] = {
+	SUI.opt.args['ModSetting'].args['Tooltips'] = {
 		type = 'group',
 		name = 'Tooltips',
 		args = {
@@ -699,7 +698,7 @@ function module:BuildOptions()
 	}
 
 	for k, v in ipairs(RuleList) do
-		spartan.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v] = {
+		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v] = {
 			name = 'Display Location ' .. v,
 			type = 'group',
 			inline = true,
@@ -784,5 +783,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args['ModSetting'].args['Tooltips'].disabled = true
+	SUI.opt.args['ModSetting'].args['Tooltips'].disabled = true
 end

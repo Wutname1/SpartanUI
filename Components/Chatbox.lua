@@ -1,5 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local module = spartan:NewModule('Component_Chatbox')
+local SUI = SUI
+local module = SUI:NewModule('Component_Chatbox')
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
 
@@ -112,7 +112,7 @@ end
 -- end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['Chatbox'] = {
+	SUI.opt.args['ModSetting'].args['Chatbox'] = {
 		type = 'group',
 		name = 'Chatbox',
 		args = {}
@@ -120,5 +120,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args['ModSetting'].args['Chatbox'].disabled = true
+	SUI.opt.args['ModSetting'].args['Chatbox'].disabled = true
 end

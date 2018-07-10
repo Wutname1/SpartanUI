@@ -1,6 +1,6 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
-local module = spartan:NewModule('SetupWindow')
+local SUI, L = SUI, SUI.L
+local module = SUI:NewModule('SetupWindow')
+local StdUi = LibStub('StdUi'):NewInstance()
 ---------------------------------------------------------------------------
 local Page_Cur = 1
 local PageCnt = 0
@@ -303,7 +303,7 @@ function module:CreateInstallWindow()
 		'OnEvent',
 		function(self, event)
 			if not InCombatLockdown() and Win:IsShown() then
-				spartan:Print(L['Hiding setup due to combat'])
+				SUI:Print(L['Hiding setup due to combat'])
 				Win:Hide()
 			elseif not InCombatLockdown() and not Win:IsShown() and WinShow then
 				Win:Show()
@@ -316,4 +316,48 @@ function module:CreateInstallWindow()
 
 	Win:Hide()
 	WinShow = false
+end
+
+function module:NewInstallerWin()
+	-- StdUi.config = {
+	-- 	dialog = {
+	-- 		-- Dialog settings
+	-- 		width = 550, -- Dialogs default width
+	-- 		height = 400, -- Dialogs default height
+	-- 		button = {
+	-- 			width = 100, -- Dialog button width
+	-- 			height = 20, -- Dialog button height
+	-- 			margin = 5 -- Dialog margin between buttons
+	-- 		}
+	-- 	}
+	-- }
+
+	local window = StdUi:Window(UIParent, 'SpartanUI setup assistant', 550, 400)
+	window:SetPoint('CENTER')
+
+	local fs = StdUi:FontString(window, 'Simple FontString')
+	StdUi:GlueTop(fs, window, 0, -40)
+
+	local l = StdUi:Label(window, 'Long Label, Long Label, Long Label, Long Label', 20, nil, 160)
+	l:SetJustifyH('MIDDLE')
+	StdUi:GlueBelow(l, fs, 0, -10)
+
+	local eb1 = StdUi:SimpleEditBox(window, 100, 24)
+	eb1:SetPoint('CENTER')
+	StdUi:AddLabel(window, eb1, 'Simple Label', 'TOP')
+
+	local eb2 = StdUi:SimpleEditBox(window, 100, 24)
+	StdUi:GlueBelow(eb2, eb1, 0, -30)
+	StdUi:AddLabel(window, eb2, 'Simple Disabled', 'TOP')
+
+	eb2:Disable()
+
+	local b = StdUi:Button(window, 200, 20, 'Next')
+	b:SetScript(
+		'OnClick',
+		function()
+			window:Hide()
+		end
+	)
+	StdUi:GlueBottom(b, window, 0, 0, 'RIGHT')
 end

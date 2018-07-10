@@ -1,9 +1,8 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
-local module = spartan:NewModule('WhatsNew')
+local SUI = SUI
+local module = SUI:NewModule('WhatsNew')
 local ArtifactWatcher, loginlevel
 
-function spartan:WhatsNew()
+function SUI:WhatsNew()
 	local PageData = {
 		title = "What's new in SpartanUI 4.4",
 		SubTitle = '',
@@ -32,7 +31,7 @@ function spartan:WhatsNew()
 					SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
 					SUI.DBMod.Artwork.FirstLoad = true
 
-					spartan:GetModule('Style_' .. DBMod.Artwork.Style):SetupProfile()
+					SUI:GetModule('Style_' .. DBMod.Artwork.Style):SetupProfile()
 
 					--Reset Moved bars; Setting up profile triggers movment
 					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
@@ -83,7 +82,7 @@ function spartan:WhatsNew()
 		end
 	}
 
-	local SetupWindow = spartan:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWindow')
 
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
@@ -122,12 +121,12 @@ function module:FirstArtifact()
 		end,
 		Next = function()
 			SUI.DBMod.StatusBars[2].display = 'ap'
-			spartan:GetModule('Style_' .. SUI.DBMod.Artwork.Style):UpdateStatusBars()
+			SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):UpdateStatusBars()
 		end,
 		Skip = function()
 		end
 	}
-	local SetupWindow = spartan:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWindow')
 
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
@@ -143,7 +142,7 @@ function module:OnInitialize()
 	--Only display if the setup has been done, and the SUI.DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 
 	if SUI.DBG.Version and SUI.DBG.Version < '4.4.0' and SUI.DB.SetupDone and SUI.DBG.WhatsNew then
-		spartan:WhatsNew()
+		SUI:WhatsNew()
 	end
 
 	-- Update SUI.DB Version
@@ -178,7 +177,9 @@ function module:FirstAtrifactNotice()
 						ArtifactWatcher:RegisterEvent('UNIT_INVENTORY_CHANGED')
 					end
 				end
-				if HasArtifactEquipped() and not (SUI.DBMod.StatusBars[1].display == 'ap' or SUI.DBMod.StatusBars[2].display == 'ap') then
+				if
+					HasArtifactEquipped() and not (SUI.DBMod.StatusBars[1].display == 'ap' or SUI.DBMod.StatusBars[2].display == 'ap')
+				 then
 					module:FirstArtifact()
 					ArtifactWatcher:UnregisterEvent('ARTIFACT_XP_UPDATE')
 					ArtifactWatcher:UnregisterEvent('UNIT_INVENTORY_CHANGED')

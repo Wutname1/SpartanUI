@@ -1,5 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local module = spartan:NewModule('Component_AutoSell', 'AceTimer-3.0')
+local SUI = SUI
+local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 ----------------------------------------------------------------------------------------------------
 local frame = CreateFrame('FRAME')
 local totalValue = 0
@@ -30,7 +30,7 @@ function module:OnInitialize()
 	if not SUI.DB.AutoSell then
 		SUI.DB.AutoSell = Defaults
 	else
-		SUI.DB.AutoSell = spartan:MergeData(SUI.DB.AutoSell, Defaults, false)
+		SUI.DB.AutoSell = SUI:MergeData(SUI.DB.AutoSell, Defaults, false)
 	end
 	if SUI.DB.AutoSell.MaxILVL >= 501 then
 		SUI.DB.AutoSell.MaxILVL = 200
@@ -136,7 +136,7 @@ function module:FirstTime()
 			SUI.DB.AutoSell.FirstLaunch = true
 		end
 	}
-	local SetupWindow = spartan:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWindow')
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
 end
@@ -172,7 +172,7 @@ function module:SellTrashInBag()
 	else
 		--Everything sold
 		if (totalValue > 0) then
-			spartan:Print('Sold item(s)')
+			SUI:Print('Sold item(s)')
 			totalValue = 0
 		end
 		module:CancelAllTimers()
@@ -277,18 +277,18 @@ function module:IsSellable(item, ilink)
 
 	if
 		qualitysellable and ilvlsellable and Craftablesellable and NotInGearset and NotConsumable and not IsGearToken and
-			not spartan:isInTable(ExcludedItems, item) and
+			not SUI:isInTable(ExcludedItems, item) and
 			itemType ~= 'Quest' and
 			itemType ~= 'Container' or
 			(quality == 0 and SUI.DB.AutoSell.Gray)
 	 then --Legion identified some junk as consumable
 		if SUI.DB.AutoSell.debug then
-			spartan:Print('--Selling--')
-			spartan:Print(name)
-			spartan:Print(ilink)
-			spartan:Print('ilvl:     ' .. iLevel)
-			spartan:Print('type:     ' .. itemType)
-			spartan:Print('sub type: ' .. itemSubType)
+			SUI:Print('--Selling--')
+			SUI:Print(name)
+			SUI:Print(ilink)
+			SUI:Print('ilvl:     ' .. iLevel)
+			SUI:Print('type:     ' .. itemType)
+			SUI:Print('sub type: ' .. itemSubType)
 		end
 		return true
 	end
@@ -339,9 +339,9 @@ function module:SellTrash()
 		module:SellTrashInBag()
 	end
 	if iCount == 0 then
-		spartan:Print('No items are to be auto sold')
+		SUI:Print('No items are to be auto sold')
 	else
-		spartan:Print('Need to sell ' .. iCount .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
+		SUI:Print('Need to sell ' .. iCount .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
 		OnlyCount = false
 		bag = 0
@@ -372,7 +372,7 @@ function module:Enable()
 		else
 			module:CancelAllTimers()
 			if (totalValue > 0) then
-				-- spartan:Print("Sold items for " .. module:GetFormattedValue(totalValue));
+				-- SUI:Print("Sold items for " .. module:GetFormattedValue(totalValue));
 				totalValue = 0
 			end
 		end
@@ -383,13 +383,13 @@ function module:Enable()
 end
 
 function module:Disable()
-	spartan:Print('Autosell disabled')
+	SUI:Print('Autosell disabled')
 	frame:UnregisterEvent('MERCHANT_SHOW')
 	frame:UnregisterEvent('MERCHANT_CLOSED')
 end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['AutoSell'] = {
+	SUI.opt.args['ModSetting'].args['AutoSell'] = {
 		type = 'group',
 		name = 'Auto Sell',
 		args = {

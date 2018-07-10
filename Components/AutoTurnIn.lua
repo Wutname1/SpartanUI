@@ -1,5 +1,5 @@
-local spartan = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
-local module = spartan:NewModule('Component_AutoTurnIn')
+local SUI = SUI
+local module = SUI:NewModule('Component_AutoTurnIn')
 ----------------------------------------------------------------------------------------------------
 local ATI_Container = CreateFrame('Frame')
 local weapon = {GetAuctionItemSubClasses(1)}
@@ -170,12 +170,12 @@ local Lquests = {
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
 	if (SUI.DB.AutoTurnIn.showrewardtext) then
-		spartan:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
+		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 
 	if (self.forceGreed) then
 		if (GetNumQuestChoices() > 1) then
-		-- spartan:Print(L["gogreedy"])
+		-- SUI:Print(L["gogreedy"])
 		end
 	else
 		local name = GetQuestItemInfo('choice', (GetNumQuestChoices() == 1) and 1 or rewardIndex)
@@ -213,7 +213,7 @@ function module:TurnInQuest(rewardIndex)
 	-- if (SUI.DB.AutoTurnIn.debug) then
 	local link = GetQuestItemLink('choice', rewardIndex)
 	if (link) then
-		spartan:Print('Debug: item to loot=', link)
+		SUI:Print('Debug: item to loot=', link)
 	end
 	-- else
 	GetQuestReward(rewardIndex)
@@ -272,7 +272,7 @@ function module.QUEST_COMPLETE()
 
 		local itemID = getItemId('choice')
 		if (not itemID) then
-			spartan:Print("Can't read reward link from server. Close NPC dialog and open it again.")
+			SUI:Print("Can't read reward link from server. Close NPC dialog and open it again.")
 			return
 		end
 		-- Tournament quest found
@@ -393,7 +393,7 @@ function module:FirstLaunch()
 			SUI.DB.AutoTurnIn.FirstLaunch = false
 		end
 	}
-	local SetupWindow = spartan:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWindow')
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()
 end
@@ -493,7 +493,7 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	spartan.opt.args['ModSetting'].args['AutoTurnIn'] = {
+	SUI.opt.args['ModSetting'].args['AutoTurnIn'] = {
 		type = 'group',
 		name = 'Auto TurnIn',
 		args = {
@@ -570,5 +570,5 @@ function module:BuildOptions()
 end
 
 function module:HideOptions()
-	spartan.opt.args['ModSetting'].args['AutoTurnIn'].disabled = true
+	SUI.opt.args['ModSetting'].args['AutoTurnIn'].disabled = true
 end
