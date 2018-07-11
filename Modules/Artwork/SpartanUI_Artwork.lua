@@ -163,7 +163,7 @@ function Artwork_Core:FirstTime()
 			control = gui:Create('Icon')
 			control:SetImage('interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center')
 			control:SetImageSize(120, 60)
-			control:SetPoint('TOPRIGHT', SUI_Win.Artwork, 'TOP', -30, -30)
+			control:SetPoint('TOPLEFT', SUI_Win.Artwork, 'TOPLEFT', 80, -30)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
@@ -188,7 +188,7 @@ function Artwork_Core:FirstTime()
 			control = gui:Create('Icon')
 			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Fel')
 			control:SetImageSize(120, 60)
-			control:SetPoint('TOPLEFT', SUI_Win.Artwork, 'TOP', 30, -30)
+			control:SetPoint('LEFT', SUI_Win.Artwork.Classic.frame, 'RIGHT', 30, 0)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
@@ -208,11 +208,59 @@ function Artwork_Core:FirstTime()
 
 			SUI_Win.Artwork.Fel = control
 
+			--War
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_War')
+			control:SetImageSize(120, 60)
+			control:SetPoint('LEFT', SUI_Win.Artwork.Fel.frame, 'RIGHT', 30, 0)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('War')
+			radio:SetUserData('value', 'War')
+			radio:SetUserData('text', 'War')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(control.frame:GetWidth() / 1.15)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.Artwork.War = control
+
+			--Digital
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Digital')
+			control:SetImageSize(120, 60)
+			control:SetPoint('TOP', SUI_Win.Artwork.Classic.radio.frame, 'BOTTOM', 0, -30)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Digital')
+			radio:SetUserData('value', 'Digital')
+			radio:SetUserData('text', 'Digital')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(control.frame:GetWidth() / 1.15)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.Artwork.Digital = control
+
 			--Transparent
 			control = gui:Create('Icon')
 			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Transparent')
 			control:SetImageSize(120, 60)
-			control:SetPoint('TOP', SUI_Win.Artwork.Classic.frame, 'BOTTOM', 0, -60)
+			control:SetPoint('LEFT', SUI_Win.Artwork.Digital.frame, 'RIGHT', 30, 0)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
@@ -236,7 +284,7 @@ function Artwork_Core:FirstTime()
 			control = gui:Create('Icon')
 			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Minimal')
 			control:SetImageSize(120, 60)
-			control:SetPoint('TOP', SUI_Win.Artwork.Fel.frame, 'BOTTOM', 0, -60)
+			control:SetPoint('LEFT', SUI_Win.Artwork.Transparent.frame, 'RIGHT', 30, 0)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
 			control.frame:Show()
@@ -266,6 +314,15 @@ function Artwork_Core:FirstTime()
 			end
 			if (SUI_Win.Artwork.Fel.radio:GetValue()) then
 				SUI.DBMod.Artwork.Style = 'Fel'
+				SUI.DBMod.Artwork.SubTheme = 'Fel'
+			end
+			if (SUI_Win.Artwork.War.radio:GetValue()) then
+				SUI.DBMod.Artwork.Style = 'Fel'
+				SUI.DB.Styles.Fel.SubTheme = 'War'
+			end
+			if (SUI_Win.Artwork.Digital.radio:GetValue()) then
+				SUI.DBMod.Artwork.Style = 'Fel'
+				SUI.DB.Styles.Fel.SubTheme = 'Digital'
 			end
 			if (SUI_Win.Artwork.Transparent.radio:GetValue()) then
 				SUI.DBMod.Artwork.Style = 'Transparent'
