@@ -37,6 +37,9 @@ function module:OnInitialize()
 	end
 end
 
+local DummyFunction = function ()
+end
+
 function module:FirstTime()
 	local PageData = {
 		SubTitle = 'Auto Sell',
@@ -54,7 +57,7 @@ function module:FirstTime()
 				CreateFrame('CheckButton', 'SUI_AutoSell_Enabled', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.Enabled:SetPoint('TOP', SUI_Win.AutoSell, 'TOP', -90, -10)
 			SUI_AutoSell_EnabledText:SetText('Auto Vendor Enabled')
-			SUI_Win.AutoSell.Enabled:HookScript(
+			SUI_Win.AutoSell.Enabled:SetScript(
 				'OnClick',
 				function(this)
 					if this:GetChecked() == true then
@@ -73,30 +76,35 @@ function module:FirstTime()
 			SUI_Win.AutoSell.SellGray =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellGray', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellGray:SetPoint('TOP', SUI_Win.AutoSell.Enabled, 'TOP', -90, -40)
+			SUI_Win.AutoSell.SellGray:SetScript("OnClick", DummyFunction);
 			SUI_AutoSell_SellGrayText:SetText('Sell gray items')
 
 			--SellWhite
 			SUI_Win.AutoSell.SellWhite =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellWhite', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellWhite:SetPoint('TOP', SUI_Win.AutoSell.SellGray, 'BOTTOM', 0, -5)
+			SUI_Win.AutoSell.SellWhite:SetScript("OnClick", DummyFunction);
 			SUI_AutoSell_SellWhiteText:SetText('Sell white items')
 
 			--SellGreen
 			SUI_Win.AutoSell.SellGreen =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellGreen', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellGreen:SetPoint('TOP', SUI_Win.AutoSell.SellWhite, 'BOTTOM', 0, -5)
+			SUI_Win.AutoSell.SellGreen:SetScript("OnClick", DummyFunction);
 			SUI_AutoSell_SellGreenText:SetText('Sell green items')
 
 			--SellBlue
 			SUI_Win.AutoSell.SellBlue =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellBlue', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellBlue:SetPoint('TOP', SUI_Win.AutoSell.SellGreen, 'BOTTOM', 0, -5)
+			SUI_Win.AutoSell.SellBlue:SetScript("OnClick", DummyFunction);
 			SUI_AutoSell_SellBlueText:SetText('Sell blue items')
 
 			--SellPurple
 			SUI_Win.AutoSell.SellPurple =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellPurple', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellPurple:SetPoint('TOP', SUI_Win.AutoSell.SellBlue, 'BOTTOM', 0, -5)
+			SUI_Win.AutoSell.SellPurple:SetScript("OnClick", DummyFunction);
 			SUI_AutoSell_SellPurpleText:SetText('Sell purple items')
 
 			--Max iLVL

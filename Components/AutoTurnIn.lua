@@ -354,6 +354,9 @@ function module:VarArgForAvailableQuests(...)
 	end
 end
 
+local DummyFunction = function ()
+end
+
 function module:FirstLaunch()
 	local PageData = {
 		SubTitle = 'Auto Turn In',
@@ -369,12 +372,14 @@ function module:FirstLaunch()
 				CreateFrame('CheckButton', 'SUI_ATI_TurnInEnabled', SUI_Win.ATI, 'OptionsCheckButtonTemplate')
 			SUI_Win.ATI.TurnInEnabled:SetPoint('TOP', SUI_Win.ATI, 'TOP', -90, -90)
 			SUI_ATI_TurnInEnabledText:SetText('Enable turning in quests')
+			SUI_Win.ATI.TurnInEnabled:SetScript("OnClick", DummyFunction);
 
 			--AcceptGeneralQuests
 			SUI_Win.ATI.AcceptGeneralQuests =
 				CreateFrame('CheckButton', 'SUI_ATI_AcceptGeneralQuests', SUI_Win.ATI, 'OptionsCheckButtonTemplate')
 			SUI_Win.ATI.AcceptGeneralQuests:SetPoint('TOP', SUI_Win.ATI.TurnInEnabled, 'BOTTOM', 0, -15)
 			SUI_ATI_AcceptGeneralQuestsText:SetText('Enable accepting quests')
+			SUI_Win.ATI.AcceptGeneralQuests:SetScript("OnClick", DummyFunction);
 
 			--Defaults
 			SUI_ATI_TurnInEnabled:SetChecked(true)
