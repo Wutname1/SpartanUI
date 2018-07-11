@@ -25,7 +25,7 @@ SUI.opt = {
 
 local FontItems = {Primary={},Core={},Party={},Player={},Raid={}}
 local FontItemsSize = {Primary={},Core={},Party={},Player={},Raid={}}
-local fontdefault = {Size = 0, Face = "SpartanUI", Type = "outline"}
+local fontdefault = {Size = 0, Face = "Roboto", Type = "outline"}
 local MovedDefault = {moved=false;point = "",relativeTo = nil,relativePoint = "",xOffset = 0,yOffset = 0}
 local frameDefault1 = {movement=MovedDefault,AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="large",moved=false,Anchors={}}
 local frameDefault2 = {AuraDisplay=true,display=true,Debuffs="all",buffs="all",style="medium",moved=false,Anchors={}}
@@ -793,6 +793,8 @@ function SUI:GetFontFace(Module)
 			return "Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf"
 		elseif DB.font[Module].Face == "SUI4" then
 			return "Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf"
+		elseif DB.font[Module].Face == "Roboto" then
+			return "Interface\\AddOns\\SpartanUI\\media\\Roboto-Medium.ttf"
 		elseif DB.font[Module].Face == "FrizQuadrata" then
 			return "Fonts\\FRIZQT__.TTF"
 		elseif DB.font[Module].Face == "ArialNarrow" then
