@@ -36,6 +36,17 @@ function module:OnInitialize()
 	_, _, _, enabled = GetAddOnInfo('SpartanUI_FilmEffects')
 	ModsLoaded.FilmEffects = enabled
 
+	local FontFaces = {
+		["SpartanUI"]="Cognosis",
+		["Roboto"]="Roboto",
+		["SUI4"]="NotoSans",
+		["SUI4cn"]="NotoSans (zhCN)",
+		["FrizQuadrata"]="Friz Quadrata",
+		["ArialNarrow"]="Arial Narrow",
+		["Skurri"]="Skurri",
+		["Morpheus"]="Morpheus"
+	}
+	
 	SUI.opt.args['General'].args['style'] = {
 		name = L['StyleSettings'],
 		type = 'group',
@@ -432,16 +443,7 @@ function module:OnInitialize()
 			b = {
 				name = L['FontType'],
 				type = 'select',
-				values = {
-					['SpartanUI'] = 'Cognosis',
-					['SUI4'] = 'NotoSans',
-					['SUI4cn'] = 'NotoSans (zhCN)',
-					['FrizQuadrata'] = 'Friz Quadrata',
-					['Arial'] = 'Arial',
-					['ArialNarrow'] = 'Arial Narrow',
-					['Skurri'] = 'Skurri',
-					['Morpheus'] = 'Morpheus'
-				},
+				values = FontFaces,
 				get = function(info)
 					return SUI.DB.font.Primary.Face
 				end,
@@ -510,16 +512,7 @@ function module:OnInitialize()
 						name = L['FontType'],
 						type = 'select',
 						order = 1,
-						values = {
-							['SpartanUI'] = 'Cognosis',
-							['SUI4'] = 'NotoSans',
-							['SUI4cn'] = 'NotoSans (zhCN)',
-							['FrizQuadrata'] = 'Friz Quadrata',
-							['Arial'] = 'Arial',
-							['ArialNarrow'] = 'Arial Narrow',
-							['Skurri'] = 'Skurri',
-							['Morpheus'] = 'Morpheus'
-						},
+						values = FontFaces,
 						get = function(info)
 							return SUI.DB.font.Core.Face
 						end,
@@ -577,16 +570,7 @@ function module:OnInitialize()
 						name = L['FontType'],
 						type = 'select',
 						order = 1,
-						values = {
-							['SpartanUI'] = 'Cognosis',
-							['SUI4'] = 'NotoSans',
-							['SUI4cn'] = 'NotoSans (zhCN)',
-							['FrizQuadrata'] = 'Friz Quadrata',
-							['Arial'] = 'Arial',
-							['ArialNarrow'] = 'Arial Narrow',
-							['Skurri'] = 'Skurri',
-							['Morpheus'] = 'Morpheus'
-						},
+						values = FontFaces,
 						get = function(info)
 							return SUI.DB.font.Player.Face
 						end,
@@ -644,16 +628,7 @@ function module:OnInitialize()
 						name = L['FontType'],
 						type = 'select',
 						order = 1,
-						values = {
-							['SpartanUI'] = 'Cognosis',
-							['SUI4'] = 'NotoSans',
-							['SUI4cn'] = 'NotoSans (zhCN)',
-							['FrizQuadrata'] = 'Friz Quadrata',
-							['Arial'] = 'Arial',
-							['ArialNarrow'] = 'Arial Narrow',
-							['Skurri'] = 'Skurri',
-							['Morpheus'] = 'Morpheus'
-						},
+						values = FontFaces,
 						get = function(info)
 							return SUI.DB.font.Party.Face
 						end,
@@ -711,16 +686,7 @@ function module:OnInitialize()
 						name = L['FontType'],
 						type = 'select',
 						order = 1,
-						values = {
-							['SpartanUI'] = 'Cognosis',
-							['SUI4'] = 'NotoSans',
-							['SUI4cn'] = 'NotoSans (zhCN)',
-							['FrizQuadrata'] = 'Friz Quadrata',
-							['Arial'] = 'Arial',
-							['ArialNarrow'] = 'Arial Narrow',
-							['Skurri'] = 'Skurri',
-							['Morpheus'] = 'Morpheus'
-						},
+						values = FontFaces,
 						get = function(info)
 							return SUI.DB.font.Raid.Face
 						end,
