@@ -484,6 +484,18 @@ function module:OnInitialize()
 		order = 200,
 		args = {
 			a = {name = L['GFontSet'], type = 'header'},
+			aa = {
+				name = L['Large number seperator'],
+				desc = L['This is used to split up large numbers example: 100,000'],
+				type = 'select',
+				values = {[''] = '', [','] = ',', ['.'] = '.'},
+				get = function(info)
+					return SUI.DB.font.NumberSeperator
+				end,
+				set = function(info, val)
+					SUI.DB.font.NumberSeperator = val
+				end
+			},
 			b = {
 				name = L['FontType'],
 				type = 'select',

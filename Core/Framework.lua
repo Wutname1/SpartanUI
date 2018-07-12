@@ -563,6 +563,7 @@ local DBdefault = {
 			bar6 = {alpha = 100, enable = true}
 		},
 		font = {
+			NumberSeperator = ',',
 			Path = '',
 			Primary = fontdefault,
 			Core = fontdefault,
@@ -1075,6 +1076,12 @@ function SUI:OnInitialize()
 
 	--First Time Setup Actions
 	if not SUI.DB.SetupDone then
+		if _G.LARGE_NUMBER_SEPERATOR == '.' then
+			SUI.DB.font.NumberSeperator = '.'
+		elseif _G.LARGE_NUMBER_SEPERATOR == '' then
+			SUI.DB.font.NumberSeperator = ''
+		end
+
 		SUI:FirstTimeSetup()
 	end
 end
@@ -1406,7 +1413,7 @@ end
 
 function SUI:comma_value(n)
 	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
-	return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
+	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. SUI.DB.font.NumberSeperator):reverse()) .. right
 end
 
 ---------------		FONT FUNCTIONS		---------------------------------------------
