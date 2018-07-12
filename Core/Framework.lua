@@ -1016,7 +1016,6 @@ function SUI:FontSetupWizard()
 	SetupWindow:DisplayPage()
 	-- This will be moved once we put the setup page in place.
 	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
-	
 end
 
 function SUI:OnInitialize()

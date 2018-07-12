@@ -37,17 +37,17 @@ function module:OnInitialize()
 	ModsLoaded.FilmEffects = enabled
 
 	local FontFaces = {
-		["SpartanUI"]="Cognosis",
-		["Roboto"]="Roboto",
-		["Roboto-Bold"]="Roboto Bold",
-		["SUI4"]="NotoSans",
-		["SUI4cn"]="NotoSans (zhCN)",
-		["FrizQuadrata"]="Friz Quadrata",
-		["ArialNarrow"]="Arial Narrow",
-		["Skurri"]="Skurri",
-		["Morpheus"]="Morpheus"
+		['SpartanUI'] = 'Cognosis',
+		['Roboto'] = 'Roboto',
+		['Roboto-Bold'] = 'Roboto Bold',
+		['SUI4'] = 'NotoSans',
+		['SUI4cn'] = 'NotoSans (zhCN)',
+		['FrizQuadrata'] = 'Friz Quadrata',
+		['ArialNarrow'] = 'Arial Narrow',
+		['Skurri'] = 'Skurri',
+		['Morpheus'] = 'Morpheus'
 	}
-	
+
 	SUI.opt.args['General'].args['style'] = {
 		name = L['StyleSettings'],
 		type = 'group',
