@@ -10,6 +10,7 @@ move-folders:
   SpartanUI/Modules/Style_Minimal: SpartanUI_Style_Minimal
   SpartanUI/Modules/Style_Transparent: SpartanUI_Style_Transparent
   SpartanUI/Modules/Style_Fel: SpartanUI_Style_Fel
+  SpartanUI/Modules/Style_War: SpartanUI_Style_War
 
 externals:
   libs/LibStub:
