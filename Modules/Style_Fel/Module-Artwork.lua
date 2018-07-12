@@ -174,6 +174,7 @@ function module:EnableArtwork()
 		for i = 1, 4 do
 			_G['Fel_Bar' .. i .. 'BG']:SetAlpha(.25)
 		end
+		module:SlidingTrays()
 	else
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right')
@@ -219,7 +220,6 @@ function module:EnableArtwork()
 	module:updateScale()
 	module:updateAlpha()
 	module:StatusBars()
-	module:SlidingTrays()
 end
 
 function module:StatusBars()
@@ -231,25 +231,25 @@ function module:StatusBars()
 		Fel_StatusBar_Left = {
 			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
 			size = {370, 20},
-			TooltipSize = {250, 80},
-			TooltipTextSize = {220, 50},
+			TooltipSize = {250, 65},
+			TooltipTextSize = {225, 40},
 			texCords = {0.150390625, 1, 0, 1},
-			-- texCordsTooltip = {0, 1, 0.234375, 0.84},
-			GlowPoint = {x = 10},
-			MaxWidth = 35,
-			bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box'
+			GlowPoint = {x = -10},
+			MaxWidth = 32,
+			bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
+			texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
 		},
 		Fel_StatusBar_Right = {
 			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
 			Grow = 'RIGHT',
 			size = {370, 20},
-			TooltipSize = {250, 80},
-			TooltipTextSize = {220, 50},
+			TooltipSize = {250, 65},
+			TooltipTextSize = {225, 40},
 			texCords = {0.150390625, 1, 0, 1},
-			-- texCordsTooltip = {0, 1, 0.234375, 0.84},
 			GlowPoint = {x = 10},
 			MaxWidth = 35,
-			bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box'
+			bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
+			texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
 		}
 	}
 

@@ -142,12 +142,12 @@ local updateText = function(self)
 			rested = (rested / goal) * 400
 
 			if
-				(rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x))) >
-					(self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x))
+				(rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))) >
+					(self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
 			 then
 				rested =
-					(self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)) -
-					(now / goal) * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x))
+					(self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))) -
+					(now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
 			end
 
 			if rested == 0 then
@@ -221,7 +221,7 @@ local updateText = function(self)
 		if (ratio * self:GetWidth()) > self:GetWidth() then
 			self.Fill:SetWidth(self:GetWidth())
 		else
-			self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - self.settings.GlowPoint.x)))
+			self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
 		end
 	end
 	if module.DB[side].text and valFill and valMax and valPercent then
