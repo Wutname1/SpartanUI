@@ -1,20 +1,18 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:GetModule('Style_Fel')
+local module = SUI:GetModule('Style_War')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
 	--Enable the in the Core options screen
-	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Fel'].disabled = false
-	SUI.opt.args['General'].args['style'].args['Artwork'].args['Fel'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PlayerFrames'].args['Fel'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PartyFrames'].args['Fel'].disabled = false
-	SUI.opt.args['General'].args['style'].args['RaidFrames'].args['Fel'].disabled = false
-
-	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Digital'].disabled = false
+	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['War'].disabled = false
+	SUI.opt.args['General'].args['style'].args['Artwork'].args['War'].disabled = false
+	-- SUI.opt.args['General'].args['style'].args['PlayerFrames'].args['War'].disabled = false
+	-- SUI.opt.args['General'].args['style'].args['PartyFrames'].args['War'].disabled = false
+	-- SUI.opt.args['General'].args['style'].args['RaidFrames'].args['War'].disabled = false
 	--Init if needed
-	if (SUI.DBMod.Artwork.Style == 'Fel') then
+	if (SUI.DBMod.Artwork.Style == 'War') then
 		module:Init()
 	end
 end
@@ -31,26 +29,26 @@ end
 function module:FirstLoad()
 	--If our profile exists activate it.
 	if
-		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Fel.BartenderProfile) and
-			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile, true))
+		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.War.BartenderProfile) and
+			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.War.BartenderProfile, true))
 	 then
-		Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile)
+		Bartender4.db:SetProfile(SUI.DB.Styles.War.BartenderProfile)
 	end
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style ~= 'Fel') then
+	if (SUI.DBMod.Artwork.Style ~= 'War') then
 		module:Disable()
 	else
-		SUI.opt.args['Artwork'].args['Artwork'].name = SUI.DB.Styles.Fel.SubTheme .. ' Options'
+		SUI.opt.args['Artwork'].args['Artwork'].name = 'War Options'
 
-		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Fel.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-			Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile)
+		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.War.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
+			Bartender4.db:SetProfile(SUI.DB.Styles.War.BartenderProfile)
 		end
 		if (not InitRan) then
 			module:Init()
 		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile, true)) then
+		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.War.BartenderProfile, true)) then
 			module:CreateProfile()
 		end
 		module:EnableArtwork()
@@ -62,12 +60,12 @@ function module:OnEnable()
 end
 
 function module:OnDisable()
-	Fel_SpartanUI:Hide()
+	War_SpartanUI:Hide()
 end
 
 function module:SetupMenus()
 	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = 'Fel Options',
+		name = 'War Options',
 		type = 'group',
 		order = 10,
 		args = {
@@ -77,10 +75,10 @@ function module:SetupMenus()
 				order = .1,
 				desc = L['Is it getting hot in here?'],
 				get = function(info)
-					return (SUI.DB.Styles.Fel.Minimap.Engulfed ~= true or false)
+					return (SUI.DB.Styles.War.Minimap.Engulfed ~= true or false)
 				end,
 				set = function(info, val)
-					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
+					SUI.DB.Styles.War.Minimap.Engulfed = (val ~= true or false)
 					module:MiniMapUpdate()
 				end
 			},
@@ -160,14 +158,14 @@ function module:SetupMenus()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return SUI.DB.Styles.Fel.Artwork.Allenable
+					return SUI.DB.Styles.War.Artwork.Allenable
 				end,
 				set = function(info, val)
 					for i = 1, 4 do
-						SUI.DB.Styles.Fel.Artwork['bar' .. i].enable, SUI.DB.Styles.Fel.Artwork.Allenable = val, val
+						SUI.DB.Styles.War.Artwork['bar' .. i].enable, SUI.DB.Styles.War.Artwork.Allenable = val, val
 					end
-					SUI.DB.Styles.Fel.Artwork.Stance.enable = val
-					SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val
+					SUI.DB.Styles.War.Artwork.Stance.enable = val
+					SUI.DB.Styles.War.Artwork.MenuBar.enable = val
 					module:updateAlpha()
 				end
 			},
@@ -180,14 +178,14 @@ function module:SetupMenus()
 				max = 100,
 				step = 1,
 				get = function(info)
-					return SUI.DB.Styles.Fel.Artwork.Allalpha
+					return SUI.DB.Styles.War.Artwork.Allalpha
 				end,
 				set = function(info, val)
 					for i = 1, 4 do
-						SUI.DB.Styles.Fel.Artwork['bar' .. i].alpha, SUI.DB.Styles.Fel.Artwork.Allalpha = val, val
+						SUI.DB.Styles.War.Artwork['bar' .. i].alpha, SUI.DB.Styles.War.Artwork.Allalpha = val, val
 					end
-					SUI.DB.Styles.Fel.Artwork.Stance.alpha = val
-					SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val
+					SUI.DB.Styles.War.Artwork.Stance.alpha = val
+					SUI.DB.Styles.War.Artwork.MenuBar.alpha = val
 					module:updateAlpha()
 				end
 			},
@@ -205,11 +203,11 @@ function module:SetupMenus()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.Stance.alpha
+							return SUI.DB.Styles.War.Artwork.Stance.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.Stance.enable == true then
-								SUI.DB.Styles.Fel.Artwork.Stance.alpha = val
+							if SUI.DB.Styles.War.Artwork.Stance.enable == true then
+								SUI.DB.Styles.War.Artwork.Stance.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -218,10 +216,10 @@ function module:SetupMenus()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.Stance.enable
+							return SUI.DB.Styles.War.Artwork.Stance.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.Stance.enable = val
+							SUI.DB.Styles.War.Artwork.Stance.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -241,11 +239,11 @@ function module:SetupMenus()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.MenuBar.alpha
+							return SUI.DB.Styles.War.Artwork.MenuBar.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.MenuBar.enable == true then
-								SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val
+							if SUI.DB.Styles.War.Artwork.MenuBar.enable == true then
+								SUI.DB.Styles.War.Artwork.MenuBar.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -254,10 +252,10 @@ function module:SetupMenus()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.MenuBar.enable
+							return SUI.DB.Styles.War.Artwork.MenuBar.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val
+							SUI.DB.Styles.War.Artwork.MenuBar.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -277,11 +275,11 @@ function module:SetupMenus()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar1.alpha
+							return SUI.DB.Styles.War.Artwork.bar1.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar1.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar1.alpha = val
+							if SUI.DB.Styles.War.Artwork.bar1.enable == true then
+								SUI.DB.Styles.War.Artwork.bar1.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -290,10 +288,10 @@ function module:SetupMenus()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar1.enable
+							return SUI.DB.Styles.War.Artwork.bar1.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar1.enable = val
+							SUI.DB.Styles.War.Artwork.bar1.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -313,11 +311,11 @@ function module:SetupMenus()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar2.alpha
+							return SUI.DB.Styles.War.Artwork.bar2.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar2.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar2.alpha = val
+							if SUI.DB.Styles.War.Artwork.bar2.enable == true then
+								SUI.DB.Styles.War.Artwork.bar2.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -326,10 +324,10 @@ function module:SetupMenus()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar2.enable
+							return SUI.DB.Styles.War.Artwork.bar2.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar2.enable = val
+							SUI.DB.Styles.War.Artwork.bar2.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -349,11 +347,11 @@ function module:SetupMenus()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar3.alpha
+							return SUI.DB.Styles.War.Artwork.bar3.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar3.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar3.alpha = val
+							if SUI.DB.Styles.War.Artwork.bar3.enable == true then
+								SUI.DB.Styles.War.Artwork.bar3.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -362,10 +360,10 @@ function module:SetupMenus()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar3.enable
+							return SUI.DB.Styles.War.Artwork.bar3.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar3.enable = val
+							SUI.DB.Styles.War.Artwork.bar3.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -385,11 +383,11 @@ function module:SetupMenus()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar4.alpha
+							return SUI.DB.Styles.War.Artwork.bar4.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar4.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar4.alpha = val
+							if SUI.DB.Styles.War.Artwork.bar4.enable == true then
+								SUI.DB.Styles.War.Artwork.bar4.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -398,10 +396,10 @@ function module:SetupMenus()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar4.enable
+							return SUI.DB.Styles.War.Artwork.bar4.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar4.enable = val
+							SUI.DB.Styles.War.Artwork.bar4.enable = val
 							module:updateAlpha()
 						end
 					}

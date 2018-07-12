@@ -144,8 +144,7 @@ function module:OnInitialize()
 							return 'interface\\addons\\SpartanUI\\media\\Style_War', 120, 60
 						end,
 						func = function()
-							SUI.DBMod.Artwork.Style = 'Fel'
-							SUI.DB.Styles.Fel.SubTheme = 'War'
+							SUI.DBMod.Artwork.Style = 'War'
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
@@ -228,8 +227,7 @@ function module:OnInitialize()
 							return 'interface\\addons\\SpartanUI\\media\\Style_War', 120, 60
 						end,
 						func = function()
-							SUI.DBMod.Artwork.Style = 'Minimal'
-							SUI.DB.Styles.Fel.SubTheme = 'War'
+							SUI.DBMod.Artwork.Style = 'War'
 							module:ArtSetup()
 						end
 					}
@@ -252,6 +250,21 @@ function module:OnInitialize()
 						func = function()
 							SUI.DBMod.PlayerFrames.Style = 'Classic'
 							module:ArtSetup()
+						end
+					},
+					War = {
+						name = 'War',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {.1, .5, .1, .5}
+						end,
+						func = function()
+							SUI.DBMod.PlayerFrames.Style = 'War'
+							SUI:UpdateModuleConfigs()
 						end
 					},
 					Fel = {
@@ -320,6 +333,21 @@ function module:OnInitialize()
 							SUI:UpdateModuleConfigs()
 						end
 					},
+					War = {
+						name = 'War',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {0, .5, .5, 1}
+						end,
+						func = function()
+							SUI.DBMod.PartyFrames.Style = 'War'
+							SUI:UpdateModuleConfigs()
+						end
+					},
 					Fel = {
 						name = 'Fel',
 						type = 'execute',
@@ -383,6 +411,21 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.RaidFrames.Style = 'Classic'
+							SUI:UpdateModuleConfigs()
+						end
+					},
+					War = {
+						name = 'War',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {.6, .9, .1, .4}
+						end,
+						func = function()
+							SUI.DBMod.RaidFrames.Style = 'War'
 							SUI:UpdateModuleConfigs()
 						end
 					},

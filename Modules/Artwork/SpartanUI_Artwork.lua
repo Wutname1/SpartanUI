@@ -307,8 +307,7 @@ function Artwork_Core:FirstTime()
 				SUI.DBMod.Artwork.SubTheme = 'Fel'
 			end
 			if (SUI_Win.Artwork.War.radio:GetValue()) then
-				SUI.DBMod.Artwork.Style = 'Fel'
-				SUI.DB.Styles.Fel.SubTheme = 'War'
+				SUI.DBMod.Artwork.Style = 'War'
 			end
 			if (SUI_Win.Artwork.Digital.radio:GetValue()) then
 				SUI.DBMod.Artwork.Style = 'Fel'

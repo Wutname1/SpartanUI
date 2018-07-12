@@ -163,18 +163,6 @@ function module:EnableArtwork()
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Right')
 		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box'
-	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
-		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Left.tga')
-		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Base_Bar_Right.tga')
-		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Barbg-' .. UnitFactionGroup('Player')
-
-		Fel_SpartanUI.Left:SetScale(.75)
-		Fel_SpartanUI.Right:SetScale(.75)
-
-		for i = 1, 4 do
-			_G['Fel_Bar' .. i .. 'BG']:SetAlpha(.25)
-		end
-		module:SlidingTrays()
 	else
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right')
@@ -253,74 +241,12 @@ function module:StatusBars()
 		}
 	}
 
-	if SUI.DB.Styles.Fel.SubTheme == 'War' then
-		Settings.Fel_StatusBar_Left.bgImg =
-			'Interface\\AddOns\\SpartanUI_Style_Fel\\War\\StatusBar-' .. UnitFactionGroup('Player')
-		Settings.Fel_StatusBar_Left.GlowPoint = {x = -16}
-		Settings.Fel_StatusBar_Left.MaxWidth = 18
-		Settings.Fel_StatusBar_Left.texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0}
-		Settings.Fel_StatusBar_Left.bgTooltip = nil
-
-		Settings.Fel_StatusBar_Right.bgImg = Settings.Fel_StatusBar_Left.bgImg
-		Settings.Fel_StatusBar_Right.GlowPoint = {x = 16}
-		Settings.Fel_StatusBar_Right.MaxWidth = 48
-		Settings.Fel_StatusBar_Right.texCords = Settings.Fel_StatusBar_Left.texCords
-		Settings.Fel_StatusBar_Right.bgTooltip = nil
-	end
-
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
 	StatusBars:Initalize(Settings)
-
-	if SUI.DB.Styles.Fel.SubTheme == 'War' then
-		StatusBars.bars.Fel_StatusBar_Left:SetAlpha(.9)
-		StatusBars.bars.Fel_StatusBar_Right:SetAlpha(.9)
-	end
 
 	-- Position the StatusBars
 	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', Fel_SpartanUI, 'BOTTOM', -100, 0)
 	StatusBars.bars.Fel_StatusBar_Right:SetPoint('BOTTOMLEFT', Fel_SpartanUI, 'BOTTOM', 100, 0)
-end
-
--- Artwork Stuff
-function module:SlidingTrays()
-	local trayIDs = {'left', 'right'}
-	for _, key in ipairs(trayIDs) do
-		local tray = CreateFrame('Frame', nil, UIParent)
-		tray:SetFrameStrata('BACKGROUND')
-		tray:SetSize(400, 45)
-
-		tray.bg = tray:CreateTexture(nil, 'BACKGROUND')
-		tray.bg:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Trays-' .. UnitFactionGroup('Player'))
-		tray.bg:SetAllPoints(tray)
-		tray.bg:SetTexCoord(0.076171875, 0.92578125, 0, 0.18359375)
-
-		tray.bgCollapsed = tray:CreateTexture(nil, 'BACKGROUND')
-		tray.bgCollapsed:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\Trays-' .. UnitFactionGroup('Player'))
-		tray.bgCollapsed:SetPoint('TOPLEFT', tray, 'BOTTOMLEFT')
-		tray.bgCollapsed:SetPoint('TOPRIGHT', tray, 'BOTTOMRIGHT')
-		tray.bgCollapsed:SetHeight(18)
-		tray.bgCollapsed:SetTexCoord(0.076171875, 0.92578125, 1, 0.92578125)
-
-		tray.bgCollapsed:Hide()
-		
-		module.Trays[key] = tray
-	end
-
-	module.Trays.left:SetAlpha(.8)
-	module.Trays.right:SetAlpha(.8)
-	
-	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, 0)
-	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, 0)
-
-	if SUI.DB.Styles.Fel.SlidingTrays.left.collapsed then
-		module.Trays.left:SetPoint('TOP', UIParent, 'TOP', 100, -45)
-		module.Trays.left.bgCollapsed:Show()
-	end
-	if SUI.DB.Styles.Fel.SlidingTrays.right.collapsed then
-		module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 100, -45)
-		module.Trays.right.bgCollapsed:Show()
-	end
-	
 end
 
 -- Bartender Stuff
@@ -341,14 +267,6 @@ function module:MiniMapUpdate()
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
 		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap')
 		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
-		Minimap.BG:SetSize(256, 256)
-		Minimap.BG:SetBlendMode('ADD')
-	elseif SUI.DB.Styles.Fel.SubTheme == 'War' then
-		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap1')
-		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 0, 3)
-		Minimap.BG:SetAlpha(.75)
-		-- Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\War\\minimap2')
-		-- Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', -7, 5)
 		Minimap.BG:SetSize(256, 256)
 		Minimap.BG:SetBlendMode('ADD')
 	else
@@ -394,26 +312,14 @@ function module:MiniMap()
 
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
 
-	if SUI.DB.Styles.Fel.SubTheme == 'War' then
-		module.Settings.MiniMap.TextLocation = 'TOP'
-		module.Settings.MiniMap.Anchor = {
-			'CENTER',
-			Fel_SpartanUI.Left,
-			'RIGHT',
-			0,
-			5
-		}
-		SUI:GetModule('Component_Minimap'):ShapeChange('square')
-	else
-		module.Settings.MiniMap.Anchor = {
-			'CENTER',
-			Fel_SpartanUI.Left,
-			'RIGHT',
-			0,
-			-10
-		}
-		SUI:GetModule('Component_Minimap'):ShapeChange('circle')
-	end
+	module.Settings.MiniMap.Anchor = {
+		'CENTER',
+		Fel_SpartanUI.Left,
+		'RIGHT',
+		0,
+		-10
+	}
+	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()
 

@@ -1,6 +1,6 @@
 local _G, SUI = _G, _G['SUI']
 local L = SUI.L
-local module = SUI:GetModule('Style_Fel')
+local module = SUI:GetModule('Style_War')
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
@@ -86,38 +86,32 @@ local threat = function(self, event, unit)
 	end
 end
 
-local pvpIcon = function(self, event, unit)
+local pvpIconWar = function(self, event, unit)
 	if (unit ~= self.unit) then
 		return
 	end
 
-	local pvp = self.PvPIndicator
-	if (pvp.PreUpdate) then
-		pvp:PreUpdate()
-	end
+	self.artwork.bgHorde:Hide()
+	self.artwork.bgAlliance:Hide()
+	self.artwork.bgNeutral:Hide()
 
-	local status
+	self.artwork.flairHorde:Hide()
+	self.artwork.flairAlliance:Hide()
+
 	local factionGroup = UnitFactionGroup(unit)
-	if (UnitIsPVPFreeForAll(unit)) then
-		-- XXX - WoW5: UnitFactionGroup() can return Neutral as well.
-		pvp:SetTexture('Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon')
-		status = 'ffa'
-	elseif (factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
-		pvp:SetTexture('Interface\\FriendsFrame\\PlusManz-' .. factionGroup)
-		-- pvp.shadow:SetTexture("Interface\\FriendsFrame\\PlusManz-"..factionGroup)
-		status = factionGroup
-	end
 
-	if (status) then
-		-- pvp.shadow:Show()
-		pvp:Show()
+	if (factionGroup and factionGroup ~= 'Neutral') then
+		self.artwork['flair' .. factionGroup]:Show()
+		self.artwork['bg' .. factionGroup]:Show()
+		if UnitIsPVP(unit) then
+			self.artwork['bg' .. factionGroup]:SetAlpha(1)
+			self.artwork['flair' .. factionGroup]:SetAlpha(1)
+		else
+			self.artwork['bg' .. factionGroup]:SetAlpha(.35)
+			self.artwork['flair' .. factionGroup]:SetAlpha(.35)
+		end
 	else
-		-- pvp.shadow:Hide()
-		pvp:Hide()
-	end
-
-	if (pvp.PostUpdate) then
-		return pvp:PostUpdate(status)
+		self.artwork.bgNeutral:Show()
 	end
 end
 
@@ -239,17 +233,34 @@ local CreateLargeFrame = function(self, unit)
 		self.RareElite:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -20)
 		self.RareElite:SetSize(self:GetWidth() + 60, self:GetHeight() + 40)
 
-		self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
-		self.artwork.bg:SetPoint('CENTER', self)
-		self.artwork.bg:SetTexture(Images.bg.Texture)
-		self.artwork.bg:SetTexCoord(unpack(Images.bg.Coords))
-		self.artwork.bg:SetSize(self:GetSize())
+		self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
+		self.artwork.bgNeutral:SetAllPoints(self)
+		self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+		self.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
 
-		self.artwork.flair = self.artwork:CreateTexture(nil, 'BACKGROUND')
-		self.artwork.flair:SetPoint('RIGHT', self, 'RIGHT', 0, 5)
-		self.artwork.flair:SetTexture(Images.flair.Texture)
-		self.artwork.flair:SetTexCoord(unpack(Images.flair.Coords))
-		self.artwork.flair:SetSize(self:GetWidth() + 60, self:GetHeight() + 75)
+		self.artwork.bgAlliance = self.artwork:CreateTexture(nil, 'BACKGROUND')
+		self.artwork.bgAlliance:SetPoint('CENTER', self)
+		self.artwork.bgAlliance:SetTexture(Images.Alliance.bg.Texture)
+		self.artwork.bgAlliance:SetTexCoord(unpack(Images.Alliance.bg.Coords))
+		self.artwork.bgAlliance:SetSize(self:GetSize())
+
+		self.artwork.bgHorde = self.artwork:CreateTexture(nil, 'BACKGROUND')
+		self.artwork.bgHorde:SetPoint('CENTER', self)
+		self.artwork.bgHorde:SetTexture(Images.Horde.bg.Texture)
+		self.artwork.bgHorde:SetTexCoord(unpack(Images.Horde.bg.Coords))
+		self.artwork.bgHorde:SetSize(self:GetSize())
+
+		self.artwork.flairAlliance = self.artwork:CreateTexture(nil, 'BORDER')
+		self.artwork.flairAlliance:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
+		self.artwork.flairAlliance:SetTexture(Images.Alliance.flair.Texture)
+		self.artwork.flairAlliance:SetTexCoord(unpack(Images.Alliance.flair.Coords))
+		self.artwork.flairAlliance:SetSize(self:GetWidth(), self:GetHeight() + 37)
+
+		self.artwork.flairHorde = self.artwork:CreateTexture(nil, 'BORDER')
+		self.artwork.flairHorde:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
+		self.artwork.flairHorde:SetTexture(Images.Horde.flair.Texture)
+		self.artwork.flairHorde:SetTexCoord(unpack(Images.Horde.flair.Coords))
+		self.artwork.flairHorde:SetSize(self:GetWidth(), self:GetHeight() + 37)
 
 		self.Portrait = PlayerFrames:CreatePortrait(self)
 		if SUI.DBMod.PlayerFrames.Portrait3D then
@@ -390,7 +401,7 @@ local CreateLargeFrame = function(self, unit)
 		self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
 		self.PvPIndicator:SetSize(25, 25)
 		self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
-		self.PvPIndicator.Override = pvpIcon
+		self.PvPIndicator.Override = pvpIconWar
 
 		self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.RestingIndicator:SetSize(20, 20)
@@ -1000,11 +1011,11 @@ local CreateUnitFrame = function(self, unit)
 end
 
 local CreateUnitFrameParty = function(self, unit)
-	if SUI.DB.Styles.Fel.PartyFrames.FrameStyle == 'small' then
+	if SUI.DB.Styles.War.PartyFrames.FrameStyle == 'small' then
 		self = CreateSmallFrame(self, unit)
-	elseif SUI.DB.Styles.Fel.PartyFrames.FrameStyle == 'medium' then
+	elseif SUI.DB.Styles.War.PartyFrames.FrameStyle == 'medium' then
 		self = CreateMediumFrame(self, unit)
-	elseif SUI.DB.Styles.Fel.PartyFrames.FrameStyle == 'large' then
+	elseif SUI.DB.Styles.War.PartyFrames.FrameStyle == 'large' then
 		self = CreateLargeFrame(self, unit)
 	end
 	self = PartyFrames:MakeMovable(self)
@@ -1012,11 +1023,11 @@ local CreateUnitFrameParty = function(self, unit)
 end
 
 local CreateUnitFrameRaid = function(self, unit)
-	if SUI.DB.Styles.Fel.RaidFrames.FrameStyle == 'small' then
+	if SUI.DB.Styles.War.RaidFrames.FrameStyle == 'small' then
 		self = CreateSmallFrame(self, unit)
-	elseif SUI.DB.Styles.Fel.RaidFrames.FrameStyle == 'medium' then
+	elseif SUI.DB.Styles.War.RaidFrames.FrameStyle == 'medium' then
 		self = CreateMediumFrame(self, unit)
-	elseif SUI.DB.Styles.Fel.RaidFrames.FrameStyle == 'large' then
+	elseif SUI.DB.Styles.War.RaidFrames.FrameStyle == 'large' then
 		self = CreateLargeFrame(self, unit)
 	end
 	self = SUI:GetModule('RaidFrames'):MakeMovable(self)
@@ -1041,9 +1052,9 @@ function module:UpdateAltBarPositions()
 	end
 end
 
-SpartanoUF:RegisterStyle('Spartan_FelPlayerFrames', CreateUnitFrame)
-SpartanoUF:RegisterStyle('Spartan_FelPartyFrames', CreateUnitFrameParty)
-SpartanoUF:RegisterStyle('Spartan_FelRaidFrames', CreateUnitFrameRaid)
+SpartanoUF:RegisterStyle('Spartan_WarPlayerFrames', CreateUnitFrame)
+SpartanoUF:RegisterStyle('Spartan_WarPartyFrames', CreateUnitFrameParty)
+SpartanoUF:RegisterStyle('Spartan_WarRaidFrames', CreateUnitFrameRaid)
 
 -- Module Calls
 function module:FrameSize(size)
@@ -1066,47 +1077,58 @@ function module:FrameSize(size)
 end
 
 function module:PlayerFrames()
-	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
-		Images = {
+	Images = {
+		Alliance = {
 			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
-				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
-			},
-			smallbg = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
 			},
 			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
-				Coords = {0, 0.1, 0, 0.2}
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.03125, 0.427734375, 0, 0.421875}
+			}
+		},
+		Horde = {
+			bg = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
 			},
-			flair2 = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
-				Coords = {0, 0.1, 0, 0.2}
+			flair = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.541015625, 1, 0, 0.421875}
 			}
 		}
+	}
+
+	if PlayerFaction == 'Horde' then
+		Images.smallbg = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
+		}
+		Images.flair = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+		Images.flair2 = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.541015625, 1, 0, 0.421875}
+		}
 	else
-		Images = {
-			bg = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {.02, .385, .45, .575} --left, right, top, bottom
-			},
-			smallbg = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
-			},
-			flair = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {0.140625, 0.615234375, 0, 0.265625}
-			},
-			flair2 = {
-				Texture = 'Interface\\Addons\\SpartanUI_Style_Fel\\Images\\Party-Frame',
-				Coords = {0.1953125, 0.8046875, 0.1328125, 0.859375}
-			}
+		Images.smallbg = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
+		}
+		Images.flair = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+		Images.flair2 = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
 		}
 	end
 	PlayerFrames = SUI:GetModule('PlayerFrames')
-	SpartanoUF:SetActiveStyle('Spartan_FelPlayerFrames')
+	SpartanoUF:SetActiveStyle('Spartan_WarPlayerFrames')
 	PlayerFrames:BuffOptions()
 
 	local FramesList = {
@@ -1239,7 +1261,7 @@ function module:PlayerFrames()
 	SUI.PlayerFrames = PlayerFrames
 
 	local unattached = false
-	Fel_SpartanUI:HookScript(
+	War_SpartanUI:HookScript(
 		'OnHide',
 		function(this, event)
 			if UnitUsingVehicle('player') then
@@ -1249,11 +1271,11 @@ function module:PlayerFrames()
 		end
 	)
 
-	Fel_SpartanUI:HookScript(
+	War_SpartanUI:HookScript(
 		'OnShow',
 		function(this, event)
 			if unattached then
-				SUI_FramesAnchor:SetParent(Fel_SpartanUI)
+				SUI_FramesAnchor:SetParent(War_SpartanUI)
 				module:PositionFrame()
 			end
 		end
@@ -1266,9 +1288,9 @@ function module:PositionFrame(b)
 		PlayerFrames[b]:ClearAllPoints()
 	end
 	--Set Position
-	if Fel_SpartanUI.Left then
+	if War_SpartanUI.Left then
 		if b == 'player' or b == nil then
-			PlayerFrames.player:SetPoint('BOTTOMRIGHT', Fel_SpartanUI.Left, 'TOPLEFT', -60, 10)
+			PlayerFrames.player:SetPoint('BOTTOMRIGHT', War_SpartanUI.Left, 'TOPLEFT', -60, 10)
 		end
 	else
 		if b == 'player' or b == nil then
@@ -1310,7 +1332,7 @@ function module:PositionFrame(b)
 end
 
 function module:RaidFrames()
-	SpartanoUF:SetActiveStyle('Spartan_FelRaidFrames')
+	SpartanoUF:SetActiveStyle('Spartan_WarRaidFrames')
 	module:RaidOptions()
 
 	local xoffset = 1
@@ -1322,7 +1344,7 @@ function module:RaidFrames()
 	if SUI.DBMod.RaidFrames.mode == 'GROUP' then
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
-	if SUI.DB.Styles.Fel.RaidFrames.FrameStyle == 'medium' then
+	if SUI.DB.Styles.War.RaidFrames.FrameStyle == 'medium' then
 		xoffset = 10
 	end
 
@@ -1364,7 +1386,7 @@ function module:RaidFrames()
 		'columnAnchorPoint',
 		columnAnchorPoint,
 		'oUF-initialConfigFunction',
-		module:FrameSize(SUI.DB.Styles.Fel.RaidFrames.FrameStyle)
+		module:FrameSize(SUI.DB.Styles.War.RaidFrames.FrameStyle)
 	)
 
 	raid:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
@@ -1374,7 +1396,7 @@ end
 
 function module:PartyFrames()
 	PartyFrames = SUI:GetModule('PartyFrames')
-	SpartanoUF:SetActiveStyle('Spartan_FelPartyFrames')
+	SpartanoUF:SetActiveStyle('Spartan_WarPartyFrames')
 	module:PartyOptions()
 
 	if _G['SUI_PartyFrameHeader'] then
@@ -1403,7 +1425,7 @@ function module:PartyFrames()
 		'initial-anchor',
 		'TOPLEFT',
 		'oUF-initialConfigFunction',
-		module:FrameSize(SUI.DB.Styles.Fel.PartyFrames.FrameStyle)
+		module:FrameSize(SUI.DB.Styles.War.PartyFrames.FrameStyle)
 	)
 
 	return (party)
@@ -1418,10 +1440,10 @@ function module:RaidOptions()
 		order = 2,
 		values = {['large'] = L['Large'], ['medium'] = L['Medium'], ['small'] = L['Small']},
 		get = function(info)
-			return SUI.DB.Styles.Fel.RaidFrames.FrameStyle
+			return SUI.DB.Styles.War.RaidFrames.FrameStyle
 		end,
 		set = function(info, val)
-			SUI.DB.Styles.Fel.RaidFrames.FrameStyle = val
+			SUI.DB.Styles.War.RaidFrames.FrameStyle = val
 			SUI:reloadui()
 		end
 	}
@@ -1434,10 +1456,10 @@ function module:PartyOptions()
 		order = 2,
 		values = {['large'] = L['Large'], ['medium'] = L['Medium'], ['small'] = L['Small']},
 		get = function(info)
-			return SUI.DB.Styles.Fel.PartyFrames.FrameStyle
+			return SUI.DB.Styles.War.PartyFrames.FrameStyle
 		end,
 		set = function(info, val)
-			SUI.DB.Styles.Fel.PartyFrames.FrameStyle = val
+			SUI.DB.Styles.War.PartyFrames.FrameStyle = val
 			SUI:reloadui()
 		end
 	}
