@@ -33,7 +33,7 @@ SUI.opt = {
 
 local FontItems = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
 local FontItemsSize = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
-local fontdefault = {Size = 0, Face = 'Roboto', Type = 'outline'}
+local fontdefault = {Size = 0, Face = 'Roboto-Bold', Type = 'outline'}
 local MovedDefault = {moved = false, point = '', relativeTo = nil, relativePoint = '', xOffset = 0, yOffset = 0}
 local frameDefault1 = {
 	movement = MovedDefault,
@@ -734,6 +734,7 @@ function SUI:ResetConfig()
 end
 
 function SUI:FirstTimeSetup()
+	local PageData, SetupWindow
 	--Hide Bartender4 Minimap icon.
 	if Bartender4 then
 		Bartender4.db.profile.minimapIcon.hide = true
@@ -742,7 +743,7 @@ function SUI:FirstTimeSetup()
 	end
 	--Setup page
 	SUI.DB.SetupDone = false
-	local PageData = {
+	PageData = {
 		SubTitle = 'Welcome',
 		Desc1 = 'Thank you for installing SpartanUI.',
 		Desc2 = 'If you would like to copy the configuration from another character you may do so below.',
@@ -788,13 +789,234 @@ function SUI:FirstTimeSetup()
 	}
 
 	-- Uncomment this when the time is right.
-	-- local SetupWindow = spartan:GetModule("SetupWindow")
+	-- SetupWindow = spartan:GetModule("SetupWindow")
 	-- SetupWindow:AddPage(PageData)
 	-- SetupWindow:DisplayPage()
+end
 
+function SUI:FontSetupWizard()
+	local PageData, SetupWindow
+
+	local fontlist = {
+		'RobotoBold',
+		'Roboto',
+		'Cognosis',
+		'NotoSans',
+		'FrizQuadrata',
+		'ArialNarrow'
+	}
+	local fontnames = {
+		['RobotoBold'] = 'Roboto-Bold',
+		['Roboto'] = 'Roboto',
+		['Cognosis'] = 'SpartanUI',
+		['NotoSans'] = 'SUI4',
+		['FrizQuadrata'] = 'FrizQuadrata',
+		['ArialNarrow'] = 'ArialNarrow'
+	}
+
+	PageData = {
+		SubTitle = 'Font Style',
+		Display = function()
+			SUI_Win.FontFace = CreateFrame('Frame', nil)
+			SUI_Win.FontFace:SetParent(SUI_Win.content)
+			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
+
+			local RadioButtons = function(self)
+				for _, v in ipairs(fontlist) do
+					fontface = SUI_Win.FontFace[v].radio:SetValue(false)
+				end
+
+				self.radio:SetValue(true)
+			end
+
+			local gui = LibStub('AceGUI-3.0')
+			local control, radio
+
+			--RobotoBold
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0, 0.3125)
+			control:SetImageSize(180, 60)
+			control:SetPoint('TOPLEFT', SUI_Win.FontFace, 'TOPLEFT', 55, -55)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.FontFace)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Roboto Bold')
+			radio:SetUserData('value', 'Roboto-Bold')
+			radio:SetUserData('text', 'Roboto-Bold')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(120)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.FontFace.RobotoBold = control
+
+			--Roboto
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.34375, 0.65625)
+			control:SetImageSize(180, 60)
+			control:SetPoint('LEFT', SUI_Win.FontFace.RobotoBold.frame, 'RIGHT', 80, 0)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.FontFace)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Roboto')
+			radio:SetUserData('value', 'Roboto')
+			radio:SetUserData('text', 'Roboto')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(120)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.FontFace.Roboto = control
+
+			--Cognosis
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.6875, 1)
+			control:SetImageSize(180, 60)
+			control:SetPoint('LEFT', SUI_Win.FontFace.Roboto.frame, 'RIGHT', 80, 0)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.FontFace)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Cognosis')
+			radio:SetUserData('value', 'SpartanUI')
+			radio:SetUserData('text', 'SpartanUI')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(120)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.FontFace.Cognosis = control
+
+			--NotoSans
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0, 0.3125)
+			control:SetImageSize(180, 60)
+			control:SetPoint('TOP', SUI_Win.FontFace.RobotoBold.radio.frame, 'BOTTOM', 0, -20)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.FontFace)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('NotoSans')
+			radio:SetUserData('value', 'SUI4')
+			radio:SetUserData('text', 'SUI4')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(120)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.FontFace.NotoSans = control
+
+			--FrizQuadrata
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.34375, 0.65625)
+			control:SetImageSize(180, 60)
+			control:SetPoint('LEFT', SUI_Win.FontFace.NotoSans.frame, 'RIGHT', 80, 0)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.FontFace)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Friz Quadrata')
+			radio:SetUserData('value', 'FrizQuadrata')
+			radio:SetUserData('text', 'FrizQuadrata')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(120)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.FontFace.FrizQuadrata = control
+
+			--ArialNarrow
+			control = gui:Create('Icon')
+			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.6875, 1)
+			control:SetImageSize(180, 60)
+			control:SetPoint('LEFT', SUI_Win.FontFace.FrizQuadrata.frame, 'RIGHT', 80, 0)
+			control:SetCallback('OnClick', RadioButtons)
+			control.frame:SetParent(SUI_Win.FontFace)
+			control.frame:Show()
+
+			radio = gui:Create('CheckBox')
+			radio:SetLabel('Arial Narrow')
+			radio:SetUserData('value', 'ArialNarrow')
+			radio:SetUserData('text', 'ArialNarrow')
+			radio:SetType('radio')
+			radio:SetDisabled(true)
+			radio:SetWidth(120)
+			radio:SetHeight(16)
+			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
+			radio:SetCallback('OnClick', RadioButton)
+			radio.frame:SetParent(control.frame)
+			radio.frame:Show()
+			control.radio = radio
+
+			SUI_Win.FontFace.ArialNarrow = control
+
+			SUI_Win.FontFace.RobotoBold.radio:SetValue(true)
+		end,
+		Next = function()
+			local fontface
+
+			for _, v in ipairs(fontlist) do
+				if SUI_Win.FontFace[v].radio:GetValue() then
+					fontface = fontnames[v]
+				end
+			end
+
+			if fontface then
+				SUI.DB.font.Primary.Face = fontface
+				SUI.DB.font.Core.Face = fontface
+				SUI.DB.font.Player.Face = fontface
+				SUI.DB.font.Party.Face = fontface
+				SUI.DB.font.Raid.Face = fontface
+			end
+			SUI_Win.FontFace:Hide()
+			SUI_Win.FontFace = nil
+			SUI.DB.SetupDone = true
+		end,
+		Skip = function()
+			SUI_Win.FontFace:Hide()
+			SUI_Win.FontFace = nil
+			SUI.DB.SetupDone = true
+		end
+	}
+
+	SetupWindow = SUI:GetModule('SetupWindow')
+	SetupWindow:AddPage(PageData)
+	SetupWindow:DisplayPage()
 	-- This will be moved once we put the setup page in place.
 	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
-	SUI.DB.SetupDone = true
+	
 end
 
 function SUI:OnInitialize()
@@ -986,6 +1208,7 @@ function SUI:reloadui(Desc2)
 		Desc2 = Desc2,
 		width = 400,
 		height = 150,
+		WipePage = true,
 		Display = function()
 			SUI_Win:ClearAllPoints()
 			SUI_Win:SetPoint('TOP', 0, -20)
@@ -997,8 +1220,6 @@ function SUI:reloadui(Desc2)
 		end,
 		Next = function()
 			ReloadUI()
-		end,
-		Skip = function()
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWindow')
@@ -1006,6 +1227,9 @@ function SUI:reloadui(Desc2)
 end
 
 function SUI:OnEnable()
+	if not SUI.DB.SetupDone then
+		SUI:FontSetupWizard()
+	end
 	AceConfig:RegisterOptionsTable(
 		'SpartanUIBliz',
 		{
@@ -1088,7 +1312,9 @@ function SUI:ChatCommand(input)
 		else
 			ResetDBWarning = true
 			SUI:Print('|cffff0000Warning')
-			SUI:Print('This will reset the full SpartanUI & Bartender4 Database. If you wish to continue perform the chat command again.')
+			SUI:Print(
+				'This will reset the full SpartanUI & Bartender4 Database. If you wish to continue perform the chat command again.'
+			)
 		end
 	elseif input == 'resetdb' then
 		if ResetDBWarning then
@@ -1181,7 +1407,7 @@ end
 
 function SUI:comma_value(n)
 	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
-	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. _G.LARGE_NUMBER_SEPERATOR):reverse()) .. right
+	return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
 end
 
 ---------------		FONT FUNCTIONS		---------------------------------------------
@@ -1210,8 +1436,10 @@ function SUI:GetFontFace(Module)
 			return 'Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf'
 		elseif SUI.DB.font[Module].Face == 'SUI4' then
 			return 'Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf'
-		elseif DB.font[Module].Face == "Roboto" then
-			return "Interface\\AddOns\\SpartanUI\\media\\Roboto-Medium.ttf"
+		elseif SUI.DB.font[Module].Face == 'Roboto' then
+			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Medium.ttf'
+		elseif SUI.DB.font[Module].Face == 'Roboto-Bold' then
+			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Bold.ttf'
 		elseif SUI.DB.font[Module].Face == 'FrizQuadrata' then
 			return 'Fonts\\FRIZQT__.TTF'
 		elseif SUI.DB.font[Module].Face == 'Arial' then
