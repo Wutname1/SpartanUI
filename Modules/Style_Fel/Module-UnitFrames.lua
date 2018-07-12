@@ -7,6 +7,7 @@ local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 local Images
+local PlayerFaction = UnitFactionGroup('Player')
 
 local function UpdatePowerPrep(self, event, specID)
 	local element = self.Power
@@ -92,12 +93,13 @@ local pvpIconWar = function(self, event, unit)
 
 	self.artwork.bgHorde:Hide()
 	self.artwork.bgAlliance:Hide()
+	self.artwork.bgNeutral:Hide()
 
 	self.artwork.flairHorde:Hide()
 	self.artwork.flairAlliance:Hide()
 
 	local factionGroup = UnitFactionGroup(unit)
-
+	
 	if (factionGroup and factionGroup ~= 'Neutral') then
 		self.artwork['flair' .. factionGroup]:Show()
 		self.artwork['bg' .. factionGroup]:Show()
@@ -108,6 +110,8 @@ local pvpIconWar = function(self, event, unit)
 			self.artwork['bg' .. factionGroup]:SetAlpha(.35)
 			self.artwork['flair' .. factionGroup]:SetAlpha(.35)
 		end
+	else
+		self.artwork.bgNeutral:Show()
 	end
 end
 
@@ -265,6 +269,11 @@ local CreateLargeFrame = function(self, unit)
 		self.RareElite:SetSize(self:GetWidth() + 60, self:GetHeight() + 40)
 
 		if SUI.DB.Styles.Fel.SubTheme == 'War' then
+			self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
+			self.artwork.bgNeutral:SetAllPoints(self)
+			self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+			self.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
+
 			self.artwork.bgAlliance = self.artwork:CreateTexture(nil, 'BACKGROUND')
 			self.artwork.bgAlliance:SetPoint('CENTER', self)
 			self.artwork.bgAlliance:SetTexture(Images.Alliance.bg.Texture)
@@ -1164,7 +1173,7 @@ function module:PlayerFrames()
 			}
 		}
 
-		if UnitFactionGroup('Player') == 'Horde' then
+		if PlayerFaction == 'Horde' then
 			Images.smallbg = {
 				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\War\\UnitFrames',
 				Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
