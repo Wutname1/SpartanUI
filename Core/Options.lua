@@ -39,6 +39,7 @@ function module:OnInitialize()
 	local FontFaces = {
 		["SpartanUI"]="Cognosis",
 		["Roboto"]="Roboto",
+		["Roboto-Bold"]="Roboto Bold",
 		["SUI4"]="NotoSans",
 		["SUI4cn"]="NotoSans (zhCN)",
 		["FrizQuadrata"]="Friz Quadrata",

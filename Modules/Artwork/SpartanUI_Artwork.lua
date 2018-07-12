@@ -153,6 +153,8 @@ function Artwork_Core:FirstTime()
 				SUI_Win.Artwork.Transparent.radio:SetValue(false)
 				SUI_Win.Artwork.Minimal.radio:SetValue(false)
 				SUI_Win.Artwork.Fel.radio:SetValue(false)
+				SUI_Win.Artwork.War.radio:SetValue(false)
+				SUI_Win.Artwork.Digital.radio:SetValue(false)
 				self.radio:SetValue(true)
 			end
 
@@ -170,8 +172,6 @@ function Artwork_Core:FirstTime()
 
 			radio = gui:Create('CheckBox')
 			radio:SetLabel('Classic')
-			radio:SetUserData('value', 'Classic')
-			radio:SetUserData('text', 'Classic')
 			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.4)
@@ -195,8 +195,6 @@ function Artwork_Core:FirstTime()
 
 			radio = gui:Create('CheckBox')
 			radio:SetLabel('Fel')
-			radio:SetUserData('value', 'Fel')
-			radio:SetUserData('text', 'Fel')
 			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
@@ -219,8 +217,6 @@ function Artwork_Core:FirstTime()
 
 			radio = gui:Create('CheckBox')
 			radio:SetLabel('War')
-			radio:SetUserData('value', 'War')
-			radio:SetUserData('text', 'War')
 			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
@@ -243,8 +239,6 @@ function Artwork_Core:FirstTime()
 
 			radio = gui:Create('CheckBox')
 			radio:SetLabel('Digital')
-			radio:SetUserData('value', 'Digital')
-			radio:SetUserData('text', 'Digital')
 			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
@@ -267,8 +261,6 @@ function Artwork_Core:FirstTime()
 
 			radio = gui:Create('CheckBox')
 			radio:SetLabel('Transparent')
-			radio:SetUserData('value', 'Transparent')
-			radio:SetUserData('text', 'Transparent')
 			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
@@ -291,8 +283,6 @@ function Artwork_Core:FirstTime()
 
 			radio = gui:Create('CheckBox')
 			radio:SetLabel('Minimal')
-			radio:SetUserData('value', 'Minimal')
-			radio:SetUserData('text', 'Minimal')
 			radio:SetType('radio')
 			radio:SetDisabled(true)
 			radio:SetWidth(control.frame:GetWidth() / 1.15)
@@ -364,7 +354,7 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork = nil
 		end,
 		RequireReload = true,
-		Priority = 1,
+		Priority = true,
 		Skipable = true,
 		NoReloadOnSkip = true,
 		Skip = function()

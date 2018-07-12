@@ -40,6 +40,15 @@ function module:DisplayPage(CustomData)
 	if Win == nil then
 		module:CreateInstallWindow()
 	end
+	if CustomData then
+		if CustomData.WipePage then
+			SUI_Win:Hide()
+			SUI_Win = nil
+			Win = nil
+			module:CreateInstallWindow()
+		end
+	end
+	
 	if (PageList[Page_Cur] == nil and not CustomData) then
 		return
 	end
@@ -136,7 +145,7 @@ end
 
 function module:CreateInstallWindow()
 	Win = CreateFrame('Frame', 'SUI_Win', UIParent)
-	Win:SetSize(550, 400)
+	Win:SetSize(600, 450)
 	Win:SetPoint('TOP', UIParent, 'TOP', 0, -150)
 	Win:SetFrameStrata('DIALOG')
 
