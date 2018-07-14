@@ -465,7 +465,7 @@ function module:MiniMap()
 			Minimap:ClearAllPoints()
 			Minimap:SetParent(UIParent)
 			Minimap:SetPoint('TOP', UIParent, 'TOP', 0, -20)
-			SUI:GetModule('Component_Minimap'):ShapeChange('square')
+			-- SUI:GetModule('Component_Minimap'):ShapeChange('square')
 		end
 	)
 
@@ -473,9 +473,9 @@ function module:MiniMap()
 		'OnShow',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', War_SpartanUI, 'CENTER', 0, 54)
+			Minimap:SetPoint('CENTER', War_SpartanUI.Left, 'RIGHT', 0, 5)
 			Minimap:SetParent(War_SpartanUI)
-			SUI:GetModule('Component_Minimap'):ShapeChange('circle')
+			-- SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 		end
 	)
 end
