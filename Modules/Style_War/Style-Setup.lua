@@ -188,41 +188,33 @@ local Defaults = {
 			}
 		},
 		BagBar = {
-			fadeoutalpha = .6,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 0,
-			position = {point = 'TOP', parent = 'War_ActionBarPlate', x = 503, y = 2, scale = 0.70, growHorizontal = 'LEFT'},
+			position = {point = 'TOP', x = 465, y = -1, scale = 0.6, growHorizontal = 'LEFT'},
 			rows = 1,
 			onebag = false,
 			keyring = true
 		},
 		MicroMenu = {
-			fadeoutalpha = .6,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = -3,
-			position = {point = 'TOP', parent = 'War_ActionBarPlate', x = 114, y = 4, scale = 0.70, growHorizontal = 'RIGHT'}
+			position = {point = 'TOP', x = 138, y = -1, scale = 0.65, growHorizontal = 'RIGHT'}
 		},
 		PetBar = {
-			fadeoutalpha = .6,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 1,
-			position = {point = 'TOP', parent = 'War_ActionBarPlate', x = -497, y = 2, scale = 0.70, growHorizontal = 'RIGHT'},
+			position = {point = 'TOP', x = -465, y = -1, scale = 0.65, growHorizontal = 'RIGHT'},
 			rows = 1,
 			skin = {Zoom = true}
 		},
 		StanceBar = {
-			fadeoutalpha = .6,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 1,
-			position = {point = 'TOP', parent = 'War_ActionBarPlate', x = -115, y = 2, scale = 0.70, growHorizontal = 'LEFT'},
+			position = {point = 'TOP', x = -129, y = -1, scale = 0.6, growHorizontal = 'LEFT'},
 			rows = 1
 		},
 		MultiCast = {

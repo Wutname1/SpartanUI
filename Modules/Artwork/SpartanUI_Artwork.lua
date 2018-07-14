@@ -56,7 +56,7 @@ function Artwork_Core:MoveTalkingHeadUI()
 	)
 end
 
-function Artwork_Core:ActionBarPlates(plate)
+function Artwork_Core:ActionBarPlates(plate, excludelist)
 	local lib = LibStub('LibWindow-1.1', true)
 	if not lib then
 		return
@@ -77,10 +77,21 @@ function Artwork_Core:ActionBarPlates(plate)
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
 			SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
 		end
+		local excluded = false
+		if excludelist then
+			for _, key in ipairs(excludelist) do
+				if frame:GetName():match(key) then
+					excluded = true
+				end
+			end
+		end
 
 		-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
 		-- if (frame:GetName():match("BT4Bar")) and storage.parent and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
-		if (frame:GetName():match('BT4Bar')) and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
+		if
+			(frame:GetName():match('BT4Bar') and not excluded) and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()]
+		 then
 			-- end
 			-- end
 			-- if (storage.parent) and _G[storage.parent] then
