@@ -1322,6 +1322,7 @@ function SUI:ChatCommand(input)
 				'This will reset the full SpartanUI & Bartender4 Database. If you wish to continue perform the chat command again.'
 			)
 		end
+	elseif input == 'resetbartender' then
 		SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']:func()
 	elseif input == 'resetdb' then
 		if ResetDBWarning then
