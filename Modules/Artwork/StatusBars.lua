@@ -195,9 +195,7 @@ local updateText = function(self)
 			if (not azeriteItemLocation) then
 				return
 			end
-			-- local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation);
 			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-			local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 			valMax = totalLevelXP - xp
 			local ratio = (xp / totalLevelXP)
 			valFill = xp
@@ -207,7 +205,6 @@ local updateText = function(self)
 			self.FillGlow:SetVertexColor(1, 0.8, 0, 0.7)
 		end
 	elseif (module.DB[side].display == 'honor') then
-		-- local honorLevel = UnitHonorLevel("player");
 		valFill = UnitHonor('player')
 		valMax = UnitHonorMax('player')
 		valPercent = ((valFill / valMax) * 100)

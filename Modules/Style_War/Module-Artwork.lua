@@ -389,15 +389,6 @@ function module:SlidingTrays()
 
 	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, 0)
 	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, 0)
-
-	-- _G['BT4BarStanceBar']:SetScript(
-	-- 	'Hide',
-	-- 	function ()
-	-- 		if module.Trays.left.expanded:IsVisible() then
-
-	-- 		end
-	-- 	end
-	-- )
 end
 
 -- Bartender Stuff
