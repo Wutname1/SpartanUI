@@ -815,7 +815,7 @@ function module:OnInitialize()
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = nil
 					end
 
-					--Force REbuild of primary bar profile
+					--Force Rebuild of primary bar profile
 					SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupProfile()
 
 					--Reset Moved bars
@@ -1288,9 +1288,8 @@ function module:OnInitialize()
 						else
 							submodule:Disable()
 						end
-					else
-						SUI:reloadui()
 					end
+					SUI:reloadui()
 				end
 			}
 		end

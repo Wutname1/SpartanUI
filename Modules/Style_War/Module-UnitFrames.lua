@@ -224,7 +224,7 @@ local CreateLargeFrame = function(self, unit)
 		self.artwork = CreateFrame('Frame', nil, self)
 		self.artwork:SetFrameStrata('BACKGROUND')
 		self.artwork:SetFrameLevel(2)
-		self.artwork:SetAllPoints(self)
+		self.artwork:SetAllPoints()
 
 		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -5)
 		self.RareElite:SetTexture('Interface\\Scenarios\\Objective-Lineglow')

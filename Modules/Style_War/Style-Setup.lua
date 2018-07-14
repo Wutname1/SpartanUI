@@ -261,6 +261,4 @@ if not SUI.DB.Styles.War.Artwork then
 else
 	SUI.DB.Styles.War = SUI:MergeData(SUI.DB.Styles.War, Defaults, false)
 end
-if not SUI.DBG.Bartender4[SUI.DB.Styles.War.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.War.BartenderProfile] = {Style = 'War'}
-end
+SUI.DB.Styles.War.BartenderSettings = Defaults.BartenderSettings
