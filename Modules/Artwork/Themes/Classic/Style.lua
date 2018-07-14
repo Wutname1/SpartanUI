@@ -75,7 +75,6 @@ function module:SetupStatusBars()
 			TooltipSize = {300, 80},
 			TooltipTextSize = {280, 70},
 			texCords = {0.150390625, 0.96875, 0, 1},
-			-- texCordsTooltip = {0, 1, 0.234375, 0.84},
 			MaxWidth = 15
 		},
 		SUI_StatusBar_Right = {
@@ -85,10 +84,8 @@ function module:SetupStatusBars()
 			TooltipSize = {300, 80},
 			TooltipTextSize = {280, 70},
 			texCords = {0, 0.849609375, 0, 1},
-			-- texCordsTooltip = {0, 1, 0.234375, 0.84},
 			GlowPoint = {x = 20},
 			MaxWidth = 50
-			-- bgTooltip = 'Interface\\Addons\\SpartanUI_Artwork\\Images\\status-tooltip'
 		}
 	}
 
