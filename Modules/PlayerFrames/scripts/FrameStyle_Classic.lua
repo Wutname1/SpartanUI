@@ -446,29 +446,27 @@ local CreatePlayerFrame = function(self, unit)
 
 		self.ComboPoints = ring:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
 		self.ComboPoints:SetPoint('BOTTOMLEFT', self.Name, 'TOPLEFT', 12, -2)
+		if unit == 'player' then
+			local ClassPower = {}
+			for index = 1, 10 do
+				local Bar = CreateFrame('StatusBar', nil, self)
+				Bar:SetStatusBarTexture(Smoothv2)
 
-		local Icon = self:CreateTexture(nil, 'OVERLAY')
-		Icon:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_combo')
+				-- Position and size.
+				Bar:SetSize(16, 5)
+				if (index == 1) then
+					Bar:SetPoint('LEFT', self.ComboPoints, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
+				else
+					Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
+				end
+				-- Bar:SetPoint('LEFT', self, 'RIGHT', , 0)
 
-		local ClassPower = {}
-		for index = 1, 10 do
-			local Bar = CreateFrame('StatusBar', nil, self)
-			Bar.bg = Icon
-
-			-- Position and size.
-			Bar:SetSize(16, 16)
-			if (index == 1) then
-				Bar:SetPoint('LEFT', self.ComboPoints, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
-			else
-				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', -2, 0)
+				ClassPower[index] = Bar
 			end
-			-- Bar:SetPoint('LEFT', self, 'RIGHT', , 0)
 
-			ClassPower[index] = Bar
+			-- Register with oUF
+			self.ClassPower = ClassPower
 		end
-
-		-- Register with oUF
-		self.ClassPower = ClassPower
 	end
 	do -- setup buffs and debuffs
 		if SUI.DB.Styles.Classic.Frames[unit] and PlayerFrames then

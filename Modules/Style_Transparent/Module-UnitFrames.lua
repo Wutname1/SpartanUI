@@ -535,80 +535,28 @@ local CreatePlayerFrame = function(self, unit)
 
 		self.ComboPoints = ring:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
 		self.ComboPoints:SetPoint('BOTTOMLEFT', self.Name, 'TOPLEFT', 40, 6)
+		if unit == 'player' then
+			local ClassPower = {}
+			for index = 1, 10 do
+				local Bar = CreateFrame('StatusBar', nil, self)
+				Bar:SetStatusBarTexture(Smoothv2)
 
-		local ClassIcons = {}
-		for i = 1, 6 do
-			local Icon = self:CreateTexture(nil, 'OVERLAY')
-			Icon:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_combo')
-
-			if (i == 1) then
-				Icon:SetPoint('LEFT', self.ComboPoints, 'RIGHT', 1, -1)
-			else
-				Icon:SetPoint('LEFT', ClassIcons[i - 1], 'RIGHT', -2, 0)
-			end
-
-			ClassIcons[i] = Icon
-		end
-		self.ClassIcons = ClassIcons
-
-		local ClassPowerID = nil
-		ring:SetScript(
-			'OnEvent',
-			function(a, b)
-				if b == 'PLAYER_SPECIALIZATION_CHANGED' then
-					return
-				end
-				local cur
-				if (unit == 'vehicle') then
-					cur = GetComboPoints('vehicle', 'target')
+				-- Position and size.
+				Bar:SetSize(16, 5)
+				if (index == 1) then
+					Bar:SetPoint('LEFT', self.ComboPoints, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
 				else
-					cur = UnitPower('player', ClassPowerID)
+					Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
 				end
-				self.ComboPoints:SetText((cur > 0 and cur) or '')
-			end
-		)
+				-- Bar:SetPoint('LEFT', self, 'RIGHT', , 0)
 
-		ring:RegisterEvent(
-			'PLAYER_SPECIALIZATION_CHANGED',
-			function()
-				ClassPowerID = nil
-				if (classFileName == 'MONK') then
-					ClassPowerID = SPELL_POWER_CHI
-				elseif (classFileName == 'PALADIN') then
-					ClassPowerID = SPELL_POWER_HOLY_POWER
-				elseif (classFileName == 'WARLOCK') then
-					ClassPowerID = SPELL_POWER_SOUL_SHARDS
-				elseif (classFileName == 'ROGUE' or classFileName == 'DRUID') then
-					ClassPowerID = SPELL_POWER_COMBO_POINTS
-				elseif (classFileName == 'MAGE') then
-					ClassPowerID = SPELL_POWER_ARCANE_CHARGES
-				end
-				if ClassPowerID ~= nil then
-					ring:RegisterEvent('UNIT_DISPLAYPOWER')
-					ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-					ring:RegisterEvent('UNIT_POWER_FREQUENT')
-					ring:RegisterEvent('UNIT_MAXPOWER')
-				end
+				ClassPower[index] = Bar
 			end
-		)
 
-		if (classFileName == 'MONK') then
-			ClassPowerID = SPELL_POWER_CHI
-		elseif (classFileName == 'PALADIN') then
-			ClassPowerID = SPELL_POWER_HOLY_POWER
-		elseif (classFileName == 'WARLOCK') then
-			ClassPowerID = SPELL_POWER_SOUL_SHARDS
-		elseif (classFileName == 'ROGUE' or classFileName == 'DRUID') then
-			ClassPowerID = SPELL_POWER_COMBO_POINTS
-		elseif (classFileName == 'MAGE') then
-			ClassPowerID = SPELL_POWER_ARCANE_CHARGES
+			-- Register with oUF
+			self.ClassPower = ClassPower
 		end
-		if ClassPowerID ~= nil then
-			ring:RegisterEvent('UNIT_DISPLAYPOWER')
-			ring:RegisterEvent('PLAYER_ENTERING_WORLD')
-			ring:RegisterEvent('UNIT_POWER_FREQUENT')
-			ring:RegisterEvent('UNIT_MAXPOWER')
-		end
+
 	end
 	do -- setup buffs and debuffs
 		if SUI.DB.Styles.Transparent.Frames[unit] and PlayerFrames then
