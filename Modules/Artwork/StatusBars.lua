@@ -201,7 +201,7 @@ local updateText = function(self)
 			valMax = totalLevelXP - xp
 			local ratio = (xp / totalLevelXP)
 			valFill = xp
-			percentage = ratio * 100
+			valPercent = ratio * 100
 
 			self.Fill:SetVertexColor(1, 0.8, 0, 0.7)
 			self.FillGlow:SetVertexColor(1, 0.8, 0, 0.7)
