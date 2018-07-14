@@ -460,8 +460,14 @@ function module:MinimapCoords()
 		if (not mapID) then
 			return
 		end
-		--Get the Cords we are at for said map
-		local x, y = C_Map.GetPlayerMapPosition(mapID, 'player'):GetXY()
+		-- Get the Cords we are at for said map
+		-- C_Map.GetPlayerMapPosition has to be nil checked for as GetXY is defined if off the edge of the map
+		-- Notibly this causes errors on the [The Stormwind Extraction] (BFA Horde start quest)
+		local MapPos = C_Map.GetPlayerMapPosition(mapID, 'player')
+		if (not MapPos) then
+			return
+		end
+		local x, y = MapPos:GetXY()
 		if (not x) or (not y) then
 			return
 		end
