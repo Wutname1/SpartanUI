@@ -576,8 +576,28 @@ local DBdefault = {
 	Modules = {
 		StatusBars = {
 			default = StatusBarsStyleDefaults,
-			[1] = StatusBarsDefaults,
-			[2] = StatusBarsDefaults,
+			[1] = {
+				display = 'xp',
+				ToolTip = 'hover',
+				text = true,
+				AutoColor = true,
+				Color = {0, 0, 0, 1},
+				FontSize = 10,
+				GlowAnchor = 'RIGHT',
+				GlowHeight = 20,
+				texCords = {0, 1, 0, 1}
+			},
+			[2] = {
+				display = 'honor',
+				ToolTip = 'hover',
+				text = true,
+				AutoColor = true,
+				Color = {0, 0, 0, 1},
+				FontSize = 10,
+				GlowAnchor = 'RIGHT',
+				GlowHeight = 20,
+				texCords = {0, 1, 0, 1}
+			},
 			[3] = StatusBarsDefaults,
 			[4] = StatusBarsDefaults,
 			[5] = StatusBarsDefaults,
@@ -723,8 +743,6 @@ local DBdefault = {
 		}
 	}
 }
-DBdefault.Modules.StatusBars[1].display = 'xp'
-DBdefault.Modules.StatusBars[2].display = 'honor'
 
 local DBdefaults = {char = DBdefault, profile = DBdefault}
 -- local SUI.DBGs = {Version = SUI.Version}
