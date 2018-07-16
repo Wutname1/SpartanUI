@@ -1,11 +1,11 @@
-## Interface: 70300
+## Interface: 80000
 ## Title: SpartanUI |CFF0070DDCore|r
 ## Notes: User Interface combining elegant artwork with well designed features.
-## Version: 4.4.0
+## Version: 4.6.0
 ## X-Build: @project-revision@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
-## X-WoWI-ID: 18206
+## X-WoWI-ID: 24685
 ## X-oUF: SpartanoUF
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
@@ -24,21 +24,14 @@ libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\AceLocale-3.0\AceLocale-3.0.xml
 libs\AceTimer-3.0\AceTimer-3.0.xml
+libs\StdUi\StdUi.xml
 #@end-no-lib-strip@
 
 libs\oUF\oUF.xml
+libs\oUF_AuraBars\oUF_AuraBars.lua
 libs\oUF_Plugins\LoadAll.xml
 
-lang\enUS.lua
-lang\esES.lua
-lang\esMX.lua
-lang\frFR.lua
-lang\itIT.lua
-lang\ruRU.lua
-lang\deDE.lua
-lang\koKR.lua
-lang\zhCN.lua
-lang\zhTW.lua
+lang\localization.xml
 
 core\Framework.lua
 components\LoadAll.xml

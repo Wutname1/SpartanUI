@@ -1,7 +1,6 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local module = spartan:NewModule("Component_MailOpenAll", "AceEvent-3.0", "AceTimer-3.0");
-local L = LibStub("AceLocale-3.0"):GetLocale("SpartanUI", true);
-module.DisplayName = "Open all mail"
+local SUI, L = SUI, SUI.L
+local module = SUI:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-3.0')
+module.DisplayName = 'Open all mail'
 
 local MAX_MAIL_SHOWN = 50
 local mailIndex, attachIndex, numUnshownItems
@@ -17,35 +16,41 @@ function module:OnInitialize()
 		Silent = false,
 		FreeSpace = 0
 	}
-	if not DB.MailOpenAll then
-		DB.MailOpenAll = Defaults
+	if not SUI.DB.MailOpenAll then
+		SUI.DB.MailOpenAll = Defaults
 	else
-		DB.MailOpenAll = spartan:MergeData(DB.MailOpenAll, Defaults, false)
+		SUI.DB.MailOpenAll = SUI:MergeData(SUI.DB.MailOpenAll, Defaults, false)
 	end
 end
 
-local updateFrame = CreateFrame("Frame")
+local updateFrame = CreateFrame('Frame')
 updateFrame:Hide()
-updateFrame:SetScript("OnShow", function(self)
-	self.time = 0.50
-	if invAlmostFull and self.time < 1.0 and not self.lootingMoney then
-		self.time = 1.0
+updateFrame:SetScript(
+	'OnShow',
+	function(self)
+		self.time = 0.50
+		if invAlmostFull and self.time < 1.0 and not self.lootingMoney then
+			self.time = 1.0
+		end
+		self.lootingMoney = nil
 	end
-	self.lootingMoney = nil
-end)
-updateFrame:SetScript("OnUpdate", function(self, elapsed)
-	self.time = self.time - elapsed
-	if self.time <= 0 then
-		self:Hide()
-		module:ProcessNext()
+)
+updateFrame:SetScript(
+	'OnUpdate',
+	function(self, elapsed)
+		self.time = self.time - elapsed
+		if self.time <= 0 then
+			self:Hide()
+			module:ProcessNext()
+		end
 	end
-end)
+)
 
 function module:RefreshMail()
 	local current, total = GetInboxNumItems()
 	if current == MAX_MAIL_SHOWN or current == total then
 		self.time = 10
-		spartan:Print(L["Refreshing mailbox"])
+		SUI:Print(L['Refreshing mailbox'])
 		CheckInbox()
 	else
 		self:Hide()
@@ -55,7 +60,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if DB.EnabledComponents.MailOpenAll then
+	if SUI.DB.EnabledComponents.MailOpenAll then
 		module:Enable()
 	else
 		return
@@ -64,22 +69,27 @@ end
 
 function module:Enable()
 	if not button then
-		button = CreateFrame("Button", "SUI_OpenAllMail", InboxFrame, "UIPanelButtonTemplate")
+		button = CreateFrame('Button', 'SUI_OpenAllMail', InboxFrame, 'UIPanelButtonTemplate')
 		button:SetWidth(120)
 		button:SetHeight(25)
 		button:SetAllPoints(OpenAllMail)
 		--button:SetPoint("CENTER", OpenAllMail, "TOP", 0, -42)
-		button:SetText(L["Open All"])
-		button:SetScript("OnClick", function() module:OpenMail() end)
+		button:SetText(L['Open All'])
+		button:SetScript(
+			'OnClick',
+			function()
+				module:OpenMail()
+			end
+		)
 		button:SetFrameLevel(button:GetFrameLevel() + 1)
 		OpenAllMail:Hide()
 	end
 
-	self:RegisterEvent("MAIL_SHOW")
+	self:RegisterEvent('MAIL_SHOW')
 end
 
 function module:Disable()
-	spartan:Print("Auto open mail disabled")
+	SUI:Print('Auto open mail disabled')
 	self:Reset()
 	button:Hide()
 end
@@ -88,15 +98,15 @@ function module:MAIL_SHOW()
 	mailIndex, b = GetInboxNumItems()
 	if mailIndex == 0 then
 		button:Hide()
-		module.CheckTimer = module:ScheduleRepeatingTimer("MAIL_SHOW", .5)
-		module.ResetTimer = module:ScheduleTimer("Reset", 2)
+		module.CheckTimer = module:ScheduleRepeatingTimer('MAIL_SHOW', .5)
+		module.ResetTimer = module:ScheduleTimer('Reset', 2)
 	else
 		button:Show()
 		module:CancelAllTimers()
 	end
-	
-	self:RegisterEvent("MAIL_CLOSED", "Reset")
-	self:RegisterEvent("PLAYER_LEAVING_WORLD", "Reset")
+
+	self:RegisterEvent('MAIL_CLOSED', 'Reset')
+	self:RegisterEvent('PLAYER_LEAVING_WORLD', 'Reset')
 end
 
 function module:OpenMail()
@@ -116,9 +126,9 @@ function module:OpenMail()
 	end
 	firstMailDaysLeft = select(7, GetInboxHeaderInfo(1))
 
-	button:SetText(L["Opening..."])
+	button:SetText(L['Opening...'])
 
-	self:RegisterEvent("UI_ERROR_MESSAGE")
+	self:RegisterEvent('UI_ERROR_MESSAGE')
 	self:ProcessNext()
 end
 
@@ -155,7 +165,7 @@ function module:ProcessNext()
 			end
 		end
 
-		local _, msgSubject, msgMoney, msgCOD, _, msgItem, _, _, msgText, _, isGM = select(3, GetInboxHeaderInfo(mailIndex))
+		local _, msgSubject, msgMoney, msgCOD, _, _, _, _, _, _, isGM = select(3, GetInboxHeaderInfo(mailIndex))
 
 		if (msgCOD and msgCOD > 0) or (isGM) then
 			skipFlag = true
@@ -163,15 +173,15 @@ function module:ProcessNext()
 			attachIndex = ATTACHMENTS_MAX_RECEIVE
 			return self:ProcessNext() -- tail call
 		end
-		
-		if (not invFull or msgMoney > 0) and not DB.MailOpenAll.Silent then
-			local moneyString = msgMoney > 0 and " ["..module:FormatMoney(msgMoney).."]" or ""
+
+		if (not invFull or msgMoney > 0) and not SUI.DB.MailOpenAll.Silent then
+			local moneyString = msgMoney > 0 and ' [' .. module:FormatMoney(msgMoney) .. ']' or ''
 			local playerName
-			if (mailType == "AHSuccess" or mailType == "AHWon") then
-				playerName = select(3,GetInboxInvoiceInfo(mailIndex))
-				playerName = playerName and (" ("..playerName..")")
+			if (mailType == 'AHSuccess' or mailType == 'AHWon') then
+				playerName = select(3, GetInboxInvoiceInfo(mailIndex))
+				playerName = playerName and (' (' .. playerName .. ')')
 			end
-			spartan:Print(format("%s %d: %s%s%s", L["Mail"], mailIndex, msgSubject or "", moneyString, (playerName or "")))
+			SUI:Print(format('%s %d: %s%s%s', L['Mail'], mailIndex, msgSubject or '', moneyString, (playerName or '')))
 		end
 
 		-- Find next attachment index
@@ -180,19 +190,19 @@ function module:ProcessNext()
 		end
 
 		-- bag space check
-		if attachIndex > 0 and not invFull and DB.MailOpenAll.FreeSpace > 0 then
-			local free=0
-			for bag=0,NUM_BAG_SLOTS do
-				local bagFree,bagFam = GetContainerNumFreeSlots(bag)
-				if bagFam==0 then
+		if attachIndex > 0 and not invFull and SUI.DB.MailOpenAll.FreeSpace > 0 then
+			local free = 0
+			for bag = 0, NUM_BAG_SLOTS do
+				local bagFree, bagFam = GetContainerNumFreeSlots(bag)
+				if bagFam == 0 then
 					free = free + bagFree
 				end
 			end
-			if free <= DB.MailOpenAll.FreeSpace then
+			if free <= SUI.DB.MailOpenAll.FreeSpace then
 				invFull = true
 				invAlmostFull = nil
-				spartan:Print(format(L["Auto open disabled. There is only %d bagslots free."], free))
-			elseif free <= DB.MailOpenAll.FreeSpace + 1 then
+				SUI:Print(format(L['Auto open disabled. There is only %d bagslots free.'], free))
+			elseif free <= SUI.DB.MailOpenAll.FreeSpace + 1 then
 				invAlmostFull = true
 			end
 		end
@@ -200,30 +210,32 @@ function module:ProcessNext()
 		-- If inventory is full, check if the item to be looted can stack with an existing stack
 		local lootFlag = false
 		if attachIndex > 0 and invFull then
-			local name, itemID, itemTexture, count, quality, canUse = GetInboxItem(mailIndex, attachIndex)
+			local _, _, _, count = GetInboxItem(mailIndex, attachIndex)
 			local link = GetInboxItemLink(mailIndex, attachIndex)
-			local itemID = strmatch(link, "item:(%d+)")
+			local itemID = strmatch(link, 'item:(%d+)')
 			local stackSize = select(8, GetItemInfo(link))
 			if itemID and stackSize and GetItemCount(itemID) > 0 then
 				for bag = 0, NUM_BAG_SLOTS do
 					for slot = 1, GetContainerNumSlots(bag) do
-						local texture2, count2, locked2, quality2, readable2, lootable2, link2 = GetContainerItemInfo(bag, slot)
+						local _, count2, _, _, _, _, link2 = GetContainerItemInfo(bag, slot)
 						if link2 then
-							local itemID2 = strmatch(link2, "item:(%d+)")
+							local itemID2 = strmatch(link2, 'item:(%d+)')
 							if itemID == itemID2 and count + count2 <= stackSize then
 								lootFlag = true
 								break
 							end
 						end
 					end
-					if lootFlag then break end
+					if lootFlag then
+						break
+					end
 				end
 			end
 		end
 
 		if attachIndex > 0 and (lootFlag or not invFull) then
 			-- If there's attachments, take the item
-			--spartan:Print("Getting Item from Message "..mailIndex..", "..attachIndex)
+			--SUI:Print("Getting Item from Message "..mailIndex..", "..attachIndex)
 			lastNumAttach, lastNumGold = module:CountAttachments()
 			TakeInboxItem(mailIndex, attachIndex)
 
@@ -233,12 +245,14 @@ function module:ProcessNext()
 			while not GetInboxItemLink(mailIndex, attachIndex2) and attachIndex2 > 0 do
 				attachIndex2 = attachIndex2 - 1
 			end
-			if attachIndex2 == 0 and msgMoney == 0 then lastItem = true end
+			if attachIndex2 == 0 and msgMoney == 0 then
+				lastItem = true
+			end
 
 			updateFrame:Show()
 		elseif msgMoney > 0 then
 			-- No attachments, but there is money
-			--spartan:Print("Getting Gold from Message "..mailIndex)
+			--SUI:Print("Getting Gold from Message "..mailIndex)
 			lastNumAttach, lastNumGold = module:CountAttachments()
 			TakeInboxMoney(mailIndex)
 
@@ -252,7 +266,6 @@ function module:ProcessNext()
 			attachIndex = ATTACHMENTS_MAX_RECEIVE
 			return self:ProcessNext() -- tail call
 		end
-
 	else
 		-- Reached the end of opening all selected mail
 
@@ -262,13 +275,15 @@ function module:ProcessNext()
 			return self:OpenAll(true) -- tail call
 		elseif totalItems > numItems and numItems < MAX_MAIL_SHOWN then
 			-- We only want to refresh if there's more items to show
-			spartan:Print(L["Not all messages are shown, refreshing mailbox soon to continue Open All..."])
+			SUI:Print(L['Not all messages are shown, refreshing mailbox soon to continue Open All...'])
 			-- refreshFrame:Show()
-			module.RefreshMailTimer = ScheduleTimer("RefreshMail", 65)
+			module.RefreshMailTimer = ScheduleTimer('RefreshMail', 65)
 			return
 		end
 
-		if skipFlag then spartan:Print(L["Some Messages May Have Been Skipped."]) end
+		if skipFlag then
+			SUI:Print(L['Some Messages May Have Been Skipped.'])
+		end
 		self:Reset()
 	end
 end
@@ -276,13 +291,13 @@ end
 function module:Reset(event)
 	updateFrame:Hide()
 	module:CancelAllTimers()
-	
-	self:UnregisterEvent("UI_ERROR_MESSAGE")
-	button:SetText(L["Open All"])
+
+	self:UnregisterEvent('UI_ERROR_MESSAGE')
+	button:SetText(L['Open All'])
 	InboxFrame_Update()
-	if event == "MAIL_CLOSED" or event == "PLAYER_LEAVING_WORLD" then
-		self:UnregisterEvent("MAIL_CLOSED")
-		self:UnregisterEvent("PLAYER_LEAVING_WORLD")
+	if event == 'MAIL_CLOSED' or event == 'PLAYER_LEAVING_WORLD' then
+		self:UnregisterEvent('MAIL_CLOSED')
+		self:UnregisterEvent('PLAYER_LEAVING_WORLD')
 	end
 end
 
@@ -301,9 +316,20 @@ function module:FormatMoney(money)
 	local silver = floor((money - gold * 10000) / 100)
 	local copper = mod(money, 100)
 	if gold > 0 then
-		return format(GOLD_AMOUNT_TEXTURE.." "..SILVER_AMOUNT_TEXTURE.." "..COPPER_AMOUNT_TEXTURE, gold, 0, 0, silver, 0, 0, copper, 0, 0)
+		return format(
+			GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
+			gold,
+			0,
+			0,
+			silver,
+			0,
+			0,
+			copper,
+			0,
+			0
+		)
 	elseif silver > 0 then
-		return format(SILVER_AMOUNT_TEXTURE.." "..COPPER_AMOUNT_TEXTURE, silver, 0, 0, copper, 0, 0)
+		return format(SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE, silver, 0, 0, copper, 0, 0)
 	else
 		return format(COPPER_AMOUNT_TEXTURE, copper, 0, 0)
 	end
@@ -320,15 +346,36 @@ function module:CountAttachments()
 end
 
 function module:BuildOptions()
-	spartan.opt.args["ModSetting"].args["MailOpenAll"] = {type="group",name="Open all mail",
+	SUI.opt.args['ModSetting'].args['MailOpenAll'] = {
+		type = 'group',
+		name = 'Open all mail',
 		args = {
-			Silent = {name="Silently open mail",type="toggle",order=1,width = "full",
-					get = function(info) return DB.MailOpenAll.Silent end,
-					set = function(info,val) DB.MailOpenAll.Silent = val end
+			Silent = {
+				name = 'Silently open mail',
+				type = 'toggle',
+				order = 1,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.MailOpenAll.Silent
+				end,
+				set = function(info, val)
+					SUI.DB.MailOpenAll.Silent = val
+				end
 			},
-			FreeSpace ={name = "Bag free space to maintain",type = "range",order = 10,width = "full",min = 0,max = 50,step=1,
-				set = function(info,val) DB.MailOpenAll.FreeSpace = val; end,
-				get = function(info) return DB.MailOpenAll.FreeSpace; end
+			FreeSpace = {
+				name = 'Bag free space to maintain',
+				type = 'range',
+				order = 10,
+				width = 'full',
+				min = 0,
+				max = 50,
+				step = 1,
+				set = function(info, val)
+					SUI.DB.MailOpenAll.FreeSpace = val
+				end,
+				get = function(info)
+					return SUI.DB.MailOpenAll.FreeSpace
+				end
 			}
 		}
 	}

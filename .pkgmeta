@@ -10,6 +10,7 @@ move-folders:
   SpartanUI/Modules/Style_Minimal: SpartanUI_Style_Minimal
   SpartanUI/Modules/Style_Transparent: SpartanUI_Style_Transparent
   SpartanUI/Modules/Style_Fel: SpartanUI_Style_Fel
+  SpartanUI/Modules/Style_War: SpartanUI_Style_War
 
 externals:
   libs/LibStub:
@@ -38,7 +39,13 @@ externals:
     url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
   libs/LibDualSpec-1.0:
     url: git://git.wowace.com/wow/libdualspec-1-0/mainline.git
-
+  libs/StdUi:
+    url: https://github.com/kaminaris/StdUi.git
+  libs/oUF:
+    url: https://github.com/oUF-wow/oUF.git
+    tag: bfa
+  libs/oUF_AuraBars:
+    url: https://github.com/Wutname1/oUF_AuraBars.git
 
 ignore:
     README.md

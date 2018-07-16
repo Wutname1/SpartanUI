@@ -1,155 +1,173 @@
-local spartan = LibStub("AceAddon-3.0"):GetAddon("SpartanUI");
-local RaidFrames = spartan:GetModule("RaidFrames");
+local SUI = SUI
+local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------
 
 function RaidFrames:UpdateRaidPosition()
-	RaidFrames.offset = DB.yoffset
-	if DBMod.RaidFrames.moved then
-		spartan.RaidFrames:SetMovable(true);
-		spartan.RaidFrames:SetUserPlaced(false);
+	RaidFrames.offset = SUI.DB.yoffset
+	if SUI.DBMod.RaidFrames.moved then
+		SUI.RaidFrames:SetMovable(true)
+		SUI.RaidFrames:SetUserPlaced(false)
 	else
-		spartan.RaidFrames:SetMovable(false);
+		SUI.RaidFrames:SetMovable(false)
 	end
-	if not DBMod.RaidFrames.moved then
-		spartan.RaidFrames:ClearAllPoints();
-		if spartan:GetModule("PartyFrames",true) then
-			spartan.RaidFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-140-(RaidFrames.offset));
+	if not SUI.DBMod.RaidFrames.moved then
+		SUI.RaidFrames:ClearAllPoints()
+		if SUI:GetModule('PartyFrames', true) then
+			SUI.RaidFrames:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 10, -140 - (RaidFrames.offset))
 		else
-			spartan.RaidFrames:SetPoint("TOPLEFT",UIParent,"TOPLEFT",10,-20-(RaidFrames.offset));
+			SUI.RaidFrames:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 10, -20 - (RaidFrames.offset))
 		end
 	else
 		local Anchors = {}
-		for k,v in pairs(DBMod.RaidFrames.Anchors) do
-			Anchors[k] = v;
+		for k, v in pairs(SUI.DBMod.RaidFrames.Anchors) do
+			Anchors[k] = v
 		end
-		spartan.RaidFrames:ClearAllPoints();
-		spartan.RaidFrames:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs);
+		SUI.RaidFrames:ClearAllPoints()
+		SUI.RaidFrames:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 	end
 end
 
-function RaidFrames:UpdateRaid(event,...)
-	if spartan.RaidFrames == nil then return end
-	
-	if DBMod.RaidFrames.showRaid and IsInRaid() then
-		spartan.RaidFrames:Show();
-		
-	elseif DBMod.RaidFrames.showParty and inParty then
-		--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
-		spartan.RaidFrames.HideTmp = spartan.RaidFrames.Hide
-		spartan.RaidFrames.Hide = spartan.RaidFrames.Show
-		--Now Display
-		spartan.RaidFrames:Show()
-		
-	elseif DBMod.RaidFrames.showSolo and not inParty and not IsInRaid() then
-		--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
-		spartan.RaidFrames.HideTmp = spartan.RaidFrames.Hide
-		spartan.RaidFrames.Hide = spartan.RaidFrames.Show
-		--Now Display
-		spartan.RaidFrames:Show()
-		
-	elseif spartan.RaidFrames:IsShown() then
-		--Swap back hide function if needed
-		if spartan.RaidFrames.HideTmp then spartan.RaidFrames.Hide = spartan.RaidFrames.HideTmp end
-		
-		-- spartan.RaidFrames:Hide()
+function RaidFrames:UpdateRaid(event, ...)
+	if SUI.RaidFrames == nil then
+		return
 	end
-	
+
+	if SUI.DBMod.RaidFrames.showRaid and IsInRaid() then
+		SUI.RaidFrames:Show()
+	elseif SUI.DBMod.RaidFrames.showParty and inParty then
+		--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
+		SUI.RaidFrames.HideTmp = SUI.RaidFrames.Hide
+		SUI.RaidFrames.Hide = SUI.RaidFrames.Show
+		--Now Display
+		SUI.RaidFrames:Show()
+	elseif SUI.DBMod.RaidFrames.showSolo and not inParty and not IsInRaid() then
+		--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
+		SUI.RaidFrames.HideTmp = SUI.RaidFrames.Hide
+		SUI.RaidFrames.Hide = SUI.RaidFrames.Show
+		--Now Display
+		SUI.RaidFrames:Show()
+	elseif SUI.RaidFrames:IsShown() then
+		--Swap back hide function if needed
+		if SUI.RaidFrames.HideTmp then
+			SUI.RaidFrames.Hide = SUI.RaidFrames.HideTmp
+		end
+
+	-- SUI.RaidFrames:Hide()
+	end
+
 	RaidFrames:UpdateRaidPosition()
-	
-	spartan.RaidFrames:SetAttribute('showRaid',DBMod.RaidFrames.showRaid);
-	spartan.RaidFrames:SetAttribute('showParty',DBMod.RaidFrames.showParty);
-	spartan.RaidFrames:SetAttribute('showPlayer',DBMod.RaidFrames.showPlayer);
-	spartan.RaidFrames:SetAttribute('showSolo',DBMod.RaidFrames.showSolo);
-	
-	spartan.RaidFrames:SetAttribute('groupBy',DBMod.RaidFrames.mode);
-	spartan.RaidFrames:SetAttribute('maxColumns', DBMod.RaidFrames.maxColumns);
-	spartan.RaidFrames:SetAttribute('unitsPerColumn', DBMod.RaidFrames.unitsPerColumn);
-	spartan.RaidFrames:SetAttribute('columnSpacing', DBMod.RaidFrames.columnSpacing);
-		
-	spartan.RaidFrames:SetScale(DBMod.RaidFrames.scale);
+
+	SUI.RaidFrames:SetAttribute('showRaid', SUI.DBMod.RaidFrames.showRaid)
+	SUI.RaidFrames:SetAttribute('showParty', SUI.DBMod.RaidFrames.showParty)
+	SUI.RaidFrames:SetAttribute('showPlayer', SUI.DBMod.RaidFrames.showPlayer)
+	SUI.RaidFrames:SetAttribute('showSolo', SUI.DBMod.RaidFrames.showSolo)
+
+	SUI.RaidFrames:SetAttribute('groupBy', SUI.DBMod.RaidFrames.mode)
+	SUI.RaidFrames:SetAttribute('maxColumns', SUI.DBMod.RaidFrames.maxColumns)
+	SUI.RaidFrames:SetAttribute('unitsPerColumn', SUI.DBMod.RaidFrames.unitsPerColumn)
+	SUI.RaidFrames:SetAttribute('columnSpacing', SUI.DBMod.RaidFrames.columnSpacing)
+
+	SUI.RaidFrames:SetScale(SUI.DBMod.RaidFrames.scale)
 end
 
 function RaidFrames:OnEnable()
-	if DBMod.RaidFrames.HideBlizzFrames and CompactRaidFrameContainer ~= nil then
+	if SUI.DBMod.RaidFrames.HideBlizzFrames and CompactRaidFrameContainer ~= nil then
 		CompactRaidFrameContainer:UnregisterAllEvents()
 		CompactRaidFrameContainer:Hide()
 
 		local function hideRaid()
 			CompactRaidFrameContainer:UnregisterAllEvents()
-			if( InCombatLockdown() ) then return end
-			local shown = CompactRaidFrameManager_GetSetting("IsShown")
-			if( shown and shown ~= "0" ) then
-				CompactRaidFrameManager_SetSetting("IsShown", "0")
+			if (InCombatLockdown()) then
+				return
+			end
+			local shown = CompactRaidFrameManager_GetSetting('IsShown')
+			if (shown and shown ~= '0') then
+				CompactRaidFrameManager_SetSetting('IsShown', '0')
 			end
 		end
 
-		hooksecurefunc("CompactRaidFrameManager_UpdateShown", function()
-			hideRaid()
-		end)
+		hooksecurefunc(
+			'CompactRaidFrameManager_UpdateShown',
+			function()
+				hideRaid()
+			end
+		)
 
-		hideRaid();
-		CompactRaidFrameContainer:HookScript("OnShow", hideRaid)
+		hideRaid()
+		CompactRaidFrameContainer:HookScript('OnShow', hideRaid)
 	end
-	
-	if (DBMod.RaidFrames.Style == "theme") and (DBMod.Artwork.Style ~= "Classic") then
-		spartan.RaidFrames = spartan:GetModule("Style_" .. DBMod.Artwork.Style):RaidFrames();
-	elseif (DBMod.RaidFrames.Style == "Classic") or (DBMod.Artwork.Style == "Classic") then
-		spartan.RaidFrames = RaidFrames:Classic()
-	elseif (DBMod.RaidFrames.Style == "plain") then
-		spartan.RaidFrames = RaidFrames:Plain();
+
+	if (SUI.DBMod.RaidFrames.Style == 'theme') and (SUI.DBMod.Artwork.Style ~= 'Classic') then
+		SUI.RaidFrames = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):RaidFrames()
+	elseif (SUI.DBMod.RaidFrames.Style == 'Classic') or (SUI.DBMod.Artwork.Style == 'Classic') then
+		SUI.RaidFrames = RaidFrames:Classic()
+	elseif (SUI.DBMod.RaidFrames.Style == 'plain') then
+		SUI.RaidFrames = RaidFrames:Plain()
 	else
-		spartan.RaidFrames = spartan:GetModule("Style_" .. DBMod.RaidFrames.Style):RaidFrames();
+		SUI.RaidFrames = SUI:GetModule('Style_' .. SUI.DBMod.RaidFrames.Style):RaidFrames()
 	end
-	
-	spartan.RaidFrames.mover = CreateFrame("Frame");
-	spartan.RaidFrames.mover:SetSize(20, 20);
-	spartan.RaidFrames.mover:SetPoint("TOPLEFT",spartan.RaidFrames,"TOPLEFT");
-	spartan.RaidFrames.mover:SetPoint("BOTTOMRIGHT",spartan.RaidFrames,"BOTTOMRIGHT");
-	spartan.RaidFrames.mover:EnableMouse(true);
-	spartan.RaidFrames.mover:SetFrameStrata("LOW");
-	
-	spartan.RaidFrames:EnableMouse(enable)
-	spartan.RaidFrames:SetScript("OnMouseDown",function(self,button)
-		if button == "LeftButton" and IsAltKeyDown() then
-			spartan.RaidFrames.mover:Show();
-			DBMod.RaidFrames.moved = true;
-			spartan.RaidFrames:SetMovable(true);
-			spartan.RaidFrames:StartMoving();
+
+	SUI.RaidFrames.mover = CreateFrame('Frame')
+	SUI.RaidFrames.mover:SetSize(20, 20)
+	SUI.RaidFrames.mover:SetPoint('TOPLEFT', SUI.RaidFrames, 'TOPLEFT')
+	SUI.RaidFrames.mover:SetPoint('BOTTOMRIGHT', SUI.RaidFrames, 'BOTTOMRIGHT')
+	SUI.RaidFrames.mover:EnableMouse(true)
+	SUI.RaidFrames.mover:SetFrameStrata('LOW')
+
+	SUI.RaidFrames:EnableMouse(enable)
+	SUI.RaidFrames:SetScript(
+		'OnMouseDown',
+		function(self, button)
+			if button == 'LeftButton' and IsAltKeyDown() then
+				SUI.RaidFrames.mover:Show()
+				SUI.DBMod.RaidFrames.moved = true
+				SUI.RaidFrames:SetMovable(true)
+				SUI.RaidFrames:StartMoving()
+			end
 		end
-	end);
-	spartan.RaidFrames:SetScript("OnMouseUp",function(self,button)
-		spartan.RaidFrames.mover:Hide();
-		spartan.RaidFrames:StopMovingOrSizing();
-		local Anchors = {}
-		Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = spartan.RaidFrames:GetPoint()
-		for k,v in pairs(Anchors) do
-			DBMod.RaidFrames.Anchors[k] = v
+	)
+	SUI.RaidFrames:SetScript(
+		'OnMouseUp',
+		function(self, button)
+			SUI.RaidFrames.mover:Hide()
+			SUI.RaidFrames:StopMovingOrSizing()
+			local Anchors = {}
+			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = SUI.RaidFrames:GetPoint()
+			for k, v in pairs(Anchors) do
+				SUI.DBMod.RaidFrames.Anchors[k] = v
+			end
 		end
-	end);
-	
-	spartan.RaidFrames.mover.bg = spartan.RaidFrames.mover:CreateTexture(nil,"BACKGROUND");
-	spartan.RaidFrames.mover.bg:SetAllPoints(spartan.RaidFrames.mover);
-	spartan.RaidFrames.mover.bg:SetTexture([[Interface\BlackMarket\BlackMarketBackground-Tile]]);
-	spartan.RaidFrames.mover.bg:SetVertexColor(1,1,1,0.5);
-	
-	spartan.RaidFrames.mover:SetScript("OnEvent",function()
-		RaidFrames.locked = 1;
-		spartan.RaidFrames.mover:Hide();
-	end);
-	spartan.RaidFrames.mover:RegisterEvent("VARIABLES_LOADED");
-	spartan.RaidFrames.mover:RegisterEvent("PLAYER_REGEN_DISABLED");
-	spartan.RaidFrames.mover:Hide();
-	
-	local raidWatch = CreateFrame("Frame");
-	raidWatch:RegisterEvent('GROUP_ROSTER_UPDATE');
-	raidWatch:RegisterEvent('PLAYER_ENTERING_WORLD');
-	
-	raidWatch:SetScript('OnEvent',function(self,event,...)
-		if(InCombatLockdown()) then
-			self:RegisterEvent('PLAYER_REGEN_ENABLED');
-		else
-			self:UnregisterEvent('PLAYER_REGEN_ENABLED');
-			RaidFrames:UpdateRaid(event);
+	)
+
+	SUI.RaidFrames.mover.bg = SUI.RaidFrames.mover:CreateTexture(nil, 'BACKGROUND')
+	SUI.RaidFrames.mover.bg:SetAllPoints(SUI.RaidFrames.mover)
+	SUI.RaidFrames.mover.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
+	SUI.RaidFrames.mover.bg:SetVertexColor(1, 1, 1, 0.5)
+
+	SUI.RaidFrames.mover:SetScript(
+		'OnEvent',
+		function()
+			RaidFrames.locked = 1
+			SUI.RaidFrames.mover:Hide()
 		end
-	end);
-end 
+	)
+	SUI.RaidFrames.mover:RegisterEvent('VARIABLES_LOADED')
+	SUI.RaidFrames.mover:RegisterEvent('PLAYER_REGEN_DISABLED')
+	SUI.RaidFrames.mover:Hide()
+
+	local raidWatch = CreateFrame('Frame')
+	raidWatch:RegisterEvent('GROUP_ROSTER_UPDATE')
+	raidWatch:RegisterEvent('PLAYER_ENTERING_WORLD')
+
+	raidWatch:SetScript(
+		'OnEvent',
+		function(self, event, ...)
+			if (InCombatLockdown()) then
+				self:RegisterEvent('PLAYER_REGEN_ENABLED')
+			else
+				self:UnregisterEvent('PLAYER_REGEN_ENABLED')
+				RaidFrames:UpdateRaid(event)
+			end
+		end
+	)
+end

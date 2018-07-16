@@ -7,6 +7,7 @@
 	<Script file="Objectives.lua" />
 	<Script file="Tooltips.lua" />
 	<Script file="MailOpenAll.lua" />
+	<Script file="Nameplates.lua" />
 	<!-- WIP Modules
 	<Script file="Chatbox.lua" />
 	-->
