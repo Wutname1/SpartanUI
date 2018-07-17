@@ -967,6 +967,7 @@ function module:OnInitialize()
 					end
 					SUI.DBMod.PartyFrames.moved = false
 					SUI.DBMod.RaidFrames.moved = false
+					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = false
 					SUI:GetModule('PlayerFrames'):UpdatePosition()
 				end
 			},
