@@ -54,35 +54,6 @@ local frameDefault2 = {
 	moved = false,
 	Anchors = {}
 }
-local StatusBarsDefaults = {
-	display = 'disabled',
-	ToolTip = 'hover',
-	text = true,
-	AutoColor = true,
-	Color = {0, 0, 0, 1},
-	FontSize = 10,
-	GlowAnchor = 'RIGHT',
-	GlowHeight = 20,
-	texCords = {0, 1, 0, 1}
-}
-local StatusBarsStyleDefaults = {
-	size = {256, 36},
-	Grow = 'LEFT',
-	bgTooltip = 'Interface\\Addons\\SpartanUI_Artwork\\Images\\status-tooltip',
-	texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
-	TooltipSize = {300, 100},
-	TooltipTextSize = {230, 60},
-	TooltipTextWidth = 300,
-	tooltipAnchor = 'TOP',
-	FontSize = 9,
-	TextColor = {1, 1, 1, 1},
-	MaxWidth = 0,
-	GlowAnchor = 'RIGHT',
-	GlowPoint = {x = 0, y = 0},
-	GlowHeight = 20,
-	GlowImage = 'Interface\\AddOns\\SpartanUI_Artwork\\Images\\status-glow',
-	texCords = {0, 1, 0, 1}
-}
 
 local DBdefault = {
 	SUIProper = {
@@ -493,46 +464,6 @@ local DBdefault = {
 			popup1anim = true,
 			popup2anim = true
 		},
-		StatusBars = {
-			left = 'xp',
-			right = 'rep',
-			XPBar = {
-				text = true,
-				ToolTip = 'click',
-				GainedColor = 'Blue',
-				GainedRed = 0,
-				GainedBlue = 1,
-				GainedGreen = .5,
-				GainedBrightness = .7,
-				RestedColor = 'Light_Blue',
-				RestedRed = 0,
-				RestedBlue = 1,
-				RestedGreen = .5,
-				RestedBrightness = .7,
-				RestedMatchColor = false
-			},
-			RepBar = {
-				text = false,
-				ToolTip = 'click',
-				GainedColor = 'AUTO',
-				GainedRed = 0,
-				GainedBlue = 0,
-				GainedGreen = 1,
-				GainedBrightness = .6,
-				AutoDefined = true
-			},
-			APBar = {
-				text = true,
-				ToolTip = 'hover'
-			},
-			AzeriteBar = {
-				text = true,
-				ToolTip = 'hover'
-			},
-			HonorBar = {
-				text = true
-			}
-		},
 		MiniMap = {
 			northTag = false,
 			ManualAllowUse = false,
@@ -575,9 +506,26 @@ local DBdefault = {
 	},
 	Modules = {
 		StatusBars = {
-			default = StatusBarsStyleDefaults,
-			[1] = {
-				display = 'xp',
+			default = {
+				size = {256, 36},
+				Grow = 'LEFT',
+				bgTooltip = 'Interface\\Addons\\SpartanUI_Artwork\\Images\\status-tooltip',
+				texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
+				TooltipSize = {300, 100},
+				TooltipTextSize = {230, 60},
+				TooltipTextWidth = 300,
+				tooltipAnchor = 'TOP',
+				FontSize = 9,
+				TextColor = {1, 1, 1, 1},
+				MaxWidth = 0,
+				GlowAnchor = 'RIGHT',
+				GlowPoint = {x = 0, y = 0},
+				GlowHeight = 20,
+				GlowImage = 'Interface\\AddOns\\SpartanUI_Artwork\\Images\\status-glow',
+				texCords = {0, 1, 0, 1}
+			},
+			['**'] = {
+				display = 'disabled',
 				ToolTip = 'hover',
 				text = true,
 				AutoColor = true,
@@ -585,38 +533,25 @@ local DBdefault = {
 				FontSize = 10,
 				GlowAnchor = 'RIGHT',
 				GlowHeight = 20,
-				texCords = {0, 1, 0, 1}
+				texCords = {0, 1, 0, 1},
+				CustomColor2 = {
+					r = 0,
+					g = 0,
+					b = 0,
+					a = 1
+				},
+				CustomColor = {
+					r = 0,
+					g = 0,
+					b = 0,
+					a = 1
+				}
+			},
+			[1] = {
+				display = 'xp'
 			},
 			[2] = {
-				display = 'honor',
-				ToolTip = 'hover',
-				text = true,
-				AutoColor = true,
-				Color = {0, 0, 0, 1},
-				FontSize = 10,
-				GlowAnchor = 'RIGHT',
-				GlowHeight = 20,
-				texCords = {0, 1, 0, 1}
-			},
-			[3] = StatusBarsDefaults,
-			[4] = StatusBarsDefaults,
-			[5] = StatusBarsDefaults,
-			XPBar = {
-				GainedColor = 'Blue',
-				RestedColor = 'Light_Blue'
-			},
-			RepBar = {
-				GainedColor = 'AUTO',
-				AutoDefined = true
-			},
-			APBar = {
-				GainedColor = 'Orange'
-			},
-			AzeriteBar = {
-				GainedColor = 'Orange'
-			},
-			HonorBar = {
-				GainedColor = 'Red'
+				display = 'honor'
 			}
 		},
 		Artwork = {

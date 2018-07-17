@@ -15,14 +15,12 @@ local FACTION_BAR_COLORS = {
 	[8] = {r = 0, g = 0.6, b = 0.1}
 }
 local COLORS = {
-	['Orange'] = {r = 1, g = 0.2, b = 0, a = .7},
-	['Yellow'] = {r = 1, g = 0.8, b = 0, a = .7},
-	['Green'] = {r = 0, g = 1, b = .1, a = .7},
-	['Blue'] = {r = 0, g = .1, b = 1, a = .7},
-	['Pink'] = {r = 1, g = 0, b = .4, a = .7},
-	['Purple'] = {r = 1, g = 0, b = 1, a = .5},
-	['Red'] = {r = 1, g = 0, b = .08, a = .7},
-	['Light_Blue'] = {r = 0, g = .5, b = 1, a = .7}
+	Orange = {r = 1, g = 0.2, b = 0, a = .7},
+	Yellow = {r = 1, g = 0.8, b = 0, a = .7},
+	Green = {r = 0, g = 1, b = .1, a = .7},
+	Blue = {r = 0, g = .1, b = 1, a = .7},
+	Red = {r = 1, g = 0, b = .08, a = .7},
+	Light_Blue = {r = 0, g = .5, b = 1, a = .7}
 }
 
 function module:Initalize(Settings)
@@ -69,59 +67,34 @@ local GetFactionDetails = function(name)
 	return description
 end
 
--- Status Bars
-local SetXPColors = function(self)
-	-- Set Gained Color
-	if module.DB.XPBar.GainedColor ~= 'Custom' then
-		module.DB.XPBar.GainedRed = COLORS[module.DB.XPBar.GainedColor].r
-		module.DB.XPBar.GainedBlue = COLORS[module.DB.XPBar.GainedColor].b
-		module.DB.XPBar.GainedGreen = COLORS[module.DB.XPBar.GainedColor].g
-		module.DB.XPBar.GainedBrightness = COLORS[module.DB.XPBar.GainedColor].a
-	end
+local SetBarColor = function(self, side)
+	local display = module.DB[side].display
+	local color1 = module.DB[side].CustomColor
+	local color2 = module.DB[side].CustomColor2
+	local r, g, b, a
 
-	local r, b, g, a
-	r = module.DB.XPBar.GainedRed
-	b = module.DB.XPBar.GainedBlue
-	g = module.DB.XPBar.GainedGreen
-	a = module.DB.XPBar.GainedBrightness
+	if module.DB[side].AutoColor then
+		if display == 'xp' then
+			color1 = COLORS.Blue
+			color2 = COLORS.Light_Blue
+		elseif display == 'az' then
+			color1 = COLORS.Orange
+		elseif display == 'ap' then
+			color1 = COLORS.Orange
+		elseif display == 'honor' then
+			color1 = COLORS.Red
+		elseif display == 'rep' then
+			color1 = FACTION_BAR_COLORS[select(2, GetWatchedFactionInfo())] or FACTION_BAR_COLORS[7]
+		end
+	end
+	r, g, b, a = color1.r, color1.g, color1.b, color1.a
+
 	self.Fill:SetVertexColor(r, g, b, a)
-	self.FillGlow:SetVertexColor(r, g, b, (a - .2))
-
-	-- Set Rested Color
-	if module.DB.XPBar.RestedMatchColor then
-		module.DB.XPBar.RestedRed = module.DB.XPBar.GainedRed
-		module.DB.XPBar.RestedBlue = module.DB.XPBar.GainedBlue
-		module.DB.XPBar.RestedGreen = module.DB.XPBar.GainedGreen
-		module.DB.XPBar.RestedBrightness = 1
-		module.DB.XPBar.RestedColor = module.DB.XPBar.GainedColor
-	elseif module.DB.XPBar.RestedColor ~= 'Custom' then
-		module.DB.XPBar.RestedRed = COLORS[module.DB.XPBar.RestedColor].r
-		module.DB.XPBar.RestedBlue = COLORS[module.DB.XPBar.RestedColor].b
-		module.DB.XPBar.RestedGreen = COLORS[module.DB.XPBar.RestedColor].g
-		module.DB.XPBar.RestedBrightness = COLORS[module.DB.XPBar.RestedColor].a
-	end
-	r = module.DB.XPBar.RestedRed
-	b = module.DB.XPBar.RestedBlue
-	g = module.DB.XPBar.RestedGreen
-	a = module.DB.XPBar.RestedBrightness
-	self.Lead:SetVertexColor(r, g, b, a)
-	self.LeadGlow:SetVertexColor(r, g, b, (a + .1))
-end
-
-local SetRepColors = function(self)
-	local _, _, reaction = 0, GetWatchedFactionInfo()
-	if module.DB.RepBar.AutoDefined then
-		local color = FACTION_BAR_COLORS[reaction] or FACTION_BAR_COLORS[7]
-		self.Fill:SetVertexColor(color.r, color.g, color.b, 0.7)
-		self.FillGlow:SetVertexColor(color.r, color.g, color.b, 0.2)
-	else
-		local r, b, g, a
-		r = module.DB.RepBar.GainedRed
-		b = module.DB.RepBar.GainedBlue
-		g = module.DB.RepBar.GainedGreen
-		a = module.DB.RepBar.GainedBrightness
-		self.Fill:SetVertexColor(r, g, b, a)
-		self.FillGlow:SetVertexColor(r, g, b, a)
+	self.FillGlow:SetVertexColor(r, g, b, a)
+	if display == 'xp' then
+		r, g, b, a = color2.r, color2.g, color2.b, color2.a
+		self.Lead:SetVertexColor(r, g, b, a)
+		self.LeadGlow:SetVertexColor(r, g, b, (a + .1))
 	end
 end
 
@@ -158,7 +131,6 @@ local updateText = function(self)
 		valFill = now
 		valMax = goal
 		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
-		SetXPColors(self)
 	elseif (module.DB[side].display == 'rep') then
 		local _, name, _, low, high, current = 0, GetWatchedFactionInfo()
 		local repLevelLow = (current - low)
@@ -173,8 +145,6 @@ local updateText = function(self)
 			valMax = repLevelHigh
 			valPercent = (repLevelLow / repLevelHigh) * 100
 		end
-
-		SetRepColors(self)
 	elseif (module.DB[side].display == 'ap') then
 		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
 			local _, _, _, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
@@ -185,9 +155,6 @@ local updateText = function(self)
 			local ratio = (xp / valMax)
 			valFill = xp
 			valPercent = ratio * 100
-
-			self.Fill:SetVertexColor(1, 0.8, 0, 0.7)
-			self.FillGlow:SetVertexColor(1, 0.8, 0, 0.7)
 		end
 	elseif (module.DB[side].display == 'az') then
 		if C_AzeriteItem.HasActiveAzeriteItem() then
@@ -200,17 +167,11 @@ local updateText = function(self)
 			local ratio = (xp / totalLevelXP)
 			valFill = xp
 			valPercent = ratio * 100
-
-			self.Fill:SetVertexColor(1, 0.8, 0, 0.7)
-			self.FillGlow:SetVertexColor(1, 0.8, 0, 0.7)
 		end
 	elseif (module.DB[side].display == 'honor') then
 		valFill = UnitHonor('player')
 		valMax = UnitHonorMax('player')
 		valPercent = ((valFill / valMax) * 100)
-
-		self.Fill:SetVertexColor(1, 0, 0, 0.7)
-		self.FillGlow:SetVertexColor(1, 0, 0, 0.7)
 	end
 
 	if valPercent ~= 0 then
@@ -224,6 +185,7 @@ local updateText = function(self)
 	if module.DB[side].text and valFill and valMax and valPercent then
 		self.Text:SetFormattedText('( %s / %s ) %d%%', SUI:comma_value(valFill), SUI:comma_value(valMax), valPercent)
 	end
+	SetBarColor(self, side)
 end
 
 local showXPTooltip = function(self)
@@ -566,106 +528,6 @@ function module:BuildOptions()
 		[5] = 'five'
 	}
 
-	--Global Options
-	SUI.opt.args['Artwork'].args['StatusBars'] = {
-		name = L['Status bars'],
-		type = 'group',
-		args = {
-			XPBar = {
-				name = L['BarXP'],
-				desc = L['BarXPDesc'],
-				type = 'group',
-				order = 100,
-				inline = true,
-				args = {
-					GainedColor = {
-						name = L['GainedColor'],
-						type = 'select',
-						style = 'dropdown',
-						order = 10,
-						values = {
-							['Custom'] = 'Custom',
-							['Orange'] = 'Orange',
-							['Yellow'] = 'Yellow',
-							['Green'] = 'Green',
-							['Pink'] = 'Pink',
-							['Purple'] = 'Purple',
-							['Blue'] = 'Blue',
-							['Red'] = 'Red',
-							['Light_Blue'] = 'Light Blue'
-						},
-						get = function(info)
-							return module.DB.XPBar.GainedColor
-						end,
-						set = function(info, val)
-							module.DB.XPBar.GainedColor = val
-							SUI:SendMessage('StatusBarUpdate')
-						end
-					},
-					RestedColor = {
-						name = L['RestedColor'],
-						type = 'select',
-						style = 'dropdown',
-						order = 20,
-						values = {
-							['Custom'] = 'Custom',
-							['Orange'] = 'Orange',
-							['Yellow'] = 'Yellow',
-							['Green'] = 'Green',
-							['Pink'] = 'Pink',
-							['Purple'] = 'Purple',
-							['Blue'] = 'Blue',
-							['Red'] = 'Red',
-							['Light_Blue'] = 'Light Blue'
-						},
-						get = function(info)
-							return module.DB.XPBar.RestedColor
-						end,
-						set = function(info, val)
-							module.DB.XPBar.RestedColor = val
-							SUI:SendMessage('StatusBarUpdate')
-						end
-					}
-				}
-			},
-			RepBar = {
-				name = L['Reputation'],
-				type = 'group',
-				order = 200,
-				inline = true,
-				args = {
-					RepColor = {
-						name = L['Color'],
-						type = 'select',
-						style = 'dropdown',
-						order = 2,
-						values = {
-							['AUTO'] = L['AUTO'],
-							['Orange'] = L['Orange'],
-							['Yellow'] = L['Yellow'],
-							['Green'] = L['Green'],
-							['Pink'] = L['Pink'],
-							['Purple'] = L['Purple'],
-							['Blue'] = L['Blue'],
-							['Red'] = L['Red'],
-							['Light_Blue'] = L['LightBlue']
-						},
-						get = function(info)
-							return module.DB.RepBar.GainedColor
-						end,
-						set = function(info, val)
-							module.DB.RepBar.GainedColor = val
-							if val == 'AUTO' then
-								module.DB.RepBar.AutoDefined = true
-							end
-							SUI:SendMessage('StatusBarUpdate')
-						end
-					}
-				}
-			}
-		}
-	}
-
 	--Bar Display dropdowns
 	for i, _ in ipairs(StyleSettings.bars) do
 		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
@@ -716,6 +578,48 @@ function module:BuildOptions()
 						SUI:SendMessage('StatusBarUpdate')
 					end
 				}
+			},
+			CustomColor = {
+				name = L['Primary custom color'],
+				type = 'select',
+				hasAlpha = true,
+				order = 4,
+				get = function(info)
+					local colors = module.DB[i].CustomColor
+					return colors.r, colors.g, colors.b, colors.a
+				end,
+				set = function(info, r, g, b, a)
+					local colors = module.DB[i].CustomColor
+					colors.r, colors.g, colors.b, colors.a = r, g, b, a
+					SUI:SendMessage('StatusBarUpdate')
+				end
+			},
+			CustomColor = {
+				name = L['Secondary custom color'],
+				type = 'select',
+				hasAlpha = true,
+				order = 4,
+				get = function(info)
+					local colors = module.DB[i].CustomColor2
+					return colors.r, colors.g, colors.b, colors.a
+				end,
+				set = function(info, r, g, b, a)
+					local colors = module.DB[i].CustomColor2
+					colors.r, colors.g, colors.b, colors.a = r, g, b, a
+					SUI:SendMessage('StatusBarUpdate')
+				end
+			},
+			AutoColor = {
+				name = L['Auto color'],
+				type = 'toggle',
+				order = 5,
+				get = function(info)
+					return module.DB[i].AutoColor
+				end,
+				set = function(info, val)
+					module.DB[i].AutoColor = val
+					SUI:SendMessage('StatusBarUpdate')
+				end
 			}
 		}
 	end
