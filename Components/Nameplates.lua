@@ -55,9 +55,9 @@ local NamePlateFactory = function(frame, unit)
 		health:SetPoint('BOTTOM')
 		health:SetSize(frame:GetWidth(), 5)
 		health:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
-		health.colorHealth = true
+		-- health.colorHealth = true
 		health.colorTapping = true
-		health.colorDisconnected = true
+		health.colorReaction = true
 		frame.Health = health
 
 		frame.bgHealth = frame:CreateTexture(nil, 'BACKGROUND', frame)
