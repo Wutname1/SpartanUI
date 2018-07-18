@@ -22,6 +22,7 @@ local Images = {
 		}
 	}
 }
+local BarTexture = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
 
 local pvpIconWar = function(self, event, unit)
 	if (unit ~= self.unit) then
@@ -54,7 +55,7 @@ local NamePlateFactory = function(frame, unit)
 		local health = CreateFrame('StatusBar', nil, frame)
 		health:SetPoint('BOTTOM')
 		health:SetSize(frame:GetWidth(), 5)
-		health:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+		health:SetStatusBarTexture(BarTexture)
 		-- health.colorHealth = true
 		health.colorTapping = true
 		health.colorReaction = true
@@ -62,16 +63,45 @@ local NamePlateFactory = function(frame, unit)
 
 		frame.bgHealth = frame:CreateTexture(nil, 'BACKGROUND', frame)
 		frame.bgHealth:SetAllPoints()
-		frame.bgHealth:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+		frame.bgHealth:SetTexture(BarTexture)
 		frame.bgHealth:SetVertexColor(0, 0, 0, .5)
 
 		-- Name
-		frame.Name = health:CreateFontString()
-		SUI:FormatFont(frame.Name, 10, 'Player')
-		frame.Name:SetSize(frame:GetWidth(), 12)
-		frame.Name:SetJustifyH('LEFT')
-		frame.Name:SetPoint('BOTTOMLEFT', frame.Health, 'TOPLEFT', 0, 0)
-		frame:Tag(frame.Name, '[difficulty][level] [SUI_ColorClass][name]')
+		local nameString = ''
+		if SUI.DB.NamePlates.ShowLevel then
+			nameString = '[difficulty][level]'
+		end
+		if SUI.DB.NamePlates.ShowName then
+			nameString = nameString .. ' [SUI_ColorClass][name]'
+		end
+		if nameString ~= '' then
+			frame.Name = health:CreateFontString()
+			SUI:FormatFont(frame.Name, 10, 'Player')
+			frame.Name:SetSize(frame:GetWidth(), 12)
+			frame.Name:SetJustifyH('LEFT')
+			frame.Name:SetPoint('BOTTOMLEFT', frame.Health, 'TOPLEFT', 0, 0)
+			frame:Tag(frame.Name, nameString)
+		end
+
+		-- Castbar
+		if SUI.DB.NamePlates.Castbar then
+			local cast = CreateFrame('StatusBar', nil, self)
+			cast:SetFrameStrata('BACKGROUND')
+			cast:SetFrameLevel(3)
+			cast:SetSize(self:GetWidth(), 4)
+			cast:SetStatusBarTexture(BarTexture)
+			
+			if SUI.DB.NamePlates.ShowName or SUI.DB.NamePlates.ShowLevel then
+				cast:SetPoint('TOP', frame.Name, 'BOTTOM', 0, 0)
+			else
+				cast:SetPoint('BOTTOMLEFT', frame.Health, 'TOPLEFT', 0, 0)
+			end
+			
+			-- Add latency display
+			cast.SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
+			
+			frame.Castbar = cast
+		end
 
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', nil, frame)
@@ -86,7 +116,7 @@ local NamePlateFactory = function(frame, unit)
 
 		frame.artwork.bgNeutral = frame:CreateTexture(nil, 'BACKGROUND', frame)
 		frame.artwork.bgNeutral:SetAllPoints()
-		frame.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+		frame.artwork.bgNeutral:SetTexture(BarTexture)
 		frame.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
 
 		frame.artwork.bgAlliance = frame:CreateTexture(nil, 'BACKGROUND', frame)
@@ -111,7 +141,10 @@ end
 function module:OnInitialize()
 	if SUI.DBMod.NamePlates == nil then
 		SUI.DBMod.NamePlates = {
-			showThreat = true,
+			ShowThreat = true,
+			ShowName = true,
+			ShowLevel = true,
+			ShowCastbar = true,
 			FlashOnInterruptibleCast = true
 		}
 	end
@@ -137,6 +170,42 @@ function module:BuildOptions()
 		type = 'group',
 		name = L['Nameplates'],
 		args = {
+			ShowName = {
+				name = L['Show name'],
+				type = 'toggle',
+				order = 4,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.NamePlates.ShowName
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowName = val
+				end
+			},
+			ShowLevel = {
+				name = L['Show level'],
+				type = 'toggle',
+				order = 4,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.NamePlates.ShowLevel
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowLevel = val
+				end
+			},
+			ShowCastbar = {
+				name = L['Show castbar'],
+				type = 'toggle',
+				order = 4,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.NamePlates.ShowCastbar
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowCastbar = val
+				end
+			},
 			desc0 = {
 				name = 'Nameplates are a take it or leave it feature at the moment.',
 				type = 'description',
@@ -179,22 +248,16 @@ function module:BuildOptions()
 				order = 403,
 				fontSize = 'small'
 			},
-			ad = {
-				name = '-Show/Hide name',
-				type = 'description',
-				order = 405,
-				fontSize = 'small'
-			},
-			ae = {
-				name = '-Show/Hide level',
+			af = {
+				name = '-Target indicator',
 				type = 'description',
 				order = 406,
 				fontSize = 'small'
 			},
 			af = {
-				name = '-Target indicator',
+				name = '-And more! Full list on Github.',
 				type = 'description',
-				order = 406,
+				order = 407,
 				fontSize = 'small'
 			}
 		}
