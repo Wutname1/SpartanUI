@@ -37,7 +37,7 @@ function module:OnInitialize()
 	end
 end
 
-local DummyFunction = function ()
+local DummyFunction = function()
 end
 
 function module:FirstTime()
@@ -76,35 +76,35 @@ function module:FirstTime()
 			SUI_Win.AutoSell.SellGray =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellGray', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellGray:SetPoint('TOP', SUI_Win.AutoSell.Enabled, 'TOP', -90, -40)
-			SUI_Win.AutoSell.SellGray:SetScript("OnClick", DummyFunction);
+			SUI_Win.AutoSell.SellGray:SetScript('OnClick', DummyFunction)
 			SUI_AutoSell_SellGrayText:SetText('Sell gray items')
 
 			--SellWhite
 			SUI_Win.AutoSell.SellWhite =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellWhite', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellWhite:SetPoint('TOP', SUI_Win.AutoSell.SellGray, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellWhite:SetScript("OnClick", DummyFunction);
+			SUI_Win.AutoSell.SellWhite:SetScript('OnClick', DummyFunction)
 			SUI_AutoSell_SellWhiteText:SetText('Sell white items')
 
 			--SellGreen
 			SUI_Win.AutoSell.SellGreen =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellGreen', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellGreen:SetPoint('TOP', SUI_Win.AutoSell.SellWhite, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellGreen:SetScript("OnClick", DummyFunction);
+			SUI_Win.AutoSell.SellGreen:SetScript('OnClick', DummyFunction)
 			SUI_AutoSell_SellGreenText:SetText('Sell green items')
 
 			--SellBlue
 			SUI_Win.AutoSell.SellBlue =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellBlue', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellBlue:SetPoint('TOP', SUI_Win.AutoSell.SellGreen, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellBlue:SetScript("OnClick", DummyFunction);
+			SUI_Win.AutoSell.SellBlue:SetScript('OnClick', DummyFunction)
 			SUI_AutoSell_SellBlueText:SetText('Sell blue items')
 
 			--SellPurple
 			SUI_Win.AutoSell.SellPurple =
 				CreateFrame('CheckButton', 'SUI_AutoSell_SellPurple', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
 			SUI_Win.AutoSell.SellPurple:SetPoint('TOP', SUI_Win.AutoSell.SellBlue, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellPurple:SetScript("OnClick", DummyFunction);
+			SUI_Win.AutoSell.SellPurple:SetScript('OnClick', DummyFunction)
 			SUI_AutoSell_SellPurpleText:SetText('Sell purple items')
 
 			--Max iLVL
@@ -332,10 +332,12 @@ function module:SellTrash()
 
 	--Populate Gearsets so they are not sold
 	for i = 1, C_EquipmentSet.GetNumEquipmentSets() do
-		local name, _ = C_EquipmentSet.GetEquipmentSetInfo(i)
-		local items = C_EquipmentSet.GetEquipmentSetItemIDs(name)
-		for _, item in pairs(items) do
-			inSet[item] = name
+		local setID = select(3, C_EquipmentSet.GetEquipmentSetInfo(i))
+		local items = C_EquipmentSet.GetItemIDs(setID)
+		for item in pairs(items) do
+			if not inSet[item] then
+				inSet[item] = name
+			end
 		end
 	end
 
