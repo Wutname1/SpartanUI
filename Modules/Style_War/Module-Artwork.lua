@@ -451,7 +451,7 @@ function module:MiniMap()
 		0,
 		5
 	}
-	-- SUI:GetModule('Component_Minimap'):ShapeChange('square')
+	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()
 
