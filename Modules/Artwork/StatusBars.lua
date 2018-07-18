@@ -174,7 +174,7 @@ local updateText = function(self)
 		valPercent = ((valFill / valMax) * 100)
 	end
 
-	if valPercent ~= 0 then
+	if valPercent ~= 0 and valPercent then
 		local ratio = (valPercent / 100)
 		if (ratio * self:GetWidth()) > self:GetWidth() then
 			self.Fill:SetWidth(self:GetWidth())
@@ -528,6 +528,13 @@ function module:BuildOptions()
 		[5] = 'five'
 	}
 
+	-- Build Holder
+	SUI.opt.args['Artwork'].args['StatusBars'] = {
+		name = L['Status bars'],
+		type = 'group',
+		args = {}
+	}
+
 	--Bar Display dropdowns
 	for i, _ in ipairs(StyleSettings.bars) do
 		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
@@ -577,49 +584,49 @@ function module:BuildOptions()
 						module.DB[i].ToolTip = val
 						SUI:SendMessage('StatusBarUpdate')
 					end
+				},
+				CustomColor1 = {
+					name = L['Primary custom color'],
+					type = 'color',
+					hasAlpha = true,
+					order = 4,
+					get = function(info)
+						local colors = module.DB[i].CustomColor
+						return colors.r, colors.g, colors.b, colors.a
+					end,
+					set = function(info, r, g, b, a)
+						local colors = module.DB[i].CustomColor
+						colors.r, colors.g, colors.b, colors.a = r, g, b, a
+						SUI:SendMessage('StatusBarUpdate')
+					end
+				},
+				CustomColor2 = {
+					name = L['Secondary custom color'],
+					type = 'color',
+					hasAlpha = true,
+					order = 4,
+					get = function(info)
+						local colors = module.DB[i].CustomColor2
+						return colors.r, colors.g, colors.b, colors.a
+					end,
+					set = function(info, r, g, b, a)
+						local colors = module.DB[i].CustomColor2
+						colors.r, colors.g, colors.b, colors.a = r, g, b, a
+						SUI:SendMessage('StatusBarUpdate')
+					end
+				},
+				AutoColor = {
+					name = L['Auto color'],
+					type = 'toggle',
+					order = 5,
+					get = function(info)
+						return module.DB[i].AutoColor
+					end,
+					set = function(info, val)
+						module.DB[i].AutoColor = val
+						SUI:SendMessage('StatusBarUpdate')
+					end
 				}
-			},
-			CustomColor = {
-				name = L['Primary custom color'],
-				type = 'select',
-				hasAlpha = true,
-				order = 4,
-				get = function(info)
-					local colors = module.DB[i].CustomColor
-					return colors.r, colors.g, colors.b, colors.a
-				end,
-				set = function(info, r, g, b, a)
-					local colors = module.DB[i].CustomColor
-					colors.r, colors.g, colors.b, colors.a = r, g, b, a
-					SUI:SendMessage('StatusBarUpdate')
-				end
-			},
-			CustomColor = {
-				name = L['Secondary custom color'],
-				type = 'select',
-				hasAlpha = true,
-				order = 4,
-				get = function(info)
-					local colors = module.DB[i].CustomColor2
-					return colors.r, colors.g, colors.b, colors.a
-				end,
-				set = function(info, r, g, b, a)
-					local colors = module.DB[i].CustomColor2
-					colors.r, colors.g, colors.b, colors.a = r, g, b, a
-					SUI:SendMessage('StatusBarUpdate')
-				end
-			},
-			AutoColor = {
-				name = L['Auto color'],
-				type = 'toggle',
-				order = 5,
-				get = function(info)
-					return module.DB[i].AutoColor
-				end,
-				set = function(info, val)
-					module.DB[i].AutoColor = val
-					SUI:SendMessage('StatusBarUpdate')
-				end
 			}
 		}
 	end
