@@ -96,15 +96,15 @@ function Artwork_Core:SetupOptions()
 					end
 					SUI.DB.viewport = val
 					if (not SUI.DB.viewport) then
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetTop'].disabled = true
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetBottom'].disabled = true
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetLeft'].disabled = true
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetRight'].disabled = true
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetTop'].disabled = true
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetBottom'].disabled = true
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetLeft'].disabled = true
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetRight'].disabled = true
 					else
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetTop'].disabled = false
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetBottom'].disabled = false
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetLeft'].disabled = false
-						SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetRight'].disabled = false
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetTop'].disabled = false
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetBottom'].disabled = false
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetLeft'].disabled = false
+						SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetRight'].disabled = false
 					end
 				end
 			},
@@ -169,9 +169,9 @@ function Artwork_Core:SetupOptions()
 	}
 
 	if (not SUI.DB.viewport) then
-		SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetTop'].disabled = true
-		SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetBottom'].disabled = true
-		SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetLeft'].disabled = true
-		SUI.opt.args['Artwork'].args['Base'].args['Viewport'].args['viewportoffsetRight'].disabled = true
+		SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetTop'].disabled = true
+		SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetBottom'].disabled = true
+		SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetLeft'].disabled = true
+		SUI.opt.args['Artwork'].args['Viewport'].args['viewportoffsetRight'].disabled = true
 	end
 end
