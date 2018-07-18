@@ -152,11 +152,18 @@ end
 
 function module:FirstAtrifactNotice()
 	--Only process if we are below 110; allowed to show new features; have never used an artifact; The style allows tracking
+	local TrackingAP = false
+	for i, v in ipairs(SUI.DBMod.StatusBars) do
+		if v.display == 'ap' then
+			TrackingAP = true
+		end
+	end
+
 	if
 		loginlevel < 110 and SUI.DBG.WhatsNew and not SUI.DBG.HasEquipedArtifact and
 			not C_ArtifactUI.IsEquippedArtifactMaxed() and
 			SUI.DB.Styles[SUI.DBMod.Artwork.Style].StatusBars.AP and
-			not (SUI.DB.StatusBars.right == 'ap' or SUI.DB.StatusBars.left == 'ap')
+			not TrackingAP
 	 then
 		--Detect if user already has a artifact
 		if HasArtifactEquipped() then
