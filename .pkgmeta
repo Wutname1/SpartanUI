@@ -43,7 +43,6 @@ externals:
     url: https://github.com/kaminaris/StdUi.git
   libs/oUF:
     url: https://github.com/oUF-wow/oUF.git
-    tag: bfa
   libs/oUF_AuraBars:
     url: https://github.com/Wutname1/oUF_AuraBars.git
 
