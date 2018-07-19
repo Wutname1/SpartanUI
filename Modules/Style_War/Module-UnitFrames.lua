@@ -315,11 +315,11 @@ local CreateLargeFrame = function(self, unit)
 
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+			if SUI.DBMod.PlayerFrames.bars[unit] and SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
 				self.Health.colorReaction = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+			elseif SUI.DBMod.PlayerFrames.bars[unit] and SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
 				self.Health.colorHappiness = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+			elseif SUI.DBMod.PlayerFrames.bars[unit] and SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
 				self.Health.colorClass = true
 			else
 				self.Health.colorSmooth = true
