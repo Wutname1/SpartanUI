@@ -68,10 +68,10 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Name
 		local nameString = ''
-		if SUI.DB.NamePlates.ShowLevel then
+		if SUI.DBMod.NamePlates.ShowLevel then
 			nameString = '[difficulty][level]'
 		end
-		if SUI.DB.NamePlates.ShowName then
+		if SUI.DBMod.NamePlates.ShowName then
 			nameString = nameString .. ' [SUI_ColorClass][name]'
 		end
 		if nameString ~= '' then
@@ -84,22 +84,15 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- Castbar
-		if SUI.DB.NamePlates.Castbar then
-			local cast = CreateFrame('StatusBar', nil, self)
-			cast:SetFrameStrata('BACKGROUND')
-			cast:SetFrameLevel(3)
-			cast:SetSize(self:GetWidth(), 4)
+		if SUI.DBMod.NamePlates.ShowCastbar then
+			local cast = CreateFrame('StatusBar', nil, frame)
+			cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+			cast:SetSize(frame:GetWidth(), 4)
 			cast:SetStatusBarTexture(BarTexture)
-			
-			if SUI.DB.NamePlates.ShowName or SUI.DB.NamePlates.ShowLevel then
-				cast:SetPoint('TOP', frame.Name, 'BOTTOM', 0, 0)
-			else
-				cast:SetPoint('BOTTOMLEFT', frame.Health, 'TOPLEFT', 0, 0)
-			end
-			
+
 			-- Add latency display
-			cast.SafeZone = Castbar:CreateTexture(nil, 'OVERLAY')
-			
+			cast.SafeZone = cast:CreateTexture(nil, 'OVERLAY')
+
 			frame.Castbar = cast
 		end
 
@@ -139,14 +132,17 @@ local NamePlateFactory = function(frame, unit)
 end
 
 function module:OnInitialize()
-	if SUI.DBMod.NamePlates == nil then
-		SUI.DBMod.NamePlates = {
-			ShowThreat = true,
-			ShowName = true,
-			ShowLevel = true,
-			ShowCastbar = true,
-			FlashOnInterruptibleCast = true
-		}
+	local Defaults = {
+		ShowThreat = true,
+		ShowName = true,
+		ShowLevel = true,
+		ShowCastbar = true,
+		FlashOnInterruptibleCast = true
+	}
+	if not SUI.DBMod.NamePlates then
+		SUI.DBMod.NamePlates = Defaults
+	else
+		SUI.DBMod.NamePlates = SUI:MergeData(SUI.DBMod.NamePlates, Defaults, false)
 	end
 
 	SpartanoUF:RegisterStyle('Spartan_NamePlates', NamePlateFactory)
@@ -176,7 +172,7 @@ function module:BuildOptions()
 				order = 4,
 				width = 'full',
 				get = function(info)
-					return SUI.DB.NamePlates.ShowName
+					return SUI.DBMod.NamePlates.ShowName
 				end,
 				set = function(info, val)
 					SUI.DBMod.NamePlates.ShowName = val
@@ -188,7 +184,7 @@ function module:BuildOptions()
 				order = 4,
 				width = 'full',
 				get = function(info)
-					return SUI.DB.NamePlates.ShowLevel
+					return SUI.DBMod.NamePlates.ShowLevel
 				end,
 				set = function(info, val)
 					SUI.DBMod.NamePlates.ShowLevel = val
@@ -200,7 +196,7 @@ function module:BuildOptions()
 				order = 4,
 				width = 'full',
 				get = function(info)
-					return SUI.DB.NamePlates.ShowCastbar
+					return SUI.DBMod.NamePlates.ShowCastbar
 				end,
 				set = function(info, val)
 					SUI.DBMod.NamePlates.ShowCastbar = val
