@@ -150,6 +150,9 @@ local OnMouseDown = function()
 end
 
 function module:ShapeChange(shape)
+	if not SUI.DB.EnabledComponents.Minimap then
+		return
+	end
 	Minimap:SetArchBlobRingScalar(0)
 	Minimap:SetQuestBlobRingScalar(0)
 
@@ -321,6 +324,9 @@ function module:OnEnable()
 end
 
 function module:ModifyMinimapLayout()
+	if not SUI.DB.EnabledComponents.Minimap then
+		return
+	end
 	Minimap:EnableMouseWheel(true)
 	Minimap:SetScript(
 		'OnMouseWheel',
@@ -427,6 +433,9 @@ function module:ModifyMinimapLayout()
 end
 
 function module:MinimapCoords()
+	if not SUI.DB.EnabledComponents.Minimap then
+		return
+	end
 	MinimapZoneText:Hide()
 
 	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY', 'SUI_Font10')
@@ -531,6 +540,9 @@ function module:SetupButton(btn, force)
 end
 
 function module:updateButtons()
+	if not SUI.DB.EnabledComponents.Minimap then
+		return
+	end
 	if (SUI.DB.MiniMap.MapZoomButtons) then
 		MinimapZoomIn:Hide()
 		MinimapZoomOut:Hide()
