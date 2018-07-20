@@ -499,7 +499,7 @@ function Artwork_Core:BartenderProfileCheck(Input, Report)
 		end
 	end
 	if (Report) and (r ~= true) then
-		addon:Print(Input .. ' ' .. L['BartenderProfileCheckFail'])
+		SUI:Print(Input .. ' ' .. L['BartenderProfileCheckFail'])
 	end
 	return r
 end
