@@ -104,6 +104,22 @@ local NamePlateFactory = function(frame, unit)
 		Auras.onlyShowPlayer = true
 		frame.Auras = Auras
 
+		-- Target Indicator
+		local TargetIndicator = CreateFrame('Frame', 'BACKGROUND', frame)
+		TargetIndicator.bg1 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
+		TargetIndicator.bg2 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
+		TargetIndicator.bg1:SetTexture('Interface\\AddOns\\SpartanUI_Artwork\\Images\\DoubleArrow')
+		TargetIndicator.bg2:SetTexture('Interface\\AddOns\\SpartanUI_Artwork\\Images\\DoubleArrow')
+		TargetIndicator.bg1:SetPoint('RIGHT', frame, 'LEFT')
+		TargetIndicator.bg2:SetPoint('LEFT', frame, 'RIGHT')
+		TargetIndicator.bg2:SetTexCoord(1, 0, 1, 0)
+		TargetIndicator.bg1:SetSize(10, frame:GetHeight())
+		TargetIndicator.bg2:SetSize(10, frame:GetHeight())
+
+		TargetIndicator.bg1:Hide()
+		TargetIndicator.bg2:Hide()
+		frame.TargetIndicator = TargetIndicator
+
 		-- frame background
 		frame.artwork = CreateFrame('Frame', 'BACKGROUND', frame)
 		frame.artwork:SetAllPoints()
@@ -138,6 +154,7 @@ function module:OnInitialize()
 		ShowName = true,
 		ShowLevel = true,
 		ShowCastbar = true,
+		ShowTarget = true,
 		FlashOnInterruptibleCast = true
 	}
 	if not SUI.DBMod.NamePlates then
@@ -170,8 +187,7 @@ function module:BuildOptions()
 			ShowName = {
 				name = L['Show name'],
 				type = 'toggle',
-				order = 4,
-				width = 'full',
+				order = 1,
 				get = function(info)
 					return SUI.DBMod.NamePlates.ShowName
 				end,
@@ -182,8 +198,7 @@ function module:BuildOptions()
 			ShowLevel = {
 				name = L['Show level'],
 				type = 'toggle',
-				order = 4,
-				width = 'full',
+				order = 2,
 				get = function(info)
 					return SUI.DBMod.NamePlates.ShowLevel
 				end,
@@ -194,13 +209,23 @@ function module:BuildOptions()
 			ShowCastbar = {
 				name = L['Show castbar'],
 				type = 'toggle',
-				order = 4,
-				width = 'full',
+				order = 3,
 				get = function(info)
 					return SUI.DBMod.NamePlates.ShowCastbar
 				end,
 				set = function(info, val)
 					SUI.DBMod.NamePlates.ShowCastbar = val
+				end
+			},
+			ShowTarget = {
+				name = L['Show target'],
+				type = 'toggle',
+				order = 4,
+				get = function(info)
+					return SUI.DBMod.NamePlates.ShowTarget
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowTarget = val
 				end
 			},
 			desc0 = {
