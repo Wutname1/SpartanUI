@@ -29,9 +29,13 @@ module.StatusBarSettings = {
 	}
 }
 local CurScale
-local petbattle = CreateFrame('Frame')
+local petbattle, trayWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 
 -- Misc Framework stuff
+local trayWatcherEvents = function()
+	module:updateOffset()
+end
+
 function module:updateScale()
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
@@ -83,6 +87,11 @@ function module:updateAlpha()
 end
 
 function module:updateOffset()
+	if InCombatLockdown() then
+		return
+	end
+
+	local Top = 0
 	local fubar, ChocolateBar, titan = 0, 0, 0
 
 	if not SUI.DB.yoffsetAuto then
@@ -92,6 +101,9 @@ function module:updateOffset()
 			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
 				local bar = _G['FuBarFrame' .. i]
 				local point = bar:GetPoint(1)
+				if point:find('TOP.*') then
+					Top = Top + bar:GetHeight()
+				end
 				if point == 'BOTTOMLEFT' then
 					fubar = fubar + bar:GetHeight()
 				end
@@ -102,6 +114,9 @@ function module:updateOffset()
 			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
 				local bar = _G['ChocolateBar' .. i]
 				local point = bar:GetPoint(1)
+				if point:find('TOP.*') then
+					Top = Top + bar:GetHeight()
+				end
 				if point == 'RIGHT' then
 					ChocolateBar = ChocolateBar + bar:GetHeight()
 				end
@@ -117,8 +132,29 @@ function module:updateOffset()
 			end
 		end
 
+		if OrderHallCommandBar and OrderHallCommandBar:IsVisible() then
+			Top = Top + OrderHallCommandBar:GetHeight()
+		end
+
 		offset = max(fubar + titan + ChocolateBar, 1)
 		SUI.DB.yoffset = offset
+	end
+	module.Trays.left:ClearAllPoints()
+	module.Trays.right:ClearAllPoints()
+	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, (Top * -1))
+	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
+
+	if BT4BarBagBar then
+		BT4BarBagBar:ClearAllPoints()
+		BT4BarStanceBar:ClearAllPoints()
+		BT4BarPetBar:ClearAllPoints()
+		BT4BarMicroMenu:ClearAllPoints()
+
+		BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
+		BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+
+		BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
 	end
 
 	War_ActionBarPlate:ClearAllPoints()
@@ -393,6 +429,13 @@ function module:SlidingTrays()
 
 	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, 0)
 	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, 0)
+
+	trayWatcher:SetScript('OnEvent', trayWatcherEvents)
+	trayWatcher:RegisterEvent('PLAYER_LOGIN')
+	trayWatcher:RegisterEvent('PLAYER_ENTERING_WORLD')
+	trayWatcher:RegisterEvent('ZONE_CHANGED')
+	trayWatcher:RegisterEvent('ZONE_CHANGED_INDOORS')
+	trayWatcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 end
 
 -- Bartender Stuff
