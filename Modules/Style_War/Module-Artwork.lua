@@ -157,6 +157,7 @@ function module:InitArtwork()
 end
 
 function module:EnableArtwork()
+	module:ActionBars()
 	War_SpartanUI:SetFrameStrata('BACKGROUND')
 	War_SpartanUI:SetFrameLevel(1)
 
@@ -219,6 +220,15 @@ function module:EnableArtwork()
 	module:updateScale()
 	module:updateAlpha()
 	module:StatusBars()
+end
+
+function module:ActionBars()
+	local Settings = {
+		style = "Blizzard"
+	}
+
+	local ActionBars = SUI:GetModule('Artwork_ActionBars')
+	ActionBars:Initialize(Settings)
 end
 
 function module:StatusBars()

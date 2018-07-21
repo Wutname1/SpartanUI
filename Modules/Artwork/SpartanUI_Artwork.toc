@@ -3,7 +3,8 @@
 ## Notes: Manages the Artwork and layout that SpartanUI uses
 ## Version: 4.6.0
 ## Author: Wutname1
-## RequiredDeps: SpartanUI, Bartender4
+## RequiredDeps: SpartanUI
+## OptionalDeps: Bartender4
 
 SpartanUI_Artwork.xml
 
