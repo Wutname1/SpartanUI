@@ -1,5 +1,7 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("SpartanUI", "enUS", true, debug)
 
+L["Action Bars"] = true
+
 L["1 status bar"] = "1st status bar"
 L["2 status bar"] = "2nd status bar"
 L["3 status bar"] = "3rd status bar"
