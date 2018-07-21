@@ -313,7 +313,12 @@ function RaidFrames:Classic()
 	)
 	raid:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
 
-	raid:SetParent('SpartanUI')
+	if SpartanUI then
+		raid:SetParent('SpartanUI')
+	else
+		raid:SetParent(UIParent)
+	end
+
 	raid:SetClampedToScreen(false)
 
 	return (raid)

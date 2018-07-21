@@ -46,26 +46,28 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 		end
 	end
 
-	local unattached = false
-	SpartanUI:HookScript(
-		'OnHide',
-		function(this, event)
-			if UnitUsingVehicle('player') then
-				SUI_FramesAnchor:SetParent(UIParent)
-				unattached = true
+	if SpartanUI then
+		local unattached = false
+		SpartanUI:HookScript(
+			'OnHide',
+			function(this, event)
+				if UnitUsingVehicle('player') then
+					SUI_FramesAnchor:SetParent(UIParent)
+					unattached = true
+				end
 			end
-		end
-	)
+		)
 
-	SpartanUI:HookScript(
-		'OnShow',
-		function(this, event)
-			if unattached then
-				SUI_FramesAnchor:SetParent(SpartanUI)
-				PlayerFrames:PositionFrame_Classic()
+		SpartanUI:HookScript(
+			'OnShow',
+			function(this, event)
+				if unattached then
+					SUI_FramesAnchor:SetParent(SpartanUI)
+					PlayerFrames:PositionFrame_Classic()
+				end
 			end
-		end
-	)
+		)
+	end
 end
 
 function PlayerFrames:PositionFrame_Classic(b)

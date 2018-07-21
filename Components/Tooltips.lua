@@ -150,7 +150,7 @@ local setPoint = function(self, parent)
 
 		--See If the theme has an anchor and if we are allowed to use it
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
-			local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+			local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style, true)
 			if style then
 				style:TooltipLoc(self, parent)
 			end
