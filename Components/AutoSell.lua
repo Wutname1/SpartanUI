@@ -1,13 +1,13 @@
-local SUI = SUI
+local _G, SUI = _G, SUI
 local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 ----------------------------------------------------------------------------------------------------
 local frame = CreateFrame('FRAME')
+local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local totalValue = 0
 local iCount = 0
 local iSellCount = 0
 local bag = 0
 local OnlyCount = true
-local inSet = {}
 local ExcludedItems = {
 	137642, --Mark Of Honor
 	141446 --Tome of the Tranquil Mind
@@ -157,7 +157,7 @@ function module:SellTrashInBag()
 	local solditem = 0
 	for slot = 1, GetContainerNumSlots(bag) do
 		local _, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
-		if module:IsSellable(itemID, link) then
+		if module:IsSellable(itemID, link, bag, slot) then
 			if OnlyCount then
 				iCount = iCount + 1
 				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
@@ -186,7 +186,23 @@ function module:SellTrashInBag()
 	end
 end
 
-function module:IsSellable(item, ilink)
+local IsInGearset = function(bag, slot)
+	local line
+	Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+	Tooltip:SetBagItem(bag, slot)
+
+	for i = 1, Tooltip:NumLines() do
+		line = _G['AutoSellTooltipTextLeft' .. i]
+		-- print(line:GetText())
+		if line:GetText():find(EQUIPMENT_SETS:format('.*')) then
+			return true
+		end
+	end
+
+	return false
+end
+
+function module:IsSellable(item, ilink, bag, slot)
 	if not item then
 		return false
 	end
@@ -205,7 +221,7 @@ function module:IsSellable(item, ilink)
 		_,
 		_,
 		_,
-		itemSetID,
+		_,
 		isCraftingReagent = GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
 		return false
@@ -260,7 +276,7 @@ function module:IsSellable(item, ilink)
 	end
 
 	--Gearset detection
-	if (inSet[item] or itemSetID) and SUI.DB.AutoSell.NotInGearset then
+	if C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then
 		NotInGearset = false
 	end
 
@@ -291,6 +307,7 @@ function module:IsSellable(item, ilink)
 	 then --Legion identified some junk as consumable
 		if SUI.DB.AutoSell.debug then
 			SUI:Print('--Selling--')
+			SUI:Print(item)
 			SUI:Print(name)
 			SUI:Print(ilink)
 			SUI:Print('ilvl:     ' .. iLevel)
@@ -330,17 +347,6 @@ function module:SellTrash()
 	Timer = nil
 	bag = 0
 
-	--Populate Gearsets so they are not sold
-	for i = 1, C_EquipmentSet.GetNumEquipmentSets() do
-		local setID = select(3, C_EquipmentSet.GetEquipmentSetInfo(i))
-		local items = C_EquipmentSet.GetItemIDs(setID)
-		for item in pairs(items) do
-			if not inSet[item] then
-				inSet[item] = name
-			end
-		end
-	end
-
 	--Count Items to sell
 	OnlyCount = true
 	for b = 0, 4 do
@@ -354,7 +360,6 @@ function module:SellTrash()
 		--Start Loop to sell, reset locals
 		OnlyCount = false
 		bag = 0
-		-- C_Timer.After(.2, SellTrashInBag)
 		self.SellTimer = self:ScheduleRepeatingTimer('SellTrashInBag', .3)
 	end
 end
