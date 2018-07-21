@@ -3,6 +3,31 @@ local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:GetModule('Style_War')
 ----------------------------------------------------------------------------------------------------
 module.Trays = {}
+module.StatusBarSettings = {
+	bars = {
+		'War_StatusBar_Left',
+		'War_StatusBar_Right'
+	},
+	War_StatusBar_Left = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+		size = {370, 20},
+		TooltipSize = {250, 65},
+		TooltipTextSize = {225, 40},
+		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+		GlowPoint = {x = -16},
+		MaxWidth = 48
+	},
+	War_StatusBar_Right = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+		Grow = 'RIGHT',
+		size = {370, 20},
+		TooltipSize = {250, 65},
+		TooltipTextSize = {225, 40},
+		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+		GlowPoint = {x = 16},
+		MaxWidth = 48
+	}
+}
 local CurScale
 local petbattle = CreateFrame('Frame')
 
@@ -20,6 +45,11 @@ function module:updateScale()
 		if (SUI.DB.scale ~= Artwork_Core:round(War_SpartanUI:GetScale())) then
 			War_SpartanUI:SetScale(SUI.DB.scale)
 		end
+		local StatusBars = SUI:GetModule('Artwork_StatusBars')
+		for _, key in ipairs(module.StatusBarSettings.bars) do
+			StatusBars.bars[key]:SetScale(SUI.DB.scale)
+		end
+
 		CurScale = SUI.DB.scale
 	end
 end
@@ -216,40 +246,14 @@ function module:EnableArtwork()
 		module:MiniMap()
 	end
 
+	module:StatusBars()
 	module:updateScale()
 	module:updateAlpha()
-	module:StatusBars()
 end
 
 function module:StatusBars()
-	local Settings = {
-		bars = {
-			'War_StatusBar_Left',
-			'War_StatusBar_Right'
-		},
-		War_StatusBar_Left = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-			size = {370, 20},
-			TooltipSize = {250, 65},
-			TooltipTextSize = {225, 40},
-			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-			GlowPoint = {x = -16},
-			MaxWidth = 48
-		},
-		War_StatusBar_Right = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-			Grow = 'RIGHT',
-			size = {370, 20},
-			TooltipSize = {250, 65},
-			TooltipTextSize = {225, 40},
-			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-			GlowPoint = {x = 16},
-			MaxWidth = 48
-		}
-	}
-
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(Settings)
+	StatusBars:Initalize(module.StatusBarSettings)
 
 	StatusBars.bars.War_StatusBar_Left:SetAlpha(.9)
 	StatusBars.bars.War_StatusBar_Right:SetAlpha(.9)

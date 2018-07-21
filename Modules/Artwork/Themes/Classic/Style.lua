@@ -7,6 +7,30 @@ if SUI.DB.Styles.Classic.BuffLoc == nil then
 	SUI.DB.Styles.Classic.BuffLoc = true
 end
 local InitRan = false
+module.StatusBarSettings = {
+	bars = {
+		'SUI_StatusBar_Left',
+		'SUI_StatusBar_Right'
+	},
+	SUI_StatusBar_Left = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
+		size = {370, 32},
+		TooltipSize = {300, 80},
+		TooltipTextSize = {280, 70},
+		texCords = {0.150390625, 0.96875, 0, 1},
+		MaxWidth = 15
+	},
+	SUI_StatusBar_Right = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-rep',
+		Grow = 'RIGHT',
+		size = {370, 32},
+		TooltipSize = {300, 80},
+		TooltipTextSize = {280, 70},
+		texCords = {0, 0.849609375, 0, 1},
+		GlowPoint = {x = 20},
+		MaxWidth = 50
+	}
+}
 
 function module:OnInitialize()
 	if SUI.DB.Styles.Classic.TalkingHeadUI == nil then
@@ -55,7 +79,6 @@ function module:OnEnable()
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
-		module:SetupStatusBars()
 
 		if (SUI.DBMod.Artwork.FirstLoad) then
 			SUI.DBMod.Artwork.FirstLoad = false
@@ -64,33 +87,8 @@ function module:OnEnable()
 end
 
 function module:SetupStatusBars()
-	local Settings = {
-		bars = {
-			'SUI_StatusBar_Left',
-			'SUI_StatusBar_Right'
-		},
-		SUI_StatusBar_Left = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
-			size = {370, 32},
-			TooltipSize = {300, 80},
-			TooltipTextSize = {280, 70},
-			texCords = {0.150390625, 0.96875, 0, 1},
-			MaxWidth = 15
-		},
-		SUI_StatusBar_Right = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-rep',
-			Grow = 'RIGHT',
-			size = {370, 32},
-			TooltipSize = {300, 80},
-			TooltipTextSize = {280, 70},
-			texCords = {0, 0.849609375, 0, 1},
-			GlowPoint = {x = 20},
-			MaxWidth = 50
-		}
-	}
-
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(Settings)
+	StatusBars:Initalize(module.StatusBarSettings)
 
 	StatusBars.bars.SUI_StatusBar_Left:SetPoint('BOTTOMRIGHT', 'SUI_ActionBarPlate', 'BOTTOM', -92, -2)
 	StatusBars.bars.SUI_StatusBar_Right:SetPoint('BOTTOMLEFT', 'SUI_ActionBarPlate', 'BOTTOM', 70, 0)

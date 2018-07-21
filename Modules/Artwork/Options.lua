@@ -3,6 +3,7 @@ local L = SUI.L
 local Artwork_Core = SUI:GetModule('Artwork_Core')
 
 function Artwork_Core:SetupOptions()
+	local Style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 	SUI.opt.args['Artwork'].args['scale'] = {
 		name = L['ConfScale'],
 		type = 'range',
@@ -16,6 +17,7 @@ function Artwork_Core:SetupOptions()
 				SUI:Print(ERR_NOT_IN_COMBAT)
 			else
 				SUI.DB.scale = min(1, SUI:round(val))
+				Style:updateScale()
 			end
 		end,
 		get = function(info)
@@ -31,6 +33,7 @@ function Artwork_Core:SetupOptions()
 			if (InCombatLockdown()) then
 				SUI:Print(ERR_NOT_IN_COMBAT)
 			else
+				Style:updateScale()
 				if (SUI.DB.scale >= 0.92) or (SUI.DB.scale < 0.78) then
 					SUI.DB.scale = 0.78
 				else

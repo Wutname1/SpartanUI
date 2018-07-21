@@ -39,6 +39,11 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 			Transparent_SpartanUI_Base3:SetPoint('RIGHT', Transparent_SpartanUI_Base2, 'LEFT')
 			Transparent_SpartanUI_Base5:SetPoint('LEFT', Transparent_SpartanUI_Base4, 'RIGHT')
 		end
+		local StatusBars = SUI:GetModule('Artwork_StatusBars')
+		for _, key in ipairs(module.StatusBarSettings.bars) do
+			StatusBars.bars[key]:SetScale(SUI.DB.scale)
+		end
+		
 		CurScale = SUI.DB.scale
 	end
 end
@@ -292,6 +297,8 @@ function module:EnableFramework()
 	)
 
 	module:SetupVehicleUI()
+	
+	module:SetupStatusBars()
 
 	module:updateScale()
 	module:updateOffset()

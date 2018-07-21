@@ -5,6 +5,35 @@ local module = SUI:GetModule('Style_Fel')
 module.Trays = {}
 local CurScale
 local petbattle = CreateFrame('Frame')
+local StatusBarSettings = {
+	bars = {
+		'Fel_StatusBar_Left',
+		'Fel_StatusBar_Right'
+	},
+	Fel_StatusBar_Left = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
+		size = {370, 20},
+		TooltipSize = {250, 65},
+		TooltipTextSize = {225, 40},
+		texCords = {0.150390625, 1, 0, 1},
+		GlowPoint = {x = -10},
+		MaxWidth = 32,
+		bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
+		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
+	},
+	Fel_StatusBar_Right = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
+		Grow = 'RIGHT',
+		size = {370, 20},
+		TooltipSize = {250, 65},
+		TooltipTextSize = {225, 40},
+		texCords = {0.150390625, 1, 0, 1},
+		GlowPoint = {x = 10},
+		MaxWidth = 35,
+		bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
+		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
+	}
+}
 
 -- Misc Framework stuff
 function module:updateScale()
@@ -19,6 +48,10 @@ function module:updateScale()
 	if SUI.DB.scale ~= CurScale then
 		if (SUI.DB.scale ~= Artwork_Core:round(Fel_SpartanUI:GetScale())) then
 			Fel_SpartanUI:SetScale(SUI.DB.scale)
+		end
+		local StatusBars = SUI:GetModule('Artwork_StatusBars')
+		for _, key in ipairs(StatusBarSettings.bars) do
+			StatusBars.bars[key]:SetScale(SUI.DB.scale)
 		end
 		CurScale = SUI.DB.scale
 	end
@@ -205,44 +238,14 @@ function module:EnableArtwork()
 		module:MiniMap()
 	end
 
-	module:updateScale()
-	module:updateAlpha()
 	module:StatusBars()
+	module:updateAlpha()
+	module:updateScale()
 end
 
 function module:StatusBars()
-	local Settings = {
-		bars = {
-			'Fel_StatusBar_Left',
-			'Fel_StatusBar_Right'
-		},
-		Fel_StatusBar_Left = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
-			size = {370, 20},
-			TooltipSize = {250, 65},
-			TooltipTextSize = {225, 40},
-			texCords = {0.150390625, 1, 0, 1},
-			GlowPoint = {x = -10},
-			MaxWidth = 32,
-			bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
-			texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
-		},
-		Fel_StatusBar_Right = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
-			Grow = 'RIGHT',
-			size = {370, 20},
-			TooltipSize = {250, 65},
-			TooltipTextSize = {225, 40},
-			texCords = {0.150390625, 1, 0, 1},
-			GlowPoint = {x = 10},
-			MaxWidth = 35,
-			bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
-			texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
-		}
-	}
-
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(Settings)
+	StatusBars:Initalize(StatusBarSettings)
 
 	-- Position the StatusBars
 	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', Fel_SpartanUI, 'BOTTOM', -100, 0)
