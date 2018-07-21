@@ -57,6 +57,7 @@ local NamePlateFactory = function(frame, unit)
 		health:SetSize(frame:GetWidth(), 5)
 		health:SetStatusBarTexture(BarTexture)
 		-- health.colorHealth = true
+		health.frequentUpdates = true
 		health.colorTapping = true
 		health.colorReaction = true
 		frame.Health = health
