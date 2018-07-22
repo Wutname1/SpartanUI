@@ -1,10 +1,52 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:NewModule('Artwork_Core')
-local Bartender4Version, BartenderMin = '', '4.7.1'
-if select(4, GetAddOnInfo('Bartender4')) then
-	Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
+
+local BarModule
+local function GetBarSettings()
+	-- local barStyle = SUI.DB.Styles['War']
+	local barStyle = SUI.DB.Styles[SUI.DBMod.BarManager.Style] 
+
+	return {
+		profile = barStyle.BartenderProfile,
+		type = barStyle.BarManager.type
+	}
 end
+
+local function GetBarModule()
+	local BarTypes = {
+		Blizzard = 'Artwork_BlizzardBars',
+		Bartender = 'Artwork_BartenderBars'
+	}
+
+	local BarSettings = GetBarSettings()
+	barType = BarSettings.type
+
+	-- Does it make sense to just go to Blizzard vs. Bartender
+	-- based solely on if the addon is enabled?
+	-- The problem is that I don't know if you can tell
+	-- Bartender to just leave everything alone.
+	-- Putting that in place for now to try it out...
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
+		barType = 'Blizzard'
+	else
+		barType = 'Bartender'
+	end
+	local barModuleName = BarTypes[barType]
+
+	local isSetup = false
+
+	local barModule = null
+
+	if SUI:GetModule(barModuleName, true) then
+		barModule = SUI:GetModule(barModuleName)
+	else
+		SUI:Err('Artwork_Core', 'Missing bar module: ' .. barModuleName)
+	end
+
+	return barModule
+end
+
 
 function Artwork_Core:isPartialMatch(frameName, tab)
 	local result = false
@@ -112,33 +154,6 @@ function Artwork_Core:ActionBarPlates(plate, excludelist)
 end
 
 function Artwork_Core:OnInitialize()
-	StaticPopupDialogs['BartenderVerWarning'] = {
-		text = '|cff33ff99SpartanUI v' ..
-			SUI.Version ..
-				'|n|r|n|n' ..
-					L['Warning'] ..
-						': ' ..
-							L['BartenderOldMSG'] .. ' ' .. Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
-		button1 = 'Ok',
-		OnAccept = function()
-			SUI.DBG.BartenderVerWarning = SUI.Version
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
-	StaticPopupDialogs['BartenderInstallWarning'] = {
-		text = '|cff33ff99SpartanUI v' ..
-			SUI.Version .. '|n|r|n|n' .. L['Warning'] .. ': ' .. L['BartenderNotFoundMSG1'] .. '|n' .. L['BartenderNotFoundMSG2'],
-		button1 = 'Ok',
-		OnAccept = function()
-			SUI.DBG.BartenderInstallWarning = SUI.Version
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
-
 	if not SUI.DBMod.Artwork.SetupDone then
 		Artwork_Core:FirstTime()
 	end
@@ -334,32 +349,13 @@ function Artwork_Core:FirstTime()
 			SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 			SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 			SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+			SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 			SUI.DBMod.Artwork.FirstLoad = true
 			SUI.DBG.BartenderChangesActive = true
 			Artwork_Core:SetupProfile()
 
-			--Reset Moved bars
-			SUI.DBG.BartenderChangesActive = true
-			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-			end
-			local FrameList = {
-				BT4Bar1,
-				BT4Bar2,
-				BT4Bar3,
-				BT4Bar4,
-				BT4Bar5,
-				BT4Bar6,
-				BT4BarBagBar,
-				BT4BarExtraActionBar,
-				BT4BarStanceBar,
-				BT4BarPetBar,
-				BT4BarMicroMenu
-			}
-			for _, v in ipairs(FrameList) do
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
-			end
-			SUI.DBG.BartenderChangesActive = false
+			SUI:GetModule('Artwork_Core'):ResetMovedBars()
+
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
 		end,
@@ -379,52 +375,11 @@ function Artwork_Core:FirstTime()
 end
 
 function Artwork_Core:OnEnable()
-	-- No Bartender/out of date Notification
-	if (not select(4, GetAddOnInfo('Bartender4')) and (SUI.DBG.BartenderInstallWarning ~= SUI.Version)) then
-		if SUI.Version ~= SUI.DBG.Version then
-			StaticPopup_Show('BartenderInstallWarning')
-		end
-	elseif Bartender4Version < BartenderMin then
-		if SUI.Version ~= SUI.DBG.Version then
-			StaticPopup_Show('BartenderVerWarning')
-		end
-	end
-
 	Artwork_Core:SetupOptions()
 
-	local FrameList = {
-		BT4Bar1,
-		BT4Bar2,
-		BT4Bar3,
-		BT4Bar4,
-		BT4Bar5,
-		BT4Bar6,
-		BT4Bar7,
-		BT4Bar8,
-		BT4Bar9,
-		BT4Bar10,
-		BT4BarBagBar,
-		BT4BarExtraActionBar,
-		BT4BarStanceBar,
-		BT4BarPetBar,
-		BT4BarMicroMenu
-	}
-
-	for _, v in ipairs(FrameList) do
-		if v then
-			v.SavePosition = function()
-				if
-					(not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] or v:GetParent():GetName() ~= 'UIParent') and
-						not SUI.DBG.BartenderChangesActive
-				 then
-					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = true
-					LibStub('LibWindow-1.1').windowData[v].storage.parent = UIParent
-					v:SetParent(UIParent)
-				end
-
-				LibStub('LibWindow-1.1').SavePosition(v)
-			end
-		end
+	local BarModule = GetBarModule()
+	if BarModule then
+		BarModule:SetupMovedBars()
 	end
 end
 
@@ -452,98 +407,43 @@ function Artwork_Core:CheckMiniMap()
 	end
 end
 
--- Bartender4 Items
-function Artwork_Core:SetupProfile(ProfileOverride)
-	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo('Bartender4'))) then
-		return
+function Artwork_Core:SetupBars()
+	local isSetup = false
+	local BarModule = GetBarModule()
+	if BarModule then
+		local BarSettings = GetBarSettings()
+		isSetup = BarModule:Initialize(BarSettings)
 	end
 
-	--Flag the SUI.DB that we are making changes
-	SUI.DBG.BartenderChangesActive = true
-	--Load the profile name the art style wants
-	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile
-	--Check if we are overriding the art
-	if ProfileOverride then
-		ProfileName = ProfileOverride
-	end
-
-	--Load the BT settings used by the art style
-	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
-
-	--If this is set then we have already setup the bars once, and the user changed them
-	if
-		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= ProfileName and
-			not ProfileOverride
-	 then
-		return
-	end
-
-	-- Set/Create our Profile
-	Bartender4.db:SetProfile(ProfileName)
-
-	--Load the Profile Data
-	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile, BartenderSettings[k])
-		end
-	end
-	SUI.DBG.BartenderChangesActive = false
+	return isSetup
 end
 
-function Artwork_Core:BartenderProfileCheck(Input, Report)
-	local profiles, r = Bartender4.db:GetProfiles(), false
-	for _, v in pairs(profiles) do
-		if v == Input then
-			r = true
-		end
+function Artwork_Core:SetupProfile()
+	local BarModule = GetBarModule()
+	if BarModule then
+		local BarSettings = GetBarSettings()
+		BarModule:CreateProfile(BarSettings.profile)
 	end
-	if (Report) and (r ~= true) then
-		addon:Print(Input .. ' ' .. L['BartenderProfileCheckFail'])
-	end
-	return r
 end
 
-function Artwork_Core:MergeData(target, source)
-	if type(target) ~= 'table' then
-		target = {}
+function Artwork_Core:ResetMovedBars()
+	local BarModule = GetBarModule()
+	if BarModule then
+		BarModule:ResetMovedBars()
 	end
-	for k, v in pairs(source) do
-		if type(v) == 'table' then
-			target[k] = self:MergeData(target[k], v)
-		else
-			target[k] = v
-		end
-	end
-	return target
 end
 
-function Artwork_Core:CreateProfile()
-	SUI.DBG.BartenderChangesActive = true
-	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile
-	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
-	--If this is set then we have already setup the bars once, and the user changed them
-	if
-		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= ProfileName
-	 then
-		return
+function Artwork_Core:ResetDB()
+	local BarModule = GetBarModule()
+	if BarModule then
+		BarModule:ResetDB()
 	end
-
-	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo('Bartender4'))) then
-		return
-	end
-
-	-- Set/Create our Profile
-	Bartender4.db:SetProfile(ProfileName)
-
-	--Load the Profile Data
-	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile, BartenderSettings[k])
-		end
-	end
-
-	Bartender4:UpdateModuleConfigs()
-	SUI.DBG.BartenderChangesActive = false
 end
+
+function Artwork_Core:UseBlizzardVehicleUI(shouldUse)
+	local BarModule = GetBarModule()
+	if BarModule then
+		BarModule:UseBlizzardVehicleUI(shouldUse)
+	end
+end
+

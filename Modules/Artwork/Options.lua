@@ -52,11 +52,8 @@ function Artwork_Core:SetupOptions()
 				return
 			end
 			SUI.DBMod.Artwork.VehicleUI = val
-			--Make sure bartender knows to do it, or not...
-			if Bartender4 then
-				Bartender4.db.profile.blizzardVehicle = val
-				Bartender4:UpdateBlizzardVehicle()
-			end
+			--Make sure the bars know to do it, or not...
+			Artwork_Core:UseBlizzardVehicleUI(val)
 
 			if SUI.DBMod.Artwork.VehicleUI then
 				if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then

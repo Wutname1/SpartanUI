@@ -4,6 +4,8 @@ local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
+local BarSetupSuccessful = false
+
 function module:OnInitialize()
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Minimal'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Minimal'].disabled = false
@@ -21,6 +23,7 @@ function module:Init()
 		module:FirstLoad()
 	end
 	module:SetupMenus()
+	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	module:InitFramework()
 	module:InitActionBars()
 	InitRan = true
@@ -40,18 +43,13 @@ function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= 'Minimal') then
 		module:Disable()
 	else
-		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Minimal.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-			Bartender4.db:SetProfile(SUI.DB.Styles.Minimal.BartenderProfile)
-		end
 		if (not InitRan) then
 			module:Init()
 		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile, true)) then
-			module:CreateProfile()
-		end
+
 		module:EnableFramework()
 		module:EnableActionBars()
-		if (SUI.DBMod.Artwork.FirstLoad) then
+		if (SUI.DBMod.Artwork.FirstLoad and BarSetupSuccessful) then
 			SUI.DBMod.Artwork.FirstLoad = false
 		end -- We want to do this last
 	end

@@ -4,8 +4,9 @@
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
 
 	
+	<Script file="BlizzardBars.lua" />
+	<Script file="BartenderBars.lua" />
 	<Script file="SpartanUI_Artwork.lua" />
 	<Script file="StatusBars.lua" />
-	<Script file="ActionBars.lua" />
 	<Script file="Options.lua" />
 </Ui>

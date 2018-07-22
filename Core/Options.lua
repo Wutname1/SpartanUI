@@ -15,10 +15,10 @@ local ModsLoaded = {
 }
 
 function module:ArtSetup()
-	SUI.DBG.BartenderChangesActive = true
+	-- SUI.DBG.BartenderChangesActive = true
 	SUI:GetModule('Artwork_Core'):SetupProfile()
 	SUI:UpdateModuleConfigs()
-	SUI.DBG.BartenderChangesActive = false
+	-- SUI.DBG.BartenderChangesActive = false
 end
 
 function module:OnInitialize()
@@ -71,6 +71,7 @@ function module:OnInitialize()
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -87,6 +88,7 @@ function module:OnInitialize()
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -102,6 +104,7 @@ function module:OnInitialize()
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -117,6 +120,7 @@ function module:OnInitialize()
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -133,6 +137,7 @@ function module:OnInitialize()
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -148,6 +153,7 @@ function module:OnInitialize()
 							SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 							SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					}
@@ -475,6 +481,88 @@ function module:OnInitialize()
 						end
 					}
 				}
+			},
+			BarManager = {
+				type = 'group',
+				name = L['Bar Manager'],
+				order = 300,
+				args = {
+					Classic = {
+						name = 'Classic',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Classic', 120, 60
+						end,
+						imageCoords = function()
+							return {.6, .9, .1, .4}
+						end,
+						func = function()
+							SUI.DBMod.BarManager.Style = 'Classic'
+							SUI:UpdateModuleConfigs()
+						end
+					},
+					War = {
+						name = 'War',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {.6, .9, .1, .4}
+						end,
+						func = function()
+							SUI.DBMod.BarManager.Style = 'War'
+							SUI:UpdateModuleConfigs()
+						end
+					},
+					Fel = {
+						name = 'Fel',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {.6, .9, .1, .4}
+						end,
+						func = function()
+							SUI.DBMod.BarManager.Style = 'Fel'
+							SUI:UpdateModuleConfigs()
+						end
+					},
+					Transparent = {
+						name = 'Transparent',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent', 120, 60
+						end,
+						imageCoords = function()
+							return {.6, .9, .1, .4}
+						end,
+						func = function()
+							SUI.DBMod.BarManager.Style = 'Transparent'
+							SUI:UpdateModuleConfigs()
+						end
+					},
+					Minimal = {
+						name = 'Minimal',
+						type = 'execute',
+						disabled = true,
+						image = function()
+							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal', 120, 60
+						end,
+						imageCoords = function()
+							return {.6, .9, .1, .4}
+						end,
+						func = function()
+							SUI.DBMod.BarManager.Style = 'Minimal'
+							SUI:UpdateModuleConfigs()
+						end
+					}
+				}
 			}
 		}
 	}
@@ -789,141 +877,6 @@ function module:OnInitialize()
 			}
 		}
 	}
-	SUI.opt.args['General'].args['Bartender'] = {
-		name = 'Bartender',
-		type = 'group',
-		order = 500,
-		args = {
-			MoveBars = {
-				name = L['Move ActionBars'],
-				type = 'execute',
-				order = 1,
-				func = function()
-					Bartender4:Unlock()
-				end
-			},
-			ResetActionBars = {
-				name = L['Reset ActionBars'],
-				type = 'execute',
-				order = 2,
-				func = function()
-					--Tell SUI to reload config
-					SUI.DBMod.Artwork.FirstLoad = true
-
-					--Strip custom BT4 Profile from config
-					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = nil
-					end
-
-					--Force Rebuild of primary bar profile
-					SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupProfile()
-
-					--Reset Moved bars
-					local FrameList = {
-						BT4Bar1,
-						BT4Bar2,
-						BT4Bar3,
-						BT4Bar4,
-						BT4Bar5,
-						BT4Bar6,
-						BT4BarBagBar,
-						BT4BarExtraActionBar,
-						BT4BarStanceBar,
-						BT4BarPetBar,
-						BT4BarMicroMenu
-					}
-					for _, v in ipairs(FrameList) do
-						if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
-							SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
-						end
-					end
-
-					--go!
-					ReloadUI()
-				end
-			},
-			line1 = {name = '', type = 'header', order = 2.5},
-			LockButtons = {
-				name = L['Lock Buttons'],
-				type = 'toggle',
-				order = 3,
-				get = function(info)
-					if Bartender4 then
-						return Bartender4.db.profile.buttonlock
-					else
-						SUI.opt.args['Artwork'].args['Base'].args['LockButtons'].disabled = true
-						return false
-					end
-				end,
-				set = function(info, value)
-					Bartender4.db.profile.buttonlock = value
-					Bartender4.Bar:ForAll('ForAll', 'SetAttribute', 'buttonlock', value)
-				end
-			},
-			kb = {
-				order = 4,
-				type = 'execute',
-				name = L['Key Bindings'],
-				func = function()
-					LibStub('LibKeyBound-1.0'):Toggle()
-					AceConfigDialog:Close('Bartender4')
-				end
-			},
-			line2 = {name = '', type = 'header', order = 5.5},
-			VehicleUI = {
-				name = L['Use Blizzard Vehicle UI'],
-				type = 'toggle',
-				order = 6,
-				get = function(info)
-					return SUI.DBMod.Artwork.VehicleUI
-				end,
-				set = function(info, val)
-					if (InCombatLockdown()) then
-						SUI:Print(ERR_NOT_IN_COMBAT)
-						return
-					end
-					SUI.DBMod.Artwork.VehicleUI = val
-					--Make sure bartender knows to do it, or not...
-					if Bartender4 then
-						Bartender4.db.profile.blizzardVehicle = val
-						Bartender4:UpdateBlizzardVehicle()
-					end
-
-					if SUI.DBMod.Artwork.VehicleUI then
-						if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
-							SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupVehicleUI()
-						end
-					else
-						if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
-							SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):RemoveVehicleUI()
-						end
-					end
-				end
-			},
-			-- MoveBars={name = "Move Bars", type = "toggle",order=0.91,
-			-- get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else SUI.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
-			-- set = function(info, value)
-			-- Bartender4.db.profile.buttonlock = value
-			-- Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
-			-- end,
-			-- },
-			minimapIcon = {
-				order = 7,
-				type = 'toggle',
-				name = L['Minimap Icon'],
-				get = function()
-					return not Bartender4.db.profile.minimapIcon.hide
-				end,
-				set = function(info, value)
-					Bartender4.db.profile.minimapIcon.hide = not value
-					LDBIcon[value and 'Show' or 'Hide'](LDBIcon, 'Bartender4')
-				end,
-				disabled = function()
-					return not LDBIcon
-				end
-			}
-		}
-	}
 	SUI.opt.args['Help'] = {
 		name = 'Help',
 		type = 'group',
@@ -947,7 +900,6 @@ function module:OnInitialize()
 					ReloadUI()
 				end
 			},
-			ResetActionBars = SUI.opt.args['General'].args['Bartender'].args['ResetActionBars'],
 			ResetMovedFrames = {
 				name = L['ResetMovableFrames'],
 				type = 'execute',
@@ -1338,7 +1290,9 @@ function module:ExportData()
 											'$PartyFrames.Style.' ..
 												SUI.DBMod.PartyFrames.Style ..
 													'$RaidFrames.Style.' ..
-														SUI.DBMod.RaidFrames.Style .. '$Addons.' .. module:FlatenTable(AddonsInstalled) .. '..$END$..'
+														SUI.DBMod.RaidFrames.Style ..
+															'$BarManager.Style' ..
+																SUI.DBMod.BarManager.Style .. '$Addons.' .. module:FlatenTable(AddonsInstalled) .. '..$END$..'
 	-- .. "$DB." .. module:FlatenTable(SUI.DB)
 	-- .. "$DBMod." .. module:FlatenTable(SUI.DBMod)
 end

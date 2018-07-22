@@ -51,6 +51,9 @@ local Defaults = {
 		y = -30,
 		scale = .8
 	},
+	BarManager = {
+	  type = 'Bartender'
+	},
 	BartenderProfile = 'SpartanUI - War',
 	BartenderSettings = {
 		ActionBars = {

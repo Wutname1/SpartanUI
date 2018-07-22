@@ -25,7 +25,9 @@ SUI.opt = {
 		Artwork = {name = L['Artwork'], type = 'group', args = {}},
 		PlayerFrames = {name = L['PlayerFrames'], type = 'group', args = {}},
 		PartyFrames = {name = L['PartyFrames'], type = 'group', args = {}},
-		RaidFrames = {name = L['RaidFrames'], type = 'group', args = {}}
+		RaidFrames = {name = L['RaidFrames'], type = 'group', args = {}},
+		-- TODO: If we break it out to a full module
+		-- BarManager = {name = L['Bar Manager'], type = 'group', args = {}}
 	}
 }
 
@@ -73,6 +75,9 @@ local DBdefault = {
 				PlayerFrames = false,
 				PartyFrames = false,
 				RaidFrames = false,
+				BarManager = {
+					type = 'Bartender'
+				},
 				Movable = {
 					Minimap = true,
 					PlayerFrames = true,
@@ -219,6 +224,9 @@ local DBdefault = {
 				PlayerFrames = true,
 				PartyFrames = true,
 				RaidFrames = true,
+				BarManager = {
+					type = 'Bartender',
+				},
 				BartenderProfile = 'SpartanUI - Classic',
 				BartenderSettings = {
 					-- actual settings being inserted into our custom profile
@@ -675,6 +683,9 @@ local DBdefault = {
 			},
 			debuffs = {display = true},
 			Auras = {size = 10, spacing = 1, showType = true}
+		},
+		BarManager = {
+			Style = 'Classic'	
 		}
 	}
 }
@@ -684,17 +695,16 @@ local DBdefaults = {char = DBdefault, profile = DBdefault}
 
 function SUI:ResetConfig()
 	SUI.DB:ResetProfile(false, true)
+
+	local _, _, _, loadable, reason = GetAddOnInfo('Bartender4')
+	if(not loadable and reason ~= 'MISSING') then
+		EnableAddOn('Bartender4')
+	end
 	ReloadUI()
 end
 
 function SUI:FirstTimeSetup()
 	local PageData, SetupWindow
-	--Hide Bartender4 Minimap icon.
-	if Bartender4 then
-		Bartender4.db.profile.minimapIcon.hide = true
-		local LDBIcon = LibStub('LibDBIcon-1.0', true)
-		LDBIcon['Hide'](LDBIcon, 'Bartender4')
-	end
 	--Setup page
 	SUI.DB.SetupDone = false
 	PageData = {
@@ -1010,19 +1020,11 @@ function SUI:OnInitialize()
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileCopied', 'UpdateModuleConfigs')
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileReset', 'UpdateModuleConfigs')
 
-	--Bartender4
 	if SUI.DBG.Bartender4 == nil then
 		SUI.DBG.Bartender4 = {}
 	end
 	if SUI.DBG.BartenderChangesActive then
 		SUI.DBG.BartenderChangesActive = false
-	end
-	if Bartender4 then
-		--Update to the current profile
-		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileChanged', 'BT4RefreshConfig')
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileCopied', 'BT4RefreshConfig')
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
 	end
 
 	SUI:FontSetup()
@@ -1057,105 +1059,7 @@ end
 
 ---------------		Misc Backend		-------------------------------
 
-function SUI:BT4ProfileAttach(msg)
-	PageData = {
-		title = 'SpartanUI',
-		Desc1 = msg,
-		-- Desc2 = Desc2,
-		width = 400,
-		height = 150,
-		Display = function()
-			SUI_Win:ClearAllPoints()
-			SUI_Win:SetPoint('TOP', 0, -20)
-			SUI_Win:SetSize(400, 150)
-			SUI_Win.Status:Hide()
-
-			SUI_Win.Skip:SetText('DO NOT ATTACH')
-			SUI_Win.Skip:SetSize(110, 25)
-			SUI_Win.Skip:ClearAllPoints()
-			SUI_Win.Skip:SetPoint('BOTTOMRIGHT', SUI_Win, 'BOTTOM', -15, 15)
-
-			SUI_Win.Next:SetText('ATTACH')
-			SUI_Win.Next:ClearAllPoints()
-			SUI_Win.Next:SetPoint('BOTTOMLEFT', SUI_Win, 'BOTTOM', 15, 15)
-		end,
-		Next = function()
-			SUI.DBG.Bartender4[SUI.DB.BT4Profile] = {
-				Style = SUI.DBMod.Artwork.Style
-			}
-			-- Catch if Movedbars is not initalized
-			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-			end
-			--Setup profile
-			SUI:GetModule('Artwork_Core'):SetupProfile(Bartender4.db:GetCurrentProfile())
-			ReloadUI()
-		end,
-		Skip = function()
-			-- ReloadUI()
-		end
-	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
-	SetupWindow:DisplayPage(PageData)
-end
-
-function SUI:BT4RefreshConfig()
-	if SUI.DBG.BartenderChangesActive or SUI.DBMod.Artwork.FirstLoad then
-		return
-	end
-	-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
-	SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
-	SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
-
-	if SUI.DBG.Bartender4 == nil then
-		SUI.DBG.Bartender4 = {}
-	end
-
-	if SUI.DBG.Bartender4[SUI.DB.BT4Profile] then
-		-- We know this profile.
-		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style == SUI.DBMod.Artwork.Style then
-			--Profile is for this style, prompt to ReloadUI; usually un needed can uncomment if needed latter
-			-- SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
-			-- Catch if Movedbars is not initalized
-			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-			end
-		else
-			--Ask if we should change to the correct profile or if we should change the profile to be for this style
-			SUI:BT4ProfileAttach(
-				"This bartender profile is currently attached to the style '" ..
-					SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style ..
-						"' you are currently using " ..
-							SUI.DBMod.Artwork.Style .. ' would you like to reassign the profile to this art skin? '
-			)
-		end
-	else
-		-- We do not know this profile, ask if we should attach it to this style.
-		SUI:BT4ProfileAttach(
-			'This bartender profile is currently NOT attached to any style you are currently using the ' ..
-				SUI.DBMod.Artwork.Style .. ' style would you like to assign the profile to this art skin? '
-		)
-	end
-
-	SUI:Print('Bartender4 Profile changed to: ' .. Bartender4.db:GetCurrentProfile())
-end
-
 function SUI:UpdateModuleConfigs()
-	-- SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
-
-	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-
-	if Bartender4 then
-		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
-			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile)
-		elseif SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile then
-			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile)
-		else
-			Bartender4.db:SetProfile(SUI.DB.BT4Profile)
-		end
-	end
-
 	SUI:reloadui()
 end
 
@@ -1238,6 +1142,10 @@ function SUI:OnEnable()
 	if not SUI:GetModule('RaidFrames', true) then
 		SUI.opt.args['RaidFrames'].disabled = true
 	end
+	-- TODO: If moving options
+	-- if not SUI:GetModule('BarManager', true) then
+	-- 	SUI.opt.args['BarManager'].disabled = true
+	-- end
 
 	self:RegisterChatCommand('sui', 'ChatCommand')
 	self:RegisterChatCommand('suihelp', 'suihelp')
@@ -1273,13 +1181,13 @@ local ResetDBWarning = false
 function SUI:ChatCommand(input)
 	if input == 'resetfulldb' then
 		if ResetDBWarning then
-			Bartender4.db:ResetDB()
+			SUI:GetModule('Artwork_Core'):ResetDB()	
 			SUI.SpartanUIDB:ResetDB()
 		else
 			ResetDBWarning = true
 			SUI:Print('|cffff0000Warning')
 			SUI:Print(
-				'This will reset the full SpartanUI & Bartender4 Database. If you wish to continue perform the chat command again.'
+				'This will reset the full SpartanUI & Bar Setup. If you wish to continue perform the chat command again.'
 			)
 		end
 	elseif input == 'resetbartender' then

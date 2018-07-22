@@ -26,6 +26,9 @@ local Defaults = {
 		RaidFrames = {0, .8, .9, .7}
 	},
 	TalkingHeadUI = {point = 'TOP', relPoint = 'TOP', x = 0, y = -30, scale = .8},
+	BarManager = {
+		type = 'Bartender',
+	},
 	BartenderProfile = 'SpartanUI - Transparent',
 	BartenderSettings = {
 		ActionBars = {

@@ -4,6 +4,8 @@ local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:GetModule('Style_War')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
+local BarSetupSuccessful = false
+
 function module:OnInitialize()
 	--Enable the in the Core options screen
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['War'].disabled = false
@@ -22,18 +24,12 @@ function module:Init()
 		module:FirstLoad()
 	end
 	module:SetupMenus()
+	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	module:InitArtwork()
 	InitRan = true
 end
 
 function module:FirstLoad()
-	--If our profile exists activate it.
-	if
-		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.War.BartenderProfile) and
-			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.War.BartenderProfile, true))
-	 then
-		Bartender4.db:SetProfile(SUI.DB.Styles.War.BartenderProfile)
-	end
 end
 
 function module:OnEnable()
@@ -42,18 +38,13 @@ function module:OnEnable()
 	else
 		SUI.opt.args['Artwork'].args['Artwork'].name = 'War Options'
 
-		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.War.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-			Bartender4.db:SetProfile(SUI.DB.Styles.War.BartenderProfile)
-		end
 		if (not InitRan) then
 			module:Init()
 		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.War.BartenderProfile, true)) then
-			module:CreateProfile()
-		end
 		module:EnableArtwork()
 
-		if (SUI.DBMod.Artwork.FirstLoad) then
+		if (SUI.DBMod.Artwork.FirstLoad and BarSetupSuccessful) then
+			SUI:Print('Bar SETUP SUCCESSFUL')
 			SUI.DBMod.Artwork.FirstLoad = false
 		end -- We want to do this last
 	end

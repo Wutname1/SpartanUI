@@ -3,6 +3,7 @@
 ## Notes: Minimal style and layout for SpartanUI
 ## Version: 4.6.0
 ## Author: Wutname1
-## RequiredDeps: SpartanUI, Bartender4, SpartanUI_Artwork
+## RequiredDeps: SpartanUI, SpartanUI_Artwork
+## OptionalDeps: Bartender4
 
 Style.xml

@@ -223,12 +223,12 @@ function module:EnableArtwork()
 end
 
 function module:ActionBars()
-	local Settings = {
-		style = "Blizzard"
-	}
+	-- local Settings = {
+	-- 	style = "Blizzard"
+	-- }
 
-	local ActionBars = SUI:GetModule('Artwork_ActionBars')
-	ActionBars:Initialize(Settings)
+	-- local ActionBars = SUI:GetModule('Artwork_ActionBars')
+	-- ActionBars:Initialize(Settings)
 end
 
 function module:StatusBars()

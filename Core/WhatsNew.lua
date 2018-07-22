@@ -29,31 +29,14 @@ function SUI:WhatsNew()
 					SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
 					SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
 					SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+					SUI.DBMod.BarManager.Style = SUI.DBMod.Artwork.Style
 					SUI.DBMod.Artwork.FirstLoad = true
 
 					SUI:GetModule('Style_' .. DBMod.Artwork.Style):SetupProfile()
 
 					--Reset Moved bars; Setting up profile triggers movment
-					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-					end
-					local FrameList = {
-						BT4Bar1,
-						BT4Bar2,
-						BT4Bar3,
-						BT4Bar4,
-						BT4Bar5,
-						BT4Bar6,
-						BT4BarBagBar,
-						BT4BarExtraActionBar,
-						BT4BarStanceBar,
-						BT4BarPetBar,
-						BT4BarMicroMenu
-					}
-					for _, v in ipairs(FrameList) do
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
-					end
-
+					SUI:GetModule('Artwork_Core'):ResetMovedBars()
+					
 					ReloadUI()
 				end
 			)

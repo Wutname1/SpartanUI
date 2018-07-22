@@ -51,6 +51,9 @@ local Defaults = {
 		y = -30,
 		scale = .8
 	},
+	BarManager = {
+		type = 'Bartender',
+	},
 	BartenderProfile = 'SpartanUI - Fel',
 	BartenderSettings = {
 		ActionBars = {
@@ -254,6 +257,4 @@ if not SUI.DB.Styles.Fel.Artwork then
 else
 	SUI.DB.Styles.Fel = SUI:MergeData(SUI.DB.Styles.Fel, Defaults, false)
 end
-if not SUI.DBG.Bartender4[SUI.DB.Styles.Fel.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.Fel.BartenderProfile] = {Style = 'Fel'}
-end
+SUI.DB.Styles.Fel.BartenderSettings = Defaults.BartenderSettings

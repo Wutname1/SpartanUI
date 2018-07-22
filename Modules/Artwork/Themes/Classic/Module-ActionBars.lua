@@ -14,9 +14,7 @@ function module:CreateProfile()
 end
 
 function module:InitActionBars()
-	--if (Bartender4.db:GetCurrentProfile() == SUI.DB.Styles.Classic.BartenderProfile) then
 	Artwork_Core:ActionBarPlates('SUI_ActionBarPlate')
-	--end
 
 	do -- create bar plate and masks
 		plate = CreateFrame('Frame', 'SUI_ActionBarPlate', SpartanUI, 'SUI_ActionBarsTemplate')
@@ -99,6 +97,7 @@ function module:EnableActionBars()
 	end
 	--module:SetupProfile();
 	-- Do what Bartender isn't - Make the Bag buttons the same size
+	-- TODO: This probably needs changed
 	do -- modify CharacterBag(0-3) Scale
 		for i = 1, 4 do
 			_G['CharacterBag' .. (i - 1) .. 'Slot']:SetScale(1.25)

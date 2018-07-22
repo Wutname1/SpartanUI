@@ -20,6 +20,9 @@ local Defaults = {
 		shape = 'square',
 		size = {width = 140, height = 140}
 	},
+	BarManager = {
+		type = 'Bartender',
+	},
 	BartenderProfile = 'SpartanUI - Minimal',
 	BartenderSettings = {
 		ActionBars = {

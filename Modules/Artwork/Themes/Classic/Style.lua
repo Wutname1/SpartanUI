@@ -7,6 +7,7 @@ if SUI.DB.Styles.Classic.BuffLoc == nil then
 	SUI.DB.Styles.Classic.BuffLoc = true
 end
 local InitRan = false
+local BarSetupSuccessful = false
 
 function module:OnInitialize()
 	if SUI.DB.Styles.Classic.TalkingHeadUI == nil then
@@ -30,6 +31,7 @@ function module:Init()
 		module:FirstLoad()
 	end
 	module:SetupMenus()
+	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	module:InitFramework()
 	module:InitActionBars()
 	InitRan = true
@@ -40,16 +42,9 @@ function module:FirstLoad()
 end
 
 function module:OnEnable()
-	--If our profile exists activate it.
-	if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Classic.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-		Bartender4.db:SetProfile(SUI.DB.Styles.Classic.BartenderProfile)
-	end
 	if (SUI.DBMod.Artwork.Style == 'Classic') then
 		if (not InitRan) then
 			module:Init()
-		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Classic.BartenderProfile, true)) then
-			module:CreateProfile()
 		end
 
 		module:EnableFramework()
@@ -57,7 +52,7 @@ function module:OnEnable()
 		module:EnableMinimap()
 		module:SetupStatusBars()
 
-		if (SUI.DBMod.Artwork.FirstLoad) then
+		if (SUI.DBMod.Artwork.FirstLoad and BarSetupSuccessful) then
 			SUI.DBMod.Artwork.FirstLoad = false
 		end -- We want to do this last
 	end

@@ -4,6 +4,8 @@ local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:GetModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
+local BarSetupSuccessful = false
+
 function module:OnInitialize()
 	--Enable the in the Core options screen
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Transparent'].disabled = false
@@ -22,6 +24,7 @@ function module:Init()
 		module:FirstLoad()
 	end
 	module:SetupMenus()
+	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	module:InitFramework()
 	module:InitActionBars()
 	module:InitMinimap()
@@ -29,13 +32,6 @@ function module:Init()
 end
 
 function module:FirstLoad()
-	--If our profile exists activate it.
-	if
-		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Transparent.BartenderProfile) and
-			not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Transparent.BartenderProfile, true))
-	 then
-		Bartender4.db:SetProfile(SUI.DB.Styles.Transparent.BartenderProfile)
-	end
 end
 
 function module:OnEnable()
@@ -47,14 +43,13 @@ function module:OnEnable()
 		if (not InitRan) then
 			module:Init()
 		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Transparent.BartenderProfile, true)) then
-			module:CreateProfile()
-		end
+
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
 		module:SetupStatusBars()
-		if (SUI.DBMod.Artwork.FirstLoad) then
+
+		if (SUI.DBMod.Artwork.FirstLoad and BarSetupSuccessful) then
 			SUI.DBMod.Artwork.FirstLoad = false
 		end -- We want to do this last
 	end
