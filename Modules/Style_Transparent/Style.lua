@@ -24,9 +24,9 @@ function module:Init()
 		module:FirstLoad()
 	end
 	module:SetupMenus()
-	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	module:InitFramework()
 	module:InitActionBars()
+	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	module:InitMinimap()
 	InitRan = true
 end

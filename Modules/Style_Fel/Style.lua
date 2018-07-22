@@ -26,8 +26,8 @@ function module:Init()
 		module:FirstLoad()
 	end
 	module:SetupMenus()
-	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	module:InitArtwork()
+	BarSetupSuccessful = Artwork_Core:SetupBars()	
 	InitRan = true
 end
 
