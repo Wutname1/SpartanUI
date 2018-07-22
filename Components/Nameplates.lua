@@ -90,6 +90,14 @@ local NamePlateFactory = function(frame, unit)
 			cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
 			cast:SetSize(frame:GetWidth(), 4)
 			cast:SetStatusBarTexture(BarTexture)
+			cast:SetStatusBarColor(1, 0.7, 0)
+			if SUI.DBMod.NamePlates.ShowCastbarText then
+				cast.Text = cast:CreateFontString()
+				SUI:FormatFont(cast.Text, 7, 'Player')
+				cast.Text:SetJustifyH('CENTER')
+				cast.Text:SetJustifyV('MIDDLE')
+				cast.Text:SetAllPoints(cast)
+			end
 
 			-- Add latency display
 			cast.SafeZone = cast:CreateTexture(nil, 'OVERLAY')
@@ -154,6 +162,7 @@ function module:OnInitialize()
 		ShowName = true,
 		ShowLevel = true,
 		ShowCastbar = true,
+		ShowCastbarText = true,
 		ShowTarget = true,
 		FlashOnInterruptibleCast = true
 	}
@@ -215,6 +224,17 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DBMod.NamePlates.ShowCastbar = val
+				end
+			},
+			ShowCastbarText = {
+				name = L['Show castbar text'],
+				type = 'toggle',
+				order = 3,
+				get = function(info)
+					return SUI.DBMod.NamePlates.ShowCastbarText
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowCastbarText = val
 				end
 			},
 			ShowTarget = {
