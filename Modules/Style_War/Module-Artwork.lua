@@ -230,7 +230,7 @@ function module:EnableArtwork()
 	War_SpartanUI:SetFrameLevel(1)
 
 	War_SpartanUI.Left = War_SpartanUI:CreateTexture('War_SpartanUI_Left', 'BORDER')
-	War_SpartanUI.Left:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', 0, 0)
+	War_SpartanUI.Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', 0, 0)
 
 	War_SpartanUI.Right = War_SpartanUI:CreateTexture('War_SpartanUI_Right', 'BORDER')
 	War_SpartanUI.Right:SetPoint('LEFT', War_SpartanUI.Left, 'RIGHT', 0, 0)
