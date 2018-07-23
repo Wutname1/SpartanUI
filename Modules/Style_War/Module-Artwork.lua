@@ -145,16 +145,23 @@ function module:updateOffset()
 	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
 
 	if BT4BarBagBar then
-		BT4BarBagBar:ClearAllPoints()
-		BT4BarStanceBar:ClearAllPoints()
-		BT4BarPetBar:ClearAllPoints()
-		BT4BarMicroMenu:ClearAllPoints()
+		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+			BT4BarPetBar:ClearAllPoints()
+			BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+			BT4BarStanceBar:ClearAllPoints()
+			BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		end
 
-		BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
-		BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
-
-		BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
-		BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+			BT4BarMicroMenu:ClearAllPoints()
+			BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+			BT4BarBagBar:ClearAllPoints()
+			BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
+		end
 	end
 
 	War_ActionBarPlate:ClearAllPoints()
@@ -436,6 +443,29 @@ function module:SlidingTrays()
 	trayWatcher:RegisterEvent('ZONE_CHANGED')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_INDOORS')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+
+	-- Default movetracker ignores stuff attached to UIParent (Tray items are)
+	local FrameList = {
+		BT4BarBagBar,
+		BT4BarExtraActionBar,
+		BT4BarStanceBar,
+		BT4BarPetBar,
+		BT4BarMicroMenu
+	}
+
+	for _, v in ipairs(FrameList) do
+		if v then
+			v.SavePosition = function()
+				if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] and not SUI.DBG.BartenderChangesActive then
+					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = true
+					LibStub('LibWindow-1.1').windowData[v].storage.parent = UIParent
+					v:SetParent(UIParent)
+				end
+
+				LibStub('LibWindow-1.1').SavePosition(v)
+			end
+		end
+	end
 end
 
 -- Bartender Stuff
