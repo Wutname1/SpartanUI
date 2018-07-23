@@ -32,10 +32,6 @@ local CurScale
 local petbattle, trayWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 
 -- Misc Framework stuff
-local trayWatcherEvents = function()
-	module:updateOffset()
-end
-
 function module:updateScale()
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
@@ -278,7 +274,7 @@ function module:EnableArtwork()
 		'OnShow',
 		function()
 			MainMenuBarVehicleLeaveButton:ClearAllPoints()
-			MainMenuBarVehicleLeaveButton:SetPoint('LEFT', SUI_playerFrame, 'RIGHT', 15, 0)
+			MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', War_SpartanUI.Left, 'TOPRIGHT', 0, 20)
 		end
 	)
 
@@ -338,6 +334,25 @@ local SetBarVisibility = function(side, state)
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu and not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
 			_G['BT4BarMicroMenu']:Show()
+		end
+	end
+end
+
+local trayWatcherEvents = function()
+	module:updateOffset()
+	local trayIDs = {'left', 'right'}
+	War_MenuBarBG:SetAlpha(0)
+	War_StanceBarBG:SetAlpha(0)
+
+	for _, key in ipairs(trayIDs) do
+		if SUI.DB.Styles.War.SlidingTrays[key].collapsed then
+			module.Trays[key].expanded:Hide()
+			module.Trays[key].collapsed:Show()
+			SetBarVisibility(module.Trays[key], 'hide')
+		else
+			module.Trays[key].expanded:Show()
+			module.Trays[key].collapsed:Hide()
+			SetBarVisibility(module.Trays[key], 'show')
 		end
 	end
 end
