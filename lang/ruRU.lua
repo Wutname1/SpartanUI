@@ -298,9 +298,13 @@ L["SetTankDesc"] = "Танк: Уменьшенные панели, Аггро о
 L["settings"] = "Настройки"
 L["SexyMapLoaded"] = "SexyMap загружена и заменяет миникарту"
 L["Show castbar"] = "Показать панель"
+--[[Translation missing --]]
+L["Show castbar text"] = "Show castbar text"
 L["Show if AFK"] = "Показать если АФК"
 L["Show level"] = "Показывать уровень"
 L["Show name"] = "Показать имя"
+--[[Translation missing --]]
+L["Show target"] = "Show target"
 L["Show type"] = "Показать тип"
 L["ShowAuras"] = "Показать ауры"
 L["ShowFrames"] = "Показывать окна"

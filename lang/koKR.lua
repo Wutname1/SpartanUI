@@ -447,11 +447,15 @@ L["SexyMapLoaded"] = "SexyMap 애드온이 미니맵을 처리합니다."
 --[[Translation missing --]]
 L["Show castbar"] = "Show castbar"
 --[[Translation missing --]]
+L["Show castbar text"] = "Show castbar text"
+--[[Translation missing --]]
 L["Show if AFK"] = "Show if AFK"
 --[[Translation missing --]]
 L["Show level"] = "Show level"
 --[[Translation missing --]]
 L["Show name"] = "Show name"
+--[[Translation missing --]]
+L["Show target"] = "Show target"
 L["Show type"] = "출력 타입"
 --[[Translation missing --]]
 L["ShowAuras"] = "Show auras"

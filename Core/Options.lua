@@ -484,7 +484,7 @@ function module:OnInitialize()
 			},
 			BarManager = {
 				type = 'group',
-				name = L['Bar Manager'],
+				name =  'Bar Manager', -- TODO: L['Bar Manager'],
 				order = 300,
 				args = {
 					Classic = {

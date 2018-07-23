@@ -359,11 +359,15 @@ L["SexyMapLoaded"] = "SexyMap wurde geladen und bearbeitet die Minikarte"
 --[[Translation missing --]]
 L["Show castbar"] = "Show castbar"
 --[[Translation missing --]]
+L["Show castbar text"] = "Show castbar text"
+--[[Translation missing --]]
 L["Show if AFK"] = "Show if AFK"
 --[[Translation missing --]]
 L["Show level"] = "Show level"
 --[[Translation missing --]]
 L["Show name"] = "Show name"
+--[[Translation missing --]]
+L["Show target"] = "Show target"
 --[[Translation missing --]]
 L["Show type"] = "Show type"
 L["ShowAuras"] = "Auren anzeigen"

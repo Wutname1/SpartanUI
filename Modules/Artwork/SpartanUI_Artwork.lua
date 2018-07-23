@@ -36,7 +36,7 @@ local function GetBarModule()
 
 	local isSetup = false
 
-	local barModule = null
+	local barModule = nil
 
 	if SUI:GetModule(barModuleName, true) then
 		barModule = SUI:GetModule(barModuleName)
@@ -127,6 +127,10 @@ function Artwork_Core:ActionBarPlates(plate, excludelist)
 				end
 			end
 		end
+
+		-- TODO: It seems like the bottom else condition below (storage.parent = UIParent)
+		-- could apply to anything.  Can this whole thing be moved to BartenderBars (ApplyMovedPanels), 
+		-- or do we need to split it out?
 
 		-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
 		-- if (frame:GetName():match("BT4Bar")) and storage.parent and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
@@ -447,3 +451,30 @@ function Artwork_Core:UseBlizzardVehicleUI(shouldUse)
 	end
 end
 
+function Artwork_Core:GetBagBar()
+	local BarModule = GetBarModule()
+	if BarModule then
+		return BarModule:GetBagBar()
+	end
+end
+
+function Artwork_Core:GetStanceBar()
+	local BarModule = GetBarModule()
+	if BarModule then
+		return BarModule:GetStanceBar()
+	end
+end
+
+function Artwork_Core:GetPetBar()
+	local BarModule = GetBarModule()
+	if BarModule then
+		return BarModule:GetPetBar()
+	end
+end
+
+function Artwork_Core:GetMicroMenuBar()
+	local BarModule = GetBarModule()
+	if BarModule then
+		return BarModule:GetMicroMenuBar()
+	end
+end

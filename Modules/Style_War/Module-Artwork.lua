@@ -144,17 +144,17 @@ function module:updateOffset()
 	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, (Top * -1))
 	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
 
-	if BT4BarBagBar then
-		BT4BarBagBar:ClearAllPoints()
-		BT4BarStanceBar:ClearAllPoints()
-		BT4BarPetBar:ClearAllPoints()
-		BT4BarMicroMenu:ClearAllPoints()
+	if Artwork_Core:GetBagBar() then
+		Artwork_Core:GetBagBar():ClearAllPoints()
+		Artwork_Core:GetStanceBar():ClearAllPoints()
+		Artwork_Core:GetPetBar():ClearAllPoints()
+		Artwork_Core:GetMicroMenuBar():ClearAllPoints()
 
-		BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
-		BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+		Artwork_Core:GetBagBar():SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
+		Artwork_Core:GetMicroMenuBar():SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
 
-		BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
-		BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		Artwork_Core:GetStanceBar():SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		Artwork_Core:GetPetBar():SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
 	end
 
 	War_ActionBarPlate:ClearAllPoints()
@@ -311,36 +311,34 @@ end
 
 local SetBarVisibility = function(side, state)
 	if side == 'left' and state == 'hide' then
-		-- BT4BarStanceBar
 		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
-			_G['BT4BarStanceBar']:Hide()
+			Artwork_Core:GetStanceBar():Hide()
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
-			_G['BT4BarPetBar']:Hide()
+			Artwork_Core:GetPetBar():Hide()
 		end
 	elseif side == 'right' and state == 'hide' then
 		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
-			_G['BT4BarBagBar']:Hide()
+			Artwork_Core:GetBagBar():Hide()
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
-			_G['BT4BarMicroMenu']:Hide()
+			Artwork_Core:GetMicroMenuBar():Hide()
 		end
 	end
 
 	if side == 'left' and state == 'show' then
-		-- BT4BarStanceBar
 		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
-			_G['BT4BarStanceBar']:Show()
+			Artwork_Core:GetStanceBar():Show()
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
-			_G['BT4BarPetBar']:Show()
+			Artwork_Core:GetPetBar():Show()
 		end
 	elseif side == 'right' and state == 'show' then
 		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
-			_G['BT4BarBagBar']:Show()
+			Artwork_Core:GetBagBar():Show()
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
-			_G['BT4BarMicroMenu']:Show()
+			Artwork_Core:GetMicroMenuBar():Show()
 		end
 	end
 end

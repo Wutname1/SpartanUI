@@ -314,11 +314,15 @@ L["settings"] = "設定"
 L["SexyMapLoaded"] = "SexyMap性感小地圖已載入"
 --[[Translation missing --]]
 L["Show castbar"] = "Show castbar"
+--[[Translation missing --]]
+L["Show castbar text"] = "Show castbar text"
 L["Show if AFK"] = true
 --[[Translation missing --]]
 L["Show level"] = "Show level"
 --[[Translation missing --]]
 L["Show name"] = "Show name"
+--[[Translation missing --]]
+L["Show target"] = "Show target"
 L["Show type"] = true
 L["ShowAuras"] = "顯示增減益效果"
 L["ShowFrames"] = "顯示框架"

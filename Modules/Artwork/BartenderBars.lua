@@ -109,6 +109,22 @@ function module:SetupProfile(Settings)
 	return isSetup
 end
 
+function module:GetBagBar()
+	return BT4BarBagBar
+end
+
+function module:GetStanceBar()
+	return BT4BarStanceBar
+end
+
+function module:GetPetBar()
+	return BT4BarPetBar
+end
+
+function module:GetMicroMenuBar()
+	return BT4BarMicroMenu
+end
+
 function module:ResetMovedBars()
 	SUI.DBG.BartenderChangesActive = true
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
@@ -325,7 +341,7 @@ end
 
 function module:BuildOptions()
 	SUI.opt.args['Artwork'].args['Bar Manager'] = {
-		name = L['Bar Manager'],
+		name = 'Bar Manager', -- TODO: L['Bar Manager'],
 		type = 'group',
 		order = 500,
 		args = {

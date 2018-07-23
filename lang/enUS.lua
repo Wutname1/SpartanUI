@@ -1,7 +1,5 @@
 local L = LibStub("AceLocale-3.0"):NewLocale("SpartanUI", "enUS", true, debug)
 
-L["Bar Manager"] = true
-
 L["1 status bar"] = "1st status bar"
 L["2 status bar"] = "2nd status bar"
 L["3 status bar"] = "3rd status bar"
@@ -299,9 +297,11 @@ L["SetTankDesc"] = "Tank: Smaller bars, aggro very noticeable"
 L["settings"] = true
 L["SexyMapLoaded"] = "SexyMap is loaded, and is handling the Minimap"
 L["Show castbar"] = true
+L["Show castbar text"] = true
 L["Show if AFK"] = true
 L["Show level"] = true
 L["Show name"] = true
+L["Show target"] = true
 L["Show type"] = true
 L["ShowAuras"] = "Show auras"
 L["ShowFrames"] = "Show Frames"
