@@ -434,8 +434,36 @@ local CreateLargeFrame = function(self, unit)
 		self.StatusText:SetJustifyH('CENTER')
 		self:Tag(self.StatusText, '[afkdnd]')
 
-		self.ComboPoints = self:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-		self.ComboPoints:SetPoint("TOPLEFT",self.Name,"BOTTOMLEFT",40,-5);
+		--Runes
+		local playerClass = select(2, UnitClass('player'))
+		if unit == 'player' and playerClass == 'DEATHKNIGHT' then
+			self.Runes = CreateFrame('Frame', nil, self)
+			self.Runes.colorSpec = true
+
+			for i = 1, 6 do
+				self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
+				self.Runes[i]:SetHeight(6)
+				self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
+				if (i == 1) then
+					self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
+				else
+					self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
+				end
+				self.Runes[i]:SetStatusBarTexture(Smoothv2)
+				self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+
+				self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
+				self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
+				self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
+				self.Runes[i].bg:SetTexture(Smoothv2)
+				self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
+				self.Runes[i].bg.multiplier = 0.64
+				self.Runes[i]:Hide()
+			end
+		end
+
+		self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+		self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
 		if unit == 'player' then
 			local ClassPower = {}
 			for index = 1, 10 do
@@ -457,7 +485,6 @@ local CreateLargeFrame = function(self, unit)
 			-- Register with oUF
 			self.ClassPower = ClassPower
 		end
-
 	end
 	do -- Special Icons/Bars
 		if unit == 'player' then

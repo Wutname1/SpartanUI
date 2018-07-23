@@ -626,6 +626,7 @@ local MakeLargeFrame = function(self, unit, width)
 				self.AdditionalPower.bg = Background
 
 				self.Runes = CreateFrame('Frame', nil, self)
+				self.Runes.colorSpec = true
 				for i = 1, 6 do
 					self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
 					self.Runes[i]:SetHeight(6)
@@ -820,6 +821,12 @@ SpartanoUF:RegisterStyle('Spartan_MinimalFrames_Raid', CreateUnitFrameRaid)
 function module:UpdateAltBarPositions()
 	if RuneFrame then
 		RuneFrame:Hide()
+		RuneFrame.Rune1:Hide()
+		RuneFrame.Rune2:Hide()
+		RuneFrame.Rune3:Hide()
+		RuneFrame.Rune4:Hide()
+		RuneFrame.Rune5:Hide()
+		RuneFrame.Rune6:Hide()
 	end
 
 	-- Hide the AlternatePowerBar

@@ -434,15 +434,16 @@ local CreatePlayerFrame = function(self, unit)
 			local playerClass = select(2, UnitClass('player'))
 			if unit == 'player' and playerClass == 'DEATHKNIGHT' then
 				self.Runes = CreateFrame('Frame', nil, self)
+				self.Runes.colorSpec = true
 
 				for i = 1, 6 do
 					self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
 					self.Runes[i]:SetHeight(6)
-					self.Runes[i]:SetWidth((245 - 5) / 6)
+					self.Runes[i]:SetWidth((245 - 10) / 6)
 					if (i == 1) then
 						self.Runes[i]:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, -3)
 					else
-						self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 1, 0)
+						self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
 					end
 					self.Runes[i]:SetStatusBarTexture(Smoothv2)
 					self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)

@@ -833,9 +833,9 @@ function module:OnInitialize()
 						BT4BarMicroMenu
 					}
 					for _, v in ipairs(FrameList) do
-						if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
+						-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
 							SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
-						end
+						-- end
 					end
 
 					--go!
