@@ -66,7 +66,12 @@ function PartyFrames:OnEnable()
 		pf.mover:Hide()
 	end
 
-	pf:SetParent('SpartanUI')
+	if SpartanUI then
+		pf:SetParent('SpartanUI')
+	else
+		pf:SetParent(UIParent)
+	end
+	
 	PartyMemberBackground.Show = function()
 		return
 	end

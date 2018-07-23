@@ -3,10 +3,39 @@ local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:GetModule('Style_War')
 ----------------------------------------------------------------------------------------------------
 module.Trays = {}
+module.StatusBarSettings = {
+	bars = {
+		'War_StatusBar_Left',
+		'War_StatusBar_Right'
+	},
+	War_StatusBar_Left = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+		size = {370, 20},
+		TooltipSize = {250, 65},
+		TooltipTextSize = {225, 40},
+		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+		GlowPoint = {x = -16},
+		MaxWidth = 48
+	},
+	War_StatusBar_Right = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+		Grow = 'RIGHT',
+		size = {370, 20},
+		TooltipSize = {250, 65},
+		TooltipTextSize = {225, 40},
+		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+		GlowPoint = {x = 16},
+		MaxWidth = 48
+	}
+}
 local CurScale
-local petbattle = CreateFrame('Frame')
+local petbattle, trayWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 
 -- Misc Framework stuff
+local trayWatcherEvents = function()
+	module:updateOffset()
+end
+
 function module:updateScale()
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
@@ -20,6 +49,11 @@ function module:updateScale()
 		if (SUI.DB.scale ~= Artwork_Core:round(War_SpartanUI:GetScale())) then
 			War_SpartanUI:SetScale(SUI.DB.scale)
 		end
+		local StatusBars = SUI:GetModule('Artwork_StatusBars')
+		for _, key in ipairs(module.StatusBarSettings.bars) do
+			StatusBars.bars[key]:SetScale(SUI.DB.scale)
+		end
+
 		CurScale = SUI.DB.scale
 	end
 end
@@ -53,6 +87,11 @@ function module:updateAlpha()
 end
 
 function module:updateOffset()
+	if InCombatLockdown() then
+		return
+	end
+
+	local Top = 0
 	local fubar, ChocolateBar, titan = 0, 0, 0
 
 	if not SUI.DB.yoffsetAuto then
@@ -62,6 +101,9 @@ function module:updateOffset()
 			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
 				local bar = _G['FuBarFrame' .. i]
 				local point = bar:GetPoint(1)
+				if point:find('TOP.*') then
+					Top = Top + bar:GetHeight()
+				end
 				if point == 'BOTTOMLEFT' then
 					fubar = fubar + bar:GetHeight()
 				end
@@ -72,6 +114,9 @@ function module:updateOffset()
 			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
 				local bar = _G['ChocolateBar' .. i]
 				local point = bar:GetPoint(1)
+				if point:find('TOP.*') then
+					Top = Top + bar:GetHeight()
+				end
 				if point == 'RIGHT' then
 					ChocolateBar = ChocolateBar + bar:GetHeight()
 				end
@@ -87,8 +132,29 @@ function module:updateOffset()
 			end
 		end
 
+		if OrderHallCommandBar and OrderHallCommandBar:IsVisible() then
+			Top = Top + OrderHallCommandBar:GetHeight()
+		end
+
 		offset = max(fubar + titan + ChocolateBar, 1)
 		SUI.DB.yoffset = offset
+	end
+	module.Trays.left:ClearAllPoints()
+	module.Trays.right:ClearAllPoints()
+	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, (Top * -1))
+	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
+
+	if BT4BarBagBar then
+		BT4BarBagBar:ClearAllPoints()
+		BT4BarStanceBar:ClearAllPoints()
+		BT4BarPetBar:ClearAllPoints()
+		BT4BarMicroMenu:ClearAllPoints()
+
+		BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
+		BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+
+		BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
 	end
 
 	War_ActionBarPlate:ClearAllPoints()
@@ -217,9 +283,9 @@ function module:EnableArtwork()
 		module:MiniMap()
 	end
 
+	module:StatusBars()
 	module:updateScale()
 	module:updateAlpha()
-	module:StatusBars()
 end
 
 function module:ActionBars()
@@ -232,34 +298,8 @@ function module:ActionBars()
 end
 
 function module:StatusBars()
-	local Settings = {
-		bars = {
-			'War_StatusBar_Left',
-			'War_StatusBar_Right'
-		},
-		War_StatusBar_Left = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-			size = {370, 20},
-			TooltipSize = {250, 65},
-			TooltipTextSize = {225, 40},
-			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-			GlowPoint = {x = -16},
-			MaxWidth = 48
-		},
-		War_StatusBar_Right = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-			Grow = 'RIGHT',
-			size = {370, 20},
-			TooltipSize = {250, 65},
-			TooltipTextSize = {225, 40},
-			texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-			GlowPoint = {x = 16},
-			MaxWidth = 48
-		}
-	}
-
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(Settings)
+	StatusBars:Initalize(module.StatusBarSettings)
 
 	StatusBars.bars.War_StatusBar_Left:SetAlpha(.9)
 	StatusBars.bars.War_StatusBar_Right:SetAlpha(.9)
@@ -399,6 +439,13 @@ function module:SlidingTrays()
 
 	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, 0)
 	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, 0)
+
+	trayWatcher:SetScript('OnEvent', trayWatcherEvents)
+	trayWatcher:RegisterEvent('PLAYER_LOGIN')
+	trayWatcher:RegisterEvent('PLAYER_ENTERING_WORLD')
+	trayWatcher:RegisterEvent('ZONE_CHANGED')
+	trayWatcher:RegisterEvent('ZONE_CHANGED_INDOORS')
+	trayWatcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 end
 
 -- Bartender Stuff

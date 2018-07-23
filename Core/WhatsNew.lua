@@ -136,7 +136,7 @@ end
 function module:FirstAtrifactNotice()
 	--Only process if we are below 110; allowed to show new features; have never used an artifact; The style allows tracking
 	local TrackingAP = false
-	for i, v in ipairs(SUI.DBMod.StatusBars) do
+	for _, v in ipairs(SUI.DBMod.StatusBars) do
 		if v.display == 'ap' then
 			TrackingAP = true
 		end

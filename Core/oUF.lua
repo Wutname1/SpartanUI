@@ -3,7 +3,7 @@ local addon = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
 --------------   oUF Functions   ------------------------------------
 function addon:HotsListing()
 	local _, classFileName = UnitClass('player')
-	local LifebloomSpellId = select(7,GetSpellInfo('Lifebloom'))
+	local LifebloomSpellId = select(7, GetSpellInfo('Lifebloom'))
 	if classFileName == 'DRUID' then
 		return {
 			774, -- Rejuvenation
@@ -164,6 +164,34 @@ do -- ClassIcon as an SpartanoUF module
 		end
 	end
 	SpartanoUF:AddElement('SUI_ClassIcon', Update, Enable, Disable)
+end
+
+do -- TargetIndicator as an SpartanoUF module
+	local Update = function(self, event, unit)
+		if self.TargetIndicator.bg1:IsVisible() then
+			self.TargetIndicator.bg1:Hide()
+			self.TargetIndicator.bg2:Hide()
+		end
+		if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and SUI.DBMod.NamePlates.ShowTarget then
+			if self:GetName() == 'oUF_Spartan_NamePlates' .. C_NamePlate.GetNamePlateForUnit('target'):GetName() then
+				self.TargetIndicator.bg1:Show()
+				self.TargetIndicator.bg2:Show()
+			end
+		end
+	end
+	local Enable = function(self)
+		local icon = self.TargetIndicator
+		if (icon) then
+			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update)
+		end
+	end
+	local Disable = function(self)
+		local icon = self.TargetIndicator
+		if (icon) then
+			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
+		end
+	end
+	SpartanoUF:AddElement('TargetIndicator', Update, Enable, Disable)
 end
 
 do -- SUI_RaidGroup as an SpartanoUF module

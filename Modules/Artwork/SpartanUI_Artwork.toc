@@ -1,7 +1,7 @@
 ## Interface: 80000
 ## Title: SpartanUI: |CFF0070DDArtwork|r
 ## Notes: Manages the Artwork and layout that SpartanUI uses
-## Version: 4.6.0
+## Version: 4.6.4
 ## Author: Wutname1
 ## RequiredDeps: SpartanUI
 ## OptionalDeps: Bartender4

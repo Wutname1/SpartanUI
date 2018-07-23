@@ -37,7 +37,7 @@ function module:updateSpartanViewport() -- handles viewport offset based on sett
 	end
 end
 
-function module:updateSpartanScale() -- scales SpartanUI based on setting or screen size
+function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
 		if (tonumber(width) / tonumber(height) > 4 / 3) then
@@ -60,6 +60,10 @@ function module:updateSpartanScale() -- scales SpartanUI based on setting or scr
 			SpartanUI_Base5:ClearAllPoints()
 			SpartanUI_Base3:SetPoint('RIGHT', SpartanUI_Base2, 'LEFT')
 			SpartanUI_Base5:SetPoint('LEFT', SpartanUI_Base4, 'RIGHT')
+		end
+		local StatusBars = SUI:GetModule('Artwork_StatusBars')
+		for _, key in ipairs(module.StatusBarSettings.bars) do
+			StatusBars.bars[key]:SetScale(SUI.DB.scale)
 		end
 		CurScale = SUI.DB.scale
 	end
@@ -337,7 +341,8 @@ function module:EnableFramework()
 
 	module:SetupVehicleUI()
 
-	module:updateSpartanScale()
+	module:SetupStatusBars()
+	module:updateScale()
 	module:updateSpartanOffset()
 	module:updateSpartanXOffset()
 	module:updateSpartanViewport()
@@ -356,7 +361,7 @@ function module:EnableFramework()
 					return
 				end
 
-				module:updateSpartanScale()
+				module:updateScale()
 				module:updateSpartanOffset()
 				module:updateSpartanXOffset()
 				module:updateSpartanViewport()

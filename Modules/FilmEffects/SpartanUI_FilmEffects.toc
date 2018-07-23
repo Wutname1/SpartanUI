@@ -1,7 +1,7 @@
 ## Interface: 80000
 ## Title: SpartanUI: |CFF0070DDFilmEffects|r
 ## Notes: Adds film grain and other special effects to the gameplay screen
-## Version: 4.6.0
+## Version: 4.6.4
 ## Author: Wutname1
 ## RequiredDeps: SpartanUI
 

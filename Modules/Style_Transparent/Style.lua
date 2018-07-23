@@ -5,6 +5,19 @@ local module = SUI:GetModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 local BarSetupSuccessful = false
+module.StatusBarSettings = {
+	bars = {
+		'Transparent_ExperienceBar'
+	},
+	Transparent_ExperienceBar = {
+		bgImg = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\status-plate-rep',
+		size = {400, 10},
+		TooltipSize = {300, 60},
+		TooltipTextSize = {280, 50},
+		texCords = {0.150390625, 1, 0, 1},
+		texCordsTooltip = {0.107421875, 0.892578125, 0.1875, 0.765625}
+	}
+}
 
 function module:OnInitialize()
 	--Enable the in the Core options screen
@@ -47,7 +60,6 @@ function module:OnEnable()
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
-		module:SetupStatusBars()
 
 		if (SUI.DBMod.Artwork.FirstLoad and BarSetupSuccessful) then
 			SUI.DBMod.Artwork.FirstLoad = false
@@ -56,22 +68,8 @@ function module:OnEnable()
 end
 
 function module:SetupStatusBars()
-	local Settings = {
-		bars = {
-			'Transparent_ExperienceBar'
-		},
-		Transparent_ExperienceBar = {
-			bgImg = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\status-plate-rep',
-			size = {400, 10},
-			TooltipSize = {300, 60},
-			TooltipTextSize = {280, 50},
-			texCords = {0.150390625, 1, 0, 1},
-			texCordsTooltip = {0.107421875, 0.892578125, 0.1875, 0.765625}
-		}
-	}
-
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(Settings)
+	StatusBars:Initalize(module.StatusBarSettings)
 
 	StatusBars.bars.Transparent_ExperienceBar:SetPoint('BOTTOMRIGHT', 'Transparent_SpartanUI', 'BOTTOM', -100, 0)
 end
