@@ -1,4 +1,4 @@
-local _G, SUI = _G, SUI
+local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 ----------------------------------------------------------------------------------------------------
 local frame = CreateFrame('FRAME')
@@ -20,6 +20,7 @@ function module:OnInitialize()
 		NotConsumables = true,
 		NotInGearset = true,
 		MaxILVL = 180,
+		ItemsPerCycle = 5,
 		Gray = true,
 		White = false,
 		Green = false,
@@ -161,7 +162,7 @@ function module:SellTrashInBag()
 			if OnlyCount then
 				iCount = iCount + 1
 				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
-			elseif solditem ~= 5 then
+			elseif solditem ~= SUI.DB.AutoSell.ItemsPerCycle then
 				solditem = solditem + 1
 				iSellCount = iSellCount + 1
 				UseContainerItem(bag, slot)
@@ -408,7 +409,7 @@ function module:BuildOptions()
 		name = 'Auto Sell',
 		args = {
 			NotCrafting = {
-				name = "Don't Sell crafting items",
+				name = L["Don't sell crafting items"],
 				type = 'toggle',
 				order = 1,
 				width = 'full',
@@ -420,7 +421,7 @@ function module:BuildOptions()
 				end
 			},
 			NotConsumables = {
-				name = "Don't Sell Consumables",
+				name = L["Don't sell consumables"],
 				type = 'toggle',
 				order = 2,
 				width = 'full',
@@ -432,7 +433,7 @@ function module:BuildOptions()
 				end
 			},
 			NotInGearset = {
-				name = "Don't Sell items in a equipment set",
+				name = L["Don't sell items in a equipment set"],
 				type = 'toggle',
 				order = 3,
 				width = 'full',
@@ -444,7 +445,7 @@ function module:BuildOptions()
 				end
 			},
 			GearTokens = {
-				name = 'Sell tier tokens',
+				name = L['Sell tier tokens'],
 				type = 'toggle',
 				order = 4,
 				width = 'full',
@@ -456,7 +457,7 @@ function module:BuildOptions()
 				end
 			},
 			MaxILVL = {
-				name = 'Maximum iLVL to sell',
+				name = L['Maximum iLVL to sell'],
 				type = 'range',
 				order = 10,
 				width = 'full',
@@ -471,7 +472,7 @@ function module:BuildOptions()
 				end
 			},
 			Gray = {
-				name = 'Sell Gray',
+				name = L['Sell gray'],
 				type = 'toggle',
 				order = 20,
 				width = 'double',
@@ -483,7 +484,7 @@ function module:BuildOptions()
 				end
 			},
 			White = {
-				name = 'Sell White',
+				name = L['Sell white'],
 				type = 'toggle',
 				order = 21,
 				width = 'double',
@@ -495,7 +496,7 @@ function module:BuildOptions()
 				end
 			},
 			Green = {
-				name = 'Sell Green',
+				name = L['Sell green'],
 				type = 'toggle',
 				order = 22,
 				width = 'double',
@@ -507,7 +508,7 @@ function module:BuildOptions()
 				end
 			},
 			Blue = {
-				name = 'Sell Blue',
+				name = L['Sell blue'],
 				type = 'toggle',
 				order = 23,
 				width = 'double',
@@ -519,7 +520,7 @@ function module:BuildOptions()
 				end
 			},
 			Purple = {
-				name = 'Sell Purple',
+				name = L['Sell purple'],
 				type = 'toggle',
 				order = 24,
 				width = 'double',
@@ -530,8 +531,24 @@ function module:BuildOptions()
 					SUI.DB.AutoSell.Purple = val
 				end
 			},
+			ItemsPerCycle = {
+				name = L['Items per bag, per cycle to sell'],
+				desc = L['Sometimes the addon can sell items too fast for the game. We limit it to only do so many per bag per vendor session to account for this.'],
+				type = 'range',
+				order = 30,
+				width = 'full',
+				min = 1,
+				max = 40,
+				step = 1,
+				set = function(info, val)
+					SUI.DB.AutoSell.ItemsPerCycle = val
+				end,
+				get = function(info)
+					return SUI.DB.AutoSell.ItemsPerCycle
+				end
+			},
 			debug = {
-				name = 'Enable debug messages',
+				name = L['Enable debug messages'],
 				type = 'toggle',
 				order = 600,
 				width = 'full',
