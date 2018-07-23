@@ -309,34 +309,34 @@ end
 local SetBarVisibility = function(side, state)
 	if side == 'left' and state == 'hide' then
 		-- BT4BarStanceBar
-		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar and not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
 			_G['BT4BarStanceBar']:Hide()
 		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar and not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
 			_G['BT4BarPetBar']:Hide()
 		end
 	elseif side == 'right' and state == 'hide' then
-		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar and not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
 			_G['BT4BarBagBar']:Hide()
 		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu and not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
 			_G['BT4BarMicroMenu']:Hide()
 		end
 	end
 
 	if side == 'left' and state == 'show' then
 		-- BT4BarStanceBar
-		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar and not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
 			_G['BT4BarStanceBar']:Show()
 		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar and not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
 			_G['BT4BarPetBar']:Show()
 		end
 	elseif side == 'right' and state == 'show' then
-		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar and not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
 			_G['BT4BarBagBar']:Show()
 		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu and not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
 			_G['BT4BarMicroMenu']:Show()
 		end
 	end
