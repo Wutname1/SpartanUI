@@ -242,6 +242,13 @@ local Defaults = {
 			enabled = true,
 			position = {point = 'CENTER', parent = 'Transparent_ActionBarPlate', x = -32, y = 240}
 		},
+		ZoneAbilityBar = {
+			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			position = {point = 'CENTER', parent = 'Transparent_ActionBarPlate', x = -32, y = 240}
+		},
 		BlizzardArt = {enabled = false},
 		XPBar = {enabled = false},
 		RepBar = {enabled = false},

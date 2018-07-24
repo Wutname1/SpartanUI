@@ -462,7 +462,6 @@ function module:SlidingTrays()
 	-- Default movetracker ignores stuff attached to UIParent (Tray items are)
 	local FrameList = {
 		BT4BarBagBar,
-		BT4BarExtraActionBar,
 		BT4BarStanceBar,
 		BT4BarPetBar,
 		BT4BarMicroMenu
