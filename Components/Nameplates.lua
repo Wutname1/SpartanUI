@@ -1,5 +1,5 @@
 local unpack, SUI, L = unpack, SUI, SUI.L
-local module = SUI:NewModule('Component_Nameplates')
+local module = SUI:NewModule('Component_Nameplates', 'AceTimer-3.0')
 local Images = {
 	Alliance = {
 		bg = {
@@ -23,6 +23,7 @@ local Images = {
 	}
 }
 local BarTexture = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
+local Timers = {}
 
 local pvpIconWar = function(self, event, unit)
 	if (unit ~= self.unit) then
@@ -43,6 +44,35 @@ local pvpIconWar = function(self, event, unit)
 		end
 	else
 		self.artwork.bgNeutral:Show()
+	end
+end
+
+function module:Flash(self)
+	if self.Castbar.casting and self.Castbar.notInterruptible == false and self:IsVisible() then
+		local _, g, b = self.Castbar:GetStatusBarColor()
+		if b ~= 0 and g ~= 0 then
+			self.Castbar:SetStatusBarColor(1, 0, 0)
+		elseif b == 0 and g == 0 then
+			self.Castbar:SetStatusBarColor(1, 1, 0)
+		else
+			self.Castbar:SetStatusBarColor(1, 1, 1)
+		end
+		module:ScheduleTimer('Flash', .1, _G[self:GetName()])
+	end
+end
+
+local PostCastStart = function(self, unit, name)
+	if self.notInterruptible == false and SUI.DBMod.NamePlates.FlashOnInterruptibleCast and UnitIsEnemy('player', unit) then
+		_G[self.PName].Castbar:SetStatusBarColor(0, 0, 0)
+		module:ScheduleTimer('Flash', .1, _G[self.PName])
+	else
+		_G[self.PName].Castbar:SetStatusBarColor(1, 0.7, 0)
+	end
+end
+
+local PostCastStop = function(self)
+	if SUI.DBMod.NamePlates.FlashOnInterruptibleCast then
+		module:CancelTimer(Timers[self:GetName()])
 	end
 end
 
@@ -102,7 +132,16 @@ local NamePlateFactory = function(frame, unit)
 			-- Add latency display
 			cast.SafeZone = cast:CreateTexture(nil, 'OVERLAY')
 
+			--Interupt Flash
+			cast.PostCastStart = PostCastStart
+			cast.PostCastInterruptible = PostCastStart
+			cast.PostCastStop = PostCastStop
+			cast.PostCastInterrupted = PostCastStop
+			cast.PostCastNotInterruptible = PostCastStop
+			cast.PName = frame:GetName()
+
 			frame.Castbar = cast
+			frame.Castbar:SetParent(frame)
 		end
 
 		-- Hots/Dots
@@ -248,14 +287,19 @@ function module:BuildOptions()
 					SUI.DBMod.NamePlates.ShowTarget = val
 				end
 			},
-			desc0 = {
-				name = 'Nameplates are a take it or leave it feature at the moment.',
-				type = 'description',
-				order = 200,
-				fontSize = 'large'
+			FlashOnInterruptibleCast = {
+				name = L['Flash on interruptible cast'],
+				type = 'toggle',
+				order = 4,
+				get = function(info)
+					return SUI.DBMod.NamePlates.FlashOnInterruptibleCast
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.FlashOnInterruptibleCast = val
+				end
 			},
 			desc1 = {
-				name = 'This is a Preview build of them, rather than disabling them for the Pre-Patch builds i have left them on so you can start providing me feedback on what you would like to see added to them.',
+				name = 'Nameplates are a beta feature, rather than disabling them for the Pre-Patch builds i have left them on so you can start providing me feedback on what you would like to see added to them.',
 				type = 'description',
 				order = 200,
 				fontSize = 'medium'
@@ -288,12 +332,6 @@ function module:BuildOptions()
 				name = '-Customizable size',
 				type = 'description',
 				order = 403,
-				fontSize = 'small'
-			},
-			af = {
-				name = '-Target indicator',
-				type = 'description',
-				order = 406,
 				fontSize = 'small'
 			},
 			af = {
