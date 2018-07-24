@@ -1295,8 +1295,8 @@ function SUI:ChatCommand(input)
 	elseif input == 'help' then
 		SUI:suihelp()
 	elseif input == 'version' then
-		SUI:Print('SpartanUI ' .. L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
-		SUI:Print('SpartanUI Build Number ' .. L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Build'))
+		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
+		SUI:Print(L['Build'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Build'))
 	else
 		AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 		AceConfigDialog:Open('SpartanUI')
