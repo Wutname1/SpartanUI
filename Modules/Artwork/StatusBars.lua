@@ -270,7 +270,7 @@ local showHonorTooltip = function(self)
 	local currentHonor = UnitHonor('player')
 	local maxHonor = UnitHonorMax('player')
 
-	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, C_PvP.GetNextHonorLevelForReward(honorLevel))
+	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, honorLevel)
 	self.tooltip.TextFrame.MainText:SetFormattedText(
 		'( %s / %s ) %d%%',
 		SUI:comma_value(currentHonor),
