@@ -3,6 +3,10 @@ local L = SUI.L
 local Artwork_Core = SUI:GetModule('Artwork_Core')
 
 function Artwork_Core:SetupOptions()
+	if SUI.DBMod.Artwork.Style == '' then
+		return
+	end
+	
 	local Style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 	SUI.opt.args['Artwork'].args['scale'] = {
 		name = L['ConfScale'],
