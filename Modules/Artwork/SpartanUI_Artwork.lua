@@ -1,7 +1,7 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:NewModule('Artwork_Core')
-local Bartender4Version, BartenderMin = '', '4.7.1'
+local Bartender4Version, BartenderMin = '', '4.8.0'
 if select(4, GetAddOnInfo('Bartender4')) then
 	Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
 end
@@ -385,9 +385,9 @@ function Artwork_Core:OnEnable()
 			StaticPopup_Show('BartenderInstallWarning')
 		end
 	elseif Bartender4Version < BartenderMin then
-		if SUI.Version ~= SUI.DBG.Version then
+		-- if SUI.Version ~= SUI.DBG.Version then
 			StaticPopup_Show('BartenderVerWarning')
-		end
+		-- end
 	end
 
 	Artwork_Core:SetupOptions()
