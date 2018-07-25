@@ -140,7 +140,7 @@ function module:updateOffset()
 			Top = Top + OrderHallCommandBar:GetHeight()
 		end
 
-		offset = max(fubar + titan + ChocolateBar, 1)
+		offset = max(fubar + titan + ChocolateBar, 0)
 		SUI.DB.yoffset = offset
 	end
 	module.Trays.left:ClearAllPoints()
@@ -306,8 +306,8 @@ function module:StatusBars()
 	StatusBars.bars.War_StatusBar_Right:SetAlpha(.9)
 
 	-- Position the StatusBars
-	StatusBars.bars.War_StatusBar_Left:SetPoint('BOTTOMRIGHT', War_SpartanUI, 'BOTTOM', -100, 0)
-	StatusBars.bars.War_StatusBar_Right:SetPoint('BOTTOMLEFT', War_SpartanUI, 'BOTTOM', 100, 0)
+	StatusBars.bars.War_StatusBar_Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', -100, 0)
+	StatusBars.bars.War_StatusBar_Right:SetPoint('BOTTOMLEFT', War_ActionBarPlate, 'BOTTOM', 100, 0)
 end
 
 local SetBarVisibility = function(side, state)
