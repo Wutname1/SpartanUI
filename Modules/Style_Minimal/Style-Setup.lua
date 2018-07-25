@@ -166,6 +166,13 @@ local Defaults = {
 			enabled = true,
 			position = {point = 'BOTTOM', x = -32, y = 275}
 		},
+		ZoneAbilityBar = {
+			fadeoutalpha = .6,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			position = {point = 'BOTTOM', x = -32, y = 275}
+		},
 		BlizzardArt = {enabled = false},
 		XPBar = {enabled = false},
 		RepBar = {enabled = false},
@@ -185,7 +192,8 @@ local Defaults = {
 		y = -30,
 		scale = .8
 	},
-	PartyFramesSize = 'large'
+	PartyFramesSize = 'large',
+	HideCenterGraphic = false
 }
 if not SUI.DB.Styles.Minimal.Artwork then
 	SUI.DB.Styles.Minimal = SUI:MergeData(SUI.DB.Styles.Minimal, Defaults, true)

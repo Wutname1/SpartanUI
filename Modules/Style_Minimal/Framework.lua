@@ -27,11 +27,6 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 			frame:SetScale(SUI.DB.scale)
 		end
 
-		-- Minimal_SpartanUI_Base3:ClearAllPoints();
-		-- Minimal_SpartanUI_Base5:ClearAllPoints();
-		-- Minimal_SpartanUI_Base3:SetPoint("RIGHT", Minimal_SpartanUI_Base2, "LEFT");
-		-- Minimal_SpartanUI_Base5:SetPoint("LEFT", Minimal_SpartanUI_Base4, "RIGHT");
-
 		CurScale = SUI.DB.scale
 	end
 end
@@ -77,6 +72,12 @@ function module:updateOffset() -- handles SpartanUI offset based on setting or f
 		anchor:SetHeight(offset)
 	end
 	SUI.DB.yoffset = offset
+
+	if SUI.DB.Styles.Minimal.HideCenterGraphic then
+		Minimal_SpartanUI_Base1:Hide()
+	else
+		Minimal_SpartanUI_Base1:Show()
+	end
 end
 
 function module:updateXOffset() -- handles SpartanUI offset based on setting or fubar / titan
@@ -293,7 +294,6 @@ function module:EnableFramework()
 				module:updateScale()
 				module:updateOffset()
 				module:updateXOffset()
-				module:updateViewport()
 				self.TimeSinceLastUpdate = 0
 
 				if SUI.DB.OpenOptions then
