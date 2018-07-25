@@ -33,7 +33,6 @@ SUI.opt = {
 
 local FontItems = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
 local FontItemsSize = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
-local fontdefault = {Size = 0, Face = 'Roboto-Bold', Type = 'outline'}
 local MovedDefault = {moved = false, point = '', relativeTo = nil, relativePoint = '', xOffset = 0, yOffset = 0}
 local frameDefault1 = {
 	movement = MovedDefault,
@@ -497,11 +496,11 @@ local DBdefault = {
 		font = {
 			NumberSeperator = ',',
 			Path = '',
-			Primary = fontdefault,
-			Core = fontdefault,
-			Player = fontdefault,
-			Party = fontdefault,
-			Raid = fontdefault
+			['**'] = {
+				Size = 0,
+				Face = 'Roboto-Bold',
+				Type = 'outline'
+			}
 		},
 		Components = {}
 	},
@@ -1427,9 +1426,6 @@ function SUI:FormatFont(element, size, Module)
 	--Adaptive Modules
 	if not Module then
 		Module = 'Primary'
-	end
-	if SUI.DB.font[Module] == nil then
-		SUI.DB.font[Module] = fontdefault
 	end
 	--Set Font Outline
 	local flags, sizeFinal = ''
