@@ -426,13 +426,13 @@ do -- Rare / Elite dragon graphic as an SpartanoUF module
 				self.RareElite:SetTexCoord(0, 1, 0, .4)
 			end
 		end
-
+		self.RareElite:Show()
 		if c == 'worldboss' or c == 'elite' or c == 'rareelite' then
-			self.RareElite:SetVertexColor(1, 0.9, 0, 1)
+			self.RareElite:SetVertexColor(1, 0.9, 0)
 		elseif c == 'rare' then
-			self.RareElite:SetVertexColor(1, 1, 1, 1)
+			self.RareElite:SetVertexColor(1, 1, 1)
 		else
-			self.RareElite:SetAlpha(0)
+			self.RareElite:Hide()
 		end
 	end
 	local Enable = function(self)

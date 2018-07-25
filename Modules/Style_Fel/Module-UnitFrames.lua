@@ -232,13 +232,6 @@ local CreateLargeFrame = function(self, unit)
 		self.artwork:SetFrameLevel(2)
 		self.artwork:SetAllPoints(self)
 
-		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -5)
-		self.RareElite:SetTexture('Interface\\Scenarios\\Objective-Lineglow')
-		self.RareElite:SetAlpha(.6)
-		self.RareElite:SetTexCoord(0, 1, 1, 0)
-		self.RareElite:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -20)
-		self.RareElite:SetSize(self:GetWidth() + 60, self:GetHeight() + 40)
-
 		self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
 		self.artwork.bg:SetPoint('CENTER', self)
 		self.artwork.bg:SetTexture(Images.bg.Texture)
@@ -370,6 +363,12 @@ local CreateLargeFrame = function(self, unit)
 		self.Name:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -5)
 		self:Tag(self.Name, '[difficulty][level] [SUI_ColorClass][name]')
 
+		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -5)
+		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
+		self.RareElite:SetAlpha(.6)
+		self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)
+		self.RareElite:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', 0, 0)
+
 		self.HLeaderIndicator = self:CreateTexture(nil, 'BORDER')
 		self.HLeaderIndicator:SetSize(12, 12)
 		self.HLeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
@@ -422,8 +421,6 @@ local CreateLargeFrame = function(self, unit)
 		self.StatusText:SetAllPoints(self.Portrait)
 		self.StatusText:SetJustifyH('CENTER')
 		self:Tag(self.StatusText, '[afkdnd]')
-
-
 	end
 	do -- Special Icons/Bars
 		if unit == 'player' then
@@ -461,9 +458,9 @@ local CreateLargeFrame = function(self, unit)
 			items:SetSize(1, 1)
 			items:SetFrameLevel(4)
 			items:SetPoint('TOPLEFT', self)
-			
-			self.ComboPoints = self:CreateFontString(nil, "BORDER","SUI_FontOutline13");
-			self.ComboPoints:SetPoint("TOPLEFT",self.Name,"BOTTOMLEFT",40,-5);
+
+			self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+			self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
 			if unit == 'player' then
 				local ClassPower = {}
 				for index = 1, 10 do
