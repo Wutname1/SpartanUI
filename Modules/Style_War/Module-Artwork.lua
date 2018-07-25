@@ -199,6 +199,11 @@ function module:SetupVehicleUI()
 			function()
 				War_SpartanUI:Show()
 				Minimap:Show()
+			end
+		)
+		War_SpartanUI:HookScript(
+			'OnShow',
+			function()
 				module:trayWatcherEvents()
 			end
 		)
