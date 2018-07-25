@@ -22,6 +22,12 @@ function module:ArtSetup()
 end
 
 function module:OnInitialize()
+	if select(4, GetAddOnInfo('Bartender4')) then
+		SUI.DB.Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
+	else
+		SUI.DB.Bartender4Version = 0
+	end
+
 	local enabled
 	_, _, _, enabled = GetAddOnInfo('SpartanUI_Artwork')
 	ModsLoaded.Artwork = enabled
@@ -834,7 +840,7 @@ function module:OnInitialize()
 					}
 					for _, v in ipairs(FrameList) do
 						-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
-							SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
+						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 						-- end
 					end
 
@@ -972,8 +978,24 @@ function module:OnInitialize()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 49},
-			ver1 = {name = 'SUI Version: ' .. SUI.Version, type = 'description', order = 50, fontSize = 'large'},
-			ver2 = {name = 'SUI Build: ' .. SUI.BuildNum, type = 'description', order = 51, fontSize = 'large'},
+			ver1 = {
+				name = 'SUI ' .. L['Version'] .. ': ' .. SUI.Version,
+				type = 'description',
+				order = 50,
+				fontSize = 'large'
+			},
+			ver2 = {
+				name = 'SUI ' .. L['Build'] .. ': ' .. SUI.BuildNum,
+				type = 'description',
+				order = 51,
+				fontSize = 'large'
+			},
+			ver3 = {
+				name = L['Bartender4 version'] .. ': ' .. SUI.DB.Bartender4Version,
+				type = 'description',
+				order = 53,
+				fontSize = 'large'
+			},
 			line2 = {name = '', type = 'header', order = 99},
 			navigationissues = {name = L['HaveQuestion'], type = 'description', order = 100, fontSize = 'large'},
 			navigationissues2 = {
@@ -1048,6 +1070,12 @@ function module:OnInitialize()
 		name = 'SUI Build: ' .. SUI.BuildNum,
 		type = 'description',
 		order = 51,
+		fontSize = 'large'
+	}
+	SUI.opt.args['General'].args['ver3'] = {
+		name = 'Bartender4 Version: ' .. SUI.DB.Bartender4Version,
+		type = 'description',
+		order = 53,
 		fontSize = 'large'
 	}
 

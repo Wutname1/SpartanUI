@@ -1,10 +1,7 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:NewModule('Artwork_Core')
-local Bartender4Version, BartenderMin = '', '4.8.0'
-if select(4, GetAddOnInfo('Bartender4')) then
-	Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
-end
+local BartenderMin = '4.8.0'
 
 function Artwork_Core:isPartialMatch(frameName, tab)
 	local result = false
@@ -112,13 +109,19 @@ function Artwork_Core:ActionBarPlates(plate, excludelist)
 end
 
 function Artwork_Core:OnInitialize()
+	if select(4, GetAddOnInfo('Bartender4')) then
+		SUI.DB.Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
+	else
+		SUI.DB.Bartender4Version = 0
+	end
 	StaticPopupDialogs['BartenderVerWarning'] = {
 		text = '|cff33ff99SpartanUI v' ..
 			SUI.Version ..
 				'|n|r|n|n' ..
 					L['Warning'] ..
 						': ' ..
-							L['BartenderOldMSG'] .. ' ' .. Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
+							L['BartenderOldMSG'] ..
+								' ' .. SUI.DB.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
 		button1 = 'Ok',
 		OnAccept = function()
 			SUI.DBG.BartenderVerWarning = SUI.Version
@@ -384,10 +387,10 @@ function Artwork_Core:OnEnable()
 		if SUI.Version ~= SUI.DBG.Version then
 			StaticPopup_Show('BartenderInstallWarning')
 		end
-	elseif Bartender4Version < BartenderMin then
+	elseif SUI.DB.Bartender4Version < BartenderMin then
 		-- if SUI.Version ~= SUI.DBG.Version then
-			StaticPopup_Show('BartenderVerWarning')
-		-- end
+		StaticPopup_Show('BartenderVerWarning')
+	-- end
 	end
 
 	Artwork_Core:SetupOptions()

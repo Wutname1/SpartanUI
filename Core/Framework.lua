@@ -58,6 +58,7 @@ local frameDefault2 = {
 local DBdefault = {
 	SUIProper = {
 		Version = SUI.Version,
+		Bartender4Version = 0,
 		SetupDone = false,
 		HVer = '',
 		yoffset = 0,
@@ -1292,6 +1293,7 @@ function SUI:ChatCommand(input)
 	elseif input == 'version' then
 		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
 		SUI:Print(L['Build'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Build'))
+		SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.DB.Bartender4Version)
 	else
 		AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 		AceConfigDialog:Open('SpartanUI')
