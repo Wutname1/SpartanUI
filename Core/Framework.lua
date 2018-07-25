@@ -31,8 +31,6 @@ SUI.opt = {
 
 ---------------		Database		-------------------------------
 
-local FontItems = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
-local FontItemsSize = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
 local MovedDefault = {moved = false, point = '', relativeTo = nil, relativePoint = '', xOffset = 0, yOffset = 0}
 local frameDefault1 = {
 	movement = MovedDefault,
@@ -496,10 +494,12 @@ local DBdefault = {
 		font = {
 			NumberSeperator = ',',
 			Path = '',
-			['**'] = {
-				Size = 0,
-				Face = 'Roboto-Bold',
-				Type = 'outline'
+			Modules = {
+				['**'] = {
+					Size = 0,
+					Face = 'Roboto-Bold',
+					Type = 'outline'
+				}
 			}
 		},
 		Components = {}
@@ -1331,6 +1331,29 @@ end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
 
+--[[
+	Takes a target table and injects data from the source
+	override allows the source to be put into the target
+	even if its already populated
+]]
+function SUI:MergeData(target, source, override)
+	if type(target) ~= 'table' then
+		target = {}
+	end
+	for k, v in pairs(source) do
+		if type(v) == 'table' then
+			target[k] = self:MergeData(target[k], v, override)
+		else
+			if override then
+				target[k] = v
+			elseif target[k] == nil then
+				target[k] = v
+			end
+		end
+	end
+	return target
+end
+
 function SUI:isPartialMatch(frameName, tab)
 	local result = false
 
@@ -1366,113 +1389,5 @@ end
 function SUI:round(num) -- rounds a number to 2 decimal places
 	if num then
 		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
-	end
-end
-
-function SUI:comma_value(n)
-	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
-	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. SUI.DB.font.NumberSeperator):reverse()) .. right
-end
-
----------------		FONT FUNCTIONS		---------------------------------------------
-
-function SUI:FontSetup()
-	local OutlineSizes = {22, 18, 16, 13, 12, 11, 10, 9, 8}
-	local Sizes = {10}
-	for _, v in ipairs(OutlineSizes) do
-		local filename = _G['SUI_FontOutline' .. v]:GetFont()
-		if filename ~= SUI:GetFontFace('Primary') then
-			_G['SUI_FontOutline' .. v] = _G['SUI_FontOutline' .. v]:SetFont(SUI:GetFontFace('Primary'), v)
-		end
-	end
-
-	for _, v in ipairs(Sizes) do
-		local filename = _G['SUI_Font' .. v]:GetFont()
-		if filename ~= SUI:GetFontFace('Primary') then
-			_G['SUI_Font' .. v] = _G['SUI_Font' .. v]:SetFont(SUI:GetFontFace('Primary'), v)
-		end
-	end
-end
-
-function SUI:GetFontFace(Module)
-	if Module then
-		if SUI.DB.font[Module].Face == 'SpartanUI' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf'
-		elseif SUI.DB.font[Module].Face == 'SUI4' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf'
-		elseif SUI.DB.font[Module].Face == 'Roboto' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Medium.ttf'
-		elseif SUI.DB.font[Module].Face == 'Roboto-Bold' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Bold.ttf'
-		elseif SUI.DB.font[Module].Face == 'FrizQuadrata' then
-			return 'Fonts\\FRIZQT__.TTF'
-		elseif SUI.DB.font[Module].Face == 'Arial' then
-			return 'Fonts\\ARIAL.TTF'
-		elseif SUI.DB.font[Module].Face == 'ArialNarrow' then
-			return 'Fonts\\ARIALN.TTF'
-		elseif SUI.DB.font[Module].Face == 'Skurri' then
-			return 'Fonts\\skurri.TTF'
-		elseif SUI.DB.font[Module].Face == 'Morpheus' then
-			return 'Fonts\\MORPHEUS.TTF'
-		elseif SUI.DB.font[Module].Face == 'Custom' and SUI.DB.font.Path ~= '' then
-			return SUI.DB.font.Path
-		end
-	end
-
-	return 'Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf'
-end
-
-function SUI:FormatFont(element, size, Module)
-	--Adaptive Modules
-	if not Module then
-		Module = 'Primary'
-	end
-	--Set Font Outline
-	local flags, sizeFinal = ''
-	if SUI.DB.font[Module].Type == 'monochrome' then
-		flags = flags .. 'monochrome '
-	end
-
-	-- Outline was deemed to thick, it is not a slight drop shadow done below
-	--if SUI.DB.font[Module].Type == "outline" then flags = flags.."outline " end
-
-	if SUI.DB.font[Module].Type == 'thickoutline' then
-		flags = flags .. 'thickoutline '
-	end
-	--Set Size
-	sizeFinal = size + SUI.DB.font[Module].Size
-	--Create Font
-	element:SetFont(SUI:GetFontFace(Module), sizeFinal, flags)
-
-	if SUI.DB.font[Module].Type == 'outline' then
-		element:SetShadowColor(0, 0, 0, .9)
-		element:SetShadowOffset(1, -1)
-	end
-	--Add Item to the Array
-	local count = 0
-	for _ in pairs(FontItems[Module]) do
-		count = count + 1
-	end
-	FontItems[Module][count + 1] = element
-	FontItemsSize[Module][count + 1] = size
-end
-
-function SUI:FontRefresh(Module)
-	for a, b in pairs(FontItems[Module]) do
-		--Set Font Outline
-		local flags, size = ''
-		if SUI.DB.font[Module].Type == 'monochrome' then
-			flags = flags .. 'monochrome '
-		end
-		if SUI.DB.font[Module].Type == 'outline' then
-			flags = flags .. 'outline '
-		end
-		if SUI.DB.font[Module].Type == 'thickoutline' then
-			flags = flags .. 'thickoutline '
-		end
-		--Set Size
-		size = FontItemsSize[Module][a] + SUI.DB.font[Module].Size
-		--Update Font
-		b:SetFont(SUI:GetFontFace(Module), size, flags)
 	end
 end
