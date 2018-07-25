@@ -199,6 +199,7 @@ function module:SetupVehicleUI()
 			function()
 				War_SpartanUI:Show()
 				Minimap:Show()
+				module:trayWatcherEvents()
 			end
 		)
 		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
@@ -363,6 +364,10 @@ local trayWatcherEvents = function()
 			SetBarVisibility(module.Trays[key], 'show')
 		end
 	end
+end
+
+function module:trayWatcherEvents()
+	trayWatcherEvents()
 end
 
 local CollapseToggle = function(self)
