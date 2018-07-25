@@ -114,7 +114,7 @@ local PerformFullBtnUpdate = function()
 	if LastUpdateStatus ~= IsMouseOver() then
 		MiniMapBtnScrape()
 		--update visibility
-		module:updateButtons()
+		module:update()
 	end
 end
 
@@ -124,7 +124,7 @@ local OnEnter = function()
 	end
 	--don't use PerformFullBtnUpdate as we want to perform the actions in reverse. since any new unknown icons will already be shown.
 	if LastUpdateStatus ~= IsMouseOver() then
-		module:updateButtons()
+		module:update()
 	end --update visibility
 	MiniMapBtnScrape()
 end
@@ -300,7 +300,7 @@ function module:OnEnable()
 	Minimap:HookScript('OnMouseDown', OnMouseDown)
 
 	--Initialize Buttons
-	module:updateButtons()
+	module:update()
 	MinimapUpdater:SetSize(1, 1)
 	MinimapUpdater:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', -128, 128)
 	MinimapUpdater:SetScript(
@@ -438,7 +438,8 @@ function module:MinimapCoords()
 	end
 	MinimapZoneText:Hide()
 
-	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY', 'SUI_Font10')
+	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
+	SUI:FormatFont(Minimap.ZoneText, 10, 'Minimap')
 	Minimap.ZoneText:SetSize(10, 12)
 	Minimap.ZoneText:SetJustifyH('MIDDLE')
 	Minimap.ZoneText:SetJustifyV('CENTER')
@@ -452,7 +453,8 @@ function module:MinimapCoords()
 	MinimapZoneTextButton:ClearAllPoints()
 	MinimapZoneTextButton:SetAllPoints(Minimap.ZoneText)
 
-	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY', 'SUI_Font9')
+	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
+	SUI:FormatFont(Minimap.coords, 9, 'Minimap')
 	Minimap.coords:SetSize(9, 12)
 	Minimap.coords:SetJustifyH('TOP')
 	Minimap.coords:SetPoint('TOPLEFT', Minimap.ZoneText, 'BOTTOMLEFT', 0, 0)
@@ -539,7 +541,7 @@ function module:SetupButton(btn, force)
 	end
 end
 
-function module:updateButtons()
+function module:update()
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
 	end
@@ -617,6 +619,20 @@ function module:updateButtons()
 	else
 		MinimapNorthTag:Hide()
 	end
+
+	if SUI.DB.MiniMap.DisplayZoneName then
+		Minimap.ZoneText:Show()
+		MinimapZoneTextButton:Show()
+	else
+		Minimap.ZoneText:Hide()
+		MinimapZoneTextButton:Hide()
+	end
+
+	if SUI.DB.MiniMap.DisplayMapCords then
+		Minimap.coords:Show()
+	else
+		Minimap.coords:Hide()
+	end
 end
 
 function module:BuildOptions()
@@ -653,7 +669,7 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DB.MiniMap.MapZoomButtons = val
-					module:updateButtons()
+					module:update()
 				end
 			},
 			OtherStyle = {
@@ -672,7 +688,31 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DB.MiniMap.OtherStyle = val
-					module:updateButtons()
+					module:update()
+				end
+			},
+			DisplayZoneName = {
+				name = L['Display zone name'],
+				type = 'toggle',
+				order = 0.5,
+				get = function(info)
+					return SUI.DB.MiniMap.DisplayZoneName
+				end,
+				set = function(info, val)
+					SUI.DB.MiniMap.DisplayZoneName = val
+					module:update()
+				end
+			},
+			DisplayMapCords = {
+				name = L['Display map cords'],
+				type = 'toggle',
+				order = 0.5,
+				get = function(info)
+					return SUI.DB.MiniMap.DisplayMapCords
+				end,
+				set = function(info, val)
+					SUI.DB.MiniMap.DisplayMapCords = val
+					module:update()
 				end
 			}
 			-- minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
