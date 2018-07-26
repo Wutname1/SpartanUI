@@ -1,7 +1,7 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Handler_Font', 'AceTimer-3.0')
 
-local FontItems = {}
+module.FontItems = {}
 local FontFaces = {
 	['SpartanUI'] = 'Cognosis',
 	['Roboto'] = 'Roboto',
@@ -16,17 +16,17 @@ local FontFaces = {
 
 function module:StoreFontItem(element, DefaultSize, Module)
 	--Create tracking table if needed
-	if not FontItems[Module] then
-		FontItems[Module] = {Count = 0}
+	if not module.FontItems[Module] then
+		module.FontItems[Module] = {Count = 0}
 	end
 
 	--Load next ID number
-	local NewItemID = FontItems[Module].Count + 1
+	local NewItemID = module.FontItems[Module].Count + 1
 
 	--Store element and latest ID used
-	FontItems[Module].Count = NewItemID
-	FontItems[Module][NewItemID .. 'DefaultSize'] = DefaultSize
-	FontItems[Module][NewItemID] = element
+	module.FontItems[Module].Count = NewItemID
+	module.FontItems[Module][NewItemID .. 'DefaultSize'] = DefaultSize
+	module.FontItems[Module][NewItemID] = element
 end
 
 function SUI:comma_value(n)
@@ -36,13 +36,18 @@ end
 
 function SUI:FontSetup()
 	for i = 5, 22 do
-		local filename = _G['SUI_FontOutline' .. i]:GetFont()
-		if filename ~= SUI:GetFontFace('Primary') then
-			_G['SUI_FontOutline' .. i] = _G['SUI_FontOutline' .. i]:SetFont(SUI:GetFontFace('Primary'), i)
+		local filename
+		if _G['SUI_FontOutline' .. i] then
+			filename = _G['SUI_FontOutline' .. i]:GetFont()
+			if filename ~= SUI:GetFontFace('Primary') then
+				_G['SUI_FontOutline' .. i] = _G['SUI_FontOutline' .. i]:SetFont(SUI:GetFontFace('Primary'), i)
+			end
 		end
-		filename = _G['SUI_Font' .. i]:GetFont()
-		if filename ~= SUI:GetFontFace('Primary') then
-			_G['SUI_Font' .. i] = _G['SUI_Font' .. i]:SetFont(SUI:GetFontFace('Primary'), i)
+		if _G['SUI_Font' .. i] then
+			filename = _G['SUI_Font' .. i]:GetFont()
+			if filename ~= SUI:GetFontFace('Primary') then
+				_G['SUI_Font' .. i] = _G['SUI_Font' .. i]:SetFont(SUI:GetFontFace('Primary'), i)
+			end
 		end
 	end
 end
@@ -111,12 +116,12 @@ end
 ]]
 function SUI:FontRefresh(Module)
 	if not Module then
-		for key, v in ipairs(SUI.DB.font.Modules) do
+		for key, v in pairs(module.FontItems) do
 			SUI:FontRefesh(key)
 		end
 	else
-		for i = 1, FontItems[Module].Count do
-			SUI:FormatFont(FontItems[Module][i], FontItems[Module][i .. 'DefaultSize'], Module, true)
+		for i = 1, module.FontItems[Module].Count do
+			SUI:FormatFont(module.FontItems[Module][i], module.FontItems[Module][i .. 'DefaultSize'], Module, true)
 		end
 	end
 end
@@ -132,7 +137,7 @@ function module:OnEnable()
 				name = L['Large number seperator'],
 				desc = L['This is used to split up large numbers example: 100,000'],
 				type = 'select',
-				values = {[''] = '', [','] = ',', ['.'] = '.'},
+				values = {[''] = 'none', [','] = 'comma', ['.'] = 'period'},
 				get = function(info)
 					return SUI.DB.font.NumberSeperator
 				end,
@@ -145,10 +150,10 @@ function module:OnEnable()
 				type = 'select',
 				values = FontFaces,
 				get = function(info)
-					return SUI.DB.font.Global.Face
+					return SUI.DB.font.Modules.Global.Face
 				end,
 				set = function(info, val)
-					SUI.DB.font.Global.Face = val
+					SUI.DB.font.Modules.Global.Face = val
 				end
 			},
 			c = {
@@ -161,10 +166,10 @@ function module:OnEnable()
 					['thickoutline'] = L['thickoutline']
 				},
 				get = function(info)
-					return SUI.DB.font.Global.Type
+					return SUI.DB.font.Modules.Global.Type
 				end,
 				set = function(info, val)
-					SUI.DB.font.Global.Type = val
+					SUI.DB.font.Modules.Global.Type = val
 				end
 			},
 			d = {
@@ -175,10 +180,10 @@ function module:OnEnable()
 				max = 3,
 				step = 1,
 				get = function(info)
-					return SUI.DB.font.Global.Size
+					return SUI.DB.font.Modules.Global.Size
 				end,
 				set = function(info, val)
-					SUI.DB.font.Global.Size = val
+					SUI.DB.font.Modules.Global.Size = val
 				end
 			},
 			z = {
@@ -186,11 +191,11 @@ function module:OnEnable()
 				type = 'execute',
 				width = 'double',
 				func = function()
-                    for Module, v in ipairs(FontItems) do
-                        SUI.DB.font.Modules[Module].Face = SUI.DB.font.Modules.Global.Face
-                        SUI.DB.font.Modules[Module].Type = SUI.DB.font.Modules.Global.Type
-                        SUI.DB.font.Modules[Module].Size = SUI.DB.font.Modules.Global.Size
-                    end
+					for Module, v in pairs(module.FontItems) do
+						SUI.DB.font.Modules[Module].Face = SUI.DB.font.Modules.Global.Face
+						SUI.DB.font.Modules[Module].Type = SUI.DB.font.Modules.Global.Type
+						SUI.DB.font.Modules[Module].Size = SUI.DB.font.Modules.Global.Size
+					end
 					SUI:FontRefresh()
 				end
 			}
@@ -198,12 +203,12 @@ function module:OnEnable()
 	}
 
 	--Setup the Options in 5 seconds giving modules time to populate.
-	self:ScheduleTimer('BuildOptions', 5)
+	self:ScheduleTimer('BuildOptions', 2)
 end
 
 function module:BuildOptions()
 	--We build the options based on the modules that are loaded and in use.
-	for Module, v in ipairs(FontItems) do
+	for Module, v in pairs(module.FontItems) do
 		SUI.opt.args['General'].args['font'].args[Module] = {
 			name = Module,
 			type = 'group',
@@ -243,9 +248,9 @@ function module:BuildOptions()
 					name = L['Adjust font size'],
 					type = 'range',
 					order = 3,
-					width = 'full',
-					min = -3,
-					max = 3,
+					width = 'double',
+					min = -15,
+					max = 15,
 					step = 1,
 					get = function(info)
 						return SUI.DB.font.Modules[Module].Size

@@ -439,7 +439,8 @@ function module:MinimapCoords()
 	MinimapZoneText:Hide()
 
 	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(Minimap.ZoneText, 10, 'Minimap')
+	SUI:FormatFont(Minimap.ZoneText, 11, 'Minimap')
+	SUI:FormatFont(MinimapZoneText, 11, 'Minimap')
 	Minimap.ZoneText:SetSize(10, 12)
 	Minimap.ZoneText:SetJustifyH('MIDDLE')
 	Minimap.ZoneText:SetJustifyV('CENTER')
@@ -715,23 +716,6 @@ function module:BuildOptions()
 					module:update()
 				end
 			}
-			-- minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
-			-- get = function(info) return SUI.DB.MiniMap.MapButtons; end,
-			-- set = function(info,val) SUI.DB.MiniMap.MapButtons = val;  end
-			-- },
-			-- BlizzStyle = {
-			-- name="Blizzard Icons",
-			-- type="select",
-			-- style="dropdown",
-			-- width="full",
-			-- values = {
-			-- ["hide"]	= "Always Hide",
-			-- ["mouseover"]	= "Show on Mouse over",
-			-- ["show"]	= "Always Show",
-			-- },
-			-- get = function(info) return SUI.DB.MiniMap.BlizzStyle; end,
-			-- set = function(info,val) SUI.DB.MiniMap.BlizzStyle = val; end
-			-- },
 		}
 	}
 end
