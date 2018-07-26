@@ -81,7 +81,8 @@
 	</Frame>
 	
 	<Script file="oUF.lua" />
+	<Script file="SUIWindow.lua" />
+	<Script file="SetupWizard.lua" />
 	<Script file="WhatsNew.lua" />
-	<Script file="Installer.lua" />
 	<Script file="Skin-Options.lua" />
 </Ui>

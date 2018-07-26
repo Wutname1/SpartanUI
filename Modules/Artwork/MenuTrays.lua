@@ -1,15 +1,18 @@
 local _G, SUI = _G, SUI
 local module = SUI:GetModule('Artwork_Core')
-
+module.Trays = false
+local settings = {}
+local trayIDs = {
+	'left',
+	'right'
+}
 
 local trayWatcherEvents = function()
+	-- Make sure we are in the right spot
 	module:updateOffset()
-	local trayIDs = {'left', 'right'}
-	War_MenuBarBG:SetAlpha(0)
-	War_StanceBarBG:SetAlpha(0)
 
 	for _, key in ipairs(trayIDs) do
-		if SUI.DB.Styles.War.SlidingTrays[key].collapsed then
+		if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
 			module.Trays[key].expanded:Hide()
 			module.Trays[key].collapsed:Show()
 			SetBarVisibility(module.Trays[key], 'hide')
@@ -25,12 +28,65 @@ function module:trayWatcherEvents()
 	trayWatcherEvents()
 end
 
+local SetBarVisibility = function(side, state)
+	if side == 'left' and state == 'hide' then
+		-- BT4BarStanceBar
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar then
+			_G['BT4BarStanceBar']:Hide()
+		end
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar then
+			_G['BT4BarPetBar']:Hide()
+		end
+	elseif side == 'right' and state == 'hide' then
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar then
+			_G['BT4BarBagBar']:Hide()
+		end
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu then
+			_G['BT4BarMicroMenu']:Hide()
+		end
+	end
+
+	if side == 'left' and state == 'show' then
+		-- BT4BarStanceBar
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar then
+			_G['BT4BarStanceBar']:Show()
+		end
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar then
+			_G['BT4BarPetBar']:Show()
+		end
+	elseif side == 'right' and state == 'show' then
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar then
+			_G['BT4BarBagBar']:Show()
+		end
+		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu then
+			_G['BT4BarMicroMenu']:Show()
+		end
+	end
+end
+
+local CollapseToggle = function(self)
+	local key = self.key
+	if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
+		SUI.DBMod.Artwork.SlidingTrays[key].collapsed = false
+		module.Trays[key].expanded:Show()
+		module.Trays[key].collapsed:Hide()
+		SetBarVisibility(key, 'show')
+	else
+		SUI.DBMod.Artwork.SlidingTrays[key].collapsed = true
+		module.Trays[key].expanded:Hide()
+		module.Trays[key].collapsed:Show()
+		SetBarVisibility(key, 'hide')
+	end
+end
+
 -- Artwork Stuff
-function module:SlidingTrays(settings)
+function module:SlidingTrays(StyleSettings)
+	module.Trays = {}
+	settings = StyleSettings
 	War_MenuBarBG:SetAlpha(0)
 	War_StanceBarBG:SetAlpha(0)
 
-	for _, key in ipairs(settings.trayIDs) do
+	for _, key in ipairs(trayIDs) do
 		local tray = CreateFrame('Frame', nil, UIParent)
 		tray:SetFrameStrata('BACKGROUND')
 		tray:SetAlpha(.8)
@@ -42,21 +98,21 @@ function module:SlidingTrays(settings)
 		collapsed:SetAllPoints()
 
 		local bg = expanded:CreateTexture(nil, 'BACKGROUND', expanded)
-		bg:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'))
+		bg:SetTexture(settings.bg.Texture)
+		bg:SetTexCoord(unpack(settings.bg.TexCoord))
 		bg:SetAllPoints()
-		bg:SetTexCoord(0.076171875, 0.92578125, 0, 0.18359375)
 
 		local bgCollapsed = collapsed:CreateTexture(nil, 'BACKGROUND', collapsed)
-		bgCollapsed:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'))
+		bgCollapsed:SetTexture(settings.bgCollapsed.Texture)
+		bgCollapsed:SetTexCoord(unpack(settings.bgCollapsed.TexCoord))
 		bgCollapsed:SetPoint('TOPLEFT', tray)
 		bgCollapsed:SetPoint('TOPRIGHT', tray)
 		bgCollapsed:SetHeight(18)
-		bgCollapsed:SetTexCoord(0.076171875, 0.92578125, 1, 0.92578125)
 
 		local btnUp = CreateFrame('BUTTON', nil, expanded)
 		local UpTex = expanded:CreateTexture()
-		UpTex:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'))
-		UpTex:SetTexCoord(0.3671875, 0.640625, 0.20703125, 0.25390625)
+		UpTex:SetTexture(settings.UpTex.Texture)
+		UpTex:SetTexCoord(unpack(settings.UpTex.TexCoord))
 		UpTex:Hide()
 		btnUp:SetSize(130, 9)
 		UpTex:SetAllPoints(btnUp)
@@ -68,8 +124,8 @@ function module:SlidingTrays(settings)
 
 		local btnDown = CreateFrame('BUTTON', nil, collapsed)
 		local DownTex = collapsed:CreateTexture()
-		DownTex:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'))
-		DownTex:SetTexCoord(0.3671875, 0.640625, 0.25390625, 0.20703125)
+		DownTex:SetTexture(settings.DownTex.Texture)
+		DownTex:SetTexCoord(unpack(settings.DownTex.TexCoord))
 		DownTex:Hide()
 		btnDown:SetSize(130, 9)
 		DownTex:SetAllPoints(btnDown)
@@ -79,8 +135,8 @@ function module:SlidingTrays(settings)
 		btnDown:SetDisabledTexture('')
 		btnDown:SetPoint('TOP', tray, 'TOP', 2, -6)
 
-		btnUp.side = key
-		btnDown.side = key
+		btnUp.key = key
+		btnDown.key = key
 		btnUp:SetScript('OnClick', CollapseToggle)
 		btnDown:SetScript('OnClick', CollapseToggle)
 
@@ -93,11 +149,10 @@ function module:SlidingTrays(settings)
 		tray.expanded = expanded
 		tray.collapsed = collapsed
 
-		if SUI.DB.Styles.War.SlidingTrays[key].collapsed then
-			tray.expanded:Hide()
+		if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
 			SetBarVisibility(key, 'hide')
 		else
-			tray.collapsed:Hide()
+			SetBarVisibility(key, 'show')
 		end
 		module.Trays[key] = tray
 	end

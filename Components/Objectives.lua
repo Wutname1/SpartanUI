@@ -299,7 +299,5 @@ function module:FirstTimeSetup()
 			SUI_Win.Objectives = nil
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
-	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
+	SUI:GetModule('SetupWizard'):AddPage(PageData)
 end

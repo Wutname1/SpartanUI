@@ -3,6 +3,96 @@ local L = SUI.L
 local Artwork_Core = SUI:NewModule('Artwork_Core')
 local BartenderMin = '4.8.0'
 
+
+function module:updateScale()
+	--Set default scale based on if the user is using a widescreen.
+	if (not SUI.DB.scale) then
+		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
+		if (tonumber(width) / tonumber(height) > 4 / 3) then
+			SUI.DB.scale = 0.92
+		else
+			SUI.DB.scale = 0.78
+		end
+	end
+
+	-- Call module scale update if defined.
+	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	if style.updateScale then
+		style:updateScale()
+	end
+end
+
+
+function module:updateOffset()
+	if InCombatLockdown() then
+		return
+	end
+
+	local Top = 0
+	local fubar, ChocolateBar, titan = 0, 0, 0
+
+	if not SUI.DB.yoffsetAuto then
+		offset = max(SUI.DB.yoffset, 0)
+	else
+		for i = 1, 4 do -- FuBar Offset
+			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
+				local bar = _G['FuBarFrame' .. i]
+				local point = bar:GetPoint(1)
+				if point:find('TOP.*') then
+					Top = Top + bar:GetHeight()
+				end
+				if point == 'BOTTOMLEFT' then
+					fubar = fubar + bar:GetHeight()
+				end
+			end
+		end
+
+		for i = 1, 100 do -- Chocolate Bar Offset
+			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
+				local bar = _G['ChocolateBar' .. i]
+				local point = bar:GetPoint(1)
+				if point:find('TOP.*') then
+					Top = Top + bar:GetHeight()
+				end
+				if point == 'RIGHT' then
+					ChocolateBar = ChocolateBar + bar:GetHeight()
+				end
+			end
+		end
+
+		local TitanTopBar = {[1] = 'Bar2', [2] = 'Bar'} -- Top 2 Bar names
+		for i = 1, 2 do
+			if (_G['Titan_Bar__Display_' .. TitanTopBar[i]] and TitanPanelGetVar(TitanTopBar[i] .. '_Show')) then
+				local PanelScale = TitanPanelGetVar('Scale') or 1
+				Top = Top + (PanelScale * _G['Titan_Bar__Display_' .. TitanTopBar[i]]:GetHeight())
+			end
+		end
+
+		local TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
+
+		for i = 1, 2 do
+			if (_G['Titan_Bar__Display_' .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. '_Show')) then
+				local PanelScale = TitanPanelGetVar('Scale') or 1
+				titan = titan + (PanelScale * _G['Titan_Bar__Display_' .. TitanBarOrder[i]]:GetHeight())
+			end
+		end
+
+		if OrderHallCommandBar and OrderHallCommandBar:IsVisible() then
+			Top = Top + OrderHallCommandBar:GetHeight()
+		end
+
+		offset = max(fubar + titan + ChocolateBar, 0)
+		SUI.DB.yoffset = offset
+	end
+	
+	-- Call module scale update if defined.
+	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	if style.updateOffset then
+		style:updateOffset(Top, offset)
+	end
+end
+
+
 function Artwork_Core:isPartialMatch(frameName, tab)
 	local result = false
 

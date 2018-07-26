@@ -558,11 +558,20 @@ local DBdefault = {
 		},
 		Artwork = {
 			Style = '',
+			TopOffset = 0,
+			TopOffsetAuto = true,
+			BottomOffset = 0,
+			BottomOffsetAuto = true,
 			FirstLoad = true,
 			VehicleUI = true,
 			Viewport = {
 				enabled = true,
 				offset = {top = 0, bottom = 2.3, left = 0, right = 0}
+			},
+			SlidingTrays = {
+				['**'] = {
+					collapsed = false
+				}
 			}
 		},
 		SpinCam = {
