@@ -484,7 +484,7 @@ function module:MinimapCoords()
 			return
 		end
 		--Update label
-		Minimap.ZoneText:SetText(GetMinimapZoneText())
+		-- Minimap.ZoneText:SetText(GetMinimapZoneText())
 		Minimap.coords:SetText(format('%.1f, %.1f', x * 100, y * 100))
 	end
 	UpdateCoords()
