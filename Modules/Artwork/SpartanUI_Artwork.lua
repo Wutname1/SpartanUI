@@ -3,8 +3,7 @@ local L = SUI.L
 local Artwork_Core = SUI:NewModule('Artwork_Core')
 local BartenderMin = '4.8.0'
 
-
-function module:updateScale()
+function Artwork_Core:updateScale()
 	--Set default scale based on if the user is using a widescreen.
 	if (not SUI.DB.scale) then
 		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
@@ -22,8 +21,7 @@ function module:updateScale()
 	end
 end
 
-
-function module:updateOffset()
+function Artwork_Core:updateOffset()
 	if InCombatLockdown() then
 		return
 	end
@@ -84,14 +82,13 @@ function module:updateOffset()
 		offset = max(fubar + titan + ChocolateBar, 0)
 		SUI.DB.yoffset = offset
 	end
-	
+
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 	if style.updateOffset then
 		style:updateOffset(Top, offset)
 	end
 end
-
 
 function Artwork_Core:isPartialMatch(frameName, tab)
 	local result = false

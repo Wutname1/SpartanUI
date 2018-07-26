@@ -29,7 +29,7 @@ module.StatusBarSettings = {
 	}
 }
 local CurScale
-local petbattle, trayWatcher = CreateFrame('Frame'), CreateFrame('Frame')
+local petbattle = CreateFrame('Frame')
 
 -- Misc Framework stuff
 function module:updateScale()
@@ -66,18 +66,6 @@ function module:updateAlpha()
 			_G['War_Bar' .. i]:SetAlpha(SUI.DB.Styles.War.Artwork['bar' .. i].alpha)
 		else
 			_G['War_Bar' .. i]:Hide()
-		end
-		if SUI.DB.Styles.War.Artwork.Stance.enable then
-			_G['War_StanceBar']:Show()
-			_G['War_StanceBar']:SetAlpha(SUI.DB.Styles.War.Artwork.Stance.alpha)
-		else
-			_G['War_StanceBar']:Hide()
-		end
-		if SUI.DB.Styles.War.Artwork.MenuBar.enable then
-			_G['War_MenuBar']:Show()
-			_G['War_MenuBar']:SetAlpha(SUI.DB.Styles.War.Artwork.MenuBar.alpha)
-		else
-			_G['War_MenuBar']:Hide()
 		end
 	end
 end
@@ -148,7 +136,7 @@ function module:SetupVehicleUI()
 		War_SpartanUI:HookScript(
 			'OnShow',
 			function()
-				module:trayWatcherEvents()
+				Artwork_Core:trayWatcherEvents()
 			end
 		)
 		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
@@ -211,9 +199,6 @@ function module:EnableArtwork()
 			_G['War_Bar' .. i .. 'BG']:SetTexture(barBG)
 			_G['War_Bar' .. i .. 'BG']:SetAlpha(.25)
 		end
-
-		War_MenuBarBG:SetTexture(barBG)
-		War_StanceBarBG:SetTexture(barBG)
 	end
 
 	Artwork_Core:updateOffset()

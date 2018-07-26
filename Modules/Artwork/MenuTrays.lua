@@ -1,32 +1,12 @@
 local _G, SUI = _G, SUI
 local module = SUI:GetModule('Artwork_Core')
 module.Trays = false
+local trayWatcher = CreateFrame('Frame')
 local settings = {}
 local trayIDs = {
 	'left',
 	'right'
 }
-
-local trayWatcherEvents = function()
-	-- Make sure we are in the right spot
-	module:updateOffset()
-
-	for _, key in ipairs(trayIDs) do
-		if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
-			module.Trays[key].expanded:Hide()
-			module.Trays[key].collapsed:Show()
-			SetBarVisibility(module.Trays[key], 'hide')
-		else
-			module.Trays[key].expanded:Show()
-			module.Trays[key].collapsed:Hide()
-			SetBarVisibility(module.Trays[key], 'show')
-		end
-	end
-end
-
-function module:trayWatcherEvents()
-	trayWatcherEvents()
-end
 
 local SetBarVisibility = function(side, state)
 	if side == 'left' and state == 'hide' then
@@ -64,6 +44,27 @@ local SetBarVisibility = function(side, state)
 	end
 end
 
+local trayWatcherEvents = function()
+	-- Make sure we are in the right spot
+	module:updateOffset()
+
+	for _, key in ipairs(trayIDs) do
+		if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
+			module.Trays[key].expanded:Hide()
+			module.Trays[key].collapsed:Show()
+			SetBarVisibility(module.Trays[key], 'hide')
+		else
+			module.Trays[key].expanded:Show()
+			module.Trays[key].collapsed:Hide()
+			SetBarVisibility(module.Trays[key], 'show')
+		end
+	end
+end
+
+function module:trayWatcherEvents()
+	trayWatcherEvents()
+end
+
 local CollapseToggle = function(self)
 	local key = self.key
 	if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
@@ -83,8 +84,6 @@ end
 function module:SlidingTrays(StyleSettings)
 	module.Trays = {}
 	settings = StyleSettings
-	War_MenuBarBG:SetAlpha(0)
-	War_StanceBarBG:SetAlpha(0)
 
 	for _, key in ipairs(trayIDs) do
 		local tray = CreateFrame('Frame', nil, UIParent)
@@ -188,4 +187,6 @@ function module:SlidingTrays(StyleSettings)
 			end
 		end
 	end
+
+	return module.Trays
 end
