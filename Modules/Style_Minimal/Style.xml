@@ -14,19 +14,6 @@
 		</Anchors>
 	</Frame>
 	
-	<!-- TopBarTemplate -->
-	<Frame name="Minimal_TopBarTemplate" frameStrata="BACKGROUND" virtual="true">
-		<Size><AbsDimension x="512" y="64" /></Size>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Minimal\Images\base-center-top">
-					<Size><AbsDimension x="512" y="64" /></Size>
-					<TexCoords left="0" right="1" top="0" bottom=".25"/>
-				</Texture>
-			</Layer>
-		</Layers>
-	</Frame>
-	
 	<!-- SpartanUI -->
 	<Frame name="Minimal_SpartanUI" frameStrata="BACKGROUND" parent="UIParent">
 		<Anchors>
@@ -59,26 +46,6 @@
 				</Texture>
 			</Layer>
 		</Layers>
-		<Frames>
-			<Frame name="Minimal_Top_Bar1" inherits="Minimal_TopBarTemplate">
-				<Anchors>
-					<Anchor point="TOPRIGHT" relativePoint="TOP">
-						<Offset>
-							<AbsDimension x="-100" y="0" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Frame>
-			<Frame name="Minimal_Top_Bar2" inherits="Minimal_TopBarTemplate">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOP">
-						<Offset>
-							<AbsDimension x="100" y="0" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Frame>
-		</Frames>
 	</Frame>
 	
 	

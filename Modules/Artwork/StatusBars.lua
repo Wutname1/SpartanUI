@@ -366,7 +366,7 @@ function module:factory()
 			--Tooltip
 			local tooltip = CreateFrame('Frame')
 			tooltip:SetParent(statusbar)
-			tooltip:SetFrameStrata("TOOLTIP")
+			tooltip:SetFrameStrata('TOOLTIP')
 			tooltip:SetSize(unpack(StyleSetting.TooltipSize))
 			if StyleSetting.tooltipAnchor == 'TOP' then
 				tooltip:SetPoint('BOTTOM', statusbar, 'TOP')
@@ -380,7 +380,7 @@ function module:factory()
 			tooltip.bg:SetTexCoord(unpack(StyleSetting.texCordsTooltip))
 
 			local TextFrame = CreateFrame('Frame')
-			TextFrame:SetFrameStrata("TOOLTIP")
+			TextFrame:SetFrameStrata('TOOLTIP')
 			TextFrame:SetSize(unpack(StyleSetting.TooltipTextSize))
 			TextFrame:SetPoint('CENTER', tooltip, 'CENTER')
 

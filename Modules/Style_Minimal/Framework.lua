@@ -4,14 +4,6 @@ local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = Minimal_AnchorFrame, Minimal_SpartanUI
 
-function module:updateViewport() -- handles viewport offset based on settings
-	if not InCombatLockdown() then
-		WorldFrame:ClearAllPoints()
-		WorldFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
-		WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
-	end
-end
-
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
@@ -22,7 +14,6 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		module:updateViewport()
 		if (SUI.DB.scale ~= Artwork_Core:round(Minimal_SpartanUI:GetScale())) then
 			frame:SetScale(SUI.DB.scale)
 		end
@@ -112,7 +103,6 @@ function module:SetColor()
 	for i = 1, 5 do
 		_G['Minimal_SpartanUI_Base' .. i]:SetVertexColor(r, b, g, a)
 	end
-	-- Minimal_SpartanUI:SetVertexColor(0,.8,.9,.1)
 end
 
 function module:InitFramework()
@@ -138,22 +128,6 @@ function module:InitFramework()
 		FramerateText:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 
 		MainMenuBar:Hide()
-		hooksecurefunc(
-			Minimal_SpartanUI,
-			'Hide',
-			function()
-				module:updateViewport()
-			end
-		)
-		hooksecurefunc(
-			Minimal_SpartanUI,
-			'Show',
-			function()
-				module:updateViewport()
-			end
-		)
-		--Minimal_SpartanUI:SetAlpha(.5);
-		--Minimal_SpartanUI:SetVertexColor(0,.8,.9,.1)
 
 		hooksecurefunc(
 			'UpdateContainerFrameAnchors',
@@ -257,9 +231,6 @@ function module:EnableFramework()
 	frame:SetFrameStrata('BACKGROUND')
 	frame:SetFrameLevel(1)
 
-	-- hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
-	-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Minimal_SpartanUI,"TOP",0,100); end
-	-- end);
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',
 		function()
@@ -276,7 +247,6 @@ function module:EnableFramework()
 	module:updateScale()
 	module:updateOffset()
 	module:updateXOffset()
-	module:updateViewport()
 
 	-- Limit updates via interval
 	anchor.UpdateInterval = 5 --Seconds
