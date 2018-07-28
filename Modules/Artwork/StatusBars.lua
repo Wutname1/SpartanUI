@@ -365,6 +365,7 @@ function module:factory()
 
 			--Tooltip
 			local tooltip = CreateFrame('Frame')
+			tooltip:SetParent(statusbar)
 			tooltip:SetFrameStrata("TOOLTIP")
 			tooltip:SetSize(unpack(StyleSetting.TooltipSize))
 			if StyleSetting.tooltipAnchor == 'TOP' then
