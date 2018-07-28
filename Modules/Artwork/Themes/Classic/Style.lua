@@ -91,7 +91,7 @@ function module:SetupStatusBars()
 	StatusBars:Initalize(module.StatusBarSettings)
 
 	StatusBars.bars.SUI_StatusBar_Left:SetPoint('BOTTOMRIGHT', 'SUI_ActionBarPlate', 'BOTTOM', -92, -2)
-	StatusBars.bars.SUI_StatusBar_Right:SetPoint('BOTTOMLEFT', 'SUI_ActionBarPlate', 'BOTTOM', 70, 0)
+	StatusBars.bars.SUI_StatusBar_Right:SetPoint('BOTTOMLEFT', 'SUI_ActionBarPlate', 'BOTTOM', 78, 0)
 end
 
 function module:SetupMenus()
