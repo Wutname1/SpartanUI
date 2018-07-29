@@ -3,7 +3,7 @@ local L = SUI.L
 local module = SUI:GetModule('Style_War')
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
+local Smoothv2 = SUI.BarTextures.smooth
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 local Images

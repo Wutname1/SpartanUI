@@ -106,7 +106,7 @@ local NamePlateFactory = function(frame, unit)
 			nameString = nameString .. ' [SUI_ColorClass][name]'
 		end
 		if nameString ~= '' then
-			frame.Name = health:CreateFontString()
+			frame.Name = health:CreateFontString(nil, 'BACKGROUND')
 			SUI:FormatFont(frame.Name, 10, 'Player')
 			frame.Name:SetSize(frame:GetWidth(), 12)
 			frame.Name:SetJustifyH('LEFT')
@@ -151,6 +151,13 @@ local NamePlateFactory = function(frame, unit)
 		Auras.onlyShowPlayer = true
 		frame.Auras = Auras
 
+		-- Raid Icon
+		if SUI.DBMod.NamePlates.ShowRaidTargetIndicator then
+			frame.RaidTargetIndicator = frame:CreateTexture(nil, 'OVERLAY')
+			frame.RaidTargetIndicator:SetSize(15, 15)
+			frame.RaidTargetIndicator:SetPoint('BOTTOM', frame.Health, 'TOPLEFT', 0, 0)
+		end
+
 		-- Target Indicator
 		local TargetIndicator = CreateFrame('Frame', 'BACKGROUND', frame)
 		TargetIndicator.bg1 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
@@ -193,6 +200,25 @@ local NamePlateFactory = function(frame, unit)
 		frame.PvPIndicator:SetPoint('BOTTOMLEFT')
 		frame.PvPIndicator.Override = pvpIconWar
 
+		-- Threat Display
+		local ThreatIndicator = frame:CreateTexture(nil, 'OVERLAY')
+		ThreatIndicator:SetTexture('Interface\\RaidFrame\\Raid-FrameHighlights')
+		ThreatIndicator:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
+		ThreatIndicator:SetAllPoints(frame)
+		overlay:SetVertexColor(1, 0, 0)
+		-- overlay:Hide()
+		-- frame.ThreatIndicatorOverlay = overlay
+		frame.ThreatIndicator = ThreatIndicator
+
+		-- Things to do if this is the players display
+		if (UnitIsUnit(unit, 'player')) then
+			attachPoint = 'Castbar'
+			-- Setup Player Icons
+			if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
+				SUI:PlayerPowerIcons(frame, 'Health')
+			end
+		end
+
 		-- Setup Scale
 		frame:SetScale(SUI.DBMod.NamePlates.Scale)
 	end
@@ -206,6 +232,8 @@ function module:OnInitialize()
 		ShowCastbar = true,
 		ShowCastbarText = true,
 		ShowTarget = true,
+		ShowRaidTargetIndicator = true,
+		ShowPlayerPowerIcons = true,
 		FlashOnInterruptibleCast = true,
 		Scale = 1,
 		Health = {

@@ -1004,9 +1004,12 @@ function SUI:OnInitialize()
 		SUI:DBUpgrades()
 	end
 
-	-- Legacy, need to phase these globals out it was messy
-	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
+	-- Add Addon-Wide Bar textures
+	SUI.BarTextures = {
+		smooth = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
+	}
+
+	-- Add Profiles to Options
 	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
 
 	-- Add dual-spec support

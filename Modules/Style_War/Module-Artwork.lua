@@ -11,8 +11,8 @@ module.StatusBarSettings = {
 	War_StatusBar_Left = {
 		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 		size = {370, 20},
-		TooltipSize = {250, 65},
-		TooltipTextSize = {225, 40},
+		TooltipSize = {300, 100},
+		TooltipTextSize = {275, 75},
 		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
 		GlowPoint = {x = -16},
 		MaxWidth = 48
@@ -21,8 +21,8 @@ module.StatusBarSettings = {
 		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 		Grow = 'RIGHT',
 		size = {370, 20},
-		TooltipSize = {250, 65},
-		TooltipTextSize = {225, 40},
+		TooltipSize = {300, 100},
+		TooltipTextSize = {275, 75},
 		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
 		GlowPoint = {x = 16},
 		MaxWidth = 48
