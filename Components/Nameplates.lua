@@ -205,7 +205,7 @@ local NamePlateFactory = function(frame, unit)
 		ThreatIndicator:SetTexture('Interface\\RaidFrame\\Raid-FrameHighlights')
 		ThreatIndicator:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
 		ThreatIndicator:SetAllPoints(frame)
-		overlay:SetVertexColor(1, 0, 0)
+		-- overlay:SetVertexColor(1, 0, 0)
 		-- overlay:Hide()
 		-- frame.ThreatIndicatorOverlay = overlay
 		frame.ThreatIndicator = ThreatIndicator

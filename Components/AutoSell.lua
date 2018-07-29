@@ -26,7 +26,9 @@ function module:OnInitialize()
 		Green = false,
 		Blue = false,
 		Purple = false,
-		GearTokens = false
+		GearTokens = false,
+		AutoRepair = false,
+		UseGuildBankRepair = false
 	}
 	if not SUI.DB.AutoSell then
 		SUI.DB.AutoSell = Defaults
@@ -355,13 +357,26 @@ function module:SellTrash()
 		module:SellTrashInBag()
 	end
 	if iCount == 0 then
-		SUI:Print('No items are to be auto sold')
+		SUI:Print(L['No items are to be auto sold'])
 	else
 		SUI:Print('Need to sell ' .. iCount .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
 		OnlyCount = false
 		bag = 0
 		self.SellTimer = self:ScheduleRepeatingTimer('SellTrashInBag', .3)
+	end
+end
+
+function module:Repair()
+	-- First see if this vendor can repair
+	if (CanMerchantRepair() and SUI.DB.AutoSell.AutoRepair) then
+		SUI:Print(L['Auto repairing if needed'])
+		-- Use guild repair
+		if (CanGuildBankRepair() == 1 and SUI.DB.AutoSell.UseGuildBankRepair) then
+			RepairAllItems(1)
+		end
+		-- Use self repair
+		RepairAllItems()
 	end
 end
 
@@ -384,6 +399,7 @@ function module:Enable()
 		end
 		if event == 'MERCHANT_SHOW' then
 			module:SellTrash()
+			module:Repair()
 		else
 			module:CancelAllTimers()
 			if (totalValue > 0) then
@@ -533,7 +549,9 @@ function module:BuildOptions()
 			},
 			ItemsPerCycle = {
 				name = L['Items per bag, per cycle to sell'],
-				desc = L['Sometimes the addon can sell items too fast for the game. We limit it to only do so many per bag per vendor session to account for this.'],
+				desc = L[
+					'Sometimes the addon can sell items too fast for the game. We limit it to only do so many per bag per vendor session to account for this.'
+				],
 				type = 'range',
 				order = 30,
 				width = 'full',
@@ -547,10 +565,34 @@ function module:BuildOptions()
 					return SUI.DB.AutoSell.ItemsPerCycle
 				end
 			},
+			line1 = {name = '', type = 'header', order = 200},
+			AutoRepair = {
+				name = L['Auto repair'],
+				type = 'toggle',
+				order = 201,
+				get = function(info)
+					return SUI.DB.AutoSell.AutoRepair
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.AutoRepair = val
+				end
+			},
+			UseGuildBankRepair = {
+				name = L['Use guild bank repair if possible'],
+				type = 'toggle',
+				order = 202,
+				get = function(info)
+					return SUI.DB.AutoSell.UseGuildBankRepair
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.UseGuildBankRepair = val
+				end
+			},
+			line2 = {name = '', type = 'header', order = 600},
 			debug = {
 				name = L['Enable debug messages'],
 				type = 'toggle',
-				order = 600,
+				order = 601,
 				width = 'full',
 				get = function(info)
 					return SUI.DB.AutoSell.debug
