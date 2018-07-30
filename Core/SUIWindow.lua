@@ -5,7 +5,7 @@ local StdUi = LibStub('StdUi'):NewInstance()
 local Page_Cur = 1
 local PageCnt = 0
 local PageList = {}
-local WinShow, Win = false, nil
+local Win = nil
 local RequireReload = 0
 local CurData = nil
 
@@ -22,16 +22,41 @@ local ReloadNeeded = function(mode)
 	end
 end
 
+--[[
+	AddPage(PageData)
+	Allows you to display multiple pages of information that will be shown to the user.
+
+	PageData follows the Same schema as DisplayPage
+]]
+
+function module:AddPage(PageData)
+	if Win == nil then
+		Win = module:CreateWindow('SUI_Win')
+	end
+
+	PageCnt = PageCnt + 1
+	PageList[PageCnt] = PageData
+
+	--If something already displayed the window update the text
+	if SUI_Win:IsVisible() then
+		SUI_Win.Status:SetText(Page_Cur .. '  /  ' .. PageCnt)
+	end
+end
+
+--[[
+	DisplayPage(CustomData)
+	Allows you to display a sinlge page of information to the user. That will not page.
+]]
 function module:DisplayPage(CustomData)
 	if Win == nil then
-		Win = module:CreateWindow()
+		Win = module:CreateWindow('SUI_Win')
 	end
 	if CustomData then
 		if CustomData.WipePage then
 			SUI_Win:Hide()
 			SUI_Win = nil
 			Win = nil
-			Win = module:CreateWindow()
+			Win = module:CreateWindow('SUI_Win')
 		end
 	end
 	
@@ -99,7 +124,6 @@ function module:DisplayPage(CustomData)
 
 	--Track that we are showing this window.
 	CurData.Displayed = true
-	WinShow = true
 	Win:Show()
 end
 
@@ -129,52 +153,63 @@ local ClearPage = function()
 	Win.Desc2:SetText('')
 end
 
-function module:CreateWindow(FrameName)
-	local Win = CreateFrame('Frame', FrameName, UIParent)
-	Win:SetSize(600, 450)
-	Win:SetPoint('TOP', UIParent, 'TOP', 0, -150)
-	Win:SetFrameStrata('DIALOG')
+--[[
+	CreateWindowdow(FrameName, width, height)
+	Returns a Window Object with the default objects created.
+]]
+function module:CreateWindowdow(FrameName, width, height)
+	if not width then
+		width = 500
+	end
+	if not height then
+		height = 400
+	end
+	
+	local Window = CreateFrame('Frame', FrameName, UIParent)
+	Window:SetSize(width, height)
+	Window:SetPoint('TOP', UIParent, 'TOP', 0, -150)
+	Window:SetFrameStrata('DIALOG')
 
-	Win.bg = Win:CreateTexture(nil, 'BORDER')
-	Win.bg:SetAllPoints(Win)
-	Win.bg:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
-	Win.bg:SetVertexColor(0, 0, 0, .7)
+	Window.bg = Window:CreateTexture(nil, 'BORDER')
+	Window.bg:SetAllPoints(Window)
+	Window.bg:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+	Window.bg:SetVertexColor(0, 0, 0, .7)
 
-	Win.border = Win:CreateTexture(nil, 'BORDER')
-	Win.border:SetPoint('TOP', 0, 10)
-	Win.border:SetPoint('LEFT', -10, 0)
-	Win.border:SetPoint('RIGHT', 10, 0)
-	Win.border:SetPoint('BOTTOM', 0, -10)
-	Win.border:SetTexture('Interface\\AddOns\\SpartanUI\\media\\smoke.tga')
-	Win.border:SetVertexColor(0, 0, 0, .7)
+	Window.border = Window:CreateTexture(nil, 'BORDER')
+	Window.border:SetPoint('TOP', 0, 10)
+	Window.border:SetPoint('LEFT', -10, 0)
+	Window.border:SetPoint('RIGHT', 10, 0)
+	Window.border:SetPoint('BOTTOM', 0, -10)
+	Window.border:SetTexture('Interface\\AddOns\\SpartanUI\\media\\smoke.tga')
+	Window.border:SetVertexColor(0, 0, 0, .7)
 
-	Win.Status = Win:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline12')
-	Win.Status:SetSize(100, 15)
-	Win.Status:SetJustifyH('RIGHT')
-	Win.Status:SetJustifyV('CENTER')
-	Win.Status:SetPoint('TOPRIGHT', Win, 'TOPRIGHT', -2, -2)
+	Window.Status = Window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline12')
+	Window.Status:SetSize(100, 15)
+	Window.Status:SetJustifyH('RIGHT')
+	Window.Status:SetJustifyV('CENTER')
+	Window.Status:SetPoint('TOPRIGHT', Window, 'TOPRIGHT', -2, -2)
 
-	Win.titleHolder = Win:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
-	Win.titleHolder:SetPoint('TOP', Win, 'TOP', 0, -5)
-	Win.titleHolder:SetSize(350, 20)
-	Win.titleHolder:SetText('SpartanUI setup assistant')
-	Win.titleHolder:SetTextColor(.76, .03, .03, 1)
+	Window.titleHolder = Window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
+	Window.titleHolder:SetPoint('TOP', Window, 'TOP', 0, -5)
+	Window.titleHolder:SetSize(350, 20)
+	Window.titleHolder:SetText('SpartanUI setup assistant')
+	Window.titleHolder:SetTextColor(.76, .03, .03, 1)
 
-	Win.SubTitle = Win:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline16')
-	Win.SubTitle:SetPoint('TOP', Win.titleHolder, 'BOTTOM', 0, -5)
-	Win.SubTitle:SetTextColor(.29, .18, .96, 1)
+	Window.SubTitle = Window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline16')
+	Window.SubTitle:SetPoint('TOP', Window.titleHolder, 'BOTTOM', 0, -5)
+	Window.SubTitle:SetTextColor(.29, .18, .96, 1)
 
-	Win.Desc1 = Win:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
-	Win.Desc1:SetPoint('TOP', Win.SubTitle, 'BOTTOM', 0, -5)
-	Win.Desc1:SetTextColor(1, 1, 1, .8)
-	Win.Desc1:SetWidth(Win:GetWidth() - 40)
+	Window.Desc1 = Window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
+	Window.Desc1:SetPoint('TOP', Window.SubTitle, 'BOTTOM', 0, -5)
+	Window.Desc1:SetTextColor(1, 1, 1, .8)
+	Window.Desc1:SetWidth(Window:GetWidth() - 40)
 
-	Win.Desc2 = Win:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
-	Win.Desc2:SetPoint('TOP', Win.Desc1, 'BOTTOM', 0, -3)
-	Win.Desc2:SetTextColor(1, 1, 1, .8)
-	Win.Desc2:SetWidth(Win:GetWidth() - 40)
+	Window.Desc2 = Window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
+	Window.Desc2:SetPoint('TOP', Window.Desc1, 'BOTTOM', 0, -3)
+	Window.Desc2:SetTextColor(1, 1, 1, .8)
+	Window.Desc2:SetWidth(Window:GetWidth() - 40)
 
-	Win:HookScript(
+	Window:HookScript(
 		'OnSizeChanged',
 		function(self)
 			self.Desc1:SetWidth(self:GetWidth() - 40)
@@ -183,29 +218,29 @@ function module:CreateWindow(FrameName)
 	)
 
 	--Holder for items
-	Win.content = CreateFrame('Frame', 'SUI_Win_Content', Win)
-	Win.content:SetPoint('BOTTOMLEFT', Win, 'BOTTOMLEFT', 0, 30)
-	Win.content:SetPoint('BOTTOMRIGHT', Win, 'BOTTOMRIGHT', 0, 30)
-	Win.content:SetPoint('TOP', Win.Desc2, 'BOTTOM', 0, -5)
+	Window.content = CreateFrame('Frame', 'SUI_Window_Content', Window)
+	Window.content:SetPoint('BOTTOMLEFT', Window, 'BOTTOMLEFT', 0, 30)
+	Window.content:SetPoint('BOTTOMRIGHT', Window, 'BOTTOMRIGHT', 0, 30)
+	Window.content:SetPoint('TOP', Window.Desc2, 'BOTTOM', 0, -5)
 
 	--Buttons
-	Win.Next = CreateFrame('Button', nil, Win, 'UIPanelButtonTemplate')
-	Win.Next:SetSize(90, 25)
-	Win.Next:SetPoint('BOTTOMRIGHT', -5, 5)
-	Win.Next:SetNormalTexture('')
-	Win.Next:SetHighlightTexture('')
-	Win.Next:SetPushedTexture('')
-	Win.Next:SetDisabledTexture('')
-	Win.Next:SetFrameLevel(Win.Next:GetFrameLevel() + 1)
-	Win.Next:SetText('CONTINUE')
+	Window.Next = CreateFrame('Button', nil, Window, 'UIPanelButtonTemplate')
+	Window.Next:SetSize(90, 25)
+	Window.Next:SetPoint('BOTTOMRIGHT', -5, 5)
+	Window.Next:SetNormalTexture('')
+	Window.Next:SetHighlightTexture('')
+	Window.Next:SetPushedTexture('')
+	Window.Next:SetDisabledTexture('')
+	Window.Next:SetFrameLevel(Window.Next:GetFrameLevel() + 1)
+	Window.Next:SetText('CONTINUE')
 
-	Win.Next.texture = Win.Next:CreateTexture(nil, 'BORDER')
-	Win.Next.texture:SetAllPoints(Win.Next)
-	Win.Next.texture:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
-	Win.Next.texture:SetVertexColor(0, 0.5, 1)
+	Window.Next.texture = Window.Next:CreateTexture(nil, 'BORDER')
+	Window.Next.texture:SetAllPoints(Window.Next)
+	Window.Next.texture:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+	Window.Next.texture:SetVertexColor(0, 0.5, 1)
 
-	-- Win.Next.parent = frame
-	Win.Next:SetScript(
+	-- Window.Next.parent = frame
+	Window.Next:SetScript(
 		'OnClick',
 		function(this)
 			if PageList[Page_Cur] ~= nil and PageList[Page_Cur].Next ~= nil then
@@ -214,8 +249,8 @@ function module:CreateWindow(FrameName)
 
 			PageList[Page_Cur].Displayed = false
 			if Page_Cur == PageCnt and not ReloadNeeded() then
-				Win:Hide()
-				WinShow = false
+				Window:Hide()
+				WindowShow = false
 				--Clear Page List
 				PageList = {}
 			elseif Page_Cur == PageCnt and ReloadNeeded() then
@@ -228,35 +263,35 @@ function module:CreateWindow(FrameName)
 			end
 		end
 	)
-	Win.Next:SetScript(
+	Window.Next:SetScript(
 		'OnEnter',
 		function(this)
 			this.texture:SetVertexColor(.5, .5, 1, 1)
 		end
 	)
-	Win.Next:SetScript(
+	Window.Next:SetScript(
 		'OnLeave',
 		function(this)
 			this.texture:SetVertexColor(0, 0.5, 1)
 		end
 	)
 
-	Win.Skip = CreateFrame('Button', nil, Win, 'UIPanelButtonTemplate')
-	Win.Skip:SetSize(90, 25)
-	Win.Skip:SetPoint('BOTTOMLEFT', 5, 5)
-	Win.Skip:SetNormalTexture('')
-	Win.Skip:SetHighlightTexture('')
-	Win.Skip:SetPushedTexture('')
-	Win.Skip:SetDisabledTexture('')
-	Win.Skip:SetFrameLevel(Win.Skip:GetFrameLevel() + 1)
-	Win.Skip:SetText('SKIP')
+	Window.Skip = CreateFrame('Button', nil, Window, 'UIPanelButtonTemplate')
+	Window.Skip:SetSize(90, 25)
+	Window.Skip:SetPoint('BOTTOMLEFT', 5, 5)
+	Window.Skip:SetNormalTexture('')
+	Window.Skip:SetHighlightTexture('')
+	Window.Skip:SetPushedTexture('')
+	Window.Skip:SetDisabledTexture('')
+	Window.Skip:SetFrameLevel(Window.Skip:GetFrameLevel() + 1)
+	Window.Skip:SetText('SKIP')
 
-	Win.Skip.texture = Win.Skip:CreateTexture(nil, 'BORDER')
-	Win.Skip.texture:SetAllPoints(Win.Skip)
-	Win.Skip.texture:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
-	Win.Skip.texture:SetVertexColor(.75, 0, 0)
+	Window.Skip.texture = Window.Skip:CreateTexture(nil, 'BORDER')
+	Window.Skip.texture:SetAllPoints(Window.Skip)
+	Window.Skip.texture:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+	Window.Skip.texture:SetVertexColor(.75, 0, 0)
 
-	Win.Skip:SetScript(
+	Window.Skip:SetScript(
 		'OnClick',
 		function(this)
 			if PageList[Page_Cur] ~= nil and PageList[Page_Cur].Skip ~= nil then
@@ -268,8 +303,8 @@ function module:CreateWindow(FrameName)
 			end
 
 			if Page_Cur == PageCnt and not ReloadNeeded() then
-				Win:Hide()
-				WinShow = false
+				Window:Hide()
+				WindowShow = false
 			elseif Page_Cur == PageCnt and ReloadNeeded() then
 				ClearPage()
 				module:ReloadPage()
@@ -280,36 +315,36 @@ function module:CreateWindow(FrameName)
 			end
 		end
 	)
-	Win.Skip:SetScript(
+	Window.Skip:SetScript(
 		'OnEnter',
 		function(this)
 			this.texture:SetVertexColor(.9, .2, .2, 1)
 		end
 	)
-	Win.Skip:SetScript(
+	Window.Skip:SetScript(
 		'OnLeave',
 		function(this)
 			this.texture:SetVertexColor(.75, 0, 0)
 		end
 	)
-	Win.Skip:Hide()
+	Window.Skip:Hide()
 
-	Win:SetScript(
+	Window:SetScript(
 		'OnEvent',
 		function(self, event)
-			if not InCombatLockdown() and Win:IsShown() then
+			if not InCombatLockdown() and Window:IsShown() then
 				SUI:Print(L['Hiding setup due to combat'])
-				Win:Hide()
-			elseif not InCombatLockdown() and not Win:IsShown() and WinShow then
-				Win:Show()
+				Window:Hide()
+			elseif not InCombatLockdown() and not Window:IsShown() and WindowShow then
+				Window:Show()
 			end
 		end
 	)
 
-	Win:RegisterEvent('PLAYER_REGEN_DISABLED')
-	Win:RegisterEvent('PLAYER_REGEN_ENABLED')
+	Window:RegisterEvent('PLAYER_REGEN_DISABLED')
+	Window:RegisterEvent('PLAYER_REGEN_ENABLED')
 
-	Win:Hide()
-	WinShow = false
-	return Win
+	Window:Hide()
+	WindowShow = false
+	return Window
 end
