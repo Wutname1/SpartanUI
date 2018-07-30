@@ -123,8 +123,9 @@ function module:SetupMenus()
 					return SUI.DB.ActionBars.Allenable
 				end,
 				set = function(info, val)
+					SUI.DB.ActionBars.Allenable = val
 					for i = 1, 6 do
-						SUI.DB.ActionBars['bar' .. i].enable, DB.ActionBars.Allenable = val, val
+						SUI.DB.ActionBars['bar' .. i].enable = val
 					end
 				end
 			},
