@@ -299,7 +299,6 @@ function module.QUEST_LOG_UPDATE()
 				questCache[title] = true
 			end
 		end
-	-- self:UnregisterEvent("QUEST_LOG_UPDATE")
 	end
 end
 
@@ -354,7 +353,7 @@ function module:VarArgForAvailableQuests(...)
 	end
 end
 
-local DummyFunction = function ()
+local DummyFunction = function()
 end
 
 function module:FirstLaunch()
@@ -375,14 +374,14 @@ function module:FirstLaunch()
 				CreateFrame('CheckButton', 'SUI_ATI_TurnInEnabled', SUI_Win.ATI, 'OptionsCheckButtonTemplate')
 			SUI_Win.ATI.TurnInEnabled:SetPoint('TOP', SUI_Win.ATI, 'TOP', -90, -90)
 			SUI_ATI_TurnInEnabledText:SetText('Enable turning in quests')
-			SUI_Win.ATI.TurnInEnabled:SetScript("OnClick", DummyFunction);
+			SUI_Win.ATI.TurnInEnabled:SetScript('OnClick', DummyFunction)
 
 			--AcceptGeneralQuests
 			SUI_Win.ATI.AcceptGeneralQuests =
 				CreateFrame('CheckButton', 'SUI_ATI_AcceptGeneralQuests', SUI_Win.ATI, 'OptionsCheckButtonTemplate')
 			SUI_Win.ATI.AcceptGeneralQuests:SetPoint('TOP', SUI_Win.ATI.TurnInEnabled, 'BOTTOM', 0, -15)
 			SUI_ATI_AcceptGeneralQuestsText:SetText('Enable accepting quests')
-			SUI_Win.ATI.AcceptGeneralQuests:SetScript("OnClick", DummyFunction);
+			SUI_Win.ATI.AcceptGeneralQuests:SetScript('OnClick', DummyFunction)
 
 			--Defaults
 			SUI_ATI_TurnInEnabled:SetChecked(true)
@@ -433,7 +432,7 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() then
+	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled then
 		CompleteQuest()
 	end
 end
@@ -468,7 +467,6 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	-- if not SUI.DB.EnabledComponents.AutoTurnIn then module:HideOptions() return end
 	if SUI.DB.AutoTurnIn.FirstLaunch then
 		module:FirstLaunch()
 	end
@@ -495,8 +493,10 @@ function module:OnEnable()
 	ATI_Container:RegisterEvent('QUEST_LOG_UPDATE') -- quest progress
 	ATI_Container:RegisterEvent('QUEST_ACCEPTED')
 	ATI_Container:RegisterEvent('QUEST_COMPLETE') -- quest turn in screen
-	-- hooksecurefunc("QuestLogQuests_Update", ATI_Container.ShowQuestLevelInLog)
-	-- hooksecurefunc(QuestFrame, "Hide", function() SUI.DB.allowed = nil end)
+end
+
+function module:OnDisable()
+	ATI_Container = nil
 end
 
 function module:BuildOptions()
