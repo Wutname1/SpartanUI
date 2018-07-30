@@ -241,8 +241,15 @@ end
 function Artwork_Core:FirstTime()
 	SUI.DBMod.Artwork.SetupDone = false
 	local PageData = {
+		ID = 'ArtworkCore',
+		Name = 'SpartanUI style',
 		SubTitle = 'Art Style',
 		Desc1 = 'Please pick an art style from the options below.',
+		RequireReload = true,
+		Priority = true,
+		Skipable = true,
+		NoReloadOnSkip = true,
+		RequireDisplay = SUI.DBMod.Artwork.SetupDone,
 		Display = function()
 			--Container
 			SUI_Win.Artwork = CreateFrame('Frame', nil)
@@ -453,19 +460,14 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
 		end,
-		RequireReload = true,
-		Priority = true,
-		Skipable = true,
-		NoReloadOnSkip = true,
 		Skip = function()
 			SUI.DBMod.Artwork.SetupDone = true
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWizard')
 	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
 end
 
 function Artwork_Core:OnEnable()

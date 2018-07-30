@@ -546,10 +546,11 @@ local CreateMediumFrame = function(self, unit)
 		self.artwork.flair.bg = self.artwork.flair:CreateTexture(nil, 'BACKGROUND')
 		-- self.artwork.flair:SetBlendMode("ADD");
 		-- self.artwork.flair:SetParent(self.artwork.bg)
-		self.artwork.flair.bg:SetPoint('RIGHT', self, 'RIGHT', 0, 0)
+		-- self.artwork.flair.bg:SetPoint('RIGHT', self, 'RIGHT', 0, 0)
 		self.artwork.flair.bg:SetTexture(Images.flair2.Texture)
 		self.artwork.flair.bg:SetTexCoord(unpack(Images.flair2.Coords))
-		self.artwork.flair.bg:SetSize(self:GetWidth(), self:GetHeight() + 20)
+		self.artwork.flair.bg:SetAllPoints(self )
+		-- self.artwork.flair.bg:SetSize(self:GetWidth(), self:GetHeight())
 
 		self.ThreatIndicator = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -5)
 		self.ThreatIndicator:SetTexture('Interface\\Scenarios\\Objective-Lineglow')

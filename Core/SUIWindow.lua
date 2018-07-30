@@ -22,30 +22,16 @@ local ReloadNeeded = function(mode)
 	end
 end
 
-function module:AddPage(PageData)
-	if Win == nil then
-		module:SUIWindow()
-	end
-
-	PageCnt = PageCnt + 1
-	PageList[PageCnt] = PageData
-
-	--If something already displayed the window update the text
-	if SUI_Win:IsVisible() then
-		SUI_Win.Status:SetText(Page_Cur .. '  /  ' .. PageCnt)
-	end
-end
-
 function module:DisplayPage(CustomData)
 	if Win == nil then
-		module:SUIWindow()
+		Win = module:CreateWindow()
 	end
 	if CustomData then
 		if CustomData.WipePage then
 			SUI_Win:Hide()
 			SUI_Win = nil
 			Win = nil
-			module:SUIWindow()
+			Win = module:CreateWindow()
 		end
 	end
 	
@@ -143,8 +129,8 @@ local ClearPage = function()
 	Win.Desc2:SetText('')
 end
 
-function module:SUIWindow()
-	Win = CreateFrame('Frame', 'SUI_Win', UIParent)
+function module:CreateWindow(FrameName)
+	local Win = CreateFrame('Frame', FrameName, UIParent)
 	Win:SetSize(600, 450)
 	Win:SetPoint('TOP', UIParent, 'TOP', 0, -150)
 	Win:SetFrameStrata('DIALOG')
@@ -325,4 +311,5 @@ function module:SUIWindow()
 
 	Win:Hide()
 	WinShow = false
+	return Win
 end

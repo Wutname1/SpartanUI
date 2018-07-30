@@ -81,7 +81,7 @@ function SUI:WhatsNew()
 		end
 	}
 
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SUIWindow')
 
 	SetupWindow:AddPage(PageData)
 	SetupWindow:DisplayPage()

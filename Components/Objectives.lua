@@ -132,7 +132,6 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent('GROUP_JOINED')
 	ObjectiveTrackerWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
 	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
-	--ObjectiveTrackerWatcher:RegisterEvent("PARTY_CONVERTED_TO_RAID")
 	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_START')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_END')
@@ -214,9 +213,12 @@ end
 
 function module:FirstTimeSetup()
 	local PageData = {
+		ID = 'Objectives',
+		Name = 'Objectives',
 		SubTitle = 'Objectives',
 		Desc1 = 'The objectives module can hide the objectives based on diffrent conditions. This allows you to free your screen when you need it the most automatically.',
 		Desc2 = 'The defaults here are based on your current level.',
+		RequireDisplay = SUI.DBMod.Objectives.SetupDone,
 		Display = function()
 			local gui = LibStub('AceGUI-3.0')
 			--Container

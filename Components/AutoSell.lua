@@ -45,9 +45,12 @@ end
 
 function module:FirstTime()
 	local PageData = {
-		SubTitle = 'Auto Sell',
+		ID = 'Autosell',
+		Name = 'Auto sell',
+		SubTitle = 'Auto sell',
 		Desc1 = 'Automatically vendor items when you visit a merchant.',
 		Desc2 = 'Crafting, consumables, and gearset items will not be sold by default.',
+		RequireDisplay = SUI.DB.AutoSell.FirstLaunch,
 		Display = function()
 			local gui = LibStub('AceGUI-3.0')
 			--Container
@@ -146,9 +149,8 @@ function module:FirstTime()
 			SUI.DB.AutoSell.FirstLaunch = true
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWizard')
 	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
 end
 
 -- Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.

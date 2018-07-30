@@ -359,8 +359,11 @@ end
 
 function module:FirstLaunch()
 	local PageData = {
-		SubTitle = 'Auto Turn In',
+		ID = 'Autoturnin',
+		Name = 'Auto turn in',
+		SubTitle = 'Auto turn in',
 		Desc1 = 'Automatically accept and turn in quests.',
+		RequireDisplay = SUI.DB.AutoTurnIn.FirstLaunch,
 		Display = function()
 			--Container
 			SUI_Win.ATI = CreateFrame('Frame', nil)
@@ -398,9 +401,8 @@ function module:FirstLaunch()
 			SUI.DB.AutoTurnIn.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWizard')
 	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
 end
 
 function module.GOSSIP_SHOW()

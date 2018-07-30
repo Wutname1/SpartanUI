@@ -759,230 +759,6 @@ function SUI:FirstTimeSetup()
 	-- SetupWindow:DisplayPage()
 end
 
-function SUI:FontSetupWizard()
-	local PageData, SetupWindow
-
-	local fontlist = {
-		'RobotoBold',
-		'Roboto',
-		'Cognosis',
-		'NotoSans',
-		'FrizQuadrata',
-		'ArialNarrow'
-	}
-	local fontnames = {
-		['RobotoBold'] = 'Roboto-Bold',
-		['Roboto'] = 'Roboto',
-		['Cognosis'] = 'SpartanUI',
-		['NotoSans'] = 'SUI4',
-		['FrizQuadrata'] = 'FrizQuadrata',
-		['ArialNarrow'] = 'ArialNarrow'
-	}
-
-	PageData = {
-		SubTitle = 'Font Style',
-		Display = function()
-			SUI_Win.FontFace = CreateFrame('Frame', nil)
-			SUI_Win.FontFace:SetParent(SUI_Win.content)
-			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
-
-			local RadioButtons = function(self)
-				for _, v in ipairs(fontlist) do
-					fontface = SUI_Win.FontFace[v].radio:SetValue(false)
-				end
-
-				self.radio:SetValue(true)
-			end
-
-			local gui = LibStub('AceGUI-3.0')
-			local control, radio
-
-			--RobotoBold
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0, 0.3125)
-			control:SetImageSize(180, 60)
-			control:SetPoint('TOPLEFT', SUI_Win.FontFace, 'TOPLEFT', 55, -55)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Roboto Bold')
-			radio:SetUserData('value', 'Roboto-Bold')
-			radio:SetUserData('text', 'Roboto-Bold')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.RobotoBold = control
-
-			--Roboto
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.34375, 0.65625)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.RobotoBold.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Roboto')
-			radio:SetUserData('value', 'Roboto')
-			radio:SetUserData('text', 'Roboto')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.Roboto = control
-
-			--Cognosis
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.6875, 1)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.Roboto.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Cognosis')
-			radio:SetUserData('value', 'SpartanUI')
-			radio:SetUserData('text', 'SpartanUI')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.Cognosis = control
-
-			--NotoSans
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0, 0.3125)
-			control:SetImageSize(180, 60)
-			control:SetPoint('TOP', SUI_Win.FontFace.RobotoBold.radio.frame, 'BOTTOM', 0, -20)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('NotoSans')
-			radio:SetUserData('value', 'SUI4')
-			radio:SetUserData('text', 'SUI4')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.NotoSans = control
-
-			--FrizQuadrata
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.34375, 0.65625)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.NotoSans.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Friz Quadrata')
-			radio:SetUserData('value', 'FrizQuadrata')
-			radio:SetUserData('text', 'FrizQuadrata')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.FrizQuadrata = control
-
-			--ArialNarrow
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.6875, 1)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.FrizQuadrata.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Arial Narrow')
-			radio:SetUserData('value', 'ArialNarrow')
-			radio:SetUserData('text', 'ArialNarrow')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.ArialNarrow = control
-
-			SUI_Win.FontFace.RobotoBold.radio:SetValue(true)
-		end,
-		Next = function()
-			local fontface
-
-			for _, v in ipairs(fontlist) do
-				if SUI_Win.FontFace[v].radio:GetValue() then
-					fontface = fontnames[v]
-				end
-			end
-
-			if fontface then
-				SUI.DB.font.Primary.Face = fontface
-				SUI.DB.font.Core.Face = fontface
-				SUI.DB.font.Player.Face = fontface
-				SUI.DB.font.Party.Face = fontface
-				SUI.DB.font.Raid.Face = fontface
-			end
-			SUI_Win.FontFace:Hide()
-			SUI_Win.FontFace = nil
-			SUI.DB.SetupDone = true
-		end,
-		Skip = function()
-			SUI_Win.FontFace:Hide()
-			SUI_Win.FontFace = nil
-			SUI.DB.SetupDone = true
-		end
-	}
-
-	SetupWindow = SUI:GetModule('SetupWindow')
-	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
-	-- This will be moved once we put the setup page in place.
-	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
-end
-
 function SUI:OnInitialize()
 	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 	--If we have not played in a long time reset the database, make sure it is all good.
@@ -1039,6 +815,7 @@ function SUI:OnInitialize()
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
 	end
 
+	-- Initalize setup of Fonts
 	SUI:FontSetup()
 
 	--First Time Setup Actions
@@ -1056,6 +833,13 @@ end
 function SUI:DBUpgrades()
 	if SUI.DBMod.Artwork.Style == '' and SUI.DBMod.Artwork.SetupDone then
 		SUI.DBMod.Artwork.Style = 'Classic'
+	end
+
+	-- 5.0.0 Upgrades
+	if SUI.DB.Version < '5.0.0' then
+		if SUI.DB.SetupDone then
+			SUI.DB.font.SetupDone = true
+		end
 	end
 end
 
@@ -1109,7 +893,7 @@ function SUI:BT4ProfileAttach(msg)
 			-- ReloadUI()
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SUIWindow')
 	SetupWindow:DisplayPage(PageData)
 end
 
@@ -1195,13 +979,12 @@ function SUI:reloadui(Desc2)
 			ReloadUI()
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SUIWindow')
 	SetupWindow:DisplayPage(PageData)
 end
 
 function SUI:OnEnable()
 	if not SUI.DB.SetupDone then
-		SUI:FontSetupWizard()
 	end
 	AceConfig:RegisterOptionsTable(
 		'SpartanUIBliz',
