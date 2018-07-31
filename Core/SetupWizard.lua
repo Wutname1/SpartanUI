@@ -28,63 +28,115 @@ function module:AddPage(PageData)
 	PageID[TotalPageCount] = PageData.ID
 end
 
-local CreateSidebarLabel = function(id, data)
+local CreateSidebarLabel = function(id, PageData)
 	-- Create the Button
-	local NewLabel = StdUi:FontString(Window.Sidebar, data.Name);
+	local NewLabel = StdUi:FontString(SetupWindow.Sidebar, PageData.Name)
 	NewLabel.ID = PageData.ID
 
 	-- Position that button
 	if SidebarID == 0 then
-		NewLabel:SetPoint('TOP', Window.Sidebar, 'TOP', 0, 0)
+		NewLabel:SetPoint('TOP', SetupWindow.Sidebar, 'TOP', 0, 0)
 	else
-		NewLabel:SetPoint('TOP', Window.Sidebar.Buttons[(SidebarID - 1)], 'BOTTOM', 0, 0)
+		NewLabel:SetPoint('TOP', SetupWindow.Sidebar.Items[(SidebarID - 1)], 'BOTTOM', 0, 0)
 	end
 
 	-- Store the Button and increase the ID Number
 	SidebarID = SidebarID + 1
-	Window.Sidebar.Items[SidebarID] = NewLabel
+	SetupWindow.Sidebar.Items[SidebarID] = NewLabel
 end
 
 function module:ShowWizard()
-	SetupWindow = SUI:GetModule('SUIWindow'):CreateWindow('SUI_SetupWizard', 600, 480)
+	SetupWindow = SUI:GetModule('SUIWindow'):CreateWindow('SUI_SetupWizard', 650, 500)
 
 	-- If we have more than one page to show then add a progress bar, and a selection tree on the side.
 	if TotalPageCount > 1 then
 		-- Create the sidebar
-		local Sidebar = CreateFrame('Frame', nil, Window)
-		Sidebar:SetPoint('TOPLEFT', Window, 'TOPLEFT', -5, -5)
-		Sidebar:SetPoint('BOTTOMRIGHT', Window, 'BOTTOMLEFT', 150, 5)
-		Sidebar.Items = {}
-		Window.Sidebar = Sidebar
+		-- local Sidebar = CreateFrame('Frame', nil, Window)
+		-- Sidebar:SetPoint('TOPLEFT', SetupWindow, 'TOPLEFT', -5, -5)
+		-- Sidebar:SetPoint('BOTTOMRIGHT', SetupWindow, 'BOTTOMLEFT', 100, 5)
+		-- Sidebar.Items = {}
+		-- SetupWindow.Sidebar = Sidebar
+
+		-- Build out the setup order & sidebar list
+		-- for id, data in pairs(PriorityPageList) do
+		-- 	CreateSidebarLabel(id, data)
+		-- end
+		-- for id, data in pairs(PageList) do
+		-- 	CreateSidebarLabel(id, data)
+		-- end
 
 		-- Add a Progress bar to the bottom
-		local ProgressBar = StdUi:ProgressBar(SetupWindow, (SetupWindow:GetWidth() - (10 + Window.Sidebar:GetWidth())), 20)
+		local ProgressBar = StdUi:ProgressBar(SetupWindow, (SetupWindow:GetWidth() - 4), 20)
 		ProgressBar:SetMinMaxValues(0, TotalPageCount)
 		ProgressBar:SetValue(0)
-		ProgressBar:SetPoint('BOTTOMLEFT', Window.Sidebar, 'BOTTOMRIGHT')
+		ProgressBar:SetPoint('BOTTOMLEFT', SetupWindow, 'BOTTOMLEFT', 2, 2)
 		SetupWindow.ProgressBar = ProgressBar
 
 		-- Adjust the buttons up
-		Window.Skip:ClearAllPoints()
-		Window.Skip:SetPoint('BOTTOMLEFT', SetupWindow.ProgressBar, 'TOPLEFT', 0, 2)
+		SetupWindow.Skip:ClearAllPoints()
+		SetupWindow.Skip:SetPoint('BOTTOMLEFT', SetupWindow.ProgressBar, 'TOPLEFT', 0, 2)
 
-		Window.Next:ClearAllPoints()
-		Window.Next:SetPoint('BOTTOMRIGHT', SetupWindow.ProgressBar, 'TOPRIGHT', 0, 2)
+		SetupWindow.Next:ClearAllPoints()
+		SetupWindow.Next:SetPoint('BOTTOMRIGHT', SetupWindow.ProgressBar, 'TOPRIGHT', 0, 2)
 
 		-- Adjust the content area to account for the new layout
-		Window.content:ClearAllPoints()
-		Window.content:SetPoint('TOP', Window.Desc2, 'BOTTOM', 0, -2)
-		Window.content:SetPoint('BOTTOMLEFT', Window.Skip, 'TOPLEFT', 0, 2)
-		Window.content:SetPoint('BOTTOMRIGHT', Window.Next, 'TOPRIGHT', 0, 2)
+		SetupWindow.content:ClearAllPoints()
+		SetupWindow.content:SetPoint('TOP', SetupWindow.Desc2, 'BOTTOM', 0, -2)
+		SetupWindow.content:SetPoint('BOTTOMLEFT', SetupWindow.Skip, 'TOPLEFT', 0, 2)
+		SetupWindow.content:SetPoint('BOTTOMRIGHT', SetupWindow.Next, 'TOPRIGHT', 0, 2)
 
-		-- Build out the setup order & sidebar list
-		for id, data in pairs(PriorityPageList) do
-			CreateSidebarLabel(id, data)
-		end
-		for id, data in pairs(PageList) do
-			CreateSidebarLabel(id, data)
-		end
+		Window.Skip:SetScript(
+			'OnClick',
+			function(this)
+				if PageList[Page_Cur] ~= nil and PageList[Page_Cur].Skip ~= nil then
+					PageList[Page_Cur].Skip()
+				end
+
+				if CurData.RequireReload ~= nil and CurData.RequireReload then
+					ReloadNeeded('remove')
+				end
+
+				if Page_Cur == PageCnt and not ReloadNeeded() then
+					Window:Hide()
+					WindowShow = false
+				elseif Page_Cur == PageCnt and ReloadNeeded() then
+					ClearPage()
+					module:ReloadPage()
+				else
+					Page_Cur = Page_Cur + 1
+					ClearPage()
+					module:DisplayPage()
+				end
+			end
+		)
+
+		Window.Next:SetScript(
+			'OnClick',
+			function(this)
+				if PageList[Page_Cur] ~= nil and PageList[Page_Cur].Next ~= nil then
+					PageList[Page_Cur].Next()
+				end
+
+				PageList[Page_Cur].Displayed = false
+				if Page_Cur == PageCnt and not ReloadNeeded() then
+					Window:Hide()
+					WindowShow = false
+					--Clear Page List
+					PageList = {}
+				elseif Page_Cur == PageCnt and ReloadNeeded() then
+					ClearPage()
+					module:ReloadPage()
+				else
+					Page_Cur = Page_Cur + 1
+					ClearPage()
+					module:DisplayPage()
+				end
+			end
+		)
 	end
+
+	SetupWindow.Status:SetText('0  /  ' .. TotalPageCount)
+	-- SetupWindow:Show()
 end
 
 function module:OnInitialize()

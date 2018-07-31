@@ -154,10 +154,10 @@ local ClearPage = function()
 end
 
 --[[
-	CreateWindowdow(FrameName, width, height)
+	CreateWindow(FrameName, width, height)
 	Returns a Window Object with the default objects created.
 ]]
-function module:CreateWindowdow(FrameName, width, height)
+function module:CreateWindow(FrameName, width, height)
 	if not width then
 		width = 500
 	end
