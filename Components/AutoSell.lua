@@ -4,10 +4,23 @@ local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 local frame = CreateFrame('FRAME')
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local totalValue = 0
-local iCount = 0
-local iSellCount = 0
+local ItemsToSellTotal = 0
 local bag = 0
 local OnlyCount = true
+local ItemToSell = {
+	[0] = 0,
+	[1] = 0,
+	[2] = 0,
+	[3] = 0,
+	[4] = 0
+}
+local ItemsSold = {
+	[0] = 0,
+	[1] = 0,
+	[2] = 0,
+	[3] = 0,
+	[4] = 0
+}
 local ExcludedItems = {
 	137642, --Mark Of Honor
 	141446 --Tome of the Tranquil Mind
@@ -20,7 +33,6 @@ function module:OnInitialize()
 		NotConsumables = true,
 		NotInGearset = true,
 		MaxILVL = 180,
-		ItemsPerCycle = 5,
 		Gray = true,
 		White = false,
 		Green = false,
@@ -126,6 +138,13 @@ function module:FirstTime()
 			control.frame:Show()
 			SUI_Win.AutoSell.iLVL = control
 
+			--AutoRepair
+			SUI_Win.AutoSell.AutoRepair =
+				CreateFrame('CheckButton', 'SUI_AutoSell_AutoRepair', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
+			SUI_Win.AutoSell.AutoRepair:SetPoint('TOP', SUI_Win.AutoSell.SellPurple, 'BOTTOM', 0, -35)
+			SUI_Win.AutoSell.AutoRepair:SetScript('OnClick', DummyFunction)
+			SUI_AutoSell_AutoRepairText:SetText('Auto repair')
+
 			--Defaults
 			SUI_AutoSell_Enabled:SetChecked(true)
 			SUI_AutoSell_SellGray:SetChecked(true)
@@ -140,6 +159,7 @@ function module:FirstTime()
 			SUI.DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
 			SUI.DB.AutoSell.Blue = (SUI_Win.AutoSell.SellBlue:GetChecked() == true or false)
 			SUI.DB.AutoSell.Purple = (SUI_Win.AutoSell.SellPurple:GetChecked() == true or false)
+			SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoSell.AutoRepair:GetChecked() == true or false)
 			SUI.DB.AutoSell.MaxILVL = SUI_Win.AutoSell.iLVL:GetValue()
 
 			SUI_Win.AutoSell:Hide()
@@ -164,17 +184,18 @@ function module:SellTrashInBag()
 		local _, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
 		if module:IsSellable(itemID, link, bag, slot) then
 			if OnlyCount then
-				iCount = iCount + 1
+				ItemToSell[bag] = ItemToSell[bag] + 1
+				ItemsToSellTotal = ItemsToSellTotal + 1
 				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
-			elseif solditem ~= SUI.DB.AutoSell.ItemsPerCycle then
+			elseif solditem ~= 5 then
 				solditem = solditem + 1
-				iSellCount = iSellCount + 1
+				ItemsSold[bag] = ItemsSold[bag] + 1
 				UseContainerItem(bag, slot)
 			end
 		end
 	end
 
-	if OnlyCount then
+	if OnlyCount or ItemToSell[bag] ~= ItemsSold[bag] then
 		return
 	end
 
@@ -347,10 +368,23 @@ end
 function module:SellTrash()
 	--Reset Locals
 	totalValue = 0
-	iCount = 0
-	iSellCount = 0
+	ItemsToSellTotal = 0
 	Timer = nil
 	bag = 0
+	ItemToSell = {
+		[0] = 0,
+		[1] = 0,
+		[2] = 0,
+		[3] = 0,
+		[4] = 0
+	}
+	ItemsSold = {
+		[0] = 0,
+		[1] = 0,
+		[2] = 0,
+		[3] = 0,
+		[4] = 0
+	}
 
 	--Count Items to sell
 	OnlyCount = true
@@ -358,10 +392,12 @@ function module:SellTrash()
 		bag = b
 		module:SellTrashInBag()
 	end
-	if iCount == 0 then
+
+	--Sell Items if needed
+	if ItemsToSellTotal == 0 then
 		SUI:Print(L['No items are to be auto sold'])
 	else
-		SUI:Print('Need to sell ' .. iCount .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
+		SUI:Print('Need to sell ' .. ItemsToSellTotal .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
 		OnlyCount = false
 		bag = 0
@@ -383,9 +419,7 @@ function module:Repair()
 end
 
 function module:OnEnable()
-	if SUI.DB.AutoSell.FirstLaunch then
-		module:FirstTime()
-	end
+	module:FirstTime()
 	module:BuildOptions()
 	if SUI.DB.EnabledComponents.AutoSell then
 		module:Enable()
@@ -547,24 +581,6 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DB.AutoSell.Purple = val
-				end
-			},
-			ItemsPerCycle = {
-				name = L['Items per bag, per cycle to sell'],
-				desc = L[
-					'Sometimes the addon can sell items too fast for the game. We limit it to only do so many per bag per vendor session to account for this.'
-				],
-				type = 'range',
-				order = 30,
-				width = 'full',
-				min = 1,
-				max = 40,
-				step = 1,
-				set = function(info, val)
-					SUI.DB.AutoSell.ItemsPerCycle = val
-				end,
-				get = function(info)
-					return SUI.DB.AutoSell.ItemsPerCycle
 				end
 			},
 			line1 = {name = '', type = 'header', order = 200},
