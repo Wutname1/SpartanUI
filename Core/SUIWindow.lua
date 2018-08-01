@@ -157,14 +157,19 @@ end
 	CreateWindow(FrameName, width, height)
 	Returns a Window Object with the default objects created.
 ]]
-function module:CreateWindow(FrameName, width, height)
+function module:CreateWindow(FrameName, width, height, FrameLabel)
 	if not width then
 		width = 500
 	end
 	if not height then
 		height = 400
 	end
+	if not FrameLabel then
+		FrameLabel = 'SpartanUI'
+	end
 	
+
+
 	local Window = CreateFrame('Frame', FrameName, UIParent)
 	Window:SetSize(width, height)
 	Window:SetPoint('TOP', UIParent, 'TOP', 0, -150)
@@ -346,5 +351,6 @@ function module:CreateWindow(FrameName, width, height)
 
 	Window:Hide()
 	WindowShow = false
+	
 	return Window
 end

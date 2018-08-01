@@ -532,11 +532,11 @@ local CreateMediumFrame = function(self, unit)
 		self.artwork:SetFrameLevel(1)
 		self.artwork:SetAllPoints(self)
 
-		self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
-		self.artwork.bg:SetPoint('CENTER', self)
-		self.artwork.bg:SetTexture(Images.smallbg.Texture)
-		self.artwork.bg:SetTexCoord(unpack(Images.smallbg.Coords))
-		self.artwork.bg:SetSize(self:GetSize())
+		-- self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
+		-- self.artwork.bg:SetPoint('CENTER', self)
+		-- self.artwork.bg:SetTexture(Images.smallbg.Texture)
+		-- self.artwork.bg:SetTexCoord(unpack(Images.smallbg.Coords))
+		-- self.artwork.bg:SetSize(self:GetSize())
 
 		self.artwork.flair = CreateFrame('Frame', nil, self)
 		self.artwork.flair:SetFrameStrata('BACKGROUND')
@@ -544,13 +544,10 @@ local CreateMediumFrame = function(self, unit)
 		self.artwork.flair:SetAllPoints(self)
 
 		self.artwork.flair.bg = self.artwork.flair:CreateTexture(nil, 'BACKGROUND')
-		-- self.artwork.flair:SetBlendMode("ADD");
-		-- self.artwork.flair:SetParent(self.artwork.bg)
-		-- self.artwork.flair.bg:SetPoint('RIGHT', self, 'RIGHT', 0, 0)
+		self.artwork.flair.bg:SetPoint('RIGHT', self, 'RIGHT', 0, 0)
 		self.artwork.flair.bg:SetTexture(Images.flair2.Texture)
 		self.artwork.flair.bg:SetTexCoord(unpack(Images.flair2.Coords))
-		self.artwork.flair.bg:SetAllPoints(self )
-		-- self.artwork.flair.bg:SetSize(self:GetWidth(), self:GetHeight())
+		self.artwork.flair.bg:SetSize(self:GetWidth(), self:GetHeight() + 20)
 
 		self.ThreatIndicator = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -5)
 		self.ThreatIndicator:SetTexture('Interface\\Scenarios\\Objective-Lineglow')
@@ -859,7 +856,7 @@ local CreateUnitFrame = function(self, unit)
 	self =
 		((unit == 'target' and CreateLargeFrame(self, unit)) or (unit == 'player' and CreateLargeFrame(self, unit)) or
 		(unit == 'targettarget' and CreateSmallFrame(self, unit)) or
-		(unit == 'focus' and CreateMediumFrame(self, unit)) or
+		(unit == 'focus' and CreateSmallFrame(self, unit)) or
 		(unit == 'focustarget' and CreateSmallFrame(self, unit)) or
 		(unit == 'pet' and CreateSmallFrame(self, unit)) or
 		(unit == 'arena' and CreateMediumFrame(self, unit)) or
