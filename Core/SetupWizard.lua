@@ -2,12 +2,30 @@ local SUI = SUI
 local module = SUI:NewModule('SetupWizard')
 local StdUi = LibStub('StdUi'):NewInstance()
 
-local SetupWindow, DisplayRequired, InitDone = nil, false, false
+local SetupWindow, DisplayRequired, InitDone, ReloadNeeded = nil, false, false, false
 local TotalPageCount, PageDisplayOrder, PageDisplayed = 0, 1, 0
-local PriorityPageList = {}
-local StandardPageList = {}
-local FinalPageList = {}
-local PageID = {}
+local PriorityPageList, StandardPageList, FinalPageList, PageID, CurrentDisplay = {}, {}, {}, {}, {}
+local ReloadPage = {
+	ID = 'ReloadPage',
+	Name = 'Reload required',
+	SubTitle = 'Reload required',
+	Desc1 = 'Setup finished!',
+	Desc2 = 'This completes the setup wizard, a reload of the UI is required to finish the setup.',
+	Display = function()
+		SetupWindow.WelcomePage = CreateFrame('Frame', nil)
+		SetupWindow.WelcomePage:SetParent(SetupWindow.content)
+		SetupWindow.WelcomePage:SetAllPoints(SetupWindow.content)
+
+		SetupWindow.WelcomePage.Helm =
+			StdUi:Texture(SetupWindow.WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
+		SetupWindow.WelcomePage.Helm:SetPoint('CENTER')
+
+		SetupWindow.Next:SetText('RELOAD UI')
+	end,
+	Next = function()
+		ReloadUI()
+	end
+}
 
 local LoadWatcherEvent = function()
 	module:ShowWizard()
@@ -38,25 +56,6 @@ function module:AddPage(PageData)
 		ID = PageData.ID,
 		DisplayOrder = nil
 	}
-
-end
-
-local CreateSidebarLabel = function(id, PageData)
-	-- Create the Button
-	local NewLabel = StdUi:FontString(SetupWindow.Sidebar, PageData.Name)
-	print(PageData.Name .. SidebarID)
-	NewLabel.ID = PageData.ID
-
-	-- Position that button
-	if SidebarID == 0 then
-		NewLabel:SetPoint('TOP', SetupWindow.Sidebar, 'TOP', 0, 0)
-	else
-		NewLabel:SetPoint('TOP', SetupWindow.Sidebar.Items[(SidebarID - 1)], 'BOTTOM', 0, 0)
-	end
-
-	-- Store the Button and increase the ID Number
-	SetupWindow.Sidebar.Items[SidebarID] = NewLabel
-	SidebarID = SidebarID + 1
 end
 
 function module:FindNextPage()
@@ -82,22 +81,28 @@ function module:FindNextPage()
 			PageDisplayOrder = PageDisplayOrder + 1
 		end
 	end
+	SetupWindow.ProgressBar:SetMinMaxValues(1, TotalPageCount)
 
 	--Find the next undisplayed page
-	if PriorityPageList[FinalPageList[PageDisplayed+1]] then
-		module:DisplayPage(PriorityPageList[FinalPageList[PageDisplayed+1]])
-	elseif StandardPageList[FinalPageList[PageDisplayed+1]] then
-		module:DisplayPage(StandardPageList[FinalPageList[PageDisplayed+1]])
+	if FinalPageList[(PageDisplayed + 1)] then
+		PageDisplayed = PageDisplayed + 1
+		local ID = FinalPageList[PageDisplayed]
+
+		-- Find what kind of page this is
+		if PriorityPageList[ID] then
+			module:DisplayPage(PriorityPageList[ID])
+		elseif StandardPageList[ID] then
+			module:DisplayPage(StandardPageList[ID])
+		end
+	elseif ReloadNeeded and PageDisplayed == TotalPageCount then
+		module:DisplayPage(ReloadPage)
 	end
 end
 
 function module:DisplayPage(PageData)
-	print(PageData.ID)
+	CurrentDisplay = PageData
 	if PageData.title then
 		SetupWindow.titleHolder:SetText(PageData.title)
-	end
-	if PageData.RequireReload then
-		ReloadNeeded('add')
 	end
 	if PageData.SubTitle then
 		SetupWindow.SubTitle:SetText(PageData.SubTitle)
@@ -116,6 +121,17 @@ function module:DisplayPage(PageData)
 	end
 	if PageData.Display then
 		PageData.Display()
+	end
+	if PageData.Skip ~= nil then
+		SetupWindow.Skip:Show()
+	else
+		SetupWindow.Skip:Hide()
+	end
+
+	-- Update the Status Counter & Progress Bar
+	SetupWindow.Status:SetText(PageDisplayed .. ' /  ' .. TotalPageCount)
+	if SetupWindow.ProgressBar then
+		SetupWindow.ProgressBar:SetValue((100 / TotalPageCount) * PageDisplayed)
 	end
 end
 
@@ -142,7 +158,7 @@ function module:ShowWizard()
 	SetupWindow.Desc2:SetTextColor(1, 1, 1, .8)
 	SetupWindow.Desc2:SetWidth(SetupWindow:GetWidth() - 40)
 
-	SetupWindow.Status = StdUi:Label(SetupWindow, '', 9, nil, 60, 15)
+	SetupWindow.Status = StdUi:Label(SetupWindow, '', 9, nil, 40, 15)
 	SetupWindow.Status:SetPoint('TOPRIGHT', SetupWindow, 'TOPRIGHT', -2, -2)
 	SetupWindow.Status:SetText('0  /  ' .. TotalPageCount)
 
@@ -177,55 +193,49 @@ function module:ShowWizard()
 	SetupWindow.Skip:SetScript(
 		'OnClick',
 		function(this)
-			if PageList[Page_Cur] ~= nil and PageList[Page_Cur].Skip ~= nil then
-				PageList[Page_Cur].Skip()
+			-- Perform the Page's Custom Skip action
+			if CurrentDisplay.Skip then
+				CurrentDisplay.Skip()
 			end
 
-			if CurData.RequireReload ~= nil and CurData.RequireReload then
-				ReloadNeeded('remove')
+			-- If Reload is needed by the page flag it.
+			if CurrentDisplay.RequireReload then
+				ReloadNeeded = true
 			end
 
-			if Page_Cur == PageCnt and not ReloadNeeded() then
-				Window:Hide()
-				WindowShow = false
-			elseif Page_Cur == PageCnt and ReloadNeeded() then
-				ClearPage()
-				module:ReloadPage()
-			else
-				Page_Cur = Page_Cur + 1
-				ClearPage()
-				module:DisplayPage()
-			end
+			-- Show the next page
+			module:FindNextPage()
 		end
 	)
 
 	SetupWindow.Next:SetScript(
 		'OnClick',
 		function(this)
-			if PageList[Page_Cur] ~= nil and PageList[Page_Cur].Next ~= nil then
-				PageList[Page_Cur].Next()
+			-- Perform the Page's Custom Next action
+			if CurrentDisplay.Next then
+				CurrentDisplay.Next()
 			end
 
-			PageList[Page_Cur].Displayed = false
-			if Page_Cur == PageCnt and not ReloadNeeded() then
-				Window:Hide()
-				WindowShow = false
-				--Clear Page List
-				PageList = {}
-			elseif Page_Cur == PageCnt and ReloadNeeded() then
-				ClearPage()
-				module:ReloadPage()
-			else
-				Page_Cur = Page_Cur + 1
-				ClearPage()
-				module:DisplayPage()
+			--Destory anything attached to the Content frame
+			for i, v in pairs(SetupWindow.content) do
+				v:Hide()
+				if SetupWindow.content[i] then
+					SetupWindow.content[i] = nil
+				end
 			end
+
+			-- If Reload is needed by the page flag it for latter.
+			if CurrentDisplay.RequireReload then
+				ReloadNeeded = true
+			end
+
+			-- Show the next page
+			module:FindNextPage()
 		end
 	)
 
 	SetupWindow.Status = StdUi:Label(SetupWindow, '', 9, nil, 60, 15)
 	SetupWindow.Status:SetPoint('TOPRIGHT', SetupWindow, 'TOPRIGHT', -2, -2)
-	SetupWindow.Status:SetText('1  /  ' .. TotalPageCount)
 
 	-- Display first page
 	module:FindNextPage()
@@ -253,8 +263,9 @@ function module:OnInitialize()
 			SetupWindow.WelcomePage:SetParent(SetupWindow.content)
 			SetupWindow.WelcomePage:SetAllPoints(SetupWindow.content)
 
-			SetupWindow.WelcomePage.Helm = StdUi:Texture(SetupWindow.WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
-			SetupWindow.WelcomePage.Helm:SetPoint('CENTER', SetupWindow.WelcomePage, 'CENTER')
+			SetupWindow.WelcomePage.Helm =
+				StdUi:Texture(SetupWindow.WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
+			SetupWindow.WelcomePage.Helm:SetPoint('CENTER')
 		end,
 		RequireDisplay = SUI.DB.SetupWizard.FirstLaunch,
 		Priority = true

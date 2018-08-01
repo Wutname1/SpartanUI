@@ -612,10 +612,18 @@ function module:OnInitialize()
 		type = 'group',
 		order = 900,
 		args = {
+			ReRunSetupWizard = {
+				name = L['Rerun setup wizard'],
+				type = 'execute',
+				order = .1,
+				func = function()
+					SUI:GetModule('SetupWizard'):ShowWizard()
+				end
+			},
 			ResetProfileDB = {
 				name = L['Reset profile'],
 				type = 'execute',
-				order = 0,
+				order = .5,
 				func = function()
 					SUI.SpartanUIDB:ResetProfile()
 					ReloadUI()
