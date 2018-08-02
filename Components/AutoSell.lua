@@ -64,6 +64,7 @@ function module:FirstTime()
 		Desc2 = 'Crafting, consumables, and gearset items will not be sold by default.',
 		RequireDisplay = SUI.DB.AutoSell.FirstLaunch,
 		Display = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			local gui = LibStub('AceGUI-3.0')
 			--Container
 			SUI_Win.AutoSell = CreateFrame('Frame', nil)
@@ -130,10 +131,8 @@ function module:FirstTime()
 			control:SetLabel('Max iLVL to sell')
 			control:SetSliderValues(1, 500, 1)
 			control:SetValue(180)
-			control:SetPoint('TOPLEFT', SUI_Win.AutoSell.SellPurple, 'BOTTOMLEFT', 0, -15)
+			control:SetPoint('TOPLEFT', SUI_Win.AutoSell.SellPurple, 'BOTTOMLEFT', 0, -10)
 			control:SetWidth(SUI_Win:GetWidth() / 1.3)
-			-- control:SetCallback("OnValueChanged",function(self) print(self:GetValue()) end)
-			-- control:SetCallback("OnMouseUp",ActivateSlider)
 			control.frame:SetParent(SUI_Win.AutoSell)
 			control.frame:Show()
 			SUI_Win.AutoSell.iLVL = control
@@ -141,7 +140,7 @@ function module:FirstTime()
 			--AutoRepair
 			SUI_Win.AutoSell.AutoRepair =
 				CreateFrame('CheckButton', 'SUI_AutoSell_AutoRepair', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.AutoRepair:SetPoint('TOP', SUI_Win.AutoSell.SellPurple, 'BOTTOM', 0, -35)
+			SUI_Win.AutoSell.AutoRepair:SetPoint('TOP', SUI_Win.AutoSell.SellPurple, 'BOTTOM', 0, -40)
 			SUI_Win.AutoSell.AutoRepair:SetScript('OnClick', DummyFunction)
 			SUI_AutoSell_AutoRepairText:SetText('Auto repair')
 
@@ -151,6 +150,7 @@ function module:FirstTime()
 			SUI_AutoSell_SellWhite:SetChecked(true)
 		end,
 		Next = function()
+			
 			SUI.DB.AutoSell.FirstLaunch = false
 
 			SUI.DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
