@@ -220,6 +220,7 @@ function module:FirstTimeSetup()
 		Desc2 = 'The defaults here are based on your current level.',
 		RequireDisplay = SUI.DBMod.Objectives.SetupDone,
 		Display = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			local gui = LibStub('AceGUI-3.0')
 			--Container
 			SUI_Win.Objectives = CreateFrame('Frame', nil)
@@ -287,6 +288,7 @@ function module:FirstTimeSetup()
 			end
 		end,
 		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI.DBMod.Objectives.SetupDone = true
 			SUI.DBMod.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
@@ -299,6 +301,9 @@ function module:FirstTimeSetup()
 
 			SUI_Win.Objectives:Hide()
 			SUI_Win.Objectives = nil
+		end,
+		Skip = function()
+			SUI.DB.Objectives.SetupDone = false
 		end
 	}
 	SUI:GetModule('SetupWizard'):AddPage(PageData)

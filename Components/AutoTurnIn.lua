@@ -364,6 +364,7 @@ function module:FirstLaunch()
 		Desc1 = 'Automatically accept and turn in quests.',
 		RequireDisplay = SUI.DB.AutoTurnIn.FirstLaunch,
 		Display = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			--Container
 			SUI_Win.ATI = CreateFrame('Frame', nil)
 			SUI_Win.ATI:SetParent(SUI_Win.content)
@@ -388,6 +389,7 @@ function module:FirstLaunch()
 			SUI_ATI_AcceptGeneralQuests:SetChecked(true)
 		end,
 		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI.DB.AutoTurnIn.FirstLaunch = false
 
 			SUI.DB.AutoTurnIn.TurnInEnabled = (SUI_ATI_TurnInEnabled:GetChecked() == true or false)

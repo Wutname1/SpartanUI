@@ -251,8 +251,10 @@ function Artwork_Core:FirstTime()
 		NoReloadOnSkip = true,
 		RequireDisplay = SUI.DBMod.Artwork.SetupDone,
 		Display = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			--Container
 			SUI_Win.Artwork = CreateFrame('Frame', nil)
+			SUI_Win.Artwork:SetFrameStrata('DIALOG')
 			SUI_Win.Artwork:SetParent(SUI_Win.content)
 			SUI_Win.Artwork:SetAllPoints(SUI_Win.content)
 
@@ -276,6 +278,7 @@ function Artwork_Core:FirstTime()
 			control:SetPoint('TOPLEFT', SUI_Win.Artwork, 'TOPLEFT', 80, -30)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:SetFrameStrata('DIALOG')
 			control.frame:Show()
 
 			radio = gui:Create('CheckBox')
@@ -287,6 +290,7 @@ function Artwork_Core:FirstTime()
 			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio:SetCallback('OnClick', RadioButton)
 			radio.frame:SetParent(control.frame)
+			radio.frame:SetFrameStrata('DIALOG')
 			radio.frame:Show()
 			control.radio = radio
 
@@ -299,6 +303,7 @@ function Artwork_Core:FirstTime()
 			control:SetPoint('LEFT', SUI_Win.Artwork.Classic.frame, 'RIGHT', 30, 0)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:SetFrameStrata('DIALOG')
 			control.frame:Show()
 
 			radio = gui:Create('CheckBox')
@@ -309,6 +314,7 @@ function Artwork_Core:FirstTime()
 			radio:SetHeight(16)
 			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
+			radio.frame:SetFrameStrata('DIALOG')
 			radio.frame:Show()
 			control.radio = radio
 
@@ -321,6 +327,7 @@ function Artwork_Core:FirstTime()
 			control:SetPoint('LEFT', SUI_Win.Artwork.Fel.frame, 'RIGHT', 30, 0)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:SetFrameStrata('DIALOG')
 			control.frame:Show()
 
 			radio = gui:Create('CheckBox')
@@ -331,6 +338,7 @@ function Artwork_Core:FirstTime()
 			radio:SetHeight(16)
 			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
+			radio.frame:SetFrameStrata('DIALOG')
 			radio.frame:Show()
 			control.radio = radio
 
@@ -343,6 +351,7 @@ function Artwork_Core:FirstTime()
 			control:SetPoint('TOP', SUI_Win.Artwork.Classic.radio.frame, 'BOTTOM', 0, -30)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:SetFrameStrata('DIALOG')
 			control.frame:Show()
 
 			radio = gui:Create('CheckBox')
@@ -353,6 +362,7 @@ function Artwork_Core:FirstTime()
 			radio:SetHeight(16)
 			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
+			radio.frame:SetFrameStrata('DIALOG')
 			radio.frame:Show()
 			control.radio = radio
 
@@ -365,6 +375,7 @@ function Artwork_Core:FirstTime()
 			control:SetPoint('LEFT', SUI_Win.Artwork.Digital.frame, 'RIGHT', 30, 0)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:SetFrameStrata('DIALOG')
 			control.frame:Show()
 
 			radio = gui:Create('CheckBox')
@@ -375,6 +386,7 @@ function Artwork_Core:FirstTime()
 			radio:SetHeight(16)
 			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
+			radio.frame:SetFrameStrata('DIALOG')
 			radio.frame:Show()
 			control.radio = radio
 
@@ -387,6 +399,7 @@ function Artwork_Core:FirstTime()
 			control:SetPoint('LEFT', SUI_Win.Artwork.Transparent.frame, 'RIGHT', 30, 0)
 			control:SetCallback('OnClick', RadioButtons)
 			control.frame:SetParent(SUI_Win.Artwork)
+			control.frame:SetFrameStrata('DIALOG')
 			control.frame:Show()
 
 			radio = gui:Create('CheckBox')
@@ -397,6 +410,7 @@ function Artwork_Core:FirstTime()
 			radio:SetHeight(16)
 			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
 			radio.frame:SetParent(control.frame)
+			radio.frame:SetFrameStrata('DIALOG')
 			radio.frame:Show()
 			control.radio = radio
 
@@ -405,6 +419,7 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork.Classic.radio:SetValue(true)
 		end,
 		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI.DBMod.Artwork.SetupDone = true
 
 			if (SUI_Win.Artwork.Classic.radio:GetValue()) then
@@ -461,6 +476,7 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork = nil
 		end,
 		Skip = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI.DBMod.Artwork.SetupDone = true
 			SUI_Win.Artwork:Hide()
 			SUI_Win.Artwork = nil

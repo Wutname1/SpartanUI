@@ -150,7 +150,7 @@ function module:FirstTime()
 			SUI_AutoSell_SellWhite:SetChecked(true)
 		end,
 		Next = function()
-			
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI.DB.AutoSell.FirstLaunch = false
 
 			SUI.DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)

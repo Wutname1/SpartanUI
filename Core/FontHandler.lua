@@ -152,6 +152,7 @@ function module:FontSetupWizard()
 		SubTitle = 'Font Style',
 		RequireDisplay = SUI.DB.font.SetupDone,
 		Display = function()
+			 			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI_Win.FontFace = CreateFrame('Frame', nil)
 			SUI_Win.FontFace:SetParent(SUI_Win.content)
 			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
@@ -320,6 +321,7 @@ function module:FontSetupWizard()
 			SUI_Win.FontFace.RobotoBold.radio:SetValue(true)
 		end,
 		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			local fontface
 
 			for _, v in ipairs(fontlist) do
@@ -329,17 +331,18 @@ function module:FontSetupWizard()
 			end
 
 			if fontface then
-				SUI.DB.font.Primary.Face = fontface
-				SUI.DB.font.Core.Face = fontface
-				SUI.DB.font.Player.Face = fontface
-				SUI.DB.font.Party.Face = fontface
-				SUI.DB.font.Raid.Face = fontface
+				SUI.DB.font.Modules.Primary.Face = fontface
+				SUI.DB.font.Modules.Core.Face = fontface
+				SUI.DB.font.Modules.Player.Face = fontface
+				SUI.DB.font.Modules.Party.Face = fontface
+				SUI.DB.font.Modules.Raid.Face = fontface
 			end
 			SUI_Win.FontFace:Hide()
 			SUI_Win.FontFace = nil
 			SUI.DB.font.SetupDone = true
 		end,
 		Skip = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI_Win.FontFace:Hide()
 			SUI_Win.FontFace = nil
 			SUI.DB.font.SetupDone = true
