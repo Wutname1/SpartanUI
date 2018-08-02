@@ -256,9 +256,8 @@ function Artwork_Core:FirstTime()
 
 			--Container
 			SUI_Win.Artwork = CreateFrame('Frame', nil)
-			SUI_Win.Artwork:SetFrameStrata('DIALOG')
-			SUI_Win.Artwork:SetParent(SUI_Win.content)
-			SUI_Win.Artwork:SetAllPoints(SUI_Win.content)
+			SUI_Win.Artwork:SetParent(SUI_Win)
+			SUI_Win.Artwork:SetAllPoints(SUI_Win)
 
 			local RadioButtons = function(self)
 				-- SUI_Win.Artwork.Classic.radio:SetChecked(false)

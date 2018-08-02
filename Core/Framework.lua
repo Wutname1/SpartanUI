@@ -698,67 +698,6 @@ function SUI:ResetConfig()
 	ReloadUI()
 end
 
-function SUI:FirstTimeSetup()
-	local PageData, SetupWindow
-	--Hide Bartender4 Minimap icon.
-	if Bartender4 then
-		Bartender4.db.profile.minimapIcon.hide = true
-		local LDBIcon = LibStub('LibDBIcon-1.0', true)
-		LDBIcon['Hide'](LDBIcon, 'Bartender4')
-	end
-	--Setup page
-	SUI.DB.SetupDone = false
-	PageData = {
-		SubTitle = 'Welcome',
-		Desc1 = 'Thank you for installing SpartanUI.',
-		Desc2 = 'If you would like to copy the configuration from another character you may do so below.',
-		Display = function()
-			--Container
-			SUI_Win.Core = CreateFrame('Frame', nil)
-			SUI_Win.Core:SetParent(SUI_Win.content)
-			SUI_Win.Core:SetAllPoints(SUI_Win.content)
-
-			local gui = LibStub('AceGUI-3.0')
-
-			--Profiles
-			local control = gui:Create('Dropdown')
-			control:SetLabel('Exsisting profiles')
-			local tmpprofiles = {}
-			local profiles = {}
-			-- copy existing profiles into the table
-			local currentProfile = SUI.DB:GetCurrentProfile()
-			for _, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
-				if not (nocurrent and v == currentProfile) then
-					profiles[v] = v
-				end
-			end
-			control:SetList(profiles)
-			control:SetPoint('TOP', SUI_Win.Core, 'TOP', 0, -30)
-			control.frame:SetParent(SUI_Win.Core)
-			control.frame:Show()
-			SUI_Win.Core.Profiles = control
-		end,
-		Next = function()
-			SUI.DB.SetupDone = true
-
-			SUI_Win.Core:Hide()
-			SUI_Win.Core = nil
-		end,
-		-- RequireReload = true,
-		-- Priority = 1,
-		-- Skipable = true,
-		-- NoReloadOnSkip = true,
-		Skip = function()
-			SUI.DB.SetupDone = true
-		end
-	}
-
-	-- Uncomment this when the time is right.
-	-- SetupWindow = spartan:GetModule("SetupWindow")
-	-- SetupWindow:AddPage(PageData)
-	-- SetupWindow:DisplayPage()
-end
-
 function SUI:OnInitialize()
 	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 	--If we have not played in a long time reset the database, make sure it is all good.
@@ -825,8 +764,6 @@ function SUI:OnInitialize()
 		elseif _G.LARGE_NUMBER_SEPERATOR == '' then
 			SUI.DB.font.NumberSeperator = ''
 		end
-
-		SUI:FirstTimeSetup()
 	end
 end
 

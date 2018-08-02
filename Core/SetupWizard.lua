@@ -136,7 +136,7 @@ function module:DisplayPage(PageData)
 	-- Update the Status Counter & Progress Bar
 	module.window.Status:SetText(PageDisplayed .. ' /  ' .. TotalPageCount)
 	if module.window.ProgressBar then
-		module.window.ProgressBar:SetValue((100 / TotalPageCount) * (PageDisplayed-1))
+		module.window.ProgressBar:SetValue((100 / TotalPageCount) * (PageDisplayed - 1))
 	end
 end
 
@@ -254,6 +254,21 @@ function module:OnInitialize()
 	else
 		SUI.DB.SetupWizard = SUI:MergeData(SUI.DB.SetupWizard, Defaults, false)
 	end
+	module:WelcomePage()
+	module:ProfileSetup()
+end
+
+function module:OnEnable()
+	-- If First launch, create a watcher frame that will trigger once everything is loaded in.
+	if SUI.DB.SetupWizard.FirstLaunch or DisplayRequired then
+		local LoadWatcher = CreateFrame('Frame')
+		LoadWatcher:SetScript('OnEvent', LoadWatcherEvent)
+		LoadWatcher:RegisterEvent('PLAYER_LOGIN')
+		LoadWatcher:RegisterEvent('PLAYER_ENTERING_WORLD')
+	end
+end
+
+function module:WelcomePage()
 	local WelcomePage = {
 		ID = 'WelcomePage',
 		Name = 'Welcome',
@@ -265,8 +280,7 @@ function module:OnInitialize()
 			WelcomePage:SetParent(module.window.content)
 			WelcomePage:SetAllPoints(module.window.content)
 
-			WelcomePage.Helm =
-				StdUi:Texture(WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
+			WelcomePage.Helm = StdUi:Texture(WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
 			WelcomePage.Helm:SetPoint('CENTER')
 			module.window.content.WelcomePage = WelcomePage
 		end,
@@ -279,12 +293,60 @@ function module:OnInitialize()
 	module:AddPage(WelcomePage)
 end
 
-function module:OnEnable()
-	-- If First launch, create a watcher frame that will trigger once everything is loaded in.
-	if SUI.DB.SetupWizard.FirstLaunch or DisplayRequired then
-		local LoadWatcher = CreateFrame('Frame')
-		LoadWatcher:SetScript('OnEvent', LoadWatcherEvent)
-		LoadWatcher:RegisterEvent('PLAYER_LOGIN')
-		LoadWatcher:RegisterEvent('PLAYER_ENTERING_WORLD')
+function module:ProfileSetup()
+	local ProfilePage = {
+		SubTitle = 'Welcome',
+		Desc1 = 'Thank you for installing SpartanUI.',
+		Desc2 = 'If you would like to copy the configuration from another character you may do so below.',
+		RequireDisplay = SUI.DB.SetupDone,
+		Display = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+
+			--Container
+			SUI_Win.ProfilePage = CreateFrame('Frame', nil)
+			SUI_Win.ProfilePage:SetParent(SUI_Win)
+			SUI_Win.ProfilePage:SetAllPoints(SUI_Win)
+
+			local gui = LibStub('AceGUI-3.0')
+
+			--Profiles
+			local control = gui:Create('Dropdown')
+			control:SetLabel('Exsisting profiles')
+			local tmpprofiles = {}
+			local profiles = {}
+			-- copy existing profiles into the table
+			local currentProfile = SUI.DB:GetCurrentProfile()
+			for _, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
+				if not (nocurrent and v == currentProfile) then
+					profiles[v] = v
+				end
+			end
+			control:SetList(profiles)
+			control:SetPoint('TOP', SUI_Win.ProfilePage, 'TOP', 0, -30)
+			control.frame:SetParent(SUI_Win.ProfilePage)
+			control.frame:Show()
+			SUI_Win.ProfilePage.Profiles = control
+		end,
+		Next = function()
+			SUI.DB.SetupDone = true
+
+			SUI_Win.ProfilePage:Hide()
+			SUI_Win.ProfilePage = nil
+		end,
+		RequireReload = true,
+		Priority = true,
+		Skip = function()
+			SUI.DB.SetupDone = true
+		end
+	}
+	--Hide Bartender4 Minimap icon.
+	if Bartender4 then
+		Bartender4.db.profile.minimapIcon.hide = true
+		local LDBIcon = LibStub('LibDBIcon-1.0', true)
+		LDBIcon['Hide'](LDBIcon, 'Bartender4')
 	end
+
+	SetupWindow:AddPage(ProfilePage)
 end
