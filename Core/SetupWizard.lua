@@ -89,8 +89,8 @@ function module:FindNextPage()
 	if ReloadNeeded and PageDisplayed == TotalPageCount then
 		module:DisplayPage(ReloadPage)
 	elseif not ReloadNeeded and PageDisplayed == TotalPageCount then
-		module.module.window:Hide()
-		module.module.window = nil
+		module.window:Hide()
+		module.window = nil
 	elseif FinalPageList[(PageDisplayed + 1)] then
 		PageDisplayed = PageDisplayed + 1
 		local ID = FinalPageList[PageDisplayed]

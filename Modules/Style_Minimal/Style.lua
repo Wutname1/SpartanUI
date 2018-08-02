@@ -22,7 +22,6 @@ function module:Init()
 	end
 	module:SetupMenus()
 	module:InitFramework()
-	module:InitActionBars()
 	InitRan = true
 end
 
@@ -49,8 +48,10 @@ function module:OnEnable()
 		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile, true)) then
 			module:CreateProfile()
 		end
+
+		module:SlidingTrays()
 		module:EnableFramework()
-		module:EnableActionBars()
+
 		if (SUI.DBMod.Artwork.FirstLoad) then
 			SUI.DBMod.Artwork.FirstLoad = false
 		end -- We want to do this last

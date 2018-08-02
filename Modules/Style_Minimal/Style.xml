@@ -55,7 +55,6 @@
 	</Frame>
 
 	<Script file="Framework.lua" />
-	<Script file="ActionBars.lua" />
 	<Script file="UnitFrames.lua" />
 	<Script file="Style.lua" />
 </Ui>

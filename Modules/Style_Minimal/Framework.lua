@@ -22,8 +22,14 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 	end
 end
 
-function module:updateOffset() -- handles SpartanUI offset based on setting or fubar / titan
+function module:updateOffset(Top, Bottom) -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar, ChocolateBar, titan, offset = 0, 0, 0
+	if Top == nil then
+		Top = 0
+	end
+	if Bottom == nil then
+		Bottom = 0
+	end
 
 	if not SUI.DB.yoffsetAuto then
 		offset = max(SUI.DB.yoffset, 1)
@@ -63,6 +69,31 @@ function module:updateOffset() -- handles SpartanUI offset based on setting or f
 		anchor:SetHeight(offset)
 	end
 	SUI.DB.yoffset = offset
+	
+	module.Trays.left:ClearAllPoints()
+	module.Trays.right:ClearAllPoints()
+	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, (Top * -1))
+	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
+
+	if BT4BarBagBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+			BT4BarPetBar:ClearAllPoints()
+			BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+			BT4BarStanceBar:ClearAllPoints()
+			BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		end
+
+		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+			BT4BarMicroMenu:ClearAllPoints()
+			BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+			BT4BarBagBar:ClearAllPoints()
+			BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
+		end
+	end
 
 	if SUI.DB.Styles.Minimal.HideCenterGraphic then
 		Minimal_SpartanUI_Base1:Hide()
@@ -94,14 +125,47 @@ end
 
 ----------------------------------------------------------------------------------------------------
 
+function module:SetupProfile()
+	Artwork_Core:SetupProfile()
+end
+
+function module:CreateProfile()
+	Artwork_Core:CreateProfile()
+end
+
+function module:SlidingTrays()
+	local Settings = {
+		bg = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {.076171875, 0.92578125, 0, 0.18359375}
+		},
+		bgCollapsed = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {0.076171875, 0.92578125, 1, 0.92578125}
+		},
+		UpTex = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {0.3675, 0.64, 0.235, 0.265}
+		},
+		DownTex = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {0.3675, 0.64, 0.265, 0.235}
+		}
+	}
+
+	module.Trays = Artwork_Core:SlidingTrays(Settings)
+end
+
 function module:SetColor()
 	local r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color)
 
-	for i = 1, 2 do
-		_G['Minimal_Top_Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
-	end
 	for i = 1, 5 do
 		_G['Minimal_SpartanUI_Base' .. i]:SetVertexColor(r, b, g, a)
+	end
+
+	for _,v in pairs(module.Trays) do
+		v.expanded.bg:SetVertexColor(r, b, g, a)
+		v.collapsed.bgCollapsed:SetVertexColor(r, b, g, a)
 	end
 end
 

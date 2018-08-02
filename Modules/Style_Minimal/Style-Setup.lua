@@ -107,9 +107,7 @@ local Defaults = {
 			}
 		},
 		BagBar = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 0,
 			position = {point = 'TOP', x = 490, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
@@ -118,17 +116,13 @@ local Defaults = {
 			keyring = true
 		},
 		MicroMenu = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = -3,
 			position = {point = 'TOP', x = 160, y = -1, scale = 0.70, growHorizontal = 'RIGHT'}
 		},
 		PetBar = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 1,
 			position = {point = 'TOP', x = -492, y = -1, scale = 0.70, growHorizontal = 'RIGHT'},
@@ -136,9 +130,7 @@ local Defaults = {
 			skin = {Zoom = true}
 		},
 		StanceBar = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 1,
 			position = {point = 'TOP', x = -163, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
@@ -152,9 +144,7 @@ local Defaults = {
 			position = {point = 'TOPRIGHT', x = -777, y = -4, scale = 0.75}
 		},
 		Vehicle = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = false,
 			padding = 3,
 			position = {point = 'BOTTOM', x = -200, y = 155, scale = 0.85}
