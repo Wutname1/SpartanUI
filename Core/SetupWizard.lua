@@ -142,6 +142,7 @@ end
 
 function module:ShowWizard()
 	module.window = StdUi:Window(nil, 'SpartanUI setup wizard', 650, 500)
+	module.window.StdUi = StdUi
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
 
