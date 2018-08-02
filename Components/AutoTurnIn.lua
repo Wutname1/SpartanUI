@@ -469,9 +469,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI.DB.AutoTurnIn.FirstLaunch then
-		module:FirstLaunch()
-	end
+	module:FirstLaunch()
 
 	ATI_Container:SetScript(
 		'OnEvent',

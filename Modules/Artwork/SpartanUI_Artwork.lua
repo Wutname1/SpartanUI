@@ -229,9 +229,8 @@ function Artwork_Core:OnInitialize()
 		hideOnEscape = false
 	}
 
-	if not SUI.DBMod.Artwork.SetupDone then
-		Artwork_Core:FirstTime()
-	end
+	Artwork_Core:FirstTime()
+
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
 		SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
 	end

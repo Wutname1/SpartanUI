@@ -152,7 +152,7 @@ function module:FontSetupWizard()
 		SubTitle = 'Font Style',
 		RequireDisplay = SUI.DB.font.SetupDone,
 		Display = function()
-			 			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI_Win.FontFace = CreateFrame('Frame', nil)
 			SUI_Win.FontFace:SetParent(SUI_Win.content)
 			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
@@ -354,9 +354,7 @@ function module:FontSetupWizard()
 end
 
 function module:OnEnable()
-	if not SUI.DB.font.SetupDone then
-		module:FontSetupWizard()
-	end
+	module:FontSetupWizard()
 	SUI.opt.args['General'].args['font'] = {
 		name = L['FontSizeStyle'],
 		type = 'group',

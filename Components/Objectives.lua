@@ -98,9 +98,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI.DBMod.Objectives.SetupDone then
-		module:FirstTimeSetup()
-	end
+	module:FirstTimeSetup()
 
 	-- Add Fade in and out
 	ObjectiveTrackerFrame.BlocksFrame.FadeIn = ObjectiveTrackerFrame.BlocksFrame:CreateAnimationGroup()
@@ -208,7 +206,7 @@ function module:HideOptions()
 	SUI.opt.args['ModSetting'].args['Objectives'].disabled = true
 end
 
-local DummyFunction = function ()
+local DummyFunction = function()
 end
 
 function module:FirstTimeSetup()
@@ -276,7 +274,7 @@ function module:FirstTimeSetup()
 					CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
 				SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
 				_G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
-				SUI_Win.Objectives[k].InCombat:SetScript("OnClick", DummyFunction);
+				SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)
 			end
 
 			--Defaults

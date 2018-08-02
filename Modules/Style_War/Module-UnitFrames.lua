@@ -372,7 +372,7 @@ local CreateLargeFrame = function(self, unit)
 		self.Name:SetSize(self:GetWidth(), 12)
 		self.Name:SetJustifyH('LEFT')
 		self.Name:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -5)
-		self:Tag(self.Name, '[difficulty][level] [SUI_ColorClass][name]')
+		self:Tag(self.Name, '[difficulty][smartlevel] [SUI_ColorClass][name]')
 
 		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -5)
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
