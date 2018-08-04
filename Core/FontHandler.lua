@@ -150,7 +150,7 @@ function module:FontSetupWizard()
 		ID = 'FontSetup',
 		Name = 'Font style',
 		SubTitle = 'Font Style',
-		RequireDisplay = SUI.DB.font.SetupDone,
+		RequireDisplay = (not SUI.DB.font.SetupDone),
 		Display = function()
 			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI_Win.FontFace = CreateFrame('Frame', nil)

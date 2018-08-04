@@ -295,10 +295,12 @@ end
 
 function module:ProfileSetup()
 	local ProfilePage = {
-		SubTitle = 'Welcome',
+		ID = 'ProfileSetup',
+		Name = 'Profile setup',
+		SubTitle = 'Profile setup',
 		Desc1 = 'Thank you for installing SpartanUI.',
 		Desc2 = 'If you would like to copy the configuration from another character you may do so below.',
-		RequireDisplay = SUI.DB.SetupDone,
+		RequireDisplay = (not SUI.DB.SetupDone),
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -309,27 +311,29 @@ function module:ProfileSetup()
 			SUI_Win.ProfilePage:SetParent(SUI_Win)
 			SUI_Win.ProfilePage:SetAllPoints(SUI_Win)
 
-			local gui = LibStub('AceGUI-3.0')
+			-- local gui = LibStub('AceGUI-3.0')
 
-			--Profiles
-			local control = gui:Create('Dropdown')
-			control:SetLabel('Exsisting profiles')
-			local tmpprofiles = {}
-			local profiles = {}
-			-- copy existing profiles into the table
-			local currentProfile = SUI.DB:GetCurrentProfile()
-			for _, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
-				if not (nocurrent and v == currentProfile) then
-					profiles[v] = v
-				end
-			end
-			control:SetList(profiles)
-			control:SetPoint('TOP', SUI_Win.ProfilePage, 'TOP', 0, -30)
-			control.frame:SetParent(SUI_Win.ProfilePage)
-			control.frame:Show()
-			SUI_Win.ProfilePage.Profiles = control
+			-- --Profiles
+			-- local control = gui:Create('Dropdown')
+			-- control:SetLabel('Exsisting profiles')
+			-- local tmpprofiles = {}
+			-- local profiles = {}
+			-- -- copy existing profiles into the table
+			-- local currentProfile = SUI.DB:GetCurrentProfile()
+			-- for _, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
+			-- 	if not (nocurrent and v == currentProfile) then
+			-- 		profiles[v] = v
+			-- 	end
+			-- end
+			-- control:SetList(profiles)
+			-- control:SetPoint('TOP', SUI_Win.ProfilePage, 'TOP', 0, -30)
+			-- control.frame:SetParent(SUI_Win.ProfilePage)
+			-- control.frame:Show()
+			-- SUI_Win.ProfilePage.Profiles = control
 		end,
 		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window.content
+
 			SUI.DB.SetupDone = true
 
 			SUI_Win.ProfilePage:Hide()
@@ -348,5 +352,5 @@ function module:ProfileSetup()
 		LDBIcon['Hide'](LDBIcon, 'Bartender4')
 	end
 
-	SetupWindow:AddPage(ProfilePage)
+	module:AddPage(ProfilePage)
 end

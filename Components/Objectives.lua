@@ -216,7 +216,7 @@ function module:FirstTimeSetup()
 		SubTitle = 'Objectives',
 		Desc1 = 'The objectives module can hide the objectives based on diffrent conditions. This allows you to free your screen when you need it the most automatically.',
 		Desc2 = 'The defaults here are based on your current level.',
-		RequireDisplay = SUI.DBMod.Objectives.SetupDone,
+		RequireDisplay = (not SUI.DBMod.Objectives.SetupDone),
 		Display = function()
 			local SUI_Win = SUI:GetModule('SetupWizard').window
 			local gui = LibStub('AceGUI-3.0')
