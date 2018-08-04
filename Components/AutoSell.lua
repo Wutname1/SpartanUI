@@ -4,23 +4,7 @@ local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 local frame = CreateFrame('FRAME')
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local totalValue = 0
-local ItemsToSellTotal = 0
-local bag = 0
-local OnlyCount = true
-local ItemToSell = {
-	[0] = 0,
-	[1] = 0,
-	[2] = 0,
-	[3] = 0,
-	[4] = 0
-}
-local ItemsSold = {
-	[0] = 0,
-	[1] = 0,
-	[2] = 0,
-	[3] = 0,
-	[4] = 0
-}
+module.SellTimer = nil
 local ExcludedItems = {
 	137642, --Mark Of Honor
 	141446 --Tome of the Tranquil Mind
@@ -173,45 +157,6 @@ function module:FirstTime()
 	SetupWindow:AddPage(PageData)
 end
 
--- Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.
-function module:SellTrashInBag()
-	if GetContainerNumSlots(bag) == 0 then
-		return 0
-	end
-
-	local solditem = 0
-	for slot = 1, GetContainerNumSlots(bag) do
-		local _, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
-		if module:IsSellable(itemID, link, bag, slot) then
-			if OnlyCount then
-				ItemToSell[bag] = ItemToSell[bag] + 1
-				ItemsToSellTotal = ItemsToSellTotal + 1
-				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
-			elseif solditem ~= 5 then
-				solditem = solditem + 1
-				ItemsSold[bag] = ItemsSold[bag] + 1
-				UseContainerItem(bag, slot)
-			end
-		end
-	end
-
-	if OnlyCount or ItemToSell[bag] ~= ItemsSold[bag] then
-		return
-	end
-
-	if bag ~= 4 then
-		--Next bag
-		bag = bag + 1
-	else
-		--Everything sold
-		if (totalValue > 0) then
-			SUI:Print('Sold item(s)')
-			totalValue = 0
-		end
-		module:CancelAllTimers()
-	end
-end
-
 local IsInGearset = function(bag, slot)
 	local line
 	Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
@@ -219,7 +164,6 @@ local IsInGearset = function(bag, slot)
 
 	for i = 1, Tooltip:NumLines() do
 		line = _G['AutoSellTooltipTextLeft' .. i]
-		-- print(line:GetText())
 		if line:GetText():find(EQUIPMENT_SETS:format('.*')) then
 			return true
 		end
@@ -368,40 +312,48 @@ end
 function module:SellTrash()
 	--Reset Locals
 	totalValue = 0
-	ItemsToSellTotal = 0
-	Timer = nil
-	bag = 0
-	ItemToSell = {
-		[0] = 0,
-		[1] = 0,
-		[2] = 0,
-		[3] = 0,
-		[4] = 0
-	}
-	ItemsSold = {
-		[0] = 0,
-		[1] = 0,
-		[2] = 0,
-		[3] = 0,
-		[4] = 0
-	}
+	-- ItemsToSellTotal = 0
+	local ItemToSell = {}
 
-	--Count Items to sell
-	OnlyCount = true
-	for b = 0, 4 do
-		bag = b
-		module:SellTrashInBag()
+	--Find Items to sell
+	for bag = 0, 4 do
+		for slot = 1, GetContainerNumSlots(bag) do
+			local _, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
+			if module:IsSellable(itemID, link, bag, slot) then
+				ItemToSell[#ItemToSell + 1] = {bag, slot}
+				-- ItemsToSellTotal = ItemsToSellTotal + 1
+				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
+			end
+		end
 	end
 
 	--Sell Items if needed
-	if ItemsToSellTotal == 0 then
+	if #ItemToSell == 0 then
 		SUI:Print(L['No items are to be auto sold'])
 	else
-		SUI:Print('Need to sell ' .. ItemsToSellTotal .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
+		SUI:Print('Need to sell ' .. #ItemToSell .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
-		OnlyCount = false
-		bag = 0
-		self.SellTimer = self:ScheduleRepeatingTimer('SellTrashInBag', .3)
+		module.SellTimer = module:ScheduleRepeatingTimer('SellTrashInBag', .2, ItemToSell)
+	end
+end
+
+-- Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.
+function module:SellTrashInBag(ItemListing)
+	-- Grab an item to sell
+	local item = table.remove(ItemListing)
+
+	-- If the Table is empty then exit.
+	if (not item) then
+		module:CancelAllTimers()
+		return
+	end
+
+	-- SELL!
+	UseContainerItem(item[1], item[2])
+
+	-- If it was the last item stop timers
+	if (#ItemListing == 0) then
+		module:CancelAllTimers()
 	end
 end
 
@@ -434,7 +386,9 @@ function module:Enable()
 			return
 		end
 		if event == 'MERCHANT_SHOW' then
-			module:SellTrash()
+			-- Sell then repair so we gain gold before we use it.
+				module:ScheduleTimer('SellTrash', .2)
+			-- module:SellTrash()
 			module:Repair()
 		else
 			module:CancelAllTimers()
