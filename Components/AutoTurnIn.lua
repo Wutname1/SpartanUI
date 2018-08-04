@@ -419,18 +419,21 @@ function module.GOSSIP_SHOW()
 		local options = {GetGossipOptions()}
 		for _, v in pairs(options) do
 			if (v ~= 'gossip') and (not BlackList[v]) then
-				local opcount = GetNumGossipOptions()
-				-- SelectGossipOption((opcount == 1) and 1 or  math.floor(k / GetNumGossipOptions()) + 1)
 				BlackList[v] = true
+				local opcount = GetNumGossipOptions()
+				SelectGossipOption((opcount == 1) and 1 or  math.floor(k / GetNumGossipOptions()) + 1)
 				if SUI.DB.AutoTurnIn.debug then
 					print(v .. '---BLACKLISTED')
 				end
 			end
 		end
 	end
+	
 	-- SelectGossipOption(1)
-	-- module:VarArgForActiveQuests(GetGossipActiveQuests())
-	-- module:VarArgForAvailableQuests(GetGossipAvailableQuests())
+	print('VarArgForActiveQuests')
+	module:VarArgForActiveQuests(GetGossipActiveQuests())
+	print('VarArgForAvailableQuests')
+	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
 end
 
 function module.QUEST_PROGRESS()
