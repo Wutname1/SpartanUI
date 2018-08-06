@@ -54,9 +54,11 @@ local SLOTS = {
 local itemCache =
 	setmetatable(
 	{},
-	{__index = function(table, key)
+	{
+		__index = function(table, key)
 			return {}
-		end}
+		end
+	}
 )
 local BlackList = {
 	-- General Blacklist
@@ -88,7 +90,7 @@ local function getItemId(typeStr)
 	local link = GetQuestItemLink(typeStr, 1) --first item is enough
 	return link and link:match('%b::'):gsub(':', '') or ERRORVALUE
 end
-local itemLevelPattern = _G.ITEM_LEVEL:gsub("%%d", "(%%d+)")
+local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
 
 local Lquests = {
 	-- Steamwheedle Cartel
