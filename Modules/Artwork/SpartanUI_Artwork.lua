@@ -260,17 +260,9 @@ function Artwork_Core:FirstTime()
 			SUI_Win.Artwork:SetAllPoints(SUI_Win)
 
 			local RadioButtons = function(self)
-				-- SUI_Win.Artwork.Classic.radio:SetChecked(false)
-				-- SUI_Win.Artwork.Transparent.radio:SetChecked(false)
-				-- SUI_Win.Artwork.Minimal.radio:SetChecked(false)
-				-- SUI_Win.Artwork.Fel.radio:SetChecked(false)
-				-- SUI_Win.Artwork.War.radio:SetChecked(false)
-				-- SUI_Win.Artwork.Digital.radio:SetChecked(false)
 				self.radio:Click()
 			end
 
-			-- local gui = LibStub('AceGUI-3.0')
-			-- local control, radio
 			local control
 
 			--Classic
