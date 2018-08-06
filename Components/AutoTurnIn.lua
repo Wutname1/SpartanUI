@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('Component_AutoTurnIn')
+local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
 ----------------------------------------------------------------------------------------------------
 local ATI_Container = CreateFrame('Frame')
 local weapon = {GetAuctionItemSubClasses(1)}
@@ -51,7 +51,13 @@ local SLOTS = {
 	['INVTYPE_WEAPONOFFHAND'] = {'SecondaryHandSlot'},
 	['INVTYPE_HOLDABLE'] = {'SecondaryHandSlot'}
 }
-
+local itemCache =
+	setmetatable(
+	{},
+	{__index = function(table, key)
+			return {}
+		end}
+)
 local BlackList = {
 	-- General Blacklist
 	['I would like to buy from you.'] = true,
@@ -76,7 +82,13 @@ local BlackList = {
 	['Yes, please, I would like to return to the ground level of the temple.'] = true,
 	["Steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple."] = true
 }
---- I would like to buy from you.
+local anchor, scanningTooltip
+
+local function getItemId(typeStr)
+	local link = GetQuestItemLink(typeStr, 1) --first item is enough
+	return link and link:match('%b::'):gsub(':', '') or ERRORVALUE
+end
+local itemLevelPattern = _G.ITEM_LEVEL:gsub("%%d", "(%%d+)")
 
 local Lquests = {
 	-- Steamwheedle Cartel
@@ -158,14 +170,77 @@ local Lquests = {
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
 
-function module:GetiLVL(itemLink)
-	if (not itemLink) then
+local function ScanTip(itemLink, itemLevel)
+	-- If the item is not in the cache populate it.
+	if type(itemCache[itemLink].ilevel) == 'nil' then
+		-- Setup the scanning tooltip
+		-- Why do this here and not in OnEnable? If the player is not questing there is no need for this to exsist.
+		if not scanningTooltip then
+			anchor = CreateFrame('Frame')
+			anchor:Hide()
+			scanningTooltip = _G.CreateFrame('GameTooltip', 'LibItemUpgradeInfoTooltip', nil, 'GameTooltipTemplate')
+		end
+		GameTooltip_SetDefaultAnchor(scanningTooltip, anchor)
+
+		-- Load tooltip
+		local itemString = itemLink:match('|H(.-)|h')
+		local rc, message = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
+		if (not rc) then
+			return {}
+		end
+		scanningTooltip:Show()
+
+		-- Initalize the cache
+		itemCache[itemLink] = {
+			ilevel = nil
+		}
+		-- Find the iLVL inthe tooltip
+		local c = itemCache[itemLink]
+		for i = 2, 6 do
+			local label, text = _G['LibItemUpgradeInfoTooltipTextLeft' .. i], nil
+			if label then
+				text = label:GetText()
+			end
+			if text then
+				if c.ilevel == nil then
+					c.ilevel = tonumber(text:match(itemLevelPattern))
+				end
+			end
+		end
+
+		-- Figure out what to cache and what to return as the ilvl
+		c.ilevel = c.ilevel or itemLevel
+		itemLevel = GetDetailedItemLevelInfo(itemLink)
+		if type(c.ilevel) == 'number' then
+			c.ilevel = math.max(c.ilevel, itemLevel)
+		else
+			c.ilevel = itemLevel
+		end
+
+		-- Hide the scanning tooltip
+		scanningTooltip:Hide()
+	end
+	-- return the ilvl
+	return itemCache[itemLink].ilevel
+end
+
+function module:GetiLVL(itemLink, itemQuality, itemLevel)
+	if not itemLink then
 		return 0
+	end
+	if not itemQuality then
+		itemQuality, itemLevel = select(3, GetItemInfo(link))
 	end
 
 	-- if a heirloom return a huge number so we dont replace it.
-	local invQuality, invLevel = select(3, GetItemInfo(itemLink))
-	return (invQuality == 7) and math.huge or invLevel
+	if (itemQuality == 7) then
+		return math.huge
+	end
+
+	-- Scan the tooltip, itemLevel is a fallback incase tooltip does not contain the data
+	if ScanTip(itemLink, itemLevel) then
+		return rc
+	end
 end
 
 -- turns quest in printing reward text if `showrewardtext` option is set.
@@ -176,43 +251,6 @@ function module:TurnInQuest(rewardIndex)
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 
-	local name = GetQuestItemInfo('choice', (GetNumQuestChoices() == 1) and 1 or rewardIndex)
-	if (SUI.DB.AutoTurnIn.autoequip and (strlen(name) > 0)) then
-		if (SUI.DB.AutoTurnIn.debug) then
-			print('selecing loot')
-		end
-
-		local lootLevel, _, _, _, _, equipSlot = select(4, GetItemInfo(GetQuestItemLink('choice', rewardIndex)))
-
-		-- Compares reward and already equipped item levels. If reward level is greater than equipped item, auto equip reward
-		local slot = SLOTS[equipSlot]
-		if (slot) then
-			local firstSlot = GetInventorySlotInfo(slot[1])
-			local invLink = GetInventoryItemLink('player', firstSlot)
-			local eqLevel = self:GetiLVL(invLink)
-
-			-- If reward is a ring  trinket or one-handed weapons all slots must be checked in order to swap one with a lesser item-level
-			if (#slot > 1) then
-				local secondSlot = GetInventorySlotInfo(slot[2])
-				invLink = GetInventoryItemLink('player', secondSlot)
-				if (invLink) then
-					local eq2Level = self:GetiLVL(invLink)
-					firstSlot = (eqLevel > eq2Level) and secondSlot or firstSlot
-					eqLevel = (eqLevel > eq2Level) and eq2Level or eqLevel
-				end
-			end
-			if (SUI.DB.AutoTurnIn.debug) then
-				print('iLVL Comparisson ' .. lootLevel .. '-' .. eqLevel)
-			end
-			-- comparing lowest equipped item level with reward's item level
-			if (lootLevel > eqLevel) then
-				self.autoEquipList[name] = firstSlot
-				self.delayFrame.delay = time() + 2
-				self.delayFrame:Show()
-			end
-		end
-	end
-
 	if (SUI.DB.AutoTurnIn.debug) then
 		local link = GetQuestItemLink('choice', rewardIndex)
 		if (link) then
@@ -220,6 +258,26 @@ function module:TurnInQuest(rewardIndex)
 		end
 	end
 	GetQuestReward(rewardIndex)
+end
+
+function module:EquipItem(ItemToEquip)
+	if (InCombatLockdown()) then
+		return
+	end
+
+	-- Make sure it is in the bags
+	for bag = 0, NUM_BAG_SLOTS do
+		for slot = 1, GetContainerNumSlots(bag), 1 do
+			local link = GetContainerItemLink(bag, slot)
+			if (link) then
+				local name = GetItemInfo(link)
+				if (name and ItemToEquip) then
+					SUI:Print(L['equipping reward'], link)
+					EquipItemByName(ItemToEquip)
+				end
+			end
+		end
+	end
 end
 
 function module.QUEST_DETAIL()
@@ -236,28 +294,61 @@ function module.QUEST_COMPLETE()
 	end
 
 	if GetNumQuestChoices() > 1 then
+		-- Look for the item that is the best upgrade and whats worth the most.
 		if (SUI.DB.AutoTurnIn.lootreward) then
-			local id, money = 0, 0
+			local GreedID, GreedValue, UpgradeID = 0, 0, nil
 			for i = 1, GetNumQuestChoices() do
+				-- Load the items information
 				local link = GetQuestItemLink('choice', i)
 				if (link == nil) then
 					return
 				end
-				local value = select(11, GetItemInfo(link))
-				if value > money then
-					money = value
-					id = i
+				local itemQuality, itemLevel, _, _, _, _, itemEquipLoc, _, itemSellPrice = select(3, GetItemInfo(link))
+				local QuestItemTrueiLVL = self:GetiLVL(link, itemQuality, itemLevel)
+
+				-- Check the items value
+				if itemSellPrice > GreedValue then
+					GreedValue = itemSellPrice
+					GreedID = i
+				end
+
+				-- See if the item is an upgrade
+				if (SUI.DB.AutoTurnIn.autoequip and (strlen(name) > 0)) then
+					-- Compares reward and already equipped item levels. If reward ilevel is greater than equipped item, auto equip reward
+					local slot = SLOTS[itemEquipLoc]
+					if (slot) then
+						local firstSlot = GetInventorySlotInfo(slot[1])
+						local invLink = GetInventoryItemLink('player', firstSlot)
+						local EquipedLevel = self:GetiLVL(invLink)
+
+						-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
+						if (#slot > 1) then
+							local secondSlot = GetInventorySlotInfo(slot[2])
+							invLink = GetInventoryItemLink('player', secondSlot)
+							if (invLink) then
+								local eq2Level = self:GetiLVL(invLink)
+								firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
+								EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
+							end
+							if (SUI.DB.AutoTurnIn.debug) then
+								print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
+							end
+							-- comparing lowest equipped item level with reward's item level
+							if (QuestItemTrueiLVL > EquipedLevel) then
+								module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, firstSlot)
+							end
+						end
+					end
 				end
 			end
 
-			if money > 0 then -- some quests, like tournament ones, offer reputation rewards and they have no cost.
-				print('Turn in and grab ' .. id)
-				module:TurnInQuest(id)
+			if GreedValue > 0 and not UpgradeID then -- some quests, like tournament ones, offer reputation rewards and they have no cost.
+				print('Grabbing item to vendor ' .. GreedID)
+				module:TurnInQuest(GreedID)
+			elseif UpgradeID then
+				print('Upgrade found! Grabbing ' .. UpgradeID)
+				module:TurnInQuest(UpgradeID)
 			end
-		end
-		local function getItemId(typeStr)
-			local link = GetQuestItemLink(typeStr, 1) --first item is enough
-			return link and link:match('%b::'):gsub(':', '') or ERRORVALUE
 		end
 
 		local itemID = getItemId('choice')
@@ -271,8 +362,7 @@ function module.QUEST_COMPLETE()
 			return
 		end
 	else
-		print('Turn in and grab the 1st')
-		module:TurnInQuest(1) -- for autoequip to work index must be greater that 0. That's required by Blizzard API
+		module:TurnInQuest(1)
 	end
 end
 
