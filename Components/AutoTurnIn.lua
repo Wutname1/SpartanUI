@@ -4,7 +4,6 @@ local module = SUI:NewModule('Component_AutoTurnIn')
 local ATI_Container = CreateFrame('Frame')
 local weapon = {GetAuctionItemSubClasses(1)}
 local armor = {GetAuctionItemSubClasses(2)}
-local questCache = {}
 local ITEMS = {
 	['One-Handed Axes'] = weapon[1],
 	['Two-Handed Axes'] = weapon[2],
@@ -53,7 +52,31 @@ local SLOTS = {
 	['INVTYPE_HOLDABLE'] = {'SecondaryHandSlot'}
 }
 
-local BlackList = {}
+local BlackList = {
+	-- General Blacklist
+	['I would like to buy from you.'] = true,
+	['Make this inn your home.'] = true,
+	['trainer'] = true,
+	["I'd like to heal and revive my battle pets."] = true,
+	['Let me browse your goods.'] = true,
+	['vendor'] = true,
+	['binder'] = true,
+	["I'm looking for a lost companion."] = true,
+	['Train me.'] = true,
+	-- WOTLK Blacklist
+	['I am prepared to face Saragosa!'] = true,
+	['What is the cause of this conflict?'] = true,
+	['I am ready to be teleported to Dalaran.'] = true,
+	['Can you spare a drake to take me to Lord Afrasastrasz in the middle of the temple?'] = true,
+	['I must return to the world of shadows, Koltira. Send me back.'] = true,
+	['I am ready to be teleported to Dalaran.'] = true,
+	['Can I get a ride back to ground level, Lord Afrasastrasz?'] = true,
+	['I would like to go to Lord Afrasastrasz in the middle of the temple.'] = true,
+	['My lord, I need to get to the top of the temple.'] = true,
+	['Yes, please, I would like to return to the ground level of the temple.'] = true,
+	["Steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple."] = true
+}
+--- I would like to buy from you.
 
 local Lquests = {
 	-- Steamwheedle Cartel
@@ -61,26 +84,6 @@ local Lquests = {
 	['War at Sea'] = {item = 'Mageweave Cloth', amount = 40, currency = false},
 	['Traitor to the Bloodsail'] = {item = 'Silk Cloth', amount = 40, currency = false},
 	['Mending Old Wounds'] = {item = 'Linen Cloth', amount = 40, currency = false},
-	-- AV both fractions
-	['Empty Stables'] = {donotaccept = true},
-	-- Alliance AV Quests
-	['Crystal Cluster'] = {donotaccept = true},
-	['Ivus the Forest Lord'] = {donotaccept = true},
-	["Call of Air - Ichman's Fleet"] = {donotaccept = true},
-	["Call of Air - Slidore's Fleet"] = {donotaccept = true},
-	["Call of Air - Vipore's Fleet"] = {donotaccept = true},
-	['Armor Scraps'] = {donotaccept = true},
-	['More Armor Scraps'] = {donotaccept = true},
-	['Ram Riding Harnesses'] = {donotaccept = true},
-	-- Horde AV Quests
-	['A Gallon of Blood'] = {donotaccept = true},
-	['Lokholar the Ice Lord'] = {donotaccept = true},
-	["Call of Air - Guse's Fleet"] = {donotaccept = true},
-	["Call of Air - Jeztor's Fleet"] = {donotaccept = true},
-	["Call of Air - Mulverick's Fleet"] = {donotaccept = true},
-	['Enemy Booty'] = {donotaccept = true},
-	['More Booty!'] = {donotaccept = true},
-	['Ram Hide Harnesses'] = {donotaccept = true},
 	-- Timbermaw Quests
 	['Feathers for Grazle'] = {item = 'Deadwood Headdress Feather', amount = 5, currency = false},
 	['Feathers for Nafien'] = {item = 'Deadwood Headdress Feather', amount = 5, currency = false},
@@ -100,16 +103,6 @@ local Lquests = {
 	['Favor Amongst the Brotherhood, Lava Core'] = {item = 'Lava Core', amount = 1, currency = false},
 	['Gaining Acceptance'] = {item = 'Dark Iron Residue', amount = 4, currency = false},
 	['Gaining Even More Acceptance'] = {item = 'Dark Iron Residue', amount = 100, currency = false},
-	-- Fiona's Caravan
-	["Argus' Journal"] = {donotaccept = true},
-	["Beezil's Cog"] = {donotaccept = true},
-	["Fiona's Lucky Charm"] = {donotaccept = true},
-	["Gidwin's Weapon Oil"] = {donotaccept = true},
-	["Pamela's Doll"] = {donotaccept = true},
-	["Rimblat's Stone"] = {donotaccept = true},
-	["Tarenar's Talisman"] = {donotaccept = true},
-	["Vex'tul's Armbands"] = {donotaccept = true},
-	--
 	--Burning Crusade, Lower City
 	['More Feathers'] = {item = 'Arakkoa Feather', amount = 30, currency = false},
 	--Aldor
@@ -165,6 +158,16 @@ local Lquests = {
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
 
+function module:GetiLVL(itemLink)
+	if (not itemLink) then
+		return 0
+	end
+
+	-- if a heirloom return a huge number so we dont replace it.
+	local invQuality, invLevel = select(3, GetItemInfo(itemLink))
+	return (invQuality == 7) and math.huge or invLevel
+end
+
 -- turns quest in printing reward text if `showrewardtext` option is set.
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
@@ -173,63 +176,53 @@ function module:TurnInQuest(rewardIndex)
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 
-	if (self.forceGreed) then
-		if (GetNumQuestChoices() > 1) then
-		-- SUI:Print(L["gogreedy"])
+	local name = GetQuestItemInfo('choice', (GetNumQuestChoices() == 1) and 1 or rewardIndex)
+	if (SUI.DB.AutoTurnIn.autoequip and (strlen(name) > 0)) then
+		if (SUI.DB.AutoTurnIn.debug) then
+			print('selecing loot')
 		end
-	else
-		local name = GetQuestItemInfo('choice', (GetNumQuestChoices() == 1) and 1 or rewardIndex)
-		if (SUI.DB.AutoTurnIn.autoequip and (strlen(name) > 0)) then
-			local lootLevel, _, _, _, _, equipSlot = select(4, GetItemInfo(GetQuestItemLink('choice', rewardIndex)))
 
-			-- Compares reward and already equipped item levels. If reward level is greater than equipped item, auto equip reward
-			local slot = C.SLOTS[equipSlot]
-			if (slot) then
-				local firstSlot = GetInventorySlotInfo(slot[1])
-				local invLink = GetInventoryItemLink('player', firstSlot)
-				local eqLevel = self:ItemLevel(invLink)
+		local lootLevel, _, _, _, _, equipSlot = select(4, GetItemInfo(GetQuestItemLink('choice', rewardIndex)))
 
-				-- If reward is a ring  trinket or one-handed weapons all slots must be checked in order to swap one with a lesser item-level
-				if (#slot > 1) then
-					local secondSlot = GetInventorySlotInfo(slot[2])
-					invLink = GetInventoryItemLink('player', secondSlot)
-					if (invLink) then
-						local eq2Level = self:ItemLevel(invLink)
-						firstSlot = (eqLevel > eq2Level) and secondSlot or firstSlot
-						eqLevel = (eqLevel > eq2Level) and eq2Level or eqLevel
-					end
+		-- Compares reward and already equipped item levels. If reward level is greater than equipped item, auto equip reward
+		local slot = SLOTS[equipSlot]
+		if (slot) then
+			local firstSlot = GetInventorySlotInfo(slot[1])
+			local invLink = GetInventoryItemLink('player', firstSlot)
+			local eqLevel = self:GetiLVL(invLink)
+
+			-- If reward is a ring  trinket or one-handed weapons all slots must be checked in order to swap one with a lesser item-level
+			if (#slot > 1) then
+				local secondSlot = GetInventorySlotInfo(slot[2])
+				invLink = GetInventoryItemLink('player', secondSlot)
+				if (invLink) then
+					local eq2Level = self:GetiLVL(invLink)
+					firstSlot = (eqLevel > eq2Level) and secondSlot or firstSlot
+					eqLevel = (eqLevel > eq2Level) and eq2Level or eqLevel
 				end
-
-				-- comparing lowest equipped item level with reward's item level
-				if (lootLevel > eqLevel) then
-					self.autoEquipList[name] = firstSlot
-					self.delayFrame.delay = time() + 2
-					self.delayFrame:Show()
-				end
+			end
+			if (SUI.DB.AutoTurnIn.debug) then
+				print('iLVL Comparisson ' .. lootLevel .. '-' .. eqLevel)
+			end
+			-- comparing lowest equipped item level with reward's item level
+			if (lootLevel > eqLevel) then
+				self.autoEquipList[name] = firstSlot
+				self.delayFrame.delay = time() + 2
+				self.delayFrame:Show()
 			end
 		end
 	end
 
-	-- if (SUI.DB.AutoTurnIn.debug) then
-	local link = GetQuestItemLink('choice', rewardIndex)
-	if (link) then
-		SUI:Print('Debug: item to loot=', link)
+	if (SUI.DB.AutoTurnIn.debug) then
+		local link = GetQuestItemLink('choice', rewardIndex)
+		if (link) then
+			SUI:Print('Debug: item to loot=', link)
+		end
 	end
-	-- else
 	GetQuestReward(rewardIndex)
-	-- end
-end
-
-function module:CacheAsDaily(questname)
-	questCache[questname] = true
 end
 
 function module.QUEST_DETAIL()
-	local name = GetTitleText()
-	if (QuestIsDaily() or QuestIsWeekly()) then
-		module:CacheAsDaily(name)
-	end
-
 	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
@@ -237,34 +230,31 @@ function module.QUEST_DETAIL()
 	end
 end
 
-function module.QUEST_ACCEPTED(event, index)
-	if SUI.DB.AutoTurnIn.questshare and GetQuestLogPushable() and GetNumGroupMembers() >= 1 then
-		SelectQuestLogEntry(index)
-		QuestLogPushQuest()
-	end
-end
-
 function module.QUEST_COMPLETE()
 	if not SUI.DB.AutoTurnIn.TurnInEnabled then
 		return
 	end
-	--/script faction = (GameTooltip:NumLines() > 2 and not UnitIsPlayer(select(2,GameTooltip:GetUnit()))) and
-	-- getglobal("GameTooltipTextLeft"..GameTooltip:NumLines()):GetText() DEFAULT_CHAT_FRAME:AddMessage(faction or "NIL")
-	local name = GetTitleText()
-	-- if module:isAppropriate(name) then
-	local questname = GetTitleText()
-	-- local quest = L.quests[questname]
 
 	if GetNumQuestChoices() > 1 then
-		-- if (SUI.DB.AutoTurnIn.lootreward > 1) then
-		-- self.forceGreed = false
-		-- if (SUI.DB.AutoTurnIn.lootreward == 3) then -- 3 == Need
-		-- self.forceGreed = (not self:Need() ) and SUI.DB.AutoTurnIn.greedifnothingfound
-		-- end
-		-- if (SUI.DB.AutoTurnIn.lootreward == 2 or self.forceGreed) then -- 2 == Greed
-		-- self:Greed()
-		-- end
-		-- end
+		if (SUI.DB.AutoTurnIn.lootreward) then
+			local id, money = 0, 0
+			for i = 1, GetNumQuestChoices() do
+				local link = GetQuestItemLink('choice', i)
+				if (link == nil) then
+					return
+				end
+				local value = select(11, GetItemInfo(link))
+				if value > money then
+					money = value
+					id = i
+				end
+			end
+
+			if money > 0 then -- some quests, like tournament ones, offer reputation rewards and they have no cost.
+				print('Turn in and grab ' .. id)
+				module:TurnInQuest(id)
+			end
+		end
 		local function getItemId(typeStr)
 			local link = GetQuestItemLink(typeStr, 1) --first item is enough
 			return link and link:match('%b::'):gsub(':', '') or ERRORVALUE
@@ -281,9 +271,9 @@ function module.QUEST_COMPLETE()
 			return
 		end
 	else
+		print('Turn in and grab the 1st')
 		module:TurnInQuest(1) -- for autoequip to work index must be greater that 0. That's required by Blizzard API
 	end
-	-- end
 end
 
 function module:GetItemAmount(isCurrency, item)
@@ -291,21 +281,10 @@ function module:GetItemAmount(isCurrency, item)
 	return amount and amount or 0
 end
 
-function module.QUEST_LOG_UPDATE()
-	if (GetNumQuestLogEntries() > 0) then
-		for index = 1, GetNumQuestLogEntries() do
-			local title, _, _, _, isHeader, _, _, isDaily = GetQuestLogTitle(index)
-			if not isHeader and isDaily then
-				questCache[title] = true
-			end
-		end
-	end
-end
-
--- (gaq[i+3]) equals "1" if quest is complete, "nil" otherwise
--- why not 	gaq={GetGossipAvailableQuests()}? Well, tables in lua are truncated for values
--- with ending `nil`. So: '#' for {1,nil, "b", nil} returns 1
 function module:VarArgForActiveQuests(...)
+	if SUI.DB.AutoTurnIn.debug then
+		print('VarArgForActiveQuests')
+	end
 	local INDEX_CONST = 6
 
 	for i = 1, select('#', ...), INDEX_CONST do
@@ -314,13 +293,11 @@ function module:VarArgForActiveQuests(...)
 			local questname = select(i, ...)
 			-- if self:isAppropriate(questname, true) then
 			local quest = Lquests[questname]
-			if quest and quest.amount then
+			if quest then
 				if module:GetItemAmount(quest.currency, quest.item) >= quest.amount then
 					SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
-				-- self.DarkmoonAllowToProceed = false
 				end
 			else
-				-- self.DarkmoonAllowToProceed = false
 				SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
 			end
 		-- end
@@ -330,26 +307,27 @@ end
 
 -- like previous function this one works around `nil` values in a list.
 function module:VarArgForAvailableQuests(...)
+	if SUI.DB.AutoTurnIn.debug then
+		print('VarArgForAvailableQuests')
+	end
 	local INDEX_CONST = 6 -- was '5' in Cataclysm
 	for i = 1, select('#', ...), INDEX_CONST do
-		local title = select(i, ...)
 		local isTrivial = select(i + 2, ...)
 		local isDaily = select(i + 3, ...)
-		-- local triviaAndAllowedOrNotTrivia = (not isTrivial) or AutoTurnInCharacterDB.trivial
-
-		local quest = Lquests[title] -- this quest exists in addons quest SUI.DB. There are mostly daily quests
-		-- local notBlackListed = not (quest and (quest.donotaccept or AutoTurnIn:IsIgnoredQuest(title)))
+		local isRepeatable = select(i + 4, ...)
+		local trivialORAllowed = (not isTrivial) or SUI.DB.AutoTurnIn.trivial
+		local isRepeatableORAllowed = (not isRepeatable or not isDaily) or SUI.DB.AutoTurnIn.AcceptRepeatable
 
 		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-		-- if (triviaAndAllowedOrNotTrivia and notBlackListed and self:_isAppropriate(isDaily)) then
-		if quest and quest.amount then
-			if self:GetItemAmount(quest.currency, quest.item) >= quest.amount then
+		if (trivialORAllowed and isRepeatableORAllowed) then
+			if quest and quest.amount then
+				if self:GetItemAmount(quest.currency, quest.item) >= quest.amount then
+					SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
+				end
+			else
 				SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
 			end
-		else
-			SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
 		end
-		-- end
 	end
 end
 
@@ -411,28 +389,23 @@ function module.GOSSIP_SHOW()
 		return
 	end
 
-	local questCount = GetNumGossipActiveQuests() > 0
-	if SUI.DB.AutoTurnIn.debug then
-		print(questCount)
-	end
-	if questCount then
-		local options = {GetGossipOptions()}
-		for _, v in pairs(options) do
-			if (v ~= 'gossip') and (not BlackList[v]) then
-				BlackList[v] = true
-				local opcount = GetNumGossipOptions()
-				SelectGossipOption((opcount == 1) and 1 or  math.floor(k / GetNumGossipOptions()) + 1)
-				if SUI.DB.AutoTurnIn.debug then
-					print(v .. '---BLACKLISTED')
-				end
+	-- local questCount = GetNumGossipActiveQuests() > 0
+	-- if questCount then
+	local options = {GetGossipOptions()}
+	for k, v in pairs(options) do
+		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
+		if (v ~= 'gossip') and (not BlackList[v]) then
+			BlackList[v] = true
+			local opcount = GetNumGossipOptions()
+			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
+			if SUI.DB.AutoTurnIn.debug then
+				print(v .. '---BLACKLISTED')
 			end
 		end
 	end
-	
-	-- SelectGossipOption(1)
-	print('VarArgForActiveQuests')
+	-- end
+
 	module:VarArgForActiveQuests(GetGossipActiveQuests())
-	print('VarArgForAvailableQuests')
 	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
 end
 
@@ -443,30 +416,27 @@ function module.QUEST_PROGRESS()
 end
 
 function module:OnInitialize()
+	local Defaults = {
+		FirstLaunch = true,
+		debug = false,
+		TurnInEnabled = true,
+		AutoGossip = true,
+		AcceptGeneralQuests = true,
+		AcceptRepeatable = false,
+		trivial = false,
+		lootreward = true,
+		showrewardtext = true,
+		autoequip = false,
+		armor = {},
+		weapon = {},
+		stat = {},
+		secondary = {},
+		AlwaysRepeat = {}
+	}
 	if not SUI.DB.AutoTurnIn then
-		SUI.DB.AutoTurnIn = {
-			FirstLaunch = true,
-			debug = false,
-			TurnInEnabled = true,
-			AutoGossip = true,
-			AcceptGeneralQuests = true,
-			AcceptDaily = false,
-			trivial = false, --Low Level
-			lootreward = 1,
-			tournament = 2,
-			darkmoonteleport = true,
-			todarkmoon = true,
-			darkmoonautostart = true,
-			showrewardtext = true,
-			autoequip = false,
-			questlevel = true,
-			watchlevel = true,
-			questshare = false,
-			armor = {},
-			weapon = {},
-			stat = {},
-			secondary = {}
-		}
+		SUI.DB.AutoTurnIn = Defaults
+	else
+		SUI.DB.AutoTurnIn = SUI:MergeData(SUI.DB.AutoTurnIn, Defaults, false)
 	end
 end
 
@@ -489,12 +459,9 @@ function module:OnEnable()
 			end
 		end
 	)
-	ATI_Container:RegisterEvent('QUEST_GREETING')
 	ATI_Container:RegisterEvent('GOSSIP_SHOW') -- multiple quests, and NPC chat screen
 	ATI_Container:RegisterEvent('QUEST_DETAIL') -- new quest screen
 	ATI_Container:RegisterEvent('QUEST_PROGRESS')
-	ATI_Container:RegisterEvent('QUEST_LOG_UPDATE') -- quest progress
-	ATI_Container:RegisterEvent('QUEST_ACCEPTED')
 	ATI_Container:RegisterEvent('QUEST_COMPLETE') -- quest turn in screen
 end
 
@@ -507,72 +474,110 @@ function module:BuildOptions()
 		type = 'group',
 		name = 'Auto TurnIn',
 		args = {
+			QuestAccepting = {
+				name = 'Quest accepting',
+				type = 'group',
+				inline = true,
+				order = 10,
+				width = 'full',
+				args = {
+					AcceptGeneralQuests = {
+						name = 'Accept Quests',
+						type = 'toggle',
+						order = 10,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.AcceptGeneralQuests
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.AcceptGeneralQuests = val
+						end
+					},
+					trivial = {
+						name = 'Accept trivial quests',
+						type = 'toggle',
+						order = 20,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.trivial
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.trivial = val
+						end
+					},
+					AcceptRepeatable = {
+						name = 'Accept repeatable',
+						type = 'toggle',
+						order = 30,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.AcceptRepeatable
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.AcceptRepeatable = val
+						end
+					},
+					AutoGossip = {
+						name = 'Auto Gossip',
+						type = 'toggle',
+						order = 15,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.AutoGossip
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.AutoGossip = val
+						end
+					}
+				}
+			},
+			QuestTurnIn = {
+				name = 'Quest turn in',
+				type = 'group',
+				inline = true,
+				order = 20,
+				width = 'full',
+				args = {
+					TurnInEnabled = {
+						name = 'Turn in Quests',
+						type = 'toggle',
+						order = 10,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.TurnInEnabled
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.TurnInEnabled = val
+						end
+					},
+					AutoSelectLoot = {
+						name = 'Auto select loot',
+						type = 'toggle',
+						order = 30,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.lootreward
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.lootreward = val
+						end
+					},
+					autoequip = {
+						name = 'Auto equip upgrades',
+						type = 'toggle',
+						order = 30,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.autoequip
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.autoequip = val
+						end
+					}
+				}
+			},
 			debugMode = {
 				name = 'Debug Mode',
 				type = 'toggle',
-				order = 1,
+				order = 900,
 				get = function(info)
 					return SUI.DB.AutoTurnIn.debug
 				end,
 				set = function(info, val)
 					SUI.DB.AutoTurnIn.debug = val
-				end
-			},
-			TurnInEnabled = {
-				name = 'Turn in Quests',
-				type = 'toggle',
-				order = 10,
-				get = function(info)
-					return SUI.DB.AutoTurnIn.TurnInEnabled
-				end,
-				set = function(info, val)
-					SUI.DB.AutoTurnIn.TurnInEnabled = val
-				end
-			},
-			AutoGossip = {
-				name = 'Auto Gossip',
-				type = 'toggle',
-				order = 15,
-				get = function(info)
-					return SUI.DB.AutoTurnIn.AutoGossip
-				end,
-				set = function(info, val)
-					SUI.DB.AutoTurnIn.AutoGossip = val
-				end
-			},
-			AcceptGeneralQuests = {
-				name = 'Accept Quests',
-				type = 'toggle',
-				order = 20,
-				get = function(info)
-					return SUI.DB.AutoTurnIn.AcceptGeneralQuests
-				end,
-				set = function(info, val)
-					SUI.DB.AutoTurnIn.AcceptGeneralQuests = val
-				end
-			},
-			AcceptDaily = {
-				name = 'Accept Daily',
-				type = 'toggle',
-				order = 30,
-				disabled = true,
-				get = function(info)
-					return SUI.DB.AutoTurnIn.AcceptDaily
-				end,
-				set = function(info, val)
-					SUI.DB.AutoTurnIn.AcceptDaily = val
-				end
-			},
-			AcceptLowLevel = {
-				name = 'Accept Low Level',
-				type = 'toggle',
-				order = 40,
-				disabled = true,
-				get = function(info)
-					return SUI.DB.AutoTurnIn.trivial
-				end,
-				set = function(info, val)
-					SUI.DB.AutoTurnIn.trivial = val
 				end
 			}
 		}
