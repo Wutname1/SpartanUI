@@ -11,8 +11,8 @@ module.StatusBarSettings = {
 	Transparent_ExperienceBar = {
 		bgImg = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\status-plate-rep',
 		size = {400, 10},
-		TooltipSize = {300, 60},
-		TooltipTextSize = {280, 50},
+		TooltipSize = {400, 100},
+		TooltipTextSize = {380, 90},
 		texCords = {0.150390625, 1, 0, 1},
 		texCordsTooltip = {0.107421875, 0.892578125, 0.1875, 0.765625}
 	}

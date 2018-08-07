@@ -255,13 +255,15 @@ local CreateLargeFrame = function(self, unit)
 		self.artwork.flairHorde:SetTexCoord(unpack(Images.Horde.flair.Coords))
 		self.artwork.flairHorde:SetSize(self:GetWidth(), self:GetHeight() + 37)
 
-		self.Portrait = PlayerFrames:CreatePortrait(self)
-		if SUI.DBMod.PlayerFrames.Portrait3D then
-			self.Portrait:SetFrameStrata('LOW')
-			self.Portrait:SetFrameLevel(2)
+		if unit ~= 'raid' then
+			self.Portrait = PlayerFrames:CreatePortrait(self)
+			if SUI.DBMod.PlayerFrames.Portrait3D then
+				self.Portrait:SetFrameStrata('LOW')
+				self.Portrait:SetFrameLevel(2)
+			end
+			self.Portrait:SetSize(58, 58)
+			self.Portrait:SetPoint('RIGHT', self, 'LEFT', -1, 0)
 		end
-		self.Portrait:SetSize(58, 58)
-		self.Portrait:SetPoint('RIGHT', self, 'LEFT', -1, 0)
 
 		local Threat = self:CreateTexture(nil, 'OVERLAY')
 		Threat:SetSize(25, 25)
@@ -371,10 +373,10 @@ local CreateLargeFrame = function(self, unit)
 		SUI:FormatFont(self.Name, 12, 'Player')
 		self.Name:SetSize(self:GetWidth(), 12)
 		self.Name:SetJustifyH('LEFT')
-		self.Name:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -5)
+		self.Name:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -2)
 		self:Tag(self.Name, '[difficulty][smartlevel] [SUI_ColorClass][name]')
 
-		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -5)
+		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -2)
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
 		self.RareElite:SetAlpha(.6)
 		self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)

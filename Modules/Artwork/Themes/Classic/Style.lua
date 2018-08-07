@@ -15,8 +15,8 @@ module.StatusBarSettings = {
 	SUI_StatusBar_Left = {
 		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
 		size = {370, 32},
-		TooltipSize = {300, 80},
-		TooltipTextSize = {280, 70},
+		TooltipSize = {400, 100},
+		TooltipTextSize = {380, 90},
 		texCords = {0.150390625, 0.96875, 0, 1},
 		MaxWidth = 15
 	},
@@ -24,8 +24,8 @@ module.StatusBarSettings = {
 		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-rep',
 		Grow = 'RIGHT',
 		size = {370, 32},
-		TooltipSize = {300, 80},
-		TooltipTextSize = {280, 70},
+		TooltipSize = {400, 100},
+		TooltipTextSize = {380, 90},
 		texCords = {0, 0.849609375, 0, 1},
 		GlowPoint = {x = 20},
 		MaxWidth = 50
