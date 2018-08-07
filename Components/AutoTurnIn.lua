@@ -462,42 +462,40 @@ function module:FirstLaunch()
 		Desc1 = 'Automatically accept and turn in quests.',
 		RequireDisplay = SUI.DB.AutoTurnIn.FirstLaunch,
 		Display = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+			if not SUI.DB.EnabledComponents.AutoTurnIn then
+				window.Skip:Click()
+			end
+
 			--Container
 			SUI_Win.ATI = CreateFrame('Frame', nil)
 			SUI_Win.ATI:SetParent(SUI_Win.content)
 			SUI_Win.ATI:SetAllPoints(SUI_Win.content)
 
-			--TurnInEnabled
-			SUI_Win.ATI.TurnInEnabled =
-				CreateFrame('CheckButton', 'SUI_ATI_TurnInEnabled', SUI_Win.ATI, 'OptionsCheckButtonTemplate')
-			SUI_Win.ATI.TurnInEnabled:SetPoint('TOP', SUI_Win.ATI, 'TOP', -90, -90)
-			SUI_ATI_TurnInEnabledText:SetText('Enable turning in quests')
-			SUI_Win.ATI.TurnInEnabled:SetScript('OnClick', DummyFunction)
-
-			--AcceptGeneralQuests
-			SUI_Win.ATI.AcceptGeneralQuests =
-				CreateFrame('CheckButton', 'SUI_ATI_AcceptGeneralQuests', SUI_Win.ATI, 'OptionsCheckButtonTemplate')
-			SUI_Win.ATI.AcceptGeneralQuests:SetPoint('TOP', SUI_Win.ATI.TurnInEnabled, 'BOTTOM', 0, -15)
-			SUI_ATI_AcceptGeneralQuestsText:SetText('Enable accepting quests')
-			SUI_Win.ATI.AcceptGeneralQuests:SetScript('OnClick', DummyFunction)
+			-- Setup checkboxes
+			SUI_Win.Artwork.TurnInEnabled = StdUi:Checkbox(SUI_Win.ATI, 'Enable turning in quests', 120, 20)
+			SUI_Win.Artwork.AcceptGeneralQuests = StdUi:Checkbox(SUI_Win.ATI, 'Accept quests', 120, 20)
 
 			--Defaults
-			SUI_ATI_TurnInEnabled:SetChecked(true)
-			SUI_ATI_AcceptGeneralQuests:SetChecked(true)
+			SUI_Win.Artwork.TurnInEnabled:SetChecked(SUI.DB.AutoTurnIn.TurnInEnabled)
+			SUI_Win.Artwork.AcceptGeneralQuests:SetChecked(SUI.DB.AutoTurnIn.AcceptGeneralQuests)
 		end,
 		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
-			SUI.DB.AutoTurnIn.FirstLaunch = false
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
 
-			SUI.DB.AutoTurnIn.TurnInEnabled = (SUI_ATI_TurnInEnabled:GetChecked() == true or false)
-			SUI.DB.AutoTurnIn.AcceptGeneralQuests = (SUI_ATI_AcceptGeneralQuests:GetChecked() == true or false)
+			SUI.DB.AutoTurnIn.TurnInEnabled = (SUI_Win.Artwork.TurnInEnabled:GetChecked() == true or false)
+			SUI.DB.AutoTurnIn.AcceptGeneralQuests = (SUI_Win.Artwork.AcceptGeneralQuests:GetChecked() == true or false)
 
-			SUI_Win.ATI:Hide()
-			SUI_Win.ATI = nil
+			window.Skip:Click()
 		end,
 		Skip = function()
 			SUI.DB.AutoTurnIn.FirstLaunch = false
+			local SUI_Win = SUI:GetModule('SetupWizard').window
+			SUI_Win.ATI:Hide()
+			SUI_Win.ATI = nil
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')

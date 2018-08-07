@@ -256,6 +256,7 @@ function module:OnInitialize()
 	end
 	module:WelcomePage()
 	module:ProfileSetup()
+	module:ModuleSelectionPage()
 end
 
 function module:OnEnable()
@@ -351,6 +352,80 @@ function module:ProfileSetup()
 		local LDBIcon = LibStub('LibDBIcon-1.0', true)
 		LDBIcon['Hide'](LDBIcon, 'Bartender4')
 	end
+
+	module:AddPage(ProfilePage)
+end
+
+function module:ModuleSelectionPage()
+	local ProfilePage = {
+		ID = 'ModuleSelectionPage',
+		Name = 'Enabled modules',
+		RequireReload = true,
+		Priority = true,
+		SubTitle = 'Enabled modules',
+		Desc1 = 'Below you can disable modules of SpartanUI',
+		RequireDisplay = (not SUI.DB.SetupDone),
+		Display = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+
+			--Container
+			SUI_Win.ModSelection = CreateFrame('Frame', nil)
+			SUI_Win.ModSelection:SetParent(SUI_Win.content)
+			SUI_Win.ModSelection:SetAllPoints(SUI_Win.content)
+
+			local itemsMatrix = {}
+
+			-- List Components
+			for name, submodule in SUI:IterateModules() do
+				if (string.match(name, 'Component_')) then
+					local RealName = string.sub(name, 11)
+					if SUI.DB.EnabledComponents == nil then
+						SUI.DB.EnabledComponents = {}
+					end
+					if SUI.DB.EnabledComponents[RealName] == nil then
+						SUI.DB.EnabledComponents[RealName] = true
+					end
+
+					local Displayname = string.sub(name, 11)
+					if submodule.DisplayName then
+						Displayname = submodule.DisplayName
+					end
+					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 120, 20)
+					checkbox:SetScript(
+						'OnValueChanged',
+						function()
+							SUI.DB.EnabledComponents[RealName] = checkbox:GetValue()
+						end
+					)
+
+					itemsMatrix[#itemsMatrix] = checkbox
+				end
+			end
+
+			SUI_Win.ModSelection.itemsMatrix = itemsMatrix
+			StdUi:ObjectGrid(SUI_Win.ModSelection, itemsMatrix)
+			--Container
+			SUI_Win.ModuleSelectionPage = CreateFrame('Frame', nil)
+			SUI_Win.ModuleSelectionPage:SetParent(SUI_Win)
+			SUI_Win.ModuleSelectionPage:SetAllPoints(SUI_Win)
+		end,
+		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window.content
+
+			SUI.DB.SetupDone = true
+
+			SUI_Win.ModuleSelectionPage:Hide()
+			SUI_Win.ModuleSelectionPage = nil
+		end,
+		Skip = function()
+			SUI.DB.SetupDone = true
+
+			SUI_Win.ModuleSelectionPage:Hide()
+			SUI_Win.ModuleSelectionPage = nil
+		end
+	}
 
 	module:AddPage(ProfilePage)
 end

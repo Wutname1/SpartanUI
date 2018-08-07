@@ -48,7 +48,13 @@ function module:FirstTime()
 		Desc2 = 'Crafting, consumables, and gearset items will not be sold by default.',
 		RequireDisplay = SUI.DB.AutoSell.FirstLaunch,
 		Display = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+			if not SUI.DB.EnabledComponents.AutoSell then
+				window.Skip:Click()
+			end
+
 			local gui = LibStub('AceGUI-3.0')
 			--Container
 			SUI_Win.AutoSell = CreateFrame('Frame', nil)
@@ -134,8 +140,8 @@ function module:FirstTime()
 			SUI_AutoSell_SellWhite:SetChecked(true)
 		end,
 		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
-			SUI.DB.AutoSell.FirstLaunch = false
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
 
 			SUI.DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
 			SUI.DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
@@ -146,11 +152,13 @@ function module:FirstTime()
 			SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoSell.AutoRepair:GetChecked() == true or false)
 			SUI.DB.AutoSell.MaxILVL = SUI_Win.AutoSell.iLVL:GetValue()
 
-			SUI_Win.AutoSell:Hide()
-			SUI_Win.AutoSell = nil
+			window.Skip:Click()
 		end,
 		Skip = function()
-			SUI.DB.AutoSell.FirstLaunch = true
+			SUI.DB.AutoSell.FirstLaunch = false
+			local SUI_Win = SUI:GetModule('SetupWizard').window
+			SUI_Win.AutoSell:Hide()
+			SUI_Win.AutoSell = nil
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
