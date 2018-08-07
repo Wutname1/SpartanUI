@@ -253,7 +253,7 @@ function Artwork_Core:FirstTime()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-
+			
 			--Container
 			SUI_Win.Artwork = CreateFrame('Frame', nil)
 			SUI_Win.Artwork:SetParent(SUI_Win)
@@ -266,66 +266,66 @@ function Artwork_Core:FirstTime()
 			local control
 
 			--Classic
-			control = StdUi:HighlightButton(window, 120, 60, '')
+			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
 			control:SetNormalTexture('interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center')
 
-			control.radio = StdUi:Radio(window, 'Classic', 'SUIArtwork', 120, 20)
+			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Classic', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Classic')
 			StdUi:GlueBelow(control.radio, control)
 
 			SUI_Win.Artwork.Classic = control
 
 			--Fel
-			control = StdUi:HighlightButton(window, 120, 60, '')
+			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
 			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Fel')
 
-			control.radio = StdUi:Radio(window, 'Fel', 'SUIArtwork', 120, 20)
+			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Fel', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Fel')
 			StdUi:GlueBelow(control.radio, control)
 
 			SUI_Win.Artwork.Fel = control
 
 			--War
-			control = StdUi:HighlightButton(window, 120, 60, '')
+			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
 			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_War')
 
-			control.radio = StdUi:Radio(window, 'War', 'SUIArtwork', 120, 20)
+			control.radio = StdUi:Radio(SUI_Win.Artwork, 'War', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('War')
 			StdUi:GlueBelow(control.radio, control)
 
 			SUI_Win.Artwork.War = control
 
 			--Digital
-			control = StdUi:HighlightButton(window, 120, 60, '')
+			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
 			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Digital')
 
-			control.radio = StdUi:Radio(window, 'Digital', 'SUIArtwork', 120, 20)
+			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Digital', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Digital')
 			StdUi:GlueBelow(control.radio, control)
 
 			SUI_Win.Artwork.Digital = control
 
 			--Transparent
-			control = StdUi:HighlightButton(window, 120, 60, '')
+			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
 			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Transparent')
 
-			control.radio = StdUi:Radio(window, 'Transparent', 'SUIArtwork', 120, 20)
+			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Transparent', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Transparent')
 			StdUi:GlueBelow(control.radio, control)
 
 			SUI_Win.Artwork.Transparent = control
 
 			--Minimal
-			control = StdUi:HighlightButton(window, 120, 60, '')
+			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
 			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Minimal')
 
-			control.radio = StdUi:Radio(window, 'Minimal', 'SUIArtwork', 120, 20)
+			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Minimal', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Minimal')
 			StdUi:GlueBelow(control.radio, control)
 
