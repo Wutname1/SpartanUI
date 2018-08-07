@@ -15,8 +15,8 @@ module.StatusBarSettings = {
 	SUI_StatusBar_Left = {
 		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
 		size = {370, 32},
-		TooltipSize = {300, 80},
-		TooltipTextSize = {280, 70},
+		TooltipSize = {400, 100},
+		TooltipTextSize = {380, 90},
 		texCords = {0.150390625, 0.96875, 0, 1},
 		MaxWidth = 15
 	},
@@ -24,8 +24,8 @@ module.StatusBarSettings = {
 		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-rep',
 		Grow = 'RIGHT',
 		size = {370, 32},
-		TooltipSize = {300, 80},
-		TooltipTextSize = {280, 70},
+		TooltipSize = {400, 100},
+		TooltipTextSize = {380, 90},
 		texCords = {0, 0.849609375, 0, 1},
 		GlowPoint = {x = 20},
 		MaxWidth = 50
@@ -91,7 +91,7 @@ function module:SetupStatusBars()
 	StatusBars:Initalize(module.StatusBarSettings)
 
 	StatusBars.bars.SUI_StatusBar_Left:SetPoint('BOTTOMRIGHT', 'SUI_ActionBarPlate', 'BOTTOM', -92, -2)
-	StatusBars.bars.SUI_StatusBar_Right:SetPoint('BOTTOMLEFT', 'SUI_ActionBarPlate', 'BOTTOM', 70, 0)
+	StatusBars.bars.SUI_StatusBar_Right:SetPoint('BOTTOMLEFT', 'SUI_ActionBarPlate', 'BOTTOM', 78, 0)
 end
 
 function module:SetupMenus()
@@ -123,8 +123,9 @@ function module:SetupMenus()
 					return SUI.DB.ActionBars.Allenable
 				end,
 				set = function(info, val)
+					SUI.DB.ActionBars.Allenable = val
 					for i = 1, 6 do
-						SUI.DB.ActionBars['bar' .. i].enable, DB.ActionBars.Allenable = val, val
+						SUI.DB.ActionBars['bar' .. i].enable = val
 					end
 				end
 			},
