@@ -29,7 +29,7 @@ module.StatusBarSettings = {
 	}
 }
 local CurScale
-local petbattle = CreateFrame('Frame')
+local petbattle, trayWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 
 -- Misc Framework stuff
 function module:updateScale()
