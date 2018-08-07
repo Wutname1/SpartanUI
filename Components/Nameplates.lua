@@ -212,10 +212,13 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Things to do if this is the players display
 		if (UnitIsUnit(unit, 'player')) then
-			attachPoint = 'Castbar'
+			local attachPoint = 'Castbar'
+			if not SUI.DBMod.NamePlates.ShowCastbar then
+				attachPoint = 'Health'
+			end
 			-- Setup Player Icons
 			if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
-				SUI:PlayerPowerIcons(frame, 'Health')
+				SUI:PlayerPowerIcons(frame, attachPoint)
 			end
 		end
 
