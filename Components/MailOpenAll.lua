@@ -135,7 +135,7 @@ end
 function module:ProcessNext()
 	local curFirstMailDaysLeft = select(7, GetInboxHeaderInfo(1))
 	if curFirstMailDaysLeft ~= 0 and curFirstMailDaysLeft ~= firstMailDaysLeft then
-		return self:OpenAll(true)
+		return -- self:OpenAll(true)
 	end
 
 	if mailIndex > 0 then
@@ -272,7 +272,7 @@ function module:ProcessNext()
 		local numItems, totalItems = GetInboxNumItems()
 		if numUnshownItems ~= totalItems - numItems then
 			-- We will Open All again if the number of unshown items is different
-			return self:OpenAll(true) -- tail call
+			return --self:OpenAll(true) -- tail call
 		elseif totalItems > numItems and numItems < MAX_MAIL_SHOWN then
 			-- We only want to refresh if there's more items to show
 			SUI:Print(L['Not all messages are shown, refreshing mailbox soon to continue Open All...'])
