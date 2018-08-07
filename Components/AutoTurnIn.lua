@@ -47,6 +47,25 @@ local BlackList = {
 	['binder'] = true,
 	["I'm looking for a lost companion."] = true,
 	['Train me.'] = true,
+	['Inn'] = true,
+	['gossip'] = true,
+	['Show me what you have available.'] = true,
+	['Class Trainer'] = true,
+	['vendor'] = true,
+	['Flight Master'] = true,
+	['Profession Trainer'] = true,
+	['Guild Master & Vendor'] = true,
+	['Void Storage'] = true,
+	['Auction House'] = true,
+	['Battle Pet Trainer'] = true,
+	['Stable Master'] = true,
+	['Zeppelin Master'] = true,
+	['Battlemasters'] = true,
+	['Barber'] = true,
+	['Bank'] = true,
+	['Other Continents'] = true,
+	["Officer's Lounge"] = true,
+	['Transmogrification'] = true,
 	-- WOTLK Blacklist
 	['I am prepared to face Saragosa!'] = true,
 	['What is the cause of this conflict?'] = true,
@@ -58,7 +77,20 @@ local BlackList = {
 	['I would like to go to Lord Afrasastrasz in the middle of the temple.'] = true,
 	['My lord, I need to get to the top of the temple.'] = true,
 	['Yes, please, I would like to return to the ground level of the temple.'] = true,
-	["Steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple."] = true
+	["Steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple."] = true,
+	['I want to exchange my Ruby Essence for Amber Essence.'] = true,
+	['What abilities do ruby drakes have?'] = true,
+	['I want to fly on the wings of the bronze flight.'] = true,
+	['I want to fly on the wings of the red flight.'] = true,
+	['I want to exchange my Ruby Essence for Emerald Essence.'] = true,
+	['What abilities do emerald drakes have?'] = true,
+	['I want to fly on the wings of the green flight.'] = true,
+	['I want to exchange my Amber Essence for Ruby Essence.'] = true,
+	['What abilities do amber drakes have?'] = true,
+	-- Legion
+	['Your people treat you with contempt. Why? What did you do?'] = true,
+	["Let's go find that Tidestone."] = true,
+	['You did all this? How? Why?'] = true
 }
 local anchor, scanningTooltip
 local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
@@ -143,23 +175,23 @@ local Lquests = {
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
 
-local function ScanTip(itemLink, itemLevel)
+local function ScanTip(itemLink)
+	-- Setup the scanning tooltip
+	-- Why do this here and not in OnEnable? If the player is not questing there is no need for this to exsist.
+	if not scanningTooltip then
+		anchor = CreateFrame('Frame')
+		anchor:Hide()
+		scanningTooltip = _G.CreateFrame('GameTooltip', 'LibItemUpgradeInfoTooltip', nil, 'GameTooltipTemplate')
+	end
+	GameTooltip_SetDefaultAnchor(scanningTooltip, anchor)
+
 	-- If the item is not in the cache populate it.
 	if type(itemCache[itemLink].ilevel) == 'nil' then
-		-- Setup the scanning tooltip
-		-- Why do this here and not in OnEnable? If the player is not questing there is no need for this to exsist.
-		if not scanningTooltip then
-			anchor = CreateFrame('Frame')
-			anchor:Hide()
-			scanningTooltip = _G.CreateFrame('GameTooltip', 'LibItemUpgradeInfoTooltip', nil, 'GameTooltipTemplate')
-		end
-		GameTooltip_SetDefaultAnchor(scanningTooltip, anchor)
-
 		-- Load tooltip
 		local itemString = itemLink:match('|H(.-)|h')
 		local rc, message = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
 		if (not rc) then
-			return {}
+			return 0
 		end
 		scanningTooltip:Show()
 
@@ -168,27 +200,28 @@ local function ScanTip(itemLink, itemLevel)
 			ilevel = nil
 		}
 		-- Find the iLVL inthe tooltip
-		local c = itemCache[itemLink]
 		for i = 2, 6 do
-			local label, text = _G['LibItemUpgradeInfoTooltipTextLeft' .. i], nil
+			local label, text = _G['ItemUpgradeTooltipTextLeft' .. i], nil
 			if label then
 				text = label:GetText()
 			end
 			if text then
-				if c.ilevel == nil then
-					c.ilevel = tonumber(text:match(itemLevelPattern))
+				if itemCache[itemLink].ilevel == nil then
+					itemCache[itemLink].ilevel = tonumber(text:match(itemLevelPattern))
 				end
 			end
 		end
 
+		print('Figure out what to cache and what to return as the ilvl')
 		-- Figure out what to cache and what to return as the ilvl
-		c.ilevel = c.ilevel or itemLevel
+		itemCache[itemLink].ilevel = itemCache[itemLink].ilevel or 0
 		itemLevel = GetDetailedItemLevelInfo(itemLink)
-		if type(c.ilevel) == 'number' then
-			c.ilevel = math.max(c.ilevel, itemLevel)
+		if type(itemCache[itemLink].ilevel) == 'number' then
+			itemCache[itemLink].ilevel = math.max(itemCache[itemLink].ilevel, 0)
 		else
-			c.ilevel = itemLevel
+			itemCache[itemLink].ilevel = itemLevel
 		end
+		print(itemCache[itemLink].ilevel)
 
 		-- Hide the scanning tooltip
 		scanningTooltip:Hide()
@@ -197,13 +230,12 @@ local function ScanTip(itemLink, itemLevel)
 	return itemCache[itemLink].ilevel
 end
 
-function module:GetiLVL(itemLink, itemQuality, itemLevel)
+function module:GetiLVL(itemLink)
 	if not itemLink then
 		return 0
 	end
-	if not itemQuality then
-		itemQuality, itemLevel = select(3, GetItemInfo(itemLink))
-	end
+
+	local itemQuality, itemLevel = select(3, GetItemInfo(itemLink))
 
 	-- if a heirloom return a huge number so we dont replace it.
 	if (itemQuality == 7) then
@@ -211,7 +243,8 @@ function module:GetiLVL(itemLink, itemQuality, itemLevel)
 	end
 
 	-- Scan the tooltip, itemLevel is a fallback incase tooltip does not contain the data
-	return ScanTip(itemLink, itemLevel)
+	local effectiveILvl = GetDetailedItemLevelInfo(itemLink)
+	return (effectiveILvl or itemLevel)
 end
 
 -- turns quest in printing reward text if `showrewardtext` option is set.
@@ -221,6 +254,10 @@ function module:TurnInQuest(rewardIndex)
 	if (SUI.DB.AutoTurnIn.showrewardtext) then
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
+	if IsAltKeyDown() and SUI.DB.AutoTurnIn.debug then
+		SUI:Print('Canceling loot selection')
+		return
+	end
 
 	GetQuestReward(rewardIndex)
 end
@@ -229,6 +266,7 @@ function module:EquipItem(ItemToEquip)
 	if (InCombatLockdown()) then
 		return
 	end
+	print('need to equip' .. ItemToEquip)
 
 	-- Make sure it is in the bags
 	for bag = 0, NUM_BAG_SLOTS do
@@ -270,7 +308,7 @@ function module.QUEST_COMPLETE()
 	if not SUI.DB.AutoTurnIn.TurnInEnabled then
 		return
 	end
-	
+
 	-- Look for the item that is the best upgrade and whats worth the most.
 	local GreedID, GreedValue, UpgradeID = nil, 0, nil
 	local GreedLink, UpgradeLink = nil, nil
@@ -299,23 +337,26 @@ function module.QUEST_COMPLETE()
 				local invLink = GetInventoryItemLink('player', firstSlot)
 				local EquipedLevel = module:GetiLVL(invLink)
 
-				-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
-				if (#slot > 1) then
-					local secondSlot = GetInventorySlotInfo(slot[2])
-					invLink = GetInventoryItemLink('player', secondSlot)
-					if (invLink) then
-						local eq2Level = module:GetiLVL(invLink)
-						firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
-						EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
+				if EquipedLevel then
+					-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
+					if (#slot > 1) then
+						local secondSlot = GetInventorySlotInfo(slot[2])
+						invLink = GetInventoryItemLink('player', secondSlot)
+						if (invLink) then
+							local eq2Level = module:GetiLVL(invLink)
+							firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
+							EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
+						end
 					end
-				end
-				-- comparing lowest equipped item level with reward's item level
-				if (SUI.DB.AutoTurnIn.debug) then
-					print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
-				end
-				if (QuestItemTrueiLVL > EquipedLevel) then
-					UpgradeLink = link
-					UpgradeID = i
+
+					-- comparing lowest equipped item level with reward's item level
+					if (SUI.DB.AutoTurnIn.debug) then
+						print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
+					end
+					if (QuestItemTrueiLVL > EquipedLevel) then
+						UpgradeLink = link
+						UpgradeID = i
+					end
 				end
 			end
 		end
@@ -324,13 +365,13 @@ function module.QUEST_COMPLETE()
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if SUI.DB.AutoTurnIn.lootreward then
-			if (GreedID and not UpgradeID)  then
+			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
 				module:TurnInQuest(GreedID)
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
-				-- module:TurnInQuest(UpgradeID)
-				-- module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
+				module:TurnInQuest(UpgradeID)
+				module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 			end
 		else
 			if (GreedID and not UpgradeID) then
@@ -340,7 +381,7 @@ function module.QUEST_COMPLETE()
 			end
 		end
 	else
-		if (GreedID and not UpgradeID)  then
+		if (GreedID and not UpgradeID) then
 			SUI:Print('Quest rewards vendor item ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
 			module:TurnInQuest(GreedID)
 		elseif UpgradeID then
