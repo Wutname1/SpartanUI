@@ -792,6 +792,25 @@ end
 
 ---------------		Misc Backend		-------------------------------
 
+function SUI:GoldFormattedValue(rawValue)
+	local gold = math.floor(rawValue / 10000)
+	local silver = math.floor((rawValue % 10000) / 100)
+	local copper = (rawValue % 10000) % 100
+
+	return format(
+		GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
+		gold,
+		0,
+		0,
+		silver,
+		0,
+		0,
+		copper,
+		0,
+		0
+	)
+end
+
 function SUI:BT4ProfileAttach(msg)
 	PageData = {
 		title = 'SpartanUI',

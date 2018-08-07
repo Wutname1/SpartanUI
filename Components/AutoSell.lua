@@ -290,25 +290,6 @@ function module:IsSellable(item, ilink, bag, slot)
 	return false
 end
 
-function module:GetFormattedValue(rawValue)
-	local gold = math.floor(rawValue / 10000)
-	local silver = math.floor((rawValue % 10000) / 100)
-	local copper = (rawValue % 10000) % 100
-
-	return format(
-		GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
-		gold,
-		0,
-		0,
-		silver,
-		0,
-		0,
-		copper,
-		0,
-		0
-	)
-end
-
 function module:SellTrash()
 	--Reset Locals
 	totalValue = 0
@@ -331,7 +312,7 @@ function module:SellTrash()
 	if #ItemToSell == 0 then
 		SUI:Print(L['No items are to be auto sold'])
 	else
-		SUI:Print('Need to sell ' .. #ItemToSell .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
+		SUI:Print('Need to sell ' .. #ItemToSell .. ' item(s) for ' .. SUI:GoldFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
 		module.SellTimer = module:ScheduleRepeatingTimer('SellTrashInBag', .2, ItemToSell)
 	end
@@ -393,7 +374,7 @@ function module:Enable()
 		else
 			module:CancelAllTimers()
 			if (totalValue > 0) then
-				-- SUI:Print("Sold items for " .. module:GetFormattedValue(totalValue));
+				-- SUI:Print("Sold items for " .. SUI:GoldFormattedValue(totalValue));
 				totalValue = 0
 			end
 		end
