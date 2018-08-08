@@ -266,14 +266,22 @@ function module:EquipItem(ItemToEquip)
 	if (InCombatLockdown()) then
 		return
 	end
-	print('need to equip' .. ItemToEquip)
+	
+	local EquipItemName = GetItemInfo(ItemToEquip)
+	local EquipILvl = GetDetailedItemLevelInfo(ItemToEquip)
+	local ItemFound = false
 
 	-- Make sure it is in the bags
 	for bag = 0, NUM_BAG_SLOTS do
+		if ItemFound then
+			return
+		end
 		for slot = 1, GetContainerNumSlots(bag), 1 do
 			local link = GetContainerItemLink(bag, slot)
 			if (link) then
-				if (link == ItemToEquip) then
+				local slotItemName = GetItemInfo(link)
+				local SlotILvl = GetDetailedItemLevelInfo(link)
+				if (slotItemName == EquipItemName) and (SlotILvl == EquipILvl) then
 					if IsMerchantOpen then
 						SUI:Print(L['Unable to equip'] .. ' ' .. link)
 						module:CancelAllTimers()
@@ -281,6 +289,8 @@ function module:EquipItem(ItemToEquip)
 						SUI:Print(L['Equipping reward'] .. ' ' .. link)
 						UseContainerItem(bag, slot)
 						module:CancelAllTimers()
+						ItemFound = true
+						return
 					end
 				end
 			end
@@ -387,6 +397,7 @@ function module.QUEST_COMPLETE()
 		elseif UpgradeID then
 			SUI:Print('Quest rewards a upgrade ' .. UpgradeLink)
 			module:TurnInQuest(UpgradeID)
+			module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 		else
 			if (SUI.DB.AutoTurnIn.debug) then
 				SUI:Print('No Reward, turning in.')
