@@ -1,5 +1,5 @@
 ## Interface: 80000
-## Title: SpartanUI |CFF0070DDCore|r
+## Title: SpartanUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
 ## X-Build: @project-revision@
