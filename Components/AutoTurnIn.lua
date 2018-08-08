@@ -51,7 +51,6 @@ local BlackList = {
 	['gossip'] = true,
 	['Show me what you have available.'] = true,
 	['Class Trainer'] = true,
-	['vendor'] = true,
 	['Flight Master'] = true,
 	['Profession Trainer'] = true,
 	['Guild Master & Vendor'] = true,
@@ -69,7 +68,6 @@ local BlackList = {
 	-- WOTLK Blacklist
 	['I am prepared to face Saragosa!'] = true,
 	['What is the cause of this conflict?'] = true,
-	['I am ready to be teleported to Dalaran.'] = true,
 	['Can you spare a drake to take me to Lord Afrasastrasz in the middle of the temple?'] = true,
 	['I must return to the world of shadows, Koltira. Send me back.'] = true,
 	['I am ready to be teleported to Dalaran.'] = true,
@@ -189,7 +187,7 @@ local function ScanTip(itemLink)
 	if type(itemCache[itemLink].ilevel) == 'nil' then
 		-- Load tooltip
 		local itemString = itemLink:match('|H(.-)|h')
-		local rc, message = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
+		local rc = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
 		if (not rc) then
 			return 0
 		end
@@ -266,7 +264,7 @@ function module:EquipItem(ItemToEquip)
 	if (InCombatLockdown()) then
 		return
 	end
-	
+
 	local EquipItemName = GetItemInfo(ItemToEquip)
 	local EquipILvl = GetDetailedItemLevelInfo(ItemToEquip)
 	local ItemFound = false
@@ -462,9 +460,6 @@ function module:VarArgForAvailableQuests(...)
 	end
 end
 
-local DummyFunction = function()
-end
-
 function module:FirstLaunch()
 	local PageData = {
 		ID = 'Autoturnin',
@@ -481,32 +476,57 @@ function module:FirstLaunch()
 			end
 
 			--Container
-			SUI_Win.ATI = CreateFrame('Frame', nil)
-			SUI_Win.ATI:SetParent(SUI_Win.content)
-			SUI_Win.ATI:SetAllPoints(SUI_Win.content)
+			local ATI = CreateFrame('Frame', nil)
+			ATI:SetParent(SUI_Win.content)
+			ATI:SetAllPoints(SUI_Win.content)
 
 			-- Setup checkboxes
-			SUI_Win.Artwork.TurnInEnabled = StdUi:Checkbox(SUI_Win.ATI, 'Enable turning in quests', 120, 20)
-			SUI_Win.Artwork.AcceptGeneralQuests = StdUi:Checkbox(SUI_Win.ATI, 'Accept quests', 120, 20)
+			local Items = {
+				[1] = {
+					label = 'Enable turning in quests',
+					db = 'TurnInEnabled'
+				},
+				[2] = {
+					label = 'Accept quests',
+					db = 'AcceptGeneralQuests'
+				},
+				[3] = {
+					label = 'Auto gossip',
+					db = 'AutoGossip'
+				},
+				[4] = {
+					label = 'Auto select loot',
+					db = 'lootreward'
+				},
+				[5] = {
+					label = 'Auto equip upgrade quest rewards',
+					db = 'autoequip'
+				}
+			}
+			local CheckBoxes = {}
+			for i = 1, #Items do
+				CheckBoxes[i] = StdUi:Checkbox(ATI, Items[i].label, 120, 20)
+				CheckBoxes[i]:SetScript('OnValueChanged', function(self, state, value)
+					SUI.DB.AutoTurnIn[Items[i].db] = state
+				end)
+				CheckBoxes[i]:SetChecked(SUI.DB.AutoTurnIn[Items[i].db])
+			end
 
-			--Defaults
-			SUI_Win.Artwork.TurnInEnabled:SetChecked(SUI.DB.AutoTurnIn.TurnInEnabled)
-			SUI_Win.Artwork.AcceptGeneralQuests:SetChecked(SUI.DB.AutoTurnIn.AcceptGeneralQuests)
+			-- Positioning
+			ATI.CheckBoxList = StdUi:ObjectList(ATI, CheckBoxes)
+
+			StdUi:GlueTop(ATI.CheckBoxList, SUI_Win, 0, -30)
+
+			SUI_Win.ATI = ATI
 		end,
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-
-			SUI.DB.AutoTurnIn.TurnInEnabled = (SUI_Win.Artwork.TurnInEnabled:GetChecked() == true or false)
-			SUI.DB.AutoTurnIn.AcceptGeneralQuests = (SUI_Win.Artwork.AcceptGeneralQuests:GetChecked() == true or false)
-
 			window.Skip:Click()
 		end,
 		Skip = function()
 			SUI.DB.AutoTurnIn.FirstLaunch = false
-			local SUI_Win = SUI:GetModule('SetupWizard').window
-			SUI_Win.ATI:Hide()
-			SUI_Win.ATI = nil
+			ATI:Hide()
+			ATI = nil
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
