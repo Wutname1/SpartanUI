@@ -489,7 +489,7 @@ function module:OnInitialize()
 		type = 'group',
 		order = 200,
 		args = {
-			a = {name = L['GFontSet'], type = 'header'},
+			a = {name = L['Global font settings'], type = 'header'},
 			aa = {
 				name = L['Large number seperator'],
 				desc = L['This is used to split up large numbers example: 100,000'],
@@ -503,7 +503,7 @@ function module:OnInitialize()
 				end
 			},
 			b = {
-				name = L['FontType'],
+				name = L['Font face'],
 				type = 'select',
 				values = FontFaces,
 				get = function(info)
@@ -514,7 +514,7 @@ function module:OnInitialize()
 				end
 			},
 			c = {
-				name = L['FontStyle'],
+				name = L['Font style'],
 				type = 'select',
 				values = {
 					['normal'] = L['normal'],
@@ -530,7 +530,7 @@ function module:OnInitialize()
 				end
 			},
 			d = {
-				name = L['AdjFontSize'],
+				name = L['Adjust font size'],
 				type = 'range',
 				width = 'double',
 				min = -3,
@@ -571,7 +571,7 @@ function module:OnInitialize()
 				type = 'group',
 				args = {
 					CFace = {
-						name = L['FontType'],
+						name = L['Font face'],
 						type = 'select',
 						order = 1,
 						values = FontFaces,
@@ -584,7 +584,7 @@ function module:OnInitialize()
 						end
 					},
 					COutline = {
-						name = L['FontStyle'],
+						name = L['Font style'],
 						type = 'select',
 						order = 2,
 						values = {
@@ -602,7 +602,7 @@ function module:OnInitialize()
 						end
 					},
 					CSize = {
-						name = L['AdjFontSize'],
+						name = L['Adjust font size'],
 						type = 'range',
 						order = 3,
 						width = 'full',
@@ -629,7 +629,7 @@ function module:OnInitialize()
 				end,
 				args = {
 					PlFace = {
-						name = L['FontType'],
+						name = L['Font face'],
 						type = 'select',
 						order = 1,
 						values = FontFaces,
@@ -642,7 +642,7 @@ function module:OnInitialize()
 						end
 					},
 					PlOutline = {
-						name = L['FontStyle'],
+						name = L['Font style'],
 						type = 'select',
 						order = 2,
 						values = {
@@ -660,7 +660,7 @@ function module:OnInitialize()
 						end
 					},
 					PlSize = {
-						name = L['AdjFontSize'],
+						name = L['Adjust font size'],
 						type = 'range',
 						order = 3,
 						width = 'full',
@@ -687,7 +687,7 @@ function module:OnInitialize()
 				end,
 				args = {
 					PaFace = {
-						name = L['FontType'],
+						name = L['Font face'],
 						type = 'select',
 						order = 1,
 						values = FontFaces,
@@ -700,7 +700,7 @@ function module:OnInitialize()
 						end
 					},
 					PaOutline = {
-						name = L['FontStyle'],
+						name = L['Font style'],
 						type = 'select',
 						order = 2,
 						values = {
@@ -718,7 +718,7 @@ function module:OnInitialize()
 						end
 					},
 					PaSize = {
-						name = L['AdjFontSize'],
+						name = L['Adjust font size'],
 						type = 'range',
 						order = 3,
 						width = 'full',
@@ -745,7 +745,7 @@ function module:OnInitialize()
 				end,
 				args = {
 					RFace = {
-						name = L['FontType'],
+						name = L['Font face'],
 						type = 'select',
 						order = 1,
 						values = FontFaces,
@@ -758,7 +758,7 @@ function module:OnInitialize()
 						end
 					},
 					ROutline = {
-						name = L['FontStyle'],
+						name = L['Font style'],
 						type = 'select',
 						order = 2,
 						values = {
@@ -776,7 +776,7 @@ function module:OnInitialize()
 						end
 					},
 					RSize = {
-						name = L['AdjFontSize'],
+						name = L['Adjust font size'],
 						type = 'range',
 						order = 3,
 						width = 'full',
