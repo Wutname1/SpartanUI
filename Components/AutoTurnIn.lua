@@ -90,6 +90,7 @@ local BlackList = {
 	-- Legion
 	['Your people treat you with contempt. Why? What did you do?'] = true,
 	-- BFA
+	["Warchief, may I ask why we want to capture Teldrassil?"] = true,
 	['I am ready to go to the Undercity.'] = true,
 	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true
 }
@@ -513,7 +514,7 @@ function module:FirstLaunch()
 				CheckBoxes[i]:SetScript(
 					'OnValueChanged',
 					function(self, state, value)
-					SUI.DB.AutoTurnIn[Items[i].db] = state
+						SUI.DB.AutoTurnIn[Items[i].db] = state
 					end
 				)
 				CheckBoxes[i]:SetChecked(SUI.DB.AutoTurnIn[Items[i].db])
@@ -546,7 +547,10 @@ function module.GOSSIP_SHOW()
 	end
 
 	local options = {GetGossipOptions()}
-	if #options > 5 then
+	if #options > 7 then
+		if SUI.DB.AutoTurnIn.debug then
+			print('Too many gossip options (' .. #options .. ')')
+		end
 		return
 	end
 	for k, v in pairs(options) do

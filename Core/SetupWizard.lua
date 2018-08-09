@@ -393,8 +393,8 @@ function module:ModuleSelectionPage()
 						Displayname = submodule.DisplayName
 					end
 					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 120, 20)
-					checkbox:SetScript(
-						'OnValueChanged',
+					checkbox:HookScript(
+						'OnClick',
 						function()
 							SUI.DB.EnabledComponents[RealName] = checkbox:GetValue()
 						end
@@ -403,9 +403,7 @@ function module:ModuleSelectionPage()
 					itemsMatrix[#itemsMatrix] = checkbox
 				end
 			end
-
-			SUI_Win.ModSelection.itemsMatrix = itemsMatrix
-			StdUi:ObjectGrid(SUI_Win.ModSelection, itemsMatrix)
+			
 			--Container
 			SUI_Win.ModuleSelectionPage = CreateFrame('Frame', nil)
 			SUI_Win.ModuleSelectionPage:SetParent(SUI_Win)
