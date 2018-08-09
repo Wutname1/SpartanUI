@@ -838,6 +838,7 @@ end
 
 function module:PlayerFrames()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
+	PartyFrames = SUI:GetModule('PartyFrames')
 	SpartanoUF:SetActiveStyle('Spartan_MinimalFrames')
 	PlayerFrames:BuffOptions()
 
@@ -940,6 +941,8 @@ function module:PositionFrame(b)
 end
 
 function module:RaidFrames()
+	PlayerFrames = SUI:GetModule('PlayerFrames')
+	PartyFrames = SUI:GetModule('PartyFrames')
 	SpartanoUF:SetActiveStyle('Spartan_MinimalFrames_Raid')
 
 	local xoffset = 3
@@ -992,6 +995,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
+	PlayerFrames = SUI:GetModule('PlayerFrames')
 	PartyFrames = SUI:GetModule('PartyFrames')
 	module:Options_PartyFrames()
 	SpartanoUF:SetActiveStyle('Spartan_MinimalFrames_Party')
