@@ -65,6 +65,8 @@ local BlackList = {
 	['Other Continents'] = true,
 	["Officer's Lounge"] = true,
 	['Transmogrification'] = true,
+	['I want to transmogrify my gear.'] = true,
+	['transmogrify'] = true,
 	-- WOTLK Blacklist
 	['I am prepared to face Saragosa!'] = true,
 	['What is the cause of this conflict?'] = true,
@@ -87,8 +89,9 @@ local BlackList = {
 	['What abilities do amber drakes have?'] = true,
 	-- Legion
 	['Your people treat you with contempt. Why? What did you do?'] = true,
-	["Let's go find that Tidestone."] = true,
-	['You did all this? How? Why?'] = true
+	-- BFA
+	['I am ready to go to the Undercity.'] = true,
+	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true
 }
 local anchor, scanningTooltip
 local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
@@ -252,8 +255,9 @@ function module:TurnInQuest(rewardIndex)
 	if (SUI.DB.AutoTurnIn.showrewardtext) then
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
-	if IsAltKeyDown() and SUI.DB.AutoTurnIn.debug then
+	if IsAltKeyDown() then
 		SUI:Print('Canceling loot selection')
+		module:CancelAllTimers()
 		return
 	end
 
@@ -506,9 +510,12 @@ function module:FirstLaunch()
 			local CheckBoxes = {}
 			for i = 1, #Items do
 				CheckBoxes[i] = StdUi:Checkbox(ATI, Items[i].label, 120, 20)
-				CheckBoxes[i]:SetScript('OnValueChanged', function(self, state, value)
+				CheckBoxes[i]:SetScript(
+					'OnValueChanged',
+					function(self, state, value)
 					SUI.DB.AutoTurnIn[Items[i].db] = state
-				end)
+					end
+				)
 				CheckBoxes[i]:SetChecked(SUI.DB.AutoTurnIn[Items[i].db])
 			end
 
@@ -538,9 +545,10 @@ function module.GOSSIP_SHOW()
 		return
 	end
 
-	-- local questCount = GetNumGossipActiveQuests() > 0
-	-- if questCount then
 	local options = {GetGossipOptions()}
+	if #options > 5 then
+		return
+	end
 	for k, v in pairs(options) do
 		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
 		if (v ~= 'gossip') and (not BlackList[v]) then
@@ -552,7 +560,6 @@ function module.GOSSIP_SHOW()
 			end
 		end
 	end
-	-- end
 
 	module:VarArgForActiveQuests(GetGossipActiveQuests())
 	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
