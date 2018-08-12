@@ -217,17 +217,6 @@ function Artwork_Core:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
-	StaticPopupDialogs['BartenderInstallWarning'] = {
-		text = '|cff33ff99SpartanUI v' ..
-			SUI.Version .. '|n|r|n|n' .. L['Warning'] .. ': ' .. L['BartenderNotFoundMSG1'] .. '|n' .. L['BartenderNotFoundMSG2'],
-		button1 = 'Ok',
-		OnAccept = function()
-			SUI.DBG.BartenderInstallWarning = SUI.Version
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
 
 	Artwork_Core:FirstTime()
 
@@ -397,14 +386,8 @@ end
 
 function Artwork_Core:OnEnable()
 	-- No Bartender/out of date Notification
-	if (not select(4, GetAddOnInfo('Bartender4')) and (SUI.DBG.BartenderInstallWarning ~= SUI.Version)) then
-		if SUI.Version ~= SUI.DBG.Version then
-			StaticPopup_Show('BartenderInstallWarning')
-		end
-	elseif SUI.DB.Bartender4Version < BartenderMin then
-		-- if SUI.Version ~= SUI.DBG.Version then
+	if SUI.DB.Bartender4Version < BartenderMin then
 		StaticPopup_Show('BartenderVerWarning')
-	-- end
 	end
 
 	Artwork_Core:SetupOptions()

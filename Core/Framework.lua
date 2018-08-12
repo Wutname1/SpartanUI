@@ -1,5 +1,6 @@
 local _, SUI = ...
 SUI = LibStub('AceAddon-3.0'):NewAddon(SUI, 'SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0')
+local StdUi = LibStub('StdUi'):NewInstance()
 _G.SUI = SUI
 
 local AceConfig = LibStub('AceConfig-3.0')
@@ -1002,6 +1003,9 @@ function SUI:OnEnable()
 		end
 	)
 	LaunchOpt:RegisterEvent('PLAYER_ENTERING_WORLD')
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
+		local Bt4Warning = StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'])
+	end
 end
 
 function SUI:suihelp(input)
