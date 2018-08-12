@@ -218,12 +218,18 @@ function module:FirstTimeSetup()
 		Desc2 = 'The defaults here are based on your current level.',
 		RequireDisplay = (not SUI.DBMod.Objectives.SetupDone),
 		Display = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
 			local gui = LibStub('AceGUI-3.0')
+			if not SUI.DB.EnabledComponents.Objectives then
+				window.Skip:Click()
+			end
+
 			--Container
 			SUI_Win.Objectives = CreateFrame('Frame', nil)
-			SUI_Win.Objectives:SetParent(SUI_Win.content)
-			SUI_Win.Objectives:SetAllPoints(SUI_Win.content)
+			SUI_Win.Objectives:SetParent(SUI_Win)
+			SUI_Win.Objectives:SetAllPoints(SUI_Win)
 
 			--scenario
 			local line = gui:Create('Heading')
@@ -286,7 +292,7 @@ function module:FirstTimeSetup()
 			end
 		end,
 		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local SUI_Win = SUI:GetModule('SetupWizard').window.content
 			SUI.DBMod.Objectives.SetupDone = true
 			SUI.DBMod.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
@@ -296,9 +302,6 @@ function module:FirstTimeSetup()
 					Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
 				}
 			end
-
-			SUI_Win.Objectives:Hide()
-			SUI_Win.Objectives = nil
 		end,
 		Skip = function()
 			SUI.DB.Objectives.SetupDone = false

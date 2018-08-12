@@ -55,110 +55,79 @@ function module:FirstTime()
 				window.Skip:Click()
 			end
 
-			local gui = LibStub('AceGUI-3.0')
 			--Container
-			SUI_Win.AutoSell = CreateFrame('Frame', nil)
-			SUI_Win.AutoSell:SetParent(SUI_Win.content)
-			SUI_Win.AutoSell:SetAllPoints(SUI_Win.content)
+			local AutoSell = CreateFrame('Frame', nil)
+			AutoSell:SetParent(SUI_Win)
+			AutoSell:SetAllPoints(SUI_Win)
 
-			--TurnInEnabled
-			SUI_Win.AutoSell.Enabled =
-				CreateFrame('CheckButton', 'SUI_AutoSell_Enabled', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.Enabled:SetPoint('TOP', SUI_Win.AutoSell, 'TOP', -90, -10)
-			SUI_AutoSell_EnabledText:SetText('Auto Vendor Enabled')
-			SUI_Win.AutoSell.Enabled:SetScript(
-				'OnClick',
-				function(this)
-					if this:GetChecked() == true then
-						SUI_AutoSell_SellGray:Enable()
-						SUI_AutoSell_SellWhite:Enable()
-						SUI_AutoSell_SellGreen:Enable()
-					else
-						SUI_AutoSell_SellGray:Disable()
-						SUI_AutoSell_SellWhite:Disable()
-						SUI_AutoSell_SellGreen:Disable()
-					end
+			-- Quality Selling Options
+			AutoSell.SellGray = StdUi:Checkbox(AutoSell, 'Sell gray items', 220, 20)
+			AutoSell.SellWhite = StdUi:Checkbox(AutoSell, 'Sell white items', 220, 20)
+			AutoSell.SellGreen = StdUi:Checkbox(AutoSell, 'Sell green items', 220, 20)
+			AutoSell.SellBlue = StdUi:Checkbox(AutoSell, 'Sell blue items', 220, 20)
+			AutoSell.SellPurple = StdUi:Checkbox(AutoSell, 'Sell purple items', 220, 20)
+
+			-- Max iLVL
+			AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, '180')
+			AutoSell.iLVLLabel:SetMaxValue(500)
+			AutoSell.iLVLLabel:SetMinValue(1)
+			AutoSell.iLVLLabel.OnValueChanged = function()
+				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
+
+				if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
+					win.iLVLSlider:SetValue(math.floor(win.iLVLLabel:GetValue()))
 				end
-			)
+			end
 
-			--SellGray
-			SUI_Win.AutoSell.SellGray =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellGray', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellGray:SetPoint('TOP', SUI_Win.AutoSell.Enabled, 'TOP', -90, -40)
-			SUI_Win.AutoSell.SellGray:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellGrayText:SetText('Sell gray items')
+			AutoSell.iLVLSlider = StdUi:Slider(AutoSell, 500, 20, 180, false, 1, 500)
+			AutoSell.iLVLSlider.OnValueChanged = function()
+				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
-			--SellWhite
-			SUI_Win.AutoSell.SellWhite =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellWhite', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellWhite:SetPoint('TOP', SUI_Win.AutoSell.SellGray, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellWhite:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellWhiteText:SetText('Sell white items')
+				if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
+					win.iLVLLabel:SetValue(math.floor(win.iLVLSlider:GetValue()))
+				end
+			end
 
-			--SellGreen
-			SUI_Win.AutoSell.SellGreen =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellGreen', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellGreen:SetPoint('TOP', SUI_Win.AutoSell.SellWhite, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellGreen:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellGreenText:SetText('Sell green items')
+			-- AutoRepair
+			AutoSell.AutoRepair = StdUi:Checkbox(AutoSell, 'Auto repair', 220, 20)
 
-			--SellBlue
-			SUI_Win.AutoSell.SellBlue =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellBlue', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellBlue:SetPoint('TOP', SUI_Win.AutoSell.SellGreen, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellBlue:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellBlueText:SetText('Sell blue items')
+			-- Positioning
+			StdUi:GlueTop(AutoSell.SellGray, SUI_Win, 0, -30)
+			StdUi:GlueBelow(AutoSell.SellWhite, AutoSell.SellGray, 0, -5)
+			StdUi:GlueBelow(AutoSell.SellGreen, AutoSell.SellWhite, 0, -5)
+			StdUi:GlueBelow(AutoSell.SellBlue, AutoSell.SellGreen, 0, -5)
+			StdUi:GlueBelow(AutoSell.SellPurple, AutoSell.SellBlue, 0, -5)
+			StdUi:GlueBelow(AutoSell.iLVLSlider, AutoSell.SellPurple, -40, -5)
+			StdUi:GlueRight(AutoSell.iLVLLabel, AutoSell.iLVLSlider, 2, 0)
+			StdUi:GlueBelow(AutoSell.AutoRepair, AutoSell.iLVLSlider, 40, -5)
 
-			--SellPurple
-			SUI_Win.AutoSell.SellPurple =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellPurple', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellPurple:SetPoint('TOP', SUI_Win.AutoSell.SellBlue, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellPurple:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellPurpleText:SetText('Sell purple items')
+			-- Attaching
+			SUI_Win.AutoSell = AutoSell
 
-			--Max iLVL
-			control = gui:Create('Slider')
-			control:SetLabel('Max iLVL to sell')
-			control:SetSliderValues(1, 500, 1)
-			control:SetValue(180)
-			control:SetPoint('TOPLEFT', SUI_Win.AutoSell.SellPurple, 'BOTTOMLEFT', 0, -10)
-			control:SetWidth(SUI_Win:GetWidth() / 1.3)
-			control.frame:SetParent(SUI_Win.AutoSell)
-			control.frame:Show()
-			SUI_Win.AutoSell.iLVL = control
-
-			--AutoRepair
-			SUI_Win.AutoSell.AutoRepair =
-				CreateFrame('CheckButton', 'SUI_AutoSell_AutoRepair', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.AutoRepair:SetPoint('TOP', SUI_Win.AutoSell.SellPurple, 'BOTTOM', 0, -40)
-			SUI_Win.AutoSell.AutoRepair:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_AutoRepairText:SetText('Auto repair')
-
-			--Defaults
-			SUI_AutoSell_Enabled:SetChecked(true)
-			SUI_AutoSell_SellGray:SetChecked(true)
-			SUI_AutoSell_SellWhite:SetChecked(true)
+			-- Defaults
+			AutoSell.SellGray:SetChecked(SUI.DB.AutoSell.Gray)
+			AutoSell.SellWhite:SetChecked(SUI.DB.AutoSell.White)
+			AutoSell.SellGreen:SetChecked(SUI.DB.AutoSell.Green)
+			AutoSell.SellBlue:SetChecked(SUI.DB.AutoSell.Blue)
+			AutoSell.SellPurple:SetChecked(SUI.DB.AutoSell.Purple)
+			AutoSell.AutoRepair:SetChecked(SUI.DB.AutoSell.AutoRepair)
+			AutoSell.iLVLLabel:SetValue(SUI.DB.AutoSell.MaxILVL)
 		end,
 		Next = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
+			local SUI_Win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
-			SUI.DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
-			SUI.DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
-			SUI.DB.AutoSell.White = (SUI_Win.AutoSell.SellWhite:GetChecked() == true or false)
-			SUI.DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
-			SUI.DB.AutoSell.Blue = (SUI_Win.AutoSell.SellBlue:GetChecked() == true or false)
-			SUI.DB.AutoSell.Purple = (SUI_Win.AutoSell.SellPurple:GetChecked() == true or false)
-			SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoSell.AutoRepair:GetChecked() == true or false)
-			SUI.DB.AutoSell.MaxILVL = SUI_Win.AutoSell.iLVL:GetValue()
+			SUI.DB.AutoSell.Gray = (SUI_Win.SellGray:GetChecked() == true or false)
+			SUI.DB.AutoSell.White = (SUI_Win.SellWhite:GetChecked() == true or false)
+			SUI.DB.AutoSell.Green = (SUI_Win.SellGreen:GetChecked() == true or false)
+			SUI.DB.AutoSell.Blue = (SUI_Win.SellBlue:GetChecked() == true or false)
+			SUI.DB.AutoSell.Purple = (SUI_Win.SellPurple:GetChecked() == true or false)
+			SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoRepair:GetChecked() == true or false)
+			SUI.DB.AutoSell.MaxILVL = SUI_Win.iLVLLabel:GetValue()
 
-			window.Skip:Click()
+			SUI.DB.AutoSell.FirstLaunch = false
 		end,
 		Skip = function()
 			SUI.DB.AutoSell.FirstLaunch = false
-			local SUI_Win = SUI:GetModule('SetupWizard').window
-			SUI_Win.AutoSell:Hide()
-			SUI_Win.AutoSell = nil
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
@@ -376,7 +345,7 @@ function module:Enable()
 		end
 		if event == 'MERCHANT_SHOW' then
 			-- Sell then repair so we gain gold before we use it.
-				module:ScheduleTimer('SellTrash', .2)
+			module:ScheduleTimer('SellTrash', .2)
 			-- module:SellTrash()
 			module:Repair()
 		else

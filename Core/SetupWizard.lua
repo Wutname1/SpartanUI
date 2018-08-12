@@ -1,4 +1,4 @@
-local SUI = SUI
+local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('SetupWizard')
 local StdUi = LibStub('StdUi'):NewInstance()
 module.window = nil
@@ -20,6 +20,7 @@ local ReloadPage = {
 		module.window.content.WelcomePage.Helm =
 			StdUi:Texture(module.window.content.WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
 		module.window.content.WelcomePage.Helm:SetPoint('CENTER')
+		WelcomePage.Helm:SetAlpha(.6)
 
 		module.window.Next:SetText('RELOAD UI')
 	end,
@@ -87,6 +88,8 @@ function module:FindNextPage()
 
 	--Find the next undisplayed page
 	if ReloadNeeded and PageDisplayed == TotalPageCount then
+		PageDisplayed = PageDisplayed + 1
+		module.window.Status:Hide()
 		module:DisplayPage(ReloadPage)
 	elseif not ReloadNeeded and PageDisplayed == TotalPageCount then
 		module.window:Hide()
@@ -136,7 +139,11 @@ function module:DisplayPage(PageData)
 	-- Update the Status Counter & Progress Bar
 	module.window.Status:SetText(PageDisplayed .. ' /  ' .. TotalPageCount)
 	if module.window.ProgressBar then
-		module.window.ProgressBar:SetValue((100 / TotalPageCount) * (PageDisplayed - 1))
+		if PageDisplayed > TotalPageCount then
+			module.window.ProgressBar:SetValue(100)
+		else
+			module.window.ProgressBar:SetValue((100 / TotalPageCount) * (PageDisplayed - 1))
+		end
 	end
 end
 
@@ -150,18 +157,21 @@ function module:ShowWizard()
 	module.window.SubTitle = StdUi:Label(module.window, '', 16, nil, module.window:GetWidth(), 20)
 	module.window.SubTitle:SetPoint('TOP', module.window.titlePanel, 'BOTTOM', 0, -5)
 	module.window.SubTitle:SetTextColor(.29, .18, .96, 1)
+	module.window.SubTitle:SetJustifyH('CENTER')
 
 	module.window.Desc1 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
 	-- module.window.Desc1 = module.window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
 	module.window.Desc1:SetPoint('TOP', module.window.SubTitle, 'BOTTOM', 0, -5)
 	module.window.Desc1:SetTextColor(1, 1, 1, .8)
 	module.window.Desc1:SetWidth(module.window:GetWidth() - 40)
+	module.window.Desc1:SetJustifyH('CENTER')
 
 	module.window.Desc2 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
 	-- module.window.Desc2 = module.window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
 	module.window.Desc2:SetPoint('TOP', module.window.Desc1, 'BOTTOM', 0, -3)
 	module.window.Desc2:SetTextColor(1, 1, 1, .8)
 	module.window.Desc2:SetWidth(module.window:GetWidth() - 40)
+	module.window.Desc2:SetJustifyH('CENTER')
 
 	module.window.Status = StdUi:Label(module.window, '', 9, nil, 40, 15)
 	module.window.Status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -2, -2)
@@ -194,6 +204,21 @@ function module:ShowWizard()
 		module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', 0, 2)
 	end
 
+	local function LoadNextPage()
+		--Hide anything attached to the Content frame
+		for _, child in ipairs({module.window.content:GetChildren()}) do
+			child:Hide()
+		end
+
+		-- If Reload is needed by the page flag it.
+		if CurrentDisplay.RequireReload then
+			ReloadNeeded = true
+		end
+
+		-- Show the next page
+		module:FindNextPage()
+	end
+
 	module.window.Skip:SetScript(
 		'OnClick',
 		function(this)
@@ -202,13 +227,7 @@ function module:ShowWizard()
 				CurrentDisplay.Skip()
 			end
 
-			-- If Reload is needed by the page flag it.
-			if CurrentDisplay.RequireReload then
-				ReloadNeeded = true
-			end
-
-			-- Show the next page
-			module:FindNextPage()
+			LoadNextPage()
 		end
 	)
 
@@ -220,19 +239,7 @@ function module:ShowWizard()
 				CurrentDisplay.Next()
 			end
 
-			--Destory anything attached to the Content frame
-			for _, child in ipairs({module.window.content:GetChildren()}) do
-				child:Hide()
-				child = nil
-			end
-
-			-- If Reload is needed by the page flag it for latter.
-			if CurrentDisplay.RequireReload then
-				ReloadNeeded = true
-			end
-
-			-- Show the next page
-			module:FindNextPage()
+			LoadNextPage()
 		end
 	)
 
@@ -283,6 +290,22 @@ function module:WelcomePage()
 
 			WelcomePage.Helm = StdUi:Texture(WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
 			WelcomePage.Helm:SetPoint('CENTER')
+			WelcomePage.Helm:SetAlpha(.6)
+
+			if not select(4, GetAddOnInfo('Bartender4')) then
+				module.window.BT4Warning =
+					StdUi:Label(
+					module.window,
+					L['Bartender4 not detected! Please download and install Bartender4.'],
+					25,
+					nil,
+					module.window:GetWidth(),
+					40
+				)
+				module.window.BT4Warning:SetTextColor(1, .18, .18, 1)
+				StdUi:GlueAbove(module.window.BT4Warning, module.window, 0, 20)
+			end
+
 			module.window.content.WelcomePage = WelcomePage
 		end,
 		Next = function()
@@ -372,8 +395,8 @@ function module:ModuleSelectionPage()
 
 			--Container
 			SUI_Win.ModSelection = CreateFrame('Frame', nil)
-			SUI_Win.ModSelection:SetParent(SUI_Win.content)
-			SUI_Win.ModSelection:SetAllPoints(SUI_Win.content)
+			SUI_Win.ModSelection:SetParent(SUI_Win)
+			SUI_Win.ModSelection:SetAllPoints(SUI_Win)
 
 			local itemsMatrix = {}
 
@@ -381,9 +404,6 @@ function module:ModuleSelectionPage()
 			for name, submodule in SUI:IterateModules() do
 				if (string.match(name, 'Component_')) then
 					local RealName = string.sub(name, 11)
-					if SUI.DB.EnabledComponents == nil then
-						SUI.DB.EnabledComponents = {}
-					end
 					if SUI.DB.EnabledComponents[RealName] == nil then
 						SUI.DB.EnabledComponents[RealName] = true
 					end
@@ -399,29 +419,59 @@ function module:ModuleSelectionPage()
 							SUI.DB.EnabledComponents[RealName] = checkbox:GetValue()
 						end
 					)
+					checkbox:SetChecked(SUI.DB.EnabledComponents[RealName])
 
-					itemsMatrix[#itemsMatrix] = checkbox
+					itemsMatrix[(#itemsMatrix + 1)] = checkbox
 				end
 			end
-			
-			--Container
-			SUI_Win.ModuleSelectionPage = CreateFrame('Frame', nil)
-			SUI_Win.ModuleSelectionPage:SetParent(SUI_Win)
-			SUI_Win.ModuleSelectionPage:SetAllPoints(SUI_Win)
+
+			local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, L['Film Effects'], 120, 20)
+			checkbox:HookScript(
+				'OnClick',
+				function()
+					if checkbox:GetValue() then
+						EnableAddOn('SpartanUI_FilmEffects')
+					else
+						DisableAddOn('SpartanUI_FilmEffects')
+					end
+				end
+			)
+			checkbox:SetChecked(select(4, GetAddOnInfo('SpartanUI_FilmEffects')))
+			itemsMatrix[(#itemsMatrix + 1)] = checkbox
+
+			checkbox = StdUi:Checkbox(SUI_Win.ModSelection, L['Spin cam'], 120, 20)
+			checkbox:HookScript(
+				'OnClick',
+				function()
+					if checkbox:GetValue() then
+						EnableAddOn('SpartanUI_SpinCam')
+					else
+						DisableAddOn('SpartanUI_SpinCam')
+					end
+				end
+			)
+			checkbox:SetChecked(select(4, GetAddOnInfo('SpartanUI_SpinCam')))
+			itemsMatrix[(#itemsMatrix + 1)] = checkbox
+
+			StdUi:GlueTop(itemsMatrix[1], SUI_Win.ModSelection, -60, 0)
+
+			local left, leftIndex = false, 1
+			for i = 2, #itemsMatrix do
+				if left then
+					StdUi:GlueBelow(itemsMatrix[i], itemsMatrix[leftIndex], 0, -5)
+					leftIndex = i
+					left = false
+				else
+					StdUi:GlueRight(itemsMatrix[i], itemsMatrix[leftIndex], 5, 0)
+					left = true
+				end
+			end
 		end,
 		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window.content
-
 			SUI.DB.SetupDone = true
-
-			SUI_Win.ModuleSelectionPage:Hide()
-			SUI_Win.ModuleSelectionPage = nil
 		end,
 		Skip = function()
 			SUI.DB.SetupDone = true
-
-			SUI_Win.ModuleSelectionPage:Hide()
-			SUI_Win.ModuleSelectionPage = nil
 		end
 	}
 

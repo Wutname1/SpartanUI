@@ -40,23 +40,19 @@ local BlackList = {
 	-- General Blacklist
 	['I would like to buy from you.'] = true,
 	['Make this inn your home.'] = true,
-	['trainer'] = true,
 	["I'd like to heal and revive my battle pets."] = true,
 	['Let me browse your goods.'] = true,
 	['vendor'] = true,
 	['binder'] = true,
 	["I'm looking for a lost companion."] = true,
-	['Train me.'] = true,
+	['I need a ride to the top of the statue.'] = true,
 	['Inn'] = true,
 	['gossip'] = true,
 	['Show me what you have available.'] = true,
-	['Class Trainer'] = true,
 	['Flight Master'] = true,
-	['Profession Trainer'] = true,
 	['Guild Master & Vendor'] = true,
 	['Void Storage'] = true,
 	['Auction House'] = true,
-	['Battle Pet Trainer'] = true,
 	['Stable Master'] = true,
 	['Zeppelin Master'] = true,
 	['Battlemasters'] = true,
@@ -87,10 +83,16 @@ local BlackList = {
 	['I want to fly on the wings of the green flight.'] = true,
 	['I want to exchange my Amber Essence for Ruby Essence.'] = true,
 	['What abilities do amber drakes have?'] = true,
+	['I am ready.'] = true, -- This one is used alot but blacklisted due to trial of the champion
+	["I am ready.  However, I'd like to skip the pageantry."] = true,
+	-- MOP
+	["I'm ready to be introduced to the instructors, High Elder."] = true,
+	["Fine. Let's proceed with the introductions."] = true,
+	['What is this place?'] = true,
 	-- Legion
 	['Your people treat you with contempt. Why? What did you do?'] = true,
 	-- BFA
-	["Warchief, may I ask why we want to capture Teldrassil?"] = true,
+	['Warchief, may I ask why we want to capture Teldrassil?'] = true,
 	['I am ready to go to the Undercity.'] = true,
 	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true
 }
@@ -310,7 +312,7 @@ function module.MERCHANT_CLOSED()
 end
 
 function module.QUEST_DETAIL()
-	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) then
+	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) and (not IsAltKeyDown()) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
 		AcceptQuest()
@@ -471,6 +473,7 @@ function module:FirstLaunch()
 		Name = 'Auto turn in',
 		SubTitle = 'Auto turn in',
 		Desc1 = 'Automatically accept and turn in quests.',
+		Desc2 = 'Holding Alt while talking to a NPC will disable turn in & accepting quests. Holding Control will disable auto gossip.',
 		RequireDisplay = SUI.DB.AutoTurnIn.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
@@ -482,59 +485,44 @@ function module:FirstLaunch()
 
 			--Container
 			local ATI = CreateFrame('Frame', nil)
-			ATI:SetParent(SUI_Win.content)
-			ATI:SetAllPoints(SUI_Win.content)
+			ATI:SetParent(SUI_Win)
+			ATI:SetAllPoints(SUI_Win)
 
 			-- Setup checkboxes
-			local Items = {
-				[1] = {
-					label = 'Enable turning in quests',
-					db = 'TurnInEnabled'
-				},
-				[2] = {
-					label = 'Accept quests',
-					db = 'AcceptGeneralQuests'
-				},
-				[3] = {
-					label = 'Auto gossip',
-					db = 'AutoGossip'
-				},
-				[4] = {
-					label = 'Auto select loot',
-					db = 'lootreward'
-				},
-				[5] = {
-					label = 'Auto equip upgrade quest rewards',
-					db = 'autoequip'
-				}
-			}
-			local CheckBoxes = {}
-			for i = 1, #Items do
-				CheckBoxes[i] = StdUi:Checkbox(ATI, Items[i].label, 120, 20)
-				CheckBoxes[i]:SetScript(
-					'OnValueChanged',
-					function(self, state, value)
-						SUI.DB.AutoTurnIn[Items[i].db] = state
-					end
-				)
-				CheckBoxes[i]:SetChecked(SUI.DB.AutoTurnIn[Items[i].db])
-			end
+			ATI.options = {}
+			ATI.options.AcceptGeneralQuests = StdUi:Checkbox(ATI, 'Accept quests', 220, 20)
+			ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, 'Enable turning in quests', 220, 20)
+			ATI.options.AutoGossip = StdUi:Checkbox(ATI, 'Auto gossip', 220, 20)
+			ATI.options.lootreward = StdUi:Checkbox(ATI, 'Auto select loot', 220, 20)
+			ATI.options.autoequip = StdUi:Checkbox(ATI, 'Auto equip upgrade quest rewards', 350, 20)
 
 			-- Positioning
-			ATI.CheckBoxList = StdUi:ObjectList(ATI, CheckBoxes)
+			StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
+			StdUi:GlueBelow(ATI.options.AutoGossip, ATI.options.AcceptGeneralQuests, 0, -5)
+			StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossip, 0, -5, 'LEFT')
 
-			StdUi:GlueTop(ATI.CheckBoxList, SUI_Win, 0, -30)
+			StdUi:GlueRight(ATI.options.TurnInEnabled, ATI.options.AcceptGeneralQuests, 5, 0)
+			StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
+
+			-- Defaults
+			for key, object in pairs(ATI.options) do
+				object:SetChecked(SUI.DB.AutoTurnIn[key])
+			end
 
 			SUI_Win.ATI = ATI
 		end,
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
-			window.Skip:Click()
+			local ATI = window.content.ATI
+
+			for key, object in pairs(ATI.options) do
+				SUI.DB.AutoTurnIn[key] = object:GetChecked()
+			end
+
+			-- window.Skip:Click()
 		end,
 		Skip = function()
 			SUI.DB.AutoTurnIn.FirstLaunch = false
-			ATI:Hide()
-			ATI = nil
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
@@ -542,7 +530,7 @@ function module:FirstLaunch()
 end
 
 function module.GOSSIP_SHOW()
-	if not SUI.DB.AutoTurnIn.AutoGossip then
+	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsControlKeyDown()) then
 		return
 	end
 
@@ -555,7 +543,7 @@ function module.GOSSIP_SHOW()
 	end
 	for k, v in pairs(options) do
 		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
-		if (v ~= 'gossip') and (not BlackList[v]) then
+		if (v ~= 'gossip') and (not BlackList[v]) and (not string.find(v, 'Train')) then
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)

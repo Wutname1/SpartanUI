@@ -242,7 +242,7 @@ function Artwork_Core:FirstTime()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			
+
 			--Container
 			SUI_Win.Artwork = CreateFrame('Frame', nil)
 			SUI_Win.Artwork:SetParent(SUI_Win)
@@ -331,11 +331,14 @@ function Artwork_Core:FirstTime()
 			StdUi:GlueRight(SUI_Win.Artwork.Minimal, SUI_Win.Artwork.Digital, 20, 0)
 
 			-- Check Classic as default
-			SUI_Win.Artwork.Classic.radio:SetChecked(true)
+			if SUI_Win.Artwork.Classic then
+				SUI_Win.Artwork[SUI.DBMod.Artwork.Style].radio:SetChecked(true)
+			else
+				SUI_Win.Artwork.Classic.radio:SetChecked(true)
+			end
 		end,
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
 			local StdUi = window.StdUi
 			SUI.DBMod.Artwork.SetupDone = true
 
@@ -370,14 +373,9 @@ function Artwork_Core:FirstTime()
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
 			end
 			SUI.DBG.BartenderChangesActive = false
-			SUI_Win.Artwork:Hide()
-			SUI_Win.Artwork = nil
 		end,
 		Skip = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
 			SUI.DBMod.Artwork.SetupDone = true
-			SUI_Win.Artwork:Hide()
-			SUI_Win.Artwork = nil
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
