@@ -530,7 +530,7 @@ function module:FirstLaunch()
 end
 
 function module.GOSSIP_SHOW()
-	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsControlKeyDown()) then
+	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsAltKeyDown()) then
 		return
 	end
 
