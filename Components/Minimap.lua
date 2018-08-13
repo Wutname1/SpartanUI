@@ -173,6 +173,7 @@ function module:ShapeChange(shape)
 	if Style.Settings.MiniMap.Anchor then
 		Minimap:ClearAllPoints()
 		Minimap:SetPoint(unpack(Style.Settings.MiniMap.Anchor))
+		Minimap:SetFrameLevel(120)
 	end
 
 	Minimap.ZoneText:ClearAllPoints()
@@ -286,6 +287,7 @@ function module:OnEnable()
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint(unpack(SUI.DB.MiniMap.Position))
 		end
+		Minimap:SetFrameLevel(120)
 	end
 
 	module:ModifyMinimapLayout()
@@ -373,6 +375,7 @@ function module:ModifyMinimapLayout()
 
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -30, -30)
+	Minimap:SetFrameLevel(120)
 
 	TimeManagerClockButton:GetRegions():Hide() -- Hide the border
 	TimeManagerClockButton:SetBackdrop(nil)
