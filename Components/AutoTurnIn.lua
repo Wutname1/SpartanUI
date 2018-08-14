@@ -36,8 +36,14 @@ local itemCache =
 		end
 	}
 )
+local WildcardBlackList = {
+	['train'] = true,
+	['repeat'] = true,
+	['buy'] = true
+}
 local BlackList = {
 	-- General Blacklist
+	['I wish to buy from you.'] = true,
 	['I would like to buy from you.'] = true,
 	['Make this inn your home.'] = true,
 	["I'd like to heal and revive my battle pets."] = true,
@@ -368,10 +374,11 @@ function module.QUEST_COMPLETE()
 					if (SUI.DB.AutoTurnIn.debug) then
 						print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
 					end
-					if (QuestItemTrueiLVL > EquipedLevel) and ((EquipedLevel - QuestItemTrueiLVL) > UpgradeAmmount) then
+
+					if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
 						UpgradeLink = link
 						UpgradeID = i
-						UpgradeAmmount = (EquipedLevel - QuestItemTrueiLVL)
+						UpgradeAmmount = (QuestItemTrueiLVL - EquipedLevel)
 					end
 				end
 			end
@@ -543,8 +550,15 @@ function module.GOSSIP_SHOW()
 		return
 	end
 	for k, v in pairs(options) do
+		local WildcardBlacklistFound = false
+		for k2,_ in pairs(WildcardBlackList) do
+			if string.find(v, k2) then
+				WildcardBlacklistFound = true
+			end
+		end
+		
 		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
-		if (v ~= 'gossip') and (not BlackList[v]) and (not string.find(v, 'Train') or not string.find(v, 'repeat') or not string.find(v, 'buy')) then
+		if (v ~= 'gossip') and (not BlackList[v]) and (not WildcardBlacklistFound) then
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
