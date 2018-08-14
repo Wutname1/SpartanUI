@@ -477,6 +477,7 @@ local DBdefault = {
 			BlizzStyle = 'mouseover',
 			OtherStyle = 'mouseover',
 			Moved = false,
+			lockminimap = true,
 			Position = nil,
 			-- frames = {},
 			-- IgnoredFrames = {},

@@ -249,7 +249,7 @@ function module:OnEnable()
 		Minimap:HookScript(
 			'OnMouseDown',
 			function(self, button)
-				if button == 'LeftButton' and IsAltKeyDown() then
+				if button == 'LeftButton' and IsAltKeyDown() and not SUI.DB.MiniMap.lockminimap then
 					Minimap.mover:Show()
 					if SUI:GetModule('Artwork_Core', true) then
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = true
@@ -662,6 +662,18 @@ function module:BuildOptions()
 					else
 						MinimapNorthTag:Hide()
 					end
+				end
+			},
+			lockminimap = {
+				name = L['Lock Minimap'],
+				type = 'toggle',
+				order = 0.5,
+				get = function(info)
+					return SUI.DB.MiniMap.lockminimap
+				end,
+				set = function(info, val)
+					SUI.DB.MiniMap.lockminimap = val
+					module:update()
 				end
 			},
 			minimapzoom = {
