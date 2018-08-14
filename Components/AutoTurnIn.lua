@@ -368,9 +368,10 @@ function module.QUEST_COMPLETE()
 					if (SUI.DB.AutoTurnIn.debug) then
 						print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
 					end
-					if (QuestItemTrueiLVL > EquipedLevel) then
+					if (QuestItemTrueiLVL > EquipedLevel) and ((EquipedLevel - QuestItemTrueiLVL) > UpgradeAmmount) then
 						UpgradeLink = link
 						UpgradeID = i
+						UpgradeAmmount = (EquipedLevel - QuestItemTrueiLVL)
 					end
 				end
 			end
