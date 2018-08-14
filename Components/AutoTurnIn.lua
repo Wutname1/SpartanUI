@@ -39,7 +39,8 @@ local itemCache =
 local WildcardBlackList = {
 	['train'] = true,
 	['repeat'] = true,
-	['buy'] = true
+	['buy'] = true,
+	['goods'] = true
 }
 local BlackList = {
 	-- General Blacklist
@@ -100,7 +101,8 @@ local BlackList = {
 	-- BFA
 	['Warchief, may I ask why we want to capture Teldrassil?'] = true,
 	['I am ready to go to the Undercity.'] = true,
-	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true
+	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true,
+	['Release me.'] = true
 }
 local anchor, scanningTooltip
 local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
@@ -350,39 +352,39 @@ function module.QUEST_COMPLETE()
 		end
 
 		-- See if the item is an upgrade
-		if (SUI.DB.AutoTurnIn.autoequip) then
-			-- Compares reward and already equipped item levels. If reward ilevel is greater than equipped item, auto equip reward
-			local slot = SLOTS[itemEquipLoc]
-			if (slot) then
-				local firstSlot = GetInventorySlotInfo(slot[1])
-				local invLink = GetInventoryItemLink('player', firstSlot)
-				local EquipedLevel = module:GetiLVL(invLink)
+		-- if (SUI.DB.AutoTurnIn.autoequip) then
+		-- Compares reward and already equipped item levels. If reward ilevel is greater than equipped item, auto equip reward
+		local slot = SLOTS[itemEquipLoc]
+		if (slot) then
+			local firstSlot = GetInventorySlotInfo(slot[1])
+			local invLink = GetInventoryItemLink('player', firstSlot)
+			local EquipedLevel = module:GetiLVL(invLink)
 
-				if EquipedLevel then
-					-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
-					if (#slot > 1) then
-						local secondSlot = GetInventorySlotInfo(slot[2])
-						invLink = GetInventoryItemLink('player', secondSlot)
-						if (invLink) then
-							local eq2Level = module:GetiLVL(invLink)
-							firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
-							EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
-						end
+			if EquipedLevel then
+				-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
+				if (#slot > 1) then
+					local secondSlot = GetInventorySlotInfo(slot[2])
+					invLink = GetInventoryItemLink('player', secondSlot)
+					if (invLink) then
+						local eq2Level = module:GetiLVL(invLink)
+						firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
+						EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
 					end
+				end
 
-					-- comparing lowest equipped item level with reward's item level
-					if (SUI.DB.AutoTurnIn.debug) then
-						print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
-					end
+				-- comparing lowest equipped item level with reward's item level
+				if (SUI.DB.AutoTurnIn.debug) then
+					print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
+				end
 
-					if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
-						UpgradeLink = link
-						UpgradeID = i
-						UpgradeAmmount = (QuestItemTrueiLVL - EquipedLevel)
-					end
+				if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
+					UpgradeLink = link
+					UpgradeID = i
+					UpgradeAmmount = (QuestItemTrueiLVL - EquipedLevel)
 				end
 			end
 		end
+		-- end
 	end
 
 	-- If there is more than one reward check that we are allowed to select it.
@@ -394,7 +396,9 @@ function module.QUEST_COMPLETE()
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
 				module:TurnInQuest(UpgradeID)
-				module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
+				if SUI.DB.AutoTurnIn.autoequip then
+					module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
+				end
 			end
 		else
 			if (GreedID and not UpgradeID) then
@@ -410,7 +414,9 @@ function module.QUEST_COMPLETE()
 		elseif UpgradeID then
 			SUI:Print('Quest rewards a upgrade ' .. UpgradeLink)
 			module:TurnInQuest(UpgradeID)
-			module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
+			if SUI.DB.AutoTurnIn.autoequip then
+				module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
+			end
 		else
 			if (SUI.DB.AutoTurnIn.debug) then
 				SUI:Print('No Reward, turning in.')
@@ -551,12 +557,12 @@ function module.GOSSIP_SHOW()
 	end
 	for k, v in pairs(options) do
 		local WildcardBlacklistFound = false
-		for k2,_ in pairs(WildcardBlackList) do
+		for k2, _ in pairs(WildcardBlackList) do
 			if string.find(v, k2) then
 				WildcardBlacklistFound = true
 			end
 		end
-		
+
 		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
 		if (v ~= 'gossip') and (not BlackList[v]) and (not WildcardBlacklistFound) then
 			BlackList[v] = true
