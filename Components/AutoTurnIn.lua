@@ -543,7 +543,7 @@ function module.GOSSIP_SHOW()
 	end
 	for k, v in pairs(options) do
 		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
-		if (v ~= 'gossip') and (not BlackList[v]) and (not string.find(v, 'Train')) then
+		if (v ~= 'gossip') and (not BlackList[v]) and (not string.find(v, 'Train') or not string.find(v, 'repeat')) then
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
