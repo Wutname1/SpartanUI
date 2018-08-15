@@ -79,6 +79,8 @@ local SetBarColor = function(self, side)
 			color2 = COLORS.Light_Blue
 		elseif display == 'az' then
 			color1 = COLORS.Orange
+		elseif display == 'ap' then
+			color1 = COLORS.Orange
 		elseif display == 'honor' then
 			color1 = COLORS.Red
 		elseif display == 'rep' then
@@ -142,6 +144,17 @@ local updateText = function(self)
 			valFill = repLevelLow
 			valMax = repLevelHigh
 			valPercent = (repLevelLow / repLevelHigh) * 100
+		end
+	elseif (module.DB[side].display == 'ap') then
+		if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
+			local _, _, _, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+			valMax = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
+			if valMax == 0 then
+				return
+			end
+			local ratio = (xp / valMax)
+			valFill = xp
+			valPercent = ratio * 100
 		end
 	elseif (module.DB[side].display == 'az') then
 		if C_AzeriteItem.HasActiveAzeriteItem() then
@@ -227,6 +240,29 @@ local showRepTooltip = function(self)
 		self.tooltip.TextFrame.HeaderText:SetText(REPUTATION)
 		self.tooltip.TextFrame.MainText:SetText(REPUTATION_STANDING_DESCRIPTION)
 	end
+end
+
+local showAPTooltip = function(self)
+	if HasArtifactEquipped() and not C_ArtifactUI.IsEquippedArtifactMaxed() then
+		local _, _, name, _, xp, pointsSpent, _, _, _, _, _, _, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo()
+		local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier)
+		if xpForNextPoint == 0 then
+			return
+		end
+		local ratio = (xp / xpForNextPoint)
+
+		self.tooltip.TextFrame.HeaderText:SetText(name)
+		self.tooltip.TextFrame.MainText:SetFormattedText(
+			'( %s / %s ) %d%%',
+			SUI:comma_value(xp),
+			SUI:comma_value(xpForNextPoint),
+			ratio * 100
+		)
+	else
+		self.tooltip.TextFrame.HeaderText:SetText('No Artifact equiped')
+		self.tooltip.TextFrame.MainText:SetText('')
+	end
+	self.tooltip:Show()
 end
 
 local showHonorTooltip = function(self)
@@ -409,6 +445,9 @@ function module:factory()
 					if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then
 						showXPTooltip(self, i)
 					end
+					if module.DB[i].display == 'ap' and module.DB[i].ToolTip == 'hover' then
+						showAPTooltip(self, i)
+					end
 					if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then
 						showAzeriteTooltip(self, i)
 					end
@@ -425,6 +464,9 @@ function module:factory()
 					end
 					if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then
 						showXPTooltip(self, i)
+					end
+					if module.DB[i].display == 'ap' and module.DB[i].ToolTip == 'click' then
+						showAPTooltip(self, i)
 					end
 					if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then
 						showAzeriteTooltip(self, i)
@@ -477,6 +519,7 @@ function module:BuildOptions()
 	local StatusBars = {
 		['xp'] = L['Experiance'],
 		['rep'] = L['Reputation'],
+		['ap'] = L['Artifact Power'],
 		['honor'] = L['Honor'],
 		['az'] = L['Azerite Bar'],
 		['disabled'] = L['Disabled']

@@ -213,39 +213,39 @@ local function ScanTip(itemLink)
 
 	-- If the item is not in the cache populate it.
 	-- if not ilevel then
-		-- Load tooltip
-		local itemString = itemLink:match('|H(.-)|h')
-		local rc = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
-		if (not rc) then
-			return 0
-		end
-		scanningTooltip:Show()
+	-- Load tooltip
+	local itemString = itemLink:match('|H(.-)|h')
+	local rc = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
+	if (not rc) then
+		return 0
+	end
+	scanningTooltip:Show()
 
-		local ilevel = nil
-		-- Find the iLVL inthe tooltip
-		for i = 2, 6 do
-			local label, text = _G['ItemUpgradeTooltipTextLeft' .. i], nil
-			if label then
-				text = label:GetText()
-			end
-			if text then
-				ilevel = tonumber(text:match(itemLevelPattern))
-			end
+	local ilevel = nil
+	-- Find the iLVL inthe tooltip
+	for i = 2, 6 do
+		local label, text = _G['ItemUpgradeTooltipTextLeft' .. i], nil
+		if label then
+			text = label:GetText()
 		end
-
-		-- print('Figure out what to cache and what to return as the ilvl')
-		-- Figure out what to cache and what to return as the ilvl
-		ilevel = ilevel or 0
-		itemLevel = GetDetailedItemLevelInfo(itemLink)
-		if type(ilevel) == 'number' then
-			ilevel = math.max(ilevel, 0)
-		else
-			ilevel = itemLevel
+		if text then
+			ilevel = tonumber(text:match(itemLevelPattern))
 		end
-		print(ilevel)
+	end
 
-		-- Hide the scanning tooltip
-		scanningTooltip:Hide()
+	-- print('Figure out what to cache and what to return as the ilvl')
+	-- Figure out what to cache and what to return as the ilvl
+	ilevel = ilevel or 0
+	itemLevel = GetDetailedItemLevelInfo(itemLink)
+	if type(ilevel) == 'number' then
+		ilevel = math.max(ilevel, 0)
+	else
+		ilevel = itemLevel
+	end
+	print(ilevel)
+
+	-- Hide the scanning tooltip
+	scanningTooltip:Hide()
 	-- end
 	-- return the ilvl
 	return ilevel
@@ -362,8 +362,6 @@ function module.QUEST_COMPLETE()
 		end
 
 		-- See if the item is an upgrade
-		-- if (SUI.DB.AutoTurnIn.autoequip) then
-		-- Compares reward and already equipped item levels. If reward ilevel is greater than equipped item, auto equip reward
 		local slot = SLOTS[itemEquipLoc]
 		if (slot) then
 			local firstSlot = GetInventorySlotInfo(slot[1])
@@ -385,8 +383,6 @@ function module.QUEST_COMPLETE()
 							EquipedLevel = eq2Level
 							firstinvLink = secondinvLink
 						end
-					-- firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
-					-- EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
 					end
 				end
 
@@ -565,6 +561,9 @@ function module.GOSSIP_SHOW()
 	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsAltKeyDown()) then
 		return
 	end
+
+	module:VarArgForActiveQuests(GetGossipActiveQuests())
+	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
 
 	local options = {GetGossipOptions()}
 	if #options > 7 then
