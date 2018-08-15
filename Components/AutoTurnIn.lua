@@ -233,7 +233,7 @@ local function ScanTip(itemLink)
 			end
 		end
 
-		print('Figure out what to cache and what to return as the ilvl')
+		-- print('Figure out what to cache and what to return as the ilvl')
 		-- Figure out what to cache and what to return as the ilvl
 		ilevel = ilevel or 0
 		itemLevel = GetDetailedItemLevelInfo(itemLink)
@@ -380,10 +380,10 @@ function module.QUEST_COMPLETE()
 						if (EquipedLevel > eq2Level) then
 							if (SUI.DB.AutoTurnIn.debug) then
 								print('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
-								firstSlot = secondSlot
-								EquipedLevel = eq2Level
-								firstinvLink = secondinvLink
 							end
+							firstSlot = secondSlot
+							EquipedLevel = eq2Level
+							firstinvLink = secondinvLink
 						end
 					-- firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
 					-- EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
