@@ -605,9 +605,7 @@ function module:update()
 			buttonName = child:GetName()
 			-- buttonType = child:GetObjectType();
 
-			if
-				buttonName and child.FadeIn ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0
-			 then
+			if buttonName and child.FadeIn ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 
@@ -665,7 +663,7 @@ function module:BuildOptions()
 				end
 			},
 			lockminimap = {
-				name = L['Lock Minimap'],
+				name = L['Lock minimap'],
 				type = 'toggle',
 				order = 0.5,
 				get = function(info)
