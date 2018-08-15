@@ -37,9 +37,17 @@ local itemCache =
 	}
 )
 local WildcardBlackList = {
+	['Train'] = true,
 	['train'] = true,
 	['repeat'] = true,
 	['buy'] = true,
+	['browse your'] = true,
+	['my home'] = true,
+	['reinforcements'] = true,
+	['Set sail'] = true,
+	['Drustvar'] = true,
+	['Stormsong Valley'] = true,
+	['Tiragarde Sound'] = true,
 	['goods'] = true
 }
 local BlackList = {
@@ -51,6 +59,10 @@ local BlackList = {
 	['Let me browse your goods.'] = true,
 	['vendor'] = true,
 	['binder'] = true,
+	['trainer'] = true,
+	['workorder'] = true,
+	['workorder'] = true,
+	['workorder'] = true,
 	["I'm looking for a lost companion."] = true,
 	['I need a ride to the top of the statue.'] = true,
 	['Inn'] = true,
@@ -99,6 +111,8 @@ local BlackList = {
 	-- Legion
 	['Your people treat you with contempt. Why? What did you do?'] = true,
 	-- BFA
+	["Yes, I'm ready to go to Drustvar."] = true,
+	['Tell me about the Betrayal of Zul.'] = true,
 	['Warchief, may I ask why we want to capture Teldrassil?'] = true,
 	['I am ready to go to the Undercity.'] = true,
 	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true,
@@ -198,7 +212,7 @@ local function ScanTip(itemLink)
 	GameTooltip_SetDefaultAnchor(scanningTooltip, anchor)
 
 	-- If the item is not in the cache populate it.
-	if type(itemCache[itemLink].ilevel) == 'nil' then
+	-- if not ilevel then
 		-- Load tooltip
 		local itemString = itemLink:match('|H(.-)|h')
 		local rc = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
@@ -207,10 +221,7 @@ local function ScanTip(itemLink)
 		end
 		scanningTooltip:Show()
 
-		-- Initalize the cache
-		itemCache[itemLink] = {
-			ilevel = nil
-		}
+		local ilevel = nil
 		-- Find the iLVL inthe tooltip
 		for i = 2, 6 do
 			local label, text = _G['ItemUpgradeTooltipTextLeft' .. i], nil
@@ -218,28 +229,26 @@ local function ScanTip(itemLink)
 				text = label:GetText()
 			end
 			if text then
-				if itemCache[itemLink].ilevel == nil then
-					itemCache[itemLink].ilevel = tonumber(text:match(itemLevelPattern))
-				end
+				ilevel = tonumber(text:match(itemLevelPattern))
 			end
 		end
 
 		print('Figure out what to cache and what to return as the ilvl')
 		-- Figure out what to cache and what to return as the ilvl
-		itemCache[itemLink].ilevel = itemCache[itemLink].ilevel or 0
+		ilevel = ilevel or 0
 		itemLevel = GetDetailedItemLevelInfo(itemLink)
-		if type(itemCache[itemLink].ilevel) == 'number' then
-			itemCache[itemLink].ilevel = math.max(itemCache[itemLink].ilevel, 0)
+		if type(ilevel) == 'number' then
+			ilevel = math.max(ilevel, 0)
 		else
-			itemCache[itemLink].ilevel = itemLevel
+			ilevel = itemLevel
 		end
-		print(itemCache[itemLink].ilevel)
+		print(ilevel)
 
 		-- Hide the scanning tooltip
 		scanningTooltip:Hide()
-	end
+	-- end
 	-- return the ilvl
-	return itemCache[itemLink].ilevel
+	return ilevel
 end
 
 function module:GetiLVL(itemLink)
@@ -256,6 +265,7 @@ function module:GetiLVL(itemLink)
 
 	-- Scan the tooltip, itemLevel is a fallback incase tooltip does not contain the data
 	local effectiveILvl = GetDetailedItemLevelInfo(itemLink)
+	print(ScanTip(itemLink) .. ' vs ' .. effectiveILvl)
 	return (effectiveILvl or itemLevel)
 end
 
@@ -357,24 +367,32 @@ function module.QUEST_COMPLETE()
 		local slot = SLOTS[itemEquipLoc]
 		if (slot) then
 			local firstSlot = GetInventorySlotInfo(slot[1])
-			local invLink = GetInventoryItemLink('player', firstSlot)
-			local EquipedLevel = module:GetiLVL(invLink)
+			local firstinvLink = GetInventoryItemLink('player', firstSlot)
+			local EquipedLevel = module:GetiLVL(firstinvLink)
 
 			if EquipedLevel then
 				-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
 				if (#slot > 1) then
 					local secondSlot = GetInventorySlotInfo(slot[2])
-					invLink = GetInventoryItemLink('player', secondSlot)
+					local secondinvLink = GetInventoryItemLink('player', secondSlot)
 					if (invLink) then
 						local eq2Level = module:GetiLVL(invLink)
-						firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
-						EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
+						if (EquipedLevel > eq2Level) then
+							if (SUI.DB.AutoTurnIn.debug) then
+								print('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
+								firstSlot = secondSlot
+								EquipedLevel = eq2Level
+								firstinvLink = secondinvLink
+							end
+						end
+					-- firstSlot = (EquipedLevel > eq2Level) and secondSlot or firstSlot
+					-- EquipedLevel = (EquipedLevel > eq2Level) and eq2Level or EquipedLevel
 					end
 				end
 
 				-- comparing lowest equipped item level with reward's item level
 				if (SUI.DB.AutoTurnIn.debug) then
-					print('iLVL Comparisson ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
+					print('iLVL Comparisson ' .. firstinvLink .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
 				end
 
 				if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
