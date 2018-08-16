@@ -332,6 +332,9 @@ function Artwork_Core:FirstTime()
 
 			-- Check Classic as default
 			if SUI_Win.Artwork.Classic then
+				if not SUI.DBMod.Artwork.Style then
+					SUI.DBMod.Artwork.Style = 'Classic'
+				end
 				SUI_Win.Artwork[SUI.DBMod.Artwork.Style].radio:SetChecked(true)
 			else
 				SUI_Win.Artwork.Classic.radio:SetChecked(true)

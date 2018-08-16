@@ -48,6 +48,8 @@ local WildcardBlackList = {
 	['Drustvar'] = true,
 	['Stormsong Valley'] = true,
 	['Tiragarde Sound'] = true,
+	['Tell me about the'] = true,
+	['like to change'] = true,
 	['goods'] = true
 }
 local BlackList = {
@@ -112,7 +114,6 @@ local BlackList = {
 	['Your people treat you with contempt. Why? What did you do?'] = true,
 	-- BFA
 	["Yes, I'm ready to go to Drustvar."] = true,
-	['Tell me about the Betrayal of Zul.'] = true,
 	['Warchief, may I ask why we want to capture Teldrassil?'] = true,
 	['I am ready to go to the Undercity.'] = true,
 	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true,
