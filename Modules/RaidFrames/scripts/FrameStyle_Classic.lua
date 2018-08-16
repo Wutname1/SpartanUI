@@ -175,9 +175,9 @@ local SpawnUnitFrame = function(self, unit)
 			self:Tag(self.Name, '[name]')
 		end
 
-		self.HLeaderIndicator = layer5:CreateTexture(nil, 'ARTWORK')
-		self.HLeaderIndicator:SetSize(15, 15)
-		self.HLeaderIndicator:SetPoint('CENTER', self, 'TOP', 0, 0)
+		self.LeaderIndicator = layer5:CreateTexture(nil, 'ARTWORK')
+		self.LeaderIndicator:SetSize(15, 15)
+		self.LeaderIndicator:SetPoint('CENTER', self, 'TOP', 0, 0)
 
 		self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.RaidTargetIndicator:SetSize(24, 24)
