@@ -42,7 +42,7 @@ externals:
   libs/StdUi:
     url: https://github.com/kaminaris/StdUi.git
   libs/oUF:
-    url: https://github.com/oUF-wow/oUF.git
+    url: https://github.com/Wutname1/oUF.git
   libs/oUF_AuraBars:
     url: https://github.com/Wutname1/oUF_AuraBars.git
   libs/LibDataBroker:
