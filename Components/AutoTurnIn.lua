@@ -346,6 +346,7 @@ function module.QUEST_COMPLETE()
 	-- Look for the item that is the best upgrade and whats worth the most.
 	local GreedID, GreedValue, UpgradeID = nil, 0, nil
 	local GreedLink, UpgradeLink, UpgradeAmmount = nil, nil, 0
+	local QuestRewardsWeapon = false
 	for i = 1, GetNumQuestChoices() do
 		-- Load the items information
 		local link = GetQuestItemLink('choice', i)
@@ -399,12 +400,18 @@ function module.QUEST_COMPLETE()
 				end
 			end
 		end
-		-- end
+
+		-- Check if it is a weapon, do this last incase it only rewards one item
+		if itemEquipLoc == 'MainHandSlot' or itemEquipLoc == 'SecondaryHandSlot' then
+			QuestRewardsWeapon = true
+		end
 	end
 
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
-		if SUI.DB.AutoTurnIn.lootreward then
+		if QuestRewardsWeapon then
+			SUI:Print(L['Canceling turn in, quest rewards weapon.'])
+		elseif SUI.DB.AutoTurnIn.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
 				module:TurnInQuest(GreedID)
@@ -434,7 +441,7 @@ function module.QUEST_COMPLETE()
 			end
 		else
 			if (SUI.DB.AutoTurnIn.debug) then
-				SUI:Print('No Reward, turning in.')
+				SUI:Print(L['No Reward, turning in.'])
 			end
 			module:TurnInQuest(1)
 		end
@@ -589,6 +596,7 @@ function module.GOSSIP_SHOW()
 			if SUI.DB.AutoTurnIn.debug then
 				print(v .. '---BLACKLISTED')
 			end
+			return
 		end
 	end
 
@@ -661,17 +669,17 @@ end
 function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['AutoTurnIn'] = {
 		type = 'group',
-		name = 'Auto TurnIn',
+		name = L['Auto TurnIn'],
 		args = {
 			QuestAccepting = {
-				name = 'Quest accepting',
+				name = L['Quest accepting'],
 				type = 'group',
 				inline = true,
 				order = 10,
 				width = 'full',
 				args = {
 					AcceptGeneralQuests = {
-						name = 'Accept Quests',
+						name = L['Accept quests'],
 						type = 'toggle',
 						order = 10,
 						get = function(info)
@@ -682,7 +690,7 @@ function module:BuildOptions()
 						end
 					},
 					trivial = {
-						name = 'Accept trivial quests',
+						name = L['Accept trivial quests'],
 						type = 'toggle',
 						order = 20,
 						get = function(info)
@@ -693,7 +701,7 @@ function module:BuildOptions()
 						end
 					},
 					AcceptRepeatable = {
-						name = 'Accept repeatable',
+						name = L['Accept repeatable'],
 						type = 'toggle',
 						order = 30,
 						get = function(info)
@@ -704,7 +712,7 @@ function module:BuildOptions()
 						end
 					},
 					AutoGossip = {
-						name = 'Auto Gossip',
+						name = L['Auto gossip'],
 						type = 'toggle',
 						order = 15,
 						get = function(info)
@@ -717,14 +725,14 @@ function module:BuildOptions()
 				}
 			},
 			QuestTurnIn = {
-				name = 'Quest turn in',
+				name = L['Quest turn in'],
 				type = 'group',
 				inline = true,
 				order = 20,
 				width = 'full',
 				args = {
 					TurnInEnabled = {
-						name = 'Turn in Quests',
+						name = L['Turn in quests'],
 						type = 'toggle',
 						order = 10,
 						get = function(info)
@@ -735,7 +743,7 @@ function module:BuildOptions()
 						end
 					},
 					AutoSelectLoot = {
-						name = 'Auto select loot',
+						name = L['Auto select loot'],
 						type = 'toggle',
 						order = 30,
 						get = function(info)
@@ -746,7 +754,7 @@ function module:BuildOptions()
 						end
 					},
 					autoequip = {
-						name = 'Auto equip upgrades',
+						name = L['Auto equip upgrades'],
 						type = 'toggle',
 						order = 30,
 						get = function(info)
@@ -759,7 +767,7 @@ function module:BuildOptions()
 				}
 			},
 			debugMode = {
-				name = 'Debug Mode',
+				name = L['Debug mode'],
 				type = 'toggle',
 				order = 900,
 				get = function(info)
