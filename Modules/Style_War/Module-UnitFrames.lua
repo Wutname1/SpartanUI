@@ -61,6 +61,8 @@ local TextFormat = function(text)
 		return '(' .. m .. ') ' .. a .. ' / ' .. t
 	elseif textmode == 3 then
 		return '(' .. m .. ') ' .. a
+	elseif textmode == 4 then
+		return a .. ' / ' .. t .. ' ([perhp]%)'
 	end
 end
 
