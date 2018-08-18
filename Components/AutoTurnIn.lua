@@ -54,6 +54,7 @@ local WildcardBlackList = {
 	['goods'] = true,
 	['take us back'] = true,
 	['take me back'] = true,
+	['and listen'] = true,
 	['where I can fly'] = true
 }
 local BlackList = {
