@@ -37,7 +37,8 @@ local itemCache =
 	}
 )
 local WildcardBlackList = {
-	['Train'] = true,
+	['taxi'] = true,
+	['trade'] = true,
 	['train'] = true,
 	['repeat'] = true,
 	['buy'] = true,
@@ -45,79 +46,70 @@ local WildcardBlackList = {
 	['my home'] = true,
 	['reinforcements'] = true,
 	['Set sail'] = true,
-	['Drustvar'] = true,
-	['Stormsong Valley'] = true,
-	['Tiragarde Sound'] = true,
-	['Tell me about the'] = true,
+	['drustvar'] = true,
+	['stormsong valley'] = true,
+	['tiragarde sound'] = true,
+	['tell me about the'] = true,
 	['like to change'] = true,
-	['goods'] = true
+	['goods'] = true,
+	['take us back'] = true,
+	['take me back'] = true,
+	['where I can fly'] = true
 }
 local BlackList = {
 	-- General Blacklist
-	['I wish to buy from you.'] = true,
-	['I would like to buy from you.'] = true,
-	['Make this inn your home.'] = true,
-	["I'd like to heal and revive my battle pets."] = true,
-	['Let me browse your goods.'] = true,
-	['vendor'] = true,
-	['binder'] = true,
-	['trainer'] = true,
-	['workorder'] = true,
-	['workorder'] = true,
-	['workorder'] = true,
-	["I'm looking for a lost companion."] = true,
-	['I need a ride to the top of the statue.'] = true,
-	['Inn'] = true,
-	['gossip'] = true,
-	['Show me what you have available.'] = true,
-	['Flight Master'] = true,
-	['Guild Master & Vendor'] = true,
-	['Void Storage'] = true,
-	['Auction House'] = true,
-	['Stable Master'] = true,
-	['Zeppelin Master'] = true,
-	['Battlemasters'] = true,
-	['Barber'] = true,
-	['Bank'] = true,
-	['Other Continents'] = true,
-	["Officer's Lounge"] = true,
-	['Transmogrification'] = true,
-	['I want to transmogrify my gear.'] = true,
-	['transmogrify'] = true,
-	-- WOTLK Blacklist
-	['I am prepared to face Saragosa!'] = true,
-	['What is the cause of this conflict?'] = true,
-	['Can you spare a drake to take me to Lord Afrasastrasz in the middle of the temple?'] = true,
-	['I must return to the world of shadows, Koltira. Send me back.'] = true,
-	['I am ready to be teleported to Dalaran.'] = true,
-	['Can I get a ride back to ground level, Lord Afrasastrasz?'] = true,
-	['I would like to go to Lord Afrasastrasz in the middle of the temple.'] = true,
-	['My lord, I need to get to the top of the temple.'] = true,
-	['Yes, please, I would like to return to the ground level of the temple.'] = true,
-	["Steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple."] = true,
-	['I want to exchange my Ruby Essence for Amber Essence.'] = true,
-	['What abilities do ruby drakes have?'] = true,
-	['I want to fly on the wings of the bronze flight.'] = true,
-	['I want to fly on the wings of the red flight.'] = true,
-	['I want to exchange my Ruby Essence for Emerald Essence.'] = true,
-	['What abilities do emerald drakes have?'] = true,
-	['I want to fly on the wings of the green flight.'] = true,
-	['I want to exchange my Amber Essence for Ruby Essence.'] = true,
-	['What abilities do amber drakes have?'] = true,
-	['I am ready.'] = true, -- This one is used alot but blacklisted due to trial of the champion
-	["I am ready.  However, I'd like to skip the pageantry."] = true,
-	-- MOP
-	["I'm ready to be introduced to the instructors, High Elder."] = true,
-	["Fine. Let's proceed with the introductions."] = true,
-	['What is this place?'] = true,
-	-- Legion
-	['Your people treat you with contempt. Why? What did you do?'] = true,
-	-- BFA
-	["Yes, I'm ready to go to Drustvar."] = true,
-	['Warchief, may I ask why we want to capture Teldrassil?'] = true,
-	['I am ready to go to the Undercity.'] = true,
-	["I've heard this tale before... <Skip the scenario and begin your next mission.>"] = true,
-	['Release me.'] = true
+	['i wish to buy from you.'] = true,
+	['i would like to buy from you.'] = true,
+	['make this inn your home.'] = true,
+	["i'd like to heal and revive my battle pets."] = true,
+	['let me browse your goods.'] = true,
+	["i'm looking for a lost companion."] = true,
+	['i need a ride to the top of the statue.'] = true,
+	['show me what you have available.'] = true,
+	['flight master'] = true,
+	['guild master & vendor'] = true,
+	['void storage'] = true,
+	['auction house'] = true,
+	['stable master'] = true,
+	['zeppelin master'] = true,
+	['other continents'] = true,
+	["officer's lounge"] = true,
+	['transmogrification'] = true,
+	['i want to transmogrify my gear.'] = true,
+	-- wotlk blacklist
+	['i am prepared to face saragosa!'] = true,
+	['what is the cause of this conflict?'] = true,
+	['can you spare a drake to take me to lord afrasastrasz in the middle of the temple?'] = true,
+	['i must return to the world of shadows, koltira. send me back.'] = true,
+	['i am ready to be teleported to dalaran.'] = true,
+	['can i get a ride back to ground level, lord afrasastrasz?'] = true,
+	['i would like to go to lord afrasastrasz in the middle of the temple.'] = true,
+	['my lord, i need to get to the top of the temple.'] = true,
+	['yes, please, i would like to return to the ground level of the temple.'] = true,
+	["steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple."] = true,
+	['i want to exchange my ruby essence for amber essence.'] = true,
+	['what abilities do ruby drakes have?'] = true,
+	['i want to fly on the wings of the bronze flight.'] = true,
+	['i want to fly on the wings of the red flight.'] = true,
+	['i want to exchange my ruby essence for emerald essence.'] = true,
+	['what abilities do emerald drakes have?'] = true,
+	['i want to fly on the wings of the green flight.'] = true,
+	['i want to exchange my amber essence for ruby essence.'] = true,
+	['what abilities do amber drakes have?'] = true,
+	['i am ready.'] = true, -- this one is used alot but blacklisted due to trial of the champion
+	["i am ready.  however, i'd like to skip the pageantry."] = true,
+	-- mop
+	["i'm ready to be introduced to the instructors, high elder."] = true,
+	["fine. let's proceed with the introductions."] = true,
+	['what is this place?'] = true,
+	-- legion
+	['your people treat you with contempt. why? what did you do?'] = true,
+	-- bfa
+	["yes, i'm ready to go to drustvar."] = true,
+	['warchief, may i ask why we want to capture teldrassil?'] = true,
+	['i am ready to go to the undercity.'] = true,
+	["i've heard this tale before... <skip the scenario and begin your next mission.>"] = true,
+	['release me.'] = true
 }
 local anchor, scanningTooltip
 local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
@@ -583,16 +575,17 @@ function module.GOSSIP_SHOW()
 	for k, v in pairs(options) do
 		local WildcardBlacklistFound = false
 		for k2, _ in pairs(WildcardBlackList) do
-			if string.find(v, k2) then
+			if string.find(string.lower(v), string.lower(k2)) then
 				WildcardBlacklistFound = true
 			end
 		end
 
 		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
-		if (v ~= 'gossip') and (not BlackList[v]) and (not WildcardBlacklistFound) then
+		if (v ~= 'gossip') and (not BlackList[v]) and (not WildcardBlacklistFound) and string.find(v, ' ') then
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
+			SUI:Print('Selecting: ' .. v)
 			if SUI.DB.AutoTurnIn.debug then
 				print(v .. '---BLACKLISTED')
 			end
