@@ -548,7 +548,7 @@ function module:FirstLaunch()
 				SUI.DB.AutoTurnIn[key] = object:GetChecked()
 			end
 
-			-- window.Skip:Click()
+			SUI.DB.AutoTurnIn.FirstLaunch = false
 		end,
 		Skip = function()
 			SUI.DB.AutoTurnIn.FirstLaunch = false
