@@ -499,10 +499,10 @@ end
 function module:FirstLaunch()
 	local PageData = {
 		ID = 'Autoturnin',
-		Name = 'Auto turn in',
-		SubTitle = 'Auto turn in',
-		Desc1 = 'Automatically accept and turn in quests.',
-		Desc2 = 'Holding Alt while talking to a NPC will disable turn in & accepting quests. Holding Control will disable auto gossip.',
+		Name = L['Auto TurnIn'],
+		SubTitle = L['Auto TurnIn'],
+		Desc1 = L['Automatically accept and turn in quests.'],
+		Desc2 = L['Holding ALT while talking to a NPC will temporarily disable the auto turnin module.'],
 		RequireDisplay = SUI.DB.AutoTurnIn.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
@@ -519,15 +519,17 @@ function module:FirstLaunch()
 
 			-- Setup checkboxes
 			ATI.options = {}
-			ATI.options.AcceptGeneralQuests = StdUi:Checkbox(ATI, 'Accept quests', 220, 20)
-			ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, 'Enable turning in quests', 220, 20)
-			ATI.options.AutoGossip = StdUi:Checkbox(ATI, 'Auto gossip', 220, 20)
-			ATI.options.lootreward = StdUi:Checkbox(ATI, 'Auto select loot', 220, 20)
-			ATI.options.autoequip = StdUi:Checkbox(ATI, 'Auto equip upgrade quest rewards', 350, 20)
+			ATI.options.AcceptGeneralQuests = StdUi:Checkbox(ATI, L['Accept quests'], 220, 20)
+			ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, L['Turn in completed quests'], 220, 20)
+			ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
+			ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
+			ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
+			ATI.options.autoequip = StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
 			-- Positioning
 			StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
 			StdUi:GlueBelow(ATI.options.AutoGossip, ATI.options.AcceptGeneralQuests, 0, -5)
+			StdUi:GlueRight(ATI.options.AutoGossipSafeMode, ATI.options.AutoGossip, 5, 0)
 			StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossip, 0, -5, 'LEFT')
 
 			StdUi:GlueRight(ATI.options.TurnInEnabled, ATI.options.AcceptGeneralQuests, 5, 0)
@@ -581,13 +583,17 @@ function module.GOSSIP_SHOW()
 			end
 		end
 
-		SUI.DB.AutoTurnIn.AlwaysRepeat[v] = true
 		if (v ~= 'gossip') and (not BlackList[v]) and (not WildcardBlacklistFound) and string.find(v, ' ') then
+			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
+			if SUI.DB.AutoTurnIn.AutoGossipSafeMode and (not string.find(string.lower(v), 'quest')) then
+				return
+			end
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
 			SUI:Print('Selecting: ' .. v)
 			if SUI.DB.AutoTurnIn.debug then
+				SUI.DB.AutoTurnIn.Blacklist[v] = true
 				print(v .. '---BLACKLISTED')
 			end
 			return
@@ -610,6 +616,7 @@ function module:OnInitialize()
 		debug = false,
 		TurnInEnabled = true,
 		AutoGossip = true,
+		AutoGossipSafeMode = true,
 		AcceptGeneralQuests = true,
 		AcceptRepeatable = false,
 		trivial = false,
@@ -620,7 +627,7 @@ function module:OnInitialize()
 		weapon = {},
 		stat = {},
 		secondary = {},
-		AlwaysRepeat = {}
+		Blacklist = {}
 	}
 	if not SUI.DB.AutoTurnIn then
 		SUI.DB.AutoTurnIn = Defaults
@@ -715,6 +722,17 @@ function module:BuildOptions()
 						set = function(info, val)
 							SUI.DB.AutoTurnIn.AutoGossip = val
 						end
+					},
+					AutoGossipMode = {
+						name = L['Auto gossip safe mode'],
+						type = 'toggle',
+						order = 16,
+						get = function(info)
+							return SUI.DB.AutoTurnIn.AutoGossipSafeMode
+						end,
+						set = function(info, val)
+							SUI.DB.AutoTurnIn.AutoGossipSafeMode = val
+						end
 					}
 				}
 			},
@@ -726,7 +744,7 @@ function module:BuildOptions()
 				width = 'full',
 				args = {
 					TurnInEnabled = {
-						name = L['Turn in quests'],
+						name = L['Turn in completed quests'],
 						type = 'toggle',
 						order = 10,
 						get = function(info)
@@ -737,7 +755,7 @@ function module:BuildOptions()
 						end
 					},
 					AutoSelectLoot = {
-						name = L['Auto select loot'],
+						name = L['Auto select quest reward'],
 						type = 'toggle',
 						order = 30,
 						get = function(info)
@@ -748,7 +766,8 @@ function module:BuildOptions()
 						end
 					},
 					autoequip = {
-						name = L['Auto equip upgrades'],
+						name = L['Auto equip upgrade quest rewards'],
+						desc = L['Based on iLVL'],
 						type = 'toggle',
 						order = 30,
 						get = function(info)
