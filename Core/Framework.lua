@@ -426,7 +426,10 @@ local DBdefault = {
 					target = {
 						Buffs = {Mode = 'icons'},
 						Debuffs = {Mode = 'bars'}
-					}
+					},
+					pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+					targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+					focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
 				},
 				Movable = {
 					Minimap = false,

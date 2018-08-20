@@ -19,7 +19,10 @@ local Defaults = {
 	},
 	Frames = {
 		player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
-		target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}}
+		target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}},
+		pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+		targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+		focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
 	},
 	PlayerFrames = {},
 	PartyFrames = {
@@ -73,10 +76,10 @@ local Defaults = {
 						stance = {
 							DRUID = {
 								prowl = 0,
-								cat = 0,
-							},
-						},
-					},
+								cat = 0
+							}
+						}
+					}
 				}, -- 1
 				{
 					enabled = true,
