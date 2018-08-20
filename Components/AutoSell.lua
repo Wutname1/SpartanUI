@@ -42,10 +42,10 @@ end
 function module:FirstTime()
 	local PageData = {
 		ID = 'Autosell',
-		Name = 'Auto sell',
-		SubTitle = 'Auto sell',
-		Desc1 = 'Automatically vendor items when you visit a merchant.',
-		Desc2 = 'Crafting, consumables, and gearset items will not be sold by default.',
+		Name = L['Auto sell'],
+		SubTitle = L['Auto sell'],
+		Desc1 = L['Automatically vendor items when you visit a merchant.'],
+		Desc2 = L['Crafting, consumables, and gearset items will not be sold by default.'],
 		RequireDisplay = SUI.DB.AutoSell.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
@@ -61,13 +61,14 @@ function module:FirstTime()
 			AutoSell:SetAllPoints(SUI_Win)
 
 			-- Quality Selling Options
-			AutoSell.SellGray = StdUi:Checkbox(AutoSell, 'Sell gray items', 220, 20)
-			AutoSell.SellWhite = StdUi:Checkbox(AutoSell, 'Sell white items', 220, 20)
-			AutoSell.SellGreen = StdUi:Checkbox(AutoSell, 'Sell green items', 220, 20)
-			AutoSell.SellBlue = StdUi:Checkbox(AutoSell, 'Sell blue items', 220, 20)
-			AutoSell.SellPurple = StdUi:Checkbox(AutoSell, 'Sell purple items', 220, 20)
+			AutoSell.SellGray = StdUi:Checkbox(AutoSell, L['Sell gray'], 220, 20)
+			AutoSell.SellWhite = StdUi:Checkbox(AutoSell, L['Sell white'], 220, 20)
+			AutoSell.SellGreen = StdUi:Checkbox(AutoSell, L['Sell green'], 220, 20)
+			AutoSell.SellBlue = StdUi:Checkbox(AutoSell, L['Sell blue'], 220, 20)
+			AutoSell.SellPurple = StdUi:Checkbox(AutoSell, L['Sell purple'], 220, 20)
 
 			-- Max iLVL
+			AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
 			AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, '180')
 			AutoSell.iLVLLabel:SetMaxValue(500)
 			AutoSell.iLVLLabel:SetMinValue(1)
@@ -89,7 +90,7 @@ function module:FirstTime()
 			end
 
 			-- AutoRepair
-			AutoSell.AutoRepair = StdUi:Checkbox(AutoSell, 'Auto repair', 220, 20)
+			AutoSell.AutoRepair = StdUi:Checkbox(AutoSell, L['Auto repair'], 220, 20)
 
 			-- Positioning
 			StdUi:GlueTop(AutoSell.SellGray, SUI_Win, 0, -30)
@@ -97,7 +98,8 @@ function module:FirstTime()
 			StdUi:GlueBelow(AutoSell.SellGreen, AutoSell.SellWhite, 0, -5)
 			StdUi:GlueBelow(AutoSell.SellBlue, AutoSell.SellGreen, 0, -5)
 			StdUi:GlueBelow(AutoSell.SellPurple, AutoSell.SellBlue, 0, -5)
-			StdUi:GlueBelow(AutoSell.iLVLSlider, AutoSell.SellPurple, -40, -5)
+			StdUi:GlueBelow(AutoSell.iLVLDesc, AutoSell.SellPurple, 0, -5)
+			StdUi:GlueBelow(AutoSell.iLVLSlider, AutoSell.iLVLDesc, -40, -5)
 			StdUi:GlueRight(AutoSell.iLVLLabel, AutoSell.iLVLSlider, 2, 0)
 			StdUi:GlueBelow(AutoSell.AutoRepair, AutoSell.iLVLSlider, 40, -5)
 
@@ -370,7 +372,7 @@ end
 function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['AutoSell'] = {
 		type = 'group',
-		name = 'Auto Sell',
+		name = L['Auto sell'],
 		args = {
 			NotCrafting = {
 				name = L["Don't sell crafting items"],
