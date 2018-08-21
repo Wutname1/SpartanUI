@@ -284,6 +284,14 @@ function module:WelcomePage()
 		Desc1 = "Welcome to SpartanUI, This setup wizard help guide you through the inital setup of the UI and it's modules.",
 		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit our wiki at http://wiki.spartanui.net',
 		Display = function()
+			local profiles = {}
+			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
+			for _, v in pairs(SUI.SpartanUIDB:GetProfiles(tmpprofiles)) do
+				if not (nocurrent and v == currentProfile) then
+					profiles[v] = v
+				end
+			end
+
 			local WelcomePage = CreateFrame('Frame', nil)
 			WelcomePage:SetParent(module.window.content)
 			WelcomePage:SetAllPoints(module.window.content)
@@ -306,6 +314,35 @@ function module:WelcomePage()
 				StdUi:GlueAbove(module.window.BT4Warning, module.window, 0, 20)
 			end
 
+			WelcomePage.ProfileCopyLabel =
+				StdUi:Label(
+				WelcomePage,
+				L['If you would like to copy the configuration from another character you may do so below.']
+			)
+
+			WelcomePage.ProfileList = StdUi:Dropdown(WelcomePage, 200, 20, profiles)
+			WelcomePage.CopyProfileButton = StdUi:Button(WelcomePage, 60, 20, 'COPY')
+			WelcomePage.CopyProfileButton:SetScript(
+				'OnClick',
+				function(this)
+					local ProfileSelection = module.window.content.WelcomePage.ProfileList:GetValue()
+					if not ProfileSelection or ProfileSelection == '' then
+						return
+					end
+
+					-- Copy profile
+					SUI.SpartanUIDB:CopyProfile(ProfileSelection)
+					-- Set the BT4 Profile
+					Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile)
+					-- Reload the UI
+					-- ReloadUI()
+				end
+			)
+
+			StdUi:GlueTop(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -5)
+			StdUi:GlueTop(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, -131, -5)
+			StdUi:GlueRight(WelcomePage.CopyProfileButton, WelcomePage.ProfileList, 2, 0)
+
 			module.window.content.WelcomePage = WelcomePage
 		end,
 		Next = function()
@@ -318,65 +355,12 @@ function module:WelcomePage()
 end
 
 function module:ProfileSetup()
-	local ProfilePage = {
-		ID = 'ProfileSetup',
-		Name = 'Profile setup',
-		SubTitle = 'Profile setup',
-		Desc1 = 'Thank you for installing SpartanUI.',
-		Desc2 = 'If you would like to copy the configuration from another character you may do so below.',
-		RequireDisplay = (not SUI.DB.SetupDone),
-		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
-
-			--Container
-			SUI_Win.ProfilePage = CreateFrame('Frame', nil)
-			SUI_Win.ProfilePage:SetParent(SUI_Win)
-			SUI_Win.ProfilePage:SetAllPoints(SUI_Win)
-
-			-- local gui = LibStub('AceGUI-3.0')
-
-			-- --Profiles
-			-- local control = gui:Create('Dropdown')
-			-- control:SetLabel('Exsisting profiles')
-			-- local tmpprofiles = {}
-			-- local profiles = {}
-			-- -- copy existing profiles into the table
-			-- local currentProfile = SUI.DB:GetCurrentProfile()
-			-- for _, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
-			-- 	if not (nocurrent and v == currentProfile) then
-			-- 		profiles[v] = v
-			-- 	end
-			-- end
-			-- control:SetList(profiles)
-			-- control:SetPoint('TOP', SUI_Win.ProfilePage, 'TOP', 0, -30)
-			-- control.frame:SetParent(SUI_Win.ProfilePage)
-			-- control.frame:Show()
-			-- SUI_Win.ProfilePage.Profiles = control
-		end,
-		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window.content
-
-			SUI.DB.SetupDone = true
-
-			SUI_Win.ProfilePage:Hide()
-			SUI_Win.ProfilePage = nil
-		end,
-		RequireReload = true,
-		Priority = true,
-		Skip = function()
-			SUI.DB.SetupDone = true
-		end
-	}
 	--Hide Bartender4 Minimap icon.
 	if Bartender4 then
 		Bartender4.db.profile.minimapIcon.hide = true
 		local LDBIcon = LibStub('LibDBIcon-1.0', true)
 		LDBIcon['Hide'](LDBIcon, 'Bartender4')
 	end
-
-	module:AddPage(ProfilePage)
 end
 
 function module:ModuleSelectionPage()
