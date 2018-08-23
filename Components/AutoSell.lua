@@ -7,7 +7,12 @@ local totalValue = 0
 module.SellTimer = nil
 local ExcludedItems = {
 	137642, --Mark Of Honor
-	141446 --Tome of the Tranquil Mind
+	141446, --Tome of the Tranquil Mind
+	6219, -- Arclight Spanner
+	140209, --imported blacksmith hammer
+	5956, -- Blacksmith Hammer
+	7005, --skinning knife
+	2901 --mining pick
 }
 
 function module:OnInitialize()
