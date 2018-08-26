@@ -340,7 +340,7 @@ function module:WelcomePage()
 			)
 
 			StdUi:GlueTop(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -5)
-			StdUi:GlueTop(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, -131, -5)
+			StdUi:GlueBottom(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, 0, -5)
 			StdUi:GlueRight(WelcomePage.CopyProfileButton, WelcomePage.ProfileList, 2, 0)
 
 			module.window.content.WelcomePage = WelcomePage
