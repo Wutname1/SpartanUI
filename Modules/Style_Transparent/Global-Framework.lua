@@ -3,6 +3,14 @@ local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:GetModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = Transparent_AnchorFrame, Transparent_SpartanUI
+local FramesList = {
+	[1] = 'pet',
+	[2] = 'target',
+	[3] = 'targettarget',
+	[4] = 'focus',
+	[5] = 'focustarget',
+	[6] = 'player'
+}
 
 function module:updateViewport() -- handles viewport offset based on settings
 	if not InCombatLockdown() and (Transparent_SpartanUI_Base5:GetHeight() ~= 0) then
@@ -43,7 +51,7 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 		for _, key in ipairs(module.StatusBarSettings.bars) do
 			StatusBars.bars[key]:SetScale(SUI.DB.scale)
 		end
-		
+
 		CurScale = SUI.DB.scale
 	end
 end
@@ -274,6 +282,20 @@ function module:SetColor()
 			_G['Transparent_Popup' .. i .. 'BG']:SetVertexColor(r, b, g, a)
 		end
 	end
+
+	if SUI.DBMod.PlayerFrames.Style == 'Transparent' then
+		PlayerFrames = SUI:GetModule('PlayerFrames')
+		r, b, g, a = unpack(SUI.DB.Styles.Transparent.Color.PlayerFrames)
+		for _, v in pairs(FramesList) do
+			PlayerFrames[v].artwork.bg:SetVertexColor(r, b, g, a)
+		end
+		for _, v in pairs(PlayerFrames.arena) do
+			v.artwork.bg:SetVertexColor(r, b, g, a)
+		end
+		for _, v in pairs(PlayerFrames.boss) do
+			v.artwork.bg:SetVertexColor(r, b, g, a)
+		end
+	end
 end
 
 function module:EnableFramework()
@@ -297,7 +319,7 @@ function module:EnableFramework()
 	)
 
 	module:SetupVehicleUI()
-	
+
 	module:SetupStatusBars()
 
 	module:updateScale()

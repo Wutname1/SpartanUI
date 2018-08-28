@@ -557,7 +557,6 @@ local CreatePlayerFrame = function(self, unit)
 			-- Register with oUF
 			self.ClassPower = ClassPower
 		end
-
 	end
 	do -- setup buffs and debuffs
 		if SUI.DB.Styles.Transparent.Frames[unit] and PlayerFrames then
@@ -1540,7 +1539,7 @@ function module:PlayerFrames()
 
 		PlayerFrames.boss = boss
 	end
-	
+
 	SUI.PlayerFrames = PlayerFrames
 
 	local unattached = false
@@ -1563,6 +1562,23 @@ function module:PlayerFrames()
 			end
 		end
 	)
+
+	module:SetColor()
+
+	SUI.opt.args['PlayerFrames'].args['FrameStyle'].args['Color'] = {
+		name = 'Frame color',
+		type = 'color',
+		hasAlpha = true,
+		order = 1,
+		width = 'full',
+		get = function(info)
+			return unpack(SUI.DB.Styles.Transparent.Color.PlayerFrames)
+		end,
+		set = function(info, r, b, g, a)
+			SUI.DB.Styles.Transparent.Color.PlayerFrames = {r, b, g, a}
+			module:SetColor()
+		end
+	}
 end
 
 function module:RaidFrames()
