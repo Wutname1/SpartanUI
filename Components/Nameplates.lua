@@ -210,20 +210,55 @@ local NamePlateFactory = function(frame, unit)
 		frame.ThreatIndicator = ThreatIndicator
 
 		-- Things to do if this is the players display
-		if (UnitIsUnit(unit, 'player')) then
-			local attachPoint = 'Castbar'
-			if not SUI.DBMod.NamePlates.ShowCastbar then
-				attachPoint = 'Health'
-			end
-			-- Setup Player Icons
-			if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
-				SUI:PlayerPowerIcons(frame, attachPoint)
-			end
+		-- if (UnitIsUnit(unit, 'player')) then
+		local attachPoint = 'Castbar'
+		if not SUI.DBMod.NamePlates.ShowCastbar then
+			attachPoint = 'Health'
 		end
+		-- Setup Player Icons
+		if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
+			SUI:PlayerPowerIcons(frame, attachPoint)
+		end
+		-- end
 
 		-- Setup Scale
 		frame:SetScale(SUI.DBMod.NamePlates.Scale)
 	end
+end
+
+local NameplateCallback = function(self, event, unit)
+	-- Update target Indicator
+	if UnitIsUnit(frame.unit, 'target') then
+		-- the frame is the new target
+		self.TargetIndicator.bg1:Show()
+		self.TargetIndicator.bg2:Show()
+	else
+		-- the frame is something else than the new target
+		self.TargetIndicator.bg1:Hide()
+		self.TargetIndicator.bg2:Hide()
+	end
+
+	-- Update Player Icons
+	if event == "NAME_PLATE_UNIT_ADDED" then
+		if UnitIsUnit(self.unit, 'player') then
+			if self.Runes then
+				self.Runes:Show()
+			end
+			if self.ClassPower then
+				self.ClassPower:Show()
+			end
+		else
+			if self.Runes then
+				self.Runes:Hide()
+			end
+			if self.ClassPower then
+				self.ClassPower:Hide()
+			end
+		end
+    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        self.Runes:Hide()
+        self.ClassPower:Hide()
+    end
 end
 
 function module:OnInitialize()
@@ -264,7 +299,7 @@ function module:OnEnable()
 	end
 	module:BuildOptions()
 	SpartanoUF:SetActiveStyle('Spartan_NamePlates')
-	SpartanoUF:SpawnNamePlates()
+	SpartanoUF:SpawnNamePlates(nil, NameplateCallback)
 end
 
 function module:BuildOptions()
