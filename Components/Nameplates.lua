@@ -209,17 +209,14 @@ local NamePlateFactory = function(frame, unit)
 		ThreatIndicator.feedbackUnit = 'PLAYER'
 		frame.ThreatIndicator = ThreatIndicator
 
-		-- Things to do if this is the players display
-		-- if (UnitIsUnit(unit, 'player')) then
-		local attachPoint = 'Castbar'
-		if not SUI.DBMod.NamePlates.ShowCastbar then
-			attachPoint = 'Health'
-		end
 		-- Setup Player Icons
 		if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
+			local attachPoint = 'Castbar'
+			if not SUI.DBMod.NamePlates.ShowCastbar then
+				attachPoint = 'Health'
+			end
 			SUI:PlayerPowerIcons(frame, attachPoint)
 		end
-		-- end
 
 		-- Setup Scale
 		frame:SetScale(SUI.DBMod.NamePlates.Scale)
@@ -239,13 +236,14 @@ local NameplateCallback = function(self, event, unit)
 	end
 
 	-- Update Player Icons
-		print(self:GetName())
+	print(self:GetName())
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
 		if self.Runes then
 			self:EnableElement('Runes')
 		elseif self.ClassPower then
 			print('EnableElement')
 			self:EnableElement('ClassPower')
+			self.ClassPower.ForceUpdate()
 		end
 	else
 		if self.Runes then
