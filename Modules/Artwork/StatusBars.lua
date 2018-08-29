@@ -256,11 +256,13 @@ local showAzeriteTooltip = function(self)
 		local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 		local xpToNextLevel = totalLevelXP - xp
 		local ratio = (xp / totalLevelXP)
-		self.tooltip.TextFrame.HeaderText:SetText(
-			AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel),
-			HIGHLIGHT_FONT_COLOR:GetRGB()
-		)
-		self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
+		if currentLevel and xpToNextLevel then
+			self.tooltip.TextFrame.HeaderText:SetText(
+				AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel),
+				HIGHLIGHT_FONT_COLOR:GetRGB()
+			)
+			self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
+		end
 	end
 	self.tooltip:Show()
 end
