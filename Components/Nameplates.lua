@@ -174,6 +174,19 @@ local NamePlateFactory = function(frame, unit)
 		TargetIndicator.bg2:Hide()
 		frame.TargetIndicator = TargetIndicator
 
+		-- Quest Indicator
+		local QuestIndicator = frame:CreateTexture(nil, 'OVERLAY')
+		QuestIndicator:SetSize(16, 16)
+		QuestIndicator:SetPoint('TOPRIGHT', frame)
+		frame.QuestIndicator = QuestIndicator
+
+		-- Rare Elite indicator
+		local RareElite = frame:CreateTexture(nil, 'BACKGROUND', nil, -2)
+		RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
+		RareElite:SetAlpha(.6)
+		RareElite:SetAllPoints(frame)
+		frame.RareElite = RareElite
+
 		-- frame background
 		frame.artwork = CreateFrame('Frame', 'BACKGROUND', frame)
 		frame.artwork:SetAllPoints()
@@ -230,6 +243,16 @@ local NameplateCallback = function(self, event, unit)
 		self.TargetIndicator.bg1:Show()
 		self.TargetIndicator.bg2:Show()
 	end
+	if SUI.DBMod.NamePlates.ShowRareElite then
+		self:EnableElement('RareElite')
+	else
+		self:DisableElement('RareElite')
+	end
+	if SUI.DBMod.NamePlates.ShowQuestIndicator then
+		self:EnableElement('QuestIndicator')
+	else
+		self:DisableElement('QuestIndicator')
+	end
 
 	-- Update Player Icons
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
@@ -257,6 +280,8 @@ function module:OnInitialize()
 		ShowCastbar = true,
 		ShowCastbarText = true,
 		ShowTarget = true,
+		ShowRareElite = true,
+		ShowQuestIndicator = true,
 		ShowRaidTargetIndicator = true,
 		ShowPlayerPowerIcons = true,
 		FlashOnInterruptibleCast = true,
@@ -337,6 +362,28 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DBMod.NamePlates.ShowCastbarText = val
+				end
+			},
+			ShowQuestIndicator = {
+				name = L['Show quest indicator'],
+				type = 'toggle',
+				order = 3,
+				get = function(info)
+					return SUI.DBMod.NamePlates.ShowQuestIndicator
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowQuestIndicator = val
+				end
+			},
+			ShowRareElite = {
+				name = L['Show rare/elite indicator'],
+				type = 'toggle',
+				order = 3,
+				get = function(info)
+					return SUI.DBMod.NamePlates.ShowRareElite
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowRareElite = val
 				end
 			},
 			ShowTarget = {
