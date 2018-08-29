@@ -229,27 +229,21 @@ local NameplateCallback = function(self, event, unit)
 		-- the frame is the new target
 		self.TargetIndicator.bg1:Show()
 		self.TargetIndicator.bg2:Show()
-	else
-		-- the frame is something else than the new target
-		self.TargetIndicator.bg1:Hide()
-		self.TargetIndicator.bg2:Hide()
 	end
 
 	-- Update Player Icons
-	print(self:GetName())
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
 		if self.Runes then
 			self:EnableElement('Runes')
+			self.Runes:ForceUpdate()
 		elseif self.ClassPower then
-			print('EnableElement')
 			self:EnableElement('ClassPower')
-			self.ClassPower.ForceUpdate()
+			self.ClassPower:ForceUpdate()
 		end
 	else
 		if self.Runes then
 			self:DisableElement('Runes')
 		elseif self.ClassPower then
-			print('DisableElement')
 			self:DisableElement('ClassPower')
 		end
 	end
