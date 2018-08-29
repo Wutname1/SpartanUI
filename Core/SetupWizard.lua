@@ -288,7 +288,7 @@ function module:WelcomePage()
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
 			for _, v in pairs(SUI.SpartanUIDB:GetProfiles(tmpprofiles)) do
 				if not (nocurrent and v == currentProfile) then
-					profiles[v] = v
+					profiles[#profiles + 1] = {text = v, value = v}
 				end
 			end
 
@@ -297,7 +297,7 @@ function module:WelcomePage()
 			WelcomePage:SetAllPoints(module.window.content)
 
 			WelcomePage.Helm = StdUi:Texture(WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
-			WelcomePage.Helm:SetPoint('CENTER')
+			WelcomePage.Helm:SetPoint('CENTER', 0, 35)
 			WelcomePage.Helm:SetAlpha(.6)
 
 			if not select(4, GetAddOnInfo('Bartender4')) then
@@ -335,12 +335,12 @@ function module:WelcomePage()
 					-- Set the BT4 Profile
 					Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile)
 					-- Reload the UI
-					-- ReloadUI()
+					ReloadUI()
 				end
 			)
 
-			StdUi:GlueTop(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -5)
-			StdUi:GlueBottom(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, 0, -5)
+			StdUi:GlueBottom(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -35)
+			StdUi:GlueBottom(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, 0, -25)
 			StdUi:GlueRight(WelcomePage.CopyProfileButton, WelcomePage.ProfileList, 2, 0)
 
 			module.window.content.WelcomePage = WelcomePage
