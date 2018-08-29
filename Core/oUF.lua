@@ -163,7 +163,8 @@ function addon:PlayerPowerIcons(frame, attachPoint)
 			else
 				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 2, 0)
 			end
-
+			Bar:Hide()
+			
 			ClassPower[index] = Bar
 		end
 
