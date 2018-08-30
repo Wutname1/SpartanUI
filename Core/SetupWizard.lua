@@ -329,11 +329,10 @@ function module:WelcomePage()
 					if not ProfileSelection or ProfileSelection == '' then
 						return
 					end
-
 					-- Copy profile
 					SUI.SpartanUIDB:CopyProfile(ProfileSelection)
 					-- Set the BT4 Profile
-					Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile)
+					Bartender4.db:SetProfile(SUI.SpartanUIDB.profile.SUIProper.Styles[SUI.SpartanUIDB.profile.Modules.Artwork.Style].BartenderProfile)
 					-- Reload the UI
 					ReloadUI()
 				end
