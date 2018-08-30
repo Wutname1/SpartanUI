@@ -181,7 +181,7 @@ local NamePlateFactory = function(frame, unit)
 		frame.QuestIndicator = QuestIndicator
 
 		-- Rare Elite indicator
-		local RareElite = frame:CreateTexture(nil, 'BACKGROUND', nil, -2)
+		local RareElite = frame:CreateTexture(nil, 'OVERLAY', nil, -2)
 		RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
 		RareElite:SetAlpha(.6)
 		RareElite:SetAllPoints(frame)
@@ -238,7 +238,7 @@ end
 
 local NameplateCallback = function(self, event, unit)
 	-- Update target Indicator
-	if UnitIsUnit(unit, 'target') then
+	if UnitIsUnit(unit, 'target') and SUI.DBMod.NamePlates.ShowTarget then
 		-- the frame is the new target
 		self.TargetIndicator.bg1:Show()
 		self.TargetIndicator.bg2:Show()
@@ -270,6 +270,9 @@ local NameplateCallback = function(self, event, unit)
 			self:DisableElement('ClassPower')
 		end
 	end
+
+	-- Set the Scale of the nameplate
+	self:SetScale(SUI.DBMod.NamePlates.Scale)
 end
 
 function module:OnInitialize()
@@ -411,9 +414,10 @@ function module:BuildOptions()
 			Scale = {
 				name = L['Nameplate scale'],
 				type = 'range',
-				min = -20,
-				max = 20,
-				step = 1,
+				width = 'double',
+				min = .01,
+				max = 3,
+				step = .01,
 				order = 100,
 				get = function(info)
 					return SUI.DBMod.NamePlates.Scale
