@@ -529,8 +529,8 @@ function module:FirstLaunch()
 			-- Positioning
 			StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
 			StdUi:GlueBelow(ATI.options.AutoGossip, ATI.options.AcceptGeneralQuests, 0, -5)
-			StdUi:GlueRight(ATI.options.AutoGossipSafeMode, ATI.options.AutoGossip, 5, 0)
-			StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossip, 0, -5, 'LEFT')
+			StdUi:GlueBelow(ATI.options.AutoGossipSafeMode, ATI.options.AutoGossip, 0, -5, 'LEFT')
+			StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossipSafeMode, 0, -5, 'LEFT')
 
 			StdUi:GlueRight(ATI.options.TurnInEnabled, ATI.options.AcceptGeneralQuests, 5, 0)
 			StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
