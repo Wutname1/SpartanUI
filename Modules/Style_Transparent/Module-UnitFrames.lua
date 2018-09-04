@@ -353,7 +353,7 @@ local CreatePlayerFrame = function(self, unit)
 			health.value:SetJustifyH('RIGHT')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetPoint('LEFT', health, 'LEFT', 4, 0)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			-- health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			-- health.ratio:SetSize(90, 11);
@@ -635,7 +635,7 @@ local CreateTargetFrame = function(self, unit)
 			health.value:SetJustifyH('LEFT')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetPoint('RIGHT', health, 'RIGHT', -4, 0)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
 			-- Background:SetAllPoints(health)

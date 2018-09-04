@@ -120,7 +120,7 @@ end
 --	Updating functions
 local PostUpdateText = function(self)
 	self:Untag(self.Health.value)
-	self:Tag(self.Health.value, TextFormat('health'))
+	self:Tag(self.Health.value, PlayerFrames:TextFormat('health'))
 	if self.Power then
 		self:Untag(self.Power.value)
 		self:Tag(self.Power.value, TextFormat('mana'))
@@ -306,7 +306,7 @@ local CreateLargeFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			self.Health = health
 
@@ -601,7 +601,7 @@ local CreateMediumFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 			self.Health = health
 
 			self.Health.frequentUpdates = true

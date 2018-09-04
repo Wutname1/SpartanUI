@@ -293,7 +293,7 @@ local CreateLargeFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			self.Health = health
 
@@ -597,7 +597,7 @@ local CreateMediumFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 			self.Health = health
 
 			self.Health.frequentUpdates = true
