@@ -694,7 +694,7 @@ local CreateTargetFrame = function(self, unit)
 			power.value:SetJustifyH('CENTER')
 			power.value:SetJustifyV('MIDDLE')
 			power.value:SetAllPoints(power)
-			self:Tag(power.value, TextFormat('mana'))
+			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true

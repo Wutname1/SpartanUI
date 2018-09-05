@@ -101,7 +101,7 @@ function PlayerFrames:TextFormat(text)
 	elseif textmode == 3 then
 		return '(' .. m .. ') ' .. a
 	elseif textmode == 4 then
-		return a .. ' / ' .. t .. ' ([perhp]%)'
+		return a .. ' / ' .. t .. ' ([per' .. z .. ']%)'
 	end
 end
 

@@ -646,7 +646,7 @@ local CreateMediumFrame = function(self, unit)
 			power.ratio:SetJustifyH('CENTER')
 			power.ratio:SetJustifyV('MIDDLE')
 			power.ratio:SetAllPoints(power)
-			self:Tag(power.ratio, '[perpp]%')
+			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true
