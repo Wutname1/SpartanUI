@@ -237,6 +237,9 @@ local NamePlateFactory = function(frame, unit)
 end
 
 local NameplateCallback = function(self, event, unit)
+	if not self or not unit then
+		return
+	end
 	-- Update target Indicator
 	if UnitIsUnit(unit, 'target') and SUI.DBMod.NamePlates.ShowTarget then
 		-- the frame is the new target
