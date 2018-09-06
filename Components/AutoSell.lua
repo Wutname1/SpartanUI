@@ -12,7 +12,8 @@ local ExcludedItems = {
 	140209, --imported blacksmith hammer
 	5956, -- Blacksmith Hammer
 	7005, --skinning knife
-	2901 --mining pick
+	2901, --mining pick
+	81055 -- Darkmoon ride ticket
 }
 
 function module:OnInitialize()
