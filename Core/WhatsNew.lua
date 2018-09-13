@@ -88,19 +88,16 @@ function SUI:WhatsNew()
 end
 
 function module:OnInitialize()
-	if SUI.DBG.WhatsNew == nil then
-		SUI.DBG.WhatsNew = true
-	end
-	if SUI.DBG.HasEquipedArtifact == nil then
-		SUI.DBG.HasEquipedArtifact = false
-	end
+	-- if SUI.DBG.WhatsNew == nil then
+	-- 	SUI.DBG.WhatsNew = true
+	-- end
 	--Only display if the setup has been done, and the SUI.DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 
-	if SUI.DBG.Version and SUI.DBG.Version < '4.4.0' and SUI.DB.SetupDone and SUI.DBG.WhatsNew then
-		SUI:WhatsNew()
-	end
+	-- if SUI.DBG.Version and SUI.DBG.Version < '5.0.0' and SUI.DB.SetupDone and SUI.DBG.WhatsNew then
+	-- SUI:WhatsNew()
+	-- end
 
 	-- Update SUI.DB Version
-	SUI.DB.Version = SUI.Version
+	-- SUI.DB.Version = SUI.Version
 	SUI.DBG.Version = SUI.Version
 end
