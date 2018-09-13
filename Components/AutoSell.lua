@@ -4,13 +4,16 @@ local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 local frame = CreateFrame('FRAME')
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local totalValue = 0
-local iCount = 0
-local iSellCount = 0
-local bag = 0
-local OnlyCount = true
+module.SellTimer = nil
 local ExcludedItems = {
 	137642, --Mark Of Honor
-	141446 --Tome of the Tranquil Mind
+	141446, --Tome of the Tranquil Mind
+	6219, -- Arclight Spanner
+	140209, --imported blacksmith hammer
+	5956, -- Blacksmith Hammer
+	7005, --skinning knife
+	2901, --mining pick
+	81055 -- Darkmoon ride ticket
 }
 
 function module:OnInitialize()
@@ -20,13 +23,14 @@ function module:OnInitialize()
 		NotConsumables = true,
 		NotInGearset = true,
 		MaxILVL = 180,
-		ItemsPerCycle = 5,
 		Gray = true,
 		White = false,
 		Green = false,
 		Blue = false,
 		Purple = false,
-		GearTokens = false
+		GearTokens = false,
+		AutoRepair = false,
+		UseGuildBankRepair = false
 	}
 	if not SUI.DB.AutoSell then
 		SUI.DB.AutoSell = Defaults
@@ -43,148 +47,99 @@ end
 
 function module:FirstTime()
 	local PageData = {
-		SubTitle = 'Auto Sell',
-		Desc1 = 'Automatically vendor items when you visit a merchant.',
-		Desc2 = 'Crafting, consumables, and gearset items will not be sold by default.',
+		ID = 'Autosell',
+		Name = L['Auto sell'],
+		SubTitle = L['Auto sell'],
+		Desc1 = L['Automatically vendor items when you visit a merchant.'],
+		Desc2 = L['Crafting, consumables, and gearset items will not be sold by default.'],
+		RequireDisplay = SUI.DB.AutoSell.FirstLaunch,
 		Display = function()
-			local gui = LibStub('AceGUI-3.0')
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+			if not SUI.DB.EnabledComponents.AutoSell then
+				window.Skip:Click()
+			end
+
 			--Container
-			SUI_Win.AutoSell = CreateFrame('Frame', nil)
-			SUI_Win.AutoSell:SetParent(SUI_Win.content)
-			SUI_Win.AutoSell:SetAllPoints(SUI_Win.content)
+			local AutoSell = CreateFrame('Frame', nil)
+			AutoSell:SetParent(SUI_Win)
+			AutoSell:SetAllPoints(SUI_Win)
 
-			--TurnInEnabled
-			SUI_Win.AutoSell.Enabled =
-				CreateFrame('CheckButton', 'SUI_AutoSell_Enabled', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.Enabled:SetPoint('TOP', SUI_Win.AutoSell, 'TOP', -90, -10)
-			SUI_AutoSell_EnabledText:SetText('Auto Vendor Enabled')
-			SUI_Win.AutoSell.Enabled:SetScript(
-				'OnClick',
-				function(this)
-					if this:GetChecked() == true then
-						SUI_AutoSell_SellGray:Enable()
-						SUI_AutoSell_SellWhite:Enable()
-						SUI_AutoSell_SellGreen:Enable()
-					else
-						SUI_AutoSell_SellGray:Disable()
-						SUI_AutoSell_SellWhite:Disable()
-						SUI_AutoSell_SellGreen:Disable()
-					end
+			-- Quality Selling Options
+			AutoSell.SellGray = StdUi:Checkbox(AutoSell, L['Sell gray'], 220, 20)
+			AutoSell.SellWhite = StdUi:Checkbox(AutoSell, L['Sell white'], 220, 20)
+			AutoSell.SellGreen = StdUi:Checkbox(AutoSell, L['Sell green'], 220, 20)
+			AutoSell.SellBlue = StdUi:Checkbox(AutoSell, L['Sell blue'], 220, 20)
+			AutoSell.SellPurple = StdUi:Checkbox(AutoSell, L['Sell purple'], 220, 20)
+
+			-- Max iLVL
+			AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
+			AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, '180')
+			AutoSell.iLVLLabel:SetMaxValue(500)
+			AutoSell.iLVLLabel:SetMinValue(1)
+			AutoSell.iLVLLabel.OnValueChanged = function()
+				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
+
+				if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
+					win.iLVLSlider:SetValue(math.floor(win.iLVLLabel:GetValue()))
 				end
-			)
+			end
 
-			--SellGray
-			SUI_Win.AutoSell.SellGray =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellGray', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellGray:SetPoint('TOP', SUI_Win.AutoSell.Enabled, 'TOP', -90, -40)
-			SUI_Win.AutoSell.SellGray:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellGrayText:SetText('Sell gray items')
+			AutoSell.iLVLSlider = StdUi:Slider(AutoSell, 500, 20, 180, false, 1, 500)
+			AutoSell.iLVLSlider.OnValueChanged = function()
+				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
-			--SellWhite
-			SUI_Win.AutoSell.SellWhite =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellWhite', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellWhite:SetPoint('TOP', SUI_Win.AutoSell.SellGray, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellWhite:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellWhiteText:SetText('Sell white items')
+				if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
+					win.iLVLLabel:SetValue(math.floor(win.iLVLSlider:GetValue()))
+				end
+			end
 
-			--SellGreen
-			SUI_Win.AutoSell.SellGreen =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellGreen', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellGreen:SetPoint('TOP', SUI_Win.AutoSell.SellWhite, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellGreen:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellGreenText:SetText('Sell green items')
+			-- AutoRepair
+			AutoSell.AutoRepair = StdUi:Checkbox(AutoSell, L['Auto repair'], 220, 20)
 
-			--SellBlue
-			SUI_Win.AutoSell.SellBlue =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellBlue', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellBlue:SetPoint('TOP', SUI_Win.AutoSell.SellGreen, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellBlue:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellBlueText:SetText('Sell blue items')
+			-- Positioning
+			StdUi:GlueTop(AutoSell.SellGray, SUI_Win, 0, -30)
+			StdUi:GlueBelow(AutoSell.SellWhite, AutoSell.SellGray, 0, -5)
+			StdUi:GlueBelow(AutoSell.SellGreen, AutoSell.SellWhite, 0, -5)
+			StdUi:GlueBelow(AutoSell.SellBlue, AutoSell.SellGreen, 0, -5)
+			StdUi:GlueBelow(AutoSell.SellPurple, AutoSell.SellBlue, 0, -5)
+			StdUi:GlueBelow(AutoSell.iLVLDesc, AutoSell.SellPurple, 0, -5)
+			StdUi:GlueBelow(AutoSell.iLVLSlider, AutoSell.iLVLDesc, -40, -5)
+			StdUi:GlueRight(AutoSell.iLVLLabel, AutoSell.iLVLSlider, 2, 0)
+			StdUi:GlueBelow(AutoSell.AutoRepair, AutoSell.iLVLSlider, 40, -5)
 
-			--SellPurple
-			SUI_Win.AutoSell.SellPurple =
-				CreateFrame('CheckButton', 'SUI_AutoSell_SellPurple', SUI_Win.AutoSell, 'OptionsCheckButtonTemplate')
-			SUI_Win.AutoSell.SellPurple:SetPoint('TOP', SUI_Win.AutoSell.SellBlue, 'BOTTOM', 0, -5)
-			SUI_Win.AutoSell.SellPurple:SetScript('OnClick', DummyFunction)
-			SUI_AutoSell_SellPurpleText:SetText('Sell purple items')
+			-- Attaching
+			SUI_Win.AutoSell = AutoSell
 
-			--Max iLVL
-			control = gui:Create('Slider')
-			control:SetLabel('Max iLVL to sell')
-			control:SetSliderValues(1, 500, 1)
-			control:SetValue(180)
-			control:SetPoint('TOPLEFT', SUI_Win.AutoSell.SellPurple, 'BOTTOMLEFT', 0, -15)
-			control:SetWidth(SUI_Win:GetWidth() / 1.3)
-			-- control:SetCallback("OnValueChanged",function(self) print(self:GetValue()) end)
-			-- control:SetCallback("OnMouseUp",ActivateSlider)
-			control.frame:SetParent(SUI_Win.AutoSell)
-			control.frame:Show()
-			SUI_Win.AutoSell.iLVL = control
-
-			--Defaults
-			SUI_AutoSell_Enabled:SetChecked(true)
-			SUI_AutoSell_SellGray:SetChecked(true)
-			SUI_AutoSell_SellWhite:SetChecked(true)
+			-- Defaults
+			AutoSell.SellGray:SetChecked(SUI.DB.AutoSell.Gray)
+			AutoSell.SellWhite:SetChecked(SUI.DB.AutoSell.White)
+			AutoSell.SellGreen:SetChecked(SUI.DB.AutoSell.Green)
+			AutoSell.SellBlue:SetChecked(SUI.DB.AutoSell.Blue)
+			AutoSell.SellPurple:SetChecked(SUI.DB.AutoSell.Purple)
+			AutoSell.AutoRepair:SetChecked(SUI.DB.AutoSell.AutoRepair)
+			AutoSell.iLVLLabel:SetValue(SUI.DB.AutoSell.MaxILVL)
 		end,
 		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window.content.AutoSell
+
+			SUI.DB.AutoSell.Gray = (SUI_Win.SellGray:GetChecked() == true or false)
+			SUI.DB.AutoSell.White = (SUI_Win.SellWhite:GetChecked() == true or false)
+			SUI.DB.AutoSell.Green = (SUI_Win.SellGreen:GetChecked() == true or false)
+			SUI.DB.AutoSell.Blue = (SUI_Win.SellBlue:GetChecked() == true or false)
+			SUI.DB.AutoSell.Purple = (SUI_Win.SellPurple:GetChecked() == true or false)
+			SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoRepair:GetChecked() == true or false)
+			SUI.DB.AutoSell.MaxILVL = SUI_Win.iLVLLabel:GetValue()
+
 			SUI.DB.AutoSell.FirstLaunch = false
-
-			SUI.DB.EnabledComponents.AutoSell = (SUI_Win.AutoSell.Enabled:GetChecked() == true or false)
-			SUI.DB.AutoSell.Gray = (SUI_Win.AutoSell.SellGray:GetChecked() == true or false)
-			SUI.DB.AutoSell.White = (SUI_Win.AutoSell.SellWhite:GetChecked() == true or false)
-			SUI.DB.AutoSell.Green = (SUI_Win.AutoSell.SellGreen:GetChecked() == true or false)
-			SUI.DB.AutoSell.Blue = (SUI_Win.AutoSell.SellBlue:GetChecked() == true or false)
-			SUI.DB.AutoSell.Purple = (SUI_Win.AutoSell.SellPurple:GetChecked() == true or false)
-			SUI.DB.AutoSell.MaxILVL = SUI_Win.AutoSell.iLVL:GetValue()
-
-			SUI_Win.AutoSell:Hide()
-			SUI_Win.AutoSell = nil
 		end,
 		Skip = function()
-			SUI.DB.AutoSell.FirstLaunch = true
+			SUI.DB.AutoSell.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SetupWizard')
 	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
-end
-
--- Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.
-function module:SellTrashInBag()
-	if GetContainerNumSlots(bag) == 0 then
-		return 0
-	end
-
-	local solditem = 0
-	for slot = 1, GetContainerNumSlots(bag) do
-		local _, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
-		if module:IsSellable(itemID, link, bag, slot) then
-			if OnlyCount then
-				iCount = iCount + 1
-				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
-			elseif solditem ~= SUI.DB.AutoSell.ItemsPerCycle then
-				solditem = solditem + 1
-				iSellCount = iSellCount + 1
-				UseContainerItem(bag, slot)
-			end
-		end
-	end
-
-	if OnlyCount then
-		return
-	end
-
-	if bag ~= 4 then
-		--Next bag
-		bag = bag + 1
-	else
-		--Everything sold
-		if (totalValue > 0) then
-			SUI:Print('Sold item(s)')
-			totalValue = 0
-		end
-		module:CancelAllTimers()
-	end
 end
 
 local IsInGearset = function(bag, slot)
@@ -194,7 +149,6 @@ local IsInGearset = function(bag, slot)
 
 	for i = 1, Tooltip:NumLines() do
 		line = _G['AutoSellTooltipTextLeft' .. i]
-		-- print(line:GetText())
 		if line:GetText():find(EQUIPMENT_SETS:format('.*')) then
 			return true
 		end
@@ -321,54 +275,69 @@ function module:IsSellable(item, ilink, bag, slot)
 	return false
 end
 
-function module:GetFormattedValue(rawValue)
-	local gold = math.floor(rawValue / 10000)
-	local silver = math.floor((rawValue % 10000) / 100)
-	local copper = (rawValue % 10000) % 100
-
-	return format(
-		GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
-		gold,
-		0,
-		0,
-		silver,
-		0,
-		0,
-		copper,
-		0,
-		0
-	)
-end
-
 function module:SellTrash()
 	--Reset Locals
 	totalValue = 0
-	iCount = 0
-	iSellCount = 0
-	Timer = nil
-	bag = 0
+	-- ItemsToSellTotal = 0
+	local ItemToSell = {}
 
-	--Count Items to sell
-	OnlyCount = true
-	for b = 0, 4 do
-		bag = b
-		module:SellTrashInBag()
+	--Find Items to sell
+	for bag = 0, 4 do
+		for slot = 1, GetContainerNumSlots(bag) do
+			local _, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
+			if module:IsSellable(itemID, link, bag, slot) then
+				ItemToSell[#ItemToSell + 1] = {bag, slot}
+				-- ItemsToSellTotal = ItemsToSellTotal + 1
+				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
+			end
+		end
 	end
-	if iCount == 0 then
-		SUI:Print('No items are to be auto sold')
+
+	--Sell Items if needed
+	if #ItemToSell == 0 then
+		SUI:Print(L['No items are to be auto sold'])
 	else
-		SUI:Print('Need to sell ' .. iCount .. ' item(s) for ' .. module:GetFormattedValue(totalValue))
+		SUI:Print('Need to sell ' .. #ItemToSell .. ' item(s) for ' .. SUI:GoldFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
-		OnlyCount = false
-		bag = 0
-		self.SellTimer = self:ScheduleRepeatingTimer('SellTrashInBag', .3)
+		module.SellTimer = module:ScheduleRepeatingTimer('SellTrashInBag', .2, ItemToSell)
+	end
+end
+
+-- Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.
+function module:SellTrashInBag(ItemListing)
+	-- Grab an item to sell
+	local item = table.remove(ItemListing)
+
+	-- If the Table is empty then exit.
+	if (not item) then
+		module:CancelAllTimers()
+		return
+	end
+
+	-- SELL!
+	UseContainerItem(item[1], item[2])
+
+	-- If it was the last item stop timers
+	if (#ItemListing == 0) then
+		module:CancelAllTimers()
+	end
+end
+
+function module:Repair()
+	-- First see if this vendor can repair
+	if (CanMerchantRepair() and SUI.DB.AutoSell.AutoRepair) then
+		SUI:Print(L['Auto repairing if needed'])
+		-- Use guild repair
+		if (CanGuildBankRepair() == 1 and SUI.DB.AutoSell.UseGuildBankRepair) then
+			RepairAllItems(1)
+		end
+		-- Use self repair
+		RepairAllItems()
 	end
 end
 
 function module:OnEnable()
-	if SUI.DB.AutoSell.FirstLaunch then
-		module:FirstTime()
-	end
+	module:FirstTime()
 	module:BuildOptions()
 	if SUI.DB.EnabledComponents.AutoSell then
 		module:Enable()
@@ -383,11 +352,14 @@ function module:Enable()
 			return
 		end
 		if event == 'MERCHANT_SHOW' then
-			module:SellTrash()
+			-- Sell then repair so we gain gold before we use it.
+			module:ScheduleTimer('SellTrash', .2)
+			-- module:SellTrash()
+			module:Repair()
 		else
 			module:CancelAllTimers()
 			if (totalValue > 0) then
-				-- SUI:Print("Sold items for " .. module:GetFormattedValue(totalValue));
+				-- SUI:Print("Sold items for " .. SUI:GoldFormattedValue(totalValue));
 				totalValue = 0
 			end
 		end
@@ -406,7 +378,7 @@ end
 function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['AutoSell'] = {
 		type = 'group',
-		name = 'Auto Sell',
+		name = L['Auto sell'],
 		args = {
 			NotCrafting = {
 				name = L["Don't sell crafting items"],
@@ -531,26 +503,34 @@ function module:BuildOptions()
 					SUI.DB.AutoSell.Purple = val
 				end
 			},
-			ItemsPerCycle = {
-				name = L['Items per bag, per cycle to sell'],
-				desc = L['Sometimes the addon can sell items too fast for the game. We limit it to only do so many per bag per vendor session to account for this.'],
-				type = 'range',
-				order = 30,
-				width = 'full',
-				min = 1,
-				max = 40,
-				step = 1,
-				set = function(info, val)
-					SUI.DB.AutoSell.ItemsPerCycle = val
-				end,
+			line1 = {name = '', type = 'header', order = 200},
+			AutoRepair = {
+				name = L['Auto repair'],
+				type = 'toggle',
+				order = 201,
 				get = function(info)
-					return SUI.DB.AutoSell.ItemsPerCycle
+					return SUI.DB.AutoSell.AutoRepair
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.AutoRepair = val
 				end
 			},
+			UseGuildBankRepair = {
+				name = L['Use guild bank repair if possible'],
+				type = 'toggle',
+				order = 202,
+				get = function(info)
+					return SUI.DB.AutoSell.UseGuildBankRepair
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.UseGuildBankRepair = val
+				end
+			},
+			line2 = {name = '', type = 'header', order = 600},
 			debug = {
 				name = L['Enable debug messages'],
 				type = 'toggle',
-				order = 600,
+				order = 601,
 				width = 'full',
 				get = function(info)
 					return SUI.DB.AutoSell.debug

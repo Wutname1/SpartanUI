@@ -353,7 +353,7 @@ local CreatePlayerFrame = function(self, unit)
 			health.value:SetJustifyH('RIGHT')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetPoint('LEFT', health, 'LEFT', 4, 0)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			-- health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			-- health.ratio:SetSize(90, 11);
@@ -487,10 +487,10 @@ local CreatePlayerFrame = function(self, unit)
 		self.Name:SetPoint('TOPLEFT', self, 'TOPLEFT', 47, -7)
 		self:Tag(self.Name, '[level] [SUI_ColorClass][name]')
 
-		self.HLeaderIndicator = ring:CreateTexture(nil, 'BORDER')
-		self.HLeaderIndicator:SetWidth(20)
-		self.HLeaderIndicator:SetHeight(20)
-		self.HLeaderIndicator:SetPoint('CENTER', ring, 'TOP')
+		self.LeaderIndicator = ring:CreateTexture(nil, 'BORDER')
+		self.LeaderIndicator:SetWidth(20)
+		self.LeaderIndicator:SetHeight(20)
+		self.LeaderIndicator:SetPoint('CENTER', ring, 'TOP')
 
 		self.SUI_RaidGroup = ring:CreateTexture(nil, 'BORDER')
 		self.SUI_RaidGroup:SetSize(15, 15)
@@ -557,7 +557,6 @@ local CreatePlayerFrame = function(self, unit)
 			-- Register with oUF
 			self.ClassPower = ClassPower
 		end
-
 	end
 	do -- setup buffs and debuffs
 		if SUI.DB.Styles.Transparent.Frames[unit] and PlayerFrames then
@@ -636,7 +635,7 @@ local CreateTargetFrame = function(self, unit)
 			health.value:SetJustifyH('LEFT')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetPoint('RIGHT', health, 'RIGHT', -4, 0)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
 			-- Background:SetAllPoints(health)
@@ -695,7 +694,7 @@ local CreateTargetFrame = function(self, unit)
 			power.value:SetJustifyH('CENTER')
 			power.value:SetJustifyV('MIDDLE')
 			power.value:SetAllPoints(power)
-			self:Tag(power.value, TextFormat('mana'))
+			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true
@@ -748,9 +747,9 @@ local CreateTargetFrame = function(self, unit)
 		self.SUI_ClassIcon:SetPoint('RIGHT', self.Name, 'LEFT')
 		self.SUI_ClassIcon:SetAlpha(.75)
 
-		self.HLeaderIndicator = ring:CreateTexture(nil, 'BORDER')
-		self.HLeaderIndicator:SetSize(18, 18)
-		self.HLeaderIndicator:SetPoint('CENTER', ring, 'TOP')
+		self.LeaderIndicator = ring:CreateTexture(nil, 'BORDER')
+		self.LeaderIndicator:SetSize(18, 18)
+		self.LeaderIndicator:SetPoint('CENTER', ring, 'TOP')
 
 		self.PvPIndicator = ring:CreateTexture(nil, 'BORDER')
 		self.PvPIndicator:SetSize(25, 25)
@@ -1540,7 +1539,7 @@ function module:PlayerFrames()
 
 		PlayerFrames.boss = boss
 	end
-	
+
 	SUI.PlayerFrames = PlayerFrames
 
 	local unattached = false
@@ -1563,6 +1562,23 @@ function module:PlayerFrames()
 			end
 		end
 	)
+
+	module:SetColor()
+
+	SUI.opt.args['PlayerFrames'].args['FrameStyle'].args['Color'] = {
+		name = 'Frame color',
+		type = 'color',
+		hasAlpha = true,
+		order = 1,
+		width = 'full',
+		get = function(info)
+			return unpack(SUI.DB.Styles.Transparent.Color.PlayerFrames)
+		end,
+		set = function(info, r, b, g, a)
+			SUI.DB.Styles.Transparent.Color.PlayerFrames = {r, b, g, a}
+			module:SetColor()
+		end
+	}
 end
 
 function module:RaidFrames()

@@ -107,9 +107,7 @@ local Defaults = {
 			}
 		},
 		BagBar = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 0,
 			position = {point = 'TOP', x = 490, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
@@ -118,17 +116,13 @@ local Defaults = {
 			keyring = true
 		},
 		MicroMenu = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = -3,
 			position = {point = 'TOP', x = 160, y = -1, scale = 0.70, growHorizontal = 'RIGHT'}
 		},
 		PetBar = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 1,
 			position = {point = 'TOP', x = -492, y = -1, scale = 0.70, growHorizontal = 'RIGHT'},
@@ -136,9 +130,7 @@ local Defaults = {
 			skin = {Zoom = true}
 		},
 		StanceBar = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = true,
 			padding = 1,
 			position = {point = 'TOP', x = -163, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
@@ -152,15 +144,20 @@ local Defaults = {
 			position = {point = 'TOPRIGHT', x = -777, y = -4, scale = 0.75}
 		},
 		Vehicle = {
-			fadeoutalpha = .25,
 			version = 3,
-			fadeout = true,
 			enabled = false,
 			padding = 3,
 			position = {point = 'BOTTOM', x = -200, y = 155, scale = 0.85}
 		},
 		ExtraActionBar = {
 			fadeoutalpha = .25,
+			version = 3,
+			fadeout = true,
+			enabled = true,
+			position = {point = 'BOTTOM', x = -32, y = 275}
+		},
+		ZoneAbilityBar = {
+			fadeoutalpha = .6,
 			version = 3,
 			fadeout = true,
 			enabled = true,
@@ -185,7 +182,8 @@ local Defaults = {
 		y = -30,
 		scale = .8
 	},
-	PartyFramesSize = 'large'
+	PartyFramesSize = 'large',
+	HideCenterGraphic = false
 }
 if not SUI.DB.Styles.Minimal.Artwork then
 	SUI.DB.Styles.Minimal = SUI:MergeData(SUI.DB.Styles.Minimal, Defaults, true)

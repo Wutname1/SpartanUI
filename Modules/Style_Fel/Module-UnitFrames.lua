@@ -61,6 +61,8 @@ local TextFormat = function(text)
 		return '(' .. m .. ') ' .. a .. ' / ' .. t
 	elseif textmode == 3 then
 		return '(' .. m .. ') ' .. a
+	elseif textmode == 4 then
+		return a .. ' / ' .. t .. ' ([perhp]%)'
 	end
 end
 
@@ -291,7 +293,7 @@ local CreateLargeFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			self.Health = health
 
@@ -343,7 +345,7 @@ local CreateLargeFrame = function(self, unit)
 			power.ratio:SetJustifyH('CENTER')
 			power.ratio:SetJustifyV('MIDDLE')
 			power.ratio:SetAllPoints(power)
-			self:Tag(power.ratio, '[perpp]%')
+			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true
@@ -369,9 +371,9 @@ local CreateLargeFrame = function(self, unit)
 		self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)
 		self.RareElite:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', 0, 0)
 
-		self.HLeaderIndicator = self:CreateTexture(nil, 'BORDER')
-		self.HLeaderIndicator:SetSize(12, 12)
-		self.HLeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
+		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
+		self.LeaderIndicator:SetSize(12, 12)
+		self.LeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
 
 		self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
 		self.SUI_RaidGroup:SetSize(12, 12)
@@ -595,7 +597,7 @@ local CreateMediumFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 			self.Health = health
 
 			self.Health.frequentUpdates = true
@@ -655,9 +657,9 @@ local CreateMediumFrame = function(self, unit)
 		self.Name:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -2)
 		self:Tag(self.Name, '[level] [SUI_ColorClass][name]')
 
-		self.HLeaderIndicator = self:CreateTexture(nil, 'BORDER')
-		self.HLeaderIndicator:SetSize(12, 12)
-		self.HLeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
+		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
+		self.LeaderIndicator:SetSize(12, 12)
+		self.LeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
 
 		self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
 		self.SUI_RaidGroup:SetSize(12, 12)

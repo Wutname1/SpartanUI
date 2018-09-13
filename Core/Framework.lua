@@ -1,5 +1,6 @@
 local _, SUI = ...
 SUI = LibStub('AceAddon-3.0'):NewAddon(SUI, 'SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0')
+local StdUi = LibStub('StdUi'):NewInstance()
 _G.SUI = SUI
 
 local AceConfig = LibStub('AceConfig-3.0')
@@ -31,9 +32,6 @@ SUI.opt = {
 
 ---------------		Database		-------------------------------
 
-local FontItems = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
-local FontItemsSize = {Primary = {}, Core = {}, Party = {}, Player = {}, Raid = {}}
-local fontdefault = {Size = 0, Face = 'Roboto-Bold', Type = 'outline'}
 local MovedDefault = {moved = false, point = '', relativeTo = nil, relativePoint = '', xOffset = 0, yOffset = 0}
 local frameDefault1 = {
 	movement = MovedDefault,
@@ -57,7 +55,7 @@ local frameDefault2 = {
 
 local DBdefault = {
 	SUIProper = {
-		Version = SUI.Version,
+		Version = '0',
 		Bartender4Version = 0,
 		SetupDone = false,
 		HVer = '',
@@ -428,7 +426,10 @@ local DBdefault = {
 					target = {
 						Buffs = {Mode = 'icons'},
 						Debuffs = {Mode = 'bars'}
-					}
+					},
+					pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+					targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+					focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
 				},
 				Movable = {
 					Minimap = false,
@@ -473,10 +474,13 @@ local DBdefault = {
 			MapButtons = true,
 			MouseIsOver = false,
 			MapZoomButtons = true,
+			DisplayMapCords = true,
+			DisplayZoneName = true,
 			Shape = 'square',
 			BlizzStyle = 'mouseover',
 			OtherStyle = 'mouseover',
 			Moved = false,
+			lockminimap = true,
 			Position = nil,
 			-- frames = {},
 			-- IgnoredFrames = {},
@@ -497,11 +501,13 @@ local DBdefault = {
 		font = {
 			NumberSeperator = ',',
 			Path = '',
-			Primary = fontdefault,
-			Core = fontdefault,
-			Player = fontdefault,
-			Party = fontdefault,
-			Raid = fontdefault
+			Modules = {
+				['**'] = {
+					Size = 0,
+					Face = 'Roboto-Bold',
+					Type = 'outline'
+				}
+			}
 		},
 		Components = {}
 	},
@@ -557,11 +563,20 @@ local DBdefault = {
 		},
 		Artwork = {
 			Style = '',
+			TopOffset = 0,
+			TopOffsetAuto = true,
+			BottomOffset = 0,
+			BottomOffsetAuto = true,
 			FirstLoad = true,
 			VehicleUI = true,
 			Viewport = {
 				enabled = true,
 				offset = {top = 0, bottom = 2.3, left = 0, right = 0}
+			},
+			SlidingTrays = {
+				['**'] = {
+					collapsed = false
+				}
 			}
 		},
 		SpinCam = {
@@ -688,300 +703,12 @@ function SUI:ResetConfig()
 	ReloadUI()
 end
 
-function SUI:FirstTimeSetup()
-	local PageData, SetupWindow
-	--Hide Bartender4 Minimap icon.
-	if Bartender4 then
-		Bartender4.db.profile.minimapIcon.hide = true
-		local LDBIcon = LibStub('LibDBIcon-1.0', true)
-		LDBIcon['Hide'](LDBIcon, 'Bartender4')
-	end
-	--Setup page
-	SUI.DB.SetupDone = false
-	PageData = {
-		SubTitle = 'Welcome',
-		Desc1 = 'Thank you for installing SpartanUI.',
-		Desc2 = 'If you would like to copy the configuration from another character you may do so below.',
-		Display = function()
-			--Container
-			SUI_Win.Core = CreateFrame('Frame', nil)
-			SUI_Win.Core:SetParent(SUI_Win.content)
-			SUI_Win.Core:SetAllPoints(SUI_Win.content)
-
-			local gui = LibStub('AceGUI-3.0')
-
-			--Profiles
-			local control = gui:Create('Dropdown')
-			control:SetLabel('Exsisting profiles')
-			local tmpprofiles = {}
-			local profiles = {}
-			-- copy existing profiles into the table
-			local currentProfile = SUI.DB:GetCurrentProfile()
-			for _, v in pairs(SUI.DB:GetProfiles(tmpprofiles)) do
-				if not (nocurrent and v == currentProfile) then
-					profiles[v] = v
-				end
-			end
-			control:SetList(profiles)
-			control:SetPoint('TOP', SUI_Win.Core, 'TOP', 0, -30)
-			control.frame:SetParent(SUI_Win.Core)
-			control.frame:Show()
-			SUI_Win.Core.Profiles = control
-		end,
-		Next = function()
-			SUI.DB.SetupDone = true
-
-			SUI_Win.Core:Hide()
-			SUI_Win.Core = nil
-		end,
-		-- RequireReload = true,
-		-- Priority = 1,
-		-- Skipable = true,
-		-- NoReloadOnSkip = true,
-		Skip = function()
-			SUI.DB.SetupDone = true
-		end
-	}
-
-	-- Uncomment this when the time is right.
-	-- SetupWindow = spartan:GetModule("SetupWindow")
-	-- SetupWindow:AddPage(PageData)
-	-- SetupWindow:DisplayPage()
-end
-
-function SUI:FontSetupWizard()
-	local PageData, SetupWindow
-
-	local fontlist = {
-		'RobotoBold',
-		'Roboto',
-		'Cognosis',
-		'NotoSans',
-		'FrizQuadrata',
-		'ArialNarrow'
-	}
-	local fontnames = {
-		['RobotoBold'] = 'Roboto-Bold',
-		['Roboto'] = 'Roboto',
-		['Cognosis'] = 'SpartanUI',
-		['NotoSans'] = 'SUI4',
-		['FrizQuadrata'] = 'FrizQuadrata',
-		['ArialNarrow'] = 'ArialNarrow'
-	}
-
-	PageData = {
-		SubTitle = 'Font Style',
-		Display = function()
-			SUI_Win.FontFace = CreateFrame('Frame', nil)
-			SUI_Win.FontFace:SetParent(SUI_Win.content)
-			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
-
-			local RadioButtons = function(self)
-				for _, v in ipairs(fontlist) do
-					fontface = SUI_Win.FontFace[v].radio:SetValue(false)
-				end
-
-				self.radio:SetValue(true)
-			end
-
-			local gui = LibStub('AceGUI-3.0')
-			local control, radio
-
-			--RobotoBold
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0, 0.3125)
-			control:SetImageSize(180, 60)
-			control:SetPoint('TOPLEFT', SUI_Win.FontFace, 'TOPLEFT', 55, -55)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Roboto Bold')
-			radio:SetUserData('value', 'Roboto-Bold')
-			radio:SetUserData('text', 'Roboto-Bold')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.RobotoBold = control
-
-			--Roboto
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.34375, 0.65625)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.RobotoBold.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Roboto')
-			radio:SetUserData('value', 'Roboto')
-			radio:SetUserData('text', 'Roboto')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.Roboto = control
-
-			--Cognosis
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.6875, 1)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.Roboto.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Cognosis')
-			radio:SetUserData('value', 'SpartanUI')
-			radio:SetUserData('text', 'SpartanUI')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.Cognosis = control
-
-			--NotoSans
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0, 0.3125)
-			control:SetImageSize(180, 60)
-			control:SetPoint('TOP', SUI_Win.FontFace.RobotoBold.radio.frame, 'BOTTOM', 0, -20)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('NotoSans')
-			radio:SetUserData('value', 'SUI4')
-			radio:SetUserData('text', 'SUI4')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.NotoSans = control
-
-			--FrizQuadrata
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.34375, 0.65625)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.NotoSans.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Friz Quadrata')
-			radio:SetUserData('value', 'FrizQuadrata')
-			radio:SetUserData('text', 'FrizQuadrata')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.FrizQuadrata = control
-
-			--ArialNarrow
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.6875, 1)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.FrizQuadrata.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Arial Narrow')
-			radio:SetUserData('value', 'ArialNarrow')
-			radio:SetUserData('text', 'ArialNarrow')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.ArialNarrow = control
-
-			SUI_Win.FontFace.RobotoBold.radio:SetValue(true)
-		end,
-		Next = function()
-			local fontface
-
-			for _, v in ipairs(fontlist) do
-				if SUI_Win.FontFace[v].radio:GetValue() then
-					fontface = fontnames[v]
-				end
-			end
-
-			if fontface then
-				SUI.DB.font.Primary.Face = fontface
-				SUI.DB.font.Core.Face = fontface
-				SUI.DB.font.Player.Face = fontface
-				SUI.DB.font.Party.Face = fontface
-				SUI.DB.font.Raid.Face = fontface
-			end
-			SUI_Win.FontFace:Hide()
-			SUI_Win.FontFace = nil
-			SUI.DB.SetupDone = true
-		end,
-		Skip = function()
-			SUI_Win.FontFace:Hide()
-			SUI_Win.FontFace = nil
-			SUI.DB.SetupDone = true
-		end
-	}
-
-	SetupWindow = SUI:GetModule('SetupWindow')
-	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
-	-- This will be moved once we put the setup page in place.
-	-- we are setting this to true now so we dont have issues in the future with setup appearing on exsisting users
-end
-
 function SUI:OnInitialize()
 	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 	--If we have not played in a long time reset the database, make sure it is all good.
 	local ver = SUI.SpartanUIDB.profile.SUIProper.Version
-	if (ver ~= nil and ver < '4.0.0') then
+	if (ver ~= '0' and ver < '4.0.0') then
 		SUI.SpartanUIDB:ResetDB()
-	end
-	if not SUI.CurseVersion then
-		SUI.CurseVersion = ''
 	end
 
 	-- New SUI.DB Access
@@ -990,13 +717,16 @@ function SUI:OnInitialize()
 	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 
 	--Check for any SUI.DB changes
-	if SUI.DB.SetupDone then
+	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) then
 		SUI:DBUpgrades()
 	end
 
-	-- Legacy, need to phase these globals out it was messy
-	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
+	-- Add Addon-Wide Bar textures
+	SUI.BarTextures = {
+		smooth = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
+	}
+
+	-- Add Profiles to Options
 	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
 
 	-- Add dual-spec support
@@ -1026,6 +756,7 @@ function SUI:OnInitialize()
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
 	end
 
+	-- Initalize setup of Fonts
 	SUI:FontSetup()
 
 	--First Time Setup Actions
@@ -1035,8 +766,6 @@ function SUI:OnInitialize()
 		elseif _G.LARGE_NUMBER_SEPERATOR == '' then
 			SUI.DB.font.NumberSeperator = ''
 		end
-
-		SUI:FirstTimeSetup()
 	end
 end
 
@@ -1044,6 +773,18 @@ function SUI:DBUpgrades()
 	if SUI.DBMod.Artwork.Style == '' and SUI.DBMod.Artwork.SetupDone then
 		SUI.DBMod.Artwork.Style = 'Classic'
 	end
+
+	-- 5.0.0 Upgrades
+	if SUI.DB.Version < '5.0.0' then
+		SUI.DB.font.SetupDone = true
+		SUI.DBMod.Objectives.SetupDone = true
+		SUI.DB.SetupWizard.FirstLaunch = false
+		SUI.DB.AutoTurnIn.FirstLaunch = false
+		SUI.DB.AutoSell.FirstLaunch = false
+		SUI.DB.SetupWizard.FirstLaunch = false
+	end
+
+	SUI.DB.Version = SUI.Version
 end
 
 function SUI:InitializeProfile()
@@ -1057,6 +798,25 @@ function SUI:InitializeProfile()
 end
 
 ---------------		Misc Backend		-------------------------------
+
+function SUI:GoldFormattedValue(rawValue)
+	local gold = math.floor(rawValue / 10000)
+	local silver = math.floor((rawValue % 10000) / 100)
+	local copper = (rawValue % 10000) % 100
+
+	return format(
+		GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
+		gold,
+		0,
+		0,
+		silver,
+		0,
+		0,
+		copper,
+		0,
+		0
+	)
+end
 
 function SUI:BT4ProfileAttach(msg)
 	PageData = {
@@ -1096,7 +856,7 @@ function SUI:BT4ProfileAttach(msg)
 			-- ReloadUI()
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SUIWindow')
 	SetupWindow:DisplayPage(PageData)
 end
 
@@ -1182,13 +942,12 @@ function SUI:reloadui(Desc2)
 			ReloadUI()
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
+	local SetupWindow = SUI:GetModule('SUIWindow')
 	SetupWindow:DisplayPage(PageData)
 end
 
 function SUI:OnEnable()
 	if not SUI.DB.SetupDone then
-		SUI:FontSetupWizard()
 	end
 	AceConfig:RegisterOptionsTable(
 		'SpartanUIBliz',
@@ -1250,6 +1009,9 @@ function SUI:OnEnable()
 		end
 	)
 	LaunchOpt:RegisterEvent('PLAYER_ENTERING_WORLD')
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
+		local Bt4Warning = StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'])
+	end
 end
 
 function SUI:suihelp(input)
@@ -1288,6 +1050,8 @@ function SUI:ChatCommand(input)
 			SUI:Print('|cffff0000Warning')
 			SUI:Print(L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
 		end
+	elseif input == 'setup' then
+		SUI:GetModule('SetupWizard'):ShowWizard()
 	elseif input == 'help' then
 		SUI:suihelp()
 	elseif input == 'version' then
@@ -1332,6 +1096,29 @@ end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
 
+--[[
+	Takes a target table and injects data from the source
+	override allows the source to be put into the target
+	even if its already populated
+]]
+function SUI:MergeData(target, source, override)
+	if type(target) ~= 'table' then
+		target = {}
+	end
+	for k, v in pairs(source) do
+		if type(v) == 'table' then
+			target[k] = self:MergeData(target[k], v, override)
+		else
+			if override then
+				target[k] = v
+			elseif target[k] == nil then
+				target[k] = v
+			end
+		end
+	end
+	return target
+end
+
 function SUI:isPartialMatch(frameName, tab)
 	local result = false
 
@@ -1367,116 +1154,5 @@ end
 function SUI:round(num) -- rounds a number to 2 decimal places
 	if num then
 		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
-	end
-end
-
-function SUI:comma_value(n)
-	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
-	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. SUI.DB.font.NumberSeperator):reverse()) .. right
-end
-
----------------		FONT FUNCTIONS		---------------------------------------------
-
-function SUI:FontSetup()
-	local OutlineSizes = {22, 18, 16, 13, 12, 11, 10, 9, 8}
-	local Sizes = {10}
-	for _, v in ipairs(OutlineSizes) do
-		local filename = _G['SUI_FontOutline' .. v]:GetFont()
-		if filename ~= SUI:GetFontFace('Primary') then
-			_G['SUI_FontOutline' .. v] = _G['SUI_FontOutline' .. v]:SetFont(SUI:GetFontFace('Primary'), v)
-		end
-	end
-
-	for _, v in ipairs(Sizes) do
-		local filename = _G['SUI_Font' .. v]:GetFont()
-		if filename ~= SUI:GetFontFace('Primary') then
-			_G['SUI_Font' .. v] = _G['SUI_Font' .. v]:SetFont(SUI:GetFontFace('Primary'), v)
-		end
-	end
-end
-
-function SUI:GetFontFace(Module)
-	if Module then
-		if SUI.DB.font[Module].Face == 'SpartanUI' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf'
-		elseif SUI.DB.font[Module].Face == 'SUI4' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf'
-		elseif SUI.DB.font[Module].Face == 'Roboto' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Medium.ttf'
-		elseif SUI.DB.font[Module].Face == 'Roboto-Bold' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Bold.ttf'
-		elseif SUI.DB.font[Module].Face == 'FrizQuadrata' then
-			return 'Fonts\\FRIZQT__.TTF'
-		elseif SUI.DB.font[Module].Face == 'Arial' then
-			return 'Fonts\\ARIAL.TTF'
-		elseif SUI.DB.font[Module].Face == 'ArialNarrow' then
-			return 'Fonts\\ARIALN.TTF'
-		elseif SUI.DB.font[Module].Face == 'Skurri' then
-			return 'Fonts\\skurri.TTF'
-		elseif SUI.DB.font[Module].Face == 'Morpheus' then
-			return 'Fonts\\MORPHEUS.TTF'
-		elseif SUI.DB.font[Module].Face == 'Custom' and SUI.DB.font.Path ~= '' then
-			return SUI.DB.font.Path
-		end
-	end
-
-	return 'Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf'
-end
-
-function SUI:FormatFont(element, size, Module)
-	--Adaptive Modules
-	if not Module then
-		Module = 'Primary'
-	end
-	if SUI.DB.font[Module] == nil then
-		SUI.DB.font[Module] = fontdefault
-	end
-	--Set Font Outline
-	local flags, sizeFinal = ''
-	if SUI.DB.font[Module].Type == 'monochrome' then
-		flags = flags .. 'monochrome '
-	end
-
-	-- Outline was deemed to thick, it is not a slight drop shadow done below
-	--if SUI.DB.font[Module].Type == "outline" then flags = flags.."outline " end
-
-	if SUI.DB.font[Module].Type == 'thickoutline' then
-		flags = flags .. 'thickoutline '
-	end
-	--Set Size
-	sizeFinal = size + SUI.DB.font[Module].Size
-	--Create Font
-	element:SetFont(SUI:GetFontFace(Module), sizeFinal, flags)
-
-	if SUI.DB.font[Module].Type == 'outline' then
-		element:SetShadowColor(0, 0, 0, .9)
-		element:SetShadowOffset(1, -1)
-	end
-	--Add Item to the Array
-	local count = 0
-	for _ in pairs(FontItems[Module]) do
-		count = count + 1
-	end
-	FontItems[Module][count + 1] = element
-	FontItemsSize[Module][count + 1] = size
-end
-
-function SUI:FontRefresh(Module)
-	for a, b in pairs(FontItems[Module]) do
-		--Set Font Outline
-		local flags, size = ''
-		if SUI.DB.font[Module].Type == 'monochrome' then
-			flags = flags .. 'monochrome '
-		end
-		if SUI.DB.font[Module].Type == 'outline' then
-			flags = flags .. 'outline '
-		end
-		if SUI.DB.font[Module].Type == 'thickoutline' then
-			flags = flags .. 'thickoutline '
-		end
-		--Set Size
-		size = FontItemsSize[Module][a] + SUI.DB.font[Module].Size
-		--Update Font
-		b:SetFont(SUI:GetFontFace(Module), size, flags)
 	end
 end

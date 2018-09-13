@@ -114,7 +114,7 @@ local PerformFullBtnUpdate = function()
 	if LastUpdateStatus ~= IsMouseOver() then
 		MiniMapBtnScrape()
 		--update visibility
-		module:updateButtons()
+		module:update()
 	end
 end
 
@@ -124,7 +124,7 @@ local OnEnter = function()
 	end
 	--don't use PerformFullBtnUpdate as we want to perform the actions in reverse. since any new unknown icons will already be shown.
 	if LastUpdateStatus ~= IsMouseOver() then
-		module:updateButtons()
+		module:update()
 	end --update visibility
 	MiniMapBtnScrape()
 end
@@ -173,6 +173,7 @@ function module:ShapeChange(shape)
 	if Style.Settings.MiniMap.Anchor then
 		Minimap:ClearAllPoints()
 		Minimap:SetPoint(unpack(Style.Settings.MiniMap.Anchor))
+		Minimap:SetFrameLevel(120)
 	end
 
 	Minimap.ZoneText:ClearAllPoints()
@@ -248,7 +249,7 @@ function module:OnEnable()
 		Minimap:HookScript(
 			'OnMouseDown',
 			function(self, button)
-				if button == 'LeftButton' and IsAltKeyDown() then
+				if button == 'LeftButton' and IsAltKeyDown() and not SUI.DB.MiniMap.lockminimap then
 					Minimap.mover:Show()
 					if SUI:GetModule('Artwork_Core', true) then
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = true
@@ -286,6 +287,7 @@ function module:OnEnable()
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint(unpack(SUI.DB.MiniMap.Position))
 		end
+		Minimap:SetFrameLevel(120)
 	end
 
 	module:ModifyMinimapLayout()
@@ -300,7 +302,7 @@ function module:OnEnable()
 	Minimap:HookScript('OnMouseDown', OnMouseDown)
 
 	--Initialize Buttons
-	module:updateButtons()
+	module:update()
 	MinimapUpdater:SetSize(1, 1)
 	MinimapUpdater:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', -128, 128)
 	MinimapUpdater:SetScript(
@@ -373,6 +375,7 @@ function module:ModifyMinimapLayout()
 
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -30, -30)
+	Minimap:SetFrameLevel(120)
 
 	TimeManagerClockButton:GetRegions():Hide() -- Hide the border
 	TimeManagerClockButton:SetBackdrop(nil)
@@ -438,7 +441,9 @@ function module:MinimapCoords()
 	end
 	MinimapZoneText:Hide()
 
-	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY', 'SUI_Font10')
+	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
+	SUI:FormatFont(Minimap.ZoneText, 11, 'Minimap')
+	SUI:FormatFont(MinimapZoneText, 11, 'Minimap')
 	Minimap.ZoneText:SetSize(10, 12)
 	Minimap.ZoneText:SetJustifyH('MIDDLE')
 	Minimap.ZoneText:SetJustifyV('CENTER')
@@ -452,7 +457,8 @@ function module:MinimapCoords()
 	MinimapZoneTextButton:ClearAllPoints()
 	MinimapZoneTextButton:SetAllPoints(Minimap.ZoneText)
 
-	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY', 'SUI_Font9')
+	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
+	SUI:FormatFont(Minimap.coords, 9, 'Minimap')
 	Minimap.coords:SetSize(9, 12)
 	Minimap.coords:SetJustifyH('TOP')
 	Minimap.coords:SetPoint('TOPLEFT', Minimap.ZoneText, 'BOTTOMLEFT', 0, 0)
@@ -481,7 +487,7 @@ function module:MinimapCoords()
 			return
 		end
 		--Update label
-		Minimap.ZoneText:SetText(GetMinimapZoneText())
+		-- Minimap.ZoneText:SetText(GetMinimapZoneText())
 		Minimap.coords:SetText(format('%.1f, %.1f', x * 100, y * 100))
 	end
 	UpdateCoords()
@@ -539,7 +545,7 @@ function module:SetupButton(btn, force)
 	end
 end
 
-function module:updateButtons()
+function module:update()
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
 	end
@@ -599,9 +605,7 @@ function module:updateButtons()
 			buttonName = child:GetName()
 			-- buttonType = child:GetObjectType();
 
-			if
-				buttonName and child.FadeIn ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0
-			 then
+			if buttonName and child.FadeIn ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 
@@ -616,6 +620,20 @@ function module:updateButtons()
 		MinimapNorthTag:Show()
 	else
 		MinimapNorthTag:Hide()
+	end
+
+	if SUI.DB.MiniMap.DisplayZoneName then
+		Minimap.ZoneText:Show()
+		MinimapZoneTextButton:Show()
+	else
+		Minimap.ZoneText:Hide()
+		MinimapZoneTextButton:Hide()
+	end
+
+	if SUI.DB.MiniMap.DisplayMapCords then
+		Minimap.coords:Show()
+	else
+		Minimap.coords:Hide()
 	end
 end
 
@@ -644,6 +662,18 @@ function module:BuildOptions()
 					end
 				end
 			},
+			lockminimap = {
+				name = L['Lock minimap'],
+				type = 'toggle',
+				order = 0.5,
+				get = function(info)
+					return SUI.DB.MiniMap.lockminimap
+				end,
+				set = function(info, val)
+					SUI.DB.MiniMap.lockminimap = val
+					module:update()
+				end
+			},
 			minimapzoom = {
 				name = L['MinMapHideZoom'],
 				type = 'toggle',
@@ -653,7 +683,7 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DB.MiniMap.MapZoomButtons = val
-					module:updateButtons()
+					module:update()
 				end
 			},
 			OtherStyle = {
@@ -672,26 +702,33 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DB.MiniMap.OtherStyle = val
-					module:updateButtons()
+					module:update()
+				end
+			},
+			DisplayZoneName = {
+				name = L['Display zone name'],
+				type = 'toggle',
+				order = 0.5,
+				get = function(info)
+					return SUI.DB.MiniMap.DisplayZoneName
+				end,
+				set = function(info, val)
+					SUI.DB.MiniMap.DisplayZoneName = val
+					module:update()
+				end
+			},
+			DisplayMapCords = {
+				name = L['Display map cords'],
+				type = 'toggle',
+				order = 0.5,
+				get = function(info)
+					return SUI.DB.MiniMap.DisplayMapCords
+				end,
+				set = function(info, val)
+					SUI.DB.MiniMap.DisplayMapCords = val
+					module:update()
 				end
 			}
-			-- minimapbuttons = {name = L["MinMapHidebtns"], type="toggle", width="full",
-			-- get = function(info) return SUI.DB.MiniMap.MapButtons; end,
-			-- set = function(info,val) SUI.DB.MiniMap.MapButtons = val;  end
-			-- },
-			-- BlizzStyle = {
-			-- name="Blizzard Icons",
-			-- type="select",
-			-- style="dropdown",
-			-- width="full",
-			-- values = {
-			-- ["hide"]	= "Always Hide",
-			-- ["mouseover"]	= "Show on Mouse over",
-			-- ["show"]	= "Always Show",
-			-- },
-			-- get = function(info) return SUI.DB.MiniMap.BlizzStyle; end,
-			-- set = function(info,val) SUI.DB.MiniMap.BlizzStyle = val; end
-			-- },
 		}
 	}
 end

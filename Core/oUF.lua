@@ -118,6 +118,61 @@ function addon:pvpIcon(self, event, unit)
 	end
 end
 
+--[[
+	Creates all the Player Power Icons
+	Converted to Lib item to provide a consistant experiance on SUI styles
+]]
+function addon:PlayerPowerIcons(frame, attachPoint)
+	--Runes
+	if select(2, UnitClass('player')) == 'DEATHKNIGHT' then
+		frame.Runes = CreateFrame('Frame', nil, frame)
+		frame.Runes.colorSpec = true
+
+		for i = 1, 6 do
+			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
+			frame.Runes[i]:SetHeight(6)
+			frame.Runes[i]:SetWidth((frame.Health:GetWidth() - 10) / 6)
+			if (i == 1) then
+				frame.Runes[i]:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
+			else
+				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
+			end
+			frame.Runes[i]:SetStatusBarTexture(SUI.BarTextures.smooth)
+			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+
+			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
+			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
+			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
+			frame.Runes[i].bg:SetTexture(SUI.BarTextures.smooth)
+			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
+			frame.Runes[i].bg.multiplier = 0.64
+			-- frame.Runes[i]:Hide()
+		end
+	else
+		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
+		local ClassPower = {}
+		for index = 1, 5 do
+			local Bar = CreateFrame('StatusBar', nil, frame)
+			Bar:SetStatusBarTexture(SUI.BarTextures.smooth)
+
+			-- Position and size.
+			Bar:SetSize(((frame.Health:GetWidth() - 10) / 5), 6)
+			if (index == 1) then
+				Bar:SetPoint('TOPLEFT', frame.ComboPoints, 'TOPLEFT')
+			else
+				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 2, 0)
+			end
+			Bar:Hide()
+			
+			ClassPower[index] = Bar
+		end
+
+		-- Register with oUF
+		frame.ClassPower = ClassPower
+	end
+end
+
 do -- ClassIcon as an SpartanoUF module
 	local Update = function(self, event, unit)
 		local icon = self.SUI_ClassIcon

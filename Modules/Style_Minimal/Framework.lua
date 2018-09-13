@@ -4,14 +4,6 @@ local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = Minimal_AnchorFrame, Minimal_SpartanUI
 
-function module:updateViewport() -- handles viewport offset based on settings
-	if not InCombatLockdown() then
-		WorldFrame:ClearAllPoints()
-		WorldFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
-		WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
-	end
-end
-
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
@@ -22,22 +14,22 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		module:updateViewport()
 		if (SUI.DB.scale ~= Artwork_Core:round(Minimal_SpartanUI:GetScale())) then
 			frame:SetScale(SUI.DB.scale)
 		end
-
-		-- Minimal_SpartanUI_Base3:ClearAllPoints();
-		-- Minimal_SpartanUI_Base5:ClearAllPoints();
-		-- Minimal_SpartanUI_Base3:SetPoint("RIGHT", Minimal_SpartanUI_Base2, "LEFT");
-		-- Minimal_SpartanUI_Base5:SetPoint("LEFT", Minimal_SpartanUI_Base4, "RIGHT");
 
 		CurScale = SUI.DB.scale
 	end
 end
 
-function module:updateOffset() -- handles SpartanUI offset based on setting or fubar / titan
+function module:updateOffset(Top, Bottom) -- handles SpartanUI offset based on setting or fubar / titan
 	local fubar, ChocolateBar, titan, offset = 0, 0, 0
+	if Top == nil then
+		Top = 0
+	end
+	if Bottom == nil then
+		Bottom = 0
+	end
 
 	if not SUI.DB.yoffsetAuto then
 		offset = max(SUI.DB.yoffset, 1)
@@ -77,6 +69,37 @@ function module:updateOffset() -- handles SpartanUI offset based on setting or f
 		anchor:SetHeight(offset)
 	end
 	SUI.DB.yoffset = offset
+	
+	module.Trays.left:ClearAllPoints()
+	module.Trays.right:ClearAllPoints()
+	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, (Top * -1))
+	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
+
+	if BT4BarBagBar then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+			BT4BarPetBar:ClearAllPoints()
+			BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+			BT4BarStanceBar:ClearAllPoints()
+			BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		end
+
+		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+			BT4BarMicroMenu:ClearAllPoints()
+			BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+			BT4BarBagBar:ClearAllPoints()
+			BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
+		end
+	end
+
+	if SUI.DB.Styles.Minimal.HideCenterGraphic then
+		Minimal_SpartanUI_Base1:Hide()
+	else
+		Minimal_SpartanUI_Base1:Show()
+	end
 end
 
 function module:updateXOffset() -- handles SpartanUI offset based on setting or fubar / titan
@@ -102,16 +125,48 @@ end
 
 ----------------------------------------------------------------------------------------------------
 
+function module:SetupProfile()
+	Artwork_Core:SetupProfile()
+end
+
+function module:CreateProfile()
+	Artwork_Core:CreateProfile()
+end
+
+function module:SlidingTrays()
+	local Settings = {
+		bg = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {.076171875, 0.92578125, 0, 0.18359375}
+		},
+		bgCollapsed = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {0.076171875, 0.92578125, 1, 0.92578125}
+		},
+		UpTex = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {0.3675, 0.64, 0.235, 0.265}
+		},
+		DownTex = {
+			Texture = 'Interface\\AddOns\\SpartanUI_Style_Minimal\\Images\\base-center-top',
+			TexCoord = {0.3675, 0.64, 0.265, 0.235}
+		}
+	}
+
+	module.Trays = Artwork_Core:SlidingTrays(Settings)
+end
+
 function module:SetColor()
 	local r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color)
 
-	for i = 1, 2 do
-		_G['Minimal_Top_Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
-	end
 	for i = 1, 5 do
 		_G['Minimal_SpartanUI_Base' .. i]:SetVertexColor(r, b, g, a)
 	end
-	-- Minimal_SpartanUI:SetVertexColor(0,.8,.9,.1)
+
+	for _,v in pairs(module.Trays) do
+		v.expanded.bg:SetVertexColor(r, b, g, a)
+		v.collapsed.bgCollapsed:SetVertexColor(r, b, g, a)
+	end
 end
 
 function module:InitFramework()
@@ -137,22 +192,6 @@ function module:InitFramework()
 		FramerateText:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 
 		MainMenuBar:Hide()
-		hooksecurefunc(
-			Minimal_SpartanUI,
-			'Hide',
-			function()
-				module:updateViewport()
-			end
-		)
-		hooksecurefunc(
-			Minimal_SpartanUI,
-			'Show',
-			function()
-				module:updateViewport()
-			end
-		)
-		--Minimal_SpartanUI:SetAlpha(.5);
-		--Minimal_SpartanUI:SetVertexColor(0,.8,.9,.1)
 
 		hooksecurefunc(
 			'UpdateContainerFrameAnchors',
@@ -256,9 +295,6 @@ function module:EnableFramework()
 	frame:SetFrameStrata('BACKGROUND')
 	frame:SetFrameLevel(1)
 
-	-- hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
-	-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Minimal_SpartanUI,"TOP",0,100); end
-	-- end);
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',
 		function()
@@ -275,7 +311,6 @@ function module:EnableFramework()
 	module:updateScale()
 	module:updateOffset()
 	module:updateXOffset()
-	module:updateViewport()
 
 	-- Limit updates via interval
 	anchor.UpdateInterval = 5 --Seconds
@@ -293,7 +328,6 @@ function module:EnableFramework()
 				module:updateScale()
 				module:updateOffset()
 				module:updateXOffset()
-				module:updateViewport()
 				self.TimeSinceLastUpdate = 0
 
 				if SUI.DB.OpenOptions then

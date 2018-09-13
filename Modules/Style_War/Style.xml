@@ -55,17 +55,6 @@
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM"><Offset><AbsDimension x="110" y="25" /></Offset></Anchor>
 				</Anchors>
 			</Frame>
-			<!-- Misc Bars -->
-			<Frame name="War_MenuBar" inherits="War_BarTemplate1">
-				<Anchors>
-					<Anchor point="BOTTOM" relativeTo="War_Bar3" relativePoint="TOP"><Offset><AbsDimension x="0" y="10" /></Offset></Anchor>
-				</Anchors>
-			</Frame>
-			<Frame name="War_StanceBar" inherits="War_BarTemplate1">
-				<Anchors>
-					<Anchor point="BOTTOM" relativeTo="War_Bar1" relativePoint="TOP"><Offset><AbsDimension x="0" y="10" /></Offset></Anchor>
-				</Anchors>
-			</Frame>
 		</Frames>
 	</Frame>
 	

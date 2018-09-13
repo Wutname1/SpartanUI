@@ -98,9 +98,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI.DBMod.Objectives.SetupDone then
-		module:FirstTimeSetup()
-	end
+	module:FirstTimeSetup()
 
 	-- Add Fade in and out
 	ObjectiveTrackerFrame.BlocksFrame.FadeIn = ObjectiveTrackerFrame.BlocksFrame:CreateAnimationGroup()
@@ -132,7 +130,6 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent('GROUP_JOINED')
 	ObjectiveTrackerWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
 	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
-	--ObjectiveTrackerWatcher:RegisterEvent("PARTY_CONVERTED_TO_RAID")
 	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_START')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_END')
@@ -209,20 +206,30 @@ function module:HideOptions()
 	SUI.opt.args['ModSetting'].args['Objectives'].disabled = true
 end
 
-local DummyFunction = function ()
+local DummyFunction = function()
 end
 
 function module:FirstTimeSetup()
 	local PageData = {
+		ID = 'Objectives',
+		Name = 'Objectives',
 		SubTitle = 'Objectives',
 		Desc1 = 'The objectives module can hide the objectives based on diffrent conditions. This allows you to free your screen when you need it the most automatically.',
 		Desc2 = 'The defaults here are based on your current level.',
+		RequireDisplay = (not SUI.DBMod.Objectives.SetupDone),
 		Display = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
 			local gui = LibStub('AceGUI-3.0')
+			if not SUI.DB.EnabledComponents.Objectives then
+				window.Skip:Click()
+			end
+
 			--Container
 			SUI_Win.Objectives = CreateFrame('Frame', nil)
-			SUI_Win.Objectives:SetParent(SUI_Win.content)
-			SUI_Win.Objectives:SetAllPoints(SUI_Win.content)
+			SUI_Win.Objectives:SetParent(SUI_Win)
+			SUI_Win.Objectives:SetAllPoints(SUI_Win)
 
 			--scenario
 			local line = gui:Create('Heading')
@@ -273,7 +280,7 @@ function module:FirstTimeSetup()
 					CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
 				SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
 				_G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
-				SUI_Win.Objectives[k].InCombat:SetScript("OnClick", DummyFunction);
+				SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)
 			end
 
 			--Defaults
@@ -285,6 +292,7 @@ function module:FirstTimeSetup()
 			end
 		end,
 		Next = function()
+			local SUI_Win = SUI:GetModule('SetupWizard').window.content
 			SUI.DBMod.Objectives.SetupDone = true
 			SUI.DBMod.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
@@ -294,12 +302,10 @@ function module:FirstTimeSetup()
 					Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
 				}
 			end
-
-			SUI_Win.Objectives:Hide()
-			SUI_Win.Objectives = nil
+		end,
+		Skip = function()
+			SUI.DB.Objectives.SetupDone = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWindow')
-	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
+	SUI:GetModule('SetupWizard'):AddPage(PageData)
 end

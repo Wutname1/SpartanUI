@@ -5,6 +5,7 @@
 
 	
 	<Script file="SpartanUI_Artwork.lua" />
+	<Script file="MenuTrays.lua" />
 	<Script file="StatusBars.lua" />
 	<Script file="Options.lua" />
 </Ui>

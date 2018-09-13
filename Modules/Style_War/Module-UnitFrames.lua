@@ -3,7 +3,7 @@ local L = SUI.L
 local module = SUI:GetModule('Style_War')
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
+local Smoothv2 = SUI.BarTextures.smooth
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 local Images
@@ -61,6 +61,8 @@ local TextFormat = function(text)
 		return '(' .. m .. ') ' .. a .. ' / ' .. t
 	elseif textmode == 3 then
 		return '(' .. m .. ') ' .. a
+	elseif textmode == 4 then
+		return a .. ' / ' .. t .. ' ([perhp]%)'
 	end
 end
 
@@ -118,7 +120,7 @@ end
 --	Updating functions
 local PostUpdateText = function(self)
 	self:Untag(self.Health.value)
-	self:Tag(self.Health.value, TextFormat('health'))
+	self:Tag(self.Health.value, PlayerFrames:TextFormat('health'))
 	if self.Power then
 		self:Untag(self.Power.value)
 		self:Tag(self.Power.value, TextFormat('mana'))
@@ -256,13 +258,13 @@ local CreateLargeFrame = function(self, unit)
 		self.artwork.flairHorde:SetSize(self:GetWidth(), self:GetHeight() + 37)
 
 		if unit ~= 'raid' then
-		self.Portrait = PlayerFrames:CreatePortrait(self)
-		if SUI.DBMod.PlayerFrames.Portrait3D then
-			self.Portrait:SetFrameStrata('LOW')
-			self.Portrait:SetFrameLevel(2)
-		end
-		self.Portrait:SetSize(58, 58)
-		self.Portrait:SetPoint('RIGHT', self, 'LEFT', -1, 0)
+			self.Portrait = PlayerFrames:CreatePortrait(self)
+			if SUI.DBMod.PlayerFrames.Portrait3D then
+				self.Portrait:SetFrameStrata('LOW')
+				self.Portrait:SetFrameLevel(2)
+			end
+			self.Portrait:SetSize(58, 58)
+			self.Portrait:SetPoint('RIGHT', self, 'LEFT', -1, 0)
 		end
 
 		local Threat = self:CreateTexture(nil, 'OVERLAY')
@@ -304,7 +306,7 @@ local CreateLargeFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 
 			self.Health = health
 
@@ -382,9 +384,9 @@ local CreateLargeFrame = function(self, unit)
 		self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)
 		self.RareElite:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', 0, 0)
 
-		self.HLeaderIndicator = self:CreateTexture(nil, 'BORDER')
-		self.HLeaderIndicator:SetSize(12, 12)
-		self.HLeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
+		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
+		self.LeaderIndicator:SetSize(12, 12)
+		self.LeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
 
 		self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
 		self.SUI_RaidGroup:SetSize(12, 12)
@@ -534,11 +536,11 @@ local CreateMediumFrame = function(self, unit)
 		self.artwork:SetFrameLevel(1)
 		self.artwork:SetAllPoints(self)
 
-		self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
-		self.artwork.bg:SetPoint('CENTER', self)
-		self.artwork.bg:SetTexture(Images.smallbg.Texture)
-		self.artwork.bg:SetTexCoord(unpack(Images.smallbg.Coords))
-		self.artwork.bg:SetSize(self:GetSize())
+		-- self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
+		-- self.artwork.bg:SetPoint('CENTER', self)
+		-- self.artwork.bg:SetTexture(Images.smallbg.Texture)
+		-- self.artwork.bg:SetTexCoord(unpack(Images.smallbg.Coords))
+		-- self.artwork.bg:SetSize(self:GetSize())
 
 		self.artwork.flair = CreateFrame('Frame', nil, self)
 		self.artwork.flair:SetFrameStrata('BACKGROUND')
@@ -546,8 +548,6 @@ local CreateMediumFrame = function(self, unit)
 		self.artwork.flair:SetAllPoints(self)
 
 		self.artwork.flair.bg = self.artwork.flair:CreateTexture(nil, 'BACKGROUND')
-		-- self.artwork.flair:SetBlendMode("ADD");
-		-- self.artwork.flair:SetParent(self.artwork.bg)
 		self.artwork.flair.bg:SetPoint('RIGHT', self, 'RIGHT', 0, 0)
 		self.artwork.flair.bg:SetTexture(Images.flair2.Texture)
 		self.artwork.flair.bg:SetTexCoord(unpack(Images.flair2.Coords))
@@ -601,7 +601,7 @@ local CreateMediumFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, TextFormat('health'))
+			self:Tag(health.value, PlayerFrames:TextFormat('health'))
 			self.Health = health
 
 			self.Health.frequentUpdates = true
@@ -646,7 +646,7 @@ local CreateMediumFrame = function(self, unit)
 			power.ratio:SetJustifyH('CENTER')
 			power.ratio:SetJustifyV('MIDDLE')
 			power.ratio:SetAllPoints(power)
-			self:Tag(power.ratio, '[perpp]%')
+			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true
@@ -661,9 +661,9 @@ local CreateMediumFrame = function(self, unit)
 		self.Name:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -2)
 		self:Tag(self.Name, '[level] [SUI_ColorClass][name]')
 
-		self.HLeaderIndicator = self:CreateTexture(nil, 'BORDER')
-		self.HLeaderIndicator:SetSize(12, 12)
-		self.HLeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
+		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
+		self.LeaderIndicator:SetSize(12, 12)
+		self.LeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
 
 		self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
 		self.SUI_RaidGroup:SetSize(12, 12)

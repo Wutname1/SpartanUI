@@ -152,8 +152,8 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.health.textstyle = val
-							for _, b in pairs(Units) do
-								addon[b]:TextUpdate(b)
+							for _, b in pairs(SUI.PlayerFrames) do
+								SUI.PlayerFrames[b]:TextUpdate(b)
 							end
 						end
 					},
@@ -161,14 +161,14 @@ function PlayerFrames:OnInitialize()
 						name = L['HTextMode'],
 						type = 'select',
 						order = 22,
-						values = {[1] = L['HTextMode1'], [2] = L['HTextMode2'], [3] = L['HTextMode3']},
+						values = {[1] = L['HTextMode1'], [2] = L['HTextMode2'], [3] = L['HTextMode3'], [4] = L['HTextMode1'] .. ' (Percentage)'},
 						get = function(info)
 							return SUI.DBMod.PlayerFrames.bars.health.textmode
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.health.textmode = val
-							for _, b in pairs(Units) do
-								addon[b]:TextUpdate(b)
+							for _, b in pairs(SUI.PlayerFrames) do
+								SUI.PlayerFrames[b]:TextUpdate(b)
 							end
 						end
 					},
@@ -183,8 +183,8 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.mana.textstyle = val
-							for _, b in pairs(Units) do
-								addon[b]:TextUpdate(b)
+							for _, b in pairs(SUI.PlayerFrames) do
+								SUI.PlayerFrames[b]:TextUpdate(b)
 							end
 						end
 					},
