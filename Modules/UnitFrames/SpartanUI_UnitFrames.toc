@@ -1,0 +1,9 @@
+## Interface: 80000
+## Title: SpartanUI: |CFF0070DDUnit Frames|r
+## Notes: Party Frames designed to complement SpartanUI
+## Version: @project-version@
+## Author: Wutname1
+## RequiredDeps: SpartanUI
+## OptionalDeps: SpartanUI_Artwork
+
+Loader.xml
