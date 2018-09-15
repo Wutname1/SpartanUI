@@ -55,7 +55,7 @@ local frameDefault2 = {
 
 local DBdefault = {
 	SUIProper = {
-		Version = SUI.Version,
+		Version = '0',
 		Bartender4Version = 0,
 		SetupDone = false,
 		HVer = '',
@@ -707,11 +707,8 @@ function SUI:OnInitialize()
 	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 	--If we have not played in a long time reset the database, make sure it is all good.
 	local ver = SUI.SpartanUIDB.profile.SUIProper.Version
-	if (ver ~= nil and ver < '4.0.0') then
+	if (ver ~= '0' and ver < '4.0.0') then
 		SUI.SpartanUIDB:ResetDB()
-	end
-	if not SUI.CurseVersion then
-		SUI.CurseVersion = ''
 	end
 
 	-- New SUI.DB Access
@@ -720,7 +717,7 @@ function SUI:OnInitialize()
 	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 
 	--Check for any SUI.DB changes
-	if SUI.DB.SetupDone then
+	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) then
 		SUI:DBUpgrades()
 	end
 
@@ -779,10 +776,15 @@ function SUI:DBUpgrades()
 
 	-- 5.0.0 Upgrades
 	if SUI.DB.Version < '5.0.0' then
-		if SUI.DB.SetupDone then
-			SUI.DB.font.SetupDone = true
-		end
+		SUI.DB.font.SetupDone = true
+		SUI.DBMod.Objectives.SetupDone = true
+		SUI.DB.SetupWizard.FirstLaunch = false
+		SUI.DB.AutoTurnIn.FirstLaunch = false
+		SUI.DB.AutoSell.FirstLaunch = false
+		SUI.DB.SetupWizard.FirstLaunch = false
 	end
+
+	SUI.DB.Version = SUI.Version
 end
 
 function SUI:InitializeProfile()
