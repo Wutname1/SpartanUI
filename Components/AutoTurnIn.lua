@@ -236,7 +236,7 @@ local function ScanTip(itemLink)
 	else
 		ilevel = itemLevel
 	end
-	print(ilevel)
+	-- print(ilevel)
 
 	-- Hide the scanning tooltip
 	scanningTooltip:Hide()
@@ -259,7 +259,7 @@ function module:GetiLVL(itemLink)
 
 	-- Scan the tooltip, itemLevel is a fallback incase tooltip does not contain the data
 	local effectiveILvl = GetDetailedItemLevelInfo(itemLink)
-	print(ScanTip(itemLink) .. ' vs ' .. effectiveILvl)
+	-- print(ScanTip(itemLink) .. ' vs ' .. effectiveILvl)
 	return (effectiveILvl or itemLevel)
 end
 
