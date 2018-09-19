@@ -38,6 +38,7 @@ local itemCache =
 )
 local WildcardBlackList = {
 	['work order'] = true,
+	['supplies needed'] = true,
 	['taxi'] = true,
 	['trade'] = true,
 	['train'] = true,
