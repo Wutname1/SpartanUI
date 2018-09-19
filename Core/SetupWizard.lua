@@ -31,7 +31,6 @@ local ReloadPage = {
 
 local LoadWatcherEvent = function()
 	module:ShowWizard()
-	-- module.window.closeBtn:Show()
 end
 
 function module:AddPage(PageData)
@@ -248,6 +247,7 @@ function module:ShowWizard()
 
 	-- Display first page
 	module:FindNextPage()
+	module.window.closeBtn:Hide()
 	module.window:Show()
 end
 
