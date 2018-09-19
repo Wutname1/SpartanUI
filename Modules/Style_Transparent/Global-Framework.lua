@@ -290,10 +290,14 @@ function module:SetColor()
 			PlayerFrames[v].artwork.bg:SetVertexColor(r, b, g, a)
 		end
 		for _, v in pairs(PlayerFrames.arena) do
-			v.artwork.bg:SetVertexColor(r, b, g, a)
+			if v.artwork then
+				v.artwork.bg:SetVertexColor(r, b, g, a)
+			end
 		end
 		for _, v in pairs(PlayerFrames.boss) do
-			v.artwork.bg:SetVertexColor(r, b, g, a)
+			if v.artwork then
+				v.artwork.bg:SetVertexColor(r, b, g, a)
+			end
 		end
 	end
 end
