@@ -1010,7 +1010,16 @@ function SUI:OnEnable()
 	)
 	LaunchOpt:RegisterEvent('PLAYER_ENTERING_WORLD')
 	if (not select(4, GetAddOnInfo('Bartender4'))) then
-		local Bt4Warning = StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'])
+		local BT4Warning = CreateFrame('Frame')
+		BT4Warning:SetScript('OnEvent', function()
+			StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'])
+		end)
+		BT4Warning:RegisterEvent('PLAYER_LOGIN')
+		BT4Warning:RegisterEvent('PLAYER_ENTERING_WORLD')
+		BT4Warning:RegisterEvent('ZONE_CHANGED')
+		BT4Warning:RegisterEvent('ZONE_CHANGED_INDOORS')
+		BT4Warning:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+		
 	end
 end
 
