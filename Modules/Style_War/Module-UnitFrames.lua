@@ -401,6 +401,10 @@ local CreateLargeFrame = function(self, unit)
 		self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 1)
 		self:Tag(self.SUI_RaidGroup.Text, '[group]')
 
+		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheckIndicator:SetSize(30, 30)
+		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
+		
 		self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
 		self.PvPIndicator:SetSize(25, 25)
 		self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
@@ -678,6 +682,10 @@ local CreateMediumFrame = function(self, unit)
 		self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 1)
 		self:Tag(self.SUI_RaidGroup.Text, '[group]')
 
+		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheckIndicator:SetSize(30, 30)
+		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
+		
 		self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
 		self.PvPIndicator:SetSize(25, 25)
 		self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
@@ -829,6 +837,10 @@ local CreateSmallFrame = function(self, unit)
 		self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.RaidTargetIndicator:SetSize(20, 20)
 		self.RaidTargetIndicator:SetPoint('BOTTOMLEFT', self)
+
+		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheckIndicator:SetSize(30, 30)
+		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
 		self.StatusText:SetPoint('CENTER', self, 'CENTER')
