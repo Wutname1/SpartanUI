@@ -8,6 +8,8 @@
 
 
 
-
 SpartanUI (aka SUI) was originally designed to free your screen by moving a majority of the interface elements to the bottom. While that is still the core focus of the primary addon and configuration it has become much more over the last few years. With Starting with 3.3 Spartan UI Has started on a path to become completely modular so that you can use only the pieces you want and give you the more control over your UI.  SpartanUI is made up of modules and components. Modules make up the core of SpartanUI and will always be listed in the addons screen. Components are minor features or expand on the features provided by Modules.
  
+[![Patreon](https://www.spartanui.net/img/patreon.png)](https://www.patreon.com/SpartanUI)
+
+Donate via bitcoin: 3CpMmtCnynoX6PiBUTg6YB5J6bBevcwi4t
