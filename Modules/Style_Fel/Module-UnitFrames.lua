@@ -454,6 +454,10 @@ local CreateLargeFrame = function(self, unit)
 				end
 			end
 
+			self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+			self.ReadyCheckIndicator:SetSize(30, 30)
+			self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
+			
 			--Combo Points & Special unit power itemsitems = CreateFrame("Frame",nil,self);
 			local items = CreateFrame('Frame', nil, self)
 			items:SetFrameStrata('BACKGROUND')
@@ -685,6 +689,10 @@ local CreateMediumFrame = function(self, unit)
 		self.GroupRoleIndicator:SetTexture(lfdrole)
 		self.GroupRoleIndicator:SetAlpha(.75)
 
+		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheckIndicator:SetSize(30, 30)
+		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
+		
 		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.CombatIndicator:SetSize(20, 20)
 		self.CombatIndicator:SetPoint('CENTER', self.RestingIndicator, 'CENTER')
@@ -825,6 +833,10 @@ local CreateSmallFrame = function(self, unit)
 		self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.RaidTargetIndicator:SetSize(20, 20)
 		self.RaidTargetIndicator:SetPoint('BOTTOMLEFT', self)
+
+		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheckIndicator:SetSize(30, 30)
+		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
 		self.StatusText:SetPoint('CENTER', self, 'CENTER')
