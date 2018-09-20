@@ -1008,6 +1008,28 @@ function module:OnInitialize()
 			}
 		end
 	end
+
+	SUI.opt.args['ModSetting'].args['enabled'] = {
+		name = L['Enabled modules'],
+		type = 'group',
+		order = .1,
+		args = {
+			Styles = {
+				name = L['Styles'],
+				type = 'group',
+				order = 100,
+				inline = true,
+				args = SUI.opt.args['ModSetting'].args['Styles'].args
+			},
+			Components = {
+				name = L['Components'],
+				type = 'group',
+				order = 200,
+				inline = true,
+				args = SUI.opt.args['ModSetting'].args['Components'].args
+			}
+		}
+	}
 end
 
 function module:OnEnable()

@@ -365,10 +365,10 @@ end
 function module:ModuleSelectionPage()
 	local ProfilePage = {
 		ID = 'ModuleSelectionPage',
-		Name = 'Enabled modules',
+		Name = L['Enabled modules'],
 		RequireReload = true,
 		Priority = true,
-		SubTitle = 'Enabled modules',
+		SubTitle = L['Enabled modules'],
 		Desc1 = 'Below you can disable modules of SpartanUI',
 		RequireDisplay = (not SUI.DB.SetupDone),
 		Display = function()
