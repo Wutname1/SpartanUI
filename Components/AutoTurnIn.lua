@@ -57,7 +57,8 @@ local WildcardBlackList = {
 	['take us back'] = true,
 	['take me back'] = true,
 	['and listen'] = true,
-	['where I can fly'] = true
+	['where I can fly'] = true,
+	['seal of wartorn'] = true
 }
 local BlackList = {
 	-- General Blacklist
