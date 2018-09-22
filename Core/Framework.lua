@@ -1009,10 +1009,16 @@ function SUI:OnEnable()
 		end
 	)
 	LaunchOpt:RegisterEvent('PLAYER_ENTERING_WORLD')
-	if (not select(4, GetAddOnInfo('Bartender4'))) then
+	if (not select(4, GetAddOnInfo('Bartender4')) and not SUI.DB.BT4Warned) then
+		local cnt = 1
 		local BT4Warning = CreateFrame('Frame')
 		BT4Warning:SetScript('OnEvent', function()
-			StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'])
+			if cnt <= 10 then
+				StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] ..' Warning ' .. cnt .. ' of 10')
+			else
+				SUI.DB.BT4Warned = true
+			end
+			cnt = cnt + 1
 		end)
 		BT4Warning:RegisterEvent('PLAYER_LOGIN')
 		BT4Warning:RegisterEvent('PLAYER_ENTERING_WORLD')
