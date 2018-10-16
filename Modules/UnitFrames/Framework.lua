@@ -2,6 +2,31 @@ local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Module_UnitFrames', 'AceTimer-3.0')
 module.DisplayName = L['Unit frames']
 local DB = SUI.DB.Unitframes
+local loadstring = loadstring
+module.frames = {
+	arena = {},
+	boss = {},
+	party = {}
+}
+----------------------------------------------------------------------------------------------------
+-- New Unitframe workflow
+--
+-- 1.  Styles are initalized and calls AddStyleSettings to pass the styles config into the unitframes module
+-- 2.  A table is created with all of the settings from all the styles
+-- 3.  UnitFrames OnEnable is called
+-- 4.  Frames are spawned
+--
+-- Player Customization DB format:
+-- PlayerCustomizations.STYLE.FRAME
+--
+-- Styles DB Format
+-- Style = {
+--		id = 'MYSTYLE', -- One word, used in backend.
+-- 		name = 'My Style', -- Human Readable
+--		artskin = 'Artwork Skin Name',
+--		FrameOptions = { Settings defined here override anything set in the default FrameOptions }
+--	}
+--
 ----------------------------------------------------------------------------------------------------
 local FrameList = {
 	'raid',
@@ -20,6 +45,13 @@ local DefaultSettings = {
 		['**'] = {
 			width = 180,
 			height = 60,
+			moved = false,
+			anchor = {
+				point = 'BOTTOM',
+				relativePoint = 'BOTTOM',
+				xOfs = 0,
+				yOfs = 0
+			},
 			elements = {
 				['**'] = {
 					enabled = false,
@@ -149,6 +181,22 @@ local DefaultSettings = {
 					}
 				}
 			}
+		},
+		player = {
+			anchor = {
+				point = 'BOTTOMRIGHT',
+				relativePoint = 'BOTTOM',
+				xOfs = -60,
+				yOfs = 250
+			}
+		},
+		target = {
+			anchor = {
+				point = 'BOTTOMLEFT',
+				relativePoint = 'BOTTOM',
+				xOfs = 60,
+				yOfs = 250
+			}
 		}
 	},
 	PlayerCustomizations = {
@@ -159,20 +207,119 @@ local DefaultSettings = {
 				}
 			}
 		}
-	}
+	},
+	Styles = {}
 }
-local StyleSettings = {}
+local CurrentSettings = {}
 
-function module:AddStyleSettings(frame, settings)
-	StyleSettings[frame] = SUI:MergeData(settings, DB.FrameOptions[frame], false)
+function module:AddStyleSettings(settings)
+	DB.Styles[style.id] = settings
 end
 
 function module:SpawnFrames()
 end
 
+function module:UpdatePosition()
+end
+
 function module:OnInitalize()
+	--First merge in all the default information
 	DB = SUI:MergeData(DB, DefaultSettings, false)
+
+	--Ensure the default FrameOptions are proper
+	DB.FrameOptions = DefaultSettings.FrameOptions
 end
 
 function module:OnEnable()
+end
+
+function module:OnEnable()
+	module:SpawnFrames()
+
+	for _, b in pairs(FrameList) do
+		if module.frames[b] then
+			module:AddMover(module.frames[b], b)
+		end
+	end
+
+	module:UpdatePosition()
+end
+
+function module:AddMover(frame, framename)
+	if frame == nil then
+		SUI:Err('PlayerFrames', DB.UnitFrames.Style .. ' did not spawn ' .. framename)
+	else
+		frame.mover = CreateFrame('Frame')
+		frame.mover:SetSize(20, 20)
+
+		if framename == 'boss' then
+			frame.mover:SetPoint('TOPLEFT', PlayerFrames.boss[1], 'TOPLEFT')
+			frame.mover:SetPoint('BOTTOMRIGHT', PlayerFrames.boss[MAX_BOSS_FRAMES], 'BOTTOMRIGHT')
+		elseif framename == 'arena' then
+			frame.mover:SetPoint('TOPLEFT', PlayerFrames.boss[1], 'TOPLEFT')
+			frame.mover:SetPoint('BOTTOMRIGHT', PlayerFrames.boss[MAX_BOSS_FRAMES], 'BOTTOMRIGHT')
+		else
+			frame.mover:SetPoint('TOPLEFT', frame, 'TOPLEFT')
+			frame.mover:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+		end
+
+		frame.mover:EnableMouse(true)
+		frame.mover:SetFrameStrata('LOW')
+
+		frame:EnableMouse(enable)
+		frame:SetScript(
+			'OnMouseDown',
+			function(self, button)
+				if button == 'LeftButton' and IsAltKeyDown() then
+					frame.mover:Show()
+					DB.UnitFrames[framename].moved = true
+					frame:SetMovable(true)
+					frame:StartMoving()
+				end
+			end
+		)
+		frame:SetScript(
+			'OnMouseUp',
+			function(self, button)
+				frame.mover:Hide()
+				frame:StopMovingOrSizing()
+				local Anchors = {}
+				Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = frame:GetPoint()
+				Anchors.relativeTo = 'UIParent'
+				for k, v in pairs(Anchors) do
+					DB.UnitFrames[framename].Anchors[k] = v
+				end
+			end
+		)
+
+		frame.mover.bg = frame.mover:CreateTexture(nil, 'BACKGROUND')
+		frame.mover.bg:SetAllPoints(frame.mover)
+		frame.mover.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
+		frame.mover.bg:SetVertexColor(1, 1, 1, 0.5)
+
+		frame.mover:SetScript(
+			'OnEvent',
+			function()
+				PlayerFrames.locked = 1
+				frame.mover:Hide()
+			end
+		)
+		frame.mover:RegisterEvent('VARIABLES_LOADED')
+		frame.mover:RegisterEvent('PLAYER_REGEN_DISABLED')
+		frame.mover:Hide()
+
+		--Set Position if moved
+		if DB.UnitFrames[framename].moved then
+			frame:SetMovable(true)
+			frame:SetUserPlaced(false)
+			local Anchors = {}
+			for k, v in pairs(DB.UnitFrames[framename].Anchors) do
+				Anchors[k] = v
+			end
+			frame:ClearAllPoints()
+			frame:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+		else
+			frame:SetMovable(false)
+		end
+	end
 end
