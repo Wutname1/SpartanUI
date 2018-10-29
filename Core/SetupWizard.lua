@@ -184,7 +184,6 @@ function module:FindNextPage(RequiredPagesOnly)
 			end
 		end
 	end
-	
 end
 
 function module:DisplayPage(PageData)

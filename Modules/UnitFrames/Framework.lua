@@ -30,15 +30,12 @@ module.frames = {
 ----------------------------------------------------------------------------------------------------
 local FrameList = {
 	'raid',
-	'party',
 	'player',
 	'pet',
 	'target',
 	'targettarget',
 	'focus',
-	'focustarget',
-	'arena',
-	'boss'
+	'focustarget'
 }
 local DefaultSettings = {
 	FrameOptions = {
@@ -236,11 +233,27 @@ end
 function module:OnEnable()
 	module:SpawnFrames()
 
+	-- Add mover to standard frames
 	for _, b in pairs(FrameList) do
 		if module.frames[b] then
 			module:AddMover(module.frames[b], b)
 		end
 	end
+
+	-- Party, Raid, and boss mover
+	if FrameList.arena[1] then
+		module:AddMover(FrameList.arena[1], 'arena')
+	end
+	if FrameList.boss[1] then
+		module:AddMover(FrameList.boss[1], 'boss')
+	end
+	if FrameList.party[1] then
+		module:AddMover(FrameList.party[1], 'party')
+	end
+	-- if FrameList.raid[1] then
+	-- 	module:AddMover(frame, 'raid')
+	-- end
+	
 
 	module:UpdatePosition()
 end
