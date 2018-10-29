@@ -57,7 +57,8 @@ local WildcardBlackList = {
 	['take us back'] = true,
 	['take me back'] = true,
 	['and listen'] = true,
-	['where I can fly'] = true
+	['where I can fly'] = true,
+	['seal of wartorn'] = true
 }
 local BlackList = {
 	-- General Blacklist
@@ -455,8 +456,10 @@ function module:VarArgForActiveQuests(...)
 	local INDEX_CONST = 6
 
 	for i = 1, select('#', ...), INDEX_CONST do
+
+		local name = select(i * 1, GetGossipActiveQuests(i))
 		local isComplete = select(i + 3, ...) -- complete status
-		if (isComplete) then
+		if (isComplete) and (not module:blacklisted(name)) then
 			local questname = select(i, ...)
 			-- if self:isAppropriate(questname, true) then
 			local quest = Lquests[questname]
@@ -479,6 +482,7 @@ function module:VarArgForAvailableQuests(...)
 	end
 	local INDEX_CONST = 6 -- was '5' in Cataclysm
 	for i = 1, select('#', ...), INDEX_CONST do
+		local name = select(i * 1, GetGossipAvailableQuests(i))
 		local isTrivial = select(i + 2, ...)
 		local isDaily = select(i + 3, ...)
 		local isRepeatable = select(i + 4, ...)
@@ -486,7 +490,7 @@ function module:VarArgForAvailableQuests(...)
 		local isRepeatableORAllowed = (not isRepeatable or not isDaily) or SUI.DB.AutoTurnIn.AcceptRepeatable
 
 		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-		if (trivialORAllowed and isRepeatableORAllowed) then
+		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
 			if quest and quest.amount then
 				if self:GetItemAmount(quest.currency, quest.item) >= quest.amount then
 					SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
@@ -562,6 +566,26 @@ function module:FirstLaunch()
 	SetupWindow:AddPage(PageData)
 end
 
+function module:blacklisted(name)
+	if BlackList[name] then
+		if SUI.DB.AutoTurnIn.debug then
+			print(name .. ' - IS BLACKLISTED')
+		end
+		return true
+	end
+	
+	for k2, _ in pairs(WildcardBlackList) do
+		if string.find(string.lower(name), string.lower(k2)) then
+			if SUI.DB.AutoTurnIn.debug then
+				print(name .. ' - IS BLACKLISTED')
+			end
+			return true
+		end
+	end
+	
+	return false
+end
+
 function module.GOSSIP_SHOW()
 	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsAltKeyDown()) then
 		return
@@ -578,14 +602,8 @@ function module.GOSSIP_SHOW()
 		return
 	end
 	for k, v in pairs(options) do
-		local WildcardBlacklistFound = false
-		for k2, _ in pairs(WildcardBlackList) do
-			if string.find(string.lower(v), string.lower(k2)) then
-				WildcardBlacklistFound = true
-			end
-		end
 
-		if (v ~= 'gossip') and (not BlackList[v]) and (not WildcardBlacklistFound) and string.find(v, ' ') then
+		if (v ~= 'gossip') and (not module:blacklisted(v)) and string.find(v, ' ') then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if SUI.DB.AutoTurnIn.AutoGossipSafeMode and (not string.find(string.lower(v), 'quest')) then
 				return
@@ -607,7 +625,7 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled then
+	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled and (not module:blacklisted(GetActiveTitle())) then
 		CompleteQuest()
 	end
 end
