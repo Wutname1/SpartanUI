@@ -174,12 +174,17 @@ function module:FindNextPage(RequiredPagesOnly)
 	end
 
 	-- Update the Status Counter & Progress Bar
-	module.window.Status:SetText(CurPage .. ' /  ' .. TotalPage)
-	if CurPage > TotalPage then
-		module.window.ProgressBar:SetValue(100)
-	else
-		module.window.ProgressBar:SetValue((100 / TotalPage) * (CurPage - 1))
+	if module.window then
+		module.window.Status:SetText(CurPage .. ' /  ' .. TotalPage)
+		if module.window.ProgressBar then
+			if CurPage > TotalPage then
+				module.window.ProgressBar:SetValue(100)
+			else
+				module.window.ProgressBar:SetValue((100 / TotalPage) * (CurPage - 1))
+			end
+		end
 	end
+	
 end
 
 function module:DisplayPage(PageData)
