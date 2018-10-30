@@ -316,9 +316,9 @@ function module:SetupWizard(RequiredPagesOnly)
 	module.window.Status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -2, -2)
 
 	-- Display first page
-	module:FindNextPage(RequiredPagesOnly)
 	module.window.closeBtn:Hide()
 	module.window:Show()
+	module:FindNextPage(RequiredPagesOnly)
 end
 
 function module:OnInitialize()

@@ -241,13 +241,13 @@ function module:OnEnable()
 	end
 
 	-- Party, Raid, and boss mover
-	if FrameList.arena[1] then
+	if module.frames.arena[1] then
 		module:AddMover(FrameList.arena[1], 'arena')
 	end
-	if FrameList.boss[1] then
+	if module.frames.boss[1] then
 		module:AddMover(FrameList.boss[1], 'boss')
 	end
-	if FrameList.party[1] then
+	if module.frames.party[1] then
 		module:AddMover(FrameList.party[1], 'party')
 	end
 	-- if FrameList.raid[1] then
