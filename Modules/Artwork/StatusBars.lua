@@ -261,7 +261,9 @@ local showAzeriteTooltip = function(self)
 				AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel),
 				HIGHLIGHT_FONT_COLOR:GetRGB()
 			)
-			self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
+			if azeriteItem:GetItemName() then
+				self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
+			end
 		end
 	end
 	self.tooltip:Show()
