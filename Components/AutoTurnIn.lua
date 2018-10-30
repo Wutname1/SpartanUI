@@ -567,6 +567,7 @@ function module:FirstLaunch()
 end
 
 function module:blacklisted(name)
+	name = tostring(name)
 	if BlackList[name] then
 		if SUI.DB.AutoTurnIn.debug then
 			print(name .. ' - IS BLACKLISTED')

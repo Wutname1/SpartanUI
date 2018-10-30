@@ -427,7 +427,7 @@ end
 
 function module:ProfileSetup()
 	--Hide Bartender4 Minimap icon.
-	if Bartender4 then
+	if Bartender4 and SUI.DB.SetupWizard.FirstLaunch then
 		Bartender4.db.profile.minimapIcon.hide = true
 		local LDBIcon = LibStub('LibDBIcon-1.0', true)
 		LDBIcon['Hide'](LDBIcon, 'Bartender4')

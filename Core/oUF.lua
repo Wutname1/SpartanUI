@@ -151,13 +151,18 @@ function addon:PlayerPowerIcons(frame, attachPoint)
 	else
 		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
 		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
-		local ClassPower = {}
-		for index = 1, 5 do
+		local MaxPower, ClassPower = 5, {}
+
+		if(select(2, UnitClass('player')) == 'MONK') then
+			MaxPower = 6
+		end
+
+		for index = 1, MaxPower do
 			local Bar = CreateFrame('StatusBar', nil, frame)
 			Bar:SetStatusBarTexture(SUI.BarTextures.smooth)
 
 			-- Position and size.
-			Bar:SetSize(((frame.Health:GetWidth() - 10) / 5), 6)
+			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
 			if (index == 1) then
 				Bar:SetPoint('TOPLEFT', frame.ComboPoints, 'TOPLEFT')
 			else

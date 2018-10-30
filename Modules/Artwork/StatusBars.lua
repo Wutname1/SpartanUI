@@ -169,7 +169,7 @@ local updateText = function(self)
 			self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
 		end
 	end
-	if module.DB[side].text and valFill and valMax and valPercent then
+	if module.DB[side].text and valFill and valMax and type(valPercent) == "number" then
 		self.Text:SetFormattedText('( %s / %s ) %d%%', SUI:comma_value(valFill), SUI:comma_value(valMax), valPercent)
 	end
 	SetBarColor(self, side)
@@ -261,7 +261,9 @@ local showAzeriteTooltip = function(self)
 				AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel),
 				HIGHLIGHT_FONT_COLOR:GetRGB()
 			)
-			self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
+			if azeriteItem:GetItemName() then
+				self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
+			end
 		end
 	end
 	self.tooltip:Show()
