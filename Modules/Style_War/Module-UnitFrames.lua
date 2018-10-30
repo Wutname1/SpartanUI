@@ -426,11 +426,11 @@ local CreateLargeFrame = function(self, unit)
 		self.CombatIndicator:SetPoint('CENTER', self.RestingIndicator, 'CENTER')
 
 		if unit ~= 'player' then
-			self.SUI_ClassIcon = self:CreateTexture(nil, 'BORDER')
+			self.SUI_ClassIcon = ring:CreateTexture(nil, 'BORDER')
 			self.SUI_ClassIcon:SetSize(20, 20)
 			self.SUI_ClassIcon:SetPoint('CENTER', self.RestingIndicator, 'CENTER', 0, 0)
 
-			self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
+			self.RaidTargetIndicator = ring:CreateTexture(nil, 'ARTWORK')
 			self.RaidTargetIndicator:SetSize(20, 20)
 			self.RaidTargetIndicator:SetPoint('CENTER', self, 'BOTTOMLEFT', -27, 0)
 		end
