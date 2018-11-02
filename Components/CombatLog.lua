@@ -8,18 +8,15 @@ function module:OnInitialize()
 	local Defaults = {
 		alwayson = false,
 		announce = true,
-
 		raidmythic = true,
 		raidheroic = true,
 		raidnormal = true,
 		raidlfr = false,
 		raidlegacy = false,
-
 		mythicplus = true,
 		mythicdungeon = false,
 		heroicdungeon = false,
 		normaldungeon = false,
-		
 		loggingActive = false,
 		FirstLaunch = true
 	}
@@ -43,6 +40,7 @@ function module.PLAYER_ENTERING_WORLD()
 	if (SUI.DB.CombatLog.loggingActive) then
 		LoggingCombat(true)
 	else
+		module:LogCheck('CHALLENGE_MODE_START')
 		SUI.DB.CombatLog.loggingActive = false
 	end
 end
@@ -73,58 +71,71 @@ function module:OnDisable()
 end
 
 function module:announce(msg)
-    SUI.DB.CombatLog.logging = true
+	SUI.DB.CombatLog.logging = true
 	if (SUI.DB.CombatLog.announce) then
-		SUI:Print('Combat logging enabled - ' .. msg .. ' detected')
+		if msg == 'disabled' then
+			SUI:Print('Combat logging disabled')
+		else
+			SUI:Print('Combat logging enabled - ' .. msg .. ' detected')
+		end
 	end
 end
 
 function module:LogCheck(event)
 	local _, type, difficulty, _, maxPlayers = GetInstanceInfo()
-	if (alwayson) then
+
+	if (SUI.DB.CombatLog.alwayson) then
 		module:announce('Always on')
 		LoggingCombat(true)
-	elseif (raidmythic) and type == 'raid' and difficulty == 16 then
+	elseif (SUI.DB.CombatLog.raidmythic) and type == 'raid' and difficulty == 16 then
 		-- 16 - 20-player Mythic Raid Instance
 		module:announce('Mythic Raid')
 		LoggingCombat(true)
-	elseif (raidheroic) and type == 'raid' and difficulty == 15 then
+	elseif (SUI.DB.CombatLog.raidheroic) and type == 'raid' and difficulty == 15 then
 		-- 15 - 10-30-player Heroic Raid Instance
 		module:announce('Heroic Raid')
 		LoggingCombat(true)
-	elseif (raidnormal) and type == 'raid' and difficulty == 14 then
+	elseif (SUI.DB.CombatLog.raidnormal) and type == 'raid' and difficulty == 14 then
 		-- 14 - 10-30-player Normal Raid Instance
 		module:announce('Normal Raid')
 		LoggingCombat(true)
-	elseif (raidlfr) and type == 'raid' and difficulty == 17 then
+	elseif (SUI.DB.CombatLog.raidlfr) and type == 'raid' and difficulty == 17 then
 		-- 17 - 10-30-player Raid Finder Instance
 		module:announce('Raid Finder')
 		LoggingCombat(true)
-	elseif (normaldungeon) and type == 'party' and difficulty == 1 and maxPlayers == 5 then
+	elseif (SUI.DB.CombatLog.normaldungeon) and type == 'party' and difficulty == 1 and maxPlayers == 5 then
 		-- 1 - 5-player Instance, filtering Garrison
 		module:announce('Normal Dungeon')
 		LoggingCombat(true)
-	elseif (heroicdungeon) and type == 'party' and difficulty == 2 and maxPlayers == 5 then
+	elseif (SUI.DB.CombatLog.heroicdungeon) and type == 'party' and difficulty == 2 and maxPlayers == 5 then
 		-- 2 - 5-player Heroic Instance, filtering Garrison
 		module:announce('Heroic Dungeon')
 		LoggingCombat(true)
-	elseif (mythicdungeon) and type == 'party' and difficulty == 23 and maxPlayers == 5 then
+	elseif (SUI.DB.CombatLog.mythicdungeon) and type == 'party' and difficulty == 23 and maxPlayers == 5 then
 		-- 23 - Mythic 5-player Instance, filtering Garrison
 		module:announce('Mythic Dungeon')
 		LoggingCombat(true)
-	elseif (mythicplus) and event == 'CHALLENGE_MODE_START' then
+	elseif
+		(SUI.DB.CombatLog.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 23 and
+			maxPlayers == 5
+	 then
 		-- 8 - Mythic+ Mode Instance
 		module:announce('Mythic+ Dungeon')
 		LoggingCombat(true)
 	elseif
-		(raidlegacy) and type == 'raid' and
+		(SUI.DB.CombatLog.raidlegacy) and type == 'raid' and
 			(difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9)
 	 then
 		-- 3-9 is legacy raid difficulties
 		module:announce('Legacy Raid')
 		LoggingCombat(true)
-	else
-		LoggingCombat(false)
+	 else
+		-- If we are curently logging announce we are disabling it.
+		if SUI.DB.CombatLog.logging and LoggingCombat() then
+			module:announce('disabled')
+			LoggingCombat(false)
+		end
+		-- Do this here to ensure DB is set to false
 		SUI.DB.CombatLog.logging = false
 	end
 end
@@ -143,6 +154,7 @@ function module:Options()
 				end,
 				set = function(info, val)
 					SUI.DB.CombatLog.alwayson = val
+					module:LogCheck()
 				end
 			},
 			announce = {
@@ -155,6 +167,7 @@ function module:Options()
 				end,
 				set = function(info, val)
 					SUI.DB.CombatLog.announce = val
+					module:LogCheck()
 				end
 			},
 			raid = {
@@ -173,6 +186,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidlegacy = val
+							module:LogCheck()
 						end
 					},
 					raidlfr = {
@@ -184,6 +198,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidlfr = val
+							module:LogCheck()
 						end
 					},
 					raidnormal = {
@@ -195,6 +210,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidnormal = val
+							module:LogCheck()
 						end
 					},
 					raidheroic = {
@@ -206,6 +222,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidheroic = val
+							module:LogCheck()
 						end
 					},
 					raidmythic = {
@@ -217,6 +234,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidmythic = val
+							module:LogCheck()
 						end
 					}
 				}
@@ -237,6 +255,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.normaldungeon = val
+							module:LogCheck()
 						end
 					},
 					heroicdungeon = {
@@ -248,6 +267,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.heroicdungeon = val
+							module:LogCheck()
 						end
 					},
 					mythicdungeon = {
@@ -259,6 +279,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.mythicdungeon = val
+							module:LogCheck()
 						end
 					},
 					mythicplus = {
@@ -270,6 +291,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.mythicplus = val
+							module:LogCheck()
 						end
 					}
 				}
@@ -307,14 +329,14 @@ function module:FirstLaunch()
 			cLog.options.raidmythic = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
 			cLog.options.raidheroic = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
 			cLog.options.raidnormal = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
-			cLog.options.raidlfr 	= StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
+			cLog.options.raidlfr = StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
 			cLog.options.raidlegacy = StdUi:Checkbox(cLog, L['Legacy raids'], 150, 20)
 
 			cLog.options.mythicplus = StdUi:Checkbox(cLog, L['Mythic+'], 150, 20)
 			cLog.options.mythicdungeon = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
 			cLog.options.heroicdungeon = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
 			cLog.options.normaldungeon = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
-			
+
 			-- Create Labels
 			cLog.modEnabled = StdUi:Checkbox(cLog, L['Module enabled'], nil, 20)
 			cLog.lblRaid = StdUi:Label(cLog, L['Raid settings'], 13)
@@ -324,25 +346,23 @@ function module:FirstLaunch()
 			StdUi:GlueTop(cLog.modEnabled, SUI_Win, 0, -10)
 			StdUi:GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
 			StdUi:GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
-			
+
 			-- Raid Settings
 			StdUi:GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
 			StdUi:GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
 			StdUi:GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
 			StdUi:GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
-			
+
 			StdUi:GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
 			StdUi:GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
-
 
 			--Dungeon Settings
 			StdUi:GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
 			StdUi:GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
 			StdUi:GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
 			StdUi:GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
-			
-			StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
 
+			StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
 
 			-- Defaults
 			cLog.modEnabled:SetChecked(SUI.DB.EnabledComponents.CombatLog)
@@ -350,15 +370,18 @@ function module:FirstLaunch()
 				object:SetChecked(SUI.DB.CombatLog[key])
 			end
 
-			cLog.modEnabled:HookScript('OnClick', function()
-				for _, object in pairs(cLog.options) do
-					if cLog.modEnabled:GetChecked() then
-						object:Enable()
-					else
-						object:Disable()
+			cLog.modEnabled:HookScript(
+				'OnClick',
+				function()
+					for _, object in pairs(cLog.options) do
+						if cLog.modEnabled:GetChecked() then
+							object:Enable()
+						else
+							object:Disable()
+						end
 					end
 				end
-			end)
+			)
 
 			SUI_Win.cLog = cLog
 		end,
