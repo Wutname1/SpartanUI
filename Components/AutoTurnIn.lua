@@ -115,7 +115,7 @@ local BlackList = {
 	["i've heard this tale before... <skip the scenario and begin your next mission.>"] = true,
 	['release me.'] = true
 }
-local anchor, scanningTooltip
+local anchor, scanningTooltip = nil, CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
 local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
 
 local Lquests = {
@@ -201,51 +201,24 @@ local Lquests = {
 local function ScanTip(itemLink)
 	-- Setup the scanning tooltip
 	-- Why do this here and not in OnEnable? If the player is not questing there is no need for this to exsist.
-	if not scanningTooltip then
-		anchor = CreateFrame('Frame')
-		anchor:Hide()
-		scanningTooltip = _G.CreateFrame('GameTooltip', 'LibItemUpgradeInfoTooltip', nil, 'GameTooltipTemplate')
-	end
-	GameTooltip_SetDefaultAnchor(scanningTooltip, anchor)
+	scanningTooltip:SetOwner(UIParent, 'ANCHOR_NONE')
 
 	-- If the item is not in the cache populate it.
 	-- if not ilevel then
 	-- Load tooltip
-	local itemString = itemLink:match('|H(.-)|h')
-	local rc = pcall(scanningTooltip.SetHyperlink, scanningTooltip, itemString)
-	if (not rc) then
-		return 0
-	end
-	scanningTooltip:Show()
+	scanningTooltip:SetHyperlink(itemLink)
+	-- scanningTooltip:Show()
+
 
 	local ilevel = nil
 	-- Find the iLVL inthe tooltip
-	for i = 2, 6 do
-		local label, text = _G['ItemUpgradeTooltipTextLeft' .. i], nil
-		if label then
-			text = label:GetText()
+	for i = 2, scanningTooltip:NumLines() do
+		local line = _G['AutoTurnInTooltipTextLeft' .. i]
+		if line:GetText():match(itemLevelPattern) then
+			return tonumber(line:GetText():match(itemLevelPattern))
 		end
-		if text then
-			ilevel = tonumber(text:match(itemLevelPattern))
 		end
-	end
-
-	-- print('Figure out what to cache and what to return as the ilvl')
-	-- Figure out what to cache and what to return as the ilvl
-	ilevel = ilevel or 0
-	itemLevel = GetDetailedItemLevelInfo(itemLink)
-	if type(ilevel) == 'number' then
-		ilevel = math.max(ilevel, 0)
-	else
-		ilevel = itemLevel
-	end
-	-- print(ilevel)
-
-	-- Hide the scanning tooltip
-	scanningTooltip:Hide()
-	-- end
-	-- return the ilvl
-	return ilevel
+	return 0
 end
 
 function module:GetiLVL(itemLink)
@@ -260,10 +233,8 @@ function module:GetiLVL(itemLink)
 		return math.huge
 	end
 
-	-- Scan the tooltip, itemLevel is a fallback incase tooltip does not contain the data
-	local effectiveILvl = GetDetailedItemLevelInfo(itemLink)
-	-- print(ScanTip(itemLink) .. ' vs ' .. effectiveILvl)
-	return (effectiveILvl or itemLevel)
+	-- Scan the tooltip
+	return ScanTip(itemLink)
 end
 
 -- turns quest in printing reward text if `showrewardtext` option is set.
@@ -386,7 +357,7 @@ function module.QUEST_COMPLETE()
 
 				-- comparing lowest equipped item level with reward's item level
 				if (SUI.DB.AutoTurnIn.debug) then
-					print('iLVL Comparisson ' .. firstinvLink .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel)
+					print('iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. firstinvLink)
 				end
 
 				if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
