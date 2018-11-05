@@ -161,7 +161,12 @@ function PlayerFrames:OnInitialize()
 						name = L['HTextMode'],
 						type = 'select',
 						order = 22,
-						values = {[1] = L['HTextMode1'], [2] = L['HTextMode2'], [3] = L['HTextMode3'], [4] = L['HTextMode1'] .. ' (Percentage)'},
+						values = {
+							[1] = L['HTextMode1'],
+							[2] = L['HTextMode2'],
+							[3] = L['HTextMode3'],
+							[4] = L['HTextMode1'] .. ' (Percentage)'
+						},
 						get = function(info)
 							return SUI.DBMod.PlayerFrames.bars.health.textmode
 						end,
@@ -477,22 +482,34 @@ function PlayerFrames:OnInitialize()
 				set = function(info, val)
 					SUI.DBMod.PlayerFrames.BossFrame.scale = val
 				end
+			},
+			bar2 = {name = L['ArenaFrames'], type = 'header', order = 20},
+			arena = {
+				name = L['ShowFrames'],
+				type = 'toggle',
+				order = 21,
+				get = function(info)
+					return SUI.DBMod.PlayerFrames.ArenaFrame.display
+				end,
+				set = function(info, val)
+					SUI.DBMod.PlayerFrames.ArenaFrame.display = val
+				end
+			},
+			arenascale = {
+				name = L['ScaleFrames'],
+				type = 'range',
+				order = 23,
+				width = 'full',
+				min = .01,
+				max = 2,
+				step = .01,
+				get = function(info)
+					return SUI.DBMod.PlayerFrames.ArenaFrame.scale
+				end,
+				set = function(info, val)
+					SUI.DBMod.PlayerFrames.ArenaFrame.scale = val
+				end
 			}
-
-			-- bar2 = {name=L["ArenaFrames"],type="header",order=20},
-			-- arena = { name = L["ShowFrames"], type = "toggle",order=21,disabled=true,
-			-- get = function(info) return SUI.DBMod.PlayerFrames.ArenaFrame.display; end,
-			-- set = function(info,val) SUI.DBMod.PlayerFrames.ArenaFrame.display = val; end
-			-- },
-			-- arenareset = {name = L["ResetLoc"],type = "execute",order=22,disabled=true,
-			-- desc = L["ResetLocDesc"],
-			-- func = function() SUI.DBMod.PlayerFrames.ArenaFrame.moved = false; PlayerFrames:UpdateArenaFramePosition(); end
-			-- },
-			-- arenascale = { name = L["ScaleFrames"], type = "range",order=23,width="full",disabled=true,
-			-- min=.01,max=2,step=.01,
-			-- get = function(info) return SUI.DBMod.PlayerFrames.ArenaFrame.scale; end,
-			-- set = function(info,val) SUI.DBMod.PlayerFrames.ArenaFrame.scale = val; end
-			-- },
 		}
 	}
 
