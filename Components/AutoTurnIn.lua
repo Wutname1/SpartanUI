@@ -381,13 +381,17 @@ function module.QUEST_COMPLETE()
 		elseif SUI.DB.AutoTurnIn.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
+				if not SUI.DB.AutoTurnIn.debug then
 				module:TurnInQuest(GreedID)
+				end
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
+				if not SUI.DB.AutoTurnIn.debug then
 				module:TurnInQuest(UpgradeID)
 				if SUI.DB.AutoTurnIn.autoequip then
 					module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 				end
+			end
 			end
 		else
 			if (GreedID and not UpgradeID) then
