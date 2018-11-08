@@ -601,7 +601,7 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled and (not module:blacklisted(GetActiveTitle())) then
+	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled then
 		CompleteQuest()
 	end
 end
