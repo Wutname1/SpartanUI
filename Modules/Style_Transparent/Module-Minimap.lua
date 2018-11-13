@@ -24,7 +24,8 @@ function Transparent_MiniMapCreate()
 		'OnHide',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint('TOP', UIParent, 'TOP', 0, -15)
+			Minimap:SetParent(UIParent)
+			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 		end
 	)
 
