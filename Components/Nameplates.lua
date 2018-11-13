@@ -260,15 +260,15 @@ local NameplateCallback = function(self, event, unit)
 	-- Update Player Icons
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
 		if self.Runes then
-			self:EnableElement('Runes')
-			self.Runes:ForceUpdate()
+			-- self:EnableElement('Runes')
+			-- self.Runes:ForceUpdate()
 		elseif self.ClassPower then
 			self:EnableElement('ClassPower')
 			self.ClassPower:ForceUpdate()
 		end
 	else
 		if self.Runes then
-			self:DisableElement('Runes')
+			-- self:DisableElement('Runes')
 		elseif self.ClassPower then
 			self:DisableElement('ClassPower')
 		end
