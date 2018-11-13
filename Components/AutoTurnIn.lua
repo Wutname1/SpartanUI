@@ -217,7 +217,7 @@ local function ScanTip(itemLink)
 		if line:GetText():match(itemLevelPattern) then
 			return tonumber(line:GetText():match(itemLevelPattern))
 		end
-		end
+	end
 	return 0
 end
 
@@ -227,7 +227,7 @@ function module:GetiLVL(itemLink)
 	end
 
 	local itemQuality, itemLevel = select(3, GetItemInfo(itemLink))
-
+	
 	-- if a heirloom return a huge number so we dont replace it.
 	if (itemQuality == 7) then
 		return math.huge
@@ -382,16 +382,16 @@ function module.QUEST_COMPLETE()
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
 				if not SUI.DB.AutoTurnIn.debug then
-				module:TurnInQuest(GreedID)
+					module:TurnInQuest(GreedID)
 				end
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
 				if not SUI.DB.AutoTurnIn.debug then
-				module:TurnInQuest(UpgradeID)
-				if SUI.DB.AutoTurnIn.autoequip then
-					module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
+					module:TurnInQuest(UpgradeID)
+					if SUI.DB.AutoTurnIn.autoequip then
+						module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
+					end
 				end
-			end
 			end
 		else
 			if (GreedID and not UpgradeID) then

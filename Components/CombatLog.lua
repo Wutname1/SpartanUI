@@ -18,7 +18,8 @@ function module:OnInitialize()
 		heroicdungeon = false,
 		normaldungeon = false,
 		loggingActive = false,
-		FirstLaunch = true
+		FirstLaunch = true,
+		debug = false
 	}
 	if not SUI.DB.CombatLog then
 		SUI.DB.CombatLog = Defaults
@@ -83,7 +84,14 @@ end
 
 function module:LogCheck(event)
 	local _, type, difficulty, _, maxPlayers = GetInstanceInfo()
-
+	if SUI.DB.CombatLog.debug then
+		print('LogCheck')
+		print('event: ' .. event)
+		print('type: ' .. type)
+		print('difficulty: ' .. difficulty)
+		print('maxPlayers: ' .. maxPlayers)
+	end
+	
 	if (SUI.DB.CombatLog.alwayson) then
 		module:announce('Always on')
 		LoggingCombat(true)
@@ -116,7 +124,7 @@ function module:LogCheck(event)
 		module:announce('Mythic Dungeon')
 		LoggingCombat(true)
 	elseif
-		(SUI.DB.CombatLog.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 23 and
+		(SUI.DB.CombatLog.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and
 			maxPlayers == 5
 	 then
 		-- 8 - Mythic+ Mode Instance
@@ -154,7 +162,7 @@ function module:Options()
 				end,
 				set = function(info, val)
 					SUI.DB.CombatLog.alwayson = val
-					module:LogCheck()
+					module:LogCheck('force')
 				end
 			},
 			announce = {
@@ -167,7 +175,19 @@ function module:Options()
 				end,
 				set = function(info, val)
 					SUI.DB.CombatLog.announce = val
-					module:LogCheck()
+					module:LogCheck('force')
+				end
+			},
+			debug = {
+				name = L['Debug mode'],
+				type = 'toggle',
+				order = 500,
+				get = function(info)
+					return SUI.DB.CombatLog.debug
+				end,
+				set = function(info, val)
+					SUI.DB.CombatLog.debug = val
+					module:LogCheck('force')
 				end
 			},
 			raid = {
@@ -186,7 +206,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidlegacy = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					},
 					raidlfr = {
@@ -198,7 +218,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidlfr = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					},
 					raidnormal = {
@@ -210,7 +230,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidnormal = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					},
 					raidheroic = {
@@ -222,7 +242,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidheroic = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					},
 					raidmythic = {
@@ -234,7 +254,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.raidmythic = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					}
 				}
@@ -255,7 +275,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.normaldungeon = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					},
 					heroicdungeon = {
@@ -267,7 +287,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.heroicdungeon = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					},
 					mythicdungeon = {
@@ -279,7 +299,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.mythicdungeon = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					},
 					mythicplus = {
@@ -291,7 +311,7 @@ function module:Options()
 						end,
 						set = function(info, val)
 							SUI.DB.CombatLog.mythicplus = val
-							module:LogCheck()
+							module:LogCheck('force')
 						end
 					}
 				}
