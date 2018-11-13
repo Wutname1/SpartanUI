@@ -34,6 +34,14 @@ function SUI:comma_value(n)
 	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. SUI.DB.font.NumberSeperator):reverse()) .. right
 end
 
+function SUI:round(val, decimal)
+	if (decimal) then
+		return math.floor((val * 10 ^ decimal) + 0.5) / (10 ^ decimal)
+	else
+		return math.floor(val + 0.5)
+	end
+end
+
 function SUI:FontSetup()
 	for i = 5, 22 do
 		local filename
