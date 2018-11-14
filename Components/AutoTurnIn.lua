@@ -210,7 +210,6 @@ local function ScanTip(itemLink)
 	scanningTooltip:SetHyperlink(itemLink)
 	-- scanningTooltip:Show()
 
-
 	local ilevel = nil
 	-- Find the iLVL inthe tooltip
 	for i = 2, scanningTooltip:NumLines() do
@@ -228,7 +227,7 @@ function module:GetiLVL(itemLink)
 	end
 
 	local itemQuality, itemLevel = select(3, GetItemInfo(itemLink))
-	
+
 	-- if a heirloom return a huge number so we dont replace it.
 	if (itemQuality == 7) then
 		return math.huge
@@ -238,11 +237,11 @@ function module:GetiLVL(itemLink)
 	return ScanTip(itemLink)
 end
 
--- turns quest in printing reward text if `showrewardtext` option is set.
+-- turns quest in printing reward text if `ChatText` option is set.
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
-	if (SUI.DB.AutoTurnIn.showrewardtext) then
+	if (SUI.DB.AutoTurnIn.ChatText) then
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 	if IsAltKeyDown() then
@@ -302,9 +301,9 @@ function module.QUEST_DETAIL()
 	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) and (not IsAltKeyDown()) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
-		AcceptQuest()
+			AcceptQuest()
+		end
 	end
-end
 
 function module.QUEST_COMPLETE()
 	if not SUI.DB.AutoTurnIn.TurnInEnabled then
@@ -432,7 +431,6 @@ function module:VarArgForActiveQuests(...)
 	local INDEX_CONST = 6
 
 	for i = 1, select('#', ...), INDEX_CONST do
-
 		local name = select(i * 1, GetGossipActiveQuests(i))
 		local isComplete = select(i + 3, ...) -- complete status
 		if (isComplete) and (not module:blacklisted(name)) then
@@ -506,7 +504,8 @@ function module:FirstLaunch()
 			ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
 			ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
 			ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
-			ATI.options.autoequip = StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
+			ATI.options.autoequip =
+				StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
 			-- Positioning
 			StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
@@ -550,7 +549,7 @@ function module:blacklisted(name)
 		end
 		return true
 	end
-	
+
 	for k2, _ in pairs(WildcardBlackList) do
 		if string.find(string.lower(name), string.lower(k2)) then
 			if SUI.DB.AutoTurnIn.debug then
@@ -559,7 +558,7 @@ function module:blacklisted(name)
 			return true
 		end
 	end
-	
+
 	return false
 end
 
@@ -579,7 +578,6 @@ function module.GOSSIP_SHOW()
 		return
 	end
 	for k, v in pairs(options) do
-
 		if (v ~= 'gossip') and (not module:blacklisted(v)) and string.find(v, ' ') then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if SUI.DB.AutoTurnIn.AutoGossipSafeMode and (not string.find(string.lower(v), 'quest')) then
@@ -588,7 +586,9 @@ function module.GOSSIP_SHOW()
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
-			SUI:Print('Selecting: ' .. v)
+			if SUI.DB.AutoTurnIn.ChatText then
+				SUI:Print('Selecting: ' .. v)
+			end
 			if SUI.DB.AutoTurnIn.debug then
 				SUI.DB.AutoTurnIn.Blacklist[v] = true
 				print(v .. '---BLACKLISTED')
@@ -602,13 +602,14 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled then
+	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled and (not module:blacklisted(GetTitleText())) then
 		CompleteQuest()
 	end
 end
 
 function module:OnInitialize()
 	local Defaults = {
+		ChatText = true,
 		FirstLaunch = true,
 		debug = false,
 		TurnInEnabled = true,
@@ -618,7 +619,6 @@ function module:OnInitialize()
 		AcceptRepeatable = false,
 		trivial = false,
 		lootreward = true,
-		showrewardtext = true,
 		autoequip = false,
 		armor = {},
 		weapon = {},
@@ -776,9 +776,22 @@ function module:BuildOptions()
 					}
 				}
 			},
+			ChatText = {
+				name = L['Output quest text in chat'],
+				type = 'toggle',
+				width = 'double',
+				order = 30,
+				get = function(info)
+					return SUI.DB.AutoTurnIn.ChatText
+				end,
+				set = function(info, val)
+					SUI.DB.AutoTurnIn.ChatText = val
+				end
+			},
 			debugMode = {
 				name = L['Debug mode'],
 				type = 'toggle',
+				width = 'full',
 				order = 900,
 				get = function(info)
 					return SUI.DB.AutoTurnIn.debug
