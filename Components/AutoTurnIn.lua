@@ -37,6 +37,7 @@ local itemCache =
 	}
 )
 local WildcardBlackList = {
+	['wartime donation'] = true,
 	['work order'] = true,
 	['supplies needed'] = true,
 	['taxi'] = true,
