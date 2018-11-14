@@ -301,12 +301,21 @@ function module.MERCHANT_CLOSED()
 end
 
 function module.QUEST_DETAIL()
-	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) and (not IsAltKeyDown()) then
+	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
+
+		if SUI.DB.AutoTurnIn.ChatText then
+			SUI:Print(GetTitleText())
+			print(GetQuestText())
+			SUI:Print(L['Quest Objectives'])
+			print(GetObjectiveText())
+		end
+		if (not IsAltKeyDown()) then
 			AcceptQuest()
 		end
 	end
+end
 
 function module.QUEST_COMPLETE()
 	if not SUI.DB.AutoTurnIn.TurnInEnabled then
