@@ -249,6 +249,9 @@ function module:TurnInQuest(rewardIndex)
 		module:CancelAllTimers()
 		return
 	end
+	if not module:blacklisted(GetTitleText()) then
+		return
+	end
 
 	GetQuestReward(rewardIndex)
 end
