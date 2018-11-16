@@ -245,11 +245,12 @@ function module:TurnInQuest(rewardIndex)
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 	if IsAltKeyDown() then
-		SUI:Print('Canceling loot selection')
+		SUI:Print('Override key held, turn in disabled')
 		module:CancelAllTimers()
 		return
 	end
-	if not module:blacklisted(GetTitleText()) then
+	if module:blacklisted(GetTitleText()) then
+		SUI:Print('Quest is blacklisted, not turning in.')
 		return
 	end
 
