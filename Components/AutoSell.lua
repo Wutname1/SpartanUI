@@ -165,7 +165,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	local name,
 		_,
 		quality,
-		iLevel,
+		_,
 		_,
 		itemType,
 		itemSubType,
@@ -197,6 +197,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	local NotInGearset = true
 	local NotConsumable = true
 	local IsGearToken = false
+	local iLevel = SUI:GetiLVL(ilink)
 
 	if quality == 0 and SUI.DB.AutoSell.Gray then
 		qualitysellable = true
