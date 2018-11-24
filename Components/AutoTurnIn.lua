@@ -382,15 +382,17 @@ function module.QUEST_COMPLETE()
 		end
 
 		-- Check if it is a weapon, do this last incase it only rewards one item
-		if itemEquipLoc == 'MainHandSlot' or itemEquipLoc == 'SecondaryHandSlot' then
-			QuestRewardsWeapon = true
+		if slot[1] == 'MainHandSlot' or slot[1] == 'SecondaryHandSlot' then
+			QuestRewardsWeapon = 'weapon'
+		elseif slot[1] == 'Trinket0Slot' then
+			QuestRewardsWeapon = 'trinket'
 		end
 	end
 
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
-			SUI:Print(L['Canceling turn in, quest rewards weapon.'])
+			SUI:Print(L['Canceling turn in, quest rewards ' .. QuestRewardsWeapon .. '.'])
 		elseif SUI.DB.AutoTurnIn.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
