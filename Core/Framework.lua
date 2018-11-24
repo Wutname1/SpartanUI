@@ -804,7 +804,9 @@ function SUI:GetiLVL(itemLink)
 		return 0
 	end
 
-	local itemQuality, itemLevel = select(3, GetItemInfo(itemLink))
+	local scanningTooltip = CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
+	local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
+	local itemQuality = select(3, GetItemInfo(itemLink))
 
 	-- if a heirloom return a huge number so we dont replace it.
 	if (itemQuality == 7) then
@@ -820,9 +822,7 @@ function SUI:GetiLVL(itemLink)
 	-- if not ilevel then
 	-- Load tooltip
 	scanningTooltip:SetHyperlink(itemLink)
-	-- scanningTooltip:Show()
 
-	local ilevel = nil
 	-- Find the iLVL inthe tooltip
 	for i = 2, scanningTooltip:NumLines() do
 		local line = _G['AutoTurnInTooltipTextLeft' .. i]

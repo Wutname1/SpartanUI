@@ -116,8 +116,7 @@ local BlackList = {
 	["i've heard this tale before... <skip the scenario and begin your next mission.>"] = true,
 	['release me.'] = true
 }
-local anchor, scanningTooltip = nil, CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
-local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
+
 
 local Lquests = {
 	-- Steamwheedle Cartel
