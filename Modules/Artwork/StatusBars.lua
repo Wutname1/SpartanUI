@@ -108,9 +108,9 @@ local updateText = function(self)
 	local valFill, valMax, valPercent
 
 	if (module.DB[side].display == 'xp') then
-		local _, rested, now, goal = UnitLevel('player'), GetXPExhaustion() or 0, UnitXP('player'), UnitXPMax('player')
+		local rested, now, goal = GetXPExhaustion() or 0, UnitXP('player'), UnitXPMax('player')
 		if now ~= 0 then
-			rested = (rested / goal) * 400
+			rested = (rested / goal) * self:GetWidth()
 
 			if
 				(rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))) >
