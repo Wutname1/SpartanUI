@@ -37,6 +37,7 @@ local itemCache =
 	}
 )
 local WildcardBlackList = {
+	['wartime donation'] = true,
 	['work order'] = true,
 	['supplies needed'] = true,
 	['taxi'] = true,
@@ -115,8 +116,7 @@ local BlackList = {
 	["i've heard this tale before... <skip the scenario and begin your next mission.>"] = true,
 	['release me.'] = true
 }
-local anchor, scanningTooltip = nil, CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
-local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
+
 
 local Lquests = {
 	-- Steamwheedle Cartel
@@ -198,55 +198,20 @@ local Lquests = {
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
 
-local function ScanTip(itemLink)
-	-- Setup the scanning tooltip
-	-- Why do this here and not in OnEnable? If the player is not questing there is no need for this to exsist.
-	scanningTooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-
-	-- If the item is not in the cache populate it.
-	-- if not ilevel then
-	-- Load tooltip
-	scanningTooltip:SetHyperlink(itemLink)
-	-- scanningTooltip:Show()
-
-
-	local ilevel = nil
-	-- Find the iLVL inthe tooltip
-	for i = 2, scanningTooltip:NumLines() do
-		local line = _G['AutoTurnInTooltipTextLeft' .. i]
-		if line:GetText():match(itemLevelPattern) then
-			return tonumber(line:GetText():match(itemLevelPattern))
-		end
-	end
-	return 0
-end
-
-function module:GetiLVL(itemLink)
-	if not itemLink then
-		return 0
-	end
-
-	local itemQuality, itemLevel = select(3, GetItemInfo(itemLink))
-	
-	-- if a heirloom return a huge number so we dont replace it.
-	if (itemQuality == 7) then
-		return math.huge
-	end
-
-	-- Scan the tooltip
-	return ScanTip(itemLink)
-end
-
--- turns quest in printing reward text if `showrewardtext` option is set.
+-- turns quest in printing reward text if `ChatText` option is set.
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
-	if (SUI.DB.AutoTurnIn.showrewardtext) then
+	if (SUI.DB.AutoTurnIn.ChatText) then
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 	if IsAltKeyDown() then
-		SUI:Print('Canceling loot selection')
+		SUI:Print('Override key held, turn in disabled')
 		module:CancelAllTimers()
+		return
+	end
+	if module:blacklisted(GetTitleText()) then
+		SUI:Print('Quest is blacklisted, not turning in.')
 		return
 	end
 
@@ -298,10 +263,19 @@ function module.MERCHANT_CLOSED()
 end
 
 function module.QUEST_DETAIL()
-	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) and (not IsAltKeyDown()) then
+	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
-		AcceptQuest()
+
+		if SUI.DB.AutoTurnIn.ChatText then
+			SUI:Print(GetTitleText())
+			print(GetQuestText())
+			SUI:Print(L['Quest Objectives'])
+			print(GetObjectiveText())
+		end
+		if (not IsAltKeyDown()) then
+			AcceptQuest()
+		end
 	end
 end
 
@@ -321,7 +295,7 @@ function module.QUEST_COMPLETE()
 			return
 		end
 		local itemName, _, itemQuality, itemLevel, _, _, _, _, itemEquipLoc, _, itemSellPrice = GetItemInfo(link)
-		local QuestItemTrueiLVL = module:GetiLVL(link, itemQuality, itemLevel)
+		local QuestItemTrueiLVL = SUI:GetiLVL(link, itemQuality, itemLevel)
 
 		-- Check the items value
 		if itemSellPrice > GreedValue then
@@ -335,7 +309,7 @@ function module.QUEST_COMPLETE()
 		if (slot) then
 			local firstSlot = GetInventorySlotInfo(slot[1])
 			local firstinvLink = GetInventoryItemLink('player', firstSlot)
-			local EquipedLevel = module:GetiLVL(firstinvLink)
+			local EquipedLevel = SUI:GetiLVL(firstinvLink)
 
 			if EquipedLevel then
 				-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
@@ -343,7 +317,7 @@ function module.QUEST_COMPLETE()
 					local secondSlot = GetInventorySlotInfo(slot[2])
 					local secondinvLink = GetInventoryItemLink('player', secondSlot)
 					if (invLink) then
-						local eq2Level = module:GetiLVL(invLink)
+						local eq2Level = SUI:GetiLVL(invLink)
 						if (EquipedLevel > eq2Level) then
 							if (SUI.DB.AutoTurnIn.debug) then
 								print('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
@@ -369,15 +343,17 @@ function module.QUEST_COMPLETE()
 		end
 
 		-- Check if it is a weapon, do this last incase it only rewards one item
-		if itemEquipLoc == 'MainHandSlot' or itemEquipLoc == 'SecondaryHandSlot' then
-			QuestRewardsWeapon = true
+		if slot[1] == 'MainHandSlot' or slot[1] == 'SecondaryHandSlot' then
+			QuestRewardsWeapon = 'weapon'
+		elseif slot[1] == 'Trinket0Slot' then
+			QuestRewardsWeapon = 'trinket'
 		end
 	end
 
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
-			SUI:Print(L['Canceling turn in, quest rewards weapon.'])
+			SUI:Print(L['Canceling turn in, quest rewards ' .. QuestRewardsWeapon .. '.'])
 		elseif SUI.DB.AutoTurnIn.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
@@ -431,7 +407,6 @@ function module:VarArgForActiveQuests(...)
 	local INDEX_CONST = 6
 
 	for i = 1, select('#', ...), INDEX_CONST do
-
 		local name = select(i * 1, GetGossipActiveQuests(i))
 		local isComplete = select(i + 3, ...) -- complete status
 		if (isComplete) and (not module:blacklisted(name)) then
@@ -505,7 +480,8 @@ function module:FirstLaunch()
 			ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
 			ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
 			ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
-			ATI.options.autoequip = StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
+			ATI.options.autoequip =
+				StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
 			-- Positioning
 			StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
@@ -549,7 +525,7 @@ function module:blacklisted(name)
 		end
 		return true
 	end
-	
+
 	for k2, _ in pairs(WildcardBlackList) do
 		if string.find(string.lower(name), string.lower(k2)) then
 			if SUI.DB.AutoTurnIn.debug then
@@ -558,7 +534,7 @@ function module:blacklisted(name)
 			return true
 		end
 	end
-	
+
 	return false
 end
 
@@ -578,7 +554,6 @@ function module.GOSSIP_SHOW()
 		return
 	end
 	for k, v in pairs(options) do
-
 		if (v ~= 'gossip') and (not module:blacklisted(v)) and string.find(v, ' ') then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if SUI.DB.AutoTurnIn.AutoGossipSafeMode and (not string.find(string.lower(v), 'quest')) then
@@ -587,7 +562,9 @@ function module.GOSSIP_SHOW()
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
-			SUI:Print('Selecting: ' .. v)
+			if SUI.DB.AutoTurnIn.ChatText then
+				SUI:Print('Selecting: ' .. v)
+			end
 			if SUI.DB.AutoTurnIn.debug then
 				SUI.DB.AutoTurnIn.Blacklist[v] = true
 				print(v .. '---BLACKLISTED')
@@ -601,13 +578,14 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled then
+	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled and (not module:blacklisted(GetTitleText())) then
 		CompleteQuest()
 	end
 end
 
 function module:OnInitialize()
 	local Defaults = {
+		ChatText = true,
 		FirstLaunch = true,
 		debug = false,
 		TurnInEnabled = true,
@@ -617,7 +595,6 @@ function module:OnInitialize()
 		AcceptRepeatable = false,
 		trivial = false,
 		lootreward = true,
-		showrewardtext = true,
 		autoequip = false,
 		armor = {},
 		weapon = {},
@@ -775,9 +752,22 @@ function module:BuildOptions()
 					}
 				}
 			},
+			ChatText = {
+				name = L['Output quest text in chat'],
+				type = 'toggle',
+				width = 'double',
+				order = 30,
+				get = function(info)
+					return SUI.DB.AutoTurnIn.ChatText
+				end,
+				set = function(info, val)
+					SUI.DB.AutoTurnIn.ChatText = val
+				end
+			},
 			debugMode = {
 				name = L['Debug mode'],
 				type = 'toggle',
+				width = 'full',
 				order = 900,
 				get = function(info)
 					return SUI.DB.AutoTurnIn.debug

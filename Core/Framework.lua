@@ -799,6 +799,40 @@ end
 
 ---------------		Misc Backend		-------------------------------
 
+function SUI:GetiLVL(itemLink)
+	if not itemLink then
+		return 0
+	end
+
+	local scanningTooltip = CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
+	local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
+	local itemQuality = select(3, GetItemInfo(itemLink))
+
+	-- if a heirloom return a huge number so we dont replace it.
+	if (itemQuality == 7) then
+		return math.huge
+	end
+
+	-- Scan the tooltip
+	-- Setup the scanning tooltip
+	-- Why do this here and not in OnEnable? If the player is not questing there is no need for this to exsist.
+	scanningTooltip:SetOwner(UIParent, 'ANCHOR_NONE')
+
+	-- If the item is not in the cache populate it.
+	-- if not ilevel then
+	-- Load tooltip
+	scanningTooltip:SetHyperlink(itemLink)
+
+	-- Find the iLVL inthe tooltip
+	for i = 2, scanningTooltip:NumLines() do
+		local line = _G['AutoTurnInTooltipTextLeft' .. i]
+		if line:GetText():match(itemLevelPattern) then
+			return tonumber(line:GetText():match(itemLevelPattern))
+		end
+	end
+	return 0
+end
+
 function SUI:GoldFormattedValue(rawValue)
 	local gold = math.floor(rawValue / 10000)
 	local silver = math.floor((rawValue % 10000) / 100)

@@ -343,7 +343,7 @@ function module:MiniMap()
 		function(this, event)
 			Minimap:ClearAllPoints()
 			Minimap:SetParent(UIParent)
-			Minimap:SetPoint('TOP', UIParent, 'TOP', 0, -20)
+			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 			-- SUI:GetModule('Component_Minimap'):ShapeChange('square')
 		end
 	)

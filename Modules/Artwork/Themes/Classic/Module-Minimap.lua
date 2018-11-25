@@ -65,7 +65,7 @@ function module:MiniMap()
 			end
 			Minimap:ClearAllPoints()
 			Minimap:SetParent(UIParent)
-			Minimap:SetPoint('TOP', UIParent, 'TOP', 0, -20)
+			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 			shapechange('square')
 		end
 	)
