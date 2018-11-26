@@ -327,14 +327,19 @@ end
 
 function module:Repair()
 	-- First see if this vendor can repair
-	if (CanMerchantRepair() and SUI.DB.AutoSell.AutoRepair) then
-		SUI:Print(L['Auto repairing if needed'])
+	if ((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) then
 		-- Use guild repair
 		if (CanGuildBankRepair() == 1 and SUI.DB.AutoSell.UseGuildBankRepair) then
+			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'] )
 			RepairAllItems(1)
 		end
-		-- Use self repair
-		RepairAllItems()
+
+		-- Use self repair, this is done 2nd incase guild repairs did not cover it all.
+		if GetRepairAllCost() ~= 0 then
+			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'] )
+			RepairAllItems()
+		end
+		
 	end
 end
 
