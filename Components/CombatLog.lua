@@ -65,6 +65,21 @@ function module:OnEnable()
 	CombatLog_Watcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
 	CombatLog_Watcher:RegisterEvent('PLAYER_ENTERING_WORLD')
+	SUI:AddChatCommand('logging', function(arg)
+		if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
+			if LoggingCombat() then
+				SUI:Print('Currently logging combat')
+			else
+				SUI:Print('NOT Currently logging combat')
+			end
+		elseif arg == 'start' then
+			module:announce('manual command')
+			LoggingCombat(true)
+		elseif arg == 'stop' then
+			module:announce('disabled')
+			LoggingCombat(false)
+		end
+	end)
 end
 
 function module:OnDisable()
