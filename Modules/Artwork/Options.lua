@@ -20,7 +20,7 @@ function Artwork_Core:SetupOptions()
 			if (InCombatLockdown()) then
 				SUI:Print(ERR_NOT_IN_COMBAT)
 			else
-				SUI.DB.scale = min(1, SUI:round(val))
+				SUI.DB.scale = val
 				Style:updateScale()
 			end
 		end,
