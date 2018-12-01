@@ -325,21 +325,21 @@ function module:SellTrashInBag(ItemListing)
 	end
 end
 
-function module:Repair()
+function module:Repair(PersonalFunds)
 	-- First see if this vendor can repair
-	if ((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) then
+	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) and not PersonalFunds) then
 		-- Use guild repair
-		if (CanGuildBankRepair() == 1 and SUI.DB.AutoSell.UseGuildBankRepair) then
+		if (CanGuildBankRepair() and SUI.DB.AutoSell.UseGuildBankRepair) then
 			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'] )
 			RepairAllItems(1)
-		end
-
-		-- Use self repair, this is done 2nd incase guild repairs did not cover it all.
-		if GetRepairAllCost() ~= 0 then
+			module:ScheduleTimer('Repair', .7, true)
+		elseif GetRepairAllCost() ~= 0 then
 			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'] )
 			RepairAllItems()
 		end
-		
+	elseif GetRepairAllCost() ~= 0 then
+		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'] )
+		RepairAllItems()
 	end
 end
 
