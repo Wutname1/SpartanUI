@@ -1121,7 +1121,6 @@ function SUI:ChatCommand(input)
 			AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 			AceConfigDialog:Open('SpartanUI')
 		end
-		
 	end
 end
 

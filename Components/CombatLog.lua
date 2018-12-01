@@ -1,6 +1,7 @@
 local SUI = SUI
 local module = SUI:NewModule('Component_CombatLog')
 local L = SUI.L
+module.DisplayName = L['Combat logging']
 ----------------------------------------------------------------------------------------------------
 local CombatLog_Watcher = CreateFrame('Frame')
 
