@@ -2,6 +2,7 @@ local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Module_UnitFrames', 'AceTimer-3.0')
 module.DisplayName = L['Unit frames']
 local DB = SUI.DB.Unitframes
+module.DB = {}
 local loadstring = loadstring
 module.frames = {
 	arena = {},
@@ -16,8 +17,8 @@ module.frames = {
 -- 3.  UnitFrames OnEnable is called
 -- 4.  Frames are spawned
 --
--- Player Customization DB format:
--- PlayerCustomizations.STYLE.FRAME
+-- DB is used for Player Customization. It uses the format:
+-- DB.STYLE.FRAME
 --
 -- Styles DB Format
 -- Style = {
@@ -204,13 +205,12 @@ local DefaultSettings = {
 				}
 			}
 		}
-	},
-	Styles = {}
+	}
 }
 local CurrentSettings = {}
 
 function module:AddStyleSettings(settings)
-	DB.Styles[style.id] = settings
+	module.DB.Styles[settings.id] = settings
 end
 
 function module:SpawnFrames()
@@ -221,7 +221,7 @@ end
 
 function module:OnInitalize()
 	--First merge in all the default information
-	DB = SUI:MergeData(DB, DefaultSettings, false)
+	DB = SUI:MergeData(DB, DefaultSettings.PlayerCustomizations, false)
 
 	--Ensure the default FrameOptions are proper
 	DB.FrameOptions = DefaultSettings.FrameOptions
