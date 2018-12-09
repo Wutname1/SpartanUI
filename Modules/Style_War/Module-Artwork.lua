@@ -124,8 +124,8 @@ function module:SetupVehicleUI()
 			function()
 				War_SpartanUI:Hide()
 				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
-				Minimap:Hide()
-			end
+					Minimap:Hide()
+				end
 			end
 		)
 		petbattle:HookScript(
@@ -133,8 +133,8 @@ function module:SetupVehicleUI()
 			function()
 				War_SpartanUI:Show()
 				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
-				Minimap:Show()
-			end
+					Minimap:Show()
+				end
 			end
 		)
 		War_SpartanUI:HookScript(
@@ -144,14 +144,16 @@ function module:SetupVehicleUI()
 			end
 		)
 		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
-		RegisterStateDriver(War_SpartanUI, 'visibility', '[overridebar][vehicleui] hide; show')
+		RegisterStateDriver(Fel_SpartanUI, 'visibility', '[overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
 		UnRegisterStateDriver(petbattle, 'visibility')
-		UnRegisterStateDriver(War_SpartanUI, 'visibility')
+		UnRegisterStateDriver(Fel_SpartanUI, 'visibility')
+		UnRegisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 
