@@ -278,12 +278,14 @@ end
 function module:SetupVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
 		RegisterStateDriver(Minimal_SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
 		UnRegisterStateDriver(Minimal_SpartanUI, 'visibility')
+		UnRegisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 

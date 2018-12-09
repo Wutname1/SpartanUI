@@ -146,19 +146,24 @@ function module:SetupVehicleUI()
 		petbattle:HookScript(
 			'OnHide',
 			function()
+				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+					Minimap:Hide()
+				end
 				Fel_SpartanUI:Hide()
-				Minimap:Hide()
 			end
 		)
 		petbattle:HookScript(
 			'OnShow',
 			function()
+				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+					Minimap:Show()
+				end
 				Fel_SpartanUI:Show()
-				Minimap:Show()
 			end
 		)
 		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
 		RegisterStateDriver(Fel_SpartanUI, 'visibility', '[overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
@@ -166,6 +171,7 @@ function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
 		UnRegisterStateDriver(petbattle, 'visibility')
 		UnRegisterStateDriver(Fel_SpartanUI, 'visibility')
+		UnRegisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 
@@ -234,7 +240,7 @@ function module:EnableArtwork()
 	Artwork_Core:MoveTalkingHeadUI()
 	module:SetupVehicleUI()
 
-	if (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+	if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
 		module:MiniMap()
 	end
 

@@ -326,6 +326,9 @@ function module:SellTrashInBag(ItemListing)
 end
 
 function module:Repair(PersonalFunds)
+	if not SUI.DB.AutoSell.AutoRepair then
+		return
+	end
 	-- First see if this vendor can repair
 	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) and not PersonalFunds) then
 		-- Use guild repair

@@ -446,7 +446,18 @@ function module:factory()
 			)
 
 			-- Hide with SpartanUI
-			RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+			SpartanUI:HookScript(
+				'OnHide',
+				function()
+					statusbar:Hide()
+				end
+			)
+			SpartanUI:HookScript(
+				'OnShow',
+				function()
+					statusbar:Show()
+				end
+			)
 
 			--Hook the visibility of the tooltip to the text
 			tooltip:HookScript(

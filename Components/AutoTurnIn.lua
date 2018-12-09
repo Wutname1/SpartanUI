@@ -340,13 +340,13 @@ function module.QUEST_COMPLETE()
 					UpgradeAmmount = (QuestItemTrueiLVL - EquipedLevel)
 				end
 			end
-		end
-
-		-- Check if it is a weapon, do this last incase it only rewards one item
-		if slot[1] == 'MainHandSlot' or slot[1] == 'SecondaryHandSlot' then
-			QuestRewardsWeapon = 'weapon'
-		elseif slot[1] == 'Trinket0Slot' then
-			QuestRewardsWeapon = 'trinket'
+			
+			-- Check if it is a weapon, do this last incase it only rewards one item
+			if slot[1] == 'MainHandSlot' or slot[1] == 'SecondaryHandSlot' then
+				QuestRewardsWeapon = 'weapon'
+			elseif slot[1] == 'Trinket0Slot' then
+				QuestRewardsWeapon = 'trinket'
+			end
 		end
 	end
 
