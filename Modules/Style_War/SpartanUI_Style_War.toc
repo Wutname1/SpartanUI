@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: SpartanUI: |CFF0070DDStyle - |r|CFFFF0000War|r
 ## Notes: Fel style and layout for SpartanUI
 ## Version: @project-version@
