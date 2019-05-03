@@ -319,6 +319,14 @@ function module:OnEnable()
 	module:BuildOptions()
 	SpartanoUF:SetActiveStyle('Spartan_NamePlates')
 	SpartanoUF:SpawnNamePlates(nil, NameplateCallback)
+
+	-- oUF is not hiding the mana bar. So we need to hide it.
+	ClassNameplateManaBarFrame:HookScript(
+	'OnShow',
+	function()
+		ClassNameplateManaBarFrame:Hide()
+	end)
+	
 end
 
 function module:BuildOptions()
