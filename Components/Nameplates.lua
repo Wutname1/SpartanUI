@@ -117,7 +117,7 @@ local NamePlateFactory = function(frame, unit)
 		-- Castbar
 		if SUI.DBMod.NamePlates.ShowCastbar then
 			local cast = CreateFrame('StatusBar', nil, frame)
-			cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+				cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
 			cast:SetSize(frame:GetWidth(), SUI.DBMod.NamePlates.Castbar.height)
 			cast:SetStatusBarTexture(BarTexture)
 			cast:SetStatusBarColor(1, 0.7, 0)
@@ -143,7 +143,7 @@ local NamePlateFactory = function(frame, unit)
 			frame.Castbar = cast
 			frame.Castbar:SetParent(frame)
 		end
-
+		
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', nil, frame)
 		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
@@ -226,8 +226,8 @@ local NamePlateFactory = function(frame, unit)
 		if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
 			local attachPoint = 'Castbar'
 			if not SUI.DBMod.NamePlates.ShowCastbar then
-				attachPoint = 'Health'
-			end
+					attachPoint = 'Health'
+				end
 			SUI:PlayerPowerIcons(frame, attachPoint)
 		end
 
@@ -260,15 +260,15 @@ local NameplateCallback = function(self, event, unit)
 	-- Update Player Icons
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
 		if self.Runes then
-			-- self:EnableElement('Runes')
-			-- self.Runes:ForceUpdate()
+			self:EnableElement('Runes')
+			self.Runes:ForceUpdate()
 		elseif self.ClassPower then
 			self:EnableElement('ClassPower')
 			self.ClassPower:ForceUpdate()
 		end
 	else
 		if self.Runes then
-			-- self:DisableElement('Runes')
+			self:DisableElement('Runes')
 		elseif self.ClassPower then
 			self:DisableElement('ClassPower')
 		end

@@ -469,9 +469,9 @@ local CreateLargeFrame = function(self, unit)
 			end
 		end
 
-		self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
-		self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
 		if unit == 'player' then
+			self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+			self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
 			local ClassPower = {}
 			for index = 1, 10 do
 				local Bar = CreateFrame('StatusBar', nil, self)
