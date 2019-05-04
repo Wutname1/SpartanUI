@@ -133,7 +133,8 @@ local function ActiveRule()
 	--Failback of Rule1
 	if not SUI.DB.Tooltips.SuppressNoMatch then
 		SUI:Print('|cffff0000Error detected')
-		SUI:Print('None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1')
+		SUI:Print(L['None of your custom tooltip conditions have been met. Defaulting to what is specified for Rule 1'])
+		SUI:Print(L['You may customize the tooltip settings via'] + ' /SUI > Modules > Tooltips')
 	end
 	return 'Rule1'
 end
