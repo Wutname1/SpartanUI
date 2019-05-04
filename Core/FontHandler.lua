@@ -124,8 +124,8 @@ end
 ]]
 function SUI:FontRefresh(Module)
 	if not Module then
-		for key, v in pairs(module.FontItems) do
-			SUI:FontRefesh(key)
+		for key, _ in pairs(module.FontItems) do
+			SUI:FontRefresh(key)
 		end
 	else
 		for i = 1, module.FontItems[Module].Count do
