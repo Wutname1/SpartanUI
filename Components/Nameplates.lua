@@ -114,10 +114,27 @@ local NamePlateFactory = function(frame, unit)
 			frame:Tag(frame.Name, nameString)
 		end
 
+		-- Mana/Energy
+		if SUI.DBMod.NamePlates.ShowPlayerPower then
+			local power = CreateFrame('StatusBar', nil, frame)
+			power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+			power:SetSize(frame:GetWidth(), SUI.DBMod.NamePlates.Power.height)
+			power:SetStatusBarTexture(BarTexture)
+
+			frame.Power = power
+			frame.Power.colorPower = true
+			frame.Power.frequentUpdates = true
+		end
+
 		-- Castbar
 		if SUI.DBMod.NamePlates.ShowCastbar then
 			local cast = CreateFrame('StatusBar', nil, frame)
-			cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+			if SUI.DBMod.NamePlates.ShowPlayerPower then
+				cast:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
+			else
+				cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+			end
+			
 			cast:SetSize(frame:GetWidth(), SUI.DBMod.NamePlates.Castbar.height)
 			cast:SetStatusBarTexture(BarTexture)
 			cast:SetStatusBarColor(1, 0.7, 0)
@@ -143,6 +160,7 @@ local NamePlateFactory = function(frame, unit)
 			frame.Castbar = cast
 			frame.Castbar:SetParent(frame)
 		end
+		
 
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', nil, frame)
@@ -226,8 +244,13 @@ local NamePlateFactory = function(frame, unit)
 		if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
 			local attachPoint = 'Castbar'
 			if not SUI.DBMod.NamePlates.ShowCastbar then
-				attachPoint = 'Health'
+				if SUI.DBMod.NamePlates.ShowPlayerPower then
+					attachPoint = 'Power'
+				else
+					attachPoint = 'Health'
+				end
 			end
+			
 			SUI:PlayerPowerIcons(frame, attachPoint)
 		end
 
@@ -260,15 +283,15 @@ local NameplateCallback = function(self, event, unit)
 	-- Update Player Icons
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
 		if self.Runes then
-			-- self:EnableElement('Runes')
-			-- self.Runes:ForceUpdate()
+			self:EnableElement('Runes')
+			self.Runes:ForceUpdate()
 		elseif self.ClassPower then
 			self:EnableElement('ClassPower')
 			self.ClassPower:ForceUpdate()
 		end
 	else
 		if self.Runes then
-			-- self:DisableElement('Runes')
+			self:DisableElement('Runes')
 		elseif self.ClassPower then
 			self:DisableElement('ClassPower')
 		end
@@ -289,11 +312,15 @@ function module:OnInitialize()
 		ShowRareElite = true,
 		ShowQuestIndicator = true,
 		ShowRaidTargetIndicator = true,
+		ShowPlayerPower = true,
 		ShowPlayerPowerIcons = true,
 		FlashOnInterruptibleCast = true,
 		Scale = 1,
 		Health = {
 			height = 5
+		},
+		Power = {
+			height = 3
 		},
 		Castbar = {
 			height = 5
@@ -319,6 +346,14 @@ function module:OnEnable()
 	module:BuildOptions()
 	SpartanoUF:SetActiveStyle('Spartan_NamePlates')
 	SpartanoUF:SpawnNamePlates(nil, NameplateCallback)
+
+	-- oUF is not hiding the mana bar. So we need to hide it.
+	ClassNameplateManaBarFrame:HookScript(
+	'OnShow',
+	function()
+		ClassNameplateManaBarFrame:Hide()
+	end)
+	
 end
 
 function module:BuildOptions()
@@ -346,6 +381,17 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DBMod.NamePlates.ShowLevel = val
+				end
+			},
+			ShowPlayerPower = {
+				name = L['Show mana/energy'],
+				type = 'toggle',
+				order = 3,
+				get = function(info)
+					return SUI.DBMod.NamePlates.ShowPlayerPower
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.ShowPlayerPower = val
 				end
 			},
 			ShowCastbar = {
@@ -443,11 +489,25 @@ function module:BuildOptions()
 					SUI.DBMod.NamePlates.Health.height = val
 				end
 			},
+			PowerbarHeight = {
+				name = L['Power bar height'],
+				type = 'range',
+				min = 1,
+				max = 15,
+				step = 1,
+				order = 101,
+				get = function(info)
+					return SUI.DBMod.NamePlates.Power.height
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.Power.height = val
+				end
+			},
 			CastbarHeight = {
 				name = L['Cast bar height'],
 				type = 'range',
 				min = 1,
-				max = 20,
+				max = 15,
 				step = 1,
 				order = 102,
 				get = function(info)
