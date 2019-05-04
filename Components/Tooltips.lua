@@ -307,13 +307,18 @@ local TooltipSetUnit = function(self)
 			end
 		end
 
-		if (UnitIsAFK(unit)) then
-			GameTooltipTextLeft1:SetFormattedText('|cffFF0000%s|r |c%s%s|r', L['AFK'], colors.colorStr, nameString)
-		elseif (UnitIsDND(unit)) then
-			GameTooltipTextLeft1:SetFormattedText('|cffFFA500%s|r |c%s%s|r', L['DND'], colors.colorStr, nameString)
+		if colors then
+			if (UnitIsAFK(unit)) then
+				GameTooltipTextLeft1:SetFormattedText('|cffFF0000%s|r |c%s%s|r', L['AFK'], colors.colorStr, nameString)
+			elseif (UnitIsDND(unit)) then
+				GameTooltipTextLeft1:SetFormattedText('|cffFFA500%s|r |c%s%s|r', L['DND'], colors.colorStr, nameString)
+			else
+				GameTooltipTextLeft1:SetFormattedText('|c%s%s|r', colors.colorStr, nameString)
+			end
 		else
-			GameTooltipTextLeft1:SetFormattedText('|c%s%s|r', colors.colorStr, nameString)
+			GameTooltipTextLeft1:SetText(nameString)
 		end
+		
 
 		if (gName) then
 			if gRealm then
