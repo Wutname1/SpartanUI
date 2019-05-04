@@ -9,6 +9,48 @@ local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 local Images
 local PlayerFaction = UnitFactionGroup('Player')
 
+function module:ImageSetup()
+	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
+		Images = {
+			bg = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
+				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
+			},
+			smallbg = {
+				Texture = 'Interface\\Scenarios\\LegionInvasion',
+				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
+			},
+			flair = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
+				Coords = {0, 0.1, 0, 0.2}
+			},
+			flair2 = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
+				Coords = {0, 0.1, 0, 0.2}
+			}
+		}
+	else
+		Images = {
+			bg = {
+				Texture = 'Interface\\Scenarios\\LegionInvasion',
+				Coords = {.02, .385, .45, .575} --left, right, top, bottom
+			},
+			smallbg = {
+				Texture = 'Interface\\Scenarios\\LegionInvasion',
+				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
+			},
+			flair = {
+				Texture = 'Interface\\Scenarios\\LegionInvasion',
+				Coords = {0.140625, 0.615234375, 0, 0.265625}
+			},
+			flair2 = {
+				Texture = 'Interface\\Addons\\SpartanUI_Style_Fel\\Images\\Party-Frame',
+				Coords = {0.1953125, 0.8046875, 0.1328125, 0.859375}
+			}
+		}
+	end
+end
+
 local function UpdatePowerPrep(self, event, specID)
 	local element = self.Power
 	element:SetMinMaxValues(0, 1)
@@ -953,45 +995,7 @@ function module:FrameSize(size)
 end
 
 function module:PlayerFrames()
-	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
-		Images = {
-			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
-				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
-			},
-			smallbg = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
-			},
-			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
-				Coords = {0, 0.1, 0, 0.2}
-			},
-			flair2 = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
-				Coords = {0, 0.1, 0, 0.2}
-			}
-		}
-	else
-		Images = {
-			bg = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {.02, .385, .45, .575} --left, right, top, bottom
-			},
-			smallbg = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
-			},
-			flair = {
-				Texture = 'Interface\\Scenarios\\LegionInvasion',
-				Coords = {0.140625, 0.615234375, 0, 0.265625}
-			},
-			flair2 = {
-				Texture = 'Interface\\Addons\\SpartanUI_Style_Fel\\Images\\Party-Frame',
-				Coords = {0.1953125, 0.8046875, 0.1328125, 0.859375}
-			}
-		}
-	end
+	module:ImageSetup()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
 	SpartanoUF:SetActiveStyle('Spartan_FelPlayerFrames')
 	PlayerFrames:BuffOptions()
@@ -1197,6 +1201,7 @@ function module:PositionFrame(b)
 end
 
 function module:RaidFrames()
+	module:ImageSetup()
 	SpartanoUF:SetActiveStyle('Spartan_FelRaidFrames')
 	module:RaidOptions()
 
@@ -1260,6 +1265,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
+	module:ImageSetup()
 	PartyFrames = SUI:GetModule('PartyFrames')
 	SpartanoUF:SetActiveStyle('Spartan_FelPartyFrames')
 	module:PartyOptions()
