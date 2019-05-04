@@ -7,7 +7,6 @@ local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 local Images
-local PlayerFaction = UnitFactionGroup('Player')
 
 function module:ImageSetup()
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then

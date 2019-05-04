@@ -390,7 +390,6 @@ function module:EnableFramework()
 			end
 		end
 
-		local old_VehicleSeatIndicatorButton_OnClick = VehicleSeatIndicatorButton_OnClick
 		VehicleSeatIndicatorButton_OnClick = My_VehicleSeatIndicatorButton_OnClick
 
 		function My_VehicleSeatIndicatorDropDown_Initialize()
@@ -410,7 +409,6 @@ function module:EnableFramework()
 			PlaySound('UChatScrollButton')
 		end
 
-		local old_VehicleSeatIndicatorDropDown_Initialize = VehicleSeatIndicatorDropDown_Initialize()
 		VehicleSeatIndicatorDropDown_Initialize = My_VehicleSeatIndicatorDropDown_Initialize
 
 		UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, 'MENU')

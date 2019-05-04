@@ -361,12 +361,6 @@ local TooltipSetUnit = function(self)
 			)
 		end
 	else
-		if UnitIsTapDenied(unit) then
-			colors = TAPPED_COLOR
-		else
-			colors = FACTION_BAR_COLORS[UnitReaction(unit, 'player')]
-		end
-
 		for i = 2, self:NumLines() do
 			local tip = _G['GameTooltipTextLeft' .. i]
 			if tip:GetText() and tip:GetText():find(LEVEL) then
