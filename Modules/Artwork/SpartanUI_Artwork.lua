@@ -6,7 +6,14 @@ local BartenderMin = '4.8.0'
 function Artwork_Core:updateScale()
 	--Set default scale based on if the user is using a widescreen.
 	if (not SUI.DB.scale) then
-		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
+		local Resolution = ''
+		if select(4, GetBuildInfo()) >= 70000 then
+			Resolution = GetCVar("gxWindowedResolution")
+		else
+			Resolution = GetCVar("gxResolution")
+		end
+
+		local width, height = string.match(Resolution, '(%d+).-(%d+)')
 		if (tonumber(width) / tonumber(height) > 4 / 3) then
 			SUI.DB.scale = 0.92
 		else
