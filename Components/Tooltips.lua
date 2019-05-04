@@ -133,7 +133,8 @@ local function ActiveRule()
 	--Failback of Rule1
 	if not SUI.DB.Tooltips.SuppressNoMatch then
 		SUI:Print('|cffff0000Error detected')
-		SUI:Print('None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1')
+		SUI:Print(L['None of your custom tooltip conditions have been met. Defaulting to what is specified for Rule 1'])
+		SUI:Print(L['You may customize the tooltip settings via'] + ' /SUI > Modules > Tooltips')
 	end
 	return 'Rule1'
 end
@@ -306,13 +307,18 @@ local TooltipSetUnit = function(self)
 			end
 		end
 
-		if (UnitIsAFK(unit)) then
-			GameTooltipTextLeft1:SetFormattedText('|cffFF0000%s|r |c%s%s|r', L['AFK'], colors.colorStr, nameString)
-		elseif (UnitIsDND(unit)) then
-			GameTooltipTextLeft1:SetFormattedText('|cffFFA500%s|r |c%s%s|r', L['DND'], colors.colorStr, nameString)
+		if colors then
+			if (UnitIsAFK(unit)) then
+				GameTooltipTextLeft1:SetFormattedText('|cffFF0000%s|r |c%s%s|r', L['AFK'], colors.colorStr, nameString)
+			elseif (UnitIsDND(unit)) then
+				GameTooltipTextLeft1:SetFormattedText('|cffFFA500%s|r |c%s%s|r', L['DND'], colors.colorStr, nameString)
+			else
+				GameTooltipTextLeft1:SetFormattedText('|c%s%s|r', colors.colorStr, nameString)
+			end
 		else
-			GameTooltipTextLeft1:SetFormattedText('|c%s%s|r', colors.colorStr, nameString)
+			GameTooltipTextLeft1:SetText(nameString)
 		end
+		
 
 		if (gName) then
 			if gRealm then
@@ -355,12 +361,6 @@ local TooltipSetUnit = function(self)
 			)
 		end
 	else
-		if UnitIsTapDenied(unit) then
-			colors = TAPPED_COLOR
-		else
-			colors = FACTION_BAR_COLORS[UnitReaction(unit, 'player')]
-		end
-
 		for i = 2, self:NumLines() do
 			local tip = _G['GameTooltipTextLeft' .. i]
 			if tip:GetText() and tip:GetText():find(LEVEL) then

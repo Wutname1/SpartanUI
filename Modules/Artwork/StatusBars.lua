@@ -61,7 +61,7 @@ local GetFactionDetails = function(name)
 	local description = ' '
 	for i = 1, GetNumFactions() do
 		if name == GetFactionInfo(i) then
-			_, description = GetFactionInfo(i)
+			description = select(2, GetFactionInfo(i))
 		end
 	end
 	return description

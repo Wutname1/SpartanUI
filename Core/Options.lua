@@ -29,17 +29,17 @@ function module:OnInitialize()
 	end
 
 	local enabled
-	_, _, _, enabled = GetAddOnInfo('SpartanUI_Artwork')
+	enabled = select(4, GetAddOnInfo('SpartanUI_Artwork'))
 	ModsLoaded.Artwork = enabled
-	_, _, _, enabled = GetAddOnInfo('SpartanUI_PlayerFrames')
+	enabled = select(4, GetAddOnInfo('SpartanUI_PlayerFrames'))
 	ModsLoaded.PlayerFrames = enabled
-	_, _, _, enabled = GetAddOnInfo('SpartanUI_PartyFrames')
+	enabled = select(4, GetAddOnInfo('SpartanUI_PartyFrames'))
 	ModsLoaded.PartyFrames = enabled
-	_, _, _, enabled = GetAddOnInfo('SpartanUI_RaidFrames')
+	enabled = select(4, GetAddOnInfo('SpartanUI_RaidFrames'))
 	ModsLoaded.RaidFrames = enabled
-	_, _, _, enabled = GetAddOnInfo('SpartanUI_SpinCam')
+	enabled = select(4, GetAddOnInfo('SpartanUI_SpinCam'))
 	ModsLoaded.SpinCam = enabled
-	_, _, _, enabled = GetAddOnInfo('SpartanUI_FilmEffects')
+	enabled = select(4, GetAddOnInfo('SpartanUI_FilmEffects'))
 	ModsLoaded.FilmEffects = enabled
 
 	SUI.opt.args['General'].args['style'] = {

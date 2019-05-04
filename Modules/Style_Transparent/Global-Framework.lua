@@ -26,7 +26,14 @@ end
 
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
-		local width, height = string.match(GetCVar('gxResolution'), '(%d+).-(%d+)')
+		local Resolution = ''
+		if select(4, GetBuildInfo()) >= 70000 then
+			Resolution = GetCVar("gxWindowedResolution")
+		else
+			Resolution = GetCVar("gxResolution")
+		end
+
+		local width, height = string.match(Resolution, '(%d+).-(%d+)')
 		if (tonumber(width) / tonumber(height) > 4 / 3) then
 			SUI.DB.scale = 0.92
 		else
@@ -383,7 +390,6 @@ function module:EnableFramework()
 			end
 		end
 
-		local old_VehicleSeatIndicatorButton_OnClick = VehicleSeatIndicatorButton_OnClick
 		VehicleSeatIndicatorButton_OnClick = My_VehicleSeatIndicatorButton_OnClick
 
 		function My_VehicleSeatIndicatorDropDown_Initialize()
@@ -403,7 +409,6 @@ function module:EnableFramework()
 			PlaySound('UChatScrollButton')
 		end
 
-		local old_VehicleSeatIndicatorDropDown_Initialize = VehicleSeatIndicatorDropDown_Initialize()
 		VehicleSeatIndicatorDropDown_Initialize = My_VehicleSeatIndicatorDropDown_Initialize
 
 		UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, 'MENU')
