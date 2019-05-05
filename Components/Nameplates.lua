@@ -139,7 +139,7 @@ local NamePlateFactory = function(frame, unit)
 			cast:SetSize(frame:GetWidth(), SUI.DBMod.NamePlates.Castbar.height)
 			cast:SetStatusBarTexture(BarTexture)
 			cast:SetStatusBarColor(1, 0.7, 0)
-			if SUI.DBMod.NamePlates.Castbar.Text then
+			if SUI.DBMod.NamePlates.Castbar.text then
 				cast.Text = cast:CreateFontString()
 				SUI:FormatFont(cast.Text, 7, 'Player')
 				cast.Text:SetJustifyH('CENTER')
@@ -325,7 +325,7 @@ function module:OnInitialize()
 		Castbar = {
 			show = true,
 			height = 5,
-			Text = true,
+			text = true,
 			FlashOnInterruptible = true
 		}
 	}
@@ -558,10 +558,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 20,
 						get = function(info)
-							return SUI.DBMod.NamePlates.Castbar.Text
+							return SUI.DBMod.NamePlates.Castbar.text
 						end,
 						set = function(info, val)
-							SUI.DBMod.NamePlates.Castbar.Text = val
+							SUI.DBMod.NamePlates.Castbar.text = val
 						end
 					},
 					FlashOnInterruptible = {
