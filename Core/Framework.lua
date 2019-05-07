@@ -10,7 +10,7 @@ SUI.L = L
 
 local _G = _G
 local type, pairs = type, pairs
-
+local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 if not SUI.BuildNum then
@@ -1108,9 +1108,24 @@ function SUI:ChatCommand(input)
 		SUI:Print(L['Build'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Build'))
 		SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.DB.Bartender4Version)
 	else
-		AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
-		AceConfigDialog:Open('SpartanUI')
+		if SUIChatCommands[input] then
+			SUIChatCommands[input]()
+		elseif string.find(input, ' ') then
+			for i in string.gmatch(input, "%S+") do
+				local arg, _ = string.gsub(input, i .. ' ', '')
+				if SUIChatCommands[i] then
+					SUIChatCommands[i](arg)
+				end
+			 end
+		else
+			AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
+			AceConfigDialog:Open('SpartanUI')
+		end
 	end
+end
+
+function SUI:AddChatCommand(arg, func)
+	SUIChatCommands[arg] = func
 end
 
 function SUI:Err(mod, err)
