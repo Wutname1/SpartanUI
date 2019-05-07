@@ -5,7 +5,13 @@ module.window = nil
 
 local DisplayRequired, InitDone, ReloadNeeded = false, false, false
 local TotalPageCount, PageDisplayOrder, PageDisplayed = 0, 1, 0
-local PriorityPageList, StandardPageList, FinalPageList, PageID, CurrentDisplay = {}, {}, {}, {}, {}
+local RequiredPageCount, RequiredDisplayOrder, RequiredPageDisplayed = 0, 1, 0
+local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageID, CurrentDisplay = {},
+	{},
+	{},
+	{},
+	{},
+	{}
 local ReloadPage = {
 	ID = 'ReloadPage',
 	Name = 'Reload required',
@@ -30,7 +36,13 @@ local ReloadPage = {
 }
 
 local LoadWatcherEvent = function()
-	module:ShowWizard()
+	if (not module.window or not module.window:IsShown()) then
+		if SUI.DB.SetupWizard.FirstLaunch then
+			module:SetupWizard()
+		elseif DisplayRequired then
+			module:SetupWizard(true)
+		end
+	end
 end
 
 function module:AddPage(PageData)
@@ -51,57 +63,125 @@ function module:AddPage(PageData)
 	end
 	if PageData.RequireDisplay then
 		DisplayRequired = true
+		RequiredPageCount = RequiredPageCount + 1
 	end
 
 	-- Track the Pages defined ID to the generated ID, this allows us to display pages in the order they were added to the system
 	PageID[TotalPageCount] = {
 		ID = PageData.ID,
-		DisplayOrder = nil
+		DisplayOrder = nil,
+		Required = PageData.RequireDisplay
 	}
 end
 
-function module:FindNextPage()
-	-- First make sure our Display Order is up to date
-	-- First add any priority pages
-	for i = 1, TotalPageCount do
-		local key = PageID[i]
+function module:FindNextPage(RequiredPagesOnly)
+	local CurPage, TotalPage = 0, 0
 
-		if PriorityPageList[key.ID] and key.DisplayOrder == nil then
-			FinalPageList[PageDisplayOrder] = key.ID
-			PageID[i][PageDisplayOrder] = PageDisplayOrder
-			PageDisplayOrder = PageDisplayOrder + 1
+	-- First we will do the standard SetupWizard logic. Then upgrade/new module logic
+	if not RequiredPagesOnly then
+		-- First make sure our Display Order is up to date
+		-- First add any priority pages
+		for i = 1, TotalPageCount do
+			local key = PageID[i]
+
+			if PriorityPageList[key.ID] and key.DisplayOrder == nil then
+				FinalPageList[PageDisplayOrder] = key.ID
+				PageID[i][PageDisplayOrder] = PageDisplayOrder
+				PageDisplayOrder = PageDisplayOrder + 1
+			end
 		end
+
+		-- Now add Standard Pages
+		for i = 1, TotalPageCount do
+			local key = PageID[i]
+
+			if StandardPageList[key.ID] and key.DisplayOrder == nil then
+				FinalPageList[PageDisplayOrder] = key.ID
+				PageID[i][PageDisplayOrder] = PageDisplayOrder
+				PageDisplayOrder = PageDisplayOrder + 1
+			end
+		end
+
+		--Find the next undisplayed page
+		if ReloadNeeded and PageDisplayed == TotalPageCount then
+			PageDisplayed = PageDisplayed + 1
+			module.window.Status:Hide()
+			module:DisplayPage(ReloadPage)
+		elseif not ReloadNeeded and PageDisplayed == TotalPageCount then
+			module.window:Hide()
+			module.window = nil
+		elseif FinalPageList[(PageDisplayed + 1)] then
+			PageDisplayed = PageDisplayed + 1
+			local ID = FinalPageList[PageDisplayed]
+
+			-- Find what kind of page this is
+			if PriorityPageList[ID] then
+				module:DisplayPage(PriorityPageList[ID])
+			elseif StandardPageList[ID] then
+				module:DisplayPage(StandardPageList[ID])
+			end
+		end
+
+		-- Update the Status Counter & Progress Bar
+		CurPage = PageDisplayed
+		TotalPage = TotalPageCount
+	else
+		-- First make sure our Display Order is up to date
+		-- First add any priority pages
+		for i = 1, TotalPageCount do
+			local key = PageID[i]
+
+			if PriorityPageList[key.ID] and key.DisplayOrder == nil and key.Required then
+				RequiredPageList[RequiredDisplayOrder] = key.ID
+				PageID[i][RequiredDisplayOrder] = RequiredDisplayOrder
+				RequiredDisplayOrder = RequiredDisplayOrder + 1
+			end
+		end
+
+		-- Now add Standard Pages
+		for i = 1, TotalPageCount do
+			local key = PageID[i]
+
+			if StandardPageList[key.ID] and key.DisplayOrder == nil and key.Required then
+				RequiredPageList[RequiredDisplayOrder] = key.ID
+				PageID[i][RequiredDisplayOrder] = RequiredDisplayOrder
+				RequiredDisplayOrder = RequiredDisplayOrder + 1
+			end
+		end
+
+		--Find the next undisplayed page
+		if ReloadNeeded and RequiredPageDisplayed == RequiredPageCount then
+			RequiredPageDisplayed = RequiredPageDisplayed + 1
+			module.window.Status:Hide()
+			module:DisplayPage(ReloadPage)
+		elseif not ReloadNeeded and RequiredPageDisplayed == RequiredPageCount then
+			module.window:Hide()
+			module.window = nil
+		elseif RequiredPageList[(RequiredPageDisplayed + 1)] then
+			RequiredPageDisplayed = RequiredPageDisplayed + 1
+			local ID = RequiredPageList[RequiredPageDisplayed]
+			-- Find what kind of page this is
+			if PriorityPageList[ID] then
+				module:DisplayPage(PriorityPageList[ID])
+			elseif StandardPageList[ID] then
+				module:DisplayPage(StandardPageList[ID])
+			end
+		end
+
+		-- Update the Status Counter & Progress Bar
+		CurPage = RequiredPageDisplayed
+		TotalPage = RequiredPageCount
 	end
 
-	-- Now add Standard Pages
-	for i = 1, TotalPageCount do
-		local key = PageID[i]
-
-		if StandardPageList[key.ID] and key.DisplayOrder == nil then
-			FinalPageList[PageDisplayOrder] = key.ID
-			PageID[i][PageDisplayOrder] = PageDisplayOrder
-			PageDisplayOrder = PageDisplayOrder + 1
-		end
-	end
-	module.window.ProgressBar:SetMinMaxValues(1, 100)
-
-	--Find the next undisplayed page
-	if ReloadNeeded and PageDisplayed == TotalPageCount then
-		PageDisplayed = PageDisplayed + 1
-		module.window.Status:Hide()
-		module:DisplayPage(ReloadPage)
-	elseif not ReloadNeeded and PageDisplayed == TotalPageCount then
-		module.window:Hide()
-		module.window = nil
-	elseif FinalPageList[(PageDisplayed + 1)] then
-		PageDisplayed = PageDisplayed + 1
-		local ID = FinalPageList[PageDisplayed]
-
-		-- Find what kind of page this is
-		if PriorityPageList[ID] then
-			module:DisplayPage(PriorityPageList[ID])
-		elseif StandardPageList[ID] then
-			module:DisplayPage(StandardPageList[ID])
+	-- Update the Status Counter & Progress Bar
+	if module.window then
+		module.window.Status:SetText(CurPage .. ' /  ' .. TotalPage)
+		if module.window.ProgressBar then
+			if CurPage > TotalPage then
+				module.window.ProgressBar:SetValue(100)
+			else
+				module.window.ProgressBar:SetValue((100 / TotalPage) * (CurPage - 1))
+			end
 		end
 	end
 end
@@ -134,19 +214,9 @@ function module:DisplayPage(PageData)
 	else
 		module.window.Skip:Hide()
 	end
-
-	-- Update the Status Counter & Progress Bar
-	module.window.Status:SetText(PageDisplayed .. ' /  ' .. TotalPageCount)
-	if module.window.ProgressBar then
-		if PageDisplayed > TotalPageCount then
-			module.window.ProgressBar:SetValue(100)
-		else
-			module.window.ProgressBar:SetValue((100 / TotalPageCount) * (PageDisplayed - 1))
-		end
-	end
 end
 
-function module:ShowWizard()
+function module:SetupWizard(RequiredPagesOnly)
 	module.window = StdUi:Window(nil, 'SpartanUI setup wizard', 650, 500)
 	module.window.StdUi = StdUi
 	module.window:SetPoint('CENTER', 0, 0)
@@ -183,7 +253,7 @@ function module:ShowWizard()
 	if TotalPageCount > 1 then
 		-- Add a Progress bar to the bottom
 		local ProgressBar = StdUi:ProgressBar(module.window, (module.window:GetWidth() - 4), 20)
-		ProgressBar:SetMinMaxValues(0, TotalPageCount)
+		ProgressBar:SetMinMaxValues(0, 100)
 		ProgressBar:SetValue(0)
 		ProgressBar:SetPoint('BOTTOM', module.window, 'BOTTOM', 0, 2)
 		module.window.ProgressBar = ProgressBar
@@ -215,7 +285,7 @@ function module:ShowWizard()
 		end
 
 		-- Show the next page
-		module:FindNextPage()
+		module:FindNextPage(RequiredPagesOnly)
 	end
 
 	module.window.Skip:SetScript(
@@ -246,9 +316,9 @@ function module:ShowWizard()
 	module.window.Status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -2, -2)
 
 	-- Display first page
-	module:FindNextPage()
 	module.window.closeBtn:Hide()
 	module.window:Show()
+	module:FindNextPage(RequiredPagesOnly)
 end
 
 function module:OnInitialize()
@@ -332,7 +402,9 @@ function module:WelcomePage()
 					-- Copy profile
 					SUI.SpartanUIDB:CopyProfile(ProfileSelection)
 					-- Set the BT4 Profile
-					Bartender4.db:SetProfile(SUI.SpartanUIDB.profile.SUIProper.Styles[SUI.SpartanUIDB.profile.Modules.Artwork.Style].BartenderProfile)
+					Bartender4.db:SetProfile(
+						SUI.SpartanUIDB.profile.SUIProper.Styles[SUI.SpartanUIDB.profile.Modules.Artwork.Style].BartenderProfile
+					)
 					-- Reload the UI
 					ReloadUI()
 				end
