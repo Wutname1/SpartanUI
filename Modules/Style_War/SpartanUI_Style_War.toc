@@ -4,5 +4,6 @@
 ## Version: @project-version@
 ## Author: Wutname1
 ## RequiredDeps: SpartanUI, Bartender4, SpartanUI_Artwork
+## OptionalDeps: SpartanUI_UnitFrames
 
 Style.xml
