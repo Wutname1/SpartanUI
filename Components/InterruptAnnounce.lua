@@ -152,10 +152,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inBG
+							return SUI.DB.InterruptAnnouncer.active.inBG
 						end,
 						set = function(info, val)
-							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inBG = val
+							SUI.DB.InterruptAnnouncer.active.inBG = val
 						end
 					},
 					inRaid = {
@@ -163,10 +163,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inRaid
+							return SUI.DB.InterruptAnnouncer.active.inRaid
 						end,
 						set = function(info, val)
-							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inRaid = val
+							SUI.DB.InterruptAnnouncer.active.inRaid = val
 						end
 					},
 					inParty = {
@@ -174,10 +174,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inParty
+							return SUI.DB.InterruptAnnouncer.active.inParty
 						end,
 						set = function(info, val)
-							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inParty = val
+							SUI.DB.InterruptAnnouncer.active.inParty = val
 						end
 					},
 					inArena = {
@@ -185,10 +185,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inArena
+							return SUI.DB.InterruptAnnouncer.active.inArena
 						end,
 						set = function(info, val)
-							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inArena = val
+							SUI.DB.InterruptAnnouncer.active.inArena = val
 						end
 					},
 					outdoors = {
@@ -196,10 +196,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.outdoors
+							return SUI.DB.InterruptAnnouncer.active.outdoors
 						end,
 						set = function(info, val)
-							SUI.DB.EnabledComponents.InterruptAnnouncer.active.outdoors = val
+							SUI.DB.InterruptAnnouncer.active.outdoors = val
 						end
 					}
 				}
@@ -228,7 +228,6 @@ function module:Options()
 		}
 	}
 end
-
 
 function module:FirstLaunch()
 	local PageData = {
@@ -269,7 +268,8 @@ function module:FirstLaunch()
 				{text = 'No chat', value = 'SELF'}
 			}
 
-			cLog.options.announceLocation = StdUi:Dropdown(cLog, 190, 20, items, SUI.DB.EnabledComponents.InterruptAnnouncer.announceLocation)
+			cLog.options.announceLocation =
+				StdUi:Dropdown(cLog, 190, 20, items, SUI.DB.EnabledComponents.InterruptAnnouncer.announceLocation)
 
 			-- Create Labels
 			cLog.modEnabled = StdUi:Checkbox(cLog, L['Module enabled'], nil, 20)
