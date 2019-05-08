@@ -7,61 +7,71 @@ local InterruptAnnouncer_Watcher = CreateFrame('Frame')
 
 local function printFormattedString(t, sid, sn, ss, ssid)
 	local msg = SUI.DB.InterruptAnnouncer.text
-	msg = msg:gsub("%%t", t):gsub("%%sn", sn):gsub("%%sc", CombatLog_String_SchoolString(ss)):gsub("%%sl", GetSpellLink(sid)):gsub("%%ys", GetSpellLink(ssid))
-	if options.channel == "SELF" then
+	local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
+
+	msg =
+		msg:gsub('%%t', t):gsub('%%sn', sn):gsub('%%sc', CombatLog_String_SchoolString(ss)):gsub('%%sl', GetSpellLink(sid)):gsub(
+		'%%ys',
+		GetSpellLink(ssid)
+	)
+	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else
-		local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
-
 		if not IsInGroup(2) then
 			if IsInRaid() then
-				if ChatChannel == "INSTANCE_CHAT" then ChatChannel = "RAID" end
+				if ChatChannel == 'INSTANCE_CHAT' then
+					ChatChannel = 'RAID'
+				end
 			elseif IsInGroup(1) then
-				if ChatChannel == "INSTANCE_CHAT" then ChatChannel = "PARTY" end
-			end	
+				if ChatChannel == 'INSTANCE_CHAT' then
+					ChatChannel = 'PARTY'
+				end
+			end
 		elseif IsInGroup(2) then
-			if ChatChannel == "RAID" then ChatChannel = "INSTANCE_CHAT" end
-			if ChatChannel == "PARTY" then ChatChannel = "INSTANCE_CHAT" end
-		end
-
-		if options.smartChannel then
-			if ChatChannel == "RAID" and not IsInRaid() then
-				ChatChannel = "PARTY"
+			if ChatChannel == 'RAID' then
+				ChatChannel = 'INSTANCE_CHAT'
 			end
-
-			if ChatChannel == "PARTY" and not IsInGroup(1) then
-				ChatChannel = "SAY"
-			end
-
-			if ChatChannel == "INSTANCE_CHAT" and not IsInGroup(2) then
-				ChatChannel = "SAY"
-			end
-
-			if ChatChannel == "CHANNEL" and ec == 0 then
-				ChatChannel = "SAY"
+			if ChatChannel == 'PARTY' then
+				ChatChannel = 'INSTANCE_CHAT'
 			end
 		end
-			
+
+		if ChatChannel == 'SMART' then
+			ChatChannel = 'RAID'
+			if ChatChannel == 'RAID' and not IsInRaid() then
+				ChatChannel = 'PARTY'
+			end
+
+			if ChatChannel == 'PARTY' and not IsInGroup(1) then
+				ChatChannel = 'SAY'
+			end
+
+			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then
+				ChatChannel = 'SAY'
+			end
+
+			if ChatChannel == 'CHANNEL' and ec == 0 then
+				ChatChannel = 'SAY'
+			end
+		end
+
 		SendChatMessage(msg, ChatChannel, nil, ec)
 	end
 end
 
 function module:OnInitialize()
 	local Defaults = {
-		alwayson = false,
-		raidmythic = true,
-		raidheroic = true,
-		raidnormal = true,
-		raidlfr = false,
-		raidlegacy = false,
-		mythicplus = true,
-		mythicdungeon = false,
-		heroicdungeon = false,
-		normaldungeon = false,
+		active = {
+			always = false,
+			inBG = false,
+			inRaid = true,
+			inParty = true,
+			inArena = true,
+			outdoors = false
+		},
 		FirstLaunch = true,
 		announceLocation = 'SMART',
-		text = 'Interupted %t %spell',
-		debug = false
+		text = 'Interupted %t %spell'
 	}
 	if not SUI.DB.InterruptAnnouncer then
 		SUI.DB.EnabledComponents.InterruptAnnouncer = false
