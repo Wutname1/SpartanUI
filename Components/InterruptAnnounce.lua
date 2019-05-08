@@ -126,4 +126,105 @@ function module:OnEnable()
 end
 
 function module:Options()
+	SUI.opt.args['ModSetting'].args['InterruptAnnouncer'] = {
+		type = 'group',
+		name = L['Interrupt announcer'],
+		args = {
+			alwayson = {
+				name = L['Always on'],
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return SUI.DB.InterruptAnnouncer.active.alwayson
+				end,
+				set = function(info, val)
+					SUI.DB.InterruptAnnouncer.active.alwayson = val
+				end
+			},
+			active = {
+				name = 'Active',
+				type = 'group',
+				inline = true,
+				order = 100,
+				args = {
+					inBG = {
+						name = 'Battleground',
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inBG
+						end,
+						set = function(info, val)
+							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inBG = val
+						end
+					},
+					inRaid = {
+						name = 'Raid',
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inRaid
+						end,
+						set = function(info, val)
+							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inRaid = val
+						end
+					},
+					inParty = {
+						name = 'Party',
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inParty
+						end,
+						set = function(info, val)
+							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inParty = val
+						end
+					},
+					inArena = {
+						name = 'Arena',
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.inArena
+						end,
+						set = function(info, val)
+							SUI.DB.EnabledComponents.InterruptAnnouncer.active.inArena = val
+						end
+					},
+					outdoors = {
+						name = 'Outdoor',
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.EnabledComponents.InterruptAnnouncer.active.outdoors
+						end,
+						set = function(info, val)
+							SUI.DB.EnabledComponents.InterruptAnnouncer.active.outdoors = val
+						end
+					}
+				}
+			},
+			announceLocation = {
+				name = 'Announce location',
+				type = 'select',
+				order = 200,
+				values = {
+					['SMART'] = 'Instance chat',
+					['INSTANCE_CHAT'] = 'Instance chat',
+					['RAID'] = 'Raid',
+					['PARTY'] = 'Party',
+					['SMART'] = 'SMART',
+					['SAY'] = 'Say',
+					['SELF'] = 'No chat'
+				},
+				get = function(info)
+					return SUI.DB.InterruptAnnouncer.announceLocation
+				end,
+				set = function(info, val)
+					SUI.DB.InterruptAnnouncer.announceLocation = val
+					RaidFrames:UpdateText()
+				end
+			}
+		}
+	}
 end
