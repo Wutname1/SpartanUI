@@ -61,14 +61,12 @@ end
 
 function module:OnInitialize()
 	local Defaults = {
-		active = {
-			always = false,
-			inBG = false,
-			inRaid = true,
-			inParty = true,
-			inArena = true,
-			outdoors = false
-		},
+		always = false,
+		inBG = false,
+		inRaid = true,
+		inParty = true,
+		inArena = true,
+		outdoors = false,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
 		text = 'Interupted %t %spell'
@@ -135,10 +133,10 @@ function module:Options()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return SUI.DB.InterruptAnnouncer.active.alwayson
+					return SUI.DB.InterruptAnnouncer.alwayson
 				end,
 				set = function(info, val)
-					SUI.DB.InterruptAnnouncer.active.alwayson = val
+					SUI.DB.InterruptAnnouncer.alwayson = val
 				end
 			},
 			active = {
@@ -152,10 +150,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.InterruptAnnouncer.active.inBG
+							return SUI.DB.InterruptAnnouncer.inBG
 						end,
 						set = function(info, val)
-							SUI.DB.InterruptAnnouncer.active.inBG = val
+							SUI.DB.InterruptAnnouncer.inBG = val
 						end
 					},
 					inRaid = {
@@ -163,10 +161,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.InterruptAnnouncer.active.inRaid
+							return SUI.DB.InterruptAnnouncer.inRaid
 						end,
 						set = function(info, val)
-							SUI.DB.InterruptAnnouncer.active.inRaid = val
+							SUI.DB.InterruptAnnouncer.inRaid = val
 						end
 					},
 					inParty = {
@@ -174,10 +172,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.InterruptAnnouncer.active.inParty
+							return SUI.DB.InterruptAnnouncer.inParty
 						end,
 						set = function(info, val)
-							SUI.DB.InterruptAnnouncer.active.inParty = val
+							SUI.DB.InterruptAnnouncer.inParty = val
 						end
 					},
 					inArena = {
@@ -185,10 +183,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.InterruptAnnouncer.active.inArena
+							return SUI.DB.InterruptAnnouncer.inArena
 						end,
 						set = function(info, val)
-							SUI.DB.InterruptAnnouncer.active.inArena = val
+							SUI.DB.InterruptAnnouncer.inArena = val
 						end
 					},
 					outdoors = {
@@ -196,10 +194,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.InterruptAnnouncer.active.outdoors
+							return SUI.DB.InterruptAnnouncer.outdoors
 						end,
 						set = function(info, val)
-							SUI.DB.InterruptAnnouncer.active.outdoors = val
+							SUI.DB.InterruptAnnouncer.outdoors = val
 						end
 					}
 				}
