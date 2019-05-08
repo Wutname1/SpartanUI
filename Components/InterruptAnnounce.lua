@@ -243,19 +243,19 @@ function module:FirstLaunch()
 			end
 
 			--Container
-			local cLog = CreateFrame('Frame', nil)
-			cLog:SetParent(SUI_Win)
-			cLog:SetAllPoints(SUI_Win)
+			local IAnnounce = CreateFrame('Frame', nil)
+			IAnnounce:SetParent(SUI_Win)
+			IAnnounce:SetAllPoints(SUI_Win)
 
 			-- Setup checkboxes
-			cLog.options = {}
-			cLog.options.alwayson = StdUi:Checkbox(cLog, L['Always on'], nil, 20)
+			IAnnounce.options = {}
+			IAnnounce.options.alwayson = StdUi:Checkbox(IAnnounce, L['Always on'], nil, 20)
 
-			cLog.options.inBG = StdUi:Checkbox(cLog, L['Announce logging in chat'], nil, 20)
-			cLog.options.inRaid = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
-			cLog.options.inParty = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
-			cLog.options.inArena = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
-			cLog.options.outdoors = StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
+			IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Announce logging in chat'], nil, 20)
+			IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Mythic'], 150, 20)
+			IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Heroic'], 150, 20)
+			IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Normal'], 150, 20)
+			IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Looking for raid'], 150, 20)
 
 			local items = {
 				{text = 'Instance chat', value = 'INSTANCE_CHAT'},
@@ -266,47 +266,38 @@ function module:FirstLaunch()
 				{text = 'No chat', value = 'SELF'}
 			}
 
-			cLog.options.announceLocation =
-				StdUi:Dropdown(cLog, 190, 20, items, SUI.DB.EnabledComponents.InterruptAnnouncer.announceLocation)
+			IAnnounce.options.announceLocation =
+				StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.EnabledComponents.InterruptAnnouncer.announceLocation)
 
 			-- Create Labels
-			cLog.modEnabled = StdUi:Checkbox(cLog, L['Module enabled'], nil, 20)
-			cLog.lblRaid = StdUi:Label(cLog, L['Raid settings'], 13)
-			cLog.lblDungeon = StdUi:Label(cLog, L['Dungeon settings'], 13)
+			IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
+			IAnnounce.lblActive = StdUi:Label(IAnnounce, 'Active settings', 13)
+			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, L['Announce location'], 13)
 
 			-- Positioning
-			StdUi:GlueTop(cLog.modEnabled, SUI_Win, 0, -10)
-			StdUi:GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
-			StdUi:GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
+			StdUi:GlueTop(IAnnounce.modEnabled, SUI_Win, 0, -10)
+			StdUi:GlueBelow(IAnnounce.options.alwayson, IAnnounce.modEnabled, -100, -5)
+			StdUi:GlueRight(IAnnounce.options.announceLocation, IAnnounce.options.alwayson, 5, 0)
 
-			-- Raid Settings
-			StdUi:GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
-			StdUi:GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
-			StdUi:GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
-			StdUi:GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
+			-- Active locations
+			StdUi:GlueTop(IAnnounce.inBG, IAnnounce.modEnabled, -150, -80)
+			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.inBG, 0, -5)
+			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 5, 0)
+			StdUi:GlueRight(IAnnounce.options.inArena, IAnnounce.options.inParty, 5, 0)
 
-			StdUi:GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
-			StdUi:GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
-
-			--Dungeon Settings
-			StdUi:GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
-			StdUi:GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
-			StdUi:GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
-			StdUi:GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
-
-			StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
+			StdUi:GlueBelow(IAnnounce.options.outdoors, IAnnounce.options.inRaid, 0, -5)
 
 			-- Defaults
-			cLog.modEnabled:SetChecked(SUI.DB.EnabledComponents.InterruptAnnouncer)
-			for key, object in pairs(cLog.options) do
+			IAnnounce.modEnabled:SetChecked(SUI.DB.EnabledComponents.InterruptAnnouncer)
+			for key, object in pairs(IAnnounce.options) do
 				object:SetChecked(SUI.DB.InterruptAnnouncer[key])
 			end
 
-			cLog.modEnabled:HookScript(
+			IAnnounce.modEnabled:HookScript(
 				'OnClick',
 				function()
-					for _, object in pairs(cLog.options) do
-						if cLog.modEnabled:GetChecked() then
+					for _, object in pairs(IAnnounce.options) do
+						if IAnnounce.modEnabled:GetChecked() then
 							object:Enable()
 						else
 							object:Disable()
@@ -315,14 +306,14 @@ function module:FirstLaunch()
 				end
 			)
 
-			SUI_Win.cLog = cLog
+			SUI_Win.IAnnounce = IAnnounce
 		end,
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
-			local cLog = window.content.cLog
-			SUI.DB.EnabledComponents.InterruptAnnouncer = cLog.modEnabled:GetChecked()
+			local IAnnounce = window.content.IAnnounce
+			SUI.DB.EnabledComponents.InterruptAnnouncer = IAnnounce.modEnabled:GetChecked()
 
-			for key, object in pairs(cLog.options) do
+			for key, object in pairs(IAnnounce.options) do
 				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
 			end
 
