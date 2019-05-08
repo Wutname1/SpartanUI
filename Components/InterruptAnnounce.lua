@@ -207,7 +207,6 @@ function module:Options()
 				type = 'select',
 				order = 200,
 				values = {
-					['SMART'] = 'Instance chat',
 					['INSTANCE_CHAT'] = 'Instance chat',
 					['RAID'] = 'Raid',
 					['PARTY'] = 'Party',
