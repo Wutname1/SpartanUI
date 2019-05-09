@@ -9,7 +9,4 @@
 	<Script file="MailOpenAll.lua" />
 	<Script file="Nameplates.lua" />
 	<Script file="CombatLog.lua" />
-	<!-- WIP Modules
-	<Script file="Chatbox.lua" />
-	-->
 </Ui>
