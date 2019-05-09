@@ -225,7 +225,7 @@ function module:Options()
 					['PARTY'] = 'Party',
 					['SMART'] = 'SMART',
 					['SAY'] = 'Say',
-					['SELF'] = 'No chat'
+					['SELF'] = 'Self'
 				},
 				get = function(info)
 					return SUI.DB.InterruptAnnouncer.announceLocation
@@ -271,11 +271,11 @@ function module:FirstLaunch()
 
 			local items = {
 				{text = 'Instance chat', value = 'INSTANCE_CHAT'},
-				{text = 'RAID', value = 'RAID'},
-				{text = 'PARTY', value = 'PARTY'},
-				{text = 'SAY', value = 'SAY'},
-				{text = 'SMART', value = 'SMART'},
-				{text = 'No chat', value = 'SELF'}
+				{text = 'Raid', value = 'RAID'},
+				{text = 'Party', value = 'PARTY'},
+				{text = 'Say', value = 'SAY'},
+				{text = 'Smart', value = 'SMART'},
+				{text = 'Self', value = 'SELF'}
 			}
 
 			IAnnounce.announceLocation =
