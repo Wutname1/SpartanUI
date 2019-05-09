@@ -107,6 +107,7 @@ end
 
 function module:OnEnable()
 	module:Options()
+	module:FirstLaunch()
 
 	InterruptAnnouncer_Watcher:SetScript(
 		'OnEvent',
@@ -265,8 +266,11 @@ function module:FirstLaunch()
 				{text = 'No chat', value = 'SELF'}
 			}
 
-			IAnnounce.options.announceLocation =
-				StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.EnabledComponents.InterruptAnnouncer.announceLocation)
+			IAnnounce.announceLocation =
+				StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.InterruptAnnouncer.announceLocation)
+			IAnnounce.announceLocation.OnValueChanged = function(self, value)
+				SUI.DB.InterruptAnnouncer.announceLocation = value
+			end
 
 			-- Create Labels
 			IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
@@ -276,11 +280,11 @@ function module:FirstLaunch()
 			-- Positioning
 			StdUi:GlueTop(IAnnounce.modEnabled, SUI_Win, 0, -10)
 			StdUi:GlueBelow(IAnnounce.options.alwayson, IAnnounce.modEnabled, -100, -5)
-			StdUi:GlueRight(IAnnounce.options.announceLocation, IAnnounce.options.alwayson, 5, 0)
+			StdUi:GlueRight(IAnnounce.announceLocation, IAnnounce.options.alwayson, 5, 0)
 
 			-- Active locations
-			StdUi:GlueTop(IAnnounce.inBG, IAnnounce.modEnabled, -150, -80)
-			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.inBG, 0, -5)
+			StdUi:GlueTop(IAnnounce.options.inBG, IAnnounce.modEnabled, -150, -80)
+			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.options.inBG, 0, -5)
 			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 5, 0)
 			StdUi:GlueRight(IAnnounce.options.inArena, IAnnounce.options.inParty, 5, 0)
 
@@ -315,11 +319,10 @@ function module:FirstLaunch()
 			for key, object in pairs(IAnnounce.options) do
 				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
 			end
-
-			SUI.DB.InterruptAnnouncer.FirstLaunch = false
+			-- SUI.DB.InterruptAnnouncer.FirstLaunch = false
 		end,
 		Skip = function()
-			SUI.DB.InterruptAnnouncer.FirstLaunch = false
+			-- SUI.DB.InterruptAnnouncer.FirstLaunch = false
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
