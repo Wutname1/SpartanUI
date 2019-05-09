@@ -85,18 +85,16 @@ local SpawnUnitFrame = function(self, unit)
 			health.ratio = health:CreateFontString()
 			SUI:FormatFont(health.ratio, 10, 'Raid')
 			-- health.ratio:SetSize(35, 11);
-			health.ratio:SetJustifyH('LEFT')
-			health.ratio:SetJustifyV('BOTTOM')
+			health.ratio:SetJustifyH('RIGHT')
+			health.ratio:SetJustifyV('MIDDLE')
 			self:Tag(health.ratio, '[perhp]%')
 
 			if SUI.DBMod.RaidFrames.FrameStyle == 'large' then
 				health.ratio:SetPoint('LEFT', health, 'RIGHT', 6, 0)
-				health.ratio:SetPoint('TOPLEFT', health, 'BOTTOMRIGHT', -29, 13)
 				health.value:SetPoint('RIGHT', health, 'RIGHT', -2, 0)
 				health.value:SetSize(health:GetWidth() / 1.1, 11)
 			elseif SUI.DBMod.RaidFrames.FrameStyle == 'medium' then
 				health.ratio:SetPoint('LEFT', health, 'RIGHT', 6, 0)
-				health.ratio:SetPoint('TOPLEFT', health, 'BOTTOMRIGHT', -29, 13)
 				health.value:SetPoint('RIGHT', health, 'RIGHT', -2, 0)
 				health.value:SetSize(health:GetWidth() / 1.5, 11)
 			elseif SUI.DBMod.RaidFrames.FrameStyle == 'small' then
