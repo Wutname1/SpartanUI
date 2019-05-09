@@ -67,6 +67,7 @@ function module:OnInitialize()
 		inParty = true,
 		inArena = true,
 		outdoors = false,
+		includePets = true,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
 		text = 'Interupted %t %spell'
@@ -82,15 +83,15 @@ end
 function module:COMBAT_LOG_EVENT_UNFILTERED()
 	local continue = false
 	local inInstance, instanceType = IsInInstance()
-	if instanceType == 'arena' and options.inArena then
+	if instanceType == 'arena' and SUI.DB.InterruptAnnouncer.inArena then
 		continue = true
-	elseif inInstance and instanceType == 'party' and options.inParty then
+	elseif inInstance and instanceType == 'party' and SUI.DB.InterruptAnnouncer.inParty then
 		continue = true
-	elseif instanceType == 'pvp' and options.inBG then
+	elseif instanceType == 'pvp' and SUI.DB.InterruptAnnouncer.inBG then
 		continue = true
-	elseif instanceType == 'raid' and options.inRaid then
+	elseif instanceType == 'raid' and SUI.DB.InterruptAnnouncer.inRaid then
 		continue = true
-	elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and options.outdoors then
+	elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and SUI.DB.InterruptAnnouncer.outdoors then
 		continue = true
 	end
 
@@ -99,7 +100,7 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 	if
 		continue and
 			(eventType == 'SPELL_INTERRUPT' and
-				(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and options.includePets)))
+				(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and SUI.DB.InterruptAnnouncer.includePets)))
 	 then
 		printFormattedString(destName, spellID, spellName, spellSchool, sourceID)
 	end
@@ -202,6 +203,17 @@ function module:Options()
 						end
 					}
 				}
+			},
+			includePets = {
+				name = 'includePets',
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return SUI.DB.InterruptAnnouncer.includePets
+				end,
+				set = function(info, val)
+					SUI.DB.InterruptAnnouncer.includePets = val
+				end
 			},
 			announceLocation = {
 				name = 'Announce location',
@@ -319,10 +331,10 @@ function module:FirstLaunch()
 			for key, object in pairs(IAnnounce.options) do
 				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
 			end
-			-- SUI.DB.InterruptAnnouncer.FirstLaunch = false
+			SUI.DB.InterruptAnnouncer.FirstLaunch = false
 		end,
 		Skip = function()
-			-- SUI.DB.InterruptAnnouncer.FirstLaunch = false
+			SUI.DB.InterruptAnnouncer.FirstLaunch = false
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
