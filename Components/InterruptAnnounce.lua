@@ -3,7 +3,7 @@ local module = SUI:NewModule('Component_InterruptAnnouncer')
 local L = SUI.L
 module.DisplayName = 'Interrupt announcer'
 ----------------------------------------------------------------------------------------------------
-local InterruptAnnouncer_Watcher = CreateFrame('Frame')
+local lastTime, lastSpellID = nil, nil
 
 local function printFormattedString(t, sid, sn, ss, ssid)
 	local msg = SUI.DB.InterruptAnnouncer.text
@@ -73,7 +73,6 @@ function module:OnInitialize()
 		text = 'Interupted %t %spell'
 	}
 	if not SUI.DB.InterruptAnnouncer then
-		SUI.DB.EnabledComponents.InterruptAnnouncer = false
 		SUI.DB.InterruptAnnouncer = Defaults
 	else
 		SUI.DB.InterruptAnnouncer = SUI:MergeData(SUI.DB.InterruptAnnouncer, Defaults, false)
@@ -98,8 +97,18 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 		continue = true
 	end
 
-	local _, eventType, _, sourceGUID, _, _, _, _, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool =
+	local timeStamp, eventType, _, sourceGUID, _, _, _, _, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool =
 		CombatLogGetCurrentEventInfo()
+
+	-- Check if time and ID was same as last
+	-- Note: This is to prevent flooding announcements on AoE taunts.
+	if timeStamp == lastTime and spellID == lastSpellID then
+		return
+	end
+
+	-- Update last time and ID
+	lastTime, lastSpellID = timeStamp, spellID
+	
 	if
 		continue and
 			(eventType == 'SPELL_INTERRUPT' and
@@ -282,8 +291,7 @@ function module:FirstLaunch()
 				{text = 'Self', value = 'SELF'}
 			}
 
-			IAnnounce.announceLocation =
-				StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.InterruptAnnouncer.announceLocation)
+			IAnnounce.announceLocation = StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.InterruptAnnouncer.announceLocation)
 			IAnnounce.announceLocation.OnValueChanged = function(self, value)
 				SUI.DB.InterruptAnnouncer.announceLocation = value
 			end
