@@ -80,7 +80,10 @@ function module:OnInitialize()
 	end
 end
 
-function module:COMBAT_LOG_EVENT_UNFILTERED()
+local function COMBAT_LOG_EVENT_UNFILTERED()
+	if not SUI.DB.EnabledComponents.InterruptAnnouncer then
+		return
+	end
 	local continue = false
 	local inInstance, instanceType = IsInInstance()
 	if instanceType == 'arena' and SUI.DB.InterruptAnnouncer.inArena then
@@ -110,19 +113,20 @@ function module:OnEnable()
 	module:Options()
 	module:FirstLaunch()
 
-	InterruptAnnouncer_Watcher:SetScript(
-		'OnEvent',
-		function(_, event)
-			if not SUI.DB.EnabledComponents.InterruptAnnouncer then
-				return
-			end
+	-- InterruptAnnouncer_Watcher:SetScript(
+	-- 	'OnEvent',
+	-- 	function(_, event)
+	-- 		if not SUI.DB.EnabledComponents.InterruptAnnouncer then
+	-- 			return
+	-- 		end
 
-			if module[event] then
-				module[event]()
-			end
-		end
-	)
-	InterruptAnnouncer_Watcher:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+	-- 		if module[event] then
+	-- 			module[event]()
+	-- 		end
+	-- 	end
+	-- )
+	-- InterruptAnnouncer_Watcher:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+	SUI:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
 end
 
 function module:Options()
