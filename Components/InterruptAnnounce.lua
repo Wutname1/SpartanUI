@@ -70,7 +70,7 @@ function module:OnInitialize()
 		includePets = true,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
-		text = 'Interupted %t %sl'
+		text = 'interrupted %t %sl'
 	}
 	if not SUI.DB.InterruptAnnouncer then
 		SUI.DB.InterruptAnnouncer = Defaults
@@ -79,7 +79,7 @@ function module:OnInitialize()
 	end
 end
 
-local function InterruptAnnouncerEvent()
+local function COMBAT_LOG_EVENT_UNFILTERED()
 	if not SUI.DB.EnabledComponents.InterruptAnnouncer then
 		return
 	end
@@ -142,13 +142,13 @@ function module:Options()
 				end
 			},
 			active = {
-				name = 'Active',
+				name = L['Active when in'],
 				type = 'group',
 				inline = true,
 				order = 100,
 				args = {
 					inBG = {
-						name = 'Battleground',
+						name = L['Battleground'],
 						type = 'toggle',
 						order = 1,
 						get = function(info)
@@ -159,7 +159,7 @@ function module:Options()
 						end
 					},
 					inRaid = {
-						name = 'Raid',
+						name = L['Raid'],
 						type = 'toggle',
 						order = 1,
 						get = function(info)
@@ -170,7 +170,7 @@ function module:Options()
 						end
 					},
 					inParty = {
-						name = 'Party',
+						name = L['Party'],
 						type = 'toggle',
 						order = 1,
 						get = function(info)
@@ -181,7 +181,7 @@ function module:Options()
 						end
 					},
 					inArena = {
-						name = 'Arena',
+						name = L['Arena'],
 						type = 'toggle',
 						order = 1,
 						get = function(info)
@@ -192,7 +192,7 @@ function module:Options()
 						end
 					},
 					outdoors = {
-						name = 'Outdoor',
+						name = L['Outdoor'],
 						type = 'toggle',
 						order = 1,
 						get = function(info)
@@ -205,7 +205,7 @@ function module:Options()
 				}
 			},
 			includePets = {
-				name = 'includePets',
+				name = L['Include pets'],
 				type = 'toggle',
 				order = 1,
 				get = function(info)
@@ -216,64 +216,62 @@ function module:Options()
 				end
 			},
 			announceLocation = {
-				name = 'Announce location',
+				name = L['Announce location'],
 				type = 'select',
 				order = 200,
 				values = {
-					['INSTANCE_CHAT'] = 'Instance chat',
-					['PARTY'] = 'Party',
-					['RAID'] = 'Raid',
-					['SAY'] = 'Say',
-					['SELF'] = 'Self',
-					['SMART'] = 'SMART'
+					['INSTANCE_CHAT'] = L['Instance chat'],
+					['PARTY'] = L['Party'],
+					['RAID'] = L['Raid'],
+					['SAY'] = L['Say'],
+					['SELF'] = L['Self'],
+					['SMART'] = L['SMART']
 				},
 				get = function(info)
 					return SUI.DB.InterruptAnnouncer.announceLocation
 				end,
 				set = function(info, val)
 					SUI.DB.InterruptAnnouncer.announceLocation = val
-					RaidFrames:UpdateText()
 				end
 			},
 			TextInfo = {
-				name = 'Spell text',
+				name = '',
 				type = 'group',
 				inline = true,
 				order = 300,
 				args = {
-					--%source Interupted %sl - %t is locked out of %sc
 					a = {
-						name = 'Possible variables:',
+						name = L['Text variables:'],
 						type = 'description',
 						order = 10,
 						fontSize = 'large'
 					},
 					b = {
-						name = '- %t - Target that was interupted',
+						name = '- %t - ' .. L['Target that was interrupted'],
 						type = 'description',
 						order = 11,
 						fontSize = 'small'
 					},
 					c = {
-						name = '- %spell - Spell you interupted',
+						name = '- %spell - ' .. L['Spell you interrupted'],
 						type = 'description',
 						order = 12,
 						fontSize = 'small'
 					},
 					e = {
-						name = '- %lnk - Spell link of spell interupted',
+						name = '- %lnk - ' .. L['Spell link of spell interrupted'],
 						type = 'description',
 						order = 13,
 						fontSize = 'small'
 					},
 					d = {
-						name = '- %cl - Spell class',
+						name = '- %cl - ' .. L['Spell class'],
 						type = 'description',
 						order = 14,
 						fontSize = 'small'
 					},
 					f = {
-						name = '- %myspell - Spell you used to interupt',
+						name = '- %myspell - ' .. L['Spell you used to interrupt'],
 						type = 'description',
 						order = 15,
 						fontSize = 'small'
@@ -284,14 +282,8 @@ function module:Options()
 						order = 499,
 						fontSize = 'medium'
 					},
-					g = {
-						name = 'Announce text:',
-						type = 'description',
-						order = 500,
-						fontSize = 'medium'
-					},
 					text = {
-						name = '',
+						name = L['Announce text:'],
 						type = 'input',
 						order = 501,
 						width = 'full',
@@ -313,7 +305,6 @@ function module:FirstLaunch()
 		ID = 'InterruptAnnouncer',
 		Name = L['Interrupt announcer'],
 		SubTitle = L['Interrupt announcer'],
-		-- Desc1 = L['Automatically turn on combat logging when entering a zone.'],
 		RequireDisplay = SUI.DB.InterruptAnnouncer.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
@@ -332,19 +323,19 @@ function module:FirstLaunch()
 			IAnnounce.options = {}
 			IAnnounce.options.alwayson = StdUi:Checkbox(IAnnounce, L['Always on'], nil, 20)
 
-			IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Announce logging in chat'], nil, 20)
-			IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Mythic'], 150, 20)
-			IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Heroic'], 150, 20)
-			IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Normal'], 150, 20)
-			IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Looking for raid'], 150, 20)
+			IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Battleground'], nil, 20)
+			IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Raid'], 150, 20)
+			IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Party'], 150, 20)
+			IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Arena'], 150, 20)
+			IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Outdoors'], 150, 20)
 
 			local items = {
-				{text = 'Instance chat', value = 'INSTANCE_CHAT'},
-				{text = 'Raid', value = 'RAID'},
-				{text = 'Party', value = 'PARTY'},
-				{text = 'Say', value = 'SAY'},
-				{text = 'Smart', value = 'SMART'},
-				{text = 'Self', value = 'SELF'}
+				{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
+				{text = L['Raid'], value = 'RAID'},
+				{text = L['Party'], value = 'PARTY'},
+				{text = L['Say'], value = 'SAY'},
+				{text = L['Smart'], value = 'SMART'},
+				{text = L['Self'], value = 'SELF'}
 			}
 
 			IAnnounce.announceLocation = StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.InterruptAnnouncer.announceLocation)
@@ -354,7 +345,7 @@ function module:FirstLaunch()
 
 			-- Create Labels
 			IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
-			IAnnounce.lblActive = StdUi:Label(IAnnounce, 'Active settings', 13)
+			IAnnounce.lblActive = StdUi:Label(IAnnounce, L['Active when in'], 13)
 			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, L['Announce location'], 13)
 
 			-- Positioning
