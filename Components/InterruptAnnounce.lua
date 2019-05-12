@@ -234,6 +234,75 @@ function module:Options()
 					SUI.DB.InterruptAnnouncer.announceLocation = val
 					RaidFrames:UpdateText()
 				end
+			},
+			TextInfo = {
+				name = 'Spell text',
+				type = 'group',
+				inline = true,
+				order = 300,
+				args = {
+					--%source Interupted %sl - %t is locked out of %sc
+					a = {
+						name = 'Possible variables:',
+						type = 'description',
+						order = 10,
+						fontSize = 'large'
+					},
+					b = {
+						name = '- %t - Target that was interupted',
+						type = 'description',
+						order = 11,
+						fontSize = 'small'
+					},
+					c = {
+						name = '- %spell - Spell you interupted',
+						type = 'description',
+						order = 12,
+						fontSize = 'small'
+					},
+					e = {
+						name = '- %lnk - Spell link of spell interupted',
+						type = 'description',
+						order = 13,
+						fontSize = 'small'
+					},
+					d = {
+						name = '- %cl - Spell class',
+						type = 'description',
+						order = 14,
+						fontSize = 'small'
+					},
+					f = {
+						name = '- %myspell - Spell you used to interupt',
+						type = 'description',
+						order = 15,
+						fontSize = 'small'
+					},
+					h = {
+						name = '',
+						type = 'description',
+						order = 499,
+						fontSize = 'medium'
+					},
+					g = {
+						name = 'Announce text:',
+						type = 'description',
+						order = 500,
+						fontSize = 'medium'
+					},
+					text = {
+						name = '',
+						type = 'input',
+						order = 501,
+						width = 'full',
+						get = function(info)
+							return SUI.DB.InterruptAnnouncer.text
+						end,
+						set = function(info, value)
+							SUI.DB.InterruptAnnouncer.text = value
+						end
+					}
+				}
 			}
 		}
 	}
