@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('Component_InterruptAnnouncer')
+local module = SUI:NewModule('Component_InterruptAnnouncer', 'AceEvent-3.0')
 local L = SUI.L
 module.DisplayName = 'Interrupt announcer'
 ----------------------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ function module:OnEnable()
 	module:Options()
 	module:FirstLaunch()
 
-	SUI:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', InterruptAnnouncerEvent)
+	module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
 end
 
 function module:Options()
