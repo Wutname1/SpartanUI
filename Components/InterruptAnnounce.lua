@@ -5,15 +5,15 @@ module.DisplayName = 'Interrupt announcer'
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
 
-local function printFormattedString(t, sid, sn, ss, ssid)
+local function printFormattedString(t, sid, spell, ss, ssid)
 	local msg = SUI.DB.InterruptAnnouncer.text
 	local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
 
 	msg =
-		msg:gsub('%%t', t):gsub('%%sn', sn):gsub('%%sc', CombatLog_String_SchoolString(ss)):gsub('%%sl', GetSpellLink(sid)):gsub(
-		'%%ys',
-		GetSpellLink(ssid)
-	)
+		msg:gsub('%%t', t):gsub('%%spell', spell):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub(
+		'%%lnk',
+		GetSpellLink(sid)
+	):gsub('%%myspell', GetSpellLink(ssid))
 	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else
@@ -70,7 +70,7 @@ function module:OnInitialize()
 		includePets = true,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
-		text = 'Interupted %t %spell'
+		text = 'Interupted %t %sl'
 	}
 	if not SUI.DB.InterruptAnnouncer then
 		SUI.DB.InterruptAnnouncer = Defaults
@@ -79,11 +79,11 @@ function module:OnInitialize()
 	end
 end
 
-local function COMBAT_LOG_EVENT_UNFILTERED()
+local function InterruptAnnouncerEvent()
 	if not SUI.DB.EnabledComponents.InterruptAnnouncer then
 		return
 	end
-	
+
 	local continue = false
 	local inInstance, instanceType = IsInInstance()
 	if instanceType == 'arena' and SUI.DB.InterruptAnnouncer.inArena then
@@ -221,11 +221,11 @@ function module:Options()
 				order = 200,
 				values = {
 					['INSTANCE_CHAT'] = 'Instance chat',
-					['RAID'] = 'Raid',
 					['PARTY'] = 'Party',
-					['SMART'] = 'SMART',
+					['RAID'] = 'Raid',
 					['SAY'] = 'Say',
-					['SELF'] = 'Self'
+					['SELF'] = 'Self',
+					['SMART'] = 'SMART'
 				},
 				get = function(info)
 					return SUI.DB.InterruptAnnouncer.announceLocation
