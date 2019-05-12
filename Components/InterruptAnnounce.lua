@@ -109,11 +109,10 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 
 	-- Update last time and ID
 	lastTime, lastSpellID = timeStamp, spellID
-	
+
 	if
-		continue and
-			(eventType == 'SPELL_INTERRUPT' and
-				(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and SUI.DB.InterruptAnnouncer.includePets)))
+		(continue or SUI.DB.InterruptAnnouncer.alwayson) and eventType == 'SPELL_INTERRUPT' and
+			(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and SUI.DB.InterruptAnnouncer.includePets))
 	 then
 		printFormattedString(destName, spellID, spellName, spellSchool, sourceID)
 	end
@@ -123,7 +122,7 @@ function module:OnEnable()
 	module:Options()
 	module:FirstLaunch()
 
-	SUI:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
+	SUI:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', InterruptAnnouncerEvent)
 end
 
 function module:Options()
