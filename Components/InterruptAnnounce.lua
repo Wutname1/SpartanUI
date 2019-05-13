@@ -321,13 +321,13 @@ function module:FirstLaunch()
 
 			-- Setup checkboxes
 			IAnnounce.options = {}
-			IAnnounce.options.alwayson = StdUi:Checkbox(IAnnounce, L['Always on'], nil, 20)
+			IAnnounce.options.alwayson = StdUi:Checkbox(IAnnounce, L['Always on'], 120, 20)
 
-			IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Battleground'], nil, 20)
-			IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Raid'], 150, 20)
-			IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Party'], 150, 20)
-			IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Arena'], 150, 20)
-			IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Outdoors'], 150, 20)
+			IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Battleground'], 120, 20)
+			IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Raid'], 120, 20)
+			IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Party'], 120, 20)
+			IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Arena'], 120, 20)
+			IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Outdoors'], 120, 20)
 
 			local items = {
 				{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
@@ -347,19 +347,30 @@ function module:FirstLaunch()
 			IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
 			IAnnounce.lblActive = StdUi:Label(IAnnounce, L['Active when in'], 13)
 			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, L['Announce location'], 13)
+			IAnnounce.lblAnnouncetext = StdUi:Label(IAnnounce, L['Announce text:'], 13)
 
 			-- Positioning
 			StdUi:GlueTop(IAnnounce.modEnabled, SUI_Win, 0, -10)
-			StdUi:GlueBelow(IAnnounce.options.alwayson, IAnnounce.modEnabled, -100, -5)
-			StdUi:GlueRight(IAnnounce.announceLocation, IAnnounce.options.alwayson, 5, 0)
+			StdUi:GlueBelow(IAnnounce.lblAnnouncelocation, IAnnounce.modEnabled, -100, -20)
+			StdUi:GlueRight(IAnnounce.announceLocation, IAnnounce.lblAnnouncelocation, 5, 0)
 
 			-- Active locations
-			StdUi:GlueTop(IAnnounce.options.inBG, IAnnounce.modEnabled, -150, -80)
-			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.options.inBG, 0, -5)
-			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 5, 0)
-			StdUi:GlueRight(IAnnounce.options.inArena, IAnnounce.options.inParty, 5, 0)
+			StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncelocation, -80, -20)
 
-			StdUi:GlueBelow(IAnnounce.options.outdoors, IAnnounce.options.inRaid, 0, -5)
+			StdUi:GlueBelow(IAnnounce.options.inBG, IAnnounce.lblActive, 30, 0)
+			StdUi:GlueRight(IAnnounce.options.inArena, IAnnounce.options.inBG, 0, 0)
+			StdUi:GlueRight(IAnnounce.options.outdoors, IAnnounce.options.inArena, 0, 0)
+
+			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.options.inBG, 0, 0)
+			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 0, 0)
+
+			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, '-or-', 13)
+			StdUi:GlueBelow(IAnnounce.lblAnnouncelocation, IAnnounce.lblActive, 0, -40, 'LEFT')
+			StdUi:GlueBelow(IAnnounce.options.alwayson, IAnnounce.options.inRaid, 0, -15)
+
+			-- Active locations
+			StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncetext, -120, 0)
+			
 
 			-- Defaults
 			IAnnounce.modEnabled:SetChecked(SUI.DB.EnabledComponents.InterruptAnnouncer)
