@@ -192,7 +192,7 @@ function module:Options()
 						end
 					},
 					outdoors = {
-						name = L['Outdoor'],
+						name = L['Outdoors'],
 						type = 'toggle',
 						order = 1,
 						get = function(info)
@@ -225,7 +225,7 @@ function module:Options()
 					['RAID'] = L['Raid'],
 					['SAY'] = L['Say'],
 					['SELF'] = L['Self'],
-					['SMART'] = L['SMART']
+					['SMART'] = L['Smart']
 				},
 				get = function(info)
 					return SUI.DB.InterruptAnnouncer.announceLocation
