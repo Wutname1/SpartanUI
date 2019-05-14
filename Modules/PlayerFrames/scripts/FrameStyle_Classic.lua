@@ -239,7 +239,7 @@ local CreatePlayerFrame = function(self, unit)
 	do -- setup base artwork
 		local artwork = CreateFrame('Frame', nil, self)
 		artwork:SetFrameStrata('BACKGROUND')
-		artwork:SetFrameLevel(1)
+		artwork:SetFrameLevel(2)
 		artwork:SetAllPoints(self)
 
 		artwork.bg = artwork:CreateTexture(nil, 'BACKGROUND')
@@ -248,7 +248,7 @@ local CreatePlayerFrame = function(self, unit)
 		self.artwork = artwork
 
 		self.Portrait = CreatePortrait(self)
-		self.Portrait:SetSize(64, 64)
+		self.Portrait:SetSize(62)
 		self.Portrait:SetPoint('CENTER', self, 'CENTER', 80, 3)
 
 		self.ThreatIndicator = CreateFrame('Frame', nil, self)
