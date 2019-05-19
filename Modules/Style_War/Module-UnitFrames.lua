@@ -9,6 +9,59 @@ local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 local Images
 local PlayerFaction = UnitFactionGroup('Player')
 
+local function ImageSetup()
+	Images = {
+		Alliance = {
+			bg = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
+			},
+			flair = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.03125, 0.427734375, 0, 0.421875}
+			}
+		},
+		Horde = {
+			bg = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
+			},
+			flair = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.541015625, 1, 0, 0.421875}
+			}
+		}
+	}
+
+	if PlayerFaction == 'Horde' then
+		Images.smallbg = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
+		}
+		Images.flair = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+		Images.flair2 = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.541015625, 1, 0, 0.421875}
+		}
+	else
+		Images.smallbg = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
+		}
+		Images.flair = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+		Images.flair2 = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+	end
+end
+
 local function UpdatePowerPrep(self, event, specID)
 	local element = self.Power
 	element:SetMinMaxValues(0, 1)
@@ -957,56 +1010,7 @@ function module:FrameSize(size)
 end
 
 function module:PlayerFrames()
-	Images = {
-		Alliance = {
-			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-				Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
-			},
-			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-				Coords = {0.03125, 0.427734375, 0, 0.421875}
-			}
-		},
-		Horde = {
-			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-				Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
-			},
-			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-				Coords = {0.541015625, 1, 0, 0.421875}
-			}
-		}
-	}
-
-	if PlayerFaction == 'Horde' then
-		Images.smallbg = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-			Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
-		}
-		Images.flair = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-			Coords = {0.03125, 0.427734375, 0, 0.421875}
-		}
-		Images.flair2 = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-			Coords = {0.541015625, 1, 0, 0.421875}
-		}
-	else
-		Images.smallbg = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-			Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
-		}
-		Images.flair = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-			Coords = {0.03125, 0.427734375, 0, 0.421875}
-		}
-		Images.flair2 = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
-			Coords = {0.03125, 0.427734375, 0, 0.421875}
-		}
-	end
+	ImageSetup()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
 	SpartanoUF:SetActiveStyle('Spartan_WarPlayerFrames')
 	PlayerFrames:BuffOptions()
@@ -1212,6 +1216,7 @@ function module:PositionFrame(b)
 end
 
 function module:RaidFrames()
+	ImageSetup()
 	SpartanoUF:SetActiveStyle('Spartan_WarRaidFrames')
 	module:RaidOptions()
 
@@ -1275,6 +1280,7 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
+	ImageSetup()
 	PartyFrames = SUI:GetModule('PartyFrames')
 	SpartanoUF:SetActiveStyle('Spartan_WarPartyFrames')
 	module:PartyOptions()
