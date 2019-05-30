@@ -13,6 +13,8 @@ local type, pairs = type, pairs
 local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
+SUI.WoWClassic = select(4, GetBuildInfo()) < 20000
+
 if not SUI.BuildNum then
 	SUI.BuildNum = 0
 end
@@ -731,9 +733,11 @@ function SUI:OnInitialize()
 
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0')
-	LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
-	LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
-	SUI.opt.args['Profiles'].order = 999
+	if not SUI.WoWClassic then
+		LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
+		LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
+		SUI.opt.args['Profiles'].order = 999
+	end
 
 	-- Spec Setup
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnNewProfile', 'InitializeProfile')

@@ -384,13 +384,17 @@ function module:factory()
 
 			--Setup Actions
 			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
-			statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
 			statusbar:RegisterEvent('UNIT_INVENTORY_CHANGED')
 			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
 			statusbar:RegisterEvent('PLAYER_XP_UPDATE')
 			statusbar:RegisterEvent('PLAYER_LEVEL_UP')
 			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
 			statusbar:RegisterEvent('UPDATE_FACTION')
+
+			if not SUI.WoWClassic then
+				statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
+			end
+			
 			--Statusbar Update event
 			statusbar:SetScript(
 				'OnEvent',
@@ -500,6 +504,14 @@ function module:BuildOptions()
 		['az'] = L['Azerite Bar'],
 		['disabled'] = L['Disabled']
 	}
+	if SUI.WoWClassic then
+		StatusBars = {
+			['xp'] = L['Experiance'],
+			['rep'] = L['Reputation'],
+			['disabled'] = L['Disabled']
+		}
+	end
+	
 	local ids = {
 		[1] = 'one',
 		[2] = 'two',

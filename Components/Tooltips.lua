@@ -371,7 +371,7 @@ local TooltipSetUnit = function(self)
 		if (lvlLine) then
 			local creatureClassification = UnitClassification(unit)
 			local creatureType = UnitCreatureType(unit)
-			if (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
+			if not SUI.WoWClassic and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
 				unitLevel = UnitBattlePetLevel(unit)
 				local ab = C_PetJournal.GetPetTeamAverageLevel()
 				if ab then

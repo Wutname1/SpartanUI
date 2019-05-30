@@ -2,6 +2,7 @@ local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Component_Objectives')
 ----------------------------------------------------------------------------------------------------
 local ObjectiveTrackerWatcher = CreateFrame('Frame')
+local frameName = 'ObjectiveTrackerFrame'
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local Conditions = {
 	['Group'] = L['In a Group'],
@@ -13,8 +14,8 @@ local Conditions = {
 }
 
 local HideFrame = function()
-	if ObjectiveTrackerFrame.BlocksFrame:GetAlpha() == 0 then
-		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:Hide()
+	if _G[frameName]:GetAlpha() == 0 and _G[frameName].HeaderMenu then
+		_G[frameName].HeaderMenu.MinimizeButton:Hide()
 	end
 end
 
@@ -50,7 +51,7 @@ local ObjTrackerUpdate = function()
 
 	--Scenario Detection
 	local ScenarioActive = false
-	if ScenarioBlocksFrame:IsVisible() then
+	if ScenarioBlocksFrame and ScenarioBlocksFrame:IsVisible() then
 		ScenarioActive = true
 	end
 
@@ -60,13 +61,15 @@ local ObjTrackerUpdate = function()
 		FadeOut = false
 	end
 
-	if FadeOut and ObjectiveTrackerFrame.BlocksFrame:GetAlpha() == 1 then
-		ObjectiveTrackerFrame.BlocksFrame.FadeOut:Play()
+	if FadeOut and _G[frameName]:GetAlpha() == 1 then
+		_G[frameName].FadeOut:Play()
 		C_Timer.After(1, HideFrame)
-	elseif FadeIn and ObjectiveTrackerFrame.BlocksFrame:GetAlpha() == 0 and not FadeOut then
-		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:Show()
-		ObjectiveTrackerFrame.BlocksFrame.FadeOut:Stop()
-		ObjectiveTrackerFrame.BlocksFrame.FadeIn:Play()
+	elseif FadeIn and _G[frameName]:GetAlpha() == 0 and not FadeOut then
+		if _G[frameName].HeaderMenu then
+			_G[frameName].HeaderMenu.MinimizeButton:Show()
+		end
+		_G[frameName].FadeOut:Stop()
+		_G[frameName].FadeIn:Play()
 	end
 end
 
@@ -101,22 +104,26 @@ function module:OnEnable()
 	module:FirstTimeSetup()
 
 	-- Add Fade in and out
-	ObjectiveTrackerFrame.BlocksFrame.FadeIn = ObjectiveTrackerFrame.BlocksFrame:CreateAnimationGroup()
-	local FadeIn = ObjectiveTrackerFrame.BlocksFrame.FadeIn:CreateAnimation('Alpha')
+	if SUI.WoWClassic then
+		frameName = 'QuestWatchFrame'
+	end
+
+	_G[frameName].FadeIn = _G[frameName]:CreateAnimationGroup()
+	local FadeIn = _G[frameName].FadeIn:CreateAnimation('Alpha')
 	FadeIn:SetOrder(1)
 	FadeIn:SetDuration(0.2)
 	FadeIn:SetFromAlpha(0)
 	FadeIn:SetToAlpha(1)
-	ObjectiveTrackerFrame.BlocksFrame.FadeIn:SetToFinalAlpha(true)
+	_G[frameName].FadeIn:SetToFinalAlpha(true)
 
-	ObjectiveTrackerFrame.BlocksFrame.FadeOut = ObjectiveTrackerFrame.BlocksFrame:CreateAnimationGroup()
-	local FadeOut = ObjectiveTrackerFrame.BlocksFrame.FadeOut:CreateAnimation('Alpha')
+	_G[frameName].FadeOut = _G[frameName]:CreateAnimationGroup()
+	local FadeOut = _G[frameName].FadeOut:CreateAnimation('Alpha')
 	FadeOut:SetOrder(1)
 	FadeOut:SetDuration(0.3)
 	FadeOut:SetFromAlpha(1)
 	FadeOut:SetToAlpha(0)
 	FadeOut:SetStartDelay(.5)
-	ObjectiveTrackerFrame.BlocksFrame.FadeOut:SetToFinalAlpha(true)
+	_G[frameName].FadeOut:SetToFinalAlpha(true)
 
 	--Event Manager
 	ObjectiveTrackerWatcher:SetScript('OnEvent', ObjTrackerUpdate)
@@ -133,11 +140,15 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_START')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_END')
-	--Scenarios
-	ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_COMPLETED')
-	ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_CRITERIA_UPDATE')
-	ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_UPDATE')
 
+	if not SUI.WoWClassic then
+		--Scenarios
+		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_COMPLETED')
+		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_CRITERIA_UPDATE')
+		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_UPDATE')
+	end
+
+	ObjTrackerUpdate()
 	module:BuildOptions()
 end
 
