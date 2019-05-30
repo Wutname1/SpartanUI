@@ -63,8 +63,11 @@ function module:OnEnable()
 			end
 		end
 	)
+	
+	if not SUI.WoWClassic then
+		CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
+	end
 	CombatLog_Watcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-	CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
 	CombatLog_Watcher:RegisterEvent('PLAYER_ENTERING_WORLD')
 	SUI:AddChatCommand('logging', function(arg)
 		if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
