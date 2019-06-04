@@ -182,11 +182,11 @@ function module:SetColor()
 		end
 	end
 
-	if _G['SUI_ExperienceBarPlate'] then
-		_G['SUI_ExperienceBarPlate']:SetVertexColor(r, b, g, a)
+	if _G['SUI_StatusBar_Left'] then
+		_G['SUI_StatusBar_Left']:SetVertexColor(r, b, g, a)
 	end
-	if _G['SUI_ReputationBarPlate'] then
-		_G['SUI_ReputationBarPlate']:SetVertexColor(r, b, g, a)
+	if _G['SUI_StatusBar_Right'] then
+		_G['SUI_StatusBar_Right']:SetVertexColor(r, b, g, a)
 	end
 end
 
