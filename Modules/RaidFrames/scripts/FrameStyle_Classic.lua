@@ -2,8 +2,8 @@ local SUI = SUI
 local L = SUI.L
 local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------
-local colors = setmetatable({}, {__index = SpartanoUF.colors})
-for k, v in pairs(SpartanoUF.colors) do
+local colors = setmetatable({}, {__index = SUIUF.colors})
+for k, v in pairs(SUIUF.colors) do
 	if not colors[k] then
 		colors[k] = v
 	end
@@ -237,11 +237,11 @@ local CreateUnitFrame = function(self, unit)
 	return self
 end
 
-SpartanoUF:RegisterStyle('Spartan_RaidFrames_Classic', CreateUnitFrame)
+SUIUF:RegisterStyle('Spartan_RaidFrames_Classic', CreateUnitFrame)
 
 function RaidFrames:Classic()
 	RaidFrames:ClassicOptions()
-	SpartanoUF:SetActiveStyle('Spartan_RaidFrames_Classic')
+	SUIUF:SetActiveStyle('Spartan_RaidFrames_Classic')
 	local xoffset = 3
 	local yOffset = -5
 	local point = 'TOP'
@@ -270,7 +270,7 @@ function RaidFrames:Classic()
 	]]
 
 	local raid =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		nil,
 		nil,
 		'raid',

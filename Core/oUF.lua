@@ -183,7 +183,7 @@ function addon:PlayerPowerIcons(frame, attachPoint)
 	end
 end
 
-do -- ClassIcon as an SpartanoUF module
+do -- ClassIcon as an SUIUF module
 	local Update = function(self, event, unit)
 		local icon = self.SUI_ClassIcon
 		if (icon) then
@@ -228,10 +228,10 @@ do -- ClassIcon as an SpartanoUF module
 			self:UnregisterEvent('UNIT_PET', Update)
 		end
 	end
-	SpartanoUF:AddElement('SUI_ClassIcon', Update, Enable, Disable)
+	SUIUF:AddElement('SUI_ClassIcon', Update, Enable, Disable)
 end
 
-do -- TargetIndicator as an SpartanoUF module
+do -- TargetIndicator as an SUIUF module
 	local Update = function(self, event, unit)
 		if self.TargetIndicator.bg1:IsVisible() then
 			self.TargetIndicator.bg1:Hide()
@@ -256,10 +256,10 @@ do -- TargetIndicator as an SpartanoUF module
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 		end
 	end
-	SpartanoUF:AddElement('TargetIndicator', Update, Enable, Disable)
+	SUIUF:AddElement('TargetIndicator', Update, Enable, Disable)
 end
 
-do -- SUI_RaidGroup as an SpartanoUF module
+do -- SUI_RaidGroup as an SUIUF module
 	local Update = function(self, event, unit)
 		if IsInRaid() then
 			self.SUI_RaidGroup:Show()
@@ -280,12 +280,12 @@ do -- SUI_RaidGroup as an SpartanoUF module
 			self:UnregisterEvent('GROUP_ROSTER_UPDATE', Update)
 		end
 	end
-	SpartanoUF:AddElement('SUI_RaidGroup', Update, Enable, Disable)
+	SUIUF:AddElement('SUI_RaidGroup', Update, Enable, Disable)
 end
 
-do -- AFK / DND status text, as an SpartanoUF module
-	SpartanoUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
-	SpartanoUF.Tags.Methods['afkdnd'] = function(unit)
+do -- AFK / DND status text, as an SUIUF module
+	SUIUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
+	SUIUF.Tags.Methods['afkdnd'] = function(unit)
 		if unit then
 			return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
 		end
@@ -293,9 +293,9 @@ do -- AFK / DND status text, as an SpartanoUF module
 end
 
 do --Health Formatting Tags
-	-- Current Health Short, as an SpartanoUF module
-	SpartanoUF.Tags.Events['curhpshort'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['curhpshort'] = function(unit)
+	-- Current Health Short, as an SUIUF module
+	SUIUF.Tags.Events['curhpshort'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['curhpshort'] = function(unit)
 		local tmp = UnitHealth(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 0) .. 'M'
@@ -305,9 +305,9 @@ do --Health Formatting Tags
 		end
 		return addon:comma_value(tmp)
 	end
-	-- Current Health Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['curhpdynamic'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['curhpdynamic'] = function(unit)
+	-- Current Health Dynamic, as an SUIUF module
+	SUIUF.Tags.Events['curhpdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['curhpdynamic'] = function(unit)
 		local tmp = UnitHealth(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -315,9 +315,9 @@ do --Health Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Total Health Short, as an SpartanoUF module
-	SpartanoUF.Tags.Events['maxhpshort'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['maxhpshort'] = function(unit)
+	-- Total Health Short, as an SUIUF module
+	SUIUF.Tags.Events['maxhpshort'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['maxhpshort'] = function(unit)
 		local tmp = UnitHealthMax(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 0) .. 'M'
@@ -327,9 +327,9 @@ do --Health Formatting Tags
 		end
 		return addon:comma_value(tmp)
 	end
-	-- Total Health Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['maxhpdynamic'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['maxhpdynamic'] = function(unit)
+	-- Total Health Dynamic, as an SUIUF module
+	SUIUF.Tags.Events['maxhpdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['maxhpdynamic'] = function(unit)
 		local tmp = UnitHealthMax(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -337,9 +337,9 @@ do --Health Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Missing Health Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['missinghpdynamic'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['missinghpdynamic'] = function(unit)
+	-- Missing Health Dynamic, as an SUIUF module
+	SUIUF.Tags.Events['missinghpdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['missinghpdynamic'] = function(unit)
 		local tmp = UnitHealthMax(unit) - UnitHealth(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -347,27 +347,27 @@ do --Health Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Current Health formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['curhpformatted'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['curhpformatted'] = function(unit)
+	-- Current Health formatted, as an SUIUF module
+	SUIUF.Tags.Events['curhpformatted'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['curhpformatted'] = function(unit)
 		return addon:comma_value(UnitHealth(unit))
 	end
-	-- Total Health formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['maxhpformatted'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['maxhpformatted'] = function(unit)
+	-- Total Health formatted, as an SUIUF module
+	SUIUF.Tags.Events['maxhpformatted'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['maxhpformatted'] = function(unit)
 		return addon:comma_value(UnitHealthMax(unit))
 	end
-	-- Missing Health formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['missinghpformatted'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['missinghpformatted'] = function(unit)
+	-- Missing Health formatted, as an SUIUF module
+	SUIUF.Tags.Events['missinghpformatted'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['missinghpformatted'] = function(unit)
 		return addon:comma_value(UnitHealthMax(unit) - UnitHealth(unit))
 	end
 end
 
 do -- Mana Formatting Tags
-	-- Current Mana Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['curppdynamic'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
-	SpartanoUF.Tags.Methods['curppdynamic'] = function(unit)
+	-- Current Mana Dynamic, as an SUIUF module
+	SUIUF.Tags.Events['curppdynamic'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['curppdynamic'] = function(unit)
 		local tmp = UnitPower(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -375,9 +375,9 @@ do -- Mana Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Total Mana Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['maxppdynamic'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
-	SpartanoUF.Tags.Methods['maxppdynamic'] = function(unit)
+	-- Total Mana Dynamic, as an SUIUF module
+	SUIUF.Tags.Events['maxppdynamic'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['maxppdynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -385,9 +385,9 @@ do -- Mana Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Missing Mana Dynamic, as an SpartanoUF module
-	SpartanoUF.Tags.Events['missingppdynamic'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['missingppdynamic'] = function(unit)
+	-- Missing Mana Dynamic, as an SUIUF module
+	SUIUF.Tags.Events['missingppdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['missingppdynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit) - UnitPower(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -395,19 +395,19 @@ do -- Mana Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Current Mana formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['curppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
-	SpartanoUF.Tags.Methods['curppformatted'] = function(unit)
+	-- Current Mana formatted, as an SUIUF module
+	SUIUF.Tags.Events['curppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['curppformatted'] = function(unit)
 		return addon:comma_value(UnitPower(unit))
 	end
-	-- Total Mana formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['maxppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
-	SpartanoUF.Tags.Methods['maxppformatted'] = function(unit)
+	-- Total Mana formatted, as an SUIUF module
+	SUIUF.Tags.Events['maxppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['maxppformatted'] = function(unit)
 		return addon:comma_value(UnitPowerMax(unit))
 	end
-	-- Total Mana formatted, as an SpartanoUF module
-	SpartanoUF.Tags.Events['missingppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
-	SpartanoUF.Tags.Methods['missingppformatted'] = function(unit)
+	-- Total Mana formatted, as an SUIUF module
+	SUIUF.Tags.Events['missingppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['missingppformatted'] = function(unit)
 		return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit))
 	end
 end
@@ -426,21 +426,21 @@ do --Color name by Class
 		end
 	end
 
-	SpartanoUF.Tags.Events['SUI_ColorClass'] = 'UNIT_HEALTH'
-	SpartanoUF.Tags.Methods['SUI_ColorClass'] = function(u)
+	SUIUF.Tags.Events['SUI_ColorClass'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Methods['SUI_ColorClass'] = function(u)
 		local _, class = UnitClass(u)
 
 		if (u == 'pet') then
-			return hex(SpartanoUF.colors.class[class])
+			return hex(SUIUF.colors.class[class])
 		elseif (UnitIsPlayer(u)) then
-			return hex(SpartanoUF.colors.class[class])
+			return hex(SUIUF.colors.class[class])
 		else
 			return hex(1, 1, 1)
 		end
 	end
 end
 
-do -- Level Skull as an SpartanoUF module
+do -- Level Skull as an SUIUF module
 	local Update = function(self, event, unit)
 		if (self.unit ~= unit) then
 			return
@@ -467,10 +467,10 @@ do -- Level Skull as an SpartanoUF module
 	local Disable = function(self)
 		return
 	end
-	SpartanoUF:AddElement('LevelSkull', Update, Enable, Disable)
+	SUIUF:AddElement('LevelSkull', Update, Enable, Disable)
 end
 
-do -- Rare / Elite dragon graphic as an SpartanoUF module
+do -- Rare / Elite dragon graphic as an SUIUF module
 	local Update = function(self, event, unit)
 		if (self.unit ~= unit) then
 			return
@@ -508,5 +508,5 @@ do -- Rare / Elite dragon graphic as an SpartanoUF module
 	local Disable = function(self)
 		return
 	end
-	SpartanoUF:AddElement('RareElite', Update, Enable, Disable)
+	SUIUF:AddElement('RareElite', Update, Enable, Disable)
 end

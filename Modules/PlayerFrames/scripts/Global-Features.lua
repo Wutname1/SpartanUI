@@ -16,7 +16,7 @@ function PlayerFrames:comma_value(n)
 	return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
 end
 
-do -- Boss graphic as an SpartanoUF module
+do -- Boss graphic as an SUIUF module
 	local Update = function(self, event, unit)
 		if (self.unit ~= unit) then
 			return
@@ -36,7 +36,7 @@ do -- Boss graphic as an SpartanoUF module
 	local Disable = function(self)
 		return
 	end
-	SpartanoUF:AddElement('BossGraphic', Update, Enable, Disable)
+	SUIUF:AddElement('BossGraphic', Update, Enable, Disable)
 end
 
 function PlayerFrames:SetupStaticOptions()

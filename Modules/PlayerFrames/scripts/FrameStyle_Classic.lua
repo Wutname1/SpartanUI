@@ -10,10 +10,10 @@ local base_ring1 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\base_ring1
 local base_ring3 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\base_ring3' -- Pet and TargetTarget
 local circle = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\circle.tga'
 
-local colors = setmetatable({}, {__index = SpartanoUF.colors})
+local colors = setmetatable({}, {__index = SUIUF.colors})
 local _, classFileName = UnitClass('player')
 
-for k, v in pairs(SpartanoUF.colors) do
+for k, v in pairs(SUIUF.colors) do
 	if not colors[k] then
 		colors[k] = v
 	end
@@ -2348,4 +2348,4 @@ function PlayerFrames:SetupExtras()
 	end
 end
 
-SpartanoUF:RegisterStyle('SUI_PlayerFrames_Classic', CreateUnitFrame)
+SUIUF:RegisterStyle('SUI_PlayerFrames_Classic', CreateUnitFrame)

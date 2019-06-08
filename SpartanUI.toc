@@ -6,7 +6,7 @@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
-## X-oUF: SpartanoUF
+## X-SUF: SUIUF
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
 

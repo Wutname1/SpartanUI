@@ -985,9 +985,9 @@ function module:UpdateAltBarPositions()
 	end
 end
 
-SpartanoUF:RegisterStyle('Spartan_WarPlayerFrames', CreateUnitFrame)
-SpartanoUF:RegisterStyle('Spartan_WarPartyFrames', CreateUnitFrameParty)
-SpartanoUF:RegisterStyle('Spartan_WarRaidFrames', CreateUnitFrameRaid)
+SUIUF:RegisterStyle('Spartan_WarPlayerFrames', CreateUnitFrame)
+SUIUF:RegisterStyle('Spartan_WarPartyFrames', CreateUnitFrameParty)
+SUIUF:RegisterStyle('Spartan_WarRaidFrames', CreateUnitFrameRaid)
 
 -- Module Calls
 function module:FrameSize(size)
@@ -1012,7 +1012,7 @@ end
 function module:PlayerFrames()
 	ImageSetup()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
-	SpartanoUF:SetActiveStyle('Spartan_WarPlayerFrames')
+	SUIUF:SetActiveStyle('Spartan_WarPlayerFrames')
 	PlayerFrames:BuffOptions()
 
 	local FramesList = {
@@ -1025,7 +1025,7 @@ function module:PlayerFrames()
 	}
 
 	for _, b in pairs(FramesList) do
-		PlayerFrames[b] = SpartanoUF:Spawn(b, 'SUI_' .. b .. 'Frame')
+		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
 		if b == 'player' then
 			PlayerFrames:SetupExtras()
 		end
@@ -1041,7 +1041,7 @@ function module:PlayerFrames()
 		end
 		local arena = {}
 		for i = 1, 3 do
-			arena[i] = SpartanoUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
+			arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
 			if i == 1 then
 				arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 				arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
@@ -1086,7 +1086,7 @@ function module:PlayerFrames()
 
 		local boss = {}
 		for i = 1, MAX_BOSS_FRAMES do
-			boss[i] = SpartanoUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
+			boss[i] = SUIUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
 			-- boss[i].artwork.bg:SetVertexColor(0,.8,.9,.9)
 
 			if i == 1 then
@@ -1217,7 +1217,7 @@ end
 
 function module:RaidFrames()
 	ImageSetup()
-	SpartanoUF:SetActiveStyle('Spartan_WarRaidFrames')
+	SUIUF:SetActiveStyle('Spartan_WarRaidFrames')
 	module:RaidOptions()
 
 	local xoffset = 1
@@ -1238,7 +1238,7 @@ function module:RaidFrames()
 	end
 
 	local raid =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		'SUI_RaidFrameHeader',
 		nil,
 		'raid',
@@ -1282,7 +1282,7 @@ end
 function module:PartyFrames()
 	ImageSetup()
 	PartyFrames = SUI:GetModule('PartyFrames')
-	SpartanoUF:SetActiveStyle('Spartan_WarPartyFrames')
+	SUIUF:SetActiveStyle('Spartan_WarPartyFrames')
 	module:PartyOptions()
 
 	if _G['SUI_PartyFrameHeader'] then
@@ -1290,7 +1290,7 @@ function module:PartyFrames()
 	end
 
 	local party =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		'SUI_PartyFrameHeader',
 		nil,
 		nil,

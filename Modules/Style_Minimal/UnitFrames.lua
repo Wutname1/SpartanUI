@@ -17,8 +17,8 @@ local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 
 local classFileName = select(2, UnitClass('player'))
-local colors = setmetatable({}, {__index = SpartanoUF.colors})
-for k, v in pairs(SpartanoUF.colors) do
+local colors = setmetatable({}, {__index = SUIUF.colors})
+for k, v in pairs(SUIUF.colors) do
 	if not colors[k] then
 		colors[k] = v
 	end
@@ -814,9 +814,9 @@ local CreateUnitFrameRaid = function(self, unit)
 	return self
 end
 
-SpartanoUF:RegisterStyle('Spartan_MinimalFrames', CreateUnitFrame)
-SpartanoUF:RegisterStyle('Spartan_MinimalFrames_Party', CreateUnitFrameParty)
-SpartanoUF:RegisterStyle('Spartan_MinimalFrames_Raid', CreateUnitFrameRaid)
+SUIUF:RegisterStyle('Spartan_MinimalFrames', CreateUnitFrame)
+SUIUF:RegisterStyle('Spartan_MinimalFrames_Party', CreateUnitFrameParty)
+SUIUF:RegisterStyle('Spartan_MinimalFrames_Raid', CreateUnitFrameRaid)
 
 function module:UpdateAltBarPositions()
 	if RuneFrame then
@@ -839,11 +839,11 @@ end
 function module:PlayerFrames()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
 	PartyFrames = SUI:GetModule('PartyFrames')
-	SpartanoUF:SetActiveStyle('Spartan_MinimalFrames')
+	SUIUF:SetActiveStyle('Spartan_MinimalFrames')
 	PlayerFrames:BuffOptions()
 
 	for _, b in pairs(FramesList) do
-		PlayerFrames[b] = SpartanoUF:Spawn(b, 'SUI_' .. b .. 'Frame')
+		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
 		if b == 'player' then
 			PlayerFrames:SetupExtras()
 		end
@@ -855,7 +855,7 @@ function module:PlayerFrames()
 
 	if SUI.DBMod.PlayerFrames.BossFrame.display == true then
 		for i = 1, MAX_BOSS_FRAMES do
-			PlayerFrames.boss[i] = SpartanoUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
+			PlayerFrames.boss[i] = SUIUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
 			if i == 1 then
 				PlayerFrames.boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 				PlayerFrames.boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
@@ -867,7 +867,7 @@ function module:PlayerFrames()
 
 	local arena = {}
 	for i = 1, 3 do
-		arena[i] = SpartanoUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
+		arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
 		if i == 1 then
 			arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 			arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
@@ -943,7 +943,7 @@ end
 function module:RaidFrames()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
 	PartyFrames = SUI:GetModule('PartyFrames')
-	SpartanoUF:SetActiveStyle('Spartan_MinimalFrames_Raid')
+	SUIUF:SetActiveStyle('Spartan_MinimalFrames_Raid')
 
 	local xoffset = 3
 	local yOffset = -5
@@ -957,7 +957,7 @@ function module:RaidFrames()
 	-- print(SUI.DBMod.RaidFrames.mode)
 	-- print(groupingOrder)
 	local raid =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		nil,
 		nil,
 		'raid',
@@ -998,9 +998,9 @@ function module:PartyFrames()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
 	PartyFrames = SUI:GetModule('PartyFrames')
 	module:Options_PartyFrames()
-	SpartanoUF:SetActiveStyle('Spartan_MinimalFrames_Party')
+	SUIUF:SetActiveStyle('Spartan_MinimalFrames_Party')
 	local party =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		'SUI_PartyFrameHeader',
 		nil,
 		nil,

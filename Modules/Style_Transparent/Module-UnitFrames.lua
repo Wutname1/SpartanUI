@@ -20,8 +20,8 @@ local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 
 local _, classFileName = UnitClass('player')
-local colors = setmetatable({}, {__index = SpartanoUF.colors})
-for k, v in pairs(SpartanoUF.colors) do
+local colors = setmetatable({}, {__index = SUIUF.colors})
+for k, v in pairs(SUIUF.colors) do
 	if not colors[k] then
 		colors[k] = v
 	end
@@ -1382,9 +1382,9 @@ local CreateUnitFrameRaid = function(self, unit)
 	return self
 end
 
-SpartanoUF:RegisterStyle('Spartan_TransparentPlayerFrames', CreateUnitFrame)
-SpartanoUF:RegisterStyle('Spartan_TransparentPartyFrames', CreateUnitFrameParty)
-SpartanoUF:RegisterStyle('Spartan_TransparentRaidFrames', CreateUnitFrameRaid)
+SUIUF:RegisterStyle('Spartan_TransparentPlayerFrames', CreateUnitFrame)
+SUIUF:RegisterStyle('Spartan_TransparentPartyFrames', CreateUnitFrameParty)
+SUIUF:RegisterStyle('Spartan_TransparentRaidFrames', CreateUnitFrameRaid)
 
 function module:UpdateAltBarPositions()
 	if RuneFrame then
@@ -1441,11 +1441,11 @@ end
 
 function module:PlayerFrames()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
-	SpartanoUF:SetActiveStyle('Spartan_TransparentPlayerFrames')
+	SUIUF:SetActiveStyle('Spartan_TransparentPlayerFrames')
 	PlayerFrames:BuffOptions()
 
 	for _, b in pairs(FramesList) do
-		PlayerFrames[b] = SpartanoUF:Spawn(b, 'SUI_' .. b .. 'Frame')
+		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
 		if b == 'player' then
 			PlayerFrames:SetupExtras()
 		end
@@ -1458,7 +1458,7 @@ function module:PlayerFrames()
 	if SUI.DBMod.PlayerFrames.ArenaFrame.display == true then
 		local arena = {}
 		for i = 1, 3 do
-			arena[i] = SpartanoUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
+			arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
 			arena[i].artwork.bg:SetVertexColor(0, .8, .9, .9)
 
 			if i == 1 then
@@ -1500,7 +1500,7 @@ function module:PlayerFrames()
 	if SUI.DBMod.PlayerFrames.BossFrame.display == true then
 		local boss = {}
 		for i = 1, MAX_BOSS_FRAMES do
-			boss[i] = SpartanoUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
+			boss[i] = SUIUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
 			boss[i].artwork.bg:SetVertexColor(0, .8, .9, .9)
 
 			if i == 1 then
@@ -1582,7 +1582,7 @@ function module:PlayerFrames()
 end
 
 function module:RaidFrames()
-	SpartanoUF:SetActiveStyle('Spartan_TransparentRaidFrames')
+	SUIUF:SetActiveStyle('Spartan_TransparentRaidFrames')
 
 	local xoffset = 3
 	local yOffset = -5
@@ -1595,7 +1595,7 @@ function module:RaidFrames()
 	end
 
 	local raid =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		nil,
 		nil,
 		'raid',
@@ -1636,10 +1636,10 @@ end
 
 function module:PartyFrames()
 	PartyFrames = SUI:GetModule('PartyFrames')
-	SpartanoUF:SetActiveStyle('Spartan_TransparentPartyFrames')
+	SUIUF:SetActiveStyle('Spartan_TransparentPartyFrames')
 
 	local party =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		'SUI_PartyFrameHeader',
 		nil,
 		nil,

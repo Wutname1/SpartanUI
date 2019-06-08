@@ -12,10 +12,10 @@ local FramesList = {
 }
 
 function PlayerFrames:SUI_PlayerFrames_Classic()
-	SpartanoUF:SetActiveStyle('SUI_PlayerFrames_Classic')
+	SUIUF:SetActiveStyle('SUI_PlayerFrames_Classic')
 
 	for _, b in pairs(FramesList) do
-		PlayerFrames[b] = SpartanoUF:Spawn(b, 'SUI_' .. b .. 'Frame')
+		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
 		if b == 'player' then
 			PlayerFrames:SetupExtras()
 		end
@@ -25,7 +25,7 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 
 	if SUI.DBMod.PlayerFrames.BossFrame.display == true then
 		for i = 1, MAX_BOSS_FRAMES do
-			PlayerFrames.boss[i] = SpartanoUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
+			PlayerFrames.boss[i] = SUIUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
 			if i == 1 then
 				PlayerFrames.boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 				PlayerFrames.boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
@@ -36,7 +36,7 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 	end
 	if SUI.DBMod.PlayerFrames.ArenaFrame.display == true then
 		for i = 1, 3 do
-			PlayerFrames.arena[i] = SpartanoUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
+			PlayerFrames.arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
 			if i == 1 then
 				PlayerFrames.arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 				PlayerFrames.arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
