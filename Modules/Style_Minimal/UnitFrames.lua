@@ -401,7 +401,7 @@ local MakeSmallFrame = function(self, unit)
 		self.StatusText:SetJustifyH('CENTER')
 		self:Tag(self.StatusText, '[afkdnd]')
 	end
-	-- self.AuraWatch = SUI:oUF_Buffs(self)
+	-- self.AuraWatch = SUI:SUF_Buffs(self)
 
 	if unit == 'party' then
 		self.TextUpdate = PartyFrames.PostUpdateText
@@ -621,7 +621,7 @@ local MakeLargeFrame = function(self, unit, width)
 				Background:SetTexture(Smoothv2)
 				Background:SetVertexColor(1, 1, 1, .2)
 
-				-- Register it with oUF
+				-- Register it with SUF
 				self.AdditionalPower = DruidMana
 				self.AdditionalPower.bg = Background
 

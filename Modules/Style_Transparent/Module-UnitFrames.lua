@@ -469,7 +469,7 @@ local CreatePlayerFrame = function(self, unit)
 			Background:SetAllPoints(DruidMana)
 			Background:SetTexture(1, 1, 1, .2)
 
-			-- Register it with oUF
+			-- Register it with SUF
 			self.AdditionalPower = DruidMana
 			self.AdditionalPower.bg = Background
 		end
@@ -554,7 +554,7 @@ local CreatePlayerFrame = function(self, unit)
 				ClassPower[index] = Bar
 			end
 
-			-- Register with oUF
+			-- Register with SUF
 			self.ClassPower = ClassPower
 		end
 	end

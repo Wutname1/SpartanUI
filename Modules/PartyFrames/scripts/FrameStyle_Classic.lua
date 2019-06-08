@@ -407,7 +407,7 @@ local CreatePartyFrame = function(self, unit)
 		self.Auras.PostUpdate = PartyFrames:PostUpdateAura(self, unit)
 	end
 	do -- HoTs Display
-		self.AuraWatch = SUI:oUF_Buffs(self, 'BOTTOMRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'BOTTOMRIGHT', 'TOPRIGHT', 0)
 	end
 	do --Threat, SpellRange, and Ready Check
 		self.Range = {

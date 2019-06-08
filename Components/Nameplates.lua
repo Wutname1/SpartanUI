@@ -350,7 +350,7 @@ function module:OnEnable()
 	SUIUF:SetActiveStyle('Spartan_NamePlates')
 	SUIUF:SpawnNamePlates(nil, NameplateCallback)
 
-	-- oUF is not hiding the mana bar. So we need to hide it.
+	-- SUF is not hiding the mana bar. So we need to hide it.
 	if ClassNameplateManaBarFrame then
 		ClassNameplateManaBarFrame:HookScript(
 			'OnShow',

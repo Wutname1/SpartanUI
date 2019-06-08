@@ -198,7 +198,7 @@ local SpawnUnitFrame = function(self, unit)
 		self.Debuffs.PostUpdate = RaidFrames:PostUpdateDebuffs(self, unit)
 	end
 	do -- HoTs Display
-		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
 	end
 	do -- Threat, SpellRange, and Ready Check
 		self.Range = {
@@ -302,9 +302,9 @@ function RaidFrames:Classic()
 		SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
-		'oUF-initialConfigFunction',
+		'SUF-initialConfigFunction',
 		format(initialConfigFunction, w, h)
-		-- 'oUF-initialConfigFunction', [[
+		-- 'SUF-initialConfigFunction', [[
 		-- self:SetHeight(35)
 		-- self:SetWidth(90)
 		-- ]]

@@ -464,7 +464,7 @@ local CreatePlayerFrame = function(self, unit)
 				ClassPower[index] = Bar
 			end
 
-			-- Register with oUF
+			-- Register with SUF
 			self.ClassPower = ClassPower
 		end
 	end

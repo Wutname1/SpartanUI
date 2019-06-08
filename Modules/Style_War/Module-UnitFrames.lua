@@ -542,7 +542,7 @@ local CreateLargeFrame = function(self, unit)
 				ClassPower[index] = Bar
 			end
 
-			-- Register with oUF
+			-- Register with SUF
 			self.ClassPower = ClassPower
 		end
 	end
@@ -760,7 +760,7 @@ local CreateMediumFrame = function(self, unit)
 		self:Tag(self.StatusText, '[afkdnd]')
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
 
 		self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
@@ -901,7 +901,7 @@ local CreateSmallFrame = function(self, unit)
 		self:Tag(self.StatusText, '[afkdnd]')
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', -5)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', -5)
 
 		self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
@@ -1270,7 +1270,7 @@ function module:RaidFrames()
 		SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
-		'oUF-initialConfigFunction',
+		'SUF-initialConfigFunction',
 		module:FrameSize(SUI.DB.Styles.War.RaidFrames.FrameStyle)
 	)
 
@@ -1310,7 +1310,7 @@ function module:PartyFrames()
 		'TOPLEFT',
 		'initial-anchor',
 		'TOPLEFT',
-		'oUF-initialConfigFunction',
+		'SUF-initialConfigFunction',
 		module:FrameSize(SUI.DB.Styles.War.PartyFrames.FrameStyle)
 	)
 
