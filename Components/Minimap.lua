@@ -87,7 +87,7 @@ function module:ShapeChange(shape)
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
 	end
-	if not SUI.WoWClassic then
+	if not SUI.IsClassic then
 		Minimap:SetArchBlobRingScalar(0)
 		Minimap:SetQuestBlobRingScalar(0)
 	end
@@ -285,7 +285,7 @@ function module:ModifyMinimapLayout()
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.shape == 'square' then
 			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
 
-			if not SUI.WoWClassic then
+			if not SUI.IsClassic then
 				Minimap:SetArchBlobRingScalar(0)
 				Minimap:SetQuestBlobRingScalar(0)
 			end
@@ -300,14 +300,14 @@ function module:ModifyMinimapLayout()
 			MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 			MinimapZoneText:SetShadowOffset(1, -1)
 
-			if not SUI.WoWClassic then
+			if not SUI.IsClassic then
 				MiniMapTracking:ClearAllPoints()
 				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
 			end
 		else
 			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
 
-			if not SUI.WoWClassic then
+			if not SUI.IsClassic then
 				MiniMapTracking:ClearAllPoints()
 				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
 			end
@@ -324,7 +324,7 @@ function module:ModifyMinimapLayout()
 	Minimap:SetFrameLevel(120)
 
 	-- Retail Version stuff
-	if not SUI.WoWClassic then
+	if not SUI.IsClassic then
 		TimeManagerClockButton:GetRegions():Hide() -- Hide the border
 		TimeManagerClockButton:SetBackdrop(nil)
 		TimeManagerClockButton:ClearAllPoints()
@@ -361,6 +361,9 @@ function module:ModifyMinimapLayout()
 
 	MinimapBorderTop:Hide()
 	MinimapBorder:Hide()
+	if MinimapToggleButton then
+		MinimapToggleButton:Hide()
+	end
 
 	-- Do modifications to MiniMapWorldMapButton
 	--	-- remove current textures

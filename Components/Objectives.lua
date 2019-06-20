@@ -104,7 +104,7 @@ function module:OnEnable()
 	module:FirstTimeSetup()
 
 	-- Add Fade in and out
-	if SUI.WoWClassic then
+	if SUI.IsClassic then
 		frameName = 'QuestWatchFrame'
 	end
 
@@ -141,7 +141,7 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_START')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_END')
 
-	if not SUI.WoWClassic then
+	if not SUI.IsClassic then
 		--Scenarios
 		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_COMPLETED')
 		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_CRITERIA_UPDATE')

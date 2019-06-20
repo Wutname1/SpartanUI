@@ -9,10 +9,10 @@ function addon:HotsListing()
 			774, -- Rejuvenation
 			LifebloomSpellId, -- Lifebloom
 			8936, -- Regrowth
-			48438, -- Wild Growth
-			155777, -- Germination
-			102351, -- Cenarion Ward
-			102342 -- Ironbark
+			-- 48438, -- Wild Growth
+			-- 155777, -- Germination
+			-- 102351, -- Cenarion Ward
+			-- 102342 -- Ironbark
 		}
 	elseif classFileName == 'PRIEST' then
 		return {

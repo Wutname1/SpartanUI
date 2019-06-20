@@ -64,7 +64,7 @@ function module:OnEnable()
 		end
 	)
 	
-	if not SUI.WoWClassic then
+	if not SUI.IsClassic then
 		CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
 	end
 	CombatLog_Watcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')

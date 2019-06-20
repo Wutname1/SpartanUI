@@ -13,7 +13,7 @@ local type, pairs = type, pairs
 local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
-SUI.WoWClassic = select(4, GetBuildInfo()) < 20000
+SUI.IsClassic = select(4, GetBuildInfo()) < 20000
 
 if not SUI.BuildNum then
 	SUI.BuildNum = 0
@@ -732,8 +732,8 @@ function SUI:OnInitialize()
 	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
 
 	-- Add dual-spec support
-	local LibDualSpec = LibStub('LibDualSpec-1.0')
-	if not SUI.WoWClassic then
+	local LibDualSpec = LibStub('LibDualSpec-1.0', true)
+	if not SUI.IsClassic and LibDualSpec then
 		LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
 		LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
 		SUI.opt.args['Profiles'].order = 999
