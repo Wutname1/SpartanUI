@@ -248,7 +248,7 @@ local CreatePlayerFrame = function(self, unit)
 		self.artwork = artwork
 
 		self.Portrait = CreatePortrait(self)
-		self.Portrait:SetSize(62)
+		self.Portrait:SetSize(62, 62)
 		self.Portrait:SetPoint('CENTER', self, 'CENTER', 80, 3)
 
 		self.ThreatIndicator = CreateFrame('Frame', nil, self)
