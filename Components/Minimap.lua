@@ -1,72 +1,6 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Component_Minimap')
 ----------------------------------------------------------------------------------------------------
-local BlizzButtons = {
-	'MiniMapTracking',
-	'MiniMapVoiceChatFrame',
-	'MiniMapWorldMapButton',
-	'QueueStatusMinimapButton',
-	'MinimapZoomIn',
-	'MinimapZoomOut',
-	'MiniMapMailFrame',
-	'MiniMapBattlefieldFrame',
-	'GameTimeFrame',
-	'FeedbackUIButton'
-}
-local BlizzUI = {
-	'ActionBar',
-	'BonusActionButton',
-	'MainMenu',
-	'ShapeshiftButton',
-	'MultiBar',
-	'KeyRingButton',
-	'PlayerFrame',
-	'TargetFrame',
-	'PartyMemberFrame',
-	'ChatFrame',
-	'ExhaustionTick',
-	'TargetofTargetFrame',
-	'WorldFrame',
-	'ActionButton',
-	'CharacterMicroButton',
-	'SpellbookMicroButton',
-	'TalentMicroButton',
-	'QuestLogMicroButton',
-	'SocialsMicroButton',
-	'LFGMicroButton',
-	'HelpMicroButton',
-	'CharacterBag',
-	'PetFrame',
-	'MinimapCluster',
-	'MinimapBackdrop',
-	'UIParent',
-	'WorldFrame',
-	'Minimap',
-	'BuffButton',
-	'BuffFrame',
-	'TimeManagerClockButton',
-	'CharacterFrame'
-}
-local BlizzParentStop = {'WorldFrame', 'Minimap', 'MinimapBackdrop', 'UIParent', 'MinimapCluster'}
-local SkinProtect = {
-	'TutorialFrameAlertButton',
-	'MiniMapMailFrame',
-	'MinimapBackdrop',
-	'MiniMapVoiceChatFrame',
-	'TimeManagerClockButton',
-	'MinimapButtonFrameDragButton',
-	'GameTimeFrame',
-	'MiniMapTracking',
-	'MiniMapVoiceChatFrame',
-	'MiniMapWorldMapButton',
-	'QueueStatusMinimapButton',
-	'MinimapZoomIn',
-	'MinimapZoomOut',
-	'MiniMapMailFrame',
-	'MiniMapBattlefieldFrame',
-	'GameTimeFrame',
-	'FeedbackUIButton'
-}
 local ChangesTimer = nil
 local MinimapUpdater = CreateFrame('Frame')
 local SUI_MiniMapIcon
@@ -153,17 +87,23 @@ function module:ShapeChange(shape)
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
 	end
-	Minimap:SetArchBlobRingScalar(0)
-	Minimap:SetQuestBlobRingScalar(0)
+	if not SUI.IsClassic then
+		Minimap:SetArchBlobRingScalar(0)
+		Minimap:SetQuestBlobRingScalar(0)
+	end
 
 	if shape == 'square' then
 		Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
-		MiniMapTracking:ClearAllPoints()
-		MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, 5)
+		if MiniMapTracking then
+			MiniMapTracking:ClearAllPoints()
+			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, 5)
+		end
 	else
 		Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
-		MiniMapTracking:ClearAllPoints()
-		MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
+		if MiniMapTracking then
+			MiniMapTracking:ClearAllPoints()
+			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
+		end
 	end
 
 	local Style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
@@ -345,8 +285,10 @@ function module:ModifyMinimapLayout()
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.shape == 'square' then
 			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
 
-			Minimap:SetArchBlobRingScalar(0)
-			Minimap:SetQuestBlobRingScalar(0)
+			if not SUI.IsClassic then
+				Minimap:SetArchBlobRingScalar(0)
+				Minimap:SetQuestBlobRingScalar(0)
+			end
 
 			Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
 			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay')
@@ -358,13 +300,17 @@ function module:ModifyMinimapLayout()
 			MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 			MinimapZoneText:SetShadowOffset(1, -1)
 
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
+			if not SUI.IsClassic then
+				MiniMapTracking:ClearAllPoints()
+				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
+			end
 		else
 			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
 
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
+			if not SUI.IsClassic then
+				MiniMapTracking:ClearAllPoints()
+				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
+			end
 		end
 	end
 	if not SUI.DB.MiniMap.northTag then
@@ -377,27 +323,47 @@ function module:ModifyMinimapLayout()
 	Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -30, -30)
 	Minimap:SetFrameLevel(120)
 
-	TimeManagerClockButton:GetRegions():Hide() -- Hide the border
-	TimeManagerClockButton:SetBackdrop(nil)
-	TimeManagerClockButton:ClearAllPoints()
-	TimeManagerClockButton:SetPoint('TOP', Minimap, 'BOTTOM', 0, 20)
-	TimeManagerClockButton:SetBackdropColor(0, 0, 0, 1)
-	TimeManagerClockButton:SetBackdropBorderColor(0, 0, 0, 1)
+	-- Retail Version stuff
+	if not SUI.IsClassic then
+		TimeManagerClockButton:GetRegions():Hide() -- Hide the border
+		TimeManagerClockButton:SetBackdrop(nil)
+		TimeManagerClockButton:ClearAllPoints()
+		TimeManagerClockButton:SetPoint('TOP', Minimap, 'BOTTOM', 0, 20)
+		TimeManagerClockButton:SetBackdropColor(0, 0, 0, 1)
+		TimeManagerClockButton:SetBackdropBorderColor(0, 0, 0, 1)
+
+		MiniMapInstanceDifficulty:ClearAllPoints()
+		MiniMapInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)
+
+		GuildInstanceDifficulty:ClearAllPoints()
+		GuildInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)
+
+		GarrisonLandingPageMinimapButton:ClearAllPoints()
+		GarrisonLandingPageMinimapButton:SetSize(35, 35)
+		GarrisonLandingPageMinimapButton:SetPoint('RIGHT', Minimap, 18, -25)
+
+		SUI_MiniMapIcon = CreateFrame('Button', 'SUI_MiniMapIcon', Minimap)
+		SUI_MiniMapIcon:SetSize(1, 1)
+		SUI_MiniMapIcon:SetScript(
+			'OnEvent',
+			function(self, event, ...)
+				GarrisonLandingPageMinimapButton:Show()
+				GarrisonLandingPageMinimapButton:SetAlpha(1)
+			end
+		)
+		SUI_MiniMapIcon:RegisterEvent('GARRISON_MISSION_FINISHED')
+		SUI_MiniMapIcon:RegisterEvent('GARRISON_INVASION_AVAILABLE')
+		SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
+	end
 
 	MinimapBackdrop:ClearAllPoints()
 	MinimapBackdrop:SetPoint('CENTER', Minimap, 'CENTER', -10, -24)
 
 	MinimapBorderTop:Hide()
 	MinimapBorder:Hide()
-
-	MiniMapInstanceDifficulty:ClearAllPoints()
-	MiniMapInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)
-	GuildInstanceDifficulty:ClearAllPoints()
-	GuildInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)
-
-	GarrisonLandingPageMinimapButton:ClearAllPoints()
-	GarrisonLandingPageMinimapButton:SetSize(35, 35)
-	GarrisonLandingPageMinimapButton:SetPoint('RIGHT', Minimap, 18, -25)
+	if MinimapToggleButton then
+		MinimapToggleButton:Hide()
+	end
 
 	-- Do modifications to MiniMapWorldMapButton
 	--	-- remove current textures
@@ -416,19 +382,6 @@ function module:ModifyMinimapLayout()
 
 	GameTimeFrame:ClearAllPoints()
 	GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
-
-	SUI_MiniMapIcon = CreateFrame('Button', 'SUI_MiniMapIcon', Minimap)
-	SUI_MiniMapIcon:SetSize(1, 1)
-	SUI_MiniMapIcon:SetScript(
-		'OnEvent',
-		function(self, event, ...)
-			GarrisonLandingPageMinimapButton:Show()
-			GarrisonLandingPageMinimapButton:SetAlpha(1)
-		end
-	)
-	SUI_MiniMapIcon:RegisterEvent('GARRISON_MISSION_FINISHED')
-	SUI_MiniMapIcon:RegisterEvent('GARRISON_INVASION_AVAILABLE')
-	SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
 
 	module:MinimapCoords()
 	MinimapZoneText:ClearAllPoints()

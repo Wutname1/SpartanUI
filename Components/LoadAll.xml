@@ -9,4 +9,5 @@
 	<Script file="MailOpenAll.lua" />
 	<Script file="Nameplates.lua" />
 	<Script file="CombatLog.lua" />
+	<Script file="InterruptAnnounce.lua" />
 </Ui>

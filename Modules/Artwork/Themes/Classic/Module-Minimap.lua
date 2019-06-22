@@ -23,8 +23,10 @@ function module:MiniMap()
 
 	-- Minimap.coords:Hide()
 
-	QueueStatusFrame:ClearAllPoints()
-	QueueStatusFrame:SetPoint('BOTTOM', SpartanUI, 'TOP', 0, 100)
+	if QueueStatusFrame then
+		QueueStatusFrame:ClearAllPoints()
+		QueueStatusFrame:SetPoint('BOTTOM', SpartanUI, 'TOP', 0, 100)
+	end
 
 	--Shape Change
 	local shapechange = function(shape)

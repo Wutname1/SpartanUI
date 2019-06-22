@@ -1,97 +1,118 @@
 local SUI = SUI
-local module = SUI:NewModule('Component_InterruptAnnouncer')
+local module = SUI:NewModule('Component_InterruptAnnouncer', 'AceEvent-3.0')
 local L = SUI.L
 module.DisplayName = 'Interrupt announcer'
 ----------------------------------------------------------------------------------------------------
-local InterruptAnnouncer_Watcher = CreateFrame('Frame')
+local lastTime, lastSpellID = nil, nil
 
-local function printFormattedString(t, sid, sn, ss, ssid)
+local function printFormattedString(t, sid, spell, ss, ssid)
 	local msg = SUI.DB.InterruptAnnouncer.text
-	msg = msg:gsub("%%t", t):gsub("%%sn", sn):gsub("%%sc", CombatLog_String_SchoolString(ss)):gsub("%%sl", GetSpellLink(sid)):gsub("%%ys", GetSpellLink(ssid))
-	if options.channel == "SELF" then
+	local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
+
+	msg =
+		msg:gsub('%%t', t):gsub('%%spell', spell):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub(
+		'%%lnk',
+		GetSpellLink(sid)
+	):gsub('%%myspell', GetSpellLink(ssid))
+	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else
-		local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
-
 		if not IsInGroup(2) then
 			if IsInRaid() then
-				if ChatChannel == "INSTANCE_CHAT" then ChatChannel = "RAID" end
+				if ChatChannel == 'INSTANCE_CHAT' then
+					ChatChannel = 'RAID'
+				end
 			elseif IsInGroup(1) then
-				if ChatChannel == "INSTANCE_CHAT" then ChatChannel = "PARTY" end
-			end	
+				if ChatChannel == 'INSTANCE_CHAT' then
+					ChatChannel = 'PARTY'
+				end
+			end
 		elseif IsInGroup(2) then
-			if ChatChannel == "RAID" then ChatChannel = "INSTANCE_CHAT" end
-			if ChatChannel == "PARTY" then ChatChannel = "INSTANCE_CHAT" end
-		end
-
-		if options.smartChannel then
-			if ChatChannel == "RAID" and not IsInRaid() then
-				ChatChannel = "PARTY"
+			if ChatChannel == 'RAID' then
+				ChatChannel = 'INSTANCE_CHAT'
 			end
-
-			if ChatChannel == "PARTY" and not IsInGroup(1) then
-				ChatChannel = "SAY"
-			end
-
-			if ChatChannel == "INSTANCE_CHAT" and not IsInGroup(2) then
-				ChatChannel = "SAY"
-			end
-
-			if ChatChannel == "CHANNEL" and ec == 0 then
-				ChatChannel = "SAY"
+			if ChatChannel == 'PARTY' then
+				ChatChannel = 'INSTANCE_CHAT'
 			end
 		end
-			
+
+		if ChatChannel == 'SMART' then
+			ChatChannel = 'RAID'
+			if ChatChannel == 'RAID' and not IsInRaid() then
+				ChatChannel = 'PARTY'
+			end
+
+			if ChatChannel == 'PARTY' and not IsInGroup(1) then
+				ChatChannel = 'SAY'
+			end
+
+			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then
+				ChatChannel = 'SAY'
+			end
+
+			if ChatChannel == 'CHANNEL' and ec == 0 then
+				ChatChannel = 'SAY'
+			end
+		end
+
 		SendChatMessage(msg, ChatChannel, nil, ec)
 	end
 end
 
 function module:OnInitialize()
 	local Defaults = {
-		alwayson = false,
-		raidmythic = true,
-		raidheroic = true,
-		raidnormal = true,
-		raidlfr = false,
-		raidlegacy = false,
-		mythicplus = true,
-		mythicdungeon = false,
-		heroicdungeon = false,
-		normaldungeon = false,
+		always = false,
+		inBG = false,
+		inRaid = true,
+		inParty = true,
+		inArena = true,
+		outdoors = false,
+		includePets = true,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
-		text = 'Interupted %t %spell',
-		debug = false
+		text = 'interrupted %t %sl'
 	}
 	if not SUI.DB.InterruptAnnouncer then
-		SUI.DB.EnabledComponents.InterruptAnnouncer = false
 		SUI.DB.InterruptAnnouncer = Defaults
 	else
 		SUI.DB.InterruptAnnouncer = SUI:MergeData(SUI.DB.InterruptAnnouncer, Defaults, false)
 	end
 end
 
-function module:COMBAT_LOG_EVENT_UNFILTERED()
+local function COMBAT_LOG_EVENT_UNFILTERED()
+	if not SUI.DB.EnabledComponents.InterruptAnnouncer then
+		return
+	end
+
 	local continue = false
 	local inInstance, instanceType = IsInInstance()
-	if instanceType == 'arena' and options.inArena then
+	if instanceType == 'arena' and SUI.DB.InterruptAnnouncer.inArena then
 		continue = true
-	elseif inInstance and instanceType == 'party' and options.inParty then
+	elseif inInstance and instanceType == 'party' and SUI.DB.InterruptAnnouncer.inParty then
 		continue = true
-	elseif instanceType == 'pvp' and options.inBG then
+	elseif instanceType == 'pvp' and SUI.DB.InterruptAnnouncer.inBG then
 		continue = true
-	elseif instanceType == 'raid' and options.inRaid then
+	elseif instanceType == 'raid' and SUI.DB.InterruptAnnouncer.inRaid then
 		continue = true
-	elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and options.outdoors then
+	elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and SUI.DB.InterruptAnnouncer.outdoors then
 		continue = true
 	end
 
-	local _, eventType, _, sourceGUID, _, _, _, _, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool =
+	local timeStamp, eventType, _, sourceGUID, _, _, _, _, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool =
 		CombatLogGetCurrentEventInfo()
+
+	-- Check if time and ID was same as last
+	-- Note: This is to prevent flooding announcements on AoE taunts.
+	if timeStamp == lastTime and spellID == lastSpellID then
+		return
+	end
+
+	-- Update last time and ID
+	lastTime, lastSpellID = timeStamp, spellID
+
 	if
-		continue and
-			(eventType == 'SPELL_INTERRUPT' and
-				(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and options.includePets)))
+		(continue or SUI.DB.InterruptAnnouncer.alwayson) and eventType == 'SPELL_INTERRUPT' and
+			(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and SUI.DB.InterruptAnnouncer.includePets))
 	 then
 		printFormattedString(destName, spellID, spellName, spellSchool, sourceID)
 	end
@@ -99,21 +120,293 @@ end
 
 function module:OnEnable()
 	module:Options()
+	module:FirstLaunch()
 
-	InterruptAnnouncer_Watcher:SetScript(
-		'OnEvent',
-		function(_, event)
-			if not SUI.DB.EnabledComponents.InterruptAnnouncer then
-				return
-			end
-
-			if module[event] then
-				module[event]()
-			end
-		end
-	)
-	InterruptAnnouncer_Watcher:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
+	module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED', COMBAT_LOG_EVENT_UNFILTERED)
 end
 
 function module:Options()
+	SUI.opt.args['ModSetting'].args['InterruptAnnouncer'] = {
+		type = 'group',
+		name = L['Interrupt announcer'],
+		args = {
+			alwayson = {
+				name = L['Always on'],
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return SUI.DB.InterruptAnnouncer.alwayson
+				end,
+				set = function(info, val)
+					SUI.DB.InterruptAnnouncer.alwayson = val
+				end
+			},
+			active = {
+				name = L['Active when in'],
+				type = 'group',
+				inline = true,
+				order = 100,
+				args = {
+					inBG = {
+						name = L['Battleground'],
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.InterruptAnnouncer.inBG
+						end,
+						set = function(info, val)
+							SUI.DB.InterruptAnnouncer.inBG = val
+						end
+					},
+					inRaid = {
+						name = L['Raid'],
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.InterruptAnnouncer.inRaid
+						end,
+						set = function(info, val)
+							SUI.DB.InterruptAnnouncer.inRaid = val
+						end
+					},
+					inParty = {
+						name = L['Party'],
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.InterruptAnnouncer.inParty
+						end,
+						set = function(info, val)
+							SUI.DB.InterruptAnnouncer.inParty = val
+						end
+					},
+					inArena = {
+						name = L['Arena'],
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.InterruptAnnouncer.inArena
+						end,
+						set = function(info, val)
+							SUI.DB.InterruptAnnouncer.inArena = val
+						end
+					},
+					outdoors = {
+						name = L['Outdoors'],
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return SUI.DB.InterruptAnnouncer.outdoors
+						end,
+						set = function(info, val)
+							SUI.DB.InterruptAnnouncer.outdoors = val
+						end
+					}
+				}
+			},
+			includePets = {
+				name = L['Include pets'],
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return SUI.DB.InterruptAnnouncer.includePets
+				end,
+				set = function(info, val)
+					SUI.DB.InterruptAnnouncer.includePets = val
+				end
+			},
+			announceLocation = {
+				name = L['Announce location'],
+				type = 'select',
+				order = 200,
+				values = {
+					['INSTANCE_CHAT'] = L['Instance chat'],
+					['PARTY'] = L['Party'],
+					['RAID'] = L['Raid'],
+					['SAY'] = L['Say'],
+					['SELF'] = L['Self'],
+					['SMART'] = L['Smart']
+				},
+				get = function(info)
+					return SUI.DB.InterruptAnnouncer.announceLocation
+				end,
+				set = function(info, val)
+					SUI.DB.InterruptAnnouncer.announceLocation = val
+				end
+			},
+			TextInfo = {
+				name = '',
+				type = 'group',
+				inline = true,
+				order = 300,
+				args = {
+					a = {
+						name = L['Text variables:'],
+						type = 'description',
+						order = 10,
+						fontSize = 'large'
+					},
+					b = {
+						name = '- %t - ' .. L['Target that was interrupted'],
+						type = 'description',
+						order = 11,
+						fontSize = 'small'
+					},
+					c = {
+						name = '- %spell - ' .. L['Spell you interrupted'],
+						type = 'description',
+						order = 12,
+						fontSize = 'small'
+					},
+					e = {
+						name = '- %lnk - ' .. L['Spell link of spell interrupted'],
+						type = 'description',
+						order = 13,
+						fontSize = 'small'
+					},
+					d = {
+						name = '- %cl - ' .. L['Spell class'],
+						type = 'description',
+						order = 14,
+						fontSize = 'small'
+					},
+					f = {
+						name = '- %myspell - ' .. L['Spell you used to interrupt'],
+						type = 'description',
+						order = 15,
+						fontSize = 'small'
+					},
+					h = {
+						name = '',
+						type = 'description',
+						order = 499,
+						fontSize = 'medium'
+					},
+					text = {
+						name = L['Announce text:'],
+						type = 'input',
+						order = 501,
+						width = 'full',
+						get = function(info)
+							return SUI.DB.InterruptAnnouncer.text
+						end,
+						set = function(info, value)
+							SUI.DB.InterruptAnnouncer.text = value
+						end
+					}
+				}
+			}
+		}
+	}
+end
+
+function module:FirstLaunch()
+	local PageData = {
+		ID = 'InterruptAnnouncer',
+		Name = L['Interrupt announcer'],
+		SubTitle = L['Interrupt announcer'],
+		RequireDisplay = SUI.DB.InterruptAnnouncer.FirstLaunch,
+		Display = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+			if not SUI.DB.EnabledComponents.InterruptAnnouncer then
+				window.Skip:Click()
+			end
+
+			--Container
+			local IAnnounce = CreateFrame('Frame', nil)
+			IAnnounce:SetParent(SUI_Win)
+			IAnnounce:SetAllPoints(SUI_Win)
+
+			-- Setup checkboxes
+			IAnnounce.options = {}
+			IAnnounce.options.alwayson = StdUi:Checkbox(IAnnounce, L['Always on'], 120, 20)
+
+			IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Battleground'], 120, 20)
+			IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Raid'], 120, 20)
+			IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Party'], 120, 20)
+			IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Arena'], 120, 20)
+			IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Outdoors'], 120, 20)
+
+			local items = {
+				{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
+				{text = L['Raid'], value = 'RAID'},
+				{text = L['Party'], value = 'PARTY'},
+				{text = L['Say'], value = 'SAY'},
+				{text = L['Smart'], value = 'SMART'},
+				{text = L['Self'], value = 'SELF'}
+			}
+
+			IAnnounce.announceLocation = StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.InterruptAnnouncer.announceLocation)
+			IAnnounce.announceLocation.OnValueChanged = function(self, value)
+				SUI.DB.InterruptAnnouncer.announceLocation = value
+			end
+
+			-- Create Labels
+			IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
+			IAnnounce.lblActive = StdUi:Label(IAnnounce, L['Active when in'], 13)
+			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, L['Announce location'], 13)
+			IAnnounce.lblAnnouncetext = StdUi:Label(IAnnounce, L['Announce text:'], 13)
+
+			-- Positioning
+			StdUi:GlueTop(IAnnounce.modEnabled, SUI_Win, 0, -10)
+			StdUi:GlueBelow(IAnnounce.lblAnnouncelocation, IAnnounce.modEnabled, -100, -20)
+			StdUi:GlueRight(IAnnounce.announceLocation, IAnnounce.lblAnnouncelocation, 5, 0)
+
+			-- Active locations
+			StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncelocation, -80, -20)
+
+			StdUi:GlueBelow(IAnnounce.options.inBG, IAnnounce.lblActive, 30, 0)
+			StdUi:GlueRight(IAnnounce.options.inArena, IAnnounce.options.inBG, 0, 0)
+			StdUi:GlueRight(IAnnounce.options.outdoors, IAnnounce.options.inArena, 0, 0)
+
+			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.options.inBG, 0, 0)
+			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 0, 0)
+
+			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, '-or-', 13)
+			StdUi:GlueBelow(IAnnounce.lblAnnouncelocation, IAnnounce.lblActive, 0, -40, 'LEFT')
+			StdUi:GlueBelow(IAnnounce.options.alwayson, IAnnounce.options.inRaid, 0, -15)
+
+			-- Active locations
+			StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncetext, -120, 0)
+			
+
+			-- Defaults
+			IAnnounce.modEnabled:SetChecked(SUI.DB.EnabledComponents.InterruptAnnouncer)
+			for key, object in pairs(IAnnounce.options) do
+				object:SetChecked(SUI.DB.InterruptAnnouncer[key])
+			end
+
+			IAnnounce.modEnabled:HookScript(
+				'OnClick',
+				function()
+					for _, object in pairs(IAnnounce.options) do
+						if IAnnounce.modEnabled:GetChecked() then
+							object:Enable()
+						else
+							object:Disable()
+						end
+					end
+				end
+			)
+
+			SUI_Win.IAnnounce = IAnnounce
+		end,
+		Next = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local IAnnounce = window.content.IAnnounce
+			SUI.DB.EnabledComponents.InterruptAnnouncer = IAnnounce.modEnabled:GetChecked()
+
+			for key, object in pairs(IAnnounce.options) do
+				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
+			end
+			SUI.DB.InterruptAnnouncer.FirstLaunch = false
+		end,
+		Skip = function()
+			SUI.DB.InterruptAnnouncer.FirstLaunch = false
+		end
+	}
+	local SetupWindow = SUI:GetModule('SetupWizard')
+	SetupWindow:AddPage(PageData)
 end

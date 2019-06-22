@@ -371,7 +371,7 @@ local TooltipSetUnit = function(self)
 		if (lvlLine) then
 			local creatureClassification = UnitClassification(unit)
 			local creatureType = UnitCreatureType(unit)
-			if (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
+			if not SUI.IsClassic and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
 				unitLevel = UnitBattlePetLevel(unit)
 				local ab = C_PetJournal.GetPetTeamAverageLevel()
 				if ab then
@@ -400,7 +400,7 @@ local TooltipSetUnit = function(self)
 
 	local unitTarget = unit .. 'target'
 	if unit ~= 'player' and UnitExists(unitTarget) then
-		if UnitIsPlayer(unitTarget) and not UnitHasVehicleUI(unitTarget) then
+		if UnitIsPlayer(unitTarget) and (not SUI.IsClassic and not UnitHasVehicleUI(unitTarget)) then
 			totColor = RAID_CLASS_COLORS[select(2, UnitClass(unitTarget))]
 		else
 			totColor = FACTION_BAR_COLORS[UnitReaction(unitTarget, 'player')]

@@ -9,6 +9,59 @@ local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
 local Images
 local PlayerFaction = UnitFactionGroup('Player')
 
+local function ImageSetup()
+	Images = {
+		Alliance = {
+			bg = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
+			},
+			flair = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.03125, 0.427734375, 0, 0.421875}
+			}
+		},
+		Horde = {
+			bg = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
+			},
+			flair = {
+				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Coords = {0.541015625, 1, 0, 0.421875}
+			}
+		}
+	}
+
+	if PlayerFaction == 'Horde' then
+		Images.smallbg = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
+		}
+		Images.flair = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+		Images.flair2 = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.541015625, 1, 0, 0.421875}
+		}
+	else
+		Images.smallbg = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
+		}
+		Images.flair = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+		Images.flair2 = {
+			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Coords = {0.03125, 0.427734375, 0, 0.421875}
+		}
+	end
+end
+
 local function UpdatePowerPrep(self, event, specID)
 	local element = self.Power
 	element:SetMinMaxValues(0, 1)
@@ -325,26 +378,28 @@ local CreateLargeFrame = function(self, unit)
 			self.Health.colorHealth = true
 
 			-- Position and size
-			local myBars = CreateFrame('StatusBar', nil, self.Health)
-			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture(Smoothv2)
-			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
-
-			local otherBars = CreateFrame('StatusBar', nil, myBars)
-			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture(Smoothv2)
-			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
-
-			myBars:SetSize(self.Health:GetSize())
-			otherBars:SetSize(self.Health:GetSize())
-
-			self.HealthPrediction = {
-				myBar = myBars,
-				otherBar = otherBars,
-				maxOverflow = 3
-			}
+			if not SUI.IsClassic then
+				local myBars = CreateFrame('StatusBar', nil, self.Health)
+				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+				myBars:SetStatusBarTexture(Smoothv2)
+				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
+	
+				local otherBars = CreateFrame('StatusBar', nil, myBars)
+				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+				otherBars:SetStatusBarTexture(Smoothv2)
+				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
+	
+				myBars:SetSize(self.Health:GetSize())
+				otherBars:SetSize(self.Health:GetSize())
+	
+				self.HealthPrediction = {
+					myBar = myBars,
+					otherBar = otherBars,
+					maxOverflow = 3
+				}
+			end
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -489,7 +544,7 @@ local CreateLargeFrame = function(self, unit)
 				ClassPower[index] = Bar
 			end
 
-			-- Register with oUF
+			-- Register with SUF
 			self.ClassPower = ClassPower
 		end
 	end
@@ -615,27 +670,30 @@ local CreateMediumFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			-- Position and size
-			local myBars = CreateFrame('StatusBar', nil, self.Health)
-			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture(Smoothv2)
-			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
+			if not SUI.IsClassic then
+				-- Position and size
+				local myBars = CreateFrame('StatusBar', nil, self.Health)
+				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+				myBars:SetStatusBarTexture(Smoothv2)
+				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
-			local otherBars = CreateFrame('StatusBar', nil, myBars)
-			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture(Smoothv2)
-			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
+				local otherBars = CreateFrame('StatusBar', nil, myBars)
+				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+				otherBars:SetStatusBarTexture(Smoothv2)
+				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
-			myBars:SetSize(self.Health:GetSize())
-			otherBars:SetSize(self.Health:GetSize())
+				myBars:SetSize(self.Health:GetSize())
+				otherBars:SetSize(self.Health:GetSize())
 
-			self.HealthPrediction = {
-				myBar = myBars,
-				otherBar = otherBars,
-				maxOverflow = 3
-			}
+				self.HealthPrediction = {
+					myBar = myBars,
+					otherBar = otherBars,
+					maxOverflow = 3
+				}
+			end
+			
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -707,7 +765,7 @@ local CreateMediumFrame = function(self, unit)
 		self:Tag(self.StatusText, '[afkdnd]')
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
 
 		self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
@@ -779,27 +837,30 @@ local CreateSmallFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			-- Position and size
-			local myBars = CreateFrame('StatusBar', nil, self.Health)
-			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture(Smoothv2)
-			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
+			if not SUI.IsClassic then
+				-- Position and size
+				local myBars = CreateFrame('StatusBar', nil, self.Health)
+				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+				myBars:SetStatusBarTexture(Smoothv2)
+				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
 
-			local otherBars = CreateFrame('StatusBar', nil, myBars)
-			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture(Smoothv2)
-			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
+				local otherBars = CreateFrame('StatusBar', nil, myBars)
+				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+				otherBars:SetStatusBarTexture(Smoothv2)
+				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
 
-			myBars:SetSize(self.Health:GetSize())
-			otherBars:SetSize(self.Health:GetSize())
+				myBars:SetSize(self.Health:GetSize())
+				otherBars:SetSize(self.Health:GetSize())
 
-			self.HealthPrediction = {
-				myBar = myBars,
-				otherBar = otherBars,
-				maxOverflow = 3
-			}
+				self.HealthPrediction = {
+					myBar = myBars,
+					otherBar = otherBars,
+					maxOverflow = 3
+				}
+			end
+			
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -848,7 +909,7 @@ local CreateSmallFrame = function(self, unit)
 		self:Tag(self.StatusText, '[afkdnd]')
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', -5)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', -5)
 
 		self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
@@ -932,9 +993,9 @@ function module:UpdateAltBarPositions()
 	end
 end
 
-SpartanoUF:RegisterStyle('Spartan_WarPlayerFrames', CreateUnitFrame)
-SpartanoUF:RegisterStyle('Spartan_WarPartyFrames', CreateUnitFrameParty)
-SpartanoUF:RegisterStyle('Spartan_WarRaidFrames', CreateUnitFrameRaid)
+SUIUF:RegisterStyle('Spartan_WarPlayerFrames', CreateUnitFrame)
+SUIUF:RegisterStyle('Spartan_WarPartyFrames', CreateUnitFrameParty)
+SUIUF:RegisterStyle('Spartan_WarRaidFrames', CreateUnitFrameRaid)
 
 -- Module Calls
 function module:FrameSize(size)
@@ -957,58 +1018,9 @@ function module:FrameSize(size)
 end
 
 function module:PlayerFrames()
-	Images = {
-		Alliance = {
-			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-				Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
-			},
-			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-				Coords = {0.03125, 0.427734375, 0, 0.421875}
-			}
-		},
-		Horde = {
-			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-				Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
-			},
-			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-				Coords = {0.541015625, 1, 0, 0.421875}
-			}
-		}
-	}
-
-	if PlayerFaction == 'Horde' then
-		Images.smallbg = {
-			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-			Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
-		}
-		Images.flair = {
-			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-			Coords = {0.03125, 0.427734375, 0, 0.421875}
-		}
-		Images.flair2 = {
-			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-			Coords = {0.541015625, 1, 0, 0.421875}
-		}
-	else
-		Images.smallbg = {
-			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-			Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
-		}
-		Images.flair = {
-			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-			Coords = {0.03125, 0.427734375, 0, 0.421875}
-		}
-		Images.flair2 = {
-			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
-			Coords = {0.03125, 0.427734375, 0, 0.421875}
-		}
-	end
+	ImageSetup()
 	PlayerFrames = SUI:GetModule('PlayerFrames')
-	SpartanoUF:SetActiveStyle('Spartan_WarPlayerFrames')
+	SUIUF:SetActiveStyle('Spartan_WarPlayerFrames')
 	PlayerFrames:BuffOptions()
 
 	local FramesList = {
@@ -1021,8 +1033,8 @@ function module:PlayerFrames()
 	}
 
 	for _, b in pairs(FramesList) do
-		PlayerFrames[b] = SpartanoUF:Spawn(b, 'SUI_' .. b .. 'Frame')
-		if b == 'player' then
+		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
+		if b == 'player' and not SUI.IsClassic then
 			PlayerFrames:SetupExtras()
 		end
 		-- PlayerFrames[b].artwork.bg:SetVertexColor(0,.8,.9,.9)
@@ -1037,7 +1049,7 @@ function module:PlayerFrames()
 		end
 		local arena = {}
 		for i = 1, 3 do
-			arena[i] = SpartanoUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
+			arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
 			if i == 1 then
 				arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
 				arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
@@ -1082,7 +1094,7 @@ function module:PlayerFrames()
 
 		local boss = {}
 		for i = 1, MAX_BOSS_FRAMES do
-			boss[i] = SpartanoUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
+			boss[i] = SUIUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
 			-- boss[i].artwork.bg:SetVertexColor(0,.8,.9,.9)
 
 			if i == 1 then
@@ -1144,7 +1156,7 @@ function module:PlayerFrames()
 	War_SpartanUI:HookScript(
 		'OnHide',
 		function(this, event)
-			if UnitUsingVehicle('player') then
+			if not SUI.IsClassic and UnitUsingVehicle('player') then
 				SUI_FramesAnchor:SetParent(UIParent)
 				unattached = true
 			end
@@ -1212,7 +1224,8 @@ function module:PositionFrame(b)
 end
 
 function module:RaidFrames()
-	SpartanoUF:SetActiveStyle('Spartan_WarRaidFrames')
+	ImageSetup()
+	SUIUF:SetActiveStyle('Spartan_WarRaidFrames')
 	module:RaidOptions()
 
 	local xoffset = 1
@@ -1233,7 +1246,7 @@ function module:RaidFrames()
 	end
 
 	local raid =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		'SUI_RaidFrameHeader',
 		nil,
 		'raid',
@@ -1265,7 +1278,7 @@ function module:RaidFrames()
 		SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
-		'oUF-initialConfigFunction',
+		'SUF-initialConfigFunction',
 		module:FrameSize(SUI.DB.Styles.War.RaidFrames.FrameStyle)
 	)
 
@@ -1275,8 +1288,9 @@ function module:RaidFrames()
 end
 
 function module:PartyFrames()
+	ImageSetup()
 	PartyFrames = SUI:GetModule('PartyFrames')
-	SpartanoUF:SetActiveStyle('Spartan_WarPartyFrames')
+	SUIUF:SetActiveStyle('Spartan_WarPartyFrames')
 	module:PartyOptions()
 
 	if _G['SUI_PartyFrameHeader'] then
@@ -1284,7 +1298,7 @@ function module:PartyFrames()
 	end
 
 	local party =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		'SUI_PartyFrameHeader',
 		nil,
 		nil,
@@ -1304,7 +1318,7 @@ function module:PartyFrames()
 		'TOPLEFT',
 		'initial-anchor',
 		'TOPLEFT',
-		'oUF-initialConfigFunction',
+		'SUF-initialConfigFunction',
 		module:FrameSize(SUI.DB.Styles.War.PartyFrames.FrameStyle)
 	)
 

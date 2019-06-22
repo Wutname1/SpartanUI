@@ -228,9 +228,11 @@ function module:EnableArtwork()
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',
 		function()
-			TutorialFrameAlertButton:SetParent(Minimap)
-			TutorialFrameAlertButton:ClearAllPoints()
-			TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
+			if TutorialFrameAlertButton then
+				TutorialFrameAlertButton:SetParent(Minimap)
+				TutorialFrameAlertButton:ClearAllPoints()
+				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
+			end
 			CastingBarFrame:ClearAllPoints()
 			CastingBarFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 90)
 		end
@@ -323,9 +325,11 @@ function module:MiniMap()
 		MinimapZoneText:Show()
 	end
 
-	QueueStatusFrame:ClearAllPoints()
-	QueueStatusFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 100)
-
+	if QueueStatusFrame then
+		QueueStatusFrame:ClearAllPoints()
+		QueueStatusFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 100)
+	end
+	
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
 
 	module.Settings.MiniMap.Anchor = {

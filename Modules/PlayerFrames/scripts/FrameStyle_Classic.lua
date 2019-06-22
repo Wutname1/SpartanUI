@@ -10,10 +10,10 @@ local base_ring1 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\ba
 local base_ring3 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_ring3' -- Pet and TargetTarget
 local circle = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\circle.tga'
 
-local colors = setmetatable({}, {__index = SpartanoUF.colors})
+local colors = setmetatable({}, {__index = SUIUF.colors})
 local _, classFileName = UnitClass('player')
 
-for k, v in pairs(SpartanoUF.colors) do
+for k, v in pairs(SUIUF.colors) do
 	if not colors[k] then
 		colors[k] = v
 	end
@@ -239,7 +239,7 @@ local CreatePlayerFrame = function(self, unit)
 	do -- setup base artwork
 		local artwork = CreateFrame('Frame', nil, self)
 		artwork:SetFrameStrata('BACKGROUND')
-		artwork:SetFrameLevel(1)
+		artwork:SetFrameLevel(2)
 		artwork:SetAllPoints(self)
 
 		artwork.bg = artwork:CreateTexture(nil, 'BACKGROUND')
@@ -248,7 +248,7 @@ local CreatePlayerFrame = function(self, unit)
 		self.artwork = artwork
 
 		self.Portrait = CreatePortrait(self)
-		self.Portrait:SetSize(64, 64)
+		self.Portrait:SetSize(62, 62)
 		self.Portrait:SetPoint('CENTER', self, 'CENTER', 80, 3)
 
 		self.ThreatIndicator = CreateFrame('Frame', nil, self)
@@ -464,7 +464,7 @@ local CreatePlayerFrame = function(self, unit)
 				ClassPower[index] = Bar
 			end
 
-			-- Register with oUF
+			-- Register with SUF
 			self.ClassPower = ClassPower
 		end
 	end
@@ -2348,4 +2348,4 @@ function PlayerFrames:SetupExtras()
 	end
 end
 
-SpartanoUF:RegisterStyle('SUI_PlayerFrames_Classic', CreateUnitFrame)
+SUIUF:RegisterStyle('SUI_PlayerFrames_Classic', CreateUnitFrame)

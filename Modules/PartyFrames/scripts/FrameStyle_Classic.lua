@@ -1,8 +1,8 @@
 local SUI = SUI
 local PartyFrames = SUI.PartyFrames
 ----------------------------------------------------------------------------------------------------
-local colors = setmetatable({}, {__index = SpartanoUF.colors})
-for k, v in pairs(SpartanoUF.colors) do
+local colors = setmetatable({}, {__index = SUIUF.colors})
+for k, v in pairs(SUIUF.colors) do
 	if not colors[k] then
 		colors[k] = v
 	end
@@ -407,7 +407,7 @@ local CreatePartyFrame = function(self, unit)
 		self.Auras.PostUpdate = PartyFrames:PostUpdateAura(self, unit)
 	end
 	do -- HoTs Display
-		self.AuraWatch = SUI:oUF_Buffs(self, 'BOTTOMRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'BOTTOMRIGHT', 'TOPRIGHT', 0)
 	end
 	do --Threat, SpellRange, and Ready Check
 		self.Range = {
@@ -529,7 +529,7 @@ local CreateUnitFrame = function(self, unit)
 	return self
 end
 
-SpartanoUF:RegisterStyle('Spartan_PartyFrames', CreateUnitFrame)
+SUIUF:RegisterStyle('Spartan_PartyFrames', CreateUnitFrame)
 
 local OptionsSetup = function()
 	SUI.opt.args['PartyFrames'].args['auras'] = {
@@ -780,10 +780,10 @@ function PartyFrames:Classic()
 	end
 
 	--Set the style
-	SpartanoUF:SetActiveStyle('Spartan_PartyFrames')
+	SUIUF:SetActiveStyle('Spartan_PartyFrames')
 	--Create the frames
 	local party =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		'SUI_PartyFrameHeader',
 		nil,
 		nil,
