@@ -804,7 +804,7 @@ function module:PlayerFrames()
 
 	for _, b in pairs(FramesList) do
 		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
-		if b == 'player' then
+		if b == 'player' and not SUI.IsClassic then
 			PlayerFrames:SetupExtras()
 		end
 	end

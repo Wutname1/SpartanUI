@@ -950,7 +950,7 @@ function module:PlayerFrames()
 
 	for _, b in pairs(FramesList) do
 		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
-		if b == 'player' then
+		if b == 'player' and not SUI.IsClassic then
 			PlayerFrames:SetupExtras()
 		end
 		-- PlayerFrames[b].artwork.bg:SetVertexColor(0,.8,.9,.9)
@@ -1072,7 +1072,7 @@ function module:PlayerFrames()
 	Fel_SpartanUI:HookScript(
 		'OnHide',
 		function(this, event)
-			if UnitUsingVehicle('player') then
+			if not SUI.IsClassic and UnitUsingVehicle('player') then
 				SUI_FramesAnchor:SetParent(UIParent)
 				unattached = true
 			end
