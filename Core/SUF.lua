@@ -29,6 +29,33 @@ function addon:HotsListing()
 	return {}
 end
 
+function addon:SUF_HealPrediction(frame)
+	if SUI.IsClassic then
+		return
+	end
+	-- Position and size
+	local myBars = CreateFrame('StatusBar', nil, frame.Health)
+	myBars:SetPoint('TOPLEFT', frame.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+	myBars:SetPoint('BOTTOMLEFT', frame.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+	myBars:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+	myBars:SetStatusBarColor(0, 1, 0.5, 0.45)
+
+	local otherBars = CreateFrame('StatusBar', nil, myBars)
+	otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+	otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+	otherBars:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
+	otherBars:SetStatusBarColor(0, 0.5, 1, 0.35)
+
+	-- myBars:SetSize(150, health:GetHeight())
+	-- otherBars:SetSize(150, health:GetHeight())
+
+	frame.HealthPrediction = {
+		myBar = myBars,
+		otherBar = otherBars,
+		maxOverflow = 3
+	}
+end
+
 function addon:SUF_Buffs(self, point, relativePoint, SizeModifier)
 	if self == nil then
 		return
