@@ -116,7 +116,7 @@ local SpawnUnitFrame = function(self, unit)
 			self.Health.colorSmooth = true
 
 			if not SUI.IsClassic then
-				SUI:
+				SUI:SUF_HealPrediction(self)
 			end
 		end
 		do -- power bar
