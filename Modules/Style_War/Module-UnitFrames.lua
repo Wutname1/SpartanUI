@@ -377,29 +377,7 @@ local CreateLargeFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			-- Position and size
-			if not SUI.IsClassic then
-				local myBars = CreateFrame('StatusBar', nil, self.Health)
-				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				myBars:SetStatusBarTexture(Smoothv2)
-				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
-	
-				local otherBars = CreateFrame('StatusBar', nil, myBars)
-				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				otherBars:SetStatusBarTexture(Smoothv2)
-				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
-	
-				myBars:SetSize(self.Health:GetSize())
-				otherBars:SetSize(self.Health:GetSize())
-	
-				self.HealthPrediction = {
-					myBar = myBars,
-					otherBar = otherBars,
-					maxOverflow = 3
-				}
-			end
+			SUI:SUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -670,30 +648,7 @@ local CreateMediumFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			if not SUI.IsClassic then
-				-- Position and size
-				local myBars = CreateFrame('StatusBar', nil, self.Health)
-				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				myBars:SetStatusBarTexture(Smoothv2)
-				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
-
-				local otherBars = CreateFrame('StatusBar', nil, myBars)
-				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				otherBars:SetStatusBarTexture(Smoothv2)
-				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
-
-				myBars:SetSize(self.Health:GetSize())
-				otherBars:SetSize(self.Health:GetSize())
-
-				self.HealthPrediction = {
-					myBar = myBars,
-					otherBar = otherBars,
-					maxOverflow = 3
-				}
-			end
-			
+			SUI:SUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -837,30 +792,7 @@ local CreateSmallFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			if not SUI.IsClassic then
-				-- Position and size
-				local myBars = CreateFrame('StatusBar', nil, self.Health)
-				myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-				myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				myBars:SetStatusBarTexture(Smoothv2)
-				myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
-
-				local otherBars = CreateFrame('StatusBar', nil, myBars)
-				otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-				otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-				otherBars:SetStatusBarTexture(Smoothv2)
-				otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
-
-				myBars:SetSize(self.Health:GetSize())
-				otherBars:SetSize(self.Health:GetSize())
-
-				self.HealthPrediction = {
-					myBar = myBars,
-					otherBar = otherBars,
-					maxOverflow = 3
-				}
-			end
-			
+			SUI:SUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
