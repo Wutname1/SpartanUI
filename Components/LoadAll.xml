@@ -8,7 +8,6 @@
 	<Script file="Tooltips.lua" />
 	<Script file="MailOpenAll.lua" />
 	<Script file="Nameplates.lua" />
-	<!-- WIP Modules
-	<Script file="Chatbox.lua" />
-	-->
+	<Script file="CombatLog.lua" />
+	<Script file="InterruptAnnounce.lua" />
 </Ui>

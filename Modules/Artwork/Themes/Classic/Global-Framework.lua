@@ -182,11 +182,11 @@ function module:SetColor()
 		end
 	end
 
-	if _G['SUI_ExperienceBarPlate'] then
-		_G['SUI_ExperienceBarPlate']:SetVertexColor(r, b, g, a)
+	if _G['SUI_StatusBar_Left'] then
+		_G['SUI_StatusBar_Left']:SetVertexColor(r, b, g, a)
 	end
-	if _G['SUI_ReputationBarPlate'] then
-		_G['SUI_ReputationBarPlate']:SetVertexColor(r, b, g, a)
+	if _G['SUI_StatusBar_Right'] then
+		_G['SUI_StatusBar_Right']:SetVertexColor(r, b, g, a)
 	end
 end
 
@@ -338,9 +338,11 @@ function module:EnableFramework()
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',
 		function()
-			TutorialFrameAlertButton:SetParent(Minimap)
-			TutorialFrameAlertButton:ClearAllPoints()
-			TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
+			if TutorialFrameAlertButton then
+				TutorialFrameAlertButton:SetParent(Minimap)
+				TutorialFrameAlertButton:ClearAllPoints()
+				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
+			end
 			CastingBarFrame:ClearAllPoints()
 			CastingBarFrame:SetPoint('BOTTOM', frame, 'TOP', 0, 90)
 		end

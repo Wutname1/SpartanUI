@@ -335,7 +335,7 @@ function module:OnInitialize()
 		SUI.DBMod.NamePlates = SUI:MergeData(SUI.DBMod.NamePlates, Defaults, false)
 	end
 
-	SpartanoUF:RegisterStyle('Spartan_NamePlates', NamePlateFactory)
+	SUIUF:RegisterStyle('Spartan_NamePlates', NamePlateFactory)
 end
 
 function module:OnDisable()
@@ -347,16 +347,18 @@ function module:OnEnable()
 		return
 	end
 	module:BuildOptions()
-	SpartanoUF:SetActiveStyle('Spartan_NamePlates')
-	SpartanoUF:SpawnNamePlates(nil, NameplateCallback)
+	SUIUF:SetActiveStyle('Spartan_NamePlates')
+	SUIUF:SpawnNamePlates(nil, NameplateCallback)
 
-	-- oUF is not hiding the mana bar. So we need to hide it.
-	ClassNameplateManaBarFrame:HookScript(
-		'OnShow',
-		function()
-			ClassNameplateManaBarFrame:Hide()
-		end
-	)
+	-- SUF is not hiding the mana bar. So we need to hide it.
+	if ClassNameplateManaBarFrame then
+		ClassNameplateManaBarFrame:HookScript(
+			'OnShow',
+			function()
+				ClassNameplateManaBarFrame:Hide()
+			end
+		)
+	end
 end
 
 function module:BuildOptions()

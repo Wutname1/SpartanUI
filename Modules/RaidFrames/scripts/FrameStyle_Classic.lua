@@ -2,8 +2,8 @@ local SUI = SUI
 local L = SUI.L
 local RaidFrames = SUI.RaidFrames
 ----------------------------------------------------------------------------------------------------
-local colors = setmetatable({}, {__index = SpartanoUF.colors})
-for k, v in pairs(SpartanoUF.colors) do
+local colors = setmetatable({}, {__index = SUIUF.colors})
+for k, v in pairs(SUIUF.colors) do
 	if not colors[k] then
 		colors[k] = v
 	end
@@ -198,7 +198,7 @@ local SpawnUnitFrame = function(self, unit)
 		self.Debuffs.PostUpdate = RaidFrames:PostUpdateDebuffs(self, unit)
 	end
 	do -- HoTs Display
-		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
 	end
 	do -- Threat, SpellRange, and Ready Check
 		self.Range = {
@@ -237,11 +237,11 @@ local CreateUnitFrame = function(self, unit)
 	return self
 end
 
-SpartanoUF:RegisterStyle('Spartan_RaidFrames_Classic', CreateUnitFrame)
+SUIUF:RegisterStyle('Spartan_RaidFrames_Classic', CreateUnitFrame)
 
 function RaidFrames:Classic()
 	RaidFrames:ClassicOptions()
-	SpartanoUF:SetActiveStyle('Spartan_RaidFrames_Classic')
+	SUIUF:SetActiveStyle('Spartan_RaidFrames_Classic')
 	local xoffset = 3
 	local yOffset = -5
 	local point = 'TOP'
@@ -270,7 +270,7 @@ function RaidFrames:Classic()
 	]]
 
 	local raid =
-		SpartanoUF:SpawnHeader(
+		SUIUF:SpawnHeader(
 		nil,
 		nil,
 		'raid',
@@ -302,9 +302,9 @@ function RaidFrames:Classic()
 		SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
-		'oUF-initialConfigFunction',
+		'SUF-initialConfigFunction',
 		format(initialConfigFunction, w, h)
-		-- 'oUF-initialConfigFunction', [[
+		-- 'SUF-initialConfigFunction', [[
 		-- self:SetHeight(35)
 		-- self:SetWidth(90)
 		-- ]]

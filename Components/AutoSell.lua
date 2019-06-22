@@ -233,7 +233,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	end
 
 	--Gearset detection
-	if C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then
+	if C_EquipmentSet and C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then
 		NotInGearset = false
 	end
 

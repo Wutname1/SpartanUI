@@ -6,7 +6,7 @@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
-## X-oUF: SpartanoUF
+## X-SUF: SUIUF
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
 
@@ -27,7 +27,7 @@ libs\AceTimer-3.0\AceTimer-3.0.xml
 libs\StdUi\StdUi.xml
 #@end-no-lib-strip@
 
-libs\oUF\oUF.xml
+libs\SUF\SUF.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
 libs\oUF_Plugins\LoadAll.xml
 
