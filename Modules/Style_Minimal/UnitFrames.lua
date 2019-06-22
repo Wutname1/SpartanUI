@@ -11,7 +11,7 @@ local FramesList = {
 	[5] = 'focustarget',
 	[6] = 'player'
 }
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
+local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
 
 --Interface/WorldStateFrame/ICONS-CLASSES
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
@@ -710,7 +710,7 @@ local MakeLargeFrame = function(self, unit, width)
 			local ClassIcons = {}
 			for i = 1, 6 do
 				local Icon = self:CreateTexture(nil, 'OVERLAY')
-				Icon:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_combo')
+				Icon:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\icon_combo')
 
 				if (i == 1) then
 					Icon:SetPoint('LEFT', self.ComboPoints, 'RIGHT', 1, -1)

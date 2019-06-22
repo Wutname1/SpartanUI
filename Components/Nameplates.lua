@@ -3,21 +3,21 @@ local module = SUI:NewModule('Component_Nameplates', 'AceTimer-3.0')
 local Images = {
 	Alliance = {
 		bg = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
 			Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
 		},
 		flair = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
 			Coords = {0.03125, 0.427734375, 0, 0.421875}
 		}
 	},
 	Horde = {
 		bg = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
 			Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
 		},
 		flair = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\war\\UnitFrames',
 			Coords = {0.541015625, 1, 0, 0.421875}
 		}
 	}

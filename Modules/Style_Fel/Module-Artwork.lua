@@ -208,7 +208,7 @@ function module:EnableArtwork()
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Right')
-		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box'
+		barBG = 'Interface\\AddOns\\SpartanUI_UnitFrames\\Images\\digital\\Fel-Box'
 	else
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right')

@@ -723,7 +723,7 @@ function SUI:OnInitialize()
 
 	-- Add Addon-Wide Bar textures
 	SUI.BarTextures = {
-		smooth = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
+		smooth = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
 	}
 
 	-- Add Profiles to Options

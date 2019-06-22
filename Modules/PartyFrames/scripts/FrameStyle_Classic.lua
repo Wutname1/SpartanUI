@@ -8,10 +8,10 @@ for k, v in pairs(SpartanoUF.colors) do
 	end
 end
 colors.health = {0 / 255, 255 / 255, 50 / 255}
-local base_plate1 = 'Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_1_full.blp'
-local base_plate2 = 'Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_2_dual.blp'
-local base_plate3 = 'Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_3_single.blp'
-local base_ring = 'Interface\\AddOns\\SpartanUI_PartyFrames\\media\\base_ring1.blp'
+local base_plate1 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_1_full.blp'
+local base_plate2 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_2_dual.blp'
+local base_plate3 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_3_single.blp'
+local base_ring = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_ring1.blp'
 
 --	Formatting functions
 
@@ -346,7 +346,7 @@ local CreatePartyFrame = function(self, unit)
 
 		self.GroupRoleIndicator = ring:CreateTexture(nil, 'BORDER')
 		self.GroupRoleIndicator:SetSize(25, 25)
-		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_role')
+		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\icon_role')
 
 		self.RaidTargetIndicator = ring:CreateTexture(nil, 'ARTWORK')
 		self.RaidTargetIndicator:SetSize(20, 20)

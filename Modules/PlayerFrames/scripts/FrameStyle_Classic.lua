@@ -2,13 +2,13 @@ local _G, SUI = _G, SUI
 local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
 
-local base_plate1 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate1.tga' -- Player and Target
-local base_plate2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate2.blp' -- Focus and Focus Target
-local base_plate3 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate3.tga' -- Pet, TargetTarget (Large, Medium)
-local base_plate4 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\classic\\base_plate4.blp' -- TargetTarget small
-local base_ring1 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\base_ring1' -- Player and Target
-local base_ring3 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\base_ring3' -- Pet and TargetTarget
-local circle = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\circle.tga'
+local base_plate1 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_plate1.tga' -- Player and Target
+local base_plate2 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_plate2.blp' -- Focus and Focus Target
+local base_plate3 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_plate3.tga' -- Pet, TargetTarget (Large, Medium)
+local base_plate4 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_plate4.blp' -- TargetTarget small
+local base_ring1 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_ring1' -- Player and Target
+local base_ring3 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\classic\\base_ring3' -- Pet and TargetTarget
+local circle = 'Interface\\AddOns\\SpartanUI_UnitFrames\\images\\circle.tga'
 
 local colors = setmetatable({}, {__index = SpartanoUF.colors})
 local _, classFileName = UnitClass('player')
@@ -425,7 +425,7 @@ local CreatePlayerFrame = function(self, unit)
 		self.GroupRoleIndicator = ring:CreateTexture(nil, 'BORDER')
 		self.GroupRoleIndicator:SetSize(28, 28)
 		self.GroupRoleIndicator:SetPoint('CENTER', ring, 'CENTER', -20, -35)
-		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\icon_role')
+		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\icon_role')
 
 		self.RestingIndicator = ring:CreateTexture(nil, 'ARTWORK')
 		self.RestingIndicator:SetSize(32, 30)
