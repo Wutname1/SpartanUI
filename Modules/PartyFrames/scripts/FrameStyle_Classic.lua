@@ -253,27 +253,7 @@ local CreatePartyFrame = function(self, unit)
 			self.Health.colorHealth = true
 			self.Health.colorSmooth = true
 
-			-- Position and size
-			local myBars = CreateFrame('StatusBar', nil, self.Health)
-			myBars:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			myBars:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			myBars:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
-			myBars:SetStatusBarColor(0, 1, 0.5, 0.35)
-
-			local otherBars = CreateFrame('StatusBar', nil, myBars)
-			otherBars:SetPoint('TOPLEFT', myBars:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
-			otherBars:SetPoint('BOTTOMLEFT', myBars:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
-			otherBars:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
-			otherBars:SetStatusBarColor(0, 0.5, 1, 0.25)
-
-			myBars:SetSize(150, 16)
-			otherBars:SetSize(150, 16)
-
-			self.HealthPrediction = {
-				myBar = myBars,
-				otherBar = otherBars,
-				maxOverflow = 3
-			}
+			SUI:SUF_HealPrediction(self)
 		end
 		do -- power bar
 			if
