@@ -356,9 +356,6 @@ function module:ModifyMinimapLayout()
 		SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
 	end
 
-	MinimapBackdrop:ClearAllPoints()
-	MinimapBackdrop:SetPoint('CENTER', Minimap, 'CENTER', -10, -24)
-
 	MinimapBorderTop:Hide()
 	MinimapBorder:Hide()
 	if MinimapToggleButton then
