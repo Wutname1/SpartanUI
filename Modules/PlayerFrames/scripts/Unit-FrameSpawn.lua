@@ -16,7 +16,7 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 
 	for _, b in pairs(FramesList) do
 		PlayerFrames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
-		if b == 'player' then
+		if b == 'player' and not SUI.IsClassic then
 			PlayerFrames:SetupExtras()
 		end
 	end
@@ -51,7 +51,7 @@ function PlayerFrames:SUI_PlayerFrames_Classic()
 		SpartanUI:HookScript(
 			'OnHide',
 			function(this, event)
-				if UnitUsingVehicle('player') then
+				if not SUI.IsClassic and UnitUsingVehicle('player') then
 					SUI_FramesAnchor:SetParent(UIParent)
 					unattached = true
 				end
