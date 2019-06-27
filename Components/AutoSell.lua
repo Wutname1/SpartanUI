@@ -6,6 +6,7 @@ local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipT
 local totalValue = 0
 module.SellTimer = nil
 local ExcludedItems = {
+	169475, --Barnacled Lockbox
 	137642, --Mark Of Honor
 	141446, --Tome of the Tranquil Mind
 	6219, -- Arclight Spanner

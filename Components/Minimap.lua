@@ -358,6 +358,7 @@ function module:ModifyMinimapLayout()
 
 	MinimapBackdrop:ClearAllPoints()
 	MinimapBackdrop:SetPoint('CENTER', Minimap, 'CENTER', -10, -24)
+	MinimapBackdrop:SetFrameLevel(Minimap:GetFrameLevel())
 
 	MinimapBorderTop:Hide()
 	MinimapBorder:Hide()

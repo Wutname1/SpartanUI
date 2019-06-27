@@ -52,11 +52,11 @@ local trayWatcherEvents = function()
 		if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
 			module.Trays[key].expanded:Hide()
 			module.Trays[key].collapsed:Show()
-			SetBarVisibility(module.Trays[key], 'hide')
+			SetBarVisibility(key, 'hide')
 		else
 			module.Trays[key].expanded:Show()
 			module.Trays[key].collapsed:Hide()
-			SetBarVisibility(module.Trays[key], 'show')
+			SetBarVisibility(key, 'show')
 		end
 	end
 end
@@ -165,6 +165,10 @@ function module:SlidingTrays(StyleSettings)
 	trayWatcher:RegisterEvent('ZONE_CHANGED')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_INDOORS')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
+	if not SUI.IsClassic then
+		trayWatcher:RegisterEvent('UNIT_EXITED_VEHICLE')
+		trayWatcher:RegisterEvent('PET_BATTLE_CLOSE')
+	end
 
 	-- Default movetracker ignores stuff attached to UIParent (Tray items are)
 	local FrameList = {
