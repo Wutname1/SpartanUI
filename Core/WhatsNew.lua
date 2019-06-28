@@ -15,7 +15,7 @@ function SUI:WhatsNew()
 
 			-- Fel Style
 			local control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Style_Digital')
+			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Style_Digital')
 			control:SetImageSize(240, 120)
 			control:SetPoint('TOP', SUI_Win.Desc1, 'BOTTOM', 0, -15)
 			control:SetCallback(

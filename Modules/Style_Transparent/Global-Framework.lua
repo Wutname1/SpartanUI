@@ -1,7 +1,11 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:GetModule('Style_Transparent')
+local module = SUI:NewModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
+if not SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] then
+	SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] = {Style = 'Transparent'}
+end
+
 local anchor, frame = Transparent_AnchorFrame, Transparent_SpartanUI
 local FramesList = {
 	[1] = 'pet',

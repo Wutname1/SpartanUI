@@ -10,14 +10,14 @@ local FramesList = {
 	[5] = 'focustarget',
 	[6] = 'player'
 }
-local base_plate1 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\Images\\transparent\\base_plate1.tga' -- Player and Target
-local base_plate2 = 'Interface\\AddOns\\SpartanUI_UnitFrames\\Images\\transparent\\base_plate2.blp' -- Focus and Focus Target
+local base_plate1 = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\base_plate1.tga' -- Player and Target
+local base_plate2 = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\base_plate2.blp' -- Focus and Focus Target
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
 
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
+local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
 
 --Interface/WorldStateFrame/ICONS-CLASSES
-local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
+local lfdrole = 'Interface\\AddOns\\SpartanUI\\images\\icon_role.tga'
 
 local _, classFileName = UnitClass('player')
 local colors = setmetatable({}, {__index = SUIUF.colors})
@@ -344,7 +344,7 @@ local CreatePlayerFrame = function(self, unit)
 			health:SetFrameStrata('BACKGROUND')
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture(Smoothv2)
-			-- health:AnimateTexCoords("Interface\\AddOns\\SpartanUI_UnitFrames\\images\\HealthBar.blp", 256, 256, 80, 16, 40, elapsed, 0.08);
+			-- health:AnimateTexCoords("Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\HealthBar.blp", 256, 256, 80, 16, 40, elapsed, 0.08);
 			health:SetSize(self.Castbar:GetWidth(), 24)
 			health:SetPoint('TOPLEFT', self.Castbar, 'BOTTOMLEFT', 0, -2)
 

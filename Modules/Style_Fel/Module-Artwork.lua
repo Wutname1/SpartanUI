@@ -1,7 +1,11 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:GetModule('Style_Fel')
+local module = SUI:NewModule('Style_Fel')
 ----------------------------------------------------------------------------------------------------
+if not SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] then
+	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = 'Fel'}
+end
+
 module.Trays = {}
 local CurScale
 local petbattle = CreateFrame('Frame')

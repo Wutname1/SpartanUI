@@ -2,7 +2,6 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Style-Setup.lua" />
 
 	<!-- SpartanUI -->
 	<Frame name="Fel_SpartanUI" frameStrata="BACKGROUND" parent="UIParent">

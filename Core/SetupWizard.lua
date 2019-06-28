@@ -24,7 +24,7 @@ local ReloadPage = {
 		module.window.content.WelcomePage:SetAllPoints(module.window.content)
 
 		module.window.content.WelcomePage.Helm =
-			StdUi:Texture(module.window.content.WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
+			StdUi:Texture(module.window.content.WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
 		module.window.content.WelcomePage.Helm:SetPoint('CENTER')
 		module.window.content.WelcomePage.Helm:SetAlpha(.6)
 
@@ -364,7 +364,7 @@ function module:WelcomePage()
 			WelcomePage:SetParent(module.window.content)
 			WelcomePage:SetAllPoints(module.window.content)
 
-			WelcomePage.Helm = StdUi:Texture(WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
+			WelcomePage.Helm = StdUi:Texture(WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
 			WelcomePage.Helm:SetPoint('CENTER', 0, 35)
 			WelcomePage.Helm:SetAlpha(.6)
 

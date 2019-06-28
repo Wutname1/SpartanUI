@@ -1,8 +1,12 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:GetModule('Style_Minimal')
+local module = SUI:NewModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = Minimal_AnchorFrame, Minimal_SpartanUI
+
+if not SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] then
+	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = 'Minimal'}
+end
 
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size

@@ -1,9 +1,0 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file='oUF_Smooth.lua'/>
-	<Script file='oUF_AuraWatch.lua' />
-	<!-- 
-	<Script file='oUF_Trinkets.lua'/>
-	<Script file='oUF_Dispellable.lua'/>
-	<Script file='oUF_RaidDebuffs.lua' />
-	-->
-</Ui>

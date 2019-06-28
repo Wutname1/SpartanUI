@@ -5,7 +5,7 @@ local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = SUI.BarTextures.smooth
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
-local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
+local lfdrole = 'Interface\\AddOns\\SpartanUI\\images\\icon_role.tga'
 local Images
 local PlayerFaction = UnitFactionGroup('Player')
 
@@ -283,7 +283,7 @@ local CreateLargeFrame = function(self, unit)
 
 		self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
 		self.artwork.bgNeutral:SetAllPoints(self)
-		self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+		self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga')
 		self.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
 
 		self.artwork.bgAlliance = self.artwork:CreateTexture(nil, 'BACKGROUND')

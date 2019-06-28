@@ -3,16 +3,16 @@ local L = SUI.L
 local module = SUI:GetModule('Style_Fel')
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
+local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
-local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
+local lfdrole = 'Interface\\AddOns\\SpartanUI\\images\\icon_role.tga'
 local Images
 
 function module:ImageSetup()
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
 		Images = {
 			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\digital\\Fel-Box',
+				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
 				Coords = {0.0234375, 0.9765625, 0.265625, 0.7734375} --left, right, top, bottom
 			},
 			smallbg = {
@@ -20,11 +20,11 @@ function module:ImageSetup()
 				Coords = {0.017578125, 0.3203125, 0.4609375, 0.564453125} --left, right, top, bottom
 			},
 			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\digital\\Fel-Box',
+				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
 				Coords = {0, 0.1, 0, 0.2}
 			},
 			flair2 = {
-				Texture = 'Interface\\addons\\SpartanUI_UnitFrames\\Images\\digital\\Fel-Box',
+				Texture = 'Interface\\addons\\SpartanUI_Style_Fel\\Digital\\Fel-Box',
 				Coords = {0, 0.1, 0, 0.2}
 			}
 		}
@@ -43,7 +43,7 @@ function module:ImageSetup()
 				Coords = {0.140625, 0.615234375, 0, 0.265625}
 			},
 			flair2 = {
-				Texture = 'Interface\\Addons\\SpartanUI_UnitFrames\\Images\\fel\\Party-Frame',
+				Texture = 'Interface\\Addons\\SpartanUI_Style_Fel\\Images\\Party-Frame',
 				Coords = {0.1953125, 0.8046875, 0.1328125, 0.859375}
 			}
 		}

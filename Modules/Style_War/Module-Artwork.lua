@@ -1,6 +1,6 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:GetModule('Style_War')
+local module = SUI:NewModule('Style_War')
 ----------------------------------------------------------------------------------------------------
 module.Trays = {}
 module.StatusBarSettings = {

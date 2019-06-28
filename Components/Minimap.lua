@@ -99,7 +99,7 @@ function module:ShapeChange(shape)
 			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, 5)
 		end
 	else
-		Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
+		Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
 		if MiniMapTracking then
 			MiniMapTracking:ClearAllPoints()
 			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
@@ -291,7 +291,7 @@ function module:ModifyMinimapLayout()
 			end
 
 			Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
-			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay')
+			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
 			Minimap.overlay:SetAllPoints(Minimap)
 			Minimap.overlay:SetBlendMode('ADD')
 
@@ -305,7 +305,7 @@ function module:ModifyMinimapLayout()
 				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
 			end
 		else
-			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
+			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
 
 			if not SUI.IsClassic then
 				MiniMapTracking:ClearAllPoints()
@@ -372,8 +372,8 @@ function module:ModifyMinimapLayout()
 	MiniMapWorldMapButton:SetPushedTexture(nil)
 	MiniMapWorldMapButton:SetHighlightTexture(nil)
 	--	-- Create new textures
-	MiniMapWorldMapButton:SetNormalTexture('Interface\\AddOns\\SpartanUI\\media\\WorldMap-Icon.png')
-	MiniMapWorldMapButton:SetPushedTexture('Interface\\AddOns\\SpartanUI\\media\\WorldMap-Icon-Pushed.png')
+	MiniMapWorldMapButton:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon.png')
+	MiniMapWorldMapButton:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon-Pushed.png')
 	MiniMapWorldMapButton:SetHighlightTexture('Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight')
 	MiniMapWorldMapButton:ClearAllPoints()
 	MiniMapWorldMapButton:SetPoint('TOPRIGHT', Minimap, -20, 12)

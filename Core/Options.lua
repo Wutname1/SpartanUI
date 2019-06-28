@@ -73,7 +73,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Fel', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Fel'
@@ -89,7 +89,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Transparent', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Transparent'
@@ -104,7 +104,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Minimal', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Minimal'
@@ -119,7 +119,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Digital', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Digital', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Fel'
@@ -135,7 +135,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_War', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_War', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'War'
@@ -168,7 +168,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Fel', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Fel'
@@ -181,7 +181,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Transparent', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Transparent'
@@ -193,7 +193,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Minimal', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Minimal'
@@ -205,7 +205,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Digital', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Digital', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Minimal'
@@ -218,7 +218,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_War', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_War', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'War'
@@ -236,7 +236,7 @@ function module:OnInitialize()
 						name = 'Classic',
 						type = 'execute',
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Classic', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Classic', 120, 60
 						end,
 						imageCoords = function()
 							return {0, .5, 0, .5}
@@ -251,7 +251,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
 						imageCoords = function()
 							return {.1, .5, .1, .5}
@@ -266,7 +266,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
 						imageCoords = function()
 							return {.1, .5, .1, .5}
@@ -281,7 +281,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Transparent', 120, 60
 						end,
 						imageCoords = function()
 							return {0, .5, 0, .5}
@@ -296,7 +296,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
 						end,
 						imageCoords = function()
 							return {0, .5, 0, .5}
@@ -317,7 +317,7 @@ function module:OnInitialize()
 						name = 'Classic',
 						type = 'execute',
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Classic', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Classic', 120, 60
 						end,
 						imageCoords = function()
 							return {.1, .5, .5, 1}
@@ -332,7 +332,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
 						imageCoords = function()
 							return {0, .5, .5, 1}
@@ -347,7 +347,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
 						imageCoords = function()
 							return {0, .5, .5, 1}
@@ -362,7 +362,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Transparent', 120, 60
 						end,
 						imageCoords = function()
 							return {.6, .9, .1, .4}
@@ -377,7 +377,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
 						end,
 						imageCoords = function()
 							return {0, .5, .5, 1}
@@ -398,7 +398,7 @@ function module:OnInitialize()
 						name = 'Classic',
 						type = 'execute',
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Classic', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Classic', 120, 60
 						end,
 						imageCoords = function()
 							return {.6, .9, .1, .4}
@@ -413,7 +413,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
 						imageCoords = function()
 							return {.6, .9, .1, .4}
@@ -428,7 +428,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Fel', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
 						imageCoords = function()
 							return {.6, .9, .1, .4}
@@ -443,7 +443,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Transparent', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Transparent', 120, 60
 						end,
 						imageCoords = function()
 							return {.6, .9, .1, .4}
@@ -458,7 +458,7 @@ function module:OnInitialize()
 						type = 'execute',
 						disabled = true,
 						image = function()
-							return 'interface\\addons\\SpartanUI\\media\\Style_Frames_Minimal', 120, 60
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
 						end,
 						imageCoords = function()
 							return {.6, .9, .1, .4}

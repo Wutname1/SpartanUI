@@ -275,7 +275,7 @@ function Artwork_Core:FirstTime()
 			--Fel
 			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Fel')
+			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Fel')
 
 			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Fel', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Fel')
@@ -286,7 +286,7 @@ function Artwork_Core:FirstTime()
 			--War
 			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_War')
+			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_War')
 
 			control.radio = StdUi:Radio(SUI_Win.Artwork, 'War', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('War')
@@ -297,7 +297,7 @@ function Artwork_Core:FirstTime()
 			--Digital
 			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Digital')
+			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Digital')
 
 			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Digital', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Digital')
@@ -308,7 +308,7 @@ function Artwork_Core:FirstTime()
 			--Transparent
 			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Transparent')
+			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent')
 
 			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Transparent', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Transparent')
@@ -319,7 +319,7 @@ function Artwork_Core:FirstTime()
 			--Minimal
 			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\media\\Style_Minimal')
+			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal')
 
 			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Minimal', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Minimal')

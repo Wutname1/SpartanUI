@@ -39,26 +39,26 @@ local tooltips = {
 	EventTraceTooltip,
 	ItemSocketingDescription
 }
-local whitebg = {bgFile = 'Interface\\AddOns\\SpartanUI\\media\\blank.tga', tile = false, edgeSize = 3}
+local whitebg = {bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3}
 
 function module:OnInitialize()
 	if SUI.DB.Tooltips == nil then
 		SUI.DB.Tooltips = {
 			Styles = {
 				metal = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\metal.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\metal.tga',
 					tile = false
 				},
 				smooth = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga',
 					tile = false
 				},
 				smoke = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\smoke.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\smoke.tga',
 					tile = false
 				},
 				none = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\blank.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
 					tile = false
 				}
 			},

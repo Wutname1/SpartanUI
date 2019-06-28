@@ -6,6 +6,7 @@ local FontFaces = {
 	['SpartanUI'] = 'Cognosis',
 	['Roboto'] = 'Roboto',
 	['Roboto-Bold'] = 'Roboto Bold',
+	['Myriad'] = 'Myriad',
 	['SUI4'] = 'NotoSans',
 	['SUI4cn'] = 'NotoSans (zhCN)',
 	['FrizQuadrata'] = 'Friz Quadrata',
@@ -63,13 +64,15 @@ end
 function SUI:GetFontFace(Module)
 	if Module then
 		if SUI.DB.font.Modules[Module].Face == 'SpartanUI' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\font-cognosis.ttf'
+			return 'Interface\\AddOns\\SpartanUI\\fonts\\Cognosis.ttf'
 		elseif SUI.DB.font.Modules[Module].Face == 'SUI4' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\NotoSans-Bold.ttf'
+			return 'Interface\\AddOns\\SpartanUI\\fonts\\NotoSans-Bold.ttf'
 		elseif SUI.DB.font.Modules[Module].Face == 'Roboto' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Medium.ttf'
+			return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Medium.ttf'
 		elseif SUI.DB.font.Modules[Module].Face == 'Roboto-Bold' then
-			return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Bold.ttf'
+			return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Bold.ttf'
+		elseif SUI.DB.font.Modules[Module].Face == 'Myriad' then
+			return 'Interface\\AddOns\\SpartanUI\\fonts\\myriad.ttf'
 		elseif SUI.DB.font.Modules[Module].Face == 'FrizQuadrata' then
 			return 'Fonts\\FRIZQT__.TTF'
 		elseif SUI.DB.font.Modules[Module].Face == 'Arial' then
@@ -86,7 +89,7 @@ function SUI:GetFontFace(Module)
 	end
 
 	--Failsafe, no module should be undefined as of 5.0
-	return 'Interface\\AddOns\\SpartanUI\\media\\Roboto-Bold.ttf'
+	return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Bold.ttf'
 end
 
 function SUI:FormatFont(element, size, Module, UpdateOnly)
@@ -140,6 +143,7 @@ function module:FontSetupWizard()
 	local fontlist = {
 		'RobotoBold',
 		'Roboto',
+		'Myriad',
 		'Cognosis',
 		'NotoSans',
 		'FrizQuadrata',
@@ -148,6 +152,7 @@ function module:FontSetupWizard()
 	local fontnames = {
 		['RobotoBold'] = 'Roboto-Bold',
 		['Roboto'] = 'Roboto',
+		['Myriad'] = 'Myriad',
 		['Cognosis'] = 'SpartanUI',
 		['NotoSans'] = 'SUI4',
 		['FrizQuadrata'] = 'FrizQuadrata',
@@ -178,7 +183,7 @@ function module:FontSetupWizard()
 
 			--RobotoBold
 			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0, 0.3125)
+			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0, 0.3125)
 			control:SetImageSize(180, 60)
 			control:SetPoint('TOPLEFT', SUI_Win.FontFace, 'TOPLEFT', 55, -55)
 			control:SetCallback('OnClick', RadioButtons)
@@ -203,7 +208,7 @@ function module:FontSetupWizard()
 
 			--Roboto
 			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.34375, 0.65625)
+			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0.34375, 0.65625)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.RobotoBold.frame, 'RIGHT', 80, 0)
 			control:SetCallback('OnClick', RadioButtons)
@@ -228,7 +233,7 @@ function module:FontSetupWizard()
 
 			--Cognosis
 			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0, 0.421875, 0.6875, 1)
+			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0.6875, 1)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.Roboto.frame, 'RIGHT', 80, 0)
 			control:SetCallback('OnClick', RadioButtons)
@@ -253,7 +258,7 @@ function module:FontSetupWizard()
 
 			--NotoSans
 			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0, 0.3125)
+			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0, 0.3125)
 			control:SetImageSize(180, 60)
 			control:SetPoint('TOP', SUI_Win.FontFace.RobotoBold.radio.frame, 'BOTTOM', 0, -20)
 			control:SetCallback('OnClick', RadioButtons)
@@ -278,7 +283,7 @@ function module:FontSetupWizard()
 
 			--FrizQuadrata
 			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.34375, 0.65625)
+			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0.34375, 0.65625)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.NotoSans.frame, 'RIGHT', 80, 0)
 			control:SetCallback('OnClick', RadioButtons)
@@ -303,7 +308,7 @@ function module:FontSetupWizard()
 
 			--ArialNarrow
 			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\media\\Setup-Fonts', 0.578125, 1, 0.6875, 1)
+			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0.6875, 1)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.FrizQuadrata.frame, 'RIGHT', 80, 0)
 			control:SetCallback('OnClick', RadioButtons)

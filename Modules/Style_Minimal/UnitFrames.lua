@@ -14,7 +14,7 @@ local FramesList = {
 local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
 
 --Interface/WorldStateFrame/ICONS-CLASSES
-local lfdrole = 'Interface\\AddOns\\SpartanUI\\media\\icon_role.tga'
+local lfdrole = 'Interface\\AddOns\\SpartanUI\\images\\icon_role.tga'
 
 local classFileName = select(2, UnitClass('player'))
 local colors = setmetatable({}, {__index = SUIUF.colors})

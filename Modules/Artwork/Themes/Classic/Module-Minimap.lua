@@ -37,7 +37,7 @@ function module:MiniMap()
 			-- Minimap:SetQuestBlobRingScalar(0)
 
 			Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
-			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\Media\\map-square-overlay')
+			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
 			Minimap.overlay:SetAllPoints(Minimap)
 			Minimap.overlay:SetBlendMode('ADD')
 
@@ -50,7 +50,7 @@ function module:MiniMap()
 			MiniMapTracking:ClearAllPoints()
 			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
 		else
-			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
+			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
 			MiniMapTracking:ClearAllPoints()
 			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
 			if Minimap.overlay then
