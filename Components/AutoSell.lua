@@ -6,16 +6,28 @@ local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipT
 local totalValue = 0
 module.SellTimer = nil
 local ExcludedItems = {
+	-- BFA
+	166846, --spare parts
+	168327, --chain ignitercoil
+	166971, --empty energy cell
+	170500, --energy cell
+	166970, --energy cell
 	169475, --Barnacled Lockbox
 	137642, --Mark Of Honor
+	
+	-- Cata
+	71141, -- Eternal Ember
+	
+	-- Misc Items
 	141446, --Tome of the Tranquil Mind
+	81055, -- Darkmoon ride ticket
+
+	--Professions
 	6219, -- Arclight Spanner
 	140209, --imported blacksmith hammer
 	5956, -- Blacksmith Hammer
 	7005, --skinning knife
 	2901, --mining pick
-	81055, -- Darkmoon ride ticket
-	71141 -- Eternal Ember
 }
 
 function module:OnInitialize()
