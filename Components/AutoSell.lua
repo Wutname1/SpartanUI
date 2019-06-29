@@ -7,6 +7,7 @@ local totalValue = 0
 module.SellTimer = nil
 local ExcludedItems = {
 	-- BFA
+	168135, --Titans Blood
 	166846, --spare parts
 	168327, --chain ignitercoil
 	166971, --empty energy cell
