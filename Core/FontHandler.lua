@@ -143,7 +143,6 @@ function module:FontSetupWizard()
 	local fontlist = {
 		'RobotoBold',
 		'Roboto',
-		'Myriad',
 		'Cognosis',
 		'NotoSans',
 		'FrizQuadrata',
@@ -152,7 +151,6 @@ function module:FontSetupWizard()
 	local fontnames = {
 		['RobotoBold'] = 'Roboto-Bold',
 		['Roboto'] = 'Roboto',
-		['Myriad'] = 'Myriad',
 		['Cognosis'] = 'SpartanUI',
 		['NotoSans'] = 'SUI4',
 		['FrizQuadrata'] = 'FrizQuadrata',

@@ -6,6 +6,7 @@ if not SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] then
 	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = 'Fel'}
 end
 
+module.Settings = {}
 module.Trays = {}
 local CurScale
 local petbattle = CreateFrame('Frame')
@@ -315,6 +316,13 @@ module.Settings.MiniMap = {
 	coordsLocation = 'BOTTOM',
 	coords = {
 		TextColor = {1, .82, 0, 1}
+	},
+	Anchor = {
+		'CENTER',
+		Fel_SpartanUI.Left,
+		'RIGHT',
+		0,
+		-10
 	}
 }
 
@@ -336,13 +344,6 @@ function module:MiniMap()
 	
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
 
-	module.Settings.MiniMap.Anchor = {
-		'CENTER',
-		Fel_SpartanUI.Left,
-		'RIGHT',
-		0,
-		-10
-	}
 	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()

@@ -7,9 +7,7 @@ local LDBIcon = LibStub('LibDBIcon-1.0', true)
 ---------------------------------------------------------------------------
 local ModsLoaded = {
 	Artwork = nil,
-	PlayerFrames = nil,
-	PartyFrames = nil,
-	RaidFrames = nil,
+	UnitFrames = nil,
 	SpinCam = nil,
 	FilmEffects = nil
 }
@@ -31,8 +29,8 @@ function module:OnInitialize()
 	local enabled
 	enabled = select(4, GetAddOnInfo('SpartanUI_Artwork'))
 	ModsLoaded.Artwork = enabled
-	enabled = select(4, GetAddOnInfo('SpartanUI_PlayerFrames'))
-	ModsLoaded.PlayerFrames = enabled
+	enabled = select(4, GetAddOnInfo('SpartanUI_UnitFrames'))
+	ModsLoaded.UnitFrames = enabled
 	enabled = select(4, GetAddOnInfo('SpartanUI_PartyFrames'))
 	ModsLoaded.PartyFrames = enabled
 	enabled = select(4, GetAddOnInfo('SpartanUI_RaidFrames'))
@@ -805,18 +803,14 @@ function module:OnInitialize()
 		name = L['Modules'],
 		type = 'group',
 		args = {
-			-- description = {type="description",name=L["ModulesDesc"],order=1,fontSize="medium"},
-			Styles = {name = L['Styles'], type = 'group', order = 100, inline = true, args = {}},
 			Components = {
 				name = 'Components',
 				type = 'group',
-				order = 200,
 				inline = true,
 				args = {
 					Artwork = {
 						name = L['Artwork'],
 						type = 'toggle',
-						order = 10,
 						get = function(info)
 							return ModsLoaded.Artwork
 						end,
@@ -834,65 +828,22 @@ function module:OnInitialize()
 							SUI:reloadui()
 						end
 					},
-					PlayerFrames = {
-						name = L['PlayerFrames'],
+					UnitFrames = {
+						name = UNITFRAME_LABEL,
 						type = 'toggle',
-						order = 20,
 						get = function(info)
-							return ModsLoaded.PlayerFrames
+							return ModsLoaded.UnitFrames
 						end,
 						set = function(info, val)
-							if ModsLoaded.PlayerFrames then
-								ModsLoaded.PlayerFrames = false
+							if ModsLoaded.UnitFrames then
+								ModsLoaded.UnitFrames = false
 							else
-								ModsLoaded.PlayerFrames = true
+								ModsLoaded.UnitFrames = true
 							end
-							if ModsLoaded.PlayerFrames then
-								EnableAddOn('SpartanUI_PlayerFrames')
+							if ModsLoaded.UnitFrames then
+								EnableAddOn('SpartanUI_UnitFrames')
 							else
-								DisableAddOn('SpartanUI_PlayerFrames')
-							end
-							SUI:reloadui()
-						end
-					},
-					PartyFrames = {
-						name = L['PartyFrames'],
-						type = 'toggle',
-						order = 30,
-						get = function(info)
-							return ModsLoaded.PartyFrames
-						end,
-						set = function(info, val)
-							if ModsLoaded.PartyFrames then
-								ModsLoaded.PartyFrames = false
-							else
-								ModsLoaded.PartyFrames = true
-							end
-							if ModsLoaded.PartyFrames then
-								EnableAddOn('SpartanUI_PartyFrames')
-							else
-								DisableAddOn('SpartanUI_PartyFrames')
-							end
-							SUI:reloadui()
-						end
-					},
-					RaidFrames = {
-						name = L['RaidFrames'],
-						type = 'toggle',
-						order = 40,
-						get = function(info)
-							return ModsLoaded.RaidFrames
-						end,
-						set = function(info, val)
-							if ModsLoaded.RaidFrames then
-								ModsLoaded.RaidFrames = false
-							else
-								ModsLoaded.RaidFrames = true
-							end
-							if ModsLoaded.RaidFrames then
-								EnableAddOn('SpartanUI_RaidFrames')
-							else
-								DisableAddOn('SpartanUI_RaidFrames')
+								DisableAddOn('SpartanUI_UnitFrames')
 							end
 							SUI:reloadui()
 						end
@@ -900,7 +851,6 @@ function module:OnInitialize()
 					SpinCam = {
 						name = L['Spin cam'],
 						type = 'toggle',
-						order = 50,
 						get = function(info)
 							return ModsLoaded.SpinCam
 						end,
@@ -921,7 +871,6 @@ function module:OnInitialize()
 					FilmEffects = {
 						name = L['Film Effects'],
 						type = 'toggle',
-						order = 60,
 						get = function(info)
 							return ModsLoaded.FilmEffects
 						end,
@@ -943,34 +892,6 @@ function module:OnInitialize()
 			}
 		}
 	}
-
-	-- List Styles
-	for i = 1, GetNumAddOns() do
-		local name = GetAddOnInfo(i)
-		ModsLoaded[name] = enabled
-		if (string.match(name, 'SpartanUI_Style_')) then
-			SUI.opt.args['ModSetting'].args['Styles'].args[string.sub(name, 9)] = {
-				name = string.sub(name, 17),
-				type = 'toggle',
-				get = function(info)
-					return ModsLoaded[name]
-				end,
-				set = function(info, val)
-					if ModsLoaded[name] then
-						ModsLoaded[name] = false
-					else
-						ModsLoaded[name] = true
-					end
-					if ModsLoaded[name] then
-						EnableAddOn(name)
-					else
-						DisableAddOn(name)
-					end
-					SUI:reloadui()
-				end
-			}
-		end
-	end
 
 	-- List Components
 	for name, submodule in SUI:IterateModules() do
@@ -1014,20 +935,7 @@ function module:OnInitialize()
 		type = 'group',
 		order = .1,
 		args = {
-			Styles = {
-				name = L['Styles'],
-				type = 'group',
-				order = 100,
-				inline = true,
-				args = SUI.opt.args['ModSetting'].args['Styles'].args
-			},
-			Components = {
-				name = L['Components'],
-				type = 'group',
-				order = 200,
-				inline = true,
-				args = SUI.opt.args['ModSetting'].args['Components'].args
-			}
+			Components = SUI.opt.args['ModSetting'].args['Components']
 		}
 	}
 end
@@ -1068,8 +976,8 @@ function module:ExportData()
 						module:FlatenTable(CharData) ..
 							'$Artwork.Style.' ..
 								SUI.DBMod.Artwork.Style ..
-									'$PlayerFrames.Style.' ..
-										SUI.DBMod.PlayerFrames.Style ..
+									'$UnitFrames.Style.' ..
+										SUI.DBMod.UnitFrames.Style ..
 											'$PartyFrames.Style.' ..
 												SUI.DBMod.PartyFrames.Style ..
 													'$RaidFrames.Style.' ..

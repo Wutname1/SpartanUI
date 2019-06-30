@@ -2,6 +2,7 @@ local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:NewModule('Style_War')
 ----------------------------------------------------------------------------------------------------
+module.Settings = {}
 module.Trays = {}
 module.StatusBarSettings = {
 	bars = {
