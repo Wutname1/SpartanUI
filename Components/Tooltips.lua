@@ -431,7 +431,7 @@ local TooltipSetUnit = function(self)
 end
 
 local function ApplyTooltipSkins()
-	GameTooltipStatusBarTexture:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+	GameTooltipStatusBarTexture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga')
 
 	GameTooltipStatusBar:ClearAllPoints()
 	GameTooltipStatusBar:SetPoint('TOPLEFT', GameTooltip, 'BOTTOMLEFT', 0, 0)
@@ -460,25 +460,25 @@ local function ApplyTooltipSkins()
 			SUITip.border[1]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
 			SUITip.border[1]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
 			SUITip.border[1]:SetHeight(2)
-			SUITip.border[1]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
+			SUITip.border[1]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 			--BOTTOM
 			SUITip.border[2] = SUITip.border:CreateTexture(nil, 'OVERLAY')
 			SUITip.border[2]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
 			SUITip.border[2]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
 			SUITip.border[2]:SetHeight(2)
-			SUITip.border[2]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
+			SUITip.border[2]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 			--RIGHT
 			SUITip.border[3] = SUITip.border:CreateTexture(nil, 'OVERLAY')
 			SUITip.border[3]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
 			SUITip.border[3]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
 			SUITip.border[3]:SetWidth(2)
-			SUITip.border[3]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
+			SUITip.border[3]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 			--LEFT
 			SUITip.border[4] = SUITip.border:CreateTexture(nil, 'OVERLAY')
 			SUITip.border[4]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
 			SUITip.border[4]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
 			SUITip.border[4]:SetWidth(2)
-			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
+			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 
 			if
 				(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and
