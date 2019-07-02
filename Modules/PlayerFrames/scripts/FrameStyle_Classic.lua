@@ -350,6 +350,29 @@ local CreatePlayerFrame = function(self, unit)
 			self.Power.colorPower = true
 			self.Power.frequentUpdates = true
 		end
+
+		--Totem Bar
+		local Totems = {}
+		for index = 1, 5 do
+			-- Position and size of the totem indicator
+			local Totem = CreateFrame('Button', nil, self)
+			Totem:SetSize(20, 20)
+			Totem:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+	
+			local Icon = Totem:CreateTexture(nil, 'OVERLAY')
+			Icon:SetAllPoints()
+	
+			local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
+			Cooldown:SetAllPoints()
+	
+			Totem.Icon = Icon
+			Totem.Cooldown = Cooldown
+	
+			Totems[index] = Totem
+		end
+	
+		-- Register with SUF
+		self.Totems = Totems
 	end
 	do -- setup ring, icons, and text
 		local ring = CreateFrame('Frame', nil, self)
@@ -1984,29 +2007,6 @@ function PlayerFrames:SetupExtras()
 			end
 			timer:Hide()
 		end
-		hooksecurefunc(
-			TotemFrame,
-			'SetPoint',
-			function(_, _, parent)
-				if (parent ~= PlayerFrames.player) then
-					TotemFrame:ClearAllPoints()
-					if classFileName == 'MONK' then
-						TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 100, 8)
-					elseif classFileName == 'PALADIN' then
-						TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 15, 8)
-					else
-						TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 70, 8)
-					end
-				end
-			end
-		)
-		TotemFrame:SetParent(PlayerFrames.player)
-		TotemFrame_OnLoad(TotemFrame)
-		TotemFrame:SetFrameStrata('MEDIUM')
-		TotemFrame:SetFrameLevel(4)
-		TotemFrame:SetScale(0.7 * SUI.DBMod.PlayerFrames.ClassBar.scale)
-		TotemFrame:ClearAllPoints()
-		TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 70, 8)
 
 		-- relocate the PlayerPowerBarAlt
 		hooksecurefunc(

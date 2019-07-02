@@ -569,6 +569,29 @@ local MakeLargeFrame = function(self, unit, width)
 		end
 		do --Special Icons/Bars
 			if unit == 'player' then
+				--Totem Bar
+				local Totems = {}
+				for index = 1, 5 do
+					-- Position and size of the totem indicator
+					local Totem = CreateFrame('Button', nil, self)
+					Totem:SetSize(20, 20)
+					Totem:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+			
+					local Icon = Totem:CreateTexture(nil, 'OVERLAY')
+					Icon:SetAllPoints()
+			
+					local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
+					Cooldown:SetAllPoints()
+			
+					Totem.Icon = Icon
+					Totem.Cooldown = Cooldown
+			
+					Totems[index] = Totem
+				end
+			
+				-- Register with SUF
+				self.Totems = Totems
+
 				local DruidMana = CreateFrame('StatusBar', nil, self)
 				DruidMana:SetSize(self:GetWidth(), 4)
 				DruidMana:SetPoint('TOP', self.Power, 'BOTTOM', 0, -1.2)

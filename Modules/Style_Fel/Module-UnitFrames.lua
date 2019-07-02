@@ -521,6 +521,29 @@ local CreateLargeFrame = function(self, unit)
 			Background:SetTexture(1, 1, 1, .2)
 			self.AdditionalPower = DruidMana
 			self.AdditionalPower.bg = Background
+
+			--Totem Bar
+			local Totems = {}
+			for index = 1, 5 do
+				-- Position and size of the totem indicator
+				local Totem = CreateFrame('Button', nil, self)
+				Totem:SetSize(20, 20)
+				Totem:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+		
+				local Icon = Totem:CreateTexture(nil, 'OVERLAY')
+				Icon:SetAllPoints()
+		
+				local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
+				Cooldown:SetAllPoints()
+		
+				Totem.Icon = Icon
+				Totem.Cooldown = Cooldown
+		
+				Totems[index] = Totem
+			end
+		
+			-- Register with SUF
+			self.Totems = Totems
 		end
 	end
 	do -- setup buffs and debuffs
