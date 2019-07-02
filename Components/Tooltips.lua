@@ -139,7 +139,6 @@ local function ActiveRule()
 	return 'Rule1'
 end
 
--- local setPoint = function(self,point,parent,rpoint)
 local setPoint = function(self, parent)
 	if parent then
 		if (SUI.DB.Tooltips[ActiveRule()].Anchor.onMouse) then
@@ -183,24 +182,19 @@ local onShow = function(self)
 		SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and
 			not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style]
 	 then
-		self.SUIBorder:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
+		self.SUITip:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
 	else
-		self.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
+		self.SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 	end
 
-	if (SUI.DB.Tooltips.ActiveStyle == 'none' or SUI.DB.Tooltips.ColorOverlay) or (not self.SUIBorder) then
+	if (SUI.DB.Tooltips.ActiveStyle == 'none' or SUI.DB.Tooltips.ColorOverlay) or (not self.SUITip) then
 		self:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
-		self.SUIBorder:SetBackdropColor(1, 1, 1, 1)
+		self.SUITip:SetBackdropColor(1, 1, 1, 1)
 	else
-		self.SUIBorder:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
+		self.SUITip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 		self:SetBackdropColor(0, 0, 0, 0)
 	end
 
-	if (self.SUIBorder) and (not GameTooltipStatusBar:IsShown()) then
-		self.SUIBorder:ClearAllPoints()
-		self.SUIBorder:SetPoint('TOPLEFT', self, 'TOPLEFT', -1, 1)
-		self.SUIBorder:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 1, -1)
-	end
 	--check if theme has a location
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.Custom then
 		SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):Tooltip()
@@ -208,49 +202,53 @@ local onShow = function(self)
 end
 
 local onHide = function(self)
-	onShow(self)
-	self.SUIBorder:ClearColors()
+	self.SUITip.border:Hide()
+	self.SUITip:ClearColors()
 end
 
 local TipCleared = function(self)
 	onShow(self)
-	self.SUIBorder:ClearColors()
+	self.SUITip:ClearColors()
+	self.SUITip.border:Hide()
 	self.itemCleared = nil
 end
 
-local Override_Color = function(self, r, g, b, a)
-	local r2, b2, g2, a2 = unpack(SUI.DB.Tooltips.Color)
-	if ((r ~= r2) and (g ~= g2) and (b ~= b2)) then
-		if not SUI.DB.Tooltips.ColorOverlay then
-			self.SUIBorder:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
-		else
-			self:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
-		end
-	end
-end
-
 local SetBorderColor = function(self, r, g, b, hasStatusBar)
-	r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
-	self[1]:SetTexture(r, g, b, 1)
-	self[2]:SetTexture(r, g, b, 1)
-	self[3]:SetTexture(r, g, b, 1)
-	self[4]:SetTexture(r, g, b, 1)
+	self.SUITip.border:Show()
+	self.SUITip.border[1]:SetVertexColor(r, g, b, 1)
+	self.SUITip.border[2]:SetVertexColor(r, g, b, 1)
+	self.SUITip.border[3]:SetVertexColor(r, g, b, 1)
+	self.SUITip.border[4]:SetVertexColor(r, g, b, 1)
 end
 
-local ClearColors = function(self)
-	self[1]:SetTexture(0, 0, 0, 0)
-	self[2]:SetTexture(0, 0, 0, 0)
-	self[3]:SetTexture(0, 0, 0, 0)
-	self[4]:SetTexture(0, 0, 0, 0)
+local ClearColors = function(SUITip)
+	SUITip.border[1]:SetVertexColor(0, 0, 0, 0)
+	SUITip.border[2]:SetVertexColor(0, 0, 0, 0)
+	SUITip.border[3]:SetVertexColor(0, 0, 0, 0)
+	SUITip.border[4]:SetVertexColor(0, 0, 0, 0)
 end
 
 local TooltipSetItem = function(self)
-	local key = self:GetItem()
-	if (key and (not self.itemCleared)) then
-		local _, _, quality = GetItemInfo(key)
+	local itemLink = select(2, self:GetItem())
+	if (itemLink) then
+		local quality = select(3, GetItemInfo(itemLink))
+		local style = {
+			bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
+		}
+		if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
+			style = {
+				bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
+				overlayAtlasTop = 'AzeriteTooltip-Topper',
+				overlayAtlasTopScale = .75,
+				overlayAtlasBottom = 'AzeriteTooltip-Bottom'
+			}
+		end
+		GameTooltip_SetBackdropStyle(self, style)
+
 		if (quality) then
 			local r, g, b = GetItemQualityColor(quality)
-			self.SUIBorder:SetBorderColor(r, g, b)
+			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
+			self:SetBorderColor(r, g, b)
 		end
 		self.itemCleared = true
 	end
@@ -260,7 +258,7 @@ local TooltipSetUnit = function(self)
 	if (not self) then
 		return
 	end
-	-- tipbackground(self)
+
 	local unit = select(2, self:GetUnit())
 	if not unit then
 		local mFocus = GetMouseFocus()
@@ -318,7 +316,6 @@ local TooltipSetUnit = function(self)
 		else
 			GameTooltipTextLeft1:SetText(nameString)
 		end
-		
 
 		if (gName) then
 			if gRealm then
@@ -434,83 +431,90 @@ local TooltipSetUnit = function(self)
 end
 
 local function ApplyTooltipSkins()
+	GameTooltipStatusBarTexture:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+
+	GameTooltipStatusBar:ClearAllPoints()
+	GameTooltipStatusBar:SetPoint('TOPLEFT', GameTooltip, 'BOTTOMLEFT', 0, 0)
+	GameTooltipStatusBar:SetPoint('TOPRIGHT', GameTooltip, 'BOTTOMRIGHT', 0, 0)
+
+	GameTooltipStatusBar.bg = GameTooltipStatusBar:CreateTexture(nil, 'BACKGROUND')
+	GameTooltipStatusBar.bg:SetColorTexture(0.3, 0.3, 0.3, 0.6)
+	GameTooltipStatusBar.bg:SetAllPoints(GameTooltipStatusBar)
+
 	for i, tooltip in pairs(tooltips) do
 		if (not tooltip) then
 			return
 		end
 
-		if (not tooltip.SUIBorder) then
-			local Offset = 0
-			if (tooltip == GameTooltip) then
-				Offset = (GameTooltipStatusBar:GetHeight() + 6) * -1
-			end
+		if (not tooltip.SUITip) then
+			local SUITip = CreateFrame('Frame', nil, tooltip)
+			SUITip:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', 0, 0)
+			SUITip:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 0, 0)
+			SUITip:SetFrameLevel(0)
 
-			local tmp = CreateFrame('Frame', nil, tooltip)
-			tmp:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', -1, 1)
-			tmp:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 1, Offset)
-			tmp:SetFrameLevel(0)
+			SUITip.border = CreateFrame('Frame', nil, tooltip)
+			SUITip.border:SetFrameLevel(1)
 
 			--TOP
-			tmp[1] = tmp:CreateTexture(nil, 'OVERLAY')
-			tmp[1]:SetPoint('BOTTOMLEFT', tmp, 'TOPLEFT', -3, 0)
-			tmp[1]:SetPoint('BOTTOMRIGHT', tmp, 'TOPRIGHT', 3, 0)
-			tmp[1]:SetHeight(3)
-			tmp[1]:SetTexture(0, 0, 0)
+			SUITip.border[1] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+			SUITip.border[1]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
+			SUITip.border[1]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
+			SUITip.border[1]:SetHeight(2)
+			SUITip.border[1]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
 			--BOTTOM
-			tmp[2] = tmp:CreateTexture(nil, 'OVERLAY')
-			tmp[2]:SetPoint('TOPLEFT', tmp, 'BOTTOMLEFT', -3, 0)
-			tmp[2]:SetPoint('TOPRIGHT', tmp, 'BOTTOMRIGHT', 3, 0)
-			tmp[2]:SetHeight(3)
-			tmp[2]:SetTexture(0, 0, 0)
+			SUITip.border[2] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+			SUITip.border[2]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
+			SUITip.border[2]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
+			SUITip.border[2]:SetHeight(2)
+			SUITip.border[2]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
 			--RIGHT
-			tmp[3] = tmp:CreateTexture(nil, 'OVERLAY')
-			tmp[3]:SetPoint('TOPLEFT', tmp, 'TOPRIGHT', 0, 3)
-			tmp[3]:SetPoint('BOTTOMLEFT', tmp, 'BOTTOMRIGHT', 0, -3)
-			tmp[3]:SetWidth(3)
-			tmp[3]:SetTexture(0, 0, 0)
+			SUITip.border[3] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+			SUITip.border[3]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
+			SUITip.border[3]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
+			SUITip.border[3]:SetWidth(2)
+			SUITip.border[3]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
 			--LEFT
-			tmp[4] = tmp:CreateTexture(nil, 'OVERLAY')
-			tmp[4]:SetPoint('TOPRIGHT', tmp, 'TOPLEFT', 0, 3)
-			tmp[4]:SetPoint('BOTTOMRIGHT', tmp, 'BOTTOMLEFT', 0, -3)
-			tmp[4]:SetWidth(3)
-			tmp[4]:SetTexture(0, 0, 0)
+			SUITip.border[4] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+			SUITip.border[4]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
+			SUITip.border[4]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
+			SUITip.border[4]:SetWidth(2)
+			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
 
 			if
 				(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and
 					not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style]
 			 then
-				tmp:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
+				SUITip:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
 			else
-				tmp:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
+				SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 			end
 
-			tmp.SetBorderColor = SetBorderColor
-			tmp.ClearColors = ClearColors
+			SUITip.ClearColors = ClearColors
+			SUITip.border:Hide()
 
-			tooltip.SUIBorder = tmp
+			tooltip.SUITip = SUITip
+			tooltip.SetBorderColor = SetBorderColor
 			tooltip:SetBackdrop(nil)
-
-			hooksecurefunc(tooltip, 'SetBackdropColor', Override_Color)
 			tooltip:HookScript('OnShow', onShow)
 			tooltip:HookScript('OnHide', onHide)
 			_G.tremove(tooltips, i)
 		end
+
+		style = {
+			bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
+		}
+		GameTooltip_SetBackdropStyle(tooltip, style)
 	end
 end
 
 function module:UpdateBG()
 	for _, tooltip in pairs(tooltips) do
-		if (tooltip.SUIBorder) then
-			-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style] then
-			-- tooltip.SUIBorder:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
-			-- else
-			-- tooltip.SUIBorder:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
-			-- end
-			if not SUI.DB.Tooltips.ColorOverlay then
+		if (tooltip.SUITip) then
+			if not SUI.DB.Tooltips.c then
 				if SUI.DB.Tooltips.ActiveStyle ~= 'none' then
-					tooltip.SUIBorder:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
+					tooltip.SUITip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 				else
-					tooltip.SUIBorder:SetBackdropColor(0, 0, 0, 0)
+					tooltip.SUITip:SetBackdropColor(0, 0, 0, 0)
 					tooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 				end
 			end
@@ -518,18 +522,12 @@ function module:UpdateBG()
 	end
 end
 
-local function ReStyle()
-	if (#tooltips > 0) then
-		ApplyTooltipSkins()
-	end
-end
-
 function module:OnEnable()
-	module:BuildOptions()
 	if not SUI.DB.EnabledComponents.Tooltips then
-		module:HideOptions()
 		return
 	end
+	module:BuildOptions()
+
 	--Create Anchor point
 	for k, v in ipairs(RuleList) do
 		local anchor = CreateFrame('Frame', nil)
@@ -601,11 +599,10 @@ function module:OnEnable()
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
 	GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
 	GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
+	ShoppingTooltip1:HookScript('OnTooltipSetItem', TooltipSetItem)
+	ShoppingTooltip2:HookScript('OnTooltipSetItem', TooltipSetItem)
 	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
-	hooksecurefunc('GameTooltip_ShowCompareItem', ReStyle)
-
-	-- GameTooltip:HookScript("SetPoint", setPoint)
-	-- hooksecurefunc(GameTooltip,"SetPoint",setPoint);
+	-- hooksecurefunc('GameTooltip_ShowCompareItem', ReStyle)
 end
 
 local OnMouseOpt = function(v)
