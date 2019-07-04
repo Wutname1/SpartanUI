@@ -105,8 +105,6 @@ function module:OnEnable()
 	BuffWatcher:RegisterEvent('GROUP_JOINED')
 	BuffWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
 	BuffWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
-	--BuffWatcher:RegisterEvent("PARTY_CONVERTED_TO_RAID")
-	BuffWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
 	BuffWatcher:RegisterEvent('ENCOUNTER_START')
 	BuffWatcher:RegisterEvent('ENCOUNTER_END')
 
