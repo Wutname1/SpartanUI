@@ -1006,7 +1006,7 @@ function SUI:OnEnable()
 					type = 'execute',
 					order = 50,
 					func = function()
-						InterfaceOptionsFrame:Hide()
+						while CloseWindows() do end
 						AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 						AceConfigDialog:Open('SpartanUI')
 					end
