@@ -14,13 +14,19 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
+SUI.GitHash = "@project-abbreviated-hash@" -- The ZIP packager will replace this with the Git hash.
+SUI.releaseType = 'Release'
+
+--@alpha@
+SUI.releaseType = 'ALPHA'
+--@end-alpha@
 
 if not SUI.BuildNum then
 	SUI.BuildNum = 0
 end
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = 'SpartanUI ' .. SUI.Version,
+	name = string.format('SpartanUI %s %s', SUI.releaseType, SUI.Version),
 	type = 'group',
 	childGroups = 'tree',
 	args = {
