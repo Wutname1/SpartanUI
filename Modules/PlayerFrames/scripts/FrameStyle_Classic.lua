@@ -350,29 +350,20 @@ local CreatePlayerFrame = function(self, unit)
 			self.Power.colorPower = true
 			self.Power.frequentUpdates = true
 		end
-
 		--Totem Bar
-		local Totems = {}
-		for index = 1, 5 do
-			-- Position and size of the totem indicator
-			local Totem = CreateFrame('Button', nil, self)
-			Totem:SetSize(20, 20)
-			Totem:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
-	
-			local Icon = Totem:CreateTexture(nil, 'OVERLAY')
-			Icon:SetAllPoints()
-	
-			local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
-			Cooldown:SetAllPoints()
-	
-			Totem.Icon = Icon
-			Totem.Cooldown = Cooldown
-	
-			Totems[index] = Totem
+		for index = 1, 4 do
+			_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+			_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+			_G['TotemFrameTotem' .. index]:SetScale(.8)
 		end
-	
-		-- Register with SUF
-		self.Totems = Totems
+		hooksecurefunc(
+			'TotemFrame_Update',
+			function()
+				TotemFrameTotem1:ClearAllPoints()
+				TotemFrameTotem1:SetParent(self)
+				TotemFrameTotem1:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 20, 0)
+			end
+		)
 	end
 	do -- setup ring, icons, and text
 		local ring = CreateFrame('Frame', nil, self)
@@ -1998,7 +1989,7 @@ function PlayerFrames:SetupExtras()
 					SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 			end
 		)
-		
+
 		-- Totem Frame (Pally Concentration, Shaman Totems, Monk Statues)
 		for i = 1, 4 do
 			local timer = _G['TotemFrameTotem' .. i .. 'Duration']

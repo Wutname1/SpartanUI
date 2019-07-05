@@ -570,27 +570,19 @@ local MakeLargeFrame = function(self, unit, width)
 		do --Special Icons/Bars
 			if unit == 'player' then
 				--Totem Bar
-				local Totems = {}
-				for index = 1, 5 do
-					-- Position and size of the totem indicator
-					local Totem = CreateFrame('Button', nil, self)
-					Totem:SetSize(20, 20)
-					Totem:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
-			
-					local Icon = Totem:CreateTexture(nil, 'OVERLAY')
-					Icon:SetAllPoints()
-			
-					local Cooldown = CreateFrame('Cooldown', nil, Totem, 'CooldownFrameTemplate')
-					Cooldown:SetAllPoints()
-			
-					Totem.Icon = Icon
-					Totem.Cooldown = Cooldown
-			
-					Totems[index] = Totem
+				for index = 1, 4 do
+					_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+					_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+					_G['TotemFrameTotem' .. index]:SetScale(.8)
 				end
-			
-				-- Register with SUF
-				self.Totems = Totems
+				hooksecurefunc(
+					'TotemFrame_Update',
+					function()
+						TotemFrameTotem1:ClearAllPoints()
+						TotemFrameTotem1:SetParent(self)
+						TotemFrameTotem1:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 20, 0)
+					end
+				)
 
 				local DruidMana = CreateFrame('StatusBar', nil, self)
 				DruidMana:SetSize(self:GetWidth(), 4)
@@ -685,7 +677,6 @@ local MakeLargeFrame = function(self, unit, width)
 		self.StatusText:SetPoint('CENTER', items, 'CENTER')
 		self.StatusText:SetJustifyH('CENTER')
 		self:Tag(self.StatusText, '[afkdnd]')
-
 
 		--Runes
 		local playerClass = select(2, UnitClass('player'))
