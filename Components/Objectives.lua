@@ -137,7 +137,6 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent('GROUP_JOINED')
 	ObjectiveTrackerWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
 	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
-	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_START')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_END')
 

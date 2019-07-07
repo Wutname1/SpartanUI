@@ -15,6 +15,15 @@ local ExcludedItems = {
 	166970, --energy cell
 	169475, --Barnacled Lockbox
 	137642, --Mark Of Honor
+	168217, --Hardened Spring
+	168952, --Hardened Spring
+	168136, --Azerokk's Fist
+	168951, --Tempered Plating
+	168258, --Bundle of Recyclable Parts
+	168950, --Machined Gear Assembly
+	169334, --Strange Oceanic Sediment
+	170193, --Sea Totem
+	168216, --Tempered Plating
 	
 	-- Cata
 	71141, -- Eternal Ember
