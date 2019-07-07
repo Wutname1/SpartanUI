@@ -31,10 +31,7 @@ SUI.opt = {
 	childGroups = 'tree',
 	args = {
 		General = {name = L['General'], type = 'group', order = 0, args = {}},
-		Artwork = {name = L['Artwork'], type = 'group', args = {}},
-		PlayerFrames = {name = L['PlayerFrames'], type = 'group', args = {}},
-		PartyFrames = {name = L['PartyFrames'], type = 'group', args = {}},
-		RaidFrames = {name = L['RaidFrames'], type = 'group', args = {}}
+		Artwork = {name = L['Artwork'], type = 'group', args = {}}
 	}
 }
 

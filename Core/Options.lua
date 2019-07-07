@@ -31,10 +31,6 @@ function module:OnInitialize()
 	ModsLoaded.Artwork = enabled
 	enabled = select(4, GetAddOnInfo('SpartanUI_UnitFrames'))
 	ModsLoaded.UnitFrames = enabled
-	enabled = select(4, GetAddOnInfo('SpartanUI_PartyFrames'))
-	ModsLoaded.PartyFrames = enabled
-	enabled = select(4, GetAddOnInfo('SpartanUI_RaidFrames'))
-	ModsLoaded.RaidFrames = enabled
 	enabled = select(4, GetAddOnInfo('SpartanUI_SpinCam'))
 	ModsLoaded.SpinCam = enabled
 	enabled = select(4, GetAddOnInfo('SpartanUI_FilmEffects'))

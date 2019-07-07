@@ -3,12 +3,42 @@ local module = SUI:GetModule('Module_UnitFrames')
 ----------------------------------------------------------------------------------------------------
 
 function PlayerFrames:OnInitialize()
-	-- PlayerOptions()
-	-- RaidOptions()
-	-- PartyOptions()
+	SUI.opt.args['UnitFrames'] = {
+		name = 'Unit frames',
+		type = 'group',
+		args = {}
+	}
+	local frameList = {
+		'player',
+		'target',
+		'targettarget',
+		'boss',
+		'bosstarget',
+		'pet',
+		'pettarget',
+		'focus',
+		'focustarget',
+		'party',
+		'partypet',
+		'partytarget',
+		'raid',
+		'arena'
+	}
+	for i, key in ipairs(frameList) do
+		CreateOptionSet(key, i)
+	end
 end
 
 ----------------------------------------------------------------------------------------------------
+
+function CreateOptionSet(frameName, order)
+	SUI.opt.args['UnitFrames'].args[frameName] = {
+		name = frameName,
+		type = 'group',
+		order = order,
+		args = {}
+	}
+end
 
 function PlayerOptions()
 	SUI.opt.args['PlayerFrames'].args['FrameStyle'] = {
