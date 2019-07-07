@@ -569,6 +569,21 @@ local MakeLargeFrame = function(self, unit, width)
 		end
 		do --Special Icons/Bars
 			if unit == 'player' then
+				--Totem Bar
+				for index = 1, 4 do
+					_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+					_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+					_G['TotemFrameTotem' .. index]:SetScale(.8)
+				end
+				hooksecurefunc(
+					'TotemFrame_Update',
+					function()
+						TotemFrameTotem1:ClearAllPoints()
+						TotemFrameTotem1:SetParent(self)
+						TotemFrameTotem1:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 20, 0)
+					end
+				)
+
 				local DruidMana = CreateFrame('StatusBar', nil, self)
 				DruidMana:SetSize(self:GetWidth(), 4)
 				DruidMana:SetPoint('TOP', self.Power, 'BOTTOM', 0, -1.2)
@@ -662,7 +677,6 @@ local MakeLargeFrame = function(self, unit, width)
 		self.StatusText:SetPoint('CENTER', items, 'CENTER')
 		self.StatusText:SetJustifyH('CENTER')
 		self:Tag(self.StatusText, '[afkdnd]')
-
 
 		--Runes
 		local playerClass = select(2, UnitClass('player'))

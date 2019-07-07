@@ -478,7 +478,7 @@ local CreateLargeFrame = function(self, unit)
 			self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
 			self.ReadyCheckIndicator:SetSize(30, 30)
 			self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
-			
+
 			--Combo Points & Special unit power itemsitems = CreateFrame("Frame",nil,self);
 			local items = CreateFrame('Frame', nil, self)
 			items:SetFrameStrata('BACKGROUND')
@@ -521,6 +521,21 @@ local CreateLargeFrame = function(self, unit)
 			Background:SetTexture(1, 1, 1, .2)
 			self.AdditionalPower = DruidMana
 			self.AdditionalPower.bg = Background
+
+			--Totem Bar
+			for index = 1, 4 do
+				_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+				_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+				_G['TotemFrameTotem' .. index]:SetScale(.8)
+			end
+			hooksecurefunc(
+				'TotemFrame_Update',
+				function()
+					TotemFrameTotem1:ClearAllPoints()
+					TotemFrameTotem1:SetParent(self)
+					TotemFrameTotem1:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 20, 0)
+				end
+			)
 		end
 	end
 	do -- setup buffs and debuffs
@@ -693,7 +708,7 @@ local CreateMediumFrame = function(self, unit)
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
 		self.ReadyCheckIndicator:SetSize(30, 30)
 		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
-		
+
 		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.CombatIndicator:SetSize(20, 20)
 		self.CombatIndicator:SetPoint('CENTER', self.RestingIndicator, 'CENTER')
