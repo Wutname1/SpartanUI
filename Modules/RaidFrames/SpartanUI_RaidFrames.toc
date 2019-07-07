@@ -1,9 +1,3 @@
 ## Interface: 80200
 ## Title: SpartanUI: |CFF0070DDRaid Frames|r
-## Notes: Raid Frames designed to complement SpartanUI
-## Version: @project-version@
-## Author: Wutname1
-## X-Category: User Interfaces
-## RequiredDeps: SpartanUI
-
-scripts\Global-Framework.xml
+## Notes: LEGACY FOLDER PLEASE DELETE
