@@ -29,10 +29,10 @@ libs\StdUi\StdUi.xml
 
 libs\SUF\SUF.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
-libs\oUF_Plugins\LoadAll.xml
+libs\oUF_Plugins\Loader.xml
 
 lang\localization.xml
 
 core\Framework.lua
-components\LoadAll.xml
-core\Framework.xml
+components\Loader.xml
+core\SUI-Core.xml
