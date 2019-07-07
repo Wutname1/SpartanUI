@@ -119,12 +119,6 @@ function Artwork_Core:isInTable(tab, frameName)
 	return false
 end
 
-function Artwork_Core:round(num) -- rounds a number to 2 decimal places
-	if num then
-		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
-	end
-end
-
 function Artwork_Core:MoveTalkingHeadUI()
 	local THUDB = SUI.DB.Styles[SUI.DBMod.Artwork.Style].TalkingHeadUI
 	local MoveTalkingHead = CreateFrame('Frame')

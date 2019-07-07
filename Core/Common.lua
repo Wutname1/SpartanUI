@@ -180,9 +180,11 @@ function SUI:isInTable(tab, frameName)
 	return false
 end
 
-function SUI:round(num) -- rounds a number to 2 decimal places
-	if num then
-		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+function SUI:round(val, decimal)
+	if (decimal) then
+		return math.floor((val * 10 ^ decimal) + 0.5) / (10 ^ decimal)
+	else
+		return math.floor(val + 0.5)
 	end
 end
 

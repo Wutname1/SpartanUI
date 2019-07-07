@@ -353,7 +353,7 @@ local CreatePlayerFrame = function(self, unit)
 			health.value:SetJustifyH('RIGHT')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetPoint('LEFT', health, 'LEFT', 4, 0)
-			self:Tag(health.value, PlayerFrames:TextFormat('health'))
+			self:Tag(health.value, module:TextFormat('health'))
 
 			-- health.ratio = health:CreateFontString(nil, "OVERLAY", "SUI_FontOutline10");
 			-- health.ratio:SetSize(90, 11);
@@ -630,7 +630,7 @@ local CreateTargetFrame = function(self, unit)
 			health.value:SetJustifyH('LEFT')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetPoint('RIGHT', health, 'RIGHT', -4, 0)
-			self:Tag(health.value, PlayerFrames:TextFormat('health'))
+			self:Tag(health.value, module:TextFormat('health'))
 
 			-- local Background = health:CreateTexture(nil, 'BACKGROUND')
 			-- Background:SetAllPoints(health)
@@ -669,7 +669,7 @@ local CreateTargetFrame = function(self, unit)
 			power.value:SetJustifyH('CENTER')
 			power.value:SetJustifyV('MIDDLE')
 			power.value:SetAllPoints(power)
-			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
+			self:Tag(power.ratio, module:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true
@@ -1143,7 +1143,7 @@ local CreateRaidFrame = function(self, unit)
 			health.value:SetAllPoints(health)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
-			self:Tag(health.value, RaidFrames:TextFormat('health'))
+			self:Tag(health.value, module:TextFormat('health'))
 			-- self:Tag(health.value, "[perhp]% ([missinghpdynamic])")
 
 			self.Health = health

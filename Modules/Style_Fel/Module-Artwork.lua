@@ -58,7 +58,7 @@ function module:updateScale()
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= Artwork_Core:round(Fel_SpartanUI:GetScale())) then
+		if (SUI.DB.scale ~= SUI:round(Fel_SpartanUI:GetScale())) then
 			Fel_SpartanUI:SetScale(SUI.DB.scale)
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')

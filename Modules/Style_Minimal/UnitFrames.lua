@@ -136,9 +136,9 @@ local PostUpdateText = function(self, unit)
 	if self.Power then
 		self:Untag(self.Power.value)
 	end
-	self:Tag(self.Health.value, PlayerFrames:TextFormat('health'))
+	self:Tag(self.Health.value, module:TextFormat('health'))
 	if self.Power then
-		self:Tag(self.Power.value, PlayerFrames:TextFormat('mana'))
+		self:Tag(self.Power.value, module:TextFormat('mana'))
 	end
 end
 
@@ -275,9 +275,9 @@ local MakeSmallFrame = function(self, unit)
 
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
-			self:Tag(health.value, PlayerFrames:TextFormat('health'))
+			self:Tag(health.value, module:TextFormat('health'))
 
-			-- self:Tag(health.value, RaidFrames:TextFormat("health"))
+			-- self:Tag(health.value, module:TextFormat("health"))
 			-- self:Tag(health.value, "[perhp]% ([missinghpdynamic])")
 
 			local Background = health:CreateTexture(nil, 'BACKGROUND')
@@ -446,7 +446,7 @@ local MakeLargeFrame = function(self, unit, width)
 			health.value:SetAllPoints(health)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
-			self:Tag(health.value, PlayerFrames:TextFormat('health'))
+			self:Tag(health.value, module:TextFormat('health'))
 			-- self:Tag(health.value, "[perhp]% ([missinghpdynamic])")
 
 			local Background = health:CreateTexture(nil, 'BACKGROUND')

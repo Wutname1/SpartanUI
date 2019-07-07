@@ -334,7 +334,7 @@ local CreateLargeFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, PlayerFrames:TextFormat('health'))
+			self:Tag(health.value, module:TextFormat('health'))
 
 			self.Health = health
 
@@ -366,7 +366,7 @@ local CreateLargeFrame = function(self, unit)
 			power.ratio:SetJustifyH('CENTER')
 			power.ratio:SetJustifyV('MIDDLE')
 			power.ratio:SetAllPoints(power)
-			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
+			self:Tag(power.ratio, module:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true
@@ -637,7 +637,7 @@ local CreateMediumFrame = function(self, unit)
 			health.value:SetJustifyH('CENTER')
 			health.value:SetJustifyV('MIDDLE')
 			health.value:SetAllPoints(health)
-			self:Tag(health.value, PlayerFrames:TextFormat('health'))
+			self:Tag(health.value, module:TextFormat('health'))
 			self.Health = health
 
 			self.Health.frequentUpdates = true

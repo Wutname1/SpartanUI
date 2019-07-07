@@ -293,6 +293,29 @@ do -- AFK / DND status text, as an SUIUF module
 	end
 end
 
+do -- Boss graphic as an SUIUF module
+	local Update = function(self, event, unit)
+		if (self.unit ~= unit) then
+			return
+		end
+		if (not self.BossGraphic) then
+			return
+		end
+		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare')
+		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
+		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
+	end
+	local Enable = function(self)
+		if (self.BossGraphic) then
+			return true
+		end
+	end
+	local Disable = function(self)
+		return
+	end
+	SUIUF:AddElement('BossGraphic', Update, Enable, Disable)
+end
+
 do --Health Formatting Tags
 	-- Current Health Short, as an SUIUF module
 	SUIUF.Tags.Events['curhpshort'] = 'UNIT_HEALTH UNIT_MAXHEALTH'

@@ -3,7 +3,7 @@ local module = SUI:GetModule('Module_UnitFrames')
 ----------------------------------------------------------------------------------------------------
 
 --	Formatting functions
-function PartyFrames:TextFormat(text)
+function module:TextFormat(text)
 	local textstyle = SUI.DBMod.PartyFrames.bars[text].textstyle
 	local textmode = SUI.DBMod.PartyFrames.bars[text].textmode
 	local a, m, t, z
@@ -49,28 +49,11 @@ end
 PartyFrames.PostUpdateText = function(self)
 	if self.Health and self.Health.value then
 		self:Untag(self.Health.value)
-		self:Tag(self.Health.value, PartyFrames:TextFormat('health'))
+		self:Tag(self.Health.value, module:TextFormat('health'))
 	end
 	if self.Power and self.Power.value then
 		self:Untag(self.Power.value)
-		self:Tag(self.Power.value, PartyFrames:TextFormat('mana'))
-	end
-end
-
-function PartyFrames:menu(self)
-	if (not self.id) then
-		self.id = self.unit:match '^.-(%d+)'
-	end
-	local unit = string.gsub(self.unit, '(.)', string.upper, 1)
-	if (_G[unit .. 'FrameDropDown']) then
-		ToggleDropDownMenu(1, nil, _G[unit .. 'FrameDropDown'], 'cursor')
-	elseif ((self.unit:match('party')) and (not self.unit:match('partypet'))) then
-		ToggleDropDownMenu(1, nil, _G['PartyMemberFrame' .. self.id .. 'DropDown'], 'cursor')
-	else
-		FriendsDropDown.unit = self.unit
-		FriendsDropDown.id = self.id
-		FriendsDropDown.initialize = RaidFrameDropDown_Initialize
-		ToggleDropDownMenu(1, nil, FriendsDropDown, 'cursor')
+		self:Tag(self.Power.value, module:TextFormat('mana'))
 	end
 end
 
@@ -139,42 +122,6 @@ function PartyFrames:MakeMovable(self)
 end
 
 ------------------------
-
-function PlayerFrames:round(val, decimal)
-	if (decimal) then
-		return math.floor((val * 10 ^ decimal) + 0.5) / (10 ^ decimal)
-	else
-		return math.floor(val + 0.5)
-	end
-end
-
-function PlayerFrames:comma_value(n)
-	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
-	return left .. (num:reverse():gsub('(%d%d%d)', '%1,'):reverse()) .. right
-end
-
-do -- Boss graphic as an SUIUF module
-	local Update = function(self, event, unit)
-		if (self.unit ~= unit) then
-			return
-		end
-		if (not self.BossGraphic) then
-			return
-		end
-		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare')
-		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
-		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
-	end
-	local Enable = function(self)
-		if (self.BossGraphic) then
-			return true
-		end
-	end
-	local Disable = function(self)
-		return
-	end
-	SUIUF:AddElement('BossGraphic', Update, Enable, Disable)
-end
 
 function PlayerFrames:SetupStaticOptions()
 	local FramesList = {

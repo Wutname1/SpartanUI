@@ -1224,9 +1224,3 @@ function SUI:isInTable(tab, frameName)
 	end
 	return false
 end
-
-function SUI:round(num) -- rounds a number to 2 decimal places
-	if num then
-		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
-	end
-end
