@@ -1,10 +1,30 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Module_UnitFrames', 'AceTimer-3.0')
 module.DisplayName = L['Unit frames']
-local DB = SUI.DB.Unitframes
-module.DB = {}
+
 local loadstring = loadstring
 local function_cache = {}
+
+local DB = SUI.DB.Unitframes
+module.CurrentSettings = {}
+
+
+module.frameList = {
+	'player',
+	'target',
+	'targettarget',
+	'boss',
+	'bosstarget',
+	'pet',
+	'pettarget',
+	'focus',
+	'focustarget',
+	'party',
+	'partypet',
+	'partytarget',
+	'raid',
+	'arena'
+}
 module.frames = {
 	arena = {},
 	boss = {},
@@ -30,232 +50,147 @@ module.frames = {
 --	}
 --
 ----------------------------------------------------------------------------------------------------
-local FrameList = {
-	'raid',
-	'player',
-	'pet',
-	'target',
-	'targettarget',
-	'focus',
-	'focustarget'
-}
-local DefaultSettings = {
-	FrameOptions = {
-		['**'] = {
-			width = 180,
-			height = 60,
-			moved = false,
-			anchor = {
-				point = 'BOTTOM',
-				relativePoint = 'BOTTOM',
-				xOfs = 0,
-				yOfs = 0
-			},
-			elements = {
-				['**'] = {
-					enabled = false,
-					Scale = 1,
-					bgTexture = false,
-					AllPoints = false,
-					points = false,
-					alpha = 1
-				},
-				Health = {
-					enabled = true,
-					width = 'full',
-					height = 60,
-					points = {
-						{point = 'TOPRIGHT', relativePoint = 'frame'}
-					},
-					Text = {
-						enabled = true,
-						Size = 12,
-						AllPoints = 'Health'
-					}
-				},
-				Mana = {
-					enabled = true,
-					width = 'full',
-					height = 15,
-					points = {
-						{point = 'TOPRIGHT', relativeTo = 'BOTTOMRIGHT', relativePoint = 'Health', x = 0, y = 0}
-					},
-					Text = {
-						enabled = true,
-						Size = 12,
-						AllPoints = 'Mana'
-					}
-				},
-				Castbar = {
-					enabled = false,
-					width = 'full',
-					height = 15,
-					points = {
-						{point = 'BOTTOMRIGHT', relativePoint = 'Health', relativeTo = 'TOPRIGHT'}
-					},
-					Text = {
-						enabled = true,
-						AllPoints = 'Castbar'
-					}
-				},
-				Name = {
-					enabled = true,
-					height = 12,
-					size = 12,
-					width = 'full',
-					points = {
-						{point = 'RIGHT', relativePoint = 'Name', relativeTo = 'LEFT'}
-					}
-				},
-				LeaderIndicator = {
-					enabled = true,
-					height = 12,
-					width = 12,
-					points = {
-						{point = 'RIGHT', relativePoint = 'Name', relativeTo = 'LEFT'}
-					}
-				},
-				RestingIndicator = {
-					enabled = true,
-					height = 20,
-					width = 20,
-					points = {
-						{point = 'CENTER', relativePoint = 'frame', relativeTo = 'LEFT'}
-					}
-				},
-				GroupRoleIndicator = {
-					enabled = true,
-					height = 18,
-					width = 18,
-					alpha = .75,
-					points = {
-						{point = 'CENTER', relativePoint = 'frame', relativeTo = 'LEFT'}
-					}
-				},
-				CombatIndicator = {
-					enabled = true,
-					height = 20,
-					width = 20,
-					points = {
-						{point = 'CENTER', relativePoint = 'GroupRoleIndicator', relativeTo = 'CENTER'}
-					}
-				},
-				RaidTargetIndicator = {
-					enabled = true,
-					height = 20,
-					width = 20,
-					points = {
-						{point = 'LEFT', relativePoint = 'RestingIndicator', relativeTo = 'RIGHT'}
-					}
-				},
-				SUI_ClassIcon = {
-					enabled = true,
-					height = 20,
-					width = 20,
-					points = {
-						{point = 'CENTER', relativePoint = 'RestingIndicator', relativeTo = 'CENTER'}
-					}
-				},
-				ReadyCheckIndicator = {
-					enabled = true,
-					width = 25,
-					height = 25,
-					points = {
-						{point = 'LEFT', relativeTo = 'LEFT'}
-					}
-				},
-				PvPIndicator = {
-					width = 25,
-					height = 25,
-					points = {
-						{point = 'CENTER', relativeTo = 'BOTTOMRIGHT'}
-					}
-				},
-				StatusText = {
-					size = 22,
-					SetJustifyH = 'CENTER',
-					SetJustifyV = 'MIDDLE',
-					points = {
-						{point = 'CENTER', relativeTo = 'CENTER'}
-					}
-				}
-			}
-		},
-		player = {
-			anchor = {
-				point = 'BOTTOMRIGHT',
-				relativePoint = 'BOTTOM',
-				xOfs = -60,
-				yOfs = 250
-			}
-		},
-		target = {
-			anchor = {
-				point = 'BOTTOMLEFT',
-				relativePoint = 'BOTTOM',
-				xOfs = 60,
-				yOfs = 250
-			}
-		}
-	},
-	PlayerCustomizations = {
-		['**'] = {
-			['**'] = {
-				elements = {
-					['**'] = {}
-				}
-			}
-		}
-	}
-}
-local CurrentSettings = {}
-
-function module:AddStyleSettings(settings)
-	module.DB.Styles[settings.id] = settings
-end
-
-function module:SpawnFrames()
-end
 
 function module:UpdatePosition()
+	module:PositionFrame()
 end
 
-function module:OnInitalize()
-	--First merge in all the default information
-	DB = SUI:MergeData(DB, DefaultSettings.PlayerCustomizations, false)
+function module:TextFormat(text, unit)
+	local textstyle = module.CurrentSettings[unit].font[text].textstyle
+	local textmode = module.CurrentSettings[unit].font[text].textmode
+	local a, m, t, z
+	if text == 'mana' then
+		z = 'pp'
+	else
+		z = 'hp'
+	end
 
-	--Ensure the default FrameOptions are proper
-	DB.FrameOptions = DefaultSettings.FrameOptions
+	-- textstyle
+	-- "Long: 			 Displays all numbers."
+	-- "Long Formatted: Displays all numbers with commas."
+	-- "Dynamic: 		 Abbriviates and formats as needed"
+	if textstyle == 'long' then
+		a = '[cur' .. z .. ']'
+		m = '[missing' .. z .. ']'
+		t = '[max' .. z .. ']'
+	elseif textstyle == 'longfor' then
+		a = '[cur' .. z .. 'formatted]'
+		m = '[missing' .. z .. 'formatted]'
+		t = '[max' .. z .. 'formatted]'
+	elseif textstyle == 'disabled' then
+		return ''
+	else
+		a = '[cur' .. z .. 'dynamic]'
+		m = '[missing' .. z .. 'dynamic]'
+		t = '[max' .. z .. 'dynamic]'
+	end
+	-- textmode
+	-- [1]="Avaliable / Total",
+	-- [2]="(Missing) Avaliable / Total",
+	-- [3]="(Missing) Avaliable"
+
+	if textmode == 1 then
+		return a .. ' / ' .. t
+	elseif textmode == 2 then
+		return '(' .. m .. ') ' .. a .. ' / ' .. t
+	elseif textmode == 3 then
+		return '(' .. m .. ') ' .. a
+	end
 end
 
-function module:OnEnable()
+function module:PositionFrame(b)
+	--Clear Point
+	if b ~= nil and module.frames[b] then
+		module.frames[b]:ClearAllPoints()
+	end
+	--Set Position
+	-- if SUI_FramesAnchor then
+	-- 	if b == 'player' or b == nil then
+	-- 		module.frames.player:SetPoint('BOTTOMRIGHT', SUI_FramesAnchor, 'TOPLEFT', -60, 10)
+	-- 	end
+	-- else
+		if b == 'player' or b == nil then
+			module.frames.player:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -60, 250)
+		end
+	-- end
+
+	if b == 'pet' or b == nil then
+		module.frames.pet:SetPoint('RIGHT', module.frames.player, 'BOTTOMLEFT', -60, 0)
+	end
+
+	if b == 'target' or b == nil then
+		module.frames.target:SetPoint('LEFT', module.frames.player, 'RIGHT', 150, 0)
+	end
+	if b == 'targettarget' or b == nil then
+		module.frames.targettarget:SetPoint('LEFT', module.frames.target, 'BOTTOMRIGHT', 4, 0)
+	end
+
+	if b == 'focus' or b == nil then
+		module.frames.focus:SetPoint('BOTTOMLEFT', module.frames.target, 'TOP', 0, 30)
+	end
+	if b == 'focustarget' or b == nil then
+		module.frames.focustarget:SetPoint('BOTTOMLEFT', module.frames.focus, 'BOTTOMRIGHT', 5, 0)
+	end
+
+	local FramesList = {
+		[1] = 'pet',
+		[2] = 'target',
+		[3] = 'targettarget',
+		[4] = 'focus',
+		[5] = 'focustarget',
+		[6] = 'player'
+	}
+	for _, c in pairs(FramesList) do
+		module.frames[c]:SetScale(SUI.DB.scale)
+	end
+
+	-- module:UpdateAltBarPositions()
+end
+
+function module:OnInitialize()
+	--[[
+		Takes a target table and injects data from the source
+		override allows the source to be put into the target
+		even if its already populated
+		function SUI:MergeData(target, source, override)
+	]]
+	-- Setup Database
+	-- Load Default Settings
+	SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.FrameOptions)
+	-- Import theme settings
+	SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
+	-- Import player customizations
+	SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations, true)
+
+	-- Build options
+	module:InitializeOptions()
 end
 
 function module:OnEnable()
 	module:SpawnFrames()
 
 	-- Add mover to standard frames
-	for _, b in pairs(FrameList) do
-		if module.frames[b] then
-			module:AddMover(module.frames[b], b)
-		end
-	end
+	-- for _, b in pairs(module.frameList) do
+	-- 	if module.frames[b] then
+	-- 		module:AddMover(module.frames[b], b)
+	-- 	end
+	-- end
 
-	-- Party, Raid, and boss mover
-	if module.frames.arena[1] then
-		module:AddMover(FrameList.arena[1], 'arena')
-	end
-	if module.frames.boss[1] then
-		module:AddMover(FrameList.boss[1], 'boss')
-	end
-	if module.frames.party[1] then
-		module:AddMover(FrameList.party[1], 'party')
-	end
+	-- -- Party, Raid, and boss mover
+	-- if module.frames.arena[1] then
+	-- 	module:AddMover(FrameList.arena[1], 'arena')
+	-- end
+	-- if module.frames.boss[1] then
+	-- 	module:AddMover(FrameList.boss[1], 'boss')
+	-- end
+	-- if module.frames.party[1] then
+	-- 	module:AddMover(FrameList.party[1], 'party')
+	-- end
 	-- if FrameList.raid[1] then
 	-- 	module:AddMover(frame, 'raid')
 	-- end
 
-	module:UpdatePosition()
+	module:PositionFrame()
 end
 
 function module:AddMover(frame, framename)

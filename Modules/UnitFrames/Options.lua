@@ -2,43 +2,332 @@ local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:GetModule('Module_UnitFrames')
 ----------------------------------------------------------------------------------------------------
 
-function PlayerFrames:OnInitialize()
+local function CreateOptionSet(frameName, order)
+	SUI.opt.args['UnitFrames'].args[frameName] = {
+		name = frameName,
+		type = 'group',
+		order = order,
+		childGroups = 'tab',
+		args = {
+			bars = {
+				name = 'Bars',
+				type = 'group',
+				order = 20,
+				childGroups = 'tree',
+				args = {}
+			},
+			elements = {
+				name = 'Elements',
+				type = 'group',
+				order = 30,
+				childGroups = 'tree',
+				args = {}
+			},
+			text = {
+				name = 'Text',
+				type = 'group',
+				order = 30,
+				childGroups = 'tree',
+				args = {}
+			}
+		}
+	}
+end
+
+local function AddGeneralOptions(frameName)
+	SUI.opt.args['UnitFrames'].args[frameName].args['general'] = {
+		name = 'General',
+		desc = 'General display settings',
+		type = 'group',
+		order = 10,
+		args = {
+			portrait = {
+				name = 'Portrait',
+				type = 'group',
+				inline = true,
+				args = {
+					enabled = {
+						name = L['Enabled'],
+						type = 'toggle',
+						order = 10,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Portrait.enabled
+						end,
+						set = function(info, val)
+							print(module.CurrentSettings[frameName].elements.Portrait.enabled)
+							--TODO
+						end
+					},
+					type = {
+						name = 'Portrait type',
+						type = 'select',
+						order = 20,
+						values = {
+							['3D'] = '3D',
+							['2D'] = '2D'
+						},
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Portrait.type
+						end,
+						set = function(info, val)
+							--TODO
+						end
+					},
+					position = {
+						name = 'Position',
+						type = 'select',
+						order = 30,
+						values = {
+							['left'] = L['Left'],
+							['right'] = L['Right']
+						},
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Portrait.position
+						end,
+						set = function(info, val)
+							--TODO
+						end
+					}
+				}
+			},
+			artwork = {
+				name = 'Artwork',
+				type = 'group',
+				inline = true,
+				args = {}
+			}
+		}
+	}
+end
+
+local function AddBuffOptions(frameName)
+	local values = {['bars'] = L['Bars'], ['icons'] = L['Icons'], ['both'] = L['Both'], ['disabled'] = L['Disabled']}
+
+	SUI.opt.args['UnitFrames'].args[frameName].args['auras'] = {
+		name = 'Buffs & Debuffs',
+		desc = 'Buff & Debuff display settings',
+		type = 'group',
+		order = 40,
+		args = {
+			Notice = {type = 'description', order = .5, fontSize = 'medium', name = L['possiblereloadneeded']},
+			Buffs = {
+				name = 'Buffs',
+				type = 'group',
+				inline = true,
+				order = 1,
+				args = {
+					Display = {
+						name = L['Display mode'],
+						type = 'select',
+						order = 15,
+						values = values,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Buffs.Mode
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Buffs.Mode = val
+							SUI:reloadui()
+						end
+					},
+					Number = {
+						name = L['Number to show'],
+						type = 'range',
+						order = 20,
+						min = 1,
+						max = 30,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Buffs.Number
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Buffs.Number = val
+							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
+								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+							end
+						end
+					},
+					size = {
+						name = L['Size'],
+						type = 'range',
+						order = 30,
+						min = 1,
+						max = 30,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Buffs.size
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Buffs.size = val
+							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
+								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+							end
+						end
+					},
+					spacing = {
+						name = L['Spacing'],
+						type = 'range',
+						order = 40,
+						min = 1,
+						max = 30,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Buffs.spacing
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Buffs.spacing = val
+							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
+								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+							end
+						end
+					},
+					showType = {
+						name = L['Show type'],
+						type = 'toggle',
+						order = 50,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Buffs.showType
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Buffs.showType = val
+							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
+								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+							end
+						end
+					},
+					onlyShowPlayer = {
+						name = L['Only show players'],
+						type = 'toggle',
+						order = 60,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Buffs.onlyShowPlayer
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Buffs.onlyShowPlayer = val
+							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
+								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+							end
+						end
+					}
+				}
+			},
+			Debuffs = {
+				name = 'Debuffs',
+				type = 'group',
+				inline = true,
+				order = 2,
+				args = {
+					Display = {
+						name = L['Display mode'],
+						type = 'select',
+						order = 15,
+						values = values,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Debuffs.Mode
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Debuffs.Mode = val
+							SUI:reloadui()
+						end
+					},
+					Number = {
+						name = L['Number to show'],
+						type = 'range',
+						order = 20,
+						min = 1,
+						max = 30,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Debuffs.Number
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Debuffs.Number = val
+							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
+								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
+							end
+						end
+					},
+					size = {
+						name = L['Size'],
+						type = 'range',
+						order = 30,
+						min = 1,
+						max = 30,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Debuffs.size
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Debuffs.size = val
+							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
+								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
+							end
+						end
+					},
+					spacing = {
+						name = L['Spacing'],
+						type = 'range',
+						order = 40,
+						min = 1,
+						max = 30,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Debuffs.spacing
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Debuffs.spacing = val
+							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
+								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
+							end
+						end
+					},
+					showType = {
+						name = L['Show type'],
+						type = 'toggle',
+						order = 50,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Debuffs.showType
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Debuffs.showType = val
+							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
+								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
+							end
+						end
+					},
+					onlyShowPlayer = {
+						name = L['Only show players'],
+						type = 'toggle',
+						order = 60,
+						get = function(info)
+							return module.CurrentSettings[frameName].auras.Debuffs.onlyShowPlayer
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].auras.Debuffs.onlyShowPlayer = val
+							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
+								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
+							end
+						end
+					}
+				}
+			}
+		}
+	}
+end
+
+function module:InitializeOptions()
 	SUI.opt.args['UnitFrames'] = {
 		name = 'Unit frames',
 		type = 'group',
 		args = {}
 	}
-	local frameList = {
-		'player',
-		'target',
-		'targettarget',
-		'boss',
-		'bosstarget',
-		'pet',
-		'pettarget',
-		'focus',
-		'focustarget',
-		'party',
-		'partypet',
-		'partytarget',
-		'raid',
-		'arena'
-	}
-	for i, key in ipairs(frameList) do
+	for i, key in ipairs(module.frameList) do
 		CreateOptionSet(key, i)
+		AddGeneralOptions(key)
+		AddBuffOptions(key)
 	end
 end
 
 ----------------------------------------------------------------------------------------------------
-
-function CreateOptionSet(frameName, order)
-	SUI.opt.args['UnitFrames'].args[frameName] = {
-		name = frameName,
-		type = 'group',
-		order = order,
-		args = {}
-	}
-end
 
 function PlayerOptions()
 	SUI.opt.args['PlayerFrames'].args['FrameStyle'] = {

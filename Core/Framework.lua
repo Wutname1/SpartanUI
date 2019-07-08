@@ -514,6 +514,304 @@ local DBdefault = {
 				}
 			}
 		},
+		Unitframes = {
+			Style = 'War',
+			FrameOptions = {
+				['**'] = {
+					enabled = false,
+					width = 180,
+					height = 60,
+					moved = false,
+					anchor = {
+						point = 'BOTTOM',
+						relativePoint = 'BOTTOM',
+						xOfs = 0,
+						yOfs = 0
+					},
+					artwork = {
+						top = {
+							enabled = false,
+							graphic = ''
+						},
+						bottom = {
+							enabled = false,
+							graphic = ''
+						}
+					},
+					auras = {
+						Buffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = false,
+							Mode = 'disabled'
+						},
+						Debuffs = {
+							Display = true,
+							Number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							onlyShowPlayer = true,
+							Mode = 'disabled'
+						}
+					},
+					elements = {
+						['**'] = {
+							enabled = false,
+							Scale = 1,
+							bgTexture = false,
+							AllPoints = false,
+							points = false,
+							alpha = 1
+						},
+						Portrait = {
+							type = '3D',
+							position = 'left'
+						},
+						Health = {
+							enabled = true,
+							width = 'full',
+							height = 60,
+							colorReaction = false,
+							colorHappiness = false,
+							colorClass = true,
+							points = {
+								{point = 'TOPRIGHT', relativePoint = 'frame'}
+							},
+							Text = {
+								enabled = true,
+								Size = 12,
+								AllPoints = 'Health'
+							}
+						},
+						Power = {
+							enabled = true,
+							width = 'full',
+							height = 15,
+							points = {
+								{point = 'TOPRIGHT', relativeTo = 'BOTTOMRIGHT', relativePoint = 'Health', x = 0, y = 0}
+							},
+							Text = {
+								enabled = true,
+								Size = 12,
+								AllPoints = 'Power'
+							}
+						},
+						Castbar = {
+							enabled = false,
+							width = 'full',
+							height = 15,
+							points = {
+								{point = 'BOTTOMRIGHT', relativePoint = 'Health', relativeTo = 'TOPRIGHT'}
+							},
+							Text = {
+								enabled = true,
+								AllPoints = 'Castbar'
+							}
+						},
+						Name = {
+							enabled = true,
+							height = 12,
+							size = 12,
+							width = 'full',
+							points = {
+								{point = 'RIGHT', relativePoint = 'Name', relativeTo = 'LEFT'}
+							}
+						},
+						LeaderIndicator = {
+							enabled = true,
+							height = 12,
+							width = 12,
+							points = {
+								{point = 'RIGHT', relativePoint = 'Name', relativeTo = 'LEFT'}
+							}
+						},
+						RestingIndicator = {
+							enabled = true,
+							height = 20,
+							width = 20,
+							points = {
+								{point = 'CENTER', relativePoint = 'frame', relativeTo = 'LEFT'}
+							}
+						},
+						GroupRoleIndicator = {
+							enabled = true,
+							height = 18,
+							width = 18,
+							alpha = .75,
+							points = {
+								{point = 'CENTER', relativePoint = 'frame', relativeTo = 'LEFT'}
+							}
+						},
+						CombatIndicator = {
+							enabled = true,
+							height = 20,
+							width = 20,
+							points = {
+								{point = 'CENTER', relativePoint = 'GroupRoleIndicator', relativeTo = 'CENTER'}
+							}
+						},
+						RaidTargetIndicator = {
+							enabled = true,
+							height = 20,
+							width = 20,
+							points = {
+								{point = 'LEFT', relativePoint = 'RestingIndicator', relativeTo = 'RIGHT'}
+							}
+						},
+						SUI_ClassIcon = {
+							enabled = true,
+							height = 20,
+							width = 20,
+							points = {
+								{point = 'CENTER', relativePoint = 'RestingIndicator', relativeTo = 'CENTER'}
+							}
+						},
+						ReadyCheckIndicator = {
+							enabled = true,
+							width = 25,
+							height = 25,
+							points = {
+								{point = 'LEFT', relativeTo = 'LEFT'}
+							}
+						},
+						PvPIndicator = {
+							width = 25,
+							height = 25,
+							points = {
+								{point = 'CENTER', relativeTo = 'BOTTOMRIGHT'}
+							}
+						},
+						StatusText = {
+							size = 22,
+							SetJustifyH = 'CENTER',
+							SetJustifyV = 'MIDDLE',
+							points = {
+								{point = 'CENTER', relativeTo = 'CENTER'}
+							}
+						}
+					},
+					font = {
+						mana = {
+							textstyle = 'dynamic',
+							textmode = 1
+						},
+						health = {
+							textstyle = 'dynamic',
+							textmode = 1
+						}
+					}
+				},
+				player = {
+					enabled = true,
+					anchor = {
+						point = 'BOTTOMRIGHT',
+						relativePoint = 'BOTTOM',
+						xOfs = -60,
+						yOfs = 250
+					},
+					auras = {
+						Buffs = {
+							Mode = 'both'
+						},
+						Debuffs = {
+							onlyShowPlayer = false,
+							Mode = 'both'
+						}
+					},
+					elements = {
+						Portrait = {
+							enabled = true
+						},
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				target = {
+					enabled = true,
+					anchor = {
+						point = 'BOTTOMLEFT',
+						relativePoint = 'BOTTOM',
+						xOfs = 60,
+						yOfs = 250
+					},
+					elements = {
+						Portrait = {
+							enabled = true
+						},
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				targettarget = {
+					enabled = true,
+					elements = {
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				boss = {
+					enabled = true,
+					elements = {
+						Portrait = {
+							enabled = true,
+							type = '2D'
+						},
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				bosstarget = {},
+				pet = {},
+				pettarget = {},
+				focus = {
+					enabled = true,
+					elements = {
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				focustarget = {
+					enabled = true,
+					elements = {
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				party = {
+					enabled = true,
+					elements = {
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				partypet = {},
+				partytarget = {},
+				raid = {
+					enabled = true
+				},
+				arena = {}
+			},
+			PlayerCustomizations = {
+				['**'] = {
+					['**'] = {
+						elements = {
+							['**'] = {}
+						}
+					}
+				}
+			}
+		},
 		Components = {}
 	},
 	Modules = {
@@ -593,109 +891,6 @@ local DBdefault = {
 			animationInterval = 0,
 			anim = '',
 			vignette = nil
-		},
-		PartyFrames = {
-			Style = 'Classic',
-			Portrait3D = true,
-			threat = true,
-			preset = 'dps',
-			FrameStyle = 'large',
-			showAuras = true,
-			partyLock = true,
-			showClass = true,
-			partyMoved = false,
-			castbar = true,
-			castbartext = true,
-			showPartyInRaid = false,
-			showParty = true,
-			showPlayer = true,
-			showSolo = false,
-			Portrait = true,
-			scale = 1,
-			Auras = {
-				NumBuffs = 0,
-				NumDebuffs = 10,
-				size = 16,
-				spacing = 1,
-				showType = true
-			},
-			Anchors = {
-				point = 'TOPLEFT',
-				relativeTo = 'UIParent',
-				relativePoint = 'TOPLEFT',
-				xOfs = 10,
-				yOfs = -20
-			},
-			bars = {health = {textstyle = 'dynamic', textmode = 1}, mana = {textstyle = 'dynamic', textmode = 1}},
-			display = {pet = true, target = true, mana = true}
-		},
-		PlayerFrames = {
-			Style = 'Classic',
-			Portrait3D = true,
-			showClass = true,
-			focusMoved = false,
-			PetPortrait = true,
-			global = frameDefault1,
-			player = frameDefault1,
-			target = frameDefault1,
-			targettarget = frameDefault2,
-			pet = frameDefault2,
-			focus = frameDefault2,
-			focustarget = frameDefault2,
-			boss = frameDefault2,
-			arena = frameDefault2,
-			bars = {
-				health = {textstyle = 'dynamic', textmode = 1},
-				mana = {textstyle = 'longfor', textmode = 1},
-				player = {color = 'dynamic'},
-				target = {color = 'reaction'},
-				targettarget = {color = 'dynamic', style = 'large'},
-				pet = {color = 'happiness'},
-				focus = {color = 'dynamic'},
-				focustarget = {color = 'dynamic'}
-			},
-			Castbar = {
-				player = 1,
-				target = 1,
-				targettarget = 1,
-				pet = 1,
-				focus = 1,
-				text = {player = 1, target = 1, targettarget = 1, pet = 1, focus = 1}
-			},
-			BossFrame = {movement = MovedDefault, display = true, scale = 1},
-			ArenaFrame = {movement = MovedDefault, display = true, scale = 1},
-			ClassBar = {scale = 1, movement = MovedDefault},
-			TotemFrame = {movement = MovedDefault},
-			AltManaBar = {movement = MovedDefault}
-		},
-		RaidFrames = {
-			Style = 'Classic',
-			HideBlizzFrames = true,
-			threat = true,
-			mode = 'ASSIGNEDROLE',
-			preset = 'dps',
-			FrameStyle = 'small',
-			showAuras = true,
-			showClass = true,
-			moved = false,
-			showRaid = true,
-			maxColumns = 4,
-			unitsPerColumn = 10,
-			columnSpacing = 5,
-			scale = 1,
-			Anchors = {
-				point = 'TOPLEFT',
-				relativeTo = 'UIParent',
-				relativePoint = 'TOPLEFT',
-				xOfs = 10,
-				yOfs = -20
-			},
-			bars = {
-				health = {textstyle = 'dynamic', textmode = 1},
-				mana = {textstyle = 'dynamic', textmode = 1}
-			},
-			debuffs = {display = true},
-			Auras = {size = 10, spacing = 1, showType = true}
 		}
 	}
 }
@@ -1009,7 +1204,8 @@ function SUI:OnEnable()
 					type = 'execute',
 					order = 50,
 					func = function()
-						while CloseWindows() do end
+						while CloseWindows() do
+						end
 						AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 						AceConfigDialog:Open('SpartanUI')
 					end
@@ -1053,20 +1249,25 @@ function SUI:OnEnable()
 	if (not select(4, GetAddOnInfo('Bartender4')) and not SUI.DB.BT4Warned) then
 		local cnt = 1
 		local BT4Warning = CreateFrame('Frame')
-		BT4Warning:SetScript('OnEvent', function()
-			if cnt <= 10 then
-				StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] ..' Warning ' .. cnt .. ' of 10')
-			else
-				SUI.DB.BT4Warned = true
+		BT4Warning:SetScript(
+			'OnEvent',
+			function()
+				if cnt <= 10 then
+					StdUi:Dialog(
+						L['Warning'],
+						L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10'
+					)
+				else
+					SUI.DB.BT4Warned = true
+				end
+				cnt = cnt + 1
 			end
-			cnt = cnt + 1
-		end)
+		)
 		BT4Warning:RegisterEvent('PLAYER_LOGIN')
 		BT4Warning:RegisterEvent('PLAYER_ENTERING_WORLD')
 		BT4Warning:RegisterEvent('ZONE_CHANGED')
 		BT4Warning:RegisterEvent('ZONE_CHANGED_INDOORS')
 		BT4Warning:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-		
 	end
 end
 
@@ -1118,15 +1319,16 @@ function SUI:ChatCommand(input)
 		if SUIChatCommands[input] then
 			SUIChatCommands[input]()
 		elseif string.find(input, ' ') then
-			for i in string.gmatch(input, "%S+") do
+			for i in string.gmatch(input, '%S+') do
 				local arg, _ = string.gsub(input, i .. ' ', '')
 				if SUIChatCommands[i] then
 					SUIChatCommands[i](arg)
 				end
-			 end
+			end
 		else
 			AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 			AceConfigDialog:Open('SpartanUI')
+			AceConfigDialog:SelectGroup('SpartanUI', 'UnitFrames')
 		end
 	end
 end
@@ -1140,29 +1342,6 @@ function SUI:Err(mod, err)
 	SUI:Print("An error has been captured in the Component '" .. mod .. "'")
 	SUI:Print('Details: ' .. err)
 	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
-end
-
---[[
-	Takes a target table and injects data from the source
-	override allows the source to be put into the target
-	even if its already populated
-]]
-function SUI:MergeData(target, source, override)
-	if type(target) ~= 'table' then
-		target = {}
-	end
-	for k, v in pairs(source) do
-		if type(v) == 'table' then
-			target[k] = self:MergeData(target[k], v, override)
-		else
-			if override then
-				target[k] = v
-			elseif target[k] == nil then
-				target[k] = v
-			end
-		end
-	end
-	return target
 end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
@@ -1220,4 +1399,10 @@ function SUI:isInTable(tab, frameName)
 		end
 	end
 	return false
+end
+
+function SUI:round(num) -- rounds a number to 2 decimal places
+	if num then
+		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+	end
 end
