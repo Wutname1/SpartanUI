@@ -563,9 +563,10 @@ local DBdefault = {
 							enabled = false,
 							Scale = 1,
 							bgTexture = false,
-							AllPoints = false,
 							points = false,
-							alpha = 1
+							alpha = 1,
+							width = 15,
+							height = 15
 						},
 						Portrait = {
 							type = '3D',
@@ -573,11 +574,12 @@ local DBdefault = {
 						},
 						Health = {
 							enabled = true,
-							width = 'full',
-							height = 60,
+							height = 40,
 							colorReaction = false,
 							colorHappiness = false,
 							colorClass = true,
+							colorTapping = true,
+							colorDisconnected = true,
 							points = {
 								{point = 'TOPRIGHT', relativePoint = 'frame'}
 							},
@@ -587,10 +589,12 @@ local DBdefault = {
 								AllPoints = 'Health'
 							}
 						},
+						HealthPrediction = {
+							enabled = true
+						},
 						Power = {
 							enabled = true,
-							width = 'full',
-							height = 15,
+							height = 10,
 							points = {
 								{point = 'TOPRIGHT', relativeTo = 'BOTTOMRIGHT', relativePoint = 'Health', x = 0, y = 0}
 							},
@@ -602,8 +606,7 @@ local DBdefault = {
 						},
 						Castbar = {
 							enabled = false,
-							width = 'full',
-							height = 15,
+							height = 10,
 							points = {
 								{point = 'BOTTOMRIGHT', relativePoint = 'Health', relativeTo = 'TOPRIGHT'}
 							},

@@ -22,62 +22,72 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	self:SetSize(180, 58)
-	-- do -- setup base artwork
-	-- 	self.artwork = CreateFrame('Frame', nil, self)
-	-- 	self.artwork:SetFrameStrata('BACKGROUND')
-	-- 	self.artwork:SetFrameLevel(2)
-	-- 	self.artwork:SetAllPoints()
+	do -- General setup
+		-- 	self.artwork = CreateFrame('Frame', nil, self)
+		-- 	self.artwork:SetFrameStrata('BACKGROUND')
+		-- 	self.artwork:SetFrameLevel(2)
+		-- 	self.artwork:SetAllPoints()
 
-	-- 	self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
-	-- 	self.artwork.bgNeutral:SetAllPoints(self)
-	-- 	self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
-	-- 	self.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
+		-- 	self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
+		-- 	self.artwork.bgNeutral:SetAllPoints(self)
+		-- 	self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+		-- 	self.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
 
-	-- 	self.artwork.bgAlliance = self.artwork:CreateTexture(nil, 'BACKGROUND')
-	-- 	self.artwork.bgAlliance:SetPoint('CENTER', self)
-	-- 	self.artwork.bgAlliance:SetTexture(Images.Alliance.bg.Texture)
-	-- 	self.artwork.bgAlliance:SetTexCoord(unpack(Images.Alliance.bg.Coords))
-	-- 	self.artwork.bgAlliance:SetSize(self:GetSize())
+		-- 	self.artwork.bgAlliance = self.artwork:CreateTexture(nil, 'BACKGROUND')
+		-- 	self.artwork.bgAlliance:SetPoint('CENTER', self)
+		-- 	self.artwork.bgAlliance:SetTexture(Images.Alliance.bg.Texture)
+		-- 	self.artwork.bgAlliance:SetTexCoord(unpack(Images.Alliance.bg.Coords))
+		-- 	self.artwork.bgAlliance:SetSize(self:GetSize())
 
-	-- 	self.artwork.bgHorde = self.artwork:CreateTexture(nil, 'BACKGROUND')
-	-- 	self.artwork.bgHorde:SetPoint('CENTER', self)
-	-- 	self.artwork.bgHorde:SetTexture(Images.Horde.bg.Texture)
-	-- 	self.artwork.bgHorde:SetTexCoord(unpack(Images.Horde.bg.Coords))
-	-- 	self.artwork.bgHorde:SetSize(self:GetSize())
+		-- 	self.artwork.bgHorde = self.artwork:CreateTexture(nil, 'BACKGROUND')
+		-- 	self.artwork.bgHorde:SetPoint('CENTER', self)
+		-- 	self.artwork.bgHorde:SetTexture(Images.Horde.bg.Texture)
+		-- 	self.artwork.bgHorde:SetTexCoord(unpack(Images.Horde.bg.Coords))
+		-- 	self.artwork.bgHorde:SetSize(self:GetSize())
 
-	-- 	self.artwork.flairAlliance = self.artwork:CreateTexture(nil, 'BORDER')
-	-- 	self.artwork.flairAlliance:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
-	-- 	self.artwork.flairAlliance:SetTexture(Images.Alliance.flair.Texture)
-	-- 	self.artwork.flairAlliance:SetTexCoord(unpack(Images.Alliance.flair.Coords))
-	-- 	self.artwork.flairAlliance:SetSize(self:GetWidth(), self:GetHeight() + 37)
+		-- 	self.artwork.flairAlliance = self.artwork:CreateTexture(nil, 'BORDER')
+		-- 	self.artwork.flairAlliance:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
+		-- 	self.artwork.flairAlliance:SetTexture(Images.Alliance.flair.Texture)
+		-- 	self.artwork.flairAlliance:SetTexCoord(unpack(Images.Alliance.flair.Coords))
+		-- 	self.artwork.flairAlliance:SetSize(self:GetWidth(), self:GetHeight() + 37)
 
-	-- 	self.artwork.flairHorde = self.artwork:CreateTexture(nil, 'BORDER')
-	-- 	self.artwork.flairHorde:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
-	-- 	self.artwork.flairHorde:SetTexture(Images.Horde.flair.Texture)
-	-- 	self.artwork.flairHorde:SetTexCoord(unpack(Images.Horde.flair.Coords))
-	-- 	self.artwork.flairHorde:SetSize(self:GetWidth(), self:GetHeight() + 37)
+		-- 	self.artwork.flairHorde = self.artwork:CreateTexture(nil, 'BORDER')
+		-- 	self.artwork.flairHorde:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
+		-- 	self.artwork.flairHorde:SetTexture(Images.Horde.flair.Texture)
+		-- 	self.artwork.flairHorde:SetTexCoord(unpack(Images.Horde.flair.Coords))
+		-- 	self.artwork.flairHorde:SetSize(self:GetWidth(), self:GetHeight() + 37)
 
-	-- 	if unit ~= 'raid' then
-	-- 		self.Portrait = PlayerFrames:CreatePortrait(self)
-	-- 		if SUI.DBMod.PlayerFrames.Portrait3D then
-	-- 			self.Portrait:SetFrameStrata('LOW')
-	-- 			self.Portrait:SetFrameLevel(2)
-	-- 		end
-	-- 		self.Portrait:SetSize(58, 58)
-	-- 		self.Portrait:SetPoint('RIGHT', self, 'LEFT', -1, 0)
-	-- 	end
+		-- 3D Portrait
+		local Portrait3D = CreateFrame('PlayerModel', nil, self)
+		Portrait3D:SetSize(self:GetHeight(), self:GetHeight())
+		Portrait3D:SetPoint('RIGHT', self, 'LEFT')
+		Portrait3D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
+		self.Portrait3D = Portrait3D
 
-	-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
-	-- 	Threat:SetSize(25, 25)
-	-- 	Threat:SetPoint('CENTER', self, 'RIGHT')
-	-- 	self.ThreatIndicator = Threat
-	-- end
+		-- 2D Portrait
+		local Portrait2D = self:CreateTexture(nil, 'OVERLAY')
+		Portrait2D:SetSize(self:GetHeight(), self:GetHeight())
+		Portrait2D:SetPoint('RIGHT', self, 'LEFT')
+		Portrait2D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
+		self.Portrait2D = Portrait2D
+
+		if module.CurrentSettings[unit].elements.Portrait.type == '3D' then
+			self.Portrait = self.Portrait3D
+		else
+			self.Portrait = self.Portrait2D
+		end
+
+		-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
+		-- 	Threat:SetSize(25, 25)
+		-- 	Threat:SetPoint('CENTER', self, 'RIGHT')
+		-- 	self.ThreatIndicator = Threat
+	end
 	do -- setup status bars
 		do -- cast bar
 			local cast = CreateFrame('StatusBar', nil, self)
 			cast:SetFrameStrata('BACKGROUND')
 			cast:SetFrameLevel(3)
-			cast:SetSize(self:GetWidth(), 8)
+			cast:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
 			cast:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, 0)
 			cast:SetStatusBarTexture(Smoothv2)
 
@@ -98,9 +108,8 @@ local function CreateUnitFrame(self, unit)
 			health:SetFrameStrata('BACKGROUND')
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture(Smoothv2)
-			health:SetWidth(self:GetWidth())
-			health:SetPoint('TOPLEFT', self.Castbar, 'BOTTOMLEFT', 0, -2)
-			health:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, 13)
+			health:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Health.height)
+			health:SetPoint('TOP', self.Castbar, 'BOTTOM', 0, -2)
 
 			health.value = health:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
 			health.value:SetJustifyH('CENTER')
@@ -112,28 +121,78 @@ local function CreateUnitFrame(self, unit)
 
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			if module.CurrentSettings[unit].elements.Health.colorReaction then
-				self.Health.colorReaction = true
-			end
-			if module.CurrentSettings[unit].elements.Health.colorHappiness then
-				self.Health.colorHappiness = true
-			end
-			if module.CurrentSettings[unit].elements.Health.colorClass then
-				self.Health.colorClass = true
-			end
+			self.Health.colorDisconnected = module.CurrentSettings[unit].elements.Health.colorDisconnected
+			self.Health.colorTapping = module.CurrentSettings[unit].elements.Health.colorTapping
+			self.Health.colorReaction = module.CurrentSettings[unit].elements.Health.colorReaction
+			self.Health.colorHappiness = module.CurrentSettings[unit].elements.Health.colorHappiness
+			self.Health.colorClass = module.CurrentSettings[unit].elements.Health.colorClass
 
 			self.Health.colorSmooth = true
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			if not SUI.IsClassic then
+				-- Position and size
+				local myBar = CreateFrame('StatusBar', nil, self.Health)
+				myBar:SetPoint('TOP')
+				myBar:SetPoint('BOTTOM')
+				myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+				myBar:SetStatusBarTexture(Smoothv2)
+				myBar:SetStatusBarColor(0, 1, 0.5, 0.45)
+				myBar:SetSize(150, 16)
+
+				local otherBar = CreateFrame('StatusBar', nil, myBar)
+				otherBar:SetPoint('TOP')
+				otherBar:SetPoint('BOTTOM')
+				otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
+				otherBar:SetStatusBarTexture(Smoothv2)
+				otherBar:SetStatusBarColor(0, 0.5, 1, 0.35)
+				otherBar:SetSize(150, 16)
+
+				local absorbBar = CreateFrame('StatusBar', nil, self.Health)
+				absorbBar:SetPoint('TOP')
+				absorbBar:SetPoint('BOTTOM')
+				absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
+				absorbBar:SetStatusBarTexture(Smoothv2)
+				absorbBar:SetWidth(10)
+
+				local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
+				healAbsorbBar:SetPoint('TOP')
+				healAbsorbBar:SetPoint('BOTTOM')
+				healAbsorbBar:SetPoint('RIGHT', self.Health:GetStatusBarTexture())
+				healAbsorbBar:SetStatusBarTexture(Smoothv2)
+				healAbsorbBar:SetReverseFill(true)
+				healAbsorbBar:SetWidth(10)
+
+				local overAbsorb = self.Health:CreateTexture(nil, 'OVERLAY')
+				overAbsorb:SetPoint('TOP')
+				overAbsorb:SetPoint('BOTTOM')
+				overAbsorb:SetPoint('LEFT', self.Health, 'RIGHT')
+				overAbsorb:SetWidth(10)
+
+				local overHealAbsorb = self.Health:CreateTexture(nil, 'OVERLAY')
+				overHealAbsorb:SetPoint('TOP')
+				overHealAbsorb:SetPoint('BOTTOM')
+				overHealAbsorb:SetPoint('RIGHT', self.Health, 'LEFT')
+				overHealAbsorb:SetWidth(10)
+
+				self.HealthPrediction = {
+					myBar = myBar,
+					otherBar = otherBar,
+					absorbBar = absorbBar,
+					healAbsorbBar = healAbsorbBar,
+					overAbsorb = overAbsorb,
+					overHealAbsorb = overHealAbsorb,
+					maxOverflow = 2
+				}
+			end
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
 			power:SetFrameStrata('BACKGROUND')
 			power:SetFrameLevel(2)
-			power:SetSize(self:GetWidth(), 10)
-			power:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', 0, 2)
+			power:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
+			power:SetPoint('TOP', self.Health, 'BOTTOM', 0, -2)
 			power:SetStatusBarTexture(Smoothv2)
 
 			power.ratio = power:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline8')
@@ -343,6 +402,9 @@ function module:SpawnFrames()
 		module.frames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
 
 		-- Disable objects based on settings
+		if not module.CurrentSettings[b].elements.Portrait.enabled then
+			module.frames[b]:DisableElement('Portrait')
+		end
 		if not module.CurrentSettings[b].elements.Castbar.enabled then
 			module.frames[b]:DisableElement('Castbar')
 		end
