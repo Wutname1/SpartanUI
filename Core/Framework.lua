@@ -530,10 +530,12 @@ local DBdefault = {
 					artwork = {
 						top = {
 							enabled = false,
+							offset = 0,
 							graphic = ''
 						},
 						bottom = {
 							enabled = false,
+							offset = 0,
 							graphic = ''
 						}
 					},

@@ -72,14 +72,14 @@ local function CreateUnitFrame(self, unit)
 
 		-- 3D Portrait
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
-		Portrait3D:SetSize(self:GetHeight(), self:GetHeight())
+		Portrait3D:SetSize(FrameHeight, FrameHeight)
 		Portrait3D:SetPoint('RIGHT', self, 'LEFT')
 		Portrait3D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
 		self.Portrait3D = Portrait3D
 
 		-- 2D Portrait
 		local Portrait2D = self:CreateTexture(nil, 'OVERLAY')
-		Portrait2D:SetSize(self:GetHeight(), self:GetHeight())
+		Portrait2D:SetSize(FrameHeight, FrameHeight)
 		Portrait2D:SetPoint('RIGHT', self, 'LEFT')
 		Portrait2D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
 		self.Portrait2D = Portrait2D
@@ -102,7 +102,7 @@ local function CreateUnitFrame(self, unit)
 			cast:SetFrameLevel(2)
 			cast:SetStatusBarTexture(Smoothv2)
 			cast:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
-			cast:SetPoint('TOP', self, 'BOTTOM', 0, 0)
+			cast:SetPoint('TOP', self, 'TOP', 0, 0)
 
 			cast.Text = cast:CreateFontString()
 			SUI:FormatFont(cast.Text, 10, 'Player')
@@ -122,10 +122,10 @@ local function CreateUnitFrame(self, unit)
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture(Smoothv2)
 			health:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Health.height)
-			if module.CurrentSettings[unit].elements.Health.enabled then
-				health:SetPoint('TOP', self, 'BOTTOM', 0, ((module.CurrentSettings[unit].elements.Health.height + 2) * -1))
+			if module.CurrentSettings[unit].elements.Castbar.enabled then
+				health:SetPoint('TOP', self, 'TOP', 0, ((module.CurrentSettings[unit].elements.Castbar.height + 2) * -1))
 			else
-				health:SetPoint('TOP', self, 'BOTTOM', 0, 0)
+				health:SetPoint('TOP', self, 'TOP', 0, 0)
 			end
 			
 
@@ -216,7 +216,7 @@ local function CreateUnitFrame(self, unit)
 				PositionData = module.CurrentSettings[unit].elements.Castbar.height
 			end
 			PositionData = PositionData + module.CurrentSettings[unit].elements.Health.height
-			power:SetPoint('TOP', self, 'BOTTOM', 0, ((PositionData + 2) * -1))
+			power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
 
 			power.ratio = power:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline8')
 			power.ratio:SetJustifyH('CENTER')
