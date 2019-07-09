@@ -415,6 +415,13 @@ local function CreateUnitFrame(self, unit)
 
 	-- self = PlayerFrames:MakeMovable(self, unit)
 
+	-- Setup the frame's Right click menu.
+	self:RegisterForClicks('AnyDown')
+	self:EnableMouse(enable)
+	self:SetClampedToScreen(true)
+	self:SetScript('OnEnter', UnitFrame_OnEnter)
+	self:SetScript('OnLeave', UnitFrame_OnLeave)
+
 	return self
 end
 
