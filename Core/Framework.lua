@@ -520,7 +520,6 @@ local DBdefault = {
 				['**'] = {
 					enabled = false,
 					width = 180,
-					height = 60,
 					moved = false,
 					anchor = {
 						point = 'BOTTOM',
@@ -753,6 +752,7 @@ local DBdefault = {
 				},
 				targettarget = {
 					enabled = true,
+					width = 100,
 					elements = {
 						Castbar = {
 							enabled = true
@@ -761,6 +761,7 @@ local DBdefault = {
 				},
 				boss = {
 					enabled = true,
+					width = 120,
 					elements = {
 						Portrait = {
 							enabled = true,
@@ -801,7 +802,8 @@ local DBdefault = {
 				partypet = {},
 				partytarget = {},
 				raid = {
-					enabled = true
+					enabled = true,
+					width = 95
 				},
 				arena = {}
 			},

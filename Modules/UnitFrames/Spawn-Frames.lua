@@ -21,7 +21,20 @@ local function CreateUnitFrame(self, unit)
 		self:SetParent(SUI_FramesAnchor)
 	end
 
-	self:SetSize(180, 58)
+	local FrameHeight = 0
+	
+	if module.CurrentSettings[unit].elements.Castbar.enabled then
+		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Castbar.height
+	end
+	if module.CurrentSettings[unit].elements.Health.enabled then
+		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Health.height
+	end
+	if module.CurrentSettings[unit].elements.Power.enabled then
+		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Power.height
+	end
+
+	self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
+
 	do -- General setup
 		-- 	self.artwork = CreateFrame('Frame', nil, self)
 		-- 	self.artwork:SetFrameStrata('BACKGROUND')
@@ -86,10 +99,10 @@ local function CreateUnitFrame(self, unit)
 		do -- cast bar
 			local cast = CreateFrame('StatusBar', nil, self)
 			cast:SetFrameStrata('BACKGROUND')
-			cast:SetFrameLevel(3)
-			cast:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
-			cast:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, 0)
+			cast:SetFrameLevel(2)
 			cast:SetStatusBarTexture(Smoothv2)
+			cast:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
+			cast:SetPoint('TOP', self, 'BOTTOM', 0, 0)
 
 			cast.Text = cast:CreateFontString()
 			SUI:FormatFont(cast.Text, 10, 'Player')
@@ -109,7 +122,12 @@ local function CreateUnitFrame(self, unit)
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture(Smoothv2)
 			health:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Health.height)
-			health:SetPoint('TOP', self.Castbar, 'BOTTOM', 0, -2)
+			if module.CurrentSettings[unit].elements.Health.enabled then
+				health:SetPoint('TOP', self, 'BOTTOM', 0, ((module.CurrentSettings[unit].elements.Health.height + 2) * -1))
+			else
+				health:SetPoint('TOP', self, 'BOTTOM', 0, 0)
+			end
+			
 
 			health.value = health:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
 			health.value:SetJustifyH('CENTER')
@@ -191,9 +209,14 @@ local function CreateUnitFrame(self, unit)
 			local power = CreateFrame('StatusBar', nil, self)
 			power:SetFrameStrata('BACKGROUND')
 			power:SetFrameLevel(2)
-			power:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
-			power:SetPoint('TOP', self.Health, 'BOTTOM', 0, -2)
 			power:SetStatusBarTexture(Smoothv2)
+			power:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
+			local PositionData = 0
+			if module.CurrentSettings[unit].elements.Castbar.enabled then
+				PositionData = module.CurrentSettings[unit].elements.Castbar.height
+			end
+			PositionData = PositionData + module.CurrentSettings[unit].elements.Health.height
+			power:SetPoint('TOP', self, 'BOTTOM', 0, ((PositionData + 2) * -1))
 
 			power.ratio = power:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline8')
 			power.ratio:SetJustifyH('CENTER')
