@@ -19,6 +19,15 @@ function module:ArtSetup()
 	SUI.DBG.BartenderChangesActive = false
 end
 
+function module:InCombatLockdown()
+	if InCombatLockdown() then
+		SUI:Print("|cffff0000Unable to change setting in combat")
+		return true
+	end
+
+	return false
+end
+
 function module:OnInitialize()
 	if select(4, GetAddOnInfo('Bartender4')) then
 		SUI.DB.Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
