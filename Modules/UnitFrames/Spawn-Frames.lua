@@ -22,7 +22,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	local FrameHeight = 0
-	
+
 	if module.CurrentSettings[unit].elements.Castbar.enabled then
 		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Castbar.height
 	end
@@ -72,17 +72,22 @@ local function CreateUnitFrame(self, unit)
 		-- 3D Portrait
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
 		Portrait3D:SetSize(FrameHeight, FrameHeight)
-		Portrait3D:SetPoint('RIGHT', self, 'LEFT')
 		Portrait3D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
 		self.Portrait3D = Portrait3D
 
 		-- 2D Portrait
 		local Portrait2D = self:CreateTexture(nil, 'OVERLAY')
 		Portrait2D:SetSize(FrameHeight, FrameHeight)
-		Portrait2D:SetPoint('RIGHT', self, 'LEFT')
 		Portrait2D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
 		self.Portrait2D = Portrait2D
 
+		if module.CurrentSettings[unit].elements.Portrait.position == 'left' then
+			Portrait3D:SetPoint('RIGHT', self, 'LEFT')
+			Portrait2D:SetPoint('RIGHT', self, 'LEFT')
+		else
+			Portrait3D:SetPoint('LEFT', self, 'RIGHT')
+			Portrait2D:SetPoint('LEFT', self, 'RIGHT')
+		end
 		if module.CurrentSettings[unit].elements.Portrait.type == '3D' then
 			self.Portrait = self.Portrait3D
 		else
@@ -126,7 +131,6 @@ local function CreateUnitFrame(self, unit)
 			else
 				health:SetPoint('TOP', self, 'TOP', 0, 0)
 			end
-			
 
 			health.value = health:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
 			health.value:SetJustifyH('CENTER')

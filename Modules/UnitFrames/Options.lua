@@ -78,7 +78,23 @@ local function AddGeneralOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Portrait.type
 						end,
 						set = function(info, val)
-							--TODO
+							--Update the screen
+							-- module.frames[frameName]:DisableElement('Portrait')
+							module.frames[frameName].Portrait3D:Hide()
+							module.frames[frameName].Portrait2D:Hide()
+							if val == '3D' then
+								module.frames[frameName].Portrait = module.frames[frameName].Portrait3D
+								module.frames[frameName].Portrait3D:Show()
+							else
+								module.frames[frameName].Portrait = module.frames[frameName].Portrait2D
+								module.frames[frameName].Portrait2D:Show()
+							end
+							-- module.frames[frameName]:EnableElement('Portrait')
+							module.frames[frameName]:UpdateAllElements('OnUpdate')
+							--Update memory
+							module.CurrentSettings[frameName].elements.Portrait.type = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.type = val
 						end
 					},
 					position = {
@@ -93,7 +109,20 @@ local function AddGeneralOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Portrait.position
 						end,
 						set = function(info, val)
-							--TODO
+							--Update the screen
+							module.frames[frameName].Portrait3D:ClearAllPoints()
+							module.frames[frameName].Portrait2D:ClearAllPoints()
+							if val == 'left' then
+								module.frames[frameName].Portrait3D:SetPoint('RIGHT', module.frames[frameName], 'LEFT')
+								module.frames[frameName].Portrait2D:SetPoint('RIGHT', module.frames[frameName], 'LEFT')
+							else
+								module.frames[frameName].Portrait3D:SetPoint('LEFT', module.frames[frameName], 'RIGHT')
+								module.frames[frameName].Portrait2D:SetPoint('LEFT', module.frames[frameName], 'RIGHT')
+							end
+							--Update memory
+							module.CurrentSettings[frameName].elements.Portrait.position = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.position = val
 						end
 					}
 				}
