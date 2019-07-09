@@ -32,7 +32,6 @@ local function CreateUnitFrame(self, unit)
 	if module.CurrentSettings[unit].elements.Power.enabled then
 		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Power.height
 	end
-
 	self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
 
 	do -- General setup

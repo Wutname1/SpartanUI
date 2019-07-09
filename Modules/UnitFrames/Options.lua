@@ -54,8 +54,16 @@ local function AddGeneralOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Portrait.enabled
 						end,
 						set = function(info, val)
-							print(module.CurrentSettings[frameName].elements.Portrait.enabled)
-							--TODO
+							--Update the screen
+							if val then
+								module.frames[frameName]:EnableElement('Portrait')
+							else
+								module.frames[frameName]:DisableElement('Portrait')
+							end
+							--Update memory
+							module.CurrentSettings[frameName].elements.Portrait.enabled = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.enabled = val
 						end
 					},
 					type = {

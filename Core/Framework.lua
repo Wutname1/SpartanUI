@@ -812,8 +812,91 @@ local DBdefault = {
 			PlayerCustomizations = {
 				['**'] = {
 					['**'] = {
+						anchor = {
+						},
+						artwork = {
+							top = {
+							},
+							bottom = {
+							}
+						},
+						auras = {
+							Buffs = {
+							},
+							Debuffs = {
+							}
+						},
 						elements = {
-							['**'] = {}
+							Portrait = {
+							},
+							Health = {
+								points = {
+								},
+								Text = {
+								}
+							},
+							HealthPrediction = {
+							},
+							Power = {
+								points = {
+								},
+								Text = {
+								}
+							},
+							Castbar = {
+								enabled = false,
+								height = 10,
+								points = {
+								},
+								Text = {
+								}
+							},
+							Name = {
+								points = {
+								}
+							},
+							LeaderIndicator = {
+								points = {
+								}
+							},
+							RestingIndicator = {
+								points = {
+								}
+							},
+							GroupRoleIndicator = {
+								points = {
+								}
+							},
+							CombatIndicator = {
+								points = {
+								}
+							},
+							RaidTargetIndicator = {
+								points = {
+								}
+							},
+							SUI_ClassIcon = {
+								points = {
+								}
+							},
+							ReadyCheckIndicator = {
+								points = {
+								}
+							},
+							PvPIndicator = {
+								points = {
+								}
+							},
+							StatusText = {
+								points = {
+								}
+							}
+						},
+						font = {
+							mana = {
+							},
+							health = {
+							}
 						}
 					}
 				}
@@ -1223,12 +1306,6 @@ function SUI:OnEnable()
 	AceConfigDialog:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
 
 	AceConfig:RegisterOptionsTable('SpartanUI', SUI.opt)
-	if not SUI:GetModule('Artwork_Core', true) then
-		SUI.opt.args['Artwork'].disabled = true
-	end
-	if not SUI:GetModule('UnitFrames', true) then
-		SUI.opt.args['UnitFrames'].disabled = true
-	end
 
 	self:RegisterChatCommand('sui', 'ChatCommand')
 	self:RegisterChatCommand('suihelp', 'suihelp')
