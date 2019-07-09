@@ -1226,14 +1226,8 @@ function SUI:OnEnable()
 	if not SUI:GetModule('Artwork_Core', true) then
 		SUI.opt.args['Artwork'].disabled = true
 	end
-	if not SUI:GetModule('PartyFrames', true) then
-		SUI.opt.args['PartyFrames'].disabled = true
-	end
-	if not SUI:GetModule('PlayerFrames', true) then
-		SUI.opt.args['PlayerFrames'].disabled = true
-	end
-	if not SUI:GetModule('RaidFrames', true) then
-		SUI.opt.args['RaidFrames'].disabled = true
+	if not SUI:GetModule('UnitFrames', true) then
+		SUI.opt.args['UnitFrames'].disabled = true
 	end
 
 	self:RegisterChatCommand('sui', 'ChatCommand')
