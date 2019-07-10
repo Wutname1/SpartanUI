@@ -577,7 +577,7 @@ local DBdefault = {
 							enabled = true,
 							height = 40,
 							colorReaction = false,
-							colorHappiness = false,
+							colorSmooth = true,
 							colorClass = true,
 							colorTapping = true,
 							colorDisconnected = true,
@@ -608,6 +608,8 @@ local DBdefault = {
 						Castbar = {
 							enabled = false,
 							height = 10,
+							interruptable = true,
+							latency = false,
 							points = {
 								{point = 'BOTTOMRIGHT', relativePoint = 'Health', relativeTo = 'TOPRIGHT'}
 							},

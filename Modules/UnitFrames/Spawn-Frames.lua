@@ -145,10 +145,9 @@ local function CreateUnitFrame(self, unit)
 			self.Health.colorDisconnected = module.CurrentSettings[unit].elements.Health.colorDisconnected
 			self.Health.colorTapping = module.CurrentSettings[unit].elements.Health.colorTapping
 			self.Health.colorReaction = module.CurrentSettings[unit].elements.Health.colorReaction
-			self.Health.colorHappiness = module.CurrentSettings[unit].elements.Health.colorHappiness
+			self.Health.colorSmooth = module.CurrentSettings[unit].elements.Health.colorSmooth
 			self.Health.colorClass = module.CurrentSettings[unit].elements.Health.colorClass
 
-			self.Health.colorSmooth = true
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 

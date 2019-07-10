@@ -9,13 +9,6 @@ local function CreateOptionSet(frameName, order)
 		order = order,
 		childGroups = 'tab',
 		args = {
-			bars = {
-				name = 'Bars',
-				type = 'group',
-				order = 20,
-				childGroups = 'tree',
-				args = {}
-			},
 			elements = {
 				name = 'Elements',
 				type = 'group',
@@ -135,6 +128,218 @@ local function AddGeneralOptions(frameName)
 			}
 		}
 	}
+end
+
+local function AddBarOptions(frameName)
+	SUI.opt.args['UnitFrames'].args[frameName].args['bars'] = {
+		name = 'Bars',
+		type = 'group',
+		order = 20,
+		childGroups = 'tree',
+		args = {
+			Castbar = {
+				name = 'Castbar',
+				type = 'group',
+				childGroups = 'inline',
+				args = {
+					Interruptable = {
+						name = 'Show interrupt or spell steal',
+						type = 'toggle',
+						order = 10,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Castbar.interruptable
+						end,
+						set = function(info, val)
+							--Update the screen
+							module.frames[frameName].Castbar.interruptable = val
+							--Update memory
+							module.CurrentSettings[frameName].elements.Castbar.interruptable = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.interruptable = val
+						end
+					},
+					latency = {
+						name = 'Show latency',
+						type = 'toggle',
+						order = 10,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Castbar.latency
+						end,
+						set = function(info, val)
+							--Update the screen
+							module.frames[frameName].Castbar.latency = val
+							--Update memory
+							module.CurrentSettings[frameName].elements.Castbar.latency = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.latency = val
+						end
+					}
+				}
+			},
+			Health = {
+				name = 'Health',
+				type = 'group',
+				childGroups = 'inline',
+				args = {
+					coloring = {
+						name = 'Color health bar by:',
+						desc = 'The below options are in order of wich they apply',
+						order = 10,
+						type = 'group',
+						args = {
+							colorTapping = {
+								name = 'Tapped',
+								desc = "Color's the bar if the unit isn't tapped by the player",
+								type = 'toggle',
+								order = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Health.colorTapping
+								end,
+								set = function(info, val)
+									--Update the screen
+									module.frames[frameName].Health.colorTapping = val
+									--Update memory
+									module.CurrentSettings[frameName].elements.Health.colorTapping = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorTapping = val
+								end
+							},
+							colorDisconnected = {
+								name = 'Disconnected',
+								desc = 'Color the bar if the player is offline',
+								type = 'toggle',
+								order = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Health.colorDisconnected
+								end,
+								set = function(info, val)
+									--Update the screen
+									module.frames[frameName].Health.colorDisconnected = val
+									--Update memory
+									module.CurrentSettings[frameName].elements.Health.colorDisconnected = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorDisconnected =
+										val
+								end
+							},
+							colorClass = {
+								name = 'Class',
+								desc = 'Color the bar based on unit class',
+								type = 'toggle',
+								order = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Health.colorClass
+								end,
+								set = function(info, val)
+									--Update the screen
+									module.frames[frameName].Health.colorClass = val
+									--Update memory
+									module.CurrentSettings[frameName].elements.Health.colorClass = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorClass = val
+								end
+							},
+							colorReaction = {
+								name = 'Reaction',
+								desc = "color the bar based on the player's reaction towards the player.",
+								type = 'toggle',
+								order = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Health.colorReaction
+								end,
+								set = function(info, val)
+									--Update the screen
+									module.frames[frameName].Health.colorReaction = val
+									--Update memory
+									module.CurrentSettings[frameName].elements.Health.colorReaction = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorReaction = val
+								end
+							},
+							colorSmooth = {
+								name = 'Smooth',
+								desc = "color the bar with a smooth gradient based on the player's current health percentage",
+								type = 'toggle',
+								order = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Health.colorSmooth
+								end,
+								set = function(info, val)
+									--Update the screen
+									module.frames[frameName].Health.colorSmooth = val
+									--Update memory
+									module.CurrentSettings[frameName].elements.Health.colorSmooth = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorSmooth = val
+								end
+							}
+						}
+					}
+				}
+			},
+			Power = {
+				name = 'Power',
+				type = 'group',
+				childGroups = 'inline',
+				args = {
+					PowerPrediction = {
+						name = 'Enable power prediction',
+						desc = 'Used to represent cost of spells on top of the Power bar',
+						type = 'toggle',
+						order = 10,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Power.PowerPrediction
+						end,
+						set = function(info, val)
+							--Update the screen
+							if val then
+								module.frames[frameName]:EnableElement('PowerPrediction')
+							else
+								module.frames[frameName]:DisableElement('PowerPrediction')
+							end
+							--Update memory
+							module.CurrentSettings[frameName].elements.Power.PowerPrediction = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Power.PowerPrediction = val
+						end
+					}
+				}
+			}
+		}
+	}
+
+	local bars = {'Castbar', 'Health', 'Power'}
+	for i, key in ipairs(bars) do
+		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['enabled'] = {
+			name = 'Enabled',
+			type = 'toggle',
+			order = 1,
+			get = function(info)
+				return module.CurrentSettings[frameName].elements[key].enabled
+			end,
+			set = function(info, val)
+				--Update the screen
+				--Update memory
+				--Update the DB
+			end
+		}
+		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['height'] = {
+			name = 'Height',
+			type = 'range',
+			order = 2,
+			min = 1,
+			max = 30,
+			step = .1,
+			get = function(info)
+				return module.CurrentSettings[frameName].elements[key].height
+			end,
+			set = function(info, val)
+				--Update the screen
+				--Update memory
+				--Update the DB
+			end
+		}
+	end
 end
 
 local function AddBuffOptions(frameName)
@@ -355,11 +560,107 @@ function module:InitializeOptions()
 	SUI.opt.args['UnitFrames'] = {
 		name = 'Unit frames',
 		type = 'group',
-		args = {}
+		args = {
+			BaseStyle = {
+				name = 'Base frame style',
+				type = 'group',
+				order = 100,
+				args = {
+					Classic = {
+						name = 'Classic',
+						type = 'execute',
+						image = function()
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Classic', 120, 60
+						end,
+						imageCoords = function()
+							return {0, .5, 0, .5}
+						end,
+						func = function()
+							SUI.DB.Unitframes.Style = 'Classic'
+						end
+					},
+					Arcane = {
+						name = 'Arcane',
+						type = 'execute',
+						image = function()
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {.1, .5, .1, .5}
+						end,
+						func = function()
+							SUI.DB.Unitframes.Style = 'Arcane'
+						end
+					},
+					War = {
+						name = 'War',
+						type = 'execute',
+						image = function()
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {.1, .5, .1, .5}
+						end,
+						func = function()
+							SUI.DB.Unitframes.Style = 'War'
+						end
+					},
+					Fel = {
+						name = 'Fel',
+						type = 'execute',
+						image = function()
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
+						end,
+						imageCoords = function()
+							return {.1, .5, .1, .5}
+						end,
+						func = function()
+							SUI.DB.Unitframes.Style = 'Fel'
+						end
+					},
+					Transparent = {
+						name = 'Transparent',
+						type = 'execute',
+						image = function()
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Transparent', 120, 60
+						end,
+						imageCoords = function()
+							return {0, .5, 0, .5}
+						end,
+						func = function()
+							SUI.DB.Unitframes.Style = 'Transparent'
+						end
+					},
+					Minimal = {
+						name = 'Minimal',
+						type = 'execute',
+						image = function()
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
+						end,
+						imageCoords = function()
+							return {0, .5, 0, .5}
+						end,
+						func = function()
+							SUI.DB.Unitframes.Style = 'Minimal'
+						end
+					},
+					reset = {
+						name = 'Reset to base style (Revert customizations)',
+						type = 'execute',
+						order = 900,
+						func = function()
+							--Reset the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style] = SUI.DB.Unitframes.PlayerCustomizations.Base
+						end
+					}
+				}
+			}
+		}
 	}
 	for i, key in ipairs(module.frameList) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
+		AddBarOptions(key)
 		AddBuffOptions(key)
 	end
 end

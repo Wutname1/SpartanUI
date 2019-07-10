@@ -160,7 +160,7 @@ function module:OnInitialize()
 	-- Import theme settings
 	SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
 	-- Import player customizations
-	SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations, true)
+	SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)
 
 	-- Build options
 	module:InitializeOptions()
