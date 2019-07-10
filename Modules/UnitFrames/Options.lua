@@ -12,14 +12,14 @@ local function CreateOptionSet(frameName, order)
 			elements = {
 				name = 'Elements',
 				type = 'group',
-				order = 30,
+				order = 40,
 				childGroups = 'tree',
 				args = {}
 			},
 			text = {
 				name = 'Text',
 				type = 'group',
-				order = 30,
+				order = 50,
 				childGroups = 'tree',
 				args = {}
 			}
@@ -32,11 +32,41 @@ local function AddGeneralOptions(frameName)
 		name = 'General',
 		desc = 'General display settings',
 		type = 'group',
+		-- childGroups = 'inline',
 		order = 10,
 		args = {
+			General = {
+				name = 'General',
+				type = 'group',
+				order = 1,
+				inline = true,
+				args = {
+					width = {
+						name = 'Frame width',
+						type = 'range',
+						width = 'full',
+						order = 2,
+						min = 1,
+						max = 300,
+						step = .1,
+						get = function(info)
+							return module.CurrentSettings[frameName].width
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].width = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].width = val
+							--Update the screen
+							module.frames[frameName].UpdateSize()
+						end
+					}
+				}
+			},
 			portrait = {
 				name = 'Portrait',
 				type = 'group',
+				order = 3,
 				inline = true,
 				args = {
 					enabled = {
@@ -119,10 +149,28 @@ local function AddGeneralOptions(frameName)
 						end
 					}
 				}
-			},
-			artwork = {
-				name = 'Artwork',
+			}
+		}
+	}
+end
+
+local function AddArtworkOptions(frameName)
+	SUI.opt.args['UnitFrames'].args[frameName].args['artwork'] = {
+		name = 'Artwork',
+		type = 'group',
+		order = 20,
+		args = {
+			top = {
+				name = 'Top',
 				type = 'group',
+				order = 1,
+				inline = true,
+				args = {}
+			},
+			bottom = {
+				name = 'Bottom',
+				type = 'group',
+				order = 2,
 				inline = true,
 				args = {}
 			}
@@ -140,6 +188,7 @@ local function AddBarOptions(frameName)
 			Castbar = {
 				name = 'Castbar',
 				type = 'group',
+				order = 1,
 				childGroups = 'inline',
 				args = {
 					Interruptable = {
@@ -179,12 +228,13 @@ local function AddBarOptions(frameName)
 			Health = {
 				name = 'Health',
 				type = 'group',
-				childGroups = 'inline',
+				order = 2,
 				args = {
 					coloring = {
 						name = 'Color health bar by:',
 						desc = 'The below options are in order of wich they apply',
 						order = 10,
+						inline = true,
 						type = 'group',
 						args = {
 							colorTapping = {
@@ -280,6 +330,7 @@ local function AddBarOptions(frameName)
 			Power = {
 				name = 'Power',
 				type = 'group',
+				order = 3,
 				childGroups = 'inline',
 				args = {
 					PowerPrediction = {
@@ -318,26 +369,102 @@ local function AddBarOptions(frameName)
 				return module.CurrentSettings[frameName].elements[key].enabled
 			end,
 			set = function(info, val)
-				--Update the screen
 				--Update memory
+				module.CurrentSettings[frameName].elements[key].enabled = val
 				--Update the DB
+				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
+				--Update the screen
+				if val then
+					module.frames[frameName]:EnableElement(key)
+				else
+					module.frames[frameName]:DisableElement(key)
+				end
+				module.frames[frameName].UpdateSize()
 			end
 		}
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['height'] = {
 			name = 'Height',
 			type = 'range',
 			order = 2,
-			min = 1,
-			max = 30,
-			step = .1,
+			min = 2,
+			max = 100,
+			step = 1,
 			get = function(info)
 				return module.CurrentSettings[frameName].elements[key].height
 			end,
 			set = function(info, val)
-				--Update the screen
 				--Update memory
+				module.CurrentSettings[frameName].elements[key].height = val
 				--Update the DB
+				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].height = val
+				--Update the screen
+				module.frames[frameName].UpdateSize()
 			end
+		}
+	end
+
+	if frameName == 'player' then
+		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['additionalpower'] = {
+			name = 'Additional power',
+			desc = "player's additional power, such as Mana for Balance druids.",
+			order = 4,
+			type = 'group',
+			childGroups = 'inline',
+			args = {
+				enabled = {
+					name = 'Enabled',
+					type = 'toggle',
+					get = function(info)
+						return module.CurrentSettings[frameName].elements.additionalpower.enabled
+					end,
+					set = function(info, val)
+						--Update the screen
+						--Update memory
+						module.CurrentSettings[frameName].elements.additionalpower.enabled = val
+						--Update the DB
+						--/script print(SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.Castbar.enabled)
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.additionalpower.enabled = val
+					end
+				}
+			}
+		}
+	end
+end
+
+local function AddElementOptions(frameName)
+	local elementList = {
+		'SUI_ClassIcon',
+		'StatusText',
+		-- 'alternativepower',
+		'assistantindicator',
+		-- 'classpower',
+		'combatindicator',
+		'grouproleindicator',
+		'healthprediction',
+		'leaderindicator',
+		'phaseindicator',
+		'pvpclassificationindicator',
+		'pvpindicator',
+		'questindicator',
+		'raidroleindicator',
+		'raidtargetindicator',
+		'range',
+		'readycheckindicator',
+		'restingindicator',
+		'resurrectindicator',
+		'runes',
+		'stagger',
+		'summonindicator',
+		'threatindicator',
+		'totems'
+	}
+	for i, key in ipairs(elementList) do
+		SUI.opt.args['UnitFrames'].args[frameName].args['elements'].args[key] = {
+			name = key,
+			type = 'group',
+			order = i,
+			childGroups = 'inline',
+			args = {}
 		}
 	end
 end
@@ -564,7 +691,8 @@ function module:InitializeOptions()
 			BaseStyle = {
 				name = 'Base frame style',
 				type = 'group',
-				order = 100,
+				inline = true,
+				order = 1,
 				args = {
 					Classic = {
 						name = 'Classic',
@@ -647,6 +775,7 @@ function module:InitializeOptions()
 					reset = {
 						name = 'Reset to base style (Revert customizations)',
 						type = 'execute',
+						width = 'full',
 						order = 900,
 						func = function()
 							--Reset the DB
@@ -660,7 +789,9 @@ function module:InitializeOptions()
 	for i, key in ipairs(module.frameList) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
+		AddArtworkOptions(key)
 		AddBarOptions(key)
+		AddElementOptions(key)
 		AddBuffOptions(key)
 	end
 end

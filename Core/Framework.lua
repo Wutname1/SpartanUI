@@ -14,7 +14,7 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = "@project-abbreviated-hash@" -- The ZIP packager will replace this with the Git hash.
+SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
@@ -605,6 +605,7 @@ local DBdefault = {
 								AllPoints = 'Power'
 							}
 						},
+						additionalpower = {},
 						Castbar = {
 							enabled = false,
 							height = 10,
@@ -760,6 +761,15 @@ local DBdefault = {
 					elements = {
 						Castbar = {
 							enabled = true
+						},
+						Health = {
+							height = 30
+						},
+						Power = {
+							height = 5,
+							Text = {
+								enabled = false
+							}
 						}
 					}
 				},
@@ -814,91 +824,64 @@ local DBdefault = {
 			PlayerCustomizations = {
 				['**'] = {
 					['**'] = {
-						anchor = {
-						},
+						anchor = {},
 						artwork = {
-							top = {
-							},
-							bottom = {
-							}
+							top = {},
+							bottom = {}
 						},
 						auras = {
-							Buffs = {
-							},
-							Debuffs = {
-							}
+							Buffs = {},
+							Debuffs = {}
 						},
 						elements = {
-							Portrait = {
-							},
+							Portrait = {},
 							Health = {
-								points = {
-								},
-								Text = {
-								}
+								points = {},
+								Text = {}
 							},
-							HealthPrediction = {
-							},
+							HealthPrediction = {},
 							Power = {
-								points = {
-								},
-								Text = {
-								}
+								points = {},
+								Text = {}
 							},
 							Castbar = {
-								enabled = false,
-								height = 10,
-								points = {
-								},
-								Text = {
-								}
+								points = {},
+								Text = {}
 							},
 							Name = {
-								points = {
-								}
+								points = {}
 							},
 							LeaderIndicator = {
-								points = {
-								}
+								points = {}
 							},
 							RestingIndicator = {
-								points = {
-								}
+								points = {}
 							},
 							GroupRoleIndicator = {
-								points = {
-								}
+								points = {}
 							},
 							CombatIndicator = {
-								points = {
-								}
+								points = {}
 							},
 							RaidTargetIndicator = {
-								points = {
-								}
+								points = {}
 							},
 							SUI_ClassIcon = {
-								points = {
-								}
+								points = {}
 							},
 							ReadyCheckIndicator = {
-								points = {
-								}
+								points = {}
 							},
 							PvPIndicator = {
-								points = {
-								}
+								points = {}
 							},
 							StatusText = {
-								points = {
-								}
+								points = {}
 							}
 						},
 						font = {
-							mana = {
-							},
-							health = {
-							}
+							mana = {},
+							health = {}
 						}
 					}
 				}

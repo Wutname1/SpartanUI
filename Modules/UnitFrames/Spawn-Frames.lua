@@ -21,19 +21,59 @@ local function CreateUnitFrame(self, unit)
 		self:SetParent(SUI_FramesAnchor)
 	end
 
-	local FrameHeight = 0
+	local function UpdateSize()
+		-- Find the Height of the frame
+		local FrameHeight = 0
+		if module.CurrentSettings[unit].elements.Castbar.enabled then
+			FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Castbar.height
+		end
+		if module.CurrentSettings[unit].elements.Health.enabled then
+			FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Health.height
+		end
+		if module.CurrentSettings[unit].elements.Power.enabled then
+			FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Power.height
+		end
+		self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
 
-	if module.CurrentSettings[unit].elements.Castbar.enabled then
-		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Castbar.height
-	end
-	if module.CurrentSettings[unit].elements.Health.enabled then
-		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Health.height
-	end
-	if module.CurrentSettings[unit].elements.Power.enabled then
-		FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Power.height
-	end
-	self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
+		-- Adjust the elements that could be effected
+		if self.Portrait3D then
+			self.Portrait3D:SetSize(FrameHeight, FrameHeight)
+		end
 
+		if self.Portrait2D then
+			self.Portrait2D:SetSize(FrameHeight, FrameHeight)
+		end
+
+		if self.Castbar then
+			self.Castbar:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
+		end
+
+		if self.Health then
+			if module.CurrentSettings[unit].elements.Castbar.enabled then
+				self.Health:SetPoint('TOP', self, 'TOP', 0, ((module.CurrentSettings[unit].elements.Castbar.height + 2) * -1))
+			else
+				self.Health:SetPoint('TOP', self, 'TOP', 0, 0)
+			end
+			
+			self.Health:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Health.height)
+		end
+
+		if self.Power then
+			local PositionData = 0
+			if module.CurrentSettings[unit].elements.Castbar.enabled then
+				PositionData = module.CurrentSettings[unit].elements.Castbar.height
+			end
+
+			PositionData = PositionData + module.CurrentSettings[unit].elements.Health.height
+
+			self.Power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
+
+			self.Power:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
+		end
+	end
+	self.UpdateSize = UpdateSize
+
+	self.UpdateSize()
 	do -- General setup
 		-- 	self.artwork = CreateFrame('Frame', nil, self)
 		-- 	self.artwork:SetFrameStrata('BACKGROUND')
@@ -71,13 +111,13 @@ local function CreateUnitFrame(self, unit)
 
 		-- 3D Portrait
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
-		Portrait3D:SetSize(FrameHeight, FrameHeight)
+		Portrait3D:SetSize(self:GetHeight(), self:GetHeight())
 		Portrait3D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
 		self.Portrait3D = Portrait3D
 
 		-- 2D Portrait
 		local Portrait2D = self:CreateTexture(nil, 'OVERLAY')
-		Portrait2D:SetSize(FrameHeight, FrameHeight)
+		Portrait2D:SetSize(self:GetHeight(), self:GetHeight())
 		Portrait2D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
 		self.Portrait2D = Portrait2D
 

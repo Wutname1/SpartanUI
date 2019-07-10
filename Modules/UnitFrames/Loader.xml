@@ -2,13 +2,6 @@
 	<!-- Load Core Functions -->
 	<Script file="Framework.lua"/>
 	
-	<!-- Load Styles -->
-	<Script file="Styles\Arcane.lua" />
-	<Script file="Styles\Classic.lua" />
-	<Script file="Styles\Fel.lua" />
-	<Script file="Styles\Transparent.lua" />
-	<Script file="Styles\War.lua" />
-	
 	<!-- Load rest of core functionality -->
 	<Script file="Spawn-Frames.lua" />
 	<Script file="Options.lua"	/>
