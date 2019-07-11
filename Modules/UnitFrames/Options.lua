@@ -182,7 +182,7 @@ local function AddBarOptions(frameName)
 	SUI.opt.args['UnitFrames'].args[frameName].args['bars'] = {
 		name = 'Bars',
 		type = 'group',
-		order = 20,
+		order = 30,
 		childGroups = 'tree',
 		args = {
 			Castbar = {
@@ -199,12 +199,16 @@ local function AddBarOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Castbar.interruptable
 						end,
 						set = function(info, val)
-							--Update the screen
-							module.frames[frameName].Castbar.interruptable = val
 							--Update memory
 							module.CurrentSettings[frameName].elements.Castbar.interruptable = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.interruptable = val
+							--Update the screen
+							if val then
+								self.Castbar.SafeZone:Show()
+							else
+								self.Castbar.SafeZone:Hide()
+							end
 						end
 					},
 					latency = {
@@ -215,12 +219,16 @@ local function AddBarOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Castbar.latency
 						end,
 						set = function(info, val)
-							--Update the screen
-							module.frames[frameName].Castbar.latency = val
 							--Update memory
 							module.CurrentSettings[frameName].elements.Castbar.latency = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.latency = val
+							--Update the screen
+							if val then
+								self.Castbar.Shield:Show()
+							else
+								self.Castbar.Shield:Hide()
+							end
 						end
 					}
 				}
@@ -258,7 +266,7 @@ local function AddBarOptions(frameName)
 								name = 'Disconnected',
 								desc = 'Color the bar if the player is offline',
 								type = 'toggle',
-								order = 1,
+								order = 2,
 								get = function(info)
 									return module.CurrentSettings[frameName].elements.Health.colorDisconnected
 								end,
@@ -276,13 +284,14 @@ local function AddBarOptions(frameName)
 								name = 'Class',
 								desc = 'Color the bar based on unit class',
 								type = 'toggle',
-								order = 1,
+								order = 3,
 								get = function(info)
 									return module.CurrentSettings[frameName].elements.Health.colorClass
 								end,
 								set = function(info, val)
 									--Update the screen
 									module.frames[frameName].Health.colorClass = val
+									module.frames[frameName].Health:ForceUpdate()
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorClass = val
 									--Update the DB
@@ -293,7 +302,7 @@ local function AddBarOptions(frameName)
 								name = 'Reaction',
 								desc = "color the bar based on the player's reaction towards the player.",
 								type = 'toggle',
-								order = 1,
+								order = 4,
 								get = function(info)
 									return module.CurrentSettings[frameName].elements.Health.colorReaction
 								end,
@@ -310,7 +319,7 @@ local function AddBarOptions(frameName)
 								name = 'Smooth',
 								desc = "color the bar with a smooth gradient based on the player's current health percentage",
 								type = 'toggle',
-								order = 1,
+								order = 5,
 								get = function(info)
 									return module.CurrentSettings[frameName].elements.Health.colorSmooth
 								end,
@@ -332,29 +341,7 @@ local function AddBarOptions(frameName)
 				type = 'group',
 				order = 3,
 				childGroups = 'inline',
-				args = {
-					PowerPrediction = {
-						name = 'Enable power prediction',
-						desc = 'Used to represent cost of spells on top of the Power bar',
-						type = 'toggle',
-						order = 10,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Power.PowerPrediction
-						end,
-						set = function(info, val)
-							--Update the screen
-							if val then
-								module.frames[frameName]:EnableElement('PowerPrediction')
-							else
-								module.frames[frameName]:DisableElement('PowerPrediction')
-							end
-							--Update memory
-							module.CurrentSettings[frameName].elements.Power.PowerPrediction = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Power.PowerPrediction = val
-						end
-					}
-				}
+				args = {}
 			}
 		}
 	}
@@ -404,67 +391,152 @@ local function AddBarOptions(frameName)
 	end
 
 	if frameName == 'player' then
+		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['Power'].args['PowerPrediction'] = {
+			name = 'Enable power prediction',
+			desc = 'Used to represent cost of spells on top of the Power bar',
+			type = 'toggle',
+			order = 10,
+			get = function(info)
+				return module.CurrentSettings[frameName].elements.Power.PowerPrediction
+			end,
+			set = function(info, val)
+				--Update the screen
+				if val then
+					module.frames[frameName]:EnableElement('PowerPrediction')
+				else
+					module.frames[frameName]:DisableElement('PowerPrediction')
+				end
+				--Update memory
+				module.CurrentSettings[frameName].elements.Power.PowerPrediction = val
+				--Update the DB
+				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Power.PowerPrediction = val
+			end
+		}
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['additionalpower'] = {
 			name = 'Additional power',
 			desc = "player's additional power, such as Mana for Balance druids.",
-			order = 4,
+			order = 20,
 			type = 'group',
 			childGroups = 'inline',
 			args = {
 				enabled = {
 					name = 'Enabled',
 					type = 'toggle',
+					order = 1,
 					get = function(info)
 						return module.CurrentSettings[frameName].elements.additionalpower.enabled
 					end,
 					set = function(info, val)
 						--Update the screen
+						if val then
+							module.frames[frameName]:EnableElement('AdditionalPower')
+						else
+							module.frames[frameName]:DisableElement('AdditionalPower')
+						end
 						--Update memory
 						module.CurrentSettings[frameName].elements.additionalpower.enabled = val
 						--Update the DB
-						--/script print(SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.Castbar.enabled)
 						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.additionalpower.enabled = val
+					end
+				},
+				height = {
+					name = 'Height',
+					type = 'range',
+					order = 2,
+					min = 2,
+					max = 100,
+					step = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].elements.additionalpower.height
+					end,
+					set = function(info, val)
+						--Update memory
+						module.CurrentSettings[frameName].elements.additionalpower.height = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.additionalpower.height = val
+						--Update the screen
+						module.frames[frameName].UpdateSize()
 					end
 				}
 			}
 		}
 	end
+
+	if module:IsFriendlyFrame(frameName) then
+		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['Castbar'].args['Interruptable'].hidden = true
+	end
 end
 
 local function AddElementOptions(frameName)
-	local elementList = {
-		'SUI_ClassIcon',
-		'StatusText',
-		-- 'alternativepower',
-		'assistantindicator',
-		-- 'classpower',
-		'combatindicator',
-		'grouproleindicator',
-		'healthprediction',
-		'leaderindicator',
-		'phaseindicator',
-		'pvpclassificationindicator',
-		'pvpindicator',
-		'questindicator',
-		'raidroleindicator',
-		'raidtargetindicator',
-		'range',
-		'readycheckindicator',
-		'restingindicator',
-		'resurrectindicator',
-		'runes',
-		'stagger',
-		'summonindicator',
-		'threatindicator',
-		'totems'
+	local PlayerOnly = {
+		['combatindicator'] = 'Combat indicator',
+		['restingindicator'] = 'Resting indicator',
+		['runes'] = 'Runes',
+		['stagger'] = 'Stagger',
+		['totems'] = 'Totems'
 	}
-	for i, key in ipairs(elementList) do
+	local FriendlyOnly = {
+		['assistantindicator'] = RAID_ASSISTANT .. ' indicator',
+		['grouproleindicator'] = 'Group role indicator',
+		['leaderindicator'] = 'Leader indicator',
+		['phaseindicator'] = 'Phase indicator',
+		['pvpindicator'] = 'PvP indicator',
+		['raidroleindicator'] = 'Main tank or assist indicator',
+		['readycheckindicator'] = 'Ready check icon',
+		['resurrectindicator'] = 'Resurrect indicator',
+		['summonindicator'] = 'Summon indicator'
+	}
+	local targetOnly = {
+		['questindicator'] = 'Quest indicator'
+	}
+	local AllElements = {
+		['SUI_ClassIcon'] = 'Class icon',
+		['raidtargetindicator'] = RAID_TARGET_ICON,
+		['range'] = 'Range',
+		['StatusText'] = STATUS_TEXT,
+		['threatindicator'] = 'Threat indicator'
+	}
+
+	-- Health Bar option
+	-- ['healthprediction'] = 'Health prediction',
+
+	-- TODO: CHECK frameName for what tables above need to be applied, use Merge
+	if frameName == 'player' then
+		AllElements = SUI:MergeData(AllElements, PlayerOnly)
+	end
+	if frameName == 'target' then
+		AllElements = SUI:MergeData(AllElements, targetOnly)
+	end
+	if module:IsFriendlyFrame(frameName) then
+		AllElements = SUI:MergeData(AllElements, FriendlyOnly)
+	end
+
+	for key, name in pairs(AllElements) do
 		SUI.opt.args['UnitFrames'].args[frameName].args['elements'].args[key] = {
-			name = key,
+			name = name,
 			type = 'group',
-			order = i,
-			childGroups = 'inline',
-			args = {}
+			args = {
+				enable = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 10,
+					get = function(info)
+						return module.CurrentSettings[frameName].elements[key].enabled
+					end,
+					set = function(info, val)
+						--Update the screen
+						if val then
+							module.frames[frameName]:EnableElement(key)
+						else
+							module.frames[frameName]:DisableElement(key)
+						end
+						--Update memory
+						module.CurrentSettings[frameName].elements[key].enabled = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
+					end
+				}
+			}
 		}
 	end
 end
@@ -476,7 +548,7 @@ local function AddBuffOptions(frameName)
 		name = 'Buffs & Debuffs',
 		desc = 'Buff & Debuff display settings',
 		type = 'group',
-		order = 40,
+		order = 100,
 		args = {
 			Notice = {type = 'description', order = .5, fontSize = 'medium', name = L['possiblereloadneeded']},
 			Buffs = {

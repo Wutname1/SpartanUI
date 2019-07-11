@@ -25,6 +25,7 @@ module.frameList = {
 	'raid',
 	'arena'
 }
+
 module.frames = {
 	arena = {},
 	boss = {},
@@ -50,6 +51,23 @@ module.frames = {
 --	}
 --
 ----------------------------------------------------------------------------------------------------
+
+function module:IsFriendlyFrame(frameName)
+	local FriendlyFrame = {
+		'player',
+		'pet',
+		'party',
+		'partypet',
+		'raid',
+		'target',
+		'targettarget'
+	}
+	if SUI:isInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then
+		return true
+	end
+	return false
+end
+
 
 function module:UpdatePosition()
 	module:PositionFrame()
@@ -156,11 +174,11 @@ function module:OnInitialize()
 	]]
 	-- Setup Database
 	-- Load Default Settings
-	SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.FrameOptions)
+	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.FrameOptions)
 	-- Import theme settings
-	SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
+	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
 	-- Import player customizations
-	SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)
+	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)
 
 	-- Build options
 	module:InitializeOptions()

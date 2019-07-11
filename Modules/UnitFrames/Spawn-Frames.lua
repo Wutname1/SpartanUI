@@ -21,6 +21,7 @@ local function CreateUnitFrame(self, unit)
 		self:SetParent(SUI_FramesAnchor)
 	end
 
+	-- Build a function that updates the size of the frame and sizes of elements
 	local function UpdateSize()
 		-- Find the Height of the frame
 		local FrameHeight = 0
@@ -54,7 +55,7 @@ local function CreateUnitFrame(self, unit)
 			else
 				self.Health:SetPoint('TOP', self, 'TOP', 0, 0)
 			end
-			
+
 			self.Health:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Health.height)
 		end
 
@@ -74,6 +75,7 @@ local function CreateUnitFrame(self, unit)
 	self.UpdateSize = UpdateSize
 
 	self.UpdateSize()
+
 	do -- General setup
 		-- 	self.artwork = CreateFrame('Frame', nil, self)
 		-- 	self.artwork:SetFrameStrata('BACKGROUND')
@@ -148,13 +150,32 @@ local function CreateUnitFrame(self, unit)
 			cast:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
 			cast:SetPoint('TOP', self, 'TOP', 0, 0)
 
-			cast.Text = cast:CreateFontString()
-			SUI:FormatFont(cast.Text, 10, 'Player')
-			cast.Text:SetJustifyH('CENTER')
-			cast.Text:SetJustifyV('MIDDLE')
-			cast.Text:SetAllPoints(cast)
+			local Text = cast:CreateFontString()
+			SUI:FormatFont(Text, 10, 'Player')
+			Text:SetJustifyH('CENTER')
+			Text:SetJustifyV('MIDDLE')
+			Text:SetAllPoints(cast)
+
+			-- Add Shield
+			local Shield = cast:CreateTexture(nil, 'OVERLAY')
+			Shield:SetSize(20, 20)
+			Shield:SetPoint('CENTER', cast, 'RIGHT')
+			-- Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
+			local function PostCastNotInterruptible(unit)
+				if not module.CurrentSettings[unit].elements.Castbar.interruptable then
+					self.Castbar.Shield:Hide()
+				end
+			end
+			cast.PostCastNotInterruptible = PostCastNotInterruptible
+
+			-- Add safezone
+			local SafeZone = cast:CreateTexture(nil, 'OVERLAY')
 
 			self.Castbar = cast
+			self.Castbar.Text = Text
+			self.Castbar.SafeZone = SafeZone
+			self.Castbar.Shield = Shield
+
 			-- self.Castbar.OnUpdate = OnCastbarUpdate
 			-- self.Castbar.PostCastStart = PostCastStart
 			-- self.Castbar.PostChannelStart = PostChannelStart
@@ -269,6 +290,49 @@ local function CreateUnitFrame(self, unit)
 			self.Power = power
 			self.Power.colorPower = true
 			self.Power.frequentUpdates = true
+
+			if unit == 'player' then
+				-- Position and size
+				local AdditionalPower = CreateFrame('StatusBar', nil, self)
+				AdditionalPower:SetFrameStrata('BACKGROUND')
+				AdditionalPower:SetFrameLevel(2)
+				AdditionalPower:SetStatusBarTexture(Smoothv2)
+				AdditionalPower:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
+				if module.CurrentSettings[unit].elements.Power.enabled then
+					PositionData = PositionData + module.CurrentSettings[unit].elements.Power.height
+				end
+				AdditionalPower:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
+
+				-- local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
+				-- Background:SetAllPoints(AdditionalPower)
+				-- Background:SetTexture(1, 1, 1, .5)
+				
+				-- AdditionalPower.bg = Background
+				AdditionalPower.colorPower = true
+				self.AdditionalPower = AdditionalPower
+
+				-- Position and size
+				local mainBar = CreateFrame('StatusBar', nil, self.Power)
+				mainBar:SetReverseFill(true)
+				mainBar:SetStatusBarTexture(Smoothv2)
+				mainBar:SetPoint('RIGHT', self.Power:GetStatusBarTexture(), 'RIGHT')
+				mainBar:SetPoint('TOP')
+				mainBar:SetPoint('BOTTOM')
+				mainBar:SetWidth(200)
+
+				local altBar = CreateFrame('StatusBar', nil, self.AdditionalPower)
+				altBar:SetReverseFill(true)
+				altBar:SetStatusBarTexture(Smoothv2)
+				altBar:SetPoint('RIGHT', self.AdditionalPower:GetStatusBarTexture(), 'RIGHT')
+				altBar:SetPoint('TOP')
+				altBar:SetPoint('BOTTOM')
+				altBar:SetWidth(200)
+
+				self.PowerPrediction = {
+					mainBar = mainBar,
+					altBar = altBar
+				}
+			end
 		end
 	end
 	-- do -- setup icons, and text
