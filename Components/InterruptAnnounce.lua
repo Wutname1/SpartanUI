@@ -70,7 +70,7 @@ function module:OnInitialize()
 		includePets = true,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
-		text = 'interrupted %t %sl'
+		text = 'interrupted %t %spell'
 	}
 	if not SUI.DB.InterruptAnnouncer then
 		SUI.DB.InterruptAnnouncer = Defaults
