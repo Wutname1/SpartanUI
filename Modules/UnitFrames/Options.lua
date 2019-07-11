@@ -469,20 +469,20 @@ end
 
 local function AddElementOptions(frameName)
 	local PlayerOnly = {
-		['combatindicator'] = 'Combat indicator',
-		['restingindicator'] = 'Resting indicator',
+		['CombatIndicator'] = 'Combat indicator',
+		['RestingIndicator'] = 'Resting indicator',
 		['runes'] = 'Runes',
 		['stagger'] = 'Stagger',
 		['totems'] = 'Totems'
 	}
 	local FriendlyOnly = {
 		['assistantindicator'] = RAID_ASSISTANT .. ' indicator',
-		['grouproleindicator'] = 'Group role indicator',
-		['leaderindicator'] = 'Leader indicator',
+		['GroupRoleIndicator'] = 'Group role indicator',
+		['LeaderIndicator'] = 'Leader indicator',
 		['phaseindicator'] = 'Phase indicator',
-		['pvpindicator'] = 'PvP indicator',
+		['PvPIndicator'] = 'PvP indicator',
 		['raidroleindicator'] = 'Main tank or assist indicator',
-		['readycheckindicator'] = 'Ready check icon',
+		['ReadyCheckIndicator'] = 'Ready check icon',
 		['resurrectindicator'] = 'Resurrect indicator',
 		['summonindicator'] = 'Summon indicator'
 	}
@@ -491,7 +491,7 @@ local function AddElementOptions(frameName)
 	}
 	local AllElements = {
 		['SUI_ClassIcon'] = 'Class icon',
-		['raidtargetindicator'] = RAID_TARGET_ICON,
+		['RaidTargetIndicator'] = RAID_TARGET_ICON,
 		['range'] = 'Range',
 		['StatusText'] = STATUS_TEXT,
 		['threatindicator'] = 'Threat indicator'
