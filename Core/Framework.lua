@@ -1445,19 +1445,35 @@ function SUI:isPartialMatch(frameName, tab)
 	return result
 end
 
-function SUI:isInTable(tab, frameName)
-	-- local Count = 0
-	-- for Index, Value in pairs( tab ) do
-	-- Count = Count + 1
-	-- end
-	-- print (Count)
-	if tab == nil or frameName == nil then
+--[[
+	Takes a target table and searches for the specified phrade
+]]
+function SUI:isInTable(searchTable, searchPhrase, all)
+	if searchTable == nil or searchPhrase == nil then
+		SUI:Err('Core', 'Invalid isInTable call')
 		return false
 	end
-	for _, v in ipairs(tab) do
-		if v ~= nil and frameName ~= nil then
-			if (strlower(v) == strlower(frameName)) then
-				return true
+
+	-- If All is specified then we are dealing with a 2 string table search both keys
+	if all ~= nil then
+		for k, v in ipairs(searchTable) do
+			if v ~= nil and searchPhrase ~= nil then
+				if (strlower(v) == strlower(searchPhrase)) then
+					return true
+				end
+			end
+			if k ~= nil and searchPhrase ~= nil then
+				if (strlower(k) == strlower(searchPhrase)) then
+					return true
+				end
+			end
+		end
+	else
+		for _, v in ipairs(searchTable) do
+			if v ~= nil and searchPhrase ~= nil then
+				if (strlower(v) == strlower(searchPhrase)) then
+					return true
+				end
 			end
 		end
 	end
