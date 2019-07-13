@@ -167,7 +167,7 @@ local setPoint = function(self, parent)
 					self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
 					SUI.DB.Tooltips[ActiveRule()].Anchor.Moved = false
 				else
-					self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+					self:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 				end
 			else
 				self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
