@@ -1,6 +1,7 @@
 local _G, SUI = _G, SUI
 local module = SUI:GetModule('Style_Transparent')
-local PlayerFrames, PartyFrames = nil
+local PlayerFrames = SUI:GetModule('PlayerFrames')
+local PartyFrames = SUI:GetModule('PartyFrames')
 ----------------------------------------------------------------------------------------------------
 local FramesList = {
 	[1] = 'pet',

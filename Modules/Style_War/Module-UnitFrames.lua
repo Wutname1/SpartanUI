@@ -1,7 +1,8 @@
 local _G, SUI = _G, _G['SUI']
 local L = SUI.L
 local module = SUI:GetModule('Style_War')
-local PlayerFrames, PartyFrames = nil
+local PlayerFrames = SUI:GetModule('PlayerFrames')
+local PartyFrames = SUI:GetModule('PartyFrames')
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = SUI.BarTextures.smooth
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
