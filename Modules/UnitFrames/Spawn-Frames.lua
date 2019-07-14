@@ -193,11 +193,19 @@ local function CreateUnitFrame(self, unit)
 				health:SetPoint('TOP', self, 'TOP', 0, 0)
 			end
 
-			health.value = health:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
-			health.value:SetJustifyH('CENTER')
-			health.value:SetJustifyV('MIDDLE')
-			health.value:SetAllPoints(health)
-			self:Tag(health.value, module:TextFormat('health', unit))
+			health.TextData = module.CurrentSettings[unit].elements.Health.text
+			health.TextElements = {}
+			for i, key in pairs(module.CurrentSettings[unit].elements.Health.text) do
+				if key.enabled then
+					local NewString = health:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
+					NewString:SetJustifyH(key.SetJustifyH)
+					NewString:SetJustifyV(key.SetJustifyV)
+					NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)
+					self:Tag(NewString, key.text)
+
+					health.TextElements[i] = NewString
+				end
+			end
 
 			self.Health = health
 
@@ -306,7 +314,7 @@ local function CreateUnitFrame(self, unit)
 				-- local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
 				-- Background:SetAllPoints(AdditionalPower)
 				-- Background:SetTexture(1, 1, 1, .5)
-				
+
 				-- AdditionalPower.bg = Background
 				AdditionalPower.colorPower = true
 				self.AdditionalPower = AdditionalPower

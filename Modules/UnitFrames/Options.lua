@@ -1,6 +1,18 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:GetModule('Module_UnitFrames')
 ----------------------------------------------------------------------------------------------------
+local anchorPoints = {
+	['TOPLEFT'] = 'TOPLEFT',
+	['TOP'] = 'TOP',
+	['TOPRIGHT'] = 'TOPRIGHT',
+	['RIGHT'] = 'RIGHT',
+	['CENTER'] = 'CENTER',
+	['LEFT'] = 'LEFT',
+	['BOTTOMLEFT'] = 'BOTTOMLEFT',
+	['BOTTOM'] = 'BOTTOM',
+	['BOTTOMRIGHT'] = 'BOTTOMRIGHT'
+}
+----------------------------------------------------------------------------------------------------
 
 local function CreateOptionSet(frameName, order)
 	SUI.opt.args['UnitFrames'].args[frameName] = {
@@ -9,8 +21,8 @@ local function CreateOptionSet(frameName, order)
 		order = order,
 		childGroups = 'tab',
 		args = {
-			elements = {
-				name = 'Elements',
+			indicators = {
+				name = 'Indicators',
 				type = 'group',
 				order = 40,
 				childGroups = 'tree',
@@ -59,6 +71,17 @@ local function AddGeneralOptions(frameName)
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].width = val
 							--Update the screen
 							module.frames[frameName].UpdateSize()
+						end
+					},
+					range = {
+						name = 'Fade out of range',
+						width = 'double',
+						type = 'toggle',
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Range.enabled
+						end,
+						set = function(info, val)
+							module.CurrentSettings[frameName].elements.Range.enabled = val
 						end
 					}
 				}
@@ -238,6 +261,23 @@ local function AddBarOptions(frameName)
 				type = 'group',
 				order = 2,
 				args = {
+					healthprediction = {
+						name = 'Health prediction',
+						desc = "color the bar with a smooth gradient based on the player's current health percentage",
+						type = 'toggle',
+						order = 5,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Health.colorSmooth
+						end,
+						set = function(info, val)
+							--Update the screen
+							module.frames[frameName].Health.colorSmooth = val
+							--Update memory
+							module.CurrentSettings[frameName].elements.Health.colorSmooth = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorSmooth = val
+						end
+					},
 					coloring = {
 						name = 'Color health bar by:',
 						desc = 'The below options are in order of wich they apply',
@@ -467,52 +507,51 @@ local function AddBarOptions(frameName)
 	end
 end
 
-local function AddElementOptions(frameName)
+local function AddIndicatorOptions(frameName)
 	local PlayerOnly = {
-		['CombatIndicator'] = 'Combat indicator',
-		['RestingIndicator'] = 'Resting indicator',
-		['runes'] = 'Runes',
-		['stagger'] = 'Stagger',
-		['totems'] = 'Totems'
+		['CombatIndicator'] = 'Combat',
+		['RestingIndicator'] = 'Resting',
+		['Runes'] = 'Runes',
+		['Stagger'] = 'Stagger',
+		['Totems'] = 'Totems'
 	}
 	local FriendlyOnly = {
-		['assistantindicator'] = RAID_ASSISTANT .. ' indicator',
-		['GroupRoleIndicator'] = 'Group role indicator',
-		['LeaderIndicator'] = 'Leader indicator',
-		['phaseindicator'] = 'Phase indicator',
-		['PvPIndicator'] = 'PvP indicator',
-		['raidroleindicator'] = 'Main tank or assist indicator',
+		['AssistantIndicator'] = RAID_ASSISTANT,
+		['GroupRoleIndicator'] = 'Group role',
+		['LeaderIndicator'] = 'Leader',
+		['phaseindicator'] = 'Phase',
+		['PvPIndicator'] = 'PvP',
+		['RaidRoleIndicator'] = 'Main tank or assist',
 		['ReadyCheckIndicator'] = 'Ready check icon',
-		['resurrectindicator'] = 'Resurrect indicator',
-		['summonindicator'] = 'Summon indicator'
+		['ResurrectIndicator'] = 'Resurrect',
+		['SummonIndicator'] = 'Summon'
 	}
 	local targetOnly = {
-		['questindicator'] = 'Quest indicator'
+		['QuestIndicator'] = 'Quest'
 	}
-	local AllElements = {
+	local AllIndicators = {
 		['SUI_ClassIcon'] = 'Class icon',
 		['RaidTargetIndicator'] = RAID_TARGET_ICON,
-		['range'] = 'Range',
-		['StatusText'] = STATUS_TEXT,
-		['threatindicator'] = 'Threat indicator'
+		['ThreatIndicator'] = 'Threat'
 	}
 
-	-- Health Bar option
-	-- ['healthprediction'] = 'Health prediction',
+	-- Text indicators
+	-- ['StatusText'] = STATUS_TEXT,
+	-- ['SUI_RaidGroup'] = 'Raid group'
 
-	-- TODO: CHECK frameName for what tables above need to be applied, use Merge
+	-- Check frameName for what tables above need to be applied
 	if frameName == 'player' then
-		AllElements = SUI:MergeData(AllElements, PlayerOnly)
+		AllIndicators = SUI:MergeData(AllIndicators, PlayerOnly)
 	end
 	if frameName == 'target' then
-		AllElements = SUI:MergeData(AllElements, targetOnly)
+		AllIndicators = SUI:MergeData(AllIndicators, targetOnly)
 	end
 	if module:IsFriendlyFrame(frameName) then
-		AllElements = SUI:MergeData(AllElements, FriendlyOnly)
+		AllIndicators = SUI:MergeData(AllIndicators, FriendlyOnly)
 	end
 
-	for key, name in pairs(AllElements) do
-		SUI.opt.args['UnitFrames'].args[frameName].args['elements'].args[key] = {
+	for key, name in pairs(AllIndicators) do
+		SUI.opt.args['UnitFrames'].args[frameName].args['indicators'].args[key] = {
 			name = name,
 			type = 'group',
 			args = {
@@ -535,14 +574,190 @@ local function AddElementOptions(frameName)
 						--Update the DB
 						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
 					end
+				},
+				position = {
+					name = 'Position',
+					type = 'group',
+					order = 50,
+					inline = true,
+					args = {
+						x = {
+							name = 'X Axis',
+							type = 'range',
+							order = 1,
+							min = -60,
+							max = 60,
+							step = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].position.x
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].position.x = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.x = val
+							end
+						},
+						y = {
+							name = 'Y Axis',
+							desc = 'desc',
+							type = 'range',
+							order = 2,
+							min = -60,
+							max = 60,
+							step = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].position.y
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].position.y = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.y = val
+							end
+						},
+						anchor = {
+							name = 'Anchor point',
+							desc = 'desc',
+							type = 'select',
+							order = 3,
+							values = anchorPoints,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].position.anchor
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].position.anchor = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.anchor = val
+							end
+						}
+					}
 				}
 			}
 		}
 	end
+
+	-- Hide a few generated options from specific frame
+	if frameName == 'player' then
+		SUI.opt.args['UnitFrames'].args[frameName].args['indicators'].args['ThreatIndicator'].hidden = true
+	elseif frameName == 'boss' then
+		SUI.opt.args['UnitFrames'].args[frameName].args['indicators'].args['SUI_ClassIcon'].hidden = true
+	end
+end
+
+local function AddDynamicText(frameName, element, count)
+	if not module.CurrentSettings[frameName].elements[element].text[count] then
+		module.CurrentSettings[frameName].elements[element].text[count] = {}
+	end
+
+	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args[element].args[count] = {
+		name = 'Text element ' .. count,
+		type = 'group',
+		inline = true,
+		order = (10 + count),
+		args = {
+			enabled = {
+				name = 'enabled',
+				desc = 'desc',
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return module.CurrentSettings[frameName].elements[element].text[count].enabled
+				end,
+				set = function(info, val)
+					module.CurrentSettings[frameName].elements[element].text[count].enabled = val
+				end
+			},
+			text = {
+				name = 'Text',
+				type = 'input',
+				width = 'full',
+				order = 2,
+				get = function(info)
+					return module.CurrentSettings[frameName].elements[element].text[count].text
+				end,
+				set = function(info, val)
+					module.CurrentSettings[frameName].elements[element].text[count].text = val
+				end
+			},
+			JustifyH = {
+				name = 'Horizontal alignment',
+				type = 'select',
+				order = 3,
+				values = {
+					['LEFT'] = 'Left',
+					['CENTER'] = 'Center',
+					['RIGHT'] = 'Right'
+				},
+				get = function(info)
+					return module.CurrentSettings[frameName].elements[element].text[count].SetJustifyH
+				end,
+				set = function(info, val)
+					module.CurrentSettings[frameName].elements[element].text[count].SetJustifyH = val
+				end
+			},
+			JustifyV = {
+				name = 'Vertical alignment',
+				type = 'select',
+				order = 4,
+				values = {
+					['TOP'] = 'Top',
+					['MIDDLE'] = 'Middle',
+					['BOTTOM'] = 'Bottom'
+				},
+				get = function(info)
+					return module.CurrentSettings[frameName].elements[element].text[count].SetJustifyV
+				end,
+				set = function(info, val)
+					module.CurrentSettings[frameName].elements[element].text[count].SetJustifyV = val
+				end
+			}
+		}
+	}
+end
+
+local function AddTextOptions(frameName)
+	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'] = {
+		name = 'Health',
+		type = 'group',
+		args = {
+			AddText = {
+				name = 'Add text',
+				type = 'execute',
+				order = 1,
+				func = function(info)
+					AddDynamicText(
+						frameName,
+						'Health',
+						(#SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'].args + 1)
+					)
+				end
+			},
+			RemoveText = {
+				name = 'Remove text',
+				desc = 'Removes the last text item',
+				type = 'execute',
+				order = 1.1,
+				func = function(info)
+					AddDynamicText(
+						frameName,
+						'Health',
+						(#SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'].args + 1)
+					)
+				end
+			}
+		}
+	}
 end
 
 local function AddBuffOptions(frameName)
-	local values = {['bars'] = L['Bars'], ['icons'] = L['Icons'], ['both'] = L['Both'], ['disabled'] = L['Disabled']}
+	local values = {
+		['bars'] = L['Bars'],
+		['icons'] = L['Icons'],
+		['both'] = L['Both'],
+		['disabled'] = L['Disabled']
+	}
 
 	SUI.opt.args['UnitFrames'].args[frameName].args['auras'] = {
 		name = 'Buffs & Debuffs',
@@ -863,7 +1078,8 @@ function module:InitializeOptions()
 		AddGeneralOptions(key)
 		AddArtworkOptions(key)
 		AddBarOptions(key)
-		AddElementOptions(key)
+		AddIndicatorOptions(key)
+		AddTextOptions(key)
 		AddBuffOptions(key)
 	end
 end

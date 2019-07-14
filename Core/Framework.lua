@@ -567,7 +567,29 @@ local DBdefault = {
 							points = false,
 							alpha = 1,
 							width = 15,
-							height = 15
+							height = 15,
+							text = {
+								['**'] = {
+									enabled = false,
+									text = '',
+									SetJustifyH = 'CENTER',
+									SetJustifyV = 'MIDDLE',
+									position = {
+										anchor = 'CENTER',
+										x = 0,
+										y = 0
+									}
+								},
+								[1] = {
+									enabled = false,
+									position = {}
+								}
+							},
+							position = {
+								anchor = 'CENTER',
+								x = 0,
+								y = 0
+							}
 						},
 						Portrait = {
 							type = '3D',
@@ -581,13 +603,16 @@ local DBdefault = {
 							colorClass = true,
 							colorTapping = true,
 							colorDisconnected = true,
-							points = {
-								{point = 'TOPRIGHT', relativePoint = 'frame'}
-							},
-							Text = {
-								enabled = true,
-								Size = 12,
-								AllPoints = 'Health'
+							text = {
+								[1] = {
+									enabled = true,
+									text = '[curhpformatted] / [maxhpformatted]',
+									position = {
+										anchor = 'CENTER',
+										x = 0,
+										y = 0
+									}
+								}
 							}
 						},
 						HealthPrediction = {
@@ -596,13 +621,9 @@ local DBdefault = {
 						Power = {
 							enabled = true,
 							height = 10,
-							points = {
-								{point = 'TOPRIGHT', relativeTo = 'BOTTOMRIGHT', relativePoint = 'Health', x = 0, y = 0}
-							},
-							Text = {
+							text = {
 								enabled = true,
-								Size = 12,
-								AllPoints = 'Power'
+								Size = 12
 							}
 						},
 						additionalpower = {},
@@ -611,29 +632,24 @@ local DBdefault = {
 							height = 10,
 							interruptable = true,
 							latency = false,
-							points = {
-								{point = 'BOTTOMRIGHT', relativePoint = 'Health', relativeTo = 'TOPRIGHT'}
-							},
-							Text = {
-								enabled = true,
-								AllPoints = 'Castbar'
+							text = {
+								enabled = true
 							}
 						},
 						Name = {
 							enabled = true,
 							height = 12,
 							size = 12,
-							width = 'full',
-							points = {
-								{point = 'RIGHT', relativePoint = 'Name', relativeTo = 'LEFT'}
-							}
+							width = 'full'
 						},
 						LeaderIndicator = {
 							enabled = true,
 							height = 12,
 							width = 12,
-							points = {
-								{point = 'RIGHT', relativePoint = 'Name', relativeTo = 'LEFT'}
+							position = {
+								anchor = 'RIGHT',
+								x = 0,
+								y = 0
 							}
 						},
 						RestingIndicator = {
@@ -649,67 +665,85 @@ local DBdefault = {
 							height = 18,
 							width = 18,
 							alpha = .75,
-							points = {
-								{point = 'CENTER', relativePoint = 'frame', relativeTo = 'LEFT'}
+							position = {
+								anchor = 'TOPRIGHT',
+								x = -10,
+								y = 10
 							}
 						},
 						CombatIndicator = {
 							enabled = true,
 							height = 20,
 							width = 20,
-							points = {
-								{point = 'CENTER', relativePoint = 'GroupRoleIndicator', relativeTo = 'CENTER'}
+							position = {
+								anchor = 'TOPRIGHT',
+								x = 10,
+								y = 10
 							}
 						},
 						RaidTargetIndicator = {
 							enabled = true,
 							height = 20,
 							width = 20,
-							points = {
-								{point = 'LEFT', relativePoint = 'RestingIndicator', relativeTo = 'RIGHT'}
+							position = {
+								anchor = 'CENTER',
+								x = 0,
+								y = 0
 							}
 						},
 						SUI_ClassIcon = {
 							enabled = true,
 							height = 20,
 							width = 20,
-							points = {
-								{point = 'CENTER', relativePoint = 'RestingIndicator', relativeTo = 'CENTER'}
+							position = {
+								anchor = 'LEFT',
+								x = -10,
+								y = 0
 							}
 						},
 						ReadyCheckIndicator = {
 							enabled = true,
 							width = 25,
 							height = 25,
-							points = {
-								{point = 'LEFT', relativeTo = 'LEFT'}
+							position = {
+								anchor = 'CENTER',
+								x = 0,
+								y = 0
 							}
 						},
 						PvPIndicator = {
 							width = 25,
 							height = 25,
-							points = {
-								{point = 'CENTER', relativeTo = 'BOTTOMRIGHT'}
+							position = {
+								anchor = 'TOP',
+								x = 0,
+								y = 0
 							}
 						},
 						StatusText = {
 							size = 22,
 							SetJustifyH = 'CENTER',
 							SetJustifyV = 'MIDDLE',
-							points = {
-								{point = 'CENTER', relativeTo = 'CENTER'}
+							position = {
+								anchor = 'CENTER',
+								x = 0,
+								y = 0
 							}
-						}
-					},
-					font = {
-						mana = {
-							textstyle = 'dynamic',
-							textmode = 1
 						},
-						health = {
-							textstyle = 'dynamic',
-							textmode = 1
-						}
+						Runes = {},
+						Stagger = {},
+						Totems = {},
+						AssistantIndicator = {},
+						RaidRoleIndicator = {},
+						ResurrectIndicator = {},
+						SummonIndicator = {},
+						QuestIndicator = {},
+						Range = {
+							enabled = true
+						},
+						phaseindicator = {},
+						ThreatIndicator = {},
+						SUI_RaidGroup = {}
 					}
 				},
 				player = {
@@ -751,6 +785,15 @@ local DBdefault = {
 							enabled = true
 						},
 						Castbar = {
+							enabled = true
+						},
+						QuestIndicator = {
+							enabled = true
+						},
+						RaidRoleIndicator = {
+							enabled = true
+						},
+						AssistantIndicator = {
 							enabled = true
 						}
 					}
@@ -810,6 +853,18 @@ local DBdefault = {
 					elements = {
 						Castbar = {
 							enabled = true
+						},
+						ResurrectIndicator = {
+							enabled = true
+						},
+						SummonIndicator = {
+							enabled = true
+						},
+						RaidRoleIndicator = {
+							enabled = true
+						},
+						AssistantIndicator = {
+							enabled = true
 						}
 					}
 				},
@@ -817,7 +872,18 @@ local DBdefault = {
 				partytarget = {},
 				raid = {
 					enabled = true,
-					width = 95
+					width = 95,
+					elements = {
+						ResurrectIndicator = {
+							enabled = true
+						},
+						SummonIndicator = {
+							enabled = true
+						},
+						RaidRoleIndicator = {
+							enabled = true
+						}
+					}
 				},
 				arena = {}
 			},

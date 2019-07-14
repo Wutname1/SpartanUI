@@ -8,7 +8,6 @@ local function_cache = {}
 local DB = SUI.DB.Unitframes
 module.CurrentSettings = {}
 
-
 module.frameList = {
 	'player',
 	'target',
@@ -68,14 +67,13 @@ function module:IsFriendlyFrame(frameName)
 	return false
 end
 
-
 function module:UpdatePosition()
 	module:PositionFrame()
 end
 
-function module:TextFormat(text, unit)
-	local textstyle = module.CurrentSettings[unit].font[text].textstyle
-	local textmode = module.CurrentSettings[unit].font[text].textmode
+function module:TextFormat(element, frameName, textID)
+	local textstyle = module.CurrentSettings[frameName].font[element].textstyle
+	local textmode = module.CurrentSettings[frameName].font[element].textmode
 	local a, m, t, z
 	if text == 'mana' then
 		z = 'pp'
@@ -127,9 +125,9 @@ function module:PositionFrame(b)
 	-- 		module.frames.player:SetPoint('BOTTOMRIGHT', SUI_FramesAnchor, 'TOPLEFT', -60, 10)
 	-- 	end
 	-- else
-		if b == 'player' or b == nil then
-			module.frames.player:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -60, 250)
-		end
+	if b == 'player' or b == nil then
+		module.frames.player:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -60, 250)
+	end
 	-- end
 
 	if b == 'pet' or b == nil then
@@ -178,7 +176,8 @@ function module:OnInitialize()
 	-- Import theme settings
 	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
 	-- Import player customizations
-	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)
+	module.CurrentSettings =
+		SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)
 
 	-- Build options
 	module:InitializeOptions()
