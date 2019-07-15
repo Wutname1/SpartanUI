@@ -981,7 +981,14 @@ local DBdefault = {
 				}
 			}
 		},
-		Components = {}
+		Components = {},
+		Tooltips = {
+			ActiveStyle = 'smoke',
+			Override = {},
+			ColorOverlay = true,
+			Color = {0, 0, 0, 0.4},
+			SuppressNoMatch = true
+		}
 	},
 	Modules = {
 		StatusBars = {
@@ -1092,7 +1099,7 @@ function SUI:OnInitialize()
 
 	-- Add Addon-Wide Bar textures
 	SUI.BarTextures = {
-		smooth = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
+		smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 	}
 
 	-- Add Profiles to Options

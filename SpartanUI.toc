@@ -35,4 +35,4 @@ lang\localization.xml
 
 core\Framework.lua
 components\Loader.xml
-core\SUI-Core.xml
+core\Framework.xml

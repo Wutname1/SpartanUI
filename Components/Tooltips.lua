@@ -40,36 +40,26 @@ local tooltips = {
 	ItemSocketingDescription
 }
 local whitebg = {bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3}
+local Styles = {
+	metal = {
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\metal',
+		tile = false
+	},
+	smooth = {
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
+		tile = false
+	},
+	smoke = {
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
+		tile = false
+	},
+	none = {
+		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+		tile = false
+	}
+}
 
 function module:OnInitialize()
-	if SUI.DB.Tooltips == nil then
-		SUI.DB.Tooltips = {
-			Styles = {
-				metal = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\metal.tga',
-					tile = false
-				},
-				smooth = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga',
-					tile = false
-				},
-				smoke = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\smoke.tga',
-					tile = false
-				},
-				none = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-					tile = false
-				}
-			},
-			ActiveStyle = 'smoke',
-			Override = {},
-			ColorOverlay = true,
-			Color = {0, 0, 0, 0.4},
-			SuppressNoMatch = true
-		}
-	end
-
 	if SUI.DB.Tooltips.Rule1 == nil then
 		for _, v in ipairs(RuleList) do
 			SUI.DB.Tooltips[v] = {
@@ -184,7 +174,7 @@ local onShow = function(self)
 	 then
 		self.SUITip:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
 	else
-		self.SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
+		self.SUITip:SetBackdrop(Styles[SUI.DB.Tooltips.ActiveStyle])
 	end
 
 	if (SUI.DB.Tooltips.ActiveStyle == 'none' or SUI.DB.Tooltips.ColorOverlay) or (not self.SUITip) then
@@ -431,7 +421,7 @@ local TooltipSetUnit = function(self)
 end
 
 local function ApplyTooltipSkins()
-	GameTooltipStatusBarTexture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga')
+	GameTooltipStatusBarTexture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 
 	GameTooltipStatusBar:ClearAllPoints()
 	GameTooltipStatusBar:SetPoint('TOPLEFT', GameTooltip, 'BOTTOMLEFT', 0, 0)
@@ -486,7 +476,7 @@ local function ApplyTooltipSkins()
 			 then
 				SUITip:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
 			else
-				SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
+				SUITip:SetBackdrop(Styles[SUI.DB.Tooltips.ActiveStyle])
 			end
 
 			SUITip.ClearColors = ClearColors

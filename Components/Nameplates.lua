@@ -22,7 +22,7 @@ local Images = {
 		}
 	}
 }
-local BarTexture = 'Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga'
+local BarTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 local Timers = {}
 
 local pvpIconWar = function(self, event, unit)

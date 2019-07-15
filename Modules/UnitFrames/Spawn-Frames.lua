@@ -84,7 +84,7 @@ local function CreateUnitFrame(self, unit)
 
 		-- 	self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
 		-- 	self.artwork.bgNeutral:SetAllPoints(self)
-		-- 	self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga')
+		-- 	self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 		-- 	self.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
 
 		-- 	self.artwork.bgAlliance = self.artwork:CreateTexture(nil, 'BACKGROUND')

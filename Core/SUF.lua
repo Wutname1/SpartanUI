@@ -8,7 +8,7 @@ function addon:HotsListing()
 		return {
 			774, -- Rejuvenation
 			LifebloomSpellId, -- Lifebloom
-			8936, -- Regrowth
+			8936 -- Regrowth
 			-- 48438, -- Wild Growth
 			-- 155777, -- Germination
 			-- 102351, -- Cenarion Ward
@@ -301,7 +301,7 @@ do -- Boss graphic as an SUIUF module
 		if (not self.BossGraphic) then
 			return
 		end
-		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare')
+		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\elite_rare')
 		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
 		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
 	end
@@ -505,7 +505,7 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 		local c = UnitClassification(unit)
 
 		if (self.RareElite:IsObjectType 'Texture' and not self.RareElite:GetTexture()) then
-			self.RareElite:SetTexture('Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\elite_rare')
+			self.RareElite:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\elite_rare')
 			self.RareElite:SetTexCoord(0, 1, 0, 1)
 			self.RareElite:SetAlpha(.75)
 			if self.RareElite.short == true then

@@ -28,7 +28,6 @@ end
 
 	PageData follows the Same schema as DisplayPage
 ]]
-
 function module:AddPage(PageData)
 	if Win == nil then
 		Win = module:CreateWindow('SUI_Win')
@@ -59,7 +58,7 @@ function module:DisplayPage(CustomData)
 			Win = module:CreateWindow('SUI_Win')
 		end
 	end
-	
+
 	if (PageList[Page_Cur] == nil and not CustomData) then
 		return
 	end
@@ -167,8 +166,6 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 	if not FrameLabel then
 		FrameLabel = 'SpartanUI'
 	end
-	
-
 
 	local Window = CreateFrame('Frame', FrameName, UIParent)
 	Window:SetSize(width, height)
@@ -177,7 +174,7 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 
 	Window.bg = Window:CreateTexture(nil, 'BORDER')
 	Window.bg:SetAllPoints(Window)
-	Window.bg:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga')
+	Window.bg:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 	Window.bg:SetVertexColor(0, 0, 0, .7)
 
 	Window.border = Window:CreateTexture(nil, 'BORDER')
@@ -185,7 +182,7 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 	Window.border:SetPoint('LEFT', -10, 0)
 	Window.border:SetPoint('RIGHT', 10, 0)
 	Window.border:SetPoint('BOTTOM', 0, -10)
-	Window.border:SetTexture('Interface\\AddOns\\SpartanUI\\images\\smoke.tga')
+	Window.border:SetTexture('Interface\\AddOns\\SpartanUI\\images\\smoke')
 	Window.border:SetVertexColor(0, 0, 0, .7)
 
 	Window.Status = Window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline12')
@@ -241,7 +238,7 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 
 	Window.Next.texture = Window.Next:CreateTexture(nil, 'BORDER')
 	Window.Next.texture:SetAllPoints(Window.Next)
-	Window.Next.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga')
+	Window.Next.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 	Window.Next.texture:SetVertexColor(0, 0.5, 1)
 
 	-- Window.Next.parent = frame
@@ -293,7 +290,7 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 
 	Window.Skip.texture = Window.Skip:CreateTexture(nil, 'BORDER')
 	Window.Skip.texture:SetAllPoints(Window.Skip)
-	Window.Skip.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga')
+	Window.Skip.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 	Window.Skip.texture:SetVertexColor(.75, 0, 0)
 
 	Window.Skip:SetScript(
@@ -351,6 +348,6 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 
 	Window:Hide()
 	WindowShow = false
-	
+
 	return Window
 end
