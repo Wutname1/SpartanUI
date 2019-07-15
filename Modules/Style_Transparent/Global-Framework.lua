@@ -1,11 +1,7 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:NewModule('Style_Transparent')
+local module = SUI:GetModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
-if not SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.Transparent.BartenderProfile] = {Style = 'Transparent'}
-end
-
 local anchor, frame = Transparent_AnchorFrame, Transparent_SpartanUI
 local FramesList = {
 	[1] = 'pet',
@@ -46,7 +42,7 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 	end
 	if SUI.DB.scale ~= CurScale then
 		module:updateViewport()
-		if (SUI.DB.scale ~= SUI:round(Transparent_SpartanUI:GetScale())) then
+		if (SUI.DB.scale ~= Artwork_Core:round(Transparent_SpartanUI:GetScale())) then
 			frame:SetScale(SUI.DB.scale)
 		end
 		if SUI.DB.scale <= .75 then
@@ -114,7 +110,7 @@ function module:updateOffset() -- handles SpartanUI offset based on setting or f
 
 		offset = max(fubar + titan + ChocolateBar, 1)
 	end
-	if (SUI:round(offset) ~= SUI:round(anchor:GetHeight())) then
+	if (Artwork_Core:round(offset) ~= Artwork_Core:round(anchor:GetHeight())) then
 		anchor:SetHeight(offset)
 	end
 	SUI.DB.yoffset = offset
@@ -125,17 +121,17 @@ function module:updateXOffset() -- handles SpartanUI offset based on setting or 
 		return 0
 	end
 	local offset = SUI.DB.xOffset
-	if SUI:round(offset) <= -300 then
+	if Artwork_Core:round(offset) <= -300 then
 		Transparent_SpartanUI_Base5:ClearAllPoints()
 		Transparent_SpartanUI_Base5:SetPoint('LEFT', Transparent_SpartanUI_Base4, 'RIGHT')
 		Transparent_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT')
-	elseif SUI:round(offset) >= 300 then
+	elseif Artwork_Core:round(offset) >= 300 then
 		Transparent_SpartanUI_Base3:ClearAllPoints()
 		Transparent_SpartanUI_Base3:SetPoint('RIGHT', Transparent_SpartanUI_Base2, 'LEFT')
 		Transparent_SpartanUI_Base3:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT')
 	end
 	Transparent_SpartanUI:SetPoint('LEFT', Transparent_AnchorFrame, 'LEFT', offset, 0)
-	if (SUI:round(offset) ~= SUI:round(anchor:GetWidth())) then
+	if (Artwork_Core:round(offset) ~= Artwork_Core:round(anchor:GetWidth())) then
 		anchor:SetWidth(offset)
 	end
 	SUI.DB.xOffset = offset

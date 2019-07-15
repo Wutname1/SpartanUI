@@ -530,12 +530,14 @@ local DBdefault = {
 					artwork = {
 						top = {
 							enabled = false,
-							offset = 0,
+							x = 0,
+							y = 0,
 							graphic = ''
 						},
 						bottom = {
 							enabled = false,
-							offset = 0,
+							x = 0,
+							y = 0,
 							graphic = ''
 						}
 					},
@@ -580,7 +582,11 @@ local DBdefault = {
 										y = 0
 									}
 								},
-								[1] = {
+								['1'] = {
+									enabled = false,
+									position = {}
+								},
+								['2'] = {
 									enabled = false,
 									position = {}
 								}
@@ -604,7 +610,7 @@ local DBdefault = {
 							colorTapping = true,
 							colorDisconnected = true,
 							text = {
-								[1] = {
+								['1'] = {
 									enabled = true,
 									text = '[curhpformatted] / [maxhpformatted]',
 									position = {
@@ -622,8 +628,15 @@ local DBdefault = {
 							enabled = true,
 							height = 10,
 							text = {
-								enabled = true,
-								Size = 12
+								['1'] = {
+									enabled = true,
+									text = '[perpp]%',
+									position = {
+										anchor = 'CENTER',
+										x = 0,
+										y = 0
+									}
+								}
 							}
 						},
 						additionalpower = {},
@@ -633,14 +646,29 @@ local DBdefault = {
 							interruptable = true,
 							latency = false,
 							text = {
-								enabled = true
+								['1'] = {
+									enabled = true,
+									text = '',
+									position = {
+										anchor = 'CENTER',
+										x = 0,
+										y = 0
+									}
+								}
 							}
 						},
 						Name = {
 							enabled = true,
 							height = 12,
 							size = 12,
-							width = 'full'
+							text = '[difficulty][smartlevel] [SUI_ColorClass][name]',
+							SetJustifyH = 'CENTER',
+							SetJustifyV = 'MIDDLE',
+							position = {
+								anchor = 'TOP',
+								x = 0,
+								y = 15
+							}
 						},
 						LeaderIndicator = {
 							enabled = true,
@@ -1347,7 +1375,6 @@ function SUI:OnEnable()
 					func = function()
 						while CloseWindows() do
 						end
-						AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 						AceConfigDialog:Open('SpartanUI')
 					end
 				}
@@ -1355,6 +1382,7 @@ function SUI:OnEnable()
 		}
 	)
 	AceConfigDialog:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
+	AceConfigDialog:SetDefaultSize('SpartanUI', 1000, 700)
 
 	AceConfig:RegisterOptionsTable('SpartanUI', SUI.opt)
 
@@ -1401,7 +1429,6 @@ function SUI:OnEnable()
 end
 
 function SUI:suihelp(input)
-	AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 	AceConfigDialog:Open('SpartanUI', 'Help')
 end
 
@@ -1455,7 +1482,6 @@ function SUI:ChatCommand(input)
 				end
 			end
 		else
-			AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 			AceConfigDialog:Open('SpartanUI')
 			AceConfigDialog:SelectGroup('SpartanUI', 'UnitFrames')
 		end
@@ -1544,6 +1570,16 @@ function SUI:isInTable(searchTable, searchPhrase, all)
 		end
 	end
 	return false
+end
+
+function SUI:tableLength(T)
+	assert(type(T) == 'table', 'bad parameter #1: must be table')
+
+	local count = 0
+	for _ in pairs(T) do
+		count = count + 1
+	end
+	return count
 end
 
 function SUI:round(num) -- rounds a number to 2 decimal places

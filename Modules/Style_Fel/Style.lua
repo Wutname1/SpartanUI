@@ -8,9 +8,6 @@ function module:OnInitialize()
 	--Enable the in the Core options screen
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Fel'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Fel'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PlayerFrames'].args['Fel'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PartyFrames'].args['Fel'].disabled = false
-	SUI.opt.args['General'].args['style'].args['RaidFrames'].args['Fel'].disabled = false
 
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Digital'].disabled = false
 	--Init if needed

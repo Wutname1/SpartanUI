@@ -2,9 +2,7 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Common.lua" />
 	<Script file="FontHandler.lua" />
-	<Script file="SUF.lua" />
 	<Script file="Options.lua" />
 	
 	<!-- SUI_PartyMemberTemplate -->
@@ -82,6 +80,7 @@
 		</Anchors>
 	</Frame>
 	
+	<Script file="SUF.lua" />
 	<Script file="SUIWindow.lua" />
 	<Script file="SetupWizard.lua" />
 	<Script file="WhatsNew.lua" />

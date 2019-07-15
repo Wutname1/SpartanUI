@@ -1,12 +1,8 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:NewModule('Style_Minimal')
+local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = Minimal_AnchorFrame, Minimal_SpartanUI
-
-if not SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = 'Minimal'}
-end
 
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
@@ -25,7 +21,7 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(Minimal_SpartanUI:GetScale(), 2)) then
+		if (SUI.DB.scale ~= Artwork_Core:round(Minimal_SpartanUI:GetScale())) then
 			frame:SetScale(SUI.DB.scale)
 		end
 
@@ -76,7 +72,7 @@ function module:updateOffset(Top, Bottom) -- handles SpartanUI offset based on s
 
 		offset = max(fubar + titan + ChocolateBar, 1)
 	end
-	if (SUI:round(offset) ~= SUI:round(anchor:GetHeight())) then
+	if (Artwork_Core:round(offset) ~= Artwork_Core:round(anchor:GetHeight())) then
 		anchor:SetHeight(offset)
 	end
 	SUI.DB.yoffset = offset
@@ -118,17 +114,17 @@ function module:updateXOffset() -- handles SpartanUI offset based on setting or 
 		return 0
 	end
 	local offset = SUI.DB.xOffset
-	if SUI:round(offset) <= -300 then
+	if Artwork_Core:round(offset) <= -300 then
 		Minimal_SpartanUI_Base5:ClearAllPoints()
 		Minimal_SpartanUI_Base5:SetPoint('LEFT', Minimal_SpartanUI_Base4, 'RIGHT')
 		Minimal_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT')
-	elseif SUI:round(offset) >= 300 then
+	elseif Artwork_Core:round(offset) >= 300 then
 		Minimal_SpartanUI_Base3:ClearAllPoints()
 		Minimal_SpartanUI_Base3:SetPoint('RIGHT', Minimal_SpartanUI_Base2, 'LEFT')
 		Minimal_SpartanUI_Base3:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT')
 	end
 	Minimal_SpartanUI:SetPoint('LEFT', Minimal_AnchorFrame, 'LEFT', offset, 0)
-	if (SUI:round(offset) ~= SUI:round(anchor:GetWidth())) then
+	if (Artwork_Core:round(offset) ~= Artwork_Core:round(anchor:GetWidth())) then
 		anchor:SetWidth(offset)
 	end
 	SUI.DB.xOffset = offset

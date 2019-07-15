@@ -7,9 +7,6 @@ local InitRan = false
 function module:OnInitialize()
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Minimal'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Minimal'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PlayerFrames'].args['Minimal'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PartyFrames'].args['Minimal'].disabled = false
-	SUI.opt.args['General'].args['style'].args['RaidFrames'].args['Minimal'].disabled = false
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == 'Minimal') then
 		module:Init()

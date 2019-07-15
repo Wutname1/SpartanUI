@@ -22,9 +22,6 @@ function module:OnInitialize()
 	--Enable the in the Core options screen
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Transparent'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Transparent'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PlayerFrames'].args['Transparent'].disabled = false
-	SUI.opt.args['General'].args['style'].args['PartyFrames'].args['Transparent'].disabled = false
-	SUI.opt.args['General'].args['style'].args['RaidFrames'].args['Transparent'].disabled = false
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == 'Transparent') then
 		module:Init()

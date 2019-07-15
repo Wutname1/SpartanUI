@@ -538,6 +538,30 @@ function module:blacklisted(name)
 	return false
 end
 
+function module.QUEST_GREETING()
+	local numActiveQuests = GetNumActiveQuests()
+	local numAvailableQuests = GetNumAvailableQuests()
+
+	for i = 1, numActiveQuests do
+		local isComplete = select(2, GetActiveTitle(i))
+		if isComplete then
+			SelectActiveQuest(i)
+		end
+	end
+
+	for i = 1, numAvailableQuests do
+		local isTrivial, frequency, isRepeatable = GetAvailableQuestInfo(i - numActiveQuests)
+
+		local trivialORAllowed = (not isTrivial) or SUI.DB.AutoTurnIn.trivial
+		local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
+		local isRepeatableORAllowed = (not isRepeatable or not isDaily) or SUI.DB.AutoTurnIn.AcceptRepeatable
+
+		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
+			SelectAvailableQuest(i)
+		end
+	end
+end
+
 function module.GOSSIP_SHOW()
 	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsAltKeyDown()) then
 		return
@@ -630,6 +654,7 @@ function module:OnEnable()
 	)
 	ATI_Container:RegisterEvent('GOSSIP_SHOW') -- multiple quests, and NPC chat screen
 	ATI_Container:RegisterEvent('QUEST_DETAIL') -- new quest screen
+	ATI_Container:RegisterEvent('QUEST_GREETING')
 	ATI_Container:RegisterEvent('QUEST_PROGRESS')
 	ATI_Container:RegisterEvent('QUEST_COMPLETE') -- quest turn in screen
 	ATI_Container:RegisterEvent('MERCHANT_SHOW')

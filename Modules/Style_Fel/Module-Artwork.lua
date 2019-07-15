@@ -1,12 +1,7 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:NewModule('Style_Fel')
+local module = SUI:GetModule('Style_Fel')
 ----------------------------------------------------------------------------------------------------
-if not SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] then
-	SUI.DBG.Bartender4[SUI.DB.Styles.Minimal.BartenderProfile] = {Style = 'Fel'}
-end
-
-module.Settings = {}
 module.Trays = {}
 local CurScale
 local petbattle = CreateFrame('Frame')
@@ -58,7 +53,7 @@ function module:updateScale()
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(Fel_SpartanUI:GetScale())) then
+		if (SUI.DB.scale ~= Artwork_Core:round(Fel_SpartanUI:GetScale())) then
 			Fel_SpartanUI:SetScale(SUI.DB.scale)
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')
@@ -213,7 +208,7 @@ function module:EnableArtwork()
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Right')
-		barBG = 'Interface\\AddOns\\SpartanUI_UnitFrames\\Images\\digital\\Fel-Box'
+		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box'
 	else
 		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left')
 		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right')
@@ -316,13 +311,6 @@ module.Settings.MiniMap = {
 	coordsLocation = 'BOTTOM',
 	coords = {
 		TextColor = {1, .82, 0, 1}
-	},
-	Anchor = {
-		'CENTER',
-		Fel_SpartanUI.Left,
-		'RIGHT',
-		0,
-		-10
 	}
 }
 
@@ -344,6 +332,13 @@ function module:MiniMap()
 	
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
 
+	module.Settings.MiniMap.Anchor = {
+		'CENTER',
+		Fel_SpartanUI.Left,
+		'RIGHT',
+		0,
+		-10
+	}
 	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()

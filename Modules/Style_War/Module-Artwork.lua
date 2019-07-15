@@ -1,8 +1,7 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
-local module = SUI:NewModule('Style_War')
+local module = SUI:GetModule('Style_War')
 ----------------------------------------------------------------------------------------------------
-module.Settings = {}
 module.Trays = {}
 module.StatusBarSettings = {
 	bars = {
@@ -50,7 +49,7 @@ function module:updateScale()
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(War_SpartanUI:GetScale())) then
+		if (SUI.DB.scale ~= Artwork_Core:round(War_SpartanUI:GetScale())) then
 			War_SpartanUI:SetScale(SUI.DB.scale)
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')

@@ -8,9 +8,6 @@ function module:OnInitialize()
 	--Enable the in the Core options screen
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['War'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['War'].disabled = false
-	-- SUI.opt.args['General'].args['style'].args['PlayerFrames'].args['War'].disabled = false
-	-- SUI.opt.args['General'].args['style'].args['PartyFrames'].args['War'].disabled = false
-	-- SUI.opt.args['General'].args['style'].args['RaidFrames'].args['War'].disabled = false
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == 'War') then
 		module:Init()

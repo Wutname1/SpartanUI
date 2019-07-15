@@ -8,9 +8,9 @@ function Artwork_Core:updateScale()
 	if (not SUI.DB.scale) then
 		local Resolution = ''
 		if select(4, GetBuildInfo()) >= 70000 then
-			Resolution = GetCVar("gxWindowedResolution")
+			Resolution = GetCVar('gxWindowedResolution')
 		else
-			Resolution = GetCVar("gxResolution")
+			Resolution = GetCVar('gxResolution')
 		end
 
 		local width, height = string.match(Resolution, '(%d+).-(%d+)')
@@ -117,6 +117,12 @@ function Artwork_Core:isInTable(tab, frameName)
 		end
 	end
 	return false
+end
+
+function Artwork_Core:round(num) -- rounds a number to 2 decimal places
+	if num then
+		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+	end
 end
 
 function Artwork_Core:MoveTalkingHeadUI()
@@ -350,9 +356,7 @@ function Artwork_Core:FirstTime()
 
 			SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
 
-			SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
-			SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
-			SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
+			SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 			SUI.DBMod.Artwork.FirstLoad = true
 			SUI.DBG.BartenderChangesActive = true
 			Artwork_Core:SetupProfile()
