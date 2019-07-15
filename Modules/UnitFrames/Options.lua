@@ -81,7 +81,16 @@ local function AddGeneralOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Range.enabled
 						end,
 						set = function(info, val)
+							--Update memory
 							module.CurrentSettings[frameName].elements.Range.enabled = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.enabled = val
+							--Update the screen
+							if val then
+								module.frames[frameName]:EnableElement('Range')
+							else
+								module.frames[frameName]:DisableElement('Range')
+							end
 						end
 					}
 				}
@@ -188,14 +197,96 @@ local function AddArtworkOptions(frameName)
 				type = 'group',
 				order = 1,
 				inline = true,
-				args = {}
-			},
-			bottom = {
-				name = 'Bottom',
-				type = 'group',
-				order = 2,
-				inline = true,
-				args = {}
+				args = {
+					War = {
+						name = 'War',
+						order = 1.1,
+						type = 'description',
+						width = 'normal',
+						image = function()
+							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_War', 120, 40
+						end,
+						imageCoords = function()
+							return {0, .5, 0, 0.203125}
+						end
+					},
+					Fel = {
+						name = 'War',
+						order = 1.2,
+						width = 'normal',
+						type = 'description',
+						image = function()
+							return 'Interface\\Scenarios\\LegionInvasion', 120, 40
+						end,
+						imageCoords = function()
+							return {0.140625, 0.615234375, 0, 0.14453125}
+						end
+					},
+					enabled = {
+						name = 'Enabled',
+						type = 'toggle',
+						order = 2,
+						get = function(info)
+							return module.CurrentSettings[frameName].artwork.top.enabled
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].artwork.top.enabled = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.top.enabled = val
+						end
+					},
+					x = {
+						name = 'X Axis',
+						type = 'range',
+						min = -100,
+						max = 100,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].artwork.top.x
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].artwork.top.x = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.top.x = val
+						end
+					},
+					y = {
+						name = 'Y Axis',
+						type = 'range',
+						min = -100,
+						max = 100,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].artwork.top.y
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].artwork.top.y = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.top.y = val
+						end
+					},
+					StyleDropdown = {
+						name = 'Current Style',
+						type = 'select',
+						order = 3,
+						values = {
+							['war'] = 'War',
+							['fel'] = 'Fel'
+						},
+						get = function(info)
+							return module.CurrentSettings[frameName].artwork.top.graphic
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].artwork.top.graphic = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.top.graphic = val
+						end
+					}
+				}
 			}
 		}
 	}
@@ -389,7 +480,7 @@ local function AddBarOptions(frameName)
 	local bars = {'Castbar', 'Health', 'Power'}
 	for i, key in ipairs(bars) do
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['enabled'] = {
-			name = 'Enabled',
+			name = L['Enabled'],
 			type = 'toggle',
 			order = 1,
 			get = function(info)
@@ -460,7 +551,7 @@ local function AddBarOptions(frameName)
 			childGroups = 'inline',
 			args = {
 				enabled = {
-					name = 'Enabled',
+					name = L['Enabled'],
 					type = 'toggle',
 					order = 1,
 					get = function(info)
@@ -647,10 +738,6 @@ local function AddIndicatorOptions(frameName)
 end
 
 local function AddDynamicText(frameName, element, count)
-	if not module.CurrentSettings[frameName].elements[element].text[count] then
-		module.CurrentSettings[frameName].elements[element].text[count] = {}
-	end
-
 	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args[element].args[count] = {
 		name = 'Text element ' .. count,
 		type = 'group',
@@ -658,7 +745,7 @@ local function AddDynamicText(frameName, element, count)
 		order = (10 + count),
 		args = {
 			enabled = {
-				name = 'enabled',
+				name = L['Enabled'],
 				desc = 'desc',
 				type = 'toggle',
 				order = 1,
@@ -666,7 +753,11 @@ local function AddDynamicText(frameName, element, count)
 					return module.CurrentSettings[frameName].elements[element].text[count].enabled
 				end,
 				set = function(info, val)
+					--Update memory
 					module.CurrentSettings[frameName].elements[element].text[count].enabled = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].enabled =
+						val
 				end
 			},
 			text = {
@@ -678,7 +769,10 @@ local function AddDynamicText(frameName, element, count)
 					return module.CurrentSettings[frameName].elements[element].text[count].text
 				end,
 				set = function(info, val)
+					--Update memory
 					module.CurrentSettings[frameName].elements[element].text[count].text = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].text = val
 				end
 			},
 			JustifyH = {
@@ -694,7 +788,11 @@ local function AddDynamicText(frameName, element, count)
 					return module.CurrentSettings[frameName].elements[element].text[count].SetJustifyH
 				end,
 				set = function(info, val)
+					--Update memory
 					module.CurrentSettings[frameName].elements[element].text[count].SetJustifyH = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].SetJustifyH =
+						val
 				end
 			},
 			JustifyV = {
@@ -710,7 +808,11 @@ local function AddDynamicText(frameName, element, count)
 					return module.CurrentSettings[frameName].elements[element].text[count].SetJustifyV
 				end,
 				set = function(info, val)
+					--Update memory
 					module.CurrentSettings[frameName].elements[element].text[count].SetJustifyV = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].SetJustifyV =
+						val
 				end
 			}
 		}
@@ -718,34 +820,188 @@ local function AddDynamicText(frameName, element, count)
 end
 
 local function AddTextOptions(frameName)
+	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Castbar'] = {
+		name = 'Castbar',
+		type = 'group',
+		order = 1,
+		args = {
+			enabled = {
+				name = L['Enabled'],
+				desc = 'desc',
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return module.CurrentSettings[frameName].elements.Castbar.text['1'].enabled
+				end,
+				set = function(info, val)
+					--Update memory
+					module.CurrentSettings[frameName].elements.Castbar.text['1'].enabled = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.text['1'].enabled = val
+				end
+			}
+		}
+	}
 	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'] = {
 		name = 'Health',
 		type = 'group',
+		order = 2,
+		args = {}
+	}
+	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Power'] = {
+		name = 'Power',
+		type = 'group',
+		order = 3,
+		args = {}
+	}
+
+	for i in pairs(module.CurrentSettings[frameName].elements.Health.text) do
+		AddDynamicText(frameName, 'Health', i)
+	end
+
+	for i in pairs(module.CurrentSettings[frameName].elements.Power.text) do
+		AddDynamicText(frameName, 'Power', i)
+	end
+
+	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Name'] = {
+		name = 'Name',
+		type = 'group',
+		order = 1,
 		args = {
-			AddText = {
-				name = 'Add text',
-				type = 'execute',
+			enabled = {
+				name = L['Enabled'],
+				desc = 'desc',
+				type = 'toggle',
 				order = 1,
-				func = function(info)
-					AddDynamicText(
-						frameName,
-						'Health',
-						(#SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'].args + 1)
-					)
+				get = function(info)
+					return module.CurrentSettings[frameName].elements.Name.enabled
+				end,
+				set = function(info, val)
+					--Update memory
+					module.CurrentSettings[frameName].elements.Name.enabled = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.enabled = val
 				end
 			},
-			RemoveText = {
-				name = 'Remove text',
-				desc = 'Removes the last text item',
-				type = 'execute',
-				order = 1.1,
-				func = function(info)
-					AddDynamicText(
-						frameName,
-						'Health',
-						(#SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'].args + 1)
-					)
-				end
+			Text = {
+				name = '',
+				type = 'group',
+				inline = true,
+				order = 10,
+				args = {
+					text = {
+						name = 'Text',
+						type = 'input',
+						width = 'full',
+						order = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Name.text
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Name.text = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.text = val
+						end
+					},
+					JustifyH = {
+						name = 'Horizontal alignment',
+						type = 'select',
+						order = 2,
+						values = {
+							['LEFT'] = 'Left',
+							['CENTER'] = 'Center',
+							['RIGHT'] = 'Right'
+						},
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Name.SetJustifyH
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Name.SetJustifyH = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.SetJustifyH = val
+						end
+					},
+					JustifyV = {
+						name = 'Vertical alignment',
+						type = 'select',
+						order = 3,
+						values = {
+							['TOP'] = 'Top',
+							['MIDDLE'] = 'Middle',
+							['BOTTOM'] = 'Bottom'
+						},
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Name.SetJustifyV
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Name.SetJustifyV = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.SetJustifyV = val
+						end
+					}
+				}
+			},
+			position = {
+				name = 'Position',
+				type = 'group',
+				order = 50,
+				inline = true,
+				args = {
+					x = {
+						name = 'X Axis',
+						type = 'range',
+						order = 1,
+						min = -60,
+						max = 60,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Name.position.x
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Name.position.x = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.x = val
+						end
+					},
+					y = {
+						name = 'Y Axis',
+						desc = 'desc',
+						type = 'range',
+						order = 2,
+						min = -60,
+						max = 60,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Name.position.y
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Name.position.y = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.y = val
+						end
+					},
+					anchor = {
+						name = 'Anchor point',
+						desc = 'desc',
+						type = 'select',
+						order = 3,
+						values = anchorPoints,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Name.position.anchor
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Name.position.anchor = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.anchor = val
+						end
+					}
+				}
 			}
 		}
 	}
@@ -1076,12 +1332,17 @@ function module:InitializeOptions()
 	for i, key in ipairs(module.frameList) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
-		AddArtworkOptions(key)
 		AddBarOptions(key)
 		AddIndicatorOptions(key)
 		AddTextOptions(key)
 		AddBuffOptions(key)
+
+		if key == 'player' or key == 'target' or key == 'party' or key == 'boss' then
+			AddArtworkOptions(key)
+		end
 	end
+
+	SUI.opt.args['UnitFrames'].args['player'].args['general'].args['General'].args['range'].hidden = true
 end
 
 ----------------------------------------------------------------------------------------------------

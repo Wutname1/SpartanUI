@@ -220,6 +220,8 @@ local function CreateUnitFrame(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
+			self.Health.DataTable = module.CurrentSettings[unit].elements.Health.text
+
 			if not SUI.IsClassic then
 				-- Position and size
 				local myBar = CreateFrame('StatusBar', nil, self.Health)
@@ -513,7 +515,7 @@ local function CreateUnitFrame(self, unit)
 	-- 	end
 	-- end
 
-	-- self.Range = {insideAlpha = 1, outsideAlpha = .3}
+	self.Range = {insideAlpha = 1, outsideAlpha = .3}
 	-- self.TextUpdate = PostUpdateText
 	-- self.ColorUpdate = PostUpdateColor
 
@@ -557,6 +559,9 @@ function module:SpawnFrames()
 		end
 		if not module.CurrentSettings[b].elements.Power.enabled then
 			module.frames[b]:DisableElement('Power')
+		end
+		if not module.CurrentSettings[b].elements.Range.enabled then
+			module.frames[b]:DisableElement('Range')
 		end
 
 		-- if b == 'player' and not SUI.IsClassic then
