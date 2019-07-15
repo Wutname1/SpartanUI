@@ -1,7 +1,7 @@
 local SUI = SUI
 local module = SUI:GetModule('Style_Minimal')
-local PlayerFrames = SUI:GetModule('PlayerFrames')
-local PartyFrames = SUI:GetModule('PartyFrames')
+local PlayerFrames = SUI:GetModule('PlayerFrames', true)
+local PartyFrames = SUI:GetModule('PartyFrames', true)
 ----------------------------------------------------------------------------------------------------
 
 local FramesList = {

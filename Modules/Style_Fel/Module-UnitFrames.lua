@@ -1,8 +1,8 @@
 local _G, SUI = _G, _G['SUI']
 local L = SUI.L
 local module = SUI:GetModule('Style_Fel')
-local PlayerFrames = SUI:GetModule('PlayerFrames')
-local PartyFrames = SUI:GetModule('PartyFrames')
+local PlayerFrames = SUI:GetModule('PlayerFrames', true)
+local PartyFrames = SUI:GetModule('PartyFrames', true)
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = 'Interface\\AddOns\\SpartanUI_PlayerFrames\\media\\Smoothv2.tga'
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
