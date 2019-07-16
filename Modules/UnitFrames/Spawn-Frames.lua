@@ -23,16 +23,17 @@ local function CreateUnitFrame(self, unit)
 
 	-- Build a function that updates the size of the frame and sizes of elements
 	local function UpdateSize()
+		local elements = module.CurrentSettings[unit].elements
 		-- Find the Height of the frame
 		local FrameHeight = 0
-		if module.CurrentSettings[unit].elements.Castbar.enabled then
-			FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Castbar.height
+		if elements.Castbar.enabled then
+			FrameHeight = FrameHeight + elements.Castbar.height
 		end
-		if module.CurrentSettings[unit].elements.Health.enabled then
-			FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Health.height
+		if elements.Health.enabled then
+			FrameHeight = FrameHeight + elements.Health.height
 		end
-		if module.CurrentSettings[unit].elements.Power.enabled then
-			FrameHeight = FrameHeight + module.CurrentSettings[unit].elements.Power.height
+		if elements.Power.enabled then
+			FrameHeight = FrameHeight + elements.Power.height
 		end
 		self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
 
@@ -46,35 +47,39 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		if self.Castbar then
-			self.Castbar:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
+			self.Castbar:SetSize(self:GetWidth(), elements.Castbar.height)
 		end
 
 		if self.Health then
-			if module.CurrentSettings[unit].elements.Castbar.enabled then
-				self.Health:SetPoint('TOP', self, 'TOP', 0, ((module.CurrentSettings[unit].elements.Castbar.height + 2) * -1))
+			if elements.Castbar.enabled then
+				self.Health:SetPoint('TOP', self, 'TOP', 0, ((elements.Castbar.height + 2) * -1))
 			else
 				self.Health:SetPoint('TOP', self, 'TOP', 0, 0)
 			end
 
-			self.Health:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Health.height)
+			self.Health:SetSize(self:GetWidth(), elements.Health.height)
 		end
 
 		if self.Power then
 			local PositionData = 0
-			if module.CurrentSettings[unit].elements.Castbar.enabled then
-				PositionData = module.CurrentSettings[unit].elements.Castbar.height
+			if elements.Castbar.enabled then
+				PositionData = elements.Castbar.height
 			end
 
-			PositionData = PositionData + module.CurrentSettings[unit].elements.Health.height
+			PositionData = PositionData + elements.Health.height
 
 			self.Power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
 
-			self.Power:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
+			self.Power:SetSize(self:GetWidth(), elements.Power.height)
 		end
 	end
 	self.UpdateSize = UpdateSize
 
 	self.UpdateSize()
+
+	local artwork = module.CurrentSettings[unit].artwork
+	local auras = module.CurrentSettings[unit].auras
+	local elements = module.CurrentSettings[unit].elements
 
 	do -- General setup
 		-- 	self.artwork = CreateFrame('Frame', nil, self)
@@ -114,23 +119,23 @@ local function CreateUnitFrame(self, unit)
 		-- 3D Portrait
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
 		Portrait3D:SetSize(self:GetHeight(), self:GetHeight())
-		Portrait3D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
+		Portrait3D:SetScale(elements.Portrait.Scale)
 		self.Portrait3D = Portrait3D
 
 		-- 2D Portrait
 		local Portrait2D = self:CreateTexture(nil, 'OVERLAY')
 		Portrait2D:SetSize(self:GetHeight(), self:GetHeight())
-		Portrait2D:SetScale(module.CurrentSettings[unit].elements.Portrait.Scale)
+		Portrait2D:SetScale(elements.Portrait.Scale)
 		self.Portrait2D = Portrait2D
 
-		if module.CurrentSettings[unit].elements.Portrait.position == 'left' then
+		if elements.Portrait.position == 'left' then
 			Portrait3D:SetPoint('RIGHT', self, 'LEFT')
 			Portrait2D:SetPoint('RIGHT', self, 'LEFT')
 		else
 			Portrait3D:SetPoint('LEFT', self, 'RIGHT')
 			Portrait2D:SetPoint('LEFT', self, 'RIGHT')
 		end
-		if module.CurrentSettings[unit].elements.Portrait.type == '3D' then
+		if elements.Portrait.type == '3D' then
 			self.Portrait = self.Portrait3D
 		else
 			self.Portrait = self.Portrait2D
@@ -147,7 +152,7 @@ local function CreateUnitFrame(self, unit)
 			cast:SetFrameStrata('BACKGROUND')
 			cast:SetFrameLevel(2)
 			cast:SetStatusBarTexture(Smoothv2)
-			cast:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Castbar.height)
+			cast:SetSize(self:GetWidth(), elements.Castbar.height)
 			cast:SetPoint('TOP', self, 'TOP', 0, 0)
 
 			local Text = cast:CreateFontString()
@@ -162,7 +167,7 @@ local function CreateUnitFrame(self, unit)
 			Shield:SetPoint('CENTER', cast, 'RIGHT')
 			-- Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
 			local function PostCastNotInterruptible(unit)
-				if not module.CurrentSettings[unit].elements.Castbar.interruptable then
+				if not elements.Castbar.interruptable then
 					self.Castbar.Shield:Hide()
 				end
 			end
@@ -186,16 +191,15 @@ local function CreateUnitFrame(self, unit)
 			health:SetFrameStrata('BACKGROUND')
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture(Smoothv2)
-			health:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Health.height)
-			if module.CurrentSettings[unit].elements.Castbar.enabled then
-				health:SetPoint('TOP', self, 'TOP', 0, ((module.CurrentSettings[unit].elements.Castbar.height + 2) * -1))
+			health:SetSize(self:GetWidth(), elements.Health.height)
+			if elements.Castbar.enabled then
+				health:SetPoint('TOP', self, 'TOP', 0, ((elements.Castbar.height + 2) * -1))
 			else
 				health:SetPoint('TOP', self, 'TOP', 0, 0)
 			end
 
-			health.TextData = module.CurrentSettings[unit].elements.Health.text
 			health.TextElements = {}
-			for i, key in pairs(module.CurrentSettings[unit].elements.Health.text) do
+			for i, key in pairs(elements.Health.text) do
 				if key.enabled then
 					local NewString = health:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
 					NewString:SetJustifyH(key.SetJustifyH)
@@ -211,16 +215,16 @@ local function CreateUnitFrame(self, unit)
 
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			self.Health.colorDisconnected = module.CurrentSettings[unit].elements.Health.colorDisconnected
-			self.Health.colorTapping = module.CurrentSettings[unit].elements.Health.colorTapping
-			self.Health.colorReaction = module.CurrentSettings[unit].elements.Health.colorReaction
-			self.Health.colorSmooth = module.CurrentSettings[unit].elements.Health.colorSmooth
-			self.Health.colorClass = module.CurrentSettings[unit].elements.Health.colorClass
+			self.Health.colorDisconnected = elements.Health.colorDisconnected
+			self.Health.colorTapping = elements.Health.colorTapping
+			self.Health.colorReaction = elements.Health.colorReaction
+			self.Health.colorSmooth = elements.Health.colorSmooth
+			self.Health.colorClass = elements.Health.colorClass
 
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			self.Health.DataTable = module.CurrentSettings[unit].elements.Health.text
+			self.Health.DataTable = elements.Health.text
 
 			if not SUI.IsClassic then
 				-- Position and size
@@ -283,12 +287,12 @@ local function CreateUnitFrame(self, unit)
 			power:SetFrameStrata('BACKGROUND')
 			power:SetFrameLevel(2)
 			power:SetStatusBarTexture(Smoothv2)
-			power:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
+			power:SetSize(self:GetWidth(), elements.Power.height)
 			local PositionData = 0
-			if module.CurrentSettings[unit].elements.Castbar.enabled then
-				PositionData = module.CurrentSettings[unit].elements.Castbar.height
+			if elements.Castbar.enabled then
+				PositionData = elements.Castbar.height
 			end
-			PositionData = PositionData + module.CurrentSettings[unit].elements.Health.height
+			PositionData = PositionData + elements.Health.height
 			power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
 
 			power.ratio = power:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline8')
@@ -307,9 +311,9 @@ local function CreateUnitFrame(self, unit)
 				AdditionalPower:SetFrameStrata('BACKGROUND')
 				AdditionalPower:SetFrameLevel(2)
 				AdditionalPower:SetStatusBarTexture(Smoothv2)
-				AdditionalPower:SetSize(self:GetWidth(), module.CurrentSettings[unit].elements.Power.height)
-				if module.CurrentSettings[unit].elements.Power.enabled then
-					PositionData = PositionData + module.CurrentSettings[unit].elements.Power.height
+				AdditionalPower:SetSize(self:GetWidth(), elements.Power.height)
+				if elements.Power.enabled then
+					PositionData = PositionData + elements.Power.height
 				end
 				AdditionalPower:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
 
@@ -345,160 +349,162 @@ local function CreateUnitFrame(self, unit)
 			end
 		end
 	end
-	-- do -- setup icons, and text
-	-- 	local ring = CreateFrame('Frame', nil, self)
-	-- 	ring:SetFrameStrata('MEDIUM')
-	-- 	ring:SetAllPoints(self.Portrait)
-	-- 	ring:SetFrameLevel(3)
+	do -- setup icons, and text
+		self.Name = self:CreateFontString()
+		SUI:FormatFont(self.Name, 12, 'Player')
+		self.Name:SetSize(self:GetWidth(), 12)
+		self.Name:SetJustifyH(elements.Name.SetJustifyH)
+		self.Name:SetJustifyV(elements.Name.SetJustifyV)
+		self.Name:SetPoint(
+			elements.Name.position.anchor,
+			self,
+			elements.Name.position.anchor,
+			elements.Name.position.x,
+			elements.Name.position.y
+		)
+		self:Tag(self.Name, elements.Name.text)
 
-	-- 	self.Name = self:CreateFontString()
-	-- 	SUI:FormatFont(self.Name, 12, 'Player')
-	-- 	self.Name:SetSize(self:GetWidth(), 12)
-	-- 	self.Name:SetJustifyH('LEFT')
-	-- 	self.Name:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 0, -2)
-	-- 	self:Tag(self.Name, '[difficulty][smartlevel] [SUI_ColorClass][name]')
+		-- 	self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -2)
+		-- 	self.RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
+		-- 	self.RareElite:SetAlpha(.6)
+		-- 	self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)
+		-- 	self.RareElite:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', 0, 0)
 
-	-- 	self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -2)
-	-- 	self.RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
-	-- 	self.RareElite:SetAlpha(.6)
-	-- 	self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)
-	-- 	self.RareElite:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', 0, 0)
+		-- 	self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
+		-- 	self.LeaderIndicator:SetSize(12, 12)
+		-- 	self.LeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
 
-	-- 	self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
-	-- 	self.LeaderIndicator:SetSize(12, 12)
-	-- 	self.LeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
+		-- 	self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
+		-- 	self.SUI_RaidGroup:SetSize(12, 12)
+		-- 	self.SUI_RaidGroup:SetPoint('TOPLEFT', self, 'TOPLEFT')
+		-- 	self.SUI_RaidGroup:SetTexture(square)
+		-- 	self.SUI_RaidGroup:SetVertexColor(0, .8, .9, .9)
 
-	-- 	self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
-	-- 	self.SUI_RaidGroup:SetSize(12, 12)
-	-- 	self.SUI_RaidGroup:SetPoint('TOPLEFT', self, 'TOPLEFT')
-	-- 	self.SUI_RaidGroup:SetTexture(square)
-	-- 	self.SUI_RaidGroup:SetVertexColor(0, .8, .9, .9)
+		-- 	self.SUI_RaidGroup.Text = self:CreateFontString(nil, 'BORDER', 'SUI_Font10')
+		-- 	self.SUI_RaidGroup.Text:SetSize(12, 12)
+		-- 	self.SUI_RaidGroup.Text:SetJustifyH('CENTER')
+		-- 	self.SUI_RaidGroup.Text:SetJustifyV('MIDDLE')
+		-- 	self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 1)
+		-- 	self:Tag(self.SUI_RaidGroup.Text, '[group]')
 
-	-- 	self.SUI_RaidGroup.Text = self:CreateFontString(nil, 'BORDER', 'SUI_Font10')
-	-- 	self.SUI_RaidGroup.Text:SetSize(12, 12)
-	-- 	self.SUI_RaidGroup.Text:SetJustifyH('CENTER')
-	-- 	self.SUI_RaidGroup.Text:SetJustifyV('MIDDLE')
-	-- 	self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 1)
-	-- 	self:Tag(self.SUI_RaidGroup.Text, '[group]')
+		-- 	self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+		-- 	self.ReadyCheckIndicator:SetSize(30, 30)
+		-- 	self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
 
-	-- 	self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
-	-- 	self.ReadyCheckIndicator:SetSize(30, 30)
-	-- 	self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
+		-- 	self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
+		-- 	self.PvPIndicator:SetSize(25, 25)
+		-- 	self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
+		-- 	self.PvPIndicator.Override = pvpIconWar
 
-	-- 	self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
-	-- 	self.PvPIndicator:SetSize(25, 25)
-	-- 	self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
-	-- 	self.PvPIndicator.Override = pvpIconWar
+		-- 	self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
+		-- 	self.RestingIndicator:SetSize(20, 20)
+		-- 	self.RestingIndicator:SetPoint('CENTER', self, 'TOPLEFT')
+		-- 	self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
 
-	-- 	self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
-	-- 	self.RestingIndicator:SetSize(20, 20)
-	-- 	self.RestingIndicator:SetPoint('CENTER', self, 'TOPLEFT')
-	-- 	self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
+		-- 	self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
+		-- 	self.GroupRoleIndicator:SetSize(18, 18)
+		-- 	self.GroupRoleIndicator:SetPoint('CENTER', self, 'LEFT', 0, 0)
+		-- 	self.GroupRoleIndicator:SetTexture(lfdrole)
+		-- 	self.GroupRoleIndicator:SetAlpha(.75)
 
-	-- 	self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
-	-- 	self.GroupRoleIndicator:SetSize(18, 18)
-	-- 	self.GroupRoleIndicator:SetPoint('CENTER', self, 'LEFT', 0, 0)
-	-- 	self.GroupRoleIndicator:SetTexture(lfdrole)
-	-- 	self.GroupRoleIndicator:SetAlpha(.75)
+		-- 	self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
+		-- 	self.CombatIndicator:SetSize(20, 20)
+		-- 	self.CombatIndicator:SetPoint('CENTER', self.RestingIndicator, 'CENTER')
 
-	-- 	self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
-	-- 	self.CombatIndicator:SetSize(20, 20)
-	-- 	self.CombatIndicator:SetPoint('CENTER', self.RestingIndicator, 'CENTER')
+		-- 	if unit ~= 'player' then
+		-- 		self.SUI_ClassIcon = ring:CreateTexture(nil, 'BORDER')
+		-- 		self.SUI_ClassIcon:SetSize(20, 20)
+		-- 		self.SUI_ClassIcon:SetPoint('CENTER', self.RestingIndicator, 'CENTER', 0, 0)
 
-	-- 	if unit ~= 'player' then
-	-- 		self.SUI_ClassIcon = ring:CreateTexture(nil, 'BORDER')
-	-- 		self.SUI_ClassIcon:SetSize(20, 20)
-	-- 		self.SUI_ClassIcon:SetPoint('CENTER', self.RestingIndicator, 'CENTER', 0, 0)
+		-- 		self.RaidTargetIndicator = ring:CreateTexture(nil, 'ARTWORK')
+		-- 		self.RaidTargetIndicator:SetSize(20, 20)
+		-- 		self.RaidTargetIndicator:SetPoint('CENTER', self, 'BOTTOMLEFT', -27, 0)
+		-- 	end
 
-	-- 		self.RaidTargetIndicator = ring:CreateTexture(nil, 'ARTWORK')
-	-- 		self.RaidTargetIndicator:SetSize(20, 20)
-	-- 		self.RaidTargetIndicator:SetPoint('CENTER', self, 'BOTTOMLEFT', -27, 0)
-	-- 	end
+		-- 	self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
+		-- 	-- self.StatusText:SetPoint("CENTER",self,"CENTER");
+		-- 	self.StatusText:SetAllPoints(self.Portrait)
+		-- 	self.StatusText:SetJustifyH('CENTER')
+		-- 	self:Tag(self.StatusText, '[afkdnd]')
+		-- end
+		-- do -- Special Icons/Bars
+		-- 	if unit == 'player' then
+		-- 		local playerClass = select(2, UnitClass('player'))
+		-- 		--Runes
+		-- 		if playerClass == 'DEATHKNIGHT' then
+		-- 			self.Runes = CreateFrame('Frame', nil, self)
+		-- 			self.Runes.colorSpec = true
 
-	-- 	self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
-	-- 	-- self.StatusText:SetPoint("CENTER",self,"CENTER");
-	-- 	self.StatusText:SetAllPoints(self.Portrait)
-	-- 	self.StatusText:SetJustifyH('CENTER')
-	-- 	self:Tag(self.StatusText, '[afkdnd]')
-	-- end
-	-- do -- Special Icons/Bars
-	-- 	if unit == 'player' then
-	-- 		local playerClass = select(2, UnitClass('player'))
-	-- 		--Runes
-	-- 		if playerClass == 'DEATHKNIGHT' then
-	-- 			self.Runes = CreateFrame('Frame', nil, self)
-	-- 			self.Runes.colorSpec = true
+		-- 			for i = 1, 6 do
+		-- 				self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
+		-- 				self.Runes[i]:SetHeight(6)
+		-- 				self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
+		-- 				if (i == 1) then
+		-- 					self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
+		-- 				else
+		-- 					self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
+		-- 				end
+		-- 				self.Runes[i]:SetStatusBarTexture(Smoothv2)
+		-- 				self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
 
-	-- 			for i = 1, 6 do
-	-- 				self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
-	-- 				self.Runes[i]:SetHeight(6)
-	-- 				self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
-	-- 				if (i == 1) then
-	-- 					self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
-	-- 				else
-	-- 					self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
-	-- 				end
-	-- 				self.Runes[i]:SetStatusBarTexture(Smoothv2)
-	-- 				self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+		-- 				self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
+		-- 				self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
+		-- 				self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
+		-- 				self.Runes[i].bg:SetTexture(Smoothv2)
+		-- 				self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
+		-- 				self.Runes[i].bg.multiplier = 0.64
+		-- 				self.Runes[i]:Hide()
+		-- 			end
+		-- 		end
 
-	-- 				self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
-	-- 				self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
-	-- 				self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
-	-- 				self.Runes[i].bg:SetTexture(Smoothv2)
-	-- 				self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
-	-- 				self.Runes[i].bg.multiplier = 0.64
-	-- 				self.Runes[i]:Hide()
-	-- 			end
-	-- 		end
+		-- 		self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+		-- 		self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
+		-- 		local ClassPower = {}
+		-- 		for index = 1, 10 do
+		-- 			local Bar = CreateFrame('StatusBar', nil, self)
+		-- 			Bar:SetStatusBarTexture(Smoothv2)
 
-	-- 		self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
-	-- 		self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
-	-- 		local ClassPower = {}
-	-- 		for index = 1, 10 do
-	-- 			local Bar = CreateFrame('StatusBar', nil, self)
-	-- 			Bar:SetStatusBarTexture(Smoothv2)
+		-- 			-- Position and size.
+		-- 			Bar:SetSize(16, 5)
+		-- 			if (index == 1) then
+		-- 				Bar:SetPoint('LEFT', self.ComboPoints, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
+		-- 			else
+		-- 				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
+		-- 			end
+		-- 			ClassPower[index] = Bar
+		-- 		end
 
-	-- 			-- Position and size.
-	-- 			Bar:SetSize(16, 5)
-	-- 			if (index == 1) then
-	-- 				Bar:SetPoint('LEFT', self.ComboPoints, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
-	-- 			else
-	-- 				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
-	-- 			end
-	-- 			ClassPower[index] = Bar
-	-- 		end
+		-- 		-- Register with SUF
+		-- 		self.ClassPower = ClassPower
 
-	-- 		-- Register with SUF
-	-- 		self.ClassPower = ClassPower
+		-- 		-- Druid Mana
+		-- 		local DruidMana = CreateFrame('StatusBar', nil, self)
+		-- 		DruidMana:SetSize(self.Power:GetWidth(), 4)
+		-- 		DruidMana:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
+		-- 		DruidMana.colorPower = true
+		-- 		DruidMana:SetStatusBarTexture(Smoothv2)
+		-- 		local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
+		-- 		Background:SetAllPoints(DruidMana)
+		-- 		Background:SetTexture(1, 1, 1, .2)
+		-- 		self.AdditionalPower = DruidMana
+		-- 		self.AdditionalPower.bg = Background
 
-	-- 		-- Druid Mana
-	-- 		local DruidMana = CreateFrame('StatusBar', nil, self)
-	-- 		DruidMana:SetSize(self.Power:GetWidth(), 4)
-	-- 		DruidMana:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
-	-- 		DruidMana.colorPower = true
-	-- 		DruidMana:SetStatusBarTexture(Smoothv2)
-	-- 		local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-	-- 		Background:SetAllPoints(DruidMana)
-	-- 		Background:SetTexture(1, 1, 1, .2)
-	-- 		self.AdditionalPower = DruidMana
-	-- 		self.AdditionalPower.bg = Background
-
-	-- 		--Totem Bar
-	-- 		for index = 1, 4 do
-	-- 			_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
-	-- 			_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
-	-- 			_G['TotemFrameTotem' .. index]:SetScale(.8)
-	-- 		end
-	-- 		hooksecurefunc(
-	-- 			'TotemFrame_Update',
-	-- 			function()
-	-- 				TotemFrameTotem1:ClearAllPoints()
-	-- 				TotemFrameTotem1:SetParent(self)
-	-- 				TotemFrameTotem1:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 20, 0)
-	-- 			end
-	-- 		)
-	-- 	end
-	-- end
+		-- 		--Totem Bar
+		-- 		for index = 1, 4 do
+		-- 			_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+		-- 			_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+		-- 			_G['TotemFrameTotem' .. index]:SetScale(.8)
+		-- 		end
+		-- 		hooksecurefunc(
+		-- 			'TotemFrame_Update',
+		-- 			function()
+		-- 				TotemFrameTotem1:ClearAllPoints()
+		-- 				TotemFrameTotem1:SetParent(self)
+		-- 				TotemFrameTotem1:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 20, 0)
+		-- 			end
+		-- 		)
+		-- 	end
+	end
 	-- do -- setup buffs and debuffs
 	-- 	self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 	-- 	self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())

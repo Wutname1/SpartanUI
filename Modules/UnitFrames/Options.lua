@@ -758,6 +758,12 @@ local function AddDynamicText(frameName, element, count)
 					--Update the DB
 					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].enabled =
 						val
+					--Update the screen
+					if val then
+						module.frames[frameName][element].TextElements[count]:Show()
+					else
+						module.frames[frameName][element].TextElements[count]:Hide()
+					end
 				end
 			},
 			text = {
@@ -773,47 +779,102 @@ local function AddDynamicText(frameName, element, count)
 					module.CurrentSettings[frameName].elements[element].text[count].text = val
 					--Update the DB
 					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].text = val
+					--Update the screen
+					module.frames[frameName]:Tag(module.frames[frameName][element].TextElements[count], val)
+					module.frames[frameName]:UpdateTags()
 				end
 			},
-			JustifyH = {
-				name = 'Horizontal alignment',
-				type = 'select',
-				order = 3,
-				values = {
-					['LEFT'] = 'Left',
-					['CENTER'] = 'Center',
-					['RIGHT'] = 'Right'
-				},
-				get = function(info)
-					return module.CurrentSettings[frameName].elements[element].text[count].SetJustifyH
-				end,
-				set = function(info, val)
-					--Update memory
-					module.CurrentSettings[frameName].elements[element].text[count].SetJustifyH = val
-					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].SetJustifyH =
-						val
-				end
-			},
-			JustifyV = {
-				name = 'Vertical alignment',
-				type = 'select',
-				order = 4,
-				values = {
-					['TOP'] = 'Top',
-					['MIDDLE'] = 'Middle',
-					['BOTTOM'] = 'Bottom'
-				},
-				get = function(info)
-					return module.CurrentSettings[frameName].elements[element].text[count].SetJustifyV
-				end,
-				set = function(info, val)
-					--Update memory
-					module.CurrentSettings[frameName].elements[element].text[count].SetJustifyV = val
-					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].SetJustifyV =
-						val
-				end
+			position = {
+				name = 'Position',
+				type = 'group',
+				order = 50,
+				inline = true,
+				args = {
+					x = {
+						name = 'X Axis',
+						type = 'range',
+						order = 1,
+						min = -60,
+						max = 60,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements[element].text[count].position.x
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements[element].text[count].position.x = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].position.x =
+								val
+							--Update the screen
+							local position = module.CurrentSettings[frameName].elements[element].text[count].position
+							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
+							module.frames[frameName][element].TextElements[count]:SetPoint(
+								position.anchor,
+								module.frames[frameName],
+								position.anchor,
+								position.x,
+								position.y
+							)
+						end
+					},
+					y = {
+						name = 'Y Axis',
+						desc = 'desc',
+						type = 'range',
+						order = 2,
+						min = -60,
+						max = 60,
+						step = 1,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements[element].text[count].position.y
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements[element].text[count].position.y = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].position.y =
+								val
+							--Update the screen
+							local position = module.CurrentSettings[frameName].elements[element].text[count].position
+							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
+							module.frames[frameName][element].TextElements[count]:SetPoint(
+								position.anchor,
+								module.frames[frameName],
+								position.anchor,
+								position.x,
+								position.y
+							)
+						end
+					},
+					anchor = {
+						name = 'Anchor point',
+						desc = 'desc',
+						type = 'select',
+						order = 3,
+						values = anchorPoints,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements[element].text[count].position.anchor
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements[element].text[count].position.anchor = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].position.anchor =
+								val
+							--Update the screen
+							local position = module.CurrentSettings[frameName].elements[element].text[count].position
+							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
+							module.frames[frameName][element].TextElements[count]:SetPoint(
+								position.anchor,
+								module.frames[frameName],
+								position.anchor,
+								position.x,
+								position.y
+							)
+						end
+					}
+				}
 			}
 		}
 	}
@@ -881,6 +942,12 @@ local function AddTextOptions(frameName)
 					module.CurrentSettings[frameName].elements.Name.enabled = val
 					--Update the DB
 					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.enabled = val
+					--Update the screen
+					if val then
+						module.frames[frameName].Name:Show()
+					else
+						module.frames[frameName].Name:Hide()
+					end
 				end
 			},
 			Text = {
@@ -902,6 +969,9 @@ local function AddTextOptions(frameName)
 							module.CurrentSettings[frameName].elements.Name.text = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.text = val
+							--Update the screen
+							module.frames[frameName]:Tag(module.frames[frameName].Name, val)
+							module.frames[frameName]:UpdateTags()
 						end
 					},
 					JustifyH = {
@@ -921,6 +991,8 @@ local function AddTextOptions(frameName)
 							module.CurrentSettings[frameName].elements.Name.SetJustifyH = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.SetJustifyH = val
+							--Update the screen
+							module.frames[frameName].Name:SetJustifyH(val)
 						end
 					},
 					JustifyV = {
@@ -940,6 +1012,8 @@ local function AddTextOptions(frameName)
 							module.CurrentSettings[frameName].elements.Name.SetJustifyV = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.SetJustifyV = val
+							--Update the screen
+							module.frames[frameName].Name:SetJustifyV(val)
 						end
 					}
 				}
@@ -965,6 +1039,15 @@ local function AddTextOptions(frameName)
 							module.CurrentSettings[frameName].elements.Name.position.x = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.x = val
+							--Update the screen
+							module.frames[frameName].Name:ClearAllPoints()
+							module.frames[frameName].Name:SetPoint(
+								module.CurrentSettings[frameName].elements.Name.position.anchor,
+								module.frames[frameName],
+								module.CurrentSettings[frameName].elements.Name.position.anchor,
+								module.CurrentSettings[frameName].elements.Name.position.x,
+								module.CurrentSettings[frameName].elements.Name.position.y
+							)
 						end
 					},
 					y = {
@@ -983,6 +1066,15 @@ local function AddTextOptions(frameName)
 							module.CurrentSettings[frameName].elements.Name.position.y = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.y = val
+							--Update the screen
+							module.frames[frameName].Name:ClearAllPoints()
+							module.frames[frameName].Name:SetPoint(
+								module.CurrentSettings[frameName].elements.Name.position.anchor,
+								module.frames[frameName],
+								module.CurrentSettings[frameName].elements.Name.position.anchor,
+								module.CurrentSettings[frameName].elements.Name.position.x,
+								module.CurrentSettings[frameName].elements.Name.position.y
+							)
 						end
 					},
 					anchor = {
@@ -999,6 +1091,15 @@ local function AddTextOptions(frameName)
 							module.CurrentSettings[frameName].elements.Name.position.anchor = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.anchor = val
+							--Update the screen
+							module.frames[frameName].Name:ClearAllPoints()
+							module.frames[frameName].Name:SetPoint(
+								module.CurrentSettings[frameName].elements.Name.position.anchor,
+								module.frames[frameName],
+								module.CurrentSettings[frameName].elements.Name.position.anchor,
+								module.CurrentSettings[frameName].elements.Name.position.x,
+								module.CurrentSettings[frameName].elements.Name.position.y
+							)
 						end
 					}
 				}

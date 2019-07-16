@@ -36,28 +36,6 @@ SUI.opt = {
 }
 
 ---------------		Database		-------------------------------
-
-local MovedDefault = {moved = false, point = '', relativeTo = nil, relativePoint = '', xOffset = 0, yOffset = 0}
-local frameDefault1 = {
-	movement = MovedDefault,
-	AuraDisplay = true,
-	display = true,
-	Debuffs = 'all',
-	buffs = 'all',
-	style = 'large',
-	moved = false,
-	Anchors = {}
-}
-local frameDefault2 = {
-	AuraDisplay = true,
-	display = true,
-	Debuffs = 'all',
-	buffs = 'all',
-	style = 'medium',
-	moved = false,
-	Anchors = {}
-}
-
 local DBdefault = {
 	SUIProper = {
 		Version = '0',
@@ -521,7 +499,7 @@ local DBdefault = {
 					enabled = false,
 					width = 180,
 					moved = false,
-					anchor = {
+					position = {
 						point = 'BOTTOM',
 						relativePoint = 'BOTTOM',
 						xOfs = 0,
@@ -930,48 +908,80 @@ local DBdefault = {
 						elements = {
 							Portrait = {},
 							Health = {
-								points = {},
-								Text = {}
+								text = {
+									['1'] = {
+										position = {}
+									},
+									['2'] = {
+										position = {}
+									}
+								}
 							},
 							HealthPrediction = {},
 							Power = {
-								points = {},
-								Text = {}
+								position = {},
+								text = {
+									['1'] = {
+										position = {}
+									},
+									['2'] = {
+										position = {}
+									}
+								}
 							},
 							Castbar = {
-								points = {},
-								Text = {}
+								position = {},
+								text = {
+									['1'] = {
+										position = {}
+									},
+									['2'] = {
+										position = {}
+									}
+								}
 							},
 							Name = {
-								points = {}
+								position = {}
 							},
 							LeaderIndicator = {
-								points = {}
+								position = {}
 							},
 							RestingIndicator = {
-								points = {}
+								position = {}
 							},
 							GroupRoleIndicator = {
-								points = {}
+								position = {}
 							},
 							CombatIndicator = {
-								points = {}
+								position = {}
 							},
 							RaidTargetIndicator = {
-								points = {}
+								position = {}
 							},
 							SUI_ClassIcon = {
-								points = {}
+								position = {}
 							},
 							ReadyCheckIndicator = {
-								points = {}
+								position = {}
 							},
 							PvPIndicator = {
-								points = {}
+								position = {}
 							},
 							StatusText = {
-								points = {}
-							}
+								position = {}
+							},
+							Runes = {},
+							Stagger = {},
+							Totems = {},
+							AssistantIndicator = {},
+							RaidRoleIndicator = {},
+							ResurrectIndicator = {},
+							SummonIndicator = {},
+							QuestIndicator = {},
+							Range = {},
+							phaseindicator = {},
+							ThreatIndicator = {},
+							SUI_RaidGroup = {}
 						},
 						font = {
 							mana = {},
@@ -1072,7 +1082,6 @@ local DBdefault = {
 }
 
 local DBdefaults = {char = DBdefault, profile = DBdefault}
--- local SUI.DBGs = {Version = SUI.Version}
 
 function SUI:ResetConfig()
 	SUI.DB:ResetProfile(false, true)
