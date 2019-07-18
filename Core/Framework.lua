@@ -546,8 +546,10 @@ local DBdefault = {
 							bgTexture = false,
 							points = false,
 							alpha = 1,
-							width = 15,
-							height = 15,
+							width = 20,
+							height = 20,
+							size = 20,
+							scale = 1,
 							text = {
 								['**'] = {
 									enabled = false,
@@ -650,26 +652,24 @@ local DBdefault = {
 						},
 						LeaderIndicator = {
 							enabled = true,
-							height = 12,
-							width = 12,
+							size = 12,
 							position = {
-								anchor = 'RIGHT',
+								anchor = 'TOP',
 								x = 0,
-								y = 0
+								y = 6
 							}
 						},
 						RestingIndicator = {
 							enabled = true,
-							height = 20,
-							width = 20,
-							points = {
-								{point = 'CENTER', relativePoint = 'frame', relativeTo = 'LEFT'}
+							position = {
+								anchor = 'TOPLEFT',
+								x = 0,
+								y = 0
 							}
 						},
 						GroupRoleIndicator = {
 							enabled = true,
-							height = 18,
-							width = 18,
+							size = 18,
 							alpha = .75,
 							position = {
 								anchor = 'TOPRIGHT',
@@ -679,8 +679,6 @@ local DBdefault = {
 						},
 						CombatIndicator = {
 							enabled = true,
-							height = 20,
-							width = 20,
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 10,
@@ -709,10 +707,9 @@ local DBdefault = {
 						},
 						ReadyCheckIndicator = {
 							enabled = true,
-							width = 25,
-							height = 25,
+							size = 35,
 							position = {
-								anchor = 'CENTER',
+								anchor = 'LEFT',
 								x = 0,
 								y = 0
 							}

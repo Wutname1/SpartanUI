@@ -370,9 +370,17 @@ local function CreateUnitFrame(self, unit)
 		-- 	self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)
 		-- 	self.RareElite:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', 0, 0)
 
-		-- 	self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
-		-- 	self.LeaderIndicator:SetSize(12, 12)
-		-- 	self.LeaderIndicator:SetPoint('RIGHT', self.Name, 'LEFT')
+		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
+		self.LeaderIndicator:SetSize(elements.LeaderIndicator.size, elements.LeaderIndicator.size)
+		self.LeaderIndicator:SetAlpha(elements.LeaderIndicator.alpha)
+		self.LeaderIndicator:SetScale(elements.LeaderIndicator.scale)
+		self.LeaderIndicator:SetPoint(
+			elements.LeaderIndicator.position.anchor,
+			self,
+			elements.LeaderIndicator.position.anchor,
+			elements.LeaderIndicator.position.x,
+			elements.LeaderIndicator.position.y
+		)
 
 		-- 	self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
 		-- 	self.SUI_RaidGroup:SetSize(12, 12)
@@ -387,29 +395,71 @@ local function CreateUnitFrame(self, unit)
 		-- 	self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 1)
 		-- 	self:Tag(self.SUI_RaidGroup.Text, '[group]')
 
-		-- 	self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
-		-- 	self.ReadyCheckIndicator:SetSize(30, 30)
-		-- 	self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
+		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
+		self.ReadyCheckIndicator:SetSize(elements.ReadyCheckIndicator.size, elements.ReadyCheckIndicator.size)
+		self.ReadyCheckIndicator:SetAlpha(elements.ReadyCheckIndicator.alpha)
+		self.ReadyCheckIndicator:SetScale(elements.ReadyCheckIndicator.scale)
+		self.ReadyCheckIndicator:SetPoint(
+			elements.ReadyCheckIndicator.position.anchor,
+			self,
+			elements.ReadyCheckIndicator.position.anchor,
+			elements.ReadyCheckIndicator.position.x,
+			elements.ReadyCheckIndicator.position.y
+		)
 
 		-- 	self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
 		-- 	self.PvPIndicator:SetSize(25, 25)
 		-- 	self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
 		-- 	self.PvPIndicator.Override = pvpIconWar
 
-		-- 	self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
-		-- 	self.RestingIndicator:SetSize(20, 20)
-		-- 	self.RestingIndicator:SetPoint('CENTER', self, 'TOPLEFT')
-		-- 	self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
+		self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
+		self.RestingIndicator:SetSize(elements.RestingIndicator.size, elements.RestingIndicator.size)
+		self.RestingIndicator:SetAlpha(elements.RestingIndicator.alpha)
+		self.RestingIndicator:SetScale(elements.RestingIndicator.scale)
+		self.RestingIndicator:SetPoint(
+			elements.RestingIndicator.position.anchor,
+			self,
+			elements.RestingIndicator.position.anchor,
+			elements.RestingIndicator.position.x,
+			elements.RestingIndicator.position.y
+		)
+		self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
 
-		-- 	self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
-		-- 	self.GroupRoleIndicator:SetSize(18, 18)
-		-- 	self.GroupRoleIndicator:SetPoint('CENTER', self, 'LEFT', 0, 0)
-		-- 	self.GroupRoleIndicator:SetTexture(lfdrole)
-		-- 	self.GroupRoleIndicator:SetAlpha(.75)
+		self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
+		self.GroupRoleIndicator:SetSize(elements.GroupRoleIndicator.size, elements.GroupRoleIndicator.size)
+		self.GroupRoleIndicator:SetAlpha(elements.GroupRoleIndicator.alpha)
+		self.GroupRoleIndicator:SetScale(elements.GroupRoleIndicator.scale)
+		self.GroupRoleIndicator:SetPoint(
+			elements.GroupRoleIndicator.position.anchor,
+			self,
+			elements.GroupRoleIndicator.position.anchor,
+			elements.GroupRoleIndicator.position.x,
+			elements.GroupRoleIndicator.position.y
+		)
+		self.GroupRoleIndicator:SetPoint('CENTER', self, 'LEFT', 0, 0)
+		self.GroupRoleIndicator:SetTexture(lfdrole)
+		self.GroupRoleIndicator:SetSize(elements.GroupRoleIndicator.size, elements.GroupRoleIndicator.size)
+		self.GroupRoleIndicator:SetAlpha(elements.GroupRoleIndicator.alpha)
+		self.GroupRoleIndicator:SetScale(elements.GroupRoleIndicator.scale)
+		self.GroupRoleIndicator:SetPoint(
+			elements.GroupRoleIndicator.position.anchor,
+			self,
+			elements.GroupRoleIndicator.position.anchor,
+			elements.GroupRoleIndicator.position.x,
+			elements.GroupRoleIndicator.position.y
+		)
 
-		-- 	self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
-		-- 	self.CombatIndicator:SetSize(20, 20)
-		-- 	self.CombatIndicator:SetPoint('CENTER', self.RestingIndicator, 'CENTER')
+		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
+		self.CombatIndicator:SetSize(elements.CombatIndicator.size, elements.CombatIndicator.size)
+		self.CombatIndicator:SetAlpha(elements.CombatIndicator.alpha)
+		self.CombatIndicator:SetScale(elements.CombatIndicator.scale)
+		self.CombatIndicator:SetPoint(
+			elements.CombatIndicator.position.anchor,
+			self,
+			elements.CombatIndicator.position.anchor,
+			elements.CombatIndicator.position.x,
+			elements.CombatIndicator.position.y
+		)
 
 		-- 	if unit ~= 'player' then
 		-- 		self.SUI_ClassIcon = ring:CreateTexture(nil, 'BORDER')
