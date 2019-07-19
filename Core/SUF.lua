@@ -185,15 +185,29 @@ function addon:PlayerPowerIcons(frame, attachPoint)
 end
 
 do -- ClassIcon as an SUIUF module
+	local ClassIconCoord = {
+		WARRIOR = {0.00, 0.25, 0.00, 0.25},
+		MAGE = {0.25, 0.50, 0.00, 0.25},
+		ROGUE = {0.50, 0.75, 0.00, 0.25},
+		DRUID = {0.75, 1.00, 0.00, 0.25},
+		HUNTER = {0.00, 0.25, 0.25, 0.50},
+		SHAMAN = {0.25, 0.50, 0.25, 0.50},
+		PRIEST = {0.50, 0.75, 0.25, 0.50},
+		WARLOCK = {0.75, 1.00, 0.25, 0.50},
+		PALADIN = {0.00, 0.25, 0.50, 0.75},
+		DEATHKNIGHT = {0.25, 0.50, 0.50, 0.75},
+		MONK = {0.50, 0.75, 0.50, 0.75},
+		DEMONHUNTER = {0.75, 1.00, 0.50, 0.75},
+		DEFAULT = {0.75, 1.00, 0.75, 1.00}
+	}
 	local Update = function(self, event, unit)
 		local icon = self.SUI_ClassIcon
 		if (icon) then
 			local _, class = UnitClass(self.unit)
 			if class then
-				-- local coords = ClassIconCoord[class or "DEFAULT"];
-				-- icon:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
-				local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class))
-				icon:SetTexture(path)
+				-- local coords = ClassIconCoord[class or 'DEFAULT']
+				-- icon:SetTexCoord(coords[1], coords[2], coords[3], coords[4])
+				icon:SetTexture('Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class)))
 				icon:Show()
 				if icon.shadow then
 					icon.shadow:SetTexture(path)
@@ -205,13 +219,18 @@ do -- ClassIcon as an SUIUF module
 			end
 		end
 	end
+	local function ForceUpdate(element)
+		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	end
 	local Enable = function(self)
 		local icon = self.SUI_ClassIcon
 		if (icon) then
+			icon.__owner = self
+			icon.ForceUpdate = ForceUpdate
 			--self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
 			self:RegisterEvent('UNIT_PET', Update, true)
-			icon:SetTexture('Interface\\AddOns\\SpartanUI\\images\\icon_class')
+			-- icon:SetTexture('Interface\\AddOns\\SpartanUI\\images\\ClassIcons\\Transparent')
 			if icon.shadow == nil then
 				icon.shadow = self:CreateTexture(nil, 'BACKGROUND')
 				icon.shadow:SetSize(icon:GetSize())
@@ -227,6 +246,7 @@ do -- ClassIcon as an SUIUF module
 			--self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 			self:UnregisterEvent('UNIT_PET', Update)
+			self.SUI_ClassIcon:Hide()
 		end
 	end
 	SUIUF:AddElement('SUI_ClassIcon', Update, Enable, Disable)
@@ -245,9 +265,14 @@ do -- TargetIndicator as an SUIUF module
 			end
 		end
 	end
+	local function ForceUpdate(element)
+		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	end
 	local Enable = function(self)
 		local icon = self.TargetIndicator
 		if (icon) then
+			icon.__owner = self
+			icon.ForceUpdate = ForceUpdate
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
 		end
 	end
@@ -255,9 +280,129 @@ do -- TargetIndicator as an SUIUF module
 		local icon = self.TargetIndicator
 		if (icon) then
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
+			icon:Hide()
 		end
 	end
 	SUIUF:AddElement('TargetIndicator', Update, Enable, Disable)
+end
+
+do -- Boss graphic as an SUIUF module
+	local Update = function(self, event, unit)
+		if (self.unit ~= unit) then
+			return
+		end
+		if (not self.BossGraphic) then
+			return
+		end
+		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\elite_rare')
+		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
+		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
+	end
+	local function ForceUpdate(element)
+		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	end
+	local Enable = function(self)
+		if (self.BossGraphic) then
+			self.BossGraphic.__owner = self
+			self.BossGraphic.ForceUpdate = ForceUpdate
+			return true
+		end
+	end
+	local Disable = function(self)
+		if (self.BossGraphic) then
+			self.BossGraphic:Hide()
+		end
+		return
+	end
+	SUIUF:AddElement('BossGraphic', Update, Enable, Disable)
+end
+
+do -- Level Skull as an SUIUF module
+	local Update = function(self, event, unit)
+		if (self.unit ~= unit) then
+			return
+		end
+		if (not self.LevelSkull) then
+			return
+		end
+		local level = UnitLevel(unit)
+		self.LevelSkull:SetTexture('Interface\\TargetingFrame\\UI-TargetingFrame-Skull')
+		if level < 0 then
+			self.LevelSkull:SetTexCoord(0, 1, 0, 1)
+			if self.Level then
+				self.Level:SetText ''
+			end
+		else
+			self.LevelSkull:SetTexCoord(0, 0.01, 0, 0.01)
+		end
+	end
+	local function ForceUpdate(element)
+		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	end
+	local Enable = function(self)
+		if (self.LevelSkull) then
+			self.LevelSkull.__owner = self
+			self.LevelSkull.ForceUpdate = ForceUpdate
+			return true
+		end
+	end
+	local Disable = function(self)
+		if (self.LevelSkull) then
+			self.LevelSkull:Hide()
+		end
+		return
+	end
+	SUIUF:AddElement('LevelSkull', Update, Enable, Disable)
+end
+
+do -- Rare / Elite dragon graphic as an SUIUF module
+	local Update = function(self, event, unit)
+		if (self.unit ~= unit) then
+			return
+		end
+		if (not self.RareElite) then
+			return
+		end
+		local c = UnitClassification(unit)
+
+		if (self.RareElite:IsObjectType 'Texture' and not self.RareElite:GetTexture()) then
+			self.RareElite:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\elite_rare')
+			self.RareElite:SetTexCoord(0, 1, 0, 1)
+			self.RareElite:SetAlpha(.75)
+			if self.RareElite.short == true then
+				self.RareElite:SetTexCoord(0, 1, 0, .7)
+			end
+			if self.RareElite.small == true then
+				self.RareElite:SetTexCoord(0, 1, 0, .4)
+			end
+		end
+		self.RareElite:Show()
+		if c == 'worldboss' or c == 'elite' or c == 'rareelite' then
+			self.RareElite:SetVertexColor(1, 0.9, 0)
+		elseif c == 'rare' then
+			self.RareElite:SetVertexColor(1, 1, 1)
+		else
+			self.RareElite:Hide()
+		end
+	end
+	local function ForceUpdate(element)
+		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	end
+	local Enable = function(self)
+		if (self.RareElite) then
+			self.RareElite.__owner = self
+			self.RareElite.ForceUpdate = ForceUpdate
+			return true
+		end
+	end
+
+	local Disable = function(self)
+		if (self.RareElite) then
+			self.RareElite:Hide()
+		end
+		return
+	end
+	SUIUF:AddElement('RareElite', Update, Enable, Disable)
 end
 
 do -- SUI_RaidGroup as an SUIUF module
@@ -279,6 +424,7 @@ do -- SUI_RaidGroup as an SUIUF module
 	local Disable = function(self)
 		if (self.SUI_RaidGroup) then
 			self:UnregisterEvent('GROUP_ROSTER_UPDATE', Update)
+			self.SUI_RaidGroup:Hide()
 		end
 	end
 	SUIUF:AddElement('SUI_RaidGroup', Update, Enable, Disable)
@@ -291,29 +437,6 @@ do -- AFK / DND status text, as an SUIUF module
 			return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
 		end
 	end
-end
-
-do -- Boss graphic as an SUIUF module
-	local Update = function(self, event, unit)
-		if (self.unit ~= unit) then
-			return
-		end
-		if (not self.BossGraphic) then
-			return
-		end
-		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\elite_rare')
-		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
-		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
-	end
-	local Enable = function(self)
-		if (self.BossGraphic) then
-			return true
-		end
-	end
-	local Disable = function(self)
-		return
-	end
-	SUIUF:AddElement('BossGraphic', Update, Enable, Disable)
 end
 
 do --Health Formatting Tags
@@ -462,75 +585,4 @@ do --Color name by Class
 			return hex(1, 1, 1)
 		end
 	end
-end
-
-do -- Level Skull as an SUIUF module
-	local Update = function(self, event, unit)
-		if (self.unit ~= unit) then
-			return
-		end
-		if (not self.LevelSkull) then
-			return
-		end
-		local level = UnitLevel(unit)
-		self.LevelSkull:SetTexture('Interface\\TargetingFrame\\UI-TargetingFrame-Skull')
-		if level < 0 then
-			self.LevelSkull:SetTexCoord(0, 1, 0, 1)
-			if self.Level then
-				self.Level:SetText ''
-			end
-		else
-			self.LevelSkull:SetTexCoord(0, 0.01, 0, 0.01)
-		end
-	end
-	local Enable = function(self)
-		if (self.LevelSkull) then
-			return true
-		end
-	end
-	local Disable = function(self)
-		return
-	end
-	SUIUF:AddElement('LevelSkull', Update, Enable, Disable)
-end
-
-do -- Rare / Elite dragon graphic as an SUIUF module
-	local Update = function(self, event, unit)
-		if (self.unit ~= unit) then
-			return
-		end
-		if (not self.RareElite) then
-			return
-		end
-		local c = UnitClassification(unit)
-
-		if (self.RareElite:IsObjectType 'Texture' and not self.RareElite:GetTexture()) then
-			self.RareElite:SetTexture('Interface\\AddOns\\SpartanUI_UnitFrames\\images\\elite_rare')
-			self.RareElite:SetTexCoord(0, 1, 0, 1)
-			self.RareElite:SetAlpha(.75)
-			if self.RareElite.short == true then
-				self.RareElite:SetTexCoord(0, 1, 0, .7)
-			end
-			if self.RareElite.small == true then
-				self.RareElite:SetTexCoord(0, 1, 0, .4)
-			end
-		end
-		self.RareElite:Show()
-		if c == 'worldboss' or c == 'elite' or c == 'rareelite' then
-			self.RareElite:SetVertexColor(1, 0.9, 0)
-		elseif c == 'rare' then
-			self.RareElite:SetVertexColor(1, 1, 1)
-		else
-			self.RareElite:Hide()
-		end
-	end
-	local Enable = function(self)
-		if (self.RareElite) then
-			return true
-		end
-	end
-	local Disable = function(self)
-		return
-	end
-	SUIUF:AddElement('RareElite', Update, Enable, Disable)
 end
