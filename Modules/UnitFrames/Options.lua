@@ -12,6 +12,53 @@ local anchorPoints = {
 	['BOTTOM'] = 'BOTTOM',
 	['BOTTOMRIGHT'] = 'BOTTOMRIGHT'
 }
+local elementList = {
+	'Portrait',
+	'Health',
+	'HealthPrediction',
+	'Power',
+	'Castbar',
+	'Name',
+	'LeaderIndicator',
+	'RestingIndicator',
+	'GroupRoleIndicator',
+	'CombatIndicator',
+	'RaidTargetIndicator',
+	'SUI_ClassIcon',
+	'ReadyCheckIndicator',
+	'PvPIndicator',
+	'StatusText',
+	'Runes',
+	'Stagger',
+	'Totems',
+	'AssistantIndicator',
+	'RaidRoleIndicator',
+	'ResurrectIndicator',
+	'SummonIndicator',
+	'QuestIndicator',
+	'Range',
+	'phaseindicator',
+	'ThreatIndicator',
+	'SUI_RaidGroup'
+}
+local IndicatorList = {
+	'LeaderIndicator',
+	'RestingIndicator',
+	'GroupRoleIndicator',
+	'CombatIndicator',
+	'RaidTargetIndicator',
+	'SUI_ClassIcon',
+	'ReadyCheckIndicator',
+	'PvPIndicator',
+	'AssistantIndicator',
+	'RaidRoleIndicator',
+	'ResurrectIndicator',
+	'SummonIndicator',
+	'QuestIndicator',
+	'phaseindicator',
+	'ThreatIndicator',
+	'SUI_RaidGroup'
+}
 ----------------------------------------------------------------------------------------------------
 
 local function CreateOptionSet(frameName, order)
@@ -88,6 +135,7 @@ local function AddGeneralOptions(frameName)
 							--Update the screen
 							if val then
 								module.frames[frameName]:EnableElement('Range')
+								module.frames[frameName].Range:ForceUpdate()
 							else
 								module.frames[frameName]:DisableElement('Range')
 							end
@@ -112,6 +160,7 @@ local function AddGeneralOptions(frameName)
 							--Update the screen
 							if val then
 								module.frames[frameName]:EnableElement('Portrait')
+								module.frames[frameName].Portrait:ForceUpdate()
 							else
 								module.frames[frameName]:DisableElement('Portrait')
 							end
@@ -654,17 +703,84 @@ local function AddIndicatorOptions(frameName)
 						return module.CurrentSettings[frameName].elements[key].enabled
 					end,
 					set = function(info, val)
-						--Update the screen
-						if val then
-							module.frames[frameName]:EnableElement(key)
-						else
-							module.frames[frameName]:DisableElement(key)
-						end
 						--Update memory
 						module.CurrentSettings[frameName].elements[key].enabled = val
 						--Update the DB
 						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
+						--Update the screen
+						if val then
+							module.frames[frameName]:EnableElement(key)
+							module.frames[frameName][key]:ForceUpdate()
+						else
+							module.frames[frameName]:DisableElement(key)
+							module.frames[frameName][key]:Hide()
+						end
 					end
+				},
+				display = {
+					name = 'Display',
+					type = 'group',
+					order = 20,
+					inline = true,
+					args = {
+						size = {
+							name = 'Size',
+							type = 'range',
+							min = 0,
+							max = 100,
+							step = .1,
+							order = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].size
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].size = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].size = val
+								--Update Screen
+								module.frames[frameName][key]:SetSize(val, val)
+							end
+						},
+						scale = {
+							name = 'Scale',
+							type = 'range',
+							min = 0,
+							max = 30,
+							step = .01,
+							order = 2,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].scale
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].scale = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].scale = val
+								--Update Screen
+								module.frames[frameName]:ElementUpdate(key)
+							end
+						},
+						alpha = {
+							name = 'Alpha',
+							type = 'range',
+							min = 0,
+							max = 1,
+							step = .01,
+							order = 3,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].alpha
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].alpha = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].alpha = val
+								--Update Screen
+								module.frames[frameName]:ElementUpdate(key)
+							end
+						}
+					}
 				},
 				position = {
 					name = 'Position',
@@ -676,8 +792,8 @@ local function AddIndicatorOptions(frameName)
 							name = 'X Axis',
 							type = 'range',
 							order = 1,
-							min = -60,
-							max = 60,
+							min = -100,
+							max = 100,
 							step = 1,
 							get = function(info)
 								return module.CurrentSettings[frameName].elements[key].position.x
@@ -687,15 +803,16 @@ local function AddIndicatorOptions(frameName)
 								module.CurrentSettings[frameName].elements[key].position.x = val
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.x = val
+								--Update Screen
+								module.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						y = {
 							name = 'Y Axis',
-							desc = 'desc',
 							type = 'range',
 							order = 2,
-							min = -60,
-							max = 60,
+							min = -100,
+							max = 100,
 							step = 1,
 							get = function(info)
 								return module.CurrentSettings[frameName].elements[key].position.y
@@ -705,11 +822,12 @@ local function AddIndicatorOptions(frameName)
 								module.CurrentSettings[frameName].elements[key].position.y = val
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.y = val
+								--Update Screen
+								module.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						anchor = {
 							name = 'Anchor point',
-							desc = 'desc',
 							type = 'select',
 							order = 3,
 							values = anchorPoints,
@@ -721,6 +839,8 @@ local function AddIndicatorOptions(frameName)
 								module.CurrentSettings[frameName].elements[key].position.anchor = val
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.anchor = val
+								--Update Screen
+								module.frames[frameName]:ElementUpdate(key)
 							end
 						}
 					}
@@ -746,7 +866,6 @@ local function AddDynamicText(frameName, element, count)
 		args = {
 			enabled = {
 				name = L['Enabled'],
-				desc = 'desc',
 				type = 'toggle',
 				order = 1,
 				get = function(info)
@@ -794,8 +913,8 @@ local function AddDynamicText(frameName, element, count)
 						name = 'X Axis',
 						type = 'range',
 						order = 1,
-						min = -60,
-						max = 60,
+						min = -100,
+						max = 100,
 						step = 1,
 						get = function(info)
 							return module.CurrentSettings[frameName].elements[element].text[count].position.x
@@ -820,11 +939,10 @@ local function AddDynamicText(frameName, element, count)
 					},
 					y = {
 						name = 'Y Axis',
-						desc = 'desc',
 						type = 'range',
 						order = 2,
-						min = -60,
-						max = 60,
+						min = -100,
+						max = 100,
 						step = 1,
 						get = function(info)
 							return module.CurrentSettings[frameName].elements[element].text[count].position.y
@@ -849,7 +967,6 @@ local function AddDynamicText(frameName, element, count)
 					},
 					anchor = {
 						name = 'Anchor point',
-						desc = 'desc',
 						type = 'select',
 						order = 3,
 						values = anchorPoints,
@@ -888,7 +1005,6 @@ local function AddTextOptions(frameName)
 		args = {
 			enabled = {
 				name = L['Enabled'],
-				desc = 'desc',
 				type = 'toggle',
 				order = 1,
 				get = function(info)
@@ -924,188 +1040,172 @@ local function AddTextOptions(frameName)
 		AddDynamicText(frameName, 'Power', i)
 	end
 
-	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Name'] = {
-		name = 'Name',
-		type = 'group',
-		order = 1,
-		args = {
-			enabled = {
-				name = L['Enabled'],
-				desc = 'desc',
-				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return module.CurrentSettings[frameName].elements.Name.enabled
-				end,
-				set = function(info, val)
-					--Update memory
-					module.CurrentSettings[frameName].elements.Name.enabled = val
-					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.enabled = val
-					--Update the screen
-					if val then
-						module.frames[frameName].Name:Show()
-					else
-						module.frames[frameName].Name:Hide()
+	local StringElements = {
+		['SUI_RaidGroup'] = 'Raid group',
+		['Name'] = 'Name',
+		['StatusText'] = 'Player status'
+	}
+
+	for key, name in pairs(StringElements) do
+		SUI.opt.args['UnitFrames'].args[frameName].args['text'].args[key] = {
+			name = name,
+			type = 'group',
+			order = 1,
+			args = {
+				enabled = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].elements[key].enabled
+					end,
+					set = function(info, val)
+						--Update memory
+						module.CurrentSettings[frameName].elements[key].enabled = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
+						--Update the screen
+						if val then
+							module.frames[frameName][key]:Show()
+						else
+							module.frames[frameName][key]:Hide()
+						end
 					end
-				end
-			},
-			Text = {
-				name = '',
-				type = 'group',
-				inline = true,
-				order = 10,
-				args = {
-					text = {
-						name = 'Text',
-						type = 'input',
-						width = 'full',
-						order = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Name.text
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Name.text = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.text = val
-							--Update the screen
-							module.frames[frameName]:Tag(module.frames[frameName].Name, val)
-							module.frames[frameName]:UpdateTags()
-						end
-					},
-					JustifyH = {
-						name = 'Horizontal alignment',
-						type = 'select',
-						order = 2,
-						values = {
-							['LEFT'] = 'Left',
-							['CENTER'] = 'Center',
-							['RIGHT'] = 'Right'
+				},
+				Text = {
+					name = '',
+					type = 'group',
+					inline = true,
+					order = 10,
+					args = {
+						text = {
+							name = 'Text',
+							type = 'input',
+							width = 'full',
+							order = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].text
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].text = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].text = val
+								--Update the screen
+								module.frames[frameName]:Tag(module.frames[frameName][key], val)
+								module.frames[frameName]:UpdateTags()
+							end
 						},
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Name.SetJustifyH
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Name.SetJustifyH = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.SetJustifyH = val
-							--Update the screen
-							module.frames[frameName].Name:SetJustifyH(val)
-						end
-					},
-					JustifyV = {
-						name = 'Vertical alignment',
-						type = 'select',
-						order = 3,
-						values = {
-							['TOP'] = 'Top',
-							['MIDDLE'] = 'Middle',
-							['BOTTOM'] = 'Bottom'
+						JustifyH = {
+							name = 'Horizontal alignment',
+							type = 'select',
+							order = 2,
+							values = {
+								['LEFT'] = 'Left',
+								['CENTER'] = 'Center',
+								['RIGHT'] = 'Right'
+							},
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].SetJustifyH
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].SetJustifyH = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].SetJustifyH = val
+								--Update the screen
+								module.frames[frameName][key]:SetJustifyH(val)
+							end
 						},
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Name.SetJustifyV
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Name.SetJustifyV = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.SetJustifyV = val
-							--Update the screen
-							module.frames[frameName].Name:SetJustifyV(val)
-						end
+						JustifyV = {
+							name = 'Vertical alignment',
+							type = 'select',
+							order = 3,
+							values = {
+								['TOP'] = 'Top',
+								['MIDDLE'] = 'Middle',
+								['BOTTOM'] = 'Bottom'
+							},
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].SetJustifyV
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].SetJustifyV = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].SetJustifyV = val
+								--Update the screen
+								module.frames[frameName][key]:SetJustifyV(val)
+							end
+						}
 					}
-				}
-			},
-			position = {
-				name = 'Position',
-				type = 'group',
-				order = 50,
-				inline = true,
-				args = {
-					x = {
-						name = 'X Axis',
-						type = 'range',
-						order = 1,
-						min = -60,
-						max = 60,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Name.position.x
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Name.position.x = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.x = val
-							--Update the screen
-							module.frames[frameName].Name:ClearAllPoints()
-							module.frames[frameName].Name:SetPoint(
-								module.CurrentSettings[frameName].elements.Name.position.anchor,
-								module.frames[frameName],
-								module.CurrentSettings[frameName].elements.Name.position.anchor,
-								module.CurrentSettings[frameName].elements.Name.position.x,
-								module.CurrentSettings[frameName].elements.Name.position.y
-							)
-						end
-					},
-					y = {
-						name = 'Y Axis',
-						desc = 'desc',
-						type = 'range',
-						order = 2,
-						min = -60,
-						max = 60,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Name.position.y
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Name.position.y = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.y = val
-							--Update the screen
-							module.frames[frameName].Name:ClearAllPoints()
-							module.frames[frameName].Name:SetPoint(
-								module.CurrentSettings[frameName].elements.Name.position.anchor,
-								module.frames[frameName],
-								module.CurrentSettings[frameName].elements.Name.position.anchor,
-								module.CurrentSettings[frameName].elements.Name.position.x,
-								module.CurrentSettings[frameName].elements.Name.position.y
-							)
-						end
-					},
-					anchor = {
-						name = 'Anchor point',
-						desc = 'desc',
-						type = 'select',
-						order = 3,
-						values = anchorPoints,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Name.position.anchor
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Name.position.anchor = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Name.position.anchor = val
-							--Update the screen
-							module.frames[frameName].Name:ClearAllPoints()
-							module.frames[frameName].Name:SetPoint(
-								module.CurrentSettings[frameName].elements.Name.position.anchor,
-								module.frames[frameName],
-								module.CurrentSettings[frameName].elements.Name.position.anchor,
-								module.CurrentSettings[frameName].elements.Name.position.x,
-								module.CurrentSettings[frameName].elements.Name.position.y
-							)
-						end
+				},
+				position = {
+					name = 'Position',
+					type = 'group',
+					order = 50,
+					inline = true,
+					args = {
+						x = {
+							name = 'X Axis',
+							type = 'range',
+							order = 1,
+							min = -100,
+							max = 100,
+							step = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].position.x
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].position.x = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.x = val
+								--Update the screen
+								module.frames[frameName][key]:UpdatePosition(key)
+							end
+						},
+						y = {
+							name = 'Y Axis',
+							type = 'range',
+							order = 2,
+							min = -100,
+							max = 100,
+							step = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].position.y
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].position.y = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.y = val
+								--Update the screen
+								module.frames[frameName][key]:UpdatePosition(key)
+							end
+						},
+						anchor = {
+							name = 'Anchor point',
+							type = 'select',
+							order = 3,
+							values = anchorPoints,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].position.anchor
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].position.anchor = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.anchor = val
+								--Update the screen
+								module.frames[frameName][key]:UpdatePosition(key)
+							end
+						}
 					}
 				}
 			}
 		}
-	}
+	end
 end
 
 local function AddBuffOptions(frameName)
@@ -1423,7 +1523,34 @@ function module:InitializeOptions()
 						order = 900,
 						func = function()
 							--Reset the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style] = SUI.DB.Unitframes.PlayerCustomizations.Base
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style] = nil
+							-- Refresh the memory
+							module:LoadDB()
+							-- Update the screen
+							for frameName, frame in pairs(module.frames) do
+								-- Check that its a frame
+								if frame.UpdateAllElements then
+									-- Loop all elements and update their status
+									for _, element in ipairs(elementList) do
+										if frame[element] then
+											-- SUF Update (event/updater state)
+											if module.CurrentSettings[frameName].elements[element].enabled then
+												frame:EnableElement(element)
+											else
+												frame:DisableElement(element)
+											end
+											-- SUI Update (size, position, etc)
+											if SUI:isInTable(IndicatorList, element) then
+												frame:ElementUpdate(element)
+											end
+										end
+									end
+
+									-- Tell everything to update to get current data
+									frame:UpdateAllElements('OnUpdate')
+									frame:UpdateTags()
+								end
+							end
 						end
 					}
 				}

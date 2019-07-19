@@ -677,31 +677,20 @@ local DBdefault = {
 								y = 10
 							}
 						},
-						CombatIndicator = {
-							enabled = true,
-							position = {
-								anchor = 'TOPRIGHT',
-								x = 10,
-								y = 10
-							}
-						},
+						CombatIndicator = {},
 						RaidTargetIndicator = {
 							enabled = true,
-							height = 20,
-							width = 20,
+							size = 30,
 							position = {
-								anchor = 'CENTER',
+								anchor = 'BOTTOM',
 								x = 0,
-								y = 0
+								y = -27
 							}
 						},
 						SUI_ClassIcon = {
-							enabled = true,
-							height = 20,
-							width = 20,
 							position = {
-								anchor = 'LEFT',
-								x = -10,
+								anchor = 'BOTTOMLEFT',
+								x = -12,
 								y = 0
 							}
 						},
@@ -715,12 +704,9 @@ local DBdefault = {
 							}
 						},
 						PvPIndicator = {
-							width = 25,
-							height = 25,
 							position = {
-								anchor = 'TOP',
-								x = 0,
-								y = 0
+								anchor = 'TOPLEFT',
+								x = -10
 							}
 						},
 						StatusText = {
@@ -736,16 +722,37 @@ local DBdefault = {
 						Runes = {},
 						Stagger = {},
 						Totems = {},
-						AssistantIndicator = {},
-						RaidRoleIndicator = {},
-						ResurrectIndicator = {},
+						AssistantIndicator = {
+							enabled = true,
+							size = 12,
+							position = {
+								anchor = 'TOP',
+								x = 0,
+								y = 6
+							}
+						},
+						RaidRoleIndicator = {
+							enabled = true
+						},
+						ResurrectIndicator = {
+							enabled = true
+						},
 						SummonIndicator = {},
 						QuestIndicator = {},
 						Range = {
 							enabled = true
 						},
-						phaseindicator = {},
-						ThreatIndicator = {},
+						phaseindicator = {
+							enabled = true,
+							position = {
+								anchor = 'TOP',
+								x = 0,
+								y = 0
+							}
+						},
+						ThreatIndicator = {
+							enabled = true
+						},
 						SUI_RaidGroup = {}
 					}
 				},
@@ -772,6 +779,17 @@ local DBdefault = {
 						},
 						Castbar = {
 							enabled = true
+						},
+						CombatIndicator = {
+							enabled = true,
+							position = {
+								anchor = 'TOPRIGHT',
+								x = 10,
+								y = 10
+							}
+						},
+						SUI_ClassIcon = {
+							enabled = true
 						}
 					}
 				},
@@ -797,6 +815,9 @@ local DBdefault = {
 							enabled = true
 						},
 						AssistantIndicator = {
+							enabled = true
+						},
+						SUI_ClassIcon = {
 							enabled = true
 						}
 					}
@@ -868,6 +889,9 @@ local DBdefault = {
 						},
 						AssistantIndicator = {
 							enabled = true
+						},
+						SUI_ClassIcon = {
+							enabled = true
 						}
 					}
 				},
@@ -888,7 +912,17 @@ local DBdefault = {
 						}
 					}
 				},
-				arena = {}
+				arena = {
+					enabled = true,
+					elements = {
+						Castbar = {
+							enabled = true
+						},
+						SUI_ClassIcon = {
+							enabled = true
+						}
+					}
+				}
 			},
 			PlayerCustomizations = {
 				['**'] = {
@@ -1558,6 +1592,8 @@ function SUI:isInTable(searchTable, searchPhrase, all)
 		SUI:Err('Core', 'Invalid isInTable call')
 		return false
 	end
+
+	assert(type(searchTable) == 'table', "Invalid argument 'searchTable' in SUI:isInTable.")
 
 	-- If All is specified then we are dealing with a 2 string table search both keys
 	if all ~= nil then

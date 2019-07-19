@@ -163,6 +163,18 @@ function module:PositionFrame(b)
 	-- module:UpdateAltBarPositions()
 end
 
+function module:LoadDB()
+	-- Setup an empty memory state
+	module.CurrentSettings = {}
+	-- Load Default Settings
+	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.FrameOptions)
+	-- Import theme settings
+	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
+	-- Import player customizations
+	module.CurrentSettings =
+		SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)
+end
+
 function module:OnInitialize()
 	--[[
 		Takes a target table and injects data from the source
@@ -171,14 +183,7 @@ function module:OnInitialize()
 		function SUI:MergeData(target, source, override)
 	]]
 	-- Setup Database
-	-- Load Default Settings
-	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.FrameOptions)
-	-- Import theme settings
-	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
-	-- Import player customizations
-	module.CurrentSettings =
-		SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)
-
+	module:LoadDB()
 	-- Build options
 	module:InitializeOptions()
 end

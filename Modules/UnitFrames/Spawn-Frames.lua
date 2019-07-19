@@ -13,6 +13,56 @@ local FramesList = {
 	[5] = 'focustarget',
 	[6] = 'player'
 }
+local elementList = {
+	'Portrait',
+	'Health',
+	'HealthPrediction',
+	'Power',
+	'Castbar',
+	'Name',
+	'LeaderIndicator',
+	'RestingIndicator',
+	'GroupRoleIndicator',
+	'CombatIndicator',
+	'RaidTargetIndicator',
+	'SUI_ClassIcon',
+	'ReadyCheckIndicator',
+	'PvPIndicator',
+	'StatusText',
+	'Runes',
+	'Stagger',
+	'Totems',
+	'AssistantIndicator',
+	'RaidRoleIndicator',
+	'ResurrectIndicator',
+	'SummonIndicator',
+	'QuestIndicator',
+	'Range',
+	'phaseindicator',
+	'ThreatIndicator',
+	'SUI_RaidGroup'
+}
+
+local function ElementUpdate(self, elementName)
+	print(self:GetName() .. ' - ' .. elementName)
+	if not self[elementName] then
+		return
+	end
+
+	local data = module.CurrentSettings[self.unit].elements
+
+	-- Setup the Alpha scape and position
+	self[elementName]:SetAlpha(data[elementName].alpha)
+	self[elementName]:SetScale(data[elementName].scale)
+	self[elementName]:ClearAllPoints()
+	self[elementName]:SetPoint(
+		data[elementName].position.anchor,
+		self,
+		data[elementName].position.anchor,
+		data[elementName].position.x,
+		data[elementName].position.y
+	)
+end
 
 local function CreateUnitFrame(self, unit)
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
@@ -74,8 +124,10 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 	self.UpdateSize = UpdateSize
+	self.ElementUpdate = ElementUpdate
 
 	self.UpdateSize()
+	self.unit = unit
 
 	local artwork = module.CurrentSettings[unit].artwork
 	local auras = module.CurrentSettings[unit].auras
@@ -120,6 +172,8 @@ local function CreateUnitFrame(self, unit)
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
 		Portrait3D:SetSize(self:GetHeight(), self:GetHeight())
 		Portrait3D:SetScale(elements.Portrait.Scale)
+		Portrait3D:SetFrameStrata('LOW')
+		Portrait3D:SetFrameLevel(2)
 		self.Portrait3D = Portrait3D
 
 		-- 2D Portrait
@@ -355,13 +409,7 @@ local function CreateUnitFrame(self, unit)
 		self.Name:SetSize(self:GetWidth(), 12)
 		self.Name:SetJustifyH(elements.Name.SetJustifyH)
 		self.Name:SetJustifyV(elements.Name.SetJustifyV)
-		self.Name:SetPoint(
-			elements.Name.position.anchor,
-			self,
-			elements.Name.position.anchor,
-			elements.Name.position.x,
-			elements.Name.position.y
-		)
+		ElementUpdate(self, 'Name')
 		self:Tag(self.Name, elements.Name.text)
 
 		-- 	self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -2)
@@ -372,15 +420,10 @@ local function CreateUnitFrame(self, unit)
 
 		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
 		self.LeaderIndicator:SetSize(elements.LeaderIndicator.size, elements.LeaderIndicator.size)
-		self.LeaderIndicator:SetAlpha(elements.LeaderIndicator.alpha)
-		self.LeaderIndicator:SetScale(elements.LeaderIndicator.scale)
-		self.LeaderIndicator:SetPoint(
-			elements.LeaderIndicator.position.anchor,
-			self,
-			elements.LeaderIndicator.position.anchor,
-			elements.LeaderIndicator.position.x,
-			elements.LeaderIndicator.position.y
-		)
+		ElementUpdate(self, 'LeaderIndicator')
+		self.AssistantIndicator = self:CreateTexture(nil, 'BORDER')
+		self.AssistantIndicator:SetSize(elements.AssistantIndicator.size, elements.AssistantIndicator.size)
+		ElementUpdate(self, 'AssistantIndicator')
 
 		-- 	self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
 		-- 	self.SUI_RaidGroup:SetSize(12, 12)
@@ -397,85 +440,41 @@ local function CreateUnitFrame(self, unit)
 
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
 		self.ReadyCheckIndicator:SetSize(elements.ReadyCheckIndicator.size, elements.ReadyCheckIndicator.size)
-		self.ReadyCheckIndicator:SetAlpha(elements.ReadyCheckIndicator.alpha)
-		self.ReadyCheckIndicator:SetScale(elements.ReadyCheckIndicator.scale)
-		self.ReadyCheckIndicator:SetPoint(
-			elements.ReadyCheckIndicator.position.anchor,
-			self,
-			elements.ReadyCheckIndicator.position.anchor,
-			elements.ReadyCheckIndicator.position.x,
-			elements.ReadyCheckIndicator.position.y
-		)
+		ElementUpdate(self, 'ReadyCheckIndicator')
 
-		-- 	self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
-		-- 	self.PvPIndicator:SetSize(25, 25)
-		-- 	self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
-		-- 	self.PvPIndicator.Override = pvpIconWar
+		self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
+		self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
+		ElementUpdate(self, 'PvPIndicator')
+		if elements.PvPIndicator.Override then
+			self.PvPIndicator.Override = elements.PvPIndicator.Override
+		end
 
 		self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.RestingIndicator:SetSize(elements.RestingIndicator.size, elements.RestingIndicator.size)
-		self.RestingIndicator:SetAlpha(elements.RestingIndicator.alpha)
-		self.RestingIndicator:SetScale(elements.RestingIndicator.scale)
-		self.RestingIndicator:SetPoint(
-			elements.RestingIndicator.position.anchor,
-			self,
-			elements.RestingIndicator.position.anchor,
-			elements.RestingIndicator.position.x,
-			elements.RestingIndicator.position.y
-		)
+		ElementUpdate(self, 'RestingIndicator')
 		self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
 
 		self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
+		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\icon_role.tga')
 		self.GroupRoleIndicator:SetSize(elements.GroupRoleIndicator.size, elements.GroupRoleIndicator.size)
-		self.GroupRoleIndicator:SetAlpha(elements.GroupRoleIndicator.alpha)
-		self.GroupRoleIndicator:SetScale(elements.GroupRoleIndicator.scale)
-		self.GroupRoleIndicator:SetPoint(
-			elements.GroupRoleIndicator.position.anchor,
-			self,
-			elements.GroupRoleIndicator.position.anchor,
-			elements.GroupRoleIndicator.position.x,
-			elements.GroupRoleIndicator.position.y
-		)
-		self.GroupRoleIndicator:SetPoint('CENTER', self, 'LEFT', 0, 0)
-		self.GroupRoleIndicator:SetTexture(lfdrole)
-		self.GroupRoleIndicator:SetSize(elements.GroupRoleIndicator.size, elements.GroupRoleIndicator.size)
-		self.GroupRoleIndicator:SetAlpha(elements.GroupRoleIndicator.alpha)
-		self.GroupRoleIndicator:SetScale(elements.GroupRoleIndicator.scale)
-		self.GroupRoleIndicator:SetPoint(
-			elements.GroupRoleIndicator.position.anchor,
-			self,
-			elements.GroupRoleIndicator.position.anchor,
-			elements.GroupRoleIndicator.position.x,
-			elements.GroupRoleIndicator.position.y
-		)
+		ElementUpdate(self, 'GroupRoleIndicator')
 
 		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.CombatIndicator:SetSize(elements.CombatIndicator.size, elements.CombatIndicator.size)
-		self.CombatIndicator:SetAlpha(elements.CombatIndicator.alpha)
-		self.CombatIndicator:SetScale(elements.CombatIndicator.scale)
-		self.CombatIndicator:SetPoint(
-			elements.CombatIndicator.position.anchor,
-			self,
-			elements.CombatIndicator.position.anchor,
-			elements.CombatIndicator.position.x,
-			elements.CombatIndicator.position.y
-		)
+		ElementUpdate(self, 'CombatIndicator')
 
-		-- 	if unit ~= 'player' then
-		-- 		self.SUI_ClassIcon = ring:CreateTexture(nil, 'BORDER')
-		-- 		self.SUI_ClassIcon:SetSize(20, 20)
-		-- 		self.SUI_ClassIcon:SetPoint('CENTER', self.RestingIndicator, 'CENTER', 0, 0)
+		self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
+		self.RaidTargetIndicator:SetSize(elements.RaidTargetIndicator.size, elements.RaidTargetIndicator.size)
+		ElementUpdate(self, 'RaidTargetIndicator')
 
-		-- 		self.RaidTargetIndicator = ring:CreateTexture(nil, 'ARTWORK')
-		-- 		self.RaidTargetIndicator:SetSize(20, 20)
-		-- 		self.RaidTargetIndicator:SetPoint('CENTER', self, 'BOTTOMLEFT', -27, 0)
-		-- 	end
+		self.SUI_ClassIcon = self:CreateTexture(nil, 'BORDER')
+		self.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
+		ElementUpdate(self, 'SUI_ClassIcon')
 
-		-- 	self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
-		-- 	-- self.StatusText:SetPoint("CENTER",self,"CENTER");
-		-- 	self.StatusText:SetAllPoints(self.Portrait)
-		-- 	self.StatusText:SetJustifyH('CENTER')
-		-- 	self:Tag(self.StatusText, '[afkdnd]')
+		self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
+		self.StatusText:SetSize(elements.StatusText.size, elements.StatusText.size)
+		ElementUpdate(self, 'StatusText')
+		self:Tag(self.StatusText, '[afkdnd]')
 		-- end
 		-- do -- Special Icons/Bars
 		-- 	if unit == 'player' then
@@ -590,7 +589,7 @@ local function CreateUnitFrame(self, unit)
 	self:SetClampedToScreen(true)
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
-
+	self.ElementSetup = ElementSetup
 	return self
 end
 
@@ -604,21 +603,27 @@ function module:SpawnFrames()
 		module.frames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
 
 		-- Disable objects based on settings
-		if not module.CurrentSettings[b].elements.Portrait.enabled then
-			module.frames[b]:DisableElement('Portrait')
+		for _, key in ipairs(elementList) do
+			if not module.CurrentSettings[b].elements[key].enabled then
+				module.frames[b]:DisableElement(key)
+			end
 		end
-		if not module.CurrentSettings[b].elements.Castbar.enabled then
-			module.frames[b]:DisableElement('Castbar')
-		end
-		if not module.CurrentSettings[b].elements.Health.enabled then
-			module.frames[b]:DisableElement('Health')
-		end
-		if not module.CurrentSettings[b].elements.Power.enabled then
-			module.frames[b]:DisableElement('Power')
-		end
-		if not module.CurrentSettings[b].elements.Range.enabled then
-			module.frames[b]:DisableElement('Range')
-		end
+
+		-- if not module.CurrentSettings[b].elements.Portrait.enabled then
+		-- 	module.frames[b]:DisableElement('Portrait')
+		-- end
+		-- if not module.CurrentSettings[b].elements.Castbar.enabled then
+		-- 	module.frames[b]:DisableElement('Castbar')
+		-- end
+		-- if not module.CurrentSettings[b].elements.Health.enabled then
+		-- 	module.frames[b]:DisableElement('Health')
+		-- end
+		-- if not module.CurrentSettings[b].elements.Power.enabled then
+		-- 	module.frames[b]:DisableElement('Power')
+		-- end
+		-- if not module.CurrentSettings[b].elements.Range.enabled then
+		-- 	module.frames[b]:DisableElement('Range')
+		-- end
 
 		-- if b == 'player' and not SUI.IsClassic then
 		-- 	PlayerFrames:SetupExtras()
