@@ -29,17 +29,15 @@ local ExcludedItems = {
 	169333, --Strange Mineralized Water
 	-- Cata
 	71141, -- Eternal Ember
-	
 	-- Misc Items
 	141446, --Tome of the Tranquil Mind
 	81055, -- Darkmoon ride ticket
-
 	--Professions
 	6219, -- Arclight Spanner
 	140209, --imported blacksmith hammer
 	5956, -- Blacksmith Hammer
 	7005, --skinning knife
-	2901, --mining pick
+	2901 --mining pick
 }
 
 function module:OnInitialize()
@@ -187,23 +185,8 @@ function module:IsSellable(item, ilink, bag, slot)
 	if not item then
 		return false
 	end
-	local name,
-		_,
-		quality,
-		_,
-		_,
-		itemType,
-		itemSubType,
-		_,
-		equipSlot,
-		_,
-		vendorPrice,
-		_,
-		_,
-		_,
-		_,
-		_,
-		isCraftingReagent = GetItemInfo(ilink)
+	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, _, _, isCraftingReagent =
+		GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
 		return false
 	end
@@ -358,15 +341,21 @@ function module:Repair(PersonalFunds)
 	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) and not PersonalFunds) then
 		-- Use guild repair
 		if (CanGuildBankRepair() and SUI.DB.AutoSell.UseGuildBankRepair) then
-			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'] )
+			SUI:Print(
+				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds']
+			)
 			RepairAllItems(1)
 			module:ScheduleTimer('Repair', .7, true)
 		elseif GetRepairAllCost() ~= 0 then
-			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'] )
+			SUI:Print(
+				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds']
+			)
 			RepairAllItems()
 		end
 	elseif GetRepairAllCost() ~= 0 then
-		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'] )
+		SUI:Print(
+			L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds']
+		)
 		RepairAllItems()
 	end
 end
