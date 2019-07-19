@@ -24,7 +24,9 @@ local ExcludedItems = {
 	169334, --Strange Oceanic Sediment
 	170193, --Sea Totem
 	168216, --Tempered Plating
-	
+	168215, --Machined Gear Assembly
+	169332, --Strange Mineralized Water
+	169333, --Strange Mineralized Water
 	-- Cata
 	71141, -- Eternal Ember
 	
