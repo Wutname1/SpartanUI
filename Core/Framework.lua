@@ -625,12 +625,30 @@ local DBdefault = {
 							height = 10,
 							interruptable = true,
 							latency = false,
+							icon = {
+								enabled = false,
+								size = 12,
+								position = {
+									anchor = 'LEFT',
+									x = 0,
+									y = 0
+								}
+							},
 							text = {
 								['1'] = {
 									enabled = true,
-									text = '',
+									text = '[Spell name]',
 									position = {
 										anchor = 'CENTER',
+										x = 0,
+										y = 0
+									}
+								},
+								['2'] = {
+									enabled = true,
+									text = '[Spell timer]',
+									position = {
+										anchor = 'RIGHT',
 										x = 0,
 										y = 0
 									}
@@ -659,14 +677,7 @@ local DBdefault = {
 								y = 6
 							}
 						},
-						RestingIndicator = {
-							enabled = true,
-							position = {
-								anchor = 'TOPLEFT',
-								x = 0,
-								y = 0
-							}
-						},
+						RestingIndicator = {},
 						GroupRoleIndicator = {
 							enabled = true,
 							size = 18,
@@ -790,6 +801,14 @@ local DBdefault = {
 						},
 						SUI_ClassIcon = {
 							enabled = true
+						},
+						RestingIndicator = {
+							enabled = true,
+							position = {
+								anchor = 'TOPLEFT',
+								x = 0,
+								y = 0
+							}
 						}
 					}
 				},

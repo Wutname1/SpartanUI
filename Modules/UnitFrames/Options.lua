@@ -1002,22 +1002,7 @@ local function AddTextOptions(frameName)
 		name = 'Castbar',
 		type = 'group',
 		order = 1,
-		args = {
-			enabled = {
-				name = L['Enabled'],
-				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return module.CurrentSettings[frameName].elements.Castbar.text['1'].enabled
-				end,
-				set = function(info, val)
-					--Update memory
-					module.CurrentSettings[frameName].elements.Castbar.text['1'].enabled = val
-					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.text['1'].enabled = val
-				end
-			}
-		}
+		args = {}
 	}
 	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'] = {
 		name = 'Health',
@@ -1031,6 +1016,12 @@ local function AddTextOptions(frameName)
 		order = 3,
 		args = {}
 	}
+
+	for i in pairs(module.CurrentSettings[frameName].elements.Castbar.text) do
+		AddDynamicText(frameName, 'Castbar', i)
+	end
+	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Castbar'].args['1'].args['text'].disabled = true
+	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Castbar'].args['2'].args['text'].disabled = true
 
 	for i in pairs(module.CurrentSettings[frameName].elements.Health.text) do
 		AddDynamicText(frameName, 'Health', i)
@@ -1526,29 +1517,12 @@ function module:InitializeOptions()
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style] = nil
 							-- Refresh the memory
 							module:LoadDB()
-							-- Update the screen
-							for frameName, frame in pairs(module.frames) do
-								-- Check that its a frame
-								if frame.UpdateAllElements then
-									-- Loop all elements and update their status
-									for _, element in ipairs(elementList) do
-										if frame[element] then
-											-- SUF Update (event/updater state)
-											if module.CurrentSettings[frameName].elements[element].enabled then
-												frame:EnableElement(element)
-											else
-												frame:DisableElement(element)
-											end
-											-- SUI Update (size, position, etc)
-											if SUI:isInTable(IndicatorList, element) then
-												frame:ElementUpdate(element)
-											end
-										end
-									end
 
-									-- Tell everything to update to get current data
-									frame:UpdateAllElements('OnUpdate')
-									frame:UpdateTags()
+							-- Update the screen
+							for _, frame in pairs(module.frames) do
+								-- Check that its a frame
+								if frame.UpdateAll then
+									frame:UpdateAll()
 								end
 							end
 						end

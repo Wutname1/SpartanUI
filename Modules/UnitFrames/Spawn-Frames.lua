@@ -42,9 +42,26 @@ local elementList = {
 	'ThreatIndicator',
 	'SUI_RaidGroup'
 }
+local IndicatorList = {
+	'LeaderIndicator',
+	'RestingIndicator',
+	'GroupRoleIndicator',
+	'CombatIndicator',
+	'RaidTargetIndicator',
+	'SUI_ClassIcon',
+	'ReadyCheckIndicator',
+	'PvPIndicator',
+	'AssistantIndicator',
+	'RaidRoleIndicator',
+	'ResurrectIndicator',
+	'SummonIndicator',
+	'QuestIndicator',
+	'phaseindicator',
+	'ThreatIndicator',
+	'SUI_RaidGroup'
+}
 
 local function ElementUpdate(self, elementName)
-	print(self:GetName() .. ' - ' .. elementName)
 	if not self[elementName] then
 		return
 	end
@@ -71,6 +88,56 @@ local function CreateUnitFrame(self, unit)
 		self:SetParent(SUI_FramesAnchor)
 	end
 
+	local function UpdateAll()
+		for frameName, frame in pairs(module.frames) do
+			local elements = module.CurrentSettings[unit].elements
+			-- Check that its a frame
+			-- Loop all elements and update their status
+			for _, element in ipairs(elementList) do
+				if self[element] then
+					-- SUF Update (event/updater state)
+					if elements[element].enabled then
+						self:EnableElement(element)
+					else
+						self:DisableElement(element)
+					end
+					-- SUI Update (size, position, etc)
+					if SUI:isInTable(IndicatorList, element) then
+						self:ElementUpdate(element)
+					end
+				end
+			end
+
+			--Update the screen
+			if elements.Power.PowerPrediction then
+				self:EnableElement('PowerPrediction')
+			else
+				self:DisableElement('PowerPrediction')
+			end
+
+			if elements.Castbar.icon.enabled then
+				self.Castbar.Icon:Show()
+			else
+				self.Castbar.Icon:Hide()
+			end
+			if elements.Castbar.text['1'].enabled then
+				self.Castbar.Text:Show()
+			else
+				self.Castbar.Text:Hide()
+			end
+			if elements.Castbar.text['2'].enabled then
+				self.Castbar.Time:Show()
+			else
+				self.Castbar.Time:Hide()
+			end
+
+			-- Tell everything to update to get current data
+			self:UpdateSize()
+			self:UpdateAllElements('OnUpdate')
+			self:UpdateTags()
+		end
+	end
+
 	-- Build a function that updates the size of the frame and sizes of elements
 	local function UpdateSize()
 		local elements = module.CurrentSettings[unit].elements
@@ -85,9 +152,10 @@ local function CreateUnitFrame(self, unit)
 		if elements.Power.enabled then
 			FrameHeight = FrameHeight + elements.Power.height
 		end
+
+		-- General
 		self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
 
-		-- Adjust the elements that could be effected
 		if self.Portrait3D then
 			self.Portrait3D:SetSize(FrameHeight, FrameHeight)
 		end
@@ -96,6 +164,7 @@ local function CreateUnitFrame(self, unit)
 			self.Portrait2D:SetSize(FrameHeight, FrameHeight)
 		end
 
+		-- Status bars
 		if self.Castbar then
 			self.Castbar:SetSize(self:GetWidth(), elements.Castbar.height)
 		end
@@ -122,7 +191,19 @@ local function CreateUnitFrame(self, unit)
 
 			self.Power:SetSize(self:GetWidth(), elements.Power.height)
 		end
+
+		-- Inidcators
+		if self.Name then
+			self.Name:SetSize(self:GetWidth(), 12)
+		end
+
+		for _, key in ipairs(IndicatorList) do
+			if self[key] then
+				self[key]:SetSize(elements[key].size, elements[key].size)
+			end
+		end
 	end
+	self.UpdateAll = UpdateAll
 	self.UpdateSize = UpdateSize
 	self.ElementUpdate = ElementUpdate
 
@@ -209,17 +290,22 @@ local function CreateUnitFrame(self, unit)
 			cast:SetSize(self:GetWidth(), elements.Castbar.height)
 			cast:SetPoint('TOP', self, 'TOP', 0, 0)
 
+			-- Add spell text
 			local Text = cast:CreateFontString()
 			SUI:FormatFont(Text, 10, 'Player')
-			Text:SetJustifyH('CENTER')
-			Text:SetJustifyV('MIDDLE')
-			Text:SetAllPoints(cast)
+			Text:SetPoint(
+				elements.Castbar.text['1'].position.anchor,
+				cast,
+				elements.Castbar.text['1'].position.anchor,
+				elements.Castbar.text['1'].position.x,
+				elements.Castbar.text['1'].position.y
+			)
 
 			-- Add Shield
 			local Shield = cast:CreateTexture(nil, 'OVERLAY')
 			Shield:SetSize(20, 20)
 			Shield:SetPoint('CENTER', cast, 'RIGHT')
-			-- Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
+			Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
 			local function PostCastNotInterruptible(unit)
 				if not elements.Castbar.interruptable then
 					self.Castbar.Shield:Hide()
@@ -227,18 +313,40 @@ local function CreateUnitFrame(self, unit)
 			end
 			cast.PostCastNotInterruptible = PostCastNotInterruptible
 
+			-- Add a timer
+			local Time = cast:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+			Time:SetPoint(
+				elements.Castbar.text['2'].position.anchor,
+				cast,
+				elements.Castbar.text['2'].position.anchor,
+				elements.Castbar.text['2'].position.x,
+				elements.Castbar.text['2'].position.y
+			)
+
+			-- Add spell icon
+			local Icon = cast:CreateTexture(nil, 'OVERLAY')
+			Icon:SetSize(20, 20)
+			Icon:SetPoint(
+				elements.Castbar.icon.position.anchor,
+				cast,
+				elements.Castbar.icon.position.anchor,
+				elements.Castbar.icon.position.x,
+				elements.Castbar.icon.position.y
+			)
+
 			-- Add safezone
 			local SafeZone = cast:CreateTexture(nil, 'OVERLAY')
 
 			self.Castbar = cast
 			self.Castbar.Text = Text
+			self.Castbar.Time = Time
+			self.Castbar.TextElements = {
+				['1'] = self.Castbar.Text,
+				['2'] = self.Castbar.Time
+			}
+			self.Castbar.Icon = Icon
 			self.Castbar.SafeZone = SafeZone
 			self.Castbar.Shield = Shield
-
-			-- self.Castbar.OnUpdate = OnCastbarUpdate
-			-- self.Castbar.PostCastStart = PostCastStart
-			-- self.Castbar.PostChannelStart = PostChannelStart
-			-- self.Castbar.PostCastStop = PostCastStop
 		end
 		do -- health bar
 			local health = CreateFrame('StatusBar', nil, self)
@@ -472,7 +580,7 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'SUI_ClassIcon')
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
-		self.StatusText:SetSize(elements.StatusText.size, elements.StatusText.size)
+		-- self.StatusText:SetSize(elements.StatusText.size, elements.StatusText.size)
 		ElementUpdate(self, 'StatusText')
 		self:Tag(self.StatusText, '[afkdnd]')
 		-- end
@@ -600,30 +708,10 @@ function module:SpawnFrames()
 	--
 
 	for _, b in pairs(FramesList) do
-		module.frames[b] = SUIUF:Spawn(b, 'SUI_' .. b .. 'Frame')
+		module.frames[b] = SUIUF:Spawn(b, 'SUI_UF_' .. b)
 
 		-- Disable objects based on settings
-		for _, key in ipairs(elementList) do
-			if not module.CurrentSettings[b].elements[key].enabled then
-				module.frames[b]:DisableElement(key)
-			end
-		end
-
-		-- if not module.CurrentSettings[b].elements.Portrait.enabled then
-		-- 	module.frames[b]:DisableElement('Portrait')
-		-- end
-		-- if not module.CurrentSettings[b].elements.Castbar.enabled then
-		-- 	module.frames[b]:DisableElement('Castbar')
-		-- end
-		-- if not module.CurrentSettings[b].elements.Health.enabled then
-		-- 	module.frames[b]:DisableElement('Health')
-		-- end
-		-- if not module.CurrentSettings[b].elements.Power.enabled then
-		-- 	module.frames[b]:DisableElement('Power')
-		-- end
-		-- if not module.CurrentSettings[b].elements.Range.enabled then
-		-- 	module.frames[b]:DisableElement('Range')
-		-- end
+		module.frames[b]:UpdateAll()
 
 		-- if b == 'player' and not SUI.IsClassic then
 		-- 	PlayerFrames:SetupExtras()

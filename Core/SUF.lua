@@ -204,10 +204,16 @@ do -- ClassIcon as an SUIUF module
 		local icon = self.SUI_ClassIcon
 		if (icon) then
 			local _, class = UnitClass(self.unit)
+			if not class then
+				return
+			end
+
+			local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class))
+
 			if class then
 				-- local coords = ClassIconCoord[class or 'DEFAULT']
 				-- icon:SetTexCoord(coords[1], coords[2], coords[3], coords[4])
-				icon:SetTexture('Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class)))
+				icon:SetTexture(path)
 				icon:Show()
 				if icon.shadow then
 					icon.shadow:SetTexture(path)
