@@ -10,10 +10,10 @@ local function printFormattedString(t, sid, spell, ss, ssid)
 	local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
 
 	msg =
-		msg:gsub('%%t', t):gsub('%%spell', spell):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub(
-		'%%lnk',
-		GetSpellLink(sid)
-	):gsub('%%myspell', GetSpellLink(ssid))
+		msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub(
+		'%%myspell',
+		GetSpellLink(ssid)
+	)
 	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else
@@ -70,7 +70,7 @@ function module:OnInitialize()
 		includePets = true,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
-		text = 'interrupted %t %spell'
+		text = 'Interrupted %t %spell'
 	}
 	if not SUI.DB.InterruptAnnouncer then
 		SUI.DB.InterruptAnnouncer = Defaults
@@ -370,7 +370,6 @@ function module:FirstLaunch()
 
 			-- Active locations
 			StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncetext, -120, 0)
-			
 
 			-- Defaults
 			IAnnounce.modEnabled:SetChecked(SUI.DB.EnabledComponents.InterruptAnnouncer)
