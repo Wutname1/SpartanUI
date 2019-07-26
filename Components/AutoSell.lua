@@ -228,7 +228,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	end
 	--Crafting Items
 	if
-		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or
+		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or
 			(itemType == 'Miscellaneous' and itemSubType == 'Reagent')) or
 			(itemType == 'Item Enhancement') or
 			isCraftingReagent
