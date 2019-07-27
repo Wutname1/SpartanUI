@@ -130,7 +130,7 @@ function module:SetupVehicleUI()
 			'OnHide',
 			function()
 				War_SpartanUI:Hide()
-				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Hide()
 				end
 			end
@@ -139,7 +139,7 @@ function module:SetupVehicleUI()
 			'OnShow',
 			function()
 				War_SpartanUI:Show()
-				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Show()
 				end
 			end
@@ -240,7 +240,7 @@ function module:EnableArtwork()
 	Artwork_Core:MoveTalkingHeadUI()
 	module:SetupVehicleUI()
 
-	if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 		module:MiniMap()
 	end
 

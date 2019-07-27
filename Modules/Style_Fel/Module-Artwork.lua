@@ -153,7 +153,7 @@ function module:SetupVehicleUI()
 		petbattle:HookScript(
 			'OnHide',
 			function()
-				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Hide()
 				end
 				Fel_SpartanUI:Hide()
@@ -162,7 +162,7 @@ function module:SetupVehicleUI()
 		petbattle:HookScript(
 			'OnShow',
 			function()
-				if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Show()
 				end
 				Fel_SpartanUI:Show()
@@ -249,7 +249,7 @@ function module:EnableArtwork()
 	Artwork_Core:MoveTalkingHeadUI()
 	module:SetupVehicleUI()
 
-	if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 		module:MiniMap()
 	end
 
