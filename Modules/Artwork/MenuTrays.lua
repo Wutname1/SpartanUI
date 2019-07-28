@@ -1,4 +1,5 @@
 local _G, SUI = _G, SUI
+local L = SUI.L
 local module = SUI:GetModule('Artwork_Core')
 module.Trays = false
 local trayWatcher = CreateFrame('Frame')
@@ -11,40 +12,68 @@ local trayIDs = {
 local SetBarVisibility = function(side, state)
 	if side == 'left' and state == 'hide' then
 		-- BT4BarStanceBar
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar
+		 then
 			_G['BT4BarStanceBar']:Hide()
 		end
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar
+		 then
 			_G['BT4BarPetBar']:Hide()
 		end
 	elseif side == 'right' and state == 'hide' then
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar
+		 then
 			_G['BT4BarBagBar']:Hide()
 		end
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu
+		 then
 			_G['BT4BarMicroMenu']:Hide()
 		end
 	end
 
 	if side == 'left' and state == 'show' then
 		-- BT4BarStanceBar
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar
+		 then
 			_G['BT4BarStanceBar']:Show()
 		end
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar
+		 then
 			_G['BT4BarPetBar']:Show()
 		end
 	elseif side == 'right' and state == 'show' then
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar
+		 then
 			_G['BT4BarBagBar']:Show()
 		end
-		if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu then
+		if
+			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and
+				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu
+		 then
 			_G['BT4BarMicroMenu']:Show()
 		end
 	end
 end
 
 local trayWatcherEvents = function()
+	if InCombatLockdown() then
+		return
+	end
+
 	-- Make sure we are in the right spot
 	module:updateOffset()
 
@@ -66,6 +95,11 @@ function module:trayWatcherEvents()
 end
 
 local CollapseToggle = function(self)
+	if InCombatLockdown() then
+		SUI:Print(L['Please leave combat first.'])
+		return
+	end
+
 	local key = self.key
 	if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
 		SUI.DBMod.Artwork.SlidingTrays[key].collapsed = false

@@ -735,33 +735,38 @@ function module:OnInitialize()
 				Displayname = submodule.DisplayName
 			end
 
-			SUI.opt.args['ModSetting'].args['Components'].args[RealName] = {
+			SUI.opt.args.ModSetting.args.Components.args[RealName] = {
 				name = Displayname,
 				type = 'toggle',
+				disabled = submodule.Override or false,
 				get = function(info)
+					if submodule.Override then
+						return false
+					end
 					return SUI.DB.EnabledComponents[RealName]
 				end,
 				set = function(info, val)
 					SUI.DB.EnabledComponents[RealName] = val
-					if submodule.Disable then
+					if submodule.OnDisable then
 						if val then
-							submodule:Enable()
+							submodule:OnEnable()
 						else
-							submodule:Disable()
+							submodule:OnDisable()
 						end
+					else
+						SUI:reloadui()
 					end
-					SUI:reloadui()
 				end
 			}
 		end
 	end
 
-	SUI.opt.args['ModSetting'].args['enabled'] = {
+	SUI.opt.args.ModSetting.args['enabled'] = {
 		name = L['Enabled modules'],
 		type = 'group',
 		order = .1,
 		args = {
-			Components = SUI.opt.args['ModSetting'].args['Components']
+			Components = SUI.opt.args.ModSetting.args['Components']
 		}
 	}
 end

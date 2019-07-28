@@ -14,12 +14,18 @@ local Conditions = {
 }
 
 local HideFrame = function()
+	if not SUI.DB.EnabledComponents.Objectives or module.Override then
+		return
+	end
 	if _G[frameName]:GetAlpha() == 0 and _G[frameName].HeaderMenu then
 		_G[frameName].HeaderMenu.MinimizeButton:Hide()
 	end
 end
 
 local ObjTrackerUpdate = function()
+	if not SUI.DB.EnabledComponents.Objectives or module.Override then
+		return
+	end
 	local FadeIn = true -- Default to display incase user changes to disabled while hidden
 	local FadeOut = false
 
@@ -56,7 +62,7 @@ local ObjTrackerUpdate = function()
 	end
 
 	-- Always Shown logic
-	if (not SUI.DB.EnabledComponents.Objectives) or (SUI.DBMod.Objectives.AlwaysShowScenario and ScenarioActive) then
+	if (SUI.DBMod.Objectives.AlwaysShowScenario and ScenarioActive) then
 		FadeIn = true
 		FadeOut = false
 	end
@@ -101,6 +107,10 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	if not SUI.DB.EnabledComponents.Objectives or module.Override then
+		return
+	end
+
 	module:FirstTimeSetup()
 
 	-- Add Fade in and out
@@ -149,6 +159,15 @@ function module:OnEnable()
 
 	ObjTrackerUpdate()
 	module:BuildOptions()
+end
+
+function module:OnDisable()
+	-- Make sure everything is visible
+	if _G[frameName].HeaderMenu then
+		_G[frameName].HeaderMenu.MinimizeButton:Show()
+	end
+	_G[frameName].FadeOut:Stop()
+	_G[frameName].FadeIn:Play()
 end
 
 function module:BuildOptions()
@@ -232,7 +251,7 @@ function module:FirstTimeSetup()
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
 			local gui = LibStub('AceGUI-3.0')
-			if not SUI.DB.EnabledComponents.Objectives then
+			if not SUI.DB.EnabledComponents.Objectives or module.Override then
 				window.Skip:Click()
 			end
 
