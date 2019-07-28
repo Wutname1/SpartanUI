@@ -139,6 +139,10 @@ local function CreateUnitFrame(self, unit)
 			self[elementName]:SizeChange()
 		end
 
+		if elementName == 'PvPIndicator' and data.PvPIndicator.Badge and self.PvPIndicator.Badge == nil then
+			self.PvPIndicator.Badge = self.PvPIndicator.BadgeBackup
+			self.PvPIndicator:ForceUpdate('OnUpdate')
+		end
 	end
 
 	-- Build a function that updates the size of the frame and sizes of elements
@@ -564,6 +568,14 @@ local function CreateUnitFrame(self, unit)
 
 		self.PvPIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
+
+		local Badge = self:CreateTexture(nil, 'BACKGROUND')
+		Badge:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
+		Badge:SetPoint('CENTER', self.PvPIndicator, 'CENTER')
+
+		self.PvPIndicator.BadgeBackup = Badge
+		self.PvPIndicator.SizeChange = function()
+		end
 		ElementUpdate(self, 'PvPIndicator')
 		if elements.PvPIndicator.Override then
 			self.PvPIndicator.Override = elements.PvPIndicator.Override
