@@ -253,6 +253,7 @@ do -- ClassIcon as an SUIUF module
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 			self:UnregisterEvent('UNIT_PET', Update)
 			self.SUI_ClassIcon:Hide()
+			self.SUI_ClassIcon.shadow:Hide()
 		end
 	end
 	SUIUF:AddElement('SUI_ClassIcon', Update, Enable, Disable)

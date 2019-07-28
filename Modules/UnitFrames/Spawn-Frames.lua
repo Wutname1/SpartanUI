@@ -61,81 +61,84 @@ local IndicatorList = {
 	'SUI_RaidGroup'
 }
 
-local function ElementUpdate(self, elementName)
-	if not self[elementName] then
-		return
-	end
-
-	local data = module.CurrentSettings[self.unit].elements
-
-	-- Setup the Alpha scape and position
-	self[elementName]:SetAlpha(data[elementName].alpha)
-	self[elementName]:SetScale(data[elementName].scale)
-	self[elementName]:ClearAllPoints()
-	self[elementName]:SetPoint(
-		data[elementName].position.anchor,
-		self,
-		data[elementName].position.anchor,
-		data[elementName].position.x,
-		data[elementName].position.y
-	)
-end
-
 local function CreateUnitFrame(self, unit)
-	if (SUI_FramesAnchor:GetParent() == UIParent) then
-		self:SetParent(UIParent)
-	else
-		self:SetParent(SUI_FramesAnchor)
+	if (unit ~= 'raid') then
+		if (SUI_FramesAnchor:GetParent() == UIParent) then
+			self:SetParent(UIParent)
+		else
+			self:SetParent(SUI_FramesAnchor)
+		end
 	end
 
 	local function UpdateAll()
-		for frameName, frame in pairs(module.frames) do
-			local elements = module.CurrentSettings[unit].elements
-			-- Check that its a frame
-			-- Loop all elements and update their status
-			for _, element in ipairs(elementList) do
-				if self[element] then
-					-- SUF Update (event/updater state)
-					if elements[element].enabled then
-						self:EnableElement(element)
-					else
-						self:DisableElement(element)
-					end
-					-- SUI Update (size, position, etc)
-					if SUI:isInTable(IndicatorList, element) then
-						self:ElementUpdate(element)
-					end
+		local elements = module.CurrentSettings[unit].elements
+		-- Check that its a frame
+		-- Loop all elements and update their status
+		for _, element in ipairs(elementList) do
+			if self[element] and element ~= nil then
+				-- SUF Update (event/updater state)
+				if elements[element].enabled then
+					self:EnableElement(element)
+				else
+					self:DisableElement(element)
+				end
+				-- SUI Update (size, position, etc)
+				if SUI:isInTable(IndicatorList, element) then
+					self:ElementUpdate(element)
 				end
 			end
-
-			--Update the screen
-			if elements.Power.PowerPrediction then
-				self:EnableElement('PowerPrediction')
-			else
-				self:DisableElement('PowerPrediction')
-			end
-
-			if elements.Castbar.icon.enabled then
-				self.Castbar.Icon:Show()
-			else
-				self.Castbar.Icon:Hide()
-			end
-			if elements.Castbar.text['1'].enabled then
-				self.Castbar.Text:Show()
-			else
-				self.Castbar.Text:Hide()
-			end
-			if elements.Castbar.text['2'].enabled then
-				self.Castbar.Time:Show()
-			else
-				self.Castbar.Time:Hide()
-			end
-
-			-- Tell everything to update to get current data
-			self:UpdateSize()
-			self:UpdateAllElements('OnUpdate')
-			self:UpdateTags()
 		end
+
+		--Update the screen
+		if elements.Power.PowerPrediction then
+			self:EnableElement('PowerPrediction')
+		else
+			self:DisableElement('PowerPrediction')
+		end
+
+		if elements.Castbar.icon.enabled then
+			self.Castbar.Icon:Show()
+		else
+			self.Castbar.Icon:Hide()
+		end
+		if elements.Castbar.text['1'].enabled then
+			self.Castbar.Text:Show()
+		else
+			self.Castbar.Text:Hide()
+		end
+		if elements.Castbar.text['2'].enabled then
+			self.Castbar.Time:Show()
+		else
+			self.Castbar.Time:Hide()
+		end
+
+		-- Tell everything to update to get current data
+		self:UpdateSize()
+		self:UpdateAllElements('OnUpdate')
+		self:UpdateTags()
+	end
+
+	local function ElementUpdate(self, elementName)
+		if not self[elementName] then
+			return
+		end
+		local data = module.CurrentSettings[unit].elements
+
+		-- Setup the Alpha scape and position
+		self[elementName]:SetAlpha(data[elementName].alpha)
+		self[elementName]:SetScale(data[elementName].scale)
+		self[elementName]:ClearAllPoints()
+		self[elementName]:SetPoint(
+			data[elementName].position.anchor,
+			self,
+			data[elementName].position.anchor,
+			data[elementName].position.x,
+			data[elementName].position.y
+		)
+		if self[elementName].SizeChange then
+			self[elementName]:SizeChange()
+		end
+
 	end
 
 	-- Build a function that updates the size of the frame and sizes of elements
@@ -154,7 +157,9 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- General
-		self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
+		if not InCombatLockdown() then
+			self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
+		end
 
 		if self.Portrait3D then
 			self.Portrait3D:SetSize(FrameHeight, FrameHeight)
@@ -208,7 +213,14 @@ local function CreateUnitFrame(self, unit)
 	self.ElementUpdate = ElementUpdate
 
 	self.UpdateSize()
-	self.unit = unit
+
+	-- if string.match(self:GetName(), 'party') then
+	-- 	FrameName = 'party'
+	-- elseif string.match(self:GetName(), 'raid') then
+	-- 	FrameName = 'raid'
+	-- else
+	-- 	self.unit = unit
+	-- end
 
 	local artwork = module.CurrentSettings[unit].artwork
 	local auras = module.CurrentSettings[unit].auras
@@ -550,7 +562,7 @@ local function CreateUnitFrame(self, unit)
 		self.ReadyCheckIndicator:SetSize(elements.ReadyCheckIndicator.size, elements.ReadyCheckIndicator.size)
 		ElementUpdate(self, 'ReadyCheckIndicator')
 
-		self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
+		self.PvPIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
 		ElementUpdate(self, 'PvPIndicator')
 		if elements.PvPIndicator.Override then
@@ -693,11 +705,14 @@ local function CreateUnitFrame(self, unit)
 
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
-	self:EnableMouse(enable)
+	if not InCombatLockdown() then
+		self:EnableMouse(enable)
+	end
 	self:SetClampedToScreen(true)
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
 	self.ElementSetup = ElementSetup
+
 	return self
 end
 
@@ -718,67 +733,172 @@ function module:SpawnFrames()
 		-- end
 	end
 
-	-- local party =
-	-- 	SUIUF:SpawnHeader(
-	-- 	'SUI_PartyFrameHeader',
-	-- 	nil,
-	-- 	nil,
-	-- 	'showRaid',
-	-- 	SUI.DBMod.PartyFrames.showRaid,
-	-- 	'showParty',
-	-- 	SUI.DBMod.PartyFrames.showParty,
-	-- 	'showPlayer',
-	-- 	SUI.DBMod.PartyFrames.showPlayer,
-	-- 	'showSolo',
-	-- 	SUI.DBMod.PartyFrames.showSolo,
-	-- 	'yOffset',
-	-- 	-16,
-	-- 	'xOffset',
-	-- 	0,
-	-- 	'columnAnchorPoint',
-	-- 	'TOPLEFT',
-	-- 	'initial-anchor',
-	-- 	'TOPLEFT',
-	-- 	'SUF-initialConfigFunction',
-	-- 	module:FrameSize(SUI.DB.Styles.War.PartyFrames.FrameStyle)
-	-- )
+	local party =
+		SUIUF:SpawnHeader(
+		'SUI_PartyFrameHeader',
+		nil,
+		nil,
+		'showRaid',
+		false,
+		'showParty',
+		true,
+		'showPlayer',
+		false,
+		'yOffset',
+		-16,
+		'xOffset',
+		0,
+		'columnAnchorPoint',
+		'TOPLEFT',
+		'initial-anchor',
+		'TOPLEFT',
+		'oUF-initialConfigFunction',
+		([[
+			local elements = module.CurrentSettings.party.elements
+			local FrameHeight = 0
+			if elements.Castbar.enabled then
+				FrameHeight = FrameHeight + elements.Castbar.height
+			end
+			if elements.Health.enabled then
+				FrameHeight = FrameHeight + elements.Health.height
+			end
+			if elements.Power.enabled then
+				FrameHeight = FrameHeight + elements.Power.height
+			end
 
-	-- local raid =
-	-- 	SUIUF:SpawnHeader(
-	-- 	'SUI_RaidFrameHeader',
-	-- 	nil,
-	-- 	'raid',
-	-- 	'showRaid',
-	-- 	SUI.DBMod.RaidFrames.showRaid,
-	-- 	'showParty',
-	-- 	SUI.DBMod.RaidFrames.showParty,
-	-- 	'showPlayer',
-	-- 	true,
-	-- 	'showSolo',
-	-- 	SUI.DBMod.RaidFrames.showSolo,
-	-- 	'xoffset',
-	-- 	xoffset,
-	-- 	'yOffset',
-	-- 	yOffset,
-	-- 	'point',
-	-- 	point,
-	-- 	'groupBy',
-	-- 	SUI.DBMod.RaidFrames.mode,
-	-- 	'groupingOrder',
-	-- 	groupingOrder,
-	-- 	'sortMethod',
-	-- 	'index',
-	-- 	'maxColumns',
-	-- 	SUI.DBMod.RaidFrames.maxColumns,
-	-- 	'unitsPerColumn',
-	-- 	SUI.DBMod.RaidFrames.unitsPerColumn,
-	-- 	'columnSpacing',
-	-- 	SUI.DBMod.RaidFrames.columnSpacing,
-	-- 	'columnAnchorPoint',
-	-- 	columnAnchorPoint,
-	-- 	'SUF-initialConfigFunction',
-	-- 	module:FrameSize(SUI.DB.Styles.War.RaidFrames.FrameStyle)
-	-- )
+			self:SetSize(module.CurrentSettings.party.width, FrameHeight)
+			self:EnableMouse(enable)
+			]])
+	)
+	module.frames.party = party
+
+	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
+
+	if module.CurrentSettings.raid.mode == 'GROUP' then
+		groupingOrder = '1,2,3,4,5,6,7,8'
+	end
+
+	local raid =
+		SUIUF:SpawnHeader(
+		'SUI_UF_RaidFrameHeader',
+		nil,
+		'solo',
+		'showRaid',
+		module.CurrentSettings.raid.showRaid,
+		'showParty',
+		module.CurrentSettings.raid.showParty,
+		'showPlayer',
+		true,
+		'showSolo',
+		module.CurrentSettings.raid.showSolo,
+		'xoffset',
+		module.CurrentSettings.raid.xOffset,
+		'yOffset',
+		module.CurrentSettings.raid.yOffset,
+		'point',
+		'TOP',
+		'groupBy',
+		module.CurrentSettings.raid.mode,
+		'groupingOrder',
+		groupingOrder,
+		'sortMethod',
+		'index',
+		'maxColumns',
+		module.CurrentSettings.raid.maxColumns,
+		'unitsPerColumn',
+		module.CurrentSettings.raid.unitsPerColumn,
+		'columnSpacing',
+		module.CurrentSettings.raid.columnSpacing,
+		'columnAnchorPoint',
+		'LEFT',
+		'oUF-initialConfigFunction',
+		([[
+			local elements = module.CurrentSettings.raid.elements
+			local FrameHeight = 0
+			if elements.Castbar.enabled then
+				FrameHeight = FrameHeight + elements.Castbar.height
+			end
+			if elements.Health.enabled then
+				FrameHeight = FrameHeight + elements.Health.height
+			end
+			if elements.Power.enabled then
+				FrameHeight = FrameHeight + elements.Power.height
+			end
+
+			self:SetSize(module.CurrentSettings.raid.width, FrameHeight)
+			self:EnableMouse(enable)
+			]])
+	)
+
+	raid:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
+
+	module.frames.raid = raid
+
+	-- module.frames.raid:UpdateAll('raid')
+
+	local function GroupWatcher(event)
+		if (InCombatLockdown()) then
+			-- module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+		else
+			-- module:UnregisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+			module:UpdateGroupFrames(event)
+		end
+	end
+	module:RegisterEvent('GROUP_ROSTER_UPDATE', GroupWatcher)
+	module:RegisterEvent('PLAYER_ENTERING_WORLD', GroupWatcher)
+	module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+end
+
+function module:UpdateGroupFrames(event, ...)
+	SUIPartyFrame = module.frames.party
+	for _, PartyUnit in ipairs({SUIPartyFrame:GetChildren()}) do
+		PartyUnit:UpdateAll()
+	end
+	SUIRaidFrame = module.frames.raid
+	for _, RaidUnit in ipairs({SUIRaidFrame:GetChildren()}) do
+		RaidUnit:UpdateAll()
+	end
+
+	-- for i = 1, 40 do
+	-- 	if _G['SUI_UF_RaidFrameHeaderUnitButton' .. i] then
+	-- 		_G['SUI_UF_RaidFrameHeaderUnitButton' .. i]:UpdateAll()
+	-- 	end
+	-- end
+
+	-- if module.CurrentSettings.raid.showRaid and IsInRaid() then
+	-- 	SUIRaidFrame:Show()
+	-- elseif module.CurrentSettings.raid.showParty and inParty then
+	-- 	--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
+	-- 	SUIRaidFrame.HideTmp = SUIRaidFrame.Hide
+	-- 	SUIRaidFrame.Hide = SUIRaidFrame.Show
+	-- 	--Now Display
+	-- 	SUIRaidFrame:Show()
+	-- elseif module.CurrentSettings.raid.showSolo and not inParty and not IsInRaid() then
+	-- 	--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
+	-- 	SUIRaidFrame.HideTmp = SUIRaidFrame.Hide
+	-- 	SUIRaidFrame.Hide = SUIRaidFrame.Show
+	-- 	--Now Display
+	-- 	SUIRaidFrame:Show()
+	-- elseif SUIRaidFrame:IsShown() then
+	-- 	--Swap back hide function if needed
+	-- 	if SUIRaidFrame.HideTmp then
+	-- 		SUIRaidFrame.Hide = SUIRaidFrame.HideTmp
+	-- 	end
+	-- -- SUIRaidFrame:Hide()
+	-- end
+	-- RaidFrames:UpdateRaidPosition()
+
+	-- SUIRaidFrame:SetAttribute('showRaid', module.CurrentSettings.raid.showRaid)
+	-- SUIRaidFrame:SetAttribute('showParty', module.CurrentSettings.raid.showParty)
+	-- SUIRaidFrame:SetAttribute('showPlayer', module.CurrentSettings.raid.showPlayer)
+	-- SUIRaidFrame:SetAttribute('showSolo', module.CurrentSettings.raid.showSolo)
+
+	-- SUIRaidFrame:SetAttribute('groupBy', module.CurrentSettings.raid.mode)
+	-- SUIRaidFrame:SetAttribute('maxColumns', module.CurrentSettings.raid.maxColumns)
+	-- SUIRaidFrame:SetAttribute('unitsPerColumn', module.CurrentSettings.raid.unitsPerColumn)
+	-- SUIRaidFrame:SetAttribute('columnSpacing', module.CurrentSettings.raid.columnSpacing)
+
+	-- SUIRaidFrame:SetScale(module.CurrentSettings.raid.scale)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1106,7 +1226,7 @@ function PlayerFrames:OnEnable()
 end
 
 function RaidFrames:OnEnable()
-	if SUI.DBMod.RaidFrames.HideBlizzFrames and CompactRaidFrameContainer ~= nil then
+	if module.CurrentSettings.raid.HideBlizzFrames and CompactRaidFrameContainer ~= nil then
 		CompactRaidFrameContainer:UnregisterAllEvents()
 		CompactRaidFrameContainer:Hide()
 
@@ -1132,14 +1252,14 @@ function RaidFrames:OnEnable()
 		CompactRaidFrameContainer:HookScript('OnShow', hideRaid)
 	end
 
-	if (SUI.DBMod.RaidFrames.Style == 'theme') and (SUI.DBMod.Artwork.Style ~= 'Classic') then
+	if (module.CurrentSettings.raid.Style == 'theme') and (SUI.DBMod.Artwork.Style ~= 'Classic') then
 		SUI.RaidFrames = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):RaidFrames()
-	elseif (SUI.DBMod.RaidFrames.Style == 'Classic') or (SUI.DBMod.Artwork.Style == 'Classic') then
+	elseif (module.CurrentSettings.raid.Style == 'Classic') or (SUI.DBMod.Artwork.Style == 'Classic') then
 		SUI.RaidFrames = RaidFrames:Classic()
-	elseif (SUI.DBMod.RaidFrames.Style == 'plain') then
+	elseif (module.CurrentSettings.raid.Style == 'plain') then
 		SUI.RaidFrames = RaidFrames:Plain()
 	else
-		SUI.RaidFrames = SUI:GetModule('Style_' .. SUI.DBMod.RaidFrames.Style):RaidFrames()
+		SUI.RaidFrames = SUI:GetModule('Style_' .. module.CurrentSettings.raid.Style):RaidFrames()
 	end
 
 	SUI.RaidFrames.mover = CreateFrame('Frame')
@@ -1155,7 +1275,7 @@ function RaidFrames:OnEnable()
 		function(self, button)
 			if button == 'LeftButton' and IsAltKeyDown() then
 				SUI.RaidFrames.mover:Show()
-				SUI.DBMod.RaidFrames.moved = true
+				module.CurrentSettings.raid.moved = true
 				SUI.RaidFrames:SetMovable(true)
 				SUI.RaidFrames:StartMoving()
 			end
@@ -1169,7 +1289,7 @@ function RaidFrames:OnEnable()
 			local Anchors = {}
 			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = SUI.RaidFrames:GetPoint()
 			for k, v in pairs(Anchors) do
-				SUI.DBMod.RaidFrames.Anchors[k] = v
+				module.CurrentSettings.raid.Anchors[k] = v
 			end
 		end
 	)
@@ -1433,13 +1553,13 @@ end
 
 function RaidFrames:UpdateRaidPosition()
 	RaidFrames.offset = SUI.DB.yoffset
-	if SUI.DBMod.RaidFrames.moved then
+	if module.CurrentSettings.raid.moved then
 		SUI.RaidFrames:SetMovable(true)
 		SUI.RaidFrames:SetUserPlaced(false)
 	else
 		SUI.RaidFrames:SetMovable(false)
 	end
-	if not SUI.DBMod.RaidFrames.moved then
+	if not module.CurrentSettings.raid.moved then
 		SUI.RaidFrames:ClearAllPoints()
 		if SUI:GetModule('PartyFrames', true) then
 			SUI.RaidFrames:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 10, -140 - (RaidFrames.offset))
@@ -1448,55 +1568,12 @@ function RaidFrames:UpdateRaidPosition()
 		end
 	else
 		local Anchors = {}
-		for k, v in pairs(SUI.DBMod.RaidFrames.Anchors) do
+		for k, v in pairs(module.CurrentSettings.raid.Anchors) do
 			Anchors[k] = v
 		end
 		SUI.RaidFrames:ClearAllPoints()
 		SUI.RaidFrames:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 	end
-end
-
-function RaidFrames:UpdateRaid(event, ...)
-	if SUI.RaidFrames == nil then
-		return
-	end
-
-	if SUI.DBMod.RaidFrames.showRaid and IsInRaid() then
-		SUI.RaidFrames:Show()
-	elseif SUI.DBMod.RaidFrames.showParty and inParty then
-		--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
-		SUI.RaidFrames.HideTmp = SUI.RaidFrames.Hide
-		SUI.RaidFrames.Hide = SUI.RaidFrames.Show
-		--Now Display
-		SUI.RaidFrames:Show()
-	elseif SUI.DBMod.RaidFrames.showSolo and not inParty and not IsInRaid() then
-		--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
-		SUI.RaidFrames.HideTmp = SUI.RaidFrames.Hide
-		SUI.RaidFrames.Hide = SUI.RaidFrames.Show
-		--Now Display
-		SUI.RaidFrames:Show()
-	elseif SUI.RaidFrames:IsShown() then
-		--Swap back hide function if needed
-		if SUI.RaidFrames.HideTmp then
-			SUI.RaidFrames.Hide = SUI.RaidFrames.HideTmp
-		end
-
-	-- SUI.RaidFrames:Hide()
-	end
-
-	RaidFrames:UpdateRaidPosition()
-
-	SUI.RaidFrames:SetAttribute('showRaid', SUI.DBMod.RaidFrames.showRaid)
-	SUI.RaidFrames:SetAttribute('showParty', SUI.DBMod.RaidFrames.showParty)
-	SUI.RaidFrames:SetAttribute('showPlayer', SUI.DBMod.RaidFrames.showPlayer)
-	SUI.RaidFrames:SetAttribute('showSolo', SUI.DBMod.RaidFrames.showSolo)
-
-	SUI.RaidFrames:SetAttribute('groupBy', SUI.DBMod.RaidFrames.mode)
-	SUI.RaidFrames:SetAttribute('maxColumns', SUI.DBMod.RaidFrames.maxColumns)
-	SUI.RaidFrames:SetAttribute('unitsPerColumn', SUI.DBMod.RaidFrames.unitsPerColumn)
-	SUI.RaidFrames:SetAttribute('columnSpacing', SUI.DBMod.RaidFrames.columnSpacing)
-
-	SUI.RaidFrames:SetScale(SUI.DBMod.RaidFrames.scale)
 end
 
 function PartyFrames:UpdatePartyPosition()

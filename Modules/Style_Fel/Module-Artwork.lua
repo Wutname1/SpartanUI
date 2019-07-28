@@ -40,9 +40,9 @@ function module:updateScale()
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local Resolution = ''
 		if select(4, GetBuildInfo()) >= 70000 then
-			Resolution = GetCVar("gxWindowedResolution")
+			Resolution = GetCVar('gxWindowedResolution')
 		else
-			Resolution = GetCVar("gxResolution")
+			Resolution = GetCVar('gxResolution')
 		end
 
 		local width, height = string.match(Resolution, '(%d+).-(%d+)')
@@ -329,7 +329,7 @@ function module:MiniMap()
 		QueueStatusFrame:ClearAllPoints()
 		QueueStatusFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 100)
 	end
-	
+
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
 
 	module.Settings.MiniMap.Anchor = {

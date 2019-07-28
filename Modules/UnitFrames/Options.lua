@@ -691,7 +691,7 @@ local function AddIndicatorOptions(frameName)
 	end
 
 	for key, name in pairs(AllIndicators) do
-		SUI.opt.args['UnitFrames'].args[frameName].args['indicators'].args[key] = {
+		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args[key] = {
 			name = name,
 			type = 'group',
 			args = {
@@ -1418,6 +1418,108 @@ local function AddBuffOptions(frameName)
 	}
 end
 
+local function AddRaidOptions()
+	SUI.opt.args['UnitFrames'].args['raid'].args['general'].args['Display'] = {
+		name = 'Display',
+		type = 'group',
+		order = 5,
+		inline = true,
+		args = {
+			toggleraid = {
+				name = L['ShowRFrames'],
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return module.CurrentSettings.raid.showRaid
+				end,
+				set = function(info, val)
+					module.CurrentSettings.raid.showRaid = val
+				end
+			},
+			toggleparty = {
+				name = L['PartyDispParty'],
+				type = 'toggle',
+				order = 2,
+				get = function(info)
+					return module.CurrentSettings.raid.showParty
+				end,
+				set = function(info, val)
+					module.CurrentSettings.raid.showParty = val
+				end
+			},
+			togglesolo = {
+				name = L['PartyDispSolo'],
+				type = 'toggle',
+				order = 4,
+				get = function(info)
+					return module.CurrentSettings.raid.showSolo
+				end,
+				set = function(info, val)
+					module.CurrentSettings.raid.showSolo = val
+				end
+			},
+			mode = {
+				name = L['LayMode'],
+				type = 'select',
+				order = 3,
+				values = {['NAME'] = L['LayName'], ['GROUP'] = L['LayGrp'], ['ASSIGNEDROLE'] = L['LayRole']},
+				get = function(info)
+					return module.CurrentSettings.raid.mode
+				end,
+				set = function(info, val)
+					module.CurrentSettings.raid.mode = val
+				end
+			},
+			bar1 = {name = L['LayoutConf'], type = 'header', order = 20},
+			maxColumns = {
+				name = L['MaxCols'],
+				type = 'range',
+				order = 21,
+				width = 'full',
+				step = 1,
+				min = 1,
+				max = 40,
+				get = function(info)
+					return module.CurrentSettings.raid.maxColumns
+				end,
+				set = function(info, val)
+					module.CurrentSettings.raid.maxColumns = val
+				end
+			},
+			unitsPerColumn = {
+				name = L['UnitPerCol'],
+				type = 'range',
+				order = 22,
+				width = 'full',
+				step = 1,
+				min = 1,
+				max = 40,
+				get = function(info)
+					return module.CurrentSettings.raid.unitsPerColumn
+				end,
+				set = function(info, val)
+					module.CurrentSettings.raid.unitsPerColumn = val
+				end
+			},
+			columnSpacing = {
+				name = L['ColSpacing'],
+				type = 'range',
+				order = 23,
+				width = 'full',
+				step = 1,
+				min = 0,
+				max = 200,
+				get = function(info)
+					return module.CurrentSettings.raid.columnSpacing
+				end,
+				set = function(info, val)
+					module.CurrentSettings.raid.columnSpacing = val
+				end
+			}
+		}
+	}
+end
+
 function module:InitializeOptions()
 	SUI.opt.args['UnitFrames'] = {
 		name = 'Unit frames',
@@ -1544,6 +1646,7 @@ function module:InitializeOptions()
 		end
 	end
 
+	AddRaidOptions()
 	SUI.opt.args['UnitFrames'].args['player'].args['general'].args['General'].args['range'].hidden = true
 end
 

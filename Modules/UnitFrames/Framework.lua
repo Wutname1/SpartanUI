@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:NewModule('Module_UnitFrames', 'AceTimer-3.0')
+local module = SUI:NewModule('Module_UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0')
 module.DisplayName = L['Unit frames']
 
 local loadstring = loadstring

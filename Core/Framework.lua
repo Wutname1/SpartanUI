@@ -919,7 +919,27 @@ local DBdefault = {
 				raid = {
 					enabled = true,
 					width = 95,
+					showRaid = true,
+					showParty = true,
+					showSolo = true,
+					mode = 'NAME',
+					xOffset = 2,
+					yOffset = 2,
+					maxColumns = 10,
+					unitsPerColumn = 10,
+					columnSpacing = 2,
 					elements = {
+						Health = {
+							height = 30
+						},
+						Power = {
+							height = 5,
+							text = {
+								['1'] = {
+									enabled = false
+								}
+							}
+						},
 						ResurrectIndicator = {
 							enabled = true
 						},
@@ -928,6 +948,14 @@ local DBdefault = {
 						},
 						RaidRoleIndicator = {
 							enabled = true
+						},
+						Name = {
+							enabled = true,
+							height = 10,
+							size = 10,
+							position = {
+								y = 0
+							}
 						}
 					}
 				},
