@@ -22,6 +22,7 @@ local ExcludedItems = {
 	169334, --Strange Oceanic Sediment
 	170193, --Sea Totem
 	168802, --Nazjatar Battle Commendation
+	171090, --Battleborn Sigil
 	-- Cata
 	71141, -- Eternal Ember
 	-- Legion
