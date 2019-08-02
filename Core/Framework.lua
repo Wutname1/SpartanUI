@@ -609,17 +609,16 @@ local DBdefault = {
 							height = 10,
 							text = {
 								['1'] = {
-									enabled = true,
-									text = '[perpp]%',
-									position = {
-										anchor = 'CENTER',
-										x = 0,
-										y = 0
-									}
+									enabled = false,
+									text = '[curppformatted] / [maxppformatted]'
+								},
+								['2'] = {
+									enabled = false,
+									text = '[perpp]%'
 								}
 							}
 						},
-						additionalpower = {},
+						AdditionalPower = {},
 						Castbar = {
 							enabled = false,
 							height = 10,
@@ -765,7 +764,31 @@ local DBdefault = {
 						ThreatIndicator = {
 							enabled = true
 						},
-						SUI_RaidGroup = {}
+						SUI_RaidGroup = {},
+						RareElite = {
+							enabled = true,
+							alpha = .6,
+							points = {
+								['1'] = {
+									anchor = 'TOPLEFT',
+									x = 0,
+									y = 0
+								},
+								['2'] = {
+									anchor = 'BOTTOMRIGHT',
+									x = 0,
+									y = 0
+								}
+							}
+						},
+						BossGraphic = {
+							size = 130,
+							position = {
+								anchor = 'LEFT',
+								x = -20,
+								y = 35
+							}
+						}
 					}
 				},
 				player = {
@@ -810,6 +833,16 @@ local DBdefault = {
 								x = 0,
 								y = 0
 							}
+						},
+						Power = {
+							text = {
+								['1'] = {
+									enabled = true
+								}
+							}
+						},
+						AdditionalPower = {
+							enabled = true
 						}
 					}
 				},
@@ -839,6 +872,13 @@ local DBdefault = {
 						},
 						SUI_ClassIcon = {
 							enabled = true
+						},
+						Power = {
+							text = {
+								['1'] = {
+									enabled = true
+								}
+							}
 						}
 					}
 				},
@@ -853,10 +893,7 @@ local DBdefault = {
 							height = 30
 						},
 						Power = {
-							height = 5,
-							Text = {
-								enabled = false
-							}
+							height = 5
 						}
 					}
 				},
@@ -920,9 +957,8 @@ local DBdefault = {
 				raid = {
 					enabled = true,
 					width = 95,
-					showRaid = true,
 					showParty = true,
-					showSolo = true,
+					showSelf = true,
 					mode = 'NAME',
 					xOffset = 2,
 					yOffset = 2,
@@ -1156,6 +1192,44 @@ local DBdefault = {
 			animationInterval = 0,
 			anim = '',
 			vignette = nil
+		},
+		NamePlates = {
+			ShowThreat = true,
+			ShowName = true,
+			ShowLevel = true,
+			ShowTarget = true,
+			ShowRareElite = true,
+			ShowRaidTargetIndicator = true,
+			Scale = 1,
+			elements = {
+				['**'] = {
+					enabled = true
+				},
+				Background = {
+					type = 'graphic'
+				},
+				Name = {
+					SetJustifyH = 'CENTER'
+				},
+				QuestIndicator = {},
+				Health = {
+					height = 5,
+					colorTapping = true,
+					colorReaction = true,
+					colorClass = true
+				},
+				Power = {
+					show = true,
+					ShowPlayerPowerIcons = true,
+					height = 3
+				},
+				Castbar = {
+					show = true,
+					height = 5,
+					text = true,
+					FlashOnInterruptible = true
+				}
+			}
 		}
 	}
 }

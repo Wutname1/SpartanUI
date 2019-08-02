@@ -520,7 +520,7 @@ end
 
 do -- Mana Formatting Tags
 	-- Current Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['curppdynamic'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Events['curppdynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['curppdynamic'] = function(unit)
 		local tmp = UnitPower(unit)
 		if tmp >= 1000000 then
@@ -530,7 +530,7 @@ do -- Mana Formatting Tags
 		end
 	end
 	-- Total Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['maxppdynamic'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Events['maxppdynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['maxppdynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit)
 		if tmp >= 1000000 then
@@ -550,17 +550,17 @@ do -- Mana Formatting Tags
 		end
 	end
 	-- Current Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['curppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Events['curppformatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['curppformatted'] = function(unit)
 		return addon:comma_value(UnitPower(unit))
 	end
 	-- Total Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['maxppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Events['maxppformatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['maxppformatted'] = function(unit)
 		return addon:comma_value(UnitPowerMax(unit))
 	end
 	-- Total Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['missingppformatted'] = 'UNIT_MAXPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Events['missingppformatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['missingppformatted'] = function(unit)
 		return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit))
 	end

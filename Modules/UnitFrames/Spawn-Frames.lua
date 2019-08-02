@@ -28,6 +28,8 @@ local elementList = {
 	'SUI_ClassIcon',
 	'ReadyCheckIndicator',
 	'PvPIndicator',
+	'RareElite',
+	'BossGraphic',
 	'StatusText',
 	'Runes',
 	'Stagger',
@@ -96,6 +98,13 @@ local function CreateUnitFrame(self, unit)
 			self:DisableElement('PowerPrediction')
 		end
 
+		--Update Health items
+		self.Health.colorDisconnected = elements.Health.colorDisconnected
+		self.Health.colorTapping = elements.Health.colorTapping
+		self.Health.colorReaction = elements.Health.colorReaction
+		self.Health.colorSmooth = elements.Health.colorSmooth
+		self.Health.colorClass = elements.Health.colorClass
+
 		if elements.Castbar.icon.enabled then
 			self.Castbar.Icon:Show()
 		else
@@ -122,26 +131,54 @@ local function CreateUnitFrame(self, unit)
 		if not self[elementName] then
 			return
 		end
-		local data = module.CurrentSettings[unit].elements
+		local data = module.CurrentSettings[unit].elements[elementName]
 
 		-- Setup the Alpha scape and position
-		self[elementName]:SetAlpha(data[elementName].alpha)
-		self[elementName]:SetScale(data[elementName].scale)
+		self[elementName]:SetAlpha(data.alpha)
+		self[elementName]:SetScale(data.scale)
+
+		-- Positioning
 		self[elementName]:ClearAllPoints()
-		self[elementName]:SetPoint(
-			data[elementName].position.anchor,
-			self,
-			data[elementName].position.anchor,
-			data[elementName].position.x,
-			data[elementName].position.y
-		)
+		if data.points ~= false and data.points == true then
+			self[elementName]:SetAllPoints(self)
+		elseif data.points ~= false and data.points ~= true then
+			for _, key in pairs(data.points) do
+				self[elementName]:SetPoint(key.anchor, self, key.anchor, key.x, key.y)
+			end
+		elseif data.position.anchor then
+			self[elementName]:SetPoint(data.position.anchor, self, data.position.anchor, data.position.x, data.position.y)
+		end
+
+		--Size it if we have a size change function for the element
 		if self[elementName].SizeChange then
 			self[elementName]:SizeChange()
 		end
 
-		if elementName == 'PvPIndicator' and data.PvPIndicator.Badge and self.PvPIndicator.Badge == nil then
+		--PVPIndicator specific stuff
+		if elementName == 'PvPIndicator' and data.Badge and self.PvPIndicator.Badge == nil then
 			self.PvPIndicator.Badge = self.PvPIndicator.BadgeBackup
 			self.PvPIndicator:ForceUpdate('OnUpdate')
+		end
+
+		--Portrait specific stuff
+		if elementName == 'Portrait' then
+			self.Portrait3D:Hide()
+			self.Portrait2D:Hide()
+			if data.type == '3D' then
+				self.Portrait = self.Portrait3D
+				self.Portrait3D:Show()
+			else
+				self.Portrait = self.Portrait2D
+				self.Portrait2D:Show()
+			end
+			if data.position == 'left' then
+				self.Portrait3D:SetPoint('RIGHT', self, 'LEFT')
+				self.Portrait2D:SetPoint('RIGHT', self, 'LEFT')
+			else
+				self.Portrait3D:SetPoint('LEFT', self, 'RIGHT')
+				self.Portrait2D:SetPoint('LEFT', self, 'RIGHT')
+			end
+			self:UpdateAllElements('OnUpdate')
 		end
 	end
 
@@ -212,29 +249,22 @@ local function CreateUnitFrame(self, unit)
 			end
 		end
 	end
+
 	self.UpdateAll = UpdateAll
 	self.UpdateSize = UpdateSize
 	self.ElementUpdate = ElementUpdate
 
 	self.UpdateSize()
 
-	-- if string.match(self:GetName(), 'party') then
-	-- 	FrameName = 'party'
-	-- elseif string.match(self:GetName(), 'raid') then
-	-- 	FrameName = 'raid'
-	-- else
-	-- 	self.unit = unit
-	-- end
-
 	local artwork = module.CurrentSettings[unit].artwork
 	local auras = module.CurrentSettings[unit].auras
 	local elements = module.CurrentSettings[unit].elements
 
 	do -- General setup
-		-- 	self.artwork = CreateFrame('Frame', nil, self)
-		-- 	self.artwork:SetFrameStrata('BACKGROUND')
-		-- 	self.artwork:SetFrameLevel(2)
-		-- 	self.artwork:SetAllPoints()
+		self.artwork = CreateFrame('Frame', nil, self)
+		self.artwork:SetFrameStrata('BACKGROUND')
+		self.artwork:SetFrameLevel(2)
+		self.artwork:SetAllPoints()
 
 		-- 	self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
 		-- 	self.artwork.bgNeutral:SetAllPoints(self)
@@ -279,18 +309,21 @@ local function CreateUnitFrame(self, unit)
 		Portrait2D:SetScale(elements.Portrait.Scale)
 		self.Portrait2D = Portrait2D
 
-		if elements.Portrait.position == 'left' then
-			Portrait3D:SetPoint('RIGHT', self, 'LEFT')
-			Portrait2D:SetPoint('RIGHT', self, 'LEFT')
-		else
-			Portrait3D:SetPoint('LEFT', self, 'RIGHT')
-			Portrait2D:SetPoint('LEFT', self, 'RIGHT')
-		end
-		if elements.Portrait.type == '3D' then
-			self.Portrait = self.Portrait3D
-		else
-			self.Portrait = self.Portrait2D
-		end
+		self.Portrait = Portrait3D
+		ElementUpdate(self, 'Portrait')
+
+		-- if elements.Portrait.position == 'left' then
+		-- 	Portrait3D:SetPoint('RIGHT', self, 'LEFT')
+		-- 	Portrait2D:SetPoint('RIGHT', self, 'LEFT')
+		-- else
+		-- 	Portrait3D:SetPoint('LEFT', self, 'RIGHT')
+		-- 	Portrait2D:SetPoint('LEFT', self, 'RIGHT')
+		-- end
+		-- if elements.Portrait.type == '3D' then
+		-- 	self.Portrait = self.Portrait3D
+		-- else
+		-- 	self.Portrait = self.Portrait2D
+		-- end
 
 		-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
 		-- 	Threat:SetSize(25, 25)
@@ -392,7 +425,6 @@ local function CreateUnitFrame(self, unit)
 			self.Health = health
 
 			self.Health.frequentUpdates = true
-			self.Health.colorDisconnected = true
 			self.Health.colorDisconnected = elements.Health.colorDisconnected
 			self.Health.colorTapping = elements.Health.colorTapping
 			self.Health.colorReaction = elements.Health.colorReaction
@@ -473,35 +505,35 @@ local function CreateUnitFrame(self, unit)
 			PositionData = PositionData + elements.Health.height
 			power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
 
-			power.ratio = power:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline8')
-			power.ratio:SetJustifyH('CENTER')
-			power.ratio:SetJustifyV('MIDDLE')
-			power.ratio:SetAllPoints(power)
-			self:Tag(power.ratio, '[perpp]%')
+			power.TextElements = {}
+			for i, key in pairs(elements.Power.text) do
+				if key.enabled then
+					local NewString = power:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
+					NewString:SetJustifyH(key.SetJustifyH)
+					NewString:SetJustifyV(key.SetJustifyV)
+					NewString:SetPoint(key.position.anchor, power, key.position.anchor, key.position.x, key.position.y)
+					self:Tag(NewString, key.text)
+
+					power.TextElements[i] = NewString
+				end
+			end
 
 			self.Power = power
 			self.Power.colorPower = true
 			self.Power.frequentUpdates = true
 
 			if unit == 'player' then
-				-- Position and size
+				-- Additional Mana
 				local AdditionalPower = CreateFrame('StatusBar', nil, self)
-				AdditionalPower:SetFrameStrata('BACKGROUND')
-				AdditionalPower:SetFrameLevel(2)
-				AdditionalPower:SetStatusBarTexture(Smoothv2)
-				AdditionalPower:SetSize(self:GetWidth(), elements.Power.height)
-				if elements.Power.enabled then
-					PositionData = PositionData + elements.Power.height
-				end
-				AdditionalPower:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
-
-				-- local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
-				-- Background:SetAllPoints(AdditionalPower)
-				-- Background:SetTexture(1, 1, 1, .5)
-
-				-- AdditionalPower.bg = Background
+				AdditionalPower:SetSize(self.Power:GetWidth(), 4)
+				AdditionalPower:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
 				AdditionalPower.colorPower = true
+				AdditionalPower:SetStatusBarTexture(Smoothv2)
+				local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
+				Background:SetAllPoints(AdditionalPower)
+				Background:SetTexture(1, 1, 1, .2)
 				self.AdditionalPower = AdditionalPower
+				self.AdditionalPower.bg = Background
 
 				-- Position and size
 				local mainBar = CreateFrame('StatusBar', nil, self.Power)
@@ -527,7 +559,7 @@ local function CreateUnitFrame(self, unit)
 			end
 		end
 	end
-	do -- setup icons, and text
+	do -- setup indicators
 		self.Name = self:CreateFontString()
 		SUI:FormatFont(self.Name, 12, 'Player')
 		self.Name:SetSize(self:GetWidth(), 12)
@@ -536,11 +568,13 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'Name')
 		self:Tag(self.Name, elements.Name.text)
 
-		-- 	self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -2)
-		-- 	self.RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
-		-- 	self.RareElite:SetAlpha(.6)
-		-- 	self.RareElite:SetPoint('BOTTOMRIGHT', self.Name, 'BOTTOMRIGHT', 0, 0)
-		-- 	self.RareElite:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', 0, 0)
+		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -8)
+		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
+		ElementUpdate(self, 'RareElite')
+
+		self.BossGraphic = self:CreateTexture(nil, 'ARTWORK')
+		self.BossGraphic:SetSize(elements.BossGraphic.size, elements.BossGraphic.size - 5)
+		ElementUpdate(self, 'BossGraphic')
 
 		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
 		self.LeaderIndicator:SetSize(elements.LeaderIndicator.size, elements.LeaderIndicator.size)
@@ -608,83 +642,72 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'StatusText')
 		self:Tag(self.StatusText, '[afkdnd]')
 		-- end
-		-- do -- Special Icons/Bars
-		-- 	if unit == 'player' then
-		-- 		local playerClass = select(2, UnitClass('player'))
-		-- 		--Runes
-		-- 		if playerClass == 'DEATHKNIGHT' then
-		-- 			self.Runes = CreateFrame('Frame', nil, self)
-		-- 			self.Runes.colorSpec = true
+		do -- Special Icons/Bars
+			if unit == 'player' then
+				local playerClass = select(2, UnitClass('player'))
+				--Runes
+				if playerClass == 'DEATHKNIGHT' then
+					self.Runes = CreateFrame('Frame', nil, self)
+					self.Runes.colorSpec = true
 
-		-- 			for i = 1, 6 do
-		-- 				self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
-		-- 				self.Runes[i]:SetHeight(6)
-		-- 				self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
-		-- 				if (i == 1) then
-		-- 					self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
-		-- 				else
-		-- 					self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
-		-- 				end
-		-- 				self.Runes[i]:SetStatusBarTexture(Smoothv2)
-		-- 				self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+					for i = 1, 6 do
+						self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
+						self.Runes[i]:SetHeight(6)
+						self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
+						if (i == 1) then
+							self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
+						else
+							self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
+						end
+						self.Runes[i]:SetStatusBarTexture(Smoothv2)
+						self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
 
-		-- 				self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
-		-- 				self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
-		-- 				self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
-		-- 				self.Runes[i].bg:SetTexture(Smoothv2)
-		-- 				self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
-		-- 				self.Runes[i].bg.multiplier = 0.64
-		-- 				self.Runes[i]:Hide()
-		-- 			end
-		-- 		end
+						self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
+						self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
+						self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
+						self.Runes[i].bg:SetTexture(Smoothv2)
+						self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
+						self.Runes[i].bg.multiplier = 0.64
+						self.Runes[i]:Hide()
+					end
+				end
 
-		-- 		self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
-		-- 		self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
-		-- 		local ClassPower = {}
-		-- 		for index = 1, 10 do
-		-- 			local Bar = CreateFrame('StatusBar', nil, self)
-		-- 			Bar:SetStatusBarTexture(Smoothv2)
+				self.CPAnchor = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+				self.CPAnchor:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
+				local ClassPower = {}
+				for index = 1, 10 do
+					local Bar = CreateFrame('StatusBar', nil, self)
+					Bar:SetStatusBarTexture(Smoothv2)
 
-		-- 			-- Position and size.
-		-- 			Bar:SetSize(16, 5)
-		-- 			if (index == 1) then
-		-- 				Bar:SetPoint('LEFT', self.ComboPoints, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
-		-- 			else
-		-- 				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
-		-- 			end
-		-- 			ClassPower[index] = Bar
-		-- 		end
+					-- Position and size.
+					Bar:SetSize(16, 5)
+					if (index == 1) then
+						Bar:SetPoint('LEFT', self.CPAnchor, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
+					else
+						Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
+					end
+					ClassPower[index] = Bar
+				end
 
-		-- 		-- Register with SUF
-		-- 		self.ClassPower = ClassPower
+				-- Register with SUF
+				self.ClassPower = ClassPower
 
-		-- 		-- Druid Mana
-		-- 		local DruidMana = CreateFrame('StatusBar', nil, self)
-		-- 		DruidMana:SetSize(self.Power:GetWidth(), 4)
-		-- 		DruidMana:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
-		-- 		DruidMana.colorPower = true
-		-- 		DruidMana:SetStatusBarTexture(Smoothv2)
-		-- 		local Background = DruidMana:CreateTexture(nil, 'BACKGROUND')
-		-- 		Background:SetAllPoints(DruidMana)
-		-- 		Background:SetTexture(1, 1, 1, .2)
-		-- 		self.AdditionalPower = DruidMana
-		-- 		self.AdditionalPower.bg = Background
-
-		-- 		--Totem Bar
-		-- 		for index = 1, 4 do
-		-- 			_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
-		-- 			_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
-		-- 			_G['TotemFrameTotem' .. index]:SetScale(.8)
-		-- 		end
-		-- 		hooksecurefunc(
-		-- 			'TotemFrame_Update',
-		-- 			function()
-		-- 				TotemFrameTotem1:ClearAllPoints()
-		-- 				TotemFrameTotem1:SetParent(self)
-		-- 				TotemFrameTotem1:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 20, 0)
-		-- 			end
-		-- 		)
-		-- 	end
+				--Totem Bar
+				for index = 1, 4 do
+					_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+					_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+					_G['TotemFrameTotem' .. index]:SetScale(.8)
+				end
+				hooksecurefunc(
+					'TotemFrame_Update',
+					function()
+						TotemFrameTotem1:ClearAllPoints()
+						TotemFrameTotem1:SetParent(self)
+						TotemFrameTotem1:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 20, 0)
+					end
+				)
+			end
+		end
 	end
 	-- do -- setup buffs and debuffs
 	-- 	self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
@@ -723,7 +746,7 @@ local function CreateUnitFrame(self, unit)
 	self:SetClampedToScreen(true)
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
-	self.ElementSetup = ElementSetup
+	-- self.ElementSetup = ElementSetup
 
 	return self
 end
@@ -739,23 +762,25 @@ function module:SpawnFrames()
 
 		-- Disable objects based on settings
 		module.frames[b]:UpdateAll()
-
-		-- if b == 'player' and not SUI.IsClassic then
-		-- 	PlayerFrames:SetupExtras()
-		-- end
 	end
+
+	-- if not SUI.IsClassic then
+	-- 	PlayerFrames:SetupExtras()
+	-- end
 
 	local party =
 		SUIUF:SpawnHeader(
 		'SUI_PartyFrameHeader',
 		nil,
-		nil,
+		'party',
 		'showRaid',
-		false,
+		true,
 		'showParty',
 		true,
 		'showPlayer',
-		false,
+		true,
+		'showSolo',
+		true,
 		'yOffset',
 		-16,
 		'xOffset',
@@ -782,6 +807,7 @@ function module:SpawnFrames()
 			self:EnableMouse(enable)
 			]])
 	)
+	party:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
 	module.frames.party = party
 
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
@@ -794,15 +820,15 @@ function module:SpawnFrames()
 		SUIUF:SpawnHeader(
 		'SUI_UF_RaidFrameHeader',
 		nil,
-		'solo',
+		'raid',
 		'showRaid',
-		module.CurrentSettings.raid.showRaid,
+		true,
 		'showParty',
 		module.CurrentSettings.raid.showParty,
 		'showPlayer',
 		true,
 		'showSolo',
-		module.CurrentSettings.raid.showSolo,
+		true,
 		'xoffset',
 		module.CurrentSettings.raid.xOffset,
 		'yOffset',
@@ -841,12 +867,54 @@ function module:SpawnFrames()
 			self:EnableMouse(enable)
 			]])
 	)
-
 	raid:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
-
 	module.frames.raid = raid
 
-	-- module.frames.raid:UpdateAll('raid')
+	-- for _, group in ipairs({'raid', 'party'}) do
+	-- 	local function GroupFrameElementUpdate(self, elementName)
+	-- 		for _, v in ipairs({module.frames[group]:GetChildren()}) do
+	-- 			if v.ElementUpdate then
+	-- 				v:ElementUpdate(elementName)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- 	local function GroupFrameUpdateSize(self)
+	-- 		for _, v in ipairs({module.frames[group]:GetChildren()}) do
+	-- 			if v.UpdateSize then
+	-- 				v:UpdateSize()
+	-- 			end
+	-- 		end
+	-- 	end
+	-- 	module.frames[group].ElementUpdate = GroupFrameElementUpdate
+	-- 	module.frames[group].UpdateSize = GroupFrameUpdateSize
+	-- end
+	local function GroupFrameUpdateAll(self)
+		for _, f in ipairs({self:GetChildren()}) do
+			if f.UpdateAll then
+				f:UpdateAll()
+			end
+		end
+	end
+	local function GroupFrameElementUpdate(self, elementName)
+		for _, f in ipairs(self) do
+			if f.ElementUpdate then
+				f:ElementUpdate(elementName)
+			end
+		end
+	end
+	local function GroupFrameUpdateSize(self)
+		for _, f in ipairs({self:GetChildren()}) do
+			if f.UpdateSize then
+				f:UpdateSize()
+			end
+		end
+	end
+
+	for _, group in ipairs({'raid', 'party'}) do
+		module.frames[group].UpdateAll = GroupFrameUpdateAll
+		module.frames[group].ElementUpdate = GroupFrameElementUpdate
+		module.frames[group].UpdateSize = GroupFrameUpdateSize
+	end
 
 	local function GroupWatcher(event)
 		if (InCombatLockdown()) then
@@ -862,10 +930,10 @@ function module:SpawnFrames()
 end
 
 function module:UpdateGroupFrames(event, ...)
-	SUIPartyFrame = module.frames.party
-	for _, PartyUnit in ipairs({SUIPartyFrame:GetChildren()}) do
-		PartyUnit:UpdateAll()
-	end
+	-- SUIPartyFrame = module.frames.party
+	-- for _, PartyUnit in ipairs({SUIPartyFrame:GetChildren()}) do
+	-- 	PartyUnit:UpdateAll()
+	-- end
 	SUIRaidFrame = module.frames.raid
 	for _, RaidUnit in ipairs({SUIRaidFrame:GetChildren()}) do
 		RaidUnit:UpdateAll()

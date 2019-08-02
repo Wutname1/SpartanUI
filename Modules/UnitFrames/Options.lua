@@ -2,62 +2,15 @@ local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:GetModule('Module_UnitFrames')
 ----------------------------------------------------------------------------------------------------
 local anchorPoints = {
-	['TOPLEFT'] = 'TOPLEFT',
+	['TOPLEFT'] = 'TOP LEFT',
 	['TOP'] = 'TOP',
-	['TOPRIGHT'] = 'TOPRIGHT',
+	['TOPRIGHT'] = 'TOP RIGHT',
 	['RIGHT'] = 'RIGHT',
 	['CENTER'] = 'CENTER',
 	['LEFT'] = 'LEFT',
-	['BOTTOMLEFT'] = 'BOTTOMLEFT',
+	['BOTTOMLEFT'] = 'BOTTOM LEFT',
 	['BOTTOM'] = 'BOTTOM',
-	['BOTTOMRIGHT'] = 'BOTTOMRIGHT'
-}
-local elementList = {
-	'Portrait',
-	'Health',
-	'HealthPrediction',
-	'Power',
-	'Castbar',
-	'Name',
-	'LeaderIndicator',
-	'RestingIndicator',
-	'GroupRoleIndicator',
-	'CombatIndicator',
-	'RaidTargetIndicator',
-	'SUI_ClassIcon',
-	'ReadyCheckIndicator',
-	'PvPIndicator',
-	'StatusText',
-	'Runes',
-	'Stagger',
-	'Totems',
-	'AssistantIndicator',
-	'RaidRoleIndicator',
-	'ResurrectIndicator',
-	'SummonIndicator',
-	'QuestIndicator',
-	'Range',
-	'phaseindicator',
-	'ThreatIndicator',
-	'SUI_RaidGroup'
-}
-local IndicatorList = {
-	'LeaderIndicator',
-	'RestingIndicator',
-	'GroupRoleIndicator',
-	'CombatIndicator',
-	'RaidTargetIndicator',
-	'SUI_ClassIcon',
-	'ReadyCheckIndicator',
-	'PvPIndicator',
-	'AssistantIndicator',
-	'RaidRoleIndicator',
-	'ResurrectIndicator',
-	'SummonIndicator',
-	'QuestIndicator',
-	'phaseindicator',
-	'ThreatIndicator',
-	'SUI_RaidGroup'
+	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 }
 ----------------------------------------------------------------------------------------------------
 
@@ -117,7 +70,7 @@ local function AddGeneralOptions(frameName)
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].width = val
 							--Update the screen
-							module.frames[frameName].UpdateSize()
+							module.frames[frameName]:UpdateSize()
 						end
 					},
 					range = {
@@ -133,11 +86,15 @@ local function AddGeneralOptions(frameName)
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.enabled = val
 							--Update the screen
-							if val then
-								module.frames[frameName]:EnableElement('Range')
-								module.frames[frameName].Range:ForceUpdate()
+							if module.frames[frameName].Range then
+								if val then
+									module.frames[frameName]:EnableElement('Range')
+									module.frames[frameName].Range:ForceUpdate()
+								else
+									module.frames[frameName]:DisableElement('Range')
+								end
 							else
-								module.frames[frameName]:DisableElement('Range')
+								module.frames[frameName]:UpdateAll()
 							end
 						end
 					}
@@ -157,17 +114,21 @@ local function AddGeneralOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Portrait.enabled
 						end,
 						set = function(info, val)
-							--Update the screen
-							if val then
-								module.frames[frameName]:EnableElement('Portrait')
-								module.frames[frameName].Portrait:ForceUpdate()
-							else
-								module.frames[frameName]:DisableElement('Portrait')
-							end
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.enabled = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.enabled = val
+							--Update the screen
+							if module.frames[frameName].Portrait then
+								if val then
+									module.frames[frameName]:EnableElement('Portrait')
+									module.frames[frameName].Portrait:ForceUpdate()
+								else
+									module.frames[frameName]:DisableElement('Portrait')
+								end
+							else
+								module.frames[frameName]:UpdateAll()
+							end
 						end
 					},
 					type = {
@@ -182,23 +143,12 @@ local function AddGeneralOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Portrait.type
 						end,
 						set = function(info, val)
-							--Update the screen
-							-- module.frames[frameName]:DisableElement('Portrait')
-							module.frames[frameName].Portrait3D:Hide()
-							module.frames[frameName].Portrait2D:Hide()
-							if val == '3D' then
-								module.frames[frameName].Portrait = module.frames[frameName].Portrait3D
-								module.frames[frameName].Portrait3D:Show()
-							else
-								module.frames[frameName].Portrait = module.frames[frameName].Portrait2D
-								module.frames[frameName].Portrait2D:Show()
-							end
-							-- module.frames[frameName]:EnableElement('Portrait')
-							module.frames[frameName]:UpdateAllElements('OnUpdate')
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.type = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.type = val
+							--Update the screen
+							module.frames[frameName]:ElementUpdate('Portrait')
 						end
 					},
 					position = {
@@ -213,20 +163,12 @@ local function AddGeneralOptions(frameName)
 							return module.CurrentSettings[frameName].elements.Portrait.position
 						end,
 						set = function(info, val)
-							--Update the screen
-							module.frames[frameName].Portrait3D:ClearAllPoints()
-							module.frames[frameName].Portrait2D:ClearAllPoints()
-							if val == 'left' then
-								module.frames[frameName].Portrait3D:SetPoint('RIGHT', module.frames[frameName], 'LEFT')
-								module.frames[frameName].Portrait2D:SetPoint('RIGHT', module.frames[frameName], 'LEFT')
-							else
-								module.frames[frameName].Portrait3D:SetPoint('LEFT', module.frames[frameName], 'RIGHT')
-								module.frames[frameName].Portrait2D:SetPoint('LEFT', module.frames[frameName], 'RIGHT')
-							end
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.position = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.position = val
+							--Update the screen
+							module.frames[frameName]:ElementUpdate('Portrait')
 						end
 					}
 				}
@@ -403,19 +345,18 @@ local function AddBarOptions(frameName)
 				args = {
 					healthprediction = {
 						name = 'Health prediction',
-						desc = "color the bar with a smooth gradient based on the player's current health percentage",
 						type = 'toggle',
 						order = 5,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Health.colorSmooth
+							return module.CurrentSettings[frameName].elements.HealthPrediction
 						end,
 						set = function(info, val)
 							--Update the screen
-							module.frames[frameName].Health.colorSmooth = val
+							module.frames[frameName].HealthPrediction = val
 							--Update memory
-							module.CurrentSettings[frameName].elements.Health.colorSmooth = val
+							module.CurrentSettings[frameName].elements.HealthPrediction = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorSmooth = val
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.HealthPrediction = val
 						end
 					},
 					coloring = {
@@ -434,12 +375,12 @@ local function AddBarOptions(frameName)
 									return module.CurrentSettings[frameName].elements.Health.colorTapping
 								end,
 								set = function(info, val)
-									--Update the screen
-									module.frames[frameName].Health.colorTapping = val
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorTapping = val
 									--Update the DB
 									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorTapping = val
+									--Update the screen
+									module.frames[frameName]:UpdateAll()
 								end
 							},
 							colorDisconnected = {
@@ -451,13 +392,13 @@ local function AddBarOptions(frameName)
 									return module.CurrentSettings[frameName].elements.Health.colorDisconnected
 								end,
 								set = function(info, val)
-									--Update the screen
-									module.frames[frameName].Health.colorDisconnected = val
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorDisconnected = val
 									--Update the DB
 									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorDisconnected =
 										val
+									--Update the screen
+									module.frames[frameName]:UpdateAll()
 								end
 							},
 							colorClass = {
@@ -469,13 +410,12 @@ local function AddBarOptions(frameName)
 									return module.CurrentSettings[frameName].elements.Health.colorClass
 								end,
 								set = function(info, val)
-									--Update the screen
-									module.frames[frameName].Health.colorClass = val
-									module.frames[frameName].Health:ForceUpdate()
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorClass = val
 									--Update the DB
 									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorClass = val
+									--Update the screen
+									module.frames[frameName]:UpdateAll()
 								end
 							},
 							colorReaction = {
@@ -487,12 +427,12 @@ local function AddBarOptions(frameName)
 									return module.CurrentSettings[frameName].elements.Health.colorReaction
 								end,
 								set = function(info, val)
-									--Update the screen
-									module.frames[frameName].Health.colorReaction = val
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorReaction = val
 									--Update the DB
 									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorReaction = val
+									--Update the screen
+									module.frames[frameName]:UpdateAll()
 								end
 							},
 							colorSmooth = {
@@ -504,12 +444,12 @@ local function AddBarOptions(frameName)
 									return module.CurrentSettings[frameName].elements.Health.colorSmooth
 								end,
 								set = function(info, val)
-									--Update the screen
-									module.frames[frameName].Health.colorSmooth = val
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorSmooth = val
 									--Update the DB
 									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorSmooth = val
+									--Update the screen
+									module.frames[frameName]:UpdateAll()
 								end
 							}
 						}
@@ -527,7 +467,7 @@ local function AddBarOptions(frameName)
 	}
 
 	local bars = {'Castbar', 'Health', 'Power'}
-	for i, key in ipairs(bars) do
+	for _, key in ipairs(bars) do
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['enabled'] = {
 			name = L['Enabled'],
 			type = 'toggle',
@@ -541,12 +481,7 @@ local function AddBarOptions(frameName)
 				--Update the DB
 				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
 				--Update the screen
-				if val then
-					module.frames[frameName]:EnableElement(key)
-				else
-					module.frames[frameName]:DisableElement(key)
-				end
-				module.frames[frameName].UpdateSize()
+				module.frames[frameName]:UpdateAll()
 			end
 		}
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['height'] = {
@@ -565,34 +500,34 @@ local function AddBarOptions(frameName)
 				--Update the DB
 				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].height = val
 				--Update the screen
-				module.frames[frameName].UpdateSize()
+				module.frames[frameName]:UpdateSize()
 			end
 		}
 	end
 
 	if frameName == 'player' then
-		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['Power'].args['PowerPrediction'] = {
+		SUI.opt.args['UnitFrames'].args.player.args['bars'].args['Power'].args['PowerPrediction'] = {
 			name = 'Enable power prediction',
 			desc = 'Used to represent cost of spells on top of the Power bar',
 			type = 'toggle',
 			order = 10,
 			get = function(info)
-				return module.CurrentSettings[frameName].elements.Power.PowerPrediction
+				return module.CurrentSettings.player.elements.Power.PowerPrediction
 			end,
 			set = function(info, val)
 				--Update the screen
 				if val then
-					module.frames[frameName]:EnableElement('PowerPrediction')
+					module.frames.player:EnableElement('PowerPrediction')
 				else
-					module.frames[frameName]:DisableElement('PowerPrediction')
+					module.frames.player:DisableElement('PowerPrediction')
 				end
 				--Update memory
-				module.CurrentSettings[frameName].elements.Power.PowerPrediction = val
+				module.CurrentSettings.player.elements.Power.PowerPrediction = val
 				--Update the DB
-				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Power.PowerPrediction = val
+				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.Power.PowerPrediction = val
 			end
 		}
-		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['additionalpower'] = {
+		SUI.opt.args['UnitFrames'].args.player.args['bars'].args['additionalpower'] = {
 			name = 'Additional power',
 			desc = "player's additional power, such as Mana for Balance druids.",
 			order = 20,
@@ -604,19 +539,19 @@ local function AddBarOptions(frameName)
 					type = 'toggle',
 					order = 1,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements.additionalpower.enabled
+						return module.CurrentSettings.player.elements.additionalpower.enabled
 					end,
 					set = function(info, val)
 						--Update the screen
 						if val then
-							module.frames[frameName]:EnableElement('AdditionalPower')
+							module.frames.player:EnableElement('AdditionalPower')
 						else
-							module.frames[frameName]:DisableElement('AdditionalPower')
+							module.frames.player:DisableElement('AdditionalPower')
 						end
 						--Update memory
-						module.CurrentSettings[frameName].elements.additionalpower.enabled = val
+						module.CurrentSettings.player.elements.additionalpower.enabled = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.additionalpower.enabled = val
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.additionalpower.enabled = val
 					end
 				},
 				height = {
@@ -627,15 +562,15 @@ local function AddBarOptions(frameName)
 					max = 100,
 					step = 1,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements.additionalpower.height
+						return module.CurrentSettings.player.elements.additionalpower.height
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings[frameName].elements.additionalpower.height = val
+						module.CurrentSettings.player.elements.additionalpower.height = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.additionalpower.height = val
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.additionalpower.height = val
 						--Update the screen
-						module.frames[frameName].UpdateSize()
+						module.frames.player:UpdateSize()
 					end
 				}
 			}
@@ -739,7 +674,11 @@ local function AddIndicatorOptions(frameName)
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].size = val
 								--Update Screen
-								module.frames[frameName][key]:SetSize(val, val)
+								if module.frames[frameName][key] then
+									module.frames[frameName][key]:SetSize(val, val)
+								else
+									module.frames[frameName]:UpdateSize()
+								end
 							end
 						},
 						scale = {
@@ -1483,10 +1422,10 @@ local function AddRaidOptions()
 				end
 			},
 			mode = {
-				name = L['LayMode'],
+				name = 'Sort order',
 				type = 'select',
 				order = 3,
-				values = {['NAME'] = L['LayName'], ['GROUP'] = L['LayGrp'], ['ASSIGNEDROLE'] = L['LayRole']},
+				values = {['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles'},
 				get = function(info)
 					return module.CurrentSettings.raid.mode
 				end,
@@ -1677,230 +1616,6 @@ end
 ----------------------------------------------------------------------------------------------------
 
 function PlayerOptions()
-	SUI.opt.args['PlayerFrames'].args['FrameStyle'] = {
-		name = L['FrameStyle'],
-		type = 'group',
-		desc = L['BarOptDesc'],
-		args = {
-			toggle3DPortrait = {
-				name = L['Portrait3D'],
-				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return SUI.DBMod.PlayerFrames.Portrait3D
-				end,
-				set = function(info, val)
-					SUI.DBMod.PlayerFrames.Portrait3D = val
-				end
-			},
-			showPetPortrait = {
-				name = 'Show pet portrait',
-				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return SUI.DBMod.PlayerFrames.PetPortrait
-				end,
-				set = function(info, val)
-					SUI.DBMod.PlayerFrames.PetPortrait = val
-				end
-			},
-			toggleclassname = {
-				name = L['ClrNameClass'],
-				type = 'toggle',
-				order = 2,
-				get = function(info)
-					return SUI.DBMod.PlayerFrames.showClass
-				end,
-				set = function(info, val)
-					SUI.DBMod.PlayerFrames.showClass = val
-				end
-			},
-			targettargetStyle = {
-				name = L['ToTFrameStyle'],
-				type = 'select',
-				order = 3,
-				values = {['large'] = L['LargeFrame'], ['medium'] = L['HidePicture'], ['small'] = L['NameHealthOnly']},
-				get = function(info)
-					return SUI.DBMod.PlayerFrames.targettarget.style
-				end,
-				set = function(info, val)
-					SUI.DBMod.PlayerFrames.targettarget.style = val
-				end
-			},
-			targettargetinfo = {name = L['ReloadRequired'], type = 'description', order = 4},
-			bars = {
-				name = L['BarOpt'],
-				type = 'group',
-				order = 1,
-				desc = L['BarOptDesc'],
-				args = {
-					bar1 = {name = L['HBarClr'], type = 'header', order = 10},
-					healthPlayerColor = {
-						name = L['PlayerHClr'],
-						type = 'select',
-						order = 11,
-						values = {['reaction'] = L['Green'], ['dynamic'] = L['TextStyle3']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.player.color
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.player.color = val
-							PlayerFrames.player:ColorUpdate('player')
-						end
-					},
-					healthTargetColor = {
-						name = 'Target Health Color',
-						type = 'select',
-						order = 12,
-						values = {['class'] = L['ClrByClass'], ['dynamic'] = L['TextStyle3'], ['reaction'] = L['ClrByReac']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.target.color
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.target.color = val
-							PlayerFrames.player:ColorUpdate('target')
-						end
-					},
-					healthToTColor = {
-						name = 'Target of Target Health Color',
-						type = 'select',
-						order = 13,
-						values = {['class'] = L['ClrByClass'], ['dynamic'] = L['TextStyle3'], ['reaction'] = L['ClrByReac']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.targettarget.color
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.targettarget.color = val
-							PlayerFrames.player:ColorUpdate('targettarget')
-						end
-					},
-					healthPetColor = {
-						name = 'Pet Health Color',
-						type = 'select',
-						order = 14,
-						values = {['class'] = L['ClrByClass'], ['dynamic'] = L['TextStyle3'], ['happiness'] = 'Happiness'},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.pet.color
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.pet.color = val
-							PlayerFrames.player:ColorUpdate('pet')
-						end
-					},
-					healthFocusColor = {
-						name = 'Focus Health Color',
-						type = 'select',
-						order = 15,
-						values = {['class'] = L['ClrByClass'], ['dynamic'] = L['TextStyle3'], ['reaction'] = L['ClrByReac']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.focus.color
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.focus.color = val
-							PlayerFrames.player:ColorUpdate('focus')
-						end
-					},
-					healthFocusTargetColor = {
-						name = 'Focus Target Health Color',
-						type = 'select',
-						order = 16,
-						values = {['class'] = L['ClrByClass'], ['dynamic'] = L['TextStyle3'], ['reaction'] = L['ClrByReac']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.focustarget.color
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.focustarget.color = val
-							PlayerFrames.player:ColorUpdate('focustarget')
-						end
-					},
-					bar2 = {name = L['TextStyle'], type = 'header', order = 20},
-					healthtextstyle = {
-						name = L['HTextStyle'],
-						type = 'select',
-						order = 21,
-						desc = 'Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed',
-						values = {['long'] = L['TextStyle1'], ['longfor'] = L['TextStyle2'], ['dynamic'] = L['TextStyle3']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.health.textstyle
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.health.textstyle = val
-							for _, b in pairs(SUI.PlayerFrames) do
-								SUI.PlayerFrames[b]:TextUpdate(b)
-							end
-						end
-					},
-					healthtextmode = {
-						name = L['HTextMode'],
-						type = 'select',
-						order = 22,
-						values = {
-							[1] = L['HTextMode1'],
-							[2] = L['HTextMode2'],
-							[3] = L['HTextMode3'],
-							[4] = L['HTextMode1'] .. ' (Percentage)'
-						},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.health.textmode
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.health.textmode = val
-							for _, b in pairs(SUI.PlayerFrames) do
-								SUI.PlayerFrames[b]:TextUpdate(b)
-							end
-						end
-					},
-					manatextstyle = {
-						name = L['MTextStyle'],
-						type = 'select',
-						order = 23,
-						desc = 'Long: Displays all numbers.|nLong Formatted: Displays all numbers with commas.|nDynamic: Abbriviates and formats as needed',
-						values = {['long'] = L['TextStyle1'], ['longfor'] = L['TextStyle2'], ['dynamic'] = L['TextStyle3']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.mana.textstyle
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.mana.textstyle = val
-							for _, b in pairs(SUI.PlayerFrames) do
-								SUI.PlayerFrames[b]:TextUpdate(b)
-							end
-						end
-					},
-					manatextmode = {
-						name = L['MTextMode'],
-						type = 'select',
-						order = 24,
-						values = {[1] = L['HTextMode1'], [2] = L['HTextMode2'], [3] = L['HTextMode3']},
-						get = function(info)
-							return SUI.DBMod.PlayerFrames.bars.mana.textmode
-						end,
-						set = function(info, val)
-							SUI.DBMod.PlayerFrames.bars.mana.textmode = val
-							for _, b in pairs(Units) do
-								addon[b]:TextUpdate(b)
-							end
-						end
-					}
-				}
-			},
-			ClassBarScale = {
-				name = 'Class bar scale',
-				type = 'range',
-				order = 6,
-				width = 'full',
-				min = .01,
-				max = 2,
-				step = .01,
-				get = function(info)
-					return SUI.DBMod.PlayerFrames.ClassBar.scale
-				end,
-				set = function(info, val)
-					SUI.DBMod.PlayerFrames.ClassBar.scale = val
-					SUI:GetModule('PlayerFrames'):SetupExtras()
-				end
-			}
-		}
-	}
 	SUI.opt.args['PlayerFrames'].args['frameDisplay'] = {
 		name = 'Disable Frames',
 		type = 'group',
@@ -2593,26 +2308,6 @@ function PartyOptions()
 			SUI.DBMod.PartyFrames.moved = false
 			PartyFrames:UpdatePartyPosition()
 			-- end
-		end
-	}
-	SUI.opt.args['PartyFrames'].args['scale'] = {
-		name = L['ScaleSize'],
-		type = 'range',
-		order = 11,
-		width = 'full',
-		step = .01,
-		min = .01,
-		max = 2,
-		get = function(info)
-			return SUI.DBMod.PartyFrames.scale
-		end,
-		set = function(info, val)
-			if (InCombatLockdown()) then
-				SUI:Print(ERR_NOT_IN_COMBAT)
-			else
-				SUI.DBMod.PartyFrames.scale = val
-				PartyFrames:UpdateParty('FORCE_UPDATE')
-			end
 		end
 	}
 end
