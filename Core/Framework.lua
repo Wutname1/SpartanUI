@@ -699,6 +699,41 @@ local DBdefault = {
 			},
 			debuffs = {display = true},
 			Auras = {size = 10, spacing = 1, showType = true}
+		},
+		NamePlates = {
+			ShowThreat = true,
+			ShowName = true,
+			ShowLevel = true,
+			ShowTarget = true,
+			ShowRareElite = true,
+			ShowRaidTargetIndicator = true,
+			Scale = 1,
+			elements = {
+				['**'] = {
+					enabled = true
+				},
+				Background = {
+					type = 'graphic'
+				},
+				Name = {
+				},
+				QuestIndicator = {},
+				Health = {
+					height = 5,
+					colorTapping = true,
+					colorReaction = true,
+					colorClass = true
+				},
+				Power = {
+					ShowPlayerPowerIcons = true,
+					height = 3
+				},
+				Castbar = {
+					height = 5,
+					text = true,
+					FlashOnInterruptible = true
+				}
+			}
 		}
 	}
 }
