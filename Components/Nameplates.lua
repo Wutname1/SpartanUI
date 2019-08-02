@@ -117,7 +117,7 @@ local NamePlateFactory = function(frame, unit)
 			frame.Name = health:CreateFontString(nil, 'BACKGROUND')
 			SUI:FormatFont(frame.Name, 10, 'Player')
 			frame.Name:SetSize(frame:GetWidth(), 12)
-			frame.Name:SetJustifyH('LEFT')
+			frame.Name:SetJustifyH(SUI.DBMod.NamePlates.elements.Name.SetJustifyH)
 			frame.Name:SetPoint('BOTTOMLEFT', frame.Health, 'TOPLEFT', 0, 0)
 			frame:Tag(frame.Name, nameString)
 		end

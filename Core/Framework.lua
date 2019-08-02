@@ -716,6 +716,7 @@ local DBdefault = {
 					type = 'graphic'
 				},
 				Name = {
+					SetJustifyH = 'CENTER'
 				},
 				QuestIndicator = {},
 				Health = {
