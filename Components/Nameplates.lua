@@ -24,30 +24,51 @@ local Images = {
 }
 local BarTexture = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga'
 local Timers = {}
+local factionColor = {
+	['Alliance'] = {0, 0, 1, 0.3},
+	['Horde'] = {1, 0, 0, 0.3},
+	['Neutral'] = {0, 0, 0, 0.5}
+}
+local NameplateList = {}
 
 local pvpIconWar = function(self, event, unit)
 	if (unit ~= self.unit) then
 		return
 	end
-	self.artwork.bgHorde:Hide()
-	self.artwork.bgAlliance:Hide()
-	self.artwork.bgNeutral:Hide()
+	local settings = SUI.DBMod.NamePlates.elements
+	self.bg.solid:Hide()
+	self.bg.artwork.Neutral:Hide()
+	self.bg.artwork.Alliance:Hide()
+	self.bg.artwork.Horde:Hide()
 
-	if not SUI.DBMod.NamePlates.elements.Background.enabled then
+	if not settings.Background.enabled then
 		return
 	end
 
 	local factionGroup = UnitFactionGroup(unit)
-
-	if (factionGroup and factionGroup ~= 'Neutral') then
-		self.artwork['bg' .. factionGroup]:Show()
-		if UnitIsPVP(unit) then
-			self.artwork['bg' .. factionGroup]:SetAlpha(.7)
+	if settings.Background.type == 'solid' then
+		self.bg.solid:Show()
+		if settings.Background.colorMode == 'faction' and factionGroup then
+			self.bg.solid:SetVertexColor(unpack(factionColor[factionGroup]))
+		elseif settings.Background.colorMode == 'reaction' then
+			local colors = SUIUF.colors.reaction[UnitReaction(unit, 'player')]
+			if colors then
+				self.bg.solid:SetVertexColor(colors[1], colors[2], colors[3])
+			else
+				self.bg.solid:SetVertexColor(0, 0, 0)
+			end
 		else
-			self.artwork['bg' .. factionGroup]:SetAlpha(.35)
+			self.bg.solid:SetVertexColor(0, 0, 0)
 		end
+		self.bg.solid:SetAlpha(settings.Background.alpha)
 	else
-		self.artwork.bgNeutral:Show()
+		if (factionGroup and factionGroup ~= 'Neutral') then
+			self.bg.artwork[factionGroup]:Show()
+			self.bg.artwork[factionGroup]:SetAlpha(settings.Background.alpha)
+		else
+			self.bg.artwork.bgNeutral:Show()
+			self.bg.artwork.bgNeutral:SetAlpha(settings.Background.alpha)
+		end
 	end
 end
 
@@ -100,10 +121,29 @@ local NamePlateFactory = function(frame, unit)
 		health.colorClass = SUI.DBMod.NamePlates.elements.Health.colorClass
 		frame.Health = health
 
-		frame.bgHealth = frame:CreateTexture(nil, 'BACKGROUND', frame)
-		frame.bgHealth:SetAllPoints()
-		frame.bgHealth:SetTexture(BarTexture)
-		frame.bgHealth:SetVertexColor(0, 0, 0, .5)
+		frame.bg = {}
+		frame.bg.artwork = {}
+		frame.bg.solid = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.solid:SetAllPoints()
+		frame.bg.solid:SetTexture(BarTexture)
+		frame.bg.solid:SetVertexColor(0, 0, 0, .5)
+
+		frame.bg.artwork.Neutral = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.artwork.Neutral:SetAllPoints()
+		frame.bg.artwork.Neutral:SetTexture(BarTexture)
+		frame.bg.artwork.Neutral:SetVertexColor(0, 0, 0, .6)
+
+		frame.bg.artwork.Alliance = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.artwork.Alliance:SetAllPoints()
+		frame.bg.artwork.Alliance:SetTexture(Images.Alliance.bg.Texture)
+		frame.bg.artwork.Alliance:SetTexCoord(unpack(Images.Alliance.bg.Coords))
+		frame.bg.artwork.Alliance:SetSize(frame:GetSize())
+
+		frame.bg.artwork.Horde = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.artwork.Horde:SetAllPoints()
+		frame.bg.artwork.Horde:SetTexture(Images.Horde.bg.Texture)
+		frame.bg.artwork.Horde:SetTexCoord(unpack(Images.Horde.bg.Coords))
+		frame.bg.artwork.Horde:SetSize(frame:GetSize())
 
 		-- Name
 		local nameString = ''
@@ -212,27 +252,7 @@ local NamePlateFactory = function(frame, unit)
 		RareElite:SetAllPoints(frame)
 		frame.RareElite = RareElite
 
-		-- frame background
-		frame.artwork = CreateFrame('Frame', 'BACKGROUND', frame)
-		frame.artwork:SetAllPoints()
-
-		frame.artwork.bgNeutral = frame:CreateTexture(nil, 'BACKGROUND', frame)
-		frame.artwork.bgNeutral:SetAllPoints()
-		frame.artwork.bgNeutral:SetTexture(BarTexture)
-		frame.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
-
-		frame.artwork.bgAlliance = frame:CreateTexture(nil, 'BACKGROUND', frame)
-		frame.artwork.bgAlliance:SetAllPoints()
-		frame.artwork.bgAlliance:SetTexture(Images.Alliance.bg.Texture)
-		frame.artwork.bgAlliance:SetTexCoord(unpack(Images.Alliance.bg.Coords))
-		frame.artwork.bgAlliance:SetSize(frame:GetSize())
-
-		frame.artwork.bgHorde = frame:CreateTexture(nil, 'BACKGROUND', frame)
-		frame.artwork.bgHorde:SetAllPoints()
-		frame.artwork.bgHorde:SetTexture(Images.Horde.bg.Texture)
-		frame.artwork.bgHorde:SetTexCoord(unpack(Images.Horde.bg.Coords))
-		frame.artwork.bgHorde:SetSize(frame:GetSize())
-
+		-- frame PvPIndicator
 		frame.PvPIndicator = frame:CreateTexture(nil, 'BORDER', frame)
 		frame.PvPIndicator:SetSize(1, 1)
 		frame.PvPIndicator:SetPoint('BOTTOMLEFT')
@@ -267,16 +287,22 @@ local NamePlateFactory = function(frame, unit)
 end
 
 local NameplateCallback = function(self, event, unit)
-	if not self or not unit then
+	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then
 		return
 	end
+	if event == 'NAME_PLATE_UNIT_ADDED' then
+		NameplateList[self:GetName()] = true
+	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
+		NameplateList[self:GetName()] = false
+	end
+
 	-- Update target Indicator
 	if UnitIsUnit(unit, 'target') and SUI.DBMod.NamePlates.ShowTarget then
 		-- the frame is the new target
 		self.TargetIndicator.bg1:Show()
 		self.TargetIndicator.bg2:Show()
 	end
-	if SUI.DBMod.NamePlates.ShowRareElite then
+	if SUI.DBMod.NamePlates.elements.RareElite.enabled then
 		self:EnableElement('RareElite')
 	else
 		self:DisableElement('RareElite')
@@ -306,6 +332,14 @@ local NameplateCallback = function(self, event, unit)
 
 	-- Set the Scale of the nameplate
 	self:SetScale(SUI.DBMod.NamePlates.Scale)
+end
+
+function module:UpdateNameplates()
+	for k, v in pairs(NameplateList) do
+		if v then
+			_G[k].PvPIndicator.Override(_G[k], nil, _G[k].unit)
+		end
+	end
 end
 
 function module:OnInitialize()
@@ -339,11 +373,13 @@ function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['Nameplates'] = {
 		type = 'group',
 		name = L['Nameplates'],
+		childGroups = 'tab',
 		args = {
 			General = {
 				name = 'General Apperance',
 				type = 'group',
 				order = 10,
+				childGroups = 'tree',
 				args = {
 					Scale = {
 						name = L['Nameplate scale'],
@@ -368,19 +404,228 @@ function module:BuildOptions()
 							Enabled = {
 								name = 'Enabled',
 								type = 'toggle',
+								width = 'full',
+								order = 1,
 								get = function(info)
 									return SUI.DBMod.NamePlates.elements.Background.enabled
 								end,
 								set = function(info, val)
 									SUI.DBMod.NamePlates.elements.Background.enabled = val
+									module:UpdateNameplates()
+								end
+							},
+							bgtype = {
+								name = 'Type',
+								order = 2,
+								type = 'select',
+								values = {['artwork'] = 'Artwork', ['solid'] = 'Solid'},
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Background.type
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Background.type = val
+									module:UpdateNameplates()
+								end
+							},
+							colorMode = {
+								name = 'Color mode',
+								type = 'select',
+								order = 3,
+								values = {
+									['faction'] = 'Faction',
+									['reaction'] = 'Reaction'
+								},
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Background.colorMode
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Background.colorMode = val
+									module:UpdateNameplates()
+								end
+							},
+							alpha = {
+								name = 'Alpha',
+								type = 'range',
+								width = 'full',
+								order = 4,
+								min = 0,
+								max = 1,
+								step = .01,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Background.alpha
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Background.alpha = val
+									module:UpdateNameplates()
 								end
 							}
 						}
 					},
+					HealthBar = {
+						name = L['Health bar'],
+						type = 'group',
+						-- inline = true,
+						order = 3,
+						args = {
+							height = {
+								name = L['Height'],
+								type = 'range',
+								width = 'full',
+								min = 1,
+								max = 30,
+								step = 1,
+								order = 10,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Health.height
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Health.height = val
+								end
+							},
+							colorTapping = {
+								name = L['Grey out tapped targets'],
+								type = 'toggle',
+								width = 'full',
+								order = 20,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Health.colorTapping
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Health.colorTapping = val
+								end
+							},
+							colorReaction = {
+								name = L['Color based on reaction'],
+								type = 'toggle',
+								width = 'full',
+								order = 30,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Health.colorReaction
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Health.colorReaction = val
+								end
+							},
+							colorClass = {
+								name = L['Color based on class'],
+								type = 'toggle',
+								width = 'full',
+								order = 40,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Health.colorClass
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Health.colorClass = val
+								end
+							}
+						}
+					},
+					PowerBar = {
+						name = L['Power bar'],
+						type = 'group',
+						-- inline = true,
+						order = 4,
+						args = {
+							show = {
+								name = L['Enabled'],
+								type = 'toggle',
+								width = 'full',
+								order = 1,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Power.enabled
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Power.enabled = val
+								end
+							},
+							height = {
+								name = L['Height'],
+								type = 'range',
+								width = 'full',
+								min = 1,
+								max = 15,
+								step = 1,
+								order = 10,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Power.height
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Power.height = val
+								end
+							}
+						}
+					},
+					CastBar = {
+						name = L['Cast bar'],
+						type = 'group',
+						-- inline = true,
+						order = 5,
+						args = {
+							show = {
+								name = L['Enabled'],
+								type = 'toggle',
+								width = 'full',
+								order = 1,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Castbar.enabled
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Castbar.enabled = val
+								end
+							},
+							Height = {
+								name = L['Height'],
+								type = 'range',
+								width = 'full',
+								min = 1,
+								max = 15,
+								step = 1,
+								order = 10,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Castbar.height
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Castbar.height = val
+								end
+							},
+							Text = {
+								name = L['Show text'],
+								type = 'toggle',
+								width = 'full',
+								order = 20,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Castbar.text
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Castbar.text = val
+								end
+							},
+							FlashOnInterruptible = {
+								name = L['Flash on interruptible cast'],
+								type = 'toggle',
+								width = 'full',
+								order = 30,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Castbar.FlashOnInterruptible
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Castbar.FlashOnInterruptible = val
+								end
+							}
+						}
+					}
+				}
+			},
+			Indicator = {
+				name = 'Indicators',
+				type = 'group',
+				order = 20,
+				childGroups = 'tree',
+				args = {
 					Name = {
 						name = 'Name',
 						type = 'group',
-						order = 2,
+						order = 1,
 						args = {
 							ShowLevel = {
 								name = L['Show level'],
@@ -426,159 +671,15 @@ function module:BuildOptions()
 							}
 						}
 					},
-					HealthBar = {
-						name = L['Health bar'],
-						type = 'group',
-						-- inline = true,
-						order = 3,
-						args = {
-							height = {
-								name = L['Height'],
-								type = 'range',
-								min = 1,
-								max = 30,
-								step = 1,
-								order = 10,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Health.height
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Health.height = val
-								end
-							},
-							colorTapping = {
-								name = L['Grey out tapped targets'],
-								type = 'toggle',
-								order = 20,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Health.colorTapping
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Health.colorTapping = val
-								end
-							},
-							colorReaction = {
-								name = L['Color based on reaction'],
-								type = 'toggle',
-								order = 30,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Health.colorReaction
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Health.colorReaction = val
-								end
-							},
-							colorClass = {
-								name = L['Color based on class'],
-								type = 'toggle',
-								order = 40,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Health.colorClass
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Health.colorClass = val
-								end
-							}
-						}
-					},
-					PowerBar = {
-						name = L['Power bar'],
-						type = 'group',
-						-- inline = true,
-						order = 4,
-						args = {
-							show = {
-								name = L['Enabled'],
-								type = 'toggle',
-								order = 1,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Power.enabled
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Power.enabled = val
-								end
-							},
-							height = {
-								name = L['Height'],
-								type = 'range',
-								min = 1,
-								max = 15,
-								step = 1,
-								order = 10,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Power.height
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Power.height = val
-								end
-							}
-						}
-					},
-					CastBar = {
-						name = L['Cast bar'],
-						type = 'group',
-						-- inline = true,
-						order = 5,
-						args = {
-							show = {
-								name = L['Enabled'],
-								type = 'toggle',
-								order = 1,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Castbar.enabled
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Castbar.enabled = val
-								end
-							},
-							Height = {
-								name = L['Height'],
-								type = 'range',
-								min = 1,
-								max = 15,
-								step = 1,
-								order = 10,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Castbar.height
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Castbar.height = val
-								end
-							},
-							Text = {
-								name = L['Show text'],
-								type = 'toggle',
-								order = 20,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Castbar.text
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Castbar.text = val
-								end
-							},
-							FlashOnInterruptible = {
-								name = L['Flash on interruptible cast'],
-								type = 'toggle',
-								order = 30,
-								get = function(info)
-									return SUI.DBMod.NamePlates.elements.Castbar.FlashOnInterruptible
-								end,
-								set = function(info, val)
-									SUI.DBMod.NamePlates.elements.Castbar.FlashOnInterruptible = val
-								end
-							}
-						}
-					},
 					QuestIndicator = {
 						name = 'Quest icon',
 						type = 'group',
-						order = 6,
 						args = {
 							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
-								width = 'double',
-								order = 3,
+								width = 'full',
+								order = 1,
 								get = function(info)
 									return SUI.DBMod.NamePlates.elements.QuestIndicator.enabled
 								end,
@@ -591,18 +692,17 @@ function module:BuildOptions()
 					RareElite = {
 						name = 'Rare/Elite background',
 						type = 'group',
-						order = 7,
 						args = {
 							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
-								width = 'double',
-								order = 4,
+								width = 'full',
+								order = 1,
 								get = function(info)
-									return SUI.DBMod.NamePlates.ShowRareElite
+									return SUI.DBMod.NamePlates.elements.RareElite.enabled
 								end,
 								set = function(info, val)
-									SUI.DBMod.NamePlates.ShowRareElite = val
+									SUI.DBMod.NamePlates.elements.RareElite.enabled = val
 								end
 							}
 						}
@@ -610,13 +710,12 @@ function module:BuildOptions()
 					TargetIndicator = {
 						name = 'Target indicator',
 						type = 'group',
-						order = 8,
 						args = {
 							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
-								width = 'double',
-								order = 5,
+								width = 'full',
+								order = 1,
 								get = function(info)
 									return SUI.DBMod.NamePlates.ShowTarget
 								end,
