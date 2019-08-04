@@ -386,10 +386,9 @@ local CreatePlayerFrame = function(self, unit)
 		end
 
 		self.Level = ring:CreateFontString(nil, 'BORDER', 'SUI_FontOutline10')
-		self.Level:SetSize(40, 11)
 		self.Level:SetJustifyH('CENTER')
 		self.Level:SetJustifyV('MIDDLE')
-		self.Level:SetPoint('CENTER', ring, 'CENTER', 53, 12)
+		self.Level:SetPoint('CENTER', ring, 'CENTER', 50, 12)
 		self:Tag(self.Level, '[level]')
 
 		self.SUI_ClassIcon = ring:CreateTexture(nil, 'BORDER')
