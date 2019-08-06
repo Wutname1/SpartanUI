@@ -62,12 +62,12 @@ local pvpIconWar = function(self, event, unit)
 		end
 		self.bg.solid:SetAlpha(settings.Background.alpha)
 	else
-		if (factionGroup and factionGroup ~= 'Neutral') then
+		if (factionGroup) then
 			self.bg.artwork[factionGroup]:Show()
 			self.bg.artwork[factionGroup]:SetAlpha(settings.Background.alpha)
 		else
-			self.bg.artwork.bgNeutral:Show()
-			self.bg.artwork.bgNeutral:SetAlpha(settings.Background.alpha)
+			self.bg.artwork.Neutral:Show()
+			self.bg.artwork.Neutral:SetAlpha(settings.Background.alpha)
 		end
 	end
 end
@@ -301,6 +301,9 @@ local NameplateCallback = function(self, event, unit)
 		-- the frame is the new target
 		self.TargetIndicator.bg1:Show()
 		self.TargetIndicator.bg2:Show()
+	elseif self.TargetIndicator.bg1:IsShown() then
+		self.TargetIndicator.bg1:Hide()
+		self.TargetIndicator.bg2:Hide()
 	end
 	if SUI.DBMod.NamePlates.elements.RareElite.enabled then
 		self:EnableElement('RareElite')
@@ -375,27 +378,27 @@ function module:BuildOptions()
 		name = L['Nameplates'],
 		childGroups = 'tab',
 		args = {
+			Scale = {
+				name = 'Scale',
+				type = 'range',
+				width = 'full',
+				min = .01,
+				max = 3,
+				step = .01,
+				order = 1,
+				get = function(info)
+					return SUI.DBMod.NamePlates.Scale
+				end,
+				set = function(info, val)
+					SUI.DBMod.NamePlates.Scale = val
+				end
+			},
 			General = {
 				name = 'General Apperance',
 				type = 'group',
 				order = 10,
 				childGroups = 'tree',
 				args = {
-					Scale = {
-						name = L['Nameplate scale'],
-						type = 'range',
-						width = 'full',
-						min = .01,
-						max = 3,
-						step = .01,
-						order = 10,
-						get = function(info)
-							return SUI.DBMod.NamePlates.Scale
-						end,
-						set = function(info, val)
-							SUI.DBMod.NamePlates.Scale = val
-						end
-					},
 					Background = {
 						name = 'Background',
 						type = 'group',

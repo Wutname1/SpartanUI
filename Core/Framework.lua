@@ -705,15 +705,18 @@ local DBdefault = {
 			ShowName = true,
 			ShowLevel = true,
 			ShowTarget = true,
-			ShowRareElite = true,
 			ShowRaidTargetIndicator = true,
 			Scale = 1,
 			elements = {
 				['**'] = {
-					enabled = true
+					enabled = true,
+					alpha = 1
 				},
+				RareElite = {},
 				Background = {
-					type = 'graphic'
+					type = 'solid',
+					colorMode = 'reaction',
+					alpha = 0.35
 				},
 				Name = {
 					SetJustifyH = 'CENTER'
