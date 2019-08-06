@@ -40,7 +40,7 @@ local elementList = {
 	'SummonIndicator',
 	'QuestIndicator',
 	'Range',
-	'phaseindicator',
+	'PhaseIndicator',
 	'ThreatIndicator',
 	'SUI_RaidGroup'
 }
@@ -58,7 +58,7 @@ local IndicatorList = {
 	'ResurrectIndicator',
 	'SummonIndicator',
 	'QuestIndicator',
-	'phaseindicator',
+	'PhaseIndicator',
 	'ThreatIndicator',
 	'SUI_RaidGroup'
 }

@@ -753,7 +753,7 @@ local DBdefault = {
 						Range = {
 							enabled = true
 						},
-						phaseindicator = {
+						PhaseIndicator = {
 							enabled = true,
 							position = {
 								anchor = 'TOP',
