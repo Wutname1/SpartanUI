@@ -253,15 +253,9 @@ function module:Options()
 						fontSize = 'small'
 					},
 					c = {
-						name = '- %spell - ' .. L['Spell you interrupted'],
+						name = '- %spell - ' .. L['Spell link of spell interrupted'],
 						type = 'description',
 						order = 12,
-						fontSize = 'small'
-					},
-					e = {
-						name = '- %lnk - ' .. L['Spell link of spell interrupted'],
-						type = 'description',
-						order = 13,
 						fontSize = 'small'
 					},
 					d = {
