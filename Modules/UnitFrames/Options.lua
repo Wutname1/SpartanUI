@@ -471,6 +471,7 @@ local function AddBarOptions(frameName)
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['enabled'] = {
 			name = L['Enabled'],
 			type = 'toggle',
+			width = 'full',
 			order = 1,
 			get = function(info)
 				return module.CurrentSettings[frameName].elements[key].enabled
@@ -487,6 +488,7 @@ local function AddBarOptions(frameName)
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['height'] = {
 			name = 'Height',
 			type = 'range',
+			width = 'full',
 			order = 2,
 			min = 2,
 			max = 100,
@@ -510,6 +512,7 @@ local function AddBarOptions(frameName)
 			name = 'Enable power prediction',
 			desc = 'Used to represent cost of spells on top of the Power bar',
 			type = 'toggle',
+			width = 'double',
 			order = 10,
 			get = function(info)
 				return module.CurrentSettings.player.elements.Power.PowerPrediction
@@ -527,7 +530,7 @@ local function AddBarOptions(frameName)
 				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.Power.PowerPrediction = val
 			end
 		}
-		SUI.opt.args['UnitFrames'].args.player.args['bars'].args['additionalpower'] = {
+		SUI.opt.args['UnitFrames'].args.player.args['bars'].args['AdditionalPower'] = {
 			name = 'Additional power',
 			desc = "player's additional power, such as Mana for Balance druids.",
 			order = 20,
@@ -537,9 +540,10 @@ local function AddBarOptions(frameName)
 				enabled = {
 					name = L['Enabled'],
 					type = 'toggle',
+					width = 'full',
 					order = 1,
 					get = function(info)
-						return module.CurrentSettings.player.elements.additionalpower.enabled
+						return module.CurrentSettings.player.elements.AdditionalPower.enabled
 					end,
 					set = function(info, val)
 						--Update the screen
@@ -549,26 +553,27 @@ local function AddBarOptions(frameName)
 							module.frames.player:DisableElement('AdditionalPower')
 						end
 						--Update memory
-						module.CurrentSettings.player.elements.additionalpower.enabled = val
+						module.CurrentSettings.player.elements.AdditionalPower.enabled = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.additionalpower.enabled = val
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.AdditionalPower.enabled = val
 					end
 				},
 				height = {
 					name = 'Height',
 					type = 'range',
+					width = 'full',
 					order = 2,
 					min = 2,
 					max = 100,
 					step = 1,
 					get = function(info)
-						return module.CurrentSettings.player.elements.additionalpower.height
+						return module.CurrentSettings.player.elements.AdditionalPower.height
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings.player.elements.additionalpower.height = val
+						module.CurrentSettings.player.elements.AdditionalPower.height = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.additionalpower.height = val
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.AdditionalPower.height = val
 						--Update the screen
 						module.frames.player:UpdateSize()
 					end
@@ -577,7 +582,7 @@ local function AddBarOptions(frameName)
 		}
 	end
 
-	if module:IsFriendlyFrame(frameName) then
+	if frameName == 'player' or frameName == 'party' or frameName == 'raid' then
 		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['Castbar'].args['Interruptable'].hidden = true
 	end
 end
@@ -594,7 +599,7 @@ local function AddIndicatorOptions(frameName)
 		['AssistantIndicator'] = RAID_ASSISTANT,
 		['GroupRoleIndicator'] = 'Group role',
 		['LeaderIndicator'] = 'Leader',
-		['phaseindicator'] = 'Phase',
+		['PhaseIndicator'] = 'Phase',
 		['PvPIndicator'] = 'PvP',
 		['RaidRoleIndicator'] = 'Main tank or assist',
 		['ReadyCheckIndicator'] = 'Ready check icon',
@@ -866,6 +871,26 @@ local function AddDynamicText(frameName, element, count)
 					module.frames[frameName]:UpdateTags()
 				end
 			},
+			size = {
+				name = 'Size',
+				type = 'range',
+				width = 'full',
+				min = 1,
+				max = 30,
+				step = 1,
+				order = 1.5,
+				get = function(info)
+					return module.CurrentSettings[frameName].elements[element].text[count].size
+				end,
+				set = function(info, val)
+					--Update memory
+					module.CurrentSettings[frameName].elements[element].text[count].size = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].size = val
+					--Update the screen
+					SUI:UpdateDefaultSize(module.frames[frameName][element].TextElements[count], val, 'UnitFrames')
+				end
+			},
 			position = {
 				name = 'Position',
 				type = 'group',
@@ -1050,6 +1075,26 @@ local function AddTextOptions(frameName)
 								module.frames[frameName]:UpdateTags()
 							end
 						},
+						size = {
+							name = 'Size',
+							type = 'range',
+							width = 'full',
+							min = 1,
+							max = 30,
+							step = 1,
+							order = 1.5,
+							get = function(info)
+								return module.CurrentSettings[frameName].elements[key].size
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].elements[key].size = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].size = val
+								--Update the screen
+								SUI:UpdateDefaultSize(module.frames[frameName][key], val, 'UnitFrames')
+							end
+						},
 						JustifyH = {
 							name = 'Horizontal alignment',
 							type = 'select',
@@ -1116,7 +1161,7 @@ local function AddTextOptions(frameName)
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.x = val
 								--Update the screen
-								module.frames[frameName][key]:UpdatePosition(key)
+								module.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						y = {
@@ -1135,7 +1180,7 @@ local function AddTextOptions(frameName)
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.y = val
 								--Update the screen
-								module.frames[frameName][key]:UpdatePosition(key)
+								module.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						anchor = {
@@ -1152,7 +1197,7 @@ local function AddTextOptions(frameName)
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.anchor = val
 								--Update the screen
-								module.frames[frameName][key]:UpdatePosition(key)
+								module.frames[frameName]:ElementUpdate(key)
 							end
 						}
 					}

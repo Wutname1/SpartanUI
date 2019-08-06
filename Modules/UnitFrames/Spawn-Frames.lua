@@ -105,20 +105,34 @@ local function CreateUnitFrame(self, unit)
 		self.Health.colorSmooth = elements.Health.colorSmooth
 		self.Health.colorClass = elements.Health.colorClass
 
-		if elements.Castbar.icon.enabled then
-			self.Castbar.Icon:Show()
-		else
-			self.Castbar.Icon:Hide()
-		end
-		if elements.Castbar.text['1'].enabled then
-			self.Castbar.Text:Show()
-		else
-			self.Castbar.Text:Hide()
-		end
-		if elements.Castbar.text['2'].enabled then
-			self.Castbar.Time:Show()
-		else
-			self.Castbar.Time:Hide()
+		do -- Castbar updates
+			if not SUI.IsClassic then
+				-- latency
+				if elements.Castbar.latency then
+					self.Castbar.Shield:Show()
+				else
+					self.Castbar.Shield:Hide()
+				end
+				-- Interupt icon
+				if elements.Castbar.icon.enabled then
+					self.Castbar.Icon:Show()
+				else
+					self.Castbar.Icon:Hide()
+				end
+
+				-- spell name
+				if elements.Castbar.text['1'].enabled then
+					self.Castbar.Text:Show()
+				else
+					self.Castbar.Text:Hide()
+				end
+				-- spell timer
+				if elements.Castbar.text['2'].enabled then
+					self.Castbar.Time:Show()
+				else
+					self.Castbar.Time:Hide()
+				end
+			end
 		end
 
 		-- Tell everything to update to get current data
@@ -341,7 +355,7 @@ local function CreateUnitFrame(self, unit)
 
 			-- Add spell text
 			local Text = cast:CreateFontString()
-			SUI:FormatFont(Text, 10, 'Player')
+			SUI:FormatFont(Text, elements.Castbar.text['1'].size, 'UnitFrames')
 			Text:SetPoint(
 				elements.Castbar.text['1'].position.anchor,
 				cast,
@@ -363,7 +377,8 @@ local function CreateUnitFrame(self, unit)
 			cast.PostCastNotInterruptible = PostCastNotInterruptible
 
 			-- Add a timer
-			local Time = cast:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
+			local Time = cast:CreateFontString(nil, 'OVERLAY')
+			SUI:FormatFont(Time, elements.Castbar.text['2'].size, 'UnitFrames')
 			Time:SetPoint(
 				elements.Castbar.text['2'].position.anchor,
 				cast,
@@ -412,7 +427,8 @@ local function CreateUnitFrame(self, unit)
 			health.TextElements = {}
 			for i, key in pairs(elements.Health.text) do
 				if key.enabled then
-					local NewString = health:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
+					local NewString = health:CreateFontString(nil, 'OVERLAY')
+					SUI:FormatFont(NewString, key.size, 'UnitFrames')
 					NewString:SetJustifyH(key.SetJustifyH)
 					NewString:SetJustifyV(key.SetJustifyV)
 					NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)
@@ -508,7 +524,8 @@ local function CreateUnitFrame(self, unit)
 			power.TextElements = {}
 			for i, key in pairs(elements.Power.text) do
 				if key.enabled then
-					local NewString = power:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline10')
+					local NewString = power:CreateFontString(nil, 'OVERLAY')
+					SUI:FormatFont(NewString, key.size, 'UnitFrames')
 					NewString:SetJustifyH(key.SetJustifyH)
 					NewString:SetJustifyV(key.SetJustifyV)
 					NewString:SetPoint(key.position.anchor, power, key.position.anchor, key.position.x, key.position.y)
@@ -561,7 +578,7 @@ local function CreateUnitFrame(self, unit)
 	end
 	do -- setup indicators
 		self.Name = self:CreateFontString()
-		SUI:FormatFont(self.Name, 12, 'Player')
+		SUI:FormatFont(self.Name, elements.Name.size, 'UnitFrames')
 		self.Name:SetSize(self:GetWidth(), 12)
 		self.Name:SetJustifyH(elements.Name.SetJustifyH)
 		self.Name:SetJustifyV(elements.Name.SetJustifyV)
@@ -584,21 +601,26 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'AssistantIndicator')
 
 		-- 	self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
-		-- 	self.SUI_RaidGroup:SetSize(12, 12)
-		-- 	self.SUI_RaidGroup:SetPoint('TOPLEFT', self, 'TOPLEFT')
+		-- 	self.SUI_RaidGroup:SetSize(elements.SUI_RaidGroup.size, elements.SUI_RaidGroup.size)
 		-- 	self.SUI_RaidGroup:SetTexture(square)
 		-- 	self.SUI_RaidGroup:SetVertexColor(0, .8, .9, .9)
 
-		-- 	self.SUI_RaidGroup.Text = self:CreateFontString(nil, 'BORDER', 'SUI_Font10')
-		-- 	self.SUI_RaidGroup.Text:SetSize(12, 12)
-		-- 	self.SUI_RaidGroup.Text:SetJustifyH('CENTER')
-		-- 	self.SUI_RaidGroup.Text:SetJustifyV('MIDDLE')
-		-- 	self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 1)
+		-- 	self.SUI_RaidGroup.Text = self:CreateFontString(nil, 'BORDER')
+		--  SUI:FormatFont(self.SUI_RaidGroup.Text, elements.SUI_RaidGroup.size, 'UnitFrames')
+		-- 	self.SUI_RaidGroup.Text:SetJustifyH(elements.SUI_RaidGroup.SetJustifyH)
+		-- 	self.SUI_RaidGroup.Text:SetJustifyV(elements.SUI_RaidGroup.SetJustifyV)
+		-- 	self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 0)
+		--  ElementUpdate(self, 'SUI_RaidGroup')
 		-- 	self:Tag(self.SUI_RaidGroup.Text, '[group]')
 
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
 		self.ReadyCheckIndicator:SetSize(elements.ReadyCheckIndicator.size, elements.ReadyCheckIndicator.size)
 		ElementUpdate(self, 'ReadyCheckIndicator')
+
+		-- Position and size
+		self.PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
+		self.PhaseIndicator:SetSize(elements.PhaseIndicator.size, elements.PhaseIndicator.size)
+		ElementUpdate(self, 'PhaseIndicator')
 
 		self.PvPIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
@@ -637,8 +659,8 @@ local function CreateUnitFrame(self, unit)
 		self.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
 		ElementUpdate(self, 'SUI_ClassIcon')
 
-		self.StatusText = self:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline22')
-		-- self.StatusText:SetSize(elements.StatusText.size, elements.StatusText.size)
+		self.StatusText = self:CreateFontString(nil, 'OVERLAY')
+		SUI:FormatFont(self.StatusText, elements.StatusText.size, 'UnitFrames')
 		ElementUpdate(self, 'StatusText')
 		self:Tag(self.StatusText, '[afkdnd]')
 		-- end
@@ -746,7 +768,6 @@ local function CreateUnitFrame(self, unit)
 	self:SetClampedToScreen(true)
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
-	-- self.ElementSetup = ElementSetup
 
 	return self
 end
@@ -917,33 +938,31 @@ function module:SpawnFrames()
 	end
 
 	local function GroupWatcher(event)
+		print(event)
 		if (InCombatLockdown()) then
-			-- module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+			module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
 		else
-			-- module:UnregisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+			module:UnregisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
 			module:UpdateGroupFrames(event)
 		end
 	end
 	module:RegisterEvent('GROUP_ROSTER_UPDATE', GroupWatcher)
+	module:RegisterEvent('GROUP_JOINED', GroupWatcher)
 	module:RegisterEvent('PLAYER_ENTERING_WORLD', GroupWatcher)
-	module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+	module:RegisterEvent('ZONE_CHANGED', GroupWatcher)
+	module:RegisterEvent('READY_CHECK', GroupWatcher)
+	-- module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
 end
 
 function module:UpdateGroupFrames(event, ...)
-	-- SUIPartyFrame = module.frames.party
-	-- for _, PartyUnit in ipairs({SUIPartyFrame:GetChildren()}) do
-	-- 	PartyUnit:UpdateAll()
-	-- end
+	SUIPartyFrame = module.frames.party
+	for _, PartyUnit in ipairs({SUIPartyFrame:GetChildren()}) do
+		PartyUnit:UpdateAll()
+	end
 	SUIRaidFrame = module.frames.raid
 	for _, RaidUnit in ipairs({SUIRaidFrame:GetChildren()}) do
 		RaidUnit:UpdateAll()
 	end
-
-	-- for i = 1, 40 do
-	-- 	if _G['SUI_UF_RaidFrameHeaderUnitButton' .. i] then
-	-- 		_G['SUI_UF_RaidFrameHeaderUnitButton' .. i]:UpdateAll()
-	-- 	end
-	-- end
 
 	-- if module.CurrentSettings.raid.showRaid and IsInRaid() then
 	-- 	SUIRaidFrame:Show()

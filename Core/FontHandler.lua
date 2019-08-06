@@ -92,8 +92,31 @@ function SUI:GetFontFace(Module)
 	return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Bold.ttf'
 end
 
+local function FindID(element, Module)
+	for i = 1, module.FontItems[Module].Count do
+		if module.FontItems[Module][i] == element then
+			return i
+		end
+	end
+	return false
+end
+
+function SUI:UpdateDefaultSize(element, size, Module)
+	--Update stored default
+	local ID = FindID(element, Module)
+	if ID then
+		--Update the DB
+		module.FontItems[Module][ID .. 'DefaultSize'] = size
+		--Update the screen
+		SUI:FormatFont(module.FontItems[Module][ID], size, Module, true)
+	end
+end
+
 function SUI:FormatFont(element, size, Module, UpdateOnly)
 	--If no module defined fall back to main settings
+	if not element then
+		return
+	end
 	if not Module then
 		Module = 'Primary'
 	end
@@ -111,6 +134,9 @@ function SUI:FormatFont(element, size, Module, UpdateOnly)
 
 	--Set Size
 	sizeFinal = size + SUI.DB.font.Modules[Module].Size
+	if sizeFinal < 1 then
+		sizeFinal = 1
+	end
 
 	--Create Font
 	element:SetFont(SUI:GetFontFace(Module), sizeFinal, flags)
