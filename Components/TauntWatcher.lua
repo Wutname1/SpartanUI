@@ -82,7 +82,7 @@ function module:OnInitialize()
 end
 
 function module:COMBAT_LOG_EVENT_UNFILTERED()
-	if not SUI.DB.EnabledComponents.TauntWatcher then
+	if not SUI.DB.EnabledComponents.TauntWatcher or module.Override then
 		return
 	end
 
@@ -311,7 +311,7 @@ function module:SetupWizard()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if not SUI.DB.EnabledComponents.TauntWatcher then
+			if not SUI.DB.EnabledComponents.TauntWatcher or module.Override then
 				window.Skip:Click()
 			end
 
