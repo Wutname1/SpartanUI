@@ -592,6 +592,7 @@ local DBdefault = {
 				inArena = true,
 				outdoors = false
 			},
+			failures = true,
 			FirstLaunch = true,
 			announceLocation = 'SELF',
 			text = '%who taunted %what!'

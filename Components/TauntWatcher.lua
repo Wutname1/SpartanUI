@@ -25,8 +25,8 @@ local TauntsList = {
 local lastTimeStamp, lastSpellID = 0, 0
 
 local function printFormattedString(who, target, sid, failed)
-	local msg = SUI.DB.TauntWatcher.text
-	local ChatChannel = SUI.DB.TauntWatcher.announceLocation
+	local msg = SUI.DBMod.TauntWatcher.text
+	local ChatChannel = SUI.DBMod.TauntWatcher.announceLocation
 
 	msg = msg:gsub('%%what', target):gsub('%%who', who):gsub('%%spell', GetSpellLink(sid))
 	if failed then
@@ -96,25 +96,25 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 	if SUI:isInTable(TauntsList, spellID) then
 		local continue = false
 		local inInstance, instanceType = IsInInstance()
-		if instanceType == 'arena' and SUI.DB.TauntWatcher.active.inArena then
+		if instanceType == 'arena' and SUI.DBMod.TauntWatcher.active.inArena then
 			continue = true
-		elseif inInstance and instanceType == 'party' and SUI.DB.TauntWatcher.active.inParty then
+		elseif inInstance and instanceType == 'party' and SUI.DBMod.TauntWatcher.active.inParty then
 			continue = true
-		elseif instanceType == 'pvp' and SUI.DB.TauntWatcher.active.inBG then
+		elseif instanceType == 'pvp' and SUI.DBMod.TauntWatcher.active.inBG then
 			continue = true
-		elseif instanceType == 'raid' and SUI.DB.TauntWatcher.active.inRaid then
+		elseif instanceType == 'raid' and SUI.DBMod.TauntWatcher.active.inRaid then
 			continue = true
-		elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and SUI.DB.TauntWatcher.outdoors then
+		elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and SUI.DBMod.TauntWatcher.outdoors then
 			continue = true
 		end
 
-		if not (continue or SUI.DB.TauntWatcher.active.alwayson) then
+		if not (continue or SUI.DBMod.TauntWatcher.active.alwayson) then
 			return
 		end
 
 		if subEvent == 'SPELL_AURA_APPLIED' then
 			printFormattedString(srcName, dstName, spellID)
-		elseif subEvent == 'SPELL_MISSED' then
+		elseif subEvent == 'SPELL_MISSED' and SUI.DBMod.TauntWatcher.failures then
 			printFormattedString(srcName, dstName, spellID, true)
 		else
 			return
@@ -142,12 +142,13 @@ function module:Options()
 			alwayson = {
 				name = L['Always on'],
 				type = 'toggle',
+				width = 'full',
 				order = 1,
 				get = function(info)
-					return SUI.DB.TauntWatcher.active.alwayson
+					return SUI.DBMod.TauntWatcher.active.alwayson
 				end,
 				set = function(info, val)
-					SUI.DB.TauntWatcher.active.alwayson = val
+					SUI.DBMod.TauntWatcher.active.alwayson = val
 				end
 			},
 			active = {
@@ -161,10 +162,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.TauntWatcher.active.inBG
+							return SUI.DBMod.TauntWatcher.active.inBG
 						end,
 						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inBG = val
+							SUI.DBMod.TauntWatcher.active.inBG = val
 						end
 					},
 					inRaid = {
@@ -172,10 +173,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.TauntWatcher.active.inRaid
+							return SUI.DBMod.TauntWatcher.active.inRaid
 						end,
 						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inRaid = val
+							SUI.DBMod.TauntWatcher.active.inRaid = val
 						end
 					},
 					inParty = {
@@ -183,10 +184,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.TauntWatcher.active.inParty
+							return SUI.DBMod.TauntWatcher.active.inParty
 						end,
 						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inParty = val
+							SUI.DBMod.TauntWatcher.active.inParty = val
 						end
 					},
 					inArena = {
@@ -194,10 +195,10 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.TauntWatcher.active.inArena
+							return SUI.DBMod.TauntWatcher.active.inArena
 						end,
 						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inArena = val
+							SUI.DBMod.TauntWatcher.active.inArena = val
 						end
 					},
 					outdoors = {
@@ -205,15 +206,27 @@ function module:Options()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DB.TauntWatcher.active.outdoors
+							return SUI.DBMod.TauntWatcher.active.outdoors
 						end,
 						set = function(info, val)
-							SUI.DB.TauntWatcher.active.outdoors = val
+							SUI.DBMod.TauntWatcher.active.outdoors = val
 						end
 					}
 				}
 			},
-			announceLocation = {3
+			failures = {
+				name = 'Annnounce failed taunts',
+				type = 'toggle',
+				width = 'full',
+				order = 150,
+				get = function(info)
+					return SUI.DBMod.TauntWatcher.failures
+				end,
+				set = function(info, val)
+					SUI.DBMod.TauntWatcher.failures = val
+				end
+			},
+			announceLocation = {
 				name = 'Announce location',
 				type = 'select',
 				order = 200,
@@ -227,10 +240,10 @@ function module:Options()
 					['SELF'] = 'No chat'
 				},
 				get = function(info)
-					return SUI.DB.TauntWatcher.announceLocation
+					return SUI.DBMod.TauntWatcher.announceLocation
 				end,
 				set = function(info, val)
-					SUI.DB.TauntWatcher.announceLocation = val
+					SUI.DBMod.TauntWatcher.announceLocation = val
 					RaidFrames:UpdateText()
 				end
 			},
@@ -276,10 +289,10 @@ function module:Options()
 						order = 501,
 						width = 'full',
 						get = function(info)
-							return SUI.DB.TauntWatcher.text
+							return SUI.DBMod.TauntWatcher.text
 						end,
 						set = function(info, value)
-							SUI.DB.TauntWatcher.text = value
+							SUI.DBMod.TauntWatcher.text = value
 						end
 					}
 				}
