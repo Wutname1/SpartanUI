@@ -10,4 +10,5 @@
 	<Script file="Nameplates.lua" />
 	<Script file="CombatLog.lua" />
 	<Script file="InterruptAnnounce.lua" />
+	<Script file="TauntWatcher.lua" />
 </Ui>

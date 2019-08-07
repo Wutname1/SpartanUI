@@ -591,6 +591,20 @@ local DBdefault = {
 			enable = true,
 			speed = 8
 		},
+		TauntWatcher = {
+			active = {
+				always = false,
+				inBG = false,
+				inRaid = true,
+				inParty = true,
+				inArena = true,
+				outdoors = false
+			},
+			failures = true,
+			FirstLaunch = true,
+			announceLocation = 'SELF',
+			text = '%who taunted %what!'
+		},
 		FilmEffects = {
 			enable = false,
 			animationInterval = 0,
@@ -1056,20 +1070,25 @@ function SUI:OnEnable()
 	if (not select(4, GetAddOnInfo('Bartender4')) and not SUI.DB.BT4Warned) then
 		local cnt = 1
 		local BT4Warning = CreateFrame('Frame')
-		BT4Warning:SetScript('OnEvent', function()
-			if cnt <= 10 then
-				StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] ..' Warning ' .. cnt .. ' of 10')
-			else
-				SUI.DB.BT4Warned = true
+		BT4Warning:SetScript(
+			'OnEvent',
+			function()
+				if cnt <= 10 then
+					StdUi:Dialog(
+						L['Warning'],
+						L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10'
+					)
+				else
+					SUI.DB.BT4Warned = true
+				end
+				cnt = cnt + 1
 			end
-			cnt = cnt + 1
-		end)
+		)
 		BT4Warning:RegisterEvent('PLAYER_LOGIN')
 		BT4Warning:RegisterEvent('PLAYER_ENTERING_WORLD')
 		BT4Warning:RegisterEvent('ZONE_CHANGED')
 		BT4Warning:RegisterEvent('ZONE_CHANGED_INDOORS')
 		BT4Warning:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-		
 	end
 end
 
