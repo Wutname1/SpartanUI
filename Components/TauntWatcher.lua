@@ -130,6 +130,7 @@ end
 
 function module:OnEnable()
 	module:Options()
+	module:SetupWizard()
 
 	module:RegisterEvent('COMBAT_LOG_EVENT_UNFILTERED')
 end
@@ -244,7 +245,6 @@ function module:Options()
 				end,
 				set = function(info, val)
 					SUI.DBMod.TauntWatcher.announceLocation = val
-					RaidFrames:UpdateText()
 				end
 			},
 			TextInfo = {
@@ -260,19 +260,19 @@ function module:Options()
 						fontSize = 'large'
 					},
 					b = {
-						name = '- %who - ' .. L['Target that was interrupted'],
+						name = '- %who - ' .. L['Who was taunted'],
 						type = 'description',
 						order = 11,
 						fontSize = 'small'
 					},
 					b2 = {
-						name = '- %what - ' .. L['Target that was interrupted'],
+						name = '- %what - ' .. L['What was taunted'],
 						type = 'description',
 						order = 12,
 						fontSize = 'small'
 					},
 					c = {
-						name = '- %spell - ' .. L['Spell link of spell interrupted'],
+						name = '- %spell - ' .. L['Spell link of spell used to taunt'],
 						type = 'description',
 						order = 13,
 						fontSize = 'small'
@@ -299,4 +299,120 @@ function module:Options()
 			}
 		}
 	}
+end
+
+function module:SetupWizard()
+	local PageData = {
+		ID = 'TauntWatcher',
+		Name = 'Taunt watcher',
+		SubTitle = 'Taunt watcher',
+		RequireDisplay = SUI.DBMod.TauntWatcher.FirstLaunch,
+		Display = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+			if not SUI.DB.EnabledComponents.TauntWatcher then
+				window.Skip:Click()
+			end
+
+			--Container
+			local TauntWatch = CreateFrame('Frame', nil)
+			TauntWatch:SetParent(SUI_Win)
+			TauntWatch:SetAllPoints(SUI_Win)
+
+			local items = {
+				{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
+				{text = L['Raid'], value = 'RAID'},
+				{text = L['Party'], value = 'PARTY'},
+				{text = L['Say'], value = 'SAY'},
+				{text = L['Smart'], value = 'SMART'},
+				{text = L['Self'], value = 'SELF'}
+			}
+
+			TauntWatch.announceLocation = StdUi:Dropdown(TauntWatch, 190, 20, items, SUI.DBMod.TauntWatcher.announceLocation)
+			TauntWatch.announceLocation.OnValueChanged = function(self, value)
+				SUI.DBMod.TauntWatcher.announceLocation = value
+			end
+
+			-- Create Labels
+			TauntWatch.modEnabled = StdUi:Checkbox(TauntWatch, L['Module enabled'], nil, 20)
+			TauntWatch.lblActive = StdUi:Label(TauntWatch, L['Active when in'], 13)
+			TauntWatch.lblAnnouncelocation = StdUi:Label(TauntWatch, L['Announce location'], 13)
+
+			-- Setup checkboxes
+			TauntWatch.options = {}
+			TauntWatch.options.alwayson = StdUi:Checkbox(TauntWatch, L['Always on'], 120, 20)
+
+			TauntWatch.options.inBG = StdUi:Checkbox(TauntWatch, L['Battleground'], 120, 20)
+			TauntWatch.options.inRaid = StdUi:Checkbox(TauntWatch, L['Raid'], 120, 20)
+			TauntWatch.options.inParty = StdUi:Checkbox(TauntWatch, L['Party'], 120, 20)
+			TauntWatch.options.inArena = StdUi:Checkbox(TauntWatch, L['Arena'], 120, 20)
+			TauntWatch.options.outdoors = StdUi:Checkbox(TauntWatch, L['Outdoors'], 120, 20)
+
+			-- Positioning
+			StdUi:GlueTop(TauntWatch.modEnabled, SUI_Win, 0, -10)
+			StdUi:GlueBelow(TauntWatch.lblAnnouncelocation, TauntWatch.modEnabled, -100, -20)
+			StdUi:GlueRight(TauntWatch.announceLocation, TauntWatch.lblAnnouncelocation, 5, 0)
+
+			-- Active location Positioning
+			StdUi:GlueBelow(TauntWatch.lblActive, TauntWatch.lblAnnouncelocation, -80, -20)
+
+			StdUi:GlueBelow(TauntWatch.options.inBG, TauntWatch.lblActive, 30, 0)
+			StdUi:GlueRight(TauntWatch.options.inArena, TauntWatch.options.inBG, 0, 0)
+			StdUi:GlueRight(TauntWatch.options.outdoors, TauntWatch.options.inArena, 0, 0)
+
+			StdUi:GlueBelow(TauntWatch.options.inRaid, TauntWatch.options.inBG, 0, 0)
+			StdUi:GlueRight(TauntWatch.options.inParty, TauntWatch.options.inRaid, 0, 0)
+
+			-- Announce text
+			TauntWatch.lblAnnouncetext = StdUi:Label(TauntWatch, L['Announce text:'], 13)
+			TauntWatch.lblvariable1 = StdUi:Label(TauntWatch, '%who - ' .. L['Who was taunted'], 13)
+			TauntWatch.lblvariable2 = StdUi:Label(TauntWatch, '%what - ' .. L['What was taunted'], 13)
+			TauntWatch.lblvariable3 = StdUi:Label(TauntWatch, '%spell - ' .. L['Spell link of spell used to taunt'], 13)
+			TauntWatch.tbAnnounceText = StdUi:SimpleEditBox(TauntWatch, 300, 24, SUI.DBMod.TauntWatcher.text)
+
+			StdUi:GlueBelow(TauntWatch.lblAnnouncetext, TauntWatch.lblActive, 0, -80)
+			StdUi:GlueBelow(TauntWatch.lblvariable1, TauntWatch.lblAnnouncetext, 15, -5, 'LEFT')
+			StdUi:GlueBelow(TauntWatch.lblvariable2, TauntWatch.lblvariable1, 0, -5, 'LEFT')
+			StdUi:GlueBelow(TauntWatch.lblvariable3, TauntWatch.lblvariable2, 0, -5, 'LEFT')
+			StdUi:GlueBelow(TauntWatch.tbAnnounceText, TauntWatch.lblvariable3, -15, -5, 'LEFT')
+
+			-- Defaults
+			TauntWatch.modEnabled:SetChecked(SUI.DB.EnabledComponents.TauntWatcher)
+			for key, object in pairs(TauntWatch.options) do
+				object:SetChecked(SUI.DBMod.TauntWatcher.active[key])
+			end
+
+			TauntWatch.modEnabled:HookScript(
+				'OnClick',
+				function()
+					for _, object in pairs(TauntWatch.options) do
+						if TauntWatch.modEnabled:GetChecked() then
+							object:Enable()
+						else
+							object:Disable()
+						end
+					end
+				end
+			)
+
+			SUI_Win.TauntWatch = TauntWatch
+		end,
+		Next = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local TauntWatch = window.content.TauntWatch
+			SUI.DB.EnabledComponents.TauntWatcher = TauntWatch.modEnabled:GetChecked()
+
+			for key, object in pairs(TauntWatch.options) do
+				SUI.DBMod.TauntWatcher[key] = object:GetChecked()
+			end
+			SUI.DBMod.TauntWatcher.text = TauntWatch.tbAnnounceText:GetText()
+			SUI.DBMod.TauntWatcher.FirstLaunch = false
+		end,
+		Skip = function()
+			SUI.DBMod.TauntWatcher.FirstLaunch = false
+		end
+	}
+	local SetupWindow = SUI:GetModule('SetupWizard')
+	SetupWindow:AddPage(PageData)
 end
