@@ -312,6 +312,7 @@ local NameplateCallback = function(self, event, unit)
 	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then
 		return
 	end
+	local elements = SUI.DBMod.NamePlates.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
 		NameplateList[self:GetName()] = true
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
@@ -343,11 +344,20 @@ local NameplateCallback = function(self, event, unit)
 	local reaction = UnitReaction(unit, 'player')
 
 	if
-		((reaction <= 2 and (VisibleOn == 'all' or VisibleOn == 'hostile')) or
-			(reaction >= 3 and (visibleOn == 'all' or VisibleOn == 'friendly'))) and
+		((reaction <= 2 and VisibleOn == 'hostile') or (reaction >= 3 and VisibleOn == 'friendly') or
+			(UnitPlayerControlled(unit) and VisibleOn == 'PlayerControlled') or
+			VisibleOn == 'all') and
 			SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled
 	 then
 		self:EnableElement('SUI_ClassIcon')
+		self.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
+		self.SUI_ClassIcon:SetPoint(
+			elements.SUI_ClassIcon.position.anchor,
+			self,
+			elements.SUI_ClassIcon.position.anchor,
+			elements.SUI_ClassIcon.position.x,
+			elements.SUI_ClassIcon.position.y
+		)
 	else
 		self:DisableElement('SUI_ClassIcon')
 	end
@@ -806,6 +816,7 @@ function module:BuildOptions()
 								values = {
 									['friendly'] = 'Friendly',
 									['hostile'] = 'Hostile',
+									['PlayerControlled'] = 'Player controlled',
 									['all'] = 'All'
 								},
 								get = function(info)
@@ -814,6 +825,21 @@ function module:BuildOptions()
 								set = function(info, val)
 									SUI.DBMod.NamePlates.elements.SUI_ClassIcon.visibleOn = val
 									module:UpdateNameplates()
+								end
+							},
+							x = {
+								name = 'Size',
+								type = 'range',
+								order = 3,
+								min = 1,
+								max = 100,
+								step = 1,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.SUI_ClassIcon.size
+								end,
+								set = function(info, val)
+									--Update the DB
+									SUI.DBMod.NamePlates.elements.SUI_ClassIcon.size = val
 								end
 							},
 							position = {
@@ -862,7 +888,7 @@ function module:BuildOptions()
 										end,
 										set = function(info, val)
 											--Update the DB
-											SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position = val
+											SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position.anchor = val
 										end
 									}
 								}
