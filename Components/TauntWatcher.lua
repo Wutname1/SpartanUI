@@ -260,13 +260,13 @@ function module:Options()
 						fontSize = 'large'
 					},
 					b = {
-						name = '- %who - ' .. L['Who was taunted'],
+						name = '- %who - ' .. L['Player/Pet that taunted'],
 						type = 'description',
 						order = 11,
 						fontSize = 'small'
 					},
 					b2 = {
-						name = '- %what - ' .. L['What was taunted'],
+						name = '- %what - ' .. L['Name of mob taunted'],
 						type = 'description',
 						order = 12,
 						fontSize = 'small'
@@ -366,8 +366,8 @@ function module:SetupWizard()
 
 			-- Announce text
 			TauntWatch.lblAnnouncetext = StdUi:Label(TauntWatch, L['Announce text:'], 13)
-			TauntWatch.lblvariable1 = StdUi:Label(TauntWatch, '%who - ' .. L['Who was taunted'], 13)
-			TauntWatch.lblvariable2 = StdUi:Label(TauntWatch, '%what - ' .. L['What was taunted'], 13)
+			TauntWatch.lblvariable1 = StdUi:Label(TauntWatch, '%who - ' .. L['Player/Pet that taunted'], 13)
+			TauntWatch.lblvariable2 = StdUi:Label(TauntWatch, '%what - ' .. L['Name of mob taunted'], 13)
 			TauntWatch.lblvariable3 = StdUi:Label(TauntWatch, '%spell - ' .. L['Spell link of spell used to taunt'], 13)
 			TauntWatch.tbAnnounceText = StdUi:SimpleEditBox(TauntWatch, 300, 24, SUI.DBMod.TauntWatcher.text)
 
