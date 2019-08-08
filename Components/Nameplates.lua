@@ -225,7 +225,17 @@ local NamePlateFactory = function(frame, unit)
 		local Auras = CreateFrame('Frame', nil, frame)
 		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
 		Auras:SetSize(frame:GetWidth(), 16)
-		Auras.onlyShowPlayer = true
+		if UnitReaction(unit, 'player') <= 2 then
+			if (SUI.DBMod.NamePlates.onlyShowPlayer and SUI.DBMod.NamePlates.showStealableBuffs) then
+				Auras.showStealableBuffs = SUI.DBMod.NamePlates.showStealableBuffs
+			else
+				Auras.onlyShowPlayer = SUI.DBMod.NamePlates.onlyShowPlayer
+				Auras.showStealableBuffs = SUI.DBMod.NamePlates.showStealableBuffs
+			end
+		else
+			Auras.onlyShowPlayer = SUI.DBMod.NamePlates.onlyShowPlayer
+		end
+
 		frame.Auras = Auras
 
 		-- Raid Icon
@@ -856,6 +866,44 @@ function module:BuildOptions()
 										end
 									}
 								}
+							}
+						}
+					},
+					Auras = {
+						name = 'Auras',
+						type = 'group',
+						args = {
+							onlyShowPlayer = {
+								name = 'Show only auras created by player',
+								type = 'toggle',
+								order = 1,
+								width = 'double',
+								get = function(info)
+									return SUI.DBMod.NamePlates.onlyShowPlayer
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.onlyShowPlayer = val
+									module:UpdateNameplates()
+								end
+							},
+							showStealableBuffs = {
+								name = 'Show Stealable/Dispellable buffs',
+								type = 'toggle',
+								order = 2,
+								width = 'double',
+								get = function(info)
+									return SUI.DBMod.NamePlates.showStealableBuffs
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.showStealableBuffs = val
+									module:UpdateNameplates()
+								end
+							},
+							notice = {
+								name = 'With both of these options active your DOTs will not appear on enemies.',
+								type = 'description',
+								order = 3,
+								fontSize = 'small'
 							}
 						}
 					}
