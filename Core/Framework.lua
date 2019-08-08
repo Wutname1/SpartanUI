@@ -1209,109 +1209,6 @@ local DBdefault = {
 			anim = '',
 			vignette = nil
 		},
-		PartyFrames = {
-			Style = 'Classic',
-			Portrait3D = true,
-			threat = true,
-			preset = 'dps',
-			FrameStyle = 'large',
-			showAuras = true,
-			partyLock = true,
-			showClass = true,
-			partyMoved = false,
-			castbar = true,
-			castbartext = true,
-			showPartyInRaid = false,
-			showParty = true,
-			showPlayer = true,
-			showSolo = false,
-			Portrait = true,
-			scale = 1,
-			Auras = {
-				NumBuffs = 0,
-				NumDebuffs = 10,
-				size = 16,
-				spacing = 1,
-				showType = true
-			},
-			Anchors = {
-				point = 'TOPLEFT',
-				relativeTo = 'UIParent',
-				relativePoint = 'TOPLEFT',
-				xOfs = 10,
-				yOfs = -20
-			},
-			bars = {health = {textstyle = 'dynamic', textmode = 1}, mana = {textstyle = 'dynamic', textmode = 1}},
-			display = {pet = true, target = true, mana = true}
-		},
-		PlayerFrames = {
-			Style = 'Classic',
-			Portrait3D = true,
-			showClass = true,
-			focusMoved = false,
-			PetPortrait = true,
-			global = frameDefault1,
-			player = frameDefault1,
-			target = frameDefault1,
-			targettarget = frameDefault2,
-			pet = frameDefault2,
-			focus = frameDefault2,
-			focustarget = frameDefault2,
-			boss = frameDefault2,
-			arena = frameDefault2,
-			bars = {
-				health = {textstyle = 'dynamic', textmode = 1},
-				mana = {textstyle = 'longfor', textmode = 1},
-				player = {color = 'dynamic'},
-				target = {color = 'reaction'},
-				targettarget = {color = 'dynamic', style = 'large'},
-				pet = {color = 'happiness'},
-				focus = {color = 'dynamic'},
-				focustarget = {color = 'dynamic'}
-			},
-			Castbar = {
-				player = 1,
-				target = 1,
-				targettarget = 1,
-				pet = 1,
-				focus = 1,
-				text = {player = 1, target = 1, targettarget = 1, pet = 1, focus = 1}
-			},
-			BossFrame = {movement = MovedDefault, display = true, scale = 1},
-			ArenaFrame = {movement = MovedDefault, display = true, scale = 1},
-			ClassBar = {scale = 1, movement = MovedDefault},
-			TotemFrame = {movement = MovedDefault},
-			AltManaBar = {movement = MovedDefault}
-		},
-		RaidFrames = {
-			Style = 'Classic',
-			HideBlizzFrames = true,
-			threat = true,
-			mode = 'ASSIGNEDROLE',
-			preset = 'dps',
-			FrameStyle = 'small',
-			showAuras = true,
-			showClass = true,
-			moved = false,
-			showRaid = true,
-			maxColumns = 4,
-			unitsPerColumn = 10,
-			columnSpacing = 5,
-			scale = 1,
-			Anchors = {
-				point = 'TOPLEFT',
-				relativeTo = 'UIParent',
-				relativePoint = 'TOPLEFT',
-				xOfs = 10,
-				yOfs = -20
-			},
-			bars = {
-				health = {textstyle = 'dynamic', textmode = 1},
-				mana = {textstyle = 'dynamic', textmode = 1}
-			},
-			debuffs = {display = true},
-			Auras = {size = 10, spacing = 1, showType = true}
-		},
 		NamePlates = {
 			ShowThreat = true,
 			ShowName = true,
@@ -1359,48 +1256,13 @@ local DBdefault = {
 				},
 				SUI_ClassIcon = {
 					enabled = false,
-					size = 20,
+					size = 40,
 					visibleOn = 'all',
 					position = {
 						anchor = 'TOP',
 						x = 0,
-						y = 20
+						y = 40
 					}
-				}
-			}
-		NamePlates = {
-			ShowThreat = true,
-			ShowName = true,
-			ShowLevel = true,
-			ShowTarget = true,
-			ShowRareElite = true,
-			ShowRaidTargetIndicator = true,
-			Scale = 1,
-			elements = {
-				['**'] = {
-					enabled = true
-				},
-				Background = {
-					type = 'graphic'
-				},
-				Name = {
-					SetJustifyH = 'CENTER'
-				},
-				QuestIndicator = {},
-				Health = {
-					height = 5,
-					colorTapping = true,
-					colorReaction = true,
-					colorClass = true
-				},
-				Power = {
-					ShowPlayerPowerIcons = true,
-					height = 3
-				},
-				Castbar = {
-					height = 5,
-					text = true,
-					FlashOnInterruptible = true
 				}
 			}
 		}
@@ -1866,21 +1728,8 @@ function SUI:MergeData(target, source, override)
 	return target
 end
 
-function SUI:isPartialMatch(frameName, tab)
-	local result = false
-
-	for _, v in ipairs(tab) do
-		startpos, endpos = strfind(strlower(frameName), strlower(v))
-		if (startpos == 1) then
-			result = true
-		end
-	end
-
-	return result
-end
-
 --[[
-	Takes a target table and searches for the specified phrade
+	Takes a target table and searches for the specified phrase
 ]]
 function SUI:isInTable(searchTable, searchPhrase, all)
 	if searchTable == nil or searchPhrase == nil then

@@ -97,19 +97,6 @@ function Artwork_Core:updateOffset()
 	end
 end
 
-function Artwork_Core:isPartialMatch(frameName, tab)
-	local result = false
-
-	for _, v in ipairs(tab) do
-		local startpos = strfind(strlower(frameName), strlower(v))
-		if (startpos == 1) then
-			result = true
-		end
-	end
-
-	return result
-end
-
 function Artwork_Core:isInTable(tab, frameName)
 	for _, v in ipairs(tab) do
 		if (strlower(v) == strlower(frameName)) then

@@ -1,0 +1,15 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<Script file="AutoTurnIn.lua" />
+	<Script file="AutoSell.lua" />
+	<Script file="Buffs.lua" />
+	<Script file="Minimap.lua" />
+	<Script file="Objectives.lua" />
+	<Script file="Tooltips.lua" />
+	<Script file="MailOpenAll.lua" />
+	<Script file="Nameplates.lua" />
+	<Script file="CombatLog.lua" />
+	<Script file="InterruptAnnounce.lua" />
+	<Script file="TauntWatcher.lua" />
+</Ui>
