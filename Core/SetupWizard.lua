@@ -219,7 +219,7 @@ function module:SetupWizard(RequiredPagesOnly)
 	module.window.StdUi = StdUi
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
-	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\media\\SUISetup')
+	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\images\\SUISetup')
 	module.window.Title:SetPoint('TOP')
 	module.window.Title:SetAlpha(.8)
 
@@ -367,7 +367,7 @@ function module:WelcomePage()
 			WelcomePage:SetParent(module.window.content)
 			WelcomePage:SetAllPoints(module.window.content)
 
-			WelcomePage.Helm = StdUi:Texture(WelcomePage, 190, 190, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
+			WelcomePage.Helm = StdUi:Texture(WelcomePage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
 			WelcomePage.Helm:SetPoint('CENTER', 0, 35)
 			WelcomePage.Helm:SetAlpha(.6)
 
