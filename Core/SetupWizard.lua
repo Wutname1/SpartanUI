@@ -19,16 +19,16 @@ local ReloadPage = {
 	Desc1 = 'Setup finished!',
 	Desc2 = 'This completes the setup wizard, a reload of the UI is required to finish the setup.',
 	Display = function()
-		module.window.content.WelcomePage = CreateFrame('Frame', nil)
-		module.window.content.WelcomePage:SetParent(module.window.content)
-		module.window.content.WelcomePage:SetAllPoints(module.window.content)
+		reloadPage = CreateFrame('Frame', nil)
+		reloadPage:SetParent(module.window.content)
+		reloadPage:SetAllPoints(module.window.content)
 
-		module.window.content.WelcomePage.Helm =
-			StdUi:Texture(module.window.content.WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
-		module.window.content.WelcomePage.Helm:SetPoint('CENTER')
-		module.window.content.WelcomePage.Helm:SetAlpha(.6)
-
+		reloadPage.Helm = StdUi:Texture(reloadPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
+		reloadPage.Helm:SetPoint('CENTER')
+		reloadPage.Helm:SetAlpha(.6)
 		module.window.Next:SetText('RELOAD UI')
+
+		module.window.content.reloadPage = reloadPage
 	end,
 	Next = function()
 		ReloadUI()
@@ -215,10 +215,13 @@ function module:DisplayPage(PageData)
 end
 
 function module:SetupWizard(RequiredPagesOnly)
-	module.window = StdUi:Window(nil, 'SpartanUI setup wizard', 650, 500)
+	module.window = StdUi:Window(nil, '', 650, 500)
 	module.window.StdUi = StdUi
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
+	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\media\\SUISetup')
+	module.window.Title:SetPoint('TOP')
+	module.window.Title:SetAlpha(.8)
 
 	-- Setup the Top text fields
 	module.window.SubTitle = StdUi:Label(module.window, '', 16, nil, module.window:GetWidth(), 20)
@@ -364,7 +367,7 @@ function module:WelcomePage()
 			WelcomePage:SetParent(module.window.content)
 			WelcomePage:SetAllPoints(module.window.content)
 
-			WelcomePage.Helm = StdUi:Texture(WelcomePage, 150, 150, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
+			WelcomePage.Helm = StdUi:Texture(WelcomePage, 190, 190, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
 			WelcomePage.Helm:SetPoint('CENTER', 0, 35)
 			WelcomePage.Helm:SetAlpha(.6)
 
