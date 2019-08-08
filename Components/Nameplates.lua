@@ -106,19 +106,20 @@ end
 
 local NamePlateFactory = function(frame, unit)
 	if unit:match('nameplate') then
+		local elements = SUI.DBMod.NamePlates.elements
 		frame:SetSize(128, 16)
 		frame:SetPoint('CENTER', 0, 0)
 
 		-- health bar
 		local health = CreateFrame('StatusBar', nil, frame)
 		health:SetPoint('BOTTOM')
-		health:SetSize(frame:GetWidth(), SUI.DBMod.NamePlates.elements.Health.height)
+		health:SetSize(frame:GetWidth(), elements.Health.height)
 		health:SetStatusBarTexture(BarTexture)
 		-- health.colorHealth = true
 		health.frequentUpdates = true
-		health.colorTapping = SUI.DBMod.NamePlates.elements.Health.colorTapping
-		health.colorReaction = SUI.DBMod.NamePlates.elements.Health.colorReaction
-		health.colorClass = SUI.DBMod.NamePlates.elements.Health.colorClass
+		health.colorTapping = elements.Health.colorTapping
+		health.colorReaction = elements.Health.colorReaction
+		health.colorClass = elements.Health.colorClass
 		frame.Health = health
 
 		frame.bg = {}
@@ -157,16 +158,16 @@ local NamePlateFactory = function(frame, unit)
 			frame.Name = health:CreateFontString(nil, 'BACKGROUND')
 			SUI:FormatFont(frame.Name, 10, 'Player')
 			frame.Name:SetSize(frame:GetWidth(), 12)
-			frame.Name:SetJustifyH(SUI.DBMod.NamePlates.elements.Name.SetJustifyH)
+			frame.Name:SetJustifyH(elements.Name.SetJustifyH)
 			frame.Name:SetPoint('BOTTOMLEFT', frame.Health, 'TOPLEFT', 0, 0)
 			frame:Tag(frame.Name, nameString)
 		end
 
 		-- Mana/Energy
-		if SUI.DBMod.NamePlates.elements.Power.enabled then
+		if elements.Power.enabled then
 			local power = CreateFrame('StatusBar', nil, frame)
 			power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
-			power:SetSize(frame:GetWidth(), SUI.DBMod.NamePlates.elements.Power.height)
+			power:SetSize(frame:GetWidth(), elements.Power.height)
 			power:SetStatusBarTexture(BarTexture)
 
 			frame.Power = power
@@ -175,18 +176,18 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- Castbar
-		if SUI.DBMod.NamePlates.elements.Castbar.enabled then
+		if elements.Castbar.enabled then
 			local cast = CreateFrame('StatusBar', nil, frame)
-			if SUI.DBMod.NamePlates.elements.Power.enabled then
+			if elements.Power.enabled then
 				cast:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
 			else
 				cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
 			end
 
-			cast:SetSize(frame:GetWidth(), SUI.DBMod.NamePlates.elements.Castbar.height)
+			cast:SetSize(frame:GetWidth(), elements.Castbar.height)
 			cast:SetStatusBarTexture(BarTexture)
 			cast:SetStatusBarColor(1, 0.7, 0)
-			if SUI.DBMod.NamePlates.elements.Castbar.text then
+			if elements.Castbar.text then
 				cast.Text = cast:CreateFontString()
 				SUI:FormatFont(cast.Text, 7, 'Player')
 				cast.Text:SetJustifyH('CENTER')
@@ -208,6 +209,17 @@ local NamePlateFactory = function(frame, unit)
 			frame.Castbar = cast
 			frame.Castbar:SetParent(frame)
 		end
+
+		-- ClassIcon
+		frame.SUI_ClassIcon = frame:CreateTexture(nil, 'BORDER')
+		frame.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
+		frame.SUI_ClassIcon:SetPoint(
+			elements.SUI_ClassIcon.position.anchor,
+			frame,
+			elements.SUI_ClassIcon.position.anchor,
+			elements.SUI_ClassIcon.position.x,
+			elements.SUI_ClassIcon.position.y
+		)
 
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', nil, frame)
@@ -270,8 +282,8 @@ local NamePlateFactory = function(frame, unit)
 		-- Setup Player Icons
 		if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
 			local attachPoint = 'Castbar'
-			if not SUI.DBMod.NamePlates.elements.Castbar.enabled then
-				if SUI.DBMod.NamePlates.elements.Power.enabled then
+			if not elements.Castbar.enabled then
+				if elements.Power.enabled then
 					attachPoint = 'Power'
 				else
 					attachPoint = 'Health'
@@ -316,6 +328,12 @@ local NameplateCallback = function(self, event, unit)
 		self:DisableElement('QuestIndicator')
 	end
 
+	-- Update class icons
+	if not SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled then
+		self:DisableElement('SUI_ClassIcon')
+	else
+		self:EnableElement('SUI_ClassIcon')
+	end
 	-- Update Player Icons
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
 		if self.Runes then
@@ -341,6 +359,12 @@ function module:UpdateNameplates()
 	for k, v in pairs(NameplateList) do
 		if v then
 			_G[k].PvPIndicator.Override(_G[k], nil, _G[k].unit)
+
+			if not SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled then
+				_G[k]:DisableElement('SUI_ClassIcon')
+			else
+				_G[k]:EnableElement('SUI_ClassIcon')
+			end
 		end
 	end
 end
@@ -373,6 +397,18 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
+	local anchorPoints = {
+		['TOPLEFT'] = 'TOP LEFT',
+		['TOP'] = 'TOP',
+		['TOPRIGHT'] = 'TOP RIGHT',
+		['RIGHT'] = 'RIGHT',
+		['CENTER'] = 'CENTER',
+		['LEFT'] = 'LEFT',
+		['BOTTOMLEFT'] = 'BOTTOM LEFT',
+		['BOTTOM'] = 'BOTTOM',
+		['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
+	}
+
 	SUI.opt.args['ModSetting'].args['Nameplates'] = {
 		type = 'group',
 		name = L['Nameplates'],
@@ -725,6 +761,76 @@ function module:BuildOptions()
 								set = function(info, val)
 									SUI.DBMod.NamePlates.ShowTarget = val
 								end
+							}
+						}
+					},
+					ClassIcon = {
+						name = 'Class icon',
+						type = 'group',
+						args = {
+							enabled = {
+								name = 'Class icon',
+								type = 'toggle',
+								width = 'full',
+								order = 1,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled = val
+									module:UpdateNameplates()
+								end
+							},
+							position = {
+								name = 'Position',
+								type = 'group',
+								order = 50,
+								inline = true,
+								args = {
+									x = {
+										name = 'X Axis',
+										type = 'range',
+										order = 1,
+										min = -100,
+										max = 100,
+										step = 1,
+										get = function(info)
+											return SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position.x
+										end,
+										set = function(info, val)
+											--Update the DB
+											SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position.x = val
+										end
+									},
+									y = {
+										name = 'Y Axis',
+										type = 'range',
+										order = 2,
+										min = -100,
+										max = 100,
+										step = 1,
+										get = function(info)
+											return SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position.y
+										end,
+										set = function(info, val)
+											--Update the DB
+											SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position.y = val
+										end
+									},
+									anchor = {
+										name = 'Anchor point',
+										type = 'select',
+										order = 3,
+										values = anchorPoints,
+										get = function(info)
+											return SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position.anchor
+										end,
+										set = function(info, val)
+											--Update the DB
+											SUI.DBMod.NamePlates.elements.SUI_ClassIcon.position = val
+										end
+									}
+								}
 							}
 						}
 					}

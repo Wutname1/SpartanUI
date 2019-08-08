@@ -14,7 +14,7 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = "@project-abbreviated-hash@" -- The ZIP packager will replace this with the Git hash.
+SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
@@ -710,7 +710,13 @@ local DBdefault = {
 			elements = {
 				['**'] = {
 					enabled = true,
-					alpha = 1
+					alpha = 1,
+					size = 20,
+					position = {
+						anchor = 'CENTER',
+						x = 0,
+						y = 0
+					}
 				},
 				RareElite = {},
 				Background = {
@@ -736,6 +742,15 @@ local DBdefault = {
 					height = 5,
 					text = true,
 					FlashOnInterruptible = true
+				},
+				SUI_ClassIcon = {
+					enabled = false,
+					size = 20,
+					position = {
+						anchor = 'TOP',
+						x = 0,
+						y = 20
+					}
 				}
 			}
 		}
@@ -743,7 +758,6 @@ local DBdefault = {
 }
 
 local DBdefaults = {char = DBdefault, profile = DBdefault}
--- local SUI.DBGs = {Version = SUI.Version}
 
 function SUI:ResetConfig()
 	SUI.DB:ResetProfile(false, true)
