@@ -1189,12 +1189,185 @@ local DBdefault = {
 			enable = true,
 			speed = 8
 		},
+		TauntWatcher = {
+			active = {
+				always = false,
+				inBG = false,
+				inRaid = true,
+				inParty = true,
+				inArena = true,
+				outdoors = false
+			},
+			failures = true,
+			FirstLaunch = true,
+			announceLocation = 'SELF',
+			text = '%who taunted %what!'
+		},
 		FilmEffects = {
 			enable = false,
 			animationInterval = 0,
 			anim = '',
 			vignette = nil
 		},
+		PartyFrames = {
+			Style = 'Classic',
+			Portrait3D = true,
+			threat = true,
+			preset = 'dps',
+			FrameStyle = 'large',
+			showAuras = true,
+			partyLock = true,
+			showClass = true,
+			partyMoved = false,
+			castbar = true,
+			castbartext = true,
+			showPartyInRaid = false,
+			showParty = true,
+			showPlayer = true,
+			showSolo = false,
+			Portrait = true,
+			scale = 1,
+			Auras = {
+				NumBuffs = 0,
+				NumDebuffs = 10,
+				size = 16,
+				spacing = 1,
+				showType = true
+			},
+			Anchors = {
+				point = 'TOPLEFT',
+				relativeTo = 'UIParent',
+				relativePoint = 'TOPLEFT',
+				xOfs = 10,
+				yOfs = -20
+			},
+			bars = {health = {textstyle = 'dynamic', textmode = 1}, mana = {textstyle = 'dynamic', textmode = 1}},
+			display = {pet = true, target = true, mana = true}
+		},
+		PlayerFrames = {
+			Style = 'Classic',
+			Portrait3D = true,
+			showClass = true,
+			focusMoved = false,
+			PetPortrait = true,
+			global = frameDefault1,
+			player = frameDefault1,
+			target = frameDefault1,
+			targettarget = frameDefault2,
+			pet = frameDefault2,
+			focus = frameDefault2,
+			focustarget = frameDefault2,
+			boss = frameDefault2,
+			arena = frameDefault2,
+			bars = {
+				health = {textstyle = 'dynamic', textmode = 1},
+				mana = {textstyle = 'longfor', textmode = 1},
+				player = {color = 'dynamic'},
+				target = {color = 'reaction'},
+				targettarget = {color = 'dynamic', style = 'large'},
+				pet = {color = 'happiness'},
+				focus = {color = 'dynamic'},
+				focustarget = {color = 'dynamic'}
+			},
+			Castbar = {
+				player = 1,
+				target = 1,
+				targettarget = 1,
+				pet = 1,
+				focus = 1,
+				text = {player = 1, target = 1, targettarget = 1, pet = 1, focus = 1}
+			},
+			BossFrame = {movement = MovedDefault, display = true, scale = 1},
+			ArenaFrame = {movement = MovedDefault, display = true, scale = 1},
+			ClassBar = {scale = 1, movement = MovedDefault},
+			TotemFrame = {movement = MovedDefault},
+			AltManaBar = {movement = MovedDefault}
+		},
+		RaidFrames = {
+			Style = 'Classic',
+			HideBlizzFrames = true,
+			threat = true,
+			mode = 'ASSIGNEDROLE',
+			preset = 'dps',
+			FrameStyle = 'small',
+			showAuras = true,
+			showClass = true,
+			moved = false,
+			showRaid = true,
+			maxColumns = 4,
+			unitsPerColumn = 10,
+			columnSpacing = 5,
+			scale = 1,
+			Anchors = {
+				point = 'TOPLEFT',
+				relativeTo = 'UIParent',
+				relativePoint = 'TOPLEFT',
+				xOfs = 10,
+				yOfs = -20
+			},
+			bars = {
+				health = {textstyle = 'dynamic', textmode = 1},
+				mana = {textstyle = 'dynamic', textmode = 1}
+			},
+			debuffs = {display = true},
+			Auras = {size = 10, spacing = 1, showType = true}
+		},
+		NamePlates = {
+			ShowThreat = true,
+			ShowName = true,
+			ShowLevel = true,
+			ShowTarget = true,
+			ShowRaidTargetIndicator = true,
+			onlyShowPlayer = true,
+			showStealableBuffs = false,
+			Scale = 1,
+			elements = {
+				['**'] = {
+					enabled = true,
+					alpha = 1,
+					size = 20,
+					position = {
+						anchor = 'CENTER',
+						x = 0,
+						y = 0
+					}
+				},
+				RareElite = {},
+				Background = {
+					type = 'solid',
+					colorMode = 'reaction',
+					alpha = 0.35
+				},
+				Name = {
+					SetJustifyH = 'CENTER'
+				},
+				QuestIndicator = {},
+				Health = {
+					height = 5,
+					colorTapping = true,
+					colorReaction = true,
+					colorClass = true
+				},
+				Power = {
+					ShowPlayerPowerIcons = true,
+					height = 3
+				},
+				Castbar = {
+					height = 5,
+					text = true,
+					FlashOnInterruptible = true
+				},
+				SUI_ClassIcon = {
+					enabled = false,
+					size = 20,
+					visibleOn = 'all',
+					position = {
+						anchor = 'TOP',
+						x = 0,
+						y = 20
+					}
+				}
+			}
 		NamePlates = {
 			ShowThreat = true,
 			ShowName = true,
