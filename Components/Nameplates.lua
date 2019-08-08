@@ -329,11 +329,19 @@ local NameplateCallback = function(self, event, unit)
 	end
 
 	-- Update class icons
-	if not SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled then
-		self:DisableElement('SUI_ClassIcon')
-	else
+	local VisibleOn = SUI.DBMod.NamePlates.elements.SUI_ClassIcon.visibleOn
+	local reaction = UnitReaction(unit, 'player')
+
+	if
+		((reaction <= 2 and (VisibleOn == 'all' or VisibleOn == 'hostile')) or
+			(reaction >= 3 and (visibleOn == 'all' or VisibleOn == 'friendly'))) and
+			SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled
+	 then
 		self:EnableElement('SUI_ClassIcon')
+	else
+		self:DisableElement('SUI_ClassIcon')
 	end
+
 	-- Update Player Icons
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
 		if self.Runes then
@@ -360,7 +368,7 @@ function module:UpdateNameplates()
 		if v then
 			_G[k].PvPIndicator.Override(_G[k], nil, _G[k].unit)
 
-			if not SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled then
+			if SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled then
 				_G[k]:DisableElement('SUI_ClassIcon')
 			else
 				_G[k]:EnableElement('SUI_ClassIcon')
@@ -769,15 +777,32 @@ function module:BuildOptions()
 						type = 'group',
 						args = {
 							enabled = {
-								name = 'Class icon',
+								name = 'Enabled',
 								type = 'toggle',
-								width = 'full',
+								width = 'double',
 								order = 1,
 								get = function(info)
 									return SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled
 								end,
 								set = function(info, val)
 									SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled = val
+									module:UpdateNameplates()
+								end
+							},
+							visibleOn = {
+								name = 'Show on',
+								type = 'select',
+								order = 2,
+								values = {
+									['friendly'] = 'Friendly',
+									['hostile'] = 'Hostile',
+									['all'] = 'All'
+								},
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.SUI_ClassIcon.visibleOn
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.SUI_ClassIcon.visibleOn = val
 									module:UpdateNameplates()
 								end
 							},

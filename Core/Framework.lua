@@ -746,6 +746,7 @@ local DBdefault = {
 				SUI_ClassIcon = {
 					enabled = false,
 					size = 20,
+					visibleOn = 'all',
 					position = {
 						anchor = 'TOP',
 						x = 0,
