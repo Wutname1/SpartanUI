@@ -14,7 +14,7 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = "@project-abbreviated-hash@" -- The ZIP packager will replace this with the Git hash.
+SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
@@ -713,12 +713,68 @@ local DBdefault = {
 			},
 			debuffs = {display = true},
 			Auras = {size = 10, spacing = 1, showType = true}
+		},
+		NamePlates = {
+			ShowThreat = true,
+			ShowName = true,
+			ShowLevel = true,
+			ShowTarget = true,
+			ShowRaidTargetIndicator = true,
+			onlyShowPlayer = true,
+			showStealableBuffs = false,
+			Scale = 1,
+			elements = {
+				['**'] = {
+					enabled = true,
+					alpha = 1,
+					size = 20,
+					position = {
+						anchor = 'CENTER',
+						x = 0,
+						y = 0
+					}
+				},
+				RareElite = {},
+				Background = {
+					type = 'solid',
+					colorMode = 'reaction',
+					alpha = 0.35
+				},
+				Name = {
+					SetJustifyH = 'CENTER'
+				},
+				QuestIndicator = {},
+				Health = {
+					height = 5,
+					colorTapping = true,
+					colorReaction = true,
+					colorClass = true
+				},
+				Power = {
+					ShowPlayerPowerIcons = true,
+					height = 3
+				},
+				Castbar = {
+					height = 5,
+					text = true,
+					FlashOnInterruptible = true
+				},
+				SUI_ClassIcon = {
+					enabled = false,
+					size = 20,
+					visibleOn = 'all',
+					position = {
+						anchor = 'TOP',
+						x = 0,
+						y = 20
+					}
+				}
+			}
 		}
 	}
 }
 
 local DBdefaults = {char = DBdefault, profile = DBdefault}
--- local SUI.DBGs = {Version = SUI.Version}
 
 function SUI:ResetConfig()
 	SUI.DB:ResetProfile(false, true)
