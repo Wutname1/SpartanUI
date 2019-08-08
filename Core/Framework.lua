@@ -765,7 +765,6 @@ local DBdefault = {
 					visibleOn = 'all',
 					position = {
 						anchor = 'TOP',
-						x = 0,
 						y = 20
 					}
 				}
