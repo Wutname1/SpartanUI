@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 80100
 ## Title: SpartanUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@

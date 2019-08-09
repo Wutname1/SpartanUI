@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 80100
 ## Title: SpartanUI: |CFF0070DDStyle - Transparent|r
 ## Notes: Transparent style and layout for SpartanUI
 ## Version: @project-version@
