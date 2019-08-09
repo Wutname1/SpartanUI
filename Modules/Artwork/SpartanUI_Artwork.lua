@@ -8,9 +8,9 @@ function Artwork_Core:updateScale()
 	if (not SUI.DB.scale) then
 		local Resolution = ''
 		if select(4, GetBuildInfo()) >= 70000 then
-			Resolution = GetCVar("gxWindowedResolution")
+			Resolution = GetCVar('gxWindowedResolution')
 		else
-			Resolution = GetCVar("gxResolution")
+			Resolution = GetCVar('gxResolution')
 		end
 
 		local width, height = string.match(Resolution, '(%d+).-(%d+)')
@@ -224,7 +224,6 @@ function Artwork_Core:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
-
 	Artwork_Core:FirstTime()
 
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
@@ -398,6 +397,19 @@ function Artwork_Core:OnEnable()
 	-- No Bartender/out of date Notification
 	if SUI.DB.Bartender4Version < BartenderMin then
 		StaticPopup_Show('BartenderVerWarning')
+	end
+
+	if MainMenuBar then
+		MainMenuBar:Hide()
+	end
+	if MainMenuBarOverlayFrame then
+		MainMenuBarOverlayFrame:Hide()
+	end
+	if MainMenuExpBar then
+		MainMenuExpBar:Hide()
+	end
+	if MainMenuBarPerformanceBarFrame then
+		MainMenuBarPerformanceBarFrame:Hide()
 	end
 
 	Artwork_Core:SetupOptions()

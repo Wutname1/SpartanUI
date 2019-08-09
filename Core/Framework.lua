@@ -14,7 +14,7 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
+SUI.GitHash = '6ead4c4' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
@@ -765,6 +765,7 @@ local DBdefault = {
 					visibleOn = 'all',
 					position = {
 						anchor = 'TOP',
+						x = 0,
 						y = 20
 					}
 				}
