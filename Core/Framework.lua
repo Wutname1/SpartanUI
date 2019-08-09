@@ -14,7 +14,7 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
+SUI.GitHash = '6ead4c4' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
@@ -762,9 +762,10 @@ local DBdefault = {
 				SUI_ClassIcon = {
 					enabled = false,
 					size = 20,
-					visibleOn = 'all',
+					visibleOn = 'PlayerControlled',
 					position = {
 						anchor = 'TOP',
+						x = 0,
 						y = 20
 					}
 				}
@@ -1081,7 +1082,8 @@ function SUI:OnEnable()
 					type = 'execute',
 					order = 50,
 					func = function()
-						while CloseWindows() do end
+						while CloseWindows() do
+						end
 						AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 						AceConfigDialog:Open('SpartanUI')
 					end
@@ -1195,12 +1197,12 @@ function SUI:ChatCommand(input)
 		if SUIChatCommands[input] then
 			SUIChatCommands[input]()
 		elseif string.find(input, ' ') then
-			for i in string.gmatch(input, "%S+") do
+			for i in string.gmatch(input, '%S+') do
 				local arg, _ = string.gsub(input, i .. ' ', '')
 				if SUIChatCommands[i] then
 					SUIChatCommands[i](arg)
 				end
-			 end
+			end
 		else
 			AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 			AceConfigDialog:Open('SpartanUI')

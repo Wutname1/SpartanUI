@@ -235,14 +235,17 @@ local TooltipSetItem = function(self)
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
 		}
-		if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
-			style = {
-				bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
-				overlayAtlasTop = 'AzeriteTooltip-Topper',
-				overlayAtlasTopScale = .75,
-				overlayAtlasBottom = 'AzeriteTooltip-Bottom'
-			}
+		if not SUI.IsClassic then
+			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
+				style = {
+					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
+					overlayAtlasTop = 'AzeriteTooltip-Topper',
+					overlayAtlasTopScale = .75,
+					overlayAtlasBottom = 'AzeriteTooltip-Bottom'
+				}
+			end
 		end
+
 		GameTooltip_SetBackdropStyle(self, style)
 
 		if (quality) then

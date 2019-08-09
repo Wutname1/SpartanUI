@@ -333,10 +333,13 @@ local NameplateCallback = function(self, event, unit)
 	else
 		self:DisableElement('RareElite')
 	end
-	if SUI.DBMod.NamePlates.elements.QuestIndicator.enabled then
-		self:EnableElement('QuestIndicator')
-	else
-		self:DisableElement('QuestIndicator')
+	-- Do the non-classic things
+	if not SUI.IsClassic then
+		if SUI.DBMod.NamePlates.elements.QuestIndicator.enabled then
+			self:EnableElement('QuestIndicator')
+		else
+			self:DisableElement('QuestIndicator')
+		end
 	end
 
 	-- Update class icons

@@ -260,10 +260,8 @@ do -- ClassIcon as an SUIUF module
 		if (icon) then
 			icon.__owner = self
 			icon.ForceUpdate = ForceUpdate
-			--self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
 			self:RegisterEvent('UNIT_PET', Update, true)
-			-- icon:SetTexture('Interface\\AddOns\\SpartanUI\\images\\ClassIcons\\Transparent')
 			if icon.shadow == nil then
 				icon.shadow = self:CreateTexture(nil, 'BACKGROUND')
 				icon.shadow:SetSize(icon:GetSize())
@@ -276,7 +274,6 @@ do -- ClassIcon as an SUIUF module
 	local Disable = function(self)
 		local icon = self.SUI_ClassIcon
 		if (icon) then
-			--self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 			self:UnregisterEvent('UNIT_PET', Update)
 			self.SUI_ClassIcon:Hide()
