@@ -405,7 +405,8 @@ function Artwork_Core:OnEnable()
 	if MainMenuBarOverlayFrame then
 		MainMenuBarOverlayFrame:Hide()
 	end
-	if MainMenuExpBar then
+	if MainMenuExpBar and SUI.IsClassic then
+		MainMenuExpBar.Show = MainMenuExpBar.Hide
 		MainMenuExpBar:Hide()
 	end
 	if MainMenuBarPerformanceBarFrame then
