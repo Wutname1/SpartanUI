@@ -571,19 +571,21 @@ local MakeLargeFrame = function(self, unit, width)
 		do --Special Icons/Bars
 			if unit == 'player' then
 				--Totem Bar
-				for index = 1, 4 do
-					_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
-					_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
-					_G['TotemFrameTotem' .. index]:SetScale(.8)
-				end
-				hooksecurefunc(
-					'TotemFrame_Update',
-					function()
-						TotemFrameTotem1:ClearAllPoints()
-						TotemFrameTotem1:SetParent(self)
-						TotemFrameTotem1:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 20, 0)
+				if not SUI.IsClassic then
+					for index = 1, 4 do
+						_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+						_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+						_G['TotemFrameTotem' .. index]:SetScale(.8)
 					end
-				)
+					hooksecurefunc(
+						'TotemFrame_Update',
+						function()
+							TotemFrameTotem1:ClearAllPoints()
+							TotemFrameTotem1:SetParent(self)
+							TotemFrameTotem1:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 20, 0)
+						end
+					)
+				end
 
 				local DruidMana = CreateFrame('StatusBar', nil, self)
 				DruidMana:SetSize(self:GetWidth(), 4)

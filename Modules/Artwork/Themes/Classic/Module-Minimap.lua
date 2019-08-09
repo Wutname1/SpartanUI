@@ -82,20 +82,23 @@ function module:MiniMap()
 		end
 	)
 
-	petbattleWatcher:SetScript(
-		'OnEvent',
-		function(self, event)
-			if event == 'PET_BATTLE_CLOSE' then
-				PetBattleActive = false
-			else
-				PetBattleActive = true
+	if not SUI.IsClassic then
+		petbattleWatcher:SetScript(
+			'OnEvent',
+			function(self, event)
+				if event == 'PET_BATTLE_CLOSE' then
+					PetBattleActive = false
+				else
+					PetBattleActive = true
+				end
 			end
-		end
-	)
-	petbattleWatcher:RegisterEvent('PET_BATTLE_OPENING_START')
-	--petbattleWatcher:RegisterEvent("PET_BATTLE_TURN_STARTED")
-	petbattleWatcher:RegisterEvent('PET_BATTLE_OPENING_DONE')
-	petbattleWatcher:RegisterEvent('PET_BATTLE_CLOSE')
+		)
+		petbattleWatcher:RegisterEvent('PET_BATTLE_OPENING_START')
+		--petbattleWatcher:RegisterEvent("PET_BATTLE_TURN_STARTED")
+		petbattleWatcher:RegisterEvent('PET_BATTLE_OPENING_DONE')
+		petbattleWatcher:RegisterEvent('PET_BATTLE_CLOSE')
+	end
+
 	Minimap:SetFrameLevel(120)
 end
 
