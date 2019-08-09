@@ -246,6 +246,26 @@ local TooltipSetItem = function(self)
 			end
 		end
 
+		if SUI.IsClassic then
+			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = GetItemInfo(itemLink)
+
+			SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
+			if itemStackCount > 1 then
+				local itemUnderMouse = GetMouseFocus()
+				-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
+				local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
+				count = tonumber(count) or 1
+				if count <= 1 then
+					count = 1
+				end
+
+				if count > 1 and count ~= itemStackCount then
+					local curValue = count * itemSellPrice
+					SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+				end
+			end
+		end
+
 		GameTooltip_SetBackdropStyle(self, style)
 
 		if (quality) then
