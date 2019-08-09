@@ -1,4 +1,9 @@
-## Interface: 80100
+#@retail@
+## Interface: 80200
+#@end-retail@
+#@non-retail@
+# ## Interface: 11302
+#@end-non-retail@
 ## Title: SpartanUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
@@ -21,7 +26,9 @@ libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
 libs\AceConsole-3.0\AceConsole-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
+#@retail@
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
+#@end-retail@
 libs\AceLocale-3.0\AceLocale-3.0.xml
 libs\AceTimer-3.0\AceTimer-3.0.xml
 libs\StdUi\StdUi.xml
