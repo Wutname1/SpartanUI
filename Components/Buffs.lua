@@ -74,7 +74,7 @@ local BuffPosUpdate = function()
 				SUI.DB.Buffs[ActiveRule()].Anchor.Moved = false
 			else
 				--Set the Buff location
-				BuffFrame:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+				BuffFrame:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 			end
 		else
 			setdefault = true
@@ -104,8 +104,6 @@ function module:OnEnable()
 	BuffWatcher:RegisterEvent('COMBAT_LOG_EVENT')
 	BuffWatcher:RegisterEvent('GROUP_JOINED')
 	BuffWatcher:RegisterEvent('GROUP_ROSTER_UPDATE')
-	BuffWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
-	--BuffWatcher:RegisterEvent("PARTY_CONVERTED_TO_RAID")
 	BuffWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
 	BuffWatcher:RegisterEvent('ENCOUNTER_START')
 	BuffWatcher:RegisterEvent('ENCOUNTER_END')
@@ -159,7 +157,7 @@ function module:OnEnable()
 						Anchors[key] = val
 					end
 					self:ClearAllPoints()
-					self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+					self:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
 				else
 					self:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -140, -10)
 				end
@@ -178,8 +176,6 @@ function module:OnEnable()
 		module[v] = {anchor = anchor}
 		module[v].anchor:Hide()
 	end
-
-	BuffPosUpdate()
 end
 
 function module:BuildOptions()

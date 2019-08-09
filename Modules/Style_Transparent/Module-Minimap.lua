@@ -23,7 +23,7 @@ function Transparent_MiniMapCreate()
 	Transparent_SpartanUI:HookScript(
 		'OnHide',
 		function(this, event)
-			if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+			if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 				Minimap:ClearAllPoints()
 				Minimap:SetParent(UIParent)
 				Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
@@ -34,7 +34,7 @@ function Transparent_MiniMapCreate()
 	Transparent_SpartanUI:HookScript(
 		'OnShow',
 		function(this, event)
-			if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+			if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 				Minimap:ClearAllPoints()
 				Minimap:SetPoint('CENTER', 'Transparent_SpartanUI', 'CENTER', 0, -5)
 			end
@@ -48,7 +48,7 @@ function module:InitMinimap()
 end
 
 function module:EnableMinimap()
-	if SUI.DB.EnabledComponents.Minimap and (SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse) then
+	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 		Transparent_MiniMapCreate()
 	end
 end

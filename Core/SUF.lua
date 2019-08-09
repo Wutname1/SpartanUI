@@ -8,7 +8,7 @@ function addon:HotsListing()
 		return {
 			774, -- Rejuvenation
 			LifebloomSpellId, -- Lifebloom
-			8936, -- Regrowth
+			8936 -- Regrowth
 			-- 48438, -- Wild Growth
 			-- 155777, -- Germination
 			-- 102351, -- Cenarion Ward
@@ -212,14 +212,34 @@ function addon:PlayerPowerIcons(frame, attachPoint)
 end
 
 do -- ClassIcon as an SUIUF module
+	local ClassIconCoord = {
+		WARRIOR = {0.00, 0.25, 0.00, 0.25},
+		MAGE = {0.25, 0.50, 0.00, 0.25},
+		ROGUE = {0.50, 0.75, 0.00, 0.25},
+		DRUID = {0.75, 1.00, 0.00, 0.25},
+		HUNTER = {0.00, 0.25, 0.25, 0.50},
+		SHAMAN = {0.25, 0.50, 0.25, 0.50},
+		PRIEST = {0.50, 0.75, 0.25, 0.50},
+		WARLOCK = {0.75, 1.00, 0.25, 0.50},
+		PALADIN = {0.00, 0.25, 0.50, 0.75},
+		DEATHKNIGHT = {0.25, 0.50, 0.50, 0.75},
+		MONK = {0.50, 0.75, 0.50, 0.75},
+		DEMONHUNTER = {0.75, 1.00, 0.50, 0.75},
+		DEFAULT = {0.75, 1.00, 0.75, 1.00}
+	}
 	local Update = function(self, event, unit)
 		local icon = self.SUI_ClassIcon
 		if (icon) then
 			local _, class = UnitClass(self.unit)
+			if not class then
+				return
+			end
+
+			local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class))
+
 			if class then
-				-- local coords = ClassIconCoord[class or "DEFAULT"];
-				-- icon:SetTexCoord(coords[1], coords[2], coords[3], coords[4]);
-				local path = 'Interface\\AddOns\\SpartanUI\\media\\flat_classicons\\wow_flat_' .. (string.lower(class))
+				-- local coords = ClassIconCoord[class or 'DEFAULT']
+				-- icon:SetTexCoord(coords[1], coords[2], coords[3], coords[4])
 				icon:SetTexture(path)
 				icon:Show()
 				if icon.shadow then
@@ -232,13 +252,18 @@ do -- ClassIcon as an SUIUF module
 			end
 		end
 	end
+	local function ForceUpdate(element)
+		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
+	end
 	local Enable = function(self)
 		local icon = self.SUI_ClassIcon
 		if (icon) then
+			icon.__owner = self
+			icon.ForceUpdate = ForceUpdate
 			--self:RegisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
 			self:RegisterEvent('UNIT_PET', Update, true)
-			icon:SetTexture('Interface\\AddOns\\SpartanUI\\media\\icon_class')
+			-- icon:SetTexture('Interface\\AddOns\\SpartanUI\\images\\ClassIcons\\Transparent')
 			if icon.shadow == nil then
 				icon.shadow = self:CreateTexture(nil, 'BACKGROUND')
 				icon.shadow:SetSize(icon:GetSize())
@@ -254,6 +279,8 @@ do -- ClassIcon as an SUIUF module
 			--self:UnregisterEvent("PARTY_MEMBERS_CHANGED", Update);
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 			self:UnregisterEvent('UNIT_PET', Update)
+			self.SUI_ClassIcon:Hide()
+			self.SUI_ClassIcon.shadow:Hide()
 		end
 	end
 	SUIUF:AddElement('SUI_ClassIcon', Update, Enable, Disable)
@@ -322,7 +349,7 @@ end
 
 do --Health Formatting Tags
 	-- Current Health Short, as an SUIUF module
-	SUIUF.Tags.Events['curhpshort'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['curhpshort'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['curhpshort'] = function(unit)
 		local tmp = UnitHealth(unit)
 		if tmp >= 1000000 then
@@ -334,7 +361,7 @@ do --Health Formatting Tags
 		return addon:comma_value(tmp)
 	end
 	-- Current Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['curhpdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['curhpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['curhpdynamic'] = function(unit)
 		local tmp = UnitHealth(unit)
 		if tmp >= 1000000 then
@@ -344,7 +371,7 @@ do --Health Formatting Tags
 		end
 	end
 	-- Total Health Short, as an SUIUF module
-	SUIUF.Tags.Events['maxhpshort'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['maxhpshort'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['maxhpshort'] = function(unit)
 		local tmp = UnitHealthMax(unit)
 		if tmp >= 1000000 then
@@ -356,7 +383,7 @@ do --Health Formatting Tags
 		return addon:comma_value(tmp)
 	end
 	-- Total Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['maxhpdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['maxhpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['maxhpdynamic'] = function(unit)
 		local tmp = UnitHealthMax(unit)
 		if tmp >= 1000000 then
@@ -366,7 +393,7 @@ do --Health Formatting Tags
 		end
 	end
 	-- Missing Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['missinghpdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['missinghpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['missinghpdynamic'] = function(unit)
 		local tmp = UnitHealthMax(unit) - UnitHealth(unit)
 		if tmp >= 1000000 then
@@ -376,17 +403,17 @@ do --Health Formatting Tags
 		end
 	end
 	-- Current Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['curhpformatted'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['curhpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['curhpformatted'] = function(unit)
 		return addon:comma_value(UnitHealth(unit))
 	end
 	-- Total Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['maxhpformatted'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['maxhpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['maxhpformatted'] = function(unit)
 		return addon:comma_value(UnitHealthMax(unit))
 	end
 	-- Missing Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['missinghpformatted'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['missinghpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['missinghpformatted'] = function(unit)
 		return addon:comma_value(UnitHealthMax(unit) - UnitHealth(unit))
 	end
@@ -414,7 +441,7 @@ do -- Mana Formatting Tags
 		end
 	end
 	-- Missing Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['missingppdynamic'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['missingppdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['missingppdynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit) - UnitPower(unit)
 		if tmp >= 1000000 then
@@ -454,7 +481,7 @@ do --Color name by Class
 		end
 	end
 
-	SUIUF.Tags.Events['SUI_ColorClass'] = 'UNIT_HEALTH'
+	SUIUF.Tags.Events['SUI_ColorClass'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['SUI_ColorClass'] = function(u)
 		local _, class = UnitClass(u)
 

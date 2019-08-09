@@ -6,15 +6,45 @@ local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipT
 local totalValue = 0
 module.SellTimer = nil
 local ExcludedItems = {
+	-- BFA
+	168135, --Titans Blood
+	166846, --spare parts
+	168327, --chain ignitercoil
+	166971, --empty energy cell
+	170500, --energy cell
+	166970, --energy cell
+	169475, --Barnacled Lockbox
 	137642, --Mark Of Honor
+	168217, --Hardened Spring
+	168136, --Azerokk's Fist
+	168216, --Tempered Plating
+	168215, --Machined Gear Assembly
+	169334, --Strange Oceanic Sediment
+	170193, --Sea Totem
+	168802, --Nazjatar Battle Commendation
+	171090, --Battleborn Sigil
+	-- Cata
+	71141, -- Eternal Ember
+	-- Legion
+	129276, -- Beginner's Guide to Dimensional Rifting
+	-- MOP
+	80914, -- Mourning Glory
+	-- Misc Items
 	141446, --Tome of the Tranquil Mind
+	81055, -- Darkmoon ride ticket
+	--Professions
 	6219, -- Arclight Spanner
 	140209, --imported blacksmith hammer
 	5956, -- Blacksmith Hammer
 	7005, --skinning knife
-	2901, --mining pick
-	81055, -- Darkmoon ride ticket
-	71141 -- Eternal Ember
+	2901 --mining pick
+}
+local ExcludedTypes = {
+	'Quest',
+	'Container',
+	'Companions',
+	'Mounts',
+	'Holiday'
 }
 
 function module:OnInitialize()
@@ -41,9 +71,6 @@ function module:OnInitialize()
 	if SUI.DB.AutoSell.MaxILVL >= 501 then
 		SUI.DB.AutoSell.MaxILVL = 200
 	end
-end
-
-local DummyFunction = function()
 end
 
 function module:FirstTime()
@@ -162,23 +189,8 @@ function module:IsSellable(item, ilink, bag, slot)
 	if not item then
 		return false
 	end
-	local name,
-		_,
-		quality,
-		_,
-		_,
-		itemType,
-		itemSubType,
-		_,
-		equipSlot,
-		_,
-		vendorPrice,
-		_,
-		_,
-		_,
-		_,
-		_,
-		isCraftingReagent = GetItemInfo(ilink)
+	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, _, _, isCraftingReagent =
+		GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
 		return false
 	end
@@ -220,7 +232,8 @@ function module:IsSellable(item, ilink, bag, slot)
 	end
 	--Crafting Items
 	if
-		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or
+		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or
+			itemType == 'Tradeskill') or
 			(itemType == 'Miscellaneous' and itemSubType == 'Reagent')) or
 			(itemType == 'Item Enhancement') or
 			isCraftingReagent
@@ -239,7 +252,7 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if SUI.DB.AutoSell.NotConsumables and itemType == 'Consumable' then
+	if SUI.DB.AutoSell.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then
 		NotConsumable = false
 	end
 
@@ -258,8 +271,8 @@ function module:IsSellable(item, ilink, bag, slot)
 	if
 		qualitysellable and ilvlsellable and Craftablesellable and NotInGearset and NotConsumable and not IsGearToken and
 			not SUI:isInTable(ExcludedItems, item) and
-			itemType ~= 'Quest' and
-			itemType ~= 'Container' or
+			not SUI:isInTable(ExcludedTypes, itemType) and
+			not SUI:isInTable(ExcludedTypes, itemSubType) or
 			(quality == 0 and SUI.DB.AutoSell.Gray)
 	 then --Legion identified some junk as consumable
 		if SUI.DB.AutoSell.debug then
@@ -333,15 +346,21 @@ function module:Repair(PersonalFunds)
 	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) and not PersonalFunds) then
 		-- Use guild repair
 		if (CanGuildBankRepair() and SUI.DB.AutoSell.UseGuildBankRepair) then
-			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'] )
+			SUI:Print(
+				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds']
+			)
 			RepairAllItems(1)
 			module:ScheduleTimer('Repair', .7, true)
 		elseif GetRepairAllCost() ~= 0 then
-			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'] )
+			SUI:Print(
+				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds']
+			)
 			RepairAllItems()
 		end
 	elseif GetRepairAllCost() ~= 0 then
-		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'] )
+		SUI:Print(
+			L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds']
+		)
 		RepairAllItems()
 	end
 end

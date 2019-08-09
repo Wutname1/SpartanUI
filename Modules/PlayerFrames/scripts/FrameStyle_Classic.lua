@@ -350,6 +350,20 @@ local CreatePlayerFrame = function(self, unit)
 			self.Power.colorPower = true
 			self.Power.frequentUpdates = true
 		end
+		--Totem Bar
+		for index = 1, 4 do
+			_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+			_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+			_G['TotemFrameTotem' .. index]:SetScale(.8)
+		end
+		hooksecurefunc(
+			'TotemFrame_Update',
+			function()
+				TotemFrameTotem1:ClearAllPoints()
+				TotemFrameTotem1:SetParent(self)
+				TotemFrameTotem1:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 20, 0)
+			end
+		)
 	end
 	do -- setup ring, icons, and text
 		local ring = CreateFrame('Frame', nil, self)
@@ -372,10 +386,9 @@ local CreatePlayerFrame = function(self, unit)
 		end
 
 		self.Level = ring:CreateFontString(nil, 'BORDER', 'SUI_FontOutline10')
-		self.Level:SetSize(40, 11)
 		self.Level:SetJustifyH('CENTER')
 		self.Level:SetJustifyV('MIDDLE')
-		self.Level:SetPoint('CENTER', ring, 'CENTER', 53, 12)
+		self.Level:SetPoint('CENTER', ring, 'CENTER', 50, 12)
 		self:Tag(self.Level, '[level]')
 
 		self.SUI_ClassIcon = ring:CreateTexture(nil, 'BORDER')
@@ -1916,29 +1929,7 @@ function PlayerFrames:SetupExtras()
 			)
 		end
 
-		-- Druid EclipseBar
-		-- if classname == "Druid" then
-		-- EclipseBarFrame:SetParent(PlayerFrames.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
-		-- EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * SUI.DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
-		-- EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
-		-- if button == "LeftButton" and IsAltKeyDown() then
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
-		-- self:SetMovable(true);
-		-- self:StartMoving();
-		-- end
-		-- end);
-		-- EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
-		-- self:StopMovingOrSizing();
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		-- end);
-		-- end
-
 		-- PriestBarFrame
-		-- if classname == "Priest" then
 		PriestBarFrame:SetParent(PlayerFrames.player)
 		PriestBarFrame_OnLoad(PriestBarFrame)
 		PriestBarFrame:SetFrameStrata('MEDIUM')
@@ -1966,7 +1957,6 @@ function PlayerFrames:SetupExtras()
 					SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 			end
 		)
-		-- end
 
 		-- Rune Frame
 		-- if classname == "DeathKnight" then
@@ -1998,24 +1988,7 @@ function PlayerFrames:SetupExtras()
 					SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 			end
 		)
-		-- RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
-		-- if button == "LeftButton" and IsAltKeyDown() then
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
-		-- self:SetMovable(true);
-		-- self:StartMoving();
-		-- end
-		-- end);
-		-- RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
-		-- self:StopMovingOrSizing();
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
-		-- end);
-		-- end
 
-		-- if classname == "Shaman" then
 		-- Totem Frame (Pally Concentration, Shaman Totems, Monk Statues)
 		for i = 1, 4 do
 			local timer = _G['TotemFrameTotem' .. i .. 'Duration']
@@ -2024,30 +1997,6 @@ function PlayerFrames:SetupExtras()
 			end
 			timer:Hide()
 		end
-		hooksecurefunc(
-			TotemFrame,
-			'SetPoint',
-			function(_, _, parent)
-				if (parent ~= PlayerFrames.player) then
-					TotemFrame:ClearAllPoints()
-					if classFileName == 'MONK' then
-						TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 100, 8)
-					elseif classFileName == 'PALADIN' then
-						TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 15, 8)
-					else
-						TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 70, 8)
-					end
-				end
-			end
-		)
-		TotemFrame:SetParent(PlayerFrames.player)
-		TotemFrame_OnLoad(TotemFrame)
-		TotemFrame:SetFrameStrata('MEDIUM')
-		TotemFrame:SetFrameLevel(4)
-		TotemFrame:SetScale(0.7 * SUI.DBMod.PlayerFrames.ClassBar.scale)
-		TotemFrame:ClearAllPoints()
-		TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 70, 8)
-		-- end
 
 		-- relocate the PlayerPowerBarAlt
 		hooksecurefunc(

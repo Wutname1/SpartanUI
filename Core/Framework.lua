@@ -14,13 +14,19 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
+SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
+SUI.releaseType = 'Release'
+
+--@alpha@
+SUI.releaseType = 'ALPHA'
+--@end-alpha@
 
 if not SUI.BuildNum then
 	SUI.BuildNum = 0
 end
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = 'SpartanUI ' .. SUI.Version,
+	name = string.format('SpartanUI %s %s', SUI.releaseType, SUI.Version),
 	type = 'group',
 	childGroups = 'tree',
 	args = {
@@ -585,6 +591,20 @@ local DBdefault = {
 			enable = true,
 			speed = 8
 		},
+		TauntWatcher = {
+			active = {
+				always = false,
+				inBG = false,
+				inRaid = true,
+				inParty = true,
+				inArena = true,
+				outdoors = false
+			},
+			failures = true,
+			FirstLaunch = true,
+			announceLocation = 'SELF',
+			text = '%who taunted %what!'
+		},
 		FilmEffects = {
 			enable = false,
 			animationInterval = 0,
@@ -693,12 +713,67 @@ local DBdefault = {
 			},
 			debuffs = {display = true},
 			Auras = {size = 10, spacing = 1, showType = true}
+		},
+		NamePlates = {
+			ShowThreat = true,
+			ShowName = true,
+			ShowLevel = true,
+			ShowTarget = true,
+			ShowRaidTargetIndicator = true,
+			onlyShowPlayer = true,
+			showStealableBuffs = false,
+			Scale = 1,
+			elements = {
+				['**'] = {
+					enabled = true,
+					alpha = 1,
+					size = 20,
+					position = {
+						anchor = 'CENTER',
+						x = 0,
+						y = 0
+					}
+				},
+				RareElite = {},
+				Background = {
+					type = 'solid',
+					colorMode = 'reaction',
+					alpha = 0.35
+				},
+				Name = {
+					SetJustifyH = 'CENTER'
+				},
+				QuestIndicator = {},
+				Health = {
+					height = 5,
+					colorTapping = true,
+					colorReaction = true,
+					colorClass = true
+				},
+				Power = {
+					ShowPlayerPowerIcons = true,
+					height = 3
+				},
+				Castbar = {
+					height = 5,
+					text = true,
+					FlashOnInterruptible = true
+				},
+				SUI_ClassIcon = {
+					enabled = false,
+					size = 20,
+					visibleOn = 'all',
+					position = {
+						anchor = 'TOP',
+						y = 20
+					}
+				}
+			}
 		}
 	}
 }
 
 local DBdefaults = {char = DBdefault, profile = DBdefault}
--- local SUI.DBGs = {Version = SUI.Version}
 
 function SUI:ResetConfig()
 	SUI.DB:ResetProfile(false, true)
@@ -1006,7 +1081,7 @@ function SUI:OnEnable()
 					type = 'execute',
 					order = 50,
 					func = function()
-						InterfaceOptionsFrame:Hide()
+						while CloseWindows() do end
 						AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 						AceConfigDialog:Open('SpartanUI')
 					end
@@ -1050,20 +1125,25 @@ function SUI:OnEnable()
 	if (not select(4, GetAddOnInfo('Bartender4')) and not SUI.DB.BT4Warned) then
 		local cnt = 1
 		local BT4Warning = CreateFrame('Frame')
-		BT4Warning:SetScript('OnEvent', function()
-			if cnt <= 10 then
-				StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] ..' Warning ' .. cnt .. ' of 10')
-			else
-				SUI.DB.BT4Warned = true
+		BT4Warning:SetScript(
+			'OnEvent',
+			function()
+				if cnt <= 10 then
+					StdUi:Dialog(
+						L['Warning'],
+						L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10'
+					)
+				else
+					SUI.DB.BT4Warned = true
+				end
+				cnt = cnt + 1
 			end
-			cnt = cnt + 1
-		end)
+		)
 		BT4Warning:RegisterEvent('PLAYER_LOGIN')
 		BT4Warning:RegisterEvent('PLAYER_ENTERING_WORLD')
 		BT4Warning:RegisterEvent('ZONE_CHANGED')
 		BT4Warning:RegisterEvent('ZONE_CHANGED_INDOORS')
 		BT4Warning:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-		
 	end
 end
 

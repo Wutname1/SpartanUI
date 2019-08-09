@@ -10,10 +10,10 @@ local function printFormattedString(t, sid, spell, ss, ssid)
 	local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
 
 	msg =
-		msg:gsub('%%t', t):gsub('%%spell', spell):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub(
-		'%%lnk',
-		GetSpellLink(sid)
-	):gsub('%%myspell', GetSpellLink(ssid))
+		msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub(
+		'%%myspell',
+		GetSpellLink(ssid)
+	)
 	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else
@@ -70,7 +70,7 @@ function module:OnInitialize()
 		includePets = true,
 		FirstLaunch = true,
 		announceLocation = 'SMART',
-		text = 'interrupted %t %sl'
+		text = 'Interrupted %t %spell'
 	}
 	if not SUI.DB.InterruptAnnouncer then
 		SUI.DB.InterruptAnnouncer = Defaults
@@ -253,15 +253,9 @@ function module:Options()
 						fontSize = 'small'
 					},
 					c = {
-						name = '- %spell - ' .. L['Spell you interrupted'],
+						name = '- %spell - ' .. L['Spell link of spell interrupted'],
 						type = 'description',
 						order = 12,
-						fontSize = 'small'
-					},
-					e = {
-						name = '- %lnk - ' .. L['Spell link of spell interrupted'],
-						type = 'description',
-						order = 13,
 						fontSize = 'small'
 					},
 					d = {
@@ -347,7 +341,6 @@ function module:FirstLaunch()
 			IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
 			IAnnounce.lblActive = StdUi:Label(IAnnounce, L['Active when in'], 13)
 			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, L['Announce location'], 13)
-			IAnnounce.lblAnnouncetext = StdUi:Label(IAnnounce, L['Announce text:'], 13)
 
 			-- Positioning
 			StdUi:GlueTop(IAnnounce.modEnabled, SUI_Win, 0, -10)
@@ -364,13 +357,20 @@ function module:FirstLaunch()
 			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.options.inBG, 0, 0)
 			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 0, 0)
 
-			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, '-or-', 13)
-			StdUi:GlueBelow(IAnnounce.lblAnnouncelocation, IAnnounce.lblActive, 0, -40, 'LEFT')
-			StdUi:GlueBelow(IAnnounce.options.alwayson, IAnnounce.options.inRaid, 0, -15)
+			-- text display
+			IAnnounce.lblAnnouncetext = StdUi:Label(IAnnounce, L['Announce text:'], 13)
+			IAnnounce.lblvariable1 = StdUi:Label(IAnnounce, '%t - ' .. L['Target that was interrupted'], 13)
+			IAnnounce.lblvariable2 = StdUi:Label(IAnnounce, '%spell - ' .. L['Spell link of spell interrupted'], 13)
+			IAnnounce.lblvariable3 = StdUi:Label(IAnnounce, '%cl - ' .. L['Spell class'], 13)
+			IAnnounce.lblvariable4 = StdUi:Label(IAnnounce, '%myspell - ' .. L['Spell you used to interrupt'], 13)
+			IAnnounce.tbAnnounceText = StdUi:SimpleEditBox(IAnnounce, 300, 24, SUI.DB.InterruptAnnouncer.text)
 
-			-- Active locations
-			StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncetext, -120, 0)
-			
+			StdUi:GlueBelow(IAnnounce.lblAnnouncetext, IAnnounce.lblActive, 0, -80)
+			StdUi:GlueBelow(IAnnounce.lblvariable1, IAnnounce.lblAnnouncetext, 15, -5, 'LEFT')
+			StdUi:GlueBelow(IAnnounce.lblvariable2, IAnnounce.lblvariable1, 0, -5, 'LEFT')
+			StdUi:GlueBelow(IAnnounce.lblvariable3, IAnnounce.lblvariable2, 0, -5, 'LEFT')
+			StdUi:GlueBelow(IAnnounce.lblvariable4, IAnnounce.lblvariable3, 0, -5, 'LEFT')
+			StdUi:GlueBelow(IAnnounce.tbAnnounceText, IAnnounce.lblvariable4, -15, -5, 'LEFT')
 
 			-- Defaults
 			IAnnounce.modEnabled:SetChecked(SUI.DB.EnabledComponents.InterruptAnnouncer)
@@ -401,6 +401,7 @@ function module:FirstLaunch()
 			for key, object in pairs(IAnnounce.options) do
 				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
 			end
+			SUI.DB.InterruptAnnouncer.text = IAnnounce.tbAnnounceText:GetText()
 			SUI.DB.InterruptAnnouncer.FirstLaunch = false
 		end,
 		Skip = function()

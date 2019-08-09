@@ -1,7 +1,8 @@
 local _G, SUI = _G, _G['SUI']
 local L = SUI.L
 local module = SUI:GetModule('Style_War')
-local PlayerFrames, PartyFrames = nil
+local PlayerFrames = SUI:GetModule('PlayerFrames', true)
+local PartyFrames = SUI:GetModule('PartyFrames', true)
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = SUI.BarTextures.smooth
 local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
@@ -437,7 +438,7 @@ local CreateLargeFrame = function(self, unit)
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
 		self.ReadyCheckIndicator:SetSize(30, 30)
 		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
-		
+
 		self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
 		self.PvPIndicator:SetSize(25, 25)
 		self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)
@@ -473,36 +474,37 @@ local CreateLargeFrame = function(self, unit)
 		self.StatusText:SetAllPoints(self.Portrait)
 		self.StatusText:SetJustifyH('CENTER')
 		self:Tag(self.StatusText, '[afkdnd]')
-
-		--Runes
-		local playerClass = select(2, UnitClass('player'))
-		if unit == 'player' and playerClass == 'DEATHKNIGHT' then
-			self.Runes = CreateFrame('Frame', nil, self)
-			self.Runes.colorSpec = true
-
-			for i = 1, 6 do
-				self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
-				self.Runes[i]:SetHeight(6)
-				self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
-				if (i == 1) then
-					self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
-				else
-					self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
-				end
-				self.Runes[i]:SetStatusBarTexture(Smoothv2)
-				self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
-
-				self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
-				self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
-				self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
-				self.Runes[i].bg:SetTexture(Smoothv2)
-				self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
-				self.Runes[i].bg.multiplier = 0.64
-				self.Runes[i]:Hide()
-			end
-		end
-
+	end
+	do -- Special Icons/Bars
 		if unit == 'player' then
+			local playerClass = select(2, UnitClass('player'))
+			--Runes
+			if playerClass == 'DEATHKNIGHT' then
+				self.Runes = CreateFrame('Frame', nil, self)
+				self.Runes.colorSpec = true
+
+				for i = 1, 6 do
+					self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
+					self.Runes[i]:SetHeight(6)
+					self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
+					if (i == 1) then
+						self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
+					else
+						self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
+					end
+					self.Runes[i]:SetStatusBarTexture(Smoothv2)
+					self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+
+					self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
+					self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
+					self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
+					self.Runes[i].bg:SetTexture(Smoothv2)
+					self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
+					self.Runes[i].bg.multiplier = 0.64
+					self.Runes[i]:Hide()
+				end
+			end
+
 			self.ComboPoints = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
 			self.ComboPoints:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
 			local ClassPower = {}
@@ -517,17 +519,12 @@ local CreateLargeFrame = function(self, unit)
 				else
 					Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
 				end
-				-- Bar:SetPoint('LEFT', self, 'RIGHT', , 0)
-
 				ClassPower[index] = Bar
 			end
 
 			-- Register with SUF
 			self.ClassPower = ClassPower
-		end
-	end
-	do -- Special Icons/Bars
-		if unit == 'player' then
+
 			-- Druid Mana
 			local DruidMana = CreateFrame('StatusBar', nil, self)
 			DruidMana:SetSize(self.Power:GetWidth(), 4)
@@ -539,6 +536,21 @@ local CreateLargeFrame = function(self, unit)
 			Background:SetTexture(1, 1, 1, .2)
 			self.AdditionalPower = DruidMana
 			self.AdditionalPower.bg = Background
+
+			--Totem Bar
+			for index = 1, 4 do
+				_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+				_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+				_G['TotemFrameTotem' .. index]:SetScale(.8)
+			end
+			hooksecurefunc(
+				'TotemFrame_Update',
+				function()
+					TotemFrameTotem1:ClearAllPoints()
+					TotemFrameTotem1:SetParent(self)
+					TotemFrameTotem1:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 20, 0)
+				end
+			)
 		end
 	end
 	do -- setup buffs and debuffs
@@ -698,7 +710,7 @@ local CreateMediumFrame = function(self, unit)
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
 		self.ReadyCheckIndicator:SetSize(30, 30)
 		self.ReadyCheckIndicator:SetPoint('LEFT', self, 'LEFT', 0, 0)
-		
+
 		self.PvPIndicator = self:CreateTexture(nil, 'BORDER')
 		self.PvPIndicator:SetSize(25, 25)
 		self.PvPIndicator:SetPoint('CENTER', self, 'BOTTOMRIGHT', 0, -3)

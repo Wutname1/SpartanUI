@@ -1,6 +1,7 @@
 local _G, SUI = _G, SUI
 local module = SUI:GetModule('Style_Transparent')
-local PlayerFrames, PartyFrames = nil
+local PlayerFrames = SUI:GetModule('PlayerFrames', true)
+local PartyFrames = SUI:GetModule('PartyFrames', true)
 ----------------------------------------------------------------------------------------------------
 local FramesList = {
 	[1] = 'pet',
@@ -452,6 +453,21 @@ local CreatePlayerFrame = function(self, unit)
 			-- Register it with SUF
 			self.AdditionalPower = DruidMana
 			self.AdditionalPower.bg = Background
+
+			--Totem Bar
+			for index = 1, 4 do
+				_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+				_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+				_G['TotemFrameTotem' .. index]:SetScale(.8)
+			end
+			hooksecurefunc(
+				'TotemFrame_Update',
+				function()
+					TotemFrameTotem1:ClearAllPoints()
+					TotemFrameTotem1:SetParent(self)
+					TotemFrameTotem1:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 20, 0)
+				end
+			)
 		end
 	end
 	do -- setup ring, icons, and text

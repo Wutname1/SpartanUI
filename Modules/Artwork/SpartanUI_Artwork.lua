@@ -1,7 +1,7 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:NewModule('Artwork_Core')
-local BartenderMin = '4.8.0'
+local BartenderMin = '4.8.3'
 
 function Artwork_Core:updateScale()
 	--Set default scale based on if the user is using a widescreen.

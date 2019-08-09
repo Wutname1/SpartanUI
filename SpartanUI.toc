@@ -2,7 +2,7 @@
 ## Title: SpartanUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
-## X-Build: @project-revision@
+## X-Build: @travis-build-number@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
