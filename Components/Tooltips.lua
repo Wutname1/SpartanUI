@@ -233,7 +233,7 @@ local TooltipSetItem = function(self)
 	if (itemLink) then
 		local quality = select(3, GetItemInfo(itemLink))
 		local style = {
-			bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
+			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
 		if not SUI.IsClassic then
 			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
@@ -524,7 +524,7 @@ local function ApplyTooltipSkins()
 		end
 
 		style = {
-			bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite'
+			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
 		GameTooltip_SetBackdropStyle(tooltip, style)
 	end
