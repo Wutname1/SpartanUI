@@ -71,7 +71,7 @@ function PartyFrames:OnEnable()
 	else
 		pf:SetParent(UIParent)
 	end
-	
+
 	PartyMemberBackground.Show = function()
 		return
 	end

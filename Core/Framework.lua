@@ -517,6 +517,39 @@ local DBdefault = {
 				}
 			}
 		},
+		AutoSell = {
+			FirstLaunch = true,
+			NotCrafting = true,
+			NotConsumables = true,
+			NotInGearset = true,
+			MaxILVL = 180,
+			Gray = true,
+			White = false,
+			Green = false,
+			Blue = false,
+			Purple = false,
+			GearTokens = false,
+			AutoRepair = false,
+			UseGuildBankRepair = false
+		},
+		AutoTurnIn = {
+			ChatText = true,
+			FirstLaunch = true,
+			debug = false,
+			TurnInEnabled = true,
+			AutoGossip = true,
+			AutoGossipSafeMode = true,
+			AcceptGeneralQuests = true,
+			AcceptRepeatable = false,
+			trivial = false,
+			lootreward = true,
+			autoequip = false,
+			armor = {},
+			weapon = {},
+			stat = {},
+			secondary = {},
+			Blacklist = {}
+		},
 		Components = {}
 	},
 	Modules = {
