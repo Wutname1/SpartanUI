@@ -117,7 +117,6 @@ local BlackList = {
 	['release me.'] = true
 }
 
-
 local Lquests = {
 	-- Steamwheedle Cartel
 	['Making Amends'] = {item = 'Runecloth', amount = 40, currency = false},
@@ -289,6 +288,11 @@ function module.QUEST_COMPLETE()
 	local GreedLink, UpgradeLink, UpgradeAmmount = nil, nil, 0
 	local QuestRewardsWeapon = false
 	for i = 1, GetNumQuestChoices() do
+		if SUI.IsClassic then
+			SUI:Print(L['Canceling turn in, quest rewards items.'])
+			return
+		end
+
 		-- Load the items information
 		local link = GetQuestItemLink('choice', i)
 		if (link == nil) then
@@ -340,7 +344,7 @@ function module.QUEST_COMPLETE()
 					UpgradeAmmount = (QuestItemTrueiLVL - EquipedLevel)
 				end
 			end
-			
+
 			-- Check if it is a weapon, do this last incase it only rewards one item
 			if slot[1] == 'MainHandSlot' or slot[1] == 'SecondaryHandSlot' then
 				QuestRewardsWeapon = 'weapon'
@@ -479,7 +483,6 @@ function module:FirstLaunch()
 			ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, L['Turn in completed quests'], 220, 20)
 			ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
 			ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
-			ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
 			ATI.options.autoequip =
 				StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
@@ -489,8 +492,13 @@ function module:FirstLaunch()
 			StdUi:GlueBelow(ATI.options.AutoGossipSafeMode, ATI.options.AutoGossip, 0, -5, 'LEFT')
 			StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossipSafeMode, 0, -5, 'LEFT')
 
+			-- Retail only options
+			if not SUI.IsClassic then
+				ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
+				StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
+			end
+
 			StdUi:GlueRight(ATI.options.TurnInEnabled, ATI.options.AcceptGeneralQuests, 5, 0)
-			StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
 
 			-- Defaults
 			for key, object in pairs(ATI.options) do
@@ -550,13 +558,17 @@ function module.QUEST_GREETING()
 	end
 
 	for i = 1, numAvailableQuests do
-		local isTrivial, frequency, isRepeatable = GetAvailableQuestInfo(i - numActiveQuests)
+		if not SUI.IsClassic then
+			local isTrivial, frequency, isRepeatable = GetAvailableQuestInfo(i - numActiveQuests)
 
-		local trivialORAllowed = (not isTrivial) or SUI.DB.AutoTurnIn.trivial
-		local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
-		local isRepeatableORAllowed = (not isRepeatable or not isDaily) or SUI.DB.AutoTurnIn.AcceptRepeatable
+			local trivialORAllowed = (not isTrivial) or SUI.DB.AutoTurnIn.trivial
+			local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
+			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or SUI.DB.AutoTurnIn.AcceptRepeatable
 
-		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
+			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
+				SelectAvailableQuest(i)
+			end
+		else
 			SelectAvailableQuest(i)
 		end
 	end
@@ -608,29 +620,6 @@ function module.QUEST_PROGRESS()
 end
 
 function module:OnInitialize()
-	local Defaults = {
-		ChatText = true,
-		FirstLaunch = true,
-		debug = false,
-		TurnInEnabled = true,
-		AutoGossip = true,
-		AutoGossipSafeMode = true,
-		AcceptGeneralQuests = true,
-		AcceptRepeatable = false,
-		trivial = false,
-		lootreward = true,
-		autoequip = false,
-		armor = {},
-		weapon = {},
-		stat = {},
-		secondary = {},
-		Blacklist = {}
-	}
-	if not SUI.DB.AutoTurnIn then
-		SUI.DB.AutoTurnIn = Defaults
-	else
-		SUI.DB.AutoTurnIn = SUI:MergeData(SUI.DB.AutoTurnIn, Defaults, false)
-	end
 end
 
 function module:OnEnable()
@@ -803,6 +792,10 @@ function module:BuildOptions()
 			}
 		}
 	}
+	if SUI.IsClassic then
+		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.AutoSelectLoot.hidden = true
+		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.autoequip.hidden = true
+	end
 end
 
 function module:HideOptions()
