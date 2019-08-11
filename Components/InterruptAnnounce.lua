@@ -358,12 +358,12 @@ function module:FirstLaunch()
 			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 0, 0)
 
 			-- text display
-			IAnnounce.lblAnnouncetext = StdUi:Label(TauntWatch, L['Announce text:'], 13)
-			IAnnounce.lblvariable1 = StdUi:Label(TauntWatch, '%t - ' .. L['Target that was interrupted'], 13)
-			IAnnounce.lblvariable2 = StdUi:Label(TauntWatch, '%spell - ' .. L['Spell link of spell interrupted'], 13)
-			IAnnounce.lblvariable3 = StdUi:Label(TauntWatch, '%cl - ' .. L['Spell class'], 13)
-			IAnnounce.lblvariable4 = StdUi:Label(TauntWatch, '%myspell - ' .. L['Spell you used to interrupt'], 13)
-			IAnnounce.tbAnnounceText = StdUi:SimpleEditBox(TauntWatch, 300, 24, SUI.DB.InterruptAnnouncer.text)
+			IAnnounce.lblAnnouncetext = StdUi:Label(IAnnounce, L['Announce text:'], 13)
+			IAnnounce.lblvariable1 = StdUi:Label(IAnnounce, '%t - ' .. L['Target that was interrupted'], 13)
+			IAnnounce.lblvariable2 = StdUi:Label(IAnnounce, '%spell - ' .. L['Spell link of spell interrupted'], 13)
+			IAnnounce.lblvariable3 = StdUi:Label(IAnnounce, '%cl - ' .. L['Spell class'], 13)
+			IAnnounce.lblvariable4 = StdUi:Label(IAnnounce, '%myspell - ' .. L['Spell you used to interrupt'], 13)
+			IAnnounce.tbAnnounceText = StdUi:SimpleEditBox(IAnnounce, 300, 24, SUI.DB.InterruptAnnouncer.text)
 
 			StdUi:GlueBelow(IAnnounce.lblAnnouncetext, IAnnounce.lblActive, 0, -80)
 			StdUi:GlueBelow(IAnnounce.lblvariable1, IAnnounce.lblAnnouncetext, 15, -5, 'LEFT')
@@ -401,7 +401,7 @@ function module:FirstLaunch()
 			for key, object in pairs(IAnnounce.options) do
 				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
 			end
-			SUI.DB.InterruptAnnouncer.text = IAnnounce.tbAnnounceText:GetValue()
+			SUI.DB.InterruptAnnouncer.text = IAnnounce.tbAnnounceText:GetText()
 			SUI.DB.InterruptAnnouncer.FirstLaunch = false
 		end,
 		Skip = function()

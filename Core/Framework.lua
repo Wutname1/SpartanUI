@@ -14,7 +14,7 @@ local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
 SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
+SUI.GitHash = '6ead4c4' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
@@ -492,6 +492,40 @@ local DBdefault = {
 				}
 			}
 		},
+		AutoSell = {
+			FirstLaunch = true,
+			NotCrafting = true,
+			NotConsumables = true,
+			NotInGearset = true,
+			MaxILVL = 180,
+			Gray = true,
+			White = false,
+			Green = false,
+			Blue = false,
+			Purple = false,
+			GearTokens = false,
+			AutoRepair = false,
+			UseGuildBankRepair = false
+		},
+		AutoTurnIn = {
+			ChatText = true,
+			FirstLaunch = true,
+			debug = false,
+			TurnInEnabled = true,
+			AutoGossip = true,
+			AutoGossipSafeMode = true,
+			AcceptGeneralQuests = true,
+			AcceptRepeatable = false,
+			trivial = false,
+			lootreward = true,
+			autoequip = false,
+			armor = {},
+			weapon = {},
+			stat = {},
+			secondary = {},
+			Blacklist = {}
+		},
+		Components = {},
 		Unitframes = {
 			Style = 'War',
 			FrameOptions = {
@@ -1256,8 +1290,8 @@ local DBdefault = {
 				},
 				SUI_ClassIcon = {
 					enabled = false,
-					size = 40,
-					visibleOn = 'all',
+					size = 20,
+					visibleOn = 'PlayerControlled',
 					position = {
 						anchor = 'TOP',
 						x = 0,
@@ -1579,6 +1613,7 @@ function SUI:OnEnable()
 					func = function()
 						while CloseWindows() do
 						end
+						AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
 						AceConfigDialog:Open('SpartanUI')
 					end
 				}

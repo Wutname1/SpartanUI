@@ -23,7 +23,7 @@ local ReloadPage = {
 		reloadPage:SetParent(module.window.content)
 		reloadPage:SetAllPoints(module.window.content)
 
-		reloadPage.Helm = StdUi:Texture(reloadPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
+		reloadPage.Helm = StdUi:Texture(reloadPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
 		reloadPage.Helm:SetPoint('CENTER')
 		reloadPage.Helm:SetAlpha(.6)
 		module.window.Next:SetText('RELOAD UI')

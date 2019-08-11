@@ -48,28 +48,10 @@ local ExcludedTypes = {
 }
 
 function module:OnInitialize()
-	local Defaults = {
-		FirstLaunch = true,
-		NotCrafting = true,
-		NotConsumables = true,
-		NotInGearset = true,
-		MaxILVL = 180,
-		Gray = true,
-		White = false,
-		Green = false,
-		Blue = false,
-		Purple = false,
-		GearTokens = false,
-		AutoRepair = false,
-		UseGuildBankRepair = false
-	}
-	if not SUI.DB.AutoSell then
-		SUI.DB.AutoSell = Defaults
-	else
-		SUI.DB.AutoSell = SUI:MergeData(SUI.DB.AutoSell, Defaults, false)
-	end
-	if SUI.DB.AutoSell.MaxILVL >= 501 then
-		SUI.DB.AutoSell.MaxILVL = 200
+	-- Bump Autosell iLVL down for classic
+	if SUI.DB.AutoSell.MaxILVL >= 40 and SUI.IsClassic then
+		SUI.DB.AutoSell.MaxILVL = 40
+		SUI.DB.AutoSell.UseGuildBankRepair = false
 	end
 end
 
@@ -103,8 +85,12 @@ function module:FirstTime()
 
 			-- Max iLVL
 			AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
-			AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, '180')
-			AutoSell.iLVLLabel:SetMaxValue(500)
+			AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, SUI.DB.AutoSell.MaxILVL)
+			local MaxiLVL = 500
+			if SUI.IsClassic then
+				MaxiLVL = 100
+			end
+			AutoSell.iLVLLabel:SetMaxValue(MaxiLVL)
 			AutoSell.iLVLLabel:SetMinValue(1)
 			AutoSell.iLVLLabel.OnValueChanged = function()
 				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
@@ -114,7 +100,7 @@ function module:FirstTime()
 				end
 			end
 
-			AutoSell.iLVLSlider = StdUi:Slider(AutoSell, 500, 20, 180, false, 1, 500)
+			AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, SUI.DB.AutoSell.MaxILVL, false, 1, MaxiLVL)
 			AutoSell.iLVLSlider.OnValueChanged = function()
 				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
@@ -345,7 +331,7 @@ function module:Repair(PersonalFunds)
 	-- First see if this vendor can repair
 	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) and not PersonalFunds) then
 		-- Use guild repair
-		if (CanGuildBankRepair() and SUI.DB.AutoSell.UseGuildBankRepair) then
+		if (CanGuildBankRepair and CanGuildBankRepair() and SUI.DB.AutoSell.UseGuildBankRepair) then
 			SUI:Print(
 				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds']
 			)
@@ -570,4 +556,8 @@ function module:BuildOptions()
 			}
 		}
 	}
+	if SUI.IsClassic then
+		SUI.opt.args.ModSetting.args.AutoSell.args.MaxILVL.max = 90
+		SUI.opt.args.ModSetting.args.AutoSell.args.UseGuildBankRepair.hidden = true
+	end
 end

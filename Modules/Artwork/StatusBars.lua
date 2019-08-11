@@ -50,6 +50,10 @@ function module:Initalize(Settings)
     }
     ]]
 	--Create Status Bars
+	if SUI.IsClassic and module.DB[2].display == 'honor' then
+		module.DB[2].display = 'rep'
+	end
+
 	module:factory()
 	module:BuildOptions()
 end
@@ -391,10 +395,10 @@ function module:factory()
 			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
 			statusbar:RegisterEvent('UPDATE_FACTION')
 
-			if not SUI.WoWClassic then
+			if not SUI.IsClassic then
 				statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
 			end
-			
+
 			--Statusbar Update event
 			statusbar:SetScript(
 				'OnEvent',
@@ -504,14 +508,14 @@ function module:BuildOptions()
 		['az'] = L['Azerite Bar'],
 		['disabled'] = L['Disabled']
 	}
-	if SUI.WoWClassic then
+	if SUI.IsClassic then
 		StatusBars = {
 			['xp'] = L['Experiance'],
 			['rep'] = L['Reputation'],
 			['disabled'] = L['Disabled']
 		}
 	end
-	
+
 	local ids = {
 		[1] = 'one',
 		[2] = 'two',

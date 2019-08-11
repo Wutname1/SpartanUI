@@ -211,7 +211,6 @@ function Artwork_Core:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
-
 	Artwork_Core:FirstTime()
 
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
@@ -385,6 +384,20 @@ function Artwork_Core:OnEnable()
 		StaticPopup_Show('BartenderVerWarning')
 	end
 
+	if MainMenuBar then
+		MainMenuBar:Hide()
+	end
+	if MainMenuBarOverlayFrame then
+		MainMenuBarOverlayFrame:Hide()
+	end
+	if MainMenuExpBar and SUI.IsClassic then
+		MainMenuExpBar.Show = MainMenuExpBar.Hide
+		MainMenuExpBar:Hide()
+	end
+	if MainMenuBarPerformanceBarFrame then
+		MainMenuBarPerformanceBarFrame:Hide()
+	end
+
 	Artwork_Core:SetupOptions()
 
 	local FrameList = {
@@ -541,4 +554,39 @@ function Artwork_Core:CreateProfile()
 
 	Bartender4:UpdateModuleConfigs()
 	SUI.DBG.BartenderChangesActive = false
+end
+
+function Artwork_Core:VehicleSeats()
+	if SUI.IsClassic then
+		return
+	end
+
+	function My_VehicleSeatIndicatorButton_OnClick(self, button)
+		local seatIndex = self.virtualID
+		local _, occupantName = UnitVehicleSeatInfo('player', seatIndex)
+		if
+			(button == 'RightButton' and
+				(CanEjectPassengerFromSeat(seatIndex) or (CanExitVehicle() and (occupantName == UnitName('player')))))
+		 then
+			ToggleDropDownMenu(1, seatIndex, VehicleSeatIndicatorDropDown, self:GetName(), 0, -5)
+			if (CanEjectPassengerFromSeat(seatIndex)) then
+				UIDropDownMenu_DisableButton(1, 2)
+				UIDropDownMenu_EnableButton(1, 1)
+			else
+				UIDropDownMenu_DisableButton(1, 1)
+				UIDropDownMenu_EnableButton(1, 2)
+			end
+		else
+			UnitSwitchToVehicleSeat('player', seatIndex)
+		end
+	end
+
+	VehicleSeatIndicatorButton_OnClick = My_VehicleSeatIndicatorButton_OnClick
+
+	function VehicleSeatLeaveVehicleDropDown_OnClick()
+		VehicleExit()
+		PlaySound('UChatScrollButton')
+	end
+
+	UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, 'MENU')
 end

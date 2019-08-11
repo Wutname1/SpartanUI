@@ -104,6 +104,10 @@ function module:OnInitialize()
 	if SUI.DBMod.Artwork.SetupDone then
 		SUI.DBMod.Objectives.SetupDone = true
 	end
+	-- Is the player is on classic disable the module
+	if SUI.IsClassic then
+		module.Override = true
+	end
 end
 
 function module:OnEnable()

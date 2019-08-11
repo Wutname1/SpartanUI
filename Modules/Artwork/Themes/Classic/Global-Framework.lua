@@ -41,9 +41,9 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local Resolution = ''
 		if select(4, GetBuildInfo()) >= 70000 then
-			Resolution = GetCVar("gxWindowedResolution")
+			Resolution = GetCVar('gxWindowedResolution')
 		else
-			Resolution = GetCVar("gxResolution")
+			Resolution = GetCVar('gxResolution')
 		end
 
 		local width, height = string.match(Resolution, '(%d+).-(%d+)')
@@ -388,44 +388,6 @@ function module:EnableFramework()
 			end
 		)
 	end
-	do
-		function My_VehicleSeatIndicatorButton_OnClick(self, button)
-			local seatIndex = self.virtualID
-			local _, occupantName = UnitVehicleSeatInfo('player', seatIndex)
-			if
-				(button == 'RightButton' and
-					(CanEjectPassengerFromSeat(seatIndex) or (CanExitVehicle() and (occupantName == UnitName('player')))))
-			 then
-				ToggleDropDownMenu(1, seatIndex, VehicleSeatIndicatorDropDown, self:GetName(), 0, -5)
-				if (CanEjectPassengerFromSeat(seatIndex)) then
-					UIDropDownMenu_DisableButton(1, 2)
-					UIDropDownMenu_EnableButton(1, 1)
-				else
-					UIDropDownMenu_DisableButton(1, 1)
-					UIDropDownMenu_EnableButton(1, 2)
-				end
-			else
-				UnitSwitchToVehicleSeat('player', seatIndex)
-			end
-		end
 
-		function My_VehicleSeatIndicatorDropDown_Initialize()
-			local info = UIDropDownMenu_CreateInfo()
-			info.text = EJECT_PASSENGER
-			info.disabled = nil
-			info.func = VehicleSeatIndicatorDropDown_OnClick
-			UIDropDownMenu_AddButton(info)
-			info.text = VEHICLE_LEAVE
-			info.disabled = nil
-			info.func = VehicleSeatLeaveVehicleDropDown_OnClick
-			UIDropDownMenu_AddButton(info)
-		end
-
-		function VehicleSeatLeaveVehicleDropDown_OnClick()
-			VehicleExit()
-			PlaySound('UChatScrollButton')
-		end
-
-		UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, 'MENU')
-	end
+	Artwork_Core:VehicleSeats()
 end
