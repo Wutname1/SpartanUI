@@ -15,11 +15,18 @@ function addon:HotsListing()
 			-- 102342 -- Ironbark
 		}
 	elseif classFileName == 'PRIEST' then
-		return {
-			139, -- Renew
-			17, -- sheild
-			33076 -- Prayer of Mending
-		}
+		if SUI.IsClassic then
+			return {
+				139, -- Renew
+				17 -- sheild
+			}
+		else
+			return {
+				139, -- Renew
+				17, -- sheild
+				33076 -- Prayer of Mending
+			}
+		end
 	elseif classFileName == 'MONK' then
 		return {
 			119611, -- Renewing Mist
