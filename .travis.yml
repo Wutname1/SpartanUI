@@ -11,7 +11,7 @@ before_script: /home/travis/.luarocks/bin/luacheck . --no-color -qo "011"
 
 script:
   - curl -s https://raw.githubusercontent.com/Wutname1/packager/master/release.sh | bash
-  - curl -s https://raw.githubusercontent.com/Wutname1/packager/master/release.sh | bash -s -- -g 1.13.2
+  - curl -s https://raw.githubusercontent.com/Wutname1/packager/master/release.sh | bash -s -- -g 1.13.2 -w 25088
 
 notifications:
   email:
