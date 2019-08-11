@@ -1246,11 +1246,18 @@ local CreateRaidFrame = function(self, unit)
 				102342 -- Ironbark
 			}
 		elseif classFileName == 'PRIEST' then
-			spellIDs = {
-				139, -- Renew
-				17, -- sheild
-				33076 -- Prayer of Mending
-			}
+			if SUI.IsClassic then
+				return {
+					139, -- Renew
+					17 -- sheild
+				}
+			else
+				return {
+					139, -- Renew
+					17, -- sheild
+					33076 -- Prayer of Mending
+				}
+			end
 		end
 		auras.presentAlpha = 1
 		auras.onlyShowPresent = true

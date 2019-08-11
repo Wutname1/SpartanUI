@@ -523,11 +523,18 @@ local MakeLargeFrame = function(self, unit, width)
 					102342 -- Ironbark
 				}
 			elseif classFileName == 'PRIEST' then
-				spellIDs = {
-					139, -- Renew
-					17, -- sheild
-					33076 -- Prayer of Mending
-				}
+				if SUI.IsClassic then
+					return {
+						139, -- Renew
+						17 -- sheild
+					}
+				else
+					return {
+						139, -- Renew
+						17, -- sheild
+						33076 -- Prayer of Mending
+					}
+				end
 			end
 			self.Buffs = CreateFrame('Frame', nil, self)
 			self.Buffs:SetSize(self:GetWidth(), SUI.DBMod.PartyFrames.Auras.size + 2)
