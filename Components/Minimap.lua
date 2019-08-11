@@ -42,6 +42,9 @@ local MiniMapBtnScrape = function()
 	if CensusButton ~= nil and CensusButton.FadeIn == nil then
 		module:SetupButton(CensusButton)
 	end
+	if GameTimeFrame then
+		module:SetupButton(GameTimeFrame)
+	end
 end
 
 local PerformFullBtnUpdate = function()
@@ -354,6 +357,7 @@ function module:ModifyMinimapLayout()
 		SUI_MiniMapIcon:RegisterEvent('GARRISON_MISSION_FINISHED')
 		SUI_MiniMapIcon:RegisterEvent('GARRISON_INVASION_AVAILABLE')
 		SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
+	else
 	end
 
 	MinimapBackdrop:ClearAllPoints()
@@ -526,6 +530,12 @@ function module:update()
 			CensusButton.FadeOut:Play()
 		end
 
+		if GameTimeFrame ~= nil and GameTimeFrame:GetAlpha() == 1 then
+			GameTimeFrame.FadeIn:Stop()
+			GameTimeFrame.FadeOut:Stop()
+			GameTimeFrame.FadeOut:Play()
+		end
+
 		for _, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName()
 
@@ -553,6 +563,11 @@ function module:update()
 			CensusButton.FadeIn:Stop()
 			CensusButton.FadeOut:Stop()
 			CensusButton.FadeIn:Play()
+		end
+		if GameTimeFrame ~= nil and GameTimeFrame:GetAlpha() == 0 then
+			GameTimeFrame.FadeIn:Stop()
+			GameTimeFrame.FadeOut:Stop()
+			GameTimeFrame.FadeIn:Play()
 		end
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
