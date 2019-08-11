@@ -812,6 +812,15 @@ local CreatePetFrame = function(self, unit)
 		end
 	end
 	do -- setup ring, icons, and text
+		if SUI.IsClassic then
+			-- Position and size
+			local PetHappiness = CreateFrame('Frame', nil, self)
+			PetHappiness:SetSize(20, 20)
+			PetHappiness:SetPoint('LEFT', self, 'LEFT')
+
+			-- Register it with oUF
+			self.PetHappiness = PetHappiness
+		end
 		if SUI.DBMod.PlayerFrames.PetPortrait then
 			local ring = CreateFrame('Frame', nil, self)
 			ring:SetParent(self)

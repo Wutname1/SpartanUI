@@ -841,6 +841,16 @@ local CreateSmallFrame = function(self, unit)
 		self.StatusText:SetPoint('CENTER', self, 'CENTER')
 		self.StatusText:SetJustifyH('CENTER')
 		self:Tag(self.StatusText, '[afkdnd]')
+
+		if SUI.IsClassic then
+			-- Position and size
+			local PetHappiness = CreateFrame('Frame', nil, self)
+			PetHappiness:SetSize(20, 20)
+			PetHappiness:SetPoint('LEFT', self, 'LEFT')
+
+			-- Register it with oUF
+			self.PetHappiness = PetHappiness
+		end
 	end
 	do -- setup buffs and debuffs
 		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', -5)

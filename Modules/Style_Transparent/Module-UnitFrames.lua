@@ -839,6 +839,16 @@ local CreatePetFrame = function(self, unit)
 		self.Name:SetSize(95, 12)
 		self.Name:SetJustifyH('RIGHT')
 		self.Name:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 6, -11)
+		if SUI.IsClassic then
+			-- Position and size
+			local PetHappiness = CreateFrame('Frame', nil, self)
+			PetHappiness:SetSize(20, 20)
+			PetHappiness:SetPoint('LEFT', self, 'LEFT')
+
+			-- Register it with oUF
+			self.PetHappiness = PetHappiness
+		end
+
 		if SUI.DBMod.PlayerFrames.showClass then
 			self:Tag(self.Name, '[difficulty][level] [SUI_ColorClass][name]')
 		else

@@ -45,6 +45,8 @@ externals:
     url: https://github.com/Wutname1/SUF.git
   libs/oUF_AuraBars:
     url: https://github.com/Wutname1/oUF_AuraBars.git
+  libs/oUF_PetHappiness:
+    url: https://github.com/Wutname1/oUF_PetHappiness.git
   libs/LibDataBroker:
     url: https://github.com/tekkub/libdatabroker-1-1.git
 

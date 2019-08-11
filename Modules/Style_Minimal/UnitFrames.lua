@@ -332,6 +332,16 @@ local MakeSmallFrame = function(self, unit)
 			outsideAlpha = 1 / 2
 		}
 
+		if SUI.IsClassic then
+			-- Position and size
+			local PetHappiness = CreateFrame('Frame', nil, self)
+			PetHappiness:SetSize(20, 20)
+			PetHappiness:SetPoint('LEFT', self, 'LEFT')
+
+			-- Register it with oUF
+			self.PetHappiness = PetHappiness
+		end
+
 		local items = CreateFrame('Frame', nil, self)
 		items:SetFrameStrata('BACKGROUND')
 		items:SetAllPoints(self)
