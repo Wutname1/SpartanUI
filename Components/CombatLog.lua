@@ -63,27 +63,30 @@ function module:OnEnable()
 			end
 		end
 	)
-	
+
 	if not SUI.IsClassic then
 		CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
 	end
 	CombatLog_Watcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	CombatLog_Watcher:RegisterEvent('PLAYER_ENTERING_WORLD')
-	SUI:AddChatCommand('logging', function(arg)
-		if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
-			if LoggingCombat() then
-				SUI:Print('Currently logging combat')
-			else
-				SUI:Print('NOT Currently logging combat')
+	SUI:AddChatCommand(
+		'logging',
+		function(arg)
+			if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
+				if LoggingCombat() then
+					SUI:Print('Currently logging combat')
+				else
+					SUI:Print('NOT Currently logging combat')
+				end
+			elseif arg == 'start' then
+				module:announce('manual command')
+				LoggingCombat(true)
+			elseif arg == 'stop' then
+				module:announce('disabled')
+				LoggingCombat(false)
 			end
-		elseif arg == 'start' then
-			module:announce('manual command')
-			LoggingCombat(true)
-		elseif arg == 'stop' then
-			module:announce('disabled')
-			LoggingCombat(false)
 		end
-	end)
+	)
 end
 
 function module:OnDisable()
@@ -110,7 +113,7 @@ function module:LogCheck(event)
 		print('difficulty: ' .. difficulty)
 		print('maxPlayers: ' .. maxPlayers)
 	end
-	
+
 	if (SUI.DB.CombatLog.alwayson) then
 		module:announce('Always on')
 		LoggingCombat(true)
@@ -156,7 +159,7 @@ function module:LogCheck(event)
 		-- 3-9 is legacy raid difficulties
 		module:announce('Legacy Raid')
 		LoggingCombat(true)
-	 else
+	else
 		-- If we are curently logging announce we are disabling it.
 		if SUI.DB.CombatLog.logging and LoggingCombat() then
 			module:announce('disabled')
