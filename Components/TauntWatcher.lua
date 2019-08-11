@@ -313,6 +313,7 @@ function module:SetupWizard()
 			local StdUi = window.StdUi
 			if not SUI.DB.EnabledComponents.TauntWatcher or module.Override then
 				window.Skip:Click()
+				return
 			end
 
 			--Container

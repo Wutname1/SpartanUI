@@ -69,6 +69,7 @@ function module:FirstTime()
 			local StdUi = window.StdUi
 			if not SUI.DB.EnabledComponents.AutoSell then
 				window.Skip:Click()
+				return
 			end
 
 			--Container

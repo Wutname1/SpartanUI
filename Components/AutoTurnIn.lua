@@ -470,6 +470,7 @@ function module:FirstLaunch()
 			local StdUi = window.StdUi
 			if not SUI.DB.EnabledComponents.AutoTurnIn then
 				window.Skip:Click()
+				return
 			end
 
 			--Container
