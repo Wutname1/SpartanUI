@@ -30,6 +30,14 @@ local factionColor = {
 	['Neutral'] = {0, 0, 0, 0.5}
 }
 local NameplateList = {}
+local ElementList = {
+	'SUI_ClassIcon',
+	'Health',
+	'Power',
+	'Castbar',
+	'RareElite',
+	'ShowRaidTargetIndicator'
+}
 
 local pvpIconWar = function(self, event, unit)
 	if (unit ~= self.unit) then
@@ -104,6 +112,51 @@ local PostCastStop = function(self)
 	end
 end
 
+local UpdateElementState = function(frame)
+	local elements = SUI.DBMod.NamePlates.elements
+
+	frame.PvPIndicator.Override(frame, nil, frame.unit)
+
+	-- Disable or enable elements that should not be enabled
+	for _, item in ipairs(ElementList) do
+		if elements[item].enabled then
+			frame:EnableElement(item)
+		else
+			frame:DisableElement(item)
+		end
+	end
+
+	-- Do the non-classic things
+	if not SUI.IsClassic then
+		if elements.QuestIndicator.enabled then
+			frame:EnableElement('QuestIndicator')
+		else
+			frame:DisableElement('QuestIndicator')
+		end
+	end
+
+	-- Position Updates
+	if (InCombatLockdown()) then
+		return
+	end
+	-- Power
+	frame.Power:ClearAllPoints()
+	if elements.Health.enabled then
+		frame.Power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+	else
+		frame.Power:SetPoint('BOTTOM', frame)
+	end
+	-- Castbar
+	frame.Castbar:ClearAllPoints()
+	if elements.Power.enabled then
+		frame.Castbar:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
+	elseif elements.Health.enabled then
+		frame.Castbar:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+	else
+		frame.Castbar:SetPoint('BOTTOM', frame)
+	end
+end
+
 local NamePlateFactory = function(frame, unit)
 	if unit:match('nameplate') then
 		local elements = SUI.DBMod.NamePlates.elements
@@ -155,60 +208,62 @@ local NamePlateFactory = function(frame, unit)
 			nameString = nameString .. ' [SUI_ColorClass][name]'
 		end
 		if nameString ~= '' then
-			frame.Name = health:CreateFontString(nil, 'BACKGROUND')
+			frame.Name = frame:CreateFontString(nil, 'BACKGROUND')
 			SUI:FormatFont(frame.Name, 10, 'Player')
 			frame.Name:SetSize(frame:GetWidth(), 12)
 			frame.Name:SetJustifyH(elements.Name.SetJustifyH)
-			frame.Name:SetPoint('BOTTOMLEFT', frame.Health, 'TOPLEFT', 0, 0)
+			frame.Name:SetPoint('TOP', frame)
 			frame:Tag(frame.Name, nameString)
 		end
 
 		-- Mana/Energy
-		if elements.Power.enabled then
-			local power = CreateFrame('StatusBar', nil, frame)
+		local power = CreateFrame('StatusBar', nil, frame)
+		if elements.Health.enabled then
 			power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
-			power:SetSize(frame:GetWidth(), elements.Power.height)
-			power:SetStatusBarTexture(BarTexture)
-
-			frame.Power = power
-			frame.Power.colorPower = true
-			frame.Power.frequentUpdates = true
+		else
+			power:SetPoint('BOTTOM', frame)
 		end
+		power:SetSize(frame:GetWidth(), elements.Power.height)
+		power:SetStatusBarTexture(BarTexture)
+
+		frame.Power = power
+		frame.Power.colorPower = true
+		frame.Power.frequentUpdates = true
 
 		-- Castbar
-		if elements.Castbar.enabled then
-			local cast = CreateFrame('StatusBar', nil, frame)
-			if elements.Power.enabled then
-				cast:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
-			else
-				cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
-			end
-
-			cast:SetSize(frame:GetWidth(), elements.Castbar.height)
-			cast:SetStatusBarTexture(BarTexture)
-			cast:SetStatusBarColor(1, 0.7, 0)
-			if elements.Castbar.text then
-				cast.Text = cast:CreateFontString()
-				SUI:FormatFont(cast.Text, 7, 'Player')
-				cast.Text:SetJustifyH('CENTER')
-				cast.Text:SetJustifyV('MIDDLE')
-				cast.Text:SetAllPoints(cast)
-			end
-
-			-- Add latency display
-			cast.SafeZone = cast:CreateTexture(nil, 'OVERLAY')
-
-			--Interupt Flash
-			cast.PostCastStart = PostCastStart
-			cast.PostCastInterruptible = PostCastStart
-			cast.PostCastStop = PostCastStop
-			cast.PostCastInterrupted = PostCastStop
-			cast.PostCastNotInterruptible = PostCastStop
-			cast.PName = frame:GetName()
-
-			frame.Castbar = cast
-			frame.Castbar:SetParent(frame)
+		local cast = CreateFrame('StatusBar', nil, frame)
+		if elements.Power.enabled then
+			cast:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
+		elseif elements.Health.enabled then
+			cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
+		else
+			cast:SetPoint('BOTTOM', frame)
 		end
+
+		cast:SetSize(frame:GetWidth(), elements.Castbar.height)
+		cast:SetStatusBarTexture(BarTexture)
+		cast:SetStatusBarColor(1, 0.7, 0)
+		if elements.Castbar.text then
+			cast.Text = cast:CreateFontString()
+			SUI:FormatFont(cast.Text, 7, 'Player')
+			cast.Text:SetJustifyH('CENTER')
+			cast.Text:SetJustifyV('MIDDLE')
+			cast.Text:SetAllPoints(cast)
+		end
+
+		-- Add latency display
+		cast.SafeZone = cast:CreateTexture(nil, 'OVERLAY')
+
+		--Interupt Flash
+		cast.PostCastStart = PostCastStart
+		cast.PostCastInterruptible = PostCastStart
+		cast.PostCastStop = PostCastStop
+		cast.PostCastInterrupted = PostCastStop
+		cast.PostCastNotInterruptible = PostCastStop
+		cast.PName = frame:GetName()
+
+		frame.Castbar = cast
+		frame.Castbar:SetParent(frame)
 
 		-- ClassIcon
 		frame.SUI_ClassIcon = frame:CreateTexture(nil, 'BORDER')
@@ -239,11 +294,9 @@ local NamePlateFactory = function(frame, unit)
 		frame.Auras = Auras
 
 		-- Raid Icon
-		if SUI.DBMod.NamePlates.ShowRaidTargetIndicator then
-			frame.RaidTargetIndicator = frame:CreateTexture(nil, 'OVERLAY')
-			frame.RaidTargetIndicator:SetSize(15, 15)
-			frame.RaidTargetIndicator:SetPoint('BOTTOM', frame.Health, 'TOPLEFT', 0, 0)
-		end
+		frame.RaidTargetIndicator = frame:CreateTexture(nil, 'OVERLAY')
+		frame.RaidTargetIndicator:SetSize(15, 15)
+		frame.RaidTargetIndicator:SetPoint('BOTTOM', frame.Health, 'TOPLEFT', 0, 0)
 
 		-- Target Indicator
 		local TargetIndicator = CreateFrame('Frame', 'BACKGROUND', frame)
@@ -268,7 +321,7 @@ local NamePlateFactory = function(frame, unit)
 		frame.QuestIndicator = QuestIndicator
 
 		-- Rare Elite indicator
-		local RareElite = frame:CreateTexture(nil, 'OVERLAY', nil, -2)
+		local RareElite = frame:CreateTexture(nil, 'BACKGROUND', nil, -2)
 		RareElite:SetTexture('Interface\\Addons\\SpartanUI_Artwork\\Images\\status-glow')
 		RareElite:SetAlpha(.6)
 		RareElite:SetAllPoints(frame)
@@ -328,19 +381,9 @@ local NameplateCallback = function(self, event, unit)
 		self.TargetIndicator.bg1:Hide()
 		self.TargetIndicator.bg2:Hide()
 	end
-	if SUI.DBMod.NamePlates.elements.RareElite.enabled then
-		self:EnableElement('RareElite')
-	else
-		self:DisableElement('RareElite')
-	end
-	-- Do the non-classic things
-	if not SUI.IsClassic then
-		if SUI.DBMod.NamePlates.elements.QuestIndicator.enabled then
-			self:EnableElement('QuestIndicator')
-		else
-			self:DisableElement('QuestIndicator')
-		end
-	end
+
+	-- Update elements
+	UpdateElementState(self)
 
 	-- Update class icons
 	local VisibleOn = SUI.DBMod.NamePlates.elements.SUI_ClassIcon.visibleOn
@@ -389,13 +432,7 @@ end
 function module:UpdateNameplates()
 	for k, v in pairs(NameplateList) do
 		if v then
-			_G[k].PvPIndicator.Override(_G[k], nil, _G[k].unit)
-
-			if SUI.DBMod.NamePlates.elements.SUI_ClassIcon.enabled then
-				_G[k]:DisableElement('SUI_ClassIcon')
-			else
-				_G[k]:EnableElement('SUI_ClassIcon')
-			end
+			UpdateElementState(_G[k])
 		end
 	end
 end
@@ -537,6 +574,19 @@ function module:BuildOptions()
 						-- inline = true,
 						order = 3,
 						args = {
+							enabled = {
+								name = L['Enabled'],
+								type = 'toggle',
+								width = 'full',
+								order = 1,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.Health.enabled
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.Health.enabled = val
+									module:UpdateNameplates()
+								end
+							},
 							height = {
 								name = L['Height'],
 								type = 'range',
@@ -596,7 +646,7 @@ function module:BuildOptions()
 						-- inline = true,
 						order = 4,
 						args = {
-							show = {
+							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
@@ -606,6 +656,7 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									SUI.DBMod.NamePlates.elements.Power.enabled = val
+									module:UpdateNameplates()
 								end
 							},
 							height = {
@@ -631,7 +682,7 @@ function module:BuildOptions()
 						-- inline = true,
 						order = 5,
 						args = {
-							show = {
+							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
@@ -641,6 +692,7 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									SUI.DBMod.NamePlates.elements.Castbar.enabled = val
+									module:UpdateNameplates()
 								end
 							},
 							Height = {
