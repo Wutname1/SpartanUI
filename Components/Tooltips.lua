@@ -149,8 +149,8 @@ local setPoint = function(self, parent)
 		end
 
 		--See If the theme has an anchor and if we are allowed to use it
-		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
-			local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style, true)
+		if SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
+			local style = SUI:GetModule('Style_' .. (SUI.DBMod.Artwork.Style or 'War'), true)
 			if style then
 				style:TooltipLoc(self, parent)
 			end
@@ -179,10 +179,11 @@ end
 local onShow = function(self)
 	self:SetBackdrop(whitebg)
 	if
-		SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and
-			not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style]
+		SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip ~= nil and
+			SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.BG and
+			not SUI.DB.Tooltip.Override[(SUI.DBMod.Artwork.Style or 'War')]
 	 then
-		self.SUITip:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
+		self.SUITip:SetBackdrop(SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.BG)
 	else
 		self.SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 	end
@@ -196,8 +197,11 @@ local onShow = function(self)
 	end
 
 	--check if theme has a location
-	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.Custom then
-		SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):Tooltip()
+	if
+		SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip ~= nil and
+			SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.Custom
+	 then
+		SUI:GetModule('Style_' .. (SUI.DBMod.Artwork.Style or 'War')):Tooltip()
 	end
 end
 
@@ -504,10 +508,11 @@ local function ApplyTooltipSkins()
 			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\media\\blank.tga')
 
 			if
-				(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip ~= nil) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG and
-					not SUI.DB.Tooltip.Override[SUI.DBMod.Artwork.Style]
+				(SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip ~= nil) and
+					SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.BG and
+					not SUI.DB.Tooltip.Override[(SUI.DBMod.Artwork.Style or 'War')]
 			 then
-				SUITip:SetBackdrop(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Tooltip.BG)
+				SUITip:SetBackdrop(SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.BG)
 			else
 				SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 			end
@@ -629,7 +634,7 @@ function module:OnEnable()
 end
 
 local OnMouseOpt = function(v)
-	if SUI.DB.Tooltips[v].Anchor.onMouse or not SUI.DB.Styles[SUI.DBMod.Artwork.Style].TooltipLoc then
+	if SUI.DB.Tooltips[v].Anchor.onMouse or not SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].TooltipLoc then
 		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = true
 	else
 		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = false
@@ -669,10 +674,10 @@ function module:BuildOptions()
 				order = 2,
 				desc = L['TooltipOverrideDesc'],
 				get = function(info)
-					return SUI.DB.Tooltips.Override[SUI.DBMod.Artwork.Style]
+					return SUI.DB.Tooltips.Override[(SUI.DBMod.Artwork.Style or 'War')]
 				end,
 				set = function(info, val)
-					SUI.DB.Tooltips.Override[SUI.DBMod.Artwork.Style] = val
+					SUI.DB.Tooltips.Override[(SUI.DBMod.Artwork.Style or 'War')] = val
 				end
 			},
 			color = {
