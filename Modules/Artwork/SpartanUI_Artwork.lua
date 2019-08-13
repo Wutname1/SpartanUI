@@ -398,6 +398,17 @@ function Artwork_Core:OnEnable()
 		StaticPopup_Show('BartenderVerWarning')
 	end
 
+	-- TODO: Remove this in 6.1
+	if SUI.DBMod.Artwork.SetupDone and SUI.DB.Bartender4Version >= '4.8.3' then
+		for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+			if k == 'StatusTrackingBar' and v.db.profile.enabled then
+				v.db.profile.enabled = false
+				BT4StatusBarTrackingManager:Hide()
+			end
+		end
+	end
+	-- END TODO
+
 	if MainMenuBar then
 		MainMenuBar:Hide()
 	end
