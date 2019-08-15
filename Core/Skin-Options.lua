@@ -55,9 +55,8 @@ local function attemptSkin()
 	if AceGUI and (AceGUI.RegisterAsContainer ~= RegisterAsContainer or AceGUI.RegisterAsWidget ~= RegisterAsWidget) then
 		if select(4, GetAddOnInfo('ElvUI')) then
 			return
-		-- local E, _, V, P, G = unpack(ElvUI)
-		-- module:SkinAce3()
 		end
+		module:SkinAce3()
 	end
 end
 
