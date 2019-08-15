@@ -53,7 +53,11 @@ local function attemptSkin()
 	SUI.DBG.textures = {i = 0}
 	local AceGUI = LibStub('AceGUI-3.0', true)
 	if AceGUI and (AceGUI.RegisterAsContainer ~= RegisterAsContainer or AceGUI.RegisterAsWidget ~= RegisterAsWidget) then
-		module:SkinAce3()
+		if select(4, GetAddOnInfo('ElvUI')) then
+			return
+		-- local E, _, V, P, G = unpack(ElvUI)
+		-- module:SkinAce3()
+		end
 	end
 end
 
