@@ -49,6 +49,12 @@ externals:
     url: https://github.com/Wutname1/oUF_PetHappiness.git
   libs/LibDataBroker:
     url: https://github.com/tekkub/libdatabroker-1-1.git
+  libs/LibClassicCast:
+    url: https://github.com/joev/LibClassicCast.git
+  libs/LibClassicDurations:
+    url: https://github.com/rgd87/LibClassicDurations.git
+  libs/oUF_ClassicAuraDurations:
+    url: https://github.com/rgd87/oUF_ClassicAuraDurations.git
 
 ignore:
     README.md
