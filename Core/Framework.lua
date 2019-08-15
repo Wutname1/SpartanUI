@@ -1417,18 +1417,51 @@ local DBdefault = {
 			GearTokens = false,
 			AutoRepair = false,
 			UseGuildBankRepair = false
+		},
 		AutoTurnIn = {
+			ChatText = true,
 			FirstLaunch = true,
 			debug = false,
+			TurnInEnabled = true,
 			AutoGossip = true,
+			AutoGossipSafeMode = true,
 			AcceptGeneralQuests = true,
+			AcceptRepeatable = false,
 			trivial = false,
 			lootreward = true,
 			autoequip = false,
 			armor = {},
 			weapon = {},
 			stat = {},
+			secondary = {},
+			Blacklist = {}
+		},
 		Components = {},
+		Tooltips = {
+			Styles = {
+				metal = {
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\metal.tga',
+					tile = false
+				},
+				smooth = {
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga',
+					tile = false
+				},
+				smoke = {
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\smoke.tga',
+					tile = false
+				},
+				none = {
+					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\blank.tga',
+					tile = false
+				}
+			},
+			ActiveStyle = 'smoke',
+			Override = {},
+			ColorOverlay = true,
+			Color = {0, 0, 0, 0.4},
+			SuppressNoMatch = true
+		},
 		Unitframes = {
 			Style = 'War',
 			FrameOptions = {
@@ -2044,23 +2077,7 @@ local DBdefault = {
 					}
 				}
 			}
-		},
-		Components = {},
-		Tooltips = {
-			ActiveStyle = 'smoke',
-			Override = {},
-			ColorOverlay = true,
-			Color = {0, 0, 0, 0.4},
-			SuppressNoMatch = true
 		}
-		},
-			AcceptRepeatable = false,
-			AutoGossipSafeMode = true,
-			TurnInEnabled = true,
-			ChatText = true,
-		},
-			Blacklist = {}
-			secondary = {},
 	},
 	Modules = {
 		StatusBars = {
