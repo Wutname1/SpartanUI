@@ -257,6 +257,7 @@ function module:FirstTimeSetup()
 			local gui = LibStub('AceGUI-3.0')
 			if not SUI.DB.EnabledComponents.Objectives or module.Override then
 				window.Skip:Click()
+				return
 			end
 
 			--Container

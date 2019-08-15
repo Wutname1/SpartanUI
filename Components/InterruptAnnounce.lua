@@ -306,6 +306,7 @@ function module:FirstLaunch()
 			local StdUi = window.StdUi
 			if not SUI.DB.EnabledComponents.InterruptAnnouncer then
 				window.Skip:Click()
+				return
 			end
 
 			--Container

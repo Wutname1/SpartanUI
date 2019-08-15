@@ -220,7 +220,6 @@ function Artwork_Core:OnInitialize()
 end
 
 function Artwork_Core:FirstTime()
-	SUI.DBMod.Artwork.SetupDone = false
 	local PageData = {
 		ID = 'ArtworkCore',
 		Name = 'SpartanUI style',
@@ -230,7 +229,7 @@ function Artwork_Core:FirstTime()
 		Priority = true,
 		Skipable = true,
 		NoReloadOnSkip = true,
-		RequireDisplay = SUI.DBMod.Artwork.SetupDone,
+		RequireDisplay = (not SUI.DBMod.Artwork.SetupDone or false),
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -325,7 +324,7 @@ function Artwork_Core:FirstTime()
 
 			-- Check Classic as default
 			if SUI_Win.Artwork.Classic then
-				if not SUI.DBMod.Artwork.Style then
+				if not SUI.DBMod.Artwork.Style or SUI.DBMod.Artwork.Style == '' then
 					SUI.DBMod.Artwork.Style = 'Classic'
 				end
 				if SUI_Win.Artwork[SUI.DBMod.Artwork.Style] and SUI_Win.Artwork[SUI.DBMod.Artwork.Style].radio then
@@ -493,7 +492,7 @@ function Artwork_Core:SetupProfile(ProfileOverride)
 	--Load the Profile Data
 	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile, BartenderSettings[k])
+			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k])
 		end
 	end
 	SUI.DBG.BartenderChangesActive = false
@@ -510,20 +509,6 @@ function Artwork_Core:BartenderProfileCheck(Input, Report)
 		SUI:Print(Input .. ' ' .. L['BartenderProfileCheckFail'])
 	end
 	return r
-end
-
-function Artwork_Core:MergeData(target, source)
-	if type(target) ~= 'table' then
-		target = {}
-	end
-	for k, v in pairs(source) do
-		if type(v) == 'table' then
-			target[k] = self:MergeData(target[k], v)
-		else
-			target[k] = v
-		end
-	end
-	return target
 end
 
 function Artwork_Core:CreateProfile()
@@ -548,7 +533,7 @@ function Artwork_Core:CreateProfile()
 	--Load the Profile Data
 	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = Artwork_Core:MergeData(v.db.profile, BartenderSettings[k])
+			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k])
 		end
 	end
 

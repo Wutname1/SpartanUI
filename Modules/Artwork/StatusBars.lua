@@ -165,17 +165,20 @@ local updateText = function(self)
 		valPercent = ((valFill / valMax) * 100)
 	end
 
-	if valPercent ~= 0 and valPercent then
-		local ratio = (valPercent / 100)
-		if (ratio * self:GetWidth()) > self:GetWidth() then
-			self.Fill:SetWidth(self:GetWidth())
-		else
-			self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
+	if type(valPercent) == 'number' then
+		if valPercent ~= 0 and valPercent then
+			local ratio = (valPercent / 100)
+			if (ratio * self:GetWidth()) > self:GetWidth() then
+				self.Fill:SetWidth(self:GetWidth())
+			else
+				self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
+			end
+		end
+		if module.DB[side].text and valFill and valMax and valPercent ~= valPercent then
+			self.Text:SetFormattedText('( %s / %s ) %d%%', SUI:comma_value(valFill), SUI:comma_value(valMax), valPercent)
 		end
 	end
-	if module.DB[side].text and valFill and valMax and type(valPercent) == 'number' then
-		self.Text:SetFormattedText('( %s / %s ) %d%%', SUI:comma_value(valFill), SUI:comma_value(valMax), valPercent)
-	end
+
 	SetBarColor(self, side)
 end
 

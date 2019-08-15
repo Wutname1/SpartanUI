@@ -24,6 +24,7 @@ SUI.releaseType = 'ALPHA'
 if not SUI.BuildNum then
 	SUI.BuildNum = 0
 end
+
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
 	name = string.format('SpartanUI %s %s', SUI.releaseType, SUI.Version),
@@ -191,6 +192,14 @@ local DBdefault = {
 					XP = false,
 					REP = false,
 					AP = false
+				},
+				BartenderSettings = {
+					BlizzardArt = {enabled = false},
+					XPBar = {enabled = false},
+					RepBar = {enabled = false},
+					APBar = {enabled = false},
+					StatusTrackingBar = {enabled = false},
+					blizzardVehicle = true
 				},
 				MovedBars = {},
 				TooltipLoc = false,
@@ -394,12 +403,7 @@ local DBdefault = {
 						padding = 3,
 						position = {point = 'CENTER', parent = 'SUI_ActionBarPlate', x = -15, y = 213, scale = 0.85}
 					},
-					ExtraActionBar = {enabled = true, position = {point = 'CENTER', parent = 'SUI_ActionBarPlate', x = -32, y = 240}},
-					BlizzardArt = {enabled = false},
-					XPBar = {enabled = false},
-					RepBar = {enabled = false},
-					APBar = {enabled = false},
-					blizzardVehicle = true
+					ExtraActionBar = {enabled = true, position = {point = 'CENTER', parent = 'SUI_ActionBarPlate', x = -32, y = 240}}
 				},
 				Frames = {
 					player = {
@@ -430,6 +434,913 @@ local DBdefault = {
 					AP = true
 				},
 				TooltipLoc = true
+			},
+			Transparent = {
+				Artwork = {},
+				PlayerFrames = {},
+				PartyFrames = {},
+				RaidFrames = {},
+				Movable = {
+					Minimap = false,
+					PlayerFrames = true,
+					PartyFrames = true,
+					RaidFrames = true
+				},
+				Minimap = {
+					shape = 'square',
+					size = {width = 140, height = 140}
+				},
+				Color = {
+					Art = {0, .8, .9, .7},
+					PlayerFrames = {0, .8, .9, .7},
+					PartyFrames = {0, .8, .9, .7},
+					RaidFrames = {0, .8, .9, .7}
+				},
+				TalkingHeadUI = {point = 'TOP', relPoint = 'TOP', x = 0, y = -30, scale = .8},
+				BartenderProfile = 'SpartanUI - Transparent',
+				BartenderSettings = {
+					ActionBars = {
+						actionbars = {
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Transparent_ActionBarPlate',
+									x = -501,
+									y = 16,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 1
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Transparent_ActionBarPlate',
+									x = -501,
+									y = -29,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 2
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Transparent_ActionBarPlate',
+									x = 98,
+									y = 16,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 3
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Transparent_ActionBarPlate',
+									x = 98,
+									y = -29,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 4
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Transparent_ActionBarPlate',
+									x = -635,
+									y = 35,
+									scale = 0.80,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 5
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Transparent_ActionBarPlate',
+									x = 504,
+									y = 35,
+									scale = 0.80,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 6
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 7
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 8
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 9
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Transparent_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							} -- 10
+						}
+					},
+					BagBar = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = 0,
+						position = {
+							point = 'TOP',
+							parent = 'Transparent_ActionBarPlate',
+							x = 494,
+							y = -15,
+							scale = 0.70,
+							growHorizontal = 'LEFT'
+						},
+						rows = 1,
+						onebag = false,
+						keyring = true
+					},
+					MicroMenu = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = -3,
+						position = {
+							point = 'TOP',
+							parent = 'Transparent_ActionBarPlate',
+							x = 105,
+							y = -15,
+							scale = 0.70,
+							growHorizontal = 'RIGHT'
+						}
+					},
+					PetBar = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = 1,
+						position = {
+							point = 'TOP',
+							parent = 'Transparent_ActionBarPlate',
+							x = -493,
+							y = -15,
+							scale = 0.70,
+							growHorizontal = 'RIGHT'
+						},
+						rows = 1,
+						skin = {Zoom = true}
+					},
+					StanceBar = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = 1,
+						position = {
+							point = 'TOP',
+							parent = 'Transparent_ActionBarPlate',
+							x = -105,
+							y = -15,
+							scale = 0.70,
+							growHorizontal = 'LEFT'
+						},
+						rows = 1
+					},
+					MultiCast = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'TOPRIGHT', parent = 'Transparent_ActionBarPlate', x = -777, y = -4, scale = 0.75}
+					},
+					Vehicle = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = false,
+						padding = 3,
+						position = {point = 'CENTER', parent = 'Transparent_ActionBarPlate', x = -15, y = 213, scale = 0.85}
+					},
+					ExtraActionBar = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'CENTER', parent = 'Transparent_ActionBarPlate', x = -32, y = 240}
+					},
+					ZoneAbilityBar = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'CENTER', parent = 'Transparent_ActionBarPlate', x = -32, y = 240}
+					}
+				},
+				TooltipLoc = true,
+				BuffLoc = true
+			},
+			Minimal = {
+				Artwork = {},
+				PlayerFrames = {},
+				PartyFrames = {},
+				RaidFrames = {},
+				Movable = {
+					Minimap = true,
+					PlayerFrames = true,
+					PartyFrames = true,
+					RaidFrames = true
+				},
+				TooltipLoc = true,
+				Minimap = {
+					shape = 'square',
+					size = {width = 140, height = 140}
+				},
+				BartenderProfile = 'SpartanUI - Minimal',
+				BartenderSettings = {
+					ActionBars = {
+						actionbars = {
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {point = 'BOTTOM', x = -200, y = 102, scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 1
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {point = 'BOTTOM', x = -200, y = 70, scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 2
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {point = 'BOTTOM', x = -200, y = 35, scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 3
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 4
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {point = 'BOTTOM', x = -317, y = 98, scale = 0.75, growHorizontal = 'RIGHT'}
+							}, -- 5
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {point = 'BOTTOM', x = 199, y = 98, scale = 0.75, growHorizontal = 'RIGHT'}
+							}, -- 6
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 7
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 8
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 9
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {scale = 0.85, growHorizontal = 'RIGHT'}
+							} -- 10
+						}
+					},
+					BagBar = {
+						version = 3,
+						enabled = true,
+						padding = 0,
+						position = {point = 'TOP', x = 490, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
+						rows = 1,
+						onebag = false,
+						keyring = true
+					},
+					MicroMenu = {
+						version = 3,
+						enabled = true,
+						padding = -3,
+						position = {point = 'TOP', x = 160, y = -1, scale = 0.70, growHorizontal = 'RIGHT'}
+					},
+					PetBar = {
+						version = 3,
+						enabled = true,
+						padding = 1,
+						position = {point = 'TOP', x = -492, y = -1, scale = 0.70, growHorizontal = 'RIGHT'},
+						rows = 1,
+						skin = {Zoom = true}
+					},
+					StanceBar = {
+						version = 3,
+						enabled = true,
+						padding = 1,
+						position = {point = 'TOP', x = -163, y = -1, scale = 0.70, growHorizontal = 'LEFT'},
+						rows = 1
+					},
+					MultiCast = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'TOPRIGHT', x = -777, y = -4, scale = 0.75}
+					},
+					Vehicle = {
+						version = 3,
+						enabled = false,
+						padding = 3,
+						position = {point = 'BOTTOM', x = -200, y = 155, scale = 0.85}
+					},
+					ExtraActionBar = {
+						fadeoutalpha = .25,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'BOTTOM', x = -32, y = 275}
+					},
+					ZoneAbilityBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'BOTTOM', x = -32, y = 275}
+					}
+				},
+				Color = {
+					0.6156862745098039,
+					0.1215686274509804,
+					0.1215686274509804,
+					0.9
+				},
+				TalkingHeadUI = {
+					point = 'BOTTOM',
+					relPoint = 'TOP',
+					x = 0,
+					y = -30,
+					scale = .8
+				},
+				PartyFramesSize = 'large',
+				HideCenterGraphic = false
+			},
+			Fel = {
+				Artwork = {
+					Allenable = true,
+					Allalpha = 100,
+					bar1 = {enable = true, alpha = 100},
+					bar2 = {enable = true, alpha = 100},
+					bar3 = {enable = true, alpha = 100},
+					bar4 = {enable = true, alpha = 100},
+					Stance = {enable = true, alpha = 100},
+					MenuBar = {enable = true, alpha = 100}
+				},
+				Frames = {
+					player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
+					target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}}
+				},
+				PlayerFrames = {},
+				PartyFrames = {
+					FrameStyle = 'medium'
+				},
+				RaidFrames = {
+					FrameStyle = 'small'
+				},
+				Movable = {
+					Minimap = true
+				},
+				Minimap = {
+					Engulfed = true
+				},
+				SlidingTrays = {
+					left = {
+						enabled = true,
+						collapsed = false
+					},
+					right = {
+						enabled = true,
+						collapsed = false
+					}
+				},
+				TalkingHeadUI = {
+					point = 'TOP',
+					relPoint = 'TOP',
+					x = 0,
+					y = -30,
+					scale = .8
+				},
+				BartenderProfile = 'SpartanUI - Fel',
+				BartenderSettings = {
+					ActionBars = {
+						actionbars = {
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Fel_ActionBarPlate',
+									x = -510,
+									y = 36,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 1
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Fel_ActionBarPlate',
+									x = -510,
+									y = -8,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 2
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Fel_ActionBarPlate',
+									x = 108,
+									y = 36,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 3
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Fel_ActionBarPlate',
+									x = 108,
+									y = -8,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 4
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Fel_ActionBarPlate',
+									x = -645,
+									y = 35,
+									scale = 0.80,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 5
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'Fel_ActionBarPlate',
+									x = 514,
+									y = 35,
+									scale = 0.80,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 6
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 7
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 8
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 9
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'Fel_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							} -- 10
+						}
+					},
+					BagBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = 0,
+						position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = 503, y = 2, scale = 0.70, growHorizontal = 'LEFT'},
+						rows = 1,
+						onebag = false,
+						keyring = true
+					},
+					MicroMenu = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = -3,
+						position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = 114, y = 4, scale = 0.70, growHorizontal = 'RIGHT'}
+					},
+					PetBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = 1,
+						position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = -497, y = 2, scale = 0.70, growHorizontal = 'RIGHT'},
+						rows = 1,
+						skin = {Zoom = true}
+					},
+					StanceBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						padding = 1,
+						position = {point = 'TOP', parent = 'Fel_ActionBarPlate', x = -115, y = 2, scale = 0.70, growHorizontal = 'LEFT'},
+						rows = 1
+					},
+					MultiCast = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'TOPRIGHT', parent = 'Fel_ActionBarPlate', x = -777, y = -4, scale = 0.75}
+					},
+					Vehicle = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = false,
+						padding = 3,
+						position = {point = 'CENTER', parent = 'Fel_ActionBarPlate', x = -15, y = 213, scale = 0.85}
+					},
+					ExtraActionBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'CENTER', parent = 'Fel_ActionBarPlate', x = -32, y = 240}
+					},
+					ZoneAbilityBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'CENTER', parent = 'Fel_ActionBarPlate', x = -32, y = 240}
+					}
+				},
+				TooltipLoc = true,
+				SubTheme = 'Fel',
+				BuffLoc = true
+			},
+			War = {
+				Frames = {
+					player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
+					target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}},
+					pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+					targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+					focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
+				},
+				PlayerFrames = {},
+				PartyFrames = {
+					FrameStyle = 'medium'
+				},
+				RaidFrames = {
+					FrameStyle = 'small'
+				},
+				Movable = {
+					Minimap = true
+				},
+				Minimap = {
+					Engulfed = true
+				},
+				SlidingTrays = {
+					left = {
+						enabled = true,
+						collapsed = false
+					},
+					right = {
+						enabled = true,
+						collapsed = false
+					}
+				},
+				TalkingHeadUI = {
+					point = 'TOP',
+					relPoint = 'TOP',
+					x = 0,
+					y = -30,
+					scale = .8
+				},
+				BartenderProfile = 'SpartanUI - War',
+				BartenderSettings = {
+					ActionBars = {
+						actionbars = {
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'War_ActionBarPlate',
+									x = -510,
+									y = 36,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								},
+								states = {
+									stance = {
+										DRUID = {
+											prowl = 0,
+											cat = 0
+										}
+									}
+								}
+							}, -- 1
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'War_ActionBarPlate',
+									x = -510,
+									y = -8,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 2
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'War_ActionBarPlate',
+									x = 108,
+									y = 36,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 3
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'War_ActionBarPlate',
+									x = 108,
+									y = -8,
+									scale = 0.85,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 4
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'War_ActionBarPlate',
+									x = -645,
+									y = 35,
+									scale = 0.80,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 5
+							{
+								enabled = true,
+								buttons = 12,
+								rows = 3,
+								padding = 4,
+								skin = {Zoom = true},
+								position = {
+									point = 'CENTER',
+									parent = 'War_ActionBarPlate',
+									x = 514,
+									y = 35,
+									scale = 0.80,
+									growHorizontal = 'RIGHT'
+								}
+							}, -- 6
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'War_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 7
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'War_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 8
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'War_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							}, -- 9
+							{
+								enabled = false,
+								buttons = 12,
+								rows = 1,
+								padding = 3,
+								skin = {Zoom = true},
+								position = {parent = 'War_ActionBarPlate', scale = 0.85, growHorizontal = 'RIGHT'}
+							} -- 10
+						}
+					},
+					BagBar = {
+						version = 3,
+						enabled = true,
+						padding = 0,
+						position = {point = 'TOP', x = 465, y = -1, scale = 0.6, growHorizontal = 'LEFT'},
+						rows = 1,
+						onebag = false,
+						keyring = true
+					},
+					MicroMenu = {
+						version = 3,
+						enabled = true,
+						padding = -3,
+						position = {point = 'TOP', x = 138, y = -1, scale = 0.65, growHorizontal = 'RIGHT'}
+					},
+					PetBar = {
+						version = 3,
+						enabled = true,
+						padding = 1,
+						position = {point = 'TOP', x = -465, y = -1, scale = 0.65, growHorizontal = 'RIGHT'},
+						rows = 1,
+						skin = {Zoom = true}
+					},
+					StanceBar = {
+						version = 3,
+						enabled = true,
+						padding = 1,
+						position = {point = 'TOP', x = -129, y = -1, scale = 0.6, growHorizontal = 'LEFT'},
+						rows = 1
+					},
+					MultiCast = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'TOPRIGHT', parent = 'War_ActionBarPlate', x = -777, y = -4, scale = 0.75}
+					},
+					Vehicle = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = false,
+						padding = 3,
+						position = {point = 'CENTER', parent = 'War_ActionBarPlate', x = -15, y = 213, scale = 0.85}
+					},
+					ExtraActionBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'CENTER', parent = 'War_ActionBarPlate', x = -32, y = 240}
+					},
+					ZoneAbilityBar = {
+						fadeoutalpha = .6,
+						version = 3,
+						fadeout = true,
+						enabled = true,
+						position = {point = 'CENTER', parent = 'War_ActionBarPlate', x = -32, y = 240}
+					}
+				},
+				TooltipLoc = true,
+				BuffLoc = true
 			}
 		},
 		ChatSettings = {
@@ -506,25 +1417,17 @@ local DBdefault = {
 			GearTokens = false,
 			AutoRepair = false,
 			UseGuildBankRepair = false
-		},
 		AutoTurnIn = {
-			ChatText = true,
 			FirstLaunch = true,
 			debug = false,
-			TurnInEnabled = true,
 			AutoGossip = true,
-			AutoGossipSafeMode = true,
 			AcceptGeneralQuests = true,
-			AcceptRepeatable = false,
 			trivial = false,
 			lootreward = true,
 			autoequip = false,
 			armor = {},
 			weapon = {},
 			stat = {},
-			secondary = {},
-			Blacklist = {}
-		},
 		Components = {},
 		Unitframes = {
 			Style = 'War',
@@ -1150,6 +2053,14 @@ local DBdefault = {
 			Color = {0, 0, 0, 0.4},
 			SuppressNoMatch = true
 		}
+		},
+			AcceptRepeatable = false,
+			AutoGossipSafeMode = true,
+			TurnInEnabled = true,
+			ChatText = true,
+		},
+			Blacklist = {}
+			secondary = {},
 	},
 	Modules = {
 		StatusBars = {
@@ -1390,7 +2301,20 @@ function SUI:DBUpgrades()
 		SUI.DB.SetupWizard.FirstLaunch = false
 		SUI.DB.AutoTurnIn.FirstLaunch = false
 		SUI.DB.AutoSell.FirstLaunch = false
-		SUI.DB.SetupWizard.FirstLaunch = false
+	end
+	-- 5.2.0 Upgrades
+	if SUI.DB.Version < '5.2.0' then
+		if not SUI.DBMod.Artwork.SetupDone and not SUI.DB.SetupWizard.FirstLaunch then
+			SUI.DBMod.Artwork.SetupDone = true
+		end
+		if SUI.DBMod.Artwork.SetupDone then
+			for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+				if k == 'StatusTrackingBar' and v.db.profile.enabled then
+					v.db.profile.enabled = false
+					v:ToggleModule()
+				end
+			end
+		end
 	end
 
 	SUI.DB.Version = SUI.Version
@@ -1738,8 +2662,6 @@ function SUI:Err(mod, err)
 	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
 end
 
----------------		Math and Comparison FUNCTIONS		-------------------------------
-
 --[[
 	Takes a target table and injects data from the source
 	override allows the source to be put into the target
@@ -1762,6 +2684,8 @@ function SUI:MergeData(target, source, override)
 	end
 	return target
 end
+
+---------------		Math and Comparison FUNCTIONS		-------------------------------
 
 --[[
 	Takes a target table and searches for the specified phrase

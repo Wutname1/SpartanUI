@@ -472,7 +472,7 @@ function module:ModuleSelectionPage()
 					checkbox:HookScript(
 						'OnClick',
 						function()
-							SUI.DB.EnabledComponents[RealName] = checkbox:GetValue()
+							SUI.DB.EnabledComponents[RealName] = (checkbox:GetValue() or false)
 						end
 					)
 					checkbox:SetChecked(SUI.DB.EnabledComponents[RealName])

@@ -36,9 +36,9 @@ libs\StdUi\StdUi.xml
 
 libs\SUF\SUF.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
-#@non-retail@
-libs\oUF_PetHappiness\oUF_PetHappiness.lua
 #@end-non-retail@
+libs\oUF_PetHappiness\oUF_PetHappiness.lua
+#@non-retail@
 libs\oUF_Plugins\Loader.xml
 
 lang\localization.xml

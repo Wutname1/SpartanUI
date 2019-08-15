@@ -1,3 +1,8 @@
+#@retail@
 ## Interface: 80200
+#@end-retail@
+#@non-retail@
+# ## Interface: 11302
+#@end-non-retail@
 ## Title: SpartanUI: |CFF0070DDParty Frames|r
 ## Notes: LEGACY FOLDER CAN BE DELETED AS OF 6.1
