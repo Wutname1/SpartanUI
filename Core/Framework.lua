@@ -1805,7 +1805,20 @@ function SUI:DBUpgrades()
 		SUI.DB.SetupWizard.FirstLaunch = false
 		SUI.DB.AutoTurnIn.FirstLaunch = false
 		SUI.DB.AutoSell.FirstLaunch = false
-		SUI.DB.SetupWizard.FirstLaunch = false
+	end
+	-- 5.2.0 Upgrades
+	if SUI.DB.Version < '5.2.0' then
+		if not SUI.DBMod.Artwork.SetupDone and not SUI.DB.SetupWizard.FirstLaunch then
+			SUI.DBMod.Artwork.SetupDone = true
+		end
+		if SUI.DBMod.Artwork.SetupDone then
+			for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+				if k == 'StatusTrackingBar' and v.db.profile.enabled then
+					v.db.profile.enabled = false
+					v:ToggleModule()
+				end
+			end
+		end
 	end
 
 	SUI.DB.Version = SUI.Version
