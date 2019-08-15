@@ -381,6 +381,19 @@ local NameplateCallback = function(self, event, unit)
 		self.TargetIndicator.bg1:Hide()
 		self.TargetIndicator.bg2:Hide()
 	end
+	if SUI.DBMod.NamePlates.elements.RareElite.enabled then
+		self:EnableElement('RareElite')
+	else
+		self:DisableElement('RareElite')
+	end
+	-- Do the non-classic things
+	if not SUI.IsClassic then
+		if SUI.DBMod.NamePlates.elements.QuestIndicator.enabled then
+			self:EnableElement('QuestIndicator')
+		else
+			self:DisableElement('QuestIndicator')
+		end
+	end
 
 	-- Update elements
 	UpdateElementState(self)
