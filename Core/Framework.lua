@@ -13,8 +13,8 @@ local type, pairs = type, pairs
 local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
-SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = '6ead4c4' -- The ZIP packager will replace this with the Git hash.
+SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
