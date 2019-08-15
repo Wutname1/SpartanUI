@@ -13,8 +13,8 @@ local type, pairs = type, pairs
 local SUIChatCommands = {}
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
-SUI.IsClassic = select(4, GetBuildInfo()) < 20000
-SUI.GitHash = '6ead4c4' -- The ZIP packager will replace this with the Git hash.
+SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 SUI.releaseType = 'Release'
 
 --@alpha@
@@ -2660,29 +2660,6 @@ function SUI:Err(mod, err)
 	SUI:Print("An error has been captured in the Component '" .. mod .. "'")
 	SUI:Print('Details: ' .. err)
 	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
-end
-
---[[
-	Takes a target table and injects data from the source
-	override allows the source to be put into the target
-	even if its already populated
-]]
-function SUI:MergeData(target, source, override)
-	if type(target) ~= 'table' then
-		target = {}
-	end
-	for k, v in pairs(source) do
-		if type(v) == 'table' then
-			target[k] = self:MergeData(target[k], v, override)
-		else
-			if override then
-				target[k] = v
-			elseif target[k] == nil then
-				target[k] = v
-			end
-		end
-	end
-	return target
 end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
