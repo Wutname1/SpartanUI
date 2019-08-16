@@ -2227,6 +2227,25 @@ local DBdefault = {
 					}
 				}
 			}
+		},
+		Chatbox = {
+			URLCopy = true,
+			SendHistory = true,
+			ColorClass = true,
+			LinkHover = true,
+			webLinks = true,
+			TimeStamp = {
+				enabled = true,
+				format = '%X'
+			},
+			player = {
+				color = true,
+				level = true
+			},
+			ChatCopy = {
+				enabled = true,
+				tip = true
+			}
 		}
 	}
 }
