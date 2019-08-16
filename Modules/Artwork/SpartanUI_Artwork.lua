@@ -555,38 +555,3 @@ function Artwork_Core:CreateProfile()
 	Bartender4:UpdateModuleConfigs()
 	SUI.DBG.BartenderChangesActive = false
 end
-
-function Artwork_Core:VehicleSeats()
-	if SUI.IsClassic then
-		return
-	end
-
-	function My_VehicleSeatIndicatorButton_OnClick(self, button)
-		local seatIndex = self.virtualID
-		local _, occupantName = UnitVehicleSeatInfo('player', seatIndex)
-		if
-			(button == 'RightButton' and
-				(CanEjectPassengerFromSeat(seatIndex) or (CanExitVehicle() and (occupantName == UnitName('player')))))
-		 then
-			ToggleDropDownMenu(1, seatIndex, VehicleSeatIndicatorDropDown, self:GetName(), 0, -5)
-			if (CanEjectPassengerFromSeat(seatIndex)) then
-				UIDropDownMenu_DisableButton(1, 2)
-				UIDropDownMenu_EnableButton(1, 1)
-			else
-				UIDropDownMenu_DisableButton(1, 1)
-				UIDropDownMenu_EnableButton(1, 2)
-			end
-		else
-			UnitSwitchToVehicleSeat('player', seatIndex)
-		end
-	end
-
-	VehicleSeatIndicatorButton_OnClick = My_VehicleSeatIndicatorButton_OnClick
-
-	function VehicleSeatLeaveVehicleDropDown_OnClick()
-		VehicleExit()
-		PlaySound('UChatScrollButton')
-	end
-
-	UIDropDownMenu_Initialize(VehicleSeatIndicatorDropDown, VehicleSeatIndicatorDropDown_Initialize, 'MENU')
-end
