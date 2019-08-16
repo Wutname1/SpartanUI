@@ -80,10 +80,10 @@ local DBdefault = {
 		},
 		Styles = {
 			['**'] = {
-				Artwork = false,
-				PlayerFrames = false,
-				PartyFrames = false,
-				RaidFrames = false,
+				Artwork = {},
+				PlayerFrames = {},
+				PartyFrames = {},
+				RaidFrames = {},
 				Movable = {
 					Minimap = true,
 					PlayerFrames = true,
@@ -234,10 +234,6 @@ local DBdefault = {
 				BuffLoc = false
 			},
 			Classic = {
-				Artwork = true,
-				PlayerFrames = true,
-				PartyFrames = true,
-				RaidFrames = true,
 				BartenderProfile = 'SpartanUI - Classic',
 				BartenderSettings = {
 					-- actual settings being inserted into our custom profile
@@ -464,10 +460,6 @@ local DBdefault = {
 				TooltipLoc = true
 			},
 			Transparent = {
-				Artwork = {},
-				PlayerFrames = {},
-				PartyFrames = {},
-				RaidFrames = {},
 				Movable = {
 					Minimap = false,
 					PlayerFrames = true,
@@ -713,10 +705,6 @@ local DBdefault = {
 				BuffLoc = true
 			},
 			Minimal = {
-				Artwork = {},
-				PlayerFrames = {},
-				PartyFrames = {},
-				RaidFrames = {},
 				Movable = {
 					Minimap = true,
 					PlayerFrames = true,
@@ -903,7 +891,6 @@ local DBdefault = {
 					player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
 					target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}}
 				},
-				PlayerFrames = {},
 				PartyFrames = {
 					FrameStyle = 'medium'
 				},
@@ -1151,7 +1138,6 @@ local DBdefault = {
 					targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
 					focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
 				},
-				PlayerFrames = {},
 				PartyFrames = {
 					FrameStyle = 'medium'
 				},
