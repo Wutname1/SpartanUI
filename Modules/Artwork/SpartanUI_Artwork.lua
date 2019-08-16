@@ -507,7 +507,7 @@ function Artwork_Core:SetupProfile(ProfileOverride)
 	--Load the Profile Data
 	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k])
+			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k], true)
 		end
 	end
 	SUI.DBG.BartenderChangesActive = false
@@ -548,7 +548,7 @@ function Artwork_Core:CreateProfile()
 	--Load the Profile Data
 	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
 		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k])
+			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k], true)
 		end
 	end
 
