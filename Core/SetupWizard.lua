@@ -324,14 +324,6 @@ end
 
 function module:OnInitialize()
 	InitDone = true
-	local Defaults = {
-		FirstLaunch = true
-	}
-	if not SUI.DB.SetupWizard then
-		SUI.DB.SetupWizard = Defaults
-	else
-		SUI.DB.SetupWizard = SUI:MergeData(SUI.DB.SetupWizard, Defaults, false)
-	end
 	module:WelcomePage()
 	module:ProfileSetup()
 	module:ModuleSelectionPage()

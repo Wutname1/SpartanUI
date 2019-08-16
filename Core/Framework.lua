@@ -75,6 +75,9 @@ local DBdefault = {
 		alpha = 1,
 		viewport = true,
 		EnabledComponents = {},
+		SetupWizard = {
+			FirstLaunch = true
+		},
 		Styles = {
 			['**'] = {
 				Artwork = false,
