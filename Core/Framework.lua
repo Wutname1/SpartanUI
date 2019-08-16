@@ -1134,6 +1134,16 @@ local DBdefault = {
 				BuffLoc = true
 			},
 			War = {
+				Artwork = {
+					Allenable = true,
+					Allalpha = 100,
+					bar1 = {enable = true, alpha = 100},
+					bar2 = {enable = true, alpha = 100},
+					bar3 = {enable = true, alpha = 100},
+					bar4 = {enable = true, alpha = 100},
+					Stance = {enable = true, alpha = 100},
+					MenuBar = {enable = true, alpha = 100}
+				},
 				Frames = {
 					player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
 					target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}},
