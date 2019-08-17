@@ -12,4 +12,5 @@
 	<Script file="CombatLog.lua" />
 	<Script file="InterruptAnnounce.lua" />
 	<Script file="TauntWatcher.lua" />
+	<Script file="Chatbox.lua" />
 </Ui>

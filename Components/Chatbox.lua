@@ -3,11 +3,16 @@ local StdUi = LibStub('StdUi'):NewInstance()
 local module = SUI:NewModule('Component_Chatbox', 'AceEvent-3.0', 'AceHook-3.0')
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
+local SUIiconID = GetFileIDFromPath('Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
 local linkTypes = {
 	item = true,
 	enchant = true,
 	spell = true,
 	achievement = true,
+	talent = true,
+	glyph = true,
+	currency = true,
+	unit = true,
 	quest = true
 }
 local ChatLevelLog
@@ -284,41 +289,53 @@ function module:SetupChatboxes()
 	end
 
 	--Copying Functions
-	local copyFunc = function(frame)
-		if not IsAltKeyDown() then
-			return
+	local TabClick = function(frame)
+		local ChatFrameName = format('%s%d', 'ChatFrame', frame:GetID())
+		local ChatFrame = _G[ChatFrameName]
+		local ChatFrameEdit = _G[ChatFrameName .. 'EditBox']
+
+		if IsAltKeyDown() then
+			local text = ''
+			-- Fix special pipe methods e.g. 5 |4hour:hours; Example: copying /played text
+			for i = 1, ChatFrame:GetNumMessages() do
+				local line = ChatFrame:GetMessageInfo(i)
+				popup.font:SetFormattedText('%s\n', line)
+				local cleanLine = popup.font:GetText() or ''
+				text = text .. cleanLine
+			end
+			text =
+				text:gsub(
+				'|T[^\\]+\\[^\\]+\\[Uu][Ii]%-[Rr][Aa][Ii][Dd][Tt][Aa][Rr][Gg][Ee][Tt][Ii][Nn][Gg][Ii][Cc][Oo][Nn]_(%d)[^|]+|t',
+				'{rt%1}'
+			)
+
+			text = text:gsub('|T13700([1-8])[^|]+|t', '{rt%1}') -- raid icons
+			text = text:gsub('|T[^|]+|t', '') -- Remove icons to prevent copying issues
+			text = text:gsub('|K[^|]+|k', '<Protected Text>') -- Remove protected text
+			module:SetPopupText(text)
+		elseif IsShiftKeyDown() then
+			if ChatFrame:IsVisible() then
+				ChatFrame:Hide()
+				ChatFrameEdit:Hide()
+			else
+				ChatFrame:Show()
+				ChatFrameEdit:Show()
+			end
 		end
-		local ChatFrame = _G[format('%s%d', 'ChatFrame', frame:GetID())]
-		local text = ''
-		for i = 1, ChatFrame:GetNumMessages() do
-			local line = ChatFrame:GetMessageInfo(i)
-			popup.font:SetFormattedText('%s\n', line) -- We do this to fix special pipe methods e.g. 5 |4hour:hours; Example: copying /played text
-			local cleanLine = popup.font:GetText() or ''
-			text = text .. cleanLine
-		end
-		text =
-			text:gsub(
-			'|T[^\\]+\\[^\\]+\\[Uu][Ii]%-[Rr][Aa][Ii][Dd][Tt][Aa][Rr][Gg][Ee][Tt][Ii][Nn][Gg][Ii][Cc][Oo][Nn]_(%d)[^|]+|t',
-			'{rt%1}'
-		) -- I like being able to copy raid icons
-		text = text:gsub('|T13700([1-8])[^|]+|t', '{rt%1}') -- I like being able to copy raid icons
-		text = text:gsub('|T[^|]+|t', '') -- Remove any other icons to prevent copying issues
-		text = text:gsub('|K[^|]+|k', '<Protected Text>') -- Remove protected text
-		module:SetPopupText(text)
-		-- C_Timer.After(0.25, scrollDown) -- Scroll to the bottom, we have to delay it unfortunately
 	end
-	local hintFuncEnter = function(frame)
+	local TabHintEnter = function(frame)
 		if not SUI.DBMod.Chatbox.ChatCopy.tip then
 			return
 		end
-		local iconID = GetFileIDFromPath('Interface\\AddOns\\SpartanUI\\media\\Spartan-Helm')
 
 		ShowUIPanel(GameTooltip)
 		GameTooltip:SetOwner(frame, 'ANCHOR_TOP')
-		GameTooltip:AddLine('|T' .. iconID .. ':20|t' .. 'ALT+Click to copy', 1, 0, 0) -- Interface\\Icons\\Spell_ChargePositive
+		-- GameTooltip:AddLine('|T' .. SUIiconID .. ':20|', .8, 0, 0)
+		GameTooltip:AddLine('Alt+Click to copy', .8, 0, 0)
+		GameTooltip:AddLine('Shift+Click to toggle', 0, 0.1, 1)
 		GameTooltip:Show()
 	end
-	local hintFuncLeave = function(frame)
+	local TabHintLeave = function(frame)
 		if not SUI.DBMod.Chatbox.ChatCopy.tip then
 			return
 		end
@@ -338,12 +355,62 @@ function module:SetupChatboxes()
 			local ChatFrameTab = _G[ChatFrameName .. 'Tab']
 			hooksecurefunc(ChatFrame.historyBuffer, 'PushFront', ModifyMessage)
 
-			ChatFrameTab:HookScript('OnClick', copyFunc)
-			ChatFrameTab:HookScript('OnEnter', hintFuncEnter)
-			ChatFrameTab:HookScript('OnLeave', hintFuncLeave)
+			ChatFrameTab:HookScript('OnClick', TabClick)
+			ChatFrameTab:HookScript('OnEnter', TabHintEnter)
+			ChatFrameTab:HookScript('OnLeave', TabHintLeave)
 
 			module:HookScript(ChatFrame, 'OnHyperlinkEnter', OnHyperlinkEnter)
 			module:HookScript(ChatFrame, 'OnHyperlinkLeave', OnHyperlinkLeave)
+
+			ChatFrame:SetClampRectInsets(0, 0, 0, 0)
+			ChatFrame:SetClampedToScreen(false)
+			SUI:StripTextures(ChatFrame)
+
+			-- Setup Editbox BG
+			local EBLeft = _G[ChatFrameName .. 'EditBoxLeft']
+			local EBMid = _G[ChatFrameName .. 'EditBoxMid']
+			local EBRight = _G[ChatFrameName .. 'EditBoxRight']
+
+			-- ChatFrame:SetTexture('Interface\\AddOns\\SpartanUI\\media\\texture')
+			EBLeft:SetTexture('Interface\\AddOns\\SpartanUI\\media\\texture')
+			EBMid:SetTexture('Interface\\AddOns\\SpartanUI\\media\\texture')
+			EBRight:SetTexture('Interface\\AddOns\\SpartanUI\\media\\texture')
+
+			-- ChatFrame:SetVertexColor(0, 0, 0, .5)
+			EBLeft:SetVertexColor(0, 0, 0, .5)
+			EBMid:SetVertexColor(0, 0, 0, .5)
+			EBRight:SetVertexColor(0, 0, 0, .5)
+
+		-- local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
+		-- local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
+		-- local EBFocusRight = _G[ChatFrameName .. 'EditBoxFocusRight']
+
+		-- local EditBoxFocusShow = function(frame)
+		-- 	EBLeft:Show()
+		-- 	EBMid:Show()
+		-- 	EBRight:Show()
+		-- end
+		-- local EditBoxFocusHide = function(frame)
+		-- 	EBLeft:Hide()
+		-- 	EBMid:Hide()
+		-- 	EBRight:Hide()
+		-- end
+
+		-- EBLeft:Hide()
+		-- EBMid:Hide()
+		-- EBRight:Hide()
+
+		-- hooksecurefunc(EBFocusLeft, 'Show', EditBoxFocusShow)
+		-- hooksecurefunc(EBFocusMid, 'Show', EditBoxFocusShow)
+		-- hooksecurefunc(EBFocusRight, 'Show', EditBoxFocusShow)
+
+		-- hooksecurefunc(EBFocusLeft, 'Hide', EditBoxFocusHide)
+		-- hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
+		-- hooksecurefunc(EBFocusRight, 'Hide', EditBoxFocusHide)
+
+		-- hooksecurefunc(EBLeft, 'Hide', EditBoxShow)
+		-- hooksecurefunc(EBMid, 'Hide', EditBoxShow)
+		-- hooksecurefunc(EBRight, 'Hide', EditBoxShow)
 		end
 	end
 
