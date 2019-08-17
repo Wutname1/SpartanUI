@@ -101,6 +101,9 @@ local SetBarColor = function(self, side)
 end
 
 local updateText = function(self)
+	if GetRealmName() == 'arctium.io' then
+		return
+	end
 	-- local FrameName = self:GetName()
 	-- Reset graphics to avoid issues
 	self.Fill:SetWidth(0.1)
@@ -174,7 +177,7 @@ local updateText = function(self)
 				self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
 			end
 		end
-		if module.DB[side].text and valFill and valMax and valPercent ~= valPercent then
+		if module.DB[side].text and valFill and valMax then
 			self.Text:SetFormattedText('( %s / %s ) %d%%', SUI:comma_value(valFill), SUI:comma_value(valMax), valPercent)
 		end
 	end
@@ -418,6 +421,9 @@ function module:factory()
 			statusbar:SetScript(
 				'OnEnter',
 				function(self)
+					if GetRealmName() == 'arctium.io' then
+						return
+					end
 					if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then
 						showRepTooltip(self, i)
 					end
@@ -435,6 +441,9 @@ function module:factory()
 			statusbar:SetScript(
 				'OnMouseDown',
 				function(self)
+					if GetRealmName() == 'arctium.io' then
+						return
+					end
 					if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then
 						showRepTooltip(self, i)
 					end

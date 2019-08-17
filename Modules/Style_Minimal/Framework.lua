@@ -291,8 +291,8 @@ end
 
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		UnRegisterStateDriver(Minimal_SpartanUI, 'visibility')
-		UnRegisterStateDriver(SpartanUI, 'visibility')
+		UnregisterStateDriver(Minimal_SpartanUI, 'visibility')
+		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 
@@ -348,6 +348,4 @@ function module:EnableFramework()
 			end
 		end
 	)
-
-	Artwork_Core:VehicleSeats()
 end

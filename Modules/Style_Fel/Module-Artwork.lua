@@ -176,9 +176,9 @@ end
 
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		UnRegisterStateDriver(petbattle, 'visibility')
-		UnRegisterStateDriver(Fel_SpartanUI, 'visibility')
-		UnRegisterStateDriver(SpartanUI, 'visibility')
+		UnregisterStateDriver(petbattle, 'visibility')
+		UnregisterStateDriver(Fel_SpartanUI, 'visibility')
+		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 

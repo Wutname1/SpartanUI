@@ -1,6 +1,7 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Artwork_Core')
 local module = SUI:NewModule('Style_Classic')
+local UnregisterStateDriver = _G.UnregisterStateDriver
 ----------------------------------------------------------------------------------------------------
 local anchor, frame = SUI_AnchorFrame, SpartanUI
 
@@ -322,7 +323,7 @@ end
 
 function module:RemoveVehicleUI()
 	if not SUI.DBMod.Artwork.VehicleUI then
-		UnRegisterStateDriver(SpartanUI, 'visibility')
+		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 
@@ -388,6 +389,4 @@ function module:EnableFramework()
 			end
 		)
 	end
-
-	Artwork_Core:VehicleSeats()
 end
