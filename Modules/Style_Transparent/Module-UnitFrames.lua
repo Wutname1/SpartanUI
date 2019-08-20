@@ -134,7 +134,7 @@ local pvpIcon = function(self, event, unit)
 	end
 
 	local status
-	local factionGroup = UnitFactionGroup(unit)
+	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 	if (UnitIsPVPFreeForAll(unit)) then
 		-- XXX - WoW5: UnitFactionGroup() can return Neutral as well.
 		pvp:SetTexture('Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon')

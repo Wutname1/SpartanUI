@@ -154,7 +154,7 @@ local pvpIconWar = function(self, event, unit)
 	self.artwork.flairHorde:Hide()
 	self.artwork.flairAlliance:Hide()
 
-	local factionGroup = UnitFactionGroup(unit)
+	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 
 	if (factionGroup and factionGroup ~= 'Neutral') then
 		self.artwork['flair' .. factionGroup]:Show()

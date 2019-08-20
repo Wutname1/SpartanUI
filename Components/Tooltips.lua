@@ -362,7 +362,7 @@ local TooltipSetUnit = function(self)
 		if (lvlLine) then
 			qColor = GetQuestDifficultyColor(unitLevel)
 			local race, englishRace = UnitRace(unit)
-			local _, factionGroup = UnitFactionGroup(unit)
+			local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 
 			if (factionGroup and englishRace == 'Pandaren') then
 				race = factionGroup .. ' ' .. race
