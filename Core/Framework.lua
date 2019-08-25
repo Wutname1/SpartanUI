@@ -1749,13 +1749,13 @@ function SUI:OnInitialize()
 
 	-- Add Profiles to Options
 	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
+	SUI.opt.args['Profiles'].order = 999
 
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0', true)
 	if not SUI.IsClassic and LibDualSpec then
 		LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
 		LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
-		SUI.opt.args['Profiles'].order = 999
 	end
 
 	-- Spec Setup
