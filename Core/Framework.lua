@@ -2358,10 +2358,6 @@ end
 function SUI:InitializeProfile()
 	SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
 
-	SUI.DBG = SUI.SpartanUIDB.global
-	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-
 	SUI:reloadui()
 end
 

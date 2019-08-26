@@ -53,7 +53,7 @@ local pvpIconWar = function(self, event, unit)
 		return
 	end
 
-	local factionGroup = UnitFactionGroup(unit)
+	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 	if settings.Background.type == 'solid' then
 		self.bg.solid:Show()
 		if settings.Background.colorMode == 'faction' and factionGroup then
