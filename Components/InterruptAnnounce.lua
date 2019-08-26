@@ -11,9 +11,9 @@ local function printFormattedString(t, sid, spell, ss, ssid)
 
 	msg =
 		msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub(
-		'%%myspell',
-		GetSpellLink(ssid)
-	)
+		'%%sl',
+		GetSpellLink(sid)
+	):gsub('%%myspell', GetSpellLink(ssid))
 	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else

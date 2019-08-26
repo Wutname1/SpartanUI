@@ -30,7 +30,7 @@ local function printFormattedString(who, target, sid, failed)
 
 	msg = msg:gsub('%%what', target):gsub('%%who', who):gsub('%%spell', GetSpellLink(sid))
 	if failed then
-		msg = msg + ' and it failed horribly.'
+		msg = msg .. ' and it failed horribly.'
 	end
 
 	if ChatChannel == 'SELF' then

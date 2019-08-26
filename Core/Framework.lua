@@ -2281,13 +2281,13 @@ function SUI:OnInitialize()
 
 	-- Add Profiles to Options
 	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
+	SUI.opt.args['Profiles'].order = 999
 
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0', true)
 	if not SUI.IsClassic and LibDualSpec then
 		LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
 		LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
-		SUI.opt.args['Profiles'].order = 999
 	end
 
 	-- Spec Setup
@@ -2356,7 +2356,7 @@ function SUI:DBUpgrades()
 end
 
 function SUI:InitializeProfile()
-	SUI.DB:RegisterDefaults(SUI.DBdefaults)
+	SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
 
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
@@ -2504,11 +2504,6 @@ function SUI:BT4RefreshConfig()
 end
 
 function SUI:UpdateModuleConfigs()
-	-- SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
-
-	-- SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	-- SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-
 	if Bartender4 then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
 			Bartender4.db:SetProfile(SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile)

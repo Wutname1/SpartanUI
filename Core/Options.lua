@@ -513,7 +513,7 @@ function module:OnInitialize()
 				order = 101,
 				width = 'full',
 				get = function(info)
-					return 'https://discord.gg/J8wJGtz'
+					return 'https://discord.gg/Qc9TRBv'
 				end,
 				set = function(info, value)
 				end
@@ -601,7 +601,7 @@ function module:OnInitialize()
 		order = 101,
 		width = 'full',
 		get = function(info)
-			return 'https://discord.gg/J8wJGtz'
+			return 'https://discord.gg/Qc9TRBv'
 		end,
 		set = function(info, value)
 		end
