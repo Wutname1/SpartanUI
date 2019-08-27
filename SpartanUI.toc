@@ -15,6 +15,9 @@
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
 
+#Setup SUI error catcher
+libs\bug-grabber\load.xml
+
 # General Libraries
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
