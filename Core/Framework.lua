@@ -2363,12 +2363,25 @@ function SUI:DBUpgrades()
 			SUI.DB.EnabledComponents.SpinCam = false
 		end
 
+		-- Only disable the new Unitframes if all 3 unitframe addons are disabled
 		if
 			not select(4, GetAddOnInfo('SpartanUI_PartyFrames')) and not select(4, GetAddOnInfo('SpartanUI_PlayerFrames')) and
 				not select(4, GetAddOnInfo('SpartanUI_RaidFrames'))
 		 then
 			SUI.DB.EnabledComponents.UnitFrames = false
 		end
+
+		-- Make sure everything is disabled
+		DisableAddOn('SpartanUI_Artwork')
+		DisableAddOn('SpartanUI_SpinCam')
+		DisableAddOn('SpartanUI_FilmEffects')
+		DisableAddOn('SpartanUI_PartyFrames')
+		DisableAddOn('SpartanUI_PlayerFrames')
+		DisableAddOn('SpartanUI_RaidFrames')
+		DisableAddOn('SpartanUI_Style_Fel')
+		DisableAddOn('SpartanUI_Style_Minimal')
+		DisableAddOn('SpartanUI_Style_Transparent')
+		DisableAddOn('SpartanUI_Style_War')
 	end
 
 	SUI.DB.Version = SUI.Version
