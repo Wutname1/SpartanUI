@@ -1,16 +1,16 @@
 package-as: SpartanUI
 
 move-folders:
-  SpartanUI/Modules/Artwork: SpartanUI_Artwork
-  SpartanUI/Modules/PlayerFrames: SpartanUI_PlayerFrames
-  SpartanUI/Modules/RaidFrames: SpartanUI_RaidFrames
-  SpartanUI/Modules/PartyFrames: SpartanUI_PartyFrames
-  SpartanUI/Modules/FilmEffects: SpartanUI_FilmEffects
-  SpartanUI/Modules/SpinCam: SpartanUI_SpinCam
-  SpartanUI/Modules/Style_Minimal: SpartanUI_Style_Minimal
-  SpartanUI/Modules/Style_Transparent: SpartanUI_Style_Transparent
-  SpartanUI/Modules/Style_Fel: SpartanUI_Style_Fel
-  SpartanUI/Modules/Style_War: SpartanUI_Style_War
+  SpartanUI/Modules/Legacy/Artwork: SpartanUI_Artwork
+  SpartanUI/Modules/Legacy/PlayerFrames: SpartanUI_PlayerFrames
+  SpartanUI/Modules/Legacy/RaidFrames: SpartanUI_RaidFrames
+  SpartanUI/Modules/Legacy/PartyFrames: SpartanUI_PartyFrames
+  SpartanUI/Modules/Legacy/FilmEffects: SpartanUI_FilmEffects
+  SpartanUI/Modules/Legacy/SpinCam: SpartanUI_SpinCam
+  SpartanUI/Modules/Legacy/Style_Minimal: SpartanUI_Style_Minimal
+  SpartanUI/Modules/Legacy/Style_Transparent: SpartanUI_Style_Transparent
+  SpartanUI/Modules/Legacy/Style_Fel: SpartanUI_Style_Fel
+  SpartanUI/Modules/Legacy/Style_War: SpartanUI_Style_War
 
 externals:
   libs/LibStub:

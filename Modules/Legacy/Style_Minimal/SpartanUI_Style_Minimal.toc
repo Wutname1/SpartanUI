@@ -1,0 +1,4 @@
+## Interface: 11302
+## Title: SpartanUI: |CFF0070DDStyle - Minimal|r
+## Notes: LEGACY FOLDER CAN BE DELETED AS OF 6.1
+## RequiredDeps: SpartanUI

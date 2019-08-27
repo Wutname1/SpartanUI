@@ -49,5 +49,12 @@ lang\localization.xml
 
 # Now load SpartanUI
 core\Framework.lua
-components\Loader.xml
+Modules\Loader.xml
 core\Framework.xml
+
+# Load Styles
+Themes\Classic\Style.xml
+Themes\War\Style.xml
+Themes\Fel\Style.xml
+Themes\Minimal\Style.xml
+Themes\Transparent\Style.xml

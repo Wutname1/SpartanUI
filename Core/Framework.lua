@@ -1439,19 +1439,19 @@ local DBdefault = {
 		Tooltips = {
 			Styles = {
 				metal = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\metal.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\metal.tga',
 					tile = false
 				},
 				smooth = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\Smoothv2.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga',
 					tile = false
 				},
 				smoke = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\smoke.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\smoke.tga',
 					tile = false
 				},
 				none = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\media\\blank.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
 					tile = false
 				}
 			},
@@ -2083,7 +2083,7 @@ local DBdefault = {
 			default = {
 				size = {256, 36},
 				Grow = 'LEFT',
-				bgTooltip = 'Interface\\Addons\\SpartanUI_Artwork\\Images\\status-tooltip',
+				bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
 				texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
 				TooltipSize = {300, 100},
 				TooltipTextSize = {230, 60},
@@ -2095,7 +2095,7 @@ local DBdefault = {
 				GlowAnchor = 'RIGHT',
 				GlowPoint = {x = 0, y = 0},
 				GlowHeight = 20,
-				GlowImage = 'Interface\\AddOns\\SpartanUI_Artwork\\Images\\status-glow',
+				GlowImage = 'Interface\\AddOns\\SpartanUI\\Images\\status-glow',
 				texCords = {0, 1, 0, 1}
 			},
 			['**'] = {
