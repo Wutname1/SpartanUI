@@ -2352,6 +2352,25 @@ function SUI:DBUpgrades()
 		end
 	end
 
+	if SUI.DB.Version < '6.0.0' then
+		if not select(4, GetAddOnInfo('SpartanUI_Artwork')) then
+			SUI.DB.EnabledComponents.Artwork = false
+		end
+		if not select(4, GetAddOnInfo('SpartanUI_FilmEffects')) then
+			SUI.DB.EnabledComponents.FilmEffects = false
+		end
+		if not select(4, GetAddOnInfo('SpartanUI_SpinCam')) then
+			SUI.DB.EnabledComponents.SpinCam = false
+		end
+
+		if
+			not select(4, GetAddOnInfo('SpartanUI_PartyFrames')) and not select(4, GetAddOnInfo('SpartanUI_PlayerFrames')) and
+				not select(4, GetAddOnInfo('SpartanUI_RaidFrames'))
+		 then
+			SUI.DB.EnabledComponents.UnitFrames = false
+		end
+	end
+
 	SUI.DB.Version = SUI.Version
 end
 
@@ -2447,7 +2466,7 @@ function SUI:BT4ProfileAttach(msg)
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
 			end
 			--Setup profile
-			SUI:GetModule('Artwork_Core'):SetupProfile(Bartender4.db:GetCurrentProfile())
+			SUI:GetModule('Component_Artwork'):SetupProfile(Bartender4.db:GetCurrentProfile())
 			ReloadUI()
 		end,
 		Skip = function()

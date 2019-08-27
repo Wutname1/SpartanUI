@@ -1,6 +1,6 @@
 local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:GetModule('Artwork_Core')
+local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Fel')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false

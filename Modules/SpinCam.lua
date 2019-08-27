@@ -1,5 +1,5 @@
 local SUI, L = SUI, SUI.L
-local addon = SUI:NewModule('SpinCam')
+local addon = SUI:NewModule('Component_SpinCam')
 local SpinCamRunning = false
 local userCameraYawMoveSpeed
 local usercameraCustomViewSmoothing
@@ -66,6 +66,10 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
+	if not SUI.DB.EnabledComponents.SpinCam then
+		return
+	end
+
 	userCameraYawMoveSpeed = tonumber(GetCVar('cameraYawMoveSpeed'))
 	usercameraCustomViewSmoothing = tonumber(GetCVar('cameraCustomViewSmoothing'))
 

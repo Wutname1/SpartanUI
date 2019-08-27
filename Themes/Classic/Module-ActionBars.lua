@@ -1,5 +1,5 @@
 local _G, SUI = _G, SUI
-local Artwork_Core = SUI:GetModule('Artwork_Core')
+local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Classic')
 ----------------------------------------------------------------------------------------------------
 

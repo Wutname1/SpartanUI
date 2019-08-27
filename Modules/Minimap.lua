@@ -178,7 +178,7 @@ function module:OnEnable()
 		return
 	end
 
-	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap or (not SUI:GetModule('Artwork_Core', true)) then
+	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap or (not SUI:GetModule('Component_Artwork', true)) then
 		Minimap.mover = CreateFrame('Frame')
 		Minimap.mover:SetSize(5, 5)
 		Minimap.mover:SetAllPoints(Minimap)
@@ -194,7 +194,7 @@ function module:OnEnable()
 			function(self, button)
 				if button == 'LeftButton' and IsAltKeyDown() and not SUI.DB.MiniMap.lockminimap then
 					Minimap.mover:Show()
-					if SUI:GetModule('Artwork_Core', true) then
+					if SUI:GetModule('Component_Artwork', true) then
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = true
 					else
 						SUI.DB.MiniMap.Moved = true
@@ -210,7 +210,7 @@ function module:OnEnable()
 			function(self, button)
 				Minimap.mover:Hide()
 				Minimap:StopMovingOrSizing()
-				if SUI:GetModule('Artwork_Core', true) then
+				if SUI:GetModule('Component_Artwork', true) then
 					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(Minimap:GetNumPoints())}
 				else
 					SUI.DB.MiniMap.Position = {Minimap:GetPoint(Minimap:GetNumPoints())}
@@ -219,7 +219,7 @@ function module:OnEnable()
 		)
 
 		if
-			SUI:GetModule('Artwork_Core', true) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved and
+			SUI:GetModule('Component_Artwork', true) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved and
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap and
 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords ~= nil
 		 then

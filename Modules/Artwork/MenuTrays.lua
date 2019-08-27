@@ -1,6 +1,6 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
-local module = SUI:GetModule('Artwork_Core')
+local module = SUI:GetModule('Component_Artwork')
 module.Trays = false
 local trayWatcher = CreateFrame('Frame')
 local settings = {}

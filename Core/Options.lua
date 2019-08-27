@@ -5,16 +5,9 @@ local module = SUI:NewModule('Options')
 local LDBIcon = LibStub('LibDBIcon-1.0', true)
 
 ---------------------------------------------------------------------------
-local ModsLoaded = {
-	Artwork = nil,
-	UnitFrames = nil,
-	SpinCam = nil,
-	FilmEffects = nil
-}
-
 function module:ArtSetup()
 	SUI.DBG.BartenderChangesActive = true
-	SUI:GetModule('Artwork_Core'):SetupProfile()
+	SUI:GetModule('Component_Artwork'):SetupProfile()
 
 	SUI.DBG.BartenderChangesActive = false
 end
@@ -34,16 +27,6 @@ function module:OnInitialize()
 	else
 		SUI.DB.Bartender4Version = 0
 	end
-
-	local enabled
-	enabled = select(4, GetAddOnInfo('SpartanUI_Artwork'))
-	ModsLoaded.Artwork = enabled
-	enabled = select(4, GetAddOnInfo('SpartanUI_UnitFrames'))
-	ModsLoaded.UnitFrames = enabled
-	enabled = select(4, GetAddOnInfo('SpartanUI_SpinCam'))
-	ModsLoaded.SpinCam = enabled
-	enabled = select(4, GetAddOnInfo('SpartanUI_FilmEffects'))
-	ModsLoaded.FilmEffects = enabled
 
 	SUI.opt.args['General'].args['style'] = {
 		name = L['StyleSettings'],
@@ -633,88 +616,7 @@ function module:OnInitialize()
 				name = 'Components',
 				type = 'group',
 				inline = true,
-				args = {
-					Artwork = {
-						name = L['Artwork'],
-						type = 'toggle',
-						get = function(info)
-							return ModsLoaded.Artwork
-						end,
-						set = function(info, val)
-							if ModsLoaded.Artwork then
-								ModsLoaded.Artwork = false
-							else
-								ModsLoaded.Artwork = true
-							end
-							if ModsLoaded.Artwork then
-								EnableAddOn('SpartanUI_Artwork')
-							else
-								DisableAddOn('SpartanUI_Artwork')
-							end
-							SUI:reloadui()
-						end
-					},
-					UnitFrames = {
-						name = UNITFRAME_LABEL,
-						type = 'toggle',
-						get = function(info)
-							return ModsLoaded.UnitFrames
-						end,
-						set = function(info, val)
-							if ModsLoaded.UnitFrames then
-								ModsLoaded.UnitFrames = false
-							else
-								ModsLoaded.UnitFrames = true
-							end
-							if ModsLoaded.UnitFrames then
-								EnableAddOn('SpartanUI_UnitFrames')
-							else
-								DisableAddOn('SpartanUI_UnitFrames')
-							end
-							SUI:reloadui()
-						end
-					},
-					SpinCam = {
-						name = L['Spin cam'],
-						type = 'toggle',
-						get = function(info)
-							return ModsLoaded.SpinCam
-						end,
-						set = function(info, val)
-							if ModsLoaded.SpinCam then
-								ModsLoaded.SpinCam = false
-							else
-								ModsLoaded.SpinCam = true
-							end
-							if ModsLoaded.SpinCam then
-								EnableAddOn('SpartanUI_SpinCam')
-							else
-								DisableAddOn('SpartanUI_SpinCam')
-							end
-							SUI:reloadui()
-						end
-					},
-					FilmEffects = {
-						name = L['Film Effects'],
-						type = 'toggle',
-						get = function(info)
-							return ModsLoaded.FilmEffects
-						end,
-						set = function(info, val)
-							if ModsLoaded.FilmEffects then
-								ModsLoaded.FilmEffects = false
-							else
-								ModsLoaded.FilmEffects = true
-							end
-							if ModsLoaded.FilmEffects then
-								EnableAddOn('SpartanUI_FilmEffects')
-							else
-								DisableAddOn('SpartanUI_FilmEffects')
-							end
-							SUI:reloadui()
-						end
-					}
-				}
+				args = {}
 			}
 		}
 	}
@@ -772,7 +674,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI:GetModule('Artwork_Core', true) then
+	if not SUI:GetModule('Component_Artwork', true) then
 		SUI.opt.args['General'].args['style'].args['OverallStyle'].disabled = true
 	end
 end

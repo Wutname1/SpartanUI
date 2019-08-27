@@ -1,6 +1,6 @@
 local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:NewModule('Artwork_Core')
+local Artwork_Core = SUI:NewModule('Component_Artwork')
 local BartenderMin = '4.8.3'
 
 function Artwork_Core:updateScale()
@@ -190,6 +190,9 @@ function Artwork_Core:ActionBarPlates(plate, excludelist)
 end
 
 function Artwork_Core:OnInitialize()
+	if not SUI.DB.EnabledComponents.Artwork then
+		return
+	end
 	if select(4, GetAddOnInfo('Bartender4')) then
 		SUI.DB.Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
 	else
@@ -378,6 +381,9 @@ function Artwork_Core:FirstTime()
 end
 
 function Artwork_Core:OnEnable()
+	if not SUI.DB.EnabledComponents.Artwork then
+		return
+	end
 	-- No Bartender/out of date Notification
 	if SUI.DB.Bartender4Version < BartenderMin then
 		StaticPopup_Show('BartenderVerWarning')

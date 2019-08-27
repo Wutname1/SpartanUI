@@ -1,6 +1,6 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
-local addon = SUI:NewModule('FilmEffect')
+local addon = SUI:NewModule('Component_FilmEffects')
 local Container
 local EffectList = {'vignette', 'blur', 'crisp'}
 
@@ -118,6 +118,10 @@ function addon:OnInitialize()
 end
 
 function addon:OnEnable()
+	if not SUI.DB.EnabledComponents.FilmEffects then
+		return
+	end
+
 	Container = CreateFrame('Frame', 'FilmEffects', WorldFrame)
 	-- Container:SetSize(1,1);
 	Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 0, 0)

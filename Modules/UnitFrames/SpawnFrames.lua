@@ -1,5 +1,5 @@
 local _G, SUI = _G, SUI
-local module = SUI:GetModule('Module_UnitFrames')
+local module = SUI:GetModule('Component_UnitFrames')
 local PartyFrames = {}
 local PlayerFrames = {}
 local RaidFrames = {}

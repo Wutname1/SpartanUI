@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:GetModule('Module_UnitFrames')
+local module = SUI:GetModule('Component_UnitFrames')
 ----------------------------------------------------------------------------------------------------
 local anchorPoints = {
 	['TOPLEFT'] = 'TOP LEFT',

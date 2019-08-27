@@ -473,34 +473,6 @@ function module:ModuleSelectionPage()
 				end
 			end
 
-			local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, L['Film Effects'], 120, 20)
-			checkbox:HookScript(
-				'OnClick',
-				function()
-					if checkbox:GetValue() then
-						EnableAddOn('SpartanUI_FilmEffects')
-					else
-						DisableAddOn('SpartanUI_FilmEffects')
-					end
-				end
-			)
-			checkbox:SetChecked(select(4, GetAddOnInfo('SpartanUI_FilmEffects')))
-			itemsMatrix[(#itemsMatrix + 1)] = checkbox
-
-			checkbox = StdUi:Checkbox(SUI_Win.ModSelection, L['Spin cam'], 120, 20)
-			checkbox:HookScript(
-				'OnClick',
-				function()
-					if checkbox:GetValue() then
-						EnableAddOn('SpartanUI_SpinCam')
-					else
-						DisableAddOn('SpartanUI_SpinCam')
-					end
-				end
-			)
-			checkbox:SetChecked(select(4, GetAddOnInfo('SpartanUI_SpinCam')))
-			itemsMatrix[(#itemsMatrix + 1)] = checkbox
-
 			StdUi:GlueTop(itemsMatrix[1], SUI_Win.ModSelection, -60, 0)
 
 			local left, leftIndex = false, 1
