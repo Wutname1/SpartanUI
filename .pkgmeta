@@ -25,7 +25,7 @@ externals:
   libs/AceEvent-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceEvent-3.0
   libs/AceTimer-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceTimer-3.0
   libs/AceLocale-3.0: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceLocale-3.0
-  libs/LibDDI-1.0: https://repos.wowace.com/wow/libddi-1-0/trunk
+  libs/AceGUI-3.0-SharedMediaWidgets: https://repos.wowace.com/wow/ace-gui-3-0-shared-media-widgets/trunk/AceGUI-3.0-SharedMediaWidgets
   libs/bug-grabber: https://repos.curseforge.com/wow/bug-grabber/trunk
   libs/LibSharedMedia-3.0: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
   libs/LibDualSpec-1.0: https://repos.curseforge.com/wow/libdualspec-1-0
