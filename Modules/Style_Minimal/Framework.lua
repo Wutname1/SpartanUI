@@ -83,20 +83,20 @@ function module:updateOffset(Top, Bottom) -- handles SpartanUI offset based on s
 	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
 
 	if BT4BarBagBar then
-		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarPetBar then
 			BT4BarPetBar:ClearAllPoints()
 			BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
 		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarStanceBar then
 			BT4BarStanceBar:ClearAllPoints()
 			BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
 		end
 
-		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarMicroMenu then
 			BT4BarMicroMenu:ClearAllPoints()
-			BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+			BT4BarMicroMenu:SetPoint('BOTTOMLEFT', module.Trays.right, 'BOTTOMLEFT', 50, 85)
 		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarBagBar then
 			BT4BarBagBar:ClearAllPoints()
 			BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
 		end
