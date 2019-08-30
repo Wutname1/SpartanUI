@@ -398,21 +398,6 @@ function Artwork_Core:OnEnable()
 		StaticPopup_Show('BartenderVerWarning')
 	end
 
-	if SUI.IsClassic then
-		if MainMenuBar then
-			MainMenuBar:Hide()
-		end
-		if MainMenuBarOverlayFrame then
-			MainMenuBarOverlayFrame:Hide()
-		end
-		if MainMenuExpBar then
-			MainMenuExpBar:Hide()
-		end
-		if MainMenuBarPerformanceBarFrame then
-			MainMenuBarPerformanceBarFrame:Hide()
-		end
-	end
-
 	Artwork_Core:SetupOptions()
 
 	local FrameList = {
