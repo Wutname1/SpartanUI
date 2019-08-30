@@ -348,8 +348,7 @@ local TooltipSetUnit = function(self)
 			if gRealm then
 				gName = gName .. '-' .. gRealm
 			end
-			GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
-			line = line + 1
+			self:AddLine(('|cff008000<%s>|r'):format(gName))
 		end
 
 		for i = line, self:NumLines() do
