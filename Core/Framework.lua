@@ -62,6 +62,11 @@ local frameDefault2 = {
 	Anchors = {}
 }
 
+local targetDebuffMode = 'bars'
+if SUi.IsClassic then
+	targetDebuffMode = 'icons'
+end
+
 local DBdefault = {
 	SUIProper = {
 		Version = '0',
@@ -128,7 +133,7 @@ local DBdefault = {
 							spacing = 1,
 							showType = true,
 							onlyShowPlayer = true,
-							Mode = 'both'
+							Mode = targetDebuffMode
 						}
 					},
 					targettarget = {
