@@ -128,7 +128,7 @@ local DBdefault = {
 							spacing = 1,
 							showType = true,
 							onlyShowPlayer = true,
-							Mode = 'bars'
+							Mode = 'both'
 						}
 					},
 					targettarget = {

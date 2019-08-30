@@ -343,6 +343,10 @@ function PlayerFrames:BuffOptions()
 	}
 	local Units = {[1] = 'player', [2] = 'pet', [3] = 'target', [4] = 'targettarget', [5] = 'focus', [6] = 'focustarget'}
 	local values = {['bars'] = L['Bars'], ['icons'] = L['Icons'], ['both'] = L['Both'], ['disabled'] = L['Disabled']}
+	if SUI.IsClassic then
+		-- No buff bars for now in classic
+		values = {['icons'] = L['Icons'], ['disabled'] = L['Disabled']}
+	end
 
 	for k, unit in pairs(Units) do
 		SUI.opt.args['PlayerFrames'].args['auras'].args[unit] = {
