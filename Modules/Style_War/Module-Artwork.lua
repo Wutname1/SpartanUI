@@ -99,7 +99,7 @@ function module:updateOffset(Top, offset)
 
 		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
 			BT4BarMicroMenu:ClearAllPoints()
-			BT4BarMicroMenu:SetPoint('BOTTOMLEFT', module.Trays.right, 'BOTTOMLEFT', 50, 85)
+			BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
 			BT4BarBagBar:ClearAllPoints()
