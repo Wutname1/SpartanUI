@@ -63,7 +63,7 @@ local frameDefault2 = {
 }
 
 local targetDebuffMode = 'bars'
-if SUi.IsClassic then
+if SUI.IsClassic then
 	targetDebuffMode = 'icons'
 end
 
