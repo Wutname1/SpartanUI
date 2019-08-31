@@ -3,6 +3,14 @@ local L = SUI.L
 local PlayerFrames = SUI.PlayerFrames
 ----------------------------------------------------------------------------------------------------
 
+local function TextUpdate()
+	for _, b in pairs(SUI.PlayerFrames) do
+		if SUI.PlayerFrames[b] and SUI.PlayerFrames[b].TextUpdate then
+			SUI.PlayerFrames[b]:TextUpdate(b)
+		end
+	end
+end
+
 function PlayerFrames:OnInitialize()
 	SUI.opt.args['PlayerFrames'].args['FrameStyle'] = {
 		name = L['FrameStyle'],
@@ -152,9 +160,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.health.textstyle = val
-							for _, b in pairs(SUI.PlayerFrames) do
-								SUI.PlayerFrames[b]:TextUpdate(b)
-							end
+							TextUpdate()
 						end
 					},
 					healthtextmode = {
@@ -172,9 +178,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.health.textmode = val
-							for _, b in pairs(SUI.PlayerFrames) do
-								SUI.PlayerFrames[b]:TextUpdate(b)
-							end
+							TextUpdate()
 						end
 					},
 					manatextstyle = {
@@ -188,9 +192,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.mana.textstyle = val
-							for _, b in pairs(SUI.PlayerFrames) do
-								SUI.PlayerFrames[b]:TextUpdate(b)
-							end
+							TextUpdate()
 						end
 					},
 					manatextmode = {
@@ -203,9 +205,7 @@ function PlayerFrames:OnInitialize()
 						end,
 						set = function(info, val)
 							SUI.DBMod.PlayerFrames.bars.mana.textmode = val
-							for _, b in pairs(Units) do
-								addon[b]:TextUpdate(b)
-							end
+							TextUpdate()
 						end
 					}
 				}
