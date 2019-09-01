@@ -254,8 +254,8 @@ local TooltipSetItem = function(self)
 			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = GetItemInfo(itemLink)
 
 			SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
-			if itemStackCount > 1 then
-				local itemUnderMouse = GetMouseFocus()
+			local itemUnderMouse = GetMouseFocus()
+			if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
 				-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
 				local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
 				count = tonumber(count) or 1
