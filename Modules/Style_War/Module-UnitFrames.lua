@@ -364,6 +364,7 @@ local CreateLargeFrame = function(self, unit)
 
 			self.Health = health
 
+			self.Health.colorTapping = true
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
 			if SUI.DBMod.PlayerFrames.bars[unit] and SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
