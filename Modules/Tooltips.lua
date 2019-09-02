@@ -40,24 +40,6 @@ local tooltips = {
 	ItemSocketingDescription
 }
 local whitebg = {bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3}
-local Styles = {
-	metal = {
-		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\metal',
-		tile = false
-	},
-	smooth = {
-		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
-		tile = false
-	},
-	smoke = {
-		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
-		tile = false
-	},
-	none = {
-		bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-		tile = false
-	}
-}
 
 function module:OnInitialize()
 	if SUI.DB.Tooltips.Rule1 == nil then
@@ -175,7 +157,7 @@ local onShow = function(self)
 	 then
 		self.SUITip:SetBackdrop(SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.BG)
 	else
-		self.SUITip:SetBackdrop(Styles[SUI.DB.Tooltips.ActiveStyle])
+		self.SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 	end
 
 	if (SUI.DB.Tooltips.ActiveStyle == 'none' or SUI.DB.Tooltips.ColorOverlay) or (not self.SUITip) then
@@ -240,22 +222,24 @@ local TooltipSetItem = function(self)
 			end
 		end
 
-		if SUI.IsClassic then
+		if SUI.IsClassic and SUI.DB.Tooltips.VendorPrices then
 			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = GetItemInfo(itemLink)
 
 			SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
-			if itemStackCount > 1 then
-				local itemUnderMouse = GetMouseFocus()
-				-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
-				local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
-				count = tonumber(count) or 1
-				if count <= 1 then
-					count = 1
-				end
+			local itemUnderMouse = GetMouseFocus()
+			if itemUnderMouse:GetName() then
+				if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
+					-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
+					local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
+					count = tonumber(count) or 1
+					if count <= 1 then
+						count = 1
+					end
 
-				if count > 1 and count ~= itemStackCount then
-					local curValue = count * itemSellPrice
-					SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+					if count > 1 and count ~= itemStackCount then
+						local curValue = count * itemSellPrice
+						SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+					end
 				end
 			end
 		end
@@ -338,8 +322,12 @@ local TooltipSetUnit = function(self)
 			if gRealm then
 				gName = gName .. '-' .. gRealm
 			end
-			GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
-			line = line + 1
+			if SUI.IsClassic then
+				self:AddLine(('|cff008000<%s>|r'):format(gName))
+			else
+				GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
+				line = line + 1
+			end
 		end
 
 		for i = line, self:NumLines() do
@@ -497,15 +485,7 @@ local function ApplyTooltipSkins()
 			SUITip.border[4]:SetWidth(2)
 			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 
-			if
-				(SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip ~= nil) and
-					SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.BG and
-					not SUI.DB.Tooltip.Override[(SUI.DBMod.Artwork.Style or 'War')]
-			 then
-				SUITip:SetBackdrop(SUI.DB.Styles[(SUI.DBMod.Artwork.Style or 'War')].Tooltip.BG)
-			else
-				SUITip:SetBackdrop(Styles[SUI.DB.Tooltips.ActiveStyle])
-			end
+			SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
 
 			SUITip.ClearColors = ClearColors
 			SUITip.border:Hide()
@@ -518,7 +498,7 @@ local function ApplyTooltipSkins()
 			_G.tremove(tooltips, i)
 		end
 
-		style = {
+		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
 		GameTooltip_SetBackdropStyle(tooltip, style)
@@ -793,6 +773,18 @@ function module:BuildOptions()
 					end
 				}
 			}
+		}
+	end
+	if SUI.IsClassic then
+		SUI.opt.args.ModSetting.args.Tooltips.args.VendorPrices = {
+			name = 'Display vendor prices',
+			type = 'toggle',
+			get = function(info)
+				return SUI.DB.Tooltips.VendorPrices
+			end,
+			set = function(info, val)
+				SUI.DB.Tooltips.VendorPrices = val
+			end
 		}
 	end
 end

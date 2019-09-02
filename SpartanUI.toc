@@ -51,7 +51,7 @@ lang\localization.xml
 
 # Now load SpartanUI
 core\Framework.lua
-Modules\Loader.xml
+modules\LoadAll.xml
 core\Framework.xml
 
 # Load Styles

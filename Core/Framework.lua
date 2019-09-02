@@ -1445,15 +1445,15 @@ local DBdefault = {
 		Tooltips = {
 			Styles = {
 				metal = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\metal.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\metal',
 					tile = false
 				},
 				smooth = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\Smoothv2.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
 					tile = false
 				},
 				smoke = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\smoke.tga',
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
 					tile = false
 				},
 				none = {
@@ -1462,6 +1462,7 @@ local DBdefault = {
 				}
 			},
 			ActiveStyle = 'smoke',
+			VendorPrices = true,
 			Override = {},
 			ColorOverlay = true,
 			Color = {0, 0, 0, 0.4},
