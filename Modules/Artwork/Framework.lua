@@ -1,7 +1,7 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:NewModule('Component_Artwork')
-local BartenderMin = '4.8.3'
+local BartenderMin = '4.8.5'
 
 function Artwork_Core:updateScale()
 	--Set default scale based on if the user is using a widescreen.
@@ -387,21 +387,6 @@ function Artwork_Core:OnEnable()
 	-- No Bartender/out of date Notification
 	if SUI.DB.Bartender4Version < BartenderMin then
 		StaticPopup_Show('BartenderVerWarning')
-	end
-
-	if SUI.IsClassic then
-		if MainMenuBar then
-			MainMenuBar:Hide()
-		end
-		if MainMenuBarOverlayFrame then
-			MainMenuBarOverlayFrame:Hide()
-		end
-		if MainMenuExpBar then
-			MainMenuExpBar:Hide()
-		end
-		if MainMenuBarPerformanceBarFrame then
-			MainMenuBarPerformanceBarFrame:Hide()
-		end
 	end
 
 	Artwork_Core:SetupOptions()
