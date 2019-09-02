@@ -1,21 +1,21 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
-local addon = SUI:NewModule('Component_FilmEffects')
+local module = SUI:NewModule('Component_FilmEffects')
 local Container
 local EffectList = {'vignette', 'blur', 'crisp'}
 
 local FilmEffectEvent = function(self, event, ...)
 	for _, v in ipairs(EffectList) do
-		if not addon.db.profile.enable then
+		if not module.db.profile.enable then
 			Container[v]:Hide()
 		elseif event == 'CHAT_MSG_SYSTEM' then
-			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (addon.db.profile.Effects[v].afk) then
+			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (module.db.profile.Effects[v].afk) then
 				Container[v]:Show()
 			elseif (... == CLEARED_AFK) then
 				Container[v]:Hide()
 			end
 		else
-			if addon.db.profile.Effects[v].always then
+			if module.db.profile.Effects[v].always then
 				Container[v]:Show()
 			else
 				Container[v]:Hide()
@@ -26,7 +26,7 @@ end
 
 local function updateopts()
 	local disabled = true
-	if addon.db.profile.enable then
+	if module.db.profile.enable then
 		disabled = false
 	end
 	for _, v in ipairs(EffectList) do
@@ -35,7 +35,7 @@ local function updateopts()
 	end
 end
 
-function addon:OnInitialize()
+function module:OnInitialize()
 	local defaults = {
 		profile = {
 			enable = false,
@@ -48,79 +48,14 @@ function addon:OnInitialize()
 			}
 		}
 	}
-	addon.db = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', defaults)
-
-	SUI.opt.args['ModSetting'].args['FilmEffects'] = {
-		name = L['Film Effects'],
-		type = 'group',
-		args = {
-			enable = {
-				name = L['Enable Film Effects'],
-				type = 'toggle',
-				order = 1,
-				width = 'full',
-				get = function(info)
-					updateopts()
-					return addon.db.profile.enable
-				end,
-				set = function(info, val)
-					if InCombatLockdown() then
-						SUI:Print(L['Please leave combat first.'])
-						return
-					end
-					addon.db.profile.enable = val
-					FilmEffectEvent(nil, nil, nil)
-					updateopts()
-				end
-			}
-		}
-	}
-
-	for k, v in ipairs(EffectList) do
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'Title'] = {
-			name = v,
-			type = 'header',
-			order = k + 1,
-			width = 'full'
-		}
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'always'] = {
-			name = L['Always show'],
-			type = 'toggle',
-			order = k + 1.2,
-			get = function(info)
-				return addon.db.profile.Effects[v].always
-			end,
-			set = function(info, val)
-				if InCombatLockdown() then
-					SUI:Print(L['Please leave combat first.'])
-					return
-				end
-				addon.db.profile.Effects[v].always = val
-				FilmEffectEvent(nil, nil, nil)
-			end
-		}
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'AFK'] = {
-			name = L['Show if AFK'],
-			type = 'toggle',
-			order = k + 1.4,
-			get = function(info)
-				if InCombatLockdown() then
-					SUI:Print(L['Please leave combat first.'])
-					return
-				end
-				return addon.db.profile.Effects[v].afk
-			end,
-			set = function(info, val)
-				addon.db.profile.Effects[v].afk = val
-			end
-		}
-	end
+	module.db = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', defaults)
 end
 
-function addon:OnEnable()
+function module:OnEnable()
 	if not SUI.DB.EnabledComponents.FilmEffects then
 		return
 	end
+	module:Options()
 
 	Container = CreateFrame('Frame', 'FilmEffects', WorldFrame)
 	-- Container:SetSize(1,1);
@@ -133,7 +68,7 @@ function addon:OnEnable()
 	Container:SetScript(
 		'OnUpdate',
 		function(self, elapsed)
-			addon:Update(elapsed)
+			module:Update(elapsed)
 		end
 	)
 
@@ -210,16 +145,84 @@ function addon:OnEnable()
 	Container.crisp:Hide()
 end
 
-function addon:Update(elapsed)
-	addon.db.profile.animationInterval = addon.db.profile.animationInterval + elapsed
-	if (addon.db.profile.animationInterval > (0.02)) then -- 50 FPS
-		addon.db.profile.animationInterval = 0
+function module:Update(elapsed)
+	module.db.profile.animationInterval = module.db.profile.animationInterval + elapsed
+	if (module.db.profile.animationInterval > (0.02)) then -- 50 FPS
+		module.db.profile.animationInterval = 0
 
 		local yOfs = math.random(0, 256)
 		local xOfs = math.random(-128, 0)
 
-		if addon.db.profile.anim == 'blur' or addon.db.profile.anim == 'crisp' then
+		if module.db.profile.anim == 'blur' or module.db.profile.anim == 'crisp' then
 			Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs)
 		end
+	end
+end
+
+function module:Options()
+	SUI.opt.args['ModSetting'].args['FilmEffects'] = {
+		name = L['Film Effects'],
+		type = 'group',
+		args = {
+			enable = {
+				name = L['Enable Film Effects'],
+				type = 'toggle',
+				order = 1,
+				width = 'full',
+				get = function(info)
+					updateopts()
+					return module.db.profile.enable
+				end,
+				set = function(info, val)
+					if InCombatLockdown() then
+						SUI:Print(L['Please leave combat first.'])
+						return
+					end
+					module.db.profile.enable = val
+					FilmEffectEvent(nil, nil, nil)
+					updateopts()
+				end
+			}
+		}
+	}
+
+	for k, v in ipairs(EffectList) do
+		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'Title'] = {
+			name = v,
+			type = 'header',
+			order = k + 1,
+			width = 'full'
+		}
+		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'always'] = {
+			name = L['Always show'],
+			type = 'toggle',
+			order = k + 1.2,
+			get = function(info)
+				return module.db.profile.Effects[v].always
+			end,
+			set = function(info, val)
+				if InCombatLockdown() then
+					SUI:Print(L['Please leave combat first.'])
+					return
+				end
+				module.db.profile.Effects[v].always = val
+				FilmEffectEvent(nil, nil, nil)
+			end
+		}
+		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'AFK'] = {
+			name = L['Show if AFK'],
+			type = 'toggle',
+			order = k + 1.4,
+			get = function(info)
+				if InCombatLockdown() then
+					SUI:Print(L['Please leave combat first.'])
+					return
+				end
+				return module.db.profile.Effects[v].afk
+			end,
+			set = function(info, val)
+				module.db.profile.Effects[v].afk = val
+			end
+		}
 	end
 end
