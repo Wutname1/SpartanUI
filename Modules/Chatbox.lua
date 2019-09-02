@@ -17,6 +17,18 @@ local linkTypes = {
 }
 local ChatLevelLog
 
+local function StripTextures(object)
+	for i = 1, object:GetNumRegions() do
+		local region = select(i, object:GetRegions())
+		if region and region:GetObjectType() == 'Texture' then
+			if region:GetTexture() == 'Interface\\DialogFrame\\UI-DialogBox-Header' then
+				-- region:SetTexture(nil)
+				region:SetScale(.2)
+			end
+		end
+	end
+end
+
 function module:SetPopupText(text)
 	popup.editBox:SetText(text)
 	popup:Show()
@@ -364,7 +376,7 @@ function module:SetupChatboxes()
 
 			ChatFrame:SetClampRectInsets(0, 0, 0, 0)
 			ChatFrame:SetClampedToScreen(false)
-			SUI:StripTextures(ChatFrame)
+			StripTextures(ChatFrame)
 
 			-- Setup Editbox BG
 			local EBLeft = _G[ChatFrameName .. 'EditBoxLeft']
