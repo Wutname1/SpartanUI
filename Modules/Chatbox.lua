@@ -158,8 +158,6 @@ function module:OnHyperlinkEnter(f, link)
 		GameTooltip:SetOwner(UIParent, 'ANCHOR_CURSOR')
 		GameTooltip:SetHyperlink(link)
 		GameTooltip:Show()
-	else
-		print(t)
 	end
 end
 

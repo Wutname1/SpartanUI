@@ -224,21 +224,22 @@ local TooltipSetItem = function(self)
 
 		if SUI.IsClassic and SUI.DB.Tooltips.VendorPrices then
 			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = GetItemInfo(itemLink)
+			if itemSellPrice then
+				SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
+				local itemUnderMouse = GetMouseFocus()
+				if itemUnderMouse:GetName() then
+					if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
+						-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
+						local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
+						count = tonumber(count) or 1
+						if count <= 1 then
+							count = 1
+						end
 
-			SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
-			local itemUnderMouse = GetMouseFocus()
-			if itemUnderMouse:GetName() then
-				if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
-					-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
-					local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
-					count = tonumber(count) or 1
-					if count <= 1 then
-						count = 1
-					end
-
-					if count > 1 and count ~= itemStackCount then
-						local curValue = count * itemSellPrice
-						SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+						if count > 1 and count ~= itemStackCount then
+							local curValue = count * itemSellPrice
+							SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+						end
 					end
 				end
 			end
