@@ -256,17 +256,19 @@ local TooltipSetItem = function(self)
 
 			SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
 			local itemUnderMouse = GetMouseFocus()
-			if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
-				-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
-				local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
-				count = tonumber(count) or 1
-				if count <= 1 then
-					count = 1
-				end
+			if itemUnderMouse:GetName() then
+				if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
+					-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
+					local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
+					count = tonumber(count) or 1
+					if count <= 1 then
+						count = 1
+					end
 
-				if count > 1 and count ~= itemStackCount then
-					local curValue = count * itemSellPrice
-					SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+					if count > 1 and count ~= itemStackCount then
+						local curValue = count * itemSellPrice
+						SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+					end
 				end
 			end
 		end
