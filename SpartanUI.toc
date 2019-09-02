@@ -45,7 +45,6 @@ libs\oUF_PetHappiness\oUF_PetHappiness.lua
 libs\LibClassicDurations\LibClassicDurations.xml
 libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
 #@end-non-retail@
-libs\oUF_Plugins\LoadAll.xml
 
 # Localization
 lang\localization.xml

@@ -2278,6 +2278,18 @@ SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 
 function SUI:OnInitialize()
+	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
+	--If we have not played in a long time reset the database, make sure it is all good.
+	local ver = SUI.SpartanUIDB.profile.SUIProper.Version
+	if (ver ~= '0' and ver < '4.0.0') then
+		SUI.SpartanUIDB:ResetDB()
+	end
+
+	-- New SUI.DB Access
+	SUI.DBG = SUI.SpartanUIDB.global
+	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
+	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
+
 	--Check for any SUI.DB changes
 	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) then
 		SUI:DBUpgrades()
