@@ -63,6 +63,7 @@ function module:OnInitialize()
 				}
 			},
 			ActiveStyle = 'smoke',
+			VendorPrices = true,
 			Override = {},
 			ColorOverlay = true,
 			Color = {0, 0, 0, 0.4},
@@ -250,7 +251,7 @@ local TooltipSetItem = function(self)
 			end
 		end
 
-		if SUI.IsClassic then
+		if SUI.IsClassic and SUI.DB.Tooltips.VendorPrices then
 			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = GetItemInfo(itemLink)
 
 			SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
@@ -807,6 +808,18 @@ function module:BuildOptions()
 					end
 				}
 			}
+		}
+	end
+	if SUI.IsClassic then
+		SUI.opt.args.ModSetting.args.Tooltips.args.VendorPrices = {
+			name = 'Display vendor prices',
+			type = 'toggle',
+			get = function(info)
+				return SUI.DB.Tooltips.VendorPrices
+			end,
+			set = function(info, val)
+				SUI.DB.Tooltips.VendorPrices = val
+			end
 		}
 	end
 end
