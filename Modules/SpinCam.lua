@@ -5,6 +5,41 @@ local userCameraYawMoveSpeed
 local usercameraCustomViewSmoothing
 
 function addon:OnInitialize()
+end
+
+function addon:OnEnable()
+	if not SUI.DB.EnabledComponents.SpinCam then
+		return
+	end
+
+	userCameraYawMoveSpeed = tonumber(GetCVar('cameraYawMoveSpeed'))
+	usercameraCustomViewSmoothing = tonumber(GetCVar('cameraCustomViewSmoothing'))
+
+	local frame = CreateFrame('Frame')
+	frame:RegisterEvent('CHAT_MSG_SYSTEM')
+	frame:RegisterEvent('PLAYER_ENTERING_WORLD')
+	frame:SetScript(
+		'OnEvent',
+		function(self, event, ...)
+			if event == 'CHAT_MSG_SYSTEM' then
+				if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (SUI.DBMod.SpinCam.enable) then
+					addon:SpinToggle('start')
+				elseif (... == CLEARED_AFK) and (SpinCamRunning) then
+					addon:SpinToggle('stop')
+				end
+			elseif event == 'PLAYER_LEAVING_WORLD' or event == 'PLAYER_ENTERING_WORLD' then
+				addon:SpinToggle('stop')
+			end
+			if SUI.DBMod.SpinCam.speed == GetCVar('cameraYawMoveSpeed') and not SpinCamRunning then
+				SetCVar('cameraYawMoveSpeed', userCameraYawMoveSpeed)
+				SetCVar('cameraCustomViewSmoothing', usercameraCustomViewSmoothing)
+			end
+		end
+	)
+	addon:Options()
+end
+
+function addon:Options()
 	SUI.opt.args['ModSetting'].args['SpinCam'] = {
 		name = L['Spin cam'],
 		type = 'group',
@@ -63,37 +98,6 @@ function addon:OnInitialize()
 			}
 		}
 	}
-end
-
-function addon:OnEnable()
-	if not SUI.DB.EnabledComponents.SpinCam then
-		return
-	end
-
-	userCameraYawMoveSpeed = tonumber(GetCVar('cameraYawMoveSpeed'))
-	usercameraCustomViewSmoothing = tonumber(GetCVar('cameraCustomViewSmoothing'))
-
-	local frame = CreateFrame('Frame')
-	frame:RegisterEvent('CHAT_MSG_SYSTEM')
-	frame:RegisterEvent('PLAYER_ENTERING_WORLD')
-	frame:SetScript(
-		'OnEvent',
-		function(self, event, ...)
-			if event == 'CHAT_MSG_SYSTEM' then
-				if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (SUI.DBMod.SpinCam.enable) then
-					addon:SpinToggle('start')
-				elseif (... == CLEARED_AFK) and (SpinCamRunning) then
-					addon:SpinToggle('stop')
-				end
-			elseif event == 'PLAYER_LEAVING_WORLD' or event == 'PLAYER_ENTERING_WORLD' then
-				addon:SpinToggle('stop')
-			end
-			if SUI.DBMod.SpinCam.speed == GetCVar('cameraYawMoveSpeed') and not SpinCamRunning then
-				SetCVar('cameraYawMoveSpeed', userCameraYawMoveSpeed)
-				SetCVar('cameraCustomViewSmoothing', usercameraCustomViewSmoothing)
-			end
-		end
-	)
 end
 
 function addon:SpinToggle(action)

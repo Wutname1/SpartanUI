@@ -2,7 +2,6 @@ local SUI = SUI
 local L = SUI.L
 local module = SUI:NewModule('Artwork_StatusBars')
 module.bars = {}
-module.DB = SUI.DBMod.StatusBars
 local StyleSettings
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1, g = 0.2, b = 0},
@@ -49,6 +48,7 @@ function module:Initalize(Settings)
         }
     }
     ]]
+	module.DB = SUI.DBMod.StatusBars
 	--Create Status Bars
 	if SUI.IsClassic and module.DB[2].display == 'honor' then
 		module.DB[2].display = 'rep'

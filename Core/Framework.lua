@@ -432,6 +432,12 @@ local DBdefault = {
 					REP = true,
 					AP = true
 				},
+				Color = {
+					Art = false,
+					PlayerFrames = false,
+					PartyFrames = false,
+					RaidFrames = false
+				},
 				TooltipLoc = true
 			},
 			Transparent = {
@@ -2076,6 +2082,9 @@ local DBdefault = {
 					}
 				}
 			}
+		},
+		BarTextures = {
+			smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 		}
 	},
 	Modules = {
@@ -2256,28 +2265,23 @@ function SUI:ResetConfig()
 	ReloadUI()
 end
 
+SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
+--If we have not played in a long time reset the database, make sure it is all good.
+local ver = SUI.SpartanUIDB.profile.SUIProper.Version
+if (ver ~= '0' and ver < '4.0.0') then
+	SUI.SpartanUIDB:ResetDB()
+end
+
+-- New SUI.DB Access
+SUI.DBG = SUI.SpartanUIDB.global
+SUI.DB = SUI.SpartanUIDB.profile.SUIProper
+SUI.DBMod = SUI.SpartanUIDB.profile.Modules
+
 function SUI:OnInitialize()
-	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
-	--If we have not played in a long time reset the database, make sure it is all good.
-	local ver = SUI.SpartanUIDB.profile.SUIProper.Version
-	if (ver ~= '0' and ver < '4.0.0') then
-		SUI.SpartanUIDB:ResetDB()
-	end
-
-	-- New SUI.DB Access
-	SUI.DBG = SUI.SpartanUIDB.global
-	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
-
 	--Check for any SUI.DB changes
 	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) then
 		SUI:DBUpgrades()
 	end
-
-	-- Add Addon-Wide Bar textures
-	SUI.BarTextures = {
-		smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
-	}
 
 	-- Add Profiles to Options
 	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
@@ -2721,6 +2725,42 @@ function SUI:Err(mod, err)
 end
 
 ---------------		Math and Comparison FUNCTIONS		-------------------------------
+
+--[[
+	Takes a target table and injects data from the source
+	override allows the source to be put into the target
+	even if its already populated
+]]
+function SUI:MergeData(target, source, override)
+	if type(target) ~= 'table' then
+		target = {}
+	end
+	for k, v in pairs(source) do
+		if type(v) == 'table' then
+			target[k] = self:MergeData(target[k], v, override)
+		else
+			if override then
+				target[k] = v
+			elseif target[k] == nil then
+				target[k] = v
+			end
+		end
+	end
+	return target
+end
+
+function SUI:isPartialMatch(frameName, tab)
+	local result = false
+
+	for _, v in ipairs(tab) do
+		startpos, endpos = strfind(strlower(frameName), strlower(v))
+		if (startpos == 1) then
+			result = true
+		end
+	end
+
+	return result
+end
 
 --[[
 	Takes a target table and searches for the specified phrase

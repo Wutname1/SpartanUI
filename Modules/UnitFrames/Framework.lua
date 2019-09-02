@@ -1,11 +1,9 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Component_UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0')
 module.DisplayName = L['Unit frames']
-
 local loadstring = loadstring
 local function_cache = {}
-
-local DB = SUI.DB.Unitframes
+local DB
 module.CurrentSettings = {}
 
 module.frameList = {
@@ -176,12 +174,7 @@ function module:LoadDB()
 end
 
 function module:OnInitialize()
-	--[[
-		Takes a target table and injects data from the source
-		override allows the source to be put into the target
-		even if its already populated
-		function SUI:MergeData(target, source, override)
-	]]
+	DB = SUI.DB.Unitframes
 	-- Setup Database
 	module:LoadDB()
 	-- Build options

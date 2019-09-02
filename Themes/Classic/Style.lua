@@ -571,17 +571,3 @@ end
 function module:OnDisable()
 	SpartanUI:Hide()
 end
-
-do -- Style Setup
-	if SUI.DB.Styles.Classic.Color == nil then
-		SUI.DB.Styles.Classic.Color = {
-			Art = false,
-			PlayerFrames = false,
-			PartyFrames = false,
-			RaidFrames = false
-		}
-	end
-	if not SUI.DBG.Bartender4[SUI.DB.Styles.Classic.BartenderProfile] then
-		SUI.DBG.Bartender4[SUI.DB.Styles.Classic.BartenderProfile] = {Style = 'Classic'}
-	end
-end

@@ -219,7 +219,7 @@ function module:SetupWizard(RequiredPagesOnly)
 	module.window.StdUi = StdUi
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')
-	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\images\\SUISetup')
+	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	module.window.Title:SetPoint('TOP')
 	module.window.Title:SetAlpha(.8)
 
