@@ -159,12 +159,6 @@ local function CreateUnitFrame(self, unit)
 				else
 					self.Castbar.Shield:Hide()
 				end
-				-- Interupt icon
-				if elements.Castbar.icon.enabled then
-					self.Castbar.Icon:Show()
-				else
-					self.Castbar.Icon:Hide()
-				end
 
 				-- spell name
 				if elements.Castbar.text['1'].enabled then
@@ -179,6 +173,21 @@ local function CreateUnitFrame(self, unit)
 					self.Castbar.Time:Hide()
 				end
 			end
+
+			-- Spell icon
+			if elements.Castbar.Icon.enabled then
+				self.Castbar.Icon:Show()
+			else
+				self.Castbar.Icon:Hide()
+			end
+			self.Castbar.Icon:ClearAllPoints()
+			self.Castbar.Icon:SetPoint(
+				elements.Castbar.Icon.position.anchor,
+				self.Castbar,
+				elements.Castbar.Icon.position.anchor,
+				elements.Castbar.Icon.position.x,
+				elements.Castbar.Icon.position.y
+			)
 		end
 
 		-- Tell everything to update to get current data
@@ -274,6 +283,7 @@ local function CreateUnitFrame(self, unit)
 		-- Status bars
 		if self.Castbar then
 			self.Castbar:SetSize(self:GetWidth(), elements.Castbar.height)
+			self.Castbar.Icon:SetSize(elements.Castbar.Icon.size, elements.Castbar.Icon.size)
 		end
 
 		if self.Health then
@@ -297,6 +307,10 @@ local function CreateUnitFrame(self, unit)
 			self.Power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
 
 			self.Power:SetSize(self:GetWidth(), elements.Power.height)
+		end
+
+		if self.AdditionalPower then
+			self.AdditionalPower:SetSize(self:GetWidth(), elements.AdditionalPower.height)
 		end
 
 		-- Inidcators
@@ -442,13 +456,13 @@ local function CreateUnitFrame(self, unit)
 
 			-- Add spell icon
 			local Icon = cast:CreateTexture(nil, 'OVERLAY')
-			Icon:SetSize(20, 20)
+			Icon:SetSize(elements.Castbar.Icon.size, elements.Castbar.Icon.size)
 			Icon:SetPoint(
-				elements.Castbar.icon.position.anchor,
+				elements.Castbar.Icon.position.anchor,
 				cast,
-				elements.Castbar.icon.position.anchor,
-				elements.Castbar.icon.position.x,
-				elements.Castbar.icon.position.y
+				elements.Castbar.Icon.position.anchor,
+				elements.Castbar.Icon.position.x,
+				elements.Castbar.Icon.position.y
 			)
 
 			-- Add safezone
@@ -575,11 +589,10 @@ local function CreateUnitFrame(self, unit)
 			power:SetStatusBarTexture(Smoothv2)
 			power:SetSize(self:GetWidth(), elements.Power.height)
 
-			local Background = power:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(power)
-			Background:SetTexture(Smoothv2)
-			Background:SetVertexColor(1, 1, 1, .2)
-			power.bg = Background
+			power.bg = power:CreateTexture(nil, 'BACKGROUND')
+			power.bg:SetAllPoints(power)
+			power.bg:SetTexture(Smoothv2)
+			power.bg:SetVertexColor(1, 1, 1, .2)
 
 			local PositionData = 0
 			if elements.Castbar.enabled then
@@ -608,16 +621,16 @@ local function CreateUnitFrame(self, unit)
 
 			-- Additional Mana
 			local AdditionalPower = CreateFrame('StatusBar', nil, self)
-			AdditionalPower:SetSize(self.Power:GetWidth(), 4)
+			AdditionalPower:SetSize(self.Power:GetWidth(), elements.AdditionalPower.height)
 			AdditionalPower:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
 			AdditionalPower.colorPower = true
 			AdditionalPower:SetStatusBarTexture(Smoothv2)
 
-			local AdditionalPowerbg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
-			AdditionalPowerbg:SetAllPoints(AdditionalPower)
-			AdditionalPowerbg:SetTexture(1, 1, 1, .2)
+			AdditionalPower.bg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
+			AdditionalPower.bg:SetAllPoints(AdditionalPower)
+			AdditionalPower.bg:SetTexture(1, 1, 1, .2)
+
 			self.AdditionalPower = AdditionalPower
-			self.AdditionalPower.bg = AdditionalPowerbg
 
 			if unit == 'player' then
 				-- Position and size

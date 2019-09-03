@@ -1598,15 +1598,18 @@ local DBdefault = {
 								}
 							}
 						},
-						AdditionalPower = {},
+						AdditionalPower = {
+							enabled = true,
+							height = 5
+						},
 						Castbar = {
 							enabled = false,
 							height = 10,
 							interruptable = true,
 							latency = false,
 							bg = true,
-							icon = {
-								enabled = false,
+							Icon = {
+								enabled = true,
 								size = 12,
 								position = {
 									anchor = 'LEFT',
@@ -2027,7 +2030,9 @@ local DBdefault = {
 								}
 							},
 							Castbar = {
-								position = {},
+								Icon = {
+									position = {}
+								},
 								text = {
 									['1'] = {
 										position = {}
@@ -2067,6 +2072,7 @@ local DBdefault = {
 							StatusText = {
 								position = {}
 							},
+							AdditionalPower = {},
 							Runes = {},
 							Stagger = {},
 							Totems = {},

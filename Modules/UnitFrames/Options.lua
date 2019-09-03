@@ -294,7 +294,6 @@ local function AddBarOptions(frameName)
 				name = 'Castbar',
 				type = 'group',
 				order = 1,
-				childGroups = 'inline',
 				args = {
 					Interruptable = {
 						name = 'Show interrupt or spell steal',
@@ -309,17 +308,13 @@ local function AddBarOptions(frameName)
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.interruptable = val
 							--Update the screen
-							if val then
-								self.Castbar.SafeZone:Show()
-							else
-								self.Castbar.SafeZone:Hide()
-							end
+							module.frames[frameName]:UpdateAll()
 						end
 					},
 					latency = {
 						name = 'Show latency',
 						type = 'toggle',
-						order = 10,
+						order = 11,
 						get = function(info)
 							return module.CurrentSettings[frameName].elements.Castbar.latency
 						end,
@@ -329,12 +324,119 @@ local function AddBarOptions(frameName)
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.latency = val
 							--Update the screen
-							if val then
-								self.Castbar.Shield:Show()
-							else
-								self.Castbar.Shield:Hide()
-							end
+							module.frames[frameName]:UpdateAll()
 						end
+					},
+					Icon = {
+						name = 'Spell icon',
+						type = 'group',
+						inline = true,
+						order = 30,
+						args = {
+							enabled = {
+								name = 'Enable',
+								type = 'toggle',
+								order = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Castbar.Icon.enabled
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].elements.Castbar.Icon.enabled = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.enabled = val
+									--Update the screen
+									module.frames[frameName]:UpdateAll()
+								end
+							},
+							size = {
+								name = 'Size',
+								type = 'range',
+								min = 0,
+								max = 100,
+								step = .1,
+								order = 5,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Castbar.Icon.size
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].elements.Castbar.Icon.size = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.size = val
+									--Update Screen
+									if module.frames[frameName].Castbar.Icon then
+										module.frames[frameName].Castbar.Icon:SetSize(val, val)
+									end
+								end
+							},
+							position = {
+								name = 'Position',
+								type = 'group',
+								order = 50,
+								inline = true,
+								args = {
+									x = {
+										name = 'X Axis',
+										type = 'range',
+										order = 1,
+										min = -100,
+										max = 100,
+										step = 1,
+										get = function(info)
+											return module.CurrentSettings[frameName].elements.Castbar.Icon.position.x
+										end,
+										set = function(info, val)
+											--Update memory
+											module.CurrentSettings[frameName].elements.Castbar.Icon.position.x = val
+											--Update the DB
+											SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.position.x =
+												val
+											--Update Screen
+											module.frames[frameName]:UpdateAll()
+										end
+									},
+									y = {
+										name = 'Y Axis',
+										type = 'range',
+										order = 2,
+										min = -100,
+										max = 100,
+										step = 1,
+										get = function(info)
+											return module.CurrentSettings[frameName].elements.Castbar.Icon.position.y
+										end,
+										set = function(info, val)
+											--Update memory
+											module.CurrentSettings[frameName].elements.Castbar.Icon.position.y = val
+											--Update the DB
+											SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.position.y =
+												val
+											--Update Screen
+											module.frames[frameName]:UpdateAll()
+										end
+									},
+									anchor = {
+										name = 'Anchor point',
+										type = 'select',
+										order = 3,
+										values = anchorPoints,
+										get = function(info)
+											return module.CurrentSettings[frameName].elements.Castbar.Icon.position.anchor
+										end,
+										set = function(info, val)
+											--Update memory
+											module.CurrentSettings[frameName].elements.Castbar.Icon.position.anchor = val
+											--Update the DB
+											SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.position.anchor =
+												val
+											--Update Screen
+											module.frames[frameName]:UpdateAll()
+										end
+									}
+								}
+							}
+						}
 					}
 				}
 			},
@@ -508,28 +610,31 @@ local function AddBarOptions(frameName)
 	end
 
 	if frameName == 'player' then
-		SUI.opt.args['UnitFrames'].args.player.args['bars'].args['Power'].args['PowerPrediction'] = {
-			name = 'Enable power prediction',
-			desc = 'Used to represent cost of spells on top of the Power bar',
-			type = 'toggle',
-			width = 'double',
-			order = 10,
-			get = function(info)
-				return module.CurrentSettings.player.elements.Power.PowerPrediction
-			end,
-			set = function(info, val)
-				--Update the screen
-				if val then
-					module.frames.player:EnableElement('PowerPrediction')
-				else
-					module.frames.player:DisableElement('PowerPrediction')
+		if not SUI.IsClassic then
+			SUI.opt.args['UnitFrames'].args.player.args['bars'].args['Power'].args['PowerPrediction'] = {
+				name = 'Enable power prediction',
+				desc = 'Used to represent cost of spells on top of the Power bar',
+				type = 'toggle',
+				width = 'double',
+				order = 10,
+				get = function(info)
+					return module.CurrentSettings.player.elements.Power.PowerPrediction
+				end,
+				set = function(info, val)
+					--Update the screen
+					if val then
+						module.frames.player:EnableElement('PowerPrediction')
+					else
+						module.frames.player:DisableElement('PowerPrediction')
+					end
+					--Update memory
+					module.CurrentSettings.player.elements.Power.PowerPrediction = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.Power.PowerPrediction = val
 				end
-				--Update memory
-				module.CurrentSettings.player.elements.Power.PowerPrediction = val
-				--Update the DB
-				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.Power.PowerPrediction = val
-			end
-		}
+			}
+		end
+
 		SUI.opt.args['UnitFrames'].args.player.args['bars'].args['AdditionalPower'] = {
 			name = 'Additional power',
 			desc = "player's additional power, such as Mana for Balance druids.",
