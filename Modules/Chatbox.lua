@@ -176,7 +176,7 @@ function module:OnInitialize()
 	popup:SetPoint('CENTER', 0, 0)
 	popup:SetFrameStrata('DIALOG')
 
-	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\SUISetup')
+	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	popup.Title:SetPoint('TOP')
 	popup.Title:SetAlpha(.8)
