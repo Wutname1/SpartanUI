@@ -17,6 +17,7 @@
 
 #Setup SUI error catcher
 libs\bug-grabber\load.xml
+Core\BugWindow.lua
 
 # General Libraries
 libs\LibStub\LibStub.lua
