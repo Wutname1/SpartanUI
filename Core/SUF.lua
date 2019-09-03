@@ -1,5 +1,30 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
 
+-- Special RealHPHandler for SpartUI 5.2.3 --
+-- Butchered Together by Alkalus to fix https://github.com/Wutname1/SpartanUI/issues/212
+
+function getCurrentUnitHP(unitid)
+	local aCurrentHP = 0
+	local aMaxHP = 0
+	if RealMobHealth and RealMobHealth.UnitHasHealthData(unitid) and RealMobHealth.GetUnitHealth then
+		aCurrentHP, aMaxHP = RealMobHealth.GetUnitHealth(unitid)
+	else
+		aCurrentHP = UnitHealth(unitid) or 0
+	end
+	return aCurrentHP
+end
+
+function getMaxUnitHP(unitid)
+	local aCurrentHP = 0
+	local aMaxHP = 0
+	if RealMobHealth and RealMobHealth.UnitHasHealthData(unitid) and RealMobHealth.GetUnitHealth then
+		aCurrentHP, aMaxHP = RealMobHealth.GetUnitHealth(unitid)
+	else
+		aMaxHP = UnitHealthMax(unitid) or 1
+	end
+	return aMaxHP
+end
+
 --------------   SUF Functions   ------------------------------------
 function addon:HotsListing()
 	local _, classFileName = UnitClass('player')
@@ -354,7 +379,7 @@ do --Health Formatting Tags
 	-- Current Health Short, as an SUIUF module
 	SUIUF.Tags.Events['curhpshort'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['curhpshort'] = function(unit)
-		local tmp = UnitHealth(unit)
+		local tmp = getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 0) .. 'M'
 		end
@@ -366,7 +391,7 @@ do --Health Formatting Tags
 	-- Current Health Dynamic, as an SUIUF module
 	SUIUF.Tags.Events['curhpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['curhpdynamic'] = function(unit)
-		local tmp = UnitHealth(unit)
+		local tmp = getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
 		else
@@ -376,7 +401,7 @@ do --Health Formatting Tags
 	-- Total Health Short, as an SUIUF module
 	SUIUF.Tags.Events['maxhpshort'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['maxhpshort'] = function(unit)
-		local tmp = UnitHealthMax(unit)
+		local tmp = getMaxUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 0) .. 'M'
 		end
@@ -388,7 +413,7 @@ do --Health Formatting Tags
 	-- Total Health Dynamic, as an SUIUF module
 	SUIUF.Tags.Events['maxhpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['maxhpdynamic'] = function(unit)
-		local tmp = UnitHealthMax(unit)
+		local tmp = getMaxUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
 		else
@@ -398,7 +423,7 @@ do --Health Formatting Tags
 	-- Missing Health Dynamic, as an SUIUF module
 	SUIUF.Tags.Events['missinghpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['missinghpdynamic'] = function(unit)
-		local tmp = UnitHealthMax(unit) - UnitHealth(unit)
+		local tmp = getMaxUnitHP(unit) - getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
 		else
@@ -408,17 +433,17 @@ do --Health Formatting Tags
 	-- Current Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['curhpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['curhpformatted'] = function(unit)
-		return addon:comma_value(UnitHealth(unit))
+		return addon:comma_value(getCurrentUnitHP(unit))
 	end
 	-- Total Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['maxhpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['maxhpformatted'] = function(unit)
-		return addon:comma_value(UnitHealthMax(unit))
+		return addon:comma_value(getMaxUnitHP(unit))
 	end
 	-- Missing Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['missinghpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['missinghpformatted'] = function(unit)
-		return addon:comma_value(UnitHealthMax(unit) - UnitHealth(unit))
+		return addon:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
 	end
 end
 
