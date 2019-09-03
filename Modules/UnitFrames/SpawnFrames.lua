@@ -606,19 +606,20 @@ local function CreateUnitFrame(self, unit)
 			self.Power.colorPower = true
 			self.Power.frequentUpdates = true
 
-			if unit == 'player' then
-				-- Additional Mana
-				local AdditionalPower = CreateFrame('StatusBar', nil, self)
-				AdditionalPower:SetSize(self.Power:GetWidth(), 4)
-				AdditionalPower:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
-				AdditionalPower.colorPower = true
-				AdditionalPower:SetStatusBarTexture(Smoothv2)
-				local Background = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
-				Background:SetAllPoints(AdditionalPower)
-				Background:SetTexture(1, 1, 1, .2)
-				self.AdditionalPower = AdditionalPower
-				self.AdditionalPower.bg = Background
+			-- Additional Mana
+			local AdditionalPower = CreateFrame('StatusBar', nil, self)
+			AdditionalPower:SetSize(self.Power:GetWidth(), 4)
+			AdditionalPower:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
+			AdditionalPower.colorPower = true
+			AdditionalPower:SetStatusBarTexture(Smoothv2)
 
+			local AdditionalPowerbg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
+			AdditionalPowerbg:SetAllPoints(AdditionalPower)
+			AdditionalPowerbg:SetTexture(1, 1, 1, .2)
+			self.AdditionalPower = AdditionalPower
+			self.AdditionalPower.bg = AdditionalPowerbg
+
+			if unit == 'player' then
 				-- Position and size
 				local mainBar = CreateFrame('StatusBar', nil, self.Power)
 				mainBar:SetReverseFill(true)
