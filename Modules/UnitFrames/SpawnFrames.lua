@@ -122,6 +122,14 @@ local function CreateUnitFrame(self, unit)
 				else
 					self:DisableElement(element)
 				end
+				--Background
+				if self[element].bg then
+					if module.CurrentSettings[unit].elements[element].bg then
+						self[element].bg:Show()
+					else
+						self[element].bg:Hide()
+					end
+				end
 				-- SUI Update (size, position, etc)
 				if SUI:isInTable(IndicatorList, element) then
 					self:ElementUpdate(element)
@@ -184,26 +192,27 @@ local function CreateUnitFrame(self, unit)
 			return
 		end
 		local data = module.CurrentSettings[unit].elements[elementName]
+		local element = self[elementName]
 
 		-- Setup the Alpha scape and position
-		self[elementName]:SetAlpha(data.alpha)
-		self[elementName]:SetScale(data.scale)
+		element:SetAlpha(data.alpha)
+		element:SetScale(data.scale)
 
 		-- Positioning
-		self[elementName]:ClearAllPoints()
+		element:ClearAllPoints()
 		if data.points ~= false and data.points == true then
-			self[elementName]:SetAllPoints(self)
+			element:SetAllPoints(self)
 		elseif data.points ~= false and data.points ~= true then
 			for _, key in pairs(data.points) do
-				self[elementName]:SetPoint(key.anchor, self, key.anchor, key.x, key.y)
+				element:SetPoint(key.anchor, self, key.anchor, key.x, key.y)
 			end
 		elseif data.position.anchor then
-			self[elementName]:SetPoint(data.position.anchor, self, data.position.anchor, data.position.x, data.position.y)
+			element:SetPoint(data.position.anchor, self, data.position.anchor, data.position.x, data.position.y)
 		end
 
 		--Size it if we have a size change function for the element
-		if self[elementName].SizeChange then
-			self[elementName]:SizeChange()
+		if element.SizeChange then
+			element:SizeChange()
 		end
 
 		--PVPIndicator specific stuff
@@ -391,6 +400,12 @@ local function CreateUnitFrame(self, unit)
 			cast:SetSize(self:GetWidth(), elements.Castbar.height)
 			cast:SetPoint('TOP', self, 'TOP', 0, 0)
 
+			local Background = cast:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(cast)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
+			cast.bg = Background
+
 			-- Add spell text
 			local Text = cast:CreateFontString()
 			SUI:FormatFont(Text, elements.Castbar.text['1'].size, 'UnitFrames')
@@ -456,6 +471,13 @@ local function CreateUnitFrame(self, unit)
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture(Smoothv2)
 			health:SetSize(self:GetWidth(), elements.Health.height)
+
+			local Background = health:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(health)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
+			health.bg = Background
+
 			if elements.Castbar.enabled then
 				health:SetPoint('TOP', self, 'TOP', 0, ((elements.Castbar.height + 2) * -1))
 			else
@@ -552,6 +574,13 @@ local function CreateUnitFrame(self, unit)
 			power:SetFrameLevel(2)
 			power:SetStatusBarTexture(Smoothv2)
 			power:SetSize(self:GetWidth(), elements.Power.height)
+
+			local Background = power:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(power)
+			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
+			power.bg = Background
+
 			local PositionData = 0
 			if elements.Castbar.enabled then
 				PositionData = elements.Castbar.height
@@ -624,7 +653,7 @@ local function CreateUnitFrame(self, unit)
 		self:Tag(self.Name, elements.Name.text)
 
 		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -8)
-		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\Images\\status-glow')
+		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
 		ElementUpdate(self, 'RareElite')
 
 		self.BossGraphic = self:CreateTexture(nil, 'ARTWORK')
