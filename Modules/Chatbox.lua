@@ -114,7 +114,7 @@ local changeName = function(fullName, misc, nameToChange, colon)
 	if nameGroup and nameGroup[name] and IsInRaid() then
 		nameToChange = nameToChange .. ':' .. nameGroup[name]
 	end
-	return '|Hplayer:' .. fullName .. misc .. '[' .. nameToChange .. ']' .. (colon == ':' and '-' or colon) .. '|h'
+	return '|Hplayer:' .. fullName .. misc .. '[' .. nameToChange .. ']' .. (colon == ':' and ' ' or colon) .. '|h'
 end
 
 function module:PlayerName(text)
