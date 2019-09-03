@@ -22,20 +22,21 @@ local IsMouseOver = function()
 	return SUI.DB.MiniMap.MouseIsOver
 end
 
-local IgnoreCheck = function(item)
-	local DoNotIgnore = true
+local isFrameIgnored = function(item)
 	if item:GetName() ~= nil then
-		if string.match(item:GetName(), 'HandyNotes') then
-			DoNotIgnore = false
+		if string.match(item:GetName(), 'Questie') then
+			return true
+		elseif string.match(item:GetName(), 'HandyNotes') then
+			return true
 		end
 	end
-	return DoNotIgnore
+	return false
 end
 
 local MiniMapBtnScrape = function()
 	-- Hook Minimap Icons
 	for _, child in ipairs({Minimap:GetChildren()}) do
-		if child.FadeIn == nil and IgnoreCheck(child) then
+		if child.FadeIn == nil and not isFrameIgnored(child) then
 			module:SetupButton(child)
 		end
 	end
@@ -540,7 +541,7 @@ function module:update()
 			buttonName = child:GetName()
 
 			--catch buttons not playing nice.
-			if child.FadeOut == nil and IgnoreCheck(child) then
+			if child.FadeOut == nil and not isFrameIgnored(child) then
 				module:SetupButton(child, true)
 			end
 
@@ -553,7 +554,7 @@ function module:update()
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 				child.FadeOut:Play()
-			elseif child.FadeIn == nil and IgnoreCheck(child) then
+			elseif child.FadeIn == nil and not isFrameIgnored(child) then
 				--if they still fail print a error and continue with our lives.
 				SUI.Err('Minimap', buttonName .. ' is not fading')
 			end
