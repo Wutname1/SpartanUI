@@ -405,7 +405,7 @@ local CreatePlayerFrame = function(self, unit)
 			power.ratio:SetJustifyV('MIDDLE')
 			power.ratio:SetAllPoints(power)
 			--power.ratio:SetPoint("RIGHT",power,"LEFT",-2,0);
-			self:Tag(power.ratio, '[perpp]%')
+			self:Tag(power.ratio, PlayerFrames:TextFormat('mana'))
 
 			self.Power = power
 			self.Power.colorPower = true

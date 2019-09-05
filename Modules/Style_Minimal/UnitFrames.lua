@@ -498,7 +498,7 @@ local MakeLargeFrame = function(self, unit, width)
 			power.value:SetAllPoints(power)
 			power.value:SetJustifyH('CENTER')
 			power.value:SetJustifyV('MIDDLE')
-			self:Tag(power.value, '[perpp]%')
+			self:Tag(power.value, PlayerFrames:TextFormat('mana'))
 
 			local Background = power:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(power)
