@@ -175,7 +175,7 @@ function module:Options()
 				end,
 				set = function(info, val)
 					if InCombatLockdown() then
-						SUI:Print(L['Please leave combat first.'])
+						SUI:Print(ERR_NOT_IN_COMBAT)
 						return
 					end
 					module.db.profile.enable = val
@@ -202,7 +202,7 @@ function module:Options()
 			end,
 			set = function(info, val)
 				if InCombatLockdown() then
-					SUI:Print(L['Please leave combat first.'])
+					SUI:Print(ERR_NOT_IN_COMBAT)
 					return
 				end
 				module.db.profile.Effects[v].always = val
@@ -215,7 +215,7 @@ function module:Options()
 			order = k + 1.4,
 			get = function(info)
 				if InCombatLockdown() then
-					SUI:Print(L['Please leave combat first.'])
+					SUI:Print(ERR_NOT_IN_COMBAT)
 					return
 				end
 				return module.db.profile.Effects[v].afk

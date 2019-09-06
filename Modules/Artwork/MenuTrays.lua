@@ -96,7 +96,7 @@ end
 
 local CollapseToggle = function(self)
 	if InCombatLockdown() then
-		SUI:Print(L['Please leave combat first.'])
+		SUI:Print(ERR_NOT_IN_COMBAT)
 		return
 	end
 
