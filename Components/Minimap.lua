@@ -656,6 +656,18 @@ function module:BuildOptions()
 					module:update()
 				end
 			},
+			minimapTimeIndicator = {
+				name = L['MinMapHideTimeIndicator'],
+				type = 'toggle',
+				order = 0.5,
+				get = function(info)
+					return SUI.DB.MiniMap.MapTimeIndicator
+				end,
+				set = function(info, val)
+					SUI.DB.MiniMap.MapTimeIndicator = val
+					module:update()
+				end
+			},
 			OtherStyle = {
 				name = 'Button display mode',
 				order = 0.9,
