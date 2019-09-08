@@ -26,6 +26,8 @@ local isFrameIgnored = function(item)
 	if item:GetName() ~= nil then
 		if string.match(item:GetName(), 'Questie') then
 			return true
+		elseif string.match(item:GetName(), 'AAP-Classic') then
+			return true
 		elseif string.match(item:GetName(), 'HandyNotes') then
 			return true
 		end
