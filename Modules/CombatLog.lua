@@ -368,44 +368,46 @@ function module:FirstLaunch()
 			cLog.options = {}
 			cLog.options.alwayson = StdUi:Checkbox(cLog, L['Always on'], nil, 20)
 			cLog.options.announce = StdUi:Checkbox(cLog, L['Announce logging in chat'], nil, 20)
-
-			cLog.options.raidmythic = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
-			cLog.options.raidheroic = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
-			cLog.options.raidnormal = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
-			cLog.options.raidlfr = StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
-			cLog.options.raidlegacy = StdUi:Checkbox(cLog, L['Legacy raids'], 150, 20)
-
-			cLog.options.mythicplus = StdUi:Checkbox(cLog, L['Mythic+'], 150, 20)
-			cLog.options.mythicdungeon = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
-			cLog.options.heroicdungeon = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
-			cLog.options.normaldungeon = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
-
-			-- Create Labels
 			cLog.modEnabled = StdUi:Checkbox(cLog, L['Module enabled'], nil, 20)
-			cLog.lblRaid = StdUi:Label(cLog, L['Raid settings'], 13)
-			cLog.lblDungeon = StdUi:Label(cLog, L['Dungeon settings'], 13)
 
 			-- Positioning
 			StdUi:GlueTop(cLog.modEnabled, SUI_Win, 0, -10)
 			StdUi:GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
 			StdUi:GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
 
-			-- Raid Settings
-			StdUi:GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
-			StdUi:GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
-			StdUi:GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
-			StdUi:GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
+			if not SUI.IsClassic then
+				cLog.options.raidmythic = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
+				cLog.options.raidheroic = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
+				cLog.options.raidnormal = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
+				cLog.options.raidlfr = StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
+				cLog.options.raidlegacy = StdUi:Checkbox(cLog, L['Legacy raids'], 150, 20)
 
-			StdUi:GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
-			StdUi:GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
+				cLog.options.mythicplus = StdUi:Checkbox(cLog, L['Mythic+'], 150, 20)
+				cLog.options.mythicdungeon = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
+				cLog.options.heroicdungeon = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
+				cLog.options.normaldungeon = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
 
-			--Dungeon Settings
-			StdUi:GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
-			StdUi:GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
-			StdUi:GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
-			StdUi:GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
+				-- Create Labels
+				cLog.lblRaid = StdUi:Label(cLog, L['Raid settings'], 13)
+				cLog.lblDungeon = StdUi:Label(cLog, L['Dungeon settings'], 13)
 
-			StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
+				-- Raid Settings
+				StdUi:GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
+				StdUi:GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
+				StdUi:GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
+				StdUi:GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
+
+				StdUi:GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
+				StdUi:GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
+
+				--Dungeon Settings
+				StdUi:GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
+				StdUi:GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
+				StdUi:GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
+				StdUi:GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
+
+				StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
+			end
 
 			-- Defaults
 			cLog.modEnabled:SetChecked(SUI.DB.EnabledComponents.CombatLog)
