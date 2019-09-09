@@ -22,7 +22,7 @@ local TauntsList = {
 	--Paladin
 	204079 --Final Stand
 }
-local lastTimeStamp, lastSpellID = 0, 0
+local lastTimeStamp, lastSpellID, lastspellName = 0, 0, ''
 
 local function printFormattedString(who, target, sid, failed)
 	local msg = SUI.DBMod.TauntWatcher.text
@@ -79,6 +79,17 @@ local function printFormattedString(who, target, sid, failed)
 end
 
 function module:OnInitialize()
+	if SUI.IsClassic then
+		TauntsList = {
+			-- Warrior taunt
+			'Taunt',
+			-- Warrior improved taunt
+			'Improved Taunt',
+			-- Druid Growl ranks
+			'Challenging Roar',
+			'Growl'
+		}
+	end
 end
 
 function module:COMBAT_LOG_EVENT_UNFILTERED()
@@ -86,14 +97,20 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 		return
 	end
 
-	local timeStamp, subEvent, _, _, srcName, _, _, _, dstName, _, _, spellID = CombatLogGetCurrentEventInfo()
+	local timeStamp, subEvent, _, _, srcName, _, _, _, dstName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
 	-- Check if we have been here before
-	if timeStamp == lastTimeStamp and spellID == lastSpellID then
+	if
+		(not SUI.IsClassic and timeStamp == lastTimeStamp and spellID == lastSpellID) or
+			(SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName) or
+			(SUI.IsClassic and type(spellName) ~= 'string')
+	 then
 		return
 	end
 
 	-- Print the taunt
-	if SUI:isInTable(TauntsList, spellID) then
+	if
+		(not SUI.IsClassic and SUI:isInTable(TauntsList, spellID)) or (SUI.IsClassic and SUI:isInTable(TauntsList, spellName))
+	 then
 		local continue = false
 		local inInstance, instanceType = IsInInstance()
 		if instanceType == 'arena' and SUI.DBMod.TauntWatcher.active.inArena then
@@ -369,14 +386,19 @@ function module:SetupWizard()
 			TauntWatch.lblAnnouncetext = StdUi:Label(TauntWatch, L['Announce text:'], 13)
 			TauntWatch.lblvariable1 = StdUi:Label(TauntWatch, '%who - ' .. L['Player/Pet that taunted'], 13)
 			TauntWatch.lblvariable2 = StdUi:Label(TauntWatch, '%what - ' .. L['Name of mob taunted'], 13)
-			TauntWatch.lblvariable3 = StdUi:Label(TauntWatch, '%spell - ' .. L['Spell link of spell used to taunt'], 13)
+
 			TauntWatch.tbAnnounceText = StdUi:SimpleEditBox(TauntWatch, 300, 24, SUI.DBMod.TauntWatcher.text)
 
 			StdUi:GlueBelow(TauntWatch.lblAnnouncetext, TauntWatch.lblActive, 0, -80)
 			StdUi:GlueBelow(TauntWatch.lblvariable1, TauntWatch.lblAnnouncetext, 15, -5, 'LEFT')
 			StdUi:GlueBelow(TauntWatch.lblvariable2, TauntWatch.lblvariable1, 0, -5, 'LEFT')
-			StdUi:GlueBelow(TauntWatch.lblvariable3, TauntWatch.lblvariable2, 0, -5, 'LEFT')
-			StdUi:GlueBelow(TauntWatch.tbAnnounceText, TauntWatch.lblvariable3, -15, -5, 'LEFT')
+			if SUI.IsClassic then
+				StdUi:GlueBelow(TauntWatch.tbAnnounceText, TauntWatch.lblvariable2, -15, -5, 'LEFT')
+			else
+				TauntWatch.lblvariable3 = StdUi:Label(TauntWatch, '%spell - ' .. L['Spell link of spell used to taunt'], 13)
+				StdUi:GlueBelow(TauntWatch.lblvariable3, TauntWatch.lblvariable2, 0, -5, 'LEFT')
+				StdUi:GlueBelow(TauntWatch.tbAnnounceText, TauntWatch.lblvariable3, -15, -5, 'LEFT')
+			end
 
 			-- Defaults
 			TauntWatch.modEnabled:SetChecked(SUI.DB.EnabledComponents.TauntWatcher)
