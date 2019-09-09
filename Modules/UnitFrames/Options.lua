@@ -728,6 +728,12 @@ local function AddIndicatorOptions(frameName)
 	if frameName == 'player' then
 		AllIndicators = SUI:MergeData(AllIndicators, PlayerOnly)
 	end
+	if frameName == 'pet' and SUI.IsClassic then
+		local petIndicator = {
+			['PetHappiness'] = 'Pet happiness'
+		}
+		AllIndicators = SUI:MergeData(AllIndicators, petIndicator)
+	end
 	if frameName == 'target' then
 		AllIndicators = SUI:MergeData(AllIndicators, targetOnly)
 	end

@@ -60,7 +60,8 @@ local IndicatorList = {
 	'QuestIndicator',
 	'PhaseIndicator',
 	'ThreatIndicator',
-	'SUI_RaidGroup'
+	'SUI_RaidGroup',
+	'PetHappiness'
 }
 
 local function customFilter(
@@ -665,6 +666,18 @@ local function CreateUnitFrame(self, unit)
 		self.Name:SetJustifyV(elements.Name.SetJustifyV)
 		ElementUpdate(self, 'Name')
 		self:Tag(self.Name, elements.Name.text)
+
+		if SUI.IsClassic then
+			-- -- Position and size
+			-- local PetHappiness = CreateFrame('Frame', nil, self)
+			-- PetHappiness:SetSize(elements.PetHappiness.size, 20)
+			-- PetHappiness:SetPoint('LEFT', self, 'LEFT')
+
+			-- Register it with oUF
+			self.PetHappiness = CreateFrame('Frame', nil, self)
+			self.PetHappiness:SetSize(elements.PetHappiness.size, elements.PetHappiness.size - 5)
+			ElementUpdate(self, 'PetHappiness')
+		end
 
 		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -8)
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
