@@ -1555,6 +1555,14 @@ local DBdefault = {
 								y = 0
 							}
 						},
+						PetHappiness = {
+							enabled = true,
+							position = {
+								anchor = 'LEFT',
+								x = -10,
+								y = -10
+							}
+						},
 						Portrait = {
 							type = '3D',
 							position = 'left'
@@ -1896,10 +1904,13 @@ local DBdefault = {
 					}
 				},
 				bosstarget = {},
-				pet = {},
+				pet = {
+					width = 100
+				},
 				pettarget = {},
 				focus = {
 					enabled = true,
+					width = 100,
 					elements = {
 						Castbar = {
 							enabled = true
@@ -1908,6 +1919,7 @@ local DBdefault = {
 				},
 				focustarget = {
 					enabled = true,
+					width = 90,
 					elements = {
 						Castbar = {
 							enabled = true
@@ -1915,6 +1927,7 @@ local DBdefault = {
 					}
 				},
 				party = {
+					width = 120,
 					enabled = true,
 					elements = {
 						Castbar = {
@@ -2018,6 +2031,9 @@ local DBdefault = {
 								}
 							},
 							HealthPrediction = {},
+							PetHappiness = {
+								position = {},
+							},
 							Power = {
 								position = {},
 								text = {
@@ -2096,6 +2112,9 @@ local DBdefault = {
 		},
 		BarTextures = {
 			smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+		},
+		MoveIt = {
+			movers = {}
 		}
 	},
 	Modules = {
@@ -2155,6 +2174,7 @@ local DBdefault = {
 			BottomOffset = 0,
 			BottomOffsetAuto = true,
 			FirstLoad = true,
+			SetupDone = false,
 			VehicleUI = true,
 			Viewport = {
 				enabled = true,
@@ -2302,7 +2322,7 @@ function SUI:OnInitialize()
 	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 
 	--Check for any SUI.DB changes
-	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) then
+	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) and SUI.DB.Version ~= '0' then
 		SUI:DBUpgrades()
 	end
 
@@ -2397,6 +2417,15 @@ function SUI:DBUpgrades()
 		 then
 			SUI.DB.EnabledComponents.UnitFrames = false
 		end
+
+		--Reset default texture paths
+		SUI.DB.Tooltips.Styles.metal.bgFile = nil
+		SUI.DB.Tooltips.Styles.smooth.bgFile = nil
+		SUI.DB.Tooltips.Styles.smoke.bgFile = nil
+		SUI.DB.Tooltips.Styles.none.bgFile = nil
+		SUI.DB.BarTextures.smooth = nil
+		SUI.DBMod.StatusBars.default.bgTooltip = nil
+		SUI.DBMod.StatusBars.default.GlowImage = nil
 
 		-- Make sure everything is disabled
 		DisableAddOn('SpartanUI_Artwork')
