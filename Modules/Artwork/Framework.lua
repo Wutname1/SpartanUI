@@ -1,9 +1,9 @@
 local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:NewModule('Component_Artwork')
+local module = SUI:NewModule('Component_Artwork')
 local BartenderMin = '4.8.5'
 
-function Artwork_Core:updateScale()
+function module:updateScale()
 	--Set default scale based on if the user is using a widescreen.
 	if (not SUI.DB.scale) then
 		local Resolution = ''
@@ -28,7 +28,7 @@ function Artwork_Core:updateScale()
 	end
 end
 
-function Artwork_Core:updateOffset()
+function module:updateOffset()
 	if InCombatLockdown() then
 		return
 	end
@@ -97,7 +97,7 @@ function Artwork_Core:updateOffset()
 	end
 end
 
-function Artwork_Core:isInTable(tab, frameName)
+function module:isInTable(tab, frameName)
 	for _, v in ipairs(tab) do
 		if (strlower(v) == strlower(frameName)) then
 			return true
@@ -106,13 +106,13 @@ function Artwork_Core:isInTable(tab, frameName)
 	return false
 end
 
-function Artwork_Core:round(num) -- rounds a number to 2 decimal places
+function module:round(num) -- rounds a number to 2 decimal places
 	if num then
 		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
 	end
 end
 
-function Artwork_Core:MoveTalkingHeadUI()
+function module:MoveTalkingHeadUI()
 	local THUDB = SUI.DB.Styles[SUI.DBMod.Artwork.Style].TalkingHeadUI
 	local MoveTalkingHead = CreateFrame('Frame')
 	MoveTalkingHead:RegisterEvent('ADDON_LOADED')
@@ -134,7 +134,7 @@ function Artwork_Core:MoveTalkingHeadUI()
 	)
 end
 
-function Artwork_Core:ActionBarPlates(plate, excludelist)
+function module:ActionBarPlates(plate, excludelist)
 	local lib = LibStub('LibWindow-1.1', true)
 	if not lib then
 		return
@@ -189,7 +189,7 @@ function Artwork_Core:ActionBarPlates(plate, excludelist)
 	end
 end
 
-function Artwork_Core:OnInitialize()
+function module:OnInitialize()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
 	end
@@ -214,15 +214,14 @@ function Artwork_Core:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
-	Artwork_Core:FirstTime()
 
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
 		SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
 	end
-	Artwork_Core:CheckMiniMap()
+	module:CheckMiniMap()
 end
 
-function Artwork_Core:FirstTime()
+function module:FirstTime()
 	local PageData = {
 		ID = 'ArtworkCore',
 		Name = 'SpartanUI style',
@@ -347,7 +346,7 @@ function Artwork_Core:FirstTime()
 			SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 			SUI.DBMod.Artwork.FirstLoad = true
 			SUI.DBG.BartenderChangesActive = true
-			Artwork_Core:SetupProfile()
+			module:SetupProfile()
 
 			--Reset Moved bars
 			SUI.DBG.BartenderChangesActive = true
@@ -380,7 +379,7 @@ function Artwork_Core:FirstTime()
 	SetupWindow:AddPage(PageData)
 end
 
-function Artwork_Core:OnEnable()
+function module:OnEnable()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
 	end
@@ -389,7 +388,8 @@ function Artwork_Core:OnEnable()
 		StaticPopup_Show('BartenderVerWarning')
 	end
 
-	Artwork_Core:SetupOptions()
+	module:FirstTime()
+	module:SetupOptions()
 
 	local FrameList = {
 		BT4Bar1,
@@ -427,7 +427,7 @@ function Artwork_Core:OnEnable()
 	end
 end
 
-function Artwork_Core:CheckMiniMap()
+function module:CheckMiniMap()
 	-- Check for Carbonite dinking with the minimap.
 	if (NXTITLELOW) then
 		SUI:Print(NXTITLELOW .. ' is loaded ...Checking settings ...')
@@ -452,7 +452,7 @@ function Artwork_Core:CheckMiniMap()
 end
 
 -- Bartender4 Items
-function Artwork_Core:SetupProfile(ProfileOverride)
+function module:SetupProfile(ProfileOverride)
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo('Bartender4'))) then
 		return
@@ -490,7 +490,7 @@ function Artwork_Core:SetupProfile(ProfileOverride)
 	SUI.DBG.BartenderChangesActive = false
 end
 
-function Artwork_Core:BartenderProfileCheck(Input, Report)
+function module:BartenderProfileCheck(Input, Report)
 	local profiles, r = Bartender4.db:GetProfiles(), false
 	for _, v in pairs(profiles) do
 		if v == Input then
@@ -503,7 +503,7 @@ function Artwork_Core:BartenderProfileCheck(Input, Report)
 	return r
 end
 
-function Artwork_Core:CreateProfile()
+function module:CreateProfile()
 	SUI.DBG.BartenderChangesActive = true
 	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile
 	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
