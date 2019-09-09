@@ -26,6 +26,8 @@ local isFrameIgnored = function(item)
 	if item:GetName() ~= nil then
 		if string.match(item:GetName(), 'Questie') then
 			return true
+		elseif string.match(item:GetName(), 'AAP-Classic') then
+			return true
 		elseif string.match(item:GetName(), 'HandyNotes') then
 			return true
 		end
@@ -212,9 +214,9 @@ function module:OnEnable()
 				Minimap.mover:Hide()
 				Minimap:StopMovingOrSizing()
 				if SUI:GetModule('Component_Artwork', true) then
-					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(Minimap:GetNumPoints())}
+					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(1)}
 				else
-					SUI.DB.MiniMap.Position = {Minimap:GetPoint(Minimap:GetNumPoints())}
+					SUI.DB.MiniMap.Position = {Minimap:GetPoint(1)}
 				end
 			end
 		)
