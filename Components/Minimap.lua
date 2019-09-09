@@ -515,6 +515,11 @@ function module:update()
 		MinimapZoomIn:Show()
 		MinimapZoomOut:Show()
 	end
+	if (SUI.DB.MiniMap.MapTimeIndicator) then
+		GameTimeFrame:Hide()
+	else
+		GameTimeFrame:Show()
+	end
 
 	SUI.DB.MiniMap.SUIMapChangesActive = true
 	if not IsMouseOver() and (SUI.DB.MiniMap.OtherStyle == 'mouseover' or SUI.DB.MiniMap.OtherStyle == 'hide') then
