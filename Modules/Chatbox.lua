@@ -457,7 +457,7 @@ function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['Chatbox'] = {
 		type = 'group',
 		name = 'Chatbox',
-		childGroups = 'tree',
+		childGroups = 'tab',
 		args = {
 			enabled = {
 				name = 'Enabled',
@@ -493,6 +493,7 @@ function module:BuildOptions()
 			player = {
 				name = 'Player name',
 				type = 'group',
+				inline = true,
 				order = 100,
 				width = 'full',
 				args = {
