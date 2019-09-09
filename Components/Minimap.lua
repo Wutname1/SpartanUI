@@ -662,7 +662,7 @@ function module:BuildOptions()
 				end
 			},
 			minimapTimeIndicator = {
-				name = L['MinMapHideTimeIndicator'],
+				name = L['Hide Time Indicator'],
 				type = 'toggle',
 				order = 0.5,
 				get = function(info)
