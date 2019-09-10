@@ -654,7 +654,6 @@ function module:BuildOptions()
 			minimapzoom = {
 				name = L['MinMapHideZoom'],
 				type = 'toggle',
-				hidden = (not SUI.IsClassic),
 				order = 0.5,
 				get = function(info)
 					return SUI.DB.MiniMap.MapZoomButtons
@@ -667,7 +666,7 @@ function module:BuildOptions()
 			minimapTimeIndicator = {
 				name = L['Hide Time Indicator'],
 				type = 'toggle',
-				
+				hidden = (not SUI.IsClassic),
 				order = 0.5,
 				get = function(info)
 					return SUI.DB.MiniMap.MapTimeIndicator
