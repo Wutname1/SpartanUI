@@ -515,10 +515,12 @@ function module:update()
 		MinimapZoomIn:Show()
 		MinimapZoomOut:Show()
 	end
-	if (SUI.DB.MiniMap.MapTimeIndicator) then
-		GameTimeFrame:Hide()
-	else
-		GameTimeFrame:Show()
+	if SUI.IsClassic then
+		if (SUI.DB.MiniMap.MapTimeIndicator) then
+			GameTimeFrame:Hide()
+		else
+			GameTimeFrame:Show()
+		end
 	end
 
 	SUI.DB.MiniMap.SUIMapChangesActive = true
@@ -652,6 +654,7 @@ function module:BuildOptions()
 			minimapzoom = {
 				name = L['MinMapHideZoom'],
 				type = 'toggle',
+				hidden = (not SUI.IsClassic),
 				order = 0.5,
 				get = function(info)
 					return SUI.DB.MiniMap.MapZoomButtons
@@ -664,6 +667,7 @@ function module:BuildOptions()
 			minimapTimeIndicator = {
 				name = L['Hide Time Indicator'],
 				type = 'toggle',
+				
 				order = 0.5,
 				get = function(info)
 					return SUI.DB.MiniMap.MapTimeIndicator
