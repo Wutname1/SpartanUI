@@ -9,6 +9,7 @@ L['4 status bar'] = '4th status bar'
 L['5 status bar'] = '5th status bar'
 L['Accept quests'] = true
 L['Accept repeatable'] = true
+L['Hide Time Indicator'] = true
 L['Accept trivial quests'] = true
 L['ActionBarConfDesc'] = 'configure actionbar backdrops'
 L['Active when in'] = true

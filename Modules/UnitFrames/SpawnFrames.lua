@@ -668,11 +668,6 @@ local function CreateUnitFrame(self, unit)
 		self:Tag(self.Name, elements.Name.text)
 
 		if SUI.IsClassic then
-			-- -- Position and size
-			-- local PetHappiness = CreateFrame('Frame', nil, self)
-			-- PetHappiness:SetSize(elements.PetHappiness.size, 20)
-			-- PetHappiness:SetPoint('LEFT', self, 'LEFT')
-
 			-- Register it with oUF
 			self.PetHappiness = CreateFrame('Frame', nil, self)
 			self.PetHappiness:SetSize(elements.PetHappiness.size, elements.PetHappiness.size - 5)

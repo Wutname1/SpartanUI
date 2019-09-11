@@ -1373,6 +1373,7 @@ local DBdefault = {
 			MapButtons = true,
 			MouseIsOver = false,
 			MapZoomButtons = true,
+			MapTimeIndicator = false,
 			DisplayMapCords = true,
 			DisplayZoneName = true,
 			Shape = 'square',

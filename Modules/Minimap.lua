@@ -388,8 +388,11 @@ function module:ModifyMinimapLayout()
 	MiniMapMailFrame:ClearAllPoints()
 	MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 21, -53)
 
-	GameTimeFrame:ClearAllPoints()
-	GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
+	if GameTimeFrame then
+		GameTimeFrame:ClearAllPoints()
+		GameTimeFrame:SetScale(.7)
+		GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
+	end
 
 	module:MinimapCoords()
 	MinimapZoneText:ClearAllPoints()
