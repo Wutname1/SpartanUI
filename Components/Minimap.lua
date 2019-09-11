@@ -289,6 +289,11 @@ function module:ModifyMinimapLayout()
 
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap ~= nil then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.shape == 'square' then
+			-- Set Map Mask
+			function GetMinimapShape()
+				return 'SQUARE'
+			end
+
 			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
 
 			if not SUI.IsClassic then
@@ -392,6 +397,7 @@ function module:ModifyMinimapLayout()
 		GameTimeFrame:ClearAllPoints()
 		GameTimeFrame:SetScale(.7)
 		GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
+		GameTimeFrame:SetFrameLevel(122)
 	end
 
 	module:MinimapCoords()
