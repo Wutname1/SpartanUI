@@ -47,12 +47,16 @@ function module:MiniMap()
 			-- MinimapZoneText:SetShadowColor(0,0,0,1);
 			-- MinimapZoneText:SetShadowOffset(1,-1);
 
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
+			if MiniMapTracking then
+				MiniMapTracking:ClearAllPoints()
+				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
+			end
 		else
 			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\media\\map-circle-overlay')
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
+			if MiniMapTracking then
+				MiniMapTracking:ClearAllPoints()
+				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
+			end
 			if Minimap.overlay then
 				Minimap.overlay:Hide()
 			end
