@@ -42,11 +42,12 @@ local ExcludedItems = {
 	6256 -- Fishing Pole
 }
 local ExcludedTypes = {
-	'Quest',
 	'Container',
 	'Companions',
+	'Holiday',
 	'Mounts',
-	'Holiday'
+	'Projectiles',
+	'Quest'
 }
 
 function module:OnInitialize()
