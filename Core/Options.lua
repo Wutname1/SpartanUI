@@ -48,7 +48,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Classic'
-							SUI.DB.UnitFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -62,7 +62,7 @@ function module:OnInitialize()
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Fel'
 							SUI.DB.Styles.Fel.SubTheme = 'Fel'
-							SUI.DB.UnitFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -75,7 +75,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Transparent'
-							SUI.DB.UnitFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -88,7 +88,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Minimal'
-							SUI.DB.UnitFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -102,7 +102,7 @@ function module:OnInitialize()
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Fel'
 							SUI.DB.Styles.Fel.SubTheme = 'Digital'
-							SUI.DB.UnitFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					},
@@ -115,7 +115,7 @@ function module:OnInitialize()
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'War'
-							SUI.DB.UnitFrames.Style = SUI.DBMod.Artwork.Style
+							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 							module:ArtSetup()
 						end
 					}
@@ -216,7 +216,7 @@ function module:OnInitialize()
 							return {0, .5, 0, .5}
 						end,
 						func = function()
-							SUI.DB.UnitFrames.Style = 'Classic'
+							SUI.DB.Unitframes.Style = 'Classic'
 						end
 					},
 					War = {
@@ -230,7 +230,7 @@ function module:OnInitialize()
 							return {.1, .5, .1, .5}
 						end,
 						func = function()
-							SUI.DB.UnitFrames.Style = 'War'
+							SUI.DB.Unitframes.Style = 'War'
 						end
 					},
 					Fel = {
@@ -244,7 +244,7 @@ function module:OnInitialize()
 							return {.1, .5, .1, .5}
 						end,
 						func = function()
-							SUI.DB.UnitFrames.Style = 'Fel'
+							SUI.DB.Unitframes.Style = 'Fel'
 						end
 					},
 					Transparent = {
@@ -258,7 +258,7 @@ function module:OnInitialize()
 							return {0, .5, 0, .5}
 						end,
 						func = function()
-							SUI.DB.UnitFrames.Style = 'Transparent'
+							SUI.DB.Unitframes.Style = 'Transparent'
 						end
 					},
 					Minimal = {
@@ -272,7 +272,7 @@ function module:OnInitialize()
 							return {0, .5, 0, .5}
 						end,
 						func = function()
-							SUI.DB.UnitFrames.Style = 'Minimal'
+							SUI.DB.Unitframes.Style = 'Minimal'
 						end
 					}
 				}

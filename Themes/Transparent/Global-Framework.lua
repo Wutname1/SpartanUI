@@ -291,24 +291,6 @@ function module:SetColor()
 			_G['Transparent_Popup' .. i .. 'BG']:SetVertexColor(r, b, g, a)
 		end
 	end
-
-	if SUI.DBMod.PlayerFrames.Style == 'Transparent' then
-		PlayerFrames = SUI:GetModule('PlayerFrames')
-		r, b, g, a = unpack(SUI.DB.Styles.Transparent.Color.PlayerFrames)
-		for _, v in pairs(FramesList) do
-			PlayerFrames[v].artwork.bg:SetVertexColor(r, b, g, a)
-		end
-		for _, v in pairs(PlayerFrames.arena) do
-			if v.artwork then
-				v.artwork.bg:SetVertexColor(r, b, g, a)
-			end
-		end
-		for _, v in pairs(PlayerFrames.boss) do
-			if v.artwork then
-				v.artwork.bg:SetVertexColor(r, b, g, a)
-			end
-		end
-	end
 end
 
 function module:EnableFramework()

@@ -2373,7 +2373,7 @@ local CreateBossFrame = function(self, unit)
 	return self
 end
 
-local CreatePlayerFrame = function(self, unit)
+local CreatePlayerFrames = function(self, unit)
 	if (SUI_FramesAnchor:GetParent() == UIParent) then
 		self:SetParent(UIParent)
 	else
@@ -2815,7 +2815,7 @@ function PlayerFrames:SetupExtras()
 			GameTooltip:Hide()
 		end
 
-		LFDCooldown = CreateFrame('Frame', nil, PlayerFrames.player)
+		local LFDCooldown = CreateFrame('Frame', nil, PlayerFrames.player)
 		LFDCooldown:SetFrameStrata('BACKGROUND')
 		LFDCooldown:SetFrameLevel(10)
 		LFDCooldown:SetWidth(38) -- Set these to whatever height/width is needed
