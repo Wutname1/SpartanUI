@@ -115,7 +115,7 @@ function module:updateSpartanOffset() -- handles SpartanUI offset based on setti
 			-- bottom bars
 			end
 		end
-		TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
+		local TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
 		for i = 1, 2 do -- Titan Bar Offset
 			if (_G['Titan_Bar__Display_' .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. '_Show')) then
 				local PanelScale = TitanPanelGetVar('Scale') or 1

@@ -15,7 +15,7 @@ module.Settings = {
 	}
 }
 
-function Transparent_MiniMapCreate()
+local function Transparent_MiniMapCreate()
 	Minimap:SetSize(130, 130)
 	Minimap:ClearAllPoints()
 	Minimap:SetPoint('CENTER', 'Transparent_SpartanUI', 'CENTER', 0, -5)

@@ -34,6 +34,7 @@ function module:updateOffset()
 	end
 
 	local Top = 0
+	local offset = 0
 	local fubar, ChocolateBar, titan = 0, 0, 0
 
 	if not SUI.DB.yoffsetAuto then

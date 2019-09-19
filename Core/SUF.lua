@@ -124,7 +124,7 @@ function addon:pvpIcon(self, event, unit)
 	end
 end
 
-function getCurrentUnitHP(unitid)
+local function getCurrentUnitHP(unitid)
 	local aCurrentHP = 0
 	local aMaxHP = 0
 	if RealMobHealth and RealMobHealth.UnitHasHealthData(unitid) and RealMobHealth.GetUnitHealth then
@@ -135,7 +135,7 @@ function getCurrentUnitHP(unitid)
 	return aCurrentHP
 end
 
-function getMaxUnitHP(unitid)
+local function getMaxUnitHP(unitid)
 	local aCurrentHP = 0
 	local aMaxHP = 0
 	if RealMobHealth and RealMobHealth.UnitHasHealthData(unitid) and RealMobHealth.GetUnitHealth then

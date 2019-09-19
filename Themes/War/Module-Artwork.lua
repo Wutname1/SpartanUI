@@ -28,7 +28,7 @@ module.StatusBarSettings = {
 		MaxWidth = 48
 	}
 }
-local CurScale
+local CurScale, plate
 local petbattle = CreateFrame('Frame')
 
 -- Misc Framework stuff

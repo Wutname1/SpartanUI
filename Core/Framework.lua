@@ -2506,7 +2506,7 @@ function SUI:GoldFormattedValue(rawValue)
 end
 
 function SUI:BT4ProfileAttach(msg)
-	PageData = {
+	local PageData = {
 		title = 'SpartanUI',
 		Desc1 = msg,
 		-- Desc2 = Desc2,
@@ -2604,7 +2604,7 @@ end
 
 function SUI:reloadui(Desc2)
 	-- SUI.DB.OpenOptions = true;
-	PageData = {
+	local PageData = {
 		title = 'SpartanUI',
 		Desc1 = 'A reload of your UI is required.',
 		Desc2 = Desc2,
@@ -2806,7 +2806,7 @@ function SUI:isPartialMatch(frameName, tab)
 	local result = false
 
 	for _, v in ipairs(tab) do
-		startpos, endpos = strfind(strlower(frameName), strlower(v))
+		local startpos, endpos = strfind(strlower(frameName), strlower(v))
 		if (startpos == 1) then
 			result = true
 		end

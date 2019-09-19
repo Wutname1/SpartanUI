@@ -95,7 +95,7 @@ function module:Disable()
 end
 
 function module:MAIL_SHOW()
-	mailIndex, b = GetInboxNumItems()
+	mailIndex = select(1, GetInboxNumItems())
 	if mailIndex == 0 then
 		button:Hide()
 		module.CheckTimer = module:ScheduleRepeatingTimer('MAIL_SHOW', .5)

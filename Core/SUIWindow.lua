@@ -252,7 +252,6 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 			PageList[Page_Cur].Displayed = false
 			if Page_Cur == PageCnt and not ReloadNeeded() then
 				Window:Hide()
-				WindowShow = false
 				--Clear Page List
 				PageList = {}
 			elseif Page_Cur == PageCnt and ReloadNeeded() then
@@ -306,7 +305,6 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 
 			if Page_Cur == PageCnt and not ReloadNeeded() then
 				Window:Hide()
-				WindowShow = false
 			elseif Page_Cur == PageCnt and ReloadNeeded() then
 				ClearPage()
 				module:ReloadPage()
@@ -337,7 +335,7 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 			if not InCombatLockdown() and Window:IsShown() then
 				SUI:Print(L['Hiding setup due to combat'])
 				Window:Hide()
-			elseif not InCombatLockdown() and not Window:IsShown() and WindowShow then
+			elseif not InCombatLockdown() and not Window:IsShown() then
 				Window:Show()
 			end
 		end
@@ -347,7 +345,6 @@ function module:CreateWindow(FrameName, width, height, FrameLabel)
 	Window:RegisterEvent('PLAYER_REGEN_ENABLED')
 
 	Window:Hide()
-	WindowShow = false
 
 	return Window
 end

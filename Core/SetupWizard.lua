@@ -19,7 +19,7 @@ local ReloadPage = {
 	Desc1 = 'Setup finished!',
 	Desc2 = 'This completes the setup wizard, a reload of the UI is required to finish the setup.',
 	Display = function()
-		reloadPage = CreateFrame('Frame', nil)
+		local reloadPage = CreateFrame('Frame', nil)
 		reloadPage:SetParent(module.window.content)
 		reloadPage:SetAllPoints(module.window.content)
 

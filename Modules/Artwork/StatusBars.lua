@@ -215,7 +215,7 @@ local showRepTooltip = function(self)
 	local percentage
 
 	if name then
-		text = GetFactionDetails(name)
+		local text = GetFactionDetails(name)
 		if repLevelHigh == 0 then
 			percentage = 100
 		else
