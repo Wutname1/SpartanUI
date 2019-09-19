@@ -93,7 +93,7 @@ function module:updateAlpha()
 end
 
 function module:updateOffset()
-	local fubar, ChocolateBar, titan = 0, 0, 0
+	local fubar, ChocolateBar, titan, offset = 0, 0, 0, 0
 
 	if not SUI.DB.yoffsetAuto then
 		offset = max(SUI.DB.yoffset, 0)
@@ -315,8 +315,6 @@ module.Settings.MiniMap = {
 }
 
 function module:MiniMap()
-	Minimap:SetParent(Fel_SpartanUI)
-
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints()
 		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -5)
@@ -351,7 +349,6 @@ function module:MiniMap()
 		'OnHide',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetParent(UIParent)
 			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 			SUI:GetModule('Component_Minimap'):ShapeChange('square')
 		end
@@ -362,7 +359,6 @@ function module:MiniMap()
 		function(this, event)
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint('CENTER', Fel_SpartanUI, 'CENTER', 0, 54)
-			Minimap:SetParent(Fel_SpartanUI)
 			SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 		end
 	)

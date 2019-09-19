@@ -2710,12 +2710,6 @@ function SUI:suihelp(input)
 	AceConfigDialog:Open('SpartanUI', 'Help')
 end
 
-function SUI:SUIMove(input)
-	SUI:Print(
-		'Sorry, /suimove has been removed due to conflicts with other systems. It will be back and better than before in a SUI 5.x build. In the meantime you can move frames and the minimap by holding alt and dragging.'
-	)
-end
-
 local ResetDBWarning = false
 function SUI:ChatCommand(input)
 	if input == 'resetfulldb' then
