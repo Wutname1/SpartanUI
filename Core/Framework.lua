@@ -425,6 +425,7 @@ local DBdefault = {
 				},
 				Minimap = {
 					shape = 'circle',
+					position = 'CENTER,Fel_SpartanUI,CENTER,0,5',
 					size = {width = 140, height = 140}
 				},
 				StatusBars = {
@@ -448,6 +449,7 @@ local DBdefault = {
 					RaidFrames = true
 				},
 				Minimap = {
+					position = 'CENTER,Transparent_SpartanUI,CENTER,0,5',
 					shape = 'square',
 					size = {width = 140, height = 140}
 				},
@@ -882,6 +884,7 @@ local DBdefault = {
 					Minimap = true
 				},
 				Minimap = {
+					position = 'CENTER,Fel_SpartanUI,CENTER,0,54',
 					Engulfed = true
 				},
 				SlidingTrays = {
@@ -1129,6 +1132,7 @@ local DBdefault = {
 					Minimap = true
 				},
 				Minimap = {
+					position = 'CENTER,War_SpartanUI,CENTER,0,54',
 					Engulfed = true
 				},
 				SlidingTrays = {
@@ -1169,8 +1173,7 @@ local DBdefault = {
 								states = {
 									stance = {
 										DRUID = {
-											prowl = 0,
-											cat = 0
+											prowl = 0
 										}
 									}
 								}
@@ -1382,8 +1385,6 @@ local DBdefault = {
 			Moved = false,
 			lockminimap = true,
 			Position = nil,
-			-- frames = {},
-			-- IgnoredFrames = {},
 			SUIMapChangesActive = false
 		},
 		ActionBars = {
@@ -1571,6 +1572,7 @@ local DBdefault = {
 						Health = {
 							enabled = true,
 							height = 40,
+							offset = 1,
 							colorReaction = false,
 							colorSmooth = true,
 							colorClass = true,
@@ -1595,6 +1597,7 @@ local DBdefault = {
 						Power = {
 							enabled = true,
 							height = 10,
+							offset = 1,
 							bg = true,
 							text = {
 								['1'] = {
@@ -1609,11 +1612,13 @@ local DBdefault = {
 						},
 						AdditionalPower = {
 							enabled = true,
+							offset = 1,
 							height = 5
 						},
 						Castbar = {
 							enabled = false,
 							height = 10,
+							offset = 0,
 							interruptable = true,
 							latency = false,
 							bg = true,
@@ -1745,7 +1750,9 @@ local DBdefault = {
 						SummonIndicator = {},
 						QuestIndicator = {},
 						Range = {
-							enabled = true
+							enabled = true,
+							insideAlpha = 1,
+							outsideAlpha = .3
 						},
 						PhaseIndicator = {
 							enabled = true,
@@ -1930,6 +1937,12 @@ local DBdefault = {
 				party = {
 					width = 120,
 					enabled = true,
+					showSelf = true,
+					xOffset = 0,
+					yOffset = -10,
+					maxColumns = 1,
+					unitsPerColumn = 5,
+					columnSpacing = 2,
 					elements = {
 						Castbar = {
 							enabled = true
@@ -1961,7 +1974,7 @@ local DBdefault = {
 					mode = 'NAME',
 					xOffset = 2,
 					yOffset = 2,
-					maxColumns = 10,
+					maxColumns = 4,
 					unitsPerColumn = 10,
 					columnSpacing = 2,
 					elements = {
@@ -2033,7 +2046,7 @@ local DBdefault = {
 							},
 							HealthPrediction = {},
 							PetHappiness = {
-								position = {},
+								position = {}
 							},
 							Power = {
 								position = {},
@@ -2115,7 +2128,12 @@ local DBdefault = {
 			smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 		},
 		MoveIt = {
-			movers = {}
+			movers = {
+				['**'] = {
+					defaultPoint = '',
+					MovedPoints = false
+				}
+			}
 		}
 	},
 	Modules = {
@@ -2312,7 +2330,6 @@ SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 function SUI:OnInitialize()
 	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 	--If we have not played in a long time reset the database, make sure it is all good.
-	local ver = SUI.SpartanUIDB.profile.SUIProper.Version
 	if (ver ~= '0' and ver < '4.0.0') then
 		SUI.SpartanUIDB:ResetDB()
 	end
@@ -2629,8 +2646,6 @@ function SUI:reloadui(Desc2)
 end
 
 function SUI:OnEnable()
-	if not SUI.DB.SetupDone then
-	end
 	AceConfig:RegisterOptionsTable(
 		'SpartanUIBliz',
 		{
@@ -2659,15 +2674,14 @@ function SUI:OnEnable()
 			}
 		}
 	)
+	AceConfig:RegisterOptionsTable('SpartanUI', SUI.opt)
+
 	AceConfigDialog:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
 	AceConfigDialog:SetDefaultSize('SpartanUI', 1000, 700)
-
-	AceConfig:RegisterOptionsTable('SpartanUI', SUI.opt)
 
 	self:RegisterChatCommand('sui', 'ChatCommand')
 	self:RegisterChatCommand('suihelp', 'suihelp')
 	self:RegisterChatCommand('spartanui', 'ChatCommand')
-	self:RegisterChatCommand('suimove', 'SUIMove')
 
 	--Reopen options screen if flagged to do so after a reloadui
 	local LaunchOpt = CreateFrame('Frame')

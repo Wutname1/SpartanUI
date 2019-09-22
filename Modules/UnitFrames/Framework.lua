@@ -1,32 +1,34 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Component_UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0')
+local MoveIt = SUI:GetModule('Component_MoveIt')
 module.DisplayName = L['Unit frames']
 local loadstring = loadstring
 local function_cache = {}
 local DB
 module.CurrentSettings = {}
-
-module.frameList = {
-	'player',
-	'target',
-	'targettarget',
-	'boss',
-	'bosstarget',
-	'pet',
-	'pettarget',
-	'focus',
-	'focustarget',
-	'party',
-	'partypet',
-	'partytarget',
-	'raid',
-	'arena'
+module.FramePos = {
+	default = {
+		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-60,250',
+		['pet'] = 'RIGHT,SUI_UF_player,BOTTOMLEFT,-60,0',
+		['pettarget'] = 'RIGHT,SUI_UF_pet,LEFT,0,-5',
+		['target'] = 'LEFT,SUI_UF_player,RIGHT,150,0',
+		['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0',
+		['focus'] = 'BOTTOMLEFT,SUI_UF_target,TOP,0,30',
+		['focustarget'] = 'BOTTOMLEFT,SUI_UF_focus,BOTTOMRIGHT,5,0',
+		['boss'] = 'TOPRIGHT,UIParent,TOPRIGHT,-50,-490',
+		['party'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
+		['partypet'] = 'BOTTOMRIGHT,frame,BOTTOMLEFT,-2,0',
+		['partytarget'] = 'LEFT,frame,RIGHT,2,0',
+		['raid'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
+		['arena'] = 'TOPRIGHT,UIParent,TOPRIGHT,-50,-490'
+	}
 }
-
 module.frames = {
 	arena = {},
 	boss = {},
-	party = {}
+	party = {},
+	raid = {},
+	containers = {}
 }
 ----------------------------------------------------------------------------------------------------
 -- New Unitframe workflow
@@ -113,52 +115,48 @@ function module:TextFormat(element, frameName, textID)
 end
 
 function module:PositionFrame(b)
-	--Clear Point
-	if b ~= nil and module.frames[b] then
+	local positionData = module.FramePos.default
+	-- If artwork is enabled load the art's position data if supplied
+	if SUI.DB.EnabledComponents.Artwork and module.FramePos[SUI.DBMod.Artwork.Style] then
+		positionData = SUI:MergeData(module.FramePos[SUI.DBMod.Artwork.Style], module.FramePos.default)
+	end
+
+	if b then
+		local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[b])
 		module.frames[b]:ClearAllPoints()
-	end
-	--Set Position
-	-- if SUI_FramesAnchor then
-	-- 	if b == 'player' or b == nil then
-	-- 		module.frames.player:SetPoint('BOTTOMRIGHT', SUI_FramesAnchor, 'TOPLEFT', -60, 10)
-	-- 	end
-	-- else
-	if b == 'player' or b == nil then
-		module.frames.player:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', -60, 250)
-	end
-	-- end
+		module.frames[b]:SetPoint(point, anchor, secondaryPoint, x, y)
+	else
+		local frameList = {
+			'player',
+			'target',
+			'targettarget',
+			'pet',
+			'pettarget',
+			'focus',
+			'focustarget',
+			'boss',
+			'party',
+			'raid',
+			'arena'
+		}
 
-	if b == 'pet' or b == nil then
-		module.frames.pet:SetPoint('RIGHT', module.frames.player, 'BOTTOMLEFT', -60, 0)
-	end
+		for _, frame in ipairs(frameList) do
+			local frameName = 'SUI_UF_' .. frame
+			if _G[frameName] then
+				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frame])
 
-	if b == 'target' or b == nil then
-		module.frames.target:SetPoint('LEFT', module.frames.player, 'RIGHT', 150, 0)
+				_G[frameName]:ClearAllPoints()
+				_G[frameName]:SetPoint(point, anchor, secondaryPoint, x, y)
+			-- if module.frames[frameName].container then
+			-- 	module.frames[frameName].container:ClearAllPoints()
+			-- 	module.frames[frameName].container:SetPoint(point, anchor, secondaryPoint, x, y)
+			-- elseif module.frames[frameName].unit then -- Only try to position if there is a unit assigned
+			-- 	module.frames[frameName]:ClearAllPoints()
+			-- 	module.frames[frameName]:SetPoint(point, anchor, secondaryPoint, x, y)
+			-- end
+			end
+		end
 	end
-	if b == 'targettarget' or b == nil then
-		module.frames.targettarget:SetPoint('LEFT', module.frames.target, 'BOTTOMRIGHT', 4, 0)
-	end
-
-	if b == 'focus' or b == nil then
-		module.frames.focus:SetPoint('BOTTOMLEFT', module.frames.target, 'TOP', 0, 30)
-	end
-	if b == 'focustarget' or b == nil then
-		module.frames.focustarget:SetPoint('BOTTOMLEFT', module.frames.focus, 'BOTTOMRIGHT', 5, 0)
-	end
-
-	local FramesList = {
-		[1] = 'pet',
-		[2] = 'target',
-		[3] = 'targettarget',
-		[4] = 'focus',
-		[5] = 'focustarget',
-		[6] = 'player'
-	}
-	for _, c in pairs(FramesList) do
-		module.frames[c]:SetScale(SUI.DB.scale)
-	end
-
-	-- module:UpdateAltBarPositions()
 end
 
 function module:LoadDB()
@@ -186,35 +184,93 @@ function module:OnEnable()
 		return
 	end
 
+	-- Create Party & Raid frame holder
+	do -- Party frame
+		local elements = module.CurrentSettings.party.elements
+		local FrameHeight = 0
+		if elements.Castbar.enabled then
+			FrameHeight = FrameHeight + elements.Castbar.height
+		end
+		if elements.Health.enabled then
+			FrameHeight = FrameHeight + elements.Health.height
+		end
+		if elements.Power.enabled then
+			FrameHeight = FrameHeight + elements.Power.height
+		end
+		local height = module.CurrentSettings.party.unitsPerColumn * (FrameHeight + module.CurrentSettings.party.yOffset)
+
+		local width =
+			module.CurrentSettings.party.maxColumns *
+			(module.CurrentSettings.party.width + module.CurrentSettings.party.columnSpacing)
+
+		local frame = CreateFrame('Frame', 'SUI_UF_party')
+		frame:SetSize(width, height)
+		module.frames.containers.party = frame
+	end
+	do -- Raid frame
+		local elements = module.CurrentSettings.raid.elements
+		local FrameHeight = 0
+		if elements.Castbar.enabled then
+			FrameHeight = FrameHeight + elements.Castbar.height
+		end
+		if elements.Health.enabled then
+			FrameHeight = FrameHeight + elements.Health.height
+		end
+		if elements.Power.enabled then
+			FrameHeight = FrameHeight + elements.Power.height
+		end
+		local width =
+			module.CurrentSettings.raid.maxColumns *
+			(module.CurrentSettings.raid.width + module.CurrentSettings.raid.columnSpacing)
+
+		local height = module.CurrentSettings.raid.unitsPerColumn * (FrameHeight + module.CurrentSettings.raid.yOffset)
+
+		local frame = CreateFrame('Frame', 'SUI_UF_raid')
+		frame:SetSize(width, height)
+		module.frames.containers.raid = frame
+	end
+
+	-- Spawn Frames
 	module:SpawnFrames()
 
-	-- Add mover to standard frames
-	-- for _, b in pairs(module.frameList) do
-	-- 	if module.frames[b] then
-	-- 		module:AddMover(module.frames[b], b)
-	-- 	end
-	-- end
-
-	-- -- Party, Raid, and boss mover
-	-- if module.frames.arena[1] then
-	-- 	module:AddMover(FrameList.arena[1], 'arena')
-	-- end
-	-- if module.frames.boss[1] then
-	-- 	module:AddMover(FrameList.boss[1], 'boss')
-	-- end
-	-- if module.frames.party[1] then
-	-- 	module:AddMover(FrameList.party[1], 'party')
-	-- end
-	-- if FrameList.raid[1] then
-	-- 	module:AddMover(frame, 'raid')
-	-- end
-
+	-- Put frames into their inital position
 	module:PositionFrame()
+
+	-- Create movers
+	-- local FramesList = {
+	-- 	'pet',
+	-- 	'target',
+	-- 	'targettarget',
+	-- 	'focus',
+	-- 	'focustarget',
+	-- 	'player',
+	-- 	'raid',
+	-- 	'party'
+	-- }
+	-- for _, b in pairs(FramesList) do
+	-- 	print(b)
+	-- 	MoveIt:CreateMover('SUI_UF_' .. b, b)
+	-- end
+	local FramesList = {
+		[1] = 'pet',
+		[2] = 'target',
+		[3] = 'targettarget',
+		[4] = 'focus',
+		[5] = 'focustarget',
+		[6] = 'player'
+	}
+	for _, b in pairs(FramesList) do
+		MoveIt:CreateMover(module.frames[b], b)
+	end
+
+	-- Create Party & Raid Mover
+	MoveIt:CreateMover(module.frames.containers.party, 'Party')
+	MoveIt:CreateMover(module.frames.containers.raid, 'Raid')
 end
 
 function module:AddMover(frame, framename)
 	if frame == nil then
-		SUI:Err('PlayerFrames', DB.UnitFrames.Style .. ' did not spawn ' .. framename)
+		SUI:Err('PlayerFrames', DB.Unitframes.Style .. ' did not spawn ' .. framename)
 	else
 		frame.mover = CreateFrame('Frame')
 		frame.mover:SetSize(20, 20)
@@ -239,7 +295,7 @@ function module:AddMover(frame, framename)
 			function(self, button)
 				if button == 'LeftButton' and IsAltKeyDown() then
 					frame.mover:Show()
-					DB.UnitFrames[framename].moved = true
+					DB.Unitframes[framename].moved = true
 					frame:SetMovable(true)
 					frame:StartMoving()
 				end
@@ -254,7 +310,7 @@ function module:AddMover(frame, framename)
 				Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = frame:GetPoint()
 				Anchors.relativeTo = 'UIParent'
 				for k, v in pairs(Anchors) do
-					DB.UnitFrames[framename].Anchors[k] = v
+					DB.Unitframes[framename].Anchors[k] = v
 				end
 			end
 		)
@@ -276,11 +332,11 @@ function module:AddMover(frame, framename)
 		frame.mover:Hide()
 
 		--Set Position if moved
-		if DB.UnitFrames[framename].moved then
+		if DB.Unitframes[framename].moved then
 			frame:SetMovable(true)
 			frame:SetUserPlaced(false)
 			local Anchors = {}
-			for k, v in pairs(DB.UnitFrames[framename].Anchors) do
+			for k, v in pairs(DB.Unitframes[framename].Anchors) do
 				Anchors[k] = v
 			end
 			frame:ClearAllPoints()
@@ -338,8 +394,6 @@ local sandbox_env =
 				return t
 			elseif k == 'getglobal' then
 				return env_getglobal
-			elseif k == 'aura_env' then
-				return current_aura_env
 			elseif blockedFunctions[k] then
 				return forbidden
 			elseif helperFunctions[k] then

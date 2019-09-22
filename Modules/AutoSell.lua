@@ -40,11 +40,12 @@ local ExcludedItems = {
 	2901 --mining pick
 }
 local ExcludedTypes = {
-	'Quest',
 	'Container',
 	'Companions',
+	'Holiday',
 	'Mounts',
-	'Holiday'
+	'Projectiles',
+	'Quest'
 }
 
 function module:OnInitialize()

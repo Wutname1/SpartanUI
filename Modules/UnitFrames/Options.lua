@@ -12,6 +12,41 @@ local anchorPoints = {
 	['BOTTOM'] = 'BOTTOM',
 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 }
+
+local frameList = {
+	'player',
+	'target',
+	'targettarget',
+	'boss',
+	'bosstarget',
+	'pet',
+	'pettarget',
+	'focus',
+	'focustarget',
+	'party',
+	'partypet',
+	'partytarget',
+	'raid',
+	'arena'
+}
+
+if SUI.IsClassic then
+	frameList = {
+		'player',
+		'target',
+		'targettarget',
+		'boss',
+		'bosstarget',
+		'pet',
+		'pettarget',
+		'party',
+		'partypet',
+		'partytarget',
+		'raid',
+		'arena'
+	}
+end
+
 ----------------------------------------------------------------------------------------------------
 
 local function CreateOptionSet(frameName, order)
@@ -928,6 +963,73 @@ local function AddIndicatorOptions(frameName)
 		}
 	end
 
+	-- Non player items like
+	if frameName ~= 'player' then
+		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.Range = {
+			name = 'Range',
+			type = 'group',
+			args = {
+				enable = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 10,
+					get = function(info)
+						return module.CurrentSettings[frameName].elements.Range.enabled
+					end,
+					set = function(info, val)
+						--Update memory
+						module.CurrentSettings[frameName].elements.Range.enabled = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.enabled = val
+						--Update the screen
+						if val then
+							module.frames[frameName]:EnableElement(key)
+						else
+							module.frames[frameName]:DisableElement(key)
+						end
+						module.frames[frameName].Range:ForceUpdate()
+					end
+				},
+				insideAlpha = {
+					name = 'In range alpha',
+					type = 'range',
+					min = 0,
+					max = 1,
+					step = .1,
+					get = function(info)
+						return module.CurrentSettings[frameName].elements.Range.insideAlpha
+					end,
+					set = function(info, val)
+						--Update memory
+						module.CurrentSettings[frameName].elements.Range.insideAlpha = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.insideAlpha = val
+						--Update the screen
+						module.frames[frameName].Range.insideAlpha = val
+					end
+				},
+				outsideAlpha = {
+					name = 'Out of range alpha',
+					type = 'range',
+					min = 0,
+					max = 1,
+					step = .1,
+					get = function(info)
+						return module.CurrentSettings[frameName].elements.Range.outsideAlpha
+					end,
+					set = function(info, val)
+						--Update memory
+						module.CurrentSettings[frameName].elements.Range.outsideAlpha = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.outsideAlpha = val
+						--Update the screen
+						module.frames[frameName].Range.outsideAlpha = val
+					end
+				}
+			}
+		}
+	end
+
 	-- Hide a few generated options from specific frame
 	if frameName == 'player' then
 		SUI.opt.args['UnitFrames'].args[frameName].args['indicators'].args['ThreatIndicator'].hidden = true
@@ -1537,8 +1639,8 @@ local function AddBuffOptions(frameName)
 	}
 end
 
-local function AddRaidOptions()
-	SUI.opt.args['UnitFrames'].args['raid'].args['general'].args['Display'] = {
+local function AddGroupOptions(frameName)
+	SUI.opt.args['UnitFrames'].args[frameName].args['general'].args['Display'] = {
 		name = 'Display',
 		type = 'group',
 		order = 5,
@@ -1549,10 +1651,10 @@ local function AddRaidOptions()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return module.CurrentSettings.raid.showRaid
+					return module.CurrentSettings[frameName].showRaid
 				end,
 				set = function(info, val)
-					module.CurrentSettings.raid.showRaid = val
+					module.CurrentSettings[frameName].showRaid = val
 				end
 			},
 			toggleparty = {
@@ -1560,10 +1662,10 @@ local function AddRaidOptions()
 				type = 'toggle',
 				order = 2,
 				get = function(info)
-					return module.CurrentSettings.raid.showParty
+					return module.CurrentSettings[frameName].showParty
 				end,
 				set = function(info, val)
-					module.CurrentSettings.raid.showParty = val
+					module.CurrentSettings[frameName].showParty = val
 				end
 			},
 			togglesolo = {
@@ -1571,10 +1673,10 @@ local function AddRaidOptions()
 				type = 'toggle',
 				order = 4,
 				get = function(info)
-					return module.CurrentSettings.raid.showSolo
+					return module.CurrentSettings[frameName].showSolo
 				end,
 				set = function(info, val)
-					module.CurrentSettings.raid.showSolo = val
+					module.CurrentSettings[frameName].showSolo = val
 				end
 			},
 			mode = {
@@ -1583,10 +1685,10 @@ local function AddRaidOptions()
 				order = 3,
 				values = {['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles'},
 				get = function(info)
-					return module.CurrentSettings.raid.mode
+					return module.CurrentSettings[frameName].mode
 				end,
 				set = function(info, val)
-					module.CurrentSettings.raid.mode = val
+					module.CurrentSettings[frameName].mode = val
 				end
 			},
 			bar1 = {name = L['LayoutConf'], type = 'header', order = 20},
@@ -1599,10 +1701,10 @@ local function AddRaidOptions()
 				min = 1,
 				max = 40,
 				get = function(info)
-					return module.CurrentSettings.raid.maxColumns
+					return module.CurrentSettings[frameName].maxColumns
 				end,
 				set = function(info, val)
-					module.CurrentSettings.raid.maxColumns = val
+					module.CurrentSettings[frameName].maxColumns = val
 				end
 			},
 			unitsPerColumn = {
@@ -1614,10 +1716,10 @@ local function AddRaidOptions()
 				min = 1,
 				max = 40,
 				get = function(info)
-					return module.CurrentSettings.raid.unitsPerColumn
+					return module.CurrentSettings[frameName].unitsPerColumn
 				end,
 				set = function(info, val)
-					module.CurrentSettings.raid.unitsPerColumn = val
+					module.CurrentSettings[frameName].unitsPerColumn = val
 				end
 			},
 			columnSpacing = {
@@ -1629,10 +1731,10 @@ local function AddRaidOptions()
 				min = 0,
 				max = 200,
 				get = function(info)
-					return module.CurrentSettings.raid.columnSpacing
+					return module.CurrentSettings[frameName].columnSpacing
 				end,
 				set = function(info, val)
-					module.CurrentSettings.raid.columnSpacing = val
+					module.CurrentSettings[frameName].columnSpacing = val
 				end
 			}
 		}
@@ -1752,7 +1854,7 @@ function module:InitializeOptions()
 			}
 		}
 	}
-	for i, key in ipairs(module.frameList) do
+	for i, key in ipairs(frameList) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
 		AddBarOptions(key)
@@ -1765,7 +1867,11 @@ function module:InitializeOptions()
 		end
 	end
 
-	AddRaidOptions()
+	AddGroupOptions('raid')
+	AddGroupOptions('party')
+	AddGroupOptions('boss')
+	AddGroupOptions('arena')
+
 	SUI.opt.args['UnitFrames'].args['player'].args['general'].args['General'].args['range'].hidden = true
 end
 

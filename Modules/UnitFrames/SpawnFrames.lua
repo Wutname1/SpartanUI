@@ -64,6 +64,15 @@ local IndicatorList = {
 	'PetHappiness'
 }
 
+if SUI.IsClassic then
+	FramesList = {
+		[1] = 'pet',
+		[2] = 'target',
+		[3] = 'targettarget',
+		[4] = 'player'
+	}
+end
+
 local function customFilter(
 	element,
 	unit,
@@ -109,6 +118,11 @@ local function CreateUnitFrame(self, unit)
 		else
 			self:SetParent(SUI_FramesAnchor)
 		end
+	end
+	if string.match(unit, 'boss') then
+		unit = 'boss'
+	elseif string.match(unit, 'arena') then
+		unit = 'arena'
 	end
 
 	local function UpdateAll()
@@ -225,13 +239,13 @@ local function CreateUnitFrame(self, unit)
 			element:SizeChange()
 		end
 
-		--PVPIndicator specific stuff
+		--PVPIndicator
 		if elementName == 'PvPIndicator' and data.Badge and self.PvPIndicator.Badge == nil then
 			self.PvPIndicator.Badge = self.PvPIndicator.BadgeBackup
 			self.PvPIndicator:ForceUpdate('OnUpdate')
 		end
 
-		--Portrait specific stuff
+		--Portrait
 		if elementName == 'Portrait' then
 			self.Portrait3D:Hide()
 			self.Portrait2D:Hide()
@@ -250,6 +264,14 @@ local function CreateUnitFrame(self, unit)
 				self.Portrait2D:SetPoint('LEFT', self, 'RIGHT')
 			end
 			self:UpdateAllElements('OnUpdate')
+		end
+
+		--Range
+		if elementName == 'Range' then
+			self.Range = {
+				insideAlpha = elements.Range.insideAlpha,
+				outsideAlpha = elements.Range.outsideAlpha
+			}
 		end
 	end
 
@@ -283,35 +305,42 @@ local function CreateUnitFrame(self, unit)
 
 		-- Status bars
 		if self.Castbar then
-			self.Castbar:SetSize(self:GetWidth(), elements.Castbar.height)
+			self.Castbar:SetHeight(elements.Castbar.height)
 			self.Castbar.Icon:SetSize(elements.Castbar.Icon.size, elements.Castbar.Icon.size)
 		end
 
 		if self.Health then
+			local healthOffset = elements.Health.offset
 			if elements.Castbar.enabled then
-				self.Health:SetPoint('TOP', self, 'TOP', 0, ((elements.Castbar.height + 2) * -1))
-			else
-				self.Health:SetPoint('TOP', self, 'TOP', 0, 0)
+				healthOffset = (elements.Castbar.height * -1)
 			end
 
-			self.Health:SetSize(self:GetWidth(), elements.Health.height)
+			self.Health:ClearAllPoints()
+			self.Health:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, healthOffset)
+			self.Health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, healthOffset)
+			self.Health:SetHeight(elements.Health.height)
 		end
 
 		if self.Power then
-			local PositionData = 0
+			local powerOffset = elements.Power.offset
 			if elements.Castbar.enabled then
-				PositionData = elements.Castbar.height
+				powerOffset = powerOffset + elements.Castbar.height
+			end
+			if elements.Health.enabled then
+				powerOffset = powerOffset + elements.Health.height
+			end
+			if elements.Castbar.enabled or elements.Health.enabled then
+				powerOffset = powerOffset * -1
 			end
 
-			PositionData = PositionData + elements.Health.height
-
-			self.Power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
-
-			self.Power:SetSize(self:GetWidth(), elements.Power.height)
+			self.Power:ClearAllPoints()
+			self.Power:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, powerOffset)
+			self.Power:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, powerOffset)
+			self.Power:SetHeight(elements.Power.height)
 		end
 
 		if self.AdditionalPower then
-			self.AdditionalPower:SetSize(self:GetWidth(), elements.AdditionalPower.height)
+			self.AdditionalPower:SetHeight(elements.AdditionalPower.height)
 		end
 
 		-- Inidcators
@@ -342,34 +371,17 @@ local function CreateUnitFrame(self, unit)
 		self.artwork:SetFrameLevel(2)
 		self.artwork:SetAllPoints()
 
-		-- 	self.artwork.bgNeutral = self.artwork:CreateTexture(nil, 'BORDER')
-		-- 	self.artwork.bgNeutral:SetAllPoints(self)
-		-- 	self.artwork.bgNeutral:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
-		-- 	self.artwork.bgNeutral:SetVertexColor(0, 0, 0, .6)
+		-- self.artwork.top = self.artwork:CreateTexture(nil, 'BORDER')
+		-- self.artwork.top:SetAllPoints(self)
+		-- self.artwork.top:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+		-- self.artwork.top:SetTexCoord(unpack(Images.Horde.bg.Coords))
+		-- self.artwork.top:SetVertexColor(0, 0, 0, .6)
 
-		-- 	self.artwork.bgAlliance = self.artwork:CreateTexture(nil, 'BACKGROUND')
-		-- 	self.artwork.bgAlliance:SetPoint('CENTER', self)
-		-- 	self.artwork.bgAlliance:SetTexture(Images.Alliance.bg.Texture)
-		-- 	self.artwork.bgAlliance:SetTexCoord(unpack(Images.Alliance.bg.Coords))
-		-- 	self.artwork.bgAlliance:SetSize(self:GetSize())
-
-		-- 	self.artwork.bgHorde = self.artwork:CreateTexture(nil, 'BACKGROUND')
-		-- 	self.artwork.bgHorde:SetPoint('CENTER', self)
-		-- 	self.artwork.bgHorde:SetTexture(Images.Horde.bg.Texture)
-		-- 	self.artwork.bgHorde:SetTexCoord(unpack(Images.Horde.bg.Coords))
-		-- 	self.artwork.bgHorde:SetSize(self:GetSize())
-
-		-- 	self.artwork.flairAlliance = self.artwork:CreateTexture(nil, 'BORDER')
-		-- 	self.artwork.flairAlliance:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
-		-- 	self.artwork.flairAlliance:SetTexture(Images.Alliance.flair.Texture)
-		-- 	self.artwork.flairAlliance:SetTexCoord(unpack(Images.Alliance.flair.Coords))
-		-- 	self.artwork.flairAlliance:SetSize(self:GetWidth(), self:GetHeight() + 37)
-
-		-- 	self.artwork.flairHorde = self.artwork:CreateTexture(nil, 'BORDER')
-		-- 	self.artwork.flairHorde:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', 0, -7)
-		-- 	self.artwork.flairHorde:SetTexture(Images.Horde.flair.Texture)
-		-- 	self.artwork.flairHorde:SetTexCoord(unpack(Images.Horde.flair.Coords))
-		-- 	self.artwork.flairHorde:SetSize(self:GetWidth(), self:GetHeight() + 37)
+		-- self.artwork.bottom = self.artwork:CreateTexture(nil, 'BORDER')
+		-- self.artwork.bottom:SetAllPoints(self)
+		-- self.artwork.bottom:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+		-- self.artwork.bottom:SetTexCoord(unpack(Images.Horde.bg.Coords))
+		-- self.artwork.bottom:SetVertexColor(0, 0, 0, .6)
 
 		-- 3D Portrait
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
@@ -412,8 +424,11 @@ local function CreateUnitFrame(self, unit)
 			cast:SetFrameStrata('BACKGROUND')
 			cast:SetFrameLevel(2)
 			cast:SetStatusBarTexture(Smoothv2)
-			cast:SetSize(self:GetWidth(), elements.Castbar.height)
-			cast:SetPoint('TOP', self, 'TOP', 0, 0)
+			cast:SetHeight(elements.Castbar.height)
+
+			local castOffset = (elements.Castbar.offset * -1)
+			cast:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, castOffset)
+			cast:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, castOffset)
 
 			local Background = cast:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(cast)
@@ -493,11 +508,12 @@ local function CreateUnitFrame(self, unit)
 			Background:SetVertexColor(1, 1, 1, .2)
 			health.bg = Background
 
+			local healthOffset = elements.Health.offset
 			if elements.Castbar.enabled then
-				health:SetPoint('TOP', self, 'TOP', 0, ((elements.Castbar.height + 2) * -1))
-			else
-				health:SetPoint('TOP', self, 'TOP', 0, 0)
+				healthOffset = (elements.Castbar.height * -1)
 			end
+			health:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, healthOffset)
+			health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, healthOffset)
 
 			health.TextElements = {}
 			for i, key in pairs(elements.Health.text) do
@@ -588,14 +604,29 @@ local function CreateUnitFrame(self, unit)
 			power:SetFrameStrata('BACKGROUND')
 			power:SetFrameLevel(2)
 			power:SetStatusBarTexture(Smoothv2)
-			power:SetSize(self:GetWidth(), elements.Power.height)
+			power:SetHeight(elements.Power.height)
 
 			power.bg = power:CreateTexture(nil, 'BACKGROUND')
 			power.bg:SetAllPoints(power)
 			power.bg:SetTexture(Smoothv2)
 			power.bg:SetVertexColor(1, 1, 1, .2)
 
+			local powerOffset = elements.Power.offset
+			if elements.Castbar.enabled then
+				powerOffset = powerOffset + elements.Castbar.height
+			end
+			if elements.Health.enabled then
+				powerOffset = powerOffset + elements.Health.height
+			end
+			if elements.Castbar.enabled or elements.Health.enabled then
+				powerOffset = powerOffset * -1
+			end
+
+			power:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, powerOffset)
+			power:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, powerOffset)
+
 			local PositionData = 0
+
 			if elements.Castbar.enabled then
 				PositionData = elements.Castbar.height
 			end
@@ -622,8 +653,9 @@ local function CreateUnitFrame(self, unit)
 
 			-- Additional Mana
 			local AdditionalPower = CreateFrame('StatusBar', nil, self)
-			AdditionalPower:SetSize(self.Power:GetWidth(), elements.AdditionalPower.height)
-			AdditionalPower:SetPoint('TOP', self.Power, 'BOTTOM', 0, 0)
+			AdditionalPower:SetHeight(elements.AdditionalPower.height)
+			AdditionalPower:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, (elements.AdditionalPower.offset * -1))
+			AdditionalPower:SetPoint('TOPRIGHT', self.Power, 'BOTTOMRIGHT', 0, (elements.AdditionalPower.offset * -1))
 			AdditionalPower.colorPower = true
 			AdditionalPower:SetStatusBarTexture(Smoothv2)
 
@@ -838,7 +870,10 @@ local function CreateUnitFrame(self, unit)
 	-- 	end
 	-- end
 
-	self.Range = {insideAlpha = 1, outsideAlpha = .3}
+	self.Range = {
+		insideAlpha = elements.Range.insideAlpha,
+		outsideAlpha = elements.Range.outsideAlpha
+	}
 	-- self.TextUpdate = PostUpdateText
 	-- self.ColorUpdate = PostUpdateColor
 
@@ -867,8 +902,8 @@ SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
 
 function module:SpawnFrames()
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
-	--
 
+	-- Spawn all main frames
 	for _, b in pairs(FramesList) do
 		module.frames[b] = SUIUF:Spawn(b, 'SUI_UF_' .. b)
 
@@ -876,10 +911,35 @@ function module:SpawnFrames()
 		module.frames[b]:UpdateAll()
 	end
 
-	-- if not SUI.IsClassic then
-	-- 	PlayerFrames:SetupExtras()
-	-- end
+	-- Area Frames
+	if not SUI.IsClassic then
+		local arena = {}
+		for i = 1, 3 do
+			arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
 
+			if i == 1 then
+				arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
+			else
+				arena[i]:SetPoint('TOP', arena[i - 1], 'BOTTOM', 0, -10)
+			end
+		end
+		module.frames.arena = arena
+	end
+
+	-- Boss Frames
+	local boss = {}
+	for i = 1, MAX_BOSS_FRAMES do
+		boss[i] = SUIUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
+
+		if i == 1 then
+			boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
+		else
+			boss[i]:SetPoint('TOP', boss[i - 1], 'BOTTOM', 0, -10)
+		end
+	end
+	module.frames.boss = boss
+
+	-- Party Frames
 	local party =
 		SUIUF:SpawnHeader(
 		'SUI_PartyFrameHeader',
@@ -890,13 +950,19 @@ function module:SpawnFrames()
 		'showParty',
 		true,
 		'showPlayer',
-		true,
+		module.CurrentSettings.party.showSelf,
 		'showSolo',
 		true,
+		'xoffset',
+		module.CurrentSettings.party.xOffset,
 		'yOffset',
-		-16,
-		'xOffset',
-		0,
+		module.CurrentSettings.party.yOffset,
+		'maxColumns',
+		module.CurrentSettings.party.maxColumns,
+		'unitsPerColumn',
+		module.CurrentSettings.party.unitsPerColumn,
+		'columnSpacing',
+		module.CurrentSettings.party.columnSpacing,
 		'columnAnchorPoint',
 		'TOPLEFT',
 		'initial-anchor',
@@ -922,6 +988,7 @@ function module:SpawnFrames()
 	party:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
 	module.frames.party = party
 
+	-- Raid Frames
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 
 	if module.CurrentSettings.raid.mode == 'GROUP' then
@@ -938,7 +1005,7 @@ function module:SpawnFrames()
 		'showParty',
 		module.CurrentSettings.raid.showParty,
 		'showPlayer',
-		true,
+		module.CurrentSettings.raid.showSelf,
 		'showSolo',
 		true,
 		'xoffset',
@@ -1032,6 +1099,11 @@ function module:SpawnFrames()
 		if (InCombatLockdown()) then
 			module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
 		else
+			-- Update 1 second after login
+			if event == 'PLAYER_ENTERING_WORLD' then
+				module:ScheduleTimer(GroupWatcher, 1)
+			end
+
 			module:UnregisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
 			module:UpdateGroupFrames(event)
 		end
@@ -1041,7 +1113,7 @@ function module:SpawnFrames()
 	module:RegisterEvent('PLAYER_ENTERING_WORLD', GroupWatcher)
 	module:RegisterEvent('ZONE_CHANGED', GroupWatcher)
 	module:RegisterEvent('READY_CHECK', GroupWatcher)
-	-- module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+	module:RegisterEvent('PARTY_MEMBER_ENABLE', GroupWatcher)
 end
 
 function module:UpdateGroupFrames(event, ...)

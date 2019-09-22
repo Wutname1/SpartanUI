@@ -1,5 +1,6 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Component_Artwork')
+local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local module = SUI:GetModule('Style_War')
 ----------------------------------------------------------------------------------------------------
 module.Trays = {}
@@ -182,9 +183,7 @@ function module:InitArtwork()
 
 	FramerateText:ClearAllPoints()
 	FramerateText:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 10, -10)
-end
 
-function module:EnableArtwork()
 	--Setup the Bottom Artwork
 	War_SpartanUI:SetFrameStrata('BACKGROUND')
 	War_SpartanUI:SetFrameLevel(1)
@@ -202,6 +201,13 @@ function module:EnableArtwork()
 	War_SpartanUI.Left:SetScale(.75)
 	War_SpartanUI.Right:SetScale(.75)
 
+	-- Setup Frame posistions
+	UnitFrames.FramePos['War'] = {
+		['player'] = 'BOTTOMRIGHT,War_SpartanUI,TOP,-45,70'
+	}
+end
+
+function module:EnableArtwork()
 	--Setup Sliding Trays
 	module:SlidingTrays()
 
@@ -300,11 +306,9 @@ function module:MiniMapUpdate()
 		Minimap.BG:ClearAllPoints()
 	end
 
-	Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\minimap1')
+	Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap')
 	Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 0, 3)
 	Minimap.BG:SetAlpha(.75)
-	-- Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\minimap2')
-	-- Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', -7, 5)
 	Minimap.BG:SetSize(256, 256)
 	Minimap.BG:SetBlendMode('ADD')
 end
@@ -322,8 +326,6 @@ module.Settings.MiniMap = {
 }
 
 function module:MiniMap()
-	Minimap:SetParent(War_SpartanUI)
-
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints()
 		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -5)
@@ -359,9 +361,7 @@ function module:MiniMap()
 		'OnHide',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetParent(UIParent)
 			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
-			-- SUI:GetModule('Component_Minimap'):ShapeChange('square')
 		end
 	)
 
@@ -369,9 +369,7 @@ function module:MiniMap()
 		'OnShow',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', War_SpartanUI.Left, 'RIGHT', 0, 5)
-			Minimap:SetParent(War_SpartanUI)
-			-- SUI:GetModule('Component_Minimap'):ShapeChange('circle')
+			Minimap:SetPoint('CENTER', War_SpartanUI, 'CENTER', 0, 5)
 		end
 	)
 end

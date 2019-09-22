@@ -1,5 +1,6 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Component_Minimap')
+local MoveIt
 ----------------------------------------------------------------------------------------------------
 local ChangesTimer = nil
 local MinimapUpdater = CreateFrame('Frame')
@@ -151,6 +152,7 @@ function module:ShapeChange(shape)
 end
 
 function module:OnInitialize()
+	MoveIt = SUI:GetModule('Component_MoveIt')
 	StaticPopupDialogs['MiniMapNotice'] = {
 		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
 		button1 = 'Yes',
@@ -181,70 +183,15 @@ function module:OnEnable()
 		return
 	end
 
-	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap or (not SUI:GetModule('Component_Artwork', true)) then
-		Minimap.mover = CreateFrame('Frame')
-		Minimap.mover:SetSize(5, 5)
-		Minimap.mover:SetAllPoints(Minimap)
-		Minimap.mover.bg = Minimap.mover:CreateTexture(nil, 'BACKGROUND')
-		Minimap.mover.bg:SetAllPoints(Minimap.mover)
-		Minimap.mover.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
-		Minimap.mover.bg:SetVertexColor(1, 1, 1, 0.8)
-		Minimap.mover:EnableMouse(true)
-		Minimap.mover:Hide()
-
-		Minimap:HookScript(
-			'OnMouseDown',
-			function(self, button)
-				if button == 'LeftButton' and IsAltKeyDown() and not SUI.DB.MiniMap.lockminimap then
-					Minimap.mover:Show()
-					if SUI:GetModule('Component_Artwork', true) then
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = true
-					else
-						SUI.DB.MiniMap.Moved = true
-					end
-					Minimap:SetMovable(true)
-					Minimap:StartMoving()
-				end
-			end
-		)
-
-		Minimap:HookScript(
-			'OnMouseUp',
-			function(self, button)
-				Minimap.mover:Hide()
-				Minimap:StopMovingOrSizing()
-				if SUI:GetModule('Component_Artwork', true) then
-					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords = {Minimap:GetPoint(1)}
-				else
-					SUI.DB.MiniMap.Position = {Minimap:GetPoint(1)}
-				end
-			end
-		)
-
-		if
-			SUI:GetModule('Component_Artwork', true) and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved and
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.Minimap and
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords ~= nil
-		 then
-			local a, _, c, d, e = unpack(SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapCords) -- do this as the parent can get corrupted
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint(a, UIParent, c, d, e)
-		elseif SUI.DB.MiniMap.Position ~= nil then
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint(unpack(SUI.DB.MiniMap.Position))
-		end
-		Minimap:SetFrameLevel(120)
-	end
+	Minimap:SetFrameLevel(120)
 
 	module:ModifyMinimapLayout()
 
 	--Look for existing buttons
 	MiniMapBtnScrape()
 
-	-- Fix CPU leak, use UpdateInterval
 	Minimap:HookScript('OnEnter', OnEnter)
 	Minimap:HookScript('OnLeave', OnLeave)
-
 	Minimap:HookScript('OnMouseDown', OnMouseDown)
 
 	--Initialize Buttons
@@ -268,6 +215,20 @@ function module:OnEnable()
 	MinimapUpdater:RegisterEvent('MINIMAP_UPDATE_TRACKING')
 	MinimapUpdater:RegisterEvent('MINIMAP_PING')
 	MinimapUpdater:RegisterEvent('PLAYER_REGEN_ENABLED')
+
+	-- Position map based on Artwork
+	if SUI.DB.EnabledComponents.Artwork and SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.position then
+		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.position)
+		if anchor then
+			Minimap:ClearAllPoints()
+			Minimap:SetPoint(point, anchor, secondaryPoint, x, y)
+		end
+	end
+
+	-- Make map movable
+	MoveIt:CreateMover(Minimap, 'Minimap')
+
+	-- Construct options
 	module:BuildOptions()
 end
 
@@ -289,6 +250,11 @@ function module:ModifyMinimapLayout()
 
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap ~= nil then
 		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap.shape == 'square' then
+			-- Set Map Mask
+			function GetMinimapShape()
+				return 'SQUARE'
+			end
+
 			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
 
 			if not SUI.IsClassic then
@@ -374,11 +340,11 @@ function module:ModifyMinimapLayout()
 	end
 
 	-- Do modifications to MiniMapWorldMapButton
-	--	-- remove current textures
+	-- remove current textures
 	MiniMapWorldMapButton:SetNormalTexture(nil)
 	MiniMapWorldMapButton:SetPushedTexture(nil)
 	MiniMapWorldMapButton:SetHighlightTexture(nil)
-	--	-- Create new textures
+	-- Create new textures
 	MiniMapWorldMapButton:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon.png')
 	MiniMapWorldMapButton:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon-Pushed.png')
 	MiniMapWorldMapButton:SetHighlightTexture('Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight')
@@ -392,6 +358,7 @@ function module:ModifyMinimapLayout()
 		GameTimeFrame:ClearAllPoints()
 		GameTimeFrame:SetScale(.7)
 		GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
+		GameTimeFrame:SetFrameLevel(122)
 	end
 
 	module:MinimapCoords()
@@ -458,9 +425,6 @@ function module:MinimapCoords()
 end
 
 function module:SetupButton(btn, force)
-	buttonName = btn:GetName()
-	buttonType = btn:GetObjectType()
-
 	--Avoid duplicates make sure it's not in the tracking table
 	if btn.FadeIn == nil or force then
 		-- Hook Mouse Events
@@ -551,19 +515,14 @@ function module:update()
 		end
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
-			buttonName = child:GetName()
+			local buttonName = child:GetName()
 
 			--catch buttons not playing nice.
 			if child.FadeOut == nil and not isFrameIgnored(child) then
 				module:SetupButton(child, true)
 			end
 
-			if
-				buttonName and -- and buttonType == "Button"
-					child.FadeOut ~= nil and
-					(not SUI:isInTable(IgnoredFrames, buttonName)) and
-					child:GetAlpha() == 1
-			 then
+			if buttonName and child.FadeOut ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 1 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 				child.FadeOut:Play()
@@ -585,8 +544,7 @@ function module:update()
 		end
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
-			buttonName = child:GetName()
-			-- buttonType = child:GetObjectType();
+			local buttonName = child:GetName()
 
 			if buttonName and child.FadeIn ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0 then
 				child.FadeIn:Stop()
