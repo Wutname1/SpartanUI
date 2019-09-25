@@ -37,7 +37,23 @@ local ExcludedItems = {
 	140209, --imported blacksmith hammer
 	5956, -- Blacksmith Hammer
 	7005, --skinning knife
-	2901 --mining pick
+	2901, --mining pick
+	-- Classic WoW
+	6256, -- Fishing Pole
+	--Start Shredder Operating Manual pages
+	16645,
+	16646,
+	16647,
+	16648,
+	16649,
+	16650,
+	16651,
+	16652,
+	16653,
+	16654,
+	16655,
+	16656
+	--End Shredder Operating Manual pages
 }
 local ExcludedTypes = {
 	'Container',
