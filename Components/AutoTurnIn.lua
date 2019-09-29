@@ -633,8 +633,15 @@ function module:OnEnable()
 			if not SUI.DB.EnabledComponents.AutoTurnIn then
 				return
 			end
+
 			if SUI.DB.AutoTurnIn.debug then
 				print(event)
+			end
+
+			if IsAltKeyDown() then
+				SUI:Print('Canceling Override key held disabled')
+				module:CancelAllTimers()
+				return
 			end
 
 			if module[event] then
@@ -796,6 +803,9 @@ function module:BuildOptions()
 	if SUI.IsClassic then
 		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.AutoSelectLoot.hidden = true
 		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.autoequip.hidden = true
+
+		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestAccepting.args.trivial.hidden = true
+		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestAccepting.args.AcceptRepeatable.hidden = true
 	end
 end
 
