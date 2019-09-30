@@ -1,4 +1,5 @@
 local SUI = SUI
+local StdUi = LibStub('StdUi'):NewInstance()
 local module = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 local MoverList = {}
 local colors = {
@@ -8,6 +9,7 @@ local colors = {
 	disabled = {0.55, 0.55, 0.55, 1}
 }
 local MoveEnabled = false
+local coordFrame
 
 local function GetPoints(obj)
 	local point, anchor, secondaryPoint, x, y = obj:GetPoint()
@@ -16,6 +18,14 @@ local function GetPoints(obj)
 	end
 
 	return format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, Round(x), Round(y))
+end
+
+function module:SaveMoverPosition(name)
+	-- local mover = _G[name]
+	-- local _, anchor = mover:GetPoint()
+	-- mover.anchor = anchor:GetName()
+
+	SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(mover)
 end
 
 function module:CalculateMoverPoints(mover)
@@ -56,7 +66,7 @@ function module:CalculateMoverPoints(mover)
 	return x, y, point, InversePoint
 end
 
-function module:IsMoved(arg)
+function module:IsMoved(name)
 	if not SUI.DB.MoveIt.movers[name] then
 		return false
 	end
@@ -66,41 +76,32 @@ function module:IsMoved(arg)
 	return false
 end
 
-function module:Reset(arg)
-	if arg == '' or arg == nil then
+function module:Reset(name)
+	if name == nil then
 		for name in pairs(MoverList) do
 			local f = _G[name]
-			local point, anchor, secondaryPoint, x, y = split(',', MoverList[name].point)
+			local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
 			f:ClearAllPoints()
-			f:Point(point, anchor, secondaryPoint, x, y)
+			f:SetPoint(point, anchor, secondaryPoint, x, y)
 
-			for key, value in pairs(MoverList[name]) do
-				if key == 'postdrag' and type(value) == 'function' then
-					value(f, E:GetScreenQuadrant(f))
-				end
+			if SUI.DB.MoveIt.movers[name].MovedPoints then
+				SUI.DB.MoveIt.movers[name].MovedPoints = nil
 			end
+
+			-- for key, value in pairs(MoverList[name]) do
+			-- 	if key == 'postdrag' and type(value) == 'function' then
+			-- 		value(f, E:GetScreenQuadrant(f))
+			-- 	end
+			-- end
 		end
-		self.db.movers = nil
 	else
-		for name in pairs(MoverList) do
-			for key, value in pairs(MoverList[name]) do
-				if key == 'text' then
-					if arg == value then
-						local f = _G[name]
-						local point, anchor, secondaryPoint, x, y = split(',', MoverList[name].point)
-						f:ClearAllPoints()
-						f:Point(point, anchor, secondaryPoint, x, y)
+		local f = _G['SUI_Mover_' .. name]
+		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
+		f:ClearAllPoints()
+		f:SetPoint(point, anchor, secondaryPoint, x, y)
 
-						if self.db.movers then
-							self.db.movers[name] = nil
-						end
-
-						if MoverList[name].postdrag ~= nil and type(MoverList[name].postdrag) == 'function' then
-							MoverList[name].postdrag(f, E:GetScreenQuadrant(f))
-						end
-					end
-				end
-			end
+		if SUI.DB.MoveIt.movers[name].MovedPoints then
+			SUI.DB.MoveIt.movers[name].MovedPoints = nil
 		end
 	end
 end
@@ -129,7 +130,7 @@ end
 
 local isDragging = false
 
-function module:CreateMover(parent, name, text)
+function module:CreateMover(parent, name, text, setDefault)
 	-- If for some reason the parent does not exist or we have already done this exit out
 	if not parent or MoverList[name] then
 		return
@@ -164,7 +165,6 @@ function module:CreateMover(parent, name, text)
 	f:Hide()
 	f.parent = parent
 	f.name = name
-	f.textString = text
 	f.postdrag = postdrag
 	f.snapOffset = snapOffset or -2
 	f.shouldDisable = shouldDisable
@@ -185,14 +185,12 @@ function module:CreateMover(parent, name, text)
 	f:SetFontString(fs)
 	f.text = fs
 
-	if not SUI.DB.MoveIt.movers[name] then
-		SUI.DB.MoveIt.movers[name] = {
-			defaultPoint = GetPoints(parent)
-		}
+	if not SUI.DB.MoveIt.movers[name].defaultPoint or SUI.DB.MoveIt.movers[name].defaultPoint == '' or setDefault then
+		SUI.DB.MoveIt.movers[name].defaultPoint = GetPoints(parent)
 	end
 
 	if SUI.DB.MoveIt.movers[name].MovedPoints then
-		point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(parent))
+		point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
 	end
 	f:ClearAllPoints()
 	f:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -212,45 +210,24 @@ function module:CreateMover(parent, name, text)
 
 	local function OnDragStop(self)
 		if InCombatLockdown() then
-			E:Print(ERR_NOT_IN_COMBAT)
+			SUI:Print(ERR_NOT_IN_COMBAT)
 			return
 		end
 		isDragging = false
-		if E.db.general.stickyFrames then
-			Sticky:StopMoving(self)
-		else
-			self:StopMovingOrSizing()
-		end
+		-- if db.stickyFrames then
+		-- 	Sticky:StopMoving(self)
+		-- else
+		self:StopMovingOrSizing()
+		-- end
 
-		local x2, y2, point2 = module:CalculateMoverPoints(self)
-		self:ClearAllPoints()
-		local overridePoint
-		if self.positionOverride then
-			if self.positionOverride == 'BOTTOM' or self.positionOverride == 'TOP' then
-				overridePoint = 'BOTTOM'
-			else
-				overridePoint = 'BOTTOMLEFT'
-			end
-		end
-
-		self:Point(self.positionOverride or point2, UIParent, overridePoint and overridePoint or point2, x2, y2)
-		if self.positionOverride then
-			self.parent:ClearAllPoints()
-			self.parent:Point(self.positionOverride, self, self.positionOverride)
-		end
-
-		E:SaveMoverPosition(name)
-
-		-- if ElvUIMoverNudgeWindow then
+		-- module:SaveMoverPosition(name)
+		SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(self)
+		-- if NudgeWindow then
 		-- 	E:UpdateNudgeFrame(self, x, y)
 		-- end
 
 		coordFrame.child = nil
 		coordFrame:Hide()
-
-		if postdrag ~= nil and (type(postdrag) == 'function') then
-			postdrag(self, E:GetScreenQuadrant(self))
-		end
 
 		self:SetUserPlaced(false)
 	end
@@ -264,24 +241,17 @@ function module:CreateMover(parent, name, text)
 
 	local function OnMouseDown(self, button)
 		if button == 'LeftButton' and not isDragging then
-			if ElvUIMoverNudgeWindow:IsShown() then
-				ElvUIMoverNudgeWindow:Hide()
-			else
-				ElvUIMoverNudgeWindow:Show()
-			end
-		elseif button == 'RightButton' then
-			isDragging = false
-			if E.db.general.stickyFrames then
-				Sticky:StopMoving(self)
-			else
-				self:StopMovingOrSizing()
-			end
+		-- if NudgeWindow:IsShown() then
+		-- 	NudgeWindow:Hide()
+		-- else
+		-- 	NudgeWindow:Show()
+		-- end
+		end
 
-			if IsAltKeyDown() and self.textString then -- Reset anchor
-				E:ResetMovers(self.textString)
-			elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
-				self:Hide()
-			end
+		if IsAltKeyDown() then -- Reset anchor
+			module:Reset(name)
+		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
+			self:Hide()
 		end
 	end
 
@@ -316,21 +286,17 @@ function module:CreateMover(parent, name, text)
 	parent.mover = f
 
 	parent:ClearAllPoints()
-	parent:SetPoint(point, f, 0, 0)
-
-	if postdrag ~= nil and type(postdrag) == 'function' then
-		f:RegisterEvent('PLAYER_ENTERING_WORLD')
-		f:SetScript(
-			'OnEvent',
-			function(self)
-				postdrag(f, E:GetScreenQuadrant(f))
-				self:UnregisterAllEvents()
-			end
-		)
-	end
+	parent:SetPoint('TOPLEFT', f, 0, 0)
 end
 
 function module:OnInitialize()
+	coordFrame = StdUi:Window(nil, '', 480, 200)
+	coordFrame:SetFrameStrata('DIALOG')
+
+	coordFrame.Title = StdUi:Texture(coordFrame, 104, 30, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	coordFrame.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+	coordFrame.Title:SetPoint('TOP')
+	coordFrame.Title:SetAlpha(.8)
 end
 
 function module:OnEnable()
@@ -351,7 +317,6 @@ function module:OnEnable()
 		end
 	end
 	SUI:AddChatCommand('move', ChatCommand)
-	-- SUI:AddChatCommand('moveit', ChatCommand)
 end
 
 function module:Options()
