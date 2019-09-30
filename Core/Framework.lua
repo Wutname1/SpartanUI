@@ -1132,7 +1132,7 @@ local DBdefault = {
 					Minimap = true
 				},
 				Minimap = {
-					position = 'CENTER,War_SpartanUI,CENTER,0,54',
+					position = 'CENTER,War_SpartanUI_Left,RIGHT,0,20',
 					Engulfed = true
 				},
 				SlidingTrays = {
@@ -1499,22 +1499,54 @@ local DBdefault = {
 					},
 					auras = {
 						Buffs = {
-							Display = true,
-							Number = 10,
+							enabled = false,
+							number = 10,
 							size = 20,
 							spacing = 1,
 							showType = true,
 							onlyShowPlayer = false,
-							Mode = 'disabled'
+							Mode = 'disabled',
+							initialAnchor = 'BOTTOMLEFT',
+							growthx = 'RIGHT',
+							growthy = 'UP',
+							rows = 3,
+							position = {
+								anchor = 'TOPLEFT',
+								x = 0,
+								y = 0
+							}
 						},
 						Debuffs = {
-							Display = true,
-							Number = 10,
+							enabled = true,
+							number = 10,
 							size = 20,
 							spacing = 1,
 							showType = true,
-							onlyShowPlayer = true,
-							Mode = 'disabled'
+							ShowBoss = true,
+							onlyShowPlayer = false,
+							Mode = 'disabled',
+							initialAnchor = 'BOTTOMRIGHT',
+							growthx = 'LEFT',
+							growthy = 'UP',
+							rows = 3,
+							position = {
+								anchor = 'TOPRIGHT',
+								x = 0,
+								y = 0
+							}
+						},
+						Bars = {
+							enabled = false,
+							auraBarHeight = 15,
+							auraBarWidth = false,
+							auraBarTexture = Smoothv2,
+							fgalpha = 1,
+							bgalpha = 1,
+							spellNameSize = 10,
+							spellTimeSize = 10,
+							gap = 1,
+							spacing = 1,
+							scaleTime = false
 						}
 					},
 					elements = {
@@ -1689,11 +1721,11 @@ local DBdefault = {
 						CombatIndicator = {},
 						RaidTargetIndicator = {
 							enabled = true,
-							size = 30,
+							size = 20,
 							position = {
-								anchor = 'BOTTOM',
-								x = 0,
-								y = -27
+								anchor = 'BOTTOMRIGHT',
+								x = 5,
+								y = -10
 							}
 						},
 						SUI_ClassIcon = {
@@ -1802,11 +1834,13 @@ local DBdefault = {
 					},
 					auras = {
 						Buffs = {
-							Mode = 'both'
+							enabled = true
 						},
 						Debuffs = {
-							onlyShowPlayer = false,
-							Mode = 'both'
+							enabled = true
+						},
+						Bars = {
+							enabled = true
 						}
 					},
 					elements = {
@@ -1842,6 +1876,9 @@ local DBdefault = {
 								}
 							}
 						},
+						PvPIndicator = {
+							enabled = true
+						},
 						AdditionalPower = {
 							enabled = true
 						}
@@ -1854,6 +1891,17 @@ local DBdefault = {
 						relativePoint = 'BOTTOM',
 						xOfs = 60,
 						yOfs = 250
+					},
+					auras = {
+						Buffs = {
+							enabled = true
+						},
+						Debuffs = {
+							enabled = true
+						},
+						Bars = {
+							enabled = true
+						}
 					},
 					elements = {
 						Portrait = {
@@ -1874,6 +1922,9 @@ local DBdefault = {
 						SUI_ClassIcon = {
 							enabled = true
 						},
+						PvPIndicator = {
+							enabled = true
+						},
 						Power = {
 							text = {
 								['1'] = {
@@ -1886,6 +1937,11 @@ local DBdefault = {
 				targettarget = {
 					enabled = true,
 					width = 100,
+					auras = {
+						Debuffs = {
+							size = 10
+						}
+					},
 					elements = {
 						Castbar = {
 							enabled = true
@@ -1901,6 +1957,12 @@ local DBdefault = {
 				boss = {
 					enabled = true,
 					width = 120,
+					auras = {
+						Buffs = {
+							enabled = true,
+							size = 10
+						}
+					},
 					elements = {
 						Portrait = {
 							enabled = true,
@@ -1943,6 +2005,16 @@ local DBdefault = {
 					maxColumns = 1,
 					unitsPerColumn = 5,
 					columnSpacing = 2,
+					auras = {
+						Buffs = {
+							enabled = true,
+							size = 10
+						},
+						Debuffs = {
+							enabled = true,
+							size = 16
+						}
+					},
 					elements = {
 						Castbar = {
 							enabled = true
@@ -1977,6 +2049,16 @@ local DBdefault = {
 					maxColumns = 4,
 					unitsPerColumn = 10,
 					columnSpacing = 2,
+					auras = {
+						Buffs = {
+							enabled = true,
+							size = 10
+						},
+						Debuffs = {
+							enabled = true,
+							size = 10
+						}
+					},
 					elements = {
 						Health = {
 							height = 30
@@ -2029,8 +2111,15 @@ local DBdefault = {
 							bottom = {}
 						},
 						auras = {
-							Buffs = {},
-							Debuffs = {}
+							Buffs = {
+								position = {}
+							},
+							Debuffs = {
+								position = {}
+							},
+							Bars = {
+								position = {}
+							}
 						},
 						elements = {
 							Portrait = {},
@@ -2130,7 +2219,7 @@ local DBdefault = {
 		MoveIt = {
 			movers = {
 				['**'] = {
-					defaultPoint = '',
+					defaultPoint = false,
 					MovedPoints = false
 				}
 			}

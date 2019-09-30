@@ -67,10 +67,6 @@ function module:IsFriendlyFrame(frameName)
 	return false
 end
 
-function module:UpdatePosition()
-	module:PositionFrame()
-end
-
 function module:TextFormat(element, frameName, textID)
 	local textstyle = module.CurrentSettings[frameName].font[element].textstyle
 	local textmode = module.CurrentSettings[frameName].font[element].textmode
@@ -147,13 +143,6 @@ function module:PositionFrame(b)
 
 				_G[frameName]:ClearAllPoints()
 				_G[frameName]:SetPoint(point, anchor, secondaryPoint, x, y)
-			-- if module.frames[frameName].container then
-			-- 	module.frames[frameName].container:ClearAllPoints()
-			-- 	module.frames[frameName].container:SetPoint(point, anchor, secondaryPoint, x, y)
-			-- elseif module.frames[frameName].unit then -- Only try to position if there is a unit assigned
-			-- 	module.frames[frameName]:ClearAllPoints()
-			-- 	module.frames[frameName]:SetPoint(point, anchor, secondaryPoint, x, y)
-			-- end
 			end
 		end
 	end
@@ -237,20 +226,6 @@ function module:OnEnable()
 	module:PositionFrame()
 
 	-- Create movers
-	-- local FramesList = {
-	-- 	'pet',
-	-- 	'target',
-	-- 	'targettarget',
-	-- 	'focus',
-	-- 	'focustarget',
-	-- 	'player',
-	-- 	'raid',
-	-- 	'party'
-	-- }
-	-- for _, b in pairs(FramesList) do
-	-- 	print(b)
-	-- 	MoveIt:CreateMover('SUI_UF_' .. b, b)
-	-- end
 	local FramesList = {
 		[1] = 'pet',
 		[2] = 'target',
@@ -260,91 +235,12 @@ function module:OnEnable()
 		[6] = 'player'
 	}
 	for _, b in pairs(FramesList) do
-		MoveIt:CreateMover(module.frames[b], b)
+		MoveIt:CreateMover(module.frames[b], b, nil, true)
 	end
 
 	-- Create Party & Raid Mover
-	MoveIt:CreateMover(module.frames.containers.party, 'Party')
-	MoveIt:CreateMover(module.frames.containers.raid, 'Raid')
-end
-
-function module:AddMover(frame, framename)
-	if frame == nil then
-		SUI:Err('PlayerFrames', DB.Unitframes.Style .. ' did not spawn ' .. framename)
-	else
-		frame.mover = CreateFrame('Frame')
-		frame.mover:SetSize(20, 20)
-
-		if framename == 'boss' then
-			frame.mover:SetPoint('TOPLEFT', PlayerFrames.boss[1], 'TOPLEFT')
-			frame.mover:SetPoint('BOTTOMRIGHT', PlayerFrames.boss[MAX_BOSS_FRAMES], 'BOTTOMRIGHT')
-		elseif framename == 'arena' then
-			frame.mover:SetPoint('TOPLEFT', PlayerFrames.boss[1], 'TOPLEFT')
-			frame.mover:SetPoint('BOTTOMRIGHT', PlayerFrames.boss[MAX_BOSS_FRAMES], 'BOTTOMRIGHT')
-		else
-			frame.mover:SetPoint('TOPLEFT', frame, 'TOPLEFT')
-			frame.mover:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
-		end
-
-		frame.mover:EnableMouse(true)
-		frame.mover:SetFrameStrata('LOW')
-
-		frame:EnableMouse(enable)
-		frame:SetScript(
-			'OnMouseDown',
-			function(self, button)
-				if button == 'LeftButton' and IsAltKeyDown() then
-					frame.mover:Show()
-					DB.Unitframes[framename].moved = true
-					frame:SetMovable(true)
-					frame:StartMoving()
-				end
-			end
-		)
-		frame:SetScript(
-			'OnMouseUp',
-			function(self, button)
-				frame.mover:Hide()
-				frame:StopMovingOrSizing()
-				local Anchors = {}
-				Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = frame:GetPoint()
-				Anchors.relativeTo = 'UIParent'
-				for k, v in pairs(Anchors) do
-					DB.Unitframes[framename].Anchors[k] = v
-				end
-			end
-		)
-
-		frame.mover.bg = frame.mover:CreateTexture(nil, 'BACKGROUND')
-		frame.mover.bg:SetAllPoints(frame.mover)
-		frame.mover.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
-		frame.mover.bg:SetVertexColor(1, 1, 1, 0.5)
-
-		frame.mover:SetScript(
-			'OnEvent',
-			function()
-				PlayerFrames.locked = 1
-				frame.mover:Hide()
-			end
-		)
-		frame.mover:RegisterEvent('VARIABLES_LOADED')
-		frame.mover:RegisterEvent('PLAYER_REGEN_DISABLED')
-		frame.mover:Hide()
-
-		--Set Position if moved
-		if DB.Unitframes[framename].moved then
-			frame:SetMovable(true)
-			frame:SetUserPlaced(false)
-			local Anchors = {}
-			for k, v in pairs(DB.Unitframes[framename].Anchors) do
-				Anchors[k] = v
-			end
-			frame:ClearAllPoints()
-			frame:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-		else
-			frame:SetMovable(false)
-		end
-	end
+	MoveIt:CreateMover(module.frames.containers.party, 'Party', nil, true)
+	MoveIt:CreateMover(module.frames.containers.raid, 'Raid', nil, true)
 end
 
 local blockedFunctions = {

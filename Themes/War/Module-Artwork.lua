@@ -307,9 +307,9 @@ function module:MiniMapUpdate()
 	end
 
 	Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap')
-	Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 0, 3)
-	Minimap.BG:SetAlpha(.75)
-	Minimap.BG:SetSize(256, 256)
+	Minimap.BG:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -47, 47)
+	Minimap.BG:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 47, -47)
+	Minimap.BG:SetAlpha(.8)
 	Minimap.BG:SetBlendMode('ADD')
 end
 
@@ -340,15 +340,7 @@ function module:MiniMap()
 	end
 
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
-
 	module.Settings.MiniMap.TextLocation = 'TOP'
-	module.Settings.MiniMap.Anchor = {
-		'CENTER',
-		War_SpartanUI.Left,
-		'RIGHT',
-		0,
-		5
-	}
 	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()

@@ -146,72 +146,6 @@ local function getMaxUnitHP(unitid)
 	return aMaxHP
 end
 
---[[
-	Creates all the Player Power Icons
-	Converted to Lib item to provide a consistant experiance on SUI styles
-]]
-function addon:PlayerPowerIcons(frame, attachPoint)
-	--Runes
-	if select(2, UnitClass('player')) == 'DEATHKNIGHT' then
-		frame.Runes = {}
-		frame.Runes.colorSpec = true
-
-		for i = 1, 6 do
-			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
-			frame.Runes[i]:SetSize((frame.Health:GetWidth() - 10) / 6, 4)
-			if (i == 1) then
-				frame.Runes[i]:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, 0)
-			else
-				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
-			end
-			frame.Runes[i]:SetStatusBarTexture(SUI.BarTextures.smooth)
-			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
-
-			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
-			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
-			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
-			frame.Runes[i].bg:SetTexture(SUI.BarTextures.smooth)
-			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
-			frame.Runes[i].bg.multiplier = 0.64
-			frame.Runes[i]:Hide()
-
-			DeathKnightResourceOverlayFrame:HookScript(
-				'OnShow',
-				function()
-					DeathKnightResourceOverlayFrame:Hide()
-				end
-			)
-		end
-	else
-		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
-		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
-		local MaxPower, ClassPower = 5, {}
-
-		if (select(2, UnitClass('player')) == 'MONK') then
-			MaxPower = 6
-		end
-
-		for index = 1, MaxPower do
-			local Bar = CreateFrame('StatusBar', nil, frame)
-			Bar:SetStatusBarTexture(SUI.BarTextures.smooth)
-
-			-- Position and size.
-			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
-			if (index == 1) then
-				Bar:SetPoint('TOPLEFT', frame.ComboPoints, 'TOPLEFT')
-			else
-				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 2, 0)
-			end
-			Bar:Hide()
-
-			ClassPower[index] = Bar
-		end
-
-		-- Register with SUF
-		frame.ClassPower = ClassPower
-	end
-end
-
 do -- ClassIcon as an SUIUF module
 	local ClassIconCoord = {
 		WARRIOR = {0.00, 0.25, 0.00, 0.25},
@@ -329,6 +263,7 @@ do -- Boss graphic as an SUIUF module
 		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
 		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
 		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
+		self.BossGraphic:Show()
 	end
 	local function ForceUpdate(element)
 		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
@@ -396,26 +331,29 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 			return
 		end
 		local c = UnitClassification(unit)
+		local element = self.RareElite
 
-		if (self.RareElite:IsObjectType 'Texture' and not self.RareElite:GetTexture()) then
-			self.RareElite:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
-			self.RareElite:SetTexCoord(0, 1, 0, 1)
-			self.RareElite:SetAlpha(.75)
-			if self.RareElite.short == true then
-				self.RareElite:SetTexCoord(0, 1, 0, .7)
-			end
-			if self.RareElite.small == true then
-				self.RareElite:SetTexCoord(0, 1, 0, .4)
-			end
-		end
-		self.RareElite:Show()
 		if c == 'worldboss' or c == 'elite' or c == 'rareelite' then
-			self.RareElite:SetVertexColor(1, 0.9, 0)
+			element:SetVertexColor(1, 0.9, 0)
 		elseif c == 'rare' then
-			self.RareElite:SetVertexColor(1, 1, 1)
+			element:SetVertexColor(1, 1, 1)
 		else
-			self.RareElite:Hide()
+			element:Hide()
+			return
 		end
+
+		if (element:IsObjectType 'Texture' and not element:GetTexture()) then
+			element:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
+			element:SetTexCoord(0, 1, 0, 1)
+			element:SetAlpha(.75)
+			if element.short == true then
+				element:SetTexCoord(0, 1, 0, .7)
+			end
+			if element.small == true then
+				element:SetTexCoord(0, 1, 0, .4)
+			end
+		end
+		element:Show()
 	end
 	local function ForceUpdate(element)
 		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
@@ -424,6 +362,7 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 		if (self.RareElite) then
 			self.RareElite.__owner = self
 			self.RareElite.ForceUpdate = ForceUpdate
+			self.RareElite:Hide()
 			return true
 		end
 	end

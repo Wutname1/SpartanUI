@@ -117,11 +117,6 @@ function module:ShapeChange(shape)
 	if Style.Settings.MiniMap.size then
 		Minimap:SetSize(unpack(Style.Settings.MiniMap.size))
 	end
-	if Style.Settings.MiniMap.Anchor then
-		Minimap:ClearAllPoints()
-		Minimap:SetPoint(unpack(Style.Settings.MiniMap.Anchor))
-		Minimap:SetFrameLevel(120)
-	end
 
 	Minimap.ZoneText:ClearAllPoints()
 	if Style.Settings.MiniMap.TextLocation == 'TOP' then
@@ -226,7 +221,7 @@ function module:OnEnable()
 	end
 
 	-- Make map movable
-	MoveIt:CreateMover(Minimap, 'Minimap')
+	MoveIt:CreateMover(Minimap, 'Minimap', nil, true)
 
 	-- Construct options
 	module:BuildOptions()
@@ -291,9 +286,8 @@ function module:ModifyMinimapLayout()
 		MinimapNorthTag:Show()
 	end
 
-	Minimap:ClearAllPoints()
-	Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -30, -30)
-	Minimap:SetFrameLevel(120)
+	-- Minimap:ClearAllPoints()
+	-- Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -30, -30)
 
 	-- Retail Version stuff
 	if not SUI.IsClassic then

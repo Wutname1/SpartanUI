@@ -825,18 +825,14 @@ local function AddIndicatorOptions(frameName)
 								--Update the DB
 								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].size = val
 								--Update Screen
-								if module.frames[frameName][key] then
-									module.frames[frameName][key]:SetSize(val, val)
-								else
-									module.frames[frameName]:UpdateSize()
-								end
+								module.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						scale = {
 							name = 'Scale',
 							type = 'range',
-							min = 0,
-							max = 30,
+							min = .1,
+							max = 3,
 							step = .01,
 							order = 2,
 							get = function(info)
@@ -1421,37 +1417,28 @@ local function AddTextOptions(frameName)
 end
 
 local function AddBuffOptions(frameName)
-	local values = {
-		['bars'] = L['Bars'],
-		['icons'] = L['Icons'],
-		['both'] = L['Both'],
-		['disabled'] = L['Disabled']
-	}
-
 	SUI.opt.args['UnitFrames'].args[frameName].args['auras'] = {
 		name = 'Buffs & Debuffs',
 		desc = 'Buff & Debuff display settings',
 		type = 'group',
+		childGroups = 'tree',
 		order = 100,
 		args = {
-			Notice = {type = 'description', order = .5, fontSize = 'medium', name = L['possiblereloadneeded']},
 			Buffs = {
 				name = 'Buffs',
 				type = 'group',
 				inline = true,
 				order = 1,
 				args = {
-					Display = {
-						name = L['Display mode'],
-						type = 'select',
-						order = 15,
-						values = values,
+					enabled = {
+						name = L['Enabled'],
+						type = 'toggle',
+						order = 1,
 						get = function(info)
-							return module.CurrentSettings[frameName].auras.Buffs.Mode
+							return module.CurrentSettings[frameName].auras.Buffs.enabled
 						end,
 						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Buffs.Mode = val
-							SUI:reloadui()
+							module.CurrentSettings[frameName].auras.Buffs.enabled = val
 						end
 					},
 					Number = {
@@ -1541,16 +1528,15 @@ local function AddBuffOptions(frameName)
 				inline = true,
 				order = 2,
 				args = {
-					Display = {
-						name = L['Display mode'],
-						type = 'select',
-						order = 15,
-						values = values,
+					enabled = {
+						name = L['Enabled'],
+						type = 'toggle',
+						order = 1,
 						get = function(info)
-							return module.CurrentSettings[frameName].auras.Debuffs.Mode
+							return module.CurrentSettings[frameName].auras.Debuffs.enabled
 						end,
 						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Debuffs.Mode = val
+							module.CurrentSettings[frameName].auras.Debuffs.enabled = val
 							SUI:reloadui()
 						end
 					},

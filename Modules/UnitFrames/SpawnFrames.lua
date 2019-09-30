@@ -73,6 +73,26 @@ if SUI.IsClassic then
 	}
 end
 
+local function InverseAnchor(anchor)
+	if anchor == 'TOPLEFT' then
+		return 'BOTTOMLEFT'
+	elseif anchor == 'TOPRIGHT' then
+		return 'BOTTOMRIGHT'
+	elseif anchor == 'BOTTOMLEFT' then
+		return 'TOPLEFT'
+	elseif anchor == 'BOTTOMRIGHT' then
+		return 'TOPRIGHT'
+	elseif anchor == 'BOTTOM' then
+		return 'TOP'
+	elseif anchor == 'TOP' then
+		return 'BOTTOM'
+	elseif anchor == 'LEFT' then
+		return 'RIGHT'
+	elseif anchor == 'RIGHT' then
+		return 'LEFT'
+	end
+end
+
 local function customFilter(
 	element,
 	unit,
@@ -111,6 +131,215 @@ local function customFilter(
 	return false
 end
 
+local function BuffConstructor(self, unit)
+	-- Build buffs
+	if SUI.DB.Styles[CurStyle].Frames[unit] then
+		local Buffsize = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.size
+		local Debuffsize = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.size
+		local BuffsMode = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode
+		local DebuffsMode = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode
+
+		--Determine how many we can fit for Hybrid Display
+		local split = 4
+		local Spacer = 3
+		local BuffWidth = 0
+		local BuffWidth2 = 0
+		local DeBuffWidth = 0
+		local DeBuffWidth2 = 0
+		for index = 1, 10 do
+			if
+				((index * (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / split))
+			 then
+				BuffWidth = index
+			end
+			if ((index * (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
+				BuffWidth2 = index
+			end
+		end
+		for index = 1, 10 do
+			if
+				((index * (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <=
+					(self.BuffAnchor:GetWidth() / split))
+			 then
+				DeBuffWidth = index
+			end
+			if
+				((index * (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2))
+			 then
+				DeBuffWidth2 = index
+			end
+		end
+		local BuffWidthActual = (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing) * BuffWidth
+		local DeBuffWidthActual = (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing) * DeBuffWidth
+
+		-- Position Bar
+		local BarPosition = function(self, pos)
+			-- Reminder on how position is defined
+			-- * = Icons
+			-- - = Bars
+			--Pos1 -------**
+			--Pos2 **-----**
+			--Pos3 **-------
+			if pos == 1 then
+				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', ((DeBuffWidthActual + Spacer) * -1), 0)
+			elseif pos == 2 then
+				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', (BuffWidthActual + Spacer), 0)
+				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', ((DeBuffWidthActual + Spacer) * -1), 0)
+			else --pos 3
+				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', (BuffWidthActual + Spacer), 0)
+				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
+			end
+			return self
+		end
+
+		--Buff Icons
+		local Buffs = CreateFrame('Frame', nil, self)
+		--Debuff Icons
+		local Debuffs = CreateFrame('Frame', nil, self)
+		-- Setup icons if needed
+		local iconFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+			if caster == 'player' and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
+				return true
+			elseif caster ~= 'player' then
+				return true
+			end
+		end
+		if BuffsMode ~= 'bars' and BuffsMode ~= 'disabled' then
+			Buffs:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+			Buffs.size = Buffsize
+			Buffs['growth-x'] = 'RIGHT'
+			Buffs['growth-y'] = 'UP'
+			Buffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing
+			Buffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.showType
+			Buffs.numBuffs = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Number
+			Buffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer
+			Buffs:SetSize(BuffWidthActual, (Buffsize * (Buffs.numBuffs / BuffWidth)))
+			Buffs.PostUpdate = PostUpdateAura
+			if BuffsMode ~= 'icons' then
+				Buffs.CustomFilter = iconFilter
+			end
+			self.Buffs = Buffs
+		end
+		if DebuffsMode ~= 'bars' and DebuffsMode ~= 'disabled' then
+			Debuffs:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
+			Debuffs.size = Debuffsize
+			Debuffs.initialAnchor = 'BOTTOMRIGHT'
+			Debuffs['growth-x'] = 'LEFT'
+			Debuffs['growth-y'] = 'UP'
+			Debuffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing
+			Debuffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.showType
+			Debuffs.numDebuffs = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Number
+			Debuffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer
+			Debuffs:SetSize(DeBuffWidthActual, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth)))
+			Debuffs.PostUpdate = PostUpdateAura
+			if DebuffsMode ~= 'icons' then
+				Debuffs.CustomFilter = iconFilter
+			end
+			self.Debuffs = Debuffs
+		end
+
+		--Bars
+		local AuraBars = CreateFrame('Frame', nil, self)
+		AuraBars:SetHeight(1)
+		AuraBars.auraBarTexture = Smoothv2
+		AuraBars.PostUpdate = PostUpdateAura
+		AuraBars.spellTimeFont = SUI:GetFontFace('Player')
+		AuraBars.spellNameFont = SUI:GetFontFace('Player')
+
+		--Hots and Dots Filter
+		local Barfilter = function(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
+			--Only Show things with a SHORT durration (HOTS and DOTS)
+			if duration > 0 and duration < 60 then
+				return true
+			end
+		end
+
+		-- Determine Buff Bar locaion
+		if BuffsMode == 'bars' and DebuffsMode == 'icons' then
+			AuraBars.Buffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 1)
+		elseif BuffsMode == 'bars' and DebuffsMode == 'both' then
+			AuraBars.ShowAll = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 1)
+		elseif BuffsMode == 'bars' and (DebuffsMode == 'bars' or DebuffsMode == 'disabled') then
+			if DebuffsMode == 'disabled' then
+				AuraBars.Buffs = true
+			else
+				AuraBars.ShowAll = true
+			end
+			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
+			self.AuraBars = AuraBars
+		elseif BuffsMode == 'icons' and DebuffsMode == 'icons' then
+			Buffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Buffsize * (Buffs.numBuffs / BuffWidth2)))
+			Debuffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth2)))
+		elseif BuffsMode == 'icons' and DebuffsMode == 'both' then
+			AuraBars.Debuffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 2)
+		elseif BuffsMode == 'icons' and DebuffsMode == 'bars' then
+			AuraBars.Debuffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 3)
+		elseif BuffsMode == 'icons' and DebuffsMode == 'disabled' then
+			Buffs:SetSize(self.BuffAnchor:GetWidth(), (Buffsize * (Buffs.numBuffs / self.BuffAnchor:GetWidth())))
+		elseif BuffsMode == 'both' and DebuffsMode == 'icons' then
+			AuraBars.Buffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 2)
+		elseif BuffsMode == 'both' and DebuffsMode == 'both' then
+			AuraBars.ShowAll = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 2)
+		elseif BuffsMode == 'both' and DebuffsMode == 'bars' then
+			AuraBars.ShowAll = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 3)
+		elseif BuffsMode == 'bars' and DebuffsMode == 'disabled' then
+			AuraBars.Buffs = true
+			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
+			self.AuraBars = AuraBars
+		elseif BuffsMode == 'disabled' and DebuffsMode == 'bars' then
+			AuraBars.Debuffs = true
+			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
+			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
+			self.AuraBars = AuraBars
+		elseif BuffsMode == 'disabled' and DebuffsMode == 'icons' then
+			Debuffs:SetSize(self.BuffAnchor:GetWidth(), (Debuffsize * (Debuffs.numDebuffs / self.BuffAnchor:GetWidth())))
+		elseif BuffsMode == 'disabled' and DebuffsMode == 'both' then
+			AuraBars.Debuffs = true
+			self.AuraBars = AuraBars
+			BarPosition(self, 1)
+		end
+
+		--Buff Filter for bars
+		if self.AuraBars then
+			AuraBars.filter = Barfilter
+		end
+
+		--Change options if needed
+		if SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode == 'bars' then
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['Number'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['size'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['spacing'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['showType'].disabled = true
+		end
+		if SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == 'bars' then
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['Number'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['size'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['spacing'].disabled = true
+			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['showType'].disabled = true
+		end
+
+		SUI.opt.args['PlayerFrames'].args['auras'].args[unit].disabled = false
+	end
+	return self
+end
+
 local function CreateUnitFrame(self, unit)
 	if (unit ~= 'raid') then
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
@@ -126,6 +355,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	local function UpdateAll()
+		local auras = module.CurrentSettings[unit].auras
 		local elements = module.CurrentSettings[unit].elements
 		-- Check that its a frame
 		-- Loop all elements and update their status
@@ -205,6 +435,18 @@ local function CreateUnitFrame(self, unit)
 			)
 		end
 
+		-- Update Buffs
+		if (auras.Buffs.enabled) then
+			self.Buffs:Show()
+		else
+			self.Buffs:Hide()
+		end
+		if (auras.Debuffs.enabled) then
+			self.Debuffs:Show()
+		else
+			self.Debuffs:Hide()
+		end
+
 		-- Tell everything to update to get current data
 		self:UpdateSize()
 		self:UpdateAllElements('OnUpdate')
@@ -237,6 +479,8 @@ local function CreateUnitFrame(self, unit)
 		--Size it if we have a size change function for the element
 		if element.SizeChange then
 			element:SizeChange()
+		elseif element.Sizeable then
+			element:SetSize(data.size, data.size)
 		end
 
 		--PVPIndicator
@@ -417,6 +661,66 @@ local function CreateUnitFrame(self, unit)
 		-- 	Threat:SetSize(25, 25)
 		-- 	Threat:SetPoint('CENTER', self, 'RIGHT')
 		-- 	self.ThreatIndicator = Threat
+	end
+	do -- setup buffs
+		-- Setup icons if needed
+		local iconFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
+			if caster == 'player' and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
+				return true
+			elseif caster ~= 'player' then
+				return true
+			end
+		end
+
+		--Buff Icons
+		local Buffs = CreateFrame('Frame', nil, self)
+		Buffs:SetPoint(
+			InverseAnchor(auras.Buffs.position.anchor),
+			self,
+			auras.Buffs.position.anchor,
+			auras.Buffs.position.x,
+			auras.Buffs.position.y
+		)
+		Buffs.size = auras.Buffs.size
+		Buffs.initialAnchor = auras.Buffs.initialAnchor
+		Buffs['growth-x'] = auras.Buffs.growthx
+		Buffs['growth-y'] = auras.Buffs.growthy
+		Buffs.spacing = auras.Buffs.spacing
+		Buffs.showType = auras.Buffs.showType
+		Buffs.numBuffs = auras.Buffs.number
+		Buffs.onlyShowPlayer = auras.Buffs.onlyShowPlayer
+		Buffs:SetSize(
+			(auras.Buffs.size + auras.Buffs.spacing) * (auras.Buffs.number / auras.Buffs.rows),
+			(auras.Buffs.spacing + auras.Buffs.size) * auras.Buffs.rows
+		)
+		Buffs.PostUpdate = PostUpdateAura
+		-- Buffs.CustomFilter = customFilter
+		self.Buffs = Buffs
+
+		--Debuff Icons
+		local Debuffs = CreateFrame('Frame', nil, self)
+		Debuffs:SetPoint(
+			InverseAnchor(auras.Debuffs.position.anchor),
+			self,
+			auras.Debuffs.position.anchor,
+			auras.Debuffs.position.x,
+			auras.Debuffs.position.y
+		)
+		Debuffs.size = auras.Debuffs.size
+		Debuffs.initialAnchor = auras.Debuffs.initialAnchor
+		Debuffs['growth-x'] = auras.Debuffs.growthx
+		Debuffs['growth-y'] = auras.Debuffs.growthy
+		Debuffs.spacing = auras.Debuffs.spacing
+		Debuffs.showType = auras.Debuffs.showType
+		Debuffs.numDebuffs = auras.Debuffs.number
+		Debuffs.onlyShowPlayer = auras.Debuffs.onlyShowPlayer
+		Debuffs:SetSize(
+			(auras.Debuffs.size + auras.Debuffs.spacing) * (auras.Buffs.number / auras.Buffs.rows),
+			(auras.Debuffs.spacing + auras.Debuffs.size) * auras.Debuffs.rows
+		)
+		Debuffs.PostUpdate = PostUpdateAura
+		-- Debuffs.CustomFilter = customFilter
+		self.Debuffs = Debuffs
 	end
 	do -- setup status bars
 		do -- cast bar
@@ -702,7 +1006,7 @@ local function CreateUnitFrame(self, unit)
 		if SUI.IsClassic then
 			-- Register it with oUF
 			self.PetHappiness = CreateFrame('Frame', nil, self)
-			self.PetHappiness:SetSize(elements.PetHappiness.size, elements.PetHappiness.size - 5)
+			self.PetHappiness.Sizeable = true
 			ElementUpdate(self, 'PetHappiness')
 		end
 
@@ -711,14 +1015,16 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'RareElite')
 
 		self.BossGraphic = self:CreateTexture(nil, 'ARTWORK')
-		self.BossGraphic:SetSize(elements.BossGraphic.size, elements.BossGraphic.size - 5)
+		self.BossGraphic.SizeChange = function()
+			self.BossGraphic:SetSize(elements.BossGraphic.size, elements.BossGraphic.size - 5)
+		end
 		ElementUpdate(self, 'BossGraphic')
 
 		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
-		self.LeaderIndicator:SetSize(elements.LeaderIndicator.size, elements.LeaderIndicator.size)
+		self.LeaderIndicator.Sizeable = true
 		ElementUpdate(self, 'LeaderIndicator')
 		self.AssistantIndicator = self:CreateTexture(nil, 'BORDER')
-		self.AssistantIndicator:SetSize(elements.AssistantIndicator.size, elements.AssistantIndicator.size)
+		self.AssistantIndicator.Sizeable = true
 		ElementUpdate(self, 'AssistantIndicator')
 
 		-- 	self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
@@ -735,12 +1041,12 @@ local function CreateUnitFrame(self, unit)
 		-- 	self:Tag(self.SUI_RaidGroup.Text, '[group]')
 
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
-		self.ReadyCheckIndicator:SetSize(elements.ReadyCheckIndicator.size, elements.ReadyCheckIndicator.size)
+		self.ReadyCheckIndicator.Sizeable = true
 		ElementUpdate(self, 'ReadyCheckIndicator')
 
 		-- Position and size
 		self.PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
-		self.PhaseIndicator:SetSize(elements.PhaseIndicator.size, elements.PhaseIndicator.size)
+		self.PhaseIndicator.Sizeable = true
 		ElementUpdate(self, 'PhaseIndicator')
 
 		self.PvPIndicator = self:CreateTexture(nil, 'ARTWORK')
@@ -752,6 +1058,11 @@ local function CreateUnitFrame(self, unit)
 
 		self.PvPIndicator.BadgeBackup = Badge
 		self.PvPIndicator.SizeChange = function()
+			self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
+			self.PvPIndicator.BadgeBackup:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
+			if self.PvPIndicator.Badge then
+				self.PvPIndicator.Badge:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
+			end
 		end
 		ElementUpdate(self, 'PvPIndicator')
 		if elements.PvPIndicator.Override then
@@ -759,25 +1070,25 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
-		self.RestingIndicator:SetSize(elements.RestingIndicator.size, elements.RestingIndicator.size)
+		self.RestingIndicator.Sizeable = true
 		ElementUpdate(self, 'RestingIndicator')
 		self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
 
 		self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
 		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\icon_role.tga')
-		self.GroupRoleIndicator:SetSize(elements.GroupRoleIndicator.size, elements.GroupRoleIndicator.size)
+		self.GroupRoleIndicator.Sizeable = true
 		ElementUpdate(self, 'GroupRoleIndicator')
 
 		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
-		self.CombatIndicator:SetSize(elements.CombatIndicator.size, elements.CombatIndicator.size)
+		self.CombatIndicator.Sizeable = true
 		ElementUpdate(self, 'CombatIndicator')
 
 		self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
-		self.RaidTargetIndicator:SetSize(elements.RaidTargetIndicator.size, elements.RaidTargetIndicator.size)
+		self.RaidTargetIndicator.Sizeable = true
 		ElementUpdate(self, 'RaidTargetIndicator')
 
 		self.SUI_ClassIcon = self:CreateTexture(nil, 'BORDER')
-		self.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
+		self.SUI_ClassIcon.Sizeable = true
 		ElementUpdate(self, 'SUI_ClassIcon')
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY')
@@ -985,7 +1296,7 @@ function module:SpawnFrames()
 			self:EnableMouse(enable)
 			]])
 	)
-	party:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
+	party:SetPoint('TOPLEFT', SUI_UF_party, 'TOPLEFT')
 	module.frames.party = party
 
 	-- Raid Frames
@@ -1046,27 +1357,9 @@ function module:SpawnFrames()
 			self:EnableMouse(enable)
 			]])
 	)
-	raid:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 20, -40)
+	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
 	module.frames.raid = raid
 
-	-- for _, group in ipairs({'raid', 'party'}) do
-	-- 	local function GroupFrameElementUpdate(self, elementName)
-	-- 		for _, v in ipairs({module.frames[group]:GetChildren()}) do
-	-- 			if v.ElementUpdate then
-	-- 				v:ElementUpdate(elementName)
-	-- 			end
-	-- 		end
-	-- 	end
-	-- 	local function GroupFrameUpdateSize(self)
-	-- 		for _, v in ipairs({module.frames[group]:GetChildren()}) do
-	-- 			if v.UpdateSize then
-	-- 				v:UpdateSize()
-	-- 			end
-	-- 		end
-	-- 	end
-	-- 	module.frames[group].ElementUpdate = GroupFrameElementUpdate
-	-- 	module.frames[group].UpdateSize = GroupFrameUpdateSize
-	-- end
 	local function GroupFrameUpdateAll(self)
 		for _, f in ipairs({self:GetChildren()}) do
 			if f.UpdateAll then
@@ -1075,7 +1368,7 @@ function module:SpawnFrames()
 		end
 	end
 	local function GroupFrameElementUpdate(self, elementName)
-		for _, f in ipairs(self) do
+		for _, f in ipairs({self:GetChildren()}) do
 			if f.ElementUpdate then
 				f:ElementUpdate(elementName)
 			end
@@ -1100,7 +1393,7 @@ function module:SpawnFrames()
 			module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
 		else
 			-- Update 1 second after login
-			if event == 'PLAYER_ENTERING_WORLD' then
+			if event == 'PLAYER_ENTERING_WORLD' or event == 'GROUP_JOINED' then
 				module:ScheduleTimer(GroupWatcher, 1)
 			end
 
@@ -1117,11 +1410,12 @@ function module:SpawnFrames()
 end
 
 function module:UpdateGroupFrames(event, ...)
-	SUIPartyFrame = module.frames.party
+	local SUIPartyFrame = module.frames.party
 	for _, PartyUnit in ipairs({SUIPartyFrame:GetChildren()}) do
 		PartyUnit:UpdateAll()
 	end
-	SUIRaidFrame = module.frames.raid
+
+	local SUIRaidFrame = module.frames.raid
 	for _, RaidUnit in ipairs({SUIRaidFrame:GetChildren()}) do
 		RaidUnit:UpdateAll()
 	end

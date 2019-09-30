@@ -329,14 +329,6 @@ function module:MiniMap()
 	end
 
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
-
-	module.Settings.MiniMap.Anchor = {
-		'CENTER',
-		Fel_SpartanUI.Left,
-		'RIGHT',
-		0,
-		-10
-	}
 	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()
