@@ -52,7 +52,8 @@ local ExcludedItems = {
 	16653,
 	16654,
 	16655,
-	16656
+	16656,
+	2730
 	--End Shredder Operating Manual pages
 }
 local ExcludedTypes = {
