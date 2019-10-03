@@ -23,7 +23,7 @@ SUI.releaseType = 'BETA'
 SUI.releaseType = 'ALPHA'
 --@end-alpha@
 --@do-not-package@
-SUI.releaseType = 'DEV'
+SUI.releaseType = '6.x.x dev build'
 SUI.Version = ''
 --@end-do-not-package@
 
