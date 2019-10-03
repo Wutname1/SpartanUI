@@ -44,9 +44,8 @@ libs\SUF\SUF.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
 #@non-retail@
 libs\oUF_PetHappiness\oUF_PetHappiness.lua
-#libs\LibClassicCast\LibClassicCast.lua
 libs\LibClassicDurations\LibClassicDurations.xml
-libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
+libs\LibClassicCasterino\LibClassicCasterino.lua
 #@end-non-retail@
 
 # Localization
