@@ -22,11 +22,6 @@ function module:InCombatLockdown()
 end
 
 function module:OnInitialize()
-	if select(4, GetAddOnInfo('Bartender4')) then
-		SUI.DB.Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
-	else
-		SUI.DB.Bartender4Version = 0
-	end
 
 	SUI.opt.args['General'].args['style'] = {
 		name = L['StyleSettings'],
@@ -483,7 +478,7 @@ function module:OnInitialize()
 				fontSize = 'large'
 			},
 			ver3 = {
-				name = L['Bartender4 version'] .. ': ' .. SUI.DB.Bartender4Version,
+				name = L['Bartender4 version'] .. ': ' .. SUI.Bartender4Version,
 				type = 'description',
 				order = 53,
 				fontSize = 'large'
@@ -565,7 +560,7 @@ function module:OnInitialize()
 		fontSize = 'large'
 	}
 	SUI.opt.args['General'].args['ver3'] = {
-		name = 'Bartender4 Version: ' .. SUI.DB.Bartender4Version,
+		name = 'Bartender4 Version: ' .. SUI.Bartender4Version,
 		type = 'description',
 		order = 53,
 		fontSize = 'large'

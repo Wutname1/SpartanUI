@@ -11,28 +11,30 @@ SUI.L = L
 local _G = _G
 local type, pairs = type, pairs
 local SUIChatCommands = {}
-SUI.Version = GetAddOnMetadata('SpartanUI', 'Version')
-SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build')
+SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
+SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
+SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
-SUI.releaseType = 'Release'
-
+--@beta@
+SUI.releaseType = 'BETA'
+--@end-beta@
 --@alpha@
 SUI.releaseType = 'ALPHA'
 --@end-alpha@
-
-if not SUI.BuildNum then
-	SUI.BuildNum = 0
-end
+--@do-not-package@
+SUI.releaseType = 'DEV'
+SUI.Version = ''
+--@end-do-not-package@
 
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = string.format('SpartanUI %s %s', SUI.releaseType, SUI.Version),
+	name = string.format('SpartanUI %s %s', SUI.releaseType or 'Release', SUI.Version),
 	type = 'group',
 	childGroups = 'tree',
 	args = {
 		General = {name = L['General'], type = 'group', order = 0, args = {}},
-		Artwork = {name = L['Artwork'], type = 'group', args = {}}
+		Artwork = {name = L['Artwork'], type = 'group', order = 1, args = {}}
 	}
 }
 
@@ -40,7 +42,6 @@ SUI.opt = {
 local DBdefault = {
 	SUIProper = {
 		Version = '0',
-		Bartender4Version = 0,
 		SetupDone = false,
 		HVer = '',
 		yoffset = 0,
@@ -2397,7 +2398,8 @@ local DBdefault = {
 	}
 }
 
-local DBdefaults = {char = DBdefault, profile = DBdefault}
+-- local DBdefaults = {char = DBdefault, profile = DBdefault}
+local DBdefaults = {profile = DBdefault}
 
 function SUI:ResetConfig()
 	SUI.DB:ResetProfile(false, true)
@@ -2405,9 +2407,9 @@ function SUI:ResetConfig()
 end
 
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
---If we have not played in a long time reset the database, make sure it is all good.
+--If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.SUIProper.Version
-if (ver ~= '0' and ver < '4.0.0') then
+if (ver ~= '0' and ver < '5.0.0') then
 	SUI.SpartanUIDB:ResetDB()
 end
 
@@ -2418,10 +2420,6 @@ SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 
 function SUI:OnInitialize()
 	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
-	--If we have not played in a long time reset the database, make sure it is all good.
-	if (ver ~= '0' and ver < '4.0.0') then
-		SUI.SpartanUIDB:ResetDB()
-	end
 
 	-- New SUI.DB Access
 	SUI.DBG = SUI.SpartanUIDB.global
@@ -2483,14 +2481,6 @@ function SUI:DBUpgrades()
 		SUI.DBMod.Artwork.Style = 'Classic'
 	end
 
-	-- 5.0.0 Upgrades
-	if SUI.DB.Version < '5.0.0' then
-		SUI.DB.font.SetupDone = true
-		SUI.DBMod.Objectives.SetupDone = true
-		SUI.DB.SetupWizard.FirstLaunch = false
-		SUI.DB.AutoTurnIn.FirstLaunch = false
-		SUI.DB.AutoSell.FirstLaunch = false
-	end
 	-- 5.2.0 Upgrades
 	if SUI.DB.Version < '5.2.0' then
 		if not SUI.DBMod.Artwork.SetupDone and not SUI.DB.SetupWizard.FirstLaunch then
@@ -2506,6 +2496,7 @@ function SUI:DBUpgrades()
 		end
 	end
 
+	-- 6.0.0 Upgrades
 	if SUI.DB.Version < '6.0.0' then
 		if not select(4, GetAddOnInfo('SpartanUI_Artwork')) then
 			SUI.DB.EnabledComponents.Artwork = false
@@ -2845,7 +2836,7 @@ function SUI:ChatCommand(input)
 	elseif input == 'version' then
 		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
 		SUI:Print(L['Build'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Build'))
-		SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.DB.Bartender4Version)
+		SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
 	else
 		if SUIChatCommands[input] then
 			SUIChatCommands[input]()

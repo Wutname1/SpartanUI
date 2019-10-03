@@ -194,11 +194,6 @@ function module:OnInitialize()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
 	end
-	if select(4, GetAddOnInfo('Bartender4')) then
-		SUI.DB.Bartender4Version = GetAddOnMetadata('Bartender4', 'Version')
-	else
-		SUI.DB.Bartender4Version = 0
-	end
 	StaticPopupDialogs['BartenderVerWarning'] = {
 		text = '|cff33ff99SpartanUI v' ..
 			SUI.Version ..
@@ -206,7 +201,7 @@ function module:OnInitialize()
 					L['Warning'] ..
 						': ' ..
 							L['BartenderOldMSG'] ..
-								' ' .. SUI.DB.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
+								' ' .. SUI.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
 		button1 = 'Ok',
 		OnAccept = function()
 			SUI.DBG.BartenderVerWarning = SUI.Version
@@ -385,7 +380,7 @@ function module:OnEnable()
 		return
 	end
 	-- No Bartender/out of date Notification
-	if SUI.DB.Bartender4Version < BartenderMin then
+	if SUI.Bartender4Version < BartenderMin then
 		StaticPopup_Show('BartenderVerWarning')
 	end
 
@@ -492,6 +487,10 @@ function module:SetupProfile(ProfileOverride)
 end
 
 function module:BartenderProfileCheck(Input, Report)
+	if not Bartender4 then
+		return
+	end
+
 	local profiles, r = Bartender4.db:GetProfiles(), false
 	for _, v in pairs(profiles) do
 		if v == Input then
