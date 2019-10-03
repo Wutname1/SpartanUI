@@ -446,22 +446,7 @@ function module:OnInitialize()
 				type = 'execute',
 				order = 3,
 				func = function()
-					local FramesList = {
-						[1] = 'pet',
-						[2] = 'target',
-						[3] = 'targettarget',
-						[4] = 'focus',
-						[5] = 'focustarget',
-						[6] = 'player',
-						[7] = 'boss'
-					}
-					for _, b in pairs(FramesList) do
-						SUI.DBMod.PlayerFrames[b].moved = false
-					end
-					SUI.DBMod.PartyFrames.moved = false
-					SUI.DBMod.RaidFrames.moved = false
-					SUI.DB.Styles[SUI.DBMod.Artwork.Style].Movable.MinimapMoved = false
-					SUI:GetModule('PlayerFrames'):UpdatePosition()
+					SUI:GetModule('Component_MoveIt'):Reset()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 49},
