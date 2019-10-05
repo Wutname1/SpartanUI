@@ -252,38 +252,6 @@ do -- TargetIndicator as an SUIUF module
 	SUIUF:AddElement('TargetIndicator', Update, Enable, Disable)
 end
 
-do -- Boss graphic as an SUIUF module
-	local Update = function(self, event, unit)
-		if (self.unit ~= unit) then
-			return
-		end
-		if (not self.BossGraphic) then
-			return
-		end
-		self.BossGraphic:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
-		self.BossGraphic:SetTexCoord(1, 0, 0, 1)
-		self.BossGraphic:SetVertexColor(1, 0.9, 0, 1)
-		self.BossGraphic:Show()
-	end
-	local function ForceUpdate(element)
-		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
-	end
-	local Enable = function(self)
-		if (self.BossGraphic) then
-			self.BossGraphic.__owner = self
-			self.BossGraphic.ForceUpdate = ForceUpdate
-			return true
-		end
-	end
-	local Disable = function(self)
-		if (self.BossGraphic) then
-			self.BossGraphic:Hide()
-		end
-		return
-	end
-	SUIUF:AddElement('BossGraphic', Update, Enable, Disable)
-end
-
 do -- Level Skull as an SUIUF module
 	local Update = function(self, event, unit)
 		if (self.unit ~= unit) then

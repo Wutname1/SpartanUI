@@ -1506,7 +1506,6 @@ local DBdefault = {
 							spacing = 1,
 							showType = true,
 							onlyShowPlayer = false,
-							Mode = 'disabled',
 							initialAnchor = 'BOTTOMLEFT',
 							growthx = 'RIGHT',
 							growthy = 'UP',
@@ -1525,7 +1524,6 @@ local DBdefault = {
 							showType = true,
 							ShowBoss = true,
 							onlyShowPlayer = false,
-							Mode = 'disabled',
 							initialAnchor = 'BOTTOMRIGHT',
 							growthx = 'LEFT',
 							growthy = 'UP',
@@ -1813,14 +1811,6 @@ local DBdefault = {
 									x = 0,
 									y = 0
 								}
-							}
-						},
-						BossGraphic = {
-							size = 130,
-							position = {
-								anchor = 'LEFT',
-								x = -20,
-								y = 35
 							}
 						}
 					}

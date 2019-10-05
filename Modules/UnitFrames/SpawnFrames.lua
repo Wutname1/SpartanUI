@@ -29,7 +29,6 @@ local elementList = {
 	'ReadyCheckIndicator',
 	'PvPIndicator',
 	'RareElite',
-	'BossGraphic',
 	'StatusText',
 	'Runes',
 	'Stagger',
@@ -1013,12 +1012,6 @@ local function CreateUnitFrame(self, unit)
 		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -8)
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
 		ElementUpdate(self, 'RareElite')
-
-		self.BossGraphic = self:CreateTexture(nil, 'ARTWORK')
-		self.BossGraphic.SizeChange = function()
-			self.BossGraphic:SetSize(elements.BossGraphic.size, elements.BossGraphic.size - 5)
-		end
-		ElementUpdate(self, 'BossGraphic')
 
 		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
 		self.LeaderIndicator.Sizeable = true
