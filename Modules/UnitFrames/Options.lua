@@ -1519,6 +1519,69 @@ local function AddBuffOptions(frameName)
 								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
 							end
 						end
+					},
+					position = {
+						name = 'Position',
+						type = 'group',
+						order = 50,
+						inline = true,
+						args = {
+							x = {
+								name = 'X Axis',
+								type = 'range',
+								order = 1,
+								min = -100,
+								max = 100,
+								step = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].auras.Buffs.position.x
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].auras.Buffs.position.x = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Buffs.position.x = val
+									--Update Screen
+									module.frames[frameName]:ElementUpdate(key)
+								end
+							},
+							y = {
+								name = 'Y Axis',
+								type = 'range',
+								order = 2,
+								min = -100,
+								max = 100,
+								step = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].auras.Buffs.position.y
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].auras.Buffs.position.y = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Buffs.position.y = val
+									--Update Screen
+									module.frames[frameName]:ElementUpdate(key)
+								end
+							},
+							anchor = {
+								name = 'Anchor point',
+								type = 'select',
+								order = 3,
+								values = anchorPoints,
+								get = function(info)
+									return module.CurrentSettings[frameName].auras.Buffs.position.anchor
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].auras.Buffs.position.anchor = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Buffs.position.anchor = val
+									--Update Screen
+									module.frames[frameName]:ElementUpdate(key)
+								end
+							}
+						}
 					}
 				}
 			},
@@ -1618,6 +1681,69 @@ local function AddBuffOptions(frameName)
 								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
 							end
 						end
+					},
+					position = {
+						name = 'Position',
+						type = 'group',
+						order = 50,
+						inline = true,
+						args = {
+							x = {
+								name = 'X Axis',
+								type = 'range',
+								order = 1,
+								min = -100,
+								max = 100,
+								step = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].auras.Debuffs.position.x
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].auras.Debuffs.position.x = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Debuffs.position.x = val
+									--Update Screen
+									module.frames[frameName]:ElementUpdate(key)
+								end
+							},
+							y = {
+								name = 'Y Axis',
+								type = 'range',
+								order = 2,
+								min = -100,
+								max = 100,
+								step = 1,
+								get = function(info)
+									return module.CurrentSettings[frameName].auras.Debuffs.position.y
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].auras.Debuffs.position.y = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Debuffs.position.y = val
+									--Update Screen
+									module.frames[frameName]:ElementUpdate(key)
+								end
+							},
+							anchor = {
+								name = 'Anchor point',
+								type = 'select',
+								order = 3,
+								values = anchorPoints,
+								get = function(info)
+									return module.CurrentSettings[frameName].auras.Debuffs.position.anchor
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].auras.Debuffs.position.anchor = val
+									--Update the DB
+									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Debuffs.position.anchor = val
+									--Update Screen
+									module.frames[frameName]:ElementUpdate(key)
+								end
+							}
+						}
 					}
 				}
 			}
