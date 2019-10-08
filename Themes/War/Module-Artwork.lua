@@ -10,7 +10,7 @@ module.StatusBarSettings = {
 		'War_StatusBar_Right'
 	},
 	War_StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 		size = {370, 20},
 		TooltipSize = {350, 100},
 		TooltipTextSize = {330, 80},
@@ -19,7 +19,7 @@ module.StatusBarSettings = {
 		MaxWidth = 48
 	},
 	War_StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 		Grow = 'RIGHT',
 		size = {370, 20},
 		TooltipSize = {350, 100},
@@ -194,8 +194,8 @@ function module:InitArtwork()
 	War_SpartanUI.Right = War_SpartanUI:CreateTexture('War_SpartanUI_Right', 'BORDER')
 	War_SpartanUI.Right:SetPoint('LEFT', War_SpartanUI.Left, 'RIGHT', 0, 0)
 
-	War_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\Base_Bar_Left.tga')
-	War_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_War\\Images\\Base_Bar_Right.tga')
+	War_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Left.tga')
+	War_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Right.tga')
 
 	-- Inital Scaling
 	War_SpartanUI.Left:SetScale(.75)
@@ -212,7 +212,7 @@ function module:EnableArtwork()
 	module:SlidingTrays()
 
 	-- Setup the bar BG
-	local barBG = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\Barbg-' .. UnitFactionGroup('Player')
+	local barBG = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-' .. UnitFactionGroup('Player')
 	if barBG then
 		for i = 1, 4 do
 			_G['War_Bar' .. i .. 'BG']:SetTexture(barBG)
@@ -271,19 +271,19 @@ end
 function module:SlidingTrays()
 	local Settings = {
 		bg = {
-			Texture = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'),
+			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
 			TexCoord = {.076171875, 0.92578125, 0, 0.18359375}
 		},
 		bgCollapsed = {
-			Texture = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'),
+			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
 			TexCoord = {0.076171875, 0.92578125, 1, 0.92578125}
 		},
 		UpTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'),
+			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
 			TexCoord = {0.3671875, 0.640625, 0.20703125, 0.25390625}
 		},
 		DownTex = {
-			Texture = 'Interface\\AddOns\\SpartanUI_Style_War\\Images\\Trays-' .. UnitFactionGroup('Player'),
+			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Trays-' .. UnitFactionGroup('Player'),
 			TexCoord = {0.3671875, 0.640625, 0.25390625, 0.20703125}
 		}
 	}
