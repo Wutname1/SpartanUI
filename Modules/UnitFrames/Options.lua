@@ -50,7 +50,7 @@ end
 ----------------------------------------------------------------------------------------------------
 
 local function CreateOptionSet(frameName, order)
-	SUI.opt.args['UnitFrames'].args[frameName] = {
+	SUI.opt.args.UnitFrames.args[frameName] = {
 		name = frameName,
 		type = 'group',
 		order = order,
@@ -75,7 +75,7 @@ local function CreateOptionSet(frameName, order)
 end
 
 local function AddGeneralOptions(frameName)
-	SUI.opt.args['UnitFrames'].args[frameName].args['general'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['general'] = {
 		name = 'General',
 		desc = 'General display settings',
 		type = 'group',
@@ -213,7 +213,7 @@ local function AddGeneralOptions(frameName)
 end
 
 local function AddArtworkOptions(frameName)
-	SUI.opt.args['UnitFrames'].args[frameName].args['artwork'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['artwork'] = {
 		name = 'Artwork',
 		type = 'group',
 		order = 20,
@@ -319,7 +319,7 @@ local function AddArtworkOptions(frameName)
 end
 
 local function AddBarOptions(frameName)
-	SUI.opt.args['UnitFrames'].args[frameName].args['bars'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['bars'] = {
 		name = 'Bars',
 		type = 'group',
 		order = 30,
@@ -605,7 +605,7 @@ local function AddBarOptions(frameName)
 
 	local bars = {'Castbar', 'Health', 'Power'}
 	for _, key in ipairs(bars) do
-		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['enabled'] = {
+		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args[key].args['enabled'] = {
 			name = L['Enabled'],
 			type = 'toggle',
 			width = 'full',
@@ -622,7 +622,7 @@ local function AddBarOptions(frameName)
 				module.frames[frameName]:UpdateAll()
 			end
 		}
-		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args[key].args['height'] = {
+		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args[key].args['height'] = {
 			name = 'Height',
 			type = 'range',
 			width = 'full',
@@ -646,7 +646,7 @@ local function AddBarOptions(frameName)
 
 	if frameName == 'player' then
 		if not SUI.IsClassic then
-			SUI.opt.args['UnitFrames'].args.player.args['bars'].args['Power'].args['PowerPrediction'] = {
+			SUI.opt.args.UnitFrames.args.player.args['bars'].args['Power'].args['PowerPrediction'] = {
 				name = 'Enable power prediction',
 				desc = 'Used to represent cost of spells on top of the Power bar',
 				type = 'toggle',
@@ -670,7 +670,7 @@ local function AddBarOptions(frameName)
 			}
 		end
 
-		SUI.opt.args['UnitFrames'].args.player.args['bars'].args['AdditionalPower'] = {
+		SUI.opt.args.UnitFrames.args.player.args['bars'].args['AdditionalPower'] = {
 			name = 'Additional power',
 			desc = "player's additional power, such as Mana for Balance druids.",
 			order = 20,
@@ -723,7 +723,7 @@ local function AddBarOptions(frameName)
 	end
 
 	if frameName == 'player' or frameName == 'party' or frameName == 'raid' then
-		SUI.opt.args['UnitFrames'].args[frameName].args['bars'].args['Castbar'].args['Interruptable'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args['Castbar'].args['Interruptable'].hidden = true
 	end
 end
 
@@ -1028,14 +1028,14 @@ local function AddIndicatorOptions(frameName)
 
 	-- Hide a few generated options from specific frame
 	if frameName == 'player' then
-		SUI.opt.args['UnitFrames'].args[frameName].args['indicators'].args['ThreatIndicator'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args['indicators'].args['ThreatIndicator'].hidden = true
 	elseif frameName == 'boss' then
-		SUI.opt.args['UnitFrames'].args[frameName].args['indicators'].args['SUI_ClassIcon'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args['indicators'].args['SUI_ClassIcon'].hidden = true
 	end
 end
 
 local function AddDynamicText(frameName, element, count)
-	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args[element].args[count] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['text'].args[element].args[count] = {
 		name = 'Text element ' .. count,
 		type = 'group',
 		inline = true,
@@ -1195,19 +1195,19 @@ local function AddDynamicText(frameName, element, count)
 end
 
 local function AddTextOptions(frameName)
-	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Castbar'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'] = {
 		name = 'Castbar',
 		type = 'group',
 		order = 1,
 		args = {}
 	}
-	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Health'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Health'] = {
 		name = 'Health',
 		type = 'group',
 		order = 2,
 		args = {}
 	}
-	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Power'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Power'] = {
 		name = 'Power',
 		type = 'group',
 		order = 3,
@@ -1217,8 +1217,8 @@ local function AddTextOptions(frameName)
 	for i in pairs(module.CurrentSettings[frameName].elements.Castbar.text) do
 		AddDynamicText(frameName, 'Castbar', i)
 	end
-	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Castbar'].args['1'].args['text'].disabled = true
-	SUI.opt.args['UnitFrames'].args[frameName].args['text'].args['Castbar'].args['2'].args['text'].disabled = true
+	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'].args['1'].args['text'].disabled = true
+	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'].args['2'].args['text'].disabled = true
 
 	for i in pairs(module.CurrentSettings[frameName].elements.Health.text) do
 		AddDynamicText(frameName, 'Health', i)
@@ -1235,7 +1235,7 @@ local function AddTextOptions(frameName)
 	}
 
 	for key, name in pairs(StringElements) do
-		SUI.opt.args['UnitFrames'].args[frameName].args['text'].args[key] = {
+		SUI.opt.args.UnitFrames.args[frameName].args['text'].args[key] = {
 			name = name,
 			type = 'group',
 			order = 1,
@@ -1417,342 +1417,181 @@ local function AddTextOptions(frameName)
 end
 
 local function AddBuffOptions(frameName)
-	SUI.opt.args['UnitFrames'].args[frameName].args['auras'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['auras'] = {
 		name = 'Buffs & Debuffs',
 		desc = 'Buff & Debuff display settings',
 		type = 'group',
 		childGroups = 'tree',
 		order = 100,
-		args = {
-			Buffs = {
-				name = 'Buffs',
-				type = 'group',
-				inline = true,
-				order = 1,
-				args = {
-					enabled = {
-						name = L['Enabled'],
-						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Buffs.enabled
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Buffs.enabled = val
-						end
-					},
-					Number = {
-						name = L['Number to show'],
-						type = 'range',
-						order = 20,
-						min = 1,
-						max = 30,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Buffs.Number
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Buffs.Number = val
-							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
-								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+		args = {}
+	}
+
+	local function SetOption(val, buffType, setting)
+		--Update memory
+		module.CurrentSettings[frameName].auras[buffType][setting] = val
+		--Update the DB
+		SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType][setting] = val
+		--Update the screen
+		module.frames[frameName]:UpdateAuras()
+	end
+
+	for _, buffType in pairs({'Buffs', 'Debuffs'}) do
+		SUI.opt.args.UnitFrames.args[frameName].args.auras.args[buffType] = {
+			name = L[buffType],
+			type = 'group',
+			inline = true,
+			order = 1,
+			args = {
+				enabled = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].enabled
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'enabled')
+					end
+				},
+				Number = {
+					name = L['Number to show'],
+					type = 'range',
+					order = 20,
+					min = 1,
+					max = 30,
+					step = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].Number
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'Number')
+					end
+				},
+				size = {
+					name = L['Size'],
+					type = 'range',
+					order = 30,
+					min = 1,
+					max = 30,
+					step = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].size
+					end,
+					set = function(info, val)
+						--Update memory
+						module.CurrentSettings[frameName].auras[buffType].size = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].size = val
+						--Update the screen
+						PlayerFrames[unit]:UpdateAuras()
+					end
+				},
+				spacing = {
+					name = L['Spacing'],
+					type = 'range',
+					order = 40,
+					min = 1,
+					max = 30,
+					step = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].spacing
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'spacing')
+					end
+				},
+				showType = {
+					name = L['Show type'],
+					type = 'toggle',
+					order = 50,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].showType
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'showType')
+					end
+				},
+				onlyShowPlayer = {
+					name = L['Only show players'],
+					type = 'toggle',
+					order = 60,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].onlyShowPlayer
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'onlyShowPlayer')
+					end
+				},
+				position = {
+					name = 'Position',
+					type = 'group',
+					order = 50,
+					inline = true,
+					args = {
+						x = {
+							name = 'X Axis',
+							type = 'range',
+							order = 1,
+							min = -100,
+							max = 100,
+							step = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].auras[buffType].position.x
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].auras[buffType].position.x = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].position.x = val
+								--Update Screen
+								module.frames[frameName]:UpdateAuras()
 							end
-						end
-					},
-					size = {
-						name = L['Size'],
-						type = 'range',
-						order = 30,
-						min = 1,
-						max = 30,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Buffs.size
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Buffs.size = val
-							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
-								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+						},
+						y = {
+							name = 'Y Axis',
+							type = 'range',
+							order = 2,
+							min = -100,
+							max = 100,
+							step = 1,
+							get = function(info)
+								return module.CurrentSettings[frameName].auras[buffType].position.y
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].auras[buffType].position.y = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].position.y = val
+								--Update Screen
+								module.frames[frameName]:UpdateAuras()
 							end
-						end
-					},
-					spacing = {
-						name = L['Spacing'],
-						type = 'range',
-						order = 40,
-						min = 1,
-						max = 30,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Buffs.spacing
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Buffs.spacing = val
-							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
-								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
+						},
+						anchor = {
+							name = 'Anchor point',
+							type = 'select',
+							order = 3,
+							values = anchorPoints,
+							get = function(info)
+								return module.CurrentSettings[frameName].auras[buffType].position.anchor
+							end,
+							set = function(info, val)
+								--Update memory
+								module.CurrentSettings[frameName].auras[buffType].position.anchor = val
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].position.anchor = val
+								--Update Screen
+								module.frames[frameName]:UpdateAuras()
 							end
-						end
-					},
-					showType = {
-						name = L['Show type'],
-						type = 'toggle',
-						order = 50,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Buffs.showType
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Buffs.showType = val
-							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
-								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
-							end
-						end
-					},
-					onlyShowPlayer = {
-						name = L['Only show players'],
-						type = 'toggle',
-						order = 60,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Buffs.onlyShowPlayer
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Buffs.onlyShowPlayer = val
-							if PlayerFrames[unit].Buffs and PlayerFrames[unit].Buffs.PostUpdate then
-								PlayerFrames[unit].Buffs:PostUpdate(unit, 'Buffs')
-							end
-						end
-					},
-					position = {
-						name = 'Position',
-						type = 'group',
-						order = 50,
-						inline = true,
-						args = {
-							x = {
-								name = 'X Axis',
-								type = 'range',
-								order = 1,
-								min = -100,
-								max = 100,
-								step = 1,
-								get = function(info)
-									return module.CurrentSettings[frameName].auras.Buffs.position.x
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].auras.Buffs.position.x = val
-									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Buffs.position.x = val
-									--Update Screen
-									module.frames[frameName]:ElementUpdate(key)
-								end
-							},
-							y = {
-								name = 'Y Axis',
-								type = 'range',
-								order = 2,
-								min = -100,
-								max = 100,
-								step = 1,
-								get = function(info)
-									return module.CurrentSettings[frameName].auras.Buffs.position.y
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].auras.Buffs.position.y = val
-									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Buffs.position.y = val
-									--Update Screen
-									module.frames[frameName]:ElementUpdate(key)
-								end
-							},
-							anchor = {
-								name = 'Anchor point',
-								type = 'select',
-								order = 3,
-								values = anchorPoints,
-								get = function(info)
-									return module.CurrentSettings[frameName].auras.Buffs.position.anchor
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].auras.Buffs.position.anchor = val
-									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Buffs.position.anchor = val
-									--Update Screen
-									module.frames[frameName]:ElementUpdate(key)
-								end
-							}
-						}
-					}
-				}
-			},
-			Debuffs = {
-				name = 'Debuffs',
-				type = 'group',
-				inline = true,
-				order = 2,
-				args = {
-					enabled = {
-						name = L['Enabled'],
-						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Debuffs.enabled
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Debuffs.enabled = val
-							SUI:reloadui()
-						end
-					},
-					Number = {
-						name = L['Number to show'],
-						type = 'range',
-						order = 20,
-						min = 1,
-						max = 30,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Debuffs.Number
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Debuffs.Number = val
-							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
-								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
-							end
-						end
-					},
-					size = {
-						name = L['Size'],
-						type = 'range',
-						order = 30,
-						min = 1,
-						max = 30,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Debuffs.size
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Debuffs.size = val
-							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
-								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
-							end
-						end
-					},
-					spacing = {
-						name = L['Spacing'],
-						type = 'range',
-						order = 40,
-						min = 1,
-						max = 30,
-						step = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Debuffs.spacing
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Debuffs.spacing = val
-							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
-								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
-							end
-						end
-					},
-					showType = {
-						name = L['Show type'],
-						type = 'toggle',
-						order = 50,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Debuffs.showType
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Debuffs.showType = val
-							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
-								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
-							end
-						end
-					},
-					onlyShowPlayer = {
-						name = L['Only show players'],
-						type = 'toggle',
-						order = 60,
-						get = function(info)
-							return module.CurrentSettings[frameName].auras.Debuffs.onlyShowPlayer
-						end,
-						set = function(info, val)
-							module.CurrentSettings[frameName].auras.Debuffs.onlyShowPlayer = val
-							if PlayerFrames[unit].Debuffs and PlayerFrames[unit].Debuffs.PostUpdate then
-								PlayerFrames[unit].Debuffs:PostUpdate(unit, 'Debuffs')
-							end
-						end
-					},
-					position = {
-						name = 'Position',
-						type = 'group',
-						order = 50,
-						inline = true,
-						args = {
-							x = {
-								name = 'X Axis',
-								type = 'range',
-								order = 1,
-								min = -100,
-								max = 100,
-								step = 1,
-								get = function(info)
-									return module.CurrentSettings[frameName].auras.Debuffs.position.x
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].auras.Debuffs.position.x = val
-									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Debuffs.position.x = val
-									--Update Screen
-									module.frames[frameName]:ElementUpdate(key)
-								end
-							},
-							y = {
-								name = 'Y Axis',
-								type = 'range',
-								order = 2,
-								min = -100,
-								max = 100,
-								step = 1,
-								get = function(info)
-									return module.CurrentSettings[frameName].auras.Debuffs.position.y
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].auras.Debuffs.position.y = val
-									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Debuffs.position.y = val
-									--Update Screen
-									module.frames[frameName]:ElementUpdate(key)
-								end
-							},
-							anchor = {
-								name = 'Anchor point',
-								type = 'select',
-								order = 3,
-								values = anchorPoints,
-								get = function(info)
-									return module.CurrentSettings[frameName].auras.Debuffs.position.anchor
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].auras.Debuffs.position.anchor = val
-									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras.Debuffs.position.anchor = val
-									--Update Screen
-									module.frames[frameName]:ElementUpdate(key)
-								end
-							}
 						}
 					}
 				}
 			}
 		}
-	}
+	end
 end
 
 local function AddGroupOptions(frameName)
-	SUI.opt.args['UnitFrames'].args[frameName].args['general'].args['Display'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args['general'].args['Display'] = {
 		name = 'Display',
 		type = 'group',
 		order = 5,
@@ -1984,7 +1823,7 @@ function module:InitializeOptions()
 	AddGroupOptions('boss')
 	AddGroupOptions('arena')
 
-	SUI.opt.args['UnitFrames'].args['player'].args['general'].args['General'].args['range'].hidden = true
+	SUI.opt.args.UnitFrames.args['player'].args['general'].args['General'].args['range'].hidden = true
 end
 
 ----------------------------------------------------------------------------------------------------
