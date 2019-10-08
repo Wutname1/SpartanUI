@@ -1942,7 +1942,7 @@ local DBdefault = {
 					},
 					elements = {
 						Castbar = {
-							enabled = true
+							enabled = false
 						},
 						Health = {
 							height = 30
