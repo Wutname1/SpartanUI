@@ -33,27 +33,27 @@
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\base-center">
+				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\base-center">
 					<Anchors>
 						<Anchor point="BOTTOM" relativePoint="BOTTOM"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\base-sides">
+				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\base-sides">
 					<Anchors>
 						<Anchor point="RIGHT" relativeTo="$parent_Base1" relativePoint="LEFT"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\base-sides" tile="true">
+				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\base-sides" tile="true">
 					<Anchors>
 						<Anchor point="RIGHT" relativeTo="$parent_Base2" relativePoint="LEFT"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\base-sides">
+				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\base-sides">
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Base1" relativePoint="RIGHT"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\base-sides" tile="true">
+				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\base-sides" tile="true">
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Base4" relativePoint="RIGHT"/>
 					</Anchors>
@@ -69,7 +69,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\bar-backdrop0">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\bar-backdrop0">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>
@@ -88,7 +88,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\bar-backdrop1">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\bar-backdrop1">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>
@@ -107,7 +107,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\bar-backdrop3">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\bar-backdrop3">
 					<Size>
 						<AbsDimension x="256" y="128" />
 					</Size>
@@ -207,7 +207,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\bar-popup1">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\bar-popup1">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>
@@ -226,7 +226,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Style_Transparent\Images\bar-popup2">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\\Themes\\Transparent\\\Images\bar-popup2">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>

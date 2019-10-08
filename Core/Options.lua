@@ -39,7 +39,7 @@ function module:OnInitialize()
 						name = 'Classic',
 						type = 'execute',
 						image = function()
-							return 'interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center', 120, 60
+							return 'interface\\addons\\SpartanUI\\Classic\\Images\\base-center', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Classic'
@@ -125,7 +125,7 @@ function module:OnInitialize()
 						name = 'Classic',
 						type = 'execute',
 						image = function()
-							return 'interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center', 120, 60
+							return 'interface\\addons\\SpartanUI\\Classic\\Images\\base-center', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Classic'

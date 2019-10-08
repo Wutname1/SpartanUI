@@ -42,7 +42,7 @@ function module:Initalize(Settings)
             GlowAnchor = 'RIGHT', --*
             GlowHeight = 20, --*
 
-            bgTooltip = 'Interface\\Addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-tooltip', --*
+            bgTooltip = 'Interface\\Addons\\SpartanUI\\Classic\\Images\\status-tooltip', --*
             TooltipSize = {380, 100}, --*
             tooltipAnchor = 'top', --*
         }

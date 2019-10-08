@@ -41,31 +41,31 @@
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI_Style_Minimal\Images\base-center">
+				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI\\Themes\\Minimal\Images\base-center">
 					<Anchors>
 						<Anchor point="BOTTOM" relativePoint="BOTTOM"/>
 					</Anchors>
 				</Texture>
 
-				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI_Style_Minimal\Images\base-sides" tile="true">					<!-- Top Left -->
+				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI\\Themes\\Minimal\Images\base-sides" tile="true">					<!-- Top Left -->
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"/>
 					</Anchors>
 					<TexCoords left="0" right="1" top="1" bottom="0"/>
 				</Texture>
-				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI_Style_Minimal\Images\base-sides">					<!-- Top Right -->
+				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI\\Themes\\Minimal\Images\base-sides">					<!-- Top Right -->
 					<Anchors>
 						<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT"/>
 					</Anchors>
 					<TexCoords left="1" right="0" top="1" bottom="0"/>
 				</Texture>
 
-				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI_Style_Minimal\Images\base-sides" tile="true">					<!-- Bottom Left -->
+				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI\\Themes\\Minimal\Images\base-sides" tile="true">					<!-- Bottom Left -->
 					<Anchors>
 						<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="BOTTOMLEFT"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI_Style_Minimal\Images\base-sides">					<!-- Bottom Right -->
+				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI\\Themes\\Minimal\Images\base-sides">					<!-- Bottom Right -->
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT"/>
 					</Anchors>

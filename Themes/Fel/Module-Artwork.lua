@@ -11,18 +11,18 @@ local StatusBarSettings = {
 		'Fel_StatusBar_Right'
 	},
 	Fel_StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
+		bgImg = 'Interface\\AddOns\\SpartanUI\\Classic\\Images\\status-plate-exp',
 		size = {370, 20},
 		TooltipSize = {400, 100},
 		TooltipTextSize = {380, 90},
 		texCords = {0.150390625, 1, 0, 1},
 		GlowPoint = {x = -10},
 		MaxWidth = 32,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
+		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
 		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
 	},
 	Fel_StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI_Artwork\\Themes\\Classic\\Images\\status-plate-exp',
+		bgImg = 'Interface\\AddOns\\SpartanUI\\Classic\\Images\\status-plate-exp',
 		Grow = 'RIGHT',
 		size = {370, 20},
 		TooltipSize = {400, 100},
@@ -30,7 +30,7 @@ local StatusBarSettings = {
 		texCords = {0.150390625, 1, 0, 1},
 		GlowPoint = {x = 10},
 		MaxWidth = 35,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Fel-Box',
+		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
 		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
 	}
 }
@@ -206,12 +206,12 @@ function module:EnableArtwork()
 	local barBG
 
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
-		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Left')
-		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Base_Bar_Right')
-		barBG = 'Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Fel-Box'
+		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Base_Bar_Left')
+		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Base_Bar_Right')
+		barBG = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Fel-Box'
 	else
-		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Left')
-		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Base_Bar_Right')
+		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Left')
+		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Right')
 	end
 
 	if barBG then
@@ -283,18 +283,18 @@ function module:MiniMapUpdate()
 	end
 
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
-		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Digital\\Minimap')
+		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Minimap')
 		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
 		Minimap.BG:SetSize(256, 256)
 		Minimap.BG:SetBlendMode('ADD')
 	else
 		if SUI.DB.Styles.Fel.Minimap.Engulfed then
-			Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Engulfed')
+			Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed')
 			Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 7, 37)
 			Minimap.BG:SetSize(330, 330)
 			Minimap.BG:SetBlendMode('ADD')
 		else
-			Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI_Style_Fel\\Images\\Minimap-Calmed')
+			Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed')
 			Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
 			Minimap.BG:SetSize(256, 256)
 			Minimap.BG:SetBlendMode('ADD')

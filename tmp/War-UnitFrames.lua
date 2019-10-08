@@ -4,7 +4,7 @@ local module = SUI:GetModule('Style_War')
 local PlayerFrames, PartyFrames = nil
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = SUI.BarTextures.smooth
-local square = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square.tga'
+local square = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\square.tga'
 local lfdrole = 'Interface\\AddOns\\SpartanUI\\images\\icon_role.tga'
 local Images
 local PlayerFaction = UnitFactionGroup('Player')
@@ -13,21 +13,21 @@ local function ImageSetup()
 	Images = {
 		Alliance = {
 			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 				Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
 			},
 			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 				Coords = {0.03125, 0.427734375, 0, 0.421875}
 			}
 		},
 		Horde = {
 			bg = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 				Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
 			},
 			flair = {
-				Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+				Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 				Coords = {0.541015625, 1, 0, 0.421875}
 			}
 		}
@@ -35,28 +35,28 @@ local function ImageSetup()
 
 	if PlayerFaction == 'Horde' then
 		Images.smallbg = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			Coords = {0.541015625, 1, 0.48828125, 0.7421875} --left, right, top, bottom
 		}
 		Images.flair = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			Coords = {0.03125, 0.427734375, 0, 0.421875}
 		}
 		Images.flair2 = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			Coords = {0.541015625, 1, 0, 0.421875}
 		}
 	else
 		Images.smallbg = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			Coords = {0, 0.458984375, 0.48828125, 0.7421875} --left, right, top, bottom
 		}
 		Images.flair = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			Coords = {0.03125, 0.427734375, 0, 0.421875}
 		}
 		Images.flair2 = {
-			Texture = 'Interface\\addons\\SpartanUI_Style_War\\Images\\UnitFrames',
+			Texture = 'Interface\\addons\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			Coords = {0.03125, 0.427734375, 0, 0.421875}
 		}
 	end

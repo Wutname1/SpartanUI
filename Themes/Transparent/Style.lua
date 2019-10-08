@@ -9,7 +9,7 @@ module.StatusBarSettings = {
 		'Transparent_ExperienceBar'
 	},
 	Transparent_ExperienceBar = {
-		bgImg = 'Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\status-plate-rep',
+		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\status-plate-rep',
 		size = {400, 10},
 		TooltipSize = {400, 100},
 		TooltipTextSize = {380, 90},

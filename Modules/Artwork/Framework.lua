@@ -247,7 +247,7 @@ function module:FirstTime()
 			--Classic
 			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI_Artwork\\Themes\\Classic\\Images\\base-center')
+			control:SetNormalTexture('interface\\addons\\SpartanUI\\Classic\\Images\\base-center')
 
 			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Classic', 'SUIArtwork', 120, 20)
 			control.radio:SetValue('Classic')

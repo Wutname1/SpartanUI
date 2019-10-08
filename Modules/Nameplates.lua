@@ -335,7 +335,7 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Threat Display
 		local ThreatIndicator = frame:CreateTexture(nil, 'OVERLAY')
-		ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI_Style_Transparent\\Images\\square')
+		ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\square')
 		ThreatIndicator:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 		ThreatIndicator:SetPoint('TOPLEFT', frame, 'TOPLEFT', -2, 2)
 		ThreatIndicator:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 2, -2)
