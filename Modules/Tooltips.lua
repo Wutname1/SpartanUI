@@ -375,7 +375,7 @@ local TooltipSetUnit = function(self)
 			lvlColor.g * 255,
 			lvlColor.b * 255,
 			unitLevel > 0 and unitLevel or '|TInterface\\TARGETINGFRAME\\UI-TargetingFrame-Skull.blp:16:16|t',
-			race or sscreatureClassColors[creatureClassification] or '',
+			race or creatureClassColors[creatureClassification] or '',
 			creatureType
 		)
 	end
