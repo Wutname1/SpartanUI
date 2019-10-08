@@ -448,6 +448,7 @@ local function CreateUnitFrame(self, unit)
 
 		-- Tell everything to update to get current data
 		self:UpdateSize()
+		self:UpdateAuras()
 		self:UpdateAllElements('OnUpdate')
 		self:UpdateTags()
 	end
@@ -598,14 +599,64 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 
+	local function UpdateAuras()
+		local db = module.CurrentSettings[unit].auras
+
+		local Buffs = self.Buffs
+		Buffs.size = db.Buffs.size
+		Buffs.initialAnchor = db.Buffs.initialAnchor
+		Buffs['growth-x'] = db.Buffs.growthx
+		Buffs['growth-y'] = db.Buffs.growthy
+		Buffs.spacing = db.Buffs.spacing
+		Buffs.showType = db.Buffs.showType
+		Buffs.numBuffs = db.Buffs.number
+		Buffs.onlyShowPlayer = db.Buffs.onlyShowPlayer
+		Buffs:SetPoint(
+			InverseAnchor(db.Buffs.position.anchor),
+			self,
+			db.Buffs.position.anchor,
+			db.Buffs.position.x,
+			db.Buffs.position.y
+		)
+		Buffs:SetSize(
+			(db.Buffs.size + db.Buffs.spacing) * (db.Buffs.number / db.Buffs.rows),
+			(db.Buffs.spacing + db.Buffs.size) * db.Buffs.rows
+		)
+
+		--Debuff Icons
+		local Debuffs = self.Debuffs
+		Debuffs.size = db.Debuffs.size
+		Debuffs.initialAnchor = db.Debuffs.initialAnchor
+		Debuffs['growth-x'] = db.Debuffs.growthx
+		Debuffs['growth-y'] = db.Debuffs.growthy
+		Debuffs.spacing = db.Debuffs.spacing
+		Debuffs.showType = db.Debuffs.showType
+		Debuffs.numDebuffs = db.Debuffs.number
+		Debuffs.onlyShowPlayer = db.Debuffs.onlyShowPlayer
+		Debuffs:SetPoint(
+			InverseAnchor(db.Debuffs.position.anchor),
+			self,
+			db.Debuffs.position.anchor,
+			db.Debuffs.position.x,
+			db.Debuffs.position.y
+		)
+		Debuffs:SetSize(
+			(db.Debuffs.size + db.Debuffs.spacing) * (db.Buffs.number / db.Buffs.rows),
+			(db.Debuffs.spacing + db.Debuffs.size) * db.Debuffs.rows
+		)
+
+		-- self.Buffs:PostUpdate(unit, 'Buffs')
+		-- self.Debuffs:PostUpdate(unit, 'Buffs')
+	end
+
 	self.UpdateAll = UpdateAll
 	self.UpdateSize = UpdateSize
 	self.ElementUpdate = ElementUpdate
+	self.UpdateAuras = UpdateAuras
 
 	self.UpdateSize()
 
 	local artwork = module.CurrentSettings[unit].artwork
-	local auras = module.CurrentSettings[unit].auras
 	local elements = module.CurrentSettings[unit].elements
 
 	do -- General setup
@@ -632,6 +683,9 @@ local function CreateUnitFrame(self, unit)
 		Portrait3D:SetScale(elements.Portrait.Scale)
 		Portrait3D:SetFrameStrata('LOW')
 		Portrait3D:SetFrameLevel(2)
+		-- local rotation = portrait.rotation or 0
+		-- local camDistanceScale = portrait.camDistanceScale or 1
+		-- local xOffset, yOffset = (portrait.xOffset or 0), (portrait.yOffset or 0)
 		self.Portrait3D = Portrait3D
 
 		-- 2D Portrait
@@ -673,51 +727,13 @@ local function CreateUnitFrame(self, unit)
 
 		--Buff Icons
 		local Buffs = CreateFrame('Frame', nil, self)
-		Buffs:SetPoint(
-			InverseAnchor(auras.Buffs.position.anchor),
-			self,
-			auras.Buffs.position.anchor,
-			auras.Buffs.position.x,
-			auras.Buffs.position.y
-		)
-		Buffs.size = auras.Buffs.size
-		Buffs.initialAnchor = auras.Buffs.initialAnchor
-		Buffs['growth-x'] = auras.Buffs.growthx
-		Buffs['growth-y'] = auras.Buffs.growthy
-		Buffs.spacing = auras.Buffs.spacing
-		Buffs.showType = auras.Buffs.showType
-		Buffs.numBuffs = auras.Buffs.number
-		Buffs.onlyShowPlayer = auras.Buffs.onlyShowPlayer
-		Buffs:SetSize(
-			(auras.Buffs.size + auras.Buffs.spacing) * (auras.Buffs.number / auras.Buffs.rows),
-			(auras.Buffs.spacing + auras.Buffs.size) * auras.Buffs.rows
-		)
-		Buffs.PostUpdate = PostUpdateAura
+		-- Buffs.PostUpdate = PostUpdateAura
 		-- Buffs.CustomFilter = customFilter
 		self.Buffs = Buffs
 
 		--Debuff Icons
 		local Debuffs = CreateFrame('Frame', nil, self)
-		Debuffs:SetPoint(
-			InverseAnchor(auras.Debuffs.position.anchor),
-			self,
-			auras.Debuffs.position.anchor,
-			auras.Debuffs.position.x,
-			auras.Debuffs.position.y
-		)
-		Debuffs.size = auras.Debuffs.size
-		Debuffs.initialAnchor = auras.Debuffs.initialAnchor
-		Debuffs['growth-x'] = auras.Debuffs.growthx
-		Debuffs['growth-y'] = auras.Debuffs.growthy
-		Debuffs.spacing = auras.Debuffs.spacing
-		Debuffs.showType = auras.Debuffs.showType
-		Debuffs.numDebuffs = auras.Debuffs.number
-		Debuffs.onlyShowPlayer = auras.Debuffs.onlyShowPlayer
-		Debuffs:SetSize(
-			(auras.Debuffs.size + auras.Debuffs.spacing) * (auras.Buffs.number / auras.Buffs.rows),
-			(auras.Debuffs.spacing + auras.Debuffs.size) * auras.Debuffs.rows
-		)
-		Debuffs.PostUpdate = PostUpdateAura
+		-- Debuffs.PostUpdate = PostUpdateAura
 		-- Debuffs.CustomFilter = customFilter
 		self.Debuffs = Debuffs
 	end
@@ -1181,13 +1197,6 @@ local function CreateUnitFrame(self, unit)
 	-- self.TextUpdate = PostUpdateText
 	-- self.ColorUpdate = PostUpdateColor
 
-	-- if self.Buffs and self.Buffs.PostUpdate then
-	-- 	self.Buffs:PostUpdate(unit, 'Buffs')
-	-- end
-	-- if self.Debuffs and self.Debuffs.PostUpdate then
-	-- 	self.Debuffs:PostUpdate(unit, 'Debuffs')
-	-- end
-
 	-- self = PlayerFrames:MakeMovable(self, unit)
 
 	-- Setup the frame's Right click menu.
@@ -1374,11 +1383,19 @@ function module:SpawnFrames()
 			end
 		end
 	end
+	local function GroupFrameUpdateAuras(self)
+		for _, f in ipairs({self:GetChildren()}) do
+			if f.UpdateAuras then
+				f:UpdateAuras()
+			end
+		end
+	end
 
 	for _, group in ipairs({'raid', 'party'}) do
 		module.frames[group].UpdateAll = GroupFrameUpdateAll
 		module.frames[group].ElementUpdate = GroupFrameElementUpdate
 		module.frames[group].UpdateSize = GroupFrameUpdateSize
+		module.frames[group].UpdateAuras = GroupFrameUpdateAuras
 	end
 
 	local function GroupWatcher(event)

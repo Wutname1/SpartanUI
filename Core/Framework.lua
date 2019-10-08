@@ -1598,6 +1598,13 @@ local DBdefault = {
 						},
 						Portrait = {
 							type = '3D',
+							scaleWithFrame = true,
+							width = 50,
+							height = 100,
+							rotation = 0,
+							camDistanceScale = 1,
+							xOffset = 0,
+							yOffset = 0,
 							position = 'left'
 						},
 						Health = {
