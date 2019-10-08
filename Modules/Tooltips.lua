@@ -273,7 +273,7 @@ local TooltipSetUnit = function(self)
 	end
 
 	local unitLevel = UnitLevel(unit)
-	local colors, qColor, totColor, lvlLine
+	local colors, lvlColor, totColor, lvlLine
 	local line = 2
 	local sex = {'', 'Male ', 'Female '}
 	local creatureClassColors = {
@@ -330,75 +330,54 @@ local TooltipSetUnit = function(self)
 				line = line + 1
 			end
 		end
+	end
 
-		for i = line, self:NumLines() do
-			local tip = _G['GameTooltipTextLeft' .. i]
-			if tip:GetText() and tip:GetText():find(LEVEL) then
-				lvlLine = tip
+	for i = 2, self:NumLines() do
+		local tip = _G['GameTooltipTextLeft' .. i]
+		if tip:GetText() and tip:GetText():find(LEVEL) then
+			lvlLine = tip
+		end
+	end
+
+	if (lvlLine) then
+		local creatureClassification = UnitClassification(unit)
+		local creatureType = UnitCreatureType(unit)
+		local race, englishRace = UnitRace(unit)
+		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
+
+		if (factionGroup and englishRace == 'Pandaren') then
+			race = factionGroup .. ' ' .. race
+		end
+		if (GENDER_INFO) then
+			if (gender) then
+				race = race .. ' ' .. gender
 			end
 		end
 
-		if (lvlLine) then
-			qColor = GetQuestDifficultyColor(unitLevel)
-			local race, englishRace = UnitRace(unit)
-			local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-
-			if (factionGroup and englishRace == 'Pandaren') then
-				race = factionGroup .. ' ' .. race
-			end
-
-			if (GENDER_INFO) then
-				if (gender) then
-					race = race .. ' ' .. gender
-				end
-			end
-			lvlLine:SetFormattedText(
-				'|cff%02x%02x%02x%s|r %s |c%s%s|r',
-				qColor.r * 255,
-				qColor.g * 255,
-				qColor.b * 255,
-				unitLevel > 0 and unitLevel or '|TInterface\\TARGETINGFRAME\\UI-TargetingFrame-Skull.blp:16:16|t',
-				race or '',
-				colors.colorStr,
-				className
-			)
-		end
-	else
-		for i = 2, self:NumLines() do
-			local tip = _G['GameTooltipTextLeft' .. i]
-			if tip:GetText() and tip:GetText():find(LEVEL) then
-				lvlLine = tip
-			end
-		end
-
-		if (lvlLine) then
-			local creatureClassification = UnitClassification(unit)
-			local creatureType = UnitCreatureType(unit)
-			if not SUI.IsClassic and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
-				unitLevel = UnitBattlePetLevel(unit)
-				local ab = C_PetJournal.GetPetTeamAverageLevel()
-				if ab then
-					qColor = GetRelativeDifficultyColor(ab, unitLevel)
-				else
-					qColor = GetQuestDifficultyColor(unitLevel)
-				end
+		if not SUI.IsClassic and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
+			unitLevel = UnitBattlePetLevel(unit)
+			local ab = C_PetJournal.GetPetTeamAverageLevel()
+			if ab then
+				lvlColor = GetRelativeDifficultyColor(ab, unitLevel)
 			else
-				qColor = GetQuestDifficultyColor(unitLevel)
+				lvlColor = GetQuestDifficultyColor(unitLevel)
 			end
-			if creatureType == nil then
-				creatureType = ''
-			end
-
-			lvlLine:SetFormattedText(
-				'|cff%02x%02x%02x%s|r %s %s',
-				qColor.r * 255,
-				qColor.g * 255,
-				qColor.b * 255,
-				unitLevel > 0 and unitLevel or '??',
-				creatureClassColors[creatureClassification] or '',
-				creatureType
-			)
+		else
+			lvlColor = GetCreatureDifficultyColor(unitLevel)
 		end
+		if creatureType == nil then
+			creatureType = ''
+		end
+
+		lvlLine:SetFormattedText(
+			'|cff%02x%02x%02x%s|r %s %s',
+			lvlColor.r * 255,
+			lvlColor.g * 255,
+			lvlColor.b * 255,
+			unitLevel > 0 and unitLevel or '|TInterface\\TARGETINGFRAME\\UI-TargetingFrame-Skull.blp:16:16|t',
+			race or sscreatureClassColors[creatureClassification] or '',
+			creatureType
+		)
 	end
 
 	local unitTarget = unit .. 'target'
