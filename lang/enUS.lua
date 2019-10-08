@@ -78,8 +78,6 @@ L['BartenderNotFoundMSG2'] = 'UI Issues may be experienced.'
 L['BartenderOldMSG'] = 'Your bartender version may be out of date. We detected Version'
 L['BartenderProfileCheckFail'] = 'Profile not found, generating one'
 L['BartenderProfileCreated'] = 'Profile generated in Bartender.'
-L['BartenderProfileLocked'] =
-	'The ability to unlock your bars is disabled when using the SpartanUI Default profile in Bartender4. Please change profiles to enable this functionality.'
 L['BarXP'] = 'XP Bar'
 L['BarXPDesc'] = 'Configure XP Bar settings'
 L['BarXPEnabled'] = 'XP Bar Enabled'
@@ -91,7 +89,8 @@ L['Blur'] = true
 L['Boss Fight'] = true
 L['BossArenaFrames'] = 'Boss & Arena frames'
 L['BossFrames'] = 'Boss Frames'
-L['Both'] = true
+L['Buffs'] = true
+L['Debuffs'] = true
 L['Bottom'] = true
 L['Brightness'] = true
 L['BuffDebuff'] = 'Buff & Debuffs'
@@ -262,9 +261,6 @@ L['Maximum iLVL to sell'] = true
 L['Medium'] = true
 L['Minimap'] = true
 L['Minimap Icon'] = true
-L['MiniMapNotice1'] =
-	'Another addon has been found modifying the minimap. Do you give permission for SpartanUI to move and possibly modify the minimap as your theme dictates?'
-L['MiniMapNotice2'] = 'You can change this option in the settings should you change your mind.'
 L['MinMapHidebtns'] = 'Hide all minimap buttons'
 L['MinMapHideZoom'] = 'Hide Zoom Buttons'
 L['MinMapSet'] = 'Minimap Settings'
@@ -365,8 +361,6 @@ L['ResetMovableFrames'] = 'Reset Movable Frames'
 L['ResetPartyPos'] = 'Reset Party position'
 L['ResetRaidPos'] = 'Reset Raid position'
 L['resetSpecialBar'] = 'Reset Special Bar location'
-L['resetSpecialBarDesc'] =
-	'Resets the Special Bar(s) (Eclipse meter, Alt Power, Runes, totems, etc...) to the default position'
 L['RestedColor'] = 'Rested Color'
 L['Right'] = true
 L['Right status bar'] = true
@@ -451,14 +445,6 @@ L['TextStyle3'] = 'Dynamic'
 L['TextStyle3Desc'] = 'Dynamic: Abbreviates and formats as needed'
 L['thickoutline'] = 'Thick outline'
 L['This is used to split up large numbers example: 100,000'] = true
-L[
-		'This will replace in the bottom right status bar and you can switch between the two at any time via the SpartanUI settings.'
-	] = true
-L['This will replace your reputation bar and you can switch between the two at any time via the SpartanUI settings.'] =
-	true
-L['This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'] =
-	true
-L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'] = true
 L['Toggle spin'] = true
 L['Tooltip display mode'] = true
 L['TooltipOverrideDesc'] =

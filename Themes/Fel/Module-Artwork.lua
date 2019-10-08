@@ -11,7 +11,7 @@ local StatusBarSettings = {
 		'Fel_StatusBar_Right'
 	},
 	Fel_StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Classic\\Images\\status-plate-exp',
+		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
 		size = {370, 20},
 		TooltipSize = {400, 100},
 		TooltipTextSize = {380, 90},
@@ -22,7 +22,7 @@ local StatusBarSettings = {
 		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
 	},
 	Fel_StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Classic\\Images\\status-plate-exp',
+		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
 		Grow = 'RIGHT',
 		size = {370, 20},
 		TooltipSize = {400, 100},

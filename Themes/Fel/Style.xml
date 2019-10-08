@@ -26,7 +26,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\\Themes\\Fel\Images\Fel-Box" alpha=".5">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Fel\Images\Fel-Box" alpha=".5">
 					<Size>
 						<AbsDimension x="400" y="32" />
 					</Size>

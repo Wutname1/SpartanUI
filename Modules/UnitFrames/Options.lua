@@ -2113,15 +2113,6 @@ function PlayerOptions()
 			}
 		}
 	}
-
-	SUI.opt.args['PlayerFrames'].args['resetSpecialBar'] = {
-		name = L['resetSpecialBar'],
-		type = 'execute',
-		desc = L['resetSpecialBarDesc'],
-		func = function()
-			PlayerFrames:ResetAltBarPositions()
-		end
-	}
 end
 
 ----------------------------------------------------------------------------------------------------
