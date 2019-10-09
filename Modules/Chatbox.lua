@@ -3,7 +3,6 @@ local StdUi = LibStub('StdUi'):NewInstance()
 local module = SUI:NewModule('Component_Chatbox', 'AceEvent-3.0', 'AceHook-3.0')
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
-local SUIiconID = GetFileIDFromPath('Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
 local linkTypes = {
 	item = true,
 	enchant = true,
@@ -170,6 +169,19 @@ end
 
 -- Module Setup
 function module:OnInitialize()
+	if not SUI.DB.EnabledComponents.Chatbox then
+		return
+	end
+	local ChatAddons = {'Chatter', 'BasicChatMods', 'Prat-3.0'}
+	for _, addonName in pairs(ChatAddons) do
+		local enabled = select(4, GetAddOnInfo(addonName))
+		if enabled then
+			SUI.DB.EnabledComponents.Chatbox = false
+			SUI:Print('Chat module disabled ' .. addonName .. ' Detected')
+			return
+		end
+	end
+
 	ChatLevelLog = SUI.DBG.ChatLevelLog
 	-- Create popup
 	popup = StdUi:Window(nil, '', 480, 200)
@@ -340,7 +352,6 @@ function module:SetupChatboxes()
 
 		ShowUIPanel(GameTooltip)
 		GameTooltip:SetOwner(frame, 'ANCHOR_TOP')
-		-- GameTooltip:AddLine('|T' .. SUIiconID .. ':20|', .8, 0, 0)
 		GameTooltip:AddLine('Alt+Click to copy', .8, 0, 0)
 		GameTooltip:AddLine('Shift+Click to toggle', 0, 0.1, 1)
 		GameTooltip:Show()
