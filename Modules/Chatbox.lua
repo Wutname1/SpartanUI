@@ -338,10 +338,11 @@ function module:SetupChatboxes()
 		elseif IsShiftKeyDown() then
 			if ChatFrame:IsVisible() then
 				ChatFrame:Hide()
-				ChatFrameEdit:Hide()
+				if ChatFrameEdit:IsVisible() then
+					ChatFrameEdit:Hide()
+				end
 			else
 				ChatFrame:Show()
-				ChatFrameEdit:Show()
 			end
 		end
 	end
