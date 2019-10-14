@@ -31,7 +31,7 @@ externals:
   libs/LibCompress: https://repos.wowace.com/wow/libcompress/trunk
   libs/LibSharedMedia-3.0: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
   libs/LibDualSpec-1.0: https://repos.curseforge.com/wow/libdualspec-1-0
-  libs/StdUi: https://github.com/kaminaris/StdUi.git
+  libs/StdUi: https://github.com/wutname1/StdUi.git
   libs/SUF: https://github.com/Wutname1/SUF.git
   libs/oUF_AuraBars: https://github.com/Wutname1/oUF_AuraBars.git
   libs/oUF_PetHappiness: https://github.com/Wutname1/oUF_PetHappiness.git
