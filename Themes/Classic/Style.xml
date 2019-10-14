@@ -32,32 +32,32 @@
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\base-center">
+				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\base-center">
 					<Anchors>
 						<Anchor point="BOTTOM" relativePoint="BOTTOM"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\base-left1">
+				<Texture name="$parent_Base2" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\base-left1">
 					<Anchors>
 						<Anchor point="RIGHT" relativeTo="$parent_Base1" relativePoint="LEFT"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\base-left2" tile="true">
+				<Texture name="$parent_Base3" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\base-left2" tile="true">
 					<Anchors>
 						<Anchor point="RIGHT" relativeTo="$parent_Base2" relativePoint="LEFT"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\base-right1">
+				<Texture name="$parent_Base4" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\base-right1">
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Base1" relativePoint="RIGHT"/>
 					</Anchors>
 				</Texture>
-				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\base-right2" tile="true">
+				<Texture name="$parent_Base5" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\base-right2" tile="true">
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parent_Base4" relativePoint="RIGHT"/>
 					</Anchors>
 				</Texture>
-				<!-- <Texture name="$parent_Tribal" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\tribal">
+				<!-- <Texture name="$parent_Tribal" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\tribal">
 					<Anchors><Anchor point="BOTTOM" relativePoint="BOTTOM"/></Anchors>
 				</Texture> -->
 			</Layer>
@@ -71,7 +71,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\bar-backdrop0">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\bar-backdrop0">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>
@@ -90,7 +90,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\bar-backdrop1">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\bar-backdrop1">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>
@@ -109,7 +109,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\bar-backdrop3">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\bar-backdrop3">
 					<Size>
 						<AbsDimension x="256" y="128" />
 					</Size>
@@ -210,7 +210,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\bar-popup1">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\bar-popup1">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>
@@ -229,7 +229,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI_Artwork\Themes\Classic\Images\bar-popup2">
+				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\bar-popup2">
 					<Size>
 						<AbsDimension x="512" y="64" />
 					</Size>
