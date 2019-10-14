@@ -21,11 +21,11 @@ SUI.releaseType = 'BETA'
 --@end-beta@
 --@alpha@
 SUI.releaseType = '6.x.x ALPHA build'
-SUI.Version = '5.9.9'
+SUI.Version = ''
 --@end-alpha@
 --@do-not-package@
 SUI.releaseType = '6.x.x dev build'
-SUI.Version = '5.9.9'
+SUI.Version = ''
 --@end-do-not-package@
 
 ----------------------------------------------------------------------------------------------------
@@ -38,6 +38,9 @@ SUI.opt = {
 		Artwork = {name = L['Artwork'], type = 'group', order = 1, args = {}}
 	}
 }
+--@alpha@
+SUI.Version = '5.9.9'
+--@end-alpha@
 
 ---------------		Database		-------------------------------
 local DBdefault = {
