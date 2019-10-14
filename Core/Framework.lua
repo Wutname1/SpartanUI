@@ -20,11 +20,12 @@ SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this
 SUI.releaseType = 'BETA'
 --@end-beta@
 --@alpha@
-SUI.releaseType = 'ALPHA'
+SUI.releaseType = '6.x.x ALPHA build'
+SUI.Version = '5.9.9'
 --@end-alpha@
 --@do-not-package@
 SUI.releaseType = '6.x.x dev build'
-SUI.Version = ''
+SUI.Version = '5.9.9'
 --@end-do-not-package@
 
 ----------------------------------------------------------------------------------------------------
@@ -2503,7 +2504,7 @@ function SUI:DBUpgrades()
 	end
 
 	-- 6.0.0 Upgrades
-	if SUI.DB.Version < '6.0.0' then
+	if SUI.DB.Version < '5.9.9' then
 		if not select(4, GetAddOnInfo('SpartanUI_Artwork')) then
 			SUI.DB.EnabledComponents.Artwork = false
 		end
