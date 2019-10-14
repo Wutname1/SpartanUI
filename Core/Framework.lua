@@ -47,7 +47,6 @@ local DBdefault = {
 	SUIProper = {
 		Version = '0',
 		SetupDone = false,
-		HVer = '',
 		yoffset = 0,
 		xOffset = 0,
 		yoffsetAuto = true,
@@ -1364,14 +1363,6 @@ local DBdefault = {
 			enabled = true,
 			Manualoffset = false,
 			offset = 0
-		},
-		PopUP = {
-			popup1enable = true,
-			popup2enable = true,
-			popup1alpha = 100,
-			popup2alpha = 100,
-			popup1anim = true,
-			popup2anim = true
 		},
 		MiniMap = {
 			northTag = false,
