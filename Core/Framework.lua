@@ -2507,7 +2507,7 @@ function SUI:DBUpgrades()
 	end
 
 	-- 6.0.0 Upgrades
-	if SUI.DB.Version < '5.9.9' then
+	if SUI.DB.Version < '5.9.9' and not SUI.DB.Migrated then
 		if not select(4, GetAddOnInfo('SpartanUI_Artwork')) then
 			SUI.DB.EnabledComponents.Artwork = false
 		end
@@ -2546,6 +2546,7 @@ function SUI:DBUpgrades()
 		DisableAddOn('SpartanUI_Style_Minimal')
 		DisableAddOn('SpartanUI_Style_Transparent')
 		DisableAddOn('SpartanUI_Style_War')
+		SUI.DB.Migrated = true
 	end
 
 	SUI.DB.Version = SUI.Version
