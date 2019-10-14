@@ -1703,84 +1703,6 @@ function module:InitializeOptions()
 				inline = true,
 				order = 1,
 				args = {
-					Classic = {
-						name = 'Classic',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Classic', 120, 60
-						end,
-						imageCoords = function()
-							return {0, .5, 0, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Classic'
-						end
-					},
-					Arcane = {
-						name = 'Arcane',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
-						end,
-						imageCoords = function()
-							return {.1, .5, .1, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Arcane'
-						end
-					},
-					War = {
-						name = 'War',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
-						end,
-						imageCoords = function()
-							return {.1, .5, .1, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'War'
-						end
-					},
-					Fel = {
-						name = 'Fel',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
-						end,
-						imageCoords = function()
-							return {.1, .5, .1, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Fel'
-						end
-					},
-					Transparent = {
-						name = 'Transparent',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Transparent', 120, 60
-						end,
-						imageCoords = function()
-							return {0, .5, 0, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Transparent'
-						end
-					},
-					Minimal = {
-						name = 'Minimal',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
-						end,
-						imageCoords = function()
-							return {0, .5, 0, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Minimal'
-						end
-					},
 					reset = {
 						name = 'Reset to base style (Revert customizations)',
 						type = 'execute',
@@ -1805,6 +1727,37 @@ function module:InitializeOptions()
 			}
 		}
 	}
+	local Skins = {
+		'Classic',
+		'War',
+		'Fel',
+		'Digital',
+		'Arcane',
+		'Transparent',
+		'Minimal'
+	}
+
+	-- Build style Buttons
+	for i, skin in pairs(Skins) do
+		SUI.opt.args.UnitFrames.args.BaseStyle.args[skin] = {
+			name = skin,
+			type = 'execute',
+			image = function()
+				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_' .. skin, 120, 60
+			end,
+			imageCoords = function()
+				return {0, .5, 0, .5}
+			end,
+			func = function()
+				SUI.DB.Unitframes.Style = skin
+			end
+		}
+	end
+	
+	-- Add built skins selection page to the styles section
+	SUI.opt.args.General.args.style.args.Unitframes = SUI.opt.args.UnitFrames.args.BaseStyle
+
+	-- Build frame options
 	for i, key in ipairs(frameList) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
@@ -1823,7 +1776,7 @@ function module:InitializeOptions()
 	AddGroupOptions('boss')
 	AddGroupOptions('arena')
 
-	SUI.opt.args.UnitFrames.args['player'].args['general'].args['General'].args['range'].hidden = true
+	SUI.opt.args.UnitFrames.args.player.args.general.args.General.args.range.hidden = true
 end
 
 ----------------------------------------------------------------------------------------------------
