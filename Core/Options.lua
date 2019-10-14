@@ -22,7 +22,6 @@ function module:InCombatLockdown()
 end
 
 function module:OnInitialize()
-
 	SUI.opt.args['General'].args['style'] = {
 		name = L['StyleSettings'],
 		type = 'group',
@@ -39,7 +38,7 @@ function module:OnInitialize()
 						name = 'Classic',
 						type = 'execute',
 						image = function()
-							return 'interface\\addons\\SpartanUI\\Classic\\Images\\base-center', 120, 60
+							return 'interface\\addons\\SpartanUI\\Themes\\Classic\\Images\\base-center', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Classic'
@@ -50,7 +49,6 @@ function module:OnInitialize()
 					Fel = {
 						name = 'Fel',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Fel', 120, 60
 						end,
@@ -64,7 +62,6 @@ function module:OnInitialize()
 					Transparent = {
 						name = 'Transparent',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent', 120, 60
 						end,
@@ -77,7 +74,6 @@ function module:OnInitialize()
 					Minimal = {
 						name = 'Minimal',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal', 120, 60
 						end,
@@ -90,7 +86,6 @@ function module:OnInitialize()
 					Digital = {
 						name = 'Digital',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Digital', 120, 60
 						end,
@@ -104,7 +99,6 @@ function module:OnInitialize()
 					War = {
 						name = 'War',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_War', 120, 60
 						end,
@@ -125,7 +119,7 @@ function module:OnInitialize()
 						name = 'Classic',
 						type = 'execute',
 						image = function()
-							return 'interface\\addons\\SpartanUI\\Classic\\Images\\base-center', 120, 60
+							return 'interface\\addons\\SpartanUI\\Themes\\Classic\\Images\\base-center', 120, 60
 						end,
 						func = function()
 							SUI.DBMod.Artwork.Style = 'Classic'
@@ -135,7 +129,6 @@ function module:OnInitialize()
 					Fel = {
 						name = 'Fel',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Fel', 120, 60
 						end,
@@ -148,7 +141,6 @@ function module:OnInitialize()
 					Transparent = {
 						name = 'Transparent',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent', 120, 60
 						end,
@@ -160,7 +152,6 @@ function module:OnInitialize()
 					Minimal = {
 						name = 'Minimal',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal', 120, 60
 						end,
@@ -172,7 +163,6 @@ function module:OnInitialize()
 					Digital = {
 						name = 'Digital',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Digital', 120, 60
 						end,
@@ -185,7 +175,6 @@ function module:OnInitialize()
 					War = {
 						name = 'War',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_War', 120, 60
 						end,
@@ -217,7 +206,6 @@ function module:OnInitialize()
 					War = {
 						name = 'War',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
@@ -231,7 +219,6 @@ function module:OnInitialize()
 					Fel = {
 						name = 'Fel',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
 						end,
@@ -245,7 +232,6 @@ function module:OnInitialize()
 					Transparent = {
 						name = 'Transparent',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Transparent', 120, 60
 						end,
@@ -259,7 +245,6 @@ function module:OnInitialize()
 					Minimal = {
 						name = 'Minimal',
 						type = 'execute',
-						disabled = true,
 						image = function()
 							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
 						end,
@@ -690,11 +675,7 @@ function module:ExportData()
 							'$Artwork.Style.' ..
 								SUI.DBMod.Artwork.Style ..
 									'$UnitFrames.Style.' ..
-										SUI.DBMod.UnitFrames.Style ..
-											'$PartyFrames.Style.' ..
-												SUI.DBMod.PartyFrames.Style ..
-													'$RaidFrames.Style.' ..
-														SUI.DBMod.RaidFrames.Style .. '$Addons.' .. module:FlatenTable(AddonsInstalled) .. '..$END$..'
+										SUI.DBMod.UnitFrames.Style .. '$Addons.' .. module:FlatenTable(AddonsInstalled) .. '..$END$..'
 	-- .. "$DB." .. module:FlatenTable(SUI.DB)
 	-- .. "$DBMod." .. module:FlatenTable(SUI.DBMod)
 end
