@@ -12,6 +12,12 @@ local anchorPoints = {
 	['BOTTOM'] = 'BOTTOM',
 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 }
+local limitedAnchorPoints = {
+	['TOPLEFT'] = 'TOP LEFT',
+	['TOPRIGHT'] = 'TOP RIGHT',
+	['BOTTOMLEFT'] = 'BOTTOM LEFT',
+	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
+}
 
 local frameList = {
 	'player',
@@ -182,6 +188,44 @@ local function AddGeneralOptions(frameName)
 							module.CurrentSettings[frameName].elements.Portrait.type = val
 							--Update the DB
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.type = val
+							--Update the screen
+							module.frames[frameName]:ElementUpdate('Portrait')
+						end
+					},
+					rotation = {
+						name = 'Rotation',
+						type = 'range',
+						min = -1,
+						max = 1,
+						step = .01,
+						order = 21,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Portrait.rotation
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Portrait.rotation = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.rotation = val
+							--Update the screen
+							module.frames[frameName]:ElementUpdate('Portrait')
+						end
+					},
+					camDistanceScale = {
+						name = 'Camera Distance Scale',
+						type = 'range',
+						min = -1,
+						max = 5,
+						step = .1,
+						order = 22,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Portrait.camDistanceScale
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Portrait.camDistanceScale = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.camDistanceScale = val
 							--Update the screen
 							module.frames[frameName]:ElementUpdate('Portrait')
 						end
@@ -1522,6 +1566,59 @@ local function AddBuffOptions(frameName)
 						SetOption(val, buffType, 'onlyShowPlayer')
 					end
 				},
+				initialAnchor = {
+					name = 'Buff anchor point',
+					type = 'select',
+					values = limitedAnchorPoints,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].initialAnchor
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'initialAnchor')
+					end
+				},
+				growthx = {
+					name = 'Growth x',
+					type = 'select',
+					values = {
+						['RIGHT'] = 'RIGHT',
+						['LEFT'] = 'LEFT'
+					},
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].growthx
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'growthx')
+					end
+				},
+				growthy = {
+					name = 'Growth y',
+					type = 'select',
+					values = {
+						['UP'] = 'UP',
+						['DOWN'] = 'DOWN'
+					},
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].growthy
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'growthy')
+					end
+				},
+				rows = {
+					name = 'Rows',
+					type = 'range',
+					order = 30,
+					min = 1,
+					max = 30,
+					step = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].rows
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, 'rows')
+					end
+				},
 				position = {
 					name = 'Position',
 					type = 'group',
@@ -1753,7 +1850,7 @@ function module:InitializeOptions()
 			end
 		}
 	end
-	
+
 	-- Add built skins selection page to the styles section
 	SUI.opt.args.General.args.style.args.Unitframes = SUI.opt.args.UnitFrames.args.BaseStyle
 

@@ -683,9 +683,24 @@ local function CreateUnitFrame(self, unit)
 		Portrait3D:SetScale(elements.Portrait.Scale)
 		Portrait3D:SetFrameStrata('LOW')
 		Portrait3D:SetFrameLevel(2)
-		-- local rotation = portrait.rotation or 0
-		-- local camDistanceScale = portrait.camDistanceScale or 1
-		-- local xOffset, yOffset = (portrait.xOffset or 0), (portrait.yOffset or 0)
+		Portrait3D.PostUpdate = function(unit, event, shouldUpdate)
+			self:SetAlpha(elements.Portrait.alpha)
+
+			if (shouldUpdate) then
+				local rotation = elements.Portrait.rotation
+
+				if self:GetFacing() ~= (rotation / 57.29573671972358) then
+					self:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
+				end
+
+				self:SetCamDistanceScale(elements.Portrait.camDistanceScale)
+				self:SetPosition(elements.Portrait.xOffset, elements.Portrait.xOffset, elements.Portrait.yOffset)
+
+				--Refresh model to fix incorrect display issues
+				self:ClearModel()
+				self:SetUnit(unit)
+			end
+		end
 		self.Portrait3D = Portrait3D
 
 		-- 2D Portrait
@@ -697,25 +712,12 @@ local function CreateUnitFrame(self, unit)
 		self.Portrait = Portrait3D
 		ElementUpdate(self, 'Portrait')
 
-		-- if elements.Portrait.position == 'left' then
-		-- 	Portrait3D:SetPoint('RIGHT', self, 'LEFT')
-		-- 	Portrait2D:SetPoint('RIGHT', self, 'LEFT')
-		-- else
-		-- 	Portrait3D:SetPoint('LEFT', self, 'RIGHT')
-		-- 	Portrait2D:SetPoint('LEFT', self, 'RIGHT')
-		-- end
-		-- if elements.Portrait.type == '3D' then
-		-- 	self.Portrait = self.Portrait3D
-		-- else
-		-- 	self.Portrait = self.Portrait2D
-		-- end
-
 		-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
 		-- 	Threat:SetSize(25, 25)
 		-- 	Threat:SetPoint('CENTER', self, 'RIGHT')
 		-- 	self.ThreatIndicator = Threat
 	end
-	do -- setup buffs
+	do -- setup auras
 		-- Setup icons if needed
 		local iconFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
 			if caster == 'player' and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
