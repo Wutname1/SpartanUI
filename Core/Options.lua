@@ -22,7 +22,7 @@ function module:InCombatLockdown()
 end
 
 function module:OnInitialize()
-	SUI.opt.args['General'].args['style'] = {
+	SUI.opt.args.General.args.style = {
 		name = L['StyleSettings'],
 		type = 'group',
 		order = 100,
@@ -35,12 +35,15 @@ function module:OnInitialize()
 				order = 10,
 				args = {}
 			},
+			description2 = {type = 'header', name = 'Artwork Style', order = 19},
 			Artwork = {
 				type = 'group',
 				name = L['Artwork'],
-				order = 100,
+				inline = true,
+				order = 20,
 				args = {}
-			}
+			},
+			description3 = {type = 'header', name = 'Unitframe Style', order = 29}
 		}
 	}
 	local Skins = {

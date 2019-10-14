@@ -1820,7 +1820,7 @@ function module:InitializeOptions()
 				name = 'Base frame style',
 				type = 'group',
 				inline = true,
-				order = 1,
+				order = 30,
 				args = {
 					reset = {
 						name = 'Reset to base style (Revert customizations)',
