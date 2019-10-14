@@ -1588,6 +1588,12 @@ local DBdefault = {
 								y = 0
 							}
 						},
+						DispelHighlight = {
+							enabled = true,
+							position = {
+								anchor = nil
+							}
+						},
 						PetHappiness = {
 							enabled = true,
 							position = {
@@ -2130,6 +2136,9 @@ local DBdefault = {
 										position = {}
 									}
 								}
+							},
+							DispelHighlight = {
+								enabled = true
 							},
 							HealthPrediction = {},
 							PetHappiness = {

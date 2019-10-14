@@ -21,6 +21,7 @@ local elementList = {
 	'Castbar',
 	'Name',
 	'LeaderIndicator',
+	'DispelHighlight',
 	'RestingIndicator',
 	'GroupRoleIndicator',
 	'CombatIndicator',
@@ -1177,20 +1178,11 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 	-- do -- setup buffs and debuffs
-	-- 	self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
-	-- 	self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
-	-- 	self.DispelHighlight:SetTexture(Smoothv2)
-	-- 	self.DispelHighlight:Hide()
-
-	-- 	if unit == 'player' or unit == 'target' then
-	-- 		self.BuffAnchor = CreateFrame('Frame', nil, self)
-	-- 		self.BuffAnchor:SetSize(self:GetWidth() + 60, 1)
-	-- 		self.BuffAnchor:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', -60, 5)
-	-- 		self.BuffAnchor:SetPoint('BOTTOMRIGHT', self, 'TOPRIGHT', 0, 5)
-
-	-- 		self = PlayerFrames:Buffs(self, unit)
-	-- 	end
-	-- end
+	self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
+	self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
+	self.DispelHighlight:SetTexture(Smoothv2)
+	self.DispelHighlight:Hide()
+	ElementUpdate(self, 'DispelHighlight')
 
 	self.Range = {
 		insideAlpha = elements.Range.insideAlpha,
@@ -1198,8 +1190,6 @@ local function CreateUnitFrame(self, unit)
 	}
 	-- self.TextUpdate = PostUpdateText
 	-- self.ColorUpdate = PostUpdateColor
-
-	-- self = PlayerFrames:MakeMovable(self, unit)
 
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')

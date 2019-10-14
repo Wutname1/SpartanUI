@@ -225,7 +225,8 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.camDistanceScale = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.camDistanceScale = val
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.camDistanceScale =
+								val
 							--Update the screen
 							module.frames[frameName]:ElementUpdate('Portrait')
 						end
@@ -540,6 +541,22 @@ local function AddBarOptions(frameName)
 							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.HealthPrediction = val
 						end
 					},
+					DispelHighlight = {
+						name = 'Dispel highlight',
+						type = 'toggle',
+						order = 5,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.DispelHighlight
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.DispelHighlight = val
+							--Update the DB
+							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.DispelHighlight = val
+							--Update the screen
+							module.frames[frameName]:UpdateAll()
+						end
+					},
 					coloring = {
 						name = 'Color health bar by:',
 						desc = 'The below options are in order of wich they apply',
@@ -766,6 +783,11 @@ local function AddBarOptions(frameName)
 		}
 	end
 
+	local friendly = {'player', 'party', 'raid', 'target', 'focus', 'targettarget', 'focustarget'}
+	if not SUI:isInTable(friendly, frameName) then
+		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args['Health'].args['DispelHighlight'].hidden = true
+	end
+	
 	if frameName == 'player' or frameName == 'party' or frameName == 'raid' then
 		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args['Castbar'].args['Interruptable'].hidden = true
 	end
