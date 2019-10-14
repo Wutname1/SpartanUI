@@ -33,232 +33,68 @@ function module:OnInitialize()
 				type = 'group',
 				inline = true,
 				order = 10,
-				args = {
-					Classic = {
-						name = 'Classic',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\Themes\\Classic\\Images\\base-center', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Classic'
-							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-							module:ArtSetup()
-						end
-					},
-					Fel = {
-						name = 'Fel',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Fel', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Fel'
-							SUI.DB.Styles.Fel.SubTheme = 'Fel'
-							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-							module:ArtSetup()
-						end
-					},
-					Transparent = {
-						name = 'Transparent',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Transparent'
-							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-							module:ArtSetup()
-						end
-					},
-					Minimal = {
-						name = 'Minimal',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Minimal'
-							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-							module:ArtSetup()
-						end
-					},
-					Digital = {
-						name = 'Digital',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Digital', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Fel'
-							SUI.DB.Styles.Fel.SubTheme = 'Digital'
-							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-							module:ArtSetup()
-						end
-					},
-					War = {
-						name = 'War',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_War', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'War'
-							SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-							module:ArtSetup()
-						end
-					}
-				}
+				args = {}
 			},
 			Artwork = {
 				type = 'group',
 				name = L['Artwork'],
 				order = 100,
-				args = {
-					Classic = {
-						name = 'Classic',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\Themes\\Classic\\Images\\base-center', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Classic'
-							module:ArtSetup()
-						end
-					},
-					Fel = {
-						name = 'Fel',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Fel', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Fel'
-							SUI.DB.Styles.Fel.SubTheme = 'Fel'
-							module:ArtSetup()
-						end
-					},
-					Transparent = {
-						name = 'Transparent',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Transparent'
-							module:ArtSetup()
-						end
-					},
-					Minimal = {
-						name = 'Minimal',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Minimal'
-							module:ArtSetup()
-						end
-					},
-					Digital = {
-						name = 'Digital',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Digital', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'Minimal'
-							SUI.DB.Styles.Fel.SubTheme = 'Digital'
-							module:ArtSetup()
-						end
-					},
-					War = {
-						name = 'War',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_War', 120, 60
-						end,
-						func = function()
-							SUI.DBMod.Artwork.Style = 'War'
-							module:ArtSetup()
-						end
-					}
-				}
-			},
-			UnitFrames = {
-				type = 'group',
-				name = 'Unit frames',
-				order = 100,
-				args = {
-					Classic = {
-						name = 'Classic',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Classic', 120, 60
-						end,
-						imageCoords = function()
-							return {0, .5, 0, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Classic'
-						end
-					},
-					War = {
-						name = 'War',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
-						end,
-						imageCoords = function()
-							return {.1, .5, .1, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'War'
-						end
-					},
-					Fel = {
-						name = 'Fel',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Fel', 120, 60
-						end,
-						imageCoords = function()
-							return {.1, .5, .1, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Fel'
-						end
-					},
-					Transparent = {
-						name = 'Transparent',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Transparent', 120, 60
-						end,
-						imageCoords = function()
-							return {0, .5, 0, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Transparent'
-						end
-					},
-					Minimal = {
-						name = 'Minimal',
-						type = 'execute',
-						image = function()
-							return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
-						end,
-						imageCoords = function()
-							return {0, .5, 0, .5}
-						end,
-						func = function()
-							SUI.DB.Unitframes.Style = 'Minimal'
-						end
-					}
-				}
+				args = {}
 			}
 		}
 	}
+	local Skins = {
+		'Classic',
+		'War',
+		'Fel',
+		'Digital',
+		'Arcane',
+		'Transparent',
+		'Minimal'
+	}
+
+	-- Setup Buttons
+	for i, skin in pairs(Skins) do
+		-- Create overall skin button
+		SUI.opt.args.General.args.style.args.OverallStyle.args[skin] = {
+			name = skin,
+			type = 'execute',
+			image = function()
+				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
+			end,
+			func = function()
+				SUI.DBMod.Artwork.Style = skin
+				-- Fel has a subtheme stil so deal with that.
+				if skin == 'Fel' or skin == 'Digital' then
+					SUI.DBMod.Artwork.Style = 'Fel'
+					SUI.DB.Styles.Fel.SubTheme = skin
+				end
+
+				SUI.DB.Unitframes.Style = skin
+				SUI.opt.args.UnitFrames.args.BaseStyle.args[skin].func()
+				module:ArtSetup()
+			end
+		}
+		-- Setup artwork button
+		SUI.opt.args.General.args.style.args.Artwork.args[skin] = {
+			name = skin,
+			type = 'execute',
+			image = function()
+				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
+			end,
+			func = function()
+				SUI.DBMod.Artwork.Style = skin
+				-- Fel has a subtheme stil so deal with that.
+				if skin == 'Fel' or skin == 'Digital' then
+					SUI.DBMod.Artwork.Style = 'Fel'
+					SUI.DB.Styles.Fel.SubTheme = skin
+				end
+
+				module:ArtSetup()
+			end
+		}
+	end
+
 	SUI.opt.args['General'].args['Bartender'] = {
 		name = 'Bartender',
 		type = 'group',
