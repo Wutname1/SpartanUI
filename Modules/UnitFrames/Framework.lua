@@ -164,8 +164,6 @@ function module:OnInitialize()
 	DB = SUI.DB.Unitframes
 	-- Setup Database
 	module:LoadDB()
-	-- Build options
-	module:InitializeOptions()
 end
 
 function module:OnEnable()
@@ -241,6 +239,9 @@ function module:OnEnable()
 	-- Create Party & Raid Mover
 	MoveIt:CreateMover(module.frames.containers.party, 'Party', nil, true)
 	MoveIt:CreateMover(module.frames.containers.raid, 'Raid', nil, true)
+
+	-- Build options
+	module:InitializeOptions()
 end
 
 local blockedFunctions = {
