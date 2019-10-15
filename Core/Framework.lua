@@ -15,12 +15,16 @@ SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+local wowVersion = 'Retail'
+if SUI.IsClassic then
+	wowVersion = 'Classic'
+end
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 --@beta@
 SUI.releaseType = 'BETA'
 --@end-beta@
 --@alpha@
-SUI.releaseType = '6.x.x ALPHA build'
+SUI.releaseType = '6.0 ALPHA build ' .. SUI.BuildNum
 SUI.Version = ''
 --@end-alpha@
 --@do-not-package@
@@ -30,7 +34,7 @@ SUI.Version = ''
 
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = string.format('SpartanUI %s %s', SUI.releaseType or 'Release', SUI.Version),
+	name = string.format('SpartanUI %s %s %s', wowVersion, SUI.releaseType or 'Release', SUI.Version),
 	type = 'group',
 	childGroups = 'tree',
 	args = {
@@ -2837,7 +2841,7 @@ function SUI:ChatCommand(input)
 		SUI:suihelp()
 	elseif input == 'version' then
 		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
-		SUI:Print(L['Build'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'X-Build'))
+		SUI:Print(string.format('%s %s', wowVersion, SUI.BuildNum))
 		SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
 	else
 		if SUIChatCommands[input] then
