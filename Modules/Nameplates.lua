@@ -157,6 +157,68 @@ local UpdateElementState = function(frame)
 	end
 end
 
+local PlayerPowerIcons = function(frame, attachPoint)
+	--Runes
+	if select(2, UnitClass('player')) == 'DEATHKNIGHT' then
+		frame.Runes = {}
+		frame.Runes.colorSpec = true
+
+		for i = 1, 6 do
+			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
+			frame.Runes[i]:SetSize((frame.Health:GetWidth() - 10) / 6, 4)
+			if (i == 1) then
+				frame.Runes[i]:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, 0)
+			else
+				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
+			end
+			frame.Runes[i]:SetStatusBarTexture(SUI.BarTextures.smooth)
+			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+
+			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
+			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
+			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
+			frame.Runes[i].bg:SetTexture(SUI.BarTextures.smooth)
+			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
+			frame.Runes[i].bg.multiplier = 0.64
+			frame.Runes[i]:Hide()
+
+			DeathKnightResourceOverlayFrame:HookScript(
+				'OnShow',
+				function()
+					DeathKnightResourceOverlayFrame:Hide()
+				end
+			)
+		end
+	else
+		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
+		local MaxPower, ClassPower = 5, {}
+
+		if (select(2, UnitClass('player')) == 'MONK') then
+			MaxPower = 6
+		end
+
+		for index = 1, MaxPower do
+			local Bar = CreateFrame('StatusBar', nil, frame)
+			Bar:SetStatusBarTexture(SUI.BarTextures.smooth)
+
+			-- Position and size.
+			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
+			if (index == 1) then
+				Bar:SetPoint('TOPLEFT', frame.ComboPoints, 'TOPLEFT')
+			else
+				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 2, 0)
+			end
+			Bar:Hide()
+
+			ClassPower[index] = Bar
+		end
+
+		-- Register with SUF
+		frame.ClassPower = ClassPower
+	end
+end
+
 local NamePlateFactory = function(frame, unit)
 	if unit:match('nameplate') then
 		local elements = SUI.DBMod.NamePlates.elements
@@ -353,7 +415,7 @@ local NamePlateFactory = function(frame, unit)
 				end
 			end
 
-			SUI:PlayerPowerIcons(frame, attachPoint)
+			PlayerPowerIcons(frame, attachPoint)
 		end
 
 		-- Setup Scale
