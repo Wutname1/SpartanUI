@@ -33,15 +33,6 @@ module.StatusBarSettings = {
 }
 
 function module:OnInitialize()
-	if SUI.DB.Styles.Classic.TalkingHeadUI == nil then
-		SUI.DB.Styles.Classic.TalkingHeadUI = {
-			point = 'BOTTOM',
-			relPoint = 'TOP',
-			x = 0,
-			y = -30,
-			scale = .8
-		}
-	end
 	if (SUI.DBMod.Artwork.Style == 'Classic') then
 		module:Init()
 	else

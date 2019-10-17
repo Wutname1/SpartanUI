@@ -2713,22 +2713,22 @@ function PlayerFrames:SetupExtras()
 		-- end
 
 		-- relocate the PlayerPowerBarAlt
-		hooksecurefunc(
-			PlayerPowerBarAlt,
-			'SetPoint',
-			function(_, _, parent)
-				if (parent ~= PlayerFrames.player) then
-					PlayerPowerBarAlt:ClearAllPoints()
-					PlayerPowerBarAlt:SetPoint('BOTTOMLEFT', PlayerFrames.player, 'TOPLEFT', 10, 40)
-				end
-			end
-		)
-		PlayerPowerBarAlt:SetParent(PlayerFrames.player)
-		PlayerPowerBarAlt:SetFrameStrata('MEDIUM')
-		PlayerPowerBarAlt:SetFrameLevel(4)
-		PlayerPowerBarAlt:SetScale(1 * SUI.DBMod.PlayerFrames.ClassBar.scale)
-		PlayerPowerBarAlt:ClearAllPoints()
-		PlayerPowerBarAlt:SetPoint('BOTTOMLEFT', PlayerFrames.player, 'TOPLEFT', 10, 40)
+		-- hooksecurefunc(
+		-- 	PlayerPowerBarAlt,
+		-- 	'SetPoint',
+		-- 	function(_, _, parent)
+		-- 		if (parent ~= PlayerFrames.player) then
+		-- 			PlayerPowerBarAlt:ClearAllPoints()
+		-- 			PlayerPowerBarAlt:SetPoint('BOTTOMLEFT', PlayerFrames.player, 'TOPLEFT', 10, 40)
+		-- 		end
+		-- 	end
+		-- )
+		-- PlayerPowerBarAlt:SetParent(PlayerFrames.player)
+		-- PlayerPowerBarAlt:SetFrameStrata('MEDIUM')
+		-- PlayerPowerBarAlt:SetFrameLevel(4)
+		-- PlayerPowerBarAlt:SetScale(1 * SUI.DBMod.PlayerFrames.ClassBar.scale)
+		-- PlayerPowerBarAlt:ClearAllPoints()
+		-- PlayerPowerBarAlt:SetPoint('BOTTOMLEFT', PlayerFrames.player, 'TOPLEFT', 10, 40)
 
 		PlayerFrames:UpdateAltBarPositions()
 

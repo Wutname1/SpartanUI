@@ -246,7 +246,6 @@ function module:EnableArtwork()
 		end
 	)
 
-	Artwork_Core:MoveTalkingHeadUI()
 	module:SetupVehicleUI()
 
 	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then

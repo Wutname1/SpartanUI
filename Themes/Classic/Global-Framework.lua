@@ -200,8 +200,6 @@ function module:InitFramework()
 		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'SUI_AnchorFrame', 'TOPLEFT', 0, 0)
 		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'SUI_AnchorFrame', 'TOPRIGHT', 0, 153)
 
-		Artwork_Core:MoveTalkingHeadUI()
-
 		MainMenuBarVehicleLeaveButton:HookScript(
 			'OnShow',
 			function()

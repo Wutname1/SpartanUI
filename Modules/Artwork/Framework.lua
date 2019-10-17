@@ -113,28 +113,6 @@ function module:round(num) -- rounds a number to 2 decimal places
 	end
 end
 
-function module:MoveTalkingHeadUI()
-	local THUDB = SUI.DB.Styles[SUI.DBMod.Artwork.Style].TalkingHeadUI
-	local MoveTalkingHead = CreateFrame('Frame')
-	MoveTalkingHead:RegisterEvent('ADDON_LOADED')
-	MoveTalkingHead:SetScript(
-		'OnEvent',
-		function(self, event, ...)
-			local addonName = ...
-			if addonName and addonName == 'Blizzard_TalkingHeadUI' then
-				TalkingHeadFrame:SetMovable(true)
-				TalkingHeadFrame:SetClampedToScreen(true)
-				TalkingHeadFrame.ignoreFramePositionManager = true
-				TalkingHeadFrame:ClearAllPoints()
-				TalkingHeadFrame:SetPoint(THUDB.point, UIParent, THUDB.relPoint, THUDB.x, THUDB.y)
-				if THUDB.scale then -- set scale
-					TalkingHeadFrame:SetScale(THUDB.scale)
-				end
-			end
-		end
-	)
-end
-
 function module:ActionBarPlates(plate, excludelist)
 	local lib = LibStub('LibWindow-1.1', true)
 	if not lib then

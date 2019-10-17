@@ -467,7 +467,7 @@ local DBdefault = {
 					PartyFrames = {0, .8, .9, .7},
 					RaidFrames = {0, .8, .9, .7}
 				},
-				TalkingHeadUI = {point = 'TOP', relPoint = 'TOP', x = 0, y = -30, scale = .8},
+				TalkingHeadUI = 'TOP,UIParent,TOP,0,-30',
 				BartenderProfile = 'SpartanUI - Transparent',
 				BartenderSettings = {
 					ActionBars = {
@@ -857,13 +857,7 @@ local DBdefault = {
 					0.1215686274509804,
 					0.9
 				},
-				TalkingHeadUI = {
-					point = 'BOTTOM',
-					relPoint = 'TOP',
-					x = 0,
-					y = -30,
-					scale = .8
-				},
+				TalkingHeadUI = 'BOTTOM,UIParent,TOP,0,-30',
 				PartyFramesSize = 'large',
 				HideCenterGraphic = false
 			},
@@ -905,13 +899,7 @@ local DBdefault = {
 						collapsed = false
 					}
 				},
-				TalkingHeadUI = {
-					point = 'TOP',
-					relPoint = 'TOP',
-					x = 0,
-					y = -30,
-					scale = .8
-				},
+				TalkingHeadUI = 'TOP,UIParent,TOP,0,-30',
 				BartenderProfile = 'SpartanUI - Fel',
 				BartenderSettings = {
 					ActionBars = {
@@ -1153,13 +1141,7 @@ local DBdefault = {
 						collapsed = false
 					}
 				},
-				TalkingHeadUI = {
-					point = 'TOP',
-					relPoint = 'TOP',
-					x = 0,
-					y = -30,
-					scale = .8
-				},
+				TalkingHeadUI = 'TOP,UIParent,TOP,0,-30',
 				BartenderProfile = 'SpartanUI - War',
 				BartenderSettings = {
 					ActionBars = {
