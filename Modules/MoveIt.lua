@@ -125,9 +125,6 @@ function module:MoveIt(name)
 	end
 end
 
-function module:NudgeMover(x, y)
-end
-
 local isDragging = false
 
 function module:CreateMover(parent, name, text, setDefault)
@@ -194,6 +191,24 @@ function module:CreateMover(parent, name, text, setDefault)
 	end
 	f:ClearAllPoints()
 	f:SetPoint(point, anchor, secondaryPoint, x, y)
+
+	local NudgeMover = function(self, nudgeX, nudgeY)
+		local point, anchor, secondaryPoint, x, y = self:GetPoint()
+		if not anchor then
+			anchor = UIParent
+		end
+		x = Round(x)
+		y = Round(y)
+
+		-- Shift it.
+		x = x + (nudgeX or 0)
+		y = y + (nudgeY or 0)
+
+		-- Save it.
+		SUI.DB.MoveIt.movers[name].MovedPoints = format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, x, y)
+		self:ClearAllPoints()
+		self:SetPoint(point, anchor, secondaryPoint, x, y)
+	end
 
 	local function OnDragStart(self)
 		if InCombatLockdown() then
@@ -267,12 +282,13 @@ function module:CreateMover(parent, name, text, setDefault)
 
 	local function OnMouseWheel(_, delta)
 		if IsShiftKeyDown() then
-			module:NudgeMover(delta)
+			f:NudgeMover(nil, delta)
 		else
-			module:NudgeMover(nil, delta)
+			f:NudgeMover(delta)
 		end
 	end
 
+	f.NudgeMover = NudgeMover
 	f:SetScript('OnDragStart', OnDragStart)
 	-- f:SetScript('OnMouseUp', E.AssignFrameToNudge)
 	f:SetScript('OnDragStop', OnDragStop)
