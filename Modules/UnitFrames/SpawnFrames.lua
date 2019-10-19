@@ -515,7 +515,6 @@ local function CreateUnitFrame(self, unit)
 		local element = self[elementName]
 
 		-- Setup the Alpha scape and position
-		print(elementName)
 		element:SetAlpha(data.alpha)
 		element:SetScale(data.scale)
 
@@ -1167,6 +1166,7 @@ local function CreateUnitFrame(self, unit)
 		self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
 		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\icon_role.tga')
 		self.GroupRoleIndicator.Sizeable = true
+		self.GroupRoleIndicator:Hide()
 		ElementUpdate(self, 'GroupRoleIndicator')
 
 		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
