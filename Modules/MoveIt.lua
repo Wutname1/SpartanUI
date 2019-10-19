@@ -371,7 +371,62 @@ function module:OnEnable()
 		end
 	end
 	SUI:AddChatCommand('move', ChatCommand)
+	module:Options()
 end
 
 function module:Options()
+	SUI.opt.args['Movers'] = {
+		name = 'Movers',
+		type = 'group',
+		order = 800,
+		args = {
+			MoveIt = {
+				name = 'Toggle movers',
+				type = 'execute',
+				order = .1,
+				func = function()
+					module:MoveIt()
+				end
+			},
+			line1 = {name = '', type = 'header', order = 49},
+			line2 = {
+				name = 'Movement can also be initated with the chat command:',
+				type = 'description',
+				order = 50,
+				fontSize = 'large'
+			},
+			line3 = {name = '/sui move', type = 'description', order = 51, fontSize = 'medium'},
+			-- line4 = {
+			-- 	name = 'Unitframes can also be moved by holding alt and dragging',
+			-- 	type = 'description',
+			-- 	order = 52,
+			-- 	fontSize = 'medium'
+			-- }
+			line5 = {
+				name = 'When the movement system is enabled you can:',
+				type = 'description',
+				order = 53,
+				fontSize = 'large'
+			},
+			line6 = {name = '- Alt+Click a mover to reset it', type = 'description', order = 51, fontSize = 'medium'},
+			line7 = {
+				name = '- Shift+Click a mover to temporarily hide it',
+				type = 'description',
+				order = 54,
+				fontSize = 'medium'
+			},
+			line8 = {
+				name = '- Use the scroll wheel to move left and right 1 coord at a time',
+				type = 'description',
+				order = 55,
+				fontSize = 'medium'
+			},
+			line9 = {
+				name = '- Use the scroll wheel + Hold Shift to move up and down 1 coord at a time',
+				type = 'description',
+				order = 56,
+				fontSize = 'medium'
+			}
+		}
+	}
 end
