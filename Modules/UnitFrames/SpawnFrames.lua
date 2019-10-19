@@ -515,6 +515,7 @@ local function CreateUnitFrame(self, unit)
 		local element = self[elementName]
 
 		-- Setup the Alpha scape and position
+		print(elementName)
 		element:SetAlpha(data.alpha)
 		element:SetScale(data.scale)
 

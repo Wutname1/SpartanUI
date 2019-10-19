@@ -323,17 +323,7 @@ function module:CreateMover(parent, name, text, setDefault)
 	parent:SetPoint('TOPLEFT', f, 0, 0)
 end
 
-function module:OnInitialize()
-	coordFrame = StdUi:Window(nil, '', 480, 200)
-	coordFrame:SetFrameStrata('DIALOG')
-
-	coordFrame.Title = StdUi:Texture(coordFrame, 104, 30, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	coordFrame.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	coordFrame.Title:SetPoint('TOP')
-	coordFrame.Title:SetAlpha(.8)
-
-	-- Create Movers
-	--TalkingHeadUI
+local function MoveTalkingHead()
 	local SetupTalkingHead = function()
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		module:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', true)
@@ -362,8 +352,9 @@ function module:OnInitialize()
 			end
 		)
 	end
+end
 
-	--AltPowerBar
+local function MoveAltPowerBar()
 	if not IsAddOnLoaded('SimplePowerBar') then
 		local holder = CreateFrame('Frame', 'AltPowerBarHolder', UIParent)
 		holder:SetPoint('TOP', UIParent, 'TOP', 0, -18)
@@ -384,7 +375,22 @@ function module:OnInitialize()
 
 		module:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power')
 	end
-	--
+end
+
+function module:OnInitialize()
+	coordFrame = StdUi:Window(nil, '', 480, 200)
+	coordFrame:SetFrameStrata('DIALOG')
+
+	coordFrame.Title = StdUi:Texture(coordFrame, 104, 30, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	coordFrame.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+	coordFrame.Title:SetPoint('TOP')
+	coordFrame.Title:SetAlpha(.8)
+
+	-- Create Movers
+	if not SUI.IsClassic then
+		MoveTalkingHead()
+		MoveAltPowerBar()
+	end
 end
 
 function module:OnEnable()

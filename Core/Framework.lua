@@ -1575,7 +1575,7 @@ local DBdefault = {
 								anchor = nil
 							}
 						},
-						PetHappiness = {
+						HappinessIndicator = {
 							enabled = true,
 							position = {
 								anchor = 'LEFT',
@@ -2122,7 +2122,7 @@ local DBdefault = {
 								enabled = true
 							},
 							HealthPrediction = {},
-							PetHappiness = {
+							HappinessIndicator = {
 								position = {}
 							},
 							Power = {
