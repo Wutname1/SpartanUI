@@ -8,6 +8,7 @@ local colors = {
 	text = {1, 1, 1, 1},
 	disabled = {0.55, 0.55, 0.55, 1}
 }
+local MoverWatcher = CreateFrame('Frame', nil, UIParent)
 local MoveEnabled = false
 local coordFrame
 
@@ -112,6 +113,7 @@ function module:MoveIt(name)
 			v:Hide()
 		end
 		MoveEnabled = false
+		MoverWatcher:Hide()
 	else
 		if name then
 			local frame = MoverList[name]
@@ -122,7 +124,9 @@ function module:MoveIt(name)
 			end
 		end
 		MoveEnabled = true
+		MoverWatcher:Show()
 	end
+	MoverWatcher:EnableKeyboard(MoveEnabled)
 end
 
 local isDragging = false
@@ -401,6 +405,21 @@ function module:OnEnable()
 		end
 	end
 	SUI:AddChatCommand('move', ChatCommand)
+
+	local function OnKeyDown(self, key)
+		if MoveEnabled and key == 'ESCAPE' then
+			self:SetPropagateKeyboardInput(false)
+			module:MoveIt()
+		else
+			self:SetPropagateKeyboardInput(true)
+		end
+	end
+
+	MoverWatcher:Hide()
+	MoverWatcher:SetFrameStrata('TOOLTIP')
+	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
+	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
+
 	module:Options()
 end
 
@@ -467,6 +486,12 @@ function module:Options()
 				name = '- Use the scroll wheel + Hold Shift to move up and down 1 coord at a time',
 				type = 'description',
 				order = 56,
+				fontSize = 'medium'
+			},
+			line10 = {
+				name = '- Press ESCAPE to exit the movement system quickly.',
+				type = 'description',
+				order = 57,
 				fontSize = 'medium'
 			}
 		}
