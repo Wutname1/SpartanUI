@@ -271,7 +271,7 @@ local CreatePartyFrame = function(self, unit)
 			self.Health.colorHealth = true
 			self.Health.colorSmooth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			if
@@ -405,7 +405,7 @@ local CreatePartyFrame = function(self, unit)
 		self.Auras.PostUpdate = PartyFrames:PostUpdateAura(self, unit)
 	end
 	do -- HoTs Display
-		self.AuraWatch = SUI:SUF_Buffs(self, 'BOTTOMRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:oUF_Buffs(self, 'BOTTOMRIGHT', 'TOPRIGHT', 0)
 	end
 	do --Threat, SpellRange, and Ready Check
 		self.Range = {
@@ -510,10 +510,10 @@ local CreateSubFrame = function(self, unit)
 end
 
 local CreateUnitFrame = function(self, unit)
-	if (self:GetAttribute('unitsuffix') == 'target') and SUI.DBMod.PartyFrames.display.target then
+	if (self:GetAttribute('unitoUFfix') == 'target') and SUI.DBMod.PartyFrames.display.target then
 		self = CreateSubFrame(self, unit)
 	elseif
-		(self:GetAttribute('unitsuffix') == 'pet') and
+		(self:GetAttribute('unitoUFfix') == 'pet') and
 			(SUI.DBMod.PartyFrames.FrameStyle == 'large' or (not SUI.DBMod.PartyFrames.display.target)) and
 			SUI.DBMod.PartyFrames.display.pet
 	 then
@@ -983,7 +983,7 @@ local CreatePlayerFrame = function(self, unit)
 			self.Health.colorHealth = true
 			self.Health.Smooth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -1107,7 +1107,7 @@ local CreatePlayerFrame = function(self, unit)
 				ClassPower[index] = Bar
 			end
 
-			-- Register with SUF
+			-- Register with oUF
 			self.ClassPower = ClassPower
 		end
 	end
@@ -1219,7 +1219,7 @@ local CreateTargetFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -1427,7 +1427,7 @@ local CreatePetFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -1675,7 +1675,7 @@ local CreateToTFrame = function(self, unit)
 					self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 					self.Health.colorHealth = true
 
-					SUI:SUF_HealPrediction(self)
+					SUI:oUF_HealPrediction(self)
 				end
 				do -- power bar
 					local power = CreateFrame('StatusBar', nil, self)
@@ -1848,7 +1848,7 @@ local CreateToTFrame = function(self, unit)
 					self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 					self.Health.colorHealth = true
 
-					SUI:SUF_HealPrediction(self)
+					SUI:oUF_HealPrediction(self)
 				end
 				do -- power bar
 					local power = CreateFrame('StatusBar', nil, self)
@@ -1972,7 +1972,7 @@ local CreateToTFrame = function(self, unit)
 					self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 					self.Health.colorHealth = true
 
-					SUI:SUF_HealPrediction(self)
+					SUI:oUF_HealPrediction(self)
 				end
 			end
 			do -- setup ring, icons, and text
@@ -2126,7 +2126,7 @@ local CreateFocusFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -2311,7 +2311,7 @@ local CreateBossFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -2930,7 +2930,7 @@ local SpawnRaidFrame = function(self, unit)
 			self.Health.colorHealth = true
 			self.Health.colorSmooth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -2993,7 +2993,7 @@ local SpawnRaidFrame = function(self, unit)
 		self.Debuffs.PostUpdate = RaidFrames:PostUpdateDebuffs(self, unit)
 	end
 	do -- HoTs Display
-		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
 	end
 	do -- Threat, SpellRange, and Ready Check
 		self.Range = {
@@ -3097,9 +3097,9 @@ function RaidFrames:Classic()
 		SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
-		'SUF-initialConfigFunction',
+		'oUF-initialConfigFunction',
 		format(initialConfigFunction, w, h)
-		-- 'SUF-initialConfigFunction', [[
+		-- 'oUF-initialConfigFunction', [[
 		-- self:SetHeight(35)
 		-- self:SetWidth(90)
 		-- ]]

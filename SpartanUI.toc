@@ -11,7 +11,7 @@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
-## X-SUF: SUIUF
+## X-oUF: SUIUF
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
 
@@ -40,10 +40,9 @@ libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 #@end-retail@
 
 # Unit Frame libraries
-libs\SUF\SUF.xml
+libs\oUF\oUF.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
 #@non-retail@
-libs\oUF_PetHappiness\oUF_PetHappiness.lua
 libs\LibClassicDurations\LibClassicDurations.xml
 libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
 libs\LibClassicCasterino\LibClassicCasterino.lua

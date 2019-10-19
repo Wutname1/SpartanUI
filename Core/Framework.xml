@@ -80,7 +80,7 @@
 		</Anchors>
 	</Frame>
 	
-	<Script file="SUF.lua" />
+	<Script file="oUF.lua" />
 	<Script file="SUIWindow.lua" />
 	<Script file="SetupWizard.lua" />
 	<Script file="WhatsNew.lua" />

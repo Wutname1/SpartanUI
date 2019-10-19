@@ -214,7 +214,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 			ClassPower[index] = Bar
 		end
 
-		-- Register with SUF
+		-- Register with oUF
 		frame.ClassPower = ClassPower
 	end
 end
@@ -528,7 +528,7 @@ function module:OnEnable()
 	SUIUF:SetActiveStyle('Spartan_NamePlates')
 	SUIUF:SpawnNamePlates(nil, NameplateCallback)
 
-	-- SUF is not hiding the mana bar. So we need to hide it.
+	-- oUF is not hiding the mana bar. So we need to hide it.
 	if ClassNameplateManaBarFrame then
 		ClassNameplateManaBarFrame:HookScript(
 			'OnShow',

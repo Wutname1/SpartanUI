@@ -1,5 +1,5 @@
 local _, ns = ...
-local oUF = (ns.oUF or oUF) or (ns.SUF or SUF)
+local oUF = (ns.oUF or oUF)
 assert(oUF, "<name> was unable to locate oUF install.")
 
 local smoothing = {}

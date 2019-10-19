@@ -377,7 +377,7 @@ local CreateLargeFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -521,7 +521,7 @@ local CreateLargeFrame = function(self, unit)
 				ClassPower[index] = Bar
 			end
 
-			-- Register with SUF
+			-- Register with oUF
 			self.ClassPower = ClassPower
 
 			-- Druid Mana
@@ -661,7 +661,7 @@ local CreateMediumFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -733,7 +733,7 @@ local CreateMediumFrame = function(self, unit)
 		self:Tag(self.StatusText, '[afkdnd]')
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
+		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', 0)
 
 		self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
@@ -805,7 +805,7 @@ local CreateSmallFrame = function(self, unit)
 			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
 			self.Health.colorHealth = true
 
-			SUI:SUF_HealPrediction(self)
+			SUI:oUF_HealPrediction(self)
 		end
 		do -- power bar
 			local power = CreateFrame('StatusBar', nil, self)
@@ -864,7 +864,7 @@ local CreateSmallFrame = function(self, unit)
 		end
 	end
 	do -- setup buffs and debuffs
-		self.AuraWatch = SUI:SUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', -5)
+		self.AuraWatch = SUI:oUF_Buffs(self, 'TOPRIGHT', 'TOPRIGHT', -5)
 
 		self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 		self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
@@ -1233,7 +1233,7 @@ function module:RaidFrames()
 		SUI.DBMod.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
-		'SUF-initialConfigFunction',
+		'oUF-initialConfigFunction',
 		module:FrameSize(SUI.DB.Styles.War.RaidFrames.FrameStyle)
 	)
 
@@ -1273,7 +1273,7 @@ function module:PartyFrames()
 		'TOPLEFT',
 		'initial-anchor',
 		'TOPLEFT',
-		'SUF-initialConfigFunction',
+		'oUF-initialConfigFunction',
 		module:FrameSize(SUI.DB.Styles.War.PartyFrames.FrameStyle)
 	)
 

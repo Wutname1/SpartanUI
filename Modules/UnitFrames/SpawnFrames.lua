@@ -414,7 +414,7 @@ local function CreateUnitFrame(self, unit)
 		-- Loop all elements and update their status
 		for _, element in ipairs(elementList) do
 			if self[element] and element ~= nil then
-				-- SUF Update (event/updater state)
+				-- oUF Update (event/updater state)
 				if elements[element].enabled then
 					self:EnableElement(element)
 				else
@@ -1080,9 +1080,29 @@ local function CreateUnitFrame(self, unit)
 
 		if SUI.IsClassic then
 			-- Register it with oUF
-			self.PetHappiness = CreateFrame('Frame', nil, self)
-			self.PetHappiness.Sizeable = true
-			ElementUpdate(self, 'PetHappiness')
+			local HappinessIndicator = CreateFrame('Frame', nil, self)
+			HappinessIndicator.Sizeable = true
+			local function HIOnEnter()
+				local element = self.PetHappiness
+				if (element.tooltip) then
+					GameTooltip:SetOwner(element, 'ANCHOR_RIGHT')
+					GameTooltip:SetText(element.tooltip)
+					if (element.tooltipDamage) then
+						GameTooltip:AddLine(element.tooltipDamage, '', 1, 1, 1)
+					end
+					if (element.tooltipLoyalty) then
+						GameTooltip:AddLine(element.tooltipLoyalty, '', 1, 1, 1)
+					end
+					GameTooltip:Show()
+				end
+			end
+			local function HIOnLeave()
+				GameTooltip:Hide()
+			end
+			HappinessIndicator:SetScript('OnEnter', HIOnEnter)
+			HappinessIndicator:SetScript('OnLeave', HIOnLeave)
+			self.HappinessIndicator = HappinessIndicator
+			ElementUpdate(self, 'HappinessIndicator')
 		end
 
 		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -8)
@@ -1212,7 +1232,7 @@ local function CreateUnitFrame(self, unit)
 					ClassPower[index] = Bar
 				end
 
-				-- Register with SUF
+				-- Register with oUF
 				self.ClassPower = ClassPower
 
 				--Totem Bar

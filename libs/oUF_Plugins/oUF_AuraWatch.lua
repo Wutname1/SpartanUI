@@ -100,10 +100,12 @@ Here is an example of how to set oUF_AW up:
 		self.AuraWatch = auras
 	end
 -----------------------------------------------------------------------------------------------------------]]
-
 local _, ns = ...
-local oUF = (ns.oUF or oUF) or (ns.SUF or SUF)
-assert(oUF, "oUF_AuraWatch cannot find an instance of oUF. If your oUF is embedded into a layout, it may not be embedded properly.")
+local oUF = (ns.oUF or oUF)
+assert(
+	oUF,
+	'oUF_AuraWatch cannot find an instance of oUF. If your oUF is embedded into a layout, it may not be embedded properly.'
+)
 
 local UnitAura, UnitGUID = UnitAura, UnitGUID
 local GUIDs = {}
@@ -111,24 +113,27 @@ local GUIDs = {}
 local PLAYER_UNITS = {
 	player = true,
 	vehicle = true,
-	pet = true,
+	pet = true
 }
 
 local SetupGUID
-do 
-	local cache = setmetatable({}, {__type = "k"})
+do
+	local cache = setmetatable({}, {__type = 'k'})
 
-	local frame = CreateFrame"Frame"
-	frame:SetScript("OnEvent", function(self, event)
-		for k,t in pairs(GUIDs) do
-			GUIDs[k] = nil
-			wipe(t)
-			cache[t] = true
+	local frame = CreateFrame 'Frame'
+	frame:SetScript(
+		'OnEvent',
+		function(self, event)
+			for k, t in pairs(GUIDs) do
+				GUIDs[k] = nil
+				wipe(t)
+				cache[t] = true
+			end
 		end
-	end)
-	frame:RegisterEvent"PLAYER_REGEN_ENABLED"
-	frame:RegisterEvent"PLAYER_ENTERING_WORLD"
-	
+	)
+	frame:RegisterEvent 'PLAYER_REGEN_ENABLED'
+	frame:RegisterEvent 'PLAYER_ENTERING_WORLD'
+
 	function SetupGUID(guid)
 		local t = next(cache)
 		if t then
@@ -158,7 +163,9 @@ local function DefaultResetIcon(watch, icon, count, duration, expire)
 		end
 		icon:SetAlpha(watch.presentAlpha)
 		icon:Show()
-		if watch.PostResetIcon then watch.PostResetIcon(watch, icon) end
+		if watch.PostResetIcon then
+			watch.PostResetIcon(watch, icon)
+		end
 	end
 end
 
@@ -172,18 +179,20 @@ end
 
 local function DefaultExpireIcon(watch, icon)
 	if not icon.onlyShowPresent then
-		if icon.cd then 
-			icon.cd:Hide() 
+		if icon.cd then
+			icon.cd:Hide()
 		end
-		if icon.count then 
-			icon.count:SetText() 
+		if icon.count then
+			icon.count:SetText()
 		end
 		icon:SetAlpha(watch.missingAlpha)
 		if icon.overlay then
 			icon.overlay:Show()
 		end
 		icon:Show()
-		if watch.PostExpireIcon then watch.PostExpireIcon(watch, icon) end
+		if watch.PostExpireIcon then
+			watch.PostExpireIcon(watch, icon)
+		end
 	end
 end
 
@@ -199,23 +208,27 @@ local Update
 do
 	local found = {}
 	function Update(frame, event, unit)
-		if frame.unit ~= unit then return end
+		if frame.unit ~= unit then
+			return
+		end
 		local watch = frame.AuraWatch
 		local index, icons = 1, watch.watched
-		local _, name, texture, count, duration, expire, caster, key, icon, spellid 
-		local filter = "HELPFUL"
+		local _, name, texture, count, duration, expire, caster, key, icon, spellid
+		local filter = 'HELPFUL'
 		local guid = UnitGUID(unit)
-		if not GUIDs[guid] then SetupGUID(guid) end
-		
+		if not GUIDs[guid] then
+			SetupGUID(guid)
+		end
+
 		for key, icon in pairs(icons) do
 			icon:Hide()
 		end
-		
+
 		while true do
 			name, texture, count, _, duration, expire, caster, _, _, spellid = UnitAura(unit, index, filter)
-			if not name then 
-				if filter == "HELPFUL" then
-					filter = "HARMFUL"
+			if not name then
+				if filter == 'HELPFUL' then
+					filter = 'HARMFUL'
 					index = 1
 				else
 					break
@@ -231,50 +244,54 @@ do
 				index = index + 1
 			end
 		end
-		
+
 		for key in pairs(GUIDs[guid]) do
 			if icons[key] and not found[key] and not icons[key].ignore then
 				ExpireIcon(watch, icons[key])
 			end
 		end
-		
+
 		wipe(found)
 	end
 end
 
 local function SetupIcons(self)
-
 	local watch = self.AuraWatch
 	local icons = watch.icons
 	watch.watched = {}
-	if not watch.missingAlpha then watch.missingAlpha = 0.75 end
-	if not watch.presentAlpha then watch.presentAlpha = 1 end
-	
-	for _,icon in pairs(icons) do
-	
+	if not watch.missingAlpha then
+		watch.missingAlpha = 0.75
+	end
+	if not watch.presentAlpha then
+		watch.presentAlpha = 1
+	end
+
+	for _, icon in pairs(icons) do
 		local name, _, image = GetSpellInfo(icon.spellID)
-		if not name then error("oUF_AuraWatch error: no spell with "..tostring(icon.spellID).." spell ID exists") end
+		if not name then
+			error('oUF_AuraWatch error: no spell with ' .. tostring(icon.spellID) .. ' spell ID exists')
+		end
 		icon.name = name
 		if not watch.customIcons then
-			local cd = CreateFrame("Cooldown", "$parentCooldown", icon, "CooldownFrameTemplate")
+			local cd = CreateFrame('Cooldown', '$parentCooldown', icon, 'CooldownFrameTemplate')
 			cd:SetAllPoints(icon)
 			icon.cd = cd
 
-			local tex = icon:CreateTexture(nil, "BACKGROUND")
+			local tex = icon:CreateTexture(nil, 'BACKGROUND')
 			tex:SetAllPoints(icon)
 			tex:SetTexture(image)
 			icon.icon = tex
-			
-			local overlay = icon:CreateTexture(nil, "OVERLAY")
-			overlay:SetTexture"Interface\\Buttons\\UI-Debuff-Overlays"
+
+			local overlay = icon:CreateTexture(nil, 'OVERLAY')
+			overlay:SetTexture 'Interface\\Buttons\\UI-Debuff-Overlays'
 			overlay:SetAllPoints(icon)
 			overlay:SetTexCoord(.296875, .5703125, 0, .515625)
 			overlay:SetVertexColor(1, 0, 0)
 			icon.overlay = overlay
 
-			local count = icon:CreateFontString(nil, "OVERLAY")
+			local count = icon:CreateFontString(nil, 'OVERLAY')
 			count:SetFontObject(NumberFontNormal)
-			count:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", -1, 0)
+			count:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', -1, 0)
 			icon.count = count
 		end
 
@@ -290,23 +307,25 @@ local function SetupIcons(self)
 		if icon.anyUnit == nil then
 			icon.anyUnit = watch.anyUnit
 		end
-		
+
 		watch.watched[icon.spellID] = icon
 
-		if watch.PostCreateIcon then watch:PostCreateIcon(icon, icon.spellID, name, self) end
+		if watch.PostCreateIcon then
+			watch:PostCreateIcon(icon, icon.spellID, name, self)
+		end
 	end
 end
 
 local function ForceUpdate(element)
-	return Update(element.__owner, "ForceUpdate", element.__owner.unit)
+	return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
 local function Enable(self)
 	if self.AuraWatch then
 		self.AuraWatch.__owner = self
 		self.AuraWatch.ForceUpdate = ForceUpdate
-		
-		self:RegisterEvent("UNIT_AURA", Update)
+
+		self:RegisterEvent('UNIT_AURA', Update)
 		SetupIcons(self)
 		return true
 	else
@@ -316,11 +335,11 @@ end
 
 local function Disable(self)
 	if self.AuraWatch then
-		self:UnregisterEvent("UNIT_AURA", Update)
-		for _,icon in pairs(self.AuraWatch.icons) do
+		self:UnregisterEvent('UNIT_AURA', Update)
+		for _, icon in pairs(self.AuraWatch.icons) do
 			icon:Hide()
 		end
 	end
 end
 
-oUF:AddElement("AuraWatch", Update, Enable, Disable)
+oUF:AddElement('AuraWatch', Update, Enable, Disable)

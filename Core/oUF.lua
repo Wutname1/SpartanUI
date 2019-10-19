@@ -1,6 +1,6 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
 
---------------   SUF Functions   ------------------------------------
+--------------   oUF Functions   ------------------------------------
 function addon:HotsListing()
 	local _, classFileName = UnitClass('player')
 	local LifebloomSpellId = select(7, GetSpellInfo('Lifebloom'))
@@ -36,7 +36,7 @@ function addon:HotsListing()
 	return {}
 end
 
-function addon:SUF_Buffs(self, point, relativePoint, SizeModifier)
+function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 	if self == nil then
 		return
 	end
@@ -225,7 +225,7 @@ do -- TargetIndicator as an SUIUF module
 			self.TargetIndicator.bg2:Hide()
 		end
 		if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and SUI.DBMod.NamePlates.ShowTarget then
-			if self:GetName() == 'SUF_Spartan_NamePlates' .. C_NamePlate.GetNamePlateForUnit('target'):GetName() then
+			if self:GetName() == 'oUF_Spartan_NamePlates' .. C_NamePlate.GetNamePlateForUnit('target'):GetName() then
 				self.TargetIndicator.bg1:Show()
 				self.TargetIndicator.bg2:Show()
 			end
