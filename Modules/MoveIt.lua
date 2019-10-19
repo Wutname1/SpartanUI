@@ -424,7 +424,7 @@ function module:Options()
 				order = 53,
 				fontSize = 'large'
 			},
-			line6 = {name = '- Alt+Click a mover to reset it', type = 'description', order = 51, fontSize = 'medium'},
+			line6 = {name = '- Alt+Click a mover to reset it', type = 'description', order = 53.5, fontSize = 'medium'},
 			line7 = {
 				name = '- Shift+Click a mover to temporarily hide it',
 				type = 'description',
