@@ -298,7 +298,21 @@ function module:CreateMover(parent, name, text, setDefault)
 	f:SetScript('OnShow', OnShow)
 	f:SetScript('OnMouseWheel', OnMouseWheel)
 
+	local function ParentMouseDown(self)
+		if IsAltKeyDown() and SUI.DB.MoveIt.AltKey then
+			module:MoveIt(name)
+			OnDragStart(self.mover)
+		end
+	end
+	local function ParentMouseUp(self)
+		if IsAltKeyDown() and SUI.DB.MoveIt.AltKey and MoveEnabled then
+			module:MoveIt(name)
+		end
+	end
+
 	parent:SetScript('OnSizeChanged', SizeChanged)
+	parent:HookScript('OnMouseDown', ParentMouseDown)
+	parent:HookScript('OnMouseUp', ParentMouseUp)
 	parent.mover = f
 
 	parent:ClearAllPoints()
@@ -396,10 +410,22 @@ function module:Options()
 		type = 'group',
 		order = 800,
 		args = {
+			AltKey = {
+				name = 'Allow Alt+Dragging to move',
+				type = 'toggle',
+				width = 'double',
+				order = 1,
+				get = function(info)
+					return SUI.DB.MoveIt.AltKey
+				end,
+				set = function(info, val)
+					SUI.DB.MoveIt.AltKey = val
+				end
+			},
 			MoveIt = {
 				name = 'Toggle movers',
 				type = 'execute',
-				order = .1,
+				order = 3,
 				func = function()
 					module:MoveIt()
 				end
@@ -412,12 +438,12 @@ function module:Options()
 				fontSize = 'large'
 			},
 			line3 = {name = '/sui move', type = 'description', order = 51, fontSize = 'medium'},
-			-- line4 = {
-			-- 	name = 'Unitframes can also be moved by holding alt and dragging',
-			-- 	type = 'description',
-			-- 	order = 52,
-			-- 	fontSize = 'medium'
-			-- }
+			line4 = {
+				name = 'Unitframes can also be moved by holding alt and dragging',
+				type = 'description',
+				order = 52,
+				fontSize = 'medium'
+			},
 			line5 = {
 				name = 'When the movement system is enabled you can:',
 				type = 'description',

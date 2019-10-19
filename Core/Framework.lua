@@ -2205,6 +2205,7 @@ local DBdefault = {
 			smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 		},
 		MoveIt = {
+			AltKey = false,
 			movers = {
 				['**'] = {
 					defaultPoint = false,
