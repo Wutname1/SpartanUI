@@ -1037,6 +1037,7 @@ local function CreateUnitFrame(self, unit)
 			AdditionalPower:SetPoint('TOPRIGHT', self.Power, 'BOTTOMRIGHT', 0, (elements.AdditionalPower.offset * -1))
 			AdditionalPower.colorPower = true
 			AdditionalPower:SetStatusBarTexture(Smoothv2)
+			AdditionalPower:Hide()
 
 			AdditionalPower.bg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
 			AdditionalPower.bg:SetAllPoints(AdditionalPower)
