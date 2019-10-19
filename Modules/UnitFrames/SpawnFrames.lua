@@ -340,6 +340,59 @@ local function BuffConstructor(self, unit)
 	return self
 end
 
+local function UpdateAura(self, elapsed)
+	if (self.expiration) then
+		self.expiration = math.max(self.expiration - elapsed, 0)
+
+		if (self.expiration > 0 and self.expiration < 60) then
+			self.Duration:SetFormattedText('%d', self.expiration)
+		else
+			self.Duration:SetText()
+		end
+	end
+end
+
+local function PostCreateAura(element, button)
+	button:SetBackdrop(BACKDROP)
+	button:SetBackdropColor(0, 0, 0)
+	button.cd:SetReverse(true)
+	button.cd:SetHideCountdownNumbers(true)
+	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	button.icon:SetDrawLayer('ARTWORK')
+	-- button:SetScript('OnEnter', OnAuraEnter)
+
+	-- We create a parent for aura strings so that they appear over the cooldown widget
+	local StringParent = CreateFrame('Frame', nil, button)
+	StringParent:SetFrameLevel(20)
+
+	button.count:SetParent(StringParent)
+	button.count:ClearAllPoints()
+	button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
+	button.count:SetFont(SUI:GetFontFace('UnitFrames'), select(2, button.count:GetFont()) - 3)
+
+	local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
+	Duration:SetFont(SUI:GetFontFace('UnitFrames'), 11)
+	Duration:SetPoint('TOPLEFT', button, 0, -1)
+	button.Duration = Duration
+
+	button:HookScript('OnUpdate', UpdateAura)
+end
+
+local function PostUpdateAura(element, unit, button, index)
+	local _, _, _, _, duration, expiration, owner, canStealOrPurge = UnitAura(unit, index, button.filter)
+	if (duration and duration > 0) then
+		button.expiration = expiration - GetTime()
+	else
+		button.expiration = math.huge
+	end
+
+	if (unit == 'target' and canStealOrPurge) then
+		button:SetBackdropColor(0, 1 / 2, 1 / 2)
+	elseif (owner ~= 'player') then
+		button:SetBackdropColor(0, 0, 0)
+	end
+end
+
 local function CreateUnitFrame(self, unit)
 	if (unit ~= 'raid') then
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
@@ -612,6 +665,8 @@ local function CreateUnitFrame(self, unit)
 		Buffs.showType = db.Buffs.showType
 		Buffs.numBuffs = db.Buffs.number
 		Buffs.onlyShowPlayer = db.Buffs.onlyShowPlayer
+		Buffs.PostCreateIcon = PostCreateAura
+		Buffs.PostUpdateIcon = PostUpdateAura
 		Buffs:SetPoint(
 			InverseAnchor(db.Buffs.position.anchor),
 			self,
@@ -634,6 +689,8 @@ local function CreateUnitFrame(self, unit)
 		Debuffs.showType = db.Debuffs.showType
 		Debuffs.numDebuffs = db.Debuffs.number
 		Debuffs.onlyShowPlayer = db.Debuffs.onlyShowPlayer
+		Debuffs.PostCreateIcon = PostCreateAura
+		Debuffs.PostUpdateIcon = PostUpdateAura
 		Debuffs:SetPoint(
 			InverseAnchor(db.Debuffs.position.anchor),
 			self,
