@@ -439,10 +439,10 @@ function module:Options()
 			},
 			line3 = {name = '/sui move', type = 'description', order = 51, fontSize = 'medium'},
 			line4 = {
-				name = 'Unitframes can also be moved by holding alt and dragging',
+				name = '',
 				type = 'description',
 				order = 52,
-				fontSize = 'medium'
+				fontSize = 'large'
 			},
 			line5 = {
 				name = 'When the movement system is enabled you can:',
