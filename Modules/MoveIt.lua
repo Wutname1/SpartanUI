@@ -300,8 +300,21 @@ function module:OnInitialize()
 
 	-- Create Movers
 	--TalkingHeadUI
+	local SetupTalkingHead = function()
+		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
+		module:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', true)
+		TalkingHeadFrame:HookScript(
+			'OnShow',
+			function()
+				TalkingHeadFrame:ClearAllPoints()
+				TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
+			end
+		)
+	end
+	local THUIHolder = CreateFrame('Frame', 'THUIHolder', UIParent)
+	THUIHolder:SetPoint('TOP', UIParent, 'TOP', 0, -18)
 	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
-		module:CreateMover(TalkingHeadFrame, 'TalkingHeadFrameMover', L['Talking Head Frame'])
+		SetupTalkingHead()
 	else
 		--We want the mover to be available immediately, so we load it ourselves
 		local f = CreateFrame('Frame')
@@ -311,25 +324,29 @@ function module:OnInitialize()
 			function(frame, event)
 				frame:UnregisterEvent(event)
 				_G.TalkingHead_LoadUI()
-				module:CreateMover(TalkingHeadFrame, 'TalkingHeadFrameMover', L['Talking Head Frame'])
+				SetupTalkingHead()
 			end
 		)
 	end
+
 	--AltPowerBar
 	if not IsAddOnLoaded('SimplePowerBar') then
-		local holder = CreateFrame('Frame', 'AltPowerBarHolder', E.UIParent)
-		holder:Point('TOP', UIParent, 'TOP', 0, -18)
-		holder:Size(128, 50)
+		local holder = CreateFrame('Frame', 'AltPowerBarHolder', UIParent)
+		holder:SetPoint('TOP', UIParent, 'TOP', 0, -18)
+		holder:SetSize(128, 50)
 
 		_G.PlayerPowerBarAlt:ClearAllPoints()
-		_G.PlayerPowerBarAlt:Point('CENTER', holder, 'CENTER')
+		_G.PlayerPowerBarAlt:SetPoint('CENTER', holder, 'CENTER')
 		_G.PlayerPowerBarAlt:SetParent(holder)
 		_G.PlayerPowerBarAlt.ignoreFramePositionManager = true
 
-		local function Position(bar)
-			bar:SetPoint('CENTER', AltPowerBarHolder, 'CENTER')
-		end
-		hooksecurefunc(_G.PlayerPowerBarAlt, 'ClearAllPoints', Position)
+		hooksecurefunc(
+			_G.PlayerPowerBarAlt,
+			'ClearAllPoints',
+			function(bar)
+				bar:SetPoint('CENTER', AltPowerBarHolder, 'CENTER')
+			end
+		)
 
 		module:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power')
 	end
