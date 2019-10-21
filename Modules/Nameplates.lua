@@ -171,13 +171,13 @@ local PlayerPowerIcons = function(frame, attachPoint)
 			else
 				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
 			end
-			frame.Runes[i]:SetStatusBarTexture(SUI.BarTextures.smooth)
+			frame.Runes[i]:SetStatusBarTexture(SUI.DB.BarTextures.smooth)
 			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
 
 			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
 			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
 			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
-			frame.Runes[i].bg:SetTexture(SUI.BarTextures.smooth)
+			frame.Runes[i].bg:SetTexture(SUI.DB.BarTextures.smooth)
 			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
 			frame.Runes[i].bg.multiplier = 0.64
 			frame.Runes[i]:Hide()
@@ -200,7 +200,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 
 		for index = 1, MaxPower do
 			local Bar = CreateFrame('StatusBar', nil, frame)
-			Bar:SetStatusBarTexture(SUI.BarTextures.smooth)
+			Bar:SetStatusBarTexture(SUI.DB.BarTextures.smooth)
 
 			-- Position and size.
 			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
