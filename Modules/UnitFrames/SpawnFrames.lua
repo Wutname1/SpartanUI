@@ -1081,27 +1081,32 @@ local function CreateUnitFrame(self, unit)
 
 		if SUI.IsClassic then
 			-- Register it with oUF
-			local HappinessIndicator = CreateFrame('Frame', nil, self)
+			local HappinessIndicator = self:CreateTexture(nil, 'OVERLAY')
+			HappinessIndicator.btn = CreateFrame('Frame', nil, self)
 			HappinessIndicator.Sizeable = true
-			local function HIOnEnter()
-				local element = self.PetHappiness
-				if (element.tooltip) then
-					GameTooltip:SetOwner(element, 'ANCHOR_RIGHT')
-					GameTooltip:SetText(element.tooltip)
-					if (element.tooltipDamage) then
-						GameTooltip:AddLine(element.tooltipDamage, '', 1, 1, 1)
-					end
-					if (element.tooltipLoyalty) then
-						GameTooltip:AddLine(element.tooltipLoyalty, '', 1, 1, 1)
-					end
-					GameTooltip:Show()
+			local function HIOnEnter(self)
+				local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
+
+				GameTooltip:SetOwner(HappinessIndicator.btn, 'ANCHOR_RIGHT')
+				GameTooltip:SetText(_G['PET_HAPPINESS' .. happiness])
+				GameTooltip:AddLine(format(PET_DAMAGE_PERCENTAGE, damagePercentage), '', 1, 1, 1)
+				local tooltipLoyalty = nil
+				if (loyaltyRate < 0) then
+					tooltipLoyalty = _G['LOSING_LOYALTY']
+				elseif (loyaltyRate > 0) then
+					tooltipLoyalty = _G['GAINING_LOYALTY']
 				end
+				if (tooltipLoyalty) then
+					GameTooltip:AddLine(tooltipLoyalty, '', 1, 1, 1)
+				end
+				GameTooltip:Show()
 			end
 			local function HIOnLeave()
 				GameTooltip:Hide()
 			end
-			HappinessIndicator:SetScript('OnEnter', HIOnEnter)
-			HappinessIndicator:SetScript('OnLeave', HIOnLeave)
+			HappinessIndicator.btn:SetAllPoints(HappinessIndicator)
+			HappinessIndicator.btn:SetScript('OnEnter', HIOnEnter)
+			HappinessIndicator.btn:SetScript('OnLeave', HIOnLeave)
 			self.HappinessIndicator = HappinessIndicator
 			ElementUpdate(self, 'HappinessIndicator')
 		end
