@@ -191,6 +191,7 @@ function module:OnEnable()
 			(module.CurrentSettings.party.width + module.CurrentSettings.party.columnSpacing)
 
 		local frame = CreateFrame('Frame', 'SUI_UF_party')
+		frame:Hide()
 		frame:SetSize(width, height)
 		module.frames.containers.party = frame
 	end
@@ -213,6 +214,7 @@ function module:OnEnable()
 		local height = module.CurrentSettings.raid.unitsPerColumn * (FrameHeight + module.CurrentSettings.raid.yOffset)
 
 		local frame = CreateFrame('Frame', 'SUI_UF_raid')
+		frame:Hide()
 		frame:SetSize(width, height)
 		module.frames.containers.raid = frame
 	end

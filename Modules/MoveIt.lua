@@ -325,6 +325,10 @@ end
 
 local function MoveTalkingHead()
 	local SetupTalkingHead = function()
+		--Prevent WoW from moving the frame around
+		TalkingHeadFrame.ignoreFramePositionManager = true
+		_G.UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
+
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		module:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', true)
 		TalkingHeadFrame:HookScript(
@@ -337,6 +341,7 @@ local function MoveTalkingHead()
 	end
 	local THUIHolder = CreateFrame('Frame', 'THUIHolder', UIParent)
 	THUIHolder:SetPoint('TOP', UIParent, 'TOP', 0, -18)
+	THUIHolder:Hide()
 	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
 		SetupTalkingHead()
 	else
@@ -359,6 +364,7 @@ local function MoveAltPowerBar()
 		local holder = CreateFrame('Frame', 'AltPowerBarHolder', UIParent)
 		holder:SetPoint('TOP', UIParent, 'TOP', 0, -18)
 		holder:SetSize(128, 50)
+		holder:Hide()
 
 		_G.PlayerPowerBarAlt:ClearAllPoints()
 		_G.PlayerPowerBarAlt:SetPoint('CENTER', holder, 'CENTER')
