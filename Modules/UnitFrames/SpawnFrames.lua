@@ -393,6 +393,21 @@ local function PostUpdateAura(element, unit, button, index)
 	end
 end
 
+local function CalculateHeight(frameName)
+	local elements = module.CurrentSettings[frameName].elements
+	local FrameHeight = 0
+	if elements.Castbar.enabled then
+		FrameHeight = FrameHeight + elements.Castbar.height
+	end
+	if elements.Health.enabled then
+		FrameHeight = FrameHeight + elements.Health.height
+	end
+	if elements.Power.enabled then
+		FrameHeight = FrameHeight + elements.Power.height
+	end
+	return FrameHeight
+end
+
 local function CreateUnitFrame(self, unit)
 	if (unit ~= 'raid') then
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
@@ -577,16 +592,7 @@ local function CreateUnitFrame(self, unit)
 	local function UpdateSize()
 		local elements = module.CurrentSettings[unit].elements
 		-- Find the Height of the frame
-		local FrameHeight = 0
-		if elements.Castbar.enabled then
-			FrameHeight = FrameHeight + elements.Castbar.height
-		end
-		if elements.Health.enabled then
-			FrameHeight = FrameHeight + elements.Health.height
-		end
-		if elements.Power.enabled then
-			FrameHeight = FrameHeight + elements.Power.height
-		end
+		local FrameHeight = CalculateHeight(unit)
 
 		-- General
 		if not InCombatLockdown() then
@@ -1107,6 +1113,7 @@ local function CreateUnitFrame(self, unit)
 			HappinessIndicator.btn:SetAllPoints(HappinessIndicator)
 			HappinessIndicator.btn:SetScript('OnEnter', HIOnEnter)
 			HappinessIndicator.btn:SetScript('OnLeave', HIOnLeave)
+			HappinessIndicator:Hide()
 			self.HappinessIndicator = HappinessIndicator
 			ElementUpdate(self, 'HappinessIndicator')
 		end
@@ -1289,6 +1296,7 @@ end
 
 SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
 
+
 function module:SpawnFrames()
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
 
@@ -1357,23 +1365,9 @@ function module:SpawnFrames()
 		'initial-anchor',
 		'TOPLEFT',
 		'oUF-initialConfigFunction',
-		([[
-			local elements = module.CurrentSettings.party.elements
-			local FrameHeight = 0
-			if elements.Castbar.enabled then
-				FrameHeight = FrameHeight + elements.Castbar.height
-			end
-			if elements.Health.enabled then
-				FrameHeight = FrameHeight + elements.Health.height
-			end
-			if elements.Power.enabled then
-				FrameHeight = FrameHeight + elements.Power.height
-			end
-
-			self:SetSize(module.CurrentSettings.party.width, FrameHeight)
-			self:EnableMouse(enable)
-			]])
+		('self:SetWidth(%d) self:SetHeight(%d)'):format(module.CurrentSettings.party.width, CalculateHeight('party'))
 	)
+	-- self:EnableMouse(enable)
 	party:SetPoint('TOPLEFT', SUI_UF_party, 'TOPLEFT')
 	module.frames.party = party
 
@@ -1418,22 +1412,7 @@ function module:SpawnFrames()
 		'columnAnchorPoint',
 		'LEFT',
 		'oUF-initialConfigFunction',
-		([[
-			local elements = module.CurrentSettings.raid.elements
-			local FrameHeight = 0
-			if elements.Castbar.enabled then
-				FrameHeight = FrameHeight + elements.Castbar.height
-			end
-			if elements.Health.enabled then
-				FrameHeight = FrameHeight + elements.Health.height
-			end
-			if elements.Power.enabled then
-				FrameHeight = FrameHeight + elements.Power.height
-			end
-
-			self:SetSize(module.CurrentSettings.raid.width, FrameHeight)
-			self:EnableMouse(enable)
-			]])
+		('self:SetWidth(%d) self:SetHeight(%d)'):format(module.CurrentSettings.raid.width, CalculateHeight('raid'))
 	)
 	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
 	module.frames.raid = raid
@@ -1496,15 +1475,13 @@ function module:SpawnFrames()
 end
 
 function module:UpdateGroupFrames(event, ...)
-	local SUIPartyFrame = module.frames.party
-	for _, PartyUnit in ipairs({SUIPartyFrame:GetChildren()}) do
-		PartyUnit:UpdateAll()
-	end
+	module.frames.party:UpdateAll()
+	module.frames.raid:UpdateAll()
 
-	local SUIRaidFrame = module.frames.raid
-	for _, RaidUnit in ipairs({SUIRaidFrame:GetChildren()}) do
-		RaidUnit:UpdateAll()
-	end
+	-- local SUIRaidFrame = module.frames.raid
+	-- for _, RaidUnit in ipairs({SUIRaidFrame:GetChildren()}) do
+	-- 	RaidUnit:UpdateAll()
+	-- end
 
 	-- if module.CurrentSettings.raid.showRaid and IsInRaid() then
 	-- 	SUIRaidFrame:Show()
