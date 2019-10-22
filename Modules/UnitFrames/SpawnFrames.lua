@@ -659,7 +659,7 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 
-	local function UpdateAuras()
+	local function UpdateAuras(self)
 		local db = module.CurrentSettings[unit].auras
 
 		local Buffs = self.Buffs
@@ -669,7 +669,7 @@ local function CreateUnitFrame(self, unit)
 		Buffs['growth-y'] = db.Buffs.growthy
 		Buffs.spacing = db.Buffs.spacing
 		Buffs.showType = db.Buffs.showType
-		Buffs.numBuffs = db.Buffs.number
+		Buffs.num = db.Buffs.number
 		Buffs.onlyShowPlayer = db.Buffs.onlyShowPlayer
 		Buffs.PostCreateIcon = PostCreateAura
 		Buffs.PostUpdateIcon = PostUpdateAura
@@ -680,8 +680,10 @@ local function CreateUnitFrame(self, unit)
 			db.Buffs.position.x,
 			db.Buffs.position.y
 		)
+		local w = (db.Buffs.number / db.Buffs.rows)
+		if w > 1.5 then w = 1.5 end
 		Buffs:SetSize(
-			(db.Buffs.size + db.Buffs.spacing) * (db.Buffs.number / db.Buffs.rows),
+			(db.Buffs.size + db.Buffs.spacing) * w,
 			(db.Buffs.spacing + db.Buffs.size) * db.Buffs.rows
 		)
 
@@ -693,7 +695,7 @@ local function CreateUnitFrame(self, unit)
 		Debuffs['growth-y'] = db.Debuffs.growthy
 		Debuffs.spacing = db.Debuffs.spacing
 		Debuffs.showType = db.Debuffs.showType
-		Debuffs.numDebuffs = db.Debuffs.number
+		Debuffs.num = db.Debuffs.number
 		Debuffs.onlyShowPlayer = db.Debuffs.onlyShowPlayer
 		Debuffs.PostCreateIcon = PostCreateAura
 		Debuffs.PostUpdateIcon = PostUpdateAura
@@ -704,11 +706,13 @@ local function CreateUnitFrame(self, unit)
 			db.Debuffs.position.x,
 			db.Debuffs.position.y
 		)
+		w = (db.Debuffs.number / db.Debuffs.rows)
+		if w > 1.5 then w = 1.5 end
 		Debuffs:SetSize(
-			(db.Debuffs.size + db.Debuffs.spacing) * (db.Buffs.number / db.Buffs.rows),
+			(db.Debuffs.size + db.Debuffs.spacing) * w,
 			(db.Debuffs.spacing + db.Debuffs.size) * db.Debuffs.rows
 		)
-
+		self:UpdateAllElements('ForceUpdate')
 		-- self.Buffs:PostUpdate(unit, 'Buffs')
 		-- self.Debuffs:PostUpdate(unit, 'Buffs')
 	end
