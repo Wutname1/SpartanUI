@@ -1085,13 +1085,16 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'Name')
 		self:Tag(self.Name, elements.Name.text)
 
-		if SUI.IsClassic then
+		if SUI.IsClassic and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
 			-- Register it with oUF
 			local HappinessIndicator = self:CreateTexture(nil, 'OVERLAY')
 			HappinessIndicator.btn = CreateFrame('Frame', nil, self)
 			HappinessIndicator.Sizeable = true
 			local function HIOnEnter(self)
 				local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
+				if not happiness then
+					return
+				end
 
 				GameTooltip:SetOwner(HappinessIndicator.btn, 'ANCHOR_RIGHT')
 				GameTooltip:SetText(_G['PET_HAPPINESS' .. happiness])
@@ -1295,7 +1298,6 @@ local function CreateUnitFrame(self, unit)
 end
 
 SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
-
 
 function module:SpawnFrames()
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
