@@ -291,7 +291,7 @@ hooksecurefunc(
 
 local createBugWindow = function()
 	-- Create window
-	window = StdUi:Window(nil, '', 480, 200)
+	window = StdUi:Window(nil, 480, 200)
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
 

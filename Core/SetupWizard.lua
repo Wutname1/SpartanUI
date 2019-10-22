@@ -215,7 +215,7 @@ function module:DisplayPage(PageData)
 end
 
 function module:SetupWizard(RequiredPagesOnly)
-	module.window = StdUi:Window(nil, '', 650, 500)
+	module.window = StdUi:Window(nil, 650, 500)
 	module.window.StdUi = StdUi
 	module.window:SetPoint('CENTER', 0, 0)
 	module.window:SetFrameStrata('DIALOG')

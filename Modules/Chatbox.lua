@@ -184,7 +184,7 @@ function module:OnInitialize()
 
 	ChatLevelLog = SUI.DBG.ChatLevelLog
 	-- Create popup
-	popup = StdUi:Window(nil, '', 480, 200)
+	popup = StdUi:Window(nil, 480, 200)
 	popup:SetPoint('CENTER', 0, 0)
 	popup:SetFrameStrata('DIALOG')
 
