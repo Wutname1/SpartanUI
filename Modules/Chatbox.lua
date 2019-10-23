@@ -198,7 +198,7 @@ function module:OnInitialize()
 	popup.btnClose = StdUi:Button(popup, 150, 20, 'CLOSE')
 
 	-- Position
-	StdUi:GlueTop(popup.editBox.panel, popup, 0, -50)
+	StdUi:GlueTop(popup.editBox, popup, 0, -50)
 	popup.btnClose:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
 
 	-- Actions

@@ -384,7 +384,7 @@ local function MoveAltPowerBar()
 end
 
 function module:OnInitialize()
-	coordFrame = StdUi:Window(nil, '', 480, 200)
+	coordFrame = StdUi:Window(nil, 480, 200)
 	coordFrame:SetFrameStrata('DIALOG')
 
 	coordFrame.Title = StdUi:Texture(coordFrame, 104, 30, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
