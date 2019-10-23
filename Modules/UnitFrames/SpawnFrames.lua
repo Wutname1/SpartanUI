@@ -6,12 +6,12 @@ local RaidFrames = {}
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = SUI.DB.BarTextures.smooth
 local FramesList = {
-	[1] = 'pet',
-	[2] = 'target',
-	[3] = 'targettarget',
-	[4] = 'focus',
-	[5] = 'focustarget',
-	[6] = 'player'
+	'pet',
+	'target',
+	'targettarget',
+	'focus',
+	'focustarget',
+	'player'
 }
 local elementList = {
 	'Portrait',
@@ -1312,6 +1312,11 @@ function module:SpawnFrames()
 
 		-- Disable objects based on settings
 		module.frames[b]:UpdateAll()
+
+		if not module.CurrentSettings[b].enabled then
+			module.frames[b]:Disable()
+			SUI.opt.args.UnitFrames.args[b].disabled = true
+		end
 	end
 
 	-- Area Frames
@@ -1451,12 +1456,28 @@ function module:SpawnFrames()
 			end
 		end
 	end
+	local function GroupFrameEnable(self)
+		for _, f in ipairs({self:GetChildren()}) do
+			if f.Enable then
+				f:Enable()
+			end
+		end
+	end
+	local function GroupFrameDisable(self)
+		for _, f in ipairs({self:GetChildren()}) do
+			if f.Disable then
+				f:Disable()
+			end
+		end
+	end
 
 	for _, group in ipairs({'raid', 'party'}) do
 		module.frames[group].UpdateAll = GroupFrameUpdateAll
 		module.frames[group].ElementUpdate = GroupFrameElementUpdate
 		module.frames[group].UpdateSize = GroupFrameUpdateSize
 		module.frames[group].UpdateAuras = GroupFrameUpdateAuras
+		module.frames[group].Enable = GroupFrameEnable
+		module.frames[group].Disable = GroupFrameDisable
 	end
 
 	local function GroupWatcher(event)

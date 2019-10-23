@@ -1456,7 +1456,7 @@ local DBdefault = {
 			Style = 'War',
 			FrameOptions = {
 				['**'] = {
-					enabled = false,
+					enabled = true,
 					width = 180,
 					moved = false,
 					position = {
@@ -1966,6 +1966,16 @@ local DBdefault = {
 				focus = {
 					enabled = true,
 					width = 100,
+					auras = {
+						Buffs = {
+							enabled = true,
+							onlyShowPlayer = true
+						},
+						Debuffs = {
+							enabled = true,
+							onlyShowPlayer = true
+						}
+					},
 					elements = {
 						Castbar = {
 							enabled = true

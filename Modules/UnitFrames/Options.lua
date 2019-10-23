@@ -1848,6 +1848,13 @@ function module:InitializeOptions()
 						end
 					}
 				}
+			},
+			EnabledFrame = {
+				name = 'Enabled frames',
+				type = 'group',
+				inline = true,
+				order = 90,
+				args = {}
 			}
 		}
 	}
@@ -1860,6 +1867,28 @@ function module:InitializeOptions()
 		'Transparent',
 		'Minimal'
 	}
+
+	for _, v in ipairs(frameList) do
+		SUI.opt.args.UnitFrames.args.EnabledFrame.args[v] = {
+			name = v,
+			type = 'toggle',
+			get = function(info)
+				return module.CurrentSettings[v].enabled
+			end,
+			set = function(info, val)
+				module.CurrentSettings[v].enabled = val
+				SUI.opt.args.UnitFrames.args[v].disabled = (not val)
+
+				if module.frames[v] then
+					if val then
+						module.frames[v]:Enable()
+					elseif module.frames[v] then
+						module.frames[v]:Disable()
+					end
+				end
+			end
+		}
+	end
 
 	-- Build style Buttons
 	for _, skin in pairs(Skins) do

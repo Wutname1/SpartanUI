@@ -219,6 +219,9 @@ function module:OnEnable()
 		module.frames.containers.raid = frame
 	end
 
+	-- Build options
+	module:InitializeOptions()
+
 	-- Spawn Frames
 	module:SpawnFrames()
 
@@ -241,9 +244,6 @@ function module:OnEnable()
 	-- Create Party & Raid Mover
 	MoveIt:CreateMover(module.frames.containers.party, 'Party', nil, true)
 	MoveIt:CreateMover(module.frames.containers.raid, 'Raid', nil, true)
-
-	-- Build options
-	module:InitializeOptions()
 end
 
 local blockedFunctions = {
