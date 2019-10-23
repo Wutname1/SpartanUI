@@ -681,7 +681,7 @@ local function CreateUnitFrame(self, unit)
 			db.Buffs.position.y
 		)
 		local w = (db.Buffs.number / db.Buffs.rows)
-		if w > 1.5 then w = 1.5 end
+		if w < 1.5 then w = 1.5 end
 		Buffs:SetSize(
 			(db.Buffs.size + db.Buffs.spacing) * w,
 			(db.Buffs.spacing + db.Buffs.size) * db.Buffs.rows
@@ -707,7 +707,7 @@ local function CreateUnitFrame(self, unit)
 			db.Debuffs.position.y
 		)
 		w = (db.Debuffs.number / db.Debuffs.rows)
-		if w > 1.5 then w = 1.5 end
+		if w < 1.5 then w = 1.5 end
 		Debuffs:SetSize(
 			(db.Debuffs.size + db.Debuffs.spacing) * w,
 			(db.Debuffs.spacing + db.Debuffs.size) * db.Debuffs.rows
