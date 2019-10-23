@@ -1472,6 +1472,12 @@ local DBdefault = {
 							y = 0,
 							graphic = ''
 						},
+						bg = {
+							enabled = false,
+							x = 0,
+							y = 0,
+							graphic = ''
+						},
 						bottom = {
 							enabled = false,
 							x = 0,

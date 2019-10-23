@@ -30,6 +30,7 @@ module.frames = {
 	raid = {},
 	containers = {}
 }
+module.Artwork = {}
 ----------------------------------------------------------------------------------------------------
 -- New Unitframe workflow
 --

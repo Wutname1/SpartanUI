@@ -59,6 +59,7 @@ core\Framework.xml
 # Load Styles
 Themes\Classic\Style.xml
 Themes\War\Style.xml
+Themes\Arcane\Style.xml
 Themes\Fel\Style.xml
 Themes\Minimal\Style.xml
 Themes\Transparent\Style.xml

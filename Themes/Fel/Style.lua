@@ -14,6 +14,35 @@ function module:OnInitialize()
 	if (SUI.DBMod.Artwork.Style == 'Fel') then
 		module:Init()
 	end
+
+	local UnitFrames = SUI:GetModule('Component_UnitFrames')
+	UnitFrames.Artwork.Fel = {
+		top = {
+			path = 'Interface\\Scenarios\\LegionInvasion',
+			-- path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+			TexCoord = {0.140625, 0.765625, 0, 0.1484375},
+			PVPAlpha = .4
+		},
+		bg = {
+			path = 'Interface\\Scenarios\\LegionInvasion',
+			-- path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+			TexCoord = {.02, .385, .45, .575},
+			PVPAlpha = .4
+		},
+		bottom = {
+			path = 'Interface\\Scenarios\\LegionInvasion',
+			-- path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+			TexCoord = {0.140625, 0.765625, 0.1484375, 0.265625},
+			PVPAlpha = .4
+		}
+	}
+	UnitFrames.Artwork.Digital = {
+		bg = {
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Fel-Box',
+			TexCoord = {0.0234375, 0.9765625, 0.265625, 0.7734375},
+			PVPAlpha = .4
+		}
+	}
 end
 
 function module:Init()
