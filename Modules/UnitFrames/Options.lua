@@ -1786,7 +1786,16 @@ local function AddGroupOptions(frameName)
 				return module.CurrentSettings[frameName].mode
 			end,
 			set = function(info, val)
+				--Update memory
 				module.CurrentSettings[frameName].mode = val
+				--Update the DB
+				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].mode = val
+				--Update the screen
+				local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
+				if val == 'GROUP' then
+					groupingOrder = '1,2,3,4,5,6,7,8'
+				end
+				SUIRaidFrame:SetAttribute('groupingOrder', groupingOrder)
 			end
 		}
 	end
