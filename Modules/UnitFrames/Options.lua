@@ -258,188 +258,83 @@ local function AddGeneralOptions(frameName)
 end
 
 local function AddArtworkOptions(frameName)
+	local ArtPositions = {['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
+	local function ArtworkOptionUpdate(pos, option, val)
+		--Update memory
+		module.CurrentSettings[frameName].artwork[pos][option] = val
+		--Update the DB
+		SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork[pos][option] = val
+		--Update the screen
+		module.frames[frameName]:UpdateArtwork()
+	end
 	SUI.opt.args.UnitFrames.args[frameName].args['artwork'] = {
 		name = 'Artwork',
 		type = 'group',
 		order = 20,
-		args = {
-			top = {
-				name = 'Top',
-				type = 'group',
-				order = 1,
-				args = {
-					enabled = {
-						name = 'Enabled',
-						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].artwork.top.enabled
-						end,
-						set = function(info, val)
-							-- --Update memory
-							-- module.CurrentSettings[frameName].artwork.top.enabled = val
-							-- --Update the DB
-							-- SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.top.enabled = val
-						end
-					},
-					StyleDropdown = {
-						name = 'Current Style',
-						type = 'select',
-						order = 2,
-						values = {[''] = 'None'},
-						get = function(info)
-							return module.CurrentSettings[frameName].artwork.top.graphic
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].artwork.top.graphic = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.top.graphic = val
-						end
-					},
-					style = {
-						name = 'Style',
-						type = 'group',
-						order = 3,
-						inline = true,
-						args = {}
-					}
-				}
-			},
-			bg = {
-				name = 'Background',
-				type = 'group',
-				order = 2,
-				args = {
-					enabled = {
-						name = 'Enabled',
-						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].artwork.bg.enabled
-						end,
-						set = function(info, val)
-							-- --Update memory
-							-- module.CurrentSettings[frameName].artwork.bg.enabled = val
-							-- --Update the DB
-							-- SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.bg.enabled = val
-						end
-					},
-					StyleDropdown = {
-						name = 'Current Style',
-						type = 'select',
-						order = 2,
-						values = {[''] = 'None'},
-						get = function(info)
-							return module.CurrentSettings[frameName].artwork.bg.graphic
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].artwork.bg.graphic = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.bg.graphic = val
-						end
-					},
-					style = {
-						name = 'Style',
-						type = 'group',
-						order = 3,
-						inline = true,
-						args = {}
-					}
-				}
-			},
-			bottom = {
-				name = 'Bottom',
-				type = 'group',
-				order = 3,
-				args = {
-					enabled = {
-						name = 'Enabled',
-						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return module.CurrentSettings[frameName].artwork.bottom.enabled
-						end,
-						set = function(info, val)
-							-- --Update memory
-							-- module.CurrentSettings[frameName].artwork.bottom.enabled = val
-							-- --Update the DB
-							-- SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.bottom.enabled = val
-						end
-					},
-					StyleDropdown = {
-						name = 'Current Style',
-						type = 'select',
-						order = 2,
-						values = {[''] = 'None'},
-						get = function(info)
-							return module.CurrentSettings[frameName].artwork.bottom.graphic
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].artwork.bottom.graphic = val
-							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork.bottom.graphic = val
-						end
-					},
-					style = {
-						name = 'Style',
-						type = 'group',
-						order = 3,
-						inline = true,
-						args = {}
-					}
+		args = {}
+	}
+	local i = 1
+	for position, DisplayName in ipairs(ArtPositions) do
+		SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position] = {
+			name = DisplayName,
+			type = 'group',
+			order = i,
+			args = {
+				enabled = {
+					name = 'Enabled',
+					type = 'toggle',
+					order = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].artwork[position].enabled
+					end,
+					set = function(info, val)
+						ArtworkOptionUpdate(position, 'enabled', val)
+					end
+				},
+				StyleDropdown = {
+					name = 'Current Style',
+					type = 'select',
+					order = 2,
+					values = {[''] = 'None'},
+					get = function(info)
+						return module.CurrentSettings[frameName].artwork[position].graphic
+					end,
+					set = function(info, val)
+						ArtworkOptionUpdate(position, 'graphic', val)
+					end
+				},
+				style = {
+					name = 'Style',
+					type = 'group',
+					order = 3,
+					inline = true,
+					args = {}
 				}
 			}
 		}
-	}
+		i = i + 1
+	end
 
 	for Name, data in pairs(module.Artwork) do
-		local displayName = (data.name or Name)
 		-- if data.full then
 		-- 	if data.full.perUnit and not data[frameName] then
 		-- 		return
 		-- 	end
 		-- end
-		if data.top then
-			SUI.opt.args.UnitFrames.args[frameName].args.artwork.args.top.args.style.args[Name] = {
-				name = displayName,
-				width = 'normal',
-				type = 'description',
-				image = function()
-					return data.top.path, (data.top.x or 160), (data.top.y or 40)
-				end,
-				imageCoords = function()
-					return data.top.TexCoord
-				end
-			}
-		end
-		if data.bg then
-			SUI.opt.args.UnitFrames.args[frameName].args.artwork.args.bg.args.style.args[Name] = {
-				name = displayName,
-				width = 'normal',
-				type = 'description',
-				image = function()
-					return data.bg.path, (data.bg.x or 120), (data.bg.y or 40)
-				end,
-				imageCoords = function()
-					return data.bg.TexCoord
-				end
-			}
-		end
-		if data.bottom then
-			SUI.opt.args.UnitFrames.args[frameName].args.artwork.args.bottom.args.style.args[Name] = {
-				name = displayName,
-				width = 'normal',
-				type = 'description',
-				image = function()
-					return data.bottom.path, (data.bottom.x or 120), (data.bottom.y or 40)
-				end,
-				imageCoords = function()
-					return data.bottom.TexCoord
-				end
-			}
+		for position, _ in ipairs(ArtPositions) do
+			if data[position] then
+				SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args.style.args[Name] = {
+					name = (data.name or Name),
+					width = 'normal',
+					type = 'description',
+					image = function()
+						return data[position].path, (data[position].x or 160), (data[position].y or 40)
+					end,
+					imageCoords = function()
+						return data[position].TexCoord
+					end
+				}
+			end
 		end
 	end
 end

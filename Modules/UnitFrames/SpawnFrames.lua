@@ -522,6 +522,10 @@ local function CreateUnitFrame(self, unit)
 		self:UpdateTags()
 	end
 
+	local function UpdateArtwork()
+
+	end
+
 	local function ElementUpdate(self, elementName)
 		if not self[elementName] then
 			return
@@ -718,6 +722,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	self.UpdateAll = UpdateAll
+	self.UpdateArtwork = UpdateArtwork
 	self.UpdateSize = UpdateSize
 	self.ElementUpdate = ElementUpdate
 	self.UpdateAuras = UpdateAuras
@@ -1470,9 +1475,17 @@ function module:SpawnFrames()
 			end
 		end
 	end
+	local function GroupFrameUpdateArtwork(self)
+		for _, f in ipairs({self:GetChildren()}) do
+			if f.UpdateArtwork then
+				f:UpdateArtwork()
+			end
+		end
+	end
 
 	for _, group in ipairs({'raid', 'party'}) do
 		module.frames[group].UpdateAll = GroupFrameUpdateAll
+		module.frames[group].UpdateArtwork = GroupFrameUpdateArtwork
 		module.frames[group].ElementUpdate = GroupFrameElementUpdate
 		module.frames[group].UpdateSize = GroupFrameUpdateSize
 		module.frames[group].UpdateAuras = GroupFrameUpdateAuras
