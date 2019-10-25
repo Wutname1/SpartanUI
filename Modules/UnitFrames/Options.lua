@@ -274,7 +274,7 @@ local function AddArtworkOptions(frameName)
 		args = {}
 	}
 	local i = 1
-	for position, DisplayName in ipairs(ArtPositions) do
+	for position, DisplayName in pairs(ArtPositions) do
 		SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position] = {
 			name = DisplayName,
 			type = 'group',
@@ -321,7 +321,7 @@ local function AddArtworkOptions(frameName)
 		-- 		return
 		-- 	end
 		-- end
-		for position, _ in ipairs(ArtPositions) do
+		for position, _ in pairs(ArtPositions) do
 			if data[position] then
 				SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args.style.args[Name] = {
 					name = (data.name or Name),
