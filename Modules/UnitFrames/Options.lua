@@ -1795,7 +1795,7 @@ local function AddGroupOptions(frameName)
 				if val == 'GROUP' then
 					groupingOrder = '1,2,3,4,5,6,7,8'
 				end
-				SUIRaidFrame:SetAttribute('groupingOrder', groupingOrder)
+				module.frames.raid:SetAttribute('groupingOrder', groupingOrder)
 			end
 		}
 	end
