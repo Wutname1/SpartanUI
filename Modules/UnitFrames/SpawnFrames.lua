@@ -314,7 +314,23 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	local function UpdateArtwork()
+		local ArtPositions = {'top', 'bg', 'bottom', 'full'}
+		for _, pos in ipairs(ArtPositions) do
+			local ArtSettings = module.CurrentSettings[unit].artwork[pos]
+			local ArtStyle = ArtPosSettings.graphic
+			local ArtData = module.Artwork[ArtStyle][pos]
 
+			if ArtSettings.enabled then
+				if ArtData.TexCoord then
+					self.artwork[pos]:SetTexCoord(unpack(ArtData.TexCoord))
+				end
+				if ArtData.Colorable then
+					self.artwork.bottom:SetVertexColor(0, 0, 0, .6)
+				end
+				-- self.artwork.top:SetAllPoints(self)
+				self.artwork.top:SetTexture(ArtData.path)
+			end
+		end
 	end
 
 	local function ElementUpdate(self, elementName)
@@ -520,7 +536,6 @@ local function CreateUnitFrame(self, unit)
 
 	self.UpdateSize()
 
-	local artwork = module.CurrentSettings[unit].artwork
 	local elements = module.CurrentSettings[unit].elements
 
 	do -- General setup
@@ -529,17 +544,10 @@ local function CreateUnitFrame(self, unit)
 		self.artwork:SetFrameLevel(2)
 		self.artwork:SetAllPoints()
 
-		-- self.artwork.top = self.artwork:CreateTexture(nil, 'BORDER')
-		-- self.artwork.top:SetAllPoints(self)
-		-- self.artwork.top:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
-		-- self.artwork.top:SetTexCoord(unpack(Images.Horde.bg.Coords))
-		-- self.artwork.top:SetVertexColor(0, 0, 0, .6)
-
-		-- self.artwork.bottom = self.artwork:CreateTexture(nil, 'BORDER')
-		-- self.artwork.bottom:SetAllPoints(self)
-		-- self.artwork.bottom:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
-		-- self.artwork.bottom:SetTexCoord(unpack(Images.Horde.bg.Coords))
-		-- self.artwork.bottom:SetVertexColor(0, 0, 0, .6)
+		self.artwork.top = self.artwork:CreateTexture(nil, 'BORDER')
+		self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
+		self.artwork.bottom = self.artwork:CreateTexture(nil, 'BORDER')
+		self.artwork.full = self.artwork:CreateTexture(nil, 'BACKGROUND')
 
 		-- 3D Portrait
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
