@@ -211,7 +211,7 @@ local TooltipSetItem = function(self)
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
-		if not SUI.IsClassic then
+		if SUI.IsRetail then
 			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
 				style = {
 					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
@@ -354,7 +354,7 @@ local TooltipSetUnit = function(self)
 			end
 		end
 
-		if not SUI.IsClassic and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
+		if SUI.IsRetail and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
 			unitLevel = UnitBattlePetLevel(unit)
 			local ab = C_PetJournal.GetPetTeamAverageLevel()
 			if ab then
@@ -382,7 +382,7 @@ local TooltipSetUnit = function(self)
 
 	local unitTarget = unit .. 'target'
 	if unit ~= 'player' and UnitExists(unitTarget) then
-		if UnitIsPlayer(unitTarget) and (not SUI.IsClassic and not UnitHasVehicleUI(unitTarget)) then
+		if UnitIsPlayer(unitTarget) and (SUI.IsRetail and not UnitHasVehicleUI(unitTarget)) then
 			totColor = RAID_CLASS_COLORS[select(2, UnitClass(unitTarget))]
 		else
 			totColor = FACTION_BAR_COLORS[UnitReaction(unitTarget, 'player')]

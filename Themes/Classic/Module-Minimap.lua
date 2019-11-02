@@ -86,7 +86,7 @@ function module:MiniMap()
 		end
 	)
 
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		petbattleWatcher:SetScript(
 			'OnEvent',
 			function(self, event)

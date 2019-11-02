@@ -64,7 +64,7 @@ function module:OnEnable()
 		end
 	)
 
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
 	end
 	CombatLog_Watcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
@@ -375,7 +375,7 @@ function module:FirstLaunch()
 			StdUi:GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
 			StdUi:GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
 
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				cLog.options.raidmythic = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
 				cLog.options.raidheroic = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
 				cLog.options.raidnormal = StdUi:Checkbox(cLog, L['Normal'], 150, 20)

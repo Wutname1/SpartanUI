@@ -131,215 +131,6 @@ local function customFilter(
 	return false
 end
 
-local function BuffConstructor(self, unit)
-	-- Build buffs
-	if SUI.DB.Styles[CurStyle].Frames[unit] then
-		local Buffsize = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.size
-		local Debuffsize = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.size
-		local BuffsMode = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode
-		local DebuffsMode = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode
-
-		--Determine how many we can fit for Hybrid Display
-		local split = 4
-		local Spacer = 3
-		local BuffWidth = 0
-		local BuffWidth2 = 0
-		local DeBuffWidth = 0
-		local DeBuffWidth2 = 0
-		for index = 1, 10 do
-			if
-				((index * (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / split))
-			 then
-				BuffWidth = index
-			end
-			if ((index * (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2)) then
-				BuffWidth2 = index
-			end
-		end
-		for index = 1, 10 do
-			if
-				((index * (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <=
-					(self.BuffAnchor:GetWidth() / split))
-			 then
-				DeBuffWidth = index
-			end
-			if
-				((index * (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing)) <= (self.BuffAnchor:GetWidth() / 2))
-			 then
-				DeBuffWidth2 = index
-			end
-		end
-		local BuffWidthActual = (Buffsize + SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing) * BuffWidth
-		local DeBuffWidthActual = (Debuffsize + SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing) * DeBuffWidth
-
-		-- Position Bar
-		local BarPosition = function(self, pos)
-			-- Reminder on how position is defined
-			-- * = Icons
-			-- - = Bars
-			--Pos1 -------**
-			--Pos2 **-----**
-			--Pos3 **-------
-			if pos == 1 then
-				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
-				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', ((DeBuffWidthActual + Spacer) * -1), 0)
-			elseif pos == 2 then
-				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', (BuffWidthActual + Spacer), 0)
-				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', ((DeBuffWidthActual + Spacer) * -1), 0)
-			else --pos 3
-				self.AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', (BuffWidthActual + Spacer), 0)
-				self.AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
-			end
-			return self
-		end
-
-		--Buff Icons
-		local Buffs = CreateFrame('Frame', nil, self)
-		--Debuff Icons
-		local Debuffs = CreateFrame('Frame', nil, self)
-		-- Setup icons if needed
-		local iconFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-			if caster == 'player' and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
-				return true
-			elseif caster ~= 'player' then
-				return true
-			end
-		end
-		if BuffsMode ~= 'bars' and BuffsMode ~= 'disabled' then
-			Buffs:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
-			Buffs.size = Buffsize
-			Buffs['growth-x'] = 'RIGHT'
-			Buffs['growth-y'] = 'UP'
-			Buffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.spacing
-			Buffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.showType
-			Buffs.numBuffs = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Number
-			Buffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.onlyShowPlayer
-			Buffs:SetSize(BuffWidthActual, (Buffsize * (Buffs.numBuffs / BuffWidth)))
-			Buffs.PostUpdate = PostUpdateAura
-			if BuffsMode ~= 'icons' then
-				Buffs.CustomFilter = iconFilter
-			end
-			self.Buffs = Buffs
-		end
-		if DebuffsMode ~= 'bars' and DebuffsMode ~= 'disabled' then
-			Debuffs:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
-			Debuffs.size = Debuffsize
-			Debuffs.initialAnchor = 'BOTTOMRIGHT'
-			Debuffs['growth-x'] = 'LEFT'
-			Debuffs['growth-y'] = 'UP'
-			Debuffs.spacing = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.spacing
-			Debuffs.showType = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.showType
-			Debuffs.numDebuffs = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Number
-			Debuffs.onlyShowPlayer = SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.onlyShowPlayer
-			Debuffs:SetSize(DeBuffWidthActual, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth)))
-			Debuffs.PostUpdate = PostUpdateAura
-			if DebuffsMode ~= 'icons' then
-				Debuffs.CustomFilter = iconFilter
-			end
-			self.Debuffs = Debuffs
-		end
-
-		--Bars
-		local AuraBars = CreateFrame('Frame', nil, self)
-		AuraBars:SetHeight(1)
-		AuraBars.auraBarTexture = Smoothv2
-		AuraBars.PostUpdate = PostUpdateAura
-		AuraBars.spellTimeFont = SUI:GetFontFace('Player')
-		AuraBars.spellNameFont = SUI:GetFontFace('Player')
-
-		--Hots and Dots Filter
-		local Barfilter = function(name, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable, spellID)
-			--Only Show things with a SHORT durration (HOTS and DOTS)
-			if duration > 0 and duration < 60 then
-				return true
-			end
-		end
-
-		-- Determine Buff Bar locaion
-		if BuffsMode == 'bars' and DebuffsMode == 'icons' then
-			AuraBars.Buffs = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 1)
-		elseif BuffsMode == 'bars' and DebuffsMode == 'both' then
-			AuraBars.ShowAll = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 1)
-		elseif BuffsMode == 'bars' and (DebuffsMode == 'bars' or DebuffsMode == 'disabled') then
-			if DebuffsMode == 'disabled' then
-				AuraBars.Buffs = true
-			else
-				AuraBars.ShowAll = true
-			end
-			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
-			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
-			self.AuraBars = AuraBars
-		elseif BuffsMode == 'icons' and DebuffsMode == 'icons' then
-			Buffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Buffsize * (Buffs.numBuffs / BuffWidth2)))
-			Debuffs:SetSize(self.BuffAnchor:GetWidth() / 2, (Debuffsize * (Debuffs.numDebuffs / DeBuffWidth2)))
-		elseif BuffsMode == 'icons' and DebuffsMode == 'both' then
-			AuraBars.Debuffs = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 2)
-		elseif BuffsMode == 'icons' and DebuffsMode == 'bars' then
-			AuraBars.Debuffs = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 3)
-		elseif BuffsMode == 'icons' and DebuffsMode == 'disabled' then
-			Buffs:SetSize(self.BuffAnchor:GetWidth(), (Buffsize * (Buffs.numBuffs / self.BuffAnchor:GetWidth())))
-		elseif BuffsMode == 'both' and DebuffsMode == 'icons' then
-			AuraBars.Buffs = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 2)
-		elseif BuffsMode == 'both' and DebuffsMode == 'both' then
-			AuraBars.ShowAll = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 2)
-		elseif BuffsMode == 'both' and DebuffsMode == 'bars' then
-			AuraBars.ShowAll = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 3)
-		elseif BuffsMode == 'bars' and DebuffsMode == 'disabled' then
-			AuraBars.Buffs = true
-			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
-			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
-			self.AuraBars = AuraBars
-		elseif BuffsMode == 'disabled' and DebuffsMode == 'bars' then
-			AuraBars.Debuffs = true
-			AuraBars:SetPoint('BOTTOMLEFT', self.BuffAnchor, 'TOPLEFT', 0, 0)
-			AuraBars:SetPoint('BOTTOMRIGHT', self.BuffAnchor, 'TOPRIGHT', 0, 0)
-			self.AuraBars = AuraBars
-		elseif BuffsMode == 'disabled' and DebuffsMode == 'icons' then
-			Debuffs:SetSize(self.BuffAnchor:GetWidth(), (Debuffsize * (Debuffs.numDebuffs / self.BuffAnchor:GetWidth())))
-		elseif BuffsMode == 'disabled' and DebuffsMode == 'both' then
-			AuraBars.Debuffs = true
-			self.AuraBars = AuraBars
-			BarPosition(self, 1)
-		end
-
-		--Buff Filter for bars
-		if self.AuraBars then
-			AuraBars.filter = Barfilter
-		end
-
-		--Change options if needed
-		if SUI.DB.Styles[CurStyle].Frames[unit].Buffs.Mode == 'bars' then
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['Number'].disabled = true
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['size'].disabled = true
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['spacing'].disabled = true
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Buffs'].args['showType'].disabled = true
-		end
-		if SUI.DB.Styles[CurStyle].Frames[unit].Debuffs.Mode == 'bars' then
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['Number'].disabled = true
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['size'].disabled = true
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['spacing'].disabled = true
-			SUI.opt.args['PlayerFrames'].args['auras'].args[unit].args['Debuffs'].args['showType'].disabled = true
-		end
-
-		SUI.opt.args['PlayerFrames'].args['auras'].args[unit].disabled = false
-	end
-	return self
-end
-
 local function UpdateAura(self, elapsed)
 	if (self.expiration) then
 		self.expiration = math.max(self.expiration - elapsed, 0)
@@ -465,7 +256,7 @@ local function CreateUnitFrame(self, unit)
 		self.Health.colorClass = elements.Health.colorClass
 
 		do -- Castbar updates
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				-- latency
 				if elements.Castbar.latency then
 					self.Castbar.Shield:Show()
@@ -937,7 +728,7 @@ local function CreateUnitFrame(self, unit)
 
 			self.Health.DataTable = elements.Health.text
 
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				-- Position and size
 				local myBar = CreateFrame('StatusBar', nil, self.Health)
 				myBar:SetPoint('TOP')
@@ -1262,7 +1053,7 @@ local function CreateUnitFrame(self, unit)
 				self.ClassPower = ClassPower
 
 				--Totem Bar
-				if not SUI.IsClassic then
+				if SUI.IsRetail then
 					for index = 1, 4 do
 						_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
 						_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
@@ -1306,9 +1097,8 @@ local function CreateUnitFrame(self, unit)
 	return self
 end
 
-SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
-
 function module:SpawnFrames()
+	SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
 
 	-- Spawn all main frames
@@ -1325,7 +1115,7 @@ function module:SpawnFrames()
 	end
 
 	-- Area Frames
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		local arena = {}
 		for i = 1, 3 do
 			arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)

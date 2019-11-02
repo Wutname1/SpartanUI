@@ -127,7 +127,7 @@ local UpdateElementState = function(frame)
 	end
 
 	-- Do the non-classic things
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		if elements.QuestIndicator.enabled then
 			frame:EnableElement('QuestIndicator')
 		else
@@ -449,7 +449,7 @@ local NameplateCallback = function(self, event, unit)
 		self:DisableElement('RareElite')
 	end
 	-- Do the non-classic things
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		if SUI.DBMod.NamePlates.elements.QuestIndicator.enabled then
 			self:EnableElement('QuestIndicator')
 		else

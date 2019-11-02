@@ -682,7 +682,7 @@ local function AddBarOptions(frameName)
 	end
 
 	if frameName == 'player' then
-		if not SUI.IsClassic then
+		if SUI.IsRetail then
 			SUI.opt.args.UnitFrames.args.player.args['bars'].args['Power'].args['PowerPrediction'] = {
 				name = 'Enable power prediction',
 				desc = 'Used to represent cost of spells on top of the Power bar',

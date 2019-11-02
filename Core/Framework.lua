@@ -15,11 +15,12 @@ SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 local wowVersion = 'Retail'
 if SUI.IsClassic then
 	wowVersion = 'Classic'
 end
-SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 --@beta@
 SUI.releaseType = 'BETA'
 --@end-beta@
@@ -28,13 +29,13 @@ SUI.releaseType = '6.0 ALPHA build ' .. SUI.BuildNum
 SUI.Version = ''
 --@end-alpha@
 --@do-not-package@
-SUI.releaseType = '6.x.x dev build'
+SUI.releaseType = '6.x.x DEV build'
 SUI.Version = ''
 --@end-do-not-package@
 
 ----------------------------------------------------------------------------------------------------
 SUI.opt = {
-	name = string.format('SpartanUI %s %s %s', wowVersion, SUI.releaseType or 'Release', SUI.Version),
+	name = string.format('SpartanUI %s %s %s', SUI.Version, SUI.releaseType or '', wowVersion),
 	type = 'group',
 	childGroups = 'tree',
 	args = {
@@ -2441,7 +2442,7 @@ function SUI:OnInitialize()
 
 	-- Add dual-spec support
 	local LibDualSpec = LibStub('LibDualSpec-1.0', true)
-	if not SUI.IsClassic and LibDualSpec then
+	if SUI.IsRetail and LibDualSpec then
 		LibDualSpec:EnhanceDatabase(self.SpartanUIDB, 'SpartanUI')
 		LibDualSpec:EnhanceOptions(SUI.opt.args['Profiles'], self.SpartanUIDB)
 	end
@@ -2840,8 +2841,10 @@ function SUI:ChatCommand(input)
 		SUI:suihelp()
 	elseif input == 'version' then
 		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
-		SUI:Print(string.format('%s %s', wowVersion, SUI.BuildNum))
-		SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
+		SUI:Print(string.format('%s build %s', wowVersion, SUI.BuildNum))
+		if SUI.Bartender4Version ~= 0 then
+			SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
+		end
 	else
 		if SUIChatCommands[input] then
 			SUIChatCommands[input]()
@@ -2854,7 +2857,6 @@ function SUI:ChatCommand(input)
 			end
 		else
 			AceConfigDialog:Open('SpartanUI')
-			AceConfigDialog:SelectGroup('SpartanUI', 'UnitFrames')
 		end
 	end
 end

@@ -94,7 +94,7 @@ function module:ShapeChange(shape)
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
 	end
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		Minimap:SetArchBlobRingScalar(0)
 		Minimap:SetQuestBlobRingScalar(0)
 	end
@@ -252,7 +252,7 @@ function module:ModifyMinimapLayout()
 
 			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
 
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				Minimap:SetArchBlobRingScalar(0)
 				Minimap:SetQuestBlobRingScalar(0)
 			end
@@ -267,14 +267,14 @@ function module:ModifyMinimapLayout()
 			MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 			MinimapZoneText:SetShadowOffset(1, -1)
 
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				MiniMapTracking:ClearAllPoints()
 				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
 			end
 		else
 			Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
 
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				MiniMapTracking:ClearAllPoints()
 				MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
 			end
@@ -290,7 +290,7 @@ function module:ModifyMinimapLayout()
 	-- Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -30, -30)
 
 	-- Retail Version stuff
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		TimeManagerClockButton:GetRegions():Hide() -- Hide the border
 		TimeManagerClockButton:SetBackdrop(nil)
 		TimeManagerClockButton:ClearAllPoints()

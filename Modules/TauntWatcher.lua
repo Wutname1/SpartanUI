@@ -100,7 +100,7 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 	local timeStamp, subEvent, _, _, srcName, _, _, _, dstName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
 	-- Check if we have been here before
 	if
-		(not SUI.IsClassic and timeStamp == lastTimeStamp and spellID == lastSpellID) or
+		(SUI.IsRetail and timeStamp == lastTimeStamp and spellID == lastSpellID) or
 			(SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName) or
 			(SUI.IsClassic and type(spellName) ~= 'string')
 	 then
@@ -109,7 +109,7 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 
 	-- Print the taunt
 	if
-		(not SUI.IsClassic and SUI:isInTable(TauntsList, spellID)) or (SUI.IsClassic and SUI:isInTable(TauntsList, spellName))
+		(SUI.IsRetail and SUI:isInTable(TauntsList, spellID)) or (SUI.IsClassic and SUI:isInTable(TauntsList, spellName))
 	 then
 		local continue = false
 		local inInstance, instanceType = IsInInstance()

@@ -494,7 +494,7 @@ function module:FirstLaunch()
 			StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossipSafeMode, 0, -5, 'LEFT')
 
 			-- Retail only options
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
 				StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
 			end
@@ -559,7 +559,7 @@ function module.QUEST_GREETING()
 	end
 
 	for i = 1, numAvailableQuests do
-		if not SUI.IsClassic then
+		if SUI.IsRetail then
 			local isTrivial, frequency, isRepeatable = GetAvailableQuestInfo(i - numActiveQuests)
 
 			local trivialORAllowed = (not isTrivial) or SUI.DB.AutoTurnIn.trivial

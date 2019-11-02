@@ -393,7 +393,7 @@ function module:OnInitialize()
 	coordFrame.Title:SetAlpha(.8)
 
 	-- Create Movers
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		MoveTalkingHead()
 		MoveAltPowerBar()
 	end

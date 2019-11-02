@@ -154,7 +154,7 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_START')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_END')
 
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		--Scenarios
 		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_COMPLETED')
 		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_CRITERIA_UPDATE')

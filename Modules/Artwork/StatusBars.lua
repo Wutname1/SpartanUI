@@ -401,7 +401,7 @@ function module:factory()
 			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
 			statusbar:RegisterEvent('UPDATE_FACTION')
 
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
 			end
 

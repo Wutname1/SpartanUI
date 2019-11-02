@@ -199,7 +199,7 @@ function module:SlidingTrays(StyleSettings)
 	trayWatcher:RegisterEvent('ZONE_CHANGED')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_INDOORS')
 	trayWatcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
-	if not SUI.IsClassic then
+	if SUI.IsRetail then
 		trayWatcher:RegisterEvent('UNIT_EXITED_VEHICLE')
 		trayWatcher:RegisterEvent('PET_BATTLE_CLOSE')
 	end
