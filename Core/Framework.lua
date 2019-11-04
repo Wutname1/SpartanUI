@@ -2770,9 +2770,8 @@ function SUI:OnEnable()
 	self:RegisterChatCommand('spartanui', 'ChatCommand')
 
 	--Reopen options screen if flagged to do so after a reloadui
-	local LaunchOpt = CreateFrame('Frame')
-	LaunchOpt:SetScript(
-		'OnEvent',
+	SUI:RegisterEvent(
+		'PLAYER_ENTERING_WORLD',
 		function(self, ...)
 			if SUI.DB.OpenOptions then
 				SUI:ChatCommand()
@@ -2780,7 +2779,6 @@ function SUI:OnEnable()
 			end
 		end
 	)
-	LaunchOpt:RegisterEvent('PLAYER_ENTERING_WORLD')
 	if (not select(4, GetAddOnInfo('Bartender4')) and not SUI.DB.BT4Warned) then
 		local cnt = 1
 		local BT4Warning = CreateFrame('Frame')

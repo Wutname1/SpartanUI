@@ -316,11 +316,24 @@ local function AddArtworkOptions(frameName)
 	end
 
 	for Name, data in pairs(module.Artwork) do
-		-- if data.full then
-		-- 	if data.full.perUnit and not data[frameName] then
-		-- 		return
-		-- 	end
-		-- end
+		-- Need some way to support the shitty classic artwork
+		if data.full then
+			if data[frameName] then
+				SUI.opt.args.UnitFrames.args[frameName].args.artwork.args.bg.args.style.args[Name] = {
+					name = (data.name or Name),
+					width = 'normal',
+					type = 'description',
+					image = function()
+						return data[frameName].path, (data[frameName].x or 160), (data[frameName].y or 40)
+					end,
+					imageCoords = function()
+						return data[frameName].TexCoord
+					end
+				}
+			end
+		end
+
+		-- Now for everything else
 		for position, _ in pairs(ArtPositions) do
 			if data[position] then
 				SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args.style.args[Name] = {
