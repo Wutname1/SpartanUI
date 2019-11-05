@@ -107,12 +107,6 @@ function module:isInTable(tab, frameName)
 	return false
 end
 
-function module:round(num) -- rounds a number to 2 decimal places
-	if num then
-		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
-	end
-end
-
 function module:ActionBarPlates(plate, excludelist)
 	local lib = LibStub('LibWindow-1.1', true)
 	if not lib then
