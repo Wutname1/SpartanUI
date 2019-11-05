@@ -1,6 +1,6 @@
 local SUI = SUI
 local StdUi = LibStub('StdUi'):NewInstance()
-local module = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
+local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 local MoverList = {}
 local colors = {
 	bg = {0.0588, 0.0588, 0, .85},
@@ -21,7 +21,7 @@ local function GetPoints(obj)
 	return format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, Round(x), Round(y))
 end
 
-function module:SaveMoverPosition(name)
+function MoveIt:SaveMoverPosition(name)
 	-- local mover = _G[name]
 	-- local _, anchor = mover:GetPoint()
 	-- mover.anchor = anchor:GetName()
@@ -29,7 +29,7 @@ function module:SaveMoverPosition(name)
 	SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(mover)
 end
 
-function module:CalculateMoverPoints(mover)
+function MoveIt:CalculateMoverPoints(mover)
 	local screenWidth, screenHeight, screenCenter = UIParent:GetRight(), UIParent:GetTop(), UIParent:GetCenter()
 	local x, y = mover:GetCenter()
 
@@ -67,7 +67,7 @@ function module:CalculateMoverPoints(mover)
 	return x, y, point, InversePoint
 end
 
-function module:IsMoved(name)
+function MoveIt:IsMoved(name)
 	if not SUI.DB.MoveIt.movers[name] then
 		return false
 	end
@@ -77,7 +77,7 @@ function module:IsMoved(name)
 	return false
 end
 
-function module:Reset(name)
+function MoveIt:Reset(name)
 	if name == nil then
 		for name in pairs(MoverList) do
 			local f = _G[name]
@@ -107,7 +107,24 @@ function module:Reset(name)
 	end
 end
 
-function module:MoveIt(name)
+function MoveIt:GetMover(name)
+	return MoverList[name]
+end
+
+function MoveIt:UpdateMover(name, obj, doNotScale)
+	local mover = MoverList[name]
+
+	if not mover then
+		return
+	end
+
+	mover:SetSize(obj:GetWidth(), obj:GetHeight())
+	if not doNotScale then
+		mover:SetScale(obj:GetScale())
+	end
+end
+
+function MoveIt:MoveIt(name)
 	if MoveEnabled then
 		for _, v in pairs(MoverList) do
 			v:Hide()
@@ -131,7 +148,7 @@ end
 
 local isDragging = false
 
-function module:CreateMover(parent, name, text, setDefault)
+function MoveIt:CreateMover(parent, name, text, setDefault)
 	-- If for some reason the parent does not exist or we have already done this exit out
 	if not parent or MoverList[name] then
 		return
@@ -152,6 +169,7 @@ function module:CreateMover(parent, name, text, setDefault)
 	f:EnableMouseWheel(true)
 	f:SetMovable(true)
 	f:SetSize(width, height)
+	f:SetScale(parent:GetScale() or 1)
 
 	f:SetBackdrop(
 		{
@@ -239,7 +257,7 @@ function module:CreateMover(parent, name, text, setDefault)
 		self:StopMovingOrSizing()
 		-- end
 
-		-- module:SaveMoverPosition(name)
+		-- MoveIt:SaveMoverPosition(name)
 		SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(self)
 		-- if NudgeWindow then
 		-- 	E:UpdateNudgeFrame(self, x, y)
@@ -268,7 +286,7 @@ function module:CreateMover(parent, name, text, setDefault)
 		end
 
 		if IsAltKeyDown() then -- Reset anchor
-			module:Reset(name)
+			MoveIt:Reset(name)
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
 			self:Hide()
 		end
@@ -304,13 +322,13 @@ function module:CreateMover(parent, name, text, setDefault)
 
 	local function ParentMouseDown(self)
 		if IsAltKeyDown() and SUI.DB.MoveIt.AltKey then
-			module:MoveIt(name)
+			MoveIt:MoveIt(name)
 			OnDragStart(self.mover)
 		end
 	end
 	local function ParentMouseUp(self)
 		if IsAltKeyDown() and SUI.DB.MoveIt.AltKey and MoveEnabled then
-			module:MoveIt(name)
+			MoveIt:MoveIt(name)
 		end
 	end
 
@@ -330,7 +348,7 @@ local function MoveTalkingHead()
 		_G.UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
 
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
-		module:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', true)
+		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', true)
 		TalkingHeadFrame:HookScript(
 			'OnShow',
 			function()
@@ -379,11 +397,11 @@ local function MoveAltPowerBar()
 			end
 		)
 
-		module:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power')
+		MoveIt:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power')
 	end
 end
 
-function module:OnInitialize()
+function MoveIt:OnInitialize()
 	coordFrame = StdUi:Window(nil, 480, 200)
 	coordFrame:SetFrameStrata('DIALOG')
 
@@ -399,7 +417,7 @@ function module:OnInitialize()
 	end
 end
 
-function module:OnEnable()
+function MoveIt:OnEnable()
 	local ChatCommand = function(arg)
 		if InCombatLockdown() then
 			SUI:Print(ERR_NOT_IN_COMBAT)
@@ -407,10 +425,10 @@ function module:OnEnable()
 		end
 
 		if (not arg) then
-			module:MoveIt()
+			MoveIt:MoveIt()
 		else
 			if MoverList[arg] then
-				module:MoveIt(arg)
+				MoveIt:MoveIt(arg)
 			else
 				SUI:Print('Invalid move command!')
 			end
@@ -421,7 +439,7 @@ function module:OnEnable()
 	local function OnKeyDown(self, key)
 		if MoveEnabled and key == 'ESCAPE' then
 			self:SetPropagateKeyboardInput(false)
-			module:MoveIt()
+			MoveIt:MoveIt()
 		else
 			self:SetPropagateKeyboardInput(true)
 		end
@@ -432,10 +450,10 @@ function module:OnEnable()
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
 
-	module:Options()
+	MoveIt:Options()
 end
 
-function module:Options()
+function MoveIt:Options()
 	SUI.opt.args['Movers'] = {
 		name = 'Movers',
 		type = 'group',
@@ -458,7 +476,7 @@ function module:Options()
 				type = 'execute',
 				order = 3,
 				func = function()
-					module:MoveIt()
+					MoveIt:MoveIt()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 49},
