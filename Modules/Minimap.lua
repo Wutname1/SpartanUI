@@ -320,7 +320,6 @@ function module:ModifyMinimapLayout()
 		SUI_MiniMapIcon:RegisterEvent('GARRISON_MISSION_FINISHED')
 		SUI_MiniMapIcon:RegisterEvent('GARRISON_INVASION_AVAILABLE')
 		SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
-	else
 	end
 
 	MinimapBackdrop:ClearAllPoints()
@@ -595,18 +594,6 @@ function module:BuildOptions()
 					else
 						MinimapNorthTag:Hide()
 					end
-				end
-			},
-			lockminimap = {
-				name = L['Lock minimap'],
-				type = 'toggle',
-				order = 0.5,
-				get = function(info)
-					return SUI.DB.MiniMap.lockminimap
-				end,
-				set = function(info, val)
-					SUI.DB.MiniMap.lockminimap = val
-					module:update()
 				end
 			},
 			minimapzoom = {
