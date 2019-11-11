@@ -24,11 +24,14 @@ end
 
 local isFrameIgnored = function(item)
 	if item:GetName() ~= nil then
-		if string.match(item:GetName(), 'Questie') then
+		local name = item:GetName()
+		if string.match(name, 'Questie') then
 			return true
-		elseif string.match(item:GetName(), 'AAP-Classic') then
+		elseif string.match(name, 'AAP-Classic') then
 			return true
-		elseif string.match(item:GetName(), 'HandyNotes') then
+		elseif string.match(name, 'HandyNotes') then
+			return true
+		elseif SUI:isInTable(IgnoredFrames, name) then
 			return true
 		end
 	end
@@ -464,9 +467,6 @@ function module:MinimapCoords()
 end
 
 function module:SetupButton(btn, force)
-	buttonName = btn:GetName()
-	buttonType = btn:GetObjectType()
-
 	--Avoid duplicates make sure it's not in the tracking table
 	if btn.FadeIn == nil or force then
 		-- Hook Mouse Events
@@ -556,25 +556,20 @@ function module:update()
 		end
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
-			buttonName = child:GetName()
+			if child:GetName() ~= nil then
+				--catch buttons not playing nice.
+				if child.FadeOut == nil and not isFrameIgnored(child) then
+					module:SetupButton(child, true)
+				end
 
-			--catch buttons not playing nice.
-			if child.FadeOut == nil and not isFrameIgnored(child) then
-				module:SetupButton(child, true)
-			end
-
-			if
-				buttonName and -- and buttonType == "Button"
-					child.FadeOut ~= nil and
-					(not SUI:isInTable(IgnoredFrames, buttonName)) and
-					child:GetAlpha() == 1
-			 then
-				child.FadeIn:Stop()
-				child.FadeOut:Stop()
-				child.FadeOut:Play()
-			elseif child.FadeIn == nil and not isFrameIgnored(child) then
-				--if they still fail print a error and continue with our lives.
-				SUI.Err('Minimap', buttonName .. ' is not fading')
+				if child.FadeOut ~= nil and child:GetAlpha() == 1 and not isFrameIgnored(child) then
+					child.FadeIn:Stop()
+					child.FadeOut:Stop()
+					child.FadeOut:Play()
+				elseif child.FadeIn == nil and not isFrameIgnored(child) then
+					--if they still fail print a error and continue with our lives.
+					SUI.Err('Minimap', child:GetName() .. ' is not fading')
+				end
 			end
 		end
 	elseif SUI.DB.MiniMap.OtherStyle ~= 'hide' then
@@ -591,9 +586,8 @@ function module:update()
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
 			buttonName = child:GetName()
-			-- buttonType = child:GetObjectType();
 
-			if buttonName and child.FadeIn ~= nil and (not SUI:isInTable(IgnoredFrames, buttonName)) and child:GetAlpha() == 0 then
+			if buttonName and child.FadeIn ~= nil and isFrameIgnored(child) and child:GetAlpha() == 0 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 
