@@ -585,9 +585,7 @@ function module:update()
 		end
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
-			buttonName = child:GetName()
-
-			if buttonName and child.FadeIn ~= nil and isFrameIgnored(child) and child:GetAlpha() == 0 then
+			if child:GetName() ~= nil and child.FadeIn ~= nil and not isFrameIgnored(child) and child:GetAlpha() == 0 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
 
