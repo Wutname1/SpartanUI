@@ -1,7 +1,6 @@
 local SUI = SUI
 local L = SUI.L
 local module = SUI:NewModule('Component_Artwork')
-local BartenderMin = '4.8.5'
 
 function module:updateScale()
 	--Set default scale based on if the user is using a widescreen.
@@ -108,80 +107,53 @@ function module:isInTable(tab, frameName)
 end
 
 function module:ActionBarPlates(plate, excludelist)
-	local lib = LibStub('LibWindow-1.1', true)
-	if not lib then
-		return
-	end
-	function lib.RegisterConfig(frame, storage, names)
-		if not lib.windowData[frame] then
-			lib.windowData[frame] = {}
-		end
-		lib.windowData[frame].names = names
-		lib.windowData[frame].storage = storage
+	return
+	-- local lib = LibStub('LibWindow-1.1', true)
+	-- if not lib then
+	-- 	return
+	-- end
+	-- function lib.RegisterConfig(frame, storage, names)
+	-- 	if not lib.windowData[frame] then
+	-- 		lib.windowData[frame] = {}
+	-- 	end
+	-- 	lib.windowData[frame].names = names
+	-- 	lib.windowData[frame].storage = storage
 
-		-- If no name return, helps avoid other addons that use the library
-		if (frame:GetName() == nil) then
-			return
-		end
+	-- 	-- If no name return, helps avoid other addons that use the library
+	-- 	if (frame:GetName() == nil) then
+	-- 		return
+	-- 	end
 
-		-- Catch if Movedbars is not initalized
-		if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
-			SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-		end
-		local excluded = false
-		if excludelist then
-			for _, key in ipairs(excludelist) do
-				if frame:GetName():match(key) then
-					excluded = true
-				end
-			end
-		end
+	-- 	-- Catch if Movedbars is not initalized
+	-- 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
+	-- 		SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
+	-- 	end
+	-- 	local excluded = false
+	-- 	if excludelist then
+	-- 		for _, key in ipairs(excludelist) do
+	-- 			if frame:GetName():match(key) then
+	-- 				excluded = true
+	-- 			end
+	-- 		end
+	-- 	end
 
-		-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
-		-- if (frame:GetName():match("BT4Bar")) and storage.parent and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()] then
-		if
-			(frame:GetName():match('BT4Bar') and not excluded) and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()]
-		 then
-			-- end
-			-- end
-			-- if (storage.parent) and _G[storage.parent] then
-			-- frame:SetParent(storage.parent);
-			frame:SetParent(plate)
-			-- if storage.parent == plate then
-			frame:SetFrameStrata('LOW')
-		else
-			-- print("---")
-			-- print(frame:GetName())
-			-- print(SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()])
-			-- print(storage.parent)
-			-- print(plate)
-			-- print("---")
-			storage.parent = UIParent
-		end
-	end
+	-- 	-- If the name contains Bartender and we have not moved it set the parent to what is in sorage
+	-- 	if
+	-- 		(frame:GetName():match('BT4Bar') and not excluded) and
+	-- 			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[frame:GetName()]
+	-- 	 then
+	-- 		frame:SetParent(plate)
+	-- 		frame:SetFrameStrata('LOW')
+	-- 	else
+	-- 		storage.parent = UIParent
+	-- 	end
+	-- end
 end
 
 function module:OnInitialize()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
 	end
-	StaticPopupDialogs['BartenderVerWarning'] = {
-		text = '|cff33ff99SpartanUI v' ..
-			SUI.Version ..
-				'|n|r|n|n' ..
-					L['Warning'] ..
-						': ' ..
-							L['BartenderOldMSG'] ..
-								' ' .. SUI.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
-		button1 = 'Ok',
-		OnAccept = function()
-			SUI.DBG.BartenderVerWarning = SUI.Version
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = false
-	}
 
 	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
 		SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
@@ -350,10 +322,6 @@ end
 function module:OnEnable()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
-	end
-	-- No Bartender/out of date Notification
-	if SUI.Bartender4Version < BartenderMin then
-		StaticPopup_Show('BartenderVerWarning')
 	end
 
 	module:FirstTime()

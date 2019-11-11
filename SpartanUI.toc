@@ -43,9 +43,9 @@ libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\oUF\oUF.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
 #@non-retail@
-libs\LibClassicDurations\LibClassicDurations.xml
-libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
-libs\LibClassicCasterino\LibClassicCasterino.lua
+# libs\LibClassicDurations\LibClassicDurations.xml
+# libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
+# libs\LibClassicCasterino\LibClassicCasterino.lua
 #@end-non-retail@
 
 # Localization
