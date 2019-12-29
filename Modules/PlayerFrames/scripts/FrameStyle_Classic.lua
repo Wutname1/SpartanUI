@@ -250,6 +250,7 @@ local CreatePlayerFrame = function(self, unit)
 		self.Portrait = CreatePortrait(self)
 		self.Portrait:SetSize(62, 62)
 		self.Portrait:SetPoint('CENTER', self, 'CENTER', 80, 3)
+		self.Portrait:SetFrameStrata('BACKGROUND')
 
 		self.ThreatIndicator = CreateFrame('Frame', nil, self)
 		self.ThreatIndicator.Override = threat
@@ -496,6 +497,7 @@ local CreateTargetFrame = function(self, unit)
 		self.Portrait = CreatePortrait(self)
 		self.Portrait:SetSize(64, 64)
 		self.Portrait:SetPoint('CENTER', self, 'CENTER', -70, 3)
+		self.Portrait:SetFrameStrata('BACKGROUND')
 
 		self.ThreatIndicator = CreateFrame('Frame', nil, self)
 		self.ThreatIndicator.Override = threat
@@ -698,6 +700,7 @@ local CreatePetFrame = function(self, unit)
 			self.Portrait = CreatePortrait(self)
 			self.Portrait:SetSize(56, 50)
 			self.Portrait:SetPoint('CENTER', self, 'CENTER', 87, -8)
+			self.Portrait:SetFrameStrata('BACKGROUND')
 		end
 
 		self.ThreatIndicator = CreateFrame('Frame', nil, self)
