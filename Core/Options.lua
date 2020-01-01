@@ -1,8 +1,5 @@
 local SUI, L = SUI, SUI.L
-local AceConfigDialog = LibStub('AceConfigDialog-3.0')
 local module = SUI:NewModule('Options')
-
-local LDBIcon = LibStub('LibDBIcon-1.0', true)
 
 ---------------------------------------------------------------------------
 function module:ArtSetup()
@@ -57,7 +54,7 @@ function module:OnInitialize()
 	}
 
 	-- Setup Buttons
-	for i, skin in pairs(Skins) do
+	for _, skin in pairs(Skins) do
 		-- Create overall skin button
 		SUI.opt.args.General.args.style.args.OverallStyle.args[skin] = {
 			name = skin,

@@ -2,6 +2,7 @@ local SUI = SUI
 local L = SUI.L
 local module = SUI:GetModule('Component_BarHandler')
 local BartenderMin = '4.8.5'
+local MoveIt = SUI:GetModule('Component_MoveIt')
 
 ------------------------------------------------------------
 
@@ -146,22 +147,41 @@ local function Options()
 	SUI.opt.args.Help.args.ResetActionBars = SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']
 end
 
+local function BTMover(BarName, DisplayName)
+	if not BarName then
+		return
+	end
+	local bar = _G[BarName]
+	if bar then
+		function bar:LoadPosition()
+		end
+
+		MoveIt:CreateMover(bar, BarName, DisplayName, true)
+		MoveIt:UpdateMover(BarName, bar.overlay, true)
+	end
+end
+
 local function AddMovers()
-	local MoveIt = SUI:GetModule('Component_MoveIt')
 	for i = 1, 10 do
 		local bar = _G['BT4Bar' .. i]
 		if bar then
+			function bar:LoadPosition()
+			end
+
+			bar:SetScale(.79)
 			MoveIt:CreateMover(bar, 'BT4Bar' .. i, 'Bar ' .. i, true)
 			MoveIt:UpdateMover('BT4Bar' .. i, bar.overlay, true)
 		end
 	end
+	BTMover('BT4BarBagBar', 'Bag bar')
+	BTMover('BT4BarExtraActionBar', 'Extra Action Bar')
+	BTMover('BT4BarStanceBar', 'Stance Bar')
+	BTMover('BT4BarPetBar', 'Pet Bar')
+	BTMover('BT4BarMicroMenu', 'Micro menu')
 end
 
 local function OnInitialize()
 	--Bartender4
-	if SUI.DBG.Bartender4 == nil then
-		SUI.DBG.Bartender4 = {}
-	end
 	if SUI.DBG.BartenderChangesActive then
 		SUI.DBG.BartenderChangesActive = false
 	end
@@ -171,6 +191,42 @@ local function OnInitialize()
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileChanged', 'BT4RefreshConfig')
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileCopied', 'BT4RefreshConfig')
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
+	end
+end
+
+local function RefreshConfig()
+	-- Load Position
+	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
+
+	local positionData = module.BarPosition.BT4.default
+	-- If artwork is enabled load the art's position data if supplied
+	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DBMod.Artwork.Style] then
+		positionData = SUI:MergeData(module.BarPosition.BT4[SUI.DBMod.Artwork.Style], module.BarPosition.BT4.default)
+	end
+
+	local FrameList = {
+		BT4Bar1,
+		BT4Bar2,
+		BT4Bar3,
+		BT4Bar4,
+		BT4Bar5,
+		BT4Bar6,
+		BT4BarBagBar,
+		BT4BarExtraActionBar,
+		BT4BarStanceBar,
+		BT4BarPetBar,
+		BT4BarMicroMenu
+	}
+	-- Position Bars
+	for _, v in ipairs(FrameList) do
+		v = v:GetName()
+		print(v)
+		if _G[v] and positionData[v] ~= '' then
+			local f = _G[v]
+			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
+			f:ClearAllPoints()
+			f:SetPoint(point, anchor, secondaryPoint, x, y)
+		end
 	end
 end
 
@@ -200,6 +256,9 @@ local function OnEnable()
 		StaticPopup_Show('BartenderVerWarning')
 	end
 
+	-- Position Bars
+	RefreshConfig()
+
 	-- Movement System
 	AddMovers()
 
@@ -227,6 +286,57 @@ local function OnEnable()
 		BT4Warning:RegisterEvent('ZONE_CHANGED_INDOORS')
 		BT4Warning:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	end
+
+	--Disable BT4 Movement system
+	function Bartender4:Unlock()
+		print('BT4 Movement System is disabled by SUI. You can move the bars via /sui move')
+	end
+
+	function Bartender4:Lock()
+	end
+
+	--Replace the BT4 Enable function so we know when new objects are created
+	local BT4ActionBars = Bartender4:GetModule('ActionBars')
+	function BT4ActionBars:EnableBar(id)
+		id = tonumber(id)
+		local bar = self.actionbars[id]
+		local config = self.db.profile.actionbars[id]
+		config.enabled = true
+		if not bar then
+			bar = self:Create(id, config)
+			self.actionbars[id] = bar
+		else
+			bar.disabled = nil
+			self:CreateBarOption(id)
+			bar:ApplyConfig(config)
+		end
+
+		--SUI Stuff
+		RefreshConfig()
+		local MoveIt = SUI:GetModule('Component_MoveIt')
+		MoveIt:CreateMover(bar, bar:GetName(), bar:GetName(), true)
+		MoveIt:UpdateMover(bar:GetName(), bar.overlay, true)
+
+		if not Bartender4.Locked then
+			bar:Unlock()
+		end
+	end
+end
+
+local function Unlock()
+	local MoveIt = SUI:GetModule('Component_MoveIt')
+	local MoverList = {}
+
+	-- Generate list of objects to move
+	for i = 1, 10 do
+		local bar = _G['BT4Bar' .. i]
+		if bar then
+			MoverList[#MoverList] = 'BT4Bar' .. i
+		end
+	end
+
+	-- Move them!
+	MoveIt:MoveIt(MoverList)
 end
 
 local function BT4ProfileAttach(msg)
@@ -312,4 +422,4 @@ function SUI:BT4RefreshConfig()
 	SUI:Print('Bartender4 Profile changed to: ' .. Bartender4.db:GetCurrentProfile())
 end
 
-module:AddBarSystem('Bartender4', OnInitialize, OnEnable)
+module:AddBarSystem('Bartender4', OnInitialize, OnEnable, Unlock, RefreshConfig)

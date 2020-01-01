@@ -205,26 +205,26 @@ function module:SlidingTrays(StyleSettings)
 	end
 
 	-- Default movetracker ignores stuff attached to UIParent (Tray items are)
-	local FrameList = {
-		BT4BarBagBar,
-		BT4BarStanceBar,
-		BT4BarPetBar,
-		BT4BarMicroMenu
-	}
+	-- local FrameList = {
+	-- 	BT4BarBagBar,
+	-- 	BT4BarStanceBar,
+	-- 	BT4BarPetBar,
+	-- 	BT4BarMicroMenu
+	-- }
 
-	for _, v in ipairs(FrameList) do
-		if v then
-			v.SavePosition = function()
-				if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] and not SUI.DBG.BartenderChangesActive then
-					SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = true
-					LibStub('LibWindow-1.1').windowData[v].storage.parent = UIParent
-					v:SetParent(UIParent)
-				end
+	-- for _, v in ipairs(FrameList) do
+	-- 	if v then
+	-- 		v.SavePosition = function()
+	-- 			if not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] and not SUI.DBG.BartenderChangesActive then
+	-- 				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = true
+	-- 				LibStub('LibWindow-1.1').windowData[v].storage.parent = UIParent
+	-- 				v:SetParent(UIParent)
+	-- 			end
 
-				LibStub('LibWindow-1.1').SavePosition(v)
-			end
-		end
-	end
+	-- 			LibStub('LibWindow-1.1').SavePosition(v)
+	-- 		end
+	-- 	end
+	-- end
 
 	return module.Trays
 end

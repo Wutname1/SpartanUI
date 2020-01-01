@@ -9,6 +9,25 @@ function module:OnInitialize()
 		module:Init()
 	end
 
+	local BarHandler = SUI:GetModule('Component_BarHandler')
+	BarHandler.BarPosition.BT4.War = {
+		-- ['BT4Bar1'] = 'CENTER,SUI_ActionBarPlate,CENTER,-510,36',
+		-- ['BT4Bar2'] = 'CENTER,SUI_ActionBarPlate,CENTER,-510,-8',
+		-- ['BT4Bar3'] = 'CENTER,SUI_ActionBarPlate,CENTER,108,36',
+		-- ['BT4Bar4'] = 'CENTER,SUI_ActionBarPlate,CENTER,108,-8',
+		-- ['BT4Bar5'] = 'LEFT,SUI_ActionBarPlate,LEFT,-135,36',
+		-- ['BT4Bar6'] = 'RIGHT,SUI_ActionBarPlate,RIGHT,3,36',
+		-- ['BT4Bar7'] = '',
+		-- ['BT4Bar8'] = '',
+		-- ['BT4Bar9'] = '',
+		-- ['BT4Bar10'] = '',
+		['BT4BarBagBar'] = 'TOP,SUI_ActionBarPlate,TOP,503,2',
+		['BT4BarExtraActionBar'] = 'TOP,SUI_ActionBarPlate,TOP,3,36',
+		['BT4BarStanceBar'] = 'TOP,SUI_ActionBarPlate,TOP,-115,2',
+		['BT4BarPetBar'] = 'TOP,SUI_ActionBarPlate,TOP,-32,240',
+		['BT4BarMicroMenu'] = 'TOP,SUI_ActionBarPlate,TOP,114,4'
+	}
+
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.war = {
 		top = {

@@ -15,14 +15,11 @@ end
 
 function module:InitActionBars()
 	--if (Bartender4.db:GetCurrentProfile() == SUI.DB.Styles.Classic.BartenderProfile) then
-	Artwork_Core:ActionBarPlates('SUI_ActionBarPlate')
+	-- Artwork_Core:ActionBarPlates('SUI_ActionBarPlate')
 	--end
 
 	do -- create bar plate and masks
-		plate = CreateFrame('Frame', 'SUI_ActionBarPlate', SpartanUI, 'SUI_ActionBarsTemplate')
-		plate:SetFrameStrata('BACKGROUND')
-		plate:SetFrameLevel(1)
-		plate:SetPoint('BOTTOM')
+		plate = L['SUI_ActionBarPlate']
 
 		plate.mask1 = CreateFrame('Frame', 'SUI_Popup1Mask', SpartanUI, 'SUI_Popup1MaskTemplate')
 		plate.mask1:SetFrameStrata('MEDIUM')
@@ -34,6 +31,25 @@ function module:InitActionBars()
 		plate.mask2:SetFrameLevel(0)
 		plate.mask2:SetPoint('BOTTOM', SUI_Popup2, 'BOTTOM')
 	end
+
+	local BarHandler = SUI:GetModule('Component_BarHandler')
+	BarHandler.BarPosition.BT4.Classic = {
+		['BT4Bar1'] = 'CENTER,SUI_ActionBarPlate,CENTER,-510,36',
+		['BT4Bar2'] = 'CENTER,SUI_ActionBarPlate,CENTER,-510,-8',
+		['BT4Bar3'] = 'CENTER,SUI_ActionBarPlate,CENTER,108,36',
+		['BT4Bar4'] = 'CENTER,SUI_ActionBarPlate,CENTER,108,-8',
+		['BT4Bar5'] = 'LEFT,SUI_ActionBarPlate,LEFT,-135,36',
+		['BT4Bar6'] = 'RIGHT,SUI_ActionBarPlate,RIGHT,3,36',
+		['BT4Bar7'] = '',
+		['BT4Bar8'] = '',
+		['BT4Bar9'] = '',
+		['BT4Bar10'] = '',
+		['BT4BarBagBar'] = 'TOP,SUI_ActionBarPlate,TOP,503,2',
+		['BT4BarExtraActionBar'] = 'TOP,SUI_ActionBarPlate,TOP,3,36',
+		['BT4BarStanceBar'] = 'TOP,SUI_ActionBarPlate,TOP,-115,2',
+		['BT4BarPetBar'] = 'TOP,SUI_ActionBarPlate,TOP,-32,240',
+		['BT4BarMicroMenu'] = 'TOP,SUI_ActionBarPlate,TOP,114,4'
+	}
 end
 
 function module:EnableActionBars()

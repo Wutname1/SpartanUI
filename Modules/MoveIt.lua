@@ -133,8 +133,15 @@ function MoveIt:MoveIt(name)
 		MoverWatcher:Hide()
 	else
 		if name then
-			local frame = MoverList[name]
-			frame:Show()
+			if type(baseName) == 'string' then
+				local frame = MoverList[name]
+				frame:Show()
+			else
+				for _, v in pairs(tableName) do
+					local frame = MoverList[v]
+					frame:Show()
+				end
+			end
 		else
 			for _, v in pairs(MoverList) do
 				v:Show()

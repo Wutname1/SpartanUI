@@ -183,7 +183,7 @@ function module:RemoveVehicleUI()
 end
 
 function module:InitArtwork()
-	Artwork_Core:ActionBarPlates('Fel_ActionBarPlate')
+	-- Artwork_Core:ActionBarPlates('Fel_ActionBarPlate')
 
 	plate = CreateFrame('Frame', 'Fel_ActionBarPlate', UIParent, 'Fel_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
