@@ -8,8 +8,8 @@ function module:MiniMap()
 	Minimap:SetSize(156, 156)
 
 	Minimap:ClearAllPoints()
-	Minimap:SetPoint('CENTER', SpartanUI, 'CENTER', 0, 54)
-	Minimap:SetParent(SpartanUI)
+	Minimap:SetPoint('CENTER', SpartanUI_Classic, 'CENTER', 0, 54)
+	Minimap:SetParent(SpartanUI_Classic)
 
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints()
@@ -25,7 +25,7 @@ function module:MiniMap()
 
 	if QueueStatusFrame then
 		QueueStatusFrame:ClearAllPoints()
-		QueueStatusFrame:SetPoint('BOTTOM', SpartanUI, 'TOP', 0, 100)
+		QueueStatusFrame:SetPoint('BOTTOM', SpartanUI_Classic, 'TOP', 0, 100)
 	end
 
 	--Shape Change
@@ -80,8 +80,8 @@ function module:MiniMap()
 		'OnShow',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', SpartanUI, 'CENTER', 0, 54)
-			Minimap:SetParent(SpartanUI)
+			Minimap:SetPoint('CENTER', SpartanUI_Classic, 'CENTER', 0, 54)
+			Minimap:SetParent(SpartanUI_Classic)
 			shapechange('circle')
 		end
 	)

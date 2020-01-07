@@ -166,20 +166,23 @@ function module:RemoveVehicleUI()
 end
 
 function module:InitArtwork()
-	Artwork_Core:ActionBarPlates(
-		'War_ActionBarPlate',
-		{
-			'BarBagBar',
-			'BarStanceBar',
-			'BarPetBar',
-			'BarMicroMenu'
-		}
-	)
+	-- Artwork_Core:ActionBarPlates(
+	-- 	'War_ActionBarPlate',
+	-- 	{
+	-- 		'BarBagBar',
+	-- 		'BarStanceBar',
+	-- 		'BarPetBar',
+	-- 		'BarMicroMenu'
+	-- 	}
+	-- )
 
 	plate = CreateFrame('Frame', 'War_ActionBarPlate', UIParent, 'War_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
 	plate:SetPoint('BOTTOM')
+
+	-- local SUIBarAnchor = _G['SUI_ActionBarAnchor']
+	-- SUIBarAnchor:ClearAllPoints()
 
 	FramerateText:ClearAllPoints()
 	FramerateText:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 10, -10)

@@ -220,7 +220,7 @@ local function RefreshConfig()
 	-- Position Bars
 	for _, v in ipairs(FrameList) do
 		v = v:GetName()
-		print(v)
+
 		if _G[v] and positionData[v] ~= '' then
 			local f = _G[v]
 			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])

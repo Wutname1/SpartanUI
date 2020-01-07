@@ -14,19 +14,15 @@ function module:CreateProfile()
 end
 
 function module:InitActionBars()
-	--if (Bartender4.db:GetCurrentProfile() == SUI.DB.Styles.Classic.BartenderProfile) then
-	-- Artwork_Core:ActionBarPlates('SUI_ActionBarPlate')
-	--end
-
 	do -- create bar plate and masks
-		plate = L['SUI_ActionBarPlate']
+		plate = _G['SUI_ActionBarPlate']
 
-		plate.mask1 = CreateFrame('Frame', 'SUI_Popup1Mask', SpartanUI, 'SUI_Popup1MaskTemplate')
+		plate.mask1 = CreateFrame('Frame', 'SUI_Popup1Mask', SpartanUI_Classic, 'SUI_Popup1MaskTemplate')
 		plate.mask1:SetFrameStrata('MEDIUM')
 		plate.mask1:SetFrameLevel(0)
 		plate.mask1:SetPoint('BOTTOM', SUI_Popup1, 'BOTTOM')
 
-		plate.mask2 = CreateFrame('Frame', 'SUI_Popup2Mask', SpartanUI, 'SUI_Popup2MaskTemplate')
+		plate.mask2 = CreateFrame('Frame', 'SUI_Popup2Mask', SpartanUI_Classic, 'SUI_Popup2MaskTemplate')
 		plate.mask2:SetFrameStrata('MEDIUM')
 		plate.mask2:SetFrameLevel(0)
 		plate.mask2:SetPoint('BOTTOM', SUI_Popup2, 'BOTTOM')
@@ -34,21 +30,17 @@ function module:InitActionBars()
 
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Classic = {
-		['BT4Bar1'] = 'CENTER,SUI_ActionBarPlate,CENTER,-510,36',
-		['BT4Bar2'] = 'CENTER,SUI_ActionBarPlate,CENTER,-510,-8',
-		['BT4Bar3'] = 'CENTER,SUI_ActionBarPlate,CENTER,108,36',
-		['BT4Bar4'] = 'CENTER,SUI_ActionBarPlate,CENTER,108,-8',
-		['BT4Bar5'] = 'LEFT,SUI_ActionBarPlate,LEFT,-135,36',
-		['BT4Bar6'] = 'RIGHT,SUI_ActionBarPlate,RIGHT,3,36',
-		['BT4Bar7'] = '',
-		['BT4Bar8'] = '',
-		['BT4Bar9'] = '',
-		['BT4Bar10'] = '',
-		['BT4BarBagBar'] = 'TOP,SUI_ActionBarPlate,TOP,503,2',
-		['BT4BarExtraActionBar'] = 'TOP,SUI_ActionBarPlate,TOP,3,36',
-		['BT4BarStanceBar'] = 'TOP,SUI_ActionBarPlate,TOP,-115,2',
-		['BT4BarPetBar'] = 'TOP,SUI_ActionBarPlate,TOP,-32,240',
-		['BT4BarMicroMenu'] = 'TOP,SUI_ActionBarPlate,TOP,114,4'
+		['BT4Bar1'] = 'CENTER,SUI_ActionBarAnchor,CENTER,-510,36',
+		['BT4Bar2'] = 'CENTER,SUI_ActionBarAnchor,CENTER,-510,-8',
+		['BT4Bar3'] = 'CENTER,SUI_ActionBarAnchor,CENTER,108,36',
+		['BT4Bar4'] = 'CENTER,SUI_ActionBarAnchor,CENTER,108,-8',
+		['BT4Bar5'] = 'LEFT,SUI_ActionBarAnchor,LEFT,-135,36',
+		['BT4Bar6'] = 'RIGHT,SUI_ActionBarAnchor,RIGHT,3,36',
+		['BT4BarBagBar'] = 'TOP,SUI_ActionBarAnchor,TOP,503,2',
+		['BT4BarExtraActionBar'] = 'TOP,SUI_ActionBarAnchor,TOP,3,36',
+		['BT4BarStanceBar'] = 'TOP,SUI_ActionBarAnchor,TOP,-115,2',
+		['BT4BarPetBar'] = 'TOP,SUI_ActionBarAnchor,TOP,-32,240',
+		['BT4BarMicroMenu'] = 'TOP,SUI_ActionBarAnchor,TOP,114,4'
 	}
 end
 

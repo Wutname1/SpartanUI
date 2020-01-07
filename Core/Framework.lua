@@ -2538,6 +2538,16 @@ function SUI:InitializeProfile()
 	SUI:reloadui()
 end
 
+-------------------------	Layout 		-------------------------------
+do
+	-- Create Plate
+	local plate = CreateFrame('Frame', 'SpartanUI', UIParent)
+	plate:SetFrameStrata('BACKGROUND')
+	plate:SetFrameLevel(1)
+	plate:SetPoint('BOTTOMLEFT')
+	plate:SetPoint('TOPRIGHT')
+end
+
 ---------------		Misc Backend		-------------------------------
 
 function SUI:GetiLVL(itemLink)

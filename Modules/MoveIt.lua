@@ -81,6 +81,26 @@ function MoveIt:Reset(name)
 	if name == nil then
 		for name in pairs(MoverList) do
 			local f = _G[name]
+			if f then
+				local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
+				f:ClearAllPoints()
+				f:SetPoint(point, anchor, secondaryPoint, x, y)
+
+				if SUI.DB.MoveIt.movers[name].MovedPoints then
+					SUI.DB.MoveIt.movers[name].MovedPoints = nil
+				end
+
+			-- for key, value in pairs(MoverList[name]) do
+			-- 	if key == 'postdrag' and type(value) == 'function' then
+			-- 		value(f, E:GetScreenQuadrant(f))
+			-- 	end
+			-- end
+			end
+		end
+		SUI:Print('Moved frames reset!')
+	else
+		local f = _G['SUI_Mover_' .. name]
+		if f then
 			local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
 			f:ClearAllPoints()
 			f:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -88,21 +108,6 @@ function MoveIt:Reset(name)
 			if SUI.DB.MoveIt.movers[name].MovedPoints then
 				SUI.DB.MoveIt.movers[name].MovedPoints = nil
 			end
-
-			-- for key, value in pairs(MoverList[name]) do
-			-- 	if key == 'postdrag' and type(value) == 'function' then
-			-- 		value(f, E:GetScreenQuadrant(f))
-			-- 	end
-			-- end
-		end
-	else
-		local f = _G['SUI_Mover_' .. name]
-		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
-		f:ClearAllPoints()
-		f:SetPoint(point, anchor, secondaryPoint, x, y)
-
-		if SUI.DB.MoveIt.movers[name].MovedPoints then
-			SUI.DB.MoveIt.movers[name].MovedPoints = nil
 		end
 	end
 end
@@ -436,6 +441,9 @@ function MoveIt:OnEnable()
 		else
 			if MoverList[arg] then
 				MoveIt:MoveIt(arg)
+			elseif arg == 'reset' then
+				SUI:Print('Restting all frames...')
+				MoveIt:Reset()
 			else
 				SUI:Print('Invalid move command!')
 			end
@@ -466,11 +474,19 @@ function MoveIt:Options()
 		type = 'group',
 		order = 800,
 		args = {
+			MoveIt = {
+				name = 'Toggle movers',
+				type = 'execute',
+				order = 1,
+				func = function()
+					MoveIt:MoveIt()
+				end
+			},
 			AltKey = {
 				name = 'Allow Alt+Dragging to move',
 				type = 'toggle',
 				width = 'double',
-				order = 1,
+				order = 2,
 				get = function(info)
 					return SUI.DB.MoveIt.AltKey
 				end,
@@ -479,11 +495,11 @@ function MoveIt:Options()
 				end
 			},
 			MoveIt = {
-				name = 'Toggle movers',
+				name = 'Reset moved frames',
 				type = 'execute',
 				order = 3,
 				func = function()
-					MoveIt:MoveIt()
+					MoveIt:Reset()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 49},

@@ -21,7 +21,7 @@
 	</Frame>
 
 	<!-- SpartanUI -->
-	<Frame name="SpartanUI" frameStrata="BACKGROUND" parent="UIParent">
+	<Frame name="SpartanUI_Classic" frameStrata="BACKGROUND" parent="UIParent">
 		<Anchors>
 			<Anchor point="BOTTOMLEFT" relativeTo="SUI_AnchorFrame" relativePoint="TOPLEFT" />
 			<Anchor point="TOPRIGHT" relativeTo="SUI_AnchorFrame" relativePoint="TOPRIGHT">
@@ -122,7 +122,7 @@
 	</Frame>
 
 	<!-- SUI_ActionBarsTemplate -->
-	<Frame name="SUI_ActionBarsTemplate" parent="SpartanUI" frameStrata="BACKGROUND" virtual="true">
+	<Frame name="SUI_ActionBarsTemplate" parent="SpartanUI_Classic" frameStrata="BACKGROUND" virtual="true">
 		<Size>
 			<AbsDimension x="1002" y="139"/>
 		</Size>
@@ -204,7 +204,7 @@
 	</Frame>
 
 	<!-- SUI_Popup1MaskTemplate -->
-	<Frame name="SUI_Popup1MaskTemplate" parent="SpartanUI" frameStrata="MEDIUM" virtual="true">
+	<Frame name="SUI_Popup1MaskTemplate" parent="SpartanUI_Classic" frameStrata="MEDIUM" virtual="true">
 		<Size>
 			<AbsDimension x="400" y="34"/>
 		</Size>
@@ -223,7 +223,7 @@
 	</Frame>
 
 	<!-- SUI_Popup2MaskTemplate -->
-	<Frame name="SUI_Popup2MaskTemplate" parent="SpartanUI" frameStrata="MEDIUM" virtual="true">
+	<Frame name="SUI_Popup2MaskTemplate" parent="SpartanUI_Classic" frameStrata="MEDIUM" virtual="true">
 		<Size>
 			<AbsDimension x="400" y="34"/>
 		</Size>

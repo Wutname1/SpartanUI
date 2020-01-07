@@ -146,7 +146,7 @@ function module:updateSpartanXOffset() -- handles SpartanUI offset based on sett
 		SpartanUI_Base3:SetPoint('RIGHT', SpartanUI_Base2, 'LEFT')
 		SpartanUI_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
 	end
-	SpartanUI:SetPoint('LEFT', SUI_AnchorFrame, 'LEFT', offset, 0)
+	SpartanUI_Classic:SetPoint('LEFT', SUI_AnchorFrame, 'LEFT', offset, 0)
 
 	SUI_FramesAnchor:ClearAllPoints()
 	SUI_FramesAnchor:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'BOTTOMLEFT', (offset / 2), 0)
@@ -195,7 +195,7 @@ function module:InitFramework()
 	do -- default interface modifications
 		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
 		SUI_FramesAnchor:SetFrameLevel(1)
-		SUI_FramesAnchor:SetParent(SpartanUI)
+		SUI_FramesAnchor:SetParent(SpartanUI_Classic)
 		SUI_FramesAnchor:ClearAllPoints()
 		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'SUI_AnchorFrame', 'TOPLEFT', 0, 0)
 		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'SUI_AnchorFrame', 'TOPRIGHT', 0, 153)
@@ -204,7 +204,7 @@ function module:InitFramework()
 			'OnShow',
 			function()
 				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SpartanUI, 'TOP', 0, 80)
+				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SpartanUI_Classic, 'TOP', 0, 80)
 			end
 		)
 
@@ -213,14 +213,14 @@ function module:InitFramework()
 
 		MainMenuBar:Hide()
 		hooksecurefunc(
-			SpartanUI,
+			SpartanUI_Classic,
 			'Hide',
 			function()
 				module:updateSpartanViewport()
 			end
 		)
 		hooksecurefunc(
-			SpartanUI,
+			SpartanUI_Classic,
 			'Show',
 			function()
 				module:updateSpartanViewport()
@@ -304,7 +304,7 @@ end
 function module:TooltipLoc(self, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
-		tooltip:SetPoint('BOTTOMRIGHT', 'SpartanUI', 'TOPRIGHT', 0, 10)
+		tooltip:SetPoint('BOTTOMRIGHT', 'SpartanUI_Classic', 'TOPRIGHT', 0, 10)
 	end
 end
 
@@ -315,13 +315,13 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SpartanUI_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if not SUI.DBMod.Artwork.VehicleUI then
-		UnregisterStateDriver(SpartanUI, 'visibility')
+		UnregisterStateDriver(SpartanUI_Classic, 'visibility')
 	end
 end
 
@@ -332,7 +332,7 @@ function module:EnableFramework()
 	frame:SetFrameLevel(1)
 
 	-- hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
-	-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",SpartanUI,"TOP",0,100); end
+	-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",SpartanUI_Classic,"TOP",0,100); end
 	-- end);
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',

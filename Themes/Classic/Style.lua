@@ -576,5 +576,5 @@ function module:AddNotice()
 end
 
 function module:OnDisable()
-	SpartanUI:Hide()
+	SpartanUI_Classic:Hide()
 end
