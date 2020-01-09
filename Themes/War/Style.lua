@@ -11,12 +11,6 @@ function module:OnInitialize()
 
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.War = {
-		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-358,75',
-		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-358,24',
-		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,364,75',
-		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,364,24',
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,30,0',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,-30,0',
 		['BT4BarBagBar'] = 'TOP,UIParent,TOP,692,0',
 		['BT4BarStanceBar'] = 'TOP,UIParent,TOP,-309,0',
 		['BT4BarPetBar'] = 'TOP,UIParent,TOP,-558,0',
