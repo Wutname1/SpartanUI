@@ -90,21 +90,17 @@ function module:updateOffset(Top, offset)
 
 	if BT4BarBagBar then
 		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
-			BT4BarPetBar:ClearAllPoints()
-			BT4BarPetBar:SetPoint('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+			BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
-			BT4BarStanceBar:ClearAllPoints()
-			BT4BarStanceBar:SetPoint('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+			BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
 		end
 
 		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
-			BT4BarMicroMenu:ClearAllPoints()
-			BT4BarMicroMenu:SetPoint('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+			BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
 		end
 		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
-			BT4BarBagBar:ClearAllPoints()
-			BT4BarBagBar:SetPoint('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
+			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
 		end
 	end
 

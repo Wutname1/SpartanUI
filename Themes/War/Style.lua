@@ -16,7 +16,11 @@ function module:OnInitialize()
 		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,364,75',
 		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,364,24',
 		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,30,0',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,-30,0'
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,-30,0',
+		['BT4BarBagBar'] = 'TOP,UIParent,TOP,692,0',
+		['BT4BarStanceBar'] = 'TOP,UIParent,TOP,-309,0',
+		['BT4BarPetBar'] = 'TOP,UIParent,TOP,-558,0',
+		['BT4BarMicroMenu'] = 'TOP,UIParent,TOP,369,0'
 	}
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
