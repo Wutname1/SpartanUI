@@ -80,22 +80,15 @@ end
 
 function MoveIt:Reset(name)
 	if name == nil then
-		for name in pairs(MoverList) do
-			local f = _G[name]
-			if f then
+		for name, frame in pairs(MoverList) do
+			if frame then
 				local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
-				f:ClearAllPoints()
-				f:SetPoint(point, anchor, secondaryPoint, x, y)
+				frame:ClearAllPoints()
+				frame:SetPoint(point, anchor, secondaryPoint, x, y)
 
 				if SUI.DB.MoveIt.movers[name].MovedPoints then
 					SUI.DB.MoveIt.movers[name].MovedPoints = nil
 				end
-
-			-- for key, value in pairs(MoverList[name]) do
-			-- 	if key == 'postdrag' and type(value) == 'function' then
-			-- 		value(f, E:GetScreenQuadrant(f))
-			-- 	end
-			-- end
 			end
 		end
 		SUI:Print('Moved frames reset!')
@@ -139,7 +132,7 @@ function MoveIt:MoveIt(name)
 		MoverWatcher:Hide()
 	else
 		if name then
-			if type(baseName) == 'string' then
+			if type(name) == 'string' then
 				local frame = MoverList[name]
 				frame:Show()
 			else
@@ -327,7 +320,6 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 
 	f.NudgeMover = NudgeMover
 	f:SetScript('OnDragStart', OnDragStart)
-	-- f:SetScript('OnMouseUp', E.AssignFrameToNudge)
 	f:SetScript('OnDragStop', OnDragStop)
 	f:SetScript('OnEnter', OnEnter)
 	f:SetScript('OnMouseDown', OnMouseDown)
@@ -344,13 +336,25 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 	local function ParentMouseUp(self)
 		if IsAltKeyDown() and SUI.DB.MoveIt.AltKey and MoveEnabled then
 			MoveIt:MoveIt(name)
+			OnDragStop(self.mover)
 		end
+	end
+	local function position(self, point, anchor, secondaryPoint, x, y, forced, defaultPos)
+		-- If the frame has been moved and we are not focing the movement stop
+		if SUI.DB.MoveIt.movers[name].MovedPoints and not forced then
+			return
+		end
+
+		-- Position frame
+		f:ClearAllPoints()
+		f:SetPoint(point, anchor, (secondaryPoint or point), x, y)
 	end
 
 	parent:SetScript('OnSizeChanged', SizeChanged)
 	parent:HookScript('OnMouseDown', ParentMouseDown)
 	parent:HookScript('OnMouseUp', ParentMouseUp)
 	parent.mover = f
+	parent.position = position
 
 	parent:ClearAllPoints()
 	parent:SetPoint('TOPLEFT', f, 0, 0)
@@ -497,7 +501,7 @@ function MoveIt:Options()
 					SUI.DB.MoveIt.AltKey = val
 				end
 			},
-			MoveIt = {
+			ResetIt = {
 				name = 'Reset moved frames',
 				type = 'execute',
 				order = 3,
