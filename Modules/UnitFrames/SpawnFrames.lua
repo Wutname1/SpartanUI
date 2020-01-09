@@ -492,11 +492,10 @@ local function CreateUnitFrame(self, unit)
 			db.Buffs.position.y
 		)
 		local w = (db.Buffs.number / db.Buffs.rows)
-		if w < 1.5 then w = 1.5 end
-		Buffs:SetSize(
-			(db.Buffs.size + db.Buffs.spacing) * w,
-			(db.Buffs.spacing + db.Buffs.size) * db.Buffs.rows
-		)
+		if w < 1.5 then
+			w = 1.5
+		end
+		Buffs:SetSize((db.Buffs.size + db.Buffs.spacing) * w, (db.Buffs.spacing + db.Buffs.size) * db.Buffs.rows)
 
 		--Debuff Icons
 		local Debuffs = self.Debuffs
@@ -518,11 +517,10 @@ local function CreateUnitFrame(self, unit)
 			db.Debuffs.position.y
 		)
 		w = (db.Debuffs.number / db.Debuffs.rows)
-		if w < 1.5 then w = 1.5 end
-		Debuffs:SetSize(
-			(db.Debuffs.size + db.Debuffs.spacing) * w,
-			(db.Debuffs.spacing + db.Debuffs.size) * db.Debuffs.rows
-		)
+		if w < 1.5 then
+			w = 1.5
+		end
+		Debuffs:SetSize((db.Debuffs.size + db.Debuffs.spacing) * w, (db.Debuffs.spacing + db.Debuffs.size) * db.Debuffs.rows)
 		self:UpdateAllElements('ForceUpdate')
 		-- self.Buffs:PostUpdate(unit, 'Buffs')
 		-- self.Debuffs:PostUpdate(unit, 'Buffs')
@@ -1122,33 +1120,20 @@ function module:SpawnFrames()
 		end
 	end
 
-	-- Area Frames
-	if SUI.IsRetail then
-		local arena = {}
-		for i = 1, 3 do
-			arena[i] = SUIUF:Spawn('arena' .. i, 'SUI_Arena' .. i)
-
-			if i == 1 then
-				arena[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
-			else
-				arena[i]:SetPoint('TOP', arena[i - 1], 'BOTTOM', 0, -10)
+	for _, group in ipairs({'boss', 'arena'}) do
+		if SUI.IsRetail then
+			local set = {}
+			for i = 1, (group == 'boss' and MAX_BOSS_FRAMES or 3) do
+				set[i] = SUIUF:Spawn(group .. i, 'SUI_' .. group .. i)
+				if i == 1 then
+					set[i]:SetPoint('TOPLEFT', _G['SUI_UF_' .. group], 'TOPLEFT', 0, 0)
+				else
+					set[i]:SetPoint('TOP', set[i - 1], 'BOTTOM', 0, -10)
+				end
 			end
-		end
-		module.frames.arena = arena
-	end
-
-	-- Boss Frames
-	local boss = {}
-	for i = 1, MAX_BOSS_FRAMES do
-		boss[i] = SUIUF:Spawn('boss' .. i, 'SUI_Boss' .. i)
-
-		if i == 1 then
-			boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
-		else
-			boss[i]:SetPoint('TOP', boss[i - 1], 'BOTTOM', 0, -10)
+			module.frames[group] = set
 		end
 	end
-	module.frames.boss = boss
 
 	-- Party Frames
 	local party =
@@ -1281,7 +1266,7 @@ function module:SpawnFrames()
 		end
 	end
 
-	for _, group in ipairs({'raid', 'party'}) do
+	for _, group in ipairs({'raid', 'party', 'boss', 'arena'}) do
 		module.frames[group].UpdateAll = GroupFrameUpdateAll
 		module.frames[group].UpdateArtwork = GroupFrameUpdateArtwork
 		module.frames[group].ElementUpdate = GroupFrameElementUpdate
@@ -1474,175 +1459,6 @@ function PlayerFrames:PositionFrame_Classic(b)
 	if b == 'focustarget' or b == nil then
 		PlayerFrames.focustarget:SetPoint('BOTTOMLEFT', PlayerFrames.focus, 'BOTTOMRIGHT', -35, 0)
 	end
-end
-
-function PlayerFrames:AddMover(frame, framename)
-	if frame == nil then
-		SUI:Err('PlayerFrames', SUI.DBMod.PlayerFrames.Style .. ' did not spawn ' .. framename)
-	else
-		frame.mover = CreateFrame('Frame')
-		frame.mover:SetSize(20, 20)
-
-		if framename == 'boss' then
-			frame.mover:SetPoint('TOPLEFT', PlayerFrames.boss[1], 'TOPLEFT')
-			frame.mover:SetPoint('BOTTOMRIGHT', PlayerFrames.boss[MAX_BOSS_FRAMES], 'BOTTOMRIGHT')
-		elseif framename == 'arena' then
-			frame.mover:SetPoint('TOPLEFT', PlayerFrames.boss[1], 'TOPLEFT')
-			frame.mover:SetPoint('BOTTOMRIGHT', PlayerFrames.boss[MAX_BOSS_FRAMES], 'BOTTOMRIGHT')
-		else
-			frame.mover:SetPoint('TOPLEFT', frame, 'TOPLEFT')
-			frame.mover:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
-		end
-
-		frame.mover:EnableMouse(true)
-		frame.mover:SetFrameStrata('LOW')
-
-		frame:EnableMouse(enable)
-		frame:SetScript(
-			'OnMouseDown',
-			function(self, button)
-				if button == 'LeftButton' and IsAltKeyDown() then
-					frame.mover:Show()
-					SUI.DBMod.PlayerFrames[framename].moved = true
-					frame:SetMovable(true)
-					frame:StartMoving()
-				end
-			end
-		)
-		frame:SetScript(
-			'OnMouseUp',
-			function(self, button)
-				frame.mover:Hide()
-				frame:StopMovingOrSizing()
-				local Anchors = {}
-				Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = frame:GetPoint()
-				Anchors.relativeTo = 'UIParent'
-				for k, v in pairs(Anchors) do
-					SUI.DBMod.PlayerFrames[framename].Anchors[k] = v
-				end
-			end
-		)
-
-		frame.mover.bg = frame.mover:CreateTexture(nil, 'BACKGROUND')
-		frame.mover.bg:SetAllPoints(frame.mover)
-		frame.mover.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
-		frame.mover.bg:SetVertexColor(1, 1, 1, 0.5)
-
-		frame.mover:SetScript(
-			'OnEvent',
-			function()
-				PlayerFrames.locked = 1
-				frame.mover:Hide()
-			end
-		)
-		frame.mover:RegisterEvent('VARIABLES_LOADED')
-		frame.mover:RegisterEvent('PLAYER_REGEN_DISABLED')
-		frame.mover:Hide()
-
-		--Set Position if moved
-		if SUI.DBMod.PlayerFrames[framename].moved then
-			frame:SetMovable(true)
-			frame:SetUserPlaced(false)
-			local Anchors = {}
-			for k, v in pairs(SUI.DBMod.PlayerFrames[framename].Anchors) do
-				Anchors[k] = v
-			end
-			frame:ClearAllPoints()
-			frame:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-		else
-			frame:SetMovable(false)
-		end
-	end
-end
-
-function PlayerFrames:BossMoveScripts(frame)
-	frame:EnableMouse(enable)
-	frame:SetScript(
-		'OnMouseDown',
-		function(self, button)
-			if button == 'LeftButton' and IsAltKeyDown() then
-				PlayerFrames.boss[1].mover:Show()
-				SUI.DBMod.PlayerFrames.boss.moved = true
-				PlayerFrames.boss[1]:SetMovable(true)
-				PlayerFrames.boss[1]:StartMoving()
-			end
-		end
-	)
-	frame:SetScript(
-		'OnMouseUp',
-		function(self, button)
-			PlayerFrames.boss[1].mover:Hide()
-			PlayerFrames.boss[1]:StopMovingOrSizing()
-			local Anchors = {}
-			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs =
-				PlayerFrames.boss[1]:GetPoint()
-			for k, v in pairs(Anchors) do
-				SUI.DBMod.PlayerFrames.boss.Anchors[k] = v
-			end
-		end
-	)
-end
-
-function PlayerFrames:UpdateArenaFramePosition()
-	if (InCombatLockdown()) then
-		return
-	end
-	if SUI.DBMod.PlayerFrames.ArenaFrame.movement.moved then
-		SUI_Arena1:SetPoint(
-			SUI.DBMod.PlayerFrames.ArenaFrame.movement.point,
-			SUI.DBMod.PlayerFrames.ArenaFrame.movement.relativeTo,
-			SUI.DBMod.PlayerFrames.ArenaFrame.movement.relativePoint,
-			SUI.DBMod.PlayerFrames.ArenaFrame.movement.xOffset,
-			SUI.DBMod.PlayerFrames.ArenaFrame.movement.yOffset
-		)
-	else
-		SUI_Arena1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
-	end
-end
-
-function PlayerFrames:UpdateBossFramePosition()
-	if (InCombatLockdown()) then
-		return
-	end
-	if SUI.DBMod.PlayerFrames.BossFrame.movement.moved then
-		SUI_Boss1:SetPoint(
-			SUI.DBMod.PlayerFrames.BossFrame.movement.point,
-			SUI.DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-			SUI.DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-			SUI.DBMod.PlayerFrames.BossFrame.movement.xOffset,
-			SUI.DBMod.PlayerFrames.BossFrame.movement.yOffset
-		)
-	else
-		SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
-	end
-end
-
-function PlayerFrames:ArenaMoveScripts(frame)
-	frame:EnableMouse(enable)
-	frame:SetScript(
-		'OnMouseDown',
-		function(self, button)
-			if button == 'LeftButton' and IsAltKeyDown() then
-				PlayerFrames.arena[1].mover:Show()
-				DBMod.PlayerFrames.arena.moved = true
-				PlayerFrames.arena[1]:SetMovable(true)
-				PlayerFrames.arena[1]:StartMoving()
-			end
-		end
-	)
-	frame:SetScript(
-		'OnMouseUp',
-		function(self, button)
-			PlayerFrames.arena[1].mover:Hide()
-			PlayerFrames.arena[1]:StopMovingOrSizing()
-			local Anchors = {}
-			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs =
-				PlayerFrames.arena[1]:GetPoint()
-			for k, v in pairs(Anchors) do
-				DBMod.PlayerFrames.arena.Anchors[k] = v
-			end
-		end
-	)
 end
 
 function PlayerFrames:OnEnable()

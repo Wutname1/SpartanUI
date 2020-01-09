@@ -356,8 +356,7 @@ local DBdefault = {
 							parent = 'SUI_ActionBarPlate',
 							x = -6,
 							y = -2,
-							scale = 0.70,
-							growHorizontal = 'LEFT'
+							scale = 0.70
 						},
 						rows = 1,
 						onebag = false,
@@ -397,8 +396,7 @@ local DBdefault = {
 							parent = 'SUI_ActionBarPlate',
 							x = -605,
 							y = -2,
-							scale = 0.85,
-							growHorizontal = 'LEFT'
+							scale = 0.85
 						},
 						rows = 1
 					},
@@ -609,7 +607,6 @@ local DBdefault = {
 							x = 494,
 							y = -15,
 							scale = 0.70,
-							growHorizontal = 'LEFT'
 						},
 						rows = 1,
 						onebag = false,
@@ -659,7 +656,6 @@ local DBdefault = {
 							x = -105,
 							y = -15,
 							scale = 0.70,
-							growHorizontal = 'LEFT'
 						},
 						rows = 1
 					},
@@ -1282,7 +1278,7 @@ local DBdefault = {
 						version = 3,
 						enabled = true,
 						padding = 0,
-						position = {point = 'TOP', x = 465, y = -1, scale = 0.6, growHorizontal = 'LEFT'},
+						position = {point = 'TOP', x = 465, y = -1, scale = 0.6},
 						rows = 1,
 						onebag = false,
 						keyring = true
@@ -1305,7 +1301,7 @@ local DBdefault = {
 						version = 3,
 						enabled = true,
 						padding = 1,
-						position = {point = 'TOP', x = -129, y = -1, scale = 0.6, growHorizontal = 'LEFT'},
+						position = {point = 'TOP', x = -129, y = -1, scale = 0.6},
 						rows = 1
 					},
 					MultiCast = {
@@ -1501,7 +1497,7 @@ local DBdefault = {
 							position = {
 								anchor = 'TOPLEFT',
 								x = 0,
-								y = 0
+								y = 20
 							}
 						},
 						Debuffs = {
@@ -1519,7 +1515,7 @@ local DBdefault = {
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 0,
-								y = 0
+								y = 20
 							}
 						},
 						Bars = {
@@ -1533,7 +1529,12 @@ local DBdefault = {
 							spellTimeSize = 10,
 							gap = 1,
 							spacing = 1,
-							scaleTime = false
+							scaleTime = false,
+							position = {
+								anchor = 'TOP',
+								x = 0,
+								y = 20
+							}
 						}
 					},
 					elements = {
@@ -1816,6 +1817,73 @@ local DBdefault = {
 						}
 					}
 				},
+				arena = {
+					enabled = true,
+					maxColumns = 1,
+					unitsPerColumn = 5,
+					columnSpacing = 1,
+					yOffset = -10,
+					elements = {
+						Castbar = {
+							enabled = true
+						},
+						SUI_ClassIcon = {
+							enabled = true
+						}
+					}
+				},
+				boss = {
+					enabled = true,
+					width = 120,
+					maxColumns = 1,
+					unitsPerColumn = 5,
+					columnSpacing = 0,
+					yOffset = -10,
+					auras = {
+						Buffs = {
+							enabled = true,
+							size = 10
+						}
+					},
+					elements = {
+						Portrait = {
+							enabled = true,
+							type = '2D'
+						},
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				bosstarget = {},
+				focus = {
+					enabled = true,
+					width = 100,
+					auras = {
+						Buffs = {
+							enabled = true,
+							onlyShowPlayer = true
+						},
+						Debuffs = {
+							enabled = true,
+							onlyShowPlayer = true
+						}
+					},
+					elements = {
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
+				focustarget = {
+					enabled = true,
+					width = 90,
+					elements = {
+						Castbar = {
+							enabled = true
+						}
+					}
+				},
 				player = {
 					enabled = true,
 					anchor = {
@@ -1876,128 +1944,10 @@ local DBdefault = {
 						}
 					}
 				},
-				target = {
-					enabled = true,
-					anchor = {
-						point = 'BOTTOMLEFT',
-						relativePoint = 'BOTTOM',
-						xOfs = 60,
-						yOfs = 250
-					},
-					auras = {
-						Buffs = {
-							enabled = true
-						},
-						Debuffs = {
-							enabled = true
-						},
-						Bars = {
-							enabled = true
-						}
-					},
-					elements = {
-						Portrait = {
-							enabled = true
-						},
-						Castbar = {
-							enabled = true
-						},
-						QuestIndicator = {
-							enabled = true
-						},
-						RaidRoleIndicator = {
-							enabled = true
-						},
-						AssistantIndicator = {
-							enabled = true
-						},
-						SUI_ClassIcon = {
-							enabled = true
-						},
-						PvPIndicator = {
-							enabled = true
-						},
-						Power = {
-							text = {
-								['1'] = {
-									enabled = true
-								}
-							}
-						}
-					}
-				},
-				targettarget = {
-					enabled = true,
-					width = 100,
-					auras = {
-						Debuffs = {
-							size = 10
-						}
-					},
-					elements = {
-						Castbar = {
-							enabled = false
-						},
-						Health = {
-							height = 30
-						},
-						Power = {
-							height = 5
-						}
-					}
-				},
-				boss = {
-					enabled = true,
-					width = 120,
-					auras = {
-						Buffs = {
-							enabled = true,
-							size = 10
-						}
-					},
-					elements = {
-						Portrait = {
-							enabled = true,
-							type = '2D'
-						},
-						Castbar = {
-							enabled = true
-						}
-					}
-				},
-				bosstarget = {},
 				pet = {
 					width = 100
 				},
 				pettarget = {},
-				focus = {
-					enabled = true,
-					width = 100,
-					auras = {
-						Buffs = {
-							enabled = true,
-							onlyShowPlayer = true
-						},
-						Debuffs = {
-							enabled = true,
-							onlyShowPlayer = true
-						}
-					},
-					elements = {
-						Castbar = {
-							enabled = true
-						}
-					}
-				},
-				focustarget = {
-					enabled = true,
-					width = 90,
-					elements = {
-						Castbar = {
-							enabled = true
-						}
-					}
-				},
 				party = {
 					width = 120,
 					enabled = true,
@@ -2092,14 +2042,73 @@ local DBdefault = {
 						}
 					}
 				},
-				arena = {
+				target = {
 					enabled = true,
+					anchor = {
+						point = 'BOTTOMLEFT',
+						relativePoint = 'BOTTOM',
+						xOfs = 60,
+						yOfs = 250
+					},
+					auras = {
+						Buffs = {
+							enabled = true
+						},
+						Debuffs = {
+							enabled = true
+						},
+						Bars = {
+							enabled = true
+						}
+					},
 					elements = {
+						Portrait = {
+							enabled = true
+						},
 						Castbar = {
+							enabled = true
+						},
+						QuestIndicator = {
+							enabled = true
+						},
+						RaidRoleIndicator = {
+							enabled = true
+						},
+						AssistantIndicator = {
 							enabled = true
 						},
 						SUI_ClassIcon = {
 							enabled = true
+						},
+						PvPIndicator = {
+							enabled = true
+						},
+						Power = {
+							text = {
+								['1'] = {
+									enabled = true
+								}
+							}
+						}
+					}
+				},
+				targettarget = {
+					enabled = true,
+					width = 100,
+					auras = {
+						Debuffs = {
+							size = 10
+						}
+					},
+					elements = {
+						Castbar = {
+							enabled = false
+						},
+						Health = {
+							height = 30
+						},
+						Power = {
+							height = 5
 						}
 					}
 				}

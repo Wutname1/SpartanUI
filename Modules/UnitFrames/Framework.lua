@@ -15,12 +15,12 @@ module.FramePos = {
 		['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0',
 		['focus'] = 'BOTTOMLEFT,SUI_UF_target,TOP,0,30',
 		['focustarget'] = 'BOTTOMLEFT,SUI_UF_focus,BOTTOMRIGHT,5,0',
-		['boss'] = 'TOPRIGHT,UIParent,TOPRIGHT,-50,-490',
+		['boss'] = 'RIGHT,UIParent,RIGHT,-9,162',
 		['party'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
 		['partypet'] = 'BOTTOMRIGHT,frame,BOTTOMLEFT,-2,0',
 		['partytarget'] = 'LEFT,frame,RIGHT,2,0',
 		['raid'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
-		['arena'] = 'TOPRIGHT,UIParent,TOPRIGHT,-50,-490'
+		['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
 	}
 }
 module.frames = {
@@ -173,8 +173,14 @@ function module:OnEnable()
 	end
 
 	-- Create Party & Raid frame holder
-	do -- Party frame
-		local elements = module.CurrentSettings.party.elements
+	local GroupedFrames = {
+		'party',
+		'raid',
+		'boss',
+		'arena'
+	}
+	for _, key in ipairs(GroupedFrames) do
+		local elements = module.CurrentSettings[key].elements
 		local FrameHeight = 0
 		if elements.Castbar.enabled then
 			FrameHeight = FrameHeight + elements.Castbar.height
@@ -185,39 +191,16 @@ function module:OnEnable()
 		if elements.Power.enabled then
 			FrameHeight = FrameHeight + elements.Power.height
 		end
-		local height = module.CurrentSettings.party.unitsPerColumn * (FrameHeight + module.CurrentSettings.party.yOffset)
+		local height = module.CurrentSettings[key].unitsPerColumn * (FrameHeight + module.CurrentSettings[key].yOffset)
 
 		local width =
-			module.CurrentSettings.party.maxColumns *
-			(module.CurrentSettings.party.width + module.CurrentSettings.party.columnSpacing)
+			module.CurrentSettings[key].maxColumns *
+			(module.CurrentSettings[key].width + module.CurrentSettings[key].columnSpacing)
 
-		local frame = CreateFrame('Frame', 'SUI_UF_party')
+		local frame = CreateFrame('Frame', 'SUI_UF_' .. key)
 		frame:Hide()
 		frame:SetSize(width, height)
-		module.frames.containers.party = frame
-	end
-	do -- Raid frame
-		local elements = module.CurrentSettings.raid.elements
-		local FrameHeight = 0
-		if elements.Castbar.enabled then
-			FrameHeight = FrameHeight + elements.Castbar.height
-		end
-		if elements.Health.enabled then
-			FrameHeight = FrameHeight + elements.Health.height
-		end
-		if elements.Power.enabled then
-			FrameHeight = FrameHeight + elements.Power.height
-		end
-		local width =
-			module.CurrentSettings.raid.maxColumns *
-			(module.CurrentSettings.raid.width + module.CurrentSettings.raid.columnSpacing)
-
-		local height = module.CurrentSettings.raid.unitsPerColumn * (FrameHeight + module.CurrentSettings.raid.yOffset)
-
-		local frame = CreateFrame('Frame', 'SUI_UF_raid')
-		frame:Hide()
-		frame:SetSize(width, height)
-		module.frames.containers.raid = frame
+		module.frames.containers[key] = frame
 	end
 
 	-- Build options
@@ -245,6 +228,10 @@ function module:OnEnable()
 	-- Create Party & Raid Mover
 	MoveIt:CreateMover(module.frames.containers.party, 'Party', nil, true)
 	MoveIt:CreateMover(module.frames.containers.raid, 'Raid', nil, true)
+	MoveIt:CreateMover(module.frames.containers.boss, 'Boss', nil, true, true)
+	if SUI.IsRetail then
+		MoveIt:CreateMover(module.frames.containers.arena, 'Arena', nil, true)
+	end
 end
 
 local blockedFunctions = {
