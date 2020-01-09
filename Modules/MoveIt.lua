@@ -4,6 +4,7 @@ local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 local MoverList = {}
 local colors = {
 	bg = {0.0588, 0.0588, 0, .85},
+	active = {.1, .1, .1, .7},
 	border = {0.00, 0.00, 0.00, 1},
 	text = {1, 1, 1, 1},
 	disabled = {0.55, 0.55, 0.55, 1}
@@ -285,6 +286,7 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 		if isDragging then
 			return
 		end
+		self:SetBackdropColor(unpack(colors.active))
 		self.text:SetTextColor(1, 1, 1)
 	end
 
@@ -308,6 +310,7 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 		if isDragging then
 			return
 		end
+		self:SetBackdropColor(unpack(colors.bg))
 	end
 
 	local function OnShow(self)
