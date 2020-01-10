@@ -209,6 +209,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 1
 							{
@@ -216,6 +217,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 2
 							{
@@ -223,6 +225,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 3
 							{
@@ -230,6 +233,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 4
 							{
@@ -237,6 +241,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 3,
 								padding = 4,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 5
 							{
@@ -244,6 +249,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 3,
 								padding = 4,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 6
 							{
@@ -251,6 +257,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 7
 							{
@@ -258,6 +265,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 8
 							{
@@ -265,6 +273,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							}, -- 9
 							{
@@ -272,6 +281,7 @@ local DBdefault = {
 								buttons = 12,
 								rows = 1,
 								padding = 3,
+								position = {scale = 0.85},
 								skin = {Zoom = true}
 							} -- 10
 						}
@@ -281,24 +291,31 @@ local DBdefault = {
 						padding = 0,
 						onebag = false,
 						keyring = true,
+						position = {scale = 0.6},
 						skin = {Zoom = true}
 					},
 					MicroMenu = {
-						enabled = true
+						enabled = true,
+						position = {scale = 0.6}
 					},
 					PetBar = {
 						enabled = true,
+						position = {scale = 0.6},
 						skin = {Zoom = true}
 					},
 					StanceBar = {
 						enabled = true,
 						padding = 1,
+						position = {scale = 0.6},
 						skin = {Zoom = true}
 					},
 					Vehicle = {
 						enabled = false
 					},
-					ExtraActionBar = {enabled = true},
+					ExtraActionBar = {
+						enabled = true,
+						position = {scale = 0.6}
+					},
 					BlizzardArt = {enabled = false},
 					StatusTrackingBar = {enabled = false},
 					blizzardVehicle = true
