@@ -15,7 +15,10 @@ end
 
 function module:InitActionBars()
 	do -- create bar plate and masks
-		plate = _G['SUI_ActionBarPlate']
+		plate = CreateFrame('Frame', 'SUI_ActionBarPlate', SpartanUI, 'SUI_ActionBarsTemplate')
+		plate:SetFrameStrata('BACKGROUND')
+		plate:SetFrameLevel(1)
+		plate:SetPoint('BOTTOM')
 
 		plate.mask1 = CreateFrame('Frame', 'SUI_Popup1Mask', SpartanUI_Classic, 'SUI_Popup1MaskTemplate')
 		plate.mask1:SetFrameStrata('MEDIUM')
@@ -27,21 +30,6 @@ function module:InitActionBars()
 		plate.mask2:SetFrameLevel(0)
 		plate.mask2:SetPoint('BOTTOM', SUI_Popup2, 'BOTTOM')
 	end
-
-	local BarHandler = SUI:GetModule('Component_BarHandler')
-	BarHandler.BarPosition.BT4.Classic = {
-		['BT4Bar1'] = 'CENTER,SUI_ActionBarAnchor,CENTER,-510,36',
-		['BT4Bar2'] = 'CENTER,SUI_ActionBarAnchor,CENTER,-510,-8',
-		['BT4Bar3'] = 'CENTER,SUI_ActionBarAnchor,CENTER,108,36',
-		['BT4Bar4'] = 'CENTER,SUI_ActionBarAnchor,CENTER,108,-8',
-		['BT4Bar5'] = 'LEFT,SUI_ActionBarAnchor,LEFT,-135,36',
-		['BT4Bar6'] = 'RIGHT,SUI_ActionBarAnchor,RIGHT,3,36',
-		['BT4BarBagBar'] = 'TOP,SUI_ActionBarAnchor,TOP,503,2',
-		['BT4BarExtraActionBar'] = 'TOP,SUI_ActionBarAnchor,TOP,3,36',
-		['BT4BarStanceBar'] = 'TOP,SUI_ActionBarAnchor,TOP,-115,2',
-		['BT4BarPetBar'] = 'TOP,SUI_ActionBarAnchor,TOP,-32,240',
-		['BT4BarMicroMenu'] = 'TOP,SUI_ActionBarAnchor,TOP,114,4'
-	}
 end
 
 function module:EnableActionBars()

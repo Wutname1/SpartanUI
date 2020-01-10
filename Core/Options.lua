@@ -73,6 +73,7 @@ function module:OnInitialize()
 				SUI.DB.Unitframes.Style = skin
 				SUI.opt.args.UnitFrames.args.BaseStyle.args[skin].func()
 				module:ArtSetup()
+				SUI:reloadui()
 			end
 		}
 		-- Setup artwork button
@@ -91,6 +92,7 @@ function module:OnInitialize()
 				end
 
 				module:ArtSetup()
+				SUI:reloadui()
 			end
 		}
 	end

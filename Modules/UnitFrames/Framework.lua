@@ -228,7 +228,7 @@ function module:OnEnable()
 	-- Create Party & Raid Mover
 	MoveIt:CreateMover(module.frames.containers.party, 'Party', nil, true)
 	MoveIt:CreateMover(module.frames.containers.raid, 'Raid', nil, true)
-	MoveIt:CreateMover(module.frames.containers.boss, 'Boss', nil, true, true)
+	MoveIt:CreateMover(module.frames.containers.boss, 'Boss', nil, true)
 	if SUI.IsRetail then
 		MoveIt:CreateMover(module.frames.containers.arena, 'Arena', nil, true)
 	end

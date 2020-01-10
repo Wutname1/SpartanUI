@@ -3,7 +3,7 @@ local L = SUI.L
 local module = SUI:GetModule('Component_BarHandler')
 local BartenderMin = '4.8.5'
 local MoveIt = SUI:GetModule('Component_MoveIt')
-
+local scaleData
 ------------------------------------------------------------
 
 local function Options()
@@ -156,6 +156,9 @@ local function BTMover(BarName, DisplayName)
 		function bar:LoadPosition()
 		end
 
+		if scaleData[BarName] then
+			bar:SetScale(scaleData[BarName])
+		end
 		MoveIt:CreateMover(bar, BarName, DisplayName, true)
 		MoveIt:UpdateMover(BarName, bar.overlay, true)
 	end
@@ -168,7 +171,9 @@ local function AddMovers()
 			function bar:LoadPosition()
 			end
 
-			bar:SetScale(.79)
+			if scaleData[BarName] then
+				bar:SetScale(scaleData[BarName])
+			end
 			MoveIt:CreateMover(bar, 'BT4Bar' .. i, 'Bar ' .. i, true)
 			MoveIt:UpdateMover('BT4Bar' .. i, bar.overlay, true)
 		end
@@ -192,6 +197,10 @@ local function OnInitialize()
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileCopied', 'BT4RefreshConfig')
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
 	end
+	scaleData = module.BarScale.BT4.default
+	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DBMod.Artwork.Style] then
+		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DBMod.Artwork.Style], module.BarScale.BT4.default)
+	end
 end
 
 local function RefreshConfig()
@@ -202,6 +211,10 @@ local function RefreshConfig()
 	-- If artwork is enabled load the art's position data if supplied
 	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DBMod.Artwork.Style] then
 		positionData = SUI:MergeData(module.BarPosition.BT4[SUI.DBMod.Artwork.Style], module.BarPosition.BT4.default)
+	end
+	scaleData = module.BarScale.BT4.default
+	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DBMod.Artwork.Style] then
+		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DBMod.Artwork.Style], module.BarScale.BT4.default)
 	end
 
 	local FrameList = {
@@ -226,6 +239,9 @@ local function RefreshConfig()
 			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
 			f:ClearAllPoints()
 			f:SetPoint(point, anchor, secondaryPoint, x, y)
+			if scaleData[v] then
+				f:SetScale(scaleData[v])
+			end
 		end
 	end
 end

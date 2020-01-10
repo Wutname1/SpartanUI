@@ -1763,29 +1763,45 @@ function SUI:UpdateModuleConfigs()
 end
 
 function SUI:reloadui(Desc2)
-	-- SUI.DB.OpenOptions = true;
-	local PageData = {
-		title = 'SpartanUI',
-		Desc1 = 'A reload of your UI is required.',
-		Desc2 = Desc2,
-		width = 400,
-		height = 150,
-		WipePage = true,
-		Display = function()
-			SUI_Win:ClearAllPoints()
-			SUI_Win:SetPoint('TOP', 0, -20)
-			SUI_Win:SetSize(400, 150)
-			SUI_Win.Status:Hide()
-			SUI_Win.Next:SetText('RELOADUI')
-			SUI_Win.Next:ClearAllPoints()
-			SUI_Win.Next:SetPoint('BOTTOM', 0, 30)
-		end,
-		Next = function()
+	local StdUi = LibStub('StdUi'):NewInstance()
+
+	-- Create popup
+	local popup = StdUi:Window(nil, 400, 140)
+	popup:SetPoint('TOP', 0, -20)
+	popup:SetFrameStrata('DIALOG')
+
+	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+	popup.Title:SetPoint('TOP')
+	popup.Title:SetAlpha(.8)
+
+	-- Create Popup Items
+	popup.ReloadMsg = StdUi:Label(popup, 'A reload of your UI is required.', 20)
+	popup.ExtraMsg = StdUi:Label(popup, (Desc2 or ''), 20, nil, 400)
+	popup.btnClose = StdUi:HighlightButton(popup, 50, 20, 'CLOSE')
+	popup.btnReload = StdUi:Button(popup, 180, 20, 'RELOAD UI')
+
+	-- Position
+	StdUi:GlueTop(popup.ReloadMsg, popup, 0, -50)
+	StdUi:GlueTop(popup.ExtraMsg, popup.ReloadMsg, 0, -20)
+	popup.btnReload:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
+	popup.btnClose:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -4, 4)
+
+	-- Actions
+	popup.btnClose:SetScript(
+		'OnClick',
+		function(this)
+			-- Perform the Page's Custom Next action
+			popup:Hide()
+		end
+	)
+	popup.btnReload:SetScript(
+		'OnClick',
+		function(this)
+			-- Perform the Page's Custom Next action
 			ReloadUI()
 		end
-	}
-	local SetupWindow = SUI:GetModule('SUIWindow')
-	SetupWindow:DisplayPage(PageData)
+	)
 end
 
 function SUI:OnEnable()

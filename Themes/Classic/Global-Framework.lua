@@ -15,7 +15,7 @@ function module:updateColor()
 end
 
 function module:updateSpartanViewport() -- handles viewport offset based on settings
-	if not InCombatLockdown() and SUI.DB.viewport and (SpartanUI_Base5:GetHeight() ~= 0) then
+	if not InCombatLockdown() and SUI.DB.viewport and (SpartanUI_Classic_Base5:GetHeight() ~= 0) then
 		WorldFrame:ClearAllPoints()
 		WorldFrame:SetPoint(
 			'TOPLEFT',
@@ -24,13 +24,13 @@ function module:updateSpartanViewport() -- handles viewport offset based on sett
 			SUI.DBMod.Artwork.Viewport.offset.left,
 			SUI.DBMod.Artwork.Viewport.offset.top
 		)
-		if SpartanUI_Base5:IsVisible() then
+		if SpartanUI_Classic_Base5:IsVisible() then
 			WorldFrame:SetPoint(
 				'BOTTOMRIGHT',
 				UIParent,
 				'BOTTOMRIGHT',
 				SUI.DBMod.Artwork.Viewport.offset.right,
-				(SpartanUI_Base5:GetHeight() * SUI.DB.scale / SUI.DBMod.Artwork.Viewport.offset.bottom)
+				(SpartanUI_Classic_Base5:GetHeight() * SUI.DB.scale / SUI.DBMod.Artwork.Viewport.offset.bottom)
 			)
 		else
 			WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
@@ -61,13 +61,13 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 			frame:SetScale(SUI.DB.scale)
 		end
 		if SUI.DB.scale <= .75 then
-			SpartanUI_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
-			SpartanUI_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
+			SpartanUI_Classic_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
+			SpartanUI_Classic_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
 		else
-			SpartanUI_Base3:ClearAllPoints()
-			SpartanUI_Base5:ClearAllPoints()
-			SpartanUI_Base3:SetPoint('RIGHT', SpartanUI_Base2, 'LEFT')
-			SpartanUI_Base5:SetPoint('LEFT', SpartanUI_Base4, 'RIGHT')
+			SpartanUI_Classic_Base3:ClearAllPoints()
+			SpartanUI_Classic_Base5:ClearAllPoints()
+			SpartanUI_Classic_Base3:SetPoint('RIGHT', SpartanUI_Classic_Base2, 'LEFT')
+			SpartanUI_Classic_Base5:SetPoint('LEFT', SpartanUI_Classic_Base4, 'RIGHT')
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')
 		for _, key in ipairs(module.StatusBarSettings.bars) do
@@ -79,11 +79,11 @@ end
 
 function module:updateSpartanAlpha() -- scales SpartanUI based on setting or screen size
 	if SUI.DB.alpha then
-		SpartanUI_Base1:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Base2:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Base3:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Base4:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Base5:SetAlpha(SUI.DB.alpha)
+		SpartanUI_Classic_Base1:SetAlpha(SUI.DB.alpha)
+		SpartanUI_Classic_Base2:SetAlpha(SUI.DB.alpha)
+		SpartanUI_Classic_Base3:SetAlpha(SUI.DB.alpha)
+		SpartanUI_Classic_Base4:SetAlpha(SUI.DB.alpha)
+		SpartanUI_Classic_Base5:SetAlpha(SUI.DB.alpha)
 		SUI_Popup1Mask:SetAlpha(SUI.DB.alpha)
 		SUI_Popup2Mask:SetAlpha(SUI.DB.alpha)
 	end
@@ -138,13 +138,13 @@ function module:updateSpartanXOffset() -- handles SpartanUI offset based on sett
 	end
 	local offset = SUI.DB.xOffset
 	if round(offset) <= -300 then
-		SpartanUI_Base5:ClearAllPoints()
-		SpartanUI_Base5:SetPoint('LEFT', SpartanUI_Base4, 'RIGHT')
-		SpartanUI_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
+		SpartanUI_Classic_Base5:ClearAllPoints()
+		SpartanUI_Classic_Base5:SetPoint('LEFT', SpartanUI_Classic_Base4, 'RIGHT')
+		SpartanUI_Classic_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
 	elseif round(offset) >= 300 then
-		SpartanUI_Base3:ClearAllPoints()
-		SpartanUI_Base3:SetPoint('RIGHT', SpartanUI_Base2, 'LEFT')
-		SpartanUI_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
+		SpartanUI_Classic_Base3:ClearAllPoints()
+		SpartanUI_Classic_Base3:SetPoint('RIGHT', SpartanUI_Classic_Base2, 'LEFT')
+		SpartanUI_Classic_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
 	end
 	SpartanUI_Classic:SetPoint('LEFT', SUI_AnchorFrame, 'LEFT', offset, 0)
 
@@ -169,8 +169,8 @@ function module:SetColor()
 	end
 
 	for i = 1, 6 do
-		if _G['SpartanUI_Base' .. i] then
-			_G['SpartanUI_Base' .. i]:SetVertexColor(r, b, g, a)
+		if _G['SpartanUI_Classic_Base' .. i] then
+			_G['SpartanUI_Classic_Base' .. i]:SetVertexColor(r, b, g, a)
 		end
 		if _G['Bar' .. i .. 'BG'] then
 			_G['Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
@@ -209,7 +209,7 @@ function module:InitFramework()
 		)
 
 		FramerateText:ClearAllPoints()
-		FramerateText:SetPoint('BOTTOM', 'SpartanUI_Base1', 'TOP', 0, 0)
+		FramerateText:SetPoint('BOTTOM', 'SpartanUI_Classic_Base1', 'TOP', 0, 0)
 
 		MainMenuBar:Hide()
 		hooksecurefunc(

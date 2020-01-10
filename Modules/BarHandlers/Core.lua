@@ -23,6 +23,27 @@ module.BarPosition = {
 		}
 	}
 }
+module.BarScale = {
+	BT4 = {
+		default = {
+			['BT4Bar1'] = 0.79,
+			['BT4Bar2'] = 0.79,
+			['BT4Bar3'] = 0.79,
+			['BT4Bar4'] = 0.79,
+			['BT4Bar5'] = 0.79,
+			['BT4Bar6'] = 0.79,
+			['BT4Bar7'] = 0.79,
+			['BT4Bar8'] = 0.79,
+			['BT4Bar9'] = 0.79,
+			['BT4Bar10'] = 0.79,
+			['BT4BarBagBar'] = 0.6,
+			['BT4BarExtraActionBar'] = 0.6,
+			['BT4BarStanceBar'] = 0.6,
+			['BT4BarPetBar'] = 0.6,
+			['BT4BarMicroMenu'] = 0.6
+		}
+	}
+}
 
 ------------------------------------------------------------
 

@@ -38,6 +38,41 @@ function module:OnInitialize()
 	else
 		module:Disable()
 	end
+
+	local BarHandler = SUI:GetModule('Component_BarHandler')
+	BarHandler.BarPosition.BT4.Classic = {
+		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-355,79',
+		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-355,32',
+		--
+		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,355,79',
+		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,355,32',
+		--
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,-55,3',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,55,3',
+		--
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-208,122',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-536,152',
+		--
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,281,127',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,587,155'
+	}
+	BarHandler.BarScale.BT4.Classic = {
+		['BT4Bar1'] = 0.85,
+		['BT4Bar2'] = 0.85,
+		['BT4Bar3'] = 0.85,
+		['BT4Bar4'] = 0.85,
+		-- ['BT4Bar5'] = 0.85,
+		-- ['BT4Bar6'] = 0.85,
+		['BT4Bar7'] = 0.85,
+		['BT4Bar8'] = 0.85,
+		['BT4Bar9'] = 0.85,
+		['BT4Bar10'] = 0.85,
+		['BT4BarBagBar'] = 0.7,
+		['BT4BarStanceBar'] = 0.85,
+		['BT4BarPetBar'] = 0.7,
+		['BT4BarMicroMenu'] = 0.8
+	}
+
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.Classic = {
 		full = {perUnit = true},

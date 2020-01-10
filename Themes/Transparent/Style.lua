@@ -22,6 +22,25 @@ function module:OnInitialize()
 	--Enable the in the Core options screen
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Transparent'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Transparent'].disabled = false
+
+	local BarHandler = SUI:GetModule('Component_BarHandler')
+	BarHandler.BarPosition.BT4.Transparent = {
+		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-349,54',
+		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-349,3',
+		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,349,54',
+		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,349,3',
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,47,0',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,-47,0',
+		--
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-243,145',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-590,145',
+		--
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,315,146',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,638,154',
+		--
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,60'
+	}
+	SUI:reloadui()
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == 'Transparent') then
 		module:Init()
