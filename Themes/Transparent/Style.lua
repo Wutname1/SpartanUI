@@ -40,7 +40,7 @@ function module:OnInitialize()
 		--
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,60'
 	}
-	SUI:reloadui()
+	
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == 'Transparent') then
 		module:Init()

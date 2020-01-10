@@ -61,8 +61,6 @@ function module:OnInitialize()
 		['BT4Bar2'] = 0.85,
 		['BT4Bar3'] = 0.85,
 		['BT4Bar4'] = 0.85,
-		-- ['BT4Bar5'] = 0.85,
-		-- ['BT4Bar6'] = 0.85,
 		['BT4Bar7'] = 0.85,
 		['BT4Bar8'] = 0.85,
 		['BT4Bar9'] = 0.85,
