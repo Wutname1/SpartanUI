@@ -1568,6 +1568,49 @@ SUI.DBG = SUI.SpartanUIDB.global
 SUI.DB = SUI.SpartanUIDB.profile.SUIProper
 SUI.DBMod = SUI.SpartanUIDB.profile.Modules
 
+local function reloaduiWindow()
+	local StdUi = LibStub('StdUi'):NewInstance()
+	local popup = StdUi:Window(nil, 400, 140)
+	popup:SetPoint('TOP', 0, -20)
+	popup:SetFrameStrata('DIALOG')
+	popup:Hide()
+
+	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+	popup.Title:SetPoint('TOP')
+	popup.Title:SetAlpha(.8)
+
+	-- Create Popup Items
+	popup.ReloadMsg = StdUi:Label(popup, 'A reload of your UI is required.', 20)
+	popup.ExtraMsg = StdUi:Label(popup, (Desc2 or ''), 20, nil, 400)
+	popup.btnClose = StdUi:HighlightButton(popup, 50, 20, 'CLOSE')
+	popup.btnReload = StdUi:Button(popup, 180, 20, 'RELOAD UI')
+
+	-- Position
+	StdUi:GlueTop(popup.ReloadMsg, popup, 0, -50)
+	StdUi:GlueTop(popup.ExtraMsg, popup.ReloadMsg, 0, -20)
+	popup.btnReload:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
+	popup.btnClose:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -4, 4)
+
+	-- Actions
+	popup.btnClose:SetScript(
+		'OnClick',
+		function(this)
+			-- Perform the Page's Custom Next action
+			popup:Hide()
+		end
+	)
+	popup.btnReload:SetScript(
+		'OnClick',
+		function(this)
+			-- Perform the Page's Custom Next action
+			ReloadUI()
+		end
+	)
+
+	SUI.reloaduiWindow = popup
+end
+
 function SUI:OnInitialize()
 	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 
@@ -1609,6 +1652,9 @@ function SUI:OnInitialize()
 			SUI.DB.font.NumberSeperator = ''
 		end
 	end
+
+	-- Setup ReloadUI Window
+	reloaduiWindow()
 end
 
 function SUI:DBUpgrades()
@@ -1763,45 +1809,7 @@ function SUI:UpdateModuleConfigs()
 end
 
 function SUI:reloadui(Desc2)
-	local StdUi = LibStub('StdUi'):NewInstance()
-
-	-- Create popup
-	local popup = StdUi:Window(nil, 400, 140)
-	popup:SetPoint('TOP', 0, -20)
-	popup:SetFrameStrata('DIALOG')
-
-	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	popup.Title:SetPoint('TOP')
-	popup.Title:SetAlpha(.8)
-
-	-- Create Popup Items
-	popup.ReloadMsg = StdUi:Label(popup, 'A reload of your UI is required.', 20)
-	popup.ExtraMsg = StdUi:Label(popup, (Desc2 or ''), 20, nil, 400)
-	popup.btnClose = StdUi:HighlightButton(popup, 50, 20, 'CLOSE')
-	popup.btnReload = StdUi:Button(popup, 180, 20, 'RELOAD UI')
-
-	-- Position
-	StdUi:GlueTop(popup.ReloadMsg, popup, 0, -50)
-	StdUi:GlueTop(popup.ExtraMsg, popup.ReloadMsg, 0, -20)
-	popup.btnReload:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
-	popup.btnClose:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -4, 4)
-
-	-- Actions
-	popup.btnClose:SetScript(
-		'OnClick',
-		function(this)
-			-- Perform the Page's Custom Next action
-			popup:Hide()
-		end
-	)
-	popup.btnReload:SetScript(
-		'OnClick',
-		function(this)
-			-- Perform the Page's Custom Next action
-			ReloadUI()
-		end
-	)
+	SUI.reloaduiWindow:Show()
 end
 
 function SUI:OnEnable()
