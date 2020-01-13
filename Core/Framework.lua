@@ -321,9 +321,14 @@ local DBdefault = {
 					blizzardVehicle = true
 				},
 				MovedBars = {},
-				TalkingHeadUI = 'TOP,UIParent,TOP,0,-30',
 				TooltipLoc = false,
-				BuffLoc = false
+				BuffLoc = false,
+				Movers = {},
+				BlizzMovers = {
+					['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
+					['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
+					['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215'
+				}
 			},
 			Classic = {
 				Frames = {

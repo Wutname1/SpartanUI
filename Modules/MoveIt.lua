@@ -82,7 +82,7 @@ function MoveIt:Reset(name)
 	if name == nil then
 		for name, frame in pairs(MoverList) do
 			if frame then
-				local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
+				local point, anchor, secondaryPoint, x, y = strsplit(',', MoverList[name].defaultPoint)
 				frame:ClearAllPoints()
 				frame:SetPoint(point, anchor, secondaryPoint, x, y)
 
@@ -95,7 +95,7 @@ function MoveIt:Reset(name)
 	else
 		local f = _G['SUI_Mover_' .. name]
 		if f then
-			local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].defaultPoint)
+			local point, anchor, secondaryPoint, x, y = strsplit(',', MoverList[name].defaultPoint)
 			f:ClearAllPoints()
 			f:SetPoint(point, anchor, secondaryPoint, x, y)
 
@@ -116,10 +116,16 @@ function MoveIt:UpdateMover(name, obj, doNotScale)
 	if not mover then
 		return
 	end
+	-- This allows us to assign a new object to be used to assign the mover's size
+	-- Removing this breaks the positioning of objects when the wow window is resized as it triggers the SizeChanged event.
+	if mover.parent ~= obj then
+		mover.updateObj = obj
+	end
 
-	mover:SetSize(obj:GetWidth(), obj:GetHeight())
+	local f = (obj or mover.updateObj or mover.parent)
+	mover:SetSize(f:GetWidth(), f:GetHeight())
 	if not doNotScale then
-		mover:SetScale(obj:GetScale())
+		mover:SetScale(f:GetScale())
 	end
 end
 
@@ -154,7 +160,10 @@ end
 
 local isDragging = false
 
-function MoveIt:CreateMover(parent, name, text, setDefault)
+function MoveIt:CreateMover(parent, name, text, postdrag)
+	if not SUI.DB.EnabledComponents.MoveIt then
+		return
+	end
 	-- If for some reason the parent does not exist or we have already done this exit out
 	if not parent or MoverList[name] then
 		return
@@ -191,15 +200,12 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 	f.parent = parent
 	f.name = name
 	f.postdrag = postdrag
-	f.snapOffset = snapOffset or -2
-	f.shouldDisable = shouldDisable
-	f.configString = configString
+	f.defaultPoint = GetPoints(parent)
 
 	f:SetFrameLevel(parent:GetFrameLevel() + 1)
 	f:SetFrameStrata('DIALOG')
 
 	MoverList[name] = f
-	-- E.snapBars[#E.snapBars + 1] = f
 
 	local fs = f:CreateFontString(nil, 'OVERLAY')
 	SUI:FormatFont(fs, 12, 'Mover')
@@ -209,10 +215,6 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 	fs:SetTextColor(unpack(colors.text))
 	f:SetFontString(fs)
 	f.text = fs
-
-	if not SUI.DB.MoveIt.movers[name].defaultPoint or SUI.DB.MoveIt.movers[name].defaultPoint == '' or setDefault then
-		SUI.DB.MoveIt.movers[name].defaultPoint = GetPoints(parent)
-	end
 
 	if SUI.DB.MoveIt.movers[name].MovedPoints then
 		point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
@@ -349,6 +351,16 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 		f:ClearAllPoints()
 		f:SetPoint(point, anchor, (secondaryPoint or point), x, y)
 	end
+	local function SizeChanged(frame)
+		if InCombatLockdown() then
+			return
+		end
+		if frame.mover.updateObj then
+			frame.mover:SetSize(frame.mover.updateObj:GetSize())
+		else
+			frame.mover:SetSize(frame:GetSize())
+		end
+	end
 
 	parent:SetScript('OnSizeChanged', SizeChanged)
 	parent:HookScript('OnMouseDown', ParentMouseDown)
@@ -360,66 +372,6 @@ function MoveIt:CreateMover(parent, name, text, setDefault)
 	parent:SetPoint('TOPLEFT', f, 0, 0)
 end
 
-local function MoveTalkingHead()
-	local SetupTalkingHead = function()
-		--Prevent WoW from moving the frame around
-		TalkingHeadFrame.ignoreFramePositionManager = true
-		_G.UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
-
-		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
-		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', true)
-		TalkingHeadFrame:HookScript(
-			'OnShow',
-			function()
-				TalkingHeadFrame:ClearAllPoints()
-				TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
-			end
-		)
-	end
-	local THUIHolder = CreateFrame('Frame', 'THUIHolder', UIParent)
-	THUIHolder:SetPoint('TOP', UIParent, 'TOP', 0, -18)
-	THUIHolder:Hide()
-	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
-		SetupTalkingHead()
-	else
-		--We want the mover to be available immediately, so we load it ourselves
-		local f = CreateFrame('Frame')
-		f:RegisterEvent('PLAYER_ENTERING_WORLD')
-		f:SetScript(
-			'OnEvent',
-			function(frame, event)
-				frame:UnregisterEvent(event)
-				_G.TalkingHead_LoadUI()
-				SetupTalkingHead()
-			end
-		)
-	end
-end
-
-local function MoveAltPowerBar()
-	if not IsAddOnLoaded('SimplePowerBar') then
-		local holder = CreateFrame('Frame', 'AltPowerBarHolder', UIParent)
-		holder:SetPoint('TOP', UIParent, 'TOP', 0, -18)
-		holder:SetSize(128, 50)
-		holder:Hide()
-
-		_G.PlayerPowerBarAlt:ClearAllPoints()
-		_G.PlayerPowerBarAlt:SetPoint('CENTER', holder, 'CENTER')
-		_G.PlayerPowerBarAlt:SetParent(holder)
-		_G.PlayerPowerBarAlt.ignoreFramePositionManager = true
-
-		hooksecurefunc(
-			_G.PlayerPowerBarAlt,
-			'ClearAllPoints',
-			function(bar)
-				bar:SetPoint('CENTER', AltPowerBarHolder, 'CENTER')
-			end
-		)
-
-		MoveIt:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power')
-	end
-end
-
 function MoveIt:OnInitialize()
 	coordFrame = StdUi:Window(nil, 480, 200)
 	coordFrame:SetFrameStrata('DIALOG')
@@ -428,15 +380,9 @@ function MoveIt:OnInitialize()
 	coordFrame.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	coordFrame.Title:SetPoint('TOP')
 	coordFrame.Title:SetAlpha(.8)
-
-	-- Create Movers
-	if SUI.IsRetail then
-		MoveTalkingHead()
-		MoveAltPowerBar()
-	end
 end
 
-function MoveIt:OnEnable()
+function MoveIt:Enable()
 	local ChatCommand = function(arg)
 		if InCombatLockdown() then
 			SUI:Print(ERR_NOT_IN_COMBAT)
@@ -473,6 +419,14 @@ function MoveIt:OnEnable()
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
 
 	MoveIt:Options()
+end
+
+function MoveIt:OnEnable()
+	if SUI.DB.EnabledComponents.MoveIt then
+		MoveIt:Enable()
+	else
+		return
+	end
 end
 
 function MoveIt:Options()
