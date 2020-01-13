@@ -1,8 +1,8 @@
 #@retail@
-## Interface: 80205
+## Interface: 80300
 #@end-retail@
 #@non-retail@
-# ## Interface: 11302
+# ## Interface: 11303
 #@end-non-retail@
 ## Title: SpartanUI: |CFF0070DDSpinCam|r
 ## Notes: Causes the camera to spin around your character when you go AFK

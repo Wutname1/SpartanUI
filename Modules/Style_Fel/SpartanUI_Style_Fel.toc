@@ -1,8 +1,8 @@
 #@retail@
-## Interface: 80205
+## Interface: 80300
 #@end-retail@
 #@non-retail@
-# ## Interface: 11302
+# ## Interface: 11303
 #@end-non-retail@
 ## Title: SpartanUI: |CFF0070DDStyle - |r|CFF259A0EFel|r
 ## Notes: Fel style and layout for SpartanUI
