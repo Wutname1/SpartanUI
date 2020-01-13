@@ -1106,27 +1106,6 @@ function module:PlayerFrames()
 		PlayerFrames.boss = boss
 	end
 	SUI.PlayerFrames = PlayerFrames
-
-	local unattached = false
-	War_SpartanUI:HookScript(
-		'OnHide',
-		function(this, event)
-			if not SUI.IsClassic and UnitUsingVehicle('player') then
-				SUI_FramesAnchor:SetParent(UIParent)
-				unattached = true
-			end
-		end
-	)
-
-	War_SpartanUI:HookScript(
-		'OnShow',
-		function(this, event)
-			if unattached then
-				SUI_FramesAnchor:SetParent(War_SpartanUI)
-				module:PositionFrame()
-			end
-		end
-	)
 end
 
 function module:PositionFrame(b)

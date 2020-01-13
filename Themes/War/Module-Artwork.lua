@@ -82,30 +82,6 @@ function module:updateOffset(Top, offset)
 	if InCombatLockdown() then
 		return
 	end
-
-	module.Trays.left:ClearAllPoints()
-	module.Trays.right:ClearAllPoints()
-	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, (Top * -1))
-	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
-
-	if BT4BarBagBar then
-		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
-			BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
-		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
-			BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
-		end
-
-		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
-			BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
-		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
-			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
-		end
-	end
-
-	War_ActionBarPlate:ClearAllPoints()
-	War_ActionBarPlate:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, offset)
 end
 
 --	Module Calls
@@ -162,26 +138,13 @@ function module:RemoveVehicleUI()
 end
 
 function module:InitArtwork()
-	-- Artwork_Core:ActionBarPlates(
-	-- 	'War_ActionBarPlate',
-	-- 	{
-	-- 		'BarBagBar',
-	-- 		'BarStanceBar',
-	-- 		'BarPetBar',
-	-- 		'BarMicroMenu'
-	-- 	}
-	-- )
-
-	plate = CreateFrame('Frame', 'War_ActionBarPlate', UIParent, 'War_ActionBarsTemplate')
+	plate = CreateFrame('Frame', 'War_ActionBarPlate', SpartanUI, 'War_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
 	plate:SetPoint('BOTTOM')
 
-	-- local SUIBarAnchor = _G['SUI_ActionBarAnchor']
-	-- SUIBarAnchor:ClearAllPoints()
-
 	FramerateText:ClearAllPoints()
-	FramerateText:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 10, -10)
+	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
 
 	--Setup the Bottom Artwork
 	War_SpartanUI:SetFrameStrata('BACKGROUND')
@@ -202,13 +165,28 @@ function module:InitArtwork()
 
 	-- Setup Frame posistions
 	UnitFrames.FramePos['War'] = {
-		['player'] = 'BOTTOMRIGHT,War_SpartanUI,TOP,-45,70'
+		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-45,250'
 	}
 end
 
 function module:EnableArtwork()
 	--Setup Sliding Trays
 	module:SlidingTrays()
+	if BT4BarBagBar and BT4BarPetBar.position then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+			BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+			BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		end
+
+		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+			BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -100, -2)
+		end
+	end
 
 	-- Setup the bar BG
 	local barBG = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg-' .. UnitFactionGroup('Player')
@@ -219,7 +197,8 @@ function module:EnableArtwork()
 		end
 	end
 
-	Artwork_Core:updateOffset()
+	War_ActionBarPlate:ClearAllPoints()
+	War_ActionBarPlate:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', 0, offset)
 
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',
@@ -287,15 +266,6 @@ function module:SlidingTrays()
 	}
 
 	module.Trays = Artwork_Core:SlidingTrays(Settings)
-end
-
--- Bartender Stuff
-function module:SetupProfile()
-	Artwork_Core:SetupProfile()
-end
-
-function module:CreateProfile()
-	Artwork_Core:CreateProfile()
 end
 
 -- Minimap

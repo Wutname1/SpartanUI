@@ -6,7 +6,7 @@
 	<Script file="Style-Setup.lua" />
 
 	<!-- Minimal_AnchorFrame -->
-	<Frame name="Minimal_AnchorFrame" frameStrata="BACKGROUND" parent="UIParent">
+	<Frame name="Minimal_AnchorFrame" frameStrata="BACKGROUND" parent="SpartanUI">
 		<Anchors>
 			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
 				<Offset>
@@ -32,7 +32,7 @@
 	</Frame>
 
 	<!-- SpartanUI -->
-	<Frame name="Minimal_SpartanUI" frameStrata="BACKGROUND" parent="UIParent">
+	<Frame name="Minimal_SpartanUI" frameStrata="BACKGROUND" parent="SpartanUI">
 		<Anchors>
 			<Anchor point="BOTTOMLEFT" relativeTo="Minimal_AnchorFrame" relativePoint="BOTTOMLEFT" />
 			<Anchor point="TOPRIGHT" relativeTo="Minimal_AnchorFrame" relativePoint="TOPRIGHT">

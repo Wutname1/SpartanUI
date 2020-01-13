@@ -5,8 +5,26 @@ local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
-	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Minimal'].disabled = false
-	SUI.opt.args['General'].args['style'].args['Artwork'].args['Minimal'].disabled = false
+	local BarHandler = SUI:GetModule('Component_BarHandler')
+	BarHandler.BarPosition.BT4.Minimal = {
+		['BT4Bar1'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOM,-1,49',
+		['BT4Bar2'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOM,-1,2',
+		--
+		['BT4Bar3'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOM,1,49',
+		['BT4Bar4'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOM,1,2',
+		--
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOM,-480,2',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOM,480,2',
+		--
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,0,120',
+		--
+		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
+		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
+		--
+		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,369,0',
+		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,680,0'
+	}
+
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == 'Minimal') then
 		module:Init()
@@ -14,39 +32,18 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	if (SUI.DBMod.Artwork.FirstLoad) then
-		module:FirstLoad()
-	end
 	module:SetupMenus()
 	module:InitFramework()
 	InitRan = true
-end
-
-function module:FirstLoad()
-	--If our profile exists activate it.
-	if
-		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Minimal.BartenderProfile) and
-			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile, true))
-	 then
-		Bartender4.db:SetProfile(SUI.DB.Styles.Minimal.BartenderProfile)
-	end
 end
 
 function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= 'Minimal') then
 		module:Disable()
 	else
-		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Minimal.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-			Bartender4.db:SetProfile(SUI.DB.Styles.Minimal.BartenderProfile)
-		end
 		if (not InitRan) then
 			module:Init()
 		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Minimal.BartenderProfile, true)) then
-			module:CreateProfile()
-		end
-
-		module:SlidingTrays()
 		module:EnableFramework()
 
 		if (SUI.DBMod.Artwork.FirstLoad) then

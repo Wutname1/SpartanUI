@@ -32,8 +32,12 @@ SUI.Version = ''
 SUI.releaseType = '6.x.x DEV build'
 SUI.Version = ''
 --@end-do-not-package@
+--@alpha@
+-- TODO REMOVE FOR 6.0 RELEASE
+SUI.Version = '5.9.9'
+--@end-alpha@
 
-----------------------------------------------------------------------------------------------------
+---------------  Options Init ---------------
 SUI.opt = {
 	name = string.format('SpartanUI %s %s %s', SUI.Version, SUI.releaseType or '', wowVersion),
 	type = 'group',
@@ -43,22 +47,118 @@ SUI.opt = {
 		Artwork = {name = L['Artwork'], type = 'group', order = 1, args = {}}
 	}
 }
---@alpha@
-SUI.Version = '5.9.9'
---@end-alpha@
-
----------------		Database		-------------------------------
+---------------  Database  ---------------
 local DBdefault = {
 	SUIProper = {
 		Version = '0',
 		SetupDone = false,
-		yoffset = 0,
-		xOffset = 0,
-		yoffsetAuto = true,
 		scale = .92,
 		alpha = 1,
-		viewport = true,
+		ActionBars = {
+			Allalpha = 100,
+			Allenable = true,
+			popup1 = {anim = true, alpha = 100, enable = true},
+			popup2 = {anim = true, alpha = 100, enable = true},
+			bar1 = {alpha = 100, enable = true},
+			bar2 = {alpha = 100, enable = true},
+			bar3 = {alpha = 100, enable = true},
+			bar4 = {alpha = 100, enable = true},
+			bar5 = {alpha = 100, enable = true},
+			bar6 = {alpha = 100, enable = true}
+		},
+		AutoSell = {
+			FirstLaunch = true,
+			NotCrafting = true,
+			NotConsumables = true,
+			NotInGearset = true,
+			MaxILVL = 180,
+			Gray = true,
+			White = false,
+			Green = false,
+			Blue = false,
+			Purple = false,
+			GearTokens = false,
+			AutoRepair = false,
+			UseGuildBankRepair = false
+		},
+		AutoTurnIn = {
+			ChatText = true,
+			FirstLaunch = true,
+			debug = false,
+			TurnInEnabled = true,
+			AutoGossip = true,
+			AutoGossipSafeMode = true,
+			AcceptGeneralQuests = true,
+			AcceptRepeatable = false,
+			trivial = false,
+			lootreward = true,
+			autoequip = false,
+			armor = {},
+			weapon = {},
+			stat = {},
+			secondary = {},
+			Blacklist = {}
+		},
+		BarTextures = {
+			smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+		},
+		BuffSettings = {
+			disableblizz = true,
+			enabled = true,
+			Manualoffset = false,
+			offset = 0
+		},
+		Components = {},
+		ChatSettings = {
+			enabled = true
+		},
 		EnabledComponents = {},
+		font = {
+			NumberSeperator = ',',
+			Path = '',
+			Modules = {
+				['**'] = {
+					Size = 0,
+					Face = 'Roboto-Bold',
+					Type = 'outline'
+				}
+			}
+		},
+		MiniMap = {
+			northTag = false,
+			ManualAllowUse = false,
+			ManualAllowPrompt = '',
+			AutoDetectAllowUse = true,
+			MapButtons = true,
+			MouseIsOver = false,
+			MapZoomButtons = true,
+			MapTimeIndicator = false,
+			DisplayMapCords = true,
+			DisplayZoneName = true,
+			Shape = 'square',
+			BlizzStyle = 'mouseover',
+			OtherStyle = 'mouseover',
+			Moved = false,
+			lockminimap = true,
+			Position = nil,
+			SUIMapChangesActive = false
+		},
+		MoveIt = {
+			AltKey = false,
+			movers = {
+				['**'] = {
+					defaultPoint = false,
+					MovedPoints = false
+				}
+			}
+		},
+		Offset = {
+			Top = 0,
+			TopAuto = true,
+			Bottom = 0,
+			BottomAuto = true,
+			Horizontal = 0
+		},
 		SetupWizard = {
 			FirstLaunch = true
 		},
@@ -479,91 +579,6 @@ local DBdefault = {
 				BuffLoc = true
 			}
 		},
-		ChatSettings = {
-			enabled = true
-		},
-		BuffSettings = {
-			disableblizz = true,
-			enabled = true,
-			Manualoffset = false,
-			offset = 0
-		},
-		MiniMap = {
-			northTag = false,
-			ManualAllowUse = false,
-			ManualAllowPrompt = '',
-			AutoDetectAllowUse = true,
-			MapButtons = true,
-			MouseIsOver = false,
-			MapZoomButtons = true,
-			MapTimeIndicator = false,
-			DisplayMapCords = true,
-			DisplayZoneName = true,
-			Shape = 'square',
-			BlizzStyle = 'mouseover',
-			OtherStyle = 'mouseover',
-			Moved = false,
-			lockminimap = true,
-			Position = nil,
-			SUIMapChangesActive = false
-		},
-		ActionBars = {
-			Allalpha = 100,
-			Allenable = true,
-			popup1 = {anim = true, alpha = 100, enable = true},
-			popup2 = {anim = true, alpha = 100, enable = true},
-			bar1 = {alpha = 100, enable = true},
-			bar2 = {alpha = 100, enable = true},
-			bar3 = {alpha = 100, enable = true},
-			bar4 = {alpha = 100, enable = true},
-			bar5 = {alpha = 100, enable = true},
-			bar6 = {alpha = 100, enable = true}
-		},
-		font = {
-			NumberSeperator = ',',
-			Path = '',
-			Modules = {
-				['**'] = {
-					Size = 0,
-					Face = 'Roboto-Bold',
-					Type = 'outline'
-				}
-			}
-		},
-		AutoSell = {
-			FirstLaunch = true,
-			NotCrafting = true,
-			NotConsumables = true,
-			NotInGearset = true,
-			MaxILVL = 180,
-			Gray = true,
-			White = false,
-			Green = false,
-			Blue = false,
-			Purple = false,
-			GearTokens = false,
-			AutoRepair = false,
-			UseGuildBankRepair = false
-		},
-		AutoTurnIn = {
-			ChatText = true,
-			FirstLaunch = true,
-			debug = false,
-			TurnInEnabled = true,
-			AutoGossip = true,
-			AutoGossipSafeMode = true,
-			AcceptGeneralQuests = true,
-			AcceptRepeatable = false,
-			trivial = false,
-			lootreward = true,
-			autoequip = false,
-			armor = {},
-			weapon = {},
-			stat = {},
-			secondary = {},
-			Blacklist = {}
-		},
-		Components = {},
 		Tooltips = {
 			Styles = {
 				metal = {
@@ -1367,18 +1382,6 @@ local DBdefault = {
 					}
 				}
 			}
-		},
-		BarTextures = {
-			smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
-		},
-		MoveIt = {
-			AltKey = false,
-			movers = {
-				['**'] = {
-					defaultPoint = false,
-					MovedPoints = false
-				}
-			}
 		}
 	},
 	Modules = {
@@ -1433,10 +1436,6 @@ local DBdefault = {
 		},
 		Artwork = {
 			Style = '',
-			TopOffset = 0,
-			TopOffsetAuto = true,
-			BottomOffset = 0,
-			BottomOffsetAuto = true,
 			FirstLoad = true,
 			SetupDone = false,
 			VehicleUI = true,
@@ -1734,7 +1733,7 @@ function SUI:InitializeProfile()
 	SUI:reloadui()
 end
 
--------------------------	Layout 		-------------------------------
+---------------  Layout  ---------------
 do
 	-- Create Plate
 	local plate = CreateFrame('Frame', 'SpartanUI', UIParent)
@@ -1744,7 +1743,7 @@ do
 	plate:SetPoint('TOPRIGHT')
 end
 
----------------		Misc Backend		-------------------------------
+---------------  Misc Backend  ---------------
 
 function SUI:GetiLVL(itemLink)
 	if not itemLink then
@@ -1871,6 +1870,8 @@ function SUI:suihelp(input)
 	AceConfigDialog:Open('SpartanUI', 'Help')
 end
 
+---------------  Chat Command  ---------------
+
 local ResetDBWarning = false
 function SUI:ChatCommand(input)
 	if input == 'resetfulldb' then
@@ -1933,7 +1934,7 @@ function SUI:Err(mod, err)
 	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
 end
 
----------------		Math and Comparison FUNCTIONS		-------------------------------
+---------------  Math and Comparison  ---------------
 
 --[[
 	Takes a target table and injects data from the source

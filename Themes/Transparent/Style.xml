@@ -6,7 +6,10 @@
 	<Script file="Style-Setup.lua" />
 
 	<!-- Transparent_AnchorFrame -->
-	<Frame name="Transparent_AnchorFrame" frameStrata="BACKGROUND" parent="UIParent">
+	<Frame name="Transparent_AnchorFrame" frameStrata="BACKGROUND" parent="SpartanUI">
+		<Size>
+			<AbsDimension x="1" y="1" />
+		</Size>
 		<Anchors>
 			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
 				<Offset>
@@ -22,7 +25,7 @@
 	</Frame>
 
 	<!-- SpartanUI -->
-	<Frame name="Transparent_SpartanUI" frameStrata="BACKGROUND" parent="UIParent">
+	<Frame name="Transparent_SpartanUI" frameStrata="BACKGROUND" parent="SpartanUI">
 		<Anchors>
 			<Anchor point="BOTTOMLEFT" relativeTo="Transparent_AnchorFrame" relativePoint="TOPLEFT" />
 			<Anchor point="TOPRIGHT" relativeTo="Transparent_AnchorFrame" relativePoint="TOPRIGHT">

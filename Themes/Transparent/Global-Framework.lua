@@ -12,18 +12,6 @@ local FramesList = {
 	[6] = 'player'
 }
 
-function module:updateViewport() -- handles viewport offset based on settings
-	if not InCombatLockdown() and (Transparent_SpartanUI_Base5:GetHeight() ~= 0) then
-		WorldFrame:ClearAllPoints()
-		WorldFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
-		if Transparent_SpartanUI_Base5:IsVisible() then
-			WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
-		else
-			WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
-		end
-	end
-end
-
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local Resolution = ''
@@ -41,13 +29,12 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		module:updateViewport()
 		if (SUI.DB.scale ~= SUI:round(Transparent_SpartanUI:GetScale())) then
 			frame:SetScale(SUI.DB.scale)
 		end
 		if SUI.DB.scale <= .75 then
-			Transparent_SpartanUI_Base3:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT')
-			Transparent_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT')
+			Transparent_SpartanUI_Base3:SetPoint('BOTTOMLEFT', SpartanUI, 'BOTTOMLEFT')
+			Transparent_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
 		else
 			Transparent_SpartanUI_Base3:ClearAllPoints()
 			Transparent_SpartanUI_Base5:ClearAllPoints()
@@ -73,68 +60,36 @@ function module:updateAlpha() -- scales SpartanUI based on setting or screen siz
 	end
 end
 
-function module:updateOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	local fubar, ChocolateBar, titan, offset = 0, 0, 0
+-- function module:updateOffset() -- handles SpartanUI offset based on setting or fubar / titan
+-- 	local fubar, ChocolateBar, titan, offset = 0, 0, 0
 
-	if not SUI.DB.yoffsetAuto then
-		offset = max(SUI.DB.yoffset, 1)
-	else
-		for i = 1, 4 do -- FuBar Offset
-			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
-				local bar = _G['FuBarFrame' .. i]
-				local point = bar:GetPoint(1)
-				if point == 'BOTTOMLEFT' then
-					fubar = fubar + bar:GetHeight()
-				end
-			end
-		end
-		for i = 1, 100 do -- Chocolate Bar Offset
-			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
-				local bar = _G['ChocolateBar' .. i]
-				local point = bar:GetPoint(1)
-				--if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
-				if point == 'RIGHT' then
-					ChocolateBar = ChocolateBar + bar:GetHeight()
-				end
-			-- bottom bars
-			end
-		end
-		local TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
-		for i = 1, 2 do -- Titan Bar Offset
-			if (_G['Titan_Bar__Display_' .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. '_Show')) then
-				local PanelScale = TitanPanelGetVar('Scale') or 1
-				local bar = _G['Titan_Bar__Display_' .. TitanBarOrder[i]]
-				titan = titan + (PanelScale * bar:GetHeight())
-			end
-		end
-
-		offset = max(fubar + titan + ChocolateBar, 1)
-	end
-	if (SUI:round(offset) ~= SUI:round(anchor:GetHeight())) then
-		anchor:SetHeight(offset)
-	end
-	SUI.DB.yoffset = offset
-end
+-- 	offset = max(SUI.DB.yoffset, 1)
+-- 	if (SUI:round(offset) ~= SUI:round(anchor:GetHeight())) then
+-- 		print(offset)
+-- 		anchor:SetHeight(offset)
+-- 	end
+-- 	SUI.DB.yoffset = offset
+-- end
 
 function module:updateXOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	if not SUI.DB.xOffset then
+	if not SUI.DB.Offset.Horizontal then
 		return 0
 	end
-	local offset = SUI.DB.xOffset
+	local offset = SUI.DB.Offset.Horizontal
 	if SUI:round(offset) <= -300 then
 		Transparent_SpartanUI_Base5:ClearAllPoints()
 		Transparent_SpartanUI_Base5:SetPoint('LEFT', Transparent_SpartanUI_Base4, 'RIGHT')
-		Transparent_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT')
+		Transparent_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
 	elseif SUI:round(offset) >= 300 then
 		Transparent_SpartanUI_Base3:ClearAllPoints()
 		Transparent_SpartanUI_Base3:SetPoint('RIGHT', Transparent_SpartanUI_Base2, 'LEFT')
-		Transparent_SpartanUI_Base3:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT')
+		Transparent_SpartanUI_Base3:SetPoint('BOTTOMLEFT', SpartanUI, 'BOTTOMLEFT')
 	end
 	Transparent_SpartanUI:SetPoint('LEFT', Transparent_AnchorFrame, 'LEFT', offset, 0)
 	if (SUI:round(offset) ~= SUI:round(anchor:GetWidth())) then
 		anchor:SetWidth(offset)
 	end
-	SUI.DB.xOffset = offset
+	SUI.DB.Offset.Horizontal = offset
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -143,7 +98,6 @@ function module:InitFramework()
 	do -- default interface modifications
 		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
 		SUI_FramesAnchor:SetFrameLevel(1)
-		SUI_FramesAnchor:SetParent(Transparent_SpartanUI)
 		SUI_FramesAnchor:ClearAllPoints()
 		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Transparent_AnchorFrame', 'TOPLEFT', 0, 0)
 		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Transparent_AnchorFrame', 'TOPRIGHT', 0, 155)
@@ -160,20 +114,6 @@ function module:InitFramework()
 		FramerateText:SetPoint('BOTTOM', 'Transparent_SpartanUI_Base1', 'TOP', 0, 0)
 
 		MainMenuBar:Hide()
-		hooksecurefunc(
-			Transparent_SpartanUI,
-			'Hide',
-			function()
-				module:updateViewport()
-			end
-		)
-		hooksecurefunc(
-			Transparent_SpartanUI,
-			'Show',
-			function()
-				module:updateViewport()
-			end
-		)
 
 		hooksecurefunc(
 			'UpdateContainerFrameAnchors',
@@ -318,9 +258,7 @@ function module:EnableFramework()
 	module:SetupStatusBars()
 
 	module:updateScale()
-	module:updateOffset()
 	module:updateXOffset()
-	module:updateViewport()
 	module:updateAlpha()
 	module:SetColor()
 
@@ -338,9 +276,7 @@ function module:EnableFramework()
 				end
 
 				module:updateScale()
-				module:updateOffset()
 				module:updateXOffset()
-				module:updateViewport()
 				self.TimeSinceLastUpdate = 0
 
 				if SUI.DB.OpenOptions then

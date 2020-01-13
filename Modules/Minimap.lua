@@ -221,7 +221,7 @@ function module:OnEnable()
 	end
 
 	-- Make map movable
-	MoveIt:CreateMover(Minimap, 'Minimap', nil, true)
+	MoveIt:CreateMover(Minimap, 'Minimap')
 
 	-- Construct options
 	module:BuildOptions()

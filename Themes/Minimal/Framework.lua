@@ -30,74 +30,6 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 end
 
 function module:updateOffset(Top, Bottom) -- handles SpartanUI offset based on setting or fubar / titan
-	local fubar, ChocolateBar, titan, offset = 0, 0, 0
-	if Top == nil then
-		Top = 0
-	end
-	if Bottom == nil then
-		Bottom = 0
-	end
-
-	if not SUI.DB.yoffsetAuto then
-		offset = max(SUI.DB.yoffset, 1)
-	else
-		for i = 1, 4 do -- FuBar Offset
-			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
-				local bar = _G['FuBarFrame' .. i]
-				local point = bar:GetPoint(1)
-				if point == 'BOTTOMLEFT' then
-					fubar = fubar + bar:GetHeight()
-				end
-			end
-		end
-		for i = 1, 100 do -- Chocolate Bar Offset
-			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
-				local bar = _G['ChocolateBar' .. i]
-				local point = bar:GetPoint(1)
-				--if point == "TOPLEFT" then ChocolateBar = ChocolateBar + bar:GetHeight(); 	end--top bars
-				if point == 'RIGHT' then
-					ChocolateBar = ChocolateBar + bar:GetHeight()
-				end
-			-- bottom bars
-			end
-		end
-		local TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
-		for i = 1, 2 do -- Titan Bar Offset
-			if (_G['Titan_Bar__Display_' .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. '_Show')) then
-				local PanelScale = TitanPanelGetVar('Scale') or 1
-				local bar = _G['Titan_Bar__Display_' .. TitanBarOrder[i]]
-				titan = titan + (PanelScale * bar:GetHeight())
-			end
-		end
-
-		offset = max(fubar + titan + ChocolateBar, 1)
-	end
-	if (SUI:round(offset) ~= SUI:round(anchor:GetHeight())) then
-		anchor:SetHeight(offset)
-	end
-	SUI.DB.yoffset = offset
-
-	module.Trays.left:ClearAllPoints()
-	module.Trays.right:ClearAllPoints()
-	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, (Top * -1))
-	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, (Top * -1))
-
-	if BT4BarBagBar then
-		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarPetBar then
-			BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
-		end
-		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarStanceBar then
-			BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
-		end
-
-		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarMicroMenu then
-			BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
-		end
-		if not SUI.DB.Styles.Minimal.MovedBars.BT4BarBagBar then
-			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -50, -2)
-		end
-	end
-
 	if SUI.DB.Styles.Minimal.HideCenterGraphic then
 		Minimal_SpartanUI_Base1:Hide()
 	else
@@ -106,10 +38,10 @@ function module:updateOffset(Top, Bottom) -- handles SpartanUI offset based on s
 end
 
 function module:updateXOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	if not SUI.DB.xOffset then
+	if not SUI.DB.Offset.Horizontal then
 		return 0
 	end
-	local offset = SUI.DB.xOffset
+	local offset = SUI.DB.Offset.Horizontal
 	if SUI:round(offset) <= -300 then
 		Minimal_SpartanUI_Base5:ClearAllPoints()
 		Minimal_SpartanUI_Base5:SetPoint('LEFT', Minimal_SpartanUI_Base4, 'RIGHT')
@@ -123,18 +55,10 @@ function module:updateXOffset() -- handles SpartanUI offset based on setting or 
 	if (SUI:round(offset) ~= SUI:round(anchor:GetWidth())) then
 		anchor:SetWidth(offset)
 	end
-	SUI.DB.xOffset = offset
+	SUI.DB.Offset.Horizontal = offset
 end
 
 ----------------------------------------------------------------------------------------------------
-
-function module:SetupProfile()
-	Artwork_Core:SetupProfile()
-end
-
-function module:CreateProfile()
-	Artwork_Core:CreateProfile()
-end
 
 function module:SlidingTrays()
 	local Settings = {
@@ -176,7 +100,6 @@ function module:InitFramework()
 	do -- default interface modifications
 		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
 		SUI_FramesAnchor:SetFrameLevel(1)
-		SUI_FramesAnchor:SetParent(Minimal_SpartanUI)
 		SUI_FramesAnchor:ClearAllPoints()
 		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Minimal_AnchorFrame', 'BOTTOMLEFT', 0, 0)
 		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Minimal_AnchorFrame', 'BOTTOMRIGHT', 0, 150)
@@ -276,23 +199,7 @@ function module:TooltipLoc(self, parent)
 	end
 end
 
-function module:SetupVehicleUI()
-	if SUI.DBMod.Artwork.VehicleUI then
-		RegisterStateDriver(Minimal_SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
-		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
-	end
-end
-
-function module:RemoveVehicleUI()
-	if SUI.DBMod.Artwork.VehicleUI then
-		UnregisterStateDriver(Minimal_SpartanUI, 'visibility')
-		UnregisterStateDriver(SpartanUI, 'visibility')
-	end
-end
-
 function module:EnableFramework()
-	module:SetColor()
-
 	anchor:SetFrameStrata('BACKGROUND')
 	anchor:SetFrameLevel(1)
 	frame:SetFrameStrata('BACKGROUND')
@@ -311,10 +218,26 @@ function module:EnableFramework()
 		end
 	)
 
-	module:SetupVehicleUI()
+	--Setup Sliding Trays
+	module:SlidingTrays()
+	if BT4BarBagBar and BT4BarPetBar.position then
+		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
+			BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
+			BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		end
 
+		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
+			BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+		end
+		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
+			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -100, -2)
+		end
+	end
+
+	module:SetColor()
 	module:updateScale()
-	module:updateOffset()
 	module:updateXOffset()
 
 	-- Limit updates via interval
@@ -331,7 +254,6 @@ function module:EnableFramework()
 				end
 
 				module:updateScale()
-				module:updateOffset()
 				module:updateXOffset()
 				self.TimeSinceLastUpdate = 0
 

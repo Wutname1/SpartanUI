@@ -37,7 +37,7 @@ module.BarScale = {
 			['BT4Bar9'] = 0.79,
 			['BT4Bar10'] = 0.79,
 			['BT4BarBagBar'] = 0.6,
-			['BT4BarExtraActionBar'] = 0.6,
+			['BT4BarExtraActionBar'] = 0.8,
 			['BT4BarStanceBar'] = 0.6,
 			['BT4BarPetBar'] = 0.6,
 			['BT4BarMicroMenu'] = 0.6
@@ -87,6 +87,7 @@ function module:OnEnable()
 end
 
 function module:Refresh()
+	module.BarSystems[module.DB.BarSystem]:refresh()
 end
 
 function module:MoveIt()

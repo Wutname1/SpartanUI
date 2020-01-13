@@ -92,49 +92,6 @@ function module:updateAlpha()
 	end
 end
 
-function module:updateOffset()
-	local fubar, ChocolateBar, titan, offset = 0, 0, 0, 0
-
-	if not SUI.DB.yoffsetAuto then
-		offset = max(SUI.DB.yoffset, 0)
-	else
-		for i = 1, 4 do -- FuBar Offset
-			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
-				local bar = _G['FuBarFrame' .. i]
-				local point = bar:GetPoint(1)
-				if point == 'BOTTOMLEFT' then
-					fubar = fubar + bar:GetHeight()
-				end
-			end
-		end
-
-		for i = 1, 100 do -- Chocolate Bar Offset
-			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
-				local bar = _G['ChocolateBar' .. i]
-				local point = bar:GetPoint(1)
-				if point == 'RIGHT' then
-					ChocolateBar = ChocolateBar + bar:GetHeight()
-				end
-			end
-		end
-
-		local TitanBarOrder = {[1] = 'AuxBar2', [2] = 'AuxBar'} -- Bottom 2 Bar names
-
-		for i = 1, 2 do
-			if (_G['Titan_Bar__Display_' .. TitanBarOrder[i]] and TitanPanelGetVar(TitanBarOrder[i] .. '_Show')) then
-				local PanelScale = TitanPanelGetVar('Scale') or 1
-				titan = titan + (PanelScale * _G['Titan_Bar__Display_' .. TitanBarOrder[i]]:GetHeight())
-			end
-		end
-
-		offset = max(fubar + titan + ChocolateBar, 1)
-		SUI.DB.yoffset = offset
-	end
-
-	Fel_ActionBarPlate:ClearAllPoints()
-	Fel_ActionBarPlate:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, offset)
-end
-
 --	Module Calls
 function module:TooltipLoc(_, parent)
 	if (parent == 'UIParent') then
@@ -183,8 +140,6 @@ function module:RemoveVehicleUI()
 end
 
 function module:InitArtwork()
-	-- Artwork_Core:ActionBarPlates('Fel_ActionBarPlate')
-
 	plate = CreateFrame('Frame', 'Fel_ActionBarPlate', UIParent, 'Fel_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
@@ -223,7 +178,8 @@ function module:EnableArtwork()
 		Fel_StanceBarBG:SetTexture(barBG)
 	end
 
-	module:updateOffset()
+	Fel_ActionBarPlate:ClearAllPoints()
+	Fel_ActionBarPlate:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', 0, offset)
 
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',
@@ -264,15 +220,6 @@ function module:StatusBars()
 	-- Position the StatusBars
 	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', Fel_SpartanUI, 'BOTTOM', -100, 0)
 	StatusBars.bars.Fel_StatusBar_Right:SetPoint('BOTTOMLEFT', Fel_SpartanUI, 'BOTTOM', 100, 0)
-end
-
--- Bartender Stuff
-function module:SetupProfile()
-	Artwork_Core:SetupProfile()
-end
-
-function module:CreateProfile()
-	Artwork_Core:CreateProfile()
 end
 
 -- Minimap

@@ -5,7 +5,10 @@
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
 
 	<!-- SUI_AncherFrame -->
-	<Frame name="SUI_AnchorFrame" frameStrata="BACKGROUND" parent="UIParent">
+	<Frame name="SUI_AnchorFrame" frameStrata="BACKGROUND" parent="SpartanUI">
+		<Size>
+			<AbsDimension x="1" y="1" />
+		</Size>
 		<Anchors>
 			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
 				<Offset>
@@ -21,7 +24,7 @@
 	</Frame>
 
 	<!-- SpartanUI -->
-	<Frame name="SpartanUI_Classic" frameStrata="BACKGROUND" parent="UIParent">
+	<Frame name="SpartanUI_Classic" frameStrata="BACKGROUND" parent="SpartanUI">
 		<Anchors>
 			<Anchor point="BOTTOMLEFT" relativeTo="SUI_AnchorFrame" relativePoint="TOPLEFT" />
 			<Anchor point="TOPRIGHT" relativeTo="SUI_AnchorFrame" relativePoint="TOPRIGHT">

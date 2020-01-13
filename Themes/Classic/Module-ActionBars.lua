@@ -5,14 +5,6 @@ local module = SUI:GetModule('Style_Classic')
 
 local plate
 
-function module:SetupProfile()
-	Artwork_Core:SetupProfile()
-end
-
-function module:CreateProfile()
-	Artwork_Core:CreateProfile()
-end
-
 function module:InitActionBars()
 	do -- create bar plate and masks
 		plate = CreateFrame('Frame', 'SUI_ActionBarPlate', SpartanUI, 'SUI_ActionBarsTemplate')
@@ -91,13 +83,6 @@ function module:EnableActionBars()
 		for i = 1, 2 do
 			_G['SUI_Popup' .. i]:SetFrameStrata('BACKGROUND')
 			_G['SUI_Popup' .. i]:SetFrameLevel(3)
-		end
-	end
-	--module:SetupProfile();
-	-- Do what Bartender isn't - Make the Bag buttons the same size
-	do -- modify CharacterBag(0-3) Scale
-		for i = 1, 4 do
-			_G['CharacterBag' .. (i - 1) .. 'Slot']:SetScale(1.25)
 		end
 	end
 end

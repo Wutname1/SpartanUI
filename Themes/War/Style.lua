@@ -11,10 +11,13 @@ function module:OnInitialize()
 
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.War = {
-		['BT4BarBagBar'] = 'TOP,UIParent,TOP,692,0',
-		['BT4BarStanceBar'] = 'TOP,UIParent,TOP,-309,0',
-		['BT4BarPetBar'] = 'TOP,UIParent,TOP,-558,0',
-		['BT4BarMicroMenu'] = 'TOP,UIParent,TOP,369,0'
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,70',
+		--
+		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
+		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
+		--
+		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,369,0',
+		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,680,0'
 	}
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
@@ -55,38 +58,20 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	if (SUI.DBMod.Artwork.FirstLoad) then
-		module:FirstLoad()
-	end
 	module:SetupMenus()
 	module:InitArtwork()
 	InitRan = true
-end
-
-function module:FirstLoad()
-	--If our profile exists activate it.
-	if
-		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.War.BartenderProfile) and
-			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.War.BartenderProfile, true))
-	 then
-		Bartender4.db:SetProfile(SUI.DB.Styles.War.BartenderProfile)
-	end
 end
 
 function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= 'War') then
 		module:Disable()
 	else
-		SUI.opt.args['Artwork'].args['Artwork'].name = 'War Options'
-
 		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.War.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
 			Bartender4.db:SetProfile(SUI.DB.Styles.War.BartenderProfile)
 		end
 		if (not InitRan) then
 			module:Init()
-		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.War.BartenderProfile, true)) then
-			module:CreateProfile()
 		end
 		module:EnableArtwork()
 
@@ -101,89 +86,6 @@ function module:OnDisable()
 end
 
 function module:SetupMenus()
-	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = 'War Options',
-		type = 'group',
-		order = 10,
-		args = {
-			MinimapEngulfed = {
-				name = L['Douse the flames'],
-				type = 'toggle',
-				order = .1,
-				desc = L['Is it getting hot in here?'],
-				get = function(info)
-					return (SUI.DB.Styles.War.Minimap.Engulfed ~= true or false)
-				end,
-				set = function(info, val)
-					SUI.DB.Styles.War.Minimap.Engulfed = (val ~= true or false)
-					module:MiniMapUpdate()
-				end
-			},
-			alpha = {
-				name = L['Transparency'],
-				type = 'range',
-				order = 1,
-				width = 'full',
-				min = 0,
-				max = 100,
-				step = 1,
-				desc = L['TransparencyDesc'],
-				get = function(info)
-					return (SUI.DB.alpha * 100)
-				end,
-				set = function(info, val)
-					SUI.DB.alpha = (val / 100)
-					module:updateAlpha()
-				end
-			},
-			-- xOffset = {name = L["MoveSideways"],type = "range",width="full",order=2,
-			-- desc = L["MoveSidewaysDesc"],
-			-- min=-200,max=200,step=.1,
-			-- get = function(info) return SUI.DB.xOffset/6.25 end,
-			-- set = function(info,val) SUI.DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
-			-- },
-			offset = {
-				name = L['ConfOffset'],
-				type = 'range',
-				width = 'normal',
-				order = 3,
-				desc = L['ConfOffsetDesc'],
-				min = 0,
-				max = 200,
-				step = .1,
-				get = function(info)
-					return SUI.DB.yoffset
-				end,
-				set = function(info, val)
-					if (InCombatLockdown()) then
-						SUI:Print(ERR_NOT_IN_COMBAT)
-					else
-						if SUI.DB.yoffsetAuto then
-							SUI:Print(L['confOffsetAuto'])
-						else
-							val = tonumber(val)
-							SUI.DB.yoffset = val
-							module:updateOffset()
-						end
-					end
-				end
-			},
-			offsetauto = {
-				name = L['AutoOffset'],
-				type = 'toggle',
-				desc = L['AutoOffsetDesc'],
-				order = 3.1,
-				get = function(info)
-					return SUI.DB.yoffsetAuto
-				end,
-				set = function(info, val)
-					SUI.DB.yoffsetAuto = val
-					module:updateOffset()
-				end
-			}
-		}
-	}
-
 	SUI.opt.args['Artwork'].args['ActionBar'] = {
 		name = 'Bar backgrounds',
 		type = 'group',

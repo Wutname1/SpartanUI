@@ -34,7 +34,7 @@ local function Options()
 					end
 
 					--Force Rebuild of primary bar profile
-					SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupProfile()
+					module.Bartender4:SetupProfile(true)
 
 					--Reset Moved bars
 					local FrameList = {
@@ -159,7 +159,7 @@ local function BTMover(BarName, DisplayName)
 		if scaleData[BarName] then
 			bar:SetScale(scaleData[BarName])
 		end
-		MoveIt:CreateMover(bar, BarName, DisplayName, true)
+		MoveIt:CreateMover(bar, BarName, DisplayName)
 		MoveIt:UpdateMover(BarName, bar.overlay, true)
 	end
 end
@@ -174,7 +174,7 @@ local function AddMovers()
 			if scaleData[BarName] then
 				bar:SetScale(scaleData[BarName])
 			end
-			MoveIt:CreateMover(bar, 'BT4Bar' .. i, 'Bar ' .. i, true)
+			MoveIt:CreateMover(bar, 'BT4Bar' .. i, 'Bar ' .. i)
 			MoveIt:UpdateMover('BT4Bar' .. i, bar.overlay, true)
 		end
 	end
@@ -236,12 +236,18 @@ local function RefreshConfig()
 
 		if _G[v] and positionData[v] ~= '' then
 			local f = _G[v]
+			if f.mover then
+				f = f.mover
+			end
+
 			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
 			f:ClearAllPoints()
 			f:SetPoint(point, anchor, secondaryPoint, x, y)
 			if scaleData[v] then
-				f:SetScale(scaleData[v])
+				f:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
+				_G[v]:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
 			end
+		-- MoveIt:UpdateMover(f.name)
 		end
 	end
 end
@@ -311,6 +317,13 @@ local function OnEnable()
 	function Bartender4:Lock()
 	end
 
+	-- Do what Bartender isn't - Make the Bag buttons the same size
+	do -- modify CharacterBag(0-3) Scale
+		for i = 1, 4 do
+			_G['CharacterBag' .. (i - 1) .. 'Slot']:SetScale(1.25)
+		end
+	end
+
 	--Replace the BT4 Enable function so we know when new objects are created
 	local BT4ActionBars = Bartender4:GetModule('ActionBars')
 	function BT4ActionBars:EnableBar(id)
@@ -330,7 +343,7 @@ local function OnEnable()
 		--SUI Stuff
 		RefreshConfig()
 		local MoveIt = SUI:GetModule('Component_MoveIt')
-		MoveIt:CreateMover(bar, bar:GetName(), bar:GetName(), true)
+		MoveIt:CreateMover(bar, bar:GetName(), 'Bar ' .. id)
 		MoveIt:UpdateMover(bar:GetName(), bar.overlay, true)
 
 		if not Bartender4.Locked then
@@ -438,4 +451,70 @@ function SUI:BT4RefreshConfig()
 	SUI:Print('Bartender4 Profile changed to: ' .. Bartender4.db:GetCurrentProfile())
 end
 
-module:AddBarSystem('Bartender4', OnInitialize, OnEnable, Unlock, RefreshConfig)
+module:AddBarSystem('Bartender4', OnInitialize, OnEnable, nil, Unlock, RefreshConfig)
+
+-- Bartender4 Items
+
+-- Creates the SUI BT4 Profile
+local function SetupProfile(updateConfig)
+	--Exit if Bartender4 is not loaded
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
+		return
+	end
+
+	--Flag the SUI.DB that we are making changes
+	SUI.DBG.BartenderChangesActive = true
+	--Load the profile name the art style wants
+	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile
+
+	--Load the BT settings used by the art style
+	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
+
+	--If this is set then we have already setup the bars once, and the user changed them
+	if
+		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= ProfileName and
+			not ProfileOverride
+	 then
+		return
+	end
+
+	-- Set/Create our Profile
+	Bartender4.db:SetProfile(ProfileName)
+
+	--Load the Profile Data
+	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+		if BartenderSettings[k] and v.db.profile then
+			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k], true)
+		end
+	end
+
+	-- Update BT4 Configuration
+	if updateConfig then
+		Bartender4:UpdateModuleConfigs()
+	end
+
+	SUI.DBG.BartenderChangesActive = false
+end
+
+-- Returns True if the Inputed profileName is the active one in BT4
+local function ProfileCheck(profileName, Report)
+	if not Bartender4 then
+		return
+	end
+
+	local profiles, r = Bartender4.db:GetProfiles(), false
+	for _, v in pairs(profiles) do
+		if v == profileName then
+			r = true
+		end
+	end
+	if (Report) and (r ~= true) then
+		SUI:Print(profileName .. ' ' .. L['BartenderProfileCheckFail'])
+	end
+	return r
+end
+
+module.Bartender4 = {
+	SetupProfile = SetupProfile,
+	ProfileCheck = ProfileCheck
+}

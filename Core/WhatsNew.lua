@@ -30,8 +30,6 @@ function SUI:WhatsNew()
 					SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
 					SUI.DBMod.Artwork.FirstLoad = true
 
-					SUI:GetModule('Style_' .. DBMod.Artwork.Style):SetupProfile()
-
 					--Reset Moved bars; Setting up profile triggers movment
 					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}

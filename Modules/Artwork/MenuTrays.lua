@@ -120,7 +120,7 @@ function module:SlidingTrays(StyleSettings)
 	settings = StyleSettings
 
 	for _, key in ipairs(trayIDs) do
-		local tray = CreateFrame('Frame', nil, UIParent)
+		local tray = CreateFrame('Frame', nil, SpartanUI)
 		tray:SetFrameStrata('BACKGROUND')
 		tray:SetAlpha(.8)
 		tray:SetSize(400, 45)
@@ -190,8 +190,8 @@ function module:SlidingTrays(StyleSettings)
 		module.Trays[key] = tray
 	end
 
-	module.Trays.left:SetPoint('TOP', UIParent, 'TOP', -300, 0)
-	module.Trays.right:SetPoint('TOP', UIParent, 'TOP', 300, 0)
+	module.Trays.left:SetPoint('TOP', SpartanUI, 'TOP', -300, -1)
+	module.Trays.right:SetPoint('TOP', SpartanUI, 'TOP', 300, -1)
 
 	trayWatcher:SetScript('OnEvent', trayWatcherEvents)
 	trayWatcher:RegisterEvent('PLAYER_LOGIN')

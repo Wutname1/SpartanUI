@@ -38,9 +38,9 @@ function module:OnInitialize()
 		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,315,146',
 		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,638,154',
 		--
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,60'
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,15'
 	}
-	
+
 	--Init if needed
 	if (SUI.DBMod.Artwork.Style == 'Transparent') then
 		module:Init()
@@ -48,9 +48,6 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	if (SUI.DBMod.Artwork.FirstLoad) then
-		module:FirstLoad()
-	end
 	module:SetupMenus()
 	module:InitFramework()
 	module:InitActionBars()
@@ -58,15 +55,6 @@ function module:Init()
 	InitRan = true
 end
 
-function module:FirstLoad()
-	--If our profile exists activate it.
-	if
-		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Transparent.BartenderProfile) and
-			not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Transparent.BartenderProfile, true))
-	 then
-		Bartender4.db:SetProfile(SUI.DB.Styles.Transparent.BartenderProfile)
-	end
-end
 
 function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= 'Transparent') then
@@ -76,9 +64,6 @@ function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style == 'Transparent') then
 		if (not InitRan) then
 			module:Init()
-		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Transparent.BartenderProfile, true)) then
-			module:CreateProfile()
 		end
 		module:EnableFramework()
 		module:EnableActionBars()
@@ -129,10 +114,10 @@ function module:SetupMenus()
 				max = 200,
 				step = .1,
 				get = function(info)
-					return SUI.DB.xOffset / 6.25
+					return SUI.DB.Offset.Horizontal / 6.25
 				end,
 				set = function(info, val)
-					SUI.DB.xOffset = val * 6.25
+					SUI.DB.Offset.Horizontal = val * 6.25
 					module:updateXOffset()
 				end
 			},

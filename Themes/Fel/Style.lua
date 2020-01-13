@@ -17,6 +17,8 @@ function module:OnInitialize()
 
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Fel = {
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,80',
+		--
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-250,175',
 		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-590,175',
 		--
@@ -55,22 +57,9 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	if (SUI.DBMod.Artwork.FirstLoad) then
-		module:FirstLoad()
-	end
 	module:SetupMenus()
 	module:InitArtwork()
 	InitRan = true
-end
-
-function module:FirstLoad()
-	--If our profile exists activate it.
-	if
-		((Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Fel.BartenderProfile) and
-			Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile, true))
-	 then
-		Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile)
-	end
 end
 
 function module:OnEnable()
@@ -87,9 +76,6 @@ function module:OnEnable()
 		end
 		if (not InitRan) then
 			module:Init()
-		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Fel.BartenderProfile, true)) then
-			module:CreateProfile()
 		end
 		module:EnableArtwork()
 
@@ -139,51 +125,6 @@ function module:SetupMenus()
 					module:updateAlpha()
 				end
 			},
-			-- xOffset = {name = L["MoveSideways"],type = "range",width="full",order=2,
-			-- desc = L["MoveSidewaysDesc"],
-			-- min=-200,max=200,step=.1,
-			-- get = function(info) return SUI.DB.xOffset/6.25 end,
-			-- set = function(info,val) SUI.DB.xOffset = val*6.25; module:updateSpartanXOffset(); end,
-			-- },
-			offset = {
-				name = L['ConfOffset'],
-				type = 'range',
-				width = 'normal',
-				order = 3,
-				desc = L['ConfOffsetDesc'],
-				min = 0,
-				max = 200,
-				step = .1,
-				get = function(info)
-					return SUI.DB.yoffset
-				end,
-				set = function(info, val)
-					if (InCombatLockdown()) then
-						SUI:Print(ERR_NOT_IN_COMBAT)
-					else
-						if SUI.DB.yoffsetAuto then
-							SUI:Print(L['confOffsetAuto'])
-						else
-							val = tonumber(val)
-							SUI.DB.yoffset = val
-							module:updateOffset()
-						end
-					end
-				end
-			},
-			offsetauto = {
-				name = L['AutoOffset'],
-				type = 'toggle',
-				desc = L['AutoOffsetDesc'],
-				order = 3.1,
-				get = function(info)
-					return SUI.DB.yoffsetAuto
-				end,
-				set = function(info, val)
-					SUI.DB.yoffsetAuto = val
-					module:updateOffset()
-				end
-			}
 		}
 	}
 

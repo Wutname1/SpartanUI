@@ -5,19 +5,7 @@ local module = SUI:GetModule('Style_Transparent')
 
 local plate
 
-function module:SetupProfile()
-	Artwork_Core:SetupProfile()
-end
-
-function module:CreateProfile()
-	Artwork_Core:CreateProfile()
-end
-
 function module:InitActionBars()
-	--if (Bartender4.db:GetCurrentProfile() == SUI.DB.Styles.Transparent.BartenderProfile or not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Transparent.BartenderProfile,true)) then
-	Artwork_Core:ActionBarPlates('Transparent_ActionBarPlate')
-	--end
-
 	do -- create bar anchor
 		plate = CreateFrame('Frame', 'Transparent_ActionBarPlate', Transparent_SpartanUI, 'Transparent_ActionBarsTemplate')
 		plate:SetFrameStrata('BACKGROUND')

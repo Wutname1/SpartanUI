@@ -289,7 +289,7 @@ function module:factory()
 			local StyleSetting = SUI:MergeData(StyleSettings[key], module.DB.default, false)
 
 			--Status Bar
-			local statusbar = CreateFrame('Frame', nil, UIParent)
+			local statusbar = CreateFrame('Frame', nil, SpartanUI)
 			statusbar:SetSize(unpack(StyleSetting.size))
 			statusbar:SetFrameStrata('BACKGROUND')
 

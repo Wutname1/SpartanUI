@@ -37,38 +37,39 @@ function module:OnInitialize()
 		module:Init()
 	else
 		module:Disable()
+		SpartanUI_Classic:Hide()
 	end
 
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Classic = {
-		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-355,79',
-		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-355,32',
+		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-358,81',
+		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-359,32',
 		--
-		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,355,79',
-		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,355,32',
+		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,359,80',
+		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,359,33',
 		--
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,-55,3',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,55,3',
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,-2,3',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,4,3',
 		--
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-208,122',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-536,152',
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,130',
 		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,281,127',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,587,155'
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-224,138',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-564,165',
+		--
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,297,133',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,628,168'
 	}
 	BarHandler.BarScale.BT4.Classic = {
-		['BT4Bar1'] = 0.85,
-		['BT4Bar2'] = 0.85,
-		['BT4Bar3'] = 0.85,
-		['BT4Bar4'] = 0.85,
-		['BT4Bar7'] = 0.85,
-		['BT4Bar8'] = 0.85,
-		['BT4Bar9'] = 0.85,
-		['BT4Bar10'] = 0.85,
-		['BT4BarBagBar'] = 0.7,
-		['BT4BarStanceBar'] = 0.85,
-		['BT4BarPetBar'] = 0.7,
-		['BT4BarMicroMenu'] = 0.8
+		['BT4Bar1'] = 0.78,
+		['BT4Bar2'] = 0.78,
+		['BT4Bar3'] = 0.78,
+		['BT4Bar4'] = 0.78,
+		['BT4Bar5'] = 0.75,
+		['BT4Bar6'] = 0.75,
+		['BT4BarBagBar'] = 0.6,
+		['BT4BarStanceBar'] = 0.7,
+		-- ['BT4BarPetBar'] = 0.7,
+		['BT4BarMicroMenu'] = 0.7
 	}
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
@@ -104,16 +105,9 @@ function module:FirstLoad()
 end
 
 function module:OnEnable()
-	--If our profile exists activate it.
-	if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Classic.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-		Bartender4.db:SetProfile(SUI.DB.Styles.Classic.BartenderProfile)
-	end
 	if (SUI.DBMod.Artwork.Style == 'Classic') then
 		if (not InitRan) then
 			module:Init()
-		end
-		if (not Artwork_Core:BartenderProfileCheck(SUI.DB.Styles.Classic.BartenderProfile, true)) then
-			module:CreateProfile()
 		end
 
 		module:EnableFramework()
@@ -123,6 +117,8 @@ function module:OnEnable()
 		if (SUI.DBMod.Artwork.FirstLoad) then
 			SUI.DBMod.Artwork.FirstLoad = false
 		end -- We want to do this last
+	else
+		module:OnDisable()
 	end
 end
 
@@ -149,7 +145,7 @@ function module:SetupMenus()
 					if (InCombatLockdown()) then
 						SUI:Print(ERR_NOT_IN_COMBAT)
 					else
-						module:CreateProfile()
+						SUI:GetModule('Component_BarHandler'):SetupProfile(true)
 						ReloadUI()
 					end
 				end
@@ -548,10 +544,10 @@ function module:SetupMenus()
 				max = 200,
 				step = .1,
 				get = function(info)
-					return SUI.DB.xOffset / 6.25
+					return SUI.DB.Offset.Horizontal / 6.25
 				end,
 				set = function(info, val)
-					SUI.DB.xOffset = val * 6.25
+					SUI.DB.Offset.Horizontal = val * 6.25
 					module:updateSpartanXOffset()
 				end
 			},

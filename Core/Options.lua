@@ -2,13 +2,6 @@ local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Options')
 
 ---------------------------------------------------------------------------
-function module:ArtSetup()
-	SUI.DBG.BartenderChangesActive = true
-	SUI:GetModule('Component_Artwork'):SetupProfile()
-
-	SUI.DBG.BartenderChangesActive = false
-end
-
 function module:InCombatLockdown()
 	if InCombatLockdown() then
 		SUI:Print('|cffff0000Unable to change setting in combat')
@@ -72,7 +65,7 @@ function module:OnInitialize()
 
 				SUI.DB.Unitframes.Style = skin
 				SUI.opt.args.UnitFrames.args.BaseStyle.args[skin].func()
-				module:ArtSetup()
+
 				SUI:reloadui()
 			end
 		}
@@ -91,7 +84,6 @@ function module:OnInitialize()
 					SUI.DB.Styles.Fel.SubTheme = skin
 				end
 
-				module:ArtSetup()
 				SUI:reloadui()
 			end
 		}
