@@ -311,24 +311,60 @@ local function CreateUnitFrame(self, unit)
 		self:UpdateAuras()
 		self:UpdateAllElements('OnUpdate')
 		self:UpdateTags()
+		self:UpdateArtwork()
 	end
 
 	local function UpdateArtwork()
 		local ArtPositions = {'top', 'bg', 'bottom', 'full'}
 		for _, pos in ipairs(ArtPositions) do
+			local artObj = self.artwork[pos]
 			local ArtSettings = module.CurrentSettings[unit].artwork[pos]
-			local ArtStyle = ArtPosSettings.graphic
-			local ArtData = module.Artwork[ArtStyle][pos]
+			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+				local ArtData = module.Artwork[ArtSettings.graphic][pos]
 
-			if ArtSettings.enabled then
+				-- setup a bg height
+				local height
+				if pos == 'bg' then
+					height = (self:GetHeight() + (ArtData.height or 0))
+				end
+
+				-- Setup the Artwork
 				if ArtData.TexCoord then
-					self.artwork[pos]:SetTexCoord(unpack(ArtData.TexCoord))
+					artObj:SetTexCoord(unpack(ArtData.TexCoord))
 				end
 				if ArtData.Colorable then
-					self.artwork.bottom:SetVertexColor(0, 0, 0, .6)
+					artObj:SetVertexColor(0, 0, 0, .6)
 				end
-				-- self.artwork.top:SetAllPoints(self)
-				self.artwork.top:SetTexture(ArtData.path)
+				artObj:SetTexture(ArtData.path)
+
+				artObj:SetScale(ArtData.scale or 1)
+				artObj:SetAlpha(ArtData.alpha or 1)
+
+				artObj:SetWidth(ArtData.width or self:GetWidth())
+				artObj:SetHeight((height or ArtData.height) or 25)
+
+				-- Position artwork
+				local x = (ArtSettings.x + (ArtData.x or 0))
+				local y = (ArtSettings.y + (ArtData.y or 0))
+				artObj:ClearAllPoints()
+				if ArtData.position then
+					x = (x + (ArtData.position.x or 0))
+					y = (y + (ArtData.position.y or 0))
+
+					artObj:SetPoint(ArtData.position.anchor, self, ArtData.position.anchor, x, y)
+				else
+					if pos == 'top' then
+						artObj:SetPoint('BOTTOM', self, 'TOP', x, y)
+					elseif pos == 'bottom' then
+						artObj:SetPoint('TOP', self, 'BOTTOM', x, y)
+					elseif pos == 'bg' then
+						artObj:SetPoint('CENTER', self, 'CENTER', x, y)
+					end
+				end
+
+				artObj:Show()
+			else
+				artObj:Hide()
 			end
 		end
 	end

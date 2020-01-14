@@ -336,15 +336,20 @@ local function AddArtworkOptions(frameName)
 		-- Now for everything else
 		for position, _ in pairs(ArtPositions) do
 			if data[position] then
-				SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args.style.args[Name] = {
+				local options = SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args
+				local dataObj = data[position]
+				--Add to dropdown
+				options.StyleDropdown.values[Name] = (data.name or Name)
+				--Create example
+				options.style.args[Name] = {
 					name = (data.name or Name),
 					width = 'normal',
 					type = 'description',
 					image = function()
-						return data[position].path, (data[position].x or 160), (data[position].y or 40)
+						return dataObj.path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
 					end,
 					imageCoords = function()
-						return data[position].TexCoord
+						return dataObj.TexCoord
 					end
 				}
 			end

@@ -549,11 +549,60 @@ local DBdefault = {
 					MenuBar = {enable = true, alpha = 100}
 				},
 				Frames = {
-					player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
-					target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}},
-					pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
-					targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
-					focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
+					player = {
+						artwork = {
+							top = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'war'
+							}
+						},
+						elements = {
+							Name = {
+								enabled = true,
+								SetJustifyH = 'LEFT',
+								position = {
+									anchor = 'BOTTOM',
+									x = 0,
+									y = -16
+								}
+							}
+						}
+					},
+					target = {
+						artwork = {
+							top = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'war'
+							}
+						},
+						elements = {
+							Name = {
+								enabled = true,
+								SetJustifyH = 'LEFT',
+								position = {
+									anchor = 'BOTTOM',
+									x = 0,
+									y = -16
+								}
+							}
+						}
+					}
 				},
 				PartyFrames = {
 					FrameStyle = 'medium'

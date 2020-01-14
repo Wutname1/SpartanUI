@@ -22,6 +22,7 @@ function module:OnInitialize()
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.war = {
+		name = 'War',
 		top = {
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			TexCoord = {0.541015625, 1, 0, 0.2109375},
@@ -29,14 +30,17 @@ function module:OnInitialize()
 			-- position = {Pos table},
 			-- scale = 1,
 			-- alpha = 1,
+			height = 45,
+			y = -15,
 			PVPAlpha = .4
 		},
 		bg = {
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
 			TexCoord = {0.572265625, 0.96875, 0.74609375, 1},
 			-- VertexColor = {0, 0, 0, .6},
-			-- position = {Pos table},
+			-- position = {anchor = 'BOTTOM'},
 			-- scale = 1,
+			-- height = 0,
 			-- alpha = 1,
 			PVPAlpha = .4
 		},
@@ -46,6 +50,8 @@ function module:OnInitialize()
 			-- VertexColor = {0, 0, 0, .6},
 			-- position = {Pos table},
 			-- scale = 1,
+			height = 50,
+			y = 40,
 			-- alpha = 1,
 			PVPAlpha = .4
 		}
