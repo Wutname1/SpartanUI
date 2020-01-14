@@ -145,6 +145,7 @@ local DBdefault = {
 		},
 		MoveIt = {
 			AltKey = false,
+			tips = true,
 			movers = {
 				['**'] = {
 					defaultPoint = false,

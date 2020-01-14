@@ -296,8 +296,10 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 
 		if IsAltKeyDown() then -- Reset anchor
 			MoveIt:Reset(name)
+			SUI:Print("Tip use the chat command '/sui move reset' to reset everything quickly.")
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
 			self:Hide()
+			SUI:Print(self.name + ' hidden temporarily.')
 		end
 	end
 
@@ -397,9 +399,22 @@ function MoveIt:Enable()
 			elseif arg == 'reset' then
 				SUI:Print('Restting all frames...')
 				MoveIt:Reset()
+				return
+			elseif arg == 'tips' then
+				SUI.DB.MoveIt.tips = not (SUI.DB.MoveIt.tips)
 			else
 				SUI:Print('Invalid move command!')
+				return
 			end
+		end
+		if SUI.DB.MoveIt.tips then
+			SUI:Print('When the movement system is enabled you can:')
+			print('   Shift+Click a mover to temporarily hide it')
+			print("   Alt+Click a mover to reset it's position")
+			print('   Use the scroll wheel to move left and right 1 coord at a time')
+			print('   Hold Shift + use the scroll wheel to move up and down 1 coord at a time')
+			print('   Press ESCAPE to exit the movement system quickly.')
+			print('To disable these tips type /sui move tips')
 		end
 	end
 	SUI:AddChatCommand('move', ChatCommand)
@@ -471,6 +486,7 @@ function MoveIt:Options()
 				fontSize = 'large'
 			},
 			line3 = {name = '/sui move', type = 'description', order = 51, fontSize = 'medium'},
+			line1 = {name = '', type = 'header', order = 51.1},
 			line4 = {
 				name = '',
 				type = 'description',
@@ -497,7 +513,7 @@ function MoveIt:Options()
 				fontSize = 'medium'
 			},
 			line9 = {
-				name = '- Use the scroll wheel + Hold Shift to move up and down 1 coord at a time',
+				name = '- Hold Shift + use the scroll wheel to move up and down 1 coord at a time',
 				type = 'description',
 				order = 56,
 				fontSize = 'medium'
@@ -507,6 +523,18 @@ function MoveIt:Options()
 				type = 'description',
 				order = 57,
 				fontSize = 'medium'
+			},
+			tips = {
+				name = 'Display tips when using /sui move',
+				type = 'toggle',
+				width = 'double',
+				order = 70,
+				get = function(info)
+					return SUI.DB.MoveIt.tips
+				end,
+				set = function(info, val)
+					SUI.DB.MoveIt.tips = val
+				end
 			}
 		}
 	}
