@@ -42,6 +42,7 @@ libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 # Unit Frame libraries
 libs\oUF\oUF.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
+libs\oUF_SpartanArt\oUF_SpartanArt.lua
 #@non-retail@
 # libs\LibClassicDurations\LibClassicDurations.xml
 # libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua

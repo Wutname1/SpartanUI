@@ -265,7 +265,7 @@ local function AddArtworkOptions(frameName)
 		--Update the DB
 		SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork[pos][option] = val
 		--Update the screen
-		module.frames[frameName]:UpdateArtwork()
+		module.frames[frameName]:ElementUpdate('SpartanArt')
 	end
 	SUI.opt.args.UnitFrames.args[frameName].args['artwork'] = {
 		name = 'Artwork',
@@ -309,6 +309,29 @@ local function AddArtworkOptions(frameName)
 					order = 3,
 					inline = true,
 					args = {}
+				},
+				settings = {
+					name = 'Settings',
+					type = 'group',
+					inline = true,
+					order = 500,
+					args = {
+						alpha = {
+							name = 'Alpha',
+							desc = 'desc',
+							type = 'range',
+							width = 'double',
+							min = 0,
+							max = 1,
+							step = .01,
+							get = function(info)
+								return module.CurrentSettings[frameName].artwork[position].alpha
+							end,
+							set = function(info, val)
+								ArtworkOptionUpdate(position, 'alpha', val)
+							end
+						}
+					}
 				}
 			}
 		}
@@ -358,7 +381,7 @@ local function AddArtworkOptions(frameName)
 end
 
 local function AddBarOptions(frameName)
-	SUI.opt.args.UnitFrames.args[frameName].args['bars'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args.bars = {
 		name = 'Bars',
 		type = 'group',
 		order = 30,
@@ -405,7 +428,7 @@ local function AddBarOptions(frameName)
 						name = 'Spell icon',
 						type = 'group',
 						inline = true,
-						order = 30,
+						order = 100,
 						args = {
 							enabled = {
 								name = 'Enable',
@@ -660,7 +683,7 @@ local function AddBarOptions(frameName)
 
 	local bars = {'Castbar', 'Health', 'Power'}
 	for _, key in ipairs(bars) do
-		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args[key].args['enabled'] = {
+		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.enabled = {
 			name = L['Enabled'],
 			type = 'toggle',
 			width = 'full',
@@ -677,7 +700,7 @@ local function AddBarOptions(frameName)
 				module.frames[frameName]:UpdateAll()
 			end
 		}
-		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args[key].args['height'] = {
+		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.height = {
 			name = 'Height',
 			type = 'range',
 			width = 'full',
@@ -697,11 +720,58 @@ local function AddBarOptions(frameName)
 				module.frames[frameName]:UpdateSize()
 			end
 		}
+
+		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.Background = {
+			name = 'Background',
+			type = 'group',
+			inline = true,
+			order = 200,
+			args = {
+				enabled = {
+					name = 'Enable',
+					type = 'toggle',
+					order = 1,
+					get = function(info)
+						return module.CurrentSettings[frameName].elements[key].bg.enabled
+					end,
+					set = function(info, val)
+						--Update memory
+						module.CurrentSettings[frameName].elements[key].bg.enabled = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].bg.enabled = val
+						--Update the screen
+						module.frames[frameName]:UpdateAll()
+					end
+				},
+				color = {
+					name = 'Color',
+					type = 'color',
+					order = 2,
+					hasAlpha = true,
+					get = function(info)
+						local val = module.CurrentSettings[frameName].elements[key].bg.color
+						if not val then
+							return {1, 1, 1, 1}
+						end
+						return unpack(val)
+					end,
+					set = function(info, r, b, g, a)
+						local val = {r, b, g, a}
+						--Update memory
+						module.CurrentSettings[frameName].elements[key].bg.color = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].bg.color = val
+						--Update the screen
+						module.frames[frameName]:UpdateAll()
+					end
+				}
+			}
+		}
 	end
 
 	if frameName == 'player' then
 		if SUI.IsRetail then
-			SUI.opt.args.UnitFrames.args.player.args['bars'].args['Power'].args['PowerPrediction'] = {
+			SUI.opt.args.UnitFrames.args.player.args.bars.args['Power'].args['PowerPrediction'] = {
 				name = 'Enable power prediction',
 				desc = 'Used to represent cost of spells on top of the Power bar',
 				type = 'toggle',
@@ -725,7 +795,7 @@ local function AddBarOptions(frameName)
 			}
 		end
 
-		SUI.opt.args.UnitFrames.args.player.args['bars'].args['AdditionalPower'] = {
+		SUI.opt.args.UnitFrames.args.player.args.bars.args['AdditionalPower'] = {
 			name = 'Additional power',
 			desc = "player's additional power, such as Mana for Balance druids.",
 			order = 20,
@@ -779,11 +849,11 @@ local function AddBarOptions(frameName)
 
 	local friendly = {'player', 'party', 'raid', 'target', 'focus', 'targettarget', 'focustarget'}
 	if not SUI:isInTable(friendly, frameName) then
-		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args['Health'].args['DispelHighlight'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args.bars.args['Health'].args['DispelHighlight'].hidden = true
 	end
 
 	if frameName == 'player' or frameName == 'party' or frameName == 'raid' then
-		SUI.opt.args.UnitFrames.args[frameName].args['bars'].args['Castbar'].args['Interruptable'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args.bars.args['Castbar'].args['Interruptable'].hidden = true
 	end
 end
 
@@ -1921,10 +1991,7 @@ function module:InitializeOptions()
 		AddIndicatorOptions(key)
 		AddTextOptions(key)
 		AddBuffOptions(key)
-
-		if key == 'player' or key == 'target' or key == 'party' or key == 'boss' then
-			AddArtworkOptions(key)
-		end
+		AddArtworkOptions(key)
 	end
 
 	AddGroupOptions('raid')

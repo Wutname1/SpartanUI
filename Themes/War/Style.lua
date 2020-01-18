@@ -19,48 +19,96 @@ function module:OnInitialize()
 		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,369,0',
 		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,680,0'
 	}
+	local Images = {
+		Alliance = {
+			bg = {
+				Coords = {0, 0.458984375, 0.74609375, 1}
+			},
+			top = {
+				Coords = {0.03125, 0.427734375, 0, 0.421875}
+			},
+			bottom = {
+				Coords = {0.541015625, 1, 0, 0.421875}
+			}
+		},
+		Horde = {
+			bg = {
+				Coords = {0.572265625, 0.96875, 0.74609375, 1}
+			},
+			top = {
+				Coords = {0.541015625, 1, 0, 0.421875}
+			},
+			bottom = {
+				Coords = {0.541015625, 1, 0, 0.421875}
+			}
+		}
+	}
+	local pathFunc = function(frame, position)
+		local factionGroup = UnitFactionGroup(frame.unit) or 'Neutral'
+		if factionGroup == 'Horde' or factionGroup == 'Alliance' then
+			return 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames'
+		end
+		if position == 'bg' then
+			return 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+		end
+
+		return false
+	end
+	local TexCoordFunc = function(frame, position)
+		local factionGroup = UnitFactionGroup(frame.unit) or 'Neutral'
+
+		if factionGroup == 'Horde' then
+			-- Horde Graphics
+			if position == 'top' then
+				return {0.541015625, 1, 0, 0.1796875}
+			elseif position == 'bg' then
+				return {0.572265625, 0.96875, 0.74609375, 1}
+			elseif position == 'bottom' then
+				return {0.541015625, 1, 0.37109375, 0.421875}
+			end
+		elseif factionGroup == 'Alliance' then
+			-- Alliance Graphics
+			if position == 'top' then
+				return {0.03125, 0.458984375, 0, 0.1796875}
+			elseif position == 'bg' then
+				return {0, 0.458984375, 0.74609375, 1}
+			elseif position == 'bottom' then
+				return {0.03125, 0.458984375, 0.37109375, 0.421875}
+			end
+		else
+			return {1, 1, 1, 1}
+		end
+	end
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.war = {
 		name = 'War',
 		top = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
-			TexCoord = {0.541015625, 1, 0, 0.2109375},
-			-- VertexColor = {0, 0, 0, .6},
-			-- position = {Pos table},
-			-- scale = 1,
-			-- alpha = 1,
-			height = 45,
-			y = -15,
-			PVPAlpha = .4
+			path = pathFunc,
+			TexCoord = TexCoordFunc,
+			heightScale = .225,
+			yScale = -.0555,
+			PVPAlpha = .6
 		},
 		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
-			TexCoord = {0.572265625, 0.96875, 0.74609375, 1},
-			-- VertexColor = {0, 0, 0, .6},
-			-- position = {anchor = 'BOTTOM'},
-			-- scale = 1,
-			-- height = 0,
-			-- alpha = 1,
-			PVPAlpha = .4
+			path = pathFunc,
+			TexCoord = TexCoordFunc,
+			PVPAlpha = .7
 		},
 		bottom = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames',
-			TexCoord = {0.541015625, 1, 0.2109375, 0.421875},
+			path = pathFunc,
+			TexCoord = TexCoordFunc,
+			heightScale = .0825,
+			yScale = 0.0223,
+			PVPAlpha = .7
+			-- height = 40,
+			-- y = 40,
+			-- alpha = 1,
 			-- VertexColor = {0, 0, 0, .6},
 			-- position = {Pos table},
 			-- scale = 1,
-			height = 50,
-			y = 40,
-			-- alpha = 1,
-			PVPAlpha = .4
 		}
 	}
-	if UnitFactionGroup('player') == 'Alliance' then
-		UnitFrames.Artwork.war.top.TexCoord = {0.03125, 0.458984375, 0, 0.2109375}
-		UnitFrames.Artwork.war.bg.TexCoord = {0, 0.458984375, 0.74609375, 1}
-		UnitFrames.Artwork.war.bottom.TexCoord = {0.03125, 0.458984375, 0.2109375, 0.421875}
-	end
 end
 
 function module:Init()

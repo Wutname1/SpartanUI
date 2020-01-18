@@ -754,7 +754,10 @@ local DBdefault = {
 							height = 20,
 							size = 20,
 							scale = 1,
-							bg = false,
+							bg = {
+								enabled = false,
+								color = false
+							},
 							text = {
 								['**'] = {
 									enabled = false,
@@ -817,7 +820,10 @@ local DBdefault = {
 							colorClass = true,
 							colorTapping = true,
 							colorDisconnected = true,
-							bg = true,
+							bg = {
+								enabled = true,
+								color = {1, 1, 1, .2}
+							},
 							text = {
 								['1'] = {
 									enabled = true,
@@ -837,7 +843,10 @@ local DBdefault = {
 							enabled = true,
 							height = 10,
 							offset = 1,
-							bg = true,
+							bg = {
+								enabled = true,
+								color = {1, 1, 1, .2}
+							},
 							text = {
 								['1'] = {
 									enabled = false,
@@ -860,7 +869,10 @@ local DBdefault = {
 							offset = 0,
 							interruptable = true,
 							latency = false,
-							bg = true,
+							bg = {
+								enabled = true,
+								color = {1, 1, 1, .2}
+							},
 							Icon = {
 								enabled = true,
 								size = 12,
@@ -1339,6 +1351,9 @@ local DBdefault = {
 							}
 						},
 						elements = {
+							['**'] = {
+								bg = {}
+							},
 							Portrait = {},
 							Health = {
 								text = {

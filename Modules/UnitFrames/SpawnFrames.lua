@@ -228,8 +228,11 @@ local function CreateUnitFrame(self, unit)
 				end
 				--Background
 				if self[element].bg then
-					if module.CurrentSettings[unit].elements[element].bg then
+					if elements[element].bg.enabled then
 						self[element].bg:Show()
+						if elements[element].bg.color then
+							self[element].bg:SetVertexColor(unpack(elements[element].bg.color))
+						end
 					else
 						self[element].bg:Hide()
 					end
@@ -311,62 +314,6 @@ local function CreateUnitFrame(self, unit)
 		self:UpdateAuras()
 		self:UpdateAllElements('OnUpdate')
 		self:UpdateTags()
-		self:UpdateArtwork()
-	end
-
-	local function UpdateArtwork()
-		local ArtPositions = {'top', 'bg', 'bottom', 'full'}
-		for _, pos in ipairs(ArtPositions) do
-			local artObj = self.artwork[pos]
-			local ArtSettings = module.CurrentSettings[unit].artwork[pos]
-			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
-				local ArtData = module.Artwork[ArtSettings.graphic][pos]
-
-				-- setup a bg height
-				local height
-				if pos == 'bg' then
-					height = (self:GetHeight() + (ArtData.height or 0))
-				end
-
-				-- Setup the Artwork
-				if ArtData.TexCoord then
-					artObj:SetTexCoord(unpack(ArtData.TexCoord))
-				end
-				if ArtData.Colorable then
-					artObj:SetVertexColor(0, 0, 0, .6)
-				end
-				artObj:SetTexture(ArtData.path)
-
-				artObj:SetScale(ArtData.scale or 1)
-				artObj:SetAlpha(ArtData.alpha or 1)
-
-				artObj:SetWidth(ArtData.width or self:GetWidth())
-				artObj:SetHeight((height or ArtData.height) or 25)
-
-				-- Position artwork
-				local x = (ArtSettings.x + (ArtData.x or 0))
-				local y = (ArtSettings.y + (ArtData.y or 0))
-				artObj:ClearAllPoints()
-				if ArtData.position then
-					x = (x + (ArtData.position.x or 0))
-					y = (y + (ArtData.position.y or 0))
-
-					artObj:SetPoint(ArtData.position.anchor, self, ArtData.position.anchor, x, y)
-				else
-					if pos == 'top' then
-						artObj:SetPoint('BOTTOM', self, 'TOP', x, y)
-					elseif pos == 'bottom' then
-						artObj:SetPoint('TOP', self, 'BOTTOM', x, y)
-					elseif pos == 'bg' then
-						artObj:SetPoint('CENTER', self, 'CENTER', x, y)
-					end
-				end
-
-				artObj:Show()
-			else
-				artObj:Hide()
-			end
-		end
 	end
 
 	local function ElementUpdate(self, elementName)
@@ -563,7 +510,6 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	self.UpdateAll = UpdateAll
-	self.UpdateArtwork = UpdateArtwork
 	self.UpdateSize = UpdateSize
 	self.ElementUpdate = ElementUpdate
 	self.UpdateAuras = UpdateAuras
@@ -573,15 +519,45 @@ local function CreateUnitFrame(self, unit)
 	local elements = module.CurrentSettings[unit].elements
 
 	do -- General setup
-		self.artwork = CreateFrame('Frame', nil, self)
-		self.artwork:SetFrameStrata('BACKGROUND')
-		self.artwork:SetFrameLevel(2)
-		self.artwork:SetAllPoints()
+		local SpartanArt = CreateFrame('Frame', nil, self)
+		SpartanArt:SetFrameStrata('BACKGROUND')
+		SpartanArt:SetFrameLevel(2)
+		SpartanArt:SetAllPoints()
+		SpartanArt.PreUpdate = function(self, unit)
+			if not unit then
+				return
+			end
+			local unitName = unit
+			if string.match(unit, 'raid') then
+				unitName = 'raid'
+			elseif string.match(unit, 'party') then
+				unitName = 'party'
+			elseif string.match(unit, 'boss') then
+				unitName = 'boss'
+			elseif string.match(unit, 'arena') then
+				unitName = 'arena'
+			end
+			if not module.CurrentSettings[unitName] then
+				print(unitName .. ' - NO SETTINGS FOUND')
+			end
 
-		self.artwork.top = self.artwork:CreateTexture(nil, 'BORDER')
-		self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
-		self.artwork.bottom = self.artwork:CreateTexture(nil, 'BORDER')
-		self.artwork.full = self.artwork:CreateTexture(nil, 'BACKGROUND')
+			self.ArtSettings = module.CurrentSettings[unitName].artwork
+
+			local ArtPositions = {'top', 'bg', 'bottom', 'full'}
+
+			for _, pos in ipairs(ArtPositions) do
+				local ArtSettings = self.ArtSettings[pos]
+				if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+					self[pos].ArtData = module.Artwork[ArtSettings.graphic][pos]
+				end
+			end
+		end
+		SpartanArt.top = SpartanArt:CreateTexture(nil, 'BORDER')
+		SpartanArt.bg = SpartanArt:CreateTexture(nil, 'BACKGROUND')
+		SpartanArt.bottom = SpartanArt:CreateTexture(nil, 'BORDER')
+		SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
+
+		self.SpartanArt = SpartanArt
 
 		-- 3D Portrait
 		local Portrait3D = CreateFrame('PlayerModel', nil, self)
@@ -833,10 +809,10 @@ local function CreateUnitFrame(self, unit)
 			power:SetStatusBarTexture(Smoothv2)
 			power:SetHeight(elements.Power.height)
 
-			power.bg = power:CreateTexture(nil, 'BACKGROUND')
-			power.bg:SetAllPoints(power)
-			power.bg:SetTexture(Smoothv2)
-			power.bg:SetVertexColor(1, 1, 1, .2)
+			local Background = power:CreateTexture(nil, 'BACKGROUND')
+			Background:SetAllPoints(power)
+			Background:SetTexture(Smoothv2)
+			power.bg = Background
 
 			local powerOffset = elements.Power.offset
 			if elements.Castbar.enabled then
@@ -963,7 +939,7 @@ local function CreateUnitFrame(self, unit)
 			ElementUpdate(self, 'HappinessIndicator')
 		end
 
-		self.RareElite = self.artwork:CreateTexture(nil, 'BACKGROUND', nil, -8)
+		self.RareElite = self.SpartanArt:CreateTexture(nil, 'BORDER')
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
 		ElementUpdate(self, 'RareElite')
 
@@ -1124,8 +1100,6 @@ local function CreateUnitFrame(self, unit)
 		insideAlpha = elements.Range.insideAlpha,
 		outsideAlpha = elements.Range.outsideAlpha
 	}
-	-- self.TextUpdate = PostUpdateText
-	-- self.ColorUpdate = PostUpdateColor
 
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
@@ -1158,16 +1132,16 @@ function module:SpawnFrames()
 
 	for _, group in ipairs({'boss', 'arena'}) do
 		if SUI.IsRetail then
-			local set = {}
+			local grpFrame = CreateFrame('Frame')
 			for i = 1, (group == 'boss' and MAX_BOSS_FRAMES or 3) do
-				set[i] = SUIUF:Spawn(group .. i, 'SUI_' .. group .. i)
+				grpFrame[i] = SUIUF:Spawn(group .. i, 'SUI_' .. group .. i)
 				if i == 1 then
-					set[i]:SetPoint('TOPLEFT', _G['SUI_UF_' .. group], 'TOPLEFT', 0, 0)
+					grpFrame[i]:SetPoint('TOPLEFT', _G['SUI_UF_' .. group], 'TOPLEFT', 0, 0)
 				else
-					set[i]:SetPoint('TOP', set[i - 1], 'BOTTOM', 0, -10)
+					grpFrame[i]:SetPoint('TOP', grpFrame[i - 1], 'BOTTOM', 0, -10)
 				end
 			end
-			module.frames[group] = set
+			module.frames[group] = grpFrame
 		end
 	end
 
@@ -1294,17 +1268,9 @@ function module:SpawnFrames()
 			end
 		end
 	end
-	local function GroupFrameUpdateArtwork(self)
-		for _, f in ipairs({self:GetChildren()}) do
-			if f.UpdateArtwork then
-				f:UpdateArtwork()
-			end
-		end
-	end
 
 	for _, group in ipairs({'raid', 'party', 'boss', 'arena'}) do
 		module.frames[group].UpdateAll = GroupFrameUpdateAll
-		module.frames[group].UpdateArtwork = GroupFrameUpdateArtwork
 		module.frames[group].ElementUpdate = GroupFrameElementUpdate
 		module.frames[group].UpdateSize = GroupFrameUpdateSize
 		module.frames[group].UpdateAuras = GroupFrameUpdateAuras
