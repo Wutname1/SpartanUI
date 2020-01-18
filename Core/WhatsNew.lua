@@ -1,101 +1,75 @@
 local SUI = SUI
 local module = SUI:NewModule('WhatsNew')
+local StdUi = LibStub('StdUi'):NewInstance()
+-- DB or DBG - This allows us to change if the whats new should appear on every profile or once.
+local db = 'DB'
 
 function SUI:WhatsNew()
-	local PageData = {
-		title = "What's new in SpartanUI 4.4",
-		SubTitle = '',
-		Desc1 = "Introducing a new style 'Digital' this is the first fan submitted style. Special thanks to Vargor of Stormrage, if you would like to try this new Skin you may click on the graphic below.",
-		Display = function()
-			--Container
-			SUI_Win.WhatsNew = CreateFrame('Frame', nil)
-			SUI_Win.WhatsNew:SetParent(SUI_Win.content)
-			SUI_Win.WhatsNew:SetAllPoints(SUI_Win.content)
-			local gui = LibStub('AceGUI-3.0')
+	module.window = StdUi:Window(nil, 650, 500)
+	module.window.StdUi = StdUi
+	module.window:SetPoint('CENTER', 0, 0)
+	module.window:SetFrameStrata('DIALOG')
+	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	module.window.Title:SetPoint('TOP')
+	module.window.Title:SetAlpha(.8)
 
-			-- Fel Style
-			local control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Style_Digital')
-			control:SetImageSize(240, 120)
-			control:SetPoint('TOP', SUI_Win.Desc1, 'BOTTOM', 0, -15)
-			control:SetCallback(
-				'OnClick',
-				function()
-					SUI.DBG.WhatsNew = (SUI_Win.WhatsNew.NeverEverAgain:GetChecked() ~= true or false)
+	-- Setup the Top text fields
+	module.window.SubTitle = StdUi:Label(module.window, "What's new", 16, nil, module.window:GetWidth(), 20)
+	module.window.SubTitle:SetPoint('TOP', module.window.titlePanel, 'BOTTOM', 0, -5)
+	module.window.SubTitle:SetTextColor(.29, .18, .96, 1)
+	module.window.SubTitle:SetJustifyH('CENTER')
 
-					SUI.DBMod.Artwork.Style = 'Fel'
-					SUI.DB.Styles.Fel.SubTheme = 'Digital'
-					SUI.DBMod.PlayerFrames.Style = SUI.DBMod.Artwork.Style
-					SUI.DBMod.PartyFrames.Style = SUI.DBMod.Artwork.Style
-					SUI.DBMod.RaidFrames.Style = SUI.DBMod.Artwork.Style
-					SUI.DBMod.Artwork.FirstLoad = true
+	module.window.Desc1 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
+	-- module.window.Desc1 = module.window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
+	module.window.Desc1:SetPoint('TOP', module.window.SubTitle, 'BOTTOM', 0, -5)
+	module.window.Desc1:SetTextColor(1, 1, 1, .8)
+	module.window.Desc1:SetWidth(module.window:GetWidth() - 40)
+	module.window.Desc1:SetJustifyH('CENTER')
 
-					--Reset Moved bars; Setting up profile triggers movment
-					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-					end
-					local FrameList = {
-						BT4Bar1,
-						BT4Bar2,
-						BT4Bar3,
-						BT4Bar4,
-						BT4Bar5,
-						BT4Bar6,
-						BT4BarBagBar,
-						BT4BarExtraActionBar,
-						BT4BarStanceBar,
-						BT4BarPetBar,
-						BT4BarMicroMenu
-					}
-					for _, v in ipairs(FrameList) do
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
-					end
+	module.window.Desc2 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
+	-- module.window.Desc2 = module.window:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
+	module.window.Desc2:SetPoint('TOP', module.window.Desc1, 'BOTTOM', 0, -3)
+	module.window.Desc2:SetTextColor(1, 1, 1, .8)
+	module.window.Desc2:SetWidth(module.window:GetWidth() - 40)
+	module.window.Desc2:SetJustifyH('CENTER')
 
-					ReloadUI()
-				end
-			)
-			control.frame:SetParent(SUI_Win.WhatsNew)
-			control.frame:Show()
-			SUI_Win.WhatsNew.Fel = control
+	-- Setup the Buttons
+	module.window.Skip = StdUi:Button(module.window, 150, 20, 'SKIP')
+	module.window.Next = StdUi:Button(module.window, 150, 20, 'CONTINUE')
 
-			SUI_Win.WhatsNew.Buffs = SUI_Win.WhatsNew:CreateFontString(nil, 'OVERLAY', 'SUI_FontOutline13')
-			SUI_Win.WhatsNew.Buffs:SetPoint('TOP', SUI_Win.WhatsNew.Fel.frame, 'BOTTOM', 0, -15)
-			SUI_Win.WhatsNew.Buffs:SetWidth(SUI_Win.WhatsNew:GetWidth() - 40)
-			SUI_Win.WhatsNew.Buffs:SetText(
-				"A new component has been added called 'Open all mail' this Component adds a button to the top of the mailbox window that allows you to open all mail with 1 click."
-			)
+	--Position the Buttons
+	module.window.Skip:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 5, 5)
+	module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', -5, 5)
 
-			-- Sad face
-			SUI_Win.WhatsNew.NeverEverAgain =
-				CreateFrame('CheckButton', 'SUI_WhatsNew_NeverEverAgain', SUI_Win.WhatsNew, 'OptionsCheckButtonTemplate')
-			SUI_Win.WhatsNew.NeverEverAgain:SetPoint('BOTTOMLEFT', SUI_Win, 'BOTTOMLEFT', 5, 5)
-			SUI_WhatsNew_NeverEverAgainText:SetText("Never tell me about what's new ever again.")
-		end,
-		-- Nothing needs to be done just let the user go.
-		Next = function()
-			SUI.DBG.WhatsNew = (SUI_Win.WhatsNew.NeverEverAgain:GetChecked() ~= true or false)
-			SUI_Win.WhatsNew:Hide()
-			SUI_Win.WhatsNew = nil
+	module.window.Skip:SetScript(
+		'OnClick',
+		function(this)
+			module.window:Hide()
 		end
-	}
+	)
 
-	local SetupWindow = SUI:GetModule('SUIWindow')
+	module.window.Next:SetScript(
+		'OnClick',
+		function(this)
+			module.window:Hide()
+		end
+	)
 
-	SetupWindow:AddPage(PageData)
-	SetupWindow:DisplayPage()
+	-- Display first page
+	module.window.closeBtn:Hide()
+	module.window:Hide()
 end
 
 function module:OnInitialize()
-	-- if SUI.DBG.WhatsNew == nil then
-	-- 	SUI.DBG.WhatsNew = true
-	-- end
+	if SUI[db].WhatsNew == nil then
+		SUI[db].WhatsNew = true
+	end
 	--Only display if the setup has been done, and the SUI.DB version is lower than release build, AND the user has not told us to never tell them about new stuff
 
-	-- if SUI.DBG.Version and SUI.DBG.Version < '5.0.0' and SUI.DB.SetupDone and SUI.DBG.WhatsNew then
-	-- SUI:WhatsNew()
-	-- end
+	if SUI[db].Version and SUI[db].Version < '6.0.0' and SUI[db].SetupDone and SUI[db].WhatsNew then
+		SUI:WhatsNew()
+	end
 
 	-- Update SUI.DB Version
-	-- SUI.DB.Version = SUI.Version
-	SUI.DBG.Version = SUI.Version
+	SUI[db].Version = SUI.Version
 end
