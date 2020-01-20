@@ -91,7 +91,7 @@ local DBdefault = {
 			AcceptGeneralQuests = true,
 			AcceptRepeatable = false,
 			trivial = false,
-			lootreward = true,
+			lootreward = false,
 			autoequip = false,
 			armor = {},
 			weapon = {},
@@ -1505,8 +1505,8 @@ local DBdefault = {
 			SetupDone = false,
 			VehicleUI = true,
 			Viewport = {
-				enabled = true,
-				offset = {top = 0, bottom = 2.3, left = 0, right = 0}
+				enabled = false,
+				offset = {top = 0, bottom = 0, left = 0, right = 0}
 			},
 			SlidingTrays = {
 				['**'] = {
