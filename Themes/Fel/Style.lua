@@ -29,22 +29,24 @@ function module:OnInitialize()
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.Fel = {
 		top = {
-			path = 'Interface\\Scenarios\\LegionInvasion',
-			-- path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			TexCoord = {0.140625, 0.765625, 0, 0.1484375},
-			PVPAlpha = .4
+			-- path = 'Interface\\Scenarios\\LegionInvasion',
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+			TexCoord = {0.1796875, 0.736328125, 0, 0.099609375},
+			heightScale = .25,
+			yScale = -0.05,
+			alpha = .8
 		},
 		bg = {
-			path = 'Interface\\Scenarios\\LegionInvasion',
-			-- path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
 			TexCoord = {.02, .385, .45, .575},
 			PVPAlpha = .4
 		},
 		bottom = {
-			path = 'Interface\\Scenarios\\LegionInvasion',
-			-- path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			TexCoord = {0.140625, 0.765625, 0.1484375, 0.265625},
-			PVPAlpha = .4
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+			heightScale = .115,
+			yScale = 0.0158,
+			TexCoord = {0.1796875, 0.736328125, 0.197265625, 0.244140625},
+			PVPAlpha = .8
 		}
 	}
 	UnitFrames.Artwork.Digital = {
@@ -124,7 +126,7 @@ function module:SetupMenus()
 					SUI.DB.alpha = (val / 100)
 					module:updateAlpha()
 				end
-			},
+			}
 		}
 	}
 

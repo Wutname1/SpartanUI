@@ -122,6 +122,7 @@ function module:OpenMail()
 	lastNumGold = nil
 	wait = false
 	if mailIndex == 0 then
+		button:SetText(L['Open All'])
 		return
 	end
 	firstMailDaysLeft = select(7, GetInboxHeaderInfo(1))

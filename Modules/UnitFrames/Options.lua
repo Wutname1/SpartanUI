@@ -317,8 +317,8 @@ local function AddArtworkOptions(frameName)
 					order = 500,
 					args = {
 						alpha = {
-							name = 'Alpha',
-							desc = 'desc',
+							name = 'Custom alpha',
+							desc = "This setting will override your art's default settings. Set to 0 to disable custom Alpha.",
 							type = 'range',
 							width = 'double',
 							min = 0,
@@ -328,6 +328,10 @@ local function AddArtworkOptions(frameName)
 								return module.CurrentSettings[frameName].artwork[position].alpha
 							end,
 							set = function(info, val)
+								if val == 0 then
+									val = false
+								end
+
 								ArtworkOptionUpdate(position, 'alpha', val)
 							end
 						}
