@@ -165,7 +165,7 @@ function module:OnInitialize()
 	module.BlizzMovers()
 end
 
-function module:FirstTime()
+function module:SetupPage()
 	local PageData = {
 		ID = 'ArtworkCore',
 		Name = 'SpartanUI style',
@@ -303,7 +303,7 @@ function module:OnEnable()
 		return
 	end
 
-	module:FirstTime()
+	module:SetupPage()
 	module:updateOffset()
 	module:updateViewport()
 	module:SetupOptions()

@@ -70,12 +70,6 @@ function module:OnEnable()
 	else
 		SUI.opt.args['Artwork'].args['Artwork'].name = SUI.DB.Styles.Fel.SubTheme .. ' Options'
 
-		if
-			Bartender4 and (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.Fel.BartenderProfile) and
-				SUI.DBMod.Artwork.FirstLoad
-		 then
-			Bartender4.db:SetProfile(SUI.DB.Styles.Fel.BartenderProfile)
-		end
 		if (not InitRan) then
 			module:Init()
 		end

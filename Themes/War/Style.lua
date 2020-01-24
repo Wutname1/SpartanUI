@@ -121,9 +121,6 @@ function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= 'War') then
 		module:Disable()
 	else
-		if (Bartender4.db:GetCurrentProfile() ~= SUI.DB.Styles.War.BartenderProfile) and SUI.DBMod.Artwork.FirstLoad then
-			Bartender4.db:SetProfile(SUI.DB.Styles.War.BartenderProfile)
-		end
 		if (not InitRan) then
 			module:Init()
 		end

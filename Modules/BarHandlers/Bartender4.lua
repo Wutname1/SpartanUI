@@ -5,6 +5,127 @@ local BartenderMin = '4.8.5'
 local MoveIt = SUI:GetModule('Component_MoveIt')
 local scaleData
 ------------------------------------------------------------
+local BTProfileName = 'SpartanUI'
+local SUIBT4Settings = {
+	ActionBars = {
+		actionbars = {
+			{
+				enabled = true,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 1
+			{
+				enabled = true,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 2
+			{
+				enabled = true,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 3
+			{
+				enabled = true,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 4
+			{
+				enabled = true,
+				buttons = 12,
+				rows = 3,
+				padding = 4,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 5
+			{
+				enabled = true,
+				buttons = 12,
+				rows = 3,
+				padding = 4,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 6
+			{
+				enabled = false,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 7
+			{
+				enabled = false,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 8
+			{
+				enabled = false,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			}, -- 9
+			{
+				enabled = false,
+				buttons = 12,
+				rows = 1,
+				padding = 3,
+				position = {scale = 0.85},
+				skin = {Zoom = true}
+			} -- 10
+		}
+	},
+	BagBar = {
+		enabled = true,
+		padding = 0,
+		onebag = false,
+		keyring = true,
+		position = {scale = 0.6},
+		skin = {Zoom = true}
+	},
+	MicroMenu = {
+		enabled = true,
+		position = {scale = 0.6}
+	},
+	PetBar = {
+		enabled = true,
+		position = {scale = 0.6},
+		skin = {Zoom = true}
+	},
+	StanceBar = {
+		enabled = true,
+		padding = 1,
+		position = {scale = 0.6},
+		skin = {Zoom = true}
+	},
+	Vehicle = {
+		enabled = false
+	},
+	ExtraActionBar = {
+		enabled = true,
+		position = {scale = 0.6}
+	},
+	BlizzardArt = {enabled = false},
+	StatusTrackingBar = {enabled = false},
+	blizzardVehicle = true
+}
+------------------------------------------------------------
 
 local function Options()
 	SUI.opt.args['General'].args['Bartender'] = {
@@ -57,7 +178,7 @@ local function Options()
 					end
 
 					--go!
-					ReloadUI()
+					-- ReloadUI()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 2.5},
@@ -187,9 +308,7 @@ end
 
 local function OnInitialize()
 	--Bartender4
-	if SUI.DBG.BartenderChangesActive then
-		SUI.DBG.BartenderChangesActive = false
-	end
+	SUI.DBG.BartenderChangesActive = false
 	if Bartender4 then
 		--Update to the current profile
 		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
@@ -201,12 +320,16 @@ local function OnInitialize()
 	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DBMod.Artwork.Style] then
 		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DBMod.Artwork.Style], module.BarScale.BT4.default)
 	end
+
+	if not module.DB.BT4Initalized or ProfileCheck(BTProfileName) then
+	end
+	-- module.DB.BT4Initalized = true
+	--Force Rebuild of primary bar profile
+	module.Bartender4.SetupProfile(true)
+	-- end
 end
 
 local function RefreshConfig()
-	-- Load Position
-	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
-
 	local positionData = module.BarPosition.BT4.default
 	-- If artwork is enabled load the art's position data if supplied
 	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DBMod.Artwork.Style] then
@@ -465,26 +588,24 @@ local function SetupProfile(updateConfig)
 	--Flag the SUI.DB that we are making changes
 	SUI.DBG.BartenderChangesActive = true
 	--Load the profile name the art style wants
-	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderProfile
-
-	--Load the BT settings used by the art style
-	local BartenderSettings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BartenderSettings
+	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BTProfileName
 
 	--If this is set then we have already setup the bars once, and the user changed them
 	if
-		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= ProfileName and
+		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and
+			SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= BTProfileName and
 			not ProfileOverride
 	 then
 		return
 	end
 
 	-- Set/Create our Profile
-	Bartender4.db:SetProfile(ProfileName)
+	Bartender4.db:SetProfile(BTProfileName)
 
 	--Load the Profile Data
 	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if BartenderSettings[k] and v.db.profile then
-			v.db.profile = SUI:MergeData(v.db.profile, BartenderSettings[k], true)
+		if SUIBT4Settings[k] and v.db.profile then
+			v.db.profile = SUI:MergeData(v.db.profile, SUIBT4Settings[k], true)
 		end
 	end
 
@@ -509,7 +630,7 @@ local function ProfileCheck(profileName, Report)
 		end
 	end
 	if (Report) and (r ~= true) then
-		SUI:Print(profileName .. ' ' .. L['BartenderProfileCheckFail'])
+		SUI:Print(profileName .. ' ' .. L['BTProfileNameCheckFail'])
 	end
 	return r
 end
