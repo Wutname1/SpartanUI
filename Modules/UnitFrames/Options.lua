@@ -1070,27 +1070,32 @@ local function AddIndicatorOptions(frameName)
 	end
 	if SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.PvPIndicator then
 		-- Badge
-		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.PvPIndicator.args['Badge'] = {
-			name = 'Show honor badge',
-			type = 'toggle',
-			get = function(info)
-				return module.CurrentSettings[frameName].elements.PvPIndicator.badge
-			end,
-			set = function(info, val)
-				--Update memory
-				module.CurrentSettings[frameName].elements.PvPIndicator.badge = val
-				--Update the DB
-				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.PvPIndicator.badge = val
-				--Update the screen
-				if val then
-					module.frames[frameName].PvPIndicator.Badge = module.frames[frameName].PvPIndicator.BadgeBackup
-				else
-					module.frames[frameName].PvPIndicator.Badge:Hide()
-					module.frames[frameName].PvPIndicator.Badge = nil
+		local i = 1
+		for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
+			SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.PvPIndicator.args[k] = {
+				name = (k == 'Badge' and 'Show honor badge') or 'Shadow',
+				type = 'toggle',
+				order = 70 + i,
+				get = function(info)
+					return module.CurrentSettings[frameName].elements.PvPIndicator[k]
+				end,
+				set = function(info, val)
+					--Update memory
+					module.CurrentSettings[frameName].elements.PvPIndicator[k] = val
+					--Update the DB
+					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.PvPIndicator[k] = val
+					--Update the screen
+					if val then
+						module.frames[frameName].PvPIndicator[k] = module.frames[frameName].PvPIndicator[v]
+					else
+						module.frames[frameName].PvPIndicator[k]:Hide()
+						module.frames[frameName].PvPIndicator[k] = nil
+					end
+					module.frames[frameName].PvPIndicator:ForceUpdate('OnUpdate')
 				end
-				module.frames[frameName].PvPIndicator:ForceUpdate('OnUpdate')
-			end
-		}
+			}
+			i = i + 1
+		end
 	end
 
 	-- Non player items like

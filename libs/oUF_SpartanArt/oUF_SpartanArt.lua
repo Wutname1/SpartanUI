@@ -6,6 +6,19 @@
 This element updates by changing the texture.
 The `Badge` sub-widget has to be on a lower sub-layer than the `PvP` texture.
 
+	ArtData = {
+		path = pathFunc,
+		TexCoord = TexCoordFunc,
+		heightScale = .0825, (FrameWidth * heightScale)
+		yScale = 0.0223, (FrameWidth * yScale)
+		PVPAlpha = .7 (applied if not flagged for PVP; User setting of ArtSettings.alpha overrides)
+		height = 40,
+		y = 40,
+		alpha = 1, (default alpha; user setting of ArtSettings.alpha overrides)
+		VertexColor = {0, 0, 0, .6},
+		position = {Pos table},
+		scale = 1,
+	}
 --]]
 local _, ns = ...
 local oUF = ns.oUF

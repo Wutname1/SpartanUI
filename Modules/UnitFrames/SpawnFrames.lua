@@ -357,9 +357,11 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		--PVPIndicator
-		if elementName == 'PvPIndicator' and data.Badge and self.PvPIndicator.Badge == nil then
-			self.PvPIndicator.Badge = self.PvPIndicator.BadgeBackup
-			self.PvPIndicator:ForceUpdate('OnUpdate')
+		for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
+			if elementName == 'PvPIndicator' and data[k] and self.PvPIndicator[k] == nil then
+				self.PvPIndicator[k] = self.PvPIndicator[v]
+			-- self.PvPIndicator:ForceUpdate('OnUpdate')
+			end
 		end
 
 		--Portrait
@@ -1047,6 +1049,8 @@ local function CreateUnitFrame(self, unit)
 		end
 		self.PvPIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
+		self.PvPIndicator.ShadowBackup = self:CreateTexture(nil, 'ARTWORK')
+		self.PvPIndicator.ShadowBackup:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
 
 		local Badge = self:CreateTexture(nil, 'BACKGROUND')
 		Badge:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
@@ -1059,6 +1063,10 @@ local function CreateUnitFrame(self, unit)
 			self.PvPIndicator.BadgeBackup:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
 			if self.PvPIndicator.Badge then
 				self.PvPIndicator.Badge:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
+			end
+			self.PvPIndicator.ShadowBackup:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
+			if self.PvPIndicator.Shadow then
+				self.PvPIndicator.Shadow:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
 			end
 		end
 		self.PvPIndicator.Override = SUIpvpIndicator

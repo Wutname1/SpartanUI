@@ -964,7 +964,8 @@ local DBdefault = {
 							}
 						},
 						PvPIndicator = {
-							badge = false,
+							Badge = false,
+							Shadow = true,
 							position = {
 								anchor = 'TOPLEFT',
 								x = -10
