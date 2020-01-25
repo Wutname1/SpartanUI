@@ -45,10 +45,6 @@ function module:OnEnable()
 			module:Init()
 		end
 		module:EnableFramework()
-
-		if (SUI.DBMod.Artwork.FirstLoad) then
-			SUI.DBMod.Artwork.FirstLoad = false
-		end -- We want to do this last
 	end
 end
 

@@ -68,9 +68,6 @@ function module:OnEnable()
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
-		if (SUI.DBMod.Artwork.FirstLoad) then
-			SUI.DBMod.Artwork.FirstLoad = false
-		end -- We want to do this last
 	end
 end
 

@@ -146,9 +146,6 @@ local function Options()
 				type = 'execute',
 				order = 2,
 				func = function()
-					--Tell SUI to reload config
-					SUI.DBMod.Artwork.FirstLoad = true
-
 					--Strip custom BT4 Profile from config
 					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
 						SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = nil
@@ -320,13 +317,6 @@ local function OnInitialize()
 	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DBMod.Artwork.Style] then
 		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DBMod.Artwork.Style], module.BarScale.BT4.default)
 	end
-
-	if not module.DB.BT4Initalized or ProfileCheck(BTProfileName) then
-	end
-	-- module.DB.BT4Initalized = true
-	--Force Rebuild of primary bar profile
-	module.Bartender4.SetupProfile(true)
-	-- end
 end
 
 local function RefreshConfig()
@@ -399,6 +389,12 @@ local function OnEnable()
 			hideOnEscape = false
 		}
 		StaticPopup_Show('BartenderVerWarning')
+	end
+
+	if not module.DB.BT4Initalized or ProfileCheck(BTProfileName) then
+		module.DB.BT4Initalized = true
+		--Force Rebuild of primary bar profile
+		module.Bartender4.SetupProfile(true)
 	end
 
 	-- Position Bars
@@ -534,7 +530,7 @@ local function BT4ProfileAttach(msg)
 end
 
 function SUI:BT4RefreshConfig()
-	if SUI.DBG.BartenderChangesActive or SUI.DBMod.Artwork.FirstLoad then
+	if SUI.DBG.BartenderChangesActive then
 		return
 	end
 	-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)

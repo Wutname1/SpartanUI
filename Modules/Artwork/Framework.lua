@@ -173,7 +173,6 @@ function module:SetupPage()
 		Desc1 = 'Please pick an art style from the options below.',
 		RequireReload = true,
 		Priority = true,
-		Skipable = true,
 		NoReloadOnSkip = true,
 		RequireDisplay = (not SUI.DBMod.Artwork.SetupDone or false),
 		Display = function()
@@ -189,74 +188,33 @@ function module:SetupPage()
 			local RadioButtons = function(self)
 				self.radio:Click()
 			end
+			local SetStyle = function(self)
+				-- Disable the old skin
+				local OldSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+				OldSkin:Disable()
 
-			local control
+				-- Set and Enable the new one
+				SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
+				SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 
-			--Classic
-			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
-			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\Classic\\Images\\base-center')
+				local NewSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+				NewSkin:Enable()
 
-			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Classic', 'SUIArtwork', 120, 20)
-			control.radio:SetValue('Classic')
-			StdUi:GlueBelow(control.radio, control)
+				SUI:GetModule('Component_UnitFrames').UpdateAll()
+			end
 
-			SUI_Win.Artwork.Classic = control
+			for i, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal'}) do
+				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
+				control:SetScript('OnClick', RadioButtons)
+				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
 
-			--Fel
-			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
-			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Fel')
+				control.radio = StdUi:Radio(SUI_Win.Artwork, v, 'SUIArtwork', 120, 20)
+				control.radio:SetValue(v)
+				control.radio:HookScript('OnClick', SetStyle)
+				StdUi:GlueBelow(control.radio, control)
 
-			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Fel', 'SUIArtwork', 120, 20)
-			control.radio:SetValue('Fel')
-			StdUi:GlueBelow(control.radio, control)
-
-			SUI_Win.Artwork.Fel = control
-
-			--War
-			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
-			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_War')
-
-			control.radio = StdUi:Radio(SUI_Win.Artwork, 'War', 'SUIArtwork', 120, 20)
-			control.radio:SetValue('War')
-			StdUi:GlueBelow(control.radio, control)
-
-			SUI_Win.Artwork.War = control
-
-			--Digital
-			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
-			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Digital')
-
-			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Digital', 'SUIArtwork', 120, 20)
-			control.radio:SetValue('Digital')
-			StdUi:GlueBelow(control.radio, control)
-
-			SUI_Win.Artwork.Digital = control
-
-			--Transparent
-			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
-			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Transparent')
-
-			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Transparent', 'SUIArtwork', 120, 20)
-			control.radio:SetValue('Transparent')
-			StdUi:GlueBelow(control.radio, control)
-
-			SUI_Win.Artwork.Transparent = control
-
-			--Minimal
-			control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
-			control:SetScript('OnClick', RadioButtons)
-			control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_Minimal')
-
-			control.radio = StdUi:Radio(SUI_Win.Artwork, 'Minimal', 'SUIArtwork', 120, 20)
-			control.radio:SetValue('Minimal')
-			StdUi:GlueBelow(control.radio, control)
-
-			SUI_Win.Artwork.Minimal = control
+				SUI_Win.Artwork[v] = control
+			end
 
 			-- Position the Top row
 			StdUi:GlueTop(SUI_Win.Artwork.Fel, SUI_Win, 0, -80)
@@ -269,16 +227,7 @@ function module:SetupPage()
 			StdUi:GlueRight(SUI_Win.Artwork.Minimal, SUI_Win.Artwork.Digital, 20, 0)
 
 			-- Check Classic as default
-			if SUI_Win.Artwork.Classic then
-				if not SUI.DBMod.Artwork.Style or SUI.DBMod.Artwork.Style == '' then
-					SUI.DBMod.Artwork.Style = 'Classic'
-				end
-				if SUI_Win.Artwork[SUI.DBMod.Artwork.Style] and SUI_Win.Artwork[SUI.DBMod.Artwork.Style].radio then
-					SUI_Win.Artwork[SUI.DBMod.Artwork.Style].radio:SetChecked(true)
-				end
-			else
-				SUI_Win.Artwork.Classic.radio:SetChecked(true)
-			end
+			SUI_Win.Artwork.War.radio:SetChecked(true)
 		end,
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
@@ -286,12 +235,7 @@ function module:SetupPage()
 			SUI.DBMod.Artwork.SetupDone = true
 
 			SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
-
 			SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-			SUI.DBMod.Artwork.FirstLoad = true
-		end,
-		Skip = function()
-			SUI.DBMod.Artwork.SetupDone = true
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')

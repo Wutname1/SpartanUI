@@ -1382,7 +1382,7 @@ local DBdefault = {
 			}
 		},
 		Artwork = {
-			Style = '',
+			Style = 'War',
 			FirstLoad = true,
 			SetupDone = false,
 			VehicleUI = true,

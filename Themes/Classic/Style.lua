@@ -91,17 +91,10 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	if (SUI.DBMod.Artwork.FirstLoad) then
-		module:FirstLoad()
-	end
 	module:SetupMenus()
 	module:InitFramework()
 	module:InitActionBars()
 	InitRan = true
-end
-
-function module:FirstLoad()
-	SUI.DBMod.Artwork.Viewport.offset.bottom = 2.8
 end
 
 function module:OnEnable()
@@ -113,10 +106,6 @@ function module:OnEnable()
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
-
-		if (SUI.DBMod.Artwork.FirstLoad) then
-			SUI.DBMod.Artwork.FirstLoad = false
-		end -- We want to do this last
 	else
 		module:OnDisable()
 	end

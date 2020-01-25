@@ -125,10 +125,6 @@ function module:OnEnable()
 			module:Init()
 		end
 		module:EnableArtwork()
-
-		if (SUI.DBMod.Artwork.FirstLoad) then
-			SUI.DBMod.Artwork.FirstLoad = false
-		end -- We want to do this last
 	end
 end
 
