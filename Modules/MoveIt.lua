@@ -369,6 +369,12 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 	parent:HookScript('OnMouseUp', ParentMouseUp)
 	parent.mover = f
 	parent.position = position
+	parent.isMoved = function()
+		if SUI.DB.MoveIt.movers[name].MovedPoints then
+			return true
+		end
+		return false
+	end
 
 	parent:ClearAllPoints()
 	parent:SetPoint('TOPLEFT', f, 0, 0)

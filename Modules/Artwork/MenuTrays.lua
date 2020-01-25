@@ -10,61 +10,19 @@ local trayIDs = {
 }
 
 local SetBarVisibility = function(side, state)
-	if side == 'left' and state == 'hide' then
-		-- BT4BarStanceBar
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar
-		 then
-			_G['BT4BarStanceBar']:Hide()
-		end
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar
-		 then
-			_G['BT4BarPetBar']:Hide()
-		end
-	elseif side == 'right' and state == 'hide' then
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar
-		 then
-			_G['BT4BarBagBar']:Hide()
-		end
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu
-		 then
-			_G['BT4BarMicroMenu']:Hide()
-		end
-	end
-
-	if side == 'left' and state == 'show' then
-		-- BT4BarStanceBar
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarStanceBar
-		 then
-			_G['BT4BarStanceBar']:Show()
-		end
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarPetBar
-		 then
-			_G['BT4BarPetBar']:Show()
-		end
-	elseif side == 'right' and state == 'show' then
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarBagBar
-		 then
-			_G['BT4BarBagBar']:Show()
-		end
-		if
-			not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu and
-				not SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars.BT4BarMicroMenu
-		 then
-			_G['BT4BarMicroMenu']:Show()
+	local bt4Positions = {
+		['BT4BarStanceBar'] = 'left',
+		['BT4BarPetBar'] = 'left',
+		['BT4BarBagBar'] = 'right',
+		['BT4BarMicroMenu'] = 'right'
+	}
+	for k, v in pairs(bt4Positions) do
+		if v == side and not _G[k].isMoved() then
+			if state == 'hide' then
+				_G[k]:Hide()
+			elseif state == 'show' then
+				_G[k]:Show()
+			end
 		end
 	end
 end
