@@ -221,19 +221,10 @@ function module:EnableFramework()
 	--Setup Sliding Trays
 	module:SlidingTrays()
 	if BT4BarBagBar and BT4BarPetBar.position then
-		if not SUI.DB.Styles.War.MovedBars.BT4BarPetBar then
-			BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
-		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarStanceBar then
-			BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
-		end
-
-		if not SUI.DB.Styles.War.MovedBars.BT4BarMicroMenu then
-			BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
-		end
-		if not SUI.DB.Styles.War.MovedBars.BT4BarBagBar then
-			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -100, -2)
-		end
+		BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
+		BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
+		BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
+		BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -100, -2)
 	end
 
 	module:SetColor()

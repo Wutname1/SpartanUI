@@ -156,9 +156,6 @@ function module:OnInitialize()
 		return
 	end
 
-	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars == nil then
-		SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-	end
 	module:CheckMiniMap()
 
 	-- Loop over the BlizzMovers and execute them

@@ -156,26 +156,24 @@ local function Options()
 
 					--Reset Moved bars
 					local FrameList = {
-						BT4Bar1,
-						BT4Bar2,
-						BT4Bar3,
-						BT4Bar4,
-						BT4Bar5,
-						BT4Bar6,
-						BT4BarBagBar,
-						BT4BarExtraActionBar,
-						BT4BarStanceBar,
-						BT4BarPetBar,
-						BT4BarMicroMenu
+						'BT4Bar1',
+						'BT4Bar2',
+						'BT4Bar3',
+						'BT4Bar4',
+						'BT4Bar5',
+						'BT4Bar6',
+						'BT4Bar7',
+						'BT4Bar8',
+						'BT4Bar9',
+						'BT4BarBagBar',
+						'BT4BarExtraActionBar',
+						'BT4BarStanceBar',
+						'BT4BarPetBar',
+						'BT4BarMicroMenu'
 					}
 					for _, v in ipairs(FrameList) do
-						-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] then
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars[v:GetName()] = false
-						-- end
+						MoveIt:Reset(v)
 					end
-
-					--go!
-					-- ReloadUI()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 2.5},
@@ -513,10 +511,6 @@ local function BT4ProfileAttach(msg)
 			SUI.DBG.Bartender4[SUI.DB.BT4Profile] = {
 				Style = SUI.DBMod.Artwork.Style
 			}
-			-- Catch if Movedbars is not initalized
-			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-			end
 			--Setup profile
 			SUI:GetModule('Component_Artwork'):SetupProfile(Bartender4.db:GetCurrentProfile())
 			ReloadUI()
@@ -543,14 +537,7 @@ function SUI:BT4RefreshConfig()
 
 	if SUI.DBG.Bartender4[SUI.DB.BT4Profile] then
 		-- We know this profile.
-		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style == SUI.DBMod.Artwork.Style then
-			--Profile is for this style, prompt to ReloadUI; usually un needed can uncomment if needed latter
-			-- SUI:reloadui("Your bartender profile has changed, a reload may be required for the bars to appear properly.")
-			-- Catch if Movedbars is not initalized
-			if SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars then
-				SUI.DB.Styles[SUI.DBMod.Artwork.Style].MovedBars = {}
-			end
-		else
+		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style ~= SUI.DBMod.Artwork.Style then
 			--Ask if we should change to the correct profile or if we should change the profile to be for this style
 			BT4ProfileAttach(
 				"This bartender profile is currently attached to the style '" ..
