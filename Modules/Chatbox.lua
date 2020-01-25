@@ -14,7 +14,7 @@ local linkTypes = {
 	unit = true,
 	quest = true
 }
-local ChatLevelLog
+local ChatLevelLog = {}
 
 local function StripTextures(object)
 	for i = 1, object:GetNumRegions() do

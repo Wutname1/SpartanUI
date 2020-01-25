@@ -186,6 +186,10 @@ function module:SetupPage()
 				self.radio:Click()
 			end
 			local SetStyle = function(self)
+				if SUI.DBMod.Artwork.Style == StdUi:GetRadioGroupValue('SUIArtwork') then
+					return
+				end
+
 				-- Disable the old skin
 				local OldSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 				OldSkin:Disable()
@@ -200,7 +204,7 @@ function module:SetupPage()
 				SUI:GetModule('Component_UnitFrames').UpdateAll()
 			end
 
-			for i, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal'}) do
+			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal'}) do
 				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 				control:SetScript('OnClick', RadioButtons)
 				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)

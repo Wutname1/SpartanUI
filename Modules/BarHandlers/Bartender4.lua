@@ -127,6 +127,70 @@ local SUIBT4Settings = {
 }
 ------------------------------------------------------------
 
+-- Bartender4 Items
+
+-- Creates the SUI BT4 Profile
+local function SetupProfile(updateConfig)
+	--Exit if Bartender4 is not loaded
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
+		return
+	end
+
+	--Flag the SUI.DB that we are making changes
+	SUI.DBG.BartenderChangesActive = true
+	--Load the profile name the art style wants
+	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BTProfileName
+
+	--If this is set then we have already setup the bars once, and the user changed them
+	if
+		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and
+			SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= BTProfileName and
+			not ProfileOverride
+	 then
+		return
+	end
+
+	-- Set/Create our Profile
+	Bartender4.db:SetProfile(BTProfileName)
+
+	--Load the Profile Data
+	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
+		if SUIBT4Settings[k] and v.db.profile then
+			v.db.profile = SUI:MergeData(v.db.profile, SUIBT4Settings[k], true)
+		end
+	end
+
+	-- Update BT4 Configuration
+	if updateConfig then
+		Bartender4:UpdateModuleConfigs()
+	end
+
+	SUI.DBG.BartenderChangesActive = false
+end
+
+-- Returns True if the Inputed profileName is the active one in BT4
+local function ProfileCheck(profileName, Report)
+	if not Bartender4 then
+		return
+	end
+
+	local profiles, r = Bartender4.db:GetProfiles(), false
+	for _, v in pairs(profiles) do
+		if v == profileName then
+			r = true
+		end
+	end
+	if (Report) and (r ~= true) then
+		SUI:Print(profileName .. ' ' .. L['BTProfileNameCheckFail'])
+	end
+	return r
+end
+
+module.Bartender4 = {
+	SetupProfile = SetupProfile,
+	ProfileCheck = ProfileCheck
+}
+
 local function Options()
 	SUI.opt.args['General'].args['Bartender'] = {
 		name = 'Bartender',
@@ -558,67 +622,3 @@ function SUI:BT4RefreshConfig()
 end
 
 module:AddBarSystem('Bartender4', OnInitialize, OnEnable, nil, Unlock, RefreshConfig)
-
--- Bartender4 Items
-
--- Creates the SUI BT4 Profile
-local function SetupProfile(updateConfig)
-	--Exit if Bartender4 is not loaded
-	if (not select(4, GetAddOnInfo('Bartender4'))) then
-		return
-	end
-
-	--Flag the SUI.DB that we are making changes
-	SUI.DBG.BartenderChangesActive = true
-	--Load the profile name the art style wants
-	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BTProfileName
-
-	--If this is set then we have already setup the bars once, and the user changed them
-	if
-		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and
-			SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= BTProfileName and
-			not ProfileOverride
-	 then
-		return
-	end
-
-	-- Set/Create our Profile
-	Bartender4.db:SetProfile(BTProfileName)
-
-	--Load the Profile Data
-	for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-		if SUIBT4Settings[k] and v.db.profile then
-			v.db.profile = SUI:MergeData(v.db.profile, SUIBT4Settings[k], true)
-		end
-	end
-
-	-- Update BT4 Configuration
-	if updateConfig then
-		Bartender4:UpdateModuleConfigs()
-	end
-
-	SUI.DBG.BartenderChangesActive = false
-end
-
--- Returns True if the Inputed profileName is the active one in BT4
-local function ProfileCheck(profileName, Report)
-	if not Bartender4 then
-		return
-	end
-
-	local profiles, r = Bartender4.db:GetProfiles(), false
-	for _, v in pairs(profiles) do
-		if v == profileName then
-			r = true
-		end
-	end
-	if (Report) and (r ~= true) then
-		SUI:Print(profileName .. ' ' .. L['BTProfileNameCheckFail'])
-	end
-	return r
-end
-
-module.Bartender4 = {
-	SetupProfile = SetupProfile,
-	ProfileCheck = ProfileCheck
-}

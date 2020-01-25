@@ -68,8 +68,6 @@ function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= 'Fel') then
 		module:Disable()
 	else
-		SUI.opt.args['Artwork'].args['Artwork'].name = SUI.DB.Styles.Fel.SubTheme .. ' Options'
-
 		if (not InitRan) then
 			module:Init()
 		end
