@@ -299,7 +299,20 @@ local DBdefault = {
 				},
 				Minimap = {
 					shape = 'circle',
-					size = {width = 140, height = 140}
+					size = {140, 140},
+					ZoneText = {Location = 'BOTTOM'},
+					UnderVehicleUI = true,
+					BG = {
+						enabled = true,
+						BlendMode = 'ADD',
+						alpha = 1
+					},
+					coords = {
+						scale = 1,
+						Location = 'BOTTOM',
+						TextColor = {1, .82, 0, 1},
+						ShadowColor = {0, 0, 0, 1}
+					}
 				},
 				TooltipLoc = false,
 				BuffLoc = false,
@@ -331,9 +344,9 @@ local DBdefault = {
 					RaidFrames = true
 				},
 				Minimap = {
-					shape = 'circle',
-					position = 'CENTER,Fel_SpartanUI,CENTER,0,5',
-					size = {width = 140, height = 140}
+					size = {156, 156},
+					coords = {TextColor = {1, .82, 0, 1}},
+					position = 'CENTER,SUI_Art_Classic,CENTER,0,54'
 				},
 				StatusBars = {
 					XP = true,
@@ -350,9 +363,13 @@ local DBdefault = {
 			},
 			Transparent = {
 				Minimap = {
-					position = 'CENTER,Transparent_SpartanUI,CENTER,0,5',
 					shape = 'square',
-					size = {width = 140, height = 140}
+					size = {130, 130},
+					ZoneText = {Location = 'TOP'},
+					position = 'CENTER,SUI_Art_Transparent,CENTER,0,20',
+					coords = {
+						Location = 'TOP'
+					}
 				},
 				Color = {
 					Art = {0, .8, .9, .7},
@@ -366,8 +383,8 @@ local DBdefault = {
 			Minimal = {
 				TooltipLoc = true,
 				Minimap = {
-					shape = 'square',
-					size = {width = 140, height = 140}
+					UnderVehicleUI = false,
+					shape = 'square'
 				},
 				Color = {
 					0.6156862745098039,
@@ -400,8 +417,17 @@ local DBdefault = {
 					FrameStyle = 'small'
 				},
 				Minimap = {
-					position = 'CENTER,Fel_SpartanUI,CENTER,0,54',
-					Engulfed = true
+					size = {156, 156},
+					BG = {
+						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
+						size = {330, 330},
+						position = 'CENTER,Minimap,CENTER,7,37'
+					},
+					coords = {
+						scale = 1.2
+					},
+					position = 'CENTER,SUI_Art_Fel,CENTER,0,54',
+					engulfed = true
 				},
 				SlidingTrays = {
 					left = {
@@ -491,8 +517,13 @@ local DBdefault = {
 					FrameStyle = 'small'
 				},
 				Minimap = {
-					position = 'CENTER,War_SpartanUI_Left,RIGHT,0,20',
-					Engulfed = true
+					size = {156, 156},
+					BG = {
+						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+						size = {330, 330},
+						position = 'CENTER,Minimap,CENTER,7,37'
+					},
+					position = 'CENTER,SUI_Art_War_Left,RIGHT,0,20'
 				},
 				SlidingTrays = {
 					left = {
@@ -1043,7 +1074,28 @@ local DBdefault = {
 					}
 				},
 				pet = {
-					width = 100
+					width = 100,
+					elements = {
+						Health = {
+							height = 30
+						},
+						Power = {
+							height = 5,
+							text = {
+								['1'] = {
+									enabled = false
+								}
+							}
+						},
+						Name = {
+							enabled = true,
+							height = 10,
+							size = 10,
+							position = {
+								y = 0
+							}
+						}
+					}
 				},
 				pettarget = {},
 				party = {
@@ -1863,6 +1915,13 @@ function SUI:AddChatCommand(arg, func)
 	SUIChatCommands[arg] = func
 end
 
+function SUI.print(msg, doNotLabel)
+	if doNotLabel then
+		print(msg)
+	else
+		SUI:Print(msg)
+	end
+end
 function SUI:Error(err, mod)
 	SUI:Print('|cffff0000Error detected')
 	SUI:Print("An error has been captured in the Component '" .. (mod or 'UNKNOWN') .. "'")

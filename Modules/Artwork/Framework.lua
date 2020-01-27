@@ -1,6 +1,10 @@
 local SUI = SUI
 local L = SUI.L
 local module = SUI:NewModule('Component_Artwork')
+module.ActiveStyle = {}
+
+function module:SetActiveStyle()
+end
 
 function module:updateScale()
 	--Set default scale based on if the user is using a widescreen.
@@ -192,13 +196,13 @@ function module:SetupPage()
 
 				-- Disable the old skin
 				local OldSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
-				OldSkin:Disable()
 
 				-- Set and Enable the new one
 				SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
 				SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
 
 				local NewSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+				OldSkin:Disable()
 				NewSkin:Enable()
 
 				SUI:GetModule('Component_UnitFrames').UpdateAll()

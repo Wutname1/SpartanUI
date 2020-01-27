@@ -87,11 +87,10 @@ local BuffPosUpdate = function()
 end
 
 function module:OnEnable()
-	module:BuildOptions()
 	if not SUI.DB.EnabledComponents.Buffs then
-		module:HideOptions()
 		return
 	end
+	module:BuildOptions()
 
 	BuffWatcher:SetScript('OnEvent', BuffPosUpdate)
 	BuffWatcher:RegisterEvent('ZONE_CHANGED')
@@ -258,8 +257,4 @@ function module:BuildOptions()
 			}
 		}
 	end
-end
-
-function module:HideOptions()
-	SUI.opt.args['ModSetting'].args['Buffs'].disabled = true
 end

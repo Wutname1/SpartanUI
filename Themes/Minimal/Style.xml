@@ -5,37 +5,11 @@
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
 	<Script file="Style-Setup.lua" />
 
-	<!-- Minimal_AnchorFrame -->
-	<Frame name="Minimal_AnchorFrame" frameStrata="BACKGROUND" parent="SpartanUI">
-		<Anchors>
-			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
-				<Offset>
-					<AbsDimension x="0" y="-1"/>
-				</Offset>
-			</Anchor>
-			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
-				<Offset>
-					<AbsDimension x="0" y="-1"/>
-				</Offset>
-			</Anchor>
-			<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
-				<Offset>
-					<AbsDimension x="0" y="1"/>
-				</Offset>
-			</Anchor>
-			<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
-				<Offset>
-					<AbsDimension x="0" y="1"/>
-				</Offset>
-			</Anchor>
-		</Anchors>
-	</Frame>
-
 	<!-- SpartanUI -->
-	<Frame name="Minimal_SpartanUI" frameStrata="BACKGROUND" parent="SpartanUI">
+	<Frame name="SUI_Art_Minimal" frameStrata="BACKGROUND" parent="SpartanUI">
 		<Anchors>
-			<Anchor point="BOTTOMLEFT" relativeTo="Minimal_AnchorFrame" relativePoint="BOTTOMLEFT" />
-			<Anchor point="TOPRIGHT" relativeTo="Minimal_AnchorFrame" relativePoint="TOPRIGHT">
+			<Anchor point="BOTTOMLEFT" relativeTo="SpartanUI" relativePoint="BOTTOMLEFT" />
+			<Anchor point="TOPRIGHT" relativeTo="SpartanUI" relativePoint="TOPRIGHT">
 				<!-- <Offset><AbsDimension x="0" y="153"/></Offset> -->
 			</Anchor>
 		</Anchors>
@@ -77,7 +51,7 @@
 
 
 	<!-- Minimal_ActionBarsTemplate -->
-	<Frame name="Minimal_ActionBarsTemplate" parent="Minimal_SpartanUI" frameStrata="BACKGROUND" virtual="true">
+	<Frame name="Minimal_ActionBarsTemplate" parent="SUI_Art_Minimal" frameStrata="BACKGROUND" virtual="true">
 		<Size>
 			<AbsDimension x="1002" y="139"/>
 		</Size>

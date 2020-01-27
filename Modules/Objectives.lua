@@ -235,10 +235,6 @@ function module:BuildOptions()
 	end
 end
 
-function module:HideOptions()
-	SUI.opt.args['ModSetting'].args['Objectives'].disabled = true
-end
-
 local DummyFunction = function()
 end
 

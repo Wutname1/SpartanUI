@@ -2,15 +2,7 @@ local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
-local anchor, frame = Transparent_AnchorFrame, Transparent_SpartanUI
-local FramesList = {
-	[1] = 'pet',
-	[2] = 'target',
-	[3] = 'targettarget',
-	[4] = 'focus',
-	[5] = 'focustarget',
-	[6] = 'player'
-}
+local frame = SUI_Art_Transparent
 
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
@@ -29,17 +21,17 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(Transparent_SpartanUI:GetScale())) then
+		if (SUI.DB.scale ~= SUI:round(SUI_Art_Transparent:GetScale())) then
 			frame:SetScale(SUI.DB.scale)
 		end
 		if SUI.DB.scale <= .75 then
-			Transparent_SpartanUI_Base3:SetPoint('BOTTOMLEFT', SpartanUI, 'BOTTOMLEFT')
-			Transparent_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
+			SUI_Art_Transparent_Base3:SetPoint('BOTTOMLEFT', SpartanUI, 'BOTTOMLEFT')
+			SUI_Art_Transparent_Base5:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
 		else
-			Transparent_SpartanUI_Base3:ClearAllPoints()
-			Transparent_SpartanUI_Base5:ClearAllPoints()
-			Transparent_SpartanUI_Base3:SetPoint('RIGHT', Transparent_SpartanUI_Base2, 'LEFT')
-			Transparent_SpartanUI_Base5:SetPoint('LEFT', Transparent_SpartanUI_Base4, 'RIGHT')
+			SUI_Art_Transparent_Base3:ClearAllPoints()
+			SUI_Art_Transparent_Base5:ClearAllPoints()
+			SUI_Art_Transparent_Base3:SetPoint('RIGHT', SUI_Art_Transparent_Base2, 'LEFT')
+			SUI_Art_Transparent_Base5:SetPoint('LEFT', SUI_Art_Transparent_Base4, 'RIGHT')
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')
 		for _, key in ipairs(module.StatusBarSettings.bars) do
@@ -52,44 +44,12 @@ end
 
 function module:updateAlpha() -- scales SpartanUI based on setting or screen size
 	if SUI.DB.alpha then
-		Transparent_SpartanUI_Base1:SetAlpha(SUI.DB.alpha)
-		Transparent_SpartanUI_Base2:SetAlpha(SUI.DB.alpha)
-		Transparent_SpartanUI_Base3:SetAlpha(SUI.DB.alpha)
-		Transparent_SpartanUI_Base4:SetAlpha(SUI.DB.alpha)
-		Transparent_SpartanUI_Base5:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Transparent_Base1:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Transparent_Base2:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Transparent_Base3:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Transparent_Base4:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Transparent_Base5:SetAlpha(SUI.DB.alpha)
 	end
-end
-
--- function module:updateOffset() -- handles SpartanUI offset based on setting or fubar / titan
--- 	local fubar, ChocolateBar, titan, offset = 0, 0, 0
-
--- 	offset = max(SUI.DB.yoffset, 1)
--- 	if (SUI:round(offset) ~= SUI:round(anchor:GetHeight())) then
--- 		print(offset)
--- 		anchor:SetHeight(offset)
--- 	end
--- 	SUI.DB.yoffset = offset
--- end
-
-function module:updateXOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	if not SUI.DB.Offset.Horizontal then
-		return 0
-	end
-	local offset = SUI.DB.Offset.Horizontal
-	if SUI:round(offset) <= -300 then
-		Transparent_SpartanUI_Base5:ClearAllPoints()
-		Transparent_SpartanUI_Base5:SetPoint('LEFT', Transparent_SpartanUI_Base4, 'RIGHT')
-		Transparent_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
-	elseif SUI:round(offset) >= 300 then
-		Transparent_SpartanUI_Base3:ClearAllPoints()
-		Transparent_SpartanUI_Base3:SetPoint('RIGHT', Transparent_SpartanUI_Base2, 'LEFT')
-		Transparent_SpartanUI_Base3:SetPoint('BOTTOMLEFT', SpartanUI, 'BOTTOMLEFT')
-	end
-	Transparent_SpartanUI:SetPoint('LEFT', Transparent_AnchorFrame, 'LEFT', offset, 0)
-	if (SUI:round(offset) ~= SUI:round(anchor:GetWidth())) then
-		anchor:SetWidth(offset)
-	end
-	SUI.DB.Offset.Horizontal = offset
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -99,19 +59,19 @@ function module:InitFramework()
 		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
 		SUI_FramesAnchor:SetFrameLevel(1)
 		SUI_FramesAnchor:ClearAllPoints()
-		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Transparent_AnchorFrame', 'TOPLEFT', 0, 0)
-		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Transparent_AnchorFrame', 'TOPRIGHT', 0, 155)
+		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'SUI_Art_Transparent', 'TOPLEFT', 0, 0)
+		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'SUI_Art_Transparent', 'BOTTOMRIGHT', 0, 155)
 
 		MainMenuBarVehicleLeaveButton:HookScript(
 			'OnShow',
 			function()
 				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', Transparent_SpartanUI, 'TOP', 0, 20)
+				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SUI_Art_Transparent, 'TOP', 0, 20)
 			end
 		)
 
 		FramerateText:ClearAllPoints()
-		FramerateText:SetPoint('BOTTOM', 'Transparent_SpartanUI_Base1', 'TOP', 0, 0)
+		FramerateText:SetPoint('BOTTOM', 'SUI_Art_Transparent_Base1', 'TOP', 0, 0)
 
 		MainMenuBar:Hide()
 
@@ -193,7 +153,7 @@ end
 function module:TooltipLoc(self, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
-		tooltip:SetPoint('BOTTOMRIGHT', 'Transparent_SpartanUI', 'TOPRIGHT', 0, 10)
+		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Transparent', 'TOPRIGHT', 0, 10)
 	end
 end
 
@@ -204,14 +164,14 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		RegisterStateDriver(Transparent_SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SUI_Art_Transparent, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		UnregisterStateDriver(Transparent_SpartanUI, 'visibility')
+		UnregisterStateDriver(SUI_Art_Transparent, 'visibility')
 		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
@@ -219,8 +179,8 @@ end
 function module:SetColor()
 	local r, b, g, a = unpack(SUI.DB.Styles.Transparent.Color.Art)
 	for i = 1, 6 do
-		if _G['Transparent_SpartanUI_Base' .. i] then
-			_G['Transparent_SpartanUI_Base' .. i]:SetVertexColor(r, b, g, a)
+		if _G['SUI_Art_Transparent_Base' .. i] then
+			_G['SUI_Art_Transparent_Base' .. i]:SetVertexColor(r, b, g, a)
 		end
 		if SUI.DB.ActionBars['bar' .. i].enable then
 			_G['Transparent_Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
@@ -232,13 +192,11 @@ function module:SetColor()
 end
 
 function module:EnableFramework()
-	anchor:SetFrameStrata('BACKGROUND')
-	anchor:SetFrameLevel(1)
 	frame:SetFrameStrata('BACKGROUND')
 	frame:SetFrameLevel(1)
 
 	-- hooksecurefunc("AchievementAlertFrame_ShowAlert",function() -- achivement alerts
-	-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",Transparent_SpartanUI,"TOP",0,100); end
+	-- if (AchievementAlertFrame1) then AchievementAlertFrame1:SetPoint("BOTTOM",SUI_Art_Transparent,"TOP",0,100); end
 	-- end);
 	hooksecurefunc(
 		'UIParent_ManageFramePositions',
@@ -258,32 +216,6 @@ function module:EnableFramework()
 	module:SetupStatusBars()
 
 	module:updateScale()
-	module:updateXOffset()
 	module:updateAlpha()
 	module:SetColor()
-
-	-- Limit updates via interval
-	anchor.UpdateInterval = 5 --Seconds
-	anchor.TimeSinceLastUpdate = 0
-	anchor:SetScript(
-		'OnUpdate',
-		function(self, ...)
-			local elapsed = select(1, ...)
-			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
-			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-				if (InCombatLockdown()) then
-					return
-				end
-
-				module:updateScale()
-				module:updateXOffset()
-				self.TimeSinceLastUpdate = 0
-
-				if SUI.DB.OpenOptions then
-					SUI:ChatCommand()
-					SUI.DB.OpenOptions = false
-				end
-			end
-		end
-	)
 end

@@ -6,10 +6,10 @@ local module = SUI:GetModule('Style_War')
 module.Trays = {}
 module.StatusBarSettings = {
 	bars = {
-		'War_StatusBar_Left',
-		'War_StatusBar_Right'
+		'StatusBar_Left',
+		'StatusBar_Right'
 	},
-	War_StatusBar_Left = {
+	StatusBar_Left = {
 		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 		size = {370, 20},
 		TooltipSize = {350, 100},
@@ -18,7 +18,7 @@ module.StatusBarSettings = {
 		GlowPoint = {x = -16},
 		MaxWidth = 48
 	},
-	War_StatusBar_Right = {
+	StatusBar_Right = {
 		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
 		Grow = 'RIGHT',
 		size = {370, 20},
@@ -50,8 +50,8 @@ function module:updateScale()
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(War_SpartanUI:GetScale())) then
-			War_SpartanUI:SetScale(SUI.DB.scale)
+		if (SUI.DB.scale ~= SUI:round(SUI_Art_War:GetScale())) then
+			SUI_Art_War:SetScale(SUI.DB.scale)
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')
 		for _, key in ipairs(module.StatusBarSettings.bars) do
@@ -64,8 +64,8 @@ end
 
 function module:updateAlpha()
 	if SUI.DB.alpha then
-		War_SpartanUI.Left:SetAlpha(SUI.DB.alpha)
-		War_SpartanUI.Right:SetAlpha(SUI.DB.alpha)
+		SUI_Art_War.Left:SetAlpha(SUI.DB.alpha)
+		SUI_Art_War.Right:SetAlpha(SUI.DB.alpha)
 	end
 	-- Update Action bar backgrounds
 	for i = 1, 4 do
@@ -88,7 +88,7 @@ end
 function module:TooltipLoc(_, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
-		tooltip:SetPoint('BOTTOMRIGHT', 'War_SpartanUI', 'TOPRIGHT', 0, 10)
+		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_War', 'TOPRIGHT', 0, 10)
 	end
 end
 
@@ -102,7 +102,7 @@ function module:SetupVehicleUI()
 		petbattle:HookScript(
 			'OnHide',
 			function()
-				War_SpartanUI:Hide()
+				SUI_Art_War:Hide()
 				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Hide()
 				end
@@ -111,29 +111,26 @@ function module:SetupVehicleUI()
 		petbattle:HookScript(
 			'OnShow',
 			function()
-				War_SpartanUI:Show()
+				SUI_Art_War:Show()
 				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Show()
 				end
 			end
 		)
-		War_SpartanUI:HookScript(
+		SUI_Art_War:HookScript(
 			'OnShow',
 			function()
 				Artwork_Core:trayWatcherEvents()
 			end
 		)
-		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
-		RegisterStateDriver(War_SpartanUI, 'visibility', '[overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SUI_Art_War, 'visibility', '[overridebar][vehicleui] hide; show')
 		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		UnregisterStateDriver(petbattle, 'visibility')
-		UnregisterStateDriver(War_SpartanUI, 'visibility')
-		UnregisterStateDriver(SpartanUI, 'visibility')
+		UnregisterStateDriver(SUI_Art_War, 'visibility')
 	end
 end
 
@@ -147,21 +144,21 @@ function module:InitArtwork()
 	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
 
 	--Setup the Bottom Artwork
-	War_SpartanUI:SetFrameStrata('BACKGROUND')
-	War_SpartanUI:SetFrameLevel(1)
+	SUI_Art_War:SetFrameStrata('BACKGROUND')
+	SUI_Art_War:SetFrameLevel(1)
 
-	War_SpartanUI.Left = War_SpartanUI:CreateTexture('War_SpartanUI_Left', 'BORDER')
-	War_SpartanUI.Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', 0, 0)
+	SUI_Art_War.Left = SUI_Art_War:CreateTexture('SUI_Art_War_Left', 'BORDER')
+	SUI_Art_War.Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', 0, 0)
 
-	War_SpartanUI.Right = War_SpartanUI:CreateTexture('War_SpartanUI_Right', 'BORDER')
-	War_SpartanUI.Right:SetPoint('LEFT', War_SpartanUI.Left, 'RIGHT', 0, 0)
+	SUI_Art_War.Right = SUI_Art_War:CreateTexture('SUI_Art_War_Right', 'BORDER')
+	SUI_Art_War.Right:SetPoint('LEFT', SUI_Art_War.Left, 'RIGHT', 0, 0)
 
-	War_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Left.tga')
-	War_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Right.tga')
+	SUI_Art_War.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Left.tga')
+	SUI_Art_War.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Right.tga')
 
 	-- Inital Scaling
-	War_SpartanUI.Left:SetScale(.75)
-	War_SpartanUI.Right:SetScale(.75)
+	SUI_Art_War.Left:SetScale(.75)
+	SUI_Art_War.Right:SetScale(.75)
 
 	-- Setup Frame posistions
 	UnitFrames.FramePos['War'] = {
@@ -200,7 +197,7 @@ function module:EnableArtwork()
 				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
 			CastingBarFrame:ClearAllPoints()
-			CastingBarFrame:SetPoint('BOTTOM', War_SpartanUI, 'TOP', 0, 90)
+			CastingBarFrame:SetPoint('BOTTOM', SUI_Art_War, 'TOP', 0, 90)
 		end
 	)
 
@@ -208,7 +205,7 @@ function module:EnableArtwork()
 		'OnShow',
 		function()
 			MainMenuBarVehicleLeaveButton:ClearAllPoints()
-			MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', War_SpartanUI.Left, 'TOPRIGHT', 0, 20)
+			MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SUI_Art_War.Left, 'TOPRIGHT', 0, 20)
 		end
 	)
 
@@ -227,12 +224,12 @@ function module:StatusBars()
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
 	StatusBars:Initalize(module.StatusBarSettings)
 
-	StatusBars.bars.War_StatusBar_Left:SetAlpha(.9)
-	StatusBars.bars.War_StatusBar_Right:SetAlpha(.9)
+	StatusBars.bars.StatusBar_Left:SetAlpha(.9)
+	StatusBars.bars.StatusBar_Right:SetAlpha(.9)
 
 	-- Position the StatusBars
-	StatusBars.bars.War_StatusBar_Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', -100, 0)
-	StatusBars.bars.War_StatusBar_Right:SetPoint('BOTTOMLEFT', War_ActionBarPlate, 'BOTTOM', 100, 0)
+	StatusBars.bars.StatusBar_Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', -100, 0)
+	StatusBars.bars.StatusBar_Right:SetPoint('BOTTOMLEFT', War_ActionBarPlate, 'BOTTOM', 100, 0)
 end
 
 -- Artwork Stuff
@@ -260,30 +257,6 @@ function module:SlidingTrays()
 end
 
 -- Minimap
-function module:MiniMapUpdate()
-	if Minimap.BG then
-		Minimap.BG:ClearAllPoints()
-	end
-
-	Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap')
-	Minimap.BG:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -47, 47)
-	Minimap.BG:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 47, -47)
-	Minimap.BG:SetAlpha(.8)
-	Minimap.BG:SetBlendMode('ADD')
-end
-
-module.Settings.MiniMap = {
-	size = {
-		156,
-		156
-	},
-	TextLocation = 'BOTTOM',
-	coordsLocation = 'BOTTOM',
-	coords = {
-		TextColor = {1, .82, 0, 1}
-	}
-}
-
 function module:MiniMap()
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints()
@@ -293,34 +266,6 @@ function module:MiniMap()
 		MinimapZoneText:Show()
 	end
 
-	if QueueStatusFrame then
-		QueueStatusFrame:ClearAllPoints()
-		QueueStatusFrame:SetPoint('BOTTOM', War_SpartanUI, 'TOP', 0, 100)
-	end
 
-	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
-	module.Settings.MiniMap.TextLocation = 'TOP'
-	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
-
-	module:MiniMapUpdate()
-
-	Minimap.coords:SetTextColor(1, .82, 0, 1)
-	Minimap.coords:SetShadowColor(0, 0, 0, 1)
-	Minimap.coords:SetScale(1.2)
-
-	War_SpartanUI:HookScript(
-		'OnHide',
-		function(this, event)
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
-		end
-	)
-
-	War_SpartanUI:HookScript(
-		'OnShow',
-		function(this, event)
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', War_SpartanUI, 'CENTER', 0, 5)
-		end
-	)
+	-- SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 end

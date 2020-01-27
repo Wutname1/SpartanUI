@@ -55,7 +55,6 @@ function module:Init()
 	InitRan = true
 end
 
-
 function module:OnEnable()
 	if (SUI.DBMod.Artwork.Style ~= 'Transparent') then
 		module:Disable()
@@ -75,7 +74,7 @@ function module:SetupStatusBars()
 	local StatusBars = SUI:GetModule('Artwork_StatusBars')
 	StatusBars:Initalize(module.StatusBarSettings)
 
-	StatusBars.bars.Transparent_ExperienceBar:SetPoint('BOTTOMRIGHT', 'Transparent_SpartanUI', 'BOTTOM', -100, 0)
+	StatusBars.bars.Transparent_ExperienceBar:SetPoint('BOTTOMRIGHT', 'SUI_Art_Transparent', 'BOTTOM', -100, 0)
 end
 
 function module:SetupMenus()
@@ -137,5 +136,5 @@ function module:SetupMenus()
 end
 
 function module:OnDisable()
-	Transparent_SpartanUI:Hide()
+	SUI_Art_Transparent:Hide()
 end

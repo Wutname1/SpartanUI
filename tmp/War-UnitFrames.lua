@@ -1114,9 +1114,9 @@ function module:PositionFrame(b)
 		PlayerFrames[b]:ClearAllPoints()
 	end
 	--Set Position
-	if War_SpartanUI.Left then
+	if SUI_Art_War.Left then
 		if b == 'player' or b == nil then
-			PlayerFrames.player:SetPoint('BOTTOMRIGHT', War_SpartanUI.Left, 'TOPLEFT', -60, 10)
+			PlayerFrames.player:SetPoint('BOTTOMRIGHT', SUI_Art_War.Left, 'TOPLEFT', -60, 10)
 		end
 	else
 		if b == 'player' or b == nil then

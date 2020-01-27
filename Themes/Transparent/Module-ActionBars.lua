@@ -7,7 +7,7 @@ local plate
 
 function module:InitActionBars()
 	do -- create bar anchor
-		plate = CreateFrame('Frame', 'Transparent_ActionBarPlate', Transparent_SpartanUI, 'Transparent_ActionBarsTemplate')
+		plate = CreateFrame('Frame', 'Transparent_ActionBarPlate', SUI_Art_Transparent, 'Transparent_ActionBarsTemplate')
 		plate:SetFrameStrata('BACKGROUND')
 		plate:SetFrameLevel(1)
 		plate:SetPoint('BOTTOM')

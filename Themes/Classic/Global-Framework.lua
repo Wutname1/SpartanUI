@@ -35,13 +35,13 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 			frame:SetScale(SUI.DB.scale)
 		end
 		if SUI.DB.scale <= .75 then
-			SpartanUI_Classic_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
-			SpartanUI_Classic_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
+			SUI_Art_Classic_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
+			SUI_Art_Classic_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
 		else
-			SpartanUI_Classic_Base3:ClearAllPoints()
-			SpartanUI_Classic_Base5:ClearAllPoints()
-			SpartanUI_Classic_Base3:SetPoint('RIGHT', SpartanUI_Classic_Base2, 'LEFT')
-			SpartanUI_Classic_Base5:SetPoint('LEFT', SpartanUI_Classic_Base4, 'RIGHT')
+			SUI_Art_Classic_Base3:ClearAllPoints()
+			SUI_Art_Classic_Base5:ClearAllPoints()
+			SUI_Art_Classic_Base3:SetPoint('RIGHT', SUI_Art_Classic_Base2, 'LEFT')
+			SUI_Art_Classic_Base5:SetPoint('LEFT', SUI_Art_Classic_Base4, 'RIGHT')
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')
 		for _, key in ipairs(module.StatusBarSettings.bars) do
@@ -53,11 +53,11 @@ end
 
 function module:updateSpartanAlpha() -- scales SpartanUI based on setting or screen size
 	if SUI.DB.alpha then
-		SpartanUI_Classic_Base1:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Classic_Base2:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Classic_Base3:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Classic_Base4:SetAlpha(SUI.DB.alpha)
-		SpartanUI_Classic_Base5:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Classic_Base1:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Classic_Base2:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Classic_Base3:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Classic_Base4:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Classic_Base5:SetAlpha(SUI.DB.alpha)
 		SUI_Popup1Mask:SetAlpha(SUI.DB.alpha)
 		SUI_Popup2Mask:SetAlpha(SUI.DB.alpha)
 	end
@@ -69,15 +69,15 @@ function module:updateSpartanXOffset() -- handles SpartanUI offset based on sett
 	end
 	local offset = SUI.DB.Offset.Horizontal
 	if round(offset) <= -300 then
-		SpartanUI_Classic_Base5:ClearAllPoints()
-		SpartanUI_Classic_Base5:SetPoint('LEFT', SpartanUI_Classic_Base4, 'RIGHT')
-		SpartanUI_Classic_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
+		SUI_Art_Classic_Base5:ClearAllPoints()
+		SUI_Art_Classic_Base5:SetPoint('LEFT', SUI_Art_Classic_Base4, 'RIGHT')
+		SUI_Art_Classic_Base5:SetPoint('BOTTOMRIGHT', SUI_AnchorFrame, 'TOPRIGHT')
 	elseif round(offset) >= 300 then
-		SpartanUI_Classic_Base3:ClearAllPoints()
-		SpartanUI_Classic_Base3:SetPoint('RIGHT', SpartanUI_Classic_Base2, 'LEFT')
-		SpartanUI_Classic_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
+		SUI_Art_Classic_Base3:ClearAllPoints()
+		SUI_Art_Classic_Base3:SetPoint('RIGHT', SUI_Art_Classic_Base2, 'LEFT')
+		SUI_Art_Classic_Base3:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'TOPLEFT')
 	end
-	SpartanUI_Classic:SetPoint('LEFT', SUI_AnchorFrame, 'LEFT', offset, 0)
+	SUI_Art_Classic:SetPoint('LEFT', SUI_AnchorFrame, 'LEFT', offset, 0)
 
 	SUI_FramesAnchor:ClearAllPoints()
 	SUI_FramesAnchor:SetPoint('BOTTOMLEFT', SUI_AnchorFrame, 'BOTTOMLEFT', (offset / 2), 0)
@@ -100,8 +100,8 @@ function module:SetColor()
 	end
 
 	for i = 1, 6 do
-		if _G['SpartanUI_Classic_Base' .. i] then
-			_G['SpartanUI_Classic_Base' .. i]:SetVertexColor(r, b, g, a)
+		if _G['SUI_Art_Classic_Base' .. i] then
+			_G['SUI_Art_Classic_Base' .. i]:SetVertexColor(r, b, g, a)
 		end
 		if _G['Bar' .. i .. 'BG'] then
 			_G['Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
@@ -134,23 +134,23 @@ function module:InitFramework()
 			'OnShow',
 			function()
 				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SpartanUI_Classic, 'TOP', 0, 80)
+				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SUI_Art_Classic, 'TOP', 0, 80)
 			end
 		)
 
 		FramerateText:ClearAllPoints()
-		FramerateText:SetPoint('BOTTOM', 'SpartanUI_Classic_Base1', 'TOP', 0, 0)
+		FramerateText:SetPoint('BOTTOM', 'SUI_Art_Classic_Base1', 'TOP', 0, 0)
 
 		MainMenuBar:Hide()
 		hooksecurefunc(
-			SpartanUI_Classic,
+			SUI_Art_Classic,
 			'Hide',
 			function()
 				Artwork_Core:updateViewport()
 			end
 		)
 		hooksecurefunc(
-			SpartanUI_Classic,
+			SUI_Art_Classic,
 			'Show',
 			function()
 				Artwork_Core:updateViewport()
@@ -162,7 +162,7 @@ end
 function module:TooltipLoc(self, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
-		tooltip:SetPoint('BOTTOMRIGHT', 'SpartanUI_Classic', 'TOPRIGHT', 0, 10)
+		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Classic', 'TOPRIGHT', 0, 10)
 	end
 end
 
@@ -173,13 +173,13 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
-		RegisterStateDriver(SpartanUI_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if not SUI.DBMod.Artwork.VehicleUI then
-		UnregisterStateDriver(SpartanUI_Classic, 'visibility')
+		UnregisterStateDriver(SUI_Art_Classic, 'visibility')
 	end
 end
 

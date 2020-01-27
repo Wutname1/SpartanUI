@@ -6,7 +6,7 @@
 	<Script file="Style-Setup.lua" />
 
 	<!-- SpartanUI -->
-	<Frame name="War_SpartanUI" frameStrata="BACKGROUND" parent="SpartanUI">
+	<Frame name="SUI_Art_War" frameStrata="BACKGROUND" parent="SpartanUI">
 		<Anchors>
 			<Anchor point="BOTTOM" relativePoint="BOTTOM" />
 			<Anchor point="TOP" relativePoint="BOTTOM">
@@ -40,7 +40,7 @@
 	</Frame>
 
 	<!-- War_ActionBarsTemplate -->
-	<Frame name="War_ActionBarsTemplate" parent="War_SpartanUI" frameStrata="BACKGROUND" virtual="true">
+	<Frame name="War_ActionBarsTemplate" parent="SUI_Art_War" frameStrata="BACKGROUND" virtual="true">
 		<Size>
 			<AbsDimension x="1002" y="139"/>
 		</Size>

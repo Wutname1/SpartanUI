@@ -47,79 +47,85 @@ local function Update(self, event, unit)
 	--]]
 	for _, pos in ipairs(ArtPositions) do
 		local artObj = element[pos]
-		local ArtSettings = element.ArtSettings[pos]
-		if artObj and ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
-			local ArtData = artObj.ArtData
 
-			-- -- setup a bg height
-			local height
-			if pos == 'bg' then
-				height = (self:GetHeight() + (ArtData.height or 0))
-			end
-			if ArtData.heightScale then
-				height = self:GetWidth() * ArtData.heightScale
-			end
+		if element.ArtSettings then
+			local ArtSettings = element.ArtSettings[pos]
 
-			-- Setup the Artwork
-			if type(ArtData.path) == 'function' then
-				artObj:SetTexture(ArtData.path(self, pos))
-			else
-				artObj:SetTexture(ArtData.path)
-			end
+			if artObj and ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+				local ArtData = artObj.ArtData
 
-			if ArtData.TexCoord then
-				if type(ArtData.TexCoord) == 'function' then
-					local cords = ArtData.TexCoord(self, pos)
-					if cords then
-						artObj:SetTexCoord(unpack(cords))
-					end
+				-- -- setup a bg height
+				local height
+				if pos == 'bg' then
+					height = (self:GetHeight() + (ArtData.height or 0))
+				end
+				if ArtData.heightScale then
+					height = self:GetWidth() * ArtData.heightScale
+				end
+
+				-- Setup the Artwork
+				if type(ArtData.path) == 'function' then
+					artObj:SetTexture(ArtData.path(self, pos))
 				else
-					artObj:SetTexCoord(unpack(ArtData.TexCoord))
+					artObj:SetTexture(ArtData.path)
 				end
-			end
-			if ArtData.Colorable then
-				artObj:SetVertexColor(0, 0, 0, .6)
-			end
 
-			artObj:SetScale(ArtData.scale or 1)
-			if ArtData.PVPAlpha and not ArtSettings.alpha then
-				artObj:SetAlpha((UnitIsPVP(unit) and 1) or ArtData.PVPAlpha)
-			else
-				artObj:SetAlpha((ArtSettings.alpha or ArtData.alpha) or 1)
-			end
-
-			artObj:SetWidth(ArtData.width or self:GetWidth())
-			artObj:SetHeight((height or ArtData.height) or 25)
-
-			-- Position artwork
-			local x = (ArtData.x or 0)
-			local y = (ArtData.y or 0)
-			if ArtData.xScale then
-				x = self:GetWidth() * ArtData.xScale
-			end
-			if ArtData.yScale then
-				y = self:GetWidth() * ArtData.yScale
-			end
-			local x = (ArtSettings.x + x)
-			local y = (ArtSettings.y + y)
-			artObj:ClearAllPoints()
-			if ArtData.position then
-				x = (x + (ArtData.position.x or 0))
-				y = (y + (ArtData.position.y or 0))
-
-				artObj:SetPoint(ArtData.position.anchor, self, ArtData.position.anchor, x, y)
-			else
-				if pos == 'top' then
-					artObj:SetPoint('BOTTOM', self, 'TOP', x, y)
-				elseif pos == 'bottom' then
-					artObj:SetPoint('TOP', self, 'BOTTOM', x, y)
-				elseif pos == 'bg' then
-					artObj:SetPoint('CENTER', self, 'CENTER', x, y)
+				if ArtData.TexCoord then
+					if type(ArtData.TexCoord) == 'function' then
+						local cords = ArtData.TexCoord(self, pos)
+						if cords then
+							artObj:SetTexCoord(unpack(cords))
+						end
+					else
+						artObj:SetTexCoord(unpack(ArtData.TexCoord))
+					end
 				end
-			end
+				if ArtData.Colorable then
+					artObj:SetVertexColor(0, 0, 0, .6)
+				end
 
-			artObj:Show()
-		elseif artObj then
+				artObj:SetScale(ArtData.scale or 1)
+				if ArtData.PVPAlpha and not ArtSettings.alpha then
+					artObj:SetAlpha((UnitIsPVP(unit) and 1) or ArtData.PVPAlpha)
+				else
+					artObj:SetAlpha((ArtSettings.alpha or ArtData.alpha) or 1)
+				end
+
+				artObj:SetWidth(ArtData.width or self:GetWidth())
+				artObj:SetHeight((height or ArtData.height) or 25)
+
+				-- Position artwork
+				local x = (ArtData.x or 0)
+				local y = (ArtData.y or 0)
+				if ArtData.xScale then
+					x = self:GetWidth() * ArtData.xScale
+				end
+				if ArtData.yScale then
+					y = self:GetWidth() * ArtData.yScale
+				end
+				local x = (ArtSettings.x + x)
+				local y = (ArtSettings.y + y)
+				artObj:ClearAllPoints()
+				if ArtData.position then
+					x = (x + (ArtData.position.x or 0))
+					y = (y + (ArtData.position.y or 0))
+
+					artObj:SetPoint(ArtData.position.anchor, self, ArtData.position.anchor, x, y)
+				else
+					if pos == 'top' then
+						artObj:SetPoint('BOTTOM', self, 'TOP', x, y)
+					elseif pos == 'bottom' then
+						artObj:SetPoint('TOP', self, 'BOTTOM', x, y)
+					elseif pos == 'bg' then
+						artObj:SetPoint('CENTER', self, 'CENTER', x, y)
+					end
+				end
+
+				artObj:Show()
+			elseif artObj then
+				artObj:Hide()
+			end
+		else
 			artObj:Hide()
 		end
 	end

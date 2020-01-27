@@ -1,4 +1,4 @@
-local SUI = SUI
+local SUI, print = SUI, SUI.print
 local StdUi = LibStub('StdUi'):NewInstance()
 local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 local MoverList = {}
@@ -23,11 +23,17 @@ local function GetPoints(obj)
 end
 
 function MoveIt:SaveMoverPosition(name)
-	-- local mover = _G[name]
+	local frame = _G[name]
 	-- local _, anchor = mover:GetPoint()
 	-- mover.anchor = anchor:GetName()
+	SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(frame.mover)
 
-	SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(mover)
+	-- Reset the frame so we dont anchor to nil after moving
+	-- Without this the minimap cause LUA errors in a vehicle
+	if frame.position then
+		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+		frame:position(point, anchor, secondaryPoint, x, y, true)
+	end
 end
 
 function MoveIt:CalculateMoverPoints(mover)
@@ -91,7 +97,7 @@ function MoveIt:Reset(name)
 				end
 			end
 		end
-		SUI:Print('Moved frames reset!')
+		print('Moved frames reset!')
 	else
 		local f = _G['SUI_Mover_' .. name]
 		if f then
@@ -142,14 +148,26 @@ function MoveIt:MoveIt(name)
 				local frame = MoverList[name]
 				frame:Show()
 			else
-				for _, v in pairs(tableName) do
-					local frame = MoverList[v]
-					frame:Show()
+				for _, v in pairs(name) do
+					if MoverList[v] then
+						local frame = MoverList[v]
+						frame:Show()
+					end
 				end
 			end
 		else
 			for _, v in pairs(MoverList) do
 				v:Show()
+			end
+			if SUI.DB.MoveIt.tips then
+				print('When the movement system is enabled you can:')
+				print('     Shift+Click a mover to temporarily hide it', true)
+				print("     Alt+Click a mover to reset it's position", true)
+				print('     Use the scroll wheel to move left and right 1 coord at a time', true)
+				print('     Hold Shift + use the scroll wheel to move up and down 1 coord at a time', true)
+				print('     Press ESCAPE to exit the movement system quickly.', true)
+				print("Use the command '/sui move tips' to disable tips")
+				print("Use the command '/sui move reset' to reset ALL moved items")
 			end
 		end
 		MoveEnabled = true
@@ -242,7 +260,7 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 
 	local function OnDragStart(self)
 		if InCombatLockdown() then
-			SUI:Print(ERR_NOT_IN_COMBAT)
+			print(ERR_NOT_IN_COMBAT)
 			return
 		end
 
@@ -255,7 +273,7 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 
 	local function OnDragStop(self)
 		if InCombatLockdown() then
-			SUI:Print(ERR_NOT_IN_COMBAT)
+			print(ERR_NOT_IN_COMBAT)
 			return
 		end
 		isDragging = false
@@ -265,8 +283,14 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 		self:StopMovingOrSizing()
 		-- end
 
-		-- MoveIt:SaveMoverPosition(name)
-		SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(self)
+		SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(f)
+
+		-- Reset the frame so we dont anchor to nil after moving
+		-- Without this the minimap cause LUA errors in a vehicle
+		if parent.position then
+			local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+			parent:position(point, anchor, secondaryPoint, x, y, true)
+		end
 		-- if NudgeWindow then
 		-- 	E:UpdateNudgeFrame(self, x, y)
 		-- end
@@ -296,10 +320,12 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 
 		if IsAltKeyDown() then -- Reset anchor
 			MoveIt:Reset(name)
-			SUI:Print("Tip use the chat command '/sui move reset' to reset everything quickly.")
+			if SUI.DB.MoveIt.tips then
+				print("Tip use the chat command '/sui move reset' to reset everything quickly.")
+			end
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
 			self:Hide()
-			SUI:Print(self.name + ' hidden temporarily.')
+			print(self.name + ' hidden temporarily.')
 		end
 	end
 
@@ -351,7 +377,7 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 
 		-- Position frame
 		f:ClearAllPoints()
-		f:SetPoint(point, anchor, (secondaryPoint or point), x, y)
+		f:SetPoint(point, (anchor or UIParent), (secondaryPoint or point), x, y)
 	end
 	local function SizeChanged(frame)
 		if InCombatLockdown() then
@@ -393,7 +419,7 @@ end
 function MoveIt:Enable()
 	local ChatCommand = function(arg)
 		if InCombatLockdown() then
-			SUI:Print(ERR_NOT_IN_COMBAT)
+			print(ERR_NOT_IN_COMBAT)
 			return
 		end
 
@@ -403,24 +429,21 @@ function MoveIt:Enable()
 			if MoverList[arg] then
 				MoveIt:MoveIt(arg)
 			elseif arg == 'reset' then
-				SUI:Print('Restting all frames...')
+				print('Restting all frames...')
 				MoveIt:Reset()
 				return
 			elseif arg == 'tips' then
 				SUI.DB.MoveIt.tips = not (SUI.DB.MoveIt.tips)
+				local mode = '|cffed2024off'
+				if SUI.DB.MoveIt.tips then
+					mode = '|cff69bd45on'
+				end
+
+				print('Tips turned ' .. mode)
 			else
-				SUI:Print('Invalid move command!')
+				print('Invalid move command!')
 				return
 			end
-		end
-		if SUI.DB.MoveIt.tips then
-			SUI:Print('When the movement system is enabled you can:')
-			print('   Shift+Click a mover to temporarily hide it')
-			print("   Alt+Click a mover to reset it's position")
-			print('   Use the scroll wheel to move left and right 1 coord at a time')
-			print('   Hold Shift + use the scroll wheel to move up and down 1 coord at a time')
-			print('   Press ESCAPE to exit the movement system quickly.')
-			print('To disable these tips type /sui move tips')
 		end
 	end
 	SUI:AddChatCommand('move', ChatCommand)

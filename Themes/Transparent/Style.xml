@@ -5,30 +5,11 @@
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
 	<Script file="Style-Setup.lua" />
 
-	<!-- Transparent_AnchorFrame -->
-	<Frame name="Transparent_AnchorFrame" frameStrata="BACKGROUND" parent="SpartanUI">
-		<Size>
-			<AbsDimension x="1" y="1" />
-		</Size>
-		<Anchors>
-			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT">
-				<Offset>
-					<AbsDimension x="0" y="-1"/>
-				</Offset>
-			</Anchor>
-			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
-				<Offset>
-					<AbsDimension x="0" y="-1"/>
-				</Offset>
-			</Anchor>
-		</Anchors>
-	</Frame>
-
 	<!-- SpartanUI -->
-	<Frame name="Transparent_SpartanUI" frameStrata="BACKGROUND" parent="SpartanUI">
+	<Frame name="SUI_Art_Transparent" frameStrata="BACKGROUND" parent="SpartanUI">
 		<Anchors>
-			<Anchor point="BOTTOMLEFT" relativeTo="Transparent_AnchorFrame" relativePoint="TOPLEFT" />
-			<Anchor point="TOPRIGHT" relativeTo="Transparent_AnchorFrame" relativePoint="TOPRIGHT">
+			<Anchor point="BOTTOMLEFT" relativeTo="SpartanUI" relativePoint="TOPLEFT" />
+			<Anchor point="TOPRIGHT" relativeTo="SpartanUI" relativePoint="TOPRIGHT">
 				<Offset>
 					<AbsDimension x="0" y="153"/>
 				</Offset>
@@ -118,7 +99,7 @@
 	</Frame>
 
 	<!-- Transparent_ActionBarsTemplate -->
-	<Frame name="Transparent_ActionBarsTemplate" parent="Transparent_SpartanUI" frameStrata="BACKGROUND" virtual="true">
+	<Frame name="Transparent_ActionBarsTemplate" parent="SUI_Art_Transparent" frameStrata="BACKGROUND" virtual="true">
 		<Size>
 			<AbsDimension x="1002" y="139"/>
 		</Size>
@@ -199,7 +180,7 @@
 	</Frame>
 
 	<!-- Transparent_Popup1MaskTemplate -->
-	<Frame name="Transparent_Popup1MaskTemplate" parent="Transparent_SpartanUI" frameStrata="MEDIUM" virtual="true">
+	<Frame name="Transparent_Popup1MaskTemplate" parent="SUI_Art_Transparent" frameStrata="MEDIUM" virtual="true">
 		<Size>
 			<AbsDimension x="400" y="34"/>
 		</Size>
@@ -218,7 +199,7 @@
 	</Frame>
 
 	<!-- Transparent_Popup2MaskTemplate -->
-	<Frame name="Transparent_Popup2MaskTemplate" parent="Transparent_SpartanUI" frameStrata="MEDIUM" virtual="true">
+	<Frame name="Transparent_Popup2MaskTemplate" parent="SUI_Art_Transparent" frameStrata="MEDIUM" virtual="true">
 		<Size>
 			<AbsDimension x="400" y="34"/>
 		</Size>

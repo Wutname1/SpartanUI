@@ -37,7 +37,7 @@ function module:OnInitialize()
 		module:Init()
 	else
 		module:Disable()
-		SpartanUI_Classic:Hide()
+		SUI_Art_Classic:Hide()
 	end
 
 	local BarHandler = SUI:GetModule('Component_BarHandler')
@@ -125,20 +125,6 @@ function module:SetupMenus()
 		type = 'group',
 		desc = L['ActionBarConfDesc'],
 		args = {
-			reset = {
-				name = 'Reset ActionBars',
-				type = 'execute',
-				width = 'double',
-				order = 1,
-				func = function()
-					if (InCombatLockdown()) then
-						SUI:Print(ERR_NOT_IN_COMBAT)
-					else
-						SUI:GetModule('Component_BarHandler'):SetupProfile(true)
-						ReloadUI()
-					end
-				end
-			},
 			header1 = {name = '', type = 'header', order = 1.1},
 			Allenable = {
 				name = L['AllBarEnable'],
@@ -594,5 +580,5 @@ function module:AddNotice()
 end
 
 function module:OnDisable()
-	SpartanUI_Classic:Hide()
+	SUI_Art_Classic:Hide()
 end

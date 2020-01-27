@@ -78,7 +78,7 @@ function module:SlidingTrays(StyleSettings)
 	settings = StyleSettings
 
 	for _, key in ipairs(trayIDs) do
-		local tray = CreateFrame('Frame', nil, SpartanUI)
+		local tray = CreateFrame('Frame', 'SlidingTray_' .. key, _G['SUI_Art_' .. SUI.DBMod.Artwork.Style])
 		tray:SetFrameStrata('BACKGROUND')
 		tray:SetAlpha(.8)
 		tray:SetSize(400, 45)

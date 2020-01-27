@@ -808,7 +808,3 @@ function module:BuildOptions()
 		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestAccepting.args.AcceptRepeatable.hidden = true
 	end
 end
-
-function module:HideOptions()
-	SUI.opt.args['ModSetting'].args['AutoTurnIn'].disabled = true
-end

@@ -769,6 +769,3 @@ function module:BuildOptions()
 	end
 end
 
-function module:HideOptions()
-	SUI.opt.args['ModSetting'].args['Tooltips'].disabled = true
-end

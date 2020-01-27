@@ -5,27 +5,12 @@ local PetBattleActive = false
 local petbattleWatcher = CreateFrame('Frame')
 
 function module:MiniMap()
-	Minimap:SetSize(156, 156)
-
-	Minimap:ClearAllPoints()
-	Minimap:SetPoint('CENTER', SpartanUI_Classic, 'CENTER', 0, 54)
-	Minimap:SetParent(SpartanUI_Classic)
-
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints()
 		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -5)
 		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -5)
 		Minimap.ZoneText:Hide()
 		MinimapZoneText:Show()
-
-		Minimap.coords:SetTextColor(1, .82, 0, 1)
-	end
-
-	-- Minimap.coords:Hide()
-
-	if QueueStatusFrame then
-		QueueStatusFrame:ClearAllPoints()
-		QueueStatusFrame:SetPoint('BOTTOM', SpartanUI_Classic, 'TOP', 0, 100)
 	end
 
 	--Shape Change
@@ -33,19 +18,10 @@ function module:MiniMap()
 		if shape == 'square' then
 			Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
 
-			-- Minimap:SetArchBlobRingScalar(0)
-			-- Minimap:SetQuestBlobRingScalar(0)
-
 			Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
 			Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
 			Minimap.overlay:SetAllPoints(Minimap)
 			Minimap.overlay:SetBlendMode('ADD')
-
-			-- MinimapZoneTextButton:SetPoint("BOTTOMLEFT",Minimap,"TOPLEFT",0,4);
-			-- MinimapZoneTextButton:SetPoint("BOTTOMRIGHT",Minimap,"TOPRIGHT",0,4);
-			-- MinimapZoneText:SetTextColor(1,1,1,1);
-			-- MinimapZoneText:SetShadowColor(0,0,0,1);
-			-- MinimapZoneText:SetShadowOffset(1,-1);
 
 			if MiniMapTracking then
 				MiniMapTracking:ClearAllPoints()
@@ -80,8 +56,8 @@ function module:MiniMap()
 		'OnShow',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', SpartanUI_Classic, 'CENTER', 0, 54)
-			Minimap:SetParent(SpartanUI_Classic)
+			Minimap:SetPoint('CENTER', SUI_Art_Classic, 'CENTER', 0, 54)
+			Minimap:SetParent(SUI_Art_Classic)
 			shapechange('circle')
 		end
 	)

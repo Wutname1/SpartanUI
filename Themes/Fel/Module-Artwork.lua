@@ -53,8 +53,8 @@ function module:updateScale()
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(Fel_SpartanUI:GetScale())) then
-			Fel_SpartanUI:SetScale(SUI.DB.scale)
+		if (SUI.DB.scale ~= SUI:round(SUI_Art_Fel:GetScale())) then
+			SUI_Art_Fel:SetScale(SUI.DB.scale)
 		end
 		local StatusBars = SUI:GetModule('Artwork_StatusBars')
 		for _, key in ipairs(StatusBarSettings.bars) do
@@ -66,8 +66,8 @@ end
 
 function module:updateAlpha()
 	if SUI.DB.alpha then
-		Fel_SpartanUI.Left:SetAlpha(SUI.DB.alpha)
-		Fel_SpartanUI.Right:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Fel.Left:SetAlpha(SUI.DB.alpha)
+		SUI_Art_Fel.Right:SetAlpha(SUI.DB.alpha)
 	end
 	-- Update Action bar backgrounds
 	for i = 1, 4 do
@@ -96,7 +96,7 @@ end
 function module:TooltipLoc(_, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
-		tooltip:SetPoint('BOTTOMRIGHT', 'Fel_SpartanUI', 'TOPRIGHT', 0, 10)
+		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Fel', 'TOPRIGHT', 0, 10)
 	end
 end
 
@@ -113,7 +113,7 @@ function module:SetupVehicleUI()
 				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Hide()
 				end
-				Fel_SpartanUI:Hide()
+				SUI_Art_Fel:Hide()
 			end
 		)
 		petbattle:HookScript(
@@ -122,11 +122,11 @@ function module:SetupVehicleUI()
 				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Show()
 				end
-				Fel_SpartanUI:Show()
+				SUI_Art_Fel:Show()
 			end
 		)
 		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
-		RegisterStateDriver(Fel_SpartanUI, 'visibility', '[overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SUI_Art_Fel, 'visibility', '[overridebar][vehicleui] hide; show')
 		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
@@ -134,7 +134,7 @@ end
 function module:RemoveVehicleUI()
 	if SUI.DBMod.Artwork.VehicleUI then
 		UnregisterStateDriver(petbattle, 'visibility')
-		UnregisterStateDriver(Fel_SpartanUI, 'visibility')
+		UnregisterStateDriver(SUI_Art_Fel, 'visibility')
 		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
@@ -150,23 +150,23 @@ function module:InitArtwork()
 end
 
 function module:EnableArtwork()
-	Fel_SpartanUI:SetFrameStrata('BACKGROUND')
-	Fel_SpartanUI:SetFrameLevel(1)
+	SUI_Art_Fel:SetFrameStrata('BACKGROUND')
+	SUI_Art_Fel:SetFrameLevel(1)
 
-	Fel_SpartanUI.Left = Fel_SpartanUI:CreateTexture('Fel_SpartanUI_Left', 'BORDER')
-	Fel_SpartanUI.Left:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', 0, 0)
+	SUI_Art_Fel.Left = SUI_Art_Fel:CreateTexture('SUI_Art_Fel_Left', 'BORDER')
+	SUI_Art_Fel.Left:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOM', 0, 0)
 
-	Fel_SpartanUI.Right = Fel_SpartanUI:CreateTexture('Fel_SpartanUI_Right', 'BORDER')
-	Fel_SpartanUI.Right:SetPoint('LEFT', Fel_SpartanUI.Left, 'RIGHT', 0, 0)
+	SUI_Art_Fel.Right = SUI_Art_Fel:CreateTexture('SUI_Art_Fel_Right', 'BORDER')
+	SUI_Art_Fel.Right:SetPoint('LEFT', SUI_Art_Fel.Left, 'RIGHT', 0, 0)
 	local barBG
 
 	if SUI.DB.Styles.Fel.SubTheme == 'Digital' then
-		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Base_Bar_Left')
-		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Base_Bar_Right')
+		SUI_Art_Fel.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Base_Bar_Left')
+		SUI_Art_Fel.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Base_Bar_Right')
 		barBG = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Digital\\Fel-Box'
 	else
-		Fel_SpartanUI.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Left')
-		Fel_SpartanUI.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Right')
+		SUI_Art_Fel.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Left')
+		SUI_Art_Fel.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Right')
 	end
 
 	if barBG then
@@ -190,7 +190,7 @@ function module:EnableArtwork()
 				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
 			CastingBarFrame:ClearAllPoints()
-			CastingBarFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 90)
+			CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Fel, 'TOP', 0, 90)
 		end
 	)
 
@@ -218,8 +218,8 @@ function module:StatusBars()
 	StatusBars:Initalize(StatusBarSettings)
 
 	-- Position the StatusBars
-	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', Fel_SpartanUI, 'BOTTOM', -100, 0)
-	StatusBars.bars.Fel_StatusBar_Right:SetPoint('BOTTOMLEFT', Fel_SpartanUI, 'BOTTOM', 100, 0)
+	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', SUI_Art_Fel, 'BOTTOM', -100, 0)
+	StatusBars.bars.Fel_StatusBar_Right:SetPoint('BOTTOMLEFT', SUI_Art_Fel, 'BOTTOM', 100, 0)
 end
 
 -- Minimap
@@ -248,18 +248,6 @@ function module:MiniMapUpdate()
 	end
 end
 
-module.Settings.MiniMap = {
-	size = {
-		156,
-		156
-	},
-	TextLocation = 'BOTTOM',
-	coordsLocation = 'BOTTOM',
-	coords = {
-		TextColor = {1, .82, 0, 1}
-	}
-}
-
 function module:MiniMap()
 	if Minimap.ZoneText ~= nil then
 		Minimap.ZoneText:ClearAllPoints()
@@ -269,21 +257,12 @@ function module:MiniMap()
 		MinimapZoneText:Show()
 	end
 
-	if QueueStatusFrame then
-		QueueStatusFrame:ClearAllPoints()
-		QueueStatusFrame:SetPoint('BOTTOM', Fel_SpartanUI, 'TOP', 0, 100)
-	end
-
 	Minimap.BG = Minimap:CreateTexture(nil, 'BACKGROUND')
 	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()
 
-	Minimap.coords:SetTextColor(1, .82, 0, 1)
-	Minimap.coords:SetShadowColor(0, 0, 0, 1)
-	Minimap.coords:SetScale(1.2)
-
-	Fel_SpartanUI:HookScript(
+	SUI_Art_Fel:HookScript(
 		'OnHide',
 		function(this, event)
 			Minimap:ClearAllPoints()
@@ -292,11 +271,11 @@ function module:MiniMap()
 		end
 	)
 
-	Fel_SpartanUI:HookScript(
+	SUI_Art_Fel:HookScript(
 		'OnShow',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', Fel_SpartanUI, 'CENTER', 0, 54)
+			Minimap:SetPoint('CENTER', SUI_Art_Fel, 'CENTER', 0, 54)
 			SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 		end
 	)

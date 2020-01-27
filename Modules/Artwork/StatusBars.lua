@@ -1,5 +1,4 @@
-local SUI = SUI
-local L = SUI.L
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Artwork_StatusBars')
 module.bars = {}
 local StyleSettings
@@ -289,7 +288,7 @@ function module:factory()
 			local StyleSetting = SUI:MergeData(StyleSettings[key], module.DB.default, false)
 
 			--Status Bar
-			local statusbar = CreateFrame('Frame', nil, SpartanUI)
+			local statusbar = CreateFrame('Frame', key, _G['SUI_Art_' .. SUI.DBMod.Artwork.Style])
 			statusbar:SetSize(unpack(StyleSetting.size))
 			statusbar:SetFrameStrata('BACKGROUND')
 

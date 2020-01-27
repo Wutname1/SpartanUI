@@ -129,7 +129,8 @@ function module:OnEnable()
 end
 
 function module:OnDisable()
-	War_SpartanUI:Hide()
+	UnregisterStateDriver(SUI_Art_War, 'visibility')
+	SUI_Art_War:Hide()
 end
 
 function module:SetupMenus()

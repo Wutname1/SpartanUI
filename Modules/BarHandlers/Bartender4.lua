@@ -1,9 +1,9 @@
-local SUI = SUI
-local L = SUI.L
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:GetModule('Component_BarHandler')
 local BartenderMin = '4.8.5'
 local MoveIt = SUI:GetModule('Component_MoveIt')
 local scaleData
+local BartenderChangesActive = false
 ------------------------------------------------------------
 local BTProfileName = 'SpartanUI'
 local SUIBT4Settings = {
@@ -125,30 +125,38 @@ local SUIBT4Settings = {
 	StatusTrackingBar = {enabled = false},
 	blizzardVehicle = true
 }
+
+local FrameList = {
+	'BT4Bar1',
+	'BT4Bar2',
+	'BT4Bar3',
+	'BT4Bar4',
+	'BT4Bar5',
+	'BT4Bar6',
+	'BT4Bar7',
+	'BT4Bar8',
+	'BT4Bar9',
+	'BT4BarBagBar',
+	'BT4BarExtraActionBar',
+	'BT4BarStanceBar',
+	'BT4BarPetBar',
+	'BT4BarMicroMenu'
+}
 ------------------------------------------------------------
 
 -- Bartender4 Items
 
 -- Creates the SUI BT4 Profile
-local function SetupProfile(updateConfig)
+local function SetupProfile()
 	--Exit if Bartender4 is not loaded
 	if (not select(4, GetAddOnInfo('Bartender4'))) then
 		return
 	end
 
 	--Flag the SUI.DB that we are making changes
-	SUI.DBG.BartenderChangesActive = true
+	BartenderChangesActive = true
 	--Load the profile name the art style wants
-	local ProfileName = SUI.DB.Styles[SUI.DBMod.Artwork.Style].BTProfileName
-
-	--If this is set then we have already setup the bars once, and the user changed them
-	if
-		SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile and
-			SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile ~= BTProfileName and
-			not ProfileOverride
-	 then
-		return
-	end
+	local ProfileName = BTProfileName
 
 	-- Set/Create our Profile
 	Bartender4.db:SetProfile(BTProfileName)
@@ -161,11 +169,14 @@ local function SetupProfile(updateConfig)
 	end
 
 	-- Update BT4 Configuration
-	if updateConfig then
-		Bartender4:UpdateModuleConfigs()
-	end
+	Bartender4:UpdateModuleConfigs()
 
-	SUI.DBG.BartenderChangesActive = false
+	BartenderChangesActive = false
+end
+
+local function Unlock()
+	-- Move them!
+	MoveIt:MoveIt(FrameList)
 end
 
 -- Returns True if the Inputed profileName is the active one in BT4
@@ -181,15 +192,10 @@ local function ProfileCheck(profileName, Report)
 		end
 	end
 	if (Report) and (r ~= true) then
-		SUI:Print(profileName .. ' ' .. L['BTProfileNameCheckFail'])
+		print(profileName .. ' ' .. L['BTProfileNameCheckFail'])
 	end
 	return r
 end
-
-module.Bartender4 = {
-	SetupProfile = SetupProfile,
-	ProfileCheck = ProfileCheck
-}
 
 local function Options()
 	SUI.opt.args['General'].args['Bartender'] = {
@@ -202,7 +208,7 @@ local function Options()
 				type = 'execute',
 				order = 1,
 				func = function()
-					Bartender4:Unlock()
+					Unlock()
 				end
 			},
 			ResetActionBars = {
@@ -210,31 +216,10 @@ local function Options()
 				type = 'execute',
 				order = 2,
 				func = function()
-					--Strip custom BT4 Profile from config
-					if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile then
-						SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = nil
-					end
-
 					--Force Rebuild of primary bar profile
-					module.Bartender4:SetupProfile(true)
+					SetupProfile()
 
 					--Reset Moved bars
-					local FrameList = {
-						'BT4Bar1',
-						'BT4Bar2',
-						'BT4Bar3',
-						'BT4Bar4',
-						'BT4Bar5',
-						'BT4Bar6',
-						'BT4Bar7',
-						'BT4Bar8',
-						'BT4Bar9',
-						'BT4BarBagBar',
-						'BT4BarExtraActionBar',
-						'BT4BarStanceBar',
-						'BT4BarPetBar',
-						'BT4BarMicroMenu'
-					}
 					for _, v in ipairs(FrameList) do
 						MoveIt:Reset(v)
 					end
@@ -277,7 +262,7 @@ local function Options()
 				end,
 				set = function(info, val)
 					if (InCombatLockdown()) then
-						SUI:Print(ERR_NOT_IN_COMBAT)
+						print(ERR_NOT_IN_COMBAT)
 						return
 					end
 					SUI.DBMod.Artwork.VehicleUI = val
@@ -298,13 +283,6 @@ local function Options()
 					end
 				end
 			},
-			-- MoveBars={name = "Move Bars", type = "toggle",order=0.91,
-			-- get = function(info) if Bartender4 then return Bartender4.db.profile.buttonlock else SUI.opt.args["Artwork"].args["Base"].args["LockButtons"].disabled=true; return false; end end,
-			-- set = function(info, value)
-			-- Bartender4.db.profile.buttonlock = value
-			-- Bartender4.Bar:ForAll("ForAll", "SetAttribute", "buttonlock", value)
-			-- end,
-			-- },
 			minimapIcon = {
 				order = 7,
 				type = 'toggle',
@@ -322,6 +300,14 @@ local function Options()
 			}
 		}
 	}
+
+	if Bartender4.options then
+		for k, v in pairs(Bartender4.options.args.bars.args) do
+			if v.args.position then
+				v.args.position.hidden = true
+			end
+		end
+	end
 
 	-- Add to help screen
 	SUI.opt.args.Help.args.ResetActionBars = SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']
@@ -367,7 +353,6 @@ end
 
 local function OnInitialize()
 	--Bartender4
-	SUI.DBG.BartenderChangesActive = false
 	if Bartender4 then
 		--Update to the current profile
 		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
@@ -422,7 +407,6 @@ local function RefreshConfig()
 				f:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
 				_G[v]:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
 			end
-		-- MoveIt:UpdateMover(f.name)
 		end
 	end
 end
@@ -453,10 +437,14 @@ local function OnEnable()
 		StaticPopup_Show('BartenderVerWarning')
 	end
 
-	if not module.DB.BT4Initalized or ProfileCheck(BTProfileName) then
+	if not module.DB.BT4Initalized then
 		module.DB.BT4Initalized = true
 		--Force Rebuild of primary bar profile
-		module.Bartender4.SetupProfile(true)
+		if Bartender4.db:GetCurrentProfile() ~= BTProfileName and ProfileCheck(BTProfileName) then
+			Bartender4.db:SetProfile(BTProfileName)
+		else
+			SetupProfile()
+		end
 	end
 
 	-- Position Bars
@@ -492,10 +480,12 @@ local function OnEnable()
 
 	--Disable BT4 Movement system
 	function Bartender4:Unlock()
-		print('BT4 Movement System is disabled by SUI. You can move the bars via /sui move')
+		print('Bartender4 movement system overridden by SpartanUI')
+		Unlock()
 	end
 
 	function Bartender4:Lock()
+		return
 	end
 
 	-- Do what Bartender isn't - Make the Bag buttons the same size
@@ -533,92 +523,12 @@ local function OnEnable()
 	end
 end
 
-local function Unlock()
-	local MoveIt = SUI:GetModule('Component_MoveIt')
-	local MoverList = {}
-
-	-- Generate list of objects to move
-	for i = 1, 10 do
-		local bar = _G['BT4Bar' .. i]
-		if bar then
-			MoverList[#MoverList] = 'BT4Bar' .. i
-		end
-	end
-
-	-- Move them!
-	MoveIt:MoveIt(MoverList)
-end
-
-local function BT4ProfileAttach(msg)
-	local PageData = {
-		title = 'SpartanUI',
-		Desc1 = msg,
-		-- Desc2 = Desc2,
-		width = 400,
-		height = 150,
-		Display = function()
-			SUI_Win:ClearAllPoints()
-			SUI_Win:SetPoint('TOP', 0, -20)
-			SUI_Win:SetSize(400, 150)
-			SUI_Win.Status:Hide()
-
-			SUI_Win.Skip:SetText('DO NOT ATTACH')
-			SUI_Win.Skip:SetSize(110, 25)
-			SUI_Win.Skip:ClearAllPoints()
-			SUI_Win.Skip:SetPoint('BOTTOMRIGHT', SUI_Win, 'BOTTOM', -15, 15)
-
-			SUI_Win.Next:SetText('ATTACH')
-			SUI_Win.Next:ClearAllPoints()
-			SUI_Win.Next:SetPoint('BOTTOMLEFT', SUI_Win, 'BOTTOM', 15, 15)
-		end,
-		Next = function()
-			SUI.DBG.Bartender4[SUI.DB.BT4Profile] = {
-				Style = SUI.DBMod.Artwork.Style
-			}
-			--Setup profile
-			SUI:GetModule('Component_Artwork'):SetupProfile(Bartender4.db:GetCurrentProfile())
-			ReloadUI()
-		end,
-		Skip = function()
-			-- ReloadUI()
-		end
-	}
-	local SetupWindow = SUI:GetModule('SUIWindow')
-	SetupWindow:DisplayPage(PageData)
-end
-
 function SUI:BT4RefreshConfig()
-	if SUI.DBG.BartenderChangesActive then
+	if BartenderChangesActive then
 		return
 	end
-	-- if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile == Bartender4.db:GetCurrentProfile() then return end -- Catch False positive)
-	SUI.DB.Styles[SUI.DBMod.Artwork.Style].BT4Profile = Bartender4.db:GetCurrentProfile()
-	SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
 
-	if SUI.DBG.Bartender4 == nil then
-		SUI.DBG.Bartender4 = {}
-	end
-
-	if SUI.DBG.Bartender4[SUI.DB.BT4Profile] then
-		-- We know this profile.
-		if SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style ~= SUI.DBMod.Artwork.Style then
-			--Ask if we should change to the correct profile or if we should change the profile to be for this style
-			BT4ProfileAttach(
-				"This bartender profile is currently attached to the style '" ..
-					SUI.DBG.Bartender4[SUI.DB.BT4Profile].Style ..
-						"' you are currently using " ..
-							SUI.DBMod.Artwork.Style .. ' would you like to reassign the profile to this art skin? '
-			)
-		end
-	else
-		-- We do not know this profile, ask if we should attach it to this style.
-		BT4ProfileAttach(
-			'This bartender profile is currently NOT attached to any style you are currently using the ' ..
-				SUI.DBMod.Artwork.Style .. ' style would you like to assign the profile to this art skin? '
-		)
-	end
-
-	SUI:Print('Bartender4 Profile changed to: ' .. Bartender4.db:GetCurrentProfile())
+	print('Bartender4 Profile changed to: ' .. Bartender4.db:GetCurrentProfile())
 end
 
 module:AddBarSystem('Bartender4', OnInitialize, OnEnable, nil, Unlock, RefreshConfig)

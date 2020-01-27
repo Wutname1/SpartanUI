@@ -567,7 +567,3 @@ function module:BuildOptions()
 		}
 	}
 end
-
-function module:HideOptions()
-	SUI.opt.args['ModSetting'].args['Chatbox'].disabled = true
-end

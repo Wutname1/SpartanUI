@@ -76,7 +76,7 @@ function module:OnEnable()
 end
 
 function module:OnDisable()
-	Fel_SpartanUI:Hide()
+	SUI_Art_Fel:Hide()
 end
 
 function module:SetupMenus()

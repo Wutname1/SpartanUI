@@ -64,9 +64,9 @@ function module:SetupMenus()
 				set = function(info, val)
 					SUI.DB.Styles.Minimal.HideCenterGraphic = val
 					if SUI.DB.Styles.Minimal.HideCenterGraphic then
-						Minimal_SpartanUI_Base1:Hide()
+						SUI_Art_Minimal_Base1:Hide()
 					else
-						Minimal_SpartanUI_Base1:Show()
+						SUI_Art_Minimal_Base1:Show()
 					end
 				end
 			},
@@ -90,8 +90,7 @@ function module:SetupMenus()
 end
 
 function module:OnDisable()
-	Minimal_SpartanUI:Hide()
-	Minimal_AnchorFrame:Hide()
+	SUI_Art_Minimal:Hide()
 end
 
 function module:Options_PartyFrames()

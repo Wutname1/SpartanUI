@@ -2,7 +2,7 @@ local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Minimal')
 ----------------------------------------------------------------------------------------------------
-local anchor, frame = Minimal_AnchorFrame, Minimal_SpartanUI
+local frame = SUI_Art_Minimal
 
 function module:updateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
@@ -21,41 +21,12 @@ function module:updateScale() -- scales SpartanUI based on setting or screen siz
 		end
 	end
 	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(Minimal_SpartanUI:GetScale())) then
+		if (SUI.DB.scale ~= SUI:round(SUI_Art_Minimal:GetScale())) then
 			frame:SetScale(SUI.DB.scale)
 		end
 
 		CurScale = SUI.DB.scale
 	end
-end
-
-function module:updateOffset(Top, Bottom) -- handles SpartanUI offset based on setting or fubar / titan
-	if SUI.DB.Styles.Minimal.HideCenterGraphic then
-		Minimal_SpartanUI_Base1:Hide()
-	else
-		Minimal_SpartanUI_Base1:Show()
-	end
-end
-
-function module:updateXOffset() -- handles SpartanUI offset based on setting or fubar / titan
-	if not SUI.DB.Offset.Horizontal then
-		return 0
-	end
-	local offset = SUI.DB.Offset.Horizontal
-	if SUI:round(offset) <= -300 then
-		Minimal_SpartanUI_Base5:ClearAllPoints()
-		Minimal_SpartanUI_Base5:SetPoint('LEFT', Minimal_SpartanUI_Base4, 'RIGHT')
-		Minimal_SpartanUI_Base5:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT')
-	elseif SUI:round(offset) >= 300 then
-		Minimal_SpartanUI_Base3:ClearAllPoints()
-		Minimal_SpartanUI_Base3:SetPoint('RIGHT', Minimal_SpartanUI_Base2, 'LEFT')
-		Minimal_SpartanUI_Base3:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT')
-	end
-	Minimal_SpartanUI:SetPoint('LEFT', Minimal_AnchorFrame, 'LEFT', offset, 0)
-	if (SUI:round(offset) ~= SUI:round(anchor:GetWidth())) then
-		anchor:SetWidth(offset)
-	end
-	SUI.DB.Offset.Horizontal = offset
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -87,7 +58,7 @@ function module:SetColor()
 	local r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color)
 
 	for i = 1, 5 do
-		_G['Minimal_SpartanUI_Base' .. i]:SetVertexColor(r, b, g, a)
+		_G['SUI_Art_Minimal_Base' .. i]:SetVertexColor(r, b, g, a)
 	end
 
 	for _, v in pairs(module.Trays) do
@@ -101,14 +72,14 @@ function module:InitFramework()
 		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
 		SUI_FramesAnchor:SetFrameLevel(1)
 		SUI_FramesAnchor:ClearAllPoints()
-		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Minimal_AnchorFrame', 'BOTTOMLEFT', 0, 0)
-		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Minimal_AnchorFrame', 'BOTTOMRIGHT', 0, 150)
+		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'SUI_Art_Minimal', 'BOTTOMLEFT', 0, 0)
+		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'SUI_Art_Minimal', 'BOTTOMRIGHT', 0, 150)
 
 		MainMenuBarVehicleLeaveButton:HookScript(
 			'OnShow',
 			function()
 				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', Minimal_SpartanUI_Base1, 'TOP', 0, -100)
+				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, -100)
 			end
 		)
 
@@ -195,13 +166,11 @@ end
 function module:TooltipLoc(self, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
-		tooltip:SetPoint('BOTTOMRIGHT', Minimal_SpartanUI, 'BOTTOMRIGHT', -20, 20)
+		tooltip:SetPoint('BOTTOMRIGHT', SUI_Art_Minimal, 'BOTTOMRIGHT', -20, 20)
 	end
 end
 
 function module:EnableFramework()
-	anchor:SetFrameStrata('BACKGROUND')
-	anchor:SetFrameLevel(1)
 	frame:SetFrameStrata('BACKGROUND')
 	frame:SetFrameLevel(1)
 
@@ -229,30 +198,4 @@ function module:EnableFramework()
 
 	module:SetColor()
 	module:updateScale()
-	module:updateXOffset()
-
-	-- Limit updates via interval
-	anchor.UpdateInterval = 5 --Seconds
-	anchor.TimeSinceLastUpdate = 0
-	anchor:SetScript(
-		'OnUpdate',
-		function(self, ...)
-			local elapsed = select(1, ...)
-			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
-			if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-				if (InCombatLockdown()) then
-					return
-				end
-
-				module:updateScale()
-				module:updateXOffset()
-				self.TimeSinceLastUpdate = 0
-
-				if SUI.DB.OpenOptions then
-					SUI:ChatCommand()
-					SUI.DB.OpenOptions = false
-				end
-			end
-		end
-	)
 end
