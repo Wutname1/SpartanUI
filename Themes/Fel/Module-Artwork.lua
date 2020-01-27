@@ -194,14 +194,6 @@ function module:EnableArtwork()
 		end
 	)
 
-	MainMenuBarVehicleLeaveButton:HookScript(
-		'OnShow',
-		function()
-			MainMenuBarVehicleLeaveButton:ClearAllPoints()
-			MainMenuBarVehicleLeaveButton:SetPoint('LEFT', SUI_playerFrame, 'RIGHT', 15, 0)
-		end
-	)
-
 	module:SetupVehicleUI()
 
 	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then

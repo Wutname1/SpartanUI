@@ -201,14 +201,6 @@ function module:EnableArtwork()
 		end
 	)
 
-	MainMenuBarVehicleLeaveButton:HookScript(
-		'OnShow',
-		function()
-			MainMenuBarVehicleLeaveButton:ClearAllPoints()
-			MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SUI_Art_War.Left, 'TOPRIGHT', 0, 20)
-		end
-	)
-
 	module:SetupVehicleUI()
 
 	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
@@ -265,7 +257,6 @@ function module:MiniMap()
 		Minimap.ZoneText:Hide()
 		MinimapZoneText:Show()
 	end
-
 
 	-- SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 end

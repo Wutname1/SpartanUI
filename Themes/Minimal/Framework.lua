@@ -75,14 +75,6 @@ function module:InitFramework()
 		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'SUI_Art_Minimal', 'BOTTOMLEFT', 0, 0)
 		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'SUI_Art_Minimal', 'BOTTOMRIGHT', 0, 150)
 
-		MainMenuBarVehicleLeaveButton:HookScript(
-			'OnShow',
-			function()
-				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, -100)
-			end
-		)
-
 		FramerateText:ClearAllPoints()
 		FramerateText:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 

@@ -62,14 +62,6 @@ function module:InitFramework()
 		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'SUI_Art_Transparent', 'TOPLEFT', 0, 0)
 		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'SUI_Art_Transparent', 'BOTTOMRIGHT', 0, 155)
 
-		MainMenuBarVehicleLeaveButton:HookScript(
-			'OnShow',
-			function()
-				MainMenuBarVehicleLeaveButton:ClearAllPoints()
-				MainMenuBarVehicleLeaveButton:SetPoint('BOTTOM', SUI_Art_Transparent, 'TOP', 0, 20)
-			end
-		)
-
 		FramerateText:ClearAllPoints()
 		FramerateText:SetPoint('BOTTOM', 'SUI_Art_Transparent_Base1', 'TOP', 0, 0)
 

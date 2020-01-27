@@ -165,7 +165,9 @@ local DBdefault = {
 		},
 		Styles = {
 			['**'] = {
-				Artwork = {},
+				Artwork = {
+					MainMenuBarVehicleLeaveButton = 'LEFT,SUI_UF_player,RIGHT,20,0'
+				},
 				PlayerFrames = {},
 				PartyFrames = {},
 				RaidFrames = {},
@@ -324,6 +326,9 @@ local DBdefault = {
 				}
 			},
 			Classic = {
+				Artwork = {
+					MainMenuBarVehicleLeaveButton = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
+				},
 				Frames = {
 					player = {
 						Buffs = {Mode = 'icons'},
