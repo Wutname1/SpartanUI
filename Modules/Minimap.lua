@@ -4,7 +4,7 @@ local MoveIt, Settings
 local UserSettings = SUI.DB.MiniMap
 ----------------------------------------------------------------------------------------------------
 local ChangesTimer = nil
-local MinimapUpdater = CreateFrame('Frame')
+local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 local SUI_MiniMapIcon
 local IgnoredFrames = {}
 local LastUpdateStatus = nil
@@ -544,7 +544,10 @@ function module:update()
 		Minimap.coords:SetScale(Settings.coords.scale)
 
 		-- If minimap default location is under the minimap setup scripts to move it
-		if Settings.UnderVehicleUI and SUI.DBMod.Artwork.VehicleUI then
+		if
+			Settings.UnderVehicleUI and SUI.DBMod.Artwork.VehicleUI and (not VisibilityWatcher.hooked) and
+				(not MoveIt:IsMoved('Minimap'))
+		 then
 			local OnHide = function(args)
 				if SUI.DBMod.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and Minimap.position then
 					Minimap:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
@@ -557,10 +560,13 @@ function module:update()
 				end
 			end
 
-			local VisibilityWatcher = CreateFrame('Frame')
 			VisibilityWatcher:SetScript('OnHide', OnHide)
 			VisibilityWatcher:SetScript('OnShow', OnShow)
 			RegisterStateDriver(VisibilityWatcher, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+			VisibilityWatcher.hooked = true
+		elseif (MoveIt:IsMoved('Minimap') or (not SUI.DBMod.Artwork.VehicleUI)) and VisibilityWatcher.hooked then
+			UnregisterStateDriver(VisibilityWatcher, 'visibility')
+			VisibilityWatcher.hooked = false
 		end
 	end
 
