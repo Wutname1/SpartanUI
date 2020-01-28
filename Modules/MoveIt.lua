@@ -370,7 +370,14 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 		end
 	end
 	local function position(self, point, anchor, secondaryPoint, x, y, forced, defaultPos)
-		-- If the frame has been moved and we are not focing the movement stop
+		-- If Frame:position() was called just make sure we are anchored properly
+		if not point then
+			self:ClearAllPoints()
+			self:SetPoint('TOPLEFT', self.mover, 0, 0)
+			return
+		end
+
+		-- If the frame has been moved and we are not focing the movement exit
 		if SUI.DB.MoveIt.movers[name].MovedPoints and not forced then
 			return
 		end

@@ -165,9 +165,7 @@ local DBdefault = {
 		},
 		Styles = {
 			['**'] = {
-				Artwork = {
-					MainMenuBarVehicleLeaveButton = 'LEFT,SUI_UF_player,RIGHT,20,0'
-				},
+				Artwork = {},
 				PlayerFrames = {},
 				PartyFrames = {},
 				RaidFrames = {},
@@ -322,13 +320,12 @@ local DBdefault = {
 				BlizzMovers = {
 					['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 					['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
-					['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215'
+					['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
+					['VehicleLeaveButton'] = 'LEFT,SUI_UF_player,RIGHT,20,0'
 				}
 			},
 			Classic = {
-				Artwork = {
-					MainMenuBarVehicleLeaveButton = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
-				},
+				Artwork = {},
 				Frames = {
 					player = {
 						Buffs = {Mode = 'icons'},
@@ -363,6 +360,9 @@ local DBdefault = {
 					PlayerFrames = false,
 					PartyFrames = false,
 					RaidFrames = false
+				},
+				BlizzMovers = {
+					['VehicleLeaveButton'] = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
 				},
 				TooltipLoc = true
 			},

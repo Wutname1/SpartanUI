@@ -251,17 +251,6 @@ function module:OnEnable()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
 	end
-	local MoveIt = SUI:GetModule('Component_MoveIt')
-
-	local function MoverCreate()
-		local point, anchor, secondaryPoint, x, y =
-			strsplit(',', SUI.DB.Styles[SUI.DBMod.Artwork.Style].Artwork.MainMenuBarVehicleLeaveButton)
-		MainMenuBarVehicleLeaveButton:ClearAllPoints()
-		MainMenuBarVehicleLeaveButton:SetPoint(point, anchor, secondaryPoint, x, y)
-		MoveIt:CreateMover(MainMenuBarVehicleLeaveButton, 'MainMenuBarVehicleLeaveButton', 'Vehicle leave button')
-	end
-
-	module:ScheduleTimer(MoverCreate, 2)
 
 	module:SetupPage()
 	module:updateOffset()

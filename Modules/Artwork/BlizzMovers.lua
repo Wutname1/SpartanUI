@@ -86,8 +86,35 @@ local function AlertFrame()
 	GroupLootContainer:SetPoint('BOTTOM', AlertHolder)
 end
 
+local function VehicleLeaveButton()
+	local function MoverCreate()
+		-- if InCombatLockdown() then
+		-- 	return
+		-- end
+
+		local point, anchor, secondaryPoint, x, y =
+			strsplit(',', SUI.DB.Styles[SUI.DBMod.Artwork.Style].BlizzMovers.VehicleLeaveButton)
+		MainMenuBarVehicleLeaveButton:ClearAllPoints()
+		MainMenuBarVehicleLeaveButton:SetPoint(point, anchor, secondaryPoint, x, y)
+		MoveIt:CreateMover(MainMenuBarVehicleLeaveButton, 'VehicleLeaveButton', 'Vehicle leave button')
+
+		MainMenuBarVehicleLeaveButton:HookScript(
+			'OnShow',
+			function()
+				if not InCombatLockdown() then
+					MainMenuBarVehicleLeaveButton:position()
+				end
+			end
+		)
+	end
+
+	-- Delay this so unit frames have been generated
+	module:ScheduleTimer(MoverCreate, 2)
+end
+
 function module.BlizzMovers()
 	AlertFrame()
 	TalkingHead()
 	AltPowerBar()
+	VehicleLeaveButton()
 end
