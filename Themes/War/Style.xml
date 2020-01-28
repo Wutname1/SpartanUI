@@ -1,26 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
-	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Style-Setup.lua" />
-
-	<!-- SpartanUI -->
-	<Frame name="SUI_Art_War" frameStrata="BACKGROUND" parent="SpartanUI">
-		<Anchors>
-			<Anchor point="BOTTOM" relativePoint="BOTTOM" />
-			<Anchor point="TOP" relativePoint="BOTTOM">
-				<Offset>
-					<AbsDimension x="0" y="153"/>
-				</Offset>
-			</Anchor>
-			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" />
-			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" />
-		</Anchors>
-	</Frame>
-
-	<!-- War_BarTemplate1 -->
-	<Frame name="War_BarTemplate1" frameStrata="BACKGROUND" virtual="true">
+	<!-- SUI_Art_War_BarBG -->
+	<Frame name="SUI_Art_War_BarBG" frameStrata="BACKGROUND" virtual="true">
 		<Size>
 			<AbsDimension x="400" y="32" />
 		</Size>
@@ -46,7 +28,7 @@
 		</Size>
 		<Frames>
 			<!-- Action Bars -->
-			<Frame name="War_Bar1" inherits="War_BarTemplate1">
+			<Frame name="War_Bar1" inherits="SUI_Art_War_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 						<Offset>
@@ -55,7 +37,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="War_Bar2" inherits="War_BarTemplate1">
+			<Frame name="War_Bar2" inherits="SUI_Art_War_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 						<Offset>
@@ -64,7 +46,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="War_Bar3" inherits="War_BarTemplate1">
+			<Frame name="War_Bar3" inherits="SUI_Art_War_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
 						<Offset>
@@ -73,7 +55,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="War_Bar4" inherits="War_BarTemplate1">
+			<Frame name="War_Bar4" inherits="SUI_Art_War_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
 						<Offset>
@@ -85,6 +67,6 @@
 		</Frames>
 	</Frame>
 
-	<Script file="Module-Artwork.lua" />
 	<Script file="Style.lua" />
+	<Script file="Module-Artwork.lua" />
 </Ui>

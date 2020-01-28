@@ -3,70 +3,11 @@ local Artwork_Core = SUI:GetModule('Component_Artwork')
 local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local module = SUI:GetModule('Style_War')
 ----------------------------------------------------------------------------------------------------
-module.Trays = {}
-module.StatusBarSettings = {
-	bars = {
-		'StatusBar_Left',
-		'StatusBar_Right'
-	},
-	StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-		size = {370, 20},
-		TooltipSize = {350, 100},
-		TooltipTextSize = {330, 80},
-		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-		GlowPoint = {x = -16},
-		MaxWidth = 48
-	},
-	StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-		Grow = 'RIGHT',
-		size = {370, 20},
-		TooltipSize = {350, 100},
-		TooltipTextSize = {330, 80},
-		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-		GlowPoint = {x = 16},
-		MaxWidth = 48
-	}
-}
+
 local CurScale, plate
 local petbattle = CreateFrame('Frame')
 
--- Misc Framework stuff
-function module:updateScale()
-	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
-		local Resolution = ''
-		if select(4, GetBuildInfo()) >= 70000 then
-			Resolution = GetCVar('gxWindowedResolution')
-		else
-			Resolution = GetCVar('gxResolution')
-		end
-
-		local width, height = string.match(Resolution, '(%d+).-(%d+)')
-		if (tonumber(width) / tonumber(height) > 4 / 3) then
-			SUI.DB.scale = 0.92
-		else
-			SUI.DB.scale = 0.78
-		end
-	end
-	if SUI.DB.scale ~= CurScale then
-		if (SUI.DB.scale ~= SUI:round(SUI_Art_War:GetScale())) then
-			SUI_Art_War:SetScale(SUI.DB.scale)
-		end
-		local StatusBars = SUI:GetModule('Artwork_StatusBars')
-		for _, key in ipairs(module.StatusBarSettings.bars) do
-			StatusBars.bars[key]:SetScale(SUI.DB.scale)
-		end
-
-		CurScale = SUI.DB.scale
-	end
-end
-
 function module:updateAlpha()
-	if SUI.DB.alpha then
-		SUI_Art_War.Left:SetAlpha(SUI.DB.alpha)
-		SUI_Art_War.Right:SetAlpha(SUI.DB.alpha)
-	end
 	-- Update Action bar backgrounds
 	for i = 1, 4 do
 		if SUI.DB.Styles.War.Artwork['bar' .. i].enable then
@@ -75,12 +16,6 @@ function module:updateAlpha()
 		else
 			_G['War_Bar' .. i]:Hide()
 		end
-	end
-end
-
-function module:updateOffset(Top, offset)
-	if InCombatLockdown() then
-		return
 	end
 end
 
@@ -134,7 +69,7 @@ function module:RemoveVehicleUI()
 	end
 end
 
-function module:InitArtwork()
+function module:CreateArtwork()
 	plate = CreateFrame('Frame', 'War_ActionBarPlate', SpartanUI, 'War_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
@@ -144,26 +79,21 @@ function module:InitArtwork()
 	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
 
 	--Setup the Bottom Artwork
-	SUI_Art_War:SetFrameStrata('BACKGROUND')
-	SUI_Art_War:SetFrameLevel(1)
+	local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
+	artFrame:SetFrameStrata('BACKGROUND')
+	artFrame:SetFrameLevel(1)
+	artFrame:SetPoint('BOTTOMLEFT', 0, 153)
+	artFrame:SetPoint('BOTTOMRIGHT', 0, 153)
 
-	SUI_Art_War.Left = SUI_Art_War:CreateTexture('SUI_Art_War_Left', 'BORDER')
-	SUI_Art_War.Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', 0, 0)
+	artFrame.Left = artFrame:CreateTexture('SUI_Art_War_Left', 'BORDER')
+	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Left')
+	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM')
+	artFrame.Left:SetScale(.75)
 
-	SUI_Art_War.Right = SUI_Art_War:CreateTexture('SUI_Art_War_Right', 'BORDER')
-	SUI_Art_War.Right:SetPoint('LEFT', SUI_Art_War.Left, 'RIGHT', 0, 0)
-
-	SUI_Art_War.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Left.tga')
-	SUI_Art_War.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Right.tga')
-
-	-- Inital Scaling
-	SUI_Art_War.Left:SetScale(.75)
-	SUI_Art_War.Right:SetScale(.75)
-
-	-- Setup Frame posistions
-	UnitFrames.FramePos['War'] = {
-		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-45,250'
-	}
+	artFrame.Right = artFrame:CreateTexture('SUI_Art_War_Right', 'BORDER')
+	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Right')
+	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
+	artFrame.Right:SetScale(.75)
 end
 
 function module:EnableArtwork()
@@ -257,6 +187,4 @@ function module:MiniMap()
 		Minimap.ZoneText:Hide()
 		MinimapZoneText:Show()
 	end
-
-	-- SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 end

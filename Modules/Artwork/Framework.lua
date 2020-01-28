@@ -2,8 +2,122 @@ local SUI = SUI
 local L = SUI.L
 local module = SUI:NewModule('Component_Artwork', 'AceTimer-3.0')
 module.ActiveStyle = {}
+local styleArt
+-------------------------------------------------
 
-function module:SetActiveStyle()
+local function SetupPage()
+	local PageData = {
+		ID = 'ArtworkCore',
+		Name = 'SpartanUI style',
+		SubTitle = 'Art Style',
+		Desc1 = 'Please pick an art style from the options below.',
+		RequireReload = true,
+		Priority = true,
+		NoReloadOnSkip = true,
+		RequireDisplay = (not SUI.DBMod.Artwork.SetupDone or false),
+		Display = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+
+			--Container
+			SUI_Win.Artwork = CreateFrame('Frame', nil)
+			SUI_Win.Artwork:SetParent(SUI_Win)
+			SUI_Win.Artwork:SetAllPoints(SUI_Win)
+
+			local RadioButtons = function(self)
+				self.radio:Click()
+			end
+			local SetStyle = function(self)
+				if SUI.DBMod.Artwork.Style == StdUi:GetRadioGroupValue('SUIArtwork') then
+					return
+				end
+
+				-- Disable the old skin
+				local OldSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+
+				-- Set and Enable the new one
+				SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
+				SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
+
+				local NewSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+				OldSkin:Disable()
+				NewSkin:Enable()
+
+				SUI:GetModule('Component_UnitFrames').UpdateAll()
+			end
+
+			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal'}) do
+				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
+				control:SetScript('OnClick', RadioButtons)
+				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
+
+				control.radio = StdUi:Radio(SUI_Win.Artwork, v, 'SUIArtwork', 120, 20)
+				control.radio:SetValue(v)
+				control.radio:HookScript('OnClick', SetStyle)
+				StdUi:GlueBelow(control.radio, control)
+
+				SUI_Win.Artwork[v] = control
+			end
+
+			-- Position the Top row
+			StdUi:GlueTop(SUI_Win.Artwork.Fel, SUI_Win, 0, -80)
+			StdUi:GlueLeft(SUI_Win.Artwork.Classic, SUI_Win.Artwork.Fel, -20, 0)
+			StdUi:GlueRight(SUI_Win.Artwork.War, SUI_Win.Artwork.Fel, 20, 0)
+
+			-- Position the Bottom row
+			StdUi:GlueTop(SUI_Win.Artwork.Digital, SUI_Win.Artwork.Fel.radio, 0, -30)
+			StdUi:GlueLeft(SUI_Win.Artwork.Transparent, SUI_Win.Artwork.Digital, -20, 0)
+			StdUi:GlueRight(SUI_Win.Artwork.Minimal, SUI_Win.Artwork.Digital, 20, 0)
+
+			-- Check Classic as default
+			SUI_Win.Artwork.War.radio:SetChecked(true)
+		end,
+		Next = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local StdUi = window.StdUi
+			SUI.DBMod.Artwork.SetupDone = true
+
+			SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
+			SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
+		end
+	}
+	local SetupWindow = SUI:GetModule('SetupWizard')
+	SetupWindow:AddPage(PageData)
+end
+
+local function StyleUpdate()
+	if module.ActiveStyle.barBackgrounds then
+		SUI.opt.args.Artwork.args.BarBG.disabled = true
+	else
+		SUI.opt.args.Artwork.args.BarBG.disabled = false
+	end
+
+	module:updateScale()
+	module:updateAlpha()
+	module:updateOffset()
+	module:updateHorizontalOffset()
+	module:updateViewport()
+end
+
+function module:SetActiveStyle(style)
+	if style and style ~= SUI.DBMod.Artwork.Style then
+		-- Disable the current style and enable the one we want
+		local OldStyle = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+		local NewStyle = SUI:GetModule('Style_' .. style)
+		OldStyle:Disable()
+		NewStyle:Enable()
+
+		-- Update the DB
+		SUI.DBMod.Artwork.Style = style
+	end
+
+	-- Update style settings shortcut
+	module.ActiveStyle = SUI.DB.Artwork.Styles[SUI.DBMod.Artwork.Style]
+	styleArt = _G['SUI_Art_' .. SUI.DBMod.Artwork.Style]
+
+	-- Update core elements based on new style
+	StyleUpdate()
 end
 
 function module:updateScale()
@@ -24,6 +138,9 @@ function module:updateScale()
 		end
 	end
 
+	if styleArt then
+		styleArt:SetAlpha(SUI.DB.alpha)
+	end
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 	if style.updateScale then
@@ -31,15 +148,10 @@ function module:updateScale()
 	end
 end
 
-function module:updateHorizontalOffset()
-	-- Call module scale update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
-	if style.updateXOffset then
-		style:updateXOffset()
-	end
-end
-
 function module:updateAlpha()
+	if styleArt then
+		styleArt:SetAlpha(SUI.DB.alpha)
+	end
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
 	if style.updateAlpha then
@@ -126,6 +238,14 @@ function module:updateOffset()
 	SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Offset.Bottom)
 end
 
+function module:updateHorizontalOffset()
+	-- Call module scale update if defined.
+	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	if style.updateXOffset then
+		style:updateXOffset()
+	end
+end
+
 function module:updateViewport()
 	if not InCombatLockdown() and SUI.DBMod.Artwork.Viewport.enabled then
 		WorldFrame:ClearAllPoints()
@@ -146,105 +266,16 @@ function module:updateViewport()
 	end
 end
 
-function module:isInTable(tab, frameName)
-	for _, v in ipairs(tab) do
-		if (strlower(v) == strlower(frameName)) then
-			return true
-		end
-	end
-	return false
-end
-
 function module:OnInitialize()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
 	end
 
-	module:CheckMiniMap()
+	-- Initalize style
+	module:SetActiveStyle()
 
 	-- Loop over the BlizzMovers and execute them
 	module.BlizzMovers()
-end
-
-function module:SetupPage()
-	local PageData = {
-		ID = 'ArtworkCore',
-		Name = 'SpartanUI style',
-		SubTitle = 'Art Style',
-		Desc1 = 'Please pick an art style from the options below.',
-		RequireReload = true,
-		Priority = true,
-		NoReloadOnSkip = true,
-		RequireDisplay = (not SUI.DBMod.Artwork.SetupDone or false),
-		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
-
-			--Container
-			SUI_Win.Artwork = CreateFrame('Frame', nil)
-			SUI_Win.Artwork:SetParent(SUI_Win)
-			SUI_Win.Artwork:SetAllPoints(SUI_Win)
-
-			local RadioButtons = function(self)
-				self.radio:Click()
-			end
-			local SetStyle = function(self)
-				if SUI.DBMod.Artwork.Style == StdUi:GetRadioGroupValue('SUIArtwork') then
-					return
-				end
-
-				-- Disable the old skin
-				local OldSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
-
-				-- Set and Enable the new one
-				SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
-				SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-
-				local NewSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
-				OldSkin:Disable()
-				NewSkin:Enable()
-
-				SUI:GetModule('Component_UnitFrames').UpdateAll()
-			end
-
-			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal'}) do
-				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
-				control:SetScript('OnClick', RadioButtons)
-				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
-
-				control.radio = StdUi:Radio(SUI_Win.Artwork, v, 'SUIArtwork', 120, 20)
-				control.radio:SetValue(v)
-				control.radio:HookScript('OnClick', SetStyle)
-				StdUi:GlueBelow(control.radio, control)
-
-				SUI_Win.Artwork[v] = control
-			end
-
-			-- Position the Top row
-			StdUi:GlueTop(SUI_Win.Artwork.Fel, SUI_Win, 0, -80)
-			StdUi:GlueLeft(SUI_Win.Artwork.Classic, SUI_Win.Artwork.Fel, -20, 0)
-			StdUi:GlueRight(SUI_Win.Artwork.War, SUI_Win.Artwork.Fel, 20, 0)
-
-			-- Position the Bottom row
-			StdUi:GlueTop(SUI_Win.Artwork.Digital, SUI_Win.Artwork.Fel.radio, 0, -30)
-			StdUi:GlueLeft(SUI_Win.Artwork.Transparent, SUI_Win.Artwork.Digital, -20, 0)
-			StdUi:GlueRight(SUI_Win.Artwork.Minimal, SUI_Win.Artwork.Digital, 20, 0)
-
-			-- Check Classic as default
-			SUI_Win.Artwork.War.radio:SetChecked(true)
-		end,
-		Next = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local StdUi = window.StdUi
-			SUI.DBMod.Artwork.SetupDone = true
-
-			SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
-			SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
-		end
-	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
 end
 
 function module:OnEnable()
@@ -256,28 +287,4 @@ function module:OnEnable()
 	module:updateOffset()
 	module:updateViewport()
 	module:SetupOptions()
-end
-
-function module:CheckMiniMap()
-	-- Check for Carbonite dinking with the minimap.
-	if (NXTITLELOW) then
-		SUI:Print(NXTITLELOW .. ' is loaded ...Checking settings ...')
-		if (Nx.db.profile.MiniMap.Own == true) then
-			SUI:Print(NXTITLELOW .. ' is controlling the Minimap')
-			SUI:Print('SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap')
-			SUI.DB.MiniMap.AutoDetectAllowUse = false
-		end
-	end
-
-	if select(4, GetAddOnInfo('SexyMap')) then
-		SUI:Print(L['SexyMapLoaded'])
-		SUI.DB.MiniMap.AutoDetectAllowUse = false
-	end
-
-	local _, relativeTo = MinimapCluster:GetPoint()
-	if (relativeTo ~= UIParent) then
-		SUI:Print('A unknown addon is controlling the Minimap')
-		SUI:Print('SpartanUI Will not modify or move the minimap until the addon modifying the minimap is no longer enabled.')
-		SUI.DB.MiniMap.AutoDetectAllowUse = false
-	end
 end

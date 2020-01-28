@@ -1929,7 +1929,11 @@ function SUI.print(msg, doNotLabel)
 end
 function SUI:Error(err, mod)
 	SUI:Print('|cffff0000Error detected')
-	SUI:Print("An error has been captured in the Component '" .. (mod or 'UNKNOWN') .. "'")
+	if mod then
+		SUI:Print("An error has occured in the Component '" .. mod .. "'")
+	else
+		SUI:Print('An error has occured')
+	end
 	SUI:Print('Details: ' .. (err or 'None provided'))
 	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
 end

@@ -162,22 +162,37 @@ function module:OnInitialize()
 		button1 = 'Yes',
 		button2 = 'No',
 		OnAccept = function()
-			UserSettings.ManualAllowPrompt = SUI.DB.Version
 			UserSettings.ManualAllowUse = true
-			ReloadUI()
 		end,
 		OnCancel = function()
-			UserSettings.ManualAllowPrompt = SUI.DB.Version
+			UserSettings.ManualAllowUse = true
+			SUI.DB.EnabledComponents.Minimap = false
+			ReloadUI()
 		end,
 		timeout = 0,
 		whileDead = true,
 		hideOnEscape = false
 	}
 	Settings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap
+
+	-- Check for Carbonite dinking with the minimap.
+	if (NXTITLELOW) then
+		SUI:Print(NXTITLELOW .. ' is loaded ...Checking settings ...')
+		if (Nx.db.profile.MiniMap.Own == true) then
+			SUI:Print(NXTITLELOW .. ' is controlling the Minimap')
+			SUI:Print('SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap')
+			UserSettings.AutoDetectAllowUse = false
+		end
+	end
+
+	-- Look for Sexymap or other MiniMap addons
+	if (select(2, MinimapCluster:GetPoint()) ~= UIParent) or select(4, GetAddOnInfo('SexyMap')) then
+		UserSettings.AutoDetectAllowUse = false
+	end
 end
 
 function module:OnEnable()
-	if ((not UserSettings.AutoDetectAllowUse) and UserSettings.ManualAllowPrompt ~= SUI.DB.Version) then
+	if ((not UserSettings.AutoDetectAllowUse) and (not UserSettings.ManualAllowUse)) then
 		StaticPopup_Show('MiniMapNotice')
 	end
 	if not SUI.DB.EnabledComponents.Minimap then
