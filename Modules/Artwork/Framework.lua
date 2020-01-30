@@ -113,7 +113,7 @@ function module:SetActiveStyle(style)
 	end
 
 	-- Update style settings shortcut
-	module.ActiveStyle = SUI.DB.Artwork.Styles[SUI.DBMod.Artwork.Style]
+	module.ActiveStyle = SUI.DB.Styles[SUI.DBMod.Artwork.Style]
 	styleArt = _G['SUI_Art_' .. SUI.DBMod.Artwork.Style]
 
 	-- Update core elements based on new style
@@ -271,6 +271,9 @@ function module:OnInitialize()
 		return
 	end
 
+	-- Setup options
+	module:SetupOptions()
+
 	-- Initalize style
 	module:SetActiveStyle()
 
@@ -283,8 +286,7 @@ function module:OnEnable()
 		return
 	end
 
-	module:SetupPage()
+	SetupPage()
 	module:updateOffset()
 	module:updateViewport()
-	module:SetupOptions()
 end

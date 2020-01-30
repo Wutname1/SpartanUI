@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
+
 	<!-- SUI_Art_War_BarBG -->
 	<Frame name="SUI_Art_War_BarBG" frameStrata="BACKGROUND" virtual="true">
 		<Size>
@@ -68,5 +69,4 @@
 	</Frame>
 
 	<Script file="Style.lua" />
-	<Script file="Module-Artwork.lua" />
 </Ui>
