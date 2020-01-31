@@ -217,7 +217,16 @@ local TooltipSetItem = function(self)
 					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
 					overlayAtlasTop = 'AzeriteTooltip-Topper',
 					overlayAtlasTopScale = .75,
-					overlayAtlasBottom = 'AzeriteTooltip-Bottom'
+					overlayAtlasTopYOffset = 1,
+					overlayAtlasBottom = 'AzeriteTooltip-Bottom',
+					overlayAtlasBottomYOffset = 2
+				}
+			elseif IsCorruptedItem(itemLink) then
+				style = {
+					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Corrupted',
+					overlayAtlasTop = 'Nzoth-tooltip-topper',
+					overlayAtlasTopScale = .75,
+					overlayAtlasTopYOffset = -2
 				}
 			end
 		end
@@ -768,4 +777,3 @@ function module:BuildOptions()
 		}
 	end
 end
-
