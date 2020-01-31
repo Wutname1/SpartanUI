@@ -267,10 +267,15 @@ function module.QUEST_DETAIL()
 		QuestInfoDescriptionText:SetAlpha(1)
 
 		if SUI.DB.AutoTurnIn.ChatText then
-			SUI:Print(GetTitleText())
-			print(GetQuestText())
-			SUI:Print(L['Quest Objectives'])
-			print(GetObjectiveText())
+			local title = GetTitleText()
+			local objText = GetObjectiveText()
+			if title and title ~= '' then
+				SUI:Print(objText)
+			end
+			if objText and objText ~= '' then
+				SUI:Print(L['Quest Objectives'])
+				print('    ' .. objText)
+			end
 		end
 		if (not IsAltKeyDown()) then
 			AcceptQuest()
