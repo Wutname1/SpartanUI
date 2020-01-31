@@ -277,7 +277,7 @@ function module:ProcessNext()
 			-- We only want to refresh if there's more items to show
 			SUI:Print(L['Not all messages are shown, refreshing mailbox soon to continue Open All...'])
 			-- refreshFrame:Show()
-			module.RefreshMailTimer = ScheduleTimer('RefreshMail', 65)
+			module.RefreshMailTimer = module:ScheduleTimer('RefreshMail', 65)
 			return
 		end
 
