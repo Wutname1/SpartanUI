@@ -4,3 +4,6 @@
 [submodule "libs/SUF"]
 	path = libs/SUF
 	url = https://github.com/Wutname1/SUF.git
+[submodule "libs/LibClassicCasterino"]
+	path = libs/LibClassicCasterino
+	url = https://github.com/rgd87/LibClassicCasterino.git
