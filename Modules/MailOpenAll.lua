@@ -8,6 +8,7 @@ local lastItem, lastNumAttach, lastNumGold
 local wait, button, skipFlag
 local invFull, invAlmostFull
 local firstMailDaysLeft
+local totalGold
 module.RefreshMailTimer = nil
 
 function module:OnInitialize()
@@ -130,6 +131,7 @@ function module:OpenMail()
 	button:SetText(L['Opening...'])
 
 	self:RegisterEvent('UI_ERROR_MESSAGE')
+	totalGold = 0
 	self:ProcessNext()
 end
 
@@ -178,6 +180,7 @@ function module:ProcessNext()
 		if (not invFull or msgMoney > 0) and not SUI.DB.MailOpenAll.Silent then
 			local moneyString = msgMoney > 0 and ' [' .. module:FormatMoney(msgMoney) .. ']' or ''
 			local playerName
+			totalGold = totalGold + msgMoney
 			if (mailType == 'AHSuccess' or mailType == 'AHWon') then
 				playerName = select(3, GetInboxInvoiceInfo(mailIndex))
 				playerName = playerName and (' (' .. playerName .. ')')
@@ -284,6 +287,9 @@ function module:ProcessNext()
 
 		if skipFlag then
 			SUI:Print(L['Some Messages May Have Been Skipped.'])
+		end
+		if (totalGold and totalGold > 0) and not SUI.DB.MailOpenAll.Silent then
+			SUI:Print('Total money gained: ' .. module:FormatMoney(totalGold))
 		end
 		self:Reset()
 	end
