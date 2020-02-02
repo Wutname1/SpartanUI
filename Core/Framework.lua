@@ -309,7 +309,7 @@ local DBdefault = {
 					},
 					coords = {
 						scale = 1,
-						Location = 'BOTTOM',
+						position = 'TOP,Minimap,BOTTOM,0,-4',
 						TextColor = {1, .82, 0, 1},
 						ShadowColor = {0, 0, 0, 1}
 					}
@@ -348,6 +348,9 @@ local DBdefault = {
 				Minimap = {
 					size = {156, 156},
 					coords = {TextColor = {1, .82, 0, 1}},
+					coords = {
+						position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+					},
 					position = 'CENTER,SUI_Art_Classic,CENTER,0,54'
 				},
 				StatusBars = {
@@ -429,6 +432,7 @@ local DBdefault = {
 						position = 'CENTER,Minimap,CENTER,7,37'
 					},
 					coords = {
+						position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 						scale = 1.2
 					},
 					position = 'CENTER,SUI_Art_Fel,CENTER,0,54',
@@ -527,6 +531,9 @@ local DBdefault = {
 						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
 						size = {330, 330},
 						position = 'CENTER,Minimap,CENTER,7,37'
+					},
+					coords = {
+						position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
 					},
 					position = 'CENTER,SUI_Art_War_Left,RIGHT,0,20'
 				},
