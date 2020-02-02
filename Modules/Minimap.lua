@@ -136,21 +136,6 @@ function module:ShapeChange(shape)
 		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -4)
 	end
 
-	Minimap.coords:ClearAllPoints()
-	if
-		(Settings.coordsLocation == 'TOP' and Settings.TextLocation == 'TOP') or
-			(Settings.coordsLocation == 'BOTTOM' and Settings.TextLocation == 'BOTTOM')
-	 then
-		Minimap.coords:SetPoint('TOPLEFT', Minimap.ZoneText, 'BOTTOMLEFT', 0, -4)
-		Minimap.coords:SetPoint('TOPRIGHT', Minimap.ZoneText, 'BOTTOMRIGHT', 0, -4)
-	elseif Settings.TextLocation == 'TOP' and Settings.coordsLocation == 'BOTTOM' then
-		Minimap.coords:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -4)
-		Minimap.coords:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -4)
-	elseif Settings.TextLocation == 'BOTTOM' and Settings.coordsLocation == 'TOP' then
-		Minimap.coords:SetPoint('BOTTOMLEFT', Minimap, 'TOPLEFT', 0, 4)
-		Minimap.coords:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 4)
-	end
-
 	MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 	MinimapZoneText:SetShadowOffset(1, -1)
 end
@@ -407,8 +392,8 @@ function module:MinimapCoords()
 	MinimapZoneTextButton:SetAllPoints(Minimap.ZoneText)
 
 	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(Minimap.coords, 9, 'Minimap')
-	Minimap.coords:SetSize(9, 12)
+	SUI:FormatFont(Minimap.coords, 10, 'Minimap')
+	Minimap.coords:SetSize(80, 12)
 	Minimap.coords:SetJustifyH('TOP')
 	Minimap.coords:SetPoint('TOPLEFT', Minimap.ZoneText, 'BOTTOMLEFT', 0, 0)
 	Minimap.coords:SetPoint('TOPRIGHT', Minimap.ZoneText, 'BOTTOMRIGHT', 0, 0)
@@ -530,6 +515,11 @@ function module:update()
 		end
 
 		if UserSettings.DisplayMapCords then
+			-- Position coords
+			local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.coords.position)
+			Minimap.coords:ClearAllPoints()
+			Minimap.coords:SetPoint(point, anchor, secondaryPoint, x, y)
+
 			Minimap.coords:Show()
 		else
 			Minimap.coords:Hide()
