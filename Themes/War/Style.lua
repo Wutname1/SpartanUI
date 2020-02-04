@@ -157,9 +157,6 @@ function module:OnEnable()
 			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -100, -2)
 		end
 
-		War_ActionBarPlate:ClearAllPoints()
-		War_ActionBarPlate:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', 0, offset)
-
 		hooksecurefunc(
 			'UIParent_ManageFramePositions',
 			function()
@@ -244,7 +241,8 @@ function module:CreateArtwork()
 	plate = CreateFrame('Frame', 'War_ActionBarPlate', SpartanUI, 'War_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
-	plate:SetPoint('BOTTOM')
+	plate:ClearAllPoints()
+	plate:SetAllPoints(SUI_ActionBarAnchor)
 
 	FramerateText:ClearAllPoints()
 	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
@@ -264,6 +262,14 @@ function module:CreateArtwork()
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Right')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
 	artFrame.Right:SetScale(.75)
+
+	for i = 1, 4 do
+		if UnitFactionGroup('PLAYER') == 'Horde' then
+			_G['War_Bar' .. i .. 'BG']:SetVertexColor(1, 0, 0, .25)
+		else
+			_G['War_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 1, .25)
+		end
+	end
 end
 
 function module:StatusBars()
@@ -274,8 +280,8 @@ function module:StatusBars()
 	StatusBars.bars.StatusBar_Right:SetAlpha(.9)
 
 	-- Position the StatusBars
-	StatusBars.bars.StatusBar_Left:SetPoint('BOTTOMRIGHT', War_ActionBarPlate, 'BOTTOM', -100, 0)
-	StatusBars.bars.StatusBar_Right:SetPoint('BOTTOMLEFT', War_ActionBarPlate, 'BOTTOM', 100, 0)
+	StatusBars.bars.StatusBar_Left:SetPoint('BOTTOMRIGHT', SUI_ActionBarAnchor, 'BOTTOM', -100, 0)
+	StatusBars.bars.StatusBar_Right:SetPoint('BOTTOMLEFT', SUI_ActionBarAnchor, 'BOTTOM', 100, 0)
 end
 
 -- Artwork Stuff
