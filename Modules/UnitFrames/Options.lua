@@ -2024,11 +2024,11 @@ function PlayerOptions()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return SUI.DBMod.PlayerFrames.player.display
+					return SUI.DB.PlayerFrames.player.display
 				end,
 				set = function(info, val)
-					SUI.DBMod.PlayerFrames.player.display = val
-					if SUI.DBMod.PlayerFrames.player.display then
+					SUI.DB.PlayerFrames.player.display = val
+					if SUI.DB.PlayerFrames.player.display then
 						PlayerFrames.player:Enable()
 					else
 						PlayerFrames.player:Disable()
@@ -2040,11 +2040,11 @@ function PlayerOptions()
 				type = 'toggle',
 				order = 2,
 				get = function(info)
-					return SUI.DBMod.PlayerFrames.pet.display
+					return SUI.DB.PlayerFrames.pet.display
 				end,
 				set = function(info, val)
-					SUI.DBMod.PlayerFrames.pet.display = val
-					if SUI.DBMod.PlayerFrames.pet.display then
+					SUI.DB.PlayerFrames.pet.display = val
+					if SUI.DB.PlayerFrames.pet.display then
 						PlayerFrames.pet:Enable()
 					else
 						PlayerFrames.pet:Disable()
@@ -2056,11 +2056,11 @@ function PlayerOptions()
 				type = 'toggle',
 				order = 3,
 				get = function(info)
-					return SUI.DBMod.PlayerFrames.target.display
+					return SUI.DB.PlayerFrames.target.display
 				end,
 				set = function(info, val)
-					SUI.DBMod.PlayerFrames.target.display = val
-					if SUI.DBMod.PlayerFrames.target.display then
+					SUI.DB.PlayerFrames.target.display = val
+					if SUI.DB.PlayerFrames.target.display then
 						PlayerFrames.target:Enable()
 					else
 						PlayerFrames.target:Disable()
@@ -2072,11 +2072,11 @@ function PlayerOptions()
 				type = 'toggle',
 				order = 4,
 				get = function(info)
-					return SUI.DBMod.PlayerFrames.targettarget.display
+					return SUI.DB.PlayerFrames.targettarget.display
 				end,
 				set = function(info, val)
-					SUI.DBMod.PlayerFrames.targettarget.display = val
-					if SUI.DBMod.PlayerFrames.targettarget.display then
+					SUI.DB.PlayerFrames.targettarget.display = val
+					if SUI.DB.PlayerFrames.targettarget.display then
 						PlayerFrames.targettarget:Enable()
 					else
 						PlayerFrames.targettarget:Disable()
@@ -2088,11 +2088,11 @@ function PlayerOptions()
 				type = 'toggle',
 				order = 5,
 				get = function(info)
-					return SUI.DBMod.PlayerFrames.focustarget.display
+					return SUI.DB.PlayerFrames.focustarget.display
 				end,
 				set = function(info, val)
-					SUI.DBMod.PlayerFrames.focustarget.display = val
-					if SUI.DBMod.PlayerFrames.focustarget.display then
+					SUI.DB.PlayerFrames.focustarget.display = val
+					if SUI.DB.PlayerFrames.focustarget.display then
 						PlayerFrames.focustarget:Enable()
 					else
 						PlayerFrames.focustarget:Disable()

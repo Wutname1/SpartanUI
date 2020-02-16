@@ -3,12 +3,12 @@ local L = SUI.L
 local module = SUI:GetModule('Component_Artwork')
 
 function module:SetupOptions()
-	if SUI.DBMod.Artwork.Style == '' then
+	if SUI.DB.Artwork.Style == '' then
 		return
 	end
 
 	local ArtworkOpts = SUI.opt.args.Artwork.args
-	local Style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	local Style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 	ArtworkOpts.scale = {
 		name = L['ConfScale'],
 		type = 'range',
@@ -50,27 +50,27 @@ function module:SetupOptions()
 		type = 'toggle',
 		order = 3,
 		get = function(info)
-			return SUI.DBMod.Artwork.VehicleUI
+			return SUI.DB.Artwork.VehicleUI
 		end,
 		set = function(info, val)
 			if (InCombatLockdown()) then
 				SUI:Print(ERR_NOT_IN_COMBAT)
 				return
 			end
-			SUI.DBMod.Artwork.VehicleUI = val
+			SUI.DB.Artwork.VehicleUI = val
 			--Make sure bartender knows to do it, or not...
 			if Bartender4 then
 				Bartender4.db.profile.blizzardVehicle = val
 				Bartender4:UpdateBlizzardVehicle()
 			end
 
-			if SUI.DBMod.Artwork.VehicleUI then
-				if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
-					SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupVehicleUI()
+			if SUI.DB.Artwork.VehicleUI then
+				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then
+					SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):SetupVehicleUI()
 				end
 			else
-				if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
-					SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):RemoveVehicleUI()
+				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then
+					SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):RemoveVehicleUI()
 				end
 			end
 		end
@@ -105,7 +105,7 @@ function module:SetupOptions()
 				order = 1,
 				desc = 'Allow SpartanUI To manage the viewport',
 				get = function(info)
-					return SUI.DBMod.Artwork.Viewport.enabled
+					return SUI.DB.Artwork.Viewport.enabled
 				end,
 				set = function(info, val)
 					if (InCombatLockdown()) then
@@ -118,10 +118,10 @@ function module:SetupOptions()
 						WorldFrame:SetPoint('TOPLEFT', 0, 0)
 						WorldFrame:SetPoint('BOTTOMRIGHT', 0, 0)
 					end
-					SUI.DBMod.Artwork.Viewport.enabled = val
+					SUI.DB.Artwork.Viewport.enabled = val
 
 					for _, v in ipairs({'Top', 'Bottom', 'Left', 'Right'}) do
-						ArtworkOpts['Viewport'].args['viewportoffset' .. v].disabled = (not SUI.DBMod.Artwork.Viewport.enabled)
+						ArtworkOpts['Viewport'].args['viewportoffset' .. v].disabled = (not SUI.DB.Artwork.Viewport.enabled)
 					end
 
 					module:updateViewport()
@@ -136,10 +136,10 @@ function module:SetupOptions()
 				max = 200,
 				step = .1,
 				get = function(info)
-					return SUI.DBMod.Artwork.Viewport.offset.top
+					return SUI.DB.Artwork.Viewport.offset.top
 				end,
 				set = function(info, val)
-					SUI.DBMod.Artwork.Viewport.offset.top = val
+					SUI.DB.Artwork.Viewport.offset.top = val
 					module:updateViewport()
 				end
 			},
@@ -151,10 +151,10 @@ function module:SetupOptions()
 				max = 200,
 				step = .1,
 				get = function(info)
-					return SUI.DBMod.Artwork.Viewport.offset.bottom
+					return SUI.DB.Artwork.Viewport.offset.bottom
 				end,
 				set = function(info, val)
-					SUI.DBMod.Artwork.Viewport.offset.bottom = val
+					SUI.DB.Artwork.Viewport.offset.bottom = val
 					module:updateViewport()
 				end
 			},
@@ -166,10 +166,10 @@ function module:SetupOptions()
 				max = 200,
 				step = .1,
 				get = function(info)
-					return SUI.DBMod.Artwork.Viewport.offset.left
+					return SUI.DB.Artwork.Viewport.offset.left
 				end,
 				set = function(info, val)
-					SUI.DBMod.Artwork.Viewport.offset.left = val
+					SUI.DB.Artwork.Viewport.offset.left = val
 					module:updateViewport()
 				end
 			},
@@ -181,17 +181,17 @@ function module:SetupOptions()
 				max = 200,
 				step = .1,
 				get = function(info)
-					return SUI.DBMod.Artwork.Viewport.offset.right
+					return SUI.DB.Artwork.Viewport.offset.right
 				end,
 				set = function(info, val)
-					SUI.DBMod.Artwork.Viewport.offset.right = val
+					SUI.DB.Artwork.Viewport.offset.right = val
 					module:updateViewport()
 				end
 			}
 		}
 	}
 	for _, v in ipairs({'Top', 'Bottom', 'Left', 'Right'}) do
-		ArtworkOpts.Viewport.args['viewportoffset' .. v].disabled = (not SUI.DBMod.Artwork.Viewport.enabled)
+		ArtworkOpts.Viewport.args['viewportoffset' .. v].disabled = (not SUI.DB.Artwork.Viewport.enabled)
 	end
 
 	ArtworkOpts.Offset = {

@@ -26,7 +26,7 @@ function module:OnInitialize()
 	}
 
 	--Init if needed
-	if (SUI.DBMod.Artwork.Style == 'Minimal') then
+	if (SUI.DB.Artwork.Style == 'Minimal') then
 		module:Init()
 	end
 end
@@ -38,7 +38,7 @@ function module:Init()
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style ~= 'Minimal') then
+	if (SUI.DB.Artwork.Style ~= 'Minimal') then
 		module:Disable()
 	else
 		if (not InitRan) then

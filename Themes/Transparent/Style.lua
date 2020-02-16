@@ -42,7 +42,7 @@ function module:OnInitialize()
 	}
 
 	--Init if needed
-	if (SUI.DBMod.Artwork.Style == 'Transparent') then
+	if (SUI.DB.Artwork.Style == 'Transparent') then
 		module:Init()
 	end
 end
@@ -56,11 +56,11 @@ function module:Init()
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style ~= 'Transparent') then
+	if (SUI.DB.Artwork.Style ~= 'Transparent') then
 		module:Disable()
 		return
 	end
-	if (SUI.DBMod.Artwork.Style == 'Transparent') then
+	if (SUI.DB.Artwork.Style == 'Transparent') then
 		if (not InitRan) then
 			module:Init()
 		end

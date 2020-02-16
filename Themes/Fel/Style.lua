@@ -11,7 +11,7 @@ function module:OnInitialize()
 
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Digital'].disabled = false
 	--Init if needed
-	if (SUI.DBMod.Artwork.Style == 'Fel') then
+	if (SUI.DB.Artwork.Style == 'Fel') then
 		module:Init()
 	end
 
@@ -65,7 +65,7 @@ function module:Init()
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style ~= 'Fel') then
+	if (SUI.DB.Artwork.Style ~= 'Fel') then
 		module:Disable()
 	else
 		if (not InitRan) then

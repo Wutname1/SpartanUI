@@ -31,7 +31,7 @@ end
 local function setLogging(on, msg)
 	if on then
 		if GetCVar('advancedCombatLogging') ~= 1 then
-			SetCVar('advancedCombatLogging', 1)
+			C_CVar.SetCVar('advancedCombatLogging', 1)
 		end
 		LoggingCombat(true)
 		SUI.DB.CombatLog.logging = true -- We have to track this ourself incase the player reloads the ui

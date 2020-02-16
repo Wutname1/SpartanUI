@@ -77,8 +77,8 @@ end
 
 --	Formatting functions
 local TextFormat = function(text)
-	local textstyle = SUI.DBMod.PlayerFrames.bars[text].textstyle
-	local textmode = SUI.DBMod.PlayerFrames.bars[text].textmode
+	local textstyle = SUI.DB.PlayerFrames.bars[text].textstyle
+	local textmode = SUI.DB.PlayerFrames.bars[text].textmode
 	local a, m, t, z
 	if text == 'mana' then
 		z = 'pp'
@@ -183,14 +183,14 @@ end
 local PostUpdateColor = function(self, unit)
 	self.Health.frequentUpdates = true
 	self.Health.colorDisconnected = true
-	if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+	if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 		self.Health.colorReaction = true
 		self.Health.colorClass = false
-	elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+	elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 		self.Health.colorHappiness = true
 		self.Health.colorReaction = false
 		self.Health.colorClass = false
-	elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+	elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 		self.Health.colorClass = true
 		self.Health.colorReaction = false
 	else
@@ -233,13 +233,13 @@ local OnCastbarUpdate = function(self, elapsed)
 			else
 				self.Time:SetTextColor(1, 1, 1)
 			end
-			if SUI.DBMod.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
+			if SUI.DB.PlayerFrames.Castbar.text[self:GetParent().unit] == 1 then
 				self.Time:SetFormattedText('%.1f', self.max - self.duration)
 			else
 				self.Time:SetFormattedText('%.1f', self.duration)
 			end
 		end
-		if SUI.DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if SUI.DB.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.max - self.duration)
 		else
 			self:SetValue(self.duration)
@@ -258,7 +258,7 @@ local OnCastbarUpdate = function(self, elapsed)
 			end
 			self.Time:SetFormattedText('%.1f', self.max - self.duration)
 		end
-		if SUI.DBMod.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
+		if SUI.DB.PlayerFrames.Castbar[self:GetParent().unit] == 1 then
 			self:SetValue(self.duration)
 		else
 			self:SetValue(self.max - self.duration)
@@ -312,7 +312,7 @@ local CreateLargeFrame = function(self, unit)
 
 		if unit ~= 'raid' then
 			self.Portrait = PlayerFrames:CreatePortrait(self)
-			if SUI.DBMod.PlayerFrames.Portrait3D then
+			if SUI.DB.PlayerFrames.Portrait3D then
 				self.Portrait:SetFrameStrata('LOW')
 				self.Portrait:SetFrameLevel(2)
 			end
@@ -365,11 +365,11 @@ local CreateLargeFrame = function(self, unit)
 
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			if SUI.DBMod.PlayerFrames.bars[unit] and SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+			if SUI.DB.PlayerFrames.bars[unit] and SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 				self.Health.colorReaction = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit] and SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+			elseif SUI.DB.PlayerFrames.bars[unit] and SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 				self.Health.colorHappiness = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit] and SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+			elseif SUI.DB.PlayerFrames.bars[unit] and SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 				self.Health.colorClass = true
 			else
 				self.Health.colorSmooth = true
@@ -998,7 +998,7 @@ function module:PlayerFrames()
 	module:PositionFrame()
 	module:UpdateAltBarPositions()
 
-	if SUI.DBMod.PlayerFrames.BossFrame.display == true then
+	if SUI.DB.PlayerFrames.BossFrame.display == true then
 		if (InCombatLockdown()) then
 			return
 		end
@@ -1054,13 +1054,13 @@ function module:PlayerFrames()
 
 			if i == 1 then
 				boss[i]:SetMovable(true)
-				if SUI.DBMod.PlayerFrames.BossFrame.movement.moved then
+				if SUI.DB.PlayerFrames.BossFrame.movement.moved then
 					boss[i]:SetPoint(
-						SUI.DBMod.PlayerFrames.BossFrame.movement.point,
-						SUI.DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-						SUI.DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-						SUI.DBMod.PlayerFrames.BossFrame.movement.xOffset,
-						SUI.DBMod.PlayerFrames.BossFrame.movement.yOffset
+						SUI.DB.PlayerFrames.BossFrame.movement.point,
+						SUI.DB.PlayerFrames.BossFrame.movement.relativeTo,
+						SUI.DB.PlayerFrames.BossFrame.movement.relativePoint,
+						SUI.DB.PlayerFrames.BossFrame.movement.xOffset,
+						SUI.DB.PlayerFrames.BossFrame.movement.yOffset
 					)
 				else
 					boss[i]:SetPoint('TOPRIGHT', UIParent, 'RIGHT', -50, 60)
@@ -1090,13 +1090,13 @@ function module:PlayerFrames()
 			if (InCombatLockdown()) then
 				return
 			end
-			if SUI.DBMod.PlayerFrames.BossFrame.movement.moved then
+			if SUI.DB.PlayerFrames.BossFrame.movement.moved then
 				SUI_Boss1:SetPoint(
-					SUI.DBMod.PlayerFrames.BossFrame.movement.point,
-					SUI.DBMod.PlayerFrames.BossFrame.movement.relativeTo,
-					SUI.DBMod.PlayerFrames.BossFrame.movement.relativePoint,
-					SUI.DBMod.PlayerFrames.BossFrame.movement.xOffset,
-					SUI.DBMod.PlayerFrames.BossFrame.movement.yOffset
+					SUI.DB.PlayerFrames.BossFrame.movement.point,
+					SUI.DB.PlayerFrames.BossFrame.movement.relativeTo,
+					SUI.DB.PlayerFrames.BossFrame.movement.relativePoint,
+					SUI.DB.PlayerFrames.BossFrame.movement.xOffset,
+					SUI.DB.PlayerFrames.BossFrame.movement.yOffset
 				)
 			else
 				SUI_Boss1:SetPoint('TOPRIGHT', UIParent, 'TOPLEFT', -50, -490)
@@ -1168,7 +1168,7 @@ function module:RaidFrames()
 	local columnAnchorPoint = 'LEFT'
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 
-	if SUI.DBMod.RaidFrames.mode == 'GROUP' then
+	if SUI.DB.RaidFrames.mode == 'GROUP' then
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
 	if SUI.DB.Styles.War.RaidFrames.FrameStyle == 'medium' then
@@ -1185,13 +1185,13 @@ function module:RaidFrames()
 		nil,
 		'raid',
 		'showRaid',
-		SUI.DBMod.RaidFrames.showRaid,
+		SUI.DB.RaidFrames.showRaid,
 		'showParty',
-		SUI.DBMod.RaidFrames.showParty,
+		SUI.DB.RaidFrames.showParty,
 		'showPlayer',
 		true,
 		'showSolo',
-		SUI.DBMod.RaidFrames.showSolo,
+		SUI.DB.RaidFrames.showSolo,
 		'xoffset',
 		xoffset,
 		'yOffset',
@@ -1199,17 +1199,17 @@ function module:RaidFrames()
 		'point',
 		point,
 		'groupBy',
-		SUI.DBMod.RaidFrames.mode,
+		SUI.DB.RaidFrames.mode,
 		'groupingOrder',
 		groupingOrder,
 		'sortMethod',
 		'index',
 		'maxColumns',
-		SUI.DBMod.RaidFrames.maxColumns,
+		SUI.DB.RaidFrames.maxColumns,
 		'unitsPerColumn',
-		SUI.DBMod.RaidFrames.unitsPerColumn,
+		SUI.DB.RaidFrames.unitsPerColumn,
 		'columnSpacing',
-		SUI.DBMod.RaidFrames.columnSpacing,
+		SUI.DB.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
 		'oUF-initialConfigFunction',
@@ -1237,13 +1237,13 @@ function module:PartyFrames()
 		nil,
 		nil,
 		'showRaid',
-		SUI.DBMod.PartyFrames.showRaid,
+		SUI.DB.PartyFrames.showRaid,
 		'showParty',
-		SUI.DBMod.PartyFrames.showParty,
+		SUI.DB.PartyFrames.showParty,
 		'showPlayer',
-		SUI.DBMod.PartyFrames.showPlayer,
+		SUI.DB.PartyFrames.showPlayer,
 		'showSolo',
-		SUI.DBMod.PartyFrames.showSolo,
+		SUI.DB.PartyFrames.showSolo,
 		'yOffset',
 		-16,
 		'xOffset',

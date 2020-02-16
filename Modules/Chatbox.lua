@@ -122,7 +122,7 @@ function module:PlayerName(text)
 end
 
 function module:TimeStamp(text)
-	SELECTED_FORMAT = '[' .. SUI.DBMod.Chatbox.TimeStamp.format .. ']'
+	SELECTED_FORMAT = '[' .. SUI.DB.Chatbox.TimeStamp.format .. ']'
 	text = date(SELECTED_FORMAT) .. text
 	return text
 end
@@ -222,11 +222,11 @@ function module:OnInitialize()
 
 	-- Disable Blizz class color
 	if GetCVar('chatClassColorOverride') ~= '0' then
-		SetCVar('chatClassColorOverride', '0')
+		C_CVar.SetCVar('chatClassColorOverride', '0')
 	end
 	-- Disable Blizz time stamping
 	if GetCVar('showTimestamps') ~= 'none' then
-		SetCVar('showTimestamps', 'none')
+		C_CVar.SetCVar('showTimestamps', 'none')
 		CHAT_TIMESTAMP_FORMAT = nil
 	end
 	ChatLevelLog = {}
@@ -275,7 +275,7 @@ end
 
 function module:SetupChatboxes()
 	local filterFunc = function(_, _, msg, ...)
-		if not SUI.DBMod.Chatbox.webLinks then
+		if not SUI.DB.Chatbox.webLinks then
 			return
 		end
 
@@ -347,7 +347,7 @@ function module:SetupChatboxes()
 		end
 	end
 	local TabHintEnter = function(frame)
-		if not SUI.DBMod.Chatbox.ChatCopy.tip then
+		if not SUI.DB.Chatbox.ChatCopy.tip then
 			return
 		end
 
@@ -358,7 +358,7 @@ function module:SetupChatboxes()
 		GameTooltip:Show()
 	end
 	local TabHintLeave = function(frame)
-		if not SUI.DBMod.Chatbox.ChatCopy.tip then
+		if not SUI.DB.Chatbox.ChatCopy.tip then
 			return
 		end
 
@@ -496,10 +496,10 @@ function module:BuildOptions()
 					['%M:%S'] = 'MM:SS'
 				},
 				get = function(info)
-					return SUI.DBMod.Chatbox.TimeStamp.format
+					return SUI.DB.Chatbox.TimeStamp.format
 				end,
 				set = function(info, val)
-					SUI.DBMod.Chatbox.TimeStamp.format = val
+					SUI.DB.Chatbox.TimeStamp.format = val
 				end
 			},
 			player = {
@@ -514,10 +514,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 1,
 						get = function(info)
-							return SUI.DBMod.Chatbox.player.level
+							return SUI.DB.Chatbox.player.level
 						end,
 						set = function(info, val)
-							SUI.DBMod.Chatbox.player.level = val
+							SUI.DB.Chatbox.player.level = val
 						end
 					},
 					color = {
@@ -525,10 +525,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 2,
 						get = function(info)
-							return SUI.DBMod.Chatbox.player.color
+							return SUI.DB.Chatbox.player.color
 						end,
 						set = function(info, val)
-							SUI.DBMod.Chatbox.player.color = val
+							SUI.DB.Chatbox.player.color = val
 						end
 					}
 				}
@@ -545,10 +545,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 20,
 						get = function(info)
-							return SUI.DBMod.Chatbox.webLinks
+							return SUI.DB.Chatbox.webLinks
 						end,
 						set = function(info, val)
-							SUI.DBMod.Chatbox.webLinks = val
+							SUI.DB.Chatbox.webLinks = val
 						end
 					},
 					gamelink = {
@@ -556,10 +556,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 21,
 						get = function(info)
-							return SUI.DBMod.Chatbox.LinkHover
+							return SUI.DB.Chatbox.LinkHover
 						end,
 						set = function(info, val)
-							SUI.DBMod.Chatbox.LinkHover = val
+							SUI.DB.Chatbox.LinkHover = val
 						end
 					}
 				}

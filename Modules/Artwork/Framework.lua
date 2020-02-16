@@ -14,7 +14,7 @@ local function SetupPage()
 		RequireReload = true,
 		Priority = true,
 		NoReloadOnSkip = true,
-		RequireDisplay = (not SUI.DBMod.Artwork.SetupDone or false),
+		RequireDisplay = (not SUI.DB.Artwork.SetupDone or false),
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -29,18 +29,18 @@ local function SetupPage()
 				self.radio:Click()
 			end
 			local SetStyle = function(self)
-				if SUI.DBMod.Artwork.Style == StdUi:GetRadioGroupValue('SUIArtwork') then
+				if SUI.DB.Artwork.Style == StdUi:GetRadioGroupValue('SUIArtwork') then
 					return
 				end
 
 				-- Disable the old skin
-				local OldSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+				local OldSkin = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 
 				-- Set and Enable the new one
-				SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
-				SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
+				SUI.DB.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
+				SUI.DB.Unitframes.Style = SUI.DB.Artwork.Style
 
-				local NewSkin = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+				local NewSkin = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 				OldSkin:Disable()
 				NewSkin:Enable()
 
@@ -76,10 +76,10 @@ local function SetupPage()
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local StdUi = window.StdUi
-			SUI.DBMod.Artwork.SetupDone = true
+			SUI.DB.Artwork.SetupDone = true
 
-			SUI.DBMod.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
-			SUI.DB.Unitframes.Style = SUI.DBMod.Artwork.Style
+			SUI.DB.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
+			SUI.DB.Unitframes.Style = SUI.DB.Artwork.Style
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
@@ -101,20 +101,20 @@ local function StyleUpdate()
 end
 
 function module:SetActiveStyle(style)
-	if style and style ~= SUI.DBMod.Artwork.Style then
+	if style and style ~= SUI.DB.Artwork.Style then
 		-- Disable the current style and enable the one we want
-		local OldStyle = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+		local OldStyle = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 		local NewStyle = SUI:GetModule('Style_' .. style)
 		OldStyle:Disable()
 		NewStyle:Enable()
 
 		-- Update the DB
-		SUI.DBMod.Artwork.Style = style
+		SUI.DB.Artwork.Style = style
 	end
 
 	-- Update style settings shortcut
-	module.ActiveStyle = SUI.DB.Styles[SUI.DBMod.Artwork.Style]
-	styleArt = _G['SUI_Art_' .. SUI.DBMod.Artwork.Style]
+	module.ActiveStyle = SUI.DB.Styles[SUI.DB.Artwork.Style]
+	styleArt = _G['SUI_Art_' .. SUI.DB.Artwork.Style]
 
 	-- Update core elements based on new style
 	StyleUpdate()
@@ -142,7 +142,7 @@ function module:updateScale()
 		styleArt:SetAlpha(SUI.DB.alpha)
 	end
 	-- Call module scale update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 	if style.updateScale then
 		style:updateScale()
 	end
@@ -153,7 +153,7 @@ function module:updateAlpha()
 		styleArt:SetAlpha(SUI.DB.alpha)
 	end
 	-- Call module scale update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 	if style.updateAlpha then
 		style:updateAlpha()
 	end
@@ -228,7 +228,7 @@ function module:updateOffset()
 	end
 
 	-- Call module update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 	if style.updateOffset then
 		style:updateOffset(SUI.DB.Offset.Top, SUI.DB.Offset.Bottom)
 	end
@@ -240,28 +240,28 @@ end
 
 function module:updateHorizontalOffset()
 	-- Call module scale update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style)
+	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 	if style.updateXOffset then
 		style:updateXOffset()
 	end
 end
 
 function module:updateViewport()
-	if not InCombatLockdown() and SUI.DBMod.Artwork.Viewport.enabled then
+	if not InCombatLockdown() and SUI.DB.Artwork.Viewport.enabled then
 		WorldFrame:ClearAllPoints()
 		WorldFrame:SetPoint(
 			'TOPLEFT',
 			UIParent,
 			'TOPLEFT',
-			SUI.DBMod.Artwork.Viewport.offset.left,
-			(SUI.DBMod.Artwork.Viewport.offset.top * -1)
+			SUI.DB.Artwork.Viewport.offset.left,
+			(SUI.DB.Artwork.Viewport.offset.top * -1)
 		)
 		WorldFrame:SetPoint(
 			'BOTTOMRIGHT',
 			UIParent,
 			'BOTTOMRIGHT',
-			(SUI.DBMod.Artwork.Viewport.offset.right * -1),
-			SUI.DBMod.Artwork.Viewport.offset.bottom
+			(SUI.DB.Artwork.Viewport.offset.right * -1),
+			SUI.DB.Artwork.Viewport.offset.bottom
 		)
 	end
 end

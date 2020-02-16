@@ -56,10 +56,10 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI.DBMod.Artwork.Style = skin
+				SUI.DB.Artwork.Style = skin
 				-- Fel has a subtheme stil so deal with that.
 				if skin == 'Fel' or skin == 'Digital' then
-					SUI.DBMod.Artwork.Style = 'Fel'
+					SUI.DB.Artwork.Style = 'Fel'
 					SUI.DB.Styles.Fel.SubTheme = skin
 				end
 
@@ -77,10 +77,10 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI.DBMod.Artwork.Style = skin
+				SUI.DB.Artwork.Style = skin
 				-- Fel has a subtheme stil so deal with that.
 				if skin == 'Fel' or skin == 'Digital' then
-					SUI.DBMod.Artwork.Style = 'Fel'
+					SUI.DB.Artwork.Style = 'Fel'
 					SUI.DB.Styles.Fel.SubTheme = skin
 				end
 
@@ -367,11 +367,11 @@ function module:ExportData()
 					'$C.' ..
 						module:FlatenTable(CharData) ..
 							'$Artwork.Style.' ..
-								SUI.DBMod.Artwork.Style ..
+								SUI.DB.Artwork.Style ..
 									'$UnitFrames.Style.' ..
-										SUI.DBMod.UnitFrames.Style .. '$Addons.' .. module:FlatenTable(AddonsInstalled) .. '..$END$..'
+										SUI.DB.UnitFrames.Style .. '$Addons.' .. module:FlatenTable(AddonsInstalled) .. '..$END$..'
 	-- .. "$DB." .. module:FlatenTable(SUI.DB)
-	-- .. "$DBMod." .. module:FlatenTable(SUI.DBMod)
+	-- .. "$DBMod." .. module:FlatenTable(SUI.DB)
 end
 
 function module:FlatenTable(input)

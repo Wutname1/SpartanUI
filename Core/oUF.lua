@@ -67,7 +67,7 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 		local icon = CreateFrame('Frame', nil, self)
 		icon.spellID = sid
 		-- set the dimensions and positions
-		local size = SUI.DBMod.PartyFrames.Auras.size + SizeModifier
+		local size = SUI.DB.PartyFrames.Auras.size + SizeModifier
 		icon:SetSize(size, size)
 		icon:SetPoint(point, self, relativePoint, (-icon:GetWidth() * (i - 1)) - 2, -2)
 
@@ -224,7 +224,7 @@ do -- TargetIndicator as an SUIUF module
 			self.TargetIndicator.bg1:Hide()
 			self.TargetIndicator.bg2:Hide()
 		end
-		if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and SUI.DBMod.NamePlates.ShowTarget then
+		if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and SUI.DB.NamePlates.ShowTarget then
 			if self:GetName() == 'oUF_Spartan_NamePlates' .. C_NamePlate.GetNamePlateForUnit('target'):GetName() then
 				self.TargetIndicator.bg1:Show()
 				self.TargetIndicator.bg2:Show()

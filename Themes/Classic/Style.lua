@@ -33,7 +33,7 @@ module.StatusBarSettings = {
 }
 
 function module:OnInitialize()
-	if (SUI.DBMod.Artwork.Style == 'Classic') then
+	if (SUI.DB.Artwork.Style == 'Classic') then
 		module:Init()
 	else
 		module:Disable()
@@ -98,7 +98,7 @@ function module:Init()
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style == 'Classic') then
+	if (SUI.DB.Artwork.Style == 'Classic') then
 		if (not InitRan) then
 			module:Init()
 		end

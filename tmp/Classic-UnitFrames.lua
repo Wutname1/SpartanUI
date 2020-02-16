@@ -50,13 +50,13 @@ local OnCastbarUpdate = function(self, elapsed)
 			else
 				self.Time:SetTextColor(1, 1, 1)
 			end
-			if SUI.DBMod.PartyFrames.castbartext == 1 then
+			if SUI.DB.PartyFrames.castbartext == 1 then
 				self.Time:SetFormattedText('%.1f', self.max - self.duration)
 			else
 				self.Time:SetFormattedText('%.1f', self.duration)
 			end
 		end
-		if SUI.DBMod.PartyFrames.castbar == 1 then
+		if SUI.DB.PartyFrames.castbar == 1 then
 			self:SetValue(self.max - self.duration)
 		else
 			self:SetValue(self.duration)
@@ -78,13 +78,13 @@ local OnCastbarUpdate = function(self, elapsed)
 				self.Time:SetTextColor(1, 1, 1)
 			end
 			--self.Time:SetFormattedText("%.1f",self.max-self.duration);
-			if SUI.DBMod.PartyFrames.castbartext == 0 then
+			if SUI.DB.PartyFrames.castbartext == 0 then
 				self.Time:SetFormattedText('%.1f', self.max - self.duration)
 			else
 				self.Time:SetFormattedText('%.1f', self.duration)
 			end
 		end
-		if SUI.DBMod.PartyFrames.castbar == 1 then
+		if SUI.DB.PartyFrames.castbar == 1 then
 			self:SetValue(self.duration)
 		else
 			self:SetValue(self.max - self.duration)
@@ -105,7 +105,7 @@ local threat = function(self, event, unit)
 	else
 		status = 0
 	end
-	if self.Portrait and SUI.DBMod.PartyFrames.threat then
+	if self.Portrait and SUI.DB.PartyFrames.threat then
 		if (not self.Portrait:IsObjectType('Texture')) then
 			return
 		end
@@ -115,7 +115,7 @@ local threat = function(self, event, unit)
 		else
 			self.Portrait:SetVertexColor(1, 1, 1)
 		end
-	elseif self.ThreatIndicatorOverlay and SUI.DBMod.PartyFrames.threat then
+	elseif self.ThreatIndicatorOverlay and SUI.DB.PartyFrames.threat then
 		if (status and status > 0) then
 			self.ThreatIndicatorOverlay:SetVertexColor(GetThreatStatusColor(status))
 			self.ThreatIndicatorOverlay:Show()
@@ -155,34 +155,34 @@ local CreatePartyFrame = function(self, unit)
 		--  Portrait.XTexSize = This is the texcord size of the Portrait it
 		-- 						is set by default for if there is no Portrait
 		local Portrait = {Size = 0, XTexSize = .3}
-		if SUI.DBMod.PartyFrames.Portrait then
+		if SUI.DB.PartyFrames.Portrait then
 			Portrait.Size = 75
 			Portrait.XTexSize = 0
 		end
 
-		if SUI.DBMod.PartyFrames.FrameStyle == 'large' then
+		if SUI.DB.PartyFrames.FrameStyle == 'large' then
 			self.artwork.bg:SetTexture(base_plate1)
 			self:SetSize(165 + Portrait.Size, 70)
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize, .95, 0.015, .59)
-		elseif SUI.DBMod.PartyFrames.FrameStyle == 'medium' then
+		elseif SUI.DB.PartyFrames.FrameStyle == 'medium' then
 			self.artwork.bg:SetTexture(base_plate1)
 			self:SetSize(165 + Portrait.Size, 50)
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize, .95, 0.015, .44)
-		elseif SUI.DBMod.PartyFrames.FrameStyle == 'small' then
+		elseif SUI.DB.PartyFrames.FrameStyle == 'small' then
 			self.artwork.bg:SetTexture(base_plate3)
 			self:SetSize(165 + Portrait.Size, 48)
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize, .95, 0.015, .77)
-		elseif SUI.DBMod.PartyFrames.FrameStyle == 'xsmall' then
+		elseif SUI.DB.PartyFrames.FrameStyle == 'xsmall' then
 			self.artwork.bg:SetTexture(base_plate2)
 			self:SetSize(165 + Portrait.Size, 35)
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize, .95, 0.015, .56)
-		elseif SUI.DBMod.PartyFrames.FrameStyle == 'raidsmall' then
+		elseif SUI.DB.PartyFrames.FrameStyle == 'raidsmall' then
 			self.artwork.bg:SetTexture(base_plate2)
 			self:SetSize(165 + Portrait.Size, 35)
 			self.artwork.bg:SetTexCoord(Portrait.XTexSize, .95, 0.015, .56)
 		end
 
-		if SUI.DBMod.PartyFrames.Portrait then
+		if SUI.DB.PartyFrames.Portrait then
 			-- local Portrait = CreateFrame('PlayerModel', nil, self)
 			-- Portrait:SetScript("OnShow", function(self) self:SetCamera(0) end)
 			-- Portrait.type = "3D"
@@ -197,7 +197,7 @@ local CreatePartyFrame = function(self, unit)
 	end
 	do -- setup status bars
 		do -- cast bar
-			if SUI.DBMod.PartyFrames.FrameStyle == 'large' then
+			if SUI.DB.PartyFrames.FrameStyle == 'large' then
 				local cast = CreateFrame('StatusBar', nil, self)
 				cast:SetFrameStrata('BACKGROUND')
 				cast:SetFrameLevel(2)
@@ -231,23 +231,23 @@ local CreatePartyFrame = function(self, unit)
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
 
-			if SUI.DBMod.PartyFrames.FrameStyle == 'large' then
+			if SUI.DB.PartyFrames.FrameStyle == 'large' then
 				health:SetPoint('TOPRIGHT', self.Castbar, 'BOTTOMRIGHT', 0, -2)
 				health:SetSize(110, 15)
-			elseif SUI.DBMod.PartyFrames.FrameStyle == 'medium' then
+			elseif SUI.DB.PartyFrames.FrameStyle == 'medium' then
 				health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -55, -19)
 				health:SetSize(110, 15)
-			elseif SUI.DBMod.PartyFrames.FrameStyle == 'small' then
+			elseif SUI.DB.PartyFrames.FrameStyle == 'small' then
 				health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -55, -19)
 				health:SetSize(110, 27)
-			elseif SUI.DBMod.PartyFrames.FrameStyle == 'xsmall' then
+			elseif SUI.DB.PartyFrames.FrameStyle == 'xsmall' then
 				health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -55, -20)
 				health:SetSize(110, 13)
 			end
 
 			health.value = health:CreateFontString()
 			SUI:FormatFont(health.value, 10, 'Party')
-			if SUI.DBMod.PartyFrames.FrameStyle == 'large' then
+			if SUI.DB.PartyFrames.FrameStyle == 'large' then
 				health.value:SetSize(100, 11)
 			else
 				health.value:SetSize(100, 10)
@@ -275,24 +275,24 @@ local CreatePartyFrame = function(self, unit)
 		end
 		do -- power bar
 			if
-				SUI.DBMod.PartyFrames.FrameStyle == 'large' or SUI.DBMod.PartyFrames.FrameStyle == 'medium' or
-					SUI.DBMod.PartyFrames.display.mana == true
+				SUI.DB.PartyFrames.FrameStyle == 'large' or SUI.DB.PartyFrames.FrameStyle == 'medium' or
+					SUI.DB.PartyFrames.display.mana == true
 			 then
 				local power = CreateFrame('StatusBar', nil, self)
 				power:SetFrameStrata('BACKGROUND')
 				power:SetFrameLevel(2)
 
-				if SUI.DBMod.PartyFrames.Portrait then
+				if SUI.DB.PartyFrames.Portrait then
 					power:SetSize(123, 14)
 				else
 					power:SetSize(self.Health:GetWidth(), 14)
 				end
 
-				if SUI.DBMod.PartyFrames.FrameStyle ~= 'small' and SUI.DBMod.PartyFrames.FrameStyle ~= 'xsmall' then
+				if SUI.DB.PartyFrames.FrameStyle ~= 'small' and SUI.DB.PartyFrames.FrameStyle ~= 'xsmall' then
 					power:SetPoint('TOPRIGHT', self.Health, 'BOTTOMRIGHT', 0, -2)
 					power.value = power:CreateFontString()
 					SUI:FormatFont(power.value, 10, 'Party')
-					if SUI.DBMod.PartyFrames.FrameStyle == 'large' then
+					if SUI.DB.PartyFrames.FrameStyle == 'large' then
 						power.value:SetSize(100, 11)
 					else
 						power.value:SetSize(100, 10)
@@ -330,7 +330,7 @@ local CreatePartyFrame = function(self, unit)
 		self.Name:SetJustifyH('LEFT')
 		self.Name:SetJustifyV('BOTTOM')
 		self.Name:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -10, -6)
-		if SUI.DBMod.PartyFrames.showClass then
+		if SUI.DB.PartyFrames.showClass then
 			self:Tag(self.Name, '[SUI_ColorClass][name]')
 		else
 			self:Tag(self.Name, '[name]')
@@ -349,7 +349,7 @@ local CreatePartyFrame = function(self, unit)
 		self.RaidTargetIndicator = ring:CreateTexture(nil, 'ARTWORK')
 		self.RaidTargetIndicator:SetSize(20, 20)
 
-		if SUI.DBMod.PartyFrames.Portrait then
+		if SUI.DB.PartyFrames.Portrait then
 			ring.bg = ring:CreateTexture(nil, 'BACKGROUND')
 			ring.bg:SetPoint('TOPLEFT', self, 'TOPLEFT', -2, 4)
 			ring.bg:SetTexture(base_ring)
@@ -394,13 +394,13 @@ local CreatePartyFrame = function(self, unit)
 		self.Auras:SetFrameStrata('BACKGROUND')
 		self.Auras:SetFrameLevel(4)
 		-- settings
-		self.Auras.size = SUI.DBMod.PartyFrames.Auras.size
-		self.Auras.spacing = SUI.DBMod.PartyFrames.Auras.spacing
-		self.Auras.showType = SUI.DBMod.PartyFrames.Auras.showType
+		self.Auras.size = SUI.DB.PartyFrames.Auras.size
+		self.Auras.spacing = SUI.DB.PartyFrames.Auras.spacing
+		self.Auras.showType = SUI.DB.PartyFrames.Auras.showType
 		self.Auras.initialAnchor = 'TOPLEFT'
 		self.Auras.gap = true -- adds an empty spacer between buffs and debuffs
-		self.Auras.numBuffs = SUI.DBMod.PartyFrames.Auras.NumBuffs
-		self.Auras.numDebuffs = SUI.DBMod.PartyFrames.Auras.NumDebuffs
+		self.Auras.numBuffs = SUI.DB.PartyFrames.Auras.NumBuffs
+		self.Auras.numDebuffs = SUI.DB.PartyFrames.Auras.NumDebuffs
 
 		self.Auras.PostUpdate = PartyFrames:PostUpdateAura(self, unit)
 	end
@@ -413,7 +413,7 @@ local CreatePartyFrame = function(self, unit)
 			outsideAlpha = 1 / 2
 		}
 
-		if not SUI.DBMod.PartyFrames.Portrait then
+		if not SUI.DB.PartyFrames.Portrait then
 			local overlay = self:CreateTexture(nil, 'OVERLAY')
 			overlay:SetTexture('Interface\\RaidFrame\\Raid-FrameHighlights')
 			overlay:SetTexCoord(0.00781250, 0.55468750, 0.00781250, 0.27343750)
@@ -500,7 +500,7 @@ local CreateSubFrame = function(self, unit)
 		self.Name:SetJustifyH('LEFT')
 		self.Name:SetJustifyV('BOTTOM')
 		self.Name:SetPoint('TOPRIGHT', self.artwork.bg, 'TOPRIGHT', 0, -4)
-		if SUI.DBMod.PartyFrames.showClass then
+		if SUI.DB.PartyFrames.showClass then
 			self:Tag(self.Name, '[level][SUI_ColorClass][name]')
 		else
 			self:Tag(self.Name, '[level][name]')
@@ -510,12 +510,12 @@ local CreateSubFrame = function(self, unit)
 end
 
 local CreateUnitFrame = function(self, unit)
-	if (self:GetAttribute('unitoUFfix') == 'target') and SUI.DBMod.PartyFrames.display.target then
+	if (self:GetAttribute('unitoUFfix') == 'target') and SUI.DB.PartyFrames.display.target then
 		self = CreateSubFrame(self, unit)
 	elseif
 		(self:GetAttribute('unitoUFfix') == 'pet') and
-			(SUI.DBMod.PartyFrames.FrameStyle == 'large' or (not SUI.DBMod.PartyFrames.display.target)) and
-			SUI.DBMod.PartyFrames.display.pet
+			(SUI.DB.PartyFrames.FrameStyle == 'large' or (not SUI.DB.PartyFrames.display.target)) and
+			SUI.DB.PartyFrames.display.pet
 	 then
 		self = CreateSubFrame(self, unit)
 	elseif (unit == 'party') then
@@ -540,10 +540,10 @@ local OptionsSetup = function()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return SUI.DBMod.PartyFrames.showAuras
+					return SUI.DB.PartyFrames.showAuras
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.showAuras = val
+					SUI.DB.PartyFrames.showAuras = val
 					addon:UpdateAura()
 				end
 			},
@@ -552,10 +552,10 @@ local OptionsSetup = function()
 				type = 'toggle',
 				order = 2,
 				get = function(info)
-					return SUI.DBMod.PartyFrames.Auras.showType
+					return SUI.DB.PartyFrames.Auras.showType
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.Auras.showType = val
+					SUI.DB.PartyFrames.Auras.showType = val
 					addon:UpdateAura()
 				end
 			},
@@ -568,10 +568,10 @@ local OptionsSetup = function()
 				max = 50,
 				step = 1,
 				get = function(info)
-					return SUI.DBMod.PartyFrames.Auras.NumBuffs
+					return SUI.DB.PartyFrames.Auras.NumBuffs
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.Auras.NumBuffs = val
+					SUI.DB.PartyFrames.Auras.NumBuffs = val
 					addon:UpdateAura()
 				end
 			},
@@ -584,10 +584,10 @@ local OptionsSetup = function()
 				max = 50,
 				step = 1,
 				get = function(info)
-					return SUI.DBMod.PartyFrames.Auras.NumDebuffs
+					return SUI.DB.PartyFrames.Auras.NumDebuffs
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.Auras.NumDebuffs = val
+					SUI.DB.PartyFrames.Auras.NumDebuffs = val
 					addon:UpdateAura()
 				end
 			},
@@ -600,10 +600,10 @@ local OptionsSetup = function()
 				max = 60,
 				step = 1,
 				get = function(info)
-					return SUI.DBMod.PartyFrames.Auras.size
+					return SUI.DB.PartyFrames.Auras.size
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.Auras.size = val
+					SUI.DB.PartyFrames.Auras.size = val
 					addon:UpdateAura()
 				end
 			},
@@ -616,10 +616,10 @@ local OptionsSetup = function()
 				max = 50,
 				step = 1,
 				get = function(info)
-					return SUI.DBMod.PartyFrames.Auras.spacing
+					return SUI.DB.PartyFrames.Auras.spacing
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.Auras.spacing = val
+					SUI.DB.PartyFrames.Auras.spacing = val
 					addon:UpdateAura()
 				end
 			}
@@ -637,10 +637,10 @@ local OptionsSetup = function()
 				style = 'radio',
 				values = {[0] = SUI.L['FillLR'], [1] = SUI.L['DepRL']},
 				get = function(info)
-					return SUI.DBMod.PartyFrames.castbar
+					return SUI.DB.PartyFrames.castbar
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.castbar = val
+					SUI.DB.PartyFrames.castbar = val
 				end
 			},
 			castbartext = {
@@ -649,10 +649,10 @@ local OptionsSetup = function()
 				style = 'radio',
 				values = {[0] = SUI.L['CountUp'], [1] = SUI.L['CountDown']},
 				get = function(info)
-					return SUI.DBMod.PartyFrames.castbartext
+					return SUI.DB.PartyFrames.castbartext
 				end,
 				set = function(info, val)
-					SUI.DBMod.PartyFrames.castbartext = val
+					SUI.DB.PartyFrames.castbartext = val
 				end
 			}
 		}
@@ -669,20 +669,20 @@ local OptionsSetup = function()
 			['healer'] = SUI.L['Healer']
 		},
 		get = function(info)
-			return SUI.DBMod.PartyFrames.preset
+			return SUI.DB.PartyFrames.preset
 		end,
 		set = function(info, val)
-			SUI.DBMod.PartyFrames.preset = val
+			SUI.DB.PartyFrames.preset = val
 			if val == 'tank' then
-				SUI.DBMod.PartyFrames.FrameStyle = 'medium'
-				SUI.DBMod.PartyFrames.Portrait = false
+				SUI.DB.PartyFrames.FrameStyle = 'medium'
+				SUI.DB.PartyFrames.Portrait = false
 			elseif val == 'dps' then
-				SUI.DBMod.PartyFrames.FrameStyle = 'xsmall'
-				SUI.DBMod.PartyFrames.Portrait = false
-				SUI.DBMod.PartyFrames.showAuras = false
+				SUI.DB.PartyFrames.FrameStyle = 'xsmall'
+				SUI.DB.PartyFrames.Portrait = false
+				SUI.DB.PartyFrames.showAuras = false
 			elseif val == 'healer' then
-				SUI.DBMod.PartyFrames.FrameStyle = 'small'
-				SUI.DBMod.PartyFrames.Portrait = false
+				SUI.DB.PartyFrames.FrameStyle = 'small'
+				SUI.DB.PartyFrames.Portrait = false
 			end
 		end
 	}
@@ -697,14 +697,14 @@ local OptionsSetup = function()
 			['xsmall'] = SUI.L['StyleXSmall']
 		},
 		get = function(info)
-			return SUI.DBMod.PartyFrames.FrameStyle
+			return SUI.DB.PartyFrames.FrameStyle
 		end,
 		set = function(info, val)
 			if (InCombatLockdown()) then
 				return SUI:Print(ERR_NOT_IN_COMBAT)
 			end
-			SUI.DBMod.PartyFrames.FrameStyle = val
-			SUI.DBMod.PartyFrames.preset = 'custom'
+			SUI.DB.PartyFrames.FrameStyle = val
+			SUI.DB.PartyFrames.preset = 'custom'
 		end
 	}
 	SUI.opt.args['PartyFrames'].args['mana'] = {
@@ -712,21 +712,21 @@ local OptionsSetup = function()
 		type = 'toggle',
 		order = 2.5,
 		hidden = function(info)
-			if SUI.DBMod.PartyFrames.FrameStyle == 'xsmall' or SUI.DBMod.PartyFrames.FrameStyle == 'small' then
+			if SUI.DB.PartyFrames.FrameStyle == 'xsmall' or SUI.DB.PartyFrames.FrameStyle == 'small' then
 				return false
 			else
 				return true
 			end
 		end,
 		get = function(info)
-			return SUI.DBMod.PartyFrames.display.mana
+			return SUI.DB.PartyFrames.display.mana
 		end,
 		set = function(info, val)
 			if (InCombatLockdown()) then
 				return SUI:Print(ERR_NOT_IN_COMBAT)
 			end
-			SUI.DBMod.PartyFrames.display.mana = val
-			SUI.DBMod.PartyFrames.preset = 'custom'
+			SUI.DB.PartyFrames.display.mana = val
+			SUI.DB.PartyFrames.preset = 'custom'
 		end
 	}
 	SUI.opt.args['PartyFrames'].args['Portrait'] = {
@@ -734,14 +734,14 @@ local OptionsSetup = function()
 		type = 'toggle',
 		order = 3,
 		get = function(info)
-			return SUI.DBMod.PartyFrames.Portrait
+			return SUI.DB.PartyFrames.Portrait
 		end,
 		set = function(info, val)
 			if (InCombatLockdown()) then
 				return SUI:Print(ERR_NOT_IN_COMBAT)
 			end
-			SUI.DBMod.PartyFrames.Portrait = val
-			SUI.DBMod.PartyFrames.preset = 'custom'
+			SUI.DB.PartyFrames.Portrait = val
+			SUI.DB.PartyFrames.preset = 'custom'
 		end
 	}
 	SUI.opt.args['PartyFrames'].args['Portrait3D'] = {
@@ -749,10 +749,10 @@ local OptionsSetup = function()
 		type = 'toggle',
 		order = 3.1,
 		get = function(info)
-			return SUI.DBMod.PartyFrames.Portrait3D
+			return SUI.DB.PartyFrames.Portrait3D
 		end,
 		set = function(info, val)
-			SUI.DBMod.PartyFrames.Portrait3D = val
+			SUI.DB.PartyFrames.Portrait3D = val
 		end
 	}
 	SUI.opt.args['PartyFrames'].args['threat'] = {
@@ -760,11 +760,11 @@ local OptionsSetup = function()
 		type = 'toggle',
 		order = 4,
 		get = function(info)
-			return SUI.DBMod.PartyFrames.threat
+			return SUI.DB.PartyFrames.threat
 		end,
 		set = function(info, val)
-			SUI.DBMod.PartyFrames.threat = val
-			SUI.DBMod.PartyFrames.preset = 'custom'
+			SUI.DB.PartyFrames.threat = val
+			SUI.DB.PartyFrames.preset = 'custom'
 		end
 	}
 end
@@ -773,8 +773,8 @@ function PartyFrames:Classic()
 	--Create the options
 	OptionsSetup()
 	--DB Fix
-	if SUI.DBMod.PartyFrames.FrameStyle == 'Large' then
-		SUI.DBMod.PartyFrames.FrameStyle = 'large'
+	if SUI.DB.PartyFrames.FrameStyle == 'Large' then
+		SUI.DB.PartyFrames.FrameStyle = 'large'
 	end
 
 	--Set the style
@@ -786,13 +786,13 @@ function PartyFrames:Classic()
 		nil,
 		nil,
 		'showRaid',
-		SUI.DBMod.PartyFrames.showRaid,
+		SUI.DB.PartyFrames.showRaid,
 		'showParty',
-		SUI.DBMod.PartyFrames.showParty,
+		SUI.DB.PartyFrames.showParty,
 		'showPlayer',
-		SUI.DBMod.PartyFrames.showPlayer,
+		SUI.DB.PartyFrames.showPlayer,
 		'showSolo',
-		SUI.DBMod.PartyFrames.showSolo,
+		SUI.DB.PartyFrames.showSolo,
 		'yOffset',
 		-16,
 		'xOffset',
@@ -808,9 +808,8 @@ function PartyFrames:Classic()
 	return (party)
 end
 
-
 local function CreatePortrait(self)
-	if SUI.DBMod.PlayerFrames.Portrait3D then
+	if SUI.DB.PlayerFrames.Portrait3D then
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript(
 			'OnShow',
@@ -819,7 +818,7 @@ local function CreatePortrait(self)
 			end
 		)
 		Portrait.type = '3D'
-		if SUI.DBMod.PlayerFrames.Portrait3D then
+		if SUI.DB.PlayerFrames.Portrait3D then
 			Portrait.bg2 = Portrait:CreateTexture(nil, 'BACKGROUND')
 			Portrait.bg2:SetTexture(circle)
 			Portrait.bg2:SetPoint('TOPLEFT', Portrait, 'TOPLEFT', -10, 10)
@@ -877,14 +876,14 @@ end
 local PostUpdateColor = function(self, unit)
 	self.Health.frequentUpdates = true
 	self.Health.colorDisconnected = true
-	if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+	if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 		self.Health.colorReaction = true
 		self.Health.colorClass = false
-	elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+	elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 		self.Health.colorHappiness = true
 		self.Health.colorReaction = false
 		self.Health.colorClass = false
-	elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+	elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 		self.Health.colorClass = true
 		self.Health.colorReaction = false
 	else
@@ -970,11 +969,11 @@ local CreatePlayerFrame = function(self, unit)
 
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+			if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 				self.Health.colorReaction = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+			elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 				self.Health.colorHappiness = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+			elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 				self.Health.colorClass = true
 			else
 				self.Health.colorSmooth = true
@@ -1028,7 +1027,7 @@ local CreatePlayerFrame = function(self, unit)
 		self.Name:SetSize(170, 12)
 		self.Name:SetJustifyH('RIGHT')
 		self.Name:SetPoint('TOPLEFT', self, 'TOPLEFT', 5, -6)
-		if SUI.DBMod.PlayerFrames.showClass then
+		if SUI.DB.PlayerFrames.showClass then
 			self:Tag(self.Name, '[SUI_ColorClass][name]')
 		else
 			self:Tag(self.Name, '[name]')
@@ -1206,11 +1205,11 @@ local CreateTargetFrame = function(self, unit)
 			self.Health.colorTapping = true
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+			if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 				self.Health.colorReaction = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+			elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 				self.Health.colorHappiness = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+			elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 				self.Health.colorClass = true
 			else
 				self.Health.colorSmooth = true
@@ -1264,7 +1263,7 @@ local CreateTargetFrame = function(self, unit)
 		self.Name:SetJustifyH('LEFT')
 		self.Name:SetJustifyV('MIDDLE')
 		self.Name:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -5, -6)
-		if SUI.DBMod.PlayerFrames.showClass then
+		if SUI.DB.PlayerFrames.showClass then
 			self:Tag(self.Name, '[SUI_ColorClass][name]')
 		else
 			self:Tag(self.Name, '[name]')
@@ -1342,7 +1341,7 @@ local CreatePetFrame = function(self, unit)
 		artwork.bg:SetTexCoord(0, 1, 0, 85 / 128)
 		self.artwork = artwork
 
-		if SUI.DBMod.PlayerFrames.PetPortrait then
+		if SUI.DB.PlayerFrames.PetPortrait then
 			self.Portrait = CreatePortrait(self)
 			self.Portrait:SetSize(56, 50)
 			self.Portrait:SetPoint('CENTER', self, 'CENTER', 87, -8)
@@ -1415,11 +1414,11 @@ local CreatePetFrame = function(self, unit)
 
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+			if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 				self.Health.colorReaction = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+			elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 				self.Health.colorHappiness = true
-			elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+			elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 				self.Health.colorClass = true
 			else
 				self.Health.colorSmooth = true
@@ -1460,7 +1459,7 @@ local CreatePetFrame = function(self, unit)
 		end
 	end
 	do -- setup ring, icons, and text
-		if SUI.DBMod.PlayerFrames.PetPortrait then
+		if SUI.DB.PlayerFrames.PetPortrait then
 			local ring = CreateFrame('Frame', nil, self)
 			ring:SetParent(self)
 			ring:SetFrameStrata('BACKGROUND')
@@ -1477,7 +1476,7 @@ local CreatePetFrame = function(self, unit)
 			self.Name:SetWidth(150)
 			self.Name:SetJustifyH('RIGHT')
 			self.Name:SetPoint('TOPLEFT', self, 'TOPLEFT', 3, -5)
-			if SUI.DBMod.PlayerFrames.showClass then
+			if SUI.DB.PlayerFrames.showClass then
 				self:Tag(self.Name, '[SUI_ColorClass][name]')
 			else
 				self:Tag(self.Name, '[name]')
@@ -1516,7 +1515,7 @@ local CreatePetFrame = function(self, unit)
 			self.Name:SetJustifyH('RIGHT')
 			self.Name:SetPoint('BOTTOMLEFT', self.Castbar, 'TOPLEFT', 0, 5)
 			self.Name:SetPoint('BOTTOMRIGHT', self.Castbar, 'TOPRIGHT', 0, 5)
-			if SUI.DBMod.PlayerFrames.showClass then
+			if SUI.DB.PlayerFrames.showClass then
 				self:Tag(self.Name, '[level] [SUI_ColorClass][name]')
 			else
 				self:Tag(self.Name, '[level] [name]')
@@ -1560,7 +1559,7 @@ local CreatePetFrame = function(self, unit)
 	end
 	self.TextUpdate = PostUpdateText
 	self.ColorUpdate = PostUpdateColor
-	if not SUI.DBMod.PlayerFrames.PetPortrait then
+	if not SUI.DB.PlayerFrames.PetPortrait then
 		self.artwork.bg:SetTexCoord(0, .7, 0, 85 / 128)
 		self.artwork.bg:SetSize(180, 85)
 		self:SetSize(135, 60)
@@ -1573,7 +1572,7 @@ local CreatePetFrame = function(self, unit)
 end
 
 local CreateToTFrame = function(self, unit)
-	if SUI.DBMod.PlayerFrames.targettarget.style == 'large' then
+	if SUI.DB.PlayerFrames.targettarget.style == 'large' then
 		do -- large
 			self:SetWidth(210)
 			self:SetHeight(60)
@@ -1663,11 +1662,11 @@ local CreateToTFrame = function(self, unit)
 
 					self.Health.frequentUpdates = true
 					self.Health.colorDisconnected = true
-					if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+					if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 						self.Health.colorReaction = true
-					elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+					elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 						self.Health.colorHappiness = true
-					elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+					elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 						self.Health.colorClass = true
 					else
 						self.Health.colorSmooth = true
@@ -1721,7 +1720,7 @@ local CreateToTFrame = function(self, unit)
 				self.Name:SetWidth(150)
 				self.Name:SetJustifyH('LEFT')
 				self.Name:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -3, -5)
-				if SUI.DBMod.PlayerFrames.showClass then
+				if SUI.DB.PlayerFrames.showClass then
 					self:Tag(self.Name, '[SUI_ColorClass][name]')
 				else
 					self:Tag(self.Name, '[name]')
@@ -1757,7 +1756,7 @@ local CreateToTFrame = function(self, unit)
 			self.TextUpdate = PostUpdateText
 			self.ColorUpdate = PostUpdateColor
 		end
-	elseif SUI.DBMod.PlayerFrames.targettarget.style == 'medium' then
+	elseif SUI.DB.PlayerFrames.targettarget.style == 'medium' then
 		do -- medium
 			self:SetSize(124, 55)
 			do -- setup base artwork
@@ -1836,11 +1835,11 @@ local CreateToTFrame = function(self, unit)
 
 					self.Health.frequentUpdates = true
 					self.Health.colorDisconnected = true
-					if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+					if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 						self.Health.colorReaction = true
-					elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+					elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 						self.Health.colorHappiness = true
-					elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+					elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 						self.Health.colorClass = true
 					else
 						self.Health.colorSmooth = true
@@ -1888,7 +1887,7 @@ local CreateToTFrame = function(self, unit)
 				self.Name:SetWidth(132)
 				self.Name:SetJustifyH('LEFT')
 				self.Name:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, -5)
-				if SUI.DBMod.PlayerFrames.showClass then
+				if SUI.DB.PlayerFrames.showClass then
 					self:Tag(self.Name, '[difficulty][level] [SUI_ColorClass][name]')
 				else
 					self:Tag(self.Name, '[difficulty][level] [name]')
@@ -1907,7 +1906,7 @@ local CreateToTFrame = function(self, unit)
 			self.TextUpdate = PostUpdateText
 			self.ColorUpdate = PostUpdateColor
 		end
-	elseif SUI.DBMod.PlayerFrames.targettarget.style == 'small' then
+	elseif SUI.DB.PlayerFrames.targettarget.style == 'small' then
 		do -- small
 			self:SetSize(200, 65)
 			do -- setup base artwork
@@ -1960,11 +1959,11 @@ local CreateToTFrame = function(self, unit)
 
 					self.Health.frequentUpdates = true
 					self.Health.colorDisconnected = true
-					if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+					if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 						self.Health.colorReaction = true
-					elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+					elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 						self.Health.colorHappiness = true
-					elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+					elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 						self.Health.colorClass = true
 					else
 						self.Health.colorSmooth = true
@@ -1986,7 +1985,7 @@ local CreateToTFrame = function(self, unit)
 				self.Name:SetSize(132, 12)
 				self.Name:SetJustifyH('LEFT')
 				self.Name:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -50, -5)
-				if SUI.DBMod.PlayerFrames.showClass then
+				if SUI.DB.PlayerFrames.showClass then
 					self:Tag(self.Name, '[difficulty][level] [SUI_ColorClass][name]')
 				else
 					self:Tag(self.Name, '[difficulty][level] [name]')
@@ -2114,11 +2113,11 @@ local CreateFocusFrame = function(self, unit)
 
 			self.Health.frequentUpdates = true
 			self.Health.colorDisconnected = true
-			-- if SUI.DBMod.PlayerFrames.bars[unit].color == "reaction" then
+			-- if SUI.DB.PlayerFrames.bars[unit].color == "reaction" then
 			-- self.Health.colorReaction = true;
-			-- elseif SUI.DBMod.PlayerFrames.bars[unit].color == "happiness" then
+			-- elseif SUI.DB.PlayerFrames.bars[unit].color == "happiness" then
 			-- self.Health.colorHappiness = true;
-			-- elseif SUI.DBMod.PlayerFrames.bars[unit].color == "class" then
+			-- elseif SUI.DB.PlayerFrames.bars[unit].color == "class" then
 			-- self.Health.colorClass = true;
 			-- else
 			-- self.Health.colorSmooth = true;
@@ -2170,7 +2169,7 @@ local CreateFocusFrame = function(self, unit)
 		elseif unit == 'focustarget' then
 			self.Name:SetPoint('TOPLEFT', self, 'TOPLEFT', 2, -6)
 		end
-		if SUI.DBMod.PlayerFrames.showClass then
+		if SUI.DB.PlayerFrames.showClass then
 			self:Tag(self.Name, '[difficulty][level] [SUI_ColorClass][name]')
 		else
 			self:Tag(self.Name, '[difficulty][level] [name]')
@@ -2353,7 +2352,7 @@ local CreateBossFrame = function(self, unit)
 		self.Name:SetJustifyH('LEFT')
 		self.Name:SetJustifyV('MIDDLE')
 		self.Name:SetPoint('TOPLEFT', self, 'TOPLEFT', 8, -2)
-		if SUI.DBMod.PlayerFrames.showClass then
+		if SUI.DB.PlayerFrames.showClass then
 			self:Tag(self.Name, '[SUI_ColorClass][name]')
 		else
 			self:Tag(self.Name, '[name]')
@@ -2403,49 +2402,49 @@ end
 function PlayerFrames:UpdateAltBarPositions()
 	-- Druid EclipseBar
 	-- EclipseBarFrame:ClearAllPoints();
-	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
-	-- EclipseBarFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DB.PlayerFrames.ClassBar.movement.moved then
+	-- EclipseBarFrame:SetPoint(SUI.DB.PlayerFrames.ClassBar.movement.point,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 	-- EclipseBarFrame:SetPoint("TOPRIGHT",PlayerFrames.player,"TOPRIGHT",157,12);
 	-- end
 
 	-- Monk Chi Bar (Hard to move but it is doable.)
 	-- MonkHarmonyBar:ClearAllPoints();
-	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
-	-- MonkHarmonyBar:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DB.PlayerFrames.ClassBar.movement.moved then
+	-- MonkHarmonyBar:SetPoint(SUI.DB.PlayerFrames.ClassBar.movement.point,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 	-- MonkHarmonyBar:SetPoint("BOTTOMLEFT",PlayerFrames.player,"BOTTOMLEFT",40,-40);
 	-- end
 
 	--Paladin Holy Power
 	-- PaladinPowerBarFrame:ClearAllPoints();
-	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
-	-- PaladinPowerBarFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DB.PlayerFrames.ClassBar.movement.moved then
+	-- PaladinPowerBarFrame:SetPoint(SUI.DB.PlayerFrames.ClassBar.movement.point,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 	-- PaladinPowerBarFrame:SetPoint("TOPLEFT",PlayerFrames.player,"BOTTOMLEFT",60,12);
 	-- end
 
 	--Priest Power Frame
 	PriestBarFrame:ClearAllPoints()
-	if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+	if SUI.DB.PlayerFrames.ClassBar.movement.moved then
 		PriestBarFrame:SetPoint(
-			SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset
+			SUI.DB.PlayerFrames.ClassBar.movement.point,
+			SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+			SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+			SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+			SUI.DB.PlayerFrames.ClassBar.movement.yOffset
 		)
 	else
 		PriestBarFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'TOPLEFT', -4, -2)
@@ -2453,25 +2452,25 @@ function PlayerFrames:UpdateAltBarPositions()
 
 	--Warlock Power Frame
 	-- WarlockPowerFrame:ClearAllPoints();
-	-- if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
-	-- WarlockPowerFrame:SetPoint(SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-	-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset);
+	-- if SUI.DB.PlayerFrames.ClassBar.movement.moved then
+	-- WarlockPowerFrame:SetPoint(SUI.DB.PlayerFrames.ClassBar.movement.point,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+	-- SUI.DB.PlayerFrames.ClassBar.movement.yOffset);
 	-- else
 	-- PlayerFrames:WarlockPowerFrame_Relocate();
 	-- end
 
 	--Death Knight Runes
 	RuneFrame:ClearAllPoints()
-	if SUI.DBMod.PlayerFrames.ClassBar.movement.moved then
+	if SUI.DB.PlayerFrames.ClassBar.movement.moved then
 		RuneFrame:SetPoint(
-			SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-			SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset
+			SUI.DB.PlayerFrames.ClassBar.movement.point,
+			SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+			SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+			SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+			SUI.DB.PlayerFrames.ClassBar.movement.yOffset
 		)
 	else
 		RuneFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 40, 7)
@@ -2480,13 +2479,13 @@ function PlayerFrames:UpdateAltBarPositions()
 	-- relocate the AlternatePowerBar
 	if classFileName ~= 'MONK' then
 		PlayerFrameAlternateManaBar:ClearAllPoints()
-		if SUI.DBMod.PlayerFrames.AltManaBar.movement.moved then
+		if SUI.DB.PlayerFrames.AltManaBar.movement.moved then
 			PlayerFrameAlternateManaBar:SetPoint(
-				SUI.DBMod.PlayerFrames.AltManaBar.movement.point,
-				SUI.DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
-				SUI.DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
-				SUI.DBMod.PlayerFrames.AltManaBar.movement.xOffset,
-				SUI.DBMod.PlayerFrames.AltManaBar.movement.yOffset
+				SUI.DB.PlayerFrames.AltManaBar.movement.point,
+				SUI.DB.PlayerFrames.AltManaBar.movement.relativeTo,
+				SUI.DB.PlayerFrames.AltManaBar.movement.relativePoint,
+				SUI.DB.PlayerFrames.AltManaBar.movement.xOffset,
+				SUI.DB.PlayerFrames.AltManaBar.movement.yOffset
 			)
 		else
 			PlayerFrameAlternateManaBar:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 40, 0)
@@ -2495,8 +2494,8 @@ function PlayerFrames:UpdateAltBarPositions()
 end
 
 function PlayerFrames:ResetAltBarPositions()
-	SUI.DBMod.PlayerFrames.AltManaBar.movement.moved = false
-	SUI.DBMod.PlayerFrames.ClassBar.movement.moved = false
+	SUI.DB.PlayerFrames.AltManaBar.movement.moved = false
+	SUI.DB.PlayerFrames.ClassBar.movement.moved = false
 	PlayerFrames:UpdateAltBarPositions()
 end
 
@@ -2544,7 +2543,7 @@ function PlayerFrames:SetupExtras()
 				PlayerFrameAlternateManaBar,
 				'SetPoint',
 				function(_, _, parent)
-					if (parent ~= PlayerFrames.player) and (SUI.DBMod.PlayerFrames.AltManaBar.movement.moved == false) then
+					if (parent ~= PlayerFrames.player) and (SUI.DB.PlayerFrames.AltManaBar.movement.moved == false) then
 						PlayerFrameAlternateManaBar:ClearAllPoints()
 						PlayerFrameAlternateManaBar:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 40, 0)
 					end
@@ -2560,7 +2559,7 @@ function PlayerFrames:SetupExtras()
 				'OnMouseDown',
 				function(self, button)
 					if button == 'LeftButton' and IsAltKeyDown() then
-						SUI.DBMod.PlayerFrames.AltManaBar.movement.moved = true
+						SUI.DB.PlayerFrames.AltManaBar.movement.moved = true
 						self:SetMovable(true)
 						self:StartMoving()
 					end
@@ -2570,11 +2569,11 @@ function PlayerFrames:SetupExtras()
 				'OnMouseUp',
 				function(self, button)
 					self:StopMovingOrSizing()
-					SUI.DBMod.PlayerFrames.AltManaBar.movement.point,
-						SUI.DBMod.PlayerFrames.AltManaBar.movement.relativeTo,
-						SUI.DBMod.PlayerFrames.AltManaBar.movement.relativePoint,
-						SUI.DBMod.PlayerFrames.AltManaBar.movement.xOffset,
-						SUI.DBMod.PlayerFrames.AltManaBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+					SUI.DB.PlayerFrames.AltManaBar.movement.point,
+						SUI.DB.PlayerFrames.AltManaBar.movement.relativeTo,
+						SUI.DB.PlayerFrames.AltManaBar.movement.relativePoint,
+						SUI.DB.PlayerFrames.AltManaBar.movement.xOffset,
+						SUI.DB.PlayerFrames.AltManaBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 				end
 			)
 		end
@@ -2582,21 +2581,21 @@ function PlayerFrames:SetupExtras()
 		-- Druid EclipseBar
 		-- if classname == "Druid" then
 		-- EclipseBarFrame:SetParent(PlayerFrames.player); EclipseBar_OnLoad(EclipseBarFrame); EclipseBarFrame:SetFrameStrata("MEDIUM");
-		-- EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * SUI.DBMod.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
+		-- EclipseBarFrame:SetFrameLevel(4); EclipseBarFrame:SetScale(0.8 * SUI.DB.PlayerFrames.ClassBar.scale); EclipseBarFrame:EnableMouse(enable);
 		-- EclipseBarFrame:SetScript("OnMouseDown",function(self,button)
 		-- if button == "LeftButton" and IsAltKeyDown() then
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
+		-- SUI.DB.PlayerFrames.ClassBar.movement.moved = true;
 		-- self:SetMovable(true);
 		-- self:StartMoving();
 		-- end
 		-- end);
 		-- EclipseBarFrame:SetScript("OnMouseUp",function(self,button)
 		-- self:StopMovingOrSizing();
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- SUI.DB.PlayerFrames.ClassBar.movement.point,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		-- end);
 		-- end
 
@@ -2606,13 +2605,13 @@ function PlayerFrames:SetupExtras()
 		PriestBarFrame_OnLoad(PriestBarFrame)
 		PriestBarFrame:SetFrameStrata('MEDIUM')
 		PriestBarFrame:SetFrameLevel(4)
-		PriestBarFrame:SetScale(.7 * SUI.DBMod.PlayerFrames.ClassBar.scale)
+		PriestBarFrame:SetScale(.7 * SUI.DB.PlayerFrames.ClassBar.scale)
 		PriestBarFrame:EnableMouse(enable)
 		PriestBarFrame:SetScript(
 			'OnMouseDown',
 			function(self, button)
 				if button == 'LeftButton' and IsAltKeyDown() then
-					SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true
+					SUI.DB.PlayerFrames.ClassBar.movement.moved = true
 					self:SetMovable(true)
 					self:StartMoving()
 				end
@@ -2622,11 +2621,11 @@ function PlayerFrames:SetupExtras()
 			'OnMouseUp',
 			function(self, button)
 				self:StopMovingOrSizing()
-				SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+				SUI.DB.PlayerFrames.ClassBar.movement.point,
+					SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+					SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+					SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+					SUI.DB.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 			end
 		)
 		-- end
@@ -2637,14 +2636,14 @@ function PlayerFrames:SetupExtras()
 		-- RuneFrame_OnLoad(RuneFrame);
 		RuneFrame:SetFrameStrata('MEDIUM')
 		RuneFrame:SetFrameLevel(4)
-		RuneFrame:SetScale(0.97 * SUI.DBMod.PlayerFrames.ClassBar.scale)
+		RuneFrame:SetScale(0.97 * SUI.DB.PlayerFrames.ClassBar.scale)
 		RuneFrame:EnableMouse(enable)
 		-- RuneButtonIndividual1:EnableMouse(enable);
 		RuneFrame:SetScript(
 			'OnMouseDown',
 			function(self, button)
 				if button == 'LeftButton' and IsAltKeyDown() then
-					SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true
+					SUI.DB.PlayerFrames.ClassBar.movement.moved = true
 					self:SetMovable(true)
 					self:StartMoving()
 				end
@@ -2654,27 +2653,27 @@ function PlayerFrames:SetupExtras()
 			'OnMouseUp',
 			function(self, button)
 				self:StopMovingOrSizing()
-				SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-					SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+				SUI.DB.PlayerFrames.ClassBar.movement.point,
+					SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+					SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+					SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+					SUI.DB.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 			end
 		)
 		-- RuneButtonIndividual1:SetScript("OnMouseDown",function(self,button)
 		-- if button == "LeftButton" and IsAltKeyDown() then
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.moved = true;
+		-- SUI.DB.PlayerFrames.ClassBar.movement.moved = true;
 		-- self:SetMovable(true);
 		-- self:StartMoving();
 		-- end
 		-- end);
 		-- RuneButtonIndividual1:SetScript("OnMouseUp",function(self,button)
 		-- self:StopMovingOrSizing();
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.point,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativeTo,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.relativePoint,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.xOffset,
-		-- SUI.DBMod.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
+		-- SUI.DB.PlayerFrames.ClassBar.movement.point,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.relativeTo,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.relativePoint,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.xOffset,
+		-- SUI.DB.PlayerFrames.ClassBar.movement.yOffset = self:GetPoint(self:GetNumPoints())
 		-- end);
 		-- end
 
@@ -2707,7 +2706,7 @@ function PlayerFrames:SetupExtras()
 		TotemFrame_OnLoad(TotemFrame)
 		TotemFrame:SetFrameStrata('MEDIUM')
 		TotemFrame:SetFrameLevel(4)
-		TotemFrame:SetScale(0.7 * SUI.DBMod.PlayerFrames.ClassBar.scale)
+		TotemFrame:SetScale(0.7 * SUI.DB.PlayerFrames.ClassBar.scale)
 		TotemFrame:ClearAllPoints()
 		TotemFrame:SetPoint('TOPLEFT', PlayerFrames.player, 'BOTTOMLEFT', 70, 8)
 		-- end
@@ -2726,7 +2725,7 @@ function PlayerFrames:SetupExtras()
 		-- PlayerPowerBarAlt:SetParent(PlayerFrames.player)
 		-- PlayerPowerBarAlt:SetFrameStrata('MEDIUM')
 		-- PlayerPowerBarAlt:SetFrameLevel(4)
-		-- PlayerPowerBarAlt:SetScale(1 * SUI.DBMod.PlayerFrames.ClassBar.scale)
+		-- PlayerPowerBarAlt:SetScale(1 * SUI.DB.PlayerFrames.ClassBar.scale)
 		-- PlayerPowerBarAlt:ClearAllPoints()
 		-- PlayerPowerBarAlt:SetPoint('BOTTOMLEFT', PlayerFrames.player, 'TOPLEFT', 10, 40)
 
@@ -2864,13 +2863,13 @@ local SpawnRaidFrame = function(self, unit)
 		self.artwork.bg = self.artwork:CreateTexture(nil, 'BACKGROUND')
 		self.artwork.bg:SetAllPoints(self)
 		self.artwork.bg:SetTexture(base_plate3_Small)
-		if SUI.DBMod.RaidFrames.FrameStyle == 'large' then
+		if SUI.DB.RaidFrames.FrameStyle == 'large' then
 			self:SetSize(165, 48)
 			self.artwork.bg:SetTexCoord(.3, .95, 0.015, .77)
-		elseif SUI.DBMod.RaidFrames.FrameStyle == 'medium' then
+		elseif SUI.DB.RaidFrames.FrameStyle == 'medium' then
 			self:SetSize(140, 35)
 			self.artwork.bg:SetTexCoord(.3, .95, 0.015, .56)
-		elseif SUI.DBMod.RaidFrames.FrameStyle == 'small' then
+		elseif SUI.DB.RaidFrames.FrameStyle == 'small' then
 			self.artwork.bg:SetTexCoord(.3, .70, 0.3, .7)
 		end
 	end
@@ -2881,13 +2880,13 @@ local SpawnRaidFrame = function(self, unit)
 			health:SetFrameLevel(2)
 			health:SetStatusBarTexture('Interface\\TargetingFrame\\UI-StatusBar')
 
-			if SUI.DBMod.RaidFrames.FrameStyle == 'large' then
+			if SUI.DB.RaidFrames.FrameStyle == 'large' then
 				health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -55, -19)
 				health:SetSize(110, 27)
-			elseif SUI.DBMod.RaidFrames.FrameStyle == 'medium' then
+			elseif SUI.DB.RaidFrames.FrameStyle == 'medium' then
 				health:SetSize(self:GetWidth() / 1.5, 13)
 				health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', -self:GetWidth() / 3, -20)
-			elseif SUI.DBMod.RaidFrames.FrameStyle == 'small' then
+			elseif SUI.DB.RaidFrames.FrameStyle == 'small' then
 				health:SetAllPoints(self)
 			end
 
@@ -2904,15 +2903,15 @@ local SpawnRaidFrame = function(self, unit)
 			health.ratio:SetJustifyV('MIDDLE')
 			self:Tag(health.ratio, '[perhp]%')
 
-			if SUI.DBMod.RaidFrames.FrameStyle == 'large' then
+			if SUI.DB.RaidFrames.FrameStyle == 'large' then
 				health.ratio:SetPoint('LEFT', health, 'RIGHT', 6, 0)
 				health.value:SetPoint('RIGHT', health, 'RIGHT', -2, 0)
 				health.value:SetSize(health:GetWidth() / 1.1, 11)
-			elseif SUI.DBMod.RaidFrames.FrameStyle == 'medium' then
+			elseif SUI.DB.RaidFrames.FrameStyle == 'medium' then
 				health.ratio:SetPoint('LEFT', health, 'RIGHT', 6, 0)
 				health.value:SetPoint('RIGHT', health, 'RIGHT', -2, 0)
 				health.value:SetSize(health:GetWidth() / 1.5, 11)
-			elseif SUI.DBMod.RaidFrames.FrameStyle == 'small' then
+			elseif SUI.DB.RaidFrames.FrameStyle == 'small' then
 				health.ratio:SetPoint('BOTTOMRIGHT', health, 'BOTTOMRIGHT', 0, 2)
 				health.ratio:SetPoint('TOPLEFT', health, 'BOTTOMRIGHT', -35, 13)
 				health.value:Hide()
@@ -2962,7 +2961,7 @@ local SpawnRaidFrame = function(self, unit)
 		self.Name:SetJustifyV('BOTTOM')
 		self.Name:SetPoint('TOPLEFT', self.GroupRoleIndicator, 'TOPRIGHT', 1, 1)
 		-- self.Name:SetPoint("BOTTOMRIGHT",self.GroupRoleIndicator,"TOPRIGHT",-12,self:GetWidth()-30);
-		if SUI.DBMod.RaidFrames.showClass then
+		if SUI.DB.RaidFrames.showClass then
 			self:Tag(self.Name, '[SUI_ColorClass][name]')
 		else
 			self:Tag(self.Name, '[name]')
@@ -2984,9 +2983,9 @@ local SpawnRaidFrame = function(self, unit)
 		self.Debuffs:SetFrameStrata('BACKGROUND')
 		self.Debuffs:SetFrameLevel(4)
 		-- settings
-		self.Debuffs.size = SUI.DBMod.RaidFrames.Auras.size
-		self.Debuffs.spacing = SUI.DBMod.RaidFrames.Auras.spacing
-		self.Debuffs.showType = SUI.DBMod.RaidFrames.Auras.showType
+		self.Debuffs.size = SUI.DB.RaidFrames.Auras.size
+		self.Debuffs.spacing = SUI.DB.RaidFrames.Auras.spacing
+		self.Debuffs.showType = SUI.DB.RaidFrames.Auras.showType
 		self.Debuffs.initialAnchor = 'BOTTOMRIGHT'
 		self.Debuffs.num = 5
 
@@ -3043,18 +3042,18 @@ function RaidFrames:Classic()
 	local columnAnchorPoint = 'LEFT'
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 
-	if SUI.DBMod.RaidFrames.mode == 'GROUP' then
+	if SUI.DB.RaidFrames.mode == 'GROUP' then
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
-	-- print(SUI.DBMod.RaidFrames.mode)
+	-- print(SUI.DB.RaidFrames.mode)
 	-- print(groupingOrder)
 	local w = 90
 	local h = 30
 
-	if SUI.DBMod.RaidFrames.FrameStyle == 'large' then
+	if SUI.DB.RaidFrames.FrameStyle == 'large' then
 		w = 165
 		h = 48
-	elseif SUI.DBMod.RaidFrames.FrameStyle == 'medium' then
+	elseif SUI.DB.RaidFrames.FrameStyle == 'medium' then
 		w = 140
 		h = 35
 	end
@@ -3070,13 +3069,13 @@ function RaidFrames:Classic()
 		nil,
 		'raid',
 		'showRaid',
-		SUI.DBMod.RaidFrames.showRaid,
+		SUI.DB.RaidFrames.showRaid,
 		'showParty',
-		SUI.DBMod.RaidFrames.showParty,
+		SUI.DB.RaidFrames.showParty,
 		'showPlayer',
-		SUI.DBMod.RaidFrames.showPlayer,
+		SUI.DB.RaidFrames.showPlayer,
 		'showSolo',
-		SUI.DBMod.RaidFrames.showSolo,
+		SUI.DB.RaidFrames.showSolo,
 		'xoffset',
 		xoffset,
 		'yOffset',
@@ -3084,17 +3083,17 @@ function RaidFrames:Classic()
 		'point',
 		point,
 		'groupBy',
-		SUI.DBMod.RaidFrames.mode,
+		SUI.DB.RaidFrames.mode,
 		'groupingOrder',
 		groupingOrder,
 		'sortMethod',
 		'index',
 		'maxColumns',
-		SUI.DBMod.RaidFrames.maxColumns,
+		SUI.DB.RaidFrames.maxColumns,
 		'unitsPerColumn',
-		SUI.DBMod.RaidFrames.unitsPerColumn,
+		SUI.DB.RaidFrames.unitsPerColumn,
 		'columnSpacing',
-		SUI.DBMod.RaidFrames.columnSpacing,
+		SUI.DB.RaidFrames.columnSpacing,
 		'columnAnchorPoint',
 		columnAnchorPoint,
 		'oUF-initialConfigFunction',
@@ -3124,10 +3123,10 @@ function RaidFrames:ClassicOptions()
 		order = 2,
 		values = {['large'] = L['Large'], ['medium'] = L['Medium'], ['small'] = L['Small']},
 		get = function(info)
-			return SUI.DBMod.RaidFrames.FrameStyle
+			return SUI.DB.RaidFrames.FrameStyle
 		end,
 		set = function(info, val)
-			SUI.DBMod.RaidFrames.FrameStyle = val
+			SUI.DB.RaidFrames.FrameStyle = val
 			SUI:reloadui()
 		end
 	}
@@ -3141,10 +3140,10 @@ function RaidFrames:ClassicOptions()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return SUI.DBMod.RaidFrames.showAuras
+					return SUI.DB.RaidFrames.showAuras
 				end,
 				set = function(info, val)
-					SUI.DBMod.RaidFrames.showAuras = val
+					SUI.DB.RaidFrames.showAuras = val
 					RaidFrames:UpdateAura()
 				end
 			},
@@ -3156,10 +3155,10 @@ function RaidFrames:ClassicOptions()
 				max = 30,
 				step = 1,
 				get = function(info)
-					return SUI.DBMod.RaidFrames.Auras.size
+					return SUI.DB.RaidFrames.Auras.size
 				end,
 				set = function(info, val)
-					SUI.DBMod.RaidFrames.Auras.size = val
+					SUI.DB.RaidFrames.Auras.size = val
 					RaidFrames:UpdateAura()
 				end
 			}
@@ -3170,11 +3169,11 @@ function RaidFrames:ClassicOptions()
 		type = 'toggle',
 		order = 4,
 		get = function(info)
-			return SUI.DBMod.RaidFrames.threat
+			return SUI.DB.RaidFrames.threat
 		end,
 		set = function(info, val)
-			SUI.DBMod.RaidFrames.threat = val
-			SUI.DBMod.RaidFrames.preset = 'custom'
+			SUI.DB.RaidFrames.threat = val
+			SUI.DB.RaidFrames.preset = 'custom'
 		end
 	}
 end

@@ -258,27 +258,27 @@ local function Options()
 				type = 'toggle',
 				order = 6,
 				get = function(info)
-					return SUI.DBMod.Artwork.VehicleUI
+					return SUI.DB.Artwork.VehicleUI
 				end,
 				set = function(info, val)
 					if (InCombatLockdown()) then
 						print(ERR_NOT_IN_COMBAT)
 						return
 					end
-					SUI.DBMod.Artwork.VehicleUI = val
+					SUI.DB.Artwork.VehicleUI = val
 					--Make sure bartender knows to do it, or not...
 					if Bartender4 then
 						Bartender4.db.profile.blizzardVehicle = val
 						Bartender4:UpdateBlizzardVehicle()
 					end
 
-					if SUI.DBMod.Artwork.VehicleUI then
-						if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).SetupVehicleUI() ~= nil then
-							SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):SetupVehicleUI()
+					if SUI.DB.Artwork.VehicleUI then
+						if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then
+							SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):SetupVehicleUI()
 						end
 					else
-						if SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style).RemoveVehicleUI() ~= nil then
-							SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):RemoveVehicleUI()
+						if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then
+							SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):RemoveVehicleUI()
 						end
 					end
 				end
@@ -361,20 +361,20 @@ local function OnInitialize()
 		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
 	end
 	scaleData = module.BarScale.BT4.default
-	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DBMod.Artwork.Style] then
-		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DBMod.Artwork.Style], module.BarScale.BT4.default)
+	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
+		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DB.Artwork.Style], module.BarScale.BT4.default)
 	end
 end
 
 local function RefreshConfig()
 	local positionData = module.BarPosition.BT4.default
 	-- If artwork is enabled load the art's position data if supplied
-	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DBMod.Artwork.Style] then
-		positionData = SUI:MergeData(module.BarPosition.BT4[SUI.DBMod.Artwork.Style], module.BarPosition.BT4.default)
+	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DB.Artwork.Style] then
+		positionData = SUI:MergeData(module.BarPosition.BT4[SUI.DB.Artwork.Style], module.BarPosition.BT4.default)
 	end
 	scaleData = module.BarScale.BT4.default
-	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DBMod.Artwork.Style] then
-		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DBMod.Artwork.Style], module.BarScale.BT4.default)
+	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
+		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DB.Artwork.Style], module.BarScale.BT4.default)
 	end
 
 	local FrameList = {

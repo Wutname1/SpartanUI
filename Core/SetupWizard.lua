@@ -345,7 +345,7 @@ function module:WelcomePage()
 		Name = 'Welcome',
 		SubTitle = '',
 		Desc1 = "Welcome to SpartanUI, This setup wizard help guide you through the inital setup of the UI and it's modules.",
-		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit our wiki at http://wiki.spartanui.net',
+		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit the wiki at http://wiki.spartanui.net or Join the SpartanUI Discord.',
 		Display = function()
 			local profiles = {}
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
@@ -398,6 +398,11 @@ function module:WelcomePage()
 					ReloadUI()
 				end
 			)
+			if #profiles == 1 then
+				WelcomePage.ProfileCopyLabel:Hide()
+				WelcomePage.ProfileList:Hide()
+				WelcomePage.CopyProfileButton:Hide()
+			end
 
 			StdUi:GlueBottom(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -35)
 			StdUi:GlueBottom(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, -31, -25)

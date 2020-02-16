@@ -145,7 +145,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style ~= 'War') then
+	if (SUI.DB.Artwork.Style ~= 'War') then
 		module:Disable()
 	else
 		--Setup Sliding Trays
@@ -201,7 +201,7 @@ function module:BuffLoc(_, parent)
 end
 
 function module:SetupVehicleUI()
-	if SUI.DBMod.Artwork.VehicleUI then
+	if SUI.DB.Artwork.VehicleUI then
 		petbattle:HookScript(
 			'OnHide',
 			function()
@@ -232,7 +232,7 @@ function module:SetupVehicleUI()
 end
 
 function module:RemoveVehicleUI()
-	if SUI.DBMod.Artwork.VehicleUI then
+	if SUI.DB.Artwork.VehicleUI then
 		UnregisterStateDriver(SUI_Art_War, 'visibility')
 	end
 end

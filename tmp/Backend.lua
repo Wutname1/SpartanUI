@@ -4,8 +4,8 @@ local module = SUI:GetModule('Component_UnitFrames')
 
 --	Formatting functions
 function module:TextFormat(text, unit)
-	local textstyle = SUI.DBMod.PartyFrames.bars[text].textstyle
-	local textmode = SUI.DBMod.PartyFrames.bars[text].textmode
+	local textstyle = SUI.DB.PartyFrames.bars[text].textstyle
+	local textmode = SUI.DB.PartyFrames.bars[text].textmode
 	local a, m, t, z
 	if text == 'mana' then
 		z = 'pp'
@@ -75,7 +75,7 @@ function PartyFrames:menu(self)
 end
 
 function PlayerFrames:CreatePortrait(self)
-	if SUI.DBMod.PlayerFrames.Portrait3D then
+	if SUI.DB.PlayerFrames.Portrait3D then
 		local Portrait = CreateFrame('PlayerModel', nil, self)
 		Portrait:SetScript(
 			'OnShow',
@@ -92,13 +92,13 @@ function PlayerFrames:CreatePortrait(self)
 end
 
 function PartyFrames:PostUpdateAura(self, unit)
-	if SUI.DBMod.PartyFrames.showAuras then
+	if SUI.DB.PartyFrames.showAuras then
 		self:Show()
-		self.size = SUI.DBMod.PartyFrames.Auras.size
-		self.spacing = SUI.DBMod.PartyFrames.Auras.spacing
-		self.showType = SUI.DBMod.PartyFrames.Auras.showType
-		self.numBuffs = SUI.DBMod.PartyFrames.Auras.NumBuffs
-		self.numDebuffs = SUI.DBMod.PartyFrames.Auras.NumDebuffs
+		self.size = SUI.DB.PartyFrames.Auras.size
+		self.spacing = SUI.DB.PartyFrames.Auras.spacing
+		self.showType = SUI.DB.PartyFrames.Auras.showType
+		self.numBuffs = SUI.DB.PartyFrames.Auras.NumBuffs
+		self.numDebuffs = SUI.DB.PartyFrames.Auras.NumDebuffs
 	else
 		self:Hide()
 	end
@@ -116,7 +116,7 @@ function PartyFrames:MakeMovable(self)
 		function(self, button)
 			if button == 'LeftButton' and IsAltKeyDown() then
 				SUI.PartyFrames.mover:Show()
-				SUI.DBMod.PartyFrames.moved = true
+				SUI.DB.PartyFrames.moved = true
 				SUI.PartyFrames:SetMovable(true)
 				SUI.PartyFrames:StartMoving()
 			end
@@ -130,7 +130,7 @@ function PartyFrames:MakeMovable(self)
 			local Anchors = {}
 			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = SUI.PartyFrames:GetPoint()
 			for k, v in pairs(Anchors) do
-				SUI.DBMod.PartyFrames.Anchors[k] = v
+				SUI.DB.PartyFrames.Anchors[k] = v
 			end
 		end
 	)
@@ -187,11 +187,11 @@ function PlayerFrames:SetupStaticOptions()
 	}
 	for _, unit in pairs(FramesList) do
 		--Health Bar Color
-		if SUI.DBMod.PlayerFrames.bars[unit].color == 'reaction' then
+		if SUI.DB.PlayerFrames.bars[unit].color == 'reaction' then
 			PlayerFrames[unit].Health.colorReaction = true
-		elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'happiness' then
+		elseif SUI.DB.PlayerFrames.bars[unit].color == 'happiness' then
 			PlayerFrames[unit].Health.colorHappiness = true
-		elseif SUI.DBMod.PlayerFrames.bars[unit].color == 'class' then
+		elseif SUI.DB.PlayerFrames.bars[unit].color == 'class' then
 			PlayerFrames[unit].Health.colorClass = true
 		else
 			PlayerFrames[unit].Health.colorSmooth = true
@@ -204,7 +204,7 @@ function PlayerFrames:Buffs(self, unit)
 	if not self.BuffAnchor then
 		return self
 	end
-	local CurStyle = SUI.DBMod.PlayerFrames.Style
+	local CurStyle = SUI.DB.PlayerFrames.Style
 	-- Build buffs
 	if SUI.DB.Styles[CurStyle].Frames[unit] then
 		local Buffsize = SUI.DB.Styles[CurStyle].Frames[unit].Buffs.size
@@ -424,24 +424,24 @@ function PlayerFrames:UpdatePosition()
 	}
 
 	for _, b in pairs(FramesList) do
-		if SUI.DBMod.PlayerFrames[b] ~= nil and SUI.DBMod.PlayerFrames[b].moved then
+		if SUI.DB.PlayerFrames[b] ~= nil and SUI.DB.PlayerFrames[b].moved then
 			PlayerFrames[b]:SetMovable(true)
 			PlayerFrames[b]:SetUserPlaced(false)
 			local Anchors = {}
-			for k, v in pairs(SUI.DBMod.PlayerFrames[b].Anchors) do
+			for k, v in pairs(SUI.DB.PlayerFrames[b].Anchors) do
 				Anchors[k] = v
 			end
 			PlayerFrames[b]:ClearAllPoints()
 			PlayerFrames[b]:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-		elseif SUI.DBMod.PlayerFrames[b] ~= nil then
+		elseif SUI.DB.PlayerFrames[b] ~= nil then
 			PlayerFrames[b]:SetMovable(false)
 			PlayerFrames[b]:ClearAllPoints()
-			if (SUI.DBMod.PlayerFrames.Style == 'Classic') then
+			if (SUI.DB.PlayerFrames.Style == 'Classic') then
 				PlayerFrames:PositionFrame_Classic(b)
-			elseif (SUI.DBMod.PlayerFrames.Style == 'plain') then
+			elseif (SUI.DB.PlayerFrames.Style == 'plain') then
 				PlayerFrames:PositionFrame_Plain(b)
 			else
-				SUI:GetModule('Style_' .. SUI.DBMod.PlayerFrames.Style):PositionFrame(b)
+				SUI:GetModule('Style_' .. SUI.DB.PlayerFrames.Style):PositionFrame(b)
 			end
 		else
 			print(b .. ' Frame has not been spawned by your theme')
@@ -449,12 +449,12 @@ function PlayerFrames:UpdatePosition()
 	end
 
 	-- for i = 1, MAX_BOSS_FRAMES do
-	if SUI.DBMod.PlayerFrames.BossFrame.display then
-		if SUI.DBMod.PlayerFrames.boss.moved then
+	if SUI.DB.PlayerFrames.BossFrame.display then
+		if SUI.DB.PlayerFrames.boss.moved then
 			PlayerFrames.boss[1]:SetMovable(true)
 			PlayerFrames.boss[1]:SetUserPlaced(false)
 			local Anchors = {}
-			for k, v in pairs(SUI.DBMod.PlayerFrames.boss.Anchors) do
+			for k, v in pairs(SUI.DB.PlayerFrames.boss.Anchors) do
 				Anchors[k] = v
 			end
 			PlayerFrames.boss[1]:ClearAllPoints()
@@ -495,11 +495,11 @@ end
 ------------------------
 
 function RaidFrames:PostUpdateDebuffs(self, unit)
-	if SUI.DBMod.RaidFrames.showDebuffs then
+	if SUI.DB.RaidFrames.showDebuffs then
 		self:Show()
-		self.size = SUI.DBMod.RaidFrames.Auras.size
-		self.spacing = SUI.DBMod.RaidFrames.Auras.spacing
-		self.showType = SUI.DBMod.RaidFrames.Auras.showType
+		self.size = SUI.DB.RaidFrames.Auras.size
+		self.spacing = SUI.DB.RaidFrames.Auras.spacing
+		self.showType = SUI.DB.RaidFrames.Auras.showType
 	else
 		self:Hide()
 	end

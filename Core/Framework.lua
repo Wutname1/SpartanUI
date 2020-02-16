@@ -34,7 +34,7 @@ SUI.Version = ''
 --@end-do-not-package@
 --@alpha@
 -- TODO REMOVE FOR 6.0 RELEASE
-SUI.Version = '5.9.9'
+SUI.Version = '5.9.91'
 --@end-alpha@
 
 ---------------  Options Init ---------------
@@ -49,1515 +49,1511 @@ SUI.opt = {
 }
 ---------------  Database  ---------------
 local DBdefault = {
-	SUIProper = {
-		Version = '0',
-		SetupDone = false,
-		scale = .92,
-		alpha = 1,
-		ActionBars = {
-			Allalpha = 100,
-			Allenable = true,
-			popup1 = {anim = true, alpha = 100, enable = true},
-			popup2 = {anim = true, alpha = 100, enable = true},
-			bar1 = {alpha = 100, enable = true},
-			bar2 = {alpha = 100, enable = true},
-			bar3 = {alpha = 100, enable = true},
-			bar4 = {alpha = 100, enable = true},
-			bar5 = {alpha = 100, enable = true},
-			bar6 = {alpha = 100, enable = true}
-		},
-		AutoSell = {
-			FirstLaunch = true,
-			NotCrafting = true,
-			NotConsumables = true,
-			NotInGearset = true,
-			MaxILVL = 180,
-			Gray = true,
-			White = false,
-			Green = false,
-			Blue = false,
-			Purple = false,
-			GearTokens = false,
-			AutoRepair = false,
-			UseGuildBankRepair = false
-		},
-		AutoTurnIn = {
-			ChatText = true,
-			FirstLaunch = true,
-			debug = false,
-			TurnInEnabled = true,
-			AutoGossip = true,
-			AutoGossipSafeMode = true,
-			AcceptGeneralQuests = true,
-			AcceptRepeatable = false,
-			trivial = false,
-			lootreward = false,
-			autoequip = false,
-			armor = {},
-			weapon = {},
-			stat = {},
-			secondary = {},
-			Blacklist = {}
-		},
-		BarTextures = {
-			smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
-		},
-		BuffSettings = {
-			disableblizz = true,
-			enabled = true,
-			Manualoffset = false,
-			offset = 0
-		},
-		Components = {},
-		ChatSettings = {
-			enabled = true
-		},
-		EnabledComponents = {},
-		font = {
-			NumberSeperator = ',',
-			Path = '',
-			Modules = {
-				['**'] = {
-					Size = 0,
-					Face = 'Roboto-Bold',
-					Type = 'outline'
-				}
-			}
-		},
-		MiniMap = {
-			northTag = false,
-			ManualAllowUse = false,
-			ManualAllowPrompt = '',
-			AutoDetectAllowUse = true,
-			MapButtons = true,
-			MouseIsOver = false,
-			MapZoomButtons = true,
-			MapTimeIndicator = false,
-			DisplayMapCords = true,
-			DisplayZoneName = true,
-			Shape = 'square',
-			BlizzStyle = 'mouseover',
-			OtherStyle = 'mouseover',
-			Moved = false,
-			lockminimap = true,
-			Position = nil,
-			SUIMapChangesActive = false
-		},
-		MoveIt = {
-			AltKey = false,
-			tips = true,
-			movers = {
-				['**'] = {
-					defaultPoint = false,
-					MovedPoints = false
-				}
-			}
-		},
-		Offset = {
-			Top = 0,
-			TopAuto = true,
-			Bottom = 0,
-			BottomAuto = true,
-			Horizontal = 0
-		},
-		SetupWizard = {
-			FirstLaunch = true
-		},
-		Styles = {
+	Version = '0',
+	SetupDone = false,
+	scale = .92,
+	alpha = 1,
+	ActionBars = {
+		Allalpha = 100,
+		Allenable = true,
+		popup1 = {anim = true, alpha = 100, enable = true},
+		popup2 = {anim = true, alpha = 100, enable = true},
+		bar1 = {alpha = 100, enable = true},
+		bar2 = {alpha = 100, enable = true},
+		bar3 = {alpha = 100, enable = true},
+		bar4 = {alpha = 100, enable = true},
+		bar5 = {alpha = 100, enable = true},
+		bar6 = {alpha = 100, enable = true}
+	},
+	AutoSell = {
+		FirstLaunch = true,
+		NotCrafting = true,
+		NotConsumables = true,
+		NotInGearset = true,
+		MaxILVL = 180,
+		Gray = true,
+		White = false,
+		Green = false,
+		Blue = false,
+		Purple = false,
+		GearTokens = false,
+		AutoRepair = false,
+		UseGuildBankRepair = false
+	},
+	AutoTurnIn = {
+		ChatText = true,
+		FirstLaunch = true,
+		debug = false,
+		TurnInEnabled = true,
+		AutoGossip = true,
+		AutoGossipSafeMode = true,
+		AcceptGeneralQuests = true,
+		AcceptRepeatable = false,
+		trivial = false,
+		lootreward = false,
+		autoequip = false,
+		armor = {},
+		weapon = {},
+		stat = {},
+		secondary = {},
+		Blacklist = {}
+	},
+	BarTextures = {
+		smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+	},
+	BuffSettings = {
+		disableblizz = true,
+		enabled = true,
+		Manualoffset = false,
+		offset = 0
+	},
+	Components = {},
+	ChatSettings = {
+		enabled = true
+	},
+	EnabledComponents = {},
+	font = {
+		NumberSeperator = ',',
+		Path = '',
+		Modules = {
 			['**'] = {
-				Artwork = {},
-				PlayerFrames = {},
-				PartyFrames = {},
-				RaidFrames = {},
-				Movable = {
-					Minimap = true,
-					PlayerFrames = true,
-					PartyFrames = true,
-					RaidFrames = true
-				},
-				Frames = {
-					player = {
-						Buffs = {
-							Display = true,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							Mode = 'both'
-						},
-						Debuffs = {
-							Display = true,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = true,
-							Mode = 'both'
-						}
-					},
-					target = {
-						Buffs = {
-							Display = true,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							Mode = 'both'
-						},
-						Debuffs = {
-							Display = true,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = true,
-							Mode = 'bars'
-						}
-					},
-					targettarget = {
-						Buffs = {
-							Display = false,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							Mode = 'disabled'
-						},
-						Debuffs = {
-							Display = true,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = true,
-							Mode = 'icons'
-						}
-					},
-					pet = {
-						Buffs = {
-							Display = true,
-							Number = 10,
-							size = 15,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							Mode = 'icons'
-						},
-						Debuffs = {
-							Display = true,
-							Number = 10,
-							size = 15,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							Mode = 'icons'
-						}
-					},
-					focus = {
-						Buffs = {
-							Display = true,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							Mode = 'icons'
-						},
-						Debuffs = {
-							Display = true,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = true,
-							Mode = 'icons'
-						}
-					},
-					focustarget = {
-						Buffs = {
-							Display = false,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							Mode = 'disabled'
-						},
-						Debuffs = {
-							Display = false,
-							Number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = true,
-							Mode = 'disabled'
-						}
-					}
-				},
-				Minimap = {
-					shape = 'circle',
-					size = {140, 140},
-					ZoneText = {Location = 'BOTTOM'},
-					UnderVehicleUI = true,
-					BG = {
-						enabled = true,
-						BlendMode = 'ADD',
-						alpha = 1
-					},
-					coords = {
-						scale = 1,
-						position = 'TOP,Minimap,BOTTOM,0,-4',
-						TextColor = {1, .82, 0, 1},
-						ShadowColor = {0, 0, 0, 1}
-					}
-				},
-				TooltipLoc = false,
-				BuffLoc = false,
-				Movers = {},
-				BlizzMovers = {
-					['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
-					['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
-					['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
-					['VehicleLeaveButton'] = 'LEFT,SUI_UF_player,RIGHT,20,0'
-				}
-			},
-			Classic = {
-				Artwork = {},
-				Frames = {
-					player = {
-						Buffs = {Mode = 'icons'},
-						Debuffs = {Mode = 'icons'}
-					},
-					target = {
-						Buffs = {Mode = 'icons'},
-						Debuffs = {Mode = 'bars'}
-					},
-					pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
-					targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
-					focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
-				},
-				Movable = {
-					Minimap = false,
-					PlayerFrames = true,
-					PartyFrames = true,
-					RaidFrames = true
-				},
-				Minimap = {
-					size = {156, 156},
-					coords = {TextColor = {1, .82, 0, 1}},
-					coords = {
-						position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
-					},
-					position = 'CENTER,SUI_Art_Classic,CENTER,0,54'
-				},
-				StatusBars = {
-					XP = true,
-					REP = true,
-					AP = true
-				},
-				Color = {
-					Art = false,
-					PlayerFrames = false,
-					PartyFrames = false,
-					RaidFrames = false
-				},
-				BlizzMovers = {
-					['VehicleLeaveButton'] = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
-				},
-				TooltipLoc = true
-			},
-			Transparent = {
-				Minimap = {
-					shape = 'square',
-					size = {130, 130},
-					ZoneText = {Location = 'TOP'},
-					position = 'CENTER,SUI_Art_Transparent,CENTER,0,20',
-					coords = {
-						Location = 'TOP'
-					}
-				},
-				Color = {
-					Art = {0, .8, .9, .7},
-					PlayerFrames = {0, .8, .9, .7},
-					PartyFrames = {0, .8, .9, .7},
-					RaidFrames = {0, .8, .9, .7}
-				},
-				TooltipLoc = true,
-				BuffLoc = true
-			},
-			Minimal = {
-				TooltipLoc = true,
-				Minimap = {
-					UnderVehicleUI = false,
-					shape = 'square'
-				},
-				Color = {
-					0.6156862745098039,
-					0.1215686274509804,
-					0.1215686274509804,
-					0.9
-				},
-				PartyFramesSize = 'large',
-				HideCenterGraphic = false
-			},
-			Fel = {
-				Artwork = {
-					Allenable = true,
-					Allalpha = 100,
-					bar1 = {enable = true, alpha = 100},
-					bar2 = {enable = true, alpha = 100},
-					bar3 = {enable = true, alpha = 100},
-					bar4 = {enable = true, alpha = 100},
-					Stance = {enable = true, alpha = 100},
-					MenuBar = {enable = true, alpha = 100}
-				},
-				Frames = {
-					player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
-					target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}}
-				},
-				PartyFrames = {
-					FrameStyle = 'medium'
-				},
-				RaidFrames = {
-					FrameStyle = 'small'
-				},
-				Minimap = {
-					size = {156, 156},
-					BG = {
-						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-						size = {330, 330},
-						position = 'CENTER,Minimap,CENTER,7,37'
-					},
-					coords = {
-						position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-						scale = 1.2
-					},
-					position = 'CENTER,SUI_Art_Fel,CENTER,0,54',
-					engulfed = true
-				},
-				SlidingTrays = {
-					left = {
-						enabled = true,
-						collapsed = false
-					},
-					right = {
-						enabled = true,
-						collapsed = false
-					}
-				},
-				TooltipLoc = true,
-				SubTheme = 'Fel',
-				BuffLoc = true
-			},
-			War = {
-				Artwork = {
-					Allenable = true,
-					Allalpha = 100,
-					bar1 = {enable = true, alpha = 100},
-					bar2 = {enable = true, alpha = 100},
-					bar3 = {enable = true, alpha = 100},
-					bar4 = {enable = true, alpha = 100},
-					Stance = {enable = true, alpha = 100},
-					MenuBar = {enable = true, alpha = 100}
-				},
-				Frames = {
-					player = {
-						artwork = {
-							top = {
-								enabled = true,
-								graphic = 'war'
-							},
-							bg = {
-								enabled = true,
-								graphic = 'war'
-							},
-							bottom = {
-								enabled = true,
-								graphic = 'war'
-							}
-						},
-						elements = {
-							Name = {
-								enabled = true,
-								SetJustifyH = 'LEFT',
-								position = {
-									anchor = 'BOTTOM',
-									x = 0,
-									y = -16
-								}
-							}
-						}
-					},
-					target = {
-						artwork = {
-							top = {
-								enabled = true,
-								graphic = 'war'
-							},
-							bg = {
-								enabled = true,
-								graphic = 'war'
-							},
-							bottom = {
-								enabled = true,
-								graphic = 'war'
-							}
-						},
-						elements = {
-							Name = {
-								enabled = true,
-								SetJustifyH = 'LEFT',
-								position = {
-									anchor = 'BOTTOM',
-									x = 0,
-									y = -16
-								}
-							}
-						}
-					}
-				},
-				PartyFrames = {
-					FrameStyle = 'medium'
-				},
-				RaidFrames = {
-					FrameStyle = 'small'
-				},
-				Minimap = {
-					size = {156, 156},
-					BG = {
-						texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
-						size = {330, 330},
-						position = 'CENTER,Minimap,CENTER,7,37'
-					},
-					coords = {
-						position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
-					},
-					position = 'CENTER,SUI_Art_War_Left,RIGHT,0,20'
-				},
-				SlidingTrays = {
-					left = {
-						enabled = true,
-						collapsed = false
-					},
-					right = {
-						enabled = true,
-						collapsed = false
-					}
-				},
-				TooltipLoc = true,
-				BuffLoc = true
+				Size = 0,
+				Face = 'Roboto-Bold',
+				Type = 'outline'
 			}
-		},
-		Tooltips = {
-			Styles = {
-				metal = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\metal',
-					tile = false
-				},
-				smooth = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
-					tile = false
-				},
-				smoke = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
-					tile = false
-				},
-				none = {
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-					tile = false
-				}
+		}
+	},
+	MiniMap = {
+		northTag = false,
+		ManualAllowUse = false,
+		ManualAllowPrompt = '',
+		AutoDetectAllowUse = true,
+		MapButtons = true,
+		MouseIsOver = false,
+		MapZoomButtons = true,
+		MapTimeIndicator = false,
+		DisplayMapCords = true,
+		DisplayZoneName = true,
+		Shape = 'square',
+		BlizzStyle = 'mouseover',
+		OtherStyle = 'mouseover',
+		Moved = false,
+		lockminimap = true,
+		Position = nil,
+		SUIMapChangesActive = false
+	},
+	MoveIt = {
+		AltKey = false,
+		tips = true,
+		movers = {
+			['**'] = {
+				defaultPoint = false,
+				MovedPoints = false
+			}
+		}
+	},
+	Offset = {
+		Top = 0,
+		TopAuto = true,
+		Bottom = 0,
+		BottomAuto = true,
+		Horizontal = 0
+	},
+	SetupWizard = {
+		FirstLaunch = true
+	},
+	Styles = {
+		['**'] = {
+			Artwork = {},
+			PlayerFrames = {},
+			PartyFrames = {},
+			RaidFrames = {},
+			Movable = {
+				Minimap = true,
+				PlayerFrames = true,
+				PartyFrames = true,
+				RaidFrames = true
 			},
-			ActiveStyle = 'smoke',
-			VendorPrices = true,
-			Override = {},
-			ColorOverlay = true,
-			Color = {0, 0, 0, 0.4},
-			SuppressNoMatch = true
-		},
-		Unitframes = {
-			Style = 'War',
-			FrameOptions = {
-				['**'] = {
-					enabled = true,
-					width = 180,
-					moved = false,
-					position = {
-						point = 'BOTTOM',
-						relativePoint = 'BOTTOM',
-						xOfs = 0,
-						yOfs = 0
-					},
-					artwork = {
-						top = {
-							enabled = false,
-							x = 0,
-							y = 0,
-							graphic = ''
-						},
-						bg = {
-							enabled = false,
-							x = 0,
-							y = 0,
-							graphic = ''
-						},
-						bottom = {
-							enabled = false,
-							x = 0,
-							y = 0,
-							graphic = ''
-						}
-					},
-					auras = {
-						Buffs = {
-							enabled = false,
-							number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							onlyShowPlayer = false,
-							initialAnchor = 'BOTTOMLEFT',
-							growthx = 'RIGHT',
-							growthy = 'UP',
-							rows = 3,
-							position = {
-								anchor = 'TOPLEFT',
-								x = 0,
-								y = 20
-							}
-						},
-						Debuffs = {
-							enabled = true,
-							number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							ShowBoss = true,
-							onlyShowPlayer = false,
-							initialAnchor = 'BOTTOMRIGHT',
-							growthx = 'LEFT',
-							growthy = 'UP',
-							rows = 3,
-							position = {
-								anchor = 'TOPRIGHT',
-								x = 0,
-								y = 20
-							}
-						},
-						Bars = {
-							enabled = false,
-							auraBarHeight = 15,
-							auraBarWidth = false,
-							auraBarTexture = Smoothv2,
-							fgalpha = 1,
-							bgalpha = 1,
-							spellNameSize = 10,
-							spellTimeSize = 10,
-							gap = 1,
-							spacing = 1,
-							scaleTime = false,
-							position = {
-								anchor = 'TOP',
-								x = 0,
-								y = 20
-							}
-						}
-					},
-					elements = {
-						['**'] = {
-							enabled = false,
-							Scale = 1,
-							bgTexture = false,
-							points = false,
-							alpha = 1,
-							width = 20,
-							height = 20,
-							size = 20,
-							scale = 1,
-							bg = {
-								enabled = false,
-								color = false
-							},
-							text = {
-								['**'] = {
-									enabled = false,
-									text = '',
-									size = 10,
-									SetJustifyH = 'CENTER',
-									SetJustifyV = 'MIDDLE',
-									position = {
-										anchor = 'CENTER',
-										x = 0,
-										y = 0
-									}
-								},
-								['1'] = {
-									enabled = false,
-									position = {}
-								},
-								['2'] = {
-									enabled = false,
-									position = {}
-								}
-							},
-							position = {
-								anchor = 'CENTER',
-								x = 0,
-								y = 0
-							}
-						},
-						DispelHighlight = {
-							enabled = true,
-							position = {
-								anchor = nil
-							}
-						},
-						HappinessIndicator = {
-							enabled = true,
-							position = {
-								anchor = 'LEFT',
-								x = -10,
-								y = -10
-							}
-						},
-						Portrait = {
-							type = '3D',
-							scaleWithFrame = true,
-							width = 50,
-							height = 100,
-							rotation = 0,
-							camDistanceScale = 1,
-							xOffset = 0,
-							yOffset = 0,
-							position = 'left'
-						},
-						Health = {
-							enabled = true,
-							height = 40,
-							offset = 1,
-							colorReaction = false,
-							colorSmooth = true,
-							colorClass = true,
-							colorTapping = true,
-							colorDisconnected = true,
-							bg = {
-								enabled = true,
-								color = {1, 1, 1, .2}
-							},
-							text = {
-								['1'] = {
-									enabled = true,
-									text = '[curhpformatted] / [maxhpformatted]',
-									position = {
-										anchor = 'CENTER',
-										x = 0,
-										y = 0
-									}
-								}
-							}
-						},
-						HealthPrediction = {
-							enabled = true
-						},
-						Power = {
-							enabled = true,
-							height = 10,
-							offset = 1,
-							bg = {
-								enabled = true,
-								color = {1, 1, 1, .2}
-							},
-							text = {
-								['1'] = {
-									enabled = false,
-									text = '[curppformatted] / [maxppformatted]'
-								},
-								['2'] = {
-									enabled = false,
-									text = '[perpp]%'
-								}
-							}
-						},
-						AdditionalPower = {
-							enabled = true,
-							offset = 1,
-							height = 5
-						},
-						Castbar = {
-							enabled = false,
-							height = 10,
-							offset = 0,
-							interruptable = true,
-							latency = false,
-							bg = {
-								enabled = true,
-								color = {1, 1, 1, .2}
-							},
-							Icon = {
-								enabled = true,
-								size = 12,
-								position = {
-									anchor = 'LEFT',
-									x = 0,
-									y = 0
-								}
-							},
-							text = {
-								['1'] = {
-									enabled = true,
-									text = '[Spell name]',
-									position = {
-										anchor = 'CENTER',
-										x = 0,
-										y = 0
-									}
-								},
-								['2'] = {
-									enabled = true,
-									text = '[Spell timer]',
-									size = 8,
-									position = {
-										anchor = 'RIGHT',
-										x = 0,
-										y = 0
-									}
-								}
-							}
-						},
-						Name = {
-							enabled = true,
-							height = 12,
-							size = 12,
-							text = '[difficulty][smartlevel] [SUI_ColorClass][name]',
-							SetJustifyH = 'CENTER',
-							SetJustifyV = 'MIDDLE',
-							position = {
-								anchor = 'TOP',
-								x = 0,
-								y = 15
-							}
-						},
-						LeaderIndicator = {
-							enabled = true,
-							size = 12,
-							position = {
-								anchor = 'TOP',
-								x = 0,
-								y = 6
-							}
-						},
-						RestingIndicator = {},
-						GroupRoleIndicator = {
-							enabled = true,
-							size = 18,
-							alpha = .75,
-							position = {
-								anchor = 'TOPRIGHT',
-								x = -10,
-								y = 10
-							}
-						},
-						CombatIndicator = {},
-						RaidTargetIndicator = {
-							enabled = true,
-							size = 20,
-							position = {
-								anchor = 'BOTTOMRIGHT',
-								x = 5,
-								y = -10
-							}
-						},
-						SUI_ClassIcon = {
-							position = {
-								anchor = 'BOTTOMLEFT',
-								x = -12,
-								y = 0
-							}
-						},
-						ReadyCheckIndicator = {
-							enabled = true,
-							size = 35,
-							position = {
-								anchor = 'LEFT',
-								x = 0,
-								y = 0
-							}
-						},
-						PvPIndicator = {
-							Badge = false,
-							Shadow = true,
-							position = {
-								anchor = 'TOPLEFT',
-								x = -10
-							}
-						},
-						StatusText = {
-							size = 22,
-							SetJustifyH = 'CENTER',
-							SetJustifyV = 'MIDDLE',
-							position = {
-								anchor = 'CENTER',
-								x = 0,
-								y = 0
-							}
-						},
-						Runes = {},
-						Stagger = {},
-						Totems = {},
-						AssistantIndicator = {
-							enabled = true,
-							size = 12,
-							position = {
-								anchor = 'TOP',
-								x = 0,
-								y = 6
-							}
-						},
-						RaidRoleIndicator = {
-							enabled = true
-						},
-						ResurrectIndicator = {
-							enabled = true
-						},
-						SummonIndicator = {},
-						QuestIndicator = {},
-						Range = {
-							enabled = true,
-							insideAlpha = 1,
-							outsideAlpha = .3
-						},
-						PhaseIndicator = {
-							enabled = true,
-							position = {
-								anchor = 'TOP',
-								x = 0,
-								y = 0
-							}
-						},
-						ThreatIndicator = {
-							enabled = true
-						},
-						SUI_RaidGroup = {},
-						RareElite = {
-							enabled = true,
-							alpha = .4,
-							points = {
-								['1'] = {
-									anchor = 'TOPLEFT',
-									x = 0,
-									y = 0
-								},
-								['2'] = {
-									anchor = 'BOTTOMRIGHT',
-									x = 0,
-									y = 0
-								}
-							}
-						}
-					}
-				},
-				arena = {
-					enabled = true,
-					maxColumns = 1,
-					unitsPerColumn = 5,
-					columnSpacing = 1,
-					yOffset = -10,
-					elements = {
-						Castbar = {
-							enabled = true
-						},
-						SUI_ClassIcon = {
-							enabled = true
-						}
-					}
-				},
-				boss = {
-					enabled = true,
-					width = 120,
-					maxColumns = 1,
-					unitsPerColumn = 5,
-					columnSpacing = 0,
-					yOffset = -10,
-					auras = {
-						Buffs = {
-							enabled = true,
-							size = 10
-						}
-					},
-					elements = {
-						Portrait = {
-							enabled = true,
-							type = '2D'
-						},
-						Castbar = {
-							enabled = true
-						}
-					}
-				},
-				bosstarget = {},
-				focus = {
-					enabled = true,
-					width = 100,
-					auras = {
-						Buffs = {
-							enabled = true,
-							onlyShowPlayer = true
-						},
-						Debuffs = {
-							enabled = true,
-							onlyShowPlayer = true
-						}
-					},
-					elements = {
-						Castbar = {
-							enabled = true
-						}
-					}
-				},
-				focustarget = {
-					enabled = true,
-					width = 90,
-					elements = {
-						Castbar = {
-							enabled = true
-						}
-					}
-				},
+			Frames = {
 				player = {
-					enabled = true,
-					anchor = {
-						point = 'BOTTOMRIGHT',
-						relativePoint = 'BOTTOM',
-						xOfs = -60,
-						yOfs = 250
+					Buffs = {
+						Display = true,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						Mode = 'both'
 					},
-					auras = {
-						Buffs = {
-							enabled = true
-						},
-						Debuffs = {
-							enabled = true
-						},
-						Bars = {
-							enabled = true
-						}
+					Debuffs = {
+						Display = true,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = true,
+						Mode = 'both'
+					}
+				},
+				target = {
+					Buffs = {
+						Display = true,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						Mode = 'both'
 					},
-					elements = {
-						Portrait = {
-							enabled = true
-						},
-						Castbar = {
-							enabled = true
-						},
-						CombatIndicator = {
-							enabled = true,
-							position = {
-								anchor = 'TOPRIGHT',
-								x = 10,
-								y = 10
-							}
-						},
-						SUI_ClassIcon = {
-							enabled = true
-						},
-						RestingIndicator = {
-							enabled = true,
-							position = {
-								anchor = 'TOPLEFT',
-								x = 0,
-								y = 0
-							}
-						},
-						Power = {
-							text = {
-								['1'] = {
-									enabled = true
-								}
-							}
-						},
-						PvPIndicator = {
-							enabled = true
-						},
-						AdditionalPower = {
-							enabled = true
-						}
+					Debuffs = {
+						Display = true,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = true,
+						Mode = 'bars'
+					}
+				},
+				targettarget = {
+					Buffs = {
+						Display = false,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						Mode = 'disabled'
+					},
+					Debuffs = {
+						Display = true,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = true,
+						Mode = 'icons'
 					}
 				},
 				pet = {
-					width = 100,
-					elements = {
-						Health = {
-							height = 30
-						},
-						Power = {
-							height = 5,
-							text = {
-								['1'] = {
-									enabled = false
-								}
-							}
-						},
-						Name = {
-							enabled = true,
-							height = 10,
-							size = 10,
-							position = {
-								y = 0
-							}
-						}
+					Buffs = {
+						Display = true,
+						Number = 10,
+						size = 15,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						Mode = 'icons'
+					},
+					Debuffs = {
+						Display = true,
+						Number = 10,
+						size = 15,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						Mode = 'icons'
 					}
 				},
-				pettarget = {},
-				party = {
-					width = 120,
+				focus = {
+					Buffs = {
+						Display = true,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						Mode = 'icons'
+					},
+					Debuffs = {
+						Display = true,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = true,
+						Mode = 'icons'
+					}
+				},
+				focustarget = {
+					Buffs = {
+						Display = false,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						Mode = 'disabled'
+					},
+					Debuffs = {
+						Display = false,
+						Number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = true,
+						Mode = 'disabled'
+					}
+				}
+			},
+			Minimap = {
+				shape = 'circle',
+				size = {140, 140},
+				ZoneText = {Location = 'BOTTOM'},
+				UnderVehicleUI = true,
+				BG = {
 					enabled = true,
-					showSelf = true,
-					xOffset = 0,
-					yOffset = -10,
-					maxColumns = 1,
-					unitsPerColumn = 5,
-					columnSpacing = 2,
-					auras = {
-						Buffs = {
+					BlendMode = 'ADD',
+					alpha = 1
+				},
+				coords = {
+					scale = 1,
+					position = 'TOP,Minimap,BOTTOM,0,-4',
+					TextColor = {1, .82, 0, 1},
+					ShadowColor = {0, 0, 0, 1}
+				}
+			},
+			TooltipLoc = false,
+			BuffLoc = false,
+			Movers = {},
+			BlizzMovers = {
+				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
+				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
+				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
+				['VehicleLeaveButton'] = 'LEFT,SUI_UF_player,RIGHT,20,0'
+			}
+		},
+		Classic = {
+			Artwork = {},
+			Frames = {
+				player = {
+					Buffs = {Mode = 'icons'},
+					Debuffs = {Mode = 'icons'}
+				},
+				target = {
+					Buffs = {Mode = 'icons'},
+					Debuffs = {Mode = 'bars'}
+				},
+				pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+				targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+				focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
+			},
+			Movable = {
+				Minimap = false,
+				PlayerFrames = true,
+				PartyFrames = true,
+				RaidFrames = true
+			},
+			Minimap = {
+				size = {156, 156},
+				coords = {TextColor = {1, .82, 0, 1}},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+				},
+				position = 'CENTER,SUI_Art_Classic,CENTER,0,54'
+			},
+			StatusBars = {
+				XP = true,
+				REP = true,
+				AP = true
+			},
+			Color = {
+				Art = false,
+				PlayerFrames = false,
+				PartyFrames = false,
+				RaidFrames = false
+			},
+			BlizzMovers = {
+				['VehicleLeaveButton'] = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
+			},
+			TooltipLoc = true
+		},
+		Transparent = {
+			Minimap = {
+				shape = 'square',
+				size = {130, 130},
+				ZoneText = {Location = 'TOP'},
+				position = 'CENTER,SUI_Art_Transparent,CENTER,0,20',
+				coords = {
+					Location = 'TOP'
+				}
+			},
+			Color = {
+				Art = {0, .8, .9, .7},
+				PlayerFrames = {0, .8, .9, .7},
+				PartyFrames = {0, .8, .9, .7},
+				RaidFrames = {0, .8, .9, .7}
+			},
+			TooltipLoc = true,
+			BuffLoc = true
+		},
+		Minimal = {
+			TooltipLoc = true,
+			Minimap = {
+				UnderVehicleUI = false,
+				shape = 'square'
+			},
+			Color = {
+				0.6156862745098039,
+				0.1215686274509804,
+				0.1215686274509804,
+				0.9
+			},
+			PartyFramesSize = 'large',
+			HideCenterGraphic = false
+		},
+		Fel = {
+			Artwork = {
+				Allenable = true,
+				Allalpha = 100,
+				bar1 = {enable = true, alpha = 100},
+				bar2 = {enable = true, alpha = 100},
+				bar3 = {enable = true, alpha = 100},
+				bar4 = {enable = true, alpha = 100},
+				Stance = {enable = true, alpha = 100},
+				MenuBar = {enable = true, alpha = 100}
+			},
+			Frames = {
+				player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
+				target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}}
+			},
+			PartyFrames = {
+				FrameStyle = 'medium'
+			},
+			RaidFrames = {
+				FrameStyle = 'small'
+			},
+			Minimap = {
+				size = {156, 156},
+				BG = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
+					size = {330, 330},
+					position = 'CENTER,Minimap,CENTER,7,37'
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+					scale = 1.2
+				},
+				position = 'CENTER,SUI_Art_Fel,CENTER,0,54',
+				engulfed = true
+			},
+			SlidingTrays = {
+				left = {
+					enabled = true,
+					collapsed = false
+				},
+				right = {
+					enabled = true,
+					collapsed = false
+				}
+			},
+			TooltipLoc = true,
+			SubTheme = 'Fel',
+			BuffLoc = true
+		},
+		War = {
+			Artwork = {
+				Allenable = true,
+				Allalpha = 100,
+				bar1 = {enable = true, alpha = 100},
+				bar2 = {enable = true, alpha = 100},
+				bar3 = {enable = true, alpha = 100},
+				bar4 = {enable = true, alpha = 100},
+				Stance = {enable = true, alpha = 100},
+				MenuBar = {enable = true, alpha = 100}
+			},
+			Frames = {
+				player = {
+					artwork = {
+						top = {
 							enabled = true,
-							size = 10
+							graphic = 'war'
 						},
-						Debuffs = {
+						bg = {
 							enabled = true,
-							size = 16
+							graphic = 'war'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'war'
 						}
 					},
 					elements = {
-						Castbar = {
-							enabled = true
-						},
-						ResurrectIndicator = {
-							enabled = true
-						},
-						SummonIndicator = {
-							enabled = true
-						},
-						RaidRoleIndicator = {
-							enabled = true
-						},
-						AssistantIndicator = {
-							enabled = true
-						},
-						SUI_ClassIcon = {
-							enabled = true
-						}
-					}
-				},
-				partypet = {},
-				partytarget = {},
-				raid = {
-					enabled = true,
-					width = 95,
-					showParty = true,
-					showSelf = true,
-					mode = 'NAME',
-					xOffset = 2,
-					yOffset = 2,
-					maxColumns = 4,
-					unitsPerColumn = 10,
-					columnSpacing = 2,
-					auras = {
-						Buffs = {
-							enabled = true,
-							size = 10
-						},
-						Debuffs = {
-							enabled = true,
-							size = 10
-						}
-					},
-					elements = {
-						Health = {
-							height = 30
-						},
-						Power = {
-							height = 5,
-							text = {
-								['1'] = {
-									enabled = false
-								}
-							}
-						},
-						ResurrectIndicator = {
-							enabled = true
-						},
-						SummonIndicator = {
-							enabled = true
-						},
-						RaidRoleIndicator = {
-							enabled = true
-						},
 						Name = {
 							enabled = true,
-							height = 10,
-							size = 10,
+							SetJustifyH = 'LEFT',
 							position = {
-								y = 0
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
 							}
 						}
 					}
 				},
 				target = {
-					enabled = true,
-					anchor = {
-						point = 'BOTTOMLEFT',
-						relativePoint = 'BOTTOM',
-						xOfs = 60,
-						yOfs = 250
-					},
-					auras = {
-						Buffs = {
-							enabled = true
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'war'
 						},
-						Debuffs = {
-							enabled = true
+						bg = {
+							enabled = true,
+							graphic = 'war'
 						},
-						Bars = {
-							enabled = true
+						bottom = {
+							enabled = true,
+							graphic = 'war'
 						}
 					},
 					elements = {
-						Portrait = {
-							enabled = true
-						},
-						Castbar = {
-							enabled = true
-						},
-						QuestIndicator = {
-							enabled = true
-						},
-						RaidRoleIndicator = {
-							enabled = true
-						},
-						AssistantIndicator = {
-							enabled = true
-						},
-						SUI_ClassIcon = {
-							enabled = true
-						},
-						PvPIndicator = {
-							enabled = true
-						},
-						Power = {
-							text = {
-								['1'] = {
-									enabled = true
-								}
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
 							}
-						}
-					}
-				},
-				targettarget = {
-					enabled = true,
-					width = 100,
-					auras = {
-						Debuffs = {
-							size = 10
-						}
-					},
-					elements = {
-						Castbar = {
-							enabled = false
-						},
-						Health = {
-							height = 30
-						},
-						Power = {
-							height = 5
 						}
 					}
 				}
 			},
-			PlayerCustomizations = {
-				['**'] = {
+			PartyFrames = {
+				FrameStyle = 'medium'
+			},
+			RaidFrames = {
+				FrameStyle = 'small'
+			},
+			Minimap = {
+				size = {156, 156},
+				BG = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+					size = {330, 330},
+					position = 'CENTER,Minimap,CENTER,7,37'
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+				},
+				position = 'CENTER,SUI_Art_War_Left,RIGHT,0,20'
+			},
+			SlidingTrays = {
+				left = {
+					enabled = true,
+					collapsed = false
+				},
+				right = {
+					enabled = true,
+					collapsed = false
+				}
+			},
+			TooltipLoc = true,
+			BuffLoc = true
+		}
+	},
+	Tooltips = {
+		Styles = {
+			metal = {
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\metal',
+				tile = false
+			},
+			smooth = {
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
+				tile = false
+			},
+			smoke = {
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
+				tile = false
+			},
+			none = {
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				tile = false
+			}
+		},
+		ActiveStyle = 'smoke',
+		VendorPrices = true,
+		Override = {},
+		ColorOverlay = true,
+		Color = {0, 0, 0, 0.4},
+		SuppressNoMatch = true
+	},
+	Unitframes = {
+		Style = 'War',
+		FrameOptions = {
+			['**'] = {
+				enabled = true,
+				width = 180,
+				moved = false,
+				position = {
+					point = 'BOTTOM',
+					relativePoint = 'BOTTOM',
+					xOfs = 0,
+					yOfs = 0
+				},
+				artwork = {
+					top = {
+						enabled = false,
+						x = 0,
+						y = 0,
+						graphic = ''
+					},
+					bg = {
+						enabled = false,
+						x = 0,
+						y = 0,
+						graphic = ''
+					},
+					bottom = {
+						enabled = false,
+						x = 0,
+						y = 0,
+						graphic = ''
+					}
+				},
+				auras = {
+					Buffs = {
+						enabled = false,
+						number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						onlyShowPlayer = false,
+						initialAnchor = 'BOTTOMLEFT',
+						growthx = 'RIGHT',
+						growthy = 'UP',
+						rows = 3,
+						position = {
+							anchor = 'TOPLEFT',
+							x = 0,
+							y = 20
+						}
+					},
+					Debuffs = {
+						enabled = true,
+						number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						ShowBoss = true,
+						onlyShowPlayer = false,
+						initialAnchor = 'BOTTOMRIGHT',
+						growthx = 'LEFT',
+						growthy = 'UP',
+						rows = 3,
+						position = {
+							anchor = 'TOPRIGHT',
+							x = 0,
+							y = 20
+						}
+					},
+					Bars = {
+						enabled = false,
+						auraBarHeight = 15,
+						auraBarWidth = false,
+						auraBarTexture = Smoothv2,
+						fgalpha = 1,
+						bgalpha = 1,
+						spellNameSize = 10,
+						spellTimeSize = 10,
+						gap = 1,
+						spacing = 1,
+						scaleTime = false,
+						position = {
+							anchor = 'TOP',
+							x = 0,
+							y = 20
+						}
+					}
+				},
+				elements = {
 					['**'] = {
-						anchor = {},
-						artwork = {
-							top = {},
-							bg = {},
-							bottom = {}
+						enabled = false,
+						Scale = 1,
+						bgTexture = false,
+						points = false,
+						alpha = 1,
+						width = 20,
+						height = 20,
+						size = 20,
+						scale = 1,
+						bg = {
+							enabled = false,
+							color = false
 						},
-						auras = {
-							Buffs = {
+						text = {
+							['**'] = {
+								enabled = false,
+								text = '',
+								size = 10,
+								SetJustifyH = 'CENTER',
+								SetJustifyV = 'MIDDLE',
+								position = {
+									anchor = 'CENTER',
+									x = 0,
+									y = 0
+								}
+							},
+							['1'] = {
+								enabled = false,
 								position = {}
 							},
-							Debuffs = {
-								position = {}
-							},
-							Bars = {
+							['2'] = {
+								enabled = false,
 								position = {}
 							}
 						},
-						elements = {
-							['**'] = {
-								bg = {}
+						position = {
+							anchor = 'CENTER',
+							x = 0,
+							y = 0
+						}
+					},
+					DispelHighlight = {
+						enabled = true,
+						position = {
+							anchor = nil
+						}
+					},
+					HappinessIndicator = {
+						enabled = true,
+						position = {
+							anchor = 'LEFT',
+							x = -10,
+							y = -10
+						}
+					},
+					Portrait = {
+						type = '3D',
+						scaleWithFrame = true,
+						width = 50,
+						height = 100,
+						rotation = 0,
+						camDistanceScale = 1,
+						xOffset = 0,
+						yOffset = 0,
+						position = 'left'
+					},
+					Health = {
+						enabled = true,
+						height = 40,
+						offset = 1,
+						colorReaction = false,
+						colorSmooth = true,
+						colorClass = true,
+						colorTapping = true,
+						colorDisconnected = true,
+						bg = {
+							enabled = true,
+							color = {1, 1, 1, .2}
+						},
+						text = {
+							['1'] = {
+								enabled = true,
+								text = '[curhpformatted] / [maxhpformatted]',
+								position = {
+									anchor = 'CENTER',
+									x = 0,
+									y = 0
+								}
+							}
+						}
+					},
+					HealthPrediction = {
+						enabled = true
+					},
+					Power = {
+						enabled = true,
+						height = 10,
+						offset = 1,
+						bg = {
+							enabled = true,
+							color = {1, 1, 1, .2}
+						},
+						text = {
+							['1'] = {
+								enabled = false,
+								text = '[curppformatted] / [maxppformatted]'
 							},
-							Portrait = {},
-							Health = {
-								text = {
-									['1'] = {
-										position = {}
-									},
-									['2'] = {
-										position = {}
-									}
+							['2'] = {
+								enabled = false,
+								text = '[perpp]%'
+							}
+						}
+					},
+					AdditionalPower = {
+						enabled = true,
+						offset = 1,
+						height = 5
+					},
+					Castbar = {
+						enabled = false,
+						height = 10,
+						offset = 0,
+						interruptable = true,
+						latency = false,
+						bg = {
+							enabled = true,
+							color = {1, 1, 1, .2}
+						},
+						Icon = {
+							enabled = true,
+							size = 12,
+							position = {
+								anchor = 'LEFT',
+								x = 0,
+								y = 0
+							}
+						},
+						text = {
+							['1'] = {
+								enabled = true,
+								text = '[Spell name]',
+								position = {
+									anchor = 'CENTER',
+									x = 0,
+									y = 0
 								}
 							},
-							DispelHighlight = {
+							['2'] = {
+								enabled = true,
+								text = '[Spell timer]',
+								size = 8,
+								position = {
+									anchor = 'RIGHT',
+									x = 0,
+									y = 0
+								}
+							}
+						}
+					},
+					Name = {
+						enabled = true,
+						height = 12,
+						size = 12,
+						text = '[difficulty][smartlevel] [SUI_ColorClass][name]',
+						SetJustifyH = 'CENTER',
+						SetJustifyV = 'MIDDLE',
+						position = {
+							anchor = 'TOP',
+							x = 0,
+							y = 15
+						}
+					},
+					LeaderIndicator = {
+						enabled = true,
+						size = 12,
+						position = {
+							anchor = 'TOP',
+							x = 0,
+							y = 6
+						}
+					},
+					RestingIndicator = {},
+					GroupRoleIndicator = {
+						enabled = true,
+						size = 18,
+						alpha = .75,
+						position = {
+							anchor = 'TOPRIGHT',
+							x = -10,
+							y = 10
+						}
+					},
+					CombatIndicator = {},
+					RaidTargetIndicator = {
+						enabled = true,
+						size = 20,
+						position = {
+							anchor = 'BOTTOMRIGHT',
+							x = 5,
+							y = -10
+						}
+					},
+					SUI_ClassIcon = {
+						position = {
+							anchor = 'BOTTOMLEFT',
+							x = -12,
+							y = 0
+						}
+					},
+					ReadyCheckIndicator = {
+						enabled = true,
+						size = 35,
+						position = {
+							anchor = 'LEFT',
+							x = 0,
+							y = 0
+						}
+					},
+					PvPIndicator = {
+						Badge = false,
+						Shadow = true,
+						position = {
+							anchor = 'TOPLEFT',
+							x = -10
+						}
+					},
+					StatusText = {
+						size = 22,
+						SetJustifyH = 'CENTER',
+						SetJustifyV = 'MIDDLE',
+						position = {
+							anchor = 'CENTER',
+							x = 0,
+							y = 0
+						}
+					},
+					Runes = {},
+					Stagger = {},
+					Totems = {},
+					AssistantIndicator = {
+						enabled = true,
+						size = 12,
+						position = {
+							anchor = 'TOP',
+							x = 0,
+							y = 6
+						}
+					},
+					RaidRoleIndicator = {
+						enabled = true
+					},
+					ResurrectIndicator = {
+						enabled = true
+					},
+					SummonIndicator = {},
+					QuestIndicator = {},
+					Range = {
+						enabled = true,
+						insideAlpha = 1,
+						outsideAlpha = .3
+					},
+					PhaseIndicator = {
+						enabled = true,
+						position = {
+							anchor = 'TOP',
+							x = 0,
+							y = 0
+						}
+					},
+					ThreatIndicator = {
+						enabled = true
+					},
+					SUI_RaidGroup = {},
+					RareElite = {
+						enabled = true,
+						alpha = .4,
+						points = {
+							['1'] = {
+								anchor = 'TOPLEFT',
+								x = 0,
+								y = 0
+							},
+							['2'] = {
+								anchor = 'BOTTOMRIGHT',
+								x = 0,
+								y = 0
+							}
+						}
+					}
+				}
+			},
+			arena = {
+				enabled = true,
+				maxColumns = 1,
+				unitsPerColumn = 5,
+				columnSpacing = 1,
+				yOffset = -10,
+				elements = {
+					Castbar = {
+						enabled = true
+					},
+					SUI_ClassIcon = {
+						enabled = true
+					}
+				}
+			},
+			boss = {
+				enabled = true,
+				width = 120,
+				maxColumns = 1,
+				unitsPerColumn = 5,
+				columnSpacing = 0,
+				yOffset = -10,
+				auras = {
+					Buffs = {
+						enabled = true,
+						size = 10
+					}
+				},
+				elements = {
+					Portrait = {
+						enabled = true,
+						type = '2D'
+					},
+					Castbar = {
+						enabled = true
+					}
+				}
+			},
+			bosstarget = {},
+			focus = {
+				enabled = true,
+				width = 100,
+				auras = {
+					Buffs = {
+						enabled = true,
+						onlyShowPlayer = true
+					},
+					Debuffs = {
+						enabled = true,
+						onlyShowPlayer = true
+					}
+				},
+				elements = {
+					Castbar = {
+						enabled = true
+					}
+				}
+			},
+			focustarget = {
+				enabled = true,
+				width = 90,
+				elements = {
+					Castbar = {
+						enabled = true
+					}
+				}
+			},
+			player = {
+				enabled = true,
+				anchor = {
+					point = 'BOTTOMRIGHT',
+					relativePoint = 'BOTTOM',
+					xOfs = -60,
+					yOfs = 250
+				},
+				auras = {
+					Buffs = {
+						enabled = true
+					},
+					Debuffs = {
+						enabled = true
+					},
+					Bars = {
+						enabled = true
+					}
+				},
+				elements = {
+					Portrait = {
+						enabled = true
+					},
+					Castbar = {
+						enabled = true
+					},
+					CombatIndicator = {
+						enabled = true,
+						position = {
+							anchor = 'TOPRIGHT',
+							x = 10,
+							y = 10
+						}
+					},
+					SUI_ClassIcon = {
+						enabled = true
+					},
+					RestingIndicator = {
+						enabled = true,
+						position = {
+							anchor = 'TOPLEFT',
+							x = 0,
+							y = 0
+						}
+					},
+					Power = {
+						text = {
+							['1'] = {
 								enabled = true
-							},
-							HealthPrediction = {},
-							HappinessIndicator = {
-								position = {}
-							},
-							Power = {
-								position = {},
-								text = {
-									['1'] = {
-										position = {}
-									},
-									['2'] = {
-										position = {}
-									}
-								}
-							},
-							Castbar = {
-								Icon = {
+							}
+						}
+					},
+					PvPIndicator = {
+						enabled = true
+					},
+					AdditionalPower = {
+						enabled = true
+					}
+				}
+			},
+			pet = {
+				width = 100,
+				elements = {
+					Health = {
+						height = 30
+					},
+					Power = {
+						height = 5,
+						text = {
+							['1'] = {
+								enabled = false
+							}
+						}
+					},
+					Name = {
+						enabled = true,
+						height = 10,
+						size = 10,
+						position = {
+							y = 0
+						}
+					}
+				}
+			},
+			pettarget = {},
+			party = {
+				width = 120,
+				enabled = true,
+				showSelf = true,
+				xOffset = 0,
+				yOffset = -10,
+				maxColumns = 1,
+				unitsPerColumn = 5,
+				columnSpacing = 2,
+				auras = {
+					Buffs = {
+						enabled = true,
+						size = 10
+					},
+					Debuffs = {
+						enabled = true,
+						size = 16
+					}
+				},
+				elements = {
+					Castbar = {
+						enabled = true
+					},
+					ResurrectIndicator = {
+						enabled = true
+					},
+					SummonIndicator = {
+						enabled = true
+					},
+					RaidRoleIndicator = {
+						enabled = true
+					},
+					AssistantIndicator = {
+						enabled = true
+					},
+					SUI_ClassIcon = {
+						enabled = true
+					}
+				}
+			},
+			partypet = {},
+			partytarget = {},
+			raid = {
+				enabled = true,
+				width = 95,
+				showParty = true,
+				showSelf = true,
+				mode = 'NAME',
+				xOffset = 2,
+				yOffset = 2,
+				maxColumns = 4,
+				unitsPerColumn = 10,
+				columnSpacing = 2,
+				auras = {
+					Buffs = {
+						enabled = true,
+						size = 10
+					},
+					Debuffs = {
+						enabled = true,
+						size = 10
+					}
+				},
+				elements = {
+					Health = {
+						height = 30
+					},
+					Power = {
+						height = 5,
+						text = {
+							['1'] = {
+								enabled = false
+							}
+						}
+					},
+					ResurrectIndicator = {
+						enabled = true
+					},
+					SummonIndicator = {
+						enabled = true
+					},
+					RaidRoleIndicator = {
+						enabled = true
+					},
+					Name = {
+						enabled = true,
+						height = 10,
+						size = 10,
+						position = {
+							y = 0
+						}
+					}
+				}
+			},
+			target = {
+				enabled = true,
+				anchor = {
+					point = 'BOTTOMLEFT',
+					relativePoint = 'BOTTOM',
+					xOfs = 60,
+					yOfs = 250
+				},
+				auras = {
+					Buffs = {
+						enabled = true
+					},
+					Debuffs = {
+						enabled = true
+					},
+					Bars = {
+						enabled = true
+					}
+				},
+				elements = {
+					Portrait = {
+						enabled = true
+					},
+					Castbar = {
+						enabled = true
+					},
+					QuestIndicator = {
+						enabled = true
+					},
+					RaidRoleIndicator = {
+						enabled = true
+					},
+					AssistantIndicator = {
+						enabled = true
+					},
+					SUI_ClassIcon = {
+						enabled = true
+					},
+					PvPIndicator = {
+						enabled = true
+					},
+					Power = {
+						text = {
+							['1'] = {
+								enabled = true
+							}
+						}
+					}
+				}
+			},
+			targettarget = {
+				enabled = true,
+				width = 100,
+				auras = {
+					Debuffs = {
+						size = 10
+					}
+				},
+				elements = {
+					Castbar = {
+						enabled = false
+					},
+					Health = {
+						height = 30
+					},
+					Power = {
+						height = 5
+					}
+				}
+			}
+		},
+		PlayerCustomizations = {
+			['**'] = {
+				['**'] = {
+					anchor = {},
+					artwork = {
+						top = {},
+						bg = {},
+						bottom = {}
+					},
+					auras = {
+						Buffs = {
+							position = {}
+						},
+						Debuffs = {
+							position = {}
+						},
+						Bars = {
+							position = {}
+						}
+					},
+					elements = {
+						['**'] = {
+							bg = {}
+						},
+						Portrait = {},
+						Health = {
+							text = {
+								['1'] = {
 									position = {}
 								},
-								text = {
-									['1'] = {
-										position = {}
-									},
-									['2'] = {
-										position = {}
-									}
+								['2'] = {
+									position = {}
 								}
-							},
-							Name = {
-								position = {}
-							},
-							LeaderIndicator = {
-								position = {}
-							},
-							RestingIndicator = {
-								position = {}
-							},
-							GroupRoleIndicator = {
-								position = {}
-							},
-							CombatIndicator = {
-								position = {}
-							},
-							RaidTargetIndicator = {
-								position = {}
-							},
-							SUI_ClassIcon = {
-								position = {}
-							},
-							ReadyCheckIndicator = {
-								position = {}
-							},
-							PvPIndicator = {
-								position = {}
-							},
-							StatusText = {
-								position = {}
-							},
-							AdditionalPower = {},
-							Runes = {},
-							Stagger = {},
-							Totems = {},
-							AssistantIndicator = {},
-							RaidRoleIndicator = {},
-							ResurrectIndicator = {},
-							SummonIndicator = {},
-							QuestIndicator = {},
-							Range = {},
-							phaseindicator = {},
-							ThreatIndicator = {},
-							SUI_RaidGroup = {}
+							}
 						},
-						font = {
-							mana = {},
-							health = {}
-						}
+						DispelHighlight = {
+							enabled = true
+						},
+						HealthPrediction = {},
+						HappinessIndicator = {
+							position = {}
+						},
+						Power = {
+							position = {},
+							text = {
+								['1'] = {
+									position = {}
+								},
+								['2'] = {
+									position = {}
+								}
+							}
+						},
+						Castbar = {
+							Icon = {
+								position = {}
+							},
+							text = {
+								['1'] = {
+									position = {}
+								},
+								['2'] = {
+									position = {}
+								}
+							}
+						},
+						Name = {
+							position = {}
+						},
+						LeaderIndicator = {
+							position = {}
+						},
+						RestingIndicator = {
+							position = {}
+						},
+						GroupRoleIndicator = {
+							position = {}
+						},
+						CombatIndicator = {
+							position = {}
+						},
+						RaidTargetIndicator = {
+							position = {}
+						},
+						SUI_ClassIcon = {
+							position = {}
+						},
+						ReadyCheckIndicator = {
+							position = {}
+						},
+						PvPIndicator = {
+							position = {}
+						},
+						StatusText = {
+							position = {}
+						},
+						AdditionalPower = {},
+						Runes = {},
+						Stagger = {},
+						Totems = {},
+						AssistantIndicator = {},
+						RaidRoleIndicator = {},
+						ResurrectIndicator = {},
+						SummonIndicator = {},
+						QuestIndicator = {},
+						Range = {},
+						phaseindicator = {},
+						ThreatIndicator = {},
+						SUI_RaidGroup = {}
+					},
+					font = {
+						mana = {},
+						health = {}
 					}
 				}
 			}
 		}
 	},
-	Modules = {
-		StatusBars = {
-			default = {
-				size = {256, 36},
-				Grow = 'LEFT',
-				bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
-				texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
-				TooltipSize = {300, 100},
-				TooltipTextSize = {230, 60},
-				TooltipTextWidth = 300,
-				tooltipAnchor = 'TOP',
-				FontSize = 9,
-				TextColor = {1, 1, 1, 1},
-				MaxWidth = 0,
-				GlowAnchor = 'RIGHT',
-				GlowPoint = {x = 0, y = 0},
-				GlowHeight = 20,
-				GlowImage = 'Interface\\AddOns\\SpartanUI\\Images\\status-glow',
-				texCords = {0, 1, 0, 1}
+	StatusBars = {
+		default = {
+			size = {256, 36},
+			Grow = 'LEFT',
+			bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
+			texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
+			TooltipSize = {300, 100},
+			TooltipTextSize = {230, 60},
+			TooltipTextWidth = 300,
+			tooltipAnchor = 'TOP',
+			FontSize = 9,
+			TextColor = {1, 1, 1, 1},
+			MaxWidth = 0,
+			GlowAnchor = 'RIGHT',
+			GlowPoint = {x = 0, y = 0},
+			GlowHeight = 20,
+			GlowImage = 'Interface\\AddOns\\SpartanUI\\Images\\status-glow',
+			texCords = {0, 1, 0, 1}
+		},
+		['**'] = {
+			display = 'disabled',
+			ToolTip = 'hover',
+			text = true,
+			AutoColor = true,
+			Color = {0, 0, 0, 1},
+			FontSize = 10,
+			GlowAnchor = 'RIGHT',
+			GlowHeight = 20,
+			texCords = {0, 1, 0, 1},
+			CustomColor2 = {
+				r = 0,
+				g = 0,
+				b = 0,
+				a = 1
 			},
+			CustomColor = {
+				r = 0,
+				g = 0,
+				b = 0,
+				a = 1
+			}
+		},
+		[1] = {
+			display = 'xp'
+		},
+		[2] = {
+			display = 'honor'
+		}
+	},
+	Artwork = {
+		Style = 'War',
+		FirstLoad = true,
+		SetupDone = false,
+		VehicleUI = true,
+		Viewport = {
+			enabled = false,
+			offset = {top = 0, bottom = 0, left = 0, right = 0}
+		},
+		SlidingTrays = {
 			['**'] = {
-				display = 'disabled',
-				ToolTip = 'hover',
+				collapsed = false
+			}
+		}
+	},
+	SpinCam = {
+		enable = true,
+		speed = 8
+	},
+	TauntWatcher = {
+		active = {
+			always = false,
+			inBG = false,
+			inRaid = true,
+			inParty = true,
+			inArena = true,
+			outdoors = false
+		},
+		failures = true,
+		FirstLaunch = true,
+		announceLocation = 'SELF',
+		text = '%who taunted %what!'
+	},
+	FilmEffects = {
+		enable = false,
+		animationInterval = 0,
+		anim = '',
+		vignette = nil
+	},
+	NamePlates = {
+		ShowThreat = true,
+		ShowName = true,
+		ShowLevel = true,
+		ShowTarget = true,
+		ShowRaidTargetIndicator = true,
+		onlyShowPlayer = true,
+		showStealableBuffs = false,
+		Scale = 1,
+		elements = {
+			['**'] = {
+				enabled = true,
+				alpha = 1,
+				size = 20,
+				position = {
+					anchor = 'CENTER',
+					x = 0,
+					y = 0
+				}
+			},
+			RareElite = {},
+			Background = {
+				type = 'solid',
+				colorMode = 'reaction',
+				alpha = 0.35
+			},
+			Name = {
+				SetJustifyH = 'CENTER'
+			},
+			QuestIndicator = {},
+			Health = {
+				height = 5,
+				colorTapping = true,
+				colorReaction = true,
+				colorClass = true
+			},
+			Power = {
+				ShowPlayerPowerIcons = true,
+				height = 3
+			},
+			Castbar = {
+				height = 5,
 				text = true,
-				AutoColor = true,
-				Color = {0, 0, 0, 1},
-				FontSize = 10,
-				GlowAnchor = 'RIGHT',
-				GlowHeight = 20,
-				texCords = {0, 1, 0, 1},
-				CustomColor2 = {
-					r = 0,
-					g = 0,
-					b = 0,
-					a = 1
-				},
-				CustomColor = {
-					r = 0,
-					g = 0,
-					b = 0,
-					a = 1
-				}
+				FlashOnInterruptible = true
 			},
-			[1] = {
-				display = 'xp'
-			},
-			[2] = {
-				display = 'honor'
-			}
-		},
-		Artwork = {
-			Style = 'War',
-			FirstLoad = true,
-			SetupDone = false,
-			VehicleUI = true,
-			Viewport = {
+			SUI_ClassIcon = {
 				enabled = false,
-				offset = {top = 0, bottom = 0, left = 0, right = 0}
-			},
-			SlidingTrays = {
-				['**'] = {
-					collapsed = false
+				size = 20,
+				visibleOn = 'PlayerControlled',
+				position = {
+					anchor = 'TOP',
+					x = 0,
+					y = 40
 				}
 			}
+		}
+	},
+	Chatbox = {
+		URLCopy = true,
+		SendHistory = true,
+		ColorClass = true,
+		LinkHover = true,
+		webLinks = true,
+		TimeStamp = {
+			enabled = true,
+			format = '%X'
 		},
-		SpinCam = {
-			enable = true,
-			speed = 8
+		player = {
+			color = true,
+			level = true
 		},
-		TauntWatcher = {
-			active = {
-				always = false,
-				inBG = false,
-				inRaid = true,
-				inParty = true,
-				inArena = true,
-				outdoors = false
-			},
-			failures = true,
-			FirstLaunch = true,
-			announceLocation = 'SELF',
-			text = '%who taunted %what!'
-		},
-		FilmEffects = {
-			enable = false,
-			animationInterval = 0,
-			anim = '',
-			vignette = nil
-		},
-		NamePlates = {
-			ShowThreat = true,
-			ShowName = true,
-			ShowLevel = true,
-			ShowTarget = true,
-			ShowRaidTargetIndicator = true,
-			onlyShowPlayer = true,
-			showStealableBuffs = false,
-			Scale = 1,
-			elements = {
-				['**'] = {
-					enabled = true,
-					alpha = 1,
-					size = 20,
-					position = {
-						anchor = 'CENTER',
-						x = 0,
-						y = 0
-					}
-				},
-				RareElite = {},
-				Background = {
-					type = 'solid',
-					colorMode = 'reaction',
-					alpha = 0.35
-				},
-				Name = {
-					SetJustifyH = 'CENTER'
-				},
-				QuestIndicator = {},
-				Health = {
-					height = 5,
-					colorTapping = true,
-					colorReaction = true,
-					colorClass = true
-				},
-				Power = {
-					ShowPlayerPowerIcons = true,
-					height = 3
-				},
-				Castbar = {
-					height = 5,
-					text = true,
-					FlashOnInterruptible = true
-				},
-				SUI_ClassIcon = {
-					enabled = false,
-					size = 20,
-					visibleOn = 'PlayerControlled',
-					position = {
-						anchor = 'TOP',
-						x = 0,
-						y = 40
-					}
-				}
-			}
-		},
-		Chatbox = {
-			URLCopy = true,
-			SendHistory = true,
-			ColorClass = true,
-			LinkHover = true,
-			webLinks = true,
-			TimeStamp = {
-				enabled = true,
-				format = '%X'
-			},
-			player = {
-				color = true,
-				level = true
-			},
-			ChatCopy = {
-				enabled = true,
-				tip = true
-			}
+		ChatCopy = {
+			enabled = true,
+			tip = true
 		}
 	}
 }
@@ -1572,15 +1568,14 @@ end
 
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
-local ver = SUI.SpartanUIDB.profile.SUIProper.Version
+local ver = SUI.SpartanUIDB.profile.Version
 if (ver ~= '0' and ver < '5.0.0') then
 	SUI.SpartanUIDB:ResetDB()
 end
 
 -- New SUI.DB Access
 SUI.DBG = SUI.SpartanUIDB.global
-SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-SUI.DBMod = SUI.SpartanUIDB.profile.Modules
+SUI.DB = SUI.SpartanUIDB.profile
 
 local function reloaduiWindow()
 	local StdUi = LibStub('StdUi'):NewInstance()
@@ -1630,8 +1625,7 @@ function SUI:OnInitialize()
 
 	-- New SUI.DB Access
 	SUI.DBG = SUI.SpartanUIDB.global
-	SUI.DB = SUI.SpartanUIDB.profile.SUIProper
-	SUI.DBMod = SUI.SpartanUIDB.profile.Modules
+	SUI.DB = SUI.SpartanUIDB.profile
 
 	--Check for any SUI.DB changes
 	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) and SUI.DB.Version ~= '0' then
@@ -1672,23 +1666,8 @@ function SUI:OnInitialize()
 end
 
 function SUI:DBUpgrades()
-	if SUI.DBMod.Artwork.Style == '' and SUI.DBMod.Artwork.SetupDone then
-		SUI.DBMod.Artwork.Style = 'Classic'
-	end
-
-	-- 5.2.0 Upgrades
-	if SUI.DB.Version < '5.2.0' then
-		if not SUI.DBMod.Artwork.SetupDone and not SUI.DB.SetupWizard.FirstLaunch then
-			SUI.DBMod.Artwork.SetupDone = true
-		end
-		if SUI.DBMod.Artwork.SetupDone then
-			for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do -- for each module (BagBar, ActionBars, etc..)
-				if k == 'StatusTrackingBar' and v.db.profile.enabled then
-					v.db.profile.enabled = false
-					v:ToggleModule()
-				end
-			end
-		end
+	if SUI.DB.Artwork.Style == '' and SUI.DB.Artwork.SetupDone then
+		SUI.DB.Artwork.Style = 'Classic'
 	end
 
 	-- 6.0.0 Upgrades
@@ -1711,15 +1690,6 @@ function SUI:DBUpgrades()
 			SUI.DB.EnabledComponents.UnitFrames = false
 		end
 
-		--Reset default texture paths
-		SUI.DB.Tooltips.Styles.metal.bgFile = nil
-		SUI.DB.Tooltips.Styles.smooth.bgFile = nil
-		SUI.DB.Tooltips.Styles.smoke.bgFile = nil
-		SUI.DB.Tooltips.Styles.none.bgFile = nil
-		SUI.DB.BarTextures.smooth = nil
-		SUI.DBMod.StatusBars.default.bgTooltip = nil
-		SUI.DBMod.StatusBars.default.GlowImage = nil
-
 		-- Make sure everything is disabled
 		DisableAddOn('SpartanUI_Artwork')
 		DisableAddOn('SpartanUI_SpinCam')
@@ -1732,6 +1702,11 @@ function SUI:DBUpgrades()
 		DisableAddOn('SpartanUI_Style_Transparent')
 		DisableAddOn('SpartanUI_Style_War')
 		SUI.DB.Migrated = true
+	end
+
+	if SUI.DB.Version < '5.9.91' then
+		SUI.SpartanUIDB:ResetProfile()
+		ReloadUI()
 	end
 
 	SUI.DB.Version = SUI.Version

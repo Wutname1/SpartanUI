@@ -45,7 +45,7 @@ local function ActiveRule()
 	end
 
 	--Failback of Rule1
-	if not SUI.DB.Buffs.SuppressNoMatch and not SUI.DB.Styles[SUI.DBMod.Artwork.Style].BuffLoc then
+	if not SUI.DB.Buffs.SuppressNoMatch and not SUI.DB.Styles[SUI.DB.Artwork.Style].BuffLoc then
 	-- SUI:Print("|cffff0000Error detected")
 	-- SUI:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
 	end
@@ -59,8 +59,8 @@ local BuffPosUpdate = function()
 	local setdefault = false
 
 	--See If the theme has an anchor and if we are allowed to use it
-	if SUI.DB.Styles[SUI.DBMod.Artwork.Style].BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
-		SUI:GetModule('Style_' .. SUI.DBMod.Artwork.Style):BuffLoc(nil, nil)
+	if SUI.DB.Styles[SUI.DB.Artwork.Style].BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
+		SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):BuffLoc(nil, nil)
 	else
 		if SUI.DB.Buffs[ActiveRule()].Anchor.Moved then
 			local Anchors = {}

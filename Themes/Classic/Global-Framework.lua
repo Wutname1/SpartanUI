@@ -164,13 +164,13 @@ function module:BuffLoc(self, parent)
 end
 
 function module:SetupVehicleUI()
-	if SUI.DBMod.Artwork.VehicleUI then
+	if SUI.DB.Artwork.VehicleUI then
 		RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
-	if not SUI.DBMod.Artwork.VehicleUI then
+	if not SUI.DB.Artwork.VehicleUI then
 		UnregisterStateDriver(SUI_Art_Classic, 'visibility')
 	end
 end

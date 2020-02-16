@@ -106,7 +106,7 @@ function module:BuffLoc(_, parent)
 end
 
 function module:SetupVehicleUI()
-	if SUI.DBMod.Artwork.VehicleUI then
+	if SUI.DB.Artwork.VehicleUI then
 		petbattle:HookScript(
 			'OnHide',
 			function()
@@ -132,7 +132,7 @@ function module:SetupVehicleUI()
 end
 
 function module:RemoveVehicleUI()
-	if SUI.DBMod.Artwork.VehicleUI then
+	if SUI.DB.Artwork.VehicleUI then
 		UnregisterStateDriver(petbattle, 'visibility')
 		UnregisterStateDriver(SUI_Art_Fel, 'visibility')
 		UnregisterStateDriver(SpartanUI, 'visibility')

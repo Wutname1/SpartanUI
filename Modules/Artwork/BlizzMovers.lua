@@ -20,8 +20,7 @@ local function TalkingHead()
 		)
 	end
 
-	local point, anchor, secondaryPoint, x, y =
-		strsplit(',', SUI.DB.Styles[SUI.DBMod.Artwork.Style].BlizzMovers.TalkingHead)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.TalkingHead)
 	local THUIHolder = CreateFrame('Frame', 'THUIHolder', SpartanUI)
 	THUIHolder:SetPoint(point, anchor, secondaryPoint, x, y)
 	THUIHolder:Hide()
@@ -45,8 +44,7 @@ end
 
 local function AltPowerBar()
 	if not IsAddOnLoaded('SimplePowerBar') then
-		local point, anchor, secondaryPoint, x, y =
-			strsplit(',', SUI.DB.Styles[SUI.DBMod.Artwork.Style].BlizzMovers.AltPowerBar)
+		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.AltPowerBar)
 		local holder = CreateFrame('Frame', 'AltPowerBarHolder', UIParent)
 		holder:SetPoint(point, anchor, secondaryPoint, x, y)
 		holder:SetSize(256, 64)
@@ -69,8 +67,7 @@ local function AltPowerBar()
 end
 
 local function AlertFrame()
-	local point, anchor, secondaryPoint, x, y =
-		strsplit(',', SUI.DB.Styles[SUI.DBMod.Artwork.Style].BlizzMovers.AlertFrame)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.AlertFrame)
 	local AlertHolder = CreateFrame('Frame', 'AlertHolder', SpartanUI)
 	AlertHolder:SetSize(250, 40)
 	AlertHolder:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -93,7 +90,7 @@ local function VehicleLeaveButton()
 		-- end
 
 		local point, anchor, secondaryPoint, x, y =
-			strsplit(',', SUI.DB.Styles[SUI.DBMod.Artwork.Style].BlizzMovers.VehicleLeaveButton)
+			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
 		MainMenuBarVehicleLeaveButton:ClearAllPoints()
 		MainMenuBarVehicleLeaveButton:SetPoint(point, anchor, secondaryPoint, x, y)
 		MoveIt:CreateMover(MainMenuBarVehicleLeaveButton, 'VehicleLeaveButton', 'Vehicle leave button')

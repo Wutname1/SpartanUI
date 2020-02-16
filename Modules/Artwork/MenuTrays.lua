@@ -36,7 +36,7 @@ local trayWatcherEvents = function()
 	module:updateOffset()
 
 	for _, key in ipairs(trayIDs) do
-		if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
+		if SUI.DB.Artwork.SlidingTrays[key].collapsed then
 			module.Trays[key].expanded:Hide()
 			module.Trays[key].collapsed:Show()
 			SetBarVisibility(key, 'hide')
@@ -59,13 +59,13 @@ local CollapseToggle = function(self)
 	end
 
 	local key = self.key
-	if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
-		SUI.DBMod.Artwork.SlidingTrays[key].collapsed = false
+	if SUI.DB.Artwork.SlidingTrays[key].collapsed then
+		SUI.DB.Artwork.SlidingTrays[key].collapsed = false
 		module.Trays[key].expanded:Show()
 		module.Trays[key].collapsed:Hide()
 		SetBarVisibility(key, 'show')
 	else
-		SUI.DBMod.Artwork.SlidingTrays[key].collapsed = true
+		SUI.DB.Artwork.SlidingTrays[key].collapsed = true
 		module.Trays[key].expanded:Hide()
 		module.Trays[key].collapsed:Show()
 		SetBarVisibility(key, 'hide')
@@ -78,7 +78,7 @@ function module:SlidingTrays(StyleSettings)
 	settings = StyleSettings
 
 	for _, key in ipairs(trayIDs) do
-		local tray = CreateFrame('Frame', 'SlidingTray_' .. key, _G['SUI_Art_' .. SUI.DBMod.Artwork.Style])
+		local tray = CreateFrame('Frame', 'SlidingTray_' .. key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
 		tray:SetFrameStrata('BACKGROUND')
 		tray:SetAlpha(.8)
 		tray:SetSize(400, 45)
@@ -140,7 +140,7 @@ function module:SlidingTrays(StyleSettings)
 		tray.expanded = expanded
 		tray.collapsed = collapsed
 
-		if SUI.DBMod.Artwork.SlidingTrays[key].collapsed then
+		if SUI.DB.Artwork.SlidingTrays[key].collapsed then
 			SetBarVisibility(key, 'hide')
 		else
 			SetBarVisibility(key, 'show')

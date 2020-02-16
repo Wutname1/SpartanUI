@@ -47,7 +47,7 @@ function module:Initalize(Settings)
         }
     }
     ]]
-	module.DB = SUI.DBMod.StatusBars
+	module.DB = SUI.DB.StatusBars
 	--Create Status Bars
 	if SUI.IsClassic and module.DB[2].display == 'honor' then
 		module.DB[2].display = 'rep'
@@ -288,7 +288,7 @@ function module:factory()
 			local StyleSetting = SUI:MergeData(StyleSettings[key], module.DB.default, false)
 
 			--Status Bar
-			local statusbar = CreateFrame('Frame', key, _G['SUI_Art_' .. SUI.DBMod.Artwork.Style])
+			local statusbar = CreateFrame('Frame', key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
 			statusbar:SetSize(unpack(StyleSetting.size))
 			statusbar:SetFrameStrata('BACKGROUND')
 

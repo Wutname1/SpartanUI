@@ -158,7 +158,7 @@ function module:OnInitialize()
 		whileDead = true,
 		hideOnEscape = false
 	}
-	Settings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap
+	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
 
 	-- Check for Carbonite dinking with the minimap.
 	if (NXTITLELOW) then
@@ -183,7 +183,7 @@ function module:OnEnable()
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
 	end
-	Settings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap
+	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
 
 	-- MiniMap Modification
 	Minimap:SetFrameLevel(120)
@@ -480,7 +480,7 @@ function module:update()
 		return
 	end
 	-- Refresh settings
-	Settings = SUI.DB.Styles[SUI.DBMod.Artwork.Style].Minimap
+	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
 
 	-- UserSettings item visibility
 	do
@@ -550,16 +550,16 @@ function module:update()
 
 		-- If minimap default location is under the minimap setup scripts to move it
 		if
-			Settings.UnderVehicleUI and SUI.DBMod.Artwork.VehicleUI and (not VisibilityWatcher.hooked) and
+			Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and (not VisibilityWatcher.hooked) and
 				(not MoveIt:IsMoved('Minimap'))
 		 then
 			local OnHide = function(args)
-				if SUI.DBMod.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and Minimap.position then
+				if SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and Minimap.position then
 					Minimap:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 				end
 			end
 			local OnShow = function(args)
-				if SUI.DBMod.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
+				if SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
 					-- Reset to skin position
 					UpdatePosition()
 				end
@@ -569,7 +569,7 @@ function module:update()
 			VisibilityWatcher:SetScript('OnShow', OnShow)
 			RegisterStateDriver(VisibilityWatcher, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 			VisibilityWatcher.hooked = true
-		elseif (MoveIt:IsMoved('Minimap') or (not SUI.DBMod.Artwork.VehicleUI)) and VisibilityWatcher.hooked then
+		elseif (MoveIt:IsMoved('Minimap') or (not SUI.DB.Artwork.VehicleUI)) and VisibilityWatcher.hooked then
 			UnregisterStateDriver(VisibilityWatcher, 'visibility')
 			VisibilityWatcher.hooked = false
 		end

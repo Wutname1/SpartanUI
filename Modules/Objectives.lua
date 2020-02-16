@@ -31,23 +31,23 @@ local ObjTrackerUpdate = function()
 
 	--Figure out if we need to hide objectives
 	for _, v in ipairs(RuleList) do
-		if SUI.DBMod.Objectives[v].Status ~= 'Disabled' then
+		if SUI.DB.Objectives[v].Status ~= 'Disabled' then
 			local CombatRule = false
-			if InCombatLockdown() and SUI.DBMod.Objectives[v].Combat then
+			if InCombatLockdown() and SUI.DB.Objectives[v].Combat then
 				CombatRule = true
-			elseif not InCombatLockdown() and not SUI.DBMod.Objectives[v].Combat then
+			elseif not InCombatLockdown() and not SUI.DB.Objectives[v].Combat then
 				CombatRule = true
 			end
 
-			if SUI.DBMod.Objectives[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
+			if SUI.DB.Objectives[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
 				FadeOut = true
-			elseif SUI.DBMod.Objectives[v].Status == 'Raid' and IsInRaid() and CombatRule then
+			elseif SUI.DB.Objectives[v].Status == 'Raid' and IsInRaid() and CombatRule then
 				FadeOut = true
-			elseif SUI.DBMod.Objectives[v].Status == 'Boss' and event == 'ENCOUNTER_START' then
+			elseif SUI.DB.Objectives[v].Status == 'Boss' and event == 'ENCOUNTER_START' then
 				FadeOut = true
-			elseif SUI.DBMod.Objectives[v].Status == 'Instance' and IsInInstance() then
+			elseif SUI.DB.Objectives[v].Status == 'Instance' and IsInInstance() then
 				FadeOut = true
-			elseif SUI.DBMod.Objectives[v].Status == 'All' and CombatRule then
+			elseif SUI.DB.Objectives[v].Status == 'All' and CombatRule then
 				FadeOut = true
 			else
 				FadeIn = true
@@ -62,7 +62,7 @@ local ObjTrackerUpdate = function()
 	end
 
 	-- Always Shown logic
-	if (SUI.DBMod.Objectives.AlwaysShowScenario and ScenarioActive) then
+	if (SUI.DB.Objectives.AlwaysShowScenario and ScenarioActive) then
 		FadeIn = true
 		FadeOut = false
 	end
@@ -96,13 +96,13 @@ function module:OnInitialize()
 			Combat = false
 		}
 	}
-	if not SUI.DBMod.Objectives then
-		SUI.DBMod.Objectives = Defaults
+	if not SUI.DB.Objectives then
+		SUI.DB.Objectives = Defaults
 	else
-		SUI.DBMod.Objectives = SUI:MergeData(SUI.DBMod.Objectives, Defaults, false)
+		SUI.DB.Objectives = SUI:MergeData(SUI.DB.Objectives, Defaults, false)
 	end
-	if SUI.DBMod.Artwork.SetupDone then
-		SUI.DBMod.Objectives.SetupDone = true
+	if SUI.DB.Artwork.SetupDone then
+		SUI.DB.Objectives.SetupDone = true
 	end
 	-- Is the player is on classic disable the module
 	if SUI.IsClassic then
@@ -185,10 +185,10 @@ function module:BuildOptions()
 				order = 0,
 				width = 'full',
 				get = function(info)
-					return SUI.DBMod.Objectives.AlwaysShowScenario
+					return SUI.DB.Objectives.AlwaysShowScenario
 				end,
 				set = function(info, val)
-					SUI.DBMod.Objectives.AlwaysShowScenario = val
+					SUI.DB.Objectives.AlwaysShowScenario = val
 					ObjTrackerUpdate()
 				end
 			}
@@ -207,10 +207,10 @@ function module:BuildOptions()
 			order = k + .2,
 			values = Conditions,
 			get = function(info)
-				return SUI.DBMod.Objectives[v].Status
+				return SUI.DB.Objectives[v].Status
 			end,
 			set = function(info, val)
-				SUI.DBMod.Objectives[v].Status = val
+				SUI.DB.Objectives[v].Status = val
 				ObjTrackerUpdate()
 			end
 		}
@@ -225,10 +225,10 @@ function module:BuildOptions()
 			type = 'toggle',
 			order = k + .4,
 			get = function(info)
-				return SUI.DBMod.Objectives[v].Combat
+				return SUI.DB.Objectives[v].Combat
 			end,
 			set = function(info, val)
-				SUI.DBMod.Objectives[v].Combat = val
+				SUI.DB.Objectives[v].Combat = val
 				ObjTrackerUpdate()
 			end
 		}
@@ -245,7 +245,7 @@ function module:FirstTimeSetup()
 		SubTitle = 'Objectives',
 		Desc1 = 'The objectives module can hide the objectives based on diffrent conditions. This allows you to free your screen when you need it the most automatically.',
 		Desc2 = 'The defaults here are based on your current level.',
-		RequireDisplay = (not SUI.DBMod.Objectives.SetupDone),
+		RequireDisplay = (not SUI.DB.Objectives.SetupDone),
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -323,11 +323,11 @@ function module:FirstTimeSetup()
 		end,
 		Next = function()
 			local SUI_Win = SUI:GetModule('SetupWizard').window.content
-			SUI.DBMod.Objectives.SetupDone = true
-			SUI.DBMod.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
+			SUI.DB.Objectives.SetupDone = true
+			SUI.DB.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
 			for k, v in ipairs(RuleList) do
-				SUI.DBMod.Objectives[v] = {
+				SUI.DB.Objectives[v] = {
 					Status = SUI_Win.Objectives[k].Condition:GetValue(),
 					Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
 				}

@@ -3,7 +3,7 @@ local module = SUI:NewModule('Style_Arcane')
 ----------------------------------------------------------------------------------------------------
 
 function module:OnInitialize()
-	-- if (SUI.DBMod.Artwork.Style == 'Arcane') then
+	-- if (SUI.DB.Artwork.Style == 'Arcane') then
 	-- -- module:Init()
 	-- end
 
@@ -41,7 +41,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DBMod.Artwork.Style ~= 'Arcane') then
+	if (SUI.DB.Artwork.Style ~= 'Arcane') then
 		module:Disable()
 	end
 end
