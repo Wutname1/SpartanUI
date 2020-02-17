@@ -3,24 +3,10 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Style-Setup.lua" />
+	<Script file="Style.lua" />
 
-	<!-- SpartanUI -->
-	<Frame name="SUI_Art_Fel" frameStrata="BACKGROUND" parent="SpartanUI">
-		<Anchors>
-			<Anchor point="BOTTOM" relativePoint="BOTTOM" />
-			<Anchor point="TOP" relativePoint="BOTTOM">
-				<Offset>
-					<AbsDimension x="0" y="153"/>
-				</Offset>
-			</Anchor>
-			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" />
-			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" />
-		</Anchors>
-	</Frame>
-
-	<!-- Fel_BarTemplate1 -->
-	<Frame name="Fel_BarTemplate1" frameStrata="BACKGROUND" virtual="true">
+	<!-- SUI_Art_Fel_BarBG -->
+	<Frame name="SUI_Art_Fel_BarBG" frameStrata="BACKGROUND" virtual="true">
 		<Size>
 			<AbsDimension x="400" y="32" />
 		</Size>
@@ -46,7 +32,7 @@
 		</Size>
 		<Frames>
 			<!-- Action Bars -->
-			<Frame name="Fel_Bar1" inherits="Fel_BarTemplate1">
+			<Frame name="Fel_Bar1" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 						<Offset>
@@ -55,7 +41,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_Bar2" inherits="Fel_BarTemplate1">
+			<Frame name="Fel_Bar2" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 						<Offset>
@@ -64,7 +50,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_Bar3" inherits="Fel_BarTemplate1">
+			<Frame name="Fel_Bar3" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
 						<Offset>
@@ -73,7 +59,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_Bar4" inherits="Fel_BarTemplate1">
+			<Frame name="Fel_Bar4" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
 						<Offset>
@@ -83,7 +69,7 @@
 				</Anchors>
 			</Frame>
 			<!-- Misc Bars -->
-			<Frame name="Fel_MenuBar" inherits="Fel_BarTemplate1">
+			<Frame name="Fel_MenuBar" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOM" relativeTo="Fel_Bar3" relativePoint="TOP">
 						<Offset>
@@ -92,7 +78,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_StanceBar" inherits="Fel_BarTemplate1">
+			<Frame name="Fel_StanceBar" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOM" relativeTo="Fel_Bar1" relativePoint="TOP">
 						<Offset>
@@ -103,7 +89,4 @@
 			</Frame>
 		</Frames>
 	</Frame>
-
-	<Script file="Module-Artwork.lua" />
-	<Script file="Style.lua" />
 </Ui>
