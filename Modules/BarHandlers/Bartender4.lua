@@ -362,8 +362,9 @@ local function OnInitialize()
 	end
 	scaleData = module.BarScale.BT4.default
 	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
-		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DB.Artwork.Style], module.BarScale.BT4.default)
+		scaleData = SUI:MergeData(scaleData, module.BarScale.BT4[SUI.DB.Artwork.Style])
 	end
+	scaleData = SUI:MergeData(scaleData, module.DB.custom.scale.BT4, true)
 end
 
 local function RefreshConfig()
