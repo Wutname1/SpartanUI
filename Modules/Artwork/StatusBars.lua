@@ -112,8 +112,8 @@ local updateText = function(self)
 
 	local side = self.i
 	local valFill, valMax, valPercent
-
-	if (module.DB[side].display == 'xp') then
+	local remaining = ''
+	if (module.DB[side].display == 'xp') and GetMaxPlayerLevel('player') ~= UnitLevel('player') then
 		local rested, now, goal = GetXPExhaustion() or 0, UnitXP('player'), UnitXPMax('player')
 		if now ~= 0 then
 			rested = (rested / goal) * self:GetWidth()
@@ -134,6 +134,7 @@ local updateText = function(self)
 		end
 		valFill = now
 		valMax = goal
+		remaining = SUI:comma_value(goal - now)
 		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
 	elseif (module.DB[side].display == 'rep') then
 		local _, name, _, low, high, current = 0, GetWatchedFactionInfo()
@@ -177,7 +178,13 @@ local updateText = function(self)
 			end
 		end
 		if module.DB[side].text and valFill and valMax then
-			self.Text:SetFormattedText('( %s / %s ) %d%%', SUI:comma_value(valFill), SUI:comma_value(valMax), valPercent)
+			self.Text:SetFormattedText(
+				'( %s / %s ) %d%% %s',
+				SUI:comma_value(valFill),
+				SUI:comma_value(valMax),
+				valPercent,
+				remaining or ''
+			)
 		end
 	end
 
