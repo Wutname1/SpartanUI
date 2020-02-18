@@ -1,18 +1,18 @@
 local SUI, L = SUI, SUI.L
 local print, error = SUI.print, SUI.Error
 local Artwork_Core = SUI:GetModule('Component_Artwork')
-local module = SUI:NewModule('Style_Fel')
+local module = SUI:NewModule('Style_Digital')
 local UnitFrames = SUI:GetModule('Component_UnitFrames')
-local artFrame = CreateFrame('Frame', 'SUI_Art_Fel', SpartanUI)
+local artFrame = CreateFrame('Frame', 'SUI_Art_Digital', SpartanUI)
 module.Settings = {}
 local CurScale
 local petbattle = CreateFrame('Frame')
 local StatusBarSettings = {
 	bars = {
-		'Fel_StatusBar_Left',
-		'Fel_StatusBar_Right'
+		'Digital_StatusBar_Left',
+		'Digital_StatusBar_Right'
 	},
-	Fel_StatusBar_Left = {
+	Digital_StatusBar_Left = {
 		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
 		size = {370, 20},
 		TooltipSize = {400, 100},
@@ -20,10 +20,10 @@ local StatusBarSettings = {
 		texCords = {0.150390625, 1, 0, 1},
 		GlowPoint = {x = -10},
 		MaxWidth = 32,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
+		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
 		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
 	},
-	Fel_StatusBar_Right = {
+	Digital_StatusBar_Right = {
 		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
 		Grow = 'RIGHT',
 		size = {370, 20},
@@ -32,7 +32,7 @@ local StatusBarSettings = {
 		texCords = {0.150390625, 1, 0, 1},
 		GlowPoint = {x = 10},
 		MaxWidth = 35,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
+		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
 		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
 	}
 }
@@ -41,7 +41,7 @@ local StatusBarSettings = {
 local InitRan = false
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
-	BarHandler.BarPosition.BT4.Fel = {
+	BarHandler.BarPosition.BT4.Digital = {
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,80',
 		--
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-250,175',
@@ -52,26 +52,11 @@ function module:OnInitialize()
 	}
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	UnitFrames.Artwork.Fel = {
-		top = {
-			-- path = 'Interface\\Scenarios\\LegionInvasion',
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			TexCoord = {0.1796875, 0.736328125, 0, 0.099609375},
-			heightScale = .25,
-			yScale = -0.05,
-			alpha = .8
-		},
+	UnitFrames.Artwork.Digital = {
 		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			TexCoord = {.02, .385, .45, .575},
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
+			TexCoord = {0.0234375, 0.9765625, 0.265625, 0.7734375},
 			PVPAlpha = .4
-		},
-		bottom = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			heightScale = .115,
-			yScale = 0.0158,
-			TexCoord = {0.1796875, 0.736328125, 0.197265625, 0.244140625},
-			PVPAlpha = .8
 		}
 	}
 
@@ -79,7 +64,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DB.Artwork.Style ~= 'Fel') then
+	if (SUI.DB.Artwork.Style ~= 'Digital') then
 		module:Disable()
 	else
 		module:Options()
@@ -93,7 +78,7 @@ end
 
 function module:Options()
 	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = 'Fel Options',
+		name = 'Digital Options',
 		type = 'group',
 		order = 10,
 		args = {
@@ -103,10 +88,10 @@ function module:Options()
 				order = .1,
 				desc = L['Is it getting hot in here?'],
 				get = function(info)
-					return (SUI.DB.Styles.Fel.Minimap.Engulfed ~= true or false)
+					return (SUI.DB.Styles.Digital.Minimap.Engulfed ~= true or false)
 				end,
 				set = function(info, val)
-					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
+					SUI.DB.Styles.Digital.Minimap.Engulfed = (val ~= true or false)
 					module:MiniMapUpdate()
 				end
 			},
@@ -141,14 +126,14 @@ function module:Options()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return SUI.DB.Styles.Fel.Artwork.Allenable
+					return SUI.DB.Styles.Digital.Artwork.Allenable
 				end,
 				set = function(info, val)
 					for i = 1, 4 do
-						SUI.DB.Styles.Fel.Artwork['bar' .. i].enable, SUI.DB.Styles.Fel.Artwork.Allenable = val, val
+						SUI.DB.Styles.Digital.Artwork['bar' .. i].enable, SUI.DB.Styles.Digital.Artwork.Allenable = val, val
 					end
-					SUI.DB.Styles.Fel.Artwork.Stance.enable = val
-					SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val
+					SUI.DB.Styles.Digital.Artwork.Stance.enable = val
+					SUI.DB.Styles.Digital.Artwork.MenuBar.enable = val
 					module:updateAlpha()
 				end
 			},
@@ -161,14 +146,14 @@ function module:Options()
 				max = 100,
 				step = 1,
 				get = function(info)
-					return SUI.DB.Styles.Fel.Artwork.Allalpha
+					return SUI.DB.Styles.Digital.Artwork.Allalpha
 				end,
 				set = function(info, val)
 					for i = 1, 4 do
-						SUI.DB.Styles.Fel.Artwork['bar' .. i].alpha, SUI.DB.Styles.Fel.Artwork.Allalpha = val, val
+						SUI.DB.Styles.Digital.Artwork['bar' .. i].alpha, SUI.DB.Styles.Digital.Artwork.Allalpha = val, val
 					end
-					SUI.DB.Styles.Fel.Artwork.Stance.alpha = val
-					SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val
+					SUI.DB.Styles.Digital.Artwork.Stance.alpha = val
+					SUI.DB.Styles.Digital.Artwork.MenuBar.alpha = val
 					module:updateAlpha()
 				end
 			},
@@ -186,11 +171,11 @@ function module:Options()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.Stance.alpha
+							return SUI.DB.Styles.Digital.Artwork.Stance.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.Stance.enable == true then
-								SUI.DB.Styles.Fel.Artwork.Stance.alpha = val
+							if SUI.DB.Styles.Digital.Artwork.Stance.enable == true then
+								SUI.DB.Styles.Digital.Artwork.Stance.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -199,10 +184,10 @@ function module:Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.Stance.enable
+							return SUI.DB.Styles.Digital.Artwork.Stance.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.Stance.enable = val
+							SUI.DB.Styles.Digital.Artwork.Stance.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -222,11 +207,11 @@ function module:Options()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.MenuBar.alpha
+							return SUI.DB.Styles.Digital.Artwork.MenuBar.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.MenuBar.enable == true then
-								SUI.DB.Styles.Fel.Artwork.MenuBar.alpha = val
+							if SUI.DB.Styles.Digital.Artwork.MenuBar.enable == true then
+								SUI.DB.Styles.Digital.Artwork.MenuBar.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -235,10 +220,10 @@ function module:Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.MenuBar.enable
+							return SUI.DB.Styles.Digital.Artwork.MenuBar.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.MenuBar.enable = val
+							SUI.DB.Styles.Digital.Artwork.MenuBar.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -258,11 +243,11 @@ function module:Options()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar1.alpha
+							return SUI.DB.Styles.Digital.Artwork.bar1.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar1.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar1.alpha = val
+							if SUI.DB.Styles.Digital.Artwork.bar1.enable == true then
+								SUI.DB.Styles.Digital.Artwork.bar1.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -271,10 +256,10 @@ function module:Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar1.enable
+							return SUI.DB.Styles.Digital.Artwork.bar1.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar1.enable = val
+							SUI.DB.Styles.Digital.Artwork.bar1.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -294,11 +279,11 @@ function module:Options()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar2.alpha
+							return SUI.DB.Styles.Digital.Artwork.bar2.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar2.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar2.alpha = val
+							if SUI.DB.Styles.Digital.Artwork.bar2.enable == true then
+								SUI.DB.Styles.Digital.Artwork.bar2.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -307,10 +292,10 @@ function module:Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar2.enable
+							return SUI.DB.Styles.Digital.Artwork.bar2.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar2.enable = val
+							SUI.DB.Styles.Digital.Artwork.bar2.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -330,11 +315,11 @@ function module:Options()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar3.alpha
+							return SUI.DB.Styles.Digital.Artwork.bar3.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar3.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar3.alpha = val
+							if SUI.DB.Styles.Digital.Artwork.bar3.enable == true then
+								SUI.DB.Styles.Digital.Artwork.bar3.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -343,10 +328,10 @@ function module:Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar3.enable
+							return SUI.DB.Styles.Digital.Artwork.bar3.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar3.enable = val
+							SUI.DB.Styles.Digital.Artwork.bar3.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -366,11 +351,11 @@ function module:Options()
 						step = 1,
 						width = 'double',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar4.alpha
+							return SUI.DB.Styles.Digital.Artwork.bar4.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.Styles.Fel.Artwork.bar4.enable == true then
-								SUI.DB.Styles.Fel.Artwork.bar4.alpha = val
+							if SUI.DB.Styles.Digital.Artwork.bar4.enable == true then
+								SUI.DB.Styles.Digital.Artwork.bar4.alpha = val
 								module:updateAlpha()
 							end
 						end
@@ -379,10 +364,10 @@ function module:Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						get = function(info)
-							return SUI.DB.Styles.Fel.Artwork.bar4.enable
+							return SUI.DB.Styles.Digital.Artwork.bar4.enable
 						end,
 						set = function(info, val)
-							SUI.DB.Styles.Fel.Artwork.bar4.enable = val
+							SUI.DB.Styles.Digital.Artwork.bar4.enable = val
 							module:updateAlpha()
 						end
 					}
@@ -419,7 +404,7 @@ function module:SetupVehicleUI()
 			end
 		)
 		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
-		RegisterStateDriver(SUI_Art_Fel, 'visibility', '[overridebar][vehicleui] hide; show')
+		RegisterStateDriver(SUI_Art_Digital, 'visibility', '[overridebar][vehicleui] hide; show')
 		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
@@ -427,13 +412,13 @@ end
 function module:RemoveVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
 		UnregisterStateDriver(petbattle, 'visibility')
-		UnregisterStateDriver(SUI_Art_Fel, 'visibility')
+		UnregisterStateDriver(SUI_Art_Digital, 'visibility')
 		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 
 function module:CreateArtwork()
-	plate = CreateFrame('Frame', 'Fel_ActionBarPlate', SpartanUI, 'Fel_ActionBarsTemplate')
+	plate = CreateFrame('Frame', 'Digital_ActionBarPlate', SpartanUI, 'Digital_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
 	plate:ClearAllPoints()
@@ -447,12 +432,12 @@ function module:CreateArtwork()
 
 	artFrame.Left = artFrame:CreateTexture('SUI_Art_War_Left', 'BORDER')
 	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM', 0, 0)
-	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Left')
+	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Base_Bar_Left')
 	-- artFrame.Left:SetScale(.75)
 
 	artFrame.Right = artFrame:CreateTexture('SUI_Art_War_Right', 'BORDER')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
-	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Right')
+	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Base_Bar_Right')
 	-- artFrame.Right:SetScale(.75)
 
 	FramerateText:ClearAllPoints()
@@ -469,7 +454,7 @@ function module:EnableArtwork()
 				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
 			CastingBarFrame:ClearAllPoints()
-			CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Fel, 'TOP', 0, 90)
+			CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Digital, 'TOP', 0, 90)
 		end
 	)
 
@@ -487,8 +472,8 @@ function module:StatusBars()
 	StatusBars:Initalize(StatusBarSettings)
 
 	-- Position the StatusBars
-	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', SUI_Art_Fel, 'BOTTOM', -100, 0)
-	StatusBars.bars.Fel_StatusBar_Right:SetPoint('BOTTOMLEFT', SUI_Art_Fel, 'BOTTOM', 100, 0)
+	StatusBars.bars.Digital_StatusBar_Left:SetPoint('BOTTOMRIGHT', SUI_Art_Digital, 'BOTTOM', -100, 0)
+	StatusBars.bars.Digital_StatusBar_Right:SetPoint('BOTTOMLEFT', SUI_Art_Digital, 'BOTTOM', 100, 0)
 end
 
 -- Minimap
@@ -497,17 +482,10 @@ function module:MiniMapUpdate()
 		Minimap.BG:ClearAllPoints()
 	end
 
-	if SUI.DB.Styles.Fel.Minimap.Engulfed then
-		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed')
-		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 7, 37)
-		Minimap.BG:SetSize(330, 330)
-		Minimap.BG:SetBlendMode('ADD')
-	else
-		Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed')
-		Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
-		Minimap.BG:SetSize(256, 256)
-		Minimap.BG:SetBlendMode('ADD')
-	end
+	Minimap.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap')
+	Minimap.BG:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
+	Minimap.BG:SetSize(256, 256)
+	Minimap.BG:SetBlendMode('ADD')
 end
 
 function module:MiniMap()
@@ -537,7 +515,7 @@ function module:MiniMap()
 		'OnShow',
 		function(this, event)
 			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', SUI_Art_Fel, 'CENTER', 0, 54)
+			Minimap:SetPoint('CENTER', SUI_Art_Digital, 'CENTER', 0, 54)
 			SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 		end
 	)
