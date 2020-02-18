@@ -57,12 +57,6 @@ function module:OnInitialize()
 			end,
 			func = function()
 				SUI.DB.Artwork.Style = skin
-				-- Fel has a subtheme stil so deal with that.
-				if skin == 'Fel' or skin == 'Digital' then
-					SUI.DB.Artwork.Style = 'Fel'
-					SUI.DB.Styles.Fel.SubTheme = skin
-				end
-
 				SUI.DB.Unitframes.Style = skin
 				SUI.opt.args.UnitFrames.args.BaseStyle.args[skin].func()
 
@@ -78,12 +72,6 @@ function module:OnInitialize()
 			end,
 			func = function()
 				SUI.DB.Artwork.Style = skin
-				-- Fel has a subtheme stil so deal with that.
-				if skin == 'Fel' or skin == 'Digital' then
-					SUI.DB.Artwork.Style = 'Fel'
-					SUI.DB.Styles.Fel.SubTheme = skin
-				end
-
 				SUI:reloadui()
 			end
 		}

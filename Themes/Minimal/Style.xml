@@ -3,7 +3,6 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Style-Setup.lua" />
 
 	<!-- SpartanUI -->
 	<Frame name="SUI_Art_Minimal" frameStrata="BACKGROUND" parent="SpartanUI">
@@ -49,7 +48,6 @@
 		</Layers>
 	</Frame>
 
-
 	<!-- Minimal_ActionBarsTemplate -->
 	<Frame name="Minimal_ActionBarsTemplate" parent="SUI_Art_Minimal" frameStrata="BACKGROUND" virtual="true">
 		<Size>
@@ -57,6 +55,5 @@
 		</Size>
 	</Frame>
 
-	<Script file="Framework.lua" />
 	<Script file="Style.lua" />
 </Ui>
