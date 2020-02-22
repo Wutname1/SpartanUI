@@ -159,6 +159,12 @@ end
 
 local NamePlateFactory = function(frame, unit)
 	if unit:match('nameplate') then
+		local blizzPlate = frame:GetParent().UnitFrame
+		frame.blizzPlate = blizzPlate
+		frame.widget = blizzPlate.WidgetContainer
+		frame.unitGUID = UnitGUID(unit)
+		frame.npcID = frame.unitGUID and select(6, strsplit('-', frame.unitGUID))
+
 		local elements = SUI.DBMod.NamePlates.elements
 		frame:SetSize(128, 16)
 		frame:SetPoint('CENTER', 0, 0)
@@ -209,7 +215,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 		if nameString ~= '' then
 			frame.Name = frame:CreateFontString(nil, 'BACKGROUND')
-			SUI:FormatFont(frame.Name, 10, 'Player')
+			SUI:FormatFont(frame.Name, 10, 'Nameplate')
 			frame.Name:SetSize(frame:GetWidth(), 12)
 			frame.Name:SetJustifyH(elements.Name.SetJustifyH)
 			frame.Name:SetPoint('TOP', frame)
@@ -245,7 +251,7 @@ local NamePlateFactory = function(frame, unit)
 		cast:SetStatusBarColor(1, 0.7, 0)
 		if elements.Castbar.text then
 			cast.Text = cast:CreateFontString()
-			SUI:FormatFont(cast.Text, 7, 'Player')
+			SUI:FormatFont(cast.Text, 7, 'Nameplate')
 			cast.Text:SetJustifyH('CENTER')
 			cast.Text:SetJustifyV('MIDDLE')
 			cast.Text:SetAllPoints(cast)
@@ -342,6 +348,34 @@ local NamePlateFactory = function(frame, unit)
 		ThreatIndicator.feedbackUnit = 'PLAYER'
 		frame.ThreatIndicator = ThreatIndicator
 
+		-- WidgetXPBar
+		local WidgetXPBar = CreateFrame('StatusBar', frame:GetDebugName() .. 'WidgetXPBar', frame)
+		WidgetXPBar:SetFrameStrata(frame:GetFrameStrata())
+		WidgetXPBar:SetFrameLevel(5)
+		WidgetXPBar:SetStatusBarTexture(BarTexture)
+		WidgetXPBar:SetSize(frame:GetWidth(), elements.XPBar.height)
+		WidgetXPBar:SetPoint('TOP', frame, 'BOTTOM', 0, elements.XPBar.Offset)
+		WidgetXPBar:SetStatusBarColor(0, .5, 1, .7)
+
+		WidgetXPBar.bg = WidgetXPBar:CreateTexture(nil, 'BACKGROUND', WidgetXPBar)
+		WidgetXPBar.bg:SetAllPoints()
+		WidgetXPBar.bg:SetTexture(BarTexture)
+		WidgetXPBar.bg:SetVertexColor(0, 0, 0, .5)
+
+		WidgetXPBar.Rank = WidgetXPBar:CreateFontString()
+		WidgetXPBar.Rank:SetJustifyH('LEFT')
+		WidgetXPBar.Rank:SetJustifyV('MIDDLE')
+		WidgetXPBar.Rank:SetAllPoints(WidgetXPBar)
+		SUI:FormatFont(WidgetXPBar.Rank, 7, 'Nameplate')
+
+		WidgetXPBar.ProgressText = WidgetXPBar:CreateFontString()
+		WidgetXPBar.ProgressText:SetJustifyH('CENTER')
+		WidgetXPBar.ProgressText:SetJustifyV('MIDDLE')
+		WidgetXPBar.ProgressText:SetAllPoints(WidgetXPBar)
+		SUI:FormatFont(WidgetXPBar.ProgressText, 7, 'Nameplate')
+
+		frame.WidgetXPBar = WidgetXPBar
+
 		-- Setup Player Icons
 		if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
 			local attachPoint = 'Castbar'
@@ -367,6 +401,15 @@ local NameplateCallback = function(self, event, unit)
 	end
 	local elements = SUI.DBMod.NamePlates.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
+		local blizzPlate = self:GetParent().UnitFrame
+		self.blizzPlate = blizzPlate
+		self.widget = blizzPlate.WidgetContainer
+		self.unitGUID = UnitGUID(unit)
+		self.npcID = self.unitGUID and select(6, strsplit('-', self.unitGUID))
+
+		NameplateList[self:GetName()] = true
+
+		self:UpdateAllElements('ForceUpdate')
 		NameplateList[self:GetName()] = true
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
 		NameplateList[self:GetName()] = false
@@ -895,7 +938,7 @@ function module:BuildOptions()
 									module:UpdateNameplates()
 								end
 							},
-							x = {
+							size = {
 								name = 'Size',
 								type = 'range',
 								order = 3,
@@ -998,6 +1041,52 @@ function module:BuildOptions()
 								type = 'description',
 								order = 3,
 								fontSize = 'small'
+							}
+						}
+					},
+					XPBar = {
+						name = 'XP Bar',
+						type = 'group',
+						args = {
+							enabled = {
+								name = L['Enabled'],
+								type = 'toggle',
+								width = 'full',
+								order = 1,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.XPBar.enabled
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.XPBar.enabled = val
+								end
+							},
+							size = {
+								name = 'Size',
+								type = 'range',
+								order = 2,
+								min = 1,
+								max = 30,
+								step = 1,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.XPBar.size
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.XPBar.size = val
+								end
+							},
+							Offset = {
+								name = 'Offset',
+								type = 'range',
+								order = 3,
+								min = -30,
+								max = 30,
+								step = .5,
+								get = function(info)
+									return SUI.DBMod.NamePlates.elements.XPBar.Offset
+								end,
+								set = function(info, val)
+									SUI.DBMod.NamePlates.elements.XPBar.Offset = val
+								end
 							}
 						}
 					}
