@@ -1534,6 +1534,10 @@ local DBdefault = {
 					x = 0,
 					y = 40
 				}
+			},
+			XPBar = {
+				height = 5,
+				Offset = -10
 			}
 		}
 	},
