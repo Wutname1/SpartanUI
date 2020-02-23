@@ -39,6 +39,7 @@ function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.War = {
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,70',
+		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,70',
 		--
 		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',

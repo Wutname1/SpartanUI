@@ -17,6 +17,7 @@ function module:OnInitialize()
 		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOM,260,1',
 		--
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,0,130',
+		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,0,130',
 		--
 		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',

@@ -138,6 +138,7 @@ function module:ShapeChange(shape)
 
 	MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 	MinimapZoneText:SetShadowOffset(1, -1)
+	MinimapZoneTextButton:SetFrameLevel(121)
 end
 
 function module:OnInitialize()
@@ -187,7 +188,7 @@ function module:OnEnable()
 
 	-- MiniMap Modification
 	Minimap:SetFrameLevel(120)
-	Minimap.Background = Minimap:CreateTexture(nil, 'BACKGROUND')
+	Minimap.Background = Minimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
 	if SUI.IsRetail then
 		Minimap:SetArchBlobRingScalar(0)
 		Minimap:SetQuestBlobRingScalar(0)
