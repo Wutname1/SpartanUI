@@ -178,7 +178,7 @@ end
 
 local isDragging = false
 
-function MoveIt:CreateMover(parent, name, text, postdrag)
+function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 	if not SUI.DB.EnabledComponents.MoveIt then
 		return
 	end
@@ -186,8 +186,8 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 	if not parent or MoverList[name] then
 		return
 	end
-	if text == nil then
-		text = name
+	if DisplayName == nil then
+		DisplayName = name
 	end
 
 	local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(parent))
@@ -217,6 +217,7 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 	f:Hide()
 	f.parent = parent
 	f.name = name
+	f.DisplayName = DisplayName
 	f.postdrag = postdrag
 	f.defaultPoint = GetPoints(parent)
 
@@ -229,10 +230,10 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 	SUI:FormatFont(fs, 12, 'Mover')
 	fs:SetJustifyH('CENTER')
 	fs:SetPoint('CENTER')
-	fs:SetText(text or name)
+	fs:SetText(DisplayName or name)
 	fs:SetTextColor(unpack(colors.text))
 	f:SetFontString(fs)
-	f.text = fs
+	f.DisplayName = fs
 
 	if SUI.DB.MoveIt.movers[name].MovedPoints then
 		point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
@@ -306,7 +307,7 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 			return
 		end
 		self:SetBackdropColor(unpack(colors.active))
-		self.text:SetTextColor(1, 1, 1)
+		self.DisplayName:SetTextColor(1, 1, 1)
 	end
 
 	local function OnMouseDown(self, button)
@@ -325,7 +326,7 @@ function MoveIt:CreateMover(parent, name, text, postdrag)
 			end
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
 			self:Hide()
-			print(self.name + ' hidden temporarily.')
+			print(self.name .. ' hidden temporarily.')
 		end
 	end
 
