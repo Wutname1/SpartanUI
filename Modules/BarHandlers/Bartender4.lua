@@ -138,6 +138,7 @@ local FrameList = {
 	'BT4Bar9',
 	'BT4BarBagBar',
 	'BT4BarExtraActionBar',
+	'BT4BarZoneAbilityBar',
 	'BT4BarStanceBar',
 	'BT4BarPetBar',
 	'BT4BarMicroMenu'
@@ -346,6 +347,7 @@ local function AddMovers()
 	end
 	BTMover('BT4BarBagBar', 'Bag bar')
 	BTMover('BT4BarExtraActionBar', 'Extra Action Bar')
+	BTMover('BT4BarZoneAbilityBar', 'Zone Ability Bar')
 	BTMover('BT4BarStanceBar', 'Stance Bar')
 	BTMover('BT4BarPetBar', 'Pet Bar')
 	BTMover('BT4BarMicroMenu', 'Micro menu')
@@ -387,6 +389,7 @@ local function RefreshConfig()
 		BT4Bar6,
 		BT4BarBagBar,
 		BT4BarExtraActionBar,
+		BT4BarZoneAbilityBar,
 		BT4BarStanceBar,
 		BT4BarPetBar,
 		BT4BarMicroMenu

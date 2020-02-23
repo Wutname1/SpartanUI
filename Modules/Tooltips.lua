@@ -121,11 +121,9 @@ local setPoint = function(self, parent)
 		end
 
 		--See If the theme has an anchor and if we are allowed to use it
-		if SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
-			local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true)
-			if style then
-				style:TooltipLoc(self, parent)
-			end
+		local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true)
+		if style and style.TooltipLoc and not SUI.DB.Tooltips[ActiveRule()].OverrideLoc then
+			style:TooltipLoc(self, parent)
 		else
 			self:ClearAllPoints()
 			if SUI.DB.Tooltips[ActiveRule()].Anchor.Moved then

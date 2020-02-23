@@ -63,5 +63,6 @@ Themes\Classic\Style.xml
 Themes\War\Style.xml
 Themes\Arcane\Style.xml
 Themes\Fel\Style.xml
+Themes\Digital\Style.xml
 Themes\Minimal\Style.xml
 Themes\Transparent\Style.xml

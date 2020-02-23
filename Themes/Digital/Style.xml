@@ -1,0 +1,92 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+    <!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
+    <!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
+    <Script file="Style.lua" />
+
+    <!-- SUI_Art_Digital_BarBG -->
+    <Frame name="SUI_Art_Digital_BarBG" frameStrata="BACKGROUND" virtual="true">
+        <Size>
+            <AbsDimension x="400" y="32" />
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Digital\Images\BarBG" alpha=".5">
+                    <Size>
+                        <AbsDimension x="400" y="32" />
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"/>
+                    </Anchors>
+                    <TexCoords left="0.07421875" right="0.92578125" top="0.359375" bottom="0.6796875"/>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <!-- Digital_ActionBarsTemplate -->
+    <Frame name="Digital_ActionBarsTemplate" parent="SUI_Art_Digital" frameStrata="BACKGROUND" virtual="true">
+        <Size>
+            <AbsDimension x="1002" y="139"/>
+        </Size>
+        <Frames>
+            <!-- Action Bars -->
+            <Frame name="Digital_Bar1" inherits="SUI_Art_Digital_BarBG">
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="-110" y="70" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="Digital_Bar2" inherits="SUI_Art_Digital_BarBG">
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="-110" y="25" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="Digital_Bar3" inherits="SUI_Art_Digital_BarBG">
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="110" y="70" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="Digital_Bar4" inherits="SUI_Art_Digital_BarBG">
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
+                        <Offset>
+                            <AbsDimension x="110" y="25" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <!-- Misc Bars -->
+            <Frame name="Digital_MenuBar" inherits="SUI_Art_Digital_BarBG">
+                <Anchors>
+                    <Anchor point="BOTTOM" relativeTo="Digital_Bar3" relativePoint="TOP">
+                        <Offset>
+                            <AbsDimension x="0" y="10" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+            <Frame name="Digital_StanceBar" inherits="SUI_Art_Digital_BarBG">
+                <Anchors>
+                    <Anchor point="BOTTOM" relativeTo="Digital_Bar1" relativePoint="TOP">
+                        <Offset>
+                            <AbsDimension x="0" y="10" />
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+</Ui>

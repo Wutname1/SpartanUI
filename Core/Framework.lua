@@ -313,8 +313,6 @@ local DBdefault = {
 					ShadowColor = {0, 0, 0, 1}
 				}
 			},
-			TooltipLoc = false,
-			BuffLoc = false,
 			Movers = {},
 			BlizzMovers = {
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
@@ -365,8 +363,7 @@ local DBdefault = {
 			},
 			BlizzMovers = {
 				['VehicleLeaveButton'] = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
-			},
-			TooltipLoc = true
+			}
 		},
 		Transparent = {
 			Minimap = {
@@ -383,12 +380,9 @@ local DBdefault = {
 				PlayerFrames = {0, .8, .9, .7},
 				PartyFrames = {0, .8, .9, .7},
 				RaidFrames = {0, .8, .9, .7}
-			},
-			TooltipLoc = true,
-			BuffLoc = true
+			}
 		},
 		Minimal = {
-			TooltipLoc = true,
 			Minimap = {
 				UnderVehicleUI = false,
 				shape = 'square'
@@ -413,16 +407,6 @@ local DBdefault = {
 				Stance = {enable = true, alpha = 100},
 				MenuBar = {enable = true, alpha = 100}
 			},
-			Frames = {
-				player = {Buffs = {Mode = 'both'}, Debuffs = {Mode = 'both'}},
-				target = {Buffs = {Mode = 'both', onlyShowPlayer = true}, Debuffs = {Mode = 'bars'}}
-			},
-			PartyFrames = {
-				FrameStyle = 'medium'
-			},
-			RaidFrames = {
-				FrameStyle = 'small'
-			},
 			Minimap = {
 				size = {156, 156},
 				BG = {
@@ -436,20 +420,33 @@ local DBdefault = {
 				},
 				position = 'CENTER,SUI_Art_Fel,CENTER,0,54',
 				engulfed = true
+			}
+		},
+		Digital = {
+			Artwork = {
+				Allenable = true,
+				Allalpha = 100,
+				bar1 = {enable = true, alpha = 100},
+				bar2 = {enable = true, alpha = 100},
+				bar3 = {enable = true, alpha = 100},
+				bar4 = {enable = true, alpha = 100},
+				Stance = {enable = true, alpha = 100},
+				MenuBar = {enable = true, alpha = 100}
 			},
-			SlidingTrays = {
-				left = {
-					enabled = true,
-					collapsed = false
+			Minimap = {
+				size = {156, 156},
+				BG = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
+					size = {330, 330},
+					position = 'CENTER,Minimap,CENTER,7,37'
 				},
-				right = {
-					enabled = true,
-					collapsed = false
-				}
-			},
-			TooltipLoc = true,
-			SubTheme = 'Fel',
-			BuffLoc = true
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+					scale = 1.2
+				},
+				position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
+				engulfed = true
+			}
 		},
 		War = {
 			Artwork = {
@@ -545,9 +542,7 @@ local DBdefault = {
 					enabled = true,
 					collapsed = false
 				}
-			},
-			TooltipLoc = true,
-			BuffLoc = true
+			}
 		}
 	},
 	Tooltips = {

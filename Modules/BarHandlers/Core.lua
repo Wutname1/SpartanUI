@@ -15,11 +15,15 @@ module.BarPosition = {
 			['BT4Bar8'] = '',
 			['BT4Bar9'] = '',
 			['BT4Bar10'] = '',
-			['BT4BarBagBar'] = 'TOP,SUI_ActionBarAnchor,TOP,503,2',
-			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,60',
-			['BT4BarStanceBar'] = 'TOP,SUI_ActionBarAnchor,TOP,-115,2',
-			['BT4BarPetBar'] = 'TOP,SUI_ActionBarAnchor,TOP,-32,240',
-			['BT4BarMicroMenu'] = 'TOP,SUI_ActionBarAnchor,TOP,114,4'
+			--
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,87',
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,87',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-285,192',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-661,191',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,340,191',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,707,193'
 		}
 	}
 }
@@ -37,6 +41,7 @@ module.BarScale = {
 			['BT4Bar9'] = 0.83,
 			['BT4Bar10'] = 0.83,
 			['BT4BarBagBar'] = 0.6,
+			['BT4BarZoneAbilityBar'] = 0.8,
 			['BT4BarExtraActionBar'] = 0.8,
 			['BT4BarStanceBar'] = 0.6,
 			['BT4BarPetBar'] = 0.6,
