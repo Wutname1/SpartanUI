@@ -1,7 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Artwork_StatusBars')
 module.bars = {}
-local StyleSettings
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1, g = 0.2, b = 0},
 	[2] = {r = 0.8, g = 0.3, b = 0},
@@ -21,8 +20,7 @@ local COLORS = {
 	Light_Blue = {r = 0, g = .5, b = 1, a = .7}
 }
 
-function module:Initalize(Settings)
-	StyleSettings = Settings
+function module:OnEnable()
 	--[[
         Example Settings
         Optional/Defaults are indicated with '--*'
@@ -286,227 +284,226 @@ local showAzeriteTooltip = function(self)
 end
 
 function module:factory()
-	if not StyleSettings.bars then
-		return
-	end
+	for i, key in ipairs({'Left', 'Right'}) do
+		local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
 
-	for i, key in ipairs(StyleSettings.bars) do
-		if StyleSettings[key] then
-			local StyleSetting = SUI:MergeData(StyleSettings[key], module.DB.default, false)
+		--Status Bar
+		local statusbar = CreateFrame('Frame', key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
+		statusbar:SetSize(unpack(StyleSetting.size))
+		statusbar:SetFrameStrata('BACKGROUND')
 
-			--Status Bar
-			local statusbar = CreateFrame('Frame', key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
-			statusbar:SetSize(unpack(StyleSetting.size))
-			statusbar:SetFrameStrata('BACKGROUND')
+		--Status Bar Images
+		statusbar.bg = statusbar:CreateTexture(nil, 'BACKGROUND')
+		statusbar.bg:SetTexture(StyleSetting.bgImg or '')
+		statusbar.bg:SetAllPoints(statusbar)
+		statusbar.bg:SetTexCoord(unpack(StyleSetting.texCords))
 
-			--Status Bar Images
-			statusbar.bg = statusbar:CreateTexture(nil, 'BACKGROUND')
-			statusbar.bg:SetTexture(StyleSetting.bgImg)
-			statusbar.bg:SetAllPoints(statusbar)
-			statusbar.bg:SetTexCoord(unpack(StyleSetting.texCords))
+		statusbar.overlay = statusbar:CreateTexture(nil, 'OVERLAY')
+		statusbar.overlay:SetTexture(StyleSetting.bgImg)
+		statusbar.overlay:SetAllPoints(statusbar.bg)
+		statusbar.overlay:SetTexCoord(unpack(StyleSetting.texCords))
 
-			statusbar.overlay = statusbar:CreateTexture(nil, 'OVERLAY')
-			statusbar.overlay:SetTexture(StyleSetting.bgImg)
-			statusbar.overlay:SetAllPoints(statusbar.bg)
-			statusbar.overlay:SetTexCoord(unpack(StyleSetting.texCords))
+		statusbar.Fill = statusbar:CreateTexture(nil, 'BORDER')
+		statusbar.Fill:SetTexture(StyleSetting.GlowImage)
+		statusbar.Fill:SetSize(.1, StyleSetting.GlowHeight)
 
-			statusbar.Fill = statusbar:CreateTexture(nil, 'BORDER')
-			statusbar.Fill:SetTexture(StyleSetting.GlowImage)
-			statusbar.Fill:SetSize(.1, StyleSetting.GlowHeight)
+		statusbar.Lead = statusbar:CreateTexture(nil, 'BORDER')
+		statusbar.Lead:SetTexture(StyleSetting.GlowImage)
+		statusbar.Lead:SetSize(.1, StyleSetting.GlowHeight)
 
-			statusbar.Lead = statusbar:CreateTexture(nil, 'BORDER')
-			statusbar.Lead:SetTexture(StyleSetting.GlowImage)
-			statusbar.Lead:SetSize(.1, StyleSetting.GlowHeight)
+		statusbar.FillGlow = statusbar:CreateTexture(nil, 'ARTWORK')
+		statusbar.FillGlow:SetTexture(StyleSetting.GlowImage)
+		statusbar.FillGlow:SetAllPoints(statusbar.Fill)
 
-			statusbar.FillGlow = statusbar:CreateTexture(nil, 'ARTWORK')
-			statusbar.FillGlow:SetTexture(StyleSetting.GlowImage)
-			statusbar.FillGlow:SetAllPoints(statusbar.Fill)
+		statusbar.LeadGlow = statusbar:CreateTexture(nil, 'ARTWORK')
+		statusbar.LeadGlow:SetTexture(StyleSetting.GlowImage)
+		statusbar.LeadGlow:SetAllPoints(statusbar.Lead)
 
-			statusbar.LeadGlow = statusbar:CreateTexture(nil, 'ARTWORK')
-			statusbar.LeadGlow:SetTexture(StyleSetting.GlowImage)
-			statusbar.LeadGlow:SetAllPoints(statusbar.Lead)
-
-			if StyleSetting.Grow == 'LEFT' then
-				statusbar.Fill:SetPoint('RIGHT', statusbar, 'RIGHT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
-				statusbar.Lead:SetPoint('RIGHT', statusbar.Fill, 'LEFT', 0, 0)
-			else
-				statusbar.Fill:SetPoint('LEFT', statusbar, 'LEFT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
-				statusbar.Lead:SetPoint('LEFT', statusbar.Fill, 'RIGHT', 0, 0)
-			end
-
-			--Status Bar Text
-			statusbar.Text = statusbar:CreateFontString(nil, 'OVERLAY')
-			--Only allow Style to override default font sizes
-			local tmp = module.DB.default.FontSize
-			if StyleSetting.FontSize and module.DB[i].FontSize == module.DB.default.FontSize then
-				tmp = StyleSetting.FontSize
-			end
-			SUI:FormatFont(statusbar.Text, tmp)
-			statusbar.Text:SetJustifyH('CENTER')
-			statusbar.Text:SetJustifyV('MIDDLE')
-			statusbar.Text:SetAllPoints(statusbar)
-			statusbar.Text:SetTextColor(unpack(StyleSetting.TextColor))
-
-			--Tooltip
-			local tooltip = CreateFrame('Frame')
-			tooltip:SetParent(statusbar)
-			tooltip:SetFrameStrata('TOOLTIP')
-			tooltip:SetSize(unpack(StyleSetting.TooltipSize))
-			if StyleSetting.tooltipAnchor == 'TOP' then
-				tooltip:SetPoint('BOTTOM', statusbar, 'TOP')
-			else
-				tooltip:SetPoint('TOP', statusbar, 'BOTTOM')
-			end
-
-			tooltip.bg = tooltip:CreateTexture(nil, 'BORDER')
-			tooltip.bg:SetTexture(StyleSetting.bgTooltip)
-			tooltip.bg:SetAllPoints(tooltip)
-			tooltip.bg:SetTexCoord(unpack(StyleSetting.texCordsTooltip))
-
-			local TextFrame = CreateFrame('Frame')
-			TextFrame:SetFrameStrata('TOOLTIP')
-			TextFrame:SetParent(tooltip)
-			TextFrame:SetSize(unpack(StyleSetting.TooltipTextSize))
-			TextFrame:SetPoint('CENTER', tooltip, 'CENTER')
-
-			TextFrame.HeaderText = TextFrame:CreateFontString(nil, 'OVERLAY')
-			SUI:FormatFont(TextFrame.HeaderText, 10)
-			TextFrame.HeaderText:SetPoint('TOPLEFT', TextFrame)
-			TextFrame.HeaderText:SetPoint('TOPRIGHT', TextFrame)
-			TextFrame.HeaderText:SetHeight((0.18 * TextFrame:GetHeight()))
-
-			TextFrame.MainText = TextFrame:CreateFontString(nil, 'OVERLAY')
-			SUI:FormatFont(TextFrame.MainText, 8)
-			TextFrame.MainText:SetPoint('TOPLEFT', TextFrame.HeaderText, 'BOTTOMLEFT', 0, -2)
-			TextFrame.MainText:SetPoint('TOPRIGHT', TextFrame.HeaderText, 'BOTTOMRIGHT', 0, -2)
-			TextFrame.MainText:SetHeight((0.82 * TextFrame:GetHeight()))
-
-			TextFrame.MainText2 = TextFrame:CreateFontString(nil, 'OVERLAY')
-			SUI:FormatFont(TextFrame.MainText2, 8)
-			TextFrame.MainText2:SetPoint('TOPLEFT', TextFrame.MainText, 'BOTTOMLEFT', 0, -2)
-			TextFrame.MainText2:SetPoint('TOPRIGHT', TextFrame.MainText, 'BOTTOMRIGHT', 0, -2)
-			TextFrame.MainText2:SetHeight((0.82 * TextFrame:GetHeight()))
-
-			TextFrame.HeaderText:SetJustifyH('LEFT')
-			TextFrame.MainText:SetJustifyH('LEFT')
-			TextFrame.MainText:SetJustifyV('TOP')
-
-			--Assign to globals
-			tooltip.TextFrame = TextFrame
-			statusbar.tooltip = tooltip
-			statusbar.settings = StyleSetting
-			statusbar.i = i
-			module.bars[key] = statusbar
-
-			--Setup Actions
-			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
-			statusbar:RegisterEvent('UNIT_INVENTORY_CHANGED')
-			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
-			statusbar:RegisterEvent('PLAYER_XP_UPDATE')
-			statusbar:RegisterEvent('PLAYER_LEVEL_UP')
-			statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
-			statusbar:RegisterEvent('UPDATE_FACTION')
-
-			if SUI.IsRetail then
-				statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
-			end
-
-			--Statusbar Update event
-			statusbar:SetScript(
-				'OnEvent',
-				function(self)
-					if module.DB[i].display ~= 'disabled' then
-						self:Show()
-						updateText(self)
-					else
-						self:Hide()
-					end
-				end
-			)
-			--Tooltip Display Events
-			statusbar:SetScript(
-				'OnEnter',
-				function(self)
-					if GetRealmName() == 'arctium.io' then
-						return
-					end
-					if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then
-						showRepTooltip(self, i)
-					end
-					if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then
-						showXPTooltip(self, i)
-					end
-					if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then
-						showAzeriteTooltip(self, i)
-					end
-					if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then
-						showHonorTooltip(self, i)
-					end
-				end
-			)
-			statusbar:SetScript(
-				'OnMouseDown',
-				function(self)
-					if GetRealmName() == 'arctium.io' then
-						return
-					end
-					if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then
-						showRepTooltip(self, i)
-					end
-					if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then
-						showXPTooltip(self, i)
-					end
-					if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then
-						showAzeriteTooltip(self, i)
-					end
-					if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'click' then
-						showHonorTooltip(self, i)
-					end
-				end
-			)
-			statusbar:SetScript(
-				'OnLeave',
-				function(self)
-					self.tooltip:Hide()
-				end
-			)
-
-			-- Hide with SpartanUI
-			SpartanUI:HookScript(
-				'OnHide',
-				function()
-					statusbar:Hide()
-				end
-			)
-			SpartanUI:HookScript(
-				'OnShow',
-				function()
-					statusbar:Show()
-				end
-			)
-
-			--Hook the visibility of the tooltip to the text
-			tooltip:HookScript(
-				'OnHide',
-				function(self)
-					tooltip.TextFrame:Hide()
-				end
-			)
-			tooltip:HookScript(
-				'OnShow',
-				function(self)
-					tooltip.TextFrame:Show()
-				end
-			)
-			--Hide the new tooltip
-			tooltip:Hide()
+		if StyleSetting.Grow == 'LEFT' then
+			statusbar.Fill:SetPoint('RIGHT', statusbar, 'RIGHT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
+			statusbar.Lead:SetPoint('RIGHT', statusbar.Fill, 'LEFT', 0, 0)
+		else
+			statusbar.Fill:SetPoint('LEFT', statusbar, 'LEFT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
+			statusbar.Lead:SetPoint('LEFT', statusbar.Fill, 'RIGHT', 0, 0)
 		end
+
+		--Status Bar Text
+		statusbar.Text = statusbar:CreateFontString(nil, 'OVERLAY')
+		--Only allow Style to override default font sizes
+		local tmp = module.DB.default.FontSize
+		if StyleSetting.FontSize and module.DB[i].FontSize == module.DB.default.FontSize then
+			tmp = StyleSetting.FontSize
+		end
+		SUI:FormatFont(statusbar.Text, tmp)
+		statusbar.Text:SetJustifyH('CENTER')
+		statusbar.Text:SetJustifyV('MIDDLE')
+		statusbar.Text:SetAllPoints(statusbar)
+		statusbar.Text:SetTextColor(unpack(StyleSetting.TextColor))
+
+		--Tooltip
+		local tooltip = CreateFrame('Frame')
+		tooltip:SetParent(statusbar)
+		tooltip:SetFrameStrata('TOOLTIP')
+		tooltip:SetSize(unpack(StyleSetting.TooltipSize))
+		if StyleSetting.tooltipAnchor == 'TOP' then
+			tooltip:SetPoint('BOTTOM', statusbar, 'TOP')
+		else
+			tooltip:SetPoint('TOP', statusbar, 'BOTTOM')
+		end
+
+		tooltip.bg = tooltip:CreateTexture(nil, 'BORDER')
+		tooltip.bg:SetTexture(StyleSetting.bgTooltip)
+		tooltip.bg:SetAllPoints(tooltip)
+		tooltip.bg:SetTexCoord(unpack(StyleSetting.texCordsTooltip))
+
+		local TextFrame = CreateFrame('Frame')
+		TextFrame:SetFrameStrata('TOOLTIP')
+		TextFrame:SetParent(tooltip)
+		TextFrame:SetSize(unpack(StyleSetting.TooltipTextSize))
+		TextFrame:SetPoint('CENTER', tooltip, 'CENTER')
+
+		TextFrame.HeaderText = TextFrame:CreateFontString(nil, 'OVERLAY')
+		SUI:FormatFont(TextFrame.HeaderText, 10)
+		TextFrame.HeaderText:SetPoint('TOPLEFT', TextFrame)
+		TextFrame.HeaderText:SetPoint('TOPRIGHT', TextFrame)
+		TextFrame.HeaderText:SetHeight((0.18 * TextFrame:GetHeight()))
+
+		TextFrame.MainText = TextFrame:CreateFontString(nil, 'OVERLAY')
+		SUI:FormatFont(TextFrame.MainText, 8)
+		TextFrame.MainText:SetPoint('TOPLEFT', TextFrame.HeaderText, 'BOTTOMLEFT', 0, -2)
+		TextFrame.MainText:SetPoint('TOPRIGHT', TextFrame.HeaderText, 'BOTTOMRIGHT', 0, -2)
+		TextFrame.MainText:SetHeight((0.82 * TextFrame:GetHeight()))
+
+		TextFrame.MainText2 = TextFrame:CreateFontString(nil, 'OVERLAY')
+		SUI:FormatFont(TextFrame.MainText2, 8)
+		TextFrame.MainText2:SetPoint('TOPLEFT', TextFrame.MainText, 'BOTTOMLEFT', 0, -2)
+		TextFrame.MainText2:SetPoint('TOPRIGHT', TextFrame.MainText, 'BOTTOMRIGHT', 0, -2)
+		TextFrame.MainText2:SetHeight((0.82 * TextFrame:GetHeight()))
+
+		TextFrame.HeaderText:SetJustifyH('LEFT')
+		TextFrame.MainText:SetJustifyH('LEFT')
+		TextFrame.MainText:SetJustifyV('TOP')
+
+		--Assign to globals
+		tooltip.TextFrame = TextFrame
+		statusbar.tooltip = tooltip
+		statusbar.settings = StyleSetting
+		statusbar.i = i
+		module.bars[key] = statusbar
+
+		--Position
+		local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
+		statusbar:ClearAllPoints()
+		statusbar:SetPoint(point, anchor, secondaryPoint, x, y)
+
+		--Setup Actions
+		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
+		statusbar:RegisterEvent('UNIT_INVENTORY_CHANGED')
+		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
+		statusbar:RegisterEvent('PLAYER_XP_UPDATE')
+		statusbar:RegisterEvent('PLAYER_LEVEL_UP')
+		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
+		statusbar:RegisterEvent('UPDATE_FACTION')
+
+		if SUI.IsRetail then
+			statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
+		end
+
+		--Statusbar Update event
+		statusbar:SetScript(
+			'OnEvent',
+			function(self)
+				if module.DB[i].display ~= 'disabled' then
+					self:Show()
+					updateText(self)
+				else
+					self:Hide()
+				end
+			end
+		)
+		--Tooltip Display Events
+		statusbar:SetScript(
+			'OnEnter',
+			function(self)
+				if GetRealmName() == 'arctium.io' then
+					return
+				end
+				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then
+					showRepTooltip(self, i)
+				end
+				if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then
+					showXPTooltip(self, i)
+				end
+				if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then
+					showAzeriteTooltip(self, i)
+				end
+				if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then
+					showHonorTooltip(self, i)
+				end
+			end
+		)
+		statusbar:SetScript(
+			'OnMouseDown',
+			function(self)
+				if GetRealmName() == 'arctium.io' then
+					return
+				end
+				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then
+					showRepTooltip(self, i)
+				end
+				if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then
+					showXPTooltip(self, i)
+				end
+				if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then
+					showAzeriteTooltip(self, i)
+				end
+				if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'click' then
+					showHonorTooltip(self, i)
+				end
+			end
+		)
+		statusbar:SetScript(
+			'OnLeave',
+			function(self)
+				self.tooltip:Hide()
+			end
+		)
+
+		-- Hide with SpartanUI
+		SpartanUI:HookScript(
+			'OnHide',
+			function()
+				statusbar:Hide()
+			end
+		)
+		SpartanUI:HookScript(
+			'OnShow',
+			function()
+				statusbar:Show()
+			end
+		)
+
+		--Hook the visibility of the tooltip to the text
+		tooltip:HookScript(
+			'OnHide',
+			function(self)
+				tooltip.TextFrame:Hide()
+			end
+		)
+		tooltip:HookScript(
+			'OnShow',
+			function(self)
+				tooltip.TextFrame:Show()
+			end
+		)
+		--Hide the new tooltip
+		tooltip:Hide()
 	end
 
 	SUI:RegisterMessage(
 		'StatusBarUpdate',
 		function()
-			for i, key in ipairs(StyleSettings.bars) do
+			for i, key in ipairs({'Left', 'Right'}) do
 				if module.DB[i].display ~= 'disabled' then
 					module.bars[key]:Show()
 					updateText(module.bars[key])
@@ -550,7 +547,7 @@ function module:BuildOptions()
 	}
 
 	--Bar Display dropdowns
-	for i, _ in ipairs(StyleSettings.bars) do
+	for i, _ in ipairs({'Left', 'Right'}) do
 		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
 			name = L[i .. ' status bar'],
 			order = i,

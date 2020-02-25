@@ -7,31 +7,6 @@ local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 module.Trays = {}
-module.StatusBarSettings = {
-	bars = {
-		'StatusBar_Left',
-		'StatusBar_Right'
-	},
-	StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-		size = {370, 20},
-		TooltipSize = {350, 100},
-		TooltipTextSize = {330, 80},
-		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-		GlowPoint = {x = -16},
-		MaxWidth = 48
-	},
-	StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-		Grow = 'RIGHT',
-		size = {370, 20},
-		TooltipSize = {350, 100},
-		TooltipTextSize = {330, 80},
-		texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
-		GlowPoint = {x = 16},
-		MaxWidth = 48
-	}
-}
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
@@ -176,8 +151,6 @@ function module:OnEnable()
 		if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 			module:MiniMap()
 		end
-
-		module:StatusBars()
 	end
 end
 
@@ -271,18 +244,6 @@ function module:CreateArtwork()
 			_G['War_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 1, .25)
 		end
 	end
-end
-
-function module:StatusBars()
-	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(module.StatusBarSettings)
-
-	StatusBars.bars.StatusBar_Left:SetAlpha(.9)
-	StatusBars.bars.StatusBar_Right:SetAlpha(.9)
-
-	-- Position the StatusBars
-	StatusBars.bars.StatusBar_Left:SetPoint('BOTTOMRIGHT', SUI_ActionBarAnchor, 'BOTTOM', -100, 0)
-	StatusBars.bars.StatusBar_Right:SetPoint('BOTTOMLEFT', SUI_ActionBarAnchor, 'BOTTOM', 100, 0)
 end
 
 -- Artwork Stuff

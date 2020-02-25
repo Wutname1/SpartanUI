@@ -7,39 +7,34 @@ local artFrame = CreateFrame('Frame', 'SUI_Art_Fel', SpartanUI)
 module.Settings = {}
 local CurScale
 local petbattle = CreateFrame('Frame')
-local StatusBarSettings = {
-	bars = {
-		'Fel_StatusBar_Left',
-		'Fel_StatusBar_Right'
-	},
-	Fel_StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-		size = {370, 20},
-		TooltipSize = {400, 100},
-		TooltipTextSize = {380, 90},
-		texCords = {0.150390625, 1, 0, 1},
-		GlowPoint = {x = -10},
-		MaxWidth = 32,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
-		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
-	},
-	Fel_StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-		Grow = 'RIGHT',
-		size = {370, 20},
-		TooltipSize = {400, 100},
-		TooltipTextSize = {380, 90},
-		texCords = {0.150390625, 1, 0, 1},
-		GlowPoint = {x = 10},
-		MaxWidth = 35,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
-		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
-	}
-}
-
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
+
+local function Options()
+	SUI.opt.args.Artwork.args.Fel = {
+		name = 'Fel style',
+		type = 'group',
+		order = 10,
+		args = {
+			MinimapEngulfed = {
+				name = L['Douse the flames'],
+				type = 'toggle',
+				order = .1,
+				desc = L['Is it getting hot in here?'],
+				get = function(info)
+					return (SUI.DB.Styles.Fel.Minimap.Engulfed ~= true or false)
+				end,
+				set = function(info, val)
+					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
+					module:MiniMapUpdate()
+				end
+			}
+		}
+	}
+end
+
 function module:OnInitialize()
+	-- BarHandler
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Fel = {
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-285,192',
@@ -49,6 +44,7 @@ function module:OnInitialize()
 		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,707,193'
 	}
 
+	-- Unitframes
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.Fel = {
 		top = {
@@ -74,42 +70,20 @@ function module:OnInitialize()
 	}
 
 	module:CreateArtwork()
+	Options()
 end
 
 function module:OnEnable()
 	if (SUI.DB.Artwork.Style ~= 'Fel') then
 		module:Disable()
 	else
-		module:Options()
 		module:EnableArtwork()
 	end
 end
 
 function module:OnDisable()
 	artFrame:Hide()
-end
-
-function module:Options()
-	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = 'Fel style',
-		type = 'group',
-		order = 10,
-		args = {
-			MinimapEngulfed = {
-				name = L['Douse the flames'],
-				type = 'toggle',
-				order = .1,
-				desc = L['Is it getting hot in here?'],
-				get = function(info)
-					return (SUI.DB.Styles.Fel.Minimap.Engulfed ~= true or false)
-				end,
-				set = function(info, val)
-					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
-					module:MiniMapUpdate()
-				end
-			}
-		}
-	}
+	SUI.opt.args.Artwork.args.Fel.hidden = true
 end
 
 --	Module Calls
@@ -198,17 +172,6 @@ function module:EnableArtwork()
 	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 		module:MiniMap()
 	end
-
-	module:StatusBars()
-end
-
-function module:StatusBars()
-	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(StatusBarSettings)
-
-	-- Position the StatusBars
-	StatusBars.bars.Fel_StatusBar_Left:SetPoint('BOTTOMRIGHT', SUI_Art_Fel, 'BOTTOM', -100, 0)
-	StatusBars.bars.Fel_StatusBar_Right:SetPoint('BOTTOMLEFT', SUI_Art_Fel, 'BOTTOM', 100, 0)
 end
 
 -- Minimap
@@ -231,14 +194,6 @@ function module:MiniMapUpdate()
 end
 
 function module:MiniMap()
-	if Minimap.ZoneText ~= nil then
-		Minimap.ZoneText:ClearAllPoints()
-		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -5)
-		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -5)
-		Minimap.ZoneText:Hide()
-		MinimapZoneText:Show()
-	end
-
 	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
 
 	module:MiniMapUpdate()

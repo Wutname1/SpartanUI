@@ -174,6 +174,33 @@ local DBdefault = {
 				PartyFrames = true,
 				RaidFrames = true
 			},
+			StatusBars = {
+				['**'] = {
+					size = {256, 36},
+					bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
+					texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
+					TooltipSize = {300, 100},
+					TooltipTextSize = {230, 60},
+					TooltipTextWidth = 300,
+					tooltipAnchor = 'TOP',
+					FontSize = 9,
+					TextColor = {1, 1, 1, 1},
+					MaxWidth = 0,
+					GlowAnchor = 'RIGHT',
+					GlowPoint = {x = 0, y = 0},
+					GlowHeight = 20,
+					GlowImage = 'Interface\\AddOns\\SpartanUI\\Images\\status-glow',
+					texCords = {0, 1, 0, 1}
+				},
+				Left = {
+					Grow = 'LEFT',
+					Position = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOM,-100,0'
+				},
+				Right = {
+					Grow = 'RIGHT',
+					Position = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOM,100,0'
+				}
+			},
 			Frames = {
 				player = {
 					Buffs = {
@@ -375,6 +402,16 @@ local DBdefault = {
 					Location = 'TOP'
 				}
 			},
+			StatusBars = {
+				['**'] = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\status-plate-rep',
+					size = {400, 10},
+					TooltipSize = {400, 100},
+					TooltipTextSize = {380, 90},
+					texCords = {0.150390625, 1, 0, 1},
+					texCordsTooltip = {0.107421875, 0.892578125, 0.1875, 0.765625}
+				}
+			},
 			Color = {
 				Art = {0, .8, .9, .7},
 				PlayerFrames = {0, .8, .9, .7},
@@ -406,6 +443,25 @@ local DBdefault = {
 				bar4 = {enable = true, alpha = 100},
 				Stance = {enable = true, alpha = 100},
 				MenuBar = {enable = true, alpha = 100}
+			},
+			StatusBars = {
+				['**'] = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
+					size = {370, 20},
+					TooltipSize = {400, 100},
+					TooltipTextSize = {380, 90},
+					texCords = {0.150390625, 1, 0, 1},
+					bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
+					texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
+				},
+				Left = {
+					GlowPoint = {x = -10},
+					MaxWidth = 32
+				},
+				Right = {
+					GlowPoint = {x = 10},
+					MaxWidth = 35
+				}
 			},
 			Minimap = {
 				size = {156, 156},
@@ -458,6 +514,24 @@ local DBdefault = {
 				bar4 = {enable = true, alpha = 100},
 				Stance = {enable = true, alpha = 100},
 				MenuBar = {enable = true, alpha = 100}
+			},
+			StatusBars = {
+				['**'] = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+					alpha = .9,
+					size = {370, 20},
+					TooltipSize = {350, 100},
+					TooltipTextSize = {330, 80},
+					texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+					MaxWidth = 48
+				},
+				Left = {
+					GlowPoint = {x = -16},
+					MaxWidth = 48
+				},
+				Right = {
+					GlowPoint = {x = 16}
+				}
 			},
 			Frames = {
 				player = {
@@ -1388,24 +1462,6 @@ local DBdefault = {
 		}
 	},
 	StatusBars = {
-		default = {
-			size = {256, 36},
-			Grow = 'LEFT',
-			bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
-			texCordsTooltip = {0.103515625, 0.8984375, 0.1796875, 0.8203125},
-			TooltipSize = {300, 100},
-			TooltipTextSize = {230, 60},
-			TooltipTextWidth = 300,
-			tooltipAnchor = 'TOP',
-			FontSize = 9,
-			TextColor = {1, 1, 1, 1},
-			MaxWidth = 0,
-			GlowAnchor = 'RIGHT',
-			GlowPoint = {x = 0, y = 0},
-			GlowHeight = 20,
-			GlowImage = 'Interface\\AddOns\\SpartanUI\\Images\\status-glow',
-			texCords = {0, 1, 0, 1}
-		},
 		['**'] = {
 			display = 'disabled',
 			ToolTip = 'hover',

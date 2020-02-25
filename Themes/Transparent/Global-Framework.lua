@@ -205,8 +205,6 @@ function module:EnableFramework()
 
 	module:SetupVehicleUI()
 
-	module:SetupStatusBars()
-
 	module:updateScale()
 	module:updateAlpha()
 	module:SetColor()

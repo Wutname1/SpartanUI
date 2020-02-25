@@ -4,19 +4,6 @@ local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
-module.StatusBarSettings = {
-	bars = {
-		'Transparent_ExperienceBar'
-	},
-	Transparent_ExperienceBar = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\status-plate-rep',
-		size = {400, 10},
-		TooltipSize = {400, 100},
-		TooltipTextSize = {380, 90},
-		texCords = {0.150390625, 1, 0, 1},
-		texCordsTooltip = {0.107421875, 0.892578125, 0.1875, 0.765625}
-	}
-}
 
 function module:OnInitialize()
 	--Enable the in the Core options screen
@@ -69,13 +56,6 @@ function module:OnEnable()
 		module:EnableActionBars()
 		module:EnableMinimap()
 	end
-end
-
-function module:SetupStatusBars()
-	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(module.StatusBarSettings)
-
-	StatusBars.bars.Transparent_ExperienceBar:SetPoint('BOTTOMRIGHT', 'SUI_Art_Transparent', 'BOTTOM', -100, 0)
 end
 
 function module:SetupMenus()
