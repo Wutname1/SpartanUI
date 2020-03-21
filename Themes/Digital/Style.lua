@@ -6,36 +6,6 @@ local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Digital', SpartanUI)
 module.Settings = {}
 local CurScale
-local petbattle = CreateFrame('Frame')
-local StatusBarSettings = {
-	bars = {
-		'Digital_StatusBar_Left',
-		'Digital_StatusBar_Right'
-	},
-	Digital_StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-		size = {370, 20},
-		TooltipSize = {400, 100},
-		TooltipTextSize = {380, 90},
-		texCords = {0.150390625, 1, 0, 1},
-		GlowPoint = {x = -10},
-		MaxWidth = 32,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
-	},
-	Digital_StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-		Grow = 'RIGHT',
-		size = {370, 20},
-		TooltipSize = {400, 100},
-		TooltipTextSize = {380, 90},
-		texCords = {0.150390625, 1, 0, 1},
-		GlowPoint = {x = 10},
-		MaxWidth = 35,
-		bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-		texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
-	}
-}
 
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
@@ -70,7 +40,8 @@ function module:OnEnable()
 end
 
 function module:OnDisable()
-	artFrame:Hide()
+	UnregisterStateDriver(SUI_Art_Digital, 'visibility')
+	SUI_Art_Digital:Hide()
 end
 
 --	Module Calls
@@ -81,35 +52,13 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		petbattle:HookScript(
-			'OnHide',
-			function()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-					Minimap:Hide()
-				end
-				artFrame:Hide()
-			end
-		)
-		petbattle:HookScript(
-			'OnShow',
-			function()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-					Minimap:Show()
-				end
-				artFrame:Show()
-			end
-		)
-		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
 		RegisterStateDriver(SUI_Art_Digital, 'visibility', '[overridebar][vehicleui] hide; show')
-		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		UnregisterStateDriver(petbattle, 'visibility')
 		UnregisterStateDriver(SUI_Art_Digital, 'visibility')
-		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 
@@ -159,17 +108,6 @@ function module:EnableArtwork()
 	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 		module:MiniMap()
 	end
-
-	module:StatusBars()
-end
-
-function module:StatusBars()
-	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(StatusBarSettings)
-
-	-- Position the StatusBars
-	StatusBars.bars.Digital_StatusBar_Left:SetPoint('BOTTOMRIGHT', SUI_Art_Digital, 'BOTTOM', -100, 0)
-	StatusBars.bars.Digital_StatusBar_Right:SetPoint('BOTTOMLEFT', SUI_Art_Digital, 'BOTTOM', 100, 0)
 end
 
 -- Minimap
@@ -181,24 +119,4 @@ function module:MiniMap()
 		Minimap.ZoneText:Hide()
 		MinimapZoneText:Show()
 	end
-
-	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
-
-	artFrame:HookScript(
-		'OnHide',
-		function(this, event)
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
-			SUI:GetModule('Component_Minimap'):ShapeChange('square')
-		end
-	)
-
-	artFrame:HookScript(
-		'OnShow',
-		function(this, event)
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', SUI_Art_Digital, 'CENTER', 0, 54)
-			SUI:GetModule('Component_Minimap'):ShapeChange('circle')
-		end
-	)
 end

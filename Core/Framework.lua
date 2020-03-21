@@ -378,9 +378,25 @@ local DBdefault = {
 				position = 'CENTER,SUI_Art_Classic,CENTER,0,54'
 			},
 			StatusBars = {
-				XP = true,
-				REP = true,
-				AP = true
+				['**'] = {
+					size = {370, 32},
+					TooltipSize = {400, 100},
+					TooltipTextSize = {380, 90},
+					bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
+					texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
+				},
+				Left = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
+					texCords = {0.150390625, 0.96875, 0, 1},
+					MaxWidth = 15
+				},
+				Right = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-rep',
+					Grow = 'RIGHT',
+					texCords = {0, 0.849609375, 0, 1},
+					GlowPoint = {x = 20},
+					MaxWidth = 50
+				}
 			},
 			Color = {
 				Art = false,
@@ -489,12 +505,31 @@ local DBdefault = {
 				Stance = {enable = true, alpha = 100},
 				MenuBar = {enable = true, alpha = 100}
 			},
+			StatusBars = {
+				['**'] = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
+					size = {370, 20},
+					TooltipSize = {400, 100},
+					TooltipTextSize = {380, 90},
+					texCords = {0.150390625, 1, 0, 1},
+					bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
+					texCordsTooltip = {0.03125, 0.96875, 0.2578125, 0.7578125}
+				},
+				Left = {
+					GlowPoint = {x = -10},
+					MaxWidth = 32
+				},
+				Right = {
+					Grow = 'RIGHT',
+					GlowPoint = {x = 10},
+					MaxWidth = 35
+				}
+			},
 			Minimap = {
 				size = {156, 156},
 				BG = {
 					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
-					size = {330, 330},
-					position = 'CENTER,Minimap,CENTER,7,37'
+					position = {'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44'}
 				},
 				coords = {
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
@@ -598,9 +633,7 @@ local DBdefault = {
 			Minimap = {
 				size = {156, 156},
 				BG = {
-					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
-					size = {330, 330},
-					position = 'CENTER,Minimap,CENTER,7,37'
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap'
 				},
 				coords = {
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'

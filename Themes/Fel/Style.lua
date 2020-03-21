@@ -6,7 +6,6 @@ local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Fel', SpartanUI)
 module.Settings = {}
 local CurScale
-local petbattle = CreateFrame('Frame')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 
@@ -26,7 +25,7 @@ local function Options()
 				end,
 				set = function(info, val)
 					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
-					module:MiniMapUpdate()
+					module:MiniMap()
 				end
 			}
 		}
@@ -84,6 +83,7 @@ end
 function module:OnDisable()
 	artFrame:Hide()
 	SUI.opt.args.Artwork.args.Fel.hidden = true
+	UnregisterStateDriver(SUI_Art_Fel, 'visibility')
 end
 
 --	Module Calls
@@ -94,35 +94,13 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		petbattle:HookScript(
-			'OnHide',
-			function()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-					Minimap:Hide()
-				end
-				artFrame:Hide()
-			end
-		)
-		petbattle:HookScript(
-			'OnShow',
-			function()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-					Minimap:Show()
-				end
-				artFrame:Show()
-			end
-		)
-		RegisterStateDriver(petbattle, 'visibility', '[petbattle] hide; show')
 		RegisterStateDriver(SUI_Art_Fel, 'visibility', '[overridebar][vehicleui] hide; show')
-		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		UnregisterStateDriver(petbattle, 'visibility')
 		UnregisterStateDriver(SUI_Art_Fel, 'visibility')
-		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 
@@ -175,44 +153,21 @@ function module:EnableArtwork()
 end
 
 -- Minimap
-function module:MiniMapUpdate()
-	if Minimap.Background then
-		Minimap.Background:ClearAllPoints()
-	end
-
-	if SUI.DB.Styles.Fel.Minimap.Engulfed then
-		Minimap.Background:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed')
-		Minimap.Background:SetPoint('CENTER', Minimap, 'CENTER', 7, 37)
-		Minimap.Background:SetSize(330, 330)
-		Minimap.Background:SetBlendMode('ADD')
-	else
-		Minimap.Background:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed')
-		Minimap.Background:SetPoint('CENTER', Minimap, 'CENTER', 5, -1)
-		Minimap.Background:SetSize(256, 256)
-		Minimap.Background:SetBlendMode('ADD')
-	end
-end
-
 function module:MiniMap()
-	SUI:GetModule('Component_Minimap'):ShapeChange('circle')
+	local enfulfed = {
+		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
+		size = {330, 330},
+		position = 'CENTER,Minimap,CENTER,7,37'
+	}
+	local calmed = {
+		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
+		size = {256, 256},
+		position = 'CENTER,Minimap,CENTER,5,-1'
+	}
 
-	module:MiniMapUpdate()
-
-	artFrame:HookScript(
-		'OnHide',
-		function(this, event)
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
-			SUI:GetModule('Component_Minimap'):ShapeChange('square')
-		end
-	)
-
-	artFrame:HookScript(
-		'OnShow',
-		function(this, event)
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint('CENTER', SUI_Art_Fel, 'CENTER', 0, 54)
-			SUI:GetModule('Component_Minimap'):ShapeChange('circle')
-		end
-	)
+	if SUI.DB.Styles.Fel.Minimap.engulfed then
+		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, enfulfed, true)
+	else
+		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, calmed, true)
+	end
 end

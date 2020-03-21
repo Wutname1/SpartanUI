@@ -7,39 +7,8 @@ if SUI.DB.Styles.Classic.BuffLoc == nil then
 	SUI.DB.Styles.Classic.BuffLoc = true
 end
 local InitRan = false
-module.StatusBarSettings = {
-	bars = {
-		'SUI_StatusBar_Left',
-		'SUI_StatusBar_Right'
-	},
-	SUI_StatusBar_Left = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-		size = {370, 32},
-		TooltipSize = {400, 100},
-		TooltipTextSize = {380, 90},
-		texCords = {0.150390625, 0.96875, 0, 1},
-		MaxWidth = 15
-	},
-	SUI_StatusBar_Right = {
-		bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-rep',
-		Grow = 'RIGHT',
-		size = {370, 32},
-		TooltipSize = {400, 100},
-		TooltipTextSize = {380, 90},
-		texCords = {0, 0.849609375, 0, 1},
-		GlowPoint = {x = 20},
-		MaxWidth = 50
-	}
-}
 
 function module:OnInitialize()
-	if (SUI.DB.Artwork.Style == 'Classic') then
-		module:Init()
-	else
-		module:Disable()
-		SUI_Art_Classic:Hide()
-	end
-
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Classic = {
 		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-358,81',
@@ -91,33 +60,17 @@ function module:OnInitialize()
 	}
 end
 
-function module:Init()
-	module:SetupMenus()
-	module:InitFramework()
-	module:InitActionBars()
-	InitRan = true
-end
-
 function module:OnEnable()
 	if (SUI.DB.Artwork.Style == 'Classic') then
-		if (not InitRan) then
-			module:Init()
-		end
-
+		module:SetupMenus()
+		module:InitFramework()
+		module:InitActionBars()
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
 	else
-		module:OnDisable()
+		module:Disable()
 	end
-end
-
-function module:SetupStatusBars()
-	local StatusBars = SUI:GetModule('Artwork_StatusBars')
-	StatusBars:Initalize(module.StatusBarSettings)
-
-	StatusBars.bars.SUI_StatusBar_Left:SetPoint('BOTTOMRIGHT', 'SUI_ActionBarPlate', 'BOTTOM', -92, -2)
-	StatusBars.bars.SUI_StatusBar_Right:SetPoint('BOTTOMLEFT', 'SUI_ActionBarPlate', 'BOTTOM', 78, 0)
 end
 
 function module:SetupMenus()
@@ -582,4 +535,5 @@ end
 
 function module:OnDisable()
 	SUI_Art_Classic:Hide()
+	UnregisterStateDriver(SUI_Art_Classic, 'visibility')
 end

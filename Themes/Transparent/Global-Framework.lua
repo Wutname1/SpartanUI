@@ -157,14 +157,12 @@ end
 function module:SetupVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
 		RegisterStateDriver(SUI_Art_Transparent, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
-		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
 		UnregisterStateDriver(SUI_Art_Transparent, 'visibility')
-		UnregisterStateDriver(SpartanUI, 'visibility')
 	end
 end
 

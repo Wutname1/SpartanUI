@@ -1,7 +1,7 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
 local module = SUI:GetModule('Component_Artwork')
-module.Trays = false
+module.Trays = {}
 local trayWatcher = CreateFrame('Frame')
 local settings = {}
 local trayIDs = {
@@ -74,78 +74,87 @@ end
 
 -- Artwork Stuff
 function module:SlidingTrays(StyleSettings)
-	module.Trays = {}
 	settings = StyleSettings
 
 	for _, key in ipairs(trayIDs) do
-		local tray = CreateFrame('Frame', 'SlidingTray_' .. key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
-		tray:SetFrameStrata('BACKGROUND')
-		tray:SetAlpha(.8)
-		tray:SetSize(400, 45)
+		if not module.Trays[key] then
+			print('building tray ' .. key)
+			local tray = CreateFrame('Frame', 'SlidingTray_' .. key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
+			tray:SetFrameStrata('BACKGROUND')
+			tray:SetAlpha(.8)
+			tray:SetSize(400, 45)
 
-		local expanded = CreateFrame('Frame', nil, tray)
-		expanded:SetAllPoints()
-		local collapsed = CreateFrame('Frame', nil, tray)
-		collapsed:SetAllPoints()
+			local expanded = CreateFrame('Frame', nil, tray)
+			expanded:SetAllPoints()
+			local collapsed = CreateFrame('Frame', nil, tray)
+			collapsed:SetAllPoints()
 
-		local bg = expanded:CreateTexture(nil, 'BACKGROUND', expanded)
-		bg:SetTexture(settings.bg.Texture)
-		bg:SetTexCoord(unpack(settings.bg.TexCoord))
-		bg:SetAllPoints()
+			local bgExpanded = expanded:CreateTexture(nil, 'BACKGROUND', expanded)
+			bgExpanded:SetAllPoints()
 
-		local bgCollapsed = collapsed:CreateTexture(nil, 'BACKGROUND', collapsed)
-		bgCollapsed:SetTexture(settings.bgCollapsed.Texture)
-		bgCollapsed:SetTexCoord(unpack(settings.bgCollapsed.TexCoord))
-		bgCollapsed:SetPoint('TOPLEFT', tray)
-		bgCollapsed:SetPoint('TOPRIGHT', tray)
-		bgCollapsed:SetHeight(18)
+			local bgCollapsed = collapsed:CreateTexture(nil, 'BACKGROUND', collapsed)
+			bgCollapsed:SetPoint('TOPLEFT', tray)
+			bgCollapsed:SetPoint('TOPRIGHT', tray)
+			bgCollapsed:SetHeight(18)
 
-		local btnUp = CreateFrame('BUTTON', nil, expanded)
-		local UpTex = expanded:CreateTexture()
-		UpTex:SetTexture(settings.UpTex.Texture)
-		UpTex:SetTexCoord(unpack(settings.UpTex.TexCoord))
-		UpTex:Hide()
-		btnUp:SetSize(130, 9)
-		UpTex:SetAllPoints(btnUp)
-		btnUp:SetNormalTexture('')
-		btnUp:SetHighlightTexture(UpTex)
-		btnUp:SetPushedTexture('')
-		btnUp:SetDisabledTexture('')
-		btnUp:SetPoint('BOTTOM', tray, 'BOTTOM', 1, 2)
+			local btnUp = CreateFrame('BUTTON', nil, expanded)
+			local UpTex = expanded:CreateTexture()
+			UpTex:Hide()
+			btnUp:SetSize(130, 9)
+			UpTex:SetAllPoints(btnUp)
+			btnUp:SetNormalTexture('')
+			btnUp:SetHighlightTexture(UpTex)
+			btnUp:SetPushedTexture('')
+			btnUp:SetDisabledTexture('')
+			btnUp:SetPoint('BOTTOM', tray, 'BOTTOM', 1, 2)
 
-		local btnDown = CreateFrame('BUTTON', nil, collapsed)
-		local DownTex = collapsed:CreateTexture()
-		DownTex:SetTexture(settings.DownTex.Texture)
-		DownTex:SetTexCoord(unpack(settings.DownTex.TexCoord))
-		DownTex:Hide()
-		btnDown:SetSize(130, 9)
-		DownTex:SetAllPoints(btnDown)
-		btnDown:SetNormalTexture('')
-		btnDown:SetHighlightTexture(DownTex)
-		btnDown:SetPushedTexture('')
-		btnDown:SetDisabledTexture('')
-		btnDown:SetPoint('TOP', tray, 'TOP', 2, -6)
+			local btnDown = CreateFrame('BUTTON', nil, collapsed)
+			local DownTex = collapsed:CreateTexture()
+			DownTex:Hide()
+			btnDown:SetSize(130, 9)
+			DownTex:SetAllPoints(btnDown)
+			btnDown:SetNormalTexture('')
+			btnDown:SetHighlightTexture(DownTex)
+			btnDown:SetPushedTexture('')
+			btnDown:SetDisabledTexture('')
+			btnDown:SetPoint('TOP', tray, 'TOP', 2, -6)
 
-		btnUp.key = key
-		btnDown.key = key
-		btnUp:SetScript('OnClick', CollapseToggle)
-		btnDown:SetScript('OnClick', CollapseToggle)
+			btnUp.key = key
+			btnDown.key = key
+			btnUp:SetScript('OnClick', CollapseToggle)
+			btnDown:SetScript('OnClick', CollapseToggle)
 
-		expanded.bg = bg
-		expanded.btnUp = btnUp
+			expanded.bg = bgExpanded
+			expanded.btnUp = btnUp
+			expanded.texture = UpTex
 
-		collapsed.bgCollapsed = bgCollapsed
-		collapsed.btnDown = btnDown
+			collapsed.bg = bgCollapsed
+			collapsed.btnDown = btnDown
+			collapsed.texture = DownTex
 
-		tray.expanded = expanded
-		tray.collapsed = collapsed
+			tray.expanded = expanded
+			tray.collapsed = collapsed
 
-		if SUI.DB.Artwork.SlidingTrays[key].collapsed then
-			SetBarVisibility(key, 'hide')
-		else
-			SetBarVisibility(key, 'show')
+			if SUI.DB.Artwork.SlidingTrays[key].collapsed then
+				SetBarVisibility(key, 'hide')
+			else
+				SetBarVisibility(key, 'show')
+			end
+
+			module.Trays[key] = tray
 		end
-		module.Trays[key] = tray
+
+		module.Trays[key].expanded.bg:SetTexture(settings.bg.Texture)
+		module.Trays[key].expanded.bg:SetTexCoord(unpack(settings.bg.TexCoord))
+
+		module.Trays[key].collapsed.bg:SetTexture(settings.bgCollapsed.Texture)
+		module.Trays[key].collapsed.bg:SetTexCoord(unpack(settings.bgCollapsed.TexCoord))
+
+		module.Trays[key].expanded.texture:SetTexture(settings.UpTex.Texture)
+		module.Trays[key].expanded.texture:SetTexCoord(unpack(settings.UpTex.TexCoord))
+
+		module.Trays[key].collapsed.texture:SetTexture(settings.DownTex.Texture)
+		module.Trays[key].collapsed.texture:SetTexCoord(unpack(settings.DownTex.TexCoord))
 	end
 
 	module.Trays.left:SetPoint('TOP', SpartanUI, 'TOP', -300, -1)

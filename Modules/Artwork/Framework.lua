@@ -3,6 +3,7 @@ local L = SUI.L
 local module = SUI:NewModule('Component_Artwork', 'AceTimer-3.0')
 module.ActiveStyle = {}
 local styleArt
+local petbattle = CreateFrame('FRAME')
 -------------------------------------------------
 
 local function SetupPage()
@@ -44,6 +45,13 @@ local function SetupPage()
 				OldSkin:Disable()
 				NewSkin:Enable()
 
+				--Update bars
+				SUI:GetModule('Component_BarHandler').Refresh()
+
+				--Update minimap
+				SUI:GetModule('Component_Minimap'):update(true)
+
+				--Update UnitFrames
 				SUI:GetModule('Component_UnitFrames').UpdateAll()
 			end
 
@@ -281,12 +289,37 @@ function module:OnInitialize()
 	module.BlizzMovers()
 end
 
+local function VehicleUI()
+	if SUI.DB.Artwork.VehicleUI then
+		petbattle:HookScript(
+			'OnHide',
+			function()
+				SUI_Art_War:Hide()
+				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+					Minimap:Hide()
+				end
+			end
+		)
+		petbattle:HookScript(
+			'OnShow',
+			function()
+				SUI_Art_War:Show()
+				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+					Minimap:Show()
+				end
+			end
+		)
+		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+	end
+end
+
 function module:OnEnable()
 	if not SUI.DB.EnabledComponents.Artwork then
 		return
 	end
 
 	SetupPage()
+	VehicleUI()
 	module:updateOffset()
 	module:updateViewport()
 end

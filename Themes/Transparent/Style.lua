@@ -36,7 +36,6 @@ function module:OnInitialize()
 end
 
 function module:Init()
-	module:SetupMenus()
 	module:InitFramework()
 	module:InitActionBars()
 	module:InitMinimap()
@@ -49,12 +48,10 @@ function module:OnEnable()
 		return
 	end
 	if (SUI.DB.Artwork.Style == 'Transparent') then
-		if (not InitRan) then
-			module:Init()
-		end
 		module:EnableFramework()
 		module:EnableActionBars()
 		module:EnableMinimap()
+		module:SetupMenus()
 	end
 end
 

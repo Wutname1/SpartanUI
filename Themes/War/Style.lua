@@ -6,7 +6,6 @@ local Artwork_Core = SUI:GetModule('Component_Artwork')
 local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
-module.Trays = {}
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
@@ -126,12 +125,6 @@ function module:OnEnable()
 	else
 		--Setup Sliding Trays
 		module:SlidingTrays()
-		if BT4BarBagBar and BT4BarPetBar.position then
-			BT4BarPetBar:position('TOPLEFT', module.Trays.left, 'TOPLEFT', 50, -2)
-			BT4BarStanceBar:position('TOPRIGHT', module.Trays.left, 'TOPRIGHT', -50, -2)
-			BT4BarMicroMenu:position('TOPLEFT', module.Trays.right, 'TOPLEFT', 50, -2)
-			BT4BarBagBar:position('TOPRIGHT', module.Trays.right, 'TOPRIGHT', -100, -2)
-		end
 
 		hooksecurefunc(
 			'UIParent_ManageFramePositions',
@@ -156,10 +149,10 @@ end
 
 function module:OnDisable()
 	SUI_Art_War:Hide()
+	UnregisterStateDriver(SUI_Art_War, 'visibility')
 end
 
 local CurScale, plate
-local petbattle = CreateFrame('Frame')
 
 --	Module Calls
 function module:TooltipLoc(_, parent)
@@ -176,24 +169,6 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		petbattle:HookScript(
-			'OnHide',
-			function()
-				SUI_Art_War:Hide()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-					Minimap:Hide()
-				end
-			end
-		)
-		petbattle:HookScript(
-			'OnShow',
-			function()
-				SUI_Art_War:Show()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-					Minimap:Show()
-				end
-			end
-		)
 		SUI_Art_War:HookScript(
 			'OnShow',
 			function()
@@ -201,7 +176,6 @@ function module:SetupVehicleUI()
 			end
 		)
 		RegisterStateDriver(SUI_Art_War, 'visibility', '[overridebar][vehicleui] hide; show')
-		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
@@ -267,7 +241,14 @@ function module:SlidingTrays()
 		}
 	}
 
-	module.Trays = Artwork_Core:SlidingTrays(Settings)
+	Artwork_Core:SlidingTrays(Settings)
+
+	if BT4BarBagBar and BT4BarPetBar.position then
+		BT4BarPetBar:position('TOPLEFT', 'SlidingTray_left', 'TOPLEFT', 50, -2)
+		BT4BarStanceBar:position('TOPRIGHT', 'SlidingTray_left', 'TOPRIGHT', -50, -2)
+		BT4BarMicroMenu:position('TOPLEFT', 'SlidingTray_right', 'TOPLEFT', 50, -2)
+		BT4BarBagBar:position('TOPRIGHT', 'SlidingTray_right', 'TOPRIGHT', -100, -2)
+	end
 end
 
 -- Minimap

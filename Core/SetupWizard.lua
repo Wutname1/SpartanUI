@@ -461,7 +461,7 @@ function module:ModuleSelectionPage()
 					if submodule.DisplayName then
 						Displayname = submodule.DisplayName
 					end
-					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 120, 20)
+					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 160, 20)
 					checkbox:HookScript(
 						'OnClick',
 						function()
@@ -479,11 +479,11 @@ function module:ModuleSelectionPage()
 			local left, leftIndex = false, 1
 			for i = 2, #itemsMatrix do
 				if left then
-					StdUi:GlueBelow(itemsMatrix[i], itemsMatrix[leftIndex], 0, -5)
+					StdUi:GlueBelow(itemsMatrix[i], itemsMatrix[leftIndex], 0, -3)
 					leftIndex = i
 					left = false
 				else
-					StdUi:GlueRight(itemsMatrix[i], itemsMatrix[leftIndex], 5, 0)
+					StdUi:GlueRight(itemsMatrix[i], itemsMatrix[leftIndex], 3, 0)
 					left = true
 				end
 			end
