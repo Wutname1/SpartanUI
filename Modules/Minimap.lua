@@ -96,7 +96,7 @@ local function UpdatePosition()
 	if SUI.DB.EnabledComponents.Artwork and Settings.position and not MoveIt:IsMoved('Minimap') then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.position)
 		if Minimap.position then
-			Minimap:position(point, anchor, secondaryPoint, x, y)
+			Minimap:position(point, anchor, secondaryPoint, x, y, false, true)
 		else
 			Minimap:ClearAllPoints()
 			Minimap:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -202,9 +202,6 @@ function module:OnEnable()
 	Minimap:HookScript('OnLeave', OnLeave)
 	Minimap:HookScript('OnMouseDown', OnMouseDown)
 
-	--Initialize Buttons & Style settings
-	module:update()
-
 	-- Setup Updater script for button visibility updates
 	MinimapUpdater:SetSize(1, 1)
 	MinimapUpdater:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', -128, 128)
@@ -226,11 +223,8 @@ function module:OnEnable()
 	MinimapUpdater:RegisterEvent('MINIMAP_PING')
 	MinimapUpdater:RegisterEvent('PLAYER_REGEN_ENABLED')
 
-	-- Position map based on Artwork
-	UpdatePosition()
-
-	-- Setup inital shape
-	module:ShapeChange(Settings.shape)
+	--Initialize Buttons & Style settings
+	module:update(true)
 
 	-- Make map movable
 	MoveIt:CreateMover(Minimap, 'Minimap')
@@ -257,6 +251,11 @@ function module:ModifyMinimapLayout()
 		end
 	)
 
+	Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
+	Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
+	Minimap.overlay:SetAllPoints(Minimap)
+	Minimap.overlay:SetBlendMode('ADD')
+
 	if Settings.shape == 'square' then
 		-- Set Map Mask
 		function GetMinimapShape()
@@ -270,10 +269,7 @@ function module:ModifyMinimapLayout()
 			Minimap:SetQuestBlobRingScalar(0)
 		end
 
-		Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
-		Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
-		Minimap.overlay:SetAllPoints(Minimap)
-		Minimap.overlay:SetBlendMode('ADD')
+		Minimap.overlay:Show()
 
 		MinimapZoneTextButton:SetPoint('BOTTOMLEFT', Minimap, 'TOPLEFT', 0, 4)
 		MinimapZoneTextButton:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 4)
@@ -286,6 +282,8 @@ function module:ModifyMinimapLayout()
 		end
 	else
 		Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
+
+		Minimap.overlay:Hide()
 
 		if SUI.IsRetail then
 			MiniMapTracking:ClearAllPoints()
@@ -476,7 +474,7 @@ function module:SetupButton(btn, force)
 	end
 end
 
-function module:update()
+function module:update(FullUpdate)
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
 	end
@@ -534,9 +532,26 @@ function module:update()
 				Minimap.Background:ClearAllPoints()
 			end
 
+			if Settings.BG.size then
+				Minimap.Background:SetSize(unpack(Settings.BG.size))
+			end
+
+			if Settings.BG.position then
+				if type(Settings.BG.position) == 'table' then
+					for i, v in ipairs(Settings.BG.position) do
+						local point, anchor, secondaryPoint, x, y = strsplit(',', v)
+						Minimap.Background:SetPoint(point, anchor, secondaryPoint, x, y)
+					end
+				else
+					local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.BG.position)
+					Minimap.Background:SetPoint(point, anchor, secondaryPoint, x, y)
+				end
+			else
+				Minimap.Background:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -47, 47)
+				Minimap.Background:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 47, -47)
+			end
+
 			Minimap.Background:SetTexture(Settings.BG.texture)
-			Minimap.Background:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -47, 47)
-			Minimap.Background:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 47, -47)
 			Minimap.Background:SetAlpha(Settings.BG.alpha)
 			Minimap.Background:SetBlendMode(Settings.BG.BlendMode)
 
@@ -637,6 +652,14 @@ function module:update()
 		end
 	end
 	LastUpdateStatus = IsMouseOver()
+
+	if FullUpdate then
+		-- Position
+		UpdatePosition()
+		-- reload shape
+		module:ShapeChange(Settings.shape)
+	end
+
 	UserSettings.SUIMapChangesActive = false
 end
 
