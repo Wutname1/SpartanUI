@@ -198,6 +198,137 @@ local function ProfileCheck(profileName, Report)
 	return r
 end
 
+local function loadScales()
+	scaleData = module.BarScale.BT4.default
+	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
+		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DB.Artwork.Style], module.BarScale.BT4.default, true)
+	end
+	scaleData = SUI:MergeData(scaleData, module.DB.custom.scale.BT4, true)
+end
+
+local function RefreshConfig()
+	local positionData = module.BarPosition.BT4.default
+	-- If artwork is enabled load the art's position data if supplied
+	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DB.Artwork.Style] then
+		positionData = SUI:MergeData(module.BarPosition.BT4[SUI.DB.Artwork.Style], module.BarPosition.BT4.default)
+	end
+	loadScales()
+
+	local FrameList = {
+		BT4Bar1,
+		BT4Bar2,
+		BT4Bar3,
+		BT4Bar4,
+		BT4Bar5,
+		BT4Bar6,
+		BT4BarBagBar,
+		BT4BarExtraActionBar,
+		BT4BarZoneAbilityBar,
+		BT4BarStanceBar,
+		BT4BarPetBar,
+		BT4BarMicroMenu
+	}
+	-- Position Bars
+	for _, v in ipairs(FrameList) do
+		v = v:GetName()
+
+		if _G[v] and positionData[v] ~= '' then
+			local f = _G[v]
+			if f.mover then
+				f = f.mover
+			end
+
+			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
+			f:ClearAllPoints()
+			f:SetPoint(point, anchor, secondaryPoint, x, y)
+			if scaleData[v] then
+				f:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
+				_G[v]:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
+			end
+		end
+	end
+end
+
+local function BTMover(BarName, DisplayName)
+	if not BarName then
+		return
+	end
+	local bar = _G[BarName]
+	if bar then
+		function bar:LoadPosition()
+		end
+		function bar:GetConfigScale()
+			return scaleData[BarName]
+		end
+
+		function bar:SetConfigScale(scale)
+			if scale then
+				--Update DB
+				module.DB.custom.scale.BT4[BarName] = scale
+				-- update memory
+				scaleData[BarName] = scale
+				--Update screen
+				bar:SetScale(scale)
+			end
+		end
+
+		if scaleData[BarName] then
+			bar:SetScale(scaleData[BarName])
+		end
+		MoveIt:CreateMover(bar, BarName, DisplayName)
+		MoveIt:UpdateMover(BarName, bar.overlay, true)
+	end
+end
+
+local function AddMovers()
+	for i = 1, 10 do
+		local BarName = 'BT4Bar' .. i
+		local bar = _G[BarName]
+		if bar then
+			function bar:LoadPosition()
+			end
+			function bar:GetConfigScale()
+				return scaleData[BarName]
+			end
+
+			function bar:SetConfigScale(scale)
+				if scale then
+					--Update DB
+					module.DB.custom.scale.BT4[BarName] = scale
+					-- update memory
+					scaleData[BarName] = scale
+					--Update screen
+					bar:SetScale(scale)
+				end
+			end
+
+			if scaleData[BarName] then
+				bar:SetScale(scaleData[BarName])
+			end
+			MoveIt:CreateMover(bar, BarName, 'Bar ' .. i)
+			MoveIt:UpdateMover(BarName, bar.overlay, true)
+		end
+	end
+	BTMover('BT4BarBagBar', 'Bag bar')
+	BTMover('BT4BarExtraActionBar', 'Extra Action Bar')
+	BTMover('BT4BarZoneAbilityBar', 'Zone Ability Bar')
+	BTMover('BT4BarStanceBar', 'Stance Bar')
+	BTMover('BT4BarPetBar', 'Pet Bar')
+	BTMover('BT4BarMicroMenu', 'Micro menu')
+end
+
+local function OnInitialize()
+	--Bartender4
+	if Bartender4 then
+		--Update to the current profile
+		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
+		Bartender4.db.RegisterCallback(SUI, 'OnProfileChanged', 'BT4RefreshConfig')
+		Bartender4.db.RegisterCallback(SUI, 'OnProfileCopied', 'BT4RefreshConfig')
+		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
+	end
+	loadScales()
+end
+
 local function Options()
 	SUI.opt.args['General'].args['Bartender'] = {
 		name = 'Bartender',
@@ -220,10 +351,16 @@ local function Options()
 					--Force Rebuild of primary bar profile
 					SetupProfile()
 
+					--Reset Scale
+					module.DB.custom.scale.BT4 = {}
+
 					--Reset Moved bars
 					for _, v in ipairs(FrameList) do
 						MoveIt:Reset(v)
 					end
+
+					--Force refresh
+					RefreshConfig()
 				end
 			},
 			line1 = {name = '', type = 'header', order = 2.5},
@@ -301,6 +438,7 @@ local function Options()
 			}
 		}
 	}
+	SUI.opt.args.Help.args.ResetActionBars = SUI.opt.args.General.args.Bartender.args.ResetActionBars
 
 	if Bartender4.options then
 		for k, v in pairs(Bartender4.options.args.bars.args) do
@@ -312,107 +450,6 @@ local function Options()
 
 	-- Add to help screen
 	SUI.opt.args.Help.args.ResetActionBars = SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']
-end
-
-local function BTMover(BarName, DisplayName)
-	if not BarName then
-		return
-	end
-	local bar = _G[BarName]
-	if bar then
-		function bar:LoadPosition()
-		end
-
-		if scaleData[BarName] then
-			bar:SetScale(scaleData[BarName])
-		end
-		MoveIt:CreateMover(bar, BarName, DisplayName)
-		MoveIt:UpdateMover(BarName, bar.overlay, true)
-	end
-end
-
-local function AddMovers()
-	for i = 1, 10 do
-		local bar = _G['BT4Bar' .. i]
-		if bar then
-			function bar:LoadPosition()
-			end
-
-			if scaleData[BarName] then
-				bar:SetScale(scaleData[BarName])
-			end
-			MoveIt:CreateMover(bar, 'BT4Bar' .. i, 'Bar ' .. i)
-			MoveIt:UpdateMover('BT4Bar' .. i, bar.overlay, true)
-		end
-	end
-	BTMover('BT4BarBagBar', 'Bag bar')
-	BTMover('BT4BarExtraActionBar', 'Extra Action Bar')
-	BTMover('BT4BarZoneAbilityBar', 'Zone Ability Bar')
-	BTMover('BT4BarStanceBar', 'Stance Bar')
-	BTMover('BT4BarPetBar', 'Pet Bar')
-	BTMover('BT4BarMicroMenu', 'Micro menu')
-end
-
-local function OnInitialize()
-	--Bartender4
-	if Bartender4 then
-		--Update to the current profile
-		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileChanged', 'BT4RefreshConfig')
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileCopied', 'BT4RefreshConfig')
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
-	end
-	scaleData = module.BarScale.BT4.default
-	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
-		scaleData = SUI:MergeData(scaleData, module.BarScale.BT4[SUI.DB.Artwork.Style])
-	end
-	scaleData = SUI:MergeData(scaleData, module.DB.custom.scale.BT4, true)
-end
-
-local function RefreshConfig()
-	local positionData = module.BarPosition.BT4.default
-	-- If artwork is enabled load the art's position data if supplied
-	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DB.Artwork.Style] then
-		positionData = SUI:MergeData(module.BarPosition.BT4[SUI.DB.Artwork.Style], module.BarPosition.BT4.default)
-	end
-	scaleData = module.BarScale.BT4.default
-	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
-		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DB.Artwork.Style], module.BarScale.BT4.default)
-	end
-
-	local FrameList = {
-		BT4Bar1,
-		BT4Bar2,
-		BT4Bar3,
-		BT4Bar4,
-		BT4Bar5,
-		BT4Bar6,
-		BT4BarBagBar,
-		BT4BarExtraActionBar,
-		BT4BarZoneAbilityBar,
-		BT4BarStanceBar,
-		BT4BarPetBar,
-		BT4BarMicroMenu
-	}
-	-- Position Bars
-	for _, v in ipairs(FrameList) do
-		v = v:GetName()
-
-		if _G[v] and positionData[v] ~= '' then
-			local f = _G[v]
-			if f.mover then
-				f = f.mover
-			end
-
-			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
-			f:ClearAllPoints()
-			f:SetPoint(point, anchor, secondaryPoint, x, y)
-			if scaleData[v] then
-				f:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
-				_G[v]:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
-			end
-		end
-	end
 end
 
 local function OnEnable()
@@ -451,7 +488,7 @@ local function OnEnable()
 		end
 	end
 
-	-- Position Bars
+	-- Position & scale Bars
 	RefreshConfig()
 
 	-- Movement System

@@ -52,10 +52,10 @@ module.BarScale = {
 
 ------------------------------------------------------------
 
-function module:AddBarSystem(name, SetupCallBack, OnEnable, OnDisable, Unlocker, RefreshConfig)
+function module:AddBarSystem(name, OnInitialize, OnEnable, OnDisable, Unlocker, RefreshConfig)
 	module.BarSystems[name] = {
 		active = false,
-		setup = SetupCallBack,
+		Initialize = OnInitialize,
 		enable = OnEnable,
 		disable = OnDisable,
 		move = Unlocker,
@@ -89,7 +89,7 @@ function module:OnInitialize()
 	plate:SetSize(1000, 140)
 
 	-- Do Setup
-	module.BarSystems[module.DB.BarSystem]:setup()
+	module.BarSystems[module.DB.BarSystem]:Initialize()
 end
 
 function module:OnEnable()
