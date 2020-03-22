@@ -1381,13 +1381,14 @@ function module:SpawnFrames()
 end
 
 function module:UpdateAll(event, ...)
-end
-
-function module:UpdateGroupFrames(event, ...)
 	for _, v in ipairs(FramesList) do
 		module.frames[v]:UpdateAll()
 	end
 
+	module:UpdateGroupFrames()
+end
+
+function module:UpdateGroupFrames(event, ...)
 	module.frames.party:UpdateAll()
 	module.frames.raid:UpdateAll()
 

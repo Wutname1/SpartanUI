@@ -413,7 +413,7 @@ local DBdefault = {
 				shape = 'square',
 				size = {130, 130},
 				ZoneText = {Location = 'TOP'},
-				position = 'CENTER,SUI_Art_Transparent,CENTER,0,20',
+				position = 'CENTER,SUI_Art_Transparent,CENTER,0,-5',
 				coords = {
 					Location = 'TOP'
 				}

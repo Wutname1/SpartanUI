@@ -1985,6 +1985,7 @@ function module:InitializeOptions()
 			end,
 			func = function()
 				SUI.DB.Unitframes.Style = skin
+				module:UpdateAll()
 			end
 		}
 	end

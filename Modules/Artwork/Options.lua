@@ -8,7 +8,6 @@ function module:SetupOptions()
 	end
 
 	local ArtworkOpts = SUI.opt.args.Artwork.args
-	local Style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 	ArtworkOpts.scale = {
 		name = L['ConfScale'],
 		type = 'range',
@@ -22,7 +21,7 @@ function module:SetupOptions()
 				SUI:Print(ERR_NOT_IN_COMBAT)
 			else
 				SUI.DB.scale = val
-				Style:updateScale()
+				module:updateScale()
 				SUI:GetModule('Component_BarHandler'):Refresh()
 			end
 		end,

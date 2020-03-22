@@ -34,28 +34,10 @@ local function SetupPage()
 					return
 				end
 
-				-- Disable the old skin
-				local OldSkin = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-
-				-- Set and Enable the new one
-				SUI.DB.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
-				SUI.DB.Unitframes.Style = SUI.DB.Artwork.Style
-
-				local NewSkin = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-				OldSkin:Disable()
-				NewSkin:Enable()
-
-				--Update bars
-				SUI:GetModule('Component_BarHandler').Refresh()
-
-				--Update minimap
-				SUI:GetModule('Component_Minimap'):update(true)
-
-				--Update UnitFrames
-				SUI:GetModule('Component_UnitFrames').UpdateAll()
+				module:SetActiveStyle(StdUi:GetRadioGroupValue('SUIArtwork'), true)
 			end
 
-			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal'}) do
+			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal', 'Arcane'}) do
 				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 				control:SetScript('OnClick', RadioButtons)
 				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
@@ -68,15 +50,66 @@ local function SetupPage()
 				SUI_Win.Artwork[v] = control
 			end
 
-			-- Position the Top row
+			SUI_Win.Artwork.slider = StdUi:Slider(SUI_Win.Artwork, 340, 15, 50, false, 1, 100)
+			StdUi:AddLabel(SUI_Win.Artwork, SUI_Win.Artwork.slider, 'UI Scale', 'LEFT')
+			SUI_Win.Artwork.sliderText = StdUi:SimpleEditBox(SUI_Win.Artwork, 40, 15)
+			SUI_Win.Artwork.sliderText:Disable()
+			SUI_Win.Artwork.sliderButton = StdUi:Button(SUI_Win.Artwork, 40, 15, 'reset')
+			-- Slider Actions
+			SUI_Win.Artwork.slider:SetScript(
+				'OnValueChanged',
+				function(self)
+					local calculate = SUI_Win.Artwork.slider:GetValue()
+					if math.floor(calculate) ~= math.floor(calculate) then
+						SUI_Win.Artwork.slider:SetValue(math.floor(calculate))
+					end
+
+					local scale = math.floor(SUI_Win.Artwork.slider:GetValue()) / 100
+					SUI_Win.Artwork.sliderText:SetText(scale)
+
+					SUI.DB.scale = scale
+					if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).updateScale then
+						SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):updateScale()
+					end
+
+					SpartanUI:SetScale(scale)
+
+					SUI:GetModule('Component_BarHandler'):Refresh()
+
+					if scale ~= 0.92 then
+						SUI_Win.Artwork.sliderButton:Enable()
+						SUI_Win.Artwork.sliderButton:Show()
+					else
+						SUI_Win.Artwork.sliderButton:Disable()
+						SUI_Win.Artwork.sliderButton:Hide()
+					end
+				end
+			)
+			SUI_Win.Artwork.sliderButton:SetScript(
+				'OnClick',
+				function()
+					SUI_Win.Artwork.slider:SetValue(92)
+				end
+			)
+			SUI_Win.Artwork.slider:SetValue(SUI.DB.scale * 100)
+
+			-- Position Slider elements
+			StdUi:GlueTop(SUI_Win.Artwork.slider, SUI_Win.Artwork, 0, -30)
+			StdUi:GlueRight(SUI_Win.Artwork.sliderText, SUI_Win.Artwork.slider, 0, 0)
+			StdUi:GlueRight(SUI_Win.Artwork.sliderButton, SUI_Win.Artwork.sliderText, 0, 0)
+
+			-- Position the 1st row
 			StdUi:GlueTop(SUI_Win.Artwork.Fel, SUI_Win, 0, -80)
 			StdUi:GlueLeft(SUI_Win.Artwork.Classic, SUI_Win.Artwork.Fel, -20, 0)
 			StdUi:GlueRight(SUI_Win.Artwork.War, SUI_Win.Artwork.Fel, 20, 0)
 
-			-- Position the Bottom row
+			-- Position the 2nd row
 			StdUi:GlueTop(SUI_Win.Artwork.Digital, SUI_Win.Artwork.Fel.radio, 0, -30)
 			StdUi:GlueLeft(SUI_Win.Artwork.Transparent, SUI_Win.Artwork.Digital, -20, 0)
 			StdUi:GlueRight(SUI_Win.Artwork.Minimal, SUI_Win.Artwork.Digital, 20, 0)
+
+			-- Podition the 3rd row
+			StdUi:GlueTop(SUI_Win.Artwork.Arcane, SUI_Win.Artwork.Digital.radio, 00, -30)
 
 			-- Check Classic as default
 			SUI_Win.Artwork.War.radio:SetChecked(true)
@@ -108,16 +141,32 @@ local function StyleUpdate()
 	module:updateViewport()
 end
 
-function module:SetActiveStyle(style)
+function module:SetActiveStyle(style, updateUnitframes)
 	if style and style ~= SUI.DB.Artwork.Style then
-		-- Disable the current style and enable the one we want
+		-- Cache the styles to swap
 		local OldStyle = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 		local NewStyle = SUI:GetModule('Style_' .. style)
-		OldStyle:Disable()
-		NewStyle:Enable()
 
 		-- Update the DB
 		SUI.DB.Artwork.Style = style
+
+		-- Disable the current style and enable the one we want
+		OldStyle:Disable()
+		NewStyle:Enable()
+
+		--Update bars
+		SUI:GetModule('Component_BarHandler').Refresh()
+
+		--Update minimap
+		SUI:GetModule('Component_Minimap'):update(true)
+
+		print(style)
+		--Update UnitFrames
+		if updateUnitframes then
+			print(updateUnitframes)
+			SUI.DB.Unitframes.Style = SUI.DB.Artwork.Style
+			SUI:GetModule('Component_UnitFrames'):UpdateAll()
+		end
 	end
 
 	-- Update style settings shortcut

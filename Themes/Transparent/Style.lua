@@ -1,7 +1,7 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:GetModule('Component_Artwork')
-local module = SUI:GetModule('Style_Transparent')
+local module = SUI:NewModule('Style_Transparent')
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 
@@ -28,29 +28,37 @@ function module:OnInitialize()
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,15',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,15'
 	}
-
-	--Init if needed
-	if (SUI.DB.Artwork.Style == 'Transparent') then
-		module:Init()
-	end
-end
-
-function module:Init()
-	module:InitFramework()
-	module:InitActionBars()
-	module:InitMinimap()
-	InitRan = true
 end
 
 function module:OnEnable()
 	if (SUI.DB.Artwork.Style ~= 'Transparent') then
 		module:Disable()
-		return
-	end
-	if (SUI.DB.Artwork.Style == 'Transparent') then
-		module:EnableFramework()
-		module:EnableActionBars()
-		module:EnableMinimap()
+	else
+		local plate =
+			CreateFrame('Frame', 'Transparent_ActionBarPlate', SUI_Art_Transparent, 'Transparent_ActionBarsTemplate')
+		plate:SetFrameStrata('BACKGROUND')
+		plate:SetFrameLevel(1)
+		plate:SetPoint('BOTTOM')
+
+		SUI_Art_Transparent:SetFrameStrata('BACKGROUND')
+		SUI_Art_Transparent:SetFrameLevel(1)
+
+		do -- modify strata / levels of backdrops
+			for i = 1, 6 do
+				_G['Transparent_Bar' .. i]:SetFrameStrata('BACKGROUND')
+				_G['Transparent_Bar' .. i]:SetFrameLevel(3)
+			end
+			for i = 1, 2 do
+				_G['Transparent_Popup' .. i]:SetFrameStrata('BACKGROUND')
+				_G['Transparent_Popup' .. i]:SetFrameLevel(3)
+			end
+		end
+
+		if SUI.DB.Artwork.VehicleUI then
+			RegisterStateDriver(SUI_Art_Transparent, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+		end
+
+		module:SetColor()
 		module:SetupMenus()
 	end
 end
@@ -61,40 +69,6 @@ function module:SetupMenus()
 		type = 'group',
 		order = 10,
 		args = {
-			alpha = {
-				name = L['Transparency'],
-				type = 'range',
-				order = 1,
-				width = 'full',
-				min = 0,
-				max = 100,
-				step = 1,
-				desc = L['TransparencyDesc'],
-				get = function(info)
-					return (SUI.DB.alpha * 100)
-				end,
-				set = function(info, val)
-					SUI.DB.alpha = (val / 100)
-					module:updateAlpha()
-				end
-			},
-			xOffset = {
-				name = L['MoveSideways'],
-				type = 'range',
-				order = 3,
-				width = 'full',
-				desc = L['MoveSidewaysDesc'],
-				min = -200,
-				max = 200,
-				step = .1,
-				get = function(info)
-					return SUI.DB.Offset.Horizontal / 6.25
-				end,
-				set = function(info, val)
-					SUI.DB.Offset.Horizontal = val * 6.25
-					module:updateXOffset()
-				end
-			},
 			Color = {
 				name = L['ArtColor'],
 				type = 'color',
@@ -114,5 +88,44 @@ function module:SetupMenus()
 end
 
 function module:OnDisable()
+	UnregisterStateDriver(SUI_Art_Transparent, 'visibility')
 	SUI_Art_Transparent:Hide()
+end
+
+----------------------------------------------------------------------------------------------------
+
+function module:TooltipLoc(self, parent)
+	if (parent == 'UIParent') then
+		tooltip:ClearAllPoints()
+		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Transparent', 'TOPRIGHT', 0, 10)
+	end
+end
+
+function module:BuffLoc(self, parent)
+	BuffFrame:ClearAllPoints()
+	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - (SUI.DB.BuffSettings.offset))
+end
+
+function module:SetupVehicleUI()
+end
+
+function module:RemoveVehicleUI()
+	if SUI.DB.Artwork.VehicleUI then
+		UnregisterStateDriver(SUI_Art_Transparent, 'visibility')
+	end
+end
+
+function module:SetColor()
+	local r, b, g, a = unpack(SUI.DB.Styles.Transparent.Color.Art)
+	for i = 1, 6 do
+		if _G['SUI_Art_Transparent_Base' .. i] then
+			_G['SUI_Art_Transparent_Base' .. i]:SetVertexColor(r, b, g, a)
+		end
+		if SUI.DB.ActionBars['bar' .. i].enable then
+			_G['Transparent_Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
+		end
+		if _G['Transparent_Popup' .. i .. 'BG'] then
+			_G['Transparent_Popup' .. i .. 'BG']:SetVertexColor(r, b, g, a)
+		end
+	end
 end

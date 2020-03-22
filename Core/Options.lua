@@ -56,11 +56,8 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI.DB.Artwork.Style = skin
-				SUI.DB.Unitframes.Style = skin
+				SUI:GetModule('Component_Artwork'):SetActiveStyle(skin, true)
 				SUI.opt.args.UnitFrames.args.BaseStyle.args[skin].func()
-
-				SUI:reloadui()
 			end
 		}
 		-- Setup artwork button
@@ -71,8 +68,7 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI.DB.Artwork.Style = skin
-				SUI:reloadui()
+				SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
 			end
 		}
 	end
