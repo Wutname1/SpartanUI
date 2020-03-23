@@ -4,7 +4,7 @@ local PartyFrames = {}
 local PlayerFrames = {}
 local RaidFrames = {}
 ----------------------------------------------------------------------------------------------------
-local Smoothv2 = SUI.DB.BarTextures.smooth
+local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 local FramesList = {
 	'pet',
 	'target',

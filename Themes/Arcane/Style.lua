@@ -3,10 +3,6 @@ local module = SUI:NewModule('Style_Arcane')
 ----------------------------------------------------------------------------------------------------
 
 function module:OnInitialize()
-	-- if (SUI.DB.Artwork.Style == 'Arcane') then
-	-- -- module:Init()
-	-- end
-
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.ArcaneRed = {
 		name = 'Arcane red',

@@ -1,16 +1,13 @@
 local _, SUI = ...
 SUI = LibStub('AceAddon-3.0'):NewAddon(SUI, 'SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0')
-local StdUi = LibStub('StdUi'):NewInstance()
 _G.SUI = SUI
-
 local AceConfig = LibStub('AceConfig-3.0')
 local AceConfigDialog = LibStub('AceConfigDialog-3.0')
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
-SUI.L = L
-
 local _G = _G
 local type, pairs = type, pairs
 local SUIChatCommands = {}
+SUI.L = L
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
@@ -98,18 +95,11 @@ local DBdefault = {
 		secondary = {},
 		Blacklist = {}
 	},
-	BarTextures = {
-		smooth = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
-	},
 	BuffSettings = {
 		disableblizz = true,
 		enabled = true,
 		Manualoffset = false,
 		offset = 0
-	},
-	Components = {},
-	ChatSettings = {
-		enabled = true
 	},
 	EnabledComponents = {},
 	font = {
@@ -165,15 +155,6 @@ local DBdefault = {
 	Styles = {
 		['**'] = {
 			Artwork = {},
-			PlayerFrames = {},
-			PartyFrames = {},
-			RaidFrames = {},
-			Movable = {
-				Minimap = true,
-				PlayerFrames = true,
-				PartyFrames = true,
-				RaidFrames = true
-			},
 			StatusBars = {
 				['**'] = {
 					size = {256, 36},
@@ -324,6 +305,7 @@ local DBdefault = {
 				}
 			},
 			Minimap = {
+				Movable = true,
 				shape = 'circle',
 				size = {140, 140},
 				scaleWithArt = true,
@@ -347,10 +329,15 @@ local DBdefault = {
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'LEFT,SUI_UF_player,RIGHT,20,0'
+			},
+			Color = {
+				Art = false,
+				PlayerFrames = false,
+				PartyFrames = false,
+				RaidFrames = false
 			}
 		},
 		Classic = {
-			Artwork = {},
 			Frames = {
 				player = {
 					Buffs = {Mode = 'icons'},
@@ -364,13 +351,8 @@ local DBdefault = {
 				targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
 				focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
 			},
-			Movable = {
-				Minimap = false,
-				PlayerFrames = true,
-				PartyFrames = true,
-				RaidFrames = true
-			},
 			Minimap = {
+				Movable = false,
 				size = {156, 156},
 				coords = {TextColor = {1, .82, 0, 1}},
 				coords = {
@@ -398,12 +380,6 @@ local DBdefault = {
 					GlowPoint = {x = 20},
 					MaxWidth = 50
 				}
-			},
-			Color = {
-				Art = false,
-				PlayerFrames = false,
-				PartyFrames = false,
-				RaidFrames = false
 			},
 			BlizzMovers = {
 				['VehicleLeaveButton'] = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
@@ -440,6 +416,7 @@ local DBdefault = {
 			Minimap = {
 				UnderVehicleUI = false,
 				scaleWithArt = false,
+				position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
 				shape = 'square'
 			},
 			Color = {
@@ -448,7 +425,6 @@ local DBdefault = {
 				0.1215686274509804,
 				0.9
 			},
-			PartyFramesSize = 'large',
 			HideCenterGraphic = false
 		},
 		Fel = {
@@ -537,8 +513,7 @@ local DBdefault = {
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 					scale = 1.2
 				},
-				position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
-				engulfed = true
+				position = 'CENTER,SUI_Art_Digital,CENTER,0,54'
 			}
 		},
 		War = {
@@ -625,12 +600,6 @@ local DBdefault = {
 						}
 					}
 				}
-			},
-			PartyFrames = {
-				FrameStyle = 'medium'
-			},
-			RaidFrames = {
-				FrameStyle = 'small'
 			},
 			Minimap = {
 				size = {156, 156},
@@ -1648,14 +1617,7 @@ local DBdefault = {
 	}
 }
 
--- local DBdefaults = {char = DBdefault, profile = DBdefault}
 local DBdefaults = {profile = DBdefault}
-
-function SUI:ResetConfig()
-	SUI.DB:ResetProfile(false, true)
-	ReloadUI()
-end
-
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version
@@ -1808,7 +1770,7 @@ function SUI:InitializeProfile()
 	SUI:reloadui()
 end
 
----------------  Layout  ---------------
+---------  Create SpartanUI Container  ---------
 do
 	-- Create Plate
 	local plate = CreateFrame('Frame', 'SpartanUI', UIParent)
@@ -1816,6 +1778,173 @@ do
 	plate:SetFrameLevel(1)
 	plate:SetPoint('BOTTOMLEFT')
 	plate:SetPoint('TOPRIGHT')
+end
+
+---------------  Chat Commands  ---------------
+
+local ResetDBWarning = false
+function SUI:ChatCommand(input)
+	if input == 'resetfulldb' then
+		if ResetDBWarning then
+			Bartender4.db:ResetDB()
+			SUI.SpartanUIDB:ResetDB()
+		else
+			ResetDBWarning = true
+			SUI:Print('|cffff0000Warning')
+			SUI:Print(
+				L[
+					'This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'
+				]
+			)
+		end
+	elseif input == 'resetbartender' then
+		SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']:func()
+	elseif input == 'resetdb' then
+		if ResetDBWarning then
+			SUI.SpartanUIDB:ResetDB()
+		else
+			ResetDBWarning = true
+			SUI:Print('|cffff0000Warning')
+			SUI:Print(L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
+		end
+	elseif input == 'setup' then
+		SUI:GetModule('SetupWizard'):SetupWizard()
+	elseif input == 'help' then
+		SUI:suihelp()
+	elseif input == 'version' then
+		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
+		SUI:Print(string.format('%s build %s', wowVersion, SUI.BuildNum))
+		if SUI.Bartender4Version ~= 0 then
+			SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
+		end
+	else
+		if SUIChatCommands[input] then
+			SUIChatCommands[input]()
+		elseif string.find(input, ' ') then
+			for i in string.gmatch(input, '%S+') do
+				local arg, _ = string.gsub(input, i .. ' ', '')
+				if SUIChatCommands[i] then
+					SUIChatCommands[i](arg)
+				end
+			end
+		else
+			AceConfigDialog:Open('SpartanUI')
+		end
+	end
+end
+
+function SUI:AddChatCommand(arg, func)
+	SUIChatCommands[arg] = func
+end
+
+function SUI.print(msg, doNotLabel)
+	if doNotLabel then
+		print(msg)
+	else
+		SUI:Print(msg)
+	end
+end
+
+function SUI:Error(err, mod)
+	SUI:Print('|cffff0000Error detected')
+	if mod then
+		SUI:Print("An error has occured in the Component '" .. mod .. "'")
+	else
+		SUI:Print('An error has occured')
+	end
+	SUI:Print('Details: ' .. (err or 'None provided'))
+	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
+end
+
+---------------  Math and Comparison  ---------------
+
+--[[
+	Takes a target table and injects data from the source
+	override allows the source to be put into the target
+	even if its already populated
+]]
+function SUI:MergeData(target, source, override)
+	if type(target) ~= 'table' then
+		target = {}
+	end
+	for k, v in pairs(source) do
+		if type(v) == 'table' then
+			target[k] = self:MergeData(target[k], v, override)
+		else
+			if override then
+				target[k] = v
+			elseif target[k] == nil then
+				target[k] = v
+			end
+		end
+	end
+	return target
+end
+
+function SUI:isPartialMatch(frameName, tab)
+	local result = false
+
+	for _, v in ipairs(tab) do
+		local startpos, endpos = strfind(strlower(frameName), strlower(v))
+		if (startpos == 1) then
+			result = true
+		end
+	end
+
+	return result
+end
+
+--[[
+	Takes a target table and searches for the specified phrase
+]]
+function SUI:isInTable(searchTable, searchPhrase, all)
+	if searchTable == nil or searchPhrase == nil then
+		SUI:Error('Invalid isInTable call', 'Core')
+		return false
+	end
+
+	assert(type(searchTable) == 'table', "Invalid argument 'searchTable' in SUI:isInTable.")
+
+	-- If All is specified then we are dealing with a 2 string table search both keys
+	if all ~= nil then
+		for k, v in ipairs(searchTable) do
+			if v ~= nil and searchPhrase ~= nil then
+				if (strlower(v) == strlower(searchPhrase)) then
+					return true
+				end
+			end
+			if k ~= nil and searchPhrase ~= nil then
+				if (strlower(k) == strlower(searchPhrase)) then
+					return true
+				end
+			end
+		end
+	else
+		for _, v in ipairs(searchTable) do
+			if v ~= nil and searchPhrase ~= nil then
+				if (strlower(v) == strlower(searchPhrase)) then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+function SUI:tableLength(T)
+	assert(type(T) == 'table', 'bad parameter #1: must be table')
+
+	local count = 0
+	for _ in pairs(T) do
+		count = count + 1
+	end
+	return count
+end
+
+function SUI:round(num) -- rounds a number to 2 decimal places
+	if num then
+		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+	end
 end
 
 ---------------  Misc Backend  ---------------
@@ -1933,170 +2062,4 @@ end
 
 function SUI:suihelp(input)
 	AceConfigDialog:Open('SpartanUI', 'Help')
-end
-
----------------  Chat Command  ---------------
-
-local ResetDBWarning = false
-function SUI:ChatCommand(input)
-	if input == 'resetfulldb' then
-		if ResetDBWarning then
-			Bartender4.db:ResetDB()
-			SUI.SpartanUIDB:ResetDB()
-		else
-			ResetDBWarning = true
-			SUI:Print('|cffff0000Warning')
-			SUI:Print(
-				L[
-					'This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'
-				]
-			)
-		end
-	elseif input == 'resetbartender' then
-		SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']:func()
-	elseif input == 'resetdb' then
-		if ResetDBWarning then
-			SUI.SpartanUIDB:ResetDB()
-		else
-			ResetDBWarning = true
-			SUI:Print('|cffff0000Warning')
-			SUI:Print(L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
-		end
-	elseif input == 'setup' then
-		SUI:GetModule('SetupWizard'):SetupWizard()
-	elseif input == 'help' then
-		SUI:suihelp()
-	elseif input == 'version' then
-		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
-		SUI:Print(string.format('%s build %s', wowVersion, SUI.BuildNum))
-		if SUI.Bartender4Version ~= 0 then
-			SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
-		end
-	else
-		if SUIChatCommands[input] then
-			SUIChatCommands[input]()
-		elseif string.find(input, ' ') then
-			for i in string.gmatch(input, '%S+') do
-				local arg, _ = string.gsub(input, i .. ' ', '')
-				if SUIChatCommands[i] then
-					SUIChatCommands[i](arg)
-				end
-			end
-		else
-			AceConfigDialog:Open('SpartanUI')
-		end
-	end
-end
-
-function SUI:AddChatCommand(arg, func)
-	SUIChatCommands[arg] = func
-end
-
-function SUI.print(msg, doNotLabel)
-	if doNotLabel then
-		print(msg)
-	else
-		SUI:Print(msg)
-	end
-end
-function SUI:Error(err, mod)
-	SUI:Print('|cffff0000Error detected')
-	if mod then
-		SUI:Print("An error has occured in the Component '" .. mod .. "'")
-	else
-		SUI:Print('An error has occured')
-	end
-	SUI:Print('Details: ' .. (err or 'None provided'))
-	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
-end
-
----------------  Math and Comparison  ---------------
-
---[[
-	Takes a target table and injects data from the source
-	override allows the source to be put into the target
-	even if its already populated
-]]
-function SUI:MergeData(target, source, override)
-	if type(target) ~= 'table' then
-		target = {}
-	end
-	for k, v in pairs(source) do
-		if type(v) == 'table' then
-			target[k] = self:MergeData(target[k], v, override)
-		else
-			if override then
-				target[k] = v
-			elseif target[k] == nil then
-				target[k] = v
-			end
-		end
-	end
-	return target
-end
-
-function SUI:isPartialMatch(frameName, tab)
-	local result = false
-
-	for _, v in ipairs(tab) do
-		local startpos, endpos = strfind(strlower(frameName), strlower(v))
-		if (startpos == 1) then
-			result = true
-		end
-	end
-
-	return result
-end
-
---[[
-	Takes a target table and searches for the specified phrase
-]]
-function SUI:isInTable(searchTable, searchPhrase, all)
-	if searchTable == nil or searchPhrase == nil then
-		SUI:Error('Invalid isInTable call', 'Core')
-		return false
-	end
-
-	assert(type(searchTable) == 'table', "Invalid argument 'searchTable' in SUI:isInTable.")
-
-	-- If All is specified then we are dealing with a 2 string table search both keys
-	if all ~= nil then
-		for k, v in ipairs(searchTable) do
-			if v ~= nil and searchPhrase ~= nil then
-				if (strlower(v) == strlower(searchPhrase)) then
-					return true
-				end
-			end
-			if k ~= nil and searchPhrase ~= nil then
-				if (strlower(k) == strlower(searchPhrase)) then
-					return true
-				end
-			end
-		end
-	else
-		for _, v in ipairs(searchTable) do
-			if v ~= nil and searchPhrase ~= nil then
-				if (strlower(v) == strlower(searchPhrase)) then
-					return true
-				end
-			end
-		end
-	end
-	return false
-end
-
-function SUI:tableLength(T)
-	assert(type(T) == 'table', 'bad parameter #1: must be table')
-
-	local count = 0
-	for _ in pairs(T) do
-		count = count + 1
-	end
-	return count
-end
-
-function SUI:round(num) -- rounds a number to 2 decimal places
-	if num then
-		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
-	end
 end
