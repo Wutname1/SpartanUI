@@ -56,7 +56,8 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI:GetModule('Component_Artwork'):SetActiveStyle(skin, true)
+				SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
+				SUI:GetModule('Component_UnitFrames'):SetActiveStyle(style)
 				SUI.opt.args.UnitFrames.args.BaseStyle.args[skin].func()
 			end
 		}

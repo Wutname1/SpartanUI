@@ -30,11 +30,13 @@ local function SetupPage()
 				self.radio:Click()
 			end
 			local SetStyle = function(self)
-				if SUI.DB.Artwork.Style == StdUi:GetRadioGroupValue('SUIArtwork') then
+				local NewStyle = StdUi:GetRadioGroupValue('SUIArtwork')
+				if SUI.DB.Artwork.Style == NewStyle then
 					return
 				end
 
-				module:SetActiveStyle(StdUi:GetRadioGroupValue('SUIArtwork'), true)
+				module:SetActiveStyle(NewStyle)
+				SUI:GetModule('Component_UnitFrames'):SetActiveStyle(NewStyle)
 			end
 
 			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal', 'Arcane'}) do
@@ -62,19 +64,16 @@ local function SetupPage()
 					local calculate = SUI_Win.Artwork.slider:GetValue()
 					if math.floor(calculate) ~= math.floor(calculate) then
 						SUI_Win.Artwork.slider:SetValue(math.floor(calculate))
+						return
 					end
 
 					local scale = math.floor(SUI_Win.Artwork.slider:GetValue()) / 100
 					SUI_Win.Artwork.sliderText:SetText(scale)
 
 					SUI.DB.scale = scale
-					if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).updateScale then
-						SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):updateScale()
-					end
 
-					SpartanUI:SetScale(scale)
-
-					SUI:GetModule('Component_BarHandler'):Refresh()
+					-- Update screen
+					module:UpdateScale()
 
 					if scale ~= 0.92 then
 						SUI_Win.Artwork.sliderButton:Enable()
@@ -125,6 +124,23 @@ local function SetupPage()
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
 	SetupWindow:AddPage(PageData)
+
+	if not SUI.DB.Artwork.SetupDone then
+		--Set default scale based on if the user is using a widescreen.
+		local Resolution = ''
+		if select(4, GetBuildInfo()) >= 70000 then
+			Resolution = GetCVar('gxWindowedResolution')
+		else
+			Resolution = GetCVar('gxResolution')
+		end
+
+		local width, height = string.match(Resolution, '(%d+).-(%d+)')
+		if (tonumber(width) / tonumber(height) > 4 / 3) then
+			SUI.DB.scale = 0.92
+		else
+			SUI.DB.scale = 0.78
+		end
+	end
 end
 
 local function StyleUpdate()
@@ -134,14 +150,14 @@ local function StyleUpdate()
 		SUI.opt.args.Artwork.args.BarBG.disabled = false
 	end
 
-	module:updateScale()
-	module:updateAlpha()
+	module:UpdateScale()
+	module:UpdateAlpha()
 	module:updateOffset()
 	module:updateHorizontalOffset()
 	module:updateViewport()
 end
 
-function module:SetActiveStyle(style, updateUnitframes)
+function module:SetActiveStyle(style)
 	if style and style ~= SUI.DB.Artwork.Style then
 		-- Cache the styles to swap
 		local OldStyle = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
@@ -159,14 +175,6 @@ function module:SetActiveStyle(style, updateUnitframes)
 
 		--Update minimap
 		SUI:GetModule('Component_Minimap'):update(true)
-
-		print(style)
-		--Update UnitFrames
-		if updateUnitframes then
-			print(updateUnitframes)
-			SUI.DB.Unitframes.Style = SUI.DB.Artwork.Style
-			SUI:GetModule('Component_UnitFrames'):UpdateAll()
-		end
 	end
 
 	-- Update style settings shortcut
@@ -177,42 +185,33 @@ function module:SetActiveStyle(style, updateUnitframes)
 	StyleUpdate()
 end
 
-function module:updateScale()
-	--Set default scale based on if the user is using a widescreen.
-	if (not SUI.DB.scale) then
-		local Resolution = ''
-		if select(4, GetBuildInfo()) >= 70000 then
-			Resolution = GetCVar('gxWindowedResolution')
-		else
-			Resolution = GetCVar('gxResolution')
-		end
+function module:UpdateScale()
+	-- Set overall UI scale
+	SpartanUI:SetScale(SUI.DB.scale)
 
-		local width, height = string.match(Resolution, '(%d+).-(%d+)')
-		if (tonumber(width) / tonumber(height) > 4 / 3) then
-			SUI.DB.scale = 0.92
-		else
-			SUI.DB.scale = 0.78
-		end
-	end
-
-	if styleArt then
-		styleArt:SetAlpha(SUI.DB.alpha)
-	end
-	-- Call module scale update if defined.
+	-- Call style scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-	if style.updateScale then
-		style:updateScale()
+	if style.UpdateScale then
+		style:UpdateScale()
 	end
+
+	-- Call Minimap scale update
+	if SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap.scaleWithArt then
+		SUI:GetModule('Component_Minimap'):UpdateScale()
+	end
+
+	-- Update Bar scales
+	SUI:GetModule('Component_BarHandler'):Refresh()
 end
 
-function module:updateAlpha()
+function module:UpdateAlpha()
 	if styleArt then
 		styleArt:SetAlpha(SUI.DB.alpha)
 	end
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-	if style.updateAlpha then
-		style:updateAlpha()
+	if style.UpdateAlpha then
+		style:UpdateAlpha()
 	end
 end
 

@@ -326,6 +326,7 @@ local DBdefault = {
 			Minimap = {
 				shape = 'circle',
 				size = {140, 140},
+				scaleWithArt = true,
 				ZoneText = {Location = 'BOTTOM'},
 				UnderVehicleUI = true,
 				BG = {
@@ -438,6 +439,7 @@ local DBdefault = {
 		Minimal = {
 			Minimap = {
 				UnderVehicleUI = false,
+				scaleWithArt = false,
 				shape = 'square'
 			},
 			Color = {

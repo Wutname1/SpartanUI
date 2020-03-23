@@ -234,6 +234,14 @@ function module:OnEnable()
 	end
 end
 
+function module:SetActiveStyle(style)
+	SUI.DB.Unitframes.Style = style
+	-- Refersh Settings
+	module:LoadDB()
+	-- Update all display elements
+	module:UpdateAll()
+end
+
 local blockedFunctions = {
 	-- Lua functions that may allow breaking out of the environment
 	getfenv = true,

@@ -21,7 +21,7 @@ function module:SetupOptions()
 				SUI:Print(ERR_NOT_IN_COMBAT)
 			else
 				SUI.DB.scale = val
-				module:updateScale()
+				module:UpdateScale()
 				SUI:GetModule('Component_BarHandler'):Refresh()
 			end
 		end,
@@ -88,7 +88,7 @@ function module:SetupOptions()
 		end,
 		set = function(info, val)
 			SUI.DB.alpha = (val / 100)
-			module:updateAlpha()
+			module:UpdateAlpha()
 		end
 	}
 
@@ -292,7 +292,7 @@ function module:SetupOptions()
 					end
 					SUI.DB.Styles.War.Artwork.Stance.enable = val
 					SUI.DB.Styles.War.Artwork.MenuBar.enable = val
-					module:updateAlpha()
+					module:UpdateAlpha()
 				end
 			},
 			Allalpha = {
@@ -312,7 +312,7 @@ function module:SetupOptions()
 					end
 					SUI.DB.Styles.War.Artwork.Stance.alpha = val
 					SUI.DB.Styles.War.Artwork.MenuBar.alpha = val
-					module:updateAlpha()
+					module:UpdateAlpha()
 				end
 			},
 			Stance = {
@@ -334,7 +334,7 @@ function module:SetupOptions()
 						set = function(info, val)
 							if SUI.DB.Styles.War.Artwork.Stance.enable == true then
 								SUI.DB.Styles.War.Artwork.Stance.alpha = val
-								module:updateAlpha()
+								module:UpdateAlpha()
 							end
 						end
 					},
@@ -346,7 +346,7 @@ function module:SetupOptions()
 						end,
 						set = function(info, val)
 							SUI.DB.Styles.War.Artwork.Stance.enable = val
-							module:updateAlpha()
+							module:UpdateAlpha()
 						end
 					}
 				}
@@ -370,7 +370,7 @@ function module:SetupOptions()
 						set = function(info, val)
 							if SUI.DB.Styles.War.Artwork.MenuBar.enable == true then
 								SUI.DB.Styles.War.Artwork.MenuBar.alpha = val
-								module:updateAlpha()
+								module:UpdateAlpha()
 							end
 						end
 					},
@@ -382,7 +382,7 @@ function module:SetupOptions()
 						end,
 						set = function(info, val)
 							SUI.DB.Styles.War.Artwork.MenuBar.enable = val
-							module:updateAlpha()
+							module:UpdateAlpha()
 						end
 					}
 				}
@@ -406,7 +406,7 @@ function module:SetupOptions()
 						set = function(info, val)
 							if SUI.DB.Styles.War.Artwork.bar1.enable == true then
 								SUI.DB.Styles.War.Artwork.bar1.alpha = val
-								module:updateAlpha()
+								module:UpdateAlpha()
 							end
 						end
 					},
@@ -418,7 +418,7 @@ function module:SetupOptions()
 						end,
 						set = function(info, val)
 							SUI.DB.Styles.War.Artwork.bar1.enable = val
-							module:updateAlpha()
+							module:UpdateAlpha()
 						end
 					}
 				}
@@ -442,7 +442,7 @@ function module:SetupOptions()
 						set = function(info, val)
 							if SUI.DB.Styles.War.Artwork.bar2.enable == true then
 								SUI.DB.Styles.War.Artwork.bar2.alpha = val
-								module:updateAlpha()
+								module:UpdateAlpha()
 							end
 						end
 					},
@@ -454,7 +454,7 @@ function module:SetupOptions()
 						end,
 						set = function(info, val)
 							SUI.DB.Styles.War.Artwork.bar2.enable = val
-							module:updateAlpha()
+							module:UpdateAlpha()
 						end
 					}
 				}
@@ -478,7 +478,7 @@ function module:SetupOptions()
 						set = function(info, val)
 							if SUI.DB.Styles.War.Artwork.bar3.enable == true then
 								SUI.DB.Styles.War.Artwork.bar3.alpha = val
-								module:updateAlpha()
+								module:UpdateAlpha()
 							end
 						end
 					},
@@ -490,7 +490,7 @@ function module:SetupOptions()
 						end,
 						set = function(info, val)
 							SUI.DB.Styles.War.Artwork.bar3.enable = val
-							module:updateAlpha()
+							module:UpdateAlpha()
 						end
 					}
 				}
@@ -514,7 +514,7 @@ function module:SetupOptions()
 						set = function(info, val)
 							if SUI.DB.Styles.War.Artwork.bar4.enable == true then
 								SUI.DB.Styles.War.Artwork.bar4.alpha = val
-								module:updateAlpha()
+								module:UpdateAlpha()
 							end
 						end
 					},
@@ -526,7 +526,7 @@ function module:SetupOptions()
 						end,
 						set = function(info, val)
 							SUI.DB.Styles.War.Artwork.bar4.enable = val
-							module:updateAlpha()
+							module:UpdateAlpha()
 						end
 					}
 				}

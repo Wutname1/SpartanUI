@@ -14,7 +14,7 @@ end
 function module:updateColor()
 end
 
-function module:updateScale() -- scales SpartanUI based on setting or screen size
+function module:UpdateScale() -- scales SpartanUI based on setting or screen size
 	if (not SUI.DB.scale) then -- make sure the variable exists, and auto-configured based on screen size
 		local Resolution = ''
 		if select(4, GetBuildInfo()) >= 70000 then
@@ -191,7 +191,7 @@ function module:EnableFramework()
 	)
 
 	module:SetupVehicleUI()
-	module:updateScale()
+	module:UpdateScale()
 	module:updateSpartanXOffset()
 	module:updateSpartanAlpha()
 	if SUI.DB.Styles.Classic.Color.Art then

@@ -370,6 +370,10 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 			OnDragStop(self.mover)
 		end
 	end
+	local function scale(self, scale)
+		f:SetScale(max(scale, .01))
+		parent:SetScale(max(scale, .01))
+	end
 	local function position(self, point, anchor, secondaryPoint, x, y, forced, defaultPos)
 		-- If Frame:position() was called just make sure we are anchored properly
 		if not point then
@@ -402,6 +406,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 	parent:HookScript('OnMouseDown', ParentMouseDown)
 	parent:HookScript('OnMouseUp', ParentMouseUp)
 	parent.mover = f
+	parent.scale = scale
 	parent.position = position
 	parent.isMoved = function()
 		if SUI.DB.MoveIt.movers[name].MovedPoints then

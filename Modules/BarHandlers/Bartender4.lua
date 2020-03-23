@@ -234,6 +234,10 @@ local function RefreshConfig()
 
 		if _G[v] and positionData[v] ~= '' then
 			local f = _G[v]
+			if f.scale then
+				f:scale(SUI.DB.scale * (scaleData[v] * 1.08696))
+			end
+
 			if f.mover then
 				f = f.mover
 			end
@@ -241,10 +245,6 @@ local function RefreshConfig()
 			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
 			f:ClearAllPoints()
 			f:SetPoint(point, anchor, secondaryPoint, x, y)
-			if scaleData[v] then
-				f:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
-				_G[v]:SetScale(max(SUI.DB.scale * (scaleData[v] * 1.08696), .01))
-			end
 		end
 	end
 end

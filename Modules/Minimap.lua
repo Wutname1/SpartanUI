@@ -419,7 +419,6 @@ function module:MinimapCoords()
 			return
 		end
 		--Update label
-		-- Minimap.ZoneText:SetText(GetMinimapZoneText())
 		Minimap.coords:SetText(format('%.1f, %.1f', x * 100, y * 100))
 	end
 	UpdateCoords()
@@ -474,6 +473,17 @@ function module:SetupButton(btn, force)
 	end
 end
 
+function module:UpdateScale()
+	if Minimap.coords then
+		module:update()
+	end
+	if Settings.scaleWithArt then
+		if Minimap.scale then
+			Minimap:scale(SUI.DB.scale)
+		end
+	end
+end
+
 function module:update(FullUpdate)
 	if not SUI.DB.EnabledComponents.Minimap then
 		return
@@ -498,10 +508,10 @@ function module:update(FullUpdate)
 		end
 
 		if UserSettings.DisplayZoneName then
-			Minimap.ZoneText:Show()
+			MinimapZoneText:Show()
 			MinimapZoneTextButton:Show()
 		else
-			Minimap.ZoneText:Hide()
+			MinimapZoneText:Hide()
 			MinimapZoneTextButton:Hide()
 		end
 
