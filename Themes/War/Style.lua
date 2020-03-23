@@ -152,8 +152,6 @@ function module:OnDisable()
 	UnregisterStateDriver(SUI_Art_War, 'visibility')
 end
 
-local CurScale, plate
-
 --	Module Calls
 function module:TooltipLoc(_, parent)
 	if (parent == 'UIParent') then
@@ -186,11 +184,41 @@ function module:RemoveVehicleUI()
 end
 
 function module:CreateArtwork()
-	plate = CreateFrame('Frame', 'War_ActionBarPlate', SpartanUI, 'War_ActionBarsTemplate')
+	if War_ActionBarPlate then
+		return
+	end
+
+	local function CreateBarBG(number)
+		local frame = CreateFrame('Frame', 'War_Bar_' .. number, SpartanUI)
+		frame:SetFrameStrata('BACKGROUND')
+		frame:SetSize(400, 32)
+		frame.BG = frame:CreateTexture('War_Bar' .. number .. 'BG', 'BACKGROUND')
+		frame.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg')
+		frame.BG:SetTexCoord(0.07421875, 0.92578125, 0.359375, 0.6796875)
+		frame.BG:SetSize(400, 32)
+		frame.BG:SetAlpha(.5)
+		frame.BG:SetAllPoints(frame)
+		return frame
+	end
+
+	local plate = CreateFrame('Frame', 'War_ActionBarPlate', SpartanUI)
+	plate:SetSize(1002, 139)
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
-	plate:ClearAllPoints()
 	plate:SetAllPoints(SUI_ActionBarAnchor)
+
+	for i = 1, 4 do
+		plate['BG' .. i] = CreateBarBG(i)
+		if UnitFactionGroup('PLAYER') == 'Horde' then
+			_G['War_Bar' .. i .. 'BG']:SetVertexColor(1, 0, 0, .25)
+		else
+			_G['War_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 1, .25)
+		end
+	end
+	plate.BG1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 70)
+	plate.BG2:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 25)
+	plate.BG4:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 110, 70)
+	plate.BG4:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 110, 25)
 
 	FramerateText:ClearAllPoints()
 	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
@@ -210,14 +238,6 @@ function module:CreateArtwork()
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Right')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
 	artFrame.Right:SetScale(.75)
-
-	for i = 1, 4 do
-		if UnitFactionGroup('PLAYER') == 'Horde' then
-			_G['War_Bar' .. i .. 'BG']:SetVertexColor(1, 0, 0, .25)
-		else
-			_G['War_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 1, .25)
-		end
-	end
 end
 
 -- Artwork Stuff
