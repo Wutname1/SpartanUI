@@ -438,6 +438,62 @@ local DBdefault = {
 				Stance = {enable = true, alpha = 100},
 				MenuBar = {enable = true, alpha = 100}
 			},
+			Frames = {
+				player = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'fel'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'fel'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'fel'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
+				},
+				target = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'fel'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'fel'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'fel'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
+				}
+			},
 			StatusBars = {
 				['**'] = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',

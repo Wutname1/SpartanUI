@@ -189,7 +189,7 @@ function module:CreateArtwork()
 	end
 
 	local function CreateBarBG(number)
-		local frame = CreateFrame('Frame', 'War_Bar_' .. number, SpartanUI)
+		local frame = CreateFrame('Frame', 'War_Bar_' .. number, War_ActionBarPlate)
 		frame:SetFrameStrata('BACKGROUND')
 		frame:SetSize(400, 32)
 		frame.BG = frame:CreateTexture('War_Bar' .. number .. 'BG', 'BACKGROUND')
@@ -201,7 +201,7 @@ function module:CreateArtwork()
 		return frame
 	end
 
-	local plate = CreateFrame('Frame', 'War_ActionBarPlate', SpartanUI)
+	local plate = CreateFrame('Frame', 'War_ActionBarPlate', SUI_Art_War)
 	plate:SetSize(1002, 139)
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
@@ -217,7 +217,7 @@ function module:CreateArtwork()
 	end
 	plate.BG1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 70)
 	plate.BG2:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 25)
-	plate.BG4:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 110, 70)
+	plate.BG3:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 110, 70)
 	plate.BG4:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 110, 25)
 
 	FramerateText:ClearAllPoints()

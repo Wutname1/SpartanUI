@@ -87,7 +87,7 @@ end
 function MoveIt:Reset(name)
 	if name == nil then
 		for name, frame in pairs(MoverList) do
-			if frame then
+			if frame and MoveIt:IsMoved(frame:GetName()) then
 				local point, anchor, secondaryPoint, x, y = strsplit(',', MoverList[name].defaultPoint)
 				frame:ClearAllPoints()
 				frame:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -100,7 +100,7 @@ function MoveIt:Reset(name)
 		print('Moved frames reset!')
 	else
 		local f = _G['SUI_Mover_' .. name]
-		if f then
+		if f and MoveIt:IsMoved(name) then
 			local point, anchor, secondaryPoint, x, y = strsplit(',', MoverList[name].defaultPoint)
 			f:ClearAllPoints()
 			f:SetPoint(point, anchor, secondaryPoint, x, y)

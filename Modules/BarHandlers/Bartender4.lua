@@ -201,7 +201,7 @@ end
 local function loadScales()
 	scaleData = module.BarScale.BT4.default
 	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
-		scaleData = SUI:MergeData(module.BarScale.BT4[SUI.DB.Artwork.Style], module.BarScale.BT4.default, true)
+		scaleData = SUI:MergeData(scaleData, module.BarScale.BT4[SUI.DB.Artwork.Style], true)
 	end
 	scaleData = SUI:MergeData(scaleData, module.DB.custom.scale.BT4, true)
 end
@@ -238,13 +238,18 @@ local function RefreshConfig()
 				f:scale(SUI.DB.scale * (scaleData[v] * 1.08696))
 			end
 
-			if f.mover then
-				f = f.mover
+			-- if f.mover then
+			-- 	f = f.mover
+			-- end
+			if f.position then
+				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
+				f:position(point, anchor, secondaryPoint, x, y, false, true)
 			end
-
-			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
-			f:ClearAllPoints()
-			f:SetPoint(point, anchor, secondaryPoint, x, y)
+		-- if not MoveIt:IsMoved(v) then
+		-- 	local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
+		-- 	f:ClearAllPoints()
+		-- 	f:SetPoint(point, anchor, secondaryPoint, x, y)
+		-- end
 		end
 	end
 end
