@@ -1,6 +1,5 @@
 local SUI, L = SUI, SUI.L
 local print, error = SUI.print, SUI.Error
-local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:NewModule('Style_War')
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local UnitFrames = SUI:GetModule('Component_UnitFrames')
@@ -188,18 +187,12 @@ function module:CreateArtwork()
 		return
 	end
 
-	local function CreateBarBG(number)
-		local frame = CreateFrame('Frame', 'War_Bar_' .. number, War_ActionBarPlate)
-		frame:SetFrameStrata('BACKGROUND')
-		frame:SetSize(400, 32)
-		frame.BG = frame:CreateTexture('War_Bar' .. number .. 'BG', 'BACKGROUND')
-		frame.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg')
-		frame.BG:SetTexCoord(0.07421875, 0.92578125, 0.359375, 0.6796875)
-		frame.BG:SetSize(400, 32)
-		frame.BG:SetAlpha(.5)
-		frame.BG:SetAllPoints(frame)
-		return frame
-	end
+	local BarBGSettings = {
+		name = 'War',
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Barbg',
+		TexCoord = {0.07421875, 0.92578125, 0.359375, 0.6796875},
+		alpha = .5
+	}
 
 	local plate = CreateFrame('Frame', 'War_ActionBarPlate', SUI_Art_War)
 	plate:SetSize(1002, 139)
@@ -208,7 +201,7 @@ function module:CreateArtwork()
 	plate:SetAllPoints(SUI_ActionBarAnchor)
 
 	for i = 1, 4 do
-		plate['BG' .. i] = CreateBarBG(i)
+		plate['BG' .. i] = Artwork_Core:CreateBarBG(BarBGSettings, i, War_ActionBarPlate)
 		if UnitFactionGroup('PLAYER') == 'Horde' then
 			_G['War_Bar' .. i .. 'BG']:SetVertexColor(1, 0, 0, .25)
 		else

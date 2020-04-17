@@ -144,11 +144,7 @@ local function SetupPage()
 end
 
 local function StyleUpdate()
-	if module.ActiveStyle.barBackgrounds then
-		SUI.opt.args.Artwork.args.BarBG.disabled = true
-	else
-		SUI.opt.args.Artwork.args.BarBG.disabled = false
-	end
+	SUI.opt.args.Artwork.args.BarBG.disabled = (not module.ActiveStyle.Artwork.barBackgrounds)
 
 	module:UpdateScale()
 	module:UpdateAlpha()
@@ -366,8 +362,24 @@ function module:OnEnable()
 		return
 	end
 
+	if SUI:GetModule('Component_BarHandler') then
+		SUI:GetModule('Component_BarHandler').Refresh()
+	end
+
 	SetupPage()
 	VehicleUI()
 	module:updateOffset()
 	module:updateViewport()
+end
+
+function module:CreateBarBG(skinSettings, number, parent)
+	local frame = CreateFrame('Frame', skinSettings.name .. '_Bar' .. number, (parent or UIParent))
+	frame:SetFrameStrata('BACKGROUND')
+	frame:SetSize((skinSettings.width or 400), (skinSettings.height or 32))
+	frame.BG = frame:CreateTexture(skinSettings.name .. '_Bar' .. number .. 'BG', 'BACKGROUND')
+	frame.BG:SetTexture(skinSettings.TexturePath)
+	frame.BG:SetTexCoord(unpack(skinSettings.TexCoord or {0, 1, 0, 1}))
+	frame.BG:SetAlpha(skinSettings.alpha or 1)
+	frame.BG:SetAllPoints(frame)
+	return frame
 end

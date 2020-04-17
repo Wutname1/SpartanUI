@@ -273,7 +273,7 @@ function module:SetupOptions()
 		}
 	end
 
-	ArtworkOpts.BarBG = {
+	SUI.opt.args.Artwork.args.BarBG = {
 		name = 'Bar backgrounds',
 		type = 'group',
 		desc = L['ActionBarConfDesc'],

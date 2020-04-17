@@ -154,7 +154,9 @@ local DBdefault = {
 	},
 	Styles = {
 		['**'] = {
-			Artwork = {},
+			Artwork = {
+				barBackgrounds = true
+			},
 			StatusBars = {
 				['**'] = {
 					size = {256, 36},
@@ -443,15 +445,15 @@ local DBdefault = {
 					artwork = {
 						top = {
 							enabled = true,
-							graphic = 'fel'
+							graphic = 'Fel'
 						},
 						bg = {
 							enabled = true,
-							graphic = 'fel'
+							graphic = 'Fel'
 						},
 						bottom = {
 							enabled = true,
-							graphic = 'fel'
+							graphic = 'Fel'
 						}
 					},
 					elements = {
@@ -470,15 +472,15 @@ local DBdefault = {
 					artwork = {
 						top = {
 							enabled = true,
-							graphic = 'fel'
+							graphic = 'Fel'
 						},
 						bg = {
 							enabled = true,
-							graphic = 'fel'
+							graphic = 'Fel'
 						},
 						bottom = {
 							enabled = true,
-							graphic = 'fel'
+							graphic = 'Fel'
 						}
 					},
 					elements = {
