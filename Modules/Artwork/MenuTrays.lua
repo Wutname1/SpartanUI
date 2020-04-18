@@ -157,8 +157,8 @@ function module:SlidingTrays(StyleSettings)
 		module.Trays[key].collapsed.texture:SetTexCoord(unpack(settings.DownTex.TexCoord))
 	end
 
-	module.Trays.left:SetPoint('TOP', SpartanUI, 'TOP', -300, -1)
-	module.Trays.right:SetPoint('TOP', SpartanUI, 'TOP', 300, -1)
+	module.Trays.left:SetPoint('TOP', SpartanUI, 'TOP', -300, 0)
+	module.Trays.right:SetPoint('TOP', SpartanUI, 'TOP', 300, 0)
 
 	trayWatcher:SetScript('OnEvent', trayWatcherEvents)
 	trayWatcher:RegisterEvent('PLAYER_LOGIN')
