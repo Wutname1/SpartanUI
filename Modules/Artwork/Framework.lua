@@ -144,7 +144,9 @@ local function SetupPage()
 end
 
 local function StyleUpdate()
-	SUI.opt.args.Artwork.args.BarBG.disabled = (not module.ActiveStyle.Artwork.barBackgrounds)
+	if SUI.opt.args.Artwork.args.BarBG then
+		SUI.opt.args.Artwork.args.BarBG.disabled = (not module.ActiveStyle.Artwork.barBackgrounds)
+	end
 
 	module:UpdateScale()
 	module:UpdateAlpha()

@@ -318,9 +318,17 @@ local DBdefault = {
 					BlendMode = 'ADD',
 					alpha = 1
 				},
-				coords = {
+				ZoneText = {
+					size = {100, 12},
 					scale = 1,
 					position = 'TOP,Minimap,BOTTOM,0,-4',
+					TextColor = {1, .82, 0, 1},
+					ShadowColor = {0, 0, 0, 1}
+				},
+				coords = {
+					scale = 1,
+					size = {80, 12},
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 					TextColor = {1, .82, 0, 1},
 					ShadowColor = {0, 0, 0, 1}
 				}
@@ -390,11 +398,16 @@ local DBdefault = {
 		Transparent = {
 			Minimap = {
 				shape = 'square',
-				size = {130, 130},
+				size = {135, 135},
 				ZoneText = {Location = 'TOP'},
 				position = 'CENTER,SUI_Art_Transparent,CENTER,0,-5',
+				ZoneText = {
+					size = {130, 12},
+					position = 'BOTTOM,Minimap,TOP,0,2'
+				},
 				coords = {
-					Location = 'TOP'
+					size = {80, 12},
+					position = 'BOTTOM,Minimap,BOTTOM,0,2'
 				}
 			},
 			StatusBars = {

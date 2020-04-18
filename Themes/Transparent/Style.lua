@@ -178,7 +178,7 @@ function module:SetColor()
 	local r, b, g, a = unpack(SUI.DB.Styles.Transparent.Color.Art)
 	for i = 1, 6 do
 		if _G['Transparent_Bar' .. i .. 'BG'] then
-			_G['Transparent_Bar' .. i .. 'BG']:SetVertexColor(r, b, g, a)
+			_G['Transparent_Bar' .. i .. 'BG']:SetVertexColor(r, b, g)
 		end
 	end
 	_G['SUI_Art_Transparent_Center']:SetVertexColor(r, b, g, a)

@@ -377,11 +377,9 @@ function module:MinimapCoords()
 	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
 	SUI:FormatFont(Minimap.ZoneText, 11, 'Minimap')
 	SUI:FormatFont(MinimapZoneText, 11, 'Minimap')
-	Minimap.ZoneText:SetSize(10, 12)
 	Minimap.ZoneText:SetJustifyH('MIDDLE')
 	Minimap.ZoneText:SetJustifyV('CENTER')
-	Minimap.ZoneText:SetPoint('BOTTOMLEFT', Minimap, 'TOPLEFT', 0, 1)
-	Minimap.ZoneText:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 1)
+	Minimap.ZoneText:SetPoint('TOP', Minimap, 'BOTTOM', 0, -1)
 	Minimap.ZoneText:SetShadowColor(0, 0, 0, 1)
 	Minimap.ZoneText:SetShadowOffset(1, -1)
 
@@ -392,10 +390,8 @@ function module:MinimapCoords()
 
 	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
 	SUI:FormatFont(Minimap.coords, 10, 'Minimap')
-	Minimap.coords:SetSize(80, 12)
 	Minimap.coords:SetJustifyH('TOP')
-	Minimap.coords:SetPoint('TOPLEFT', Minimap.ZoneText, 'BOTTOMLEFT', 0, 0)
-	Minimap.coords:SetPoint('TOPRIGHT', Minimap.ZoneText, 'BOTTOMRIGHT', 0, 0)
+	Minimap.coords:SetPoint('TOP', Minimap.ZoneText, 'BOTTOM', 0, -1)
 	Minimap.coords:SetShadowOffset(1, -1)
 
 	local Timer = C_Timer.After
@@ -523,6 +519,10 @@ function module:update(FullUpdate)
 			end
 		end
 
+		local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.ZoneText.position)
+		Minimap.ZoneText:ClearAllPoints()
+		Minimap.ZoneText:SetPoint(point, anchor, secondaryPoint, x, y)
+
 		if UserSettings.DisplayMapCords then
 			-- Position coords
 			local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.coords.position)
@@ -570,6 +570,12 @@ function module:update(FullUpdate)
 			Minimap.Background:Hide()
 		end
 
+		Minimap.ZoneText:SetSize(unpack(Settings.ZoneText.size))
+		Minimap.ZoneText:SetTextColor(unpack(Settings.ZoneText.TextColor))
+		Minimap.ZoneText:SetShadowColor(unpack(Settings.ZoneText.ShadowColor))
+		Minimap.ZoneText:SetScale(Settings.ZoneText.scale)
+
+		Minimap.coords:SetSize(unpack(Settings.coords.size))
 		Minimap.coords:SetTextColor(unpack(Settings.coords.TextColor))
 		Minimap.coords:SetShadowColor(unpack(Settings.coords.ShadowColor))
 		Minimap.coords:SetScale(Settings.coords.scale)
