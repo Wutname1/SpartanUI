@@ -3,7 +3,7 @@ local module = SUI:NewModule('SetupWizard')
 local StdUi = LibStub('StdUi'):NewInstance()
 module.window = nil
 
-local DisplayRequired, InitDone, ReloadNeeded = false, false, false
+local DisplayRequired, InitDone = false, false
 local TotalPageCount, PageDisplayOrder, PageDisplayed = 0, 1, 0
 local RequiredPageCount, RequiredDisplayOrder, RequiredPageDisplayed = 0, 1, 0
 local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageID, CurrentDisplay = {},
@@ -12,26 +12,25 @@ local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageI
 	{},
 	{},
 	{}
-local ReloadPage = {
-	ID = 'ReloadPage',
-	Name = 'Reload required',
-	SubTitle = 'Reload required',
-	Desc1 = 'Setup finished!',
-	Desc2 = 'This completes the setup wizard, a reload of the UI is required to finish the setup.',
+local FinishedPage = {
+	ID = 'FinishedPage',
+	Name = 'Setup Finished!',
+	Desc1 = 'This completes the setup wizard.',
+	Desc2 = 'Thank you for trying SpartanUI.',
 	Display = function()
-		local reloadPage = CreateFrame('Frame', nil)
-		reloadPage:SetParent(module.window.content)
-		reloadPage:SetAllPoints(module.window.content)
+		local FinishedPage = CreateFrame('Frame', nil)
+		FinishedPage:SetParent(module.window.content)
+		FinishedPage:SetAllPoints(module.window.content)
 
-		reloadPage.Helm = StdUi:Texture(reloadPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
-		reloadPage.Helm:SetPoint('CENTER')
-		reloadPage.Helm:SetAlpha(.6)
-		module.window.Next:SetText('RELOAD UI')
+		FinishedPage.Helm = StdUi:Texture(FinishedPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
+		FinishedPage.Helm:SetPoint('CENTER')
+		FinishedPage.Helm:SetAlpha(.6)
+		module.window.Next:SetText('FINISH')
 
-		module.window.content.reloadPage = reloadPage
+		module.window.content.FinishedPage = FinishedPage
 	end,
 	Next = function()
-		ReloadUI()
+		module.window:Hide()
 	end
 }
 
@@ -103,12 +102,10 @@ function module:FindNextPage(RequiredPagesOnly)
 		end
 
 		--Find the next undisplayed page
-		if ReloadNeeded and PageDisplayed == TotalPageCount then
+		if PageDisplayed == TotalPageCount then
 			PageDisplayed = PageDisplayed + 1
 			module.window.Status:Hide()
-			module:DisplayPage(ReloadPage)
-		elseif not ReloadNeeded and PageDisplayed == TotalPageCount then
-			module.window:Hide()
+			module:DisplayPage(FinishedPage)
 		elseif FinalPageList[(PageDisplayed + 1)] then
 			PageDisplayed = PageDisplayed + 1
 			local ID = FinalPageList[PageDisplayed]
@@ -149,12 +146,10 @@ function module:FindNextPage(RequiredPagesOnly)
 		end
 
 		--Find the next undisplayed page
-		if ReloadNeeded and RequiredPageDisplayed == RequiredPageCount then
+		if RequiredPageDisplayed == RequiredPageCount then
 			RequiredPageDisplayed = RequiredPageDisplayed + 1
 			module.window.Status:Hide()
-			module:DisplayPage(ReloadPage)
-		elseif not ReloadNeeded and RequiredPageDisplayed == RequiredPageCount then
-			module.window:Hide()
+			module:DisplayPage(FinishedPage)
 		elseif RequiredPageList[(RequiredPageDisplayed + 1)] then
 			RequiredPageDisplayed = RequiredPageDisplayed + 1
 			local ID = RequiredPageList[RequiredPageDisplayed]
@@ -278,11 +273,6 @@ function module:SetupWizard(RequiredPagesOnly)
 		--Hide anything attached to the Content frame
 		for _, child in ipairs({module.window.content:GetChildren()}) do
 			child:Hide()
-		end
-
-		-- If Reload is needed by the page flag it.
-		if CurrentDisplay.RequireReload then
-			ReloadNeeded = true
 		end
 
 		-- Show the next page
@@ -432,7 +422,6 @@ function module:ModuleSelectionPage()
 	local ProfilePage = {
 		ID = 'ModuleSelectionPage',
 		Name = L['Enabled modules'],
-		RequireReload = true,
 		Priority = true,
 		SubTitle = L['Enabled modules'],
 		Desc1 = 'Below you can disable modules of SpartanUI',
@@ -466,6 +455,12 @@ function module:ModuleSelectionPage()
 						'OnClick',
 						function()
 							SUI.DB.EnabledComponents[RealName] = (checkbox:GetValue() or false)
+							print((checkbox:GetValue() or false))
+							if (checkbox:GetValue() or false) then
+								submodule:Enable()
+							else
+								submodule:Disable()
+							end
 						end
 					)
 					checkbox:SetChecked(SUI.DB.EnabledComponents[RealName])

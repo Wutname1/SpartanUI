@@ -12,9 +12,7 @@ local function SetupPage()
 		Name = 'SpartanUI style',
 		SubTitle = 'Art Style',
 		Desc1 = 'Please pick an art style from the options below.',
-		RequireReload = true,
 		Priority = true,
-		NoReloadOnSkip = true,
 		RequireDisplay = (not SUI.DB.Artwork.SetupDone or false),
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
