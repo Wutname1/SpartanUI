@@ -3,6 +3,7 @@ local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 ----------------------------------------------------------------------------------------------------
 local frame = CreateFrame('FRAME')
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
+local LoadedOnce = false
 local totalValue = 0
 module.SellTimer = nil
 local ExcludedItems = {
@@ -73,7 +74,7 @@ function module:OnInitialize()
 	end
 end
 
-function module:FirstTime()
+local function SetupPage()
 	local PageData = {
 		ID = 'Autosell',
 		Name = L['Auto sell'],
@@ -175,7 +176,183 @@ function module:FirstTime()
 	SetupWindow:AddPage(PageData)
 end
 
-local IsInGearset = function(bag, slot)
+local function BuildOptions()
+	if SUI.opt.args['ModSetting'].args['AutoSell'] then
+		return
+	end
+
+	SUI.opt.args['ModSetting'].args['AutoSell'] = {
+		type = 'group',
+		name = L['Auto sell'],
+		args = {
+			NotCrafting = {
+				name = L["Don't sell crafting items"],
+				type = 'toggle',
+				order = 1,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.AutoSell.NotCrafting
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.NotCrafting = val
+				end
+			},
+			NotConsumables = {
+				name = L["Don't sell consumables"],
+				type = 'toggle',
+				order = 2,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.AutoSell.NotConsumables
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.NotConsumables = val
+				end
+			},
+			NotInGearset = {
+				name = L["Don't sell items in a equipment set"],
+				type = 'toggle',
+				order = 3,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.AutoSell.NotInGearset
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.NotInGearset = val
+				end
+			},
+			GearTokens = {
+				name = L['Sell tier tokens'],
+				type = 'toggle',
+				order = 4,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.AutoSell.GearTokens
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.GearTokens = val
+				end
+			},
+			MaxILVL = {
+				name = L['Maximum iLVL to sell'],
+				type = 'range',
+				order = 10,
+				width = 'full',
+				min = 1,
+				max = 500,
+				step = 1,
+				set = function(info, val)
+					SUI.DB.AutoSell.MaxILVL = val
+				end,
+				get = function(info)
+					return SUI.DB.AutoSell.MaxILVL
+				end
+			},
+			Gray = {
+				name = L['Sell gray'],
+				type = 'toggle',
+				order = 20,
+				width = 'double',
+				get = function(info)
+					return SUI.DB.AutoSell.Gray
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.Gray = val
+				end
+			},
+			White = {
+				name = L['Sell white'],
+				type = 'toggle',
+				order = 21,
+				width = 'double',
+				get = function(info)
+					return SUI.DB.AutoSell.White
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.White = val
+				end
+			},
+			Green = {
+				name = L['Sell green'],
+				type = 'toggle',
+				order = 22,
+				width = 'double',
+				get = function(info)
+					return SUI.DB.AutoSell.Green
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.Green = val
+				end
+			},
+			Blue = {
+				name = L['Sell blue'],
+				type = 'toggle',
+				order = 23,
+				width = 'double',
+				get = function(info)
+					return SUI.DB.AutoSell.Blue
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.Blue = val
+				end
+			},
+			Purple = {
+				name = L['Sell purple'],
+				type = 'toggle',
+				order = 24,
+				width = 'double',
+				get = function(info)
+					return SUI.DB.AutoSell.Purple
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.Purple = val
+				end
+			},
+			line1 = {name = '', type = 'header', order = 200},
+			AutoRepair = {
+				name = L['Auto repair'],
+				type = 'toggle',
+				order = 201,
+				get = function(info)
+					return SUI.DB.AutoSell.AutoRepair
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.AutoRepair = val
+				end
+			},
+			UseGuildBankRepair = {
+				name = L['Use guild bank repair if possible'],
+				type = 'toggle',
+				order = 202,
+				get = function(info)
+					return SUI.DB.AutoSell.UseGuildBankRepair
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.UseGuildBankRepair = val
+				end
+			},
+			line2 = {name = '', type = 'header', order = 600},
+			debug = {
+				name = L['Enable debug messages'],
+				type = 'toggle',
+				order = 601,
+				width = 'full',
+				get = function(info)
+					return SUI.DB.AutoSell.debug
+				end,
+				set = function(info, val)
+					SUI.DB.AutoSell.debug = val
+				end
+			}
+		}
+	}
+	if SUI.IsClassic then
+		SUI.opt.args.ModSetting.args.AutoSell.args.MaxILVL.max = 90
+		SUI.opt.args.ModSetting.args.AutoSell.args.UseGuildBankRepair.hidden = true
+	end
+end
+
+local function IsInGearset(bag, slot)
 	local line
 	Tooltip:SetOwner(UIParent, 'ANCHOR_NONE')
 	Tooltip:SetBagItem(bag, slot)
@@ -371,212 +548,39 @@ function module:Repair(PersonalFunds)
 end
 
 function module:OnEnable()
-	module:FirstTime()
-	module:BuildOptions()
-	if SUI.DB.EnabledComponents.AutoSell then
-		module:Enable()
-	else
+	if not SUI.DB.EnabledComponents.AutoSell then
 		return
 	end
-end
 
-function module:Enable()
-	local function MerchantEventHandler(self, event, ...)
-		if not SUI.DB.EnabledComponents.AutoSell then
-			return
-		end
-		if event == 'MERCHANT_SHOW' then
-			-- Sell then repair so we gain gold before we use it.
-			module:ScheduleTimer('SellTrash', .2)
-			-- module:SellTrash()
-			module:Repair()
-		else
-			module:CancelAllTimers()
-			if (totalValue > 0) then
-				-- SUI:Print("Sold items for " .. SUI:GoldFormattedValue(totalValue));
-				totalValue = 0
+	if not LoadedOnce then
+		SetupPage()
+		BuildOptions()
+		local function MerchantEventHandler(self, event, ...)
+			if not SUI.DB.EnabledComponents.AutoSell then
+				return
 			end
+			if event == 'MERCHANT_SHOW' then
+				-- Sell then repair so we gain gold before we use it.
+				module:ScheduleTimer('SellTrash', .2)
+				module:Repair()
+			else
+				module:CancelAllTimers()
+				if (totalValue > 0) then
+					totalValue = 0
+				end
+			end
+			LoadedOnce = true
 		end
+
+		frame:SetScript('OnEvent', MerchantEventHandler)
 	end
-	frame:SetScript('OnEvent', MerchantEventHandler)
+
 	frame:RegisterEvent('MERCHANT_SHOW')
 	frame:RegisterEvent('MERCHANT_CLOSED')
 end
 
-function module:Disable()
+function module:OnDisable()
 	SUI:Print('Autosell disabled')
 	frame:UnregisterEvent('MERCHANT_SHOW')
 	frame:UnregisterEvent('MERCHANT_CLOSED')
-end
-
-function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['AutoSell'] = {
-		type = 'group',
-		name = L['Auto sell'],
-		args = {
-			NotCrafting = {
-				name = L["Don't sell crafting items"],
-				type = 'toggle',
-				order = 1,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.NotCrafting
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.NotCrafting = val
-				end
-			},
-			NotConsumables = {
-				name = L["Don't sell consumables"],
-				type = 'toggle',
-				order = 2,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.NotConsumables
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.NotConsumables = val
-				end
-			},
-			NotInGearset = {
-				name = L["Don't sell items in a equipment set"],
-				type = 'toggle',
-				order = 3,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.NotInGearset
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.NotInGearset = val
-				end
-			},
-			GearTokens = {
-				name = L['Sell tier tokens'],
-				type = 'toggle',
-				order = 4,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.GearTokens
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.GearTokens = val
-				end
-			},
-			MaxILVL = {
-				name = L['Maximum iLVL to sell'],
-				type = 'range',
-				order = 10,
-				width = 'full',
-				min = 1,
-				max = 500,
-				step = 1,
-				set = function(info, val)
-					SUI.DB.AutoSell.MaxILVL = val
-				end,
-				get = function(info)
-					return SUI.DB.AutoSell.MaxILVL
-				end
-			},
-			Gray = {
-				name = L['Sell gray'],
-				type = 'toggle',
-				order = 20,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Gray
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Gray = val
-				end
-			},
-			White = {
-				name = L['Sell white'],
-				type = 'toggle',
-				order = 21,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.White
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.White = val
-				end
-			},
-			Green = {
-				name = L['Sell green'],
-				type = 'toggle',
-				order = 22,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Green
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Green = val
-				end
-			},
-			Blue = {
-				name = L['Sell blue'],
-				type = 'toggle',
-				order = 23,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Blue
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Blue = val
-				end
-			},
-			Purple = {
-				name = L['Sell purple'],
-				type = 'toggle',
-				order = 24,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Purple
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Purple = val
-				end
-			},
-			line1 = {name = '', type = 'header', order = 200},
-			AutoRepair = {
-				name = L['Auto repair'],
-				type = 'toggle',
-				order = 201,
-				get = function(info)
-					return SUI.DB.AutoSell.AutoRepair
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.AutoRepair = val
-				end
-			},
-			UseGuildBankRepair = {
-				name = L['Use guild bank repair if possible'],
-				type = 'toggle',
-				order = 202,
-				get = function(info)
-					return SUI.DB.AutoSell.UseGuildBankRepair
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.UseGuildBankRepair = val
-				end
-			},
-			line2 = {name = '', type = 'header', order = 600},
-			debug = {
-				name = L['Enable debug messages'],
-				type = 'toggle',
-				order = 601,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.debug
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.debug = val
-				end
-			}
-		}
-	}
-	if SUI.IsClassic then
-		SUI.opt.args.ModSetting.args.AutoSell.args.MaxILVL.max = 90
-		SUI.opt.args.ModSetting.args.AutoSell.args.UseGuildBankRepair.hidden = true
-	end
 end
