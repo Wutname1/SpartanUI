@@ -78,7 +78,6 @@ function module:SlidingTrays(StyleSettings)
 
 	for _, key in ipairs(trayIDs) do
 		if not module.Trays[key] then
-			print('building tray ' .. key)
 			local tray = CreateFrame('Frame', 'SlidingTray_' .. key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
 			tray:SetFrameStrata('BACKGROUND')
 			tray:SetAlpha(.8)
