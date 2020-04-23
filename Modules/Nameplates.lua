@@ -81,7 +81,7 @@ local pvpIconWar = function(self, event, unit)
 end
 
 function module:Flash(self)
-	if self.Castbar.casting and self.Castbar.notInterruptible == false and self:IsVisible() then
+	if (self.Castbar.casting or self.Castbar.channeling) and self.Castbar.notInterruptible == false and self:IsVisible() then
 		local _, g, b = self.Castbar:GetStatusBarColor()
 		if b ~= 0 and g ~= 0 then
 			self.Castbar:SetStatusBarColor(1, 0, 0)
