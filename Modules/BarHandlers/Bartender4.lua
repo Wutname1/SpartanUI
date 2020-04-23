@@ -214,24 +214,8 @@ local function RefreshConfig()
 	end
 	loadScales()
 
-	local FrameList = {
-		BT4Bar1,
-		BT4Bar2,
-		BT4Bar3,
-		BT4Bar4,
-		BT4Bar5,
-		BT4Bar6,
-		BT4BarBagBar,
-		BT4BarExtraActionBar,
-		BT4BarZoneAbilityBar,
-		BT4BarStanceBar,
-		BT4BarPetBar,
-		BT4BarMicroMenu
-	}
 	-- Position Bars
 	for _, v in ipairs(FrameList) do
-		v = v:GetName()
-
 		if _G[v] and positionData[v] ~= '' then
 			local f = _G[v]
 			if f.scale then
