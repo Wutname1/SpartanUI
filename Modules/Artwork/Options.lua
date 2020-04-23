@@ -205,8 +205,8 @@ function module:SetupOptions()
 				inline = true,
 				order = 300,
 				args = {
-					offset = {
-						name = 'Horizontal offset',
+					Top = {
+						name = 'Top offset',
 						type = 'range',
 						width = 'double',
 						order = 3,
@@ -214,10 +214,26 @@ function module:SetupOptions()
 						max = 500,
 						step = .1,
 						get = function(info)
-							return SUI.DB.Offset.Horizontal
+							return SUI.DB.Offset.Horizontal.Top
 						end,
 						set = function(info, val)
-							SUI.DB.Offset.Horizontal = val
+							SUI.DB.Offset.Horizontal.Top = val
+							module:updateHorizontalOffset()
+						end
+					},
+					Bottom = {
+						name = 'Bottom offset',
+						type = 'range',
+						width = 'double',
+						order = 3,
+						min = -500,
+						max = 500,
+						step = .1,
+						get = function(info)
+							return SUI.DB.Offset.Horizontal.Bottom
+						end,
+						set = function(info, val)
+							SUI.DB.Offset.Horizontal.Bottom = val
 							module:updateHorizontalOffset()
 						end
 					}

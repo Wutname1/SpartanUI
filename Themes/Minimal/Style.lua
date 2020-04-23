@@ -7,17 +7,17 @@ local InitRan = false
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Minimal = {
-		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-1,90',
-		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-1,45',
+		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-1,90',
+		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-1,45',
 		--
-		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,1,1',
-		['BT4Bar4'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,1,1',
+		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,1,1',
+		['BT4Bar4'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,1,1',
 		--
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOM,-232,1',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOM,260,1',
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-232,1',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,260,1',
 		--
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,0,130',
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,0,130',
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,130',
+		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,130',
 		--
 		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',

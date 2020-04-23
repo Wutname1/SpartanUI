@@ -14,7 +14,7 @@
 			<Layer level="BACKGROUND">
 				<Texture name="$parent_Base1" file="Interface\AddOns\SpartanUI\Themes\Minimal\Images\base-center">
 					<Anchors>
-						<Anchor point="BOTTOM" relativePoint="BOTTOM"/>
+						<Anchor point="BOTTOM" relativeTo="SUI_BottomAnchor" relativePoint="BOTTOM"/>
 					</Anchors>
 				</Texture>
 

@@ -11,8 +11,8 @@ function module:OnInitialize()
 	-- Bartender 4 Settings
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.War = {
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,70',
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,70',
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
+		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
 		--
 		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
@@ -198,7 +198,7 @@ function module:CreateArtwork()
 	plate:SetSize(1002, 139)
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
-	plate:SetAllPoints(SUI_ActionBarAnchor)
+	plate:SetAllPoints(SUI_BottomAnchor)
 
 	for i = 1, 4 do
 		plate['BG' .. i] = Artwork_Core:CreateBarBG(BarBGSettings, i, War_ActionBarPlate)
@@ -219,8 +219,8 @@ function module:CreateArtwork()
 	--Setup the Bottom Artwork
 	artFrame:SetFrameStrata('BACKGROUND')
 	artFrame:SetFrameLevel(1)
-	artFrame:SetPoint('BOTTOMLEFT')
-	artFrame:SetPoint('TOPRIGHT', SpartanUI, 'BOTTOMRIGHT', 0, 153)
+	artFrame:SetSize(2, 2)
+	artFrame:SetPoint('BOTTOM', SUI_BottomAnchor)
 
 	artFrame.Left = artFrame:CreateTexture('SUI_Art_War_Left', 'BORDER')
 	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\Base_Bar_Left')

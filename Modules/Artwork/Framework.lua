@@ -291,6 +291,12 @@ function module:updateOffset()
 end
 
 function module:updateHorizontalOffset()
+	SUI_BottomAnchor:ClearAllPoints()
+	SUI_BottomAnchor:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', SUI.DB.Offset.Horizontal.Bottom, 0)
+
+	SUI_TopAnchor:ClearAllPoints()
+	SUI_TopAnchor:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', SUI.DB.Offset.Horizontal.Top, 0)
+
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
 	if style.updateXOffset then
@@ -380,6 +386,11 @@ function module:CreateBarBG(skinSettings, number, parent)
 	frame.BG:SetTexture(skinSettings.TexturePath)
 	frame.BG:SetTexCoord(unpack(skinSettings.TexCoord or {0, 1, 0, 1}))
 	frame.BG:SetAlpha(skinSettings.alpha or 1)
-	frame.BG:SetAllPoints(frame)
+	if skinSettings.point then
+		frame.BG:SetPoint(skinSettings.point)
+	else
+		frame.BG:SetAllPoints(frame)
+	end
+
 	return frame
 end

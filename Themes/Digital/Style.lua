@@ -12,11 +12,11 @@ local InitRan = false
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Digital = {
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-285,192',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-661,191',
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,192',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,340,191',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,707,193'
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193'
 	}
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
@@ -67,13 +67,13 @@ function module:CreateArtwork()
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
 	plate:ClearAllPoints()
-	plate:SetAllPoints(SUI_ActionBarAnchor)
+	plate:SetAllPoints(SUI_BottomAnchor)
 
 	--Setup the Bottom Artwork
 	artFrame:SetFrameStrata('BACKGROUND')
 	artFrame:SetFrameLevel(1)
-	artFrame:SetPoint('BOTTOMLEFT')
-	artFrame:SetPoint('TOPRIGHT', SpartanUI, 'BOTTOMRIGHT', 0, 153)
+	artFrame:SetSize(2, 2)
+	artFrame:SetPoint('BOTTOM', SUI_BottomAnchor)
 
 	artFrame.Left = artFrame:CreateTexture('SUI_Art_War_Left', 'BORDER')
 	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM', 0, 0)
@@ -90,19 +90,6 @@ function module:CreateArtwork()
 end
 
 function module:EnableArtwork()
-	hooksecurefunc(
-		'UIParent_ManageFramePositions',
-		function()
-			if TutorialFrameAlertButton then
-				TutorialFrameAlertButton:SetParent(Minimap)
-				TutorialFrameAlertButton:ClearAllPoints()
-				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-			end
-			CastingBarFrame:ClearAllPoints()
-			CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Digital, 'TOP', 0, 90)
-		end
-	)
-
 	module:SetupVehicleUI()
 
 	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then

@@ -36,11 +36,11 @@ function module:OnInitialize()
 	-- BarHandler
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Fel = {
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-285,192',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-661,191',
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,192',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,340,191',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,707,193'
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193'
 	}
 
 	-- Unitframes
@@ -108,13 +108,13 @@ function module:CreateArtwork()
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
 	plate:ClearAllPoints()
-	plate:SetAllPoints(SUI_ActionBarAnchor)
+	plate:SetAllPoints(SUI_BottomAnchor)
 
 	--Setup the Bottom Artwork
 	artFrame:SetFrameStrata('BACKGROUND')
 	artFrame:SetFrameLevel(1)
-	artFrame:SetPoint('BOTTOMLEFT')
-	artFrame:SetPoint('TOPRIGHT', SpartanUI, 'BOTTOMRIGHT', 0, 153)
+	artFrame:SetSize(2, 2)
+	artFrame:SetPoint('BOTTOM', SUI_BottomAnchor)
 
 	artFrame.Left = artFrame:CreateTexture('SUI_Art_War_Left', 'BORDER')
 	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM', 0, 0)

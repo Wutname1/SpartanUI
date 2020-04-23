@@ -2,32 +2,170 @@ local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Classic')
+local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 if SUI.DB.Styles.Classic.BuffLoc == nil then
 	SUI.DB.Styles.Classic.BuffLoc = true
 end
 local InitRan = false
 
+local function CreateArtwork()
+	local plate = CreateFrame('Frame', 'Classic_ActionBarPlate', artFrame)
+	plate:SetSize(1002, 139)
+	plate:SetFrameStrata('BACKGROUND')
+	plate:SetFrameLevel(1)
+	plate:SetAllPoints(SUI_BottomAnchor)
+
+	-- Create actionbar BG's
+	local BarBGSettings = {
+		name = 'Classic',
+		height = 37,
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop1',
+		TexCoord = {0.107421875, 0.896484375, 0.25, 0.765625}
+	}
+
+	local BarBGSettings2 = {
+		name = 'Classic',
+		width = 140,
+		height = 110,
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop3',
+		TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
+	}
+
+	local BarBGSettings3 = {
+		name = 'Classic',
+		-- height = 32,
+		point = 'BOTTOM',
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop0'
+		-- TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
+	}
+
+	local PopupMask = {
+		name = 'Classic',
+		height = 34,
+		point = 'BOTTOMRIGHT',
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup1'
+		-- TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
+	}
+
+	for i = 1, 4 do
+		plate['BG' .. i] = Artwork_Core:CreateBarBG(BarBGSettings, i, Classic_ActionBarPlate)
+	end
+	plate.BG5 = Artwork_Core:CreateBarBG(BarBGSettings2, 5, Classic_ActionBarPlate)
+	plate.BG6 = Artwork_Core:CreateBarBG(BarBGSettings2, 6, Classic_ActionBarPlate)
+
+	for i = 1, 6 do
+		plate['BG' .. i]:SetFrameLevel(3)
+	end
+
+	plate.POP1 = Artwork_Core:CreateBarBG(BarBGSettings3, 7, Classic_ActionBarPlate)
+	plate.POP2 = Artwork_Core:CreateBarBG(BarBGSettings3, 8, Classic_ActionBarPlate)
+	plate.POP1:SetFrameLevel(3)
+	plate.POP2:SetFrameLevel(3)
+
+	plate.mask1 = Artwork_Core:CreateBarBG(PopupMask, 9, Classic_ActionBarPlate)
+	plate.mask1:SetFrameStrata('HIGH')
+	plate.mask1:SetFrameLevel(0)
+	plate.mask1:SetPoint('BOTTOMRIGHT', plate.POP1, 'BOTTOMRIGHT')
+
+	plate.mask2 = Artwork_Core:CreateBarBG(PopupMask, 10, Classic_ActionBarPlate)
+	plate.mask2.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup2')
+	plate.mask2:SetFrameStrata('HIGH')
+	plate.mask2:SetFrameLevel(0)
+	plate.mask2.BG:ClearAllPoints()
+	plate.mask2.BG:SetPoint('BOTTOMLEFT', plate.mask2)
+	plate.mask2:SetPoint('BOTTOMLEFT', plate.POP2, 'BOTTOMLEFT')
+
+	-- Position Actionbar BG's
+	plate.BG1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -100, 70)
+	plate.BG2:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -100, 31)
+
+	plate.BG3:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 100, 70)
+	plate.BG4:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 100, 31)
+
+	plate.BG5:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -502, 5)
+	plate.BG6:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 502, 5)
+
+	plate.POP1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -100, 105)
+	plate.POP2:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 100, 105)
+
+	--Setup the Bottom Artwork
+	artFrame:SetFrameStrata('BACKGROUND')
+	artFrame:SetFrameLevel(1)
+	artFrame:SetSize(2, 2)
+	artFrame:SetPoint('BOTTOM', SUI_BottomAnchor)
+
+	artFrame.Center = artFrame:CreateTexture('SUI_Art_Classic_Center', 'BACKGROUND')
+	artFrame.Center:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base-center')
+	artFrame.Center:SetPoint('BOTTOM', artFrame, 'BOTTOM')
+
+	artFrame.Left = artFrame:CreateTexture('SUI_Art_Classic_Left', 'BACKGROUND')
+	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base-left1')
+	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame.Center, 'BOTTOMLEFT', 0, 0)
+	artFrame.FarLeft = artFrame:CreateTexture('SUI_Art_Classic_FarLeft', 'BACKGROUND')
+	artFrame.FarLeft:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base-left2')
+	artFrame.FarLeft:SetPoint('BOTTOMRIGHT', artFrame.Left, 'BOTTOMLEFT', 0, 0)
+	artFrame.FarLeft:SetPoint('BOTTOMLEFT', SpartanUI, 'BOTTOMLEFT', 0, 0)
+
+	artFrame.Right = artFrame:CreateTexture('SUI_Art_Classic_Right', 'BACKGROUND')
+	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base-right1')
+	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame.Center, 'BOTTOMRIGHT')
+	artFrame.FarRight = artFrame:CreateTexture('SUI_Art_Classic_FarRight', 'BACKGROUND')
+	artFrame.FarRight:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base-right2')
+	artFrame.FarRight:SetPoint('BOTTOMLEFT', artFrame.Right, 'BOTTOMRIGHT')
+	artFrame.FarRight:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
+
+	if SUI.DB.Artwork.VehicleUI then
+		RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+	end
+
+	do -- create base module frames
+		-- Fix CPU leak, use UpdateInterval
+		plate.UpdateInterval = 0.5
+		plate.TimeSinceLastUpdate = 0
+		plate:HookScript(
+			'OnUpdate',
+			function(self, ...) -- backdrop and popup visibility changes (alpha, animation, hide/show)
+				local elapsed = select(1, ...)
+				self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
+				if (self.TimeSinceLastUpdate > self.UpdateInterval) then
+					if not MouseIsOver(plate.mask1) and not MouseIsOver(plate.POP1) and SUI.DB.ActionBars['popup1'].anim then -- popup1 animation
+						plate.mask1:Show()
+					else
+						plate.mask1:Hide()
+					end
+					if not MouseIsOver(plate.mask2) and not MouseIsOver(plate.POP2) and SUI.DB.ActionBars['popup2'].anim then -- popup2 animation
+						plate.mask2:Show()
+					else
+						plate.mask2:Hide()
+					end
+					self.TimeSinceLastUpdate = 0
+				end
+			end
+		)
+	end
+end
+
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Classic = {
-		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-358,81',
-		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-359,32',
+		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-358,81',
+		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,32',
 		--
-		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,359,80',
-		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,359,33',
+		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,359,80',
+		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,359,33',
 		--
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,-2,3',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,4,3',
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-2,3',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,4,3',
 		--
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,130',
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,130',
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
 		--
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-224,138',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-564,165',
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
 		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,297,133',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,628,168'
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,297,133',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
 	}
 	BarHandler.BarScale.BT4.Classic = {
 		['BT4Bar1'] = 0.78,
@@ -58,16 +196,39 @@ function module:OnInitialize()
 			TexCoord = {.68, 0, 0, 0.6640625}
 		}
 	}
+
+	CreateArtwork()
 end
 
 function module:OnEnable()
 	if (SUI.DB.Artwork.Style == 'Classic') then
 		module:SetupMenus()
-		module:InitFramework()
-		module:InitActionBars()
-		module:EnableFramework()
-		module:EnableActionBars()
-		module:EnableMinimap()
+
+		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
+		SUI_FramesAnchor:SetFrameLevel(1)
+		SUI_FramesAnchor:ClearAllPoints()
+		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Classic_AnchorFrame', 'TOPLEFT', 0, 0)
+		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Classic_AnchorFrame', 'TOPRIGHT', 0, 153)
+
+		hooksecurefunc(
+			SUI_Art_Classic,
+			'Hide',
+			function()
+				Artwork_Core:updateViewport()
+			end
+		)
+		hooksecurefunc(
+			SUI_Art_Classic,
+			'Show',
+			function()
+				Artwork_Core:updateViewport()
+			end
+		)
+
+		module:SetupVehicleUI()
+		if SUI.DB.Styles.Classic.Color.Art then
+			module:SetColor()
+		end
 	else
 		module:Disable()
 	end
@@ -462,23 +623,6 @@ function module:SetupMenus()
 				type = 'description',
 				fontSize = 'small',
 				hidden = true
-			},
-			xOffset = {
-				name = L['MoveSideways'],
-				type = 'range',
-				width = 'full',
-				order = 2,
-				desc = L['MoveSidewaysDesc'],
-				min = -200,
-				max = 200,
-				step = .1,
-				get = function(info)
-					return SUI.DB.Offset.Horizontal / 6.25
-				end,
-				set = function(info, val)
-					SUI.DB.Offset.Horizontal = val * 6.25
-					module:updateSpartanXOffset()
-				end
 			},
 			offset = {
 				name = L['ConfOffset'],

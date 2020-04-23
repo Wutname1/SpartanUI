@@ -147,7 +147,10 @@ local DBdefault = {
 		TopAuto = true,
 		Bottom = 0,
 		BottomAuto = true,
-		Horizontal = 0
+		Horizontal = {
+			Bottom = 0,
+			Top = 0
+		}
 	},
 	SetupWizard = {
 		FirstLaunch = true
@@ -177,11 +180,11 @@ local DBdefault = {
 				},
 				Left = {
 					Grow = 'LEFT',
-					Position = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOM,-100,0'
+					Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-100,0'
 				},
 				Right = {
 					Grow = 'RIGHT',
-					Position = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOM,100,0'
+					Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,0'
 				}
 			},
 			Frames = {
@@ -368,7 +371,7 @@ local DBdefault = {
 				coords = {
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
 				},
-				position = 'CENTER,SUI_Art_Classic,CENTER,0,54'
+				position = 'CENTER,SUI_Art_Classic_Center,CENTER,0,0'
 			},
 			StatusBars = {
 				['**'] = {
@@ -386,6 +389,7 @@ local DBdefault = {
 				Right = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-rep',
 					Grow = 'RIGHT',
+					Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,79,0',
 					texCords = {0, 0.849609375, 0, 1},
 					GlowPoint = {x = 20},
 					MaxWidth = 50
@@ -1849,6 +1853,23 @@ do
 	plate:SetFrameLevel(1)
 	plate:SetPoint('BOTTOMLEFT')
 	plate:SetPoint('TOPRIGHT')
+
+	-- Create Bottom Anchor
+	local BottomAnchor = CreateFrame('Frame', 'SUI_BottomAnchor', SpartanUI)
+	BottomAnchor:SetFrameStrata('BACKGROUND')
+	BottomAnchor:SetFrameLevel(1)
+	BottomAnchor:SetPoint('BOTTOM')
+	BottomAnchor:SetSize(1000, 140)
+
+	-- Create Top Anchor
+	local TopAnchor = CreateFrame('Frame', 'SUI_TopAnchor', SpartanUI)
+	TopAnchor:SetFrameStrata('BACKGROUND')
+	TopAnchor:SetFrameLevel(1)
+	TopAnchor:SetPoint('TOP')
+	TopAnchor:SetSize(1000, 5)
+
+	plate.TopAnchor = TopAnchor
+	plate.BottomAnchor = BottomAnchor
 end
 
 ---------------  Chat Commands  ---------------

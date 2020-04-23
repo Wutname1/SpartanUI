@@ -13,21 +13,21 @@ function module:OnInitialize()
 
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Transparent = {
-		['BT4Bar1'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-347,80',
-		['BT4Bar2'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-347,25',
-		['BT4Bar3'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,344,80',
-		['BT4Bar4'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,344,25',
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_ActionBarAnchor,BOTTOMLEFT,0,5',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_ActionBarAnchor,BOTTOMRIGHT,3,5',
+		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,80',
+		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,25',
+		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,344,80',
+		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,344,25',
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,0,5',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,3,5',
 		--
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-285,186',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,-581,187',
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,186',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-581,187',
 		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,320,183',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_ActionBarAnchor,BOTTOM,611,188',
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,320,183',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,611,188',
 		--
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,15',
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_ActionBarAnchor,TOP,0,15'
+		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15',
+		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15'
 	}
 
 	BarHandler.BarScale.BT4.Transparent = {
@@ -48,7 +48,7 @@ function module:OnEnable()
 		plate:SetSize(1002, 139)
 		plate:SetFrameStrata('BACKGROUND')
 		plate:SetFrameLevel(1)
-		plate:SetAllPoints(SUI_ActionBarAnchor)
+		plate:SetAllPoints(SUI_BottomAnchor)
 
 		local BarBGSettings = {
 			name = 'Transparent',
@@ -90,8 +90,8 @@ function module:OnEnable()
 		--Setup the Bottom Artwork
 		artFrame:SetFrameStrata('BACKGROUND')
 		artFrame:SetFrameLevel(1)
-		artFrame:SetPoint('BOTTOMLEFT')
-		artFrame:SetPoint('TOPRIGHT', SpartanUI, 'BOTTOMRIGHT', 0, 153)
+		artFrame:SetSize(2, 2)
+		artFrame:SetPoint('BOTTOM', SUI_BottomAnchor)
 
 		artFrame.Center = artFrame:CreateTexture('SUI_Art_Transparent_Center', 'BACKGROUND')
 		artFrame.Center:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base-center')
@@ -103,7 +103,7 @@ function module:OnEnable()
 		artFrame.FarLeft = artFrame:CreateTexture('SUI_Art_Transparent_FarLeft', 'BACKGROUND')
 		artFrame.FarLeft:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base-sides')
 		artFrame.FarLeft:SetPoint('BOTTOMRIGHT', artFrame.Left, 'BOTTOMLEFT', 0, 0)
-		artFrame.FarLeft:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOMLEFT', 0, 0)
+		artFrame.FarLeft:SetPoint('BOTTOMLEFT', SpartanUI, 'BOTTOMLEFT', 0, 0)
 
 		artFrame.Right = artFrame:CreateTexture('SUI_Art_Transparent_Right', 'BACKGROUND')
 		artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base-sides')
@@ -111,7 +111,7 @@ function module:OnEnable()
 		artFrame.FarRight = artFrame:CreateTexture('SUI_Art_Transparent_FarRight', 'BACKGROUND')
 		artFrame.FarRight:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base-sides')
 		artFrame.FarRight:SetPoint('BOTTOMLEFT', artFrame.Right, 'BOTTOMRIGHT')
-		artFrame.FarRight:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOMRIGHT')
+		artFrame.FarRight:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
 
 		if SUI.DB.Artwork.VehicleUI then
 			RegisterStateDriver(SUI_Art_Transparent, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
