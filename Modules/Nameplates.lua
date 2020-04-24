@@ -234,6 +234,7 @@ local NamePlateFactory = function(frame, unit)
 		-- health bar
 		local health = CreateFrame('StatusBar', nil, frame)
 		health:SetPoint('BOTTOM')
+		health:SetFrameStrata('HIGH')
 		health:SetSize(frame:GetWidth(), elements.Health.height)
 		health:SetStatusBarTexture(BarTexture)
 		-- health.colorHealth = true
@@ -293,6 +294,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 		power:SetSize(frame:GetWidth(), elements.Power.height)
 		power:SetStatusBarTexture(BarTexture)
+		power:SetFrameStrata('HIGH')
 
 		frame.Power = power
 		frame.Power.colorPower = true
@@ -311,6 +313,7 @@ local NamePlateFactory = function(frame, unit)
 		cast:SetSize(frame:GetWidth(), elements.Castbar.height)
 		cast:SetStatusBarTexture(BarTexture)
 		cast:SetStatusBarColor(1, 0.7, 0)
+		cast:SetFrameStrata('HIGH')
 		if elements.Castbar.text then
 			cast.Text = cast:CreateFontString()
 			SUI:FormatFont(cast.Text, 7, 'Nameplate')
@@ -402,11 +405,11 @@ local NamePlateFactory = function(frame, unit)
 		frame.PvPIndicator.Override = pvpIconWar
 
 		-- Threat Display
-		local ThreatIndicator = frame:CreateTexture(nil, 'OVERLAY')
+		local ThreatIndicator = frame:CreateTexture(nil, 'BACKGROUND')
 		ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\square')
 		ThreatIndicator:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
-		ThreatIndicator:SetPoint('TOPLEFT', frame, 'TOPLEFT', -2, 2)
-		ThreatIndicator:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 2, -2)
+		ThreatIndicator:SetPoint('TOPLEFT', frame, 'TOPLEFT', -3, 3)
+		ThreatIndicator:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 3, -3)
 		ThreatIndicator.feedbackUnit = 'PLAYER'
 		frame.ThreatIndicator = ThreatIndicator
 
