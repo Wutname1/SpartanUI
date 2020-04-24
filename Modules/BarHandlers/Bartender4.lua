@@ -118,8 +118,10 @@ local SUIBT4Settings = {
 		enabled = false
 	},
 	ExtraActionBar = {
-		enabled = true,
-		position = {scale = 0.6}
+		enabled = false
+	},
+	ZoneAbilityBar = {
+		enabled = false
 	},
 	BlizzardArt = {enabled = false},
 	StatusTrackingBar = {enabled = false},
@@ -137,8 +139,8 @@ local FrameList = {
 	'BT4Bar8',
 	'BT4Bar9',
 	'BT4BarBagBar',
-	'BT4BarExtraActionBar',
-	'BT4BarZoneAbilityBar',
+	-- 'BT4BarExtraActionBar',
+	-- 'BT4BarZoneAbilityBar',
 	'BT4BarStanceBar',
 	'BT4BarPetBar',
 	'BT4BarMicroMenu'
@@ -299,8 +301,8 @@ local function AddMovers()
 		end
 	end
 	BTMover('BT4BarBagBar', 'Bag bar')
-	BTMover('BT4BarExtraActionBar', 'Extra Action Bar')
-	BTMover('BT4BarZoneAbilityBar', 'Zone Ability Bar')
+	-- BTMover('BT4BarExtraActionBar', 'Extra Action Bar')
+	-- BTMover('BT4BarZoneAbilityBar', 'Zone Ability Bar')
 	BTMover('BT4BarStanceBar', 'Stance Bar')
 	BTMover('BT4BarPetBar', 'Pet Bar')
 	BTMover('BT4BarMicroMenu', 'Micro menu')

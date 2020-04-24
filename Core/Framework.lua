@@ -31,7 +31,7 @@ SUI.Version = ''
 --@end-do-not-package@
 --@alpha@
 -- TODO REMOVE FOR 6.0 RELEASE
-SUI.Version = '5.9.91'
+SUI.Version = '5.9.92'
 --@end-alpha@
 
 ---------------  Options Init ---------------
@@ -340,6 +340,8 @@ local DBdefault = {
 			BlizzMovers = {
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
+				['ZoneAbility'] = 'CENTER,SpartanUI,CENTER,0,-172',
+				['ExtraAction'] = 'CENTER,SpartanUI,CENTER,0,-172',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'LEFT,SUI_UF_player,RIGHT,20,0'
 			},
@@ -1834,6 +1836,13 @@ function SUI:DBUpgrades()
 	if SUI.DB.Version < '5.9.91' then
 		SUI.SpartanUIDB:ResetProfile()
 		ReloadUI()
+	end
+	if SUI.DB.Version < '5.9.92' then
+		for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do
+			if k == 'ZoneAbilityBar' or k == 'ExtraActionBar' then
+				v.db.profile.enabled = false
+			end
+		end
 	end
 
 	SUI.DB.Version = SUI.Version

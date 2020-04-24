@@ -66,6 +66,32 @@ local function AltPowerBar()
 	end
 end
 
+local function AbilityBars()
+	-- ZoneAbility
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ZoneAbility)
+	local ZoneAbilityHolder = CreateFrame('Frame', 'ZoneAbilityHolder', SpartanUI)
+	ZoneAbilityHolder:SetSize(ZoneAbilityFrame:GetSize())
+	ZoneAbilityHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability')
+
+	ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
+	ZoneAbilityFrame:ClearAllPoints()
+	ZoneAbilityFrame:SetPoint('CENTER', ZoneAbilityHolder)
+	ZoneAbilityFrame.ignoreFramePositionManager = true
+
+	-- Extra Action / Boss Bar
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ZoneAbility)
+	local ExtraActionHolder = CreateFrame('Frame', 'ExtraActionHolder', SpartanUI)
+	ExtraActionHolder:SetSize(ExtraActionBarFrame:GetSize())
+	ExtraActionHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+	MoveIt:CreateMover(ExtraActionHolder, 'ExtraAction', 'Boss Button')
+
+	ExtraActionBarFrame:SetParent(ExtraActionHolder)
+	ExtraActionBarFrame:ClearAllPoints()
+	ExtraActionBarFrame:SetPoint('CENTER', ExtraActionHolder)
+	ExtraActionBarFrame.ignoreFramePositionManager = true
+end
+
 local function AlertFrame()
 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.AlertFrame)
 	local AlertHolder = CreateFrame('Frame', 'AlertHolder', SpartanUI)
@@ -114,4 +140,5 @@ function module.BlizzMovers()
 	TalkingHead()
 	AltPowerBar()
 	VehicleLeaveButton()
+	AbilityBars()
 end
