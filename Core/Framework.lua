@@ -1645,7 +1645,8 @@ local DBdefault = {
 			Health = {
 				height = 5,
 				colorTapping = true,
-				colorReaction = true,
+				colorReaction = false,
+				colorSmooth = true,
 				colorClass = true
 			},
 			Power = {

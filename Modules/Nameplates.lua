@@ -237,11 +237,12 @@ local NamePlateFactory = function(frame, unit)
 		health:SetFrameStrata('HIGH')
 		health:SetSize(frame:GetWidth(), elements.Health.height)
 		health:SetStatusBarTexture(BarTexture)
-		-- health.colorHealth = true
 		health.frequentUpdates = true
 		health.colorTapping = elements.Health.colorTapping
 		health.colorReaction = elements.Health.colorReaction
 		health.colorClass = elements.Health.colorClass
+		health.colorSmooth = elements.Health.colorSmooth
+
 		frame.Health = health
 
 		frame.bg = {}
@@ -406,8 +407,9 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Threat Display
 		local ThreatIndicator = frame:CreateTexture(nil, 'BACKGROUND')
-		ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\square')
-		ThreatIndicator:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
+		ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\HighlightBar')
+		-- ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\square')
+		-- ThreatIndicator:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 		ThreatIndicator:SetPoint('TOPLEFT', frame, 'TOPLEFT', -3, 3)
 		ThreatIndicator:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 3, -3)
 		ThreatIndicator.feedbackUnit = 'PLAYER'
@@ -749,6 +751,18 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									SUI.DB.NamePlates.elements.Health.colorReaction = val
+								end
+							},
+							colorSmooth = {
+								name = 'Color by health remaning',
+								type = 'toggle',
+								width = 'full',
+								order = 30,
+								get = function(info)
+									return SUI.DB.NamePlates.elements.Health.colorSmooth
+								end,
+								set = function(info, val)
+									SUI.DB.NamePlates.elements.Health.colorSmooth = val
 								end
 							},
 							colorClass = {
