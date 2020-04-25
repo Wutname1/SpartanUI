@@ -408,8 +408,6 @@ local NamePlateFactory = function(frame, unit)
 		-- Threat Display
 		local ThreatIndicator = frame:CreateTexture(nil, 'BACKGROUND')
 		ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\HighlightBar')
-		-- ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\square')
-		-- ThreatIndicator:SetTexCoord(0.0625, 0.9375, 0.0625, 0.9375)
 		ThreatIndicator:SetPoint('TOPLEFT', frame, 'TOPLEFT', -3, 3)
 		ThreatIndicator:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 3, -3)
 		ThreatIndicator.feedbackUnit = 'PLAYER'
