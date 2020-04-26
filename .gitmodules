@@ -7,3 +7,6 @@
 [submodule "libs/LibClassicCasterino"]
 	path = libs/LibClassicCasterino
 	url = https://github.com/rgd87/LibClassicCasterino.git
+[submodule "libs/oUF_QuestMobIndicator"]
+	path = libs/oUF_QuestMobIndicator
+	url = git@github.com:Wutname1/oUF_QuestMobIndicator.git
