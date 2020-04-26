@@ -1071,7 +1071,11 @@ local DBdefault = {
 						enabled = true
 					},
 					SummonIndicator = {},
-					QuestIndicator = {},
+					QuestMobIndicator = {
+						position = {
+							anchor = 'RIGHT'
+						}
+					},
 					Range = {
 						enabled = true,
 						insideAlpha = 1,
@@ -1379,7 +1383,7 @@ local DBdefault = {
 					Castbar = {
 						enabled = true
 					},
-					QuestIndicator = {
+					QuestMobIndicator = {
 						enabled = true
 					},
 					RaidRoleIndicator = {
@@ -1528,7 +1532,7 @@ local DBdefault = {
 						RaidRoleIndicator = {},
 						ResurrectIndicator = {},
 						SummonIndicator = {},
-						QuestIndicator = {},
+						QuestMobIndicator = {},
 						Range = {},
 						phaseindicator = {},
 						ThreatIndicator = {},
@@ -1641,7 +1645,7 @@ local DBdefault = {
 			Name = {
 				SetJustifyH = 'CENTER'
 			},
-			QuestIndicator = {},
+			QuestMobIndicator = {},
 			Health = {
 				height = 5,
 				colorTapping = true,

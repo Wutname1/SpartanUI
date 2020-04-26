@@ -881,7 +881,7 @@ local function AddIndicatorOptions(frameName)
 		['SummonIndicator'] = 'Summon'
 	}
 	local targetOnly = {
-		['QuestIndicator'] = 'Quest'
+		['QuestMobIndicator'] = 'Quest'
 	}
 	local AllIndicators = {
 		['SUI_ClassIcon'] = 'Class icon',

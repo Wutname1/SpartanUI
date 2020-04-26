@@ -38,7 +38,7 @@ local elementList = {
 	'RaidRoleIndicator',
 	'ResurrectIndicator',
 	'SummonIndicator',
-	'QuestIndicator',
+	'QuestMobIndicator',
 	'Range',
 	'PhaseIndicator',
 	'ThreatIndicator',
@@ -57,7 +57,7 @@ local IndicatorList = {
 	'RaidRoleIndicator',
 	'ResurrectIndicator',
 	'SummonIndicator',
-	'QuestIndicator',
+	'QuestMobIndicator',
 	'PhaseIndicator',
 	'ThreatIndicator',
 	'SUI_RaidGroup',
@@ -979,6 +979,9 @@ local function CreateUnitFrame(self, unit)
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
 		self.ReadyCheckIndicator.Sizeable = true
 		ElementUpdate(self, 'ReadyCheckIndicator')
+
+		self.QuestMobIndicator = self:CreateTexture(nil, 'OVERLAY')
+		ElementUpdate(self, 'QuestMobIndicator')
 
 		-- Position and size
 		self.PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')

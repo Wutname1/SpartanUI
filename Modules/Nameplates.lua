@@ -228,22 +228,19 @@ local NamePlateFactory = function(frame, unit)
 		frame.npcID = frame.unitGUID and select(6, strsplit('-', frame.unitGUID))
 
 		local elements = SUI.DB.NamePlates.elements
-		frame:SetSize(128, 16)
+		local height = 0
+		if SUI.DB.NamePlates.ShowName or SUI.DB.NamePlates.ShowLevel then
+			height = height + 13
+		end
+		if elements.Health.enabled then
+			height = height + elements.Health.height
+		end
+		if elements.Power.enabled then
+			height = height + elements.Power.height
+		end
+
+		frame:SetSize(128, height)
 		frame:SetPoint('CENTER', 0, 0)
-
-		-- health bar
-		local health = CreateFrame('StatusBar', nil, frame)
-		health:SetPoint('BOTTOM')
-		health:SetFrameStrata('HIGH')
-		health:SetSize(frame:GetWidth(), elements.Health.height)
-		health:SetStatusBarTexture(BarTexture)
-		health.frequentUpdates = true
-		health.colorTapping = elements.Health.colorTapping
-		health.colorReaction = elements.Health.colorReaction
-		health.colorClass = elements.Health.colorClass
-		health.colorSmooth = elements.Health.colorSmooth
-
-		frame.Health = health
 
 		frame.bg = {}
 		frame.bg.artwork = {}
@@ -285,6 +282,25 @@ local NamePlateFactory = function(frame, unit)
 			frame.Name:SetPoint('TOP', frame)
 			frame:Tag(frame.Name, nameString)
 		end
+
+		-- health bar
+		local health = CreateFrame('StatusBar', nil, frame)
+		if frame.Name then
+			health:SetPoint('TOP', frame.Name, 'BOTTOM', 0, -1)
+		else
+			health:SetPoint('TOP')
+		end
+		health:SetFrameStrata('HIGH')
+		health:SetSize(frame:GetWidth(), elements.Health.height)
+		health:SetStatusBarTexture(BarTexture)
+
+		health.frequentUpdates = true
+		health.colorTapping = elements.Health.colorTapping
+		health.colorReaction = elements.Health.colorReaction
+		health.colorClass = elements.Health.colorClass
+		health.colorSmooth = elements.Health.colorSmooth
+
+		frame.Health = health
 
 		-- Mana/Energy
 		local power = CreateFrame('StatusBar', nil, frame)
@@ -390,7 +406,7 @@ local NamePlateFactory = function(frame, unit)
 		local QuestIndicator = frame:CreateTexture(nil, 'OVERLAY')
 		QuestIndicator:SetSize(16, 16)
 		QuestIndicator:SetPoint('TOPRIGHT', frame)
-		frame.QuestIndicator = QuestIndicator
+		frame.QuestMobIndicator = QuestIndicator
 
 		-- Rare Elite indicator
 		local RareElite = frame:CreateTexture(nil, 'BACKGROUND', nil, -2)
