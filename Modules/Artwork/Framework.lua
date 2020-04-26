@@ -122,23 +122,6 @@ local function SetupPage()
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
 	SetupWindow:AddPage(PageData)
-
-	if not SUI.DB.Artwork.SetupDone then
-		--Set default scale based on if the user is using a widescreen.
-		local Resolution = ''
-		if select(4, GetBuildInfo()) >= 70000 then
-			Resolution = GetCVar('gxWindowedResolution')
-		else
-			Resolution = GetCVar('gxResolution')
-		end
-
-		local width, height = string.match(Resolution, '(%d+).-(%d+)')
-		if (tonumber(width) / tonumber(height) > 4 / 3) then
-			SUI.DB.scale = 0.92
-		else
-			SUI.DB.scale = 0.78
-		end
-	end
 end
 
 local function StyleUpdate()
