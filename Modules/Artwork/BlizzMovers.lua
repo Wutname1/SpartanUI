@@ -10,7 +10,7 @@ local function TalkingHead()
 		_G.UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
 
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
-		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame')
+		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
 		TalkingHeadFrame:HookScript(
 			'OnShow',
 			function()
@@ -62,7 +62,7 @@ local function AltPowerBar()
 			end
 		)
 
-		MoveIt:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power')
+		MoveIt:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power', nil, 'Blizzard UI')
 	end
 end
 
@@ -72,7 +72,7 @@ local function AbilityBars()
 	local ZoneAbilityHolder = CreateFrame('Frame', 'ZoneAbilityHolder', SpartanUI)
 	ZoneAbilityHolder:SetSize(ZoneAbilityFrame:GetSize())
 	ZoneAbilityHolder:SetPoint(point, anchor, secondaryPoint, x, y)
-	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability')
+	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
 
 	ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
 	ZoneAbilityFrame:ClearAllPoints()
@@ -84,7 +84,7 @@ local function AbilityBars()
 	local ExtraActionHolder = CreateFrame('Frame', 'ExtraActionHolder', SpartanUI)
 	ExtraActionHolder:SetSize(ExtraActionBarFrame:GetSize())
 	ExtraActionHolder:SetPoint(point, anchor, secondaryPoint, x, y)
-	MoveIt:CreateMover(ExtraActionHolder, 'ExtraAction', 'Boss Button')
+	MoveIt:CreateMover(ExtraActionHolder, 'ExtraAction', 'Boss Button', nil, 'Blizzard UI')
 
 	ExtraActionBarFrame:SetParent(ExtraActionHolder)
 	ExtraActionBarFrame:ClearAllPoints()
@@ -98,7 +98,7 @@ local function AlertFrame()
 	AlertHolder:SetSize(250, 40)
 	AlertHolder:SetPoint(point, anchor, secondaryPoint, x, y)
 	AlertHolder:Hide()
-	MoveIt:CreateMover(AlertHolder, 'AlertHolder', 'Alert frame anchor')
+	MoveIt:CreateMover(AlertHolder, 'AlertHolder', 'Alert frame anchor', nil, 'Blizzard UI')
 
 	local AlertFrame = _G.AlertFrame
 	local GroupLootContainer = _G.GroupLootContainer
@@ -119,7 +119,7 @@ local function VehicleLeaveButton()
 			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
 		MainMenuBarVehicleLeaveButton:ClearAllPoints()
 		MainMenuBarVehicleLeaveButton:SetPoint(point, anchor, secondaryPoint, x, y)
-		MoveIt:CreateMover(MainMenuBarVehicleLeaveButton, 'VehicleLeaveButton', 'Vehicle leave button')
+		MoveIt:CreateMover(MainMenuBarVehicleLeaveButton, 'VehicleLeaveButton', 'Vehicle leave button', nil, 'Blizzard UI')
 
 		MainMenuBarVehicleLeaveButton:HookScript(
 			'OnShow',

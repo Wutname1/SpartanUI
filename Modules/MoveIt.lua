@@ -22,6 +22,162 @@ local function GetPoints(obj)
 	return format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, Round(x), Round(y))
 end
 
+local function CreateGroup(groupName)
+	if SUI.opt.args.Movers.args[groupName] then
+		return
+	end
+
+	SUI.opt.args.Movers.args[groupName] = {
+		name = groupName,
+		type = 'group',
+		args = {}
+	}
+end
+
+local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
+	local anchorPoints = {
+		['TOPLEFT'] = 'TOP LEFT',
+		['TOP'] = 'TOP',
+		['TOPRIGHT'] = 'TOP RIGHT',
+		['RIGHT'] = 'RIGHT',
+		['CENTER'] = 'CENTER',
+		['LEFT'] = 'LEFT',
+		['BOTTOMLEFT'] = 'BOTTOM LEFT',
+		['BOTTOM'] = 'BOTTOM',
+		['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
+	}
+	local dynamicAnchorPoints = {
+		['UIParent'] = 'Blizzard UI',
+		['SUI_BottomAnchor'] = 'SpartanUI Bottom Anchor',
+		['SUI_TopAnchor'] = 'SpartanUI Top Anchor'
+	}
+
+	CreateGroup(groupName)
+
+	SUI.opt.args.Movers.args[groupName].args[MoverName] = {
+		name = groupName,
+		type = 'group',
+		inline = true,
+		args = {
+			name = {
+				name = DisplayName,
+				type = 'description',
+				order = 1,
+				fontSize = 'large'
+			},
+			position = {
+				name = 'Position',
+				type = 'group',
+				inline = true,
+				order = 2,
+				args = {
+					x = {
+						name = 'x',
+						order = 1,
+						type = 'input',
+						get = function()
+							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+							return x
+						end,
+						set = function(info, val)
+						end
+					},
+					y = {
+						name = 'y',
+						order = 2,
+						type = 'input',
+						get = function()
+							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+							return y
+						end,
+						set = function(info, val)
+						end
+					},
+					MyAnchorPoint = {
+						order = 3,
+						name = 'point',
+						type = 'select',
+						values = anchorPoints,
+						get = function()
+							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+							return point
+						end,
+						set = function(info, val)
+						end
+					},
+					AnchorTo = {
+						order = 4,
+						name = 'anchor',
+						type = 'select',
+						values = dynamicAnchorPoints,
+						get = function()
+							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+
+							if not dynamicAnchorPoints[anchor] then
+								dynamicAnchorPoints[anchor] = anchor
+							end
+
+							return anchor
+						end,
+						set = function(info, val)
+						end
+					},
+					ItsAnchorPoint = {
+						order = 5,
+						name = 'secondaryPoint',
+						type = 'select',
+						values = anchorPoints,
+						get = function()
+							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+							return secondaryPoint
+						end,
+						set = function(info, val)
+						end
+					}
+				}
+			},
+			ResetPosition = {
+				name = 'Reset Position',
+				type = 'execute',
+				order = 3,
+				func = function()
+					-- Mover
+				end
+			},
+			scale = {
+				name = 'Scale',
+				type = 'group',
+				inline = true,
+				order = 4,
+				args = {
+					scale = {
+						name = 'Current',
+						type = 'input',
+						order = 1,
+						get = function()
+							return (MoverFrame:GetScale() or 1)
+						end,
+						set = function(info, val)
+							MoverFrame:Scale(val)
+						end
+					},
+					ResetScale = {
+						name = 'Reset Scale',
+						type = 'execute',
+						order = 100,
+						func = function()
+							MoverFrame:SetScale(MoverFrame.defaultScale)
+							MoverFrame.parent:SetScale(MoverFrame.defaultScale)
+
+							SUI.DB.MoveIt.movers[name].AdjustedScale = false
+						end
+					}
+				}
+			}
+		}
+	}
+end
+
 function MoveIt:SaveMoverPosition(name)
 	local frame = _G[name]
 	-- local _, anchor = mover:GetPoint()
@@ -178,7 +334,7 @@ end
 
 local isDragging = false
 
-function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
+function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	if not SUI.DB.EnabledComponents.MoveIt then
 		return
 	end
@@ -202,7 +358,6 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 	f:EnableMouseWheel(true)
 	f:SetMovable(true)
 	f:SetSize(width, height)
-	f:SetScale(parent:GetScale() or 1)
 
 	f:SetBackdrop(
 		{
@@ -219,6 +374,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 	f.name = name
 	f.DisplayName = DisplayName
 	f.postdrag = postdrag
+	f.defaultScale = (parent:GetScale() or 1)
 	f.defaultPoint = GetPoints(parent)
 
 	f:SetFrameLevel(parent:GetFrameLevel() + 1)
@@ -235,11 +391,26 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 	f:SetFontString(fs)
 	f.DisplayName = fs
 
+	f:SetScale(SUI.DB.MoveIt.movers[name].AdjustedScale or parent:GetScale() or 1)
+	if SUI.DB.MoveIt.movers[name].AdjustedScale then
+		parent:SetScale(SUI.DB.MoveIt.movers[name].AdjustedScale)
+	end
+
 	if SUI.DB.MoveIt.movers[name].MovedPoints then
 		point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
 	end
 	f:ClearAllPoints()
 	f:SetPoint(point, anchor, secondaryPoint, x, y)
+
+	local Scale = function(self, ammount)
+		local Current = self:GetScale()
+		local NewScale = Current + ammount
+
+		self:SetScale(NewScale)
+		self.parent:SetScale(NewScale)
+
+		SUI.DB.MoveIt.movers[name].AdjustedScale = NewScale
+	end
 
 	local NudgeMover = function(self, nudgeX, nudgeY)
 		local point, anchor, secondaryPoint, x, y = self:GetPoint()
@@ -324,6 +495,11 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 			if SUI.DB.MoveIt.tips then
 				print("Tip use the chat command '/sui move reset' to reset everything quickly.")
 			end
+		elseif IsControlKeyDown() then -- Reset Scale to default
+			self:SetScale(self.defaultScale)
+			self.parent:SetScale(self.defaultScale)
+
+			SUI.DB.MoveIt.movers[name].AdjustedScale = false
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
 			self:Hide()
 			print(self.name .. ' hidden temporarily.')
@@ -342,13 +518,16 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 	end
 
 	local function OnMouseWheel(_, delta)
-		if IsShiftKeyDown() then
+		if IsAltKeyDown() then
+			f:Scale((delta / 100))
+		elseif IsShiftKeyDown() then
 			f:NudgeMover(nil, delta)
 		else
 			f:NudgeMover(delta)
 		end
 	end
 
+	f.Scale = Scale
 	f.NudgeMover = NudgeMover
 	f:SetScript('OnDragStart', OnDragStart)
 	f:SetScript('OnDragStop', OnDragStop)
@@ -373,6 +552,14 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 	local function scale(self, scale)
 		f:SetScale(max(scale, .01))
 		parent:SetScale(max(scale, .01))
+
+		local point, anchor, secondaryPoint, x, y = strsplit(',', f.defaultPoint)
+
+		if SUI.DB.MoveIt.movers[name].MovedPoints then
+			point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+		end
+		f:ClearAllPoints()
+		f:SetPoint(point, anchor, secondaryPoint, x, y)
 	end
 	local function position(self, point, anchor, secondaryPoint, x, y, forced, defaultPos)
 		-- If Frame:position() was called just make sure we are anchored properly
@@ -417,9 +604,13 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag)
 
 	parent:ClearAllPoints()
 	parent:SetPoint('TOPLEFT', f, 0, 0)
+
+	AddToOptions(name, DisplayName, (groupName or 'General'), f)
 end
 
 function MoveIt:OnInitialize()
+	MoveIt:Options()
+
 	coordFrame = StdUi:Window(nil, 480, 200)
 	coordFrame:SetFrameStrata('DIALOG')
 
@@ -474,8 +665,6 @@ function MoveIt:Enable()
 	MoverWatcher:SetFrameStrata('TOOLTIP')
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
-
-	MoveIt:Options()
 end
 
 function MoveIt:OnEnable()
@@ -560,6 +749,12 @@ function MoveIt:Options()
 				order = 56,
 				fontSize = 'medium'
 			},
+			line9a = {
+				name = '- Hold Control + use the scroll wheel to scale the frame',
+				type = 'description',
+				order = 56.5,
+				fontSize = 'medium'
+			},
 			line10 = {
 				name = '- Press ESCAPE to exit the movement system quickly.',
 				type = 'description',
@@ -577,6 +772,13 @@ function MoveIt:Options()
 				set = function(info, val)
 					SUI.DB.MoveIt.tips = val
 				end
+			},
+			MoverListing = {
+				name = 'Moveable frames',
+				type = 'group',
+				inline = true,
+				order = 15000,
+				args = {}
 			}
 		}
 	}
