@@ -312,13 +312,6 @@ function module:SetupWizard(RequiredPagesOnly)
 	module:FindNextPage(RequiredPagesOnly)
 end
 
-function module:OnInitialize()
-	InitDone = true
-	module:WelcomePage()
-	module:ProfileSetup()
-	module:ModuleSelectionPage()
-end
-
 function module:OnEnable()
 	-- If First launch, create a watcher frame that will trigger once everything is loaded in.
 	if SUI.DB.SetupWizard.FirstLaunch or DisplayRequired then
@@ -329,7 +322,183 @@ function module:OnEnable()
 	end
 end
 
-function module:WelcomePage()
+local function wutsTweaks()
+	local WutsTweaks = {
+		ID = 'WutsTweaks',
+		Name = "Wutname1's Tweaks",
+		SubTitle = '',
+		Desc1 = 'Below are a collection of tweaks I find myself making often, so I decided to add them in here.',
+		Display = function()
+			local window = SUI:GetModule('SetupWizard').window
+			local SUI_Win = window.content
+			local StdUi = window.StdUi
+			SetCVar('nameplateShowSelf', 0)
+			SetCVar('autoLootDefault', 1)
+			SetCVar('nameplateShowAll', 1)
+
+			--Container
+			local WutsTweaks = CreateFrame('Frame', nil)
+			WutsTweaks:SetParent(SUI_Win)
+			WutsTweaks:SetAllPoints(SUI_Win)
+
+			local Nameplate = StdUi:Checkbox(WutsTweaks, 'Disable personal nameplate', 240, 20)
+			local AutoLoot = StdUi:Checkbox(WutsTweaks, 'Enable AutoLoot', 240, 20)
+			local ShowNameplates = StdUi:Checkbox(WutsTweaks, 'Enable Always show nameplates', 240, 20)
+			local DisableTutorials = StdUi:Checkbox(WutsTweaks, 'Disable ALL tutorials', 240, 20)
+			local DisableTutorialsWarning = StdUi:Label(WutsTweaks, 'WARNING: Experianced players only')
+			StdUi:GlueRight(DisableTutorialsWarning, DisableTutorials, -85, 0)
+
+			Nameplate:SetChecked(true)
+			AutoLoot:SetChecked(true)
+			ShowNameplates:SetChecked(true)
+			-- If the user has more than 4 SUI Profile they should be 'experianced' we will check this by default
+			if #SUI.SpartanUIDB:GetProfiles(tmpprofiles) >= 4 then
+				DisableTutorials:SetChecked(true)
+			end
+
+			Nameplate:HookScript(
+				'OnClick',
+				function()
+					if (Nameplate:GetValue() or false) then
+						SetCVar('nameplateShowSelf', 0)
+					else
+						SetCVar('nameplateShowSelf', 1)
+					end
+				end
+			)
+			AutoLoot:HookScript(
+				'OnClick',
+				function()
+					if (AutoLoot:GetValue() or false) then
+						SetCVar('autoLootDefault', 1)
+					else
+						SetCVar('autoLootDefault', 0)
+					end
+				end
+			)
+			ShowNameplates:HookScript(
+				'OnClick',
+				function()
+					if (ShowNameplates:GetValue() or false) then
+						SetCVar('nameplateShowAll', 1)
+					else
+						SetCVar('nameplateShowAll', 0)
+					end
+				end
+			)
+
+			StdUi:GlueTop(Nameplate, WutsTweaks, 0, -30)
+			StdUi:GlueBelow(AutoLoot, Nameplate, 0, -10)
+			StdUi:GlueBelow(ShowNameplates, AutoLoot, 0, -10)
+			StdUi:GlueBelow(DisableTutorials, ShowNameplates, 0, -10)
+
+			if DBM_MinimapIcon then
+				DBM_MinimapIcon.hide = true
+				local DBMMinimap = StdUi:Checkbox(WutsTweaks, 'Hide DBM Minimap Icon', 240, 20)
+				DBMMinimap:SetChecked(true)
+				DBMMinimap:HookScript(
+					'OnClick',
+					function()
+						DBM_MinimapIcon.hide = (not DBMMinimap:GetValue() or false)
+						if (DBMMinimap:GetValue() or false) then
+							LibStub('LibDBIcon-1.0'):Hide('DBM')
+						else
+							LibStub('LibDBIcon-1.0'):Show('DBM')
+						end
+					end
+				)
+				StdUi:GlueBelow(DBMMinimap, DisableTutorials, 0, -10)
+				WutsTweaks.DBMMinimap = DBMMinimap
+			end
+
+			if Bartender4 then
+				Bartender4.db.profile.minimapIcon.hide = true
+				LibStub('LibDBIcon-1.0'):Hide('Bartender4')
+
+				local BT4MiniMap = StdUi:Checkbox(WutsTweaks, 'Hide DBM Minimap Icon', 240, 20)
+				BT4MiniMap:SetChecked(true)
+				BT4MiniMap:HookScript(
+					'OnClick',
+					function()
+						Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetValue() or false)
+						if (BT4MiniMap:GetValue() or false) then
+							LibStub('LibDBIcon-1.0'):Hide('Bartender4')
+						else
+							LibStub('LibDBIcon-1.0'):Show('Bartender4')
+						end
+					end
+				)
+				StdUi:GlueBelow(BT4MiniMap, BT4MiniMap or DisableTutorials, 0, -10)
+			end
+
+			WutsTweaks.DisableTutorials = DisableTutorials
+			SUI_Win.WutsTweaks = WutsTweaks
+		end,
+		Next = function()
+			local WutsTweaks = SUI:GetModule('SetupWizard').window.content.WutsTweaks
+			if (WutsTweaks.DisableTutorials:GetValue() or false) then
+				local bitfieldListing = {
+					LE_FRAME_TUTORIAL_TOYBOX,
+					LE_FRAME_TUTORIAL_TOYBOX_MOUSEWHEEL_PAGING,
+					LE_FRAME_TUTORIAL_TOYBOX_FAVORITE,
+					LE_FRAME_TUTORIAL_AZERITE_RESPEC,
+					LE_FRAME_TUTORIAL_AZERITE_ITEM_IN_BAG,
+					LE_FRAME_TUTORIAL_CHAT_CHANNELS,
+					LE_FRAME_TUTORIAL_CORRUPTION_CLEANSER,
+					LE_FRAME_TUTORIAL_ARTIFACT_APPEARANCE_TAB,
+					LE_FRAME_TUTORIAL_ISLANDS_QUEUE_INFO_FRAME,
+					LE_FRAME_TUTORIAL_ISLANDS_QUEUE_BUTTON,
+					LE_FRAME_TUTORIAL_ISLANDS_QUEUE_INFO_FRAME,
+					LE_FRAME_TUTORIAL_HEIRLOOM_JOURNAL,
+					LE_FRAME_TUTORIAL_HEIRLOOM_JOURNAL_TAB,
+					LE_FRAME_TUTORIAL_TRANSMOG_SETS_VENDOR_TAB,
+					LE_FRAME_TUTORIAL_TRANSMOG_SETS_TAB,
+					LE_FRAME_TUTORIAL_WORLD_MAP_FRAME,
+					LE_FRAME_TUTORIAL_REAGENT_BANK_UNLOCK,
+					LE_FRAME_TUTORIAL_TRADESKILL_UNLEARNED_TAB,
+					LE_FRAME_TUTORIAL_GAME_TIME_AUCTION_HOUSE,
+					LE_FRAME_TUTORIAL_CHAT_CHANNELS,
+					LE_FRAME_TUTORIAL_REPUTATION_EXALTED_PLUS,
+					LE_FRAME_TUTORIAL_AZERITE_ITEM_IN_SLOT,
+					LE_FRAME_TUTORIAL_ARTIFACT_RELIC_MATCH,
+					LE_FRAME_TUTORIAL_SPEC,
+					LE_FRAME_TUTORIAL_TALENT,
+					LE_FRAME_TUTORIAL_PVP_TALENTS_FIRST_UNLOCK,
+					LE_FRAME_TUTORIAL_PVP_WARMODE_UNLOCK,
+					LE_FRAME_TUTORIAL_TRANSMOG_OUTFIT_DROPDOWN,
+					LE_FRAME_TUTORIAL_TRIAL_BANKED_XP,
+					LE_FRAME_TUTORIAL_TRANSMOG_MODEL_CLICK,
+					LE_FRAME_TUTORIAL_MOUNT_EQUIPMENT_SLOT_FRAME,
+					LE_FRAME_TUTORIAL_TRADESKILL_RANK_STAR,
+					LE_FRAME_TUTORIAL_BONUS_ROLL_ENCOUNTER_JOURNAL_LINK,
+					LE_FRAME_TUTORIAL_PVP_SPECIAL_EVENT,
+					LE_FRAME_TUTORIAL_PET_JOURNAL,
+					LE_FRAME_TUTORIAL_GARRISON_BUILDING,
+					LE_FRAME_TUTORIAL_BOOSTED_SPELL_BOOK,
+					LE_FRAME_TUTORIAL_SPELLBOOK,
+					LE_FRAME_TUTORIAL_PROFESSIONS,
+					LE_FRAME_TUTORIAL_REPUTATION_EXALTED_PLUS,
+					LE_FRAME_TUTORIAL_INVENTORY_FIXUP_EXPANSION_LEGION,
+					LE_FRAME_TUTORIAL_INVENTORY_FIXUP_CHECK_EXPANSION_LEGION,
+					LE_FRAME_TUTORIAL_WARFRONT_RESOURCES,
+					LE_FRAME_TUTORIAL_BRAWL,
+					LE_FRAME_TUTORIAL_FRIENDS_LIST_QUICK_JOIN,
+					LE_FRAME_TUTORIAL_BOUNTY_INTRO,
+					LE_FRAME_TUTORIAL_BOUNTY_FINISHED
+				}
+				for i, v in ipairs(bitfieldListing) do
+					if v then
+						SetCVarBitfield('closedInfoFrames', v, true)
+					end
+				end
+			end
+		end
+		-- RequireDisplay = true
+	}
+	module:AddPage(WutsTweaks)
+end
+
+local function WelcomePage()
 	local WelcomePage = {
 		ID = 'WelcomePage',
 		Name = 'Welcome',
@@ -409,16 +578,7 @@ function module:WelcomePage()
 	module:AddPage(WelcomePage)
 end
 
-function module:ProfileSetup()
-	--Hide Bartender4 Minimap icon.
-	if Bartender4 and SUI.DB.SetupWizard.FirstLaunch then
-		Bartender4.db.profile.minimapIcon.hide = true
-		local LDBIcon = LibStub('LibDBIcon-1.0', true)
-		LDBIcon['Hide'](LDBIcon, 'Bartender4')
-	end
-end
-
-function module:ModuleSelectionPage()
+local function ModuleSelectionPage()
 	local ProfilePage = {
 		ID = 'ModuleSelectionPage',
 		Name = L['Enabled modules'],
@@ -455,7 +615,7 @@ function module:ModuleSelectionPage()
 						'OnClick',
 						function()
 							SUI.DB.EnabledComponents[RealName] = (checkbox:GetValue() or false)
-							print((checkbox:GetValue() or false))
+
 							if (checkbox:GetValue() or false) then
 								submodule:Enable()
 							else
@@ -492,4 +652,11 @@ function module:ModuleSelectionPage()
 	}
 
 	module:AddPage(ProfilePage)
+end
+
+function module:OnInitialize()
+	InitDone = true
+	WelcomePage()
+	ModuleSelectionPage()
+	wutsTweaks()
 end
