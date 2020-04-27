@@ -332,6 +332,7 @@ local function wutsTweaks()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
+			local CheckboxItem = {}
 			SetCVar('nameplateShowSelf', 0)
 			SetCVar('autoLootDefault', 1)
 			SetCVar('nameplateShowAll', 1)
@@ -345,14 +346,14 @@ local function wutsTweaks()
 			local AutoLoot = StdUi:Checkbox(WutsTweaks, 'Enable AutoLoot', 240, 20)
 			local ShowNameplates = StdUi:Checkbox(WutsTweaks, 'Enable Always show nameplates', 240, 20)
 			local DisableTutorials = StdUi:Checkbox(WutsTweaks, 'Disable ALL tutorials', 240, 20)
-			local DisableTutorialsWarning = StdUi:Label(WutsTweaks, 'WARNING: Experianced players only')
-			StdUi:GlueRight(DisableTutorialsWarning, DisableTutorials, -85, 0)
+			local DisableTutorialsWarning = StdUi:Label(WutsTweaks, 'For experienced players only')
+			DisableTutorialsWarning:SetTextColor(1, 0, 0, .7)
 
 			Nameplate:SetChecked(true)
 			AutoLoot:SetChecked(true)
 			ShowNameplates:SetChecked(true)
-			-- If the user has more than 4 SUI Profile they should be 'experianced' we will check this by default
-			if #SUI.SpartanUIDB:GetProfiles(tmpprofiles) >= 4 then
+			-- If the user has more than 2 SUI Profile they should be 'experienced' so check this by default
+			if #SUI.SpartanUIDB:GetProfiles(tmpprofiles) >= 2 then
 				DisableTutorials:SetChecked(true)
 			end
 
@@ -387,10 +388,10 @@ local function wutsTweaks()
 				end
 			)
 
-			StdUi:GlueTop(Nameplate, WutsTweaks, 0, -30)
-			StdUi:GlueBelow(AutoLoot, Nameplate, 0, -10)
-			StdUi:GlueBelow(ShowNameplates, AutoLoot, 0, -10)
-			StdUi:GlueBelow(DisableTutorials, ShowNameplates, 0, -10)
+			CheckboxItem['tut'] = DisableTutorials
+			CheckboxItem['prd'] = nameplates
+			CheckboxItem['autoloot'] = AutoLoot
+			CheckboxItem['nameplate'] = ShowNameplates
 
 			if DBM_MinimapIcon then
 				DBM_MinimapIcon.hide = true
@@ -407,15 +408,14 @@ local function wutsTweaks()
 						end
 					end
 				)
-				StdUi:GlueBelow(DBMMinimap, DisableTutorials, 0, -10)
-				WutsTweaks.DBMMinimap = DBMMinimap
+				CheckboxItem['dbm'] = DBMMinimap
 			end
 
 			if Bartender4 then
 				Bartender4.db.profile.minimapIcon.hide = true
 				LibStub('LibDBIcon-1.0'):Hide('Bartender4')
 
-				local BT4MiniMap = StdUi:Checkbox(WutsTweaks, 'Hide DBM Minimap Icon', 240, 20)
+				local BT4MiniMap = StdUi:Checkbox(WutsTweaks, 'Hide Bartender4 Minimap Icon', 240, 20)
 				BT4MiniMap:SetChecked(true)
 				BT4MiniMap:HookScript(
 					'OnClick',
@@ -428,8 +428,40 @@ local function wutsTweaks()
 						end
 					end
 				)
-				StdUi:GlueBelow(BT4MiniMap, BT4MiniMap or DisableTutorials, 0, -10)
+				CheckboxItem['bt4'] = BT4MiniMap
 			end
+
+			if WeakAurasSaved then
+				WeakAurasSaved.minimap.hide = true
+				LibStub('LibDBIcon-1.0'):Hide('WeakAuras')
+
+				local WAMiniMap = StdUi:Checkbox(WutsTweaks, 'Hide WeakAuras Minimap Icon', 240, 20)
+				WAMiniMap:SetChecked(true)
+				WAMiniMap:HookScript(
+					'OnClick',
+					function()
+						Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetValue() or false)
+						if (WAMiniMap:GetValue() or false) then
+							LibStub('LibDBIcon-1.0'):Hide('WeakAuras')
+						else
+							LibStub('LibDBIcon-1.0'):Show('WeakAuras')
+						end
+					end
+				)
+				CheckboxItem['wa'] = WAMiniMap
+			end
+
+			local lastItem = false
+			for k, v in pairs(CheckboxItem) do
+				if not lastItem then
+					StdUi:GlueTop(v, WutsTweaks, 0, -30)
+				else
+					StdUi:GlueBelow(v, lastItem, 0, -10)
+				end
+				lastItem = v
+			end
+
+			StdUi:GlueRight(DisableTutorialsWarning, DisableTutorials, -85, 0)
 
 			WutsTweaks.DisableTutorials = DisableTutorials
 			SUI_Win.WutsTweaks = WutsTweaks
@@ -492,8 +524,8 @@ local function wutsTweaks()
 					end
 				end
 			end
-		end
-		-- RequireDisplay = true
+		end,
+		RequireDisplay = true
 	}
 	module:AddPage(WutsTweaks)
 end
