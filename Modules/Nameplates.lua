@@ -61,7 +61,11 @@ local pvpIconWar = function(self, event, unit)
 		elseif settings.Background.colorMode == 'reaction' then
 			local colors = SUIUF.colors.reaction[UnitReaction(unit, 'player')]
 			if colors then
-				self.bg.solid:SetVertexColor(colors[1], colors[2], colors[3])
+				if colors[1] == 0.9 and colors[2] == 0.7 then
+					self.bg.solid:SetVertexColor(.5, .5, .5, .5)
+				else
+					self.bg.solid:SetVertexColor(colors[1], colors[2], colors[3])
+				end
 			else
 				self.bg.solid:SetVertexColor(0, 0, 0)
 			end
