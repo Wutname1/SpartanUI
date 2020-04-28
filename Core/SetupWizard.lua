@@ -524,8 +524,7 @@ local function wutsTweaks()
 					end
 				end
 			end
-		end,
-		RequireDisplay = true
+		end
 	}
 	module:AddPage(WutsTweaks)
 end
