@@ -237,26 +237,30 @@ function MoveIt:IsMoved(name)
 	if SUI.DB.MoveIt.movers[name].MovedPoints then
 		return true
 	end
+	if SUI.DB.MoveIt.movers[name].AdjustedScale then
+		return true
+	end
 	return false
 end
 
-function MoveIt:Reset(name)
+function MoveIt:Reset(name, onlyPosition)
 	if name == nil then
 		for name, frame in pairs(MoverList) do
-			if frame and MoveIt:IsMoved(name) then
-				local point, anchor, secondaryPoint, x, y = strsplit(',', MoverList[name].defaultPoint)
-				frame:ClearAllPoints()
-				frame:SetPoint(point, anchor, secondaryPoint, x, y)
-
-				if SUI.DB.MoveIt.movers[name].MovedPoints then
-					SUI.DB.MoveIt.movers[name].MovedPoints = nil
-				end
-			end
+			MoveIt:Reset(name)
 		end
 		print('Moved frames reset!')
 	else
 		local frame = _G['SUI_Mover_' .. name]
 		if frame and MoveIt:IsMoved(name) then
+			-- Reset the scale
+			if SUI.DB.MoveIt.movers[name].AdjustedScale and not onlyPosition then
+				SUI.DB.MoveIt.movers[name].AdjustedScale = nil
+
+				frame:SetScale(f.defaultScale or 1)
+				frame.parent:SetScale(f.defaultScale or 1)
+			end
+
+			-- Reset Position
 			local point, anchor, secondaryPoint, x, y = strsplit(',', MoverList[name].defaultPoint)
 			frame:ClearAllPoints()
 			frame:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -319,8 +323,12 @@ function MoveIt:MoveIt(name)
 				print('When the movement system is enabled you can:')
 				print('     Shift+Click a mover to temporarily hide it', true)
 				print("     Alt+Click a mover to reset it's position", true)
+				print("     Control+Click a mover to reset it's scale", true)
+				print(' ', true)
 				print('     Use the scroll wheel to move left and right 1 coord at a time', true)
 				print('     Hold Shift + use the scroll wheel to move up and down 1 coord at a time', true)
+				print('     Hold Alt + use the scroll wheel to scale the frame', true)
+				print(' ', true)
 				print('     Press ESCAPE to exit the movement system quickly.', true)
 				print("Use the command '/sui move tips' to disable tips")
 				print("Use the command '/sui move reset' to reset ALL moved items")
@@ -690,7 +698,7 @@ function MoveIt:Options()
 				end
 			},
 			AltKey = {
-				name = 'Allow Alt+Dragging to move',
+				name = 'Allow Alt+Dragging to move frames',
 				type = 'toggle',
 				width = 'double',
 				order = 2,
@@ -737,6 +745,13 @@ function MoveIt:Options()
 				order = 54,
 				fontSize = 'medium'
 			},
+			line7a = {
+				name = "- Control+Click a mover to reset it's scale",
+				type = 'description',
+				order = 54.2,
+				fontSize = 'medium'
+			},
+			line7b = {name = '', type = 'description', order = 54.99, fontSize = 'medium'},
 			line8 = {
 				name = '- Use the scroll wheel to move left and right 1 coord at a time',
 				type = 'description',
@@ -750,7 +765,7 @@ function MoveIt:Options()
 				fontSize = 'medium'
 			},
 			line9a = {
-				name = '- Hold Control + use the scroll wheel to scale the frame',
+				name = '- Hold Alt + use the scroll wheel to scale the frame',
 				type = 'description',
 				order = 56.5,
 				fontSize = 'medium'
@@ -772,13 +787,6 @@ function MoveIt:Options()
 				set = function(info, val)
 					SUI.DB.MoveIt.tips = val
 				end
-			},
-			MoverListing = {
-				name = 'Moveable frames',
-				type = 'group',
-				inline = true,
-				order = 15000,
-				args = {}
 			}
 		}
 	}
