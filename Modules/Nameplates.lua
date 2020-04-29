@@ -226,8 +226,11 @@ end
 local NamePlateFactory = function(frame, unit)
 	if unit:match('nameplate') then
 		local blizzPlate = frame:GetParent().UnitFrame
-		frame.blizzPlate = blizzPlate
-		frame.widget = blizzPlate.WidgetContainer
+		if blizzPlate then
+			frame.blizzPlate = blizzPlate
+			frame.widget = blizzPlate.WidgetContainer
+		end
+
 		frame.unitGUID = UnitGUID(unit)
 		frame.npcID = frame.unitGUID and select(6, strsplit('-', frame.unitGUID))
 
@@ -487,8 +490,10 @@ local NameplateCallback = function(self, event, unit)
 	local elements = SUI.DB.NamePlates.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
 		local blizzPlate = self:GetParent().UnitFrame
-		self.blizzPlate = blizzPlate
-		self.widget = blizzPlate.WidgetContainer
+		if blizzPlate then
+			frame.blizzPlate = blizzPlate
+			frame.widget = blizzPlate.WidgetContainer
+		end
 		self.unitGUID = UnitGUID(unit)
 		self.npcID = self.unitGUID and select(6, strsplit('-', self.unitGUID))
 
