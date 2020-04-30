@@ -7,50 +7,51 @@ local lastTime, lastSpellID = nil, nil
 
 local function printFormattedString(t, sid, spell, ss, ssid)
 	local msg = SUI.DB.InterruptAnnouncer.text
-	local ChatChannel = SUI.DB.InterruptAnnouncer.announceLocation
+	local DBChannel = SUI.DB.InterruptAnnouncer.announceLocation or 'SELF'
+	local ChatChannel = 'SAY'
 
 	msg =
 		msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub(
 		'%%sl',
 		GetSpellLink(sid)
 	):gsub('%%myspell', GetSpellLink(ssid))
-	if ChatChannel == 'SELF' then
+	if DBChannel == 'SELF' then
 		SUI:Print(msg)
 	else
 		if not IsInGroup(2) then
 			if IsInRaid() then
-				if ChatChannel == 'INSTANCE_CHAT' then
+				if DBChannel == 'INSTANCE_CHAT' then
 					ChatChannel = 'RAID'
 				end
 			elseif IsInGroup(1) then
-				if ChatChannel == 'INSTANCE_CHAT' then
+				if DBChannel == 'INSTANCE_CHAT' then
 					ChatChannel = 'PARTY'
 				end
 			end
 		elseif IsInGroup(2) then
-			if ChatChannel == 'RAID' then
+			if DBChannel == 'RAID' then
 				ChatChannel = 'INSTANCE_CHAT'
 			end
-			if ChatChannel == 'PARTY' then
+			if DBChannel == 'PARTY' then
 				ChatChannel = 'INSTANCE_CHAT'
 			end
 		end
 
-		if ChatChannel == 'SMART' then
+		if DBChannel == 'SMART' then
 			ChatChannel = 'RAID'
-			if ChatChannel == 'RAID' and not IsInRaid() then
+			if DBChannel == 'RAID' and not IsInRaid() then
 				ChatChannel = 'PARTY'
 			end
 
-			if ChatChannel == 'PARTY' and not IsInGroup(1) then
+			if DBChannel == 'PARTY' and not IsInGroup(1) then
 				ChatChannel = 'SAY'
 			end
 
-			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then
+			if DBChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then
 				ChatChannel = 'SAY'
 			end
 
-			if ChatChannel == 'CHANNEL' and ec == 0 then
+			if DBChannel == 'CHANNEL' and ec == 0 then
 				ChatChannel = 'SAY'
 			end
 		end
