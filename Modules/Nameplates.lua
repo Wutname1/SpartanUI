@@ -491,8 +491,8 @@ local NameplateCallback = function(self, event, unit)
 	if event == 'NAME_PLATE_UNIT_ADDED' then
 		local blizzPlate = self:GetParent().UnitFrame
 		if blizzPlate then
-			frame.blizzPlate = blizzPlate
-			frame.widget = blizzPlate.WidgetContainer
+			self.blizzPlate = blizzPlate
+			self.widget = blizzPlate.WidgetContainer
 		end
 		self.unitGUID = UnitGUID(unit)
 		self.npcID = self.unitGUID and select(6, strsplit('-', self.unitGUID))
