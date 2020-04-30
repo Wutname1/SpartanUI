@@ -221,21 +221,13 @@ local function RefreshConfig()
 		if _G[v] and positionData[v] ~= '' then
 			local f = _G[v]
 			if f.scale then
-				f:scale(SUI.DB.scale * (scaleData[v] * 1.08696))
+				f:scale(SUI.DB.scale * (scaleData[v] * 1.08696), true)
 			end
 
-			-- if f.mover then
-			-- 	f = f.mover
-			-- end
 			if f.position then
 				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
 				f:position(point, anchor, secondaryPoint, x, y, false, true)
 			end
-		-- if not MoveIt:IsMoved(v) then
-		-- 	local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[v])
-		-- 	f:ClearAllPoints()
-		-- 	f:SetPoint(point, anchor, secondaryPoint, x, y)
-		-- end
 		end
 	end
 end

@@ -168,7 +168,6 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						func = function()
 							MoverFrame:SetScale(MoverFrame.defaultScale)
 							MoverFrame.parent:SetScale(MoverFrame.defaultScale)
-
 							SUI.DB.MoveIt.movers[name].AdjustedScale = false
 						end
 					}
@@ -176,20 +175,6 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 			}
 		}
 	}
-end
-
-function MoveIt:SaveMoverPosition(name)
-	local frame = _G[name]
-	-- local _, anchor = mover:GetPoint()
-	-- mover.anchor = anchor:GetName()
-	SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(frame.mover)
-
-	-- Reset the frame so we dont anchor to nil after moving
-	-- Without this the minimap cause LUA errors in a vehicle
-	if frame.position then
-		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
-		frame:position(point, anchor, secondaryPoint, x, y, true)
-	end
 end
 
 function MoveIt:CalculateMoverPoints(mover)
@@ -258,6 +243,7 @@ function MoveIt:Reset(name, onlyPosition)
 
 				frame:SetScale(f.defaultScale or 1)
 				frame.parent:SetScale(f.defaultScale or 1)
+				frame.ScaledText:Hide()
 			end
 
 			-- Reset Position
@@ -268,6 +254,9 @@ function MoveIt:Reset(name, onlyPosition)
 			if SUI.DB.MoveIt.movers[name].MovedPoints then
 				SUI.DB.MoveIt.movers[name].MovedPoints = nil
 			end
+
+			-- Hide Moved Text
+			frame.MovedText:Hide()
 		end
 	end
 end
@@ -390,25 +379,59 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 	MoverList[name] = f
 
-	local fs = f:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(fs, 12, 'Mover')
-	fs:SetJustifyH('CENTER')
-	fs:SetPoint('CENTER')
-	fs:SetText(DisplayName or name)
-	fs:SetTextColor(unpack(colors.text))
-	f:SetFontString(fs)
-	f.DisplayName = fs
+	local nameText = f:CreateFontString(nil, 'OVERLAY')
+	SUI:FormatFont(nameText, 12, 'Mover')
+	nameText:SetJustifyH('CENTER')
+	nameText:SetPoint('CENTER')
+	nameText:SetText(DisplayName or name)
+	nameText:SetTextColor(unpack(colors.text))
+	f:SetFontString(nameText)
+	f.DisplayName = nameText
+
+	local MovedText = f:CreateFontString(nil, 'OVERLAY')
+	SUI:FormatFont(MovedText, 8, 'Mover')
+	MovedText:SetJustifyH('CENTER')
+	MovedText:SetPoint('TOPRIGHT', nameText, 'BOTTOM', -2, -2)
+	MovedText:SetText('(MOVED)')
+	MovedText:SetTextColor(unpack(colors.text))
+	-- f:SetFontString(MovedText)
+	MovedText:Hide()
+	f.MovedText = MovedText
+
+	local ScaledText = f:CreateFontString(nil, 'OVERLAY')
+	SUI:FormatFont(ScaledText, 8, 'Mover')
+	ScaledText:SetJustifyH('CENTER')
+	ScaledText:SetPoint('TOPLEFT', nameText, 'BOTTOM', 2, -2)
+	ScaledText:SetText('(SCALED)')
+	ScaledText:SetTextColor(unpack(colors.text))
+	-- f:SetFontString(ScaledText)
+	ScaledText:Hide()
+	f.ScaledText = ScaledText
 
 	f:SetScale(SUI.DB.MoveIt.movers[name].AdjustedScale or parent:GetScale() or 1)
 	if SUI.DB.MoveIt.movers[name].AdjustedScale then
+		ScaledText:Show()
 		parent:SetScale(SUI.DB.MoveIt.movers[name].AdjustedScale)
 	end
 
 	if SUI.DB.MoveIt.movers[name].MovedPoints then
+		MovedText:Show()
 		point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
 	end
 	f:ClearAllPoints()
 	f:SetPoint(point, anchor, secondaryPoint, x, y)
+
+	local function SaveMoverPosition()
+		SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(f)
+		f.MovedText:Show()
+
+		-- Reset the frame so we dont anchor to nil after moving
+		-- Without this the minimap cause LUA errors in a vehicle
+		if f.parent.position then
+			local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+			f.parent:position(point, anchor, secondaryPoint, x, y, true)
+		end
+	end
 
 	local Scale = function(self, ammount)
 		local Current = self:GetScale()
@@ -416,6 +439,11 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 		self:SetScale(NewScale)
 		self.parent:SetScale(NewScale)
+		if scale == f.defaultScale then
+			ScaledText:Hide()
+		else
+			ScaledText:Show()
+		end
 
 		SUI.DB.MoveIt.movers[name].AdjustedScale = NewScale
 	end
@@ -433,9 +461,9 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		y = y + (nudgeY or 0)
 
 		-- Save it.
-		SUI.DB.MoveIt.movers[name].MovedPoints = format('%s,%s,%s,%d,%d', point, anchor:GetName(), secondaryPoint, x, y)
 		self:ClearAllPoints()
 		self:SetPoint(point, anchor, secondaryPoint, x, y)
+		SaveMoverPosition()
 	end
 
 	local function OnDragStart(self)
@@ -463,14 +491,15 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		self:StopMovingOrSizing()
 		-- end
 
-		SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(f)
+		SaveMoverPosition()
+		-- SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(f)
 
 		-- Reset the frame so we dont anchor to nil after moving
 		-- Without this the minimap cause LUA errors in a vehicle
-		if parent.position then
-			local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
-			parent:position(point, anchor, secondaryPoint, x, y, true)
-		end
+		-- if parent.position then
+		-- 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+		-- 	parent:position(point, anchor, secondaryPoint, x, y, true)
+		-- end
 		-- if NudgeWindow then
 		-- 	E:UpdateNudgeFrame(self, x, y)
 		-- end
@@ -506,6 +535,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		elseif IsControlKeyDown() then -- Reset Scale to default
 			self:SetScale(self.defaultScale)
 			self.parent:SetScale(self.defaultScale)
+			ScaledText:Hide()
 
 			SUI.DB.MoveIt.movers[name].AdjustedScale = false
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
@@ -557,9 +587,18 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			OnDragStop(self.mover)
 		end
 	end
-	local function scale(self, scale)
+	local function scale(self, scale, setDefault)
+		if setDefault then
+			f.defaultScale = scale
+		end
+
 		f:SetScale(max(scale, .01))
 		parent:SetScale(max(scale, .01))
+		if scale == f.defaultScale then
+			ScaledText:Hide()
+		else
+			ScaledText:Show()
+		end
 
 		local point, anchor, secondaryPoint, x, y = strsplit(',', f.defaultPoint)
 
