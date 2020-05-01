@@ -393,7 +393,7 @@ end
 function module:OnEnable()
 	module:FontSetupWizard()
 	SUI.opt.args['General'].args['font'] = {
-		name = L['FontSizeStyle'],
+		name = 'Font',
 		type = 'group',
 		order = 200,
 		args = {

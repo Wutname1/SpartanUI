@@ -139,8 +139,6 @@ local FrameList = {
 	'BT4Bar8',
 	'BT4Bar9',
 	'BT4BarBagBar',
-	-- 'BT4BarExtraActionBar',
-	-- 'BT4BarZoneAbilityBar',
 	'BT4BarStanceBar',
 	'BT4BarPetBar',
 	'BT4BarMicroMenu'
@@ -314,7 +312,7 @@ end
 
 local function Options()
 	SUI.opt.args['General'].args['Bartender'] = {
-		name = 'Bartender',
+		name = 'Bartender4',
 		type = 'group',
 		order = 500,
 		args = {

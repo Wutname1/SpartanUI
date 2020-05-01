@@ -13,7 +13,7 @@ end
 
 function module:OnInitialize()
 	SUI.opt.args.General.args.style = {
-		name = L['StyleSettings'],
+		name = 'Art Style',
 		type = 'group',
 		order = 100,
 		args = {
