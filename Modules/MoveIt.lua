@@ -35,107 +35,109 @@ local function CreateGroup(groupName)
 end
 
 local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
-	local anchorPoints = {
-		['TOPLEFT'] = 'TOP LEFT',
-		['TOP'] = 'TOP',
-		['TOPRIGHT'] = 'TOP RIGHT',
-		['RIGHT'] = 'RIGHT',
-		['CENTER'] = 'CENTER',
-		['LEFT'] = 'LEFT',
-		['BOTTOMLEFT'] = 'BOTTOM LEFT',
-		['BOTTOM'] = 'BOTTOM',
-		['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
-	}
-	local dynamicAnchorPoints = {
-		['UIParent'] = 'Blizzard UI',
-		['SUI_BottomAnchor'] = 'SpartanUI Bottom Anchor',
-		['SUI_TopAnchor'] = 'SpartanUI Top Anchor'
-	}
-
+	-- local anchorPoints = {
+	-- 	['TOPLEFT'] = 'TOP LEFT',
+	-- 	['TOP'] = 'TOP',
+	-- 	['TOPRIGHT'] = 'TOP RIGHT',
+	-- 	['RIGHT'] = 'RIGHT',
+	-- 	['CENTER'] = 'CENTER',
+	-- 	['LEFT'] = 'LEFT',
+	-- 	['BOTTOMLEFT'] = 'BOTTOM LEFT',
+	-- 	['BOTTOM'] = 'BOTTOM',
+	-- 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
+	-- }
+	-- local dynamicAnchorPoints = {
+	-- 	['UIParent'] = 'Blizzard UI',
+	-- 	['SpartanUI'] = 'Spartan UI',
+	-- 	['SUI_BottomAnchor'] = 'SpartanUI Bottom Anchor',
+	-- 	['SUI_TopAnchor'] = 'SpartanUI Top Anchor'
+	-- }
 	CreateGroup(groupName)
-
 	SUI.opt.args.Movers.args[groupName].args[MoverName] = {
-		name = groupName,
+		name = DisplayName,
 		type = 'group',
 		inline = true,
 		args = {
-			name = {
-				name = DisplayName,
-				type = 'description',
-				order = 1,
-				fontSize = 'large'
-			},
-			position = {
-				name = 'Position',
-				type = 'group',
-				inline = true,
-				order = 2,
-				args = {
-					x = {
-						name = 'x',
-						order = 1,
-						type = 'input',
-						get = function()
-							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-							return x
-						end,
-						set = function(info, val)
-						end
-					},
-					y = {
-						name = 'y',
-						order = 2,
-						type = 'input',
-						get = function()
-							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-							return y
-						end,
-						set = function(info, val)
-						end
-					},
-					MyAnchorPoint = {
-						order = 3,
-						name = 'point',
-						type = 'select',
-						values = anchorPoints,
-						get = function()
-							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-							return point
-						end,
-						set = function(info, val)
-						end
-					},
-					AnchorTo = {
-						order = 4,
-						name = 'anchor',
-						type = 'select',
-						values = dynamicAnchorPoints,
-						get = function()
-							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-
-							if not dynamicAnchorPoints[anchor] then
-								dynamicAnchorPoints[anchor] = anchor
-							end
-
-							return anchor
-						end,
-						set = function(info, val)
-						end
-					},
-					ItsAnchorPoint = {
-						order = 5,
-						name = 'secondaryPoint',
-						type = 'select',
-						values = anchorPoints,
-						get = function()
-							local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-							return secondaryPoint
-						end,
-						set = function(info, val)
-						end
-					}
-				}
-			},
+			-- 		position = {
+			-- 			name = 'Position',
+			-- 			type = 'group',
+			-- 			inline = true,
+			-- 			order = 2,
+			-- 			args = {
+			-- 				x = {
+			-- 					name = 'X Offset',
+			-- 					order = 1,
+			-- 					type = 'input',
+			-- 					dialogControl = 'NumberEditBox',
+			-- 					get = function()
+			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+			-- 						return x
+			-- 					end,
+			-- 					set = function(info, val)
+			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+			-- 						x = tonumber(val)
+			-- 						MoverFrame.parent:position(point, anchor, secondaryPoint, x, y)
+			-- 					end
+			-- 				},
+			-- 				y = {
+			-- 					name = 'Y Offset',
+			-- 					order = 2,
+			-- 					type = 'input',
+			-- 					dialogControl = 'NumberEditBox',
+			-- 					get = function()
+			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+			-- 						return y
+			-- 					end,
+			-- 					set = function(info, val)
+			-- 						--Fetch current position
+			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+			-- 						-- Move the frame and update the DB
+			-- 						MoverFrame:ClearAllPoints()
+			-- 						MoverFrame:SetPoint(point, anchor, secondaryPoint, x, val)
+			-- 						-- SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, x, val)
+			-- 					end
+			-- 				},
+			-- 				MyAnchorPoint = {
+			-- 					order = 3,
+			-- 					name = 'point',
+			-- 					type = 'select',
+			-- 					values = anchorPoints,
+			-- 					get = function()
+			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+			-- 						return point
+			-- 					end,
+			-- 					set = function(info, val)
+			-- 					end
+			-- 				},
+			-- 				AnchorTo = {
+			-- 					order = 4,
+			-- 					name = 'anchor',
+			-- 					type = 'select',
+			-- 					values = dynamicAnchorPoints,
+			-- 					get = function()
+			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+			-- 						if not dynamicAnchorPoints[anchor] then
+			-- 							dynamicAnchorPoints[anchor] = anchor
+			-- 						end
+			-- 						return anchor
+			-- 					end,
+			-- 					set = function(info, val)
+			-- 					end
+			-- 				},
+			-- 				ItsAnchorPoint = {
+			-- 					order = 5,
+			-- 					name = 'secondaryPoint',
+			-- 					type = 'select',
+			-- 					values = anchorPoints,
+			-- 					get = function()
+			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+			-- 						return secondaryPoint
+			-- 					end,
+			-- 					set = function(info, val)
+			-- 					end
+			-- 				}
+			-- 			}
+			-- 		},
 			ResetPosition = {
 				name = 'Reset Position',
 				type = 'execute',
