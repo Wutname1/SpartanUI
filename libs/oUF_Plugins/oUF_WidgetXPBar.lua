@@ -60,6 +60,10 @@ local function Update(self)
 	if not element then
 		return
 	end
+	if oUF.IsClassic then
+		Hide(element)
+		return
+	end
 
 	local widget = self.widget
 	if not widget then

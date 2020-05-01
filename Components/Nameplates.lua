@@ -349,32 +349,34 @@ local NamePlateFactory = function(frame, unit)
 		frame.ThreatIndicator = ThreatIndicator
 
 		-- WidgetXPBar
-		local WidgetXPBar = CreateFrame('StatusBar', frame:GetDebugName() .. 'WidgetXPBar', frame)
-		WidgetXPBar:SetFrameStrata(frame:GetFrameStrata())
-		WidgetXPBar:SetFrameLevel(5)
-		WidgetXPBar:SetStatusBarTexture(BarTexture)
-		WidgetXPBar:SetSize(frame:GetWidth(), elements.XPBar.height)
-		WidgetXPBar:SetPoint('TOP', frame, 'BOTTOM', 0, elements.XPBar.Offset)
-		WidgetXPBar:SetStatusBarColor(0, .5, 1, .7)
+		if SUI.IsRetail then
+			local WidgetXPBar = CreateFrame('StatusBar', frame:GetDebugName() .. 'WidgetXPBar', frame)
+			WidgetXPBar:SetFrameStrata(frame:GetFrameStrata())
+			WidgetXPBar:SetFrameLevel(5)
+			WidgetXPBar:SetStatusBarTexture(BarTexture)
+			WidgetXPBar:SetSize(frame:GetWidth(), elements.XPBar.height)
+			WidgetXPBar:SetPoint('TOP', frame, 'BOTTOM', 0, elements.XPBar.Offset)
+			WidgetXPBar:SetStatusBarColor(0, .5, 1, .7)
 
-		WidgetXPBar.bg = WidgetXPBar:CreateTexture(nil, 'BACKGROUND', WidgetXPBar)
-		WidgetXPBar.bg:SetAllPoints()
-		WidgetXPBar.bg:SetTexture(BarTexture)
-		WidgetXPBar.bg:SetVertexColor(0, 0, 0, .5)
+			WidgetXPBar.bg = WidgetXPBar:CreateTexture(nil, 'BACKGROUND', WidgetXPBar)
+			WidgetXPBar.bg:SetAllPoints()
+			WidgetXPBar.bg:SetTexture(BarTexture)
+			WidgetXPBar.bg:SetVertexColor(0, 0, 0, .5)
 
-		WidgetXPBar.Rank = WidgetXPBar:CreateFontString()
-		WidgetXPBar.Rank:SetJustifyH('LEFT')
-		WidgetXPBar.Rank:SetJustifyV('MIDDLE')
-		WidgetXPBar.Rank:SetAllPoints(WidgetXPBar)
-		SUI:FormatFont(WidgetXPBar.Rank, 7, 'Nameplate')
+			WidgetXPBar.Rank = WidgetXPBar:CreateFontString()
+			WidgetXPBar.Rank:SetJustifyH('LEFT')
+			WidgetXPBar.Rank:SetJustifyV('MIDDLE')
+			WidgetXPBar.Rank:SetAllPoints(WidgetXPBar)
+			SUI:FormatFont(WidgetXPBar.Rank, 7, 'Nameplate')
 
-		WidgetXPBar.ProgressText = WidgetXPBar:CreateFontString()
-		WidgetXPBar.ProgressText:SetJustifyH('CENTER')
-		WidgetXPBar.ProgressText:SetJustifyV('MIDDLE')
-		WidgetXPBar.ProgressText:SetAllPoints(WidgetXPBar)
-		SUI:FormatFont(WidgetXPBar.ProgressText, 7, 'Nameplate')
+			WidgetXPBar.ProgressText = WidgetXPBar:CreateFontString()
+			WidgetXPBar.ProgressText:SetJustifyH('CENTER')
+			WidgetXPBar.ProgressText:SetJustifyV('MIDDLE')
+			WidgetXPBar.ProgressText:SetAllPoints(WidgetXPBar)
+			SUI:FormatFont(WidgetXPBar.ProgressText, 7, 'Nameplate')
 
-		frame.WidgetXPBar = WidgetXPBar
+			frame.WidgetXPBar = WidgetXPBar
+		end
 
 		-- Setup Player Icons
 		if SUI.DBMod.NamePlates.ShowPlayerPowerIcons then
@@ -429,6 +431,14 @@ local NameplateCallback = function(self, event, unit)
 	else
 		self:DisableElement('RareElite')
 	end
+	if SUI.IsRetail then
+		if SUI.DBMod.NamePlates.elements.XPBar.enabled then
+			self:EnableElement('WidgetXPBar')
+		else
+			self:DisableElement('WidgetXPBar')
+		end
+	end
+
 	-- Do the non-classic things
 	if not SUI.IsClassic then
 		if SUI.DBMod.NamePlates.elements.QuestIndicator.enabled then
