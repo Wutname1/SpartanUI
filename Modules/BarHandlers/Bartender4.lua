@@ -123,6 +123,12 @@ local SUIBT4Settings = {
 	ZoneAbilityBar = {
 		enabled = false
 	},
+	XPBar = {
+		enabled = false
+	},
+	RepBar = {
+		enabled = false
+	},
 	BlizzardArt = {enabled = false},
 	StatusTrackingBar = {enabled = false},
 	blizzardVehicle = true

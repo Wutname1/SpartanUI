@@ -222,11 +222,11 @@ function module:OnInitialize()
 
 	-- Disable Blizz class color
 	if GetCVar('chatClassColorOverride') ~= '0' then
-		C_CVar.SetCVar('chatClassColorOverride', '0')
+		SetCVar('chatClassColorOverride', '0')
 	end
 	-- Disable Blizz time stamping
 	if GetCVar('showTimestamps') ~= 'none' then
-		C_CVar.SetCVar('showTimestamps', 'none')
+		SetCVar('showTimestamps', 'none')
 		CHAT_TIMESTAMP_FORMAT = nil
 	end
 	ChatLevelLog = {}

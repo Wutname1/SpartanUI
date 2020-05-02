@@ -278,7 +278,7 @@ function module:updateHorizontalOffset()
 	SUI_BottomAnchor:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', SUI.DB.Offset.Horizontal.Bottom, 0)
 
 	SUI_TopAnchor:ClearAllPoints()
-	SUI_TopAnchor:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', SUI.DB.Offset.Horizontal.Top, 0)
+	SUI_TopAnchor:SetPoint('TOP', SpartanUI, 'TOP', SUI.DB.Offset.Horizontal.Top, 0)
 
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)

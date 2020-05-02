@@ -136,6 +136,10 @@ local function VehicleLeaveButton()
 end
 
 function module.BlizzMovers()
+	if SUI.IsClassic then
+		return
+	end
+
 	AlertFrame()
 	TalkingHead()
 	AltPowerBar()

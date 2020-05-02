@@ -323,6 +323,10 @@ function module:OnEnable()
 end
 
 local function wutsTweaks()
+	if SUI.IsClassic then
+		return
+	end
+
 	local WutsTweaks = {
 		ID = 'WutsTweaks',
 		Name = "Wutname1's Tweaks",

@@ -434,6 +434,7 @@ local NamePlateFactory = function(frame, unit)
 		ThreatIndicator:SetPoint('TOPLEFT', frame, 'TOPLEFT', -3, 3)
 		ThreatIndicator:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 3, -3)
 		ThreatIndicator.feedbackUnit = 'PLAYER'
+		ThreatIndicator:Hide()
 		frame.ThreatIndicator = ThreatIndicator
 
 		-- WidgetXPBar
