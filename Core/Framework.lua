@@ -1116,10 +1116,15 @@ local DBdefault = {
 				maxColumns = 1,
 				unitsPerColumn = 5,
 				columnSpacing = 1,
-				yOffset = -10,
+				yOffset = -15,
 				elements = {
+					Name = {text = '[SUI_ColorClass][name] [arenaspec]'},
+					Power = {
+						height = 5
+					},
 					Castbar = {
-						enabled = true
+						enabled = true,
+						height = 15
 					},
 					SUI_ClassIcon = {
 						enabled = true

@@ -768,6 +768,7 @@ local function CreateUnitFrame(self, unit)
 				myBar:SetStatusBarTexture(Smoothv2)
 				myBar:SetStatusBarColor(0, 1, 0.5, 0.45)
 				myBar:SetSize(150, 16)
+				myBar:Hide()
 
 				local otherBar = CreateFrame('StatusBar', nil, myBar)
 				otherBar:SetPoint('TOP')
@@ -776,6 +777,7 @@ local function CreateUnitFrame(self, unit)
 				otherBar:SetStatusBarTexture(Smoothv2)
 				otherBar:SetStatusBarColor(0, 0.5, 1, 0.35)
 				otherBar:SetSize(150, 16)
+				otherBar:Hide()
 
 				local absorbBar = CreateFrame('StatusBar', nil, self.Health)
 				absorbBar:SetPoint('TOP')
@@ -783,6 +785,7 @@ local function CreateUnitFrame(self, unit)
 				absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
 				absorbBar:SetStatusBarTexture(Smoothv2)
 				absorbBar:SetWidth(10)
+				absorbBar:Hide()
 
 				local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
 				healAbsorbBar:SetPoint('TOP')
@@ -791,18 +794,21 @@ local function CreateUnitFrame(self, unit)
 				healAbsorbBar:SetStatusBarTexture(Smoothv2)
 				healAbsorbBar:SetReverseFill(true)
 				healAbsorbBar:SetWidth(10)
+				healAbsorbBar:Hide()
 
 				local overAbsorb = self.Health:CreateTexture(nil, 'OVERLAY')
 				overAbsorb:SetPoint('TOP')
 				overAbsorb:SetPoint('BOTTOM')
 				overAbsorb:SetPoint('LEFT', self.Health, 'RIGHT')
 				overAbsorb:SetWidth(10)
+				overAbsorb:Hide()
 
 				local overHealAbsorb = self.Health:CreateTexture(nil, 'OVERLAY')
 				overHealAbsorb:SetPoint('TOP')
 				overHealAbsorb:SetPoint('BOTTOM')
 				overHealAbsorb:SetPoint('RIGHT', self.Health, 'LEFT')
 				overHealAbsorb:SetWidth(10)
+				overHealAbsorb:Hide()
 
 				self.HealthPrediction = {
 					myBar = myBar,
@@ -958,6 +964,7 @@ local function CreateUnitFrame(self, unit)
 
 		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
 		self.LeaderIndicator.Sizeable = true
+		self.LeaderIndicator:Hide()
 		ElementUpdate(self, 'LeaderIndicator')
 		self.AssistantIndicator = self:CreateTexture(nil, 'BORDER')
 		self.AssistantIndicator.Sizeable = true
@@ -986,6 +993,7 @@ local function CreateUnitFrame(self, unit)
 		-- Position and size
 		self.PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
 		self.PhaseIndicator.Sizeable = true
+		self.PhaseIndicator:Hide()
 		ElementUpdate(self, 'PhaseIndicator')
 
 		-- PVP Indicator
@@ -1236,7 +1244,7 @@ function module:SpawnFrames()
 		nil,
 		'party',
 		'showRaid',
-		true,
+		false,
 		'showParty',
 		true,
 		'showPlayer',

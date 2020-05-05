@@ -258,7 +258,7 @@ local function AddGeneralOptions(frameName)
 end
 
 local function AddArtworkOptions(frameName)
-	local ArtPositions = {['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
+	local ArtPositions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
 	local function ArtworkOptionUpdate(pos, option, val)
 		--Update memory
 		module.CurrentSettings[frameName].artwork[pos][option] = val
