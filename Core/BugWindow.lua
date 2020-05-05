@@ -89,7 +89,7 @@ do
 			-- Set up our error event handler
 			BugGrabber.RegisterCallback(addon, 'BugGrabber_BugGrabbed', onError)
 
-			SlashCmdList.BugSack = function(msg)
+			SlashCmdList.suierrors = function(msg)
 				msg = msg:lower()
 				if msg == 'show' then
 					addon:OpenSack()
@@ -98,7 +98,7 @@ do
 					InterfaceOptionsFrame_OpenToCategory(addonName)
 				end
 			end
-			SLASH_BugSack1 = '/bugsack'
+			SLASH_suierrors1 = '/suierrors'
 
 			self:SetScript('OnEvent', nil)
 		end

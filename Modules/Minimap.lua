@@ -143,6 +143,7 @@ end
 
 function module:OnInitialize()
 	MoveIt = SUI:GetModule('Component_MoveIt')
+	-- TOOD: Convert this away from StaticPopup
 	StaticPopupDialogs['MiniMapNotice'] = {
 		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
 		button1 = 'Yes',

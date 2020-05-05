@@ -445,6 +445,7 @@ local function OnEnable()
 
 	-- No Bartender/out of date Notification
 	if SUI.Bartender4Version < BartenderMin then
+		-- TODO: Convert this away from Static popup
 		-- Minimum version warning.
 		StaticPopupDialogs['BartenderVerWarning'] = {
 			text = '|cff33ff99SpartanUI v' ..

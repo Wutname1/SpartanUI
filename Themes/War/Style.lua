@@ -1,5 +1,5 @@
 local SUI, L = SUI, SUI.L
-local print, error = SUI.print, SUI.Error
+local print = SUI.print
 local module = SUI:NewModule('Style_War')
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local UnitFrames = SUI:GetModule('Component_UnitFrames')

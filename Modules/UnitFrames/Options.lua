@@ -2014,7 +2014,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 
-function PlayerOptions()
+local function PlayerOptions()
 	SUI.opt.args['PlayerFrames'].args['frameDisplay'] = {
 		name = 'Disable Frames',
 		type = 'group',

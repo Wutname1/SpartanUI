@@ -122,8 +122,7 @@ function module:PlayerName(text)
 end
 
 function module:TimeStamp(text)
-	SELECTED_FORMAT = '[' .. SUI.DB.Chatbox.TimeStamp.format .. ']'
-	text = date(SELECTED_FORMAT) .. text
+	text = date('[' .. SUI.DB.Chatbox.TimeStamp.format .. ']') .. text
 	return text
 end
 

@@ -268,7 +268,7 @@ function module:SetupMenus()
 				end,
 				set = function(info, val)
 					for i = 1, 6 do
-						SUI.DB.ActionBars['bar' .. i].alpha, DB.ActionBars.Allalpha = val, val
+						SUI.DB.ActionBars['bar' .. i].alpha, SUI.DB.ActionBars.Allalpha = val, val
 					end
 				end
 			},

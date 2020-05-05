@@ -186,7 +186,7 @@ function MoveIt:CalculateMoverPoints(mover)
 	local LEFT = screenWidth / 3
 	local RIGHT = screenWidth * 2 / 3
 	local TOP = screenHeight / 2
-	local point, nudgePoint, nudgeInversePoint
+	local point, InversePoint
 
 	if y >= TOP then
 		point = 'TOP'
@@ -766,7 +766,7 @@ function MoveIt:Options()
 				fontSize = 'large'
 			},
 			line3 = {name = '/sui move', type = 'description', order = 51, fontSize = 'medium'},
-			line1 = {name = '', type = 'header', order = 51.1},
+			line22 = {name = '', type = 'header', order = 51.1},
 			line4 = {
 				name = '',
 				type = 'description',

@@ -23,44 +23,6 @@
 		</Anchors>
 	</Frame>
 
-	<!-- SUI_Popup1MaskTemplate -->
-	<Frame name="SUI_Popup1MaskTemplate" parent="SUI_Art_Classic" frameStrata="MEDIUM" virtual="true">
-		<Size>
-			<AbsDimension x="400" y="34"/>
-		</Size>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\bar-popup1">
-					<Size>
-						<AbsDimension x="512" y="64" />
-					</Size>
-					<Anchors>
-						<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-	</Frame>
-
-	<!-- SUI_Popup2MaskTemplate -->
-	<Frame name="SUI_Popup2MaskTemplate" parent="SUI_Art_Classic" frameStrata="MEDIUM" virtual="true">
-		<Size>
-			<AbsDimension x="400" y="34"/>
-		</Size>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentBG" file="Interface\AddOns\SpartanUI\Themes\Classic\Images\bar-popup2">
-					<Size>
-						<AbsDimension x="512" y="64" />
-					</Size>
-					<Anchors>
-						<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-	</Frame>
-
 	<Script file="Global-Framework.lua" />
 	<Script file="Style.lua" />
 </Ui>

@@ -13,12 +13,12 @@
 	</Button>
 
 	<!-- SUI_Font's -->
-	<Font name="SUI_FontOutline22custom" outline="NORMAL" virtual="true">
+	<Font name="SUI_FontOutline22custom" virtual="true">
 		<FontHeight>
 			<AbsValue val="22"/>
 		</FontHeight>
 	</Font>
-	<Font name="SUI_FontOutline22" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline22" virtual="true">
 		<FontHeight>
 			<AbsValue val="22"/>
 		</FontHeight>
@@ -27,7 +27,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline18" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline18" virtual="true">
 		<FontHeight>
 			<AbsValue val="18"/>
 		</FontHeight>
@@ -36,7 +36,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline16" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline16" virtual="true">
 		<FontHeight>
 			<AbsValue val="16"/>
 		</FontHeight>
@@ -45,7 +45,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline13" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline13" virtual="true">
 		<FontHeight>
 			<AbsValue val="13"/>
 		</FontHeight>
@@ -54,7 +54,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline12" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline12" virtual="true">
 		<FontHeight>
 			<AbsValue val="12"/>
 		</FontHeight>
@@ -63,7 +63,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline11" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline11" virtual="true">
 		<FontHeight>
 			<AbsValue val="11"/>
 		</FontHeight>
@@ -72,7 +72,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline10" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline10" virtual="true">
 		<FontHeight>
 			<AbsValue val="10"/>
 		</FontHeight>
@@ -81,7 +81,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline9" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline9" virtual="true">
 		<FontHeight>
 			<AbsValue val="9"/>
 		</FontHeight>
@@ -90,7 +90,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_FontOutline8" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_FontOutline8" virtual="true">
 		<FontHeight>
 			<AbsValue val="8"/>
 		</FontHeight>
@@ -99,7 +99,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_Font10" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_Font10" virtual="true">
 		<FontHeight>
 			<AbsValue val="10"/>
 		</FontHeight>
@@ -108,7 +108,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_Font9" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_Font9" virtual="true">
 		<FontHeight>
 			<AbsValue val="9"/>
 		</FontHeight>
@@ -117,7 +117,7 @@
 			<Offset x="1" y="-1"/>
 		</Shadow>
 	</Font>
-	<Font name="SUI_Font8" outline="MONOCHROME" virtual="true">
+	<Font name="SUI_Font8" virtual="true">
 		<FontHeight>
 			<AbsValue val="8"/>
 		</FontHeight>

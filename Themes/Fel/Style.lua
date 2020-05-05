@@ -1,5 +1,5 @@
 local SUI, L = SUI, SUI.L
-local print, error = SUI.print, SUI.Error
+local print = SUI.print
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:NewModule('Style_Fel')
 local UnitFrames = SUI:GetModule('Component_UnitFrames')
@@ -104,7 +104,7 @@ function module:RemoveVehicleUI()
 end
 
 function module:CreateArtwork()
-	plate = CreateFrame('Frame', 'Fel_ActionBarPlate', SpartanUI, 'Fel_ActionBarsTemplate')
+	local plate = CreateFrame('Frame', 'Fel_ActionBarPlate', SpartanUI, 'Fel_ActionBarsTemplate')
 	plate:SetFrameStrata('BACKGROUND')
 	plate:SetFrameLevel(1)
 	plate:ClearAllPoints()

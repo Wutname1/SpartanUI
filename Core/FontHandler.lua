@@ -196,7 +196,7 @@ function module:FontSetupWizard()
 
 			local RadioButtons = function(self)
 				for _, v in ipairs(fontlist) do
-					fontface = SUI_Win.FontFace[v].radio:SetValue(false)
+					SUI_Win.FontFace[v].radio:SetValue(false)
 				end
 
 				self.radio:SetValue(true)

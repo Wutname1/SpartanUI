@@ -314,7 +314,6 @@ local DBdefault = {
 				shape = 'circle',
 				size = {140, 140},
 				scaleWithArt = true,
-				ZoneText = {Location = 'BOTTOM'},
 				UnderVehicleUI = true,
 				BG = {
 					enabled = true,
@@ -369,7 +368,6 @@ local DBdefault = {
 			Minimap = {
 				Movable = false,
 				size = {156, 156},
-				coords = {TextColor = {1, .82, 0, 1}},
 				coords = {
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
 				},
@@ -405,7 +403,6 @@ local DBdefault = {
 			Minimap = {
 				shape = 'square',
 				size = {135, 135},
-				ZoneText = {Location = 'TOP'},
 				position = 'CENTER,SUI_Art_Transparent,CENTER,0,-5',
 				ZoneText = {
 					size = {130, 12},
@@ -2121,7 +2118,7 @@ function SUI:UpdateModuleConfigs()
 	SUI:reloadui()
 end
 
-function SUI:reloadui(Desc2)
+function SUI:reloadui()
 	SUI.reloaduiWindow:Show()
 end
 
@@ -2175,6 +2172,6 @@ function SUI:OnEnable()
 	)
 end
 
-function SUI:suihelp(input)
+function SUI:suihelp()
 	AceConfigDialog:Open('SpartanUI', 'Help')
 end

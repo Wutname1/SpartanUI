@@ -884,7 +884,7 @@ local function CreateUnitFrame(self, unit)
 
 			AdditionalPower.bg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
 			AdditionalPower.bg:SetAllPoints(AdditionalPower)
-			AdditionalPower.bg:SetTexture(1, 1, 1, .2)
+			AdditionalPower.bg:SetColorTexture(1, 1, 1, .2)
 
 			self.AdditionalPower = AdditionalPower
 
