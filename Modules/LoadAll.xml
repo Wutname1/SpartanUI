@@ -16,6 +16,7 @@
 	<Script file="Chatbox.lua" />
 	<Script file="SpinCam.lua" />
 	<Script file="FilmEffects.lua" />
+	<Script file="StopTalking.lua" />
 
 	<!-- Load BarHandlers -->
 	<Script file="BarHandlers\Core.lua" />
