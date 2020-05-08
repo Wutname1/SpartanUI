@@ -65,7 +65,7 @@ function module:OnEnable()
 					return
 				end
 				local persist = module.DB.profile.persist
-				if (module.shutit.profile.lines[vo] and persist) or (not persist and HeardLines[vo]) then
+				if (module.DB.profile.lines[vo] and persist) or (not persist and HeardLines[vo]) then
 					-- Heard this before.
 					if module.DB.profile.chatOutput and name and text then
 						SUI:Print(name)
@@ -76,7 +76,7 @@ function module:OnEnable()
 				else
 					-- New, flag it as heard.
 					if persist then
-						module.shutit.profile.lines[vo] = true
+						module.DB.profile.lines[vo] = true
 					else
 						HeardLines[vo] = true
 					end
