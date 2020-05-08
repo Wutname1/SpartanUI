@@ -642,18 +642,24 @@ local function ModuleSelectionPage()
 			local itemsMatrix = {}
 
 			-- List Components
-			for name, submodule in SUI:IterateModules() do
-				if (string.match(name, 'Component_')) then
-					local RealName = string.sub(name, 11)
+			-- for i, v in pairs(SUI.orderedModules) do print(v) end
+			-- for name, submodule in SUI:IterateModules() do
+
+			for _, submodule in pairs(SUI.orderedModules) do
+				if (string.match(submodule.name, 'Component_')) then
+					local RealName = string.sub(submodule.name, 21)
 					if SUI.DB.EnabledComponents[RealName] == nil then
 						SUI.DB.EnabledComponents[RealName] = true
 					end
 
-					local Displayname = string.sub(name, 11)
-					if submodule.DisplayName then
-						Displayname = submodule.DisplayName
-					end
+					-- Get modules display name
+					local Displayname = submodule.DisplayName or RealName
+
 					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 160, 20)
+					if submodule.description then
+						local tooltip = StdUi:FrameTooltip(checkbox, submodule.description, submodule.name .. 'Tooltip', 'TOP', true)
+					end
+
 					checkbox:HookScript(
 						'OnClick',
 						function()

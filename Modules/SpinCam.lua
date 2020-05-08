@@ -1,5 +1,6 @@
 local SUI, L = SUI, SUI.L
 local addon = SUI:NewModule('Component_SpinCam')
+addon.description = 'Spin the camera around your character when AFK'
 local SpinCamRunning = false
 local userCameraYawMoveSpeed
 local usercameraCustomViewSmoothing

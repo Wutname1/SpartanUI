@@ -1,5 +1,7 @@
 local SUI = SUI
 local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
+module.name = 'Auto turn in'
+module.description = 'Auto accept and turn in quests'
 local L = SUI.L
 ----------------------------------------------------------------------------------------------------
 local ATI_Container = CreateFrame('Frame')

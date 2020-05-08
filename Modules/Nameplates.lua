@@ -1,5 +1,6 @@
 local unpack, SUI, L = unpack, SUI, SUI.L
 local module = SUI:NewModule('Component_Nameplates', 'AceTimer-3.0')
+module.description = 'Basic nameplate module'
 local Images = {
 	Alliance = {
 		bg = {

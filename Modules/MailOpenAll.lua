@@ -1,6 +1,7 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-3.0')
 module.DisplayName = 'Open all mail'
+module.description = 'Quality of life update to the open all mail button'
 
 local MAX_MAIL_SHOWN = 50
 local mailIndex, attachIndex, numUnshownItems

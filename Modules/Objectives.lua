@@ -1,5 +1,6 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Component_Objectives')
+module.description = 'Allows the hiding of the Objectives tracker based on conditions'
 ----------------------------------------------------------------------------------------------------
 local ObjectiveTrackerWatcher = CreateFrame('Frame')
 local frameName = 'ObjectiveTrackerFrame'

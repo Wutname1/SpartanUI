@@ -1,6 +1,7 @@
 local SUI = SUI
 local L = SUI.L
 local module = SUI:NewModule('Component_BarHandler')
+module.description = 'CORE: Handles the SpartanUI Bartender4 intergration'
 module.BarSystems = {}
 module.BarPosition = {
 	BT4 = {

@@ -1,6 +1,7 @@
 local SUI = SUI
 local StdUi = LibStub('StdUi'):NewInstance()
 local module = SUI:NewModule('Component_Chatbox', 'AceEvent-3.0', 'AceHook-3.0')
+module.description = 'Lightweight quality of life chat improvements'
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
 local linkTypes = {

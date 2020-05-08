@@ -1,6 +1,7 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_CombatLog')
 module.DisplayName = L['Combat logging']
+module.description = 'Automatically runs /combatlog when in raids for log uploading to sites like Warcraftlogs'
 ----------------------------------------------------------------------------------------------------
 local CombatLog_Watcher = CreateFrame('Frame')
 

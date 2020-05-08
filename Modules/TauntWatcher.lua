@@ -2,6 +2,7 @@ local SUI = SUI
 local module = SUI:NewModule('Component_TauntWatcher', 'AceEvent-3.0')
 local L = SUI.L
 module.DisplayName = 'Taunt watcher'
+module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------
 local TauntsList = {
 	--Warrior
