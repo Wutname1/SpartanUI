@@ -1,8 +1,6 @@
 local _, SUI = ...
 SUI = LibStub('AceAddon-3.0'):NewAddon(SUI, 'SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0')
 _G.SUI = SUI
-local AceConfig = LibStub('AceConfig-3.0')
-local AceConfigDialog = LibStub('AceConfigDialog-3.0')
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 local _G = _G
 local type, pairs = type, pairs
@@ -33,6 +31,25 @@ SUI.Version = ''
 -- TODO REMOVE FOR 6.0 RELEASE
 SUI.Version = '5.9.92'
 --@end-alpha@
+
+---------------  Add Libraries ---------------
+
+SUI.Lib = {}
+SUI.AddLib = function(name, libaray, silent)
+	if not name then
+		return
+	end
+
+	-- in this case: `major` is the lib table and `minor` is the minor version
+	if type(libaray) == 'table' then
+		SUI.Lib[name] = libaray
+	else -- in this case: `major` is the lib name and `minor` is the silent switch
+		SUI.Lib[name] = LibStub(libaray, silent)
+	end
+end
+
+AddLib('AceC', 'AceConfig-3.0')
+AddLib('AceCD', 'AceConfigDialog-3.0')
 
 ---------------  Options Init ---------------
 SUI.opt = {
@@ -1940,7 +1957,7 @@ function SUI:ChatCommand(input)
 				end
 			end
 		else
-			AceConfigDialog:Open('SpartanUI')
+			SUI.Lib.AceCD:Open('SpartanUI')
 		end
 	end
 end
@@ -2043,16 +2060,6 @@ function SUI:isInTable(searchTable, searchPhrase, all)
 	return false
 end
 
-function SUI:tableLength(T)
-	assert(type(T) == 'table', 'bad parameter #1: must be table')
-
-	local count = 0
-	for _ in pairs(T) do
-		count = count + 1
-	end
-	return count
-end
-
 function SUI:round(num) -- rounds a number to 2 decimal places
 	if num then
 		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
@@ -2123,7 +2130,10 @@ function SUI:reloadui()
 end
 
 function SUI:OnEnable()
-	AceConfig:RegisterOptionsTable(
+	local AceC = SUI.Lib.AceC
+	local AceCD = SUI.Lib.AceCD
+
+	AceC:RegisterOptionsTable(
 		'SpartanUIBliz',
 		{
 			name = 'SpartanUI',
@@ -2144,17 +2154,17 @@ function SUI:OnEnable()
 					func = function()
 						while CloseWindows() do
 						end
-						AceConfigDialog:SetDefaultSize('SpartanUI', 850, 600)
-						AceConfigDialog:Open('SpartanUI')
+						AceCD:SetDefaultSize('SpartanUI', 850, 600)
+						AceCD:Open('SpartanUI')
 					end
 				}
 			}
 		}
 	)
-	AceConfig:RegisterOptionsTable('SpartanUI', SUI.opt)
+	AceC:RegisterOptionsTable('SpartanUI', SUI.opt)
 
-	AceConfigDialog:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
-	AceConfigDialog:SetDefaultSize('SpartanUI', 1000, 700)
+	AceCD:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
+	AceCD:SetDefaultSize('SpartanUI', 1000, 700)
 
 	self:RegisterChatCommand('sui', 'ChatCommand')
 	self:RegisterChatCommand('suihelp', 'suihelp')
@@ -2173,5 +2183,5 @@ function SUI:OnEnable()
 end
 
 function SUI:suihelp()
-	AceConfigDialog:Open('SpartanUI', 'Help')
+	SUI.Lib.AceCD:Open('SpartanUI', 'Help')
 end

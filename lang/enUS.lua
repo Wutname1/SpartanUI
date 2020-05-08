@@ -1,5 +1,23 @@
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Filters'] = true
+L['Minimum Duration'] = true
+L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."] = true
+L['Maximum Duration'] = true
+L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."] = true
+L['Maximum Duration'] = true
+L['Custom Filters'] = true
+L["Go to 'Filters' section of the config."] = true
+L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."] = true
+L["These filters don't use a list of spells like Custom filters. They are dynamic and based on the WoW API."] = true
+L['Use drag and drop to rearrange filter priority or right click to remove a filter.'] = true
+L['Filter Priority'] = true
+L[
+		'Use Shift+LeftClick to toggle between friendly or enemy or normal state. Normal state will apply the filter to all units.'
+	] = true
+L['Add basic Filter'] = true
+L['Reset Priority'] = true
+L['Reset filter priority to the default state.'] = true
 L[' (current stack of %d)'] = true
 L['1 status bar'] = '1st status bar'
 L['2 status bar'] = '2nd status bar'
