@@ -48,8 +48,8 @@ SUI.AddLib = function(name, libaray, silent)
 	end
 end
 
-AddLib('AceC', 'AceConfig-3.0')
-AddLib('AceCD', 'AceConfigDialog-3.0')
+SUI.AddLib('AceC', 'AceConfig-3.0')
+SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
 
 ---------------  Options Init ---------------
 SUI.opt = {
