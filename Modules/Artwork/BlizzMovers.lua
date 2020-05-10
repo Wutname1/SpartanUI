@@ -117,15 +117,30 @@ local function VehicleLeaveButton()
 
 		local point, anchor, secondaryPoint, x, y =
 			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
-		MainMenuBarVehicleLeaveButton:ClearAllPoints()
-		MainMenuBarVehicleLeaveButton:SetPoint(point, anchor, secondaryPoint, x, y)
-		MoveIt:CreateMover(MainMenuBarVehicleLeaveButton, 'VehicleLeaveButton', 'Vehicle leave button', nil, 'Blizzard UI')
+		local VehicleBtnHolder = CreateFrame('Frame', 'VehicleBtnHolder', SpartanUI)
+		VehicleBtnHolder:SetSize(MainMenuBarVehicleLeaveButton:GetSize())
+		VehicleBtnHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+		MoveIt:CreateMover(VehicleBtnHolder, 'VehicleLeaveButton', 'Vehicle leave button', nil, 'Blizzard UI')
 
+		MainMenuBarVehicleLeaveButton:ClearAllPoints()
+		MainMenuBarVehicleLeaveButton:SetPoint('CENTER', holder, 'CENTER')
 		MainMenuBarVehicleLeaveButton:HookScript(
 			'OnShow',
 			function()
 				if not InCombatLockdown() then
 					MainMenuBarVehicleLeaveButton:position()
+				end
+			end
+		)
+
+		hooksecurefunc(
+			MainMenuBarVehicleLeaveButton,
+			'SetPoint',
+			function(_, _, parent)
+				if parent ~= holder then
+					MainMenuBarVehicleLeaveButton:ClearAllPoints()
+					MainMenuBarVehicleLeaveButton:SetParent(UIParent)
+					MainMenuBarVehicleLeaveButton:SetPoint('CENTER', holder, 'CENTER')
 				end
 			end
 		)
