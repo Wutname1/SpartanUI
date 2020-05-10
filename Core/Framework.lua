@@ -1615,10 +1615,6 @@ local DBdefault = {
 			}
 		}
 	},
-	SpinCam = {
-		enable = true,
-		speed = 8
-	},
 	TauntWatcher = {
 		active = {
 			always = false,
