@@ -283,7 +283,7 @@ local NamePlateFactory = function(frame, unit)
 			nameString = nameString .. ' [SUI_ColorClass][name]'
 		end
 		if nameString ~= '' then
-			frame.Name = frame:CreateFontString(nil, 'BACKGROUND')
+			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
 			SUI:FormatFont(frame.Name, 10, 'Nameplate')
 			frame.Name:SetSize(frame:GetWidth(), 12)
 			frame.Name:SetJustifyH(elements.Name.SetJustifyH)
