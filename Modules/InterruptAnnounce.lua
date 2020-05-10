@@ -1,6 +1,6 @@
 local SUI = SUI
 local module = SUI:NewModule('Component_InterruptAnnouncer', 'AceEvent-3.0')
-local L = SUI.L
+local L, print = SUI.L, SUI.print
 module.DisplayName = 'Interrupt announcer'
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
@@ -8,55 +8,67 @@ local lastTime, lastSpellID = nil, nil
 local function printFormattedString(t, sid, spell, ss, ssid)
 	local msg = SUI.DB.InterruptAnnouncer.text
 	local DBChannel = SUI.DB.InterruptAnnouncer.announceLocation or 'SELF'
-	local ChatChannel = 'SAY'
-
+	local ChatChannel = false
 	msg =
 		msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub(
 		'%%sl',
 		GetSpellLink(sid)
 	):gsub('%%myspell', GetSpellLink(ssid))
+
+	print('IsInRaid() .. ' .. (IsInRaid() and 'true' or 'false'))
+	print('IsInGroup(1) .. ' .. (IsInGroup(1) and 'true' or 'false'))
+	print('IsInGroup(2) .. ' .. (IsInGroup(2) and 'true' or 'false'))
+
 	if DBChannel == 'SELF' then
 		SUI:Print(msg)
 	else
-		if not IsInGroup(2) then
+		if DBChannel == 'SMART' then
 			if IsInRaid() then
-				if DBChannel == 'INSTANCE_CHAT' then
+				if IsInGroup(2) then
+					ChatChannel = 'INSTANCE_CHAT'
+				else
 					ChatChannel = 'RAID'
 				end
 			elseif IsInGroup(1) then
-				if DBChannel == 'INSTANCE_CHAT' then
-					ChatChannel = 'PARTY'
+				ChatChannel = 'PARTY'
+			else
+				ChatChannel = 'SELF'
+			end
+		else
+			if DBChannel == 'RAID' or DBChannel == 'INSTANCE_CHAT' then
+				if (IsInRaid() and IsInGroup(2)) then
+					-- We are in a raid with instance chat
+				elseif (IsInRaid() and not IsInGroup(2)) then
+				-- We are in a manual Raid
 				end
-			end
-		elseif IsInGroup(2) then
-			if DBChannel == 'RAID' then
-				ChatChannel = 'INSTANCE_CHAT'
-			end
-			if DBChannel == 'PARTY' then
-				ChatChannel = 'INSTANCE_CHAT'
-			end
-		end
-
-		if DBChannel == 'SMART' then
-			ChatChannel = 'RAID'
-			if DBChannel == 'RAID' and not IsInRaid() then
+			elseif DBChannel == 'PARTY' then
 				ChatChannel = 'PARTY'
 			end
 
-			if DBChannel == 'PARTY' and not IsInGroup(1) then
-				ChatChannel = 'SAY'
-			end
-
-			if DBChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then
-				ChatChannel = 'SAY'
-			end
-
-			if DBChannel == 'CHANNEL' and ec == 0 then
-				ChatChannel = 'SAY'
+			if not IsInGroup(2) then
+				if IsInRaid() then
+					if DBChannel == 'INSTANCE_CHAT' then
+						ChatChannel = 'RAID'
+					end
+				elseif IsInGroup(1) then
+					if DBChannel == 'INSTANCE_CHAT' then
+						ChatChannel = 'PARTY'
+					end
+				end
+			elseif IsInGroup(2) then
+				if DBChannel == 'RAID' then
+					ChatChannel = 'INSTANCE_CHAT'
+				end
+				if DBChannel == 'PARTY' then
+					ChatChannel = 'INSTANCE_CHAT'
+				end
 			end
 		end
 
-		SendChatMessage(msg, ChatChannel, nil, ec)
+		if ChatChannel then
+			print('Sending to ' .. ChatChannel)
+			SendChatMessage(msg, ChatChannel)
+		end
 	end
 end
 
@@ -224,7 +236,6 @@ function module:Options()
 					['INSTANCE_CHAT'] = L['Instance chat'],
 					['PARTY'] = L['Party'],
 					['RAID'] = L['Raid'],
-					['SAY'] = L['Say'],
 					['SELF'] = L['Self'],
 					['SMART'] = L['Smart']
 				},
@@ -329,7 +340,6 @@ function module:FirstLaunch()
 				{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
 				{text = L['Raid'], value = 'RAID'},
 				{text = L['Party'], value = 'PARTY'},
-				{text = L['Say'], value = 'SAY'},
 				{text = L['Smart'], value = 'SMART'},
 				{text = L['Self'], value = 'SELF'}
 			}
