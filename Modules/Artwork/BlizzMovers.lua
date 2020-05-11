@@ -128,7 +128,7 @@ local function VehicleLeaveButton()
 			MainMenuBarVehicleLeaveButton,
 			'SetPoint',
 			function(_, _, parent)
-				if parent ~= holder then
+				if parent ~= VehicleBtnHolder then
 					MainMenuBarVehicleLeaveButton:ClearAllPoints()
 					MainMenuBarVehicleLeaveButton:SetParent(UIParent)
 					MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
