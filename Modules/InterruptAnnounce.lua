@@ -15,20 +15,14 @@ local function printFormattedString(t, sid, spell, ss, ssid)
 		GetSpellLink(sid)
 	):gsub('%%myspell', GetSpellLink(ssid))
 
-	print('IsInRaid() .. ' .. (IsInRaid() and 'true' or 'false'))
-	print('IsInGroup(1) .. ' .. (IsInGroup(1) and 'true' or 'false'))
-	print('IsInGroup(2) .. ' .. (IsInGroup(2) and 'true' or 'false'))
-
 	if DBChannel == 'SELF' then
 		SUI:Print(msg)
 	else
 		if DBChannel == 'SMART' then
-			if IsInRaid() then
-				if IsInGroup(2) then
-					ChatChannel = 'INSTANCE_CHAT'
-				else
-					ChatChannel = 'RAID'
-				end
+			if IsInGroup(2) then
+				ChatChannel = 'INSTANCE_CHAT'
+			elseif IsInRaid() then
+				ChatChannel = 'RAID'
 			elseif IsInGroup(1) then
 				ChatChannel = 'PARTY'
 			else
@@ -38,30 +32,13 @@ local function printFormattedString(t, sid, spell, ss, ssid)
 			if DBChannel == 'RAID' or DBChannel == 'INSTANCE_CHAT' then
 				if (IsInRaid() and IsInGroup(2)) then
 					-- We are in a raid with instance chat
+					ChatChannel = 'INSTANCE_CHAT'
 				elseif (IsInRaid() and not IsInGroup(2)) then
-				-- We are in a manual Raid
+					-- We are in a manual Raid
+					ChatChannel = 'RAID'
 				end
-			elseif DBChannel == 'PARTY' then
+			elseif DBChannel == 'PARTY' and IsInGroup(1) then
 				ChatChannel = 'PARTY'
-			end
-
-			if not IsInGroup(2) then
-				if IsInRaid() then
-					if DBChannel == 'INSTANCE_CHAT' then
-						ChatChannel = 'RAID'
-					end
-				elseif IsInGroup(1) then
-					if DBChannel == 'INSTANCE_CHAT' then
-						ChatChannel = 'PARTY'
-					end
-				end
-			elseif IsInGroup(2) then
-				if DBChannel == 'RAID' then
-					ChatChannel = 'INSTANCE_CHAT'
-				end
-				if DBChannel == 'PARTY' then
-					ChatChannel = 'INSTANCE_CHAT'
-				end
 			end
 		end
 
