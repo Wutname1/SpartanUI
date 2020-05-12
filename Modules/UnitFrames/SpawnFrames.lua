@@ -831,6 +831,7 @@ local function CreateUnitFrame(self, unit)
 			local Background = power:CreateTexture(nil, 'BACKGROUND')
 			Background:SetAllPoints(power)
 			Background:SetTexture(Smoothv2)
+			Background:SetVertexColor(1, 1, 1, .2)
 			power.bg = Background
 
 			local powerOffset = elements.Power.offset
