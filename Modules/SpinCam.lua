@@ -18,6 +18,10 @@ function module:OnInitialize()
 end
 
 local function StopSpin()
+	if not SpinCamRunning then
+		return
+	end
+
 	SetView(module.DB.profile.saveView) -- restore saved position
 	ResetView(module.DB.profile.saveView)
 	ResetView(module.DB.profile.useView)
