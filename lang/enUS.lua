@@ -1,5 +1,9 @@
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Text'] = true
+L['Table'] = true
+L['Plugin'] = true
+
 L['Filters'] = true
 L['Minimum Duration'] = true
 L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."] = true
