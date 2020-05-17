@@ -1,5 +1,5 @@
 local _, SUI = ...
-SUI = LibStub('AceAddon-3.0'):NewAddon(SUI, 'SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0')
+SUI = LibStub('AceAddon-3.0'):NewAddon(SUI, 'SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 local _G = _G
@@ -50,6 +50,8 @@ end
 
 SUI.AddLib('AceC', 'AceConfig-3.0')
 SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
+SUI.AddLib('Compress', 'LibCompress')
+SUI.AddLib('Base64', 'LibBase64-1.0')
 
 ---------------  Options Init ---------------
 SUI.opt = {

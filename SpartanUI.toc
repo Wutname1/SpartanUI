@@ -35,6 +35,9 @@ libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
 libs\AceLocale-3.0\AceLocale-3.0.xml
 libs\AceTimer-3.0\AceTimer-3.0.xml
+libs\AceSerializer-3.0\AceSerializer-3.0.xml
+libs\LibCompress\LibCompress.lua
+libs\LibBase64-1.0\LibBase64-1.0.lua
 #@retail@
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 #@end-retail@
