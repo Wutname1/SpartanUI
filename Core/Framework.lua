@@ -776,7 +776,7 @@ local DBdefault = {
 					}
 				},
 				auras = {
-					Buffs = {
+					['**'] = {
 						enabled = false,
 						number = 10,
 						size = 20,
@@ -788,31 +788,39 @@ local DBdefault = {
 						growthy = 'UP',
 						rows = 3,
 						position = {
-							anchor = 'TOPLEFT',
+							anchor = 'TOPRIGHT',
 							x = 0,
 							y = 20
+						},
+						filters = {
+							minDuration = 0,
+							maxDuration = 600,
+							priority = ''
 						}
 					},
-					Debuffs = {
-						enabled = true,
+					Buffs = {
 						number = 10,
 						size = 20,
 						spacing = 1,
 						showType = true,
-						ShowBoss = true,
-						onlyShowPlayer = false,
-						initialAnchor = 'BOTTOMRIGHT',
-						growthx = 'LEFT',
+						initialAnchor = 'BOTTOMLEFT',
+						growthx = 'RIGHT',
 						growthy = 'UP',
-						rows = 3,
 						position = {
-							anchor = 'TOPRIGHT',
-							x = 0,
-							y = 20
+							anchor = 'TOPLEFT'
+						},
+						filters = {
+							priority = 'Blacklist,blockNoDuration,Personal,TurtleBuffs,PlayerBuffs'
 						}
 					},
+					Debuffs = {
+						enabled = true,
+						ShowBoss = true,
+						initialAnchor = 'BOTTOMRIGHT',
+						growthx = 'LEFT',
+						growthy = 'UP'
+					},
 					Bars = {
-						enabled = false,
 						auraBarHeight = 15,
 						auraBarWidth = false,
 						auraBarTexture = Smoothv2,
@@ -824,9 +832,7 @@ local DBdefault = {
 						spacing = 1,
 						scaleTime = false,
 						position = {
-							anchor = 'TOP',
-							x = 0,
-							y = 20
+							anchor = 'TOP'
 						}
 					}
 				},

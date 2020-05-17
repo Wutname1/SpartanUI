@@ -1575,6 +1575,9 @@ local function AddBuffOptions(frameName)
 	end
 
 	for _, buffType in pairs({'Buffs', 'Debuffs'}) do
+		local function AddBuffFilter(value)
+		end
+
 		SUI.opt.args.UnitFrames.args[frameName].args.auras.args[buffType] = {
 			name = L[buffType],
 			type = 'group',
@@ -1788,6 +1791,171 @@ local function AddBuffOptions(frameName)
 								--Update Screen
 								module.frames[frameName]:UpdateAuras()
 							end
+						}
+					}
+				},
+				filters = {
+					name = L['Filters'],
+					inline = true,
+					type = 'group',
+					order = 500,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType].filters[info[#info]]
+					end,
+					set = function(info, value)
+						print(info)
+						print(#info)
+						module.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = value
+						--Update memory
+						module.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = val
+						--Update the DB
+						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].filters[info[#info]] =
+							val
+						--Update Screen
+						module.frames[frameName]:UpdateAuras()
+					end,
+					args = {
+						minDuration = {
+							order = 1,
+							type = 'range',
+							name = L['Minimum Duration'],
+							desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
+							min = 0,
+							max = 7200,
+							step = 1
+						},
+						maxDuration = {
+							order = 2,
+							type = 'range',
+							name = L['Maximum Duration'],
+							desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
+							min = 0,
+							max = 7200,
+							step = 1
+						},
+						customFilters = {
+							order = 3,
+							name = L['Custom Filters'],
+							desc = L["Go to 'Filters' section of the config."],
+							type = 'execute',
+							func = function()
+								SUI.Lib.AceCD:SelectGroup('SpartanUI', 'BuffFilters')
+							end
+						},
+						basicFilters = {
+							order = 4,
+							-- sortByValue = true,
+							type = 'select',
+							name = L['Add basic Filter'],
+							desc = L[
+								"These filters don't use a list of spells like Custom filters. They are dynamic and based on the WoW API."
+							],
+							values = function()
+								local list = {
+									-- Whitelists
+									Boss = true,
+									MyPet = true,
+									OtherPet = true,
+									Personal = true,
+									nonPersonal = true,
+									CastByUnit = true,
+									notCastByUnit = true,
+									Dispellable = true,
+									notDispellable = true,
+									CastByNPC = true,
+									CastByPlayers = true,
+									-- Blacklists
+									blockNonPersonal = true,
+									blockCastByPlayers = true,
+									blockNoDuration = true,
+									blockDispellable = true,
+									blockNotDispellable = true
+								}
+								for filter in pairs(list) do
+									filters[filter] = filter
+								end
+								return filters
+							end,
+							set = function(info, value)
+								AddBuffFilter(value)
+							end
+						},
+						resetPriority = {
+							order = 6,
+							name = L['Reset Priority'],
+							desc = L['Reset filter priority to the default state.'],
+							type = 'execute',
+							func = function()
+								--Update the DB
+								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].priority = ''
+								--Update Screen
+								module.frames[frameName]:UpdateAuras()
+							end
+						},
+						-- filterPriority = {
+						-- 	order = 7,
+						-- 	dragdrop = true,
+						-- 	type = 'multiselect',
+						-- 	name = L['Filter Priority'],
+						-- 	dragOnLeave = function()
+						-- 	end, --keep this here
+						-- 	dragOnEnter = function(info)
+						-- 		carryFilterTo = info.obj.value
+						-- 	end,
+						-- 	dragOnMouseDown = function(info)
+						-- 		carryFilterFrom, carryFilterTo = info.obj.value, nil
+						-- 	end,
+						-- 	dragOnMouseUp = function(info)
+						-- 		filterPriority(auraType, groupName, carryFilterTo, nil, carryFilterFrom) --add it in the new spot
+						-- 		carryFilterFrom, carryFilterTo = nil, nil
+						-- 	end,
+						-- 	dragOnClick = function(info)
+						-- 		filterPriority(auraType, groupName, carryFilterFrom, true)
+						-- 	end,
+						-- 	stateSwitchGetText = function(_, TEXT)
+						-- 		local friend, enemy = strmatch(TEXT, '^Friendly:([^,]*)'), strmatch(TEXT, '^Enemy:([^,]*)')
+						-- 		local text, blockB, blockS, blockT = friend or enemy or TEXT
+						-- 		local SF, localized = E.global.unitframe.specialFilters[text], L[text]
+						-- 		if SF and localized and text:match('^block') then
+						-- 			blockB, blockS, blockT = localized:match('^%[(.-)](%s?)(.+)')
+						-- 		end
+						-- 		local filterText = (blockB and format('|cFF999999%s|r%s%s', blockB, blockS, blockT)) or localized or text
+						-- 		return (friend and format('|cFF33FF33%s|r %s', _G.FRIEND, filterText)) or
+						-- 			(enemy and format('|cFFFF3333%s|r %s', _G.ENEMY, filterText)) or
+						-- 			filterText
+						-- 	end,
+						-- 	stateSwitchOnClick = function(info)
+						-- 		filterPriority(auraType, groupName, carryFilterFrom, nil, nil, true)
+						-- 	end,
+						-- 	values = function()
+						-- 		local str = E.db.unitframe.units[groupName][auraType].priority
+						-- 		if str == '' then
+						-- 			return nil
+						-- 		end
+						-- 		return {strsplit(',', str)}
+						-- 	end,
+						-- 	get = function(info, value)
+						-- 		local str = E.db.unitframe.units[groupName][auraType].priority
+						-- 		if str == '' then
+						-- 			return nil
+						-- 		end
+						-- 		local tbl = {strsplit(',', str)}
+						-- 		return tbl[value]
+						-- 	end,
+						-- 	set = function(info)
+						-- 		E.db.unitframe.units[groupName][auraType][info[#info]] = nil -- this was being set when drag and drop was first added, setting it to nil to clear tester profiles of this variable
+						-- 		updateFunc(UF, groupName, numUnits)
+						-- 	end
+						-- },
+						spacer1 = {
+							order = 8,
+							type = 'description',
+							fontSize = 'medium',
+							name = L['Use drag and drop to rearrange filter priority or right click to remove a filter.'] ..
+								'\n' ..
+									L[
+										'Use Shift+LeftClick to toggle between friendly or enemy or normal state. Normal state will apply the filter to all units.'
+									]
 						}
 					}
 				}
