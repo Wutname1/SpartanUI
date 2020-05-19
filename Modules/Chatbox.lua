@@ -21,10 +21,7 @@ local function StripTextures(object)
 	for i = 1, object:GetNumRegions() do
 		local region = select(i, object:GetRegions())
 		if region and region:GetObjectType() == 'Texture' then
-			if region:GetTexture() == 'Interface\\DialogFrame\\UI-DialogBox-Header' then
-				-- region:SetTexture(nil)
-				region:SetScale(.2)
-			end
+			region:SetTexture(nil)
 		end
 	end
 end
@@ -472,6 +469,53 @@ function module:SetupChatboxes()
 	GDM:SetPoint('BOTTOMLEFT', _G.ChatFrame1Background, 'TOPLEFT', -1, 1)
 	GDM:SetPoint('BOTTOMRIGHT', _G.ChatFrame1Background, 'TOPRIGHT', 1, 1)
 
+	local QJTB = _G.QuickJoinToastButton
+	QJTB:ClearAllPoints()
+	QJTB:SetSize(18, 18)
+	StripTextures(QJTB)
+	QJTB:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -1, -1)
+	QJTB.FriendCount:Hide()
+	local icon = 'Interface\\Addons\\SpartanUI\\images\\chaticons'
+	local function updateTexture()
+		QJTB.FriendsButton:SetTexture(icon)
+		QJTB.QueueButton:SetTexture('Interface\\HELPFRAME\\HelpIcon-ItemRestoration')
+	end
+	QJTB:HookScript('OnMouseDown', updateTexture)
+	QJTB:HookScript('OnMouseUp', updateTexture)
+	updateTexture()
+
+	QJTB.FriendsButton:SetTexture(icon)
+	QJTB.FriendsButton:SetTexCoord(0.08, 0.4, 0.6, 0.9)
+	-- QJTB.FriendsButton:SetTexCoord(0.1484375, 0.359375, 0.6484375, 0.859375)
+	QJTB.FriendsButton:ClearAllPoints()
+	QJTB.FriendsButton:SetPoint('CENTER')
+	QJTB.FriendsButton:SetSize(18, 18)
+	-- QJTB.FriendsButton:SetScale(.6)
+
+	QJTB.Toast:ClearAllPoints()
+	QJTB.Toast:SetPoint('BOTTOM', GDM, 'TOP')
+	QJTB.Toast2:ClearAllPoints()
+	QJTB.Toast2:SetPoint('BOTTOM', GDM, 'TOP')
+	BNToastFrame:ClearAllPoints()
+	BNToastFrame:SetPoint('BOTTOM', GDM, 'TOP')
+
+	ChatFrameChannelButton:ClearAllPoints()
+	ChatFrameChannelButton:SetPoint('TOPRIGHT', QJTB, 'TOPLEFT', -1, 0)
+	StripTextures(ChatFrameChannelButton)
+	ChatFrameChannelButton:SetSize(18, 18)
+	ChatFrameChannelButton.Icon:SetTexture('Interface\\Addons\\SpartanUI\\images\\chaticons')
+	ChatFrameChannelButton.Icon:SetTexCoord(0.1484375, 0.359375, 0.1484375, 0.359375)
+	ChatFrameChannelButton.Icon:SetScale(.8)
+
+	ChatFrameMenuButton:ClearAllPoints()
+	ChatFrameMenuButton:SetPoint('TOPLEFT', ChatFrame1Background, 'BOTTOMRIGHT', 0, 0)
+	ChatFrameMenuButton:SetSize(20, 20)
+	
+	-- ChatFrameMenuButton:Hide()
+
+	ChatAlertFrame:ClearAllPoints()
+	ChatAlertFrame:SetPoint('BOTTOMLEFT', QJTB, 'TOPLEFT', 0, 2)
+
 	for i = 1, 10 do
 		local ChatFrameName = ('%s%d'):format('ChatFrame', i)
 
@@ -502,7 +546,6 @@ function module:SetupChatboxes()
 
 		ChatFrame:SetClampRectInsets(0, 0, 0, 0)
 		ChatFrame:SetClampedToScreen(false)
-		StripTextures(ChatFrame)
 
 		-- Setup Editbox BG
 		local EBLeft = _G[ChatFrameName .. 'EditBoxLeft']
@@ -552,7 +595,7 @@ function module:SetupChatboxes()
 		end
 
 		disable(_G[ChatFrameName .. 'ButtonFrame'])
-		disable(_G.ChatFrameMenuButton)
+		-- disable(_G.ChatFrameMenuButton)
 
 		ChatFrame:SetBackdrop(nil)
 
@@ -567,11 +610,16 @@ function module:SetupChatboxes()
 		EBFocusMid:SetVertexColor(c.r, c.g, c.b, c.a)
 		EBFocusRight:SetVertexColor(c.r, c.g, c.b, c.a)
 
+		local EditBoxFocusShow = function(frame)
+			ChatFrameMenuButton:Show()
+		end
 		local EditBoxFocusHide = function(frame)
+			ChatFrameMenuButton:Hide()
 			ChatFrameEdit:Hide()
 		end
 
 		hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
+		hooksecurefunc(EBFocusMid, 'Show', EditBoxFocusShow)
 	end
 	-- end
 
