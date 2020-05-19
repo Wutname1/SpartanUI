@@ -63,6 +63,40 @@ function module:GetColor(className, isLocal)
 	return color
 end
 
+local function get_color(c)
+	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' and type(c.a) == 'number' then
+		return c.r, c.g, c.b, c.a
+	end
+	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' then
+		return c.r, c.g, c.b, .8
+	end
+	return 1.0, 1.0, 1.0, .8
+end
+
+local function get_var_color(a1, a2, a3, a4)
+	local r, g, b, a
+
+	if type(a1) == 'table' then
+		r, g, b, a = get_color(a1)
+	elseif type(a1) == 'number' and type(a2) == 'number' and type(a3) == 'number' and type(a4) == 'number' then
+		r, g, b, a = a1, a2, a3, a4
+	elseif type(a1) == 'number' and type(a2) == 'number' and type(a3) == 'number' and type(a4) == 'nil' then
+		r, g, b, a = a1, a2, a3, .8
+	else
+		r, g, b, a = 1.0, 1.0, 1.0, .8
+	end
+
+	return r, g, b, a
+end
+
+local function to225(r, g, b, a)
+	return r * 255, g * 255, b * 255, a
+end
+
+local function GetHexColor(a1, a2, a3, a4)
+	return string.format('%02x%02x%02x', to225(get_var_color(a1, a2, a3, a4)))
+end
+
 local changeName = function(fullName, misc, nameToChange, colon)
 	local name = Ambiguate(fullName, 'none')
 	--Do this here instead of listening to the guild event, as the event is slower than a player login
@@ -109,7 +143,9 @@ local changeName = function(fullName, misc, nameToChange, colon)
 		end
 	end
 	if ChatLevelLog and ChatLevelLog[name] then
-		nameToChange = (ChatLevelLog[name]) .. ':' .. nameToChange
+		local color = GetHexColor(GetQuestDifficultyColor(ChatLevelLog[name]))
+
+		nameToChange = '|cff' .. color .. (ChatLevelLog[name]) .. '|r:' .. nameToChange
 	end
 	if nameGroup and nameGroup[name] and IsInRaid() then
 		nameToChange = nameToChange .. ':' .. nameGroup[name]
@@ -123,7 +159,43 @@ function module:PlayerName(text)
 end
 
 function module:TimeStamp(text)
-	text = date('[' .. SUI.DB.Chatbox.TimeStamp.format .. ']') .. text
+	text = date('|cff7d7d7d[' .. SUI.DB.Chatbox.TimeStamp.format .. ']|r ') .. text
+	return text
+end
+
+local function shortenChannel(text)
+	local rplc = {
+		'[I]', --Instance
+		'[IL]', --Instance Leader
+		'[G]', --Guild
+		'[P]', --Party
+		'[PL]', --Party Leader
+		'[PL]', --Party Leader (Guide)
+		'[O]', --Officer
+		'[R]', --Raid
+		'[RL]', --Raid Leader
+		'[RW]', --Raid Warning
+		'[%1]' --Custom Channels
+	}
+	local gsub = gsub
+	local chn = {
+		gsub(CHAT_INSTANCE_CHAT_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_INSTANCE_CHAT_LEADER_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_GUILD_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_PARTY_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_PARTY_LEADER_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_PARTY_GUIDE_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_OFFICER_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_RAID_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_RAID_LEADER_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		gsub(CHAT_RAID_WARNING_GET, '.*%[(.*)%].*', '%%[%1%%]'),
+		'%[(%d%d?)%. ([^%]]+)%]' --Custom Channels
+	}
+
+	local num = #chn
+	for i = 1, num do
+		text = gsub(text, chn[i], rplc[i])
+	end
 	return text
 end
 
@@ -139,7 +211,12 @@ local ModifyMessage = function(self)
 	local text = tbl and tbl.message
 
 	if text then
+		if tbl.message.CHANNELNUM then
+			print(tbl.message.CHANNELNUM)
+		end
+
 		text = tostring(text)
+		text = shortenChannel(text)
 		text = module:TimeStamp(text)
 		text = module:PlayerName(text)
 
@@ -184,7 +261,8 @@ function module:OnInitialize()
 
 	ChatLevelLog = SUI.DBG.ChatLevelLog
 	-- Create popup
-	popup = StdUi:Window(nil, 480, 200)
+	popup = StdUi:Window(nil, 600, 350)
+	popup:MakeResizable('BOTTOMRIGHT')
 	popup:SetPoint('CENTER', 0, 0)
 	popup:SetFrameStrata('DIALOG')
 
@@ -194,21 +272,23 @@ function module:OnInitialize()
 	popup.Title:SetAlpha(.8)
 
 	-- Create Popup Items
-	popup.editBox = StdUi:MultiLineBox(popup, 450, 120, '')
-	popup.btnClose = StdUi:Button(popup, 150, 20, 'CLOSE')
+	popup.editBox = StdUi:MultiLineBox(popup, 580, 120, '')
+	popup.editBox.editBox:SetFont(SUI:GetFontFace('chatbox'), 12)
+	-- popup.btnClose = StdUi:Button(popup, 150, 20, 'CLOSE')
 
 	-- Position
-	StdUi:GlueTop(popup.editBox, popup, 0, -50)
-	popup.btnClose:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
+	popup.editBox:SetPoint('TOPLEFT', popup, 'TOPLEFT', 10, -55)
+	popup.editBox:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -10, 10)
+	-- popup.btnClose:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
 
 	-- Actions
-	popup.btnClose:SetScript(
-		'OnClick',
-		function(this)
-			-- Perform the Page's Custom Next action
-			popup:Hide()
-		end
-	)
+	-- popup.btnClose:SetScript(
+	-- 	'OnClick',
+	-- 	function(this)
+	-- 		-- Perform the Page's Custom Next action
+	-- 		popup:Hide()
+	-- 	end
+	-- )
 	popup:Hide()
 
 	popup.font = popup:CreateFontString(nil, nil, 'GameFontNormal')
@@ -274,6 +354,20 @@ function module:OnEnable()
 end
 
 function module:SetupChatboxes()
+	DEFAULT_CHATFRAME_ALPHA = 0.7
+	DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
+	DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
+
+	local chatBG = {
+		bgFile = [[Interface\Buttons\WHITE8X8]],
+		edgeFile = [[Interface\Buttons\WHITE8X8]],
+		tile = true,
+		tileSize = 16,
+		edgeSize = 2
+	}
+
+	local c = {r = .05, g = .05, b = .05, a = 0.7}
+	-- local c = {r = 0.0588, g = 0.0588, b = 0, a = 0.8}
 	local filterFunc = function(_, _, msg, ...)
 		if not SUI.DB.Chatbox.webLinks then
 			return
@@ -338,12 +432,17 @@ function module:SetupChatboxes()
 		elseif IsShiftKeyDown() then
 			if ChatFrame:IsVisible() then
 				ChatFrame:Hide()
-				if ChatFrameEdit:IsVisible() then
-					ChatFrameEdit:Hide()
-				end
 			else
 				ChatFrame:Show()
 			end
+		end
+		if ChatFrame:IsVisible() then
+		-- FCF_SetWindowColor(ChatFrame, c.r, c.g, c.b)
+		-- FCF_SetWindowAlpha(ChatFrame, .7)
+		end
+
+		if ChatFrameEdit:IsVisible() then
+			ChatFrameEdit:Hide()
 		end
 	end
 	local TabHintEnter = function(frame)
@@ -365,6 +464,14 @@ function module:SetupChatboxes()
 		HideUIPanel(GameTooltip)
 	end
 
+	local GDM = _G.GeneralDockManager
+	GDM:SetBackdrop(chatBG)
+	GDM:SetBackdropColor(c.r, c.g, c.b, c.a)
+	GDM:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
+	GDM:ClearAllPoints()
+	GDM:SetPoint('BOTTOMLEFT', _G.ChatFrame1Background, 'TOPLEFT', -1, 1)
+	GDM:SetPoint('BOTTOMRIGHT', _G.ChatFrame1Background, 'TOPRIGHT', 1, 1)
+
 	for i = 1, 10 do
 		local ChatFrameName = ('%s%d'):format('ChatFrame', i)
 
@@ -372,69 +479,101 @@ function module:SetupChatboxes()
 		local ChatFrameEdit = _G[ChatFrameName .. 'EditBox']
 		ChatFrameEdit:SetAltArrowKeyMode(false)
 
-		if i ~= 2 then --skip combatlog
-			local ChatFrame = _G[ChatFrameName]
-			local ChatFrameTab = _G[ChatFrameName .. 'Tab']
-			hooksecurefunc(ChatFrame.historyBuffer, 'PushFront', ModifyMessage)
+		-- if i ~= 2 then --skip combatlog
+		local ChatFrame = _G[ChatFrameName]
+		local ChatFrameTab = _G[ChatFrameName .. 'Tab']
+		hooksecurefunc(ChatFrame.historyBuffer, 'PushFront', ModifyMessage)
 
-			ChatFrameTab:HookScript('OnClick', TabClick)
-			ChatFrameTab:HookScript('OnEnter', TabHintEnter)
-			ChatFrameTab:HookScript('OnLeave', TabHintLeave)
+		ChatFrameTab:HookScript('OnClick', TabClick)
+		ChatFrameTab:HookScript('OnEnter', TabHintEnter)
+		ChatFrameTab:HookScript('OnLeave', TabHintLeave)
+		-- ChatFrameTab:SetBackdrop(nil)
+		ChatFrameTab.Text:ClearAllPoints()
+		ChatFrameTab.Text:SetPoint('CENTER', ChatFrameTab)
 
-			module:HookScript(ChatFrame, 'OnHyperlinkEnter', OnHyperlinkEnter)
-			module:HookScript(ChatFrame, 'OnHyperlinkLeave', OnHyperlinkLeave)
-
-			ChatFrame:SetClampRectInsets(0, 0, 0, 0)
-			ChatFrame:SetClampedToScreen(false)
-			StripTextures(ChatFrame)
-
-			-- Setup Editbox BG
-			local EBLeft = _G[ChatFrameName .. 'EditBoxLeft']
-			local EBMid = _G[ChatFrameName .. 'EditBoxMid']
-			local EBRight = _G[ChatFrameName .. 'EditBoxRight']
-
-			-- ChatFrame:SetTexture('Interface\\AddOns\\SpartanUI\\images\\texture')
-			EBLeft:SetTexture('Interface\\AddOns\\SpartanUI\\images\\texture')
-			EBMid:SetTexture('Interface\\AddOns\\SpartanUI\\images\\texture')
-			EBRight:SetTexture('Interface\\AddOns\\SpartanUI\\images\\texture')
-
-			-- ChatFrame:SetVertexColor(0, 0, 0, .5)
-			EBLeft:SetVertexColor(0, 0, 0, .5)
-			EBMid:SetVertexColor(0, 0, 0, .5)
-			EBRight:SetVertexColor(0, 0, 0, .5)
-
-		-- local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
-		-- local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
-		-- local EBFocusRight = _G[ChatFrameName .. 'EditBoxFocusRight']
-
-		-- local EditBoxFocusShow = function(frame)
-		-- 	EBLeft:Show()
-		-- 	EBMid:Show()
-		-- 	EBRight:Show()
-		-- end
-		-- local EditBoxFocusHide = function(frame)
-		-- 	EBLeft:Hide()
-		-- 	EBMid:Hide()
-		-- 	EBRight:Hide()
-		-- end
-
-		-- EBLeft:Hide()
-		-- EBMid:Hide()
-		-- EBRight:Hide()
-
-		-- hooksecurefunc(EBFocusLeft, 'Show', EditBoxFocusShow)
-		-- hooksecurefunc(EBFocusMid, 'Show', EditBoxFocusShow)
-		-- hooksecurefunc(EBFocusRight, 'Show', EditBoxFocusShow)
-
-		-- hooksecurefunc(EBFocusLeft, 'Hide', EditBoxFocusHide)
-		-- hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
-		-- hooksecurefunc(EBFocusRight, 'Hide', EditBoxFocusHide)
-
-		-- hooksecurefunc(EBLeft, 'Hide', EditBoxShow)
-		-- hooksecurefunc(EBMid, 'Hide', EditBoxShow)
-		-- hooksecurefunc(EBRight, 'Hide', EditBoxShow)
+		for _, v in ipairs({'left', 'middle', 'right'}) do
+			ChatFrameTab[v .. 'HighlightTexture']:SetTexture(nil)
+			ChatFrameTab[v .. 'SelectedTexture']:SetTexture(nil)
+			ChatFrameTab[v .. 'Texture']:SetTexture(nil)
 		end
+
+		module:HookScript(ChatFrame, 'OnHyperlinkEnter', OnHyperlinkEnter)
+		module:HookScript(ChatFrame, 'OnHyperlinkLeave', OnHyperlinkLeave)
+
+		ChatFrame:SetClampRectInsets(0, 0, 0, 0)
+		ChatFrame:SetClampedToScreen(false)
+		StripTextures(ChatFrame)
+
+		-- Setup Editbox BG
+		local EBLeft = _G[ChatFrameName .. 'EditBoxLeft']
+		local EBMid = _G[ChatFrameName .. 'EditBoxMid']
+		local EBRight = _G[ChatFrameName .. 'EditBoxRight']
+		EBLeft:Hide()
+		EBRight:Hide()
+		EBMid:Hide()
+
+		local header = _G[ChatFrameName .. 'EditBoxHeader']
+		local _, s, m = header:GetFont()
+		SUI:FormatFont(header, s, 'Chatbox')
+		SUI:FormatFont(ChatFrame, 12, 'Chatbox')
+		SUI:FormatFont(ChatFrameEdit, 12, 'Chatbox')
+
+		if (_G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil) then
+			_G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil)
+		end
+		if (_G[ChatFrameName .. 'EditBoxFocusRight'] ~= nil) then
+			_G[ChatFrameName .. 'EditBoxFocusRight']:SetTexture(nil)
+		end
+		if (_G[ChatFrameName .. 'EditBoxFocusMid'] ~= nil) then
+			_G[ChatFrameName .. 'EditBoxFocusMid']:SetTexture(nil)
+		end
+
+		ChatFrameEdit:Hide()
+		ChatFrameEdit:ClearAllPoints()
+		ChatFrameEdit:SetPoint('TOPLEFT', ChatFrame.Background, 'BOTTOMLEFT', -1, -1)
+		ChatFrameEdit:SetPoint('TOPRIGHT', ChatFrame.Background, 'BOTTOMRIGHT', 1, -1)
+		ChatFrameEdit:SetHeight(22)
+
+		-- FCF_SetWindowColor(ChatFrame, c.r, c.g, c.b)
+		-- FCF_SetWindowAlpha(ChatFrame, .7)
+		-- FCF_SetWindowColor(chatFrame, DEFAULT_CHATFRAME_COLOR.r, DEFAULT_CHATFRAME_COLOR.g, DEFAULT_CHATFRAME_COLOR.b)
+		-- FCF_SetWindowAlpha(chatFrame, DEFAULT_CHATFRAME_ALPHA)
+
+		local function disable(element)
+			if element.UnregisterAllEvents then
+				element:UnregisterAllEvents()
+				element:SetParent(nil)
+			-- else
+			-- 	element.Show = element.Hide
+			end
+			element.Show = element.Hide
+
+			element:Hide()
+		end
+
+		disable(_G[ChatFrameName .. 'ButtonFrame'])
+		disable(_G.ChatFrameMenuButton)
+
+		ChatFrame:SetBackdrop(nil)
+
+		ChatFrameEdit:SetBackdrop(chatBG)
+		ChatFrameEdit:SetBackdropColor(c.r, c.g, c.b, c.a)
+		ChatFrameEdit:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
+
+		local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
+		local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
+		local EBFocusRight = _G[ChatFrameName .. 'EditBoxFocusRight']
+		EBFocusLeft:SetVertexColor(c.r, c.g, c.b, c.a)
+		EBFocusMid:SetVertexColor(c.r, c.g, c.b, c.a)
+		EBFocusRight:SetVertexColor(c.r, c.g, c.b, c.a)
+
+		local EditBoxFocusHide = function(frame)
+			ChatFrameEdit:Hide()
+		end
+
+		hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
 	end
+	-- end
 
 	ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', filterFunc)
 	ChatFrame_AddMessageEventFilter('CHAT_MSG_YELL', filterFunc)
@@ -488,6 +627,7 @@ function module:BuildOptions()
 				type = 'select',
 				order = 2,
 				values = {
+					[''] = 'Disabled',
 					['%I:%M:%S %p'] = 'HH:MM:SS AM (12-hour)',
 					['%I:%M:S'] = 'HH:MM (12-hour)',
 					['%X'] = 'HH:MM:SS (24-hour)',
@@ -500,6 +640,16 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					SUI.DB.Chatbox.TimeStamp.format = val
+				end
+			},
+			shortenChannelNames = {
+				name = 'Shorten channel names',
+				type = 'toggle',
+				get = function(info)
+					return ReturnValue
+				end,
+				set = function(info, val)
+					ReturnValue = val
 				end
 			},
 			player = {

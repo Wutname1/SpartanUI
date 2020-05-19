@@ -1810,9 +1810,6 @@ function SUI:OnInitialize()
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileCopied', 'UpdateModuleConfigs')
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileReset', 'UpdateModuleConfigs')
 
-	-- Initalize setup of Fonts
-	SUI:FontSetup()
-
 	--First Time Setup Actions
 	if not SUI.DB.SetupDone then
 		if _G.LARGE_NUMBER_SEPERATOR == '.' then
@@ -1970,6 +1967,17 @@ function SUI:AddChatCommand(arg, func)
 	SUIChatCommands[arg] = func
 end
 
+function SUI.Print(self, ...)
+	local tmp = {}
+	local n = 1
+	tmp[1] = '|cffffffffSpartan|cffe21f1fUI|r:'
+	for i = 1, select('#', ...) do
+		n = n + 1
+		tmp[n] = tostring(select(i, ...))
+	end
+	DEFAULT_CHAT_FRAME:AddMessage(table.concat(tmp, ' ', 1, n))
+end
+
 function SUI.print(msg, doNotLabel)
 	if doNotLabel then
 		print(msg)
@@ -2062,6 +2070,152 @@ function SUI:isInTable(searchTable, searchPhrase, all)
 		end
 	end
 	return false
+end
+
+function SUI:CopyTable(currentTable, defaultTable)
+	if type(currentTable) ~= 'table' then
+		currentTable = {}
+	end
+
+	if type(defaultTable) == 'table' then
+		for option, value in pairs(defaultTable) do
+			if type(value) == 'table' then
+				value = self:CopyTable(currentTable[option], value)
+			end
+
+			currentTable[option] = value
+		end
+	end
+
+	return currentTable
+end
+
+function SUI:RemoveEmptySubTables(tbl)
+	if type(tbl) ~= 'table' then
+		print("Bad argument #1 to 'RemoveEmptySubTables' (table expected)")
+		return
+	end
+
+	for k, v in pairs(tbl) do
+		if type(v) == 'table' then
+			if next(v) == nil then
+				tbl[k] = nil
+			else
+				self:RemoveEmptySubTables(v)
+			end
+		end
+	end
+end
+
+--Compare 2 tables and remove duplicate key/value pairs
+--param cleanTable : table you want cleaned
+--param checkTable : table you want to check against.
+--return : a copy of cleanTable with duplicate key/value pairs removed
+function SUI:RemoveTableDuplicates(cleanTable, checkTable, customVars)
+	if type(cleanTable) ~= 'table' then
+		print("Bad argument #1 to 'RemoveTableDuplicates' (table expected)")
+		return
+	end
+	if type(checkTable) ~= 'table' then
+		print("Bad argument #2 to 'RemoveTableDuplicates' (table expected)")
+		return
+	end
+
+	local rtdCleaned = {}
+	for option, value in pairs(cleanTable) do
+		if not customVars or (customVars[option] or checkTable[option] ~= nil) then
+			-- we only want to add settings which are existing in the default table, unless it's allowed by customVars
+			if type(value) == 'table' and type(checkTable[option]) == 'table' then
+				rtdCleaned[option] = self:RemoveTableDuplicates(value, checkTable[option], customVars)
+			elseif cleanTable[option] ~= checkTable[option] then
+				-- add unique data to our clean table
+				rtdCleaned[option] = value
+			end
+		end
+	end
+
+	--Clean out empty sub-tables
+	self:RemoveEmptySubTables(rtdCleaned)
+
+	return rtdCleaned
+end
+
+--Compare 2 tables and remove blacklisted key/value pairs
+--cleanTable - table you want cleaned
+--blacklistTable - table you want to check against.
+--return - a copy of cleanTable with blacklisted key/value pairs removed
+function SUI:FilterTableFromBlacklist(cleanTable, blacklistTable)
+	if type(cleanTable) ~= 'table' then
+		print("Bad argument #1 to 'FilterTableFromBlacklist' (table expected)")
+		return
+	end
+	if type(blacklistTable) ~= 'table' then
+		print("Bad argument #2 to 'FilterTableFromBlacklist' (table expected)")
+		return
+	end
+
+	local tfbCleaned = {}
+	for option, value in pairs(cleanTable) do
+		if type(value) == 'table' and blacklistTable[option] and type(blacklistTable[option]) == 'table' then
+			tfbCleaned[option] = self:FilterTableFromBlacklist(value, blacklistTable[option])
+		else
+			-- Filter out blacklisted keys
+			if (blacklistTable[option] ~= true) then
+				tfbCleaned[option] = value
+			end
+		end
+	end
+
+	--Clean out empty sub-tables
+	self:RemoveEmptySubTables(tfbCleaned)
+
+	return tfbCleaned
+end
+
+function SUI:TableToLuaString(inTable)
+	local function recurse(table, level, ret)
+		for i, v in pairs(table) do
+			ret = ret .. strrep('    ', level) .. '['
+			if type(i) == 'string' then
+				ret = ret .. '"' .. i .. '"'
+			else
+				ret = ret .. i
+			end
+			ret = ret .. '] = '
+
+			if type(v) == 'number' then
+				ret = ret .. v .. ',\n'
+			elseif type(v) == 'string' then
+				ret = ret .. '"' .. v:gsub('\\', '\\\\'):gsub('\n', '\\n'):gsub('"', '\\"'):gsub('\124', '\124\124') .. '",\n'
+			elseif type(v) == 'boolean' then
+				if v then
+					ret = ret .. 'true,\n'
+				else
+					ret = ret .. 'false,\n'
+				end
+			elseif type(v) == 'table' then
+				ret = ret .. '{\n'
+				ret = recurse(v, level + 1, ret)
+				ret = ret .. strrep('    ', level) .. '},\n'
+			else
+				ret = ret .. '"' .. tostring(v) .. '",\n'
+			end
+		end
+
+		return ret
+	end
+	if type(inTable) ~= 'table' then
+		print('Invalid argument #1 to SUI:TableToLuaString (table expected)')
+		return
+	end
+
+	local ret = '{\n'
+	if inTable then
+		ret = recurse(inTable, 1, ret)
+	end
+	ret = ret .. '}'
+
+	return ret
 end
 
 function SUI:round(num) -- rounds a number to 2 decimal places

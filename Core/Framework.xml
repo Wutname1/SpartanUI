@@ -3,7 +3,9 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="FontHandler.lua" />
+	<Script file="Handlers/Font.lua" />
+	<Script file="Handlers/Profiles.lua" />
+	<Script file="Handlers/SetupWizard.lua" />
 	<Script file="Options.lua" />
 
 	<!-- SUI_PartyMemberTemplate -->
@@ -12,120 +14,6 @@
 		</Frames>
 	</Button>
 
-	<!-- SUI_Font's -->
-	<Font name="SUI_FontOutline22custom" virtual="true">
-		<FontHeight>
-			<AbsValue val="22"/>
-		</FontHeight>
-	</Font>
-	<Font name="SUI_FontOutline22" virtual="true">
-		<FontHeight>
-			<AbsValue val="22"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline18" virtual="true">
-		<FontHeight>
-			<AbsValue val="18"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline16" virtual="true">
-		<FontHeight>
-			<AbsValue val="16"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline13" virtual="true">
-		<FontHeight>
-			<AbsValue val="13"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline12" virtual="true">
-		<FontHeight>
-			<AbsValue val="12"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline11" virtual="true">
-		<FontHeight>
-			<AbsValue val="11"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline10" virtual="true">
-		<FontHeight>
-			<AbsValue val="10"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline9" virtual="true">
-		<FontHeight>
-			<AbsValue val="9"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_FontOutline8" virtual="true">
-		<FontHeight>
-			<AbsValue val="8"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_Font10" virtual="true">
-		<FontHeight>
-			<AbsValue val="10"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_Font9" virtual="true">
-		<FontHeight>
-			<AbsValue val="9"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
-	<Font name="SUI_Font8" virtual="true">
-		<FontHeight>
-			<AbsValue val="8"/>
-		</FontHeight>
-		<Shadow>
-			<Color a="1" r="0" g="0" b="0"/>
-			<Offset x="1" y="-1"/>
-		</Shadow>
-	</Font>
 	<!-- SUI_AncherFrame -->
 	<Frame name="SUI_FramesBase" frameStrata="BACKGROUND" parent="UIParent">
 		<Anchors>
@@ -154,7 +42,6 @@
 	</Frame>
 
 	<Script file="oUF.lua" />
-	<Script file="SetupWizard.lua" />
 	<Script file="WhatsNew.lua" />
 	<Script file="Skin-Options.lua" />
 </Ui>

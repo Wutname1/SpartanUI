@@ -43,24 +43,6 @@ function SUI:round(val, decimal)
 	end
 end
 
-function SUI:FontSetup()
-	for i = 5, 22 do
-		local filename
-		if _G['SUI_FontOutline' .. i] then
-			filename = _G['SUI_FontOutline' .. i]:GetFont()
-			if filename ~= SUI:GetFontFace('Primary') then
-				_G['SUI_FontOutline' .. i] = _G['SUI_FontOutline' .. i]:SetFont(SUI:GetFontFace('Primary'), i)
-			end
-		end
-		if _G['SUI_Font' .. i] then
-			filename = _G['SUI_Font' .. i]:GetFont()
-			if filename ~= SUI:GetFontFace('Primary') then
-				_G['SUI_Font' .. i] = _G['SUI_Font' .. i]:SetFont(SUI:GetFontFace('Primary'), i)
-			end
-		end
-	end
-end
-
 function SUI:GetFontFace(Module)
 	if Module then
 		if SUI.DB.font.Modules[Module].Face == 'SpartanUI' then

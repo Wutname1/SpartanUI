@@ -195,7 +195,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 			)
 		end
 	else
-		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER')
 		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
 		local MaxPower, ClassPower = 5, {}
 

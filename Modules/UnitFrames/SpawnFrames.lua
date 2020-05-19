@@ -1143,7 +1143,7 @@ local function CreateUnitFrame(self, unit)
 					end
 				end
 
-				self.CPAnchor = self:CreateFontString(nil, 'BORDER', 'SUI_FontOutline13')
+				self.CPAnchor = self:CreateFontString(nil, 'BORDER')
 				self.CPAnchor:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
 				local ClassPower = {}
 				for index = 1, 10 do
