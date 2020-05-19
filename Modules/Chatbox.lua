@@ -139,7 +139,7 @@ local changeName = function(fullName, misc, nameToChange, colon)
 			nameToChange = '|cFF' .. nameColor[name] .. nameToChange .. '|r' -- All this code just to color player log in events, worth it?
 		end
 	end
-	if ChatLevelLog and ChatLevelLog[name] then
+	if ChatLevelLog and ChatLevelLog[name] and module.DB.profile.playerlevel then
 		local color = GetHexColor(GetQuestDifficultyColor(ChatLevelLog[name]))
 
 		nameToChange = '|cff' .. color .. (ChatLevelLog[name]) .. '|r:' .. nameToChange
@@ -156,11 +156,18 @@ function module:PlayerName(text)
 end
 
 function module:TimeStamp(text)
-	text = date('|cff7d7d7d[' .. SUI.DB.Chatbox.TimeStamp.format .. ']|r ') .. text
+	if module.DB.profile.timestampFormat == '' then
+		return text
+	end
+	text = date('|cff7d7d7d[' .. module.DB.profile.timestampFormat .. ']|r ') .. text
 	return text
 end
 
 local function shortenChannel(text)
+	if not module.DB.profile.shortenChannelNames then
+		return text
+	end
+
 	local rplc = {
 		'[I]', --Instance
 		'[IL]', --Instance Leader
@@ -208,10 +215,6 @@ local ModifyMessage = function(self)
 	local text = tbl and tbl.message
 
 	if text then
-		if tbl.message.CHANNELNUM then
-			print(tbl.message.CHANNELNUM)
-		end
-
 		text = tostring(text)
 		text = shortenChannel(text)
 		text = module:TimeStamp(text)
@@ -243,6 +246,19 @@ end
 
 -- Module Setup
 function module:OnInitialize()
+	local defaults = {
+		profile = {
+			LinkHover = true,
+			shortenChannelNames = true,
+			webLinks = true,
+			timestampFormat = '%X',
+			playerlevel,
+			ChatCopyTip = true,
+			fontSize = 12
+		}
+	}
+	module.DB = SUI.SpartanUIDB:RegisterNamespace('Chatbox', defaults)
+
 	if not SUI.DB.EnabledComponents.Chatbox then
 		return
 	end
@@ -354,9 +370,8 @@ function module:SetupChatboxes()
 	}
 
 	local c = {r = .05, g = .05, b = .05, a = 0.7}
-	-- local c = {r = 0.0588, g = 0.0588, b = 0, a = 0.8}
 	local filterFunc = function(_, _, msg, ...)
-		if not SUI.DB.Chatbox.webLinks then
+		if not module.DB.profile.webLinks then
 			return
 		end
 
@@ -423,17 +438,13 @@ function module:SetupChatboxes()
 				ChatFrame:Show()
 			end
 		end
-		if ChatFrame:IsVisible() then
-		-- FCF_SetWindowColor(ChatFrame, c.r, c.g, c.b)
-		-- FCF_SetWindowAlpha(ChatFrame, .7)
-		end
 
 		if ChatFrameEdit:IsVisible() then
 			ChatFrameEdit:Hide()
 		end
 	end
 	local TabHintEnter = function(frame)
-		if not SUI.DB.Chatbox.ChatCopy.tip then
+		if not module.DB.profile.ChatCopyTip then
 			return
 		end
 
@@ -444,7 +455,7 @@ function module:SetupChatboxes()
 		GameTooltip:Show()
 	end
 	local TabHintLeave = function(frame)
-		if not SUI.DB.Chatbox.ChatCopy.tip then
+		if not module.DB.profile.ChatCopyTip then
 			return
 		end
 
@@ -560,6 +571,12 @@ function module:SetupChatboxes()
 		local ChatFrameTab = _G[ChatFrameName .. 'Tab']
 		hooksecurefunc(ChatFrame.historyBuffer, 'PushFront', ModifyMessage)
 
+		local _, _, r, g, b, a = FCF_GetChatWindowInfo(i)
+		if r == 0 and g == 0 and b == 0 and a < .16 and a > .15 then
+			FCF_SetWindowColor(ChatFrame, DEFAULT_CHATFRAME_COLOR.r, DEFAULT_CHATFRAME_COLOR.g, DEFAULT_CHATFRAME_COLOR.b)
+			FCF_SetWindowAlpha(ChatFrame, DEFAULT_CHATFRAME_ALPHA)
+		end
+
 		ChatFrameTab:HookScript('OnClick', TabClick)
 		ChatFrameTab:HookScript('OnEnter', TabHintEnter)
 		ChatFrameTab:HookScript('OnLeave', TabHintLeave)
@@ -589,8 +606,8 @@ function module:SetupChatboxes()
 		local header = _G[ChatFrameName .. 'EditBoxHeader']
 		local _, s, m = header:GetFont()
 		SUI:FormatFont(header, s, 'Chatbox')
-		SUI:FormatFont(ChatFrame, 12, 'Chatbox')
-		SUI:FormatFont(ChatFrameEdit, 12, 'Chatbox')
+		SUI:FormatFont(ChatFrame, module.DB.profile.fontSize, 'Chatbox')
+		SUI:FormatFont(ChatFrameEdit, module.DB.profile.fontSize, 'Chatbox')
 
 		if (_G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil) then
 			_G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil)
@@ -625,8 +642,10 @@ function module:SetupChatboxes()
 		ChatFrame:SetBackdrop(nil)
 
 		ChatFrameEdit:SetBackdrop(chatBG)
-		ChatFrameEdit:SetBackdropColor(c.r, c.g, c.b, c.a)
-		ChatFrameEdit:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
+		ChatFrameEdit:SetBackdropColor(ChatFrame.Background:GetVertexColor())
+		ChatFrameEdit:SetBackdropBorderColor(ChatFrame.Background:GetVertexColor())
+		-- ChatFrameEdit:SetBackdropColor(c.r, c.g, c.b, c.a)
+		-- ChatFrameEdit:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
 
 		local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
 		local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
@@ -690,7 +709,7 @@ function module:BuildOptions()
 					SUI.DB.EnabledComponents.Chatbox = val
 				end
 			},
-			timestamp = {
+			timestampFormat = {
 				name = 'Timestamp format',
 				type = 'select',
 				order = 2,
@@ -704,83 +723,54 @@ function module:BuildOptions()
 					['%M:%S'] = 'MM:SS'
 				},
 				get = function(info)
-					return SUI.DB.Chatbox.TimeStamp.format
+					return module.DB.profile.timestampFormat
 				end,
 				set = function(info, val)
-					SUI.DB.Chatbox.TimeStamp.format = val
+					module.DB.profile.timestampFormat = val
 				end
 			},
 			shortenChannelNames = {
 				name = 'Shorten channel names',
 				type = 'toggle',
 				get = function(info)
-					return ReturnValue
+					return module.DB.profile.shortenChannelNames
 				end,
 				set = function(info, val)
-					ReturnValue = val
+					module.DB.profile.shortenChannelNames = val
 				end
 			},
-			player = {
-				name = 'Player name',
-				type = 'group',
-				inline = true,
-				order = 100,
-				width = 'full',
-				args = {
-					level = {
-						name = 'Display level',
-						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return SUI.DB.Chatbox.player.level
-						end,
-						set = function(info, val)
-							SUI.DB.Chatbox.player.level = val
-						end
-					},
-					color = {
-						name = 'Color by class',
-						type = 'toggle',
-						order = 2,
-						get = function(info)
-							return SUI.DB.Chatbox.player.color
-						end,
-						set = function(info, val)
-							SUI.DB.Chatbox.player.color = val
-						end
-					}
-				}
+			playerlevel = {
+				name = 'Display level',
+				type = 'toggle',
+				order = 1,
+				get = function(info)
+					return module.DB.profile.playerlevel
+				end,
+				set = function(info, val)
+					module.DB.profile.playerlevel = val
+				end
 			},
-			links = {
-				name = 'Links',
-				type = 'group',
-				inline = true,
-				order = 200,
-				width = 'full',
-				args = {
-					links = {
-						name = 'Clickable web link',
-						type = 'toggle',
-						order = 20,
-						get = function(info)
-							return SUI.DB.Chatbox.webLinks
-						end,
-						set = function(info, val)
-							SUI.DB.Chatbox.webLinks = val
-						end
-					},
-					gamelink = {
-						name = 'Hoveable game links',
-						type = 'toggle',
-						order = 21,
-						get = function(info)
-							return SUI.DB.Chatbox.LinkHover
-						end,
-						set = function(info, val)
-							SUI.DB.Chatbox.LinkHover = val
-						end
-					}
-				}
+			webLinks = {
+				name = 'Clickable web link',
+				type = 'toggle',
+				order = 20,
+				get = function(info)
+					return module.DB.profile.webLinks
+				end,
+				set = function(info, val)
+					module.DB.profile.webLinks = val
+				end
+			},
+			LinkHover = {
+				name = 'Hoveable game links',
+				type = 'toggle',
+				order = 21,
+				get = function(info)
+					return module.DB.profile.LinkHover
+				end,
+				set = function(info, val)
+					module.DB.profile.LinkHover = val
+				end
 			}
 		}
 	}
