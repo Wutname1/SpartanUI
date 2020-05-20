@@ -360,6 +360,7 @@ function module:SetupChatboxes()
 	DEFAULT_CHATFRAME_ALPHA = 0.7
 	DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
 	DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
+	local icon = 'Interface\\Addons\\SpartanUI\\images\\chaticons'
 
 	local chatBG = {
 		bgFile = [[Interface\Buttons\WHITE8X8]],
@@ -482,7 +483,6 @@ function module:SetupChatboxes()
 		QJTB:ClearAllPoints()
 		QJTB:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
 		QJTB.FriendCount:Hide()
-		local icon = 'Interface\\Addons\\SpartanUI\\images\\chaticons'
 		hooksecurefunc(
 			QJTB,
 			'UpdateQueueIcon',
@@ -543,26 +543,29 @@ function module:SetupChatboxes()
 	end
 	hooksecurefunc(BNToastFrame, 'SetPoint', fixbnetpos)
 
+	local VoiceChannelButton = _G.ChatFrameChannelButton
+	VoiceChannelButton:ClearAllPoints()
 	if SUI.IsRetail then
-		local VoiceChannelButton = _G.ChatFrameChannelButton
-		VoiceChannelButton:ClearAllPoints()
 		VoiceChannelButton:SetPoint('TOPRIGHT', QJTB, 'TOPLEFT', -1, 0)
-		StripTextures(VoiceChannelButton)
-		VoiceChannelButton:SetSize(18, 18)
-		VoiceChannelButton.Icon:SetTexture(icon)
-		VoiceChannelButton.Icon:SetTexCoord(0.1484375, 0.359375, 0.1484375, 0.359375)
-		VoiceChannelButton.Icon:SetScale(.8)
-
-		ChatFrameMenuButton:ClearAllPoints()
-		ChatFrameMenuButton:SetPoint('TOPRIGHT', VoiceChannelButton, 'TOPLEFT', -1, 0)
-		ChatFrameMenuButton:SetSize(18, 18)
-		StripTextures(ChatFrameMenuButton)
-		ChatFrameMenuButton.Icon = ChatFrameMenuButton:CreateTexture(nil, 'ARTWORK')
-		ChatFrameMenuButton.Icon:SetAllPoints(ChatFrameMenuButton)
-		ChatFrameMenuButton.Icon:SetTexture(icon)
-		ChatFrameMenuButton.Icon:SetTexCoord(.6, .9, .6, .9)
-		ChatFrameMenuButton.Icon:SetTexCoord(.6, .9, .6, .9)
+	else
+		VoiceChannelButton:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
 	end
+
+	StripTextures(VoiceChannelButton)
+	VoiceChannelButton:SetSize(18, 18)
+	VoiceChannelButton.Icon:SetTexture(icon)
+	VoiceChannelButton.Icon:SetTexCoord(0.1484375, 0.359375, 0.1484375, 0.359375)
+	VoiceChannelButton.Icon:SetScale(.8)
+
+	ChatFrameMenuButton:ClearAllPoints()
+	ChatFrameMenuButton:SetPoint('TOPRIGHT', VoiceChannelButton, 'TOPLEFT', -1, 0)
+	ChatFrameMenuButton:SetSize(18, 18)
+	StripTextures(ChatFrameMenuButton)
+	ChatFrameMenuButton.Icon = ChatFrameMenuButton:CreateTexture(nil, 'ARTWORK')
+	ChatFrameMenuButton.Icon:SetAllPoints(ChatFrameMenuButton)
+	ChatFrameMenuButton.Icon:SetTexture(icon)
+	ChatFrameMenuButton.Icon:SetTexCoord(.6, .9, .6, .9)
+	ChatFrameMenuButton.Icon:SetTexCoord(.6, .9, .6, .9)
 
 	for i = 1, 10 do
 		local ChatFrameName = ('%s%d'):format('ChatFrame', i)
@@ -576,7 +579,7 @@ function module:SetupChatboxes()
 		hooksecurefunc(ChatFrame.historyBuffer, 'PushFront', ModifyMessage)
 
 		local _, _, r, g, b, a = FCF_GetChatWindowInfo(i)
-		if r == 0 and g == 0 and b == 0 and a < .16 and a > .15 then
+		if r == 0 and g == 0 and b == 0 and ((SUI.IsRetail and a < .16 and a > .15) or (SUI.IsClassic and a < .1)) then
 			FCF_SetWindowColor(ChatFrame, DEFAULT_CHATFRAME_COLOR.r, DEFAULT_CHATFRAME_COLOR.g, DEFAULT_CHATFRAME_COLOR.b)
 			FCF_SetWindowAlpha(ChatFrame, DEFAULT_CHATFRAME_ALPHA)
 		end
@@ -641,8 +644,6 @@ function module:SetupChatboxes()
 			element:Hide()
 		end
 
-		-- disable(_G[ChatFrameName .. 'ButtonFrame'])
-
 		ChatFrame:SetBackdrop(nil)
 
 		ChatFrameEdit:SetBackdrop(chatBG)
@@ -651,6 +652,16 @@ function module:SetupChatboxes()
 		-- ChatFrameEdit:SetBackdropColor(c.r, c.g, c.b, c.a)
 		-- ChatFrameEdit:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
 
+		if SUI.IsClassic then
+			local bottombutton = _G[ChatFrameName .. 'ButtonFrameButtomButton']
+			if bottombutton then
+				bottombutton:ClearAllPoints()
+				bottombutton:SetParent(ChatFrame.Background)
+				bottombutton:SetPoint('BOTTOMLEFT', ChatFrame.Background, 'BOTTOMLEFT', 0, 0)
+				bottombutton:Show()
+			end
+		-- ChatFrameEdit:SetVertexColor(c.r, c.g, c.b, c.a)
+		end
 		if SUI.IsRetail then
 			local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
 			local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
@@ -664,7 +675,8 @@ function module:SetupChatboxes()
 				ChatFrameEdit:Hide()
 			end
 			hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
-		-- hooksecurefunc(EBFocusMid, 'Show', EditBoxFocusShow)
+			-- hooksecurefunc(EBFocusMid, 'Show', EditBoxFocusShow)
+			disable(_G[ChatFrameName .. 'ButtonFrame'])
 		end
 	end
 
