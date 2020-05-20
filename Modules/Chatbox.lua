@@ -636,8 +636,6 @@ function module:SetupChatboxes()
 			if element.UnregisterAllEvents then
 				element:UnregisterAllEvents()
 				element:SetParent(nil)
-			-- else
-			-- 	element.Show = element.Hide
 			end
 			element.Show = element.Hide
 
@@ -647,10 +645,16 @@ function module:SetupChatboxes()
 		ChatFrame:SetBackdrop(nil)
 
 		ChatFrameEdit:SetBackdrop(chatBG)
-		ChatFrameEdit:SetBackdropColor(ChatFrame.Background:GetVertexColor())
-		ChatFrameEdit:SetBackdropBorderColor(ChatFrame.Background:GetVertexColor())
-		-- ChatFrameEdit:SetBackdropColor(c.r, c.g, c.b, c.a)
-		-- ChatFrameEdit:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
+		local bg = {ChatFrame.Background:GetVertexColor()}
+		ChatFrameEdit:SetBackdropColor(unpack(bg))
+		ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
+
+		local function BackdropColorUpdate(frame, r, g, b)
+			local bg = {ChatFrame.Background:GetVertexColor()}
+			ChatFrameEdit:SetBackdropColor(unpack(bg))
+			ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
+		end
+		hooksecurefunc(ChatFrame.Background, 'SetVertexColor', BackdropColorUpdate)
 
 		if SUI.IsClassic then
 			local bottombutton = _G[ChatFrameName .. 'ButtonFrameButtomButton']
@@ -660,7 +664,6 @@ function module:SetupChatboxes()
 				bottombutton:SetPoint('BOTTOMLEFT', ChatFrame.Background, 'BOTTOMLEFT', 0, 0)
 				bottombutton:Show()
 			end
-		-- ChatFrameEdit:SetVertexColor(c.r, c.g, c.b, c.a)
 		end
 		if SUI.IsRetail then
 			local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
@@ -675,7 +678,7 @@ function module:SetupChatboxes()
 				ChatFrameEdit:Hide()
 			end
 			hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
-			-- hooksecurefunc(EBFocusMid, 'Show', EditBoxFocusShow)
+
 			disable(_G[ChatFrameName .. 'ButtonFrame'])
 		end
 	end
