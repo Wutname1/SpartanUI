@@ -94,7 +94,7 @@ function module:OnInitialize()
 end
 
 function module:COMBAT_LOG_EVENT_UNFILTERED()
-	if not SUI.DB.EnabledComponents.TauntWatcher or module.Override then
+	if SUI.DB.DisabledComponents.TauntWatcher or module.Override then
 		return
 	end
 
@@ -326,7 +326,7 @@ function module:SetupWizard()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if not SUI.DB.EnabledComponents.TauntWatcher or module.Override then
+			if SUI.DB.DisabledComponents.TauntWatcher or module.Override then
 				window.Skip:Click()
 				return
 			end
@@ -399,7 +399,7 @@ function module:SetupWizard()
 			end
 
 			-- Defaults
-			TauntWatch.modEnabled:SetChecked(SUI.DB.EnabledComponents.TauntWatcher)
+			TauntWatch.modEnabled:SetChecked(SUI:IsModuleEnabled('TauntWatcher'))
 			for key, object in pairs(TauntWatch.options) do
 				object:SetChecked(SUI.DB.TauntWatcher.active[key])
 			end
@@ -409,9 +409,9 @@ function module:SetupWizard()
 				function()
 					for _, object in pairs(TauntWatch.options) do
 						if TauntWatch.modEnabled:GetChecked() then
-							object:Enable()
+							SUI:EnableModule(module)
 						else
-							object:Disable()
+							SUI:DisableModule(module)
 						end
 					end
 				end
@@ -422,7 +422,6 @@ function module:SetupWizard()
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local TauntWatch = window.content.TauntWatch
-			SUI.DB.EnabledComponents.TauntWatcher = TauntWatch.modEnabled:GetChecked()
 
 			for key, object in pairs(TauntWatch.options) do
 				SUI.DB.TauntWatcher[key] = object:GetChecked()

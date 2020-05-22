@@ -269,13 +269,6 @@ function module:OnInitialize()
 	for name, submodule in SUI:IterateModules() do
 		if (string.match(name, 'Component_')) then
 			local RealName = string.sub(name, 11)
-			if SUI.DB.EnabledComponents == nil then
-				SUI.DB.EnabledComponents = {}
-			end
-			if SUI.DB.EnabledComponents[RealName] == nil then
-				SUI.DB.EnabledComponents[RealName] = true
-			end
-
 			local Displayname = string.sub(name, 11)
 			if submodule.DisplayName then
 				Displayname = submodule.DisplayName
@@ -289,10 +282,10 @@ function module:OnInitialize()
 					if submodule.Override then
 						return false
 					end
-					return SUI.DB.EnabledComponents[RealName]
+					return not SUI.DB.DisabledComponents[RealName]
 				end,
 				set = function(info, val)
-					SUI.DB.EnabledComponents[RealName] = val
+					SUI.DB.DisabledComponents[RealName] = (not val)
 					if submodule.OnDisable then
 						if val then
 							submodule:OnEnable()

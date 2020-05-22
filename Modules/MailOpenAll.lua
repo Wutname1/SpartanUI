@@ -62,11 +62,10 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI.DB.EnabledComponents.MailOpenAll then
-		module:Enable()
-	else
+	if SUI.DB.DisabledComponents.MailOpenAll then
 		return
 	end
+	module:Enable()
 end
 
 function module:Enable()

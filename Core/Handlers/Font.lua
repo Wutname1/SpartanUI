@@ -145,7 +145,7 @@ function SUI:FontRefresh(Module)
 	end
 end
 
-function module:FontSetupWizard()
+local function FontSetupWizard()
 	local PageData, SetupWindow
 
 	local fontlist = {
@@ -373,7 +373,7 @@ function module:FontSetupWizard()
 end
 
 function module:OnEnable()
-	module:FontSetupWizard()
+	FontSetupWizard()
 	SUI.opt.args['General'].args['font'] = {
 		name = 'Font',
 		type = 'group',

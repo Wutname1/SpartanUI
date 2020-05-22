@@ -600,7 +600,7 @@ function module:OnDisable()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.Nameplates then
+	if SUI.DB.DisabledComponents.Nameplates then
 		return
 	end
 	module:BuildOptions()

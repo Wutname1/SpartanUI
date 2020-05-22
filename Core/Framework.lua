@@ -4,7 +4,6 @@ _G.SUI = SUI
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 local _G = _G
 local type, pairs = type, pairs
-local SUIChatCommands = {}
 SUI.L = L
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
@@ -52,6 +51,10 @@ SUI.AddLib('AceC', 'AceConfig-3.0')
 SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0')
+SUI.AddLib('StdUi', 'StdUi')
+
+--init StdUI Instance for the whole addon
+SUI.StdUi = SUI.Lib.StdUi:NewInstance()
 
 ---------------  Options Init ---------------
 SUI.opt = {
@@ -120,7 +123,7 @@ local DBdefault = {
 		Manualoffset = false,
 		offset = 0
 	},
-	EnabledComponents = {},
+	DisabledComponents = {},
 	font = {
 		NumberSeperator = ',',
 		Path = '',
@@ -1720,7 +1723,7 @@ SUI.DBG = SUI.SpartanUIDB.global
 SUI.DB = SUI.SpartanUIDB.profile
 
 local function reloaduiWindow()
-	local StdUi = LibStub('StdUi'):NewInstance()
+	local StdUi = LibStub('StdUi')
 	local popup = StdUi:Window(nil, 400, 140)
 	popup:SetPoint('TOP', 0, -20)
 	popup:SetFrameStrata('DIALOG')
@@ -1812,13 +1815,13 @@ function SUI:DBUpgrades()
 	-- 6.0.0 Upgrades
 	if SUI.DB.Version < '5.9.9' and not SUI.DB.Migrated then
 		if not select(4, GetAddOnInfo('SpartanUI_Artwork')) then
-			SUI.DB.EnabledComponents.Artwork = false
+			SUI.DB.DisabledComponents.Artwork = true
 		end
 		if not select(4, GetAddOnInfo('SpartanUI_FilmEffects')) then
-			SUI.DB.EnabledComponents.FilmEffects = false
+			SUI.DB.DisabledComponents.FilmEffects = true
 		end
 		if not select(4, GetAddOnInfo('SpartanUI_SpinCam')) then
-			SUI.DB.EnabledComponents.SpinCam = false
+			SUI.DB.DisabledComponents.SpinCam = true
 		end
 
 		-- Only disable the new Unitframes if all 3 unitframe addons are disabled
@@ -1826,7 +1829,7 @@ function SUI:DBUpgrades()
 			not select(4, GetAddOnInfo('SpartanUI_PartyFrames')) and not select(4, GetAddOnInfo('SpartanUI_PlayerFrames')) and
 				not select(4, GetAddOnInfo('SpartanUI_RaidFrames'))
 		 then
-			SUI.DB.EnabledComponents.UnitFrames = false
+			SUI.DB.DisabledComponents.UnitFrames = true
 		end
 
 		-- Make sure everything is disabled
@@ -1889,93 +1892,6 @@ do
 
 	plate.TopAnchor = TopAnchor
 	plate.BottomAnchor = BottomAnchor
-end
-
----------------  Chat Commands  ---------------
-
-local ResetDBWarning = false
-function SUI:ChatCommand(input)
-	if input == 'resetfulldb' then
-		if ResetDBWarning then
-			Bartender4.db:ResetDB()
-			SUI.SpartanUIDB:ResetDB()
-		else
-			ResetDBWarning = true
-			SUI:Print('|cffff0000Warning')
-			SUI:Print(
-				L[
-					'This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'
-				]
-			)
-		end
-	elseif input == 'resetbartender' then
-		SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']:func()
-	elseif input == 'resetdb' then
-		if ResetDBWarning then
-			SUI.SpartanUIDB:ResetDB()
-		else
-			ResetDBWarning = true
-			SUI:Print('|cffff0000Warning')
-			SUI:Print(L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
-		end
-	elseif input == 'setup' then
-		SUI:GetModule('SetupWizard'):SetupWizard()
-	elseif input == 'help' then
-		SUI:suihelp()
-	elseif input == 'version' then
-		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
-		SUI:Print(string.format('%s build %s', wowVersion, SUI.BuildNum))
-		if SUI.Bartender4Version ~= 0 then
-			SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
-		end
-	else
-		if SUIChatCommands[input] then
-			SUIChatCommands[input]()
-		elseif string.find(input, ' ') then
-			for i in string.gmatch(input, '%S+') do
-				local arg, _ = string.gsub(input, i .. ' ', '')
-				if SUIChatCommands[i] then
-					SUIChatCommands[i](arg)
-				end
-			end
-		else
-			SUI.Lib.AceCD:Open('SpartanUI')
-		end
-	end
-end
-
-function SUI:AddChatCommand(arg, func)
-	SUIChatCommands[arg] = func
-end
-
-function SUI.Print(self, ...)
-	local tmp = {}
-	local n = 1
-	tmp[1] = '|cffffffffSpartan|cffe21f1fUI|r:'
-	for i = 1, select('#', ...) do
-		n = n + 1
-		tmp[n] = tostring(select(i, ...))
-	end
-	DEFAULT_CHAT_FRAME:AddMessage(table.concat(tmp, ' ', 1, n))
-end
-
-function SUI.print(msg, doNotLabel)
-	if doNotLabel then
-		print(msg)
-	else
-		SUI:Print(msg)
-	end
-end
-
-function SUI:Error(err, mod)
-	SUI:Print('|cffff0000Error detected')
-	if mod then
-		SUI:Print("An error has occured in the Component '" .. mod .. "'")
-	else
-		SUI:Print('An error has occured')
-	end
-	SUI:Print('Details: ' .. (err or 'None provided'))
-	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
 end
 
 ---------------  Math and Comparison  ---------------

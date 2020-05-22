@@ -54,7 +54,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.FilmEffects then
+	if SUI.DB.DisabledComponents.FilmEffects then
 		return
 	end
 	module:Options()

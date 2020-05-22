@@ -509,7 +509,7 @@ function module:UpdateBG()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.Tooltips then
+	if SUI.DB.DisabledComponents.Tooltips then
 		return
 	end
 	module:BuildOptions()

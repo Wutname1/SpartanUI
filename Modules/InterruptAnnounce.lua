@@ -70,7 +70,7 @@ function module:OnInitialize()
 end
 
 local function COMBAT_LOG_EVENT_UNFILTERED()
-	if not SUI.DB.EnabledComponents.InterruptAnnouncer then
+	if SUI.DB.DisabledComponents.InterruptAnnouncer then
 		return
 	end
 
@@ -293,7 +293,7 @@ function module:FirstLaunch()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if not SUI.DB.EnabledComponents.InterruptAnnouncer then
+			if SUI.DB.DisabledComponents.InterruptAnnouncer then
 				window.Skip:Click()
 				return
 			end
@@ -362,7 +362,7 @@ function module:FirstLaunch()
 			StdUi:GlueBelow(IAnnounce.tbAnnounceText, IAnnounce.lblvariable4, -15, -5, 'LEFT')
 
 			-- Defaults
-			IAnnounce.modEnabled:SetChecked(SUI.DB.EnabledComponents.InterruptAnnouncer)
+			IAnnounce.modEnabled:SetChecked(not SUI.DB.DisabledComponents.InterruptAnnouncer)
 			for key, object in pairs(IAnnounce.options) do
 				object:SetChecked(SUI.DB.InterruptAnnouncer[key])
 			end
@@ -385,7 +385,9 @@ function module:FirstLaunch()
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local IAnnounce = window.content.IAnnounce
-			SUI.DB.EnabledComponents.InterruptAnnouncer = IAnnounce.modEnabled:GetChecked()
+			if not IAnnounce.modEnabled:GetChecked() then
+				SUI.DB.DisabledComponents.InterruptAnnouncer = true
+			end
 
 			for key, object in pairs(IAnnounce.options) do
 				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()

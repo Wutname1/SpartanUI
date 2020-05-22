@@ -204,7 +204,7 @@ local function shortenChannel(text)
 end
 
 local ModifyMessage = function(self)
-	if not SUI.DB.EnabledComponents.Chatbox then
+	if SUI.DB.DisabledComponents.Chatbox then
 		return
 	end
 	local num = self.headIndex
@@ -260,15 +260,15 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', defaults)
 	module.DB = module.Database.profile
 
-	if not SUI.DB.EnabledComponents.Chatbox then
+	if SUI:IsModuleDisabled('chatbox') then
 		return
 	end
 	local ChatAddons = {'Chatter', 'BasicChatMods', 'Prat-3.0'}
 	for _, addonName in pairs(ChatAddons) do
 		local enabled = select(4, GetAddOnInfo(addonName))
 		if enabled then
-			SUI.DB.EnabledComponents.Chatbox = false
-			SUI:Print('Chat module disabled ' .. addonName .. ' Detected')
+			SUI:Print('Chat module disabling ' .. addonName .. ' Detected')
+			SUI:DisableModule('chatbox')
 			return
 		end
 	end
@@ -319,7 +319,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.Chatbox then
+	if SUI:IsModuleDisabled('chatbox') then
 		return
 	end
 

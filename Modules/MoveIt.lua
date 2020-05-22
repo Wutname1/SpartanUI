@@ -335,7 +335,7 @@ end
 local isDragging = false
 
 function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
-	if not SUI.DB.EnabledComponents.MoveIt then
+	if SUI.DB.DisabledComponents.MoveIt then
 		return
 	end
 	-- If for some reason the parent does not exist or we have already done this exit out
@@ -718,11 +718,10 @@ function MoveIt:Enable()
 end
 
 function MoveIt:OnEnable()
-	if SUI.DB.EnabledComponents.MoveIt then
-		MoveIt:Enable()
-	else
+	if SUI:IsModuleDisabled(module) then
 		return
 	end
+	MoveIt:Enable()
 end
 
 function MoveIt:Options()

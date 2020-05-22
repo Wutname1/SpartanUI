@@ -15,7 +15,7 @@ local Conditions = {
 }
 
 local HideFrame = function()
-	if not SUI.DB.EnabledComponents.Objectives or module.Override then
+	if SUI.DB.DisabledComponents.Objectives or module.Override then
 		return
 	end
 	if _G[frameName]:GetAlpha() == 0 and _G[frameName].HeaderMenu then
@@ -24,7 +24,7 @@ local HideFrame = function()
 end
 
 local ObjTrackerUpdate = function()
-	if not SUI.DB.EnabledComponents.Objectives or module.Override then
+	if SUI.DB.DisabledComponents.Objectives or module.Override then
 		return
 	end
 	local FadeIn = true -- Default to display incase user changes to disabled while hidden
@@ -112,7 +112,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.Objectives or module.Override then
+	if SUI.DB.DisabledComponents.Objectives or module.Override then
 		return
 	end
 
@@ -252,7 +252,7 @@ function module:FirstTimeSetup()
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
 			local gui = LibStub('AceGUI-3.0')
-			if not SUI.DB.EnabledComponents.Objectives or module.Override then
+			if SUI.DB.DisabledComponents.Objectives or module.Override then
 				window.Skip:Click()
 				return
 			end

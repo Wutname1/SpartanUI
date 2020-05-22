@@ -94,7 +94,7 @@ end
 
 local function UpdatePosition()
 	-- Position map based on Artwork
-	if SUI.DB.EnabledComponents.Artwork and Settings.position and not MoveIt:IsMoved('Minimap') then
+	if SUI:IsModuleEnabled(module) and Settings.position and not MoveIt:IsMoved('Minimap') then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.position)
 		if Minimap.position then
 			Minimap:position(point, anchor, secondaryPoint, x, y, false, true)
@@ -106,7 +106,7 @@ local function UpdatePosition()
 end
 
 function module:ShapeChange(shape)
-	if not SUI.DB.EnabledComponents.Minimap then
+	if SUI.DB.DisabledComponents.Minimap then
 		return
 	end
 
@@ -154,7 +154,7 @@ function module:OnInitialize()
 		end,
 		OnCancel = function()
 			UserSettings.ManualAllowUse = true
-			SUI.DB.EnabledComponents.Minimap = false
+			SUI:DisableModule(module)
 			ReloadUI()
 		end,
 		timeout = 0,
@@ -183,7 +183,7 @@ function module:OnEnable()
 	if ((not UserSettings.AutoDetectAllowUse) and (not UserSettings.ManualAllowUse)) then
 		StaticPopup_Show('MiniMapNotice')
 	end
-	if not SUI.DB.EnabledComponents.Minimap then
+	if SUI.DB.DisabledComponents.Minimap then
 		return
 	end
 	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
@@ -371,7 +371,7 @@ function module:ModifyMinimapLayout()
 end
 
 function module:MinimapCoords()
-	if not SUI.DB.EnabledComponents.Minimap then
+	if SUI.DB.DisabledComponents.Minimap then
 		return
 	end
 	MinimapZoneText:Hide()
@@ -483,7 +483,7 @@ function module:UpdateScale()
 end
 
 function module:update(FullUpdate)
-	if not SUI.DB.EnabledComponents.Minimap then
+	if SUI.DB.DisabledComponents.Minimap then
 		return
 	end
 	-- Refresh settings

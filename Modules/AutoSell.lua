@@ -88,7 +88,7 @@ local function SetupPage()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if not SUI.DB.EnabledComponents.AutoSell then
+			if SUI:IsModuleDisabled('AutoSell') then
 				window.Skip:Click()
 				return
 			end
@@ -550,7 +550,7 @@ function module:Repair(PersonalFunds)
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.AutoSell then
+	if SUI:IsModuleDisabled('AutoSell') then
 		return
 	end
 
@@ -558,7 +558,7 @@ function module:OnEnable()
 		SetupPage()
 		BuildOptions()
 		local function MerchantEventHandler(self, event, ...)
-			if not SUI.DB.EnabledComponents.AutoSell then
+			if SUI:IsModuleDisabled('AutoSell') then
 				return
 			end
 			if event == 'MERCHANT_SHOW' then

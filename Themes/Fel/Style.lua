@@ -146,7 +146,7 @@ function module:EnableArtwork()
 
 	module:SetupVehicleUI()
 
-	if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+	if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 		module:MiniMap()
 	end
 end

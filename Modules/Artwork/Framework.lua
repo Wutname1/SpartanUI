@@ -308,7 +308,7 @@ function module:updateViewport()
 end
 
 function module:OnInitialize()
-	if not SUI.DB.EnabledComponents.Artwork then
+	if SUI.DB.DisabledComponents.Artwork then
 		return
 	end
 
@@ -328,7 +328,7 @@ local function VehicleUI()
 			'OnHide',
 			function()
 				SUI_Art_War:Hide()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+				if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Hide()
 				end
 			end
@@ -337,7 +337,7 @@ local function VehicleUI()
 			'OnShow',
 			function()
 				SUI_Art_War:Show()
-				if SUI.DB.EnabledComponents.Minimap and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+				if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
 					Minimap:Show()
 				end
 			end
@@ -347,7 +347,7 @@ local function VehicleUI()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.Artwork then
+	if SUI.DB.DisabledComponents.Artwork then
 		return
 	end
 

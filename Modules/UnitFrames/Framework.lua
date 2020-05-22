@@ -114,7 +114,7 @@ end
 function module:PositionFrame(b)
 	local positionData = module.FramePos.default
 	-- If artwork is enabled load the art's position data if supplied
-	if SUI.DB.EnabledComponents.Artwork and module.FramePos[SUI.DB.Artwork.Style] then
+	if SUI:IsModuleEnabled('Artwork') and module.FramePos[SUI.DB.Artwork.Style] then
 		positionData = SUI:MergeData(module.FramePos[SUI.DB.Artwork.Style], module.FramePos.default)
 	end
 
@@ -168,7 +168,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.UnitFrames then
+	if SUI.DB.DisabledComponents.UnitFrames then
 		return
 	end
 

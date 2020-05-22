@@ -74,7 +74,7 @@ function module:OnEnable()
 	CombatLog_Watcher:SetScript(
 		'OnEvent',
 		function(_, event)
-			if not SUI.DB.EnabledComponents.CombatLog then
+			if SUI.DB.DisabledComponents.CombatLog then
 				return
 			end
 
@@ -353,7 +353,7 @@ function module:FirstLaunch()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if not SUI.DB.EnabledComponents.CombatLog then
+			if SUI.DB.DisabledComponents.CombatLog then
 				window.Skip:Click()
 				return
 			end
@@ -409,7 +409,7 @@ function module:FirstLaunch()
 			end
 
 			-- Defaults
-			cLog.modEnabled:SetChecked(SUI.DB.EnabledComponents.CombatLog)
+			cLog.modEnabled:SetChecked(not SUI.DB.DisabledComponents.CombatLog)
 			for key, object in pairs(cLog.options) do
 				object:SetChecked(SUI.DB.CombatLog[key])
 			end
@@ -432,7 +432,9 @@ function module:FirstLaunch()
 		Next = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local cLog = window.content.cLog
-			SUI.DB.EnabledComponents.CombatLog = cLog.modEnabled:GetChecked()
+			if not cLog.modEnabled:GetChecked() then
+				SUI.DB.DisabledComponents.CombatLog = true
+			end
 
 			for key, object in pairs(cLog.options) do
 				SUI.DB.CombatLog[key] = object:GetChecked()

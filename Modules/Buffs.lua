@@ -88,7 +88,7 @@ local BuffPosUpdate = function()
 end
 
 function module:OnEnable()
-	if not SUI.DB.EnabledComponents.Buffs then
+	if SUI.DB.DisabledComponents.Buffs then
 		return
 	end
 	module:BuildOptions()

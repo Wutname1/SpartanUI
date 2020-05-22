@@ -1,3 +1,12 @@
+local SUI, L, Lib = SUI, SUI.L, SUI.Lib
+local StdUi = SUI.StdUi
+local module = SUI:NewModule('Handler_Profiles')
+----------------------------------------------------------------------------------------------------
+
+function module:OnInitialize()
+end
+function module:OnEnable()
+end
 
 local function GetProfileData(profileScope)
 	local function SetCustomVars(data, keys)
@@ -61,8 +70,8 @@ local function GetProfileExport(exportFormat, profileScope)
 	if exportFormat == 'text' then
 		local serialData = SUI:Serialize(profileData)
 		exportString = SUI:CreateProfileExport(serialData, profileScope, profileKey)
-		local compressedData = SUI.Lib.Compress:Compress(exportString)
-		local encodedData = SUI.Lib.Base64:Encode(compressedData)
+		local compressedData = Lib.Compress:Compress(exportString)
+		local encodedData = Lib.Base64:Encode(compressedData)
 		profileExport = encodedData
 	elseif exportFormat == 'luaTable' then
 		exportString = SUI:TableToLuaString(profileData)
@@ -89,7 +98,7 @@ end
 function SUI:GetImportStringType(dataString)
 	local stringType = ''
 
-	if SUI.Lib.Base64:IsBase64(dataString) then
+	if Lib.Base64:IsBase64(dataString) then
 		stringType = 'Base64'
 	elseif find(dataString, '{') then --Basic check to weed out obviously wrong strings
 		stringType = 'Table'
@@ -103,8 +112,8 @@ function SUI:Decode(dataString)
 	local stringType = self:GetImportStringType(dataString)
 
 	if stringType == 'Base64' then
-		local decodedData = SUI.Lib.Base64:Decode(dataString)
-		local decompressedData, decompressedMessage = SUI.Lib.Compress:Decompress(decodedData)
+		local decodedData = Lib.Base64:Decode(dataString)
+		local decompressedData, decompressedMessage = Lib.Compress:Decompress(decodedData)
 
 		if not decompressedData then
 			SUI:Print('Error decompressing data:', decompressedMessage)
@@ -161,7 +170,6 @@ function SUI:Decode(dataString)
 end
 
 function SUI:ExportUI()
-	local StdUi = LibStub('StdUi'):NewInstance()
 	local window = StdUi:Window(nil, 650, 500)
 	window.StdUi = StdUi
 	window:SetPoint('CENTER', 0, 0)

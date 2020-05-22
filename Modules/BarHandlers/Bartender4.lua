@@ -206,7 +206,7 @@ end
 
 local function loadScales()
 	scaleData = module.BarScale.BT4.default
-	if SUI.DB.EnabledComponents.Artwork and module.BarScale.BT4[SUI.DB.Artwork.Style] then
+	if SUI:IsModuleEnabled('Artwork') and module.BarScale.BT4[SUI.DB.Artwork.Style] then
 		scaleData = SUI:MergeData(scaleData, module.BarScale.BT4[SUI.DB.Artwork.Style], true)
 	end
 	scaleData = SUI:MergeData(scaleData, module.DB.custom.scale.BT4, true)
@@ -215,7 +215,7 @@ end
 local function RefreshConfig()
 	local positionData = module.BarPosition.BT4.default
 	-- If artwork is enabled load the art's position data if supplied
-	if SUI.DB.EnabledComponents.Artwork and module.BarPosition.BT4[SUI.DB.Artwork.Style] then
+	if SUI:IsModuleEnabled('Artwork') and module.BarPosition.BT4[SUI.DB.Artwork.Style] then
 		positionData = SUI:MergeData(module.BarPosition.BT4[SUI.DB.Artwork.Style], module.BarPosition.BT4.default)
 	end
 	loadScales()

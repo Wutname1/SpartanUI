@@ -3,9 +3,11 @@
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
 	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
-	<Script file="Handlers/Font.lua" />
-	<Script file="Handlers/Profiles.lua" />
-	<Script file="Handlers/SetupWizard.lua" />
+	<Script file="Handlers\ChatCommands.lua" />
+	<Script file="Handlers\Font.lua" />
+	<Script file="Handlers\Modules.lua" />
+	<Script file="Handlers\Profiles.lua" />
+	<Script file="Handlers\SetupWizard.lua" />
 	<Script file="Options.lua" />
 
 	<!-- SUI_PartyMemberTemplate -->

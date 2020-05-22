@@ -475,7 +475,7 @@ function module:FirstLaunch()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if not SUI.DB.EnabledComponents.AutoTurnIn then
+			if SUI.DB.DisabledComponents.AutoTurnIn then
 				window.Skip:Click()
 				return
 			end
@@ -637,7 +637,7 @@ function module:OnEnable()
 	ATI_Container:SetScript(
 		'OnEvent',
 		function(_, event)
-			if not SUI.DB.EnabledComponents.AutoTurnIn then
+			if SUI.DB.DisabledComponents.AutoTurnIn then
 				return
 			end
 
