@@ -1,5 +1,5 @@
 local SUI = SUI
-local StdUi = LibStub('StdUi'):NewInstance()
+local StdUi = SUI.StdUi
 local module = SUI:NewModule('Component_Chatbox', 'AceEvent-3.0', 'AceHook-3.0')
 module.description = 'Lightweight quality of life chat improvements'
 ----------------------------------------------------------------------------------------------------
@@ -487,15 +487,15 @@ function module:SetupChatboxes()
 		hooksecurefunc(
 			QJTB,
 			'UpdateQueueIcon',
-			function(t)
-				if not t.displayedToast then
+			function(frame)
+				if not frame.displayedToast then
 					return
 				end
-				t.FriendsButton:SetTexture(icon)
-				t.QueueButton:SetTexture(icon)
-				t.FlashingLayer:SetTexture(icon)
-				t.FriendsButton:SetShown(false)
-				t.FriendCount:SetShown(false)
+				frame.FriendsButton:SetTexture(icon)
+				frame.QueueButton:SetTexture(icon)
+				frame.FlashingLayer:SetTexture(icon)
+				frame.FriendsButton:SetShown(false)
+				frame.FriendCount:SetShown(false)
 			end
 		)
 		hooksecurefunc(
@@ -508,6 +508,7 @@ function module:SetupChatboxes()
 				end
 			end
 		)
+
 		local function updateTexture()
 			QJTB.FriendsButton:SetTexture(icon)
 			QJTB.QueueButton:SetTexture(icon)
@@ -527,6 +528,12 @@ function module:SetupChatboxes()
 		QJTB.QueueButton:ClearAllPoints()
 		QJTB.QueueButton:SetPoint('CENTER')
 		QJTB.QueueButton:SetSize(18, 18)
+
+		QJTB.FlashingLayer:SetTexture(icon)
+		QJTB.FlashingLayer:SetTexCoord(0.6, 0.9, 0.08, 0.4)
+		QJTB.FlashingLayer:ClearAllPoints()
+		QJTB.FlashingLayer:SetPoint('CENTER')
+		QJTB.FlashingLayer:SetSize(20, 20)
 
 		QJTB.Toast:ClearAllPoints()
 		QJTB.Toast:SetPoint('BOTTOMLEFT', QJTB, 'TOPLEFT')
@@ -566,7 +573,6 @@ function module:SetupChatboxes()
 	ChatFrameMenuButton.Icon:SetAllPoints(ChatFrameMenuButton)
 	ChatFrameMenuButton.Icon:SetTexture(icon)
 	ChatFrameMenuButton.Icon:SetTexCoord(.6, .9, .6, .9)
-	ChatFrameMenuButton.Icon:SetTexCoord(.6, .9, .6, .9)
 
 	for i = 1, 10 do
 		local ChatFrameName = ('%s%d'):format('ChatFrame', i)
@@ -575,16 +581,55 @@ function module:SetupChatboxes()
 		local ChatFrameEdit = _G[ChatFrameName .. 'EditBox']
 		ChatFrameEdit:SetAltArrowKeyMode(false)
 
+		-- Setup chat message modification
 		local ChatFrame = _G[ChatFrameName]
-		local ChatFrameTab = _G[ChatFrameName .. 'Tab']
 		hooksecurefunc(ChatFrame.historyBuffer, 'PushFront', ModifyMessage)
+		module:HookScript(ChatFrame, 'OnHyperlinkEnter', OnHyperlinkEnter)
+		module:HookScript(ChatFrame, 'OnHyperlinkLeave', OnHyperlinkLeave)
 
+		-- Now we can skin everything
+		-- First lets setup some settings
+		ChatFrame:SetClampRectInsets(0, 0, 0, 0)
+		ChatFrame:SetClampedToScreen(false)
+
+		-- Setup main BG
 		local _, _, r, g, b, a = FCF_GetChatWindowInfo(i)
 		if r == 0 and g == 0 and b == 0 and ((SUI.IsRetail and a < .16 and a > .15) or (SUI.IsClassic and a < .1)) then
 			FCF_SetWindowColor(ChatFrame, DEFAULT_CHATFRAME_COLOR.r, DEFAULT_CHATFRAME_COLOR.g, DEFAULT_CHATFRAME_COLOR.b)
 			FCF_SetWindowAlpha(ChatFrame, DEFAULT_CHATFRAME_ALPHA)
 		end
+		ChatFrame:SetBackdrop(nil)
 
+		--Setup Scrollbar
+		if ChatFrame.ScrollBar then
+			ChatFrame.ScrollBar.ThumbTexture:SetColorTexture(1, 1, 1, .4)
+			ChatFrame.ScrollBar.ThumbTexture:SetWidth(10)
+
+			StripTextures(ChatFrame.ScrollToBottomButton)
+			local BG = ChatFrame.ScrollToBottomButton:CreateTexture()
+			BG = ChatFrame.ScrollToBottomButton:CreateTexture(nil, 'ARTWORK')
+			BG:SetAllPoints(ChatFrame.ScrollToBottomButton)
+			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\ToBottomArrow')
+			BG:SetAlpha(.4)
+			ChatFrame.ScrollToBottomButton.BG = BG
+			ChatFrame.ScrollToBottomButton:ClearAllPoints()
+			ChatFrame.ScrollToBottomButton:SetSize(20, 20)
+			ChatFrame.ScrollToBottomButton:SetPoint('BOTTOMRIGHT', ChatFrame.ResizeButton, 'TOPRIGHT', -4, 0)
+		end
+
+		if SUI.IsClassic then
+			--Position the bottom button in classic to the same spot as retail
+			local bottombutton = _G[ChatFrameName .. 'ButtonFrameButtomButton']
+			if bottombutton then
+				bottombutton:ClearAllPoints()
+				bottombutton:SetParent(ChatFrame.Background)
+				bottombutton:SetPoint('BOTTOMLEFT', ChatFrame.Background, 'BOTTOMLEFT', 0, 0)
+				bottombutton:Show()
+			end
+		end
+
+		--Skin the Tab
+		local ChatFrameTab = _G[ChatFrameName .. 'Tab']
 		ChatFrameTab:HookScript('OnClick', TabClick)
 		ChatFrameTab:HookScript('OnEnter', TabHintEnter)
 		ChatFrameTab:HookScript('OnLeave', TabHintLeave)
@@ -597,13 +642,7 @@ function module:SetupChatboxes()
 			ChatFrameTab[v .. 'Texture']:SetTexture(nil)
 		end
 
-		module:HookScript(ChatFrame, 'OnHyperlinkEnter', OnHyperlinkEnter)
-		module:HookScript(ChatFrame, 'OnHyperlinkLeave', OnHyperlinkLeave)
-
-		ChatFrame:SetClampRectInsets(0, 0, 0, 0)
-		ChatFrame:SetClampedToScreen(false)
-
-		-- Setup Editbox BG
+		-- Setup Editbox
 		local EBLeft = _G[ChatFrameName .. 'EditBoxLeft']
 		local EBMid = _G[ChatFrameName .. 'EditBoxMid']
 		local EBRight = _G[ChatFrameName .. 'EditBoxRight']
@@ -643,8 +682,6 @@ function module:SetupChatboxes()
 			element:Hide()
 		end
 
-		ChatFrame:SetBackdrop(nil)
-
 		ChatFrameEdit:SetBackdrop(chatBG)
 		local bg = {ChatFrame.Background:GetVertexColor()}
 		ChatFrameEdit:SetBackdropColor(unpack(bg))
@@ -657,15 +694,6 @@ function module:SetupChatboxes()
 		end
 		hooksecurefunc(ChatFrame.Background, 'SetVertexColor', BackdropColorUpdate)
 
-		if SUI.IsClassic then
-			local bottombutton = _G[ChatFrameName .. 'ButtonFrameButtomButton']
-			if bottombutton then
-				bottombutton:ClearAllPoints()
-				bottombutton:SetParent(ChatFrame.Background)
-				bottombutton:SetPoint('BOTTOMLEFT', ChatFrame.Background, 'BOTTOMLEFT', 0, 0)
-				bottombutton:Show()
-			end
-		end
 		if SUI.IsRetail then
 			local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
 			local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
@@ -719,18 +747,6 @@ function module:BuildOptions()
 		name = 'Chatbox',
 		childGroups = 'tab',
 		args = {
-			enabled = {
-				name = 'Enabled',
-				type = 'toggle',
-				width = 'full',
-				order = 1,
-				get = function(info)
-					return SUI.DB.EnabledComponents.Chatbox
-				end,
-				set = function(info, val)
-					SUI.DB.EnabledComponents.Chatbox = val
-				end
-			},
 			timestampFormat = {
 				name = 'Timestamp format',
 				type = 'select',
