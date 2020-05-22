@@ -14,8 +14,7 @@
 	<Script file="InterruptAnnounce.lua" />
 	<Script file="TauntWatcher.lua" />
 	<Script file="Chatbox.lua" />
-	<Script file="SpinCam.lua" />
-	<Script file="FilmEffects.lua" />
+	<Script file="AFKEffects.lua" />
 	<Script file="StopTalking.lua" />
 
 	<!-- Load BarHandlers -->

@@ -139,7 +139,7 @@ local changeName = function(fullName, misc, nameToChange, colon)
 			nameToChange = '|cFF' .. nameColor[name] .. nameToChange .. '|r' -- All this code just to color player log in events, worth it?
 		end
 	end
-	if ChatLevelLog and ChatLevelLog[name] and module.DB.profile.playerlevel then
+	if ChatLevelLog and ChatLevelLog[name] and module.DB.playerlevel then
 		local color = GetHexColor(GetQuestDifficultyColor(ChatLevelLog[name]))
 
 		nameToChange = '|cff' .. color .. (ChatLevelLog[name]) .. '|r:' .. nameToChange
@@ -156,15 +156,15 @@ function module:PlayerName(text)
 end
 
 function module:TimeStamp(text)
-	if module.DB.profile.timestampFormat == '' then
+	if module.DB.timestampFormat == '' then
 		return text
 	end
-	text = date('|cff7d7d7d[' .. module.DB.profile.timestampFormat .. ']|r ') .. text
+	text = date('|cff7d7d7d[' .. module.DB.timestampFormat .. ']|r ') .. text
 	return text
 end
 
 local function shortenChannel(text)
-	if not module.DB.profile.shortenChannelNames then
+	if not module.DB.shortenChannelNames then
 		return text
 	end
 
@@ -257,7 +257,8 @@ function module:OnInitialize()
 			fontSize = 12
 		}
 	}
-	module.DB = SUI.SpartanUIDB:RegisterNamespace('Chatbox', defaults)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', defaults)
+	module.DB = module.Database.profile
 
 	if not SUI.DB.EnabledComponents.Chatbox then
 		return
@@ -372,7 +373,7 @@ function module:SetupChatboxes()
 
 	local c = {r = .05, g = .05, b = .05, a = 0.7}
 	local filterFunc = function(_, _, msg, ...)
-		if not module.DB.profile.webLinks then
+		if not module.DB.webLinks then
 			return
 		end
 
@@ -445,7 +446,7 @@ function module:SetupChatboxes()
 		end
 	end
 	local TabHintEnter = function(frame)
-		if not module.DB.profile.ChatCopyTip then
+		if not module.DB.ChatCopyTip then
 			return
 		end
 
@@ -456,7 +457,7 @@ function module:SetupChatboxes()
 		GameTooltip:Show()
 	end
 	local TabHintLeave = function(frame)
-		if not module.DB.profile.ChatCopyTip then
+		if not module.DB.ChatCopyTip then
 			return
 		end
 
@@ -613,8 +614,8 @@ function module:SetupChatboxes()
 		local header = _G[ChatFrameName .. 'EditBoxHeader']
 		local _, s, m = header:GetFont()
 		SUI:FormatFont(header, s, 'Chatbox')
-		SUI:FormatFont(ChatFrame, module.DB.profile.fontSize, 'Chatbox')
-		SUI:FormatFont(ChatFrameEdit, module.DB.profile.fontSize, 'Chatbox')
+		SUI:FormatFont(ChatFrame, module.DB.fontSize, 'Chatbox')
+		SUI:FormatFont(ChatFrameEdit, module.DB.fontSize, 'Chatbox')
 
 		if (_G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil) then
 			_G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil)
@@ -744,20 +745,20 @@ function module:BuildOptions()
 					['%M:%S'] = 'MM:SS'
 				},
 				get = function(info)
-					return module.DB.profile.timestampFormat
+					return module.DB.timestampFormat
 				end,
 				set = function(info, val)
-					module.DB.profile.timestampFormat = val
+					module.DB.timestampFormat = val
 				end
 			},
 			shortenChannelNames = {
 				name = 'Shorten channel names',
 				type = 'toggle',
 				get = function(info)
-					return module.DB.profile.shortenChannelNames
+					return module.DB.shortenChannelNames
 				end,
 				set = function(info, val)
-					module.DB.profile.shortenChannelNames = val
+					module.DB.shortenChannelNames = val
 				end
 			},
 			playerlevel = {
@@ -765,10 +766,10 @@ function module:BuildOptions()
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return module.DB.profile.playerlevel
+					return module.DB.playerlevel
 				end,
 				set = function(info, val)
-					module.DB.profile.playerlevel = val
+					module.DB.playerlevel = val
 				end
 			},
 			webLinks = {
@@ -776,10 +777,10 @@ function module:BuildOptions()
 				type = 'toggle',
 				order = 20,
 				get = function(info)
-					return module.DB.profile.webLinks
+					return module.DB.webLinks
 				end,
 				set = function(info, val)
-					module.DB.profile.webLinks = val
+					module.DB.webLinks = val
 				end
 			},
 			LinkHover = {
@@ -787,10 +788,10 @@ function module:BuildOptions()
 				type = 'toggle',
 				order = 21,
 				get = function(info)
-					return module.DB.profile.LinkHover
+					return module.DB.LinkHover
 				end,
 				set = function(info, val)
-					module.DB.profile.LinkHover = val
+					module.DB.LinkHover = val
 				end
 			}
 		}

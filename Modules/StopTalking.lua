@@ -17,7 +17,8 @@ function module:OnInitialize()
 			lines = {}
 		}
 	}
-	module.DB = SUI.SpartanUIDB:RegisterNamespace('StopTalking', defaults)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', defaults)
+	module.DB = module.Database.profile
 end
 
 local function Options()
@@ -25,10 +26,10 @@ local function Options()
 		name = 'Stop Talking',
 		type = 'group',
 		get = function(info)
-			return module.DB.profile[info[#info]]
+			return module.DB[info[#info]]
 		end,
 		set = function(info, val)
-			module.DB.profile[info[#info]] = val
+			module.DB[info[#info]] = val
 		end,
 		args = {
 			persist = {
@@ -64,10 +65,10 @@ function module:OnEnable()
 				if not vo then
 					return
 				end
-				local persist = module.DB.profile.persist
-				if (module.DB.profile.lines[vo] and persist) or (not persist and HeardLines[vo]) then
+				local persist = module.DB.persist
+				if (module.DB.lines[vo] and persist) or (not persist and HeardLines[vo]) then
 					-- Heard this before.
-					if module.DB.profile.chatOutput and name and text then
+					if module.DB.chatOutput and name and text then
 						SUI:Print(name)
 						print(text)
 					end
@@ -76,7 +77,7 @@ function module:OnEnable()
 				else
 					-- New, flag it as heard.
 					if persist then
-						module.DB.profile.lines[vo] = true
+						module.DB.lines[vo] = true
 					else
 						HeardLines[vo] = true
 					end
