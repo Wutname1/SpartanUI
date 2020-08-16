@@ -296,11 +296,8 @@ function module:ModifyMinimapLayout()
 	-- Retail Version stuff
 	if SUI.IsRetail then
 		TimeManagerClockButton:GetRegions():Hide() -- Hide the border
-		TimeManagerClockButton:SetBackdrop(nil)
 		TimeManagerClockButton:ClearAllPoints()
 		TimeManagerClockButton:SetPoint('TOP', Minimap, 'BOTTOM', 0, 20)
-		TimeManagerClockButton:SetBackdropColor(0, 0, 0, 1)
-		TimeManagerClockButton:SetBackdropBorderColor(0, 0, 0, 1)
 
 		MiniMapInstanceDifficulty:ClearAllPoints()
 		MiniMapInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)

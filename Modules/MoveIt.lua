@@ -352,7 +352,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	local width = parent.dirtyWidth or parent:GetWidth()
 	local height = parent.dirtyHeight or parent:GetHeight()
 
-	local f = CreateFrame('Button', 'SUI_Mover_' .. name, UIParent)
+	local f = CreateFrame('Button', 'SUI_Mover_' .. name, UIParent, BackdropTemplateMixin and 'BackdropTemplate')
 	f:SetClampedToScreen(true)
 	f:RegisterForDrag('LeftButton', 'RightButton')
 	f:EnableMouseWheel(true)

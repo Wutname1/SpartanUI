@@ -253,7 +253,13 @@ local TooltipSetItem = function(self)
 			end
 		end
 
-		GameTooltip_SetBackdropStyle(self, style)
+		if (GameTooltip_SetBackdropStyle) then
+			hooksecurefunc("GameTooltip_SetBackdropStyle", function(self, style)
+				if (self.style) then
+					self:SetBackdrop(nil)
+				end
+			end)
+		end
 
 		if (quality) then
 			local r, g, b = GetItemQualityColor(quality)
@@ -440,7 +446,7 @@ local function ApplyTooltipSkins()
 		end
 
 		if (not tooltip.SUITip) then
-			local SUITip = CreateFrame('Frame', nil, tooltip)
+			local SUITip = CreateFrame('Frame', nil, tooltip, BackdropTemplateMixin and 'BackdropTemplate')
 			SUITip:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', 0, 0)
 			SUITip:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 0, 0)
 			SUITip:SetFrameLevel(0)
@@ -480,7 +486,7 @@ local function ApplyTooltipSkins()
 
 			tooltip.SUITip = SUITip
 			tooltip.SetBorderColor = SetBorderColor
-			tooltip:SetBackdrop(nil)
+			if (tooltip.SetBackdrop) then tooltip:SetBackdrop(nil) end
 			tooltip:HookScript('OnShow', onShow)
 			tooltip:HookScript('OnHide', onHide)
 			_G.tremove(tooltips, i)
@@ -489,7 +495,13 @@ local function ApplyTooltipSkins()
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
-		GameTooltip_SetBackdropStyle(tooltip, style)
+		if (GameTooltip_SetBackdropStyle) then
+			hooksecurefunc("GameTooltip_SetBackdropStyle", function(tooltip, style)
+				if (tooltip.style) then
+					tooltip:SetBackdrop(nil)
+				end
+			end)
+		end
 	end
 end
 

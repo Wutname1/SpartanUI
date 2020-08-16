@@ -465,9 +465,11 @@ function module:SetupChatboxes()
 	end
 
 	local GDM = _G.GeneralDockManager
-	GDM:SetBackdrop(chatBG)
-	GDM:SetBackdropColor(c.r, c.g, c.b, c.a)
-	GDM:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
+	if (GDM.SetBackdrop) then
+		GDM:SetBackdrop(chatBG)
+		GDM:SetBackdropColor(c.r, c.g, c.b, c.a)
+		GDM:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
+	end
 	GDM:ClearAllPoints()
 	GDM:SetPoint('BOTTOMLEFT', _G.ChatFrame1Background, 'TOPLEFT', -1, 1)
 	GDM:SetPoint('BOTTOMRIGHT', _G.ChatFrame1Background, 'TOPRIGHT', 1, 1)
@@ -598,7 +600,9 @@ function module:SetupChatboxes()
 			FCF_SetWindowColor(ChatFrame, DEFAULT_CHATFRAME_COLOR.r, DEFAULT_CHATFRAME_COLOR.g, DEFAULT_CHATFRAME_COLOR.b)
 			FCF_SetWindowAlpha(ChatFrame, DEFAULT_CHATFRAME_ALPHA)
 		end
-		ChatFrame:SetBackdrop(nil)
+		if (ChatFrame.SetBackdrop) then
+			ChatFrame:SetBackdrop(nil)
+		end
 
 		--Setup Scrollbar
 		if ChatFrame.ScrollBar then
@@ -682,15 +686,19 @@ function module:SetupChatboxes()
 			element:Hide()
 		end
 
-		ChatFrameEdit:SetBackdrop(chatBG)
-		local bg = {ChatFrame.Background:GetVertexColor()}
-		ChatFrameEdit:SetBackdropColor(unpack(bg))
-		ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
-
-		local function BackdropColorUpdate(frame, r, g, b)
+		if (ChatFrameEdit.SetBackdrop) then
+			ChatFrameEdit:SetBackdrop(chatBG)
 			local bg = {ChatFrame.Background:GetVertexColor()}
 			ChatFrameEdit:SetBackdropColor(unpack(bg))
 			ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
+		end
+
+		local function BackdropColorUpdate(frame, r, g, b)
+			local bg = {ChatFrame.Background:GetVertexColor()}
+			if (ChatFrameEdit.SetBackdrop) then
+				ChatFrameEdit:SetBackdropColor(unpack(bg))
+				ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
+			end
 		end
 		hooksecurefunc(ChatFrame.Background, 'SetVertexColor', BackdropColorUpdate)
 

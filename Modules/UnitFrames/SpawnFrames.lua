@@ -144,8 +144,10 @@ local function UpdateAura(self, elapsed)
 end
 
 local function PostCreateAura(element, button)
-	button:SetBackdrop(BACKDROP)
-	button:SetBackdropColor(0, 0, 0)
+	if button.SetBackdrop then
+		button:SetBackdrop(nil)
+		button:SetBackdropColor(0, 0, 0)
+	end
 	button.cd:SetReverse(true)
 	button.cd:SetHideCountdownNumbers(true)
 	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -177,10 +179,12 @@ local function PostUpdateAura(element, unit, button, index)
 		button.expiration = math.huge
 	end
 
-	if (unit == 'target' and canStealOrPurge) then
-		button:SetBackdropColor(0, 1 / 2, 1 / 2)
-	elseif (owner ~= 'player') then
-		button:SetBackdropColor(0, 0, 0)
+	if button.SetBackdrop then
+		if (unit == 'target' and canStealOrPurge) then
+			button:SetBackdropColor(0, 1 / 2, 1 / 2)
+		elseif (owner ~= 'player') then
+			button:SetBackdropColor(0, 0, 0)
+		end
 	end
 end
 
