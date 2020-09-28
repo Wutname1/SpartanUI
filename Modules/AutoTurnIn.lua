@@ -583,7 +583,7 @@ function module.QUEST_GREETING()
 end
 
 function module.GOSSIP_SHOW()
-	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsAltKeyDown()) then
+	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsAltKeyDown()) or (SUI.IsRetail) then
 		return
 	end
 
