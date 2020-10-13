@@ -26,10 +26,6 @@ SUI.Version = ''
 SUI.releaseType = '6.x.x DEV build'
 SUI.Version = ''
 --@end-do-not-package@
---@alpha@
--- TODO REMOVE FOR 6.0 RELEASE
-SUI.Version = '5.9.92'
---@end-alpha@
 
 ---------------  Add Libraries ---------------
 
