@@ -56,8 +56,10 @@ local ExcludedItems = {
 	16654,
 	16655,
 	16656,
-	2730
+	2730,
 	--End Shredder Operating Manual pages
+	63207, -- Wrap of unity
+	63206 -- Wrap of unity
 }
 local ExcludedTypes = {
 	'Container',
