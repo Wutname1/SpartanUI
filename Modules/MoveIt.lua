@@ -627,6 +627,10 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		-- Position frame
 		f:ClearAllPoints()
 		f:SetPoint(point, (anchor or UIParent), (secondaryPoint or point), (x or 0), (y or 0))
+
+		if defaultPos then
+			f.defaultPoint = GetPoints(f)
+		end
 	end
 	local function SizeChanged(frame)
 		if InCombatLockdown() then
