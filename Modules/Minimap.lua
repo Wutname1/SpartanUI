@@ -1,4 +1,4 @@
-local SUI, L, print = SUI, SUI.L, SUI.print
+local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Component_Minimap')
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 local MoveIt, Settings
@@ -162,6 +162,7 @@ function module:OnInitialize()
 		hideOnEscape = false
 	}
 	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
+	UserSettings = SUI.DB.MiniMap
 
 	-- Check for Carbonite dinking with the minimap.
 	if (NXTITLELOW) then
