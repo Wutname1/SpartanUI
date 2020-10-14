@@ -119,7 +119,7 @@ local function VehicleLeaveButton()
 			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
 		local VehicleBtnHolder = CreateFrame('Frame', 'VehicleBtnHolder', SpartanUI)
 		VehicleBtnHolder:SetSize(MainMenuBarVehicleLeaveButton:GetSize())
-		VehicleBtnHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+		VehicleBtnHolder:SetPoint(point, UIParent, secondaryPoint, x, y)
 		MoveIt:CreateMover(VehicleBtnHolder, 'VehicleLeaveButton', 'Vehicle leave button', nil, 'Blizzard UI')
 
 		MainMenuBarVehicleLeaveButton:ClearAllPoints()

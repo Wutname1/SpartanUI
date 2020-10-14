@@ -162,13 +162,16 @@ function module:LoadDB()
 end
 
 function module:OnInitialize()
+	if SUI:IsModuleDisabled('UnitFrames') then
+		return
+	end
 	DB = SUI.DB.Unitframes
 	-- Setup Database
 	module:LoadDB()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.UnitFrames then
+	if SUI:IsModuleDisabled('UnitFrames') then
 		return
 	end
 
