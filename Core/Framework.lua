@@ -16,8 +16,7 @@ if SUI.IsClassic then
 	wowVersion = 'Classic'
 end
 --@alpha@
-SUI.releaseType = '6.0 ALPHA build ' .. SUI.BuildNum
-SUI.Version = ''
+SUI.releaseType = 'ALPHA build ' .. SUI.BuildNum
 --@end-alpha@
 --@do-not-package@
 SUI.releaseType = '6.x.x DEV build'
