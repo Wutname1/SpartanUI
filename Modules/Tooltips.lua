@@ -148,6 +148,9 @@ local setPoint = function(self, parent)
 end
 
 local onShow = function(self)
+	if not self.SetBackdrop then
+		Mixin(self, BackdropTemplateMixin)
+	end
 	self:SetBackdrop(whitebg)
 	if
 		SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip ~= nil and
