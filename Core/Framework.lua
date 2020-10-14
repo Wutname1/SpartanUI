@@ -19,7 +19,7 @@ end
 SUI.releaseType = 'ALPHA build ' .. SUI.BuildNum
 --@end-alpha@
 --@do-not-package@
-SUI.releaseType = '6.x.x DEV build'
+SUI.releaseType = 'DEV Build'
 SUI.Version = ''
 --@end-do-not-package@
 

@@ -348,12 +348,8 @@ local function AddArtworkOptions(frameName)
 			if data[position] then
 				local options = SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args
 				local dataObj = data[position]
-				if dataObj.perUnit then
-					if data[frameName] then
-						dataObj = data[frameName]
-					else
-						dataObj = false
-					end
+				if dataObj.perUnit and data[frameName] then
+					dataObj = data[frameName]
 				end
 
 				if dataObj then

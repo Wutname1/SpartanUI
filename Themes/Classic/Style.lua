@@ -185,14 +185,17 @@ function module:OnInitialize()
 		full = {perUnit = true},
 		player = {
 			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_1_full',
+			heightScale = 1.2,
 			TexCoord = {0.2, 0.80859375, 0.8046875, 0.1953125}
 		},
 		target = {
 			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_1_full',
+			heightScale = 1.2,
 			TexCoord = {0.80859375, 0.2, 0.1953125, 0.8046875}
 		},
 		targettarget = {
 			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_3_single',
+			heightScale = 1.2,
 			TexCoord = {.68, 0, 0, 0.6640625}
 		}
 	}
