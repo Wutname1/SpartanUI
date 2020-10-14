@@ -260,7 +260,7 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', defaults)
 	module.DB = module.Database.profile
 
-	if SUI:IsModuleDisabled('chatbox') then
+	if SUI:IsModuleDisabled('Chatbox') then
 		return
 	end
 	local ChatAddons = {'Chatter', 'BasicChatMods', 'Prat-3.0'}
@@ -319,7 +319,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled('chatbox') then
+	if SUI:IsModuleDisabled('Chatbox') then
 		return
 	end
 
@@ -358,6 +358,9 @@ function module:OnEnable()
 end
 
 function module:SetupChatboxes()
+	if SUI:IsModuleDisabled('Chatbox') then
+		return
+	end
 	DEFAULT_CHATFRAME_ALPHA = 0.7
 	DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
 	DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
@@ -750,6 +753,9 @@ function ItemRefTooltip:SetHyperlink(data, ...)
 end
 
 function module:BuildOptions()
+	if SUI:IsModuleDisabled('Chatbox') then
+		return
+	end
 	SUI.opt.args['ModSetting'].args['Chatbox'] = {
 		type = 'group',
 		name = 'Chatbox',
