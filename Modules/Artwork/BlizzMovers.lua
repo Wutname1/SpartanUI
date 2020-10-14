@@ -72,21 +72,21 @@ local function AbilityBars()
 	local ZoneAbilityHolder = CreateFrame('Frame', 'ZoneAbilityHolder', SpartanUI)
 	ZoneAbilityHolder:SetSize(ZoneAbilityFrame:GetSize())
 	ZoneAbilityHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+	ZoneAbilityHolder:Hide()
 	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
 
-	ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
-	ZoneAbilityFrame:ClearAllPoints()
-	ZoneAbilityFrame:SetPoint('CENTER', ZoneAbilityHolder)
-	ZoneAbilityFrame.ignoreFramePositionManager = true
+	ExtraAbilityContainer:ClearAllPoints()
+	ExtraAbilityContainer:SetPoint('CENTER', ZoneAbilityHolder)
+	-- ExtraAbilityContainer.ignoreFramePositionManager = true
 
 	-- Extra Action / Boss Bar
 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ZoneAbility)
 	local ExtraActionHolder = CreateFrame('Frame', 'ExtraActionHolder', SpartanUI)
 	ExtraActionHolder:SetSize(ExtraActionBarFrame:GetSize())
 	ExtraActionHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+	ExtraActionHolder:Hide()
 	MoveIt:CreateMover(ExtraActionHolder, 'ExtraAction', 'Boss Button', nil, 'Blizzard UI')
 
-	ExtraActionBarFrame:SetParent(ExtraActionHolder)
 	ExtraActionBarFrame:ClearAllPoints()
 	ExtraActionBarFrame:SetPoint('CENTER', ExtraActionHolder)
 	ExtraActionBarFrame.ignoreFramePositionManager = true
