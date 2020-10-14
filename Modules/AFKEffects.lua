@@ -45,7 +45,7 @@ end
 ----- Core ----
 
 local function AFKToggle()
-	if SUI:IsModuleEnabled(module) then
+	if not SUI:IsModuleEnabled(module) then
 		if SpinCamRunning then
 			StopSpin()
 		end
@@ -85,10 +85,10 @@ local function Options()
 				type = 'group',
 				inline = true,
 				get = function(info)
-					return module.DB[info[#info]]
+					return module.DB.SpinCam.enabled
 				end,
 				set = function(info, val)
-					module.DB[info[#info]] = val
+					module.DB.SpinCam.enabled = val
 				end,
 				args = {
 					enabled = {
@@ -106,10 +106,10 @@ local function Options()
 						max = 100,
 						step = 1,
 						get = function(info)
-							return (SUI.DB.speed * 100)
+							return (module.DB.SpinCam.speed * 100)
 						end,
 						set = function(info, val)
-							module.DB.speed = (val / 100)
+							module.DB.SpinCam.speed = (val / 100)
 						end
 					}
 				}
@@ -156,7 +156,7 @@ function module:OnEnable()
 				StopSpin()
 			end
 			-- This is to ensure that camera movement speed got reset, wow api "was" buggy at one point.
-			if module.DB.speed == GetCVar('cameraYawMoveSpeed') and not SpinCamRunning then
+			if module.DB.SpinCam.speed == GetCVar('cameraYawMoveSpeed') and not SpinCamRunning then
 				SetCVar('cameraYawMoveSpeed', userCameraYawMoveSpeed)
 			end
 		end
