@@ -57,7 +57,7 @@ function module:OnInitialize()
 			end,
 			func = function()
 				SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
-				SUI:GetModule('Component_UnitFrames'):SetActiveStyle(style)
+				SUI:GetModule('Component_UnitFrames'):SetActiveStyle(skin)
 				SUI.opt.args.UnitFrames.args.BaseStyle.args[skin].func()
 			end
 		}
