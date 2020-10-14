@@ -1079,7 +1079,9 @@ local DBdefault = {
 							y = 0
 						}
 					},
-					Runes = {},
+					Runes = {
+						enabled = true
+					},
 					Stagger = {},
 					Totems = {},
 					AssistantIndicator = {
