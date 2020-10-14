@@ -354,7 +354,15 @@ local function AddArtworkOptions(frameName)
 						return data[frameName].path, (data[frameName].x or 160), (data[frameName].y or 40)
 					end,
 					imageCoords = function()
-						return data[frameName].TexCoord
+						local texcord = data[frameName].TexCoord
+						if type(texcord) == 'function' then
+							local cords = texcord(nil, 'full', true)
+							if cords then
+								return cords
+							end
+						else
+							return texcord
+						end
 					end
 				}
 			end
@@ -373,10 +381,24 @@ local function AddArtworkOptions(frameName)
 					width = 'normal',
 					type = 'description',
 					image = function()
-						return dataObj.path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
+						if type(dataObj.path) == 'function' then
+							local path = dataObj.path(nil, position)
+							if path then
+								return path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
+							end
+						else
+							return dataObj.path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
+						end
 					end,
 					imageCoords = function()
-						return dataObj.TexCoord
+						if type(dataObj.TexCoord) == 'function' then
+							local cords = dataObj.TexCoord(nil, position)
+							if cords then
+								return cords
+							end
+						else
+							return dataObj.TexCoord
+						end
 					end
 				}
 			end

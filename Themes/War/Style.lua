@@ -48,7 +48,11 @@ function module:OnInitialize()
 		}
 	}
 	local pathFunc = function(frame, position)
-		local factionGroup = UnitFactionGroup(frame.unit) or 'Neutral'
+		local factionGroup = select(1, UnitFactionGroup('player'))
+		if frame then
+			factionGroup = select(1, UnitFactionGroup(frame.unit)) or 'Neutral'
+		end
+
 		if factionGroup == 'Horde' or factionGroup == 'Alliance' then
 			return 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames'
 		end
@@ -59,7 +63,10 @@ function module:OnInitialize()
 		return false
 	end
 	local TexCoordFunc = function(frame, position)
-		local factionGroup = UnitFactionGroup(frame.unit) or 'Neutral'
+		local factionGroup = select(1, UnitFactionGroup('player'))
+		if frame then
+			factionGroup = select(1, UnitFactionGroup(frame.unit)) or 'Neutral'
+		end
 
 		if factionGroup == 'Horde' then
 			-- Horde Graphics
