@@ -47,7 +47,7 @@ function module:OnInitialize()
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.Fel = {
 		top = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\bar-backdrop1',
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
 			TexCoord = {0.1796875, 0.736328125, 0, 0.099609375},
 			heightScale = .25,
 			yScale = -0.05,
