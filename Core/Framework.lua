@@ -15,9 +15,6 @@ local wowVersion = 'Retail'
 if SUI.IsClassic then
 	wowVersion = 'Classic'
 end
---@beta@
-SUI.releaseType = 'BETA'
---@end-beta@
 --@alpha@
 SUI.releaseType = '6.0 ALPHA build ' .. SUI.BuildNum
 SUI.Version = ''
