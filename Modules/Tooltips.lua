@@ -84,7 +84,7 @@ end
 
 local function ActiveRule()
 	for _, v in ipairs(RuleList) do
-		if SUI.DB.Tooltips[v].Status ~= 'Disabled' then
+		if SUI.DB.Tooltips[v] and SUI.DB.Tooltips[v].Status ~= 'Disabled' then
 			local CombatRule = false
 			if InCombatLockdown() and SUI.DB.Tooltips[v].Combat then
 				CombatRule = true
@@ -254,11 +254,14 @@ local TooltipSetItem = function(self)
 		end
 
 		if (GameTooltip_SetBackdropStyle) then
-			hooksecurefunc("GameTooltip_SetBackdropStyle", function(self, style)
-				if (self.style) then
-					self:SetBackdrop(nil)
+			hooksecurefunc(
+				'GameTooltip_SetBackdropStyle',
+				function(self, style)
+					if (self.style) then
+						self:SetBackdrop(nil)
+					end
 				end
-			end)
+			)
 		end
 
 		if (quality) then
@@ -486,7 +489,9 @@ local function ApplyTooltipSkins()
 
 			tooltip.SUITip = SUITip
 			tooltip.SetBorderColor = SetBorderColor
-			if (tooltip.SetBackdrop) then tooltip:SetBackdrop(nil) end
+			if (tooltip.SetBackdrop) then
+				tooltip:SetBackdrop(nil)
+			end
 			tooltip:HookScript('OnShow', onShow)
 			tooltip:HookScript('OnHide', onHide)
 			_G.tremove(tooltips, i)
@@ -496,11 +501,14 @@ local function ApplyTooltipSkins()
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
 		if (GameTooltip_SetBackdropStyle) then
-			hooksecurefunc("GameTooltip_SetBackdropStyle", function(tooltip, style)
-				if (tooltip.style) then
-					tooltip:SetBackdrop(nil)
+			hooksecurefunc(
+				'GameTooltip_SetBackdropStyle',
+				function(tooltip, style)
+					if (tooltip.style) then
+						tooltip:SetBackdrop(nil)
+					end
 				end
-			end)
+			)
 		end
 	end
 end
