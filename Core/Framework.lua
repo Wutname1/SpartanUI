@@ -751,22 +751,32 @@ local DBdefault = {
 					yOfs = 0
 				},
 				artwork = {
+					full = {
+						enabled = false,
+						x = 0,
+						y = 0,
+						alpha = 1,
+						graphic = ''
+					},
 					top = {
 						enabled = false,
 						x = 0,
 						y = 0,
+						alpha = 1,
 						graphic = ''
 					},
 					bg = {
 						enabled = false,
 						x = 0,
 						y = 0,
+						alpha = 1,
 						graphic = ''
 					},
 					bottom = {
 						enabled = false,
 						x = 0,
 						y = 0,
+						alpha = 1,
 						graphic = ''
 					}
 				},
@@ -1459,6 +1469,7 @@ local DBdefault = {
 				['**'] = {
 					anchor = {},
 					artwork = {
+						full = {},
 						top = {},
 						bg = {},
 						bottom = {}

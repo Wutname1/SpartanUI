@@ -184,15 +184,15 @@ function module:OnInitialize()
 	UnitFrames.Artwork.Classic = {
 		full = {perUnit = true},
 		player = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_1_full',
+			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_1_full',
 			TexCoord = {0.2, 0.80859375, 0.8046875, 0.1953125}
 		},
 		target = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_1_full',
+			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_1_full',
 			TexCoord = {0.80859375, 0.2, 0.1953125, 0.8046875}
 		},
 		targettarget = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_3_single',
+			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_3_single',
 			TexCoord = {.68, 0, 0, 0.6640625}
 		}
 	}

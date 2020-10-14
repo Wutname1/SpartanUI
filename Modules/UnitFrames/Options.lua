@@ -279,6 +279,7 @@ local function AddArtworkOptions(frameName)
 			name = DisplayName,
 			type = 'group',
 			order = i,
+			disabled = true,
 			args = {
 				enabled = {
 					name = 'Enabled',
@@ -343,64 +344,50 @@ local function AddArtworkOptions(frameName)
 	end
 
 	for Name, data in pairs(module.Artwork) do
-		-- Need some way to support the shitty classic artwork
-		if data.full then
-			if data[frameName] then
-				SUI.opt.args.UnitFrames.args[frameName].args.artwork.args.bg.args.style.args[Name] = {
-					name = (data.name or Name),
-					width = 'normal',
-					type = 'description',
-					image = function()
-						return data[frameName].path, (data[frameName].x or 160), (data[frameName].y or 40)
-					end,
-					imageCoords = function()
-						local texcord = data[frameName].TexCoord
-						if type(texcord) == 'function' then
-							local cords = texcord(nil, 'full', true)
-							if cords then
-								return cords
-							end
-						else
-							return texcord
-						end
-					end
-				}
-			end
-		end
-
-		-- Now for everything else
 		for position, _ in pairs(ArtPositions) do
 			if data[position] then
 				local options = SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args
 				local dataObj = data[position]
-				--Add to dropdown
-				options.StyleDropdown.values[Name] = (data.name or Name)
-				--Create example
-				options.style.args[Name] = {
-					name = (data.name or Name),
-					width = 'normal',
-					type = 'description',
-					image = function()
-						if type(dataObj.path) == 'function' then
-							local path = dataObj.path(nil, position)
-							if path then
-								return path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
-							end
-						else
-							return dataObj.path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
-						end
-					end,
-					imageCoords = function()
-						if type(dataObj.TexCoord) == 'function' then
-							local cords = dataObj.TexCoord(nil, position)
-							if cords then
-								return cords
-							end
-						else
-							return dataObj.TexCoord
-						end
+				if dataObj.perUnit then
+					if data[frameName] then
+						dataObj = data[frameName]
+					else
+						dataObj = false
 					end
-				}
+				end
+
+				if dataObj then
+					--Enable art option
+					SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].disabled = false
+					--Add to dropdown
+					options.StyleDropdown.values[Name] = (data.name or Name)
+					--Create example
+					options.style.args[Name] = {
+						name = (data.name or Name),
+						width = 'normal',
+						type = 'description',
+						image = function()
+							if type(dataObj.path) == 'function' then
+								local path = dataObj.path(nil, position)
+								if path then
+									return path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
+								end
+							else
+								return dataObj.path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
+							end
+						end,
+						imageCoords = function()
+							if type(dataObj.TexCoord) == 'function' then
+								local cords = dataObj.TexCoord(nil, position)
+								if cords then
+									return cords
+								end
+							else
+								return dataObj.TexCoord
+							end
+						end
+					}
+				end
 			end
 		end
 	end
