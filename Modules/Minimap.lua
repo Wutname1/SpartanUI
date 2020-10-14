@@ -476,6 +476,8 @@ function module:UpdateScale()
 	if Settings.scaleWithArt then
 		if Minimap.scale then
 			Minimap:scale(SUI.DB.scale)
+		else
+			Minimap:SetScale(max(SUI.DB.scale, .01))
 		end
 	end
 end
@@ -594,6 +596,8 @@ function module:update(FullUpdate)
 				if SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
 					-- Reset to skin position
 					UpdatePosition()
+					-- Update Scale
+					module:UpdateScale()
 				end
 			end
 
@@ -672,6 +676,8 @@ function module:update(FullUpdate)
 	if FullUpdate then
 		-- Position
 		UpdatePosition()
+		-- Update Scale
+		module:UpdateScale()
 		-- reload shape
 		module:ShapeChange(Settings.shape)
 	end
