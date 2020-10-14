@@ -1858,6 +1858,36 @@ function SUI:InitializeProfile()
 
 	SUI:reloadui()
 end
+-- chat setup --
+
+function SUI.Print(self, ...)
+	local tmp = {}
+	local n = 1
+	tmp[1] = '|cffffffffSpartan|cffe21f1fUI|r:'
+	for i = 1, select('#', ...) do
+		n = n + 1
+		tmp[n] = tostring(select(i, ...))
+	end
+	DEFAULT_CHAT_FRAME:AddMessage(table.concat(tmp, ' ', 1, n))
+end
+
+function SUI.print(msg, doNotLabel)
+	if doNotLabel then
+		print(msg)
+	else
+		SUI:Print(msg)
+	end
+end
+function SUI:Error(err, mod)
+	SUI:Print('|cffff0000Error detected')
+	if mod then
+		SUI:Print("An error has occured in the Component '" .. mod .. "'")
+	else
+		SUI:Print('An error has occured')
+	end
+	SUI:Print('Details: ' .. (err or 'None provided'))
+	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
+end
 
 ---------  Create SpartanUI Container  ---------
 do

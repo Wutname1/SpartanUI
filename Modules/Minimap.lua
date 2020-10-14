@@ -1,4 +1,4 @@
-local SUI, L = SUI, SUI.L
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_Minimap')
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 local MoveIt, Settings
