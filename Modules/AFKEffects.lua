@@ -45,7 +45,7 @@ end
 ----- Core ----
 
 local function AFKToggle()
-	if not SUI:IsModuleEnabled(module) or not module.DB.SpinCam.enabled then
+	if SUI:IsModuleDisabled('AFKEffects') or not module.DB.SpinCam.enabled then
 		if SpinCamRunning then
 			StopSpin()
 		end
@@ -136,7 +136,7 @@ end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled(module) then
+	if SUI:IsModuleDisabled('AFKEffects') then
 		return
 	end
 
