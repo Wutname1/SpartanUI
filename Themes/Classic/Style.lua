@@ -58,8 +58,8 @@ local function CreateArtwork()
 		plate['BG' .. i]:SetFrameLevel(3)
 	end
 
-	plate.POP1 = Artwork_Core:CreateBarBG(BarBGSettings3, 7, Classic_ActionBarPlate)
-	plate.POP2 = Artwork_Core:CreateBarBG(BarBGSettings3, 8, Classic_ActionBarPlate)
+	plate.POP1 = Artwork_Core:CreateBarBG(BarBGSettings3, 'Stance', Classic_ActionBarPlate)
+	plate.POP2 = Artwork_Core:CreateBarBG(BarBGSettings3, 'MenuBar', Classic_ActionBarPlate)
 	plate.POP1:SetFrameLevel(3)
 	plate.POP2:SetFrameLevel(3)
 

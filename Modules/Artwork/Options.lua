@@ -293,80 +293,7 @@ function module:SetupOptions()
 		name = 'Bar backgrounds',
 		type = 'group',
 		desc = L['ActionBarConfDesc'],
-		args = {
-			Stance = {
-				name = L['Stance and Pet bar'],
-				type = 'group',
-				inline = true,
-				order = 10,
-				args = {
-					bar5alpha = {
-						name = L['Alpha'],
-						type = 'range',
-						min = 0,
-						max = 100,
-						step = 1,
-						width = 'double',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.Stance.alpha
-						end,
-						set = function(info, val)
-							if SUI.DB.Styles.War.Artwork.Stance.enable == true then
-								SUI.DB.Styles.War.Artwork.Stance.alpha = val
-								module:UpdateAlpha()
-							end
-						end
-					},
-					bar5enable = {
-						name = L['Enabled'],
-						type = 'toggle',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.Stance.enable
-						end,
-						set = function(info, val)
-							SUI.DB.Styles.War.Artwork.Stance.enable = val
-							module:UpdateAlpha()
-						end
-					}
-				}
-			},
-			MenuBar = {
-				name = L['Bag and Menu bar'],
-				type = 'group',
-				inline = true,
-				order = 20,
-				args = {
-					bar6alpha = {
-						name = L['Alpha'],
-						type = 'range',
-						min = 0,
-						max = 100,
-						step = 1,
-						width = 'double',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.MenuBar.alpha
-						end,
-						set = function(info, val)
-							if SUI.DB.Styles.War.Artwork.MenuBar.enable == true then
-								SUI.DB.Styles.War.Artwork.MenuBar.alpha = val
-								module:UpdateAlpha()
-							end
-						end
-					},
-					bar6enable = {
-						name = L['Enabled'],
-						type = 'toggle',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.MenuBar.enable
-						end,
-						set = function(info, val)
-							SUI.DB.Styles.War.Artwork.MenuBar.enable = val
-							module:UpdateAlpha()
-						end
-					}
-				}
-			}
-		}
+		args = {}
 	}
 	local function CreatOption(key)
 		local function updateOpt(opt, val)
@@ -374,10 +301,18 @@ function module:SetupOptions()
 			module:UpdateBarBG()
 		end
 
-		SUI.opt.args.Artwork.args.BarBG.args[key] = {
+		ArtworkOpts.BarBG.args[key] = {
 			name = 'Bar ' .. key,
 			type = 'group',
 			inline = true,
+			hidden = function(info)
+				if module.BarBG[SUI.DB.Artwork.Style] then
+					if module.BarBG[SUI.DB.Artwork.Style][key] then
+						return false
+					end
+				end
+				return true
+			end,
 			args = {
 				enabled = {
 					order = 1,
