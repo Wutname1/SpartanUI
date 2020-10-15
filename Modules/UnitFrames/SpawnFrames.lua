@@ -543,14 +543,16 @@ local function CreateUnitFrame(self, unit)
 			if not unit or unit == 'vehicle' then
 				return
 			end
+			-- Party frame shows 'player' instead of party 1-5
+			local parentName = self:GetParent():GetName()
 			local unitName = unit
-			if string.match(unit, 'raid') then
+			if string.match(parentName, 'raid') then
 				unitName = 'raid'
-			elseif string.match(unit, 'party') then
+			elseif string.match(parentName, 'party') then
 				unitName = 'party'
-			elseif string.match(unit, 'boss') then
+			elseif string.match(parentName, 'boss') then
 				unitName = 'boss'
-			elseif string.match(unit, 'arena') then
+			elseif string.match(parentName, 'arena') then
 				unitName = 'arena'
 			end
 			if not module.CurrentSettings[unitName] then
@@ -1249,7 +1251,7 @@ function module:SpawnFrames()
 	-- Party Frames
 	local party =
 		SUIUF:SpawnHeader(
-		'SUI_PartyFrameHeader',
+		'SUI_partyFrameHeader',
 		nil,
 		'party',
 		'showRaid',
@@ -1277,7 +1279,6 @@ function module:SpawnFrames()
 		'oUF-initialConfigFunction',
 		('self:SetWidth(%d) self:SetHeight(%d)'):format(module.CurrentSettings.party.width, CalculateHeight('party'))
 	)
-	-- self:EnableMouse(enable)
 	party:SetPoint('TOPLEFT', SUI_UF_party, 'TOPLEFT')
 	module.frames.party = party
 
@@ -1290,7 +1291,7 @@ function module:SpawnFrames()
 
 	local raid =
 		SUIUF:SpawnHeader(
-		'SUI_UF_RaidFrameHeader',
+		'SUI_UF_raidFrameHeader',
 		nil,
 		'raid',
 		'showRaid',
@@ -1328,42 +1329,35 @@ function module:SpawnFrames()
 	module.frames.raid = raid
 
 	local function GroupFrameUpdateAll(self)
-		for _, f in ipairs({self:GetChildren()}) do
+		for _, f in ipairs(self) do
 			if f.UpdateAll then
 				f:UpdateAll()
 			end
 		end
 	end
 	local function GroupFrameElementUpdate(self, elementName)
-		for _, f in ipairs({self:GetChildren()}) do
+		for _, f in ipairs(self) do
 			if f.ElementUpdate then
 				f:ElementUpdate(elementName)
 			end
 		end
 	end
-	local function GroupFrameUpdateSize(self)
-		for _, f in ipairs({self:GetChildren()}) do
-			if f.UpdateSize then
-				f:UpdateSize()
-			end
-		end
-	end
 	local function GroupFrameUpdateAuras(self)
-		for _, f in ipairs({self:GetChildren()}) do
+		for _, f in ipairs(self) do
 			if f.UpdateAuras then
 				f:UpdateAuras()
 			end
 		end
 	end
 	local function GroupFrameEnable(self)
-		for _, f in ipairs({self:GetChildren()}) do
+		for _, f in ipairs(self) do
 			if f.Enable then
 				f:Enable()
 			end
 		end
 	end
 	local function GroupFrameDisable(self)
-		for _, f in ipairs({self:GetChildren()}) do
+		for _, f in ipairs(self) do
 			if f.Disable then
 				f:Disable()
 			end
@@ -1371,6 +1365,15 @@ function module:SpawnFrames()
 	end
 
 	for _, group in ipairs({'raid', 'party', 'boss', 'arena'}) do
+		local function GroupFrameUpdateSize(self)
+			for i = 1, 40 do
+				local f = _G['SUI_' .. group .. 'FrameHeaderUnitButton' .. i]
+				if f and f.UpdateSize then
+					f:UpdateSize()
+				end
+			end
+		end
+
 		module.frames[group].UpdateAll = GroupFrameUpdateAll
 		module.frames[group].ElementUpdate = GroupFrameElementUpdate
 		module.frames[group].UpdateSize = GroupFrameUpdateSize
