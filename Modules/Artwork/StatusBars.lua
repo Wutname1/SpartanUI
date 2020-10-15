@@ -288,7 +288,7 @@ function module:factory()
 		local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
 
 		--Status Bar
-		local statusbar = CreateFrame('Frame', key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
+		local statusbar = CreateFrame('Frame', 'SUI_StatusBar_' .. key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
 		statusbar:SetSize(unpack(StyleSetting.size))
 		statusbar:SetFrameStrata('BACKGROUND')
 

@@ -20,15 +20,9 @@ function module:SetColor()
 		r, b, g, a = unpack(SUI.DB.Styles.Classic.Color.Art)
 	end
 
-	for i = 1, 6 do
-		if Classic_ActionBarPlate['BG' .. i].BG then
-			Classic_ActionBarPlate['BG' .. i].BG:SetVertexColor(r, b, g, a)
-		end
-		if Classic_ActionBarPlate['POP' .. i].BG then
-			Classic_ActionBarPlate['POP' .. i].BG:SetVertexColor(r, b, g, a)
-		end
-		if Classic_ActionBarPlate['mask' .. i].BG then
-			Classic_ActionBarPlate['mask' .. i].BG:SetVertexColor(r, b, g, a)
+	for i = 1, 10 do
+		if _G['Classic_Bar' .. i].BG then
+			_G['Classic_Bar' .. i].BG:SetVertexColor(r, b, g, a)
 		end
 	end
 	SUI_Art_Classic.Center:SetVertexColor(r, b, g, a)
@@ -38,10 +32,12 @@ function module:SetColor()
 	SUI_Art_Classic.FarRight:SetVertexColor(r, b, g, a)
 
 	if _G['SUI_StatusBar_Left'] then
-		_G['SUI_StatusBar_Left']:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Left'].bg:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Left'].overlay:SetVertexColor(r, b, g, a)
 	end
 	if _G['SUI_StatusBar_Right'] then
-		_G['SUI_StatusBar_Right']:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Right'].bg:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Right'].overlay:SetVertexColor(r, b, g, a)
 	end
 end
 
