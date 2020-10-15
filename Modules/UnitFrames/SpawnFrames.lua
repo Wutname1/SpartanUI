@@ -1412,44 +1412,4 @@ end
 function module:UpdateGroupFrames(event, ...)
 	module.frames.party:UpdateAll()
 	module.frames.raid:UpdateAll()
-
-	-- local SUIRaidFrame = module.frames.raid
-	-- for _, RaidUnit in ipairs({SUIRaidFrame:GetChildren()}) do
-	-- 	RaidUnit:UpdateAll()
-	-- end
-
-	-- if module.CurrentSettings.raid.showRaid and IsInRaid() then
-	-- 	SUIRaidFrame:Show()
-	-- elseif module.CurrentSettings.raid.showParty and inParty then
-	-- 	--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
-	-- 	SUIRaidFrame.HideTmp = SUIRaidFrame.Hide
-	-- 	SUIRaidFrame.Hide = SUIRaidFrame.Show
-	-- 	--Now Display
-	-- 	SUIRaidFrame:Show()
-	-- elseif module.CurrentSettings.raid.showSolo and not inParty and not IsInRaid() then
-	-- 	--Something keeps hiding it on us when solo so lets force it. Messy but oh well.
-	-- 	SUIRaidFrame.HideTmp = SUIRaidFrame.Hide
-	-- 	SUIRaidFrame.Hide = SUIRaidFrame.Show
-	-- 	--Now Display
-	-- 	SUIRaidFrame:Show()
-	-- elseif SUIRaidFrame:IsShown() then
-	-- 	--Swap back hide function if needed
-	-- 	if SUIRaidFrame.HideTmp then
-	-- 		SUIRaidFrame.Hide = SUIRaidFrame.HideTmp
-	-- 	end
-	-- -- SUIRaidFrame:Hide()
-	-- end
-	-- RaidFrames:UpdateRaidPosition()
-
-	-- SUIRaidFrame:SetAttribute('showRaid', module.CurrentSettings.raid.showRaid)
-	-- SUIRaidFrame:SetAttribute('showParty', module.CurrentSettings.raid.showParty)
-	-- SUIRaidFrame:SetAttribute('showPlayer', module.CurrentSettings.raid.showPlayer)
-	-- SUIRaidFrame:SetAttribute('showSolo', module.CurrentSettings.raid.showSolo)
-
-	-- SUIRaidFrame:SetAttribute('groupBy', module.CurrentSettings.raid.mode)
-	-- SUIRaidFrame:SetAttribute('maxColumns', module.CurrentSettings.raid.maxColumns)
-	-- SUIRaidFrame:SetAttribute('unitsPerColumn', module.CurrentSettings.raid.unitsPerColumn)
-	-- SUIRaidFrame:SetAttribute('columnSpacing', module.CurrentSettings.raid.columnSpacing)
-
-	-- SUIRaidFrame:SetScale(module.CurrentSettings.raid.scale)
 end

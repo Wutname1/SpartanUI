@@ -1975,28 +1975,39 @@ local function AddGroupOptions(frameName)
 		type = 'group',
 		order = 5,
 		inline = true,
+		get = function(info)
+			return module.CurrentSettings[frameName][info[#info]]
+		end,
+		set = function(info, val)
+			local setting = info[#info]
+
+			--Update memory
+			module.CurrentSettings[frameName][setting] = val
+			--Update the DB
+			SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName][setting] = val
+			--Update the screen
+			module.frames[frameName]:SetAttribute(setting, val)
+		end,
 		args = {
-			toggleraid = {
+			showRaid = {
 				name = L['ShowRFrames'],
 				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return module.CurrentSettings[frameName].showRaid
-				end,
-				set = function(info, val)
-					module.CurrentSettings[frameName].showRaid = val
-				end
+				order = 1
 			},
-			toggleparty = {
+			showParty = {
 				name = L['PartyDispParty'],
 				type = 'toggle',
-				order = 2,
-				get = function(info)
-					return module.CurrentSettings[frameName].showParty
-				end,
-				set = function(info, val)
-					module.CurrentSettings[frameName].showParty = val
-				end
+				order = 2
+			},
+			showSelf = {
+				name = 'Show self',
+				type = 'toggle',
+				order = 2
+			},
+			showSolo = {
+				name = 'Show solo',
+				type = 'toggle',
+				order = 2
 			},
 			bar1 = {name = L['LayoutConf'], type = 'header', order = 20},
 			maxColumns = {
@@ -2006,13 +2017,25 @@ local function AddGroupOptions(frameName)
 				width = 'full',
 				step = 1,
 				min = 1,
-				max = 40,
-				get = function(info)
-					return module.CurrentSettings[frameName].maxColumns
-				end,
-				set = function(info, val)
-					module.CurrentSettings[frameName].maxColumns = val
-				end
+				max = 40
+			},
+			yOffset = {
+				name = 'Vertical offset',
+				type = 'range',
+				order = 23,
+				width = 'full',
+				step = 1,
+				min = -200,
+				max = 200
+			},
+			xOffset = {
+				name = 'Horizonal offset',
+				type = 'range',
+				order = 23,
+				width = 'full',
+				step = 1,
+				min = -200,
+				max = 200
 			},
 			unitsPerColumn = {
 				name = L['UnitPerCol'],
@@ -2021,13 +2044,7 @@ local function AddGroupOptions(frameName)
 				width = 'full',
 				step = 1,
 				min = 1,
-				max = 40,
-				get = function(info)
-					return module.CurrentSettings[frameName].unitsPerColumn
-				end,
-				set = function(info, val)
-					module.CurrentSettings[frameName].unitsPerColumn = val
-				end
+				max = 40
 			},
 			columnSpacing = {
 				name = L['ColSpacing'],
@@ -2035,14 +2052,8 @@ local function AddGroupOptions(frameName)
 				order = 23,
 				width = 'full',
 				step = 1,
-				min = 0,
-				max = 200,
-				get = function(info)
-					return module.CurrentSettings[frameName].columnSpacing
-				end,
-				set = function(info, val)
-					module.CurrentSettings[frameName].columnSpacing = val
-				end
+				min = -200,
+				max = 200
 			}
 		}
 	}
