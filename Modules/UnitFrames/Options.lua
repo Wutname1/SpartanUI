@@ -1856,6 +1856,7 @@ local function AddBuffOptions(frameName)
 								"These filters don't use a list of spells like Custom filters. They are dynamic and based on the WoW API."
 							],
 							values = function()
+								local filters = {}
 								local list = {
 									-- Whitelists
 									Boss = true,
