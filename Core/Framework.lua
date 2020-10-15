@@ -1882,7 +1882,7 @@ local DBdefaults = {profile = DBdefault}
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version
-if (ver ~= '0' and ver < '5.0.0') then
+if (ver ~= '0' and ver < '6.0.0') then
 	SUI.SpartanUIDB:ResetDB()
 end
 
@@ -1981,7 +1981,7 @@ function SUI:DBUpgrades()
 	end
 
 	-- 6.0.0 Upgrades
-	if SUI.DB.Version < '5.9.9' and not SUI.DB.Migrated then
+	if SUI.DB.Version < '6.0.0' and not SUI.DB.Migrated then
 		if not select(4, GetAddOnInfo('SpartanUI_Artwork')) then
 			SUI.DB.DisabledComponents.Artwork = true
 		end
@@ -2012,18 +2012,8 @@ function SUI:DBUpgrades()
 		DisableAddOn('SpartanUI_Style_Transparent')
 		DisableAddOn('SpartanUI_Style_War')
 		SUI.DB.Migrated = true
-	end
-
-	if SUI.DB.Version < '5.9.91' then
 		SUI.SpartanUIDB:ResetProfile()
 		ReloadUI()
-	end
-	if SUI.DB.Version < '5.9.92' then
-		for k, v in LibStub('AceAddon-3.0'):IterateModulesOfAddon(Bartender4) do
-			if k == 'ZoneAbilityBar' or k == 'ExtraActionBar' then
-				v.db.profile.enabled = false
-			end
-		end
 	end
 
 	SUI.DB.Version = SUI.Version
