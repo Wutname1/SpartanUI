@@ -468,7 +468,10 @@ function module:SetupChatboxes()
 	end
 
 	local GDM = _G.GeneralDockManager
-	Mixin(GDM, BackdropTemplateMixin)
+	if not GDM.SetBackdrop then
+		Mixin(GDM, BackdropTemplateMixin)
+	end
+
 	if (GDM.SetBackdrop) then
 		GDM:SetBackdrop(chatBG)
 		GDM:SetBackdropColor(c.r, c.g, c.b, c.a)
@@ -690,7 +693,9 @@ function module:SetupChatboxes()
 			element:Hide()
 		end
 
-		Mixin(ChatFrameEdit, BackdropTemplateMixin)
+		if not ChatFrameEdit.SetBackdrop then
+			Mixin(ChatFrameEdit, BackdropTemplateMixin)
+		end
 		if (ChatFrameEdit.SetBackdrop) then
 			ChatFrameEdit:SetBackdrop(chatBG)
 			local bg = {ChatFrame.Background:GetVertexColor()}
