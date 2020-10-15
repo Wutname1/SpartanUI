@@ -1335,6 +1335,13 @@ function module:SpawnFrames()
 			end
 		end
 	end
+	local function GroupFrameUpdateSize(self)
+		for _, f in ipairs(self) do
+			if f.UpdateSize then
+				f:UpdateSize()
+			end
+		end
+	end
 	local function GroupFrameElementUpdate(self, elementName)
 		for _, f in ipairs(self) do
 			if f.ElementUpdate then
@@ -1365,15 +1372,6 @@ function module:SpawnFrames()
 	end
 
 	for _, group in ipairs({'raid', 'party', 'boss', 'arena'}) do
-		local function GroupFrameUpdateSize(self)
-			for i = 1, 40 do
-				local f = _G['SUI_' .. group .. 'FrameHeaderUnitButton' .. i]
-				if f and f.UpdateSize then
-					f:UpdateSize()
-				end
-			end
-		end
-
 		module.frames[group].UpdateAll = GroupFrameUpdateAll
 		module.frames[group].ElementUpdate = GroupFrameElementUpdate
 		module.frames[group].UpdateSize = GroupFrameUpdateSize
