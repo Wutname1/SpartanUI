@@ -2,6 +2,7 @@ local SUI = SUI
 local L = SUI.L
 local module = SUI:NewModule('Component_Artwork', 'AceTimer-3.0')
 module.ActiveStyle = {}
+module.BarBG = {}
 local styleArt
 local petbattle = CreateFrame('FRAME')
 -------------------------------------------------
@@ -125,15 +126,12 @@ local function SetupPage()
 end
 
 local function StyleUpdate()
-	if SUI.opt.args.Artwork.args.BarBG then
-		SUI.opt.args.Artwork.args.BarBG.disabled = (not module.ActiveStyle.Artwork.barBackgrounds)
-	end
-
 	module:UpdateScale()
 	module:UpdateAlpha()
 	module:updateOffset()
 	module:updateHorizontalOffset()
 	module:updateViewport()
+	module:UpdateBarBG()
 end
 
 function module:SetActiveStyle(style)
@@ -361,8 +359,28 @@ function module:OnEnable()
 	module:updateViewport()
 end
 
+function module:UpdateBarBG()
+	if not module.BarBG[SUI.DB.Artwork.Style] then
+		return
+	end
+	local usersettings = module.ActiveStyle.Artwork.barBG
+	for i, bgFrame in pairs(module.BarBG[SUI.DB.Artwork.Style]) do
+		if usersettings[i] then
+			if usersettings[i].enabled then
+				bgFrame:Show()
+				bgFrame.BG:Show()
+				bgFrame.BG:SetAlpha((bgFrame.skinSettings.alpha or 1) * usersettings[i].alpha)
+			else
+				bgFrame:Hide()
+				bgFrame.BG:Hide()
+			end
+		end
+	end
+end
+
 function module:CreateBarBG(skinSettings, number, parent)
 	local frame = CreateFrame('Frame', skinSettings.name .. '_Bar' .. number, (parent or UIParent))
+	frame.skinSettings = skinSettings
 	frame:SetFrameStrata('BACKGROUND')
 	frame:SetSize((skinSettings.width or 400), (skinSettings.height or 32))
 	frame.BG = frame:CreateTexture(skinSettings.name .. '_Bar' .. number .. 'BG', 'BACKGROUND')
@@ -374,6 +392,13 @@ function module:CreateBarBG(skinSettings, number, parent)
 	else
 		frame.BG:SetAllPoints(frame)
 	end
+
+	if not module.BarBG[skinSettings.name] then
+		module.BarBG[skinSettings.name] = {}
+	end
+	module.BarBG[skinSettings.name][tostring(number)] = frame
+
+	module:UpdateBarBG()
 
 	return frame
 end

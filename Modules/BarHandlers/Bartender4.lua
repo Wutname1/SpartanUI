@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:GetModule('Component_BarHandler')
-local BartenderMin = '4.10'
+local BartenderMin = '4.10.0'
 local MoveIt = SUI:GetModule('Component_MoveIt')
 local scaleData
 local BartenderChangesActive = false

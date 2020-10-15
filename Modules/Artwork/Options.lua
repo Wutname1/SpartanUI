@@ -289,48 +289,11 @@ function module:SetupOptions()
 		}
 	end
 
-	SUI.opt.args.Artwork.args.BarBG = {
+	ArtworkOpts.BarBG = {
 		name = 'Bar backgrounds',
 		type = 'group',
 		desc = L['ActionBarConfDesc'],
 		args = {
-			header1 = {name = '', type = 'header', order = 1.1},
-			Allenable = {
-				name = L['AllBarEnable'],
-				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return SUI.DB.Styles.War.Artwork.Allenable
-				end,
-				set = function(info, val)
-					for i = 1, 4 do
-						SUI.DB.Styles.War.Artwork['bar' .. i].enable, SUI.DB.Styles.War.Artwork.Allenable = val, val
-					end
-					SUI.DB.Styles.War.Artwork.Stance.enable = val
-					SUI.DB.Styles.War.Artwork.MenuBar.enable = val
-					module:UpdateAlpha()
-				end
-			},
-			Allalpha = {
-				name = L['AllBarAlpha'],
-				type = 'range',
-				order = 2,
-				width = 'double',
-				min = 0,
-				max = 100,
-				step = 1,
-				get = function(info)
-					return SUI.DB.Styles.War.Artwork.Allalpha
-				end,
-				set = function(info, val)
-					for i = 1, 4 do
-						SUI.DB.Styles.War.Artwork['bar' .. i].alpha, SUI.DB.Styles.War.Artwork.Allalpha = val, val
-					end
-					SUI.DB.Styles.War.Artwork.Stance.alpha = val
-					SUI.DB.Styles.War.Artwork.MenuBar.alpha = val
-					module:UpdateAlpha()
-				end
-			},
 			Stance = {
 				name = L['Stance and Pet bar'],
 				type = 'group',
@@ -402,151 +365,51 @@ function module:SetupOptions()
 						end
 					}
 				}
-			},
-			Bar1 = {
-				name = L['Bar 1'],
-				type = 'group',
-				inline = true,
-				order = 30,
-				args = {
-					bar1alpha = {
-						name = L['Alpha'],
-						type = 'range',
-						min = 0,
-						max = 100,
-						step = 1,
-						width = 'double',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar1.alpha
-						end,
-						set = function(info, val)
-							if SUI.DB.Styles.War.Artwork.bar1.enable == true then
-								SUI.DB.Styles.War.Artwork.bar1.alpha = val
-								module:UpdateAlpha()
-							end
-						end
-					},
-					bar1enable = {
-						name = L['Enabled'],
-						type = 'toggle',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar1.enable
-						end,
-						set = function(info, val)
-							SUI.DB.Styles.War.Artwork.bar1.enable = val
-							module:UpdateAlpha()
-						end
-					}
-				}
-			},
-			Bar2 = {
-				name = L['Bar 2'],
-				type = 'group',
-				inline = true,
-				order = 40,
-				args = {
-					bar2alpha = {
-						name = L['Alpha'],
-						type = 'range',
-						min = 0,
-						max = 100,
-						step = 1,
-						width = 'double',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar2.alpha
-						end,
-						set = function(info, val)
-							if SUI.DB.Styles.War.Artwork.bar2.enable == true then
-								SUI.DB.Styles.War.Artwork.bar2.alpha = val
-								module:UpdateAlpha()
-							end
-						end
-					},
-					bar2enable = {
-						name = L['Enabled'],
-						type = 'toggle',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar2.enable
-						end,
-						set = function(info, val)
-							SUI.DB.Styles.War.Artwork.bar2.enable = val
-							module:UpdateAlpha()
-						end
-					}
-				}
-			},
-			Bar3 = {
-				name = L['Bar 3'],
-				type = 'group',
-				inline = true,
-				order = 50,
-				args = {
-					bar3alpha = {
-						name = L['Alpha'],
-						type = 'range',
-						min = 0,
-						max = 100,
-						step = 1,
-						width = 'double',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar3.alpha
-						end,
-						set = function(info, val)
-							if SUI.DB.Styles.War.Artwork.bar3.enable == true then
-								SUI.DB.Styles.War.Artwork.bar3.alpha = val
-								module:UpdateAlpha()
-							end
-						end
-					},
-					bar3enable = {
-						name = L['Enabled'],
-						type = 'toggle',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar3.enable
-						end,
-						set = function(info, val)
-							SUI.DB.Styles.War.Artwork.bar3.enable = val
-							module:UpdateAlpha()
-						end
-					}
-				}
-			},
-			Bar4 = {
-				name = L['Bar 4'],
-				type = 'group',
-				inline = true,
-				order = 60,
-				args = {
-					bar4alpha = {
-						name = L['Alpha'],
-						type = 'range',
-						min = 0,
-						max = 100,
-						step = 1,
-						width = 'double',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar4.alpha
-						end,
-						set = function(info, val)
-							if SUI.DB.Styles.War.Artwork.bar4.enable == true then
-								SUI.DB.Styles.War.Artwork.bar4.alpha = val
-								module:UpdateAlpha()
-							end
-						end
-					},
-					bar4enable = {
-						name = L['Enabled'],
-						type = 'toggle',
-						get = function(info)
-							return SUI.DB.Styles.War.Artwork.bar4.enable
-						end,
-						set = function(info, val)
-							SUI.DB.Styles.War.Artwork.bar4.enable = val
-							module:UpdateAlpha()
-						end
-					}
-				}
 			}
 		}
 	}
+	local function CreatOption(key)
+		local function updateOpt(opt, val)
+			module.ActiveStyle.Artwork.barBG[key][opt] = val
+			module:UpdateBarBG()
+		end
+
+		SUI.opt.args.Artwork.args.BarBG.args[key] = {
+			name = 'Bar ' .. key,
+			type = 'group',
+			inline = true,
+			args = {
+				enabled = {
+					order = 1,
+					name = L['Enabled'],
+					type = 'toggle',
+					get = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].enabled
+					end,
+					set = function(info, val)
+						updateOpt('enabled', val)
+					end
+				},
+				alpha = {
+					order = 2,
+					name = L['Alpha'],
+					type = 'range',
+					min = 0,
+					max = 1,
+					step = .01,
+					width = 'double',
+					get = function(info)
+						return module.ActiveStyle.Artwork.barBG[key].alpha
+					end,
+					set = function(info, val)
+						updateOpt('alpha', val)
+					end
+				}
+			}
+		}
+	end
+
+	for i, v in pairs({'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Stance', 'MenuBar'}) do
+		CreatOption(v)
+	end
 end
