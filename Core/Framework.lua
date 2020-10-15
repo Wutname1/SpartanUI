@@ -497,7 +497,12 @@ local DBdefault = {
 						}
 					},
 					Buffs = {Mode = 'icons'},
-					Debuffs = {Mode = 'icons'}
+					Debuffs = {Mode = 'icons'},
+					elements = {
+						Portrait = {
+							position = 'right'
+						}
+					}
 				},
 				target = {
 					artwork = {

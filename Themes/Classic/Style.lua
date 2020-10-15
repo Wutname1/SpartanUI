@@ -200,6 +200,13 @@ function module:OnInitialize()
 		}
 	}
 
+	UnitFrames.FramePos.Classic = {
+		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-139,143',
+		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,0,0',
+		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,135,140',
+		['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0'
+	}
+
 	CreateArtwork()
 end
 

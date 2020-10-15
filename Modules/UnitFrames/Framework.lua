@@ -120,8 +120,13 @@ function module:PositionFrame(b)
 
 	if b then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[b])
-		module.frames[b]:ClearAllPoints()
-		module.frames[b]:SetPoint(point, anchor, secondaryPoint, x, y)
+
+		if module.frames[b].position then
+			module.frames[b]:position(point, anchor, secondaryPoint, x, y, false, true)
+		else
+			module.frames[b]:ClearAllPoints()
+			module.frames[b]:SetPoint(point, anchor, secondaryPoint, x, y)
+		end
 	else
 		local frameList = {
 			'player',
@@ -142,8 +147,12 @@ function module:PositionFrame(b)
 			if _G[frameName] then
 				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frame])
 
-				_G[frameName]:ClearAllPoints()
-				_G[frameName]:SetPoint(point, anchor, secondaryPoint, x, y)
+				if _G[frameName].position then
+					_G[frameName]:position(point, anchor, secondaryPoint, x, y, false, true)
+				else
+					_G[frameName]:ClearAllPoints()
+					_G[frameName]:SetPoint(point, anchor, secondaryPoint, x, y)
+				end
 			end
 		end
 	end
@@ -241,6 +250,8 @@ function module:SetActiveStyle(style)
 	SUI.DB.Unitframes.Style = style
 	-- Refersh Settings
 	module:LoadDB()
+	-- Update positions
+	module:PositionFrame()
 	-- Update all display elements
 	module:UpdateAll()
 end
