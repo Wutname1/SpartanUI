@@ -94,7 +94,7 @@ end
 
 local function UpdatePosition()
 	-- Position map based on Artwork
-	if SUI:IsModuleEnabled(module) and Settings.position and not MoveIt:IsMoved('Minimap') then
+	if SUI:IsModuleEnabled('Minimap') and Settings.position and not MoveIt:IsMoved('Minimap') then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.position)
 		if Minimap.position then
 			Minimap:position(point, anchor, secondaryPoint, x, y, false, true)

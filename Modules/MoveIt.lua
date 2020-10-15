@@ -722,7 +722,7 @@ function MoveIt:Enable()
 end
 
 function MoveIt:OnEnable()
-	if SUI:IsModuleDisabled(module) then
+	if SUI:IsModuleDisabled('MoveIt') then
 		return
 	end
 	MoveIt:Enable()

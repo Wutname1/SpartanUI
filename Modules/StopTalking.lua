@@ -59,7 +59,7 @@ function module:OnEnable()
 
 		--Setup our catch function
 		local NewPlayFunc = function()
-			if SUI:IsModuleEnabled(module) then
+			if SUI:IsModuleEnabled('StopTalking') then
 				local displayInfo, cameraID, vo, duration, lineNumber, numLines, name, text, isNewTalkingHead =
 					C_TalkingHead.GetCurrentLineInfo()
 				if not vo then
