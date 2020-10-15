@@ -38,6 +38,20 @@ function module:OnInitialize()
 		['BT4Bar5'] = 0.74,
 		['BT4Bar6'] = 0.74
 	}
+
+	-- Unitframes Settings
+	local UnitFrames = SUI:GetModule('Component_UnitFrames')
+	UnitFrames.Artwork.Transparent = {
+		name = 'Transparent',
+		top = {
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
+			TexCoord = {0.03125, 0.458984375, 0, 0.2109375}
+		},
+		bg = {
+			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
+			TexCoord = {0, 0.458984375, 0.74609375, 1}
+		}
+	}
 end
 
 function module:OnEnable()

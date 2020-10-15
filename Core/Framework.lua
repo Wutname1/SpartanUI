@@ -551,7 +551,11 @@ local DBdefault = {
 			Frames = {
 				player = {
 					artwork = {
-						full = {
+						top = {
+							enabled = true,
+							graphic = 'Transparent'
+						},
+						bg = {
 							enabled = true,
 							graphic = 'Transparent'
 						}
@@ -561,7 +565,11 @@ local DBdefault = {
 				},
 				target = {
 					artwork = {
-						full = {
+						top = {
+							enabled = true,
+							graphic = 'Transparent'
+						},
+						bg = {
 							enabled = true,
 							graphic = 'Transparent'
 						}
