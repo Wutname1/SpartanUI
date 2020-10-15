@@ -382,13 +382,130 @@ local DBdefault = {
 				RaidFrames = false
 			}
 		},
+		Arcane = {
+			Artwork = {},
+			StatusBars = {
+				['**'] = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar',
+					alpha = .9,
+					size = {370, 20},
+					TooltipSize = {350, 100},
+					TooltipTextSize = {330, 80},
+					texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+					MaxWidth = 48
+				},
+				Left = {
+					GlowPoint = {x = -16},
+					MaxWidth = 48
+				},
+				Right = {
+					GlowPoint = {x = 16}
+				}
+			},
+			Frames = {
+				player = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'ArcaneBlue'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'ArcaneBlue'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'ArcaneBlue'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
+				},
+				target = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'ArcaneBlue'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'ArcaneBlue'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'ArcaneBlue'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
+				}
+			},
+			Minimap = {
+				size = {156, 156},
+				BG = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap'
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+				},
+				position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20'
+			},
+			Color = {
+				Art = {
+					0.4784313725490196,
+					0.9137254901960784,
+					1,
+					0.9
+				}
+			},
+			SlidingTrays = {
+				left = {
+					enabled = true,
+					collapsed = false
+				},
+				right = {
+					enabled = true,
+					collapsed = false
+				}
+			}
+		},
 		Classic = {
 			Frames = {
 				player = {
+					artwork = {
+						full = {
+							enabled = true,
+							graphic = 'Classic'
+						}
+					},
 					Buffs = {Mode = 'icons'},
 					Debuffs = {Mode = 'icons'}
 				},
 				target = {
+					artwork = {
+						full = {
+							enabled = true,
+							graphic = 'Classic'
+						}
+					},
 					Buffs = {Mode = 'icons'},
 					Debuffs = {Mode = 'bars'}
 				},
@@ -431,6 +548,31 @@ local DBdefault = {
 			}
 		},
 		Transparent = {
+			Frames = {
+				player = {
+					artwork = {
+						full = {
+							enabled = true,
+							graphic = 'Transparent'
+						}
+					},
+					Buffs = {Mode = 'icons'},
+					Debuffs = {Mode = 'icons'}
+				},
+				target = {
+					artwork = {
+						full = {
+							enabled = true,
+							graphic = 'Transparent'
+						}
+					},
+					Buffs = {Mode = 'icons'},
+					Debuffs = {Mode = 'bars'}
+				},
+				pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+				targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+				focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
+			},
 			Minimap = {
 				shape = 'square',
 				size = {135, 135},
@@ -477,16 +619,7 @@ local DBdefault = {
 			HideCenterGraphic = false
 		},
 		Fel = {
-			Artwork = {
-				Allenable = true,
-				Allalpha = 100,
-				bar1 = {enable = true, alpha = 100},
-				bar2 = {enable = true, alpha = 100},
-				bar3 = {enable = true, alpha = 100},
-				bar4 = {enable = true, alpha = 100},
-				Stance = {enable = true, alpha = 100},
-				MenuBar = {enable = true, alpha = 100}
-			},
+			Artwork = {},
 			Frames = {
 				player = {
 					artwork = {
@@ -578,16 +711,7 @@ local DBdefault = {
 			}
 		},
 		Digital = {
-			Artwork = {
-				Allenable = true,
-				Allalpha = 100,
-				bar1 = {enable = true, alpha = 100},
-				bar2 = {enable = true, alpha = 100},
-				bar3 = {enable = true, alpha = 100},
-				bar4 = {enable = true, alpha = 100},
-				Stance = {enable = true, alpha = 100},
-				MenuBar = {enable = true, alpha = 100}
-			},
+			Artwork = {},
 			StatusBars = {
 				['**'] = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
@@ -608,6 +732,24 @@ local DBdefault = {
 					MaxWidth = 35
 				}
 			},
+			Frames = {
+				player = {
+					artwork = {
+						bg = {
+							enabled = true,
+							graphic = 'Digital'
+						}
+					}
+				},
+				target = {
+					artwork = {
+						bg = {
+							enabled = true,
+							graphic = 'Digital'
+						}
+					}
+				}
+			},
 			Minimap = {
 				size = {156, 156},
 				BG = {
@@ -622,16 +764,7 @@ local DBdefault = {
 			}
 		},
 		War = {
-			Artwork = {
-				Allenable = true,
-				Allalpha = 100,
-				bar1 = {enable = true, alpha = 100},
-				bar2 = {enable = true, alpha = 100},
-				bar3 = {enable = true, alpha = 100},
-				bar4 = {enable = true, alpha = 100},
-				Stance = {enable = true, alpha = 100},
-				MenuBar = {enable = true, alpha = 100}
-			},
+			Artwork = {},
 			StatusBars = {
 				['**'] = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
