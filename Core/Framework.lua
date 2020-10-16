@@ -1976,43 +1976,8 @@ function SUI:OnInitialize()
 end
 
 function SUI:DBUpgrades()
-	if SUI.DB.Artwork.Style == '' and SUI.DB.Artwork.SetupDone then
-		SUI.DB.Artwork.Style = 'Classic'
-	end
-
-	-- 6.0.0 Upgrades
-	if SUI.DB.Version < '6.0.0' and not SUI.DB.Migrated then
-		if not select(4, GetAddOnInfo('SpartanUI_Artwork')) then
-			SUI.DB.DisabledComponents.Artwork = true
-		end
-		if not select(4, GetAddOnInfo('SpartanUI_FilmEffects')) then
-			SUI.DB.DisabledComponents.FilmEffects = true
-		end
-		if not select(4, GetAddOnInfo('SpartanUI_SpinCam')) then
-			SUI.DB.DisabledComponents.SpinCam = true
-		end
-
-		-- Only disable the new Unitframes if all 3 unitframe addons are disabled
-		if
-			not select(4, GetAddOnInfo('SpartanUI_PartyFrames')) and not select(4, GetAddOnInfo('SpartanUI_PlayerFrames')) and
-				not select(4, GetAddOnInfo('SpartanUI_RaidFrames'))
-		 then
-			SUI.DB.DisabledComponents.UnitFrames = true
-		end
-
-		-- Make sure everything is disabled
-		DisableAddOn('SpartanUI_Artwork')
-		DisableAddOn('SpartanUI_SpinCam')
-		DisableAddOn('SpartanUI_FilmEffects')
-		DisableAddOn('SpartanUI_PartyFrames')
-		DisableAddOn('SpartanUI_PlayerFrames')
-		DisableAddOn('SpartanUI_RaidFrames')
-		DisableAddOn('SpartanUI_Style_Fel')
-		DisableAddOn('SpartanUI_Style_Minimal')
-		DisableAddOn('SpartanUI_Style_Transparent')
-		DisableAddOn('SpartanUI_Style_War')
-		SUI.DB.Migrated = true
-		SUI.SpartanUIDB:ResetProfile()
+	if SUI.DB.SUIProper then
+		SUI.SpartanUIDB:ResetDB()
 		ReloadUI()
 	end
 
