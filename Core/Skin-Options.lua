@@ -33,15 +33,11 @@ function module:SkinAce3()
 			local frame = widget.content:GetParent()
 			if TYPE == 'Frame' then
 				StripTextures(frame)
-			-- for i=1, frame:GetNumChildren() do
-			-- local child = select(i, frame:GetChildren())
-			-- if child:GetObjectType() == "Button" and child:GetText() then
-			-- SkinButton(child)
-			-- else
-			-- child:StripTextures()
-			-- end
-			-- end
 			end
+			if not frame.SetBackdropBorderColor then
+				Mixin(frame, BackdropTemplateMixin)
+			end
+
 			frame:SetBackdropBorderColor(0, 0, 0, 0)
 		end
 		return oldRegisterAsContainer(self, widget)
