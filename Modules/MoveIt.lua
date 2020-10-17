@@ -708,6 +708,10 @@ function MoveIt:Enable()
 
 	local function OnKeyDown(self, key)
 		if MoveEnabled and key == 'ESCAPE' then
+			if InCombatLockdown() then
+				self:SetPropagateKeyboardInput(true)
+				return
+			end
 			self:SetPropagateKeyboardInput(false)
 			MoveIt:MoveIt()
 		else
@@ -719,6 +723,15 @@ function MoveIt:Enable()
 	MoverWatcher:SetFrameStrata('TOOLTIP')
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
+
+	self:RegisterEvent('PLAYER_REGEN_DISABLED', 'CombatLockdown')
+end
+
+function MoveIt:CombatLockdown()
+	if MoveEnabled then
+		MoveIt:MoveIt()
+		print('Disabling movement system while in combat')
+	end
 end
 
 function MoveIt:OnEnable()
