@@ -11,6 +11,7 @@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
+## X-Github: https://github.com/Wutname1/SpartanUI
 ## X-oUF: SUIUF
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
