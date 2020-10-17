@@ -172,6 +172,9 @@ function module:FindNextPage(RequiredPagesOnly)
 		if module.window.ProgressBar then
 			if CurPage > TotalPage then
 				module.window.ProgressBar:SetValue(100)
+				if CurPage > (TotalPage + 1) then
+					module.window:Hide()
+				end
 			else
 				module.window.ProgressBar:SetValue((100 / TotalPage) * (CurPage - 1))
 			end
@@ -307,6 +310,14 @@ function module:SetupWizard(RequiredPagesOnly)
 	-- Display first page
 	module.window.closeBtn:Hide()
 	module.window:Show()
+	module.window:HookScript(
+		'OnShow',
+		function()
+			if CurPage > (TotalPage + 1) then
+				module.window:Hide()
+			end
+		end
+	)
 	module:FindNextPage(RequiredPagesOnly)
 end
 
@@ -318,6 +329,18 @@ function module:OnEnable()
 		LoadWatcher:RegisterEvent('PLAYER_LOGIN')
 		LoadWatcher:RegisterEvent('PLAYER_ENTERING_WORLD')
 	end
+	SUI:AddChatCommand(
+		'setup',
+		function(args)
+			if module.window then
+				module.window:Hide()
+			end
+
+			PageDisplayOrder = 1
+			PageDisplayed = 0
+			module:SetupWizard()
+		end
+	)
 end
 
 local function WelcomePage()

@@ -27,8 +27,6 @@ function SUI:ChatCommand(input)
 			SUI:Print('|cffff0000Warning')
 			SUI:Print(L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
 		end
-	elseif input == 'setup' then
-		SUI:GetModule('SetupWizard'):SetupWizard()
 	elseif input == 'help' then
 		SUI:suihelp()
 	elseif input == 'version' then
