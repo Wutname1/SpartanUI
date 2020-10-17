@@ -144,6 +144,7 @@ local FrameList = {
 	'BT4Bar7',
 	'BT4Bar8',
 	'BT4Bar9',
+	'BT4Bar10',
 	'BT4BarBagBar',
 	'BT4BarStanceBar',
 	'BT4BarPetBar',
