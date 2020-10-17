@@ -61,6 +61,9 @@ local function CreateOptionSet(frameName, order)
 		type = 'group',
 		order = order,
 		childGroups = 'tab',
+		disabled = function(args)
+			return not module.CurrentSettings[frameName].enabled
+		end,
 		args = {
 			indicators = {
 				name = 'Indicators',
@@ -2143,9 +2146,11 @@ function module:InitializeOptions()
 				return module.CurrentSettings[v].enabled
 			end,
 			set = function(info, val)
+				--Update memory
 				module.CurrentSettings[v].enabled = val
-				SUI.opt.args.UnitFrames.args[v].disabled = (not val)
-
+				--Update the DB
+				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][v].enabled = val
+				--Update the UI
 				if module.frames[v] then
 					if val then
 						module.frames[v]:Enable()
