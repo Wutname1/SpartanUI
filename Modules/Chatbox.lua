@@ -760,13 +760,17 @@ function ItemRefTooltip:SetHyperlink(data, ...)
 end
 
 function module:BuildOptions()
-	if SUI:IsModuleDisabled('Chatbox') then
-		return
-	end
 	SUI.opt.args['ModSetting'].args['Chatbox'] = {
 		type = 'group',
 		name = 'Chatbox',
 		childGroups = 'tab',
+		disabled = SUI:IsModuleDisabled('Chatbox'),
+		get = function(info)
+			return module.DB[info[#info]]
+		end,
+		set = function(info, val)
+			module.DB[info[#info]] = val
+		end,
 		args = {
 			timestampFormat = {
 				name = 'Timestamp format',
@@ -781,9 +785,6 @@ function module:BuildOptions()
 					['%H:%M'] = 'HH:MM (24-hour)',
 					['%M:%S'] = 'MM:SS'
 				},
-				get = function(info)
-					return module.DB.timestampFormat
-				end,
 				set = function(info, val)
 					module.DB.timestampFormat = val
 				end
@@ -791,9 +792,6 @@ function module:BuildOptions()
 			shortenChannelNames = {
 				name = 'Shorten channel names',
 				type = 'toggle',
-				get = function(info)
-					return module.DB.shortenChannelNames
-				end,
 				set = function(info, val)
 					module.DB.shortenChannelNames = val
 				end
@@ -802,9 +800,6 @@ function module:BuildOptions()
 				name = 'Display level',
 				type = 'toggle',
 				order = 1,
-				get = function(info)
-					return module.DB.playerlevel
-				end,
 				set = function(info, val)
 					module.DB.playerlevel = val
 				end
@@ -813,9 +808,6 @@ function module:BuildOptions()
 				name = 'Clickable web link',
 				type = 'toggle',
 				order = 20,
-				get = function(info)
-					return module.DB.webLinks
-				end,
 				set = function(info, val)
 					module.DB.webLinks = val
 				end
@@ -824,9 +816,6 @@ function module:BuildOptions()
 				name = 'Hoveable game links',
 				type = 'toggle',
 				order = 21,
-				get = function(info)
-					return module.DB.LinkHover
-				end,
 				set = function(info, val)
 					module.DB.LinkHover = val
 				end
