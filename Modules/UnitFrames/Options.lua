@@ -2000,8 +2000,8 @@ local function AddGroupOptions(frameName)
 				type = 'toggle',
 				order = 2
 			},
-			showSelf = {
-				name = 'Show self',
+			showPlayer = {
+				name = 'Show player',
 				type = 'toggle',
 				order = 2
 			},

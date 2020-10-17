@@ -1259,7 +1259,7 @@ function module:SpawnFrames()
 		'showParty',
 		true,
 		'showPlayer',
-		module.CurrentSettings.party.showSelf,
+		module.CurrentSettings.party.showPlayer,
 		'showSolo',
 		module.CurrentSettings.party.showSolo,
 		'xoffset',
