@@ -251,6 +251,7 @@ function module:OnInitialize()
 			LinkHover = true,
 			shortenChannelNames = true,
 			webLinks = true,
+			EditBoxTop = false,
 			timestampFormat = '%X',
 			playerlevel,
 			ChatCopyTip = true,
@@ -355,6 +356,25 @@ function module:OnEnable()
 	-- Setup everything
 	module:SetupChatboxes()
 	module:BuildOptions()
+end
+
+function module:EditBoxPosition()
+	for i = 1, 10 do
+		local ChatFrameName = ('%s%d'):format('ChatFrame', i)
+		local ChatFrame = _G[ChatFrameName]
+		local ChatFrameEdit = _G[ChatFrameName .. 'EditBox']
+
+		ChatFrameEdit:ClearAllPoints()
+
+		if module.DB.EditBoxTop then
+			local GDM = _G.GeneralDockManager
+			ChatFrameEdit:SetPoint('BOTTOMLEFT', GDM, 'TOPLEFT', 0, 1)
+			ChatFrameEdit:SetPoint('BOTTOMRIGHT', GDM, 'TOPRIGHT', 0, 1)
+		else
+			ChatFrameEdit:SetPoint('TOPLEFT', ChatFrame.Background, 'BOTTOMLEFT', -1, -1)
+			ChatFrameEdit:SetPoint('TOPRIGHT', ChatFrame.Background, 'BOTTOMRIGHT', 1, -1)
+		end
+	end
 end
 
 function module:SetupChatboxes()
@@ -678,9 +698,6 @@ function module:SetupChatboxes()
 		end
 
 		ChatFrameEdit:Hide()
-		ChatFrameEdit:ClearAllPoints()
-		ChatFrameEdit:SetPoint('TOPLEFT', ChatFrame.Background, 'BOTTOMLEFT', -1, -1)
-		ChatFrameEdit:SetPoint('TOPRIGHT', ChatFrame.Background, 'BOTTOMRIGHT', 1, -1)
 		ChatFrameEdit:SetHeight(22)
 
 		local function disable(element)
@@ -730,6 +747,8 @@ function module:SetupChatboxes()
 		end
 	end
 
+	module:EditBoxPosition()
+
 	ChatFrame_AddMessageEventFilter('CHAT_MSG_CHANNEL', filterFunc)
 	ChatFrame_AddMessageEventFilter('CHAT_MSG_YELL', filterFunc)
 	ChatFrame_AddMessageEventFilter('CHAT_MSG_GUILD', filterFunc)
@@ -770,6 +789,7 @@ function module:BuildOptions()
 		end,
 		set = function(info, val)
 			module.DB[info[#info]] = val
+			module:EditBoxPosition()
 		end,
 		args = {
 			timestampFormat = {
@@ -784,41 +804,30 @@ function module:BuildOptions()
 					['%I:%M'] = 'HH:MM (12-hour)',
 					['%H:%M'] = 'HH:MM (24-hour)',
 					['%M:%S'] = 'MM:SS'
-				},
-				set = function(info, val)
-					module.DB.timestampFormat = val
-				end
+				}
 			},
 			shortenChannelNames = {
 				name = 'Shorten channel names',
-				type = 'toggle',
-				set = function(info, val)
-					module.DB.shortenChannelNames = val
-				end
+				type = 'toggle'
+			},
+			EditBoxTop = {
+				name = 'Edit box on top',
+				type = 'toggle'
 			},
 			playerlevel = {
 				name = 'Display level',
 				type = 'toggle',
-				order = 1,
-				set = function(info, val)
-					module.DB.playerlevel = val
-				end
+				order = 1
 			},
 			webLinks = {
 				name = 'Clickable web link',
 				type = 'toggle',
-				order = 20,
-				set = function(info, val)
-					module.DB.webLinks = val
-				end
+				order = 20
 			},
 			LinkHover = {
 				name = 'Hoveable game links',
 				type = 'toggle',
-				order = 21,
-				set = function(info, val)
-					module.DB.LinkHover = val
-				end
+				order = 21
 			}
 		}
 	}
