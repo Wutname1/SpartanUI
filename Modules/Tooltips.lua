@@ -256,16 +256,8 @@ local TooltipSetItem = function(self)
 			end
 		end
 
-		if (GameTooltip_SetBackdropStyle) then
-			hooksecurefunc(
-				'GameTooltip_SetBackdropStyle',
-				function(self, style)
-					if (self.style) then
-						self:SetBackdrop(nil)
-					end
-				end
-			)
-		end
+		GameTooltip:SetBackdrop(style)
+		GameTooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 
 		if (quality) then
 			local r, g, b = GetItemQualityColor(quality)
@@ -503,16 +495,9 @@ local function ApplyTooltipSkins()
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
-		if (GameTooltip_SetBackdropStyle) then
-			hooksecurefunc(
-				'GameTooltip_SetBackdropStyle',
-				function(tooltip, style)
-					if (tooltip.style) then
-						tooltip:SetBackdrop(nil)
-					end
-				end
-			)
-		end
+
+		GameTooltip:SetBackdrop(style)
+		GameTooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 	end
 end
 
