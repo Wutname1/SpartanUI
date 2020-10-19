@@ -475,54 +475,55 @@ function module:FirstLaunch()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if SUI.DB.DisabledComponents.AutoTurnIn then
-				window.Skip:Click()
-				return
-			end
 
 			--Container
 			local ATI = CreateFrame('Frame', nil)
 			ATI:SetParent(SUI_Win)
 			ATI:SetAllPoints(SUI_Win)
 
-			-- Setup checkboxes
-			ATI.options = {}
-			ATI.options.AcceptGeneralQuests = StdUi:Checkbox(ATI, L['Accept quests'], 220, 20)
-			ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, L['Turn in completed quests'], 220, 20)
-			ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
-			ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
-			ATI.options.autoequip =
-				StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
+			if SUI:IsModuleDisabled('AutoTurnIn') then
+				ATI.lblDisabled = StdUi:Label(ATI, 'Disabled', 20)
+				ATI.lblDisabled:SetPoint('CENTER', ATI)
+			else
+				-- Setup checkboxes
+				ATI.options = {}
+				ATI.options.AcceptGeneralQuests = StdUi:Checkbox(ATI, L['Accept quests'], 220, 20)
+				ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, L['Turn in completed quests'], 220, 20)
+				ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
+				ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
+				ATI.options.autoequip =
+					StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
-			-- Positioning
-			StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
-			StdUi:GlueBelow(ATI.options.AutoGossip, ATI.options.AcceptGeneralQuests, 0, -5)
-			StdUi:GlueBelow(ATI.options.AutoGossipSafeMode, ATI.options.AutoGossip, 0, -5, 'LEFT')
-			StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossipSafeMode, 0, -5, 'LEFT')
+				-- Positioning
+				StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
+				StdUi:GlueBelow(ATI.options.AutoGossip, ATI.options.AcceptGeneralQuests, 0, -5)
+				StdUi:GlueBelow(ATI.options.AutoGossipSafeMode, ATI.options.AutoGossip, 0, -5, 'LEFT')
+				StdUi:GlueBelow(ATI.options.autoequip, ATI.options.AutoGossipSafeMode, 0, -5, 'LEFT')
 
-			-- Retail only options
-			if SUI.IsRetail then
-				ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
-				StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
+				-- Retail only options
+				if SUI.IsRetail then
+					ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
+					StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
+				end
+
+				StdUi:GlueRight(ATI.options.TurnInEnabled, ATI.options.AcceptGeneralQuests, 5, 0)
+
+				-- Defaults
+				for key, object in pairs(ATI.options) do
+					object:SetChecked(SUI.DB.AutoTurnIn[key])
+				end
 			end
-
-			StdUi:GlueRight(ATI.options.TurnInEnabled, ATI.options.AcceptGeneralQuests, 5, 0)
-
-			-- Defaults
-			for key, object in pairs(ATI.options) do
-				object:SetChecked(SUI.DB.AutoTurnIn[key])
-			end
-
 			SUI_Win.ATI = ATI
 		end,
 		Next = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local ATI = window.content.ATI
+			if SUI:IsModuleEnabled('AutoTurnIn') then
+				local window = SUI:GetModule('SetupWizard').window
+				local ATI = window.content.ATI
 
-			for key, object in pairs(ATI.options) do
-				SUI.DB.AutoTurnIn[key] = object:GetChecked()
+				for key, object in pairs(ATI.options) do
+					SUI.DB.AutoTurnIn[key] = object:GetChecked()
+				end
 			end
-
 			SUI.DB.AutoTurnIn.FirstLaunch = false
 		end,
 		Skip = function()

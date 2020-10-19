@@ -353,93 +353,95 @@ function module:FirstLaunch()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if SUI.DB.DisabledComponents.CombatLog then
-				window.Skip:Click()
-				return
-			end
 
 			--Container
 			local cLog = CreateFrame('Frame', nil)
 			cLog:SetParent(SUI_Win)
 			cLog:SetAllPoints(SUI_Win)
 
-			-- Setup checkboxes
-			cLog.options = {}
-			cLog.options.alwayson = StdUi:Checkbox(cLog, L['Always on'], nil, 20)
-			cLog.options.announce = StdUi:Checkbox(cLog, L['Announce logging in chat'], nil, 20)
-			cLog.modEnabled = StdUi:Checkbox(cLog, L['Module enabled'], nil, 20)
+			if SUI:IsModuleDisabled('CombatLog') then
+				cLog.lblDisabled = StdUi:Label(cLog, 'Disabled', 20)
+				cLog.lblDisabled:SetPoint('CENTER', cLog)
+			else
+				-- Setup checkboxes
+				cLog.options = {}
+				cLog.options.alwayson = StdUi:Checkbox(cLog, L['Always on'], nil, 20)
+				cLog.options.announce = StdUi:Checkbox(cLog, L['Announce logging in chat'], nil, 20)
+				cLog.modEnabled = StdUi:Checkbox(cLog, L['Module enabled'], nil, 20)
 
-			-- Positioning
-			StdUi:GlueTop(cLog.modEnabled, SUI_Win, 0, -10)
-			StdUi:GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
-			StdUi:GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
+				-- Positioning
+				StdUi:GlueTop(cLog.modEnabled, SUI_Win, 0, -10)
+				StdUi:GlueBelow(cLog.options.alwayson, cLog.modEnabled, -100, -5)
+				StdUi:GlueRight(cLog.options.announce, cLog.options.alwayson, 5, 0)
 
-			if SUI.IsRetail then
-				cLog.options.raidmythic = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
-				cLog.options.raidheroic = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
-				cLog.options.raidnormal = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
-				cLog.options.raidlfr = StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
-				cLog.options.raidlegacy = StdUi:Checkbox(cLog, L['Legacy raids'], 150, 20)
+				if SUI.IsRetail then
+					cLog.options.raidmythic = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
+					cLog.options.raidheroic = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
+					cLog.options.raidnormal = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
+					cLog.options.raidlfr = StdUi:Checkbox(cLog, L['Looking for raid'], 150, 20)
+					cLog.options.raidlegacy = StdUi:Checkbox(cLog, L['Legacy raids'], 150, 20)
 
-				cLog.options.mythicplus = StdUi:Checkbox(cLog, L['Mythic+'], 150, 20)
-				cLog.options.mythicdungeon = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
-				cLog.options.heroicdungeon = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
-				cLog.options.normaldungeon = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
+					cLog.options.mythicplus = StdUi:Checkbox(cLog, L['Mythic+'], 150, 20)
+					cLog.options.mythicdungeon = StdUi:Checkbox(cLog, L['Mythic'], 150, 20)
+					cLog.options.heroicdungeon = StdUi:Checkbox(cLog, L['Heroic'], 150, 20)
+					cLog.options.normaldungeon = StdUi:Checkbox(cLog, L['Normal'], 150, 20)
 
-				-- Create Labels
-				cLog.lblRaid = StdUi:Label(cLog, L['Raid settings'], 13)
-				cLog.lblDungeon = StdUi:Label(cLog, L['Dungeon settings'], 13)
+					-- Create Labels
+					cLog.lblRaid = StdUi:Label(cLog, L['Raid settings'], 13)
+					cLog.lblDungeon = StdUi:Label(cLog, L['Dungeon settings'], 13)
 
-				-- Raid Settings
-				StdUi:GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
-				StdUi:GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
-				StdUi:GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
-				StdUi:GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
+					-- Raid Settings
+					StdUi:GlueTop(cLog.lblRaid, cLog.modEnabled, -150, -80)
+					StdUi:GlueBelow(cLog.options.raidmythic, cLog.lblRaid, 0, -5)
+					StdUi:GlueRight(cLog.options.raidheroic, cLog.options.raidmythic, 5, 0)
+					StdUi:GlueRight(cLog.options.raidnormal, cLog.options.raidheroic, 5, 0)
 
-				StdUi:GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
-				StdUi:GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
+					StdUi:GlueBelow(cLog.options.raidlfr, cLog.options.raidmythic, 0, -5)
+					StdUi:GlueRight(cLog.options.raidlegacy, cLog.options.raidlfr, 5, 0)
 
-				--Dungeon Settings
-				StdUi:GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
-				StdUi:GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
-				StdUi:GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
-				StdUi:GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
+					--Dungeon Settings
+					StdUi:GlueBelow(cLog.lblDungeon, cLog.options.raidlfr, 0, -20)
+					StdUi:GlueBelow(cLog.options.mythicplus, cLog.lblDungeon, 0, -5)
+					StdUi:GlueRight(cLog.options.mythicdungeon, cLog.options.mythicplus, 5, 0)
+					StdUi:GlueRight(cLog.options.heroicdungeon, cLog.options.mythicdungeon, 5, 0)
 
-				StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
-			end
+					StdUi:GlueBelow(cLog.options.normaldungeon, cLog.options.mythicplus, 0, -5)
+				end
 
-			-- Defaults
-			cLog.modEnabled:SetChecked(not SUI.DB.DisabledComponents.CombatLog)
-			for key, object in pairs(cLog.options) do
-				object:SetChecked(SUI.DB.CombatLog[key])
-			end
+				-- Defaults
+				cLog.modEnabled:SetChecked(not SUI.DB.DisabledComponents.CombatLog)
+				for key, object in pairs(cLog.options) do
+					object:SetChecked(SUI.DB.CombatLog[key])
+				end
 
-			cLog.modEnabled:HookScript(
-				'OnClick',
-				function()
-					for _, object in pairs(cLog.options) do
-						if cLog.modEnabled:GetChecked() then
-							object:Enable()
-						else
-							object:Disable()
+				cLog.modEnabled:HookScript(
+					'OnClick',
+					function()
+						for _, object in pairs(cLog.options) do
+							if cLog.modEnabled:GetChecked() then
+								object:Enable()
+							else
+								object:Disable()
+							end
 						end
 					end
-				end
-			)
+				)
+			end
 
 			SUI_Win.cLog = cLog
 		end,
 		Next = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local cLog = window.content.cLog
-			if not cLog.modEnabled:GetChecked() then
-				SUI.DB.DisabledComponents.CombatLog = true
-			end
+			if SUI:IsModuleEnabled('CombatLog') then
+				local window = SUI:GetModule('SetupWizard').window
+				local cLog = window.content.cLog
+				if not cLog.modEnabled:GetChecked() then
+					SUI.DB.DisabledComponents.CombatLog = true
+				end
 
-			for key, object in pairs(cLog.options) do
-				SUI.DB.CombatLog[key] = object:GetChecked()
+				for key, object in pairs(cLog.options) do
+					SUI.DB.CombatLog[key] = object:GetChecked()
+				end
 			end
-
 			SUI.DB.CombatLog.FirstLaunch = false
 		end,
 		Skip = function()

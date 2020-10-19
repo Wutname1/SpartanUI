@@ -293,106 +293,109 @@ function module:FirstLaunch()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if SUI.DB.DisabledComponents.InterruptAnnouncer then
-				window.Skip:Click()
-				return
-			end
 
 			--Container
 			local IAnnounce = CreateFrame('Frame', nil)
 			IAnnounce:SetParent(SUI_Win)
 			IAnnounce:SetAllPoints(SUI_Win)
 
-			-- Setup checkboxes
-			IAnnounce.options = {}
-			IAnnounce.options.alwayson = StdUi:Checkbox(IAnnounce, L['Always on'], 120, 20)
+			if SUI:IsModuleDisabled('InterruptAnnouncer') then
+				IAnnounce.lblDisabled = StdUi:Label(IAnnounce, 'Disabled', 20)
+				IAnnounce.lblDisabled:SetPoint('CENTER', IAnnounce)
+			else
+				-- Setup checkboxes
+				IAnnounce.options = {}
+				IAnnounce.options.alwayson = StdUi:Checkbox(IAnnounce, L['Always on'], 120, 20)
 
-			IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Battleground'], 120, 20)
-			IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Raid'], 120, 20)
-			IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Party'], 120, 20)
-			IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Arena'], 120, 20)
-			IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Outdoors'], 120, 20)
+				IAnnounce.options.inBG = StdUi:Checkbox(IAnnounce, L['Battleground'], 120, 20)
+				IAnnounce.options.inRaid = StdUi:Checkbox(IAnnounce, L['Raid'], 120, 20)
+				IAnnounce.options.inParty = StdUi:Checkbox(IAnnounce, L['Party'], 120, 20)
+				IAnnounce.options.inArena = StdUi:Checkbox(IAnnounce, L['Arena'], 120, 20)
+				IAnnounce.options.outdoors = StdUi:Checkbox(IAnnounce, L['Outdoors'], 120, 20)
 
-			local items = {
-				{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
-				{text = L['Raid'], value = 'RAID'},
-				{text = L['Party'], value = 'PARTY'},
-				{text = L['Smart'], value = 'SMART'},
-				{text = L['Self'], value = 'SELF'}
-			}
+				local items = {
+					{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
+					{text = L['Raid'], value = 'RAID'},
+					{text = L['Party'], value = 'PARTY'},
+					{text = L['Smart'], value = 'SMART'},
+					{text = L['Self'], value = 'SELF'}
+				}
 
-			IAnnounce.announceLocation = StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.InterruptAnnouncer.announceLocation)
-			IAnnounce.announceLocation.OnValueChanged = function(self, value)
-				SUI.DB.InterruptAnnouncer.announceLocation = value
-			end
+				IAnnounce.announceLocation = StdUi:Dropdown(IAnnounce, 190, 20, items, SUI.DB.InterruptAnnouncer.announceLocation)
+				IAnnounce.announceLocation.OnValueChanged = function(self, value)
+					SUI.DB.InterruptAnnouncer.announceLocation = value
+				end
 
-			-- Create Labels
-			IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
-			IAnnounce.lblActive = StdUi:Label(IAnnounce, L['Active when in'], 13)
-			IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, L['Announce location'], 13)
+				-- Create Labels
+				IAnnounce.modEnabled = StdUi:Checkbox(IAnnounce, L['Module enabled'], nil, 20)
+				IAnnounce.lblActive = StdUi:Label(IAnnounce, L['Active when in'], 13)
+				IAnnounce.lblAnnouncelocation = StdUi:Label(IAnnounce, L['Announce location'], 13)
 
-			-- Positioning
-			StdUi:GlueTop(IAnnounce.modEnabled, SUI_Win, 0, -10)
-			StdUi:GlueBelow(IAnnounce.lblAnnouncelocation, IAnnounce.modEnabled, -100, -20)
-			StdUi:GlueRight(IAnnounce.announceLocation, IAnnounce.lblAnnouncelocation, 5, 0)
+				-- Positioning
+				StdUi:GlueTop(IAnnounce.modEnabled, SUI_Win, 0, -10)
+				StdUi:GlueBelow(IAnnounce.lblAnnouncelocation, IAnnounce.modEnabled, -100, -20)
+				StdUi:GlueRight(IAnnounce.announceLocation, IAnnounce.lblAnnouncelocation, 5, 0)
 
-			-- Active locations
-			StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncelocation, -80, -20)
+				-- Active locations
+				StdUi:GlueBelow(IAnnounce.lblActive, IAnnounce.lblAnnouncelocation, -80, -20)
 
-			StdUi:GlueBelow(IAnnounce.options.inBG, IAnnounce.lblActive, 30, 0)
-			StdUi:GlueRight(IAnnounce.options.inArena, IAnnounce.options.inBG, 0, 0)
-			StdUi:GlueRight(IAnnounce.options.outdoors, IAnnounce.options.inArena, 0, 0)
+				StdUi:GlueBelow(IAnnounce.options.inBG, IAnnounce.lblActive, 30, 0)
+				StdUi:GlueRight(IAnnounce.options.inArena, IAnnounce.options.inBG, 0, 0)
+				StdUi:GlueRight(IAnnounce.options.outdoors, IAnnounce.options.inArena, 0, 0)
 
-			StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.options.inBG, 0, 0)
-			StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 0, 0)
+				StdUi:GlueBelow(IAnnounce.options.inRaid, IAnnounce.options.inBG, 0, 0)
+				StdUi:GlueRight(IAnnounce.options.inParty, IAnnounce.options.inRaid, 0, 0)
 
-			-- text display
-			IAnnounce.lblAnnouncetext = StdUi:Label(IAnnounce, L['Announce text:'], 13)
-			IAnnounce.lblvariable1 = StdUi:Label(IAnnounce, '%t - ' .. L['Target that was interrupted'], 13)
-			IAnnounce.lblvariable2 = StdUi:Label(IAnnounce, '%spell - ' .. L['Spell link of spell interrupted'], 13)
-			IAnnounce.lblvariable3 = StdUi:Label(IAnnounce, '%cl - ' .. L['Spell class'], 13)
-			IAnnounce.lblvariable4 = StdUi:Label(IAnnounce, '%myspell - ' .. L['Spell you used to interrupt'], 13)
-			IAnnounce.tbAnnounceText = StdUi:SimpleEditBox(IAnnounce, 300, 24, SUI.DB.InterruptAnnouncer.text)
+				-- text display
+				IAnnounce.lblAnnouncetext = StdUi:Label(IAnnounce, L['Announce text:'], 13)
+				IAnnounce.lblvariable1 = StdUi:Label(IAnnounce, '%t - ' .. L['Target that was interrupted'], 13)
+				IAnnounce.lblvariable2 = StdUi:Label(IAnnounce, '%spell - ' .. L['Spell link of spell interrupted'], 13)
+				IAnnounce.lblvariable3 = StdUi:Label(IAnnounce, '%cl - ' .. L['Spell class'], 13)
+				IAnnounce.lblvariable4 = StdUi:Label(IAnnounce, '%myspell - ' .. L['Spell you used to interrupt'], 13)
+				IAnnounce.tbAnnounceText = StdUi:SimpleEditBox(IAnnounce, 300, 24, SUI.DB.InterruptAnnouncer.text)
 
-			StdUi:GlueBelow(IAnnounce.lblAnnouncetext, IAnnounce.lblActive, 0, -80)
-			StdUi:GlueBelow(IAnnounce.lblvariable1, IAnnounce.lblAnnouncetext, 15, -5, 'LEFT')
-			StdUi:GlueBelow(IAnnounce.lblvariable2, IAnnounce.lblvariable1, 0, -5, 'LEFT')
-			StdUi:GlueBelow(IAnnounce.lblvariable3, IAnnounce.lblvariable2, 0, -5, 'LEFT')
-			StdUi:GlueBelow(IAnnounce.lblvariable4, IAnnounce.lblvariable3, 0, -5, 'LEFT')
-			StdUi:GlueBelow(IAnnounce.tbAnnounceText, IAnnounce.lblvariable4, -15, -5, 'LEFT')
+				StdUi:GlueBelow(IAnnounce.lblAnnouncetext, IAnnounce.lblActive, 0, -80)
+				StdUi:GlueBelow(IAnnounce.lblvariable1, IAnnounce.lblAnnouncetext, 15, -5, 'LEFT')
+				StdUi:GlueBelow(IAnnounce.lblvariable2, IAnnounce.lblvariable1, 0, -5, 'LEFT')
+				StdUi:GlueBelow(IAnnounce.lblvariable3, IAnnounce.lblvariable2, 0, -5, 'LEFT')
+				StdUi:GlueBelow(IAnnounce.lblvariable4, IAnnounce.lblvariable3, 0, -5, 'LEFT')
+				StdUi:GlueBelow(IAnnounce.tbAnnounceText, IAnnounce.lblvariable4, -15, -5, 'LEFT')
 
-			-- Defaults
-			IAnnounce.modEnabled:SetChecked(not SUI.DB.DisabledComponents.InterruptAnnouncer)
-			for key, object in pairs(IAnnounce.options) do
-				object:SetChecked(SUI.DB.InterruptAnnouncer[key])
-			end
+				-- Defaults
+				IAnnounce.modEnabled:SetChecked(not SUI.DB.DisabledComponents.InterruptAnnouncer)
+				for key, object in pairs(IAnnounce.options) do
+					object:SetChecked(SUI.DB.InterruptAnnouncer[key])
+				end
 
-			IAnnounce.modEnabled:HookScript(
-				'OnClick',
-				function()
-					for _, object in pairs(IAnnounce.options) do
-						if IAnnounce.modEnabled:GetChecked() then
-							object:Enable()
-						else
-							object:Disable()
+				IAnnounce.modEnabled:HookScript(
+					'OnClick',
+					function()
+						for _, object in pairs(IAnnounce.options) do
+							if IAnnounce.modEnabled:GetChecked() then
+								object:Enable()
+							else
+								object:Disable()
+							end
 						end
 					end
-				end
-			)
+				)
+			end
 
 			SUI_Win.IAnnounce = IAnnounce
 		end,
 		Next = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local IAnnounce = window.content.IAnnounce
-			if not IAnnounce.modEnabled:GetChecked() then
-				SUI.DB.DisabledComponents.InterruptAnnouncer = true
-			end
+			if SUI:IsModuleEnabled('CombatLog') then
+				local window = SUI:GetModule('SetupWizard').window
+				local IAnnounce = window.content.IAnnounce
+				if not IAnnounce.modEnabled:GetChecked() then
+					SUI.DB.DisabledComponents.InterruptAnnouncer = true
+				end
 
-			for key, object in pairs(IAnnounce.options) do
-				SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
+				for key, object in pairs(IAnnounce.options) do
+					SUI.DB.InterruptAnnouncer[key] = object:GetChecked()
+				end
+				SUI.DB.InterruptAnnouncer.text = IAnnounce.tbAnnounceText:GetText()
 			end
-			SUI.DB.InterruptAnnouncer.text = IAnnounce.tbAnnounceText:GetText()
 			SUI.DB.InterruptAnnouncer.FirstLaunch = false
 		end,
 		Skip = function()

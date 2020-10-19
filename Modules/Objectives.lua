@@ -252,86 +252,89 @@ function module:FirstTimeSetup()
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
 			local gui = LibStub('AceGUI-3.0')
-			if SUI.DB.DisabledComponents.Objectives or module.Override then
-				window.Skip:Click()
-				return
-			end
 
 			--Container
 			SUI_Win.Objectives = CreateFrame('Frame', nil)
 			SUI_Win.Objectives:SetParent(SUI_Win)
 			SUI_Win.Objectives:SetAllPoints(SUI_Win)
 
-			--scenario
-			local line = gui:Create('Heading')
-			line:SetText(L['Global'])
-			line:SetPoint('TOP', SUI_Win.Objectives, 'TOP', 0, 0)
-			line:SetPoint('LEFT', SUI_Win.Objectives, 'LEFT')
-			line:SetPoint('RIGHT', SUI_Win.Objectives, 'RIGHT')
-			line.frame:SetParent(SUI_Win.Objectives)
-			line.frame:Show()
-			SUI_Win.Objectives.GlobalLine = line
-
-			local AlwaysShowScenario = gui:Create('CheckBox')
-			AlwaysShowScenario:SetLabel(L['Always show in a scenario'])
-			AlwaysShowScenario:SetPoint('TOP', SUI_Win.Objectives, 'TOP', 0, -15)
-			AlwaysShowScenario.frame:SetParent(SUI_Win.Objectives)
-			AlwaysShowScenario.frame:Show()
-			AlwaysShowScenario:SetValue(true)
-			SUI_Win.Objectives.AlwaysShowScenario = AlwaysShowScenario
-
-			for k, _ in ipairs(RuleList) do
-				SUI_Win.Objectives[k] = {}
-				--Rule 1
-				line = gui:Create('Heading')
-				line:SetText(L['Rule'] .. k)
-				if k == 1 then
-					line:SetPoint('TOP', SUI_Win.Objectives.AlwaysShowScenario.frame, 'TOP', 0, -30)
-				else
-					line:SetPoint('TOP', SUI_Win.Objectives[(k - 1)].InCombat, 'BOTTOM', 0, -5)
-				end
+			if SUI:IsModuleDisabled('Objectives') or module.Override then
+				SUI_Win.Objectives.lblDisabled = StdUi:Label(SUI_Win.Objectives, 'Disabled', 20)
+				SUI_Win.Objectives.lblDisabled:SetPoint('CENTER', SUI_Win.Objectives)
+			else
+				--scenario
+				local line = gui:Create('Heading')
+				line:SetText(L['Global'])
+				line:SetPoint('TOP', SUI_Win.Objectives, 'TOP', 0, 0)
 				line:SetPoint('LEFT', SUI_Win.Objectives, 'LEFT')
 				line:SetPoint('RIGHT', SUI_Win.Objectives, 'RIGHT')
 				line.frame:SetParent(SUI_Win.Objectives)
 				line.frame:Show()
-				SUI_Win.Objectives[k].line = line
+				SUI_Win.Objectives.GlobalLine = line
 
-				--Condition
-				local control = gui:Create('Dropdown')
-				control:SetLabel('When to hide')
-				control:SetList(Conditions)
-				control:SetValue('Disabled')
-				control:SetPoint('TOP', SUI_Win.Objectives[k].line.frame, 'BOTTOM', -55, 0)
-				control.frame:SetParent(SUI_Win.Objectives)
-				control.frame:Show()
-				SUI_Win.Objectives[k].Condition = control
+				local AlwaysShowScenario = gui:Create('CheckBox')
+				AlwaysShowScenario:SetLabel(L['Always show in a scenario'])
+				AlwaysShowScenario:SetPoint('TOP', SUI_Win.Objectives, 'TOP', 0, -15)
+				AlwaysShowScenario.frame:SetParent(SUI_Win.Objectives)
+				AlwaysShowScenario.frame:Show()
+				AlwaysShowScenario:SetValue(true)
+				SUI_Win.Objectives.AlwaysShowScenario = AlwaysShowScenario
 
-				--InCombat 1
-				SUI_Win.Objectives[k].InCombat =
-					CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
-				SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
-				_G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
-				SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)
-			end
+				for k, _ in ipairs(RuleList) do
+					SUI_Win.Objectives[k] = {}
+					--Rule 1
+					line = gui:Create('Heading')
+					line:SetText(L['Rule'] .. k)
+					if k == 1 then
+						line:SetPoint('TOP', SUI_Win.Objectives.AlwaysShowScenario.frame, 'TOP', 0, -30)
+					else
+						line:SetPoint('TOP', SUI_Win.Objectives[(k - 1)].InCombat, 'BOTTOM', 0, -5)
+					end
+					line:SetPoint('LEFT', SUI_Win.Objectives, 'LEFT')
+					line:SetPoint('RIGHT', SUI_Win.Objectives, 'RIGHT')
+					line.frame:SetParent(SUI_Win.Objectives)
+					line.frame:Show()
+					SUI_Win.Objectives[k].line = line
 
-			--Defaults
-			SUI_Win.Objectives[1].Condition:SetValue('Raid')
+					--Condition
+					local control = gui:Create('Dropdown')
+					control:SetLabel('When to hide')
+					control:SetList(Conditions)
+					control:SetValue('Disabled')
+					control:SetPoint('TOP', SUI_Win.Objectives[k].line.frame, 'BOTTOM', -55, 0)
+					control.frame:SetParent(SUI_Win.Objectives)
+					control.frame:Show()
+					SUI_Win.Objectives[k].Condition = control
 
-			if UnitLevel('player') == 110 then
-				SUI_Objectives_InCombat_1:SetChecked(true)
-				SUI_Win.Objectives[2].Condition:SetValue('Instance')
+					--InCombat 1
+					SUI_Win.Objectives[k].InCombat =
+						CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
+					SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
+					_G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
+					SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)
+				end
+
+				--Defaults
+				SUI_Win.Objectives[1].Condition:SetValue('Raid')
+
+				if UnitLevel('player') == 110 then
+					SUI_Objectives_InCombat_1:SetChecked(true)
+					SUI_Win.Objectives[2].Condition:SetValue('Instance')
+				end
 			end
 		end,
 		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window.content
-			SUI.DB.Objectives.SetupDone = true
-			SUI.DB.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
+			if SUI:IsModuleEnabled('CombatLog') and (not module.Override) then
+				local SUI_Win = SUI:GetModule('SetupWizard').window.content
+				SUI.DB.Objectives.SetupDone = true
+				SUI.DB.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
-			for k, v in ipairs(RuleList) do
-				SUI.DB.Objectives[v] = {
-					Status = SUI_Win.Objectives[k].Condition:GetValue(),
-					Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
-				}
+				for k, v in ipairs(RuleList) do
+					SUI.DB.Objectives[v] = {
+						Status = SUI_Win.Objectives[k].Condition:GetValue(),
+						Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
+					}
+				end
 			end
 		end,
 		Skip = function()

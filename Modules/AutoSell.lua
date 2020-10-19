@@ -90,86 +90,90 @@ local function SetupPage()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
 			local StdUi = window.StdUi
-			if SUI:IsModuleDisabled('AutoSell') then
-				window.Skip:Click()
-				return
-			end
 
 			--Container
 			local AutoSell = CreateFrame('Frame', nil)
 			AutoSell:SetParent(SUI_Win)
 			AutoSell:SetAllPoints(SUI_Win)
 
-			-- Quality Selling Options
-			AutoSell.SellGray = StdUi:Checkbox(AutoSell, L['Sell gray'], 220, 20)
-			AutoSell.SellWhite = StdUi:Checkbox(AutoSell, L['Sell white'], 220, 20)
-			AutoSell.SellGreen = StdUi:Checkbox(AutoSell, L['Sell green'], 220, 20)
-			AutoSell.SellBlue = StdUi:Checkbox(AutoSell, L['Sell blue'], 220, 20)
-			AutoSell.SellPurple = StdUi:Checkbox(AutoSell, L['Sell purple'], 220, 20)
+			if SUI:IsModuleDisabled('AutoSell') then
+				AutoSell.lblDisabled = StdUi:Label(AutoSell, 'Disabled', 20)
+				AutoSell.lblDisabled:SetPoint('CENTER', AutoSell)
+				-- Attaching
+				SUI_Win.AutoSell = AutoSell
+			else
+				-- Quality Selling Options
+				AutoSell.SellGray = StdUi:Checkbox(AutoSell, L['Sell gray'], 220, 20)
+				AutoSell.SellWhite = StdUi:Checkbox(AutoSell, L['Sell white'], 220, 20)
+				AutoSell.SellGreen = StdUi:Checkbox(AutoSell, L['Sell green'], 220, 20)
+				AutoSell.SellBlue = StdUi:Checkbox(AutoSell, L['Sell blue'], 220, 20)
+				AutoSell.SellPurple = StdUi:Checkbox(AutoSell, L['Sell purple'], 220, 20)
 
-			-- Max iLVL
-			AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
-			AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, SUI.DB.AutoSell.MaxILVL)
-			local MaxiLVL = 500
-			if SUI.IsClassic then
-				MaxiLVL = 100
-			end
-			AutoSell.iLVLLabel:SetMaxValue(MaxiLVL)
-			AutoSell.iLVLLabel:SetMinValue(1)
-			AutoSell.iLVLLabel.OnValueChanged = function()
-				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
-
-				if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
-					win.iLVLSlider:SetValue(math.floor(win.iLVLLabel:GetValue()))
+				-- Max iLVL
+				AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
+				AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, SUI.DB.AutoSell.MaxILVL)
+				local MaxiLVL = 500
+				if SUI.IsClassic then
+					MaxiLVL = 100
 				end
-			end
+				AutoSell.iLVLLabel:SetMaxValue(MaxiLVL)
+				AutoSell.iLVLLabel:SetMinValue(1)
+				AutoSell.iLVLLabel.OnValueChanged = function()
+					local win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
-			AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, SUI.DB.AutoSell.MaxILVL, false, 1, MaxiLVL)
-			AutoSell.iLVLSlider.OnValueChanged = function()
-				local win = SUI:GetModule('SetupWizard').window.content.AutoSell
-
-				if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
-					win.iLVLLabel:SetValue(math.floor(win.iLVLSlider:GetValue()))
+					if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
+						win.iLVLSlider:SetValue(math.floor(win.iLVLLabel:GetValue()))
+					end
 				end
+
+				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, SUI.DB.AutoSell.MaxILVL, false, 1, MaxiLVL)
+				AutoSell.iLVLSlider.OnValueChanged = function()
+					local win = SUI:GetModule('SetupWizard').window.content.AutoSell
+
+					if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
+						win.iLVLLabel:SetValue(math.floor(win.iLVLSlider:GetValue()))
+					end
+				end
+
+				-- AutoRepair
+				AutoSell.AutoRepair = StdUi:Checkbox(AutoSell, L['Auto repair'], 220, 20)
+
+				-- Positioning
+				StdUi:GlueTop(AutoSell.SellGray, SUI_Win, 0, -30)
+				StdUi:GlueBelow(AutoSell.SellWhite, AutoSell.SellGray, 0, -5)
+				StdUi:GlueBelow(AutoSell.SellGreen, AutoSell.SellWhite, 0, -5)
+				StdUi:GlueBelow(AutoSell.SellBlue, AutoSell.SellGreen, 0, -5)
+				StdUi:GlueBelow(AutoSell.SellPurple, AutoSell.SellBlue, 0, -5)
+				StdUi:GlueBelow(AutoSell.iLVLDesc, AutoSell.SellPurple, 0, -5)
+				StdUi:GlueBelow(AutoSell.iLVLSlider, AutoSell.iLVLDesc, -40, -5)
+				StdUi:GlueRight(AutoSell.iLVLLabel, AutoSell.iLVLSlider, 2, 0)
+				StdUi:GlueBelow(AutoSell.AutoRepair, AutoSell.iLVLSlider, 40, -5)
+
+				-- Attaching
+				SUI_Win.AutoSell = AutoSell
+
+				-- Defaults
+				AutoSell.SellGray:SetChecked(SUI.DB.AutoSell.Gray)
+				AutoSell.SellWhite:SetChecked(SUI.DB.AutoSell.White)
+				AutoSell.SellGreen:SetChecked(SUI.DB.AutoSell.Green)
+				AutoSell.SellBlue:SetChecked(SUI.DB.AutoSell.Blue)
+				AutoSell.SellPurple:SetChecked(SUI.DB.AutoSell.Purple)
+				AutoSell.AutoRepair:SetChecked(SUI.DB.AutoSell.AutoRepair)
+				AutoSell.iLVLLabel:SetValue(SUI.DB.AutoSell.MaxILVL)
 			end
-
-			-- AutoRepair
-			AutoSell.AutoRepair = StdUi:Checkbox(AutoSell, L['Auto repair'], 220, 20)
-
-			-- Positioning
-			StdUi:GlueTop(AutoSell.SellGray, SUI_Win, 0, -30)
-			StdUi:GlueBelow(AutoSell.SellWhite, AutoSell.SellGray, 0, -5)
-			StdUi:GlueBelow(AutoSell.SellGreen, AutoSell.SellWhite, 0, -5)
-			StdUi:GlueBelow(AutoSell.SellBlue, AutoSell.SellGreen, 0, -5)
-			StdUi:GlueBelow(AutoSell.SellPurple, AutoSell.SellBlue, 0, -5)
-			StdUi:GlueBelow(AutoSell.iLVLDesc, AutoSell.SellPurple, 0, -5)
-			StdUi:GlueBelow(AutoSell.iLVLSlider, AutoSell.iLVLDesc, -40, -5)
-			StdUi:GlueRight(AutoSell.iLVLLabel, AutoSell.iLVLSlider, 2, 0)
-			StdUi:GlueBelow(AutoSell.AutoRepair, AutoSell.iLVLSlider, 40, -5)
-
-			-- Attaching
-			SUI_Win.AutoSell = AutoSell
-
-			-- Defaults
-			AutoSell.SellGray:SetChecked(SUI.DB.AutoSell.Gray)
-			AutoSell.SellWhite:SetChecked(SUI.DB.AutoSell.White)
-			AutoSell.SellGreen:SetChecked(SUI.DB.AutoSell.Green)
-			AutoSell.SellBlue:SetChecked(SUI.DB.AutoSell.Blue)
-			AutoSell.SellPurple:SetChecked(SUI.DB.AutoSell.Purple)
-			AutoSell.AutoRepair:SetChecked(SUI.DB.AutoSell.AutoRepair)
-			AutoSell.iLVLLabel:SetValue(SUI.DB.AutoSell.MaxILVL)
 		end,
 		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window.content.AutoSell
+			if SUI:IsModuleEnabled('AutoSell') then
+				local SUI_Win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
-			SUI.DB.AutoSell.Gray = (SUI_Win.SellGray:GetChecked() == true or false)
-			SUI.DB.AutoSell.White = (SUI_Win.SellWhite:GetChecked() == true or false)
-			SUI.DB.AutoSell.Green = (SUI_Win.SellGreen:GetChecked() == true or false)
-			SUI.DB.AutoSell.Blue = (SUI_Win.SellBlue:GetChecked() == true or false)
-			SUI.DB.AutoSell.Purple = (SUI_Win.SellPurple:GetChecked() == true or false)
-			SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoRepair:GetChecked() == true or false)
-			SUI.DB.AutoSell.MaxILVL = SUI_Win.iLVLLabel:GetValue()
-
+				SUI.DB.AutoSell.Gray = (SUI_Win.SellGray:GetChecked() == true or false)
+				SUI.DB.AutoSell.White = (SUI_Win.SellWhite:GetChecked() == true or false)
+				SUI.DB.AutoSell.Green = (SUI_Win.SellGreen:GetChecked() == true or false)
+				SUI.DB.AutoSell.Blue = (SUI_Win.SellBlue:GetChecked() == true or false)
+				SUI.DB.AutoSell.Purple = (SUI_Win.SellPurple:GetChecked() == true or false)
+				SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoRepair:GetChecked() == true or false)
+				SUI.DB.AutoSell.MaxILVL = SUI_Win.iLVLLabel:GetValue()
+			end
 			SUI.DB.AutoSell.FirstLaunch = false
 		end,
 		Skip = function()
