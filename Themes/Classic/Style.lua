@@ -179,35 +179,39 @@ function module:OnInitialize()
 
 	local UnitFrames = SUI:GetModule('Component_UnitFrames')
 	UnitFrames.Artwork.Classic = {
-		full = {perUnit = true},
-		player = {
-			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_1_full',
-			heightScale = 1.2,
-			TexCoord = {0.2, 0.80859375, 0.8046875, 0.1953125},
-			position = {
-				anchor = 'CENTER',
-				x = 0,
-				y = 0
-			}
-		},
-		target = {
-			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_1_full',
-			heightScale = 1.2,
-			TexCoord = {0.80859375, 0.2, 0.1953125, 0.8046875},
-			position = {
-				anchor = 'CENTER',
-				x = 0,
-				y = 0
-			}
-		},
-		targettarget = {
-			path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_3_single',
-			heightScale = 1.2,
-			TexCoord = {.68, 0, 0, 0.6640625},
-			position = {
-				anchor = 'CENTER',
-				x = 0,
-				y = 0
+		full = {
+			perUnit = true,
+			player = {
+				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+				height = 80,
+				widthScale = 1.6,
+				TexCoord = {0.19140625, 0.810546875, 0.1796875, 0.8203125},
+				position = {
+					anchor = 'CENTER',
+					x = 30,
+					y = 0
+				}
+			},
+			target = {
+				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+				height = 80,
+				widthScale = 1.6,
+				TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
+				position = {
+					anchor = 'CENTER',
+					x = 0,
+					y = 0
+				}
+			},
+			targettarget = {
+				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_3_single',
+				heightScale = 1.2,
+				TexCoord = {.68, 0, 0, 0.6640625},
+				position = {
+					anchor = 'CENTER',
+					x = 0,
+					y = 0
+				}
 			}
 		}
 	}

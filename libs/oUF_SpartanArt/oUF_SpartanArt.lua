@@ -54,13 +54,19 @@ local function Update(self, event, unit)
 			if artObj and artObj.ArtData and ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
 				local ArtData = artObj.ArtData
 
+				-- -- setup a bg width
+				local width = ArtData.width or self:GetWidth()
+				if ArtData.widthScale then
+					width = width * ArtData.widthScale
+				end
+
 				-- -- setup a bg height
 				local height
 				if pos == 'bg' then
 					height = (self:GetHeight() + (ArtData.height or 0))
 				end
 				if ArtData.heightScale then
-					height = self:GetWidth() * ArtData.heightScale
+					height = width * ArtData.heightScale
 				end
 
 				-- Setup the Artwork
@@ -91,17 +97,17 @@ local function Update(self, event, unit)
 					artObj:SetAlpha((ArtSettings.alpha or ArtData.alpha) or 1)
 				end
 
-				artObj:SetWidth(ArtData.width or self:GetWidth())
+				artObj:SetWidth(width or 1)
 				artObj:SetHeight((height or ArtData.height) or 25)
 
 				-- Position artwork
 				local x = (ArtData.x or 0)
 				local y = (ArtData.y or 0)
 				if ArtData.xScale then
-					x = self:GetWidth() * ArtData.xScale
+					x = width * ArtData.xScale
 				end
 				if ArtData.yScale then
-					y = self:GetWidth() * ArtData.yScale
+					y = width * ArtData.yScale
 				end
 				local x = (ArtSettings.x + x)
 				local y = (ArtSettings.y + y)
