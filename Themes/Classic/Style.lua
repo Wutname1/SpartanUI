@@ -4,9 +4,6 @@ local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Classic')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
-if SUI.DB.Styles.Classic.BuffLoc == nil then
-	SUI.DB.Styles.Classic.BuffLoc = true
-end
 local InitRan = false
 
 local function CreateArtwork()

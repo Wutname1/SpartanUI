@@ -45,10 +45,6 @@ local function ActiveRule()
 	end
 
 	--Failback of Rule1
-	if not SUI.DB.Buffs.SuppressNoMatch and not SUI.DB.Styles[SUI.DB.Artwork.Style].BuffLoc then
-	-- SUI:Print("|cffff0000Error detected")
-	-- SUI:Print("None of your custom Tooltip contidions have been meet. Defaulting to what is specified for Rule 1")
-	end
 	return 'Rule1'
 end
 

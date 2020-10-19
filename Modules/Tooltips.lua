@@ -601,10 +601,11 @@ function module:OnEnable()
 end
 
 local OnMouseOpt = function(v)
-	if SUI.DB.Tooltips[v].Anchor.onMouse or not SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].TooltipLoc then
-		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = true
+	local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true)
+	if style and style.TooltipLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
+		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideLoc'].disabled = false
 	else
-		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideTheme'].disabled = false
+		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideLoc'].disabled = true
 	end
 
 	SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled =
@@ -635,7 +636,7 @@ function module:BuildOptions()
 					SUI.DB.Tooltips.ActiveStyle = val
 				end
 			},
-			OverrideTheme = {
+			OverrideLoc = {
 				name = L['OverrideTheme'],
 				type = 'toggle',
 				order = 2,
@@ -696,8 +697,11 @@ function module:BuildOptions()
 			inline = true,
 			order = k + 20.1,
 			width = 'full',
+			get = function(info)
+				return SUI.DB.Tooltips[v][info[#info]]
+			end,
 			args = {
-				Condition = {
+				Status = {
 					name = 'Condition',
 					type = 'select',
 					order = k + 20.2,
@@ -708,9 +712,6 @@ function module:BuildOptions()
 						['All'] = 'All the time',
 						['Disabled'] = 'Disabled'
 					},
-					get = function(info)
-						return SUI.DB.Tooltips[v].Status
-					end,
 					set = function(info, val)
 						SUI.DB.Tooltips[v].Status = val
 					end
@@ -719,9 +720,6 @@ function module:BuildOptions()
 					name = 'only if in combat',
 					type = 'toggle',
 					order = k + 20.3,
-					get = function(info)
-						return SUI.DB.Tooltips[v].Combat
-					end,
 					set = function(info, val)
 						SUI.DB.Tooltips[v].Combat = val
 					end
@@ -740,13 +738,10 @@ function module:BuildOptions()
 						OnMouseOpt(v)
 					end
 				},
-				OverrideTheme = {
+				OverrideLoc = {
 					name = L['OverrideTheme'],
 					type = 'toggle',
 					order = k + 20.5,
-					get = function(info)
-						return SUI.DB.Tooltips[v].OverrideLoc
-					end,
 					set = function(info, val)
 						SUI.DB.Tooltips[v].OverrideLoc = val
 					end
@@ -757,6 +752,9 @@ function module:BuildOptions()
 					order = k + 20.6,
 					width = 'half',
 					func = function(info, val)
+						-- Force override sincce the user is moving the anchor
+						SUI.DB.Tooltips[v].OverrideLoc = true
+						--show the anchor
 						module[v].anchor:Show()
 					end
 				},
