@@ -1945,22 +1945,24 @@ function SUI:OnInitialize()
 		SUI:DBUpgrades()
 	end
 
-	-- if SUI.DB.SUIProper then
-	SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
-	local SUI5Indicator = CreateFrame('Button', 'SUI5Profile', UIParent, BackdropTemplateMixin and 'BackdropTemplate')
-	SUI5Indicator:SetFrameStrata('DIALOG')
-	SUI5Indicator:SetPoint('TOPRIGHT')
-	SUI5Indicator:SetSize(20, 20)
-	SUI5Indicator:SetBackdrop(
-		{
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-			edgeSize = 1
-		}
-	)
-	SUI5Indicator:SetBackdropColor(1, 0, 0, .5)
-	SUI5Indicator:SetBackdropBorderColor(0.00, 0.00, 0.00, 1)
-	-- end
+	if SUI.DB.SUIProper then
+		SUI.print('---------------', true)
+		SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
+		SUI.print('---------------', true)
+		local SUI5Indicator = CreateFrame('Button', 'SUI5Profile', UIParent, BackdropTemplateMixin and 'BackdropTemplate')
+		SUI5Indicator:SetFrameStrata('DIALOG')
+		SUI5Indicator:SetPoint('TOPRIGHT')
+		SUI5Indicator:SetSize(20, 20)
+		SUI5Indicator:SetBackdrop(
+			{
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeSize = 1
+			}
+		)
+		SUI5Indicator:SetBackdropColor(1, 0, 0, .5)
+		SUI5Indicator:SetBackdropBorderColor(0.00, 0.00, 0.00, 1)
+	end
 
 	-- Add Profiles to Options
 	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
