@@ -1417,7 +1417,11 @@ end
 
 function module:UpdateAll(event, ...)
 	for _, v in ipairs(FramesList) do
-		module.frames[v]:UpdateAll()
+		if module.frames[v].UpdateAll then
+			module.frames[v]:UpdateAll()
+		else
+			SUI:Error('Unable to find updater for ' .. v, 'Unit Frames')
+		end
 	end
 
 	module:UpdateGroupFrames()
