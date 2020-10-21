@@ -1171,7 +1171,11 @@ local function CreateUnitFrame(self, unit)
 				end
 
 				-- Register with oUF
-				self.ClassPower = ClassPower
+				if SUI.IsClassic then
+					self.ClassPowerClassic = ClassPower
+				else
+					self.ClassPower = ClassPower
+				end
 
 				--Totem Bar
 				if SUI.IsRetail then
