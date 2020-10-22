@@ -92,6 +92,7 @@ function module:OnInitialize()
 	end
 	UnitFrames.Artwork.war = {
 		name = 'War',
+		skin = 'War',
 		top = {
 			path = pathFunc,
 			TexCoord = TexCoordFunc,

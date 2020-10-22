@@ -179,7 +179,13 @@ function module:LoadDB()
 	-- Load Default Settings
 	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.FrameOptions)
 	-- Import theme settings
-	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
+	if SUI.DB.Styles[SUI.DB.Unitframes.Style] and SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames then
+		module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[SUI.DB.Unitframes.Style].Frames, true)
+	elseif module.Artwork[SUI.DB.Unitframes.Style] then
+		local skin = module.Artwork[SUI.DB.Unitframes.Style].skin
+		module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[skin].Frames, true)
+	end
+
 	-- Import player customizations
 	module.CurrentSettings =
 		SUI:MergeData(module.CurrentSettings, SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style], true)

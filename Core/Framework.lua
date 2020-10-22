@@ -407,15 +407,15 @@ local DBdefault = {
 					artwork = {
 						top = {
 							enabled = true,
-							graphic = 'ArcaneBlue'
+							graphic = 'Arcane'
 						},
 						bg = {
 							enabled = true,
-							graphic = 'ArcaneBlue'
+							graphic = 'Arcane'
 						},
 						bottom = {
 							enabled = true,
-							graphic = 'ArcaneBlue'
+							graphic = 'Arcane'
 						}
 					},
 					elements = {
@@ -434,15 +434,15 @@ local DBdefault = {
 					artwork = {
 						top = {
 							enabled = true,
-							graphic = 'ArcaneBlue'
+							graphic = 'Arcane'
 						},
 						bg = {
 							enabled = true,
-							graphic = 'ArcaneBlue'
+							graphic = 'Arcane'
 						},
 						bottom = {
 							enabled = true,
-							graphic = 'ArcaneBlue'
+							graphic = 'Arcane'
 						}
 					},
 					elements = {
@@ -484,6 +484,64 @@ local DBdefault = {
 				right = {
 					enabled = true,
 					collapsed = false
+				}
+			}
+		},
+		ArcaneRed = {
+			Frames = {
+				player = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'ArcaneRed'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'ArcaneRed'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'ArcaneRed'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
+				},
+				target = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'ArcaneRed'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'ArcaneRed'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'ArcaneRed'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
 				}
 			}
 		},
@@ -617,6 +675,7 @@ local DBdefault = {
 			}
 		},
 		Minimal = {
+			Frames = {},
 			Minimap = {
 				UnderVehicleUI = false,
 				scaleWithArt = false,

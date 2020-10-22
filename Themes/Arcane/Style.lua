@@ -84,7 +84,7 @@ function module:OnInitialize()
 			TexCoord = {0.533203125, 1, 0.374, 0.403}
 		}
 	}
-	UnitFrames.Artwork.ArcaneBlue = {
+	UnitFrames.Artwork.Arcane = {
 		name = 'Arcane blue',
 		top = {
 			heightScale = .225,

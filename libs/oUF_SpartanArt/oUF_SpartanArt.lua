@@ -51,7 +51,7 @@ local function Update(self, event, unit)
 		if element.ArtSettings then
 			local ArtSettings = element.ArtSettings[pos]
 
-			if artObj and ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+			if artObj and artObj.ArtData and ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
 				local ArtData = artObj.ArtData
 
 				-- -- setup a bg height

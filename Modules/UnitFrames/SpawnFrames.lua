@@ -566,7 +566,7 @@ local function CreateUnitFrame(self, unit)
 
 			for _, pos in ipairs(ArtPositions) do
 				local ArtSettings = self.ArtSettings[pos]
-				if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+				if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and module.Artwork[ArtSettings.graphic] then
 					self[pos].ArtData = module.Artwork[ArtSettings.graphic][pos]
 					--Grab the settings for the frame specifically if defined (classic skin)
 					if self[pos].ArtData.perUnit and self[pos].ArtData[unitName] then

@@ -2122,16 +2122,6 @@ function module:InitializeOptions()
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = 'Reset uniframe customizations'
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.width = 'double'
 
-	local Skins = {
-		'Classic',
-		'War',
-		'Fel',
-		'Digital',
-		'Arcane',
-		'Transparent',
-		'Minimal'
-	}
-
 	for _, v in ipairs(frameList) do
 		SUI.opt.args.UnitFrames.args.EnabledFrame.args[v] = {
 			name = v,
@@ -2157,22 +2147,36 @@ function module:InitializeOptions()
 	end
 
 	-- Build style Buttons
-	for _, skin in pairs(Skins) do
+	for styleKey, data in pairs(module.Artwork) do
+		local skin = data.skin or styleKey
+
 		SUI.opt.args.UnitFrames.args.BaseStyle.args[skin] = {
-			name = skin,
+			name = data.name or skin,
 			type = 'execute',
 			image = function()
-				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_' .. skin, 120, 60
+				return data.image or ('interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_' .. skin), 120, 60
 			end,
 			imageCoords = function()
 				return {0, .5, 0, .5}
 			end,
 			func = function()
-				SUI.DB.Unitframes.Style = skin
-				module:UpdateAll()
+				module:SetActiveStyle(skin)
 			end
 		}
 	end
+	SUI.opt.args.UnitFrames.args.BaseStyle.args.Minimal = {
+		name = 'Minimal',
+		type = 'execute',
+		image = function()
+			return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
+		end,
+		imageCoords = function()
+			return {0, .5, 0, .5}
+		end,
+		func = function()
+			module:SetActiveStyle('Minimal')
+		end
+	}
 
 	-- Add built skins selection page to the styles section
 	SUI.opt.args.General.args.style.args.Unitframes = SUI.opt.args.UnitFrames.args.BaseStyle
