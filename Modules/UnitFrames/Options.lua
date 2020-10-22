@@ -2103,18 +2103,7 @@ function module:InitializeOptions()
 						width = 'full',
 						order = 900,
 						func = function()
-							--Reset the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style] = nil
-							-- Refresh the memory
-							module:LoadDB()
-
-							-- Update the screen
-							for _, frame in pairs(module.frames) do
-								-- Check that its a frame
-								if frame.UpdateAll then
-									frame:UpdateAll()
-								end
-							end
+							module:ResetSettings()
 						end
 					}
 				}
@@ -2128,6 +2117,11 @@ function module:InitializeOptions()
 			}
 		}
 	}
+
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames = SUI.opt.args.UnitFrames.args.BaseStyle.args.reset
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = 'Reset uniframe customizations'
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.width = 'double'
+
 	local Skins = {
 		'Classic',
 		'War',

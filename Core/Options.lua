@@ -79,39 +79,59 @@ function module:OnInitialize()
 		type = 'group',
 		order = 900,
 		args = {
-			ReRunSetupWizard = {
-				name = L['Rerun setup wizard'],
-				type = 'execute',
-				order = .1,
-				func = function()
-					SUI:GetModule('SetupWizard'):SetupWizard()
-				end
+			SUIActions = {
+				name = 'SUI Core Reset',
+				type = 'group',
+				inline = true,
+				order = 40,
+				args = {
+					ReRunSetupWizard = {
+						name = L['Rerun setup wizard'],
+						type = 'execute',
+						order = .1,
+						func = function()
+							SUI:GetModule('SetupWizard'):SetupWizard()
+						end
+					},
+					ResetProfileDB = {
+						name = L['Reset profile'],
+						type = 'execute',
+						width = 'double',
+						desc = 'Start fresh with a new SUI profile',
+						order = .5,
+						func = function()
+							SUI.SpartanUIDB:ResetProfile()
+							ReloadUI()
+						end
+					},
+					ResetDB = {
+						name = L['ResetDatabase'],
+						type = 'execute',
+						desc = 'New SUI profile did not work? This is your nucular option. Reset everything SpartanUI related.',
+						order = 1,
+						func = function()
+							SUI.SpartanUIDB:ResetDB()
+							ReloadUI()
+						end
+					}
+				}
 			},
-			ResetProfileDB = {
-				name = L['Reset profile'],
-				type = 'execute',
-				order = .5,
-				func = function()
-					SUI.SpartanUIDB:ResetProfile()
-					ReloadUI()
-				end
-			},
-			ResetDB = {
-				name = L['ResetDatabase'],
-				type = 'execute',
-				order = 1,
-				func = function()
-					SUI.SpartanUIDB:ResetDB()
-					ReloadUI()
-				end
-			},
-			ResetMovedFrames = {
-				name = L['ResetMovableFrames'],
-				type = 'execute',
-				order = 3,
-				func = function()
-					SUI:GetModule('Component_MoveIt'):Reset()
-				end
+			line1 = {name = '', type = 'header', order = 40},
+			SUIModuleHelp = {
+				name = 'SUI Module Resets',
+				type = 'group',
+				order = 45,
+				inline = true,
+				args = {
+					ResetMovedFrames = {
+						name = L['ResetMovableFrames'],
+						type = 'execute',
+						order = 3,
+						func = function()
+							SUI:GetModule('Component_MoveIt'):Reset()
+						end
+					}
+				}
 			},
 			line1 = {name = '', type = 'header', order = 49},
 			ver1 = {
@@ -162,36 +182,9 @@ function module:OnInitialize()
 				set = function(info, value)
 				end
 			},
-			line3 = {name = '', type = 'header', order = 500},
-			FAQ = {name = 'F.A.Q', type = 'description', order = 501, fontSize = 'large'},
-			FAQQ1 = {name = 'How do I move _________', type = 'description', order = 510, fontSize = 'medium'},
-			FAQQ1A1 = {
-				name = '- Unit frames can be moved by holding alt down and draging.',
-				type = 'description',
-				order = 511,
-				fontSize = 'small'
-			},
-			FAQQ1A2 = {
-				name = '- If the skin allows it the minimap can be moved by holding alt and dragging.',
-				type = 'description',
-				order = 512,
-				fontSize = 'small'
-			},
-			FAQQ2 = {
-				name = 'Actionbars are appearing in the wrong place',
-				type = 'description',
-				order = 520,
-				fontSize = 'medium'
-			},
-			FAQQ2A1 = {
-				name = '- Most issues can be fixed by reseting the action bars above.',
-				type = 'description',
-				order = 521,
-				fontSize = 'small'
-			}
+			line3 = {name = '', type = 'header', order = 500}
 
 			-- description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
-			-- description = {name=L["HelpStringDesc2"],type="description",order = 902,fontSize="small"},
 			-- dataDump = {name=L["Export"],type="input",multiline=15,width="full",order=993,get = function(info) return module:enc(module:ExportData()) end},
 		}
 	}

@@ -426,7 +426,6 @@ local function Options()
 			}
 		}
 	}
-	SUI.opt.args.Help.args.ResetActionBars = SUI.opt.args.General.args.Bartender.args.ResetActionBars
 
 	if Bartender4.options then
 		for k, v in pairs(Bartender4.options.args.bars.args) do
@@ -437,7 +436,7 @@ local function Options()
 	end
 
 	-- Add to help screen
-	SUI.opt.args.Help.args.ResetActionBars = SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetActionBars = SUI.opt.args.General.args.Bartender.args.ResetActionBars
 end
 
 local function OnEnable()

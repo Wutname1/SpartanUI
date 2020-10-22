@@ -158,6 +158,21 @@ function module:PositionFrame(b)
 	end
 end
 
+function module:ResetSettings()
+	--Reset the DB
+	SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style] = nil
+	-- Refresh the memory
+	module:LoadDB()
+
+	-- Update the screen
+	for _, frame in pairs(module.frames) do
+		-- Check that its a frame
+		if frame.UpdateAll then
+			frame:UpdateAll()
+		end
+	end
+end
+
 function module:LoadDB()
 	-- Setup an empty memory state
 	module.CurrentSettings = {}
