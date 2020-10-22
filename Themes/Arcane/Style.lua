@@ -68,31 +68,39 @@ function module:OnInitialize()
 	UnitFrames.Artwork.ArcaneRed = {
 		name = 'Arcane red',
 		top = {
+			heightScale = .225,
+			yScale = -.09,
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.541015625, 1, 0, 0.2109375}
+			TexCoord = {0.533203125, 1, 0, 0.19921875}
 		},
 		bg = {
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.572265625, 0.96875, 0.74609375, 1}
+			TexCoord = {0.533203125, 1, 0.46484375, 0.75}
 		},
 		bottom = {
+			heightScale = .075,
+			-- yScale = 0.0223,
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.541015625, 1, 0.2109375, 0.421875}
+			TexCoord = {0.533203125, 1, 0.374, 0.403}
 		}
 	}
 	UnitFrames.Artwork.ArcaneBlue = {
 		name = 'Arcane blue',
 		top = {
+			heightScale = .225,
+			yScale = -.09,
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.03125, 0.458984375, 0, 0.2109375}
+			TexCoord = {0, 0.458984375, 0, 0.19921875}
 		},
 		bg = {
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0, 0.458984375, 0.74609375, 1}
+			TexCoord = {0, 0.458984375, 0.46484375, 0.75}
 		},
 		bottom = {
+			heightScale = .075,
+			-- yScale = 0,
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.03125, 0.458984375, 0.2109375, 0.421875}
+			TexCoord = {0, 0.458984375, 0.374, 0.403}
 		}
 	}
 
