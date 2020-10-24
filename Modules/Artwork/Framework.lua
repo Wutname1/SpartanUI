@@ -1,6 +1,6 @@
 local SUI = SUI
 local L = SUI.L
-local module = SUI:NewModule('Component_Artwork', 'AceTimer-3.0')
+local module = SUI:NewModule('Component_Artwork', 'AceTimer-3.0', 'AceEvent-3.0')
 module.ActiveStyle = {}
 module.BarBG = {}
 local styleArt
@@ -357,6 +357,7 @@ function module:OnEnable()
 	VehicleUI()
 	module:updateOffset()
 	module:updateViewport()
+	module:RegisterEvent('ADDON_LOADED', 'updateOffset')
 end
 
 function module:UpdateBarBG()
