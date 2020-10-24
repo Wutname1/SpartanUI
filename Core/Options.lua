@@ -39,6 +39,7 @@ function module:OnInitialize()
 	local Skins = {
 		'Classic',
 		'War',
+		'Tribal',
 		'Fel',
 		'Digital',
 		'Arcane',

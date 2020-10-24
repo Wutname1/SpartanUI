@@ -71,3 +71,4 @@ Themes\Fel\Style.xml
 Themes\Digital\Style.xml
 Themes\Minimal\Style.xml
 Themes\Transparent\Style.xml
+Themes\Tribal\Style.xml

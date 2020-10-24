@@ -38,7 +38,7 @@ local function SetupPage()
 				SUI:GetModule('Component_UnitFrames'):SetActiveStyle(NewStyle)
 			end
 
-			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal', 'Arcane'}) do
+			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal', 'Arcane', 'Tribal'}) do
 				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 				control:SetScript('OnClick', RadioButtons)
 				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
@@ -108,6 +108,7 @@ local function SetupPage()
 
 			-- Podition the 3rd row
 			StdUi:GlueTop(SUI_Win.Artwork.Arcane, SUI_Win.Artwork.Digital.radio, 00, -30)
+			StdUi:GlueLeft(SUI_Win.Artwork.Tribal, SUI_Win.Artwork.Arcane, -20, 0)
 
 			-- Check Classic as default
 			SUI_Win.Artwork.War.radio:SetChecked(true)

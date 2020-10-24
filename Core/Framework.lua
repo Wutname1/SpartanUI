@@ -931,6 +931,103 @@ local DBdefault = {
 					collapsed = false
 				}
 			}
+		},
+		Tribal = {
+			Artwork = {},
+			StatusBars = {
+				['**'] = {
+					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\StatusBar',
+					alpha = .9,
+					size = {370, 20},
+					TooltipSize = {350, 100},
+					TooltipTextSize = {330, 80},
+					texCords = {0.0546875, 0.9140625, 0.5555555555555556, 0},
+					MaxWidth = 48
+				},
+				Left = {
+					GlowPoint = {x = -16},
+					MaxWidth = 48
+				},
+				Right = {
+					GlowPoint = {x = 16}
+				}
+			},
+			Frames = {
+				player = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'Tribal'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'Tribal'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'Tribal'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
+				},
+				target = {
+					artwork = {
+						top = {
+							enabled = true,
+							graphic = 'Tribal'
+						},
+						bg = {
+							enabled = true,
+							graphic = 'Tribal'
+						},
+						bottom = {
+							enabled = true,
+							graphic = 'Tribal'
+						}
+					},
+					elements = {
+						Name = {
+							enabled = true,
+							SetJustifyH = 'LEFT',
+							position = {
+								anchor = 'BOTTOM',
+								x = 0,
+								y = -16
+							}
+						}
+					}
+				}
+			},
+			Minimap = {
+				size = {156, 156},
+				BG = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap'
+				},
+				coords = {
+					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+				},
+				position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20'
+			},
+			SlidingTrays = {
+				left = {
+					enabled = true,
+					collapsed = false
+				},
+				right = {
+					enabled = true,
+					collapsed = false
+				}
+			}
 		}
 	},
 	Tooltips = {
