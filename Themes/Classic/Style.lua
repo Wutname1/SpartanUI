@@ -199,7 +199,7 @@ function module:OnInitialize()
 				TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
 				position = {
 					anchor = 'CENTER',
-					x = 0,
+					x = -30,
 					y = 0
 				}
 			},
@@ -217,10 +217,10 @@ function module:OnInitialize()
 	}
 
 	UnitFrames.FramePos.Classic = {
-		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-139,143',
-		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,0,0',
-		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,135,140',
-		['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0'
+		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-129,136',
+		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
+		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,124,138',
+		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,20,0'
 	}
 
 	CreateArtwork()
