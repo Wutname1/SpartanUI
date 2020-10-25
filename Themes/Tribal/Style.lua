@@ -29,8 +29,8 @@ function module:OnInitialize()
 		top = {
 			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
 			TexCoord = {0.25390625, 0.580078125, 0.583984375, 0.712890625},
-			heightScale = .4,
-			widthScale = .8,
+			heightScale = .38,
+			widthScale = .6,
 			yScale = -.072
 		},
 		bg = {
@@ -156,11 +156,13 @@ function module:CreateArtwork()
 	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Art-Left')
 	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM', 0, 0)
 	artFrame.Left:SetScale(.75)
+	artFrame.Left:SetAlpha(.85)
 
 	artFrame.Right = artFrame:CreateTexture('SUI_Art_Tribal_Right', 'BORDER')
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Art-Right')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
 	artFrame.Right:SetScale(.75)
+	artFrame.Right:SetAlpha(.85)
 end
 
 -- Artwork Stuff
