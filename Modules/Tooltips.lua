@@ -356,7 +356,8 @@ local TooltipSetUnit = function(self)
 		local creatureType = UnitCreatureType(unit)
 		local race, englishRace = UnitRace(unit)
 		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-		race = race .. ' ' .. className
+
+		race = (race or '') .. ' ' .. (className or '')
 		if (factionGroup and englishRace == 'Pandaren') then
 			race = factionGroup .. ' ' .. race
 		end
