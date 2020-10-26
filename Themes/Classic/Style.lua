@@ -143,6 +143,17 @@ local function CreateArtwork()
 	end
 end
 
+local function UnitFrameCallback(self, unit)
+	local Skined = {['player'] = true, ['target'] = true}
+	if not Skined[unit] then
+		return
+	end
+
+	if unit == 'player' then
+	elseif unit == 'target' then
+	end
+end
+
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Classic = {
@@ -181,26 +192,27 @@ function module:OnInitialize()
 	UnitFrames.Artwork.Classic = {
 		full = {
 			perUnit = true,
+			UnitFrameCallback = UnitFrameCallback,
 			player = {
 				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
 				height = 80,
-				widthScale = 1.6,
+				widthScale = 2.2,
 				TexCoord = {0.19140625, 0.810546875, 0.1796875, 0.8203125},
 				position = {
 					anchor = 'CENTER',
-					x = 30,
-					y = 0
+					x = 34,
+					y = 7
 				}
 			},
 			target = {
 				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
 				height = 80,
-				widthScale = 1.6,
+				widthScale = 2.2,
 				TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
 				position = {
 					anchor = 'CENTER',
-					x = -30,
-					y = 0
+					x = -34,
+					y = 7
 				}
 			},
 			targettarget = {
@@ -217,9 +229,9 @@ function module:OnInitialize()
 	}
 
 	UnitFrames.FramePos.Classic = {
-		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-129,136',
+		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-173,153',
 		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
-		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,124,138',
+		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,173,153',
 		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,20,0'
 	}
 

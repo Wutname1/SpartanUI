@@ -548,6 +548,8 @@ local DBdefault = {
 		Classic = {
 			Frames = {
 				player = {
+					width = 153,
+					scale = 0.91,
 					artwork = {
 						full = {
 							enabled = true,
@@ -557,16 +559,56 @@ local DBdefault = {
 					Buffs = {Mode = 'icons'},
 					Debuffs = {Mode = 'icons'},
 					elements = {
+						Castbar = {
+							height = 15
+						},
+						Health = {
+							offset = 2,
+							height = 16
+						},
+						Power = {
+							offset = 2,
+							height = 14
+						},
 						Portrait = {
 							position = 'right'
+						},
+						RestingIndicator = {
+							position = {
+								anchor = 'TOPRIGHT',
+								x = 20,
+								y = 20
+							}
+						},
+						SUI_ClassIcon = {
+							position = {
+								anchor = 'BOTTOMRIGHT',
+								x = 20,
+								y = 0
+							}
 						}
 					}
 				},
 				target = {
+					width = 153,
+					scale = 0.91,
 					artwork = {
 						full = {
 							enabled = true,
 							graphic = 'Classic'
+						}
+					},
+					elements = {
+						Health = {
+							offset = 2,
+							height = 16
+						},
+						Power = {
+							offset = 2,
+							height = 16
+						},
+						Castbar = {
+							height = 15
 						}
 					},
 					Buffs = {Mode = 'icons'},
@@ -1062,6 +1104,7 @@ local DBdefault = {
 			['**'] = {
 				enabled = true,
 				width = 180,
+				scale = 1,
 				moved = false,
 				position = {
 					point = 'BOTTOM',

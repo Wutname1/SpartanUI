@@ -203,6 +203,19 @@ local function CalculateHeight(frameName)
 	return FrameHeight
 end
 
+local function GetBasicUnitName(unit)
+	if string.match(unit, 'raid') then
+		return 'raid'
+	elseif string.match(unit, 'party') then
+		return 'party'
+	elseif string.match(unit, 'boss') then
+		return 'boss'
+	elseif string.match(unit, 'arena') then
+		return 'arena'
+	end
+	return unit
+end
+
 local function CreateUnitFrame(self, unit)
 	if (unit ~= 'raid') then
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
@@ -407,6 +420,7 @@ local function CreateUnitFrame(self, unit)
 		-- General
 		if not InCombatLockdown() then
 			self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
+			self:SetScale(module.CurrentSettings[unit].scale)
 		end
 
 		if self.Portrait3D then
@@ -535,35 +549,35 @@ local function CreateUnitFrame(self, unit)
 	local elements = module.CurrentSettings[unit].elements
 
 	do -- General setup
+		local ArtPositions = {'top', 'bg', 'bottom', 'full'}
+		local unitName = GetBasicUnitName(unit)
+
 		local SpartanArt = CreateFrame('Frame', nil, self)
 		SpartanArt:SetFrameStrata('BACKGROUND')
 		SpartanArt:SetFrameLevel(2)
 		SpartanArt:SetAllPoints()
+		SpartanArt.PostUpdate = function(self, unit)
+			for _, pos in ipairs(ArtPositions) do
+				local ArtSettings = module.CurrentSettings[unitName].artwork[pos]
+				if
+					ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and
+						module.Artwork[ArtSettings.graphic][pos].UnitFrameCallback
+				 then
+					module.Artwork[ArtSettings.graphic][pos].UnitFrameCallback(self:GetParent(), unit)
+				end
+			end
+		end
 		SpartanArt.PreUpdate = function(self, unit)
 			if not unit or unit == 'vehicle' then
 				return
 			end
 			-- Party frame shows 'player' instead of party 1-5
-			local parentName = self:GetParent():GetName()
-			local unitName = unit
-			if string.match(parentName, 'raid') then
-				unitName = 'raid'
-			elseif string.match(parentName, 'party') then
-				unitName = 'party'
-			elseif string.match(parentName, 'boss') then
-				unitName = 'boss'
-			elseif string.match(parentName, 'arena') then
-				unitName = 'arena'
-			end
 			if not module.CurrentSettings[unitName] then
 				SUI:Error(unitName .. ' - NO SETTINGS FOUND')
 				return
 			end
 
 			self.ArtSettings = module.CurrentSettings[unitName].artwork
-
-			local ArtPositions = {'top', 'bg', 'bottom', 'full'}
-
 			for _, pos in ipairs(ArtPositions) do
 				local ArtSettings = self.ArtSettings[pos]
 				if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and module.Artwork[ArtSettings.graphic] then
