@@ -285,6 +285,7 @@ local TooltipSetUnit = function(self)
 	end
 
 	local unitLevel = UnitLevel(unit)
+	local className, classToken = UnitClass(unit)
 	local colors, lvlColor, totColor, lvlLine
 	local line = 2
 	local sex = {'', 'Male ', 'Female '}
@@ -296,7 +297,6 @@ local TooltipSetUnit = function(self)
 	}
 
 	if UnitIsPlayer(unit) then
-		local className, classToken = UnitClass(unit)
 		local uName, uRealm = UnitName(unit)
 		local gName, _, _, gRealm = GetGuildInfo(unit)
 		local gender = sex[UnitSex(unit)]
@@ -356,7 +356,7 @@ local TooltipSetUnit = function(self)
 		local creatureType = UnitCreatureType(unit)
 		local race, englishRace = UnitRace(unit)
 		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-
+		race = race .. ' ' .. className
 		if (factionGroup and englishRace == 'Pandaren') then
 			race = factionGroup .. ' ' .. race
 		end
