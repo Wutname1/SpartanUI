@@ -383,6 +383,8 @@ function module:SetActiveStyle(style)
 	module:LoadDB()
 	-- Update positions
 	module:PositionFrame()
+	--Send Custom change event
+	SUI:SendMessage('UNITFRAME_STYLE_CHANGED')
 	-- Update all display elements
 	module:UpdateAll()
 end

@@ -1,5 +1,4 @@
-local SUI = SUI
-local L = SUI.L
+local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Component_Artwork', 'AceTimer-3.0', 'AceEvent-3.0')
 module.ActiveStyle = {}
 module.BarBG = {}
@@ -158,6 +157,9 @@ function module:SetActiveStyle(style)
 	-- Update style settings shortcut
 	module.ActiveStyle = SUI.DB.Styles[SUI.DB.Artwork.Style]
 	styleArt = _G['SUI_Art_' .. SUI.DB.Artwork.Style]
+
+	--Send Custom change event
+	SUI:SendMessage('ARTWORK_STYLE_CHANGED')
 
 	-- Update core elements based on new style
 	StyleUpdate()

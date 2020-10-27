@@ -599,7 +599,7 @@ local DBdefault = {
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 102,
-								y = 7
+								y = 10
 							}
 						},
 						SUI_ClassIcon = {
@@ -607,21 +607,21 @@ local DBdefault = {
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 20,
-								y = 13
+								y = 16
 							}
 						},
 						PvPIndicator = {
 							position = {
 								anchor = 'BOTTOMRIGHT',
 								x = 80,
-								y = -3
+								y = 0
 							}
 						},
 						RaidRoleIndicator = {
 							position = {
 								anchor = 'BOTTOMRIGHT',
 								x = 22,
-								y = -3
+								y = 0
 							}
 						},
 						CombatIndicator = {
@@ -629,7 +629,7 @@ local DBdefault = {
 							position = {
 								anchor = 'TOPRIGHT',
 								x = 102,
-								y = 7
+								y = 10
 							}
 						}
 					}
@@ -680,21 +680,21 @@ local DBdefault = {
 							position = {
 								anchor = 'TOPLEFT',
 								x = -22,
-								y = 13
+								y = 16
 							}
 						},
 						PvPIndicator = {
 							position = {
 								anchor = 'BOTTOMLEFT',
 								x = -80,
-								y = -3
+								y = 0
 							}
 						},
 						RaidRoleIndicator = {
 							position = {
 								anchor = 'BOTTOMLEFT',
 								x = -22,
-								y = -3
+								y = 0
 							}
 						}
 					},

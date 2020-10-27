@@ -1,5 +1,4 @@
-local SUI = SUI
-local L = SUI.L
+local SUI, L = SUI, SUI.L
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Classic')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
@@ -149,26 +148,30 @@ local function UnitFrameCallback(self, unit)
 		return
 	end
 
-	if not self.ring then
+	if not self.Art_Classic then
 		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\base_ring1' -- Player and Target
 		local circle = 'Interface\\AddOns\\SpartanUI\\images\\circle'
 		local ring = CreateFrame('Frame', nil, self)
-		ring:SetFrameStrata('LOW')
+		ring:SetFrameStrata('BACKGROUND')
 		ring:SetAllPoints(self.Portrait)
 		ring:SetFrameLevel(4)
 
 		ring.bg = ring:CreateTexture(nil, 'BACKGROUND')
+		ring.bg:SetParent(ring)
 		ring.bg:SetTexture(base_ring1)
 		if unit == 'target' then
 			ring.bg:SetTexCoord(1, 0, 0, 1)
 		end
 
-		-- ring.bg2 = ring:CreateTexture(nil, 'BACKGROUND')
-		-- ring.bg2:SetTexture(circle)
-		-- ring.bg2:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', -10, 10)
-		-- ring.bg2:SetPoint('BOTTOMRIGHT', self.Portrait, 'BOTTOMRIGHT', 10, -10)
-
-		self.ring = ring
+		self.Art_Classic = ring
+		local function StyleChange()
+			if SUI.DB.Unitframes.Style ~= 'Classic' then
+				self.Art_Classic:Hide()
+			elseif SUI.DB.Unitframes.Style == 'Classic' and not self.Art_Classic:IsVisible() then
+				self.Art_Classic:Show()
+			end
+		end
+		SUI:RegisterMessage('UNITFRAME_STYLE_CHANGED', StyleChange)
 	end
 	if unit == 'player' then
 		--Aiming for a 62x62 Portrait
@@ -176,13 +179,13 @@ local function UnitFrameCallback(self, unit)
 		self.Portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 72, 15)
 		self.Portrait:SetPoint('BOTTOMLEFT', self, 'BOTTOMRIGHT', 10, 0)
 
-		self.ring.bg:SetPoint('CENTER', self.ring, 'CENTER', -80, -3)
+		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', -80, 0)
 	elseif unit == 'target' then
 		self.Portrait:ClearAllPoints()
 		self.Portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', -72, 15)
 		self.Portrait:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', -10, 0)
 
-		self.ring.bg:SetPoint('CENTER', self.ring, 'CENTER', 80, -3)
+		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', 80, 0)
 	end
 end
 
