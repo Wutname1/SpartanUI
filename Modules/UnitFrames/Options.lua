@@ -1,4 +1,4 @@
-local _G, SUI, L = _G, SUI, SUI.L
+local _G, SUI, L, print = _G, SUI, SUI.L, SUI.print
 local module = SUI:GetModule('Component_UnitFrames')
 ----------------------------------------------------------------------------------------------------
 local anchorPoints = {
@@ -77,7 +77,15 @@ local function CreateOptionSet(frameName, order)
 				type = 'group',
 				order = 50,
 				childGroups = 'tree',
-				args = {}
+				args = {
+					execute = {
+						name = 'Text tag list',
+						type = 'execute',
+						func = function(info)
+							SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'TextTags')
+						end
+					}
+				}
 			}
 		}
 	}
@@ -897,7 +905,7 @@ local function AddIndicatorOptions(frameName)
 		['ThreatIndicator'] = 'Threat'
 	}
 
-	-- Text indicators
+	-- Text indicators TODO
 	-- ['StatusText'] = STATUS_TEXT,
 	-- ['SUI_RaidGroup'] = 'Raid group'
 
@@ -2117,6 +2125,33 @@ function module:InitializeOptions()
 			}
 		}
 	}
+	SUI.opt.args.Help.args.TextTags = {
+		name = 'Text tags',
+		type = 'group',
+		childGroups = 'tab',
+		args = {}
+	}
+	for k, v in pairs(module.TagList) do
+		if v.category and not SUI.opt.args.Help.args.TextTags.args[v.category] then
+			SUI.opt.args.Help.args.TextTags.args[v.category] = {
+				name = v.category,
+				type = 'group',
+				args = {}
+			}
+		end
+		SUI.opt.args.Help.args.TextTags.args[v.category].args[k] = {
+			name = v.description,
+			-- desc = 'desc',
+			type = 'input',
+			-- multiline = 'false',
+			width = 'full',
+			get = function(info)
+				return '[' .. k .. ']'
+			end,
+			set = function(info, val)
+			end
+		}
+	end
 
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames = SUI.opt.args.UnitFrames.args.BaseStyle.args.reset
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = 'Reset uniframe customizations'

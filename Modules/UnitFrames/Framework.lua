@@ -31,6 +31,116 @@ module.frames = {
 	containers = {}
 }
 module.Artwork = {}
+module.TagList = {
+	--Health
+	['curhp'] = {category = 'Health', description = 'Displays the current HP without decimals'},
+	['deficit:name'] = {category = 'Health', description = 'Displays the health as a deficit and the name at full health'},
+	['perhp'] = {
+		category = 'Health',
+		description = 'Displays percentage HP without decimals or the % sign. You can display the percent sign by adjusting the tag to [perhp<%].'
+	},
+	['maxhp'] = {category = 'Health', description = 'Displays max HP without decimals'},
+	['missinghp'] = {
+		category = 'Health',
+		description = 'Displays the missing health of the unit in whole numbers, when not at full health'
+	},
+	['health:current-short'] = {
+		category = 'Health',
+		description = 'Displays current HP rounded to the nearest Thousand or Million'
+	},
+	['health:current-dynamic'] = {
+		category = 'Health',
+		description = 'Displays current HP Rounded to the nearest Million or with commas below 1 million'
+	},
+	['health:current-formatted'] = {category = 'Health', description = 'Displays current HP with commas'},
+	['health:missing-formatted'] = {category = 'Health', description = 'Displays missing HP with commas'},
+	['health:max-formatted'] = {category = 'Health', description = 'Displays max HP with commas'},
+	--Power
+	['perpp'] = {category = 'Power', description = "Displays the unit's percentage power without decimals "},
+	['curpp'] = {category = 'Power', description = "Displays the unit's current power without decimals"},
+	['maxpp'] = {
+		category = 'Power',
+		description = 'Displays the max amount of power of the unit in whole numbers without decimals'
+	},
+	['missingpp'] = {
+		category = 'Power',
+		description = 'Displays the missing power of the unit in whole numbers when not at full power'
+	},
+	['power:current-formatted'] = {category = 'Power', description = 'Displays current power with commas'},
+	['power:missing-formatted'] = {category = 'Power', description = 'Displays missing power with commas'},
+	['power:max-formatted'] = {category = 'Power', description = 'Displays max power with commas'},
+	--Mana
+	['curmana'] = {category = 'Mana', description = 'Displays the current mana without decimals'},
+	['maxmana'] = {category = 'Mana', description = 'Displays the max amount of mana the unit can have'},
+	--Status
+	['status'] = {category = 'Status', description = 'Displays zzz, dead, ghost, offline'},
+	['afkdnd'] = {category = 'Status', description = 'Displays AFK or DND if the unit is afk or in Do not Disturb'},
+	['dead'] = {category = 'Status', description = 'Displays <DEAD> if the unit is dead'},
+	['offline'] = {category = 'Status', description = "Displays 'OFFLINE' if the unit is disconnected"},
+	['resting'] = {category = 'Status', description = "Displays 'zzz' if the unit is resting"},
+	--Classification
+	['classification'] = {
+		category = 'Classification',
+		description = "Displays the unit's classification (e.g. 'ELITE' and 'RARE')"
+	},
+	['plus'] = {
+		category = 'Classification',
+		description = "Displays the character '+' if the unit is an elite or rare-elite"
+	},
+	['rare'] = {category = 'Classification', description = "Displays 'Rare' when the unit is a rare or rareelite"},
+	['shortclassification'] = {
+		category = 'Classification',
+		description = "Displays the unit's classification in short form (e.g. '+' for ELITE and 'R' for RARE)"
+	},
+	--Classpower
+	['cpoints'] = {
+		category = 'Classpower',
+		description = 'Displays amount of combo points the player has (only for player, shows nothing on 0)'
+	},
+	--Colors
+	['difficulty'] = {
+		category = 'Colors',
+		description = 'Changes color of the next tag based on how difficult the unit is compared to the players level'
+	},
+	['powercolor'] = {category = 'Colors', description = 'Colors the power text based upon its type'},
+	['SUI_ColorClass'] = {category = 'Colors', description = 'Changes the text color based on the class'},
+	--PvP
+	['faction'] = {category = 'PvP', description = "Displays 'Alliance' or 'Horde'"},
+	['pvp'] = {category = 'PvP', description = "Displays 'PvP' if the unit is pvp flagged"},
+	--Party and Raid
+	['group'] = {category = 'Party and Raid', description = "Displays the group number the unit is in ('1' - '8')"},
+	['leader'] = {category = 'Party and Raid', description = "Displays 'L' if the unit is the group/raid leader"},
+	['leaderlong'] = {category = 'Party and Raid', description = "Displays 'Leader' if the unit is the group/raid leader"},
+	--Level
+	['level'] = {category = 'Level', description = 'Displays the level of the unit'},
+	['smartlevel'] = {category = 'Level', description = "Only display the unit's level if it is not the same as yours"},
+	--Names
+	['name'] = {category = 'Names', description = 'Displays the full name of the unit without any letter limitation'}
+}
+if SUI.IsRetail then
+	module.TagList['affix'] = {category = 'Miscellaneous', description = 'Displays low level critter mobs'}
+	module.TagList['specialization'] = {
+		category = 'Miscellaneous',
+		description = 'Displays your current specialization as text'
+	}
+	module.TagList['arcanecharges'] = {category = 'Classpower', description = 'Displays the arcane charges (Mage)'}
+	module.TagList['arenaspec'] = {category = 'PvP', description = 'Displays the area spec of an unit'}
+	module.TagList['chi'] = {category = 'Classpower', description = 'Displays the chi points (Monk)'}
+	module.TagList['faction'] = {category = 'PvP', description = "Displays 'Alliance' or 'Horde'"}
+	module.TagList['holypower'] = {category = 'Classpower', description = 'Displays the holy power (Paladin)'}
+	module.TagList['runes'] = {category = 'Classpower', description = 'Displays the runes (Death Knight)'}
+	module.TagList['soulshards'] = {category = 'Classpower', description = 'Displays the soulshards (Warlock)'}
+	module.TagList['threat'] = {
+		category = 'Threat',
+		description = 'Displays the current threat situation (Aggro is secure tanking, -- is losing threat and ++ is gaining threat)'
+	}
+	module.TagList['title'] = {category = 'Names', description = 'Displays player title'}
+	module.TagList['threatcolor'] = {
+		category = 'Colors',
+		description = "Changes the text color, depending on the unit's threat situation"
+	}
+end
+
 ----------------------------------------------------------------------------------------------------
 -- New Unitframe workflow
 --
