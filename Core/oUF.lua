@@ -368,20 +368,39 @@ do -- SUI_RaidGroup as an SUIUF module
 	end
 	SUIUF:AddElement('SUI_RaidGroup', Update, Enable, Disable)
 end
+-- AFK / DND status text, as an SUIUF module
+SUIUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
+SUIUF.Tags.Methods['afkdnd'] = function(unit)
+	if unit then
+		return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
+	end
+end
 
-do -- AFK / DND status text, as an SUIUF module
-	SUIUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
-	SUIUF.Tags.Methods['afkdnd'] = function(unit)
-		if unit then
-			return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
+if SUI.IsRetail then
+	SUIUF.Tags.Events['title'] = 'UNIT_NAME_UPDATE INSTANCE_ENCOUNTER_ENGAGE_UNIT'
+	SUIUF.Tags.Methods['title'] = function(unit)
+		if UnitIsPlayer(unit) then
+			return GetTitleName(GetCurrentTitle())
+		end
+	end
+	SUIUF.Tags.Events['specialization'] = 'PLAYER_TALENT_UPDATE'
+	SUIUF.Tags.Methods['specialization'] = function(unit)
+		if UnitIsPlayer(unit) then
+			local currentSpec = GetSpecialization()
+			if currentSpec then
+				local _, currentSpecName = GetSpecializationInfo(currentSpec)
+				if currentSpecName then
+					return currentSpecName
+				end
+			end
 		end
 	end
 end
 
 do --Health Formatting Tags
 	-- Current Health Short, as an SUIUF module
-	SUIUF.Tags.Events['curhpshort'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['curhpshort'] = function(unit)
+	SUIUF.Tags.Events['health:current-short'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:current-short'] = function(unit)
 		local tmp = getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 0) .. 'M'
@@ -392,8 +411,8 @@ do --Health Formatting Tags
 		return addon:comma_value(tmp)
 	end
 	-- Current Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['curhpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['curhpdynamic'] = function(unit)
+	SUIUF.Tags.Events['health:current-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:current-dynamic'] = function(unit)
 		local tmp = getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -401,9 +420,15 @@ do --Health Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
+	-- Current Health formatted, as an SUIUF module
+	SUIUF.Tags.Events['health:current-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:current-formatted'] = function(unit)
+		return addon:comma_value(getCurrentUnitHP(unit))
+	end
+
 	-- Total Health Short, as an SUIUF module
-	SUIUF.Tags.Events['maxhpshort'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['maxhpshort'] = function(unit)
+	SUIUF.Tags.Events['health:max-short'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:max-short'] = function(unit)
 		local tmp = getMaxUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 0) .. 'M'
@@ -414,8 +439,8 @@ do --Health Formatting Tags
 		return addon:comma_value(tmp)
 	end
 	-- Total Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['maxhpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['maxhpdynamic'] = function(unit)
+	SUIUF.Tags.Events['health:max-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:max-dynamic'] = function(unit)
 		local tmp = getMaxUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -423,9 +448,15 @@ do --Health Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
+	-- Total Health formatted, as an SUIUF module
+	SUIUF.Tags.Events['health:max-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:max-formatted'] = function(unit)
+		return addon:comma_value(getMaxUnitHP(unit))
+	end
+
 	-- Missing Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['missinghpdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['missinghpdynamic'] = function(unit)
+	SUIUF.Tags.Events['health:missing-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:missing-dynamic'] = function(unit)
 		local tmp = getMaxUnitHP(unit) - getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -433,27 +464,17 @@ do --Health Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Current Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['curhpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['curhpformatted'] = function(unit)
-		return addon:comma_value(getCurrentUnitHP(unit))
-	end
-	-- Total Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['maxhpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['maxhpformatted'] = function(unit)
-		return addon:comma_value(getMaxUnitHP(unit))
-	end
 	-- Missing Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['missinghpformatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['missinghpformatted'] = function(unit)
+	SUIUF.Tags.Events['health:missing-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['health:missing-formatted'] = function(unit)
 		return addon:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
 	end
 end
 
 do -- Mana Formatting Tags
 	-- Current Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['curppdynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['curppdynamic'] = function(unit)
+	SUIUF.Tags.Events['power:current-dynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['power:current-dynamic'] = function(unit)
 		local tmp = UnitPower(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -461,9 +482,15 @@ do -- Mana Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
+	-- Current Mana formatted, as an SUIUF module
+	SUIUF.Tags.Events['power:current-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['power:current-formatted'] = function(unit)
+		return addon:comma_value(UnitPower(unit))
+	end
+
 	-- Total Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['maxppdynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['maxppdynamic'] = function(unit)
+	SUIUF.Tags.Events['power:max-dynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['power:max-dynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -471,9 +498,15 @@ do -- Mana Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
+	-- Total Mana formatted, as an SUIUF module
+	SUIUF.Tags.Events['power:max-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['power:max-formatted'] = function(unit)
+		return addon:comma_value(UnitPowerMax(unit))
+	end
+
 	-- Missing Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['missingppdynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['missingppdynamic'] = function(unit)
+	SUIUF.Tags.Events['power:missing-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['power:missing-dynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit) - UnitPower(unit)
 		if tmp >= 1000000 then
 			return addon:round(tmp / 1000000, 1) .. 'M '
@@ -481,19 +514,9 @@ do -- Mana Formatting Tags
 			return addon:comma_value(tmp)
 		end
 	end
-	-- Current Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['curppformatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['curppformatted'] = function(unit)
-		return addon:comma_value(UnitPower(unit))
-	end
-	-- Total Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['maxppformatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['maxppformatted'] = function(unit)
-		return addon:comma_value(UnitPowerMax(unit))
-	end
-	-- Total Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['missingppformatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['missingppformatted'] = function(unit)
+	-- Missing Mana formatted, as an SUIUF module
+	SUIUF.Tags.Events['power:missing-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
+	SUIUF.Tags.Methods['power:missing-formatted'] = function(unit)
 		return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit))
 	end
 end

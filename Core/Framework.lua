@@ -1374,7 +1374,7 @@ local DBdefault = {
 						text = {
 							['1'] = {
 								enabled = true,
-								text = '[curhpformatted] / [maxhpformatted]',
+								text = '[health:current-formatted] / [health:max-formatted]',
 								position = {
 									anchor = 'CENTER',
 									x = 0,
@@ -1397,7 +1397,7 @@ local DBdefault = {
 						text = {
 							['1'] = {
 								enabled = false,
-								text = '[curppformatted] / [maxppformatted]'
+								text = '[power:current-formatted] / [power:max-formatted]'
 							},
 							['2'] = {
 								enabled = false,
