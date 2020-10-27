@@ -564,11 +564,33 @@ local DBdefault = {
 						},
 						Health = {
 							offset = 2,
-							height = 16
+							height = 16,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perhp]%',
+									position = {
+										anchor = 'LEFT',
+										x = -35,
+										y = 0
+									}
+								}
+							}
 						},
 						Power = {
 							offset = 2,
-							height = 14
+							height = 14,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perpp]%',
+									position = {
+										anchor = 'LEFT',
+										x = -35,
+										y = 0
+									}
+								}
+							}
 						},
 						Portrait = {
 							position = 'right'
@@ -576,15 +598,38 @@ local DBdefault = {
 						RestingIndicator = {
 							position = {
 								anchor = 'TOPRIGHT',
-								x = 20,
-								y = 20
+								x = 102,
+								y = 7
 							}
 						},
 						SUI_ClassIcon = {
+							size = 18,
+							position = {
+								anchor = 'TOPRIGHT',
+								x = 20,
+								y = 13
+							}
+						},
+						PvPIndicator = {
 							position = {
 								anchor = 'BOTTOMRIGHT',
-								x = 20,
-								y = 0
+								x = 80,
+								y = -3
+							}
+						},
+						RaidRoleIndicator = {
+							position = {
+								anchor = 'BOTTOMRIGHT',
+								x = 22,
+								y = -3
+							}
+						},
+						CombatIndicator = {
+							enabled = true,
+							position = {
+								anchor = 'TOPRIGHT',
+								x = 102,
+								y = 7
 							}
 						}
 					}
@@ -601,14 +646,56 @@ local DBdefault = {
 					elements = {
 						Health = {
 							offset = 2,
-							height = 16
+							height = 16,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perhp]%',
+									position = {
+										anchor = 'RIGHT',
+										x = 40
+									}
+								}
+							}
 						},
 						Power = {
 							offset = 2,
-							height = 16
+							height = 16,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perpp]%',
+									position = {
+										anchor = 'RIGHT',
+										x = 40
+									}
+								}
+							}
 						},
 						Castbar = {
 							height = 15
+						},
+						SUI_ClassIcon = {
+							size = 18,
+							position = {
+								anchor = 'TOPLEFT',
+								x = -22,
+								y = 13
+							}
+						},
+						PvPIndicator = {
+							position = {
+								anchor = 'BOTTOMLEFT',
+								x = -80,
+								y = -3
+							}
+						},
+						RaidRoleIndicator = {
+							position = {
+								anchor = 'BOTTOMLEFT',
+								x = -22,
+								y = -3
+							}
 						}
 					},
 					Buffs = {Mode = 'icons'},

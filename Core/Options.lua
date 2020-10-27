@@ -75,7 +75,7 @@ function module:OnInitialize()
 		}
 	end
 
-	SUI.opt.args['Help'] = {
+	SUI.opt.args.Help = {
 		name = 'Help',
 		type = 'group',
 		order = 900,

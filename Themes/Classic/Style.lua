@@ -149,8 +149,40 @@ local function UnitFrameCallback(self, unit)
 		return
 	end
 
+	if not self.ring then
+		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\base_ring1' -- Player and Target
+		local circle = 'Interface\\AddOns\\SpartanUI\\images\\circle'
+		local ring = CreateFrame('Frame', nil, self)
+		ring:SetFrameStrata('LOW')
+		ring:SetAllPoints(self.Portrait)
+		ring:SetFrameLevel(4)
+
+		ring.bg = ring:CreateTexture(nil, 'BACKGROUND')
+		ring.bg:SetTexture(base_ring1)
+		if unit == 'target' then
+			ring.bg:SetTexCoord(1, 0, 0, 1)
+		end
+
+		-- ring.bg2 = ring:CreateTexture(nil, 'BACKGROUND')
+		-- ring.bg2:SetTexture(circle)
+		-- ring.bg2:SetPoint('TOPLEFT', self.Portrait, 'TOPLEFT', -10, 10)
+		-- ring.bg2:SetPoint('BOTTOMRIGHT', self.Portrait, 'BOTTOMRIGHT', 10, -10)
+
+		self.ring = ring
+	end
 	if unit == 'player' then
+		--Aiming for a 62x62 Portrait
+		self.Portrait:ClearAllPoints()
+		self.Portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 72, 15)
+		self.Portrait:SetPoint('BOTTOMLEFT', self, 'BOTTOMRIGHT', 10, 0)
+
+		self.ring.bg:SetPoint('CENTER', self.ring, 'CENTER', -80, -3)
 	elseif unit == 'target' then
+		self.Portrait:ClearAllPoints()
+		self.Portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', -72, 15)
+		self.Portrait:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', -10, 0)
+
+		self.ring.bg:SetPoint('CENTER', self.ring, 'CENTER', 80, -3)
 	end
 end
 
@@ -232,7 +264,7 @@ function module:OnInitialize()
 		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-173,153',
 		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
 		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,173,153',
-		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,20,0'
+		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0'
 	}
 
 	CreateArtwork()
