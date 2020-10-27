@@ -374,10 +374,16 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		--PVPIndicator
-		for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
-			if elementName == 'PvPIndicator' and data[k] and self.PvPIndicator[k] == nil then
-				self.PvPIndicator[k] = self.PvPIndicator[v]
-			-- self.PvPIndicator:ForceUpdate('OnUpdate')
+		if elementName == 'PvPIndicator' then
+			for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
+				-- If badge is true but does not exsist create from backup
+				if data[k] and self.PvPIndicator[k] == nil then
+					self.PvPIndicator[k] = self.PvPIndicator[v]
+				elseif not data[k] and self.PvPIndicator[k] then
+					-- If badge is false but exsists remove it
+					self.PvPIndicator[k]:Hide()
+					self.PvPIndicator[k] = nil
+				end
 			end
 		end
 
