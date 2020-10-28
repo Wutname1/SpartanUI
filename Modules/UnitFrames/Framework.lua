@@ -384,7 +384,7 @@ function module:SetActiveStyle(style)
 	-- Update positions
 	module:PositionFrame()
 	--Send Custom change event
-	SUI:SendMessage('UNITFRAME_STYLE_CHANGED')
+	SUI.Event:SendEvent('UNITFRAME_STYLE_CHANGED')
 	-- Update all display elements
 	module:UpdateAll()
 end

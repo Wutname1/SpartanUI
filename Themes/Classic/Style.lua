@@ -3,7 +3,7 @@ local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Classic')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
-local InitRan = false
+local SkinnedFrames = {}
 
 local function CreateArtwork()
 	local plate = CreateFrame('Frame', 'Classic_ActionBarPlate', artFrame)
@@ -164,14 +164,7 @@ local function UnitFrameCallback(self, unit)
 		end
 
 		self.Art_Classic = ring
-		local function StyleChange()
-			if SUI.DB.Unitframes.Style ~= 'Classic' then
-				self.Art_Classic:Hide()
-			elseif SUI.DB.Unitframes.Style == 'Classic' and not self.Art_Classic:IsVisible() then
-				self.Art_Classic:Show()
-			end
-		end
-		SUI:RegisterMessage('UNITFRAME_STYLE_CHANGED', StyleChange)
+		SkinnedFrames[unit] = self
 	end
 	if unit == 'player' then
 		--Aiming for a 62x62 Portrait
@@ -271,6 +264,17 @@ function module:OnInitialize()
 	}
 
 	CreateArtwork()
+
+	local function StyleChange()
+		for unit, frame in pairs(SkinnedFrames) do
+			if SUI.DB.Unitframes.Style ~= 'Classic' then
+				frame.Art_Classic:Hide()
+			elseif SUI.DB.Unitframes.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
+				frame.Art_Classic:Show()
+			end
+		end
+	end
+	SUI.Event:RegisterEvent('UNITFRAME_STYLE_CHANGED', StyleChange)
 end
 
 function module:OnEnable()

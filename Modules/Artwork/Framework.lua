@@ -159,7 +159,7 @@ function module:SetActiveStyle(style)
 	styleArt = _G['SUI_Art_' .. SUI.DB.Artwork.Style]
 
 	--Send Custom change event
-	SUI:SendMessage('ARTWORK_STYLE_CHANGED')
+	SUI.Event:SendEvent('ARTWORK_STYLE_CHANGED')
 
 	-- Update core elements based on new style
 	StyleUpdate()
