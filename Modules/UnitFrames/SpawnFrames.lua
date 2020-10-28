@@ -44,7 +44,14 @@ local elementList = {
 	'ThreatIndicator',
 	'SUI_RaidGroup'
 }
-local NoBulkUpdate = {'Range', 'HealthPrediction'}
+local NoBulkUpdate = {
+	'Range',
+	'HealthPrediction',
+	'Health',
+	'HealthPrediction',
+	'Power',
+	'Castbar'
+}
 local IndicatorList = {
 	'LeaderIndicator',
 	'RestingIndicator',
