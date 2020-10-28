@@ -313,7 +313,7 @@ function module:SetupWizard(RequiredPagesOnly)
 	module.window:HookScript(
 		'OnShow',
 		function()
-			if CurPage > (TotalPage + 1) then
+			if PageDisplayed > (TotalPageCount + 1) then
 				module.window:Hide()
 			end
 		end
