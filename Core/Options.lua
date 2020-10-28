@@ -261,7 +261,7 @@ function module:OnInitialize()
 
 	-- List Components
 	for name, submodule in SUI:IterateModules() do
-		if (string.match(name, 'Component_')) then
+		if (string.match(name, 'Component_')) and not submodule.HideModule then
 			local RealName = string.sub(name, 11)
 			local Displayname = string.sub(name, 11)
 			if submodule.DisplayName then

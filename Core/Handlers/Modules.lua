@@ -85,7 +85,10 @@ local function ModuleSelectionPage()
 
 			-- List Components
 			for _, submodule in pairs(SUI.orderedModules) do
-				if (string.match(submodule.name, 'Component_')) or (string.match(submodule.name, 'Module_')) then
+				if
+					((string.match(submodule.name, 'Component_')) or (string.match(submodule.name, 'Module_'))) and
+						not submodule.HideModule
+				 then
 					local RealName = GetName(submodule)
 					-- Get modules display name
 					local Displayname = submodule.DisplayName or RealName
