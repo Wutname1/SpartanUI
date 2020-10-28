@@ -225,7 +225,7 @@ local function AddGeneralOptions(frameName)
 					camDistanceScale = {
 						name = 'Camera Distance Scale',
 						type = 'range',
-						min = -1,
+						min = .01,
 						max = 5,
 						step = .1,
 						order = 22,
@@ -1028,8 +1028,8 @@ local function AddIndicatorOptions(frameName)
 							name = 'X Axis',
 							type = 'range',
 							order = 1,
-							min = -100,
-							max = 100,
+							min = -200,
+							max = 200,
 							step = 1,
 							get = function(info)
 								return module.CurrentSettings[frameName].elements[key].position.x
@@ -1047,8 +1047,8 @@ local function AddIndicatorOptions(frameName)
 							name = 'Y Axis',
 							type = 'range',
 							order = 2,
-							min = -100,
-							max = 100,
+							min = -200,
+							max = 200,
 							step = 1,
 							get = function(info)
 								return module.CurrentSettings[frameName].elements[key].position.y
@@ -1265,8 +1265,8 @@ local function AddDynamicText(frameName, element, count)
 						name = 'X Axis',
 						type = 'range',
 						order = 1,
-						min = -100,
-						max = 100,
+						min = -200,
+						max = 200,
 						step = 1,
 						get = function(info)
 							return module.CurrentSettings[frameName].elements[element].text[count].position.x
@@ -1293,8 +1293,8 @@ local function AddDynamicText(frameName, element, count)
 						name = 'Y Axis',
 						type = 'range',
 						order = 2,
-						min = -100,
-						max = 100,
+						min = -200,
+						max = 200,
 						step = 1,
 						get = function(info)
 							return module.CurrentSettings[frameName].elements[element].text[count].position.y
@@ -1513,8 +1513,8 @@ local function AddTextOptions(frameName)
 							name = 'X Axis',
 							type = 'range',
 							order = 1,
-							min = -100,
-							max = 100,
+							min = -200,
+							max = 200,
 							step = 1,
 							get = function(info)
 								return module.CurrentSettings[frameName].elements[key].position.x
@@ -1532,8 +1532,8 @@ local function AddTextOptions(frameName)
 							name = 'Y Axis',
 							type = 'range',
 							order = 2,
-							min = -100,
-							max = 100,
+							min = -200,
+							max = 200,
 							step = 1,
 							get = function(info)
 								return module.CurrentSettings[frameName].elements[key].position.y
