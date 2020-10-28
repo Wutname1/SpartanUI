@@ -44,6 +44,7 @@ local elementList = {
 	'ThreatIndicator',
 	'SUI_RaidGroup'
 }
+local NoBulkUpdate = {'Range', 'HealthPrediction'}
 local IndicatorList = {
 	'LeaderIndicator',
 	'RestingIndicator',
@@ -255,9 +256,7 @@ local function CreateUnitFrame(self, unit)
 					end
 				end
 				-- SUI Update (size, position, etc)
-				if SUI:isInTable(IndicatorList, element) then
-					self:ElementUpdate(element)
-				end
+				self:ElementUpdate(element)
 			end
 		end
 
@@ -345,6 +344,10 @@ local function CreateUnitFrame(self, unit)
 			return
 		end
 
+		if SUI:isInTable(NoBulkUpdate, elementName) then
+			return
+		end
+
 		if not data then
 			SUI:Error('NO SETTINGS FOR "' .. unit .. '" element: ' .. elementName)
 			return
@@ -425,8 +428,12 @@ local function CreateUnitFrame(self, unit)
 
 		-- General
 		if not InCombatLockdown() then
+			if self.scale then
+				self:scale(module.CurrentSettings[unit].scale, true)
+			else
+				self:SetScale(module.CurrentSettings[unit].scale)
+			end
 			self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
-			self:SetScale(module.CurrentSettings[unit].scale)
 		end
 
 		if self.Portrait3D then
