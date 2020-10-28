@@ -13,8 +13,8 @@ local function SetupTweaks()
 	local SetupWizard = SUI:GetModule('SetupWizard')
 	local LibsToolkit = {
 		ID = 'LibsToolkit',
-		Name = "Wutname1's Tweaks",
-		SubTitle = '',
+		Name = "Lib's Toolkit",
+		SubTitle = "Lib's Toolkit",
 		Desc1 = 'Below are a collection of tweaks I find myself making often, so I decided to add them in here.',
 		Display = function()
 			local window = SetupWizard.window
