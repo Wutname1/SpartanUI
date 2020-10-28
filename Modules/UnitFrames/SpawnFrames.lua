@@ -397,6 +397,22 @@ local function CreateUnitFrame(self, unit)
 			if data.type == '3D' then
 				self.Portrait = self.Portrait3D
 				self.Portrait3D:Show()
+				if (self.Portrait:IsObjectType('PlayerModel')) then
+					self.Portrait:SetAlpha(data.alpha)
+
+					local rotation = data.rotation
+
+					if self.Portrait:GetFacing() ~= (rotation / 57.29573671972358) then
+						self.Portrait:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
+					end
+
+					self.Portrait:SetCamDistanceScale(data.camDistanceScale)
+					self.Portrait:SetPosition(data.xOffset, data.xOffset, data.yOffset)
+
+					--Refresh model to fix incorrect display issues
+					self.Portrait:ClearModel()
+					self.Portrait:SetUnit(unit)
+				end
 			else
 				self.Portrait = self.Portrait2D
 				self.Portrait2D:Show()
@@ -616,9 +632,9 @@ local function CreateUnitFrame(self, unit)
 		Portrait3D:SetFrameStrata('BACKGROUND')
 		Portrait3D:SetFrameLevel(2)
 		Portrait3D.PostUpdate = function(unit, event, shouldUpdate)
-			self:SetAlpha(elements.Portrait.alpha)
+			if (self:IsObjectType('PlayerModel')) then
+				self:SetAlpha(elements.Portrait.alpha)
 
-			if (shouldUpdate) then
 				local rotation = elements.Portrait.rotation
 
 				if self:GetFacing() ~= (rotation / 57.29573671972358) then
