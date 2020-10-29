@@ -354,7 +354,7 @@ local function WelcomePage()
 			local profiles = {}
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
 			for _, v in pairs(SUI.SpartanUIDB:GetProfiles(tmpprofiles)) do
-				if not (nocurrent and v == currentProfile) then
+				if v ~= currentProfile then
 					profiles[#profiles + 1] = {text = v, value = v}
 				end
 			end
