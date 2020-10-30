@@ -631,6 +631,20 @@ function module:BuildOptions()
 		['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 	}
 
+	local function toInt(val)
+		if val then
+			return 1
+		end
+		return 0
+	end
+	local function toBool(val)
+		if tonumber(val) == 1 then
+			return true
+		else
+			return false
+		end
+	end
+
 	SUI.opt.args['ModSetting'].args['Nameplates'] = {
 		type = 'group',
 		name = L['Nameplates'],
@@ -1121,6 +1135,55 @@ function module:BuildOptions()
 								end
 							}
 						}
+					}
+				}
+			},
+			Display = {
+				name = 'Blizzard display options',
+				type = 'group',
+				order = 300,
+				args = {
+					nameplateShowAll = {
+						name = UNIT_NAMEPLATES_AUTOMODE,
+						desc = OPTION_TOOLTIP_UNIT_NAMEPLATES_AUTOMODE,
+						type = 'toggle',
+						width = 'double',
+						get = function(info)
+							return toBool(GetCVar('nameplateShowAll'))
+						end,
+						set = function(info, val)
+							SetCVar('nameplateShowAll', toInt(val))
+						end
+					},
+					nameplateShowSelf = {
+						name = DISPLAY_PERSONAL_RESOURCE,
+						desc = OPTION_TOOLTIP_UNIT_NAMEPLATES_AUTOMODE,
+						type = 'toggle',
+						width = 'double',
+						get = function(info)
+							return toBool(GetCVar('nameplateShowSelf'))
+						end,
+						set = function(info, val)
+							SetCVar('nameplateShowSelf', toInt(val))
+						end
+					},
+					nameplateMotion = {
+						name = UNIT_NAMEPLATES_TYPES,
+						desc = function(info)
+							if GetCVar('nameplateMotion') == '1' then
+								return UNIT_NAMEPLATES_TYPE_TOOLTIP_2
+							else
+								return UNIT_NAMEPLATES_TYPE_TOOLTIP_1
+							end
+						end,
+						type = 'select',
+						values = {['1'] = UNIT_NAMEPLATES_TYPE_2, ['0'] = UNIT_NAMEPLATES_TYPE_1},
+						get = function(info)
+							return GetCVar('nameplateMotion')
+						end,
+						set = function(info, val)
+							SetCVar('nameplateMotion', tonumber(val))
+						end
 					}
 				}
 			}
