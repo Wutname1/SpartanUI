@@ -263,7 +263,7 @@ local function BTMover(BarName, DisplayName)
 		if scaleData[BarName] then
 			bar:SetScale(scaleData[BarName])
 		end
-		MoveIt:CreateMover(bar, BarName, DisplayName)
+		MoveIt:CreateMover(bar, BarName, DisplayName, nil, 'Bartender4')
 		MoveIt:UpdateMover(BarName, bar.overlay, true)
 	end
 end
@@ -293,7 +293,7 @@ local function AddMovers()
 			if scaleData[BarName] then
 				bar:SetScale(scaleData[BarName])
 			end
-			MoveIt:CreateMover(bar, BarName, 'Bar ' .. i)
+			MoveIt:CreateMover(bar, BarName, 'Bar ' .. i, nil, 'Bartender4')
 			MoveIt:UpdateMover(BarName, bar.overlay, true)
 		end
 	end
@@ -543,7 +543,7 @@ local function OnEnable()
 		--SUI Stuff
 		RefreshConfig()
 		local MoveIt = SUI:GetModule('Component_MoveIt')
-		MoveIt:CreateMover(bar, bar:GetName(), 'Bar ' .. id)
+		MoveIt:CreateMover(bar, bar:GetName(), 'Bar ' .. id, nil, 'Bartender4')
 		MoveIt:UpdateMover(bar:GetName(), bar.overlay, true)
 
 		if not Bartender4.Locked then

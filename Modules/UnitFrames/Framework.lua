@@ -365,15 +365,15 @@ function module:OnEnable()
 		[6] = 'player'
 	}
 	for _, b in pairs(FramesList) do
-		MoveIt:CreateMover(module.frames[b], b)
+		MoveIt:CreateMover(module.frames[b], b, nil, nil, 'Unit frames')
 	end
 
 	-- Create Party & Raid Mover
-	MoveIt:CreateMover(module.frames.containers.party, 'Party')
-	MoveIt:CreateMover(module.frames.containers.raid, 'Raid')
-	MoveIt:CreateMover(module.frames.containers.boss, 'Boss')
+	MoveIt:CreateMover(module.frames.containers.party, 'Party', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(module.frames.containers.raid, 'Raid', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(module.frames.containers.boss, 'Boss', nil, nil, 'Unit frames')
 	if SUI.IsRetail then
-		MoveIt:CreateMover(module.frames.containers.arena, 'Arena')
+		MoveIt:CreateMover(module.frames.containers.arena, 'Arena', nil, nil, 'Unit frames')
 	end
 end
 
