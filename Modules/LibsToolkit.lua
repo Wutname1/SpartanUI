@@ -25,15 +25,16 @@ local function SetupTweaks()
 			SetCVar('nameplateShowSelf', 0)
 			SetCVar('autoLootDefault', 1)
 			SetCVar('nameplateShowAll', 1)
+			SetCVar('nameplateMotion', 0)
 
 			--Container
 			local LibsToolkit = CreateFrame('Frame', nil)
 			LibsToolkit:SetParent(SUI_Win)
 			LibsToolkit:SetAllPoints(SUI_Win)
 			if SUI:IsModuleEnabled('LibsToolkit') then
-				local Nameplate = StdUi:Checkbox(LibsToolkit, 'Disable personal nameplate', 240, 20)
+				local Nameplate = StdUi:Checkbox(LibsToolkit, 'Disable ' .. DISPLAY_PERSONAL_RESOURCE, 240, 20)
 				local AutoLoot = StdUi:Checkbox(LibsToolkit, 'Enable AutoLoot', 240, 20)
-				local ShowNameplates = StdUi:Checkbox(LibsToolkit, 'Enable Always show nameplates', 240, 20)
+				local ShowNameplates = StdUi:Checkbox(LibsToolkit, 'Enable ' .. UNIT_NAMEPLATES_AUTOMODE, 240, 20)
 				local DisableTutorials = StdUi:Checkbox(LibsToolkit, 'Disable ALL tutorials', 240, 20)
 				local DisableTutorialsWarning = StdUi:Label(LibsToolkit, 'For experienced players only')
 				DisableTutorialsWarning:SetTextColor(1, 0, 0, .7)
@@ -234,6 +235,7 @@ local function SetupTweaks()
 							SetCVarBitfield('closedInfoFrames', v, true)
 						end
 					end
+					SetCVar('showTutorials', 0)
 				end
 			end
 		end
