@@ -2608,9 +2608,11 @@ function SUI:TableToLuaString(inTable)
 	return ret
 end
 
-function SUI:round(num) -- rounds a number to 2 decimal places
+function SUI:round(num, pos)
 	if num then
-		return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
+		local mult = 10 ^ (pos or 2)
+		return floor(num * mult + 0.5) / mult
+	-- return floor((num * 10 ^ 2) + 0.5) / (10 ^ 2)
 	end
 end
 

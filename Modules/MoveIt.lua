@@ -13,6 +13,23 @@ local colors = {
 local MoverWatcher = CreateFrame('Frame', nil, UIParent)
 local MoveEnabled = false
 local coordFrame
+local anchorPoints = {
+	['TOPLEFT'] = 'TOP LEFT',
+	['TOP'] = 'TOP',
+	['TOPRIGHT'] = 'TOP RIGHT',
+	['RIGHT'] = 'RIGHT',
+	['CENTER'] = 'CENTER',
+	['LEFT'] = 'LEFT',
+	['BOTTOMLEFT'] = 'BOTTOM LEFT',
+	['BOTTOM'] = 'BOTTOM',
+	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
+}
+local dynamicAnchorPoints = {
+	['UIParent'] = 'Blizzard UI',
+	['SpartanUI'] = 'Spartan UI',
+	['SUI_BottomAnchor'] = 'SpartanUI Bottom Anchor',
+	['SUI_TopAnchor'] = 'SpartanUI Top Anchor'
+}
 
 local function GetPoints(obj)
 	local point, anchor, secondaryPoint, x, y = obj:GetPoint()
@@ -36,142 +53,142 @@ local function CreateGroup(groupName)
 end
 
 local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
-	-- local anchorPoints = {
-	-- 	['TOPLEFT'] = 'TOP LEFT',
-	-- 	['TOP'] = 'TOP',
-	-- 	['TOPRIGHT'] = 'TOP RIGHT',
-	-- 	['RIGHT'] = 'RIGHT',
-	-- 	['CENTER'] = 'CENTER',
-	-- 	['LEFT'] = 'LEFT',
-	-- 	['BOTTOMLEFT'] = 'BOTTOM LEFT',
-	-- 	['BOTTOM'] = 'BOTTOM',
-	-- 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
-	-- }
-	-- local dynamicAnchorPoints = {
-	-- 	['UIParent'] = 'Blizzard UI',
-	-- 	['SpartanUI'] = 'Spartan UI',
-	-- 	['SUI_BottomAnchor'] = 'SpartanUI Bottom Anchor',
-	-- 	['SUI_TopAnchor'] = 'SpartanUI Top Anchor'
-	-- }
 	CreateGroup(groupName)
 	SUI.opt.args.Movers.args[groupName].args[MoverName] = {
 		name = DisplayName,
 		type = 'group',
 		inline = true,
 		args = {
-			-- 		position = {
-			-- 			name = 'Position',
-			-- 			type = 'group',
-			-- 			inline = true,
-			-- 			order = 2,
-			-- 			args = {
-			-- 				x = {
-			-- 					name = 'X Offset',
-			-- 					order = 1,
-			-- 					type = 'input',
-			-- 					dialogControl = 'NumberEditBox',
-			-- 					get = function()
-			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-			-- 						return x
-			-- 					end,
-			-- 					set = function(info, val)
-			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-			-- 						x = tonumber(val)
-			-- 						MoverFrame.parent:position(point, anchor, secondaryPoint, x, y)
-			-- 					end
-			-- 				},
-			-- 				y = {
-			-- 					name = 'Y Offset',
-			-- 					order = 2,
-			-- 					type = 'input',
-			-- 					dialogControl = 'NumberEditBox',
-			-- 					get = function()
-			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-			-- 						return y
-			-- 					end,
-			-- 					set = function(info, val)
-			-- 						--Fetch current position
-			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-			-- 						-- Move the frame and update the DB
-			-- 						MoverFrame:ClearAllPoints()
-			-- 						MoverFrame:SetPoint(point, anchor, secondaryPoint, x, val)
-			-- 						-- SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, x, val)
-			-- 					end
-			-- 				},
-			-- 				MyAnchorPoint = {
-			-- 					order = 3,
-			-- 					name = 'point',
-			-- 					type = 'select',
-			-- 					values = anchorPoints,
-			-- 					get = function()
-			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-			-- 						return point
-			-- 					end,
-			-- 					set = function(info, val)
-			-- 					end
-			-- 				},
-			-- 				AnchorTo = {
-			-- 					order = 4,
-			-- 					name = 'anchor',
-			-- 					type = 'select',
-			-- 					values = dynamicAnchorPoints,
-			-- 					get = function()
-			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-			-- 						if not dynamicAnchorPoints[anchor] then
-			-- 							dynamicAnchorPoints[anchor] = anchor
-			-- 						end
-			-- 						return anchor
-			-- 					end,
-			-- 					set = function(info, val)
-			-- 					end
-			-- 				},
-			-- 				ItsAnchorPoint = {
-			-- 					order = 5,
-			-- 					name = 'secondaryPoint',
-			-- 					type = 'select',
-			-- 					values = anchorPoints,
-			-- 					get = function()
-			-- 						local point, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
-			-- 						return secondaryPoint
-			-- 					end,
-			-- 					set = function(info, val)
-			-- 					end
-			-- 				}
-			-- 			}
-			-- 		},
+			position = {
+				name = 'Position',
+				type = 'group',
+				inline = true,
+				order = 2,
+				args = {
+					x = {
+						name = 'X Offset',
+						order = 1,
+						type = 'input',
+						dialogControl = 'NumberEditBox',
+						get = function()
+							return tostring(select(4, strsplit(',', GetPoints(MoverFrame))))
+						end,
+						set = function(info, val)
+							--Fetch current position
+							local point, anchor, secondaryPoint, _, y = strsplit(',', GetPoints(MoverFrame))
+							-- Move the frame and update the DB
+							MoverFrame.parent:position(point, anchor, secondaryPoint, tonumber(val), y, true)
+							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, val, y)
+						end
+					},
+					y = {
+						name = 'Y Offset',
+						order = 2,
+						type = 'input',
+						dialogControl = 'NumberEditBox',
+						get = function()
+							return tostring(select(5, strsplit(',', GetPoints(MoverFrame))))
+						end,
+						set = function(info, val)
+							--Fetch current position
+							local point, anchor, secondaryPoint, x, _ = strsplit(',', GetPoints(MoverFrame))
+							-- Move the frame and update the DB
+							MoverFrame.parent:position(point, anchor, secondaryPoint, x, tonumber(val), true)
+							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, x, val)
+						end
+					},
+					MyAnchorPoint = {
+						order = 3,
+						name = 'point',
+						type = 'select',
+						values = anchorPoints,
+						get = function()
+							return tostring(select(1, strsplit(',', GetPoints(MoverFrame))))
+						end,
+						set = function(info, val)
+							--Fetch current position
+							local _, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+							-- Move the frame and update the DB
+							MoverFrame.parent:position(val, anchor, val, x, y, true)
+							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', val, anchor, secondaryPoint, x, y)
+						end
+					},
+					AnchorTo = {
+						order = 4,
+						name = 'anchor',
+						type = 'select',
+						values = dynamicAnchorPoints,
+						get = function()
+							local anchor = tostring(select(2, strsplit(',', GetPoints(MoverFrame))))
+							if not dynamicAnchorPoints[anchor] then
+								dynamicAnchorPoints[anchor] = anchor
+							end
+							return anchor
+						end,
+						set = function(info, val)
+							--Fetch current position
+							local point, _, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
+							-- Move the frame and update the DB
+							MoverFrame.parent:position(point, (_G[val] or UIParent), secondaryPoint, x, y, true)
+							SUI.DB.MoveIt.movers[MoverName].MovedPoints =
+								format('%s,%s,%s,%s,%s', point, (_G[val] or UIParent):GetName(), secondaryPoint, x, y)
+						end
+					},
+					ItsAnchorPoint = {
+						order = 5,
+						name = 'secondaryPoint',
+						type = 'select',
+						values = anchorPoints,
+						get = function()
+							return tostring(select(3, strsplit(',', GetPoints(MoverFrame))))
+						end,
+						set = function(info, val)
+							--Fetch current position
+							local point, anchor, _, x, y = strsplit(',', GetPoints(MoverFrame))
+							-- Move the frame and update the DB
+							MoverFrame.parent:position(point, anchor, val, x, y, true)
+							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, val, x, y)
+						end
+					}
+				}
+			},
 			ResetPosition = {
 				name = 'Reset Position',
 				type = 'execute',
 				order = 3,
 				func = function()
-					-- Mover
+					MoveIt:Reset(MoverName, true)
 				end
 			},
 			scale = {
-				name = 'Scale',
+				name = '',
 				type = 'group',
 				inline = true,
 				order = 4,
 				args = {
 					scale = {
-						name = 'Current',
-						type = 'input',
+						name = 'Scale',
+						type = 'range',
 						order = 1,
+						min = .01,
+						max = 1,
+						width = 'double',
+						step = .01,
 						get = function()
-							return (MoverFrame:GetScale() or 1)
+							return SUI:round(MoverFrame:GetScale(), 2)
 						end,
 						set = function(info, val)
-							MoverFrame:Scale(val)
+							SUI.DB.MoveIt.movers[MoverName].AdjustedScale = val
+							MoverFrame.parent:scale(val)
 						end
 					},
 					ResetScale = {
 						name = 'Reset Scale',
 						type = 'execute',
-						order = 100,
+						order = 2,
 						func = function()
-							MoverFrame:SetScale(MoverFrame.defaultScale)
-							MoverFrame.parent:SetScale(MoverFrame.defaultScale)
-							SUI.DB.MoveIt.movers[name].AdjustedScale = false
+							MoverFrame.parent:scale()
+							SUI.DB.MoveIt.movers[MoverName].AdjustedScale = false
 						end
 					}
 				}
@@ -438,7 +455,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 	local Scale = function(self, ammount)
 		local Current = self:GetScale()
-		local NewScale = Current + ammount
+		local NewScale = Current + (ammount or 0)
 
 		self:SetScale(NewScale)
 		self.parent:SetScale(NewScale)
@@ -595,8 +612,8 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			f.defaultScale = scale
 		end
 
-		f:SetScale(max(scale, .01))
-		parent:SetScale(max(scale, .01))
+		f:SetScale(max((scale or f.defaultScale), .01))
+		parent:SetScale(max((scale or f.defaultScale), .01))
 		if scale == f.defaultScale then
 			ScaledText:Hide()
 		else
