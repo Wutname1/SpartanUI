@@ -2133,8 +2133,8 @@ local DBdefault = {
 			Health = {
 				height = 5,
 				colorTapping = true,
-				colorReaction = false,
-				colorSmooth = true,
+				colorReaction = true,
+				colorSmooth = false,
 				colorClass = true
 			},
 			Power = {

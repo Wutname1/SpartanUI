@@ -661,32 +661,25 @@ function module:BuildOptions()
 						name = 'Background',
 						type = 'group',
 						order = 1,
+						get = function(info)
+							return SUI.DB.NamePlates.elements.Background[info[#info]]
+						end,
+						set = function(info, val)
+							SUI.DB.NamePlates.elements.Background[info[#info]] = val
+							module:UpdateNameplates()
+						end,
 						args = {
-							Enabled = {
+							enabled = {
 								name = 'Enabled',
 								type = 'toggle',
 								width = 'full',
-								order = 1,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Background.enabled
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Background.enabled = val
-									module:UpdateNameplates()
-								end
+								order = 1
 							},
-							bgtype = {
+							type = {
 								name = 'Type',
 								order = 2,
 								type = 'select',
-								values = {['artwork'] = 'Artwork', ['solid'] = 'Solid'},
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Background.type
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Background.type = val
-									module:UpdateNameplates()
-								end
+								values = {['artwork'] = 'Artwork', ['solid'] = 'Solid'}
 							},
 							colorMode = {
 								name = 'Color mode',
@@ -695,14 +688,7 @@ function module:BuildOptions()
 								values = {
 									['faction'] = 'Faction',
 									['reaction'] = 'Reaction'
-								},
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Background.colorMode
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Background.colorMode = val
-									module:UpdateNameplates()
-								end
+								}
 							},
 							alpha = {
 								name = 'Alpha',
@@ -711,35 +697,27 @@ function module:BuildOptions()
 								order = 4,
 								min = 0,
 								max = 1,
-								step = .01,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Background.alpha
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Background.alpha = val
-									module:UpdateNameplates()
-								end
+								step = .01
 							}
 						}
 					},
 					HealthBar = {
 						name = L['Health bar'],
 						type = 'group',
-						-- inline = true,
 						order = 3,
+						get = function(info)
+							return SUI.DB.NamePlates.elements.Health[info[#info]]
+						end,
+						set = function(info, val)
+							SUI.DB.NamePlates.elements.Health[info[#info]] = val
+							module:UpdateNameplates()
+						end,
 						args = {
 							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
-								order = 1,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Health.enabled
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Health.enabled = val
-									module:UpdateNameplates()
-								end
+								order = 1
 							},
 							height = {
 								name = L['Height'],
@@ -748,82 +726,51 @@ function module:BuildOptions()
 								min = 1,
 								max = 30,
 								step = 1,
-								order = 10,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Health.height
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Health.height = val
-								end
+								order = 10
 							},
 							colorTapping = {
 								name = L['Grey out tapped targets'],
 								type = 'toggle',
 								width = 'full',
-								order = 20,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Health.colorTapping
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Health.colorTapping = val
-								end
+								order = 20
 							},
 							colorReaction = {
 								name = L['Color based on reaction'],
 								type = 'toggle',
 								width = 'full',
-								order = 30,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Health.colorReaction
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Health.colorReaction = val
-								end
+								order = 30
 							},
 							colorSmooth = {
 								name = 'Color by health remaning',
 								type = 'toggle',
 								width = 'full',
-								order = 30,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Health.colorSmooth
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Health.colorSmooth = val
-								end
+								order = 30
 							},
 							colorClass = {
 								name = L['Color based on class'],
 								type = 'toggle',
 								width = 'full',
-								order = 40,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Health.colorClass
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Health.colorClass = val
-								end
+								order = 40
 							}
 						}
 					},
 					PowerBar = {
 						name = L['Power bar'],
 						type = 'group',
-						-- inline = true,
 						order = 4,
+						get = function(info)
+							return SUI.DB.NamePlates.elements.Power[info[#info]]
+						end,
+						set = function(info, val)
+							SUI.DB.NamePlates.elements.Power[info[#info]] = val
+							module:UpdateNameplates()
+						end,
 						args = {
 							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
-								order = 1,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Power.enabled
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Power.enabled = val
-									module:UpdateNameplates()
-								end
+								order = 1
 							},
 							height = {
 								name = L['Height'],
@@ -832,73 +779,48 @@ function module:BuildOptions()
 								min = 1,
 								max = 15,
 								step = 1,
-								order = 10,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Power.height
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Power.height = val
-								end
+								order = 10
 							}
 						}
 					},
 					CastBar = {
 						name = L['Cast bar'],
 						type = 'group',
-						-- inline = true,
 						order = 5,
+						get = function(info)
+							return SUI.DB.NamePlates.elements.Castbar[info[#info]]
+						end,
+						set = function(info, val)
+							SUI.DB.NamePlates.elements.Castbar[info[#info]] = val
+							module:UpdateNameplates()
+						end,
 						args = {
 							enabled = {
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
-								order = 1,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Castbar.enabled
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Castbar.enabled = val
-									module:UpdateNameplates()
-								end
+								order = 1
 							},
-							Height = {
+							height = {
 								name = L['Height'],
 								type = 'range',
 								width = 'full',
 								min = 1,
 								max = 15,
 								step = 1,
-								order = 10,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Castbar.height
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Castbar.height = val
-								end
+								order = 10
 							},
-							Text = {
+							text = {
 								name = L['Show text'],
 								type = 'toggle',
 								width = 'full',
-								order = 20,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Castbar.text
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Castbar.text = val
-								end
+								order = 20
 							},
 							FlashOnInterruptible = {
 								name = L['Flash on interruptible cast'],
 								type = 'toggle',
 								width = 'full',
-								order = 30,
-								get = function(info)
-									return SUI.DB.NamePlates.elements.Castbar.FlashOnInterruptible
-								end,
-								set = function(info, val)
-									SUI.DB.NamePlates.elements.Castbar.FlashOnInterruptible = val
-								end
+								order = 30
 							}
 						}
 					}
