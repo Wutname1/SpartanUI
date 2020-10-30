@@ -429,8 +429,8 @@ function module:SetupWizard()
 					SUI.DB.TauntWatcher[key] = object:GetChecked()
 				end
 				SUI.DB.TauntWatcher.text = TauntWatch.tbAnnounceText:GetText()
-				SUI.DB.TauntWatcher.FirstLaunch = false
 			end
+			SUI.DB.TauntWatcher.FirstLaunch = false
 		end,
 		Skip = function()
 			SUI.DB.TauntWatcher.FirstLaunch = false
