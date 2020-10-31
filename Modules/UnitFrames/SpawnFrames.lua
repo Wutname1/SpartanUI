@@ -1286,8 +1286,8 @@ function module:SpawnFrames()
 		end
 	end
 
-	for _, group in ipairs({'boss', 'arena'}) do
-		if SUI.IsRetail then
+	if SUI.IsRetail then
+		for _, group in ipairs({'boss', 'arena'}) do
 			local grpFrame = CreateFrame('Frame')
 			for i = 1, (group == 'boss' and MAX_BOSS_FRAMES or 3) do
 				grpFrame[i] = SUIUF:Spawn(group .. i, 'SUI_' .. group .. i)
@@ -1420,32 +1420,34 @@ function module:SpawnFrames()
 	end
 
 	for _, group in ipairs({'raid', 'party', 'boss', 'arena'}) do
-		local function GroupFrameUpdateAll(self)
-			if module.CurrentSettings[group].enabled then
-				-- if not Header.isForced then
-				-- 	RegisterStateDriver(Header, 'visibility', visibility)
-				-- end
-				-- if Header.mover then
-				-- 	E:EnableMover(Header.mover:GetName())
-				-- end
-			else
-				UnregisterStateDriver(module.frames[group], 'visibility')
-				module.frames[group]:Hide()
-			end
+		if module.frames[group] then
+			local function GroupFrameUpdateAll(self)
+				if module.CurrentSettings[group].enabled then
+					-- if not Header.isForced then
+					-- 	RegisterStateDriver(Header, 'visibility', visibility)
+					-- end
+					-- if Header.mover then
+					-- 	E:EnableMover(Header.mover:GetName())
+					-- end
+				else
+					UnregisterStateDriver(module.frames[group], 'visibility')
+					module.frames[group]:Hide()
+				end
 
-			for _, f in ipairs(self) do
-				if f.UpdateAll then
-					f:UpdateAll()
+				for _, f in ipairs(self) do
+					if f.UpdateAll then
+						f:UpdateAll()
+					end
 				end
 			end
-		end
 
-		module.frames[group].UpdateAll = GroupFrameUpdateAll
-		module.frames[group].ElementUpdate = GroupFrameElementUpdate
-		module.frames[group].UpdateSize = GroupFrameUpdateSize
-		module.frames[group].UpdateAuras = GroupFrameUpdateAuras
-		module.frames[group].Enable = GroupFrameEnable
-		module.frames[group].Disable = GroupFrameDisable
+			module.frames[group].UpdateAll = GroupFrameUpdateAll
+			module.frames[group].ElementUpdate = GroupFrameElementUpdate
+			module.frames[group].UpdateSize = GroupFrameUpdateSize
+			module.frames[group].UpdateAuras = GroupFrameUpdateAuras
+			module.frames[group].Enable = GroupFrameEnable
+			module.frames[group].Disable = GroupFrameDisable
+		end
 	end
 
 	local function GroupWatcher(event)
@@ -1483,9 +1485,11 @@ end
 
 function module:UpdateGroupFrames(event, ...)
 	for _, v in ipairs({'raid', 'party', 'boss', 'arena'}) do
-		module.frames[v]:UpdateAll()
-		if not module.CurrentSettings[v].enabled then
-			module.frames[v]:Disable()
+		if module.frames[v] then
+			module.frames[v]:UpdateAll()
+			if not module.CurrentSettings[v].enabled then
+				module.frames[v]:Disable()
+			end
 		end
 	end
 end

@@ -41,15 +41,12 @@ if SUI.IsClassic then
 		'player',
 		'target',
 		'targettarget',
-		'boss',
-		'bosstarget',
 		'pet',
 		'pettarget',
 		'party',
 		'partypet',
 		'partytarget',
-		'raid',
-		'arena'
+		'raid'
 	}
 end
 
@@ -2229,8 +2226,10 @@ function module:InitializeOptions()
 
 	AddGroupOptions('raid')
 	AddGroupOptions('party')
-	AddGroupOptions('boss')
-	AddGroupOptions('arena')
+	if SUI.IsRetail then
+		AddGroupOptions('boss')
+		AddGroupOptions('arena')
+	end
 
 	SUI.opt.args.UnitFrames.args.player.args.general.args.General.args.range.hidden = true
 end
