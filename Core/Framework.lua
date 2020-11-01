@@ -373,7 +373,7 @@ local DBdefault = {
 				['ZoneAbility'] = 'CENTER,SpartanUI,CENTER,0,-172',
 				['ExtraAction'] = 'CENTER,SpartanUI,CENTER,0,-172',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
-				['VehicleLeaveButton'] = 'LEFT,SUI_UF_player,RIGHT,20,0'
+				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180'
 			},
 			Color = {
 				Art = false,
