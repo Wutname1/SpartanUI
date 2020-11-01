@@ -752,6 +752,11 @@ local DBdefault = {
 							graphic = 'Transparent'
 						}
 					},
+					elements = {
+						Portrait = {
+							position = 'right'
+						}
+					},
 					Buffs = {Mode = 'icons'},
 					Debuffs = {Mode = 'icons'}
 				},

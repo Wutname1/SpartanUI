@@ -52,6 +52,12 @@ function module:OnInitialize()
 			TexCoord = {0, 0.458984375, 0.74609375, 1}
 		}
 	}
+	UnitFrames.FramePos.Transparent = {
+		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-123,138',
+		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
+		['target'] = 'LEFT,SUI_UF_player,RIGHT,244,0',
+		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0'
+	}
 end
 
 function module:OnEnable()
