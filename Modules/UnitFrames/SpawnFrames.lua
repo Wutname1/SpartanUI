@@ -225,7 +225,7 @@ local function GetBasicUnitName(unit)
 end
 
 local function CreateUnitFrame(self, unit)
-	if (unit ~= 'raid') then
+	if (unit ~= 'raid' and unit ~= 'party') then
 		if (SUI_FramesAnchor:GetParent() == UIParent) then
 			self:SetParent(UIParent)
 		else
@@ -1310,7 +1310,7 @@ function module:SpawnFrames()
 		'showRaid',
 		module.CurrentSettings.party.showRaid,
 		'showParty',
-		true,
+		module.CurrentSettings.party.showParty,
 		'showPlayer',
 		module.CurrentSettings.party.showPlayer,
 		'showSolo',
@@ -1348,7 +1348,7 @@ function module:SpawnFrames()
 		nil,
 		'raid',
 		'showRaid',
-		true,
+		module.CurrentSettings.raid.showRaid,
 		'showParty',
 		module.CurrentSettings.raid.showParty,
 		'showPlayer',
@@ -1423,20 +1423,10 @@ function module:SpawnFrames()
 		if module.frames[group] then
 			local function GroupFrameUpdateAll(self)
 				if module.CurrentSettings[group].enabled then
-					-- if not Header.isForced then
-					-- 	RegisterStateDriver(Header, 'visibility', visibility)
-					-- end
-					-- if Header.mover then
-					-- 	E:EnableMover(Header.mover:GetName())
-					-- end
-				else
-					UnregisterStateDriver(module.frames[group], 'visibility')
-					module.frames[group]:Hide()
-				end
-
-				for _, f in ipairs(self) do
-					if f.UpdateAll then
-						f:UpdateAll()
+					for _, f in ipairs(self) do
+						if f.UpdateAll then
+							f:UpdateAll()
+						end
 					end
 				end
 			end
@@ -1451,15 +1441,13 @@ function module:SpawnFrames()
 	end
 
 	local function GroupWatcher(event)
-		if (InCombatLockdown()) then
-			module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
-		else
+		if not InCombatLockdown() then
 			-- Update 1 second after login
 			if event == 'PLAYER_ENTERING_WORLD' or event == 'GROUP_JOINED' then
 				module:ScheduleTimer(GroupWatcher, 1)
+				return
 			end
 
-			module:UnregisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
 			module:UpdateGroupFrames(event)
 		end
 	end
@@ -1469,6 +1457,11 @@ function module:SpawnFrames()
 	module:RegisterEvent('ZONE_CHANGED', GroupWatcher)
 	module:RegisterEvent('READY_CHECK', GroupWatcher)
 	module:RegisterEvent('PARTY_MEMBER_ENABLE', GroupWatcher)
+	module:RegisterEvent('PLAYER_LOGIN', GroupWatcher)
+	module:RegisterEvent('RAID_ROSTER_UPDATE', GroupWatcher)
+	module:RegisterEvent('PARTY_LEADER_CHANGED', GroupWatcher)
+	module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+	module:RegisterEvent('ZONE_CHANGED_NEW_AREA', GroupWatcher)
 end
 
 function module:UpdateAll(event, ...)
@@ -1481,12 +1474,41 @@ function module:UpdateAll(event, ...)
 	end
 
 	module:UpdateGroupFrames()
+	for _, v in ipairs({'boss', 'arena'}) do
+		if module.frames[v] then
+			module.frames[v]:UpdateAll()
+			if not module.CurrentSettings[v].enabled then
+				module.frames[v]:Disable()
+			end
+		end
+	end
+end
+
+local function VisibilityCheck(group)
+	local retVal = false
+	if module.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
+		retVal = true
+	end
+	if module.CurrentSettings[group].showRaid and IsInRaid() then
+		retVal = true
+	end
+	if module.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
+		retVal = true
+	end
+
+	return retVal
 end
 
 function module:UpdateGroupFrames(event, ...)
-	for _, v in ipairs({'raid', 'party', 'boss', 'arena'}) do
+	for _, v in ipairs({'raid', 'party'}) do
 		if module.frames[v] then
-			module.frames[v]:UpdateAll()
+			if VisibilityCheck(v) then
+				module.frames[v]:Show()
+				module.frames[v]:UpdateAll()
+			else
+				module.frames[v]:Hide()
+			end
+
 			if not module.CurrentSettings[v].enabled then
 				module.frames[v]:Disable()
 			end
