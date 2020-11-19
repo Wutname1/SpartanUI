@@ -607,9 +607,14 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			OnDragStop(self.mover)
 		end
 	end
-	local function scale(self, scale, setDefault)
+	local function scale(self, scale, setDefault, forced)
 		if setDefault then
 			f.defaultScale = scale
+		end
+
+		-- If the frame has been moved and we are not focing the movement exit
+		if SUI.DB.MoveIt.movers[name].AdjustedScale and not forced then
+			return
 		end
 
 		f:SetScale(max((scale or f.defaultScale), .01))

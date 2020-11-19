@@ -1,1 +1,0 @@
-## Notes: LEGACY FOLDER CAN BE DELETED AS OF 6.1 This addon does nothing.
