@@ -1,10 +1,9 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_Minimap')
+local module = SUI:NewModule('Component_Minimap', 'AceTimer-3.0')
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 local MoveIt, Settings
 local UserSettings = SUI.DB.MiniMap
 ----------------------------------------------------------------------------------------------------
-local ChangesTimer = nil
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 local SUI_MiniMapIcon
 local IgnoredFrames = {}
@@ -26,12 +25,9 @@ local IsMouseOver = function()
 end
 
 local isFrameIgnored = function(item)
+	local ignored = {'Questie', 'HybridMinimap', 'AAP-Classic', 'HandyNotes'}
 	if item:GetName() ~= nil then
-		if string.match(item:GetName(), 'Questie') then
-			return true
-		elseif string.match(item:GetName(), 'AAP-Classic') then
-			return true
-		elseif string.match(item:GetName(), 'HandyNotes') then
+		if SUI:isInTable(ignored, item:GetName()) then
 			return true
 		end
 	end
@@ -53,8 +49,8 @@ local MiniMapBtnScrape = function()
 	end
 end
 
-local PerformFullBtnUpdate = function()
-	if LastUpdateStatus ~= IsMouseOver() then
+local PerformFullBtnUpdate = function(forced)
+	if LastUpdateStatus ~= IsMouseOver() or forced then
 		MiniMapBtnScrape()
 		--update visibility
 		module:update()
@@ -83,9 +79,7 @@ local OnLeave = function()
 
 	-- Set a timer to check that the mouse actually left and we did not just mouse away for a second
 	-- Overwrite if we are giving extra time
-	if ChangesTimer == nil or i == 10 then
-		ChangesTimer = C_Timer.After(i, PerformFullBtnUpdate)
-	end
+	module:ScheduleTimer(PerformFullBtnUpdate, i)
 end
 
 local OnMouseDown = function()
@@ -212,9 +206,7 @@ function module:OnEnable()
 		'OnEvent',
 		function()
 			if not InCombatLockdown() then
-				if ChangesTimer == nil then
-					ChangesTimer = C_Timer.After(2, PerformFullBtnUpdate)
-				end
+				module:ScheduleTimer(PerformFullBtnUpdate, 2, true)
 			end
 		end
 	)
@@ -225,6 +217,7 @@ function module:OnEnable()
 	MinimapUpdater:RegisterEvent('MINIMAP_UPDATE_TRACKING')
 	MinimapUpdater:RegisterEvent('MINIMAP_PING')
 	MinimapUpdater:RegisterEvent('PLAYER_REGEN_ENABLED')
+	module:ScheduleRepeatingTimer(PerformFullBtnUpdate, 30, true)
 
 	--Initialize Buttons & Style settings
 	module:update(true)
@@ -534,6 +527,11 @@ function module:update(FullUpdate)
 			Minimap.coords:Show()
 		else
 			Minimap.coords:Hide()
+		end
+		if HybridMinimap then
+			HybridMinimap:Hide()
+			Minimap_ZoomIn()
+			Minimap_ZoomOut()
 		end
 	end
 
