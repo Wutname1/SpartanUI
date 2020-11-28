@@ -12,6 +12,11 @@ local ExcludedItems = {
 	-- Shadowlands
 	180276, --Locked Toolbox Key
 	175757, --Construct Supply Key
+	27944, --Talisman of True Treasure Tracking
+	156725, --red-crystal-monocle
+	156726, --yellow-crystal-monocle
+	156727, --green-crystal-monocle
+	156724, --blue-crystal-monocle
 	-- BFA
 	168135, --Titans Blood
 	166846, --spare parts
