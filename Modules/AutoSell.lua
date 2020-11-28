@@ -9,6 +9,9 @@ local LoadedOnce = false
 local totalValue = 0
 module.SellTimer = nil
 local ExcludedItems = {
+	-- Shadowlands
+	180276, --Locked Toolbox Key
+	175757, --Construct Supply Key
 	-- BFA
 	168135, --Titans Blood
 	166846, --spare parts
