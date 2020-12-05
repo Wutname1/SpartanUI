@@ -1668,6 +1668,13 @@ local DBdefault = {
 			},
 			player = {
 				enabled = true,
+				visibility = {
+					alphaDelay = 1,
+					hideDelay = 3,
+					showAlways = true,
+					showInCombat = true,
+					showWithTarget = false
+				},
 				anchor = {
 					point = 'BOTTOMRIGHT',
 					relativePoint = 'BOTTOM',
@@ -1759,18 +1766,33 @@ local DBdefault = {
 				showRaid = false,
 				showSolo = false,
 				xOffset = 0,
-				yOffset = -10,
+				yOffset = -20,
 				maxColumns = 1,
 				unitsPerColumn = 5,
 				columnSpacing = 2,
 				auras = {
 					Buffs = {
 						enabled = true,
-						size = 10
+						onlyShowPlayer = true,
+						size = 15,
+						initialAnchor = 'BOTTOMLEFT',
+						growthx = 'LEFT',
+						position = {
+							anchor = 'BOTTOMLEFT',
+							x = -15,
+							y = 47
+						}
 					},
 					Debuffs = {
 						enabled = true,
-						size = 16
+						size = 15,
+						initialAnchor = 'BOTTOMRIGHT',
+						growthx = 'RIGHT',
+						position = {
+							anchor = 'BOTTOMRIGHT',
+							x = 15,
+							y = 47
+						}
 					}
 				},
 				elements = {
@@ -1783,14 +1805,42 @@ local DBdefault = {
 					SummonIndicator = {
 						enabled = true
 					},
-					RaidRoleIndicator = {
-						enabled = true
+					GroupRoleIndicator = {
+						enabled = true,
+						position = {
+							anchor = 'TOPRIGHT',
+							x = 0,
+							y = 0
+						}
 					},
 					AssistantIndicator = {
 						enabled = true
 					},
+					RaidTargetIndicator = {
+						enabled = true,
+						size = 15,
+						position = {
+							anchor = 'RIGHT',
+							x = 5,
+							y = 0
+						}
+					},
 					SUI_ClassIcon = {
-						enabled = true
+						enabled = false,
+						size = 15,
+						position = {
+							anchor = 'TOPLEFT',
+							x = 0,
+							y = 0
+						}
+					},
+					name = {
+						position = {
+							y = 12
+						}
+					},
+					Power = {
+						height = 5
 					}
 				}
 			},
@@ -1812,6 +1862,7 @@ local DBdefault = {
 				auras = {
 					Buffs = {
 						enabled = true,
+						onlyShowPlayer = true,
 						size = 10
 					},
 					Debuffs = {
