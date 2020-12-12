@@ -3,9 +3,90 @@ local StdUi = SUI.StdUi
 local module = SUI:NewModule('Handler_Profiles')
 ----------------------------------------------------------------------------------------------------
 
+local function ImportUI()
+end
+
+local function ExportUI()
+	local window = StdUi:Window(nil, 650, 500)
+	window.StdUi = StdUi
+	window:SetPoint('CENTER', 0, 0)
+	window:SetFrameStrata('DIALOG')
+	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+	window.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+	window.Title:SetPoint('TOP')
+	window.Title:SetAlpha(.8)
+
+	window.Desc1 = StdUi:Label(window, '', 13, nil, window:GetWidth())
+	window.Desc1:SetPoint('TOP', window.titlePanel, 'BOTTOM', 0, -20)
+	window.Desc1:SetTextColor(1, 1, 1, .8)
+	window.Desc1:SetWidth(window:GetWidth() - 40)
+	window.Desc1:SetJustifyH('CENTER')
+	window.Desc1:SetText('')
+
+	window.textBox = StdUi:MultiLineBox(window, 600, 350, '')
+	window.textBox:SetPoint('TOP', window.Title, 'BOTTOM', 0, -25)
+	window.textBox:SetPoint('BOTTOM', window, 'BOTTOM', 0, 25)
+
+	-- Setup the Buttons
+	window.Export = StdUi:Button(window, 150, 20, 'EXPORT')
+	local items = {
+		{text = L['Text'], value = 'text'},
+		{text = L['Table'], value = 'luaTable'},
+		{text = L['Plugin'], value = 'luaPlugin'}
+	}
+
+	window.mode = StdUi:Dropdown(window, 200, 20, items, 'luaTable')
+	window.mode:SetPoint('BOTTOM', window, 'BOTTOM', 0, 2)
+
+	local namespaceblacklist = {'LibDualSpec-1.0'}
+	local namespacelist = {{text = 'All', value = 'all'}, {text = 'Core', value = 'core'}}
+	for i, v in pairs(SpartanUIDB.namespaces) do
+		if not SUI:isInTable(namespaceblacklist, i) then
+			table.insert(namespacelist, {text = i, value = i})
+		end
+	end
+
+	window.namespaces = StdUi:Dropdown(window, 200, 20, namespacelist, 'all')
+	window.namespaces:SetPoint('BOTTOMLEFT', window, 'BOTTOMLEFT', 2, 2)
+
+	--Position the Buttons
+	window.Export:SetPoint('BOTTOMRIGHT', window, 'BOTTOMRIGHT', -2, 2)
+
+	window.Export:SetScript(
+		'OnClick',
+		function(this)
+			local profileScope = window.namespaces:GetValue()
+			local profileKey, profileExport = GetProfileExport(window.mode:GetValue(), profileScope)
+			if not profileExport then
+				window.Desc1:SetText('Error exporting profile!')
+			else
+				local a = format('%s: |cff00b3ff%s|r', 'Exported', window.namespaces:FindValueText(profileScope))
+				local b = format('%s: |cff00b3ff%s|r', 'Profile Name', profileKey)
+
+				window.Desc1:SetText(a)
+				if profileScope == 'all' or profileScope == 'core' then
+					window.Desc1:SetText(a .. ' ' .. b)
+				end
+
+				window.textBox:SetValue(profileExport)
+				window.textBox.editBox:HighlightText()
+				window.textBox.editBox:SetFocus()
+
+				exportString = profileExport
+			end
+		end
+	)
+
+	-- Display first page
+	-- window.closeBtn:Hide()
+	window:Show()
+end
+
 function module:OnInitialize()
 end
 function module:OnEnable()
+	SUI:AddChatCommand('export', ExportUI)
+	SUI:AddChatCommand('import', ImportUI)
 end
 
 local function GetProfileData(profileScope)
@@ -167,80 +248,4 @@ function SUI:Decode(dataString)
 	end
 
 	return profileType, profileKey, profileData
-end
-
-function SUI:ExportUI()
-	local window = StdUi:Window(nil, 650, 500)
-	window.StdUi = StdUi
-	window:SetPoint('CENTER', 0, 0)
-	window:SetFrameStrata('DIALOG')
-	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-	window.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	window.Title:SetPoint('TOP')
-	window.Title:SetAlpha(.8)
-
-	window.Desc1 = StdUi:Label(window, '', 13, nil, window:GetWidth())
-	window.Desc1:SetPoint('TOP', window.titlePanel, 'BOTTOM', 0, -20)
-	window.Desc1:SetTextColor(1, 1, 1, .8)
-	window.Desc1:SetWidth(window:GetWidth() - 40)
-	window.Desc1:SetJustifyH('CENTER')
-	window.Desc1:SetText('')
-
-	window.textBox = StdUi:MultiLineBox(window, 600, 350, '')
-	window.textBox:SetPoint('TOP', window.Title, 'BOTTOM', 0, -25)
-	window.textBox:SetPoint('BOTTOM', window, 'BOTTOM', 0, 25)
-
-	-- Setup the Buttons
-	window.Export = StdUi:Button(window, 150, 20, 'EXPORT')
-	local items = {
-		{text = L['Text'], value = 'text'},
-		{text = L['Table'], value = 'luaTable'},
-		{text = L['Plugin'], value = 'luaPlugin'}
-	}
-
-	window.mode = StdUi:Dropdown(window, 200, 20, items, 'luaTable')
-	window.mode:SetPoint('BOTTOM', window, 'BOTTOM', 0, 2)
-
-	local namespaceblacklist = {'LibDualSpec-1.0'}
-	local namespacelist = {{text = 'All', value = 'all'}, {text = 'Core', value = 'core'}}
-	for i, v in pairs(SpartanUIDB.namespaces) do
-		if not SUI:isInTable(namespaceblacklist, i) then
-			table.insert(namespacelist, {text = i, value = i})
-		end
-	end
-
-	window.namespaces = StdUi:Dropdown(window, 200, 20, namespacelist, 'all')
-	window.namespaces:SetPoint('BOTTOMLEFT', window, 'BOTTOMLEFT', 2, 2)
-
-	--Position the Buttons
-	window.Export:SetPoint('BOTTOMRIGHT', window, 'BOTTOMRIGHT', -2, 2)
-
-	window.Export:SetScript(
-		'OnClick',
-		function(this)
-			local profileScope = window.namespaces:GetValue()
-			local profileKey, profileExport = GetProfileExport(window.mode:GetValue(), profileScope)
-			if not profileExport then
-				window.Desc1:SetText('Error exporting profile!')
-			else
-				local a = format('%s: |cff00b3ff%s|r', 'Exported', window.namespaces:FindValueText(profileScope))
-				local b = format('%s: |cff00b3ff%s|r', 'Profile Name', profileKey)
-
-				window.Desc1:SetText(a)
-				if profileScope == 'all' or profileScope == 'core' then
-					window.Desc1:SetText(a .. ' ' .. b)
-				end
-
-				window.textBox:SetValue(profileExport)
-				window.textBox.editBox:HighlightText()
-				window.textBox.editBox:SetFocus()
-
-				exportString = profileExport
-			end
-		end
-	)
-
-	-- Display first page
-	-- window.closeBtn:Hide()
-	window:Show()
 end

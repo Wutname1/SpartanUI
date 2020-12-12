@@ -21,10 +21,11 @@ local function Options()
 				order = .1,
 				desc = L['Is it getting hot in here?'],
 				get = function(info)
-					return (SUI.DB.Styles.Fel.Minimap.Engulfed ~= true or false)
+					return not SUI.DB.Styles.Fel.Minimap.engulfed
 				end,
 				set = function(info, val)
-					SUI.DB.Styles.Fel.Minimap.Engulfed = (val ~= true or false)
+					print(val)
+					SUI.DB.Styles.Fel.Minimap.engulfed = not val or false
 					module:MiniMap()
 				end
 			}
@@ -116,12 +117,12 @@ function module:CreateArtwork()
 	artFrame:SetSize(2, 2)
 	artFrame:SetPoint('BOTTOM', SUI_BottomAnchor)
 
-	artFrame.Left = artFrame:CreateTexture('SUI_Art_War_Left', 'BORDER')
+	artFrame.Left = artFrame:CreateTexture('SUI_Art_Fel_Left', 'BORDER')
 	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM', 0, 0)
 	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Left')
 	-- artFrame.Left:SetScale(.75)
 
-	artFrame.Right = artFrame:CreateTexture('SUI_Art_War_Right', 'BORDER')
+	artFrame.Right = artFrame:CreateTexture('SUI_Art_Fel_Right', 'BORDER')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Right')
 	-- artFrame.Right:SetScale(.75)
@@ -155,13 +156,13 @@ end
 function module:MiniMap()
 	local enfulfed = {
 		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-		size = {330, 330},
-		position = 'CENTER,Minimap,CENTER,7,37'
+		size = {220, 220},
+		position = 'CENTER,Minimap,CENTER,5,23'
 	}
 	local calmed = {
 		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
-		size = {256, 256},
-		position = 'CENTER,Minimap,CENTER,5,-1'
+		size = {162, 162},
+		position = 'CENTER,Minimap,CENTER,3,-1'
 	}
 
 	if SUI.DB.Styles.Fel.Minimap.engulfed then
@@ -169,4 +170,5 @@ function module:MiniMap()
 	else
 		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, calmed, true)
 	end
+	SUI:GetModule('Component_Minimap'):update(true)
 end

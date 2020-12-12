@@ -905,14 +905,14 @@ local DBdefault = {
 				size = {156, 156},
 				BG = {
 					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-					size = {330, 330},
-					position = 'CENTER,Minimap,CENTER,7,37'
+					size = {220, 220},
+					position = 'CENTER,Minimap,CENTER,5,23'
 				},
 				coords = {
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 					scale = 1.2
 				},
-				position = 'CENTER,SUI_Art_Fel,CENTER,0,54',
+				position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,10',
 				engulfed = true
 			}
 		},
@@ -1855,7 +1855,7 @@ local DBdefault = {
 				showSolo = false,
 				mode = 'NAME',
 				xOffset = 2,
-				yOffset = 2,
+				yOffset = 0,
 				maxColumns = 4,
 				unitsPerColumn = 10,
 				columnSpacing = 2,
@@ -1875,7 +1875,8 @@ local DBdefault = {
 						height = 30
 					},
 					Power = {
-						height = 5,
+						height = 3,
+						offset = 0,
 						text = {
 							['1'] = {
 								enabled = false
@@ -1889,7 +1890,12 @@ local DBdefault = {
 						enabled = true
 					},
 					RaidRoleIndicator = {
-						enabled = true
+						enabled = true,
+						position = {
+							anchor = 'BOTTOMLEFT',
+							x = 0,
+							y = 0
+						}
 					},
 					Name = {
 						enabled = true,

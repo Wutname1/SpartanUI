@@ -5,6 +5,7 @@ local MoveIt, Settings
 local UserSettings = SUI.DB.MiniMap
 ----------------------------------------------------------------------------------------------------
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
+local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
 local SUI_MiniMapIcon
 local IgnoredFrames = {}
 local LastUpdateStatus = nil
@@ -134,6 +135,16 @@ function module:ShapeChange(shape)
 	MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 	MinimapZoneText:SetShadowOffset(1, -1)
 	MinimapZoneTextButton:SetFrameLevel(121)
+
+	if HybridMinimap then
+		HybridMinimap.MapCanvas:SetUseMaskTexture(false)
+		if shape == 'square' then
+			HybridMinimap.CircleMask:SetTexture('Interface\\BUTTONS\\WHITE8X8')
+		else
+			HybridMinimap.CircleMask:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
+		end
+		HybridMinimap.MapCanvas:SetUseMaskTexture(true)
+	end
 end
 
 function module:OnInitialize()
@@ -184,13 +195,35 @@ function module:OnEnable()
 	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
 
 	-- MiniMap Modification
-	Minimap:SetFrameLevel(120)
-	Minimap.Background = Minimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
+	-- Minimap:SetFrameLevel(120)
+
+	-- local frame = CreateFrame('Frame', skinSettings.name .. '_Bar' .. number, (parent or UIParent))
+	SUIMinimap:SetFrameStrata('BACKGROUND')
+	SUIMinimap:SetFrameLevel(99)
+	SUIMinimap:SetAllPoints(Minimap)
+
+	SUIMinimap.BG = SUIMinimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
+	-- Minimap.Background = Minimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
 	if SUI.IsRetail then
 		Minimap:SetArchBlobRingScalar(0)
 		Minimap:SetQuestBlobRingScalar(0)
 	end
 	module:ModifyMinimapLayout()
+
+	-- if not HybridMinimap then
+	-- 	local frame = CreateFrame('Frame')
+	-- 	frame:SetScript(
+	-- 		'OnEvent',
+	-- 		function(self, event, addon)
+	-- 			if addon == 'Blizzard_HybridMinimap' then
+	-- 				self:UnregisterEvent(event)
+	-- 				module:ShapeChange(Settings.shape)
+	-- 				self:SetScript('OnEvent', nil)
+	-- 			end
+	-- 		end
+	-- 	)
+	-- 	frame:RegisterEvent('ADDON_LOADED')
+	-- end
 
 	--Look for existing buttons
 	MiniMapBtnScrape()
@@ -528,46 +561,45 @@ function module:update(FullUpdate)
 		else
 			Minimap.coords:Hide()
 		end
-		if HybridMinimap then
-			HybridMinimap:Hide()
-			Minimap_ZoomIn()
-			Minimap_ZoomOut()
-		end
+		-- if HybridMinimap then
+		-- 	HybridMinimap:Hide()
+		-- end
 	end
 
 	-- Apply Style Settings
 	do
 		if Settings.BG.enabled then
-			if Minimap.Background then
-				Minimap.Background:ClearAllPoints()
+			SUIMinimap.BG.Settings = Settings.BG or nil
+			if SUIMinimap.BG then
+				SUIMinimap.BG:ClearAllPoints()
 			end
 
 			if Settings.BG.size then
-				Minimap.Background:SetSize(unpack(Settings.BG.size))
+				SUIMinimap.BG:SetSize(unpack(Settings.BG.size))
 			end
 
 			if Settings.BG.position then
 				if type(Settings.BG.position) == 'table' then
 					for i, v in ipairs(Settings.BG.position) do
 						local point, anchor, secondaryPoint, x, y = strsplit(',', v)
-						Minimap.Background:SetPoint(point, anchor, secondaryPoint, x, y)
+						SUIMinimap.BG:SetPoint(point, anchor, secondaryPoint, x, y)
 					end
 				else
 					local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.BG.position)
-					Minimap.Background:SetPoint(point, anchor, secondaryPoint, x, y)
+					SUIMinimap.BG:SetPoint(point, anchor, secondaryPoint, x, y)
 				end
 			else
-				Minimap.Background:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -47, 47)
-				Minimap.Background:SetPoint('BOTTOMRIGHT', Minimap, 'BOTTOMRIGHT', 47, -47)
+				SUIMinimap.BG:SetPoint('TOPLEFT', SUIMinimap, 'TOPLEFT', -30, 30)
+				SUIMinimap.BG:SetPoint('BOTTOMRIGHT', SUIMinimap, 'BOTTOMRIGHT', 30, -30)
 			end
 
-			Minimap.Background:SetTexture(Settings.BG.texture)
-			Minimap.Background:SetAlpha(Settings.BG.alpha)
-			Minimap.Background:SetBlendMode(Settings.BG.BlendMode)
+			SUIMinimap.BG:SetTexture(Settings.BG.texture)
+			SUIMinimap.BG:SetAlpha(Settings.BG.alpha)
+			SUIMinimap.BG:SetBlendMode(Settings.BG.BlendMode)
 
-			Minimap.Background:Show()
+			SUIMinimap.BG:Show()
 		else
-			Minimap.Background:Hide()
+			SUIMinimap.BG:Hide()
 		end
 
 		Minimap.ZoneText:SetSize(unpack(Settings.ZoneText.size))
