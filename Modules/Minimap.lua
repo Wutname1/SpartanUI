@@ -201,6 +201,18 @@ function module:OnEnable()
 	SUIMinimap:SetFrameStrata('BACKGROUND')
 	SUIMinimap:SetFrameLevel(99)
 	SUIMinimap:SetAllPoints(Minimap)
+	Minimap:HookScript(
+		'OnShow',
+		function()
+			SUIMinimap:Show()
+		end
+	)
+	Minimap:HookScript(
+		'OnHide',
+		function()
+			SUIMinimap:Hide()
+		end
+	)
 
 	SUIMinimap.BG = SUIMinimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
 	-- Minimap.Background = Minimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
