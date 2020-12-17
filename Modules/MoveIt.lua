@@ -261,8 +261,8 @@ function MoveIt:Reset(name, onlyPosition)
 			if SUI.DB.MoveIt.movers[name].AdjustedScale and not onlyPosition then
 				SUI.DB.MoveIt.movers[name].AdjustedScale = nil
 
-				frame:SetScale(f.defaultScale or 1)
-				frame.parent:SetScale(f.defaultScale or 1)
+				frame:SetScale(frame.defaultScale or 1)
+				frame.parent:SetScale(frame.defaultScale or 1)
 				frame.ScaledText:Hide()
 			end
 
