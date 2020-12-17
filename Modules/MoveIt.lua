@@ -618,6 +618,9 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		end
 
 		f:SetScale(max((scale or f.defaultScale), .01))
+		if f.OnScale then
+			f.OnScale:SetScale(max((scale or f.defaultScale), .01))
+		end
 		parent:SetScale(max((scale or f.defaultScale), .01))
 		if scale == f.defaultScale then
 			ScaledText:Hide()
