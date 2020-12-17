@@ -2,7 +2,9 @@ local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Component_Objectives')
 module.description = 'Allows the hiding of the Objectives tracker based on conditions'
 ----------------------------------------------------------------------------------------------------
+local MoveIt
 local ObjectiveTrackerWatcher = CreateFrame('Frame')
+local holder = CreateFrame('Frame', 'ObjectiveTrackerHolder', UIParent)
 local frameName = 'ObjectiveTrackerFrame'
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local Conditions = {
@@ -13,6 +15,36 @@ local Conditions = {
 	['All'] = L['All the time'],
 	['Disabled'] = L['Disabled']
 }
+
+local function UpdateSize(args)
+	local screenHeight = GetScreenHeight()
+	local FrameHeight = min((screenHeight - (screenHeight - (_G.ObjectiveTrackerFrame:GetTop() or 0))), module.DB.height)
+
+	holder:SetSize(280, FrameHeight)
+	_G.ObjectiveTrackerFrame:SetHeight(FrameHeight)
+	MoveIt:UpdateMover('ObjectiveTracker')
+end
+
+local function MakeMoveable()
+	local ObjectiveTrackerFrame = _G.ObjectiveTrackerFrame
+	local point, anchor, secondaryPoint, x, y =
+		strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
+	holder:SetPoint(point, anchor, secondaryPoint, x, y)
+	holder:SetFrameStrata('LOW')
+	holder:SetSize(280, module.DB.height)
+	holder.OnScale = function(self, val)
+		ObjectiveTrackerFrame:SetScale(val)
+	end
+
+	ObjectiveTrackerFrame:SetClampedToScreen(false)
+	ObjectiveTrackerFrame:ClearAllPoints()
+	ObjectiveTrackerFrame:SetPoint('TOP', holder, 'TOP')
+	ObjectiveTrackerFrame:SetMovable(true)
+	ObjectiveTrackerFrame:SetUserPlaced(true)
+
+	MoveIt:CreateMover(holder, 'ObjectiveTracker', 'Objective Tracker', nil, 'Blizzard UI')
+	UpdateSize()
+end
 
 local HideFrame = function()
 	if SUI.DB.DisabledComponents.Objectives or module.Override then
@@ -32,23 +64,23 @@ local ObjTrackerUpdate = function()
 
 	--Figure out if we need to hide objectives
 	for _, v in ipairs(RuleList) do
-		if SUI.DB.Objectives[v].Status ~= 'Disabled' then
+		if module.DB[v].Status ~= 'Disabled' then
 			local CombatRule = false
-			if InCombatLockdown() and SUI.DB.Objectives[v].Combat then
+			if InCombatLockdown() and module.DB[v].Combat then
 				CombatRule = true
-			elseif not InCombatLockdown() and not SUI.DB.Objectives[v].Combat then
+			elseif not InCombatLockdown() and not module.DB[v].Combat then
 				CombatRule = true
 			end
 
-			if SUI.DB.Objectives[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
+			if module.DB[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
 				FadeOut = true
-			elseif SUI.DB.Objectives[v].Status == 'Raid' and IsInRaid() and CombatRule then
+			elseif module.DB[v].Status == 'Raid' and IsInRaid() and CombatRule then
 				FadeOut = true
-			elseif SUI.DB.Objectives[v].Status == 'Boss' and event == 'ENCOUNTER_START' then
+			elseif module.DB[v].Status == 'Boss' and event == 'ENCOUNTER_START' then
 				FadeOut = true
-			elseif SUI.DB.Objectives[v].Status == 'Instance' and IsInInstance() then
+			elseif module.DB[v].Status == 'Instance' and IsInInstance() then
 				FadeOut = true
-			elseif SUI.DB.Objectives[v].Status == 'All' and CombatRule then
+			elseif module.DB[v].Status == 'All' and CombatRule then
 				FadeOut = true
 			else
 				FadeIn = true
@@ -63,7 +95,7 @@ local ObjTrackerUpdate = function()
 	end
 
 	-- Always Shown logic
-	if (SUI.DB.Objectives.AlwaysShowScenario and ScenarioActive) then
+	if (module.DB.AlwaysShowScenario and ScenarioActive) then
 		FadeIn = true
 		FadeOut = false
 	end
@@ -80,35 +112,106 @@ local ObjTrackerUpdate = function()
 	end
 end
 
-function module:OnInitialize()
-	local Defaults = {
-		SetupDone = false,
-		AlwaysShowScenario = true,
-		Rule1 = {
-			Status = 'Raid',
-			Combat = false
-		},
-		Rule2 = {
-			Status = 'Disabled',
-			Combat = false
-		},
-		Rule3 = {
-			Status = 'Disabled',
-			Combat = false
+local function Options()
+	SUI.opt.args.ModSetting.args.Objectives = {
+		type = 'group',
+		name = L.Objectives,
+		args = {
+			AlwaysShowScenario = {
+				name = L['Always show in a scenario'],
+				type = 'toggle',
+				order = 0,
+				width = 'full',
+				get = function(info)
+					return module.DB.AlwaysShowScenario
+				end,
+				set = function(info, val)
+					module.DB.AlwaysShowScenario = val
+					ObjTrackerUpdate()
+				end
+			},
+			height = {
+				name = 'Height',
+				type = 'range',
+				min = 20,
+				max = 1000,
+				step = 1,
+				order = .1,
+				width = 'full',
+				get = function(info)
+					return module.DB.height
+				end,
+				set = function(info, val)
+					module.DB.height = val
+					UpdateSize()
+				end
+			}
 		}
 	}
-	if not SUI.DB.Objectives then
-		SUI.DB.Objectives = Defaults
-	else
-		SUI.DB.Objectives = SUI:MergeData(SUI.DB.Objectives, Defaults, false)
+	for k, v in ipairs(RuleList) do
+		SUI.opt.args.ModSetting.args.Objectives.args[v] = {
+			name = v,
+			type = 'group',
+			inline = true,
+			order = k + 5.2,
+			get = function(info)
+				return module.DB[v][info[#info]]
+			end,
+			set = function(info, val)
+				module.DB[v][info[#info]] = val
+				ObjTrackerUpdate()
+			end,
+			args = {
+				Status = {
+					name = 'When to hide',
+					type = 'select',
+					order = 1,
+					values = Conditions
+				},
+				Combat = {
+					name = L['Only if in combat'],
+					type = 'toggle',
+					order = 2
+				}
+			}
+		}
 	end
-	if SUI.DB.Artwork.SetupDone then
-		SUI.DB.Objectives.SetupDone = true
+end
+
+function module:OnInitialize()
+	local defaults = {
+		profile = {
+			SetupDone = false,
+			AlwaysShowScenario = true,
+			height = 480,
+			Rule1 = {
+				Status = 'Raid',
+				Combat = false
+			},
+			Rule2 = {
+				Status = 'Disabled',
+				Combat = false
+			},
+			Rule3 = {
+				Status = 'Disabled',
+				Combat = false
+			}
+		}
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Objectives', defaults)
+	module.DB = module.Database.profile
+
+	--Migrate old settings
+	if SUI.DB.Objectives then
+		module.DB = SUI:MergeData(module.DB, SUI.DB.Objectives, true)
+		SUI.DB.Objectives = nil
 	end
+
 	-- Is the player is on classic disable the module
 	if SUI.IsClassic then
 		module.Override = true
 	end
+	MoveIt = SUI:GetModule('Component_MoveIt')
 end
 
 function module:OnEnable()
@@ -163,7 +266,8 @@ function module:OnEnable()
 	end
 
 	ObjTrackerUpdate()
-	module:BuildOptions()
+	Options()
+	MakeMoveable()
 end
 
 function module:OnDisable()
@@ -173,67 +277,6 @@ function module:OnDisable()
 	end
 	_G[frameName].FadeOut:Stop()
 	_G[frameName].FadeIn:Play()
-end
-
-function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['Objectives'] = {
-		type = 'group',
-		name = L['Objectives'],
-		args = {
-			AlwaysShowScenario = {
-				name = L['Always show in a scenario'],
-				type = 'toggle',
-				order = 0,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.Objectives.AlwaysShowScenario
-				end,
-				set = function(info, val)
-					SUI.DB.Objectives.AlwaysShowScenario = val
-					ObjTrackerUpdate()
-				end
-			}
-		}
-	}
-	for k, v in ipairs(RuleList) do
-		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Title'] = {
-			name = v,
-			type = 'header',
-			order = k,
-			width = 'full'
-		}
-		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Status'] = {
-			name = 'When to hide',
-			type = 'select',
-			order = k + .2,
-			values = Conditions,
-			get = function(info)
-				return SUI.DB.Objectives[v].Status
-			end,
-			set = function(info, val)
-				SUI.DB.Objectives[v].Status = val
-				ObjTrackerUpdate()
-			end
-		}
-		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Text'] = {
-			name = '',
-			type = 'description',
-			order = k + .3,
-			width = 'half'
-		}
-		SUI.opt.args['ModSetting'].args['Objectives'].args[v .. 'Combat'] = {
-			name = L['Only if in combat'],
-			type = 'toggle',
-			order = k + .4,
-			get = function(info)
-				return SUI.DB.Objectives[v].Combat
-			end,
-			set = function(info, val)
-				SUI.DB.Objectives[v].Combat = val
-				ObjTrackerUpdate()
-			end
-		}
-	end
 end
 
 local DummyFunction = function()
@@ -246,7 +289,7 @@ function module:FirstTimeSetup()
 		SubTitle = 'Objectives',
 		Desc1 = 'The objectives module can hide the objectives based on diffrent conditions. This allows you to free your screen when you need it the most automatically.',
 		Desc2 = 'The defaults here are based on your current level.',
-		RequireDisplay = (not SUI.DB.Objectives.SetupDone),
+		RequireDisplay = (not module.DB.SetupDone),
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -326,11 +369,11 @@ function module:FirstTimeSetup()
 		Next = function()
 			if SUI:IsModuleEnabled('CombatLog') and (not module.Override) then
 				local SUI_Win = SUI:GetModule('SetupWizard').window.content
-				SUI.DB.Objectives.SetupDone = true
-				SUI.DB.Objectives.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
+				module.DB.SetupDone = true
+				module.DB.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
 				for k, v in ipairs(RuleList) do
-					SUI.DB.Objectives[v] = {
+					module.DB[v] = {
 						Status = SUI_Win.Objectives[k].Condition:GetValue(),
 						Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
 					}
@@ -338,7 +381,7 @@ function module:FirstTimeSetup()
 			end
 		end,
 		Skip = function()
-			SUI.DB.Objectives.SetupDone = false
+			module.DB.SetupDone = false
 		end
 	}
 	SUI:GetModule('SetupWizard'):AddPage(PageData)

@@ -368,6 +368,7 @@ local DBdefault = {
 			},
 			Movers = {},
 			BlizzMovers = {
+				['ObjectiveTracker'] = 'TOPRIGHT,SpartanUI,TOPRIGHT,-30,-100',
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
 				['ZoneAbility'] = 'CENTER,SpartanUI,CENTER,0,-172',
