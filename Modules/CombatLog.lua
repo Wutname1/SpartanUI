@@ -35,10 +35,10 @@ local function setLogging(on, msg)
 			SetCVar('advancedCombatLogging', 1)
 		end
 		LoggingCombat(true)
-		SUI.DB.CombatLog.logging = true -- We have to track this ourself incase the player reloads the ui
+		SUI.DB.CombatLog.loggingActive = true -- We have to track this ourself incase the player reloads the ui
 	else
 		LoggingCombat(false)
-		SUI.DB.CombatLog.logging = false
+		SUI.DB.CombatLog.loggingActive = false
 	end
 	if (SUI.DB.CombatLog.announce and msg) then
 		if msg == 'disabled' then
@@ -161,11 +161,11 @@ function module:LogCheck(event)
 		setLogging(true, 'Legacy Raid')
 	else
 		-- If we are curently logging announce we are disabling it.
-		if SUI.DB.CombatLog.logging and LoggingCombat() then
+		if SUI.DB.CombatLog.loggingActive and LoggingCombat() then
 			setLogging(false, 'disabled')
 		end
 		-- Do this here to ensure DB is set to false
-		SUI.DB.CombatLog.logging = false
+		SUI.DB.CombatLog.loggingActive = false
 	end
 end
 
