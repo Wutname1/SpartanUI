@@ -793,15 +793,16 @@ local function CreateUnitFrame(self, unit)
 
 			health.TextElements = {}
 			for i, key in pairs(elements.Health.text) do
-				if key.enabled then
-					local NewString = health:CreateFontString(nil, 'OVERLAY')
-					SUI:FormatFont(NewString, key.size, 'UnitFrames')
-					NewString:SetJustifyH(key.SetJustifyH)
-					NewString:SetJustifyV(key.SetJustifyV)
-					NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)
-					self:Tag(NewString, key.text)
+				local NewString = health:CreateFontString(nil, 'OVERLAY')
+				SUI:FormatFont(NewString, key.size, 'UnitFrames')
+				NewString:SetJustifyH(key.SetJustifyH)
+				NewString:SetJustifyV(key.SetJustifyV)
+				NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)
+				self:Tag(NewString, key.text)
 
-					health.TextElements[i] = NewString
+				health.TextElements[i] = NewString
+				if not key.enabled then
+					health.TextElements[i]:Hide()
 				end
 			end
 
@@ -918,15 +919,16 @@ local function CreateUnitFrame(self, unit)
 
 			power.TextElements = {}
 			for i, key in pairs(elements.Power.text) do
-				if key.enabled then
-					local NewString = power:CreateFontString(nil, 'OVERLAY')
-					SUI:FormatFont(NewString, key.size, 'UnitFrames')
-					NewString:SetJustifyH(key.SetJustifyH)
-					NewString:SetJustifyV(key.SetJustifyV)
-					NewString:SetPoint(key.position.anchor, power, key.position.anchor, key.position.x, key.position.y)
-					self:Tag(NewString, key.text)
+				local NewString = power:CreateFontString(nil, 'OVERLAY')
+				SUI:FormatFont(NewString, key.size, 'UnitFrames')
+				NewString:SetJustifyH(key.SetJustifyH)
+				NewString:SetJustifyV(key.SetJustifyV)
+				NewString:SetPoint(key.position.anchor, power, key.position.anchor, key.position.x, key.position.y)
+				self:Tag(NewString, key.text)
 
-					power.TextElements[i] = NewString
+				power.TextElements[i] = NewString
+				if not key.enabled then
+					power.TextElements[i]:Hide()
 				end
 			end
 
