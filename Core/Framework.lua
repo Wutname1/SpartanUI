@@ -2227,6 +2227,7 @@ local DBdefault = {
 		}
 	}
 }
+SUI.DBdefault = DBdefault
 
 local DBdefaults = {profile = DBdefault}
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
@@ -2741,6 +2742,28 @@ end
 
 function SUI:reloadui()
 	SUI.reloaduiWindow:Show()
+end
+
+function SUI:SplitString(str, delim)
+	assert(type(delim) == 'string' and strlen(delim) > 0, 'bad delimiter')
+	local splitTable = {}
+	local start = 1
+
+	-- find each instance of a string followed by the delimiter
+	while true do
+		local pos = strfind(str, delim, start, true)
+		if not pos then
+			break
+		end
+
+		tinsert(splitTable, strsub(str, start, pos - 1))
+		start = pos + strlen(delim)
+	end
+
+	-- insert final one (after last delimiter)
+	tinsert(splitTable, strsub(str, start))
+
+	return unpack(splitTable)
 end
 
 function SUI:OnEnable()

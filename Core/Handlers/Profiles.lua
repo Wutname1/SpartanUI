@@ -2,12 +2,12 @@ local SUI, L, Lib = SUI, SUI.L, SUI.Lib
 local StdUi = SUI.StdUi
 local module = SUI:NewModule('Handler_Profiles')
 ----------------------------------------------------------------------------------------------------
+local window
+local namespaceblacklist = {'LibDualSpec-1.0'}
+local namespacelist = {{text = 'All', value = 'all'}, {text = 'Core', value = 'core'}}
 
-local function ImportUI()
-end
-
-local function ExportUI()
-	local window = StdUi:Window(nil, 650, 500)
+local function CreateWindow()
+	window = StdUi:Window(nil, 650, 500)
 	window.StdUi = StdUi
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
@@ -29,34 +29,12 @@ local function ExportUI()
 
 	-- Setup the Buttons
 	window.Export = StdUi:Button(window, 150, 20, 'EXPORT')
-	local items = {
-		{text = L['Text'], value = 'text'},
-		{text = L['Table'], value = 'luaTable'},
-		{text = L['Plugin'], value = 'luaPlugin'}
-	}
-
-	window.mode = StdUi:Dropdown(window, 200, 20, items, 'luaTable')
-	window.mode:SetPoint('BOTTOM', window, 'BOTTOM', 0, 2)
-
-	local namespaceblacklist = {'LibDualSpec-1.0'}
-	local namespacelist = {{text = 'All', value = 'all'}, {text = 'Core', value = 'core'}}
-	for i, v in pairs(SpartanUIDB.namespaces) do
-		if not SUI:isInTable(namespaceblacklist, i) then
-			table.insert(namespacelist, {text = i, value = i})
-		end
-	end
-
-	window.namespaces = StdUi:Dropdown(window, 200, 20, namespacelist, 'all')
-	window.namespaces:SetPoint('BOTTOMLEFT', window, 'BOTTOMLEFT', 2, 2)
-
-	--Position the Buttons
 	window.Export:SetPoint('BOTTOMRIGHT', window, 'BOTTOMRIGHT', -2, 2)
-
 	window.Export:SetScript(
 		'OnClick',
 		function(this)
 			local profileScope = window.namespaces:GetValue()
-			local profileKey, profileExport = GetProfileExport(window.mode:GetValue(), profileScope)
+			local profileKey, profileExport = module:GetProfileExport(window.mode:GetValue(), profileScope)
 			if not profileExport then
 				window.Desc1:SetText('Error exporting profile!')
 			else
@@ -71,14 +49,65 @@ local function ExportUI()
 				window.textBox:SetValue(profileExport)
 				window.textBox.editBox:HighlightText()
 				window.textBox.editBox:SetFocus()
-
-				exportString = profileExport
 			end
 		end
 	)
 
-	-- Display first page
-	-- window.closeBtn:Hide()
+	window.Import = StdUi:Button(window, 150, 20, 'IMPORT')
+	window.Import:SetPoint('BOTTOMRIGHT', window, 'BOTTOMRIGHT', -2, 2)
+	window.Import:SetScript(
+		'OnClick',
+		function(this)
+			local profileScope = window.namespaces:GetValue()
+			local profileImport = window.textBox:GetValue()
+			if profileImport == '' then
+				window.Desc1:SetText('Please enter a string to import')
+			else
+				module:ImportProfile(profileImport)
+			end
+		end
+	)
+
+	local items = {
+		{text = L['Text'], value = 'text'},
+		{text = L['Table'], value = 'luaTable'},
+		{text = L['Plugin'], value = 'luaPlugin'}
+	}
+	window.mode = StdUi:Dropdown(window, 200, 20, items, 'luaTable')
+	window.mode:SetPoint('BOTTOM', window, 'BOTTOM', 0, 2)
+
+	for i, v in pairs(SpartanUIDB.namespaces) do
+		if not SUI:isInTable(namespaceblacklist, i) then
+			table.insert(namespacelist, {text = i, value = i})
+		end
+	end
+	window.namespaces = StdUi:Dropdown(window, 200, 20, namespacelist, 'all')
+	window.namespaces:SetPoint('BOTTOMLEFT', window, 'BOTTOMLEFT', 2, 2)
+end
+
+local function ImportUI()
+	if not window then
+		CreateWindow()
+	end
+	window.Export:Hide()
+	window.mode:Hide()
+	window.namespaces:Hide()
+	window.Import:Show()
+	window.textBox:SetValue('')
+
+	window:Show()
+end
+
+local function ExportUI()
+	if not window then
+		CreateWindow()
+	end
+	window.Export:Show()
+	window.mode:Show()
+	window.namespaces:Show()
+	window.Import:Hide()
+	window.textBox:SetValue('')
+
 	window:Show()
 end
 
@@ -125,21 +154,27 @@ local function GetProfileData(profileScope)
 		--Copy current profile data
 		local core = SUI:CopyTable({}, SUI.DB)
 		--Compare against the defaults and remove all duplicates
-		core = SUI:RemoveTableDuplicates(SUI.DB, DBdefault, vars)
+		core = SUI:RemoveTableDuplicates(SUI.DB, SUI.DBdefault, vars)
 		core = SUI:FilterTableFromBlacklist(core, blacklistedKeys)
 		profileData.core = core
 	end
 
 	for name, datatable in pairs(SpartanUIDB.namespaces) do
 		if inScope(name) and datatable.profiles and datatable.profiles[profileKey] then
-			profileData[name] = datatable.profiles[profileKey]
+			--Copy current profile data
+			local data = SUI:CopyTable({}, datatable.profiles[profileKey])
+			--Compare against the defaults and remove all duplicates
+			local namespaceData = SUI.SpartanUIDB:GetNamespace(name).defaults.profile
+			data = SUI:RemoveTableDuplicates(data, namespaceData, vars)
+
+			profileData[name] = data
 		end
 	end
 
 	return profileKey, profileData
 end
 
-local function GetProfileExport(exportFormat, profileScope)
+function module:GetProfileExport(exportFormat, profileScope)
 	local profileExport, exportString
 	local profileKey, profileData = GetProfileData(profileScope)
 
@@ -150,13 +185,13 @@ local function GetProfileExport(exportFormat, profileScope)
 
 	if exportFormat == 'text' then
 		local serialData = SUI:Serialize(profileData)
-		exportString = SUI:CreateProfileExport(serialData, profileScope, profileKey)
+		exportString = module:CreateProfileExport(serialData, profileScope, profileKey)
 		local compressedData = Lib.Compress:Compress(exportString)
 		local encodedData = Lib.Base64:Encode(compressedData)
 		profileExport = encodedData
 	elseif exportFormat == 'luaTable' then
 		exportString = SUI:TableToLuaString(profileData)
-		profileExport = SUI:CreateProfileExport(exportString, profileScope, profileKey)
+		profileExport = module:CreateProfileExport(exportString, profileScope, profileKey)
 	elseif exportFormat == 'luaPlugin' then
 		profileExport = SUI:ProfileTableToPluginFormat(profileData, profileScope)
 	end
@@ -164,7 +199,7 @@ local function GetProfileExport(exportFormat, profileScope)
 	return profileKey, profileExport
 end
 
-function SUI:CreateProfileExport(dataString, profileScope, profileKey)
+function module:CreateProfileExport(dataString, profileScope, profileKey)
 	local returnString
 
 	if profileScope == 'core' or profileScope == 'all' then
@@ -176,21 +211,21 @@ function SUI:CreateProfileExport(dataString, profileScope, profileKey)
 	return returnString
 end
 
-function SUI:GetImportStringType(dataString)
+local function GetImportStringType(dataString)
 	local stringType = ''
 
 	if Lib.Base64:IsBase64(dataString) then
 		stringType = 'Base64'
-	elseif find(dataString, '{') then --Basic check to weed out obviously wrong strings
+	elseif strfind(dataString, '{') then --Basic check to weed out obviously wrong strings
 		stringType = 'Table'
 	end
 
 	return stringType
 end
 
-function SUI:Decode(dataString)
+function module:Decode(dataString)
 	local profileInfo, profileType, profileKey, profileData
-	local stringType = self:GetImportStringType(dataString)
+	local stringType = GetImportStringType(dataString)
 
 	if stringType == 'Base64' then
 		local decodedData = Lib.Base64:Decode(dataString)
@@ -248,4 +283,15 @@ function SUI:Decode(dataString)
 	end
 
 	return profileType, profileKey, profileData
+end
+
+function module:ImportProfile(dataString)
+	local profileScope, profileKey, profileData = module:Decode(dataString)
+
+	if profileScope == 'core' or profileScope == 'all' then
+	else
+		local namespaceData = SUI.SpartanUIDB:GetNamespace(profileScope).profile
+		window.db = namespaceData
+		namespaceData = profileData
+	end
 end

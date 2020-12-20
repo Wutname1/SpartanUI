@@ -142,8 +142,6 @@ if SUI.IsRetail then
 end
 
 ----------------------------------------------------------------------------------------------------
--- New Unitframe workflow
---
 -- 1.  Styles are initalized and calls AddStyleSettings to pass the styles config into the unitframes module
 -- 2.  A table is created with all of the settings from all the styles
 -- 3.  UnitFrames OnEnable is called
