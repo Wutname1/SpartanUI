@@ -130,7 +130,7 @@ function module:OnInitialize()
 			}
 		}
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('SpinCam', defaults)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AFKEffects', defaults)
 	module.DB = module.Database.profile
 end
 

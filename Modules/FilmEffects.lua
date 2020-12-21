@@ -8,16 +8,16 @@ local EffectList = {'vignette', 'blur', 'crisp'}
 
 local FilmEffectEvent = function(self, event, ...)
 	for _, v in ipairs(EffectList) do
-		if not module.db.profile.enable then
+		if not module.DB.profile.enable then
 			Container[v]:Hide()
 		elseif event == 'CHAT_MSG_SYSTEM' then
-			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (module.db.profile.Effects[v].afk) then
+			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (module.DB.profile.Effects[v].afk) then
 				Container[v]:Show()
 			elseif (... == CLEARED_AFK) then
 				Container[v]:Hide()
 			end
 		else
-			if module.db.profile.Effects[v].always then
+			if module.DB.profile.Effects[v].always then
 				Container[v]:Show()
 			else
 				Container[v]:Hide()
@@ -28,7 +28,7 @@ end
 
 local function updateopts()
 	local disabled = true
-	if module.db.profile.enable then
+	if module.DB.profile.enable then
 		disabled = false
 	end
 	for _, v in ipairs(EffectList) do
@@ -50,7 +50,8 @@ function module:OnInitialize()
 			}
 		}
 	}
-	module.db = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', defaults)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', defaults)
+	module.DB = module.Database.profile
 end
 
 function module:OnEnable()
@@ -148,14 +149,14 @@ function module:OnEnable()
 end
 
 function module:Update(elapsed)
-	module.db.profile.animationInterval = module.db.profile.animationInterval + elapsed
-	if (module.db.profile.animationInterval > (0.02)) then -- 50 FPS
-		module.db.profile.animationInterval = 0
+	module.DB.profile.animationInterval = module.DB.profile.animationInterval + elapsed
+	if (module.DB.profile.animationInterval > (0.02)) then -- 50 FPS
+		module.DB.profile.animationInterval = 0
 
 		local yOfs = math.random(0, 256)
 		local xOfs = math.random(-128, 0)
 
-		if module.db.profile.anim == 'blur' or module.db.profile.anim == 'crisp' then
+		if module.DB.profile.anim == 'blur' or module.DB.profile.anim == 'crisp' then
 			Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs)
 		end
 	end
@@ -173,14 +174,14 @@ function module:Options()
 				width = 'full',
 				get = function(info)
 					updateopts()
-					return module.db.profile.enable
+					return module.DB.profile.enable
 				end,
 				set = function(info, val)
 					if InCombatLockdown() then
 						SUI:Print(ERR_NOT_IN_COMBAT)
 						return
 					end
-					module.db.profile.enable = val
+					module.DB.profile.enable = val
 					FilmEffectEvent(nil, nil, nil)
 					updateopts()
 				end
@@ -200,14 +201,14 @@ function module:Options()
 			type = 'toggle',
 			order = k + 1.2,
 			get = function(info)
-				return module.db.profile.Effects[v].always
+				return module.DB.profile.Effects[v].always
 			end,
 			set = function(info, val)
 				if InCombatLockdown() then
 					SUI:Print(ERR_NOT_IN_COMBAT)
 					return
 				end
-				module.db.profile.Effects[v].always = val
+				module.DB.profile.Effects[v].always = val
 				FilmEffectEvent(nil, nil, nil)
 			end
 		}
@@ -220,10 +221,10 @@ function module:Options()
 					SUI:Print(ERR_NOT_IN_COMBAT)
 					return
 				end
-				return module.db.profile.Effects[v].afk
+				return module.DB.profile.Effects[v].afk
 			end,
 			set = function(info, val)
-				module.db.profile.Effects[v].afk = val
+				module.DB.profile.Effects[v].afk = val
 			end
 		}
 	end

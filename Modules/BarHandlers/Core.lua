@@ -76,8 +76,8 @@ function module:OnInitialize()
 			}
 		}
 	}
-	module.database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', defaults)
-	module.DB = module.database.profile
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', defaults)
+	module.DB = module.Database.profile
 	if not module.BarSystems[module.DB.BarSystem] then
 		module.DB.BarSystem = 'Bartender4'
 	end
