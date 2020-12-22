@@ -16,7 +16,7 @@ local Conditions = {
 	['Disabled'] = L['Disabled']
 }
 
-local function UpdateSize(args)
+local function UpdateSize()
 	local screenHeight = GetScreenHeight()
 	local FrameHeight = min((screenHeight - (screenHeight - (_G.ObjectiveTrackerFrame:GetTop() or 0))), module.DB.height)
 
@@ -280,6 +280,15 @@ function module:OnDisable()
 end
 
 local DummyFunction = function()
+end
+
+function module:update()
+	if SUI.DB.DisabledComponents.Objectives or module.Override then
+		return
+	end
+
+	UpdateSize()
+	ObjTrackerUpdate()
 end
 
 function module:FirstTimeSetup()

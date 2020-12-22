@@ -6,9 +6,30 @@ local window
 local namespaceblacklist = {'LibDualSpec-1.0'}
 local namespacelist = {{text = 'All', value = 'all'}, {text = 'Core', value = 'core'}}
 
+local function ResetWindow()
+	window.Export:Hide()
+	window.ProfileItems:Hide()
+	window.namespaces:Hide()
+	window.Import:Hide()
+	window.textBox:SetValue('')
+
+	if window.mode == 'export' then
+		window.Export:Show()
+		window.ProfileItems:Show()
+		window.namespaces:Show()
+	else
+		window.Import:Show()
+		window.textBox:SetValue('')
+	end
+
+	window.Desc1:SetText(mode)
+	window:Show()
+end
+
 local function CreateWindow()
 	window = StdUi:Window(nil, 650, 500)
 	window.StdUi = StdUi
+	window.mode = 'init'
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
 	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
@@ -28,13 +49,28 @@ local function CreateWindow()
 	window.textBox:SetPoint('BOTTOM', window, 'BOTTOM', 0, 25)
 
 	-- Setup the Buttons
+	window.SwitchMode = StdUi:Button(window, 150, 20, 'SWITCH MODE')
+	window.SwitchMode:SetPoint('TOPLEFT', window, 'TOPLEFT', 2, -2)
+	window.SwitchMode:SetScript(
+		'OnClick',
+		function(this)
+			if window.mode == 'import' then
+				window.mode = 'export'
+			else
+				window.mode = 'import'
+			end
+
+			ResetWindow()
+		end
+	)
+
 	window.Export = StdUi:Button(window, 150, 20, 'EXPORT')
 	window.Export:SetPoint('BOTTOMRIGHT', window, 'BOTTOMRIGHT', -2, 2)
 	window.Export:SetScript(
 		'OnClick',
 		function(this)
 			local profileScope = window.namespaces:GetValue()
-			local profileKey, profileExport = module:GetProfileExport(window.mode:GetValue(), profileScope)
+			local profileKey, profileExport = module:GetProfileExport(window.ProfileItems:GetValue(), profileScope)
 			if not profileExport then
 				window.Desc1:SetText('Error exporting profile!')
 			else
@@ -73,8 +109,8 @@ local function CreateWindow()
 		{text = L['Table'], value = 'luaTable'},
 		{text = L['Plugin'], value = 'luaPlugin'}
 	}
-	window.mode = StdUi:Dropdown(window, 200, 20, items, 'luaTable')
-	window.mode:SetPoint('BOTTOM', window, 'BOTTOM', 0, 2)
+	window.ProfileItems = StdUi:Dropdown(window, 200, 20, items, 'luaTable')
+	window.ProfileItems:SetPoint('BOTTOM', window, 'BOTTOM', 0, 2)
 
 	for i, v in pairs(SpartanUIDB.namespaces) do
 		if not SUI:isInTable(namespaceblacklist, i) then
@@ -89,26 +125,16 @@ local function ImportUI()
 	if not window then
 		CreateWindow()
 	end
-	window.Export:Hide()
-	window.mode:Hide()
-	window.namespaces:Hide()
-	window.Import:Show()
-	window.textBox:SetValue('')
-
-	window:Show()
+	window.mode = 'import'
+	ResetWindow()
 end
 
 local function ExportUI()
 	if not window then
 		CreateWindow()
 	end
-	window.Export:Show()
-	window.mode:Show()
-	window.namespaces:Show()
-	window.Import:Hide()
-	window.textBox:SetValue('')
-
-	window:Show()
+	window.mode = 'export'
+	ResetWindow()
 end
 
 function module:OnInitialize()
@@ -285,13 +311,43 @@ function module:Decode(dataString)
 	return profileType, profileKey, profileData
 end
 
+local function PrepareImport(defaults, importData)
+	local newData = SUI:CopyTable({}, defaults)
+	newData = SUI:CopyTable(newData, importData)
+
+	return newData
+end
+
+local function ImportModuleSettings(ModuleName, NewSettings)
+	local module = SUI:GetModule('Component_' .. ModuleName)
+	local newsettings = PrepareImport(module.Database.defaults.profile, NewSettings)
+
+	module.DB = SUI:MergeData(module.DB, newsettings, true)
+	-- Trigger a update for the module if the module has an updater
+	if module.update then
+		module:update()
+	end
+end
+
 function module:ImportProfile(dataString)
 	local profileScope, profileKey, profileData = module:Decode(dataString)
 
-	if profileScope == 'core' or profileScope == 'all' then
+	-- local CurProfile = SUI.SpartanUIDB:GetCurrentProfile()
+	-- SUI.SpartanUIDB.keys.profile = CurProfile .. '_Temp'
+	if profileScope == 'all' then
+		-- else if profileScope == 'core' then
+		for k, v in pairs(profileData) do
+			if k == 'core' then
+			else
+				ImportModuleSettings(k, v)
+			end
+		end
 	else
-		local namespaceData = SUI.SpartanUIDB:GetNamespace(profileScope).profile
-		window.db = namespaceData
-		namespaceData = profileData
+		--For toubleshooting
+		-- window.importinit = profileData[profileScope]
+		-- window.db = namespaceDB.profile
+		-- window.dbMain = SUI.SpartanUIDB
+		ImportModuleSettings(profileScope, profileData[profileScope])
 	end
+	-- SUI.SpartanUIDB:SetProfile(CurProfile)
 end

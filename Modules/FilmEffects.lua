@@ -71,7 +71,7 @@ function module:OnEnable()
 	Container:SetScript(
 		'OnUpdate',
 		function(self, elapsed)
-			module:Update(elapsed)
+			module:UpdateStatus(elapsed)
 		end
 	)
 
@@ -148,7 +148,7 @@ function module:OnEnable()
 	Container.crisp:Hide()
 end
 
-function module:Update(elapsed)
+function module:UpdateStatus(elapsed)
 	module.DB.profile.animationInterval = module.DB.profile.animationInterval + elapsed
 	if (module.DB.profile.animationInterval > (0.02)) then -- 50 FPS
 		module.DB.profile.animationInterval = 0
