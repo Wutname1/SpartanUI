@@ -1272,6 +1272,21 @@ local function CreateUnitFrame(self, unit)
 	return self
 end
 
+local function VisibilityCheck(group)
+	local retVal = false
+	if module.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
+		retVal = true
+	end
+	if module.CurrentSettings[group].showRaid and IsInRaid() then
+		retVal = true
+	end
+	if module.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
+		retVal = true
+	end
+
+	return retVal
+end
+
 function module:SpawnFrames()
 	SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
@@ -1424,12 +1439,20 @@ function module:SpawnFrames()
 	for _, group in ipairs({'raid', 'party', 'boss', 'arena'}) do
 		if module.frames[group] then
 			local function GroupFrameUpdateAll(self)
-				if module.CurrentSettings[group].enabled then
+				if VisibilityCheck(group) and module.CurrentSettings[group].enabled then
+					if module.frames[group].visibility then
+						RegisterStateDriver(module.frames[group], module.frames[group].visibility)
+					end
+					module.frames[group]:Show()
+
 					for _, f in ipairs(self) do
 						if f.UpdateAll then
 							f:UpdateAll()
 						end
 					end
+				else
+					UnregisterStateDriver(module.frames[group], 'visibility')
+					module.frames[group]:Hide()
 				end
 			end
 
@@ -1476,44 +1499,12 @@ function module:UpdateAll(event, ...)
 	end
 
 	module:UpdateGroupFrames()
-	for _, v in ipairs({'boss', 'arena'}) do
-		if module.frames[v] then
-			module.frames[v]:UpdateAll()
-			if not module.CurrentSettings[v].enabled then
-				module.frames[v]:Disable()
-			end
-		end
-	end
-end
-
-local function VisibilityCheck(group)
-	local retVal = false
-	if module.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
-		retVal = true
-	end
-	if module.CurrentSettings[group].showRaid and IsInRaid() then
-		retVal = true
-	end
-	if module.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
-		retVal = true
-	end
-
-	return retVal
 end
 
 function module:UpdateGroupFrames(event, ...)
-	for _, v in ipairs({'raid', 'party'}) do
+	for _, v in ipairs({'raid', 'party', 'boss', 'arena'}) do
 		if module.frames[v] then
-			if VisibilityCheck(v) then
-				module.frames[v]:Show()
-				module.frames[v]:UpdateAll()
-			else
-				module.frames[v]:Hide()
-			end
-
-			if not module.CurrentSettings[v].enabled then
-				module.frames[v]:Disable()
-			end
+			module.frames[v]:UpdateAll()
 		end
 	end
 end
