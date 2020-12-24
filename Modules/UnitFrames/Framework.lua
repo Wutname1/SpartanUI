@@ -269,19 +269,11 @@ end
 function module:ResetSettings()
 	--Reset the DB
 	SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style] = nil
-	-- Refresh the memory
-	module:LoadDB()
-
-	-- Update the screen
-	for _, frame in pairs(module.frames) do
-		-- Check that its a frame
-		if frame.UpdateAll then
-			frame:UpdateAll()
-		end
-	end
+	-- Trigger update
+	module:Update()
 end
 
-function module:LoadDB()
+local function LoadDB()
 	-- Setup an empty memory state
 	module.CurrentSettings = {}
 	-- Load Default Settings
@@ -305,7 +297,7 @@ function module:OnInitialize()
 	end
 	DB = SUI.DB.Unitframes
 	-- Setup Database
-	module:LoadDB()
+	LoadDB()
 end
 
 function module:OnEnable()
@@ -375,16 +367,21 @@ function module:OnEnable()
 	end
 end
 
-function module:SetActiveStyle(style)
-	SUI.DB.Unitframes.Style = style
-	-- Refersh Settings
-	module:LoadDB()
+function module:Update()
+	-- Refresh Settings
+	LoadDB()
 	-- Update positions
 	module:PositionFrame()
 	--Send Custom change event
 	SUI.Event:SendEvent('UNITFRAME_STYLE_CHANGED')
 	-- Update all display elements
 	module:UpdateAll()
+end
+
+function module:SetActiveStyle(style)
+	SUI.DB.Unitframes.Style = style
+	-- Refersh Settings
+	module:Update()
 end
 
 local blockedFunctions = {

@@ -4,7 +4,7 @@ local module = SUI:NewModule('Handler_Profiles')
 ----------------------------------------------------------------------------------------------------
 local window
 local namespaceblacklist = {'LibDualSpec-1.0'}
-local namespacelist = {{text = 'All', value = 'all'}, {text = 'Core', value = 'core'}}
+local namespacelist = {{text = 'Full profile', value = 'full'}, {text = 'Core', value = 'core'}}
 
 local function ResetWindow()
 	window.Export:Hide()
@@ -12,6 +12,7 @@ local function ResetWindow()
 	window.namespaces:Hide()
 	window.Import:Hide()
 	window.textBox:SetValue('')
+	window.importWin:Hide()
 
 	if window.mode == 'export' then
 		window.Export:Show()
@@ -20,6 +21,7 @@ local function ResetWindow()
 	else
 		window.Import:Show()
 		window.textBox:SetValue('')
+		window.importWin:Show()
 	end
 
 	window.Desc1:SetText(mode)
@@ -78,7 +80,7 @@ local function CreateWindow()
 				local b = format('%s: |cff00b3ff%s|r', 'Profile Name', profileKey)
 
 				window.Desc1:SetText(a)
-				if profileScope == 'all' or profileScope == 'core' then
+				if profileScope == 'full' then
 					window.Desc1:SetText(a .. ' ' .. b)
 				end
 
@@ -117,8 +119,25 @@ local function CreateWindow()
 			table.insert(namespacelist, {text = i, value = i})
 		end
 	end
-	window.namespaces = StdUi:Dropdown(window, 200, 20, namespacelist, 'all')
+	window.namespaces = StdUi:Dropdown(window, 200, 20, namespacelist, 'full')
 	window.namespaces:SetPoint('BOTTOMLEFT', window, 'BOTTOMLEFT', 2, 2)
+
+	local importWin = StdUi:Window(nil, 200, window:GetHeight())
+	importWin:SetPoint('LEFT', window, 'RIGHT', 2, 0)
+	importWin:SetFrameStrata('DIALOG')
+
+	importWin.Title = StdUi:Label(importWin, '', 13, nil, importWin:GetWidth())
+	importWin.Title:SetPoint('TOP')
+	importWin.Title:SetTextColor(1, 1, 1, .8)
+	importWin.Title:SetWidth(importWin:GetWidth() - 40)
+	importWin.Title:SetJustifyH('CENTER')
+	importWin.Title:SetText('Import Settings')
+
+	-- importWin.CurrentProfile = StdUi:Checkbox(importWin, 'Use current profile', 220, 20)
+	-- importWin.NewProfile = StdUi:Checkbox(importWin, 'New Profile', 220, 20)
+	-- importWin.NewProfileName = StdUi:SimpleEditBox(importWin, 300, 24, '')
+
+	window.importWin = importWin
 end
 
 local function ImportUI()
@@ -160,7 +179,7 @@ local function GetProfileData(profileScope)
 		return vars
 	end
 	local function inScope(localScope)
-		if not profileScope or (profileScope == 'all' or profileScope == localScope) then
+		if not profileScope or (profileScope == 'full' or profileScope == localScope) then
 			return true
 		end
 		return false
@@ -228,7 +247,7 @@ end
 function module:CreateProfileExport(dataString, profileScope, profileKey)
 	local returnString
 
-	if profileScope == 'core' or profileScope == 'all' then
+	if profileScope == 'full' then
 		returnString = format('%s::%s::%s', dataString, profileScope, profileKey)
 	else
 		returnString = format('%s::%s', dataString, profileScope)
@@ -318,12 +337,18 @@ local function PrepareImport(defaults, importData)
 	return newData
 end
 
+local function ImportCoreSettings(importData)
+	local newsettings = PrepareImport(SUI.SpartanUIDB.defaults.profile, importData)
+	SUI.DB = SUI:MergeData(SUI.DB, newsettings, true)
+end
+
 local function ImportModuleSettings(ModuleName, NewSettings)
 	local module = SUI:GetModule('Component_' .. ModuleName)
 	local newsettings = PrepareImport(module.Database.defaults.profile, NewSettings)
 
 	module.DB = SUI:MergeData(module.DB, newsettings, true)
 	-- Trigger a update for the module if the module has an updater
+	-- If module needs reloadui it can call SUI:reloadui in the update call
 	if module.update then
 		module:update()
 	end
@@ -333,21 +358,20 @@ function module:ImportProfile(dataString)
 	local profileScope, profileKey, profileData = module:Decode(dataString)
 
 	-- local CurProfile = SUI.SpartanUIDB:GetCurrentProfile()
-	-- SUI.SpartanUIDB.keys.profile = CurProfile .. '_Temp'
-	if profileScope == 'all' then
-		-- else if profileScope == 'core' then
+	-- SUI.SpartanUIDB:SetProfile(CurProfile)
+	if profileScope == 'full' then
 		for k, v in pairs(profileData) do
 			if k == 'core' then
+				ImportCoreSettings(v)
+				SUI:reloadui()
 			else
 				ImportModuleSettings(k, v)
 			end
 		end
+	elseif profileScope == 'core' then
+		ImportCoreSettings(v)
+		SUI:reloadui()
 	else
-		--For toubleshooting
-		-- window.importinit = profileData[profileScope]
-		-- window.db = namespaceDB.profile
-		-- window.dbMain = SUI.SpartanUIDB
 		ImportModuleSettings(profileScope, profileData[profileScope])
 	end
-	-- SUI.SpartanUIDB:SetProfile(CurProfile)
 end
