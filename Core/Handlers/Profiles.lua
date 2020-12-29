@@ -4,28 +4,22 @@ local module = SUI:NewModule('Handler_Profiles')
 ----------------------------------------------------------------------------------------------------
 local window
 local namespaceblacklist = {'LibDualSpec-1.0'}
-local namespacelist = {{text = 'Full profile', value = 'full'}, {text = 'Core', value = 'core'}}
 
 local function ResetWindow()
-	window.Export:Hide()
-	window.ProfileItems:Hide()
-	window.namespaces:Hide()
-	window.Import:Hide()
 	window.textBox:SetValue('')
-	window.importWin:Hide()
+	window.optionPane.exportOpt:Hide()
+	window.optionPane.importOpt:Hide()
 
 	if window.mode == 'export' then
-		window.Export:Show()
-		window.ProfileItems:Show()
-		window.namespaces:Show()
+		window.optionPane.Title:SetText('Export settings')
+		window.optionPane.exportOpt:Show()
 	else
-		window.Import:Show()
-		window.textBox:SetValue('')
-		window.importWin:Show()
+		window.optionPane.Title:SetText('Import settings')
+		window.optionPane.importOpt:Show()
 	end
 
-	window.Desc1:SetText(mode)
 	window:Show()
+	window.optionPane:Show()
 end
 
 local function CreateWindow()
@@ -40,20 +34,39 @@ local function CreateWindow()
 	window.Title:SetAlpha(.8)
 
 	window.Desc1 = StdUi:Label(window, '', 13, nil, window:GetWidth())
-	window.Desc1:SetPoint('TOP', window.titlePanel, 'BOTTOM', 0, -20)
+	window.Desc1:SetPoint('TOP', window.Title, 'BOTTOM', 0, -5)
 	window.Desc1:SetTextColor(1, 1, 1, .8)
 	window.Desc1:SetWidth(window:GetWidth() - 40)
 	window.Desc1:SetJustifyH('CENTER')
 	window.Desc1:SetText('')
 
-	window.textBox = StdUi:MultiLineBox(window, 600, 350, '')
-	window.textBox:SetPoint('TOP', window.Title, 'BOTTOM', 0, -25)
-	window.textBox:SetPoint('BOTTOM', window, 'BOTTOM', 0, 25)
+	window.textBox = StdUi:MultiLineBox(window, window:GetWidth() - 10, 350, '')
+	window.textBox:SetPoint('TOP', window.Desc1, 'BOTTOM', 0, -5)
+	window.textBox:SetPoint('BOTTOM', window, 'BOTTOM', 0, 5)
 
-	-- Setup the Buttons
-	window.SwitchMode = StdUi:Button(window, 150, 20, 'SWITCH MODE')
-	window.SwitchMode:SetPoint('TOPLEFT', window, 'TOPLEFT', 2, -2)
-	window.SwitchMode:SetScript(
+	-- Setup the Options Pane
+	local OptWidth = 194 -- Will be created 4 larger than this value
+
+	local optionPane = StdUi:Window(nil, OptWidth + 4, window:GetHeight())
+	optionPane:SetPoint('LEFT', window, 'RIGHT', 1, 0)
+	optionPane:SetFrameStrata('DIALOG')
+	window:HookScript(
+		'OnHide',
+		function()
+			optionPane:Hide()
+		end
+	)
+	optionPane.closeBtn:Hide()
+
+	optionPane.Title = StdUi:Label(optionPane, '', 13, nil, OptWidth)
+	optionPane.Title:SetTextColor(1, 1, 1, .8)
+	optionPane.Title:SetJustifyH('CENTER')
+	optionPane.Title:SetText('Import settings')
+	optionPane.Title:SetPoint('TOP', 0, -2)
+
+	optionPane.SwitchMode = StdUi:Button(optionPane, OptWidth, 20, 'SWITCH MODE')
+	optionPane.SwitchMode:SetPoint('BOTTOM', optionPane, 0, 24)
+	optionPane.SwitchMode:SetScript(
 		'OnClick',
 		function(this)
 			if window.mode == 'import' then
@@ -66,23 +79,92 @@ local function CreateWindow()
 		end
 	)
 
-	window.Export = StdUi:Button(window, 150, 20, 'EXPORT')
-	window.Export:SetPoint('BOTTOMRIGHT', window, 'BOTTOMRIGHT', -2, 2)
-	window.Export:SetScript(
+	--------------------------------
+	-------- EXPORT STUFF ----------
+	local exportOpt = CreateFrame('Frame', nil)
+	exportOpt:SetParent(optionPane)
+	exportOpt:SetPoint('TOPLEFT', optionPane, 3, -25)
+	exportOpt:SetPoint('BOTTOMRIGHT', -3, 3)
+
+	exportOpt.formatExportText = StdUi:Radio(exportOpt, 'Text', 'exportFormat', OptWidth, 20)
+	exportOpt.formatExportText:SetValue('text')
+	exportOpt.formatExportText:SetPoint('TOP')
+
+	exportOpt.formatExportTable = StdUi:Radio(exportOpt, 'Table', 'exportFormat', OptWidth, 20)
+	exportOpt.formatExportTable:SetValue('luaTable')
+	exportOpt.formatExportTable:SetPoint('TOP', exportOpt.formatExportText, 'BOTTOM', 0, -2)
+
+	StdUi:SetRadioGroupValue('exportFormat', 'luaTable')
+
+	exportOpt.AllNamespaces = StdUi:Checkbox(exportOpt, 'All', OptWidth, 20)
+	exportOpt.AllNamespaces:SetPoint('TOP', exportOpt.formatExportTable, 'BOTTOM', 0, -20)
+	exportOpt.AllNamespaces:SetChecked(true)
+	exportOpt.AllNamespaces:HookScript(
+		'OnClick',
+		function(self)
+			for i, v in ipairs(exportOpt.items) do
+				v:SetChecked(self:GetChecked())
+			end
+		end
+	)
+
+	local NamespaceListings = StdUi:FauxScrollFrame(exportOpt, OptWidth, 300, 15, 20)
+	NamespaceListings:SetPoint('TOP', exportOpt.AllNamespaces, 'BOTTOM', 0, -2)
+
+	exportOpt.items = {}
+	local list = {}
+	table.insert(list, {text = 'Core', value = 'core'})
+	for i, v in pairs(SpartanUIDB.namespaces) do
+		if not SUI:isInTable(namespaceblacklist, i) then
+			local DisplayName
+			local tmpModule = SUI:GetModule('Component_' .. i, true)
+			if tmpModule and tmpModule.DisplayName then
+				DisplayName = tmpModule.DisplayName
+			end
+
+			table.insert(list, {text = (DisplayName or i), value = i})
+		end
+	end
+
+	local function update(parent, checkbox, data)
+		checkbox:SetText(data.text)
+		checkbox:SetValue(data.value)
+		checkbox:SetChecked(true)
+		StdUi:SetObjSize(checkbox, 60, 20)
+		checkbox:SetPoint('RIGHT')
+		checkbox:SetPoint('LEFT')
+		checkbox:HookScript(
+			'OnClick',
+			function(self)
+				if not self:GetChecked() then
+					exportOpt.AllNamespaces:SetChecked(false)
+				end
+			end
+		)
+		return checkbox
+	end
+
+	StdUi:ObjectList(NamespaceListings.scrollChild, exportOpt.items, 'Checkbox', update, list, 1, 0, 0)
+	exportOpt.NamespaceListings = NamespaceListings
+
+	exportOpt.Export = StdUi:Button(exportOpt, OptWidth, 20, 'EXPORT')
+	exportOpt.Export:SetPoint('BOTTOM')
+	exportOpt.Export:SetScript(
 		'OnClick',
 		function(this)
-			local profileScope = window.namespaces:GetValue()
-			local profileKey, profileExport = module:GetProfileExport(window.ProfileItems:GetValue(), profileScope)
+			local ExportScopes = {}
+			for i, v in ipairs(exportOpt.items) do
+				if v:GetChecked() then
+					ExportScopes[v:GetValue()] = {}
+				end
+			end
+
+			local profileExport = module:ExportProfile(StdUi:GetRadioGroupValue('exportFormat'), ExportScopes)
+
 			if not profileExport then
 				window.Desc1:SetText('Error exporting profile!')
 			else
-				local a = format('%s: |cff00b3ff%s|r', 'Exported', window.namespaces:FindValueText(profileScope))
-				local b = format('%s: |cff00b3ff%s|r', 'Profile Name', profileKey)
-
-				window.Desc1:SetText(a)
-				if profileScope == 'full' then
-					window.Desc1:SetText(a .. ' ' .. b)
-				end
+				window.Desc1:SetText('Exported!')
 
 				window.textBox:SetValue(profileExport)
 				window.textBox.editBox:HighlightText()
@@ -91,53 +173,55 @@ local function CreateWindow()
 		end
 	)
 
-	window.Import = StdUi:Button(window, 150, 20, 'IMPORT')
-	window.Import:SetPoint('BOTTOMRIGHT', window, 'BOTTOMRIGHT', -2, 2)
-	window.Import:SetScript(
+	--------------------------------
+	-------- IMPORT STUFF ----------
+	local importOpt = CreateFrame('Frame', nil)
+	importOpt:SetParent(optionPane)
+	importOpt:SetPoint('TOPLEFT', optionPane, 3, -25)
+	importOpt:SetPoint('BOTTOMRIGHT', -3, 3)
+
+	importOpt.CurrentProfile = StdUi:Radio(importOpt, 'Use current profile', 'importTo', OptWidth, 20)
+	importOpt.CurrentProfile:SetValue('current')
+	importOpt.CurrentProfile:SetPoint('TOP')
+
+	importOpt.NewProfile = StdUi:Radio(importOpt, 'New Profile', 'importTo', OptWidth, 20)
+	importOpt.NewProfile:SetValue('new')
+	importOpt.NewProfile:SetPoint('TOP', importOpt.CurrentProfile, 'BOTTOM', 0, -2)
+
+	importOpt.NewProfileName = StdUi:SimpleEditBox(importOpt, OptWidth, 20, '')
+	importOpt.NewProfileName:SetPoint('TOP', importOpt.NewProfile, 'BOTTOM', 0, -2)
+
+	StdUi:OnRadioGroupValueChanged(
+		'importTo',
+		function(v)
+			importOpt.NewProfileName:SetText('')
+			if v == 'new' then
+				importOpt.NewProfileName:Enable()
+			else
+				importOpt.NewProfileName:Disable()
+			end
+		end
+	)
+	StdUi:SetRadioGroupValue('importTo', 'current')
+
+	importOpt.Import = StdUi:Button(importOpt, OptWidth, 20, 'IMPORT')
+	importOpt.Import:SetPoint('BOTTOM')
+	importOpt.Import:SetScript(
 		'OnClick',
 		function(this)
-			local profileScope = window.namespaces:GetValue()
-			local profileImport = window.textBox:GetValue()
+			local importProfileTo = StdUi:GetRadioGroupValue('importTo')
+			local profileImport = optionPane.textBox:GetValue()
 			if profileImport == '' then
-				window.Desc1:SetText('Please enter a string to import')
+				optionPane.Desc1:SetText('Please enter a string to import')
 			else
 				module:ImportProfile(profileImport)
 			end
 		end
 	)
 
-	local items = {
-		{text = L['Text'], value = 'text'},
-		{text = L['Table'], value = 'luaTable'},
-		{text = L['Plugin'], value = 'luaPlugin'}
-	}
-	window.ProfileItems = StdUi:Dropdown(window, 200, 20, items, 'luaTable')
-	window.ProfileItems:SetPoint('BOTTOM', window, 'BOTTOM', 0, 2)
-
-	for i, v in pairs(SpartanUIDB.namespaces) do
-		if not SUI:isInTable(namespaceblacklist, i) then
-			table.insert(namespacelist, {text = i, value = i})
-		end
-	end
-	window.namespaces = StdUi:Dropdown(window, 200, 20, namespacelist, 'full')
-	window.namespaces:SetPoint('BOTTOMLEFT', window, 'BOTTOMLEFT', 2, 2)
-
-	local importWin = StdUi:Window(nil, 200, window:GetHeight())
-	importWin:SetPoint('LEFT', window, 'RIGHT', 2, 0)
-	importWin:SetFrameStrata('DIALOG')
-
-	importWin.Title = StdUi:Label(importWin, '', 13, nil, importWin:GetWidth())
-	importWin.Title:SetPoint('TOP')
-	importWin.Title:SetTextColor(1, 1, 1, .8)
-	importWin.Title:SetWidth(importWin:GetWidth() - 40)
-	importWin.Title:SetJustifyH('CENTER')
-	importWin.Title:SetText('Import Settings')
-
-	-- importWin.CurrentProfile = StdUi:Checkbox(importWin, 'Use current profile', 220, 20)
-	-- importWin.NewProfile = StdUi:Checkbox(importWin, 'New Profile', 220, 20)
-	-- importWin.NewProfileName = StdUi:SimpleEditBox(importWin, 300, 24, '')
-
-	window.importWin = importWin
+	optionPane.exportOpt = exportOpt
+	optionPane.importOpt = importOpt
+	window.optionPane = optionPane
 end
 
 local function ImportUI()
@@ -163,7 +247,9 @@ function module:OnEnable()
 	SUI:AddChatCommand('import', ImportUI)
 end
 
-local function GetProfileData(profileScope)
+-------- EXPORT STUFF ----------
+
+local function GetProfileData(ScopeTable)
 	local function SetCustomVars(data, keys)
 		if not data then
 			return
@@ -179,22 +265,20 @@ local function GetProfileData(profileScope)
 		return vars
 	end
 	local function inScope(localScope)
-		if not profileScope or (profileScope == 'full' or profileScope == localScope) then
+		if ScopeTable and ScopeTable[localScope] ~= nil then
 			return true
 		end
 		return false
 	end
 
-	local profileKey = SUI.SpartanUIDB:GetCurrentProfile()
+	local profile = SUI.SpartanUIDB:GetCurrentProfile()
 	local profileData = {}
-
-	-- profileKey = SpartanUIDB.profileKeys and SpartanUIDB.profileKeys[E.myname .. ' - ' .. E.myrealm]
 
 	local namespaces = {}
 	local blacklistedKeys = {}
 
 	if inScope('core') then
-		local data = SpartanUIDB.profiles[profileKey]
+		local data = SpartanUIDB.profiles[profile]
 		local vars = SetCustomVars(data, namespaces)
 		--Copy current profile data
 		local core = SUI:CopyTable({}, SUI.DB)
@@ -205,9 +289,9 @@ local function GetProfileData(profileScope)
 	end
 
 	for name, datatable in pairs(SpartanUIDB.namespaces) do
-		if inScope(name) and datatable.profiles and datatable.profiles[profileKey] then
+		if inScope(name) and datatable.profiles and datatable.profiles[profile] then
 			--Copy current profile data
-			local data = SUI:CopyTable({}, datatable.profiles[profileKey])
+			local data = SUI:CopyTable({}, datatable.profiles[profile])
 			--Compare against the defaults and remove all duplicates
 			local namespaceData = SUI.SpartanUIDB:GetNamespace(name).defaults.profile
 			data = SUI:RemoveTableDuplicates(data, namespaceData, vars)
@@ -216,45 +300,31 @@ local function GetProfileData(profileScope)
 		end
 	end
 
-	return profileKey, profileData
+	return profileData
 end
 
-function module:GetProfileExport(exportFormat, profileScope)
-	local profileExport, exportString
-	local profileKey, profileData = GetProfileData(profileScope)
+function module:ExportProfile(exportFormat, ScopeTable)
+	local profileExport
+	local profileData = GetProfileData(ScopeTable)
 
-	if not profileKey or not profileData or (profileData and type(profileData) ~= 'table') then
+	if not profileData or (profileData and type(profileData) ~= 'table') then
 		print('Error getting data from "GetProfileData"')
 		return
 	end
 
 	if exportFormat == 'text' then
 		local serialData = SUI:Serialize(profileData)
-		exportString = module:CreateProfileExport(serialData, profileScope, profileKey)
-		local compressedData = Lib.Compress:Compress(exportString)
+		local compressedData = Lib.Compress:Compress(serialData)
 		local encodedData = Lib.Base64:Encode(compressedData)
 		profileExport = encodedData
 	elseif exportFormat == 'luaTable' then
-		exportString = SUI:TableToLuaString(profileData)
-		profileExport = module:CreateProfileExport(exportString, profileScope, profileKey)
-	elseif exportFormat == 'luaPlugin' then
-		profileExport = SUI:ProfileTableToPluginFormat(profileData, profileScope)
+		profileExport = SUI:TableToLuaString(profileData)
 	end
 
-	return profileKey, profileExport
+	return profileExport
 end
 
-function module:CreateProfileExport(dataString, profileScope, profileKey)
-	local returnString
-
-	if profileScope == 'full' then
-		returnString = format('%s::%s::%s', dataString, profileScope, profileKey)
-	else
-		returnString = format('%s::%s', dataString, profileScope)
-	end
-
-	return returnString
-end
+-------- IMPORT STUFF ----------
 
 local function GetImportStringType(dataString)
 	local stringType = ''
@@ -268,8 +338,8 @@ local function GetImportStringType(dataString)
 	return stringType
 end
 
-function module:Decode(dataString)
-	local profileInfo, profileType, profileKey, profileData
+local function DecodeImportInput(dataString)
+	local profileData
 	local stringType = GetImportStringType(dataString)
 
 	if stringType == 'Base64' then
@@ -281,17 +351,8 @@ function module:Decode(dataString)
 			return
 		end
 
-		local serializedData, success
-		serializedData, profileInfo = SUI:SplitString(decompressedData, '^^::') -- '^^' indicates the end of the AceSerializer string
-
-		if not profileInfo then
-			SUI:Print('Error importing profile. String is invalid or corrupted!')
-			return
-		end
-
-		serializedData = format('%s%s', serializedData, '^^') --Add back the AceSerializer terminator
-		profileType, profileKey = SUI:SplitString(profileInfo, '::')
-		success, profileData = SUI:Deserialize(serializedData)
+		local success
+		success, profileData = SUI:Deserialize(decompressedData)
 
 		if not success then
 			SUI:Print('Error deserializing:', profileData)
@@ -299,21 +360,9 @@ function module:Decode(dataString)
 		end
 	elseif stringType == 'Table' then
 		local profileDataAsString
-		profileDataAsString, profileInfo = SUI:SplitString(dataString, '}::') -- '}::' indicates the end of the table
 
-		if not profileInfo then
-			SUI:Print('Error extracting profile info. Invalid import string!')
-			return
-		end
-
-		if not profileDataAsString then
-			SUI:Print('Error extracting profile data. Invalid import string!')
-			return
-		end
-
-		profileDataAsString = format('%s%s', profileDataAsString, '}') --Add back the missing '}'
+		profileDataAsString = format('%s%s', dataString, '}') --Add back the missing '}'
 		profileDataAsString = gsub(profileDataAsString, '\124\124', '\124') --Remove escape pipe characters
-		profileType, profileKey = SUI:SplitString(profileInfo, '::')
 
 		local profileMessage
 		local profileToTable = loadstring(format('%s %s', 'return', profileDataAsString))
@@ -322,12 +371,12 @@ function module:Decode(dataString)
 		end
 
 		if profileMessage and (not profileData or type(profileData) ~= 'table') then
-			SUI:Print('Error converting lua string to tablSUI:', profileMessage)
+			SUI:Print('Error converting lua string to table:', profileMessage)
 			return
 		end
 	end
 
-	return profileType, profileKey, profileData
+	return profileData
 end
 
 local function PrepareImport(defaults, importData)
@@ -355,23 +404,16 @@ local function ImportModuleSettings(ModuleName, NewSettings)
 end
 
 function module:ImportProfile(dataString)
-	local profileScope, profileKey, profileData = module:Decode(dataString)
+	local profileData = DecodeImportInput(dataString)
 
 	-- local CurProfile = SUI.SpartanUIDB:GetCurrentProfile()
 	-- SUI.SpartanUIDB:SetProfile(CurProfile)
-	if profileScope == 'full' then
-		for k, v in pairs(profileData) do
-			if k == 'core' then
-				ImportCoreSettings(v)
-				SUI:reloadui()
-			else
-				ImportModuleSettings(k, v)
-			end
+	for k, v in pairs(profileData) do
+		if k == 'core' then
+			ImportCoreSettings(v)
+			SUI:reloadui()
+		else
+			ImportModuleSettings(k, v)
 		end
-	elseif profileScope == 'core' then
-		ImportCoreSettings(v)
-		SUI:reloadui()
-	else
-		ImportModuleSettings(profileScope, profileData[profileScope])
 	end
 end
