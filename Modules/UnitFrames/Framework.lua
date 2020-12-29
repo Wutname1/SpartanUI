@@ -37,7 +37,7 @@ module.TagList = {
 	['deficit:name'] = {category = 'Health', description = 'Displays the health as a deficit and the name at full health'},
 	['perhp'] = {
 		category = 'Health',
-		description = 'Displays percentage HP without decimals or the % sign. You can display the percent sign by adjusting the tag to [perhp<%].'
+		description = 'Displays percentage HP without decimals or the % sign. You can display the percent sign by adjusting the tag to [perhp<$%].'
 	},
 	['maxhp'] = {category = 'Health', description = 'Displays max HP without decimals'},
 	['missinghp'] = {
