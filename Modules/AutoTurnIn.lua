@@ -203,7 +203,7 @@ local Lquests = {
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
-	if (SUI.DB.AutoTurnIn.ChatText) then
+	if (module.DB.ChatText) then
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 	if IsAltKeyDown() then
@@ -264,11 +264,11 @@ function module.MERCHANT_CLOSED()
 end
 
 function module.QUEST_DETAIL()
-	if (SUI.DB.AutoTurnIn.AcceptGeneralQuests) then
+	if (module.DB.AcceptGeneralQuests) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
 
-		if SUI.DB.AutoTurnIn.ChatText then
+		if module.DB.ChatText then
 			local title = GetTitleText()
 			local objText = GetObjectiveText()
 			if title and title ~= '' then
@@ -286,7 +286,7 @@ function module.QUEST_DETAIL()
 end
 
 function module.QUEST_COMPLETE()
-	if not SUI.DB.AutoTurnIn.TurnInEnabled then
+	if not module.DB.TurnInEnabled then
 		return
 	end
 
@@ -330,7 +330,7 @@ function module.QUEST_COMPLETE()
 					if (invLink) then
 						local eq2Level = SUI:GetiLVL(invLink)
 						if (EquipedLevel > eq2Level) then
-							if (SUI.DB.AutoTurnIn.debug) then
+							if (module.DB.debug) then
 								print('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
 							end
 							firstSlot = secondSlot
@@ -341,7 +341,7 @@ function module.QUEST_COMPLETE()
 				end
 
 				-- comparing lowest equipped item level with reward's item level
-				if (SUI.DB.AutoTurnIn.debug) then
+				if (module.DB.debug) then
 					print('iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. firstinvLink)
 				end
 
@@ -365,17 +365,17 @@ function module.QUEST_COMPLETE()
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
 			SUI:Print(L['Canceling turn in, quest rewards ' .. QuestRewardsWeapon .. '.'])
-		elseif SUI.DB.AutoTurnIn.lootreward then
+		elseif module.DB.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
-				if not SUI.DB.AutoTurnIn.debug then
+				if not module.DB.debug then
 					module:TurnInQuest(GreedID)
 				end
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
-				if not SUI.DB.AutoTurnIn.debug then
+				if not module.DB.debug then
 					module:TurnInQuest(UpgradeID)
-					if SUI.DB.AutoTurnIn.autoequip then
+					if module.DB.autoequip then
 						module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 					end
 				end
@@ -394,11 +394,11 @@ function module.QUEST_COMPLETE()
 		elseif UpgradeID then
 			SUI:Print('Quest rewards a upgrade ' .. UpgradeLink)
 			module:TurnInQuest(UpgradeID)
-			if SUI.DB.AutoTurnIn.autoequip then
+			if module.DB.autoequip then
 				module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 			end
 		else
-			if (SUI.DB.AutoTurnIn.debug) then
+			if (module.DB.debug) then
 				SUI:Print(L['No Reward, turning in.'])
 			end
 			module:TurnInQuest(1)
@@ -412,7 +412,7 @@ function module:GetItemAmount(isCurrency, item)
 end
 
 function module:VarArgForActiveQuests(...)
-	if SUI.DB.AutoTurnIn.debug then
+	if module.DB.debug then
 		print('VarArgForActiveQuests')
 	end
 	local INDEX_CONST = 6
@@ -438,7 +438,7 @@ end
 
 -- like previous function this one works around `nil` values in a list.
 function module:VarArgForAvailableQuests(...)
-	if SUI.DB.AutoTurnIn.debug then
+	if module.DB.debug then
 		print('VarArgForAvailableQuests')
 	end
 	local INDEX_CONST = 6 -- was '5' in Cataclysm
@@ -447,8 +447,8 @@ function module:VarArgForAvailableQuests(...)
 		local isTrivial = select(i + 2, ...)
 		local isDaily = select(i + 3, ...)
 		local isRepeatable = select(i + 4, ...)
-		local trivialORAllowed = (not isTrivial) or SUI.DB.AutoTurnIn.trivial
-		local isRepeatableORAllowed = (not isRepeatable or not isDaily) or SUI.DB.AutoTurnIn.AcceptRepeatable
+		local trivialORAllowed = (not isTrivial) or module.DB.trivial
+		local isRepeatableORAllowed = (not isRepeatable or not isDaily) or module.DB.AcceptRepeatable
 
 		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
 		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
@@ -470,7 +470,7 @@ function module:FirstLaunch()
 		SubTitle = L['Auto TurnIn'],
 		Desc1 = L['Automatically accept and turn in quests.'],
 		Desc2 = L['Holding ALT while talking to a NPC will temporarily disable the auto turnin module.'],
-		RequireDisplay = SUI.DB.AutoTurnIn.FirstLaunch,
+		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -510,7 +510,7 @@ function module:FirstLaunch()
 
 				-- Defaults
 				for key, object in pairs(ATI.options) do
-					object:SetChecked(SUI.DB.AutoTurnIn[key])
+					object:SetChecked(module.DB[key])
 				end
 			end
 			SUI_Win.ATI = ATI
@@ -521,13 +521,13 @@ function module:FirstLaunch()
 				local ATI = window.content.ATI
 
 				for key, object in pairs(ATI.options) do
-					SUI.DB.AutoTurnIn[key] = object:GetChecked()
+					module.DB[key] = object:GetChecked()
 				end
 			end
-			SUI.DB.AutoTurnIn.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end,
 		Skip = function()
-			SUI.DB.AutoTurnIn.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
@@ -537,7 +537,7 @@ end
 function module:blacklisted(name)
 	name = tostring(name)
 	if BlackList[name] then
-		if SUI.DB.AutoTurnIn.debug then
+		if module.DB.debug then
 			print(name .. ' - IS BLACKLISTED')
 		end
 		return true
@@ -545,7 +545,7 @@ function module:blacklisted(name)
 
 	for k2, _ in pairs(WildcardBlackList) do
 		if string.find(string.lower(name), string.lower(k2)) then
-			if SUI.DB.AutoTurnIn.debug then
+			if module.DB.debug then
 				print(name .. ' - IS BLACKLISTED')
 			end
 			return true
@@ -570,9 +570,9 @@ function module.QUEST_GREETING()
 		if SUI.IsRetail then
 			local isTrivial, frequency, isRepeatable = GetAvailableQuestInfo(i - numActiveQuests)
 
-			local trivialORAllowed = (not isTrivial) or SUI.DB.AutoTurnIn.trivial
+			local trivialORAllowed = (not isTrivial) or module.DB.trivial
 			local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
-			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or SUI.DB.AutoTurnIn.AcceptRepeatable
+			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or module.DB.AcceptRepeatable
 
 			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
 				SelectAvailableQuest(i)
@@ -584,7 +584,7 @@ function module.QUEST_GREETING()
 end
 
 function module.GOSSIP_SHOW()
-	if (not SUI.DB.AutoTurnIn.AutoGossip) or (IsAltKeyDown()) or (SUI.IsRetail) then
+	if (not module.DB.AutoGossip) or (IsAltKeyDown()) or (SUI.IsRetail) then
 		return
 	end
 
@@ -593,7 +593,7 @@ function module.GOSSIP_SHOW()
 
 	local options = {GetGossipOptions()}
 	if #options > 7 then
-		if SUI.DB.AutoTurnIn.debug then
+		if module.DB.debug then
 			print('Too many gossip options (' .. #options .. ')')
 		end
 		return
@@ -601,17 +601,17 @@ function module.GOSSIP_SHOW()
 	for k, v in pairs(options) do
 		if (v ~= 'gossip') and (not module:blacklisted(v)) and string.find(v, ' ') then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
-			if SUI.DB.AutoTurnIn.AutoGossipSafeMode and (not string.find(string.lower(v), 'quest')) then
+			if module.DB.AutoGossipSafeMode and (not string.find(string.lower(v), 'quest')) then
 				return
 			end
 			BlackList[v] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
-			if SUI.DB.AutoTurnIn.ChatText then
+			if module.DB.ChatText then
 				SUI:Print('Selecting: ' .. v)
 			end
-			if SUI.DB.AutoTurnIn.debug then
-				SUI.DB.AutoTurnIn.Blacklist[v] = true
+			if module.DB.debug then
+				module.DB.Blacklist[v] = true
 				print(v .. '---BLACKLISTED')
 			end
 			return
@@ -623,12 +623,40 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() and SUI.DB.AutoTurnIn.TurnInEnabled and (not module:blacklisted(GetTitleText())) then
+	if IsQuestCompletable() and module.DB.TurnInEnabled and (not module:blacklisted(GetTitleText())) then
 		CompleteQuest()
 	end
 end
 
 function module:OnInitialize()
+	local defaults = {
+		profile = {
+			ChatText = true,
+			FirstLaunch = true,
+			debug = false,
+			TurnInEnabled = true,
+			AutoGossip = true,
+			AutoGossipSafeMode = true,
+			AcceptGeneralQuests = true,
+			AcceptRepeatable = false,
+			trivial = false,
+			lootreward = false,
+			autoequip = false,
+			armor = {},
+			weapon = {},
+			stat = {},
+			secondary = {},
+			Blacklist = {}
+		}
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoTurnIn', defaults)
+	module.DB = module.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.AutoTurnIn then
+		module.DB = SUI:MergeData(module.DB, SUI.DB.AutoTurnIn, true)
+		SUI.DB.AutoTurnIn = nil
+	end
 end
 
 function module:OnEnable()
@@ -642,7 +670,7 @@ function module:OnEnable()
 				return
 			end
 
-			if SUI.DB.AutoTurnIn.debug then
+			if module.DB.debug then
 				print(event)
 			end
 
@@ -687,10 +715,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 10,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.AcceptGeneralQuests
+							return module.DB.AcceptGeneralQuests
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.AcceptGeneralQuests = val
+							module.DB.AcceptGeneralQuests = val
 						end
 					},
 					trivial = {
@@ -698,10 +726,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 20,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.trivial
+							return module.DB.trivial
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.trivial = val
+							module.DB.trivial = val
 						end
 					},
 					AcceptRepeatable = {
@@ -709,10 +737,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 30,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.AcceptRepeatable
+							return module.DB.AcceptRepeatable
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.AcceptRepeatable = val
+							module.DB.AcceptRepeatable = val
 						end
 					},
 					AutoGossip = {
@@ -720,10 +748,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 15,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.AutoGossip
+							return module.DB.AutoGossip
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.AutoGossip = val
+							module.DB.AutoGossip = val
 						end
 					},
 					AutoGossipMode = {
@@ -731,10 +759,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 16,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.AutoGossipSafeMode
+							return module.DB.AutoGossipSafeMode
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.AutoGossipSafeMode = val
+							module.DB.AutoGossipSafeMode = val
 						end
 					}
 				}
@@ -751,10 +779,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 10,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.TurnInEnabled
+							return module.DB.TurnInEnabled
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.TurnInEnabled = val
+							module.DB.TurnInEnabled = val
 						end
 					},
 					AutoSelectLoot = {
@@ -762,10 +790,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 30,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.lootreward
+							return module.DB.lootreward
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.lootreward = val
+							module.DB.lootreward = val
 						end
 					},
 					autoequip = {
@@ -774,10 +802,10 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 30,
 						get = function(info)
-							return SUI.DB.AutoTurnIn.autoequip
+							return module.DB.autoequip
 						end,
 						set = function(info, val)
-							SUI.DB.AutoTurnIn.autoequip = val
+							module.DB.autoequip = val
 						end
 					}
 				}
@@ -788,10 +816,10 @@ function module:BuildOptions()
 				width = 'double',
 				order = 30,
 				get = function(info)
-					return SUI.DB.AutoTurnIn.ChatText
+					return module.DB.ChatText
 				end,
 				set = function(info, val)
-					SUI.DB.AutoTurnIn.ChatText = val
+					module.DB.ChatText = val
 				end
 			},
 			debugMode = {
@@ -800,10 +828,10 @@ function module:BuildOptions()
 				width = 'full',
 				order = 900,
 				get = function(info)
-					return SUI.DB.AutoTurnIn.debug
+					return module.DB.debug
 				end,
 				set = function(info, val)
-					SUI.DB.AutoTurnIn.debug = val
+					module.DB.debug = val
 				end
 			}
 		}

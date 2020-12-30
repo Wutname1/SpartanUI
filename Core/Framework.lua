@@ -76,39 +76,6 @@ local DBdefault = {
 		bar5 = {alpha = 100, enable = true},
 		bar6 = {alpha = 100, enable = true}
 	},
-	AutoSell = {
-		FirstLaunch = true,
-		NotCrafting = true,
-		NotConsumables = true,
-		NotInGearset = true,
-		MaxILVL = 100,
-		Gray = true,
-		White = false,
-		Green = false,
-		Blue = false,
-		Purple = false,
-		GearTokens = false,
-		AutoRepair = false,
-		UseGuildBankRepair = false
-	},
-	AutoTurnIn = {
-		ChatText = true,
-		FirstLaunch = true,
-		debug = false,
-		TurnInEnabled = true,
-		AutoGossip = true,
-		AutoGossipSafeMode = true,
-		AcceptGeneralQuests = true,
-		AcceptRepeatable = false,
-		trivial = false,
-		lootreward = false,
-		autoequip = false,
-		armor = {},
-		weapon = {},
-		stat = {},
-		secondary = {},
-		Blacklist = {}
-	},
 	BuffSettings = {
 		disableblizz = true,
 		enabled = true,
@@ -145,16 +112,6 @@ local DBdefault = {
 		lockminimap = true,
 		Position = nil,
 		SUIMapChangesActive = false
-	},
-	MoveIt = {
-		AltKey = false,
-		tips = true,
-		movers = {
-			['**'] = {
-				defaultPoint = false,
-				MovedPoints = false
-			}
-		}
 	},
 	Offset = {
 		Top = 0,
@@ -2151,88 +2108,6 @@ local DBdefault = {
 		SlidingTrays = {
 			['**'] = {
 				collapsed = false
-			}
-		}
-	},
-	TauntWatcher = {
-		active = {
-			always = false,
-			inBG = false,
-			inRaid = true,
-			inParty = true,
-			inArena = true,
-			outdoors = false
-		},
-		failures = true,
-		FirstLaunch = true,
-		announceLocation = 'SELF',
-		text = '%who taunted %what!'
-	},
-	FilmEffects = {
-		enable = false,
-		animationInterval = 0,
-		anim = '',
-		vignette = nil
-	},
-	NamePlates = {
-		ShowThreat = true,
-		ShowName = true,
-		ShowLevel = true,
-		ShowTarget = true,
-		ShowRaidTargetIndicator = true,
-		onlyShowPlayer = true,
-		showStealableBuffs = false,
-		Scale = 1,
-		elements = {
-			['**'] = {
-				enabled = true,
-				alpha = 1,
-				size = 20,
-				position = {
-					anchor = 'CENTER',
-					x = 0,
-					y = 0
-				}
-			},
-			RareElite = {},
-			Background = {
-				type = 'solid',
-				colorMode = 'reaction',
-				alpha = 0.35
-			},
-			Name = {
-				SetJustifyH = 'CENTER'
-			},
-			QuestMobIndicator = {},
-			Health = {
-				height = 5,
-				colorTapping = true,
-				colorReaction = true,
-				colorSmooth = false,
-				colorClass = true
-			},
-			Power = {
-				ShowPlayerPowerIcons = true,
-				height = 3
-			},
-			Castbar = {
-				height = 5,
-				text = true,
-				FlashOnInterruptible = true
-			},
-			SUI_ClassIcon = {
-				enabled = false,
-				size = 20,
-				visibleOn = 'PlayerControlled',
-				position = {
-					anchor = 'TOP',
-					x = 0,
-					y = 40
-				}
-			},
-			XPBar = {
-				height = 5,
-				Offset = -10
 			}
 		}
 	}

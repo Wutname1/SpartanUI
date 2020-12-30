@@ -78,7 +78,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							local point, anchor, secondaryPoint, _, y = strsplit(',', GetPoints(MoverFrame))
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, secondaryPoint, tonumber(val), y, true)
-							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, val, y)
+							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, val, y)
 						end
 					},
 					y = {
@@ -94,7 +94,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							local point, anchor, secondaryPoint, x, _ = strsplit(',', GetPoints(MoverFrame))
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, secondaryPoint, x, tonumber(val), true)
-							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, x, val)
+							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, x, val)
 						end
 					},
 					MyAnchorPoint = {
@@ -110,7 +110,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							local _, anchor, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(val, anchor, val, x, y, true)
-							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', val, anchor, secondaryPoint, x, y)
+							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', val, anchor, secondaryPoint, x, y)
 						end
 					},
 					AnchorTo = {
@@ -130,7 +130,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							local point, _, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, (_G[val] or UIParent), secondaryPoint, x, y, true)
-							SUI.DB.MoveIt.movers[MoverName].MovedPoints =
+							MoveIt.DB.movers[MoverName].MovedPoints =
 								format('%s,%s,%s,%s,%s', point, (_G[val] or UIParent):GetName(), secondaryPoint, x, y)
 						end
 					},
@@ -147,7 +147,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							local point, anchor, _, x, y = strsplit(',', GetPoints(MoverFrame))
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, val, x, y, true)
-							SUI.DB.MoveIt.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, val, x, y)
+							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, val, x, y)
 						end
 					}
 				}
@@ -178,7 +178,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							return SUI:round(MoverFrame:GetScale(), 2)
 						end,
 						set = function(info, val)
-							SUI.DB.MoveIt.movers[MoverName].AdjustedScale = val
+							MoveIt.DB.movers[MoverName].AdjustedScale = val
 							MoverFrame.parent:scale(val)
 						end
 					},
@@ -188,7 +188,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						order = 2,
 						func = function()
 							MoverFrame.parent:scale()
-							SUI.DB.MoveIt.movers[MoverName].AdjustedScale = false
+							MoveIt.DB.movers[MoverName].AdjustedScale = false
 						end
 					}
 				}
@@ -236,13 +236,13 @@ function MoveIt:CalculateMoverPoints(mover)
 end
 
 function MoveIt:IsMoved(name)
-	if not SUI.DB.MoveIt.movers[name] then
+	if not MoveIt.DB.movers[name] then
 		return false
 	end
-	if SUI.DB.MoveIt.movers[name].MovedPoints then
+	if MoveIt.DB.movers[name].MovedPoints then
 		return true
 	end
-	if SUI.DB.MoveIt.movers[name].AdjustedScale then
+	if MoveIt.DB.movers[name].AdjustedScale then
 		return true
 	end
 	return false
@@ -258,8 +258,8 @@ function MoveIt:Reset(name, onlyPosition)
 		local frame = _G['SUI_Mover_' .. name]
 		if frame and MoveIt:IsMoved(name) then
 			-- Reset the scale
-			if SUI.DB.MoveIt.movers[name].AdjustedScale and not onlyPosition then
-				SUI.DB.MoveIt.movers[name].AdjustedScale = nil
+			if MoveIt.DB.movers[name].AdjustedScale and not onlyPosition then
+				MoveIt.DB.movers[name].AdjustedScale = nil
 
 				frame:SetScale(frame.defaultScale or 1)
 				frame.parent:SetScale(frame.defaultScale or 1)
@@ -271,8 +271,8 @@ function MoveIt:Reset(name, onlyPosition)
 			frame:ClearAllPoints()
 			frame:SetPoint(point, anchor, secondaryPoint, x, y)
 
-			if SUI.DB.MoveIt.movers[name].MovedPoints then
-				SUI.DB.MoveIt.movers[name].MovedPoints = nil
+			if MoveIt.DB.movers[name].MovedPoints then
+				MoveIt.DB.movers[name].MovedPoints = nil
 			end
 
 			-- Hide Moved Text
@@ -328,7 +328,7 @@ function MoveIt:MoveIt(name)
 			for _, v in pairs(MoverList) do
 				v:Show()
 			end
-			if SUI.DB.MoveIt.tips then
+			if MoveIt.DB.tips then
 				print('When the movement system is enabled you can:')
 				print('     Shift+Click a mover to temporarily hide it', true)
 				print("     Alt+Click a mover to reset it's position", true)
@@ -428,27 +428,27 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	ScaledText:Hide()
 	f.ScaledText = ScaledText
 
-	f:SetScale(SUI.DB.MoveIt.movers[name].AdjustedScale or parent:GetScale() or 1)
-	if SUI.DB.MoveIt.movers[name].AdjustedScale then
+	f:SetScale(MoveIt.DB.movers[name].AdjustedScale or parent:GetScale() or 1)
+	if MoveIt.DB.movers[name].AdjustedScale then
 		ScaledText:Show()
-		parent:SetScale(SUI.DB.MoveIt.movers[name].AdjustedScale)
+		parent:SetScale(MoveIt.DB.movers[name].AdjustedScale)
 	end
 
-	if SUI.DB.MoveIt.movers[name].MovedPoints then
+	if MoveIt.DB.movers[name].MovedPoints then
 		MovedText:Show()
-		point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+		point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
 	end
 	f:ClearAllPoints()
 	f:SetPoint(point, anchor, secondaryPoint, x, y)
 
 	local function SaveMoverPosition()
-		SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(f)
+		MoveIt.DB.movers[name].MovedPoints = GetPoints(f)
 		f.MovedText:Show()
 
 		-- Reset the frame so we dont anchor to nil after moving
 		-- Without this the minimap cause LUA errors in a vehicle
 		if f.parent.position then
-			local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+			local point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
 			f.parent:position(point, anchor, secondaryPoint, x, y, true)
 		end
 	end
@@ -465,7 +465,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			ScaledText:Show()
 		end
 
-		SUI.DB.MoveIt.movers[name].AdjustedScale = NewScale
+		MoveIt.DB.movers[name].AdjustedScale = NewScale
 	end
 
 	local NudgeMover = function(self, nudgeX, nudgeY)
@@ -512,12 +512,12 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		-- end
 
 		SaveMoverPosition()
-		-- SUI.DB.MoveIt.movers[name].MovedPoints = GetPoints(f)
+		-- MoveIt.DB.movers[name].MovedPoints = GetPoints(f)
 
 		-- Reset the frame so we dont anchor to nil after moving
 		-- Without this the minimap cause LUA errors in a vehicle
 		-- if parent.position then
-		-- 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+		-- 	local point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
 		-- 	parent:position(point, anchor, secondaryPoint, x, y, true)
 		-- end
 		-- if NudgeWindow then
@@ -549,7 +549,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 		if IsAltKeyDown() then -- Reset anchor
 			MoveIt:Reset(name)
-			if SUI.DB.MoveIt.tips then
+			if MoveIt.DB.tips then
 				print("Tip use the chat command '/sui move reset' to reset everything quickly.")
 			end
 		elseif IsControlKeyDown() then -- Reset Scale to default
@@ -557,7 +557,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			self.parent:SetScale(self.defaultScale)
 			ScaledText:Hide()
 
-			SUI.DB.MoveIt.movers[name].AdjustedScale = false
+			MoveIt.DB.movers[name].AdjustedScale = false
 		elseif IsShiftKeyDown() then -- Allow hiding a mover temporarily
 			self:Hide()
 			print(self.name .. ' hidden temporarily.')
@@ -596,13 +596,13 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f:SetScript('OnMouseWheel', OnMouseWheel)
 
 	local function ParentMouseDown(self)
-		if IsAltKeyDown() and SUI.DB.MoveIt.AltKey then
+		if IsAltKeyDown() and MoveIt.DB.AltKey then
 			MoveIt:MoveIt(name)
 			OnDragStart(self.mover)
 		end
 	end
 	local function ParentMouseUp(self)
-		if IsAltKeyDown() and SUI.DB.MoveIt.AltKey and MoveEnabled then
+		if IsAltKeyDown() and MoveIt.DB.AltKey and MoveEnabled then
 			MoveIt:MoveIt(name)
 			OnDragStop(self.mover)
 		end
@@ -613,7 +613,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		end
 
 		-- If the frame has been moved and we are not focing the movement exit
-		if SUI.DB.MoveIt.movers[name].AdjustedScale and not forced then
+		if MoveIt.DB.movers[name].AdjustedScale and not forced then
 			return
 		end
 
@@ -630,8 +630,8 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 		local point, anchor, secondaryPoint, x, y = strsplit(',', f.defaultPoint)
 
-		if SUI.DB.MoveIt.movers[name].MovedPoints then
-			point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.MoveIt.movers[name].MovedPoints)
+		if MoveIt.DB.movers[name].MovedPoints then
+			point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
 		end
 		f:ClearAllPoints()
 		f:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -645,7 +645,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		end
 
 		-- If the frame has been moved and we are not focing the movement exit
-		if SUI.DB.MoveIt.movers[name].MovedPoints and not forced then
+		if MoveIt.DB.movers[name].MovedPoints and not forced then
 			return
 		end
 
@@ -675,7 +675,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	parent.scale = scale
 	parent.position = position
 	parent.isMoved = function()
-		if SUI.DB.MoveIt.movers[name].MovedPoints then
+		if MoveIt.DB.movers[name].MovedPoints then
 			return true
 		end
 		return false
@@ -688,8 +688,31 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 end
 
 function MoveIt:OnInitialize()
+	local defaults = {
+		profile = {
+			AltKey = false,
+			tips = true,
+			movers = {
+				['**'] = {
+					defaultPoint = false,
+					MovedPoints = false
+				}
+			}
+		}
+	}
+	MoveIt.Database = SUI.SpartanUIDB:RegisterNamespace('MoveIt', defaults)
+	MoveIt.DB = MoveIt.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.MoveIt then
+		MoveIt.DB = SUI:MergeData(MoveIt.DB, SUI.DB.MoveIt, true)
+		SUI.DB.MoveIt = nil
+	end
+
+	--Build Options
 	MoveIt:Options()
 
+	-- Build Coord Frame
 	coordFrame = StdUi:Window(nil, 480, 200)
 	coordFrame:SetFrameStrata('DIALOG')
 
@@ -716,9 +739,9 @@ function MoveIt:Enable()
 				MoveIt:Reset()
 				return
 			elseif arg == 'tips' then
-				SUI.DB.MoveIt.tips = not (SUI.DB.MoveIt.tips)
+				MoveIt.DB.tips = not (MoveIt.DB.tips)
 				local mode = '|cffed2024off'
-				if SUI.DB.MoveIt.tips then
+				if MoveIt.DB.tips then
 					mode = '|cff69bd45on'
 				end
 
@@ -786,10 +809,10 @@ function MoveIt:Options()
 				width = 'double',
 				order = 2,
 				get = function(info)
-					return SUI.DB.MoveIt.AltKey
+					return MoveIt.DB.AltKey
 				end,
 				set = function(info, val)
-					SUI.DB.MoveIt.AltKey = val
+					MoveIt.DB.AltKey = val
 				end
 			},
 			ResetIt = {
@@ -865,10 +888,10 @@ function MoveIt:Options()
 				width = 'double',
 				order = 70,
 				get = function(info)
-					return SUI.DB.MoveIt.tips
+					return MoveIt.DB.tips
 				end,
 				set = function(info, val)
-					SUI.DB.MoveIt.tips = val
+					MoveIt.DB.tips = val
 				end
 			}
 		}

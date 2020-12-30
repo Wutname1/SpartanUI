@@ -209,7 +209,15 @@ local function CreateWindow()
 	importOpt.Import:SetScript(
 		'OnClick',
 		function(this)
-			local importProfileTo = StdUi:GetRadioGroupValue('importTo')
+			if StdUi:GetRadioGroupValue('importTo') == 'new' then
+				local profileName = importOpt.NewProfileName:GetText()
+				if profileName == '' then
+					optionPane.Desc1:SetText('Please enter a new profile name')
+					return
+				end
+				SUI.SpartanUIDB:SetProfile(profileName)
+			end
+
 			local profileImport = optionPane.textBox:GetValue()
 			if profileImport == '' then
 				optionPane.Desc1:SetText('Please enter a string to import')

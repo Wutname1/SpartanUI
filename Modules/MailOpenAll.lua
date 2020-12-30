@@ -13,15 +13,20 @@ local totalGold
 module.RefreshMailTimer = nil
 
 function module:OnInitialize()
-	local Defaults = {
-		FirstLaunch = true,
-		Silent = false,
-		FreeSpace = 0
+	local defaults = {
+		profile = {
+			FirstLaunch = true,
+			Silent = false,
+			FreeSpace = 0
+		}
 	}
-	if not SUI.DB.MailOpenAll then
-		SUI.DB.MailOpenAll = Defaults
-	else
-		SUI.DB.MailOpenAll = SUI:MergeData(SUI.DB.MailOpenAll, Defaults, false)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('MailOpenAll', defaults)
+	module.DB = module.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.MailOpenAll then
+		module.DB = SUI:MergeData(module.DB, SUI.DB.MailOpenAll, true)
+		SUI.DB.MailOpenAll = nil
 	end
 end
 
@@ -177,7 +182,7 @@ function module:ProcessNext()
 			return self:ProcessNext() -- tail call
 		end
 
-		if (not invFull or msgMoney > 0) and not SUI.DB.MailOpenAll.Silent then
+		if (not invFull or msgMoney > 0) and not module.DB.Silent then
 			local moneyString = msgMoney > 0 and ' [' .. module:FormatMoney(msgMoney) .. ']' or ''
 			local playerName
 			totalGold = totalGold + msgMoney
@@ -194,7 +199,7 @@ function module:ProcessNext()
 		end
 
 		-- bag space check
-		if attachIndex > 0 and not invFull and SUI.DB.MailOpenAll.FreeSpace > 0 then
+		if attachIndex > 0 and not invFull and module.DB.FreeSpace > 0 then
 			local free = 0
 			for bag = 0, NUM_BAG_SLOTS do
 				local bagFree, bagFam = GetContainerNumFreeSlots(bag)
@@ -202,11 +207,11 @@ function module:ProcessNext()
 					free = free + bagFree
 				end
 			end
-			if free <= SUI.DB.MailOpenAll.FreeSpace then
+			if free <= module.DB.FreeSpace then
 				invFull = true
 				invAlmostFull = nil
 				SUI:Print(format(L['Auto open disabled. There is only %d bagslots free.'], free))
-			elseif free <= SUI.DB.MailOpenAll.FreeSpace + 1 then
+			elseif free <= module.DB.FreeSpace + 1 then
 				invAlmostFull = true
 			end
 		end
@@ -288,7 +293,7 @@ function module:ProcessNext()
 		if skipFlag then
 			SUI:Print(L['Some Messages May Have Been Skipped.'])
 		end
-		if (totalGold and totalGold > 0) and not SUI.DB.MailOpenAll.Silent then
+		if (totalGold and totalGold > 0) and not module.DB.Silent then
 			SUI:Print('Total money gained: ' .. module:FormatMoney(totalGold))
 		end
 		self:Reset()
@@ -363,10 +368,10 @@ function module:BuildOptions()
 				order = 1,
 				width = 'full',
 				get = function(info)
-					return SUI.DB.MailOpenAll.Silent
+					return module.DB.Silent
 				end,
 				set = function(info, val)
-					SUI.DB.MailOpenAll.Silent = val
+					module.DB.Silent = val
 				end
 			},
 			FreeSpace = {
@@ -378,10 +383,10 @@ function module:BuildOptions()
 				max = 50,
 				step = 1,
 				set = function(info, val)
-					SUI.DB.MailOpenAll.FreeSpace = val
+					module.DB.FreeSpace = val
 				end,
 				get = function(info)
-					return SUI.DB.MailOpenAll.FreeSpace
+					return module.DB.FreeSpace
 				end
 			}
 		}

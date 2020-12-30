@@ -44,7 +44,7 @@ local pvpIconWar = function(self, event, unit)
 	if (unit ~= self.unit) then
 		return
 	end
-	local settings = SUI.DB.NamePlates.elements
+	local settings = module.DB.elements
 	self.bg.solid:Hide()
 	self.bg.artwork.Neutral:Hide()
 	self.bg.artwork.Alliance:Hide()
@@ -100,10 +100,7 @@ function module:Flash(self)
 end
 
 local PostCastStart = function(self, unit, name)
-	if
-		self.notInterruptible == false and SUI.DB.NamePlates.elements.Castbar.FlashOnInterruptible and
-			UnitIsEnemy('player', unit)
-	 then
+	if self.notInterruptible == false and module.DB.elements.Castbar.FlashOnInterruptible and UnitIsEnemy('player', unit) then
 		_G[self.PName].Castbar:SetStatusBarColor(0, 0, 0)
 		module:ScheduleTimer('Flash', .1, _G[self.PName])
 	else
@@ -112,13 +109,13 @@ local PostCastStart = function(self, unit, name)
 end
 
 local PostCastStop = function(self)
-	if SUI.DB.NamePlates.elements.Castbar.FlashOnInterruptible then
+	if module.DB.elements.Castbar.FlashOnInterruptible then
 		module:CancelTimer(Timers[self:GetName()])
 	end
 end
 
 local UpdateElementState = function(frame)
-	local elements = SUI.DB.NamePlates.elements
+	local elements = module.DB.elements
 
 	frame.PvPIndicator.Override(frame, nil, frame.unit)
 
@@ -235,9 +232,9 @@ local NamePlateFactory = function(frame, unit)
 		frame.unitGUID = UnitGUID(unit)
 		frame.npcID = frame.unitGUID and select(6, strsplit('-', frame.unitGUID))
 
-		local elements = SUI.DB.NamePlates.elements
+		local elements = module.DB.elements
 		local height = 0
-		if SUI.DB.NamePlates.ShowName or SUI.DB.NamePlates.ShowLevel then
+		if module.DB.ShowName or module.DB.ShowLevel then
 			height = height + 13
 		end
 		if elements.Health.enabled then
@@ -276,10 +273,10 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Name
 		local nameString = ''
-		if SUI.DB.NamePlates.ShowLevel then
+		if module.DB.ShowLevel then
 			nameString = '[difficulty][level]'
 		end
-		if SUI.DB.NamePlates.ShowName then
+		if module.DB.ShowName then
 			nameString = nameString .. ' [SUI_ColorClass][name]'
 		end
 		if nameString ~= '' then
@@ -377,14 +374,14 @@ local NamePlateFactory = function(frame, unit)
 		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
 		Auras:SetSize(frame:GetWidth(), 16)
 		if UnitReaction(unit, 'player') <= 2 then
-			if (SUI.DB.NamePlates.onlyShowPlayer and SUI.DB.NamePlates.showStealableBuffs) then
-				Auras.showStealableBuffs = SUI.DB.NamePlates.showStealableBuffs
+			if (module.DB.onlyShowPlayer and module.DB.showStealableBuffs) then
+				Auras.showStealableBuffs = module.DB.showStealableBuffs
 			else
-				Auras.onlyShowPlayer = SUI.DB.NamePlates.onlyShowPlayer
-				Auras.showStealableBuffs = SUI.DB.NamePlates.showStealableBuffs
+				Auras.onlyShowPlayer = module.DB.onlyShowPlayer
+				Auras.showStealableBuffs = module.DB.showStealableBuffs
 			end
 		else
-			Auras.onlyShowPlayer = SUI.DB.NamePlates.onlyShowPlayer
+			Auras.onlyShowPlayer = module.DB.onlyShowPlayer
 		end
 
 		frame.Auras = Auras
@@ -469,7 +466,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- Setup Player Icons
-		if SUI.DB.NamePlates.ShowPlayerPowerIcons then
+		if module.DB.ShowPlayerPowerIcons then
 			local attachPoint = 'Castbar'
 			if not elements.Castbar.enabled then
 				if elements.Power.enabled then
@@ -483,7 +480,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- Setup Scale
-		frame:SetScale(SUI.DB.NamePlates.Scale)
+		frame:SetScale(module.DB.Scale)
 	end
 end
 
@@ -491,7 +488,7 @@ local NameplateCallback = function(self, event, unit)
 	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then
 		return
 	end
-	local elements = SUI.DB.NamePlates.elements
+	local elements = module.DB.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
 		local blizzPlate = self:GetParent().UnitFrame
 		if blizzPlate then
@@ -509,7 +506,7 @@ local NameplateCallback = function(self, event, unit)
 	end
 
 	-- Update target Indicator
-	if UnitIsUnit(unit, 'target') and SUI.DB.NamePlates.ShowTarget then
+	if UnitIsUnit(unit, 'target') and module.DB.ShowTarget then
 		-- the frame is the new target
 		self.TargetIndicator.bg1:Show()
 		self.TargetIndicator.bg2:Show()
@@ -517,19 +514,19 @@ local NameplateCallback = function(self, event, unit)
 		self.TargetIndicator.bg1:Hide()
 		self.TargetIndicator.bg2:Hide()
 	end
-	if SUI.DB.NamePlates.elements.RareElite.enabled then
+	if module.DB.elements.RareElite.enabled then
 		self:EnableElement('RareElite')
 	else
 		self:DisableElement('RareElite')
 	end
-	if SUI.DB.NamePlates.elements.XPBar.enabled and self.WidgetXPBar then
+	if module.DB.elements.XPBar.enabled and self.WidgetXPBar then
 		self:EnableElement('WidgetXPBar')
 	else
 		self:DisableElement('WidgetXPBar')
 	end
 	-- Do the non-classic things
 	if SUI.IsRetail then
-		if SUI.DB.NamePlates.elements.QuestIndicator.enabled then
+		if module.DB.elements.QuestIndicator.enabled then
 			self:EnableElement('QuestIndicator')
 		else
 			self:DisableElement('QuestIndicator')
@@ -540,14 +537,14 @@ local NameplateCallback = function(self, event, unit)
 	UpdateElementState(self)
 
 	-- Update class icons
-	local VisibleOn = SUI.DB.NamePlates.elements.SUI_ClassIcon.visibleOn
+	local VisibleOn = module.DB.elements.SUI_ClassIcon.visibleOn
 	local reaction = UnitReaction(unit, 'player')
 
 	if
 		((reaction <= 2 and VisibleOn == 'hostile') or (reaction >= 3 and VisibleOn == 'friendly') or
 			(UnitPlayerControlled(unit) and VisibleOn == 'PlayerControlled') or
 			VisibleOn == 'all') and
-			SUI.DB.NamePlates.elements.SUI_ClassIcon.enabled
+			module.DB.elements.SUI_ClassIcon.enabled
 	 then
 		self:EnableElement('SUI_ClassIcon')
 		self.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
@@ -580,7 +577,7 @@ local NameplateCallback = function(self, event, unit)
 	end
 
 	-- Set the Scale of the nameplate
-	self:SetScale(SUI.DB.NamePlates.Scale)
+	self:SetScale(module.DB.Scale)
 end
 
 function module:UpdateNameplates()
@@ -592,6 +589,79 @@ function module:UpdateNameplates()
 end
 
 function module:OnInitialize()
+	local defaults = {
+		profile = {
+			ShowThreat = true,
+			ShowName = true,
+			ShowLevel = true,
+			ShowTarget = true,
+			ShowRaidTargetIndicator = true,
+			onlyShowPlayer = true,
+			showStealableBuffs = false,
+			Scale = 1,
+			elements = {
+				['**'] = {
+					enabled = true,
+					alpha = 1,
+					size = 20,
+					position = {
+						anchor = 'CENTER',
+						x = 0,
+						y = 0
+					}
+				},
+				RareElite = {},
+				Background = {
+					type = 'solid',
+					colorMode = 'reaction',
+					alpha = 0.35
+				},
+				Name = {
+					SetJustifyH = 'CENTER'
+				},
+				QuestMobIndicator = {},
+				Health = {
+					height = 5,
+					colorTapping = true,
+					colorReaction = true,
+					colorSmooth = false,
+					colorClass = true
+				},
+				Power = {
+					ShowPlayerPowerIcons = true,
+					height = 3
+				},
+				Castbar = {
+					height = 5,
+					text = true,
+					FlashOnInterruptible = true
+				},
+				SUI_ClassIcon = {
+					enabled = false,
+					size = 20,
+					visibleOn = 'PlayerControlled',
+					position = {
+						anchor = 'TOP',
+						x = 0,
+						y = 40
+					}
+				},
+				XPBar = {
+					height = 5,
+					Offset = -10
+				}
+			}
+		}
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Nameplates', defaults)
+	module.DB = module.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.Nameplates then
+		module.DB = SUI:MergeData(module.DB, SUI.DB.Nameplates, true)
+		SUI.DB.Nameplates = nil
+	end
+
 	SUIUF:RegisterStyle('Spartan_NamePlates', NamePlateFactory)
 end
 
@@ -659,10 +729,10 @@ function module:BuildOptions()
 				step = .01,
 				order = 1,
 				get = function(info)
-					return SUI.DB.NamePlates.Scale
+					return module.DB.Scale
 				end,
 				set = function(info, val)
-					SUI.DB.NamePlates.Scale = val
+					module.DB.Scale = val
 				end
 			},
 			General = {
@@ -676,10 +746,10 @@ function module:BuildOptions()
 						type = 'group',
 						order = 1,
 						get = function(info)
-							return SUI.DB.NamePlates.elements.Background[info[#info]]
+							return module.DB.elements.Background[info[#info]]
 						end,
 						set = function(info, val)
-							SUI.DB.NamePlates.elements.Background[info[#info]] = val
+							module.DB.elements.Background[info[#info]] = val
 							module:UpdateNameplates()
 						end,
 						args = {
@@ -720,10 +790,10 @@ function module:BuildOptions()
 						type = 'group',
 						order = 3,
 						get = function(info)
-							return SUI.DB.NamePlates.elements.Health[info[#info]]
+							return module.DB.elements.Health[info[#info]]
 						end,
 						set = function(info, val)
-							SUI.DB.NamePlates.elements.Health[info[#info]] = val
+							module.DB.elements.Health[info[#info]] = val
 							module:UpdateNameplates()
 						end,
 						args = {
@@ -773,10 +843,10 @@ function module:BuildOptions()
 						type = 'group',
 						order = 4,
 						get = function(info)
-							return SUI.DB.NamePlates.elements.Power[info[#info]]
+							return module.DB.elements.Power[info[#info]]
 						end,
 						set = function(info, val)
-							SUI.DB.NamePlates.elements.Power[info[#info]] = val
+							module.DB.elements.Power[info[#info]] = val
 							module:UpdateNameplates()
 						end,
 						args = {
@@ -802,10 +872,10 @@ function module:BuildOptions()
 						type = 'group',
 						order = 5,
 						get = function(info)
-							return SUI.DB.NamePlates.elements.Castbar[info[#info]]
+							return module.DB.elements.Castbar[info[#info]]
 						end,
 						set = function(info, val)
-							SUI.DB.NamePlates.elements.Castbar[info[#info]] = val
+							module.DB.elements.Castbar[info[#info]] = val
 							module:UpdateNameplates()
 						end,
 						args = {
@@ -856,10 +926,10 @@ function module:BuildOptions()
 								type = 'toggle',
 								order = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.ShowLevel
+									return module.DB.ShowLevel
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.ShowLevel = val
+									module.DB.ShowLevel = val
 								end
 							},
 							ShowName = {
@@ -867,11 +937,11 @@ function module:BuildOptions()
 								type = 'toggle',
 								order = 2,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.Name.enabled
+									return module.DB.elements.Name.enabled
 								end,
 								set = function(info, val)
 									--Update the DB
-									SUI.DB.NamePlates.elements.Name.enabled = val
+									module.DB.elements.Name.enabled = val
 								end
 							},
 							JustifyH = {
@@ -884,11 +954,11 @@ function module:BuildOptions()
 									['RIGHT'] = 'Right'
 								},
 								get = function(info)
-									return SUI.DB.NamePlates.elements.Name.SetJustifyH
+									return module.DB.elements.Name.SetJustifyH
 								end,
 								set = function(info, val)
 									--Update the DB
-									SUI.DB.NamePlates.elements.Name.SetJustifyH = val
+									module.DB.elements.Name.SetJustifyH = val
 									--Update the screen
 									-- module.frames[frameName][key]:SetJustifyH(val)
 								end
@@ -905,10 +975,10 @@ function module:BuildOptions()
 								width = 'full',
 								order = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.QuestIndicator.enabled
+									return module.DB.elements.QuestIndicator.enabled
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.elements.QuestIndicator.enabled = val
+									module.DB.elements.QuestIndicator.enabled = val
 								end
 							}
 						}
@@ -923,10 +993,10 @@ function module:BuildOptions()
 								width = 'full',
 								order = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.RareElite.enabled
+									return module.DB.elements.RareElite.enabled
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.elements.RareElite.enabled = val
+									module.DB.elements.RareElite.enabled = val
 								end
 							}
 						}
@@ -941,10 +1011,10 @@ function module:BuildOptions()
 								width = 'full',
 								order = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.ShowTarget
+									return module.DB.ShowTarget
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.ShowTarget = val
+									module.DB.ShowTarget = val
 								end
 							}
 						}
@@ -959,10 +1029,10 @@ function module:BuildOptions()
 								width = 'double',
 								order = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.SUI_ClassIcon.enabled
+									return module.DB.elements.SUI_ClassIcon.enabled
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.elements.SUI_ClassIcon.enabled = val
+									module.DB.elements.SUI_ClassIcon.enabled = val
 									module:UpdateNameplates()
 								end
 							},
@@ -977,10 +1047,10 @@ function module:BuildOptions()
 									['all'] = 'All'
 								},
 								get = function(info)
-									return SUI.DB.NamePlates.elements.SUI_ClassIcon.visibleOn
+									return module.DB.elements.SUI_ClassIcon.visibleOn
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.elements.SUI_ClassIcon.visibleOn = val
+									module.DB.elements.SUI_ClassIcon.visibleOn = val
 									module:UpdateNameplates()
 								end
 							},
@@ -992,11 +1062,11 @@ function module:BuildOptions()
 								max = 100,
 								step = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.SUI_ClassIcon.size
+									return module.DB.elements.SUI_ClassIcon.size
 								end,
 								set = function(info, val)
 									--Update the DB
-									SUI.DB.NamePlates.elements.SUI_ClassIcon.size = val
+									module.DB.elements.SUI_ClassIcon.size = val
 								end
 							},
 							position = {
@@ -1013,11 +1083,11 @@ function module:BuildOptions()
 										max = 100,
 										step = 1,
 										get = function(info)
-											return SUI.DB.NamePlates.elements.SUI_ClassIcon.position.x
+											return module.DB.elements.SUI_ClassIcon.position.x
 										end,
 										set = function(info, val)
 											--Update the DB
-											SUI.DB.NamePlates.elements.SUI_ClassIcon.position.x = val
+											module.DB.elements.SUI_ClassIcon.position.x = val
 										end
 									},
 									y = {
@@ -1028,11 +1098,11 @@ function module:BuildOptions()
 										max = 100,
 										step = 1,
 										get = function(info)
-											return SUI.DB.NamePlates.elements.SUI_ClassIcon.position.y
+											return module.DB.elements.SUI_ClassIcon.position.y
 										end,
 										set = function(info, val)
 											--Update the DB
-											SUI.DB.NamePlates.elements.SUI_ClassIcon.position.y = val
+											module.DB.elements.SUI_ClassIcon.position.y = val
 										end
 									},
 									anchor = {
@@ -1041,11 +1111,11 @@ function module:BuildOptions()
 										order = 3,
 										values = anchorPoints,
 										get = function(info)
-											return SUI.DB.NamePlates.elements.SUI_ClassIcon.position.anchor
+											return module.DB.elements.SUI_ClassIcon.position.anchor
 										end,
 										set = function(info, val)
 											--Update the DB
-											SUI.DB.NamePlates.elements.SUI_ClassIcon.position.anchor = val
+											module.DB.elements.SUI_ClassIcon.position.anchor = val
 										end
 									}
 								}
@@ -1062,10 +1132,10 @@ function module:BuildOptions()
 								order = 1,
 								width = 'double',
 								get = function(info)
-									return SUI.DB.NamePlates.onlyShowPlayer
+									return module.DB.onlyShowPlayer
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.onlyShowPlayer = val
+									module.DB.onlyShowPlayer = val
 									module:UpdateNameplates()
 								end
 							},
@@ -1075,10 +1145,10 @@ function module:BuildOptions()
 								order = 2,
 								width = 'double',
 								get = function(info)
-									return SUI.DB.NamePlates.showStealableBuffs
+									return module.DB.showStealableBuffs
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.showStealableBuffs = val
+									module.DB.showStealableBuffs = val
 									module:UpdateNameplates()
 								end
 							},
@@ -1100,10 +1170,10 @@ function module:BuildOptions()
 								width = 'full',
 								order = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.XPBar.enabled
+									return module.DB.elements.XPBar.enabled
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.elements.XPBar.enabled = val
+									module.DB.elements.XPBar.enabled = val
 								end
 							},
 							size = {
@@ -1114,10 +1184,10 @@ function module:BuildOptions()
 								max = 30,
 								step = 1,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.XPBar.size
+									return module.DB.elements.XPBar.size
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.elements.XPBar.size = val
+									module.DB.elements.XPBar.size = val
 								end
 							},
 							Offset = {
@@ -1128,10 +1198,10 @@ function module:BuildOptions()
 								max = 30,
 								step = .5,
 								get = function(info)
-									return SUI.DB.NamePlates.elements.XPBar.Offset
+									return module.DB.elements.XPBar.Offset
 								end,
 								set = function(info, val)
-									SUI.DB.NamePlates.elements.XPBar.Offset = val
+									module.DB.elements.XPBar.Offset = val
 								end
 							}
 						}

@@ -26,8 +26,8 @@ local TauntsList = {
 local lastTimeStamp, lastSpellID, lastspellName = 0, 0, ''
 
 local function printFormattedString(who, target, sid, failed)
-	local msg = SUI.DB.TauntWatcher.text
-	local ChatChannel = SUI.DB.TauntWatcher.announceLocation
+	local msg = module.DB.text
+	local ChatChannel = module.DB.announceLocation
 
 	msg = msg:gsub('%%what', target):gsub('%%who', who):gsub('%%spell', GetSpellLink(sid))
 	if failed then
@@ -91,6 +91,30 @@ function module:OnInitialize()
 			'Growl'
 		}
 	end
+	local defaults = {
+		profile = {
+			active = {
+				always = false,
+				inBG = false,
+				inRaid = true,
+				inParty = true,
+				inArena = true,
+				outdoors = false
+			},
+			failures = true,
+			FirstLaunch = true,
+			announceLocation = 'SELF',
+			text = '%who taunted %what!'
+		}
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('TauntWatcher', defaults)
+	module.DB = module.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.TauntWatcher then
+		module.DB = SUI:MergeData(module.DB, SUI.DB.TauntWatcher, true)
+		SUI.DB.TauntWatcher = nil
+	end
 end
 
 function module:COMBAT_LOG_EVENT_UNFILTERED()
@@ -112,25 +136,25 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 	if (SUI.IsRetail and SUI:isInTable(TauntsList, spellID)) or (SUI.IsClassic and SUI:isInTable(TauntsList, spellName)) then
 		local continue = false
 		local inInstance, instanceType = IsInInstance()
-		if instanceType == 'arena' and SUI.DB.TauntWatcher.active.inArena then
+		if instanceType == 'arena' and module.DB.active.inArena then
 			continue = true
-		elseif inInstance and instanceType == 'party' and SUI.DB.TauntWatcher.active.inParty then
+		elseif inInstance and instanceType == 'party' and module.DB.active.inParty then
 			continue = true
-		elseif instanceType == 'pvp' and SUI.DB.TauntWatcher.active.inBG then
+		elseif instanceType == 'pvp' and module.DB.active.inBG then
 			continue = true
-		elseif instanceType == 'raid' and SUI.DB.TauntWatcher.active.inRaid then
+		elseif instanceType == 'raid' and module.DB.active.inRaid then
 			continue = true
-		elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and SUI.DB.TauntWatcher.outdoors then
+		elseif (instanceType == 'none' or (not inInstance and instanceType == 'party')) and module.DB.outdoors then
 			continue = true
 		end
 
-		if not (continue or SUI.DB.TauntWatcher.active.alwayson) then
+		if not (continue or module.DB.active.alwayson) then
 			return
 		end
 
 		if subEvent == 'SPELL_AURA_APPLIED' then
 			printFormattedString(srcName, dstName, spellID)
-		elseif subEvent == 'SPELL_MISSED' and SUI.DB.TauntWatcher.failures then
+		elseif subEvent == 'SPELL_MISSED' and module.DB.failures then
 			printFormattedString(srcName, dstName, spellID, true)
 		else
 			return
@@ -155,6 +179,12 @@ function module:Options()
 	SUI.opt.args['ModSetting'].args['TauntWatcher'] = {
 		type = 'group',
 		name = 'Taunt watcher',
+		get = function(info)
+			return module.DB[info[#info]]
+		end,
+		set = function(info, val)
+			module.DB[info[#info]] = val
+		end,
 		args = {
 			alwayson = {
 				name = L['Always on'],
@@ -162,10 +192,10 @@ function module:Options()
 				width = 'full',
 				order = 1,
 				get = function(info)
-					return SUI.DB.TauntWatcher.active.alwayson
+					return module.DB.active.alwayson
 				end,
 				set = function(info, val)
-					SUI.DB.TauntWatcher.active.alwayson = val
+					module.DB.active.alwayson = val
 				end
 			},
 			active = {
@@ -173,61 +203,37 @@ function module:Options()
 				type = 'group',
 				inline = true,
 				order = 100,
+				get = function(info)
+					return module.DB.active[info[#info]]
+				end,
+				set = function(info, val)
+					module.DB.active[info[#info]] = val
+				end,
 				args = {
 					inBG = {
 						name = 'Battleground',
 						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return SUI.DB.TauntWatcher.active.inBG
-						end,
-						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inBG = val
-						end
+						order = 1
 					},
 					inRaid = {
 						name = 'Raid',
 						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return SUI.DB.TauntWatcher.active.inRaid
-						end,
-						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inRaid = val
-						end
+						order = 1
 					},
 					inParty = {
 						name = 'Party',
 						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return SUI.DB.TauntWatcher.active.inParty
-						end,
-						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inParty = val
-						end
+						order = 1
 					},
 					inArena = {
 						name = 'Arena',
 						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return SUI.DB.TauntWatcher.active.inArena
-						end,
-						set = function(info, val)
-							SUI.DB.TauntWatcher.active.inArena = val
-						end
+						order = 1
 					},
 					outdoors = {
 						name = 'Outdoor',
 						type = 'toggle',
-						order = 1,
-						get = function(info)
-							return SUI.DB.TauntWatcher.active.outdoors
-						end,
-						set = function(info, val)
-							SUI.DB.TauntWatcher.active.outdoors = val
-						end
+						order = 1
 					}
 				}
 			},
@@ -235,13 +241,7 @@ function module:Options()
 				name = 'Annnounce failed taunts',
 				type = 'toggle',
 				width = 'full',
-				order = 150,
-				get = function(info)
-					return SUI.DB.TauntWatcher.failures
-				end,
-				set = function(info, val)
-					SUI.DB.TauntWatcher.failures = val
-				end
+				order = 150
 			},
 			announceLocation = {
 				name = 'Announce location',
@@ -254,13 +254,7 @@ function module:Options()
 					['SMART'] = 'SMART',
 					['SAY'] = 'Say',
 					['SELF'] = 'No chat'
-				},
-				get = function(info)
-					return SUI.DB.TauntWatcher.announceLocation
-				end,
-				set = function(info, val)
-					SUI.DB.TauntWatcher.announceLocation = val
-				end
+				}
 			},
 			TextInfo = {
 				name = '',
@@ -304,10 +298,10 @@ function module:Options()
 						order = 501,
 						width = 'full',
 						get = function(info)
-							return SUI.DB.TauntWatcher.text
+							return module.DB.text
 						end,
 						set = function(info, value)
-							SUI.DB.TauntWatcher.text = value
+							module.DB.text = value
 						end
 					}
 				}
@@ -321,7 +315,7 @@ function module:SetupWizard()
 		ID = 'TauntWatcher',
 		Name = 'Taunt watcher',
 		SubTitle = 'Taunt watcher',
-		RequireDisplay = SUI.DB.TauntWatcher.FirstLaunch,
+		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -345,9 +339,9 @@ function module:SetupWizard()
 					{text = L['Self'], value = 'SELF'}
 				}
 
-				TauntWatch.announceLocation = StdUi:Dropdown(TauntWatch, 190, 20, items, SUI.DB.TauntWatcher.announceLocation)
+				TauntWatch.announceLocation = StdUi:Dropdown(TauntWatch, 190, 20, items, module.DB.announceLocation)
 				TauntWatch.announceLocation.OnValueChanged = function(self, value)
-					SUI.DB.TauntWatcher.announceLocation = value
+					module.DB.announceLocation = value
 				end
 
 				-- Create Labels
@@ -385,7 +379,7 @@ function module:SetupWizard()
 				TauntWatch.lblvariable1 = StdUi:Label(TauntWatch, '%who - ' .. L['Player/Pet that taunted'], 13)
 				TauntWatch.lblvariable2 = StdUi:Label(TauntWatch, '%what - ' .. L['Name of mob taunted'], 13)
 
-				TauntWatch.tbAnnounceText = StdUi:SimpleEditBox(TauntWatch, 300, 24, SUI.DB.TauntWatcher.text)
+				TauntWatch.tbAnnounceText = StdUi:SimpleEditBox(TauntWatch, 300, 24, module.DB.text)
 
 				StdUi:GlueBelow(TauntWatch.lblAnnouncetext, TauntWatch.lblActive, 0, -80)
 				StdUi:GlueBelow(TauntWatch.lblvariable1, TauntWatch.lblAnnouncetext, 15, -5, 'LEFT')
@@ -401,7 +395,7 @@ function module:SetupWizard()
 				-- Defaults
 				TauntWatch.modEnabled:SetChecked(SUI:IsModuleEnabled('TauntWatcher'))
 				for key, object in pairs(TauntWatch.options) do
-					object:SetChecked(SUI.DB.TauntWatcher.active[key])
+					object:SetChecked(module.DB.active[key])
 				end
 
 				TauntWatch.modEnabled:HookScript(
@@ -426,14 +420,14 @@ function module:SetupWizard()
 				local TauntWatch = window.content.TauntWatch
 
 				for key, object in pairs(TauntWatch.options) do
-					SUI.DB.TauntWatcher[key] = object:GetChecked()
+					module.DB[key] = object:GetChecked()
 				end
-				SUI.DB.TauntWatcher.text = TauntWatch.tbAnnounceText:GetText()
+				module.DB.text = TauntWatch.tbAnnounceText:GetText()
 			end
-			SUI.DB.TauntWatcher.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end,
 		Skip = function()
-			SUI.DB.TauntWatcher.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')

@@ -6,26 +6,31 @@ module.description = 'Automatically runs /combatlog when in raids for log upload
 local CombatLog_Watcher = CreateFrame('Frame')
 
 function module:OnInitialize()
-	local Defaults = {
-		alwayson = false,
-		announce = true,
-		raidmythic = true,
-		raidheroic = true,
-		raidnormal = true,
-		raidlfr = false,
-		raidlegacy = false,
-		mythicplus = true,
-		mythicdungeon = false,
-		heroicdungeon = false,
-		normaldungeon = false,
-		loggingActive = false,
-		FirstLaunch = true,
-		debug = false
+	local defaults = {
+		profile = {
+			alwayson = false,
+			announce = true,
+			raidmythic = true,
+			raidheroic = true,
+			raidnormal = true,
+			raidlfr = false,
+			raidlegacy = false,
+			mythicplus = true,
+			mythicdungeon = false,
+			heroicdungeon = false,
+			normaldungeon = false,
+			loggingActive = false,
+			FirstLaunch = true,
+			debug = false
+		}
 	}
-	if not SUI.DB.CombatLog then
-		SUI.DB.CombatLog = Defaults
-	else
-		SUI.DB.CombatLog = SUI:MergeData(SUI.DB.CombatLog, Defaults, false)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('CombatLog', defaults)
+	module.DB = module.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.CombatLog then
+		module.DB = SUI:MergeData(module.DB, SUI.DB.CombatLog, true)
+		SUI.DB.CombatLog = nil
 	end
 end
 
@@ -35,12 +40,12 @@ local function setLogging(on, msg)
 			SetCVar('advancedCombatLogging', 1)
 		end
 		LoggingCombat(true)
-		SUI.DB.CombatLog.loggingActive = true -- We have to track this ourself incase the player reloads the ui
+		module.DB.loggingActive = true -- We have to track this ourself incase the player reloads the ui
 	else
 		LoggingCombat(false)
-		SUI.DB.CombatLog.loggingActive = false
+		module.DB.loggingActive = false
 	end
-	if (SUI.DB.CombatLog.announce and msg) then
+	if (module.DB.announce and msg) then
 		if msg == 'disabled' then
 			SUI:Print('Combat logging disabled')
 		else
@@ -59,7 +64,7 @@ end
 
 -- This is used to keep loggin turned on if the user /reloads
 function module.PLAYER_ENTERING_WORLD()
-	if (SUI.DB.CombatLog.loggingActive) then
+	if (module.DB.loggingActive) then
 		setLogging(true)
 	else
 		module:LogCheck('CHALLENGE_MODE_START')
@@ -116,7 +121,7 @@ end
 
 function module:LogCheck(event)
 	local _, type, difficulty, _, maxPlayers = GetInstanceInfo()
-	if SUI.DB.CombatLog.debug then
+	if module.DB.debug then
 		print('LogCheck')
 		print('event: ' .. event)
 		print('type: ' .. type)
@@ -124,48 +129,47 @@ function module:LogCheck(event)
 		print('maxPlayers: ' .. maxPlayers)
 	end
 
-	if (SUI.DB.CombatLog.alwayson) then
+	if (module.DB.alwayson) then
 		setLogging(true, 'Always on')
-	elseif (SUI.DB.CombatLog.raidmythic) and type == 'raid' and difficulty == 16 then
+	elseif (module.DB.raidmythic) and type == 'raid' and difficulty == 16 then
 		-- 16 - 20-player Mythic Raid Instance
 		setLogging(true, 'Mythic Raid')
-	elseif (SUI.DB.CombatLog.raidheroic) and type == 'raid' and difficulty == 15 then
+	elseif (module.DB.raidheroic) and type == 'raid' and difficulty == 15 then
 		-- 15 - 10-30-player Heroic Raid Instance
 		setLogging(true, 'Heroic Raid')
-	elseif (SUI.DB.CombatLog.raidnormal) and type == 'raid' and difficulty == 14 then
+	elseif (module.DB.raidnormal) and type == 'raid' and difficulty == 14 then
 		-- 14 - 10-30-player Normal Raid Instance
 		setLogging(true, 'Normal Raid')
-	elseif (SUI.DB.CombatLog.raidlfr) and type == 'raid' and difficulty == 17 then
+	elseif (module.DB.raidlfr) and type == 'raid' and difficulty == 17 then
 		-- 17 - 10-30-player Raid Finder Instance
 		setLogging(true, 'Raid Finder')
-	elseif (SUI.DB.CombatLog.normaldungeon) and type == 'party' and difficulty == 1 and maxPlayers == 5 then
+	elseif (module.DB.normaldungeon) and type == 'party' and difficulty == 1 and maxPlayers == 5 then
 		-- 1 - 5-player Instance, filtering Garrison
 		setLogging(true, 'Normal Dungeon')
-	elseif (SUI.DB.CombatLog.heroicdungeon) and type == 'party' and difficulty == 2 and maxPlayers == 5 then
+	elseif (module.DB.heroicdungeon) and type == 'party' and difficulty == 2 and maxPlayers == 5 then
 		-- 2 - 5-player Heroic Instance, filtering Garrison
 		setLogging(true, 'Heroic Dungeon')
-	elseif (SUI.DB.CombatLog.mythicdungeon) and type == 'party' and difficulty == 23 and maxPlayers == 5 then
+	elseif (module.DB.mythicdungeon) and type == 'party' and difficulty == 23 and maxPlayers == 5 then
 		-- 23 - Mythic 5-player Instance, filtering Garrison
 		setLogging(true, 'Mythic Dungeon')
 	elseif
-		(SUI.DB.CombatLog.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and
-			maxPlayers == 5
+		(module.DB.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and maxPlayers == 5
 	 then
 		-- 8 - Mythic+ Mode Instance
 		setLogging(true, 'Mythic+ Dungeon')
 	elseif
-		(SUI.DB.CombatLog.raidlegacy) and type == 'raid' and
+		(module.DB.raidlegacy) and type == 'raid' and
 			(difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9)
 	 then
 		-- 3-9 is legacy raid difficulties
 		setLogging(true, 'Legacy Raid')
 	else
 		-- If we are curently logging announce we are disabling it.
-		if SUI.DB.CombatLog.loggingActive and LoggingCombat() then
+		if module.DB.loggingActive and LoggingCombat() then
 			setLogging(false, 'disabled')
 		end
 		-- Do this here to ensure DB is set to false
-		SUI.DB.CombatLog.loggingActive = false
+		module.DB.loggingActive = false
 	end
 end
 
@@ -173,43 +177,29 @@ function module:Options()
 	SUI.opt.args['ModSetting'].args['CombatLog'] = {
 		type = 'group',
 		name = L['Combat logging'],
+		get = function(info)
+			return module.DB[info[#info]]
+		end,
+		set = function(info, val)
+			module.DB[info[#info]] = val
+			module:LogCheck('force')
+		end,
 		args = {
 			alwayson = {
 				name = L['Always on'],
 				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return SUI.DB.CombatLog.alwayson
-				end,
-				set = function(info, val)
-					SUI.DB.CombatLog.alwayson = val
-					module:LogCheck('force')
-				end
+				order = 1
 			},
 			announce = {
 				name = L['Announce logging in chat'],
 				type = 'toggle',
 				width = 'double',
-				order = 5,
-				get = function(info)
-					return SUI.DB.CombatLog.announce
-				end,
-				set = function(info, val)
-					SUI.DB.CombatLog.announce = val
-					module:LogCheck('force')
-				end
+				order = 5
 			},
 			debug = {
 				name = L['Debug mode'],
 				type = 'toggle',
-				order = 500,
-				get = function(info)
-					return SUI.DB.CombatLog.debug
-				end,
-				set = function(info, val)
-					SUI.DB.CombatLog.debug = val
-					module:LogCheck('force')
-				end
+				order = 500
 			},
 			raid = {
 				name = L['Raid settings'],
@@ -217,66 +207,38 @@ function module:Options()
 				inline = true,
 				order = 10,
 				width = 'full',
+				get = function(info)
+					return module.DB[info[#info]]
+				end,
+				set = function(info, val)
+					module.DB[info[#info]] = val
+					module:LogCheck('force')
+				end,
 				args = {
 					raidlegacy = {
 						name = L['Legacy raids'],
 						type = 'toggle',
-						order = 0,
-						get = function(info)
-							return SUI.DB.CombatLog.raidlegacy
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.raidlegacy = val
-							module:LogCheck('force')
-						end
+						order = 0
 					},
 					raidlfr = {
 						name = L['Looking for raid'],
 						type = 'toggle',
-						order = 2,
-						get = function(info)
-							return SUI.DB.CombatLog.raidlfr
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.raidlfr = val
-							module:LogCheck('force')
-						end
+						order = 2
 					},
 					raidnormal = {
 						name = L['Normal'],
 						type = 'toggle',
-						order = 4,
-						get = function(info)
-							return SUI.DB.CombatLog.raidnormal
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.raidnormal = val
-							module:LogCheck('force')
-						end
+						order = 4
 					},
 					raidheroic = {
 						name = L['Heroic'],
 						type = 'toggle',
-						order = 6,
-						get = function(info)
-							return SUI.DB.CombatLog.raidheroic
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.raidheroic = val
-							module:LogCheck('force')
-						end
+						order = 6
 					},
 					raidmythic = {
 						name = L['Mythic'],
 						type = 'toggle',
-						order = 8,
-						get = function(info)
-							return SUI.DB.CombatLog.raidmythic
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.raidmythic = val
-							module:LogCheck('force')
-						end
+						order = 8
 					}
 				}
 			},
@@ -286,54 +248,33 @@ function module:Options()
 				inline = true,
 				order = 20,
 				width = 'full',
+				get = function(info)
+					return module.DB[info[#info]]
+				end,
+				set = function(info, val)
+					module.DB[info[#info]] = val
+					module:LogCheck('force')
+				end,
 				args = {
 					normaldungeon = {
 						name = L['Normal'],
 						type = 'toggle',
-						order = 0,
-						get = function(info)
-							return SUI.DB.CombatLog.normaldungeon
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.normaldungeon = val
-							module:LogCheck('force')
-						end
+						order = 0
 					},
 					heroicdungeon = {
 						name = L['Heroic'],
 						type = 'toggle',
-						order = 2,
-						get = function(info)
-							return SUI.DB.CombatLog.heroicdungeon
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.heroicdungeon = val
-							module:LogCheck('force')
-						end
+						order = 2
 					},
 					mythicdungeon = {
 						name = L['Mythic'],
 						type = 'toggle',
-						order = 4,
-						get = function(info)
-							return SUI.DB.CombatLog.mythicdungeon
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.mythicdungeon = val
-							module:LogCheck('force')
-						end
+						order = 4
 					},
 					mythicplus = {
 						name = L['Mythic+'],
 						type = 'toggle',
-						order = 6,
-						get = function(info)
-							return SUI.DB.CombatLog.mythicplus
-						end,
-						set = function(info, val)
-							SUI.DB.CombatLog.mythicplus = val
-							module:LogCheck('force')
-						end
+						order = 6
 					}
 				}
 			}
@@ -348,7 +289,7 @@ function module:FirstLaunch()
 		SubTitle = L['Combat logging'],
 		Desc1 = L['Automatically turn on combat logging when entering a zone.'],
 		Desc2 = L['Combat log will be Automatically enabled, for easy uploading to websites such as Warcraftlogs.'],
-		RequireDisplay = SUI.DB.CombatLog.FirstLaunch,
+		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -411,7 +352,7 @@ function module:FirstLaunch()
 				-- Defaults
 				cLog.modEnabled:SetChecked(not SUI.DB.DisabledComponents.CombatLog)
 				for key, object in pairs(cLog.options) do
-					object:SetChecked(SUI.DB.CombatLog[key])
+					object:SetChecked(module.DB[key])
 				end
 
 				cLog.modEnabled:HookScript(
@@ -439,13 +380,13 @@ function module:FirstLaunch()
 				end
 
 				for key, object in pairs(cLog.options) do
-					SUI.DB.CombatLog[key] = object:GetChecked()
+					module.DB[key] = object:GetChecked()
 				end
 			end
-			SUI.DB.CombatLog.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end,
 		Skip = function()
-			SUI.DB.CombatLog.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')

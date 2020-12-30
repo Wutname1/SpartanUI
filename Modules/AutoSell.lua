@@ -79,10 +79,35 @@ local ExcludedTypes = {
 }
 
 function module:OnInitialize()
+	local defaults = {
+		profile = {
+			FirstLaunch = true,
+			NotCrafting = true,
+			NotConsumables = true,
+			NotInGearset = true,
+			MaxILVL = 100,
+			Gray = true,
+			White = false,
+			Green = false,
+			Blue = false,
+			Purple = false,
+			GearTokens = false,
+			AutoRepair = false,
+			UseGuildBankRepair = false
+		}
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', defaults)
+	module.DB = module.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.AutoSell then
+		module.DB = SUI:MergeData(module.DB, SUI.DB.AutoSell, true)
+		SUI.DB.AutoSell = nil
+	end
 	-- Bump Autosell iLVL down for classic
-	if SUI.DB.AutoSell.MaxILVL >= 40 and SUI.IsClassic then
-		SUI.DB.AutoSell.MaxILVL = 40
-		SUI.DB.AutoSell.UseGuildBankRepair = false
+	if module.DB.MaxILVL >= 40 and SUI.IsClassic then
+		module.DB.MaxILVL = 40
+		module.DB.UseGuildBankRepair = false
 	end
 end
 
@@ -93,7 +118,7 @@ local function SetupPage()
 		SubTitle = L['Auto sell'],
 		Desc1 = L['Automatically vendor items when you visit a merchant.'],
 		Desc2 = L['Crafting, consumables, and gearset items will not be sold by default.'],
-		RequireDisplay = SUI.DB.AutoSell.FirstLaunch,
+		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -119,7 +144,7 @@ local function SetupPage()
 
 				-- Max iLVL
 				AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
-				AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, SUI.DB.AutoSell.MaxILVL)
+				AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, module.DB.MaxILVL)
 				local MaxiLVL = 500
 				if SUI.IsClassic then
 					MaxiLVL = 100
@@ -134,7 +159,7 @@ local function SetupPage()
 					end
 				end
 
-				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, SUI.DB.AutoSell.MaxILVL, false, 1, MaxiLVL)
+				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, module.DB.MaxILVL, false, 1, MaxiLVL)
 				AutoSell.iLVLSlider.OnValueChanged = function()
 					local win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
@@ -161,31 +186,31 @@ local function SetupPage()
 				SUI_Win.AutoSell = AutoSell
 
 				-- Defaults
-				AutoSell.SellGray:SetChecked(SUI.DB.AutoSell.Gray)
-				AutoSell.SellWhite:SetChecked(SUI.DB.AutoSell.White)
-				AutoSell.SellGreen:SetChecked(SUI.DB.AutoSell.Green)
-				AutoSell.SellBlue:SetChecked(SUI.DB.AutoSell.Blue)
-				AutoSell.SellPurple:SetChecked(SUI.DB.AutoSell.Purple)
-				AutoSell.AutoRepair:SetChecked(SUI.DB.AutoSell.AutoRepair)
-				AutoSell.iLVLLabel:SetValue(SUI.DB.AutoSell.MaxILVL)
+				AutoSell.SellGray:SetChecked(module.DB.Gray)
+				AutoSell.SellWhite:SetChecked(module.DB.White)
+				AutoSell.SellGreen:SetChecked(module.DB.Green)
+				AutoSell.SellBlue:SetChecked(module.DB.Blue)
+				AutoSell.SellPurple:SetChecked(module.DB.Purple)
+				AutoSell.AutoRepair:SetChecked(module.DB.AutoRepair)
+				AutoSell.iLVLLabel:SetValue(module.DB.MaxILVL)
 			end
 		end,
 		Next = function()
 			if SUI:IsModuleEnabled('AutoSell') then
 				local SUI_Win = SUI:GetModule('SetupWizard').window.content.AutoSell
 
-				SUI.DB.AutoSell.Gray = (SUI_Win.SellGray:GetChecked() == true or false)
-				SUI.DB.AutoSell.White = (SUI_Win.SellWhite:GetChecked() == true or false)
-				SUI.DB.AutoSell.Green = (SUI_Win.SellGreen:GetChecked() == true or false)
-				SUI.DB.AutoSell.Blue = (SUI_Win.SellBlue:GetChecked() == true or false)
-				SUI.DB.AutoSell.Purple = (SUI_Win.SellPurple:GetChecked() == true or false)
-				SUI.DB.AutoSell.AutoRepair = (SUI_Win.AutoRepair:GetChecked() == true or false)
-				SUI.DB.AutoSell.MaxILVL = SUI_Win.iLVLLabel:GetValue()
+				module.DB.Gray = (SUI_Win.SellGray:GetChecked() == true or false)
+				module.DB.White = (SUI_Win.SellWhite:GetChecked() == true or false)
+				module.DB.Green = (SUI_Win.SellGreen:GetChecked() == true or false)
+				module.DB.Blue = (SUI_Win.SellBlue:GetChecked() == true or false)
+				module.DB.Purple = (SUI_Win.SellPurple:GetChecked() == true or false)
+				module.DB.AutoRepair = (SUI_Win.AutoRepair:GetChecked() == true or false)
+				module.DB.MaxILVL = SUI_Win.iLVLLabel:GetValue()
 			end
-			SUI.DB.AutoSell.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end,
 		Skip = function()
-			SUI.DB.AutoSell.FirstLaunch = false
+			module.DB.FirstLaunch = false
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
@@ -200,54 +225,36 @@ local function BuildOptions()
 	SUI.opt.args['ModSetting'].args['AutoSell'] = {
 		type = 'group',
 		name = L['Auto sell'],
+		get = function(info)
+			return module.DB[info[#info]]
+		end,
+		set = function(info, val)
+			module.DB[info[#info]] = val
+		end,
 		args = {
 			NotCrafting = {
 				name = L["Don't sell crafting items"],
 				type = 'toggle',
 				order = 1,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.NotCrafting
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.NotCrafting = val
-				end
+				width = 'full'
 			},
 			NotConsumables = {
 				name = L["Don't sell consumables"],
 				type = 'toggle',
 				order = 2,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.NotConsumables
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.NotConsumables = val
-				end
+				width = 'full'
 			},
 			NotInGearset = {
 				name = L["Don't sell items in a equipment set"],
 				type = 'toggle',
 				order = 3,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.NotInGearset
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.NotInGearset = val
-				end
+				width = 'full'
 			},
 			GearTokens = {
 				name = L['Sell tier tokens'],
 				type = 'toggle',
 				order = 4,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.GearTokens
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.GearTokens = val
-				end
+				width = 'full'
 			},
 			MaxILVL = {
 				name = L['Maximum iLVL to sell'],
@@ -256,109 +263,55 @@ local function BuildOptions()
 				width = 'full',
 				min = 1,
 				max = 500,
-				step = 1,
-				set = function(info, val)
-					SUI.DB.AutoSell.MaxILVL = val
-				end,
-				get = function(info)
-					return SUI.DB.AutoSell.MaxILVL
-				end
+				step = 1
 			},
 			Gray = {
 				name = L['Sell gray'],
 				type = 'toggle',
 				order = 20,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Gray
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Gray = val
-				end
+				width = 'double'
 			},
 			White = {
 				name = L['Sell white'],
 				type = 'toggle',
 				order = 21,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.White
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.White = val
-				end
+				width = 'double'
 			},
 			Green = {
 				name = L['Sell green'],
 				type = 'toggle',
 				order = 22,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Green
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Green = val
-				end
+				width = 'double'
 			},
 			Blue = {
 				name = L['Sell blue'],
 				type = 'toggle',
 				order = 23,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Blue
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Blue = val
-				end
+				width = 'double'
 			},
 			Purple = {
 				name = L['Sell purple'],
 				type = 'toggle',
 				order = 24,
-				width = 'double',
-				get = function(info)
-					return SUI.DB.AutoSell.Purple
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.Purple = val
-				end
+				width = 'double'
 			},
 			line1 = {name = '', type = 'header', order = 200},
 			AutoRepair = {
 				name = L['Auto repair'],
 				type = 'toggle',
-				order = 201,
-				get = function(info)
-					return SUI.DB.AutoSell.AutoRepair
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.AutoRepair = val
-				end
+				order = 201
 			},
 			UseGuildBankRepair = {
 				name = L['Use guild bank repair if possible'],
 				type = 'toggle',
-				order = 202,
-				get = function(info)
-					return SUI.DB.AutoSell.UseGuildBankRepair
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.UseGuildBankRepair = val
-				end
+				order = 202
 			},
 			line2 = {name = '', type = 'header', order = 600},
 			debug = {
 				name = L['Enable debug messages'],
 				type = 'toggle',
 				order = 601,
-				width = 'full',
-				get = function(info)
-					return SUI.DB.AutoSell.debug
-				end,
-				set = function(info, val)
-					SUI.DB.AutoSell.debug = val
-				end
+				width = 'full'
 			}
 		}
 	}
@@ -409,23 +362,23 @@ function module:IsSellable(item, ilink, bag, slot)
 	local IsGearToken = false
 	local iLevel = SUI:GetiLVL(ilink)
 
-	if quality == 0 and SUI.DB.AutoSell.Gray then
+	if quality == 0 and module.DB.Gray then
 		qualitysellable = true
 	end
-	if quality == 1 and SUI.DB.AutoSell.White then
+	if quality == 1 and module.DB.White then
 		qualitysellable = true
 	end
-	if quality == 2 and SUI.DB.AutoSell.Green then
+	if quality == 2 and module.DB.Green then
 		qualitysellable = true
 	end
-	if quality == 3 and SUI.DB.AutoSell.Blue then
+	if quality == 3 and module.DB.Blue then
 		qualitysellable = true
 	end
-	if quality == 4 and SUI.DB.AutoSell.Purple then
+	if quality == 4 and module.DB.Purple then
 		qualitysellable = true
 	end
 
-	if (not iLevel) or (iLevel <= SUI.DB.AutoSell.MaxILVL) then
+	if (not iLevel) or (iLevel <= module.DB.MaxILVL) then
 		ilvlsellable = true
 	end
 	--Crafting Items
@@ -436,7 +389,7 @@ function module:IsSellable(item, ilink, bag, slot)
 			(itemType == 'Item Enhancement') or
 			isCraftingReagent
 	 then
-		if not SUI.DB.AutoSell.NotCrafting then
+		if not module.DB.NotCrafting then
 			Craftablesellable = true
 		end
 	else
@@ -450,14 +403,14 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if SUI.DB.AutoSell.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then
+	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then
 		NotConsumable = false
 	end
 
 	-- Gear Tokens
 	if
 		quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and
-			not SUI.DB.AutoSell.GearTokens
+			not module.DB.GearTokens
 	 then
 		IsGearToken = true
 	end
@@ -471,9 +424,9 @@ function module:IsSellable(item, ilink, bag, slot)
 			not SUI:isInTable(ExcludedItems, item) and
 			not SUI:isInTable(ExcludedTypes, itemType) and
 			not SUI:isInTable(ExcludedTypes, itemSubType) or
-			(quality == 0 and SUI.DB.AutoSell.Gray)
+			(quality == 0 and module.DB.Gray)
 	 then --Legion identified some junk as consumable
-		if SUI.DB.AutoSell.debug then
+		if module.DB.debug then
 			SUI:Print('--Selling--')
 			SUI:Print(item)
 			SUI:Print(name)
@@ -537,13 +490,13 @@ function module:SellTrashInBag(ItemListing)
 end
 
 function module:Repair(PersonalFunds)
-	if not SUI.DB.AutoSell.AutoRepair then
+	if not module.DB.AutoRepair then
 		return
 	end
 	-- First see if this vendor can repair
-	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and SUI.DB.AutoSell.AutoRepair) and not PersonalFunds) then
+	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and module.DB.AutoRepair) and not PersonalFunds) then
 		-- Use guild repair
-		if (CanGuildBankRepair and CanGuildBankRepair() and SUI.DB.AutoSell.UseGuildBankRepair) then
+		if (CanGuildBankRepair and CanGuildBankRepair() and module.DB.UseGuildBankRepair) then
 			SUI:Print(
 				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds']
 			)
