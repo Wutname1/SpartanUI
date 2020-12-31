@@ -1,5 +1,5 @@
-local SUI, L = SUI, SUI.L
-local module = SUI:NewModule('Options')
+local SUI, L, Lib = SUI, SUI.L, SUI.Lib
+local module = SUI:NewModule('Handler_Options')
 
 ---------------------------------------------------------------------------
 function module:InCombatLockdown()
@@ -9,6 +9,11 @@ function module:InCombatLockdown()
 	end
 
 	return false
+end
+
+function module:GetConfigWindow()
+	local ConfigOpen = Lib.AceCD and Lib.AceCD.OpenFrames and Lib.AceCD.OpenFrames['SpartanUI']
+	return ConfigOpen and ConfigOpen.frame
 end
 
 function module:OnInitialize()
@@ -307,5 +312,176 @@ end
 function module:OnEnable()
 	if not SUI:GetModule('Component_Artwork', true) then
 		SUI.opt.args['General'].args['style'].args['OverallStyle'].disabled = true
+	end
+
+	SUI:AddChatCommand(
+		'help',
+		function()
+			SUI.Lib.AceCD:Open('SpartanUI', 'Help')
+		end
+	)
+end
+
+function module:ConfigOpened(name)
+	if name ~= 'SpartanUI' then
+		return
+	end
+
+	local frame = module:GetConfigWindow()
+	if frame and frame.leftHolder then
+	-- E:Config_WindowOpened(frame)
+	end
+end
+
+function module:ToggleOptions()
+	if InCombatLockdown() then
+		self:Print(ERR_NOT_IN_COMBAT)
+		self.ShowOptionsUI = true
+		return
+	end
+
+	local frame = module:GetConfigWindow()
+	local mode = 'Open'
+	if not frame then
+		mode = 'Close'
+	end
+
+	local ACD = Lib.AceCD
+	if ACD then
+		if not ACD.OpenHookedSUI then
+			hooksecurefunc(Lib.AceCD, 'Open', module.ConfigOpened)
+			ACD.OpenHookedSUI = true
+		end
+
+		ACD[mode](ACD, 'SpartanUI')
+	end
+
+	if not frame then
+		frame = module:GetConfigWindow()
+	end
+
+	if mode == 'Open' and frame then
+		local ACR = E.Libs.AceConfigRegistry
+		if ACR and not ACR.NotifyHookedElvUI then
+			hooksecurefunc(E.Libs.AceConfigRegistry, 'NotifyChange', E.Config_UpdateLeftButtons)
+			ACR.NotifyHookedElvUI = true
+			E:Config_UpdateSize()
+		end
+
+		if not frame.bottomHolder then -- window was released or never opened
+			frame:HookScript('OnHide', E.Config_WindowClosed)
+
+			for i = 1, frame:GetNumChildren() do
+				local child = select(i, frame:GetChildren())
+				if child:IsObjectType('Button') and child:GetText() == _G.CLOSE then
+					frame.originalClose = child
+					child:Hide()
+				elseif child:IsObjectType('Frame') or child:IsObjectType('Button') then
+					if child:HasScript('OnMouseUp') then
+						child:HookScript('OnMouseUp', E.Config_StopMoving)
+					end
+				end
+			end
+
+			local unskinned = not E.private.skins.ace3Enable
+			if unskinned then
+				for i = 1, frame:GetNumRegions() do
+					local region = select(i, frame:GetRegions())
+					if region:IsObjectType('Texture') and region:GetTexture() == 131080 then
+						region:SetAlpha(0)
+					end
+				end
+			end
+
+			local bottom = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
+			bottom:Point('BOTTOMLEFT', 2, 2)
+			bottom:Point('BOTTOMRIGHT', -2, 2)
+			bottom:Height(37)
+			frame.bottomHolder = bottom
+
+			local close = CreateFrame('Button', nil, frame, 'UIPanelCloseButton, BackdropTemplate')
+			close:SetScript('OnClick', E.Config_CloseClicked)
+			close:SetFrameLevel(1000)
+			close:Point('TOPRIGHT', unskinned and -8 or 1, unskinned and -8 or 2)
+			close:Size(32, 32)
+			close.originalClose = frame.originalClose
+			frame.closeButton = close
+
+			local left = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
+			left:Point('BOTTOMRIGHT', bottom, 'BOTTOMLEFT', 181, 0)
+			left:Point('BOTTOMLEFT', bottom, 'TOPLEFT', 0, 1)
+			left:Point('TOPLEFT', unskinned and 10 or 2, unskinned and -6 or -2)
+			frame.leftHolder = left
+
+			local top = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
+			top.version = frame.obj.titletext
+			top:Point('TOPRIGHT', frame, -2, 0)
+			top:Point('TOPLEFT', left, 'TOPRIGHT', 1, 0)
+			top:Height(24)
+			frame.topHolder = top
+
+			local LogoBottom = left:CreateTexture()
+			LogoBottom:SetTexture(E.Media.Textures.LogoBottomSmall)
+			LogoBottom:Point('CENTER', left, 'TOP', unskinned and 10 or 0, unskinned and -40 or -36)
+			LogoBottom:Size(128, 64)
+			left.LogoBottom = LogoBottom
+
+			local LogoTop = left:CreateTexture()
+			LogoTop:SetTexture(E.Media.Textures.LogoTopSmall)
+			LogoTop:Point('CENTER', left, 'TOP', unskinned and 10 or 0, unskinned and -40 or -36)
+			LogoTop:Size(128, 64)
+			left.LogoTop = LogoTop
+
+			local buttonsHolder = CreateFrame('Frame', nil, left)
+			buttonsHolder:Point('BOTTOMLEFT', bottom, 'TOPLEFT', 0, 1)
+			buttonsHolder:Point('TOPLEFT', left, 'TOPLEFT', 0, -70)
+			buttonsHolder:Point('BOTTOMRIGHT')
+			buttonsHolder:SetFrameLevel(5)
+			buttonsHolder:SetClipsChildren(true)
+			left.buttonsHolder = buttonsHolder
+
+			local buttons = CreateFrame('Frame', nil, buttonsHolder, 'BackdropTemplate')
+			buttons:Point('BOTTOMLEFT', bottom, 'TOPLEFT', 0, 1)
+			buttons:Point('BOTTOMRIGHT')
+			buttons:Point('TOPLEFT', 0, 0)
+			left.buttons = buttons
+
+			local slider = CreateFrame('Slider', nil, frame, 'BackdropTemplate')
+			slider:SetThumbTexture(E.Media.Textures.White8x8)
+			slider:SetScript('OnMouseWheel', ConfigSliderOnMouseWheel)
+			slider:SetScript('OnValueChanged', ConfigSliderOnValueChanged)
+			slider:SetOrientation('VERTICAL')
+			slider:SetObeyStepOnDrag(true)
+			slider:SetFrameLevel(4)
+			slider:SetValueStep(1)
+			slider:SetValue(0)
+			slider:Width(192)
+			slider:Point('BOTTOMLEFT', bottom, 'TOPLEFT', 0, 1)
+			slider:Point('TOPLEFT', buttons, 'TOPLEFT', 0, 0)
+			slider.buttons = buttons
+			left.slider = slider
+
+			local thumb = slider:GetThumbTexture()
+			thumb:Point('LEFT', left, 'RIGHT', 2, 0)
+			thumb:SetVertexColor(1, 1, 1, 0.5)
+			thumb:Size(8, 12)
+			left.slider.thumb = thumb
+
+			if not unskinned then
+				bottom:SetTemplate('Transparent')
+				left:SetTemplate('Transparent')
+				top:SetTemplate('Transparent')
+				E.Skins:HandleCloseButton(close)
+			end
+
+			E:Config_CreateLeftButtons(frame, unskinned, E.Options.args)
+			E:Config_CreateBottomButtons(frame, unskinned)
+			E:Config_UpdateLeftScroller(frame)
+			E:Config_WindowOpened(frame)
+		end
+
+		if ACD and pages then
+			ACD:SelectGroup(E.name, unpack(pages))
+		end
 	end
 end

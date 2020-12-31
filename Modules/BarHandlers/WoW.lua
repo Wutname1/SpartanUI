@@ -4,5 +4,16 @@ local module = SUI:GetModule('Component_BarHandler')
 
 ------------------------------------------------------------
 
+local function OnInitialize(args)
+end
 
--- module:AddBarSystem('WoW', args)
+local function OnEnable(args)
+end
+
+local function Unlock(args)
+end
+
+local function RefreshConfig(args)
+end
+
+-- module:AddBarSystem('WoW', OnInitialize, OnEnable, nil, Unlock, RefreshConfig)

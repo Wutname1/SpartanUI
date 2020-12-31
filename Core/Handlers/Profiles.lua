@@ -400,7 +400,10 @@ local function ImportCoreSettings(importData)
 end
 
 local function ImportModuleSettings(ModuleName, NewSettings)
-	local module = SUI:GetModule('Component_' .. ModuleName)
+	local module = SUI:GetModule('Component_' .. ModuleName, true) or SUI:GetModule('Handler_' .. ModuleName, true)
+	if not module then
+		return
+	end
 	local newsettings = PrepareImport(module.Database.defaults.profile, NewSettings)
 
 	module.DB = SUI:MergeData(module.DB, newsettings, true)

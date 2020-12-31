@@ -1,6 +1,6 @@
 --Cache global variables and Lua functions
 local _G, SUI = _G, SUI
-local module = SUI:NewModule('Skinning')
+local module = SUI:NewModule('Handler_Skinning')
 
 local RegisterAsContainer
 

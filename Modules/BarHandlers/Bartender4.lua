@@ -307,13 +307,15 @@ end
 
 local function OnInitialize()
 	--Bartender4
-	if Bartender4 then
-		--Update to the current profile
-		SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileChanged', 'BT4RefreshConfig')
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileCopied', 'BT4RefreshConfig')
-		Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
+	if not Bartender4 then
+		return
 	end
+	--Update to the current profile
+	SUI.DB.BT4Profile = Bartender4.db:GetCurrentProfile()
+	Bartender4.db.RegisterCallback(SUI, 'OnProfileChanged', 'BT4RefreshConfig')
+	Bartender4.db.RegisterCallback(SUI, 'OnProfileCopied', 'BT4RefreshConfig')
+	Bartender4.db.RegisterCallback(SUI, 'OnProfileReset', 'BT4RefreshConfig')
+
 	loadScales()
 end
 
@@ -440,9 +442,9 @@ local function Options()
 end
 
 local function OnEnable()
-	-- Build options
-	Options()
-
+	if not Bartender4 then
+		return
+	end
 	-- No Bartender/out of date Notification
 	if SUI.Bartender4Version < BartenderMin then
 		-- TODO: Convert this away from Static popup
@@ -475,6 +477,9 @@ local function OnEnable()
 			SetupProfile()
 		end
 	end
+
+	-- Build options
+	Options()
 
 	-- Position & scale Bars
 	RefreshConfig()

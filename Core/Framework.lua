@@ -345,7 +345,7 @@ local DBdefault = {
 			StatusBars = {
 				['**'] = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar',
-					alpha = .9,
+					alpha = 0.9,
 					size = {370, 20},
 					TooltipSize = {350, 100},
 					TooltipTextSize = {330, 80},
@@ -932,7 +932,7 @@ local DBdefault = {
 			StatusBars = {
 				['**'] = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-					alpha = .9,
+					alpha = 0.9,
 					size = {370, 20},
 					TooltipSize = {350, 100},
 					TooltipTextSize = {330, 80},
@@ -2228,6 +2228,49 @@ function SUI:OnInitialize()
 
 	-- Setup ReloadUI Window
 	reloaduiWindow()
+
+	local ResetDBWarning = false
+	local function resetdb()
+		if ResetDBWarning then
+			SUI.SpartanUIDB:ResetDB()
+		else
+			ResetDBWarning = true
+			SUI:Print('|cffff0000Warning')
+			SUI:Print(L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
+		end
+	end
+
+	local function resetfulldb()
+		if ResetDBWarning then
+			Bartender4.db:ResetDB()
+			SUI.SpartanUIDB:ResetDB()
+		else
+			ResetDBWarning = true
+			SUI:Print('|cffff0000Warning')
+			SUI:Print(
+				L[
+					'This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'
+				]
+			)
+		end
+	end
+
+	local function resetbartender(args)
+		SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']:func()
+	end
+
+	local function Version()
+		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
+		SUI:Print(string.format('%s build %s', wowVersion, SUI.BuildNum))
+		if SUI.Bartender4Version ~= 0 then
+			SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
+		end
+	end
+
+	SUI:AddChatCommand('version', Version)
+	SUI:AddChatCommand('resetbartender', resetbartender)
+	SUI:AddChatCommand('resetfulldb', resetfulldb)
+	SUI:AddChatCommand('resetdb', resetdb)
 end
 
 function SUI:DBUpgrades()
@@ -2702,8 +2745,4 @@ function SUI:OnEnable()
 			end
 		end
 	)
-end
-
-function SUI:suihelp()
-	SUI.Lib.AceCD:Open('SpartanUI', 'Help')
 end
