@@ -41,6 +41,7 @@ end
 
 SUI.AddLib('AceC', 'AceConfig-3.0')
 SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
+SUI.AddLib('AceCR', 'AceConfigRegistry-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0')
 SUI.AddLib('StdUi', 'StdUi')
@@ -2342,6 +2343,7 @@ function SUI.print(msg, doNotLabel)
 		SUI:Print(msg)
 	end
 end
+
 function SUI:Error(err, mod)
 	SUI:Print('|cffff0000Error detected')
 	if mod then

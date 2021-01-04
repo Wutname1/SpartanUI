@@ -244,7 +244,7 @@ function module:OnInitialize()
 				}
 			},
 			targettarget = {
-				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_3_single',
+				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
 				heightScale = 1.2,
 				TexCoord = {.68, 0, 0, 0.6640625},
 				position = {

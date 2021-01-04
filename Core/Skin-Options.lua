@@ -8,9 +8,12 @@ local function StripTextures(object)
 	for i = 1, object:GetNumRegions() do
 		local region = select(i, object:GetRegions())
 		if region and region:GetObjectType() == 'Texture' then
-			if region:GetTexture() == 'Interface\\DialogFrame\\UI-DialogBox-Header' then
-				-- region:SetTexture(nil)
-				region:SetScale(.2)
+			if region:GetTexture() == 'Interface\\DialogFrame\\UI-DialogBox-Border' then
+				-- region:SetScale(.2)
+			elseif region:GetTexture() == 131080 then
+				region:SetTexture(nil)
+			elseif region:GetTexture() ~= nil then
+			-- print(region:GetTexture())
 			end
 		end
 	end
@@ -31,14 +34,18 @@ function module:SkinAce3()
 				TYPE == 'Window'
 		 then
 			local frame = widget.content:GetParent()
-			if TYPE == 'Frame' then
+			if TYPE == 'Frame' or TYPE == 'Window' then
 				StripTextures(frame)
-			end
-			if not frame.SetBackdropBorderColor then
-				Mixin(frame, BackdropTemplateMixin)
+				for k, v in pairs(frame:GetChildren()) do
+					if type(v) == 'frame' then
+						SUI:SkinFrame(v)
+					else
+						-- print(type(v))
+					end
+				end
 			end
 
-			frame:SetBackdropBorderColor(0, 0, 0, 0)
+			SUI:SkinFrame(frame)
 		end
 		return oldRegisterAsContainer(self, widget)
 	end
@@ -54,6 +61,15 @@ local function attemptSkin()
 		end
 		module:SkinAce3()
 	end
+end
+
+function SUI:SkinFrame(frame)
+	-- StripTextures(frame)
+	if not frame.SetBackdropBorderColor then
+		Mixin(frame, BackdropTemplateMixin)
+	end
+
+	frame:SetBackdropBorderColor(0, 0, 0, 0)
 end
 
 local f = CreateFrame('Frame')
