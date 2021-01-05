@@ -1,10 +1,10 @@
-local SUI, L, Lib = SUI, SUI.L, SUI.Lib
+local SUI, L, Lib, StdUi = SUI, SUI.L, SUI.Lib, SUI.StdUi
 local module = SUI:NewModule('Handler_Options')
 
 ---------------------------------------------------------------------------
 function module:InCombatLockdown()
 	if InCombatLockdown() then
-		SUI:Print('|cffff0000Unable to change setting in combat')
+		SUI:Print(ERR_NOT_IN_COMBAT)
 		return true
 	end
 
@@ -328,8 +328,8 @@ function module:ConfigOpened(name)
 	end
 
 	local frame = module:GetConfigWindow()
-	if frame and frame.leftHolder then
-	-- E:Config_WindowOpened(frame)
+	if frame and frame.bottomHolder then
+		frame.bottomHolder:Show()
 	end
 end
 
@@ -362,59 +362,77 @@ function module:ToggleOptions(pages)
 
 	if mode == 'Open' and frame then
 		if not frame.bottomHolder then -- window was released or never opened
-			frame:HookScript(
-				'OnHide',
-				function()
-					if not self.bottomHolder then
-						return
-					end
-
-					local frame = E:Config_GetWindow()
-					if not frame or frame ~= self then
-						self.bottomHolder:Hide()
-					-- ConfigLogoTop = nil
-					end
+			for i = 1, frame:GetNumChildren() do
+				local child = select(i, frame:GetChildren())
+				if child:IsObjectType('Button') and child:GetText() == _G.CLOSE then
+					frame.CloseBtn = child
+					child:Hide()
+				-- elseif child:IsObjectType('Frame') or child:IsObjectType('Button') then
+				-- 	if child:HasScript('OnMouseUp') then
+				-- 		child:HookScript('OnMouseUp', ConfigStopMoving)
+				-- 	end
 				end
-			)
-
-			-- for i = 1, frame:GetNumChildren() do
-			-- 	local child = select(i, frame:GetChildren())
-			-- 	if child:IsObjectType('Button') and child:GetText	() == _G.CLOSE then
-			-- 		frame.originalClose = child
-			-- 		child:Hide()
-			-- 	elseif child:IsObjectType('Frame') or child:IsObjectType('Button') then
-			-- 		if child:HasScript('OnMouseUp') then
-			-- 			child:HookScript('OnMouseUp', E.Config_StopMoving)
-			-- 		end
-			-- 	end
-			-- end
+			end
 
 			local bottom = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
-			bottom:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT')
-			bottom:SetPoint('TOPRIGHT', frame, 'BOTTOMRIGHT')
-			bottom:SetHeight(37)
+			bottom:SetPoint('BOTTOMLEFT', 2, 2)
+			bottom:SetPoint('BOTTOMRIGHT', -2, 2)
+			bottom:SetHeight(35)
 			bottom:SetBackdropBorderColor(0, 0, 0, 0)
 			frame.bottomHolder = bottom
 
-			-- local close = CreateFrame('Button', nil, frame, 'UIPanelCloseButton, BackdropTemplate')
-			-- close:SetScript(
-			-- 	'OnClick',
-			-- 	function()
-			-- 		self.originalClose:Click()
-			-- 	end
-			-- )
-			-- close:SetFrameLevel(1000)
-			-- close:SetPoint('TOPRIGHT', 1, 2)
-			-- close:SetSize(32, 32)
-			-- close.originalClose = frame.originalClose
-			-- frame.closeButton = close
+			local ProfileHandler = SUI:GetModule('Handler_Profiles', true)
+			if ProfileHandler then
+				local Export = StdUi:Button(bottom, 150, 20, 'Export')
+				Export:SetPoint('BOTTOM', 80, 5)
+				Export:HookScript(
+					'OnClick',
+					function()
+						ProfileHandler:ExportUI()
+						frame.CloseBtn:Click()
+					end
+				)
+				bottom.Export = Export
 
-			local LogoBottom = bottom:CreateTexture()
-			LogoBottom:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
-			LogoBottom:SetPoint('LEFT', bottom, 'LEFT')
-			LogoBottom:SetSize(156, 45)
-			LogoBottom:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-			bottom.LogoBottom = LogoBottom
+				local Import = StdUi:Button(bottom, 150, 20, 'Import')
+				Import:SetPoint('BOTTOM', -80, 5)
+				Import:HookScript(
+					'OnClick',
+					function()
+						ProfileHandler:ImportUI()
+						frame.CloseBtn:Click()
+					end
+				)
+				bottom.Import = Import
+			end
+
+			local Close = StdUi:Button(frame, 150, 20, 'CLOSE')
+			Close:HookScript(
+				'OnClick',
+				function()
+					frame.CloseBtn:Click()
+				end
+			)
+			Close:SetFrameLevel(5)
+			Close:SetPoint('BOTTOMRIGHT', -5, 5)
+			frame.Close = Close
+
+			local Logo = bottom:CreateTexture()
+			Logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
+			Logo:SetPoint('LEFT', bottom, 'LEFT')
+			Logo:SetSize(156, 45)
+			Logo:SetScale(.78)
+			Logo:SetTexCoord(0, 0.611328125, 0, 0.6640625)
+			bottom.Logo = Logo
+
+			frame:HookScript(
+				'OnHide',
+				function()
+					if bottom then
+						bottom:Hide()
+					end
+				end
+			)
 		end
 
 	-- if ACD and pages then

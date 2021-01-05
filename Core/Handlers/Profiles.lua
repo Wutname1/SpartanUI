@@ -232,7 +232,7 @@ local function CreateWindow()
 	window.optionPane = optionPane
 end
 
-local function ImportUI()
+function module:ImportUI()
 	if not window then
 		CreateWindow()
 	end
@@ -240,7 +240,7 @@ local function ImportUI()
 	ResetWindow()
 end
 
-local function ExportUI()
+function module:ExportUI()
 	if not window then
 		CreateWindow()
 	end
