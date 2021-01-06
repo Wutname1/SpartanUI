@@ -28,6 +28,7 @@ local function CreateWindow()
 	window.mode = 'init'
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
+	window:SetFrameLevel(10)
 	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	window.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	window.Title:SetPoint('TOP')
@@ -248,11 +249,9 @@ function module:ExportUI()
 	ResetWindow()
 end
 
-function module:OnInitialize()
-end
 function module:OnEnable()
-	SUI:AddChatCommand('export', ExportUI)
-	SUI:AddChatCommand('import', ImportUI)
+	SUI:AddChatCommand('export', module.ExportUI, 'Export your settings')
+	SUI:AddChatCommand('import', module.ImportUI, 'Import settings')
 end
 
 -------- EXPORT STUFF ----------

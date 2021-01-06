@@ -39,7 +39,7 @@ function module:Skin(ObjType, object)
 	if not object then
 		return
 	end
-	if not object.SetBackdropBorderColor then
+	if not object.SetBackdrop then
 		Mixin(object, BackdropTemplateMixin)
 	end
 

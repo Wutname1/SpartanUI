@@ -265,11 +265,12 @@ function module:OnInitialize()
 
 	CreateArtwork()
 
+	local UF = SUI:GetModule('Component_UnitFrames')
 	local function StyleChange()
 		for unit, frame in pairs(SkinnedFrames) do
-			if SUI.DB.Unitframes.Style ~= 'Classic' then
+			if UF.DB.Style ~= 'Classic' then
 				frame.Art_Classic:Hide()
-			elseif SUI.DB.Unitframes.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
+			elseif UF.DB.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
 				frame.Art_Classic:Show()
 			end
 		end

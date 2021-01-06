@@ -417,6 +417,16 @@ local function WelcomePage()
 			StdUi:GlueBottom(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, -31, -25)
 			StdUi:GlueRight(WelcomePage.CopyProfileButton, WelcomePage.ProfileList, 2, 0)
 
+			WelcomePage.Import = StdUi:Button(WelcomePage, 200, 20, 'IMPORT SETTINGS')
+			WelcomePage.Import:SetScript(
+				'OnClick',
+				function()
+					local Profiles = SUI:GetModule('Handler_Profiles')
+					Profiles:ImportUI()
+				end
+			)
+			WelcomePage.Import:SetPoint('TOP', WelcomePage.ProfileList, 'BOTTOM', 31, -5)
+
 			module.window.content.WelcomePage = WelcomePage
 		end,
 		Next = function()

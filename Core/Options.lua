@@ -189,39 +189,36 @@ function module:OnInitialize()
 				end
 			},
 			line3 = {name = '', type = 'header', order = 500}
-
-			-- description = {name=L["HelpStringDesc1"],type="description",order = 901,fontSize="large"},
-			-- dataDump = {name=L["Export"],type="input",multiline=15,width="full",order=993,get = function(info) return module:enc(module:ExportData()) end},
 		}
 	}
 
-	SUI.opt.args['General'].args['ver1'] = {
+	SUI.opt.args.General.args['ver1'] = {
 		name = 'SUI Version: ' .. SUI.Version,
 		type = 'description',
 		order = 50,
 		fontSize = 'large'
 	}
-	SUI.opt.args['General'].args['ver2'] = {
+	SUI.opt.args.General.args['ver2'] = {
 		name = 'SUI Build: ' .. SUI.BuildNum,
 		type = 'description',
 		order = 51,
 		fontSize = 'large'
 	}
-	SUI.opt.args['General'].args['ver3'] = {
+	SUI.opt.args.General.args['ver3'] = {
 		name = 'Bartender4 Version: ' .. SUI.Bartender4Version,
 		type = 'description',
 		order = 53,
 		fontSize = 'large'
 	}
 
-	SUI.opt.args['General'].args['line2'] = {name = '', type = 'header', order = 99}
-	SUI.opt.args['General'].args['navigationissues'] = {
+	SUI.opt.args.General.args['line2'] = {name = '', type = 'header', order = 99}
+	SUI.opt.args.General.args['navigationissues'] = {
 		name = L['HaveQuestion'],
 		type = 'description',
 		order = 100,
 		fontSize = 'medium'
 	}
-	SUI.opt.args['General'].args['navigationissues2'] = {
+	SUI.opt.args.General.args['navigationissues2'] = {
 		name = '',
 		type = 'input',
 		order = 101,
@@ -233,13 +230,13 @@ function module:OnInitialize()
 		end
 	}
 
-	SUI.opt.args['General'].args['bugsandfeatures'] = {
+	SUI.opt.args.General.args['bugsandfeatures'] = {
 		name = L['Bugs and Feature Requests'] .. ':',
 		type = 'description',
 		order = 200,
 		fontSize = 'medium'
 	}
-	SUI.opt.args['General'].args['bugsandfeatures2'] = {
+	SUI.opt.args.General.args['bugsandfeatures2'] = {
 		name = '',
 		type = 'input',
 		order = 201,
@@ -311,14 +308,15 @@ end
 
 function module:OnEnable()
 	if not SUI:GetModule('Component_Artwork', true) then
-		SUI.opt.args['General'].args['style'].args['OverallStyle'].disabled = true
+		SUI.opt.args.General.args['style'].args['OverallStyle'].disabled = true
 	end
 
 	SUI:AddChatCommand(
 		'help',
 		function()
 			SUI.Lib.AceCD:Open('SpartanUI', 'Help')
-		end
+		end,
+		'Displays SUI Help screen'
 	)
 end
 

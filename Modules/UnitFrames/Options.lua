@@ -117,7 +117,7 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].width = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].width = val
+							module.DB.UserSettings[module.DB.Style][frameName].width = val
 							--Update the screen
 							module.frames[frameName]:UpdateSize()
 						end
@@ -133,7 +133,7 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Range.enabled = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.enabled = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Range.enabled = val
 							--Update the screen
 							if module.frames[frameName].Range then
 								if val then
@@ -166,7 +166,7 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.enabled = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.enabled = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.enabled = val
 							--Update the screen
 							if module.frames[frameName].Portrait then
 								if val then
@@ -195,7 +195,7 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.type = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.type = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.type = val
 							--Update the screen
 							module.frames[frameName]:ElementUpdate('Portrait')
 						end
@@ -214,7 +214,7 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.rotation = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.rotation = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.rotation = val
 							--Update the screen
 							module.frames[frameName]:ElementUpdate('Portrait')
 						end
@@ -233,8 +233,7 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.camDistanceScale = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.camDistanceScale =
-								val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.camDistanceScale = val
 							--Update the screen
 							module.frames[frameName]:ElementUpdate('Portrait')
 						end
@@ -254,7 +253,7 @@ local function AddGeneralOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Portrait.position = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Portrait.position = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.position = val
 							--Update the screen
 							module.frames[frameName]:ElementUpdate('Portrait')
 						end
@@ -271,7 +270,7 @@ local function AddArtworkOptions(frameName)
 		--Update memory
 		module.CurrentSettings[frameName].artwork[pos][option] = val
 		--Update the DB
-		SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].artwork[pos][option] = val
+		module.DB.UserSettings[module.DB.Style][frameName].artwork[pos][option] = val
 		--Update the screen
 		module.frames[frameName]:ElementUpdate('SpartanArt')
 	end
@@ -420,7 +419,7 @@ local function AddBarOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Castbar.interruptable = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.interruptable = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.interruptable = val
 							--Update the screen
 							module.frames[frameName]:UpdateAll()
 						end
@@ -436,7 +435,7 @@ local function AddBarOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.Castbar.latency = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.latency = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.latency = val
 							--Update the screen
 							module.frames[frameName]:UpdateAll()
 						end
@@ -458,7 +457,7 @@ local function AddBarOptions(frameName)
 									--Update memory
 									module.CurrentSettings[frameName].elements.Castbar.Icon.enabled = val
 									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.enabled = val
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.enabled = val
 									--Update the screen
 									module.frames[frameName]:UpdateAll()
 								end
@@ -477,7 +476,7 @@ local function AddBarOptions(frameName)
 									--Update memory
 									module.CurrentSettings[frameName].elements.Castbar.Icon.size = val
 									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.size = val
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.size = val
 									--Update Screen
 									if module.frames[frameName].Castbar.Icon then
 										module.frames[frameName].Castbar.Icon:SetSize(val, val)
@@ -504,8 +503,7 @@ local function AddBarOptions(frameName)
 											--Update memory
 											module.CurrentSettings[frameName].elements.Castbar.Icon.position.x = val
 											--Update the DB
-											SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.position.x =
-												val
+											module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position.x = val
 											--Update Screen
 											module.frames[frameName]:UpdateAll()
 										end
@@ -524,8 +522,7 @@ local function AddBarOptions(frameName)
 											--Update memory
 											module.CurrentSettings[frameName].elements.Castbar.Icon.position.y = val
 											--Update the DB
-											SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.position.y =
-												val
+											module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position.y = val
 											--Update Screen
 											module.frames[frameName]:UpdateAll()
 										end
@@ -542,8 +539,7 @@ local function AddBarOptions(frameName)
 											--Update memory
 											module.CurrentSettings[frameName].elements.Castbar.Icon.position.anchor = val
 											--Update the DB
-											SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Castbar.Icon.position.anchor =
-												val
+											module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position.anchor = val
 											--Update Screen
 											module.frames[frameName]:UpdateAll()
 										end
@@ -572,7 +568,7 @@ local function AddBarOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.HealthPrediction = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.HealthPrediction = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.HealthPrediction = val
 						end
 					},
 					DispelHighlight = {
@@ -586,7 +582,7 @@ local function AddBarOptions(frameName)
 							--Update memory
 							module.CurrentSettings[frameName].elements.DispelHighlight = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.DispelHighlight = val
+							module.DB.UserSettings[module.DB.Style][frameName].elements.DispelHighlight = val
 							--Update the screen
 							module.frames[frameName]:UpdateAll()
 						end
@@ -610,7 +606,7 @@ local function AddBarOptions(frameName)
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorTapping = val
 									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorTapping = val
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorTapping = val
 									--Update the screen
 									module.frames[frameName]:UpdateAll()
 								end
@@ -627,8 +623,7 @@ local function AddBarOptions(frameName)
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorDisconnected = val
 									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorDisconnected =
-										val
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorDisconnected = val
 									--Update the screen
 									module.frames[frameName]:UpdateAll()
 								end
@@ -645,7 +640,7 @@ local function AddBarOptions(frameName)
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorClass = val
 									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorClass = val
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorClass = val
 									--Update the screen
 									module.frames[frameName]:UpdateAll()
 								end
@@ -662,7 +657,7 @@ local function AddBarOptions(frameName)
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorReaction = val
 									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorReaction = val
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorReaction = val
 									--Update the screen
 									module.frames[frameName]:UpdateAll()
 								end
@@ -679,7 +674,7 @@ local function AddBarOptions(frameName)
 									--Update memory
 									module.CurrentSettings[frameName].elements.Health.colorSmooth = val
 									--Update the DB
-									SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Health.colorSmooth = val
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorSmooth = val
 									--Update the screen
 									module.frames[frameName]:UpdateAll()
 								end
@@ -712,7 +707,7 @@ local function AddBarOptions(frameName)
 				--Update memory
 				module.CurrentSettings[frameName].elements[key].enabled = val
 				--Update the DB
-				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
+				module.DB.UserSettings[module.DB.Style][frameName].elements[key].enabled = val
 				--Update the screen
 				module.frames[frameName]:UpdateAll()
 			end
@@ -732,7 +727,7 @@ local function AddBarOptions(frameName)
 				--Update memory
 				module.CurrentSettings[frameName].elements[key].height = val
 				--Update the DB
-				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].height = val
+				module.DB.UserSettings[module.DB.Style][frameName].elements[key].height = val
 				--Update the screen
 				module.frames[frameName]:UpdateSize()
 			end
@@ -755,7 +750,7 @@ local function AddBarOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].elements[key].bg.enabled = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].bg.enabled = val
+						module.DB.UserSettings[module.DB.Style][frameName].elements[key].bg.enabled = val
 						--Update the screen
 						module.frames[frameName]:UpdateAll()
 					end
@@ -777,7 +772,7 @@ local function AddBarOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].elements[key].bg.color = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].bg.color = val
+						module.DB.UserSettings[module.DB.Style][frameName].elements[key].bg.color = val
 						--Update the screen
 						module.frames[frameName]:UpdateAll()
 					end
@@ -807,7 +802,7 @@ local function AddBarOptions(frameName)
 					--Update memory
 					module.CurrentSettings.player.elements.Power.PowerPrediction = val
 					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.Power.PowerPrediction = val
+					module.DB.UserSettings[module.DB.Style].player.elements.Power.PowerPrediction = val
 				end
 			}
 		end
@@ -837,7 +832,7 @@ local function AddBarOptions(frameName)
 						--Update memory
 						module.CurrentSettings.player.elements.AdditionalPower.enabled = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.AdditionalPower.enabled = val
+						module.DB.UserSettings[module.DB.Style].player.elements.AdditionalPower.enabled = val
 					end
 				},
 				height = {
@@ -855,7 +850,7 @@ local function AddBarOptions(frameName)
 						--Update memory
 						module.CurrentSettings.player.elements.AdditionalPower.height = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style].player.elements.AdditionalPower.height = val
+						module.DB.UserSettings[module.DB.Style].player.elements.AdditionalPower.height = val
 						--Update the screen
 						module.frames.player:UpdateSize()
 					end
@@ -939,7 +934,7 @@ local function AddIndicatorOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].elements[key].enabled = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
+						module.DB.UserSettings[module.DB.Style][frameName].elements[key].enabled = val
 						--Update the screen
 						if val then
 							module.frames[frameName]:EnableElement(key)
@@ -970,7 +965,7 @@ local function AddIndicatorOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].size = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].size = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].size = val
 								--Update Screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -989,7 +984,7 @@ local function AddIndicatorOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].scale = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].scale = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].scale = val
 								--Update Screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1008,7 +1003,7 @@ local function AddIndicatorOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].alpha = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].alpha = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].alpha = val
 								--Update Screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1035,7 +1030,7 @@ local function AddIndicatorOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].position.x = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.x = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.x = val
 								--Update Screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1054,7 +1049,7 @@ local function AddIndicatorOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].position.y = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.y = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.y = val
 								--Update Screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1071,7 +1066,7 @@ local function AddIndicatorOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].position.anchor = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.anchor = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.anchor = val
 								--Update Screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1096,7 +1091,7 @@ local function AddIndicatorOptions(frameName)
 					--Update memory
 					module.CurrentSettings[frameName].elements.PvPIndicator[k] = val
 					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.PvPIndicator[k] = val
+					module.DB.UserSettings[module.DB.Style][frameName].elements.PvPIndicator[k] = val
 					--Update the screen
 					if val then
 						module.frames[frameName].PvPIndicator[k] = module.frames[frameName].PvPIndicator[v]
@@ -1128,7 +1123,7 @@ local function AddIndicatorOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].elements.Range.enabled = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.enabled = val
+						module.DB.UserSettings[module.DB.Style][frameName].elements.Range.enabled = val
 						--Update the screen
 						if val then
 							module.frames[frameName]:EnableElement(key)
@@ -1151,7 +1146,7 @@ local function AddIndicatorOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].elements.Range.insideAlpha = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.insideAlpha = val
+						module.DB.UserSettings[module.DB.Style][frameName].elements.Range.insideAlpha = val
 						--Update the screen
 						module.frames[frameName].Range.insideAlpha = val
 					end
@@ -1169,7 +1164,7 @@ local function AddIndicatorOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].elements.Range.outsideAlpha = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements.Range.outsideAlpha = val
+						module.DB.UserSettings[module.DB.Style][frameName].elements.Range.outsideAlpha = val
 						--Update the screen
 						module.frames[frameName].Range.outsideAlpha = val
 					end
@@ -1204,8 +1199,7 @@ local function AddDynamicText(frameName, element, count)
 					--Update memory
 					module.CurrentSettings[frameName].elements[element].text[count].enabled = val
 					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].enabled =
-						val
+					module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].enabled = val
 					--Update the screen
 					if val then
 						module.frames[frameName][element].TextElements[count]:Show()
@@ -1226,7 +1220,7 @@ local function AddDynamicText(frameName, element, count)
 					--Update memory
 					module.CurrentSettings[frameName].elements[element].text[count].text = val
 					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].text = val
+					module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].text = val
 					--Update the screen
 					module.frames[frameName]:Tag(module.frames[frameName][element].TextElements[count], val)
 					module.frames[frameName]:UpdateTags()
@@ -1247,7 +1241,7 @@ local function AddDynamicText(frameName, element, count)
 					--Update memory
 					module.CurrentSettings[frameName].elements[element].text[count].size = val
 					--Update the DB
-					SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].size = val
+					module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].size = val
 					--Update the screen
 					SUI:UpdateDefaultSize(module.frames[frameName][element].TextElements[count], val, 'UnitFrames')
 				end
@@ -1272,8 +1266,7 @@ local function AddDynamicText(frameName, element, count)
 							--Update memory
 							module.CurrentSettings[frameName].elements[element].text[count].position.x = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].position.x =
-								val
+							module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].position.x = val
 							--Update the screen
 							local position = module.CurrentSettings[frameName].elements[element].text[count].position
 							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
@@ -1300,8 +1293,7 @@ local function AddDynamicText(frameName, element, count)
 							--Update memory
 							module.CurrentSettings[frameName].elements[element].text[count].position.y = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].position.y =
-								val
+							module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].position.y = val
 							--Update the screen
 							local position = module.CurrentSettings[frameName].elements[element].text[count].position
 							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
@@ -1326,8 +1318,7 @@ local function AddDynamicText(frameName, element, count)
 							--Update memory
 							module.CurrentSettings[frameName].elements[element].text[count].position.anchor = val
 							--Update the DB
-							SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[element].text[count].position.anchor =
-								val
+							module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].position.anchor = val
 							--Update the screen
 							local position = module.CurrentSettings[frameName].elements[element].text[count].position
 							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
@@ -1403,7 +1394,7 @@ local function AddTextOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].elements[key].enabled = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].enabled = val
+						module.DB.UserSettings[module.DB.Style][frameName].elements[key].enabled = val
 						--Update the screen
 						if val then
 							module.frames[frameName][key]:Show()
@@ -1430,7 +1421,7 @@ local function AddTextOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].text = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].text = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].text = val
 								--Update the screen
 								module.frames[frameName]:Tag(module.frames[frameName][key], val)
 								module.frames[frameName]:UpdateTags()
@@ -1451,7 +1442,7 @@ local function AddTextOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].size = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].size = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].size = val
 								--Update the screen
 								SUI:UpdateDefaultSize(module.frames[frameName][key], val, 'UnitFrames')
 							end
@@ -1472,7 +1463,7 @@ local function AddTextOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].SetJustifyH = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].SetJustifyH = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].SetJustifyH = val
 								--Update the screen
 								module.frames[frameName][key]:SetJustifyH(val)
 							end
@@ -1493,7 +1484,7 @@ local function AddTextOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].SetJustifyV = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].SetJustifyV = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].SetJustifyV = val
 								--Update the screen
 								module.frames[frameName][key]:SetJustifyV(val)
 							end
@@ -1520,7 +1511,7 @@ local function AddTextOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].position.x = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.x = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.x = val
 								--Update the screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1539,7 +1530,7 @@ local function AddTextOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].position.y = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.y = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.y = val
 								--Update the screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1556,7 +1547,7 @@ local function AddTextOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].elements[key].position.anchor = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].elements[key].position.anchor = val
+								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.anchor = val
 								--Update the screen
 								module.frames[frameName]:ElementUpdate(key)
 							end
@@ -1582,7 +1573,7 @@ local function AddBuffOptions(frameName)
 		--Update memory
 		module.CurrentSettings[frameName].auras[buffType][setting] = val
 		--Update the DB
-		SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType][setting] = val
+		module.DB.UserSettings[module.DB.Style][frameName].auras[buffType][setting] = val
 		--Update the screen
 		module.frames[frameName]:UpdateAuras()
 	end
@@ -1764,7 +1755,7 @@ local function AddBuffOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].auras[buffType].position.x = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].position.x = val
+								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].position.x = val
 								--Update Screen
 								module.frames[frameName]:UpdateAuras()
 							end
@@ -1783,7 +1774,7 @@ local function AddBuffOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].auras[buffType].position.y = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].position.y = val
+								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].position.y = val
 								--Update Screen
 								module.frames[frameName]:UpdateAuras()
 							end
@@ -1800,7 +1791,7 @@ local function AddBuffOptions(frameName)
 								--Update memory
 								module.CurrentSettings[frameName].auras[buffType].position.anchor = val
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].position.anchor = val
+								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].position.anchor = val
 								--Update Screen
 								module.frames[frameName]:UpdateAuras()
 							end
@@ -1822,8 +1813,7 @@ local function AddBuffOptions(frameName)
 						--Update memory
 						module.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = val
 						--Update the DB
-						SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].filters[info[#info]] =
-							val
+						module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].filters[info[#info]] = val
 						--Update Screen
 						module.frames[frameName]:UpdateAuras()
 					end,
@@ -1901,7 +1891,7 @@ local function AddBuffOptions(frameName)
 							type = 'execute',
 							func = function()
 								--Update the DB
-								SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].auras[buffType].priority = ''
+								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].priority = ''
 								--Update Screen
 								module.frames[frameName]:UpdateAuras()
 							end
@@ -1993,7 +1983,7 @@ local function AddGroupOptions(frameName)
 			--Update memory
 			module.CurrentSettings[frameName][setting] = val
 			--Update the DB
-			SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName][setting] = val
+			module.DB.UserSettings[module.DB.Style][frameName][setting] = val
 			--Update the screen
 			module.frames[frameName]:SetAttribute(setting, val)
 		end,
@@ -2079,7 +2069,7 @@ local function AddGroupOptions(frameName)
 				--Update memory
 				module.CurrentSettings[frameName].mode = val
 				--Update the DB
-				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][frameName].mode = val
+				module.DB.UserSettings[module.DB.Style][frameName].mode = val
 				--Update the screen
 				local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 				if val == 'GROUP' then
@@ -2151,7 +2141,7 @@ function module:InitializeOptions()
 	end
 
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames = SUI.opt.args.UnitFrames.args.BaseStyle.args.reset
-	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = 'Reset uniframe customizations'
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = 'Reset unitframe customizations'
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.width = 'double'
 
 	for _, v in ipairs(frameList) do
@@ -2165,7 +2155,7 @@ function module:InitializeOptions()
 				--Update memory
 				module.CurrentSettings[v].enabled = val
 				--Update the DB
-				SUI.DB.Unitframes.PlayerCustomizations[SUI.DB.Unitframes.Style][v].enabled = val
+				module.DB.UserSettings[module.DB.Style][v].enabled = val
 				--Update the UI
 				if module.frames[v] then
 					if val then

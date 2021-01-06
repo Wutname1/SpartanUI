@@ -113,12 +113,7 @@ local function SetupPage()
 			SUI_Win.Artwork.War.radio:SetChecked(true)
 		end,
 		Next = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local StdUi = window.StdUi
 			SUI.DB.Artwork.SetupDone = true
-
-			SUI.DB.Artwork.Style = StdUi:GetRadioGroupValue('SUIArtwork')
-			SUI.DB.Unitframes.Style = SUI.DB.Artwork.Style
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
