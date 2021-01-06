@@ -19,19 +19,61 @@ end
 
 local function AddToOptions(arg)
 	local settings = CommandDetails[arg]
-	SUI.opt.args.Help.args.ChatCommands.args[arg] = {
-		name = (settings.commandDescription or ''),
-		type = 'input',
-		width = 'full',
-		get = function(info)
-			return '/sui ' .. arg
-		end,
-		set = function(info, val)
+
+	if settings.arguments then
+		if settings.arguments.required then
+		else
+			SUI.opt.args.Help.args.ChatCommands.args[arg] = {
+				name = '',
+				type = 'group',
+				inline = true,
+				args = {
+					[arg] = {
+						name = (settings.commandDescription or ''),
+						type = 'input',
+						width = 'full',
+						order = 1,
+						get = function(info)
+							return '/sui ' .. arg
+						end,
+						set = function(info, val)
+						end
+					}
+				}
+			}
+			local i = 2
+			for k, v in pairs(settings.arguments) do
+				if type(v) ~= 'boolean' then
+					SUI.opt.args.Help.args.ChatCommands.args[arg].args[k] = {
+						name = (v or ''),
+						type = 'input',
+						width = 'full',
+						order = i,
+						get = function(info)
+							return '/sui ' .. arg .. ' ' .. k
+						end,
+						set = function(info, val)
+						end
+					}
+					i = i + 1
+				end
+			end
 		end
-	}
+	else
+		SUI.opt.args.Help.args.ChatCommands.args[arg] = {
+			name = (settings.commandDescription or ''),
+			type = 'input',
+			width = 'full',
+			get = function(info)
+				return '/sui ' .. arg
+			end,
+			set = function(info, val)
+			end
+		}
+	end
 end
 
-function SUI:AddChatCommand(arg, func, commandDescription, argumentDesciption, argOptional)
+function SUI:AddChatCommand(arg, func, commandDescription, arguments)
 	if SUIChatCommands[arg] then
 		SUI:Error(arg .. ' Chat command has already been added')
 		return
@@ -44,8 +86,7 @@ function SUI:AddChatCommand(arg, func, commandDescription, argumentDesciption, a
 	CommandDetails[arg] = {
 		func = func,
 		commandDescription = commandDescription,
-		argumentDesciption = argumentDesciption,
-		argOptional = (argOptional or true)
+		arguments = arguments
 	}
 
 	-- if OnEnable has ran add to options

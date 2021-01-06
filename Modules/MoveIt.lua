@@ -753,7 +753,15 @@ function MoveIt:Enable()
 			end
 		end
 	end
-	SUI:AddChatCommand('move', ChatCommand, "|cffffffffSpartan|cffe21f1fUI|r's movement system")
+	SUI:AddChatCommand(
+		'move',
+		ChatCommand,
+		"|cffffffffSpartan|cffe21f1fUI|r's movement system",
+		{
+			reset = 'Reset all moved objects',
+			tips = 'Disable tips from being displayed in chat when movement system is activated'
+		}
+	)
 
 	local function OnKeyDown(self, key)
 		if MoveEnabled and key == 'ESCAPE' then
