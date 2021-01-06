@@ -660,8 +660,99 @@ local DBdefault = {
 					Buffs = {Mode = 'icons'},
 					Debuffs = {Mode = 'bars'}
 				},
-				pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
-				targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
+				pet = {
+					Buffs = {Mode = 'icons'},
+					Debuffs = {Mode = 'icons'},
+					artwork = {
+						full = {
+							enabled = true,
+							graphic = 'Classic'
+						}
+					},
+					elements = {
+						Health = {
+							offset = 2,
+							height = 16,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perhp]%',
+									position = {
+										anchor = 'LEFT',
+										x = -35,
+										y = 0
+									}
+								}
+							}
+						},
+						Power = {
+							offset = 2,
+							height = 14,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perpp]%',
+									position = {
+										anchor = 'LEFT',
+										x = -35,
+										y = 0
+									}
+								}
+							}
+						},
+						Castbar = {
+							height = 15
+						},
+						Name = {
+							position = {
+								y = 17
+							}
+						}
+					}
+				},
+				targettarget = {
+					Buffs = {Mode = 'icons'},
+					Debuffs = {Mode = 'icons'},
+					artwork = {
+						full = {
+							enabled = true,
+							graphic = 'Classic'
+						}
+					},
+					elements = {
+						Health = {
+							offset = 2,
+							height = 14,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perhp]%',
+									position = {
+										anchor = 'RIGHT',
+										x = 40
+									}
+								}
+							}
+						},
+						Power = {
+							offset = 1,
+							height = 14,
+							text = {
+								['2'] = {
+									enabled = true,
+									text = '[perpp]%',
+									position = {
+										anchor = 'RIGHT',
+										x = 40
+									}
+								}
+							}
+						},
+						Castbar = {
+							height = 14
+						}
+					}
+				},
 				focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
 			},
 			Minimap = {

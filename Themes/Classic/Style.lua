@@ -243,14 +243,26 @@ function module:OnInitialize()
 					y = 7
 				}
 			},
+			pet = {
+				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
+				height = 53,
+				widthScale = 1.6,
+				TexCoord = {0.9453125, .25, 0, 0.78125},
+				position = {
+					anchor = 'BOTTOMRIGHT',
+					x = 10,
+					y = -1
+				}
+			},
 			targettarget = {
 				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
-				heightScale = 1.2,
-				TexCoord = {.68, 0, 0, 0.6640625},
+				height = 53,
+				widthScale = 1.6,
+				TexCoord = {0.25, 0.9453125, 0, 0.78125},
 				position = {
-					anchor = 'CENTER',
-					x = 0,
-					y = 0
+					anchor = 'BOTTOMLEFT',
+					x = -10,
+					y = -1
 				}
 			}
 		}
@@ -258,9 +270,9 @@ function module:OnInitialize()
 
 	UnitFrames.FramePos.Classic = {
 		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-173,153',
-		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
+		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
 		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,173,153',
-		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0'
+		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-4'
 	}
 
 	CreateArtwork()
