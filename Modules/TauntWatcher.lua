@@ -1,6 +1,5 @@
-local SUI = SUI
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_TauntWatcher', 'AceEvent-3.0')
-local L = SUI.L
 module.DisplayName = 'Taunt watcher'
 module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------
@@ -112,6 +111,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.TauntWatcher then
+		print('Taunt watcher DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.TauntWatcher, true)
 		SUI.DB.TauntWatcher = nil
 	end

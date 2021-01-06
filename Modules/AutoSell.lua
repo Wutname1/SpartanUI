@@ -1,4 +1,4 @@
-local _G, SUI, L = _G, SUI, SUI.L
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
 module.name = 'Auto Sell'
 module.description = 'Auto sells junk and more'
@@ -101,6 +101,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.AutoSell then
+		print('Auto sell DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.AutoSell, true)
 		SUI.DB.AutoSell = nil
 	end

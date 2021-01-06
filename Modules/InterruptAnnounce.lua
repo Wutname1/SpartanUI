@@ -1,6 +1,5 @@
-local SUI = SUI
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_InterruptAnnouncer', 'AceEvent-3.0')
-local L, print = SUI.L, SUI.print
 module.DisplayName = 'Interrupt announcer'
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
@@ -69,6 +68,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.InterruptAnnouncer then
+		print('Interrupt announcer DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.InterruptAnnouncer, true)
 		SUI.DB.InterruptAnnouncer = nil
 	end

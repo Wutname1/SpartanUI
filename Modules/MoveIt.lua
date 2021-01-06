@@ -705,6 +705,7 @@ function MoveIt:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.MoveIt then
+		print('MoveIt DB Migration')
 		MoveIt.DB = SUI:MergeData(MoveIt.DB, SUI.DB.MoveIt, true)
 		SUI.DB.MoveIt = nil
 	end

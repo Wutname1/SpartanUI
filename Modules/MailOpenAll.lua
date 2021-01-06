@@ -1,4 +1,4 @@
-local SUI, L = SUI, SUI.L
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-3.0')
 module.DisplayName = 'Open all mail'
 module.description = 'Quality of life update to the open all mail button'
@@ -25,6 +25,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.MailOpenAll then
+		print('Mail enhancements DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.MailOpenAll, true)
 		SUI.DB.MailOpenAll = nil
 	end

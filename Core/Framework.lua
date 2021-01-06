@@ -2390,6 +2390,10 @@ end
 	even if its already populated
 ]]
 function SUI:MergeData(target, source, override)
+	if source == nil then
+		return target
+	end
+
 	if type(target) ~= 'table' then
 		target = {}
 	end

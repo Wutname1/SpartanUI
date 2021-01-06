@@ -1,8 +1,7 @@
-local SUI = SUI
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
 module.name = 'Auto turn in'
 module.description = 'Auto accept and turn in quests'
-local L = SUI.L
 ----------------------------------------------------------------------------------------------------
 local ATI_Container = CreateFrame('Frame')
 local IsMerchantOpen = false
@@ -654,6 +653,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.AutoTurnIn then
+		print('Auto turn in DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.AutoTurnIn, true)
 		SUI.DB.AutoTurnIn = nil
 	end

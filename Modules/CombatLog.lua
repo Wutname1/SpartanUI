@@ -29,6 +29,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.CombatLog then
+		print('Combat log DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.CombatLog, true)
 		SUI.DB.CombatLog = nil
 	end

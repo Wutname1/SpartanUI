@@ -1,4 +1,4 @@
-local unpack, SUI, L = unpack, SUI, SUI.L
+local unpack, SUI, L, print = unpack, SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_Nameplates', 'AceTimer-3.0')
 module.description = 'Basic nameplate module'
 local Images = {
@@ -658,6 +658,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.Nameplates then
+		print('Nameplate DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.Nameplates, true)
 		SUI.DB.Nameplates = nil
 	end
