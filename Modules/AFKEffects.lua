@@ -168,5 +168,5 @@ function module:OnEnable()
 		end
 		AFKToggle()
 	end
-	SUI:AddChatCommand('spin', ChatCommand)
+	SUI:AddChatCommand('spin', ChatCommand, 'Toggles the Spincam')
 end

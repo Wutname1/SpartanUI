@@ -753,7 +753,7 @@ function MoveIt:Enable()
 			end
 		end
 	end
-	SUI:AddChatCommand('move', ChatCommand)
+	SUI:AddChatCommand('move', ChatCommand, "|cffffffffSpartan|cffe21f1fUI|r's movement system")
 
 	local function OnKeyDown(self, key)
 		if MoveEnabled and key == 'ESCAPE' then

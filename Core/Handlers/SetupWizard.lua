@@ -339,7 +339,8 @@ function module:OnEnable()
 			PageDisplayOrder = 1
 			PageDisplayed = 0
 			module:SetupWizard()
-		end
+		end,
+		'Re-run the setup wizard'
 	)
 end
 

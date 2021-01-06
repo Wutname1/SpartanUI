@@ -109,7 +109,8 @@ function module:OnEnable()
 			elseif arg == 'stop' then
 				setLogging(false, 'disabled')
 			end
-		end
+		end,
+		'Toggles combat logging'
 	)
 end
 
