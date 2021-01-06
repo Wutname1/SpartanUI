@@ -3,7 +3,7 @@ local module = SUI:NewModule('SetupWizard')
 local StdUi = LibStub('StdUi'):NewInstance()
 module.window = nil
 
-local DisplayRequired, InitDone = false, false
+local DisplayRequired, WelcomeAdded = false, false
 local TotalPageCount, PageDisplayOrder, PageDisplayed = 0, 1, 0
 local RequiredPageCount, RequiredDisplayOrder, RequiredPageDisplayed = 0, 1, 0
 local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageID, CurrentDisplay = {},
@@ -46,7 +46,7 @@ end
 
 function module:AddPage(PageData)
 	-- Make sure SetupWizard does it's initalization before any pages other are added
-	if not InitDone then
+	if not WelcomeAdded and PageData.ID ~= 'WelcomePage' then
 		module:OnInitialize()
 	end
 
@@ -344,6 +344,10 @@ function module:OnEnable()
 end
 
 local function WelcomePage()
+	if WelcomeAdded then
+		return
+	end
+
 	local WelcomePage = {
 		ID = 'WelcomePage',
 		Name = 'Welcome',
@@ -420,10 +424,11 @@ local function WelcomePage()
 		RequireDisplay = SUI.DB.SetupWizard.FirstLaunch,
 		Priority = true
 	}
+
 	module:AddPage(WelcomePage)
+	WelcomeAdded = true
 end
 
 function module:OnInitialize()
-	InitDone = true
 	WelcomePage()
 end
