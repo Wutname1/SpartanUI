@@ -1,4 +1,4 @@
-local _G, SUI, L = _G, SUI, SUI.L
+local _G, SUI, L, print = _G, SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0')
 local MoveIt = SUI:GetModule('Component_MoveIt')
 module.DisplayName = L['Unit frames']
@@ -595,6 +595,7 @@ function module:OnInitialize()
 						enabled = true,
 						size = 18,
 						alpha = .75,
+						text = '[group]',
 						position = {
 							anchor = 'TOPRIGHT',
 							x = -10,

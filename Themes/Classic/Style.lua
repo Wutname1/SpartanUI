@@ -180,6 +180,7 @@ local function UnitFrameCallback(self, unit)
 
 		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', 80, 0)
 	end
+	self:SetFrameLevel(5)
 end
 
 function module:OnInitialize()
