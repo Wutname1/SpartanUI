@@ -899,7 +899,6 @@ local function AddIndicatorOptions(frameName)
 
 	-- Text indicators TODO
 	-- ['StatusText'] = STATUS_TEXT,
-	-- ['SUI_RaidGroup'] = 'Raid group'
 
 	-- Check frameName for what tables above need to be applied
 	if frameName == 'player' then

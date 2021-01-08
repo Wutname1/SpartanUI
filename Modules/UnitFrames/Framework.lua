@@ -688,7 +688,17 @@ function module:OnInitialize()
 					ThreatIndicator = {
 						enabled = true
 					},
-					SUI_RaidGroup = {},
+					SUI_RaidGroup = {
+						size = 13,
+						text = '[group]',
+						SetJustifyH = 'CENTER',
+						SetJustifyV = 'MIDDLE',
+						position = {
+							anchor = 'BOTTOMRIGHT',
+							x = 0,
+							y = 10
+						}
+					},
 					RareElite = {
 						enabled = true,
 						alpha = .4,
@@ -839,7 +849,8 @@ function module:OnInitialize()
 					},
 					AdditionalPower = {
 						enabled = true
-					}
+					},
+					SUI_RaidGroup = {enabled = true}
 				}
 			},
 			pet = {
@@ -1018,6 +1029,17 @@ function module:OnInitialize()
 						position = {
 							y = 0
 						}
+					},
+					SUI_RaidGroup = {
+						size = 9,
+						text = '[group]',
+						SetJustifyH = 'CENTER',
+						SetJustifyV = 'MIDDLE',
+						position = {
+							anchor = 'BOTTOMRIGHT',
+							x = 0,
+							y = 5
+						}
 					}
 				}
 			},
@@ -1117,7 +1139,8 @@ function module:OnInitialize()
 						},
 						elements = {
 							['**'] = {
-								bg = {}
+								bg = {},
+								position = {}
 							},
 							Portrait = {},
 							Health = {
@@ -1130,13 +1153,9 @@ function module:OnInitialize()
 									}
 								}
 							},
-							DispelHighlight = {
-								enabled = true
-							},
+							DispelHighlight = {},
 							HealthPrediction = {},
-							HappinessIndicator = {
-								position = {}
-							},
+							HappinessIndicator = {},
 							Power = {
 								position = {},
 								text = {
@@ -1161,36 +1180,16 @@ function module:OnInitialize()
 									}
 								}
 							},
-							Name = {
-								position = {}
-							},
-							LeaderIndicator = {
-								position = {}
-							},
-							RestingIndicator = {
-								position = {}
-							},
-							GroupRoleIndicator = {
-								position = {}
-							},
-							CombatIndicator = {
-								position = {}
-							},
-							RaidTargetIndicator = {
-								position = {}
-							},
-							SUI_ClassIcon = {
-								position = {}
-							},
-							ReadyCheckIndicator = {
-								position = {}
-							},
-							PvPIndicator = {
-								position = {}
-							},
-							StatusText = {
-								position = {}
-							},
+							Name = {},
+							LeaderIndicator = {},
+							RestingIndicator = {},
+							GroupRoleIndicator = {},
+							CombatIndicator = {},
+							RaidTargetIndicator = {},
+							SUI_ClassIcon = {},
+							ReadyCheckIndicator = {},
+							PvPIndicator = {},
+							StatusText = {},
 							AdditionalPower = {},
 							Runes = {},
 							Stagger = {},

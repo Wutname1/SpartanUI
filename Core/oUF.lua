@@ -367,6 +367,7 @@ do -- SUI_RaidGroup as an SUIUF module
 		if (self.SUI_RaidGroup) then
 			self:UnregisterEvent('GROUP_ROSTER_UPDATE', Update)
 			self.SUI_RaidGroup:Hide()
+			self.SUI_RaidGroup.Text:Hide()
 		end
 	end
 	SUIUF:AddElement('SUI_RaidGroup', Update, Enable, Disable)
