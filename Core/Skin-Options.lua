@@ -127,9 +127,16 @@ function module:SkinAce3()
 				-- Re-Create FontString to change its frame level
 				widget.titletext = AppBar:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 				widget.titletext:SetPoint('TOP', AppBar, 'TOP', 0, -5)
-				SUI:FormatFont(widget.titletext, 14)
+				SUI:FormatFont(widget.titletext, 13)
 
 				frame.AppBar = AppBar
+
+				frame:SetMovable(true)
+				frame:EnableMouse(true)
+				frame:SetClampedToScreen(true)
+				frame:RegisterForDrag('LeftButton')
+				frame:SetScript('OnDragStart', frame.StartMoving)
+				frame:SetScript('OnDragStop', frame.StopMovingOrSizing)
 			end
 
 			RemoveTextures(frame)
