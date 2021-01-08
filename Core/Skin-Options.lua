@@ -86,8 +86,52 @@ function module:SkinAce3()
 			module:Skin('ScrollBar', widget.scrollBar)
 		elseif widgetType == 'Frame' then
 			local frame = widget.frame
-			widget.titletext:SetPoint('TOP', frame, 'TOP', 0, -6)
-			SUI:FormatFont(widget.titletext, 14)
+
+			if not frame.AppBar then
+				local AppBar = StdUi:Panel(frame, frame:GetWidth(), 22)
+				AppBar:SetFrameLevel(4)
+				AppBar:SetPoint('TOPRIGHT', 0, 0)
+				AppBar:SetPoint('TOPLEFT', 0, 0)
+				AppBar.ignore = true
+
+				local closeBtn = StdUi:HighlightButton(AppBar, 28, 20, 'X')
+				closeBtn.text:SetFontSize(15)
+				closeBtn:SetPoint('TOPRIGHT', -1, -1)
+				closeBtn:SetScript(
+					'OnClick',
+					function(self)
+						frame.CloseBtn:Click()
+					end
+				)
+				closeBtn:SetFrameLevel(5)
+				AppBar.closeBtn = closeBtn
+
+				-- local minimizeBtn = StdUi:HighlightButton(AppBar, 28, 20, '_')
+				-- minimizeBtn.text:SetFontSize(13)
+				-- minimizeBtn:SetPoint('TOPRIGHT', -30, -1)
+				-- minimizeBtn.IsMinimized = false
+				-- minimizeBtn:SetScript(
+				-- 	'OnClick',
+				-- 	function(self)
+				-- 		if minimizeBtn.IsMinimized then
+				-- 			widgetParent:Show()
+				-- 		else
+				-- 			widgetParent:Hide()
+				-- 		end
+				-- 		self.IsMinimized = not minimizeBtn.IsMinimized
+				-- 	end
+				-- )
+				-- minimizeBtn:SetFrameLevel(5)
+				-- AppBar.minimizeBtn = minimizeBtn
+
+				-- Re-Create FontString to change its frame level
+				widget.titletext = AppBar:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+				widget.titletext:SetPoint('TOP', AppBar, 'TOP', 0, -5)
+				SUI:FormatFont(widget.titletext, 14)
+
+				frame.AppBar = AppBar
+			end
+
 			RemoveTextures(frame)
 			module:Skin('Window', frame)
 
@@ -95,7 +139,7 @@ function module:SkinAce3()
 				local childFrame = select(i, widgetParent:GetChildren())
 				if childFrame:GetObjectType() == 'Button' and childFrame:GetText() then
 					-- Widget_ButtonStyle(childFrame)
-				else
+				elseif not childFrame.ignore then
 					RemoveTextures(childFrame)
 				end
 			end
@@ -153,19 +197,6 @@ function module:ConfigOpened(name)
 	if frame.Close then
 		return
 	end
-
-	local closeBtn = StdUi:Button(frame, 25, 25, 'X')
-	closeBtn.text:SetFontSize(15)
-	closeBtn:SetPoint('TOPRIGHT', -1, -1)
-	closeBtn:SetScript(
-		'OnClick',
-		function(self)
-			frame.CloseBtn:Click()
-		end
-	)
-	closeBtn:SetFrameLevel(3)
-
-	frame.closeBtn = closeBtn
 
 	local Close = StdUi:Button(frame, 150, 20, 'CLOSE')
 	Close:HookScript(
