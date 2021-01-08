@@ -16,7 +16,7 @@ if SUI.IsClassic then
 	wowVersion = 'Classic'
 end
 --@alpha@
-SUI.releaseType = 'ALPHA build ' .. SUI.BuildNum
+SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
 --@end-alpha@
 --@do-not-package@
 SUI.releaseType = 'DEV Build'
@@ -51,7 +51,7 @@ SUI.StdUi = SUI.Lib.StdUi:NewInstance()
 
 ---------------  Options Init ---------------
 SUI.opt = {
-	name = string.format('SpartanUI %s %s %s', SUI.Version, SUI.releaseType or '', wowVersion),
+	name = string.format('|cffffffffSpartan|cffe21f1fUI|r %s %s %s', wowVersion, SUI.Version, SUI.releaseType or ''),
 	type = 'group',
 	childGroups = 'tree',
 	args = {

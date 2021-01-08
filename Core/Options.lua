@@ -360,18 +360,6 @@ function module:ToggleOptions(pages)
 
 	if mode == 'Open' and frame then
 		if not frame.bottomHolder then -- window was released or never opened
-			for i = 1, frame:GetNumChildren() do
-				local child = select(i, frame:GetChildren())
-				if child:IsObjectType('Button') and child:GetText() == _G.CLOSE then
-					frame.CloseBtn = child
-					child:Hide()
-				-- elseif child:IsObjectType('Frame') or child:IsObjectType('Button') then
-				-- 	if child:HasScript('OnMouseUp') then
-				-- 		child:HookScript('OnMouseUp', ConfigStopMoving)
-				-- 	end
-				end
-			end
-
 			local bottom = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
 			bottom:SetPoint('BOTTOMLEFT', 2, 2)
 			bottom:SetPoint('BOTTOMRIGHT', -2, 2)
@@ -382,7 +370,7 @@ function module:ToggleOptions(pages)
 			local ProfileHandler = SUI:GetModule('Handler_Profiles', true)
 			if ProfileHandler then
 				local Export = StdUi:Button(bottom, 150, 20, 'Export')
-				Export:SetPoint('BOTTOM', 80, 5)
+				Export:SetPoint('BOTTOM', 80, 10)
 				Export:HookScript(
 					'OnClick',
 					function()
@@ -393,7 +381,7 @@ function module:ToggleOptions(pages)
 				bottom.Export = Export
 
 				local Import = StdUi:Button(bottom, 150, 20, 'Import')
-				Import:SetPoint('BOTTOM', -80, 5)
+				Import:SetPoint('BOTTOM', -80, 10)
 				Import:HookScript(
 					'OnClick',
 					function()
@@ -403,17 +391,6 @@ function module:ToggleOptions(pages)
 				)
 				bottom.Import = Import
 			end
-
-			local Close = StdUi:Button(frame, 150, 20, 'CLOSE')
-			Close:HookScript(
-				'OnClick',
-				function()
-					frame.CloseBtn:Click()
-				end
-			)
-			Close:SetFrameLevel(5)
-			Close:SetPoint('BOTTOMRIGHT', -5, 5)
-			frame.Close = Close
 
 			local Logo = bottom:CreateTexture()
 			Logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')

@@ -1,5 +1,5 @@
 --Cache global variables and Lua functions
-local _G, SUI = _G, SUI
+local _G, SUI, Lib, StdUi = _G, SUI, SUI.Lib, SUI.StdUi
 local module = SUI:NewModule('Handler_Skinning')
 
 local RegisterAsContainer
@@ -55,6 +55,11 @@ function module:Skin(ObjType, object)
 	object:SetBackdropBorderColor(0, 0, 0, 1)
 end
 
+local function GetAce3ConfigWindow(name)
+	local ConfigOpen = Lib.AceCD and Lib.AceCD.OpenFrames and Lib.AceCD.OpenFrames[name]
+	return ConfigOpen and ConfigOpen.frame
+end
+
 function module:SkinAce3()
 	local AceGUI = LibStub('AceGUI-3.0', true)
 	if not AceGUI then
@@ -72,12 +77,20 @@ function module:SkinAce3()
 	local regWidget = AceGUI.RegisterAsWidget
 	local regContainer = AceGUI.RegisterAsContainer
 
+	--Skin main window elements
 	RegisterAsContainer = function(self, widget)
 		local widgetType = widget.type
 		local widgetParent = widget.content:GetParent()
+
 		if widgetType == 'ScrollFrame' then
 			module:Skin('ScrollBar', widget.scrollBar)
 		elseif widgetType == 'Frame' then
+			local frame = widget.frame
+			widget.titletext:SetPoint('TOP', frame, 'TOP', 0, -6)
+			SUI:FormatFont(widget.titletext, 14)
+			RemoveTextures(frame)
+			module:Skin('Window', frame)
+
 			for i = 1, widgetParent:GetNumChildren() do
 				local childFrame = select(i, widgetParent:GetChildren())
 				if childFrame:GetObjectType() == 'Button' and childFrame:GetText() then
@@ -89,6 +102,7 @@ function module:SkinAce3()
 			module:Skin('Window', widgetParent)
 		elseif (ProxyType[widgetType]) then
 			if widget.treeframe then
+				module:Skin('Frame', widget.border)
 				module:Skin('Frame', widget.treeframe)
 				widgetParent:SetPoint('TOPLEFT', widget.treeframe, 'TOPRIGHT', 1, 0)
 				local oldFunc = widget.CreateButton
@@ -121,9 +135,69 @@ function module:SkinAce3()
 		return regContainer(self, widget)
 	end
 	AceGUI.RegisterAsContainer = RegisterAsContainer
+
+	--Setup custom buttons
+	local frame = GetAce3ConfigWindow()
+
+	local ACD = Lib.AceCD
+	if ACD then
+		if not ACD.OpenHookedSUISkin then
+			hooksecurefunc(Lib.AceCD, 'Open', module.ConfigOpened)
+			ACD.OpenHookedSUISkin = true
+		end
+	end
 end
 
-local function attemptSkin()
+function module:ConfigOpened(name)
+	local frame = GetAce3ConfigWindow(name)
+	if frame.Close then
+		return
+	end
+
+	local closeBtn = StdUi:Button(frame, 25, 25, 'X')
+	closeBtn.text:SetFontSize(15)
+	closeBtn:SetPoint('TOPRIGHT', -1, -1)
+	closeBtn:SetScript(
+		'OnClick',
+		function(self)
+			frame.CloseBtn:Click()
+		end
+	)
+	closeBtn:SetFrameLevel(3)
+
+	frame.closeBtn = closeBtn
+
+	local Close = StdUi:Button(frame, 150, 20, 'CLOSE')
+	Close:HookScript(
+		'OnClick',
+		function()
+			frame.CloseBtn:Click()
+		end
+	)
+	Close:SetFrameLevel(5)
+	Close:SetPoint('BOTTOMRIGHT', -17, 10)
+	frame.Close = Close
+
+	for i = 1, frame:GetNumChildren() do
+		local child = select(i, frame:GetChildren())
+		if child:IsObjectType('Button') and child:GetText() == _G.CLOSE then
+			frame.CloseBtn = child
+			child:Hide()
+		-- elseif child:IsObjectType('Frame') or child:IsObjectType('Button') then
+		-- 	if child:HasScript('OnMouseUp') then
+		-- 		child:HookScript('OnMouseUp', ConfigStopMoving)
+		-- 	end
+		end
+	end
+end
+
+local function attemptSkin(AddonName)
+	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner')
+	if a then
+		a.prdb.ChatEditBox.skin = false
+		a.prdb.DisabledSkins['AceGUI-3.0 (Lib)'] = true
+	end
+
 	local AceGUI = LibStub('AceGUI-3.0', true)
 	if AceGUI and (AceGUI.RegisterAsContainer ~= RegisterAsContainer or AceGUI.RegisterAsWidget ~= RegisterAsWidget) then
 		if select(4, GetAddOnInfo('ElvUI')) then
