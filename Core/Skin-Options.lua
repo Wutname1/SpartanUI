@@ -192,7 +192,7 @@ function module:ConfigOpened(name)
 end
 
 local function attemptSkin(AddonName)
-	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner')
+	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner', true)
 	if a then
 		a.prdb.ChatEditBox.skin = false
 		a.prdb.DisabledSkins['AceGUI-3.0 (Lib)'] = true
