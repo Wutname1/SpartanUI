@@ -34,6 +34,7 @@ local ExcludedItems = {
 	170193, --Sea Totem
 	168802, --Nazjatar Battle Commendation
 	171090, --Battleborn Sigil
+	153647, --Tome of the quiet mind
 	-- Cata
 	71141, -- Eternal Ember
 	-- Legion
