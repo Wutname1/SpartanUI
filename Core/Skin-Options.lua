@@ -89,7 +89,7 @@ function module:SkinAce3()
 
 			if not frame.AppBar then
 				local AppBar = StdUi:Panel(frame, frame:GetWidth(), 22)
-				AppBar:SetFrameLevel(4)
+				AppBar:SetFrameLevel(500)
 				AppBar:SetPoint('TOPRIGHT', 0, 0)
 				AppBar:SetPoint('TOPLEFT', 0, 0)
 				AppBar.ignore = true
@@ -103,7 +103,6 @@ function module:SkinAce3()
 						frame.CloseBtn:Click()
 					end
 				)
-				closeBtn:SetFrameLevel(5)
 				AppBar.closeBtn = closeBtn
 
 				-- local minimizeBtn = StdUi:HighlightButton(AppBar, 28, 20, '_')
@@ -212,7 +211,6 @@ function module:ConfigOpened(name)
 			frame.CloseBtn:Click()
 		end
 	)
-	Close:SetFrameLevel(5)
 	Close:SetPoint('BOTTOMRIGHT', -17, 10)
 	frame.Close = Close
 

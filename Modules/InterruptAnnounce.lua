@@ -4,8 +4,8 @@ module.DisplayName = 'Interrupt announcer'
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
 
-local function printFormattedString(t, sid, spell, ss, ssid)
-	local msg = module.DB.text
+local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
+	local msg = inputstring or module.DB.text
 	local DBChannel = module.DB.announceLocation or 'SELF'
 	local ChatChannel = false
 	msg =
@@ -55,6 +55,7 @@ function module:OnInitialize()
 			inBG = false,
 			inRaid = true,
 			inParty = true,
+			selfInterrupt = true,
 			inArena = true,
 			outdoors = false,
 			includePets = true,
@@ -109,7 +110,18 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 		(continue or module.DB.alwayson) and eventType == 'SPELL_INTERRUPT' and
 			(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and module.DB.includePets))
 	 then
-		printFormattedString(destName, spellID, spellName, spellSchool, sourceID)
+		if sourceGUID == UnitGUID('player') and module.DB.selfInterrupt then
+			printFormattedString(
+				destName,
+				spellID,
+				spellName,
+				spellSchool,
+				sourceID,
+				'I have hurt myself in confustion while casting %spell and can no longer cast.'
+			)
+		else
+			printFormattedString(destName, spellID, spellName, spellSchool, sourceID)
+		end
 	end
 end
 
@@ -124,17 +136,17 @@ function module:Options()
 	SUI.opt.args['ModSetting'].args['InterruptAnnouncer'] = {
 		type = 'group',
 		name = L['Interrupt announcer'],
+		get = function(info)
+			return module.DB[info[#info]]
+		end,
+		set = function(info, val)
+			module.DB[info[#info]] = val
+		end,
 		args = {
 			alwayson = {
 				name = L['Always on'],
 				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return module.DB.alwayson
-				end,
-				set = function(info, val)
-					module.DB.alwayson = val
-				end
+				order = 1
 			},
 			active = {
 				name = L['Active when in'],
@@ -175,16 +187,15 @@ function module:Options()
 					}
 				}
 			},
+			selfInterrupt = {
+				name = 'Include self',
+				type = 'toggle',
+				order = 1
+			},
 			includePets = {
 				name = L['Include pets'],
 				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return module.DB.includePets
-				end,
-				set = function(info, val)
-					module.DB.includePets = val
-				end
+				order = 2
 			},
 			announceLocation = {
 				name = L['Announce location'],
@@ -196,13 +207,7 @@ function module:Options()
 					['RAID'] = L['Raid'],
 					['SELF'] = L['Self'],
 					['SMART'] = L['Smart']
-				},
-				get = function(info)
-					return module.DB.announceLocation
-				end,
-				set = function(info, val)
-					module.DB.announceLocation = val
-				end
+				}
 			},
 			TextInfo = {
 				name = '',

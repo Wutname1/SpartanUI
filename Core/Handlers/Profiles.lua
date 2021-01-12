@@ -213,17 +213,18 @@ local function CreateWindow()
 			if StdUi:GetRadioGroupValue('importTo') == 'new' then
 				local profileName = importOpt.NewProfileName:GetText()
 				if profileName == '' then
-					optionPane.Desc1:SetText('Please enter a new profile name')
+					window.Desc1:SetText('Please enter a new profile name')
 					return
 				end
 				SUI.SpartanUIDB:SetProfile(profileName)
 			end
 
-			local profileImport = optionPane.textBox:GetValue()
+			local profileImport = window.textBox:GetValue()
 			if profileImport == '' then
-				optionPane.Desc1:SetText('Please enter a string to import')
+				window.Desc1:SetText('Please enter a string to import')
 			else
 				module:ImportProfile(profileImport)
+				window.Desc1:SetText('Settings imported!')
 			end
 		end
 	)
@@ -366,11 +367,7 @@ local function DecodeImportInput(dataString)
 			return
 		end
 	elseif stringType == 'Table' then
-		local profileDataAsString
-
-		profileDataAsString = format('%s%s', dataString, '}') --Add back the missing '}'
-		profileDataAsString = gsub(profileDataAsString, '\124\124', '\124') --Remove escape pipe characters
-
+		local profileDataAsString = gsub(dataString, '\124\124', '\124') --Remove escape pipe characters
 		local profileMessage
 		local profileToTable = loadstring(format('%s %s', 'return', profileDataAsString))
 		if profileToTable then
@@ -426,4 +423,6 @@ function module:ImportProfile(dataString)
 			ImportModuleSettings(k, v)
 		end
 	end
+
+	return true
 end
