@@ -372,6 +372,7 @@ do -- SUI_RaidGroup as an SUIUF module
 	end
 	SUIUF:AddElement('SUI_RaidGroup', Update, Enable, Disable)
 end
+
 -- AFK / DND status text, as an SUIUF module
 SUIUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
 SUIUF.Tags.Methods['afkdnd'] = function(unit)

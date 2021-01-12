@@ -532,7 +532,9 @@ function module:OnInitialize()
 						height = 10,
 						offset = 0,
 						interruptable = true,
+						FlashOnInterruptible = true,
 						latency = false,
+						InterruptSpeed = .1,
 						bg = {
 							enabled = true,
 							color = {1, 1, 1, .2}

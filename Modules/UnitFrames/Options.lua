@@ -407,60 +407,65 @@ local function AddBarOptions(frameName)
 				name = 'Castbar',
 				type = 'group',
 				order = 1,
+				get = function(info)
+					return module.CurrentSettings[frameName].elements.Castbar[info[#info]] or false
+				end,
+				set = function(info, val)
+					--Update memory
+					module.CurrentSettings[frameName].elements.Castbar[info[#info]] = val
+					--Update the DB
+					module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar[info[#info]] = val
+					--Update the screen
+					module.frames[frameName]:UpdateAll()
+				end,
 				args = {
-					Interruptable = {
+					FlashOnInterruptible = {
+						name = L['Flash on interruptible cast'],
+						type = 'toggle',
+						width = 'double',
+						order = 10
+					},
+					InterruptSpeed = {
+						name = 'Interrupt flash speed',
+						type = 'range',
+						width = 'double',
+						min = .01,
+						max = 1,
+						step = .01,
+						order = 11
+					},
+					interruptable = {
 						name = 'Show interrupt or spell steal',
 						type = 'toggle',
-						order = 10,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Castbar.interruptable
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Castbar.interruptable = val
-							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.interruptable = val
-							--Update the screen
-							module.frames[frameName]:UpdateAll()
-						end
+						width = 'double',
+						order = 20
 					},
 					latency = {
 						name = 'Show latency',
 						type = 'toggle',
-						order = 11,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.Castbar.latency
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.Castbar.latency = val
-							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.latency = val
-							--Update the screen
-							module.frames[frameName]:UpdateAll()
-						end
+						order = 21
 					},
 					Icon = {
 						name = 'Spell icon',
 						type = 'group',
 						inline = true,
 						order = 100,
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]]
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]] = val
+							--Update the DB
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon[info[#info]] = val
+							--Update the screen
+							module.frames[frameName]:UpdateAll()
+						end,
 						args = {
 							enabled = {
 								name = 'Enable',
 								type = 'toggle',
-								order = 1,
-								get = function(info)
-									return module.CurrentSettings[frameName].elements.Castbar.Icon.enabled
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].elements.Castbar.Icon.enabled = val
-									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.enabled = val
-									--Update the screen
-									module.frames[frameName]:UpdateAll()
-								end
+								order = 1
 							},
 							size = {
 								name = 'Size',
@@ -468,26 +473,24 @@ local function AddBarOptions(frameName)
 								min = 0,
 								max = 100,
 								step = .1,
-								order = 5,
-								get = function(info)
-									return module.CurrentSettings[frameName].elements.Castbar.Icon.size
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].elements.Castbar.Icon.size = val
-									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.size = val
-									--Update Screen
-									if module.frames[frameName].Castbar.Icon then
-										module.frames[frameName].Castbar.Icon:SetSize(val, val)
-									end
-								end
+								order = 5
 							},
 							position = {
 								name = 'Position',
 								type = 'group',
 								order = 50,
 								inline = true,
+								get = function(info)
+									return module.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]]
+								end,
+								set = function(info, val)
+									--Update memory
+									module.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]] = val
+									--Update the DB
+									module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position[info[#info]] = val
+									--Update Screen
+									module.frames[frameName]:UpdateAll()
+								end,
 								args = {
 									x = {
 										name = 'X Axis',
@@ -495,18 +498,7 @@ local function AddBarOptions(frameName)
 										order = 1,
 										min = -100,
 										max = 100,
-										step = 1,
-										get = function(info)
-											return module.CurrentSettings[frameName].elements.Castbar.Icon.position.x
-										end,
-										set = function(info, val)
-											--Update memory
-											module.CurrentSettings[frameName].elements.Castbar.Icon.position.x = val
-											--Update the DB
-											module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position.x = val
-											--Update Screen
-											module.frames[frameName]:UpdateAll()
-										end
+										step = 1
 									},
 									y = {
 										name = 'Y Axis',
@@ -514,35 +506,13 @@ local function AddBarOptions(frameName)
 										order = 2,
 										min = -100,
 										max = 100,
-										step = 1,
-										get = function(info)
-											return module.CurrentSettings[frameName].elements.Castbar.Icon.position.y
-										end,
-										set = function(info, val)
-											--Update memory
-											module.CurrentSettings[frameName].elements.Castbar.Icon.position.y = val
-											--Update the DB
-											module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position.y = val
-											--Update Screen
-											module.frames[frameName]:UpdateAll()
-										end
+										step = 1
 									},
 									anchor = {
 										name = 'Anchor point',
 										type = 'select',
 										order = 3,
-										values = anchorPoints,
-										get = function(info)
-											return module.CurrentSettings[frameName].elements.Castbar.Icon.position.anchor
-										end,
-										set = function(info, val)
-											--Update memory
-											module.CurrentSettings[frameName].elements.Castbar.Icon.position.anchor = val
-											--Update the DB
-											module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position.anchor = val
-											--Update Screen
-											module.frames[frameName]:UpdateAll()
-										end
+										values = anchorPoints
 									}
 								}
 							}
@@ -865,7 +835,7 @@ local function AddBarOptions(frameName)
 	end
 
 	if frameName == 'player' or frameName == 'party' or frameName == 'raid' then
-		SUI.opt.args.UnitFrames.args[frameName].args.bars.args['Castbar'].args['Interruptable'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args.bars.args['Castbar'].args['interruptable'].hidden = true
 	end
 end
 

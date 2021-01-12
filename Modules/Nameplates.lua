@@ -102,7 +102,7 @@ end
 local PostCastStart = function(self, unit, name)
 	if self.notInterruptible == false and module.DB.elements.Castbar.FlashOnInterruptible and UnitIsEnemy('player', unit) then
 		_G[self.PName].Castbar:SetStatusBarColor(0, 0, 0)
-		module:ScheduleTimer('Flash', .1, _G[self.PName])
+		module:ScheduleTimer('Flash', module.DB.elements.Castbar.InterruptSpeed, _G[self.PName])
 	else
 		_G[self.PName].Castbar:SetStatusBarColor(1, 0.7, 0)
 	end
@@ -634,7 +634,8 @@ function module:OnInitialize()
 				Castbar = {
 					height = 5,
 					text = true,
-					FlashOnInterruptible = true
+					FlashOnInterruptible = true,
+					InterruptSpeed = .1
 				},
 				SUI_ClassIcon = {
 					enabled = false,
@@ -906,6 +907,13 @@ function module:BuildOptions()
 								type = 'toggle',
 								width = 'full',
 								order = 30
+							},
+							InterruptSpeed = {
+								name = 'Interrupt flash speed',
+								type = 'range',
+								min = .01,
+								max = 1,
+								step = .01
 							}
 						}
 					}
