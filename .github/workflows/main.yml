@@ -1,0 +1,26 @@
+name: Package and release
+
+on:
+  push:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
+      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}  # "GITHUB_TOKEN" is a secret always provided to the workflow
+
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v1
+
+      # Run the GitHub Action for the packager project
+      - name: Package and release
+        uses: BigWigsMods/packager@master
+
+      # release for the Classic version of the game
+      - name: Package and release for Classic
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g classic -w 25088
