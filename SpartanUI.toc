@@ -7,7 +7,7 @@
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
-## X-Build: @travis-build-number@
+## X-Build: @project-revision@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
