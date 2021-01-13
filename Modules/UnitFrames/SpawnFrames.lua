@@ -48,7 +48,6 @@ local NoBulkUpdate = {
 	'Range',
 	'HealthPrediction',
 	'Health',
-	'HealthPrediction',
 	'Power',
 	'Castbar'
 }
@@ -759,6 +758,13 @@ local function CreateUnitFrame(self, unit)
 
 			-- Add safezone
 			local SafeZone = cast:CreateTexture(nil, 'OVERLAY')
+
+			-- --Interupt Flash
+			-- cast.PostCastStart = PostCastStart
+			-- cast.PostCastInterruptible = PostCastStart
+			-- cast.PostCastStop = PostCastStop
+			-- cast.PostCastInterrupted = PostCastStop
+			-- cast.PostCastNotInterruptible = PostCastStop
 
 			self.Castbar = cast
 			self.Castbar.Text = Text

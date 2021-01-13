@@ -597,10 +597,9 @@ function module:OnInitialize()
 						enabled = true,
 						size = 18,
 						alpha = .75,
-						text = '[group]',
 						position = {
 							anchor = 'TOPRIGHT',
-							x = -10,
+							x = 0,
 							y = 10
 						}
 					},
@@ -1041,6 +1040,15 @@ function module:OnInitialize()
 							anchor = 'BOTTOMRIGHT',
 							x = 0,
 							y = 5
+						}
+					},
+					GroupRoleIndicator = {
+						enabled = true,
+						size = 14,
+						position = {
+							anchor = 'TOPRIGHT',
+							x = -1,
+							y = 1
 						}
 					}
 				}

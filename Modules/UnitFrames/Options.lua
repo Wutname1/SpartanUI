@@ -524,38 +524,29 @@ local function AddBarOptions(frameName)
 				name = 'Health',
 				type = 'group',
 				order = 2,
+				get = function(info)
+					return module.CurrentSettings[frameName].elements[info[#info]]
+				end,
+				set = function(info, val)
+					--Update the screen
+					module.frames[frameName][info[#info]] = val
+					--Update memory
+					module.CurrentSettings[frameName].elements[info[#info]] = val
+					--Update the DB
+					module.DB.UserSettings[module.DB.Style][frameName].elements[info[#info]] = val
+					--Update the screen
+					module.frames[frameName]:UpdateAll()
+				end,
 				args = {
 					healthprediction = {
 						name = 'Health prediction',
 						type = 'toggle',
-						order = 5,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.HealthPrediction
-						end,
-						set = function(info, val)
-							--Update the screen
-							module.frames[frameName].HealthPrediction = val
-							--Update memory
-							module.CurrentSettings[frameName].elements.HealthPrediction = val
-							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.HealthPrediction = val
-						end
+						order = 5
 					},
 					DispelHighlight = {
 						name = 'Dispel highlight',
 						type = 'toggle',
-						order = 5,
-						get = function(info)
-							return module.CurrentSettings[frameName].elements.DispelHighlight
-						end,
-						set = function(info, val)
-							--Update memory
-							module.CurrentSettings[frameName].elements.DispelHighlight = val
-							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.DispelHighlight = val
-							--Update the screen
-							module.frames[frameName]:UpdateAll()
-						end
+						order = 5
 					},
 					coloring = {
 						name = 'Color health bar by:',
@@ -563,91 +554,47 @@ local function AddBarOptions(frameName)
 						order = 10,
 						inline = true,
 						type = 'group',
+						get = function(info)
+							return module.CurrentSettings[frameName].elements.Health[info[#info]]
+						end,
+						set = function(info, val)
+							--Update memory
+							module.CurrentSettings[frameName].elements.Health[info[#info]] = val
+							--Update the DB
+							module.DB.UserSettings[module.DB.Style][frameName].elements.Health[info[#info]] = val
+							--Update the screen
+							module.frames[frameName]:UpdateAll()
+						end,
 						args = {
 							colorTapping = {
 								name = 'Tapped',
 								desc = "Color's the bar if the unit isn't tapped by the player",
 								type = 'toggle',
-								order = 1,
-								get = function(info)
-									return module.CurrentSettings[frameName].elements.Health.colorTapping
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].elements.Health.colorTapping = val
-									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorTapping = val
-									--Update the screen
-									module.frames[frameName]:UpdateAll()
-								end
+								order = 1
 							},
 							colorDisconnected = {
 								name = 'Disconnected',
 								desc = 'Color the bar if the player is offline',
 								type = 'toggle',
-								order = 2,
-								get = function(info)
-									return module.CurrentSettings[frameName].elements.Health.colorDisconnected
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].elements.Health.colorDisconnected = val
-									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorDisconnected = val
-									--Update the screen
-									module.frames[frameName]:UpdateAll()
-								end
+								order = 2
 							},
 							colorClass = {
 								name = 'Class',
 								desc = 'Color the bar based on unit class',
 								type = 'toggle',
-								order = 3,
-								get = function(info)
-									return module.CurrentSettings[frameName].elements.Health.colorClass
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].elements.Health.colorClass = val
-									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorClass = val
-									--Update the screen
-									module.frames[frameName]:UpdateAll()
-								end
+								order = 3
 							},
 							colorReaction = {
 								name = 'Reaction',
 								desc = "color the bar based on the player's reaction towards the player.",
 								type = 'toggle',
-								order = 4,
-								get = function(info)
-									return module.CurrentSettings[frameName].elements.Health.colorReaction
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].elements.Health.colorReaction = val
-									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorReaction = val
-									--Update the screen
-									module.frames[frameName]:UpdateAll()
-								end
+								order = 4
 							},
 							colorSmooth = {
 								name = 'Smooth',
 								desc = "color the bar with a smooth gradient based on the player's current health percentage",
 								type = 'toggle',
-								order = 5,
-								get = function(info)
-									return module.CurrentSettings[frameName].elements.Health.colorSmooth
-								end,
-								set = function(info, val)
-									--Update memory
-									module.CurrentSettings[frameName].elements.Health.colorSmooth = val
-									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Health.colorSmooth = val
-									--Update the screen
-									module.frames[frameName]:UpdateAll()
-								end
+								order = 5
 							}
 						}
 					}
