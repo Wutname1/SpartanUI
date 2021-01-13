@@ -752,10 +752,6 @@ function module:OnInitialize()
 					}
 				},
 				elements = {
-					Portrait = {
-						enabled = true,
-						type = '2D'
-					},
 					Castbar = {
 						enabled = true
 					}
