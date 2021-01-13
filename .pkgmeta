@@ -26,6 +26,9 @@ externals:
   libs/LibDataBroker: https://github.com/tekkub/libdatabroker-1-1.git
   libs/LibClassicDurations: https://github.com/rgd87/LibClassicDurations.git
   libs/oUF_ClassicAuraDurations: https://github.com/rgd87/oUF_ClassicAuraDurations.git
+  libs/LibClassicCasterino: https://github.com/rgd87/LibClassicCasterino.git
+  libs/StdUi: https://github.com/Wutname1/StdUi.git
+  libs/oUF: https://github.com/Wutname1/oUF.git
 
 ignore:
     README.md

@@ -2,6 +2,7 @@ name: Package and release
 
 on:
   push:
+    branches: "master"
 
 jobs:
   release:
@@ -9,7 +10,7 @@ jobs:
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
-      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}  # "GITHUB_TOKEN" is a secret always provided to the workflow
+      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }} # "GITHUB_TOKEN" is a secret always provided to the workflow
 
     steps:
       - name: Clone project
