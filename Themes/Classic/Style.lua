@@ -143,6 +143,10 @@ local function CreateArtwork()
 end
 
 local function UnitFrameCallback(self, unit)
+	if InCombatLockdown() then
+		return
+	end
+
 	local Skined = {['player'] = true, ['target'] = true}
 	if not Skined[unit] then
 		return
