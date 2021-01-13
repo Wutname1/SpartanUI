@@ -212,6 +212,7 @@ function module:ConfigOpened(name)
 		end
 	)
 	Close:SetPoint('BOTTOMRIGHT', -17, 10)
+	Close:SetFrameLevel(500)
 	frame.Close = Close
 
 	for i = 1, frame:GetNumChildren() do
