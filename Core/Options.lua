@@ -360,7 +360,7 @@ function module:ToggleOptions(pages)
 
 	if mode == 'Open' and frame then
 		if not frame.bottomHolder then -- window was released or never opened
-			local bottom = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
+			local bottom = CreateFrame('Frame', nil, frame, BackdropTemplateMixin and 'BackdropTemplate')
 			bottom:SetPoint('BOTTOMLEFT', 2, 2)
 			bottom:SetPoint('BOTTOMRIGHT', -2, 2)
 			bottom:SetHeight(35)

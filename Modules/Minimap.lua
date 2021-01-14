@@ -26,10 +26,19 @@ local IsMouseOver = function()
 end
 
 local isFrameIgnored = function(item)
-	local ignored = {'Questie', 'HybridMinimap', 'AAP-Classic', 'HandyNotes'}
-	if item:GetName() ~= nil then
-		if SUI:isInTable(ignored, item:GetName()) then
+	local ignored = {'HybridMinimap', 'AAP-Classic', 'HandyNotes'}
+	local WildcardIgnore = {'Questie'}
+
+	local name = item:GetName()
+	if name ~= nil then
+		if SUI:isInTable(ignored, name) then
 			return true
+		end
+
+		for _, v in ipairs(WildcardIgnore) do
+			if string.match(name, v) then
+				return true
+			end
 		end
 	end
 	return false
@@ -676,17 +685,17 @@ function module:update(FullUpdate)
 		end
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
-			if child:GetName() ~= nil then
+			if child:GetName() ~= nil and not isFrameIgnored(child) then
 				--catch buttons not playing nice.
-				if child.FadeOut == nil and not isFrameIgnored(child) then
+				if child.FadeOut == nil then
 					module:SetupButton(child, true)
 				end
 
-				if child.FadeOut ~= nil and child:GetAlpha() == 1 and not isFrameIgnored(child) then
+				if child.FadeOut ~= nil and child:GetAlpha() == 1 then
 					child.FadeIn:Stop()
 					child.FadeOut:Stop()
 					child.FadeOut:Play()
-				elseif child.FadeIn == nil and not isFrameIgnored(child) then
+				elseif child.FadeIn == nil then
 					--if they still fail print a error and continue with our lives.
 					SUI.Err('Minimap', child:GetName() .. ' is not fading')
 				end

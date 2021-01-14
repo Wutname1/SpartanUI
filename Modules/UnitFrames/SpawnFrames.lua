@@ -70,6 +70,10 @@ local IndicatorList = {
 	'SUI_RaidGroup',
 	'PetHappiness'
 }
+local GroupFrames = {'raid', 'party', 'boss', 'arena'}
+if SUI.IsClassic then
+	GroupFrames = {'raid', 'party'}
+end
 
 if SUI.IsClassic then
 	FramesList = {
@@ -1442,7 +1446,7 @@ function module:SpawnFrames()
 		end
 	end
 
-	for _, group in ipairs({'raid', 'party', 'boss', 'arena'}) do
+	for _, group in ipairs(GroupFrames) do
 		if module.frames[group] then
 			local function GroupFrameUpdateAll(self)
 				if VisibilityCheck(group) and module.CurrentSettings[group].enabled then
@@ -1508,7 +1512,7 @@ function module:UpdateAll(event, ...)
 end
 
 function module:UpdateGroupFrames(event, ...)
-	for _, v in ipairs({'raid', 'party', 'boss', 'arena'}) do
+	for _, v in ipairs(GroupFrames) do
 		if module.frames[v] then
 			module.frames[v]:UpdateAll()
 		end
