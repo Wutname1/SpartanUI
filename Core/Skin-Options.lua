@@ -200,7 +200,7 @@ end
 
 function module:ConfigOpened(name)
 	local frame = GetAce3ConfigWindow(name)
-	if frame.Close then
+	if not frame or frame.Close then
 		return
 	end
 
