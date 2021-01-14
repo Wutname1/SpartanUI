@@ -93,8 +93,23 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 		continue = true
 	end
 
-	local timeStamp, eventType, _, sourceGUID, _, _, _, _, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool =
-		CombatLogGetCurrentEventInfo()
+	local timeStamp,
+		eventType,
+		_,
+		sourceGUID,
+		_,
+		_,
+		_,
+		destGUID,
+		destName,
+		_,
+		_,
+		sourceID,
+		_,
+		_,
+		spellID,
+		spellName,
+		spellSchool = CombatLogGetCurrentEventInfo()
 
 	-- Check if time and ID was same as last
 	-- Note: This is to prevent flooding announcements on AoE taunts.
@@ -109,7 +124,7 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 		(continue or module.DB.alwayson) and eventType == 'SPELL_INTERRUPT' and
 			(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and module.DB.includePets))
 	 then
-		if sourceGUID == UnitGUID('player') and module.DB.selfInterrupt then
+		if destGUID == UnitGUID('player') and module.DB.selfInterrupt then
 			printFormattedString(
 				destName,
 				spellID,
