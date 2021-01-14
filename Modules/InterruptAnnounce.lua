@@ -15,7 +15,7 @@ local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	):gsub('%%myspell', GetSpellLink(ssid))
 
 	if DBChannel == 'SELF' then
-		SUI:Print(msg)
+		print(msg)
 	else
 		if DBChannel == 'SMART' then
 			if IsInGroup(2) then
@@ -42,7 +42,6 @@ local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 		end
 
 		if ChatChannel then
-			print('Sending to ' .. ChatChannel)
 			SendChatMessage(msg, ChatChannel)
 		end
 	end
