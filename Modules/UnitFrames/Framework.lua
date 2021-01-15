@@ -353,7 +353,6 @@ function module:OnInitialize()
 						size = 20,
 						spacing = 1,
 						showType = true,
-						onlyShowPlayer = false,
 						initialAnchor = 'BOTTOMLEFT',
 						growthx = 'RIGHT',
 						growthy = 'UP',
@@ -366,7 +365,8 @@ function module:OnInitialize()
 						filters = {
 							minDuration = 0,
 							maxDuration = 600,
-							priority = ''
+							showPlayers = true,
+							boss = true
 						}
 					},
 					Buffs = {
@@ -381,7 +381,7 @@ function module:OnInitialize()
 							anchor = 'TOPLEFT'
 						},
 						filters = {
-							priority = 'Blacklist,blockNoDuration,Personal,TurtleBuffs,PlayerBuffs'
+							raid = true
 						}
 					},
 					Debuffs = {
@@ -1134,13 +1134,16 @@ function module:OnInitialize()
 						},
 						auras = {
 							Buffs = {
-								position = {}
+								position = {},
+								filters = {}
 							},
 							Debuffs = {
-								position = {}
+								position = {},
+								filters = {}
 							},
 							Bars = {
-								position = {}
+								position = {},
+								filters = {}
 							}
 						},
 						elements = {

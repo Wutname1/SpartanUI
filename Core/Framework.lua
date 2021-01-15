@@ -5,6 +5,7 @@ local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 local _G = _G
 local type, pairs = type, pairs
 SUI.L = L
+SUI.AutoOpenErrors = true
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
@@ -1289,7 +1290,7 @@ local DBdefault = {
 }
 SUI.DBdefault = DBdefault
 
-local DBdefaults = {profile = DBdefault}
+local DBdefaults = {global = {SUIErrorIcon = {}}, profile = DBdefault}
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version
@@ -1350,6 +1351,11 @@ function SUI:OnInitialize()
 	-- New SUI.DB Access
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile
+
+	SUI.AutoOpenErrors = (SUI.DBG.AutoOpenErrors or false)
+	if _G.SUIErrorDisplay then
+		_G.SUIErrorDisplay:updatemapIcon()
+	end
 
 	--Check for any SUI.DB changes
 	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) and SUI.DB.Version ~= '0' then

@@ -139,7 +139,7 @@ function module:OnInitialize()
 					}
 				}
 			},
-			line1 = {name = '', type = 'header', order = 49},
+			line2 = {name = '', type = 'header', order = 49},
 			ver1 = {
 				name = 'SUI ' .. L['Version'] .. ': ' .. SUI.Version,
 				type = 'description',

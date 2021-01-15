@@ -19,6 +19,28 @@ L['Filter Priority'] = true
 L[
 		'Use Shift+LeftClick to toggle between friendly or enemy or normal state. Normal state will apply the filter to all units.'
 	] = true
+L['Show your auras'] = true
+L['Whether auras you casted should be shown'] = true
+L['Show castable on other auras'] = true
+L['Whether to show buffs that you cannot cast.'] = true
+L['Whether to show any debuffs you can remove, cure or steal.'] = true
+L['Show casted by boss'] = true
+L['Whether to show any auras casted by the boss'] = true
+L['Show any other auras'] = true
+L['Whether to show auras that do not fall into the above categories.'] = true
+L['Smart Friendly/Hostile Filter'] = true
+L[
+		'Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'
+	] = true
+
+L['Scaled aura size'] = true
+L[
+		'Scale for auras that you casted or can Spellsteal, any number above 100% is bigger than default, any number below 100% is smaller than default.'
+	] = true
+
+L['Show curable/removable auras'] = true
+L['Display'] = true
+L['Display settings'] = true
 L['Add basic Filter'] = true
 L['Reset Priority'] = true
 L['Reset filter priority to the default state.'] = true
@@ -318,6 +340,14 @@ L['On click'] = true
 L['On mouse over'] = true
 L['Only if in combat'] = true
 L['Only show players'] = true
+L['Display'] = true
+L['Show player'] = true
+L['Show solo'] = true
+L['Vertical offset'] = true
+L['Horizonal offset'] = true
+L['Position'] = true
+L['Sizing & layout'] = true
+
 L['OnlyYourBuffDebuff'] = 'Only Show your buffs/debuffs'
 L['Open All'] = true
 L['Opening...'] = true

@@ -15,11 +15,13 @@
 ## X-oUF: SUIUF
 ## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB
+## X-BugGrabber-Display: SUIErrorDisplay
 
 # General Libraries
 libs\LibStub\LibStub.lua
 libs\StdUi\StdUi.xml
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\LibDBIcon-1.0\lib.xml
 
 #Setup SUI error catcher
 libs\bug-grabber\load.xml

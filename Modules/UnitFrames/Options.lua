@@ -1495,9 +1495,6 @@ local function AddBuffOptions(frameName)
 	end
 
 	for _, buffType in pairs({'Buffs', 'Debuffs'}) do
-		local function AddBuffFilter(value)
-		end
-
 		SUI.opt.args.UnitFrames.args[frameName].args.auras.args[buffType] = {
 			name = L[buffType],
 			type = 'group',
@@ -1516,10 +1513,16 @@ local function AddBuffOptions(frameName)
 					end
 				},
 				Display = {
-					name = 'Display settings',
+					name = L['Display settings'],
 					type = 'group',
 					order = 100,
 					inline = true,
+					get = function(info)
+						return module.CurrentSettings[frameName].auras[buffType][info[#info]]
+					end,
+					set = function(info, val)
+						SetOption(val, buffType, info[#info])
+					end,
 					args = {
 						number = {
 							name = L['Number to show'],
@@ -1527,40 +1530,29 @@ local function AddBuffOptions(frameName)
 							order = 20,
 							min = 1,
 							max = 30,
-							step = 1,
-							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].number
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'number')
-							end
+							step = 1
 						},
 						showType = {
 							name = L['Show type'],
 							type = 'toggle',
-							order = 30,
-							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].showType
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'showType')
-							end
+							order = 30
 						},
-						onlyShowPlayer = {
-							name = L['Only show players'],
-							type = 'toggle',
-							order = 60,
-							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].onlyShowPlayer
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'onlyShowPlayer')
-							end
+						selfScale = {
+							order = 2,
+							type = 'range',
+							name = L['Scaled aura size'],
+							desc = L[
+								'Scale for auras that you casted or can Spellsteal, any number above 100% is bigger than default, any number below 100% is smaller than default.'
+							],
+							min = 1,
+							max = 3,
+							step = 0.10,
+							isPercent = true
 						}
 					}
 				},
 				Sizing = {
-					name = 'Sizing & layout',
+					name = L['Sizing & layout'],
 					type = 'group',
 					order = 200,
 					inline = true,
@@ -1652,7 +1644,7 @@ local function AddBuffOptions(frameName)
 					}
 				},
 				position = {
-					name = 'Position',
+					name = L['Position'],
 					type = 'group',
 					order = 400,
 					inline = true,
@@ -1716,20 +1708,16 @@ local function AddBuffOptions(frameName)
 				},
 				filters = {
 					name = L['Filters'],
-					inline = true,
 					type = 'group',
 					order = 500,
 					get = function(info)
 						return module.CurrentSettings[frameName].auras[buffType].filters[info[#info]]
 					end,
 					set = function(info, value)
-						print(info)
-						print(#info)
-						module.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = value
 						--Update memory
-						module.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = val
+						module.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = value
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].filters[info[#info]] = val
+						module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].filters[info[#info]] = value
 						--Update Screen
 						module.frames[frameName]:UpdateAuras()
 					end,
@@ -1741,7 +1729,8 @@ local function AddBuffOptions(frameName)
 							desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
 							min = 0,
 							max = 7200,
-							step = 1
+							step = 1,
+							width = 'full'
 						},
 						maxDuration = {
 							order = 2,
@@ -1750,132 +1739,50 @@ local function AddBuffOptions(frameName)
 							desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
 							min = 0,
 							max = 7200,
-							step = 1
+							step = 1,
+							width = 'full'
 						},
-						customFilters = {
+						showPlayers = {
 							order = 3,
-							name = L['Custom Filters'],
-							desc = L["Go to 'Filters' section of the config."],
-							type = 'execute',
-							func = function()
-								SUI.Lib.AceCD:SelectGroup('SpartanUI', 'BuffFilters')
-							end
+							type = 'toggle',
+							name = L['Show your auras'],
+							desc = L['Whether auras you casted should be shown'],
+							width = 'full'
 						},
-						basicFilters = {
+						raid = {
 							order = 4,
-							-- sortByValue = true,
-							type = 'select',
-							name = L['Add basic Filter'],
-							desc = L[
-								"These filters don't use a list of spells like Custom filters. They are dynamic and based on the WoW API."
-							],
-							values = function()
-								local filters = {}
-								local list = {
-									-- Whitelists
-									Boss = true,
-									MyPet = true,
-									OtherPet = true,
-									Personal = true,
-									nonPersonal = true,
-									CastByUnit = true,
-									notCastByUnit = true,
-									Dispellable = true,
-									notDispellable = true,
-									CastByNPC = true,
-									CastByPlayers = true,
-									-- Blacklists
-									blockNonPersonal = true,
-									blockCastByPlayers = true,
-									blockNoDuration = true,
-									blockDispellable = true,
-									blockNotDispellable = true
-								}
-								for filter in pairs(list) do
-									filters[filter] = filter
-								end
-								return filters
+							type = 'toggle',
+							name = function(info)
+								return buffType == 'buffs' and L['Show castable on other auras'] or L['Show curable/removable auras']
 							end,
-							set = function(info, value)
-								AddBuffFilter(value)
-							end
+							desc = function(info)
+								return buffType == 'buffs' and L['Whether to show buffs that you cannot cast.'] or
+									L['Whether to show any debuffs you can remove, cure or steal.']
+							end,
+							width = 'full'
 						},
-						resetPriority = {
+						boss = {
+							order = 5,
+							type = 'toggle',
+							name = L['Show casted by boss'],
+							desc = L['Whether to show any auras casted by the boss'],
+							width = 'full'
+						},
+						misc = {
 							order = 6,
-							name = L['Reset Priority'],
-							desc = L['Reset filter priority to the default state.'],
-							type = 'execute',
-							func = function()
-								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].priority = ''
-								--Update Screen
-								module.frames[frameName]:UpdateAuras()
-							end
+							type = 'toggle',
+							name = L['Show any other auras'],
+							desc = L['Whether to show auras that do not fall into the above categories.'],
+							width = 'full'
 						},
-						-- filterPriority = {
-						-- 	order = 7,
-						-- 	dragdrop = true,
-						-- 	type = 'multiselect',
-						-- 	name = L['Filter Priority'],
-						-- 	dragOnLeave = function()
-						-- 	end, --keep this here
-						-- 	dragOnEnter = function(info)
-						-- 		carryFilterTo = info.obj.value
-						-- 	end,
-						-- 	dragOnMouseDown = function(info)
-						-- 		carryFilterFrom, carryFilterTo = info.obj.value, nil
-						-- 	end,
-						-- 	dragOnMouseUp = function(info)
-						-- 		filterPriority(auraType, groupName, carryFilterTo, nil, carryFilterFrom) --add it in the new spot
-						-- 		carryFilterFrom, carryFilterTo = nil, nil
-						-- 	end,
-						-- 	dragOnClick = function(info)
-						-- 		filterPriority(auraType, groupName, carryFilterFrom, true)
-						-- 	end,
-						-- 	stateSwitchGetText = function(_, TEXT)
-						-- 		local friend, enemy = strmatch(TEXT, '^Friendly:([^,]*)'), strmatch(TEXT, '^Enemy:([^,]*)')
-						-- 		local text, blockB, blockS, blockT = friend or enemy or TEXT
-						-- 		local SF, localized = E.global.unitframe.specialFilters[text], L[text]
-						-- 		if SF and localized and text:match('^block') then
-						-- 			blockB, blockS, blockT = localized:match('^%[(.-)](%s?)(.+)')
-						-- 		end
-						-- 		local filterText = (blockB and format('|cFF999999%s|r%s%s', blockB, blockS, blockT)) or localized or text
-						-- 		return (friend and format('|cFF33FF33%s|r %s', _G.FRIEND, filterText)) or
-						-- 			(enemy and format('|cFFFF3333%s|r %s', _G.ENEMY, filterText)) or
-						-- 			filterText
-						-- 	end,
-						-- 	stateSwitchOnClick = function(info)
-						-- 		filterPriority(auraType, groupName, carryFilterFrom, nil, nil, true)
-						-- 	end,
-						-- 	values = function()
-						-- 		local str = E.db.unitframe.units[groupName][auraType].priority
-						-- 		if str == '' then
-						-- 			return nil
-						-- 		end
-						-- 		return {strsplit(',', str)}
-						-- 	end,
-						-- 	get = function(info, value)
-						-- 		local str = E.db.unitframe.units[groupName][auraType].priority
-						-- 		if str == '' then
-						-- 			return nil
-						-- 		end
-						-- 		local tbl = {strsplit(',', str)}
-						-- 		return tbl[value]
-						-- 	end,
-						-- 	set = function(info)
-						-- 		E.db.unitframe.units[groupName][auraType][info[#info]] = nil -- this was being set when drag and drop was first added, setting it to nil to clear tester profiles of this variable
-						-- 		updateFunc(UF, groupName, numUnits)
-						-- 	end
-						-- },
-						spacer1 = {
-							order = 8,
-							type = 'description',
-							fontSize = 'medium',
-							name = L['Use drag and drop to rearrange filter priority or right click to remove a filter.'] ..
-								'\n' ..
-									L[
-										'Use Shift+LeftClick to toggle between friendly or enemy or normal state. Normal state will apply the filter to all units.'
-									]
+						relevant = {
+							order = 7,
+							type = 'toggle',
+							name = L['Smart Friendly/Hostile Filter'],
+							desc = L[
+								'Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'
+							],
+							width = 'full'
 						}
 					}
 				}
@@ -1886,7 +1793,7 @@ end
 
 local function AddGroupOptions(frameName)
 	SUI.opt.args.UnitFrames.args[frameName].args['general'].args['Display'] = {
-		name = 'Display',
+		name = L['Display'],
 		type = 'group',
 		order = 5,
 		inline = true,
@@ -1915,12 +1822,12 @@ local function AddGroupOptions(frameName)
 				order = 2
 			},
 			showPlayer = {
-				name = 'Show player',
+				name = L['Show player'],
 				type = 'toggle',
 				order = 2
 			},
 			showSolo = {
-				name = 'Show solo',
+				name = L['Show solo'],
 				type = 'toggle',
 				order = 2
 			},
@@ -1935,7 +1842,7 @@ local function AddGroupOptions(frameName)
 				max = 40
 			},
 			yOffset = {
-				name = 'Vertical offset',
+				name = L['Vertical offset'],
 				type = 'range',
 				order = 23,
 				width = 'full',
@@ -1944,7 +1851,7 @@ local function AddGroupOptions(frameName)
 				max = 200
 			},
 			xOffset = {
-				name = 'Horizonal offset',
+				name = L['Horizonal offset'],
 				type = 'range',
 				order = 23,
 				width = 'full',
