@@ -1289,8 +1289,13 @@ local DBdefault = {
 	}
 }
 SUI.DBdefault = DBdefault
+local GlobalDefaults = {
+	ErrorHandler = {
+		SUIErrorIcon = {}
+	}
+}
 
-local DBdefaults = {global = {SUIErrorIcon = {}}, profile = DBdefault}
+local DBdefaults = {global = GlobalDefaults, profile = DBdefault}
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version
@@ -1352,8 +1357,9 @@ function SUI:OnInitialize()
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile
 
-	SUI.AutoOpenErrors = (SUI.DBG.AutoOpenErrors or false)
+	SUI.AutoOpenErrors = (SUI.DBG.ErrorHandler.AutoOpenErrors or false)
 	if _G.SUIErrorDisplay then
+		_G.SUIErrorDisplay:UpdateDisplay()
 		_G.SUIErrorDisplay:updatemapIcon()
 	end
 
@@ -1436,7 +1442,7 @@ function SUI:OnInitialize()
 		end
 	end
 
-	local function resetbartender(args)
+	local function resetbartender()
 		SUI.opt.args['General'].args['Bartender'].args['ResetActionBars']:func()
 	end
 
@@ -1456,6 +1462,24 @@ function SUI:OnInitialize()
 		resetfulldb,
 		'Reset bartender4 & SpartanUI settings (This is similar to deleting your WTF folder but will only effect this character)'
 	)
+	if _G.SUIErrorDisplay then
+		local function ErrHandler(arg)
+			if arg == 'reset' then
+				_G.SUIErrorDisplay:Reset()
+			else
+				_G.SUIErrorDisplay:OpenErrWindow()
+			end
+		end
+
+		SUI:AddChatCommand(
+			'errors',
+			ErrHandler,
+			'Display SUI Error handler',
+			{
+				reset = 'Clear all saved errors'
+			}
+		)
+	end
 end
 
 function SUI:DBUpgrades()
@@ -1921,7 +1945,12 @@ function SUI:OnEnable()
 	AceCD:SetDefaultSize('SpartanUI', 1000, 700)
 
 	self:RegisterChatCommand('sui', 'ChatCommand')
-	self:RegisterChatCommand('suihelp', 'suihelp')
+	self:RegisterChatCommand(
+		'suihelp',
+		function()
+			SUI.Lib.AceCD:Open('SpartanUI', 'Help')
+		end
+	)
 	self:RegisterChatCommand('spartanui', 'ChatCommand')
 
 	--Reopen options screen if flagged to do so after a reloadui

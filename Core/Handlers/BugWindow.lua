@@ -290,8 +290,8 @@ local createBugWindow = function()
 	window.AutoOpen:HookScript(
 		'OnClick',
 		function()
-			SUI.DBG.AutoOpenErrors = window.AutoOpen:GetValue()
-			SUI.AutoOpenErrors = (SUI.DBG.AutoOpenErrors or false)
+			SUI.DBG.ErrorHandler.AutoOpenErrors = window.AutoOpen:GetValue()
+			SUI.AutoOpenErrors = (SUI.DBG.ErrorHandler.AutoOpenErrors or false)
 		end
 	)
 	window.prevButton:SetScript(
@@ -372,8 +372,8 @@ function MapIcon.OnClick(self, button)
 end
 
 function addon:updatemapIcon()
-	if icon:GetMinimapButton(name) and SUI.DBG.SUIErrorIcon then
-		icon:Refresh(IconName, SUI.DBG.SUIErrorIcon)
+	if icon:GetMinimapButton(name) and SUI.DBG.ErrorHandler.SUIErrorIcon then
+		icon:Refresh(IconName, SUI.DBG.ErrorHandler.SUIErrorIcon)
 	end
 
 	local count = #addon:GetErrors(BugGrabber:GetSessionId())
@@ -385,8 +385,7 @@ function addon:updatemapIcon()
 end
 
 do
-	local hint =
-		'|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear the all saved errors.'
+	local hint = '|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
 
 	local line = '%d. %s (x%d)'
 	function MapIcon.OnTooltipShow(tt)
