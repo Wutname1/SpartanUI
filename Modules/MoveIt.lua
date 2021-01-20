@@ -1,4 +1,4 @@
-local SUI, print = SUI, SUI.print
+local SUI, L, print = SUI, SUI.L, SUI.print
 local StdUi = LibStub('StdUi'):NewInstance()
 local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
@@ -60,13 +60,13 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 		inline = true,
 		args = {
 			position = {
-				name = 'Position',
+				name = L['Position'],
 				type = 'group',
 				inline = true,
 				order = 2,
 				args = {
 					x = {
-						name = 'X Offset',
+						name = L['X Offset'],
 						order = 1,
 						type = 'input',
 						dialogControl = 'NumberEditBox',
@@ -82,7 +82,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						end
 					},
 					y = {
-						name = 'Y Offset',
+						name = L['Y Offset'],
 						order = 2,
 						type = 'input',
 						dialogControl = 'NumberEditBox',
@@ -99,7 +99,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 					},
 					MyAnchorPoint = {
 						order = 3,
-						name = 'point',
+						name = L['Point'],
 						type = 'select',
 						values = anchorPoints,
 						get = function()
@@ -115,7 +115,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 					},
 					AnchorTo = {
 						order = 4,
-						name = 'anchor',
+						name = L['Anchor'],
 						type = 'select',
 						values = dynamicAnchorPoints,
 						get = function()
@@ -136,7 +136,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 					},
 					ItsAnchorPoint = {
 						order = 5,
-						name = 'secondaryPoint',
+						name = L['Secondary point'],
 						type = 'select',
 						values = anchorPoints,
 						get = function()
@@ -153,7 +153,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 				}
 			},
 			ResetPosition = {
-				name = 'Reset Position',
+				name = L['Reset position'],
 				type = 'execute',
 				order = 3,
 				func = function()
@@ -167,7 +167,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 				order = 4,
 				args = {
 					scale = {
-						name = 'Scale',
+						name = L['Scale'],
 						type = 'range',
 						order = 1,
 						min = .01,
@@ -183,7 +183,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						end
 					},
 					ResetScale = {
-						name = 'Reset Scale',
+						name = L['Reset Scale'],
 						type = 'execute',
 						order = 2,
 						func = function()
@@ -800,12 +800,12 @@ end
 
 function MoveIt:Options()
 	SUI.opt.args['Movers'] = {
-		name = 'Movers',
+		name = L['Movers'],
 		type = 'group',
 		order = 800,
 		args = {
 			MoveIt = {
-				name = 'Toggle movers',
+				name = L['Toggle movers'],
 				type = 'execute',
 				order = 1,
 				func = function()
@@ -813,7 +813,7 @@ function MoveIt:Options()
 				end
 			},
 			AltKey = {
-				name = 'Allow Alt+Dragging to move frames',
+				name = L['Allow Alt+Dragging to move frames'],
 				type = 'toggle',
 				width = 'double',
 				order = 2,
@@ -825,7 +825,7 @@ function MoveIt:Options()
 				end
 			},
 			ResetIt = {
-				name = 'Reset moved frames',
+				name = L['Reset moved frames'],
 				type = 'execute',
 				order = 3,
 				func = function()
@@ -834,7 +834,7 @@ function MoveIt:Options()
 			},
 			line1 = {name = '', type = 'header', order = 49},
 			line2 = {
-				name = 'Movement can also be initated with the chat command:',
+				name = L['Movement can also be initated with the chat command:'],
 				type = 'description',
 				order = 50,
 				fontSize = 'large'
@@ -848,14 +848,14 @@ function MoveIt:Options()
 				fontSize = 'large'
 			},
 			line5 = {
-				name = 'When the movement system is enabled you can:',
+				name = L['When the movement system is enabled you can:'],
 				type = 'description',
 				order = 53,
 				fontSize = 'large'
 			},
-			line6 = {name = '- Alt+Click a mover to reset it', type = 'description', order = 53.5, fontSize = 'medium'},
+			line6 = {name = '- ' .. L['Alt+Click a mover to reset it'], type = 'description', order = 53.5, fontSize = 'medium'},
 			line7 = {
-				name = '- Shift+Click a mover to temporarily hide it',
+				name = '- ' .. L['Shift+Click a mover to temporarily hide it'],
 				type = 'description',
 				order = 54,
 				fontSize = 'medium'
@@ -868,31 +868,31 @@ function MoveIt:Options()
 			},
 			line7b = {name = '', type = 'description', order = 54.99, fontSize = 'medium'},
 			line8 = {
-				name = '- Use the scroll wheel to move left and right 1 coord at a time',
+				name = '- ' .. L['Use the scroll wheel to move left and right 1 coord at a time'],
 				type = 'description',
 				order = 55,
 				fontSize = 'medium'
 			},
 			line9 = {
-				name = '- Hold Shift + use the scroll wheel to move up and down 1 coord at a time',
+				name = '- ' .. L['Hold Shift + use the scroll wheel to move up and down 1 coord at a time'],
 				type = 'description',
 				order = 56,
 				fontSize = 'medium'
 			},
 			line9a = {
-				name = '- Hold Alt + use the scroll wheel to scale the frame',
+				name = '- ' .. L['Hold Alt + use the scroll wheel to scale the frame'],
 				type = 'description',
 				order = 56.5,
 				fontSize = 'medium'
 			},
 			line10 = {
-				name = '- Press ESCAPE to exit the movement system quickly.',
+				name = '- ' .. L['Press ESCAPE to exit the movement system quickly.'],
 				type = 'description',
 				order = 57,
 				fontSize = 'medium'
 			},
 			tips = {
-				name = 'Display tips when using /sui move',
+				name = L['Display tips when using /sui move'],
 				type = 'toggle',
 				width = 'double',
 				order = 70,

@@ -331,7 +331,7 @@ end
 
 function module:SetupMenus()
 	SUI.opt.args['Artwork'].args['ActionBar'] = {
-		name = 'ActionBar Settings',
+		name = L['ActionBar Settings'],
 		type = 'group',
 		desc = L['ActionBarConfDesc'],
 		args = {
@@ -368,7 +368,7 @@ function module:SetupMenus()
 				end
 			},
 			Bar1 = {
-				name = 'Bar 1',
+				name = L['Bar'] .. '1',
 				type = 'group',
 				inline = true,
 				args = {
@@ -401,7 +401,7 @@ function module:SetupMenus()
 				}
 			},
 			Bar2 = {
-				name = 'Bar 2',
+				name = L['Bar'] .. '2',
 				type = 'group',
 				inline = true,
 				args = {
@@ -434,7 +434,7 @@ function module:SetupMenus()
 				}
 			},
 			Bar3 = {
-				name = 'Bar 3',
+				name = L['Bar'] .. '3',
 				type = 'group',
 				inline = true,
 				args = {
@@ -467,7 +467,7 @@ function module:SetupMenus()
 				}
 			},
 			Bar4 = {
-				name = 'Bar 4',
+				name = L['Bar'] .. '4',
 				type = 'group',
 				inline = true,
 				args = {
@@ -500,7 +500,7 @@ function module:SetupMenus()
 				}
 			},
 			Bar5 = {
-				name = 'Bar 5',
+				name = L['Bar'] .. '5',
 				type = 'group',
 				inline = true,
 				args = {
@@ -533,7 +533,7 @@ function module:SetupMenus()
 				}
 			},
 			Bar6 = {
-				name = 'Bar 6',
+				name = L['Bar'] .. '6',
 				type = 'group',
 				inline = true,
 				args = {
@@ -568,12 +568,12 @@ function module:SetupMenus()
 		}
 	}
 	SUI.opt.args['Artwork'].args['popup'] = {
-		name = L['PopupAnimConf'],
+		name = L['Popup Animations'],
 		type = 'group',
-		desc = L['PopupAnimConfDesc'],
+		desc = L['Toggle popup bar animations'],
 		args = {
 			popup1anim = {
-				name = L['LPopupAnimate'],
+				name = L['Animate left popup'],
 				type = 'toggle',
 				order = 1,
 				width = 'full',
@@ -585,7 +585,7 @@ function module:SetupMenus()
 				end
 			},
 			popup1alpha = {
-				name = L['LPopupAlpha'],
+				name = L['Alpha left popup'],
 				type = 'range',
 				order = 2,
 				min = 0,
@@ -601,7 +601,7 @@ function module:SetupMenus()
 				end
 			},
 			popup1enable = {
-				name = L['LPopupEnable'],
+				name = L['Enable left popup'],
 				type = 'toggle',
 				order = 3,
 				get = function(info)
@@ -612,7 +612,7 @@ function module:SetupMenus()
 				end
 			},
 			popup2anim = {
-				name = L['RPopupAnimate'],
+				name = L['Animate right popup'],
 				type = 'toggle',
 				order = 4,
 				width = 'full',
@@ -624,7 +624,7 @@ function module:SetupMenus()
 				end
 			},
 			popup2alpha = {
-				name = L['RPopupAlpha'],
+				name = L['Alpha right popup'],
 				type = 'range',
 				order = 5,
 				min = 0,
@@ -640,7 +640,7 @@ function module:SetupMenus()
 				end
 			},
 			popup2enable = {
-				name = L['RPopupEnable'],
+				name = L['Enable right popup'],
 				type = 'toggle',
 				order = 6,
 				get = function(info)
@@ -653,12 +653,12 @@ function module:SetupMenus()
 		}
 	}
 	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = L['ArtworkOpt'],
+		name = L['Artwork Options'],
 		type = 'group',
 		order = 10,
 		args = {
 			Color = {
-				name = L['ArtColor'],
+				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
 				order = .5,
@@ -674,7 +674,7 @@ function module:SetupMenus()
 				end
 			},
 			ColorEnabled = {
-				name = 'Color enabled',
+				name = L['Color enabled'],
 				type = 'toggle',
 				order = .6,
 				get = function(info)
@@ -702,7 +702,7 @@ function module:SetupMenus()
 				min = 0,
 				max = 100,
 				step = 1,
-				desc = L['TransparencyDesc'],
+				desc = L['XP and Rep Bars are known issues and need a redesign to look right'],
 				get = function(info)
 					return (SUI.DB.alpha * 100)
 				end,
@@ -720,11 +720,11 @@ function module:SetupMenus()
 				hidden = true
 			},
 			offset = {
-				name = L['ConfOffset'],
+				name = L['Configure Offset'],
 				type = 'range',
 				width = 'normal',
 				order = 3,
-				desc = L['ConfOffsetDesc'],
+				desc = L['Offsets the bottom bar automatically, or set value'],
 				min = 0,
 				max = 200,
 				step = .1,
@@ -736,7 +736,7 @@ function module:SetupMenus()
 						SUI:Print(ERR_NOT_IN_COMBAT)
 					else
 						if SUI.DB.yoffsetAuto then
-							SUI:Print(L['confOffsetAuto'])
+							SUI:Print(L['Offset is set AUTO'])
 						else
 							val = tonumber(val)
 							SUI.DB.yoffset = val
@@ -745,9 +745,9 @@ function module:SetupMenus()
 				end
 			},
 			offsetauto = {
-				name = L['AutoOffset'],
+				name = L['Auto Offset'],
 				type = 'toggle',
-				desc = L['AutoOffsetDesc'],
+				desc = L['Offsets the bottom bar automatically'],
 				order = 3.1,
 				get = function(info)
 					return SUI.DB.yoffsetAuto

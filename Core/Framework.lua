@@ -1925,7 +1925,7 @@ function SUI:OnEnable()
 					name = L['Options can be accessed by the button below or by typing /sui']
 				},
 				Close = {
-					name = 'Launch Options',
+					name = L['Launch Options'],
 					width = 'full',
 					type = 'execute',
 					order = 50,

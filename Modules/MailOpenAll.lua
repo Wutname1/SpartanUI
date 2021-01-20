@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-3.0')
-module.DisplayName = 'Open all mail'
+module.Displayname = L['Open all mail']
 module.description = 'Quality of life update to the open all mail button'
 
 local MAX_MAIL_SHOWN = 50
@@ -361,10 +361,10 @@ end
 function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['MailOpenAll'] = {
 		type = 'group',
-		name = 'Open all mail',
+		name = L['Open all mail'],
 		args = {
 			Silent = {
-				name = 'Silently open mail',
+				name = L['Silently open mail'],
 				type = 'toggle',
 				order = 1,
 				width = 'full',
@@ -376,7 +376,7 @@ function module:BuildOptions()
 				end
 			},
 			FreeSpace = {
-				name = 'Bag free space to maintain',
+				name = L['Bag free space to maintain'],
 				type = 'range',
 				order = 10,
 				width = 'full',

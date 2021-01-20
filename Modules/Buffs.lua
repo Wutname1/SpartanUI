@@ -178,20 +178,20 @@ end
 function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['Buffs'] = {
 		type = 'group',
-		name = 'Buffs',
+		name = L['Buffs'],
 		args = {}
 	}
 
 	for k, v in ipairs(RuleList) do
 		SUI.opt.args['ModSetting'].args['Buffs'].args['DisplayLocation' .. v] = {
-			name = 'Display Location ' .. v,
+			name = L['Display Location'] .. ' ' .. v,
 			type = 'group',
 			inline = true,
 			order = k + 20.1,
 			width = 'full',
 			args = {
 				Condition = {
-					name = 'Condition',
+					name = L['Condition'],
 					type = 'select',
 					order = k + 20.2,
 					values = {
@@ -210,7 +210,7 @@ function module:BuildOptions()
 					end
 				},
 				Combat = {
-					name = 'only if in combat',
+					name = L['Only in combat'],
 					type = 'toggle',
 					order = k + 20.3,
 					get = function(info)
@@ -222,7 +222,7 @@ function module:BuildOptions()
 					end
 				},
 				OverrideTheme = {
-					name = L['OverrideTheme'],
+					name = L['Override theme'],
 					type = 'toggle',
 					order = k + 20.5,
 					get = function(info)
@@ -234,7 +234,7 @@ function module:BuildOptions()
 					end
 				},
 				MoveAnchor = {
-					name = 'Move anchor',
+					name = L['Move anchor'],
 					type = 'execute',
 					order = k + 20.6,
 					width = 'half',
@@ -243,7 +243,7 @@ function module:BuildOptions()
 					end
 				},
 				ResetAnchor = {
-					name = 'Reset anchor',
+					name = L['Reset anchor'],
 					type = 'execute',
 					order = k + 20.7,
 					width = 'half',

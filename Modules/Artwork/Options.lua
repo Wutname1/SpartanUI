@@ -9,11 +9,11 @@ function module:SetupOptions()
 
 	local ArtworkOpts = SUI.opt.args.Artwork.args
 	ArtworkOpts.scale = {
-		name = L['ConfScale'],
+		name = L['Configure Scale'],
 		type = 'range',
 		order = 1,
 		width = 'double',
-		desc = L['ConfScaleDesc'],
+		desc = L['Sets a specific scale for SpartanUI'],
 		min = 0,
 		max = 1,
 		set = function(info, val)
@@ -31,10 +31,10 @@ function module:SetupOptions()
 	}
 
 	ArtworkOpts.DefaultScales = {
-		name = L['DefScales'],
+		name = L['Toggle Default Scales'],
 		type = 'execute',
 		order = 2,
-		desc = L['DefScalesDesc'],
+		desc = L['Toggles between widescreen and standard scales'],
 		func = function()
 			if (SUI.DB.scale >= 0.92) or (SUI.DB.scale < 0.78) then
 				ArtworkOpts.scale.set(nil, 0.78)
@@ -45,7 +45,7 @@ function module:SetupOptions()
 	}
 
 	ArtworkOpts.VehicleUI = {
-		name = 'Use Blizzard Vehicle UI',
+		name = L['Use Blizzard Vehicle UI'],
 		type = 'toggle',
 		order = 3,
 		get = function(info)
@@ -93,16 +93,16 @@ function module:SetupOptions()
 	}
 
 	ArtworkOpts.Viewport = {
-		name = 'Viewport',
+		name = L['Viewport'],
 		type = 'group',
 		inline = true,
 		order = 100,
 		args = {
 			Enabled = {
-				name = 'Enabled',
+				name = L['Enabled'],
 				type = 'toggle',
 				order = 1,
-				desc = 'Allow SpartanUI To manage the viewport',
+				desc = L['Allow SpartanUI To manage the viewport'],
 				get = function(info)
 					return SUI.DB.Artwork.Viewport.enabled
 				end,
@@ -126,9 +126,9 @@ function module:SetupOptions()
 					module:updateViewport()
 				end
 			},
-			viewportoffsets = {name = 'Offset', order = 2, type = 'description', fontSize = 'large'},
+			viewportoffsets = {name = L['Offset'], order = 2, type = 'description', fontSize = 'large'},
 			viewportoffsetTop = {
-				name = 'Top',
+				name = L['Top'],
 				type = 'range',
 				order = 2.1,
 				min = -50,
@@ -143,7 +143,7 @@ function module:SetupOptions()
 				end
 			},
 			viewportoffsetBottom = {
-				name = 'Bottom',
+				name = L['Bottom'],
 				type = 'range',
 				order = 2.2,
 				min = -50,
@@ -158,7 +158,7 @@ function module:SetupOptions()
 				end
 			},
 			viewportoffsetLeft = {
-				name = 'Left',
+				name = L['Left'],
 				type = 'range',
 				order = 2.3,
 				min = -50,
@@ -173,7 +173,7 @@ function module:SetupOptions()
 				end
 			},
 			viewportoffsetRight = {
-				name = 'Right',
+				name = L['Right'],
 				type = 'range',
 				order = 2.4,
 				min = -50,
@@ -194,19 +194,19 @@ function module:SetupOptions()
 	end
 
 	ArtworkOpts.Offset = {
-		name = 'Offset',
+		name = L['Offset'],
 		type = 'group',
 		inline = true,
 		order = 200,
 		args = {
 			Horizontal = {
-				name = 'Horizontal',
+				name = L['Horizontal'],
 				type = 'group',
 				inline = true,
 				order = 300,
 				args = {
 					Top = {
-						name = 'Top offset',
+						name = L['Top offset'],
 						type = 'range',
 						width = 'double',
 						order = 3,
@@ -222,7 +222,7 @@ function module:SetupOptions()
 						end
 					},
 					Bottom = {
-						name = 'Bottom offset',
+						name = L['Bottom offset'],
 						type = 'range',
 						width = 'double',
 						order = 3,
@@ -264,7 +264,7 @@ function module:SetupOptions()
 							SUI:Print(ERR_NOT_IN_COMBAT)
 						else
 							if SUI.DB.Offset[v .. 'Auto'] then
-								SUI:Print(L['confOffsetAuto'])
+								SUI:Print(L['Offset is set AUTO'])
 							else
 								val = tonumber(val)
 								SUI.DB.Offset[v] = val
@@ -274,7 +274,7 @@ function module:SetupOptions()
 					end
 				},
 				offsetauto = {
-					name = L['AutoOffset'],
+					name = L['Auto Offset'],
 					type = 'toggle',
 					order = 3.1,
 					get = function(info)
@@ -290,9 +290,8 @@ function module:SetupOptions()
 	end
 
 	ArtworkOpts.BarBG = {
-		name = 'Bar backgrounds',
+		name = L['Bar backgrounds'],
 		type = 'group',
-		desc = L['ActionBarConfDesc'],
 		args = {}
 	}
 	local function CreatOption(key)
@@ -302,7 +301,7 @@ function module:SetupOptions()
 		end
 
 		ArtworkOpts.BarBG.args[key] = {
-			name = 'Bar ' .. key,
+			name = L['Bar'] .. ' ' .. key,
 			type = 'group',
 			inline = true,
 			hidden = function(info)

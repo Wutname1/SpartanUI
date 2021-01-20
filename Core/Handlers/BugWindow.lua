@@ -24,11 +24,15 @@ local print = function(...)
 	DEFAULT_CHAT_FRAME:AddMessage(table.concat(tmp, ' ', 1, n))
 end
 
+local msgsAllowedLastTime = GetTime()
+
 local onError = function()
 	-- If the frame is shown, we need to update it.
 	-- if (addon.db.auto and not InCombatLockdown()) or (window and window:IsShown()) then
 	if (not InCombatLockdown() and SUI and SUI.AutoOpenErrors) or (window and window:IsShown()) then
 		addon:OpenErrWindow()
+	elseif (SUI and not SUI.AutoOpenErrors) and (not InCombatLockdown()) then
+	-- print('Error captured by error handler')
 	end
 
 	addon:updatemapIcon()

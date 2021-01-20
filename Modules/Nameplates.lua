@@ -723,7 +723,7 @@ function module:BuildOptions()
 		childGroups = 'tab',
 		args = {
 			Scale = {
-				name = 'Scale',
+				name = L['Scale'],
 				type = 'range',
 				width = 'full',
 				min = .01,
@@ -738,13 +738,13 @@ function module:BuildOptions()
 				end
 			},
 			General = {
-				name = 'General Apperance',
+				name = L['General Apperance'],
 				type = 'group',
 				order = 10,
 				childGroups = 'tree',
 				args = {
 					Background = {
-						name = 'Background',
+						name = L['Background'],
 						type = 'group',
 						order = 1,
 						get = function(info)
@@ -756,19 +756,19 @@ function module:BuildOptions()
 						end,
 						args = {
 							enabled = {
-								name = 'Enabled',
+								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
 								order = 1
 							},
 							type = {
-								name = 'Type',
+								name = L['Type'],
 								order = 2,
 								type = 'select',
 								values = {['artwork'] = 'Artwork', ['solid'] = 'Solid'}
 							},
 							colorMode = {
-								name = 'Color mode',
+								name = L['Color mode'],
 								type = 'select',
 								order = 3,
 								values = {
@@ -777,7 +777,7 @@ function module:BuildOptions()
 								}
 							},
 							alpha = {
-								name = 'Alpha',
+								name = L['Alpha'],
 								type = 'range',
 								width = 'full',
 								order = 4,
@@ -827,7 +827,7 @@ function module:BuildOptions()
 								order = 30
 							},
 							colorSmooth = {
-								name = 'Color by health remaning',
+								name = L['Color by health remaning'],
 								type = 'toggle',
 								width = 'full',
 								order = 30
@@ -909,7 +909,7 @@ function module:BuildOptions()
 								order = 30
 							},
 							InterruptSpeed = {
-								name = 'Interrupt flash speed',
+								name = L['Interrupt flash speed'],
 								type = 'range',
 								min = .01,
 								max = 1,
@@ -920,13 +920,13 @@ function module:BuildOptions()
 				}
 			},
 			Indicator = {
-				name = 'Indicators',
+				name = L['Indicators'],
 				type = 'group',
 				order = 20,
 				childGroups = 'tree',
 				args = {
 					Name = {
-						name = 'Name',
+						name = L['Name'],
 						type = 'group',
 						order = 1,
 						args = {
@@ -954,7 +954,7 @@ function module:BuildOptions()
 								end
 							},
 							JustifyH = {
-								name = 'Horizontal alignment',
+								name = L['Horizontal alignment'],
 								type = 'select',
 								order = 3,
 								values = {
@@ -975,7 +975,7 @@ function module:BuildOptions()
 						}
 					},
 					QuestIndicator = {
-						name = 'Quest icon',
+						name = L['Quest icon'],
 						type = 'group',
 						args = {
 							enabled = {
@@ -993,7 +993,7 @@ function module:BuildOptions()
 						}
 					},
 					RareElite = {
-						name = 'Rare/Elite background',
+						name = L['Rare/Elite background'],
 						type = 'group',
 						args = {
 							enabled = {
@@ -1011,7 +1011,7 @@ function module:BuildOptions()
 						}
 					},
 					TargetIndicator = {
-						name = 'Target indicator',
+						name = L['Target indicator'],
 						type = 'group',
 						args = {
 							enabled = {
@@ -1029,11 +1029,11 @@ function module:BuildOptions()
 						}
 					},
 					ClassIcon = {
-						name = 'Class icon',
+						name = L['Class icon'],
 						type = 'group',
 						args = {
 							enabled = {
-								name = 'Enabled',
+								name = L['Enabled'],
 								type = 'toggle',
 								width = 'double',
 								order = 1,
@@ -1046,7 +1046,7 @@ function module:BuildOptions()
 								end
 							},
 							visibleOn = {
-								name = 'Show on',
+								name = L['Show on'],
 								type = 'select',
 								order = 2,
 								values = {
@@ -1064,7 +1064,7 @@ function module:BuildOptions()
 								end
 							},
 							size = {
-								name = 'Size',
+								name = L['Size'],
 								type = 'range',
 								order = 3,
 								min = 1,
@@ -1079,13 +1079,13 @@ function module:BuildOptions()
 								end
 							},
 							position = {
-								name = 'Position',
+								name = L['Position'],
 								type = 'group',
 								order = 50,
 								inline = true,
 								args = {
 									x = {
-										name = 'X Axis',
+										name = L['X Axis'],
 										type = 'range',
 										order = 1,
 										min = -100,
@@ -1100,7 +1100,7 @@ function module:BuildOptions()
 										end
 									},
 									y = {
-										name = 'Y Axis',
+										name = L['Y Axis'],
 										type = 'range',
 										order = 2,
 										min = -100,
@@ -1115,7 +1115,7 @@ function module:BuildOptions()
 										end
 									},
 									anchor = {
-										name = 'Anchor point',
+										name = L['Anchor point'],
 										type = 'select',
 										order = 3,
 										values = anchorPoints,
@@ -1132,11 +1132,11 @@ function module:BuildOptions()
 						}
 					},
 					Auras = {
-						name = 'Auras',
+						name = L['Auras'],
 						type = 'group',
 						args = {
 							onlyShowPlayer = {
-								name = 'Show only auras created by player',
+								name = L['Show only auras created by player'],
 								type = 'toggle',
 								order = 1,
 								width = 'double',
@@ -1149,7 +1149,7 @@ function module:BuildOptions()
 								end
 							},
 							showStealableBuffs = {
-								name = 'Show Stealable/Dispellable buffs',
+								name = L['Show Stealable/Dispellable buffs'],
 								type = 'toggle',
 								order = 2,
 								width = 'double',
@@ -1162,7 +1162,7 @@ function module:BuildOptions()
 								end
 							},
 							notice = {
-								name = 'With both of these options active your DOTs will not appear on enemies.',
+								name = L['With both of these options active your DOTs will not appear on enemies.'],
 								type = 'description',
 								order = 3,
 								fontSize = 'small'
@@ -1170,7 +1170,7 @@ function module:BuildOptions()
 						}
 					},
 					XPBar = {
-						name = 'XP Bar',
+						name = L['XP Bar'],
 						type = 'group',
 						args = {
 							enabled = {
@@ -1186,7 +1186,7 @@ function module:BuildOptions()
 								end
 							},
 							size = {
-								name = 'Size',
+								name = L['Size'],
 								type = 'range',
 								order = 2,
 								min = 1,
@@ -1200,7 +1200,7 @@ function module:BuildOptions()
 								end
 							},
 							Offset = {
-								name = 'Offset',
+								name = L['Offset'],
 								type = 'range',
 								order = 3,
 								min = -30,
@@ -1218,7 +1218,7 @@ function module:BuildOptions()
 				}
 			},
 			Display = {
-				name = 'Blizzard display options',
+				name = L['Blizzard display options'],
 				type = 'group',
 				order = 300,
 				args = {

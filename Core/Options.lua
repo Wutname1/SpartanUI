@@ -38,7 +38,7 @@ function module:OnInitialize()
 		},
 		line2 = {name = '', type = 'header', order = 99},
 		navigationissues = {
-			name = L['HaveQuestion'],
+			name = L['Have a Question?'],
 			type = 'description',
 			order = 100,
 			fontSize = 'medium'
@@ -55,7 +55,7 @@ function module:OnInitialize()
 			end
 		},
 		bugsandfeatures = {
-			name = L['Bugs and Feature Requests'] .. ':',
+			name = L['Bugs & Feature Requests'] .. ':',
 			type = 'description',
 			order = 200,
 			fontSize = 'medium'
@@ -72,7 +72,7 @@ function module:OnInitialize()
 			end
 		},
 		ErrorHandler = {
-			name = 'Error handler',
+			name = L['Error handler'],
 			type = 'group',
 			inline = true,
 			order = 300,
@@ -85,18 +85,18 @@ function module:OnInitialize()
 			end,
 			args = {
 				AutoOpenErrors = {
-					name = 'Auto open on error',
-					desc = 'Automativally open the error report window when a bug occurs.',
+					name = L['Auto open on error'],
+					desc = L['Automatically open the error report window when a bug occurs.'],
 					type = 'toggle'
 				}
 			}
 		},
 		style = {
-			name = 'Art Style',
+			name = L['Art Style'],
 			type = 'group',
 			order = 100,
 			args = {
-				description = {type = 'header', name = L['OverallStyle'], order = 1},
+				description = {type = 'header', name = L['Overall Style'], order = 1},
 				OverallStyle = {
 					name = '',
 					type = 'group',
@@ -104,7 +104,7 @@ function module:OnInitialize()
 					order = 10,
 					args = {}
 				},
-				description2 = {type = 'header', name = 'Artwork Style', order = 19},
+				description2 = {type = 'header', name = L['Artwork Style'], order = 19},
 				Artwork = {
 					type = 'group',
 					name = L['Artwork'],
@@ -112,7 +112,7 @@ function module:OnInitialize()
 					order = 20,
 					args = {}
 				},
-				description3 = {type = 'header', name = 'Unitframe Style', order = 29}
+				description3 = {type = 'header', name = L['Unitframe Style'], order = 29}
 			}
 		}
 	}
@@ -157,12 +157,12 @@ function module:OnInitialize()
 	end
 
 	SUI.opt.args.Help = {
-		name = 'Help',
+		name = L['Help'],
 		type = 'group',
 		order = 900,
 		args = {
 			SUIActions = {
-				name = 'SUI Core Reset',
+				name = L['SUI Core Reset'],
 				type = 'group',
 				inline = true,
 				order = 40,
@@ -179,7 +179,7 @@ function module:OnInitialize()
 						name = L['Reset profile'],
 						type = 'execute',
 						width = 'double',
-						desc = 'Start fresh with a new SUI profile',
+						desc = L['Start fresh with a new SUI profile'],
 						order = .5,
 						func = function()
 							SUI.SpartanUIDB:ResetProfile()
@@ -187,9 +187,9 @@ function module:OnInitialize()
 						end
 					},
 					ResetDB = {
-						name = L['ResetDatabase'],
+						name = L['Reset Database'],
 						type = 'execute',
-						desc = 'New SUI profile did not work? This is your nucular option. Reset everything SpartanUI related.',
+						desc = L['New SUI profile did not work? This is your nucular option. Reset everything SpartanUI related.'],
 						order = 1,
 						func = function()
 							SUI.SpartanUIDB:ResetDB()
@@ -200,13 +200,13 @@ function module:OnInitialize()
 			},
 			line1 = {name = '', type = 'header', order = 40},
 			SUIModuleHelp = {
-				name = 'SUI Module Resets',
+				name = L['SUI module resets'],
 				type = 'group',
 				order = 45,
 				inline = true,
 				args = {
 					ResetMovedFrames = {
-						name = L['ResetMovableFrames'],
+						name = L['Reset movable frames'],
 						type = 'execute',
 						order = 3,
 						func = function()
@@ -235,7 +235,7 @@ function module:OnInitialize()
 				fontSize = 'large'
 			},
 			line2 = {name = '', type = 'header', order = 99},
-			navigationissues = {name = L['HaveQuestion'], type = 'description', order = 100, fontSize = 'large'},
+			navigationissues = {name = L['Have a Question?'], type = 'description', order = 100, fontSize = 'large'},
 			navigationissues2 = {
 				name = '',
 				type = 'input',
@@ -248,7 +248,7 @@ function module:OnInitialize()
 				end
 			},
 			bugsandfeatures = {
-				name = L['Bugs and Feature Requests'] .. ':',
+				name = L['Bugs & Feature Requests'] .. ':',
 				type = 'description',
 				order = 200,
 				fontSize = 'large'
@@ -273,7 +273,7 @@ function module:OnInitialize()
 		type = 'group',
 		args = {
 			Components = {
-				name = 'Components',
+				name = L['Components'],
 				type = 'group',
 				inline = true,
 				args = {}

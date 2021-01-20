@@ -742,7 +742,7 @@ function module:BuildOptions()
 		name = L['Minimap'],
 		args = {
 			NorthIndicator = {
-				name = 'Show North Indicator',
+				name = L['Show North Indicator'],
 				type = 'toggle',
 				order = 0.1,
 				get = function(info)
@@ -762,7 +762,7 @@ function module:BuildOptions()
 				end
 			},
 			minimapzoom = {
-				name = L['MinMapHideZoom'],
+				name = L['Hide Zoom Buttons'],
 				type = 'toggle',
 				order = 0.5,
 				get = function(info)
@@ -787,7 +787,7 @@ function module:BuildOptions()
 				end
 			},
 			OtherStyle = {
-				name = 'Button display mode',
+				name = L['Button display mode'],
 				order = 0.9,
 				type = 'select',
 				style = 'dropdown',

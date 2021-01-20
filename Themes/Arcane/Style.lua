@@ -7,12 +7,12 @@ local artFrame = CreateFrame('Frame', 'SUI_Art_Arcane', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local function SetupMenus()
 	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = L['ArtworkOpt'],
+		name = L['Artwork Options'],
 		type = 'group',
 		order = 10,
 		args = {
 			Color = {
-				name = L['ArtColor'],
+				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
 				order = .5,
@@ -28,7 +28,7 @@ local function SetupMenus()
 				end
 			},
 			ColorEnabled = {
-				name = 'Color enabled',
+				name = L['Color enabled'],
 				type = 'toggle',
 				order = .6,
 				get = function(info)

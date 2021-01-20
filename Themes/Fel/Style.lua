@@ -11,7 +11,7 @@ local InitRan = false
 
 local function Options()
 	SUI.opt.args.Artwork.args.Fel = {
-		name = 'Fel style',
+		name = L['Fel style'],
 		type = 'group',
 		order = 10,
 		args = {

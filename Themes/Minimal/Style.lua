@@ -87,7 +87,7 @@ end
 
 function module:SetupMenus()
 	SUI.opt.args['Artwork'].args['Art'] = {
-		name = L['ArtworkOpt'],
+		name = L['Artwork Options'],
 		type = 'group',
 		order = 10,
 		args = {
@@ -108,12 +108,12 @@ function module:SetupMenus()
 				end
 			},
 			alpha = {
-				name = L['ArtColor'],
+				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
 				order = 2,
 				width = 'full',
-				desc = L['TransparencyDesc'],
+				desc = L['XP and Rep Bars are known issues and need a redesign to look right'],
 				get = function(info)
 					return unpack(SUI.DB.Styles.Minimal.Color)
 				end,

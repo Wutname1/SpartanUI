@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_TauntWatcher', 'AceEvent-3.0')
-module.DisplayName = 'Taunt watcher'
+module.Displayname = L['Taunt watcher']
 module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------
 local TauntsList = {
@@ -178,7 +178,7 @@ end
 function module:Options()
 	SUI.opt.args['ModSetting'].args['TauntWatcher'] = {
 		type = 'group',
-		name = 'Taunt watcher',
+		name = L['Taunt watcher'],
 		get = function(info)
 			return module.DB[info[#info]]
 		end,
@@ -199,7 +199,7 @@ function module:Options()
 				end
 			},
 			active = {
-				name = 'Active',
+				name = L['Active'],
 				type = 'group',
 				inline = true,
 				order = 100,
@@ -211,40 +211,40 @@ function module:Options()
 				end,
 				args = {
 					inBG = {
-						name = 'Battleground',
+						name = L['Battleground'],
 						type = 'toggle',
 						order = 1
 					},
 					inRaid = {
-						name = 'Raid',
+						name = L['Raid'],
 						type = 'toggle',
 						order = 1
 					},
 					inParty = {
-						name = 'Party',
+						name = L['Party'],
 						type = 'toggle',
 						order = 1
 					},
 					inArena = {
-						name = 'Arena',
+						name = L['Arena'],
 						type = 'toggle',
 						order = 1
 					},
 					outdoors = {
-						name = 'Outdoor',
+						name = L['Outdoor'],
 						type = 'toggle',
 						order = 1
 					}
 				}
 			},
 			failures = {
-				name = 'Annnounce failed taunts',
+				name = L['Annnounce failed taunts'],
 				type = 'toggle',
 				width = 'full',
 				order = 150
 			},
 			announceLocation = {
-				name = 'Announce location',
+				name = L['Announce location'],
 				type = 'select',
 				order = 200,
 				values = {
@@ -313,7 +313,7 @@ end
 function module:SetupWizard()
 	local PageData = {
 		ID = 'TauntWatcher',
-		Name = 'Taunt watcher',
+		name = L['Taunt watcher'],
 		SubTitle = 'Taunt watcher',
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()

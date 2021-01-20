@@ -321,7 +321,7 @@ end
 
 local function Options()
 	SUI.opt.args['General'].args['Bartender'] = {
-		name = 'Bartender4',
+		name = L['Bartender4'],
 		type = 'group',
 		order = 500,
 		args = {
@@ -455,7 +455,7 @@ local function OnEnable()
 					'|n|r|n|n' ..
 						L['Warning'] ..
 							': ' ..
-								L['BartenderOldMSG'] ..
+								L['Your bartender version may be out of date. We detected Version'] ..
 									' ' .. SUI.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
 			button1 = 'Ok',
 			OnAccept = function()

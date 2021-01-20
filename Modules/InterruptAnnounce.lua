@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_InterruptAnnouncer', 'AceEvent-3.0')
-module.DisplayName = 'Interrupt announcer'
+module.Displayname = L['Interrupt announcer']
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
 
@@ -202,7 +202,7 @@ function module:Options()
 				}
 			},
 			selfInterrupt = {
-				name = 'Include self',
+				name = L['Include self'],
 				type = 'toggle',
 				order = 1
 			},

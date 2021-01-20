@@ -14,7 +14,7 @@ local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageI
 	{}
 local FinishedPage = {
 	ID = 'FinishedPage',
-	Name = 'Setup Finished!',
+	name = L['Setup Finished!'],
 	Desc1 = 'This completes the setup wizard.',
 	Desc2 = 'Thank you for trying SpartanUI.',
 	Display = function()
@@ -351,7 +351,7 @@ local function WelcomePage()
 
 	local WelcomePage = {
 		ID = 'WelcomePage',
-		Name = 'Welcome',
+		name = L['Welcome'],
 		SubTitle = '',
 		Desc1 = "Welcome to SpartanUI, This setup wizard help guide you through the inital setup of the UI and it's modules.",
 		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit the wiki at http://wiki.spartanui.net or Join the SpartanUI Discord.',

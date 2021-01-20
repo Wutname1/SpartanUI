@@ -63,20 +63,20 @@ local function CreateOptionSet(frameName, order)
 		end,
 		args = {
 			indicators = {
-				name = 'Indicators',
+				name = L['Indicators'],
 				type = 'group',
 				order = 40,
 				childGroups = 'tree',
 				args = {}
 			},
 			text = {
-				name = 'Text',
+				name = L['Text'],
 				type = 'group',
 				order = 50,
 				childGroups = 'tree',
 				args = {
 					execute = {
-						name = 'Text tag list',
+						name = L['Text tag list'],
 						type = 'execute',
 						func = function(info)
 							SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'TextTags')
@@ -90,20 +90,20 @@ end
 
 local function AddGeneralOptions(frameName)
 	SUI.opt.args.UnitFrames.args[frameName].args['general'] = {
-		name = 'General',
-		desc = 'General display settings',
+		name = L['General'],
+		desc = L['General display settings'],
 		type = 'group',
 		-- childGroups = 'inline',
 		order = 10,
 		args = {
 			General = {
-				name = 'General',
+				name = L['General'],
 				type = 'group',
 				order = 1,
 				inline = true,
 				args = {
 					width = {
-						name = 'Frame width',
+						name = L['Frame width'],
 						type = 'range',
 						width = 'full',
 						order = 2,
@@ -123,7 +123,7 @@ local function AddGeneralOptions(frameName)
 						end
 					},
 					range = {
-						name = 'Fade out of range',
+						name = L['Fade out of range'],
 						width = 'double',
 						type = 'toggle',
 						get = function(info)
@@ -150,7 +150,7 @@ local function AddGeneralOptions(frameName)
 				}
 			},
 			portrait = {
-				name = 'Portrait',
+				name = L['Portrait'],
 				type = 'group',
 				order = 3,
 				inline = true,
@@ -181,7 +181,7 @@ local function AddGeneralOptions(frameName)
 						end
 					},
 					type = {
-						name = 'Portrait type',
+						name = L['Portrait type'],
 						type = 'select',
 						order = 20,
 						values = {
@@ -201,7 +201,7 @@ local function AddGeneralOptions(frameName)
 						end
 					},
 					rotation = {
-						name = 'Rotation',
+						name = L['Rotation'],
 						type = 'range',
 						min = -1,
 						max = 1,
@@ -220,7 +220,7 @@ local function AddGeneralOptions(frameName)
 						end
 					},
 					camDistanceScale = {
-						name = 'Camera Distance Scale',
+						name = L['Camera Distance Scale'],
 						type = 'range',
 						min = .01,
 						max = 5,
@@ -239,7 +239,7 @@ local function AddGeneralOptions(frameName)
 						end
 					},
 					position = {
-						name = 'Position',
+						name = L['Position'],
 						type = 'select',
 						order = 30,
 						values = {
@@ -275,7 +275,7 @@ local function AddArtworkOptions(frameName)
 		module.frames[frameName]:ElementUpdate('SpartanArt')
 	end
 	SUI.opt.args.UnitFrames.args[frameName].args['artwork'] = {
-		name = 'Artwork',
+		name = L['Artwork'],
 		type = 'group',
 		order = 20,
 		args = {}
@@ -289,7 +289,7 @@ local function AddArtworkOptions(frameName)
 			disabled = true,
 			args = {
 				enabled = {
-					name = 'Enabled',
+					name = L['Enabled'],
 					type = 'toggle',
 					order = 1,
 					get = function(info)
@@ -300,7 +300,7 @@ local function AddArtworkOptions(frameName)
 					end
 				},
 				StyleDropdown = {
-					name = 'Current Style',
+					name = L['Current Style'],
 					type = 'select',
 					order = 2,
 					values = {[''] = 'None'},
@@ -312,20 +312,20 @@ local function AddArtworkOptions(frameName)
 					end
 				},
 				style = {
-					name = 'Style',
+					name = L['Style'],
 					type = 'group',
 					order = 3,
 					inline = true,
 					args = {}
 				},
 				settings = {
-					name = 'Settings',
+					name = L['Settings'],
 					type = 'group',
 					inline = true,
 					order = 500,
 					args = {
 						alpha = {
-							name = 'Custom alpha',
+							name = L['Custom alpha'],
 							desc = "This setting will override your art's default settings. Set to 0 to disable custom Alpha.",
 							type = 'range',
 							width = 'double',
@@ -398,13 +398,13 @@ end
 
 local function AddBarOptions(frameName)
 	SUI.opt.args.UnitFrames.args[frameName].args.bars = {
-		name = 'Bars',
+		name = L['Bars'],
 		type = 'group',
 		order = 30,
 		childGroups = 'tree',
 		args = {
 			Castbar = {
-				name = 'Castbar',
+				name = L['Castbar'],
 				type = 'group',
 				order = 1,
 				get = function(info)
@@ -426,7 +426,7 @@ local function AddBarOptions(frameName)
 						order = 10
 					},
 					InterruptSpeed = {
-						name = 'Interrupt flash speed',
+						name = L['Interrupt flash speed'],
 						type = 'range',
 						width = 'double',
 						min = .01,
@@ -435,18 +435,18 @@ local function AddBarOptions(frameName)
 						order = 11
 					},
 					interruptable = {
-						name = 'Show interrupt or spell steal',
+						name = L['Show interrupt or spell steal'],
 						type = 'toggle',
 						width = 'double',
 						order = 20
 					},
 					latency = {
-						name = 'Show latency',
+						name = L['Show latency'],
 						type = 'toggle',
 						order = 21
 					},
 					Icon = {
-						name = 'Spell icon',
+						name = L['Spell icon'],
 						type = 'group',
 						inline = true,
 						order = 100,
@@ -463,12 +463,12 @@ local function AddBarOptions(frameName)
 						end,
 						args = {
 							enabled = {
-								name = 'Enable',
+								name = L['Enable'],
 								type = 'toggle',
 								order = 1
 							},
 							size = {
-								name = 'Size',
+								name = L['Size'],
 								type = 'range',
 								min = 0,
 								max = 100,
@@ -476,7 +476,7 @@ local function AddBarOptions(frameName)
 								order = 5
 							},
 							position = {
-								name = 'Position',
+								name = L['Position'],
 								type = 'group',
 								order = 50,
 								inline = true,
@@ -493,7 +493,7 @@ local function AddBarOptions(frameName)
 								end,
 								args = {
 									x = {
-										name = 'X Axis',
+										name = L['X Axis'],
 										type = 'range',
 										order = 1,
 										min = -100,
@@ -501,7 +501,7 @@ local function AddBarOptions(frameName)
 										step = 1
 									},
 									y = {
-										name = 'Y Axis',
+										name = L['Y Axis'],
 										type = 'range',
 										order = 2,
 										min = -100,
@@ -509,7 +509,7 @@ local function AddBarOptions(frameName)
 										step = 1
 									},
 									anchor = {
-										name = 'Anchor point',
+										name = L['Anchor point'],
 										type = 'select',
 										order = 3,
 										values = anchorPoints
@@ -521,7 +521,7 @@ local function AddBarOptions(frameName)
 				}
 			},
 			Health = {
-				name = 'Health',
+				name = L['Health'],
 				type = 'group',
 				order = 2,
 				get = function(info)
@@ -539,18 +539,18 @@ local function AddBarOptions(frameName)
 				end,
 				args = {
 					healthprediction = {
-						name = 'Health prediction',
+						name = L['Health prediction'],
 						type = 'toggle',
 						order = 5
 					},
 					DispelHighlight = {
-						name = 'Dispel highlight',
+						name = L['Dispel highlight'],
 						type = 'toggle',
 						order = 5
 					},
 					coloring = {
-						name = 'Color health bar by:',
-						desc = 'The below options are in order of wich they apply',
+						name = L['Color health bar by:'],
+						desc = L['The below options are in order of wich they apply'],
 						order = 10,
 						inline = true,
 						type = 'group',
@@ -567,31 +567,31 @@ local function AddBarOptions(frameName)
 						end,
 						args = {
 							colorTapping = {
-								name = 'Tapped',
+								name = L['Tapped'],
 								desc = "Color's the bar if the unit isn't tapped by the player",
 								type = 'toggle',
 								order = 1
 							},
 							colorDisconnected = {
-								name = 'Disconnected',
-								desc = 'Color the bar if the player is offline',
+								name = L['Disconnected'],
+								desc = L['Color the bar if the player is offline'],
 								type = 'toggle',
 								order = 2
 							},
 							colorClass = {
-								name = 'Class',
-								desc = 'Color the bar based on unit class',
+								name = L['Class'],
+								desc = L['Color the bar based on unit class'],
 								type = 'toggle',
 								order = 3
 							},
 							colorReaction = {
-								name = 'Reaction',
+								name = L['Reaction'],
 								desc = "color the bar based on the player's reaction towards the player.",
 								type = 'toggle',
 								order = 4
 							},
 							colorSmooth = {
-								name = 'Smooth',
+								name = L['Smooth'],
 								desc = "color the bar with a smooth gradient based on the player's current health percentage",
 								type = 'toggle',
 								order = 5
@@ -601,7 +601,7 @@ local function AddBarOptions(frameName)
 				}
 			},
 			Power = {
-				name = 'Power',
+				name = L['Power'],
 				type = 'group',
 				order = 3,
 				childGroups = 'inline',
@@ -630,7 +630,7 @@ local function AddBarOptions(frameName)
 			end
 		}
 		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.height = {
-			name = 'Height',
+			name = L['Height'],
 			type = 'range',
 			width = 'full',
 			order = 2,
@@ -651,13 +651,13 @@ local function AddBarOptions(frameName)
 		}
 
 		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.Background = {
-			name = 'Background',
+			name = L['Background'],
 			type = 'group',
 			inline = true,
 			order = 200,
 			args = {
 				enabled = {
-					name = 'Enable',
+					name = L['Enable'],
 					type = 'toggle',
 					order = 1,
 					get = function(info)
@@ -673,7 +673,7 @@ local function AddBarOptions(frameName)
 					end
 				},
 				color = {
-					name = 'Color',
+					name = L['Color'],
 					type = 'color',
 					order = 2,
 					hasAlpha = true,
@@ -701,8 +701,8 @@ local function AddBarOptions(frameName)
 	if frameName == 'player' then
 		if SUI.IsRetail then
 			SUI.opt.args.UnitFrames.args.player.args.bars.args['Power'].args['PowerPrediction'] = {
-				name = 'Enable power prediction',
-				desc = 'Used to represent cost of spells on top of the Power bar',
+				name = L['Enable power prediction'],
+				desc = L['Used to represent cost of spells on top of the Power bar'],
 				type = 'toggle',
 				width = 'double',
 				order = 10,
@@ -725,7 +725,7 @@ local function AddBarOptions(frameName)
 		end
 
 		SUI.opt.args.UnitFrames.args.player.args.bars.args['AdditionalPower'] = {
-			name = 'Additional power',
+			name = L['Additional power'],
 			desc = "player's additional power, such as Mana for Balance druids.",
 			order = 20,
 			type = 'group',
@@ -753,7 +753,7 @@ local function AddBarOptions(frameName)
 					end
 				},
 				height = {
-					name = 'Height',
+					name = L['Height'],
 					type = 'range',
 					width = 'full',
 					order = 2,
@@ -862,13 +862,13 @@ local function AddIndicatorOptions(frameName)
 					end
 				},
 				display = {
-					name = 'Display',
+					name = L['Display'],
 					type = 'group',
 					order = 20,
 					inline = true,
 					args = {
 						size = {
-							name = 'Size',
+							name = L['Size'],
 							type = 'range',
 							min = 0,
 							max = 100,
@@ -887,7 +887,7 @@ local function AddIndicatorOptions(frameName)
 							end
 						},
 						scale = {
-							name = 'Scale',
+							name = L['Scale'],
 							type = 'range',
 							min = .1,
 							max = 3,
@@ -906,7 +906,7 @@ local function AddIndicatorOptions(frameName)
 							end
 						},
 						alpha = {
-							name = 'Alpha',
+							name = L['Alpha'],
 							type = 'range',
 							min = 0,
 							max = 1,
@@ -927,13 +927,13 @@ local function AddIndicatorOptions(frameName)
 					}
 				},
 				position = {
-					name = 'Position',
+					name = L['Position'],
 					type = 'group',
 					order = 50,
 					inline = true,
 					args = {
 						x = {
-							name = 'X Axis',
+							name = L['X Axis'],
 							type = 'range',
 							order = 1,
 							min = -200,
@@ -952,7 +952,7 @@ local function AddIndicatorOptions(frameName)
 							end
 						},
 						y = {
-							name = 'Y Axis',
+							name = L['Y Axis'],
 							type = 'range',
 							order = 2,
 							min = -200,
@@ -971,7 +971,7 @@ local function AddIndicatorOptions(frameName)
 							end
 						},
 						anchor = {
-							name = 'Anchor point',
+							name = L['Anchor point'],
 							type = 'select',
 							order = 3,
 							values = anchorPoints,
@@ -1025,7 +1025,7 @@ local function AddIndicatorOptions(frameName)
 	-- Non player items like
 	if frameName ~= 'player' then
 		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.Range = {
-			name = 'Range',
+			name = L['Range'],
 			type = 'group',
 			args = {
 				enable = {
@@ -1050,7 +1050,7 @@ local function AddIndicatorOptions(frameName)
 					end
 				},
 				insideAlpha = {
-					name = 'In range alpha',
+					name = L['In range alpha'],
 					type = 'range',
 					min = 0,
 					max = 1,
@@ -1068,7 +1068,7 @@ local function AddIndicatorOptions(frameName)
 					end
 				},
 				outsideAlpha = {
-					name = 'Out of range alpha',
+					name = L['Out of range alpha'],
 					type = 'range',
 					min = 0,
 					max = 1,
@@ -1099,7 +1099,7 @@ end
 
 local function AddDynamicText(frameName, element, count)
 	SUI.opt.args.UnitFrames.args[frameName].args['text'].args[element].args[count] = {
-		name = 'Text element ' .. count,
+		name = L['Text element'] .. ' ' .. count,
 		type = 'group',
 		inline = true,
 		order = (10 + count),
@@ -1125,7 +1125,7 @@ local function AddDynamicText(frameName, element, count)
 				end
 			},
 			text = {
-				name = 'Text',
+				name = L['Text'],
 				type = 'input',
 				width = 'full',
 				order = 2,
@@ -1143,7 +1143,7 @@ local function AddDynamicText(frameName, element, count)
 				end
 			},
 			size = {
-				name = 'Size',
+				name = L['Size'],
 				type = 'range',
 				width = 'full',
 				min = 1,
@@ -1163,13 +1163,13 @@ local function AddDynamicText(frameName, element, count)
 				end
 			},
 			position = {
-				name = 'Position',
+				name = L['Position'],
 				type = 'group',
 				order = 50,
 				inline = true,
 				args = {
 					x = {
-						name = 'X Axis',
+						name = L['X Axis'],
 						type = 'range',
 						order = 1,
 						min = -200,
@@ -1196,7 +1196,7 @@ local function AddDynamicText(frameName, element, count)
 						end
 					},
 					y = {
-						name = 'Y Axis',
+						name = L['Y Axis'],
 						type = 'range',
 						order = 2,
 						min = -200,
@@ -1223,7 +1223,7 @@ local function AddDynamicText(frameName, element, count)
 						end
 					},
 					anchor = {
-						name = 'Anchor point',
+						name = L['Anchor point'],
 						type = 'select',
 						order = 3,
 						values = anchorPoints,
@@ -1255,19 +1255,19 @@ end
 
 local function AddTextOptions(frameName)
 	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'] = {
-		name = 'Castbar',
+		name = L['Castbar'],
 		type = 'group',
 		order = 1,
 		args = {}
 	}
 	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Health'] = {
-		name = 'Health',
+		name = L['Health'],
 		type = 'group',
 		order = 2,
 		args = {}
 	}
 	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Power'] = {
-		name = 'Power',
+		name = L['Power'],
 		type = 'group',
 		order = 3,
 		args = {}
@@ -1326,7 +1326,7 @@ local function AddTextOptions(frameName)
 					order = 10,
 					args = {
 						text = {
-							name = 'Text',
+							name = L['Text'],
 							type = 'input',
 							width = 'full',
 							order = 1,
@@ -1344,7 +1344,7 @@ local function AddTextOptions(frameName)
 							end
 						},
 						size = {
-							name = 'Size',
+							name = L['Size'],
 							type = 'range',
 							width = 'full',
 							min = 1,
@@ -1364,7 +1364,7 @@ local function AddTextOptions(frameName)
 							end
 						},
 						JustifyH = {
-							name = 'Horizontal alignment',
+							name = L['Horizontal alignment'],
 							type = 'select',
 							order = 2,
 							values = {
@@ -1385,7 +1385,7 @@ local function AddTextOptions(frameName)
 							end
 						},
 						JustifyV = {
-							name = 'Vertical alignment',
+							name = L['Vertical alignment'],
 							type = 'select',
 							order = 3,
 							values = {
@@ -1408,13 +1408,13 @@ local function AddTextOptions(frameName)
 					}
 				},
 				position = {
-					name = 'Position',
+					name = L['Position'],
 					type = 'group',
 					order = 50,
 					inline = true,
 					args = {
 						x = {
-							name = 'X Axis',
+							name = L['X Axis'],
 							type = 'range',
 							order = 1,
 							min = -200,
@@ -1433,7 +1433,7 @@ local function AddTextOptions(frameName)
 							end
 						},
 						y = {
-							name = 'Y Axis',
+							name = L['Y Axis'],
 							type = 'range',
 							order = 2,
 							min = -200,
@@ -1452,7 +1452,7 @@ local function AddTextOptions(frameName)
 							end
 						},
 						anchor = {
-							name = 'Anchor point',
+							name = L['Anchor point'],
 							type = 'select',
 							order = 3,
 							values = anchorPoints,
@@ -1477,8 +1477,8 @@ end
 
 local function AddBuffOptions(frameName)
 	SUI.opt.args.UnitFrames.args[frameName].args['auras'] = {
-		name = 'Buffs & Debuffs',
-		desc = 'Buff & Debuff display settings',
+		name = L['Buffs & Debuffs'],
+		desc = L['Buff & Debuff display settings'],
 		type = 'group',
 		childGroups = 'tree',
 		order = 100,
@@ -1586,7 +1586,7 @@ local function AddBuffOptions(frameName)
 							end
 						},
 						rows = {
-							name = 'Rows',
+							name = L['Rows'],
 							type = 'range',
 							order = 50,
 							min = 1,
@@ -1600,7 +1600,7 @@ local function AddBuffOptions(frameName)
 							end
 						},
 						initialAnchor = {
-							name = 'Buff anchor point',
+							name = L['Buff anchor point'],
 							type = 'select',
 							order = 70,
 							values = limitedAnchorPoints,
@@ -1612,7 +1612,7 @@ local function AddBuffOptions(frameName)
 							end
 						},
 						growthx = {
-							name = 'Growth x',
+							name = L['Growth x'],
 							type = 'select',
 							order = 71,
 							values = {
@@ -1627,7 +1627,7 @@ local function AddBuffOptions(frameName)
 							end
 						},
 						growthy = {
-							name = 'Growth y',
+							name = L['Growth y'],
 							type = 'select',
 							order = 72,
 							values = {
@@ -1650,7 +1650,7 @@ local function AddBuffOptions(frameName)
 					inline = true,
 					args = {
 						x = {
-							name = 'X Axis',
+							name = L['X Axis'],
 							type = 'range',
 							order = 1,
 							min = -100,
@@ -1669,7 +1669,7 @@ local function AddBuffOptions(frameName)
 							end
 						},
 						y = {
-							name = 'Y Axis',
+							name = L['Y Axis'],
 							type = 'range',
 							order = 2,
 							min = -100,
@@ -1688,7 +1688,7 @@ local function AddBuffOptions(frameName)
 							end
 						},
 						anchor = {
-							name = 'Anchor point',
+							name = L['Anchor point'],
 							type = 'select',
 							order = 3,
 							values = anchorPoints,
@@ -1812,12 +1812,12 @@ local function AddGroupOptions(frameName)
 		end,
 		args = {
 			showRaid = {
-				name = L['ShowRFrames'],
+				name = L['Show Raid Frames'],
 				type = 'toggle',
 				order = 1
 			},
 			showParty = {
-				name = L['PartyDispParty'],
+				name = L['Show while in party'],
 				type = 'toggle',
 				order = 2
 			},
@@ -1831,9 +1831,9 @@ local function AddGroupOptions(frameName)
 				type = 'toggle',
 				order = 2
 			},
-			bar1 = {name = L['LayoutConf'], type = 'header', order = 20},
+			bar1 = {name = L['Layout Configuration'], type = 'header', order = 20},
 			maxColumns = {
-				name = L['MaxCols'],
+				name = L['Max Columns'],
 				type = 'range',
 				order = 21,
 				width = 'full',
@@ -1860,7 +1860,7 @@ local function AddGroupOptions(frameName)
 				max = 200
 			},
 			unitsPerColumn = {
-				name = L['UnitPerCol'],
+				name = L['Units Per Column'],
 				type = 'range',
 				order = 22,
 				width = 'full',
@@ -1869,7 +1869,7 @@ local function AddGroupOptions(frameName)
 				max = 40
 			},
 			columnSpacing = {
-				name = L['ColSpacing'],
+				name = L['Column Spacing'],
 				type = 'range',
 				order = 23,
 				width = 'full',
@@ -1881,7 +1881,7 @@ local function AddGroupOptions(frameName)
 	}
 	if frameName == 'raid' then
 		SUI.opt.args.UnitFrames.args[frameName].args.general.args.Display.args.SortOrder = {
-			name = 'Sort order',
+			name = L['Sort order'],
 			type = 'select',
 			order = 3,
 			values = {['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles'},
@@ -1906,17 +1906,17 @@ end
 
 function module:InitializeOptions()
 	SUI.opt.args['UnitFrames'] = {
-		name = 'Unit frames',
+		name = L['Unit frames'],
 		type = 'group',
 		args = {
 			BaseStyle = {
-				name = 'Base frame style',
+				name = L['Base frame style'],
 				type = 'group',
 				inline = true,
 				order = 30,
 				args = {
 					reset = {
-						name = 'Reset to base style (Revert customizations)',
+						name = L['Reset to base style (Revert customizations)'],
 						type = 'execute',
 						width = 'full',
 						order = 900,
@@ -1927,7 +1927,7 @@ function module:InitializeOptions()
 				}
 			},
 			EnabledFrame = {
-				name = 'Enabled frames',
+				name = L['Enabled frames'],
 				type = 'group',
 				inline = true,
 				order = 90,
@@ -1936,7 +1936,7 @@ function module:InitializeOptions()
 		}
 	}
 	SUI.opt.args.Help.args.TextTags = {
-		name = 'Text tags',
+		name = L['Text tags'],
 		type = 'group',
 		childGroups = 'tab',
 		args = {}
@@ -1964,7 +1964,7 @@ function module:InitializeOptions()
 	end
 
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames = SUI.opt.args.UnitFrames.args.BaseStyle.args.reset
-	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = 'Reset unitframe customizations'
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = L['Reset unitframe customizations']
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.width = 'double'
 
 	for _, v in ipairs(frameList) do
@@ -2051,12 +2051,12 @@ end
 
 local function PlayerOptions()
 	SUI.opt.args['PlayerFrames'].args['frameDisplay'] = {
-		name = 'Disable Frames',
+		name = L['Disable Frames'],
 		type = 'group',
-		desc = 'Enable and Disable Specific frames',
+		desc = L['Enable and Disable Specific frames'],
 		args = {
 			player = {
-				name = L['DispPlayer'],
+				name = L['Display player'],
 				type = 'toggle',
 				order = 1,
 				get = function(info)
@@ -2072,7 +2072,7 @@ local function PlayerOptions()
 				end
 			},
 			pet = {
-				name = L['DispPet'],
+				name = L['Display Pets'],
 				type = 'toggle',
 				order = 2,
 				get = function(info)
@@ -2088,7 +2088,7 @@ local function PlayerOptions()
 				end
 			},
 			target = {
-				name = L['DispTarget'],
+				name = L["Show Party's Target"],
 				type = 'toggle',
 				order = 3,
 				get = function(info)
@@ -2104,7 +2104,7 @@ local function PlayerOptions()
 				end
 			},
 			targettarget = {
-				name = L['DispToT'],
+				name = L['Display Target of Target'],
 				type = 'toggle',
 				order = 4,
 				get = function(info)
@@ -2120,7 +2120,7 @@ local function PlayerOptions()
 				end
 			},
 			focustarget = {
-				name = L['DispFocusTar'],
+				name = L['Display focus target'],
 				type = 'toggle',
 				order = 5,
 				get = function(info)

@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_AutoSell', 'AceTimer-3.0')
-module.name = 'Auto Sell'
+module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
 local frame = CreateFrame('FRAME')

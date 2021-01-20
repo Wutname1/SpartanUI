@@ -1,7 +1,7 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
 local module = SUI:NewModule('Component_FilmEffects')
-module.name = 'Film effects'
+module.DisplayName = L['Film effects']
 module.description = 'Adds a film effect to the screen when AFK'
 local Container
 local EffectList = {'vignette', 'blur', 'crisp'}

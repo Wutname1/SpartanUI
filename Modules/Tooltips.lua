@@ -618,7 +618,7 @@ end
 function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['Tooltips'] = {
 		type = 'group',
-		name = 'Tooltips',
+		name = L['Tooltips'],
 		args = {
 			Background = {
 				name = L['Background'],
@@ -628,7 +628,7 @@ function module:BuildOptions()
 					['metal'] = 'metal',
 					['smooth'] = 'smooth',
 					['smoke'] = 'smoke',
-					['none'] = L['none']
+					['none'] = L['None']
 				},
 				get = function(info)
 					return SUI.DB.Tooltips.ActiveStyle
@@ -638,7 +638,7 @@ function module:BuildOptions()
 				end
 			},
 			OverrideLoc = {
-				name = L['OverrideTheme'],
+				name = L['Override theme'],
 				type = 'toggle',
 				order = 2,
 				desc = L['TooltipOverrideDesc'],
@@ -667,7 +667,7 @@ function module:BuildOptions()
 				name = L['Color Overlay'],
 				type = 'toggle',
 				order = 11,
-				desc = L['ColorOverlayDesc'],
+				desc = L['Apply the color to the texture or put it over the texture'],
 				get = function(info)
 					return SUI.DB.Tooltips.ColorOverlay
 				end,
@@ -677,10 +677,10 @@ function module:BuildOptions()
 				end
 			},
 			SuppressNoMatch = {
-				name = 'Suppress no rule match error',
+				name = L['Suppress no rule match error'],
 				type = 'toggle',
 				order = 11,
-				desc = L['ColorOverlayDesc'],
+				desc = L['Apply the color to the texture or put it over the texture'],
 				get = function(info)
 					return SUI.DB.Tooltips.SuppressNoMatch
 				end,
@@ -693,7 +693,7 @@ function module:BuildOptions()
 
 	for k, v in ipairs(RuleList) do
 		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v] = {
-			name = 'Display Location ' .. v,
+			name = L['Display Location'] .. ' ' .. v,
 			type = 'group',
 			inline = true,
 			order = k + 20.1,
@@ -703,7 +703,7 @@ function module:BuildOptions()
 			end,
 			args = {
 				Status = {
-					name = 'Condition',
+					name = L['Condition'],
 					type = 'select',
 					order = k + 20.2,
 					values = {
@@ -718,7 +718,7 @@ function module:BuildOptions()
 					end
 				},
 				Combat = {
-					name = 'only if in combat',
+					name = L['Only if in combat'],
 					type = 'toggle',
 					order = k + 20.3,
 					set = function(info, val)
@@ -726,7 +726,7 @@ function module:BuildOptions()
 					end
 				},
 				OnMouse = {
-					name = 'Display on mouse?',
+					name = L['Display on mouse?'],
 					type = 'toggle',
 					order = k + 20.4,
 					desc = L['TooltipOverrideDesc'],
@@ -740,7 +740,7 @@ function module:BuildOptions()
 					end
 				},
 				OverrideLoc = {
-					name = L['OverrideTheme'],
+					name = L['Override theme'],
 					type = 'toggle',
 					order = k + 20.5,
 					set = function(info, val)
@@ -748,7 +748,7 @@ function module:BuildOptions()
 					end
 				},
 				MoveAnchor = {
-					name = 'Move anchor',
+					name = L['Move anchor'],
 					type = 'execute',
 					order = k + 20.6,
 					width = 'half',
@@ -760,7 +760,7 @@ function module:BuildOptions()
 					end
 				},
 				ResetAnchor = {
-					name = 'Reset anchor',
+					name = L['Reset anchor'],
 					type = 'execute',
 					order = k + 20.7,
 					width = 'half',
@@ -773,7 +773,7 @@ function module:BuildOptions()
 	end
 	if SUI.IsClassic then
 		SUI.opt.args.ModSetting.args.Tooltips.args.VendorPrices = {
-			name = 'Display vendor prices',
+			name = L['Display vendor prices'],
 			type = 'toggle',
 			get = function(info)
 				return SUI.DB.Tooltips.VendorPrices

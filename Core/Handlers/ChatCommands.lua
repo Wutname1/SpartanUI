@@ -1,4 +1,4 @@
-local SUI, print = SUI, SUI.print
+local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Handler_ChatCommands')
 local SUIChatCommands, CommandDetails, enabled = {}, {}, false
 
@@ -97,7 +97,7 @@ end
 
 function module:OnEnable()
 	SUI.opt.args.Help.args.ChatCommands = {
-		name = 'Chat commands',
+		name = L['Chat commands'],
 		type = 'group',
 		args = {}
 	}

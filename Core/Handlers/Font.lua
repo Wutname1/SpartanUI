@@ -167,7 +167,7 @@ local function FontSetupWizard()
 
 	PageData = {
 		ID = 'FontSetup',
-		Name = 'Font style',
+		name = L['Font style'],
 		SubTitle = 'Font Style',
 		RequireDisplay = (not SUI.DB.font.SetupDone),
 		Display = function()
@@ -375,7 +375,7 @@ end
 function module:OnEnable()
 	FontSetupWizard()
 	SUI.opt.args['General'].args['font'] = {
-		name = 'Font',
+		name = L['Font'],
 		type = 'group',
 		order = 200,
 		args = {
@@ -407,10 +407,10 @@ function module:OnEnable()
 				name = L['Font style'],
 				type = 'select',
 				values = {
-					['normal'] = L['normal'],
-					['monochrome'] = L['monochrome'],
-					['outline'] = L['outline'],
-					['thickoutline'] = L['thickoutline']
+					['normal'] = L['Normal'],
+					['monochrome'] = L['Monochrome'],
+					['outline'] = L['Outline'],
+					['thickoutline'] = L['Thick outline']
 				},
 				get = function(info)
 					return SUI.DB.font.Modules.Global.Type
@@ -434,7 +434,7 @@ function module:OnEnable()
 				end
 			},
 			z = {
-				name = L['AplyGlobal'] .. ' ' .. L['AllSet'],
+				name = L['Apply Global to all'],
 				type = 'execute',
 				width = 'double',
 				func = function()
@@ -478,10 +478,10 @@ function module:BuildOptions()
 					type = 'select',
 					order = 2,
 					values = {
-						['normal'] = L['normal'],
-						['monochrome'] = L['monochrome'],
-						['outline'] = L['outline'],
-						['thickoutline'] = L['thickoutline']
+						['normal'] = L['Normal'],
+						['monochrome'] = L['Monochrome'],
+						['outline'] = L['Outline'],
+						['thickoutline'] = L['Thick outline']
 					},
 					get = function(info)
 						return SUI.DB.font.Modules[Module].Type

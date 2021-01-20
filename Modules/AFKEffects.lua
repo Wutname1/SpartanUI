@@ -1,6 +1,6 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
 local module = SUI:NewModule('Component_AFKEffects')
-module.name = 'AFK Effects'
+module.DisplayName = L['AFK Effects']
 module.description = 'Spin the camera around your character and apply some effects when AFK'
 local print = SUI.print
 ----------------------------------------
@@ -61,21 +61,21 @@ end
 ----- Base ----
 
 local function Options()
-	SUI.opt.args['ModSetting'].args['AFKEffects'] = {
-		name = 'AFK Effects',
+	SUI.opt.args.ModSetting.args.AFKEffects = {
+		name = L['AFK Effects'],
 		type = 'group',
 		get = function(info)
 			return module.DB[info[#info]]
 		end,
 		args = {
 			toggle = {
-				name = 'Toggle Effects',
+				name = L['Toggle Effects'],
 				type = 'execute',
 				order = 2,
 				-- width = 'double',
 				func = function(info, val)
 					if not SpinCamRunning then
-						DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['SpinStopMSG'])
+						DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['Spinning, to stop type /spin again'])
 					end
 					AFKToggle()
 				end
@@ -164,7 +164,7 @@ function module:OnEnable()
 
 	local ChatCommand = function(msg)
 		if not SpinCamRunning then
-			DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['SpinStopMSG'])
+			DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['Spinning, to stop type /spin again'])
 		end
 		AFKToggle()
 	end

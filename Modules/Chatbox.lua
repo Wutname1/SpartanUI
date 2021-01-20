@@ -1,4 +1,4 @@
-local SUI = SUI
+local SUI, L, print = SUI, SUI.L, SUI.print
 local StdUi = SUI.StdUi
 local module = SUI:NewModule('Component_Chatbox', 'AceEvent-3.0', 'AceHook-3.0')
 module.description = 'Lightweight quality of life chat improvements'
@@ -781,7 +781,7 @@ end
 function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['Chatbox'] = {
 		type = 'group',
-		name = 'Chatbox',
+		name = L['Chatbox'],
 		childGroups = 'tab',
 		disabled = SUI:IsModuleDisabled('Chatbox'),
 		get = function(info)
@@ -793,7 +793,7 @@ function module:BuildOptions()
 		end,
 		args = {
 			timestampFormat = {
-				name = 'Timestamp format',
+				name = L['Timestamp format'],
 				type = 'select',
 				order = 2,
 				values = {
@@ -807,25 +807,25 @@ function module:BuildOptions()
 				}
 			},
 			shortenChannelNames = {
-				name = 'Shorten channel names',
+				name = L['Shorten channel names'],
 				type = 'toggle'
 			},
 			EditBoxTop = {
-				name = 'Edit box on top',
+				name = L['Edit box on top'],
 				type = 'toggle'
 			},
 			playerlevel = {
-				name = 'Display level',
+				name = L['Display level'],
 				type = 'toggle',
 				order = 1
 			},
 			webLinks = {
-				name = 'Clickable web link',
+				name = L['Clickable web link'],
 				type = 'toggle',
 				order = 20
 			},
 			LinkHover = {
-				name = 'Hoveable game links',
+				name = L['Hoveable game links'],
 				type = 'toggle',
 				order = 21
 			}

@@ -144,12 +144,12 @@ end
 
 function module:SetupMenus()
 	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = 'Artwork Options',
+		name = L['Artwork Options'],
 		type = 'group',
 		order = 10,
 		args = {
 			Color = {
-				name = L['ArtColor'],
+				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
 				order = 1,

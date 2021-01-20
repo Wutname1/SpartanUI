@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
-module.name = 'Auto turn in'
+module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
 local ATI_Container = CreateFrame('Frame')
@@ -363,7 +363,7 @@ function module.QUEST_COMPLETE()
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
-			SUI:Print(L['Canceling turn in, quest rewards ' .. QuestRewardsWeapon .. '.'])
+			SUI:Print(L['Canceling turn in, quest rewards'] .. ' ' .. QuestRewardsWeapon .. '.')
 		elseif module.DB.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))

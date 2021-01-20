@@ -131,7 +131,7 @@ local function Options()
 				end
 			},
 			height = {
-				name = 'Height',
+				name = L['Height'],
 				type = 'range',
 				min = 20,
 				max = 1000,
@@ -163,7 +163,7 @@ local function Options()
 			end,
 			args = {
 				Status = {
-					name = 'When to hide',
+					name = L['When to hide'],
 					type = 'select',
 					order = 1,
 					values = Conditions
@@ -294,7 +294,7 @@ end
 function module:FirstTimeSetup()
 	local PageData = {
 		ID = 'Objectives',
-		Name = 'Objectives',
+		name = L['Objectives'],
 		SubTitle = 'Objectives',
 		Desc1 = 'The objectives module can hide the objectives based on diffrent conditions. This allows you to free your screen when you need it the most automatically.',
 		Desc2 = 'The defaults here are based on your current level.',

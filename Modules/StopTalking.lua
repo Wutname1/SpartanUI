@@ -4,7 +4,7 @@ if SUI.IsClassic then
 end
 local module = SUI:NewModule('Component_StopTalking')
 local L = SUI.L
-module.DisplayName = 'Stop Talking'
+module.Displayname = L['Stop Talking']
 module.description = 'Mutes the talking head frame once you have heard it.'
 ----------------------------------------------------------------------------------------------------
 local HeardLines = {}
@@ -23,7 +23,7 @@ end
 
 local function Options()
 	SUI.opt.args['ModSetting'].args['StopTalking'] = {
-		name = 'Stop Talking',
+		name = L['Stop Talking'],
 		type = 'group',
 		get = function(info)
 			return module.DB[info[#info]]
@@ -33,13 +33,13 @@ local function Options()
 		end,
 		args = {
 			persist = {
-				name = 'Keep track of voice lines forever',
+				name = L['Keep track of voice lines forever'],
 				type = 'toggle',
 				order = 1,
 				width = 'full'
 			},
 			chatOutput = {
-				name = 'Display heard voice lines in the chat.',
+				name = L['Display heard voice lines in the chat.'],
 				type = 'toggle',
 				order = 2,
 				width = 'full'

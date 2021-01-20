@@ -549,7 +549,7 @@ function module:BuildOptions()
 	--Bar Display dropdowns
 	for i, _ in ipairs({'Left', 'Right'}) do
 		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
-			name = L[i .. ' status bar'],
+			name = L['Status bar'] .. ' ' .. i,
 			order = i,
 			type = 'group',
 			inline = true,
