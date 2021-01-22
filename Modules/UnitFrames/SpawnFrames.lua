@@ -240,6 +240,7 @@ local function CreateUnitFrame(self, unit)
 	elseif string.match(unit, 'arena') then
 		unit = 'arena'
 	end
+	self.unitOnCreate = unit
 
 	local function UpdateAll()
 		local auras = module.CurrentSettings[unit].auras

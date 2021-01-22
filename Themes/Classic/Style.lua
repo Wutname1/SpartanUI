@@ -146,6 +146,7 @@ local function UnitFrameCallback(self, unit)
 	if InCombatLockdown() then
 		return
 	end
+	unit = self.unitOnCreate
 
 	local Skined = {['player'] = true, ['target'] = true}
 	if not Skined[unit] then
