@@ -378,7 +378,8 @@ function module:OnInitialize()
 						growthx = 'RIGHT',
 						growthy = 'UP',
 						position = {
-							anchor = 'TOPLEFT'
+							anchor = 'TOPLEFT',
+							y = 0
 						},
 						filters = {
 							raid = true
@@ -389,7 +390,11 @@ function module:OnInitialize()
 						ShowBoss = true,
 						initialAnchor = 'BOTTOMRIGHT',
 						growthx = 'LEFT',
-						growthy = 'UP'
+						growthy = 'UP',
+						position = {
+							anchor = 'BOTTOMRIGHT',
+							y = 0
+						}
 					},
 					Bars = {
 						auraBarHeight = 15,
