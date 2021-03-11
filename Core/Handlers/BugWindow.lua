@@ -9,6 +9,7 @@ local currentErrorIndex = nil -- Index of the error in the currentErrorList curr
 local currentErrorList = nil -- List of all the errors currently navigated in the sack
 local SessionID = nil -- Current session ID available in the sack
 local currentErrorObject = nil
+local BugGrabber = BugGrabber
 
 -----------------------------------------------------------------------
 -- Utility
@@ -364,8 +365,6 @@ local MapIcon =
 		icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm'
 	}
 )
-
-local BugGrabber = BugGrabber
 
 function MapIcon.OnClick(self, button)
 	if IsAltKeyDown() then
