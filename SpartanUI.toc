@@ -14,7 +14,7 @@
 ## X-Github: https://github.com/Wutname1/SpartanUI
 ## X-oUF: SUIUF
 ## OptionalDeps: Bartender4
-## SavedVariables: SpartanUIDB
+## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## X-BugGrabber-Display: SUIErrorDisplay
 
 # General Libraries

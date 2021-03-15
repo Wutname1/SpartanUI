@@ -1,8 +1,6 @@
 local StdUi = LibStub('StdUi'):NewInstance()
 local IconName = 'SUIErrorIcon'
 local addon = {}
-local IconDB = {}
--- local IconDB = {hide = true}
 local window
 -- Frame state variables
 local currentErrorIndex = nil -- Index of the error in the currentErrorList currently shown
@@ -348,11 +346,8 @@ function addon:OpenErrWindow()
 end
 
 local icon = LibStub('LibDBIcon-1.0', true)
-if not icon then
-	return
-end
 local ldb = LibStub:GetLibrary('LibDataBroker-1.1', true)
-if not ldb then
+if not icon or not ldb then
 	return
 end
 
@@ -362,21 +357,42 @@ local MapIcon =
 	{
 		type = 'data source',
 		text = '0',
-		icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm'
+		icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm',
+		OnClick = function()
+			if IsAltKeyDown() then
+				addon:Reset()
+			else
+				addon:OpenErrWindow()
+			end
+		end,
+		OnTooltipShow = function(tt)
+			local hint =
+				'|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
+			local line = '%d. %s (x%d)'
+			local errs = addon:GetErrors(BugGrabber:GetSessionId())
+			if #errs == 0 then
+				tt:AddLine('You have no bugs, yay!')
+			else
+				tt:AddLine('SpartanUI error handler')
+				for i, err in next, errs do
+					tt:AddLine(line:format(i, colorStack(err.message), err.counter), .5, .5, .5)
+					if i > 8 then
+						break
+					end
+				end
+			end
+			tt:AddLine(' ')
+			tt:AddLine(hint, 0.2, 1, 0.2, 1)
+		end
 	}
 )
 
-function MapIcon.OnClick(self, button)
-	if IsAltKeyDown() then
-		addon:Reset()
-	else
-		addon:OpenErrWindow()
-	end
-end
+-- function MapIcon.UpdateCoord()
+-- end
 
 function addon:updatemapIcon()
-	if icon:GetMinimapButton(name) and SUI.DBG.ErrorHandler.SUIErrorIcon then
-		icon:Refresh(IconName, SUI.DBG.ErrorHandler.SUIErrorIcon)
+	if icon:GetMinimapButton(name) then
+		icon:Refresh(IconName)
 	end
 
 	local count = #addon:GetErrors(BugGrabber:GetSessionId())
@@ -387,35 +403,16 @@ function addon:updatemapIcon()
 	end
 end
 
-do
-	local hint = '|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
-
-	local line = '%d. %s (x%d)'
-	function MapIcon.OnTooltipShow(tt)
-		local errs = addon:GetErrors(BugGrabber:GetSessionId())
-		if #errs == 0 then
-			tt:AddLine('You have no bugs, yay!')
-		else
-			tt:AddLine('SpartanUI error handler')
-			for i, err in next, errs do
-				tt:AddLine(line:format(i, colorStack(err.message), err.counter), .5, .5, .5)
-				if i > 8 then
-					break
-				end
-			end
-		end
-		tt:AddLine(' ')
-		tt:AddLine(hint, 0.2, 1, 0.2, 1)
-	end
-end
-
 _G.SUIErrorDisplay = addon
 
 local f = CreateFrame('Frame')
 f:SetScript(
 	'OnEvent',
 	function()
-		icon:Register(IconName, MapIcon, IconDB)
+		if not SUIErrorHandler then
+			SUIErrorHandler = {}
+		end
+		icon:Register(IconName, MapIcon, SUIErrorHandler)
 		icon:Hide(IconName)
 	end
 )
