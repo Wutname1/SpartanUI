@@ -26,3 +26,9 @@ jobs:
         uses: BigWigsMods/packager@master
         with:
           args: -g classic -w 25088
+
+      # release for the BCC version of the game
+      - name: Package and release for Burning Crusade Classic
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g bcc
