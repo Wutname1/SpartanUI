@@ -50,7 +50,7 @@ libs\LibBase64-1.0\LibBase64-1.0.lua
 #@non-retail@
 # libs\LibHealComm-4.0\LibHealComm-4.0.lua
 # #@version-classic@
-# libs\oUF-Classic\oUF.xml
+# libs\oUF\oUF.xml
 # #@end-version-classic@
 # #@version-bcc@
 # libs\oUF-BCC\oUF.xml
