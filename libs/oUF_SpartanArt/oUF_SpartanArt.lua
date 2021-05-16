@@ -176,7 +176,7 @@ local function Enable(self)
 		element.full = element.full or element:CreateTexture(nil, 'BACKGROUND')
 
 		self:RegisterEvent('UNIT_FACTION', Path)
-		if not oUF.IsClassic then
+		if oUF.IsRetail then
 			self:RegisterEvent('HONOR_LEVEL_UPDATE', Path, true)
 		end
 
@@ -196,7 +196,7 @@ local function Disable(self)
 		self:UnregisterEvent('UNIT_FACTION', Path)
 		self:UnregisterEvent('PLAYER_REGEN_DISABLED', Path)
 		self:UnregisterEvent('PLAYER_REGEN_ENABLED', Path)
-		if not oUF.IsClassic then
+		if oUF.IsRetail then
 			self:UnregisterEvent('HONOR_LEVEL_UPDATE', Path)
 		end
 	end

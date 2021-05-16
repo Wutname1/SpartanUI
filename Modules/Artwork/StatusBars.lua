@@ -47,7 +47,7 @@ function module:OnEnable()
     ]]
 	module.DB = SUI.DB.StatusBars
 	--Create Status Bars
-	if SUI.IsClassic and module.DB[2].display == 'honor' then
+	if (SUI.IsClassic or SUI.IsBCC) and module.DB[2].display == 'honor' then
 		module.DB[2].display = 'rep'
 	end
 

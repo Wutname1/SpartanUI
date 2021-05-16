@@ -147,8 +147,11 @@ function module.BlizzMovers()
 	end
 
 	AlertFrame()
-	TalkingHead()
-	AltPowerBar()
 	VehicleLeaveButton()
-	AbilityBars()
+
+	if SUI.IsRetail then
+		TalkingHead()
+		AltPowerBar()
+		AbilityBars()
+	end
 end

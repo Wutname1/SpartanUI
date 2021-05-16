@@ -18,29 +18,29 @@ local Conditions = {
 
 local function UpdateSize()
 	local screenHeight = GetScreenHeight()
-	local FrameHeight = min((screenHeight - (screenHeight - (_G.ObjectiveTrackerFrame:GetTop() or 0))), module.DB.height)
+	local FrameHeight = min((screenHeight - (screenHeight - (_G[frameName]:GetTop() or 0))), module.DB.height)
 
 	holder:SetSize(280, FrameHeight)
-	_G.ObjectiveTrackerFrame:SetHeight(FrameHeight)
+	_G[frameName]:SetHeight(FrameHeight)
 	MoveIt:UpdateMover('ObjectiveTracker')
 end
 
 local function MakeMoveable()
-	local ObjectiveTrackerFrame = _G.ObjectiveTrackerFrame
+	local BlizzObjectiveFrame = _G[frameName]
 	local point, anchor, secondaryPoint, x, y =
 		strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
 	holder:SetPoint(point, anchor, secondaryPoint, x, y)
 	holder:SetFrameStrata('LOW')
 	holder:SetSize(280, module.DB.height)
 	holder.OnScale = function(self, val)
-		ObjectiveTrackerFrame:SetScale(val)
+		BlizzObjectiveFrame:SetScale(val)
 	end
 
-	ObjectiveTrackerFrame:SetClampedToScreen(false)
-	ObjectiveTrackerFrame:ClearAllPoints()
-	ObjectiveTrackerFrame:SetPoint('TOP', holder, 'TOP')
-	ObjectiveTrackerFrame:SetMovable(true)
-	ObjectiveTrackerFrame:SetUserPlaced(true)
+	BlizzObjectiveFrame:SetClampedToScreen(false)
+	BlizzObjectiveFrame:ClearAllPoints()
+	BlizzObjectiveFrame:SetPoint('TOP', holder, 'TOP')
+	BlizzObjectiveFrame:SetMovable(true)
+	BlizzObjectiveFrame:SetUserPlaced(true)
 
 	MoveIt:CreateMover(holder, 'ObjectiveTracker', 'Objective Tracker', nil, 'Blizzard UI')
 	UpdateSize()
@@ -222,7 +222,7 @@ function module:OnEnable()
 	module:FirstTimeSetup()
 
 	-- Add Fade in and out
-	if SUI.IsClassic then
+	if SUI.IsClassic or SUI.IsBCC then
 		frameName = 'QuestWatchFrame'
 	end
 

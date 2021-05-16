@@ -1,5 +1,5 @@
 local SUI = SUI
-if SUI.IsClassic then
+if not SUI.IsRetail then
 	return
 end
 local module = SUI:NewModule('Component_StopTalking')

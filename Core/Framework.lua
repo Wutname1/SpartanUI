@@ -10,6 +10,7 @@ SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+SUI.IsBCC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
 SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 local wowVersion = 'Retail'

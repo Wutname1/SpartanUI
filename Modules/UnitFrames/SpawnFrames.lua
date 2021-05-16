@@ -71,7 +71,7 @@ local IndicatorList = {
 	'PetHappiness'
 }
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
-if SUI.IsClassic then
+if SUI.IsClassic or SUI.IsBCC then
 	GroupFrames = {'raid', 'party'}
 end
 
