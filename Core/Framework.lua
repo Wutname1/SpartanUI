@@ -45,7 +45,7 @@ SUI.AddLib('AceC', 'AceConfig-3.0')
 SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
 SUI.AddLib('AceCR', 'AceConfigRegistry-3.0')
 SUI.AddLib('Compress', 'LibCompress')
-SUI.AddLib('Base64', 'LibBase64-1.0')
+SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
 
 --init StdUI Instance for the whole addon
