@@ -59,7 +59,7 @@ eventFrame:SetScript(
 			as:Embed(addon)
 		end
 
-		-- Make sure we grab any errors fired before bugsack loaded.
+		-- Make sure we grab any errors fired before we loaded.
 		local session = addon:GetErrors(BugGrabber:GetSessionId())
 		if #session > 0 then
 			onError()
@@ -413,7 +413,9 @@ f:SetScript(
 			SUIErrorHandler = {}
 		end
 		icon:Register(IconName, MapIcon, SUIErrorHandler)
-		icon:Hide(IconName)
+		if #addon:GetErrors(BugGrabber:GetSessionId()) == 0 then
+			icon:Hide(IconName)
+		end
 	end
 )
 f:RegisterEvent('PLAYER_LOGIN')
