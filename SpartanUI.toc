@@ -9,6 +9,7 @@
 ## Author: Wutname1
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
+## X-Wago-ID: vEGPqeN1
 ## X-Github: https://github.com/Wutname1/SpartanUI
 ## X-oUF: SUIUF
 ## OptionalDeps: Bartender4
@@ -40,35 +41,32 @@ libs\AceSerializer-3.0\AceSerializer-3.0.xml
 libs\LibCompress\LibCompress.lua
 libs\LibBase64-1.0\LibBase64-1.0.lua
 #@retail@
-# libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
+libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 #@end-retail@
 
 # Unit Frame libraries
-#@retail@
-# libs\oUF\oUF.xml
-#@end-retail@
 #@non-retail@
 # libs\LibHealComm-4.0\LibHealComm-4.0.lua
-# #@version-classic@
-# libs\oUF\oUF.xml
-# #@end-version-classic@
-# #@version-bcc@
-# libs\oUF-BCC\oUF.xml
-# #@end-version-bcc@
 #@end-non-retail@
+#@version-classic@
+# libs\LibClassicDurations\LibClassicDurations.xml
+# libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
+# libs\LibClassicCasterino\LibClassicCasterino.lua
+#@end-version-classic@
 
+#@version-retail@
+libs\oUF\oUF.xml
+#@end-version-retail@
+#@version-classic@
+# libs\oUF-Classic\oUF.xml
+#@end-version-classic@
+#@version-bcc@
+# libs\oUF-BCC\oUF.xml
+#@end-version-bcc@
 libs\oUF_AuraBars\oUF_AuraBars.lua
 libs\oUF_SpartanArt\oUF_SpartanArt.lua
 libs\oUF_QuestMobIndicator\oUF_QuestMobIndicator.lua
 libs\oUF_Plugins\Loader.xml
-
-#@non-retail@
-# #@version-classic@
-# libs\LibClassicDurations\LibClassicDurations.xml
-# libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
-# libs\LibClassicCasterino\LibClassicCasterino.lua
-# #@end-version-classic@
-#@end-non-retail@
 
 # Localization
 lang\localization.xml
