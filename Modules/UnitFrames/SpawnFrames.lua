@@ -1047,8 +1047,6 @@ local function CreateUnitFrame(self, unit)
 
 		self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
 		self.SUI_RaidGroup:SetSize(elements.SUI_RaidGroup.size, elements.SUI_RaidGroup.size)
-		-- self.SUI_RaidGroup:SetTexture('Interface\\BUTTONS\\WHITE8X8')
-		-- self.SUI_RaidGroup:SetVertexColor(0, 0, 0, .5)
 
 		self.SUI_RaidGroup.Text = self:CreateFontString(nil, 'BORDER')
 		SUI:FormatFont(self.SUI_RaidGroup.Text, elements.SUI_RaidGroup.size, 'UnitFrames')
@@ -1235,11 +1233,7 @@ local function CreateUnitFrame(self, unit)
 				end
 
 				-- Register with oUF
-				if SUI.IsClassic then
-					self.ClassPowerClassic = ClassPower
-				else
-					self.ClassPower = ClassPower
-				end
+				self.ClassPower = ClassPower
 
 				--Totem Bar
 				if SUI.IsRetail then
