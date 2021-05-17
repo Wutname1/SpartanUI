@@ -687,13 +687,13 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		--Buff Icons
-		local Buffs = CreateFrame('Frame', nil, self)
+		local Buffs = CreateFrame('Frame', unit .. 'Buffs', self)
 		-- Buffs.PostUpdate = PostUpdateAura
 		-- Buffs.CustomFilter = customFilter
 		self.Buffs = Buffs
 
 		--Debuff Icons
-		local Debuffs = CreateFrame('Frame', nil, self)
+		local Debuffs = CreateFrame('Frame', unit .. 'Debuffs', self)
 		-- Debuffs.PostUpdate = PostUpdateAura
 		-- Debuffs.CustomFilter = customFilter
 		self.Debuffs = Debuffs
