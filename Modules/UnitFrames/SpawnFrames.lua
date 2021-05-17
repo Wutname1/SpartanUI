@@ -701,6 +701,7 @@ local function CreateUnitFrame(self, unit)
 	do -- setup status bars
 		do -- cast bar
 			local cast = CreateFrame('StatusBar', nil, self)
+			cast:Hide()
 			cast:SetFrameStrata('BACKGROUND')
 			cast:SetFrameLevel(2)
 			cast:SetStatusBarTexture(Smoothv2)
