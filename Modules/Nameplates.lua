@@ -370,7 +370,7 @@ local NamePlateFactory = function(frame, unit)
 		)
 
 		-- Hots/Dots
-		local Auras = CreateFrame('Frame', nil, frame)
+		local Auras = CreateFrame('Frame', unit .. 'Auras', frame)
 		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
 		Auras:SetSize(frame:GetWidth(), 16)
 		if UnitReaction(unit, 'player') <= 2 then
