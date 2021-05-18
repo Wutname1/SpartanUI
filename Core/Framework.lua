@@ -1386,6 +1386,16 @@ function SUI:OnInitialize()
 		)
 		SUI5Indicator:SetBackdropColor(1, 0, 0, .5)
 		SUI5Indicator:SetBackdropBorderColor(0.00, 0.00, 0.00, 1)
+		SUI5Indicator:HookScript(
+			'OnEnter',
+			function()
+				SUI.print('---------------', true)
+				SUI:Print(
+					'SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp'
+				)
+				SUI.print('---------------', true)
+			end
+		)
 	end
 
 	-- Add Profiles to Options
