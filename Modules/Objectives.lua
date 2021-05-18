@@ -32,6 +32,7 @@ local function MakeMoveable()
 	holder:SetPoint(point, anchor, secondaryPoint, x, y)
 	holder:SetFrameStrata('LOW')
 	holder:SetSize(280, module.DB.height)
+	holder:Hide()
 	holder.OnScale = function(self, val)
 		BlizzObjectiveFrame:SetScale(val)
 	end
