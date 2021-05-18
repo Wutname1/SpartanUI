@@ -17,7 +17,7 @@ local SetBarVisibility = function(side, state)
 		['BT4BarMicroMenu'] = 'right'
 	}
 	for k, v in pairs(bt4Positions) do
-		if v == side and not _G[k].isMoved() then
+		if v == side and _G[k].isMoved and not _G[k].isMoved() then
 			if state == 'hide' then
 				_G[k]:Hide()
 			elseif state == 'show' then
