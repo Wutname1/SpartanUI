@@ -733,6 +733,7 @@ local function CreateUnitFrame(self, unit)
 			Shield:SetSize(20, 20)
 			Shield:SetPoint('CENTER', cast, 'RIGHT')
 			Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
+			Shield:Hide()
 			local function PostCastNotInterruptible(unit)
 				if not elements.Castbar.interruptable then
 					self.Castbar.Shield:Hide()
