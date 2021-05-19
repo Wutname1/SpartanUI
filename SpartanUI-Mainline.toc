@@ -1,7 +1,4 @@
 ## Interface: 90005
-## Interface-Classic: 11307
-## Interface-BCC: 20501
-
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
