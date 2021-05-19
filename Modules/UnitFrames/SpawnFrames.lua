@@ -972,6 +972,7 @@ local function CreateUnitFrame(self, unit)
 				mainBar:SetPoint('TOP')
 				mainBar:SetPoint('BOTTOM')
 				mainBar:SetWidth(200)
+				mainBar:Hide()
 
 				local altBar = CreateFrame('StatusBar', nil, self.AdditionalPower)
 				altBar:SetReverseFill(true)
@@ -980,6 +981,7 @@ local function CreateUnitFrame(self, unit)
 				altBar:SetPoint('TOP')
 				altBar:SetPoint('BOTTOM')
 				altBar:SetWidth(200)
+				altBar:Hide()
 
 				self.PowerPrediction = {
 					mainBar = mainBar,
