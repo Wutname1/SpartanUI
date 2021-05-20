@@ -2047,6 +2047,18 @@ function module:InitializeOptions()
 	SUI.opt.args.UnitFrames.args.player.args.general.args.General.args.range.hidden = true
 end
 
+function module:ScaleFrames(scale)
+	if SUI:IsModuleDisabled('MoveIt') then
+		return
+	end
+	local MoveIt = SUI:GetModule('Component_MoveIt')
+	for _, v in ipairs(frameList) do
+		if module.frames[v] and module.frames[v].mover then
+			local newScale = module.frames[v].mover.defaultScale * (scale + .08) -- Add .08 to use .92 (the default scale) as 1.
+			module.frames[v]:scale(newScale)
+		end
+	end
+end
 ----------------------------------------------------------------------------------------------------
 
 local function PlayerOptions()

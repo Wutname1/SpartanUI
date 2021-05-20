@@ -169,6 +169,9 @@ function module:UpdateScale()
 	if style.UpdateScale then
 		style:UpdateScale()
 	end
+	if SUI:IsModuleEnabled('UnitFrames') then
+		SUI:GetModule('Component_UnitFrames'):ScaleFrames(SUI.DB.scale)
+	end
 
 	-- Call Minimap scale update
 	if SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap.scaleWithArt then
