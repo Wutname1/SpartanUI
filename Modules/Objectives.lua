@@ -216,7 +216,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.Objectives or module.Override then
+	if SUI:IsModuleDisabled('Objectives') or module.Override then
 		return
 	end
 
@@ -377,21 +377,18 @@ function module:FirstTimeSetup()
 			end
 		end,
 		Next = function()
-			if SUI:IsModuleEnabled('CombatLog') and (not module.Override) then
-				local SUI_Win = SUI:GetModule('SetupWizard').window.content
-				module.DB.SetupDone = true
-				module.DB.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
+			module.DB.SetupDone = true
+			local SUI_Win = SUI:GetModule('SetupWizard').window.content
+			module.DB.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
-				for k, v in ipairs(RuleList) do
-					module.DB[v] = {
-						Status = SUI_Win.Objectives[k].Condition:GetValue(),
-						Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
-					}
-				end
+			for k, v in ipairs(RuleList) do
+				module.DB[v] = {
+					Status = SUI_Win.Objectives[k].Condition:GetValue(),
+					Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
+				}
 			end
 		end,
 		Skip = function()
-			module.DB.SetupDone = false
 		end
 	}
 	SUI:GetModule('SetupWizard'):AddPage(PageData)
