@@ -52,8 +52,8 @@ function module:OnInitialize()
 		}
 	}
 	-- Default frame posistions
-	UnitFrames.FramePos['Tribal'] = {
-		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-45,250'
+	UnitFrames.FramePos.Tribal = {
+		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
 	}
 	module:CreateArtwork()
 end

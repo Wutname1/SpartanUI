@@ -275,9 +275,9 @@ function module:OnInitialize()
 	}
 
 	UnitFrames.FramePos.Classic = {
-		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-173,153',
+		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-173,153',
 		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
-		['target'] = 'BOTTOMLEFT,UIParent,BOTTOM,173,153',
+		['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,173,153',
 		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-4'
 	}
 
