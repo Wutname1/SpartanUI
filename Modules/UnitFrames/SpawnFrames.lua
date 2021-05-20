@@ -1000,7 +1000,7 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'Name')
 		self:Tag(self.Name, elements.Name.text)
 
-		if SUI.IsClassic and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
+		if (SUI.IsClassic or SUI.IsBCC) and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
 			-- Register it with oUF
 			local HappinessIndicator = self:CreateTexture(nil, 'OVERLAY')
 			HappinessIndicator.btn = CreateFrame('Frame', nil, self)
@@ -1086,7 +1086,7 @@ local function CreateUnitFrame(self, unit)
 			local status
 			local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 			local honorRewardInfo = false
-			if not SUI.IsClassic then
+			if SUI.IsRetail then
 				honorRewardInfo = C_PvP.GetHonorRewardInfo(UnitHonorLevel(unit))
 			end
 
