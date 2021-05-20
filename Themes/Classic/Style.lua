@@ -191,14 +191,14 @@ end
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
 	BarHandler.BarPosition.BT4.Classic = {
-		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-358,81',
-		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,32',
+		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,82',
+		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,35',
 		--
-		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,359,80',
-		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,359,33',
+		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,81',
+		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,35',
 		--
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-2,3',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,4,3',
+		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
 		--
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
@@ -210,10 +210,10 @@ function module:OnInitialize()
 		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
 	}
 	BarHandler.BarScale.BT4.Classic = {
-		['BT4Bar1'] = 0.78,
-		['BT4Bar2'] = 0.78,
-		['BT4Bar3'] = 0.78,
-		['BT4Bar4'] = 0.78,
+		['BT4Bar1'] = 0.77,
+		['BT4Bar2'] = 0.77,
+		['BT4Bar3'] = 0.77,
+		['BT4Bar4'] = 0.77,
 		['BT4Bar5'] = 0.75,
 		['BT4Bar6'] = 0.75,
 		['BT4BarBagBar'] = 0.6,
@@ -275,9 +275,9 @@ function module:OnInitialize()
 	}
 
 	UnitFrames.FramePos.Classic = {
-		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-173,153',
+		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,161',
 		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
-		['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,173,153',
+		['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,161',
 		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-4'
 	}
 
