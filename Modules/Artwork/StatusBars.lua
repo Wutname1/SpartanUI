@@ -523,7 +523,7 @@ function module:BuildOptions()
 		['az'] = L['Azerite Bar'],
 		['disabled'] = L['Disabled']
 	}
-	if SUI.IsClassic then
+	if (SUI.IsClassic or SUI.IsBCC) then
 		StatusBars = {
 			['xp'] = L['Experiance'],
 			['rep'] = L['Reputation'],
