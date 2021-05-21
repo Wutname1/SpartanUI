@@ -17,6 +17,9 @@ local wowVersion = 'Retail'
 if SUI.IsClassic then
 	wowVersion = 'Classic'
 end
+if SUI.IsBCC then
+	wowVersion = 'BCC'
+end
 --@alpha@
 SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
 --@end-alpha@
@@ -131,6 +134,7 @@ local DBdefault = {
 	},
 	Styles = {
 		['**'] = {
+			Frames = {},
 			Artwork = {
 				barBG = {
 					['**'] = {
@@ -176,128 +180,6 @@ local DBdefault = {
 				Right = {
 					Grow = 'RIGHT',
 					Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,0'
-				}
-			},
-			Frames = {
-				player = {
-					Buffs = {
-						Display = true,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = false,
-						Mode = 'both'
-					},
-					Debuffs = {
-						Display = true,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = true,
-						Mode = 'both'
-					}
-				},
-				target = {
-					Buffs = {
-						Display = true,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = false,
-						Mode = 'both'
-					},
-					Debuffs = {
-						Display = true,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = true,
-						Mode = 'bars'
-					}
-				},
-				targettarget = {
-					Buffs = {
-						Display = false,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = false,
-						Mode = 'disabled'
-					},
-					Debuffs = {
-						Display = true,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = true,
-						Mode = 'icons'
-					}
-				},
-				pet = {
-					Buffs = {
-						Display = true,
-						Number = 10,
-						size = 15,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = false,
-						Mode = 'icons'
-					},
-					Debuffs = {
-						Display = true,
-						Number = 10,
-						size = 15,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = false,
-						Mode = 'icons'
-					}
-				},
-				focus = {
-					Buffs = {
-						Display = true,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = false,
-						Mode = 'icons'
-					},
-					Debuffs = {
-						Display = true,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = true,
-						Mode = 'icons'
-					}
-				},
-				focustarget = {
-					Buffs = {
-						Display = false,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = false,
-						Mode = 'disabled'
-					},
-					Debuffs = {
-						Display = false,
-						Number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						onlyShowPlayer = true,
-						Mode = 'disabled'
-					}
 				}
 			},
 			Minimap = {
@@ -517,8 +399,20 @@ local DBdefault = {
 							graphic = 'Classic'
 						}
 					},
-					Buffs = {Mode = 'icons'},
-					Debuffs = {Mode = 'icons'},
+					auras = {
+						Buffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						}
+					},
 					elements = {
 						Castbar = {
 							height = 15
@@ -598,6 +492,20 @@ local DBdefault = {
 				target = {
 					width = 153,
 					scale = 0.91,
+					auras = {
+						Buffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						}
+					},
 					artwork = {
 						full = {
 							enabled = true,
@@ -658,13 +566,23 @@ local DBdefault = {
 								y = 0
 							}
 						}
-					},
-					Buffs = {Mode = 'icons'},
-					Debuffs = {Mode = 'bars'}
+					}
 				},
 				pet = {
-					Buffs = {Mode = 'icons'},
-					Debuffs = {Mode = 'icons'},
+					auras = {
+						Buffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						}
+					},
 					artwork = {
 						full = {
 							enabled = true,
@@ -713,8 +631,20 @@ local DBdefault = {
 					}
 				},
 				targettarget = {
-					Buffs = {Mode = 'icons'},
-					Debuffs = {Mode = 'icons'},
+					auras = {
+						Buffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						}
+					},
 					artwork = {
 						full = {
 							enabled = true,
@@ -754,8 +684,7 @@ local DBdefault = {
 							height = 14
 						}
 					}
-				},
-				focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
+				}
 			},
 			Minimap = {
 				Movable = false,
@@ -808,9 +737,7 @@ local DBdefault = {
 						Portrait = {
 							position = 'right'
 						}
-					},
-					Buffs = {Mode = 'icons'},
-					Debuffs = {Mode = 'icons'}
+					}
 				},
 				target = {
 					artwork = {
@@ -822,13 +749,8 @@ local DBdefault = {
 							enabled = true,
 							graphic = 'Transparent'
 						}
-					},
-					Buffs = {Mode = 'icons'},
-					Debuffs = {Mode = 'bars'}
-				},
-				pet = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
-				targettarget = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}},
-				focus = {Buffs = {Mode = 'icons'}, Debuffs = {Mode = 'icons'}}
+					}
+				}
 			},
 			Minimap = {
 				shape = 'square',
@@ -861,7 +783,6 @@ local DBdefault = {
 			}
 		},
 		Minimal = {
-			Frames = {},
 			Minimap = {
 				UnderVehicleUI = false,
 				scaleWithArt = false,

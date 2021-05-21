@@ -275,10 +275,10 @@ function module:OnInitialize()
 	}
 
 	UnitFrames.FramePos.Classic = {
-		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,161',
+		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
 		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
-		['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,161',
-		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-4'
+		['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
+		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5'
 	}
 
 	CreateArtwork()

@@ -377,6 +377,7 @@ function module:OnInitialize()
 						initialAnchor = 'BOTTOMLEFT',
 						growthx = 'RIGHT',
 						growthy = 'UP',
+						mode = 'icons',
 						position = {
 							anchor = 'TOPLEFT',
 							y = 0
@@ -391,6 +392,7 @@ function module:OnInitialize()
 						initialAnchor = 'BOTTOMRIGHT',
 						growthx = 'LEFT',
 						growthy = 'UP',
+						mode = 'icons',
 						position = {
 							anchor = 'BOTTOMRIGHT',
 							y = 0
@@ -804,10 +806,16 @@ function module:OnInitialize()
 				},
 				auras = {
 					Buffs = {
-						enabled = true
+						enabled = true,
+						position = {
+							anchor = 'TOPLEFT'
+						}
 					},
 					Debuffs = {
-						enabled = true
+						enabled = true,
+						position = {
+							anchor = 'TOPRIGHT'
+						}
 					},
 					Bars = {
 						enabled = true
