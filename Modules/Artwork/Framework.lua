@@ -356,9 +356,8 @@ function module:OnEnable()
 
 	SetupPage()
 	VehicleUI()
-	module:updateOffset()
-	module:updateViewport()
-	module:RegisterEvent('ADDON_LOADED', 'updateOffset')
+	StyleUpdate()
+	module:RegisterEvent('ADDON_LOADED', StyleUpdate)
 end
 
 function module:UpdateBarBG()
