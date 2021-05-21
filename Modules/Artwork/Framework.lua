@@ -2,6 +2,8 @@ local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Component_Artwork', 'AceTimer-3.0', 'AceEvent-3.0')
 module.ActiveStyle = {}
 module.BarBG = {}
+module.description = 'CORE: Provides the graphical looks of SUI'
+module.Core = true
 local styleArt
 local petbattle = CreateFrame('FRAME')
 -------------------------------------------------

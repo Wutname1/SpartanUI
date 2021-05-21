@@ -110,12 +110,18 @@ function module:OnEnable()
 				setLogging(false, 'disabled')
 			end
 		end,
-		'Toggles combat logging'
+		'Toggles combat logging',
+		nil,
+		true
 	)
 end
 
 function module:OnDisable()
-	CombatLog_Watcher = nil
+	if SUI.IsRetail then
+		CombatLog_Watcher:UnregisterEvent('CHALLENGE_MODE_START')
+	end
+	CombatLog_Watcher:UnregisterEvent('ZONE_CHANGED_NEW_AREA')
+	CombatLog_Watcher:UnregisterEvent('PLAYER_ENTERING_WORLD')
 end
 
 function module:announce(msg)

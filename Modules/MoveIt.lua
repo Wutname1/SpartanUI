@@ -2,6 +2,7 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 local StdUi = LibStub('StdUi'):NewInstance()
 local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
+MoveIt.Core = true
 local MoverList = {}
 local colors = {
 	bg = {0.0588, 0.0588, 0, .85},
@@ -723,7 +724,18 @@ function MoveIt:OnInitialize()
 	coordFrame.Title:SetAlpha(.8)
 end
 
-function MoveIt:Enable()
+function MoveIt:CombatLockdown()
+	if MoveEnabled then
+		MoveIt:MoveIt()
+		print('Disabling movement system while in combat')
+	end
+end
+
+function MoveIt:OnEnable()
+	if SUI:IsModuleDisabled('MoveIt') then
+		return
+	end
+
 	local ChatCommand = function(arg)
 		if InCombatLockdown() then
 			print(ERR_NOT_IN_COMBAT)
@@ -760,7 +772,9 @@ function MoveIt:Enable()
 		{
 			reset = 'Reset all moved objects',
 			tips = 'Disable tips from being displayed in chat when movement system is activated'
-		}
+		},
+		nil,
+		true
 	)
 
 	local function OnKeyDown(self, key)
@@ -782,20 +796,6 @@ function MoveIt:Enable()
 	MoverWatcher:SetScript('OnKeyDown', OnKeyDown)
 
 	self:RegisterEvent('PLAYER_REGEN_DISABLED', 'CombatLockdown')
-end
-
-function MoveIt:CombatLockdown()
-	if MoveEnabled then
-		MoveIt:MoveIt()
-		print('Disabling movement system while in combat')
-	end
-end
-
-function MoveIt:OnEnable()
-	if SUI:IsModuleDisabled('MoveIt') then
-		return
-	end
-	MoveIt:Enable()
 end
 
 function MoveIt:Options()

@@ -695,7 +695,13 @@ function module:OnEnable()
 end
 
 function module:OnDisable()
-	ATI_Container = nil
+	ATI_Container:UnregisterEvent('GOSSIP_SHOW') -- multiple quests, and NPC chat screen
+	ATI_Container:UnregisterEvent('QUEST_DETAIL') -- new quest screen
+	ATI_Container:UnregisterEvent('QUEST_GREETING')
+	ATI_Container:UnregisterEvent('QUEST_PROGRESS')
+	ATI_Container:UnregisterEvent('QUEST_COMPLETE') -- quest turn in screen
+	ATI_Container:UnregisterEvent('MERCHANT_SHOW')
+	ATI_Container:UnregisterEvent('MERCHANT_CLOSED')
 end
 
 function module:BuildOptions()

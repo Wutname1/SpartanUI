@@ -1,6 +1,7 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_Minimap', 'AceTimer-3.0')
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
+module.Core = true
 local MoveIt, Settings
 local UserSettings = SUI.DB.MiniMap
 ----------------------------------------------------------------------------------------------------

@@ -668,7 +668,7 @@ function module:OnInitialize()
 end
 
 function module:OnDisable()
-	SUI.opt.args['ModSetting'].args['Nameplates'].enabled = false
+	SUI.opt.args.ModSetting.args.Nameplates.enabled = false
 end
 
 function module:OnEnable()
@@ -676,17 +676,20 @@ function module:OnEnable()
 		return
 	end
 	module:BuildOptions()
-	SUIUF:SetActiveStyle('Spartan_NamePlates')
-	SUIUF:SpawnNamePlates(nil, NameplateCallback)
 
-	-- oUF is not hiding the mana bar. So we need to hide it.
-	if ClassNameplateManaBarFrame then
-		ClassNameplateManaBarFrame:HookScript(
-			'OnShow',
-			function()
-				ClassNameplateManaBarFrame:Hide()
-			end
-		)
+	if (not oUF_NamePlateDriver) then
+		SUIUF:SetActiveStyle('Spartan_NamePlates')
+		SUIUF:SpawnNamePlates(nil, NameplateCallback)
+
+		-- oUF is not hiding the mana bar. So we need to hide it.
+		if ClassNameplateManaBarFrame then
+			ClassNameplateManaBarFrame:HookScript(
+				'OnShow',
+				function()
+					ClassNameplateManaBarFrame:Hide()
+				end
+			)
+		end
 	end
 end
 
@@ -717,7 +720,7 @@ function module:BuildOptions()
 		end
 	end
 
-	SUI.opt.args['ModSetting'].args['Nameplates'] = {
+	SUI.opt.args.ModSetting.args.Nameplates = {
 		type = 'group',
 		name = L['Nameplates'],
 		childGroups = 'tab',

@@ -50,6 +50,11 @@ function module:AddPage(PageData)
 		module:OnInitialize()
 	end
 
+	-- Do not allow more than 1 page with a specific ID
+	if PriorityPageList[PageData.ID] or StandardPageList[PageData.ID] then
+		return
+	end
+
 	-- Incriment the page count/id by 1
 	TotalPageCount = TotalPageCount + 1
 

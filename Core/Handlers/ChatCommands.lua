@@ -73,9 +73,12 @@ local function AddToOptions(arg)
 	end
 end
 
-function SUI:AddChatCommand(arg, func, commandDescription, arguments)
+function SUI:AddChatCommand(arg, func, commandDescription, arguments, silent)
 	if SUIChatCommands[arg] then
-		SUI:Error(arg .. ' Chat command has already been added')
+		if not silent then
+			SUI:Error(arg .. ' Chat command has already been added')
+		end
+
 		return
 	end
 

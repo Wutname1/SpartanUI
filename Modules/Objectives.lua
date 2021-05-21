@@ -216,11 +216,11 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	module:FirstTimeSetup()
+
 	if SUI:IsModuleDisabled('Objectives') or module.Override then
 		return
 	end
-
-	module:FirstTimeSetup()
 
 	-- Add Fade in and out
 	if SUI.IsClassic or SUI.IsBCC then
@@ -378,17 +378,18 @@ function module:FirstTimeSetup()
 		end,
 		Next = function()
 			module.DB.SetupDone = true
-			local SUI_Win = SUI:GetModule('SetupWizard').window.content
-			module.DB.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
-			for k, v in ipairs(RuleList) do
-				module.DB[v] = {
-					Status = SUI_Win.Objectives[k].Condition:GetValue(),
-					Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
-				}
+			if SUI:IsModuleEnabled('Objectives') then
+				local SUI_Win = SUI:GetModule('SetupWizard').window.content
+				module.DB.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
+
+				for k, v in ipairs(RuleList) do
+					module.DB[v] = {
+						Status = SUI_Win.Objectives[k].Condition:GetValue(),
+						Combat = (SUI_Win.Objectives[k].InCombat:GetChecked() == true or false)
+					}
+				end
 			end
-		end,
-		Skip = function()
 		end
 	}
 	SUI:GetModule('SetupWizard'):AddPage(PageData)

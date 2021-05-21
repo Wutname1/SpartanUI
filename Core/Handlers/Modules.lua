@@ -112,7 +112,8 @@ local function ModuleSelectionPage()
 						end
 					)
 					checkbox:SetChecked(not SUI.DB.DisabledComponents[RealName])
-
+					checkbox.name = RealName
+					checkbox.Core = (submodule.Core or false)
 					itemsMatrix[(#itemsMatrix + 1)] = checkbox
 				end
 			end
@@ -130,6 +131,28 @@ local function ModuleSelectionPage()
 					left = true
 				end
 			end
+
+			local btnOptional = StdUi:Button(SUI_Win.ModSelection, 130, 18, 'Toggle optional(s)')
+			btnOptional.tooltip =
+				StdUi:FrameTooltip(
+				btnOptional,
+				'Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.',
+				'OptionalTooltip',
+				'TOP',
+				true
+			)
+			btnOptional:SetScript(
+				'OnClick',
+				function(this)
+					for i, v in ipairs(itemsMatrix) do
+						if not v.Core then
+							v:Click()
+						end
+					end
+				end
+			)
+			StdUi:GlueBottom(btnOptional, SUI_Win.ModSelection, 0, 0)
+			SUI_Win.ModSelection.btnOptional = btnOptional
 		end,
 		Next = function()
 			SUI.DB.SetupDone = true

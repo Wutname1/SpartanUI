@@ -1899,12 +1899,14 @@ end
 
 -- For Setting a unifid skin across all registered Skinable modules
 function SUI:SetActiveStyle(skin)
+	SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
+
 	for name, submodule in SUI:IterateModules() do
 		if submodule.SetActiveStyle then
 			submodule:SetActiveStyle(skin)
 		end
 	end
 
-	-- Ensure this is the last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
+	-- Ensure this is the First and last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
 	SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
 end
