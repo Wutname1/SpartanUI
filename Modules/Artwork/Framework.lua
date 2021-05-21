@@ -33,8 +33,7 @@ local function SetupPage()
 					return
 				end
 
-				module:SetActiveStyle(NewStyle)
-				SUI:GetModule('Component_UnitFrames'):SetActiveStyle(NewStyle)
+				SUI:SetActiveStyle(NewStyle)
 			end
 
 			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal', 'Arcane', 'Tribal'}) do
