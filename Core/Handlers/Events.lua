@@ -1,4 +1,4 @@
-local SUI, L, Lib = SUI, SUI.L, SUI.Lib
+local SUI = SUI
 local module = SUI:NewModule('Handler_Events', 'AceEvent-3.0')
 SUI.Event = module
 local SUIEvents = {}
@@ -8,7 +8,7 @@ function module:SendEvent(EventName, ...)
 		return
 	end
 
-	for k, v in pairs(SUIEvents[EventName]) do
+	for _, v in pairs(SUIEvents[EventName]) do
 		v(...)
 	end
 end

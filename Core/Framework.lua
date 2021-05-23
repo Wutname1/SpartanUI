@@ -1256,14 +1256,14 @@ local function reloaduiWindow()
 	-- Actions
 	popup.btnClose:SetScript(
 		'OnClick',
-		function(this)
+		function()
 			-- Perform the Page's Custom Next action
 			popup:Hide()
 		end
 	)
 	popup.btnReload:SetScript(
 		'OnClick',
-		function(this)
+		function()
 			-- Perform the Page's Custom Next action
 			ReloadUI()
 		end
@@ -1554,7 +1554,7 @@ function SUI:isPartialMatch(frameName, tab)
 	local result = false
 
 	for _, v in ipairs(tab) do
-		local startpos, endpos = strfind(strlower(frameName), strlower(v))
+		local startpos, _ = strfind(strlower(frameName), strlower(v))
 		if (startpos == 1) then
 			result = true
 		end
@@ -1888,7 +1888,7 @@ function SUI:OnEnable()
 	--Reopen options screen if flagged to do so after a reloadui
 	SUI:RegisterEvent(
 		'PLAYER_ENTERING_WORLD',
-		function(self, ...)
+		function()
 			if SUI.DB.OpenOptions then
 				SUI:ChatCommand()
 				SUI.DB.OpenOptions = false

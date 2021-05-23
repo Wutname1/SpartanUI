@@ -287,7 +287,7 @@ function module:SetupWizard(RequiredPagesOnly)
 
 	module.window.Skip:SetScript(
 		'OnClick',
-		function(this)
+		function()
 			-- Perform the Page's Custom Skip action
 			if CurrentDisplay.Skip then
 				CurrentDisplay.Skip()
@@ -299,7 +299,7 @@ function module:SetupWizard(RequiredPagesOnly)
 
 	module.window.Next:SetScript(
 		'OnClick',
-		function(this)
+		function()
 			-- Perform the Page's Custom Next action
 			if CurrentDisplay.Next then
 				CurrentDisplay.Next()
@@ -336,7 +336,7 @@ function module:OnEnable()
 	end
 	SUI:AddChatCommand(
 		'setup',
-		function(args)
+		function()
 			if module.window then
 				module.window:Hide()
 			end
@@ -401,7 +401,7 @@ local function WelcomePage()
 			WelcomePage.CopyProfileButton = StdUi:Button(WelcomePage, 60, 20, 'COPY')
 			WelcomePage.CopyProfileButton:SetScript(
 				'OnClick',
-				function(this)
+				function()
 					local ProfileSelection = module.window.content.WelcomePage.ProfileList:GetValue()
 					if not ProfileSelection or ProfileSelection == '' then
 						return

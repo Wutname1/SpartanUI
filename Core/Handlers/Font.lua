@@ -385,10 +385,10 @@ function module:OnEnable()
 				desc = L['This is used to split up large numbers example: 100,000'],
 				type = 'select',
 				values = {[''] = 'none', [','] = 'comma', ['.'] = 'period'},
-				get = function(info)
+				get = function()
 					return SUI.DB.font.NumberSeperator
 				end,
-				set = function(info, val)
+				set = function(_, val)
 					SUI.DB.font.NumberSeperator = val
 				end
 			},
@@ -396,10 +396,10 @@ function module:OnEnable()
 				name = L['Font face'],
 				type = 'select',
 				values = FontFaces,
-				get = function(info)
+				get = function()
 					return SUI.DB.font.Modules.Global.Face
 				end,
-				set = function(info, val)
+				set = function(_, val)
 					SUI.DB.font.Modules.Global.Face = val
 				end
 			},
@@ -412,10 +412,10 @@ function module:OnEnable()
 					['outline'] = L['Outline'],
 					['thickoutline'] = L['Thick outline']
 				},
-				get = function(info)
+				get = function()
 					return SUI.DB.font.Modules.Global.Type
 				end,
-				set = function(info, val)
+				set = function(_, val)
 					SUI.DB.font.Modules.Global.Type = val
 				end
 			},
@@ -426,10 +426,10 @@ function module:OnEnable()
 				min = -3,
 				max = 3,
 				step = 1,
-				get = function(info)
+				get = function()
 					return SUI.DB.font.Modules.Global.Size
 				end,
-				set = function(info, val)
+				set = function(_, val)
 					SUI.DB.font.Modules.Global.Size = val
 				end
 			},
@@ -438,7 +438,7 @@ function module:OnEnable()
 				type = 'execute',
 				width = 'double',
 				func = function()
-					for Module, v in pairs(module.FontItems) do
+					for Module, _ in pairs(module.FontItems) do
 						SUI.DB.font.Modules[Module].Face = SUI.DB.font.Modules.Global.Face
 						SUI.DB.font.Modules[Module].Type = SUI.DB.font.Modules.Global.Type
 						SUI.DB.font.Modules[Module].Size = SUI.DB.font.Modules.Global.Size
@@ -455,7 +455,7 @@ end
 
 function module:BuildOptions()
 	--We build the options based on the modules that are loaded and in use.
-	for Module, v in pairs(module.FontItems) do
+	for Module, _ in pairs(module.FontItems) do
 		SUI.opt.args['General'].args['font'].args[Module] = {
 			name = Module,
 			type = 'group',
@@ -465,10 +465,10 @@ function module:BuildOptions()
 					type = 'select',
 					order = 1,
 					values = FontFaces,
-					get = function(info)
+					get = function()
 						return SUI.DB.font.Modules[Module].Face
 					end,
-					set = function(info, val)
+					set = function(_, val)
 						SUI.DB.font.Modules[Module].Face = val
 						SUI:FontRefresh(Module)
 					end
@@ -483,10 +483,10 @@ function module:BuildOptions()
 						['outline'] = L['Outline'],
 						['thickoutline'] = L['Thick outline']
 					},
-					get = function(info)
+					get = function()
 						return SUI.DB.font.Modules[Module].Type
 					end,
-					set = function(info, val)
+					set = function(_, val)
 						SUI.DB.font.Modules[Module].Type = val
 						SUI:FontRefresh(Module)
 					end
@@ -499,10 +499,10 @@ function module:BuildOptions()
 					min = -15,
 					max = 15,
 					step = 1,
-					get = function(info)
+					get = function()
 						return SUI.DB.font.Modules[Module].Size
 					end,
-					set = function(info, val)
+					set = function(_, val)
 						SUI.DB.font.Modules[Module].Size = val
 						SUI:FontRefresh(Module)
 					end

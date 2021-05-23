@@ -5,6 +5,7 @@ module.description = 'Spin the camera around your character and apply some effec
 local print = SUI.print
 ----------------------------------------
 local isAFK = false
+local SpinCamRunning = false
 
 ----- Film Effects ----
 local FilmEffectEvent = function(self, event, ...)

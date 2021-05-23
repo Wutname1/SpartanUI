@@ -69,7 +69,7 @@ local function CreateWindow()
 	optionPane.SwitchMode:SetPoint('BOTTOM', optionPane, 0, 24)
 	optionPane.SwitchMode:SetScript(
 		'OnClick',
-		function(this)
+		function()
 			if window.mode == 'import' then
 				window.mode = 'export'
 			else
@@ -103,7 +103,7 @@ local function CreateWindow()
 	exportOpt.AllNamespaces:HookScript(
 		'OnClick',
 		function(self)
-			for i, v in ipairs(exportOpt.items) do
+			for _, v in ipairs(exportOpt.items) do
 				v:SetChecked(self:GetChecked())
 			end
 		end
@@ -115,7 +115,7 @@ local function CreateWindow()
 	exportOpt.items = {}
 	local list = {}
 	table.insert(list, {text = 'Core', value = 'core'})
-	for i, v in pairs(SpartanUIDB.namespaces) do
+	for i, _ in pairs(SpartanUIDB.namespaces) do
 		if not SUI:isInTable(namespaceblacklist, i) then
 			local DisplayName
 			local tmpModule = SUI:GetModule('Component_' .. i, true)
@@ -127,7 +127,7 @@ local function CreateWindow()
 		end
 	end
 
-	local function update(parent, checkbox, data)
+	local function update(_, checkbox, data)
 		checkbox:SetText(data.text)
 		checkbox:SetValue(data.value)
 		checkbox:SetChecked(true)
@@ -152,9 +152,9 @@ local function CreateWindow()
 	exportOpt.Export:SetPoint('BOTTOM')
 	exportOpt.Export:SetScript(
 		'OnClick',
-		function(this)
+		function()
 			local ExportScopes = {}
-			for i, v in ipairs(exportOpt.items) do
+			for _, v in ipairs(exportOpt.items) do
 				if v:GetChecked() then
 					ExportScopes[v:GetValue()] = {}
 				end
@@ -209,7 +209,7 @@ local function CreateWindow()
 	importOpt.Import:SetPoint('BOTTOM')
 	importOpt.Import:SetScript(
 		'OnClick',
-		function(this)
+		function()
 			if StdUi:GetRadioGroupValue('importTo') == 'new' then
 				local profileName = importOpt.NewProfileName:GetText()
 				if profileName == '' then

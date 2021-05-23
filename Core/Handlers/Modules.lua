@@ -1,5 +1,4 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
-local StdUi = Lib.StdUi
 local module = SUI:NewModule('Handler_Modules')
 -- Incase we decide to handle this different again in the future using these helpers will 'help'
 ----------------------------------------------------------------------------------------------------
@@ -95,7 +94,7 @@ local function ModuleSelectionPage()
 
 					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 160, 20)
 					if submodule.description then
-						local tooltip = StdUi:FrameTooltip(checkbox, submodule.description, submodule.name .. 'Tooltip', 'TOP', true)
+						StdUi:FrameTooltip(checkbox, submodule.description, submodule.name .. 'Tooltip', 'TOP', true)
 					end
 
 					checkbox:HookScript(

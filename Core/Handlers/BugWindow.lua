@@ -68,7 +68,7 @@ eventFrame:SetScript(
 		-- Set up our error event handler
 		BugGrabber.RegisterCallback(addon, 'BugGrabber_BugGrabbed', onError)
 
-		SlashCmdList.suierrors = function(msg)
+		SlashCmdList.suierrors = function()
 			addon:OpenErrWindow()
 		end
 		SLASH_suierrors1 = '/suierrors'
@@ -103,7 +103,7 @@ function addon:GetErrors(sessionId)
 	if sessionId then
 		wipe(errors)
 		local db = BugGrabber:GetDB(sessionId)
-		for i, e in next, db do
+		for _, e in next, db do
 			if sessionId == e.session then
 				errors[#errors + 1] = e
 			end

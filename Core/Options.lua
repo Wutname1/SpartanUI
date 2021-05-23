@@ -428,8 +428,8 @@ function module:ToggleOptions(pages)
 			)
 		end
 
-	-- if ACD and pages then
-	-- 	ACD:SelectGroup('SpartanUI', unpack(pages))
-	-- end
+		if ACD and pages then
+			ACD:SelectGroup('SpartanUI', unpack(pages))
+		end
 	end
 end

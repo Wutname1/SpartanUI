@@ -1,4 +1,4 @@
-local SUI, L, print = SUI, SUI.L, SUI.print
+local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Handler_ChatCommands')
 local SUIChatCommands, CommandDetails, enabled = {}, {}, false
 
@@ -33,10 +33,10 @@ local function AddToOptions(arg)
 						type = 'input',
 						width = 'full',
 						order = 1,
-						get = function(info)
+						get = function()
 							return '/sui ' .. arg
 						end,
-						set = function(info, val)
+						set = function()
 						end
 					}
 				}
@@ -49,10 +49,10 @@ local function AddToOptions(arg)
 						type = 'input',
 						width = 'full',
 						order = i,
-						get = function(info)
+						get = function()
 							return '/sui ' .. arg .. ' ' .. k
 						end,
-						set = function(info, val)
+						set = function()
 						end
 					}
 					i = i + 1
@@ -64,10 +64,10 @@ local function AddToOptions(arg)
 			name = (settings.commandDescription or ''),
 			type = 'input',
 			width = 'full',
-			get = function(info)
+			get = function()
 				return '/sui ' .. arg
 			end,
-			set = function(info, val)
+			set = function()
 			end
 		}
 	end
