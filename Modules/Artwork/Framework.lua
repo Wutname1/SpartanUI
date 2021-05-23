@@ -206,8 +206,8 @@ function module:updateOffset()
 	if SUI.DB.Offset.TopAuto or SUI.DB.Offset.BottomAuto then
 		-- FuBar Offset
 		for i = 1, 4 do
-			if (_G['FuBarFrame' .. i] and _G['FuBarFrame' .. i]:IsVisible()) then
-				local bar = _G['FuBarFrame' .. i]
+			local bar = _G['FuBarFrame' .. i]
+			if (bar and bar:IsVisible()) then
 				local point = bar:GetPoint(1)
 				if point:find('TOP.*') then
 					Tfubar = Tfubar + bar:GetHeight()
@@ -220,8 +220,8 @@ function module:updateOffset()
 
 		-- Chocolate Bar Offset
 		for i = 1, 100 do
-			if (_G['ChocolateBar' .. i] and _G['ChocolateBar' .. i]:IsVisible()) then
-				local bar = _G['ChocolateBar' .. i]
+			local bar = _G['ChocolateBar' .. i]
+			if (bar and bar:IsVisible()) then
 				local point = bar:GetPoint(1)
 				if point:find('TOP.*') then
 					TChocolateBar = TChocolateBar + bar:GetHeight()
@@ -235,7 +235,7 @@ function module:updateOffset()
 		-- Titan Bar
 		local TitanBars = {['Bar2'] = 'top', ['Bar'] = 'top', ['AuxBar2'] = 'bottom', ['AuxBar'] = 'bottom'}
 		for k, v in pairs(TitanBars) do
-			local bar = _G['Titan_Bar__Display_' .. k] 
+			local bar = _G['Titan_Bar__Display_' .. k]
 			if bar and bar:IsVisible() then
 				if v == 'top' then
 					Ttitan = Ttitan + ((TitanPanelGetVar('Scale') or 1) * bar:GetHeight())
