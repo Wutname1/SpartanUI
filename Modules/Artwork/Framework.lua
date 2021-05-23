@@ -233,16 +233,15 @@ function module:updateOffset()
 		end
 
 		-- Titan Bar
-		for i, v in ipairs({'Bar2', 'Bar'}) do
-			if (_G['Titan_Bar__Display_' .. v] and TitanPanelGetVar(v .. '_Show')) then
-				local PanelScale = TitanPanelGetVar('Scale') or 1
-				Ttitan = Ttitan + (PanelScale * _G['Titan_Bar__Display_' .. v]:GetHeight())
-			end
-		end
-		for i, v in ipairs({'AuxBar2', 'AuxBar'}) do
-			if (_G['Titan_Bar__Display_' .. v] and TitanPanelGetVar(v .. '_Show')) then
-				local PanelScale = TitanPanelGetVar('Scale') or 1
-				Btitan = Btitan + (PanelScale * _G['Titan_Bar__Display_' .. v]:GetHeight())
+		local TitanBars = {['Bar2'] = 'top', ['Bar'] = 'top', ['AuxBar2'] = 'bottom', ['AuxBar'] = 'bottom'}
+		for k, v in pairs(TitanBars) do
+			local bar = _G['Titan_Bar__Display_' .. k] 
+			if bar and bar:IsVisible() then
+				if v == 'top' then
+					Ttitan = Ttitan + ((TitanPanelGetVar('Scale') or 1) * bar:GetHeight())
+				else
+					Btitan = Btitan + ((TitanPanelGetVar('Scale') or 1) * bar:GetHeight())
+				end
 			end
 		end
 
@@ -270,7 +269,11 @@ function module:updateOffset()
 
 	SpartanUI:ClearAllPoints()
 	SpartanUI:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, (SUI.DB.Offset.Top * -1))
-	SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Offset.Bottom)
+	if SUI.DB.Offset.BottomAuto and _G['TitanPanelBottomAnchor'] then
+		SpartanUI:SetPoint('BOTTOMLEFT', _G['TitanPanelBottomAnchor'], 'BOTTOMLEFT', 0, 0)
+	else
+		SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Offset.Bottom)
+	end
 end
 
 function module:updateHorizontalOffset()
