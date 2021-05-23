@@ -2,15 +2,6 @@ local SUI, L, Lib, StdUi = SUI, SUI.L, SUI.Lib, SUI.StdUi
 local module = SUI:NewModule('Handler_Options')
 
 ---------------------------------------------------------------------------
-function module:InCombatLockdown()
-	if InCombatLockdown() then
-		SUI:Print(ERR_NOT_IN_COMBAT)
-		return true
-	end
-
-	return false
-end
-
 function module:GetConfigWindow()
 	local ConfigOpen = Lib.AceCD and Lib.AceCD.OpenFrames and Lib.AceCD.OpenFrames['SpartanUI']
 	return ConfigOpen and ConfigOpen.frame
@@ -351,7 +342,7 @@ end
 
 function module:ToggleOptions(pages)
 	if InCombatLockdown() then
-		self:Print(ERR_NOT_IN_COMBAT)
+		SUI:Print(ERR_NOT_IN_COMBAT)
 		self.ShowOptionsUI = true
 		return
 	end
