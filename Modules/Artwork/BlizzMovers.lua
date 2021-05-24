@@ -109,6 +109,29 @@ local function AlertFrame()
 	GroupLootContainer:SetPoint('BOTTOM', AlertHolder)
 end
 
+local function VehicleSeatIndicator()
+	local VehicleSeatIndicator = _G.VehicleSeatIndicator
+	local function SetPosition(_, _, anchor)
+		if anchor:GetName() == 'MinimapCluster' or anchor == _G.MinimapCluster then
+			VehicleSeatIndicator:ClearAllPoints()
+			VehicleSeatIndicator:SetPoint('TOPLEFT', _G.VehicleSeatHolder)
+		end
+	end
+
+	local point, anchor, secondaryPoint, x, y =
+		strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleSeatIndicator)
+	local VehicleSeatHolder = CreateFrame('Frame', 'VehicleSeatHolder', SpartanUI)
+	VehicleSeatHolder:SetSize(VehicleSeatIndicator:GetSize())
+	VehicleSeatHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+	VehicleSeatHolder:Hide()
+	MoveIt:CreateMover(VehicleSeatHolder, 'VehicleSeatIndicator', 'Vehicle seat anchor', nil, 'Blizzard UI')
+
+	hooksecurefunc(VehicleSeatIndicator, 'SetPoint', SetPosition)
+	VehicleSeatIndicator.PositionVehicleFrameHooked = true
+	VehicleSeatIndicator:ClearAllPoints()
+	VehicleSeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
+end
+
 local function VehicleLeaveButton()
 	local function MoverCreate()
 		-- if InCombatLockdown() then
@@ -150,6 +173,7 @@ function module.BlizzMovers()
 	VehicleLeaveButton()
 
 	if SUI.IsRetail then
+		VehicleSeatIndicator()
 		TalkingHead()
 		AltPowerBar()
 		AbilityBars()

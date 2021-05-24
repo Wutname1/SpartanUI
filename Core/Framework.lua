@@ -210,6 +210,7 @@ local DBdefault = {
 			},
 			Movers = {},
 			BlizzMovers = {
+				['VehicleSeatIndicator'] = 'RIGHT,SpartanUI,RIGHT,-10,-30',
 				['ObjectiveTracker'] = 'TOPRIGHT,SpartanUI,TOPRIGHT,-30,-100',
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
@@ -717,7 +718,7 @@ local DBdefault = {
 				}
 			},
 			BlizzMovers = {
-				['VehicleLeaveButton'] = 'BOTTOM,SUI_Art_Classic,TOP,0,80'
+				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,195'
 			}
 		},
 		Transparent = {
