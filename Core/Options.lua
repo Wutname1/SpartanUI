@@ -1,5 +1,6 @@
 local SUI, L, Lib, StdUi = SUI, SUI.L, SUI.Lib, SUI.StdUi
-local module = SUI:NewModule('Handler_Options')
+local module = SUI:NewModule('Handler_Options', 'AceEvent-3.0')
+module.ShowOptionsUI = false
 
 ---------------------------------------------------------------------------
 function module:GetConfigWindow()
@@ -343,9 +344,12 @@ end
 function module:ToggleOptions(pages)
 	if InCombatLockdown() then
 		SUI:Print(ERR_NOT_IN_COMBAT)
-		self.ShowOptionsUI = true
+		module.ShowOptionsUI = true
+		module:RegisterEvent('PLAYER_REGEN_ENABLED', module.ToggleOptions)
 		return
 	end
+	module:UnregisterEvent('PLAYER_REGEN_ENABLED', module.ToggleOptions)
+	module.ShowOptionsUI = false
 
 	local frame = module:GetConfigWindow()
 	local mode = 'Open'
