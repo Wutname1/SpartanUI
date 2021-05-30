@@ -1074,10 +1074,16 @@ function module:OnInitialize()
 				},
 				auras = {
 					Buffs = {
-						enabled = true
+						enabled = true,
+						position = {
+							anchor = 'TOPLEFT'
+						}
 					},
 					Debuffs = {
-						enabled = true
+						enabled = true,
+						position = {
+							anchor = 'TOPRIGHT'
+						}
 					},
 					Bars = {
 						enabled = true
