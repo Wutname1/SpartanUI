@@ -32,6 +32,7 @@ local factionColor = {
 }
 local NameplateList = {}
 local ElementList = {
+	'Auras',
 	'SUI_ClassIcon',
 	'Health',
 	'Power',
@@ -610,6 +611,7 @@ function module:OnInitialize()
 						y = 0
 					}
 				},
+				Auras = {},
 				RareElite = {},
 				Background = {
 					type = 'solid',
@@ -1138,10 +1140,23 @@ function module:BuildOptions()
 						name = L['Auras'],
 						type = 'group',
 						args = {
+							enabled = {
+								name = L['Enabled'],
+								type = 'toggle',
+								order = 1,
+								width = 'double',
+								get = function(info)
+									return module.DB.elements.Auras.enabled
+								end,
+								set = function(info, val)
+									module.DB.elements.Auras.enabled = val
+									module:UpdateNameplates()
+								end
+							},
 							onlyShowPlayer = {
 								name = L['Show only auras created by player'],
 								type = 'toggle',
-								order = 1,
+								order = 2,
 								width = 'double',
 								get = function(info)
 									return module.DB.onlyShowPlayer
@@ -1154,7 +1169,7 @@ function module:BuildOptions()
 							showStealableBuffs = {
 								name = L['Show Stealable/Dispellable buffs'],
 								type = 'toggle',
-								order = 2,
+								order = 3,
 								width = 'double',
 								get = function(info)
 									return module.DB.showStealableBuffs
@@ -1167,7 +1182,7 @@ function module:BuildOptions()
 							notice = {
 								name = L['With both of these options active your DOTs will not appear on enemies.'],
 								type = 'description',
-								order = 3,
+								order = 4,
 								fontSize = 'small'
 							}
 						}
