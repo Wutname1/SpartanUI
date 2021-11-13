@@ -497,6 +497,9 @@ local function ApplyTooltipSkins()
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
 		}
 
+		if not GameTooltip.SetBackdrop then
+			Mixin(GameTooltip, BackdropTemplateMixin)
+		end
 		GameTooltip:SetBackdrop(style)
 		GameTooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 	end
