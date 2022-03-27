@@ -1,6 +1,3 @@
-[submodule "libs/StdUi"]
-	path = libs/StdUi
-	url = https://github.com/Wutname1/StdUi.git
 [submodule "libs/oUF"]
 	path = libs/oUF
 	url = https://github.com/Wutname1/oUF.git
