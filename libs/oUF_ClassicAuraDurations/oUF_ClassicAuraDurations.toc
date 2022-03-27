@@ -1,4 +1,4 @@
-## Interface: 11307
+## Interface: 11302
 ## Title: oUF_ClassicAuraDurations
 ## Notes: LibClassicDurations hook for oUF
 ## X-Category: UnitFrame
