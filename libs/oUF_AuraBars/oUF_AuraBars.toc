@@ -1,0 +1,9 @@
+## Interface: 11307
+## Title: oUF_AuraBars
+## Author: Kingamajick, Mrruben5, wutname1
+## X-WoWI-ID: 15852
+## Version: 80000.1
+## Dependencies: oUF
+## Notes: Class Aura Bars for oUF
+
+oUF_AuraBars.lua

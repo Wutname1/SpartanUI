@@ -1,35 +1,5 @@
 package-as: SpartanUI
 
-externals:
-  libs/LibStub: https://repos.wowace.com/wow/libstub/tags/1.0
-  libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
-  libs/AceAddon-3.0: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
-  libs/AceConfig-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
-  libs/AceComm-3.0: https://repos.wowace.com/wow/ace3/trunk/AceComm-3.0
-  libs/AceConsole-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConsole-3.0
-  libs/AceDB-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDB-3.0
-  libs/AceDBOptions-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDBOptions-3.0
-  libs/AceGUI-3.0: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
-  libs/AceHook-3.0: https://repos.wowace.com/wow/ace3/trunk/AceHook-3.0
-  libs/AceEvent-3.0: https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0
-  libs/AceTimer-3.0: https://repos.wowace.com/wow/ace3/trunk/AceTimer-3.0
-  libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
-  libs/AceSerializer-3.0: https://repos.wowace.com/wow/ace3/trunk/AceSerializer-3.0
-  libs/AceGUI-3.0-SharedMediaWidgets: https://repos.wowace.com/wow/ace-gui-3-0-shared-media-widgets/trunk/AceGUI-3.0-SharedMediaWidgets
-  libs/bug-grabber: https://repos.curseforge.com/wow/bug-grabber/trunk
-  libs/LibCompress: https://repos.wowace.com/wow/libcompress/trunk
-  libs/LibSharedMedia-3.0: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
-  libs/LibDualSpec-1.0: https://repos.curseforge.com/wow/libdualspec-1-0
-  libs/oUF_AuraBars: https://github.com/Wutname1/oUF_AuraBars.git
-  libs/oUF_QuestMobIndicator: https://github.com/Wutname1/oUF_QuestMobIndicator.git
-  libs/LibBase64-1.0: https://github.com/Wutname1/LibBase64-1.0.git
-  libs/LibDataBroker: https://github.com/tekkub/libdatabroker-1-1.git
-  libs/LibClassicDurations: https://github.com/rgd87/LibClassicDurations.git
-  libs/oUF_ClassicAuraDurations: https://github.com/rgd87/oUF_ClassicAuraDurations.git
-  libs/LibClassicCasterino: https://github.com/rgd87/LibClassicCasterino.git
-  libs/StdUi: https://github.com/Wutname1/StdUi.git
-  libs/oUF: https://github.com/Wutname1/oUF.git
-
 ignore:
     README.md
     .travis.yml

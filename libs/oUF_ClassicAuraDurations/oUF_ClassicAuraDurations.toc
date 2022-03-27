@@ -1,0 +1,13 @@
+## Interface: 11307
+## Title: oUF_ClassicAuraDurations
+## Notes: LibClassicDurations hook for oUF
+## X-Category: UnitFrame
+## Dependencies: oUF
+## DefaultState: enabled
+## X-oUF: oUF
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibClassicDurations\LibClassicDurations.xml
+
+oUF_ClassicAuraDurations.lua
