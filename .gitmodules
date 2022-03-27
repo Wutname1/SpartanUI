@@ -4,5 +4,3 @@
 [submodule "libs/oUF"]
 	path = libs/oUF
 	url = https://github.com/Wutname1/oUF.git
-[submodule "libs/oUF_QuestMobIndicator"]
-	url = https://github.com/Wutname1/oUF_QuestMobIndicator.git
