@@ -40,7 +40,7 @@ libs\LibBase64-1.0\LibBase64-1.0.lua
 
 # Unit Frame libraries
 libs\LibHealComm-4.0\LibHealComm-4.0.lua
-libs\oUF-BCC\oUF.xml
+libs\oUF\oUF_TBC.xml
 libs\oUF_AuraBars\oUF_AuraBars.lua
 libs\oUF_SpartanArt\oUF_SpartanArt.lua
 libs\oUF_QuestMobIndicator\oUF_QuestMobIndicator.lua
