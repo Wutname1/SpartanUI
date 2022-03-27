@@ -9,5 +9,3 @@
 	url = https://github.com/rgd87/LibClassicCasterino.git
 [submodule "libs/oUF_QuestMobIndicator"]
 	url = https://github.com/Wutname1/oUF_QuestMobIndicator.git
-[submodule "libs/LibBase64-1.0"]
-	url = https://github.com/Wutname1/LibBase64-1.0.git
