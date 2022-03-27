@@ -783,6 +783,11 @@ local function CreateUnitFrame(self, unit)
 			self.Castbar.Icon = Icon
 			self.Castbar.SafeZone = SafeZone
 			self.Castbar.Shield = Shield
+
+			if unit == 'player' then
+				CastingBarFrame_SetUnit(_G.CastingBarFrame)
+				CastingBarFrame_SetUnit(_G.PetCastingBarFrame)
+			end
 		end
 		do -- health bar
 			local health = CreateFrame('StatusBar', nil, self)
