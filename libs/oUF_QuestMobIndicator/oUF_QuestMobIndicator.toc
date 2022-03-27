@@ -1,0 +1,8 @@
+## Interface: 80300
+## Title: oUF_QuestMobIndicator
+## Author: wutname1
+## Version: 80300.1
+## Dependencies: oUF
+## Notes: Adds a Quest Indicator that scrapes the tooltip to enable the noting of ALL quest mobs
+
+oUF_QuestMobIndicator.lua
