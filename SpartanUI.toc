@@ -38,6 +38,7 @@ libs\AceSerializer-3.0\AceSerializer-3.0.xml
 libs\LibCompress\LibCompress.lua
 libs\LibBase64-1.0\LibBase64-1.0.lua
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
+libs\WagoAnalyticsShim\Shim.lua
 
 # Unit Frame libraries
 libs\oUF\oUF.xml

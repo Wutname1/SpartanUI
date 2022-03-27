@@ -37,6 +37,7 @@ libs\AceTimer-3.0\AceTimer-3.0.xml
 libs\AceSerializer-3.0\AceSerializer-3.0.xml
 libs\LibCompress\LibCompress.lua
 libs\LibBase64-1.0\LibBase64-1.0.lua
+libs\WagoAnalyticsShim\Shim.lua
 
 # Unit Frame libraries
 libs\LibHealComm-4.0\LibHealComm-4.0.lua

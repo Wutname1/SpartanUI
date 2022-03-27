@@ -53,6 +53,9 @@ SUI.AddLib('StdUi', 'StdUi')
 
 --init StdUI Instance for the whole addon
 SUI.StdUi = SUI.Lib.StdUi:NewInstance()
+if WagoAnalytics then
+	SUI.WagoAnalytics = LibStub('WagoAnalytics'):Register(GetAddOnMetadata('SpartanUI', 'X-Wago-ID'))
+end
 
 ---------------  Options Init ---------------
 SUI.opt = {
