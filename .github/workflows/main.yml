@@ -2,8 +2,8 @@ name: Package and release
 
 on:
   push:
-    tags: '**'
-    branches: 'master'
+    tags: "**"
+    branches: "master"
 
 jobs:
   release:
@@ -21,15 +21,3 @@ jobs:
       # Run the GitHub Action for the packager project
       - name: Package and release
         uses: BigWigsMods/packager@master
-
-      # release for the Classic version of the game
-      - name: Package and release for Classic
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g classic -w 25088
-
-      # release for the BCC version of the game
-      - name: Package and release for Burning Crusade Classic
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g bcc

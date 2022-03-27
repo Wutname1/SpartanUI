@@ -1,6 +1,4 @@
 ## Interface: 90200
-## Interface-Classic: 11402
-## Interface-BCC: 20504
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
@@ -39,31 +37,10 @@ libs\AceTimer-3.0\AceTimer-3.0.xml
 libs\AceSerializer-3.0\AceSerializer-3.0.xml
 libs\LibCompress\LibCompress.lua
 libs\LibBase64-1.0\LibBase64-1.0.lua
-#@retail@
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
-#@end-retail@
 
 # Unit Frame libraries
-#@non-retail@
-# libs\LibHealComm-4.0\LibHealComm-4.0.lua
-#@version-classic@
-# libs\LibClassicDurations\LibClassicDurations.xml
-# libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
-# libs\LibClassicCasterino\LibClassicCasterino.lua
-#@end-version-classic@
-#@end-non-retail@
-
-#@version-retail@
 libs\oUF\oUF.xml
-#@end-version-retail@
-#@non-retail@
-# #@version-classic@
-# libs\oUF-Classic\oUF.xml
-# #@end-version-classic@
-# #@version-bcc@
-# libs\oUF-BCC\oUF.xml
-# #@end-version-bcc@
-#@end-non-retail@
 libs\oUF_AuraBars\oUF_AuraBars.lua
 libs\oUF_SpartanArt\oUF_SpartanArt.lua
 libs\oUF_QuestMobIndicator\oUF_QuestMobIndicator.lua
