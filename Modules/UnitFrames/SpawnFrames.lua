@@ -42,7 +42,8 @@ local elementList = {
 	'Range',
 	'PhaseIndicator',
 	'ThreatIndicator',
-	'SUI_RaidGroup'
+	'SUI_RaidGroup',
+	'HappinessIndicator'
 }
 local NoBulkUpdate = {
 	'Range',
@@ -1037,6 +1038,9 @@ local function CreateUnitFrame(self, unit)
 			HappinessIndicator.btn:SetScript('OnEnter', HIOnEnter)
 			HappinessIndicator.btn:SetScript('OnLeave', HIOnLeave)
 			HappinessIndicator:Hide()
+			HappinessIndicator.PostUpdate = function()
+				ElementUpdate(self, 'HappinessIndicator')
+			end
 			self.HappinessIndicator = HappinessIndicator
 			ElementUpdate(self, 'HappinessIndicator')
 		end
