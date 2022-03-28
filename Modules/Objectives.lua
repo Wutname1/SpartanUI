@@ -299,7 +299,7 @@ function module:FirstTimeSetup()
 		SubTitle = 'Objectives',
 		Desc1 = 'The objectives module can hide the objectives based on diffrent conditions. This allows you to free your screen when you need it the most automatically.',
 		Desc2 = 'The defaults here are based on your current level.',
-		RequireDisplay = (not module.DB.SetupDone),
+		RequireDisplay = (not module.DB.SetupDone) and (SUI:IsModuleEnabled(module) or not module.Override),
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -314,6 +314,7 @@ function module:FirstTimeSetup()
 			if SUI:IsModuleDisabled('Objectives') or module.Override then
 				SUI_Win.Objectives.lblDisabled = StdUi:Label(SUI_Win.Objectives, 'Disabled', 20)
 				SUI_Win.Objectives.lblDisabled:SetPoint('CENTER', SUI_Win.Objectives)
+				window.Next:Click()
 			else
 				--scenario
 				local line = gui:Create('Heading')
@@ -379,7 +380,7 @@ function module:FirstTimeSetup()
 		Next = function()
 			module.DB.SetupDone = true
 
-			if SUI:IsModuleEnabled('Objectives') then
+			if not (SUI:IsModuleDisabled('Objectives') or module.Override) then
 				local SUI_Win = SUI:GetModule('SetupWizard').window.content
 				module.DB.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
