@@ -38,7 +38,7 @@ function module:Set(moduleName, setting, value)
 end
 
 function setupOption(setting)
-	if not SUI.opt.args.ModSetting then
+	if not SUI.opt.args.ModSetting or not SUI.opt.args.ModSetting.args.WagoAnalytics then
 		return
 	end
 
