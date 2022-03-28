@@ -66,10 +66,15 @@ SUI.opt = {
 	}
 }
 ---------------  Database  ---------------
+local scale = .88
+if SUI.IsClassic then
+	scale = .79
+end
+
 local DBdefault = {
 	Version = '0',
 	SetupDone = false,
-	scale = .88,
+	scale = scale,
 	alpha = 1,
 	ActionBars = {
 		Allalpha = 100,
