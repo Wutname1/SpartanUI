@@ -823,7 +823,7 @@ local function AddIndicatorOptions(frameName)
 	end
 	if frameName == 'pet' and (SUI.IsClassic or SUI.IsBCC) then
 		local petIndicator = {
-			['PetHappiness'] = 'Pet happiness'
+			['HappinessIndicator'] = 'Pet happiness'
 		}
 		AllIndicators = SUI:MergeData(AllIndicators, petIndicator)
 	end
