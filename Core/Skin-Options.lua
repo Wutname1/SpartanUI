@@ -94,16 +94,18 @@ function module:SkinAce3()
 				AppBar:SetPoint('TOPLEFT', 0, 0)
 				AppBar.ignore = true
 
-				local closeBtn = StdUi:HighlightButton(AppBar, 28, 20, 'X')
-				closeBtn.text:SetFontSize(15)
-				closeBtn:SetPoint('TOPRIGHT', -1, -1)
-				closeBtn:SetScript(
-					'OnClick',
-					function(self)
-						frame.CloseBtn:Click()
-					end
-				)
-				AppBar.closeBtn = closeBtn
+				if frame.CloseBtn then
+					local closeBtn = StdUi:HighlightButton(AppBar, 28, 20, 'X')
+					closeBtn.text:SetFontSize(15)
+					closeBtn:SetPoint('TOPRIGHT', -1, -1)
+					closeBtn:SetScript(
+						'OnClick',
+						function(self)
+							frame.CloseBtn:Click()
+						end
+					)
+					AppBar.closeBtn = closeBtn
+				end
 
 				-- local minimizeBtn = StdUi:HighlightButton(AppBar, 28, 20, '_')
 				-- minimizeBtn.text:SetFontSize(13)
