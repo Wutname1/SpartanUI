@@ -82,6 +82,28 @@ function module:OnInitialize()
 	end
 end
 
+local function StripTextures(obj)
+	local nineSlicePieces = {
+		-- keys have to match pieceNames in nineSliceSetup table in "NineSlice.lua"
+		'TopLeftCorner',
+		'TopRightCorner',
+		'BottomLeftCorner',
+		'BottomRightCorner',
+		'TopEdge',
+		'BottomEdge',
+		'LeftEdge',
+		'RightEdge',
+		'Center'
+	}
+
+	for index, pieceName in ipairs(nineSlicePieces) do
+		local region = obj[pieceName]
+		if (region) then
+			region:SetTexture(nil)
+		end
+	end
+end
+
 local function ActiveRule()
 	for _, v in ipairs(RuleList) do
 		if SUI.DB.Tooltips[v] and SUI.DB.Tooltips[v].Status ~= 'Disabled' then
@@ -197,6 +219,10 @@ local SetBorderColor = function(self, r, g, b, hasStatusBar)
 	self.SUITip.border[2]:SetVertexColor(r, g, b, 1)
 	self.SUITip.border[3]:SetVertexColor(r, g, b, 1)
 	self.SUITip.border[4]:SetVertexColor(r, g, b, 1)
+
+	if self.NineSlice then
+		StripTextures(self.NineSlice)
+	end
 end
 
 local ClearColors = function(SUITip)
@@ -426,6 +452,10 @@ local TooltipSetUnit = function(self)
 			wipe(targetList)
 		end
 	end
+
+	if self.NineSlice then
+		StripTextures(self.NineSlice)
+	end
 end
 
 local function ApplyTooltipSkins()
@@ -494,14 +524,14 @@ local function ApplyTooltipSkins()
 		end
 
 		local style = {
-			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
+			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 		}
 
-		if not GameTooltip.SetBackdrop then
-			Mixin(GameTooltip, BackdropTemplateMixin)
+		if not tooltip.SetBackdrop then
+			Mixin(tooltip, BackdropTemplateMixin)
 		end
-		GameTooltip:SetBackdrop(style)
-		GameTooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
+		tooltip:SetBackdrop(style)
+		tooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 	end
 end
 
@@ -516,6 +546,10 @@ function module:UpdateBG()
 					tooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 				end
 			end
+		end
+
+		if tooltip.NineSlice then
+			StripTextures(tooltip.NineSlice)
 		end
 	end
 end
