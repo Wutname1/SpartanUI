@@ -21,7 +21,7 @@ function module:SetColor()
 	end
 
 	for i = 1, 10 do
-		if _G['Classic_Bar' .. i].BG then
+		if _G['Classic_Bar' .. i] and _G['Classic_Bar' .. i].BG then
 			_G['Classic_Bar' .. i].BG:SetVertexColor(r, b, g, a)
 		end
 	end
