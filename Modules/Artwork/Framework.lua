@@ -148,6 +148,9 @@ function module:SetActiveStyle(style)
 
 		--Update minimap
 		SUI:GetModule('Component_Minimap'):update(true)
+
+		--Analytics
+		SUI.Analytics:Set(module, 'Style', style)
 	end
 
 	-- Update style settings shortcut

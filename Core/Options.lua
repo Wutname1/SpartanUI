@@ -291,15 +291,10 @@ function module:OnInitialize()
 					return not SUI.DB.DisabledComponents[RealName]
 				end,
 				set = function(info, val)
-					SUI.DB.DisabledComponents[RealName] = (not val)
-					if submodule.OnDisable then
-						if val then
-							submodule:OnEnable()
-						else
-							submodule:OnDisable()
-						end
+					if (val) then
+						SUI:EnableModule(submodule)
 					else
-						SUI:reloadui()
+						SUI:DisableModule(submodule)
 					end
 				end
 			}

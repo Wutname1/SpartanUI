@@ -154,7 +154,11 @@ function module:FindNextPage(RequiredPagesOnly)
 		if RequiredPageDisplayed == RequiredPageCount then
 			RequiredPageDisplayed = RequiredPageDisplayed + 1
 			module.window.Status:Hide()
-			module:DisplayPage(FinishedPage)
+			if RequiredPageCount == 1 then
+				module.window:Hide()
+			else
+				module:DisplayPage(FinishedPage)
+			end
 		elseif RequiredPageList[(RequiredPageDisplayed + 1)] then
 			RequiredPageDisplayed = RequiredPageDisplayed + 1
 			local ID = RequiredPageList[RequiredPageDisplayed]

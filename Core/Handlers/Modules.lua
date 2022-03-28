@@ -3,7 +3,7 @@ local module = SUI:NewModule('Handler_Modules')
 -- Incase we decide to handle this different again in the future using these helpers will 'help'
 ----------------------------------------------------------------------------------------------------
 
-local function GetName(ModuleTable)
+function SUI:GetModuleName(ModuleTable)
 	local name
 
 	-- Ace3 adds SpartanUI_ to the name so it knows how to handle things, we need to account for that.
@@ -19,7 +19,7 @@ end
 
 function SUI:IsModuleEnabled(moduleName)
 	if type(moduleName) == 'table' then
-		moduleName = GetName(moduleName)
+		moduleName = SUI:GetModuleName(moduleName)
 	end
 
 	if SUI.DB.DisabledComponents[moduleName] then
@@ -30,7 +30,7 @@ end
 
 function SUI:IsModuleDisabled(moduleName)
 	if type(moduleName) == 'table' then
-		moduleName = GetName(moduleName)
+		moduleName = SUI:GetModuleName(moduleName)
 	end
 
 	if SUI.DB.DisabledComponents[moduleName] then
@@ -40,25 +40,33 @@ function SUI:IsModuleDisabled(moduleName)
 end
 
 -- These override the default Ace3 calls so we can track the status
-function SUI:DisableModule(moduleName)
-	if type(moduleName) == 'table' then
-		moduleName = GetName(moduleName)
+function SUI:DisableModule(input)
+	local module = nil
+	if type(input) == 'table' then
+		module = input
+	else
+		module = SUI:GetModule(input)
 	end
 
-	SUI.DB.DisabledComponents[moduleName] = true
-	moduleName = 'Component_' .. moduleName
-	local module = self:GetModule(moduleName)
+	--Analytics
+	SUI.Analytics:Set(module, 'Enabled', false)
+
+	SUI.DB.DisabledComponents[SUI:GetModuleName(module)] = true
 	return module:Disable()
 end
 
-function SUI:EnableModule(moduleName)
-	if type(moduleName) == 'table' then
-		moduleName = GetName(moduleName)
+function SUI:EnableModule(input)
+	local module = nil
+	if type(input) == 'table' then
+		module = input
+	else
+		module = SUI:GetModule(input)
 	end
 
-	SUI.DB.DisabledComponents[moduleName] = nil
-	moduleName = 'Component_' .. moduleName
-	local module = self:GetModule(moduleName)
+	--Analytics
+	SUI.Analytics:Set(module, 'Enabled', true)
+
+	SUI.DB.DisabledComponents[SUI:GetModuleName(module)] = nil
 	return module:Enable()
 end
 
@@ -88,7 +96,7 @@ local function ModuleSelectionPage()
 					((string.match(submodule.name, 'Component_')) or (string.match(submodule.name, 'Module_'))) and
 						not submodule.HideModule
 				 then
-					local RealName = GetName(submodule)
+					local RealName = SUI:GetModuleName(submodule)
 					-- Get modules display name
 					local Displayname = submodule.DisplayName or RealName
 
@@ -101,12 +109,10 @@ local function ModuleSelectionPage()
 						'OnClick',
 						function()
 							local IsDisabled = (not checkbox:GetValue()) or false
-							SUI.DB.DisabledComponents[RealName] = IsDisabled
-
 							if (IsDisabled) then
-								submodule:Disable()
+								SUI:DisableModule(submodule)
 							else
-								submodule:Enable()
+								SUI:EnableModule(submodule)
 							end
 						end
 					)

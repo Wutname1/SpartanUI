@@ -1343,6 +1343,9 @@ function module:SetActiveStyle(style)
 	module.DB.Style = style
 	-- Refersh Settings
 	module:Update()
+
+	--Analytics
+	SUI.Analytics:Set(module, 'Style', style)
 end
 
 local blockedFunctions = {

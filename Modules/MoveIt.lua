@@ -80,6 +80,8 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, secondaryPoint, tonumber(val), y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, val, y)
+							--Analytics
+							SUI.Analytics:Set(MoveIt, MoverName .. '_Moved', true)
 						end
 					},
 					y = {
@@ -96,6 +98,8 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, secondaryPoint, x, tonumber(val), true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, secondaryPoint, x, val)
+							--Analytics
+							SUI.Analytics:Set(MoveIt, MoverName .. '_Moved', true)
 						end
 					},
 					MyAnchorPoint = {
@@ -112,6 +116,8 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(val, anchor, val, x, y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', val, anchor, secondaryPoint, x, y)
+							--Analytics
+							SUI.Analytics:Set(MoveIt, MoverName .. '_Moved', true)
 						end
 					},
 					AnchorTo = {
@@ -133,6 +139,8 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							MoverFrame.parent:position(point, (_G[val] or UIParent), secondaryPoint, x, y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints =
 								format('%s,%s,%s,%s,%s', point, (_G[val] or UIParent):GetName(), secondaryPoint, x, y)
+							--Analytics
+							SUI.Analytics:Set(MoveIt, MoverName .. '_Moved', true)
 						end
 					},
 					ItsAnchorPoint = {
@@ -149,6 +157,8 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, anchor, val, x, y, true)
 							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, anchor, val, x, y)
+							--Analytics
+							SUI.Analytics:Set(MoveIt, MoverName .. '_Moved', true)
 						end
 					}
 				}
@@ -181,6 +191,8 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						set = function(info, val)
 							MoveIt.DB.movers[MoverName].AdjustedScale = val
 							MoverFrame.parent:scale(val)
+							--Analytics
+							SUI.Analytics:Set(MoveIt, MoverName .. '_Scale', true)
 						end
 					},
 					ResetScale = {
@@ -190,6 +202,8 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						func = function()
 							MoverFrame.parent:scale()
 							MoveIt.DB.movers[MoverName].AdjustedScale = false
+							--Analytics
+							SUI.Analytics:Set(MoveIt, MoverName .. '_Scale', false)
 						end
 					}
 				}
@@ -278,6 +292,9 @@ function MoveIt:Reset(name, onlyPosition)
 
 			-- Hide Moved Text
 			frame.MovedText:Hide()
+
+			--Analytics
+			SUI.Analytics:Set(MoveIt, name .. '_Moved', false)
 		end
 	end
 end
@@ -452,6 +469,9 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			local point, anchor, secondaryPoint, x, y = strsplit(',', MoveIt.DB.movers[name].MovedPoints)
 			f.parent:position(point, anchor, secondaryPoint, x, y, true)
 		end
+
+		--Analytics
+		SUI.Analytics:Set(MoveIt, name .. '_Moved', true)
 	end
 
 	local Scale = function(self, ammount)
@@ -467,6 +487,9 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		end
 
 		MoveIt.DB.movers[name].AdjustedScale = NewScale
+
+		--Analytics
+		SUI.Analytics:Set(MoveIt, name .. '_Scale', NewScale)
 	end
 
 	local NudgeMover = function(self, nudgeX, nudgeY)
