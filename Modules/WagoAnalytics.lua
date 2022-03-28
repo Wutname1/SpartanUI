@@ -251,6 +251,10 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	if not SUI.IsRetail then
+		SUI:DisableModule(module)
+		return
+	end
 	--Module Setup
 	SetupPage()
 	BuildOptions()
