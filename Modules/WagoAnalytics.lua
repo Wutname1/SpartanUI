@@ -81,9 +81,6 @@ local function SetupPage()
 				-- Attaching
 				SUI_Win.WagoAnalytics = WagoAnalytics
 			else
-				-- Quality Selling Options
-				WagoAnalytics.enable = StdUi:Checkbox(WagoAnalytics, L['Allow annonymous data collection'], 260, 30)
-
 				WagoAnalytics.lbl0 =
 					StdUi:Label(
 					WagoAnalytics,
@@ -122,9 +119,6 @@ local function SetupPage()
 
 				-- Attaching
 				SUI_Win.WagoAnalytics = WagoAnalytics
-
-				-- Defaults
-				WagoAnalytics.enable:SetChecked(module.DB.Enabled)
 			end
 		end,
 		Next = function()

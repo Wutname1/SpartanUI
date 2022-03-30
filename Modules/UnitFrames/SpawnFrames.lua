@@ -406,37 +406,39 @@ local function CreateUnitFrame(self, unit)
 		if elementName == 'Portrait' then
 			self.Portrait3D:Hide()
 			self.Portrait2D:Hide()
-			if data.type == '3D' then
-				self.Portrait = self.Portrait3D
-				self.Portrait3D:Show()
-				if (self.Portrait:IsObjectType('PlayerModel')) then
-					self.Portrait:SetAlpha(data.alpha)
+			if data.enabled then
+				if data.type == '3D' then
+					self.Portrait = self.Portrait3D
+					self.Portrait3D:Show()
+					if (self.Portrait:IsObjectType('PlayerModel')) then
+						self.Portrait:SetAlpha(data.alpha)
 
-					local rotation = data.rotation
+						local rotation = data.rotation
 
-					if self.Portrait:GetFacing() ~= (rotation / 57.29573671972358) then
-						self.Portrait:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
+						if self.Portrait:GetFacing() ~= (rotation / 57.29573671972358) then
+							self.Portrait:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
+						end
+
+						self.Portrait:SetCamDistanceScale(data.camDistanceScale)
+						self.Portrait:SetPosition(data.xOffset, data.xOffset, data.yOffset)
+
+						--Refresh model to fix incorrect display issues
+						self.Portrait:ClearModel()
+						self.Portrait:SetUnit(unit)
 					end
-
-					self.Portrait:SetCamDistanceScale(data.camDistanceScale)
-					self.Portrait:SetPosition(data.xOffset, data.xOffset, data.yOffset)
-
-					--Refresh model to fix incorrect display issues
-					self.Portrait:ClearModel()
-					self.Portrait:SetUnit(unit)
+				else
+					self.Portrait = self.Portrait2D
+					self.Portrait2D:Show()
 				end
-			else
-				self.Portrait = self.Portrait2D
-				self.Portrait2D:Show()
+				if data.position == 'left' then
+					self.Portrait3D:SetPoint('RIGHT', self, 'LEFT')
+					self.Portrait2D:SetPoint('RIGHT', self, 'LEFT')
+				else
+					self.Portrait3D:SetPoint('LEFT', self, 'RIGHT')
+					self.Portrait2D:SetPoint('LEFT', self, 'RIGHT')
+				end
+				self:UpdateAllElements('OnUpdate')
 			end
-			if data.position == 'left' then
-				self.Portrait3D:SetPoint('RIGHT', self, 'LEFT')
-				self.Portrait2D:SetPoint('RIGHT', self, 'LEFT')
-			else
-				self.Portrait3D:SetPoint('LEFT', self, 'RIGHT')
-				self.Portrait2D:SetPoint('LEFT', self, 'RIGHT')
-			end
-			self:UpdateAllElements('OnUpdate')
 		end
 
 		--Range
