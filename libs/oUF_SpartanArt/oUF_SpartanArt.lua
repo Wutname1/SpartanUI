@@ -141,11 +141,9 @@ local function Update(self, event, unit)
 
 	* self   - the SpartanArt element
 	* unit   - the unit for which the update has been triggered (string)
-	* status - the unit's current PvP status or faction accounting for mercenary mode (string)['FFA', 'Alliance',
-	           'Horde']
 	--]]
 	if (element.PostUpdate) then
-		return element:PostUpdate(unit, status)
+		return element:PostUpdate(unit)
 	end
 end
 

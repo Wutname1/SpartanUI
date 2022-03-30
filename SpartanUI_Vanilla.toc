@@ -44,10 +44,7 @@ libs\LibHealComm-4.0\LibHealComm-4.0.lua
 libs\LibClassicDurations\LibClassicDurations.xml
 libs\LibClassicCasterino\LibClassicCasterino.lua
 libs\oUF\oUF_Classic.xml
-libs\oUF_ClassicAuraDurations\oUF_ClassicAuraDurations.lua
-libs\oUF_AuraBars\oUF_AuraBars.lua
 libs\oUF_SpartanArt\oUF_SpartanArt.lua
-libs\oUF_QuestMobIndicator\oUF_QuestMobIndicator.lua
 libs\oUF_Plugins\Loader.xml
 
 # Localization

@@ -42,9 +42,7 @@ libs\WagoAnalyticsShim\Shim.lua
 
 # Unit Frame libraries
 libs\oUF\oUF.xml
-libs\oUF_AuraBars\oUF_AuraBars.lua
 libs\oUF_SpartanArt\oUF_SpartanArt.lua
-libs\oUF_QuestMobIndicator\oUF_QuestMobIndicator.lua
 libs\oUF_Plugins\Loader.xml
 
 # Localization
