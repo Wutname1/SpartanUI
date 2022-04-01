@@ -1,0 +1,16 @@
+{
+  "Lua.runtime.version": "Lua 5.1",
+  "Lua.diagnostics.globals": [
+    "ScriptErrorsFrame",
+    "SpartanUI",
+    "SpartanUIDB",
+    "InterfaceOptionsFramePanelContainer",
+    "CensusButton",
+    "GameTimeFrame",
+    "Minimap",
+    "BugGrabber"
+  ],
+  "Lua.workspace.ignoreDir": [".vscode", "libs"],
+  "Lua.diagnostics.ignoredFiles": "Disable",
+  "Lua.diagnostics.enable": true
+}

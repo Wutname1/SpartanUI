@@ -23,8 +23,6 @@ local print = function(...)
 	DEFAULT_CHAT_FRAME:AddMessage(table.concat(tmp, ' ', 1, n))
 end
 
-local msgsAllowedLastTime = GetTime()
-
 local onError = function()
 	-- If the frame is shown, we need to update it.
 	-- if (addon.db.auto and not InCombatLockdown()) or (window and window:IsShown()) then
@@ -45,7 +43,7 @@ local eventFrame = CreateFrame('Frame', nil, InterfaceOptionsFramePanelContainer
 eventFrame:SetScript(
 	'OnEvent',
 	function(self, event, loadedAddon)
-		if loadedAddon ~= 'SpartanUI' then
+		if loadedAddon ~= 'SpartanUI' or not BugGrabber then
 			return
 		end
 		self:UnregisterEvent('ADDON_LOADED')
@@ -158,6 +156,9 @@ end
 local function updateDisplay(forceRefresh)
 	if not window then
 		addon:updatemapIcon()
+		return
+	end
+	if not BugGrabber then
 		return
 	end
 
@@ -391,8 +392,12 @@ local MapIcon =
 -- end
 
 function addon:updatemapIcon()
-	if icon:GetMinimapButton(name) then
+	if icon:GetMinimapButton() then
 		icon:Refresh(IconName)
+	end
+
+	if not BugGrabber then
+		return
 	end
 
 	local count = #addon:GetErrors(BugGrabber:GetSessionId())
@@ -411,6 +416,9 @@ f:SetScript(
 	function()
 		if not SUIErrorHandler then
 			SUIErrorHandler = {}
+		end
+		if not BugGrabber then
+			return
 		end
 		icon:Register(IconName, MapIcon, SUIErrorHandler)
 		if #addon:GetErrors(BugGrabber:GetSessionId()) == 0 then
