@@ -32,8 +32,5 @@
 	<Script file="Artwork\Options.lua" />
 
 	<!-- Load UnitFrames -->
-	<Script file="UnitFrames\Framework.lua"/>
-	<Script file="UnitFrames\SpawnFrames.lua" />
-	<Script file="UnitFrames\Options.lua" />
-
+	<Include file="UnitFrames\Load.xml"/>
 </Ui>

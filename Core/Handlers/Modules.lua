@@ -15,6 +15,7 @@ function SUI:GetModuleName(ModuleTable)
 	return name
 end
 
+---@param moduleName AceModule|string
 function SUI:IsModuleEnabled(moduleName)
 	if type(moduleName) == 'table' then
 		moduleName = SUI:GetModuleName(moduleName)

@@ -350,6 +350,7 @@ local function CreateUnitFrame(self, unit)
 		end
 		local data = module.CurrentSettings[unit].elements[elementName]
 		local element = self[elementName]
+		element.DB = data
 
 		if elementName == 'SpartanArt' then
 			self.SpartanArt:ForceUpdate('OnUpdate')
@@ -447,6 +448,11 @@ local function CreateUnitFrame(self, unit)
 				insideAlpha = elements.Range.insideAlpha,
 				outsideAlpha = elements.Range.outsideAlpha
 			}
+		end
+
+		-- Call the elements update function
+		if module.Elements[elementName] then
+			module.Elements[elementName].Update(self)
 		end
 	end
 
@@ -1201,53 +1207,11 @@ local function CreateUnitFrame(self, unit)
 		-- end
 		do -- Special Icons/Bars
 			if unit == 'player' then
-				local playerClass = select(2, UnitClass('player'))
 				--Runes
-				if playerClass == 'DEATHKNIGHT' then
-					self.Runes = CreateFrame('Frame', nil, self)
-					self.Runes.colorSpec = true
+				module:BuldElement(self, 'Runes')
 
-					for i = 1, 6 do
-						self.Runes[i] = CreateFrame('StatusBar', self:GetName() .. '_Runes' .. i, self)
-						self.Runes[i]:SetHeight(6)
-						self.Runes[i]:SetWidth((self.Health:GetWidth() - 10) / 6)
-						if (i == 1) then
-							self.Runes[i]:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 0, -3)
-						else
-							self.Runes[i]:SetPoint('TOPLEFT', self.Runes[i - 1], 'TOPRIGHT', 2, 0)
-						end
-						self.Runes[i]:SetStatusBarTexture(Smoothv2)
-						self.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
-
-						self.Runes[i].bg = self.Runes[i]:CreateTexture(nil, 'BORDER')
-						self.Runes[i].bg:SetPoint('TOPLEFT', self.Runes[i], 'TOPLEFT', -0, 0)
-						self.Runes[i].bg:SetPoint('BOTTOMRIGHT', self.Runes[i], 'BOTTOMRIGHT', 0, -0)
-						self.Runes[i].bg:SetTexture(Smoothv2)
-						self.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
-						self.Runes[i].bg.multiplier = 0.64
-						self.Runes[i]:Hide()
-					end
-				end
-
-				self.CPAnchor = self:CreateFontString(nil, 'BORDER')
-				self.CPAnchor:SetPoint('TOPLEFT', self.Name, 'BOTTOMLEFT', 40, -5)
-				local ClassPower = {}
-				for index = 1, 10 do
-					local Bar = CreateFrame('StatusBar', nil, self)
-					Bar:SetStatusBarTexture(Smoothv2)
-
-					-- Position and size.
-					Bar:SetSize(16, 5)
-					if (index == 1) then
-						Bar:SetPoint('LEFT', self.CPAnchor, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
-					else
-						Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
-					end
-					ClassPower[index] = Bar
-				end
-
-				-- Register with oUF
-				self.ClassPower = ClassPower
+				-- Combo points
+				module:BuldElement(self, 'ClassPower')
 
 				--Totem Bar
 				if SUI.IsRetail then

@@ -31,6 +31,7 @@ module.frames = {
 	raid = {},
 	containers = {}
 }
+module.Elements = {}
 module.Artwork = {}
 module.TagList = {
 	--Health
@@ -160,6 +161,20 @@ end
 --	}
 --
 ----------------------------------------------------------------------------------------------------
+
+function module:RegisterElement(ElementName, Build, Update, OptionsTable)
+	module.Elements[ElementName] = {
+		Build = Build,
+		Update = Update,
+		OptionsTable = OptionsTable
+	}
+end
+
+function module:BuldElement(frame, ElementName)
+	if module.Elements[ElementName] then
+		module.Elements[ElementName].Build(frame)
+	end
+end
 
 function module:IsFriendlyFrame(frameName)
 	local FriendlyFrame = {
