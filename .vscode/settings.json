@@ -102,9 +102,19 @@
     "ExtraAbilityContainer",
     "ZoneAbilityFrame",
     "ExtraActionBarFrame",
-    "MainMenuBarVehicleLeaveButton"
+    "MainMenuBarVehicleLeaveButton",
+    "GameFontNormalLarge",
+    "ElvUI",
+    "COPPER_PER_GOLD",
+    "COPPER_PER_SILVER"
   ],
-  "Lua.workspace.ignoreDir": [".vscode", "libs"],
+  "Lua.workspace.ignoreDir": [
+    ".vscode",
+    "libs/Ace*",
+    "libs/lib*",
+    "libs/oUF*",
+    "libs/Wago*"
+  ],
   "Lua.diagnostics.ignoredFiles": "Disable",
   "Lua.diagnostics.enable": true
 }

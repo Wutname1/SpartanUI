@@ -1,10 +1,9 @@
 local AceAddon = LibStub('AceAddon-3.0')
----@class SpartanUI : AceAddon, SUI_Modules, SUI_Font
+---@class SUI : AceAddon, SUI_Modules, SUI_Font, SUI_ChatCommands
 ---@field MoveIt MoveIt
 local SUI = AceAddon:NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
----@type SUIL
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
+local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
 local _G = _G
 local type, pairs, unpack = type, pairs, unpack
 SUI.L = L
@@ -12,9 +11,9 @@ SUI.AutoOpenErrors = true
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
-SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
-SUI.IsBCC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
-SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
+SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
+SUI.IsBCC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
+SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 local wowVersion = 'Retail'
 if SUI.IsClassic then
@@ -58,7 +57,7 @@ SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
 
 --init StdUI Instance for the whole addon
-SUI.StdUi = SUI.Lib.StdUi:NewInstance()
+SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
 SUI.WagoAnalytics = LibStub('WagoAnalytics'):Register(GetAddOnMetadata('SpartanUI', 'X-Wago-ID'))
 
 ---------------  Options Init ---------------
@@ -1777,7 +1776,7 @@ function SUI:GetiLVL(itemLink)
 	end
 
 	local scanningTooltip = CreateFrame('GameTooltip', 'AutoTurnInTooltip', nil, 'GameTooltipTemplate')
-	local itemLevelPattern = _G.ITEM_LEVEL:gsub('%%d', '(%%d+)')
+	local itemLevelPattern = ITEM_LEVEL:gsub('%%d', '(%%d+)')
 	local itemQuality = select(3, GetItemInfo(itemLink))
 
 	-- if a heirloom return a huge number so we dont replace it.

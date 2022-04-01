@@ -1,6 +1,8 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Handler_ChatCommands')
 local SUIChatCommands, CommandDetails, enabled = {}, {}, false
+---@class SUI_ChatCommands
+local SUI_ChatCommands = {}
 
 function SUI:ChatCommand(input)
 	if SUIChatCommands[input] then

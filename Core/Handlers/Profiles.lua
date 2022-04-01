@@ -302,7 +302,7 @@ local function GetProfileData(ScopeTable)
 			local data = SUI:CopyTable({}, datatable.profiles[profile])
 			--Compare against the defaults and remove all duplicates
 			local namespaceData = SUI.SpartanUIDB:GetNamespace(name).defaults.profile
-			data = SUI:RemoveTableDuplicates(data, namespaceData, vars)
+			data = SUI:RemoveTableDuplicates(data, namespaceData)
 
 			profileData[name] = data
 		end
