@@ -20,7 +20,7 @@ local function RemoveTextures(frame, option)
 				if (type(option) == 'boolean') then
 					if region.UnregisterAllEvents then
 						region:UnregisterAllEvents()
-						region:SetParent(_purgatory)
+						region:SetParent(nil)
 					else
 						region.Show = region.Hide
 					end
@@ -154,6 +154,8 @@ function module:SkinAce3()
 			module:Skin('Window', widgetParent)
 		elseif (ProxyType[widgetType]) then
 			if widget.treeframe then
+				local function NOOP()
+				end
 				module:Skin('Frame', widget.border)
 				module:Skin('Frame', widget.treeframe)
 				widgetParent:SetPoint('TOPLEFT', widget.treeframe, 'TOPRIGHT', 1, 0)

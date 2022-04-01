@@ -1,5 +1,6 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Style_Arcane')
+local unpack = unpack
 module.Settings = {}
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local UnitFrames = SUI:GetModule('Component_UnitFrames')

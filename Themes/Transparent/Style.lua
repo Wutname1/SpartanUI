@@ -3,8 +3,8 @@ local L = SUI.L
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:NewModule('Style_Transparent')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Transparent', SpartanUI)
+local unpack = unpack
 ----------------------------------------------------------------------------------------------------
-local InitRan = false
 
 function module:OnInitialize()
 	--Enable the in the Core options screen

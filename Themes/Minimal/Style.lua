@@ -2,6 +2,7 @@ local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:NewModule('Style_Minimal')
+local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()

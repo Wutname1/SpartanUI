@@ -1,6 +1,7 @@
 local _G, SUI = _G, SUI
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:NewModule('Style_Classic')
+local unpack = unpack
 local UnregisterStateDriver = _G.UnregisterStateDriver
 ----------------------------------------------------------------------------------------------------
 local round = function(num) -- rounds a number to 2 decimal places

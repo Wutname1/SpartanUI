@@ -1,6 +1,7 @@
 local SUI, L, Lib, StdUi = SUI, SUI.L, SUI.Lib, SUI.StdUi
 local module = SUI:NewModule('Handler_Options', 'AceEvent-3.0')
 module.ShowOptionsUI = false
+local unpack = unpack
 
 ---------------------------------------------------------------------------
 function module:GetConfigWindow()
@@ -224,7 +225,7 @@ function module:OnInitialize()
 				order = 53,
 				fontSize = 'large'
 			},
-			line2 = {name = '', type = 'header', order = 99},
+			line3 = {name = '', type = 'header', order = 99},
 			navigationissues = {name = L['Have a Question?'], type = 'description', order = 100, fontSize = 'large'},
 			navigationissues2 = {
 				name = '',
@@ -254,7 +255,7 @@ function module:OnInitialize()
 				set = function(info, value)
 				end
 			},
-			line3 = {name = '', type = 'header', order = 500}
+			line4 = {name = '', type = 'header', order = 500}
 		}
 	}
 

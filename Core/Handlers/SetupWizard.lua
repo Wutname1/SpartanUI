@@ -367,7 +367,7 @@ local function WelcomePage()
 		Display = function()
 			local profiles = {}
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
-			for _, v in pairs(SUI.SpartanUIDB:GetProfiles(tmpprofiles)) do
+			for _, v in pairs(SUI.SpartanUIDB:GetProfiles()) do
 				if v ~= currentProfile then
 					profiles[#profiles + 1] = {text = v, value = v}
 				end
@@ -416,7 +416,7 @@ local function WelcomePage()
 					ReloadUI()
 				end
 			)
-			if #profiles == 1 then
+			if #profiles == 0 then
 				WelcomePage.ProfileCopyLabel:Hide()
 				WelcomePage.ProfileList:Hide()
 				WelcomePage.CopyProfileButton:Hide()

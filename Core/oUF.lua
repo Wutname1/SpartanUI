@@ -1,4 +1,5 @@
 local addon = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
+local unpack = unpack
 
 --------------   oUF Functions   ------------------------------------
 function addon:HotsListing()
@@ -81,7 +82,7 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 	return auras
 end
 
-function addon:pvpIcon(self, event, unit)
+function addon.pvpIcon(self, event, unit)
 	if (unit ~= self.unit) then
 		return
 	end
@@ -288,7 +289,6 @@ do -- Level Skull as an SUIUF module
 		if (self.LevelSkull) then
 			self.LevelSkull:Hide()
 		end
-		return
 	end
 	SUIUF:AddElement('LevelSkull', Update, Enable, Disable)
 end
@@ -342,7 +342,6 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 		if (self.RareElite) then
 			self.RareElite:Hide()
 		end
-		return
 	end
 	SUIUF:AddElement('RareElite', Update, Enable, Disable)
 end

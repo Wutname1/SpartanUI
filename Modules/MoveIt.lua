@@ -1,8 +1,10 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local StdUi = LibStub('StdUi'):NewInstance()
+---@class MoveIt : AceModule
 local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
 MoveIt.Core = true
+SUI.MoveIt = MoveIt
 local MoverList = {}
 local colors = {
 	bg = {0.0588, 0.0588, 0, .85},

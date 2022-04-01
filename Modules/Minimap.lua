@@ -2,8 +2,9 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Component_Minimap', 'AceTimer-3.0')
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
-local MoveIt, Settings
-local UserSettings = SUI.DB.MiniMap
+---@type MoveIt, any
+local MoveIt
+local UserSettings, Settings = SUI.DB.MiniMap, nil
 ----------------------------------------------------------------------------------------------------
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
@@ -158,7 +159,7 @@ function module:ShapeChange(shape)
 end
 
 function module:OnInitialize()
-	MoveIt = SUI:GetModule('Component_MoveIt')
+	MoveIt = SUI.MoveIt
 	-- TOOD: Convert this away from StaticPopup
 	StaticPopupDialogs['MiniMapNotice'] = {
 		text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permisson for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',

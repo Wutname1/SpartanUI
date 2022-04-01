@@ -3,6 +3,9 @@ local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
+local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest
+local SelectActiveQuest = C_GossipInfo.SelectActiveQuest
+
 local ATI_Container = CreateFrame('Frame')
 local IsMerchantOpen = false
 local SLOTS = {
@@ -304,8 +307,8 @@ function module.QUEST_COMPLETE()
 		if (link == nil) then
 			return
 		end
-		local itemName, _, itemQuality, itemLevel, _, _, _, _, itemEquipLoc, _, itemSellPrice = GetItemInfo(link)
-		local QuestItemTrueiLVL = SUI:GetiLVL(link, itemQuality, itemLevel)
+		local itemName, _, _, _, _, _, _, _, itemEquipLoc, _, itemSellPrice = GetItemInfo(link)
+		local QuestItemTrueiLVL = SUI:GetiLVL(link)
 
 		-- Check the items value
 		if itemSellPrice > GreedValue then

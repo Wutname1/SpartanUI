@@ -1,6 +1,7 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Component_Tooltips')
 module.description = 'SpartanUI tooltip skining'
+local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 local targetList = {}
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}

@@ -1,6 +1,7 @@
 local SUI, L = SUI, SUI.L
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:GetModule('Style_Classic')
+local unpack = unpack
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local SkinnedFrames = {}

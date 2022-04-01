@@ -104,7 +104,7 @@ function SUI:FormatFont(element, size, Module, UpdateOnly)
 	end
 
 	--Set Font Outline
-	local flags, sizeFinal = ''
+	local flags, sizeFinal = '', (size or 1)
 	if SUI.DB.font.Modules[Module].Type == 'monochrome' then
 		flags = flags .. 'monochrome '
 	elseif SUI.DB.font.Modules[Module].Type == 'thickoutline' then

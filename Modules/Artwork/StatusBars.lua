@@ -202,7 +202,7 @@ local showXPTooltip = function(self)
 		(UnitXP('player') / UnitXPMax('player') * 100)
 	)
 	self.tooltip.TextFrame.HeaderText:SetText(a .. b) -- Level 99 (9999 / 9999) 100% Experience
-	local rested, text = GetXPExhaustion() or 0
+	local rested, text = GetXPExhaustion() or 0, ''
 	if (rested > 0) then
 		text = format(xptip1, format(xprest, (rested / UnitXPMax('player')) * 100), 200)
 		self.tooltip.TextFrame.MainText:SetText(text) -- Rested (15%) - 200% of normal experience gained from monsters.
@@ -424,48 +424,48 @@ function module:factory()
 		--Tooltip Display Events
 		statusbar:SetScript(
 			'OnEnter',
-			function(self)
+			function()
 				if GetRealmName() == 'arctium.io' then
 					return
 				end
 				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then
-					showRepTooltip(self, i)
+					showRepTooltip(statusbar)
 				end
 				if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then
-					showXPTooltip(self, i)
+					showXPTooltip(statusbar)
 				end
 				if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then
-					showAzeriteTooltip(self, i)
+					showAzeriteTooltip(statusbar)
 				end
 				if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then
-					showHonorTooltip(self, i)
+					showHonorTooltip(statusbar)
 				end
 			end
 		)
 		statusbar:SetScript(
 			'OnMouseDown',
-			function(self)
+			function()
 				if GetRealmName() == 'arctium.io' then
 					return
 				end
 				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then
-					showRepTooltip(self, i)
+					showRepTooltip(statusbar)
 				end
 				if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then
-					showXPTooltip(self, i)
+					showXPTooltip(statusbar)
 				end
 				if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then
-					showAzeriteTooltip(self, i)
+					showAzeriteTooltip(statusbar)
 				end
 				if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'click' then
-					showHonorTooltip(self, i)
+					showHonorTooltip(statusbar)
 				end
 			end
 		)
 		statusbar:SetScript(
 			'OnLeave',
-			function(self)
-				self.tooltip:Hide()
+			function()
+				statusbar.tooltip:Hide()
 			end
 		)
 
@@ -486,13 +486,13 @@ function module:factory()
 		--Hook the visibility of the tooltip to the text
 		tooltip:HookScript(
 			'OnHide',
-			function(self)
+			function()
 				tooltip.TextFrame:Hide()
 			end
 		)
 		tooltip:HookScript(
 			'OnShow',
-			function(self)
+			function()
 				tooltip.TextFrame:Show()
 			end
 		)
