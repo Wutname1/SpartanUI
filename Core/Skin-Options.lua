@@ -154,8 +154,6 @@ function module:SkinAce3()
 			module:Skin('Window', widgetParent)
 		elseif (ProxyType[widgetType]) then
 			if widget.treeframe then
-				local function NOOP()
-				end
 				module:Skin('Frame', widget.border)
 				module:Skin('Frame', widget.treeframe)
 				widgetParent:SetPoint('TOPLEFT', widget.treeframe, 'TOPRIGHT', 1, 0)
@@ -163,8 +161,29 @@ function module:SkinAce3()
 				widget.CreateButton = function(self)
 					local newButton = oldFunc(self)
 					RemoveTextures(newButton.toggle)
-					newButton.toggle.SetNormalTexture = NOOP
-					newButton.toggle.SetPushedTexture = NOOP
+					newButton.toggle:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
+					newButton.toggle:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton')
+					hooksecurefunc(
+						newButton.toggle,
+						'SetNormalTexture',
+						function(frame, texture)
+							local tex = tostring(frame:GetNormalTexture():GetTexture())
+							if tex == '130838' then
+								frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
+							elseif tex == '130821' then
+								frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\MinusButton')
+							end
+						end
+					)
+					hooksecurefunc(
+						newButton.toggle,
+						'SetPushedTexture',
+						function(frame, texture)
+							if not strfind(texture, 'PushButton') then
+								frame:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton')
+							end
+						end
+					)
 					module:Skin('Button', newButton.toggle)
 					return newButton
 				end
