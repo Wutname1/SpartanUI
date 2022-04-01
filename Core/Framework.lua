@@ -1,9 +1,11 @@
-local _, SUI = ...
-SUI = LibStub('AceAddon-3.0'):NewAddon(SUI, 'SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
+local AceAddon = LibStub('AceAddon-3.0')
+---@class SpartanUI : AceAddon
+local SUI = AceAddon:NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
+---@type SUIL
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 local _G = _G
-local type, pairs = type, pairs
+local type, pairs, unpack = type, pairs, unpack
 SUI.L = L
 SUI.AutoOpenErrors = true
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
@@ -31,6 +33,9 @@ SUI.Version = ''
 ---------------  Add Libraries ---------------
 
 SUI.Lib = {}
+---@param name string
+---@param libaray table|function
+---@param silent boolean
 SUI.AddLib = function(name, libaray, silent)
 	if not name then
 		return
@@ -1250,13 +1255,11 @@ local function reloaduiWindow()
 
 	-- Create Popup Items
 	popup.ReloadMsg = StdUi:Label(popup, 'A reload of your UI is required.', 20)
-	popup.ExtraMsg = StdUi:Label(popup, (Desc2 or ''), 20, nil, 400)
 	popup.btnClose = StdUi:HighlightButton(popup, 50, 20, 'CLOSE')
 	popup.btnReload = StdUi:Button(popup, 180, 20, 'RELOAD UI')
 
 	-- Position
 	StdUi:GlueTop(popup.ReloadMsg, popup, 0, -50)
-	StdUi:GlueTop(popup.ExtraMsg, popup.ReloadMsg, 0, -20)
 	popup.btnReload:SetPoint('BOTTOM', popup, 'BOTTOM', 0, 4)
 	popup.btnClose:SetPoint('BOTTOMRIGHT', popup, 'BOTTOMRIGHT', -4, 4)
 
@@ -1345,9 +1348,9 @@ function SUI:OnInitialize()
 
 	--First Time Setup Actions
 	if not SUI.DB.SetupDone then
-		if _G.LARGE_NUMBER_SEPERATOR == '.' then
+		if LARGE_NUMBER_SEPERATOR == '.' then
 			SUI.DB.font.NumberSeperator = '.'
-		elseif _G.LARGE_NUMBER_SEPERATOR == '' then
+		elseif LARGE_NUMBER_SEPERATOR == '' then
 			SUI.DB.font.NumberSeperator = ''
 		end
 	end
@@ -1368,7 +1371,9 @@ function SUI:OnInitialize()
 
 	local function resetfulldb()
 		if ResetDBWarning then
-			Bartender4.db:ResetDB()
+			if Bartender4 then
+				Bartender4.db:ResetDB()
+			end
 			SUI.SpartanUIDB:ResetDB()
 		else
 			ResetDBWarning = true

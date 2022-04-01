@@ -371,6 +371,12 @@ end
 
 local isDragging = false
 
+---@param parent Frame
+---@param name string
+---@param DisplayName string
+---@param postdrag function
+---@param groupName string
+---@return nil
 function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	if SUI.DB.DisabledComponents.MoveIt then
 		return
@@ -714,6 +720,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 end
 
 function MoveIt:OnInitialize()
+	---@class MoveItDB
 	local defaults = {
 		profile = {
 			AltKey = false,
@@ -726,6 +733,7 @@ function MoveIt:OnInitialize()
 			}
 		}
 	}
+	---@type MoveItDB
 	MoveIt.Database = SUI.SpartanUIDB:RegisterNamespace('MoveIt', defaults)
 	MoveIt.DB = MoveIt.Database.profile
 

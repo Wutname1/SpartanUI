@@ -1,7 +1,5 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
 local module = SUI:NewModule('Handler_Modules')
--- Incase we decide to handle this different again in the future using these helpers will 'help'
-----------------------------------------------------------------------------------------------------
 
 function SUI:GetModuleName(ModuleTable)
 	local name
