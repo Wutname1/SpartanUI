@@ -1,5 +1,6 @@
 local AceAddon = LibStub('AceAddon-3.0')
----@class SpartanUI : AceAddon
+---@class SpartanUI : AceAddon, SUI_Modules, SUI_Font
+---@field MoveIt MoveIt
 local SUI = AceAddon:NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
 ---@type SUIL

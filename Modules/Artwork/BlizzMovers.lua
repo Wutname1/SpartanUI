@@ -12,7 +12,7 @@ local function TalkingHead()
 	local SetupTalkingHead = function()
 		--Prevent WoW from moving the frame around
 		TalkingHeadFrame.ignoreFramePositionManager = true
-		UIPARENT_MANAGED_FRAME_POSITION.TalkingHeadFrame = nil
+		UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
 
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
@@ -119,7 +119,7 @@ local function VehicleSeatIndicator()
 	VehicleSeatHolder:SetPoint(point, anchor, secondaryPoint, x, y)
 	VehicleSeatHolder:Hide()
 	local function SetPosition(_, _, anchor)
-		if anchor:GetName() == 'MinimapCluster' or anchor == _G.MinimapCluster then
+		if anchor:GetName() == 'MinimapCluster' or anchor == MinimapCluster then
 			SeatIndicator:ClearAllPoints()
 			SeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
 		end

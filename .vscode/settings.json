@@ -94,7 +94,15 @@
     "Minimap_ZoomOut",
     "NXTITLELOW",
     "Nx",
-    "HybridMinimap"
+    "HybridMinimap",
+    "MinimapCluster",
+    "UIPARENT_MANAGED_FRAME_POSITIONS",
+    "TalkingHeadFrame",
+    "TalkingHead_LoadUI",
+    "ExtraAbilityContainer",
+    "ZoneAbilityFrame",
+    "ExtraActionBarFrame",
+    "MainMenuBarVehicleLeaveButton"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs"],
   "Lua.diagnostics.ignoredFiles": "Disable",

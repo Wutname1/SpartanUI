@@ -1,7 +1,9 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
 local module = SUI:NewModule('Handler_Modules')
+---@class SUI_Modules
+local SUI_Modules = {}
 
-function SUI:GetModuleName(ModuleTable)
+function SUI_Modules:GetModuleName(ModuleTable)
 	local name
 
 	-- Ace3 adds SpartanUI_ to the name so it knows how to handle things, we need to account for that.
@@ -16,7 +18,8 @@ function SUI:GetModuleName(ModuleTable)
 end
 
 ---@param moduleName AceModule|string
-function SUI:IsModuleEnabled(moduleName)
+---@return boolean
+function SUI_Modules:IsModuleEnabled(moduleName)
 	if type(moduleName) == 'table' then
 		moduleName = SUI:GetModuleName(moduleName)
 	end
@@ -27,7 +30,9 @@ function SUI:IsModuleEnabled(moduleName)
 	return true
 end
 
-function SUI:IsModuleDisabled(moduleName)
+---@param moduleName AceModule|string
+---@return boolean
+function SUI_Modules:IsModuleDisabled(moduleName)
 	if type(moduleName) == 'table' then
 		moduleName = SUI:GetModuleName(moduleName)
 	end
@@ -39,7 +44,8 @@ function SUI:IsModuleDisabled(moduleName)
 end
 
 -- These override the default Ace3 calls so we can track the status
-function SUI:DisableModule(input)
+---@param input AceModule|string
+function SUI_Modules:DisableModule(input)
 	local module = nil
 	if type(input) == 'table' then
 		module = input
@@ -54,7 +60,8 @@ function SUI:DisableModule(input)
 	return module:Disable()
 end
 
-function SUI:EnableModule(input)
+---@param input AceModule|string
+function SUI_Modules:EnableModule(input)
 	local module = nil
 	if type(input) == 'table' then
 		module = input
@@ -171,4 +178,18 @@ end
 
 function module:OnEnable()
 	ModuleSelectionPage()
+end
+
+-- Inject into SUI Root
+local mixins = {
+	'GetModuleName',
+	'IsModuleEnabled',
+	'IsModuleDisabled',
+	'DisableModule',
+	'EnableModule'
+}
+do
+	for _, v in next, mixins do
+		SUI[v] = SUI_Modules[v]
+	end
 end

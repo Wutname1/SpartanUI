@@ -1,5 +1,8 @@
 local SUI, L = SUI, SUI.L
+---@class AceAddon : AceTimer-3.0
 local module = SUI:NewModule('Handler_Font', 'AceTimer-3.0')
+---@class SUI_Font
+local SUI_Font = {}
 
 module.FontItems = {}
 local FontFaces = {
@@ -30,12 +33,12 @@ function module:StoreFontItem(element, DefaultSize, Module)
 	module.FontItems[Module][NewItemID] = element
 end
 
-function SUI:comma_value(n)
+function SUI_Font:comma_value(n)
 	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
 	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. SUI.DB.font.NumberSeperator):reverse()) .. right
 end
 
-function SUI:round(val, decimal)
+function SUI_Font:round(val, decimal)
 	if (decimal) then
 		return math.floor((val * 10 ^ decimal) + 0.5) / (10 ^ decimal)
 	else
@@ -43,7 +46,7 @@ function SUI:round(val, decimal)
 	end
 end
 
-function SUI:GetFontFace(Module)
+function SUI_Font:GetFontFace(Module)
 	if Module then
 		if SUI.DB.font.Modules[Module].Face == 'SpartanUI' then
 			return 'Interface\\AddOns\\SpartanUI\\fonts\\Cognosis.ttf'
@@ -83,7 +86,7 @@ local function FindID(element, Module)
 	return false
 end
 
-function SUI:UpdateDefaultSize(element, size, Module)
+function SUI_Font:UpdateDefaultSize(element, size, Module)
 	--Update stored default
 	local ID = FindID(element, Module)
 	if ID then
@@ -94,7 +97,7 @@ function SUI:UpdateDefaultSize(element, size, Module)
 	end
 end
 
-function SUI:FormatFont(element, size, Module, UpdateOnly)
+function SUI_Font:FormatFont(element, size, Module, UpdateOnly)
 	--If no module defined fall back to main settings
 	if not element then
 		return
@@ -133,7 +136,7 @@ end
     Refresh the font settings for the specified module.
     If no module is specified all modules will be updated
 ]]
-function SUI:FontRefresh(Module)
+function SUI_Font:FontRefresh(Module)
 	if not Module then
 		for key, _ in pairs(module.FontItems) do
 			SUI:FontRefresh(key)
@@ -142,6 +145,22 @@ function SUI:FontRefresh(Module)
 		for i = 1, module.FontItems[Module].Count do
 			SUI:FormatFont(module.FontItems[Module][i], module.FontItems[Module][i .. 'DefaultSize'], Module, true)
 		end
+	end
+end
+
+-- Inject into SUI Root
+local mixins = {
+	'FontRefresh',
+	'FormatFont',
+	'UpdateDefaultSize',
+	'GetFontFace',
+	'round',
+	'comma_value',
+	'StoreFontItem'
+}
+do
+	for _, v in next, mixins do
+		SUI[v] = SUI_Font[v]
 	end
 end
 
@@ -176,7 +195,7 @@ local function FontSetupWizard()
 			SUI_Win.FontFace:SetParent(SUI_Win.content)
 			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
 
-			local RadioButtons = function(self)
+			local RadioButton = function(self)
 				for _, v in ipairs(fontlist) do
 					SUI_Win.FontFace[v].radio:SetValue(false)
 				end
@@ -192,7 +211,7 @@ local function FontSetupWizard()
 			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0, 0.3125)
 			control:SetImageSize(180, 60)
 			control:SetPoint('TOPLEFT', SUI_Win.FontFace, 'TOPLEFT', 55, -55)
-			control:SetCallback('OnClick', RadioButtons)
+			control:SetCallback('OnClick', RadioButton)
 			control.frame:SetParent(SUI_Win.FontFace)
 			control.frame:Show()
 
@@ -217,7 +236,7 @@ local function FontSetupWizard()
 			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0.34375, 0.65625)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.RobotoBold.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
+			control:SetCallback('OnClick', RadioButton)
 			control.frame:SetParent(SUI_Win.FontFace)
 			control.frame:Show()
 
@@ -242,7 +261,7 @@ local function FontSetupWizard()
 			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0.6875, 1)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.Roboto.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
+			control:SetCallback('OnClick', RadioButton)
 			control.frame:SetParent(SUI_Win.FontFace)
 			control.frame:Show()
 
@@ -267,7 +286,7 @@ local function FontSetupWizard()
 			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0, 0.3125)
 			control:SetImageSize(180, 60)
 			control:SetPoint('TOP', SUI_Win.FontFace.RobotoBold.radio.frame, 'BOTTOM', 0, -20)
-			control:SetCallback('OnClick', RadioButtons)
+			control:SetCallback('OnClick', RadioButton)
 			control.frame:SetParent(SUI_Win.FontFace)
 			control.frame:Show()
 
@@ -292,7 +311,7 @@ local function FontSetupWizard()
 			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0.34375, 0.65625)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.NotoSans.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
+			control:SetCallback('OnClick', RadioButton)
 			control.frame:SetParent(SUI_Win.FontFace)
 			control.frame:Show()
 
@@ -317,7 +336,7 @@ local function FontSetupWizard()
 			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0.6875, 1)
 			control:SetImageSize(180, 60)
 			control:SetPoint('LEFT', SUI_Win.FontFace.FrizQuadrata.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButtons)
+			control:SetCallback('OnClick', RadioButton)
 			control.frame:SetParent(SUI_Win.FontFace)
 			control.frame:Show()
 
@@ -450,7 +469,7 @@ function module:OnEnable()
 	}
 
 	--Setup the Options in 5 seconds giving modules time to populate.
-	self:ScheduleTimer('BuildOptions', 2)
+	module:ScheduleTimer('BuildOptions', 2)
 end
 
 function module:BuildOptions()
