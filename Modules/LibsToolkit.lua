@@ -79,7 +79,7 @@ local function SetupTweaks()
 				)
 
 				CheckboxItem['tut'] = DisableTutorials
-				CheckboxItem['prd'] = nameplates
+				CheckboxItem['prd'] = Nameplate
 				CheckboxItem['autoloot'] = AutoLoot
 				CheckboxItem['nameplate'] = ShowNameplates
 

@@ -205,10 +205,6 @@ function module:OnEnable()
 	end
 	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
 
-	-- MiniMap Modification
-	-- Minimap:SetFrameLevel(120)
-
-	-- local frame = CreateFrame('Frame', skinSettings.name .. '_Bar' .. number, (parent or UIParent))
 	SUIMinimap:SetFrameStrata('BACKGROUND')
 	SUIMinimap:SetFrameLevel(99)
 	SUIMinimap:SetAllPoints(Minimap)
@@ -232,21 +228,6 @@ function module:OnEnable()
 		Minimap:SetQuestBlobRingScalar(0)
 	end
 	module:ModifyMinimapLayout()
-
-	-- if not HybridMinimap then
-	-- 	local frame = CreateFrame('Frame')
-	-- 	frame:SetScript(
-	-- 		'OnEvent',
-	-- 		function(self, event, addon)
-	-- 			if addon == 'Blizzard_HybridMinimap' then
-	-- 				self:UnregisterEvent(event)
-	-- 				module:ShapeChange(Settings.shape)
-	-- 				self:SetScript('OnEvent', nil)
-	-- 			end
-	-- 		end
-	-- 	)
-	-- 	frame:RegisterEvent('ADDON_LOADED')
-	-- end
 
 	--Look for existing buttons
 	MiniMapBtnScrape()
@@ -294,7 +275,7 @@ function module:ModifyMinimapLayout()
 	Minimap:EnableMouseWheel(true)
 	Minimap:SetScript(
 		'OnMouseWheel',
-		function(self, delta)
+		function(_, delta)
 			if (delta > 0) then
 				Minimap_ZoomIn()
 			else
@@ -667,13 +648,6 @@ function module:update(FullUpdate)
 	-- Set SUIMapChangesActive so we dont enter a loop from button events
 	UserSettings.SUIMapChangesActive = true
 	if not IsMouseOver() and (UserSettings.OtherStyle == 'mouseover' or UserSettings.OtherStyle == 'hide') then
-		--Fix for SUI.DBM making its icon even if its not needed
-		if SUI.DBM ~= nil and SUI.DBM.Options ~= nil then
-			if SUI.DBM.Options.ShowMinimapButton ~= nil and not SUI.DBM.Options.ShowMinimapButton then
-				table.insert(IgnoredFrames, 'DBMMinimapButton')
-			end
-		end
-
 		if CensusButton ~= nil and CensusButton:GetAlpha() == 1 then
 			CensusButton.FadeIn:Stop()
 			CensusButton.FadeOut:Stop()
@@ -698,8 +672,8 @@ function module:update(FullUpdate)
 					child.FadeOut:Stop()
 					child.FadeOut:Play()
 				elseif child.FadeIn == nil then
-					--if they still fail print a error and continue with our lives.
-					SUI.Err('Minimap', child:GetName() .. ' is not fading')
+				--if they still fail print a error and continue with our name
+				-- SUI.Error('Minimap', child:GetName() .. ' is not fading')
 				end
 			end
 		end
