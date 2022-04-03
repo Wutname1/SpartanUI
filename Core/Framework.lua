@@ -55,10 +55,10 @@ SUI.AddLib('AceCR', 'AceConfigRegistry-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
+SUI.AddLib('WagoAnalytics', 'WagoAnalytics')
 
 --init StdUI Instance for the whole addon
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
-SUI.WagoAnalytics = LibStub('WagoAnalytics'):Register(GetAddOnMetadata('SpartanUI', 'X-Wago-ID'))
 
 ---------------  Options Init ---------------
 SUI.opt = {
@@ -1890,14 +1890,14 @@ function SUI:OnEnable()
 	AceCD:AddToBlizOptions('SpartanUIBliz', 'SpartanUI')
 	AceCD:SetDefaultSize('SpartanUI', 1000, 700)
 
-	self:RegisterChatCommand('sui', 'ChatCommand')
-	self:RegisterChatCommand(
+	SUI:RegisterChatCommand('sui', 'ChatCommand')
+	SUI:RegisterChatCommand(
 		'suihelp',
 		function()
 			SUI.Lib.AceCD:Open('SpartanUI', 'Help')
 		end
 	)
-	self:RegisterChatCommand('spartanui', 'ChatCommand')
+	SUI:RegisterChatCommand('spartanui', 'ChatCommand')
 
 	--Reopen options screen if flagged to do so after a reloadui
 	SUI:RegisterEvent(

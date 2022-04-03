@@ -9,7 +9,7 @@
 ## X-Wago-ID: vEGPqeN1
 ## X-Github: https://github.com/Wutname1/SpartanUI
 ## X-oUF: SUIUF
-## OptionalDeps: Bartender4
+## OptionalDeps: Bartender4, WagoAnalytics
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## X-BugGrabber-Display: SUIErrorDisplay
 

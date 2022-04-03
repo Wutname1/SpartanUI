@@ -5,6 +5,19 @@ module.description = L['Module handles Wago Analytics collection IF your update 
 SUI.Analytics = module
 local print = SUI.print
 ----------------------------------------
+local Analytics = {}
+
+local function setupOption(setting)
+	if not SUI.opt.args.ModSetting or not SUI.opt.args.ModSetting.args.WagoAnalytics then
+		return
+	end
+
+	SUI.opt.args.ModSetting.args.WagoAnalytics.args.SessionData.args[setting] = {
+		name = setting,
+		type = 'input',
+		width = 'full'
+	}
+end
 
 function module:Set(moduleName, setting, value)
 	if not module.DB.Enabled or SUI:IsModuleDisabled(module) then
@@ -29,24 +42,12 @@ function module:Set(moduleName, setting, value)
 		module.DB.CollectedData[name] = tostring(value)
 
 		if type(value) == 'number' then
-			SUI.WagoAnalytics:SetCounter(name, value)
+			Analytics:SetCounter(name, value)
 		else
-			SUI.WagoAnalytics:Switch(name, value)
+			Analytics:Switch(name, value)
 		end
 		setupOption(name)
 	end
-end
-
-function setupOption(setting)
-	if not SUI.opt.args.ModSetting or not SUI.opt.args.ModSetting.args.WagoAnalytics then
-		return
-	end
-
-	SUI.opt.args.ModSetting.args.WagoAnalytics.args.SessionData.args[setting] = {
-		name = setting,
-		type = 'input',
-		width = 'full'
-	}
 end
 
 local function InitalCollection()
@@ -56,8 +57,12 @@ local function InitalCollection()
 	end
 
 	module:Set('Core', 'Scale', SUI.DB.scale)
-	module:Set('UnitFrames', 'Style', SUI:GetModule('Component_UnitFrames').DB.Style)
-	module:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
+	if SUI:IsModuleEnabled('Artwork') then
+		module:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
+	end
+	if SUI:IsModuleEnabled('UnitFrames') then
+		module:Set('UnitFrames', 'Style', SUI:GetModule('UnitFrames').DB.Style)
+	end
 end
 
 local function SetupPage()
@@ -242,6 +247,7 @@ function module:OnInitialize()
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('WagoAnalytics', defaults)
 	module.DB = module.Database.profile
+	Analytics = SUI.Lib.WagoAnalytics:Register(GetAddOnMetadata('SpartanUI', 'X-Wago-ID'))
 end
 
 function module:OnEnable()

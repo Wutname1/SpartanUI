@@ -253,7 +253,7 @@ function module:OnInitialize()
 			webLinks = true,
 			EditBoxTop = false,
 			timestampFormat = '%X',
-			playerlevel,
+			playerlevel = nil,
 			ChatCopyTip = true,
 			fontSize = 12
 		}
