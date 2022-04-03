@@ -55,7 +55,7 @@ SUI.AddLib('AceCR', 'AceConfigRegistry-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
-SUI.AddLib('WagoAnalytics', 'WagoAnalytics')
+SUI.AddLib('WagoAnalytics', 'WagoAnalytics', true)
 
 --init StdUI Instance for the whole addon
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi

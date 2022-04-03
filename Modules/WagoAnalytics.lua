@@ -5,7 +5,7 @@ module.description = L['Module handles Wago Analytics collection IF your update 
 SUI.Analytics = module
 local print = SUI.print
 ----------------------------------------
-local Analytics = {}
+local Analytics = nil
 
 local function setupOption(setting)
 	if not SUI.opt.args.ModSetting or not SUI.opt.args.ModSetting.args.WagoAnalytics then
@@ -20,7 +20,7 @@ local function setupOption(setting)
 end
 
 function module:Set(moduleName, setting, value)
-	if not module.DB.Enabled or SUI:IsModuleDisabled(module) then
+	if not module.DB.Enabled or SUI:IsModuleDisabled(module) or not Analytics then
 		return
 	end
 
@@ -247,12 +247,18 @@ function module:OnInitialize()
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('WagoAnalytics', defaults)
 	module.DB = module.Database.profile
+	if not SUI.Lib.WagoAnalytics then
+		return
+	end
 	Analytics = SUI.Lib.WagoAnalytics:Register(GetAddOnMetadata('SpartanUI', 'X-Wago-ID'))
 end
 
 function module:OnEnable()
 	if not SUI.IsRetail then
 		SUI:DisableModule(module)
+		return
+	end
+	if not Analytics then
 		return
 	end
 	--Module Setup
