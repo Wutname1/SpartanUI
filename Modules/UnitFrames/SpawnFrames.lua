@@ -1250,6 +1250,7 @@ local function CreateUnitFrame(self, unit)
 		self:EnableMouse(enable)
 	end
 	self:SetClampedToScreen(true)
+	--Setup unitframes tooltip hook
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
 
