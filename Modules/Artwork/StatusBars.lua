@@ -111,7 +111,7 @@ local updateText = function(self)
 	local side = self.i
 	local valFill, valMax, valPercent
 	local remaining = ''
-	if (module.DB[side].display == 'xp') and GetMaxPlayerLevel('player') ~= UnitLevel('player') then
+	if (module.DB[side].display == 'xp') and UnitLevel('player') <= GetMaxPlayerLevel() then
 		local rested, now, goal = GetXPExhaustion() or 0, UnitXP('player'), UnitXPMax('player')
 		if now ~= 0 then
 			rested = (rested / goal) * self:GetWidth()

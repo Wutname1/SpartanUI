@@ -1,8 +1,8 @@
-local SUI, L = SUI, SUI.L
+---@class SUI
+local SUI = SUI
+local L = SUI.L
 ---@class AceAddon : AceTimer-3.0
 local module = SUI:NewModule('Handler_Font', 'AceTimer-3.0')
----@class SUI_Font
-local SUI_Font = {}
 
 module.FontItems = {}
 local FontFaces = {
@@ -33,12 +33,12 @@ function module:StoreFontItem(element, DefaultSize, Module)
 	module.FontItems[Module][NewItemID] = element
 end
 
-function SUI_Font:comma_value(n)
+function SUI.comma_value(self, n)
 	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
 	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. SUI.DB.font.NumberSeperator):reverse()) .. right
 end
 
-function SUI_Font:round(val, decimal)
+function SUI.round(self, val, decimal)
 	if (decimal) then
 		return math.floor((val * 10 ^ decimal) + 0.5) / (10 ^ decimal)
 	else
@@ -46,7 +46,7 @@ function SUI_Font:round(val, decimal)
 	end
 end
 
-function SUI_Font:GetFontFace(Module)
+function SUI.GetFontFace(self, Module)
 	if Module then
 		if SUI.DB.font.Modules[Module].Face == 'SpartanUI' then
 			return 'Interface\\AddOns\\SpartanUI\\fonts\\Cognosis.ttf'
@@ -86,7 +86,7 @@ local function FindID(element, Module)
 	return false
 end
 
-function SUI_Font:UpdateDefaultSize(element, size, Module)
+function SUI.UpdateDefaultSize(self, element, size, Module)
 	--Update stored default
 	local ID = FindID(element, Module)
 	if ID then
@@ -97,7 +97,7 @@ function SUI_Font:UpdateDefaultSize(element, size, Module)
 	end
 end
 
-function SUI_Font:FormatFont(element, size, Module, UpdateOnly)
+function SUI.FormatFont(self, element, size, Module, UpdateOnly)
 	--If no module defined fall back to main settings
 	if not element then
 		return
@@ -136,7 +136,7 @@ end
     Refresh the font settings for the specified module.
     If no module is specified all modules will be updated
 ]]
-function SUI_Font:FontRefresh(Module)
+function SUI.FontRefresh(self, Module)
 	if not Module then
 		for key, _ in pairs(module.FontItems) do
 			SUI:FontRefresh(key)
@@ -145,22 +145,6 @@ function SUI_Font:FontRefresh(Module)
 		for i = 1, module.FontItems[Module].Count do
 			SUI:FormatFont(module.FontItems[Module][i], module.FontItems[Module][i .. 'DefaultSize'], Module, true)
 		end
-	end
-end
-
--- Inject into SUI Root
-local mixins = {
-	'FontRefresh',
-	'FormatFont',
-	'UpdateDefaultSize',
-	'GetFontFace',
-	'round',
-	'comma_value',
-	'StoreFontItem'
-}
-do
-	for _, v in next, mixins do
-		SUI[v] = SUI_Font[v]
 	end
 end
 

@@ -372,7 +372,7 @@ function module:FirstTimeSetup()
 				SUI_Win.Objectives[1].Condition:SetValue('Raid')
 
 				if UnitLevel('player') == 110 then
-					SUI_Objectives_InCombat_1:SetChecked(true)
+					SUI_Win.Objectives[1].InCombat:SetChecked(true)
 					SUI_Win.Objectives[2].Condition:SetValue('Instance')
 				end
 			end

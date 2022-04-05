@@ -68,13 +68,9 @@ local function printFormattedString(who, target, sid, failed)
 			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then
 				ChatChannel = 'SAY'
 			end
-
-			if ChatChannel == 'CHANNEL' and ec == 0 then
-				ChatChannel = 'SAY'
-			end
 		end
 
-		SendChatMessage(msg, ChatChannel, nil, ec)
+		SendChatMessage(msg, ChatChannel)
 	end
 end
 

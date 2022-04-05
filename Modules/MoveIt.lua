@@ -1,5 +1,4 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local StdUi = LibStub('StdUi'):NewInstance()
 ---@class MoveIt : AceModule
 local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
@@ -748,6 +747,7 @@ function MoveIt:OnInitialize()
 	MoveIt:Options()
 
 	-- Build Coord Frame
+	local StdUi = SUI.StdUi
 	coordFrame = StdUi:Window(nil, 480, 200)
 	coordFrame:SetFrameStrata('DIALOG')
 

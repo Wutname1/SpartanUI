@@ -1,5 +1,5 @@
 local AceAddon = LibStub('AceAddon-3.0')
----@class SUI : AceAddon, SUI_Modules, SUI_Font, SUI_ChatCommands
+---@class SUI : AceAddon
 ---@field MoveIt MoveIt
 local SUI = AceAddon:NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
@@ -1231,7 +1231,8 @@ local GlobalDefaults = {
 
 --- @class SUIDBObject
 local DBdefaults = {global = GlobalDefaults, profile = DBdefault}
---- @class SUIDB : SUIDBObject
+--- @class SUIDB : SUIDBObject, AceDBObject-3.0
+--- @field RegisterCallback function
 SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version
@@ -1244,7 +1245,7 @@ SUI.DBG = SUI.SpartanUIDB.global
 SUI.DB = SUI.SpartanUIDB.profile
 
 local function reloaduiWindow()
-	local StdUi = LibStub('StdUi')
+	local StdUi = SUI.StdUi
 	local popup = StdUi:Window(nil, 400, 140)
 	popup:SetPoint('TOP', 0, -20)
 	popup:SetFrameStrata('DIALOG')

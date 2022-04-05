@@ -61,7 +61,7 @@ local function InitalCollection()
 		module:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
 	end
 	if SUI:IsModuleEnabled('UnitFrames') then
-		module:Set('UnitFrames', 'Style', SUI:GetModule('UnitFrames').DB.Style)
+		module:Set('UnitFrames', 'Style', SUI:GetModule('Component_UnitFrames').DB.Style)
 	end
 end
 

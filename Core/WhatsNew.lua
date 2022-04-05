@@ -1,10 +1,10 @@
 local SUI = SUI
 local module = SUI:NewModule('WhatsNew')
-local StdUi = LibStub('StdUi'):NewInstance()
 -- DB or DBG - This allows us to change if the whats new should appear on every profile or once.
 local db = 'DB'
 
 function SUI:WhatsNew()
+	local StdUi = SUI.StdUi
 	module.window = StdUi:Window(nil, 650, 500)
 	module.window.StdUi = StdUi
 	module.window:SetPoint('CENTER', 0, 0)
