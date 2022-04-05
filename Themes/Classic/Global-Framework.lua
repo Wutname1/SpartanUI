@@ -42,7 +42,7 @@ function module:SetColor()
 	end
 end
 
-function module:TooltipLoc(self, parent)
+function module:TooltipLoc(tooltip, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
 		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Classic', 'TOPRIGHT', 0, 10)

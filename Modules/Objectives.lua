@@ -56,7 +56,7 @@ local HideFrame = function()
 	end
 end
 
-local ObjTrackerUpdate = function()
+local ObjTrackerUpdate = function(_, event)
 	if SUI.DB.DisabledComponents.Objectives or module.Override then
 		return
 	end

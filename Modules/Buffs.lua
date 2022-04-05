@@ -110,7 +110,7 @@ function module:OnEnable()
 	for k, v in ipairs(RuleList) do
 		local anchor = CreateFrame('Frame', nil)
 		anchor:SetSize(150, 25)
-		anchor:EnableMouse(enable)
+		anchor:EnableMouse(true)
 		anchor.bg = anchor:CreateTexture(nil, 'OVERLAY')
 		anchor.bg:SetAllPoints(anchor)
 		anchor.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')

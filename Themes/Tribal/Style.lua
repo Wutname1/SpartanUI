@@ -92,7 +92,7 @@ function module:OnDisable()
 end
 
 --	Module Calls
-function module:TooltipLoc(_, parent)
+function module:TooltipLoc(tooltip, parent)
 	if (parent == 'UIParent') then
 		tooltip:ClearAllPoints()
 		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Tribal', 'TOPRIGHT', 0, 10)
