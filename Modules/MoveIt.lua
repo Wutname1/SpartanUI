@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
----@class MoveIt : AceModule
+---@class MoveIt
 local MoveIt = SUI:NewModule('Component_MoveIt', 'AceEvent-3.0', 'AceHook-3.0')
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
 MoveIt.Core = true
@@ -487,7 +487,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 		self:SetScale(NewScale)
 		self.parent:SetScale(NewScale)
-		if scale == f.defaultScale then
+		if NewScale == f.defaultScale then
 			ScaledText:Hide()
 		else
 			ScaledText:Show()
@@ -806,7 +806,6 @@ function MoveIt:OnEnable()
 			reset = 'Reset all moved objects',
 			tips = 'Disable tips from being displayed in chat when movement system is activated'
 		},
-		nil,
 		true
 	)
 
