@@ -320,6 +320,7 @@ local function OnInitialize()
 end
 
 local function Options()
+	local LDBIcon = LibStub('LibDBIcon-1.0')
 	SUI.opt.args['General'].args['Bartender'] = {
 		name = L['Bartender4'],
 		type = 'group',
@@ -495,7 +496,7 @@ local function OnEnable()
 			'OnEvent',
 			function()
 				if cnt <= 10 then
-					StdUi:Dialog(
+					SUI.StdUi:Dialog(
 						L['Warning'],
 						L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10'
 					)
@@ -519,7 +520,6 @@ local function OnEnable()
 	end
 
 	function Bartender4:Lock()
-		return
 	end
 
 	-- Do what Bartender isn't - Make the Bag buttons the same size
