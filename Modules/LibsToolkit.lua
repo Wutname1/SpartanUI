@@ -32,6 +32,7 @@ local function SetupTweaks()
 			LibsToolkit:SetParent(SUI_Win)
 			LibsToolkit:SetAllPoints(SUI_Win)
 			if SUI:IsModuleEnabled('LibsToolkit') then
+				local LDBIcon = LibStub('LibDBIcon-1.0')
 				local Nameplate = StdUi:Checkbox(LibsToolkit, 'Disable ' .. DISPLAY_PERSONAL_RESOURCE, 240, 20)
 				local AutoLoot = StdUi:Checkbox(LibsToolkit, 'Enable AutoLoot', 240, 20)
 				local ShowNameplates = StdUi:Checkbox(LibsToolkit, 'Enable ' .. UNIT_NAMEPLATES_AUTOMODE, 240, 20)
@@ -43,6 +44,7 @@ local function SetupTweaks()
 				AutoLoot:SetChecked(true)
 				ShowNameplates:SetChecked(true)
 				-- If the user has more than 2 SUI Profile they should be 'experienced' so check this by default
+				local tmpprofiles = {}
 				if #SUI.SpartanUIDB:GetProfiles(tmpprofiles) >= 2 then
 					DisableTutorials:SetChecked(true)
 				end
@@ -92,9 +94,9 @@ local function SetupTweaks()
 						function()
 							DBM_MinimapIcon.hide = (not DBMMinimap:GetValue() or false)
 							if (DBMMinimap:GetValue() or false) then
-								LibStub('LibDBIcon-1.0'):Hide('DBM')
+								LDBIcon:Hide('DBM')
 							else
-								LibStub('LibDBIcon-1.0'):Show('DBM')
+								LDBIcon:Show('DBM')
 							end
 						end
 					)
@@ -103,7 +105,7 @@ local function SetupTweaks()
 
 				if Bartender4 then
 					Bartender4.db.profile.minimapIcon.hide = true
-					LibStub('LibDBIcon-1.0'):Hide('Bartender4')
+					LDBIcon:Hide('Bartender4')
 
 					local BT4MiniMap = StdUi:Checkbox(LibsToolkit, 'Hide Bartender4 Minimap Icon', 240, 20)
 					BT4MiniMap:SetChecked(true)
@@ -112,9 +114,9 @@ local function SetupTweaks()
 						function()
 							Bartender4.db.profile.minimapIcon.hide = (not BT4MiniMap:GetValue() or false)
 							if (BT4MiniMap:GetValue() or false) then
-								LibStub('LibDBIcon-1.0'):Hide('Bartender4')
+								LDBIcon:Hide('Bartender4')
 							else
-								LibStub('LibDBIcon-1.0'):Show('Bartender4')
+								LDBIcon:Show('Bartender4')
 							end
 						end
 					)
@@ -123,7 +125,7 @@ local function SetupTweaks()
 
 				if WeakAurasSaved then
 					WeakAurasSaved.minimap.hide = true
-					LibStub('LibDBIcon-1.0'):Hide('WeakAuras')
+					LDBIcon:Hide('WeakAuras')
 
 					local WAMiniMap = StdUi:Checkbox(LibsToolkit, 'Hide WeakAuras Minimap Icon', 240, 20)
 					WAMiniMap:SetChecked(true)
@@ -132,9 +134,9 @@ local function SetupTweaks()
 						function()
 							Bartender4.db.profile.minimapIcon.hide = (not WAMiniMap:GetValue() or false)
 							if (WAMiniMap:GetValue() or false) then
-								LibStub('LibDBIcon-1.0'):Hide('WeakAuras')
+								LDBIcon:Hide('WeakAuras')
 							else
-								LibStub('LibDBIcon-1.0'):Show('WeakAuras')
+								LDBIcon:Show('WeakAuras')
 							end
 						end
 					)
