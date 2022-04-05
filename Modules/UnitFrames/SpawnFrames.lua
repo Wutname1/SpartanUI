@@ -1247,7 +1247,7 @@ local function CreateUnitFrame(self, unit)
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
 	if not InCombatLockdown() then
-		self:EnableMouse(enable)
+		self:EnableMouse(true)
 	end
 	self:SetClampedToScreen(true)
 	--Setup unitframes tooltip hook
@@ -1291,7 +1291,7 @@ function module:SpawnFrames()
 	if SUI.IsRetail then
 		for _, group in ipairs({'boss', 'arena'}) do
 			local grpFrame = CreateFrame('Frame')
-			for i = 1, (group == 'boss' and MAX_BOSS_FRAMES or 3) do
+			for i = 1, (group == 'boss' and MAX_BOSS_FRAMES or 5) do
 				grpFrame[i] = SUIUF:Spawn(group .. i, 'SUI_' .. group .. i)
 				if i == 1 then
 					grpFrame[i]:SetPoint('TOPLEFT', _G['SUI_UF_' .. group], 'TOPLEFT', 0, 0)
