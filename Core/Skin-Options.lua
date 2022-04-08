@@ -100,7 +100,7 @@ function module:SkinAce3()
 					closeBtn:SetPoint('TOPRIGHT', -1, -1)
 					closeBtn:SetScript(
 						'OnClick',
-						function(self)
+						function()
 							frame.CloseBtn:Click()
 						end
 					)
@@ -251,7 +251,7 @@ function module:ConfigOpened(name)
 	end
 end
 
-local function attemptSkin(AddonName)
+local function attemptSkin()
 	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner', true)
 	if a then
 		a.prdb.ChatEditBox.skin = false
@@ -270,6 +270,3 @@ end
 local f = CreateFrame('Frame')
 f:RegisterEvent('ADDON_LOADED')
 f:SetScript('OnEvent', attemptSkin)
-
-SUI.callbacks = LibStub('CallbackHandler-1.0'):New(SUI)
-SUI:RegisterCallback('Ace3', attemptSkin)
