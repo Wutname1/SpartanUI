@@ -1,5 +1,5 @@
 local AceAddon = LibStub('AceAddon-3.0')
----@class SUI : AceAddon
+---@class SUI : AceAddon, AceEvent-3.0, AceConsole-3.0
 ---@field MoveIt MoveIt
 local SUI = AceAddon:NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
@@ -52,6 +52,8 @@ end
 SUI.AddLib('AceC', 'AceConfig-3.0')
 SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
 SUI.AddLib('AceCR', 'AceConfigRegistry-3.0')
+SUI.AddLib('AceDB', 'AceDB-3.0')
+SUI.AddLib('AceDBO', 'AceDBOptions-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
@@ -1233,7 +1235,7 @@ local GlobalDefaults = {
 local DBdefaults = {global = GlobalDefaults, profile = DBdefault}
 --- @class SUIDB : SUIDBObject, AceDBObject-3.0
 --- @field RegisterCallback function
-SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
+SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version
 if (ver ~= '0' and ver < '6.0.0') then
@@ -1286,7 +1288,7 @@ local function reloaduiWindow()
 end
 
 function SUI:OnInitialize()
-	SUI.SpartanUIDB = LibStub('AceDB-3.0'):New('SpartanUIDB', DBdefaults)
+	SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
 
 	-- New SUI.DB Access
 	SUI.DBG = SUI.SpartanUIDB.global
@@ -1307,6 +1309,7 @@ function SUI:OnInitialize()
 		SUI.print('---------------', true)
 		SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
 		SUI.print('---------------', true)
+		---@type Frame | BackdropTemplate
 		local SUI5Indicator = CreateFrame('Button', 'SUI5Profile', UIParent, BackdropTemplateMixin and 'BackdropTemplate')
 		SUI5Indicator:SetFrameStrata('DIALOG')
 		SUI5Indicator:SetPoint('TOPRIGHT')
@@ -1333,7 +1336,7 @@ function SUI:OnInitialize()
 	end
 
 	-- Add Profiles to Options
-	SUI.opt.args['Profiles'] = LibStub('AceDBOptions-3.0'):GetOptionsTable(SUI.SpartanUIDB)
+	SUI.opt.args['Profiles'] = SUI.Lib.AceDBO:GetOptionsTable(SUI.SpartanUIDB)
 	SUI.opt.args['Profiles'].order = 999
 
 	-- Add dual-spec support
@@ -1474,7 +1477,7 @@ function SUI:DBUpgrades()
 end
 
 function SUI:InitializeProfile()
-	SUI.SpartanUIDB:RegisterDefaults(SUI.DBdefaults)
+	SUI.SpartanUIDB:RegisterDefaults(DBdefaults)
 
 	SUI:reloadui()
 end
