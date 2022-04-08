@@ -288,7 +288,10 @@
     "MAX_BOSS_FRAMES",
     "SUI_UF_party",
     "SUI_UF_raid",
-    "AceConfigDialog"
+    "AceConfigDialog",
+    "CloseWindows",
+    "RealMobHealth",
+    "RegisterAsWidget"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",
