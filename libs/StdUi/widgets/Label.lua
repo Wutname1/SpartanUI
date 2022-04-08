@@ -10,14 +10,18 @@ if not StdUi:UpgradeNeeded(module, version) then return end;
 ----------------------------------------------------
 --- FontString
 ----------------------------------------------------
-
+---@class FontStringMethods
 local FontStringMethods = {
 	SetFontSize = function(self, newSize)
 		self:SetFont(self:GetFont(), newSize);
 	end
 }
+---@class StdUi_FontString : FontString, FontStringMethods
 
---- @return FontString
+--- @param parent Frame
+--- @param text string
+--- @param inherit any
+--- @return StdUi_FontString
 function StdUi:FontString(parent, text, inherit)
 	local fs = parent:CreateFontString(nil, self.config.font.strata, inherit or 'GameFontNormal');
 
