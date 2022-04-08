@@ -1,6 +1,8 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Accept/Complete Campaign Quests'] = true
+L['Current quest is a campaign quest, pausing AutoTurnIn'] = true
 L['General'] = true
 L['Artwork'] = true
 L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'] = true

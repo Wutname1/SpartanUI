@@ -640,6 +640,7 @@ function module:OnInitialize()
 			AutoGossip = true,
 			AutoGossipSafeMode = true,
 			AcceptGeneralQuests = true,
+			DoCampainQuests = false,
 			AcceptRepeatable = false,
 			trivial = false,
 			lootreward = false,
@@ -677,6 +678,12 @@ function module:OnEnable()
 				print(event)
 			end
 
+			if SUI.IsRetail then
+				if C_CampaignInfo.IsCampaignQuest(GetQuestID()) and not module.DB.DoCampainQuests then
+					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
+					return
+				end
+			end
 			if IsAltKeyDown() then
 				SUI:Print('Canceling Override key held disabled')
 				module:CancelAllTimers()
@@ -711,68 +718,55 @@ function module:BuildOptions()
 	SUI.opt.args['ModSetting'].args['AutoTurnIn'] = {
 		type = 'group',
 		name = L['Auto TurnIn'],
+		get = function(info)
+			return module.DB[info[#info]]
+		end,
+		set = function(info, val)
+			module.DB[info[#info]] = val
+		end,
 		args = {
+			DoCampainQuests = {
+				name = L['Accept/Complete Campaign Quests'],
+				type = 'toggle',
+				order = 1
+			},
 			QuestAccepting = {
 				name = L['Quest accepting'],
 				type = 'group',
 				inline = true,
 				order = 10,
 				width = 'full',
+				get = function(info)
+					return module.DB[info[#info]]
+				end,
+				set = function(info, val)
+					module.DB[info[#info]] = val
+				end,
 				args = {
 					AcceptGeneralQuests = {
 						name = L['Accept quests'],
 						type = 'toggle',
-						order = 10,
-						get = function(info)
-							return module.DB.AcceptGeneralQuests
-						end,
-						set = function(info, val)
-							module.DB.AcceptGeneralQuests = val
-						end
+						order = 10
 					},
 					trivial = {
 						name = L['Accept trivial quests'],
 						type = 'toggle',
-						order = 20,
-						get = function(info)
-							return module.DB.trivial
-						end,
-						set = function(info, val)
-							module.DB.trivial = val
-						end
+						order = 20
 					},
 					AcceptRepeatable = {
 						name = L['Accept repeatable'],
 						type = 'toggle',
-						order = 30,
-						get = function(info)
-							return module.DB.AcceptRepeatable
-						end,
-						set = function(info, val)
-							module.DB.AcceptRepeatable = val
-						end
+						order = 30
 					},
 					AutoGossip = {
 						name = L['Auto gossip'],
 						type = 'toggle',
-						order = 15,
-						get = function(info)
-							return module.DB.AutoGossip
-						end,
-						set = function(info, val)
-							module.DB.AutoGossip = val
-						end
+						order = 15
 					},
 					AutoGossipMode = {
 						name = L['Auto gossip safe mode'],
 						type = 'toggle',
-						order = 16,
-						get = function(info)
-							return module.DB.AutoGossipSafeMode
-						end,
-						set = function(info, val)
-							module.DB.AutoGossipSafeMode = val
-						end
+						order = 16
 					}
 				}
 			},
@@ -782,40 +776,28 @@ function module:BuildOptions()
 				inline = true,
 				order = 20,
 				width = 'full',
+				get = function(info)
+					return module.DB[info[#info]]
+				end,
+				set = function(info, val)
+					module.DB[info[#info]] = val
+				end,
 				args = {
 					TurnInEnabled = {
 						name = L['Turn in completed quests'],
 						type = 'toggle',
-						order = 10,
-						get = function(info)
-							return module.DB.TurnInEnabled
-						end,
-						set = function(info, val)
-							module.DB.TurnInEnabled = val
-						end
+						order = 10
 					},
 					AutoSelectLoot = {
 						name = L['Auto select quest reward'],
 						type = 'toggle',
-						order = 30,
-						get = function(info)
-							return module.DB.lootreward
-						end,
-						set = function(info, val)
-							module.DB.lootreward = val
-						end
+						order = 30
 					},
 					autoequip = {
 						name = L['Auto equip upgrade quest rewards'],
 						desc = L['Based on iLVL'],
 						type = 'toggle',
-						order = 30,
-						get = function(info)
-							return module.DB.autoequip
-						end,
-						set = function(info, val)
-							module.DB.autoequip = val
-						end
+						order = 30
 					}
 				}
 			},
