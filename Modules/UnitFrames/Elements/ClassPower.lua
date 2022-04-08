@@ -1,5 +1,4 @@
-local _G, SUI = _G, SUI
-local module = SUI:GetModule('Component_UnitFrames')
+local UF = SUI.UF
 
 local function Build(frame, DB)
 	frame.CPAnchor = frame:CreateFontString(nil, 'BORDER')
@@ -7,7 +6,7 @@ local function Build(frame, DB)
 	local ClassPower = {}
 	for index = 1, 10 do
 		local Bar = CreateFrame('StatusBar', nil, frame)
-		Bar:SetStatusBarTexture(Smoothv2)
+		Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 
 		-- Position and size.
 		Bar:SetSize(16, 5)
@@ -30,4 +29,4 @@ end
 local function Options()
 end
 
-module:RegisterElement('ClassPower', Build, Update, Options)
+UF:RegisterElement('ClassPower', Build, Update, Options)

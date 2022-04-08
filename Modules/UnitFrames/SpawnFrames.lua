@@ -1,5 +1,4 @@
-local _G, SUI = _G, SUI
-local module = SUI:GetModule('Component_UnitFrames')
+local _G, SUI, UF = _G, SUI, SUI.UF
 local PartyFrames = {}
 local PlayerFrames = {}
 local RaidFrames = {}
@@ -201,7 +200,7 @@ local function PostUpdateAura(element, unit, button, index)
 end
 
 local function CalculateHeight(frameName)
-	local elements = module.CurrentSettings[frameName].elements
+	local elements = UF.CurrentSettings[frameName].elements
 	local FrameHeight = 0
 	if elements.Castbar.enabled then
 		FrameHeight = FrameHeight + elements.Castbar.height
@@ -244,8 +243,8 @@ local function CreateUnitFrame(self, unit)
 	self.unitOnCreate = unit
 
 	local function UpdateAll()
-		local auras = module.CurrentSettings[unit].auras
-		local elements = module.CurrentSettings[unit].elements
+		local auras = UF.CurrentSettings[unit].auras
+		local elements = UF.CurrentSettings[unit].elements
 		-- Check that its a frame
 		-- Loop all elements and update their status
 		for _, element in ipairs(elementList) do
@@ -348,7 +347,7 @@ local function CreateUnitFrame(self, unit)
 		if not self[elementName] then
 			return
 		end
-		local data = module.CurrentSettings[unit].elements[elementName]
+		local data = UF.CurrentSettings[unit].elements[elementName]
 		local element = self[elementName]
 		element.DB = data
 
@@ -451,25 +450,25 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- Call the elements update function
-		if module.Elements[elementName] then
-			module.Elements[elementName].Update(self)
+		if UF.Elements[elementName] then
+			UF.Elements[elementName].Update(self)
 		end
 	end
 
 	-- Build a function that updates the size of the frame and sizes of elements
 	local function UpdateSize()
-		local elements = module.CurrentSettings[unit].elements
+		local elements = UF.CurrentSettings[unit].elements
 		-- Find the Height of the frame
 		local FrameHeight = CalculateHeight(unit)
 
 		-- General
 		if not InCombatLockdown() then
 			if self.scale then
-				self:scale(module.CurrentSettings[unit].scale, true)
+				self:scale(UF.CurrentSettings[unit].scale, true)
 			else
-				self:SetScale(module.CurrentSettings[unit].scale)
+				self:SetScale(UF.CurrentSettings[unit].scale)
 			end
-			self:SetSize(module.CurrentSettings[unit].width, FrameHeight)
+			self:SetSize(UF.CurrentSettings[unit].width, FrameHeight)
 		end
 
 		if self.Portrait3D then
@@ -533,7 +532,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	local function UpdateAuras(self)
-		local db = module.CurrentSettings[unit].auras
+		local db = UF.CurrentSettings[unit].auras
 
 		local Buffs = self.Buffs
 		Buffs.size = db.Buffs.size
@@ -595,7 +594,7 @@ local function CreateUnitFrame(self, unit)
 
 	self.UpdateSize()
 
-	local elements = module.CurrentSettings[unit].elements
+	local elements = UF.CurrentSettings[unit].elements
 
 	do -- General setup
 		local ArtPositions = {'top', 'bg', 'bottom', 'full'}
@@ -607,12 +606,12 @@ local function CreateUnitFrame(self, unit)
 		SpartanArt:SetAllPoints()
 		SpartanArt.PostUpdate = function(self, unit)
 			for _, pos in ipairs(ArtPositions) do
-				local ArtSettings = module.CurrentSettings[unitName].artwork[pos]
+				local ArtSettings = UF.CurrentSettings[unitName].artwork[pos]
 				if
 					ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and
-						module.Artwork[ArtSettings.graphic][pos].UnitFrameCallback
+						UF.Artwork[ArtSettings.graphic][pos].UnitFrameCallback
 				 then
-					module.Artwork[ArtSettings.graphic][pos].UnitFrameCallback(self:GetParent(), unit)
+					UF.Artwork[ArtSettings.graphic][pos].UnitFrameCallback(self:GetParent(), unit)
 				end
 			end
 		end
@@ -621,16 +620,16 @@ local function CreateUnitFrame(self, unit)
 				return
 			end
 			-- Party frame shows 'player' instead of party 1-5
-			if not module.CurrentSettings[unitName] then
+			if not UF.CurrentSettings[unitName] then
 				SUI:Error(unitName .. ' - NO SETTINGS FOUND')
 				return
 			end
 
-			self.ArtSettings = module.CurrentSettings[unitName].artwork
+			self.ArtSettings = UF.CurrentSettings[unitName].artwork
 			for _, pos in ipairs(ArtPositions) do
 				local ArtSettings = self.ArtSettings[pos]
-				if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and module.Artwork[ArtSettings.graphic] then
-					self[pos].ArtData = module.Artwork[ArtSettings.graphic][pos]
+				if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and UF.Artwork[ArtSettings.graphic] then
+					self[pos].ArtData = UF.Artwork[ArtSettings.graphic][pos]
 					--Grab the settings for the frame specifically if defined (classic skin)
 					if self[pos].ArtData.perUnit and self[pos].ArtData[unitName] then
 						self[pos].ArtData = self[pos].ArtData[unitName]
@@ -1208,10 +1207,10 @@ local function CreateUnitFrame(self, unit)
 		do -- Special Icons/Bars
 			if unit == 'player' then
 				--Runes
-				module:BuldElement(self, 'Runes')
+				UF:BuldElement(self, 'Runes')
 
 				-- Combo points
-				module:BuldElement(self, 'ClassPower')
+				UF:BuldElement(self, 'ClassPower')
 
 				--Totem Bar
 				if SUI.IsRetail then
@@ -1259,32 +1258,32 @@ end
 
 local function VisibilityCheck(group)
 	local retVal = false
-	if module.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
+	if UF.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
 		retVal = true
 	end
-	if module.CurrentSettings[group].showRaid and IsInRaid() then
+	if UF.CurrentSettings[group].showRaid and IsInRaid() then
 		retVal = true
 	end
-	if module.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
+	if UF.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
 		retVal = true
 	end
 
 	return retVal
 end
 
-function module:SpawnFrames()
+function UF:SpawnFrames()
 	SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
 
 	-- Spawn all main frames
 	for _, b in pairs(FramesList) do
-		module.frames[b] = SUIUF:Spawn(b, 'SUI_UF_' .. b)
+		UF.frames[b] = SUIUF:Spawn(b, 'SUI_UF_' .. b)
 
 		-- Disable objects based on settings
-		module.frames[b]:UpdateAll()
+		UF.frames[b]:UpdateAll()
 
-		if not module.CurrentSettings[b].enabled then
-			module.frames[b]:Disable()
+		if not UF.CurrentSettings[b].enabled then
+			UF.frames[b]:Disable()
 		end
 	end
 
@@ -1299,7 +1298,7 @@ function module:SpawnFrames()
 					grpFrame[i]:SetPoint('TOP', grpFrame[i - 1], 'BOTTOM', 0, -10)
 				end
 			end
-			module.frames[group] = grpFrame
+			UF.frames[group] = grpFrame
 		end
 	end
 
@@ -1310,37 +1309,37 @@ function module:SpawnFrames()
 		nil,
 		'party',
 		'showRaid',
-		module.CurrentSettings.party.showRaid,
+		UF.CurrentSettings.party.showRaid,
 		'showParty',
-		module.CurrentSettings.party.showParty,
+		UF.CurrentSettings.party.showParty,
 		'showPlayer',
-		module.CurrentSettings.party.showPlayer,
+		UF.CurrentSettings.party.showPlayer,
 		'showSolo',
-		module.CurrentSettings.party.showSolo,
+		UF.CurrentSettings.party.showSolo,
 		'xoffset',
-		module.CurrentSettings.party.xOffset,
+		UF.CurrentSettings.party.xOffset,
 		'yOffset',
-		module.CurrentSettings.party.yOffset,
+		UF.CurrentSettings.party.yOffset,
 		'maxColumns',
-		module.CurrentSettings.party.maxColumns,
+		UF.CurrentSettings.party.maxColumns,
 		'unitsPerColumn',
-		module.CurrentSettings.party.unitsPerColumn,
+		UF.CurrentSettings.party.unitsPerColumn,
 		'columnSpacing',
-		module.CurrentSettings.party.columnSpacing,
+		UF.CurrentSettings.party.columnSpacing,
 		'columnAnchorPoint',
 		'TOPLEFT',
 		'initial-anchor',
 		'TOPLEFT',
 		'oUF-initialConfigFunction',
-		('self:SetWidth(%d) self:SetHeight(%d)'):format(module.CurrentSettings.party.width, CalculateHeight('party'))
+		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, CalculateHeight('party'))
 	)
 	party:SetPoint('TOPLEFT', SUI_UF_party, 'TOPLEFT')
-	module.frames.party = party
+	UF.frames.party = party
 
 	-- Raid Frames
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 
-	if module.CurrentSettings.raid.mode == 'GROUP' then
+	if UF.CurrentSettings.raid.mode == 'GROUP' then
 		groupingOrder = '1,2,3,4,5,6,7,8'
 	end
 
@@ -1350,38 +1349,38 @@ function module:SpawnFrames()
 		nil,
 		'raid',
 		'showRaid',
-		module.CurrentSettings.raid.showRaid,
+		UF.CurrentSettings.raid.showRaid,
 		'showParty',
-		module.CurrentSettings.raid.showParty,
+		UF.CurrentSettings.raid.showParty,
 		'showPlayer',
-		module.CurrentSettings.raid.showSelf,
+		UF.CurrentSettings.raid.showSelf,
 		'showSolo',
-		module.CurrentSettings.raid.showSolo,
+		UF.CurrentSettings.raid.showSolo,
 		'xoffset',
-		module.CurrentSettings.raid.xOffset,
+		UF.CurrentSettings.raid.xOffset,
 		'yOffset',
-		module.CurrentSettings.raid.yOffset,
+		UF.CurrentSettings.raid.yOffset,
 		'point',
 		'TOP',
 		'groupBy',
-		module.CurrentSettings.raid.mode,
+		UF.CurrentSettings.raid.mode,
 		'groupingOrder',
 		groupingOrder,
 		'sortMethod',
 		'index',
 		'maxColumns',
-		module.CurrentSettings.raid.maxColumns,
+		UF.CurrentSettings.raid.maxColumns,
 		'unitsPerColumn',
-		module.CurrentSettings.raid.unitsPerColumn,
+		UF.CurrentSettings.raid.unitsPerColumn,
 		'columnSpacing',
-		module.CurrentSettings.raid.columnSpacing,
+		UF.CurrentSettings.raid.columnSpacing,
 		'columnAnchorPoint',
 		'LEFT',
 		'oUF-initialConfigFunction',
-		('self:SetWidth(%d) self:SetHeight(%d)'):format(module.CurrentSettings.raid.width, CalculateHeight('raid'))
+		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, CalculateHeight('raid'))
 	)
 	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
-	module.frames.raid = raid
+	UF.frames.raid = raid
 
 	local function GroupFrameUpdateSize(self)
 		for _, f in ipairs(self) do
@@ -1422,13 +1421,13 @@ function module:SpawnFrames()
 	end
 
 	for _, group in ipairs(GroupFrames) do
-		if module.frames[group] then
+		if UF.frames[group] then
 			local function GroupFrameUpdateAll(self)
-				if VisibilityCheck(group) and module.CurrentSettings[group].enabled then
-					if module.frames[group].visibility then
-						RegisterStateDriver(module.frames[group], module.frames[group].visibility)
+				if VisibilityCheck(group) and UF.CurrentSettings[group].enabled then
+					if UF.frames[group].visibility then
+						RegisterStateDriver(UF.frames[group], UF.frames[group].visibility)
 					end
-					module.frames[group]:Show()
+					UF.frames[group]:Show()
 
 					for _, f in ipairs(self) do
 						if f.UpdateAll then
@@ -1436,17 +1435,17 @@ function module:SpawnFrames()
 						end
 					end
 				else
-					UnregisterStateDriver(module.frames[group], 'visibility')
-					module.frames[group]:Hide()
+					UnregisterStateDriver(UF.frames[group], 'visibility')
+					UF.frames[group]:Hide()
 				end
 			end
 
-			module.frames[group].UpdateAll = GroupFrameUpdateAll
-			module.frames[group].ElementUpdate = GroupFrameElementUpdate
-			module.frames[group].UpdateSize = GroupFrameUpdateSize
-			module.frames[group].UpdateAuras = GroupFrameUpdateAuras
-			module.frames[group].Enable = GroupFrameEnable
-			module.frames[group].Disable = GroupFrameDisable
+			UF.frames[group].UpdateAll = GroupFrameUpdateAll
+			UF.frames[group].ElementUpdate = GroupFrameElementUpdate
+			UF.frames[group].UpdateSize = GroupFrameUpdateSize
+			UF.frames[group].UpdateAuras = GroupFrameUpdateAuras
+			UF.frames[group].Enable = GroupFrameEnable
+			UF.frames[group].Disable = GroupFrameDisable
 		end
 	end
 
@@ -1454,42 +1453,42 @@ function module:SpawnFrames()
 		if not InCombatLockdown() then
 			-- Update 1 second after login
 			if event == 'PLAYER_ENTERING_WORLD' or event == 'GROUP_JOINED' then
-				module:ScheduleTimer(GroupWatcher, 1)
+				UF:ScheduleTimer(GroupWatcher, 1)
 				return
 			end
 
-			module:UpdateGroupFrames(event)
+			UF:UpdateGroupFrames(event)
 		end
 	end
-	module:RegisterEvent('GROUP_ROSTER_UPDATE', GroupWatcher)
-	module:RegisterEvent('GROUP_JOINED', GroupWatcher)
-	module:RegisterEvent('PLAYER_ENTERING_WORLD', GroupWatcher)
-	module:RegisterEvent('ZONE_CHANGED', GroupWatcher)
-	module:RegisterEvent('READY_CHECK', GroupWatcher)
-	module:RegisterEvent('PARTY_MEMBER_ENABLE', GroupWatcher)
-	module:RegisterEvent('PLAYER_LOGIN', GroupWatcher)
-	module:RegisterEvent('RAID_ROSTER_UPDATE', GroupWatcher)
-	module:RegisterEvent('PARTY_LEADER_CHANGED', GroupWatcher)
-	module:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
-	module:RegisterEvent('ZONE_CHANGED_NEW_AREA', GroupWatcher)
+	UF:RegisterEvent('GROUP_ROSTER_UPDATE', GroupWatcher)
+	UF:RegisterEvent('GROUP_JOINED', GroupWatcher)
+	UF:RegisterEvent('PLAYER_ENTERING_WORLD', GroupWatcher)
+	UF:RegisterEvent('ZONE_CHANGED', GroupWatcher)
+	UF:RegisterEvent('READY_CHECK', GroupWatcher)
+	UF:RegisterEvent('PARTY_MEMBER_ENABLE', GroupWatcher)
+	UF:RegisterEvent('PLAYER_LOGIN', GroupWatcher)
+	UF:RegisterEvent('RAID_ROSTER_UPDATE', GroupWatcher)
+	UF:RegisterEvent('PARTY_LEADER_CHANGED', GroupWatcher)
+	UF:RegisterEvent('PLAYER_REGEN_ENABLED', GroupWatcher)
+	UF:RegisterEvent('ZONE_CHANGED_NEW_AREA', GroupWatcher)
 end
 
-function module:UpdateAll(event, ...)
+function UF:UpdateAll(event, ...)
 	for _, v in ipairs(FramesList) do
-		if module.frames[v] and module.frames[v].UpdateAll then
-			module.frames[v]:UpdateAll()
+		if UF.frames[v] and UF.frames[v].UpdateAll then
+			UF.frames[v]:UpdateAll()
 		else
 			SUI:Error('Unable to find updater for ' .. v, 'Unit Frames')
 		end
 	end
 
-	module:UpdateGroupFrames()
+	UF:UpdateGroupFrames()
 end
 
-function module:UpdateGroupFrames(event, ...)
+function UF:UpdateGroupFrames(event, ...)
 	for _, v in ipairs(GroupFrames) do
-		if module.frames[v] then
-			module.frames[v]:UpdateAll()
+		if UF.frames[v] then
+			UF.frames[v]:UpdateAll()
 		end
 	end
 end

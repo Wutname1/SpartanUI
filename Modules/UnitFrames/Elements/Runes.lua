@@ -1,4 +1,4 @@
-local module = SUI:GetModule('Component_UnitFrames')
+local UF = SUI.UF
 
 local function Build(frame)
 	local playerClass = select(2, UnitClass('player'))
@@ -15,13 +15,13 @@ local function Build(frame)
 			else
 				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
 			end
-			frame.Runes[i]:SetStatusBarTexture(Smoothv2)
+			frame.Runes[i]:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
 
 			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
 			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
 			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
-			frame.Runes[i].bg:SetTexture(Smoothv2)
+			frame.Runes[i].bg:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
 			frame.Runes[i].bg.multiplier = 0.64
 			frame.Runes[i]:Hide()
@@ -36,4 +36,4 @@ end
 local function Options()
 end
 
-module:RegisterElement('Runes', Build, Update, Options)
+UF:RegisterElement('Runes', Build, Update, Options)

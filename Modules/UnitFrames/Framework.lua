@@ -1,13 +1,17 @@
-local _G, SUI, L, print = _G, SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0')
+local _G, L, print = _G, SUI.L, SUI.print
+---@class SUI
+local SUI = SUI
+---@class SUI_UnitFrames : AceAddon, AceEvent-3.0, AceTimer-3.0
+local UF = SUI:NewModule('Component_UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0')
 local MoveIt = SUI:GetModule('Component_MoveIt')
-module.DisplayName = L['Unit frames']
-module.description = 'CORE: SUI Unitframes'
-module.Core = true
+SUI.UF = UF
+UF.DisplayName = L['Unit frames']
+UF.description = 'CORE: SUI Unitframes'
+UF.Core = true
 local loadstring = loadstring
 local function_cache = {}
-module.CurrentSettings = {}
-module.FramePos = {
+UF.CurrentSettings = {}
+UF.FramePos = {
 	default = {
 		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-60,250',
 		['pet'] = 'RIGHT,SUI_UF_player,BOTTOMLEFT,-60,0',
@@ -24,16 +28,16 @@ module.FramePos = {
 		['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
 	}
 }
-module.frames = {
+UF.frames = {
 	arena = {},
 	boss = {},
 	party = {},
 	raid = {},
 	containers = {}
 }
-module.Elements = {}
-module.Artwork = {}
-module.TagList = {
+UF.Elements = {}
+UF.Artwork = {}
+UF.TagList = {
 	--Health
 	['curhp'] = {category = 'Health', description = 'Displays the current HP without decimals'},
 	['deficit:name'] = {category = 'Health', description = 'Displays the health as a deficit and the name at full health'},
@@ -120,24 +124,24 @@ module.TagList = {
 	['name'] = {category = 'Names', description = 'Displays the full name of the unit without any letter limitation'}
 }
 if SUI.IsRetail then
-	module.TagList['affix'] = {category = 'Miscellaneous', description = 'Displays low level critter mobs'}
-	module.TagList['specialization'] = {
+	UF.TagList['affix'] = {category = 'Miscellaneous', description = 'Displays low level critter mobs'}
+	UF.TagList['specialization'] = {
 		category = 'Miscellaneous',
 		description = 'Displays your current specialization as text'
 	}
-	module.TagList['arcanecharges'] = {category = 'Classpower', description = 'Displays the arcane charges (Mage)'}
-	module.TagList['arenaspec'] = {category = 'PvP', description = 'Displays the area spec of an unit'}
-	module.TagList['chi'] = {category = 'Classpower', description = 'Displays the chi points (Monk)'}
-	module.TagList['faction'] = {category = 'PvP', description = "Displays 'Alliance' or 'Horde'"}
-	module.TagList['holypower'] = {category = 'Classpower', description = 'Displays the holy power (Paladin)'}
-	module.TagList['runes'] = {category = 'Classpower', description = 'Displays the runes (Death Knight)'}
-	module.TagList['soulshards'] = {category = 'Classpower', description = 'Displays the soulshards (Warlock)'}
-	module.TagList['threat'] = {
+	UF.TagList['arcanecharges'] = {category = 'Classpower', description = 'Displays the arcane charges (Mage)'}
+	UF.TagList['arenaspec'] = {category = 'PvP', description = 'Displays the area spec of an unit'}
+	UF.TagList['chi'] = {category = 'Classpower', description = 'Displays the chi points (Monk)'}
+	UF.TagList['faction'] = {category = 'PvP', description = "Displays 'Alliance' or 'Horde'"}
+	UF.TagList['holypower'] = {category = 'Classpower', description = 'Displays the holy power (Paladin)'}
+	UF.TagList['runes'] = {category = 'Classpower', description = 'Displays the runes (Death Knight)'}
+	UF.TagList['soulshards'] = {category = 'Classpower', description = 'Displays the soulshards (Warlock)'}
+	UF.TagList['threat'] = {
 		category = 'Threat',
 		description = 'Displays the current threat situation (Aggro is secure tanking, -- is losing threat and ++ is gaining threat)'
 	}
-	module.TagList['title'] = {category = 'Names', description = 'Displays player title'}
-	module.TagList['threatcolor'] = {
+	UF.TagList['title'] = {category = 'Names', description = 'Displays player title'}
+	UF.TagList['threatcolor'] = {
 		category = 'Colors',
 		description = "Changes the text color, depending on the unit's threat situation"
 	}
@@ -162,21 +166,21 @@ end
 --
 ----------------------------------------------------------------------------------------------------
 
-function module:RegisterElement(ElementName, Build, Update, OptionsTable)
-	module.Elements[ElementName] = {
+function UF:RegisterElement(ElementName, Build, Update, OptionsTable)
+	UF.Elements[ElementName] = {
 		Build = Build,
 		Update = Update,
 		OptionsTable = OptionsTable
 	}
 end
 
-function module:BuldElement(frame, ElementName)
-	if module.Elements[ElementName] then
-		module.Elements[ElementName].Build(frame)
+function UF:BuldElement(frame, ElementName)
+	if UF.Elements[ElementName] then
+		UF.Elements[ElementName].Build(frame)
 	end
 end
 
-function module:IsFriendlyFrame(frameName)
+function UF:IsFriendlyFrame(frameName)
 	local FriendlyFrame = {
 		'player',
 		'pet',
@@ -192,64 +196,21 @@ function module:IsFriendlyFrame(frameName)
 	return false
 end
 
-function module:TextFormat(element, frameName, textID)
-	local textstyle = module.CurrentSettings[frameName].font[element].textstyle
-	local textmode = module.CurrentSettings[frameName].font[element].textmode
-	local a, m, t, z
-	if text == 'mana' then
-		z = 'pp'
-	else
-		z = 'hp'
-	end
-
-	-- textstyle
-	-- "Long: 			 Displays all numbers."
-	-- "Long Formatted: Displays all numbers with commas."
-	-- "Dynamic: 		 Abbriviates and formats as needed"
-	if textstyle == 'long' then
-		a = '[cur' .. z .. ']'
-		m = '[missing' .. z .. ']'
-		t = '[max' .. z .. ']'
-	elseif textstyle == 'longfor' then
-		a = '[cur' .. z .. 'formatted]'
-		m = '[missing' .. z .. 'formatted]'
-		t = '[max' .. z .. 'formatted]'
-	elseif textstyle == 'disabled' then
-		return ''
-	else
-		a = '[cur' .. z .. 'dynamic]'
-		m = '[missing' .. z .. 'dynamic]'
-		t = '[max' .. z .. 'dynamic]'
-	end
-	-- textmode
-	-- [1]="Avaliable / Total",
-	-- [2]="(Missing) Avaliable / Total",
-	-- [3]="(Missing) Avaliable"
-
-	if textmode == 1 then
-		return a .. ' / ' .. t
-	elseif textmode == 2 then
-		return '(' .. m .. ') ' .. a .. ' / ' .. t
-	elseif textmode == 3 then
-		return '(' .. m .. ') ' .. a
-	end
-end
-
-function module:PositionFrame(b)
-	local positionData = module.FramePos.default
+function UF:PositionFrame(b)
+	local positionData = UF.FramePos.default
 	-- If artwork is enabled load the art's position data if supplied
-	if SUI:IsModuleEnabled('Artwork') and module.FramePos[SUI.DB.Artwork.Style] then
-		positionData = SUI:MergeData(module.FramePos[SUI.DB.Artwork.Style], module.FramePos.default)
+	if SUI:IsModuleEnabled('Artwork') and UF.FramePos[SUI.DB.Artwork.Style] then
+		positionData = SUI:MergeData(UF.FramePos[SUI.DB.Artwork.Style], UF.FramePos.default)
 	end
 
 	if b then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[b])
 
-		if module.frames[b].position then
-			module.frames[b]:position(point, anchor, secondaryPoint, x, y, false, true)
+		if UF.frames[b].position then
+			UF.frames[b]:position(point, anchor, secondaryPoint, x, y, false, true)
 		else
-			module.frames[b]:ClearAllPoints()
-			module.frames[b]:SetPoint(point, anchor, secondaryPoint, x, y)
+			UF.frames[b]:ClearAllPoints()
+			UF.frames[b]:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
 	else
 		local frameList = {
@@ -282,30 +243,30 @@ function module:PositionFrame(b)
 	end
 end
 
-function module:ResetSettings()
+function UF:ResetSettings()
 	--Reset the DB
-	module.DB.UserSettings[module.DB.Style] = nil
+	UF.DB.UserSettings[UF.DB.Style] = nil
 	-- Trigger update
-	module:Update()
+	UF:Update()
 end
 
 local function LoadDB()
 	-- Load Default Settings
-	module.CurrentSettings = SUI:MergeData({}, module.Settings)
+	UF.CurrentSettings = SUI:MergeData({}, UF.Settings)
 
 	-- Import theme settings
-	if SUI.DB.Styles[module.DB.Style] and SUI.DB.Styles[module.DB.Style].Frames then
-		module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[module.DB.Style].Frames, true)
-	elseif module.Artwork[module.DB.Style] then
-		local skin = module.Artwork[module.DB.Style].skin
-		module.CurrentSettings = SUI:MergeData(module.CurrentSettings, SUI.DB.Styles[skin].Frames, true)
+	if SUI.DB.Styles[UF.DB.Style] and SUI.DB.Styles[UF.DB.Style].Frames then
+		UF.CurrentSettings = SUI:MergeData(UF.CurrentSettings, SUI.DB.Styles[UF.DB.Style].Frames, true)
+	elseif UF.Artwork[UF.DB.Style] then
+		local skin = UF.Artwork[UF.DB.Style].skin
+		UF.CurrentSettings = SUI:MergeData(UF.CurrentSettings, SUI.DB.Styles[skin].Frames, true)
 	end
 
 	-- Import player customizations
-	module.CurrentSettings = SUI:MergeData(module.CurrentSettings, module.DB.UserSettings[module.DB.Style], true)
+	UF.CurrentSettings = SUI:MergeData(UF.CurrentSettings, UF.DB.UserSettings[UF.DB.Style], true)
 end
 
-function module:OnInitialize()
+function UF:OnInitialize()
 	if SUI:IsModuleDisabled('UnitFrames') then
 		return
 	end
@@ -1258,16 +1219,16 @@ function module:OnInitialize()
 			}
 		}
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('UnitFrames', defaults)
-	module.Settings = module.Database.global
-	module.DB = module.Database.profile
+	UF.Database = SUI.SpartanUIDB:RegisterNamespace('UnitFrames', defaults)
+	UF.Settings = UF.Database.global
+	UF.DB = UF.Database.profile
 
 	-- Migrate old settings
 	if SUI.DB.Unitframes then
 		print('Unit Frame DB Migration')
-		module.DB.Style = SUI.DB.Artwork.Style -- default to this, setting to SUI.DB.Unitframes.Style results in blank frames on inital load
+		UF.DB.Style = SUI.DB.Artwork.Style -- default to this, setting to SUI.DB.Unitframes.Style results in blank frames on inital load
 		if SUI.DB.Unitframes.PlayerCustomizations then
-			module.DB.UserSettings = SUI:MergeData(module.DB.UserSettings, SUI.DB.Unitframes.PlayerCustomizations, true)
+			UF.DB.UserSettings = SUI:MergeData(UF.DB.UserSettings, SUI.DB.Unitframes.PlayerCustomizations, true)
 		end
 
 		SUI.DB.Unitframes = nil
@@ -1276,7 +1237,7 @@ function module:OnInitialize()
 	LoadDB()
 end
 
-function module:OnEnable()
+function UF:OnEnable()
 	if SUI:IsModuleDisabled('UnitFrames') then
 		return
 	end
@@ -1289,7 +1250,7 @@ function module:OnEnable()
 		'arena'
 	}
 	for _, key in ipairs(GroupedFrames) do
-		local elements = module.CurrentSettings[key].elements
+		local elements = UF.CurrentSettings[key].elements
 		local FrameHeight = 0
 		if elements.Castbar.enabled then
 			FrameHeight = FrameHeight + elements.Castbar.height
@@ -1300,26 +1261,25 @@ function module:OnEnable()
 		if elements.Power.enabled then
 			FrameHeight = FrameHeight + elements.Power.height
 		end
-		local height = module.CurrentSettings[key].unitsPerColumn * (FrameHeight + module.CurrentSettings[key].yOffset)
+		local height = UF.CurrentSettings[key].unitsPerColumn * (FrameHeight + UF.CurrentSettings[key].yOffset)
 
 		local width =
-			module.CurrentSettings[key].maxColumns *
-			(module.CurrentSettings[key].width + module.CurrentSettings[key].columnSpacing)
+			UF.CurrentSettings[key].maxColumns * (UF.CurrentSettings[key].width + UF.CurrentSettings[key].columnSpacing)
 
 		local frame = CreateFrame('Frame', 'SUI_UF_' .. key)
 		frame:Hide()
 		frame:SetSize(width, height)
-		module.frames.containers[key] = frame
+		UF.frames.containers[key] = frame
 	end
 
 	-- Build options
-	module:InitializeOptions()
+	UF:InitializeOptions()
 
 	-- Spawn Frames
-	module:SpawnFrames()
+	UF:SpawnFrames()
 
 	-- Put frames into their inital position
-	module:PositionFrame()
+	UF:PositionFrame()
 
 	-- Create movers
 	local FramesList = {
@@ -1331,36 +1291,36 @@ function module:OnEnable()
 		[6] = 'player'
 	}
 	for _, b in pairs(FramesList) do
-		MoveIt:CreateMover(module.frames[b], b, nil, nil, 'Unit frames')
+		MoveIt:CreateMover(UF.frames[b], b, nil, nil, 'Unit frames')
 	end
 
 	-- Create Party & Raid Mover
-	MoveIt:CreateMover(module.frames.containers.party, 'Party', nil, nil, 'Unit frames')
-	MoveIt:CreateMover(module.frames.containers.raid, 'Raid', nil, nil, 'Unit frames')
-	MoveIt:CreateMover(module.frames.containers.boss, 'Boss', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(UF.frames.containers.party, 'Party', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(UF.frames.containers.raid, 'Raid', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(UF.frames.containers.boss, 'Boss', nil, nil, 'Unit frames')
 	if SUI.IsRetail then
-		MoveIt:CreateMover(module.frames.containers.arena, 'Arena', nil, nil, 'Unit frames')
+		MoveIt:CreateMover(UF.frames.containers.arena, 'Arena', nil, nil, 'Unit frames')
 	end
 end
 
-function module:Update()
+function UF:Update()
 	-- Refresh Settings
 	LoadDB()
 	-- Update positions
-	module:PositionFrame()
+	UF:PositionFrame()
 	--Send Custom change event
 	SUI.Event:SendEvent('UNITFRAME_STYLE_CHANGED')
 	-- Update all display elements
-	module:UpdateAll()
+	UF:UpdateAll()
 end
 
-function module:SetActiveStyle(style)
-	module.DB.Style = style
+function UF:SetActiveStyle(style)
+	UF.DB.Style = style
 	-- Refersh Settings
-	module:Update()
+	UF:Update()
 
 	--Analytics
-	SUI.Analytics:Set(module, 'Style', style)
+	SUI.Analytics:Set(UF, 'Style', style)
 end
 
 -- local blockedFunctions = {

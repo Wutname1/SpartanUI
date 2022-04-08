@@ -1,5 +1,4 @@
-local _G, SUI, L, print = _G, SUI, SUI.L, SUI.print
-local module = SUI:GetModule('Component_UnitFrames')
+local SUI, L, UF = SUI, SUI.L, SUI.UF
 ----------------------------------------------------------------------------------------------------
 local anchorPoints = {
 	['TOPLEFT'] = 'TOP LEFT',
@@ -59,7 +58,7 @@ local function CreateOptionSet(frameName, order)
 		order = order,
 		childGroups = 'tab',
 		disabled = function(args)
-			return not module.CurrentSettings[frameName].enabled
+			return not UF.CurrentSettings[frameName].enabled
 		end,
 		args = {
 			indicators = {
@@ -111,15 +110,15 @@ local function AddGeneralOptions(frameName)
 						max = 300,
 						step = .1,
 						get = function(info)
-							return module.CurrentSettings[frameName].width
+							return UF.CurrentSettings[frameName].width
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].width = val
+							UF.CurrentSettings[frameName].width = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].width = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].width = val
 							--Update the screen
-							module.frames[frameName]:UpdateSize()
+							UF.frames[frameName]:UpdateSize()
 						end
 					},
 					range = {
@@ -127,23 +126,23 @@ local function AddGeneralOptions(frameName)
 						width = 'double',
 						type = 'toggle',
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Range.enabled
+							return UF.CurrentSettings[frameName].elements.Range.enabled
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Range.enabled = val
+							UF.CurrentSettings[frameName].elements.Range.enabled = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Range.enabled = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.enabled = val
 							--Update the screen
-							if module.frames[frameName].Range then
+							if UF.frames[frameName].Range then
 								if val then
-									module.frames[frameName]:EnableElement('Range')
-									module.frames[frameName].Range:ForceUpdate()
+									UF.frames[frameName]:EnableElement('Range')
+									UF.frames[frameName].Range:ForceUpdate()
 								else
-									module.frames[frameName]:DisableElement('Range')
+									UF.frames[frameName]:DisableElement('Range')
 								end
 							else
-								module.frames[frameName]:UpdateAll()
+								UF.frames[frameName]:UpdateAll()
 							end
 						end
 					}
@@ -160,23 +159,23 @@ local function AddGeneralOptions(frameName)
 						type = 'toggle',
 						order = 10,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Portrait.enabled
+							return UF.CurrentSettings[frameName].elements.Portrait.enabled
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Portrait.enabled = val
+							UF.CurrentSettings[frameName].elements.Portrait.enabled = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.enabled = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.enabled = val
 							--Update the screen
-							if module.frames[frameName].Portrait then
+							if UF.frames[frameName].Portrait then
 								if val then
-									module.frames[frameName]:EnableElement('Portrait')
-									module.frames[frameName].Portrait:ForceUpdate()
+									UF.frames[frameName]:EnableElement('Portrait')
+									UF.frames[frameName].Portrait:ForceUpdate()
 								else
-									module.frames[frameName]:DisableElement('Portrait')
+									UF.frames[frameName]:DisableElement('Portrait')
 								end
 							else
-								module.frames[frameName]:UpdateAll()
+								UF.frames[frameName]:UpdateAll()
 							end
 						end
 					},
@@ -189,15 +188,15 @@ local function AddGeneralOptions(frameName)
 							['2D'] = '2D'
 						},
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Portrait.type
+							return UF.CurrentSettings[frameName].elements.Portrait.type
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Portrait.type = val
+							UF.CurrentSettings[frameName].elements.Portrait.type = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.type = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.type = val
 							--Update the screen
-							module.frames[frameName]:ElementUpdate('Portrait')
+							UF.frames[frameName]:ElementUpdate('Portrait')
 						end
 					},
 					rotation = {
@@ -208,15 +207,15 @@ local function AddGeneralOptions(frameName)
 						step = .01,
 						order = 21,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Portrait.rotation
+							return UF.CurrentSettings[frameName].elements.Portrait.rotation
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Portrait.rotation = val
+							UF.CurrentSettings[frameName].elements.Portrait.rotation = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.rotation = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.rotation = val
 							--Update the screen
-							module.frames[frameName]:ElementUpdate('Portrait')
+							UF.frames[frameName]:ElementUpdate('Portrait')
 						end
 					},
 					camDistanceScale = {
@@ -227,15 +226,15 @@ local function AddGeneralOptions(frameName)
 						step = .1,
 						order = 22,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Portrait.camDistanceScale
+							return UF.CurrentSettings[frameName].elements.Portrait.camDistanceScale
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Portrait.camDistanceScale = val
+							UF.CurrentSettings[frameName].elements.Portrait.camDistanceScale = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.camDistanceScale = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.camDistanceScale = val
 							--Update the screen
-							module.frames[frameName]:ElementUpdate('Portrait')
+							UF.frames[frameName]:ElementUpdate('Portrait')
 						end
 					},
 					position = {
@@ -247,15 +246,15 @@ local function AddGeneralOptions(frameName)
 							['right'] = L['Right']
 						},
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Portrait.position
+							return UF.CurrentSettings[frameName].elements.Portrait.position
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Portrait.position = val
+							UF.CurrentSettings[frameName].elements.Portrait.position = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Portrait.position = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.position = val
 							--Update the screen
-							module.frames[frameName]:ElementUpdate('Portrait')
+							UF.frames[frameName]:ElementUpdate('Portrait')
 						end
 					}
 				}
@@ -268,11 +267,11 @@ local function AddArtworkOptions(frameName)
 	local ArtPositions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
 	local function ArtworkOptionUpdate(pos, option, val)
 		--Update memory
-		module.CurrentSettings[frameName].artwork[pos][option] = val
+		UF.CurrentSettings[frameName].artwork[pos][option] = val
 		--Update the DB
-		module.DB.UserSettings[module.DB.Style][frameName].artwork[pos][option] = val
+		UF.DB.UserSettings[UF.DB.Style][frameName].artwork[pos][option] = val
 		--Update the screen
-		module.frames[frameName]:ElementUpdate('SpartanArt')
+		UF.frames[frameName]:ElementUpdate('SpartanArt')
 	end
 	SUI.opt.args.UnitFrames.args[frameName].args['artwork'] = {
 		name = L['Artwork'],
@@ -293,7 +292,7 @@ local function AddArtworkOptions(frameName)
 					type = 'toggle',
 					order = 1,
 					get = function(info)
-						return module.CurrentSettings[frameName].artwork[position].enabled
+						return UF.CurrentSettings[frameName].artwork[position].enabled
 					end,
 					set = function(info, val)
 						ArtworkOptionUpdate(position, 'enabled', val)
@@ -305,7 +304,7 @@ local function AddArtworkOptions(frameName)
 					order = 2,
 					values = {[''] = 'None'},
 					get = function(info)
-						return module.CurrentSettings[frameName].artwork[position].graphic
+						return UF.CurrentSettings[frameName].artwork[position].graphic
 					end,
 					set = function(info, val)
 						ArtworkOptionUpdate(position, 'graphic', val)
@@ -333,7 +332,7 @@ local function AddArtworkOptions(frameName)
 							max = 1,
 							step = .01,
 							get = function(info)
-								return module.CurrentSettings[frameName].artwork[position].alpha
+								return UF.CurrentSettings[frameName].artwork[position].alpha
 							end,
 							set = function(info, val)
 								if val == 0 then
@@ -350,7 +349,7 @@ local function AddArtworkOptions(frameName)
 		i = i + 1
 	end
 
-	for Name, data in pairs(module.Artwork) do
+	for Name, data in pairs(UF.Artwork) do
 		for position, _ in pairs(ArtPositions) do
 			if data[position] then
 				local options = SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args
@@ -408,15 +407,15 @@ local function AddBarOptions(frameName)
 				type = 'group',
 				order = 1,
 				get = function(info)
-					return module.CurrentSettings[frameName].elements.Castbar[info[#info]] or false
+					return UF.CurrentSettings[frameName].elements.Castbar[info[#info]] or false
 				end,
 				set = function(info, val)
 					--Update memory
-					module.CurrentSettings[frameName].elements.Castbar[info[#info]] = val
+					UF.CurrentSettings[frameName].elements.Castbar[info[#info]] = val
 					--Update the DB
-					module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar[info[#info]] = val
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar[info[#info]] = val
 					--Update the screen
-					module.frames[frameName]:UpdateAll()
+					UF.frames[frameName]:UpdateAll()
 				end,
 				args = {
 					FlashOnInterruptible = {
@@ -451,15 +450,15 @@ local function AddBarOptions(frameName)
 						inline = true,
 						order = 100,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]]
+							return UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]]
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]] = val
+							UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]] = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon[info[#info]] = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon[info[#info]] = val
 							--Update the screen
-							module.frames[frameName]:UpdateAll()
+							UF.frames[frameName]:UpdateAll()
 						end,
 						args = {
 							enabled = {
@@ -481,15 +480,15 @@ local function AddBarOptions(frameName)
 								order = 50,
 								inline = true,
 								get = function(info)
-									return module.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]]
+									return UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]]
 								end,
 								set = function(info, val)
 									--Update memory
-									module.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]] = val
+									UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]] = val
 									--Update the DB
-									module.DB.UserSettings[module.DB.Style][frameName].elements.Castbar.Icon.position[info[#info]] = val
+									UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon.position[info[#info]] = val
 									--Update Screen
-									module.frames[frameName]:UpdateAll()
+									UF.frames[frameName]:UpdateAll()
 								end,
 								args = {
 									x = {
@@ -525,17 +524,17 @@ local function AddBarOptions(frameName)
 				type = 'group',
 				order = 2,
 				get = function(info)
-					return module.CurrentSettings[frameName].elements[info[#info]]
+					return UF.CurrentSettings[frameName].elements[info[#info]]
 				end,
 				set = function(info, val)
 					--Update the screen
-					module.frames[frameName][info[#info]] = val
+					UF.frames[frameName][info[#info]] = val
 					--Update memory
-					module.CurrentSettings[frameName].elements[info[#info]] = val
+					UF.CurrentSettings[frameName].elements[info[#info]] = val
 					--Update the DB
-					module.DB.UserSettings[module.DB.Style][frameName].elements[info[#info]] = val
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[info[#info]] = val
 					--Update the screen
-					module.frames[frameName]:UpdateAll()
+					UF.frames[frameName]:UpdateAll()
 				end,
 				args = {
 					healthprediction = {
@@ -555,15 +554,15 @@ local function AddBarOptions(frameName)
 						inline = true,
 						type = 'group',
 						get = function(info)
-							return module.CurrentSettings[frameName].elements.Health[info[#info]]
+							return UF.CurrentSettings[frameName].elements.Health[info[#info]]
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements.Health[info[#info]] = val
+							UF.CurrentSettings[frameName].elements.Health[info[#info]] = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements.Health[info[#info]] = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Health[info[#info]] = val
 							--Update the screen
-							module.frames[frameName]:UpdateAll()
+							UF.frames[frameName]:UpdateAll()
 						end,
 						args = {
 							colorTapping = {
@@ -618,15 +617,15 @@ local function AddBarOptions(frameName)
 			width = 'full',
 			order = 1,
 			get = function(info)
-				return module.CurrentSettings[frameName].elements[key].enabled
+				return UF.CurrentSettings[frameName].elements[key].enabled
 			end,
 			set = function(info, val)
 				--Update memory
-				module.CurrentSettings[frameName].elements[key].enabled = val
+				UF.CurrentSettings[frameName].elements[key].enabled = val
 				--Update the DB
-				module.DB.UserSettings[module.DB.Style][frameName].elements[key].enabled = val
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].enabled = val
 				--Update the screen
-				module.frames[frameName]:UpdateAll()
+				UF.frames[frameName]:UpdateAll()
 			end
 		}
 		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.height = {
@@ -638,15 +637,15 @@ local function AddBarOptions(frameName)
 			max = 100,
 			step = 1,
 			get = function(info)
-				return module.CurrentSettings[frameName].elements[key].height
+				return UF.CurrentSettings[frameName].elements[key].height
 			end,
 			set = function(info, val)
 				--Update memory
-				module.CurrentSettings[frameName].elements[key].height = val
+				UF.CurrentSettings[frameName].elements[key].height = val
 				--Update the DB
-				module.DB.UserSettings[module.DB.Style][frameName].elements[key].height = val
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].height = val
 				--Update the screen
-				module.frames[frameName]:UpdateSize()
+				UF.frames[frameName]:UpdateSize()
 			end
 		}
 
@@ -661,15 +660,15 @@ local function AddBarOptions(frameName)
 					type = 'toggle',
 					order = 1,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements[key].bg.enabled
+						return UF.CurrentSettings[frameName].elements[key].bg.enabled
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings[frameName].elements[key].bg.enabled = val
+						UF.CurrentSettings[frameName].elements[key].bg.enabled = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].elements[key].bg.enabled = val
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].bg.enabled = val
 						--Update the screen
-						module.frames[frameName]:UpdateAll()
+						UF.frames[frameName]:UpdateAll()
 					end
 				},
 				color = {
@@ -678,7 +677,7 @@ local function AddBarOptions(frameName)
 					order = 2,
 					hasAlpha = true,
 					get = function(info)
-						local val = module.CurrentSettings[frameName].elements[key].bg.color
+						local val = UF.CurrentSettings[frameName].elements[key].bg.color
 						if not val then
 							return {1, 1, 1, 1}
 						end
@@ -687,11 +686,11 @@ local function AddBarOptions(frameName)
 					set = function(info, r, b, g, a)
 						local val = {r, b, g, a}
 						--Update memory
-						module.CurrentSettings[frameName].elements[key].bg.color = val
+						UF.CurrentSettings[frameName].elements[key].bg.color = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].elements[key].bg.color = val
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].bg.color = val
 						--Update the screen
-						module.frames[frameName]:UpdateAll()
+						UF.frames[frameName]:UpdateAll()
 					end
 				}
 			}
@@ -707,19 +706,19 @@ local function AddBarOptions(frameName)
 				width = 'double',
 				order = 10,
 				get = function(info)
-					return module.CurrentSettings.player.elements.Power.PowerPrediction
+					return UF.CurrentSettings.player.elements.Power.PowerPrediction
 				end,
 				set = function(info, val)
 					--Update the screen
 					if val then
-						module.frames.player:EnableElement('PowerPrediction')
+						UF.frames.player:EnableElement('PowerPrediction')
 					else
-						module.frames.player:DisableElement('PowerPrediction')
+						UF.frames.player:DisableElement('PowerPrediction')
 					end
 					--Update memory
-					module.CurrentSettings.player.elements.Power.PowerPrediction = val
+					UF.CurrentSettings.player.elements.Power.PowerPrediction = val
 					--Update the DB
-					module.DB.UserSettings[module.DB.Style].player.elements.Power.PowerPrediction = val
+					UF.DB.UserSettings[UF.DB.Style].player.elements.Power.PowerPrediction = val
 				end
 			}
 		end
@@ -737,19 +736,19 @@ local function AddBarOptions(frameName)
 					width = 'full',
 					order = 1,
 					get = function(info)
-						return module.CurrentSettings.player.elements.AdditionalPower.enabled
+						return UF.CurrentSettings.player.elements.AdditionalPower.enabled
 					end,
 					set = function(info, val)
 						--Update the screen
 						if val then
-							module.frames.player:EnableElement('AdditionalPower')
+							UF.frames.player:EnableElement('AdditionalPower')
 						else
-							module.frames.player:DisableElement('AdditionalPower')
+							UF.frames.player:DisableElement('AdditionalPower')
 						end
 						--Update memory
-						module.CurrentSettings.player.elements.AdditionalPower.enabled = val
+						UF.CurrentSettings.player.elements.AdditionalPower.enabled = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style].player.elements.AdditionalPower.enabled = val
+						UF.DB.UserSettings[UF.DB.Style].player.elements.AdditionalPower.enabled = val
 					end
 				},
 				height = {
@@ -761,15 +760,15 @@ local function AddBarOptions(frameName)
 					max = 100,
 					step = 1,
 					get = function(info)
-						return module.CurrentSettings.player.elements.AdditionalPower.height
+						return UF.CurrentSettings.player.elements.AdditionalPower.height
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings.player.elements.AdditionalPower.height = val
+						UF.CurrentSettings.player.elements.AdditionalPower.height = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style].player.elements.AdditionalPower.height = val
+						UF.DB.UserSettings[UF.DB.Style].player.elements.AdditionalPower.height = val
 						--Update the screen
-						module.frames.player:UpdateSize()
+						UF.frames.player:UpdateSize()
 					end
 				}
 			}
@@ -830,7 +829,7 @@ local function AddIndicatorOptions(frameName)
 	if frameName == 'target' then
 		AllIndicators = SUI:MergeData(AllIndicators, targetOnly)
 	end
-	if module:IsFriendlyFrame(frameName) then
+	if UF:IsFriendlyFrame(frameName) then
 		AllIndicators = SUI:MergeData(AllIndicators, FriendlyOnly)
 	end
 
@@ -844,20 +843,20 @@ local function AddIndicatorOptions(frameName)
 					type = 'toggle',
 					order = 10,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements[key].enabled
+						return UF.CurrentSettings[frameName].elements[key].enabled
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings[frameName].elements[key].enabled = val
+						UF.CurrentSettings[frameName].elements[key].enabled = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].elements[key].enabled = val
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].enabled = val
 						--Update the screen
 						if val then
-							module.frames[frameName]:EnableElement(key)
-							module.frames[frameName][key]:ForceUpdate()
+							UF.frames[frameName]:EnableElement(key)
+							UF.frames[frameName][key]:ForceUpdate()
 						else
-							module.frames[frameName]:DisableElement(key)
-							module.frames[frameName][key]:Hide()
+							UF.frames[frameName]:DisableElement(key)
+							UF.frames[frameName][key]:Hide()
 						end
 					end
 				},
@@ -875,15 +874,15 @@ local function AddIndicatorOptions(frameName)
 							step = .1,
 							order = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].size
+								return UF.CurrentSettings[frameName].elements[key].size
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].size = val
+								UF.CurrentSettings[frameName].elements[key].size = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].size = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].size = val
 								--Update Screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						scale = {
@@ -894,15 +893,15 @@ local function AddIndicatorOptions(frameName)
 							step = .01,
 							order = 2,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].scale
+								return UF.CurrentSettings[frameName].elements[key].scale
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].scale = val
+								UF.CurrentSettings[frameName].elements[key].scale = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].scale = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].scale = val
 								--Update Screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						alpha = {
@@ -913,15 +912,15 @@ local function AddIndicatorOptions(frameName)
 							step = .01,
 							order = 3,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].alpha
+								return UF.CurrentSettings[frameName].elements[key].alpha
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].alpha = val
+								UF.CurrentSettings[frameName].elements[key].alpha = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].alpha = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].alpha = val
 								--Update Screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						}
 					}
@@ -940,15 +939,15 @@ local function AddIndicatorOptions(frameName)
 							max = 200,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].position.x
+								return UF.CurrentSettings[frameName].elements[key].position.x
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].position.x = val
+								UF.CurrentSettings[frameName].elements[key].position.x = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.x = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.x = val
 								--Update Screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						y = {
@@ -959,15 +958,15 @@ local function AddIndicatorOptions(frameName)
 							max = 200,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].position.y
+								return UF.CurrentSettings[frameName].elements[key].position.y
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].position.y = val
+								UF.CurrentSettings[frameName].elements[key].position.y = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.y = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.y = val
 								--Update Screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						anchor = {
@@ -976,15 +975,15 @@ local function AddIndicatorOptions(frameName)
 							order = 3,
 							values = anchorPoints,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].position.anchor
+								return UF.CurrentSettings[frameName].elements[key].position.anchor
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].position.anchor = val
+								UF.CurrentSettings[frameName].elements[key].position.anchor = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.anchor = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.anchor = val
 								--Update Screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						}
 					}
@@ -1001,21 +1000,21 @@ local function AddIndicatorOptions(frameName)
 				type = 'toggle',
 				order = 70 + i,
 				get = function(info)
-					return module.CurrentSettings[frameName].elements.PvPIndicator[k]
+					return UF.CurrentSettings[frameName].elements.PvPIndicator[k]
 				end,
 				set = function(info, val)
 					--Update memory
-					module.CurrentSettings[frameName].elements.PvPIndicator[k] = val
+					UF.CurrentSettings[frameName].elements.PvPIndicator[k] = val
 					--Update the DB
-					module.DB.UserSettings[module.DB.Style][frameName].elements.PvPIndicator[k] = val
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements.PvPIndicator[k] = val
 					--Update the screen
 					if val then
-						module.frames[frameName].PvPIndicator[k] = module.frames[frameName].PvPIndicator[v]
+						UF.frames[frameName].PvPIndicator[k] = UF.frames[frameName].PvPIndicator[v]
 					else
-						module.frames[frameName].PvPIndicator[k]:Hide()
-						module.frames[frameName].PvPIndicator[k] = nil
+						UF.frames[frameName].PvPIndicator[k]:Hide()
+						UF.frames[frameName].PvPIndicator[k] = nil
 					end
-					module.frames[frameName].PvPIndicator:ForceUpdate('OnUpdate')
+					UF.frames[frameName].PvPIndicator:ForceUpdate('OnUpdate')
 				end
 			}
 			i = i + 1
@@ -1033,20 +1032,20 @@ local function AddIndicatorOptions(frameName)
 					type = 'toggle',
 					order = 10,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements.Range.enabled
+						return UF.CurrentSettings[frameName].elements.Range.enabled
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings[frameName].elements.Range.enabled = val
+						UF.CurrentSettings[frameName].elements.Range.enabled = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].elements.Range.enabled = val
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.enabled = val
 						--Update the screen
 						if val then
-							module.frames[frameName]:EnableElement(key)
+							UF.frames[frameName]:EnableElement(key)
 						else
-							module.frames[frameName]:DisableElement(key)
+							UF.frames[frameName]:DisableElement(key)
 						end
-						module.frames[frameName].Range:ForceUpdate()
+						UF.frames[frameName].Range:ForceUpdate()
 					end
 				},
 				insideAlpha = {
@@ -1056,15 +1055,15 @@ local function AddIndicatorOptions(frameName)
 					max = 1,
 					step = .1,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements.Range.insideAlpha
+						return UF.CurrentSettings[frameName].elements.Range.insideAlpha
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings[frameName].elements.Range.insideAlpha = val
+						UF.CurrentSettings[frameName].elements.Range.insideAlpha = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].elements.Range.insideAlpha = val
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.insideAlpha = val
 						--Update the screen
-						module.frames[frameName].Range.insideAlpha = val
+						UF.frames[frameName].Range.insideAlpha = val
 					end
 				},
 				outsideAlpha = {
@@ -1074,15 +1073,15 @@ local function AddIndicatorOptions(frameName)
 					max = 1,
 					step = .1,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements.Range.outsideAlpha
+						return UF.CurrentSettings[frameName].elements.Range.outsideAlpha
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings[frameName].elements.Range.outsideAlpha = val
+						UF.CurrentSettings[frameName].elements.Range.outsideAlpha = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].elements.Range.outsideAlpha = val
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.outsideAlpha = val
 						--Update the screen
-						module.frames[frameName].Range.outsideAlpha = val
+						UF.frames[frameName].Range.outsideAlpha = val
 					end
 				}
 			}
@@ -1109,18 +1108,18 @@ local function AddDynamicText(frameName, element, count)
 				type = 'toggle',
 				order = 1,
 				get = function(info)
-					return module.CurrentSettings[frameName].elements[element].text[count].enabled
+					return UF.CurrentSettings[frameName].elements[element].text[count].enabled
 				end,
 				set = function(info, val)
 					--Update memory
-					module.CurrentSettings[frameName].elements[element].text[count].enabled = val
+					UF.CurrentSettings[frameName].elements[element].text[count].enabled = val
 					--Update the DB
-					module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].enabled = val
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].enabled = val
 					--Update the screen
 					if val then
-						module.frames[frameName][element].TextElements[count]:Show()
+						UF.frames[frameName][element].TextElements[count]:Show()
 					else
-						module.frames[frameName][element].TextElements[count]:Hide()
+						UF.frames[frameName][element].TextElements[count]:Hide()
 					end
 				end
 			},
@@ -1130,16 +1129,16 @@ local function AddDynamicText(frameName, element, count)
 				width = 'full',
 				order = 2,
 				get = function(info)
-					return module.CurrentSettings[frameName].elements[element].text[count].text
+					return UF.CurrentSettings[frameName].elements[element].text[count].text
 				end,
 				set = function(info, val)
 					--Update memory
-					module.CurrentSettings[frameName].elements[element].text[count].text = val
+					UF.CurrentSettings[frameName].elements[element].text[count].text = val
 					--Update the DB
-					module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].text = val
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].text = val
 					--Update the screen
-					module.frames[frameName]:Tag(module.frames[frameName][element].TextElements[count], val)
-					module.frames[frameName]:UpdateTags()
+					UF.frames[frameName]:Tag(UF.frames[frameName][element].TextElements[count], val)
+					UF.frames[frameName]:UpdateTags()
 				end
 			},
 			size = {
@@ -1151,15 +1150,15 @@ local function AddDynamicText(frameName, element, count)
 				step = 1,
 				order = 1.5,
 				get = function(info)
-					return module.CurrentSettings[frameName].elements[element].text[count].size
+					return UF.CurrentSettings[frameName].elements[element].text[count].size
 				end,
 				set = function(info, val)
 					--Update memory
-					module.CurrentSettings[frameName].elements[element].text[count].size = val
+					UF.CurrentSettings[frameName].elements[element].text[count].size = val
 					--Update the DB
-					module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].size = val
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].size = val
 					--Update the screen
-					SUI:UpdateDefaultSize(module.frames[frameName][element].TextElements[count], val, 'UnitFrames')
+					SUI:UpdateDefaultSize(UF.frames[frameName][element].TextElements[count], val, 'UnitFrames')
 				end
 			},
 			position = {
@@ -1176,19 +1175,19 @@ local function AddDynamicText(frameName, element, count)
 						max = 200,
 						step = 1,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements[element].text[count].position.x
+							return UF.CurrentSettings[frameName].elements[element].text[count].position.x
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements[element].text[count].position.x = val
+							UF.CurrentSettings[frameName].elements[element].text[count].position.x = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].position.x = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.x = val
 							--Update the screen
-							local position = module.CurrentSettings[frameName].elements[element].text[count].position
-							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
-							module.frames[frameName][element].TextElements[count]:SetPoint(
+							local position = UF.CurrentSettings[frameName].elements[element].text[count].position
+							UF.frames[frameName][element].TextElements[count]:ClearAllPoints()
+							UF.frames[frameName][element].TextElements[count]:SetPoint(
 								position.anchor,
-								module.frames[frameName],
+								UF.frames[frameName],
 								position.anchor,
 								position.x,
 								position.y
@@ -1203,19 +1202,19 @@ local function AddDynamicText(frameName, element, count)
 						max = 200,
 						step = 1,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements[element].text[count].position.y
+							return UF.CurrentSettings[frameName].elements[element].text[count].position.y
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements[element].text[count].position.y = val
+							UF.CurrentSettings[frameName].elements[element].text[count].position.y = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].position.y = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.y = val
 							--Update the screen
-							local position = module.CurrentSettings[frameName].elements[element].text[count].position
-							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
-							module.frames[frameName][element].TextElements[count]:SetPoint(
+							local position = UF.CurrentSettings[frameName].elements[element].text[count].position
+							UF.frames[frameName][element].TextElements[count]:ClearAllPoints()
+							UF.frames[frameName][element].TextElements[count]:SetPoint(
 								position.anchor,
-								module.frames[frameName],
+								UF.frames[frameName],
 								position.anchor,
 								position.x,
 								position.y
@@ -1228,19 +1227,19 @@ local function AddDynamicText(frameName, element, count)
 						order = 3,
 						values = anchorPoints,
 						get = function(info)
-							return module.CurrentSettings[frameName].elements[element].text[count].position.anchor
+							return UF.CurrentSettings[frameName].elements[element].text[count].position.anchor
 						end,
 						set = function(info, val)
 							--Update memory
-							module.CurrentSettings[frameName].elements[element].text[count].position.anchor = val
+							UF.CurrentSettings[frameName].elements[element].text[count].position.anchor = val
 							--Update the DB
-							module.DB.UserSettings[module.DB.Style][frameName].elements[element].text[count].position.anchor = val
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.anchor = val
 							--Update the screen
-							local position = module.CurrentSettings[frameName].elements[element].text[count].position
-							module.frames[frameName][element].TextElements[count]:ClearAllPoints()
-							module.frames[frameName][element].TextElements[count]:SetPoint(
+							local position = UF.CurrentSettings[frameName].elements[element].text[count].position
+							UF.frames[frameName][element].TextElements[count]:ClearAllPoints()
+							UF.frames[frameName][element].TextElements[count]:SetPoint(
 								position.anchor,
-								module.frames[frameName],
+								UF.frames[frameName],
 								position.anchor,
 								position.x,
 								position.y
@@ -1273,17 +1272,17 @@ local function AddTextOptions(frameName)
 		args = {}
 	}
 
-	for i in pairs(module.CurrentSettings[frameName].elements.Castbar.text) do
+	for i in pairs(UF.CurrentSettings[frameName].elements.Castbar.text) do
 		AddDynamicText(frameName, 'Castbar', i)
 	end
 	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'].args['1'].args['text'].disabled = true
 	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'].args['2'].args['text'].disabled = true
 
-	for i in pairs(module.CurrentSettings[frameName].elements.Health.text) do
+	for i in pairs(UF.CurrentSettings[frameName].elements.Health.text) do
 		AddDynamicText(frameName, 'Health', i)
 	end
 
-	for i in pairs(module.CurrentSettings[frameName].elements.Power.text) do
+	for i in pairs(UF.CurrentSettings[frameName].elements.Power.text) do
 		AddDynamicText(frameName, 'Power', i)
 	end
 
@@ -1304,18 +1303,18 @@ local function AddTextOptions(frameName)
 					type = 'toggle',
 					order = 1,
 					get = function(info)
-						return module.CurrentSettings[frameName].elements[key].enabled
+						return UF.CurrentSettings[frameName].elements[key].enabled
 					end,
 					set = function(info, val)
 						--Update memory
-						module.CurrentSettings[frameName].elements[key].enabled = val
+						UF.CurrentSettings[frameName].elements[key].enabled = val
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].elements[key].enabled = val
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].enabled = val
 						--Update the screen
 						if val then
-							module.frames[frameName][key]:Show()
+							UF.frames[frameName][key]:Show()
 						else
-							module.frames[frameName][key]:Hide()
+							UF.frames[frameName][key]:Hide()
 						end
 					end
 				},
@@ -1331,16 +1330,16 @@ local function AddTextOptions(frameName)
 							width = 'full',
 							order = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].text
+								return UF.CurrentSettings[frameName].elements[key].text
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].text = val
+								UF.CurrentSettings[frameName].elements[key].text = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].text = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].text = val
 								--Update the screen
-								module.frames[frameName]:Tag(module.frames[frameName][key], val)
-								module.frames[frameName]:UpdateTags()
+								UF.frames[frameName]:Tag(UF.frames[frameName][key], val)
+								UF.frames[frameName]:UpdateTags()
 							end
 						},
 						size = {
@@ -1352,15 +1351,15 @@ local function AddTextOptions(frameName)
 							step = 1,
 							order = 1.5,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].size
+								return UF.CurrentSettings[frameName].elements[key].size
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].size = val
+								UF.CurrentSettings[frameName].elements[key].size = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].size = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].size = val
 								--Update the screen
-								SUI:UpdateDefaultSize(module.frames[frameName][key], val, 'UnitFrames')
+								SUI:UpdateDefaultSize(UF.frames[frameName][key], val, 'UnitFrames')
 							end
 						},
 						JustifyH = {
@@ -1373,15 +1372,15 @@ local function AddTextOptions(frameName)
 								['RIGHT'] = 'Right'
 							},
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].SetJustifyH
+								return UF.CurrentSettings[frameName].elements[key].SetJustifyH
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].SetJustifyH = val
+								UF.CurrentSettings[frameName].elements[key].SetJustifyH = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].SetJustifyH = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].SetJustifyH = val
 								--Update the screen
-								module.frames[frameName][key]:SetJustifyH(val)
+								UF.frames[frameName][key]:SetJustifyH(val)
 							end
 						},
 						JustifyV = {
@@ -1394,15 +1393,15 @@ local function AddTextOptions(frameName)
 								['BOTTOM'] = 'Bottom'
 							},
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].SetJustifyV
+								return UF.CurrentSettings[frameName].elements[key].SetJustifyV
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].SetJustifyV = val
+								UF.CurrentSettings[frameName].elements[key].SetJustifyV = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].SetJustifyV = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].SetJustifyV = val
 								--Update the screen
-								module.frames[frameName][key]:SetJustifyV(val)
+								UF.frames[frameName][key]:SetJustifyV(val)
 							end
 						}
 					}
@@ -1421,15 +1420,15 @@ local function AddTextOptions(frameName)
 							max = 200,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].position.x
+								return UF.CurrentSettings[frameName].elements[key].position.x
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].position.x = val
+								UF.CurrentSettings[frameName].elements[key].position.x = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.x = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.x = val
 								--Update the screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						y = {
@@ -1440,15 +1439,15 @@ local function AddTextOptions(frameName)
 							max = 200,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].position.y
+								return UF.CurrentSettings[frameName].elements[key].position.y
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].position.y = val
+								UF.CurrentSettings[frameName].elements[key].position.y = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.y = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.y = val
 								--Update the screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						},
 						anchor = {
@@ -1457,15 +1456,15 @@ local function AddTextOptions(frameName)
 							order = 3,
 							values = anchorPoints,
 							get = function(info)
-								return module.CurrentSettings[frameName].elements[key].position.anchor
+								return UF.CurrentSettings[frameName].elements[key].position.anchor
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].elements[key].position.anchor = val
+								UF.CurrentSettings[frameName].elements[key].position.anchor = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].elements[key].position.anchor = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.anchor = val
 								--Update the screen
-								module.frames[frameName]:ElementUpdate(key)
+								UF.frames[frameName]:ElementUpdate(key)
 							end
 						}
 					}
@@ -1487,11 +1486,11 @@ local function AddBuffOptions(frameName)
 
 	local function SetOption(val, buffType, setting)
 		--Update memory
-		module.CurrentSettings[frameName].auras[buffType][setting] = val
+		UF.CurrentSettings[frameName].auras[buffType][setting] = val
 		--Update the DB
-		module.DB.UserSettings[module.DB.Style][frameName].auras[buffType][setting] = val
+		UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType][setting] = val
 		--Update the screen
-		module.frames[frameName]:UpdateAuras()
+		UF.frames[frameName]:UpdateAuras()
 	end
 
 	for _, buffType in pairs({'Buffs', 'Debuffs'}) do
@@ -1506,7 +1505,7 @@ local function AddBuffOptions(frameName)
 					type = 'toggle',
 					order = 1,
 					get = function(info)
-						return module.CurrentSettings[frameName].auras[buffType].enabled
+						return UF.CurrentSettings[frameName].auras[buffType].enabled
 					end,
 					set = function(info, val)
 						SetOption(val, buffType, 'enabled')
@@ -1518,7 +1517,7 @@ local function AddBuffOptions(frameName)
 					order = 100,
 					inline = true,
 					get = function(info)
-						return module.CurrentSettings[frameName].auras[buffType][info[#info]]
+						return UF.CurrentSettings[frameName].auras[buffType][info[#info]]
 					end,
 					set = function(info, val)
 						SetOption(val, buffType, info[#info])
@@ -1565,7 +1564,7 @@ local function AddBuffOptions(frameName)
 							max = 30,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].size
+								return UF.CurrentSettings[frameName].auras[buffType].size
 							end,
 							set = function(info, val)
 								SetOption(val, buffType, 'size')
@@ -1579,7 +1578,7 @@ local function AddBuffOptions(frameName)
 							max = 30,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].spacing
+								return UF.CurrentSettings[frameName].auras[buffType].spacing
 							end,
 							set = function(info, val)
 								SetOption(val, buffType, 'spacing')
@@ -1593,7 +1592,7 @@ local function AddBuffOptions(frameName)
 							max = 30,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].rows
+								return UF.CurrentSettings[frameName].auras[buffType].rows
 							end,
 							set = function(info, val)
 								SetOption(val, buffType, 'rows')
@@ -1605,7 +1604,7 @@ local function AddBuffOptions(frameName)
 							order = 70,
 							values = limitedAnchorPoints,
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].initialAnchor
+								return UF.CurrentSettings[frameName].auras[buffType].initialAnchor
 							end,
 							set = function(info, val)
 								SetOption(val, buffType, 'initialAnchor')
@@ -1620,7 +1619,7 @@ local function AddBuffOptions(frameName)
 								['LEFT'] = 'LEFT'
 							},
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].growthx
+								return UF.CurrentSettings[frameName].auras[buffType].growthx
 							end,
 							set = function(info, val)
 								SetOption(val, buffType, 'growthx')
@@ -1635,7 +1634,7 @@ local function AddBuffOptions(frameName)
 								['DOWN'] = 'DOWN'
 							},
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].growthy
+								return UF.CurrentSettings[frameName].auras[buffType].growthy
 							end,
 							set = function(info, val)
 								SetOption(val, buffType, 'growthy')
@@ -1657,15 +1656,15 @@ local function AddBuffOptions(frameName)
 							max = 100,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].position.x
+								return UF.CurrentSettings[frameName].auras[buffType].position.x
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].auras[buffType].position.x = val
+								UF.CurrentSettings[frameName].auras[buffType].position.x = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].position.x = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].position.x = val
 								--Update Screen
-								module.frames[frameName]:UpdateAuras()
+								UF.frames[frameName]:UpdateAuras()
 							end
 						},
 						y = {
@@ -1676,15 +1675,15 @@ local function AddBuffOptions(frameName)
 							max = 100,
 							step = 1,
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].position.y
+								return UF.CurrentSettings[frameName].auras[buffType].position.y
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].auras[buffType].position.y = val
+								UF.CurrentSettings[frameName].auras[buffType].position.y = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].position.y = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].position.y = val
 								--Update Screen
-								module.frames[frameName]:UpdateAuras()
+								UF.frames[frameName]:UpdateAuras()
 							end
 						},
 						anchor = {
@@ -1693,15 +1692,15 @@ local function AddBuffOptions(frameName)
 							order = 3,
 							values = anchorPoints,
 							get = function(info)
-								return module.CurrentSettings[frameName].auras[buffType].position.anchor
+								return UF.CurrentSettings[frameName].auras[buffType].position.anchor
 							end,
 							set = function(info, val)
 								--Update memory
-								module.CurrentSettings[frameName].auras[buffType].position.anchor = val
+								UF.CurrentSettings[frameName].auras[buffType].position.anchor = val
 								--Update the DB
-								module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].position.anchor = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].position.anchor = val
 								--Update Screen
-								module.frames[frameName]:UpdateAuras()
+								UF.frames[frameName]:UpdateAuras()
 							end
 						}
 					}
@@ -1711,15 +1710,15 @@ local function AddBuffOptions(frameName)
 					type = 'group',
 					order = 500,
 					get = function(info)
-						return module.CurrentSettings[frameName].auras[buffType].filters[info[#info]]
+						return UF.CurrentSettings[frameName].auras[buffType].filters[info[#info]]
 					end,
 					set = function(info, value)
 						--Update memory
-						module.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = value
+						UF.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = value
 						--Update the DB
-						module.DB.UserSettings[module.DB.Style][frameName].auras[buffType].filters[info[#info]] = value
+						UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].filters[info[#info]] = value
 						--Update Screen
-						module.frames[frameName]:UpdateAuras()
+						UF.frames[frameName]:UpdateAuras()
 					end,
 					args = {
 						minDuration = {
@@ -1798,17 +1797,17 @@ local function AddGroupOptions(frameName)
 		order = 5,
 		inline = true,
 		get = function(info)
-			return module.CurrentSettings[frameName][info[#info]]
+			return UF.CurrentSettings[frameName][info[#info]]
 		end,
 		set = function(info, val)
 			local setting = info[#info]
 
 			--Update memory
-			module.CurrentSettings[frameName][setting] = val
+			UF.CurrentSettings[frameName][setting] = val
 			--Update the DB
-			module.DB.UserSettings[module.DB.Style][frameName][setting] = val
+			UF.DB.UserSettings[UF.DB.Style][frameName][setting] = val
 			--Update the screen
-			module.frames[frameName]:SetAttribute(setting, val)
+			UF.frames[frameName]:SetAttribute(setting, val)
 		end,
 		args = {
 			showRaid = {
@@ -1886,25 +1885,25 @@ local function AddGroupOptions(frameName)
 			order = 3,
 			values = {['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles'},
 			get = function(info)
-				return module.CurrentSettings[frameName].mode
+				return UF.CurrentSettings[frameName].mode
 			end,
 			set = function(info, val)
 				--Update memory
-				module.CurrentSettings[frameName].mode = val
+				UF.CurrentSettings[frameName].mode = val
 				--Update the DB
-				module.DB.UserSettings[module.DB.Style][frameName].mode = val
+				UF.DB.UserSettings[UF.DB.Style][frameName].mode = val
 				--Update the screen
 				local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 				if val == 'GROUP' then
 					groupingOrder = '1,2,3,4,5,6,7,8'
 				end
-				module.frames.raid:SetAttribute('groupingOrder', groupingOrder)
+				UF.frames.raid:SetAttribute('groupingOrder', groupingOrder)
 			end
 		}
 	end
 end
 
-function module:InitializeOptions()
+function UF:InitializeOptions()
 	SUI.opt.args['UnitFrames'] = {
 		name = L['Unit frames'],
 		type = 'group',
@@ -1921,7 +1920,7 @@ function module:InitializeOptions()
 						width = 'full',
 						order = 900,
 						func = function()
-							module:ResetSettings()
+							UF:ResetSettings()
 						end
 					}
 				}
@@ -1941,7 +1940,7 @@ function module:InitializeOptions()
 		childGroups = 'tab',
 		args = {}
 	}
-	for k, v in pairs(module.TagList) do
+	for k, v in pairs(UF.TagList) do
 		if v.category and not SUI.opt.args.Help.args.TextTags.args[v.category] then
 			SUI.opt.args.Help.args.TextTags.args[v.category] = {
 				name = v.category,
@@ -1972,19 +1971,19 @@ function module:InitializeOptions()
 			name = v,
 			type = 'toggle',
 			get = function(info)
-				return module.CurrentSettings[v].enabled
+				return UF.CurrentSettings[v].enabled
 			end,
 			set = function(info, val)
 				--Update memory
-				module.CurrentSettings[v].enabled = val
+				UF.CurrentSettings[v].enabled = val
 				--Update the DB
-				module.DB.UserSettings[module.DB.Style][v].enabled = val
+				UF.DB.UserSettings[UF.DB.Style][v].enabled = val
 				--Update the UI
-				if module.frames[v] then
+				if UF.frames[v] then
 					if val then
-						module.frames[v]:Enable()
-					elseif module.frames[v] then
-						module.frames[v]:Disable()
+						UF.frames[v]:Enable()
+					elseif UF.frames[v] then
+						UF.frames[v]:Disable()
 					end
 				end
 			end
@@ -1992,7 +1991,7 @@ function module:InitializeOptions()
 	end
 
 	-- Build style Buttons
-	for styleKey, data in pairs(module.Artwork) do
+	for styleKey, data in pairs(UF.Artwork) do
 		local skin = data.skin or styleKey
 
 		SUI.opt.args.UnitFrames.args.BaseStyle.args[skin] = {
@@ -2005,7 +2004,7 @@ function module:InitializeOptions()
 				return {0, .5, 0, .5}
 			end,
 			func = function()
-				module:SetActiveStyle(skin)
+				UF:SetActiveStyle(skin)
 			end
 		}
 	end
@@ -2019,7 +2018,7 @@ function module:InitializeOptions()
 			return {0, .5, 0, .5}
 		end,
 		func = function()
-			module:SetActiveStyle('Minimal')
+			UF:SetActiveStyle('Minimal')
 		end
 	}
 
@@ -2047,15 +2046,15 @@ function module:InitializeOptions()
 	SUI.opt.args.UnitFrames.args.player.args.general.args.General.args.range.hidden = true
 end
 
-function module:ScaleFrames(scale)
+function UF:ScaleFrames(scale)
 	if SUI:IsModuleDisabled('MoveIt') then
 		return
 	end
 	local MoveIt = SUI:GetModule('Component_MoveIt')
 	for _, v in ipairs(frameList) do
-		if module.frames[v] and module.frames[v].mover then
-			local newScale = module.frames[v].mover.defaultScale * (scale + .08) -- Add .08 to use .92 (the default scale) as 1.
-			module.frames[v]:scale(newScale)
+		if UF.frames[v] and UF.frames[v].mover then
+			local newScale = UF.frames[v].mover.defaultScale * (scale + .08) -- Add .08 to use .92 (the default scale) as 1.
+			UF.frames[v]:scale(newScale)
 		end
 	end
 end
