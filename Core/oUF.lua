@@ -1,8 +1,8 @@
-local addon = LibStub('AceAddon-3.0'):GetAddon('SpartanUI')
+local SUI = SUI
 local unpack = unpack
 
 --------------   oUF Functions   ------------------------------------
-function addon:HotsListing()
+function SUI:HotsListing()
 	local _, classFileName = UnitClass('player')
 	local LifebloomSpellId = select(7, GetSpellInfo('Lifebloom'))
 	if classFileName == 'DRUID' then
@@ -37,7 +37,7 @@ function addon:HotsListing()
 	return {}
 end
 
-function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
+function SUI:oUF_Buffs(self, point, relativePoint, SizeModifier)
 	if self == nil then
 		return
 	end
@@ -52,7 +52,7 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 	end
 
 	local auras = {}
-	local spellIDs = addon:HotsListing()
+	local spellIDs = SUI:HotsListing()
 	auras.presentAlpha = 1
 	auras.onlyShowPresent = true
 	-- auras.PostCreateIcon = myCustomIconSkinnerFunction
@@ -80,49 +80,6 @@ function addon:oUF_Buffs(self, point, relativePoint, SizeModifier)
 		-- Set any other AuraWatch icon settings
 	end
 	return auras
-end
-
-function addon.pvpIcon(self, event, unit)
-	if (unit ~= self.unit) then
-		return
-	end
-
-	local pvp = self.PvP
-	if (pvp.PreUpdate) then
-		pvp:PreUpdate()
-	end
-	pvp:SetFrameStrata('LOW')
-
-	if pvp.shadow == nil then
-		pvp.shadow = self:CreateTexture(nil, 'BACKGROUND')
-		pvp.shadow:SetSize(pvp:GetSize())
-		pvp.shadow:SetParent(pvp)
-		pvp.shadow:SetPoint('CENTER', pvp, 'CENTER', 2, -2)
-		pvp.shadow:SetVertexColor(0, 0, 0, .9)
-	end
-
-	local status
-	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-	if (UnitIsPVPFreeForAll(unit)) then
-		pvp:SetTexture('Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon')
-		status = 'ffa'
-	elseif (factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
-		pvp:SetTexture('Interface\\FriendsFrame\\PlusManz-' .. factionGroup)
-		pvp.shadow:SetTexture('Interface\\FriendsFrame\\PlusManz-' .. factionGroup)
-		status = factionGroup
-	end
-
-	if (status) then
-		-- pvp.shadow:Show()
-		pvp:Show()
-	else
-		-- pvp.shadow:Hide()
-		pvp:Hide()
-	end
-
-	if (pvp.PostUpdate) then
-		return pvp:PostUpdate(status)
-	end
 end
 
 local function getCurrentUnitHP(unitid)
@@ -407,27 +364,27 @@ do --Health Formatting Tags
 	SUIUF.Tags.Methods['health:current-short'] = function(unit)
 		local tmp = getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 0) .. 'M'
+			return SUI:round(tmp / 1000000, 0) .. 'M'
 		end
 		if tmp >= 1000 then
-			return addon:round(tmp / 1000, 0) .. 'K'
+			return SUI:round(tmp / 1000, 0) .. 'K'
 		end
-		return addon:comma_value(tmp)
+		return SUI:comma_value(tmp)
 	end
 	-- Current Health Dynamic, as an SUIUF module
 	SUIUF.Tags.Events['health:current-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:current-dynamic'] = function(unit)
 		local tmp = getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 1) .. 'M '
+			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return addon:comma_value(tmp)
+			return SUI:comma_value(tmp)
 		end
 	end
 	-- Current Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['health:current-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:current-formatted'] = function(unit)
-		return addon:comma_value(getCurrentUnitHP(unit))
+		return SUI:comma_value(getCurrentUnitHP(unit))
 	end
 
 	-- Total Health Short, as an SUIUF module
@@ -435,27 +392,27 @@ do --Health Formatting Tags
 	SUIUF.Tags.Methods['health:max-short'] = function(unit)
 		local tmp = getMaxUnitHP(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 0) .. 'M'
+			return SUI:round(tmp / 1000000, 0) .. 'M'
 		end
 		if tmp >= 1000 then
-			return addon:round(tmp / 1000, 0) .. 'K'
+			return SUI:round(tmp / 1000, 0) .. 'K'
 		end
-		return addon:comma_value(tmp)
+		return SUI:comma_value(tmp)
 	end
 	-- Total Health Dynamic, as an SUIUF module
 	SUIUF.Tags.Events['health:max-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:max-dynamic'] = function(unit)
 		local tmp = getMaxUnitHP(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 1) .. 'M '
+			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return addon:comma_value(tmp)
+			return SUI:comma_value(tmp)
 		end
 	end
 	-- Total Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['health:max-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:max-formatted'] = function(unit)
-		return addon:comma_value(getMaxUnitHP(unit))
+		return SUI:comma_value(getMaxUnitHP(unit))
 	end
 
 	-- Missing Health Dynamic, as an SUIUF module
@@ -463,15 +420,15 @@ do --Health Formatting Tags
 	SUIUF.Tags.Methods['health:missing-dynamic'] = function(unit)
 		local tmp = getMaxUnitHP(unit) - getCurrentUnitHP(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 1) .. 'M '
+			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return addon:comma_value(tmp)
+			return SUI:comma_value(tmp)
 		end
 	end
 	-- Missing Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['health:missing-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:missing-formatted'] = function(unit)
-		return addon:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
+		return SUI:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
 	end
 end
 
@@ -481,15 +438,15 @@ do -- Mana Formatting Tags
 	SUIUF.Tags.Methods['power:current-dynamic'] = function(unit)
 		local tmp = UnitPower(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 1) .. 'M '
+			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return addon:comma_value(tmp)
+			return SUI:comma_value(tmp)
 		end
 	end
 	-- Current Mana formatted, as an SUIUF module
 	SUIUF.Tags.Events['power:current-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['power:current-formatted'] = function(unit)
-		return addon:comma_value(UnitPower(unit))
+		return SUI:comma_value(UnitPower(unit))
 	end
 
 	-- Total Mana Dynamic, as an SUIUF module
@@ -497,15 +454,15 @@ do -- Mana Formatting Tags
 	SUIUF.Tags.Methods['power:max-dynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 1) .. 'M '
+			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return addon:comma_value(tmp)
+			return SUI:comma_value(tmp)
 		end
 	end
 	-- Total Mana formatted, as an SUIUF module
 	SUIUF.Tags.Events['power:max-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['power:max-formatted'] = function(unit)
-		return addon:comma_value(UnitPowerMax(unit))
+		return SUI:comma_value(UnitPowerMax(unit))
 	end
 
 	-- Missing Mana Dynamic, as an SUIUF module
@@ -513,15 +470,15 @@ do -- Mana Formatting Tags
 	SUIUF.Tags.Methods['power:missing-dynamic'] = function(unit)
 		local tmp = UnitPowerMax(unit) - UnitPower(unit)
 		if tmp >= 1000000 then
-			return addon:round(tmp / 1000000, 1) .. 'M '
+			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return addon:comma_value(tmp)
+			return SUI:comma_value(tmp)
 		end
 	end
 	-- Missing Mana formatted, as an SUIUF module
 	SUIUF.Tags.Events['power:missing-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['power:missing-formatted'] = function(unit)
-		return addon:comma_value(UnitPowerMax(unit) - UnitPower(unit))
+		return SUI:comma_value(UnitPowerMax(unit) - UnitPower(unit))
 	end
 end
 
