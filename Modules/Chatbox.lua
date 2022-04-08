@@ -367,7 +367,7 @@ function module:EditBoxPosition()
 		ChatFrameEdit:ClearAllPoints()
 
 		if module.DB.EditBoxTop then
-			local GDM = _G.GeneralDockManager
+			local GDM = _G['GeneralDockManager']
 			ChatFrameEdit:SetPoint('BOTTOMLEFT', GDM, 'TOPLEFT', 0, 1)
 			ChatFrameEdit:SetPoint('BOTTOMRIGHT', GDM, 'TOPRIGHT', 0, 1)
 		else
@@ -487,7 +487,7 @@ function module:SetupChatboxes()
 		HideUIPanel(GameTooltip)
 	end
 
-	local GDM = _G.GeneralDockManager
+	local GDM = _G['GeneralDockManager']
 	if not GDM.SetBackdrop then
 		Mixin(GDM, BackdropTemplateMixin)
 	end
@@ -498,13 +498,13 @@ function module:SetupChatboxes()
 		GDM:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
 	end
 	GDM:ClearAllPoints()
-	GDM:SetPoint('BOTTOMLEFT', _G.ChatFrame1Background, 'TOPLEFT', -1, 1)
-	GDM:SetPoint('BOTTOMRIGHT', _G.ChatFrame1Background, 'TOPRIGHT', 1, 1)
+	GDM:SetPoint('BOTTOMLEFT', _G['ChatFrame1Background'], 'TOPLEFT', -1, 1)
+	GDM:SetPoint('BOTTOMRIGHT', _G['ChatFrame1Background'], 'TOPRIGHT', 1, 1)
 
 	ChatAlertFrame:ClearAllPoints()
 	ChatAlertFrame:SetPoint('BOTTOMLEFT', GDM, 'TOPLEFT', 0, 2)
 
-	local QJTB = _G.QuickJoinToastButton
+	local QJTB = _G['QuickJoinToastButton']
 	if QJTB then
 		QJTB:ClearAllPoints()
 		QJTB:SetSize(18, 18)
@@ -580,7 +580,7 @@ function module:SetupChatboxes()
 	end
 	hooksecurefunc(BNToastFrame, 'SetPoint', fixbnetpos)
 
-	local VoiceChannelButton = _G.ChatFrameChannelButton
+	local VoiceChannelButton = _G['ChatFrameChannelButton']
 	VoiceChannelButton:ClearAllPoints()
 	if SUI.IsRetail then
 		VoiceChannelButton:SetPoint('TOPRIGHT', QJTB, 'TOPLEFT', -1, 0)

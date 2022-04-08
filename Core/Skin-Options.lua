@@ -240,7 +240,7 @@ function module:ConfigOpened(name)
 
 	for i = 1, frame:GetNumChildren() do
 		local child = select(i, frame:GetChildren())
-		if child:IsObjectType('Button') and child:GetText() == _G.CLOSE then
+		if child:IsObjectType('Button') and child:GetText() == _G['CLOSE'] then
 			frame.CloseBtn = child
 			child:Hide()
 		-- elseif child:IsObjectType('Frame') or child:IsObjectType('Button') then
@@ -254,7 +254,9 @@ end
 local function attemptSkin()
 	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner', true)
 	if a then
+		---@diagnostic disable-next-line: undefined-field
 		a.prdb.ChatEditBox.skin = false
+		---@diagnostic disable-next-line: undefined-field
 		a.prdb.DisabledSkins['AceGUI-3.0 (Lib)'] = true
 	end
 
