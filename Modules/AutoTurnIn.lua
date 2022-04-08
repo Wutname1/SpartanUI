@@ -506,6 +506,8 @@ function module:FirstLaunch()
 				if SUI.IsRetail then
 					ATI.options.lootreward = StdUi:Checkbox(ATI, L['Auto select quest reward'], 220, 20)
 					StdUi:GlueBelow(ATI.options.lootreward, ATI.options.TurnInEnabled, 0, -5)
+					ATI.options.DoCampainQuests = StdUi:Checkbox(ATI, L['Accept/Complete Campaign Quests'], 220, 20)
+					StdUi:GlueBelow(ATI.options.DoCampainQuests, ATI.options.lootreward, 0, -5, 'LEFT')
 				end
 
 				StdUi:GlueRight(ATI.options.TurnInEnabled, ATI.options.AcceptGeneralQuests, 5, 0)
@@ -728,6 +730,7 @@ function module:BuildOptions()
 			DoCampainQuests = {
 				name = L['Accept/Complete Campaign Quests'],
 				type = 'toggle',
+				width = 'double',
 				order = 1
 			},
 			QuestAccepting = {
