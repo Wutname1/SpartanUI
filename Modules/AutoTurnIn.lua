@@ -681,7 +681,17 @@ function module:OnEnable()
 			end
 
 			if SUI.IsRetail then
-				if C_CampaignInfo.IsCampaignQuest(GetQuestID()) and not module.DB.DoCampainQuests then
+				local QuestID = GetQuestID()
+				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
+				if
+					C_CampaignInfo.IsCampaignQuest(QuestID) and not module.DB.DoCampainQuests and
+						C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
+				 then
+					if module.DB.debug then
+						print(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
+						print(C_CampaignInfo.GetCurrentChapterID(CampaignId))
+					end
+
 					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
 					return
 				end
