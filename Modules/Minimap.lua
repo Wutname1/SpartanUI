@@ -273,6 +273,7 @@ end
 
 function module:ModifyMinimapLayout()
 	Minimap:EnableMouseWheel(true)
+	MinimapCluster:EnableMouse(false)
 	Minimap:SetScript(
 		'OnMouseWheel',
 		function(_, delta)
