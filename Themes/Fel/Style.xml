@@ -1,4 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" 
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
 	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
@@ -32,7 +32,7 @@
 		</Size>
 		<Frames>
 			<!-- Action Bars -->
-			<Frame name="Fel_Bar1" inherits="SUI_Art_Fel_BarBG">
+			<Frame name="$parentBar1" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 						<Offset>
@@ -41,7 +41,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_Bar2" inherits="SUI_Art_Fel_BarBG">
+			<Frame name="$parentBar2" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM">
 						<Offset>
@@ -50,7 +50,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_Bar3" inherits="SUI_Art_Fel_BarBG">
+			<Frame name="$parentBar3" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
 						<Offset>
@@ -59,7 +59,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_Bar4" inherits="SUI_Art_Fel_BarBG">
+			<Frame name="$parentBar4" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM">
 						<Offset>
@@ -69,18 +69,18 @@
 				</Anchors>
 			</Frame>
 			<!-- Misc Bars -->
-			<Frame name="Fel_MenuBar" inherits="SUI_Art_Fel_BarBG">
+			<Frame name="$parentMenuBar" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
-					<Anchor point="BOTTOM" relativeTo="Fel_Bar3" relativePoint="TOP">
+					<Anchor point="BOTTOM" relativeTo="$parentBar3" relativePoint="TOP">
 						<Offset>
 							<AbsDimension x="0" y="10" />
 						</Offset>
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Fel_StanceBar" inherits="SUI_Art_Fel_BarBG">
+			<Frame name="$parentStanceBar" inherits="SUI_Art_Fel_BarBG">
 				<Anchors>
-					<Anchor point="BOTTOM" relativeTo="Fel_Bar1" relativePoint="TOP">
+					<Anchor point="BOTTOM" relativeTo="$parentBar1" relativePoint="TOP">
 						<Offset>
 							<AbsDimension x="0" y="10" />
 						</Offset>
