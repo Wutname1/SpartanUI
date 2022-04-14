@@ -122,6 +122,10 @@ local function SetupPage()
 end
 
 local function StyleUpdate()
+	if InCombatLockdown() then
+		return
+	end
+
 	module:UpdateScale()
 	module:UpdateAlpha()
 	module:updateOffset()

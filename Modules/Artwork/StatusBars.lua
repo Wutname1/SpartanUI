@@ -248,6 +248,10 @@ local showHonorTooltip = function(self)
 	local currentHonor = UnitHonor('player')
 	local maxHonor = UnitHonorMax('player')
 
+	if currentHonor == 0 and maxHonor == 0 then
+		return -- If something odd happened and both values are 0 don't show anything
+	end
+
 	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, honorLevel)
 	self.tooltip.TextFrame.MainText:SetFormattedText(
 		'( %s / %s ) %d%%',
