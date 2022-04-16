@@ -1,8 +1,9 @@
 local AceAddon = LibStub('AceAddon-3.0')
----@class SUI : AceAddon, AceEvent-3.0, AceConsole-3.0
+---@class SUI : AceAddon-3.0, AceEvent-3.0, AceConsole-3.0
 ---@field MoveIt MoveIt
 local SUI = AceAddon:NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
+---@diagnostic disable-next-line: undefined-field
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
 local _G = _G
 local type, pairs, unpack = type, pairs, unpack
@@ -63,6 +64,7 @@ SUI.AddLib('WagoAnalytics', 'WagoAnalytics', true)
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
 
 ---------------  Options Init ---------------
+---@type AceConfigOptionsTable
 SUI.opt = {
 	name = string.format('|cffffffffSpartan|cffe21f1fUI|r %s %s %s', wowVersion, SUI.Version, SUI.releaseType or ''),
 	type = 'group',

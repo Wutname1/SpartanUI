@@ -291,7 +291,8 @@
     "AceConfigDialog",
     "CloseWindows",
     "RealMobHealth",
-    "RegisterAsWidget"
+    "RegisterAsWidget",
+    "RAID"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

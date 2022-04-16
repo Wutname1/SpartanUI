@@ -443,14 +443,12 @@ local function CreateUnitFrame(self, unit)
 
 		--Range
 		if elementName == 'Range' then
-			self.Range = {
-				insideAlpha = elements.Range.insideAlpha,
-				outsideAlpha = elements.Range.outsideAlpha
-			}
+			element.insideAlpha = data.insideAlpha
+			element.outsideAlpha = data.outsideAlpha
 		end
 
 		-- Call the elements update function
-		if UF.Elements[elementName] then
+		if UF.Elements[elementName] and UF.Elements[elementName].Update then
 			UF.Elements[elementName].Update(self)
 		end
 	end
