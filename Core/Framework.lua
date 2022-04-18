@@ -1,13 +1,10 @@
-local AceAddon = LibStub('AceAddon-3.0')
----@class SUI : AceAddon-3.0, AceEvent-3.0, AceConsole-3.0
+---@class SUI : AceAddon-3.0, AceEvent-3.0, AceConsole-3.0, AceSerializer-3.0
 ---@field MoveIt MoveIt
-local SUI = AceAddon:NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
+local SUI = LibStub('AceAddon-3.0'):NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
----@diagnostic disable-next-line: undefined-field
-local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
-local _G = _G
 local type, pairs, unpack = type, pairs, unpack
-SUI.L = L
+local _G = _G
+SUI.L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
 SUI.AutoOpenErrors = true
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
@@ -70,8 +67,8 @@ SUI.opt = {
 	type = 'group',
 	childGroups = 'tree',
 	args = {
-		General = {name = L['General'], type = 'group', order = 0, args = {}},
-		Artwork = {name = L['Artwork'], type = 'group', order = 1, args = {}}
+		General = {name = SUI.L['General'], type = 'group', order = 0, args = {}},
+		Artwork = {name = SUI.L['Artwork'], type = 'group', order = 1, args = {}}
 	}
 }
 ---------------  Database  ---------------
@@ -1373,7 +1370,7 @@ function SUI:OnInitialize()
 		else
 			ResetDBWarning = true
 			SUI:Print('|cffff0000Warning')
-			SUI:Print(L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
+			SUI:Print(SUI.L['This will reset the SpartanUI Database. If you wish to continue perform the chat command again.'])
 		end
 	end
 
@@ -1387,7 +1384,7 @@ function SUI:OnInitialize()
 			ResetDBWarning = true
 			SUI:Print('|cffff0000Warning')
 			SUI:Print(
-				L[
+				SUI.L[
 					'This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'
 				]
 			)
@@ -1399,10 +1396,10 @@ function SUI:OnInitialize()
 	end
 
 	local function Version()
-		SUI:Print(L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
+		SUI:Print(SUI.L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
 		SUI:Print(string.format('%s build %s', wowVersion, SUI.BuildNum))
 		if SUI.Bartender4Version ~= 0 then
-			SUI:Print(L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
+			SUI:Print(SUI.L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version)
 		end
 	end
 
@@ -1874,10 +1871,10 @@ function SUI:OnEnable()
 					fontSize = 'medium',
 					order = 3,
 					width = 'full',
-					name = L['Options can be accessed by the button below or by typing /sui']
+					name = SUI.L['Options can be accessed by the button below or by typing /sui']
 				},
 				Close = {
-					name = L['Launch Options'],
+					name = SUI.L['Launch Options'],
 					width = 'full',
 					type = 'execute',
 					order = 50,
