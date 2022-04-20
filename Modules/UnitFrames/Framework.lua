@@ -980,6 +980,7 @@ function UF:OnInitialize()
 					},
 					Debuffs = {
 						enabled = true,
+						rows = 1,
 						size = 10
 					}
 				},

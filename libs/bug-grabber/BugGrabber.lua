@@ -690,7 +690,7 @@ function seterrorhandler --[[ noop ]]()
 end
 
 -- Set up slash command
-_G.SlashCmdList.BugGrabber = slashHandler
+_G['SlashCmdList'].BugGrabber = slashHandler
 _G.SLASH_BugGrabber1 = '/buggrabber'
 _G.BugGrabber =
 	setmetatable(

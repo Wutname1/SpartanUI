@@ -329,17 +329,17 @@ function module.QUEST_COMPLETE()
 				if (#slot > 1) then
 					local secondSlot = GetInventorySlotInfo(slot[2])
 					local secondinvLink = GetInventoryItemLink('player', secondSlot)
-					if (invLink) then
-						local eq2Level = SUI:GetiLVL(invLink)
-						if (EquipedLevel > eq2Level) then
-							if (module.DB.debug) then
-								print('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
-							end
-							firstSlot = secondSlot
-							EquipedLevel = eq2Level
-							firstinvLink = secondinvLink
-						end
-					end
+				-- if (invLink) then
+				-- 	local eq2Level = SUI:GetiLVL(invLink)
+				-- 	if (EquipedLevel > eq2Level) then
+				-- 		if (module.DB.debug) then
+				-- 			print('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
+				-- 		end
+				-- 		firstSlot = secondSlot
+				-- 		EquipedLevel = eq2Level
+				-- 		firstinvLink = secondinvLink
+				-- 	end
+				-- end
 				end
 
 				-- comparing lowest equipped item level with reward's item level
@@ -696,6 +696,16 @@ function module:OnEnable()
 					return
 				end
 			end
+			-- local questname = GetTitleText()
+			-- local questID = GetQuestID()
+			-- local questindex = C_QuestLog.GetLogIndexForQuestID(questID)
+			-- local info = C_QuestLog.GetInfo(questindex)
+			-- print(info)
+			-- for k, v in pairs(info) do
+			-- 	print(k)
+			-- 	print(v)
+			-- end
+
 			if IsAltKeyDown() then
 				SUI:Print('Canceling Override key held disabled')
 				module:CancelAllTimers()

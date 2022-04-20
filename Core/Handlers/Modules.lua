@@ -17,7 +17,7 @@ function SUI:GetModuleName(ModuleTable)
 	return name
 end
 
----@param moduleName AceModule|string
+---@param moduleName AceAddon-3.0|string
 ---@return boolean
 function SUI:IsModuleEnabled(moduleName)
 	if type(moduleName) == 'table' then
@@ -30,7 +30,7 @@ function SUI:IsModuleEnabled(moduleName)
 	return true
 end
 
----@param moduleName AceModule|string
+---@param moduleName AceAddon-3.0|string
 ---@return boolean
 function SUI:IsModuleDisabled(moduleName)
 	if type(moduleName) == 'table' then
@@ -44,7 +44,7 @@ function SUI:IsModuleDisabled(moduleName)
 end
 
 -- These override the default Ace3 calls so we can track the status
----@param input AceModule|string
+---@param input AceAddon-3.0|string
 function SUI:DisableModule(input)
 	local module = nil
 	if type(input) == 'table' then
@@ -60,7 +60,7 @@ function SUI:DisableModule(input)
 	return module:Disable()
 end
 
----@param input AceModule|string
+---@param input AceAddon-3.0|string
 function SUI:EnableModule(input)
 	local module = nil
 	if type(input) == 'table' then
