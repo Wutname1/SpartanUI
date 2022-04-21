@@ -1041,9 +1041,9 @@ local function AddIndicatorOptions(frameName)
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.enabled = val
 						--Update the screen
 						if val then
-							UF.frames[frameName]:EnableElement(key)
+							UF.frames[frameName]:EnableElement('Range')
 						else
-							UF.frames[frameName]:DisableElement(key)
+							UF.frames[frameName]:DisableElement('Range')
 						end
 						UF.frames[frameName].Range:ForceUpdate()
 					end

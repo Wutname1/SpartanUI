@@ -379,7 +379,7 @@ function UF:OnInitialize()
 					Bars = {
 						auraBarHeight = 15,
 						auraBarWidth = false,
-						auraBarTexture = Smoothv2,
+						auraBarTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
 						fgalpha = 1,
 						bgalpha = 1,
 						spellNameSize = 10,
