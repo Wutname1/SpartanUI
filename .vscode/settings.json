@@ -294,7 +294,10 @@
     "RegisterAsWidget",
     "RAID",
     "SlashCmdList",
-    "seterrorhandler"
+    "seterrorhandler",
+    "OnHyperlinkLeave",
+    "OnHyperlinkEnter",
+    "SUI_Art_Minimal_Base"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

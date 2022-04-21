@@ -1230,10 +1230,10 @@ local GlobalDefaults = {
 	}
 }
 
---- @class SUIDBObject
+---@class SUIDBObject
 local DBdefaults = {global = GlobalDefaults, profile = DBdefault}
---- @class SUIDB : SUIDBObject, AceDBObject-3.0
---- @field RegisterCallback function
+---@class SUIDB : SUIDBObject, AceDBObject-3.0
+---@field RegisterCallback function
 SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
 --If user has not played in a long time reset the database.
 local ver = SUI.SpartanUIDB.profile.Version

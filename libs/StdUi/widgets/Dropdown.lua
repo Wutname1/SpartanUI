@@ -1,196 +1,181 @@
---- @class StdUi
-local StdUi = LibStub and LibStub('StdUi', true);
+---@class StdUi
+local StdUi = LibStub and LibStub('StdUi', true)
 if not StdUi then
 	return
 end
 
-local module, version = 'Dropdown', 4;
-if not StdUi:UpgradeNeeded(module, version) then return end;
+local module, version = 'Dropdown', 4
+if not StdUi:UpgradeNeeded(module, version) then
+	return
+end
 
-local TableInsert = tinsert;
+local TableInsert = tinsert
 
 -- reference to all other dropdowns to close them when new one opens
-local dropdowns = StdUiDropdowns or {};
-StdUiDropdowns = dropdowns;
+local dropdowns = StdUiDropdowns or {}
+StdUiDropdowns = dropdowns
 
 local DropdownItemOnClick = function(self)
-	self.dropdown:SetValue(self.value, self:GetText());
-	self.dropdown.optsFrame:Hide();
+	self.dropdown:SetValue(self.value, self:GetText())
+	self.dropdown.optsFrame:Hide()
 end
 
 local DropdownItemOnValueChanged = function(checkbox, isChecked)
-	checkbox.dropdown:ToggleValue(checkbox.value, isChecked);
+	checkbox.dropdown:ToggleValue(checkbox.value, isChecked)
 end
 
 local DropdownMethods = {
 	buttonCreate = function(parent)
-		local dropdown = parent.dropdown;
-		local optionButton;
+		local dropdown = parent.dropdown
+		local optionButton
 
 		if dropdown.multi then
-			optionButton = dropdown.stdUi:Checkbox(parent, '', parent:GetWidth(), 20);
+			optionButton = dropdown.stdUi:Checkbox(parent, '', parent:GetWidth(), 20)
 		else
-			optionButton = dropdown.stdUi:HighlightButton(parent, parent:GetWidth(), 20, '');
-			optionButton.text:SetJustifyH('LEFT');
+			optionButton = dropdown.stdUi:HighlightButton(parent, parent:GetWidth(), 20, '')
+			optionButton.text:SetJustifyH('LEFT')
 		end
 
-		optionButton.dropdown = dropdown;
-		optionButton:SetFrameLevel(parent:GetFrameLevel() + 2);
+		optionButton.dropdown = dropdown
+		optionButton:SetFrameLevel(parent:GetFrameLevel() + 2)
 		if not dropdown.multi then
-			optionButton:SetScript('OnClick', DropdownItemOnClick);
+			optionButton:SetScript('OnClick', DropdownItemOnClick)
 		else
-			optionButton.OnValueChanged = DropdownItemOnValueChanged;
+			optionButton.OnValueChanged = DropdownItemOnValueChanged
 		end
 
-		return optionButton;
+		return optionButton
 	end,
-
 	buttonUpdate = function(parent, itemFrame, data)
-		itemFrame:SetWidth(parent:GetWidth());
-		itemFrame:SetText(data.text);
+		itemFrame:SetWidth(parent:GetWidth())
+		itemFrame:SetText(data.text)
 
 		if itemFrame.dropdown.multi then
-			itemFrame:SetValue(data.value);
+			itemFrame:SetValue(data.value)
 		else
-			itemFrame.value = data.value;
+			itemFrame.value = data.value
 		end
 	end,
-
 	ShowOptions = function(self)
 		for i = 1, #dropdowns do
-			dropdowns[i]:HideOptions();
+			dropdowns[i]:HideOptions()
 		end
 
-		self.optsFrame:UpdateSize(self:GetWidth(), self.optsFrame:GetHeight());
-		self.optsFrame:Show();
-		self.optsFrame:Update();
-		self:RepaintOptions();
+		self.optsFrame:UpdateSize(self:GetWidth(), self.optsFrame:GetHeight())
+		self.optsFrame:Show()
+		self.optsFrame:Update()
+		self:RepaintOptions()
 	end,
-
 	HideOptions = function(self)
-		self.optsFrame:Hide();
+		self.optsFrame:Hide()
 	end,
-
 	ToggleOptions = function(self)
 		if self.optsFrame:IsShown() then
-			self:HideOptions();
+			self:HideOptions()
 		else
-			self:ShowOptions();
+			self:ShowOptions()
 		end
 	end,
-
 	SetPlaceholder = function(self, placeholderText)
 		if self:GetText() == '' or self:GetText() == self.placeholder then
-			self:SetText(placeholderText);
+			self:SetText(placeholderText)
 		end
 
-		self.placeholder = placeholderText;
+		self.placeholder = placeholderText
 	end,
-
 	RepaintOptions = function(self)
-		local scrollChild = self.optsFrame.scrollChild;
-		self.stdUi:ObjectList(
-			scrollChild,
-			scrollChild.items,
-			self.buttonCreate,
-			self.buttonUpdate,
-			self.options
-		);
-		self.optsFrame:UpdateItemsCount(#self.options);
+		local scrollChild = self.optsFrame.scrollChild
+		self.stdUi:ObjectList(scrollChild, scrollChild.items, self.buttonCreate, self.buttonUpdate, self.options)
+		self.optsFrame:UpdateItemsCount(#self.options)
 	end,
-
 	SetOptions = function(self, newOptions)
-		self.options = newOptions;
-		local optionsHeight = #newOptions * 20;
-		local scrollChild = self.optsFrame.scrollChild;
+		self.options = newOptions
+		local optionsHeight = #newOptions * 20
+		local scrollChild = self.optsFrame.scrollChild
 		if not scrollChild.items then
-			scrollChild.items = {};
+			scrollChild.items = {}
 		end
 
-		self.optsFrame:SetHeight(math.min(optionsHeight + 4, 200));
-		scrollChild:SetHeight(optionsHeight);
+		self.optsFrame:SetHeight(math.min(optionsHeight + 4, 200))
+		scrollChild:SetHeight(optionsHeight)
 
-		self:RepaintOptions();
+		self:RepaintOptions()
 	end,
-
 	ToggleValue = function(self, value, state)
-		assert(self.multi, 'Single dropdown cannot have more than one value!');
+		assert(self.multi, 'Single dropdown cannot have more than one value!')
 
 		-- Treat is as associative array
 		if self.assoc then
-			self.value[value] = state;
+			self.value[value] = state
 		else
 			if state then
 				-- we are toggling it on
 				if not tContains(self.value, value) then
-					TableInsert(self.value, value);
+					TableInsert(self.value, value)
 				end
 			else
 				-- we are removing it from table
 				if tContains(self.value, value) then
-					tDeleteItem(self.value, value);
+					tDeleteItem(self.value, value)
 				end
 			end
 		end
 
-		self:SetValue(self.value);
+		self:SetValue(self.value)
 	end,
-
 	SetValue = function(self, value, text)
-		self.value = value;
+		self.value = value
 
 		if text then
-			self:SetText(text);
+			self:SetText(text)
 		else
-			self:SetText(self:FindValueText(value));
+			self:SetText(self:FindValueText(value))
 		end
 
 		if self.multi then
 			for _, checkbox in pairs(self.optsFrame.scrollChild.items) do
-				local isChecked = false;
+				local isChecked = false
 				if self.assoc then
-					isChecked = self.value[checkbox.value];
+					isChecked = self.value[checkbox.value]
 				else
-					isChecked = tContains(self.value, checkbox.value);
+					isChecked = tContains(self.value, checkbox.value)
 				end
 
-				checkbox:SetChecked(isChecked, true);
+				checkbox:SetChecked(isChecked, true)
 			end
 		end
 
 		if self.OnValueChanged then
-			self.OnValueChanged(self, value, self:GetText());
+			self.OnValueChanged(self, value, self:GetText())
 		end
 	end,
-
 	GetValue = function(self)
-		return self.value;
+		return self.value
 	end,
-
 	FindValueText = function(self, value)
 		if type(value) ~= 'table' then
 			for i = 1, #self.options do
-				local opt = self.options[i];
+				local opt = self.options[i]
 
 				if opt.value == value then
-					return opt.text;
+					return opt.text
 				end
 			end
 
-			return self.placeholder or '';
+			return self.placeholder or ''
 		else
-			local result = '';
+			local result = ''
 
 			for i = 1, #self.options do
-				local opt = self.options[i];
+				local opt = self.options[i]
 
 				if self.assoc then
 					for key, checked in pairs(value) do
 						if checked and key == opt.value then
 							if result == '' then
-								result = opt.text;
+								result = opt.text
 							else
-								result = result .. ', ' .. opt.text;
+								result = result .. ', ' .. opt.text
 							end
 						end
 					end
@@ -198,9 +183,9 @@ local DropdownMethods = {
 					for x = 1, #value do
 						if value[x] == opt.value then
 							if result == '' then
-								result = opt.text;
+								result = opt.text
 							else
-								result = result .. ', ' .. opt.text;
+								result = result .. ', ' .. opt.text
 							end
 						end
 					end
@@ -210,17 +195,17 @@ local DropdownMethods = {
 			if result ~= '' then
 				return result
 			else
-				return self.placeholder or '';
+				return self.placeholder or ''
 			end
 		end
 	end
-};
+}
 
 local DropdownEvents = {
 	OnClick = function(self)
-		self:ToggleOptions();
+		self:ToggleOptions()
 	end
-};
+}
 
 --- Creates a single level dropdown menu
 --- local options = {
@@ -228,56 +213,56 @@ local DropdownEvents = {
 ---		{text = 'some text2', value = 11},
 ---		{text = 'some text3', value = 12},
 --- }
---- @return Dropdown
+---@return Dropdown
 function StdUi:Dropdown(parent, width, height, options, value, multi, assoc)
-	--- @class Dropdown
-	local dropdown = self:Button(parent, width, height, '');
-	dropdown.stdUi = self;
+	---@class Dropdown
+	local dropdown = self:Button(parent, width, height, '')
+	dropdown.stdUi = self
 
-	dropdown.text:SetJustifyH('LEFT');
+	dropdown.text:SetJustifyH('LEFT')
 	-- make it shorter because of arrow
-	dropdown.text:ClearAllPoints();
-	self:GlueAcross(dropdown.text, dropdown, 2, -2, -16, 2);
-	
-	local dropTex = self:Texture(dropdown, 15, 15, [[Interface\Buttons\SquareButtonTextures]]);
-	dropTex:SetTexCoord(0.45312500, 0.64062500, 0.20312500, 0.01562500);
-	self:GlueRight(dropTex, dropdown, -2, 0, true);
+	dropdown.text:ClearAllPoints()
+	self:GlueAcross(dropdown.text, dropdown, 2, -2, -16, 2)
 
-	local optsFrame = self:FauxScrollFrame(dropdown, dropdown:GetWidth(), 200, 10, 20);
-	optsFrame:Hide();
-	self:GlueBelow(optsFrame, dropdown, 0, 1, 'LEFT');
-	dropdown:SetFrameLevel(optsFrame:GetFrameLevel() + 1);
+	local dropTex = self:Texture(dropdown, 15, 15, [[Interface\Buttons\SquareButtonTextures]])
+	dropTex:SetTexCoord(0.45312500, 0.64062500, 0.20312500, 0.01562500)
+	self:GlueRight(dropTex, dropdown, -2, 0, true)
 
-	dropdown.multi = multi;
-	dropdown.assoc = assoc;
+	local optsFrame = self:FauxScrollFrame(dropdown, dropdown:GetWidth(), 200, 10, 20)
+	optsFrame:Hide()
+	self:GlueBelow(optsFrame, dropdown, 0, 1, 'LEFT')
+	dropdown:SetFrameLevel(optsFrame:GetFrameLevel() + 1)
 
-	dropdown.optsFrame = optsFrame;
-	dropdown.dropTex = dropTex;
-	dropdown.options = options;
+	dropdown.multi = multi
+	dropdown.assoc = assoc
 
-	optsFrame.scrollChild.dropdown = dropdown;
+	dropdown.optsFrame = optsFrame
+	dropdown.dropTex = dropTex
+	dropdown.options = options
+
+	optsFrame.scrollChild.dropdown = dropdown
 
 	for k, v in pairs(DropdownMethods) do
-		dropdown[k] = v;
+		dropdown[k] = v
 	end
 
 	if options then
-		dropdown:SetOptions(options);
+		dropdown:SetOptions(options)
 	end
 
 	if value then
-		dropdown:SetValue(value);
+		dropdown:SetValue(value)
 	elseif multi then
-		dropdown.value = {};
+		dropdown.value = {}
 	end
 
 	for k, v in pairs(DropdownEvents) do
-		dropdown:SetScript(k, v);
+		dropdown:SetScript(k, v)
 	end
 
-	TableInsert(dropdowns, dropdown);
+	TableInsert(dropdowns, dropdown)
 
-	return dropdown;
+	return dropdown
 end
 
-StdUi:RegisterModule(module, version);
+StdUi:RegisterModule(module, version)
