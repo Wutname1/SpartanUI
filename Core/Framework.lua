@@ -33,7 +33,7 @@ SUI.Version = ''
 SUI.Lib = {}
 ---@param name string
 ---@param libaray table|function
----@param silent boolean
+---@param silent? boolean
 SUI.AddLib = function(name, libaray, silent)
 	if not name then
 		return

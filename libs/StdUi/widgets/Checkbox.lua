@@ -17,7 +17,7 @@ local CheckboxMethods = {
 	--- Set checkbox state
 	---
 	---@param flag boolean
-	---@param internal boolean - indicates to not run OnValueChanged
+	---@param internal boolean indicates to not run OnValueChanged
 	SetChecked = function(self, flag, internal)
 		self.isChecked = flag
 
@@ -67,7 +67,7 @@ local CheckboxMethods = {
 		self:SetWidth(self.target:GetWidth() + 15 + self.text:GetWidth())
 	end
 }
-
+---@class CheckboxEvents
 local CheckboxEvents = {
 	OnClick = function(self)
 		if not self.isDisabled then
@@ -76,9 +76,8 @@ local CheckboxEvents = {
 	end
 }
 
----@return CheckButton
 function StdUi:Checkbox(parent, text, width, height)
-	local checkbox = CreateFrame('Button', nil, parent)
+	local checkbox = CreateFrame('Button', nil, parent) ---@class StdUi_Checkbox : CheckButton, CheckboxEvents
 	checkbox.stdUi = self
 
 	checkbox:EnableMouse(true)
