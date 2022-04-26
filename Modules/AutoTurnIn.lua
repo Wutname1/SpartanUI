@@ -3,8 +3,15 @@ local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
-local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest
-local SelectActiveQuest = C_GossipInfo.SelectActiveQuest
+local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest or SelectAvailableQuest
+local SelectActiveQuest = C_GossipInfo.SelectActiveQuest or SelectActiveQuest
+local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests or GetGossipActiveQuests
+local SelectGossipActiveQuest = C_GossipInfo.SelectActiveQuest or SelectGossipActiveQuest
+local GetNumGossipOptions = C_GossipInfo.GetNumOptions or GetNumGossipOptions
+local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
+local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests or GetGossipAvailableQuests
+local GetGossipOptions = C_GossipInfo.GetOptions or GetGossipOptions
+local SelectGossipAvailableQuest = C_GossipInfo.SelectAvailableQuest or SelectGossipAvailableQuest
 
 local ATI_Container = CreateFrame('Frame')
 local IsMerchantOpen = false
@@ -413,21 +420,20 @@ function module:GetItemAmount(isCurrency, item)
 	return amount and amount or 0
 end
 
+---@param ... GossipQuestUIInfo[]
 function module:VarArgForActiveQuests(...)
 	if module.DB.debug then
 		print('VarArgForActiveQuests')
+		print(#...)
 	end
 	local INDEX_CONST = 6
 
-	for i = 1, select('#', ...), INDEX_CONST do
-		local name = select(i * 1, GetGossipActiveQuests(i))
-		local isComplete = select(i + 3, ...) -- complete status
-		if (isComplete) and (not module:blacklisted(name)) then
-			local questname = select(i, ...)
+	for i, quest in pairs(...) do
+		if (quest.isComplete) and (not module:blacklisted(quest.title)) then
 			-- if self:isAppropriate(questname, true) then
-			local quest = Lquests[questname]
-			if quest then
-				if module:GetItemAmount(quest.currency, quest.item) >= quest.amount then
+			local questInfo = Lquests[quest.title]
+			if questInfo then
+				if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
 					SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
 				end
 			else
@@ -439,23 +445,22 @@ function module:VarArgForActiveQuests(...)
 end
 
 -- like previous function this one works around `nil` values in a list.
+---@param ... GossipQuestUIInfo[]
 function module:VarArgForAvailableQuests(...)
 	if module.DB.debug then
 		print('VarArgForAvailableQuests')
+		print(#...)
 	end
 	local INDEX_CONST = 6 -- was '5' in Cataclysm
-	for i = 1, select('#', ...), INDEX_CONST do
-		local name = select(i * 1, GetGossipAvailableQuests(i))
-		local isTrivial = select(i + 2, ...)
-		local isDaily = select(i + 3, ...)
-		local isRepeatable = select(i + 4, ...)
-		local trivialORAllowed = (not isTrivial) or module.DB.trivial
-		local isRepeatableORAllowed = (not isRepeatable or not isDaily) or module.DB.AcceptRepeatable
+	for i, quest in pairs(...) do
+		local trivialORAllowed = (not quest.isTrivial) or module.DB.trivial
+		local isRepeatableORAllowed = (not quest.repeatable) or module.DB.AcceptRepeatable
 
 		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
-			if quest and quest.amount then
-				if self:GetItemAmount(quest.currency, quest.item) >= quest.amount then
+		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
+			local questInfo = Lquests[quest.title]
+			if questInfo and questInfo.amount then
+				if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
 					SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
 				end
 			else
@@ -588,35 +593,44 @@ function module.QUEST_GREETING()
 end
 
 function module.GOSSIP_SHOW()
-	if (not module.DB.AutoGossip) or (IsAltKeyDown()) or (SUI.IsRetail) then
+	if (not module.DB.AutoGossip) or (IsAltKeyDown()) then
 		return
 	end
 
 	module:VarArgForActiveQuests(GetGossipActiveQuests())
 	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
 
-	local options = {GetGossipOptions()}
-	if #options > 7 then
+	local options = GetGossipOptions()
+	for k, gossip in pairs(options) do
 		if module.DB.debug then
-			print('Too many gossip options (' .. #options .. ')')
+			print('------')
+			print(gossip.name)
+			print(gossip.type)
+			print(gossip.rewards)
+			print(gossip.spellID)
+			print(gossip.status)
+			print('------')
 		end
-		return
-	end
-	for k, v in pairs(options) do
-		if (v ~= 'gossip') and (not module:blacklisted(v)) and string.find(v, ' ') then
+		if
+			(gossip.type ~= 'gossip') or
+				(gossip.type == 'gossip' and gossip.status == 0) and (not module:blacklisted(gossip.name))
+		 then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
-			if module.DB.AutoGossipSafeMode and (not string.find(string.lower(v), 'quest')) then
+			if module.DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest')) then
+				if module.DB.debug then
+					print(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
+				end
 				return
 			end
-			BlackList[v] = true
+			BlackList[gossip.name] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
 			if module.DB.ChatText then
-				SUI:Print('Selecting: ' .. v)
+				SUI:Print('Selecting: ' .. gossip.name)
 			end
 			if module.DB.debug then
-				module.DB.Blacklist[v] = true
-				print(v .. '---BLACKLISTED')
+				module.DB.Blacklist[gossip.name] = true
+				print(gossip.name .. '---BLACKLISTED')
 			end
 			return
 		end
@@ -696,15 +710,6 @@ function module:OnEnable()
 					return
 				end
 			end
-			-- local questname = GetTitleText()
-			-- local questID = GetQuestID()
-			-- local questindex = C_QuestLog.GetLogIndexForQuestID(questID)
-			-- local info = C_QuestLog.GetInfo(questindex)
-			-- print(info)
-			-- for k, v in pairs(info) do
-			-- 	print(k)
-			-- 	print(v)
-			-- end
 
 			if IsAltKeyDown() then
 				SUI:Print('Canceling Override key held disabled')
