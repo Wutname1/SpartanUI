@@ -786,7 +786,7 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 15
 					},
-					AutoGossipMode = {
+					AutoGossipSafeMode = {
 						name = L['Auto gossip safe mode'],
 						type = 'toggle',
 						order = 16
@@ -811,7 +811,7 @@ function module:BuildOptions()
 						type = 'toggle',
 						order = 10
 					},
-					AutoSelectLoot = {
+					lootreward = {
 						name = L['Auto select quest reward'],
 						type = 'toggle',
 						order = 30
@@ -828,25 +828,13 @@ function module:BuildOptions()
 				name = L['Output quest text in chat'],
 				type = 'toggle',
 				width = 'double',
-				order = 30,
-				get = function(info)
-					return module.DB.ChatText
-				end,
-				set = function(info, val)
-					module.DB.ChatText = val
-				end
+				order = 30
 			},
-			debugMode = {
+			debug = {
 				name = L['Debug mode'],
 				type = 'toggle',
 				width = 'full',
-				order = 900,
-				get = function(info)
-					return module.DB.debug
-				end,
-				set = function(info, val)
-					module.DB.debug = val
-				end
+				order = 900
 			}
 		}
 	}
