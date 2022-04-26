@@ -1,4 +1,5 @@
-local SUI, L, UF = SUI, SUI.L, SUI.UF
+local _G, SUI, L = _G, SUI, SUI.L
+local UF = SUI.UF ---@class SUI_UnitFrames
 ----------------------------------------------------------------------------------------------------
 local anchorPoints = {
 	['TOPLEFT'] = 'TOP LEFT',

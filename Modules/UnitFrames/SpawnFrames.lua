@@ -1,4 +1,5 @@
-local _G, SUI, UF = _G, SUI, SUI.UF
+local _G, SUI = _G, SUI
+local UF = SUI.UF ---@class SUI_UnitFrames
 local PartyFrames = {}
 local PlayerFrames = {}
 local RaidFrames = {}
