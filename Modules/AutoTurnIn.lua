@@ -125,7 +125,9 @@ local BlackList = {
 	['warchief, may i ask why we want to capture teldrassil?'] = true,
 	['i am ready to go to the undercity.'] = true,
 	["i've heard this tale before... <skip the scenario and begin your next mission.>"] = true,
-	['release me.'] = true
+	['release me.'] = true,
+	--- Shadowlands
+	["Witness the Jailer's defeat."] = true
 }
 
 local Lquests = {
@@ -207,7 +209,11 @@ local Lquests = {
 	['Pristine Firestorm Egg'] = {item = 'Pristine Firestorm Egg', amount = 1, currency = false},
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
-
+local function debug(content)
+	if module.DB.debug then
+		print(content)
+	end
+end
 -- turns quest in printing reward text if `ChatText` option is set.
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
@@ -339,9 +345,7 @@ function module.QUEST_COMPLETE()
 				-- if (invLink) then
 				-- 	local eq2Level = SUI:GetiLVL(invLink)
 				-- 	if (EquipedLevel > eq2Level) then
-				-- 		if (module.DB.debug) then
-				-- 			print('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
-				-- 		end
+				-- 		debug('Slot ' .. #slot .. ' is lower (' .. EquipedLevel .. '>' .. eq2Level .. ')')
 				-- 		firstSlot = secondSlot
 				-- 		EquipedLevel = eq2Level
 				-- 		firstinvLink = secondinvLink
@@ -350,9 +354,7 @@ function module.QUEST_COMPLETE()
 				end
 
 				-- comparing lowest equipped item level with reward's item level
-				if (module.DB.debug) then
-					print('iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. firstinvLink)
-				end
+				debug('iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. firstinvLink)
 
 				if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
 					UpgradeLink = link
@@ -377,16 +379,12 @@ function module.QUEST_COMPLETE()
 		elseif module.DB.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
-				if not module.DB.debug then
-					module:TurnInQuest(GreedID)
-				end
+				module:TurnInQuest(GreedID)
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
-				if not module.DB.debug then
-					module:TurnInQuest(UpgradeID)
-					if module.DB.autoequip then
-						module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
-					end
+				module:TurnInQuest(UpgradeID)
+				if module.DB.autoequip then
+					module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 				end
 			end
 		else
@@ -407,9 +405,7 @@ function module.QUEST_COMPLETE()
 				module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 			end
 		else
-			if (module.DB.debug) then
-				SUI:Print(L['No Reward, turning in.'])
-			end
+			debug(L['No Reward, turning in.'])
 			module:TurnInQuest(1)
 		end
 	end
@@ -422,22 +418,23 @@ end
 
 ---@param ... GossipQuestUIInfo[]
 function module:VarArgForActiveQuests(...)
-	if module.DB.debug then
-		print('VarArgForActiveQuests')
-		print(#...)
-	end
-	local INDEX_CONST = 6
+	debug('VarArgForActiveQuests')
+	debug(#...)
 
 	for i, quest in pairs(...) do
+		debug(quest.isComplete)
+		debug(quest.frequency)
+		debug(quest.title)
 		if (quest.isComplete) and (not module:blacklisted(quest.title)) then
 			-- if self:isAppropriate(questname, true) then
 			local questInfo = Lquests[quest.title]
+			debug('selecting.. ' .. quest.title)
 			if questInfo then
 				if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
-					SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
+					SelectGossipActiveQuest(i)
 				end
 			else
-				SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
+				SelectGossipActiveQuest(i)
 			end
 		-- end
 		end
@@ -447,10 +444,8 @@ end
 -- like previous function this one works around `nil` values in a list.
 ---@param ... GossipQuestUIInfo[]
 function module:VarArgForAvailableQuests(...)
-	if module.DB.debug then
-		print('VarArgForAvailableQuests')
-		print(#...)
-	end
+	debug('VarArgForAvailableQuests')
+	debug(#...)
 	local INDEX_CONST = 6 -- was '5' in Cataclysm
 	for i, quest in pairs(...) do
 		local trivialORAllowed = (not quest.isTrivial) or module.DB.trivial
@@ -546,17 +541,13 @@ end
 function module:blacklisted(name)
 	name = tostring(name)
 	if BlackList[name] then
-		if module.DB.debug then
-			print(name .. ' - IS BLACKLISTED')
-		end
+		debug(name .. ' - IS BLACKLISTED')
 		return true
 	end
 
 	for k2, _ in pairs(WildcardBlackList) do
 		if string.find(string.lower(name), string.lower(k2)) then
-			if module.DB.debug then
-				print(name .. ' - IS BLACKLISTED')
-			end
+			debug(name .. ' - IS BLACKLISTED')
 			return true
 		end
 	end
@@ -567,6 +558,10 @@ end
 function module.QUEST_GREETING()
 	local numActiveQuests = GetNumActiveQuests()
 	local numAvailableQuests = GetNumAvailableQuests()
+	if module.DB.debug then
+		debug('TESTING NEEDED')
+		return
+	end
 
 	for i = 1, numActiveQuests do
 		local isComplete = select(2, GetActiveTitle(i))
@@ -583,7 +578,8 @@ function module.QUEST_GREETING()
 			local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
 			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or module.DB.AcceptRepeatable
 
-			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
+			-- if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
+			if (trivialORAllowed and isRepeatableORAllowed) then
 				SelectAvailableQuest(i)
 			end
 		else
@@ -602,24 +598,20 @@ function module.GOSSIP_SHOW()
 
 	local options = GetGossipOptions()
 	for k, gossip in pairs(options) do
-		if module.DB.debug then
-			print('------')
-			print(gossip.name)
-			print(gossip.type)
-			print(gossip.rewards)
-			print(gossip.spellID)
-			print(gossip.status)
-			print('------')
-		end
+		debug('------')
+		debug(gossip.name)
+		debug(gossip.type)
+		debug(gossip.rewards)
+		debug(gossip.spellID)
+		debug(gossip.status)
+		debug('------')
 		if
 			(gossip.type ~= 'gossip') or
 				(gossip.type == 'gossip' and gossip.status == 0) and (not module:blacklisted(gossip.name))
 		 then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if module.DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest')) then
-				if module.DB.debug then
-					print(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
-				end
+				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
 				return
 			end
 			BlackList[gossip.name] = true
@@ -628,10 +620,8 @@ function module.GOSSIP_SHOW()
 			if module.DB.ChatText then
 				SUI:Print('Selecting: ' .. gossip.name)
 			end
-			if module.DB.debug then
-				module.DB.Blacklist[gossip.name] = true
-				print(gossip.name .. '---BLACKLISTED')
-			end
+			module.DB.Blacklist[gossip.name] = true
+			debug(gossip.name .. '---BLACKLISTED')
 			return
 		end
 	end
@@ -673,7 +663,7 @@ function module:OnInitialize()
 
 	-- Migrate old settings
 	if SUI.DB.AutoTurnIn then
-		print('Auto turn in DB Migration')
+		debug('Auto turn in DB Migration')
 		module.DB = SUI:MergeData(module.DB, SUI.DB.AutoTurnIn, true)
 		SUI.DB.AutoTurnIn = nil
 	end
@@ -690,9 +680,7 @@ function module:OnEnable()
 				return
 			end
 
-			if module.DB.debug then
-				print(event)
-			end
+			debug(event)
 
 			if SUI.IsRetail then
 				local QuestID = GetQuestID()
@@ -701,10 +689,8 @@ function module:OnEnable()
 					C_CampaignInfo.IsCampaignQuest(QuestID) and not module.DB.DoCampainQuests and
 						C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
 				 then
-					if module.DB.debug then
-						print(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
-						print(C_CampaignInfo.GetCurrentChapterID(CampaignId))
-					end
+					debug(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
+					debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
 
 					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
 					return
