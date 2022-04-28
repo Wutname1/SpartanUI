@@ -452,6 +452,9 @@ local function CreateUnitFrame(self, unit)
 		if UF.Elements[elementName] and UF.Elements[elementName].Update then
 			UF.Elements[elementName].Update(self)
 		end
+		if UF.Elements[elementName] and UF.Elements[elementName].ForceUpdate then
+			UF.Elements[elementName].ForceUpdate(element)
+		end
 	end
 
 	-- Build a function that updates the size of the frame and sizes of elements
@@ -1188,6 +1191,13 @@ local function CreateUnitFrame(self, unit)
 
 		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.CombatIndicator.Sizeable = true
+		function self.CombatIndicator:PostUpdate(inCombat)
+			if self.DB and self.DB.enabled and inCombat then
+				self:Show()
+			else
+				self:Hide()
+			end
+		end
 		ElementUpdate(self, 'CombatIndicator')
 
 		self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
@@ -1196,6 +1206,15 @@ local function CreateUnitFrame(self, unit)
 
 		self.SUI_ClassIcon = self:CreateTexture(nil, 'BORDER')
 		self.SUI_ClassIcon.Sizeable = true
+		function self.SUI_ClassIcon:PostUpdate()
+			if self.DB and self.DB.enabled then
+				self:Show()
+				self.shadow:Show()
+			else
+				self:Hide()
+				self.shadow:Hide()
+			end
+		end
 		ElementUpdate(self, 'SUI_ClassIcon')
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY')

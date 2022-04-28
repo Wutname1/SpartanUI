@@ -78,8 +78,8 @@ end
 ---@param arg string the chat command to register
 ---@param func function the function that will be called when the command is used
 ---@param commandDescription string the description of the command
----@param arguments table the arguments that the command takes
----@param silent boolean if adding the command should error silently
+---@param arguments? table the arguments that the command takes
+---@param silent? boolean if adding the command should error silently
 function SUI:AddChatCommand(arg, func, commandDescription, arguments, silent)
 	if SUIChatCommands[arg] then
 		if not silent then

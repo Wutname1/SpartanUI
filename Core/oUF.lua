@@ -143,6 +143,9 @@ do -- ClassIcon as an SUIUF module
 				icon:Hide()
 				icon.shadow:Hide()
 			end
+			if (icon.PostUpdate) then
+				return icon:PostUpdate()
+			end
 		end
 	end
 	local function ForceUpdate(element)

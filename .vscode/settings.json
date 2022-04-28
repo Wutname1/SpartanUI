@@ -297,7 +297,11 @@
     "seterrorhandler",
     "OnHyperlinkLeave",
     "OnHyperlinkEnter",
-    "SUI_Art_Minimal_Base"
+    "SUI_Art_Minimal_Base",
+    "IsInRaid",
+    "CUSTOM_CLASS_COLORS",
+    "OPEN_ALL_MAIL_BUTTON",
+    "OpenAllMailMixin"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",
