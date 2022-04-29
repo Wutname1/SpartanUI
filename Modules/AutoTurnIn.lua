@@ -10,6 +10,112 @@ local GetNumGossipOptions = C_GossipInfo.GetNumOptions or GetNumGossipOptions
 local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
 local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests or GetGossipAvailableQuests
 local GetGossipOptions = C_GossipInfo.GetOptions or GetGossipOptions
+local DB  ---@type AutoTurnInDB
+---@class AutoTurnInDB
+local DBDefaults = {
+	ChatText = true,
+	FirstLaunch = true,
+	debug = false,
+	TurnInEnabled = true,
+	AutoGossip = true,
+	AutoGossipSafeMode = true,
+	AcceptGeneralQuests = true,
+	DoCampainQuests = false,
+	AcceptRepeatable = false,
+	trivial = false,
+	lootreward = false,
+	autoequip = false,
+	armor = {},
+	weapon = {},
+	stat = {},
+	secondary = {},
+	GossipBlacklist = {
+		-- General Blacklist
+		'i wish to buy from you.',
+		'i would like to buy from you.',
+		'make this inn your home.',
+		"i'd like to heal and revive my battle pets.",
+		'let me browse your goods.',
+		"i'm looking for a lost companion.",
+		'i need a ride to the top of the statue.',
+		'show me what you have available.',
+		'flight master',
+		'guild master & vendor',
+		'void storage',
+		'auction house',
+		'stable master',
+		'zeppelin master',
+		'other continents',
+		"officer's lounge",
+		'transmogrification',
+		'i want to transmogrify my gear.',
+		-- wotlk blacklist
+		'i am prepared to face saragosa!',
+		'what is the cause of this conflict?',
+		'can you spare a drake to take me to lord afrasastrasz in the middle of the temple?',
+		'i must return to the world of shadows, koltira. send me back.',
+		'i am ready to be teleported to dalaran.',
+		'can i get a ride back to ground level, lord afrasastrasz?',
+		'i would like to go to lord afrasastrasz in the middle of the temple.',
+		'my lord, i need to get to the top of the temple.',
+		'yes, please, i would like to return to the ground level of the temple.',
+		"steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple.",
+		'i want to exchange my ruby essence for amber essence.',
+		'what abilities do ruby drakes have?',
+		'i want to fly on the wings of the bronze flight.',
+		'i want to fly on the wings of the red flight.',
+		'i want to exchange my ruby essence for emerald essence.',
+		'what abilities do emerald drakes have?',
+		'i want to fly on the wings of the green flight.',
+		'i want to exchange my amber essence for ruby essence.',
+		'what abilities do amber drakes have?',
+		'i am ready.', -- this one is used alot but blacklisted due to trial of the champion
+		"i am ready.  however, i'd like to skip the pageantry.",
+		-- mop
+		"i'm ready to be introduced to the instructors, high elder.",
+		"fine. let's proceed with the introductions.",
+		'what is this place?',
+		-- legion
+		'your people treat you with contempt. why? what did you do?',
+		-- bfa
+		"yes, i'm ready to go to drustvar.",
+		'warchief, may i ask why we want to capture teldrassil?',
+		'i am ready to go to the undercity.',
+		"i've heard this tale before... <skip the scenario and begin your next mission.>",
+		'release me.',
+		--- Shadowlands
+		"Witness the Jailer's defeat."
+	},
+	WildcardBlackList = {
+		'wartime donation',
+		'work order',
+		'supplies needed',
+		'taxi',
+		'trade',
+		'train',
+		'repeat',
+		'buy',
+		'browse your',
+		'my home',
+		'reinforcements',
+		'Set sail',
+		'drustvar',
+		'stormsong valley',
+		'tiragarde sound',
+		'tell me about the',
+		'like to change',
+		'goods',
+		'take us back',
+		'take me back',
+		'and listen',
+		'where I can fly',
+		'seal of wartorn'
+	},
+	GossipWhitelist = {
+		"I've cleared a path for you. You should leave.",
+		'If you insist. The show must go on!'
+	}
+}
 
 local ATI_Container = CreateFrame('Frame')
 local IsMerchantOpen = false
@@ -45,92 +151,7 @@ local itemCache =
 		end
 	}
 )
-local WildcardBlackList = {
-	['wartime donation'] = true,
-	['work order'] = true,
-	['supplies needed'] = true,
-	['taxi'] = true,
-	['trade'] = true,
-	['train'] = true,
-	['repeat'] = true,
-	['buy'] = true,
-	['browse your'] = true,
-	['my home'] = true,
-	['reinforcements'] = true,
-	['Set sail'] = true,
-	['drustvar'] = true,
-	['stormsong valley'] = true,
-	['tiragarde sound'] = true,
-	['tell me about the'] = true,
-	['like to change'] = true,
-	['goods'] = true,
-	['take us back'] = true,
-	['take me back'] = true,
-	['and listen'] = true,
-	['where I can fly'] = true,
-	['seal of wartorn'] = true
-}
-local BlackList = {
-	-- General Blacklist
-	['i wish to buy from you.'] = true,
-	['i would like to buy from you.'] = true,
-	['make this inn your home.'] = true,
-	["i'd like to heal and revive my battle pets."] = true,
-	['let me browse your goods.'] = true,
-	["i'm looking for a lost companion."] = true,
-	['i need a ride to the top of the statue.'] = true,
-	['show me what you have available.'] = true,
-	['flight master'] = true,
-	['guild master & vendor'] = true,
-	['void storage'] = true,
-	['auction house'] = true,
-	['stable master'] = true,
-	['zeppelin master'] = true,
-	['other continents'] = true,
-	["officer's lounge"] = true,
-	['transmogrification'] = true,
-	['i want to transmogrify my gear.'] = true,
-	-- wotlk blacklist
-	['i am prepared to face saragosa!'] = true,
-	['what is the cause of this conflict?'] = true,
-	['can you spare a drake to take me to lord afrasastrasz in the middle of the temple?'] = true,
-	['i must return to the world of shadows, koltira. send me back.'] = true,
-	['i am ready to be teleported to dalaran.'] = true,
-	['can i get a ride back to ground level, lord afrasastrasz?'] = true,
-	['i would like to go to lord afrasastrasz in the middle of the temple.'] = true,
-	['my lord, i need to get to the top of the temple.'] = true,
-	['yes, please, i would like to return to the ground level of the temple.'] = true,
-	["steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple."] = true,
-	['i want to exchange my ruby essence for amber essence.'] = true,
-	['what abilities do ruby drakes have?'] = true,
-	['i want to fly on the wings of the bronze flight.'] = true,
-	['i want to fly on the wings of the red flight.'] = true,
-	['i want to exchange my ruby essence for emerald essence.'] = true,
-	['what abilities do emerald drakes have?'] = true,
-	['i want to fly on the wings of the green flight.'] = true,
-	['i want to exchange my amber essence for ruby essence.'] = true,
-	['what abilities do amber drakes have?'] = true,
-	['i am ready.'] = true, -- this one is used alot but blacklisted due to trial of the champion
-	["i am ready.  however, i'd like to skip the pageantry."] = true,
-	-- mop
-	["i'm ready to be introduced to the instructors, high elder."] = true,
-	["fine. let's proceed with the introductions."] = true,
-	['what is this place?'] = true,
-	-- legion
-	['your people treat you with contempt. why? what did you do?'] = true,
-	-- bfa
-	["yes, i'm ready to go to drustvar."] = true,
-	['warchief, may i ask why we want to capture teldrassil?'] = true,
-	['i am ready to go to the undercity.'] = true,
-	["i've heard this tale before... <skip the scenario and begin your next mission.>"] = true,
-	['release me.'] = true,
-	--- Shadowlands
-	["Witness the Jailer's defeat."] = true
-}
-local GossipWhitelist = {
-	["I've cleared a path for you. You should leave."] = true
-}
-
+local TempBlackList = {}
 local Lquests = {
 	-- Steamwheedle Cartel
 	['Making Amends'] = {item = 'Runecloth', amount = 40, currency = false},
@@ -211,7 +232,7 @@ local Lquests = {
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
 local function debug(content)
-	if module.DB.debug then
+	if DB.debug then
 		print(content)
 	end
 end
@@ -219,7 +240,7 @@ end
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
-	if (module.DB.ChatText) then
+	if (DB.ChatText) then
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
 	if IsAltKeyDown() then
@@ -280,11 +301,11 @@ function module.MERCHANT_CLOSED()
 end
 
 function module.QUEST_DETAIL()
-	if (module.DB.AcceptGeneralQuests) then
+	if (DB.AcceptGeneralQuests) then
 		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
 		QuestInfoDescriptionText:SetAlpha(1)
 
-		if module.DB.ChatText then
+		if DB.ChatText then
 			local title = GetTitleText()
 			local objText = GetObjectiveText()
 			if title and title ~= '' then
@@ -302,7 +323,7 @@ function module.QUEST_DETAIL()
 end
 
 function module.QUEST_COMPLETE()
-	if not module.DB.TurnInEnabled then
+	if not DB.TurnInEnabled then
 		return
 	end
 
@@ -377,14 +398,14 @@ function module.QUEST_COMPLETE()
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
 			SUI:Print(L['Canceling turn in, quest rewards'] .. ' ' .. QuestRewardsWeapon .. '.')
-		elseif module.DB.lootreward then
+		elseif DB.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
 				module:TurnInQuest(GreedID)
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
 				module:TurnInQuest(UpgradeID)
-				if module.DB.autoequip then
+				if DB.autoequip then
 					module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 				end
 			end
@@ -402,7 +423,7 @@ function module.QUEST_COMPLETE()
 		elseif UpgradeID then
 			SUI:Print('Quest rewards a upgrade ' .. UpgradeLink)
 			module:TurnInQuest(UpgradeID)
-			if module.DB.autoequip then
+			if DB.autoequip then
 				module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', .5, UpgradeLink)
 			end
 		else
@@ -473,8 +494,8 @@ function module:VarArgForAvailableQuests(...)
 		debug(#...)
 		local INDEX_CONST = 6 -- was '5' in Cataclysm
 		for i, quest in pairs(...) do
-			local trivialORAllowed = (not quest.isTrivial) or module.DB.trivial
-			local isRepeatableORAllowed = (not quest.repeatable) or module.DB.AcceptRepeatable
+			local trivialORAllowed = (not quest.isTrivial) or DB.trivial
+			local isRepeatableORAllowed = (not quest.repeatable) or DB.AcceptRepeatable
 
 			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
 			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
@@ -496,8 +517,8 @@ function module:VarArgForAvailableQuests(...)
 			local isTrivial = select(i + 2, ...)
 			local isDaily = select(i + 3, ...)
 			local isRepeatable = select(i + 4, ...)
-			local trivialORAllowed = (not isTrivial) or module.DB.trivial
-			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or module.DB.AcceptRepeatable
+			local trivialORAllowed = (not isTrivial) or DB.trivial
+			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or DB.AcceptRepeatable
 
 			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
 			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
@@ -521,7 +542,7 @@ function module:FirstLaunch()
 		SubTitle = L['Auto TurnIn'],
 		Desc1 = L['Automatically accept and turn in quests.'],
 		Desc2 = L['Holding ALT while talking to a NPC will temporarily disable the auto turnin module.'],
-		RequireDisplay = module.DB.FirstLaunch,
+		RequireDisplay = DB.FirstLaunch,
 		Display = function()
 			local window = SUI:GetModule('SetupWizard').window
 			local SUI_Win = window.content
@@ -563,7 +584,7 @@ function module:FirstLaunch()
 
 				-- Defaults
 				for key, object in pairs(ATI.options) do
-					object:SetChecked(module.DB[key])
+					object:SetChecked(DB[key])
 				end
 			end
 			SUI_Win.ATI = ATI
@@ -574,13 +595,13 @@ function module:FirstLaunch()
 				local ATI = window.content.ATI
 
 				for key, object in pairs(ATI.options) do
-					module.DB[key] = object:GetChecked()
+					DB[key] = object:GetChecked()
 				end
 			end
-			module.DB.FirstLaunch = false
+			DB.FirstLaunch = false
 		end,
 		Skip = function()
-			module.DB.FirstLaunch = false
+			DB.FirstLaunch = false
 		end
 	}
 	local SetupWindow = SUI:GetModule('SetupWizard')
@@ -589,13 +610,13 @@ end
 
 function module:blacklisted(name)
 	name = tostring(name)
-	if BlackList[name] then
+	if SUI:IsInTable(DB.GossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) then
 		debug(name .. ' - IS BLACKLISTED')
 		return true
 	end
 
-	for k2, _ in pairs(WildcardBlackList) do
-		if string.find(string.lower(name), string.lower(k2)) then
+	for _, key in pairs(DB.WildcardBlackList) do
+		if string.find(string.lower(name), string.lower(key)) then
 			debug(name .. ' - IS BLACKLISTED')
 			return true
 		end
@@ -607,7 +628,7 @@ end
 function module.QUEST_GREETING()
 	local numActiveQuests = GetNumActiveQuests()
 	local numAvailableQuests = GetNumAvailableQuests()
-	if module.DB.debug then
+	if DB.debug then
 		debug('TESTING NEEDED')
 		return
 	end
@@ -623,9 +644,9 @@ function module.QUEST_GREETING()
 		if SUI.IsRetail then
 			local isTrivial, frequency, isRepeatable = GetAvailableQuestInfo(i - numActiveQuests)
 
-			local trivialORAllowed = (not isTrivial) or module.DB.trivial
+			local trivialORAllowed = (not isTrivial) or DB.trivial
 			local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
-			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or module.DB.AcceptRepeatable
+			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or DB.AcceptRepeatable
 
 			-- if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
 			if (trivialORAllowed and isRepeatableORAllowed) then
@@ -638,7 +659,7 @@ function module.QUEST_GREETING()
 end
 
 function module.GOSSIP_SHOW()
-	if (not module.DB.AutoGossip) or (IsAltKeyDown()) then
+	if (not DB.AutoGossip) or (IsAltKeyDown()) then
 		return
 	end
 
@@ -660,24 +681,24 @@ function module.GOSSIP_SHOW()
 		if
 			(gossip.type ~= 'gossip') or
 				(gossip.type == 'gossip' and gossip.status == 0) and
-					(not module:blacklisted(gossip.name) or GossipWhitelist[gossip.name]) and
+					(not module:blacklisted(gossip.name) or SUI:IsInTable(DB.GossipWhitelist, gossip.name)) and
 					SUI.IsRetail
 		 then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if
-				(module.DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest'))) and
-					not GossipWhitelist[gossip.name]
+				(DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest'))) and
+					not SUI:IsInTable(DB.GossipWhitelist, gossip.name)
 			 then
 				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
 				return
 			end
-			BlackList[gossip.name] = true
+			TempBlackList[gossip.name] = true
 			local opcount = GetNumGossipOptions()
 			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
-			if module.DB.ChatText then
+			if DB.ChatText then
 				SUI:Print('Selecting: ' .. gossip.name)
 			end
-			module.DB.Blacklist[gossip.name] = true
+			TempBlackList[gossip.name] = true
 			debug(gossip.name .. '---BLACKLISTED')
 			return
 		end
@@ -688,41 +709,19 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() and module.DB.TurnInEnabled and (not module:blacklisted(GetTitleText())) then
+	if IsQuestCompletable() and DB.TurnInEnabled and (not module:blacklisted(GetTitleText())) then
 		CompleteQuest()
 	end
 end
 
 function module:OnInitialize()
-	local defaults = {
-		profile = {
-			ChatText = true,
-			FirstLaunch = true,
-			debug = false,
-			TurnInEnabled = true,
-			AutoGossip = true,
-			AutoGossipSafeMode = true,
-			AcceptGeneralQuests = true,
-			DoCampainQuests = false,
-			AcceptRepeatable = false,
-			trivial = false,
-			lootreward = false,
-			autoequip = false,
-			armor = {},
-			weapon = {},
-			stat = {},
-			secondary = {},
-			Blacklist = {},
-			Whitelist = {}
-		}
-	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoTurnIn', defaults)
-	module.DB = module.Database.profile
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoTurnIn', {profile = DBDefaults})
+	DB = module.Database.profile
 
 	-- Migrate old settings
 	if SUI.DB.AutoTurnIn then
 		debug('Auto turn in DB Migration')
-		module.DB = SUI:MergeData(module.DB, SUI.DB.AutoTurnIn, true)
+		DB = SUI:MergeData(DB, SUI.DB.AutoTurnIn, true)
 		SUI.DB.AutoTurnIn = nil
 	end
 end
@@ -744,7 +743,7 @@ function module:OnEnable()
 				local QuestID = GetQuestID()
 				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
 				if
-					C_CampaignInfo.IsCampaignQuest(QuestID) and not module.DB.DoCampainQuests and
+					C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
 						C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
 				 then
 					debug(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
@@ -790,10 +789,10 @@ function module:BuildOptions()
 		type = 'group',
 		name = L['Auto TurnIn'],
 		get = function(info)
-			return module.DB[info[#info]]
+			return DB[info[#info]]
 		end,
 		set = function(info, val)
-			module.DB[info[#info]] = val
+			DB[info[#info]] = val
 		end,
 		args = {
 			DoCampainQuests = {
@@ -809,10 +808,10 @@ function module:BuildOptions()
 				order = 10,
 				width = 'full',
 				get = function(info)
-					return module.DB[info[#info]]
+					return DB[info[#info]]
 				end,
 				set = function(info, val)
-					module.DB[info[#info]] = val
+					DB[info[#info]] = val
 				end,
 				args = {
 					AcceptGeneralQuests = {
@@ -849,10 +848,10 @@ function module:BuildOptions()
 				order = 20,
 				width = 'full',
 				get = function(info)
-					return module.DB[info[#info]]
+					return DB[info[#info]]
 				end,
 				set = function(info, val)
-					module.DB[info[#info]] = val
+					DB[info[#info]] = val
 				end,
 				args = {
 					TurnInEnabled = {

@@ -129,7 +129,7 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 	end
 
 	-- Print the taunt
-	if (SUI.IsRetail and SUI:isInTable(TauntsList, spellID)) or (SUI.IsClassic and SUI:isInTable(TauntsList, spellName)) then
+	if (SUI.IsRetail and SUI:IsInTable(TauntsList, spellID)) or (SUI.IsClassic and SUI:IsInTable(TauntsList, spellName)) then
 		local continue = false
 		local inInstance, instanceType = IsInInstance()
 		if instanceType == 'arena' and module.DB.active.inArena then

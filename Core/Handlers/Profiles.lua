@@ -116,7 +116,7 @@ local function CreateWindow()
 	local list = {}
 	table.insert(list, {text = 'Core', value = 'core'})
 	for i, _ in pairs(SpartanUIDB.namespaces) do
-		if not SUI:isInTable(namespaceblacklist, i) then
+		if not SUI:IsInTable(namespaceblacklist, i) then
 			local DisplayName
 			local tmpModule = SUI:GetModule('Component_' .. i, true)
 			if tmpModule and tmpModule.DisplayName then

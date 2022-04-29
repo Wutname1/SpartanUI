@@ -193,7 +193,7 @@ function UF:IsFriendlyFrame(frameName)
 		'target',
 		'targettarget'
 	}
-	if SUI:isInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then
+	if SUI:IsInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then
 		return true
 	end
 	return false

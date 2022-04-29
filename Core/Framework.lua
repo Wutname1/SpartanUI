@@ -1583,7 +1583,7 @@ end
 --[[
 	Takes a target table and searches for the specified phrase
 ]]
-function SUI:isInTable(searchTable, searchPhrase, all)
+function SUI:IsInTable(searchTable, searchPhrase, all)
 	if searchTable == nil or searchPhrase == nil then
 		SUI:Error('Invalid isInTable call', 'Core')
 		return false

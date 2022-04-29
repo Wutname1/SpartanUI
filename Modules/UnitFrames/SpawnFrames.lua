@@ -355,7 +355,7 @@ local function CreateUnitFrame(self, unit)
 			return
 		end
 
-		if SUI:isInTable(NoBulkUpdate, elementName) then
+		if SUI:IsInTable(NoBulkUpdate, elementName) then
 			return
 		end
 

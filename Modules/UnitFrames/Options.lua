@@ -777,7 +777,7 @@ local function AddBarOptions(frameName)
 	end
 
 	local friendly = {'player', 'party', 'raid', 'target', 'focus', 'targettarget', 'focustarget'}
-	if not SUI:isInTable(friendly, frameName) then
+	if not SUI:IsInTable(friendly, frameName) then
 		SUI.opt.args.UnitFrames.args[frameName].args.bars.args['Health'].args['DispelHighlight'].hidden = true
 	end
 

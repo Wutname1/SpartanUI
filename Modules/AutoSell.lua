@@ -423,9 +423,9 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	if
 		qualitysellable and ilvlsellable and Craftablesellable and NotInGearset and NotConsumable and not IsGearToken and
-			not SUI:isInTable(ExcludedItems, item) and
-			not SUI:isInTable(ExcludedTypes, itemType) and
-			not SUI:isInTable(ExcludedTypes, itemSubType) or
+			not SUI:IsInTable(ExcludedItems, item) and
+			not SUI:IsInTable(ExcludedTypes, itemType) and
+			not SUI:IsInTable(ExcludedTypes, itemSubType) or
 			(quality == 0 and module.DB.Gray)
 	 then --Legion identified some junk as consumable
 		if module.DB.debug then

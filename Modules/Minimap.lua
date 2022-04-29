@@ -33,7 +33,7 @@ local isFrameIgnored = function(item)
 
 	local name = item:GetName()
 	if name ~= nil then
-		if SUI:isInTable(ignored, name) then
+		if SUI:IsInTable(ignored, name) then
 			return true
 		end
 
