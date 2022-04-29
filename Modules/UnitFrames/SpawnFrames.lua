@@ -452,8 +452,8 @@ local function CreateUnitFrame(self, unit)
 		if UF.Elements[elementName] and UF.Elements[elementName].Update then
 			UF.Elements[elementName].Update(self)
 		end
-		if UF.Elements[elementName] and UF.Elements[elementName].ForceUpdate then
-			UF.Elements[elementName].ForceUpdate(element)
+		if self[elementName] and self[elementName].ForceUpdate then
+			self[elementName].ForceUpdate(element)
 		end
 	end
 
@@ -1204,19 +1204,6 @@ local function CreateUnitFrame(self, unit)
 		self.RaidTargetIndicator.Sizeable = true
 		ElementUpdate(self, 'RaidTargetIndicator')
 
-		self.ClassIcon = self:CreateTexture(nil, 'BORDER')
-		self.ClassIcon.Sizeable = true
-		function self.ClassIcon:PostUpdate()
-			if self.DB and self.DB.enabled then
-				self:Show()
-				self.shadow:Show()
-			else
-				self:Hide()
-				self.shadow:Hide()
-			end
-		end
-		ElementUpdate(self, 'ClassIcon')
-
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY')
 		SUI:FormatFont(self.StatusText, elements.StatusText.size, 'UnitFrames')
 		ElementUpdate(self, 'StatusText')
@@ -1249,6 +1236,13 @@ local function CreateUnitFrame(self, unit)
 			end
 		end
 	end
+
+	local MigratedElements = {'PvPIndicator', 'ClassIcon'}
+	for _, element in ipairs(MigratedElements) do
+		UF:BuldElement(self, element)
+		ElementUpdate(self, element)
+	end
+
 	-- do -- setup buffs and debuffs
 	self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
 	self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())

@@ -174,7 +174,7 @@ end
 
 function UF:BuldElement(frame, ElementName)
 	if UF.Elements[ElementName] then
-		UF.Elements[ElementName].Build(frame)
+		UF.Elements[ElementName].Build(frame, UF.CurrentSettings[frame.unitOnCreate].elements[ElementName])
 	end
 end
 
@@ -1321,80 +1321,3 @@ function UF:SetActiveStyle(style)
 	--Analytics
 	SUI.Analytics:Set(UF, 'Style', style)
 end
-
--- local blockedFunctions = {
--- 	-- Lua functions that may allow breaking out of the environment
--- 	getfenv = true,
--- 	setfenv = true,
--- 	loadstring = true,
--- 	pcall = true,
--- 	xpcall = true,
--- 	-- blocked WoW API
--- 	SendMail = true,
--- 	SetTradeMoney = true,
--- 	AddTradeMoney = true,
--- 	PickupTradeMoney = true,
--- 	PickupPlayerMoney = true,
--- 	TradeFrame = true,
--- 	MailFrame = true,
--- 	EnumerateFrames = true,
--- 	RunScript = true,
--- 	AcceptTrade = true,
--- 	SetSendMailMoney = true,
--- 	EditMacro = true,
--- 	SlashCmdList = true,
--- 	DevTools_DumpCommand = true,
--- 	hash_SlashCmdList = true,
--- 	CreateMacro = true,
--- 	SetBindingMacro = true,
--- 	GuildDisband = true,
--- 	GuildUninvite = true,
--- 	securecall = true
--- }
-
--- local TestFunction = function(unit)
--- 	return 'value'
--- end
-
--- local helperFunctions = {
--- 	TestFunction = TestFunction
--- }
-
--- local sandbox_env =
--- 	setmetatable(
--- 	{},
--- 	{
--- 		__index = function(t, k)
--- 			if k == '_G' then
--- 				return t
--- 			elseif k == 'getglobal' then
--- 				return env_getglobal
--- 			elseif blockedFunctions[k] then
--- 				return forbidden
--- 			elseif helperFunctions[k] then
--- 				return helperFunctions[k]
--- 			else
--- 				return _G[k]
--- 			end
--- 		end
--- 	}
--- )
-
--- function module.LoadFunction(string, id, trigger)
--- 	if function_cache[string] then
--- 		return function_cache[string]
--- 	else
--- 		local loadedFunction, errormsg =
--- 			loadstring("--[[ Error in '" .. (id or 'Unknown') .. (trigger and ("':'" .. trigger) or '') .. "' ]] " .. string)
--- 		if errormsg then
--- 			print(errormsg)
--- 		else
--- 			setfenv(loadedFunction, sandbox_env)
--- 			local success, func = pcall(assert(loadedFunction))
--- 			if success then
--- 				function_cache[string] = func
--- 				return func
--- 			end
--- 		end
--- 	end
--- end
