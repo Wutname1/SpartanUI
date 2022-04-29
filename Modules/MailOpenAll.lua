@@ -3,7 +3,7 @@ local module = SUI:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-
 module.Displayname = L['Open all mail']
 module.description = 'Quality of life update to the open all mail button'
 
-local mailCount, OpenButton, totalGold = 0, nil, 0
+local OpenButton = nil
 module.RefreshMailTimer = nil
 
 function module:OnInitialize()
@@ -46,7 +46,6 @@ function module:Enable()
 		Mixin(OpenButton, OpenAllMailMixin)
 
 		function OpenButton:ProcessNextItem()
-			mailCount = mailCount + 1
 			local _, _, _, subject, money, CODAmount, _, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(self.mailIndex)
 			if (isGM or (CODAmount and CODAmount > 0)) then
 				self:AdvanceAndProcessNextItem()
@@ -61,13 +60,13 @@ function module:Enable()
 						playerName = select(3, GetInboxInvoiceInfo(self.mailIndex))
 						playerName = playerName and (' (' .. playerName .. ')')
 					end
-					SUI:Print(format('%s %d: %s%s%s', L['Mail'], mailCount, subject or '', moneyString, (playerName or '')))
+					SUI:Print(format('%s: %s%s%s', L['Mail'], subject or '', moneyString, (playerName or '')))
 				end
 				TakeInboxMoney(self.mailIndex)
 				self.timeUntilNextRetrieval = 0.6
 			elseif (itemCount and itemCount > 0) then
 				if not module.DB.Silent then
-					SUI:Print(format('%s %d: %s', L['Mail'], mailCount, subject or ''))
+					SUI:Print(format('%s: %s', L['Mail'], subject or ''))
 				end
 
 				TakeInboxItem(self.mailIndex, self.attachmentIndex)
@@ -92,7 +91,6 @@ function module:Disable()
 end
 
 function module:MAIL_SHOW()
-	mailCount = 0
 end
 
 function module:FormatMoney(money)
