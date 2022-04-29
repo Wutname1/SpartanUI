@@ -389,20 +389,6 @@ local function CreateUnitFrame(self, unit)
 			element:SetSize(data.size, data.size)
 		end
 
-		--PVPIndicator
-		if elementName == 'PvPIndicator' then
-			for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
-				-- If badge is true but does not exsist create from backup
-				if data[k] and self.PvPIndicator[k] == nil then
-					self.PvPIndicator[k] = self.PvPIndicator[v]
-				elseif not data[k] and self.PvPIndicator[k] then
-					-- If badge is false but exsists remove it
-					self.PvPIndicator[k]:Hide()
-					self.PvPIndicator[k] = nil
-				end
-			end
-		end
-
 		--Portrait
 		if elementName == 'Portrait' then
 			self.Portrait3D:Hide()
@@ -1089,94 +1075,6 @@ local function CreateUnitFrame(self, unit)
 		self.PhaseIndicator.Sizeable = true
 		self.PhaseIndicator:Hide()
 		ElementUpdate(self, 'PhaseIndicator')
-
-		-- PVP Indicator
-		local SUIpvpIndicator = function(self, event, unit)
-			if (unit ~= self.unit) then
-				return
-			end
-
-			local pvp = self.PvPIndicator
-			if (pvp.PreUpdate) then
-				pvp:PreUpdate()
-			end
-
-			local status
-			local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-			local honorRewardInfo = false
-			if SUI.IsRetail then
-				honorRewardInfo = C_PvP.GetHonorRewardInfo(UnitHonorLevel(unit))
-			end
-
-			if (UnitIsPVPFreeForAll(unit)) then
-				pvp:SetTexture('Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon')
-				status = 'FFA'
-			elseif (factionGroup and factionGroup ~= 'Neutral' and UnitIsPVP(unit)) then
-				status = factionGroup
-			end
-
-			if (status) then
-				pvp:Show()
-
-				if (pvp.Badge and honorRewardInfo) then
-					pvp:SetTexture(honorRewardInfo.badgeFileDataID)
-					pvp:SetTexCoord(0, 1, 0, 1)
-
-					if (pvp.shadow) then
-						pvp.shadow:Hide()
-					end
-				else
-					if (pvp.shadow) then
-						pvp.shadow:Show()
-					end
-					if (status == 'FFA') then
-						pvp:SetTexture('Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon')
-					else
-						pvp:SetTexture('Interface\\FriendsFrame\\PlusManz-' .. factionGroup)
-						if (pvp.shadow) then
-							pvp.shadow:SetTexture('Interface\\FriendsFrame\\PlusManz-' .. factionGroup)
-						end
-					end
-
-					if (pvp.Badge) then
-						pvp.Badge:Hide()
-					end
-				end
-			else
-				pvp:Hide()
-				if (pvp.shadow) then
-					pvp.shadow:Hide()
-				end
-			end
-
-			if (pvp.PostUpdate) then
-				return pvp:PostUpdate(status)
-			end
-		end
-		self.PvPIndicator = self:CreateTexture(nil, 'ARTWORK')
-		self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
-		self.PvPIndicator.ShadowBackup = self:CreateTexture(nil, 'ARTWORK')
-		self.PvPIndicator.ShadowBackup:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
-
-		local Badge = self:CreateTexture(nil, 'BACKGROUND')
-		Badge:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
-		Badge:SetPoint('CENTER', self.PvPIndicator, 'CENTER')
-
-		self.PvPIndicator.BadgeBackup = Badge
-		self.PvPIndicator.Badge = Badge
-		self.PvPIndicator.SizeChange = function()
-			self.PvPIndicator:SetSize(elements.PvPIndicator.size, elements.PvPIndicator.size)
-			self.PvPIndicator.BadgeBackup:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
-			if self.PvPIndicator.Badge then
-				self.PvPIndicator.Badge:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
-			end
-			self.PvPIndicator.ShadowBackup:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
-			if self.PvPIndicator.Shadow then
-				self.PvPIndicator.Shadow:SetSize(elements.PvPIndicator.size + 12, elements.PvPIndicator.size + 12)
-			end
-		end
-		self.PvPIndicator.Override = SUIpvpIndicator
-		ElementUpdate(self, 'PvPIndicator')
 
 		self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.RestingIndicator.Sizeable = true

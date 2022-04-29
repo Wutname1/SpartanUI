@@ -301,7 +301,8 @@
     "IsInRaid",
     "CUSTOM_CLASS_COLORS",
     "OPEN_ALL_MAIL_BUTTON",
-    "OpenAllMailMixin"
+    "OpenAllMailMixin",
+    "oUF"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

@@ -26,7 +26,7 @@ local function Update(frame)
 	local DB = frame.ClassPower.DB
 end
 
-local function Options()
+local function Options(unit)
 end
 
 UF:RegisterElement('ClassPower', Build, Update, Options)
