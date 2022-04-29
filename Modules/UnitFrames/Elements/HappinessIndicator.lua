@@ -1,6 +1,9 @@
 local UF = SUI.UF
 
 local function Build(frame, DB)
+	if not _G['GetPetHappiness'] then
+		return
+	end
 	local HappinessIndicator = frame:CreateTexture(nil, 'OVERLAY')
 	HappinessIndicator.btn = CreateFrame('Frame', nil, frame)
 	HappinessIndicator.Sizeable = true
