@@ -4,6 +4,7 @@
     <Script file="Framework.lua"/>
     <Script file="Elements\ClassIcon.lua"/>
     <Script file="Elements\ClassPower.lua"/>
+    <Script file="Elements\Portrait.lua"/>
     <Script file="Elements\PVPIndicator.lua"/>
     <Script file="Elements\Runes.lua"/>
     <Script file="SpawnFrames.lua" />

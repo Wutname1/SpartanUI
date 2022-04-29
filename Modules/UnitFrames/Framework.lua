@@ -163,11 +163,16 @@ end
 --	}
 --
 ----------------------------------------------------------------------------------------------------
-
-function UF:RegisterElement(ElementName, Build, Update, OptionsTable)
+---@param ElementName string
+---@param Build function
+---@param Update? function
+---@param OptionsTable? function
+---@param UpdateSize? function
+function UF:RegisterElement(ElementName, Build, Update, OptionsTable, UpdateSize)
 	UF.Elements[ElementName] = {
 		Build = Build,
 		Update = Update,
+		UpdateSize = UpdateSize,
 		OptionsTable = OptionsTable
 	}
 end

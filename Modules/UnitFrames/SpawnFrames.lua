@@ -1,8 +1,5 @@
 local _G, SUI = _G, SUI
 local UF = SUI.UF ---@class SUI_UnitFrames
-local PartyFrames = {}
-local PlayerFrames = {}
-local RaidFrames = {}
 ----------------------------------------------------------------------------------------------------
 local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 local FramesList = {
@@ -71,6 +68,7 @@ local IndicatorList = {
 	'SUI_RaidGroup',
 	'PetHappiness'
 }
+local MigratedElements = {'PvPIndicator', 'ClassIcon', 'Portrait'}
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
 if SUI.IsClassic or SUI.IsBCC then
 	GroupFrames = {'raid', 'party'}
@@ -389,45 +387,6 @@ local function CreateUnitFrame(self, unit)
 			element:SetSize(data.size, data.size)
 		end
 
-		--Portrait
-		if elementName == 'Portrait' then
-			self.Portrait3D:Hide()
-			self.Portrait2D:Hide()
-			if data.enabled then
-				if data.type == '3D' then
-					self.Portrait = self.Portrait3D
-					self.Portrait3D:Show()
-					if (self.Portrait:IsObjectType('PlayerModel')) then
-						self.Portrait:SetAlpha(data.alpha)
-
-						local rotation = data.rotation
-
-						if self.Portrait:GetFacing() ~= (rotation / 57.29573671972358) then
-							self.Portrait:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
-						end
-
-						self.Portrait:SetCamDistanceScale(data.camDistanceScale)
-						self.Portrait:SetPosition(data.xOffset, data.xOffset, data.yOffset)
-
-						--Refresh model to fix incorrect display issues
-						self.Portrait:ClearModel()
-						self.Portrait:SetUnit(unit)
-					end
-				else
-					self.Portrait = self.Portrait2D
-					self.Portrait2D:Show()
-				end
-				if data.position == 'left' then
-					self.Portrait3D:SetPoint('RIGHT', self, 'LEFT')
-					self.Portrait2D:SetPoint('RIGHT', self, 'LEFT')
-				else
-					self.Portrait3D:SetPoint('LEFT', self, 'RIGHT')
-					self.Portrait2D:SetPoint('LEFT', self, 'RIGHT')
-				end
-				self:UpdateAllElements('OnUpdate')
-			end
-		end
-
 		--Range
 		if elementName == 'Range' then
 			element.insideAlpha = data.insideAlpha
@@ -448,6 +407,7 @@ local function CreateUnitFrame(self, unit)
 		local elements = UF.CurrentSettings[unit].elements
 		-- Find the Height of the frame
 		local FrameHeight = CalculateHeight(unit)
+		self.FrameHeight = FrameHeight
 
 		-- General
 		if not InCombatLockdown() then
@@ -459,12 +419,10 @@ local function CreateUnitFrame(self, unit)
 			self:SetSize(UF.CurrentSettings[unit].width, FrameHeight)
 		end
 
-		if self.Portrait3D then
-			self.Portrait3D:SetSize(FrameHeight, FrameHeight)
-		end
-
-		if self.Portrait2D then
-			self.Portrait2D:SetSize(FrameHeight, FrameHeight)
+		for _, element in ipairs(MigratedElements) do
+			if UF.Elements[element] and UF.Elements[element].UpdateSize then
+				UF.Elements[element].UpdateSize(self)
+			end
 		end
 
 		-- Status bars
@@ -631,41 +589,6 @@ local function CreateUnitFrame(self, unit)
 		SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
 
 		self.SpartanArt = SpartanArt
-
-		-- 3D Portrait
-		local Portrait3D = CreateFrame('PlayerModel', nil, self)
-		Portrait3D:SetSize(self:GetHeight(), self:GetHeight())
-		Portrait3D:SetScale(elements.Portrait.Scale)
-		Portrait3D:SetFrameStrata('BACKGROUND')
-		Portrait3D:SetFrameLevel(2)
-		Portrait3D.PostUpdate = function(unit, event, shouldUpdate)
-			if (self:IsObjectType('PlayerModel')) then
-				self:SetAlpha(elements.Portrait.alpha)
-
-				local rotation = elements.Portrait.rotation
-
-				if self:GetFacing() ~= (rotation / 57.29573671972358) then
-					self:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
-				end
-
-				self:SetCamDistanceScale(elements.Portrait.camDistanceScale)
-				self:SetPosition(elements.Portrait.xOffset, elements.Portrait.xOffset, elements.Portrait.yOffset)
-
-				--Refresh model to fix incorrect display issues
-				self:ClearModel()
-				self:SetUnit(unit)
-			end
-		end
-		self.Portrait3D = Portrait3D
-
-		-- 2D Portrait
-		local Portrait2D = self:CreateTexture(nil, 'OVERLAY')
-		Portrait2D:SetSize(self:GetHeight(), self:GetHeight())
-		Portrait2D:SetScale(elements.Portrait.Scale)
-		self.Portrait2D = Portrait2D
-
-		self.Portrait = Portrait3D
-		ElementUpdate(self, 'Portrait')
 
 		-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
 		-- 	Threat:SetSize(25, 25)
@@ -1135,7 +1058,6 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 
-	local MigratedElements = {'PvPIndicator', 'ClassIcon'}
 	for _, element in ipairs(MigratedElements) do
 		UF:BuldElement(self, element)
 		ElementUpdate(self, element)
