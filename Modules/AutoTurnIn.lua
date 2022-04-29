@@ -6,12 +6,10 @@ module.description = 'Auto accept and turn in quests'
 local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest or SelectAvailableQuest
 local SelectActiveQuest = C_GossipInfo.SelectActiveQuest or SelectActiveQuest
 local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests or GetGossipActiveQuests
-local SelectGossipActiveQuest = C_GossipInfo.SelectActiveQuest or SelectGossipActiveQuest
 local GetNumGossipOptions = C_GossipInfo.GetNumOptions or GetNumGossipOptions
 local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
 local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests or GetGossipAvailableQuests
 local GetGossipOptions = C_GossipInfo.GetOptions or GetGossipOptions
-local SelectGossipAvailableQuest = C_GossipInfo.SelectAvailableQuest or SelectGossipAvailableQuest
 
 local ATI_Container = CreateFrame('Frame')
 local IsMerchantOpen = false
@@ -128,6 +126,9 @@ local BlackList = {
 	['release me.'] = true,
 	--- Shadowlands
 	["Witness the Jailer's defeat."] = true
+}
+local GossipWhitelist = {
+	["I've cleared a path for you. You should leave."] = true
 }
 
 local Lquests = {
@@ -421,22 +422,45 @@ function module:VarArgForActiveQuests(...)
 	debug('VarArgForActiveQuests')
 	debug(#...)
 
-	for i, quest in pairs(...) do
-		debug(quest.isComplete)
-		debug(quest.frequency)
-		debug(quest.title)
-		if (quest.isComplete) and (not module:blacklisted(quest.title)) then
-			-- if self:isAppropriate(questname, true) then
-			local questInfo = Lquests[quest.title]
-			debug('selecting.. ' .. quest.title)
-			if questInfo then
-				if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
-					SelectGossipActiveQuest(i)
+	if SUI.IsRetail then
+		for i, quest in pairs(...) do
+			debug(quest.isComplete)
+			debug(quest.frequency)
+			debug(quest.title)
+			if (quest.isComplete) and (not module:blacklisted(quest.title)) then
+				-- if self:isAppropriate(questname, true) then
+				local questInfo = Lquests[quest.title]
+				debug('selecting.. ' .. quest.title)
+				if questInfo then
+					if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
+						C_GossipInfo.SelectActiveQuest(i)
+					end
+				else
+					C_GossipInfo.SelectActiveQuest(i)
 				end
-			else
-				SelectGossipActiveQuest(i)
+			-- end
 			end
-		-- end
+		end
+	else
+		local INDEX_CONST = 6
+
+		for i = 1, select('#', ...), INDEX_CONST do
+			---@diagnostic disable-next-line: redundant-parameter
+			local name = select(i * 1, GetGossipActiveQuests(i))
+			local isComplete = select(i + 3, ...) -- complete status
+			if (isComplete) and (not module:blacklisted(name)) then
+				local questname = select(i, ...)
+				-- if self:isAppropriate(questname, true) then
+				local quest = Lquests[questname]
+				if quest then
+					if module:GetItemAmount(quest.currency, quest.item) >= quest.amount then
+						SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
+					end
+				else
+					SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
+				end
+			-- end
+			end
 		end
 	end
 end
@@ -445,21 +469,46 @@ end
 ---@param ... GossipQuestUIInfo[]
 function module:VarArgForAvailableQuests(...)
 	debug('VarArgForAvailableQuests')
-	debug(#...)
-	local INDEX_CONST = 6 -- was '5' in Cataclysm
-	for i, quest in pairs(...) do
-		local trivialORAllowed = (not quest.isTrivial) or module.DB.trivial
-		local isRepeatableORAllowed = (not quest.repeatable) or module.DB.AcceptRepeatable
+	if SUI.IsRetail then
+		debug(#...)
+		local INDEX_CONST = 6 -- was '5' in Cataclysm
+		for i, quest in pairs(...) do
+			local trivialORAllowed = (not quest.isTrivial) or module.DB.trivial
+			local isRepeatableORAllowed = (not quest.repeatable) or module.DB.AcceptRepeatable
 
-		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
-			local questInfo = Lquests[quest.title]
-			if questInfo and questInfo.amount then
-				if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
+			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
+			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
+				local questInfo = Lquests[quest.title]
+				if questInfo and questInfo.amount then
+					if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
+						C_GossipInfo.SelectAvailableQuest(math.floor(i / INDEX_CONST) + 1)
+					end
+				else
+					C_GossipInfo.SelectAvailableQuest(math.floor(i / INDEX_CONST) + 1)
+				end
+			end
+		end
+	else
+		local INDEX_CONST = 6 -- was '5' in Cataclysm
+		for i = 1, select('#', ...), INDEX_CONST do
+			---@diagnostic disable-next-line: redundant-parameter
+			local name = select(i * 1, GetGossipAvailableQuests(i))
+			local isTrivial = select(i + 2, ...)
+			local isDaily = select(i + 3, ...)
+			local isRepeatable = select(i + 4, ...)
+			local trivialORAllowed = (not isTrivial) or module.DB.trivial
+			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or module.DB.AcceptRepeatable
+
+			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
+			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
+				local questInfo = Lquests[name]
+				if questInfo and questInfo.amount then
+					if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
+						SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
+					end
+				else
 					SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
 				end
-			else
-				SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
 			end
 		end
 	end
@@ -595,6 +644,9 @@ function module.GOSSIP_SHOW()
 
 	module:VarArgForActiveQuests(GetGossipActiveQuests())
 	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
+	if not SUI.IsRetail then
+		return
+	end
 
 	local options = GetGossipOptions()
 	for k, gossip in pairs(options) do
@@ -607,10 +659,15 @@ function module.GOSSIP_SHOW()
 		debug('------')
 		if
 			(gossip.type ~= 'gossip') or
-				(gossip.type == 'gossip' and gossip.status == 0) and (not module:blacklisted(gossip.name))
+				(gossip.type == 'gossip' and gossip.status == 0) and
+					(not module:blacklisted(gossip.name) or GossipWhitelist[gossip.name]) and
+					SUI.IsRetail
 		 then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
-			if module.DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest')) then
+			if
+				(module.DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest'))) and
+					not GossipWhitelist[gossip.name]
+			 then
 				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
 				return
 			end
@@ -655,7 +712,8 @@ function module:OnInitialize()
 			weapon = {},
 			stat = {},
 			secondary = {},
-			Blacklist = {}
+			Blacklist = {},
+			Whitelist = {}
 		}
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoTurnIn', defaults)
