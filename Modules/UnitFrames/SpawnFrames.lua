@@ -543,52 +543,7 @@ local function CreateUnitFrame(self, unit)
 	local elements = UF.CurrentSettings[unit].elements
 
 	do -- General setup
-		local ArtPositions = {'top', 'bg', 'bottom', 'full'}
-		local unitName = GetBasicUnitName(unit)
-
-		local SpartanArt = CreateFrame('Frame', nil, self)
-		SpartanArt:SetFrameStrata('BACKGROUND')
-		SpartanArt:SetFrameLevel(2)
-		SpartanArt:SetAllPoints()
-		SpartanArt.PostUpdate = function(self, unit)
-			for _, pos in ipairs(ArtPositions) do
-				local ArtSettings = UF.CurrentSettings[unitName].artwork[pos]
-				if
-					ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and
-						UF.Artwork[ArtSettings.graphic][pos].UnitFrameCallback
-				 then
-					UF.Artwork[ArtSettings.graphic][pos].UnitFrameCallback(self:GetParent(), unit)
-				end
-			end
-		end
-		SpartanArt.PreUpdate = function(self, unit)
-			if not unit or unit == 'vehicle' then
-				return
-			end
-			-- Party frame shows 'player' instead of party 1-5
-			if not UF.CurrentSettings[unitName] then
-				SUI:Error(unitName .. ' - NO SETTINGS FOUND')
-				return
-			end
-
-			self.ArtSettings = UF.CurrentSettings[unitName].artwork
-			for _, pos in ipairs(ArtPositions) do
-				local ArtSettings = self.ArtSettings[pos]
-				if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and UF.Artwork[ArtSettings.graphic] then
-					self[pos].ArtData = UF.Artwork[ArtSettings.graphic][pos]
-					--Grab the settings for the frame specifically if defined (classic skin)
-					if self[pos].ArtData.perUnit and self[pos].ArtData[unitName] then
-						self[pos].ArtData = self[pos].ArtData[unitName]
-					end
-				end
-			end
-		end
-		SpartanArt.top = SpartanArt:CreateTexture(nil, 'BORDER')
-		SpartanArt.bg = SpartanArt:CreateTexture(nil, 'BACKGROUND')
-		SpartanArt.bottom = SpartanArt:CreateTexture(nil, 'BORDER')
-		SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
-
-		self.SpartanArt = SpartanArt
+		UF:BuldElement(self, 'SpartanArt')
 
 		-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
 		-- 	Threat:SetSize(25, 25)
@@ -929,7 +884,7 @@ local function CreateUnitFrame(self, unit)
 			ElementUpdate(self, 'HappinessIndicator')
 		end
 
-		self.RareElite = self.SpartanArt:CreateTexture(nil, 'BORDER')
+		self.RareElite = self:CreateTexture(nil, 'BORDER')
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
 		ElementUpdate(self, 'RareElite')
 

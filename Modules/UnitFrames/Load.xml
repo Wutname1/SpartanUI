@@ -8,6 +8,7 @@
     <Script file="Elements\Portrait.lua"/>
     <Script file="Elements\PVPIndicator.lua"/>
     <Script file="Elements\Runes.lua"/>
+    <Script file="Elements\SpartanArt.lua"/>
     <Script file="SpawnFrames.lua" />
     <Script file="Options.lua" />
 </Ui>
