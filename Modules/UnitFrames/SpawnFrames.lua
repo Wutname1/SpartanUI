@@ -884,7 +884,7 @@ local function CreateUnitFrame(self, unit)
 			ElementUpdate(self, 'HappinessIndicator')
 		end
 
-		self.RareElite = self:CreateTexture(nil, 'BORDER')
+		self.RareElite = self.SpartanArt:CreateTexture(nil, 'BORDER')
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
 		ElementUpdate(self, 'RareElite')
 
