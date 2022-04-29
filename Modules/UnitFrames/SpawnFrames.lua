@@ -924,42 +924,8 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'Name')
 		self:Tag(self.Name, elements.Name.text)
 
-		if (SUI.IsClassic or SUI.IsBCC) and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
-			-- Register it with oUF
-			local HappinessIndicator = self:CreateTexture(nil, 'OVERLAY')
-			HappinessIndicator.btn = CreateFrame('Frame', nil, self)
-			HappinessIndicator.Sizeable = true
-			local function HIOnEnter(self)
-				local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
-				if not happiness then
-					return
-				end
-
-				GameTooltip:SetOwner(HappinessIndicator.btn, 'ANCHOR_RIGHT')
-				GameTooltip:SetText(_G['PET_HAPPINESS' .. happiness])
-				GameTooltip:AddLine(format(PET_DAMAGE_PERCENTAGE, damagePercentage), '', 1, 1, 1)
-				local tooltipLoyalty = nil
-				if (loyaltyRate < 0) then
-					tooltipLoyalty = _G['LOSING_LOYALTY']
-				elseif (loyaltyRate > 0) then
-					tooltipLoyalty = _G['GAINING_LOYALTY']
-				end
-				if (tooltipLoyalty) then
-					GameTooltip:AddLine(tooltipLoyalty, '', 1, 1, 1)
-				end
-				GameTooltip:Show()
-			end
-			local function HIOnLeave()
-				GameTooltip:Hide()
-			end
-			HappinessIndicator.btn:SetAllPoints(HappinessIndicator)
-			HappinessIndicator.btn:SetScript('OnEnter', HIOnEnter)
-			HappinessIndicator.btn:SetScript('OnLeave', HIOnLeave)
-			HappinessIndicator:Hide()
-			HappinessIndicator.PostUpdate = function()
-				ElementUpdate(self, 'HappinessIndicator')
-			end
-			self.HappinessIndicator = HappinessIndicator
+		if (_G['GetPetHappiness']) and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
+			UF:BuldElement(self, 'HappinessIndicator')
 			ElementUpdate(self, 'HappinessIndicator')
 		end
 
