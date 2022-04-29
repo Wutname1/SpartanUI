@@ -26,7 +26,7 @@ local elementList = {
 	'GroupRoleIndicator',
 	'CombatIndicator',
 	'RaidTargetIndicator',
-	'SUI_ClassIcon',
+	'ClassIcon',
 	'ReadyCheckIndicator',
 	'PvPIndicator',
 	'RareElite',
@@ -58,7 +58,7 @@ local IndicatorList = {
 	'GroupRoleIndicator',
 	'CombatIndicator',
 	'RaidTargetIndicator',
-	'SUI_ClassIcon',
+	'ClassIcon',
 	'ReadyCheckIndicator',
 	'PvPIndicator',
 	'AssistantIndicator',
@@ -1204,9 +1204,9 @@ local function CreateUnitFrame(self, unit)
 		self.RaidTargetIndicator.Sizeable = true
 		ElementUpdate(self, 'RaidTargetIndicator')
 
-		self.SUI_ClassIcon = self:CreateTexture(nil, 'BORDER')
-		self.SUI_ClassIcon.Sizeable = true
-		function self.SUI_ClassIcon:PostUpdate()
+		self.ClassIcon = self:CreateTexture(nil, 'BORDER')
+		self.ClassIcon.Sizeable = true
+		function self.ClassIcon:PostUpdate()
 			if self.DB and self.DB.enabled then
 				self:Show()
 				self.shadow:Show()
@@ -1215,7 +1215,7 @@ local function CreateUnitFrame(self, unit)
 				self.shadow:Hide()
 			end
 		end
-		ElementUpdate(self, 'SUI_ClassIcon')
+		ElementUpdate(self, 'ClassIcon')
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY')
 		SUI:FormatFont(self.StatusText, elements.StatusText.size, 'UnitFrames')

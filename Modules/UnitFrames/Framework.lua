@@ -596,7 +596,7 @@ function UF:OnInitialize()
 							y = -10
 						}
 					},
-					SUI_ClassIcon = {
+					ClassIcon = {
 						position = {
 							anchor = 'BOTTOMLEFT',
 							x = -12,
@@ -716,7 +716,7 @@ function UF:OnInitialize()
 						enabled = true,
 						height = 15
 					},
-					SUI_ClassIcon = {
+					ClassIcon = {
 						enabled = true
 					}
 				}
@@ -812,7 +812,7 @@ function UF:OnInitialize()
 							y = 10
 						}
 					},
-					SUI_ClassIcon = {
+					ClassIcon = {
 						enabled = true
 					},
 					RestingIndicator = {
@@ -931,7 +931,7 @@ function UF:OnInitialize()
 							y = 0
 						}
 					},
-					SUI_ClassIcon = {
+					ClassIcon = {
 						enabled = false,
 						size = 15,
 						position = {
@@ -1080,7 +1080,7 @@ function UF:OnInitialize()
 					AssistantIndicator = {
 						enabled = true
 					},
-					SUI_ClassIcon = {
+					ClassIcon = {
 						enabled = true
 					},
 					PvPIndicator = {
@@ -1191,7 +1191,7 @@ function UF:OnInitialize()
 							GroupRoleIndicator = {},
 							CombatIndicator = {},
 							RaidTargetIndicator = {},
-							SUI_ClassIcon = {},
+							ClassIcon = {},
 							ReadyCheckIndicator = {},
 							PvPIndicator = {},
 							StatusText = {},

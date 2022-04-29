@@ -33,7 +33,7 @@ local factionColor = {
 local NameplateList = {}
 local ElementList = {
 	'Auras',
-	'SUI_ClassIcon',
+	'ClassIcon',
 	'Health',
 	'Power',
 	'Castbar',
@@ -360,14 +360,14 @@ local NamePlateFactory = function(frame, unit)
 		frame.Castbar:SetParent(frame)
 
 		-- ClassIcon
-		frame.SUI_ClassIcon = frame:CreateTexture(nil, 'BORDER')
-		frame.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
-		frame.SUI_ClassIcon:SetPoint(
-			elements.SUI_ClassIcon.position.anchor,
+		frame.ClassIcon = frame:CreateTexture(nil, 'BORDER')
+		frame.ClassIcon:SetSize(elements.ClassIcon.size, elements.ClassIcon.size)
+		frame.ClassIcon:SetPoint(
+			elements.ClassIcon.position.anchor,
 			frame,
-			elements.SUI_ClassIcon.position.anchor,
-			elements.SUI_ClassIcon.position.x,
-			elements.SUI_ClassIcon.position.y
+			elements.ClassIcon.position.anchor,
+			elements.ClassIcon.position.x,
+			elements.ClassIcon.position.y
 		)
 
 		-- Hots/Dots
@@ -538,26 +538,26 @@ local NameplateCallback = function(self, event, unit)
 	UpdateElementState(self)
 
 	-- Update class icons
-	local VisibleOn = module.DB.elements.SUI_ClassIcon.visibleOn
+	local VisibleOn = module.DB.elements.ClassIcon.visibleOn
 	local reaction = UnitReaction(unit, 'player')
 
 	if
 		((reaction <= 2 and VisibleOn == 'hostile') or (reaction >= 3 and VisibleOn == 'friendly') or
 			(UnitPlayerControlled(unit) and VisibleOn == 'PlayerControlled') or
 			VisibleOn == 'all') and
-			module.DB.elements.SUI_ClassIcon.enabled
+			module.DB.elements.ClassIcon.enabled
 	 then
-		self:EnableElement('SUI_ClassIcon')
-		self.SUI_ClassIcon:SetSize(elements.SUI_ClassIcon.size, elements.SUI_ClassIcon.size)
-		self.SUI_ClassIcon:SetPoint(
-			elements.SUI_ClassIcon.position.anchor,
+		self:EnableElement('ClassIcon')
+		self.ClassIcon:SetSize(elements.ClassIcon.size, elements.ClassIcon.size)
+		self.ClassIcon:SetPoint(
+			elements.ClassIcon.position.anchor,
 			self,
-			elements.SUI_ClassIcon.position.anchor,
-			elements.SUI_ClassIcon.position.x,
-			elements.SUI_ClassIcon.position.y
+			elements.ClassIcon.position.anchor,
+			elements.ClassIcon.position.x,
+			elements.ClassIcon.position.y
 		)
 	else
-		self:DisableElement('SUI_ClassIcon')
+		self:DisableElement('ClassIcon')
 	end
 
 	-- Update Player Icons
@@ -639,7 +639,7 @@ function module:OnInitialize()
 					FlashOnInterruptible = true,
 					InterruptSpeed = .1
 				},
-				SUI_ClassIcon = {
+				ClassIcon = {
 					enabled = false,
 					size = 20,
 					visibleOn = 'PlayerControlled',
@@ -1043,10 +1043,10 @@ function module:BuildOptions()
 								width = 'double',
 								order = 1,
 								get = function(info)
-									return module.DB.elements.SUI_ClassIcon.enabled
+									return module.DB.elements.ClassIcon.enabled
 								end,
 								set = function(info, val)
-									module.DB.elements.SUI_ClassIcon.enabled = val
+									module.DB.elements.ClassIcon.enabled = val
 									module:UpdateNameplates()
 								end
 							},
@@ -1061,10 +1061,10 @@ function module:BuildOptions()
 									['all'] = 'All'
 								},
 								get = function(info)
-									return module.DB.elements.SUI_ClassIcon.visibleOn
+									return module.DB.elements.ClassIcon.visibleOn
 								end,
 								set = function(info, val)
-									module.DB.elements.SUI_ClassIcon.visibleOn = val
+									module.DB.elements.ClassIcon.visibleOn = val
 									module:UpdateNameplates()
 								end
 							},
@@ -1076,11 +1076,11 @@ function module:BuildOptions()
 								max = 100,
 								step = 1,
 								get = function(info)
-									return module.DB.elements.SUI_ClassIcon.size
+									return module.DB.elements.ClassIcon.size
 								end,
 								set = function(info, val)
 									--Update the DB
-									module.DB.elements.SUI_ClassIcon.size = val
+									module.DB.elements.ClassIcon.size = val
 								end
 							},
 							position = {
@@ -1097,11 +1097,11 @@ function module:BuildOptions()
 										max = 100,
 										step = 1,
 										get = function(info)
-											return module.DB.elements.SUI_ClassIcon.position.x
+											return module.DB.elements.ClassIcon.position.x
 										end,
 										set = function(info, val)
 											--Update the DB
-											module.DB.elements.SUI_ClassIcon.position.x = val
+											module.DB.elements.ClassIcon.position.x = val
 										end
 									},
 									y = {
@@ -1112,11 +1112,11 @@ function module:BuildOptions()
 										max = 100,
 										step = 1,
 										get = function(info)
-											return module.DB.elements.SUI_ClassIcon.position.y
+											return module.DB.elements.ClassIcon.position.y
 										end,
 										set = function(info, val)
 											--Update the DB
-											module.DB.elements.SUI_ClassIcon.position.y = val
+											module.DB.elements.ClassIcon.position.y = val
 										end
 									},
 									anchor = {
@@ -1125,11 +1125,11 @@ function module:BuildOptions()
 										order = 3,
 										values = anchorPoints,
 										get = function(info)
-											return module.DB.elements.SUI_ClassIcon.position.anchor
+											return module.DB.elements.ClassIcon.position.anchor
 										end,
 										set = function(info, val)
 											--Update the DB
-											module.DB.elements.SUI_ClassIcon.position.anchor = val
+											module.DB.elements.ClassIcon.position.anchor = val
 										end
 									}
 								}

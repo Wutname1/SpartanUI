@@ -121,7 +121,7 @@ do -- ClassIcon as an SUIUF module
 		DEFAULT = {0.75, 1.00, 0.75, 1.00}
 	}
 	local Update = function(self, event, unit)
-		local icon = self.SUI_ClassIcon
+		local icon = self.ClassIcon
 		if (icon) then
 			local _, class = UnitClass(self.unit)
 			if not class then
@@ -152,7 +152,7 @@ do -- ClassIcon as an SUIUF module
 		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 	end
 	local Enable = function(self)
-		local icon = self.SUI_ClassIcon
+		local icon = self.ClassIcon
 		if (icon) then
 			icon.__owner = self
 			icon.ForceUpdate = ForceUpdate
@@ -168,15 +168,15 @@ do -- ClassIcon as an SUIUF module
 		end
 	end
 	local Disable = function(self)
-		local icon = self.SUI_ClassIcon
+		local icon = self.ClassIcon
 		if (icon) then
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 			self:UnregisterEvent('UNIT_PET', Update)
-			self.SUI_ClassIcon:Hide()
-			self.SUI_ClassIcon.shadow:Hide()
+			self.ClassIcon:Hide()
+			self.ClassIcon.shadow:Hide()
 		end
 	end
-	SUIUF:AddElement('SUI_ClassIcon', Update, Enable, Disable)
+	SUIUF:AddElement('ClassIcon', Update, Enable, Disable)
 end
 
 do -- TargetIndicator as an SUIUF module

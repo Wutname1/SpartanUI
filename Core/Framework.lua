@@ -470,7 +470,7 @@ local DBdefault = {
 								y = 10
 							}
 						},
-						SUI_ClassIcon = {
+						ClassIcon = {
 							size = 18,
 							position = {
 								anchor = 'TOPRIGHT',
@@ -557,7 +557,7 @@ local DBdefault = {
 						Castbar = {
 							height = 15
 						},
-						SUI_ClassIcon = {
+						ClassIcon = {
 							size = 18,
 							position = {
 								anchor = 'TOPLEFT',

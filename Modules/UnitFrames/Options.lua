@@ -809,7 +809,7 @@ local function AddIndicatorOptions(frameName)
 		['QuestMobIndicator'] = 'Quest'
 	}
 	local AllIndicators = {
-		['SUI_ClassIcon'] = 'Class icon',
+		['ClassIcon'] = 'Class icon',
 		['RaidTargetIndicator'] = RAID_TARGET_ICON,
 		['ThreatIndicator'] = 'Threat'
 	}
@@ -1093,7 +1093,7 @@ local function AddIndicatorOptions(frameName)
 	if frameName == 'player' then
 		SUI.opt.args.UnitFrames.args[frameName].args['indicators'].args['ThreatIndicator'].hidden = true
 	elseif frameName == 'boss' then
-		SUI.opt.args.UnitFrames.args[frameName].args['indicators'].args['SUI_ClassIcon'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args['indicators'].args['ClassIcon'].hidden = true
 	end
 end
 
