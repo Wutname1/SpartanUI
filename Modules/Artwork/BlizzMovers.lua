@@ -66,6 +66,32 @@ local function AltPowerBar()
 	end
 end
 
+local function WidgetPowerBarContainer()
+	if not _G['UIWidgetPowerBarContainerFrame'] then
+		return
+	end
+	local point, anchor, secondaryPoint, x, y =
+		strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.WidgetPowerBarContainer)
+	local holder = CreateFrame('Frame', 'WidgetPowerBarContainerHolder', UIParent)
+	holder:SetPoint(point, anchor, secondaryPoint, x, y)
+	holder:SetSize(256, 64)
+	holder:Hide()
+
+	_G['UIWidgetPowerBarContainerFrame']:ClearAllPoints()
+	_G['UIWidgetPowerBarContainerFrame']:SetPoint('CENTER', holder, 'CENTER')
+	_G['UIWidgetPowerBarContainerFrame'].ignoreFramePositionManager = true
+
+	hooksecurefunc(
+		_G['UIWidgetPowerBarContainerFrame'],
+		'ClearAllPoints',
+		function(bar)
+			bar:SetPoint('CENTER', holder, 'CENTER')
+		end
+	)
+
+	MoveIt:CreateMover(holder, 'WidgetPowerBarContainer', 'Power bar', nil, 'Blizzard UI')
+end
+
 local function AbilityBars()
 	-- ZoneAbility
 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ZoneAbility)
@@ -177,5 +203,6 @@ function module.BlizzMovers()
 		TalkingHead()
 		AltPowerBar()
 		AbilityBars()
+		WidgetPowerBarContainer()
 	end
 end

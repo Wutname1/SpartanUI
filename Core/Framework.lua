@@ -226,6 +226,7 @@ local DBdefault = {
 				['ObjectiveTracker'] = 'TOPRIGHT,SpartanUI,TOPRIGHT,-30,-100',
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
+				['WidgetPowerBarContainer'] = 'TOP,SpartanUI,TOP,0,-18',
 				['ZoneAbility'] = 'CENTER,SpartanUI,CENTER,0,-172',
 				['ExtraAction'] = 'CENTER,SpartanUI,CENTER,0,-172',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
