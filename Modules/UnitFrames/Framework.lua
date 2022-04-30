@@ -711,7 +711,7 @@ function UF:OnInitialize()
 				maxColumns = 1,
 				unitsPerColumn = 5,
 				columnSpacing = 1,
-				yOffset = -15,
+				yOffset = -25,
 				elements = {
 					Name = {text = '[SUI_ColorClass][name] [arenaspec]'},
 					Power = {
