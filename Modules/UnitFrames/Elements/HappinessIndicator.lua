@@ -44,7 +44,7 @@ local function Update(frame)
 	local DB = frame.HappinessIndicator.DB
 end
 
-local function Options(unit)
+local function Options(unitName)
 end
 
-UF:RegisterElement('HappinessIndicator', Build, Update, Options)
+UF.Elements:Register('HappinessIndicator', Build, Update, Options)

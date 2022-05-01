@@ -18,10 +18,13 @@ local function ElementUpdate(frame)
 	local DB = frame.ClassIcon.DB
 end
 
-local function ElementOptions(unit)
+local function ElementOptions(unitName, OptionSet)
+	if unitName == 'boss' then
+		OptionSet.hidden = true
+	end
 end
 
-UF:RegisterElement('ClassIcon', ElementBuild, ElementUpdate, ElementOptions)
+UF.Elements:Register('ClassIcon', ElementBuild, ElementUpdate, ElementOptions)
 
 do -- ClassIcon as an SUIUF module
 	local function Update(self, event, unit)
