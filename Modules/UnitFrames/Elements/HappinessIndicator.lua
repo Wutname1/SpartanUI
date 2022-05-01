@@ -34,9 +34,15 @@ local function Build(frame, DB)
 	HappinessIndicator.btn:SetScript('OnEnter', HIOnEnter)
 	HappinessIndicator.btn:SetScript('OnLeave', HIOnLeave)
 	HappinessIndicator:Hide()
-	HappinessIndicator.PostUpdate = function()
-		frame.ElementUpdate(frame, 'HappinessIndicator')
-	end
+	HappinessIndicator.UpdateSUI = CreateFrame('Frame', nil, frame)
+	HappinessIndicator.UpdateSUI:RegisterEvent('UNIT_HAPPINESS')
+	HappinessIndicator.UpdateSUI:SetScript(
+		'OnEvent',
+		function()
+			frame:ElementUpdate('HappinessIndicator')
+		end
+	)
+	HappinessIndicator.UpdateSUI:Hide()
 	frame.HappinessIndicator = HappinessIndicator
 end
 
