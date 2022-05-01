@@ -1,8 +1,10 @@
-local SUI, L, Lib = SUI, SUI.L, SUI.Lib
+---@class SUI
+local SUI = SUI
+local L, Lib = SUI.L, SUI.Lib
 local module = SUI:NewModule('Module_WagoAnalytics')
 module.DisplayName = 'Wago Analytics'
 module.description = L['Module handles Wago Analytics collection IF your update client supports it.']
-SUI.Analytics = module
+SUI.Analytics = {}
 local print = SUI.print
 ----------------------------------------
 local Analytics = nil
@@ -19,7 +21,7 @@ local function setupOption(setting)
 	}
 end
 
-function module:Set(moduleName, setting, value)
+function SUI.Analytics:Set(moduleName, setting, value)
 	if not module.DB.Enabled or SUI:IsModuleDisabled(module) or not Analytics then
 		return
 	end

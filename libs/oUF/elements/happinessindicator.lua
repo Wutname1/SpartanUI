@@ -90,7 +90,7 @@ local function Path(self, ...)
 end
 
 local function ForceUpdate(element)
-	return Path(element.__pwner, 'ForceUpdate', 'pet')
+	return Path(element.__owner, 'ForceUpdate', 'pet')
 end
 
 local function Enable(self, unit)

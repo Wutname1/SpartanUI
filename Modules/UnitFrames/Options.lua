@@ -264,138 +264,6 @@ local function AddGeneralOptions(frameName)
 	}
 end
 
-local function AddArtworkOptions(frameName)
-	local ArtPositions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
-	local function ArtworkOptionUpdate(pos, option, val)
-		--Update memory
-		UF.CurrentSettings[frameName].artwork[pos][option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][frameName].artwork[pos][option] = val
-		--Update the screen
-		UF.frames[frameName]:ElementUpdate('SpartanArt')
-	end
-	SUI.opt.args.UnitFrames.args[frameName].args['artwork'] = {
-		name = L['Artwork'],
-		type = 'group',
-		order = 20,
-		args = {}
-	}
-	local i = 1
-	for position, DisplayName in pairs(ArtPositions) do
-		SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position] = {
-			name = DisplayName,
-			type = 'group',
-			order = i,
-			disabled = true,
-			args = {
-				enabled = {
-					name = L['Enabled'],
-					type = 'toggle',
-					order = 1,
-					get = function(info)
-						return UF.CurrentSettings[frameName].artwork[position].enabled
-					end,
-					set = function(info, val)
-						ArtworkOptionUpdate(position, 'enabled', val)
-					end
-				},
-				StyleDropdown = {
-					name = L['Current Style'],
-					type = 'select',
-					order = 2,
-					values = {[''] = 'None'},
-					get = function(info)
-						return UF.CurrentSettings[frameName].artwork[position].graphic
-					end,
-					set = function(info, val)
-						ArtworkOptionUpdate(position, 'graphic', val)
-					end
-				},
-				style = {
-					name = L['Style'],
-					type = 'group',
-					order = 3,
-					inline = true,
-					args = {}
-				},
-				settings = {
-					name = L['Settings'],
-					type = 'group',
-					inline = true,
-					order = 500,
-					args = {
-						alpha = {
-							name = L['Custom alpha'],
-							desc = "This setting will override your art's default settings. Set to 0 to disable custom Alpha.",
-							type = 'range',
-							width = 'double',
-							min = 0,
-							max = 1,
-							step = .01,
-							get = function(info)
-								return UF.CurrentSettings[frameName].artwork[position].alpha
-							end,
-							set = function(info, val)
-								if val == 0 then
-									val = false
-								end
-
-								ArtworkOptionUpdate(position, 'alpha', val)
-							end
-						}
-					}
-				}
-			}
-		}
-		i = i + 1
-	end
-
-	for Name, data in pairs(UF.Artwork) do
-		for position, _ in pairs(ArtPositions) do
-			if data[position] then
-				local options = SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args
-				local dataObj = data[position]
-				if dataObj.perUnit and data[frameName] then
-					dataObj = data[frameName]
-				end
-
-				if dataObj then
-					--Enable art option
-					SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].disabled = false
-					--Add to dropdown
-					options.StyleDropdown.values[Name] = (data.name or Name)
-					--Create example
-					options.style.args[Name] = {
-						name = (data.name or Name),
-						width = 'normal',
-						type = 'description',
-						image = function()
-							if type(dataObj.path) == 'function' then
-								local path = dataObj.path(nil, position)
-								if path then
-									return path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
-								end
-							else
-								return dataObj.path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
-							end
-						end,
-						imageCoords = function()
-							if type(dataObj.TexCoord) == 'function' then
-								local cords = dataObj.TexCoord(nil, position)
-								if cords then
-									return cords
-								end
-							else
-								return dataObj.TexCoord
-							end
-						end
-					}
-				end
-			end
-		end
-	end
-end
-
 local function AddBarOptions(frameName)
 	SUI.opt.args.UnitFrames.args[frameName].args.bars = {
 		name = L['Bars'],
@@ -991,35 +859,9 @@ local function AddIndicatorOptions(frameName)
 				}
 			}
 		}
-	end
-	if SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.PvPIndicator then
-		-- Badge
-		local i = 1
-		for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
-			SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.PvPIndicator.args[k] = {
-				name = (k == 'Badge' and 'Show honor badge') or 'Shadow',
-				type = 'toggle',
-				order = 70 + i,
-				get = function(info)
-					return UF.CurrentSettings[frameName].elements.PvPIndicator[k]
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[frameName].elements.PvPIndicator[k] = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements.PvPIndicator[k] = val
-					--Update the screen
-					if val then
-						UF.frames[frameName].PvPIndicator[k] = UF.frames[frameName].PvPIndicator[v]
-					else
-						UF.frames[frameName].PvPIndicator[k]:Hide()
-						UF.frames[frameName].PvPIndicator[k] = nil
-					end
-					UF.frames[frameName].PvPIndicator:ForceUpdate('OnUpdate')
-				end
-			}
-			i = i + 1
-		end
+
+		-- Call the unit's Options builder
+		UF.Elements:Options(frameName, key, SUI.opt.args.UnitFrames.args[frameName].args.indicators.args[key])
 	end
 
 	-- Non player items like
@@ -1091,9 +933,7 @@ local function AddIndicatorOptions(frameName)
 
 	-- Hide a few generated options from specific frame
 	if frameName == 'player' then
-		SUI.opt.args.UnitFrames.args[frameName].args['indicators'].args['ThreatIndicator'].hidden = true
-	elseif frameName == 'boss' then
-		SUI.opt.args.UnitFrames.args[frameName].args['indicators'].args['ClassIcon'].hidden = true
+		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.ThreatIndicator.hidden = true
 	end
 end
 
@@ -2030,11 +1870,11 @@ function UF:InitializeOptions()
 	for i, key in ipairs(frameList) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
+		UF.Elements:Options(key, 'SpartanArt')
 		AddBarOptions(key)
 		AddIndicatorOptions(key)
 		AddTextOptions(key)
 		AddBuffOptions(key)
-		AddArtworkOptions(key)
 	end
 
 	AddGroupOptions('raid')

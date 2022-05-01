@@ -103,7 +103,34 @@ local function Update(frame)
 	end
 end
 
-local function Options(unit)
+local function Options(unitName)
+	-- Badge
+	local i = 1
+	for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
+		SUI.opt.args.UnitFrames.args[unitName].args.indicators.args.PvPIndicator.args[k] = {
+			name = (k == 'Badge' and 'Show honor badge') or 'Shadow',
+			type = 'toggle',
+			order = 70 + i,
+			get = function(info)
+				return UF.CurrentSettings[unitName].elements.PvPIndicator[k]
+			end,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[unitName].elements.PvPIndicator[k] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][unitName].elements.PvPIndicator[k] = val
+				--Update the screen
+				if val then
+					UF.frames[unitName].PvPIndicator[k] = UF.frames[unitName].PvPIndicator[v]
+				else
+					UF.frames[unitName].PvPIndicator[k]:Hide()
+					UF.frames[unitName].PvPIndicator[k] = nil
+				end
+				UF.frames[unitName].PvPIndicator:ForceUpdate('OnUpdate')
+			end
+		}
+		i = i + 1
+	end
 end
 
-UF:RegisterElement('PVPIndicator', Build, Update, Options)
+UF.Elements:Register('PVPIndicator', Build, Update, Options)

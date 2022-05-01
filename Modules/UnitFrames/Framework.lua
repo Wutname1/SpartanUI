@@ -33,6 +33,15 @@ UF.frames = {
 	raid = {},
 	containers = {}
 }
+
+---@class SUIUFElement
+---@field Build function
+---@field Update? function
+---@field OptionsTable? function
+---@field UpdateSize? function
+
+---@class SUIUFElementList
+---@field T table<SUIUFElement>
 UF.Elements = {}
 UF.Artwork = {}
 UF.TagList = {
@@ -163,12 +172,13 @@ end
 --	}
 --
 ----------------------------------------------------------------------------------------------------
+
 ---@param ElementName string
 ---@param Build function
 ---@param Update? function
 ---@param OptionsTable? function
 ---@param UpdateSize? function
-function UF:RegisterElement(ElementName, Build, Update, OptionsTable, UpdateSize)
+function UF.Elements:Register(ElementName, Build, Update, OptionsTable, UpdateSize)
 	UF.Elements[ElementName] = {
 		Build = Build,
 		Update = Update,
@@ -177,9 +187,36 @@ function UF:RegisterElement(ElementName, Build, Update, OptionsTable, UpdateSize
 	}
 end
 
-function UF:BuldElement(frame, ElementName)
+---@param frame table
+---@param ElementName string
+function UF.Elements:Build(frame, ElementName)
 	if UF.Elements[ElementName] then
 		UF.Elements[ElementName].Build(frame, UF.CurrentSettings[frame.unitOnCreate].elements[ElementName])
+	end
+end
+
+---@param frame table
+---@param ElementName string
+function UF.Elements:Update(frame, ElementName)
+	if UF.Elements[ElementName] then
+		UF.Elements[ElementName].Update(frame)
+	end
+end
+
+---@param frame table
+---@param ElementName string
+function UF.Elements:UpdateSize(frame, ElementName)
+	if UF.Elements[ElementName] then
+		UF.Elements[ElementName].UpdateSize(frame)
+	end
+end
+
+---@param unitName string
+---@param ElementName string
+---@param OptionSet AceConfigOptionsTable
+function UF.Elements:Options(unitName, ElementName, OptionSet)
+	if UF.Elements[ElementName] then
+		UF.Elements[ElementName].OptionsTable(unitName, OptionSet)
 	end
 end
 

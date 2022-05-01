@@ -543,7 +543,7 @@ local function CreateUnitFrame(self, unit)
 	local elements = UF.CurrentSettings[unit].elements
 
 	do -- General setup
-		UF:BuldElement(self, 'SpartanArt')
+		UF.Elements:Build(self, 'SpartanArt')
 
 		-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
 		-- 	Threat:SetSize(25, 25)
@@ -880,7 +880,7 @@ local function CreateUnitFrame(self, unit)
 		self:Tag(self.Name, elements.Name.text)
 
 		if (_G['GetPetHappiness']) and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
-			UF:BuldElement(self, 'HappinessIndicator')
+			UF.Elements:Build(self, 'HappinessIndicator')
 			ElementUpdate(self, 'HappinessIndicator')
 		end
 
@@ -954,10 +954,10 @@ local function CreateUnitFrame(self, unit)
 		do -- Special Icons/Bars
 			if unit == 'player' then
 				--Runes
-				UF:BuldElement(self, 'Runes')
+				UF.Elements:Build(self, 'Runes')
 
 				-- Combo points
-				UF:BuldElement(self, 'ClassPower')
+				UF.Elements:Build(self, 'ClassPower')
 
 				--Totem Bar
 				if SUI.IsRetail then
@@ -980,7 +980,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	for _, element in ipairs(MigratedElements) do
-		UF:BuldElement(self, element)
+		UF.Elements:Build(self, element)
 		ElementUpdate(self, element)
 	end
 
