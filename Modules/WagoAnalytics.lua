@@ -55,15 +55,15 @@ end
 local function InitalCollection()
 	-- Inital Analytics
 	for _, submodule in pairs(SUI.orderedModules) do
-		module:Set(submodule, 'Enabled', SUI:IsModuleEnabled(submodule))
+		SUI.Analytics:Set(submodule, 'Enabled', SUI:IsModuleEnabled(submodule))
 	end
 
-	module:Set('Core', 'Scale', SUI.DB.scale)
+	SUI.Analytics:Set('Core', 'Scale', SUI.DB.scale)
 	if SUI:IsModuleEnabled('Artwork') then
-		module:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
+		SUI.Analytics:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
 	end
 	if SUI:IsModuleEnabled('UnitFrames') then
-		module:Set('UnitFrames', 'Style', SUI:GetModule('Component_UnitFrames').DB.Style)
+		SUI.Analytics:Set('UnitFrames', 'Style', SUI:GetModule('Component_UnitFrames').DB.Style)
 	end
 end
 
