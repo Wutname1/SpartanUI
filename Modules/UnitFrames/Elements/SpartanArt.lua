@@ -53,17 +53,17 @@ local function Update(frame)
 	local DB = frame.SpartanArt.DB
 end
 
-local function Options(frameName)
+local function Options(unitName, OptionSet)
 	local Positions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
 	local function ArtUpdate(pos, option, val)
 		--Update memory
-		UF.CurrentSettings[frameName].artwork[pos][option] = val
+		UF.CurrentSettings[unitName].artwork[pos][option] = val
 		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][frameName].artwork[pos][option] = val
+		UF.DB.UserSettings[UF.DB.Style][unitName].artwork[pos][option] = val
 		--Update the screen
-		UF.frames[frameName]:ElementUpdate('SpartanArt')
+		UF.frames[unitName]:ElementUpdate('SpartanArt')
 	end
-	SUI.opt.args.UnitFrames.args[frameName].args['artwork'] = {
+	SUI.opt.args.UnitFrames.args[unitName].args['artwork'] = {
 		name = L['Artwork'],
 		type = 'group',
 		order = 20,
@@ -71,7 +71,7 @@ local function Options(frameName)
 	}
 	local i = 1
 	for position, DisplayName in pairs(Positions) do
-		SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position] = {
+		SUI.opt.args.UnitFrames.args[unitName].args.artwork.args[position] = {
 			name = DisplayName,
 			type = 'group',
 			order = i,
@@ -82,7 +82,7 @@ local function Options(frameName)
 					type = 'toggle',
 					order = 1,
 					get = function(info)
-						return UF.CurrentSettings[frameName].artwork[position].enabled
+						return UF.CurrentSettings[unitName].artwork[position].enabled
 					end,
 					set = function(info, val)
 						ArtUpdate(position, 'enabled', val)
@@ -94,7 +94,7 @@ local function Options(frameName)
 					order = 2,
 					values = {[''] = 'None'},
 					get = function(info)
-						return UF.CurrentSettings[frameName].artwork[position].graphic
+						return UF.CurrentSettings[unitName].artwork[position].graphic
 					end,
 					set = function(info, val)
 						ArtUpdate(position, 'graphic', val)
@@ -122,7 +122,7 @@ local function Options(frameName)
 							max = 1,
 							step = .01,
 							get = function(info)
-								return UF.CurrentSettings[frameName].artwork[position].alpha
+								return UF.CurrentSettings[unitName].artwork[position].alpha
 							end,
 							set = function(info, val)
 								if val == 0 then
@@ -142,15 +142,15 @@ local function Options(frameName)
 	for Name, data in pairs(UF.Artwork) do
 		for position, _ in pairs(Positions) do
 			if data[position] then
-				local options = SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].args
+				local options = SUI.opt.args.UnitFrames.args[unitName].args.artwork.args[position].args
 				local dataObj = data[position]
-				if dataObj.perUnit and data[frameName] then
-					dataObj = data[frameName]
+				if dataObj.perUnit and data[unitName] then
+					dataObj = data[unitName]
 				end
 
 				if dataObj then
 					--Enable art option
-					SUI.opt.args.UnitFrames.args[frameName].args.artwork.args[position].disabled = false
+					SUI.opt.args.UnitFrames.args[unitName].args.artwork.args[position].disabled = false
 					--Add to dropdown
 					options.StyleDropdown.values[Name] = (data.name or Name)
 					--Create example
