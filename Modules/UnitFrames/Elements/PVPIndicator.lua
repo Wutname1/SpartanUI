@@ -103,7 +103,7 @@ local function Update(frame)
 	end
 end
 
-local function Options(unitName)
+local function Options(unitName, OptionSet)
 	-- Badge
 	local i = 1
 	for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do

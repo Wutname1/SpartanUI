@@ -85,7 +85,7 @@ local function UpdateSize(frame)
 	end
 end
 
-local function Options(unitName)
+local function Options(unitName, OptionSet)
 end
 
 UF.Elements:Register('Portrait', Build, Update, Options, UpdateSize)

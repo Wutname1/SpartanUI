@@ -68,7 +68,7 @@ local IndicatorList = {
 	'SUI_RaidGroup',
 	'PetHappiness'
 }
-local MigratedElements = {'PvPIndicator', 'ClassIcon', 'Portrait'}
+local MigratedElements = {'PvPIndicator', 'ClassIcon', 'Portrait', 'GroupRoleIndicator'}
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
 if SUI.IsClassic or SUI.IsBCC then
 	GroupFrames = {'raid', 'party'}
@@ -924,12 +924,6 @@ local function CreateUnitFrame(self, unit)
 		self.RestingIndicator.Sizeable = true
 		ElementUpdate(self, 'RestingIndicator')
 		self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
-
-		self.GroupRoleIndicator = self:CreateTexture(nil, 'BORDER')
-		self.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\icon_role.tga')
-		self.GroupRoleIndicator.Sizeable = true
-		self.GroupRoleIndicator:Hide()
-		ElementUpdate(self, 'GroupRoleIndicator')
 
 		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
 		self.CombatIndicator.Sizeable = true

@@ -622,6 +622,9 @@ function UF:OnInitialize()
 						enabled = true,
 						size = 18,
 						alpha = .75,
+						ShowTank = true,
+						ShowHealer = true,
+						ShowDPS = true,
 						position = {
 							anchor = 'TOPRIGHT',
 							x = 0,

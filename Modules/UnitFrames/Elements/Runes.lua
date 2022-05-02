@@ -33,7 +33,7 @@ local function Update(frame)
 	local DB = frame.Runes.DB
 end
 
-local function Options(unitName)
+local function Options(unitName, OptionSet)
 end
 
 UF.Elements:Register('Runes', Build, Update, Options)
