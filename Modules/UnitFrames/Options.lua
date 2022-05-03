@@ -679,7 +679,8 @@ local function AddIndicatorOptions(frameName)
 	local AllIndicators = {
 		['ClassIcon'] = 'Class icon',
 		['RaidTargetIndicator'] = RAID_TARGET_ICON,
-		['ThreatIndicator'] = 'Threat'
+		['ThreatIndicator'] = 'Threat',
+		['Range'] = 'Range'
 	}
 
 	-- Text indicators TODO
@@ -862,73 +863,6 @@ local function AddIndicatorOptions(frameName)
 
 		-- Call the unit's Options builder
 		UF.Elements:Options(frameName, key, SUI.opt.args.UnitFrames.args[frameName].args.indicators.args[key])
-	end
-
-	-- Non player items like
-	if frameName ~= 'player' then
-		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.Range = {
-			name = L['Range'],
-			type = 'group',
-			args = {
-				enable = {
-					name = L['Enabled'],
-					type = 'toggle',
-					order = 10,
-					get = function(info)
-						return UF.CurrentSettings[frameName].elements.Range.enabled
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings[frameName].elements.Range.enabled = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.enabled = val
-						--Update the screen
-						if val then
-							UF.frames[frameName]:EnableElement('Range')
-						else
-							UF.frames[frameName]:DisableElement('Range')
-						end
-						UF.frames[frameName].Range:ForceUpdate()
-					end
-				},
-				insideAlpha = {
-					name = L['In range alpha'],
-					type = 'range',
-					min = 0,
-					max = 1,
-					step = .1,
-					get = function(info)
-						return UF.CurrentSettings[frameName].elements.Range.insideAlpha
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings[frameName].elements.Range.insideAlpha = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.insideAlpha = val
-						--Update the screen
-						UF.frames[frameName].Range.insideAlpha = val
-					end
-				},
-				outsideAlpha = {
-					name = L['Out of range alpha'],
-					type = 'range',
-					min = 0,
-					max = 1,
-					step = .1,
-					get = function(info)
-						return UF.CurrentSettings[frameName].elements.Range.outsideAlpha
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings[frameName].elements.Range.outsideAlpha = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.outsideAlpha = val
-						--Update the screen
-						UF.frames[frameName].Range.outsideAlpha = val
-					end
-				}
-			}
-		}
 	end
 
 	-- Hide a few generated options from specific frame

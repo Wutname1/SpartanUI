@@ -68,7 +68,7 @@ local IndicatorList = {
 	'SUI_RaidGroup',
 	'PetHappiness'
 }
-local MigratedElements = {'PvPIndicator', 'ClassIcon', 'Portrait', 'GroupRoleIndicator'}
+local MigratedElements = {'PvPIndicator', 'ClassIcon', 'Portrait', 'GroupRoleIndicator', 'Range'}
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
 if SUI.IsClassic or SUI.IsBCC then
 	GroupFrames = {'raid', 'party'}
@@ -355,6 +355,11 @@ local function CreateUnitFrame(self, unit)
 			return
 		end
 
+		-- Call the elements update function
+		if UF.Elements[elementName] and UF.Elements[elementName].Update then
+			UF.Elements[elementName].Update(self)
+		end
+
 		if SUI:IsInTable(NoBulkUpdate, elementName) then
 			return
 		end
@@ -387,16 +392,7 @@ local function CreateUnitFrame(self, unit)
 			element:SetSize(data.size, data.size)
 		end
 
-		--Range
-		if elementName == 'Range' then
-			element.insideAlpha = data.insideAlpha
-			element.outsideAlpha = data.outsideAlpha
-		end
-
 		-- Call the elements update function
-		if UF.Elements[elementName] and UF.Elements[elementName].Update then
-			UF.Elements[elementName].Update(self)
-		end
 		if self[elementName] and self[elementName].ForceUpdate then
 			self[elementName].ForceUpdate(element)
 		end
@@ -984,11 +980,6 @@ local function CreateUnitFrame(self, unit)
 	self.DispelHighlight:SetTexture(Smoothv2)
 	self.DispelHighlight:Hide()
 	ElementUpdate(self, 'DispelHighlight')
-
-	self.Range = {
-		insideAlpha = elements.Range.insideAlpha,
-		outsideAlpha = elements.Range.outsideAlpha
-	}
 
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
