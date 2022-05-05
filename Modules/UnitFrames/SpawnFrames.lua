@@ -536,7 +536,7 @@ local function CreateUnitFrame(self, unit)
 
 	self.UpdateSize()
 
-	local elements = UF.CurrentSettings[unit].elements
+	local elementsDB = UF.CurrentSettings[unit].elements
 
 	do -- General setup
 		UF.Elements:Build(self, 'SpartanArt')
@@ -569,266 +569,15 @@ local function CreateUnitFrame(self, unit)
 		self.Debuffs = Debuffs
 	end
 	do -- setup status bars
-		do -- cast bar
-			local cast = CreateFrame('StatusBar', nil, self)
-			cast:Hide()
-			cast:SetFrameStrata('BACKGROUND')
-			cast:SetFrameLevel(2)
-			cast:SetStatusBarTexture(Smoothv2)
-			cast:SetHeight(elements.Castbar.height)
-
-			local castOffset = (elements.Castbar.offset * -1)
-			cast:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, castOffset)
-			cast:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, castOffset)
-
-			local Background = cast:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(cast)
-			Background:SetTexture(Smoothv2)
-			Background:SetVertexColor(1, 1, 1, .2)
-			cast.bg = Background
-
-			-- Add spell text
-			local Text = cast:CreateFontString()
-			SUI:FormatFont(Text, elements.Castbar.text['1'].size, 'UnitFrames')
-			Text:SetPoint(
-				elements.Castbar.text['1'].position.anchor,
-				cast,
-				elements.Castbar.text['1'].position.anchor,
-				elements.Castbar.text['1'].position.x,
-				elements.Castbar.text['1'].position.y
-			)
-
-			-- Add Shield
-			local Shield = cast:CreateTexture(nil, 'OVERLAY')
-			Shield:SetSize(20, 20)
-			Shield:SetPoint('CENTER', cast, 'RIGHT')
-			Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
-			Shield:Hide()
-			local function PostCastNotInterruptible(unit)
-				if not elements.Castbar.interruptable then
-					self.Castbar.Shield:Hide()
-				end
-			end
-			cast.PostCastNotInterruptible = PostCastNotInterruptible
-
-			-- Add a timer
-			local Time = cast:CreateFontString(nil, 'OVERLAY')
-			SUI:FormatFont(Time, elements.Castbar.text['2'].size, 'UnitFrames')
-			Time:SetPoint(
-				elements.Castbar.text['2'].position.anchor,
-				cast,
-				elements.Castbar.text['2'].position.anchor,
-				elements.Castbar.text['2'].position.x,
-				elements.Castbar.text['2'].position.y
-			)
-
-			-- Add spell icon
-			local Icon = cast:CreateTexture(nil, 'OVERLAY')
-			Icon:SetSize(elements.Castbar.Icon.size, elements.Castbar.Icon.size)
-			Icon:SetPoint(
-				elements.Castbar.Icon.position.anchor,
-				cast,
-				elements.Castbar.Icon.position.anchor,
-				elements.Castbar.Icon.position.x,
-				elements.Castbar.Icon.position.y
-			)
-
-			-- Add safezone
-			local SafeZone = cast:CreateTexture(nil, 'OVERLAY')
-
-			-- --Interupt Flash
-			-- cast.PostCastStart = PostCastStart
-			-- cast.PostCastInterruptible = PostCastStart
-			-- cast.PostCastStop = PostCastStop
-			-- cast.PostCastInterrupted = PostCastStop
-			-- cast.PostCastNotInterruptible = PostCastStop
-
-			self.Castbar = cast
-			self.Castbar.Text = Text
-			self.Castbar.Time = Time
-			self.Castbar.TextElements = {
-				['1'] = self.Castbar.Text,
-				['2'] = self.Castbar.Time
-			}
-			self.Castbar.Icon = Icon
-			self.Castbar.SafeZone = SafeZone
-			self.Castbar.Shield = Shield
-
-			if unit == 'player' then
-				CastingBarFrame_SetUnit(_G.CastingBarFrame)
-				CastingBarFrame_SetUnit(_G.PetCastingBarFrame)
-			end
-		end
-		do -- health bar
-			local health = CreateFrame('StatusBar', nil, self)
-			health:SetFrameStrata('BACKGROUND')
-			health:SetFrameLevel(2)
-			health:SetStatusBarTexture(Smoothv2)
-			health:SetSize(self:GetWidth(), elements.Health.height)
-
-			local Background = health:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(health)
-			Background:SetTexture(Smoothv2)
-			Background:SetVertexColor(1, 1, 1, .2)
-			health.bg = Background
-
-			local healthOffset = elements.Health.offset
-			if elements.Castbar.enabled then
-				healthOffset = (elements.Castbar.height * -1)
-			end
-			health:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, healthOffset)
-			health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, healthOffset)
-
-			health.TextElements = {}
-			for i, key in pairs(elements.Health.text) do
-				local NewString = health:CreateFontString(nil, 'OVERLAY')
-				SUI:FormatFont(NewString, key.size, 'UnitFrames')
-				NewString:SetJustifyH(key.SetJustifyH)
-				NewString:SetJustifyV(key.SetJustifyV)
-				NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)
-				self:Tag(NewString, key.text)
-
-				health.TextElements[i] = NewString
-				if not key.enabled then
-					health.TextElements[i]:Hide()
-				end
-			end
-
-			self.Health = health
-
-			self.Health.frequentUpdates = true
-			self.Health.colorDisconnected = elements.Health.colorDisconnected
-			self.Health.colorTapping = elements.Health.colorTapping
-			self.Health.colorReaction = elements.Health.colorReaction
-			self.Health.colorSmooth = elements.Health.colorSmooth
-			self.Health.colorClass = elements.Health.colorClass
-
-			self.colors.smooth = {1, 0, 0, 1, 1, 0, 0, 1, 0}
-			self.Health.colorHealth = true
-
-			self.Health.DataTable = elements.Health.text
-
-			if SUI.IsRetail then
-				-- Position and size
-				local myBar = CreateFrame('StatusBar', nil, self.Health)
-				myBar:SetPoint('TOP')
-				myBar:SetPoint('BOTTOM')
-				myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
-				myBar:SetStatusBarTexture(Smoothv2)
-				myBar:SetStatusBarColor(0, 1, 0.5, 0.45)
-				myBar:SetSize(150, 16)
-				myBar:Hide()
-
-				local otherBar = CreateFrame('StatusBar', nil, myBar)
-				otherBar:SetPoint('TOP')
-				otherBar:SetPoint('BOTTOM')
-				otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
-				otherBar:SetStatusBarTexture(Smoothv2)
-				otherBar:SetStatusBarColor(0, 0.5, 1, 0.35)
-				otherBar:SetSize(150, 16)
-				otherBar:Hide()
-
-				local absorbBar = CreateFrame('StatusBar', nil, self.Health)
-				absorbBar:SetPoint('TOP')
-				absorbBar:SetPoint('BOTTOM')
-				absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
-				absorbBar:SetStatusBarTexture(Smoothv2)
-				absorbBar:SetWidth(10)
-				absorbBar:Hide()
-
-				local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
-				healAbsorbBar:SetPoint('TOP')
-				healAbsorbBar:SetPoint('BOTTOM')
-				healAbsorbBar:SetPoint('RIGHT', self.Health:GetStatusBarTexture())
-				healAbsorbBar:SetStatusBarTexture(Smoothv2)
-				healAbsorbBar:SetReverseFill(true)
-				healAbsorbBar:SetWidth(10)
-				healAbsorbBar:Hide()
-
-				local overAbsorb = self.Health:CreateTexture(nil, 'OVERLAY')
-				overAbsorb:SetPoint('TOP')
-				overAbsorb:SetPoint('BOTTOM')
-				overAbsorb:SetPoint('LEFT', self.Health, 'RIGHT')
-				overAbsorb:SetWidth(10)
-				overAbsorb:Hide()
-
-				local overHealAbsorb = self.Health:CreateTexture(nil, 'OVERLAY')
-				overHealAbsorb:SetPoint('TOP')
-				overHealAbsorb:SetPoint('BOTTOM')
-				overHealAbsorb:SetPoint('RIGHT', self.Health, 'LEFT')
-				overHealAbsorb:SetWidth(10)
-				overHealAbsorb:Hide()
-
-				self.HealthPrediction = {
-					myBar = myBar,
-					otherBar = otherBar,
-					absorbBar = absorbBar,
-					healAbsorbBar = healAbsorbBar,
-					overAbsorb = overAbsorb,
-					overHealAbsorb = overHealAbsorb,
-					maxOverflow = 2
-				}
-			end
-		end
+		UF.Elements:Build(self, 'Castbar', elementsDB.Castbar)
+		UF.Elements:Build(self, 'Health', elementsDB.Health)
+		UF.Elements:Build(self, 'Power', elementsDB.Power)
 		do -- power bar
-			local power = CreateFrame('StatusBar', nil, self)
-			power:SetFrameStrata('BACKGROUND')
-			power:SetFrameLevel(2)
-			power:SetStatusBarTexture(Smoothv2)
-			power:SetHeight(elements.Power.height)
-
-			local Background = power:CreateTexture(nil, 'BACKGROUND')
-			Background:SetAllPoints(power)
-			Background:SetTexture(Smoothv2)
-			Background:SetVertexColor(1, 1, 1, .2)
-			power.bg = Background
-
-			local powerOffset = elements.Power.offset
-			if elements.Castbar.enabled then
-				powerOffset = powerOffset + elements.Castbar.height
-			end
-			if elements.Health.enabled then
-				powerOffset = powerOffset + elements.Health.height
-			end
-			if elements.Castbar.enabled or elements.Health.enabled then
-				powerOffset = powerOffset * -1
-			end
-
-			power:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, powerOffset)
-			power:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, powerOffset)
-
-			local PositionData = 0
-
-			if elements.Castbar.enabled then
-				PositionData = elements.Castbar.height
-			end
-			PositionData = PositionData + elements.Health.height
-			power:SetPoint('TOP', self, 'TOP', 0, ((PositionData + 2) * -1))
-
-			power.TextElements = {}
-			for i, key in pairs(elements.Power.text) do
-				local NewString = power:CreateFontString(nil, 'OVERLAY')
-				SUI:FormatFont(NewString, key.size, 'UnitFrames')
-				NewString:SetJustifyH(key.SetJustifyH)
-				NewString:SetJustifyV(key.SetJustifyV)
-				NewString:SetPoint(key.position.anchor, power, key.position.anchor, key.position.x, key.position.y)
-				self:Tag(NewString, key.text)
-
-				power.TextElements[i] = NewString
-				if not key.enabled then
-					power.TextElements[i]:Hide()
-				end
-			end
-
-			self.Power = power
-			self.Power.colorPower = true
-			self.Power.frequentUpdates = true
-
 			-- Additional Mana
 			local AdditionalPower = CreateFrame('StatusBar', nil, self)
-			AdditionalPower:SetHeight(elements.AdditionalPower.height)
-			AdditionalPower:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, (elements.AdditionalPower.offset * -1))
-			AdditionalPower:SetPoint('TOPRIGHT', self.Power, 'BOTTOMRIGHT', 0, (elements.AdditionalPower.offset * -1))
+			AdditionalPower:SetHeight(elementsDB.AdditionalPower.height)
+			AdditionalPower:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, (elementsDB.AdditionalPower.offset * -1))
+			AdditionalPower:SetPoint('TOPRIGHT', self.Power, 'BOTTOMRIGHT', 0, (elementsDB.AdditionalPower.offset * -1))
 			AdditionalPower.colorPower = true
 			AdditionalPower:SetStatusBarTexture(Smoothv2)
 			AdditionalPower:Hide()
@@ -839,41 +588,41 @@ local function CreateUnitFrame(self, unit)
 
 			self.AdditionalPower = AdditionalPower
 
-			if unit == 'player' then
-				-- Position and size
-				local mainBar = CreateFrame('StatusBar', nil, self.Power)
-				mainBar:SetReverseFill(true)
-				mainBar:SetStatusBarTexture(Smoothv2)
-				mainBar:SetPoint('RIGHT', self.Power:GetStatusBarTexture(), 'RIGHT')
-				mainBar:SetPoint('TOP')
-				mainBar:SetPoint('BOTTOM')
-				mainBar:SetWidth(200)
-				mainBar:Hide()
+			-- if unit == 'player' then
+			-- 	-- Position and size
+			-- 	local mainBar = CreateFrame('StatusBar', nil, self.Power)
+			-- 	mainBar:SetReverseFill(true)
+			-- 	mainBar:SetStatusBarTexture(Smoothv2)
+			-- 	mainBar:SetPoint('RIGHT', self.Power:GetStatusBarTexture(), 'RIGHT')
+			-- 	mainBar:SetPoint('TOP')
+			-- 	mainBar:SetPoint('BOTTOM')
+			-- 	mainBar:SetWidth(200)
+			-- 	mainBar:Hide()
 
-				local altBar = CreateFrame('StatusBar', nil, self.AdditionalPower)
-				altBar:SetReverseFill(true)
-				altBar:SetStatusBarTexture(Smoothv2)
-				altBar:SetPoint('RIGHT', self.AdditionalPower:GetStatusBarTexture(), 'RIGHT')
-				altBar:SetPoint('TOP')
-				altBar:SetPoint('BOTTOM')
-				altBar:SetWidth(200)
-				altBar:Hide()
+			-- 	local altBar = CreateFrame('StatusBar', nil, self.AdditionalPower)
+			-- 	altBar:SetReverseFill(true)
+			-- 	altBar:SetStatusBarTexture(Smoothv2)
+			-- 	altBar:SetPoint('RIGHT', self.AdditionalPower:GetStatusBarTexture(), 'RIGHT')
+			-- 	altBar:SetPoint('TOP')
+			-- 	altBar:SetPoint('BOTTOM')
+			-- 	altBar:SetWidth(200)
+			-- 	altBar:Hide()
 
-				self.PowerPrediction = {
-					mainBar = mainBar,
-					altBar = altBar
-				}
-			end
+			-- 	self.PowerPrediction = {
+			-- 		mainBar = mainBar,
+			-- 		altBar = altBar
+			-- 	}
+			-- end
 		end
 	end
 	do -- setup indicators
 		self.Name = self:CreateFontString()
-		SUI:FormatFont(self.Name, elements.Name.size, 'UnitFrames')
+		SUI:FormatFont(self.Name, elementsDB.Name.size, 'UnitFrames')
 		self.Name:SetSize(self:GetWidth(), 12)
-		self.Name:SetJustifyH(elements.Name.SetJustifyH)
-		self.Name:SetJustifyV(elements.Name.SetJustifyV)
+		self.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
+		self.Name:SetJustifyV(elementsDB.Name.SetJustifyV)
 		ElementUpdate(self, 'Name')
-		self:Tag(self.Name, elements.Name.text)
+		self:Tag(self.Name, elementsDB.Name.text)
 
 		if (_G['GetPetHappiness']) and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
 			UF.Elements:Build(self, 'HappinessIndicator')
@@ -893,12 +642,12 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'AssistantIndicator')
 
 		self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
-		self.SUI_RaidGroup:SetSize(elements.SUI_RaidGroup.size, elements.SUI_RaidGroup.size)
+		self.SUI_RaidGroup:SetSize(elementsDB.SUI_RaidGroup.size, elementsDB.SUI_RaidGroup.size)
 
 		self.SUI_RaidGroup.Text = self:CreateFontString(nil, 'BORDER')
-		SUI:FormatFont(self.SUI_RaidGroup.Text, elements.SUI_RaidGroup.size, 'UnitFrames')
-		self.SUI_RaidGroup.Text:SetJustifyH(elements.SUI_RaidGroup.SetJustifyH)
-		self.SUI_RaidGroup.Text:SetJustifyV(elements.SUI_RaidGroup.SetJustifyV)
+		SUI:FormatFont(self.SUI_RaidGroup.Text, elementsDB.SUI_RaidGroup.size, 'UnitFrames')
+		self.SUI_RaidGroup.Text:SetJustifyH(elementsDB.SUI_RaidGroup.SetJustifyH)
+		self.SUI_RaidGroup.Text:SetJustifyV(elementsDB.SUI_RaidGroup.SetJustifyV)
 		self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 0)
 		ElementUpdate(self, 'SUI_RaidGroup')
 		self:Tag(self.SUI_RaidGroup.Text, '[group]')
@@ -937,7 +686,7 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'RaidTargetIndicator')
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(self.StatusText, elements.StatusText.size, 'UnitFrames')
+		SUI:FormatFont(self.StatusText, elementsDB.StatusText.size, 'UnitFrames')
 		ElementUpdate(self, 'StatusText')
 		self:Tag(self.StatusText, '[afkdnd]')
 		-- end
@@ -970,7 +719,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	for _, element in ipairs(MigratedElements) do
-		UF.Elements:Build(self, element)
+		UF.Elements:Build(self, element, elementsDB[element])
 		ElementUpdate(self, element)
 	end
 

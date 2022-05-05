@@ -2,11 +2,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
     <Script file="Framework.lua"/>
+    <Script file="Elements\Castbar.lua"/>
     <Script file="Elements\ClassIcon.lua"/>
     <Script file="Elements\ClassPower.lua"/>
     <Script file="Elements\GroupRoleIndicator.lua"/>
+    <Script file="Elements\Health.lua"/>
     <Script file="Elements\HappinessIndicator.lua"/>
     <Script file="Elements\Portrait.lua"/>
+    <Script file="Elements\Power.lua"/>
     <Script file="Elements\PVPIndicator.lua"/>
     <Script file="Elements\Range.lua"/>
     <Script file="Elements\Runes.lua"/>
