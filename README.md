@@ -1,14 +1,61 @@
 # SpartanUI
 
-[![Package and release](https://github.com/Wutname1/SpartanUI/workflows/Package%20and%20release/badge.svg)](https://github.com/Wutname1/SpartanUI/actions)
-[![Discord](https://img.shields.io/discord/265564257347829771.svg?logo=discord)](https://discord.gg/J8wJGtz)
-![GitHub release](https://img.shields.io/github/release/wutname1/spartanui.svg)
-[![GitHub issues](https://img.shields.io/github/issues-raw/wutname1/spartanui.svg?logo=github)](https://github.com/Wutname1/SpartanUI/issues)
+SpartanUI (SUI) was originally designed to free your screen by moving a majority of the interface elements to the bottom. While that is still the core focus of the primary addon and configuration it has become much more. Spartan UI has become completely modular and has added many new features over the years. Thanks to the modules you can use only the parts of SUI that you want to give you untimate control over your interface.
 
+---
 
-
-SpartanUI (aka SUI) was originally designed to free your screen by moving a majority of the interface elements to the bottom. While that is still the core focus of the primary addon and configuration it has become much more over the last few years. With Starting with 3.3 Spartan UI Has started on a path to become completely modular so that you can use only the pieces you want and give you the more control over your UI.  SpartanUI is made up of modules and components. Modules make up the core of SpartanUI and will always be listed in the addons screen. Components are minor features or expand on the features provided by Modules.
- 
-[![Patreon](https://www.spartanui.net/img/patreon.png)](https://www.patreon.com/SpartanUI)
-
+[![](https://img.shields.io/badge/Patreon-Donate-important?style=for-the-badge&logo=Patreon)](https://www.patreon.com/SpartanUI)
+[![Issues](https://img.shields.io/github/issues/wutname1/SpartanUI?style=for-the-badge)](https://github.com/Wutname1/SpartanUI/issues)
+[![Discord](https://img.shields.io/discord/265564257347829771.svg?logo=discord&style=for-the-badge)](https://discord.gg/Qc9TRBv)
+[![GitHub release](https://img.shields.io/github/release/wutname1/spartanui.svg?&style=for-the-badge)](https://www.curseforge.com/wow/addons/spartan-ui)
+[![Package and release](https://img.shields.io/github/workflow/status/Wutname1/SpartanUI/Package%20and%20release?style=for-the-badge)](https://github.com/Wutname1/SpartanUI/actions)
 Donate via bitcoin: 3CpMmtCnynoX6PiBUTg6YB5J6bBevcwi4t
+
+<!-- [![YouTube](https://www.spartanui.net/img/YouTube.png)](https://www.youtube.com/channel/UCAZ_suCikZWtNGMJH1wLmjg/) -->
+
+---
+
+If you have a spare 2 minutes please take a moment to let me know what game version you play and what Skin you use [https://forms.office.com/r/pVfXCKKd0p](https://forms.office.com/r/pVfXCKKd0p "https://forms.office.com/r/pVfXCKKd0p") This will help me know what to focus on
+
+**Overview**
+
+SpartanUI is designed to free your screen by moving a majority of the interface elements to the bottom.
+
+- Artwork
+- Player Frames
+- Party Frames
+- Raid Frames
+- HoT Tracking
+- Auto Sell
+- Auto turn in
+- Auto-Hide Objectives
+- Custom Tooltips
+- Minimap
+- Buff Management
+- Open All Mail
+- Vignette Effects
+- And much more!
+
+**Notes**
+
+- Please submit bugs and feature requests at [GitHub.](https://github.com/Wutname1/SpartanUI/issues)
+- For Support please join the [SpartanUI Discord](https://discord.gg/Qc9TRBv) or join one of the SpartanUI [Dev Streams on Twitch](https://www.twitch.tv/wutname1)
+
+**Required Addons**
+
+- [Bartender4](https://www.curseforge.com/wow/addons/bartender4)
+
+Chat Commands
+
+- /sui (Main options window) **See a [list of all](https://github.com/Wutname1/SpartanUI/wiki/Slash-Commands) commands on the [Github Wiki](https://github.com/Wutname1/SpartanUI/wiki/Slash-Commands)**
+
+**F.A.Q**
+
+**Q. I changed an option but nothing changed.**
+
+**A.** Some of the options for require a /reload to be done after changing them. This is something that is being worked on to reduce the need for and will be soon prompting for when it must be done.
+
+## Additional Addons
+
+- [Chinese Font](http://www.curse.com/addons/wow/spartanui-chinese-font/)
+- [Fun Fact](https://www.curseforge.com/wow/addons/funfact)
