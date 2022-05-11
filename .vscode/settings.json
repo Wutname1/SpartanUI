@@ -302,7 +302,8 @@
     "CUSTOM_CLASS_COLORS",
     "OPEN_ALL_MAIL_BUTTON",
     "OpenAllMailMixin",
-    "oUF"
+    "oUF",
+    "RegisterAttributeDriver"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

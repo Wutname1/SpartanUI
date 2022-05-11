@@ -642,6 +642,7 @@ function UF:OnInitialize()
 						}
 					},
 					ClassIcon = {
+						VisibleOn = 'PlayerControlled',
 						position = {
 							anchor = 'BOTTOMLEFT',
 							x = -12,

@@ -49,6 +49,14 @@ local DBDefaults = {
 		"officer's lounge",
 		'transmogrification',
 		'i want to transmogrify my gear.',
+		'The Enclave',
+		'Bank',
+		'Appearance Agitator',
+		'Portal to Orgrimmar',
+		'Inn',
+		'Master of Conflict',
+		'Mailbox',
+		'Item Upgrade',
 		-- wotlk blacklist
 		'i am prepared to face saragosa!',
 		'what is the cause of this conflict?',
@@ -84,7 +92,12 @@ local DBDefaults = {
 		"i've heard this tale before... <skip the scenario and begin your next mission.>",
 		'release me.',
 		--- Shadowlands
-		"Witness the Jailer's defeat."
+		"Witness the Jailer's defeat.",
+		'What is the Purpose?',
+		'I am ready to choose my fate in the Shadowlands.',
+		'What adventures await me if i join your covenant?',
+		'Show me how I can help the Shadowlands.',
+		'What are you offering here?'
 	},
 	WildcardBlackList = {
 		'wartime donation',
@@ -93,6 +106,7 @@ local DBDefaults = {
 		'taxi',
 		'trade',
 		'train',
+		'trainer',
 		'repeat',
 		'buy',
 		'browse your',
@@ -109,11 +123,20 @@ local DBDefaults = {
 		'take me back',
 		'and listen',
 		'where I can fly',
-		'seal of wartorn'
+		'seal of wartorn',
+		'Threads of Fate',
+		'What are the strengths of the',
+		'covenant abilities again',
+		'could you please reset the cooldown on my ability',
+		'your home',
+		'this inn',
+		'what you have on offer'
 	},
 	GossipWhitelist = {
 		"I've cleared a path for you. You should leave.",
-		'If you insist. The show must go on!'
+		'If you insist. The show must go on!',
+		'Will you spar with me?',
+		'I would like to challenge both of you to a spar.'
 	}
 }
 
@@ -632,7 +655,8 @@ function module.QUEST_GREETING()
 		debug('TESTING NEEDED')
 		return
 	end
-
+	debug(numActiveQuests)
+	debug(numAvailableQuests)
 	for i = 1, numActiveQuests do
 		local isComplete = select(2, GetActiveTitle(i))
 		if isComplete then
@@ -678,17 +702,15 @@ function module.GOSSIP_SHOW()
 		debug(gossip.spellID)
 		debug(gossip.status)
 		debug('------')
+		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
+		local isBlacklisted = module:blacklisted(gossip.name)
 		if
-			(gossip.type ~= 'gossip') or
-				(gossip.type == 'gossip' and gossip.status == 0) and
-					(not module:blacklisted(gossip.name) or SUI:IsInTable(DB.GossipWhitelist, gossip.name)) and
-					SUI.IsRetail
+			((gossip.type ~= 'gossip') or (gossip.type == 'gossip' and gossip.status == 0)) and
+				(not isBlacklisted or isWhitelisted) and
+				SUI.IsRetail
 		 then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
-			if
-				(DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest'))) and
-					not SUI:IsInTable(DB.GossipWhitelist, gossip.name)
-			 then
+			if (DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest'))) and not isWhitelisted then
 				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
 				return
 			end
