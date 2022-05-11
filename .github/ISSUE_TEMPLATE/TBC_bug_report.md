@@ -1,8 +1,8 @@
 ---
-name: Retail Bug Report
-about: Bug Report for issues when playing WoW's latest expansion
-title: "[Retail Bug Report]"
-labels: "bug, Retail"
+name: TBC Bug Report
+about: Bug Report for issues when playing WoW Classic with The Burning Crusade expansion
+title: "[TBC Bug Report]"
+labels: "bug, TBC"
 assignees: Wutname1
 ---
 

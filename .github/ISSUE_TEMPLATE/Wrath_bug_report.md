@@ -1,8 +1,8 @@
 ---
-name: Retail Bug Report
-about: Bug Report for issues when playing WoW's latest expansion
-title: "[Retail Bug Report]"
-labels: "bug, Retail"
+name: Wrath Bug Report
+about: Bug Report for issues when playing WoW Classic with Wrath of the Lich King expansion
+title: "[Wrath Bug Report]"
+labels: "bug, Wrath"
 assignees: Wutname1
 ---
 

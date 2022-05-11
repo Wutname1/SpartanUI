@@ -1,8 +1,8 @@
 ---
-name: Retail Bug Report
-about: Bug Report for issues when playing WoW's latest expansion
-title: "[Retail Bug Report]"
-labels: "bug, Retail"
+name: Vanilla Bug Report
+about: Bug Report for issues when playing WoW Classic with no expansion
+title: "[Vanilla Bug Report]"
+labels: "bug, Vanilla"
 assignees: Wutname1
 ---
 
