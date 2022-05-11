@@ -1,8 +1,8 @@
 ---
-name: Bug report
+name: Retail Bug Report
 about: Create a report to help us improve
-title: ''
-labels: ''
+title: '[Retail Bug Report]'
+labels: 'bug, retail'
 assignees: Wutname1
 
 ---
@@ -21,7 +21,6 @@ Steps to reproduce the behavior:
 If applicable, add screenshots to help explain your problem.
 
 **Game details:**
- - Version: [Retail, BCC, or Vanilla]
  - Disabled Modules:
 
 **Additional context**
