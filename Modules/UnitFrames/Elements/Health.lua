@@ -5,8 +5,6 @@ local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 ---@param DB table
 local function Build(frame, DB)
 	local health = CreateFrame('StatusBar', nil, frame)
-	health:SetFrameStrata('BACKGROUND')
-	health:SetFrameLevel(2)
 	health:SetStatusBarTexture(Smoothv2)
 	health:SetSize(frame:GetWidth(), DB.height)
 
@@ -16,8 +14,8 @@ local function Build(frame, DB)
 	Background:SetVertexColor(1, 1, 1, .2)
 	health.bg = Background
 
-	health:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
-	health:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
+	health:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or -1)
+	health:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or -1)
 
 	health.TextElements = {}
 	for i, key in pairs(DB.text) do

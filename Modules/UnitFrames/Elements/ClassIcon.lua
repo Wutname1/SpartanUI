@@ -3,6 +3,11 @@ local UF = SUI.UF
 local function ElementBuild(frame, DB)
 	frame.ClassIcon = frame:CreateTexture(nil, 'BORDER')
 	frame.ClassIcon.Sizeable = true
+	frame.ClassIcon.shadow = frame:CreateTexture(nil, 'BACKGROUND')
+	frame.ClassIcon.shadow:SetPoint('TOPLEFT', frame.ClassIcon, 'TOPLEFT', 2, -2)
+	frame.ClassIcon.shadow:SetPoint('BOTTOMRIGHT', frame.ClassIcon, 'BOTTOMRIGHT', 2, -2)
+	frame.ClassIcon.shadow:SetVertexColor(0, 0, 0, .9)
+
 	function frame.ClassIcon:PostUpdate()
 		if self.DB and self.DB.enabled then
 			self:Show()
@@ -16,6 +21,26 @@ end
 
 local function ElementUpdate(frame)
 	local DB = frame.ClassIcon.DB
+
+	local reaction = UnitReaction(frame.unit, 'player')
+	if not reaction then
+		return
+	end
+
+	if
+		((reaction <= 2 and DB.VisibleOn == 'hostile') or (reaction >= 3 and DB.VisibleOn == 'friendly') or
+			(UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled') or
+			DB.VisibleOn == 'all') and
+			DB.enabled
+	 then
+		frame.ClassIcon:Show()
+		frame.ClassIcon.shadow:Show()
+		frame.ClassIcon:SetSize(DB.size, DB.size)
+		frame.ClassIcon:SetPoint(DB.position.anchor, frame, DB.position.anchor, DB.position.x, DB.position.y)
+	else
+		frame.ClassIcon:Hide()
+		frame.ClassIcon.shadow:Hide()
+	end
 end
 
 local function ElementOptions(unitName, OptionSet)

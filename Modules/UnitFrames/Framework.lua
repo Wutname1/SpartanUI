@@ -33,6 +33,7 @@ UF.frames = {
 	raid = {},
 	containers = {}
 }
+UF.Elements = {}
 
 ---@class SUIUFElement
 ---@field Build function
@@ -42,7 +43,7 @@ UF.frames = {
 
 ---@class SUIUFElementList
 ---@field T table<SUIUFElement>
-UF.Elements = {}
+UF.Elements.List = {}
 UF.Artwork = {}
 UF.TagList = {
 	--Health
@@ -179,7 +180,7 @@ end
 ---@param OptionsTable? function
 ---@param UpdateSize? function
 function UF.Elements:Register(ElementName, Build, Update, OptionsTable, UpdateSize)
-	UF.Elements[ElementName] = {
+	UF.Elements.List[ElementName] = {
 		Build = Build,
 		Update = Update,
 		UpdateSize = UpdateSize,
@@ -189,34 +190,41 @@ end
 
 ---@param frame table
 ---@param ElementName string
-function UF.Elements:Build(frame, ElementName)
-	if UF.Elements[ElementName] then
-		UF.Elements[ElementName].Build(frame, UF.CurrentSettings[frame.unitOnCreate].elements[ElementName])
+---@param DB? table
+function UF.Elements:Build(frame, ElementName, DB)
+	if UF.Elements.List[ElementName] then
+		UF.Elements.List[ElementName].Build(frame, DB or UF.CurrentSettings[frame.unitOnCreate].elements[ElementName] or {})
 	end
 end
 
 ---@param frame table
 ---@param ElementName string
-function UF.Elements:Update(frame, ElementName)
-	if UF.Elements[ElementName] then
-		UF.Elements[ElementName].Update(frame)
+---@param DB? table
+function UF.Elements:Update(frame, ElementName, DB)
+	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].Update then
+		UF.Elements.List[ElementName].Update(frame, DB or UF.CurrentSettings[frame.unitOnCreate].elements[ElementName] or {})
 	end
 end
 
 ---@param frame table
 ---@param ElementName string
 function UF.Elements:UpdateSize(frame, ElementName)
-	if UF.Elements[ElementName] then
-		UF.Elements[ElementName].UpdateSize(frame)
+	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].UpdateSize then
+		UF.Elements.List[ElementName].UpdateSize(frame)
 	end
 end
 
 ---@param unitName string
 ---@param ElementName string
 ---@param OptionSet AceConfigOptionsTable
-function UF.Elements:Options(unitName, ElementName, OptionSet)
-	if UF.Elements[ElementName] then
-		UF.Elements[ElementName].OptionsTable(unitName, OptionSet)
+---@param DB? table
+function UF.Elements:Options(unitName, ElementName, OptionSet, DB)
+	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].OptionsTable then
+		UF.Elements.List[ElementName].OptionsTable(
+			unitName,
+			OptionSet or {},
+			DB or UF.CurrentSettings[unitName].elements[ElementName] or {}
+		)
 	end
 end
 

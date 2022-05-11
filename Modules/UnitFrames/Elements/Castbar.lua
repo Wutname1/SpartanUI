@@ -36,14 +36,11 @@ local function Build(frame, DB)
 
 	local cast = CreateFrame('StatusBar', nil, frame)
 	cast:Hide()
-	cast:SetFrameStrata('BACKGROUND')
-	cast:SetFrameLevel(2)
 	cast:SetStatusBarTexture(Smoothv2)
 	cast:SetHeight(DB.height)
 
-	local castOffset = (DB.offset * -1)
-	cast:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, castOffset)
-	cast:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, castOffset)
+	cast:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
+	cast:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
 
 	local Background = cast:CreateTexture(nil, 'BACKGROUND')
 	Background:SetAllPoints(cast)

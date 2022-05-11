@@ -356,9 +356,7 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- Call the elements update function
-		if UF.Elements[elementName] and UF.Elements[elementName].Update then
-			UF.Elements[elementName].Update(self)
-		end
+		UF.Elements:Update(self, elementName)
 
 		if SUI:IsInTable(NoBulkUpdate, elementName) then
 			return
@@ -415,10 +413,8 @@ local function CreateUnitFrame(self, unit)
 			self:SetSize(UF.CurrentSettings[unit].width, FrameHeight)
 		end
 
-		for _, element in ipairs(MigratedElements) do
-			if UF.Elements[element] and UF.Elements[element].UpdateSize then
-				UF.Elements[element].UpdateSize(self)
-			end
+		for _, elementName in ipairs(MigratedElements) do
+			UF.Elements:UpdateSize(self, elementName)
 		end
 
 		-- Status bars
