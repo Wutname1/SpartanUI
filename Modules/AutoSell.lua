@@ -496,7 +496,7 @@ function module:Repair(PersonalFunds)
 		return
 	end
 	-- First see if this vendor can repair
-	if (((CanMerchantRepair() and GetRepairAllCost() ~= 0) and module.DB.AutoRepair) and not PersonalFunds) then
+	if (CanMerchantRepair() and GetRepairAllCost() ~= 0 and not PersonalFunds) then
 		-- Use guild repair
 		if (CanGuildBankRepair and CanGuildBankRepair() and module.DB.UseGuildBankRepair) then
 			SUI:Print(
