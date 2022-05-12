@@ -5,6 +5,7 @@ local unpack = unpack
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local SkinnedFrames = {}
+local FramesToSkin = {'player', 'target'}
 
 local function CreateArtwork()
 	local plate = CreateFrame('Frame', 'Classic_ActionBarPlate', artFrame)
@@ -149,12 +150,7 @@ local function UnitFrameCallback(self, unit)
 	end
 	unit = self.unitOnCreate
 
-	local Skined = {['player'] = true, ['target'] = true}
-	if not Skined[unit] then
-		return
-	end
-
-	if not self.Art_Classic then
+	if not self.Art_Classic and SUI:IsInTable(FramesToSkin, unit) then
 		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\base_ring1' -- Player and Target
 		local circle = 'Interface\\AddOns\\SpartanUI\\images\\circle'
 		local ring = CreateFrame('Frame', nil, self)
@@ -170,6 +166,7 @@ local function UnitFrameCallback(self, unit)
 		end
 
 		self.Art_Classic = ring
+		self:SetFrameLevel(5)
 		SkinnedFrames[unit] = self
 	end
 	if unit == 'player' then
@@ -179,6 +176,8 @@ local function UnitFrameCallback(self, unit)
 		self.Portrait:SetPoint('BOTTOMLEFT', self, 'BOTTOMRIGHT', 10, 0)
 
 		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', -80, 0)
+	elseif unit == 'targettarget' then
+		self.SpartanArt:SetFrameLevel(1)
 	elseif unit == 'target' then
 		self.Portrait:ClearAllPoints()
 		self.Portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', -72, 15)
@@ -186,7 +185,6 @@ local function UnitFrameCallback(self, unit)
 
 		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', 80, 0)
 	end
-	self:SetFrameLevel(5)
 end
 
 function module:OnInitialize()
