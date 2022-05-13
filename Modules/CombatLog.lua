@@ -299,9 +299,8 @@ function module:FirstLaunch()
 		Desc2 = L['Combat log will be Automatically enabled, for easy uploading to websites such as Warcraftlogs.'],
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			local cLog = CreateFrame('Frame', nil)
@@ -381,7 +380,7 @@ function module:FirstLaunch()
 		end,
 		Next = function()
 			if SUI:IsModuleEnabled('CombatLog') then
-				local window = SUI:GetModule('SetupWizard').window
+				local window = SUI.Setup.window
 				local cLog = window.content.cLog
 				if not cLog.modEnabled:GetChecked() then
 					SUI.DB.DisabledComponents.CombatLog = true
@@ -397,6 +396,5 @@ function module:FirstLaunch()
 			module.DB.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end

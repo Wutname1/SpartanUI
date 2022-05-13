@@ -114,6 +114,7 @@ function module:OnInitialize()
 end
 
 local function SetupPage()
+	---@type SUI.SetupWizard.PageData
 	local PageData = {
 		ID = 'Autosell',
 		Name = L['Auto sell'],
@@ -122,9 +123,8 @@ local function SetupPage()
 		Desc2 = L['Crafting, consumables, and gearset items will not be sold by default.'],
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			local AutoSell = CreateFrame('Frame', nil)
@@ -154,19 +154,19 @@ local function SetupPage()
 				AutoSell.iLVLLabel:SetMaxValue(MaxiLVL)
 				AutoSell.iLVLLabel:SetMinValue(1)
 				AutoSell.iLVLLabel.OnValueChanged = function()
-					local win = SUI:GetModule('SetupWizard').window.content.AutoSell
+					local win = SUI.Setup.window.content.AutoSell
 
-					if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
-						win.iLVLSlider:SetValue(math.floor(win.iLVLLabel:GetValue()))
+					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
+						AutoSell.iLVLSlider:SetValue(math.floor(AutoSell.iLVLLabel:GetValue()))
 					end
 				end
 
 				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, module.DB.MaxILVL, false, 1, MaxiLVL)
 				AutoSell.iLVLSlider.OnValueChanged = function()
-					local win = SUI:GetModule('SetupWizard').window.content.AutoSell
+					local win = SUI.Setup.window.content.AutoSell
 
-					if math.floor(win.iLVLLabel:GetValue()) ~= math.floor(win.iLVLSlider:GetValue()) then
-						win.iLVLLabel:SetValue(math.floor(win.iLVLSlider:GetValue()))
+					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
+						AutoSell.iLVLLabel:SetValue(math.floor(AutoSell.iLVLSlider:GetValue()))
 					end
 				end
 
@@ -199,7 +199,7 @@ local function SetupPage()
 		end,
 		Next = function()
 			if SUI:IsModuleEnabled('AutoSell') then
-				local SUI_Win = SUI:GetModule('SetupWizard').window.content.AutoSell
+				local SUI_Win = SUI.Setup.window.content.AutoSell
 
 				module.DB.Gray = (SUI_Win.SellGray:GetChecked() == true or false)
 				module.DB.White = (SUI_Win.SellWhite:GetChecked() == true or false)
@@ -215,8 +215,7 @@ local function SetupPage()
 			module.DB.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end
 
 local function BuildOptions()
@@ -502,7 +501,7 @@ function module:Repair(PersonalFunds)
 			SUI:Print(
 				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds']
 			)
-			RepairAllItems(1)
+			RepairAllItems()
 			module:ScheduleTimer('Repair', .7, true)
 		elseif GetRepairAllCost() ~= 0 then
 			SUI:Print(

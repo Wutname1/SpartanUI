@@ -301,9 +301,8 @@ function module:FirstTimeSetup()
 		Desc2 = 'The defaults here are based on your current level.',
 		RequireDisplay = (not module.DB.SetupDone) and (SUI:IsModuleEnabled(module) or not module.Override),
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 			local gui = LibStub('AceGUI-3.0')
 
 			--Container
@@ -381,7 +380,7 @@ function module:FirstTimeSetup()
 			module.DB.SetupDone = true
 
 			if not (SUI:IsModuleDisabled('Objectives') or module.Override) then
-				local SUI_Win = SUI:GetModule('SetupWizard').window.content
+				local SUI_Win = SUI.Setup.window.content
 				module.DB.AlwaysShowScenario = SUI_Win.Objectives.AlwaysShowScenario:GetValue()
 
 				for k, v in ipairs(RuleList) do
@@ -393,5 +392,5 @@ function module:FirstTimeSetup()
 			end
 		end
 	}
-	SUI:GetModule('SetupWizard'):AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end

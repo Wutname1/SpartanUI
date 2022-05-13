@@ -313,9 +313,8 @@ function module:SetupWizard()
 		SubTitle = 'Taunt watcher',
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			local TauntWatch = CreateFrame('Frame', nil)
@@ -412,7 +411,7 @@ function module:SetupWizard()
 		end,
 		Next = function()
 			if SUI:IsModuleEnabled('TauntWatcher') and (not module.Override) then
-				local window = SUI:GetModule('SetupWizard').window
+				local window = SUI.Setup.window
 				local TauntWatch = window.content.TauntWatch
 
 				for key, object in pairs(TauntWatch.options) do
@@ -426,6 +425,5 @@ function module:SetupWizard()
 			module.DB.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end

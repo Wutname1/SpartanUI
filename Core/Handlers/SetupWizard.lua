@@ -1,17 +1,23 @@
-local SUI, L = SUI, SUI.L
+---@class SUI
+local SUI = SUI
+local L = SUI.L
+---@class SUI.SetupWizard
 local module = SUI:NewModule('SetupWizard')
-local StdUi = LibStub('StdUi'):NewInstance()
+local StdUi = SUI.StdUi
 module.window = nil
 
 local DisplayRequired, WelcomeAdded = false, false
 local TotalPageCount, PageDisplayOrder, PageDisplayed = 0, 1, 0
 local RequiredPageCount, RequiredDisplayOrder, RequiredPageDisplayed = 0, 1, 0
+---@type table<string, SUI.SetupWizard.PageData>
 local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageID, CurrentDisplay = {},
 	{},
 	{},
 	{},
 	{},
 	{}
+
+---@type SUI.SetupWizard.PageData
 local FinishedPage = {
 	ID = 'FinishedPage',
 	name = L['Setup Finished!'],
@@ -34,6 +40,18 @@ local FinishedPage = {
 	end
 }
 
+---@class SUI.SetupWizard.PageData
+---@field ID string
+---@field Name string
+---@field SubTitle? string
+---@field Desc1? string
+---@field Desc2? string
+---@field RequireDisplay? boolean
+---@field Priority? boolean
+---@field Display function
+---@field Next function
+---@field Skip? function
+
 local LoadWatcherEvent = function()
 	if (not module.window or not module.window:IsShown()) then
 		if SUI.DB.SetupWizard.FirstLaunch then
@@ -44,6 +62,7 @@ local LoadWatcherEvent = function()
 	end
 end
 
+---@param PageData SUI.SetupWizard.PageData
 function module:AddPage(PageData)
 	-- Make sure SetupWizard does it's initalization before any pages other are added
 	if not WelcomeAdded and PageData.ID ~= 'WelcomePage' then
@@ -251,6 +270,9 @@ function module:SetupWizard(RequiredPagesOnly)
 	module.window.Status = StdUi:Label(module.window, '', 9, nil, 40, 15)
 	module.window.Status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -2, -2)
 
+	-- Create the content area to account for the new layout
+	module.window.content = CreateFrame('Frame', 'SUI_SetupWindow_Content', module.window)
+
 	-- Setup the Buttons
 	module.window.Skip = StdUi:Button(module.window, 150, 20, 'SKIP')
 	module.window.Next = StdUi:Button(module.window, 150, 20, 'CONTINUE')
@@ -267,17 +289,15 @@ function module:SetupWizard(RequiredPagesOnly)
 		--Position the Buttons
 		module.window.Skip:SetPoint('BOTTOMLEFT', module.window.ProgressBar, 'TOPLEFT', 0, 2)
 		module.window.Next:SetPoint('BOTTOMRIGHT', module.window.ProgressBar, 'TOPRIGHT', 0, 2)
-
-		-- Adjust the content area to account for the new layout
-		module.window.content = CreateFrame('Frame', 'SUI_Window_Content', module.window)
-		module.window.content:SetPoint('TOP', module.window.Desc2, 'BOTTOM', 0, -2)
-		module.window.content:SetPoint('BOTTOMLEFT', module.window.Skip, 'TOPLEFT', 0, 2)
-		module.window.content:SetPoint('BOTTOMRIGHT', module.window.Next, 'TOPRIGHT', 0, 2)
 	else
 		--Position the Buttons
 		module.window.Skip:SetPoint('BOTTOMLEFT', module.window, 'BOTTOMLEFT', 0, 2)
 		module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', 0, 2)
 	end
+
+	module.window.content:SetPoint('TOP', module.window.Desc2, 'BOTTOM', 0, -2)
+	module.window.content:SetPoint('BOTTOMLEFT', module.window.Skip, 'TOPLEFT', 0, 2)
+	module.window.content:SetPoint('BOTTOMRIGHT', module.window.Next, 'TOPRIGHT', 0, 2)
 
 	local function LoadNextPage()
 		--Hide anything attached to the Content frame
@@ -378,7 +398,7 @@ local function WelcomePage()
 			WelcomePage:SetAllPoints(module.window.content)
 
 			WelcomePage.Helm = StdUi:Texture(WelcomePage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
-			WelcomePage.Helm:SetPoint('CENTER', 0, 35)
+			WelcomePage.Helm:SetPoint('CENTER', 0, 45)
 			WelcomePage.Helm:SetAlpha(.6)
 
 			if not select(4, GetAddOnInfo('Bartender4')) then
@@ -422,7 +442,7 @@ local function WelcomePage()
 				WelcomePage.CopyProfileButton:Hide()
 			end
 
-			StdUi:GlueBottom(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -35)
+			StdUi:GlueBottom(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -25)
 			StdUi:GlueBottom(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, -31, -25)
 			StdUi:GlueRight(WelcomePage.CopyProfileButton, WelcomePage.ProfileList, 2, 0)
 
@@ -436,10 +456,37 @@ local function WelcomePage()
 			)
 			WelcomePage.Import:SetPoint('TOP', WelcomePage.ProfileList, 'BOTTOM', 31, -5)
 
+			WelcomePage.SkipAllButton = StdUi:Button(WelcomePage, 150, 20, 'SKIP SETUP')
+			WelcomePage.SkipAllButton:SetScript(
+				'OnClick',
+				function()
+					module.window:Hide()
+					for _, ID in pairs(FinalPageList) do
+						if PriorityPageList[ID] then
+							PriorityPageList[ID].Display()
+							PriorityPageList[ID].Next()
+						elseif StandardPageList[ID] then
+							StandardPageList[ID].Display()
+							StandardPageList[ID].Next()
+						end
+					end
+					DisplayRequired = false
+					module.window:Hide()
+				end
+			)
+			WelcomePage.SkipOr = StdUi:Label(WelcomePage, 'OR')
+			StdUi:GlueBelow(WelcomePage.SkipOr, WelcomePage.SkipAllButton, 0, -5)
+
+			module.window.ProgressBar:Hide()
+			module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', 0, 2)
+			WelcomePage.SkipAllButton:SetPoint('BOTTOMRIGHT', 0, 2)
+
 			module.window.content.WelcomePage = WelcomePage
 		end,
 		Next = function()
 			SUI.DB.SetupWizard.FirstLaunch = false
+			module.window.ProgressBar:Show()
+			module.window.Next:SetPoint('BOTTOMRIGHT', module.window.ProgressBar, 'TOPRIGHT', 0, 2)
 		end,
 		RequireDisplay = SUI.DB.SetupWizard.FirstLaunch,
 		Priority = true
@@ -452,3 +499,5 @@ end
 function module:OnInitialize()
 	WelcomePage()
 end
+
+SUI.Setup = module

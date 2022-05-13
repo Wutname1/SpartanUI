@@ -290,9 +290,8 @@ function module:FirstLaunch()
 		SubTitle = L['Interrupt announcer'],
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			local IAnnounce = CreateFrame('Frame', nil)
@@ -385,7 +384,7 @@ function module:FirstLaunch()
 		end,
 		Next = function()
 			if SUI:IsModuleEnabled('CombatLog') then
-				local window = SUI:GetModule('SetupWizard').window
+				local window = SUI.Setup.window
 				local IAnnounce = window.content.IAnnounce
 				if not IAnnounce.modEnabled:GetChecked() then
 					SUI.DB.DisabledComponents.InterruptAnnouncer = true
@@ -402,6 +401,5 @@ function module:FirstLaunch()
 			module.DB.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end

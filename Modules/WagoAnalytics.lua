@@ -73,9 +73,8 @@ local function SetupPage()
 		Name = 'Wago Analytics',
 		RequireDisplay = module.DB.FirstLaunch,
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			local WagoAnalytics = CreateFrame('Frame', nil)
@@ -117,8 +116,8 @@ local function SetupPage()
 					500
 				)
 
-				window.Skip:SetText('No thanks')
-				window.Next:SetText("I'm in")
+				SUI.Setup.window.Skip:SetText('No thanks')
+				SUI.Setup.window.Next:SetText("I'm in")
 				-- Positioning
 				StdUi:GlueTop(WagoAnalytics.lbl0, SUI_Win, 0, -25)
 				StdUi:GlueBelow(WagoAnalytics.lbl1, WagoAnalytics.lbl0, 0, -15)
@@ -129,20 +128,19 @@ local function SetupPage()
 			end
 		end,
 		Next = function()
-			SUI:GetModule('SetupWizard').window.Skip:SetText('SKIP')
-			SUI:GetModule('SetupWizard').window.Next:SetText('CONTINUE')
+			SUI.Setup.window.Skip:SetText('SKIP')
+			SUI.Setup.window.Next:SetText('CONTINUE')
 			module.DB.FirstLaunch = false
 			InitalCollection()
 		end,
 		Skip = function()
-			SUI:GetModule('SetupWizard').window.Skip:SetText('SKIP')
-			SUI:GetModule('SetupWizard').window.Next:SetText('CONTINUE')
+			SUI.Setup.window.Skip:SetText('SKIP')
+			SUI.Setup.window.Next:SetText('CONTINUE')
 			SUI:DisableModule(module)
 			module.DB.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end
 
 local function BuildOptions()

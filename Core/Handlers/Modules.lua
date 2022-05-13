@@ -85,9 +85,8 @@ local function ModuleSelectionPage()
 		Desc1 = 'Below you can disable modules of SpartanUI',
 		RequireDisplay = (not SUI.DB.SetupDone),
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			SUI_Win.ModSelection = CreateFrame('Frame', nil)
@@ -173,7 +172,7 @@ local function ModuleSelectionPage()
 		end
 	}
 
-	SUI:GetModule('SetupWizard'):AddPage(ModuleSelectionPage)
+	SUI.Setup:AddPage(ModuleSelectionPage)
 end
 
 function module:OnEnable()

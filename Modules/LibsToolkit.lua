@@ -10,16 +10,14 @@ local function SetupTweaks()
 		return
 	end
 
-	local SetupWizard = SUI:GetModule('SetupWizard')
 	local LibsToolkit = {
 		ID = 'LibsToolkit',
 		Name = "Lib's Toolkit",
 		SubTitle = "Lib's Toolkit",
 		Desc1 = 'Below are a collection of tweaks I find myself making often, so I decided to add them in here.',
 		Display = function()
-			local window = SetupWizard.window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			local CheckboxItem = {}
 			SetCVar('nameplateShowSelf', 0)
@@ -165,7 +163,7 @@ local function SetupTweaks()
 		end,
 		Next = function()
 			if SUI:IsModuleEnabled('LibsToolkit') then
-				local LibsToolkit = SetupWizard.window.content.LibsToolkit
+				local LibsToolkit = SUI.Setup.window.content.LibsToolkit
 				if (LibsToolkit.DisableTutorials:GetValue() or false) then
 					local bitfieldListing = {
 						LE_FRAME_TUTORIAL_ACCCOUNT_RAF_INTRO,
@@ -242,7 +240,7 @@ local function SetupTweaks()
 			end
 		end
 	}
-	SetupWizard:AddPage(LibsToolkit)
+	SUI.Setup:AddPage(LibsToolkit)
 end
 
 function module:OnInitialize()

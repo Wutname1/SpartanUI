@@ -149,8 +149,6 @@ function SUI.FontRefresh(self, Module)
 end
 
 local function FontSetupWizard()
-	local PageData, SetupWindow
-
 	local fontlist = {
 		'RobotoBold',
 		'Roboto',
@@ -168,13 +166,13 @@ local function FontSetupWizard()
 		['ArialNarrow'] = 'ArialNarrow'
 	}
 
-	PageData = {
+	local PageData = {
 		ID = 'FontSetup',
 		name = L['Font style'],
 		SubTitle = 'Font Style',
 		RequireDisplay = (not SUI.DB.font.SetupDone),
 		Display = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local SUI_Win = SUI.Setup.window
 			SUI_Win.FontFace = CreateFrame('Frame', nil)
 			SUI_Win.FontFace:SetParent(SUI_Win.content)
 			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
@@ -343,7 +341,7 @@ local function FontSetupWizard()
 			SUI_Win.FontFace.RobotoBold.radio:SetValue(true)
 		end,
 		Next = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local SUI_Win = SUI.Setup.window
 			local fontface
 
 			for _, v in ipairs(fontlist) do
@@ -364,15 +362,14 @@ local function FontSetupWizard()
 			SUI.DB.font.SetupDone = true
 		end,
 		Skip = function()
-			local SUI_Win = SUI:GetModule('SetupWizard').window
+			local SUI_Win = SUI.Setup.window
 			SUI_Win.FontFace:Hide()
 			SUI_Win.FontFace = nil
 			SUI.DB.font.SetupDone = true
 		end
 	}
 
-	SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end
 
 function module:OnEnable()

@@ -17,9 +17,8 @@ local function SetupPage()
 		Priority = true,
 		RequireDisplay = (not SUI.DB.Artwork.SetupDone or false),
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			SUI_Win.Artwork = CreateFrame('Frame', nil)
@@ -38,7 +37,10 @@ local function SetupPage()
 				SUI:SetActiveStyle(NewStyle)
 			end
 
-			for _, v in ipairs({'Classic', 'Fel', 'War', 'Transparent', 'Digital', 'Minimal', 'Arcane', 'Tribal'}) do
+			local count = 0
+			local row = 1
+			local Themes = {}
+			for i, v in pairs({'Classic', 'War', 'Fel', 'Digital', 'Arcane', 'Minimal', 'Tribal', 'Transparent'}) do
 				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 				control:SetScript('OnClick', RadioButtons)
 				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
@@ -47,9 +49,45 @@ local function SetupPage()
 				control.radio:SetValue(v)
 				control.radio:HookScript('OnClick', SetStyle)
 				StdUi:GlueBelow(control.radio, control)
+				if v == SUI.DB.Artwork.Style then
+					control.radio:SetChecked(true)
+				end
 
-				SUI_Win.Artwork[v] = control
+				Themes[i] = control
+
+				count = count + 1
+				if i == 1 then
+					-- Position the 1st row
+					StdUi:GlueTop(Themes[i], SUI_Win, 0, -80)
+				elseif count == 1 then
+					StdUi:GlueBelow(Themes[i], Themes[i - 3], 0, -30)
+				elseif count == 2 then
+					StdUi:GlueLeft(Themes[i], Themes[i - 1], -20, 0)
+				elseif count == 3 then
+					StdUi:GlueRight(Themes[i], Themes[i - 2], 20, 0)
+
+					row = row + 1
+					count = 0
+				end
 			end
+
+			local Popular = CreateFrame('Frame', nil, SUI_Win.Artwork, BackdropTemplateMixin and 'BackdropTemplate')
+			Popular:SetPoint('TOPLEFT', Themes[2], 'TOPLEFT', -5, 5)
+			Popular:SetPoint('BOTTOMRIGHT', Themes[3].radio, 'BOTTOMRIGHT', 5, -2)
+
+			Popular:SetBackdrop(
+				{
+					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+					edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+					edgeSize = 1
+				}
+			)
+			Popular:SetBackdropColor(0.0588, 0.0588, 0, .85)
+			Popular:SetBackdropBorderColor(.9, .9, 0, .9)
+			Popular.lbl = StdUi:FontString(SUI_Win.Artwork, 'Popular')
+			Popular.lbl:SetPoint('BOTTOMLEFT', Popular, 'TOPLEFT', 0, 0)
+
+			SUI_Win.Artwork.Popular = Popular
 
 			SUI_Win.Artwork.slider = StdUi:Slider(SUI_Win.Artwork, 340, 15, 50, false, 1, 100)
 			StdUi:AddLabel(SUI_Win.Artwork, SUI_Win.Artwork.slider, 'UI Scale', 'LEFT')
@@ -95,30 +133,12 @@ local function SetupPage()
 			StdUi:GlueTop(SUI_Win.Artwork.slider, SUI_Win.Artwork, 0, -30)
 			StdUi:GlueRight(SUI_Win.Artwork.sliderText, SUI_Win.Artwork.slider, 0, 0)
 			StdUi:GlueRight(SUI_Win.Artwork.sliderButton, SUI_Win.Artwork.sliderText, 0, 0)
-
-			-- Position the 1st row
-			StdUi:GlueTop(SUI_Win.Artwork.Fel, SUI_Win, 0, -80)
-			StdUi:GlueLeft(SUI_Win.Artwork.Classic, SUI_Win.Artwork.Fel, -20, 0)
-			StdUi:GlueRight(SUI_Win.Artwork.War, SUI_Win.Artwork.Fel, 20, 0)
-
-			-- Position the 2nd row
-			StdUi:GlueTop(SUI_Win.Artwork.Digital, SUI_Win.Artwork.Fel.radio, 0, -30)
-			StdUi:GlueLeft(SUI_Win.Artwork.Transparent, SUI_Win.Artwork.Digital, -20, 0)
-			StdUi:GlueRight(SUI_Win.Artwork.Minimal, SUI_Win.Artwork.Digital, 20, 0)
-
-			-- Podition the 3rd row
-			StdUi:GlueTop(SUI_Win.Artwork.Arcane, SUI_Win.Artwork.Digital.radio, 00, -30)
-			StdUi:GlueLeft(SUI_Win.Artwork.Tribal, SUI_Win.Artwork.Arcane, -20, 0)
-
-			-- Check Classic as default
-			SUI_Win.Artwork.War.radio:SetChecked(true)
 		end,
 		Next = function()
 			SUI.DB.Artwork.SetupDone = true
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end
 
 local function StyleUpdate()

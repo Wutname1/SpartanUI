@@ -567,9 +567,8 @@ function module:FirstLaunch()
 		Desc2 = L['Holding ALT while talking to a NPC will temporarily disable the auto turnin module.'],
 		RequireDisplay = DB.FirstLaunch,
 		Display = function()
-			local window = SUI:GetModule('SetupWizard').window
-			local SUI_Win = window.content
-			local StdUi = window.StdUi
+			local SUI_Win = SUI.Setup.window.content
+			local StdUi = SUI.StdUi
 
 			--Container
 			local ATI = CreateFrame('Frame', nil)
@@ -614,7 +613,7 @@ function module:FirstLaunch()
 		end,
 		Next = function()
 			if SUI:IsModuleEnabled('AutoTurnIn') then
-				local window = SUI:GetModule('SetupWizard').window
+				local window = SUI.Setup.window
 				local ATI = window.content.ATI
 
 				for key, object in pairs(ATI.options) do
@@ -627,8 +626,7 @@ function module:FirstLaunch()
 			DB.FirstLaunch = false
 		end
 	}
-	local SetupWindow = SUI:GetModule('SetupWizard')
-	SetupWindow:AddPage(PageData)
+	SUI.Setup:AddPage(PageData)
 end
 
 function module:blacklisted(name)
