@@ -1,6 +1,9 @@
 local UF = SUI.UF
 
 local function Build(frame)
+	if frame.unitOnCreate ~= 'player' then
+		return
+	end
 	local playerClass = select(2, UnitClass('player'))
 	if playerClass == 'DEATHKNIGHT' then
 		frame.Runes = CreateFrame('Frame', nil, frame)

@@ -1,6 +1,9 @@
 local UF = SUI.UF
 
 local function Build(frame, DB)
+	if frame.unitOnCreate ~= 'player' then
+		return
+	end
 	frame.CPAnchor = frame:CreateFontString(nil, 'BORDER')
 	frame.CPAnchor:SetPoint('TOPLEFT', frame.Name, 'BOTTOMLEFT', 40, -5)
 	local ClassPower = {}

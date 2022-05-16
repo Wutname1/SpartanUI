@@ -1,7 +1,10 @@
 local UF = SUI.UF
 
 local function Build(frame, DB)
-	if not _G['GetPetHappiness'] then
+	if
+		not _G['GetPetHappiness'] or
+			not ((_G['GetPetHappiness']) and 'HUNTER' == select(2, UnitClass('player')) and frame.unitOnCreate == 'pet')
+	 then
 		return
 	end
 	local HappinessIndicator = frame:CreateTexture(nil, 'OVERLAY')

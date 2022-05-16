@@ -119,7 +119,7 @@ end
 local function Options(unitName, OptionSet)
 	local function OptUpdate(option, val)
 		--Update memory
-		UF.CurrentSettings[unitName].elements.Health[option] = val
+		UF.CurrentSettings[unitName].DB[option] = val
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Health[option] = val
 		--Update the screen
