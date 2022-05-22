@@ -5,6 +5,8 @@ local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 ---@param DB table
 local function Build(frame, DB)
 	local health = CreateFrame('StatusBar', nil, frame)
+	health:SetFrameStrata(DB.FrameStrata or frame:GetFrameStrata())
+	health:SetFrameLevel(DB.FrameLevel or 2)
 	health:SetStatusBarTexture(Smoothv2)
 	health:SetSize(frame:GetWidth(), DB.height)
 
@@ -111,7 +113,22 @@ end
 
 ---@param frame table
 local function Update(frame)
+	if frame.Health then
+		return
+	end
 	local DB = frame.Health.DB
+
+	--Update Health items
+	frame.Health.colorDisconnected = DB.colorDisconnected
+	frame.Health.colorTapping = DB.colorTapping
+	frame.Health.colorReaction = DB.colorReaction
+	frame.Health.colorSmooth = DB.colorSmooth
+	frame.Health.colorClass = DB.colorClass
+
+	frame.Health:ClearAllPoints()
+	frame.Health:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
+	frame.Health:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
+	frame.Health:SetHeight(DB.height)
 end
 
 ---@param unitName string
@@ -121,11 +138,11 @@ local function Options(unitName, OptionSet)
 		--Update memory
 		UF.CurrentSettings[unitName].DB[option] = val
 		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Health[option] = val
+		UF.DB.UserSettings[UF.DB.Style][unitName].DB[option] = val
 		--Update the screen
 		UF.frames[unitName]:ElementUpdate('Health')
 	end
-	--local DB = UF.CurrentSettings[unitName].elements.Health
+	--local DB = UF.CurrentSettings[unitName].DB
 end
 
 UF.Elements:Register('Health', Build, Update, Options)

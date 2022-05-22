@@ -89,7 +89,7 @@ local function Build(frame, DB)
 end
 
 local function Update(frame)
-	local DB = frame.PVPIndicator.DB
+	local DB = frame.PvPIndicator.DB
 
 	for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
 		-- If badge is true but does not exsist create from backup
@@ -133,4 +133,4 @@ local function Options(unitName, OptionSet)
 	end
 end
 
-UF.Elements:Register('PVPIndicator', Build, Update, Options)
+UF.Elements:Register('PvPIndicator', Build, Update, Options)

@@ -35,9 +35,11 @@ local function Build(frame, DB)
 	end
 
 	local cast = CreateFrame('StatusBar', nil, frame)
-	cast:Hide()
+	cast:SetFrameStrata(DB.FrameStrata or frame:GetFrameStrata())
+	cast:SetFrameLevel(DB.FrameLevel or 2)
 	cast:SetStatusBarTexture(Smoothv2)
 	cast:SetHeight(DB.height)
+	cast:Hide()
 
 	cast:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
 	cast:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
@@ -110,6 +112,53 @@ end
 ---@param frame table
 local function Update(frame)
 	local DB = frame.Castbar.DB
+
+	if SUI.IsRetail then
+		-- latency
+		if DB.latency then
+			frame.Castbar.Shield:Show()
+		else
+			frame.Castbar.Shield:Hide()
+		end
+
+		-- spell name
+		if DB.text['1'].enabled then
+			frame.Castbar.Text:Show()
+		else
+			frame.Castbar.Text:Hide()
+		end
+		-- spell timer
+		if DB.text['2'].enabled then
+			frame.Castbar.Time:Show()
+		else
+			frame.Castbar.Time:Hide()
+		end
+	end
+
+	-- Spell icon
+	if DB.Icon.enabled then
+		frame.Castbar.Icon:Show()
+	else
+		frame.Castbar.Icon:Hide()
+	end
+	frame.Castbar.Icon:ClearAllPoints()
+	frame.Castbar.Icon:SetPoint(
+		DB.Icon.position.anchor,
+		frame.Castbar,
+		DB.Icon.position.anchor,
+		DB.Icon.position.x,
+		DB.Icon.position.y
+	)
+end
+
+---@param frame table
+local function UpdateSize(frame)
+	if frame.Castbar then
+		return
+	end
+	local DB = frame.Castbar.DB
+	frame.Castbar:SetHeight(DB.height)
+	frame.Castbar.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end
 
 ---@param unitName string
@@ -117,4 +166,4 @@ end
 local function Options(unitName, OptionSet)
 end
 
-UF.Elements:Register('Castbar', Build, Update, Options)
+UF.Elements:Register('Castbar', Build, Update, Options, UpdateSize)
