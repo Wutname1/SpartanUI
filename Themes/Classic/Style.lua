@@ -280,6 +280,8 @@ function module:OnInitialize()
 		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5'
 	}
 
+	-- SUI:RegisterStyle('Classic', Settings)
+
 	CreateArtwork()
 
 	local UF = SUI:GetModule('Component_UnitFrames')

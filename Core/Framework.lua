@@ -240,7 +240,6 @@ local DBdefault = {
 			}
 		},
 		Arcane = {
-			Artwork = {},
 			StatusBars = {
 				['**'] = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar',
@@ -261,20 +260,6 @@ local DBdefault = {
 			},
 			Frames = {
 				player = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Arcane'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Arcane'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'Arcane'
-						}
-					},
 					elements = {
 						Name = {
 							enabled = true,
@@ -284,24 +269,24 @@ local DBdefault = {
 								x = 0,
 								y = -16
 							}
+						},
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Arcane'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Arcane'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'Arcane'
+							}
 						}
 					}
 				},
 				target = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Arcane'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Arcane'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'Arcane'
-						}
-					},
 					elements = {
 						Name = {
 							enabled = true,
@@ -310,6 +295,20 @@ local DBdefault = {
 								anchor = 'BOTTOM',
 								x = 0,
 								y = -16
+							}
+						},
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Arcane'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Arcane'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'Arcane'
 							}
 						}
 					}
@@ -347,21 +346,21 @@ local DBdefault = {
 		ArcaneRed = {
 			Frames = {
 				player = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'ArcaneRed'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'ArcaneRed'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'ArcaneRed'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'ArcaneRed'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'ArcaneRed'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'ArcaneRed'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -374,21 +373,21 @@ local DBdefault = {
 					}
 				},
 				target = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'ArcaneRed'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'ArcaneRed'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'ArcaneRed'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'ArcaneRed'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'ArcaneRed'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'ArcaneRed'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -407,27 +406,21 @@ local DBdefault = {
 				player = {
 					width = 153,
 					scale = 0.91,
-					artwork = {
-						full = {
-							enabled = true,
-							graphic = 'Classic'
-						}
-					},
-					auras = {
-						Buffs = {
-							enabled = true,
-							position = {
-								y = 22
+					elements = {
+						Auras = {
+							Buffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
+							},
+							Debuffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
 							}
 						},
-						Debuffs = {
-							enabled = true,
-							position = {
-								y = 22
-							}
-						}
-					},
-					elements = {
 						Castbar = {
 							height = 15
 						},
@@ -459,6 +452,9 @@ local DBdefault = {
 										y = 0
 									}
 								}
+							},
+							position = {
+								y = -3
 							}
 						},
 						Portrait = {
@@ -493,6 +489,12 @@ local DBdefault = {
 								y = 0
 							}
 						},
+						SpartanArt = {
+							full = {
+								enabled = true,
+								graphic = 'Classic'
+							}
+						},
 						CombatIndicator = {
 							enabled = true,
 							position = {
@@ -506,27 +508,21 @@ local DBdefault = {
 				target = {
 					width = 153,
 					scale = 0.91,
-					auras = {
-						Buffs = {
-							enabled = true,
-							position = {
-								y = 22
+					elements = {
+						Auras = {
+							Buffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
+							},
+							Debuffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
 							}
 						},
-						Debuffs = {
-							enabled = true,
-							position = {
-								y = 22
-							}
-						}
-					},
-					artwork = {
-						full = {
-							enabled = true,
-							graphic = 'Classic'
-						}
-					},
-					elements = {
 						Health = {
 							offset = 2,
 							height = 16,
@@ -553,6 +549,9 @@ local DBdefault = {
 										x = 40
 									}
 								}
+							},
+							position = {
+								y = -3
 							}
 						},
 						Castbar = {
@@ -579,31 +578,31 @@ local DBdefault = {
 								x = -22,
 								y = 0
 							}
+						},
+						SpartanArt = {
+							full = {
+								enabled = true,
+								graphic = 'Classic'
+							}
 						}
 					}
 				},
 				pet = {
-					auras = {
-						Buffs = {
-							enabled = true,
-							position = {
-								y = 22
+					elements = {
+						Auras = {
+							Buffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
+							},
+							Debuffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
 							}
 						},
-						Debuffs = {
-							enabled = true,
-							position = {
-								y = 22
-							}
-						}
-					},
-					artwork = {
-						full = {
-							enabled = true,
-							graphic = 'Classic'
-						}
-					},
-					elements = {
 						Health = {
 							offset = 2,
 							height = 16,
@@ -641,31 +640,31 @@ local DBdefault = {
 							position = {
 								y = 17
 							}
+						},
+						SpartanArt = {
+							full = {
+								enabled = true,
+								graphic = 'Classic'
+							}
 						}
 					}
 				},
 				targettarget = {
-					auras = {
-						Buffs = {
-							enabled = true,
-							position = {
-								y = 22
+					elements = {
+						Auras = {
+							Buffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
+							},
+							Debuffs = {
+								enabled = true,
+								position = {
+									y = 22
+								}
 							}
 						},
-						Debuffs = {
-							enabled = true,
-							position = {
-								y = 22
-							}
-						}
-					},
-					artwork = {
-						full = {
-							enabled = true,
-							graphic = 'Classic'
-						}
-					},
-					elements = {
 						Health = {
 							offset = 2,
 							height = 14,
@@ -696,6 +695,12 @@ local DBdefault = {
 						},
 						Castbar = {
 							height = 14
+						},
+						SpartanArt = {
+							full = {
+								enabled = true,
+								graphic = 'Classic'
+							}
 						}
 					}
 				}
@@ -737,31 +742,33 @@ local DBdefault = {
 		Transparent = {
 			Frames = {
 				player = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Transparent'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Transparent'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Transparent'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Transparent'
+							}
+						},
 						Portrait = {
 							position = 'right'
 						}
 					}
 				},
 				target = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Transparent'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Transparent'
+					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Transparent'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Transparent'
+							}
 						}
 					}
 				}
@@ -815,21 +822,21 @@ local DBdefault = {
 			Artwork = {},
 			Frames = {
 				player = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Fel'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Fel'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'Fel'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Fel'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Fel'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'Fel'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -842,21 +849,21 @@ local DBdefault = {
 					}
 				},
 				target = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Fel'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Fel'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'Fel'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Fel'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Fel'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'Fel'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -927,18 +934,22 @@ local DBdefault = {
 			},
 			Frames = {
 				player = {
-					artwork = {
-						bg = {
-							enabled = true,
-							graphic = 'Digital'
+					elements = {
+						SpartanArt = {
+							bg = {
+								enabled = true,
+								graphic = 'Digital'
+							}
 						}
 					}
 				},
 				target = {
-					artwork = {
-						bg = {
-							enabled = true,
-							graphic = 'Digital'
+					elements = {
+						SpartanArt = {
+							bg = {
+								enabled = true,
+								graphic = 'Digital'
+							}
 						}
 					}
 				}
@@ -978,21 +989,21 @@ local DBdefault = {
 			},
 			Frames = {
 				player = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'war'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'war'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'war'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'war'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -1005,21 +1016,21 @@ local DBdefault = {
 					}
 				},
 				target = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'war'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'war'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'war'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'war'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'war'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -1075,21 +1086,21 @@ local DBdefault = {
 			},
 			Frames = {
 				player = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Tribal'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Tribal'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'Tribal'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Tribal'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Tribal'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'Tribal'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -1102,21 +1113,21 @@ local DBdefault = {
 					}
 				},
 				target = {
-					artwork = {
-						top = {
-							enabled = true,
-							graphic = 'Tribal'
-						},
-						bg = {
-							enabled = true,
-							graphic = 'Tribal'
-						},
-						bottom = {
-							enabled = true,
-							graphic = 'Tribal'
-						}
-					},
 					elements = {
+						SpartanArt = {
+							top = {
+								enabled = true,
+								graphic = 'Tribal'
+							},
+							bg = {
+								enabled = true,
+								graphic = 'Tribal'
+							},
+							bottom = {
+								enabled = true,
+								graphic = 'Tribal'
+							}
+						},
 						Name = {
 							enabled = true,
 							SetJustifyH = 'LEFT',
@@ -1249,13 +1260,13 @@ SUI.DB = SUI.SpartanUIDB.profile
 local function reloaduiWindow()
 	local StdUi = SUI.StdUi
 	local popup = StdUi:Window(nil, 400, 140)
-	popup:SetPoint('TOP', 0, -20)
+	popup:SetPoint('TOP', UIParent, 'TOP', 0, -20)
 	popup:SetFrameStrata('DIALOG')
 	popup:Hide()
 
 	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	popup.Title:SetPoint('TOP')
+	StdUi:GlueTop(popup.Title, popup)
 	popup.Title:SetAlpha(.8)
 
 	-- Create Popup Items
@@ -1312,7 +1323,7 @@ function SUI:OnInitialize()
 		---@type Frame | BackdropTemplate
 		local SUI5Indicator = CreateFrame('Button', 'SUI5Profile', UIParent, BackdropTemplateMixin and 'BackdropTemplate')
 		SUI5Indicator:SetFrameStrata('DIALOG')
-		SUI5Indicator:SetPoint('TOPRIGHT')
+		SUI5Indicator:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, 0)
 		SUI5Indicator:SetSize(20, 20)
 		SUI5Indicator:SetBackdrop(
 			{
@@ -1331,7 +1342,8 @@ function SUI:OnInitialize()
 					'SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp'
 				)
 				SUI.print('---------------', true)
-			end
+			end,
+			'LE_SCRIPT_BINDING_TYPE_EXTRINSIC'
 		)
 	end
 
@@ -1634,6 +1646,59 @@ function SUI:CopyTable(currentTable, defaultTable)
 	end
 
 	return currentTable
+end
+
+function SUI:CopyDefaults(dest, src)
+	-- this happens if some value in the SV overwrites our default value with a non-table
+	--if type(dest) ~= "table" then return end
+	for k, v in pairs(src) do
+		if k == '*' or k == '**' then
+			if type(v) == 'table' then
+				-- This is a metatable used for table defaults
+				local mt = {
+					-- This handles the lookup and creation of new subtables
+					__index = function(t, k)
+						if k == nil then
+							return nil
+						end
+						local tbl = {}
+						SUI:CopyDefaults(tbl, v)
+						rawset(t, k, tbl)
+						return tbl
+					end
+				}
+				setmetatable(dest, mt)
+				-- handle already existing tables in the SV
+				for dk, dv in pairs(dest) do
+					if not rawget(src, dk) and type(dv) == 'table' then
+						SUI:CopyDefaults(dv, v)
+					end
+				end
+			else
+				-- Values are not tables, so this is just a simple return
+				local mt = {
+					__index = function(t, k)
+						return k ~= nil and v or nil
+					end
+				}
+				setmetatable(dest, mt)
+			end
+		elseif type(v) == 'table' then
+			if not rawget(dest, k) then
+				rawset(dest, k, {})
+			end
+			if type(dest[k]) == 'table' then
+				SUI:CopyDefaults(dest[k], v)
+				if src['**'] then
+					SUI:CopyDefaults(dest[k], src['**'])
+				end
+			end
+		else
+			if rawget(dest, k) == nil then
+				rawset(dest, k, v)
+			end
+		end
+	end
 end
 
 function SUI:RemoveEmptySubTables(tbl)

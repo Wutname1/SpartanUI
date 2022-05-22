@@ -8,9 +8,15 @@ local function Build(frame, DB)
 	SpartanArt:SetFrameStrata('BACKGROUND')
 	SpartanArt:SetFrameLevel(2)
 	SpartanArt:SetAllPoints()
+	SpartanArt.top = SpartanArt:CreateTexture(nil, 'BORDER')
+	SpartanArt.bg = SpartanArt:CreateTexture(nil, 'BACKGROUND')
+	SpartanArt.bottom = SpartanArt:CreateTexture(nil, 'BORDER')
+	SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
+	SpartanArt.ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt
+
 	SpartanArt.PostUpdate = function(self, unit)
 		for _, pos in ipairs(ArtPositions) do
-			local ArtSettings = UF.CurrentSettings[unitName].artwork[pos]
+			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
 			if
 				ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and
 					UF.Artwork[ArtSettings.graphic][pos].UnitFrameCallback
@@ -29,9 +35,8 @@ local function Build(frame, DB)
 			return
 		end
 
-		self.ArtSettings = UF.CurrentSettings[unitName].artwork
 		for _, pos in ipairs(ArtPositions) do
-			local ArtSettings = self.ArtSettings[pos]
+			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
 			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and UF.Artwork[ArtSettings.graphic] then
 				self[pos].ArtData = UF.Artwork[ArtSettings.graphic][pos]
 				--Grab the settings for the frame specifically if defined (classic skin)
@@ -41,16 +46,13 @@ local function Build(frame, DB)
 			end
 		end
 	end
-	SpartanArt.top = SpartanArt:CreateTexture(nil, 'BORDER')
-	SpartanArt.bg = SpartanArt:CreateTexture(nil, 'BACKGROUND')
-	SpartanArt.bottom = SpartanArt:CreateTexture(nil, 'BORDER')
-	SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
 
 	frame.SpartanArt = SpartanArt
 end
 
 local function Update(frame)
-	local DB = frame.SpartanArt.DB
+	frame.SpartanArt:ForceUpdate()
+	-- local DB = frame.SpartanArt.DB
 end
 
 local function Options(unitName, OptionSet)
@@ -76,26 +78,23 @@ local function Options(unitName, OptionSet)
 			type = 'group',
 			order = i,
 			disabled = true,
+			get = function(info)
+				return UF.CurrentSettings[unitName].elements.SpartanArt[position][info[#info]]
+			end,
 			args = {
 				enabled = {
 					name = L['Enabled'],
 					type = 'toggle',
 					order = 1,
-					get = function(info)
-						return UF.CurrentSettings[unitName].artwork[position].enabled
-					end,
 					set = function(info, val)
 						ArtUpdate(position, 'enabled', val)
 					end
 				},
-				StyleDropdown = {
+				graphic = {
 					name = L['Current Style'],
 					type = 'select',
 					order = 2,
 					values = {[''] = 'None'},
-					get = function(info)
-						return UF.CurrentSettings[unitName].artwork[position].graphic
-					end,
 					set = function(info, val)
 						ArtUpdate(position, 'graphic', val)
 					end
@@ -122,7 +121,7 @@ local function Options(unitName, OptionSet)
 							max = 1,
 							step = .01,
 							get = function(info)
-								return UF.CurrentSettings[unitName].artwork[position].alpha
+								return UF.CurrentSettings[unitName].elements.SpartanArt[position].alpha
 							end,
 							set = function(info, val)
 								if val == 0 then
@@ -152,7 +151,7 @@ local function Options(unitName, OptionSet)
 					--Enable art option
 					SUI.opt.args.UnitFrames.args[unitName].args.artwork.args[position].disabled = false
 					--Add to dropdown
-					options.StyleDropdown.values[Name] = (data.name or Name)
+					options.graphic.values[Name] = (data.name or Name)
 					--Create example
 					options.style.args[Name] = {
 						name = (data.name or Name),
@@ -185,4 +184,4 @@ local function Options(unitName, OptionSet)
 	end
 end
 
-UF.Elements:Register('SpartanArt', Build, nil, Options)
+UF.Elements:Register('SpartanArt', Build, Update, Options)

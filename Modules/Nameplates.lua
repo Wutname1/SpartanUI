@@ -1,4 +1,4 @@
-local unpack, SUI, L, print = unpack, SUI, SUI.L, SUI.print
+local unpack, SUI, L, print, UF = unpack, SUI, SUI.L, SUI.print, SUI.UF
 local module = SUI:NewModule('Component_Nameplates', 'AceTimer-3.0')
 module.description = 'Basic nameplate module'
 local Images = {
@@ -24,12 +24,6 @@ local Images = {
 	}
 }
 local BarTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
-local Timers = {}
-local factionColor = {
-	['Alliance'] = {0, 0, 1, 0.3},
-	['Horde'] = {1, 0, 0, 0.3},
-	['Neutral'] = {0, 0, 0, 0.5}
-}
 local NameplateList = {}
 local ElementList = {
 	'Auras',
@@ -38,82 +32,11 @@ local ElementList = {
 	'Power',
 	'Castbar',
 	'RareElite',
-	'ShowRaidTargetIndicator'
+	'RaidTargetIndicator',
+	'QuestIndicator',
+	'PvPIndicator',
+	'ThreatIndicator'
 }
-
-local pvpIconWar = function(self, event, unit)
-	if (unit ~= self.unit) then
-		return
-	end
-	local settings = module.DB.elements
-	self.bg.solid:Hide()
-	self.bg.artwork.Neutral:Hide()
-	self.bg.artwork.Alliance:Hide()
-	self.bg.artwork.Horde:Hide()
-
-	if not settings.Background.enabled then
-		return
-	end
-
-	local factionGroup = UnitFactionGroup(unit) or 'Neutral'
-	if settings.Background.type == 'solid' then
-		self.bg.solid:Show()
-		if settings.Background.colorMode == 'faction' and factionGroup then
-			self.bg.solid:SetVertexColor(unpack(factionColor[factionGroup]))
-		elseif settings.Background.colorMode == 'reaction' then
-			local colors = SUIUF.colors.reaction[UnitReaction(unit, 'player')]
-			if colors then
-				if colors[1] == 0.9 and colors[2] == 0.7 then
-					self.bg.solid:SetVertexColor(.5, .5, .5, .5)
-				else
-					self.bg.solid:SetVertexColor(colors[1], colors[2], colors[3])
-				end
-			else
-				self.bg.solid:SetVertexColor(0, 0, 0)
-			end
-		else
-			self.bg.solid:SetVertexColor(0, 0, 0)
-		end
-		self.bg.solid:SetAlpha(settings.Background.alpha)
-	else
-		if (factionGroup) then
-			self.bg.artwork[factionGroup]:Show()
-			self.bg.artwork[factionGroup]:SetAlpha(settings.Background.alpha)
-		else
-			self.bg.artwork.Neutral:Show()
-			self.bg.artwork.Neutral:SetAlpha(settings.Background.alpha)
-		end
-	end
-end
-
-function module:Flash(self)
-	if (self.Castbar.casting or self.Castbar.channeling) and self.Castbar.notInterruptible == false and self:IsVisible() then
-		local _, g, b = self.Castbar:GetStatusBarColor()
-		if b ~= 0 and g ~= 0 then
-			self.Castbar:SetStatusBarColor(1, 0, 0)
-		elseif b == 0 and g == 0 then
-			self.Castbar:SetStatusBarColor(1, 1, 0)
-		else
-			self.Castbar:SetStatusBarColor(1, 1, 1)
-		end
-		module:ScheduleTimer('Flash', .1, _G[self:GetName()])
-	end
-end
-
-local PostCastStart = function(self, unit, name)
-	if self.notInterruptible == false and module.DB.elements.Castbar.FlashOnInterruptible and UnitIsEnemy('player', unit) then
-		_G[self.PName].Castbar:SetStatusBarColor(0, 0, 0)
-		module:ScheduleTimer('Flash', module.DB.elements.Castbar.InterruptSpeed, _G[self.PName])
-	else
-		_G[self.PName].Castbar:SetStatusBarColor(1, 0.7, 0)
-	end
-end
-
-local PostCastStop = function(self)
-	if module.DB.elements.Castbar.FlashOnInterruptible then
-		module:CancelTimer(Timers[self:GetName()])
-	end
-end
 
 local UpdateElementState = function(frame)
 	local elements = module.DB.elements
@@ -122,19 +45,10 @@ local UpdateElementState = function(frame)
 
 	-- Disable or enable elements that should not be enabled
 	for _, item in ipairs(ElementList) do
-		if elements[item].enabled then
+		if frame[item] and elements[item].enabled then
 			frame:EnableElement(item)
 		else
 			frame:DisableElement(item)
-		end
-	end
-
-	-- Do the non-classic things
-	if SUI.IsRetail then
-		if elements.QuestIndicator.enabled then
-			frame:EnableElement('QuestIndicator')
-		else
-			frame:DisableElement('QuestIndicator')
 		end
 	end
 
@@ -233,19 +147,19 @@ local NamePlateFactory = function(frame, unit)
 		frame.unitGUID = UnitGUID(unit)
 		frame.npcID = frame.unitGUID and select(6, strsplit('-', frame.unitGUID))
 
-		local elements = module.DB.elements
+		local elementsDB = module.DB.elements
 		local height = 0
-		if module.DB.ShowName or module.DB.ShowLevel then
-			height = height + 13
+		if elementsDB.Health.enabled then
+			height = height + elementsDB.Health.height
 		end
-		if elements.Health.enabled then
-			height = height + elements.Health.height
+		if elementsDB.Power.enabled then
+			height = height + elementsDB.Power.height
 		end
-		if elements.Power.enabled then
-			height = height + elements.Power.height
+		if elementsDB.Castbar.enabled then
+			height = height + elementsDB.Castbar.height
 		end
 
-		frame:SetSize(128, height)
+		frame:SetSize(module.DB.width, height)
 		frame:SetPoint('CENTER', 0, 0)
 
 		frame.bg = {}
@@ -284,90 +198,27 @@ local NamePlateFactory = function(frame, unit)
 			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
 			SUI:FormatFont(frame.Name, 10, 'Nameplate')
 			frame.Name:SetSize(frame:GetWidth(), 12)
-			frame.Name:SetJustifyH(elements.Name.SetJustifyH)
-			frame.Name:SetPoint('TOP', frame)
+			frame.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
+			frame.Name:SetPoint('BOTTOM', frame, 'TOP')
 			frame:Tag(frame.Name, nameString)
 		end
 
 		-- health bar
-		local health = CreateFrame('StatusBar', nil, frame)
-		if frame.Name then
-			health:SetPoint('TOP', frame.Name, 'BOTTOM', 0, -1)
-		else
-			health:SetPoint('TOP')
-		end
-		health:SetFrameStrata('HIGH')
-		health:SetSize(frame:GetWidth(), elements.Health.height)
-		health:SetStatusBarTexture(BarTexture)
-
-		health.frequentUpdates = true
-		health.colorTapping = elements.Health.colorTapping
-		health.colorReaction = elements.Health.colorReaction
-		health.colorClass = elements.Health.colorClass
-		health.colorSmooth = elements.Health.colorSmooth
-
-		frame.Health = health
-
-		-- Mana/Energy
-		local power = CreateFrame('StatusBar', nil, frame)
-		if elements.Health.enabled then
-			power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
-		else
-			power:SetPoint('BOTTOM', frame)
-		end
-		power:SetSize(frame:GetWidth(), elements.Power.height)
-		power:SetStatusBarTexture(BarTexture)
-		power:SetFrameStrata('HIGH')
-
-		frame.Power = power
-		frame.Power.colorPower = true
-		frame.Power.frequentUpdates = true
-
-		-- Castbar
-		local cast = CreateFrame('StatusBar', nil, frame)
-		if elements.Power.enabled then
-			cast:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
-		elseif elements.Health.enabled then
-			cast:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
-		else
-			cast:SetPoint('BOTTOM', frame)
-		end
-
-		cast:SetSize(frame:GetWidth(), elements.Castbar.height)
-		cast:SetStatusBarTexture(BarTexture)
-		cast:SetStatusBarColor(1, 0.7, 0)
-		cast:SetFrameStrata('HIGH')
-		if elements.Castbar.text then
-			cast.Text = cast:CreateFontString()
-			SUI:FormatFont(cast.Text, 7, 'Nameplate')
-			cast.Text:SetJustifyH('CENTER')
-			cast.Text:SetJustifyV('MIDDLE')
-			cast.Text:SetAllPoints(cast)
-		end
-
-		-- Add latency display
-		cast.SafeZone = cast:CreateTexture(nil, 'OVERLAY')
-
-		--Interupt Flash
-		cast.PostCastStart = PostCastStart
-		cast.PostCastInterruptible = PostCastStart
-		cast.PostCastStop = PostCastStop
-		cast.PostCastInterrupted = PostCastStop
-		cast.PostCastNotInterruptible = PostCastStop
-		cast.PName = frame:GetName()
-
-		frame.Castbar = cast
-		frame.Castbar:SetParent(frame)
+		UF.Elements:Build(frame, 'Castbar', elementsDB.Castbar)
+		UF.Elements:Build(frame, 'Health', elementsDB.Health)
+		UF.Elements:Build(frame, 'Power', elementsDB.Power)
+		UF.Elements:Build(frame, 'PvPIndicator', elementsDB.PvPIndicator)
+		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
 
 		-- ClassIcon
 		frame.ClassIcon = frame:CreateTexture(nil, 'BORDER')
-		frame.ClassIcon:SetSize(elements.ClassIcon.size, elements.ClassIcon.size)
+		frame.ClassIcon:SetSize(elementsDB.ClassIcon.size, elementsDB.ClassIcon.size)
 		frame.ClassIcon:SetPoint(
-			elements.ClassIcon.position.anchor,
+			elementsDB.ClassIcon.position.anchor,
 			frame,
-			elements.ClassIcon.position.anchor,
-			elements.ClassIcon.position.x,
-			elements.ClassIcon.position.y
+			elementsDB.ClassIcon.position.anchor,
+			elementsDB.ClassIcon.position.x,
+			elementsDB.ClassIcon.position.y
 		)
 
 		-- Hots/Dots
@@ -421,29 +272,14 @@ local NamePlateFactory = function(frame, unit)
 		RareElite:SetAllPoints(frame)
 		frame.RareElite = RareElite
 
-		-- frame PvPIndicator
-		frame.PvPIndicator = frame:CreateTexture(nil, 'BORDER', frame)
-		frame.PvPIndicator:SetSize(1, 1)
-		frame.PvPIndicator:SetPoint('BOTTOMLEFT')
-		frame.PvPIndicator.Override = pvpIconWar
-
-		-- Threat Display
-		local ThreatIndicator = frame:CreateTexture(nil, 'BACKGROUND')
-		ThreatIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\HighlightBar')
-		ThreatIndicator:SetPoint('TOPLEFT', frame, 'TOPLEFT', -3, 3)
-		ThreatIndicator:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', 3, -3)
-		ThreatIndicator.feedbackUnit = 'PLAYER'
-		ThreatIndicator:Hide()
-		frame.ThreatIndicator = ThreatIndicator
-
 		-- WidgetXPBar
 		if SUI.IsRetail then
 			local WidgetXPBar = CreateFrame('StatusBar', frame:GetDebugName() .. 'WidgetXPBar', frame)
-			WidgetXPBar:SetFrameStrata(frame:GetFrameStrata())
+			-- WidgetXPBar:SetFrameStrata(frame:GetFrameStrata())
 			WidgetXPBar:SetFrameLevel(5)
 			WidgetXPBar:SetStatusBarTexture(BarTexture)
-			WidgetXPBar:SetSize(frame:GetWidth(), elements.XPBar.height)
-			WidgetXPBar:SetPoint('TOP', frame, 'BOTTOM', 0, elements.XPBar.Offset)
+			WidgetXPBar:SetSize(frame:GetWidth(), elementsDB.XPBar.height)
+			WidgetXPBar:SetPoint('TOP', frame, 'BOTTOM', 0, elementsDB.XPBar.Offset)
 			WidgetXPBar:SetStatusBarColor(0, .5, 1, .7)
 
 			WidgetXPBar.bg = WidgetXPBar:CreateTexture(nil, 'BACKGROUND', WidgetXPBar)
@@ -469,8 +305,8 @@ local NamePlateFactory = function(frame, unit)
 		-- Setup Player Icons
 		if module.DB.ShowPlayerPowerIcons then
 			local attachPoint = 'Castbar'
-			if not elements.Castbar.enabled then
-				if elements.Power.enabled then
+			if not elementsDB.Castbar.enabled then
+				if elementsDB.Power.enabled then
 					attachPoint = 'Power'
 				else
 					attachPoint = 'Health'
@@ -489,7 +325,8 @@ local NameplateCallback = function(self, event, unit)
 	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then
 		return
 	end
-	local elements = module.DB.elements
+
+	local elementDB = module.DB.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
 		local blizzPlate = self:GetParent().UnitFrame
 		if blizzPlate then
@@ -515,22 +352,12 @@ local NameplateCallback = function(self, event, unit)
 		self.TargetIndicator.bg1:Hide()
 		self.TargetIndicator.bg2:Hide()
 	end
-	if module.DB.elements.RareElite.enabled then
-		self:EnableElement('RareElite')
-	else
-		self:DisableElement('RareElite')
-	end
-	if module.DB.elements.XPBar.enabled and self.WidgetXPBar then
-		self:EnableElement('WidgetXPBar')
-	else
-		self:DisableElement('WidgetXPBar')
-	end
-	-- Do the non-classic things
-	if SUI.IsRetail then
-		if module.DB.elements.QuestIndicator.enabled then
-			self:EnableElement('QuestIndicator')
+
+	for _, item in ipairs(ElementList) do
+		if self[item] and elementDB[item].enabled then
+			self:EnableElement(item)
 		else
-			self:DisableElement('QuestIndicator')
+			self:DisableElement(item)
 		end
 	end
 
@@ -548,13 +375,13 @@ local NameplateCallback = function(self, event, unit)
 			module.DB.elements.ClassIcon.enabled
 	 then
 		self:EnableElement('ClassIcon')
-		self.ClassIcon:SetSize(elements.ClassIcon.size, elements.ClassIcon.size)
+		self.ClassIcon:SetSize(elementDB.ClassIcon.size, elementDB.ClassIcon.size)
 		self.ClassIcon:SetPoint(
-			elements.ClassIcon.position.anchor,
+			elementDB.ClassIcon.position.anchor,
 			self,
-			elements.ClassIcon.position.anchor,
-			elements.ClassIcon.position.x,
-			elements.ClassIcon.position.y
+			elementDB.ClassIcon.position.anchor,
+			elementDB.ClassIcon.position.x,
+			elementDB.ClassIcon.position.y
 		)
 	else
 		self:DisableElement('ClassIcon')
@@ -600,11 +427,46 @@ function module:OnInitialize()
 			onlyShowPlayer = true,
 			showStealableBuffs = false,
 			Scale = 1,
+			width = 128,
 			elements = {
 				['**'] = {
-					enabled = true,
+					enabled = false,
+					Scale = 1,
+					bgTexture = false,
+					points = false,
 					alpha = 1,
+					width = 20,
+					height = 20,
 					size = 20,
+					scale = 1,
+					FrameLevel = nil,
+					FrameStrata = nil,
+					bg = {
+						enabled = false,
+						color = false
+					},
+					text = {
+						['**'] = {
+							enabled = false,
+							text = '',
+							size = 10,
+							SetJustifyH = 'CENTER',
+							SetJustifyV = 'MIDDLE',
+							position = {
+								anchor = 'CENTER',
+								x = 0,
+								y = 0
+							}
+						},
+						['1'] = {
+							enabled = false,
+							position = {}
+						},
+						['2'] = {
+							enabled = false,
+							position = {}
+						}
+					},
 					position = {
 						anchor = 'CENTER',
 						x = 0,
@@ -612,32 +474,105 @@ function module:OnInitialize()
 					}
 				},
 				Auras = {},
-				RareElite = {},
 				Background = {
 					type = 'solid',
 					colorMode = 'reaction',
 					alpha = 0.35
 				},
+				DispelHighlight = {},
+				RareElite = {},
 				Name = {
 					SetJustifyH = 'CENTER'
 				},
 				QuestMobIndicator = {},
 				Health = {
+					enabled = true,
 					height = 5,
-					colorTapping = true,
+					offset = 0,
 					colorReaction = true,
 					colorSmooth = false,
-					colorClass = true
+					colorClass = true,
+					colorTapping = true,
+					colorDisconnected = true,
+					bg = {
+						enabled = true,
+						color = {1, 1, 1, .2}
+					},
+					text = {
+						['1'] = {
+							enabled = false,
+							text = '[health:current-formatted] [perhp]%',
+							position = {
+								anchor = 'CENTER',
+								x = 0,
+								y = 0
+							}
+						}
+					}
 				},
 				Power = {
-					ShowPlayerPowerIcons = true,
-					height = 3
+					enabled = true,
+					height = 3,
+					offset = 1,
+					bg = {
+						enabled = true,
+						color = {1, 1, 1, .2}
+					},
+					text = {
+						['1'] = {
+							enabled = false,
+							text = '[power:current-formatted] / [power:max-formatted]'
+						},
+						['2'] = {
+							enabled = false,
+							text = '[perpp]%'
+						}
+					}
 				},
+				PvPIndicator = {},
+				ThreatIndicator = {},
 				Castbar = {
+					enabled = true,
 					height = 5,
-					text = true,
+					offset = -6,
+					interruptable = true,
 					FlashOnInterruptible = true,
-					InterruptSpeed = .1
+					latency = false,
+					InterruptSpeed = .1,
+					bg = {
+						enabled = true,
+						color = {1, 1, 1, .2}
+					},
+					Icon = {
+						enabled = false,
+						size = 12,
+						position = {
+							anchor = 'LEFT',
+							x = 0,
+							y = 0
+						}
+					},
+					text = {
+						['1'] = {
+							enabled = true,
+							text = '[Spell name]',
+							position = {
+								anchor = 'CENTER',
+								x = 0,
+								y = 0
+							}
+						},
+						['2'] = {
+							enabled = true,
+							text = '[Spell timer]',
+							size = 8,
+							position = {
+								anchor = 'RIGHT',
+								x = 0,
+								y = 0
+							}
+						}
+					}
 				},
 				ClassIcon = {
 					enabled = false,
@@ -726,7 +661,18 @@ function module:BuildOptions()
 		type = 'group',
 		name = L['Nameplates'],
 		childGroups = 'tab',
+		get = function(info)
+			return module.DB[info[#info]]
+		end,
+		set = function(info, val)
+			module.DB[info[#info]] = val
+			module:UpdateNameplates()
+		end,
 		args = {
+			width = {
+				name = L['Frame width'],
+				type = 'input'
+			},
 			Scale = {
 				name = L['Scale'],
 				type = 'range',
@@ -734,13 +680,7 @@ function module:BuildOptions()
 				min = .01,
 				max = 3,
 				step = .01,
-				order = 1,
-				get = function(info)
-					return module.DB.Scale
-				end,
-				set = function(info, val)
-					module.DB.Scale = val
-				end
+				order = 1
 			},
 			General = {
 				name = L['General Apperance'],
@@ -842,6 +782,14 @@ function module:BuildOptions()
 								type = 'toggle',
 								width = 'full',
 								order = 40
+							},
+							offset = {
+								name = L['Offset'],
+								type = 'range',
+								order = 3,
+								min = -30,
+								max = 30,
+								step = .5
 							}
 						}
 					},

@@ -43,34 +43,19 @@ local elementList = {
 	'HappinessIndicator'
 }
 local NoBulkUpdate = {
-	'Range',
+	'Auras',
+	-- 'Castbar',
+	'ClassPower',
 	'HealthPrediction',
-	'Health',
-	'Power',
-	'Castbar'
+	-- 'Health',
+	-- 'Power',
+	'Range',
+	'SpartanArt'
 }
-local IndicatorList = {
-	'LeaderIndicator',
-	'RestingIndicator',
-	'GroupRoleIndicator',
-	'CombatIndicator',
-	'RaidTargetIndicator',
-	'ClassIcon',
-	'ReadyCheckIndicator',
-	'PvPIndicator',
-	'AssistantIndicator',
-	'RaidRoleIndicator',
-	'ResurrectIndicator',
-	'SummonIndicator',
-	'QuestMobIndicator',
-	'PhaseIndicator',
-	'ThreatIndicator',
-	'SUI_RaidGroup',
-	'PetHappiness'
-}
-local MigratedElements = {'PvPIndicator', 'ClassIcon', 'Portrait', 'GroupRoleIndicator', 'Range'}
+
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
-if SUI.IsClassic or SUI.IsBCC then
+-- if SUI.IsClassic or SUI.IsBCC then
+if SUI.IsClassic then
 	GroupFrames = {'raid', 'party'}
 end
 
@@ -81,121 +66,6 @@ if SUI.IsClassic then
 		[3] = 'targettarget',
 		[4] = 'player'
 	}
-end
-
-local function InverseAnchor(anchor)
-	if anchor == 'TOPLEFT' then
-		return 'BOTTOMLEFT'
-	elseif anchor == 'TOPRIGHT' then
-		return 'BOTTOMRIGHT'
-	elseif anchor == 'BOTTOMLEFT' then
-		return 'TOPLEFT'
-	elseif anchor == 'BOTTOMRIGHT' then
-		return 'TOPRIGHT'
-	elseif anchor == 'BOTTOM' then
-		return 'TOP'
-	elseif anchor == 'TOP' then
-		return 'BOTTOM'
-	elseif anchor == 'LEFT' then
-		return 'RIGHT'
-	elseif anchor == 'RIGHT' then
-		return 'LEFT'
-	end
-end
-
-local function customFilter(
-	element,
-	unit,
-	button,
-	name,
-	texture,
-	count,
-	debuffType,
-	duration,
-	expiration,
-	caster,
-	isStealable,
-	nameplateShowSelf,
-	spellID,
-	canApply,
-	isBossDebuff,
-	casterIsPlayer,
-	nameplateShowAll,
-	timeMod,
-	effect1,
-	effect2,
-	effect3)
-	-- check for onlyShowPlayer rules
-	if (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name) then
-		return true
-	end
-	-- Check boss rules
-	if isBossDebuff and element.ShowBossDebuffs then
-		return true
-	end
-	if isStealable and element.ShowStealable then
-		return true
-	end
-
-	-- We did not find a display rule, so hide it
-	return false
-end
-
-local function UpdateAura(self, elapsed)
-	if (self.expiration) then
-		self.expiration = math.max(self.expiration - elapsed, 0)
-
-		if (self.expiration > 0 and self.expiration < 60) then
-			self.Duration:SetFormattedText('%d', self.expiration)
-		else
-			self.Duration:SetText()
-		end
-	end
-end
-
-local function PostCreateAura(element, button)
-	if button.SetBackdrop then
-		button:SetBackdrop(nil)
-		button:SetBackdropColor(0, 0, 0)
-	end
-	button.cd:SetReverse(true)
-	button.cd:SetHideCountdownNumbers(true)
-	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	button.icon:SetDrawLayer('ARTWORK')
-	-- button:SetScript('OnEnter', OnAuraEnter)
-
-	-- We create a parent for aura strings so that they appear over the cooldown widget
-	local StringParent = CreateFrame('Frame', nil, button)
-	StringParent:SetFrameLevel(20)
-
-	button.count:SetParent(StringParent)
-	button.count:ClearAllPoints()
-	button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
-	button.count:SetFont(SUI:GetFontFace('UnitFrames'), select(2, button.count:GetFont()) - 3)
-
-	local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
-	Duration:SetFont(SUI:GetFontFace('UnitFrames'), 11)
-	Duration:SetPoint('TOPLEFT', button, 0, -1)
-	button.Duration = Duration
-
-	button:HookScript('OnUpdate', UpdateAura)
-end
-
-local function PostUpdateAura(element, unit, button, index)
-	local _, _, _, _, duration, expiration, owner, canStealOrPurge = UnitAura(unit, index, button.filter)
-	if (duration and duration > 0) then
-		button.expiration = expiration - GetTime()
-	else
-		button.expiration = math.huge
-	end
-
-	if button.SetBackdrop then
-		if (unit == 'target' and canStealOrPurge) then
-			button:SetBackdropColor(0, 1 / 2, 1 / 2)
-		elseif (owner ~= 'player') then
-			button:SetBackdropColor(0, 0, 0)
-		end
-	end
 end
 
 local function CalculateHeight(frameName)
@@ -211,19 +81,6 @@ local function CalculateHeight(frameName)
 		FrameHeight = FrameHeight + elements.Power.height
 	end
 	return FrameHeight
-end
-
-local function GetBasicUnitName(unit)
-	if string.match(unit, 'raid') then
-		return 'raid'
-	elseif string.match(unit, 'party') then
-		return 'party'
-	elseif string.match(unit, 'boss') then
-		return 'boss'
-	elseif string.match(unit, 'arena') then
-		return 'arena'
-	end
-	return unit
 end
 
 local function CreateUnitFrame(self, unit)
@@ -242,7 +99,6 @@ local function CreateUnitFrame(self, unit)
 	self.unitOnCreate = unit
 
 	local function UpdateAll()
-		local auras = UF.CurrentSettings[unit].auras
 		local elements = UF.CurrentSettings[unit].elements
 		-- Check that its a frame
 		-- Loop all elements and update their status
@@ -270,93 +126,28 @@ local function CreateUnitFrame(self, unit)
 			end
 		end
 
-		--Update the screen
-		if elements.Power.PowerPrediction then
-			self:EnableElement('PowerPrediction')
-		else
-			self:DisableElement('PowerPrediction')
-		end
-
-		--Update Health items
-		self.Health.colorDisconnected = elements.Health.colorDisconnected
-		self.Health.colorTapping = elements.Health.colorTapping
-		self.Health.colorReaction = elements.Health.colorReaction
-		self.Health.colorSmooth = elements.Health.colorSmooth
-		self.Health.colorClass = elements.Health.colorClass
-
-		do -- Castbar updates
-			if SUI.IsRetail then
-				-- latency
-				if elements.Castbar.latency then
-					self.Castbar.Shield:Show()
-				else
-					self.Castbar.Shield:Hide()
-				end
-
-				-- spell name
-				if elements.Castbar.text['1'].enabled then
-					self.Castbar.Text:Show()
-				else
-					self.Castbar.Text:Hide()
-				end
-				-- spell timer
-				if elements.Castbar.text['2'].enabled then
-					self.Castbar.Time:Show()
-				else
-					self.Castbar.Time:Hide()
-				end
-			end
-
-			-- Spell icon
-			if elements.Castbar.Icon.enabled then
-				self.Castbar.Icon:Show()
-			else
-				self.Castbar.Icon:Hide()
-			end
-			self.Castbar.Icon:ClearAllPoints()
-			self.Castbar.Icon:SetPoint(
-				elements.Castbar.Icon.position.anchor,
-				self.Castbar,
-				elements.Castbar.Icon.position.anchor,
-				elements.Castbar.Icon.position.x,
-				elements.Castbar.Icon.position.y
-			)
-		end
-
-		-- Update Buffs
-		if (auras.Buffs.enabled) then
-			self.Buffs:Show()
-		else
-			self.Buffs:Hide()
-		end
-		if (auras.Debuffs.enabled) then
-			self.Debuffs:Show()
-		else
-			self.Debuffs:Hide()
-		end
-
 		-- Tell everything to update to get current data
 		self:UpdateSize()
-		self:UpdateAuras()
 		self:UpdateAllElements('OnUpdate')
 		self:UpdateTags()
 	end
 
-	local function ElementUpdate(self, elementName)
-		if not self[elementName] then
+	local function ElementUpdate(frame, elementName)
+		if not frame[elementName] then
 			return
 		end
 		local data = UF.CurrentSettings[unit].elements[elementName]
-		local element = self[elementName]
+		local element = frame[elementName]
 		element.DB = data
 
-		if elementName == 'SpartanArt' then
-			self.SpartanArt:ForceUpdate('OnUpdate')
-			return
+		if data.enabled then
+			frame:EnableElement(elementName)
+		else
+			frame:DisableElement(elementName)
 		end
 
 		-- Call the elements update function
-		UF.Elements:Update(self, elementName)
+		UF.Elements:Update(frame, elementName)
 
 		if SUI:IsInTable(NoBulkUpdate, elementName) then
 			return
@@ -373,32 +164,51 @@ local function CreateUnitFrame(self, unit)
 
 		-- Positioning
 		element:ClearAllPoints()
-		if data.points ~= false and data.points == true then
-			element:SetAllPoints(self)
+		if data.points ~= false then
+			if type(data.points) == 'string' then
+				element:SetAllPoints(frame[data.points])
+			else
+				element:SetAllPoints(frame)
+			end
 		elseif data.points ~= false and data.points ~= true then
 			for _, key in pairs(data.points) do
-				element:SetPoint(key.anchor, self, key.anchor, key.x, key.y)
+				if key.relativeTo == 'Frame' then
+					element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
+				else
+					element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
+				end
 			end
 		elseif data.position.anchor then
-			element:SetPoint(data.position.anchor, self, data.position.anchor, data.position.x, data.position.y)
+			if data.position.relativeTo == 'Frame' then
+				element:SetPoint(data.position.anchor, frame, data.position.anchor, data.position.x, data.position.y)
+			else
+				element:SetPoint(
+					data.position.anchor,
+					frame[data.position.relativeTo],
+					data.position.relativePoint or data.position.anchor,
+					data.position.x,
+					data.position.y
+				)
+			end
 		end
 
 		--Size it if we have a size change function for the element
 		if element.SizeChange then
 			element:SizeChange()
-		elseif element.Sizeable then
+		elseif element.SingleSize then
 			element:SetSize(data.size, data.size)
+		else
+			element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())
 		end
 
 		-- Call the elements update function
-		if self[elementName] and self[elementName].ForceUpdate then
-			self[elementName].ForceUpdate(element)
+		if frame[elementName] and frame[elementName].ForceUpdate then
+			frame[elementName].ForceUpdate(element)
 		end
 	end
 
 	-- Build a function that updates the size of the frame and sizes of elements
 	local function UpdateSize()
-		local elements = UF.CurrentSettings[unit].elements
 		-- Find the Height of the frame
 		local FrameHeight = CalculateHeight(unit)
 		self.FrameHeight = FrameHeight
@@ -413,243 +223,36 @@ local function CreateUnitFrame(self, unit)
 			self:SetSize(UF.CurrentSettings[unit].width, FrameHeight)
 		end
 
-		for _, elementName in ipairs(MigratedElements) do
+		for elementName, _ in ipairs(UF.Elements.List) do
 			UF.Elements:UpdateSize(self, elementName)
 		end
-
-		-- Status bars
-		if self.Castbar then
-			self.Castbar:SetHeight(elements.Castbar.height)
-			self.Castbar.Icon:SetSize(elements.Castbar.Icon.size, elements.Castbar.Icon.size)
-		end
-
-		if self.Health then
-			local healthOffset = elements.Health.offset
-			if elements.Castbar.enabled then
-				healthOffset = (elements.Castbar.height * -1)
-			end
-
-			self.Health:ClearAllPoints()
-			self.Health:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, healthOffset)
-			self.Health:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, healthOffset)
-			self.Health:SetHeight(elements.Health.height)
-		end
-
-		if self.Power then
-			local powerOffset = elements.Power.offset
-			if elements.Castbar.enabled then
-				powerOffset = powerOffset + elements.Castbar.height
-			end
-			if elements.Health.enabled then
-				powerOffset = powerOffset + elements.Health.height
-			end
-			if elements.Castbar.enabled or elements.Health.enabled then
-				powerOffset = powerOffset * -1
-			end
-
-			self.Power:ClearAllPoints()
-			self.Power:SetPoint('TOPLEFT', self, 'TOPLEFT', 0, powerOffset)
-			self.Power:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 0, powerOffset)
-			self.Power:SetHeight(elements.Power.height)
-		end
-
-		if self.AdditionalPower then
-			self.AdditionalPower:SetHeight(elements.AdditionalPower.height)
-		end
-
-		-- Inidcators
-		if self.Name then
-			self.Name:SetSize(self:GetWidth(), 12)
-		end
-
-		for _, key in ipairs(IndicatorList) do
-			if self[key] then
-				self[key]:SetSize(elements[key].size, elements[key].size)
-			end
-		end
-	end
-
-	local function UpdateAuras(self)
-		local db = UF.CurrentSettings[unit].auras
-
-		local Buffs = self.Buffs
-		Buffs.size = db.Buffs.size
-		Buffs.initialAnchor = db.Buffs.initialAnchor
-		Buffs['growth-x'] = db.Buffs.growthx
-		Buffs['growth-y'] = db.Buffs.growthy
-		Buffs.spacing = db.Buffs.spacing
-		Buffs.showType = db.Buffs.showType
-		Buffs.num = db.Buffs.number
-		Buffs.onlyShowPlayer = db.Buffs.onlyShowPlayer
-		Buffs.PostCreateIcon = PostCreateAura
-		Buffs.PostUpdateIcon = PostUpdateAura
-		Buffs:SetPoint(
-			InverseAnchor(db.Buffs.position.anchor),
-			self,
-			db.Buffs.position.anchor,
-			db.Buffs.position.x,
-			db.Buffs.position.y
-		)
-		local w = (db.Buffs.number / db.Buffs.rows)
-		if w < 1.5 then
-			w = 1.5
-		end
-		Buffs:SetSize((db.Buffs.size + db.Buffs.spacing) * w, (db.Buffs.spacing + db.Buffs.size) * db.Buffs.rows)
-
-		--Debuff Icons
-		local Debuffs = self.Debuffs
-		Debuffs.size = db.Debuffs.size
-		Debuffs.initialAnchor = db.Debuffs.initialAnchor
-		Debuffs['growth-x'] = db.Debuffs.growthx
-		Debuffs['growth-y'] = db.Debuffs.growthy
-		Debuffs.spacing = db.Debuffs.spacing
-		Debuffs.showType = db.Debuffs.showType
-		Debuffs.num = db.Debuffs.number
-		Debuffs.onlyShowPlayer = db.Debuffs.onlyShowPlayer
-		Debuffs.PostCreateIcon = PostCreateAura
-		Debuffs.PostUpdateIcon = PostUpdateAura
-		Debuffs:SetPoint(
-			InverseAnchor(db.Debuffs.position.anchor),
-			self,
-			db.Debuffs.position.anchor,
-			db.Debuffs.position.x,
-			db.Debuffs.position.y
-		)
-		w = (db.Debuffs.number / db.Debuffs.rows)
-		if w < 1.5 then
-			w = 1.5
-		end
-		Debuffs:SetSize((db.Debuffs.size + db.Debuffs.spacing) * w, (db.Debuffs.spacing + db.Debuffs.size) * db.Debuffs.rows)
-		self:UpdateAllElements('ForceUpdate')
-		-- self.Buffs:PostUpdate(unit, 'Buffs')
-		-- self.Debuffs:PostUpdate(unit, 'Buffs')
 	end
 
 	self.UpdateAll = UpdateAll
 	self.UpdateSize = UpdateSize
 	self.ElementUpdate = ElementUpdate
-	self.UpdateAuras = UpdateAuras
 
 	self.UpdateSize()
 
 	local elementsDB = UF.CurrentSettings[unit].elements
-
-	do -- General setup
-		UF.Elements:Build(self, 'SpartanArt')
-
-		-- 	local Threat = self:CreateTexture(nil, 'OVERLAY')
-		-- 	Threat:SetSize(25, 25)
-		-- 	Threat:SetPoint('CENTER', self, 'RIGHT')
-		-- 	self.ThreatIndicator = Threat
-	end
-	do -- setup auras
-		-- Setup icons if needed
-		local iconFilter = function(icons, unit, icon, name, rank, texture, count, dtype, duration, timeLeft, caster)
-			if caster == 'player' and (duration == 0 or duration > 60) then --Do not show DOTS & HOTS
-				return true
-			elseif caster ~= 'player' then
-				return true
-			end
-		end
-
-		--Buff Icons
-		local Buffs = CreateFrame('Frame', unit .. 'Buffs', self)
-		-- Buffs.PostUpdate = PostUpdateAura
-		-- Buffs.CustomFilter = customFilter
-		self.Buffs = Buffs
-
-		--Debuff Icons
-		local Debuffs = CreateFrame('Frame', unit .. 'Debuffs', self)
-		-- Debuffs.PostUpdate = PostUpdateAura
-		-- Debuffs.CustomFilter = customFilter
-		self.Debuffs = Debuffs
-	end
-	do -- setup status bars
-		UF.Elements:Build(self, 'Castbar', elementsDB.Castbar)
-		UF.Elements:Build(self, 'Health', elementsDB.Health)
-		UF.Elements:Build(self, 'Power', elementsDB.Power)
-		do -- power bar
-			-- Additional Mana
-			local AdditionalPower = CreateFrame('StatusBar', nil, self)
-			AdditionalPower:SetHeight(elementsDB.AdditionalPower.height)
-			AdditionalPower:SetPoint('TOPLEFT', self.Power, 'BOTTOMLEFT', 0, (elementsDB.AdditionalPower.offset * -1))
-			AdditionalPower:SetPoint('TOPRIGHT', self.Power, 'BOTTOMRIGHT', 0, (elementsDB.AdditionalPower.offset * -1))
-			AdditionalPower.colorPower = true
-			AdditionalPower:SetStatusBarTexture(Smoothv2)
-			AdditionalPower:Hide()
-
-			AdditionalPower.bg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
-			AdditionalPower.bg:SetAllPoints(AdditionalPower)
-			AdditionalPower.bg:SetColorTexture(1, 1, 1, .2)
-
-			self.AdditionalPower = AdditionalPower
-
-			-- if unit == 'player' then
-			-- 	-- Position and size
-			-- 	local mainBar = CreateFrame('StatusBar', nil, self.Power)
-			-- 	mainBar:SetReverseFill(true)
-			-- 	mainBar:SetStatusBarTexture(Smoothv2)
-			-- 	mainBar:SetPoint('RIGHT', self.Power:GetStatusBarTexture(), 'RIGHT')
-			-- 	mainBar:SetPoint('TOP')
-			-- 	mainBar:SetPoint('BOTTOM')
-			-- 	mainBar:SetWidth(200)
-			-- 	mainBar:Hide()
-
-			-- 	local altBar = CreateFrame('StatusBar', nil, self.AdditionalPower)
-			-- 	altBar:SetReverseFill(true)
-			-- 	altBar:SetStatusBarTexture(Smoothv2)
-			-- 	altBar:SetPoint('RIGHT', self.AdditionalPower:GetStatusBarTexture(), 'RIGHT')
-			-- 	altBar:SetPoint('TOP')
-			-- 	altBar:SetPoint('BOTTOM')
-			-- 	altBar:SetWidth(200)
-			-- 	altBar:Hide()
-
-			-- 	self.PowerPrediction = {
-			-- 		mainBar = mainBar,
-			-- 		altBar = altBar
-			-- 	}
-			-- end
+	self.elementDB = elementsDB
+	for elementName, Functions in pairs(UF.Elements.List) do
+		if not elementsDB[elementName] then
+			print(type(elementName))
+			print('MISSING: ' .. elementName)
+		else
+			UF.Elements:Build(self, elementName, elementsDB[elementName])
+			ElementUpdate(self, elementName)
 		end
 	end
+
 	do -- setup indicators
-		self.Name = self:CreateFontString()
-		SUI:FormatFont(self.Name, elementsDB.Name.size, 'UnitFrames')
-		self.Name:SetSize(self:GetWidth(), 12)
-		self.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
-		self.Name:SetJustifyV(elementsDB.Name.SetJustifyV)
-		ElementUpdate(self, 'Name')
-		self:Tag(self.Name, elementsDB.Name.text)
-
-		if (_G['GetPetHappiness']) and 'HUNTER' == select(2, UnitClass('player')) and unit == 'pet' then
-			UF.Elements:Build(self, 'HappinessIndicator')
-			ElementUpdate(self, 'HappinessIndicator')
-		end
-
 		self.RareElite = self.SpartanArt:CreateTexture(nil, 'BORDER')
 		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
 		ElementUpdate(self, 'RareElite')
 
-		self.LeaderIndicator = self:CreateTexture(nil, 'BORDER')
-		self.LeaderIndicator.Sizeable = true
-		self.LeaderIndicator:Hide()
-		ElementUpdate(self, 'LeaderIndicator')
-		self.AssistantIndicator = self:CreateTexture(nil, 'BORDER')
-		self.AssistantIndicator.Sizeable = true
-		ElementUpdate(self, 'AssistantIndicator')
-
-		self.SUI_RaidGroup = self:CreateTexture(nil, 'BORDER')
-		self.SUI_RaidGroup:SetSize(elementsDB.SUI_RaidGroup.size, elementsDB.SUI_RaidGroup.size)
-
-		self.SUI_RaidGroup.Text = self:CreateFontString(nil, 'BORDER')
-		SUI:FormatFont(self.SUI_RaidGroup.Text, elementsDB.SUI_RaidGroup.size, 'UnitFrames')
-		self.SUI_RaidGroup.Text:SetJustifyH(elementsDB.SUI_RaidGroup.SetJustifyH)
-		self.SUI_RaidGroup.Text:SetJustifyV(elementsDB.SUI_RaidGroup.SetJustifyV)
-		self.SUI_RaidGroup.Text:SetPoint('CENTER', self.SUI_RaidGroup, 'CENTER', 0, 0)
-		ElementUpdate(self, 'SUI_RaidGroup')
-		self:Tag(self.SUI_RaidGroup.Text, '[group]')
-
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
-		self.ReadyCheckIndicator.Sizeable = true
+		self.ReadyCheckIndicator.SingleSize = true
 		ElementUpdate(self, 'ReadyCheckIndicator')
 
 		self.QuestMobIndicator = self:CreateTexture(nil, 'OVERLAY')
@@ -657,43 +260,16 @@ local function CreateUnitFrame(self, unit)
 
 		-- Position and size
 		self.PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
-		self.PhaseIndicator.Sizeable = true
+		self.PhaseIndicator.SingleSize = true
 		self.PhaseIndicator:Hide()
 		ElementUpdate(self, 'PhaseIndicator')
-
-		self.RestingIndicator = self:CreateTexture(nil, 'ARTWORK')
-		self.RestingIndicator.Sizeable = true
-		ElementUpdate(self, 'RestingIndicator')
-		self.RestingIndicator:SetTexCoord(0.15, 0.86, 0.15, 0.86)
-
-		self.CombatIndicator = self:CreateTexture(nil, 'ARTWORK')
-		self.CombatIndicator.Sizeable = true
-		function self.CombatIndicator:PostUpdate(inCombat)
-			if self.DB and self.DB.enabled and inCombat then
-				self:Show()
-			else
-				self:Hide()
-			end
-		end
-		ElementUpdate(self, 'CombatIndicator')
-
-		self.RaidTargetIndicator = self:CreateTexture(nil, 'ARTWORK')
-		self.RaidTargetIndicator.Sizeable = true
-		ElementUpdate(self, 'RaidTargetIndicator')
 
 		self.StatusText = self:CreateFontString(nil, 'OVERLAY')
 		SUI:FormatFont(self.StatusText, elementsDB.StatusText.size, 'UnitFrames')
 		ElementUpdate(self, 'StatusText')
 		self:Tag(self.StatusText, '[afkdnd]')
-		-- end
 		do -- Special Icons/Bars
 			if unit == 'player' then
-				--Runes
-				UF.Elements:Build(self, 'Runes')
-
-				-- Combo points
-				UF.Elements:Build(self, 'ClassPower')
-
 				--Totem Bar
 				if SUI.IsRetail then
 					for index = 1, 4 do
@@ -712,11 +288,6 @@ local function CreateUnitFrame(self, unit)
 				end
 			end
 		end
-	end
-
-	for _, element in ipairs(MigratedElements) do
-		UF.Elements:Build(self, element, elementsDB[element])
-		ElementUpdate(self, element)
 	end
 
 	-- do -- setup buffs and debuffs
@@ -865,38 +436,31 @@ function UF:SpawnFrames()
 	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
 	UF.frames.raid = raid
 
-	local function GroupFrameUpdateSize(self)
-		for _, f in ipairs(self) do
+	local function GroupFrameUpdateSize(groupFrame)
+		for _, f in ipairs(groupFrame) do
 			if f.UpdateSize then
 				f:UpdateSize()
 			end
 		end
 	end
-	local function GroupFrameElementUpdate(self, elementName)
-		for _, f in ipairs(self) do
+	local function GroupFrameElementUpdate(groupFrame, elementName)
+		for _, f in ipairs(groupFrame) do
 			if f.ElementUpdate then
 				f:ElementUpdate(elementName)
 			end
 		end
 	end
-	local function GroupFrameUpdateAuras(self)
-		for _, f in ipairs(self) do
-			if f.UpdateAuras then
-				f:UpdateAuras()
-			end
-		end
-	end
-	local function GroupFrameEnable(self)
-		self:UpdateAll()
-		for _, f in ipairs(self) do
+	local function GroupFrameEnable(groupFrame)
+		groupFrame:UpdateAll()
+		for _, f in ipairs(groupFrame) do
 			if f.Enable then
 				f:Enable()
 			end
 		end
 	end
-	local function GroupFrameDisable(self)
-		self:UpdateAll()
-		for _, f in ipairs(self) do
+	local function GroupFrameDisable(groupFrame)
+		groupFrame:UpdateAll()
+		for _, f in ipairs(groupFrame) do
 			if f.Disable then
 				f:Disable()
 			end
@@ -905,14 +469,14 @@ function UF:SpawnFrames()
 
 	for _, group in ipairs(GroupFrames) do
 		if UF.frames[group] then
-			local function GroupFrameUpdateAll(self)
+			local function GroupFrameUpdateAll(groupFrame)
 				if VisibilityCheck(group) and UF.CurrentSettings[group].enabled then
 					if UF.frames[group].visibility then
 						RegisterStateDriver(UF.frames[group], UF.frames[group].visibility)
 					end
 					UF.frames[group]:Show()
 
-					for _, f in ipairs(self) do
+					for _, f in ipairs(groupFrame) do
 						if f.UpdateAll then
 							f:UpdateAll()
 						end
@@ -926,7 +490,6 @@ function UF:SpawnFrames()
 			UF.frames[group].UpdateAll = GroupFrameUpdateAll
 			UF.frames[group].ElementUpdate = GroupFrameElementUpdate
 			UF.frames[group].UpdateSize = GroupFrameUpdateSize
-			UF.frames[group].UpdateAuras = GroupFrameUpdateAuras
 			UF.frames[group].Enable = GroupFrameEnable
 			UF.frames[group].Disable = GroupFrameDisable
 		end

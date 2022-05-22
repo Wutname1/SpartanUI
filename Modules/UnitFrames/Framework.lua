@@ -34,134 +34,6 @@ UF.frames = {
 	containers = {}
 }
 UF.Artwork = {}
-UF.TagList = {
-	--Health
-	['curhp'] = {category = 'Health', description = 'Displays the current HP without decimals'},
-	['deficit:name'] = {category = 'Health', description = 'Displays the health as a deficit and the name at full health'},
-	['perhp'] = {
-		category = 'Health',
-		description = 'Displays percentage HP without decimals or the % sign. You can display the percent sign by adjusting the tag to [perhp<$%].'
-	},
-	['maxhp'] = {category = 'Health', description = 'Displays max HP without decimals'},
-	['missinghp'] = {
-		category = 'Health',
-		description = 'Displays the missing health of the unit in whole numbers, when not at full health'
-	},
-	['health:current-short'] = {
-		category = 'Health',
-		description = 'Displays current HP rounded to the nearest Thousand or Million'
-	},
-	['health:current-dynamic'] = {
-		category = 'Health',
-		description = 'Displays current HP Rounded to the nearest Million or with commas below 1 million'
-	},
-	['health:current-formatted'] = {category = 'Health', description = 'Displays current HP with commas'},
-	['health:missing-formatted'] = {category = 'Health', description = 'Displays missing HP with commas'},
-	['health:max-formatted'] = {category = 'Health', description = 'Displays max HP with commas'},
-	--Power
-	['perpp'] = {category = 'Power', description = "Displays the unit's percentage power without decimals "},
-	['curpp'] = {category = 'Power', description = "Displays the unit's current power without decimals"},
-	['maxpp'] = {
-		category = 'Power',
-		description = 'Displays the max amount of power of the unit in whole numbers without decimals'
-	},
-	['missingpp'] = {
-		category = 'Power',
-		description = 'Displays the missing power of the unit in whole numbers when not at full power'
-	},
-	['power:current-formatted'] = {category = 'Power', description = 'Displays current power with commas'},
-	['power:missing-formatted'] = {category = 'Power', description = 'Displays missing power with commas'},
-	['power:max-formatted'] = {category = 'Power', description = 'Displays max power with commas'},
-	--Mana
-	['curmana'] = {category = 'Mana', description = 'Displays the current mana without decimals'},
-	['maxmana'] = {category = 'Mana', description = 'Displays the max amount of mana the unit can have'},
-	--Status
-	['status'] = {category = 'Status', description = 'Displays zzz, dead, ghost, offline'},
-	['afkdnd'] = {category = 'Status', description = 'Displays AFK or DND if the unit is afk or in Do not Disturb'},
-	['dead'] = {category = 'Status', description = 'Displays <DEAD> if the unit is dead'},
-	['offline'] = {category = 'Status', description = "Displays 'OFFLINE' if the unit is disconnected"},
-	['resting'] = {category = 'Status', description = "Displays 'zzz' if the unit is resting"},
-	--Classification
-	['classification'] = {
-		category = 'Classification',
-		description = "Displays the unit's classification (e.g. 'ELITE' and 'RARE')"
-	},
-	['plus'] = {
-		category = 'Classification',
-		description = "Displays the character '+' if the unit is an elite or rare-elite"
-	},
-	['rare'] = {category = 'Classification', description = "Displays 'Rare' when the unit is a rare or rareelite"},
-	['shortclassification'] = {
-		category = 'Classification',
-		description = "Displays the unit's classification in short form (e.g. '+' for ELITE and 'R' for RARE)"
-	},
-	--Classpower
-	['cpoints'] = {
-		category = 'Classpower',
-		description = 'Displays amount of combo points the player has (only for player, shows nothing on 0)'
-	},
-	--Colors
-	['difficulty'] = {
-		category = 'Colors',
-		description = 'Changes color of the next tag based on how difficult the unit is compared to the players level'
-	},
-	['powercolor'] = {category = 'Colors', description = 'Colors the power text based upon its type'},
-	['SUI_ColorClass'] = {category = 'Colors', description = 'Changes the text color based on the class'},
-	--PvP
-	['faction'] = {category = 'PvP', description = "Displays 'Alliance' or 'Horde'"},
-	['pvp'] = {category = 'PvP', description = "Displays 'PvP' if the unit is pvp flagged"},
-	--Party and Raid
-	['group'] = {category = 'Party and Raid', description = "Displays the group number the unit is in ('1' - '8')"},
-	['leader'] = {category = 'Party and Raid', description = "Displays 'L' if the unit is the group/raid leader"},
-	['leaderlong'] = {category = 'Party and Raid', description = "Displays 'Leader' if the unit is the group/raid leader"},
-	--Level
-	['level'] = {category = 'Level', description = 'Displays the level of the unit'},
-	['smartlevel'] = {category = 'Level', description = "Only display the unit's level if it is not the same as yours"},
-	--Names
-	['name'] = {category = 'Names', description = 'Displays the full name of the unit without any letter limitation'}
-}
-if SUI.IsRetail then
-	UF.TagList['affix'] = {category = 'Miscellaneous', description = 'Displays low level critter mobs'}
-	UF.TagList['specialization'] = {
-		category = 'Miscellaneous',
-		description = 'Displays your current specialization as text'
-	}
-	UF.TagList['arcanecharges'] = {category = 'Classpower', description = 'Displays the arcane charges (Mage)'}
-	UF.TagList['arenaspec'] = {category = 'PvP', description = 'Displays the area spec of an unit'}
-	UF.TagList['chi'] = {category = 'Classpower', description = 'Displays the chi points (Monk)'}
-	UF.TagList['faction'] = {category = 'PvP', description = "Displays 'Alliance' or 'Horde'"}
-	UF.TagList['holypower'] = {category = 'Classpower', description = 'Displays the holy power (Paladin)'}
-	UF.TagList['runes'] = {category = 'Classpower', description = 'Displays the runes (Death Knight)'}
-	UF.TagList['soulshards'] = {category = 'Classpower', description = 'Displays the soulshards (Warlock)'}
-	UF.TagList['threat'] = {
-		category = 'Threat',
-		description = 'Displays the current threat situation (Aggro is secure tanking, -- is losing threat and ++ is gaining threat)'
-	}
-	UF.TagList['title'] = {category = 'Names', description = 'Displays player title'}
-	UF.TagList['threatcolor'] = {
-		category = 'Colors',
-		description = "Changes the text color, depending on the unit's threat situation"
-	}
-end
-
-----------------------------------------------------------------------------------------------------
--- 1.  Styles are initalized and calls AddStyleSettings to pass the styles config into the unitframes module
--- 2.  A table is created with all of the settings from all the styles
--- 3.  UnitFrames OnEnable is called
--- 4.  Frames are spawned
---
--- DB is used for Player Customization. It uses the format:
--- DB.STYLE.FRAME
---
--- Styles DB Format
--- Style = {
---		id = 'MYSTYLE', -- One word, used in backend.
--- 		name = 'My Style', -- Human Readable
---		artskin = 'Artwork Skin Name',
---		FrameOptions = { Settings defined here override anything set in the default FrameOptions }
---	}
---
-----------------------------------------------------------------------------------------------------
 
 local Elements = {}
 
@@ -169,7 +41,7 @@ local Elements = {}
 ---@field Build function
 ---@field Update? function
 ---@field OptionsTable? function
----@field UpdateSize? function
+---@field UpdateSize? function+
 
 ---@class SUIUFElementList
 ---@field T table<string, SUIUFElement>
@@ -248,7 +120,6 @@ function UF:IsFriendlyFrame(frameName)
 		'pet',
 		'party',
 		'partypet',
-		'raid',
 		'target',
 		'targettarget'
 	}
@@ -352,107 +223,10 @@ function UF:OnInitialize()
 				},
 				position = {
 					point = 'BOTTOM',
+					relativeTo = 'Frame',
 					relativePoint = 'BOTTOM',
 					xOfs = 0,
 					yOfs = 0
-				},
-				artwork = {
-					full = {
-						enabled = false,
-						x = 0,
-						y = 0,
-						alpha = 1,
-						graphic = ''
-					},
-					top = {
-						enabled = false,
-						x = 0,
-						y = 0,
-						alpha = 1,
-						graphic = ''
-					},
-					bg = {
-						enabled = false,
-						x = 0,
-						y = 0,
-						alpha = 1,
-						graphic = ''
-					},
-					bottom = {
-						enabled = false,
-						x = 0,
-						y = 0,
-						alpha = 1,
-						graphic = ''
-					}
-				},
-				auras = {
-					['**'] = {
-						enabled = false,
-						number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						initialAnchor = 'BOTTOMLEFT',
-						growthx = 'RIGHT',
-						growthy = 'UP',
-						rows = 3,
-						position = {
-							anchor = 'TOPRIGHT',
-							x = 0,
-							y = 20
-						},
-						filters = {
-							minDuration = 0,
-							maxDuration = 600,
-							showPlayers = true,
-							boss = true
-						}
-					},
-					Buffs = {
-						number = 10,
-						size = 20,
-						spacing = 1,
-						showType = true,
-						initialAnchor = 'BOTTOMLEFT',
-						growthx = 'RIGHT',
-						growthy = 'UP',
-						mode = 'icons',
-						position = {
-							anchor = 'TOPLEFT',
-							y = 0
-						},
-						filters = {
-							raid = true
-						}
-					},
-					Debuffs = {
-						enabled = true,
-						ShowBoss = true,
-						initialAnchor = 'BOTTOMRIGHT',
-						growthx = 'LEFT',
-						growthy = 'UP',
-						mode = 'icons',
-						position = {
-							anchor = 'BOTTOMRIGHT',
-							y = 0
-						}
-					},
-					Bars = {
-						auraBarHeight = 15,
-						auraBarWidth = false,
-						auraBarTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
-						fgalpha = 1,
-						bgalpha = 1,
-						spellNameSize = 10,
-						spellTimeSize = 10,
-						gap = 1,
-						spacing = 1,
-						scaleTime = false,
-						position = {
-							anchor = 'TOP'
-						}
-					}
 				},
 				elements = {
 					['**'] = {
@@ -465,6 +239,8 @@ function UF:OnInitialize()
 						height = 20,
 						size = 20,
 						scale = 1,
+						FrameStrata = nil,
+						FrameLevel = nil,
 						bg = {
 							enabled = false,
 							color = false
@@ -493,9 +269,80 @@ function UF:OnInitialize()
 						},
 						position = {
 							anchor = 'CENTER',
+							relativeTo = 'Frame',
+							relativePoint = nil,
 							x = 0,
 							y = 0
 						}
+					},
+					Auras = {
+						['**'] = {
+							enabled = false,
+							number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							initialAnchor = 'BOTTOMLEFT',
+							growthx = 'RIGHT',
+							growthy = 'UP',
+							rows = 3,
+							position = {
+								anchor = 'TOPRIGHT',
+								x = 0,
+								y = 20
+							},
+							filters = {
+								minDuration = 0,
+								maxDuration = 600,
+								showPlayers = true,
+								boss = true
+							}
+						},
+						Buffs = {
+							number = 10,
+							size = 20,
+							spacing = 1,
+							showType = true,
+							initialAnchor = 'BOTTOMLEFT',
+							growthx = 'RIGHT',
+							growthy = 'UP',
+							mode = 'icons',
+							position = {
+								anchor = 'TOPLEFT',
+								y = 0
+							},
+							filters = {
+								raid = true
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							ShowBoss = true,
+							initialAnchor = 'BOTTOMRIGHT',
+							growthx = 'LEFT',
+							growthy = 'UP',
+							mode = 'icons',
+							position = {
+								anchor = 'BOTTOMRIGHT',
+								y = 0
+							}
+						},
+						Bars = {
+							auraBarHeight = 15,
+							auraBarWidth = false,
+							auraBarTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
+							fgalpha = 1,
+							bgalpha = 1,
+							spellNameSize = 10,
+							spellTimeSize = 10,
+							gap = 1,
+							spacing = 1,
+							scaleTime = false,
+							position = {
+								anchor = 'TOP'
+							}
+						},
+						auras = {}
 					},
 					DispelHighlight = {
 						enabled = true,
@@ -525,7 +372,8 @@ function UF:OnInitialize()
 					Health = {
 						enabled = true,
 						height = 40,
-						offset = 1,
+						width = false,
+						FrameStrata = 'BACKGROUND',
 						colorReaction = true,
 						colorSmooth = false,
 						colorClass = true,
@@ -545,6 +393,9 @@ function UF:OnInitialize()
 									y = 0
 								}
 							}
+						},
+						position = {
+							anchor = 'TOP'
 						}
 					},
 					HealthPrediction = {
@@ -553,7 +404,8 @@ function UF:OnInitialize()
 					Power = {
 						enabled = true,
 						height = 10,
-						offset = 1,
+						width = false,
+						FrameStrata = 'BACKGROUND',
 						bg = {
 							enabled = true,
 							color = {1, 1, 1, .2}
@@ -567,17 +419,30 @@ function UF:OnInitialize()
 								enabled = false,
 								text = '[perpp]%'
 							}
+						},
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Health',
+							relativePoint = 'BOTTOM',
+							y = -1
 						}
 					},
 					AdditionalPower = {
 						enabled = true,
-						offset = 1,
-						height = 5
+						height = 5,
+						width = false,
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Power',
+							relativePoint = 'BOTTOM',
+							y = -1
+						}
 					},
 					Castbar = {
 						enabled = false,
 						height = 10,
-						offset = 0,
+						width = false,
+						FrameStrata = 'BACKGROUND',
 						interruptable = true,
 						FlashOnInterruptible = true,
 						latency = false,
@@ -615,10 +480,15 @@ function UF:OnInitialize()
 									y = 0
 								}
 							}
+						},
+						position = {
+							anchor = 'TOP'
 						}
 					},
+					ClassPower = {},
 					Name = {
 						enabled = true,
+						width = false,
 						height = 12,
 						size = 12,
 						text = '[difficulty][smartlevel] [SUI_ColorClass][name]',
@@ -718,6 +588,20 @@ function UF:OnInitialize()
 					ResurrectIndicator = {
 						enabled = true
 					},
+					SpartanArt = {
+						enabled = true,
+						['**'] = {
+							enabled = false,
+							x = 0,
+							y = 0,
+							alpha = 1,
+							graphic = ''
+						},
+						full = {},
+						top = {},
+						bg = {},
+						bottom = {}
+					},
 					SummonIndicator = {},
 					QuestMobIndicator = {
 						position = {
@@ -738,7 +622,8 @@ function UF:OnInitialize()
 						}
 					},
 					ThreatIndicator = {
-						enabled = true
+						enabled = true,
+						points = 'Name'
 					},
 					SUI_RaidGroup = {
 						size = 13,
@@ -757,11 +642,13 @@ function UF:OnInitialize()
 						points = {
 							['1'] = {
 								anchor = 'TOPLEFT',
+								relativeTo = 'Frame',
 								x = 0,
 								y = 0
 							},
 							['2'] = {
 								anchor = 'BOTTOMRIGHT',
+								relativeTo = 'Frame',
 								x = 0,
 								y = 0
 							}
@@ -784,6 +671,13 @@ function UF:OnInitialize()
 						enabled = true,
 						height = 15
 					},
+					Health = {
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Castbar',
+							relativePoint = 'BOTTOM'
+						}
+					},
 					ClassIcon = {
 						enabled = true
 					}
@@ -805,6 +699,13 @@ function UF:OnInitialize()
 				elements = {
 					Castbar = {
 						enabled = true
+					},
+					Health = {
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Castbar',
+							relativePoint = 'BOTTOM'
+						}
 					}
 				}
 			},
@@ -825,6 +726,13 @@ function UF:OnInitialize()
 				elements = {
 					Castbar = {
 						enabled = true
+					},
+					Health = {
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Castbar',
+							relativePoint = 'BOTTOM'
+						}
 					}
 				}
 			},
@@ -834,6 +742,13 @@ function UF:OnInitialize()
 				elements = {
 					Castbar = {
 						enabled = true
+					},
+					Health = {
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Castbar',
+							relativePoint = 'BOTTOM'
+						}
 					}
 				}
 			},
@@ -871,6 +786,13 @@ function UF:OnInitialize()
 					},
 					Castbar = {
 						enabled = true
+					},
+					Health = {
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Castbar',
+							relativePoint = 'BOTTOM'
+						}
 					},
 					CombatIndicator = {
 						enabled = true,
@@ -973,6 +895,13 @@ function UF:OnInitialize()
 					Castbar = {
 						enabled = true
 					},
+					Health = {
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Castbar',
+							relativePoint = 'BOTTOM'
+						}
+					},
 					ResurrectIndicator = {
 						enabled = true
 					},
@@ -1056,7 +985,6 @@ function UF:OnInitialize()
 					},
 					Power = {
 						height = 3,
-						offset = 0,
 						text = {
 							['1'] = {
 								enabled = false
@@ -1139,6 +1067,13 @@ function UF:OnInitialize()
 					Castbar = {
 						enabled = true
 					},
+					Health = {
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Castbar',
+							relativePoint = 'BOTTOM'
+						}
+					},
 					QuestMobIndicator = {
 						enabled = true
 					},
@@ -1172,9 +1107,6 @@ function UF:OnInitialize()
 					}
 				},
 				elements = {
-					Castbar = {
-						enabled = false
-					},
 					Health = {
 						height = 30
 					},
@@ -1190,30 +1122,28 @@ function UF:OnInitialize()
 				['**'] = {
 					['**'] = {
 						anchor = {},
-						artwork = {
-							full = {},
-							top = {},
-							bg = {},
-							bottom = {}
-						},
-						auras = {
-							Buffs = {
-								position = {},
-								filters = {}
-							},
-							Debuffs = {
-								position = {},
-								filters = {}
-							},
-							Bars = {
-								position = {},
-								filters = {}
-							}
-						},
 						elements = {
 							['**'] = {
 								bg = {},
 								position = {}
+							},
+							Auras = {
+								Buffs = {
+									position = {},
+									filters = {}
+								},
+								Debuffs = {
+									position = {},
+									filters = {}
+								},
+								Bars = {
+									position = {},
+									filters = {}
+								},
+								auras = {
+									position = {},
+									filters = {}
+								}
 							},
 							Portrait = {},
 							Health = {
@@ -1267,6 +1197,12 @@ function UF:OnInitialize()
 							Runes = {},
 							Stagger = {},
 							Totems = {},
+							SpartanArt = {
+								full = {},
+								top = {},
+								bg = {},
+								bottom = {}
+							},
 							AssistantIndicator = {},
 							RaidRoleIndicator = {},
 							ResurrectIndicator = {},
@@ -1290,15 +1226,14 @@ function UF:OnInitialize()
 	UF.Settings = UF.Database.global
 	UF.DB = UF.Database.profile
 
-	-- Migrate old settings
-	if SUI.DB.Unitframes then
-		print('Unit Frame DB Migration')
-		UF.DB.Style = SUI.DB.Artwork.Style -- default to this, setting to SUI.DB.Unitframes.Style results in blank frames on inital load
-		if SUI.DB.Unitframes.PlayerCustomizations then
-			UF.DB.UserSettings = SUI:MergeData(UF.DB.UserSettings, SUI.DB.Unitframes.PlayerCustomizations, true)
+	for frameKey, frameData in pairs(UF.DB.UserSettings[UF.DB.Style]) do
+		if frameData.artwork then
+			frameData.elements.SpartanArt = frameData.artwork
+			frameData.artwork = nil
 		end
-
-		SUI.DB.Unitframes = nil
+		if frameData.auras then
+			frameData.elements.Auras = frameData.auras
+		end
 	end
 
 	LoadDB()
@@ -1350,12 +1285,12 @@ function UF:OnEnable()
 
 	-- Create movers
 	local FramesList = {
-		[1] = 'pet',
-		[2] = 'target',
-		[3] = 'targettarget',
-		[4] = 'focus',
-		[5] = 'focustarget',
-		[6] = 'player'
+		'pet',
+		'target',
+		'targettarget',
+		'focus',
+		'focustarget',
+		'player'
 	}
 	for _, b in pairs(FramesList) do
 		MoveIt:CreateMover(UF.frames[b], b, nil, nil, 'Unit frames')

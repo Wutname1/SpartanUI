@@ -328,7 +328,7 @@ local createBugWindow = function()
 	window:HookScript(
 		'OnShow',
 		function()
-			window.editBox.scrollFrame:SetVerticalScroll((window.editBox.scrollFrame:GetVerticalScrollRange()) or 0)
+			window.editBox.scrollFrame:SetVerticalScroll(0)
 		end
 	)
 end

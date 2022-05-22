@@ -5,6 +5,7 @@
 
     <Script file="Elements\AdditionalPower.lua"/>
     <Script file="Elements\AssistantIndicator.lua"/>
+    <Script file="Elements\Auras.lua"/>
     <Script file="Elements\Castbar.lua"/>
     <Script file="Elements\ClassIcon.lua"/>
     <Script file="Elements\ClassPower.lua"/>
