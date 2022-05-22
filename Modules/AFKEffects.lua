@@ -8,25 +8,25 @@ local isAFK = false
 local SpinCamRunning = false
 
 ----- Film Effects ----
-local FilmEffectEvent = function(self, event, ...)
-	for _, v in ipairs(EffectList) do
-		if not module.db.profile.enable then
-			Container[v]:Hide()
-		elseif event == 'CHAT_MSG_SYSTEM' then
-			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (module.db.profile.Effects[v].afk) then
-				Container[v]:Show()
-			elseif (... == CLEARED_AFK) then
-				Container[v]:Hide()
-			end
-		else
-			if module.db.profile.Effects[v].always then
-				Container[v]:Show()
-			else
-				Container[v]:Hide()
-			end
-		end
-	end
-end
+-- local FilmEffectEvent = function(self, event, ...)
+-- 	for _, v in ipairs(EffectList) do
+-- 		if not module.db.profile.enable then
+-- 			Container[v]:Hide()
+-- 		elseif event == 'CHAT_MSG_SYSTEM' then
+-- 			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (module.db.profile.Effects[v].afk) then
+-- 				Container[v]:Show()
+-- 			elseif (... == CLEARED_AFK) then
+-- 				Container[v]:Hide()
+-- 			end
+-- 		else
+-- 			if module.db.profile.Effects[v].always then
+-- 				Container[v]:Show()
+-- 			else
+-- 				Container[v]:Hide()
+-- 			end
+-- 		end
+-- 	end
+-- end
 
 ----- Spin Cam ----
 local function StopSpin()

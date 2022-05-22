@@ -303,7 +303,8 @@
     "OPEN_ALL_MAIL_BUTTON",
     "OpenAllMailMixin",
     "oUF",
-    "RegisterAttributeDriver"
+    "RegisterAttributeDriver",
+    "CreateFrame"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

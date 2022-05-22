@@ -21,30 +21,6 @@ local COLORS = {
 }
 
 function module:OnEnable()
-	--[[
-        Example Settings
-        Optional/Defaults are indicated with '--*'
-
-    settings = {
-        bars = {
-            'Fel_StatusBar_Left'
-        },
-        Fel_StatusBar_Left = {
-            bgImg = 'Interface//addons//myimage',
-            texCords = {0,1,0,1}, --*
-            size = {256, 36}, --*
-            MaxWidth = 60, --If not defined Max width will be self:GetWidth() This is subtracted from the status bar width and is the size of the actual status bar.
-            FontSize = 10, --*
-            Grow = 'LEFT', --*
-            GlowAnchor = 'RIGHT', --*
-            GlowHeight = 20, --*
-
-            bgTooltip = 'Interface\\Addons\\SpartanUI\\Classic\\Images\\status-tooltip', --*
-            TooltipSize = {380, 100}, --*
-            tooltipAnchor = 'top', --*
-        }
-    }
-    ]]
 	module.DB = SUI.DB.StatusBars
 	--Create Status Bars
 	if (SUI.IsClassic or SUI.IsBCC) and module.DB[2].display == 'honor' then

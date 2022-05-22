@@ -144,9 +144,6 @@ local changeName = function(fullName, misc, nameToChange, colon)
 
 		nameToChange = '|cff' .. color .. (ChatLevelLog[name]) .. '|r:' .. nameToChange
 	end
-	if nameGroup and nameGroup[name] and IsInRaid() then
-		nameToChange = nameToChange .. ':' .. nameGroup[name]
-	end
 	return '|Hplayer:' .. fullName .. misc .. '[' .. nameToChange .. ']' .. (colon == ':' and ' ' or colon) .. '|h'
 end
 
@@ -283,7 +280,7 @@ function module:OnInitialize()
 
 	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
-	popup.Title:SetPoint('TOP')
+	StdUi:GlueTop(popup.Title, popup, 0, 0)
 	popup.Title:SetAlpha(.8)
 
 	-- Create Popup Items

@@ -313,7 +313,7 @@ function module:FirstTimeSetup()
 			if SUI:IsModuleDisabled('Objectives') or module.Override then
 				SUI_Win.Objectives.lblDisabled = StdUi:Label(SUI_Win.Objectives, 'Disabled', 20)
 				SUI_Win.Objectives.lblDisabled:SetPoint('CENTER', SUI_Win.Objectives)
-				window.Next:Click()
+				SUI.Setup.window.Next:Click()
 			else
 				--scenario
 				local line = gui:Create('Heading')
