@@ -98,6 +98,18 @@ local function CreateUnitFrame(self, unit)
 	end
 	self.unitOnCreate = unit
 
+	-- Build a function that updates the size of the frame and sizes of elements
+	local function UpdateSize()
+		if not InCombatLockdown() then
+			if self.scale then
+				self:scale(UF.CurrentSettings[unit].scale, true)
+			else
+				self:SetScale(UF.CurrentSettings[unit].scale)
+			end
+			self:SetSize(UF.CurrentSettings[unit].width, CalculateHeight(unit))
+		end
+	end
+
 	local function UpdateAll()
 		local elements = UF.CurrentSettings[unit].elements
 		-- Check that its a frame
@@ -127,7 +139,7 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- Tell everything to update to get current data
-		self:UpdateSize()
+		UpdateSize()
 		self:UpdateAllElements('OnUpdate')
 		self:UpdateTags()
 	end
@@ -207,32 +219,10 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 
-	-- Build a function that updates the size of the frame and sizes of elements
-	local function UpdateSize()
-		-- Find the Height of the frame
-		local FrameHeight = CalculateHeight(unit)
-		self.FrameHeight = FrameHeight
-
-		-- General
-		if not InCombatLockdown() then
-			if self.scale then
-				self:scale(UF.CurrentSettings[unit].scale, true)
-			else
-				self:SetScale(UF.CurrentSettings[unit].scale)
-			end
-			self:SetSize(UF.CurrentSettings[unit].width, FrameHeight)
-		end
-
-		for elementName, _ in ipairs(UF.Elements.List) do
-			UF.Elements:UpdateSize(self, elementName)
-		end
-	end
-
 	self.UpdateAll = UpdateAll
-	self.UpdateSize = UpdateSize
 	self.ElementUpdate = ElementUpdate
 
-	self.UpdateSize()
+	UpdateSize()
 
 	local elementsDB = UF.CurrentSettings[unit].elements
 	self.elementDB = elementsDB
@@ -436,13 +426,6 @@ function UF:SpawnFrames()
 	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
 	UF.frames.raid = raid
 
-	local function GroupFrameUpdateSize(groupFrame)
-		for _, f in ipairs(groupFrame) do
-			if f.UpdateSize then
-				f:UpdateSize()
-			end
-		end
-	end
 	local function GroupFrameElementUpdate(groupFrame, elementName)
 		for _, f in ipairs(groupFrame) do
 			if f.ElementUpdate then
@@ -489,7 +472,6 @@ function UF:SpawnFrames()
 
 			UF.frames[group].UpdateAll = GroupFrameUpdateAll
 			UF.frames[group].ElementUpdate = GroupFrameElementUpdate
-			UF.frames[group].UpdateSize = GroupFrameUpdateSize
 			UF.frames[group].Enable = GroupFrameEnable
 			UF.frames[group].Disable = GroupFrameDisable
 		end

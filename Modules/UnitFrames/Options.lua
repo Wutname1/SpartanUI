@@ -229,7 +229,7 @@ local function AddGeneralOptions(frameName)
 							--Update the DB
 							UF.DB.UserSettings[UF.DB.Style][frameName].width = val
 							--Update the screen
-							UF.frames[frameName]:UpdateSize()
+							UF.frames[frameName]:UpdateAll()
 						end
 					},
 					range = {
@@ -624,7 +624,7 @@ local function AddBarOptions(frameName)
 				--Update the DB
 				UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].height = val
 				--Update the screen
-				UF.frames[frameName]:UpdateSize()
+				UF.frames[frameName]:UpdateAll()
 			end
 		}
 
@@ -747,7 +747,7 @@ local function AddBarOptions(frameName)
 						--Update the DB
 						UF.DB.UserSettings[UF.DB.Style].player.elements.AdditionalPower.height = val
 						--Update the screen
-						UF.frames.player:UpdateSize()
+						UF.frames.player:UpdateAll()
 					end
 				}
 			}
