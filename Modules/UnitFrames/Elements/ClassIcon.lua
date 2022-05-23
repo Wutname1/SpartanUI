@@ -1,5 +1,7 @@
 local UF = SUI.UF
 
+---@param frame table
+---@param DB table
 local function ElementBuild(frame, DB)
 	frame.ClassIcon = frame:CreateTexture(nil, 'BORDER')
 	frame.ClassIcon.Sizeable = true
@@ -19,6 +21,7 @@ local function ElementBuild(frame, DB)
 	end
 end
 
+---@param frame table
 local function ElementUpdate(frame)
 	local DB = frame.ClassIcon.DB
 
@@ -43,6 +46,8 @@ local function ElementUpdate(frame)
 	end
 end
 
+---@param unitName string
+---@param OptionSet AceConfigOptionsTable
 local function ElementOptions(unitName, OptionSet)
 	if unitName == 'boss' then
 		OptionSet.hidden = true

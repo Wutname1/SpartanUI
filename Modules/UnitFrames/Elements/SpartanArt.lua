@@ -1,6 +1,8 @@
 local _G, SUI, L, UF = _G, SUI, SUI.L, SUI.UF
 local ArtPositions = {'top', 'bg', 'bottom', 'full'}
 
+---@param frame table
+---@param DB table
 local function Build(frame, DB)
 	local unitName = frame.unitOnCreate
 
@@ -50,11 +52,8 @@ local function Build(frame, DB)
 	frame.SpartanArt = SpartanArt
 end
 
-local function Update(frame)
-	frame.SpartanArt:ForceUpdate()
-	-- local DB = frame.SpartanArt.DB
-end
-
+---@param unitName string
+---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
 	local Positions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
 	local function ArtUpdate(pos, option, val)
@@ -184,4 +183,4 @@ local function Options(unitName, OptionSet)
 	end
 end
 
-UF.Elements:Register('SpartanArt', Build, Update, Options)
+UF.Elements:Register('SpartanArt', Build, _, Options)

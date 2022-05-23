@@ -1,6 +1,8 @@
 local UF = SUI.UF
 
-local function Build(frame)
+---@param frame table
+---@param DB table
+local function Build(frame, DB)
 	if frame.unitOnCreate ~= 'player' then
 		return
 	end
@@ -32,10 +34,13 @@ local function Build(frame)
 	end
 end
 
+---@param frame table
 local function Update(frame)
 	local DB = frame.Runes.DB
 end
 
+---@param unitName string
+---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
 end
 

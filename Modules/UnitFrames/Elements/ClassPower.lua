@@ -1,5 +1,7 @@
 local UF = SUI.UF
 
+---@param frame table
+---@param DB table
 local function Build(frame, DB)
 	if frame.unitOnCreate ~= 'player' then
 		return
@@ -25,10 +27,13 @@ local function Build(frame, DB)
 	frame.ClassPower = ClassPower
 end
 
+---@param frame table
 local function Update(frame)
 	local DB = frame.ClassPower.DB
 end
 
+---@param unitName string
+---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
 end
 

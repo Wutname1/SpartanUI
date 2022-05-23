@@ -1,5 +1,7 @@
 local UF = SUI.UF
 
+---@param frame table
+---@param DB table
 local function Build(frame, DB)
 	local SUIpvpIndicator = function(self, event, unit)
 		if (unit ~= self.unit) then
@@ -88,6 +90,7 @@ local function Build(frame, DB)
 	frame.PvPIndicator.Override = SUIpvpIndicator
 end
 
+---@param frame table
 local function Update(frame)
 	local DB = frame.PvPIndicator.DB
 
@@ -103,6 +106,8 @@ local function Update(frame)
 	end
 end
 
+---@param unitName string
+---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
 	-- Badge
 	local i = 1
