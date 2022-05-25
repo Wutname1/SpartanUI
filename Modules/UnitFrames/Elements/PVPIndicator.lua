@@ -9,10 +9,6 @@ local function Build(frame, DB)
 		end
 
 		local pvp = self.PvPIndicator
-		if (pvp.PreUpdate) then
-			pvp:PreUpdate()
-		end
-
 		local status
 		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 		local honorRewardInfo = false
@@ -103,6 +99,12 @@ local function Update(frame)
 			frame.PvPIndicator[k]:Hide()
 			frame.PvPIndicator[k] = nil
 		end
+	end
+
+	if DB.enabled then
+		frame.PvPIndicator:Show()
+	else
+		frame.PvPIndicator:Hide()
 	end
 end
 
