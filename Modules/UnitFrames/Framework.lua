@@ -621,10 +621,6 @@ function UF:OnInitialize()
 							y = 0
 						}
 					},
-					ThreatIndicator = {
-						enabled = true,
-						points = 'Name'
-					},
 					SUI_RaidGroup = {
 						size = 13,
 						text = '[group]',
@@ -678,6 +674,10 @@ function UF:OnInitialize()
 							relativePoint = 'BOTTOM'
 						}
 					},
+					ThreatIndicator = {
+						enabled = true,
+						points = 'Name'
+					},
 					ClassIcon = {
 						enabled = true
 					}
@@ -690,13 +690,13 @@ function UF:OnInitialize()
 				unitsPerColumn = 5,
 				columnSpacing = 0,
 				yOffset = -10,
-				auras = {
-					Buffs = {
-						enabled = true,
-						size = 10
-					}
-				},
 				elements = {
+					Auras = {
+						Buffs = {
+							enabled = true,
+							size = 10
+						}
+					},
 					Castbar = {
 						enabled = true
 					},
@@ -713,17 +713,17 @@ function UF:OnInitialize()
 			focus = {
 				enabled = true,
 				width = 100,
-				auras = {
-					Buffs = {
-						enabled = true,
-						onlyShowPlayer = true
-					},
-					Debuffs = {
-						enabled = true,
-						onlyShowPlayer = true
-					}
-				},
 				elements = {
+					Auras = {
+						Buffs = {
+							enabled = true,
+							onlyShowPlayer = true
+						},
+						Debuffs = {
+							enabled = true,
+							onlyShowPlayer = true
+						}
+					},
 					Castbar = {
 						enabled = true
 					},
@@ -763,24 +763,24 @@ function UF:OnInitialize()
 					xOfs = -60,
 					yOfs = 250
 				},
-				auras = {
-					Buffs = {
-						enabled = true,
-						position = {
-							anchor = 'TOPLEFT'
-						}
-					},
-					Debuffs = {
-						enabled = true,
-						position = {
-							anchor = 'TOPRIGHT'
-						}
-					},
-					Bars = {
-						enabled = true
-					}
-				},
 				elements = {
+					Auras = {
+						Buffs = {
+							enabled = true,
+							position = {
+								anchor = 'TOPLEFT'
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								anchor = 'TOPRIGHT'
+							}
+						},
+						Bars = {
+							enabled = true
+						}
+					},
 					Portrait = {
 						enabled = true
 					},
@@ -866,34 +866,38 @@ function UF:OnInitialize()
 				maxColumns = 1,
 				unitsPerColumn = 5,
 				columnSpacing = 2,
-				auras = {
-					Buffs = {
-						enabled = true,
-						onlyShowPlayer = true,
-						size = 15,
-						initialAnchor = 'BOTTOMLEFT',
-						growthx = 'LEFT',
-						position = {
-							anchor = 'BOTTOMLEFT',
-							x = -15,
-							y = 47
+				elements = {
+					Auras = {
+						Buffs = {
+							enabled = true,
+							onlyShowPlayer = true,
+							size = 15,
+							initialAnchor = 'BOTTOMLEFT',
+							growthx = 'LEFT',
+							position = {
+								anchor = 'BOTTOMLEFT',
+								x = -15,
+								y = 47
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							size = 15,
+							initialAnchor = 'BOTTOMRIGHT',
+							growthx = 'RIGHT',
+							position = {
+								anchor = 'BOTTOMRIGHT',
+								x = 15,
+								y = 47
+							}
 						}
 					},
-					Debuffs = {
-						enabled = true,
-						size = 15,
-						initialAnchor = 'BOTTOMRIGHT',
-						growthx = 'RIGHT',
-						position = {
-							anchor = 'BOTTOMRIGHT',
-							x = 15,
-							y = 47
-						}
-					}
-				},
-				elements = {
 					Castbar = {
 						enabled = true
+					},
+					ThreatIndicator = {
+						enabled = true,
+						points = 'Name'
 					},
 					Health = {
 						position = {
@@ -967,19 +971,19 @@ function UF:OnInitialize()
 					showInRaid = true,
 					showInParty = false
 				},
-				auras = {
-					Buffs = {
-						enabled = true,
-						onlyShowPlayer = true,
-						size = 10
-					},
-					Debuffs = {
-						enabled = true,
-						rows = 1,
-						size = 10
-					}
-				},
 				elements = {
+					Auras = {
+						Buffs = {
+							enabled = true,
+							onlyShowPlayer = true,
+							size = 10
+						},
+						Debuffs = {
+							enabled = true,
+							rows = 1,
+							size = 10
+						}
+					},
 					Health = {
 						height = 30
 					},
@@ -1005,10 +1009,15 @@ function UF:OnInitialize()
 							y = 0
 						}
 					},
+					ThreatIndicator = {
+						enabled = true,
+						points = 'Name'
+					},
 					Name = {
 						enabled = true,
 						height = 10,
 						size = 10,
+						text = '[SUI_ColorClass][name]',
 						position = {
 							y = 0
 						}
@@ -1043,24 +1052,28 @@ function UF:OnInitialize()
 					xOfs = 60,
 					yOfs = 250
 				},
-				auras = {
-					Buffs = {
-						enabled = true,
-						position = {
-							anchor = 'TOPLEFT'
-						}
-					},
-					Debuffs = {
-						enabled = true,
-						position = {
-							anchor = 'TOPRIGHT'
-						}
-					},
-					Bars = {
-						enabled = true
-					}
-				},
 				elements = {
+					Auras = {
+						Buffs = {
+							enabled = true,
+							position = {
+								anchor = 'TOPLEFT'
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								anchor = 'TOPRIGHT'
+							}
+						},
+						Bars = {
+							enabled = true
+						}
+					},
+					ThreatIndicator = {
+						enabled = true,
+						points = 'Name'
+					},
 					Portrait = {
 						enabled = true
 					},
@@ -1101,12 +1114,16 @@ function UF:OnInitialize()
 			targettarget = {
 				enabled = true,
 				width = 100,
-				auras = {
-					Debuffs = {
-						size = 10
-					}
-				},
 				elements = {
+					auras = {
+						Debuffs = {
+							size = 10
+						}
+					},
+					ThreatIndicator = {
+						enabled = true,
+						points = 'Name'
+					},
 					Health = {
 						height = 30
 					},
@@ -1233,6 +1250,7 @@ function UF:OnInitialize()
 		end
 		if frameData.auras then
 			frameData.elements.Auras = frameData.auras
+			frameData.auras = nil
 		end
 	end
 
