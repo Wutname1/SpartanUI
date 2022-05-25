@@ -1,6 +1,6 @@
-local _G, L, print = _G, SUI.L, SUI.print
 ---@class SUI
 local SUI = SUI
+local _G, L, print = _G, SUI.L, SUI.print
 ---@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
 local UF = SUI:NewModule('Component_UnitFrames', 'AceTimer-3.0', 'AceEvent-3.0')
 local MoveIt = SUI:GetModule('Component_MoveIt')

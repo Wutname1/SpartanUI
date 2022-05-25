@@ -1,4 +1,4 @@
-local SUI, L, print = SUI, SUI.L, SUI.print
+local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
@@ -255,9 +255,7 @@ local Lquests = {
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
 local function debug(content)
-	if DB.debug then
-		print(content)
-	end
+	SUI.Debug(content, 'AutoTurnIn')
 end
 -- turns quest in printing reward text if `ChatText` option is set.
 -- prints appropriate message if item is taken by greed
@@ -336,7 +334,7 @@ function module.QUEST_DETAIL()
 			end
 			if objText and objText ~= '' then
 				SUI:Print(L['Quest Objectives'])
-				print('    ' .. objText)
+				debug('    ' .. objText)
 			end
 		end
 		if (not IsAltKeyDown()) then
