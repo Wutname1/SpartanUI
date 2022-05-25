@@ -12,12 +12,6 @@ local anchorPoints = {
 	['BOTTOM'] = 'BOTTOM',
 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 }
-local limitedAnchorPoints = {
-	['TOPLEFT'] = 'TOP LEFT',
-	['TOPRIGHT'] = 'TOP RIGHT',
-	['BOTTOMLEFT'] = 'BOTTOM LEFT',
-	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
-}
 
 local frameList = {
 	'player',
@@ -518,7 +512,6 @@ local function AddBarOptions(frameName)
 				UF.frames[frameName]:UpdateAll()
 			end
 		}
-
 		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.Background = {
 			name = L['Background'],
 			type = 'group',
@@ -724,10 +717,10 @@ local function AddIndicatorOptions(frameName)
 						--Update the screen
 						if val then
 							UF.frames[frameName]:EnableElement(key)
-							UF.frames[frameName][key]:ForceUpdate()
+							UF.frames[frameName]:UpdateAll()
 						else
 							UF.frames[frameName]:DisableElement(key)
-							UF.frames[frameName][key]:Hide()
+							UF.frames[frameName]:UpdateAll()
 						end
 					end
 				},
@@ -1250,322 +1243,6 @@ local function AddTextOptions(frameName)
 	end
 end
 
-local function AddBuffOptions(frameName)
-	SUI.opt.args.UnitFrames.args[frameName].args['auras'] = {
-		name = L['Buffs & Debuffs'],
-		desc = L['Buff & Debuff display settings'],
-		type = 'group',
-		childGroups = 'tree',
-		order = 100,
-		args = {}
-	}
-
-	local function SetOption(val, buffType, setting)
-		--Update memory
-		UF.CurrentSettings[frameName].auras[buffType][setting] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType][setting] = val
-		--Update the screen
-		UF.frames[frameName]:UpdateAuras()
-	end
-
-	for _, buffType in pairs({'Buffs', 'Debuffs'}) do
-		SUI.opt.args.UnitFrames.args[frameName].args.auras.args[buffType] = {
-			name = L[buffType],
-			type = 'group',
-			-- inline = true,
-			order = 1,
-			args = {
-				enabled = {
-					name = L['Enabled'],
-					type = 'toggle',
-					order = 1,
-					get = function(info)
-						return UF.CurrentSettings[frameName].auras[buffType].enabled
-					end,
-					set = function(info, val)
-						SetOption(val, buffType, 'enabled')
-					end
-				},
-				Display = {
-					name = L['Display settings'],
-					type = 'group',
-					order = 100,
-					inline = true,
-					get = function(info)
-						return UF.CurrentSettings[frameName].auras[buffType][info[#info]]
-					end,
-					set = function(info, val)
-						SetOption(val, buffType, info[#info])
-					end,
-					args = {
-						number = {
-							name = L['Number to show'],
-							type = 'range',
-							order = 20,
-							min = 1,
-							max = 30,
-							step = 1
-						},
-						showType = {
-							name = L['Show type'],
-							type = 'toggle',
-							order = 30
-						},
-						selfScale = {
-							order = 2,
-							type = 'range',
-							name = L['Scaled aura size'],
-							desc = L[
-								'Scale for auras that you casted or can Spellsteal, any number above 100% is bigger than default, any number below 100% is smaller than default.'
-							],
-							min = 1,
-							max = 3,
-							step = 0.10,
-							isPercent = true
-						}
-					}
-				},
-				Sizing = {
-					name = L['Sizing & layout'],
-					type = 'group',
-					order = 200,
-					inline = true,
-					args = {
-						size = {
-							name = L['Size'],
-							type = 'range',
-							order = 40,
-							min = 1,
-							max = 30,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].size
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'size')
-							end
-						},
-						spacing = {
-							name = L['Spacing'],
-							type = 'range',
-							order = 41,
-							min = 1,
-							max = 30,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].spacing
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'spacing')
-							end
-						},
-						rows = {
-							name = L['Rows'],
-							type = 'range',
-							order = 50,
-							min = 1,
-							max = 30,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].rows
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'rows')
-							end
-						},
-						initialAnchor = {
-							name = L['Buff anchor point'],
-							type = 'select',
-							order = 70,
-							values = limitedAnchorPoints,
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].initialAnchor
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'initialAnchor')
-							end
-						},
-						growthx = {
-							name = L['Growth x'],
-							type = 'select',
-							order = 71,
-							values = {
-								['RIGHT'] = 'RIGHT',
-								['LEFT'] = 'LEFT'
-							},
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].growthx
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'growthx')
-							end
-						},
-						growthy = {
-							name = L['Growth y'],
-							type = 'select',
-							order = 72,
-							values = {
-								['UP'] = 'UP',
-								['DOWN'] = 'DOWN'
-							},
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].growthy
-							end,
-							set = function(info, val)
-								SetOption(val, buffType, 'growthy')
-							end
-						}
-					}
-				},
-				position = {
-					name = L['Position'],
-					type = 'group',
-					order = 400,
-					inline = true,
-					args = {
-						x = {
-							name = L['X Axis'],
-							type = 'range',
-							order = 1,
-							min = -100,
-							max = 100,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].position.x
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].auras[buffType].position.x = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].position.x = val
-								--Update Screen
-								UF.frames[frameName]:UpdateAuras()
-							end
-						},
-						y = {
-							name = L['Y Axis'],
-							type = 'range',
-							order = 2,
-							min = -100,
-							max = 100,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].position.y
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].auras[buffType].position.y = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].position.y = val
-								--Update Screen
-								UF.frames[frameName]:UpdateAuras()
-							end
-						},
-						anchor = {
-							name = L['Anchor point'],
-							type = 'select',
-							order = 3,
-							values = anchorPoints,
-							get = function(info)
-								return UF.CurrentSettings[frameName].auras[buffType].position.anchor
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].auras[buffType].position.anchor = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].position.anchor = val
-								--Update Screen
-								UF.frames[frameName]:UpdateAuras()
-							end
-						}
-					}
-				},
-				filters = {
-					name = L['Filters'],
-					type = 'group',
-					order = 500,
-					get = function(info)
-						return UF.CurrentSettings[frameName].auras[buffType].filters[info[#info]]
-					end,
-					set = function(info, value)
-						--Update memory
-						UF.CurrentSettings[frameName].auras[buffType].filters[info[#info]] = value
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].auras[buffType].filters[info[#info]] = value
-						--Update Screen
-						UF.frames[frameName]:UpdateAuras()
-					end,
-					args = {
-						minDuration = {
-							order = 1,
-							type = 'range',
-							name = L['Minimum Duration'],
-							desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
-							min = 0,
-							max = 7200,
-							step = 1,
-							width = 'full'
-						},
-						maxDuration = {
-							order = 2,
-							type = 'range',
-							name = L['Maximum Duration'],
-							desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
-							min = 0,
-							max = 7200,
-							step = 1,
-							width = 'full'
-						},
-						showPlayers = {
-							order = 3,
-							type = 'toggle',
-							name = L['Show your auras'],
-							desc = L['Whether auras you casted should be shown'],
-							width = 'full'
-						},
-						raid = {
-							order = 4,
-							type = 'toggle',
-							name = function(info)
-								return buffType == 'buffs' and L['Show castable on other auras'] or L['Show curable/removable auras']
-							end,
-							desc = function(info)
-								return buffType == 'buffs' and L['Whether to show buffs that you cannot cast.'] or
-									L['Whether to show any debuffs you can remove, cure or steal.']
-							end,
-							width = 'full'
-						},
-						boss = {
-							order = 5,
-							type = 'toggle',
-							name = L['Show casted by boss'],
-							desc = L['Whether to show any auras casted by the boss'],
-							width = 'full'
-						},
-						misc = {
-							order = 6,
-							type = 'toggle',
-							name = L['Show any other auras'],
-							desc = L['Whether to show auras that do not fall into the above categories.'],
-							width = 'full'
-						},
-						relevant = {
-							order = 7,
-							type = 'toggle',
-							name = L['Smart Friendly/Hostile Filter'],
-							desc = L[
-								'Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'
-							],
-							width = 'full'
-						}
-					}
-				}
-			}
-		}
-	end
-end
-
 local function AddGroupOptions(frameName)
 	SUI.opt.args.UnitFrames.args[frameName].args['general'].args['Display'] = {
 		name = L['Display'],
@@ -1805,11 +1482,11 @@ function UF:InitializeOptions()
 	for i, key in ipairs(frameList) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
-		UF.Elements:Options(key, 'SpartanArt')
+		UF.Elements:Options(key, 'SpartanArt', SUI.opt.args.UnitFrames.args[key])
+		UF.Elements:Options(key, 'Auras', SUI.opt.args.UnitFrames.args[key])
 		AddBarOptions(key)
 		AddIndicatorOptions(key)
 		AddTextOptions(key)
-		AddBuffOptions(key)
 	end
 
 	AddGroupOptions('raid')
