@@ -11,6 +11,7 @@ end
 
 --- Creates frame list that reuses frames and is based on array data
 ---@param parent Frame
+---@param itemsTable? table
 ---@param create function
 ---@param update function
 ---@param data table

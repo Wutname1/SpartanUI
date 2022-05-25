@@ -1,6 +1,6 @@
 local _, ns = ...
 local oUF = (ns.oUF or oUF)
-assert(oUF, "<name> was unable to locate oUF install.")
+assert(oUF, '<name> was unable to locate oUF install.')
 
 local smoothing = {}
 local function Smooth(self, value)
@@ -29,25 +29,28 @@ local function hook(frame)
 	end
 end
 
-
-for i, frame in ipairs(oUF.objects) do hook(frame) end
+for i, frame in ipairs(oUF.objects) do
+	hook(frame)
+end
 oUF:RegisterInitCallback(hook)
 
-
-local f, min, max = CreateFrame('Frame'), math.min, math.max 
-f:SetScript('OnUpdate', function()
-	local limit = 30/GetFramerate()
-	for bar, value in pairs(smoothing) do
-		local cur = bar:GetValue()
-		local new = cur + min((value-cur)/3, max(value-cur, limit))
-		if new ~= new then
-			-- Mad hax to prevent QNAN.
-			new = value
-		end
-		bar:SetValue_(new)
-		if cur == value or abs(new - value) < 2 then
-			bar:SetValue_(value)
-			smoothing[bar] = nil
+local f, min, max = CreateFrame('Frame'), math.min, math.max
+f:SetScript(
+	'OnUpdate',
+	function()
+		local limit = 30 / GetFramerate()
+		for bar, value in pairs(smoothing) do
+			local cur = bar:GetValue()
+			local new = cur + min((value - cur) / 3, max(value - cur, limit))
+			if new ~= new then
+				-- Mad hax to prevent QNAN.
+				new = value
+			end
+			bar:SetValue_(new)
+			if cur == value or abs(new - value) < 2 then
+				bar:SetValue_(value)
+				smoothing[bar] = nil
+			end
 		end
 	end
-end)
+)

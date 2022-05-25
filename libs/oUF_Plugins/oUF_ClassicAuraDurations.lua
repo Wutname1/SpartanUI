@@ -1,9 +1,11 @@
 local addonName, ns = ...
 local oUF = ns.oUF or oUF
 
-if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
+if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then
+	return
+end
 
-local LibClassicDurations = LibStub("LibClassicDurations")
+local LibClassicDurations = LibStub('LibClassicDurations')
 LibClassicDurations:RegisterFrame(addonName)
 
 local LCDWrapper = function(element, unit, button, index, position, duration, expiration, debuffType, isStealable)
@@ -15,7 +17,7 @@ local LCDWrapper = function(element, unit, button, index, position, duration, ex
 			duration = durationNew
 			expiration = expirationTimeNew
 
-			if(button.cd and not element.disableCooldown) then
+			if (button.cd and not element.disableCooldown) then
 				button.cd:SetCooldown(expiration - duration, duration)
 				button.cd:Show()
 			end
@@ -46,6 +48,7 @@ local function hook(frame)
 	end
 end
 
-
-for i, frame in ipairs(oUF.objects) do hook(frame) end
+for i, frame in ipairs(oUF.objects) do
+	hook(frame)
+end
 oUF:RegisterInitCallback(hook)

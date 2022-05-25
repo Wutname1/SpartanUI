@@ -99,7 +99,7 @@ local function Update(self, event, unit)
 		element:PreUpdate()
 	end
 
-	
+
 	local isDungeon = IsInInstance()
 	local questList = GetUnitQuestInfo(unit)
 	local showIcon = false
@@ -117,7 +117,7 @@ local function Update(self, event, unit)
 				showIcon = true
 			end
 		end
-	end	
+	end
 
 	if (showIcon) then
 		element:Show()

@@ -228,8 +228,7 @@ local function CreateUnitFrame(self, unit)
 	self.elementDB = elementsDB
 	for elementName, Functions in pairs(UF.Elements.List) do
 		if not elementsDB[elementName] then
-			print(type(elementName))
-			print('MISSING: ' .. elementName)
+			SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
 		else
 			UF.Elements:Build(self, elementName, elementsDB[elementName])
 			ElementUpdate(self, elementName)

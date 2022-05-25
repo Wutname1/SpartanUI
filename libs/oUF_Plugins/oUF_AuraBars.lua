@@ -60,7 +60,7 @@ local function onUpdate(bar, elapsed)
 	bar.elapsed = (bar.elapsed or 0) + elapsed
 
 	if bar.elapsed > 0.01 then
-		local remain = bar.expiration - GetTime()
+		local remain = (bar.expiration - GetTime()) / (bar.modRate or 1)
 		bar:SetValue(remain / bar.duration)
 		bar.timeText:SetFormattedText(FormatTime(remain))
 
@@ -176,7 +176,7 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 		isBossDebuff,
 		castByPlayer,
 		nameplateShowAll,
-		timeMod,
+		modRate,
 		effect1,
 		effect2,
 		effect3
@@ -197,7 +197,7 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 			isBossDebuff,
 			castByPlayer,
 			nameplateShowAll,
-			timeMod,
+			modRate,
 			effect1,
 			effect2,
 			effect3 = LCD:UnitAura(unit, index, filter)
@@ -224,7 +224,7 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 			isBossDebuff,
 			castByPlayer,
 			nameplateShowAll,
-			timeMod,
+			modRate,
 			effect1,
 			effect2,
 			effect3 = UnitAura(unit, index, filter)
@@ -257,6 +257,7 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 	bar.position = position
 	bar.duration = duration
 	bar.expiration = expiration
+	bar.modRate = modRate
 	bar.spellID = spellID
 	bar.spell = name
 	bar.noTime = (duration == 0 and expiration == 0)
@@ -280,7 +281,7 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 		isBossDebuff,
 		castByPlayer,
 		nameplateShowAll,
-		timeMod,
+		modRate,
 		effect1,
 		effect2,
 		effect3
@@ -345,7 +346,7 @@ local function filterBars(element, unit, filter, limit, isDebuff, offset, dontHi
 end
 
 local function UpdateAuras(self, event, unit, isFullUpdate, updatedAuras)
-	if oUF:ShouldSkipAuraUpdate(self, event, unit, isFullUpdate, updatedAuras) then
+	if not unit or self.unit ~= unit then
 		return
 	end
 
@@ -407,11 +408,7 @@ local function Enable(self)
 	local element = self.AuraBars
 
 	if (element) then
-		if oUF.isRetail then
-			self:RegisterEvent('UNIT_AURA', UpdateAuras)
-		else
-			oUF:RegisterEvent(self, 'UNIT_AURA', UpdateAuras)
-		end
+		oUF:RegisterEvent(self, 'UNIT_AURA', UpdateAuras)
 
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
@@ -448,11 +445,7 @@ local function Disable(self)
 	local element = self.AuraBars
 
 	if (element) then
-		if oUF.isRetail then
-			self:UnregisterEvent('UNIT_AURA', UpdateAuras)
-		else
-			oUF:UnregisterEvent(self, 'UNIT_AURA', UpdateAuras)
-		end
+		oUF:UnregisterEvent(self, 'UNIT_AURA', UpdateAuras)
 
 		element:Hide()
 	end
