@@ -64,7 +64,7 @@ local function Options(unitName, OptionSet)
 		--Update the screen
 		UF.frames[unitName]:ElementUpdate('SpartanArt')
 	end
-	SUI.opt.args.UnitFrames.args[unitName].args['artwork'] = {
+	OptionSet.args['artwork'] = {
 		name = L['Artwork'],
 		type = 'group',
 		order = 20,
@@ -72,7 +72,7 @@ local function Options(unitName, OptionSet)
 	}
 	local i = 1
 	for position, DisplayName in pairs(Positions) do
-		SUI.opt.args.UnitFrames.args[unitName].args.artwork.args[position] = {
+		OptionSet.args.artwork.args[position] = {
 			name = DisplayName,
 			type = 'group',
 			order = i,
@@ -140,7 +140,7 @@ local function Options(unitName, OptionSet)
 	for Name, data in pairs(UF.Artwork) do
 		for position, _ in pairs(Positions) do
 			if data[position] then
-				local options = SUI.opt.args.UnitFrames.args[unitName].args.artwork.args[position].args
+				local options = OptionSet.args.artwork.args[position].args
 				local dataObj = data[position]
 				if dataObj.perUnit and data[unitName] then
 					dataObj = data[unitName]
@@ -148,7 +148,7 @@ local function Options(unitName, OptionSet)
 
 				if dataObj then
 					--Enable art option
-					SUI.opt.args.UnitFrames.args[unitName].args.artwork.args[position].disabled = false
+					OptionSet.args.artwork.args[position].disabled = false
 					--Add to dropdown
 					options.graphic.values[Name] = (data.name or Name)
 					--Create example
