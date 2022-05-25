@@ -5,11 +5,13 @@
 
     <Script file="Elements\AdditionalPower.lua"/>
     <Script file="Elements\AssistantIndicator.lua"/>
-    <Script file="Elements\Auras.lua"/>
+    <Script file="Elements\AuraBars.lua"/>
+    <Script file="Elements\Buffs.lua"/>
     <Script file="Elements\Castbar.lua"/>
     <Script file="Elements\ClassIcon.lua"/>
     <Script file="Elements\ClassPower.lua"/>
     <Script file="Elements\CombatIndicator.lua"/>
+    <Script file="Elements\Debuffs.lua"/>
     <Script file="Elements\GroupRoleIndicator.lua"/>
     <Script file="Elements\Health.lua"/>
     <Script file="Elements\LeaderIndicator.lua"/>

@@ -275,74 +275,74 @@ function UF:OnInitialize()
 							y = 0
 						}
 					},
-					Auras = {
-						['**'] = {
-							enabled = false,
-							number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							initialAnchor = 'BOTTOMLEFT',
-							growthx = 'RIGHT',
-							growthy = 'UP',
-							rows = 3,
-							position = {
-								anchor = 'TOPRIGHT',
-								x = 0,
-								y = 20
-							},
-							filters = {
-								minDuration = 0,
-								maxDuration = 600,
-								showPlayers = true,
-								boss = true
-							}
+					AuraBars = {
+						height = 14,
+						width = false,
+						sparkEnabled = true,
+						spacing = 2,
+						initialAnchor = 'BOTTOMLEFT',
+						growth = 'UP',
+						maxBars = 32,
+						texture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
+						fgalpha = 1,
+						bgalpha = 1,
+						spellNameSize = 10,
+						spellTimeSize = 10,
+						gap = 1,
+						scaleTime = false,
+						icon = true,
+						position = {
+							anchor = 'BOTTOM',
+							relativePoint = 'TOP',
+							x = 7,
+							y = 20
 						},
-						Buffs = {
-							number = 10,
-							size = 20,
-							spacing = 1,
-							showType = true,
-							initialAnchor = 'BOTTOMLEFT',
-							growthx = 'RIGHT',
-							growthy = 'UP',
-							mode = 'icons',
-							position = {
-								anchor = 'TOPLEFT',
-								y = 0
-							},
-							filters = {
-								raid = true
-							}
+						filters = {
+							showPlayers = true
+						}
+					},
+					Buffs = {
+						number = 10,
+						size = 20,
+						spacing = 1,
+						showType = true,
+						width = false,
+						initialAnchor = 'BOTTOMLEFT',
+						growthx = 'RIGHT',
+						growthy = 'UP',
+						rows = 3,
+						position = {
+							anchor = 'TOPLEFT',
+							relativePoint = 'BOTTOMLEFT',
+							y = -10
 						},
-						Debuffs = {
-							enabled = true,
-							ShowBoss = true,
-							initialAnchor = 'BOTTOMRIGHT',
-							growthx = 'LEFT',
-							growthy = 'UP',
-							mode = 'icons',
-							position = {
-								anchor = 'BOTTOMRIGHT',
-								y = 0
-							}
+						filters = {
+							showPlayers = true,
+							raid = true,
+							boss = true
+						}
+					},
+					Debuffs = {
+						number = 10,
+						size = 20,
+						spacing = 1,
+						width = false,
+						ShowBoss = true,
+						showType = true,
+						initialAnchor = 'BOTTOMRIGHT',
+						growthx = 'LEFT',
+						growthy = 'UP',
+						rows = 3,
+						position = {
+							anchor = 'TOPRIGHT',
+							relativePoint = 'BOTTOMRIGHT',
+							y = -10
 						},
-						Bars = {
-							auraBarHeight = 15,
-							auraBarWidth = false,
-							auraBarTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
-							fgalpha = 1,
-							bgalpha = 1,
-							spellNameSize = 10,
-							spellTimeSize = 10,
-							gap = 1,
-							spacing = 1,
-							scaleTime = false,
-							position = {
-								anchor = 'TOP'
-							}
-						},
-						auras = {}
+						filters = {
+							showPlayers = true,
+							raid = true,
+							boss = true
+						}
 					},
 					DispelHighlight = {
 						enabled = true,
@@ -692,11 +692,9 @@ function UF:OnInitialize()
 				columnSpacing = 0,
 				yOffset = -10,
 				elements = {
-					Auras = {
-						Buffs = {
-							enabled = true,
-							size = 10
-						}
+					Buffs = {
+						enabled = true,
+						size = 10
 					},
 					Castbar = {
 						enabled = true
@@ -715,15 +713,13 @@ function UF:OnInitialize()
 				enabled = true,
 				width = 100,
 				elements = {
-					Auras = {
-						Buffs = {
-							enabled = true,
-							onlyShowPlayer = true
-						},
-						Debuffs = {
-							enabled = true,
-							onlyShowPlayer = true
-						}
+					Buffs = {
+						enabled = true,
+						onlyShowPlayer = true
+					},
+					Debuffs = {
+						enabled = true,
+						onlyShowPlayer = true
 					},
 					Castbar = {
 						enabled = true
@@ -765,21 +761,19 @@ function UF:OnInitialize()
 					yOfs = 250
 				},
 				elements = {
-					Auras = {
-						Buffs = {
-							enabled = true,
-							position = {
-								anchor = 'TOPLEFT'
-							}
-						},
-						Debuffs = {
-							enabled = true,
-							position = {
-								anchor = 'TOPRIGHT'
-							}
-						},
-						Bars = {
-							enabled = true
+					AuraBars = {
+						enabled = true
+					},
+					Buffs = {
+						enabled = true,
+						position = {
+							anchor = 'TOPLEFT'
+						}
+					},
+					Debuffs = {
+						enabled = true,
+						position = {
+							anchor = 'TOPRIGHT'
 						}
 					},
 					Portrait = {
@@ -868,29 +862,27 @@ function UF:OnInitialize()
 				unitsPerColumn = 5,
 				columnSpacing = 2,
 				elements = {
-					Auras = {
-						Buffs = {
-							enabled = true,
-							onlyShowPlayer = true,
-							size = 15,
-							initialAnchor = 'BOTTOMLEFT',
-							growthx = 'LEFT',
-							position = {
-								anchor = 'BOTTOMLEFT',
-								x = -15,
-								y = 47
-							}
-						},
-						Debuffs = {
-							enabled = true,
-							size = 15,
-							initialAnchor = 'BOTTOMRIGHT',
-							growthx = 'RIGHT',
-							position = {
-								anchor = 'BOTTOMRIGHT',
-								x = 15,
-								y = 47
-							}
+					Buffs = {
+						enabled = true,
+						onlyShowPlayer = true,
+						size = 15,
+						initialAnchor = 'BOTTOMLEFT',
+						growthx = 'LEFT',
+						position = {
+							anchor = 'BOTTOMLEFT',
+							x = -15,
+							y = 47
+						}
+					},
+					Debuffs = {
+						enabled = true,
+						size = 15,
+						initialAnchor = 'BOTTOMRIGHT',
+						growthx = 'RIGHT',
+						position = {
+							anchor = 'BOTTOMRIGHT',
+							x = 15,
+							y = 47
 						}
 					},
 					Castbar = {
@@ -973,17 +965,15 @@ function UF:OnInitialize()
 					showInParty = false
 				},
 				elements = {
-					Auras = {
-						Buffs = {
-							enabled = true,
-							onlyShowPlayer = true,
-							size = 10
-						},
-						Debuffs = {
-							enabled = true,
-							rows = 1,
-							size = 10
-						}
+					Buffs = {
+						enabled = true,
+						onlyShowPlayer = true,
+						size = 10
+					},
+					Debuffs = {
+						enabled = true,
+						rows = 1,
+						size = 10
 					},
 					Health = {
 						height = 30
@@ -1054,21 +1044,19 @@ function UF:OnInitialize()
 					yOfs = 250
 				},
 				elements = {
-					Auras = {
-						Buffs = {
-							enabled = true,
-							position = {
-								anchor = 'TOPLEFT'
-							}
-						},
-						Debuffs = {
-							enabled = true,
-							position = {
-								anchor = 'TOPRIGHT'
-							}
-						},
-						Bars = {
-							enabled = true
+					AuraBars = {
+						enabled = true
+					},
+					Buffs = {
+						enabled = true,
+						position = {
+							anchor = 'TOPLEFT'
+						}
+					},
+					Debuffs = {
+						enabled = true,
+						position = {
+							anchor = 'TOPRIGHT'
 						}
 					},
 					ThreatIndicator = {
@@ -1145,23 +1133,17 @@ function UF:OnInitialize()
 								bg = {},
 								position = {}
 							},
-							Auras = {
-								Buffs = {
-									position = {},
-									filters = {}
-								},
-								Debuffs = {
-									position = {},
-									filters = {}
-								},
-								Bars = {
-									position = {},
-									filters = {}
-								},
-								auras = {
-									position = {},
-									filters = {}
-								}
+							AuraBars = {
+								position = {},
+								filters = {}
+							},
+							Buffs = {
+								position = {},
+								filters = {}
+							},
+							Debuffs = {
+								position = {},
+								filters = {}
 							},
 							Portrait = {},
 							Health = {
@@ -1248,10 +1230,6 @@ function UF:OnInitialize()
 		if frameData.artwork then
 			frameData.elements.SpartanArt = frameData.artwork
 			frameData.artwork = nil
-		end
-		if frameData.auras then
-			frameData.elements.Auras = frameData.auras
-			frameData.auras = nil
 		end
 	end
 
@@ -1342,4 +1320,81 @@ function UF:SetActiveStyle(style)
 
 	--Analytics
 	SUI.Analytics:Set(UF, 'Style', style)
+end
+
+function UF.PostCreateAura(element, button)
+	local function UpdateAura(self, elapsed)
+		if (self.expiration) then
+			self.expiration = math.max(self.expiration - elapsed, 0)
+
+			if (self.expiration > 0 and self.expiration < 60) then
+				self.Duration:SetFormattedText('%d', self.expiration)
+			else
+				self.Duration:SetText()
+			end
+		end
+	end
+
+	if button.SetBackdrop then
+		button:SetBackdrop(nil)
+		button:SetBackdropColor(0, 0, 0)
+	end
+	button.cd:SetReverse(true)
+	button.cd:SetHideCountdownNumbers(true)
+	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	button.icon:SetDrawLayer('ARTWORK')
+	-- button:SetScript('OnEnter', OnAuraEnter)
+
+	-- We create a parent for aura strings so that they appear over the cooldown widget
+	local StringParent = CreateFrame('Frame', nil, button)
+	StringParent:SetFrameLevel(20)
+
+	button.count:SetParent(StringParent)
+	button.count:ClearAllPoints()
+	button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
+	button.count:SetFont(SUI:GetFontFace('UnitFrames'), select(2, button.count:GetFont()) - 3)
+
+	local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
+	Duration:SetFont(SUI:GetFontFace('UnitFrames'), 11)
+	Duration:SetPoint('TOPLEFT', button, 0, -1)
+	button.Duration = Duration
+
+	button:HookScript('OnUpdate', UpdateAura)
+end
+
+function UF.PostUpdateAura(element, unit, button, index)
+	local _, _, _, _, duration, expiration, owner, canStealOrPurge = UnitAura(unit, index, button.filter)
+	if (duration and duration > 0) then
+		button.expiration = expiration - GetTime()
+	else
+		button.expiration = math.huge
+	end
+
+	if button.SetBackdrop then
+		if (unit == 'target' and canStealOrPurge) then
+			button:SetBackdropColor(0, 1 / 2, 1 / 2)
+		elseif (owner ~= 'player') then
+			button:SetBackdropColor(0, 0, 0)
+		end
+	end
+end
+
+function UF.InverseAnchor(anchor)
+	if anchor == 'TOPLEFT' then
+		return 'BOTTOMLEFT'
+	elseif anchor == 'TOPRIGHT' then
+		return 'BOTTOMRIGHT'
+	elseif anchor == 'BOTTOMLEFT' then
+		return 'TOPLEFT'
+	elseif anchor == 'BOTTOMRIGHT' then
+		return 'TOPRIGHT'
+	elseif anchor == 'BOTTOM' then
+		return 'TOP'
+	elseif anchor == 'TOP' then
+		return 'BOTTOM'
+	elseif anchor == 'LEFT' then
+		return 'RIGHT'
+	elseif anchor == 'RIGHT' then
+		return 'LEFT'
+	end
 end

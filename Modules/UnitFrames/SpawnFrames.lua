@@ -11,39 +11,20 @@ local FramesList = {
 	'player'
 }
 local elementList = {
-	'Portrait',
-	'Health',
-	'HealthPrediction',
-	'Power',
-	'Castbar',
-	'Name',
-	'LeaderIndicator',
 	'DispelHighlight',
-	'RestingIndicator',
-	'GroupRoleIndicator',
-	'CombatIndicator',
-	'RaidTargetIndicator',
-	'ClassIcon',
 	'ReadyCheckIndicator',
-	'PvPIndicator',
 	'RareElite',
 	'StatusText',
-	'Runes',
 	'Stagger',
 	'Totems',
-	'AssistantIndicator',
 	'RaidRoleIndicator',
 	'ResurrectIndicator',
 	'SummonIndicator',
 	'QuestMobIndicator',
-	'Range',
-	'PhaseIndicator',
-	'ThreatIndicator',
-	'SUI_RaidGroup',
-	'HappinessIndicator'
+	'PhaseIndicator'
 }
 local NoBulkUpdate = {
-	'Auras',
+	-- 'Auras',
 	-- 'Castbar',
 	'ClassPower',
 	'HealthPrediction',
@@ -111,23 +92,31 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	local function UpdateAll()
-		local elements = UF.CurrentSettings[unit].elements
+		local elementsDB = UF.CurrentSettings[unit].elements
 		-- Check that its a frame
 		-- Loop all elements and update their status
+		for elementName, Functions in pairs(UF.Elements.List) do
+			if not elementsDB[elementName] then
+				SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
+			else
+				self:ElementUpdate(elementName)
+			end
+		end
+
 		for _, element in ipairs(elementList) do
 			if self[element] and element ~= nil then
 				-- oUF Update (event/updater state)
-				if elements[element].enabled then
+				if elementsDB[element].enabled then
 					self:EnableElement(element)
 				else
 					self:DisableElement(element)
 				end
 				--Background
 				if self[element].bg then
-					if elements[element].bg.enabled then
+					if elementsDB[element].bg.enabled then
 						self[element].bg:Show()
-						if elements[element].bg.color then
-							self[element].bg:SetVertexColor(unpack(elements[element].bg.color))
+						if elementsDB[element].bg.color then
+							self[element].bg:SetVertexColor(unpack(elementsDB[element].bg.color))
 						end
 					else
 						self[element].bg:Hide()
@@ -192,7 +181,13 @@ local function CreateUnitFrame(self, unit)
 			end
 		elseif data.position.anchor then
 			if data.position.relativeTo == 'Frame' then
-				element:SetPoint(data.position.anchor, frame, data.position.anchor, data.position.x, data.position.y)
+				element:SetPoint(
+					data.position.anchor,
+					frame,
+					data.position.relativePoint or data.position.anchor,
+					data.position.x,
+					data.position.y
+				)
 			else
 				element:SetPoint(
 					data.position.anchor,
@@ -214,7 +209,7 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- Call the elements update function
-		if frame[elementName] and frame[elementName].ForceUpdate then
+		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then
 			frame[elementName].ForceUpdate(element)
 		end
 	end
