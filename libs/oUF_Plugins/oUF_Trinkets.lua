@@ -8,9 +8,9 @@ local function GetTrinketIconBySpellID(spellID)
 end
 
 local function GetTrinketIconByFaction(unit)
-	if UnitFactionGroup(unit) == 'Horde' then
+	if UnitFactionGroup(unit) == "Horde" then
 		return [[Interface\Icons\INV_Jewelry_Necklace_38]]
-	elseif UnitFactionGroup(unit) == 'Alliance' then
+	elseif UnitFactionGroup(unit) == "Alliance" then
 		return [[Interface\Icons\INV_Jewelry_Necklace_37]]
 	else
 		return [[Interface\Icons\INV_MISC_QUESTIONMARK]]
@@ -43,32 +43,28 @@ local function ClearCooldowns(self)
 end
 
 local function Update(self, event, unit, ...)
-	if (self.isForced and event ~= 'ElvUI_UpdateAllElements') or (self.unit ~= unit) then
-		return
-	end
+	if (self.isForced and event ~= 'ElvUI_UpdateAllElements') or (self.unit ~= unit) then return end
 
 	local element = self.Trinket
 
 	if self.isForced then
-		element.icon:SetTexture(GetTrinketIconByFaction('player'))
+		element.icon:SetTexture(GetTrinketIconByFaction("player"))
 		element:Show()
-		return
+		return;
 	end
 
 	if (element.PreUpdate) then
 		element:PreUpdate(event, unit)
 	end
 
-	if (event == 'ARENA_OPPONENT_UPDATE' or event == 'OnShow') then
+	if (event == "ARENA_OPPONENT_UPDATE" or event == "OnShow") then
 		local unitEvent = ...
-		if (unitEvent ~= 'seen' and event ~= 'OnShow') then
-			return
-		end
+		if (unitEvent ~= "seen" and event ~= "OnShow") then return end
 
 		C_PvP.RequestCrowdControlSpell(unit)
-	elseif event == 'ARENA_COOLDOWNS_UPDATE' then
+	elseif event == "ARENA_COOLDOWNS_UPDATE" then
 		UpdateTrinket(self, unit)
-	elseif event == 'ARENA_CROWD_CONTROL_SPELL_UPDATE' then
+	elseif event == "ARENA_CROWD_CONTROL_SPELL_UPDATE" then
 		local spellID = ...
 		if spellID ~= 0 then
 			element.spellID = spellID
@@ -88,12 +84,12 @@ local function Enable(self)
 	if element then
 		element.__owner = self
 
-		self:RegisterEvent('ARENA_COOLDOWNS_UPDATE', Update, true)
-		self:RegisterEvent('ARENA_CROWD_CONTROL_SPELL_UPDATE', Update, true)
-		self:RegisterEvent('ARENA_OPPONENT_UPDATE', Update, true)
+		self:RegisterEvent("ARENA_COOLDOWNS_UPDATE", Update, true)
+		self:RegisterEvent("ARENA_CROWD_CONTROL_SPELL_UPDATE", Update, true)
+		self:RegisterEvent("ARENA_OPPONENT_UPDATE", Update, true)
 
 		if oUF.isRetail then
-			self:RegisterEvent('PVP_MATCH_INACTIVE', ClearCooldowns, true)
+			self:RegisterEvent("PVP_MATCH_INACTIVE", ClearCooldowns, true)
 		end
 
 		return true
@@ -103,12 +99,13 @@ end
 local function Disable(self)
 	local element = self.Trinket
 	if element then
-		self:UnregisterEvent('ARENA_COOLDOWNS_UPDATE', Update)
-		self:UnregisterEvent('ARENA_CROWD_CONTROL_SPELL_UPDATE', Update)
-		self:UnregisterEvent('ARENA_OPPONENT_UPDATE', Update)
+
+		self:UnregisterEvent("ARENA_COOLDOWNS_UPDATE", Update)
+		self:UnregisterEvent("ARENA_CROWD_CONTROL_SPELL_UPDATE", Update)
+		self:UnregisterEvent("ARENA_OPPONENT_UPDATE", Update)
 
 		if oUF.isRetail then
-			self:UnregisterEvent('PVP_MATCH_INACTIVE', ClearCooldowns)
+			self:UnregisterEvent("PVP_MATCH_INACTIVE", ClearCooldowns)
 		end
 
 		element:Hide()

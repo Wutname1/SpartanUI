@@ -45,9 +45,7 @@ local function createAuraIcon(element, index)
 	button.count = count
 	button.cd = cd
 
-	if element.PostCreateIcon then
-		element:PostCreateIcon(button)
-	end
+	if element.PostCreateIcon then element:PostCreateIcon(button) end
 
 	return button
 end
@@ -73,7 +71,7 @@ local function getIcon(element, visible, offset)
 	local button = element[position]
 
 	if not button then
-		button = (element.CreateIcon or createAuraIcon)(element, position)
+		button = (element.CreateIcon or createAuraIcon) (element, position)
 
 		tinsert(element, button)
 		element.createdIcons = element.createdIcons + 1
@@ -82,21 +80,10 @@ local function getIcon(element, visible, offset)
 	return button, position
 end
 
-local function handleElements(
-	element,
-	unit,
-	button,
-	setting,
-	icon,
-	count,
-	duration,
-	expiration,
-	isDebuff,
-	debuffType,
-	isStealable)
+local function handleElements(element, unit, button, setting, icon, count, duration, expiration, isDebuff, debuffType, isStealable, modRate)
 	if button.cd then
 		if duration and duration > 0 then
-			button.cd:SetCooldown(expiration - duration, duration)
+			button.cd:SetCooldown(expiration - duration, duration, modRate)
 			button.cd:Show()
 		else
 			button.cd:Hide()
@@ -177,27 +164,8 @@ local function postOnlyMissing(element, unit, offset)
 end
 
 local function updateIcon(element, unit, index, offset, filter, isDebuff, visible)
-	local name,
-		icon,
-		count,
-		debuffType,
-		duration,
-		expiration,
-		source,
-		isStealable,
-		nameplateShowPersonal,
-		spellID,
-		canApplyAura,
-		isBossDebuff,
-		castByPlayer,
-		nameplateShowAll,
-		timeMod,
-		effect1,
-		effect2,
-		effect3 = UnitAura(unit, index, filter)
-	if not name then
-		return
-	end
+	local name, icon, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3 = UnitAura(unit, index, filter)
+	if not name then return end
 
 	local button, position = getIcon(element, visible, offset)
 
@@ -218,30 +186,9 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 		end
 	end
 
-	local show =
-		(element.CustomFilter or customFilter)(
-		element,
-		unit,
-		button,
-		name,
-		icon,
-		count,
-		debuffType,
-		duration,
-		expiration,
-		source,
-		isStealable,
-		nameplateShowPersonal,
-		spellID,
-		canApplyAura,
-		isBossDebuff,
-		castByPlayer,
-		nameplateShowAll,
-		timeMod,
-		effect1,
-		effect2,
-		effect3
-	)
+	local show = (element.CustomFilter or customFilter) (element, unit, button, name, icon,
+		count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID,
+		canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3)
 
 	local setting = element.watched[spellID]
 	if setting and setting.onlyShowMissing then
@@ -249,7 +196,7 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 	end
 
 	if show then
-		handleElements(element, unit, button, setting, icon, count, duration, expiration, isDebuff, debuffType, isStealable)
+		handleElements(element, unit, button, setting, icon, count, duration, expiration, isDebuff, debuffType, isStealable, modRate)
 
 		if element.PostUpdateIcon then
 			element:PostUpdateIcon(unit, button, index, position, duration, expiration, debuffType, isStealable)
@@ -262,9 +209,7 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 end
 
 local function filterIcons(element, unit, filter, limit, isDebuff, offset, dontHide)
-	if not offset then
-		offset = 0
-	end
+	if not offset then offset = 0 end
 
 	local index, visible, hidden = 1, 0, 0
 	while visible < limit do
@@ -290,15 +235,11 @@ local function filterIcons(element, unit, filter, limit, isDebuff, offset, dontH
 end
 
 local function UpdateAuras(self, event, unit, isFullUpdate, updatedAuras)
-	if oUF:ShouldSkipAuraUpdate(self, event, unit, isFullUpdate, updatedAuras) then
-		return
-	end
+	if not unit or self.unit ~= unit then return end
 
 	local element = self.AuraWatch
 	if element then
-		if element.PreUpdate then
-			element:PreUpdate(unit)
-		end
+		if element.PreUpdate then element:PreUpdate(unit) end
 
 		preOnlyMissing(element)
 
@@ -306,17 +247,8 @@ local function UpdateAuras(self, event, unit, isFullUpdate, updatedAuras)
 		local numDebuffs = element.numDebuffs or 16
 		local numAuras = element.numTotal or (numBuffs + numDebuffs)
 
-		local visibleBuffs, hiddenBuffs =
-			filterIcons(element, unit, element.buffFilter or element.filter or 'HELPFUL', min(numBuffs, numAuras), nil, 0, true)
-		local visibleDebuffs, hiddenDebuffs =
-			filterIcons(
-			element,
-			unit,
-			element.buffFilter or element.filter or 'HARMFUL',
-			min(numDebuffs, numAuras - visibleBuffs),
-			true,
-			visibleBuffs
-		)
+		local visibleBuffs, hiddenBuffs = filterIcons(element, unit, element.buffFilter or element.filter or 'HELPFUL', min(numBuffs, numAuras), nil, 0, true)
+		local visibleDebuffs, hiddenDebuffs = filterIcons(element, unit, element.buffFilter or element.filter or 'HARMFUL', min(numDebuffs, numAuras - visibleBuffs), true, visibleBuffs)
 
 		element.visibleDebuffs = visibleDebuffs
 		element.visibleBuffs = visibleBuffs
@@ -327,16 +259,12 @@ local function UpdateAuras(self, event, unit, isFullUpdate, updatedAuras)
 
 		element.allAuras = visibleBuffs + visibleDebuffs + hiddenBuffs + hiddenDebuffs + visibleMissing
 
-		if element.PostUpdate then
-			element:PostUpdate(unit)
-		end
+		if element.PostUpdate then element:PostUpdate(unit) end
 	end
 end
 
 local function Update(self, event, unit)
-	if self.unit ~= unit then
-		return
-	end
+	if self.unit ~= unit then return end
 
 	UpdateAuras(self, event, unit)
 end
@@ -361,11 +289,7 @@ local function Enable(self)
 		element.anchoredIcons = 0
 		element.size = 8
 
-		if oUF.isRetail then
-			self:RegisterEvent('UNIT_AURA', UpdateAuras)
-		else
-			oUF:RegisterEvent(self, 'UNIT_AURA', UpdateAuras)
-		end
+		oUF:RegisterEvent(self, 'UNIT_AURA', UpdateAuras)
 
 		element:Show()
 
@@ -375,15 +299,9 @@ end
 
 local function Disable(self)
 	if self.AuraWatch then
-		if oUF.isRetail then
-			self:UnregisterEvent('UNIT_AURA', UpdateAuras)
-		else
-			oUF:UnregisterEvent(self, 'UNIT_AURA', UpdateAuras)
-		end
+		oUF:UnregisterEvent(self, 'UNIT_AURA', UpdateAuras)
 
-		if self.AuraWatch then
-			self.AuraWatch:Hide()
-		end
+		if self.AuraWatch then self.AuraWatch:Hide() end
 	end
 end
 
