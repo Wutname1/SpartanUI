@@ -486,6 +486,7 @@ function UF:OnInitialize()
 						}
 					},
 					ClassPower = {},
+					ThreatIndicator = {},
 					Name = {
 						enabled = true,
 						width = false,
