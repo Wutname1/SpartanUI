@@ -426,6 +426,20 @@ function UF:SpawnFrames()
 	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
 	UF.frames.raid = raid
 
+	local function GroupEnableElement(groupFrame, elementName)
+		for _, f in ipairs(groupFrame) do
+			if f.EnableElement then
+				f:EnableElement(elementName)
+			end
+		end
+	end
+	local function GroupDisableElement(groupFrame, elementName)
+		for _, f in ipairs(groupFrame) do
+			if f.DisableElement then
+				f:DisableElement(elementName)
+			end
+		end
+	end
 	local function GroupFrameElementUpdate(groupFrame, elementName)
 		for _, f in ipairs(groupFrame) do
 			if f.ElementUpdate then
@@ -474,6 +488,8 @@ function UF:SpawnFrames()
 			UF.frames[group].ElementUpdate = GroupFrameElementUpdate
 			UF.frames[group].Enable = GroupFrameEnable
 			UF.frames[group].Disable = GroupFrameDisable
+			UF.frames[group].EnableElement = GroupEnableElement
+			UF.frames[group].DisableElement = GroupDisableElement
 		end
 	end
 
