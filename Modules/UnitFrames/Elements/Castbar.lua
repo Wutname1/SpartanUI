@@ -149,14 +149,7 @@ local function Update(frame)
 		DB.Icon.position.x,
 		DB.Icon.position.y
 	)
-end
 
----@param frame table
-local function UpdateSize(frame)
-	if frame.Castbar then
-		return
-	end
-	local DB = frame.Castbar.DB
 	frame.Castbar:SetHeight(DB.height)
 	frame.Castbar.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end
@@ -166,4 +159,4 @@ end
 local function Options(unitName, OptionSet)
 end
 
-UF.Elements:Register('Castbar', Build, Update, Options, UpdateSize)
+UF.Elements:Register('Castbar', Build, Update, Options)

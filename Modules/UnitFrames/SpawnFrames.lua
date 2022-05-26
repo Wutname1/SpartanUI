@@ -24,12 +24,7 @@ local elementList = {
 	'PhaseIndicator'
 }
 local NoBulkUpdate = {
-	-- 'Auras',
-	-- 'Castbar',
-	'ClassPower',
 	'HealthPrediction',
-	-- 'Health',
-	-- 'Power',
 	'Range',
 	'SpartanArt'
 }
@@ -150,7 +145,7 @@ local function CreateUnitFrame(self, unit)
 		-- Call the elements update function
 		UF.Elements:Update(frame, elementName)
 
-		if SUI:IsInTable(NoBulkUpdate, elementName) then
+		if SUI:IsInTable(NoBulkUpdate, elementName) or UF.Elements:GetConfig(elementName).NoBulkUpdate then
 			return
 		end
 

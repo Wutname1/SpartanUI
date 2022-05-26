@@ -14,7 +14,6 @@ local function Build(frame, DB)
 		Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 
 		-- Position and size.
-		Bar:SetSize(DB.width, DB.height)
 		if (index == 1) then
 			Bar:SetPoint('LEFT', frame.CPAnchor, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
 		else
@@ -49,6 +48,10 @@ local function Update(frame)
 			DB.position.y
 		)
 	end
+
+	for i = 1, #element do
+		element[i]:SetSize(DB.width, DB.height)
+	end
 end
 
 ---@param unitName string
@@ -56,4 +59,6 @@ end
 local function Options(unitName, OptionSet)
 end
 
-UF.Elements:Register('ClassPower', Build, Update, Options)
+local Config = {NoBulkUpdate = true}
+
+UF.Elements:Register('ClassPower', Build, Update, Options, Config)

@@ -133,6 +133,7 @@ local DBDefaults = {
 		'what you have on offer'
 	},
 	GossipWhitelist = {
+		'Evacuate, now!',
 		"I've cleared a path for you. You should leave.",
 		'If you insist. The show must go on!',
 		'Will you spar with me?',

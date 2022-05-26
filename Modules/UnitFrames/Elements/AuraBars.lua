@@ -55,6 +55,9 @@ local InverseAnchor = UF.InverseAnchor
 local function Build(frame, DB)
 	local AuraBars = CreateFrame('Frame', '$parent_AuraBars', frame)
 
+	AuraBars.spellTimeFont = SUI:GetFontFace('Player')
+	AuraBars.spellNameFont = SUI:GetFontFace('Player')
+
 	local function PostCreateBar()
 	end
 
@@ -117,21 +120,6 @@ local function Update(frame)
 		frame:DisableElement('AuraBars')
 		AuraBars:Hide()
 	end
-end
-
----@param frame table
-local function UpdateSize(frame)
-	if not frame.AuraBars then
-		return
-	end
-	local AuraBars = frame.AuraBars
-	local DB = frame.AuraBars.DB
-
-	-- AuraBars.width = DB.width or 240
-	-- AuraBars.height = DB.height or 12
-	--frame.AuraBars:SetSize(DB.size, DB.size)
-	--frame.AuraBars:SetSize(DB.width, DB.height)
-	--frame.AuraBars:SetSize(frame:GetWitdth(), DB.height)
 end
 
 ---@param unitName string

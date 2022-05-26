@@ -43,17 +43,6 @@ local function Update(frame)
 	frame:UpdateAllElements('ForceUpdate')
 end
 
----@param frame table
-local function UpdateSize(frame)
-	if not frame.Buffs then
-		return
-	end
-	local DB = frame.Buffs.DB
-	--frame.Buffs:SetSize(DB.size, DB.size)
-	--frame.Buffs:SetSize(DB.width, DB.height)
-	--frame.Buffs:SetSize(frame:GetWitdth(), DB.height)
-end
-
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)

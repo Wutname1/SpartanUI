@@ -47,16 +47,19 @@ local Elements = {}
 ---@field T table<string, SUIUFElement>
 Elements.List = {}
 
+---@class ElementConfig
+---@field NoBulkUpdate boolean
+
 ---@param ElementName string
 ---@param Build function
 ---@param Update? function
 ---@param OptionsTable? function
----@param UpdateSize? function
-function Elements:Register(ElementName, Build, Update, OptionsTable, UpdateSize)
+---@param Config? ElementConfig
+function Elements:Register(ElementName, Build, Update, OptionsTable, Config)
 	UF.Elements.List[ElementName] = {
 		Build = Build,
 		Update = Update,
-		UpdateSize = UpdateSize,
+		Config = Config,
 		OptionsTable = OptionsTable
 	}
 end
@@ -83,15 +86,13 @@ function Elements:Update(frame, ElementName, DB)
 	end
 end
 
----@param frame table
 ---@param ElementName string
----@return boolean --False if the element did not provide a Size updater
-function Elements:UpdateSize(frame, ElementName)
-	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].UpdateSize then
-		UF.Elements.List[ElementName].UpdateSize(frame)
-		return true
+---@return ElementConfig --False if the element did not provide a Size updater
+function Elements:GetConfig(ElementName)
+	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].Config then
+		return UF.Elements.List[ElementName].Config
 	else
-		return false
+		return {NoBulkUpdate = false}
 	end
 end
 

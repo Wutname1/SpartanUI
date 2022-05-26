@@ -79,16 +79,6 @@ local function Update(frame)
 	end
 end
 
----@param frame table
-local function UpdateSize(frame)
-	if frame.Portrait3D then
-		frame.Portrait3D:SetSize(frame.FrameHeight, frame.FrameHeight)
-	end
-	if frame.Portrait2D then
-		frame.Portrait2D:SetSize(frame.FrameHeight, frame.FrameHeight)
-	end
-end
-
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
@@ -205,4 +195,4 @@ local function Options(unitName, OptionSet)
 	}
 end
 
-UF.Elements:Register('Portrait', Build, Update, Options, UpdateSize)
+UF.Elements:Register('Portrait', Build, Update, Options)

@@ -43,17 +43,6 @@ local function Update(frame)
 	frame:UpdateAllElements('ForceUpdate')
 end
 
----@param frame table
-local function UpdateSize(frame)
-	if not frame.Debuffs then
-		return
-	end
-	local DB = frame.Debuffs.DB
-	--frame.Debuffs:SetSize(DB.size, DB.size)
-	--frame.Debuffs:SetSize(DB.width, DB.height)
-	--frame.Debuffs:SetSize(frame:GetWitdth(), DB.height)
-end
-
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
