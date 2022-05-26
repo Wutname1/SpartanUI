@@ -83,7 +83,7 @@ local function Build(frame, DB)
 		effect1,
 		effect2,
 		effect3)
-		if castByPlayer and duration ~= 0 then
+		if (source == 'player' or source == 'vehicle' or isBossDebuff) and duration ~= 0 and duration <= 900 then
 			return true
 		end
 	end

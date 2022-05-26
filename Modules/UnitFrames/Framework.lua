@@ -692,10 +692,6 @@ function UF:OnInitialize()
 				columnSpacing = 0,
 				yOffset = -10,
 				elements = {
-					Buffs = {
-						enabled = true,
-						size = 10
-					},
 					Castbar = {
 						enabled = true
 					},
@@ -713,10 +709,6 @@ function UF:OnInitialize()
 				enabled = true,
 				width = 100,
 				elements = {
-					Buffs = {
-						enabled = true,
-						onlyShowPlayer = true
-					},
 					Debuffs = {
 						enabled = true,
 						onlyShowPlayer = true
