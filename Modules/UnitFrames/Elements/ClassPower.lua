@@ -14,7 +14,7 @@ local function Build(frame, DB)
 		Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 
 		-- Position and size.
-		Bar:SetSize(16, 5)
+		Bar:SetSize(DB.width, DB.height)
 		if (index == 1) then
 			Bar:SetPoint('LEFT', frame.CPAnchor, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
 		else
@@ -29,7 +29,26 @@ end
 
 ---@param frame table
 local function Update(frame)
-	local DB = frame.ClassPower.DB
+	local element = frame.ClassPower
+	local DB = element.DB
+
+	if DB.position.relativeTo == 'Frame' then
+		element[1]:SetPoint(
+			DB.position.anchor,
+			frame,
+			DB.position.relativePoint or DB.position.anchor,
+			DB.position.x,
+			DB.position.y
+		)
+	else
+		element[1]:SetPoint(
+			DB.position.anchor,
+			frame[DB.position.relativeTo],
+			DB.position.relativePoint or DB.position.anchor,
+			DB.position.x,
+			DB.position.y
+		)
+	end
 end
 
 ---@param unitName string

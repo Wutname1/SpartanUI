@@ -350,94 +350,6 @@ function UF:OnInitialize()
 							anchor = nil
 						}
 					},
-					HappinessIndicator = {
-						enabled = true,
-						position = {
-							anchor = 'LEFT',
-							x = -10,
-							y = -10
-						}
-					},
-					Portrait = {
-						type = '3D',
-						scaleWithFrame = true,
-						width = 50,
-						height = 100,
-						rotation = 0,
-						camDistanceScale = 1,
-						xOffset = 0,
-						yOffset = 0,
-						position = 'left'
-					},
-					Health = {
-						enabled = true,
-						height = 40,
-						width = false,
-						FrameStrata = 'BACKGROUND',
-						colorReaction = true,
-						colorSmooth = false,
-						colorClass = true,
-						colorTapping = true,
-						colorDisconnected = true,
-						bg = {
-							enabled = true,
-							color = {1, 1, 1, .2}
-						},
-						text = {
-							['1'] = {
-								enabled = true,
-								text = '[health:current-formatted] / [health:max-formatted]',
-								position = {
-									anchor = 'CENTER',
-									x = 0,
-									y = 0
-								}
-							}
-						},
-						position = {
-							anchor = 'TOP'
-						}
-					},
-					HealthPrediction = {
-						enabled = true
-					},
-					Power = {
-						enabled = true,
-						height = 10,
-						width = false,
-						FrameStrata = 'BACKGROUND',
-						bg = {
-							enabled = true,
-							color = {1, 1, 1, .2}
-						},
-						text = {
-							['1'] = {
-								enabled = false,
-								text = '[power:current-formatted] / [power:max-formatted]'
-							},
-							['2'] = {
-								enabled = false,
-								text = '[perpp]%'
-							}
-						},
-						position = {
-							anchor = 'TOP',
-							relativeTo = 'Health',
-							relativePoint = 'BOTTOM',
-							y = -1
-						}
-					},
-					AdditionalPower = {
-						enabled = true,
-						height = 5,
-						width = false,
-						position = {
-							anchor = 'TOP',
-							relativeTo = 'Power',
-							relativePoint = 'BOTTOM',
-							y = -1
-						}
-					},
 					Castbar = {
 						enabled = false,
 						height = 10,
@@ -485,7 +397,135 @@ function UF:OnInitialize()
 							anchor = 'TOP'
 						}
 					},
-					ClassPower = {},
+					ClassPower = {
+						enabled = true,
+						width = 16,
+						height = 5,
+						position = {
+							anchor = 'TOPLEFT',
+							relativeTo = 'Name',
+							relativePoint = 'BOTTOMLEFT',
+							y = -5
+						}
+					},
+					ClassIcon = {
+						VisibleOn = 'PlayerControlled',
+						position = {
+							anchor = 'BOTTOMLEFT',
+							x = -12,
+							y = 0
+						}
+					},
+					CombatIndicator = {},
+					GroupRoleIndicator = {
+						enabled = true,
+						size = 18,
+						alpha = .75,
+						ShowTank = true,
+						ShowHealer = true,
+						ShowDPS = true,
+						position = {
+							anchor = 'TOPRIGHT',
+							x = 0,
+							y = 10
+						}
+					},
+					HappinessIndicator = {
+						enabled = true,
+						position = {
+							anchor = 'LEFT',
+							x = -10,
+							y = -10
+						}
+					},
+					Health = {
+						enabled = true,
+						height = 40,
+						width = false,
+						FrameStrata = 'BACKGROUND',
+						colorReaction = true,
+						colorSmooth = false,
+						colorClass = true,
+						colorTapping = true,
+						colorDisconnected = true,
+						bg = {
+							enabled = true,
+							color = {1, 1, 1, .2}
+						},
+						text = {
+							['1'] = {
+								enabled = true,
+								text = '[health:current-formatted] / [health:max-formatted]',
+								position = {
+									anchor = 'CENTER',
+									x = 0,
+									y = 0
+								}
+							}
+						},
+						position = {
+							anchor = 'TOP'
+						}
+					},
+					HealthPrediction = {
+						enabled = true
+					},
+					PhaseIndicator = {
+						enabled = true,
+						position = {
+							anchor = 'TOP',
+							x = 0,
+							y = 0
+						}
+					},
+					Portrait = {
+						type = '3D',
+						scaleWithFrame = true,
+						width = 50,
+						height = 100,
+						rotation = 0,
+						camDistanceScale = 1,
+						xOffset = 0,
+						yOffset = 0,
+						position = 'left'
+					},
+					Power = {
+						enabled = true,
+						height = 10,
+						width = false,
+						FrameStrata = 'BACKGROUND',
+						bg = {
+							enabled = true,
+							color = {1, 1, 1, .2}
+						},
+						text = {
+							['1'] = {
+								enabled = false,
+								text = '[power:current-formatted] / [power:max-formatted]'
+							},
+							['2'] = {
+								enabled = false,
+								text = '[perpp]%'
+							}
+						},
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Health',
+							relativePoint = 'BOTTOM',
+							y = -1
+						}
+					},
+					AdditionalPower = {
+						enabled = true,
+						height = 5,
+						width = false,
+						position = {
+							anchor = 'TOP',
+							relativeTo = 'Power',
+							relativePoint = 'BOTTOM',
+							y = -1
+						}
+					},
 					ThreatIndicator = {},
 					Name = {
 						enabled = true,
@@ -511,20 +551,6 @@ function UF:OnInitialize()
 						}
 					},
 					RestingIndicator = {},
-					GroupRoleIndicator = {
-						enabled = true,
-						size = 18,
-						alpha = .75,
-						ShowTank = true,
-						ShowHealer = true,
-						ShowDPS = true,
-						position = {
-							anchor = 'TOPRIGHT',
-							x = 0,
-							y = 10
-						}
-					},
-					CombatIndicator = {},
 					RaidTargetIndicator = {
 						enabled = true,
 						size = 20,
@@ -532,14 +558,6 @@ function UF:OnInitialize()
 							anchor = 'BOTTOMRIGHT',
 							x = 5,
 							y = -10
-						}
-					},
-					ClassIcon = {
-						VisibleOn = 'PlayerControlled',
-						position = {
-							anchor = 'BOTTOMLEFT',
-							x = -12,
-							y = 0
 						}
 					},
 					ReadyCheckIndicator = {
@@ -613,14 +631,6 @@ function UF:OnInitialize()
 						enabled = true,
 						insideAlpha = 1,
 						outsideAlpha = .3
-					},
-					PhaseIndicator = {
-						enabled = true,
-						position = {
-							anchor = 'TOP',
-							x = 0,
-							y = 0
-						}
 					},
 					SUI_RaidGroup = {
 						size = 13,

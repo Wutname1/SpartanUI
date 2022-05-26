@@ -1012,6 +1012,18 @@ local DBdefault = {
 								x = 0,
 								y = -16
 							}
+						},
+						Buffs = {
+							position = {
+								relativeTo = 'Name',
+								y = -15
+							}
+						},
+						Debuffs = {
+							position = {
+								relativeTo = 'Name',
+								y = -15
+							}
 						}
 					}
 				},
@@ -1038,6 +1050,18 @@ local DBdefault = {
 								anchor = 'BOTTOM',
 								x = 0,
 								y = -16
+							}
+						},
+						Buffs = {
+							position = {
+								relativeTo = 'Name',
+								y = -5
+							}
+						},
+						Debuffs = {
+							position = {
+								relativeTo = 'Name',
+								y = -5
 							}
 						}
 					}
