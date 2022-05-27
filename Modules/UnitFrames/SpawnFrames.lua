@@ -20,10 +20,10 @@ end
 
 if SUI.IsClassic then
 	FramesList = {
-		[1] = 'pet',
-		[2] = 'target',
-		[3] = 'targettarget',
-		[4] = 'player'
+		'pet',
+		'target',
+		'targettarget',
+		'player'
 	}
 end
 
