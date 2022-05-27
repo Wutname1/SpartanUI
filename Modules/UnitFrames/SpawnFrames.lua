@@ -22,9 +22,6 @@ local elementList = {
 	'QuestMobIndicator',
 	'PhaseIndicator'
 }
-local NoBulkUpdate = {
-	'HealthPrediction'
-}
 
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
 -- if SUI.IsClassic or SUI.IsBCC then
@@ -142,7 +139,7 @@ local function CreateUnitFrame(self, unit)
 		-- Call the elements update function
 		UF.Elements:Update(frame, elementName)
 
-		if SUI:IsInTable(NoBulkUpdate, elementName) or UF.Elements:GetConfig(elementName).NoBulkUpdate then
+		if UF.Elements:GetConfig(elementName).NoBulkUpdate then
 			return
 		end
 
