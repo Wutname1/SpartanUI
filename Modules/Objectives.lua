@@ -52,8 +52,7 @@ local ObjTrackerUpdate = function(_, event)
 	if SUI.DB.DisabledComponents.Objectives or module.Override then
 		return
 	end
-	local FadeIn = true -- Default to display incase user changes to disabled while hidden
-	local FadeOut = false
+	local HideObjs = false
 
 	--Figure out if we need to hide objectives
 	for _, v in ipairs(RuleList) do
@@ -66,17 +65,15 @@ local ObjTrackerUpdate = function(_, event)
 			end
 
 			if module.DB[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
-				FadeOut = true
+				HideObjs = true
 			elseif module.DB[v].Status == 'Raid' and IsInRaid() and CombatRule then
-				FadeOut = true
+				HideObjs = true
 			elseif module.DB[v].Status == 'Boss' and event == 'ENCOUNTER_START' then
-				FadeOut = true
+				HideObjs = true
 			elseif module.DB[v].Status == 'Instance' and IsInInstance() then
-				FadeOut = true
+				HideObjs = true
 			elseif module.DB[v].Status == 'All' and CombatRule then
-				FadeOut = true
-			else
-				FadeIn = true
+				HideObjs = true
 			end
 		end
 	end
@@ -89,30 +86,41 @@ local ObjTrackerUpdate = function(_, event)
 
 	-- Always Shown logic
 	if (module.DB.AlwaysShowScenario and ScenarioActive) then
-		FadeIn = true
-		FadeOut = false
+		HideObjs = false
 	end
 
 	if SUI.IsRetail then
 		for _, headerName in ipairs({'CampaignQuestHeader', 'QuestHeader'}) do
 			local QuestHeader = _G['ObjectiveTrackerBlocksFrame'][headerName]
-			if QuestHeader and QuestHeader.nextBlock then
-				if
-					((QuestHeader.nextBlock:IsVisible() and FadeOut) or (not QuestHeader.nextBlock:IsVisible() and FadeIn)) and
-						not QuestHeader.nextBlock.isHeader
-				 then
+			if QuestHeader and QuestHeader.module then
+				if QuestHeader.module.collapsed == nil then
+					if (not QuestHeader.nextBlock) or (QuestHeader.nextBlock and QuestHeader.nextBlock.isHeader) then
+						QuestHeader.module.collapsed = true
+					end
+					if QuestHeader.nextBlock and not QuestHeader.nextBlock.isHeader then
+						QuestHeader.module.collapsed = false
+					end
+				end
+
+				-- print(HideObjs)
+				-- print(QuestHeader.module:IsCollapsed())
+				-- print((QuestHeader.module.collapsed and HideObjs))
+				-- print((QuestHeader.module.collapsed == false and HideObjs))
+				-- print('---')
+
+				if ((QuestHeader.module:IsCollapsed() and not HideObjs) or (QuestHeader.module:IsCollapsed() and HideObjs)) then
 					QuestHeader.MinimizeButton:Click()
 				end
 			end
 		end
 	else
-		if FadeOut and _G[frameName]:GetAlpha() == 1 then
+		if HideObjs and _G[frameName]:GetAlpha() == 1 then
 			_G[frameName].FadeOut:Play()
 			_G[frameName]:Hide()
 			if _G[frameName].HeaderMenu then
 				_G[frameName].HeaderMenu.MinimizeButton:Hide()
 			end
-		elseif FadeIn and _G[frameName]:GetAlpha() == 0 and not FadeOut then
+		elseif FadeIn and _G[frameName]:GetAlpha() == 0 and not HideObjs then
 			if _G[frameName].HeaderMenu then
 				_G[frameName].HeaderMenu.MinimizeButton:Show()
 			end
@@ -274,7 +282,6 @@ function module:OnEnable()
 		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_UPDATE')
 	end
 
-	ObjTrackerUpdate()
 	Options()
 	MakeMoveable()
 end
