@@ -580,6 +580,8 @@ function UF:OnInitialize()
 					},
 					StatusText = {
 						size = 22,
+						width = 70,
+						height = 25,
 						SetJustifyH = 'CENTER',
 						SetJustifyV = 'MIDDLE',
 						position = {
