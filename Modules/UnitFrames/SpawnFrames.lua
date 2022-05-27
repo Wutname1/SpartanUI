@@ -10,10 +10,12 @@ local FramesList = {
 	'player'
 }
 
-local GroupFrames = {'raid', 'party', 'boss', 'arena'}
--- if SUI.IsClassic or SUI.IsBCC then
-if SUI.IsClassic then
-	GroupFrames = {'raid', 'party'}
+local GroupFrames = {'raid', 'party'}
+if SUI.IsRetail then
+	table.insert(GroupFrames, 'boss')
+end
+if not SUI.IsClassic then
+	table.insert(GroupFrames, 'arena')
 end
 
 if SUI.IsClassic then
