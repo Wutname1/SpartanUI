@@ -12,6 +12,7 @@
     <Script file="Elements\ClassPower.lua"/>
     <Script file="Elements\CombatIndicator.lua"/>
     <Script file="Elements\Debuffs.lua"/>
+    <Script file="Elements\DispelHighlight.lua"/>
     <Script file="Elements\GroupRoleIndicator.lua"/>
     <Script file="Elements\Health.lua"/>
     <Script file="Elements\LeaderIndicator.lua"/>

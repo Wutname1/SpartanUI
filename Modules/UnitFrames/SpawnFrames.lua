@@ -263,13 +263,6 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 
-	-- do -- setup buffs and debuffs
-	self.DispelHighlight = self.Health:CreateTexture(nil, 'OVERLAY')
-	self.DispelHighlight:SetAllPoints(self.Health:GetStatusBarTexture())
-	self.DispelHighlight:SetTexture(Smoothv2)
-	self.DispelHighlight:Hide()
-	ElementUpdate(self, 'DispelHighlight')
-
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
 	if not InCombatLockdown() then
