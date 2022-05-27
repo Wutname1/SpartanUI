@@ -5,6 +5,7 @@ module.description = 'Allows the hiding of the Objectives tracker based on condi
 local MoveIt
 local ObjectiveTrackerWatcher = CreateFrame('Frame')
 local holder = CreateFrame('Frame', 'ObjectiveTrackerHolder', UIParent)
+-- local frameName = 'ObjectiveTrackerBlocksFrame'
 local frameName = 'ObjectiveTrackerFrame'
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local Conditions = {
@@ -45,15 +46,6 @@ local function MakeMoveable()
 
 	MoveIt:CreateMover(holder, 'ObjectiveTracker', 'Objective Tracker', nil, 'Blizzard UI')
 	UpdateSize()
-end
-
-local HideFrame = function()
-	if SUI.DB.DisabledComponents.Objectives or module.Override then
-		return
-	end
-	if _G[frameName]:GetAlpha() == 0 and _G[frameName].HeaderMenu then
-		_G[frameName].HeaderMenu.MinimizeButton:Hide()
-	end
 end
 
 local ObjTrackerUpdate = function(_, event)
@@ -101,15 +93,32 @@ local ObjTrackerUpdate = function(_, event)
 		FadeOut = false
 	end
 
-	if FadeOut and _G[frameName]:GetAlpha() == 1 then
-		_G[frameName].FadeOut:Play()
-		C_Timer.After(1, HideFrame)
-	elseif FadeIn and _G[frameName]:GetAlpha() == 0 and not FadeOut then
-		if _G[frameName].HeaderMenu then
-			_G[frameName].HeaderMenu.MinimizeButton:Show()
+	if SUI.IsRetail then
+		for _, headerName in ipairs({'CampaignQuestHeader', 'QuestHeader'}) do
+			local QuestHeader = _G['ObjectiveTrackerBlocksFrame'][headerName]
+			if QuestHeader and QuestHeader.nextBlock then
+				if
+					((QuestHeader.nextBlock:IsVisible() and FadeOut) or (not QuestHeader.nextBlock:IsVisible() and FadeIn)) and
+						not QuestHeader.nextBlock.isHeader
+				 then
+					QuestHeader.MinimizeButton:Click()
+				end
+			end
 		end
-		_G[frameName].FadeOut:Stop()
-		_G[frameName].FadeIn:Play()
+	else
+		if FadeOut and _G[frameName]:GetAlpha() == 1 then
+			_G[frameName].FadeOut:Play()
+			_G[frameName]:Hide()
+			if _G[frameName].HeaderMenu then
+				_G[frameName].HeaderMenu.MinimizeButton:Hide()
+			end
+		elseif FadeIn and _G[frameName]:GetAlpha() == 0 and not FadeOut then
+			if _G[frameName].HeaderMenu then
+				_G[frameName].HeaderMenu.MinimizeButton:Show()
+			end
+			_G[frameName].FadeOut:Stop()
+			_G[frameName].FadeIn:Play()
+		end
 	end
 end
 
@@ -225,24 +234,24 @@ function module:OnEnable()
 	-- Add Fade in and out
 	if SUI.IsClassic or SUI.IsBCC then
 		frameName = 'QuestWatchFrame'
+
+		_G[frameName].FadeIn = _G[frameName]:CreateAnimationGroup()
+		local FadeIn = _G[frameName].FadeIn:CreateAnimation('Alpha')
+		FadeIn:SetOrder(1)
+		FadeIn:SetDuration(0.2)
+		FadeIn:SetFromAlpha(0)
+		FadeIn:SetToAlpha(1)
+		_G[frameName].FadeIn:SetToFinalAlpha(true)
+
+		_G[frameName].FadeOut = _G[frameName]:CreateAnimationGroup()
+		local FadeOut = _G[frameName].FadeOut:CreateAnimation('Alpha')
+		FadeOut:SetOrder(1)
+		FadeOut:SetDuration(0.3)
+		FadeOut:SetFromAlpha(1)
+		FadeOut:SetToAlpha(0)
+		FadeOut:SetStartDelay(.5)
+		_G[frameName].FadeOut:SetToFinalAlpha(true)
 	end
-
-	_G[frameName].FadeIn = _G[frameName]:CreateAnimationGroup()
-	local FadeIn = _G[frameName].FadeIn:CreateAnimation('Alpha')
-	FadeIn:SetOrder(1)
-	FadeIn:SetDuration(0.2)
-	FadeIn:SetFromAlpha(0)
-	FadeIn:SetToAlpha(1)
-	_G[frameName].FadeIn:SetToFinalAlpha(true)
-
-	_G[frameName].FadeOut = _G[frameName]:CreateAnimationGroup()
-	local FadeOut = _G[frameName].FadeOut:CreateAnimation('Alpha')
-	FadeOut:SetOrder(1)
-	FadeOut:SetDuration(0.3)
-	FadeOut:SetFromAlpha(1)
-	FadeOut:SetToAlpha(0)
-	FadeOut:SetStartDelay(.5)
-	_G[frameName].FadeOut:SetToFinalAlpha(true)
 
 	--Event Manager
 	ObjectiveTrackerWatcher:SetScript('OnEvent', ObjTrackerUpdate)
