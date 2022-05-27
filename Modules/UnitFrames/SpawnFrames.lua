@@ -14,7 +14,6 @@ local elementList = {
 	'DispelHighlight',
 	'ReadyCheckIndicator',
 	'RareElite',
-	'StatusText',
 	'Stagger',
 	'Totems',
 	'RaidRoleIndicator',
@@ -245,10 +244,6 @@ local function CreateUnitFrame(self, unit)
 		self.PhaseIndicator:Hide()
 		ElementUpdate(self, 'PhaseIndicator')
 
-		self.StatusText = self:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(self.StatusText, elementsDB.StatusText.size, 'UnitFrames')
-		ElementUpdate(self, 'StatusText')
-		self:Tag(self.StatusText, '[afkdnd]')
 		do -- Special Icons/Bars
 			if unit == 'player' then
 				--Totem Bar

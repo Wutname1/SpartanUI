@@ -582,6 +582,7 @@ function UF:OnInitialize()
 						size = 22,
 						width = 70,
 						height = 25,
+						text = '[afkdnd]',
 						SetJustifyH = 'CENTER',
 						SetJustifyV = 'MIDDLE',
 						position = {

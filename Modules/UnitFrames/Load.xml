@@ -25,6 +25,7 @@
     <Script file="Elements\RestingIndicator.lua"/>
     <Script file="Elements\Runes.lua"/>
     <Script file="Elements\SpartanArt.lua"/>
+    <Script file="Elements\StatusText.lua"/>
     <Script file="Elements\SUI_RaidGroup.lua"/>
     <Script file="Elements\ThreatIndicator.lua"/>
 
