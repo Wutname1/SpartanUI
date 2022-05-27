@@ -307,13 +307,13 @@ function UF:SpawnFrames()
 
 	-- Spawn all main frames
 	for _, b in pairs(FramesList) do
-		UF.frames[b] = SUIUF:Spawn(b, 'SUI_UF_' .. b)
+		UF.Frames[b] = SUIUF:Spawn(b, 'SUI_UF_' .. b)
 
 		-- Disable objects based on settings
-		UF.frames[b]:UpdateAll()
+		UF.Frames[b]:UpdateAll()
 
 		if not UF.CurrentSettings[b].enabled then
-			UF.frames[b]:Disable()
+			UF.Frames[b]:Disable()
 		end
 	end
 
@@ -328,7 +328,7 @@ function UF:SpawnFrames()
 					grpFrame[i]:SetPoint('TOP', grpFrame[i - 1], 'BOTTOM', 0, -10)
 				end
 			end
-			UF.frames[group] = grpFrame
+			UF.Frames[group] = grpFrame
 		end
 	end
 
@@ -364,7 +364,7 @@ function UF:SpawnFrames()
 		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, CalculateHeight('party'))
 	)
 	party:SetPoint('TOPLEFT', SUI_UF_party, 'TOPLEFT')
-	UF.frames.party = party
+	UF.Frames.party = party
 
 	-- Raid Frames
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
@@ -410,7 +410,7 @@ function UF:SpawnFrames()
 		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, CalculateHeight('raid'))
 	)
 	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
-	UF.frames.raid = raid
+	UF.Frames.raid = raid
 
 	local function GroupEnableElement(groupFrame, elementName)
 		for _, f in ipairs(groupFrame) do
@@ -451,13 +451,13 @@ function UF:SpawnFrames()
 	end
 
 	for _, group in ipairs(GroupFrames) do
-		if UF.frames[group] then
+		if UF.Frames[group] then
 			local function GroupFrameUpdateAll(groupFrame)
 				if VisibilityCheck(group) and UF.CurrentSettings[group].enabled then
-					if UF.frames[group].visibility then
-						RegisterStateDriver(UF.frames[group], UF.frames[group].visibility)
+					if UF.Frames[group].visibility then
+						RegisterStateDriver(UF.Frames[group], UF.Frames[group].visibility)
 					end
-					UF.frames[group]:Show()
+					UF.Frames[group]:Show()
 
 					for _, f in ipairs(groupFrame) do
 						if f.UpdateAll then
@@ -465,17 +465,17 @@ function UF:SpawnFrames()
 						end
 					end
 				else
-					UnregisterStateDriver(UF.frames[group], 'visibility')
-					UF.frames[group]:Hide()
+					UnregisterStateDriver(UF.Frames[group], 'visibility')
+					UF.Frames[group]:Hide()
 				end
 			end
 
-			UF.frames[group].UpdateAll = GroupFrameUpdateAll
-			UF.frames[group].ElementUpdate = GroupFrameElementUpdate
-			UF.frames[group].Enable = GroupFrameEnable
-			UF.frames[group].Disable = GroupFrameDisable
-			UF.frames[group].EnableElement = GroupEnableElement
-			UF.frames[group].DisableElement = GroupDisableElement
+			UF.Frames[group].UpdateAll = GroupFrameUpdateAll
+			UF.Frames[group].ElementUpdate = GroupFrameElementUpdate
+			UF.Frames[group].Enable = GroupFrameEnable
+			UF.Frames[group].Disable = GroupFrameDisable
+			UF.Frames[group].EnableElement = GroupEnableElement
+			UF.Frames[group].DisableElement = GroupDisableElement
 		end
 	end
 
@@ -505,8 +505,8 @@ end
 
 function UF:UpdateAll(event, ...)
 	for _, v in ipairs(FramesList) do
-		if UF.frames[v] and UF.frames[v].UpdateAll then
-			UF.frames[v]:UpdateAll()
+		if UF.Frames[v] and UF.Frames[v].UpdateAll then
+			UF.Frames[v]:UpdateAll()
 		else
 			SUI:Error('Unable to find updater for ' .. v, 'Unit Frames')
 		end
@@ -517,8 +517,8 @@ end
 
 function UF:UpdateGroupFrames(event, ...)
 	for _, v in ipairs(GroupFrames) do
-		if UF.frames[v] then
-			UF.frames[v]:UpdateAll()
+		if UF.Frames[v] then
+			UF.Frames[v]:UpdateAll()
 		end
 	end
 end

@@ -140,7 +140,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].DB[option] = val
 		--Update the screen
-		UF.frames[unitName]:ElementUpdate('Health')
+		UF.Frames[unitName]:ElementUpdate('Health')
 	end
 	--local DB = UF.CurrentSettings[unitName].DB
 end

@@ -128,12 +128,12 @@ local function Options(unitName, OptionSet)
 				UF.DB.UserSettings[UF.DB.Style][unitName].elements.PvPIndicator[k] = val
 				--Update the screen
 				if val then
-					UF.frames[unitName].PvPIndicator[k] = UF.frames[unitName].PvPIndicator[v]
+					UF.Frames[unitName].PvPIndicator[k] = UF.Frames[unitName].PvPIndicator[v]
 				else
-					UF.frames[unitName].PvPIndicator[k]:Hide()
-					UF.frames[unitName].PvPIndicator[k] = nil
+					UF.Frames[unitName].PvPIndicator[k]:Hide()
+					UF.Frames[unitName].PvPIndicator[k] = nil
 				end
-				UF.frames[unitName].PvPIndicator:ForceUpdate('OnUpdate')
+				UF.Frames[unitName].PvPIndicator:ForceUpdate('OnUpdate')
 			end
 		}
 		i = i + 1

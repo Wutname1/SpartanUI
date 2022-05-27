@@ -101,15 +101,15 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.enabled = val
 					--Update the screen
-					if UF.frames[unitName].Portrait then
+					if UF.Frames[unitName].Portrait then
 						if val then
-							UF.frames[unitName]:EnableElement('Portrait')
-							UF.frames[unitName].Portrait:ForceUpdate()
+							UF.Frames[unitName]:EnableElement('Portrait')
+							UF.Frames[unitName].Portrait:ForceUpdate()
 						else
-							UF.frames[unitName]:DisableElement('Portrait')
+							UF.Frames[unitName]:DisableElement('Portrait')
 						end
 					else
-						UF.frames[unitName]:UpdateAll()
+						UF.Frames[unitName]:UpdateAll()
 					end
 				end
 			},
@@ -130,7 +130,7 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.type = val
 					--Update the screen
-					UF.frames[unitName]:ElementUpdate('Portrait')
+					UF.Frames[unitName]:ElementUpdate('Portrait')
 				end
 			},
 			rotation = {
@@ -149,7 +149,7 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.rotation = val
 					--Update the screen
-					UF.frames[unitName]:ElementUpdate('Portrait')
+					UF.Frames[unitName]:ElementUpdate('Portrait')
 				end
 			},
 			camDistanceScale = {
@@ -168,7 +168,7 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.camDistanceScale = val
 					--Update the screen
-					UF.frames[unitName]:ElementUpdate('Portrait')
+					UF.Frames[unitName]:ElementUpdate('Portrait')
 				end
 			},
 			position = {
@@ -188,7 +188,7 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.position = val
 					--Update the screen
-					UF.frames[unitName]:ElementUpdate('Portrait')
+					UF.Frames[unitName]:ElementUpdate('Portrait')
 				end
 			}
 		}

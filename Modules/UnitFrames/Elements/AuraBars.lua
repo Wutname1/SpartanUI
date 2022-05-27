@@ -131,7 +131,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.AuraBars[option] = val
 		--Update the screen
-		UF.frames[unitName]:ElementUpdate('AuraBars')
+		UF.Frames[unitName]:ElementUpdate('AuraBars')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.AuraBars
 end

@@ -58,7 +58,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Power[option] = val
 		--Update the screen
-		UF.frames[unitName]:ElementUpdate('Power')
+		UF.Frames[unitName]:ElementUpdate('Power')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Power
 end

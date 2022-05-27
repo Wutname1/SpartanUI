@@ -30,7 +30,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.GroupRoleIndicator[option] = val
 		--Update the screen
-		UF.frames[unitName]:ElementUpdate('GroupRoleIndicator')
+		UF.Frames[unitName]:ElementUpdate('GroupRoleIndicator')
 	end
 
 	--local DB = UF.CurrentSettings[unitName].elements.Range.enabled

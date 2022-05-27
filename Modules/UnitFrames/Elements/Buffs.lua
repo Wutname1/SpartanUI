@@ -52,7 +52,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Buffs[option] = val
 		--Update the screen
-		UF.frames[unitName]:ElementUpdate('Buffs')
+		UF.Frames[unitName]:ElementUpdate('Buffs')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Buffs
 end

@@ -47,7 +47,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Totems[option] = val
 		--Update the screen
-		UF.frames[unitName]:ElementUpdate('Totems')
+		UF.Frames[unitName]:ElementUpdate('Totems')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Totems
 end

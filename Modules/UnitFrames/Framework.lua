@@ -26,7 +26,7 @@ UF.FramePos = {
 		['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
 	}
 }
-UF.frames = {
+UF.Frames = {
 	arena = {},
 	boss = {},
 	party = {},
@@ -140,11 +140,11 @@ function UF:PositionFrame(b)
 	if b then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[b])
 
-		if UF.frames[b].position then
-			UF.frames[b]:position(point, anchor, secondaryPoint, x, y, false, true)
+		if UF.Frames[b].position then
+			UF.Frames[b]:position(point, anchor, secondaryPoint, x, y, false, true)
 		else
-			UF.frames[b]:ClearAllPoints()
-			UF.frames[b]:SetPoint(point, anchor, secondaryPoint, x, y)
+			UF.Frames[b]:ClearAllPoints()
+			UF.Frames[b]:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
 	else
 		local frameList = {
@@ -1274,7 +1274,7 @@ function UF:OnEnable()
 		local frame = CreateFrame('Frame', 'SUI_UF_' .. key)
 		frame:Hide()
 		frame:SetSize(width, height)
-		UF.frames.containers[key] = frame
+		UF.Frames.containers[key] = frame
 	end
 
 	-- Build options
@@ -1296,15 +1296,15 @@ function UF:OnEnable()
 		'player'
 	}
 	for _, b in pairs(FramesList) do
-		MoveIt:CreateMover(UF.frames[b], b, nil, nil, 'Unit frames')
+		MoveIt:CreateMover(UF.Frames[b], b, nil, nil, 'Unit frames')
 	end
 
 	-- Create Party & Raid Mover
-	MoveIt:CreateMover(UF.frames.containers.party, 'Party', nil, nil, 'Unit frames')
-	MoveIt:CreateMover(UF.frames.containers.raid, 'Raid', nil, nil, 'Unit frames')
-	MoveIt:CreateMover(UF.frames.containers.boss, 'Boss', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(UF.Frames.containers.party, 'Party', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(UF.Frames.containers.raid, 'Raid', nil, nil, 'Unit frames')
+	MoveIt:CreateMover(UF.Frames.containers.boss, 'Boss', nil, nil, 'Unit frames')
 	if SUI.IsRetail then
-		MoveIt:CreateMover(UF.frames.containers.arena, 'Arena', nil, nil, 'Unit frames')
+		MoveIt:CreateMover(UF.Frames.containers.arena, 'Arena', nil, nil, 'Unit frames')
 	end
 end
 

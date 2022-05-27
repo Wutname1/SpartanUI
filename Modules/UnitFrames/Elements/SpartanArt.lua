@@ -62,7 +62,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].artwork[pos][option] = val
 		--Update the screen
-		UF.frames[unitName]:ElementUpdate('SpartanArt')
+		UF.Frames[unitName]:ElementUpdate('SpartanArt')
 	end
 	OptionSet.args['artwork'] = {
 		name = L['Artwork'],
