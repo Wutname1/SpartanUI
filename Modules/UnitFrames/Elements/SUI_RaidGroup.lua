@@ -7,6 +7,7 @@ local function Build(frame, DB)
 
 	frame.SUI_RaidGroup.Text = frame:CreateFontString(nil, 'BORDER')
 	frame.SUI_RaidGroup.Text:SetPoint('CENTER', frame.SUI_RaidGroup, 'CENTER', 0, 0)
+	SUI:FormatFont(frame.SUI_RaidGroup.Text, DB.size, 'UnitFrames')
 	frame:Tag(frame.SUI_RaidGroup.Text, '[group]')
 end
 

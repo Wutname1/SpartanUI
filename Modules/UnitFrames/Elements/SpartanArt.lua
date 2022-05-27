@@ -183,4 +183,4 @@ local function Options(unitName, OptionSet)
 	end
 end
 
-UF.Elements:Register('SpartanArt', Build, _, Options)
+UF.Elements:Register('SpartanArt', Build, _, Options, {NoBulkUpdate = true})

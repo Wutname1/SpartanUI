@@ -24,9 +24,7 @@ local elementList = {
 	'PhaseIndicator'
 }
 local NoBulkUpdate = {
-	'HealthPrediction',
-	'Range',
-	'SpartanArt'
+	'HealthPrediction'
 }
 
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
@@ -216,11 +214,15 @@ local function CreateUnitFrame(self, unit)
 
 	local elementsDB = UF.CurrentSettings[unit].elements
 	self.elementDB = elementsDB
-	for elementName, Functions in pairs(UF.Elements.List) do
+	for elementName, _ in pairs(UF.Elements.List) do
 		if not elementsDB[elementName] then
 			SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
 		else
 			UF.Elements:Build(self, elementName, elementsDB[elementName])
+		end
+	end
+	for elementName, _ in pairs(UF.Elements.List) do
+		if elementsDB[elementName] then
 			ElementUpdate(self, elementName)
 		end
 	end

@@ -14,12 +14,6 @@ local function Build(frame, DB)
 		for i = 1, 6 do
 			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
 			frame.Runes[i]:SetHeight(6)
-			frame.Runes[i]:SetWidth((frame.Health:GetWidth() - 10) / 6)
-			if (i == 1) then
-				frame.Runes[i]:SetPoint('TOPLEFT', frame.Name, 'BOTTOMLEFT', 0, -3)
-			else
-				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
-			end
 			frame.Runes[i]:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
 
@@ -37,6 +31,14 @@ end
 ---@param frame table
 local function Update(frame)
 	local DB = frame.Runes.DB
+	for i = 1, 6 do
+		frame.Runes[i]:SetWidth((frame.Health:GetWidth() - 10) / 6)
+		if (i == 1) then
+			frame.Runes[i]:SetPoint('TOPLEFT', frame.Name, 'BOTTOMLEFT', 0, -3)
+		else
+			frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
+		end
+	end
 end
 
 ---@param unitName string
@@ -44,4 +46,4 @@ end
 local function Options(unitName, OptionSet)
 end
 
-UF.Elements:Register('Runes', Build, Update, Options)
+UF.Elements:Register('Runes', Build, Update, Options, {NoBulkUpdate = true})

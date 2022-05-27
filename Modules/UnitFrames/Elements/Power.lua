@@ -26,7 +26,7 @@ local function Build(frame, DB)
 		NewString:SetJustifyH(key.SetJustifyH)
 		NewString:SetJustifyV(key.SetJustifyV)
 		NewString:SetPoint(key.position.anchor, power, key.position.anchor, key.position.x, key.position.y)
-		frame:Tag(NewString, key.text)
+		frame:Tag(NewString, key.text or '')
 
 		power.TextElements[i] = NewString
 		if not key.enabled then
