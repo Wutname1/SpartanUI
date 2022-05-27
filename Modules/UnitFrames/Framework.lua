@@ -26,14 +26,31 @@ UF.FramePos = {
 		['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
 	}
 }
-UF.Frames = {
+local Frames = {
 	arena = {},
 	boss = {},
 	party = {},
 	raid = {},
-	containers = {}
+	containers = {},
+	builders = {}
 }
 UF.Artwork = {}
+
+---@param frameName string
+---@param builder function
+function Frames.Add(frameName, builder)
+	Frames.builders[frameName] = builder
+end
+---@param frame table
+function Frames.Build(frame)
+	if Frames.builders[frame.unitOnCreate] then
+		Frames.builders[frame.unitOnCreate](frame)
+	else
+		Frames.builders['player'](frame)
+	end
+end
+
+UF.Frames = Frames
 
 local Elements = {}
 
@@ -69,6 +86,10 @@ end
 ---@param DB? table
 function Elements:Build(frame, ElementName, DB)
 	if UF.Elements.List[ElementName] then
+		if not frame.elementList then
+			frame.elementList = {}
+		end
+		table.insert(frame.elementList, ElementName)
 		UF.Elements.List[ElementName].Build(frame, DB or UF.CurrentSettings[frame.unitOnCreate].elements[ElementName] or {})
 	end
 end

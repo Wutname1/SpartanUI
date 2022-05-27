@@ -1,7 +1,6 @@
 local _G, SUI = _G, SUI
 local UF = SUI.UF ---@class SUI_UnitFrames
 ----------------------------------------------------------------------------------------------------
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 local FramesList = {
 	'pet',
 	'target',
@@ -9,18 +8,6 @@ local FramesList = {
 	'focus',
 	'focustarget',
 	'player'
-}
-local elementList = {
-	'DispelHighlight',
-	'ReadyCheckIndicator',
-	'RareElite',
-	'Stagger',
-	'Totems',
-	'RaidRoleIndicator',
-	'ResurrectIndicator',
-	'SummonIndicator',
-	'QuestMobIndicator',
-	'PhaseIndicator'
 }
 
 local GroupFrames = {'raid', 'party', 'boss', 'arena'}
@@ -67,6 +54,7 @@ local function CreateUnitFrame(self, unit)
 		unit = 'arena'
 	end
 	self.unitOnCreate = unit
+	self.elementList = {}
 
 	-- Build a function that updates the size of the frame and sizes of elements
 	local function UpdateSize()
@@ -84,7 +72,7 @@ local function CreateUnitFrame(self, unit)
 		local elementsDB = UF.CurrentSettings[unit].elements
 		-- Check that its a frame
 		-- Loop all elements and update their status
-		for elementName, Functions in pairs(UF.Elements.List) do
+		for _, elementName in pairs(self.elementList) do
 			if not elementsDB[elementName] then
 				SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
 			else
@@ -92,7 +80,7 @@ local function CreateUnitFrame(self, unit)
 			end
 		end
 
-		for _, element in ipairs(elementList) do
+		for _, element in ipairs(self.elementList) do
 			if self[element] and element ~= nil then
 				-- oUF Update (event/updater state)
 				if elementsDB[element].enabled then
@@ -208,17 +196,13 @@ local function CreateUnitFrame(self, unit)
 
 	UpdateSize()
 
-	local elementsDB = UF.CurrentSettings[unit].elements
-	self.elementDB = elementsDB
-	for elementName, _ in pairs(UF.Elements.List) do
-		if not elementsDB[elementName] then
-			SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
-		else
-			UF.Elements:Build(self, elementName, elementsDB[elementName])
-		end
-	end
-	for elementName, _ in pairs(UF.Elements.List) do
-		if elementsDB[elementName] then
+	local elementDB = UF.CurrentSettings[unit].elements
+	self.elementDB = elementDB
+
+	UF.Frames.Build(self)
+
+	for _, elementName in pairs(self.elementList) do
+		if elementDB[elementName] then
 			ElementUpdate(self, elementName)
 		end
 	end

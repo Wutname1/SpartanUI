@@ -31,6 +31,9 @@
     <Script file="Elements\ThreatIndicator.lua"/>
     <!-- <Script file="Elements\Totems.lua"/> -->
 
+
+    <Script file="Units\player.lua"/>
+
     <Script file="SpawnFrames.lua" />
     <Script file="Options.lua" />
 </Ui>
