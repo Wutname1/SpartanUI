@@ -3,8 +3,7 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	frame.DispelHighlight = frame.Health:CreateTexture(nil, 'OVERLAY')
-	frame.DispelHighlight:SetAllPoints(frame.Health:GetStatusBarTexture())
+	frame.DispelHighlight = frame:CreateTexture(nil, 'OVERLAY')
 	frame.DispelHighlight:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
 	frame.DispelHighlight:Hide()
 end
@@ -13,6 +12,7 @@ end
 local function Update(frame)
 	local element = frame.DispelHighlight
 	local DB = element.DB
+	frame.DispelHighlight:SetAllPoints(frame)
 end
 
 ---@param unitName string
