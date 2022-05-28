@@ -573,6 +573,10 @@ function UF:OnInitialize()
 						}
 					},
 					RestingIndicator = {},
+					ResurrectIndicator = {
+						enabled = true,
+						size = 20
+					},
 					RaidTargetIndicator = {
 						enabled = true,
 						size = 20,

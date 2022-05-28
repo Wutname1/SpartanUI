@@ -22,6 +22,7 @@
     <Script file="Elements\Power.lua"/>
     <Script file="Elements\PvPIndicator.lua"/>
     <Script file="Elements\RaidTargetIndicator.lua"/>
+    <Script file="Elements\ResurrectIndicator.lua"/>
     <Script file="Elements\Range.lua"/>
     <Script file="Elements\RestingIndicator.lua"/>
     <Script file="Elements\Runes.lua"/>
