@@ -181,7 +181,7 @@ local function CreateUnitFrame(self, unit)
 		--Size it if we have a size change function for the element
 		if element.SizeChange then
 			element:SizeChange()
-		elseif element.size then
+		elseif data.size then
 			element:SetSize(data.size, data.size)
 		else
 			element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())

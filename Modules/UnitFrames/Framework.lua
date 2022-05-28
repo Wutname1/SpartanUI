@@ -349,7 +349,6 @@ function UF:OnInitialize()
 						},
 						filters = {
 							showPlayers = true,
-							raid = true,
 							boss = true
 						}
 					},
@@ -371,7 +370,6 @@ function UF:OnInitialize()
 						},
 						filters = {
 							showPlayers = true,
-							raid = true,
 							boss = true
 						}
 					},
@@ -564,7 +562,7 @@ function UF:OnInitialize()
 						enabled = true,
 						width = false,
 						height = 12,
-						size = 12,
+						textSize = 12,
 						text = '[difficulty][smartlevel] [SUI_ColorClass][name]',
 						SetJustifyH = 'CENTER',
 						SetJustifyV = 'MIDDLE',
@@ -618,7 +616,7 @@ function UF:OnInitialize()
 						}
 					},
 					StatusText = {
-						size = 22,
+						textSize = 22,
 						width = 70,
 						height = 25,
 						text = '[afkdnd]',
@@ -664,7 +662,7 @@ function UF:OnInitialize()
 						outsideAlpha = .3
 					},
 					SUI_RaidGroup = {
-						size = 13,
+						textSize = 13,
 						text = '[group]',
 						SetJustifyH = 'CENTER',
 						SetJustifyV = 'MIDDLE',
@@ -1042,14 +1040,14 @@ function UF:OnInitialize()
 					Name = {
 						enabled = true,
 						height = 10,
-						size = 10,
+						textSize = 10,
 						text = '[SUI_ColorClass][name]',
 						position = {
 							y = 0
 						}
 					},
 					SUI_RaidGroup = {
-						size = 9,
+						textSize = 9,
 						text = '[group]',
 						SetJustifyH = 'CENTER',
 						SetJustifyV = 'MIDDLE',
@@ -1061,7 +1059,7 @@ function UF:OnInitialize()
 					},
 					GroupRoleIndicator = {
 						enabled = true,
-						size = 10,
+						size = 15,
 						alpha = .75,
 						position = {
 							anchor = 'TOPRIGHT',

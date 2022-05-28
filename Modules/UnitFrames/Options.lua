@@ -1446,7 +1446,7 @@ local function AddTextOptions(frameName)
 								UF.Frames[frameName]:UpdateTags()
 							end
 						},
-						size = {
+						textSize = {
 							name = L['Size'],
 							type = 'range',
 							width = 'full',
@@ -1455,13 +1455,13 @@ local function AddTextOptions(frameName)
 							step = 1,
 							order = 1.5,
 							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].size
+								return UF.CurrentSettings[frameName].elements[key].textSize
 							end,
 							set = function(info, val)
 								--Update memory
-								UF.CurrentSettings[frameName].elements[key].size = val
+								UF.CurrentSettings[frameName].elements[key].textSize = val
 								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].size = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].textSize = val
 								--Update the screen
 								SUI:UpdateDefaultSize(UF.Frames[frameName][key], val, 'UnitFrames')
 							end
@@ -1818,7 +1818,6 @@ function UF:InitializeOptions()
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
 		UF.Elements:Options(key, 'SpartanArt', SUI.opt.args.UnitFrames.args[key])
-		-- UF.Elements:Options(key, 'Auras', SUI.opt.args.UnitFrames.args[key])
 		AurasOptions(key, SUI.opt.args.UnitFrames.args[key])
 		AddBarOptions(key)
 		AddIndicatorOptions(key)

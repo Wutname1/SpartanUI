@@ -46,6 +46,8 @@ local InverseAnchor = UF.InverseAnchor
 -- 	bar.spark:Point('BOTTOM')
 -- 	bar.spark:Point('TOP')
 
+-- 	AuraBars.spellTimeFont = SUI:GetFontFace('Player')
+-- 	AuraBars.spellNameFont = SUI:GetFontFace('Player')
 -- 	UF:Update_FontString(bar.timeText)
 -- 	UF:Update_FontString(bar.nameText)
 -- end
