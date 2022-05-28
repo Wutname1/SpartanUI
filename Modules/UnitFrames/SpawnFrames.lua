@@ -181,7 +181,7 @@ local function CreateUnitFrame(self, unit)
 		--Size it if we have a size change function for the element
 		if element.SizeChange then
 			element:SizeChange()
-		elseif element.SingleSize then
+		elseif element.size then
 			element:SetSize(data.size, data.size)
 		else
 			element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())
@@ -215,7 +215,6 @@ local function CreateUnitFrame(self, unit)
 		ElementUpdate(self, 'RareElite')
 
 		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
-		self.ReadyCheckIndicator.SingleSize = true
 		ElementUpdate(self, 'ReadyCheckIndicator')
 
 		self.QuestMobIndicator = self:CreateTexture(nil, 'OVERLAY')
@@ -223,7 +222,6 @@ local function CreateUnitFrame(self, unit)
 
 		-- Position and size
 		self.PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
-		self.PhaseIndicator.SingleSize = true
 		self.PhaseIndicator:Hide()
 		ElementUpdate(self, 'PhaseIndicator')
 

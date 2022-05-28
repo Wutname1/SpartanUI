@@ -4,7 +4,6 @@ local UF = SUI.UF
 ---@param DB table
 local function Build(frame, DB)
 	frame.RestingIndicator = frame:CreateTexture(nil, 'ARTWORK')
-	frame.RestingIndicator.SingleSize = true
 end
 
 UF.Elements:Register('RestingIndicator', Build)

@@ -259,7 +259,7 @@ function UF:OnInitialize()
 						alpha = 1,
 						width = 20,
 						height = 20,
-						size = 20,
+						size = false,
 						scale = 1,
 						FrameStrata = nil,
 						FrameLevel = nil,
@@ -295,6 +295,15 @@ function UF:OnInitialize()
 							relativePoint = nil,
 							x = 0,
 							y = 0
+						}
+					},
+					AssistantIndicator = {
+						enabled = true,
+						size = 12,
+						position = {
+							anchor = 'TOP',
+							x = 0,
+							y = 6
 						}
 					},
 					AuraBars = {
@@ -432,6 +441,7 @@ function UF:OnInitialize()
 					},
 					ClassIcon = {
 						VisibleOn = 'PlayerControlled',
+						size = 20,
 						position = {
 							anchor = 'BOTTOMLEFT',
 							x = -12,
@@ -494,6 +504,7 @@ function UF:OnInitialize()
 					},
 					PhaseIndicator = {
 						enabled = true,
+						size = 20,
 						position = {
 							anchor = 'TOP',
 							x = 0,
@@ -572,7 +583,9 @@ function UF:OnInitialize()
 							y = 6
 						}
 					},
-					RestingIndicator = {},
+					RestingIndicator = {
+						size = 20
+					},
 					ResurrectIndicator = {
 						enabled = true,
 						size = 20
@@ -598,6 +611,7 @@ function UF:OnInitialize()
 					PvPIndicator = {
 						Badge = false,
 						Shadow = true,
+						size = 20,
 						position = {
 							anchor = 'TOPLEFT',
 							x = -10
@@ -621,19 +635,7 @@ function UF:OnInitialize()
 					},
 					Stagger = {},
 					Totems = {},
-					AssistantIndicator = {
-						enabled = true,
-						size = 12,
-						position = {
-							anchor = 'TOP',
-							x = 0,
-							y = 6
-						}
-					},
 					RaidRoleIndicator = {
-						enabled = true
-					},
-					ResurrectIndicator = {
 						enabled = true
 					},
 					SpartanArt = {
@@ -1025,6 +1027,8 @@ function UF:OnInitialize()
 					},
 					RaidRoleIndicator = {
 						enabled = true,
+						size = 10,
+						alpha = .75,
 						position = {
 							anchor = 'BOTTOMLEFT',
 							x = 0,
@@ -1057,7 +1061,8 @@ function UF:OnInitialize()
 					},
 					GroupRoleIndicator = {
 						enabled = true,
-						size = 14,
+						size = 10,
+						alpha = .75,
 						position = {
 							anchor = 'TOPRIGHT',
 							x = -1,
