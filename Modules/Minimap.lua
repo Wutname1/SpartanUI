@@ -427,8 +427,6 @@ function module:MinimapCoords()
 
 	local Timer = C_Timer.After
 	local function UpdateCoords()
-		--New Timer
-		Timer(0.2, UpdateCoords)
 		--Get the Map we are on
 		local mapID = C_Map.GetBestMapForUnit('player')
 		if (not mapID) then
@@ -448,7 +446,7 @@ function module:MinimapCoords()
 		--Update label
 		Minimap.coords:SetText(format('%.1f, %.1f', x * 100, y * 100))
 	end
-	UpdateCoords()
+	module:ScheduleRepeatingTimer(UpdateCoords, 1)
 end
 
 function module:SetupButton(btn, force)
