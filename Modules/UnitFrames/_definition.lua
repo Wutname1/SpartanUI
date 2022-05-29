@@ -83,21 +83,24 @@ local text = {
 ---|"ThreatIndicator"
 ---|"Totems"
 
----@class UFFrameSettings
+---@class UFrameSettings
 ---@field position ElementPositioning
----@field elements table<UnitFrameElement, ElementSettings>
+---@field elements table<string, ElementSettings>
+---@field visibility UFrameVisibility
 local UFrameSettings = {
 	enabled = true,
 	width = 180,
 	scale = 1,
-	moved = false,
-	visibility = {
-		alphaDelay = 1,
-		hideDelay = 3,
-		showAlways = false,
-		showInCombat = true,
-		showWithTarget = false,
-		showInRaid = false,
-		showInParty = false
-	}
+	moved = false
+}
+
+---@class UFrameVisibility
+local visibility = {
+	alphaDelay = 1,
+	hideDelay = 3,
+	showAlways = false,
+	showInCombat = true,
+	showWithTarget = false,
+	showInRaid = false,
+	showInParty = false
 }
