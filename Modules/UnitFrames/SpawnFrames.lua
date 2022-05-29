@@ -112,6 +112,8 @@ local function CreateUnitFrame(self, unit)
 		self:UpdateTags()
 	end
 
+	---@param frame table
+	---@param elementName UnitFrameElement
 	local function ElementUpdate(frame, elementName)
 		if not frame[elementName] then
 			return

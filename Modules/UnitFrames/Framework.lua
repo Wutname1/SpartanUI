@@ -72,7 +72,8 @@ Elements.List = {}
 ---@param Update? function
 ---@param OptionsTable? function
 ---@param Config? ElementConfig
-function Elements:Register(ElementName, Build, Update, OptionsTable, Config)
+---@param ElementSettings? ElementSettings
+function Elements:Register(ElementName, Build, Update, OptionsTable, Config, ElementSettings)
 	UF.Elements.List[ElementName] = {
 		Build = Build,
 		Update = Update,

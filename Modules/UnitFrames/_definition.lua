@@ -82,3 +82,22 @@ local text = {
 ---|"SUI_RaidGroup"
 ---|"ThreatIndicator"
 ---|"Totems"
+
+---@class UFFrameSettings
+---@field position ElementPositioning
+---@field elements table<UnitFrameElement, ElementSettings>
+local UFrameSettings = {
+	enabled = true,
+	width = 180,
+	scale = 1,
+	moved = false,
+	visibility = {
+		alphaDelay = 1,
+		hideDelay = 3,
+		showAlways = false,
+		showInCombat = true,
+		showWithTarget = false,
+		showInRaid = false,
+		showInParty = false
+	}
+}
