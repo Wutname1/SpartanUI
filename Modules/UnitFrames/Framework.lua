@@ -253,7 +253,6 @@ function UF:OnInitialize()
 				elements = {
 					['**'] = {
 						enabled = false,
-						Scale = 1,
 						bgTexture = false,
 						points = false,
 						alpha = 1,

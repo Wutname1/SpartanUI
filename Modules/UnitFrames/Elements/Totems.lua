@@ -28,6 +28,23 @@ local function Build(frame, DB)
 
 	-- Register with oUF
 	frame.Totems = Totems
+
+	if SUI.IsRetail and frame.unitOnCreate == 'player' then
+		--Totem Bar
+		for index = 1, 4 do
+			_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
+			_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
+			_G['TotemFrameTotem' .. index]:SetScale(.8)
+		end
+		hooksecurefunc(
+			'TotemFrame_Update',
+			function()
+				TotemFrameTotem1:ClearAllPoints()
+				TotemFrameTotem1:SetParent(frame)
+				TotemFrameTotem1:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 20, 0)
+			end
+		)
+	end
 end
 
 ---@param frame table

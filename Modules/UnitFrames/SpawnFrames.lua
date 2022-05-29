@@ -209,44 +209,6 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 
-	do -- setup indicators
-		self.RareElite = self.SpartanArt:CreateTexture(nil, 'BORDER')
-		self.RareElite:SetTexture('Interface\\Addons\\SpartanUI\\images\\blank')
-		ElementUpdate(self, 'RareElite')
-
-		self.ReadyCheckIndicator = self:CreateTexture(nil, 'OVERLAY')
-		ElementUpdate(self, 'ReadyCheckIndicator')
-
-		self.QuestMobIndicator = self:CreateTexture(nil, 'OVERLAY')
-		ElementUpdate(self, 'QuestMobIndicator')
-
-		-- Position and size
-		self.PhaseIndicator = self:CreateTexture(nil, 'OVERLAY')
-		self.PhaseIndicator:Hide()
-		ElementUpdate(self, 'PhaseIndicator')
-
-		do -- Special Icons/Bars
-			if unit == 'player' then
-				--Totem Bar
-				if SUI.IsRetail then
-					for index = 1, 4 do
-						_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
-						_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
-						_G['TotemFrameTotem' .. index]:SetScale(.8)
-					end
-					hooksecurefunc(
-						'TotemFrame_Update',
-						function()
-							TotemFrameTotem1:ClearAllPoints()
-							TotemFrameTotem1:SetParent(self)
-							TotemFrameTotem1:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 20, 0)
-						end
-					)
-				end
-			end
-		end
-	end
-
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
 	if not InCombatLockdown() then
