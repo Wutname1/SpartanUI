@@ -1,4 +1,4 @@
-local SUI, L = SUI, SUI.L
+local SUI, L, StdUi = SUI, SUI.L, SUI.StdUi
 local module = SUI:NewModule('Component_AutoTurnIn', 'AceTimer-3.0')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'

@@ -38,9 +38,11 @@ UF.Artwork = {}
 
 ---@param frameName string
 ---@param builder function
-function Frames.Add(frameName, builder)
+---@param defaultConfig UFrameSettings
+function Frames.Add(frameName, builder, defaultConfig)
 	Frames.builders[frameName] = builder
 end
+
 ---@param frame table
 function Frames.Build(frame)
 	if Frames.builders[frame.unitOnCreate] then
@@ -1159,11 +1161,7 @@ function UF:OnInitialize()
 		profile = {
 			Style = 'War',
 			UserSettings = {
-				['**'] = {
-					['**'] = {
-						['**'] = {['**'] = {['**'] = {['**'] = {}}}}
-					}
-				}
+				['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {}}}}}}
 			}
 		}
 	}
