@@ -306,7 +306,8 @@
     "RegisterAttributeDriver",
     "CreateFrame",
     "UIParent",
-    "QuestFrame"
+    "QuestFrame",
+    "GossipFrame"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

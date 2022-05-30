@@ -256,7 +256,7 @@ local Lquests = {
 	['Thick Tiger Haunch'] = {item = 'Thick Tiger Haunch', amount = 1, currency = false}
 }
 local function debug(content)
-	SUI.Debug(content, 'AutoTurnIn')
+	-- SUI.Debug(content, 'AutoTurnIn')
 end
 -- turns quest in printing reward text if `ChatText` option is set.
 -- prints appropriate message if item is taken by greed
@@ -748,42 +748,43 @@ end
 function module:OnEnable()
 	module:BuildOptions()
 	module:FirstLaunch()
+	local lastEvent = ''
 
-	ATI_Container:SetScript(
-		'OnEvent',
-		function(_, event)
-			if SUI.DB.DisabledComponents.AutoTurnIn then
+	local function OnEvent(_, event)
+		if SUI.DB.DisabledComponents.AutoTurnIn then
+			return
+		end
+
+		debug(event)
+		lastEvent = event
+
+		if SUI.IsRetail then
+			local QuestID = GetQuestID()
+			local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
+			if
+				C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
+					C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
+			 then
+				debug(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
+				debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
+
+				SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
 				return
-			end
-
-			debug(event)
-
-			if SUI.IsRetail then
-				local QuestID = GetQuestID()
-				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
-				if
-					C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
-						C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
-				 then
-					debug(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
-					debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
-
-					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
-					return
-				end
-			end
-
-			if IsAltKeyDown() then
-				SUI:Print('Canceling Override key held disabled')
-				module:CancelAllTimers()
-				return
-			end
-
-			if module[event] then
-				module[event]()
 			end
 		end
-	)
+
+		if IsAltKeyDown() then
+			SUI:Print('Canceling Override key held disabled')
+			module:CancelAllTimers()
+			return
+		end
+
+		if module[event] then
+			module[event]()
+		end
+	end
+
+	ATI_Container:SetScript('OnEvent', OnEvent)
 	ATI_Container:RegisterEvent('GOSSIP_SHOW') -- multiple quests, and NPC chat screen
 	ATI_Container:RegisterEvent('QUEST_DETAIL') -- new quest screen
 	ATI_Container:RegisterEvent('QUEST_GREETING')
@@ -791,6 +792,65 @@ function module:OnEnable()
 	ATI_Container:RegisterEvent('QUEST_COMPLETE') -- quest turn in screen
 	ATI_Container:RegisterEvent('MERCHANT_SHOW')
 	ATI_Container:RegisterEvent('MERCHANT_CLOSED')
+
+	if SUI.IsRetail then
+		-- QuestFrame
+		-- GossipFrame
+		local OptionsPopdown = StdUi:Panel(QuestFrame, 330, 20)
+		OptionsPopdown:SetPoint('TOP', QuestFrame, 'BOTTOM', 0, -2)
+		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
+		OptionsPopdown.title:SetPoint('CENTER')
+
+		OptionsPopdown.CloseButton = StdUi:Button(OptionsPopdown, 15, 15, 'X')
+		OptionsPopdown.minimizeButton = StdUi:Button(OptionsPopdown, 15, 15, '-')
+
+		StdUi:GlueRight(OptionsPopdown.CloseButton, OptionsPopdown, -5, 0, true)
+		StdUi:GlueLeft(OptionsPopdown.minimizeButton, OptionsPopdown.CloseButton, -2, 0)
+
+		OptionsPopdown.minimizeButton:SetScript(
+			'OnClick',
+			function()
+				if OptionsPopdown.Panel:IsVisible() then
+					OptionsPopdown.Panel:Hide()
+				else
+					OptionsPopdown.Panel:Show()
+				end
+			end
+		)
+
+		local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
+		Panel:SetPoint('TOP', OptionsPopdown, 'BOTTOM', 0, -1)
+		Panel:Hide()
+		local options = {}
+		options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
+		options.AcceptGeneralQuests = StdUi:Checkbox(Panel, L['Accept quests'], nil, 20)
+		options.TurnInEnabled = StdUi:Checkbox(Panel, L['Turn in completed quests'], nil, 20)
+		options.AutoGossip = StdUi:Checkbox(Panel, L['Auto gossip'], nil, 20)
+		options.AutoGossipSafeMode = StdUi:Checkbox(Panel, L['Auto gossip safe mode'], nil, 20)
+		for setting, Checkbox in pairs(options) do
+			Checkbox:SetChecked(DB[setting])
+			Checkbox:HookScript(
+				'OnClick',
+				function()
+					DB[setting] = Checkbox:GetChecked()
+					if Checkbox:GetChecked() then
+						OnEvent(nil, lastEvent)
+					end
+				end
+			)
+		end
+
+		StdUi:GlueTop(options.DoCampainQuests, Panel, 5, -2, 'LEFT')
+
+		StdUi:GlueBelow(options.AcceptGeneralQuests, options.DoCampainQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.TurnInEnabled, options.AcceptGeneralQuests, 0, 0)
+
+		StdUi:GlueBelow(options.AutoGossip, options.AcceptGeneralQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.AutoGossipSafeMode, options.AutoGossip, 0, 0)
+
+		OptionsPopdown.Panel = Panel
+		OptionsPopdown.Panel.options = options
+	end
 end
 
 function module:OnDisable()
