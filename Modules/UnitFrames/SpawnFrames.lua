@@ -131,7 +131,7 @@ local function CreateUnitFrame(self, unit)
 		-- Call the elements update function
 		UF.Elements:Update(frame, elementName)
 
-		if UF.Elements:GetConfig(elementName).NoBulkUpdate then
+		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then
 			return
 		end
 

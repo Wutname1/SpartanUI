@@ -110,12 +110,12 @@ function Elements:Update(frame, ElementName, DB)
 end
 
 ---@param ElementName string
----@return ElementConfig --False if the element did not provide a Size updater
+---@return ElementSettings --False if the element did not provide a Size updater
 function Elements:GetConfig(ElementName)
-	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].Config then
-		return UF.Elements.List[ElementName].ElementSettings.config
+	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
+		return UF.Elements.List[ElementName].ElementSettings
 	else
-		return {NoBulkUpdate = false}
+		return {config = {NoBulkUpdate = false}}
 	end
 end
 
