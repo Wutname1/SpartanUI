@@ -793,9 +793,7 @@ function module:OnEnable()
 	ATI_Container:RegisterEvent('MERCHANT_SHOW')
 	ATI_Container:RegisterEvent('MERCHANT_CLOSED')
 
-	if SUI.IsRetail then
-		-- QuestFrame
-		-- GossipFrame
+	if SUI.IsRetail and SUI:IsModuleEnabled(module) then
 		local OptionsPopdown = StdUi:Panel(QuestFrame, 330, 20)
 		OptionsPopdown:SetPoint('TOP', QuestFrame, 'BOTTOM', 0, -2)
 		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
