@@ -73,14 +73,13 @@ Elements.List = {}
 ---@param Build function
 ---@param Update? function
 ---@param OptionsTable? function
----@param Config? ElementConfig
 ---@param ElementSettings? ElementSettings
-function Elements:Register(ElementName, Build, Update, OptionsTable, Config, ElementSettings)
+function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
 	UF.Elements.List[ElementName] = {
 		Build = Build,
 		Update = Update,
-		Config = Config,
-		OptionsTable = OptionsTable
+		OptionsTable = OptionsTable,
+		ElementSettings = ElementSettings
 	}
 end
 
@@ -114,7 +113,7 @@ end
 ---@return ElementConfig --False if the element did not provide a Size updater
 function Elements:GetConfig(ElementName)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].Config then
-		return UF.Elements.List[ElementName].Config
+		return UF.Elements.List[ElementName].ElementSettings.config
 	else
 		return {NoBulkUpdate = false}
 	end

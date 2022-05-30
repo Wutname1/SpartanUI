@@ -69,8 +69,6 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Totems
 end
 
-local Config = {
-	NoBulkUpdate = true
-}
+local Config = {config = {NoBulkUpdate = true}}
 
 UF.Elements:Register('Totems', Build, Update, nil, Config)

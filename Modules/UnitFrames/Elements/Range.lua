@@ -77,4 +77,6 @@ local function Options(unitName, OptionSet)
 	}
 end
 
-UF.Elements:Register('Range', Build, Update, Options, {NoBulkUpdate = true})
+local Config = {config = {NoBulkUpdate = true}}
+
+UF.Elements:Register('Range', Build, Update, Options, Config)

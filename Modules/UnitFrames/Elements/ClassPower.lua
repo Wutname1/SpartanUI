@@ -59,6 +59,6 @@ end
 local function Options(unitName, OptionSet)
 end
 
-local Config = {NoBulkUpdate = true}
+local Config = {config = {NoBulkUpdate = true}}
 
 UF.Elements:Register('ClassPower', Build, Update, Options, Config)
