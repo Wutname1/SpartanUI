@@ -1,3 +1,9 @@
+---@class ElementConfig
+---@field NoBulkUpdate boolean
+local ElementConfig = {
+	NoBulkUpdate = false
+}
+
 ---@class ElementSettings
 ---@field enabled boolean
 ---@field scale integer
@@ -6,6 +12,7 @@
 ---@field size integer|boolean
 ---@field FrameStrata FrameStrata
 ---@field FrameLevel integer
+---@field config? ElementConfig
 ---@field position ElementPositioning
 local ElementSettings = {
 	enabled = false,
