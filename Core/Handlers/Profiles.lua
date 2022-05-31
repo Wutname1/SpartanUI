@@ -95,7 +95,7 @@ local function CreateWindow()
 	exportOpt.formatExportTable:SetValue('luaTable')
 	exportOpt.formatExportTable:SetPoint('TOP', exportOpt.formatExportText, 'BOTTOM', 0, -2)
 
-	StdUi:SetRadioGroupValue('exportFormat', 'luaTable')
+	StdUi:SetRadioGroupValue('exportFormat', 'text')
 
 	exportOpt.AllNamespaces = StdUi:Checkbox(exportOpt, 'All', OptWidth, 20)
 	exportOpt.AllNamespaces:SetPoint('TOP', exportOpt.formatExportTable, 'BOTTOM', 0, -20)
