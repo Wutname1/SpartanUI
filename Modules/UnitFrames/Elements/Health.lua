@@ -8,7 +8,7 @@ local function Build(frame, DB)
 	health:SetFrameStrata(DB.FrameStrata or frame:GetFrameStrata())
 	health:SetFrameLevel(DB.FrameLevel or 2)
 	health:SetStatusBarTexture(Smoothv2)
-	health:SetSize(frame:GetWidth(), DB.height)
+	health:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 
 	local Background = health:CreateTexture(nil, 'BACKGROUND')
 	Background:SetAllPoints(health)
@@ -126,9 +126,9 @@ local function Update(frame)
 	frame.Health.colorClass = DB.colorClass
 
 	frame.Health:ClearAllPoints()
+	frame.Health:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 	frame.Health:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
 	frame.Health:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
-	frame.Health:SetHeight(DB.height)
 end
 
 ---@param unitName string

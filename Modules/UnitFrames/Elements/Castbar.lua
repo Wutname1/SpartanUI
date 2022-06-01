@@ -38,17 +38,16 @@ local function Build(frame, DB)
 	cast:SetFrameStrata(DB.FrameStrata or frame:GetFrameStrata())
 	cast:SetFrameLevel(DB.FrameLevel or 2)
 	cast:SetStatusBarTexture(Smoothv2)
-	cast:SetHeight(DB.height)
+	cast:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 	cast:Hide()
 
-	cast:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
-	cast:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
+	cast:SetPoint('TOP', frame, 'TOP', 0, DB.offset or 0)
 
-	local Background = cast:CreateTexture(nil, 'BACKGROUND')
-	Background:SetAllPoints(cast)
-	Background:SetTexture(Smoothv2)
-	Background:SetVertexColor(1, 1, 1, .2)
-	cast.bg = Background
+	local bg = cast:CreateTexture(nil, 'BACKGROUND')
+	bg:SetAllPoints(cast)
+	bg:SetTexture(Smoothv2)
+	bg:SetVertexColor(1, 1, 1, .2)
+	cast.bg = bg
 
 	-- Add spell text
 	local Text = cast:CreateFontString()
@@ -60,6 +59,7 @@ local function Build(frame, DB)
 		DB.text['1'].position.x,
 		DB.text['1'].position.y
 	)
+	frame.Castbar.Text = Text
 
 	-- Add a timer
 	local Time = cast:CreateFontString(nil, 'OVERLAY')
@@ -71,6 +71,7 @@ local function Build(frame, DB)
 		DB.text['2'].position.x,
 		DB.text['2'].position.y
 	)
+	frame.Castbar.Time = Time
 
 	-- Add Shield
 	local Shield = cast:CreateTexture(nil, 'OVERLAY')
@@ -78,30 +79,28 @@ local function Build(frame, DB)
 	Shield:SetPoint('CENTER', cast, 'RIGHT')
 	Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
 	Shield:Hide()
+	frame.Castbar.Shield = Shield
 
 	-- Add spell icon
 	local Icon = cast:CreateTexture(nil, 'OVERLAY')
 	Icon:SetSize(DB.Icon.size, DB.Icon.size)
 	Icon:SetPoint(DB.Icon.position.anchor, cast, DB.Icon.position.anchor, DB.Icon.position.x, DB.Icon.position.y)
+	frame.Castbar.Icon = Icon
 
 	-- Add safezone
 	local SafeZone = cast:CreateTexture(nil, 'OVERLAY')
+	frame.Castbar.SafeZone = SafeZone
 
 	-- --Interupt Flash
 	cast.PostCastStart = PostCastStart
 	cast.PostCastInterruptible = PostCastStart
 	cast.PostCastStop = PostCastStop
-
-	frame.Castbar = cast
-	frame.Castbar.Text = Text
-	frame.Castbar.Time = Time
-	frame.Castbar.TextElements = {
+	cast.TextElements = {
 		['1'] = frame.Castbar.Text,
 		['2'] = frame.Castbar.Time
 	}
-	frame.Castbar.Icon = Icon
-	frame.Castbar.SafeZone = SafeZone
-	frame.Castbar.Shield = Shield
+
+	frame.Castbar = cast
 
 	if frame.unitOnCreate == 'player' then
 		CastingBarFrame_SetUnit(_G['CastingBarFrame'])
@@ -150,7 +149,7 @@ local function Update(frame)
 		DB.Icon.position.y
 	)
 
-	frame.Castbar:SetHeight(DB.height)
+	frame.Castbar:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 	frame.Castbar.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end
 
