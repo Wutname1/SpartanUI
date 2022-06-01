@@ -59,7 +59,7 @@ local function Build(frame, DB)
 		DB.text['1'].position.x,
 		DB.text['1'].position.y
 	)
-	frame.Castbar.Text = Text
+	cast.Text = Text
 
 	-- Add a timer
 	local Time = cast:CreateFontString(nil, 'OVERLAY')
@@ -71,7 +71,7 @@ local function Build(frame, DB)
 		DB.text['2'].position.x,
 		DB.text['2'].position.y
 	)
-	frame.Castbar.Time = Time
+	cast.Time = Time
 
 	-- Add Shield
 	local Shield = cast:CreateTexture(nil, 'OVERLAY')
@@ -79,25 +79,25 @@ local function Build(frame, DB)
 	Shield:SetPoint('CENTER', cast, 'RIGHT')
 	Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
 	Shield:Hide()
-	frame.Castbar.Shield = Shield
+	cast.Shield = Shield
 
 	-- Add spell icon
 	local Icon = cast:CreateTexture(nil, 'OVERLAY')
 	Icon:SetSize(DB.Icon.size, DB.Icon.size)
 	Icon:SetPoint(DB.Icon.position.anchor, cast, DB.Icon.position.anchor, DB.Icon.position.x, DB.Icon.position.y)
-	frame.Castbar.Icon = Icon
+	cast.Icon = Icon
 
 	-- Add safezone
 	local SafeZone = cast:CreateTexture(nil, 'OVERLAY')
-	frame.Castbar.SafeZone = SafeZone
+	cast.SafeZone = SafeZone
 
 	-- --Interupt Flash
 	cast.PostCastStart = PostCastStart
 	cast.PostCastInterruptible = PostCastStart
 	cast.PostCastStop = PostCastStop
 	cast.TextElements = {
-		['1'] = frame.Castbar.Text,
-		['2'] = frame.Castbar.Time
+		['1'] = cast.Text,
+		['2'] = cast.Time
 	}
 
 	frame.Castbar = cast
