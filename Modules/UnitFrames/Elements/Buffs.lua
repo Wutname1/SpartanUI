@@ -23,7 +23,7 @@ local function Update(frame)
 	end
 
 	local Buffs = frame.Buffs
-	Buffs.size = DB.size
+	Buffs.size = DB.auraSize
 	Buffs.initialAnchor = DB.initialAnchor
 	Buffs['growth-x'] = DB.growthx
 	Buffs['growth-y'] = DB.growthy
@@ -38,7 +38,7 @@ local function Update(frame)
 	if w < 1.5 then
 		w = 1.5
 	end
-	Buffs:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
+	Buffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
 
 	frame:UpdateAllElements('ForceUpdate')
 end

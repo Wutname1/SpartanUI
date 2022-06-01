@@ -23,7 +23,7 @@ local function Update(frame)
 	end
 
 	local Debuffs = frame.Debuffs
-	Debuffs.size = DB.size
+	Debuffs.size = DB.auraSize
 	Debuffs.initialAnchor = DB.initialAnchor
 	Debuffs['growth-x'] = DB.growthx
 	Debuffs['growth-y'] = DB.growthy
@@ -38,7 +38,7 @@ local function Update(frame)
 	if w < 1.5 then
 		w = 1.5
 	end
-	Debuffs:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
+	Debuffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
 
 	frame:UpdateAllElements('ForceUpdate')
 end

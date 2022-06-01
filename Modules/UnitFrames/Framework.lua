@@ -266,7 +266,7 @@ function UF:OnInitialize()
 						FrameLevel = nil,
 						bg = {
 							enabled = false,
-							color = false
+							color = {0, 0, 0, .2}
 						},
 						text = {
 							['**'] = {
@@ -335,14 +335,14 @@ function UF:OnInitialize()
 					},
 					Buffs = {
 						number = 10,
-						size = 20,
+						auraSize = 20,
 						spacing = 1,
 						showType = true,
 						width = false,
 						initialAnchor = 'BOTTOMLEFT',
 						growthx = 'RIGHT',
-						growthy = 'UP',
-						rows = 3,
+						growthy = 'DOWN',
+						rows = 2,
 						position = {
 							anchor = 'TOPLEFT',
 							relativePoint = 'BOTTOMLEFT',
@@ -355,7 +355,7 @@ function UF:OnInitialize()
 					},
 					Debuffs = {
 						number = 10,
-						size = 20,
+						auraSize = 20,
 						spacing = 1,
 						width = false,
 						ShowBoss = true,
@@ -363,7 +363,7 @@ function UF:OnInitialize()
 						initialAnchor = 'BOTTOMRIGHT',
 						growthx = 'LEFT',
 						growthy = 'UP',
-						rows = 3,
+						rows = 2,
 						position = {
 							anchor = 'TOPRIGHT',
 							relativePoint = 'BOTTOMRIGHT',
