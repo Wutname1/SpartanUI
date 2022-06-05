@@ -38,7 +38,7 @@ UF.Artwork = {}
 
 ---@param frameName string
 ---@param builder function
----@param defaultConfig UFrameSettings
+---@param defaultConfig? UFrameSettings
 function Frames.Add(frameName, builder, defaultConfig)
 	Frames.builders[frameName] = builder
 end
@@ -53,6 +53,9 @@ function Frames.Build(frame)
 end
 
 UF.Frames = Frames
+
+function Frames.Config(frameName)
+end
 
 local Elements = {}
 

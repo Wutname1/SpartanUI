@@ -1,8 +1,10 @@
-local SUI, L, Lib, StdUi = SUI, SUI.L, SUI.Lib, SUI.StdUi
+---@class SUI
+local SUI = SUI
+local L, Lib, StdUi = SUI.L, SUI.Lib, SUI.StdUi
 local module = SUI:NewModule('Handler_Options', 'AceEvent-3.0')
 module.ShowOptionsUI = false
 local unpack = unpack
-
+local Options = {}
 ---------------------------------------------------------------------------
 function module:GetConfigWindow()
 	local ConfigOpen = Lib.AceCD and Lib.AceCD.OpenFrames and Lib.AceCD.OpenFrames['SpartanUI']
@@ -424,3 +426,23 @@ function module:ToggleOptions(pages)
 		end
 	end
 end
+
+---@alias OptionsType
+---| "Module"
+---| "Help"
+---| "Root"
+---| "General"
+
+---@param OptionsTable AceConfigOptionsTable
+---@param OptType OptionsType Default is "Module"
+function Options:AddOptions(OptionsTable, name, OptType)
+	if OptType == nil or OptType == 'Module' then
+		-- elseif type == 'Help' then
+		-- 	SUI.opt.args.Help.args[name or #SUI.opt.args.Help.args] = optionsTable
+	elseif OptType == 'Root' then
+	elseif OptType ~= nil then
+		SUI.opt.args[OptType].args[name or tostring(#SUI.opt.args.Help.args)] = OptionsTable
+	end
+end
+
+SUI.Options = Options
