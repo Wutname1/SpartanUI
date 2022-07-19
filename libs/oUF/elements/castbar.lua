@@ -129,11 +129,11 @@ local function CastStart(self, real, unit, castGUID)
 	if oUF.isRetail and real == 'UNIT_SPELLCAST_START' and not castGUID then return end
 
 	local element = self.Castbar
-	local name, _, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
+	local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible, spellID = UnitCastingInfo(unit)
 
 	local event = 'UNIT_SPELLCAST_START'
 	if not name then
-		name, _, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
+		name, text, texture, startTime, endTime, isTradeSkill, notInterruptible, spellID = UnitChannelInfo(unit)
 
 		event = 'UNIT_SPELLCAST_CHANNEL_START'
 	end
@@ -183,7 +183,7 @@ local function CastStart(self, real, unit, castGUID)
 	if(element.Icon) then element.Icon:SetTexture(texture or FALLBACK_ICON) end
 	if(element.Shield) then element.Shield:SetShown(notInterruptible) end
 	if(element.Spark) then element.Spark:Show() end
-	if(element.Text) then element.Text:SetText(name) end
+	if(element.Text) then element.Text:SetText(text) end
 	if(element.Time) then element.Time:SetText() end
 
 	local safeZone = element.SafeZone
@@ -433,9 +433,7 @@ local LCC, EventFunctions = oUF.isClassic and LibStub('LibClassicCasterino', tru
 
 local function Enable(self, unit)
 	local element = self.Castbar
-	if(element and (not isClassic or unit == 'player')) then
-	-- if(element and unit and not unit:match('%wtarget$')) then
-
+	if(element and unit and not unit:match('%wtarget$')) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
