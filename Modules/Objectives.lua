@@ -240,7 +240,7 @@ function module:OnEnable()
 	end
 
 	-- Add Fade in and out
-	if SUI.IsClassic or SUI.IsBCC then
+	if SUI.IsClassic or SUI.IsTBC then
 		frameName = 'QuestWatchFrame'
 
 		_G[frameName].FadeIn = _G[frameName]:CreateAnimationGroup()

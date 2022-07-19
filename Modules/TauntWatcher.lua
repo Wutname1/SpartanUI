@@ -75,7 +75,7 @@ local function printFormattedString(who, target, sid, failed)
 end
 
 function module:OnInitialize()
-	if (SUI.IsClassic or SUI.IsBCC) then
+	if (SUI.IsClassic or SUI.IsTBC) then
 		TauntsList = {
 			-- Warrior taunt
 			'Taunt',

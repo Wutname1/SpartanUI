@@ -23,7 +23,7 @@ local COLORS = {
 function module:OnEnable()
 	module.DB = SUI.DB.StatusBars
 	--Create Status Bars
-	if (SUI.IsClassic or SUI.IsBCC) and module.DB[2].display == 'honor' then
+	if (SUI.IsClassic or SUI.IsTBC) and module.DB[2].display == 'honor' then
 		module.DB[2].display = 'rep'
 	end
 
@@ -503,7 +503,7 @@ function module:BuildOptions()
 		['az'] = L['Azerite Bar'],
 		['disabled'] = L['Disabled']
 	}
-	if (SUI.IsClassic or SUI.IsBCC) then
+	if (SUI.IsClassic or SUI.IsTBC) then
 		StatusBars = {
 			['xp'] = L['Experiance'],
 			['rep'] = L['Reputation'],

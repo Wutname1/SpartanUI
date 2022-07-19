@@ -307,7 +307,13 @@
     "CreateFrame",
     "UIParent",
     "QuestFrame",
-    "GossipFrame"
+    "GossipFrame",
+    "GetAddOnMetadata",
+    "WOW_PROJECT_ID",
+    "WOW_PROJECT_MAINLINE",
+    "WOW_PROJECT_BURNING_CRUSADE_CLASSIC",
+    "WOW_PROJECT_CLASSIC",
+    "GetBuildInfo"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",
