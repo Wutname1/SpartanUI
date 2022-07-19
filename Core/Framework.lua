@@ -1,4 +1,4 @@
----@class SUI : AceAddon-3.0, AceEvent-3.0, AceConsole-3.0, AceSerializer-3.0
+---@class SUI : AceAddon, AceEvent-3.0, AceConsole-3.0, AceSerializer-3.0
 ---@field MoveIt MoveIt
 local SUI = LibStub('AceAddon-3.0'):NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
 _G.SUI = SUI
@@ -1753,11 +1753,11 @@ end
 function SUI:RemoveTableDuplicates(cleanTable, checkTable, customVars)
 	if type(cleanTable) ~= 'table' then
 		print("Bad argument #1 to 'RemoveTableDuplicates' (table expected)")
-		return
+		return {}
 	end
 	if type(checkTable) ~= 'table' then
 		print("Bad argument #2 to 'RemoveTableDuplicates' (table expected)")
-		return
+		return {}
 	end
 
 	local rtdCleaned = {}
@@ -1786,11 +1786,11 @@ end
 function SUI:FilterTableFromBlacklist(cleanTable, blacklistTable)
 	if type(cleanTable) ~= 'table' then
 		print("Bad argument #1 to 'FilterTableFromBlacklist' (table expected)")
-		return
+		return {}
 	end
 	if type(blacklistTable) ~= 'table' then
 		print("Bad argument #2 to 'FilterTableFromBlacklist' (table expected)")
-		return
+		return {}
 	end
 
 	local tfbCleaned = {}

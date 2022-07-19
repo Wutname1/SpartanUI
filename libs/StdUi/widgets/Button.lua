@@ -89,9 +89,13 @@ function StdUi:HighlightButtonTexture(button)
 	return hTex
 end
 
---- Creates a button with only a highlight
+---@class StdUi_HighlightButton : Button
+---@field text StdUi_FontString
+
+---Creates a button with only a highlight
+---@return StdUi_HighlightButton
 function StdUi:HighlightButton(parent, width, height, text, inherit)
-	local button = CreateFrame('Button', nil, parent, inherit) ---@type Button
+	local button = CreateFrame('Button', nil, parent, inherit) ---@type StdUi_HighlightButton
 	self:InitWidget(button)
 	self:SetObjSize(button, width, height)
 	button.text = self:ButtonLabel(button, text)
@@ -109,9 +113,11 @@ function StdUi:HighlightButton(parent, width, height, text, inherit)
 	return button
 end
 
----@return Button
+---@class StdUi_Button : StdUi_HighlightButton
+
+---@return StdUi_Button
 function StdUi:Button(parent, width, height, text, inherit)
-	local button = self:HighlightButton(parent, width, height, text, inherit)
+	local button = self:HighlightButton(parent, width, height, text, inherit) ---@type StdUi_Button
 	button.stdUi = self
 
 	button:SetHighlightTexture(nil)

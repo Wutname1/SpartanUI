@@ -9,7 +9,10 @@ if not StdUi:UpgradeNeeded(module, version) then
 	return
 end
 
----@return Frame
+---@class StdUIWindow : Frame
+---@field closeBtn StdUi_Button
+
+---@return StdUIWindow
 function StdUi:Window(parent, width, height, title)
 	parent = parent or UIParent
 	local frame = self:PanelWithTitle(parent, width, height, title)

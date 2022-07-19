@@ -313,7 +313,8 @@
     "WOW_PROJECT_MAINLINE",
     "WOW_PROJECT_BURNING_CRUSADE_CLASSIC",
     "WOW_PROJECT_CLASSIC",
-    "GetBuildInfo"
+    "GetBuildInfo",
+    "_"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",
@@ -323,5 +324,10 @@
     "libs/Wago*"
   ],
   "Lua.diagnostics.ignoredFiles": "Disable",
-  "Lua.diagnostics.enable": true
+  "Lua.diagnostics.enable": true,
+  "Lua.diagnostics.disable": [
+    "param-type-mismatch",
+    "assign-type-mismatch",
+    "need-check-nil"
+  ]
 }

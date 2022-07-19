@@ -1,6 +1,6 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
 local StdUi = SUI.StdUi
-local module = SUI:NewModule('Handler_Profiles')
+local module = SUI:NewModule('Handler_Profiles') ---@type AceAddon
 ----------------------------------------------------------------------------------------------------
 local window
 local namespaceblacklist = {'LibDualSpec-1.0'}

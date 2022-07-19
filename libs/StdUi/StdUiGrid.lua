@@ -15,10 +15,10 @@ end
 ---@param create function
 ---@param update function
 ---@param data table
----@param padding number
----@param oX number
----@param oY number
----@param limitFn function
+---@param padding? number
+---@param oX? number
+---@param oY? number
+---@param limitFn? function
 function StdUi:ObjectList(parent, itemsTable, create, update, data, padding, oX, oY, limitFn)
 	local this = self
 	oX = oX or 1
@@ -78,10 +78,10 @@ end
 ---@param create function
 ---@param update function
 ---@param data table
----@param paddingX number
----@param paddingY number
----@param oX number
----@param oY number
+---@param paddingX? number
+---@param paddingY? number
+---@param oX? number
+---@param oY? number
 function StdUi:ObjectGrid(parent, itemsMatrix, create, update, data, paddingX, paddingY, oX, oY)
 	oX = oX or 1
 	oY = oY or -1
