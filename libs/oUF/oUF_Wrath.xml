@@ -35,7 +35,5 @@
 	<Script file="elements\threatindicator.lua"/>
 	<Script file="elements\totems.lua"/>
 
-	<Script file="elements\happinessindicator.lua"/>
-
 	<Script file="finalize.lua"/>
 </Ui>
