@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('Handler_Events', 'AceEvent-3.0')
+local module = SUI:NewModule('Handler_Events')
 SUI.Event = module
 local SUIEvents = {}
 

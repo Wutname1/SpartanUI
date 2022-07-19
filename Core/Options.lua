@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L, Lib, StdUi = SUI.L, SUI.Lib, SUI.StdUi
-local module = SUI:NewModule('Handler_Options', 'AceEvent-3.0')
+local module = SUI:NewModule('Handler_Options')
 module.ShowOptionsUI = false
 local unpack = unpack
 local Options = {}

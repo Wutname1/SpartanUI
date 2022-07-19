@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('Component_LibsToolkit', 'AceEvent-3.0')
+local module = SUI:NewModule('Component_LibsToolkit')
 local L = SUI.L
 module.DisplayName = "Lib's Toolkit"
 module.HideModule = true

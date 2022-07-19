@@ -1,6 +1,7 @@
 ---@class SUI : AceAddon, AceEvent-3.0, AceConsole-3.0, AceSerializer-3.0
 ---@field MoveIt MoveIt
 local SUI = LibStub('AceAddon-3.0'):NewAddon('SpartanUI', 'AceEvent-3.0', 'AceConsole-3.0', 'AceSerializer-3.0')
+SUI:SetDefaultModuleLibraries('AceEvent-3.0', 'AceTimer-3.0')
 _G.SUI = SUI
 local type, pairs, unpack = type, pairs, unpack
 local _G = _G

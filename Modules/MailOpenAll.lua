@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_MailOpenAll', 'AceEvent-3.0', 'AceTimer-3.0')
+local module = SUI:NewModule('Component_MailOpenAll')
 module.Displayname = L['Open all mail']
 module.description = 'Quality of life update to the open all mail button'
 

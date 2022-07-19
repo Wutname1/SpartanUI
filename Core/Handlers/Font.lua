@@ -2,7 +2,7 @@
 local SUI = SUI
 local L = SUI.L
 ---@class AceAddon : AceTimer-3.0
-local module = SUI:NewModule('Handler_Font', 'AceTimer-3.0')
+local module = SUI:NewModule('Handler_Font')
 
 module.FontItems = {}
 local FontFaces = {
