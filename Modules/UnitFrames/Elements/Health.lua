@@ -1,5 +1,4 @@
 local UF = SUI.UF
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 
 ---@param frame table
 ---@param DB table
@@ -7,12 +6,12 @@ local function Build(frame, DB)
 	local health = CreateFrame('StatusBar', nil, frame)
 	health:SetFrameStrata(DB.FrameStrata or frame:GetFrameStrata())
 	health:SetFrameLevel(DB.FrameLevel or 2)
-	health:SetStatusBarTexture(Smoothv2)
+	health:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	health:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 
 	local Background = health:CreateTexture(nil, 'BACKGROUND')
 	Background:SetAllPoints(health)
-	Background:SetTexture(Smoothv2)
+	Background:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	Background:SetVertexColor(1, 1, 1, .2)
 	health.bg = Background
 
@@ -54,7 +53,7 @@ local function Build(frame, DB)
 		myBar:SetPoint('TOP')
 		myBar:SetPoint('BOTTOM')
 		myBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
-		myBar:SetStatusBarTexture(Smoothv2)
+		myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 		myBar:SetStatusBarColor(0, 1, 0.5, 0.45)
 		myBar:SetSize(150, 16)
 		myBar:Hide()
@@ -63,7 +62,7 @@ local function Build(frame, DB)
 		otherBar:SetPoint('TOP')
 		otherBar:SetPoint('BOTTOM')
 		otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
-		otherBar:SetStatusBarTexture(Smoothv2)
+		otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 		otherBar:SetStatusBarColor(0, 0.5, 1, 0.35)
 		otherBar:SetSize(150, 16)
 		otherBar:Hide()
@@ -72,7 +71,7 @@ local function Build(frame, DB)
 		absorbBar:SetPoint('TOP')
 		absorbBar:SetPoint('BOTTOM')
 		absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
-		absorbBar:SetStatusBarTexture(Smoothv2)
+		absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 		absorbBar:SetWidth(10)
 		absorbBar:Hide()
 
@@ -80,7 +79,7 @@ local function Build(frame, DB)
 		healAbsorbBar:SetPoint('TOP')
 		healAbsorbBar:SetPoint('BOTTOM')
 		healAbsorbBar:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
-		healAbsorbBar:SetStatusBarTexture(Smoothv2)
+		healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 		healAbsorbBar:SetReverseFill(true)
 		healAbsorbBar:SetWidth(10)
 		healAbsorbBar:Hide()
@@ -113,9 +112,6 @@ end
 
 ---@param frame table
 local function Update(frame)
-	if frame.Health then
-		return
-	end
 	local DB = frame.Health.DB
 
 	--Update Health items
@@ -124,6 +120,9 @@ local function Update(frame)
 	frame.Health.colorReaction = DB.colorReaction
 	frame.Health.colorSmooth = DB.colorSmooth
 	frame.Health.colorClass = DB.colorClass
+
+	frame.Health:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	frame.Health.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 
 	frame.Health:ClearAllPoints()
 	frame.Health:SetSize(DB.width or frame:GetWidth(), DB.height or 20)

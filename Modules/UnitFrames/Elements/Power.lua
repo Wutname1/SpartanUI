@@ -1,5 +1,4 @@
 local UF = SUI.UF
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 
 ---@param frame table
 ---@param DB table
@@ -7,12 +6,12 @@ local function Build(frame, DB)
 	local power = CreateFrame('StatusBar', nil, frame)
 	power:SetFrameStrata(DB.FrameStrata or frame:GetFrameStrata())
 	power:SetFrameLevel(DB.FrameLevel or 2)
-	power:SetStatusBarTexture(Smoothv2)
+	power:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	power:SetHeight(DB.height)
 
 	local Background = power:CreateTexture(nil, 'BACKGROUND')
 	Background:SetAllPoints(power)
-	Background:SetTexture(Smoothv2)
+	Background:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	Background:SetVertexColor(1, 1, 1, .2)
 	power.bg = Background
 
@@ -47,6 +46,9 @@ local function Update(frame)
 	else
 		frame:DisableElement('PowerPrediction')
 	end
+
+	-- frame.Power:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	-- frame.Power.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 end
 
 ---@param unitName string

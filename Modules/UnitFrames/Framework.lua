@@ -141,6 +141,15 @@ function Elements:Options(unitName, ElementName, OptionSet, DB)
 end
 UF.Elements = Elements
 
+---Returns the path to the texture for the given LSM key, or the SUI default
+---@param LSMKey string
+---@return string
+function UF:FindStatusBarTexture(LSMKey)
+	local defaultTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+
+	return SUI.Lib.LSM:Fetch('statusbar', LSMKey, true) or defaultTexture
+end
+
 function UF:IsFriendlyFrame(frameName)
 	local FriendlyFrame = {
 		'player',
@@ -319,7 +328,7 @@ function UF:OnInitialize()
 						initialAnchor = 'BOTTOMLEFT',
 						growth = 'UP',
 						maxBars = 32,
-						texture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
+						texture = nil,
 						fgalpha = 1,
 						bgalpha = 1,
 						spellNameSize = 10,

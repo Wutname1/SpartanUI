@@ -1,5 +1,4 @@
 local UF = SUI.UF
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 local timers = {}
 
 ---@param frame table
@@ -37,7 +36,7 @@ local function Build(frame, DB)
 	local cast = CreateFrame('StatusBar', nil, frame)
 	cast:SetFrameStrata(DB.FrameStrata or frame:GetFrameStrata())
 	cast:SetFrameLevel(DB.FrameLevel or 2)
-	cast:SetStatusBarTexture(Smoothv2)
+	cast:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	cast:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 	cast:Hide()
 
@@ -45,7 +44,7 @@ local function Build(frame, DB)
 
 	local bg = cast:CreateTexture(nil, 'BACKGROUND')
 	bg:SetAllPoints(cast)
-	bg:SetTexture(Smoothv2)
+	bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	bg:SetVertexColor(1, 1, 1, .2)
 	cast.bg = bg
 
@@ -149,6 +148,8 @@ local function Update(frame)
 		DB.Icon.position.y
 	)
 
+	frame.Castbar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	frame.Castbar.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	frame.Castbar:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 	frame.Castbar.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end

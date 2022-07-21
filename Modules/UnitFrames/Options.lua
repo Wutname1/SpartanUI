@@ -819,93 +819,6 @@ local function AddBarOptions(frameName)
 		}
 	}
 
-	local bars = {'Castbar', 'Health', 'Power'}
-	for _, key in ipairs(bars) do
-		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.enabled = {
-			name = L['Enabled'],
-			type = 'toggle',
-			width = 'full',
-			order = 1,
-			get = function(info)
-				return UF.CurrentSettings[frameName].elements[key].enabled
-			end,
-			set = function(info, val)
-				--Update memory
-				UF.CurrentSettings[frameName].elements[key].enabled = val
-				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].enabled = val
-				--Update the screen
-				UF.Frames[frameName]:UpdateAll()
-			end
-		}
-		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.height = {
-			name = L['Height'],
-			type = 'range',
-			width = 'full',
-			order = 2,
-			min = 2,
-			max = 100,
-			step = 1,
-			get = function(info)
-				return UF.CurrentSettings[frameName].elements[key].height
-			end,
-			set = function(info, val)
-				--Update memory
-				UF.CurrentSettings[frameName].elements[key].height = val
-				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].height = val
-				--Update the screen
-				UF.Frames[frameName]:UpdateAll()
-			end
-		}
-		SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key].args.Background = {
-			name = L['Background'],
-			type = 'group',
-			inline = true,
-			order = 200,
-			args = {
-				enabled = {
-					name = L['Enable'],
-					type = 'toggle',
-					order = 1,
-					get = function(info)
-						return UF.CurrentSettings[frameName].elements[key].bg.enabled
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings[frameName].elements[key].bg.enabled = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].bg.enabled = val
-						--Update the screen
-						UF.Frames[frameName]:UpdateAll()
-					end
-				},
-				color = {
-					name = L['Color'],
-					type = 'color',
-					order = 2,
-					hasAlpha = true,
-					get = function(info)
-						local val = UF.CurrentSettings[frameName].elements[key].bg.color
-						if not val then
-							return {1, 1, 1, 1}
-						end
-						return unpack(val)
-					end,
-					set = function(info, r, b, g, a)
-						local val = {r, b, g, a}
-						--Update memory
-						UF.CurrentSettings[frameName].elements[key].bg.color = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].bg.color = val
-						--Update the screen
-						UF.Frames[frameName]:UpdateAll()
-					end
-				}
-			}
-		}
-	end
-
 	if frameName == 'player' then
 		if SUI.IsRetail then
 			SUI.opt.args.UnitFrames.args.player.args.bars.args['Power'].args['PowerPrediction'] = {
@@ -938,50 +851,108 @@ local function AddBarOptions(frameName)
 			order = 20,
 			type = 'group',
 			childGroups = 'inline',
-			args = {
-				enabled = {
-					name = L['Enabled'],
-					type = 'toggle',
-					width = 'full',
-					order = 1,
-					get = function(info)
-						return UF.CurrentSettings.player.elements.AdditionalPower.enabled
-					end,
-					set = function(info, val)
-						--Update the screen
-						if val then
-							UF.Frames.player:EnableElement('AdditionalPower')
-						else
-							UF.Frames.player:DisableElement('AdditionalPower')
+			args = {}
+		}
+	end
+
+	local bars = {'Castbar', 'Health', 'Power', 'AdditionalPower'}
+	for _, key in ipairs(bars) do
+		local BarOpt = SUI.opt.args.UnitFrames.args[frameName].args.bars.args[key]
+		if BarOpt then
+			BarOpt.args.enabled = {
+				name = L['Enabled'],
+				type = 'toggle',
+				width = 'full',
+				order = 1,
+				get = function(info)
+					return UF.CurrentSettings[frameName].elements[key].enabled
+				end,
+				set = function(info, val)
+					--Update memory
+					UF.CurrentSettings[frameName].elements[key].enabled = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].enabled = val
+					--Update the screen
+					UF.Frames[frameName]:UpdateAll()
+				end
+			}
+			BarOpt.args.height = {
+				name = L['Height'],
+				type = 'range',
+				width = 'full',
+				order = 2,
+				min = 2,
+				max = 100,
+				step = 1,
+				get = function(info)
+					return UF.CurrentSettings[frameName].elements[key].height
+				end,
+				set = function(info, val)
+					--Update memory
+					UF.CurrentSettings[frameName].elements[key].height = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].height = val
+					--Update the screen
+					UF.Frames[frameName]:UpdateAll()
+				end
+			}
+			BarOpt.args.Background = {
+				name = L['Background'],
+				type = 'group',
+				inline = true,
+				order = 200,
+				args = {
+					enabled = {
+						name = L['Enable'],
+						type = 'toggle',
+						order = 1,
+						get = function(info)
+							return UF.CurrentSettings[frameName].elements[key].bg.enabled
+						end,
+						set = function(info, val)
+							--Update memory
+							UF.CurrentSettings[frameName].elements[key].bg.enabled = val
+							--Update the DB
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].bg.enabled = val
+							--Update the screen
+							UF.Frames[frameName]:UpdateAll()
 						end
-						--Update memory
-						UF.CurrentSettings.player.elements.AdditionalPower.enabled = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style].player.elements.AdditionalPower.enabled = val
-					end
-				},
-				height = {
-					name = L['Height'],
-					type = 'range',
-					width = 'full',
-					order = 2,
-					min = 2,
-					max = 100,
-					step = 1,
-					get = function(info)
-						return UF.CurrentSettings.player.elements.AdditionalPower.height
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings.player.elements.AdditionalPower.height = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style].player.elements.AdditionalPower.height = val
-						--Update the screen
-						UF.Frames.player:UpdateAll()
-					end
+					},
+					color = {
+						name = L['Color'],
+						type = 'color',
+						order = 2,
+						hasAlpha = true,
+						get = function(info)
+							local val = UF.CurrentSettings[frameName].elements[key].bg.color
+							if not val then
+								return {1, 1, 1, 1}
+							end
+							return unpack(val)
+						end,
+						set = function(info, r, b, g, a)
+							local val = {r, b, g, a}
+							--Update memory
+							UF.CurrentSettings[frameName].elements[key].bg.color = val
+							--Update the DB
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].bg.color = val
+							--Update the screen
+							UF.Frames[frameName]:UpdateAll()
+						end
+					}
 				}
 			}
-		}
+			BarOpt.args.texture = {
+				type = 'select',
+				dialogControl = 'LSM30_Statusbar',
+				order = 2,
+				width = 'double',
+				name = 'Bar Texture',
+				values = AceGUIWidgetLSMlists.statusbar
+			}
+
+		-- UF.Elements:Options(frameName, key, BarOpt)
+		end
 	end
 
 	local friendly = {'player', 'party', 'raid', 'target', 'focus', 'targettarget', 'focustarget'}
@@ -999,6 +970,7 @@ local function AddIndicatorOptions(frameName)
 		['CombatIndicator'] = 'Combat',
 		['RestingIndicator'] = 'Resting',
 		['Runes'] = 'Runes',
+		['ClassPower'] = 'Class Power',
 		['Stagger'] = 'Stagger',
 		['Totems'] = 'Totems'
 	}
@@ -1047,6 +1019,17 @@ local function AddIndicatorOptions(frameName)
 		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args[key] = {
 			name = name,
 			type = 'group',
+			get = function(info)
+				return UF.CurrentSettings[frameName].elements[key][info[#info]] or false
+			end,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[frameName].elements[key][info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[key][info[#info]] = val
+				--Update the screen
+				UF.Frames[frameName]:UpdateAll()
+			end,
 			args = {
 				enable = {
 					name = L['Enabled'],

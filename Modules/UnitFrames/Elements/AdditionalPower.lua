@@ -7,7 +7,7 @@ local function Build(frame, DB)
 	local AdditionalPower = CreateFrame('StatusBar', nil, frame)
 	AdditionalPower:SetHeight(DB.height)
 	AdditionalPower.colorPower = true
-	AdditionalPower:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+	AdditionalPower:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	AdditionalPower:Hide()
 
 	AdditionalPower.bg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')

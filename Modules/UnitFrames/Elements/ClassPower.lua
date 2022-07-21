@@ -11,7 +11,7 @@ local function Build(frame, DB)
 	local ClassPower = {}
 	for index = 1, 10 do
 		local Bar = CreateFrame('StatusBar', nil, frame)
-		Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+		Bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 
 		-- Position and size.
 		if (index == 1) then
@@ -51,12 +51,21 @@ local function Update(frame)
 
 	for i = 1, #element do
 		element[i]:SetSize(DB.width, DB.height)
+		element[i]:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	end
 end
 
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
+	OptionSet.args.texture = {
+		type = 'select',
+		dialogControl = 'LSM30_Statusbar',
+		order = 2,
+		width = 'double',
+		name = 'Bar Texture',
+		values = AceGUIWidgetLSMlists.statusbar
+	}
 end
 
 local Config = {config = {NoBulkUpdate = true}}

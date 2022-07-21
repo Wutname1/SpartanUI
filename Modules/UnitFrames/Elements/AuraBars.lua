@@ -2,7 +2,6 @@ local UF = SUI.UF
 local PostCreateAura = UF.PostCreateAura
 local PostUpdateAura = UF.PostUpdateAura
 local InverseAnchor = UF.InverseAnchor
-local Smoothv2 = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
 -- local AuraFilter = UF.AuraFilter
 
 -- function UF:Construct_AuraBars(bar)
@@ -62,9 +61,9 @@ local function Build(frame, DB)
 	AuraBars.spellNameFont = SUI:GetFontFace('Player')
 
 	local function PostCreateBar(_, bar)
-		bar:SetStatusBarTexture(Smoothv2)
+		bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 
-		bar.spark:SetTexture(Smoothv2)
+		bar.spark:SetTexture(UF:FindStatusBarTexture(DB.texture))
 		bar.spark:SetVertexColor(1, 1, 1, 0.4)
 		bar.spark:SetSize(2, DB.height)
 	end
