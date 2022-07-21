@@ -23,7 +23,10 @@ if SUI.IsClassic then
 	wowVersion = 'Classic'
 end
 if SUI.IsTBC then
-	wowVersion = 'BCC'
+	wowVersion = 'TBC'
+end
+if SUI.isWrath then
+	wowVersion = 'Wrath'
 end
 --@alpha@
 SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
