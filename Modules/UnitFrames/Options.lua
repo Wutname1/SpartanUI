@@ -723,15 +723,15 @@ local function AddBarOptions(frameName)
 				type = 'group',
 				order = 2,
 				get = function(info)
-					return UF.CurrentSettings[frameName].elements[info[#info]]
+					return UF.CurrentSettings[frameName].elements.Health[info[#info]]
 				end,
 				set = function(info, val)
 					--Update the screen
 					UF.Frames[frameName][info[#info]] = val
 					--Update memory
-					UF.CurrentSettings[frameName].elements[info[#info]] = val
+					UF.CurrentSettings[frameName].elements.Health[info[#info]] = val
 					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[info[#info]] = val
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Health[info[#info]] = val
 					--Update the screen
 					UF.Frames[frameName]:UpdateAll()
 				end,
@@ -803,6 +803,17 @@ local function AddBarOptions(frameName)
 				type = 'group',
 				order = 3,
 				childGroups = 'inline',
+				get = function(info)
+					return UF.CurrentSettings[frameName].elements.Power[info[#info]] or false
+				end,
+				set = function(info, val)
+					--Update memory
+					UF.CurrentSettings[frameName].elements.Power[info[#info]] = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Power[info[#info]] = val
+					--Update the screen
+					UF.Frames[frameName]:UpdateAll()
+				end,
 				args = {}
 			}
 		}
