@@ -314,7 +314,8 @@
     "WOW_PROJECT_BURNING_CRUSADE_CLASSIC",
     "WOW_PROJECT_CLASSIC",
     "GetBuildInfo",
-    "_"
+    "_",
+    "AceGUIWidgetLSMlists"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

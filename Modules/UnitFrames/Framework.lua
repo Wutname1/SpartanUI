@@ -267,6 +267,7 @@ function UF:OnInitialize()
 						scale = 1,
 						FrameStrata = nil,
 						FrameLevel = nil,
+						texture = nil,
 						bg = {
 							enabled = false,
 							color = {0, 0, 0, .2}
