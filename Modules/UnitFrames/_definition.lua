@@ -35,7 +35,7 @@ local ElementSettings = {
 ---@field anchor AnchorPoint
 ---@field relativeTo UnitFrameElement
 ---@field relativePoint AnchorPoint
-local position = {
+local ElementPositioning = {
 	anchor = 'CENTER',
 	relativeTo = 'Frame',
 	relativePoint = nil,
@@ -43,11 +43,18 @@ local position = {
 	y = 0
 }
 
+---@class FramePositioning
+---@field point AnchorPoint
+---@field relativePoint AnchorPoint
+---@field xOfs integer
+---@field yOfs integer
+local FramePositioning = {}
+
 ---@class ElementTextData
 ---@field SetJustifyH JustifyH
 ---@field SetJustifyV JustifyV
 ---@field position ElementPositioning
-local text = {
+local ElementTextData = {
 	enabled = false,
 	text = '',
 	size = 10,
@@ -91,7 +98,7 @@ local text = {
 ---|"Totems"
 
 ---@class UFrameSettings
----@field position ElementPositioning
+---@field anchor FramePositioning
 ---@field elements table<string, ElementSettings>
 ---@field visibility UFrameVisibility
 local UFrameSettings = {
@@ -111,3 +118,13 @@ local visibility = {
 	showInRaid = false,
 	showInParty = false
 }
+
+---@alias UnitFrameName
+---|"player"
+---|"target"
+---|"targettarget"
+---|"boss"
+---|"raid"
+---|"party"
+---|"arena"
+---|"pet"

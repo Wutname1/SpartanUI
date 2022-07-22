@@ -17,4 +17,7 @@ local function Build(frame, DB)
 	frame.AdditionalPower = AdditionalPower
 end
 
+---@type ElementSettings
+local Settings = {}
+
 UF.Elements:Register('AdditionalPower', Build)

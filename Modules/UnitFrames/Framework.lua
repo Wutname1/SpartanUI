@@ -32,7 +32,8 @@ local Frames = {
 	party = {},
 	raid = {},
 	containers = {},
-	builders = {}
+	builders = {},
+	defaultConfigs = {} ---@type table<string, UFrameSettings>
 }
 UF.Artwork = {}
 
@@ -41,6 +42,35 @@ UF.Artwork = {}
 ---@param defaultConfig? UFrameSettings
 function Frames.Add(frameName, builder, defaultConfig)
 	Frames.builders[frameName] = builder
+
+	local Defaults = {
+		enabled = true,
+		width = 180,
+		scale = 1,
+		moved = false,
+		visibility = {
+			alphaDelay = 1,
+			hideDelay = 3,
+			showAlways = false,
+			showInCombat = true,
+			showWithTarget = false,
+			showInRaid = false,
+			showInParty = false
+		},
+		position = {
+			point = 'BOTTOM',
+			relativeTo = 'Frame',
+			relativePoint = 'BOTTOM',
+			xOfs = 0,
+			yOfs = 0
+		},
+		elements = {}
+	}
+	for elementName, elementData in pairs(UF.Elements.List) do
+		Defaults.elements[elementName] = elementData.ElementSettings
+	end
+
+	Frames.defaultConfigs[frameName] = SUI:MergeData(Defaults, defaultConfig, true)
 end
 
 ---@param frame table
@@ -49,6 +79,10 @@ function Frames.Build(frame)
 		Frames.builders[frame.unitOnCreate](frame)
 	else
 		Frames.builders['player'](frame)
+	end
+
+	if Frames.defaultConfigs[frame.unitOnCreate] then
+		frame.NewDB = Frames.defaultConfigs[frame.unitOnCreate]
 	end
 end
 
@@ -69,6 +103,14 @@ local Elements = {}
 ---@field T table<string, SUIUFElement>
 Elements.List = {}
 
+---@class SUIUFFrameSettingList
+---@field T table<string, UnitFrameElement>
+Elements.FrameSettings = {}
+
+-- ['player'] = {
+-- 	['health'] = {} ---@type ElementSettings
+-- }
+
 ---@class ElementConfig
 ---@field NoBulkUpdate boolean
 
@@ -78,6 +120,58 @@ Elements.List = {}
 ---@param OptionsTable? function
 ---@param ElementSettings? ElementSettings
 function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
+	local Defaults = {
+		enabled = false,
+		bgTexture = false,
+		points = false,
+		alpha = 1,
+		width = 20,
+		height = 20,
+		size = false,
+		scale = 1,
+		FrameStrata = nil,
+		FrameLevel = nil,
+		texture = nil,
+		bg = {
+			enabled = false,
+			color = {0, 0, 0, .2}
+		},
+		text = {
+			['**'] = {
+				enabled = false,
+				text = '',
+				size = 10,
+				SetJustifyH = 'CENTER',
+				SetJustifyV = 'MIDDLE',
+				position = {
+					anchor = 'CENTER',
+					x = 0,
+					y = 0
+				}
+			},
+			['1'] = {
+				enabled = false,
+				position = {}
+			},
+			['2'] = {
+				enabled = false,
+				position = {}
+			}
+		},
+		position = {
+			anchor = 'CENTER',
+			relativeTo = 'Frame',
+			relativePoint = nil,
+			x = 0,
+			y = 0
+		},
+		config = {
+			NoBulkUpdate = false
+		}
+	} ---@type ElementSettings
+
+	ElementSettings = SUI:MergeData(Defaults, ElementSettings, true)
+
 	UF.Elements.List[ElementName] = {
 		Build = Build,
 		Update = Update,
@@ -114,7 +208,11 @@ end
 
 ---@param ElementName string
 ---@return ElementSettings --False if the element did not provide a Size updater
-function Elements:GetConfig(ElementName)
+function Elements:GetConfig(ElementName, frame)
+	if frame then
+		local unit = frame.unitOnCreate
+	end
+
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
 		return UF.Elements.List[ElementName].ElementSettings
 	else
@@ -221,7 +319,8 @@ end
 
 local function LoadDB()
 	-- Load Default Settings
-	UF.CurrentSettings = SUI:MergeData({}, UF.Settings)
+	UF.CurrentSettings = SUI:MergeData({}, UF.Database.global)
+	-- UF.CurrentSettings = SUI:MergeData({}, Frames.defaultConfigs)
 
 	-- Import theme settings
 	if SUI.DB.Styles[UF.DB.Style] and SUI.DB.Styles[UF.DB.Style].Frames then
@@ -1178,7 +1277,6 @@ function UF:OnInitialize()
 		}
 	}
 	UF.Database = SUI.SpartanUIDB:RegisterNamespace('UnitFrames', defaults)
-	UF.Settings = UF.Database.global
 	UF.DB = UF.Database.profile
 
 	for frameKey, frameData in pairs(UF.DB.UserSettings[UF.DB.Style]) do

@@ -4,38 +4,6 @@ local PostUpdateAura = UF.PostUpdateAura
 local InverseAnchor = UF.InverseAnchor
 -- local AuraFilter = UF.AuraFilter
 
--- function UF:Construct_AuraBars(bar)
--- 	bar:CreateBackdrop(nil, nil, nil, nil, true)
--- 	bar:SetScript('OnMouseDown', UF.Aura_OnClick)
--- 	bar:Point('LEFT')
--- 	bar:Point('RIGHT')
-
--- 	bar.spark:SetTexture(E.media.blankTex)
--- 	bar.spark:SetVertexColor(1, 1, 1, 0.4)
--- 	bar.spark:Width(2)
-
--- 	bar.icon:CreateBackdrop(nil, nil, nil, nil, true)
--- 	bar.icon:ClearAllPoints()
--- 	-- bar.icon:Point('RIGHT', bar, 'LEFT', -self.barSpacing, 0)
--- 	-- bar.icon:SetTexCoord(unpack(E.TexCoords))
-
--- 	-- UF.statusbars[bar] = true
--- 	-- UF:Update_StatusBar(bar)
-
--- 	-- UF:Configure_FontString(bar.timeText)
--- 	-- UF:Configure_FontString(bar.nameText)
-
--- 	UF:AuraBars_UpdateBar(bar)
-
--- 	bar.nameText:SetJustifyH('LEFT')
--- 	bar.nameText:SetJustifyV('MIDDLE')
--- 	bar.nameText:Point('RIGHT', bar.timeText, 'LEFT', -4, 0)
--- 	bar.nameText:SetWordWrap(false)
-
--- 	bar.bg = bar:CreateTexture(nil, 'BORDER')
--- 	bar.bg:Show()
--- end
-
 -- function UF:AuraBars_UpdateBar(bar)
 -- 	local bars = bar:GetParent()
 -- 	bar.db = bars.db
@@ -66,6 +34,12 @@ local function Build(frame, DB)
 		bar.spark:SetTexture(UF:FindStatusBarTexture(DB.texture))
 		bar.spark:SetVertexColor(1, 1, 1, 0.4)
 		bar.spark:SetSize(2, DB.height)
+
+		bar.bg = bar:CreateTexture(nil, 'BORDER')
+		bar.bg:SetAllPoints(bar)
+		bar.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+		bar.bg:SetVertexColor(0, 0, 0, 0.4)
+		bar.bg:Show()
 	end
 
 	-- AuraBars.PreSetPosition = SortAuras
@@ -140,5 +114,8 @@ local function Options(unitName, OptionSet)
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.AuraBars
 end
+
+---@type ElementSettings
+local Settings = {}
 
 UF.Elements:Register('AuraBars', Build, Update, Options)
