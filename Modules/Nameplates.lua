@@ -432,7 +432,6 @@ function module:OnInitialize()
 				['**'] = {
 					enabled = false,
 					Scale = 1,
-					bgTexture = false,
 					points = false,
 					alpha = 1,
 					width = 20,

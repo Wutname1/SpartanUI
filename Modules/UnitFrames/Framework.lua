@@ -122,7 +122,6 @@ Elements.FrameSettings = {}
 function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
 	local Defaults = {
 		enabled = false,
-		bgTexture = false,
 		points = false,
 		alpha = 1,
 		width = 20,
@@ -366,7 +365,6 @@ function UF:OnInitialize()
 				elements = {
 					['**'] = {
 						enabled = false,
-						bgTexture = false,
 						points = false,
 						alpha = 1,
 						width = 20,

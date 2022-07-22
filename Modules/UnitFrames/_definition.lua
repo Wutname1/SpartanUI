@@ -7,7 +7,6 @@ local ElementConfig = {
 ---@class ElementSettings
 ---@field enabled boolean
 ---@field scale integer
----@field bgTexture string|boolean
 ---@field points boolean|table|string
 ---@field size integer|boolean
 ---@field FrameStrata FrameStrata
@@ -16,7 +15,6 @@ local ElementConfig = {
 ---@field position ElementPositioning
 local ElementSettings = {
 	enabled = false,
-	bgTexture = false,
 	points = false,
 	alpha = 1,
 	width = 20,
@@ -27,6 +25,7 @@ local ElementSettings = {
 	FrameLevel = nil,
 	bg = {
 		enabled = false,
+		texture = nil,
 		color = false
 	}
 }
