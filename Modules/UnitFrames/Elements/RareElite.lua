@@ -27,4 +27,24 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.RareElite
 end
 
-UF.Elements:Register('RareElite', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	alpha = .4,
+	points = {
+		['1'] = {
+			anchor = 'TOPLEFT',
+			relativeTo = 'Frame',
+			x = 0,
+			y = 0
+		},
+		['2'] = {
+			anchor = 'BOTTOMRIGHT',
+			relativeTo = 'Frame',
+			x = 0,
+			y = 0
+		}
+	}
+}
+
+UF.Elements:Register('RareElite', Build, Update, Options, Settings)

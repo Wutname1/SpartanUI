@@ -330,5 +330,8 @@
     "param-type-mismatch",
     "assign-type-mismatch",
     "need-check-nil"
-  ]
+  ],
+  "todo-tree.tree.showBadges": true,
+  "todo-tree.tree.showCountsInTree": true,
+  "todo-tree.tree.disableCompactFolders": false
 }

@@ -6,4 +6,9 @@ local function Build(frame, DB)
 	frame.RestingIndicator = frame:CreateTexture(nil, 'ARTWORK')
 end
 
-UF.Elements:Register('RestingIndicator', Build)
+---@type ElementSettings
+local Settings = {
+	size = 20
+}
+
+UF.Elements:Register('RestingIndicator', Build, nil, nil, Settings)

@@ -21,4 +21,18 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.PhaseIndicator
 end
 
-UF.Elements:Register('PhaseIndicator', Build, nil, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	size = 20,
+	position = {
+		anchor = 'TOP',
+		x = 0,
+		y = 0
+	},
+	config = {
+		type = 'Indicator'
+	}
+}
+
+UF.Elements:Register('PhaseIndicator', Build, nil, Options, Settings)

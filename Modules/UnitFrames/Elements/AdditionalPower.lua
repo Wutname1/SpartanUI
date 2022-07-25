@@ -18,6 +18,19 @@ local function Build(frame, DB)
 end
 
 ---@type ElementSettings
-local Settings = {}
+local Settings = {
+	enabled = true,
+	height = 5,
+	width = false,
+	position = {
+		anchor = 'TOP',
+		relativeTo = 'Power',
+		relativePoint = 'BOTTOM',
+		y = -1
+	},
+	config = {
+		type = 'Indicator'
+	}
+}
 
-UF.Elements:Register('AdditionalPower', Build)
+UF.Elements:Register('AdditionalPower', Build, nil, nil, Settings)

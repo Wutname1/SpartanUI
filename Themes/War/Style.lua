@@ -1,12 +1,11 @@
 local SUI, L = SUI, SUI.L
-local print = SUI.print
 local module = SUI:NewModule('Style_War')
 local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UnitFrames = SUI:GetModule('Component_UnitFrames')
+local UnitFrames = SUI:GetModule('Component_UnitFrames') ---@type SUI_UnitFrames
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
-local InitRan = false
+
 function module:OnInitialize()
 	-- Bartender 4 Settings
 	local BarHandler = SUI:GetModule('Component_BarHandler')
@@ -22,17 +21,16 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	local Images = {
+	local ImageInfo = {
 		Alliance = {
 			bg = {
-				Coords = {0, 0.458984375, 0.74609375, 1}
+				Coords = {0.572265625, 0.96875, 0.74609375, 1}
 			},
 			top = {
-				Coords = {0.03125, 0.427734375, 0, 0.421875}
+				Coords = {0.03125, 0.458984375, 0, 0.1796875}
 			},
 			bottom = {
-				Coords = {0.541015625, 1, 0, 0.421875}
+				Coords = {0.03125, 0.458984375, 0.37109375, 0.421875}
 			}
 		},
 		Horde = {
@@ -40,10 +38,10 @@ function module:OnInitialize()
 				Coords = {0.572265625, 0.96875, 0.74609375, 1}
 			},
 			top = {
-				Coords = {0.541015625, 1, 0, 0.421875}
+				Coords = {0.541015625, 1, 0, 0.1796875}
 			},
 			bottom = {
-				Coords = {0.541015625, 1, 0, 0.421875}
+				Coords = {0.541015625, 1, 0.37109375, 0.421875}
 			}
 		}
 	}
@@ -68,24 +66,8 @@ function module:OnInitialize()
 			factionGroup = select(1, UnitFactionGroup(frame.unit)) or 'Neutral'
 		end
 
-		if factionGroup == 'Horde' then
-			-- Horde Graphics
-			if position == 'top' then
-				return {0.541015625, 1, 0, 0.1796875}
-			elseif position == 'bg' then
-				return {0.572265625, 0.96875, 0.74609375, 1}
-			elseif position == 'bottom' then
-				return {0.541015625, 1, 0.37109375, 0.421875}
-			end
-		elseif factionGroup == 'Alliance' then
-			-- Alliance Graphics
-			if position == 'top' then
-				return {0.03125, 0.458984375, 0, 0.1796875}
-			elseif position == 'bg' then
-				return {0, 0.458984375, 0.74609375, 1}
-			elseif position == 'bottom' then
-				return {0.03125, 0.458984375, 0.37109375, 0.421875}
-			end
+		if ImageInfo[factionGroup] and ImageInfo[factionGroup][position] then
+			return ImageInfo[factionGroup][position].Coords
 		else
 			return {1, 1, 1, 1}
 		end
@@ -123,6 +105,14 @@ function module:OnInitialize()
 	UnitFrames.FramePos.War = {
 		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
 	}
+	-- module.UF = {
+	-- 	Artwork = {},
+	-- 	Positioning = {},
+	-- 	Settings = {}
+	-- }
+	-- UnitFrames:RegisterArtwork('War', module.UF.Artwork)
+	-- UnitFrames:RegisterPositioning('War', module.UF.Positioning)
+	-- UnitFrames:RegisterSettings('War', module.UF.Settings)
 	module:CreateArtwork()
 end
 

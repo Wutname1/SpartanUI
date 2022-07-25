@@ -29,7 +29,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Range[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('Range')
+		UF.Unit[unitName]:ElementUpdate('Range')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Range
 	SUI.opt.args.UnitFrames.args[unitName].args.indicators.args.Range = {
@@ -53,9 +53,9 @@ local function Options(unitName, OptionSet)
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Range.enabled = val
 					--Update the screen
 					if val then
-						UF.Frames[unitName]:EnableElement('Range')
+						UF.Unit[unitName]:EnableElement('Range')
 					else
-						UF.Frames[unitName]:DisableElement('Range')
+						UF.Unit[unitName]:DisableElement('Range')
 					end
 				end
 			},
@@ -78,10 +78,13 @@ local function Options(unitName, OptionSet)
 end
 
 ---@type ElementSettings
-local settings = {
+local Settings = {
+	enabled = true,
+	insideAlpha = 1,
+	outsideAlpha = .3,
 	config = {
 		NoBulkUpdate = true
 	}
 }
 
-UF.Elements:Register('Range', Build, Update, Options, settings)
+UF.Elements:Register('Range', Build, Update, Options, Settings)

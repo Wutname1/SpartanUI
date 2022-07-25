@@ -49,12 +49,23 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function ElementOptions(unitName, OptionSet)
-	if unitName == 'boss' then
-		OptionSet.hidden = true
-	end
 end
 
-UF.Elements:Register('ClassIcon', ElementBuild, ElementUpdate, ElementOptions)
+---@type ElementSettings
+local Settings = {
+	VisibleOn = 'PlayerControlled',
+	size = 20,
+	position = {
+		anchor = 'BOTTOMLEFT',
+		x = -12,
+		y = 0
+	},
+	config = {
+		type = 'Indicator'
+	}
+}
+
+UF.Elements:Register('ClassIcon', ElementBuild, ElementUpdate, ElementOptions, Settings)
 
 do -- ClassIcon as an SUIUF module
 	local function Update(self, event, unit)

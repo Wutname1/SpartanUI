@@ -60,9 +60,40 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Power[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('Power')
+		UF.Unit[unitName]:ElementUpdate('Power')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Power
 end
 
-UF.Elements:Register('Power', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	height = 10,
+	width = false,
+	FrameStrata = 'BACKGROUND',
+	bg = {
+		enabled = true,
+		color = {1, 1, 1, .2}
+	},
+	text = {
+		['1'] = {
+			enabled = false,
+			text = '[power:current-formatted] / [power:max-formatted]'
+		},
+		['2'] = {
+			enabled = false,
+			text = '[perpp]%'
+		}
+	},
+	position = {
+		anchor = 'TOP',
+		relativeTo = 'Health',
+		relativePoint = 'BOTTOM',
+		y = -1
+	},
+	config = {
+		type = 'StatusBar'
+	}
+}
+
+UF.Elements:Register('Power', Build, Update, Options, Settings)

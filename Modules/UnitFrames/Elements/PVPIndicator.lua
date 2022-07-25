@@ -128,16 +128,27 @@ local function Options(unitName, OptionSet)
 				UF.DB.UserSettings[UF.DB.Style][unitName].elements.PvPIndicator[k] = val
 				--Update the screen
 				if val then
-					UF.Frames[unitName].PvPIndicator[k] = UF.Frames[unitName].PvPIndicator[v]
+					UF.Unit[unitName].PvPIndicator[k] = UF.Unit[unitName].PvPIndicator[v]
 				else
-					UF.Frames[unitName].PvPIndicator[k]:Hide()
-					UF.Frames[unitName].PvPIndicator[k] = nil
+					UF.Unit[unitName].PvPIndicator[k]:Hide()
+					UF.Unit[unitName].PvPIndicator[k] = nil
 				end
-				UF.Frames[unitName].PvPIndicator:ForceUpdate('OnUpdate')
+				UF.Unit[unitName].PvPIndicator:ForceUpdate('OnUpdate')
 			end
 		}
 		i = i + 1
 	end
 end
 
-UF.Elements:Register('PvPIndicator', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	Badge = false,
+	Shadow = true,
+	size = 20,
+	position = {
+		anchor = 'TOPLEFT',
+		x = -10
+	}
+}
+
+UF.Elements:Register('PvPIndicator', Build, Update, Options, Settings)

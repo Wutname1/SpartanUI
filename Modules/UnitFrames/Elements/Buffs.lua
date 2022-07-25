@@ -52,9 +52,33 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Buffs[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('Buffs')
+		UF.Unit[unitName]:ElementUpdate('Buffs')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Buffs
 end
 
-UF.Elements:Register('Buffs', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	number = 10,
+	auraSize = 20,
+	spacing = 1,
+	showType = true,
+	width = false,
+	initialAnchor = 'BOTTOMLEFT',
+	growthx = 'RIGHT',
+	growthy = 'DOWN',
+	rows = 2,
+	position = {
+		anchor = 'TOPLEFT',
+		relativePoint = 'BOTTOMLEFT',
+		y = -10
+	},
+	filters = {
+		showPlayers = true,
+		boss = true
+	},
+	config = {
+		type = 'Auras'
+	}
+}
+UF.Elements:Register('Buffs', Build, Update, Options, Settings)

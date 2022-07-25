@@ -14,4 +14,11 @@ local function Build(frame, DB)
 	end
 end
 
-UF.Elements:Register('CombatIndicator', Build)
+---@type ElementSettings
+local Settings = {
+	config = {
+		type = 'Indicator'
+	}
+}
+
+UF.Elements:Register('CombatIndicator', Build, nil, nil, Settings)

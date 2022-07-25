@@ -30,7 +30,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.GroupRoleIndicator[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('GroupRoleIndicator')
+		UF.Unit[unitName]:ElementUpdate('GroupRoleIndicator')
 	end
 
 	--local DB = UF.CurrentSettings[unitName].elements.Range.enabled
@@ -61,4 +61,22 @@ local function Options(unitName, OptionSet)
 	}
 end
 
-UF.Elements:Register('GroupRoleIndicator', Build, nil, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	size = 18,
+	alpha = .75,
+	ShowTank = true,
+	ShowHealer = true,
+	ShowDPS = true,
+	position = {
+		anchor = 'TOPRIGHT',
+		x = 0,
+		y = 10
+	},
+	config = {
+		type = 'Indicator'
+	}
+}
+
+UF.Elements:Register('GroupRoleIndicator', Build, nil, Options, Settings)

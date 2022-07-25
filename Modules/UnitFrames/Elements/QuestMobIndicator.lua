@@ -20,4 +20,11 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.QuestMobIndicator
 end
 
-UF.Elements:Register('QuestMobIndicator', Build, nil, Options)
+---@type ElementSettings
+local Settings = {
+	position = {
+		anchor = 'RIGHT'
+	}
+}
+
+UF.Elements:Register('QuestMobIndicator', Build, nil, Options, Settings)

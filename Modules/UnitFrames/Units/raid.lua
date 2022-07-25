@@ -1,6 +1,6 @@
 local UF = SUI.UF
 
-local function builder(frame)
+local function Builder(frame)
 	local elementDB = frame.elementDB
 	UF.Elements:Build(frame, 'Name', elementDB.Name)
 	UF.Elements:Build(frame, 'Castbar', elementDB.Castbar)
@@ -18,9 +18,11 @@ local function builder(frame)
 	UF.Elements:Build(frame, 'ResurrectIndicator', elementDB.ResurrectIndicator)
 end
 
+local function Options()
+end
+
 ---@type UFrameSettings
-local config = {
-	enabled = true,
+local Settings = {
 	width = 95,
 	showParty = false,
 	showPlayer = true,
@@ -109,7 +111,10 @@ local config = {
 				y = 1
 			}
 		}
+	},
+	config = {
+		IsGroup = true
 	}
 }
 
-UF.Frames.Add('raid', builder, config)
+UF.Unit.Add('raid', Builder, Settings)

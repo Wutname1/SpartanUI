@@ -28,4 +28,10 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.ResurrectIndicator
 end
 
-UF.Elements:Register('ResurrectIndicator', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	size = 20
+}
+
+UF.Elements:Register('ResurrectIndicator', Build, Update, Options, Settings)

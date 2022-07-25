@@ -68,6 +68,21 @@ local function Options(unitName, OptionSet)
 	}
 end
 
-local Config = {config = {NoBulkUpdate = true}}
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	width = 16,
+	height = 5,
+	position = {
+		anchor = 'TOPLEFT',
+		relativeTo = 'Name',
+		relativePoint = 'BOTTOMLEFT',
+		y = -5
+	},
+	config = {
+		NoBulkUpdate = true,
+		type = 'StatusBar'
+	}
+}
 
-UF.Elements:Register('ClassPower', Build, Update, Options, Config)
+UF.Elements:Register('ClassPower', Build, Update, Options, Settings)

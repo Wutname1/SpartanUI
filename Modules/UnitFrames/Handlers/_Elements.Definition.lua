@@ -1,8 +1,14 @@
 ---@class ElementConfig
----@field NoBulkUpdate boolean
-local ElementConfig = {
-	NoBulkUpdate = false
-}
+---@field NoBulkUpdate? boolean
+---@field type ElementType
+local ElementConfig = {}
+
+---@alias ElementType
+---|'Indicator'
+---|'StatusBar'
+---|'Text'
+---|'Auras'
+---|'Other'
 
 ---@class ElementSettings
 ---@field enabled boolean
@@ -84,6 +90,7 @@ local ElementTextData = {
 ---|"PVPIndicator"
 ---|"QuestMobIndicator"
 ---|"RaidTargetIndicator"
+---|"RaidRoleIndicator"
 ---|"Range"
 ---|"RareElite"
 ---|"ReadyCheckIndicator"
@@ -95,35 +102,3 @@ local ElementTextData = {
 ---|"SUI_RaidGroup"
 ---|"ThreatIndicator"
 ---|"Totems"
-
----@class UFrameSettings
----@field anchor FramePositioning
----@field elements table<string, ElementSettings>
----@field visibility UFrameVisibility
-local UFrameSettings = {
-	enabled = true,
-	width = 180,
-	scale = 1,
-	moved = false
-}
-
----@class UFrameVisibility
-local visibility = {
-	alphaDelay = 1,
-	hideDelay = 3,
-	showAlways = false,
-	showInCombat = true,
-	showWithTarget = false,
-	showInRaid = false,
-	showInParty = false
-}
-
----@alias UnitFrameName
----|"player"
----|"target"
----|"targettarget"
----|"boss"
----|"raid"
----|"party"
----|"arena"
----|"pet"

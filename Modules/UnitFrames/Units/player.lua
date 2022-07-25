@@ -1,6 +1,6 @@
 local UF = SUI.UF
 
-local function builder(frame)
+local function Builder(frame)
 	local elementDB = frame.elementDB
 	for elementName, _ in pairs(UF.Elements.List) do
 		if not elementDB[elementName] then
@@ -9,6 +9,9 @@ local function builder(frame)
 			UF.Elements:Build(frame, elementName, elementDB[elementName])
 		end
 	end
+end
+
+local function Options()
 end
 
 ---@type UFrameSettings
@@ -87,4 +90,4 @@ local Settings = {
 	}
 }
 
-UF.Frames.Add('player', builder, Settings)
+UF.Unit.Add('player', Builder, Settings)

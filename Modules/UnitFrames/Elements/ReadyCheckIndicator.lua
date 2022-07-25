@@ -20,4 +20,15 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.ReadyCheckIndicator
 end
 
-UF.Elements:Register('ReadyCheckIndicator', Build, nil, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	size = 35,
+	position = {
+		anchor = 'LEFT',
+		x = 0,
+		y = 0
+	}
+}
+
+UF.Elements:Register('ReadyCheckIndicator', Build, nil, Options, Settings)

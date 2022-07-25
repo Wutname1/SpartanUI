@@ -61,4 +61,17 @@ end
 local function Options(unitName, OptionSet)
 end
 
-UF.Elements:Register('HappinessIndicator', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	position = {
+		anchor = 'LEFT',
+		x = -10,
+		y = -10
+	},
+	config = {
+		type = 'Indicator'
+	}
+}
+
+UF.Elements:Register('HappinessIndicator', Build, Update, Options, Settings)

@@ -7,4 +7,18 @@ local function Build(frame, DB)
 	frame.LeaderIndicator:Hide()
 end
 
-UF.Elements:Register('LeaderIndicator', Build)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	size = 12,
+	position = {
+		anchor = 'TOP',
+		x = 0,
+		y = 6
+	},
+	config = {
+		type = 'Indicator'
+	}
+}
+
+UF.Elements:Register('LeaderIndicator', Build, nil, nil, Settings)

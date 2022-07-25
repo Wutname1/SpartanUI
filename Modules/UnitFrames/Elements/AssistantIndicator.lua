@@ -7,14 +7,17 @@ local function Build(frame, DB)
 end
 
 ---@type ElementSettings
-local Defaults = {
+local Settings = {
 	enabled = true,
 	size = 12,
 	position = {
 		anchor = 'TOP',
 		x = 0,
 		y = 6
+	},
+	config = {
+		type = 'Indicator'
 	}
 }
 
-UF.Elements:Register('AssistantIndicator', Build)
+UF.Elements:Register('AssistantIndicator', Build, nil, nil, Settings)

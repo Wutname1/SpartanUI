@@ -139,9 +139,43 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].DB[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('Health')
+		UF.Unit[unitName]:ElementUpdate('Health')
 	end
 	--local DB = UF.CurrentSettings[unitName].DB
 end
 
-UF.Elements:Register('Health', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	height = 40,
+	width = false,
+	FrameStrata = 'BACKGROUND',
+	colorReaction = true,
+	colorSmooth = false,
+	colorClass = true,
+	colorTapping = true,
+	colorDisconnected = true,
+	bg = {
+		enabled = true,
+		color = {1, 1, 1, .2}
+	},
+	text = {
+		['1'] = {
+			enabled = true,
+			text = '[health:current-formatted] / [health:max-formatted]',
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0
+			}
+		}
+	},
+	position = {
+		anchor = 'TOP'
+	},
+	config = {
+		type = 'StatusBar'
+	}
+}
+
+UF.Elements:Register('Health', Build, Update, Options, Settings)

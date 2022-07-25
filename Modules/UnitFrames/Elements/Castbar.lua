@@ -159,4 +159,55 @@ end
 local function Options(unitName, OptionSet)
 end
 
-UF.Elements:Register('Castbar', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = false,
+	height = 10,
+	width = false,
+	FrameStrata = 'BACKGROUND',
+	interruptable = true,
+	FlashOnInterruptible = true,
+	latency = false,
+	InterruptSpeed = .1,
+	bg = {
+		enabled = true,
+		color = {1, 1, 1, .2}
+	},
+	Icon = {
+		enabled = true,
+		size = 12,
+		position = {
+			anchor = 'LEFT',
+			x = 0,
+			y = 0
+		}
+	},
+	text = {
+		['1'] = {
+			enabled = true,
+			text = '[Spell name]',
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0
+			}
+		},
+		['2'] = {
+			enabled = true,
+			text = '[Spell timer]',
+			size = 8,
+			position = {
+				anchor = 'RIGHT',
+				x = 0,
+				y = 0
+			}
+		}
+	},
+	position = {
+		anchor = 'TOP'
+	},
+	config = {
+		type = 'StatusBar'
+	}
+}
+UF.Elements:Register('Castbar', Build, Update, Options, Settings)

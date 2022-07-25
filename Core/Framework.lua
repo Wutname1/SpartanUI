@@ -1613,6 +1613,69 @@ function SUI:MergeData(target, source, override)
 	return target
 end
 
+---Copied from AceDB this allows tables to be copied and used as a in memory dynamic db using the '*' and '**' wildcards
+---@param dest any the table that will be updated
+---@param source any The data that will be used to populate the dest, unless the target info exsists in the dest then it will be left alone
+---@return any will return the dest table, this is not needed as LUA updates the dest obj you passed but can be useful for easy re-assignment
+function SUI:CopyData(dest, source)
+	if source == nil then
+		return dest
+	end
+
+	if type(dest) ~= 'table' then
+		dest = {}
+	end
+	for k, v in pairs(source) do
+		if k == '*' or k == '**' then
+			if type(v) == 'table' then
+				-- This is a metatable used for table defaults
+				local mt = {
+					-- This handles the lookup and creation of new subtables
+					__index = function(t, k)
+						if k == nil then
+							return nil
+						end
+						local tbl = {}
+						SUI:CopyData(tbl, v)
+						rawset(t, k, tbl)
+						return tbl
+					end
+				}
+				setmetatable(dest, mt)
+				-- handle already existing tables in the SV
+				for dk, dv in pairs(dest) do
+					if not rawget(source, dk) and type(dv) == 'table' then
+						SUI:CopyData(dv, v)
+					end
+				end
+			else
+				-- Values are not tables, so this is just a simple return
+				local mt = {
+					__index = function(t, k)
+						return k ~= nil and v or nil
+					end
+				}
+				setmetatable(dest, mt)
+			end
+		elseif type(v) == 'table' then
+			if not rawget(dest, k) then
+				rawset(dest, k, {})
+			end
+			if type(dest[k]) == 'table' then
+				SUI:CopyData(dest[k], v)
+				if source['**'] then
+					SUI:CopyData(dest[k], source['**'])
+				end
+			end
+		else
+			if rawget(dest, k) == nil then
+				rawset(dest, k, v)
+			end
+		end
+	end
+	return dest
+end
+
 function SUI:isPartialMatch(frameName, tab)
 	local result = false
 

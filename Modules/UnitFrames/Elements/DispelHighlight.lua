@@ -24,9 +24,19 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.DispelHighlight[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('DispelHighlight')
+		UF.Unit[unitName]:ElementUpdate('DispelHighlight')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.DispelHighlight
 end
 
-UF.Elements:Register('DispelHighlight', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	position = {
+		anchor = nil
+	},
+	config = {
+		type = 'Indicator'
+	}
+}
+UF.Elements:Register('DispelHighlight', Build, Update, Options, Settings)

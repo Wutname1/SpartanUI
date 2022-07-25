@@ -62,7 +62,7 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].artwork[pos][option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('SpartanArt')
+		UF.Unit[unitName]:ElementUpdate('SpartanArt')
 	end
 	OptionSet.args['artwork'] = {
 		name = L['Artwork'],
@@ -182,5 +182,22 @@ local function Options(unitName, OptionSet)
 		end
 	end
 end
-local Config = {config = {NoBulkUpdate = true}}
-UF.Elements:Register('SpartanArt', Build, _, Options, Config)
+
+local sectiondefault = {
+	enabled = false,
+	x = 0,
+	y = 0,
+	alpha = 1,
+	graphic = ''
+}
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	full = sectiondefault,
+	top = sectiondefault,
+	bg = sectiondefault,
+	bottom = sectiondefault,
+	config = {NoBulkUpdate = true}
+}
+
+UF.Elements:Register('SpartanArt', Build, _, Options, Settings)

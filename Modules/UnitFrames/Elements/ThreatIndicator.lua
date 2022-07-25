@@ -15,4 +15,7 @@ local function Build(frame, DB)
 	frame.ThreatIndicator = ThreatIndicator
 end
 
-UF.Elements:Register('ThreatIndicator', Build)
+---@type ElementSettings
+local Settings = {}
+
+UF.Elements:Register('ThreatIndicator', Build, nil, nil, Settings)

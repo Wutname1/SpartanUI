@@ -101,15 +101,15 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.enabled = val
 					--Update the screen
-					if UF.Frames[unitName].Portrait then
+					if UF.Unit[unitName].Portrait then
 						if val then
-							UF.Frames[unitName]:EnableElement('Portrait')
-							UF.Frames[unitName].Portrait:ForceUpdate()
+							UF.Unit[unitName]:EnableElement('Portrait')
+							UF.Unit[unitName].Portrait:ForceUpdate()
 						else
-							UF.Frames[unitName]:DisableElement('Portrait')
+							UF.Unit[unitName]:DisableElement('Portrait')
 						end
 					else
-						UF.Frames[unitName]:UpdateAll()
+						UF.Unit[unitName]:UpdateAll()
 					end
 				end
 			},
@@ -130,7 +130,7 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.type = val
 					--Update the screen
-					UF.Frames[unitName]:ElementUpdate('Portrait')
+					UF.Unit[unitName]:ElementUpdate('Portrait')
 				end
 			},
 			rotation = {
@@ -149,7 +149,7 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.rotation = val
 					--Update the screen
-					UF.Frames[unitName]:ElementUpdate('Portrait')
+					UF.Unit[unitName]:ElementUpdate('Portrait')
 				end
 			},
 			camDistanceScale = {
@@ -168,7 +168,7 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.camDistanceScale = val
 					--Update the screen
-					UF.Frames[unitName]:ElementUpdate('Portrait')
+					UF.Unit[unitName]:ElementUpdate('Portrait')
 				end
 			},
 			position = {
@@ -188,11 +188,27 @@ local function Options(unitName, OptionSet)
 					--Update the DB
 					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.position = val
 					--Update the screen
-					UF.Frames[unitName]:ElementUpdate('Portrait')
+					UF.Unit[unitName]:ElementUpdate('Portrait')
 				end
 			}
 		}
 	}
 end
 
-UF.Elements:Register('Portrait', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	type = '3D',
+	scaleWithFrame = true,
+	width = 50,
+	height = 100,
+	rotation = 0,
+	camDistanceScale = 1,
+	xOffset = 0,
+	yOffset = 0,
+	position = 'left',
+	config = {
+		type = 'Other'
+	}
+}
+
+UF.Elements:Register('Portrait', Build, Update, Options, Settings)

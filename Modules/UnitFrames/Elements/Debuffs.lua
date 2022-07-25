@@ -52,9 +52,34 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Debuffs[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('Debuffs')
+		UF.Unit[unitName]:ElementUpdate('Debuffs')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Debuffs
 end
 
-UF.Elements:Register('Debuffs', Build, Update, Options)
+---@type ElementSettings
+local Settings = {
+	number = 10,
+	auraSize = 20,
+	spacing = 1,
+	width = false,
+	ShowBoss = true,
+	showType = true,
+	initialAnchor = 'BOTTOMRIGHT',
+	growthx = 'LEFT',
+	growthy = 'UP',
+	rows = 2,
+	position = {
+		anchor = 'TOPRIGHT',
+		relativePoint = 'BOTTOMRIGHT',
+		y = -10
+	},
+	filters = {
+		showPlayers = true,
+		boss = true
+	},
+	config = {
+		type = 'Auras'
+	}
+}
+UF.Elements:Register('Debuffs', Build, Update, Options, Settings)

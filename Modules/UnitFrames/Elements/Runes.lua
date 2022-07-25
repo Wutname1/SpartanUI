@@ -56,6 +56,10 @@ local function Options(unitName, OptionSet)
 	}
 end
 
-local Config = {config = {NoBulkUpdate = true}}
+---@type ElementSettings
+local Settings = {
+	enabled = true,
+	config = {NoBulkUpdate = true}
+}
 
-UF.Elements:Register('Runes', Build, Update, Options, Config)
+UF.Elements:Register('Runes', Build, Update, Options, Settings)

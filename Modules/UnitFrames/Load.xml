@@ -3,6 +3,9 @@
 ..\..\FrameXML\UI.xsd">
     <Script file="Framework.lua"/>
 
+    <Script file="Handlers\Elements.lua"/>
+    <Script file="Handlers\Units.lua"/>
+
     <Script file="Elements\AdditionalPower.lua"/>
     <Script file="Elements\AssistantIndicator.lua"/>
     <Script file="Elements\AuraBars.lua"/>
@@ -23,6 +26,7 @@
     <Script file="Elements\Power.lua"/>
     <Script file="Elements\PvPIndicator.lua"/>
     <Script file="Elements\QuestMobIndicator.lua"/>
+    <!-- <Script file="Elements\RaidRoleIndicator.lua"/> -->
     <Script file="Elements\RaidTargetIndicator.lua"/>
     <Script file="Elements\ResurrectIndicator.lua"/>
     <Script file="Elements\Range.lua"/>
@@ -37,9 +41,21 @@
     <Script file="Elements\Totems.lua"/>
 
 
+    <Script file="Units\arena.lua"/>
+    <Script file="Units\boss.lua"/>
+    <Script file="Units\bosstarget.lua"/>
+    <Script file="Units\focus.lua"/>
+    <Script file="Units\focustarget.lua"/>
+    <Script file="Units\party.lua"/>
+    <Script file="Units\partypet.lua"/>
+    <Script file="Units\partytarget.lua"/>
+    <Script file="Units\pet.lua"/>
+    <Script file="Units\pettarget.lua"/>
     <Script file="Units\player.lua"/>
     <Script file="Units\raid.lua"/>
+    <Script file="Units\target.lua"/>
+    <Script file="Units\targettarget.lua"/>
 
     <Script file="SpawnFrames.lua" />
-    <Script file="Options.lua" />
+    <!-- <Script file="Options.lua" /> -->
 </Ui>

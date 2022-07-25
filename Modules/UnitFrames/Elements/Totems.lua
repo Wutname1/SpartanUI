@@ -64,11 +64,11 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Totems[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('Totems')
+		UF.Unit[unitName]:ElementUpdate('Totems')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.Totems
 end
 
-local Config = {config = {NoBulkUpdate = true}}
+local Settings = {config = {NoBulkUpdate = true}}
 
-UF.Elements:Register('Totems', Build, Update, nil, Config)
+UF.Elements:Register('Totems', Build, Update, nil, Settings)

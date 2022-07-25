@@ -29,7 +29,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.HealHelper then
+	if SUI:IsModuleDisabled('HealHelper') or SUI:IsModuleDisabled('UnitFrames') then
 		return
 	end
 end

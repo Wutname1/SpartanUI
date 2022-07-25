@@ -110,12 +110,40 @@ local function Options(unitName, OptionSet)
 		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.AuraBars[option] = val
 		--Update the screen
-		UF.Frames[unitName]:ElementUpdate('AuraBars')
+		UF.Unit[unitName]:ElementUpdate('AuraBars')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.AuraBars
 end
 
 ---@type ElementSettings
-local Settings = {}
+local Settings = {
+	height = 14,
+	width = false,
+	sparkEnabled = true,
+	spacing = 2,
+	initialAnchor = 'BOTTOMLEFT',
+	growth = 'UP',
+	maxBars = 32,
+	texture = nil,
+	fgalpha = 1,
+	bgalpha = 1,
+	spellNameSize = 10,
+	spellTimeSize = 10,
+	gap = 1,
+	scaleTime = false,
+	icon = true,
+	position = {
+		anchor = 'BOTTOM',
+		relativePoint = 'TOP',
+		x = 7,
+		y = 20
+	},
+	filters = {
+		showPlayers = true
+	},
+	config = {
+		type = 'Auras'
+	}
+}
 
-UF.Elements:Register('AuraBars', Build, Update, Options)
+UF.Elements:Register('AuraBars', Build, Update, Options, Settings)
