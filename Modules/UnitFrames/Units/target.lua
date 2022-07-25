@@ -28,8 +28,12 @@ local function Builder(frame)
 	UF.Elements:Build(frame, 'ReadyCheckIndicator', elementDB['ReadyCheckIndicator'])
 	UF.Elements:Build(frame, 'ResurrectIndicator', elementDB['ResurrectIndicator'])
 	UF.Elements:Build(frame, 'SummonIndicator', elementDB['SummonIndicator'])
+	UF.Elements:Build(frame, 'StatusText', elementDB['StatusText'])
+	UF.Elements:Build(frame, 'SUI_RaidGroup', elementDB['SUI_RaidGroup'])
 
 	UF.Elements:Build(frame, 'QuestMobIndicator', elementDB['QuestMobIndicator'])
+	UF.Elements:Build(frame, 'RareElite', elementDB['RareElite'])
+	UF.Elements:Build(frame, 'AuraBars', elementDB['AuraBars'])
 end
 
 local function Options()

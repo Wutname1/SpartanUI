@@ -6,15 +6,36 @@ local function Build(frame, DB)
 	frame.RaidTargetIndicator = frame:CreateTexture(nil, 'ARTWORK')
 end
 
+---@param frame table
+local function Update(frame)
+	local element = frame.RaidTargetIndicator
+	local DB = element.DB
+end
+
+---@param unitName string
+---@param OptionSet AceConfigOptionsTable
+local function Options(unitName, OptionSet)
+	local function OptUpdate(option, val)
+		--Update memory
+		UF.CurrentSettings[unitName].elements.RaidTargetIndicator[option] = val
+		--Update the DB
+		UF.DB.UserSettings[UF.DB.Style][unitName].elements.RaidTargetIndicator[option] = val
+		--Update the screen
+		UF.frames[unitName]:ElementUpdate('RaidTargetIndicator')
+	end
+	--local DB = UF.CurrentSettings[unitName].elements.RaidTargetIndicator
+end
+
 ---@type ElementSettings
 local Settings = {
 	enabled = true,
 	size = 20,
 	position = {
 		anchor = 'BOTTOMRIGHT',
-		x = 5,
-		y = -10
+		relativePoint = 'CENTER',
+		x = 0,
+		y = 0
 	}
 }
 
-UF.Elements:Register('RaidTargetIndicator', Build, nil, nil, Settings)
+UF.Elements:Register('RaidTargetIndicator', Build, Update, Options, Settings)
