@@ -72,6 +72,10 @@ function Unit:BuildGroup(groupName)
 	local holder = CreateFrame('Frame', 'SUI_UF_' .. groupName .. '_Holder')
 	holder:Hide()
 	holder:SetSize(UF:GroupSize(groupName))
+
+	holder:EnableMouse(false)
+	holder:SetMouseClickEnabled(false)
+
 	holder.frames = {}
 
 	BuiltFrames[groupName] = holder

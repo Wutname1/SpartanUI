@@ -285,13 +285,14 @@ function UF:SpawnFrames()
 
 	for groupName, _ in pairs(UF.Unit:GetFrameList(true)) do
 		local groupElement = UF.Unit:Get(groupName)
-		if groupElement then
+		local firstElement = groupElement.header or groupElement.frames[1]
+		if firstElement then
 			local function GroupFrameUpdateAll(groupFrame)
 				if VisibilityCheck(groupName) and UF.CurrentSettings[groupName].enabled then
-					if groupElement.visibility then
-						RegisterStateDriver(groupElement, groupElement.visibility)
+					if firstElement.visibility then
+						RegisterStateDriver(firstElement, firstElement.visibility)
 					end
-					groupElement:Show()
+					firstElement:Show()
 
 					for i, f in pairs(groupFrame.frames) do
 						if f.UpdateAll then
@@ -299,8 +300,8 @@ function UF:SpawnFrames()
 						end
 					end
 				else
-					UnregisterStateDriver(groupElement, 'visibility')
-					groupElement:Hide()
+					UnregisterStateDriver(firstElement, 'visibility')
+					firstElement:Hide()
 				end
 			end
 
