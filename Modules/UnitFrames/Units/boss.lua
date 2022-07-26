@@ -4,21 +4,38 @@ end
 
 local UF = SUI.UF
 
-local function Builder(frame)
-	local elementDB = frame.elementDB
-	UF.Elements:Build(frame, 'Name', elementDB.Name)
-	UF.Elements:Build(frame, 'Castbar', elementDB.Castbar)
-	UF.Elements:Build(frame, 'Health', elementDB.Health)
-	UF.Elements:Build(frame, 'Power', elementDB.Power)
-	UF.Elements:Build(frame, 'SpartanArt', elementDB.SpartanArt)
-	UF.Elements:Build(frame, 'RaidTargetIndicator', elementDB.RaidTargetIndicator)
-	UF.Elements:Build(frame, 'Range', elementDB.Range)
-	UF.Elements:Build(frame, 'ThreatIndicator', elementDB.ThreatIndicator)
-	UF.Elements:Build(frame, 'Buffs', elementDB.Buffs)
-	UF.Elements:Build(frame, 'Debuffs', elementDB.Debuffs)
+local function GroupBuilder(holder)
+	for i = 1, (MAX_BOSS_FRAMES or 5) do
+		holder.frames[i] = SUIUF:Spawn('boss' .. i, 'SUI_boss' .. i)
+		if i == 1 then
+			holder.frames[i]:SetPoint('TOPLEFT', _G['SUI_UF_boss'], 'TOPLEFT', 0, 0)
+		else
+			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
+		end
+	end
 end
 
-local function GroupBuilder()
+local function Builder(frame)
+	local elementDB = frame.elementDB
+	local ElementsToBuild = {
+		---Basic
+		'Name',
+		'Health',
+		'Castbar',
+		'Power',
+		'Portrait',
+		'SpartanArt',
+		'Buffs',
+		'Debuffs,',
+		'RaidTargetIndicator',
+		'Range',
+		'ThreatIndicator',
+		'RaidRoleIndicator'
+	}
+
+	for _, elementName in pairs(ElementsToBuild) do
+		UF.Elements:Build(frame, elementName, elementDB[elementName])
+	end
 end
 
 local function Options()
@@ -48,4 +65,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('boss', Builder, Settings, Options, GroupBuilder)
+UF.Unit:Add('boss', Builder, Settings, Options, GroupBuilder)

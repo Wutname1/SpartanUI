@@ -42,4 +42,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('partypet', Builder, Settings)
+UF.Unit:Add('partypet', Builder, Settings)

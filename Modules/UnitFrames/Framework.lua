@@ -3,7 +3,7 @@ local SUI = SUI
 local _G, L, print = _G, SUI.L, SUI.print
 ---@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
 local UF = SUI:NewModule('Component_UnitFrames')
-local MoveIt = SUI:GetModule('Component_MoveIt')
+local MoveIt = SUI.MoveIt
 SUI.UF = UF
 UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
@@ -52,7 +52,7 @@ function UF:IsFriendlyFrame(frameName)
 	return false
 end
 
----@param unit UnitFrameName
+---@param unit? UnitFrameName
 function UF:PositionFrame(unit)
 	local positionData = UF.FramePos.default
 	-- If artwork is enabled load the art's position data if supplied
@@ -61,7 +61,7 @@ function UF:PositionFrame(unit)
 	end
 
 	if unit then
-		local UnitFrame = UF.Unit.Get(unit)
+		local UnitFrame = UF.Unit:Get(unit)
 		local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[unit])
 
 		if UnitFrame.position then
@@ -71,32 +71,15 @@ function UF:PositionFrame(unit)
 			UnitFrame:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
 	else
-		local frameList = {
-			'player',
-			'target',
-			'targettarget',
-			'pet',
-			'pettarget',
-			'focus',
-			'focustarget'
-			-- 'boss',
-			-- 'party',
-			-- 'raid',
-			-- 'arena'
-		}
+		for frameName, config in pairs(UF.Unit:GetFrameList()) do
+			local UnitFrame = UF.Unit:Get(frameName)
+			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frameName])
 
-		for _, frame in ipairs(frameList) do
-			-- local frameName = 'SUI_UF_' .. frame
-			local UnitFrame = UF.Unit.Get(frame)
-			if UnitFrame then
-				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frame])
-
-				if UnitFrame.position then
-					UnitFrame:position(point, anchor, secondaryPoint, x, y, false, true)
-				else
-					UnitFrame:ClearAllPoints()
-					UnitFrame:SetPoint(point, anchor, secondaryPoint, x, y)
-				end
+			if UnitFrame.position then
+				UnitFrame:position(point, anchor, secondaryPoint, x, y, false, true)
+			else
+				UnitFrame:ClearAllPoints()
+				UnitFrame:SetPoint(point, anchor, secondaryPoint, x, y)
 			end
 		end
 	end
@@ -159,38 +142,6 @@ function UF:OnEnable()
 		return
 	end
 
-	-- Create Party & Raid frame holder
-	local GroupedFrames = {
-		'party',
-		'raid',
-		'boss',
-		'arena'
-	}
-	for unit, config in ipairs(UF.Unit.UnitsLoaded) do
-		if config.IsGroup then
-			local CurFrameOpt = UF.CurrentSettings[unit]
-			local elements = CurFrameOpt.elements
-			local FrameHeight = 0
-			if elements.Castbar.enabled then
-				FrameHeight = FrameHeight + elements.Castbar.height
-			end
-			if elements.Health.enabled then
-				FrameHeight = FrameHeight + elements.Health.height
-			end
-			if elements.Power.enabled then
-				FrameHeight = FrameHeight + elements.Power.height
-			end
-			local height = (CurFrameOpt.unitsPerColumn or 10) * (FrameHeight + (CurFrameOpt.yOffset or 0))
-
-			local width = (CurFrameOpt.maxColumns or 4) * (CurFrameOpt.width + (CurFrameOpt.columnSpacing or 1))
-
-			local frame = CreateFrame('Frame', 'SUI_UF_' .. unit)
-			frame:Hide()
-			frame:SetSize(width, height)
-			UF.Unit.GroupContainer[unit] = frame
-		end
-	end
-
 	-- Build options
 	-- UF:InitializeOptions()
 
@@ -201,18 +152,8 @@ function UF:OnEnable()
 	UF:PositionFrame()
 
 	-- Create movers
-	for unit, config in pairs(UF.Unit.UnitsLoaded) do
-		if not config.IsGroup then
-			MoveIt:CreateMover(UF.Unit[unit], unit, nil, nil, 'Unit frames')
-		end
-	end
-
-	-- Create Party & Raid Mover
-	MoveIt:CreateMover(UF.Unit.GroupContainer.party, 'Party', nil, nil, 'Unit frames')
-	MoveIt:CreateMover(UF.Unit.GroupContainer.raid, 'Raid', nil, nil, 'Unit frames')
-	MoveIt:CreateMover(UF.Unit.GroupContainer.boss, 'Boss', nil, nil, 'Unit frames')
-	if SUI.IsRetail then
-		MoveIt:CreateMover(UF.Unit.GroupContainer.arena, 'Arena', nil, nil, 'Unit frames')
+	for unit, config in pairs(UF.Unit:GetFrameList()) do
+		MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
 	end
 end
 
@@ -318,11 +259,11 @@ function UF:ScaleFrames(scale)
 		return
 	end
 
-	for unitName, _ in ipairs(UF.Unit.UnitsLoaded) do
-		local UFrame = UF.Unit.Get(unitName)
+	for unitName, _ in pairs(UF.Unit:GetFrameList()) do
+		local UFrame = UF.Unit:Get(unitName)
 		if UFrame and UFrame.mover then
 			local newScale = UFrame.mover.defaultScale * (scale + .08) -- Add .08 to use .92 (the default scale) as 1.
-			UF.Unit[unitName]:scale(newScale)
+			UFrame:scale(newScale)
 		end
 	end
 end

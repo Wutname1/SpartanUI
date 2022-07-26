@@ -42,4 +42,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('pettarget', Builder, Settings)
+UF.Unit:Add('pettarget', Builder, Settings)

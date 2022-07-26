@@ -4,17 +4,41 @@ end
 
 local UF = SUI.UF
 
-local function GroupBuilder()
+local function GroupBuilder(holder)
+	for i = 1, (5) do
+		holder.frames[i] = SUIUF:Spawn('arena' .. i, 'SUI_arena' .. i)
+		if i == 1 then
+			holder.frames[i]:SetPoint('TOPLEFT', _G['SUI_UF_arena'], 'TOPLEFT', 0, 0)
+		else
+			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
+		end
+	end
 end
 
 local function Builder(frame)
 	local elementDB = frame.elementDB
-	for elementName, _ in pairs(UF.Elements.List) do
-		if not elementDB[elementName] then
-			SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
-		else
-			UF.Elements:Build(frame, elementName, elementDB[elementName])
-		end
+	local ElementsToBuild = {
+		---Basic
+		'Name',
+		'Health',
+		'Castbar',
+		'Power',
+		'Portrait',
+		'DispelHighlight',
+		'SpartanArt',
+		'Buffs',
+		'Debuffs,',
+		'ClassIcon',
+		'RaidTargetIndicator',
+		'Range',
+		--Friendly Only
+		'GroupRoleIndicator',
+		'RaidRoleIndicator',
+		'AuraBars'
+	}
+
+	for _, elementName in pairs(ElementsToBuild) do
+		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 end
 
@@ -56,4 +80,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('arena', Builder, Settings, Options, GroupBuilder)
+UF.Unit:Add('arena', Builder, Settings, Options, GroupBuilder)

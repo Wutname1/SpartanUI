@@ -1,13 +1,72 @@
 local UF = SUI.UF
 
+local function GroupBuilder(holder)
+	holder.header =
+		SUIUF:SpawnHeader(
+		'SUI_UF_party_Header',
+		nil,
+		'party',
+		'showRaid',
+		UF.CurrentSettings.party.showRaid,
+		'showParty',
+		UF.CurrentSettings.party.showParty,
+		'showPlayer',
+		UF.CurrentSettings.party.showPlayer,
+		'showSolo',
+		UF.CurrentSettings.party.showSolo,
+		'xoffset',
+		UF.CurrentSettings.party.xOffset,
+		'yOffset',
+		UF.CurrentSettings.party.yOffset,
+		'maxColumns',
+		UF.CurrentSettings.party.maxColumns,
+		'unitsPerColumn',
+		UF.CurrentSettings.party.unitsPerColumn,
+		'columnSpacing',
+		UF.CurrentSettings.party.columnSpacing,
+		'columnAnchorPoint',
+		'TOPLEFT',
+		'initial-anchor',
+		'TOPLEFT',
+		'oUF-initialConfigFunction',
+		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party'))
+	)
+	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
+end
+
 local function Builder(frame)
 	local elementDB = frame.elementDB
-	for elementName, _ in pairs(UF.Elements.List) do
-		if not elementDB[elementName] then
-			SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
-		else
-			UF.Elements:Build(frame, elementName, elementDB[elementName])
-		end
+	local ElementsToBuild = {
+		---Basic
+		'Name',
+		'Health',
+		'Castbar',
+		'Power',
+		'Portrait',
+		'DispelHighlight',
+		'SpartanArt',
+		'Buffs',
+		'Debuffs,',
+		'ClassIcon',
+		'RaidTargetIndicator',
+		'ThreatIndicator',
+		'Range',
+		--Friendly Only
+		'AssistantIndicator',
+		'GroupRoleIndicator',
+		'LeaderIndicator',
+		'PhaseIndicator',
+		'PVPIndicator',
+		'RaidRoleIndicator',
+		'ReadyCheckIndicator',
+		'ResurrectIndicator',
+		'SummonIndicator',
+		'StatusText',
+		'SUI_RaidGroup'
+	}
+
+	for _, elementName in pairs(ElementsToBuild) do
+		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 end
 
@@ -113,4 +172,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('party', Builder, Settings)
+UF.Unit:Add('party', Builder, Settings, Options, GroupBuilder)

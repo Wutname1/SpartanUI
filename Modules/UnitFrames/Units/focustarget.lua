@@ -34,4 +34,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('focustarget', Builder, Settings)
+UF.Unit:Add('focustarget', Builder, Settings)

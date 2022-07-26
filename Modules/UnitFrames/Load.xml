@@ -43,12 +43,12 @@
 
     <Script file="Units\arena.lua"/>
     <Script file="Units\boss.lua"/>
-    <Script file="Units\bosstarget.lua"/>
+    <!-- <Script file="Units\bosstarget.lua"/> -->
     <Script file="Units\focus.lua"/>
     <Script file="Units\focustarget.lua"/>
     <Script file="Units\party.lua"/>
-    <Script file="Units\partypet.lua"/>
-    <Script file="Units\partytarget.lua"/>
+    <!-- <Script file="Units\partypet.lua"/> -->
+    <!-- <Script file="Units\partytarget.lua"/> -->
     <Script file="Units\pet.lua"/>
     <Script file="Units\pettarget.lua"/>
     <Script file="Units\player.lua"/>

@@ -35,4 +35,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('focus', Builder, Settings)
+UF.Unit:Add('focus', Builder, Settings)

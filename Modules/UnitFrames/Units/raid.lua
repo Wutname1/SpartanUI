@@ -1,21 +1,88 @@
 local UF = SUI.UF
 
+local function groupingOrder()
+	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
+
+	if UF.CurrentSettings.raid.mode == 'GROUP' then
+		groupingOrder = '1,2,3,4,5,6,7,8'
+	end
+	return groupingOrder
+end
+
+local function GroupBuilder(holder)
+	holder.header =
+		SUIUF:SpawnHeader(
+		'SUI_UF_raid_Header',
+		nil,
+		'raid',
+		'showRaid',
+		UF.CurrentSettings.raid.showRaid,
+		'showParty',
+		UF.CurrentSettings.raid.showParty,
+		'showPlayer',
+		UF.CurrentSettings.raid.showSelf,
+		'showSolo',
+		UF.CurrentSettings.raid.showSolo,
+		'xoffset',
+		UF.CurrentSettings.raid.xOffset,
+		'yOffset',
+		UF.CurrentSettings.raid.yOffset,
+		'point',
+		'TOP',
+		'groupBy',
+		UF.CurrentSettings.raid.mode,
+		'groupingOrder',
+		groupingOrder(),
+		'sortMethod',
+		'index',
+		'maxColumns',
+		UF.CurrentSettings.raid.maxColumns,
+		'unitsPerColumn',
+		UF.CurrentSettings.raid.unitsPerColumn,
+		'columnSpacing',
+		UF.CurrentSettings.raid.columnSpacing,
+		'columnAnchorPoint',
+		'LEFT',
+		'oUF-initialConfigFunction',
+		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, UF:CalculateHeight('raid'))
+	)
+	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
+end
+
 local function Builder(frame)
 	local elementDB = frame.elementDB
-	UF.Elements:Build(frame, 'Name', elementDB.Name)
-	UF.Elements:Build(frame, 'Castbar', elementDB.Castbar)
-	UF.Elements:Build(frame, 'Health', elementDB.Health)
-	UF.Elements:Build(frame, 'Power', elementDB.Power)
-	UF.Elements:Build(frame, 'SpartanArt', elementDB.SpartanArt)
-	UF.Elements:Build(frame, 'RaidTargetIndicator', elementDB.RaidTargetIndicator)
-	UF.Elements:Build(frame, 'Range', elementDB.Range)
-	UF.Elements:Build(frame, 'ThreatIndicator', elementDB.ThreatIndicator)
-	UF.Elements:Build(frame, 'Buffs', elementDB.Buffs)
-	UF.Elements:Build(frame, 'Debuffs', elementDB.Debuffs)
-	UF.Elements:Build(frame, 'DispelHighlight', elementDB.DispelHighlight)
-	UF.Elements:Build(frame, 'LeaderIndicator', elementDB.LeaderIndicator)
-	UF.Elements:Build(frame, 'GroupRoleIndicator', elementDB.GroupRoleIndicator)
-	UF.Elements:Build(frame, 'ResurrectIndicator', elementDB.ResurrectIndicator)
+	local ElementsToBuild = {
+		---Basic
+		'Name',
+		'Health',
+		'Castbar',
+		'Power',
+		'Portrait',
+		'DispelHighlight',
+		'SpartanArt',
+		'Buffs',
+		'Debuffs,',
+		'ClassIcon',
+		'RaidTargetIndicator',
+		'ThreatIndicator',
+		'Range',
+		--Friendly Only
+		'AssistantIndicator',
+		'GroupRoleIndicator',
+		'LeaderIndicator',
+		'PhaseIndicator',
+		'PVPIndicator',
+		'RaidRoleIndicator',
+		'ReadyCheckIndicator',
+		'ResurrectIndicator',
+		'SummonIndicator',
+		'StatusText',
+		'SUI_RaidGroup'
+	}
+
+	for _, elementName in pairs(ElementsToBuild) do
+		UF.Elements:Build(frame, elementName, elementDB[elementName])
+	end
 end
 
 local function Options()
@@ -117,4 +184,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('raid', Builder, Settings)
+UF.Unit:Add('raid', Builder, Settings, Options, GroupBuilder)

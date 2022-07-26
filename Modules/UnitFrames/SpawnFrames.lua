@@ -1,33 +1,19 @@
 local _G, SUI = _G, SUI
 local UF = SUI.UF ---@class SUI_UnitFrames
 ----------------------------------------------------------------------------------------------------
-local FramesList = {
-	'pet',
-	'target',
-	'targettarget',
-	'focus',
-	'focustarget',
-	'player'
-}
-
-local GroupFrames = {'raid', 'party'}
-if SUI.IsRetail then
-	table.insert(GroupFrames, 'boss')
-end
-if not SUI.IsClassic then
-	table.insert(GroupFrames, 'arena')
+---comment
+---@param frameName UnitFrameName
+---@return integer width
+---@return integer height
+function UF:GroupSize(frameName)
+	local CurFrameOpt = UF.CurrentSettings[frameName]
+	local FrameHeight = UF:CalculateHeight(frameName)
+	local height = (CurFrameOpt.unitsPerColumn or 10) * (FrameHeight + (CurFrameOpt.yOffset or 0))
+	local width = (CurFrameOpt.maxColumns or 4) * (CurFrameOpt.width + (CurFrameOpt.columnSpacing or 1))
+	return width, height
 end
 
-if SUI.IsClassic then
-	FramesList = {
-		'pet',
-		'target',
-		'targettarget',
-		'player'
-	}
-end
-
-local function CalculateHeight(frameName)
+function UF:CalculateHeight(frameName)
 	local elements = UF.CurrentSettings[frameName].elements
 	local FrameHeight = 0
 	if elements.Castbar.enabled then
@@ -66,7 +52,7 @@ local function CreateUnitFrame(self, unit)
 			else
 				self:SetScale(UF.CurrentSettings[unit].scale)
 			end
-			self:SetSize(UF.CurrentSettings[unit].width, CalculateHeight(unit))
+			self:SetSize(UF.CurrentSettings[unit].width, UF:CalculateHeight(unit))
 		end
 	end
 
@@ -203,7 +189,7 @@ local function CreateUnitFrame(self, unit)
 	local elementDB = UF.CurrentSettings[unit].elements
 	self.elementDB = elementDB
 
-	UF.Unit.BuildFrame(unit, self)
+	UF.Unit:BuildFrame(unit, self)
 
 	for _, elementName in pairs(self.elementList) do
 		if elementDB[elementName] then
@@ -244,128 +230,37 @@ function UF:SpawnFrames()
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
 
 	-- Spawn all main frames
-	for _, b in pairs(FramesList) do
-		UF.Unit[b] = SUIUF:Spawn(b, 'SUI_UF_' .. b)
+	for frameName, config in pairs(UF.Unit:GetFrameList()) do
+		if config.IsGroup then
+			UF.Unit[frameName] = UF.Unit:BuildGroup(frameName)
+		else
+			UF.Unit[frameName] = SUIUF:Spawn(frameName, 'SUI_UF_' .. frameName)
 
-		-- Disable objects based on settings
-		UF.Unit[b]:UpdateAll()
+			-- Disable objects based on settings
+			UF.Unit[frameName]:UpdateAll()
 
-		if not UF.CurrentSettings[b].enabled then
-			UF.Unit[b]:Disable()
-		end
-	end
-
-	if SUI.IsRetail then
-		for _, group in ipairs({'boss', 'arena'}) do
-			local grpFrame = CreateFrame('Frame')
-			for i = 1, (group == 'boss' and MAX_BOSS_FRAMES or 5) do
-				grpFrame[i] = SUIUF:Spawn(group .. i, 'SUI_' .. group .. i)
-				if i == 1 then
-					grpFrame[i]:SetPoint('TOPLEFT', _G['SUI_UF_' .. group], 'TOPLEFT', 0, 0)
-				else
-					grpFrame[i]:SetPoint('TOP', grpFrame[i - 1], 'BOTTOM', 0, -10)
-				end
+			if not UF.CurrentSettings[frameName].enabled then
+				UF.Unit[frameName]:Disable()
 			end
-			UF.Unit[group] = grpFrame
 		end
 	end
-
-	-- Party Frames
-	local party =
-		SUIUF:SpawnHeader(
-		'SUI_partyFrameHeader',
-		nil,
-		'party',
-		'showRaid',
-		UF.CurrentSettings.party.showRaid,
-		'showParty',
-		UF.CurrentSettings.party.showParty,
-		'showPlayer',
-		UF.CurrentSettings.party.showPlayer,
-		'showSolo',
-		UF.CurrentSettings.party.showSolo,
-		'xoffset',
-		UF.CurrentSettings.party.xOffset,
-		'yOffset',
-		UF.CurrentSettings.party.yOffset,
-		'maxColumns',
-		UF.CurrentSettings.party.maxColumns,
-		'unitsPerColumn',
-		UF.CurrentSettings.party.unitsPerColumn,
-		'columnSpacing',
-		UF.CurrentSettings.party.columnSpacing,
-		'columnAnchorPoint',
-		'TOPLEFT',
-		'initial-anchor',
-		'TOPLEFT',
-		'oUF-initialConfigFunction',
-		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, CalculateHeight('party'))
-	)
-	party:SetPoint('TOPLEFT', SUI_UF_party, 'TOPLEFT')
-	UF.Unit.party = party
-
-	-- Raid Frames
-	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
-
-	if UF.CurrentSettings.raid.mode == 'GROUP' then
-		groupingOrder = '1,2,3,4,5,6,7,8'
-	end
-
-	local raid =
-		SUIUF:SpawnHeader(
-		'SUI_UF_raidFrameHeader',
-		nil,
-		'raid',
-		'showRaid',
-		UF.CurrentSettings.raid.showRaid,
-		'showParty',
-		UF.CurrentSettings.raid.showParty,
-		'showPlayer',
-		UF.CurrentSettings.raid.showSelf,
-		'showSolo',
-		UF.CurrentSettings.raid.showSolo,
-		'xoffset',
-		UF.CurrentSettings.raid.xOffset,
-		'yOffset',
-		UF.CurrentSettings.raid.yOffset,
-		'point',
-		'TOP',
-		'groupBy',
-		UF.CurrentSettings.raid.mode,
-		'groupingOrder',
-		groupingOrder,
-		'sortMethod',
-		'index',
-		'maxColumns',
-		UF.CurrentSettings.raid.maxColumns,
-		'unitsPerColumn',
-		UF.CurrentSettings.raid.unitsPerColumn,
-		'columnSpacing',
-		UF.CurrentSettings.raid.columnSpacing,
-		'columnAnchorPoint',
-		'LEFT',
-		'oUF-initialConfigFunction',
-		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, CalculateHeight('raid'))
-	)
-	raid:SetPoint('TOPLEFT', SUI_UF_raid, 'TOPLEFT')
-	UF.Unit.raid = raid
 
 	local function GroupEnableElement(groupFrame, elementName)
-		for _, f in ipairs(groupFrame) do
+		for _, f in ipairs(groupFrame.frames) do
 			if f.EnableElement then
 				f:EnableElement(elementName)
 			end
 		end
 	end
 	local function GroupDisableElement(groupFrame, elementName)
-		for _, f in ipairs(groupFrame) do
+		for _, f in ipairs(groupFrame.frames) do
 			if f.DisableElement then
 				f:DisableElement(elementName)
 			end
 		end
 	end
 	local function GroupFrameElementUpdate(groupFrame, elementName)
-		for _, f in ipairs(groupFrame) do
+		for _, f in ipairs(groupFrame.frames) do
 			if f.ElementUpdate then
 				f:ElementUpdate(elementName)
 			end
@@ -373,7 +268,7 @@ function UF:SpawnFrames()
 	end
 	local function GroupFrameEnable(groupFrame)
 		groupFrame:UpdateAll()
-		for _, f in ipairs(groupFrame) do
+		for _, f in ipairs(groupFrame.frames) do
 			if f.Enable then
 				f:Enable()
 			end
@@ -381,39 +276,40 @@ function UF:SpawnFrames()
 	end
 	local function GroupFrameDisable(groupFrame)
 		groupFrame:UpdateAll()
-		for _, f in ipairs(groupFrame) do
+		for _, f in ipairs(groupFrame.frames) do
 			if f.Disable then
 				f:Disable()
 			end
 		end
 	end
 
-	for _, group in ipairs(GroupFrames) do
-		if UF.Unit[group] then
+	for groupName, _ in pairs(UF.Unit:GetFrameList(true)) do
+		local groupElement = UF.Unit:Get(groupName)
+		if groupElement then
 			local function GroupFrameUpdateAll(groupFrame)
-				if VisibilityCheck(group) and UF.CurrentSettings[group].enabled then
-					if UF.Unit[group].visibility then
-						RegisterStateDriver(UF.Unit[group], UF.Unit[group].visibility)
+				if VisibilityCheck(groupName) and UF.CurrentSettings[groupName].enabled then
+					if groupElement.visibility then
+						RegisterStateDriver(groupElement, groupElement.visibility)
 					end
-					UF.Unit[group]:Show()
+					groupElement:Show()
 
-					for _, f in ipairs(groupFrame) do
+					for i, f in pairs(groupFrame.frames) do
 						if f.UpdateAll then
 							f:UpdateAll()
 						end
 					end
 				else
-					UnregisterStateDriver(UF.Unit[group], 'visibility')
-					UF.Unit[group]:Hide()
+					UnregisterStateDriver(groupElement, 'visibility')
+					groupElement:Hide()
 				end
 			end
 
-			UF.Unit[group].UpdateAll = GroupFrameUpdateAll
-			UF.Unit[group].ElementUpdate = GroupFrameElementUpdate
-			UF.Unit[group].Enable = GroupFrameEnable
-			UF.Unit[group].Disable = GroupFrameDisable
-			UF.Unit[group].EnableElement = GroupEnableElement
-			UF.Unit[group].DisableElement = GroupDisableElement
+			groupElement.UpdateAll = GroupFrameUpdateAll
+			groupElement.ElementUpdate = GroupFrameElementUpdate
+			groupElement.Enable = GroupFrameEnable
+			groupElement.Disable = GroupFrameDisable
+			groupElement.EnableElement = GroupEnableElement
+			groupElement.DisableElement = GroupDisableElement
 		end
 	end
 
@@ -442,11 +338,12 @@ function UF:SpawnFrames()
 end
 
 function UF:UpdateAll(event, ...)
-	for _, v in ipairs(FramesList) do
-		if UF.Unit[v] and UF.Unit[v].UpdateAll then
-			UF.Unit[v]:UpdateAll()
+	for frameName, _ in pairs(UF.Unit:GetFrameList()) do
+		local frame = UF.Unit:Get(frameName)
+		if frame and frame.UpdateAll then
+			frame:UpdateAll()
 		else
-			SUI:Error('Unable to find updater for ' .. v, 'Unit Frames')
+			SUI:Error('Unable to find updater for ' .. frameName, 'Unit Frames')
 		end
 	end
 
@@ -454,9 +351,10 @@ function UF:UpdateAll(event, ...)
 end
 
 function UF:UpdateGroupFrames(event, ...)
-	for _, v in ipairs(GroupFrames) do
-		if UF.Unit[v] then
-			UF.Unit[v]:UpdateAll()
+	for frameName, _ in pairs(UF.Unit:GetFrameList(true)) do
+		local frame = UF.Unit:Get(frameName)
+		if frame then
+			frame:UpdateAll()
 		end
 	end
 end

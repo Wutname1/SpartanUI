@@ -51,4 +51,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('pet', Builder, Settings)
+UF.Unit:Add('pet', Builder, Settings)

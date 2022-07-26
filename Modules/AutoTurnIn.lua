@@ -137,7 +137,8 @@ local DBDefaults = {
 		"I've cleared a path for you. You should leave.",
 		'If you insist. The show must go on!',
 		'Will you spar with me?',
-		'I would like to challenge both of you to a spar.'
+		'I would like to challenge both of you to a spar.',
+		'<Request tithe>'
 	}
 }
 

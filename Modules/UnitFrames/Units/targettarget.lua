@@ -39,4 +39,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('targettarget', Builder, Settings)
+UF.Unit:Add('targettarget', Builder, Settings)

@@ -23,4 +23,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('bosstarget', Builder, Settings)
+UF.Unit:Add('bosstarget', Builder, Settings)

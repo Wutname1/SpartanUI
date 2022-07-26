@@ -42,4 +42,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('partytarget', Builder, Settings)
+UF.Unit:Add('partytarget', Builder, Settings)

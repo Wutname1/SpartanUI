@@ -9,14 +9,17 @@ local FramePositioning = {}
 ---@field anchor FramePositioning
 ---@field elements table<string, ElementSettings>
 ---@field visibility UFrameVisibility
+---@field config UFrameConfig
 local UFrameSettings = {
 	enabled = true,
 	width = 180,
 	scale = 1,
-	moved = false,
-	config = {
-		IsGroup = false
-	}
+	moved = false
+}
+
+---@class UFrameConfig
+local config = {
+	IsGroup = false
 }
 
 ---@class UFrameVisibility

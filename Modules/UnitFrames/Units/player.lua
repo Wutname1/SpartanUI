@@ -35,7 +35,8 @@ local function Builder(frame)
 		'Runes',
 		'RestingIndicator',
 		'ClassPower',
-		'AdditionalPower'
+		'AdditionalPower',
+		'AuraBars'
 	}
 
 	for _, elementName in pairs(ElementsToBuild) do
@@ -122,4 +123,4 @@ local Settings = {
 	}
 }
 
-UF.Unit.Add('player', Builder, Settings)
+UF.Unit:Add('player', Builder, Settings)

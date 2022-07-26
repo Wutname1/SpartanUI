@@ -198,7 +198,7 @@ function module:UpdateScale()
 		style:UpdateScale()
 	end
 	if SUI:IsModuleEnabled('UnitFrames') then
-		SUI:GetModule('Component_UnitFrames'):ScaleFrames(SUI.DB.scale)
+		SUI.UF:ScaleFrames(SUI.DB.scale)
 	end
 
 	-- Call Minimap scale update

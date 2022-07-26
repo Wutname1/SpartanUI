@@ -5,12 +5,8 @@ local BuiltFrames = {} ---@type table<UnitFrameName, table>
 local FrameData = {} ---@type table<UnitFrameName, table>
 
 local Unit = {
-	UnitsLoaded = {},
-	arena = {},
-	boss = {},
-	party = {},
-	raid = {},
-	GroupContainer = {},
+	UnitsLoaded = {}, ---@type table<UnitFrameName, UFrameConfig>
+	GroupsLoaded = {}, ---@type table<UnitFrameName, UFrameConfig>
 	defaultConfigs = {} ---@type table<string, UFrameSettings>
 }
 
@@ -19,7 +15,7 @@ local Unit = {
 ---@param settings? UFrameSettings
 ---@param options? function
 ---@param groupbuilder? function
-function Unit.Add(frameName, builder, settings, options, groupbuilder)
+function Unit:Add(frameName, builder, settings, options, groupbuilder)
 	---@class SUI_UF_Unit_DB
 	local Defaults = {
 		enabled = true,
@@ -63,40 +59,76 @@ function Unit.Add(frameName, builder, settings, options, groupbuilder)
 	Unit.defaultConfigs[frameName] = SUI:CopyData(settings, Defaults)
 
 	Unit.UnitsLoaded[frameName] = Unit.defaultConfigs[frameName].config
+	if Unit.defaultConfigs[frameName].config.IsGroup then
+		Unit.GroupsLoaded[frameName] = Unit.defaultConfigs[frameName].config
+	end
+end
+
+function Unit:BuildGroup(groupName)
+	if not Unit.defaultConfigs[groupName].config.IsGroup then
+		return
+	end
+
+	local holder = CreateFrame('Frame', 'SUI_UF_' .. groupName .. '_Holder')
+	holder:Hide()
+	holder:SetSize(UF:GroupSize(groupName))
+	holder.frames = {}
+
+	BuiltFrames[groupName] = holder
+
+	FrameData[groupName].groupbuilder(BuiltFrames[groupName])
 end
 
 ---@param frameName UnitFrameName
 ---@return table
-function Unit.Get(frameName)
+function Unit:Get(frameName)
+	-- if Unit:GetConfig(frameName).config.IsGroup then
+	-- 	return Unit.GroupContainer[frameName]
+	-- else
 	return BuiltFrames[frameName]
+	-- end
 end
 
 ---@param frameName UnitFrameName
 ---@return UFrameSettings
-function Unit.GetConfig(frameName)
+function Unit:GetConfig(frameName)
 	return UF.CurrentSettings[frameName] ---@type UFrameSettings
 end
 
 ---@param frameName UnitFrameName
 ---@param frame table
-function Unit.BuildFrame(frameName, frame)
+function Unit:BuildFrame(frameName, frame)
 	if not FrameData[frameName] then
 		return
 	end
 
 	FrameData[frameName].builder(frame)
 
-	if Unit.GetConfig(frameName).config.IsGroup then
+	if Unit:GetConfig(frameName).config.IsGroup then
 		if not BuiltFrames[frameName] then
-			BuiltFrames[frameName] = {}
+			print('NO WHERE TO STORE FRAME FOR ' .. frameName)
+			return
 		end
-		BuiltFrames[frameName][#BuiltFrames[frameName] + 1] = frame
+
+		-- BuiltFrames[frameName].frames[#BuiltFrames[frameName].frames + 1] = frame
+		table.insert(BuiltFrames[frameName].frames, frame)
 	else
 		BuiltFrames[frameName] = frame
 	end
 end
 
-function Unit.BuildOptions(frameName)
+---comment
+---@param onlyGroups any
+---@return table
+function Unit:GetFrameList(onlyGroups)
+	if onlyGroups then
+		return Unit.GroupsLoaded
+	end
+
+	return Unit.UnitsLoaded
+end
+
+function Unit:BuildOptions(frameName)
 end
 
 UF.Unit = Unit

@@ -13,37 +13,6 @@ local anchorPoints = {
 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 }
 
-local frameList = {
-	'arena',
-	'boss',
-	'bosstarget',
-	'focus',
-	'focustarget',
-	'party',
-	'partypet',
-	'partytarget',
-	'pet',
-	'pettarget',
-	'player',
-	'raid',
-	'target',
-	'targettarget'
-}
-
-if SUI.IsClassic then
-	frameList = {
-		'player',
-		'target',
-		'targettarget',
-		'pet',
-		'pettarget',
-		'party',
-		'partypet',
-		'partytarget',
-		'raid'
-	}
-end
-
 local TagList = {
 	--Health
 	['curhp'] = {category = 'Health', description = 'Displays the current HP without decimals'},
@@ -1734,7 +1703,7 @@ function UF:InitializeOptions()
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = L['Reset unitframe customizations']
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.width = 'double'
 
-	for _, v in ipairs(frameList) do
+	for v, _ in pairs(UF.Unit:GetFrameList()) do
 		SUI.opt.args.UnitFrames.args.EnabledFrame.args[v] = {
 			name = v,
 			type = 'toggle',
@@ -1794,7 +1763,8 @@ function UF:InitializeOptions()
 	SUI.opt.args.General.args.style.args.Unitframes = SUI.opt.args.UnitFrames.args.BaseStyle
 
 	-- Build frame options
-	for i, key in ipairs(frameList) do
+	local i = 1
+	for key, config in pairs(UF.Unit:GetFrameList()) do
 		CreateOptionSet(key, i)
 		AddGeneralOptions(key)
 		UF.Elements:Options(key, 'SpartanArt', SUI.opt.args.UnitFrames.args[key])
@@ -1802,13 +1772,11 @@ function UF:InitializeOptions()
 		AddBarOptions(key)
 		AddIndicatorOptions(key)
 		AddTextOptions(key)
-	end
+		if config.IsGroup then
+			AddGroupOptions(key)
+		end
 
-	AddGroupOptions('raid')
-	AddGroupOptions('party')
-	if SUI.IsRetail then
-		AddGroupOptions('boss')
-		AddGroupOptions('arena')
+		i = i + 1
 	end
 
 	SUI.opt.args.UnitFrames.args.player.args.general.args.General.args.range.hidden = true
