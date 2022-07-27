@@ -8,7 +8,7 @@ local function GroupBuilder(holder)
 	for i = 1, (5) do
 		holder.frames[i] = SUIUF:Spawn('arena' .. i, 'SUI_arena' .. i)
 		if i == 1 then
-			holder.frames[i]:SetPoint('TOPLEFT', _G['SUI_UF_arena'], 'TOPLEFT', 0, 0)
+			holder.frames[i]:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
 		else
 			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
 		end

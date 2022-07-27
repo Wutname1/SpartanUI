@@ -8,7 +8,7 @@ local function GroupBuilder(holder)
 	for i = 1, (MAX_BOSS_FRAMES or 5) do
 		holder.frames[i] = SUIUF:Spawn('boss' .. i, 'SUI_boss' .. i)
 		if i == 1 then
-			holder.frames[i]:SetPoint('TOPLEFT', _G['SUI_UF_boss'], 'TOPLEFT', 0, 0)
+			holder.frames[i]:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
 		else
 			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
 		end
