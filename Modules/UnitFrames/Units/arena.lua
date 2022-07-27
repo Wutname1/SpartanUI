@@ -6,7 +6,7 @@ local UF = SUI.UF
 
 local function GroupBuilder(holder)
 	for i = 1, (5) do
-		holder.frames[i] = SUIUF:Spawn('arena' .. i, 'SUI_arena' .. i)
+		holder.frames[i] = SUIUF:Spawn('arena' .. i, 'SUI_UF_arena' .. i)
 		if i == 1 then
 			holder.frames[i]:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
 		else

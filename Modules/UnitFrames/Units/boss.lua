@@ -6,7 +6,7 @@ local UF = SUI.UF
 
 local function GroupBuilder(holder)
 	for i = 1, (MAX_BOSS_FRAMES or 5) do
-		holder.frames[i] = SUIUF:Spawn('boss' .. i, 'SUI_boss' .. i)
+		holder.frames[i] = SUIUF:Spawn('boss' .. i, 'SUI_UF_boss' .. i)
 		if i == 1 then
 			holder.frames[i]:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
 		else
