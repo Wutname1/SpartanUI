@@ -1,7 +1,3 @@
-if not SUI.IsRetail then
-	return
-end
-
 local UF = SUI.UF
 
 local function GroupBuilder(holder)
