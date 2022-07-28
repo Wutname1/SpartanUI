@@ -52,6 +52,12 @@ local function Build(frame, DB)
 	frame.SpartanArt = SpartanArt
 end
 
+---@param frame table
+local function Update(frame)
+	local element = frame.SpartanArt
+	local DB = element.DB
+end
+
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
@@ -200,4 +206,4 @@ local Settings = {
 	config = {NoBulkUpdate = true}
 }
 
-UF.Elements:Register('SpartanArt', Build, _, Options, Settings)
+UF.Elements:Register('SpartanArt', Build, Update, Options, Settings)
