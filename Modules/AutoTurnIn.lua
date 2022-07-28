@@ -983,7 +983,7 @@ function module:BuildOptions()
 		}
 	}
 	if SUI.IsClassic then
-		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.AutoSelectLoot.hidden = true
+		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.lootreward.hidden = true
 		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.autoequip.hidden = true
 
 		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestAccepting.args.trivial.hidden = true
