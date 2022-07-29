@@ -49,7 +49,6 @@ local function CreateDebugWindow()
 	NamespaceListings:SetPoint('TOP', OutputSelect, 'TOP', 0, -10)
 	NamespaceListings:SetPoint('BOTTOM', OutputSelect, 'BOTTOM', 0, 10)
 
-	table.insert(ScrollListing, {text = 'Core', value = 'core'})
 	for moduleName, _ in pairs(DebugMessages) do
 		table.insert(ScrollListing, {text = (moduleName), value = moduleName})
 	end
