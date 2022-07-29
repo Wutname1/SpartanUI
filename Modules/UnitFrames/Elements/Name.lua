@@ -8,7 +8,7 @@ local function Build(frame, DB)
 	frame.Name:SetSize(frame:GetWidth(), 12)
 	frame.Name:SetJustifyH(DB.SetJustifyH)
 	frame.Name:SetJustifyV(DB.SetJustifyV)
-	frame:Tag(frame.Name, DB.content)
+	frame:Tag(frame.Name, DB.text)
 end
 
 ---@param frame table
@@ -17,7 +17,7 @@ local function Update(frame)
 	SUI:FormatFont(frame.Name, DB.textSize, 'UnitFrames')
 	frame.Name:SetJustifyH(DB.SetJustifyH)
 	frame.Name:SetJustifyV(DB.SetJustifyV)
-	frame:Tag(frame.Name, DB.content)
+	frame:Tag(frame.Name, DB.text)
 end
 
 ---@type ElementSettings
@@ -26,7 +26,7 @@ local Settings = {
 	width = false,
 	height = 12,
 	textSize = 12,
-	content = '[difficulty][smartlevel] [SUI_ColorClass][name]',
+	text = '[difficulty][smartlevel] [SUI_ColorClass][name]',
 	SetJustifyH = 'CENTER',
 	SetJustifyV = 'MIDDLE',
 	position = {

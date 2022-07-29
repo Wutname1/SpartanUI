@@ -5,7 +5,7 @@ local UF = SUI.UF
 local function Build(frame, DB)
 	frame.StatusText = frame:CreateFontString(nil, 'OVERLAY')
 	SUI:FormatFont(frame.StatusText, DB.textSize, 'UnitFrames')
-	frame:Tag(frame.StatusText, DB.content)
+	frame:Tag(frame.StatusText, DB.text)
 end
 
 ---@param frame table
@@ -13,7 +13,7 @@ local function Update(frame)
 	local element = frame.StatusText
 	local DB = element.DB
 	SUI:FormatFont(frame.StatusText, DB.textSize, 'UnitFrames')
-	frame:Tag(frame.StatusText, DB.content)
+	frame:Tag(frame.StatusText, DB.text)
 end
 
 ---@type ElementSettings
@@ -21,7 +21,7 @@ local Settings = {
 	textSize = 22,
 	width = 70,
 	height = 25,
-	content = '[afkdnd]',
+	text = '[afkdnd]',
 	SetJustifyH = 'CENTER',
 	SetJustifyV = 'MIDDLE',
 	position = {
