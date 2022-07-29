@@ -1641,7 +1641,40 @@ local function AddGroupOptions(frameName)
 end
 
 function UF:InitializeOptions()
-	SUI.opt.args['UnitFrames'] = {
+	---Build Help screen
+
+	---@type AceConfigOptionsTable
+	local HelpScreen = {
+		name = L['Text tags'],
+		type = 'group',
+		childGroups = 'tab',
+		args = {}
+	}
+	for k, v in pairs(TagList) do
+		if v.category and not HelpScreen.args[v.category] then
+			HelpScreen.args[v.category] = {
+				name = v.category,
+				type = 'group',
+				args = {}
+			}
+		end
+		HelpScreen.args[v.category].args[k] = {
+			name = v.description,
+			-- desc = 'desc',
+			type = 'input',
+			-- multiline = 'false',
+			width = 'full',
+			get = function(info)
+				return '[' .. k .. ']'
+			end,
+			set = function(info, val)
+			end
+		}
+	end
+
+	-- Construct base Help screen object
+	---@type AceConfigOptionsTable
+	local UFOptions = {
 		name = L['Unit frames'],
 		type = 'group',
 		args = {
@@ -1671,40 +1704,16 @@ function UF:InitializeOptions()
 			}
 		}
 	}
-	SUI.opt.args.Help.args.TextTags = {
-		name = L['Text tags'],
-		type = 'group',
-		childGroups = 'tab',
-		args = {}
-	}
-	for k, v in pairs(TagList) do
-		if v.category and not SUI.opt.args.Help.args.TextTags.args[v.category] then
-			SUI.opt.args.Help.args.TextTags.args[v.category] = {
-				name = v.category,
-				type = 'group',
-				args = {}
-			}
-		end
-		SUI.opt.args.Help.args.TextTags.args[v.category].args[k] = {
-			name = v.description,
-			-- desc = 'desc',
-			type = 'input',
-			-- multiline = 'false',
-			width = 'full',
-			get = function(info)
-				return '[' .. k .. ']'
-			end,
-			set = function(info, val)
-			end
-		}
-	end
+	-- UFOptions.args.HelpScreen.inline = true
 
-	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames = SUI.opt.args.UnitFrames.args.BaseStyle.args.reset
+	-- Add options to Base Help group
+	SUI.opt.args.Help.args.SUIModuleHelp = HelpScreen
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames = UFOptions.args.BaseStyle.args.reset
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = L['Reset unitframe customizations']
 	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.width = 'double'
 
 	for v, _ in pairs(UF.Unit:GetFrameList()) do
-		SUI.opt.args.UnitFrames.args.EnabledFrame.args[v] = {
+		UFOptions.args.EnabledFrame.args[v] = {
 			name = v,
 			type = 'toggle',
 			get = function(info)
@@ -1731,7 +1740,7 @@ function UF:InitializeOptions()
 	for styleKey, data in pairs(UF.Artwork) do
 		local skin = data.skin or styleKey
 
-		SUI.opt.args.UnitFrames.args.BaseStyle.args[skin] = {
+		UFOptions.args.BaseStyle.args[skin] = {
 			name = data.name or skin,
 			type = 'execute',
 			image = function()
@@ -1745,7 +1754,7 @@ function UF:InitializeOptions()
 			end
 		}
 	end
-	SUI.opt.args.UnitFrames.args.BaseStyle.args.Minimal = {
+	UFOptions.args.BaseStyle.args.Minimal = {
 		name = 'Minimal',
 		type = 'execute',
 		image = function()
@@ -1759,25 +1768,26 @@ function UF:InitializeOptions()
 		end
 	}
 
-	-- Add built skins selection page to the styles section
-	SUI.opt.args.General.args.style.args.Unitframes = SUI.opt.args.UnitFrames.args.BaseStyle
+	-- -- Add built skins selection page to the styles section
+	-- SUI.opt.args.General.args.style.args.Unitframes = UFOptions.args.BaseStyle
 
-	-- Build frame options
-	local i = 1
-	for key, config in pairs(UF.Unit:GetFrameList()) do
-		CreateOptionSet(key, i)
-		AddGeneralOptions(key)
-		UF.Elements:Options(key, 'SpartanArt', SUI.opt.args.UnitFrames.args[key])
-		AurasOptions(key, SUI.opt.args.UnitFrames.args[key])
-		AddBarOptions(key)
-		AddIndicatorOptions(key)
-		AddTextOptions(key)
-		if config.IsGroup then
-			AddGroupOptions(key)
-		end
+	-- -- Build frame options
+	-- local i = 1
+	-- for key, config in pairs(UF.Unit:GetFrameList()) do
+	-- 	CreateOptionSet(key, i)
+	-- 	AddGeneralOptions(key)
+	-- 	UF.Elements:Options(key, 'SpartanArt', UFOptions.args[key])
+	-- 	AurasOptions(key, UFOptions.args[key])
+	-- 	AddBarOptions(key)
+	-- 	AddIndicatorOptions(key)
+	-- 	AddTextOptions(key)
+	-- 	if config.IsGroup then
+	-- 		AddGroupOptions(key)
+	-- 	end
 
-		i = i + 1
-	end
+	-- 	i = i + 1
+	-- end
 
-	SUI.opt.args.UnitFrames.args.player.args.general.args.General.args.range.hidden = true
+	-- UFOptions.args.player.args.general.args.General.args.range.hidden = true
+	SUI.opt.args.UnitFrames = UFOptions
 end

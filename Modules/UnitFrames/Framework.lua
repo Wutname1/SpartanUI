@@ -142,9 +142,6 @@ function UF:OnEnable()
 		return
 	end
 
-	-- Build options
-	-- UF:InitializeOptions()
-
 	-- Spawn Frames
 	UF:SpawnFrames()
 
@@ -155,6 +152,9 @@ function UF:OnEnable()
 	for unit, config in pairs(UF.Unit:GetFrameList()) do
 		MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
 	end
+
+	-- Build options
+	UF:InitializeOptions()
 end
 
 function UF:Update()
@@ -169,7 +169,9 @@ function UF:Update()
 end
 
 function UF:SetActiveStyle(style)
+	UF.Style:Change(style)
 	UF.DB.Style = style
+
 	-- Refersh Settings
 	UF:Update()
 

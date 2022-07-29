@@ -3,6 +3,7 @@
 ..\..\FrameXML\UI.xsd">
     <Script file="Framework.lua"/>
 
+    <Script file="Handlers\Style.lua"/>
     <Script file="Handlers\Elements.lua"/>
     <Script file="Handlers\Units.lua"/>
 
@@ -57,5 +58,5 @@
     <Script file="Units\targettarget.lua"/>
 
     <Script file="SpawnFrames.lua" />
-    <!-- <Script file="Options.lua" /> -->
+    <Script file="Options.lua" />
 </Ui>
