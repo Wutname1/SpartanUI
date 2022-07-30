@@ -3,8 +3,10 @@ local module = SUI:NewModule('Component_AutoTurnIn')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
-local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest or SelectAvailableQuest
-local SelectActiveQuest = C_GossipInfo.SelectActiveQuest or SelectActiveQuest
+-- local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest or SelectAvailableQuest
+-- local SelectActiveQuest = C_GossipInfo.SelectActiveQuest or SelectActiveQuest
+local SelectAvailableQuest = SelectAvailableQuest
+local SelectActiveQuest = SelectActiveQuest
 local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests or GetGossipActiveQuests
 local GetNumGossipOptions = C_GossipInfo.GetNumOptions or GetNumGossipOptions
 local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
@@ -271,7 +273,7 @@ function module:TurnInQuest(rewardIndex)
 		module:CancelAllTimers()
 		return
 	end
-	if module:blacklisted(GetTitleText()) then
+	if module:blacklisted(GetQuestID()) then
 		SUI:Print('Quest is blacklisted, not turning in.')
 		return
 	end
@@ -366,7 +368,7 @@ function module.QUEST_COMPLETE()
 			return
 		end
 		local itemName, _, _, _, _, _, _, _, itemEquipLoc, _, itemSellPrice = GetItemInfo(link)
-		local QuestItemTrueiLVL = SUI:GetiLVL(link)
+		local QuestItemTrueiLVL = SUI:GetiLVL(link) or 0
 
 		-- Check the items value
 		if itemSellPrice > GreedValue then
@@ -380,7 +382,7 @@ function module.QUEST_COMPLETE()
 		if (slot) then
 			local firstSlot = GetInventorySlotInfo(slot[1])
 			local firstinvLink = GetInventoryItemLink('player', firstSlot)
-			local EquipedLevel = SUI:GetiLVL(firstinvLink)
+			local EquipedLevel = SUI:GetiLVL(firstinvLink) or 0
 
 			if EquipedLevel then
 				-- If reward is a ring, trinket or one-handed weapons all slots must be checked in order to swap with a lesser ilevel
@@ -399,7 +401,9 @@ function module.QUEST_COMPLETE()
 				end
 
 				-- comparing lowest equipped item level with reward's item level
-				debug('iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. firstinvLink)
+				debug(
+					'iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. (firstinvLink or '')
+				)
 
 				if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
 					UpgradeLink = link
@@ -629,8 +633,8 @@ function module:FirstLaunch()
 	SUI.Setup:AddPage(PageData)
 end
 
-function module:blacklisted(name)
-	name = tostring(name)
+function module:blacklisted(lookupId)
+	local name = tostring(lookupId)
 	if SUI:IsInTable(DB.GossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) then
 		debug(name .. ' - IS BLACKLISTED')
 		return true
@@ -649,10 +653,7 @@ end
 function module.QUEST_GREETING()
 	local numActiveQuests = GetNumActiveQuests()
 	local numAvailableQuests = GetNumAvailableQuests()
-	if DB.debug then
-		debug('TESTING NEEDED')
-		return
-	end
+
 	debug(numActiveQuests)
 	debug(numAvailableQuests)
 	for i = 1, numActiveQuests do
@@ -664,17 +665,18 @@ function module.QUEST_GREETING()
 
 	for i = 1, numAvailableQuests do
 		if SUI.IsRetail then
-			local isTrivial, frequency, isRepeatable = GetAvailableQuestInfo(i - numActiveQuests)
+			local isTrivial, frequency, isRepeatable, _, questID = GetAvailableQuestInfo(i - numActiveQuests)
 
 			local trivialORAllowed = (not isTrivial) or DB.trivial
 			local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
 			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or DB.AcceptRepeatable
-
-			-- if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
-			if (trivialORAllowed and isRepeatableORAllowed) then
+			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(questID)) then
+				debug('selecting ' .. i .. ' questId ' .. questID)
+				---@diagnostic disable-next-line: redundant-parameter
 				SelectAvailableQuest(i)
 			end
 		else
+			---@diagnostic disable-next-line: redundant-parameter
 			SelectAvailableQuest(i)
 		end
 	end
