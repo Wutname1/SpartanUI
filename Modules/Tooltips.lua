@@ -303,7 +303,7 @@ local TooltipSetUnit = function(self)
 	local unit = select(2, self:GetUnit())
 	if not unit then
 		local mFocus = GetMouseFocus()
-		if mFocus and mFocus:GetAttribute('unit') then
+		if mFocus and mFocus.GetAttribute and mFocus:GetAttribute('unit') then
 			unit = mFocus:GetAttribute('unit')
 		end
 		if not unit or not UnitExists(unit) then
