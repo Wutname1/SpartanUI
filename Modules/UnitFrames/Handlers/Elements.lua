@@ -4,11 +4,11 @@ local Elements = {
 	Types = {}
 }
 
+Elements.Types.General = {}
 Elements.Types.StatusBar = {}
 Elements.Types.Indicator = {}
 Elements.Types.Text = {}
 Elements.Types.Auras = {}
-Elements.Types.Other = {}
 
 ---@class SUIUFElement
 ---@field Build function
@@ -77,7 +77,7 @@ function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSett
 		},
 		config = {
 			NoBulkUpdate = false,
-			type = 'Other'
+			type = 'General'
 		}
 	} ---@type ElementSettings
 	SUI:CopyData(ElementSettings, Defaults) ---@type ElementSettings
@@ -89,7 +89,7 @@ function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSett
 		ElementSettings = ElementSettings
 	}
 
-	table.insert(Elements.Types[ElementSettings.config.type], ElementName)
+	Elements.Types[ElementSettings.config.type or 'Other'][ElementName] = ElementName
 end
 
 ---@param frame table
@@ -129,7 +129,7 @@ function Elements:GetConfig(ElementName, frame)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
 		return UF.Elements.List[ElementName].ElementSettings
 	else
-		return {config = {NoBulkUpdate = false}}
+		return {config = {NoBulkUpdate = false, type = 'General'}}
 	end
 end
 

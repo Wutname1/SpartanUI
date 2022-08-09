@@ -8,7 +8,7 @@ local ElementConfig = {}
 ---|'StatusBar'
 ---|'Text'
 ---|'Auras'
----|'Other'
+---|'General'
 
 ---@class ElementSettings
 ---@field enabled boolean

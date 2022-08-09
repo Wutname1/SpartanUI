@@ -1,7 +1,7 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Style_War')
 local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UnitFrames = SUI:GetModule('Component_UnitFrames') ---@type SUI_UnitFrames
+local UF = SUI:GetModule('Component_UnitFrames') ---@type SUI_UnitFrames
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
@@ -72,47 +72,36 @@ function module:OnInitialize()
 			return {1, 1, 1, 1}
 		end
 	end
-	UnitFrames.Artwork.war = {
-		name = 'War',
-		skin = 'War',
-		top = {
-			path = pathFunc,
-			TexCoord = TexCoordFunc,
-			heightScale = .225,
-			yScale = -.0555,
-			PVPAlpha = .6
+
+	---@type UFStyleSettings
+	local ufsettings = {
+		artwork = {
+			top = {
+				path = pathFunc,
+				TexCoord = TexCoordFunc,
+				heightScale = .225,
+				yScale = -.0555,
+				PVPAlpha = .6
+			},
+			bg = {
+				path = pathFunc,
+				TexCoord = TexCoordFunc,
+				PVPAlpha = .7
+			},
+			bottom = {
+				path = pathFunc,
+				TexCoord = TexCoordFunc,
+				heightScale = .0825,
+				yScale = 0.0223,
+				PVPAlpha = .7
+			}
 		},
-		bg = {
-			path = pathFunc,
-			TexCoord = TexCoordFunc,
-			PVPAlpha = .7
-		},
-		bottom = {
-			path = pathFunc,
-			TexCoord = TexCoordFunc,
-			heightScale = .0825,
-			yScale = 0.0223,
-			PVPAlpha = .7
-			-- height = 40,
-			-- y = 40,
-			-- alpha = 1,
-			-- VertexColor = {0, 0, 0, .6},
-			-- position = {Pos table},
-			-- scale = 1,
+		positions = {
+			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
 		}
 	}
-	-- Default frame posistions
-	UnitFrames.FramePos.War = {
-		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
-	}
-	-- module.UF = {
-	-- 	Artwork = {},
-	-- 	Positioning = {},
-	-- 	Settings = {}
-	-- }
-	-- UnitFrames:RegisterArtwork('War', module.UF.Artwork)
-	-- UnitFrames:RegisterPositioning('War', module.UF.Positioning)
-	-- UnitFrames:RegisterSettings('War', module.UF.Settings)
+	UF.Style:Register('War', ufsettings)
+
 	module:CreateArtwork()
 end
 

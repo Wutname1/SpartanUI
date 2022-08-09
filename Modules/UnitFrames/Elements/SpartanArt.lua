@@ -19,11 +19,12 @@ local function Build(frame, DB)
 	SpartanArt.PostUpdate = function(self, unit)
 		for _, pos in ipairs(ArtPositions) do
 			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
-			if
-				ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and
-					UF.Artwork[ArtSettings.graphic][pos].UnitFrameCallback
-			 then
-				UF.Artwork[ArtSettings.graphic][pos].UnitFrameCallback(self:GetParent(), unit)
+
+			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
+				if ufArt[pos].UnitFrameCallback then
+					ufArt[pos].UnitFrameCallback(self:GetParent(), unit)
+				end
 			end
 		end
 	end
@@ -39,8 +40,10 @@ local function Build(frame, DB)
 
 		for _, pos in ipairs(ArtPositions) do
 			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
-			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' and UF.Artwork[ArtSettings.graphic] then
-				self[pos].ArtData = UF.Artwork[ArtSettings.graphic][pos]
+
+			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
+				self[pos].ArtData = ufArt[pos]
 				--Grab the settings for the frame specifically if defined (classic skin)
 				if self[pos].ArtData.perUnit and self[pos].ArtData[unitName] then
 					self[pos].ArtData = self[pos].ArtData[unitName]
@@ -143,7 +146,8 @@ local function Options(unitName, OptionSet)
 		i = i + 1
 	end
 
-	for Name, data in pairs(UF.Artwork) do
+	for Name, styleDB in pairs(UF.Style:GetList()) do
+		local data = styleDB.settings.artwork
 		for position, _ in pairs(Positions) do
 			if data[position] then
 				local options = OptionSet.args.artwork.args[position].args

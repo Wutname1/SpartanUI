@@ -207,7 +207,7 @@ local Settings = {
 	yOffset = 0,
 	position = 'left',
 	config = {
-		type = 'Other'
+		type = 'General'
 	}
 }
 

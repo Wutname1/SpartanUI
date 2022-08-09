@@ -34,7 +34,8 @@ local function Builder(frame)
 	end
 end
 
-local function Options()
+local function Options(OptionSet)
+	UF.Options:AddGroupLayout('boss', OptionSet)
 end
 
 ---@type UFrameSettings

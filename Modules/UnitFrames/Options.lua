@@ -122,113 +122,105 @@ if SUI.IsRetail then
 		description = "Changes the text color, depending on the unit's threat situation"
 	}
 end
-
+local Options = {}
 ----------------------------------------------------------------------------------------------------
 
-local function CreateOptionSet(frameName, order)
-	SUI.opt.args.UnitFrames.args[frameName] = {
+---Creates the base options screen for a frame name
+---@param frameName UnitFrameName
+---@return AceConfigOptionsTable
+local function CreateOptionSet(frameName)
+	local OptionSet = {
 		name = frameName,
 		type = 'group',
-		order = order,
 		childGroups = 'tab',
-		disabled = function(args)
+		disabled = function()
 			return not UF.CurrentSettings[frameName].enabled
 		end,
+		get = function(info)
+			return UF.CurrentSettings[frameName][info[#info]] or false
+		end,
+		set = function(info, val)
+			--Update memory
+			UF.CurrentSettings[frameName][info[#info]] = val
+			--Update the DB
+			UF.DB.UserSettings[UF.DB.Style][frameName][info[#info]] = val
+			--Update the screen
+			UF.Unit[frameName]:UpdateAll()
+		end,
 		args = {
-			indicators = {
-				name = L['Indicators'],
+			General = {
+				name = L['General'],
+				desc = L['General display settings'],
 				type = 'group',
-				order = 40,
+				order = 10,
+				args = {}
+			},
+			StatusBar = {
+				name = L['Bars'],
+				type = 'group',
+				order = 20,
 				childGroups = 'tree',
 				args = {}
 			},
-			text = {
+			Indicator = {
+				name = L['Indicators'],
+				type = 'group',
+				order = 30,
+				childGroups = 'tree',
+				args = {}
+			},
+			Text = {
 				name = L['Text'],
 				type = 'group',
-				order = 50,
+				order = 40,
 				childGroups = 'tree',
 				args = {
 					execute = {
 						name = L['Text tag list'],
 						type = 'execute',
 						func = function(info)
-							SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'TextTags')
+							SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
 						end
 					}
 				}
-			}
-		}
-	}
-end
-
-local function AddGeneralOptions(frameName)
-	SUI.opt.args.UnitFrames.args[frameName].args['general'] = {
-		name = L['General'],
-		desc = L['General display settings'],
-		type = 'group',
-		-- childGroups = 'inline',
-		order = 10,
-		args = {
-			General = {
-				name = L['General'],
+			},
+			Auras = {
+				name = L['Buffs & Debuffs'],
+				desc = L['Buff & Debuff display settings'],
 				type = 'group',
-				order = 1,
-				inline = true,
-				args = {
-					width = {
-						name = L['Frame width'],
-						type = 'range',
-						width = 'full',
-						order = 2,
-						min = 1,
-						max = 300,
-						step = .1,
-						get = function(info)
-							return UF.CurrentSettings[frameName].width
-						end,
-						set = function(info, val)
-							--Update memory
-							UF.CurrentSettings[frameName].width = val
-							--Update the DB
-							UF.DB.UserSettings[UF.DB.Style][frameName].width = val
-							--Update the screen
-							UF.Unit[frameName]:UpdateAll()
-						end
-					},
-					range = {
-						name = L['Fade out of range'],
-						width = 'double',
-						type = 'toggle',
-						get = function(info)
-							return UF.CurrentSettings[frameName].elements.Range.enabled
-						end,
-						set = function(info, val)
-							--Update memory
-							UF.CurrentSettings[frameName].elements.Range.enabled = val
-							--Update the DB
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Range.enabled = val
-							--Update the screen
-							if UF.Unit[frameName].Range then
-								if val then
-									UF.Unit[frameName]:EnableElement('Range')
-									UF.Unit[frameName].Range:ForceUpdate()
-								else
-									UF.Unit[frameName]:DisableElement('Range')
-								end
-							else
-								UF.Unit[frameName]:UpdateAll()
-							end
-						end
-					}
+				childGroups = 'tree',
+				order = 50,
+				args = {}
+			}
+		}
+	} ---@type AceConfigOptionsTable
+
+	return OptionSet
+end
+
+local function AddGeneral(OptionSet)
+	OptionSet.args.General.args = {
+		General = {
+			name = L['General'],
+			type = 'group',
+			order = 1,
+			inline = true,
+			args = {
+				width = {
+					name = L['Frame width'],
+					type = 'range',
+					width = 'full',
+					order = 2,
+					min = 1,
+					max = 300,
+					step = .1
 				}
 			}
 		}
 	}
-
-	UF.Elements:Options(frameName, 'Portrait', SUI.opt.args.UnitFrames.args[frameName].args.general)
 end
 
-local function AurasOptions(unitName, OptionSet)
+local function AddAuras(unitName, OptionSet)
 	local anchorPoints = {
 		['TOPLEFT'] = 'TOP LEFT',
 		['TOP'] = 'TOP',
@@ -247,15 +239,6 @@ local function AurasOptions(unitName, OptionSet)
 		['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 	}
 	local CurrentSettings = UF.CurrentSettings[unitName].elements.Auras
-
-	OptionSet.args['auras'] = {
-		name = L['Buffs & Debuffs'],
-		desc = L['Buff & Debuff display settings'],
-		type = 'group',
-		childGroups = 'tree',
-		order = 100,
-		args = {}
-	}
 
 	local function SetOption(val, buffType, setting)
 		--Update memory
@@ -564,227 +547,221 @@ local function AurasOptions(unitName, OptionSet)
 end
 
 local function AddBarOptions(frameName)
-	SUI.opt.args.UnitFrames.args[frameName].args.bars = {
-		name = L['Bars'],
-		type = 'group',
-		order = 30,
-		childGroups = 'tree',
-		args = {
-			Castbar = {
-				name = L['Castbar'],
-				type = 'group',
-				order = 1,
-				get = function(info)
-					return UF.CurrentSettings[frameName].elements.Castbar[info[#info]] or false
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[frameName].elements.Castbar[info[#info]] = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar[info[#info]] = val
-					--Update the screen
-					UF.Unit[frameName]:UpdateAll()
-				end,
-				args = {
-					FlashOnInterruptible = {
-						name = L['Flash on interruptible cast'],
-						type = 'toggle',
-						width = 'double',
-						order = 10
-					},
-					InterruptSpeed = {
-						name = L['Interrupt flash speed'],
-						type = 'range',
-						width = 'double',
-						min = .01,
-						max = 1,
-						step = .01,
-						order = 11
-					},
-					interruptable = {
-						name = L['Show interrupt or spell steal'],
-						type = 'toggle',
-						width = 'double',
-						order = 20
-					},
-					latency = {
-						name = L['Show latency'],
-						type = 'toggle',
-						order = 21
-					},
-					Icon = {
-						name = L['Spell icon'],
-						type = 'group',
-						inline = true,
-						order = 100,
-						get = function(info)
-							return UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]]
-						end,
-						set = function(info, val)
-							--Update memory
-							UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]] = val
-							--Update the DB
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon[info[#info]] = val
-							--Update the screen
-							UF.Unit[frameName]:UpdateAll()
-						end,
-						args = {
-							enabled = {
-								name = L['Enable'],
-								type = 'toggle',
-								order = 1
-							},
-							size = {
-								name = L['Size'],
-								type = 'range',
-								min = 0,
-								max = 100,
-								step = .1,
-								order = 5
-							},
-							position = {
-								name = L['Position'],
-								type = 'group',
-								order = 50,
-								inline = true,
-								get = function(info)
-									return UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]]
-								end,
-								set = function(info, val)
-									--Update memory
-									UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]] = val
-									--Update the DB
-									UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon.position[info[#info]] = val
-									--Update Screen
-									UF.Unit[frameName]:UpdateAll()
-								end,
-								args = {
-									x = {
-										name = L['X Axis'],
-										type = 'range',
-										order = 1,
-										min = -100,
-										max = 100,
-										step = 1
-									},
-									y = {
-										name = L['Y Axis'],
-										type = 'range',
-										order = 2,
-										min = -100,
-										max = 100,
-										step = 1
-									},
-									anchor = {
-										name = L['Anchor point'],
-										type = 'select',
-										order = 3,
-										values = anchorPoints
-									}
+	SUI.opt.args.UnitFrames.args[frameName].args.StatusBar.args = {
+		Castbar = {
+			name = L['Castbar'],
+			type = 'group',
+			order = 1,
+			get = function(info)
+				return UF.CurrentSettings[frameName].elements.Castbar[info[#info]] or false
+			end,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[frameName].elements.Castbar[info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar[info[#info]] = val
+				--Update the screen
+				UF.Unit[frameName]:UpdateAll()
+			end,
+			args = {
+				FlashOnInterruptible = {
+					name = L['Flash on interruptible cast'],
+					type = 'toggle',
+					width = 'double',
+					order = 10
+				},
+				InterruptSpeed = {
+					name = L['Interrupt flash speed'],
+					type = 'range',
+					width = 'double',
+					min = .01,
+					max = 1,
+					step = .01,
+					order = 11
+				},
+				interruptable = {
+					name = L['Show interrupt or spell steal'],
+					type = 'toggle',
+					width = 'double',
+					order = 20
+				},
+				latency = {
+					name = L['Show latency'],
+					type = 'toggle',
+					order = 21
+				},
+				Icon = {
+					name = L['Spell icon'],
+					type = 'group',
+					inline = true,
+					order = 100,
+					get = function(info)
+						return UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]]
+					end,
+					set = function(info, val)
+						--Update memory
+						UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]] = val
+						--Update the DB
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon[info[#info]] = val
+						--Update the screen
+						UF.Unit[frameName]:UpdateAll()
+					end,
+					args = {
+						enabled = {
+							name = L['Enable'],
+							type = 'toggle',
+							order = 1
+						},
+						size = {
+							name = L['Size'],
+							type = 'range',
+							min = 0,
+							max = 100,
+							step = .1,
+							order = 5
+						},
+						position = {
+							name = L['Position'],
+							type = 'group',
+							order = 50,
+							inline = true,
+							get = function(info)
+								return UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]]
+							end,
+							set = function(info, val)
+								--Update memory
+								UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]] = val
+								--Update the DB
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon.position[info[#info]] = val
+								--Update Screen
+								UF.Unit[frameName]:UpdateAll()
+							end,
+							args = {
+								x = {
+									name = L['X Axis'],
+									type = 'range',
+									order = 1,
+									min = -100,
+									max = 100,
+									step = 1
+								},
+								y = {
+									name = L['Y Axis'],
+									type = 'range',
+									order = 2,
+									min = -100,
+									max = 100,
+									step = 1
+								},
+								anchor = {
+									name = L['Anchor point'],
+									type = 'select',
+									order = 3,
+									values = anchorPoints
 								}
 							}
 						}
 					}
 				}
-			},
-			Health = {
-				name = L['Health'],
-				type = 'group',
-				order = 2,
-				get = function(info)
-					return UF.CurrentSettings[frameName].elements.Health[info[#info]]
-				end,
-				set = function(info, val)
-					--Update the screen
-					UF.Unit[frameName][info[#info]] = val
-					--Update memory
-					UF.CurrentSettings[frameName].elements.Health[info[#info]] = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Health[info[#info]] = val
-					--Update the screen
-					UF.Unit[frameName]:UpdateAll()
-				end,
-				args = {
-					healthprediction = {
-						name = L['Health prediction'],
-						type = 'toggle',
-						order = 5
-					},
-					DispelHighlight = {
-						name = L['Dispel highlight'],
-						type = 'toggle',
-						order = 5
-					},
-					coloring = {
-						name = L['Color health bar by:'],
-						desc = L['The below options are in order of wich they apply'],
-						order = 10,
-						inline = true,
-						type = 'group',
-						get = function(info)
-							return UF.CurrentSettings[frameName].elements.Health[info[#info]]
-						end,
-						set = function(info, val)
-							--Update memory
-							UF.CurrentSettings[frameName].elements.Health[info[#info]] = val
-							--Update the DB
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements.Health[info[#info]] = val
-							--Update the screen
-							UF.Unit[frameName]:UpdateAll()
-						end,
-						args = {
-							colorTapping = {
-								name = L['Tapped'],
-								desc = "Color's the bar if the unit isn't tapped by the player",
-								type = 'toggle',
-								order = 1
-							},
-							colorDisconnected = {
-								name = L['Disconnected'],
-								desc = L['Color the bar if the player is offline'],
-								type = 'toggle',
-								order = 2
-							},
-							colorClass = {
-								name = L['Class'],
-								desc = L['Color the bar based on unit class'],
-								type = 'toggle',
-								order = 3
-							},
-							colorReaction = {
-								name = L['Reaction'],
-								desc = "color the bar based on the player's reaction towards the player.",
-								type = 'toggle',
-								order = 4
-							},
-							colorSmooth = {
-								name = L['Smooth'],
-								desc = "color the bar with a smooth gradient based on the player's current health percentage",
-								type = 'toggle',
-								order = 5
-							}
+			}
+		},
+		Health = {
+			name = L['Health'],
+			type = 'group',
+			order = 2,
+			get = function(info)
+				return UF.CurrentSettings[frameName].elements.Health[info[#info]]
+			end,
+			set = function(info, val)
+				--Update the screen
+				UF.Unit[frameName][info[#info]] = val
+				--Update memory
+				UF.CurrentSettings[frameName].elements.Health[info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements.Health[info[#info]] = val
+				--Update the screen
+				UF.Unit[frameName]:UpdateAll()
+			end,
+			args = {
+				healthprediction = {
+					name = L['Health prediction'],
+					type = 'toggle',
+					order = 5
+				},
+				DispelHighlight = {
+					name = L['Dispel highlight'],
+					type = 'toggle',
+					order = 5
+				},
+				coloring = {
+					name = L['Color health bar by:'],
+					desc = L['The below options are in order of wich they apply'],
+					order = 10,
+					inline = true,
+					type = 'group',
+					get = function(info)
+						return UF.CurrentSettings[frameName].elements.Health[info[#info]]
+					end,
+					set = function(info, val)
+						--Update memory
+						UF.CurrentSettings[frameName].elements.Health[info[#info]] = val
+						--Update the DB
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Health[info[#info]] = val
+						--Update the screen
+						UF.Unit[frameName]:UpdateAll()
+					end,
+					args = {
+						colorTapping = {
+							name = L['Tapped'],
+							desc = "Color's the bar if the unit isn't tapped by the player",
+							type = 'toggle',
+							order = 1
+						},
+						colorDisconnected = {
+							name = L['Disconnected'],
+							desc = L['Color the bar if the player is offline'],
+							type = 'toggle',
+							order = 2
+						},
+						colorClass = {
+							name = L['Class'],
+							desc = L['Color the bar based on unit class'],
+							type = 'toggle',
+							order = 3
+						},
+						colorReaction = {
+							name = L['Reaction'],
+							desc = "color the bar based on the player's reaction towards the player.",
+							type = 'toggle',
+							order = 4
+						},
+						colorSmooth = {
+							name = L['Smooth'],
+							desc = "color the bar with a smooth gradient based on the player's current health percentage",
+							type = 'toggle',
+							order = 5
 						}
 					}
 				}
-			},
-			Power = {
-				name = L['Power'],
-				type = 'group',
-				order = 3,
-				childGroups = 'inline',
-				get = function(info)
-					return UF.CurrentSettings[frameName].elements.Power[info[#info]] or false
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[frameName].elements.Power[info[#info]] = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Power[info[#info]] = val
-					--Update the screen
-					UF.Unit[frameName]:UpdateAll()
-				end,
-				args = {}
 			}
+		},
+		Power = {
+			name = L['Power'],
+			type = 'group',
+			order = 3,
+			childGroups = 'inline',
+			get = function(info)
+				return UF.CurrentSettings[frameName].elements.Power[info[#info]] or false
+			end,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[frameName].elements.Power[info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements.Power[info[#info]] = val
+				--Update the screen
+				UF.Unit[frameName]:UpdateAll()
+			end,
+			args = {}
 		}
 	}
 
@@ -1151,7 +1128,7 @@ local function AddIndicatorOptions(frameName)
 end
 
 local function AddDynamicText(frameName, element, count)
-	SUI.opt.args.UnitFrames.args[frameName].args['text'].args[element].args[count] = {
+	SUI.opt.args.UnitFrames.args[frameName].args.Text.args[element].args[count] = {
 		name = L['Text element'] .. ' ' .. count,
 		type = 'group',
 		inline = true,
@@ -1307,19 +1284,19 @@ local function AddDynamicText(frameName, element, count)
 end
 
 local function AddTextOptions(frameName)
-	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Castbar'] = {
 		name = L['Castbar'],
 		type = 'group',
 		order = 1,
 		args = {}
 	}
-	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Health'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Health'] = {
 		name = L['Health'],
 		type = 'group',
 		order = 2,
 		args = {}
 	}
-	SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Power'] = {
+	SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Power'] = {
 		name = L['Power'],
 		type = 'group',
 		order = 3,
@@ -1328,7 +1305,7 @@ local function AddTextOptions(frameName)
 
 	for i in pairs(UF.CurrentSettings[frameName].elements.Castbar.text) do
 		AddDynamicText(frameName, 'Castbar', i)
-		SUI.opt.args.UnitFrames.args[frameName].args['text'].args['Castbar'].args[i].args['text'].disabled = true
+		SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Castbar'].args[i].args['text'].disabled = true
 	end
 
 	for i in pairs(UF.CurrentSettings[frameName].elements.Health.text) do
@@ -1346,7 +1323,7 @@ local function AddTextOptions(frameName)
 	}
 
 	for key, name in pairs(StringElements) do
-		SUI.opt.args.UnitFrames.args[frameName].args['text'].args[key] = {
+		SUI.opt.args.UnitFrames.args[frameName].args.Text.args[key] = {
 			name = name,
 			type = 'group',
 			order = 1,
@@ -1527,18 +1504,14 @@ local function AddTextOptions(frameName)
 	end
 end
 
-local function AddGroupOptions(frameName)
-	SUI.opt.args.UnitFrames.args[frameName].args['general'].args['Display'] = {
+function Options:AddGroupDisplay(frameName, OptionSet)
+	OptionSet.args.General.args.Display = {
 		name = L['Display'],
 		type = 'group',
-		order = 5,
+		order = 10,
 		inline = true,
-		get = function(info)
-			return UF.CurrentSettings[frameName][info[#info]]
-		end,
 		set = function(info, val)
 			local setting = info[#info]
-
 			--Update memory
 			UF.CurrentSettings[frameName][setting] = val
 			--Update the DB
@@ -1566,39 +1539,40 @@ local function AddGroupOptions(frameName)
 				name = L['Show solo'],
 				type = 'toggle',
 				order = 2
-			},
-			bar1 = {name = L['Layout Configuration'], type = 'header', order = 20},
+			}
+		}
+	}
+end
+
+function Options:AddGroupLayout(frameName, OptionSet)
+	OptionSet.args.General.args.Layout = {
+		name = L['Layout Configuration'],
+		type = 'group',
+		order = 20,
+		inline = true,
+		set = function(info, val)
+			local setting = info[#info]
+			--Update memory
+			UF.CurrentSettings[frameName][setting] = val
+			--Update the DB
+			UF.DB.UserSettings[UF.DB.Style][frameName][setting] = val
+			--Update the screen
+			UF.Unit:Get(frameName).header:SetAttribute(setting, val)
+		end,
+		args = {
 			maxColumns = {
 				name = L['Max Columns'],
 				type = 'range',
-				order = 21,
+				order = 1,
 				width = 'full',
 				step = 1,
 				min = 1,
 				max = 40
 			},
-			yOffset = {
-				name = L['Vertical offset'],
-				type = 'range',
-				order = 23,
-				width = 'full',
-				step = 1,
-				min = -200,
-				max = 200
-			},
-			xOffset = {
-				name = L['Horizonal offset'],
-				type = 'range',
-				order = 23,
-				width = 'full',
-				step = 1,
-				min = -200,
-				max = 200
-			},
 			unitsPerColumn = {
 				name = L['Units Per Column'],
 				type = 'range',
-				order = 22,
+				order = 2,
 				width = 'full',
 				step = 1,
 				min = 1,
@@ -1607,7 +1581,26 @@ local function AddGroupOptions(frameName)
 			columnSpacing = {
 				name = L['Column Spacing'],
 				type = 'range',
-				order = 23,
+				order = 3,
+				width = 'full',
+				step = 1,
+				min = -200,
+				max = 200
+			},
+			bar1 = {name = 'Offsets', type = 'header', order = 20},
+			yOffset = {
+				name = L['Vertical offset'],
+				type = 'range',
+				order = 21,
+				width = 'full',
+				step = 1,
+				min = -200,
+				max = 200
+			},
+			xOffset = {
+				name = L['Horizonal offset'],
+				type = 'range',
+				order = 22,
 				width = 'full',
 				step = 1,
 				min = -200,
@@ -1615,32 +1608,9 @@ local function AddGroupOptions(frameName)
 			}
 		}
 	}
-	if frameName == 'raid' then
-		SUI.opt.args.UnitFrames.args[frameName].args.general.args.Display.args.SortOrder = {
-			name = L['Sort order'],
-			type = 'select',
-			order = 3,
-			values = {['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles'},
-			get = function(info)
-				return UF.CurrentSettings[frameName].mode
-			end,
-			set = function(info, val)
-				--Update memory
-				UF.CurrentSettings[frameName].mode = val
-				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][frameName].mode = val
-				--Update the screen
-				local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
-				if val == 'GROUP' then
-					groupingOrder = '1,2,3,4,5,6,7,8'
-				end
-				UF.Unit.raid:SetAttribute('groupingOrder', groupingOrder)
-			end
-		}
-	end
 end
 
-function UF:InitializeOptions()
+function Options:Initialize()
 	---Build Help screen
 
 	---@type AceConfigOptionsTable
@@ -1671,29 +1641,40 @@ function UF:InitializeOptions()
 			end
 		}
 	end
+	SUI.opt.args.Help.args.UnitFrames = HelpScreen
 
-	-- Construct base Help screen object
+	-- Add options to Base Help group
+	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUFSettings = {
+		name = L['Reset unitframe customizations'],
+		type = 'execute',
+		width = 'double',
+		order = 90,
+		func = function()
+			UF:ResetSettings()
+		end
+	}
+
+	-- Construct base Options object
 	---@type AceConfigOptionsTable
 	local UFOptions = {
 		name = L['Unit frames'],
 		type = 'group',
 		args = {
+			ResetUFSettings = {
+				name = L['Reset to base style (Revert customizations)'],
+				type = 'execute',
+				width = 'full',
+				order = 1,
+				func = function()
+					UF:ResetSettings()
+				end
+			},
 			BaseStyle = {
 				name = L['Base frame style'],
 				type = 'group',
 				inline = true,
 				order = 30,
-				args = {
-					reset = {
-						name = L['Reset to base style (Revert customizations)'],
-						type = 'execute',
-						width = 'full',
-						order = 900,
-						func = function()
-							UF:ResetSettings()
-						end
-					}
-				}
+				args = {}
 			},
 			EnabledFrame = {
 				name = L['Enabled frames'],
@@ -1704,32 +1685,26 @@ function UF:InitializeOptions()
 			}
 		}
 	}
-	-- UFOptions.args.HelpScreen.inline = true
 
-	-- Add options to Base Help group
-	SUI.opt.args.Help.args.SUIModuleHelp = HelpScreen
-	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames = UFOptions.args.BaseStyle.args.reset
-	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.name = L['Reset unitframe customizations']
-	SUI.opt.args.Help.args.SUIModuleHelp.args.ResetUnitFrames.width = 'double'
-
-	for v, _ in pairs(UF.Unit:GetFrameList()) do
-		UFOptions.args.EnabledFrame.args[v] = {
-			name = v,
+	for frameName, _ in pairs(UF.Unit:GetFrameList()) do
+		UFOptions.args.EnabledFrame.args[frameName] = {
+			name = frameName,
 			type = 'toggle',
 			get = function(info)
-				return UF.CurrentSettings[v].enabled
+				return UF.CurrentSettings[frameName].enabled
 			end,
 			set = function(info, val)
 				--Update memory
-				UF.CurrentSettings[v].enabled = val
+				UF.CurrentSettings[frameName].enabled = val
 				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][v].enabled = val
+				UF.DB.UserSettings[UF.DB.Style][frameName].enabled = val
 				--Update the UI
-				if UF.Unit[v] then
+				local frame = UF.Unit:Get(frameName)
+				if frame then
 					if val then
-						UF.Unit[v]:Enable()
-					elseif UF.Unit[v] then
-						UF.Unit[v]:Disable()
+						frame:Enable()
+					else
+						frame:Disable()
 					end
 				end
 			end
@@ -1737,57 +1712,45 @@ function UF:InitializeOptions()
 	end
 
 	-- Build style Buttons
-	for styleKey, data in pairs(UF.Artwork) do
-		local skin = data.skin or styleKey
+	for styleName, styleInfo in pairs(UF.Style:GetList()) do
+		local data = styleInfo.settings ---@type UFStyleSettings
 
-		UFOptions.args.BaseStyle.args[skin] = {
-			name = data.name or skin,
+		UFOptions.args.BaseStyle.args[styleName] = {
+			name = data.displayName or styleName,
 			type = 'execute',
 			image = function()
-				return data.image or ('interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_' .. skin), 120, 60
+				return data.setup.image or ('interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_' .. styleName), 120, 60
 			end,
 			imageCoords = function()
-				return {0, .5, 0, .5}
+				return data.setup.imageCoords or {0, .5, 0, .5}
 			end,
 			func = function()
-				UF:SetActiveStyle(skin)
+				UF:SetActiveStyle(styleName)
 			end
 		}
 	end
-	UFOptions.args.BaseStyle.args.Minimal = {
-		name = 'Minimal',
-		type = 'execute',
-		image = function()
-			return 'interface\\addons\\SpartanUI\\images\\setup\\Style_Frames_Minimal', 120, 60
-		end,
-		imageCoords = function()
-			return {0, .5, 0, .5}
-		end,
-		func = function()
-			UF:SetActiveStyle('Minimal')
-		end
-	}
 
 	-- -- Add built skins selection page to the styles section
-	-- SUI.opt.args.General.args.style.args.Unitframes = UFOptions.args.BaseStyle
+	SUI.opt.args.General.args.style.args.Unitframes = UFOptions.args.BaseStyle
 
-	-- -- Build frame options
-	-- local i = 1
-	-- for key, config in pairs(UF.Unit:GetFrameList()) do
-	-- 	CreateOptionSet(key, i)
-	-- 	AddGeneralOptions(key)
-	-- 	UF.Elements:Options(key, 'SpartanArt', UFOptions.args[key])
-	-- 	AurasOptions(key, UFOptions.args[key])
-	-- 	AddBarOptions(key)
-	-- 	AddIndicatorOptions(key)
-	-- 	AddTextOptions(key)
-	-- 	if config.IsGroup then
-	-- 		AddGroupOptions(key)
-	-- 	end
+	-- Build frame options
+	for key, config in pairs(UF.Unit:GetFrameList()) do
+		local OptionSet = CreateOptionSet(key)
+		AddGeneral(OptionSet)
+		-- UF.Elements:Options(key, 'SpartanArt', UFOptions.args[key])
+		-- AddAuras(key, UFOptions.args[key])
+		-- AddBarOptions(key)
+		-- AddIndicatorOptions(key)
+		-- AddTextOptions(key)
+		-- UF.Elements:Options(key, 'Portrait', OptionSet.args.General)
+		-- UF.Elements:Options(key, '', OptionSet, {})
 
-	-- 	i = i + 1
-	-- end
+		UF.Unit:BuildOptions(key, OptionSet)
 
-	-- UFOptions.args.player.args.general.args.General.args.range.hidden = true
+		UFOptions.args[key] = OptionSet
+	end
+
 	SUI.opt.args.UnitFrames = UFOptions
 end
+
+UF.Options = Options

@@ -31,7 +31,7 @@ local function Options(unitName, OptionSet)
 		--Update the screen
 		UF.Unit[unitName]:ElementUpdate('Range')
 	end
-	--local DB = UF.CurrentSettings[unitName].elements.Range
+
 	SUI.opt.args.UnitFrames.args[unitName].args.indicators.args.Range = {
 		name = L['Range'],
 		type = 'group',
@@ -83,7 +83,8 @@ local Settings = {
 	insideAlpha = 1,
 	outsideAlpha = .3,
 	config = {
-		NoBulkUpdate = true
+		NoBulkUpdate = true,
+		type = 'General'
 	}
 }
 

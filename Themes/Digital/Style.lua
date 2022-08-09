@@ -2,7 +2,7 @@ local SUI, L = SUI, SUI.L
 local print = SUI.print
 local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:NewModule('Style_Digital')
-local UnitFrames = SUI:GetModule('Component_UnitFrames')
+local UF = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Digital', SpartanUI)
 module.Settings = {}
 local CurScale
@@ -19,14 +19,17 @@ function module:OnInitialize()
 		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193'
 	}
 
-	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	UnitFrames.Artwork.Digital = {
-		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-			TexCoord = {0.0234375, 0.9765625, 0.265625, 0.7734375},
-			PVPAlpha = .4
+	---@type UFStyleSettings
+	local ufsettings = {
+		artwork = {
+			bg = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
+				TexCoord = {0.0234375, 0.9765625, 0.265625, 0.7734375},
+				PVPAlpha = .4
+			}
 		}
 	}
+	UF.Style:Register('Digital', ufsettings)
 
 	module:CreateArtwork()
 end

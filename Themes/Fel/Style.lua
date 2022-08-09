@@ -1,13 +1,9 @@
 local SUI, L = SUI, SUI.L
 local print = SUI.print
-local Artwork_Core = SUI:GetModule('Component_Artwork')
 local module = SUI:NewModule('Style_Fel')
-local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Fel', SpartanUI)
 module.Settings = {}
-local CurScale
 ----------------------------------------------------------------------------------------------------
-local InitRan = false
 
 local function Options()
 	SUI.opt.args.Artwork.args.Fel = {
@@ -45,28 +41,32 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes
-	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	UnitFrames.Artwork.Fel = {
-		top = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			TexCoord = {0.1796875, 0.736328125, 0, 0.099609375},
-			heightScale = .25,
-			yScale = -0.05,
-			alpha = .8
-		},
-		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			TexCoord = {.02, .385, .45, .575},
-			PVPAlpha = .4
-		},
-		bottom = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-			heightScale = .115,
-			yScale = 0.0158,
-			TexCoord = {0.1796875, 0.736328125, 0.197265625, 0.244140625},
-			PVPAlpha = .8
+	local UF = SUI:GetModule('Component_UnitFrames')
+	---@type UFStyleSettings
+	local ufsettings = {
+		artwork = {
+			top = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+				TexCoord = {0.1796875, 0.736328125, 0, 0.099609375},
+				heightScale = .25,
+				yScale = -0.05,
+				alpha = .8
+			},
+			bg = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+				TexCoord = {.02, .385, .45, .575},
+				PVPAlpha = .4
+			},
+			bottom = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
+				heightScale = .115,
+				yScale = 0.0158,
+				TexCoord = {0.1796875, 0.736328125, 0.197265625, 0.244140625},
+				PVPAlpha = .8
+			}
 		}
 	}
+	UF.Style:Register('Fel', ufsettings)
 
 	module:CreateArtwork()
 	Options()

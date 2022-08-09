@@ -120,7 +120,7 @@ end
 
 ---comment
 ---@param onlyGroups any
----@return table
+---@return table<UnitFrameName, UFrameConfig>
 function Unit:GetFrameList(onlyGroups)
 	if onlyGroups then
 		return Unit.GroupsLoaded
@@ -129,7 +129,9 @@ function Unit:GetFrameList(onlyGroups)
 	return Unit.UnitsLoaded
 end
 
-function Unit:BuildOptions(frameName)
+---@param frameName UnitFrameName
+---@param OptionsSet AceConfigOptionsTable
+function Unit:BuildOptions(frameName, OptionsSet)
 end
 
 UF.Unit = Unit

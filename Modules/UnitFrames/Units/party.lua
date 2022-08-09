@@ -70,7 +70,9 @@ local function Builder(frame)
 	end
 end
 
-local function Options()
+local function Options(OptionSet)
+	UF.Options:AddGroupDisplay('party', OptionSet)
+	UF.Options:AddGroupLayout('party', OptionSet)
 end
 
 ---@type UFrameSettings

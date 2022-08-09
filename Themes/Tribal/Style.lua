@@ -2,7 +2,7 @@ local SUI, L = SUI, SUI.L
 local print = SUI.print
 local module = SUI:NewModule('Style_Tribal')
 local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UnitFrames = SUI:GetModule('Component_UnitFrames')
+local UF = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Tribal', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
@@ -22,39 +22,32 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	UnitFrames.Artwork.Tribal = {
-		name = 'Tribal',
-		skin = 'Tribal',
-		top = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-			TexCoord = {0.25390625, 0.580078125, 0.583984375, 0.712890625},
-			heightScale = .38,
-			widthScale = .6,
-			yScale = -.072
+	---@type UFStyleSettings
+	local ufsettings = {
+		artwork = {
+			top = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
+				TexCoord = {0.25390625, 0.580078125, 0.583984375, 0.712890625},
+				heightScale = .38,
+				widthScale = .6,
+				yScale = -.072
+			},
+			bg = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
+				TexCoord = {0.126953125, 0.734375, 0.171875, 0.291015625}
+			},
+			bottom = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
+				TexCoord = {0.869140625, 1, 0.3203125, 0.359375},
+				heightScale = .15,
+				widthScale = .25
+			}
 		},
-		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-			TexCoord = {0.126953125, 0.734375, 0.171875, 0.291015625}
-		},
-		bottom = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-			TexCoord = {0.869140625, 1, 0.3203125, 0.359375},
-			heightScale = .15,
-			widthScale = .25
-			-- yScale = 0
-			-- height = 40,
-			-- y = 40,
-			-- alpha = 1,
-			-- VertexColor = {0, 0, 0, .6},
-			-- position = {Pos table},
-			-- scale = 1,
+		positions = {
+			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
 		}
 	}
-	-- Default frame posistions
-	UnitFrames.FramePos.Tribal = {
-		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
-	}
+	UF.Style:Register('Tribal', ufsettings)
 	module:CreateArtwork()
 end
 

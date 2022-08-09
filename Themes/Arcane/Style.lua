@@ -3,7 +3,6 @@ local module = SUI:NewModule('Style_Arcane')
 local unpack = unpack
 module.Settings = {}
 local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UnitFrames = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Arcane', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local function SetupMenus()
@@ -65,45 +64,54 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	UnitFrames.Artwork.ArcaneRed = {
-		name = 'Arcane red',
-		top = {
-			heightScale = .225,
-			yScale = -.09,
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.533203125, 1, 0, 0.19921875}
-		},
-		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.533203125, 1, 0.46484375, 0.75}
-		},
-		bottom = {
-			heightScale = .075,
-			-- yScale = 0.0223,
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0.533203125, 1, 0.374, 0.403}
+	local UF = SUI:GetModule('Component_UnitFrames')
+	---@type UFStyleSettings
+	local RedUFSettings = {
+		displayName = 'Arcane red',
+		artwork = {
+			top = {
+				heightScale = .225,
+				yScale = -.09,
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
+				TexCoord = {0.533203125, 1, 0, 0.19921875}
+			},
+			bg = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
+				TexCoord = {0.533203125, 1, 0.46484375, 0.75}
+			},
+			bottom = {
+				heightScale = .075,
+				-- yScale = 0.0223,
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
+				TexCoord = {0.533203125, 1, 0.374, 0.403}
+			}
 		}
 	}
-	UnitFrames.Artwork.Arcane = {
-		name = 'Arcane blue',
-		top = {
-			heightScale = .225,
-			yScale = -.09,
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0, 0.458984375, 0, 0.19921875}
-		},
-		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0, 0.458984375, 0.46484375, 0.75}
-		},
-		bottom = {
-			heightScale = .075,
-			-- yScale = 0,
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
-			TexCoord = {0, 0.458984375, 0.374, 0.403}
+	UF.Style:Register('ArcaneRed', RedUFSettings)
+
+	---@type UFStyleSettings
+	local BlueUFSettings = {
+		displayName = 'Arcane blue',
+		artwork = {
+			top = {
+				heightScale = .225,
+				yScale = -.09,
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
+				TexCoord = {0, 0.458984375, 0, 0.19921875}
+			},
+			bg = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
+				TexCoord = {0, 0.458984375, 0.46484375, 0.75}
+			},
+			bottom = {
+				heightScale = .075,
+				-- yScale = 0,
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\UnitFrames',
+				TexCoord = {0, 0.458984375, 0.374, 0.403}
+			}
 		}
 	}
+	UF.Style:Register('Arcane', BlueUFSettings)
 
 	module:CreateArtwork()
 end

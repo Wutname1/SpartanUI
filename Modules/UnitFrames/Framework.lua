@@ -9,22 +9,21 @@ UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
 UF.Core = true
 UF.CurrentSettings = {}
-UF.FramePos = {
-	default = {
-		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-60,250',
-		['pet'] = 'RIGHT,SUI_UF_player,BOTTOMLEFT,-60,0',
-		['pettarget'] = 'RIGHT,SUI_UF_pet,LEFT,0,-5',
-		['target'] = 'LEFT,SUI_UF_player,RIGHT,150,0',
-		['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0',
-		['focus'] = 'BOTTOMLEFT,SUI_UF_target,TOP,0,30',
-		['focustarget'] = 'BOTTOMLEFT,SUI_UF_focus,BOTTOMRIGHT,5,0',
-		['boss'] = 'RIGHT,UIParent,RIGHT,-9,162',
-		['party'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
-		['partypet'] = 'BOTTOMRIGHT,frame,BOTTOMLEFT,-2,0',
-		['partytarget'] = 'LEFT,frame,RIGHT,2,0',
-		['raid'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
-		['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
-	}
+---@class UFPositionDefaults
+local UFPositionDefaults = {
+	['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-60,250',
+	['pet'] = 'RIGHT,SUI_UF_player,BOTTOMLEFT,-60,0',
+	['pettarget'] = 'RIGHT,SUI_UF_pet,LEFT,0,-5',
+	['target'] = 'LEFT,SUI_UF_player,RIGHT,150,0',
+	['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0',
+	['focus'] = 'BOTTOMLEFT,SUI_UF_target,TOP,0,30',
+	['focustarget'] = 'BOTTOMLEFT,SUI_UF_focus,BOTTOMRIGHT,5,0',
+	['boss'] = 'RIGHT,UIParent,RIGHT,-9,162',
+	['party'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
+	['partypet'] = 'BOTTOMRIGHT,frame,BOTTOMLEFT,-2,0',
+	['partytarget'] = 'LEFT,frame,RIGHT,2,0',
+	['raid'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
+	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
 }
 UF.Artwork = {}
 
@@ -54,10 +53,11 @@ end
 
 ---@param unit? UnitFrameName
 function UF:PositionFrame(unit)
-	local positionData = UF.FramePos.default
+	local positionData = UFPositionDefaults
 	-- If artwork is enabled load the art's position data if supplied
-	if SUI:IsModuleEnabled('Artwork') and UF.FramePos[SUI.DB.Artwork.Style] then
-		positionData = SUI:MergeData(UF.FramePos[SUI.DB.Artwork.Style], UF.FramePos.default)
+	local posData = UF.Style:Get(SUI.DB.Artwork.Style).positions
+	if SUI:IsModuleEnabled('Artwork') and posData then
+		positionData = SUI:CopyData(posData, UFPositionDefaults)
 	end
 
 	if unit then
@@ -149,12 +149,12 @@ function UF:OnEnable()
 	UF:PositionFrame()
 
 	-- Create movers
-	for unit, config in pairs(UF.Unit:GetFrameList()) do
+	for unit, _ in pairs(UF.Unit:GetFrameList()) do
 		MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
 	end
 
 	-- Build options
-	UF:InitializeOptions()
+	UF.Options:Initialize()
 end
 
 function UF:Update()

@@ -221,70 +221,70 @@ function module:OnInitialize()
 		['BT4BarMicroMenu'] = 0.7
 	}
 
-	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	UnitFrames.Artwork.Classic = {
-		full = {
-			perUnit = true,
-			UnitFrameCallback = UnitFrameCallback,
-			player = {
-				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
-				height = 80,
-				widthScale = 2.2,
-				TexCoord = {0.19140625, 0.810546875, 0.1796875, 0.8203125},
-				position = {
-					anchor = 'CENTER',
-					x = 34,
-					y = 7
-				}
-			},
-			target = {
-				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
-				height = 80,
-				widthScale = 2.2,
-				TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
-				position = {
-					anchor = 'CENTER',
-					x = -34,
-					y = 7
-				}
-			},
-			pet = {
-				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
-				height = 53,
-				widthScale = 1.6,
-				TexCoord = {0.9453125, .25, 0, 0.78125},
-				position = {
-					anchor = 'BOTTOMRIGHT',
-					x = 10,
-					y = -1
-				}
-			},
-			targettarget = {
-				path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
-				height = 53,
-				widthScale = 1.6,
-				TexCoord = {0.25, 0.9453125, 0, 0.78125},
-				position = {
-					anchor = 'BOTTOMLEFT',
-					x = -10,
-					y = -1
+	local UF = SUI:GetModule('Component_UnitFrames')
+	---@type UFStyleSettings
+	local ufsettings = {
+		artwork = {
+			full = {
+				perUnit = true,
+				UnitFrameCallback = UnitFrameCallback,
+				player = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+					height = 80,
+					widthScale = 2.2,
+					TexCoord = {0.19140625, 0.810546875, 0.1796875, 0.8203125},
+					position = {
+						anchor = 'CENTER',
+						x = 34,
+						y = 7
+					}
+				},
+				target = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+					height = 80,
+					widthScale = 2.2,
+					TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
+					position = {
+						anchor = 'CENTER',
+						x = -34,
+						y = 7
+					}
+				},
+				pet = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
+					height = 53,
+					widthScale = 1.6,
+					TexCoord = {0.9453125, .25, 0, 0.78125},
+					position = {
+						anchor = 'BOTTOMRIGHT',
+						x = 10,
+						y = -1
+					}
+				},
+				targettarget = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
+					height = 53,
+					widthScale = 1.6,
+					TexCoord = {0.25, 0.9453125, 0, 0.78125},
+					position = {
+						anchor = 'BOTTOMLEFT',
+						x = -10,
+						y = -1
+					}
 				}
 			}
+		},
+		positions = {
+			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
+			['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
+			['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
+			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5'
 		}
 	}
-
-	UnitFrames.FramePos.Classic = {
-		['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
-		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
-		['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
-		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5'
-	}
-
-	-- SUI:RegisterStyle('Classic', Settings)
+	UF.Style:Register('Classic', ufsettings)
 
 	CreateArtwork()
 
-	local UF = SUI:GetModule('Component_UnitFrames')
 	local function StyleChange()
 		for unit, frame in pairs(SkinnedFrames) do
 			if UF.DB.Style ~= 'Classic' then

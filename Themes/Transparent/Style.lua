@@ -40,24 +40,27 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	local UnitFrames = SUI:GetModule('Component_UnitFrames')
-	UnitFrames.Artwork.Transparent = {
-		name = 'Transparent',
-		top = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
-			TexCoord = {0.03125, 0.458984375, 0, 0.2109375}
+	local UF = SUI:GetModule('Component_UnitFrames')
+	---@type UFStyleSettings
+	local ufsettings = {
+		artwork = {
+			top = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
+				TexCoord = {0.03125, 0.458984375, 0, 0.2109375}
+			},
+			bg = {
+				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
+				TexCoord = {0, 0.458984375, 0.74609375, 1}
+			}
 		},
-		bg = {
-			path = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\base_plate1',
-			TexCoord = {0, 0.458984375, 0.74609375, 1}
+		positions = {
+			['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-123,138',
+			['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
+			['target'] = 'LEFT,SUI_UF_player,RIGHT,244,0',
+			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0'
 		}
 	}
-	UnitFrames.FramePos.Transparent = {
-		['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-123,138',
-		['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,20,0',
-		['target'] = 'LEFT,SUI_UF_player,RIGHT,244,0',
-		['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0'
-	}
+	UF.Style:Register('Transparent', ufsettings)
 end
 
 function module:OnEnable()

@@ -85,7 +85,30 @@ local function Builder(frame)
 	end
 end
 
-local function Options()
+local function Options(OptionSet)
+	UF.Options:AddGroupDisplay('raid', OptionSet)
+	UF.Options:AddGroupLayout('raid', OptionSet)
+
+	OptionSet.args.General.args.Layout.args.bar2 = {name = 'Offsets', type = 'header', order = 20}
+	OptionSet.args.General.args.Layout.args.mode = {
+		name = SUI.L['Sort order'],
+		type = 'select',
+		order = 11,
+		values = {['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles'},
+		set = function(info, val)
+			--Update memory
+			UF.CurrentSettings.raid.mode = val
+			--Update the DB
+			UF.DB.UserSettings[UF.DB.Style].raid.mode = val
+			--Update the screen
+			local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
+			if val == 'GROUP' then
+				groupingOrder = '1,2,3,4,5,6,7,8'
+			end
+
+			UF.Unit:Get('raid').header:SetAttribute('groupingOrder', groupingOrder)
+		end
+	}
 end
 
 ---@type UFrameSettings

@@ -42,7 +42,8 @@ local function Builder(frame)
 	end
 end
 
-local function Options()
+local function Options(OptionSet)
+	UF.Options:AddGroupLayout('arena', OptionSet)
 end
 
 ---@type UFrameSettings
