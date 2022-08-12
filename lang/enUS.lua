@@ -1,6 +1,26 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Aura Bars'] = true
+L['Class Icon'] = true
+L['Class Power'] = true
+L['Combat'] = true
+L['Runes'] = true
+L['Raid Assistant'] = true
+L['SUI Artwork'] = true
+L['Status Text'] = true
+L['PvP'] = true
+L['Resting'] = true
+L['Quest'] = true
+L['Dispel Highlight'] = true
+L['Group Role'] = true
+L['Happiness'] = true
+L['Raid Role'] = true
+L['Raid assignment (main tank or main assist)'] = true
+-- L['SUI_RaidGroup'] = ''
+-- L['ThreatIndicator'] = ''
+-- L['Totems'] = true
+
 L['Accept/Complete Campaign Quests'] = true
 L['Current quest is a campaign quest, pausing AutoTurnIn'] = true
 L['General'] = true

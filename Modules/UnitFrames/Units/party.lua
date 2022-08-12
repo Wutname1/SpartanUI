@@ -1,4 +1,32 @@
 local UF = SUI.UF
+local elementList = {
+	---Basic
+	'Name',
+	'Health',
+	'Castbar',
+	'Power',
+	'Portrait',
+	'DispelHighlight',
+	'SpartanArt',
+	'Buffs',
+	'Debuffs',
+	'ClassIcon',
+	'RaidTargetIndicator',
+	'ThreatIndicator',
+	'Range',
+	--Friendly Only
+	'AssistantIndicator',
+	'GroupRoleIndicator',
+	'LeaderIndicator',
+	'PhaseIndicator',
+	'PvPIndicator',
+	'RaidRoleIndicator',
+	'ReadyCheckIndicator',
+	'ResurrectIndicator',
+	'SummonIndicator',
+	'StatusText',
+	'SUI_RaidGroup'
+}
 
 local function GroupBuilder(holder)
 	holder.header =
@@ -32,40 +60,13 @@ local function GroupBuilder(holder)
 		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party'))
 	)
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
+	holder.elementList = elementList
 end
 
 local function Builder(frame)
 	local elementDB = frame.elementDB
-	local ElementsToBuild = {
-		---Basic
-		'Name',
-		'Health',
-		'Castbar',
-		'Power',
-		'Portrait',
-		'DispelHighlight',
-		'SpartanArt',
-		'Buffs',
-		'Debuffs,',
-		'ClassIcon',
-		'RaidTargetIndicator',
-		'ThreatIndicator',
-		'Range',
-		--Friendly Only
-		'AssistantIndicator',
-		'GroupRoleIndicator',
-		'LeaderIndicator',
-		'PhaseIndicator',
-		'PVPIndicator',
-		'RaidRoleIndicator',
-		'ReadyCheckIndicator',
-		'ResurrectIndicator',
-		'SummonIndicator',
-		'StatusText',
-		'SUI_RaidGroup'
-	}
 
-	for _, elementName in pairs(ElementsToBuild) do
+	for _, elementName in pairs(elementList) do
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 end

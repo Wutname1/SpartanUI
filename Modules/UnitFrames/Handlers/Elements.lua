@@ -4,6 +4,54 @@ local Elements = {
 	Types = {}
 }
 
+local DefaultSettings = {
+	enabled = false,
+	points = false,
+	alpha = 1,
+	width = 20,
+	height = 20,
+	size = false,
+	scale = 1,
+	FrameStrata = nil,
+	FrameLevel = nil,
+	texture = nil,
+	bg = {
+		enabled = false,
+		color = {0, 0, 0, .2}
+	},
+	text = {
+		['**'] = {
+			enabled = false,
+			text = '',
+			size = 10,
+			SetJustifyH = 'CENTER',
+			SetJustifyV = 'MIDDLE',
+			position = {
+				anchor = 'CENTER',
+				x = 0,
+				y = 0
+			}
+		},
+		['1'] = {
+			position = {}
+		},
+		['2'] = {
+			position = {}
+		}
+	},
+	position = {
+		anchor = 'CENTER',
+		relativeTo = 'Frame',
+		relativePoint = nil,
+		x = 0,
+		y = 0
+	},
+	config = {
+		NoBulkUpdate = false,
+		type = 'General'
+	}
+} ---@type ElementSettings
+
 Elements.Types.General = {}
 Elements.Types.StatusBar = {}
 Elements.Types.Indicator = {}
@@ -33,54 +81,7 @@ Elements.FrameSettings = {}
 ---@param OptionsTable? function
 ---@param ElementSettings? ElementSettings
 function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
-	local Defaults = {
-		enabled = false,
-		points = false,
-		alpha = 1,
-		width = 20,
-		height = 20,
-		size = false,
-		scale = 1,
-		FrameStrata = nil,
-		FrameLevel = nil,
-		texture = nil,
-		bg = {
-			enabled = false,
-			color = {0, 0, 0, .2}
-		},
-		text = {
-			['**'] = {
-				enabled = false,
-				text = '',
-				size = 10,
-				SetJustifyH = 'CENTER',
-				SetJustifyV = 'MIDDLE',
-				position = {
-					anchor = 'CENTER',
-					x = 0,
-					y = 0
-				}
-			},
-			['1'] = {
-				position = {}
-			},
-			['2'] = {
-				position = {}
-			}
-		},
-		position = {
-			anchor = 'CENTER',
-			relativeTo = 'Frame',
-			relativePoint = nil,
-			x = 0,
-			y = 0
-		},
-		config = {
-			NoBulkUpdate = false,
-			type = 'General'
-		}
-	} ---@type ElementSettings
-	SUI:CopyData(ElementSettings, Defaults) ---@type ElementSettings
+	SUI:CopyData(ElementSettings, DefaultSettings) ---@type ElementSettings
 
 	UF.Elements.List[ElementName] = {
 		Build = Build,
@@ -129,7 +130,7 @@ function Elements:GetConfig(ElementName, frame)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
 		return UF.Elements.List[ElementName].ElementSettings
 	else
-		return {config = {NoBulkUpdate = false, type = 'General'}}
+		return DefaultSettings
 	end
 end
 

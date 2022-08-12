@@ -8,7 +8,11 @@ end
 
 ---@type ElementSettings
 local Settings = {
-	size = 20
+	size = 20,
+	config = {
+		DisplayName = 'Resting',
+		type = 'Indicator'
+	}
 }
 
 UF.Elements:Register('RestingIndicator', Build, nil, nil, Settings)

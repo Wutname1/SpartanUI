@@ -9,9 +9,8 @@ end
 
 ---@param frame table
 local function Update(frame)
-	local element = frame.SummonIndicator
-	local DB = element.DB
-	element:SetSize(DB.size, DB.size)
+	-- local element = frame.SummonIndicator
+	-- local DB = element.DB
 end
 
 ---@param unitName string

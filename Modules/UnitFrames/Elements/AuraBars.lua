@@ -142,7 +142,8 @@ local Settings = {
 		showPlayers = true
 	},
 	config = {
-		type = 'Auras'
+		type = 'Auras',
+		DisplayName = 'Aura Bars'
 	}
 }
 

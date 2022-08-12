@@ -74,6 +74,7 @@ function Unit:BuildGroup(groupName)
 	holder:SetSize(UF:GroupSize(groupName))
 
 	holder.frames = {}
+	holder.config = UF.Unit:GetConfig(groupName)
 
 	BuiltFrames[groupName] = holder
 
@@ -81,7 +82,7 @@ function Unit:BuildGroup(groupName)
 end
 
 ---@param frameName UnitFrameName
----@return table
+---@return SUI.UnitFrame
 function Unit:Get(frameName)
 	-- if Unit:GetConfig(frameName).config.IsGroup then
 	-- 	return Unit.GroupContainer[frameName]
@@ -104,6 +105,7 @@ function Unit:BuildFrame(frameName, frame)
 	end
 
 	FrameData[frameName].builder(frame)
+	frame.config = UF.Unit:GetConfig(frameName)
 
 	if Unit:GetConfig(frameName).config.IsGroup then
 		if not BuiltFrames[frameName] then
@@ -111,7 +113,6 @@ function Unit:BuildFrame(frameName, frame)
 			return
 		end
 
-		-- BuiltFrames[frameName].frames[#BuiltFrames[frameName].frames + 1] = frame
 		table.insert(BuiltFrames[frameName].frames, frame)
 	else
 		BuiltFrames[frameName] = frame

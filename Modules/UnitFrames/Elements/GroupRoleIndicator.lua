@@ -75,7 +75,8 @@ local Settings = {
 		y = 10
 	},
 	config = {
-		type = 'Indicator'
+		type = 'Indicator',
+		DisplayName = 'Group Role'
 	}
 }
 

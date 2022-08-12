@@ -16,7 +16,8 @@ local Settings = {
 		y = 6
 	},
 	config = {
-		type = 'Indicator'
+		type = 'Indicator',
+		DisplayName = 'Raid Assistant'
 	}
 }
 

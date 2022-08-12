@@ -28,6 +28,10 @@ local Settings = {
 		anchor = 'CENTER',
 		x = 0,
 		y = 0
+	},
+	config = {
+		type = 'Text',
+		DisplayName = 'Status Text'
 	}
 }
 

@@ -148,6 +148,10 @@ local Settings = {
 	position = {
 		anchor = 'TOPLEFT',
 		x = -10
+	},
+	config = {
+		DisplayName = 'PvP',
+		type = 'Indicator'
 	}
 }
 

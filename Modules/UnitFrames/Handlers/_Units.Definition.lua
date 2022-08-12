@@ -42,3 +42,13 @@ local visibility = {
 ---|"party"
 ---|"arena"
 ---|"pet"
+
+---@class SUI.UnitFrame : frame, SUIElements
+---@field unitOnCreate UnitFrameName
+---@field elementList table<integer, UnitFrameElement>
+---@field UpdateAll function
+---@field ElementUpdate function
+---@field mover frame
+---@field config UFrameSettings
+---@field frames? table<integer, SUI.UnitFrame>
+local SUIUnitFrame = {}

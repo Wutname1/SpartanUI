@@ -36,7 +36,8 @@ local Settings = {
 		anchor = nil
 	},
 	config = {
-		type = 'Indicator'
+		type = 'Indicator',
+		DisplayName = 'Dispel Highlight'
 	}
 }
 UF.Elements:Register('DispelHighlight', Build, Update, Options, Settings)

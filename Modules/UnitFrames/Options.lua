@@ -1734,9 +1734,45 @@ function Options:Initialize()
 	SUI.opt.args.General.args.style.args.Unitframes = UFOptions.args.BaseStyle
 
 	-- Build frame options
-	for key, config in pairs(UF.Unit:GetFrameList()) do
-		local OptionSet = CreateOptionSet(key)
-		AddGeneral(OptionSet)
+	for frameName, FrameConfig in pairs(UF.Unit:GetFrameList()) do
+		local FrameOptSet = CreateOptionSet(frameName)
+		AddGeneral(FrameOptSet)
+
+		-- Add Element Options
+		local builtFrame = UF.Unit:Get(frameName)
+
+		for _, elementName in ipairs(builtFrame.elementList) do
+			local elementConfig = builtFrame.config.elements[elementName].config
+
+			local ElementOptSet = {
+				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
+				type = 'group',
+				order = 1,
+				get = function(info)
+					return UF.CurrentSettings[frameName].elements[elementName][info[#info]] or false
+				end,
+				set = function(info, val)
+					--Update memory
+					UF.CurrentSettings[frameName].elements[elementName][info[#info]] = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName][info[#info]] = val
+					--Update the screen
+					builtFrame:UpdateAll()
+				end,
+				args = {}
+			}
+
+			if elementConfig.type == 'General' then
+			elseif elementConfig.type == 'StatusBar' then
+			elseif elementConfig.type == 'Indicator' then
+			elseif elementConfig.type == 'Text' then
+			elseif elementConfig.type == 'Auras' then
+			end
+
+			-- Add element option to screen
+			FrameOptSet.args[elementConfig.type].args[elementName] = ElementOptSet
+		end
+
 		-- UF.Elements:Options(key, 'SpartanArt', UFOptions.args[key])
 		-- AddAuras(key, UFOptions.args[key])
 		-- AddBarOptions(key)
@@ -1745,9 +1781,9 @@ function Options:Initialize()
 		-- UF.Elements:Options(key, 'Portrait', OptionSet.args.General)
 		-- UF.Elements:Options(key, '', OptionSet, {})
 
-		UF.Unit:BuildOptions(key, OptionSet)
+		UF.Unit:BuildOptions(frameName, FrameOptSet)
 
-		UFOptions.args[key] = OptionSet
+		UFOptions.args[frameName] = FrameOptSet
 	end
 
 	SUI.opt.args.UnitFrames = UFOptions

@@ -34,6 +34,11 @@ local Settings = {
 		anchor = 'TOP',
 		x = 20,
 		y = -10
+	},
+	config = {
+		type = 'Indicator',
+		DisplayName = 'Raid Role',
+		Description = 'Raid assignment (main tank or main assist)'
 	}
 }
 

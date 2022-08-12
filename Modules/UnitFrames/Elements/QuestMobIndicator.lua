@@ -24,6 +24,10 @@ end
 local Settings = {
 	position = {
 		anchor = 'RIGHT'
+	},
+	config = {
+		DisplayName = 'Quest',
+		type = 'Indicator'
 	}
 }
 

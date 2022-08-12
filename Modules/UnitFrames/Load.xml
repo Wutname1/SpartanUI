@@ -38,6 +38,7 @@
     <Script file="Elements\SpartanArt.lua"/>
     <Script file="Elements\StatusText.lua"/>
     <Script file="Elements\SUI_RaidGroup.lua"/>
+    <Script file="Elements\SummonIndicator.lua"/>
     <Script file="Elements\ThreatIndicator.lua"/>
     <Script file="Elements\Totems.lua"/>
 

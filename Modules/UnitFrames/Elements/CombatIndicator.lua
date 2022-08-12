@@ -17,7 +17,8 @@ end
 ---@type ElementSettings
 local Settings = {
 	config = {
-		type = 'Indicator'
+		type = 'Indicator',
+		DisplayName = 'Combat'
 	}
 }
 

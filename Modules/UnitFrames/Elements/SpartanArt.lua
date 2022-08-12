@@ -207,7 +207,10 @@ local Settings = {
 	top = sectiondefault,
 	bg = sectiondefault,
 	bottom = sectiondefault,
-	config = {NoBulkUpdate = true}
+	config = {
+		NoBulkUpdate = true,
+		DisplayName = 'SUI Artwork'
+	}
 }
 
 UF.Elements:Register('SpartanArt', Build, Update, Options, Settings)

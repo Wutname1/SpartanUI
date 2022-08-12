@@ -59,7 +59,7 @@ end
 ---@type ElementSettings
 local Settings = {
 	enabled = true,
-	config = {NoBulkUpdate = true}
+	config = {type = 'Indicator', NoBulkUpdate = true}
 }
 
 UF.Elements:Register('Runes', Build, Update, Options, Settings)

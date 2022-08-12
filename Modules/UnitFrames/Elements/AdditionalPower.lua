@@ -29,7 +29,8 @@ local Settings = {
 		y = -1
 	},
 	config = {
-		type = 'Indicator'
+		type = 'Indicator',
+		DisplayName = 'Additional power'
 	}
 }
 

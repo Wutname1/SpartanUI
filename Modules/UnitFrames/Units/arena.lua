@@ -3,6 +3,25 @@ if SUI.IsClassic then
 end
 
 local UF = SUI.UF
+local elementList = {
+	---Basic
+	'Name',
+	'Health',
+	'Castbar',
+	'Power',
+	'Portrait',
+	'DispelHighlight',
+	'SpartanArt',
+	'Buffs',
+	'Debuffs',
+	'ClassIcon',
+	'RaidTargetIndicator',
+	'Range',
+	--Friendly Only
+	'GroupRoleIndicator',
+	'RaidRoleIndicator'
+	-- 'AuraBars'
+}
 
 local function GroupBuilder(holder)
 	for i = 1, (5) do
@@ -13,31 +32,13 @@ local function GroupBuilder(holder)
 			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
 		end
 	end
+	holder.elementList = elementList
 end
 
 local function Builder(frame)
 	local elementDB = frame.elementDB
-	local ElementsToBuild = {
-		---Basic
-		'Name',
-		'Health',
-		'Castbar',
-		'Power',
-		'Portrait',
-		'DispelHighlight',
-		'SpartanArt',
-		'Buffs',
-		'Debuffs,',
-		'ClassIcon',
-		'RaidTargetIndicator',
-		'Range',
-		--Friendly Only
-		'GroupRoleIndicator',
-		'RaidRoleIndicator',
-		'AuraBars'
-	}
 
-	for _, elementName in pairs(ElementsToBuild) do
+	for _, elementName in pairs(elementList) do
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 end

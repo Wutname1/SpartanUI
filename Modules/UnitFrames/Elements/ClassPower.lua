@@ -81,7 +81,8 @@ local Settings = {
 	},
 	config = {
 		NoBulkUpdate = true,
-		type = 'StatusBar'
+		type = 'StatusBar',
+		DisplayName = 'Class Power'
 	}
 }
 
