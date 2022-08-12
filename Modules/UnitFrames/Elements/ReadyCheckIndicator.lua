@@ -28,6 +28,10 @@ local Settings = {
 		anchor = 'LEFT',
 		x = 0,
 		y = 0
+	},
+	config = {
+		type = 'Indicator',
+		DisplayName = 'Ready Check'
 	}
 }
 

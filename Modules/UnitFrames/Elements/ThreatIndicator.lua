@@ -16,6 +16,11 @@ local function Build(frame, DB)
 end
 
 ---@type ElementSettings
-local Settings = {}
+local Settings = {
+	config = {
+		type = 'Indicator',
+		DisplayName = 'Threat'
+	}
+}
 
 UF.Elements:Register('ThreatIndicator', Build, nil, nil, Settings)

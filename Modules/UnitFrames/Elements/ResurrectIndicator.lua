@@ -31,7 +31,11 @@ end
 ---@type ElementSettings
 local Settings = {
 	enabled = true,
-	size = 20
+	size = 20,
+	config = {
+		type = 'Indicator',
+		DisplayName = 'Resurrect'
+	}
 }
 
 UF.Elements:Register('ResurrectIndicator', Build, Update, Options, Settings)

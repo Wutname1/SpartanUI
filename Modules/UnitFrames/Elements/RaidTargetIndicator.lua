@@ -35,6 +35,10 @@ local Settings = {
 		relativePoint = 'CENTER',
 		x = 0,
 		y = 0
+	},
+	config = {
+		type = 'Indicator',
+		DisplayName = 'Raid Target Icon'
 	}
 }
 

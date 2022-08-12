@@ -27,8 +27,11 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.SummonIndicator
 end
 
+---@type ElementSettings
 local Settings = {
 	config = {
+		type = 'Indicator',
+		DisplayName = 'Summon',
 		NoBulkUpdate = false
 	}
 }

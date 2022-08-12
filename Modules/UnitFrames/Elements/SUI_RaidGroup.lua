@@ -29,6 +29,10 @@ local Settings = {
 		anchor = 'BOTTOMRIGHT',
 		x = 0,
 		y = 10
+	},
+	config = {
+		type = 'Indicator',
+		DisplayName = 'Raid Group'
 	}
 }
 

@@ -31,7 +31,8 @@ local Settings = {
 		y = 0
 	},
 	config = {
-		type = 'Indicator'
+		type = 'Indicator',
+		DisplayName = 'Phase'
 	}
 }
 

@@ -83,8 +83,7 @@ local Settings = {
 	insideAlpha = 1,
 	outsideAlpha = .3,
 	config = {
-		NoBulkUpdate = true,
-		type = 'General'
+		NoBulkUpdate = true
 	}
 }
 
