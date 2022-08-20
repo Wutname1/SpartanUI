@@ -148,6 +148,16 @@ local function CreateOptionSet(frameName)
 			UF.Unit[frameName]:UpdateAll()
 		end,
 		args = {
+			ShowFrame = {
+				name = 'Show Frame',
+				type = 'execute',
+				order = 1,
+				width = 'full',
+				disabled = (frameName == 'raid' or frameName == 'party' or frameName == 'boss' or frameName == 'arena'),
+				func = function()
+					UF.Unit:ToggleForceShow(frameName)
+				end
+			},
 			General = {
 				name = L['General'],
 				desc = L['General display settings'],
@@ -1746,6 +1756,7 @@ function Options:Initialize()
 
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
+				-- description = elementConfig.Description or '',
 				type = 'group',
 				order = 1,
 				get = function(info)

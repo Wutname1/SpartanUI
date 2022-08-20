@@ -64,6 +64,8 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder)
 	end
 end
 
+---Build a group holder
+---@param groupName string
 function Unit:BuildGroup(groupName)
 	if not Unit.defaultConfigs[groupName].config.IsGroup then
 		return
@@ -79,6 +81,116 @@ function Unit:BuildGroup(groupName)
 	BuiltFrames[groupName] = holder
 
 	FrameData[groupName].groupbuilder(BuiltFrames[groupName])
+
+	if holder.header then
+		holder.header:SetAttribute('startingIndex', -4)
+		holder.header:Show()
+		holder.header.initialized = true
+	end
+end
+
+function Unit:ToggleForceShow(frame)
+	if type(frame) == 'string' then
+		frame = Unit:Get(frame)
+	end
+	if frame.isForced then
+		Unit:UnforceShow(frame)
+	else
+		Unit:ForceShow(frame)
+	end
+end
+
+function Unit:ForceShow(frame)
+	if InCombatLockdown() then
+		return
+	end
+
+	if type(frame) == 'string' then
+		frame = Unit:Get(frame)
+	end
+
+	if frame.header and frame.frames then
+		for i, childFrame in ipairs(frame.frames) do
+			print(childFrame:GetName())
+			childFrame:SetID(i)
+			Unit:ForceShow(childFrame)
+		end
+		frame.header:Show()
+		return
+	end
+
+	if not frame.isForced then
+		frame.oldUnit = frame.unit
+		frame.unit = 'player'
+		frame.isForced = true
+		frame.oldOnUpdate = frame:GetScript('OnUpdate')
+	end
+
+	frame:SetScript('OnUpdate', nil)
+	frame.forceShowAuras = true
+	UnregisterUnitWatch(frame)
+	RegisterUnitWatch(frame, true)
+
+	frame:EnableMouse(false)
+
+	frame:Show()
+
+	if frame.UpdateAll then
+		frame:UpdateAll()
+	end
+
+	if _G[frame:GetName() .. 'Target'] then
+		self:ForceShow(_G[frame:GetName() .. 'Target'])
+	end
+
+	if _G[frame:GetName() .. 'Pet'] then
+		self:ForceShow(_G[frame:GetName() .. 'Pet'])
+	end
+end
+
+function Unit:UnforceShow(frame)
+	if InCombatLockdown() then
+		return
+	end
+
+	if frame.header and frame.frames then
+		for _, childFrame in ipairs(frame.frames) do
+			Unit:UnforceShow(childFrame)
+		end
+		frame.header:Hide()
+		return
+	end
+
+	if not frame.isForced then
+		return
+	end
+	frame.forceShowAuras = nil
+	frame.isForced = nil
+
+	-- Ask the SecureStateDriver to show/hide the frame for us
+	UnregisterUnitWatch(frame)
+	RegisterUnitWatch(frame)
+
+	frame:EnableMouse(true)
+
+	if frame.oldOnUpdate then
+		frame:SetScript('OnUpdate', frame.oldOnUpdate)
+		frame.oldOnUpdate = nil
+	end
+
+	frame.unit = frame.oldUnit or frame.unit
+
+	if _G[frame:GetName() .. 'Target'] then
+		self:UnforceShow(_G[frame:GetName() .. 'Target'])
+	end
+
+	if _G[frame:GetName() .. 'Pet'] then
+		self:UnforceShow(_G[frame:GetName() .. 'Pet'])
+	end
+
+	if frame.UpdateAll then
+		frame:UpdateAll()
+	end
 end
 
 ---@param frameName UnitFrameName

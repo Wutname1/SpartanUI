@@ -59,6 +59,7 @@ local function GroupBuilder(holder)
 		'oUF-initialConfigFunction',
 		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party'))
 	)
+	holder.header:Show()
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
 	holder.elementList = elementList
 end

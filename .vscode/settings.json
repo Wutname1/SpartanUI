@@ -315,7 +315,10 @@
     "WOW_PROJECT_CLASSIC",
     "GetBuildInfo",
     "_",
-    "AceGUIWidgetLSMlists"
+    "AceGUIWidgetLSMlists",
+    "UnregisterUnitWatch",
+    "RegisterUnitWatch",
+    "InCombatLockdown"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

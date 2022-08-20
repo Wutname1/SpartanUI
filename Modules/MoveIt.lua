@@ -831,7 +831,7 @@ function MoveIt:OnEnable()
 end
 
 function MoveIt:Options()
-	SUI.opt.args['Movers'] = {
+	SUI.opt.args.Movers = {
 		name = L['Movers'],
 		type = 'group',
 		order = 800,
