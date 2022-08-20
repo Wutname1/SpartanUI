@@ -403,6 +403,18 @@ function module:ToggleOptions(pages)
 				bottom.Import = Import
 			end
 
+			if SUI:IsModuleEnabled('MoveIt') then
+				local MoveIt = StdUi:Button(bottom, 150, 20, L['Toggle movers'])
+				MoveIt:SetPoint('RIGHT', bottom.Import, 'LEFT', -25, 0)
+				MoveIt:HookScript(
+					'OnClick',
+					function()
+						SUI.MoveIt:MoveIt()
+					end
+				)
+				bottom.MoveIt = MoveIt
+			end
+
 			local Logo = bottom:CreateTexture()
 			Logo:SetTexture('Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 			Logo:SetPoint('LEFT', bottom, 'LEFT')
