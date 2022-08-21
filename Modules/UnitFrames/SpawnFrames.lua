@@ -211,18 +211,17 @@ local function CreateUnitFrame(self, unit)
 end
 
 local function VisibilityCheck(group)
-	local retVal = false
 	if UF.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
-		retVal = true
+		return true
 	end
 	if UF.CurrentSettings[group].showRaid and IsInRaid() then
-		retVal = true
+		return true
 	end
 	if UF.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
-		retVal = true
+		return true
 	end
 
-	return retVal
+	return false
 end
 
 function UF:SpawnFrames()

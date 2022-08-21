@@ -239,6 +239,11 @@ end
 ---@param frameName UnitFrameName
 ---@param OptionsSet AceConfigOptionsTable
 function Unit:BuildOptions(frameName, OptionsSet)
+	if not FrameData[frameName] or not FrameData[frameName].options then
+		return
+	end
+
+	FrameData[frameName].options(OptionsSet)
 end
 
 UF.Unit = Unit

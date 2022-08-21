@@ -211,7 +211,7 @@ end
 local function AddGeneral(OptionSet)
 	OptionSet.args.General.args = {
 		General = {
-			name = L['General'],
+			name = '',
 			type = 'group',
 			order = 1,
 			inline = true,
@@ -1518,8 +1518,7 @@ function Options:AddGroupDisplay(frameName, OptionSet)
 	OptionSet.args.General.args.Display = {
 		name = L['Display'],
 		type = 'group',
-		order = 10,
-		inline = true,
+		order = .1,
 		set = function(info, val)
 			local setting = info[#info]
 			--Update memory
@@ -1558,8 +1557,7 @@ function Options:AddGroupLayout(frameName, OptionSet)
 	OptionSet.args.General.args.Layout = {
 		name = L['Layout Configuration'],
 		type = 'group',
-		order = 20,
-		inline = true,
+		order = .2,
 		set = function(info, val)
 			local setting = info[#info]
 			--Update memory
