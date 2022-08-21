@@ -81,12 +81,6 @@ function Unit:BuildGroup(groupName)
 	BuiltFrames[groupName] = holder
 
 	FrameData[groupName].groupbuilder(BuiltFrames[groupName])
-
-	if holder.header then
-		holder.header:SetAttribute('startingIndex', -4)
-		holder.header:Show()
-		holder.header.initialized = true
-	end
 end
 
 function Unit:ToggleForceShow(frame)

@@ -62,6 +62,10 @@ local function GroupBuilder(holder)
 	holder.header:Show()
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
 	holder.elementList = elementList
+
+	holder.header:SetAttribute('startingIndex', -4)
+	holder.header:Show()
+	holder.header.initialized = true
 end
 
 local function Builder(frame)
