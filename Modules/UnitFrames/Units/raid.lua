@@ -50,7 +50,7 @@ local function GroupBuilder(holder)
 		'showPlayer',
 		UF.CurrentSettings.raid.showSelf,
 		'showSolo',
-		UF.CurrentSettings.raid.showSolo,
+		true,
 		'xoffset',
 		UF.CurrentSettings.raid.xOffset,
 		'yOffset',
@@ -87,6 +87,7 @@ local function Builder(frame)
 end
 
 local function Options(OptionSet)
+	UF.Options:AddGroupDisplay('raid', OptionSet)
 	UF.Options:AddGroupDisplay('raid', OptionSet)
 	UF.Options:AddGroupLayout('raid', OptionSet)
 

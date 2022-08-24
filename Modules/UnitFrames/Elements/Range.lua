@@ -23,56 +23,37 @@ local function Options(unitName, OptionSet)
 		OptionSet.hidden = true
 		return
 	end
-	local function OptUpdate(option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].elements.Range[option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Range[option] = val
-		--Update the screen
-		UF.Unit[unitName]:ElementUpdate('Range')
-	end
-
-	SUI.opt.args.UnitFrames.args[unitName].args.indicators.args.Range = {
-		name = L['Range'],
-		type = 'group',
-		get = function(info)
-			return UF.CurrentSettings[unitName].elements.Range[info[#info]]
-		end,
-		set = function(info, val)
-			OptUpdate(info[#info], val)
-		end,
-		args = {
-			enabled = {
-				name = L['Enabled'],
-				type = 'toggle',
-				order = 10,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[unitName].elements.Range.enabled = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Range.enabled = val
-					--Update the screen
-					if val then
-						UF.Unit[unitName]:EnableElement('Range')
-					else
-						UF.Unit[unitName]:DisableElement('Range')
-					end
+	OptionSet.args = {
+		enabled = {
+			name = L['Enabled'],
+			type = 'toggle',
+			order = 10,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[unitName].elements.Range.enabled = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][unitName].elements.Range.enabled = val
+				--Update the screen
+				if val then
+					UF.Unit[unitName]:EnableElement('Range')
+				else
+					UF.Unit[unitName]:DisableElement('Range')
 				end
-			},
-			insideAlpha = {
-				name = L['In range alpha'],
-				type = 'range',
-				min = 0,
-				max = 1,
-				step = .1
-			},
-			outsideAlpha = {
-				name = L['Out of range alpha'],
-				type = 'range',
-				min = 0,
-				max = 1,
-				step = .1
-			}
+			end
+		},
+		insideAlpha = {
+			name = L['In range alpha'],
+			type = 'range',
+			min = 0,
+			max = 1,
+			step = .1
+		},
+		outsideAlpha = {
+			name = L['Out of range alpha'],
+			type = 'range',
+			min = 0,
+			max = 1,
+			step = .1
 		}
 	}
 end

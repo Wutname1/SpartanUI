@@ -41,7 +41,7 @@ local function GroupBuilder(holder)
 		'showPlayer',
 		UF.CurrentSettings.party.showPlayer,
 		'showSolo',
-		UF.CurrentSettings.party.showSolo,
+		true,
 		'xoffset',
 		UF.CurrentSettings.party.xOffset,
 		'yOffset',
@@ -66,6 +66,7 @@ local function GroupBuilder(holder)
 	holder.header:SetAttribute('startingIndex', -4)
 	holder.header:Show()
 	holder.header.initialized = true
+	holder.header:SetAttribute('startingIndex', nil)
 end
 
 local function Builder(frame)

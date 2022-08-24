@@ -1,4 +1,4 @@
-local UF = SUI.UF
+local UF, L = SUI.UF, SUI.L
 local timers = {}
 
 ---@param frame table
@@ -154,9 +154,110 @@ local function Update(frame)
 	frame.Castbar.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end
 
----@param unitName string
+---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
-local function Options(unitName, OptionSet)
+local function Options(frameName, OptionSet)
+	OptionSet.args = {
+		FlashOnInterruptible = {
+			name = L['Flash on interruptible cast'],
+			type = 'toggle',
+			width = 'double',
+			order = 10
+		},
+		InterruptSpeed = {
+			name = L['Interrupt flash speed'],
+			type = 'range',
+			width = 'double',
+			min = .01,
+			max = 1,
+			step = .01,
+			order = 11
+		},
+		interruptable = {
+			name = L['Show interrupt or spell steal'],
+			type = 'toggle',
+			width = 'double',
+			order = 20
+		},
+		latency = {
+			name = L['Show latency'],
+			type = 'toggle',
+			order = 21
+		},
+		Icon = {
+			name = L['Spell icon'],
+			type = 'group',
+			inline = true,
+			order = 100,
+			get = function(info)
+				return UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]]
+			end,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon[info[#info]] = val
+				--Update the screen
+				UF.Unit[frameName]:UpdateAll()
+			end,
+			args = {
+				enabled = {
+					name = L['Enable'],
+					type = 'toggle',
+					order = 1
+				},
+				size = {
+					name = L['Size'],
+					type = 'range',
+					min = 0,
+					max = 100,
+					step = .1,
+					order = 5
+				},
+				position = {
+					name = L['Position'],
+					type = 'group',
+					order = 50,
+					inline = true,
+					get = function(info)
+						return UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]]
+					end,
+					set = function(info, val)
+						--Update memory
+						UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]] = val
+						--Update the DB
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon.position[info[#info]] = val
+						--Update Screen
+						UF.Unit[frameName]:UpdateAll()
+					end,
+					args = {
+						x = {
+							name = L['X Axis'],
+							type = 'range',
+							order = 1,
+							min = -100,
+							max = 100,
+							step = 1
+						},
+						y = {
+							name = L['Y Axis'],
+							type = 'range',
+							order = 2,
+							min = -100,
+							max = 100,
+							step = 1
+						},
+						anchor = {
+							name = L['Anchor point'],
+							type = 'select',
+							order = 3,
+							values = UF.Options.CONST.anchorPoints
+						}
+					}
+				}
+			}
+		}
+	}
 end
 
 ---@type ElementSettings

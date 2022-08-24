@@ -108,32 +108,32 @@ local function Update(frame)
 	end
 end
 
----@param unitName string
+---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
-local function Options(unitName, OptionSet)
+local function Options(frameName, OptionSet)
 	-- Badge
 	local i = 1
 	for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
-		SUI.opt.args.UnitFrames.args[unitName].args.indicators.args.PvPIndicator.args[k] = {
+		OptionSet.args[k] = {
 			name = (k == 'Badge' and 'Show honor badge') or 'Shadow',
 			type = 'toggle',
 			order = 70 + i,
 			get = function(info)
-				return UF.CurrentSettings[unitName].elements.PvPIndicator[k]
+				return UF.CurrentSettings[frameName].elements.PvPIndicator[k]
 			end,
 			set = function(info, val)
 				--Update memory
-				UF.CurrentSettings[unitName].elements.PvPIndicator[k] = val
+				UF.CurrentSettings[frameName].elements.PvPIndicator[k] = val
 				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][unitName].elements.PvPIndicator[k] = val
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements.PvPIndicator[k] = val
 				--Update the screen
 				if val then
-					UF.Unit[unitName].PvPIndicator[k] = UF.Unit[unitName].PvPIndicator[v]
+					UF.Unit[frameName].PvPIndicator[k] = UF.Unit[frameName].PvPIndicator[v]
 				else
-					UF.Unit[unitName].PvPIndicator[k]:Hide()
-					UF.Unit[unitName].PvPIndicator[k] = nil
+					UF.Unit[frameName].PvPIndicator[k]:Hide()
+					UF.Unit[frameName].PvPIndicator[k] = nil
 				end
-				UF.Unit[unitName].PvPIndicator:ForceUpdate('OnUpdate')
+				UF.Unit[frameName].PvPIndicator:ForceUpdate('OnUpdate')
 			end
 		}
 		i = i + 1

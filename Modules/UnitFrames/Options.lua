@@ -208,6 +208,7 @@ local function CreateOptionSet(frameName)
 	return OptionSet
 end
 
+---@param OptionSet AceConfigOptionsTable
 local function AddGeneral(OptionSet)
 	OptionSet.args.General.args = {
 		General = {
@@ -230,7 +231,9 @@ local function AddGeneral(OptionSet)
 	}
 end
 
-local function AddAuras(unitName, OptionSet)
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
+local function AddAuras(frameName, OptionSet)
 	local anchorPoints = {
 		['TOPLEFT'] = 'TOP LEFT',
 		['TOP'] = 'TOP',
@@ -248,15 +251,15 @@ local function AddAuras(unitName, OptionSet)
 		['BOTTOMLEFT'] = 'BOTTOM LEFT',
 		['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
 	}
-	local CurrentSettings = UF.CurrentSettings[unitName].elements.Auras
+	local CurrentSettings = UF.CurrentSettings[frameName].elements.Auras
 
 	local function SetOption(val, buffType, setting)
 		--Update memory
 		CurrentSettings[buffType][setting] = val
 		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Auras[buffType][setting] = val
+		UF.DB.UserSettings[UF.DB.Style][frameName].elements.Auras[buffType][setting] = val
 		--Update the screen
-		UF.Unit[unitName]:UpdateAuras()
+		UF.Unit[frameName]:UpdateAuras()
 	end
 
 	for _, buffType in pairs({'Buffs', 'Debuffs'}) do
@@ -428,9 +431,9 @@ local function AddAuras(unitName, OptionSet)
 								--Update memory
 								CurrentSettings[buffType].position.x = val
 								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][unitName].elements.Auras[buffType].position.x = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements.Auras[buffType].position.x = val
 								--Update Screen
-								UF.Unit[unitName]:UpdateAuras()
+								UF.Unit[frameName]:UpdateAuras()
 							end
 						},
 						y = {
@@ -447,9 +450,9 @@ local function AddAuras(unitName, OptionSet)
 								--Update memory
 								CurrentSettings[buffType].position.y = val
 								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][unitName].elements.Auras[buffType].position.y = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements.Auras[buffType].position.y = val
 								--Update Screen
-								UF.Unit[unitName]:UpdateAuras()
+								UF.Unit[frameName]:UpdateAuras()
 							end
 						},
 						anchor = {
@@ -464,9 +467,9 @@ local function AddAuras(unitName, OptionSet)
 								--Update memory
 								CurrentSettings[buffType].position.anchor = val
 								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][unitName].elements.Auras[buffType].position.anchor = val
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements.Auras[buffType].position.anchor = val
 								--Update Screen
-								UF.Unit[unitName]:UpdateAuras()
+								UF.Unit[frameName]:UpdateAuras()
 							end
 						}
 					}
@@ -482,9 +485,9 @@ local function AddAuras(unitName, OptionSet)
 						--Update memory
 						CurrentSettings[buffType].filters[info[#info]] = value
 						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][unitName].elements.Auras[buffType].filters[info[#info]] = value
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Auras[buffType].filters[info[#info]] = value
 						--Update Screen
-						UF.Unit[unitName]:UpdateAuras()
+						UF.Unit[frameName]:UpdateAuras()
 					end,
 					args = {
 						minDuration = {
@@ -556,7 +559,9 @@ local function AddAuras(unitName, OptionSet)
 	end
 end
 
-local function AddBarOptions(frameName)
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
+local function AddBarOptions(frameName, OptionSet)
 	SUI.opt.args.UnitFrames.args[frameName].args.StatusBar.args = {
 		Castbar = {
 			name = L['Castbar'],
@@ -573,107 +578,7 @@ local function AddBarOptions(frameName)
 				--Update the screen
 				UF.Unit[frameName]:UpdateAll()
 			end,
-			args = {
-				FlashOnInterruptible = {
-					name = L['Flash on interruptible cast'],
-					type = 'toggle',
-					width = 'double',
-					order = 10
-				},
-				InterruptSpeed = {
-					name = L['Interrupt flash speed'],
-					type = 'range',
-					width = 'double',
-					min = .01,
-					max = 1,
-					step = .01,
-					order = 11
-				},
-				interruptable = {
-					name = L['Show interrupt or spell steal'],
-					type = 'toggle',
-					width = 'double',
-					order = 20
-				},
-				latency = {
-					name = L['Show latency'],
-					type = 'toggle',
-					order = 21
-				},
-				Icon = {
-					name = L['Spell icon'],
-					type = 'group',
-					inline = true,
-					order = 100,
-					get = function(info)
-						return UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]]
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings[frameName].elements.Castbar.Icon[info[#info]] = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon[info[#info]] = val
-						--Update the screen
-						UF.Unit[frameName]:UpdateAll()
-					end,
-					args = {
-						enabled = {
-							name = L['Enable'],
-							type = 'toggle',
-							order = 1
-						},
-						size = {
-							name = L['Size'],
-							type = 'range',
-							min = 0,
-							max = 100,
-							step = .1,
-							order = 5
-						},
-						position = {
-							name = L['Position'],
-							type = 'group',
-							order = 50,
-							inline = true,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]]
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements.Castbar.Icon.position[info[#info]] = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements.Castbar.Icon.position[info[#info]] = val
-								--Update Screen
-								UF.Unit[frameName]:UpdateAll()
-							end,
-							args = {
-								x = {
-									name = L['X Axis'],
-									type = 'range',
-									order = 1,
-									min = -100,
-									max = 100,
-									step = 1
-								},
-								y = {
-									name = L['Y Axis'],
-									type = 'range',
-									order = 2,
-									min = -100,
-									max = 100,
-									step = 1
-								},
-								anchor = {
-									name = L['Anchor point'],
-									type = 'select',
-									order = 3,
-									values = anchorPoints
-								}
-							}
-						}
-					}
-				}
-			}
+			args = {}
 		},
 		Health = {
 			name = L['Health'],
@@ -921,7 +826,9 @@ local function AddBarOptions(frameName)
 	end
 end
 
-local function AddIndicatorOptions(frameName)
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
+local function AddIndicatorOptions(frameName, OptionSet)
 	local PlayerOnly = {
 		['CombatIndicator'] = 'Combat',
 		['RestingIndicator'] = 'Resting',
@@ -1137,7 +1044,11 @@ local function AddIndicatorOptions(frameName)
 	end
 end
 
-local function AddDynamicText(frameName, element, count)
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
+---@param element UnitFrameElement
+---@param count integer
+local function AddDynamicText(frameName, OptionSet, element, count)
 	SUI.opt.args.UnitFrames.args[frameName].args.Text.args[element].args[count] = {
 		name = L['Text element'] .. ' ' .. count,
 		type = 'group',
@@ -1293,7 +1204,9 @@ local function AddDynamicText(frameName, element, count)
 	}
 end
 
-local function AddTextOptions(frameName)
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
+local function AddTextOptions(frameName, OptionSet)
 	SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Castbar'] = {
 		name = L['Castbar'],
 		type = 'group',
@@ -1514,6 +1427,8 @@ local function AddTextOptions(frameName)
 	end
 end
 
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
 function Options:AddGroupDisplay(frameName, OptionSet)
 	OptionSet.args.General.args.Display = {
 		name = L['Display'],
@@ -1553,6 +1468,8 @@ function Options:AddGroupDisplay(frameName, OptionSet)
 	}
 end
 
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
 function Options:AddGroupLayout(frameName, OptionSet)
 	OptionSet.args.General.args.Layout = {
 		name = L['Layout Configuration'],
@@ -1778,6 +1695,9 @@ function Options:Initialize()
 			elseif elementConfig.type == 'Auras' then
 			end
 
+			--Call Elements Custom function
+			UF.Elements:Options(frameName, elementName, ElementOptSet)
+
 			-- Add element option to screen
 			FrameOptSet.args[elementConfig.type].args[elementName] = ElementOptSet
 		end
@@ -1797,5 +1717,7 @@ function Options:Initialize()
 
 	SUI.opt.args.UnitFrames = UFOptions
 end
+
+Options.CONST = {anchorPoints = anchorPoints}
 
 UF.Options = Options
