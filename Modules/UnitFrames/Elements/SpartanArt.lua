@@ -73,15 +73,9 @@ local function Options(unitName, OptionSet)
 		--Update the screen
 		UF.Unit[unitName]:ElementUpdate('SpartanArt')
 	end
-	OptionSet.args['artwork'] = {
-		name = L['Artwork'],
-		type = 'group',
-		order = 20,
-		args = {}
-	}
 	local i = 1
 	for position, DisplayName in pairs(Positions) do
-		OptionSet.args.artwork.args[position] = {
+		OptionSet.args[position] = {
 			name = DisplayName,
 			type = 'group',
 			order = i,
@@ -150,7 +144,7 @@ local function Options(unitName, OptionSet)
 		local data = styleDB.settings.artwork
 		for position, _ in pairs(Positions) do
 			if data[position] then
-				local options = OptionSet.args.artwork.args[position].args
+				local options = OptionSet.args[position].args
 				local dataObj = data[position]
 				if dataObj.perUnit and data[unitName] then
 					dataObj = data[unitName]
@@ -158,7 +152,7 @@ local function Options(unitName, OptionSet)
 
 				if dataObj then
 					--Enable art option
-					OptionSet.args.artwork.args[position].disabled = false
+					OptionSet.args[position].disabled = false
 					--Add to dropdown
 					options.graphic.values[Name] = (data.name or Name)
 					--Create example

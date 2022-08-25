@@ -881,28 +881,6 @@ local function AddIndicatorOptions(frameName, OptionSet)
 				UF.Unit[frameName]:UpdateAll()
 			end,
 			args = {
-				enable = {
-					name = L['Enabled'],
-					type = 'toggle',
-					order = 10,
-					get = function(info)
-						return UF.CurrentSettings[frameName].elements[key].enabled
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings[frameName].elements[key].enabled = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].enabled = val
-						--Update the screen
-						if val then
-							UF.Unit[frameName]:EnableElement(key)
-							UF.Unit[frameName]:UpdateAll()
-						else
-							UF.Unit[frameName]:DisableElement(key)
-							UF.Unit[frameName]:UpdateAll()
-						end
-					end
-				},
 				display = {
 					name = L['Display'],
 					type = 'group',
@@ -1698,6 +1676,11 @@ function Options:Initialize()
 			--Call Elements Custom function
 			UF.Elements:Options(frameName, elementName, ElementOptSet)
 
+			ElementOptSet.args.enabled = {
+				name = L['Enabled'],
+				type = 'toggle',
+				order = 10
+			}
 			-- Add element option to screen
 			FrameOptSet.args[elementConfig.type].args[elementName] = ElementOptSet
 		end
