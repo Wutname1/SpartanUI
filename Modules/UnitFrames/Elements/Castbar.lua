@@ -258,6 +258,25 @@ local function Options(frameName, OptionSet)
 			}
 		}
 	}
+
+	OptionSet.args.Text = {
+		name = L['Text'],
+		type = 'group',
+		order = 1,
+		args = {
+			execute = {
+				name = L['Text tag list'],
+				type = 'execute',
+				order = .1,
+				func = function(info)
+					SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
+				end
+			}
+		}
+	}
+	for i in pairs(UF.CurrentSettings[frameName].elements.Castbar.text) do
+		UF.Options:AddDynamicText(frameName, OptionSet.args.Text, 'Castbar', i)
+	end
 end
 
 ---@type ElementSettings

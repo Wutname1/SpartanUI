@@ -82,114 +82,72 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
-	OptionSet.args.Portrait = {
-		name = L['Portrait'],
-		type = 'group',
-		order = 3,
-		inline = true,
-		args = {
-			enabled = {
-				name = L['Enabled'],
-				type = 'toggle',
-				order = 10,
-				get = function(info)
-					return UF.CurrentSettings[unitName].elements.Portrait.enabled
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[unitName].elements.Portrait.enabled = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.enabled = val
-					--Update the screen
-					if UF.Unit[unitName].Portrait then
-						if val then
-							UF.Unit[unitName]:EnableElement('Portrait')
-							UF.Unit[unitName].Portrait:ForceUpdate()
-						else
-							UF.Unit[unitName]:DisableElement('Portrait')
-						end
+	OptionSet.args = {
+		enabled = {
+			name = L['Enabled'],
+			type = 'toggle',
+			order = 10,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[unitName].elements.Portrait.enabled = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.enabled = val
+				--Update the screen
+				if UF.Unit[unitName].Portrait then
+					if val then
+						UF.Unit[unitName]:EnableElement('Portrait')
+						UF.Unit[unitName].Portrait:ForceUpdate()
 					else
-						UF.Unit[unitName]:UpdateAll()
+						UF.Unit[unitName]:DisableElement('Portrait')
 					end
+				else
+					UF.Unit[unitName]:UpdateAll()
 				end
+			end
+		},
+		type = {
+			name = L['Portrait type'],
+			type = 'select',
+			order = 20,
+			values = {
+				['3D'] = '3D',
+				['2D'] = '2D'
 			},
-			type = {
-				name = L['Portrait type'],
-				type = 'select',
-				order = 20,
-				values = {
-					['3D'] = '3D',
-					['2D'] = '2D'
-				},
-				get = function(info)
-					return UF.CurrentSettings[unitName].elements.Portrait.type
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[unitName].elements.Portrait.type = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.type = val
-					--Update the screen
-					UF.Unit[unitName]:ElementUpdate('Portrait')
-				end
-			},
-			rotation = {
-				name = L['Rotation'],
-				type = 'range',
-				min = -1,
-				max = 1,
-				step = .01,
-				order = 21,
-				get = function(info)
-					return UF.CurrentSettings[unitName].elements.Portrait.rotation
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[unitName].elements.Portrait.rotation = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.rotation = val
-					--Update the screen
-					UF.Unit[unitName]:ElementUpdate('Portrait')
-				end
-			},
-			camDistanceScale = {
-				name = L['Camera Distance Scale'],
-				type = 'range',
-				min = .01,
-				max = 5,
-				step = .1,
-				order = 22,
-				get = function(info)
-					return UF.CurrentSettings[unitName].elements.Portrait.camDistanceScale
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[unitName].elements.Portrait.camDistanceScale = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.camDistanceScale = val
-					--Update the screen
-					UF.Unit[unitName]:ElementUpdate('Portrait')
-				end
-			},
-			position = {
-				name = L['Position'],
-				type = 'select',
-				order = 30,
-				values = {
-					['left'] = L['Left'],
-					['right'] = L['Right']
-				},
-				get = function(info)
-					return UF.CurrentSettings[unitName].elements.Portrait.position
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[unitName].elements.Portrait.position = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.position = val
-					--Update the screen
-					UF.Unit[unitName]:ElementUpdate('Portrait')
-				end
+			get = function(info)
+				return UF.CurrentSettings[unitName].elements.Portrait.type
+			end,
+			set = function(info, val)
+				--Update memory
+				UF.CurrentSettings[unitName].elements.Portrait.type = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.type = val
+				--Update the screen
+				UF.Unit[unitName]:ElementUpdate('Portrait')
+			end
+		},
+		rotation = {
+			name = L['Rotation'],
+			type = 'range',
+			min = -1,
+			max = 1,
+			step = .01,
+			order = 21
+		},
+		camDistanceScale = {
+			name = L['Camera Distance Scale'],
+			type = 'range',
+			min = .01,
+			max = 5,
+			step = .1,
+			order = 22
+		},
+		position = {
+			name = L['Position'],
+			type = 'select',
+			order = 30,
+			values = {
+				['left'] = L['Left'],
+				['right'] = L['Right']
 			}
 		}
 	}

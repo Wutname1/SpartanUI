@@ -827,207 +827,135 @@ local function AddBarOptions(frameName, OptionSet)
 end
 
 ---@param frameName UnitFrameName
----@param OptionSet AceConfigOptionsTable
-local function AddIndicatorOptions(frameName, OptionSet)
-	local PlayerOnly = {
-		['CombatIndicator'] = 'Combat',
-		['RestingIndicator'] = 'Resting',
-		['Runes'] = 'Runes',
-		['ClassPower'] = 'Class Power',
-		['Stagger'] = 'Stagger',
-		['Totems'] = 'Totems'
-	}
-	local FriendlyOnly = {
-		['AssistantIndicator'] = RAID_ASSISTANT,
-		['GroupRoleIndicator'] = 'Group role',
-		['LeaderIndicator'] = 'Leader',
-		['PhaseIndicator'] = 'Phase',
-		['PvPIndicator'] = 'PvP',
-		['RaidRoleIndicator'] = 'Main tank or assist',
-		['ReadyCheckIndicator'] = 'Ready check icon',
-		['ResurrectIndicator'] = 'Resurrect',
-		['SummonIndicator'] = 'Summon'
-	}
-	local AllIndicators = {
-		['ClassIcon'] = 'Class icon',
-		['RaidTargetIndicator'] = RAID_TARGET_ICON,
-		['ThreatIndicator'] = 'Threat',
-		['Range'] = 'Range'
-	}
-
-	-- TODO: Text indicators
-	-- ['StatusText'] = STATUS_TEXT,
-
-	-- Check frameName for what tables above need to be applied
-	if frameName == 'pet' and (SUI.IsClassic or SUI.IsTBC) then
-		local petIndicator = {
-			['HappinessIndicator'] = 'Pet happiness'
-		}
-		AllIndicators = SUI:MergeData(AllIndicators, petIndicator)
-	end
-	for key, name in pairs(AllIndicators) do
-		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args[key] = {
-			name = name,
-			type = 'group',
-			get = function(info)
-				return UF.CurrentSettings[frameName].elements[key][info[#info]] or false
-			end,
-			set = function(info, val)
-				--Update memory
-				UF.CurrentSettings[frameName].elements[key][info[#info]] = val
-				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][frameName].elements[key][info[#info]] = val
-				--Update the screen
-				UF.Unit[frameName]:UpdateAll()
-			end,
-			args = {
-				display = {
-					name = L['Display'],
-					type = 'group',
-					order = 20,
-					inline = true,
-					args = {
-						size = {
-							name = L['Size'],
-							type = 'range',
-							min = 0,
-							max = 100,
-							step = .1,
-							order = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].size
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].size = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].size = val
-								--Update Screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						},
-						scale = {
-							name = L['Scale'],
-							type = 'range',
-							min = .1,
-							max = 3,
-							step = .01,
-							order = 2,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].scale
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].scale = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].scale = val
-								--Update Screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						},
-						alpha = {
-							name = L['Alpha'],
-							type = 'range',
-							min = 0,
-							max = 1,
-							step = .01,
-							order = 3,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].alpha
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].alpha = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].alpha = val
-								--Update Screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						}
-					}
-				},
-				position = {
-					name = L['Position'],
-					type = 'group',
-					order = 50,
-					inline = true,
-					args = {
-						x = {
-							name = L['X Axis'],
-							type = 'range',
-							order = 1,
-							min = -200,
-							max = 200,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].position.x
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].position.x = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.x = val
-								--Update Screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						},
-						y = {
-							name = L['Y Axis'],
-							type = 'range',
-							order = 2,
-							min = -200,
-							max = 200,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].position.y
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].position.y = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.y = val
-								--Update Screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						},
-						anchor = {
-							name = L['Anchor point'],
-							type = 'select',
-							order = 3,
-							values = anchorPoints,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].position.anchor
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].position.anchor = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.anchor = val
-								--Update Screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						}
-					}
+---@param ElementOptSet AceConfigOptionsTable
+function Options:TextBasicDisplay(frameName, ElementOptSet)
+	ElementOptSet.args.Text = {
+		name = '',
+		type = 'group',
+		inline = true,
+		order = 10,
+		args = {
+			text = {
+				name = L['Text'],
+				type = 'input',
+				width = 'full',
+				order = 1
+			},
+			textSize = {
+				name = L['Size'],
+				type = 'range',
+				width = 'full',
+				min = 1,
+				max = 30,
+				step = 1,
+				order = 1.5
+			},
+			SetJustifyH = {
+				name = L['Horizontal alignment'],
+				type = 'select',
+				order = 2,
+				values = {
+					['LEFT'] = 'Left',
+					['CENTER'] = 'Center',
+					['RIGHT'] = 'Right'
+				}
+			},
+			SetJustifyV = {
+				name = L['Vertical alignment'],
+				type = 'select',
+				order = 3,
+				values = {
+					['TOP'] = 'Top',
+					['MIDDLE'] = 'Middle',
+					['BOTTOM'] = 'Bottom'
 				}
 			}
 		}
+	}
+end
 
-		-- Call the unit's Options builder
-		UF.Elements:Options(frameName, key, SUI.opt.args.UnitFrames.args[frameName].args.indicators.args[key])
-	end
+---@param frameName UnitFrameName
+---@param ElementOptSet AceConfigOptionsTable
+function Options:IndicatorAddDisplay(frameName, ElementOptSet)
+	ElementOptSet.args.display = {
+		name = L['Display'],
+		type = 'group',
+		order = 20,
+		inline = true,
+		args = {
+			size = {
+				name = L['Size'],
+				type = 'range',
+				min = 0,
+				max = 100,
+				step = .1,
+				order = 1
+			},
+			scale = {
+				name = L['Scale'],
+				type = 'range',
+				min = .1,
+				max = 3,
+				step = .01,
+				order = 2
+			},
+			alpha = {
+				name = L['Alpha'],
+				type = 'range',
+				min = 0,
+				max = 1,
+				step = .01,
+				order = 3
+			}
+		}
+	}
+end
 
-	-- Hide a few generated options from specific frame
-	if frameName == 'player' then
-		SUI.opt.args.UnitFrames.args[frameName].args.indicators.args.ThreatIndicator.hidden = true
-	end
+---@param frameName UnitFrameName
+---@param ElementOptSet AceConfigOptionsTable
+---@param get function
+---@param set function
+function Options:IndicatorAddPosition(frameName, ElementOptSet, get, set)
+	ElementOptSet.args.position = {
+		name = L['Position'],
+		type = 'group',
+		order = 50,
+		inline = true,
+		get = get,
+		set = set,
+		args = {
+			x = {
+				name = L['X Axis'],
+				type = 'range',
+				order = 1,
+				min = -200,
+				max = 200,
+				step = 1
+			},
+			y = {
+				name = L['Y Axis'],
+				type = 'range',
+				order = 2,
+				min = -200,
+				max = 200,
+				step = 1
+			},
+			anchor = {
+				name = L['Anchor point'],
+				type = 'select',
+				order = 3,
+				values = anchorPoints
+			}
+		}
+	}
 end
 
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
 ---@param element UnitFrameElement
 ---@param count integer
-local function AddDynamicText(frameName, OptionSet, element, count)
-	SUI.opt.args.UnitFrames.args[frameName].args.Text.args[element].args[count] = {
+function Options:AddDynamicText(frameName, OptionSet, element, count)
+	OptionSet.args[count] = {
 		name = L['Text element'] .. ' ' .. count,
 		type = 'group',
 		inline = true,
@@ -1185,12 +1113,6 @@ end
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
 local function AddTextOptions(frameName, OptionSet)
-	SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Castbar'] = {
-		name = L['Castbar'],
-		type = 'group',
-		order = 1,
-		args = {}
-	}
 	SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Health'] = {
 		name = L['Health'],
 		type = 'group',
@@ -1204,204 +1126,12 @@ local function AddTextOptions(frameName, OptionSet)
 		args = {}
 	}
 
-	for i in pairs(UF.CurrentSettings[frameName].elements.Castbar.text) do
-		AddDynamicText(frameName, 'Castbar', i)
-		SUI.opt.args.UnitFrames.args[frameName].args.Text.args['Castbar'].args[i].args['text'].disabled = true
-	end
-
 	for i in pairs(UF.CurrentSettings[frameName].elements.Health.text) do
-		AddDynamicText(frameName, 'Health', i)
+		UF.Options:AddDynamicText(frameName, 'Health', i)
 	end
 
 	for i in pairs(UF.CurrentSettings[frameName].elements.Power.text) do
-		AddDynamicText(frameName, 'Power', i)
-	end
-
-	local StringElements = {
-		['SUI_RaidGroup'] = 'Raid group',
-		['Name'] = 'Name',
-		['StatusText'] = 'Player status'
-	}
-
-	for key, name in pairs(StringElements) do
-		SUI.opt.args.UnitFrames.args[frameName].args.Text.args[key] = {
-			name = name,
-			type = 'group',
-			order = 1,
-			args = {
-				enabled = {
-					name = L['Enabled'],
-					type = 'toggle',
-					order = 1,
-					get = function(info)
-						return UF.CurrentSettings[frameName].elements[key].enabled
-					end,
-					set = function(info, val)
-						--Update memory
-						UF.CurrentSettings[frameName].elements[key].enabled = val
-						--Update the DB
-						UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].enabled = val
-						--Update the screen
-						if val then
-							UF.Unit[frameName][key]:Show()
-						else
-							UF.Unit[frameName][key]:Hide()
-						end
-					end
-				},
-				Text = {
-					name = '',
-					type = 'group',
-					inline = true,
-					order = 10,
-					args = {
-						text = {
-							name = L['Text'],
-							type = 'input',
-							width = 'full',
-							order = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].text
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].text = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].text = val
-								--Update the screen
-								UF.Unit[frameName]:Tag(UF.Unit[frameName][key], val)
-								UF.Unit[frameName]:UpdateTags()
-							end
-						},
-						textSize = {
-							name = L['Size'],
-							type = 'range',
-							width = 'full',
-							min = 1,
-							max = 30,
-							step = 1,
-							order = 1.5,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].textSize
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].textSize = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].textSize = val
-								--Update the screen
-								SUI:UpdateDefaultSize(UF.Unit[frameName][key], val, 'UnitFrames')
-							end
-						},
-						JustifyH = {
-							name = L['Horizontal alignment'],
-							type = 'select',
-							order = 2,
-							values = {
-								['LEFT'] = 'Left',
-								['CENTER'] = 'Center',
-								['RIGHT'] = 'Right'
-							},
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].SetJustifyH
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].SetJustifyH = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].SetJustifyH = val
-								--Update the screen
-								UF.Unit[frameName][key]:SetJustifyH(val)
-							end
-						},
-						JustifyV = {
-							name = L['Vertical alignment'],
-							type = 'select',
-							order = 3,
-							values = {
-								['TOP'] = 'Top',
-								['MIDDLE'] = 'Middle',
-								['BOTTOM'] = 'Bottom'
-							},
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].SetJustifyV
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].SetJustifyV = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].SetJustifyV = val
-								--Update the screen
-								UF.Unit[frameName][key]:SetJustifyV(val)
-							end
-						}
-					}
-				},
-				position = {
-					name = L['Position'],
-					type = 'group',
-					order = 50,
-					inline = true,
-					args = {
-						x = {
-							name = L['X Axis'],
-							type = 'range',
-							order = 1,
-							min = -200,
-							max = 200,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].position.x
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].position.x = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.x = val
-								--Update the screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						},
-						y = {
-							name = L['Y Axis'],
-							type = 'range',
-							order = 2,
-							min = -200,
-							max = 200,
-							step = 1,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].position.y
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].position.y = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.y = val
-								--Update the screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						},
-						anchor = {
-							name = L['Anchor point'],
-							type = 'select',
-							order = 3,
-							values = anchorPoints,
-							get = function(info)
-								return UF.CurrentSettings[frameName].elements[key].position.anchor
-							end,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[key].position.anchor = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[key].position.anchor = val
-								--Update the screen
-								UF.Unit[frameName]:ElementUpdate(key)
-							end
-						}
-					}
-				}
-			}
-		}
+		UF.Options:AddDynamicText(frameName, 'Power', i)
 	end
 end
 
@@ -1666,21 +1396,41 @@ function Options:Initialize()
 				args = {}
 			}
 
+			local PositionGet = function(info)
+				return UF.CurrentSettings[frameName].elements[elementName].position[info[#info]]
+			end
+			local PositionSet = function(info, val)
+				--Update memory
+				UF.CurrentSettings[frameName].elements[elementName].position[info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].position[info[#info]] = val
+				--Update Screen
+				UF.Unit[frameName]:ElementUpdate(elementName)
+			end
+
 			if elementConfig.type == 'General' then
 			elseif elementConfig.type == 'StatusBar' then
 			elseif elementConfig.type == 'Indicator' then
+				Options:IndicatorAddDisplay(frameName, ElementOptSet)
+				Options:IndicatorAddPosition(frameName, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Text' then
+				-- Options:IndicatorAddDisplay(frameName, ElementOptSet)
+				Options:IndicatorAddPosition(frameName, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Auras' then
+				Options:IndicatorAddDisplay(frameName, ElementOptSet)
+				Options:IndicatorAddPosition(frameName, ElementOptSet, PositionGet, PositionSet)
 			end
 
 			--Call Elements Custom function
 			UF.Elements:Options(frameName, elementName, ElementOptSet)
 
-			ElementOptSet.args.enabled = {
-				name = L['Enabled'],
-				type = 'toggle',
-				order = 10
-			}
+			if not ElementOptSet.args.enabled then
+				ElementOptSet.args.enabled = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 10
+				}
+			end
 			-- Add element option to screen
 			FrameOptSet.args[elementConfig.type].args[elementName] = ElementOptSet
 		end
