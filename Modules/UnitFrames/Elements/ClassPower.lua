@@ -58,14 +58,6 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
-	OptionSet.args.texture = {
-		type = 'select',
-		dialogControl = 'LSM30_Statusbar',
-		order = 2,
-		width = 'double',
-		name = 'Bar Texture',
-		values = AceGUIWidgetLSMlists.statusbar
-	}
 end
 
 ---@type ElementSettings

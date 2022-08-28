@@ -51,18 +51,10 @@ local function Update(frame)
 	-- frame.Power.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 end
 
----@param unitName string
+---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
-local function Options(unitName, OptionSet)
-	local function OptUpdate(option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].elements.Power[option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Power[option] = val
-		--Update the screen
-		UF.Unit[unitName]:ElementUpdate('Power')
-	end
-	--local DB = UF.CurrentSettings[unitName].elements.Power
+local function Options(frameName, OptionSet)
+	UF.Options:AddDynamicText(frameName, OptionSet, 'Power')
 end
 
 ---@type ElementSettings

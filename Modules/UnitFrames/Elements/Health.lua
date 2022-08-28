@@ -130,18 +130,10 @@ local function Update(frame)
 	frame.Health:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
 end
 
----@param unitName string
+---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
-local function Options(unitName, OptionSet)
-	local function OptUpdate(option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].DB[option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].DB[option] = val
-		--Update the screen
-		UF.Unit[unitName]:ElementUpdate('Health')
-	end
-	--local DB = UF.CurrentSettings[unitName].DB
+local function Options(frameName, OptionSet)
+	UF.Options:AddDynamicText(frameName, OptionSet, 'Health')
 end
 
 ---@type ElementSettings
@@ -165,6 +157,14 @@ local Settings = {
 			text = '[health:current-formatted] / [health:max-formatted]',
 			position = {
 				anchor = 'CENTER',
+				x = 0,
+				y = 0
+			}
+		},
+		['2'] = {
+			text = '[perhp]%',
+			position = {
+				anchor = 'RIGHT',
 				x = 0,
 				y = 0
 			}

@@ -876,6 +876,19 @@ end
 
 ---@param frameName UnitFrameName
 ---@param ElementOptSet AceConfigOptionsTable
+function Options:StatusBarDefaults(frameName, ElementOptSet)
+	ElementOptSet.args.texture = {
+		type = 'select',
+		dialogControl = 'LSM30_Statusbar',
+		order = 2,
+		width = 'double',
+		name = 'Bar Texture',
+		values = AceGUIWidgetLSMlists.statusbar
+	}
+end
+
+---@param frameName UnitFrameName
+---@param ElementOptSet AceConfigOptionsTable
 function Options:IndicatorAddDisplay(frameName, ElementOptSet)
 	ElementOptSet.args.display = {
 		name = L['Display'],
@@ -953,161 +966,166 @@ end
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
 ---@param element UnitFrameElement
----@param count integer
-function Options:AddDynamicText(frameName, OptionSet, element, count)
-	OptionSet.args[count] = {
-		name = L['Text element'] .. ' ' .. count,
+function Options:AddDynamicText(frameName, OptionSet, element)
+	OptionSet.args.Text = {
+		name = L['Text'],
 		type = 'group',
-		inline = true,
-		order = (10 + count),
+		order = 1,
 		args = {
-			enabled = {
-				name = L['Enabled'],
-				type = 'toggle',
-				order = 1,
-				get = function(info)
-					return UF.CurrentSettings[frameName].elements[element].text[count].enabled
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[frameName].elements[element].text[count].enabled = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].enabled = val
-					--Update the screen
-					if val then
-						UF.Unit[frameName][element].TextElements[count]:Show()
-					else
-						UF.Unit[frameName][element].TextElements[count]:Hide()
+			execute = {
+				name = L['Text tag list'],
+				type = 'execute',
+				order = .1,
+				func = function(info)
+					SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
+				end
+			}
+		}
+	}
+
+	for count in pairs(UF.CurrentSettings[frameName].elements[element].text) do
+		OptionSet.args.Text.args[count] = {
+			name = L['Text element'] .. ' ' .. count,
+			type = 'group',
+			inline = true,
+			order = (10 + count),
+			get = function(info)
+				return UF.CurrentSettings[frameName].elements[element].text[count][info[#info]]
+			end,
+			args = {
+				enabled = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 1,
+					set = function(info, val)
+						--Update memory
+						UF.CurrentSettings[frameName].elements[element].text[count].enabled = val
+						--Update the DB
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].enabled = val
+						--Update the screen
+						if val then
+							UF.Unit[frameName][element].TextElements[count]:Show()
+						else
+							UF.Unit[frameName][element].TextElements[count]:Hide()
+						end
 					end
-				end
-			},
-			text = {
-				name = L['Text'],
-				type = 'input',
-				width = 'full',
-				order = 2,
-				get = function(info)
-					return UF.CurrentSettings[frameName].elements[element].text[count].text
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[frameName].elements[element].text[count].text = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].text = val
-					--Update the screen
-					UF.Unit[frameName]:Tag(UF.Unit[frameName][element].TextElements[count], val)
-					UF.Unit[frameName]:UpdateTags()
-				end
-			},
-			size = {
-				name = L['Size'],
-				type = 'range',
-				width = 'full',
-				min = 1,
-				max = 30,
-				step = 1,
-				order = 1.5,
-				get = function(info)
-					return UF.CurrentSettings[frameName].elements[element].text[count].size
-				end,
-				set = function(info, val)
-					--Update memory
-					UF.CurrentSettings[frameName].elements[element].text[count].size = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].size = val
-					--Update the screen
-					SUI:UpdateDefaultSize(UF.Unit[frameName][element].TextElements[count], val, 'UnitFrames')
-				end
-			},
-			position = {
-				name = L['Position'],
-				type = 'group',
-				order = 50,
-				inline = true,
-				args = {
-					x = {
-						name = L['X Axis'],
-						type = 'range',
-						order = 1,
-						min = -200,
-						max = 200,
-						step = 1,
-						get = function(info)
-							return UF.CurrentSettings[frameName].elements[element].text[count].position.x
-						end,
-						set = function(info, val)
-							--Update memory
-							UF.CurrentSettings[frameName].elements[element].text[count].position.x = val
-							--Update the DB
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.x = val
-							--Update the screen
-							local position = UF.CurrentSettings[frameName].elements[element].text[count].position
-							UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-							UF.Unit[frameName][element].TextElements[count]:SetPoint(
-								position.anchor,
-								UF.Unit[frameName],
-								position.anchor,
-								position.x,
-								position.y
-							)
-						end
-					},
-					y = {
-						name = L['Y Axis'],
-						type = 'range',
-						order = 2,
-						min = -200,
-						max = 200,
-						step = 1,
-						get = function(info)
-							return UF.CurrentSettings[frameName].elements[element].text[count].position.y
-						end,
-						set = function(info, val)
-							--Update memory
-							UF.CurrentSettings[frameName].elements[element].text[count].position.y = val
-							--Update the DB
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.y = val
-							--Update the screen
-							local position = UF.CurrentSettings[frameName].elements[element].text[count].position
-							UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-							UF.Unit[frameName][element].TextElements[count]:SetPoint(
-								position.anchor,
-								UF.Unit[frameName],
-								position.anchor,
-								position.x,
-								position.y
-							)
-						end
-					},
-					anchor = {
-						name = L['Anchor point'],
-						type = 'select',
-						order = 3,
-						values = anchorPoints,
-						get = function(info)
-							return UF.CurrentSettings[frameName].elements[element].text[count].position.anchor
-						end,
-						set = function(info, val)
-							--Update memory
-							UF.CurrentSettings[frameName].elements[element].text[count].position.anchor = val
-							--Update the DB
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.anchor = val
-							--Update the screen
-							local position = UF.CurrentSettings[frameName].elements[element].text[count].position
-							UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-							UF.Unit[frameName][element].TextElements[count]:SetPoint(
-								position.anchor,
-								UF.Unit[frameName],
-								position.anchor,
-								position.x,
-								position.y
-							)
-						end
+				},
+				text = {
+					name = L['Text'],
+					type = 'input',
+					width = 'full',
+					order = 2,
+					set = function(info, val)
+						--Update memory
+						UF.CurrentSettings[frameName].elements[element].text[count].text = val
+						--Update the DB
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].text = val
+						--Update the screen
+						UF.Unit[frameName]:Tag(UF.Unit[frameName][element].TextElements[count], val)
+						UF.Unit[frameName]:UpdateTags()
+					end
+				},
+				size = {
+					name = L['Size'],
+					type = 'range',
+					width = 'full',
+					min = 1,
+					max = 30,
+					step = 1,
+					order = 1.5,
+					set = function(info, val)
+						--Update memory
+						UF.CurrentSettings[frameName].elements[element].text[count].size = val
+						--Update the DB
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].size = val
+						--Update the screen
+						SUI:UpdateDefaultSize(UF.Unit[frameName][element].TextElements[count], val, 'UnitFrames')
+					end
+				},
+				position = {
+					name = L['Position'],
+					type = 'group',
+					order = 50,
+					inline = true,
+					get = function(info)
+						return UF.CurrentSettings[frameName].elements[element].text[count].position[info[#info]]
+					end,
+					args = {
+						x = {
+							name = L['X Axis'],
+							type = 'range',
+							order = 1,
+							min = -200,
+							max = 200,
+							step = 1,
+							set = function(info, val)
+								--Update memory
+								UF.CurrentSettings[frameName].elements[element].text[count].position.x = val
+								--Update the DB
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.x = val
+								--Update the screen
+								local position = UF.CurrentSettings[frameName].elements[element].text[count].position
+								UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
+								UF.Unit[frameName][element].TextElements[count]:SetPoint(
+									position.anchor,
+									UF.Unit[frameName],
+									position.anchor,
+									position.x,
+									position.y
+								)
+							end
+						},
+						y = {
+							name = L['Y Axis'],
+							type = 'range',
+							order = 2,
+							min = -200,
+							max = 200,
+							step = 1,
+							set = function(info, val)
+								--Update memory
+								UF.CurrentSettings[frameName].elements[element].text[count].position.y = val
+								--Update the DB
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.y = val
+								--Update the screen
+								local position = UF.CurrentSettings[frameName].elements[element].text[count].position
+								UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
+								UF.Unit[frameName][element].TextElements[count]:SetPoint(
+									position.anchor,
+									UF.Unit[frameName],
+									position.anchor,
+									position.x,
+									position.y
+								)
+							end
+						},
+						anchor = {
+							name = L['Anchor point'],
+							type = 'select',
+							order = 3,
+							values = anchorPoints,
+							set = function(info, val)
+								--Update memory
+								UF.CurrentSettings[frameName].elements[element].text[count].position.anchor = val
+								--Update the DB
+								UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.anchor = val
+								--Update the screen
+								local position = UF.CurrentSettings[frameName].elements[element].text[count].position
+								UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
+								UF.Unit[frameName][element].TextElements[count]:SetPoint(
+									position.anchor,
+									UF.Unit[frameName],
+									position.anchor,
+									position.x,
+									position.y
+								)
+							end
+						}
 					}
 				}
 			}
 		}
-	}
+	end
 end
 
 ---@param frameName UnitFrameName
@@ -1410,6 +1428,7 @@ function Options:Initialize()
 
 			if elementConfig.type == 'General' then
 			elseif elementConfig.type == 'StatusBar' then
+				Options:StatusBarDefaults(frameName, ElementOptSet)
 			elseif elementConfig.type == 'Indicator' then
 				Options:IndicatorAddDisplay(frameName, ElementOptSet)
 				Options:IndicatorAddPosition(frameName, ElementOptSet, PositionGet, PositionSet)
@@ -1428,7 +1447,7 @@ function Options:Initialize()
 				ElementOptSet.args.enabled = {
 					name = L['Enabled'],
 					type = 'toggle',
-					order = 10
+					order = 1
 				}
 			end
 			-- Add element option to screen
