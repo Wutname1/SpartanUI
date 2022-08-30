@@ -51,4 +51,5 @@ local visibility = {
 ---@field mover frame
 ---@field config UFrameSettings
 ---@field frames? table<integer, SUI.UnitFrame>
+---@field header? frame
 local SUIUnitFrame = {}

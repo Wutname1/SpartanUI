@@ -1,4 +1,4 @@
-local UF = SUI.UF
+local UF, L = SUI.UF, SUI.L
 
 ---@param frame table
 ---@param DB table
@@ -54,6 +54,24 @@ end
 ---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(frameName, OptionSet)
+	OptionSet.args.general = {
+		name = '',
+		type = 'group',
+		inline = true,
+		args = {}
+	}
+
+	if frameName == 'player' then
+		if SUI.IsRetail then
+			OptionSet.args.PowerPrediction = {
+				name = L['Enable power prediction'],
+				desc = L['Used to represent cost of spells on top of the Power bar'],
+				type = 'toggle',
+				width = 'double',
+				order = 10
+			}
+		end
+	end
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Power')
 end
 

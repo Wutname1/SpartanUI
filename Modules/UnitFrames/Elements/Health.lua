@@ -1,4 +1,4 @@
-local UF = SUI.UF
+local UF, L = SUI.UF, SUI.L
 
 ---@param frame table
 ---@param DB table
@@ -133,6 +133,62 @@ end
 ---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(frameName, OptionSet)
+	OptionSet.args.general = {
+		name = '',
+		type = 'group',
+		inline = true,
+		args = {
+			healthprediction = {
+				name = L['Health prediction'],
+				type = 'toggle',
+				order = 5
+			},
+			DispelHighlight = {
+				name = L['Dispel highlight'],
+				type = 'toggle',
+				order = 5
+			},
+			coloring = {
+				name = L['Color health bar by:'],
+				desc = L['The below options are in order of wich they apply'],
+				order = 10,
+				inline = true,
+				type = 'group',
+				args = {
+					colorTapping = {
+						name = L['Tapped'],
+						desc = "Color's the bar if the unit isn't tapped by the player",
+						type = 'toggle',
+						order = 1
+					},
+					colorDisconnected = {
+						name = L['Disconnected'],
+						desc = L['Color the bar if the player is offline'],
+						type = 'toggle',
+						order = 2
+					},
+					colorClass = {
+						name = L['Class'],
+						desc = L['Color the bar based on unit class'],
+						type = 'toggle',
+						order = 3
+					},
+					colorReaction = {
+						name = L['Reaction'],
+						desc = "color the bar based on the player's reaction towards the player.",
+						type = 'toggle',
+						order = 4
+					},
+					colorSmooth = {
+						name = L['Smooth'],
+						desc = "color the bar with a smooth gradient based on the player's current health percentage",
+						type = 'toggle',
+						order = 5
+					}
+				}
+			}
+		}
+	}
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Health')
 end
 
