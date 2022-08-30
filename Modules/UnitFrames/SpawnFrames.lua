@@ -80,7 +80,7 @@ local function CreateUnitFrame(self, unit)
 				if self[element].bg then
 					if elementsDB[element].bg.enabled then
 						self[element].bg:Show()
-						if elementsDB[element].bg.color then
+						if elementsDB[element].bg.color and type(elementsDB[element].bg.color) == 'table' then
 							self[element].bg:SetVertexColor(unpack(elementsDB[element].bg.color))
 						end
 					else
