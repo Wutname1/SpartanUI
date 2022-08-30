@@ -48,13 +48,18 @@ local function Options(OptionSet)
 end
 
 ---@type UFrameSettings
+local nameText = '[SUI_ColorClass][name]'
+if SUI.IsRetail then
+	nameText = nameText .. ' [arenaspec]'
+end
+
 local Settings = {
 	maxColumns = 1,
 	unitsPerColumn = 5,
 	columnSpacing = 1,
 	yOffset = -25,
 	elements = {
-		Name = {text = '[SUI_ColorClass][name] [arenaspec]'},
+		Name = {text = nameText},
 		Power = {
 			height = 5
 		},
