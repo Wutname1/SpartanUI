@@ -303,6 +303,9 @@ local function AddMovers()
 	BTMover('BT4BarStanceBar', 'Stance Bar')
 	BTMover('BT4BarPetBar', 'Pet Bar')
 	BTMover('BT4BarMicroMenu', 'Micro menu')
+	if not SUI.IsRetail and select(2, UnitClass('player')) == 'SHAMAN' then
+		BTMover('MultiCastActionBarFrame', 'Totem Bar')
+	end
 end
 
 local function OnInitialize()
