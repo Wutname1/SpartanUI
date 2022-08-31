@@ -48,6 +48,7 @@ module.BarScale = {
 			['BT4BarExtraActionBar'] = 0.8,
 			['BT4BarStanceBar'] = 0.6,
 			['BT4BarPetBar'] = 0.6,
+			['MultiCastActionBarFrame'] = 0.6,
 			['BT4BarMicroMenu'] = 0.6
 		}
 	}
