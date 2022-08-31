@@ -148,6 +148,7 @@ local FrameList = {
 	'BT4BarBagBar',
 	'BT4BarStanceBar',
 	'BT4BarPetBar',
+	'MultiCastActionBarFrame',
 	'BT4BarMicroMenu'
 }
 ------------------------------------------------------------
@@ -298,8 +299,6 @@ local function AddMovers()
 		end
 	end
 	BTMover('BT4BarBagBar', 'Bag bar')
-	-- BTMover('BT4BarExtraActionBar', 'Extra Action Bar')
-	-- BTMover('BT4BarZoneAbilityBar', 'Zone Ability Bar')
 	BTMover('BT4BarStanceBar', 'Stance Bar')
 	BTMover('BT4BarPetBar', 'Pet Bar')
 	BTMover('BT4BarMicroMenu', 'Micro menu')

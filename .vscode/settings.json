@@ -318,7 +318,8 @@
     "AceGUIWidgetLSMlists",
     "UnregisterUnitWatch",
     "RegisterUnitWatch",
-    "InCombatLockdown"
+    "InCombatLockdown",
+    "MultiCastActionBarFrame"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

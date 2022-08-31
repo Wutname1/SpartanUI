@@ -13,11 +13,12 @@ local SetBarVisibility = function(side, state)
 	local bt4Positions = {
 		['BT4BarStanceBar'] = 'left',
 		['BT4BarPetBar'] = 'left',
+		['MultiCastActionBarFrame'] = 'left',
 		['BT4BarBagBar'] = 'right',
 		['BT4BarMicroMenu'] = 'right'
 	}
 	for k, v in pairs(bt4Positions) do
-		if v == side and _G[k].isMoved and not _G[k].isMoved() then
+		if _G[k] and v == side and _G[k].isMoved and not _G[k].isMoved() then
 			if state == 'hide' then
 				_G[k]:Hide()
 			elseif state == 'show' then

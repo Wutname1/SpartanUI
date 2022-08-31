@@ -23,6 +23,7 @@ function module:OnInitialize()
 		--
 		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
+		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
 		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,369,0',
 		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,680,0'
@@ -42,6 +43,7 @@ function module:OnInitialize()
 		['BT4BarExtraActionBar'] = 0.8,
 		['BT4BarStanceBar'] = 0.6,
 		['BT4BarPetBar'] = 0.6,
+		['MultiCastActionBarFrame'] = 0.6,
 		['BT4BarMicroMenu'] = 0.6
 	}
 	UF.Style:Register('Minimal', {})

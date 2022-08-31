@@ -204,6 +204,7 @@ function module:OnInitialize()
 		--
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
 		--
 		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,297,133',
 		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
