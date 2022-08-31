@@ -23,7 +23,7 @@ local COLORS = {
 function module:OnEnable()
 	module.DB = SUI.DB.StatusBars
 	--Create Status Bars
-	if (SUI.IsClassic or SUI.IsTBC) and module.DB[2].display == 'honor' then
+	if not SUI.IsRetail and module.DB[2].display == 'honor' then
 		module.DB[2].display = 'rep'
 	end
 

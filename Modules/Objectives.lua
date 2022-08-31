@@ -28,24 +28,26 @@ end
 
 local function MakeMoveable()
 	local BlizzObjectiveFrame = _G[frameName]
-	local point, anchor, secondaryPoint, x, y =
-		strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
-	holder:SetPoint(point, anchor, secondaryPoint, x, y)
-	holder:SetFrameStrata('LOW')
-	holder:SetSize(280, module.DB.height)
-	holder:Hide()
-	holder.OnScale = function(self, val)
-		BlizzObjectiveFrame:SetScale(val)
+	if BlizzObjectiveFrame then
+		local point, anchor, secondaryPoint, x, y =
+			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
+		holder:SetPoint(point, anchor, secondaryPoint, x, y)
+		holder:SetFrameStrata('LOW')
+		holder:SetSize(280, module.DB.height)
+		holder:Hide()
+		holder.OnScale = function(self, val)
+			BlizzObjectiveFrame:SetScale(val)
+		end
+
+		BlizzObjectiveFrame:SetClampedToScreen(false)
+		BlizzObjectiveFrame:ClearAllPoints()
+		BlizzObjectiveFrame:SetPoint('TOP', holder, 'TOP')
+		BlizzObjectiveFrame:SetMovable(true)
+		BlizzObjectiveFrame:SetUserPlaced(true)
+
+		MoveIt:CreateMover(holder, 'ObjectiveTracker', 'Objective Tracker', nil, 'Blizzard UI')
+		UpdateSize()
 	end
-
-	BlizzObjectiveFrame:SetClampedToScreen(false)
-	BlizzObjectiveFrame:ClearAllPoints()
-	BlizzObjectiveFrame:SetPoint('TOP', holder, 'TOP')
-	BlizzObjectiveFrame:SetMovable(true)
-	BlizzObjectiveFrame:SetUserPlaced(true)
-
-	MoveIt:CreateMover(holder, 'ObjectiveTracker', 'Objective Tracker', nil, 'Blizzard UI')
-	UpdateSize()
 end
 
 local ObjTrackerUpdate = function(_, event)

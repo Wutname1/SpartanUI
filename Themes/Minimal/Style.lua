@@ -1,6 +1,7 @@
 local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:GetModule('Component_Artwork')
+local UF = SUI:GetModule('Component_UnitFrames') ---@type SUI_UnitFrames
 local module = SUI:NewModule('Style_Minimal')
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
@@ -43,6 +44,7 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 0.6,
 		['BT4BarMicroMenu'] = 0.6
 	}
+	UF.Style:Register('Minimal', {})
 end
 
 function module:OnEnable()
