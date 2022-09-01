@@ -795,6 +795,57 @@ function Options:IndicatorAddPosition(frameName, ElementOptSet, get, set)
 end
 
 ---@param frameName UnitFrameName
+---@param ElementOptSet AceConfigOptionsTable
+---@param get function
+---@param set function
+function Options:FullPositioning(frameName, ElementOptSet, get, set)
+	ElementOptSet.args.position = {
+		name = L['Position'],
+		type = 'group',
+		order = 50,
+		inline = true,
+		get = get,
+		set = set,
+		args = {
+			x = {
+				name = L['X Axis'],
+				type = 'range',
+				order = 1,
+				min = -200,
+				max = 200,
+				step = 1
+			},
+			y = {
+				name = L['Y Axis'],
+				type = 'range',
+				order = 2,
+				min = -200,
+				max = 200,
+				step = 1
+			},
+			anchor = {
+				name = L['Anchor point'],
+				type = 'select',
+				order = 3,
+				values = anchorPoints
+			},
+			relativeTo = {
+				name = 'Relative To',
+				type = 'select',
+				order = 3,
+				values = anchorPoints
+			},
+			relativePoint = {
+				name = 'Relative Point',
+				type = 'select',
+				order = 3,
+				values = anchorPoints
+			}
+		}
+	}
+end
+
+---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
 ---@param element UnitFrameElement
 function Options:AddDynamicText(frameName, OptionSet, element)
@@ -881,6 +932,25 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 					get = function(info)
 						return UF.CurrentSettings[frameName].elements[element].text[count].position[info[#info]]
 					end,
+					set = function(info, val)
+						--Update memory
+						UF.CurrentSettings[frameName].elements[element].text[count].position[info[#info]] = val
+						--Update the DB
+						if not UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position then
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position = {}
+						end
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position[info[#info]] = val
+						--Update the screen
+						local position = UF.CurrentSettings[frameName].elements[element].text[count].position
+						UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
+						UF.Unit[frameName][element].TextElements[count]:SetPoint(
+							position.anchor,
+							UF.Unit[frameName],
+							position.anchor,
+							position.x,
+							position.y
+						)
+					end,
 					args = {
 						x = {
 							name = L['X Axis'],
@@ -888,23 +958,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 							order = 1,
 							min = -200,
 							max = 200,
-							step = 1,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[element].text[count].position.x = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.x = val
-								--Update the screen
-								local position = UF.CurrentSettings[frameName].elements[element].text[count].position
-								UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-								UF.Unit[frameName][element].TextElements[count]:SetPoint(
-									position.anchor,
-									UF.Unit[frameName],
-									position.anchor,
-									position.x,
-									position.y
-								)
-							end
+							step = 1
 						},
 						y = {
 							name = L['Y Axis'],
@@ -912,45 +966,13 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 							order = 2,
 							min = -200,
 							max = 200,
-							step = 1,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[element].text[count].position.y = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.y = val
-								--Update the screen
-								local position = UF.CurrentSettings[frameName].elements[element].text[count].position
-								UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-								UF.Unit[frameName][element].TextElements[count]:SetPoint(
-									position.anchor,
-									UF.Unit[frameName],
-									position.anchor,
-									position.x,
-									position.y
-								)
-							end
+							step = 1
 						},
 						anchor = {
 							name = L['Anchor point'],
 							type = 'select',
 							order = 3,
-							values = anchorPoints,
-							set = function(info, val)
-								--Update memory
-								UF.CurrentSettings[frameName].elements[element].text[count].position.anchor = val
-								--Update the DB
-								UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position.anchor = val
-								--Update the screen
-								local position = UF.CurrentSettings[frameName].elements[element].text[count].position
-								UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-								UF.Unit[frameName][element].TextElements[count]:SetPoint(
-									position.anchor,
-									UF.Unit[frameName],
-									position.anchor,
-									position.x,
-									position.y
-								)
-							end
+							values = anchorPoints
 						}
 					}
 				}
@@ -1198,7 +1220,7 @@ function Options:Initialize()
 		-- Add Element Options
 		local builtFrame = UF.Unit:Get(frameName)
 
-		for _, elementName in ipairs(builtFrame.elementList) do
+		for elementName, _ in pairs(builtFrame.elementList) do
 			local elementConfig = builtFrame.config.elements[elementName].config
 
 			local ElementOptSet = {

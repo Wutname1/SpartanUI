@@ -101,7 +101,11 @@ function Elements:Build(frame, ElementName, DB)
 			frame.elementList = {}
 		end
 
-		table.insert(frame.elementList, ElementName)
+		frame.elementList[ElementName] = UF.Elements.List[ElementName].ElementSettings.config.DisplayName or ElementName
+		if _G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'] then
+			_G['SUI_UF_' .. frame.unitOnCreate .. '_Holder'].elementList = frame.elementList
+		end
+
 		UF.Elements.List[ElementName].Build(frame, DB or UF.CurrentSettings[frame.unitOnCreate].elements[ElementName] or {})
 	end
 end

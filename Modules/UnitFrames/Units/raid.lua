@@ -75,7 +75,6 @@ local function GroupBuilder(holder)
 		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.raid.width, UF:CalculateHeight('raid'))
 	)
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')
-	holder.elementList = elementList
 
 	holder.header:SetAttribute('startingIndex', -10)
 	holder.header:Show()

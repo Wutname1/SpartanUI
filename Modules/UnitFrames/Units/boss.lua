@@ -24,7 +24,6 @@ local function GroupBuilder(holder)
 			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
 		end
 	end
-	holder.elementList = elementList
 end
 
 local function Builder(frame)
