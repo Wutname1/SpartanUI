@@ -132,19 +132,19 @@ local function CreateUnitFrame(self, unit)
 
 		-- Positioning
 		element:ClearAllPoints()
-		if data.points ~= false then
+		if data.points then
 			if type(data.points) == 'string' then
 				element:SetAllPoints(frame[data.points])
+			elseif data.points and type(data.points) == 'table' then
+				for _, key in pairs(data.points) do
+					if key.relativeTo == 'Frame' then
+						element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
+					else
+						element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
+					end
+				end
 			else
 				element:SetAllPoints(frame)
-			end
-		elseif data.points ~= false and data.points ~= true then
-			for _, key in pairs(data.points) do
-				if key.relativeTo == 'Frame' then
-					element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
-				else
-					element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
-				end
 			end
 		elseif data.position.anchor then
 			if data.position.relativeTo == 'Frame' then

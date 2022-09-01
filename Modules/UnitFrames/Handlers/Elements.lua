@@ -6,7 +6,6 @@ local Elements = {
 
 local DefaultSettings = {
 	enabled = false,
-	points = false,
 	alpha = 1,
 	width = 20,
 	height = 20,

@@ -44,6 +44,18 @@ local function Update(frame)
 
 	frame.Portrait3D:Hide()
 	frame.Portrait2D:Hide()
+	frame.Portrait3D:ClearAllPoints()
+	frame.Portrait2D:ClearAllPoints()
+	if DB.position == 'left' then
+		frame.Portrait3D:SetPoint('RIGHT', frame, 'LEFT')
+		frame.Portrait2D:SetPoint('RIGHT', frame, 'LEFT')
+	elseif DB.position == 'overlay' then
+		frame.Portrait3D:SetAllPoints(frame)
+	else
+		frame.Portrait3D:SetPoint('LEFT', frame, 'RIGHT')
+		frame.Portrait2D:SetPoint('LEFT', frame, 'RIGHT')
+	end
+
 	if DB.enabled then
 		if DB.type == '3D' then
 			frame.Portrait = frame.Portrait3D
@@ -68,86 +80,67 @@ local function Update(frame)
 			frame.Portrait = frame.Portrait2D
 			frame.Portrait2D:Show()
 		end
-		if DB.position == 'left' then
-			frame.Portrait3D:SetPoint('RIGHT', frame, 'LEFT')
-			frame.Portrait2D:SetPoint('RIGHT', frame, 'LEFT')
-		else
-			frame.Portrait3D:SetPoint('LEFT', frame, 'RIGHT')
-			frame.Portrait2D:SetPoint('LEFT', frame, 'RIGHT')
-		end
 		frame:UpdateAllElements('OnUpdate')
 	end
 end
 
----@param unitName string
+---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
-local function Options(unitName, OptionSet)
-	OptionSet.args = {
-		enabled = {
-			name = L['Enabled'],
-			type = 'toggle',
-			order = 10,
-			set = function(info, val)
-				--Update memory
-				UF.CurrentSettings[unitName].elements.Portrait.enabled = val
-				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.enabled = val
-				--Update the screen
-				if UF.Unit[unitName].Portrait then
-					if val then
-						UF.Unit[unitName]:EnableElement('Portrait')
-						UF.Unit[unitName].Portrait:ForceUpdate()
-					else
-						UF.Unit[unitName]:DisableElement('Portrait')
-					end
-				else
-					UF.Unit[unitName]:UpdateAll()
-				end
-			end
-		},
-		type = {
-			name = L['Portrait type'],
-			type = 'select',
-			order = 20,
-			values = {
-				['3D'] = '3D',
-				['2D'] = '2D'
+local function Options(frameName, OptionSet)
+	UF.Options:IndicatorAddDisplay(frameName, OptionSet)
+
+	OptionSet.args.general = {
+		name = '',
+		type = 'group',
+		inline = true,
+		args = {
+			type = {
+				name = L['Portrait type'],
+				type = 'select',
+				order = 20,
+				values = {
+					['3D'] = '3D',
+					['2D'] = '2D'
+				}
 			},
-			get = function(info)
-				return UF.CurrentSettings[unitName].elements.Portrait.type
-			end,
-			set = function(info, val)
-				--Update memory
-				UF.CurrentSettings[unitName].elements.Portrait.type = val
-				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][unitName].elements.Portrait.type = val
-				--Update the screen
-				UF.Unit[unitName]:ElementUpdate('Portrait')
-			end
-		},
-		rotation = {
-			name = L['Rotation'],
-			type = 'range',
-			min = -1,
-			max = 1,
-			step = .01,
-			order = 21
-		},
-		camDistanceScale = {
-			name = L['Camera Distance Scale'],
-			type = 'range',
-			min = .01,
-			max = 5,
-			step = .1,
-			order = 22
-		},
-		position = {
-			name = L['Position'],
-			type = 'select',
-			order = 30,
-			values = {
-				['left'] = L['Left'],
-				['right'] = L['Right']
+			rotation = {
+				name = L['Rotation'],
+				type = 'range',
+				min = -1,
+				max = 1,
+				step = .01,
+				order = 21
+			},
+			camDistanceScale = {
+				name = L['Camera Distance Scale'],
+				type = 'range',
+				min = .01,
+				max = 5,
+				step = .1,
+				order = 22
+			},
+			position = {
+				name = L['Position'],
+				type = 'select',
+				order = 30,
+				values = {
+					['left'] = L['Left'],
+					['right'] = L['Right'],
+					['overlay'] = 'Overlay'
+				},
+				set = function(info, val)
+					if val == 'overlay' then
+						UF.CurrentSettings[frameName].elements.Portrait.type = '3D'
+						UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.type = '3D'
+					end
+
+					--Update memory
+					UF.CurrentSettings[frameName].elements.Portrait.position = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.position = val
+					--Update the screen
+					UF.Unit[frameName]:ElementUpdate('Portrait')
+				end
 			}
 		}
 	}
@@ -165,6 +158,7 @@ local Settings = {
 	yOffset = 0,
 	position = 'left',
 	config = {
+		NoBulkUpdate = true,
 		type = 'General'
 	}
 }
