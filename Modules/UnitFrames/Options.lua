@@ -179,21 +179,21 @@ local function CreateOptionSet(frameName)
 				childGroups = 'tree',
 				args = {}
 			},
-			Text = {
-				name = L['Text'],
-				type = 'group',
-				order = 40,
-				childGroups = 'tree',
-				args = {
-					execute = {
-						name = L['Text tag list'],
-						type = 'execute',
-						func = function(info)
-							SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
-						end
-					}
-				}
-			},
+			-- Text = {
+			-- 	name = L['Text'],
+			-- 	type = 'group',
+			-- 	order = 40,
+			-- 	childGroups = 'tree',
+			-- 	args = {
+			-- 		execute = {
+			-- 			name = L['Text tag list'],
+			-- 			type = 'execute',
+			-- 			func = function(info)
+			-- 				SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
+			-- 			end
+			-- 		}
+			-- 	}
+			-- },
 			Auras = {
 				name = L['Buffs & Debuffs'],
 				desc = L['Buff & Debuff display settings'],
@@ -631,6 +631,13 @@ function Options:TextBasicDisplay(frameName, ElementOptSet)
 				type = 'input',
 				width = 'full',
 				order = 1
+			},
+			taglist = {
+				name = L['Text tag list'],
+				type = 'execute',
+				func = function(info)
+					SUI.Lib.AceCD:SelectGroup('SpartanUI', 'Help', 'UnitFrames')
+				end
 			},
 			textSize = {
 				name = L['Size'],

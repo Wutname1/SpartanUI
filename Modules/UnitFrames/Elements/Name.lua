@@ -20,6 +20,12 @@ local function Update(frame)
 	frame:Tag(frame.Name, DB.text)
 end
 
+---@param frameName string
+---@param OptionSet AceConfigOptionsTable
+local function Options(frameName, OptionSet)
+	UF.Options:TextBasicDisplay(frameName, OptionSet)
+end
+
 ---@type ElementSettings
 local Settings = {
 	enabled = true,
@@ -35,8 +41,8 @@ local Settings = {
 		y = 15
 	},
 	config = {
-		type = 'Text'
+		type = 'Indicator'
 	}
 }
 
-UF.Elements:Register('Name', Build, Update, nil, Settings)
+UF.Elements:Register('Name', Build, Update, Options, Settings)

@@ -16,6 +16,12 @@ local function Update(frame)
 	frame:Tag(frame.StatusText, DB.text)
 end
 
+---@param frameName string
+---@param OptionSet AceConfigOptionsTable
+local function Options(frameName, OptionSet)
+	UF.Options:TextBasicDisplay(frameName, OptionSet)
+end
+
 ---@type ElementSettings
 local Settings = {
 	textSize = 22,
@@ -30,9 +36,9 @@ local Settings = {
 		y = 0
 	},
 	config = {
-		type = 'Text',
+		type = 'Indicator',
 		DisplayName = 'Status Text'
 	}
 }
 
-UF.Elements:Register('StatusText', Build, Update, nil, Settings)
+UF.Elements:Register('StatusText', Build, Update, Options, Settings)
