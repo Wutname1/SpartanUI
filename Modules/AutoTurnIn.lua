@@ -140,7 +140,15 @@ local DBDefaults = {
 		'If you insist. The show must go on!',
 		'Will you spar with me?',
 		'I would like to challenge both of you to a spar.',
-		'<Request tithe>'
+		'<Request tithe>',
+		--DF
+		'We need explorers for an expedition to the Dradon Isles. Will you join us?',
+		'We need artisans for an expedition to the Dradon Isles. Will you join us?',
+		'We need scholars for an expedition to the Dradon Isles. Will you join us?',
+		'<Ask Khadgar what happened.>'
+		-- "Tell me of the dracthyr's origins.",
+		-- "Tell me of the Neltharion's downfall.",
+		-- 'Tell me of the Dawn of the Aspects.'
 	}
 }
 

@@ -28,6 +28,7 @@ local function Build(frame, DB)
 			end
 		end
 	end
+
 	SpartanArt.PreUpdate = function(self, unit)
 		if not unit or unit == 'vehicle' then
 			return
@@ -67,18 +68,17 @@ local function Options(unitName, OptionSet)
 	local Positions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
 	local function ArtUpdate(pos, option, val)
 		--Update memory
-		UF.CurrentSettings[unitName].artwork[pos][option] = val
+		UF.CurrentSettings[unitName].elements.SpartanArt[pos][option] = val
 		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].artwork[pos][option] = val
+		UF.DB.UserSettings[UF.DB.Style][unitName].elements.SpartanArt[pos][option] = val
 		--Update the screen
 		UF.Unit[unitName]:ElementUpdate('SpartanArt')
 	end
-	local i = 1
+
 	for position, DisplayName in pairs(Positions) do
 		OptionSet.args[position] = {
 			name = DisplayName,
 			type = 'group',
-			order = i,
 			disabled = true,
 			get = function(info)
 				return UF.CurrentSettings[unitName].elements.SpartanArt[position][info[#info]]
@@ -122,9 +122,6 @@ local function Options(unitName, OptionSet)
 							min = 0,
 							max = 1,
 							step = .01,
-							get = function(info)
-								return UF.CurrentSettings[unitName].elements.SpartanArt[position].alpha
-							end,
 							set = function(info, val)
 								if val == 0 then
 									val = false
@@ -137,7 +134,6 @@ local function Options(unitName, OptionSet)
 				}
 			}
 		}
-		i = i + 1
 	end
 
 	for Name, styleDB in pairs(UF.Style:GetList()) do

@@ -17,6 +17,7 @@
 libs\LibStub\LibStub.lua
 libs\StdUi\StdUi.xml
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+libs\LibDataBroker-1.1.lua
 libs\LibDBIcon-1.0\lib.xml
 
 #Setup SUI error catcher

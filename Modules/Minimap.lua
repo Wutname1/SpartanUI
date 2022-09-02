@@ -310,7 +310,7 @@ function module:ModifyMinimapLayout()
 		MinimapZoneText:SetShadowColor(0, 0, 0, 1)
 		MinimapZoneText:SetShadowOffset(1, -1)
 
-		if SUI.IsRetail then
+		if MiniMapTracking then
 			MiniMapTracking:ClearAllPoints()
 			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', 0, 0)
 		end
@@ -319,7 +319,7 @@ function module:ModifyMinimapLayout()
 
 		Minimap.overlay:Hide()
 
-		if SUI.IsRetail then
+		if MiniMapTracking then
 			MiniMapTracking:ClearAllPoints()
 			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
 		end
@@ -337,9 +337,11 @@ function module:ModifyMinimapLayout()
 		GuildInstanceDifficulty:ClearAllPoints()
 		GuildInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)
 
-		GarrisonLandingPageMinimapButton:ClearAllPoints()
-		GarrisonLandingPageMinimapButton:SetSize(35, 35)
-		GarrisonLandingPageMinimapButton:SetPoint('RIGHT', Minimap, 18, -25)
+		if GarrisonLandingPageMinimapButton then
+			GarrisonLandingPageMinimapButton:ClearAllPoints()
+			GarrisonLandingPageMinimapButton:SetSize(35, 35)
+			GarrisonLandingPageMinimapButton:SetPoint('RIGHT', Minimap, 18, -25)
+		end
 
 		SUI_MiniMapIcon = CreateFrame('Button', 'SUI_MiniMapIcon', Minimap)
 		SUI_MiniMapIcon:SetSize(1, 1)
@@ -361,31 +363,37 @@ function module:ModifyMinimapLayout()
 	MinimapBackdrop:SetFrameLevel(Minimap:GetFrameLevel())
 
 	-- Hide Blizzard Artwork
-	MinimapBorderTop:Hide()
-	MinimapBorder:Hide()
+	if MinimapBorderTop then
+		MinimapBorderTop:Hide()
+		MinimapBorder:Hide()
+		if not UserSettings.northTag then
+			MinimapNorthTag:Hide()
+		else
+			MinimapNorthTag:Show()
+		end
+	end
 	if MinimapToggleButton then
 		MinimapToggleButton:Hide()
-	end
-	if not UserSettings.northTag then
-		MinimapNorthTag:Hide()
-	else
-		MinimapNorthTag:Show()
 	end
 
 	-- Do modifications to MiniMapWorldMapButton
 	-- remove current textures
-	MiniMapWorldMapButton:SetNormalTexture(nil)
-	MiniMapWorldMapButton:SetPushedTexture(nil)
-	MiniMapWorldMapButton:SetHighlightTexture(nil)
-	-- Create new textures
-	MiniMapWorldMapButton:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon.png')
-	MiniMapWorldMapButton:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon-Pushed.png')
-	MiniMapWorldMapButton:SetHighlightTexture('Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight')
-	MiniMapWorldMapButton:ClearAllPoints()
-	MiniMapWorldMapButton:SetPoint('TOPRIGHT', Minimap, -20, 12)
+	if MiniMapWorldMapButton then
+		MiniMapWorldMapButton:SetNormalTexture(nil)
+		MiniMapWorldMapButton:SetPushedTexture(nil)
+		MiniMapWorldMapButton:SetHighlightTexture(nil)
+		-- Create new textures
+		MiniMapWorldMapButton:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon.png')
+		MiniMapWorldMapButton:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\WorldMap-Icon-Pushed.png')
+		MiniMapWorldMapButton:SetHighlightTexture('Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight')
+		MiniMapWorldMapButton:ClearAllPoints()
+		MiniMapWorldMapButton:SetPoint('TOPRIGHT', Minimap, -20, 12)
+	end
 
-	MiniMapMailFrame:ClearAllPoints()
-	MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 21, -53)
+	if MiniMapMailFrame then
+		MiniMapMailFrame:ClearAllPoints()
+		MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 21, -53)
+	end
 
 	if GameTimeFrame then
 		GameTimeFrame:ClearAllPoints()
@@ -395,8 +403,10 @@ function module:ModifyMinimapLayout()
 	end
 
 	module:MinimapCoords()
-	MinimapZoneText:ClearAllPoints()
-	MinimapZoneText:SetAllPoints(MinimapZoneTextButton)
+	if MinimapZoneTextButton then
+		MinimapZoneText:ClearAllPoints()
+		MinimapZoneText:SetAllPoints(MinimapZoneTextButton)
+	end
 end
 
 function module:MinimapCoords()
@@ -414,10 +424,13 @@ function module:MinimapCoords()
 	Minimap.ZoneText:SetShadowColor(0, 0, 0, 1)
 	Minimap.ZoneText:SetShadowOffset(1, -1)
 
-	MinimapZoneText:ClearAllPoints()
-	MinimapZoneText:SetAllPoints(Minimap.ZoneText)
-	MinimapZoneTextButton:ClearAllPoints()
-	MinimapZoneTextButton:SetAllPoints(Minimap.ZoneText)
+	if MinimapZoneTextButton then
+		MinimapZoneText:ClearAllPoints()
+		MinimapZoneText:SetAllPoints(Minimap.ZoneText)
+
+		MinimapZoneTextButton:ClearAllPoints()
+		MinimapZoneTextButton:SetAllPoints(Minimap.ZoneText)
+	end
 
 	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
 	SUI:FormatFont(Minimap.coords, 10, 'Minimap')
@@ -520,29 +533,31 @@ function module:update(FullUpdate)
 
 	-- UserSettings item visibility
 	do
-		if (UserSettings.MapZoomButtons) then
-			MinimapZoomIn:Hide()
-			MinimapZoomOut:Hide()
-		else
-			MinimapZoomIn:Show()
-			MinimapZoomOut:Show()
+		if MinimapZoomIn then
+			if (UserSettings.MapZoomButtons) then
+				MinimapZoomIn:Hide()
+				MinimapZoomOut:Hide()
+			else
+				MinimapZoomIn:Show()
+				MinimapZoomOut:Show()
+			end
+
+			if UserSettings.northTag then
+				MinimapNorthTag:Show()
+			else
+				MinimapNorthTag:Hide()
+			end
+
+			if UserSettings.DisplayZoneName then
+				MinimapZoneText:Show()
+				MinimapZoneTextButton:Show()
+			else
+				MinimapZoneText:Hide()
+				MinimapZoneTextButton:Hide()
+			end
 		end
 
-		if UserSettings.northTag then
-			MinimapNorthTag:Show()
-		else
-			MinimapNorthTag:Hide()
-		end
-
-		if UserSettings.DisplayZoneName then
-			MinimapZoneText:Show()
-			MinimapZoneTextButton:Show()
-		else
-			MinimapZoneText:Hide()
-			MinimapZoneTextButton:Hide()
-		end
-
-		if SUI.IsClassic then
+		if GameTimeFrame then
 			if (UserSettings.MapTimeIndicator) then
 				GameTimeFrame:Hide()
 			else
