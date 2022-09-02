@@ -51,7 +51,6 @@ local UpdateElementState = function(frame)
 			frame:DisableElement(item)
 		end
 	end
-	print('update nameplate state')
 	-- Position Updates
 	if (InCombatLockdown()) then
 		return
