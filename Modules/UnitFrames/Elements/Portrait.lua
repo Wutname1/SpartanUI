@@ -88,6 +88,8 @@ end
 ---@param OptionSet AceConfigOptionsTable
 local function Options(frameName, OptionSet)
 	UF.Options:IndicatorAddDisplay(frameName, OptionSet)
+	OptionSet.args.display.args.size = nil
+	OptionSet.args.display.args.scale = nil
 
 	OptionSet.args.general = {
 		name = '',

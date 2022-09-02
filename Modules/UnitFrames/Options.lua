@@ -830,22 +830,6 @@ function Options:AddPositioning(frameName, ElementOptSet, get, set)
 end
 
 ---@param frameName UnitFrameName
----@param ElementOptSet AceConfigOptionsTable
----@param get function
----@param set function
-function Options:FullPositioning(frameName, ElementOptSet, get, set)
-	ElementOptSet.args.position = {
-		name = L['Position'],
-		type = 'group',
-		order = 50,
-		inline = true,
-		get = get,
-		set = set,
-		args = {}
-	}
-end
-
----@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
 ---@param element UnitFrameElement
 function Options:AddDynamicText(frameName, OptionSet, element)
@@ -1255,7 +1239,6 @@ function Options:Initialize()
 			end
 
 			if elementConfig.type == 'General' then
-				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'StatusBar' then
 				Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 			elseif elementConfig.type == 'Indicator' then
