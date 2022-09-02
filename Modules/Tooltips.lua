@@ -286,7 +286,7 @@ local TooltipSetItem = function(self)
 		GameTooltip:SetBackdrop(style)
 		GameTooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 
-		if (quality) then
+		if (quality) and self.SetBorderColor then
 			local r, g, b = GetItemQualityColor(quality)
 			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
 			self:SetBorderColor(r, g, b)
