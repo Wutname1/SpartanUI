@@ -59,7 +59,6 @@ local UpdateElementState = function(frame)
 	-- Power
 	frame.Power:ClearAllPoints()
 	if elements.Health.enabled then
-		print('power to health')
 		frame.Power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
 	else
 		frame.Power:SetPoint('BOTTOM', frame)
@@ -67,10 +66,8 @@ local UpdateElementState = function(frame)
 	-- Castbar
 	frame.Castbar:ClearAllPoints()
 	if elements.Power.enabled then
-		print('cast to power')
 		frame.Castbar:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
 	elseif elements.Health.enabled then
-		print('cast to health')
 		frame.Castbar:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
 	else
 		frame.Castbar:SetPoint('BOTTOM', frame)
