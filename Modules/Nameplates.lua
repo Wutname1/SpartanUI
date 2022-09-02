@@ -51,7 +51,7 @@ local UpdateElementState = function(frame)
 			frame:DisableElement(item)
 		end
 	end
-
+	print('update nameplate state')
 	-- Position Updates
 	if (InCombatLockdown()) then
 		return
@@ -59,6 +59,7 @@ local UpdateElementState = function(frame)
 	-- Power
 	frame.Power:ClearAllPoints()
 	if elements.Health.enabled then
+		print('power to health')
 		frame.Power:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
 	else
 		frame.Power:SetPoint('BOTTOM', frame)
@@ -66,8 +67,10 @@ local UpdateElementState = function(frame)
 	-- Castbar
 	frame.Castbar:ClearAllPoints()
 	if elements.Power.enabled then
+		print('cast to power')
 		frame.Castbar:SetPoint('TOP', frame.Power, 'BOTTOM', 0, 0)
 	elseif elements.Health.enabled then
+		print('cast to health')
 		frame.Castbar:SetPoint('TOP', frame.Health, 'BOTTOM', 0, 0)
 	else
 		frame.Castbar:SetPoint('BOTTOM', frame)
@@ -204,9 +207,11 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- health bar
-		UF.Elements:Build(frame, 'Castbar', elementsDB.Castbar)
 		UF.Elements:Build(frame, 'Health', elementsDB.Health)
 		UF.Elements:Build(frame, 'Power', elementsDB.Power)
+		frame.Power:SetWidth(module.DB.width)
+		UF.Elements:Build(frame, 'Castbar', elementsDB.Castbar)
+		frame.Castbar:SetWidth(module.DB.width)
 		UF.Elements:Build(frame, 'PvPIndicator', elementsDB.PvPIndicator)
 		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
 
