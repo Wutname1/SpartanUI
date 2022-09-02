@@ -476,7 +476,9 @@ end
 ---@param ... GossipQuestUIInfo[]
 function module:VarArgForActiveQuests(...)
 	debug('VarArgForActiveQuests')
-	debug(#...)
+	if ... then
+		debug(#...)
+	end
 
 	if SUI.IsRetail then
 		for i, quest in pairs(...) do
