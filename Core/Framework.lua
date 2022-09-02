@@ -11,12 +11,9 @@ SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
 SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
-
-local _, _, _, toc = GetBuildInfo() -- TODO: Check back later
-SUI.isWrath = toc >= 30400 and toc < 40000 ---@type boolean -- TODO: Check back later
-SUI.IsTBC = toc >= 20500 and toc < 30000 ---@type boolean -- TODO: Check back later
-
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
+SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
+SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) -- ---@type boolean
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 local wowVersion = 'Retail'
 if SUI.IsClassic then
@@ -25,7 +22,7 @@ end
 if SUI.IsTBC then
 	wowVersion = 'TBC'
 end
-if SUI.isWrath then
+if SUI.IsWrath then
 	wowVersion = 'Wrath'
 end
 --@alpha@
