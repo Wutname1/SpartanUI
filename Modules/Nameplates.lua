@@ -136,6 +136,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 end
 
 local NamePlateFactory = function(frame, unit)
+	---#TODO: Cleanup the nameplate factory
 	if unit:match('nameplate') then
 		local blizzPlate = frame:GetParent().UnitFrame
 		if blizzPlate then
@@ -418,6 +419,7 @@ function module:UpdateNameplates()
 end
 
 function module:OnInitialize()
+	---#TODO: convert to new element settings process
 	local defaults = {
 		profile = {
 			ShowThreat = true,
@@ -631,6 +633,7 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
+	---#TODO: update to new element options process
 	local anchorPoints = {
 		['TOPLEFT'] = 'TOP LEFT',
 		['TOP'] = 'TOP',

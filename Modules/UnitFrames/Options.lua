@@ -729,11 +729,16 @@ end
 ---@param ElementOptSet AceConfigOptionsTable
 function Options:IndicatorAddDisplay(frameName, ElementOptSet)
 	ElementOptSet.args.display = {
-		name = L['Display'],
+		name = '',
 		type = 'group',
 		order = 20,
 		inline = true,
 		args = {
+			header = {
+				type = 'header',
+				name = L['Display'],
+				order = .1
+			},
 			size = {
 				name = L['Size'],
 				type = 'range',
@@ -766,54 +771,26 @@ end
 ---@param ElementOptSet AceConfigOptionsTable
 ---@param get function
 ---@param set function
-function Options:IndicatorAddPosition(frameName, ElementOptSet, get, set)
-	ElementOptSet.args.position = {
-		name = L['Position'],
-		type = 'group',
-		order = 50,
-		inline = true,
-		get = get,
-		set = set,
-		args = {
-			x = {
-				name = L['X Axis'],
-				type = 'range',
-				order = 1,
-				min = -200,
-				max = 200,
-				step = 1
-			},
-			y = {
-				name = L['Y Axis'],
-				type = 'range',
-				order = 2,
-				min = -200,
-				max = 200,
-				step = 1
-			},
-			anchor = {
-				name = L['Anchor point'],
-				type = 'select',
-				order = 3,
-				values = anchorPoints
-			}
-		}
+function Options:AddPositioning(frameName, ElementOptSet, get, set)
+	local builtFrame = UF.Unit:Get(frameName)
+	local AnchorablePoints = {
+		['Frame'] = 'Unit Frame'
 	}
-end
+	SUI:CopyData(AnchorablePoints, builtFrame.elementList)
 
----@param frameName UnitFrameName
----@param ElementOptSet AceConfigOptionsTable
----@param get function
----@param set function
-function Options:FullPositioning(frameName, ElementOptSet, get, set)
 	ElementOptSet.args.position = {
-		name = L['Position'],
+		name = '',
 		type = 'group',
 		order = 50,
 		inline = true,
 		get = get,
 		set = set,
 		args = {
+			header = {
+				type = 'header',
+				name = L['Position'],
+				order = .1
+			},
 			x = {
 				name = L['X Axis'],
 				type = 'range',
@@ -840,7 +817,7 @@ function Options:FullPositioning(frameName, ElementOptSet, get, set)
 				name = 'Relative To',
 				type = 'select',
 				order = 3,
-				values = anchorPoints
+				values = AnchorablePoints
 			},
 			relativePoint = {
 				name = 'Relative Point',
@@ -849,6 +826,22 @@ function Options:FullPositioning(frameName, ElementOptSet, get, set)
 				values = anchorPoints
 			}
 		}
+	}
+end
+
+---@param frameName UnitFrameName
+---@param ElementOptSet AceConfigOptionsTable
+---@param get function
+---@param set function
+function Options:FullPositioning(frameName, ElementOptSet, get, set)
+	ElementOptSet.args.position = {
+		name = L['Position'],
+		type = 'group',
+		order = 50,
+		inline = true,
+		get = get,
+		set = set,
+		args = {}
 	}
 end
 
@@ -1262,17 +1255,18 @@ function Options:Initialize()
 			end
 
 			if elementConfig.type == 'General' then
+				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'StatusBar' then
 				Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 			elseif elementConfig.type == 'Indicator' then
 				Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:IndicatorAddPosition(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Text' then
 				-- Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:IndicatorAddPosition(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Auras' then
 				Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:IndicatorAddPosition(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
 			end
 
 			--Call Elements Custom function

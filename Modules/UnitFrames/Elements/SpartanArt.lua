@@ -65,6 +65,8 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
+	OptionSet.args.position = nil
+
 	local Positions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
 	local function ArtUpdate(pos, option, val)
 		--Update memory

@@ -93,7 +93,13 @@ local function Options(frameName, OptionSet)
 		name = '',
 		type = 'group',
 		inline = true,
+		order = 10,
 		args = {
+			header = {
+				type = 'header',
+				name = 'General',
+				order = .1
+			},
 			type = {
 				name = L['Portrait type'],
 				type = 'select',

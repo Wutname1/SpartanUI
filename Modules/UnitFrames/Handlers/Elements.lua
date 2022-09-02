@@ -41,7 +41,6 @@ local DefaultSettings = {
 	position = {
 		anchor = 'CENTER',
 		relativeTo = 'Frame',
-		relativePoint = nil,
 		x = 0,
 		y = 0
 	},
