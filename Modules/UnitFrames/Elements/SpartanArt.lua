@@ -61,6 +61,7 @@ end
 local function Update(frame)
 	local element = frame.SpartanArt
 	local DB = element.DB
+	frame.SpartanArt.ForceUpdate(element)
 end
 
 ---@param unitName string
@@ -85,8 +86,7 @@ local function Options(unitName, OptionSet)
 				--Update the DB
 				UF.DB.UserSettings[UF.DB.Style][unitName].elements.SpartanArt[position][info[#info]] = val
 				--Update the screen
-				UF.Unit[unitName]:ElementUpdate('SpartanArt')
-				ArtUpdate(position, 'alpha', val)
+				UF.Unit:Get(unitName):ElementUpdate('SpartanArt')
 			end,
 			args = {
 				enabled = {
@@ -130,7 +130,7 @@ local function Options(unitName, OptionSet)
 
 	for Name, styleDB in pairs(UF.Style:GetList()) do
 		local data = styleDB.settings.artwork
-		for position, _ in pairs(Positions) do
+		for position, _ in pairs(ArtPositions) do
 			if data[position] then
 				local options = OptionSet.args[position].args
 				local dataObj = data[position]

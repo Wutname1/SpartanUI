@@ -127,13 +127,6 @@ function UF:OnInitialize()
 	UF.Database = SUI.SpartanUIDB:RegisterNamespace('UnitFrames', defaults)
 	UF.DB = UF.Database.profile
 
-	for frameKey, frameData in pairs(UF.DB.UserSettings[UF.DB.Style]) do
-		if frameData.artwork then
-			frameData.elements.SpartanArt = frameData.artwork
-			frameData.artwork = nil
-		end
-	end
-
 	LoadDB()
 end
 
