@@ -999,15 +999,15 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'war'
+								graphic = 'War'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'war'
+								graphic = 'War'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'war'
+								graphic = 'War'
 							}
 						},
 						Name = {
@@ -1038,15 +1038,15 @@ local DBdefault = {
 						SpartanArt = {
 							top = {
 								enabled = true,
-								graphic = 'war'
+								graphic = 'War'
 							},
 							bg = {
 								enabled = true,
-								graphic = 'war'
+								graphic = 'War'
 							},
 							bottom = {
 								enabled = true,
-								graphic = 'war'
+								graphic = 'War'
 							}
 						},
 						Name = {
