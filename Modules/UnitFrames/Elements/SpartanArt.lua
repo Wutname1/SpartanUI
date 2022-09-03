@@ -1,5 +1,5 @@
 local _G, SUI, L, UF = _G, SUI, SUI.L, SUI.UF
-local ArtPositions = {'top', 'bg', 'bottom', 'full'}
+local ArtPositions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
 
 ---@param frame table
 ---@param DB table
@@ -16,19 +16,6 @@ local function Build(frame, DB)
 	SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
 	SpartanArt.ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt
 
-	SpartanArt.PostUpdate = function(self, unit)
-		for _, pos in ipairs(ArtPositions) do
-			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
-
-			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
-				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
-				if ufArt[pos].UnitFrameCallback then
-					ufArt[pos].UnitFrameCallback(self:GetParent(), unit)
-				end
-			end
-		end
-	end
-
 	SpartanArt.PreUpdate = function(self, unit)
 		if not unit or unit == 'vehicle' then
 			return
@@ -39,15 +26,29 @@ local function Build(frame, DB)
 			return
 		end
 
-		for _, pos in ipairs(ArtPositions) do
+		for pos, _ in pairs(ArtPositions) do
 			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
 
 			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
 				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
 				self[pos].ArtData = ufArt[pos]
+				self[pos].ArtData.graphic = ArtSettings.graphic
 				--Grab the settings for the frame specifically if defined (classic skin)
 				if self[pos].ArtData.perUnit and self[pos].ArtData[unitName] then
 					self[pos].ArtData = self[pos].ArtData[unitName]
+				end
+			end
+		end
+	end
+
+	SpartanArt.PostUpdate = function(self, unit)
+		for pos, _ in pairs(ArtPositions) do
+			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
+
+			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
+				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
+				if ufArt[pos].UnitFrameCallback then
+					ufArt[pos].UnitFrameCallback(self:GetParent(), unit)
 				end
 			end
 		end
@@ -67,17 +68,7 @@ end
 local function Options(unitName, OptionSet)
 	OptionSet.args.position = nil
 
-	local Positions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
-	local function ArtUpdate(pos, option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].elements.SpartanArt[pos][option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.SpartanArt[pos][option] = val
-		--Update the screen
-		UF.Unit[unitName]:ElementUpdate('SpartanArt')
-	end
-
-	for position, DisplayName in pairs(Positions) do
+	for position, DisplayName in pairs(ArtPositions) do
 		OptionSet.args[position] = {
 			name = DisplayName,
 			type = 'group',
@@ -85,23 +76,29 @@ local function Options(unitName, OptionSet)
 			get = function(info)
 				return UF.CurrentSettings[unitName].elements.SpartanArt[position][info[#info]]
 			end,
+			set = function(info, val)
+				if val == 0 then
+					val = false
+				end
+				--Update memory
+				UF.CurrentSettings[unitName].elements.SpartanArt[position][info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][unitName].elements.SpartanArt[position][info[#info]] = val
+				--Update the screen
+				UF.Unit[unitName]:ElementUpdate('SpartanArt')
+				ArtUpdate(position, 'alpha', val)
+			end,
 			args = {
 				enabled = {
 					name = L['Enabled'],
 					type = 'toggle',
-					order = 1,
-					set = function(info, val)
-						ArtUpdate(position, 'enabled', val)
-					end
+					order = 1
 				},
 				graphic = {
 					name = L['Current Style'],
 					type = 'select',
 					order = 2,
-					values = {[''] = 'None'},
-					set = function(info, val)
-						ArtUpdate(position, 'graphic', val)
-					end
+					values = {[''] = 'None'}
 				},
 				style = {
 					name = L['Style'],
@@ -123,14 +120,7 @@ local function Options(unitName, OptionSet)
 							width = 'double',
 							min = 0,
 							max = 1,
-							step = .01,
-							set = function(info, val)
-								if val == 0 then
-									val = false
-								end
-
-								ArtUpdate(position, 'alpha', val)
-							end
+							step = .01
 						}
 					}
 				}
