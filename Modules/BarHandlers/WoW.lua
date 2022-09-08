@@ -8,6 +8,9 @@ local function OnInitialize(args)
 end
 
 local function OnEnable(args)
+	if StatusTrackingBarManager then
+		StatusTrackingBarManager:Hide()
+	end
 end
 
 local function Unlock(args)
@@ -16,4 +19,4 @@ end
 local function RefreshConfig(args)
 end
 
--- module:AddBarSystem('WoW', OnInitialize, OnEnable, nil, Unlock, RefreshConfig)
+module:AddBarSystem('WoW', OnInitialize, OnEnable, nil, Unlock, RefreshConfig)

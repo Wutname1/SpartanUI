@@ -143,9 +143,11 @@ function module:ShapeChange(shape)
 		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -4)
 	end
 
-	MinimapZoneText:SetShadowColor(0, 0, 0, 1)
-	MinimapZoneText:SetShadowOffset(1, -1)
-	MinimapZoneTextButton:SetFrameLevel(121)
+	if MinimapZoneTextButton then
+		MinimapZoneText:SetShadowColor(0, 0, 0, 1)
+		MinimapZoneText:SetShadowOffset(1, -1)
+		MinimapZoneTextButton:SetFrameLevel(121)
+	end
 
 	if HybridMinimap then
 		HybridMinimap.MapCanvas:SetUseMaskTexture(false)
@@ -363,6 +365,10 @@ function module:ModifyMinimapLayout()
 	MinimapBackdrop:SetFrameLevel(Minimap:GetFrameLevel())
 
 	-- Hide Blizzard Artwork
+	if MinimapCompassTexture then
+		MinimapCompassTexture:Hide()
+	end
+
 	if MinimapBorderTop then
 		MinimapBorderTop:Hide()
 		MinimapBorder:Hide()
@@ -533,15 +539,25 @@ function module:update(FullUpdate)
 
 	-- UserSettings item visibility
 	do
-		if MinimapZoomIn then
-			if (UserSettings.MapZoomButtons) then
+		if (UserSettings.MapZoomButtons) then
+			if Minimap.ZoomIn then
+				Minimap.ZoomIn:Hide()
+				Minimap.ZoomOut:Hide()
+			elseif MinimapZoomIn then
 				MinimapZoomIn:Hide()
 				MinimapZoomOut:Hide()
-			else
+			end
+		else
+			if Minimap.ZoomIn then
+				Minimap.ZoomIn:Show()
+				Minimap.ZoomOut:Show()
+			elseif MinimapZoomIn then
 				MinimapZoomIn:Show()
 				MinimapZoomOut:Show()
 			end
+		end
 
+		if MinimapZoomIn then
 			if UserSettings.northTag then
 				MinimapNorthTag:Show()
 			else

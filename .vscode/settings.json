@@ -319,7 +319,8 @@
     "UnregisterUnitWatch",
     "RegisterUnitWatch",
     "InCombatLockdown",
-    "MultiCastActionBarFrame"
+    "MultiCastActionBarFrame",
+    "MinimapCompassTexture"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

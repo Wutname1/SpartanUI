@@ -81,6 +81,9 @@ function module:OnInitialize()
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', defaults)
 	module.DB = module.Database.profile
+	if (not select(4, GetAddOnInfo('Bartender4'))) then
+		module.DB.BarSystem = 'WoW'
+	end
 	if not module.BarSystems[module.DB.BarSystem] then
 		module.DB.BarSystem = 'Bartender4'
 	end
