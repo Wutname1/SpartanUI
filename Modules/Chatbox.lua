@@ -285,7 +285,9 @@ function module:OnInitialize()
 
 	-- Create Popup Items
 	popup.editBox = StdUi:MultiLineBox(popup, 580, 120, '')
-	popup.editBox.editBox:SetFont(SUI:GetFontFace('chatbox'), 12)
+	if not SUI.IsDF then -- TODO: DF Release this should work fine. Why is it not working?
+		popup.editBox.editBox:SetFont(SUI:GetFontFace('chatbox'), 12)
+	end
 
 	-- Position
 	popup.editBox:SetPoint('TOPLEFT', popup, 'TOPLEFT', 10, -55)

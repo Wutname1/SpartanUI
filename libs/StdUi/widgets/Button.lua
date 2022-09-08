@@ -120,7 +120,7 @@ function StdUi:Button(parent, width, height, text, inherit)
 	local button = self:HighlightButton(parent, width, height, text, inherit) ---@type StdUi_Button
 	button.stdUi = self
 
-	button:SetHighlightTexture(nil)
+	button:SetHighlightTexture('Interface\\Addons\\SpartanUI\\libs\\StdUi\\media\\Empty.tga')
 
 	self:ApplyBackdrop(button)
 	self:HookDisabledBackdrop(button)
