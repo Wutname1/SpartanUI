@@ -1250,6 +1250,11 @@ function Options:Initialize()
 			elseif elementConfig.type == 'Auras' then
 				Options:IndicatorAddDisplay(frameName, ElementOptSet)
 				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				ElementOptSet.args.ComingSoon = {
+					type = 'header',
+					name = 'More Options coming soon later this month.',
+					order = 500
+				}
 			end
 
 			--Call Elements Custom function
