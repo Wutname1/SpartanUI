@@ -320,7 +320,8 @@
     "RegisterUnitWatch",
     "InCombatLockdown",
     "MultiCastActionBarFrame",
-    "MinimapCompassTexture"
+    "MinimapCompassTexture",
+    "WOW_PROJECT_WRATH_CLASSIC"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

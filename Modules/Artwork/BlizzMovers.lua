@@ -196,9 +196,11 @@ function module.BlizzMovers()
 	end
 
 	AlertFrame()
-	VehicleLeaveButton()
+	if not SUI.IsDF then
+		VehicleLeaveButton()
+	end
 
-	if SUI.IsRetail then
+	if SUI.IsRetail and not SUI.IsDF then
 		VehicleSeatIndicator()
 		TalkingHead()
 		AltPowerBar()

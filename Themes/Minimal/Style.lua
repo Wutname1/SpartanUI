@@ -63,8 +63,10 @@ function module:OnEnable()
 					TutorialFrameAlertButton:ClearAllPoints()
 					TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 				end
-				CastingBarFrame:ClearAllPoints()
-				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, 90)
+				if CastingBarFrame then
+					CastingBarFrame:ClearAllPoints()
+					CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, 90)
+				end
 			end
 		)
 

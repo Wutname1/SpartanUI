@@ -89,10 +89,10 @@ function module:SlidingTrays(StyleSettings)
 			local collapsed = CreateFrame('Frame', nil, tray)
 			collapsed:SetAllPoints()
 
-			local bgExpanded = expanded:CreateTexture(nil, 'BACKGROUND', expanded)
+			local bgExpanded = expanded:CreateTexture(nil, 'BACKGROUND')
 			bgExpanded:SetAllPoints()
 
-			local bgCollapsed = collapsed:CreateTexture(nil, 'BACKGROUND', collapsed)
+			local bgCollapsed = collapsed:CreateTexture(nil, 'BACKGROUND')
 			bgCollapsed:SetPoint('TOPLEFT', tray)
 			bgCollapsed:SetPoint('TOPRIGHT', tray)
 			bgCollapsed:SetHeight(18)
