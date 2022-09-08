@@ -639,7 +639,7 @@ function module:SetupChatboxes()
 			local BG = ChatFrame.ScrollToBottomButton:CreateTexture()
 			BG = ChatFrame.ScrollToBottomButton:CreateTexture(nil, 'ARTWORK')
 			BG:SetAllPoints(ChatFrame.ScrollToBottomButton)
-			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\ToBottomArrow')
+			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\bottomArrow')
 			BG:SetAlpha(.4)
 			ChatFrame.ScrollToBottomButton.BG = BG
 			ChatFrame.ScrollToBottomButton:ClearAllPoints()
@@ -647,15 +647,20 @@ function module:SetupChatboxes()
 			ChatFrame.ScrollToBottomButton:SetPoint('BOTTOMRIGHT', ChatFrame.ResizeButton, 'TOPRIGHT', -4, 0)
 		end
 
-		if SUI.IsClassic then
-			--Position the bottom button in classic to the same spot as retail
-			local bottombutton = _G[ChatFrameName .. 'ButtonFrameButtomButton']
-			if bottombutton then
-				bottombutton:ClearAllPoints()
-				bottombutton:SetParent(ChatFrame.Background)
-				bottombutton:SetPoint('BOTTOMLEFT', ChatFrame.Background, 'BOTTOMLEFT', 0, 0)
-				bottombutton:Show()
-			end
+		if not SUI.IsRetail then
+			ChatFrame.buttonFrame.downButton:Hide()
+			ChatFrame.buttonFrame.upButton:Hide()
+			local element = ChatFrame.buttonFrame.bottomButton
+			StripTextures(element)
+			local BG = element:CreateTexture()
+			BG = element:CreateTexture(nil, 'ARTWORK')
+			BG:SetAllPoints(element)
+			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\bottomArrow')
+			BG:SetAlpha(.6)
+			element.BG = BG
+			element:ClearAllPoints()
+			element:SetSize(20, 20)
+			element:SetPoint('BOTTOMRIGHT', ChatFrame, 'BOTTOMRIGHT', -4, 0)
 		end
 
 		--Skin the Tab
