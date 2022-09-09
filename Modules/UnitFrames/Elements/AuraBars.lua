@@ -113,6 +113,14 @@ local function Options(unitName, OptionSet)
 		UF.Unit[unitName]:ElementUpdate('AuraBars')
 	end
 	--local DB = UF.CurrentSettings[unitName].elements.AuraBars
+
+	OptionSet.args.Layout = {
+		name = '',
+		type = 'group',
+		order = 100,
+		inline = true,
+		args = {}
+	}
 end
 
 ---@type ElementSettings

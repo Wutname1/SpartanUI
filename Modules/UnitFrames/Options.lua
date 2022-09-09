@@ -244,6 +244,65 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				type = 'header',
 				order = .1,
 				name = L['Layout Configuration']
+			},
+			number = {
+				name = L['Number to show'],
+				type = 'range',
+				order = 20,
+				min = 1,
+				max = 30,
+				step = 1
+			},
+			showType = {
+				name = L['Show type'],
+				type = 'toggle',
+				order = 30
+			},
+			selfScale = {
+				order = 2,
+				type = 'range',
+				name = L['Scaled aura size'],
+				desc = L[
+					'Scale for auras that you casted or can Spellsteal, any number above 100% is bigger than default, any number below 100% is smaller than default.'
+				],
+				min = 0,
+				max = 3,
+				step = 0.10,
+				isPercent = true
+			},
+			spacing = {
+				name = L['Spacing'],
+				type = 'range',
+				order = 41,
+				min = 1,
+				max = 30,
+				step = 1
+			},
+			rows = {
+				name = L['Rows'],
+				type = 'range',
+				order = 50,
+				min = 1,
+				max = 30,
+				step = 1
+			},
+			growthx = {
+				name = L['Growth x'],
+				type = 'select',
+				order = 71,
+				values = {
+					['RIGHT'] = 'RIGHT',
+					['LEFT'] = 'LEFT'
+				}
+			},
+			growthy = {
+				name = L['Growth y'],
+				type = 'select',
+				order = 72,
+				values = {
+					['UP'] = 'UP',
+					['DOWN'] = 'DOWN'
+				}
 			}
 		}
 	}
@@ -975,7 +1034,7 @@ function Options:Initialize()
 					UF.Unit[frameName]:ElementUpdate(elementName)
 				end
 
-				Options:AddAuraFilters(frameName, ElementOptSet, FilterSet, FilterGet)
+				-- Options:AddAuraFilters(frameName, ElementOptSet, FilterSet, FilterGet)
 
 				ElementOptSet.args.ComingSoon = {
 					type = 'header',
