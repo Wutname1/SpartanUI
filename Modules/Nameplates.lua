@@ -210,6 +210,56 @@ local NamePlateFactory = function(frame, unit)
 		UF.Elements:Build(frame, 'Castbar', elementsDB.Castbar)
 		frame.Castbar:SetWidth(module.DB.width)
 		UF.Elements:Build(frame, 'PvPIndicator', elementsDB.PvPIndicator)
+		frame.PvPIndicator.Override = function(self, event, unit)
+			if (unit ~= self.unit) then
+				return
+			end
+			local factionColor = {
+				['Alliance'] = {0, 0, 1, 0.3},
+				['Horde'] = {1, 0, 0, 0.3},
+				['Neutral'] = {0, 0, 0, 0.5}
+			}
+			local settings = module.DB.elements
+			self.bg.solid:Hide()
+			self.bg.artwork.Neutral:Hide()
+			self.bg.artwork.Alliance:Hide()
+			self.bg.artwork.Horde:Hide()
+
+			if not settings.Background.enabled then
+				return
+			end
+
+			local factionGroup = UnitFactionGroup(unit) or 'Neutral'
+			if settings.Background.type == 'solid' then
+				self.bg.solid:Show()
+				if settings.Background.colorMode == 'faction' and factionGroup then
+					self.bg.solid:SetVertexColor(unpack(factionColor[factionGroup]))
+				elseif settings.Background.colorMode == 'reaction' then
+					local colors = SUIUF.colors.reaction[UnitReaction(unit, 'player')]
+					if colors then
+						if colors[1] == 0.9 and colors[2] == 0.7 then
+							self.bg.solid:SetVertexColor(.5, .5, .5, .5)
+						else
+							self.bg.solid:SetVertexColor(colors[1], colors[2], colors[3])
+						end
+					else
+						self.bg.solid:SetVertexColor(0, 0, 0)
+					end
+				else
+					self.bg.solid:SetVertexColor(0, 0, 0)
+				end
+				self.bg.solid:SetAlpha(settings.Background.alpha)
+			else
+				if (factionGroup) then
+					self.bg.artwork[factionGroup]:Show()
+					self.bg.artwork[factionGroup]:SetAlpha(settings.Background.alpha)
+				else
+					self.bg.artwork.Neutral:Show()
+					self.bg.artwork.Neutral:SetAlpha(settings.Background.alpha)
+				end
+			end
+		end
+
 		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
 
 		-- ClassIcon
