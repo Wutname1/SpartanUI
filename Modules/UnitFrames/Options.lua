@@ -233,16 +233,40 @@ end
 
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
-local function AddAuras(frameName, OptionSet, set, get)
-	local CurrentSettings = UF.CurrentSettings[frameName].elements.Auras
-
-	OptionSet.args.filters = {
-		name = L['Filters'],
+function Options:AddAuraLayout(frameName, OptionSet)
+	OptionSet.args.Layout = {
+		name = '',
 		type = 'group',
-		order = 500,
+		order = 100,
+		inline = true,
+		args = {
+			header = {
+				type = 'header',
+				order = .1,
+				name = L['Layout Configuration']
+			}
+		}
+	}
+end
+
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
+---@param set function
+---@param get function
+function Options:AddAuraFilters(frameName, OptionSet, set, get)
+	OptionSet.args.Filters = {
+		name = '',
+		type = 'group',
+		inline = true,
+		order = 200,
 		get = get,
 		set = set,
 		args = {
+			header = {
+				type = 'header',
+				order = .1,
+				name = 'Filter Configuration'
+			},
 			minDuration = {
 				order = 1,
 				type = 'range',
@@ -273,13 +297,8 @@ local function AddAuras(frameName, OptionSet, set, get)
 			raid = {
 				order = 4,
 				type = 'toggle',
-				name = function(info)
-					return buffType == 'buffs' and L['Show castable on other auras'] or L['Show curable/removable auras']
-				end,
-				desc = function(info)
-					return buffType == 'buffs' and L['Whether to show buffs that you cannot cast.'] or
-						L['Whether to show any debuffs you can remove, cure or steal.']
-				end,
+				name = L['Show curable/removable auras'],
+				desc = L['Whether to show any debuffs you can remove, cure or steal.'],
 				width = 'full'
 			},
 			boss = {
@@ -942,6 +961,22 @@ function Options:Initialize()
 			elseif elementConfig.type == 'Auras' then
 				Options:IndicatorAddDisplay(frameName, ElementOptSet)
 				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:AddAuraLayout(frameName, ElementOptSet)
+
+				local FilterGet = function(info)
+					return UF.CurrentSettings[frameName].elements[elementName].filters[info[#info]]
+				end
+				local FilterSet = function(info, val)
+					--Update memory
+					UF.CurrentSettings[frameName].elements[elementName].filters[info[#info]] = val
+					--Update the DB
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].filters[info[#info]] = val
+					--Update Screen
+					UF.Unit[frameName]:ElementUpdate(elementName)
+				end
+
+				Options:AddAuraFilters(frameName, ElementOptSet, FilterSet, FilterGet)
+
 				ElementOptSet.args.ComingSoon = {
 					type = 'header',
 					name = 'More Options coming soon later this month.',
