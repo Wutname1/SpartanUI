@@ -153,7 +153,7 @@ local function CreateOptionSet(frameName)
 				type = 'execute',
 				order = 1,
 				width = 'full',
-				-- disabled = (frameName == 'raid' or frameName == 'party' or frameName == 'boss' or frameName == 'arena'),
+				disabled = (frameName == 'raid' or frameName == 'party' or frameName == 'boss' or frameName == 'arena'),
 				func = function()
 					UF.Unit:ToggleForceShow(frameName)
 				end
