@@ -37,7 +37,7 @@ local function GroupBuilder(holder)
 		'showRaid',
 		UF.CurrentSettings.party.showRaid,
 		'showParty',
-		UF.CurrentSettings.party.showParty,
+		true,
 		'showPlayer',
 		UF.CurrentSettings.party.showPlayer,
 		'showSolo',
