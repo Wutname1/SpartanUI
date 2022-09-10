@@ -72,14 +72,16 @@ function UF:PositionFrame(unit)
 		end
 	else
 		for frameName, config in pairs(UF.Unit:GetFrameList()) do
-			local UnitFrame = UF.Unit:Get(frameName)
-			local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frameName])
+			if not config.isChild then
+				local UnitFrame = UF.Unit:Get(frameName)
+				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frameName])
 
-			if UnitFrame.position then
-				UnitFrame:position(point, anchor, secondaryPoint, x, y, false, true)
-			else
-				UnitFrame:ClearAllPoints()
-				UnitFrame:SetPoint(point, anchor, secondaryPoint, x, y)
+				if UnitFrame.position then
+					UnitFrame:position(point, anchor, secondaryPoint, x, y, false, true)
+				else
+					UnitFrame:ClearAllPoints()
+					UnitFrame:SetPoint(point, anchor, secondaryPoint, x, y)
+				end
 			end
 		end
 	end
@@ -142,8 +144,10 @@ function UF:OnEnable()
 	UF:PositionFrame()
 
 	-- Create movers
-	for unit, _ in pairs(UF.Unit:GetFrameList()) do
-		MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
+	for unit, config in pairs(UF.Unit:GetFrameList()) do
+		if not config.isChild then
+			MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
+		end
 	end
 
 	-- Build options
@@ -254,11 +258,13 @@ function UF:ScaleFrames(scale)
 		return
 	end
 
-	for unitName, _ in pairs(UF.Unit:GetFrameList()) do
-		local UFrame = UF.Unit:Get(unitName)
-		if UFrame and UFrame.mover then
-			local newScale = UFrame.mover.defaultScale * (scale + .08) -- Add .08 to use .92 (the default scale) as 1.
-			UFrame:scale(newScale)
+	for unitName, config in pairs(UF.Unit:GetFrameList()) do
+		if not config.isChild then
+			local UFrame = UF.Unit:Get(unitName)
+			if UFrame and UFrame.mover then
+				local newScale = UFrame.mover.defaultScale * (scale + .08) -- Add .08 to use .92 (the default scale) as 1.
+				UFrame:scale(newScale)
+			end
 		end
 	end
 end

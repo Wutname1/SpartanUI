@@ -19,7 +19,8 @@ local UFrameSettings = {
 
 ---@class UFrameConfig
 local config = {
-	IsGroup = false
+	IsGroup = false,
+	isChild = false
 }
 
 ---@class UFrameVisibility

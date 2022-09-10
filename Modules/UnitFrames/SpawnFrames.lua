@@ -41,6 +41,13 @@ local function CreateUnitFrame(self, unit)
 	elseif string.match(unit, 'arena') then
 		unit = 'arena'
 	end
+	if self.isChild then
+		self.childType = 'pet'
+		if self == _G[self:GetName() .. 'Target'] then
+			self.childType = 'target'
+		end
+	end
+
 	self.unitOnCreate = unit
 	self.elementList = {}
 
@@ -232,7 +239,7 @@ function UF:SpawnFrames()
 	for frameName, config in pairs(UF.Unit:GetFrameList()) do
 		if config.IsGroup then
 			UF.Unit[frameName] = UF.Unit:BuildGroup(frameName)
-		else
+		elseif not config.isChild then
 			UF.Unit[frameName] = SUIUF:Spawn(frameName, 'SUI_UF_' .. frameName)
 
 			-- Disable objects based on settings
@@ -338,11 +345,11 @@ function UF:SpawnFrames()
 end
 
 function UF:UpdateAll(event, ...)
-	for frameName, _ in pairs(UF.Unit:GetFrameList()) do
+	for frameName, config in pairs(UF.Unit:GetFrameList()) do
 		local frame = UF.Unit:Get(frameName)
 		if frame and frame.UpdateAll then
 			frame:UpdateAll()
-		else
+		elseif not config.isChild then
 			SUI:Error('Unable to find updater for ' .. frameName, 'Unit Frames')
 		end
 	end
