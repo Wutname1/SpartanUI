@@ -15,7 +15,8 @@ local Unit = {
 ---@param settings? UFrameSettings
 ---@param options? function
 ---@param groupbuilder? function
-function Unit:Add(frameName, builder, settings, options, groupbuilder)
+---@param updater? function
+function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
 	---@class SUI_UF_Unit_DB
 	local Defaults = {
 		enabled = true,
@@ -47,6 +48,7 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder)
 
 	FrameData[frameName] = {
 		builder = builder,
+		updater = updater,
 		settings = settings,
 		options = options,
 		groupbuilder = groupbuilder
@@ -62,6 +64,14 @@ function Unit:Add(frameName, builder, settings, options, groupbuilder)
 	if Unit.defaultConfigs[frameName].config.IsGroup then
 		Unit.GroupsLoaded[frameName] = Unit.defaultConfigs[frameName].config
 	end
+end
+
+---@param frame table
+function Unit:Update(frame)
+	if not FrameData[frame.unitOnCreate].updater then
+		return
+	end
+	FrameData[frame.unitOnCreate].updater(frame)
 end
 
 ---Build a group holder

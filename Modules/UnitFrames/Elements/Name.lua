@@ -3,7 +3,7 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	frame.Name = frame:CreateFontString()
+	frame.Name = frame.raised:CreateFontString(nil, 'OVERLAY')
 	SUI:FormatFont(frame.Name, DB.textSize, 'UnitFrames')
 	frame.Name:SetSize(frame:GetWidth(), 12)
 	frame.Name:SetJustifyH(DB.SetJustifyH)

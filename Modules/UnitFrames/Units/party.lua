@@ -57,7 +57,9 @@ local function GroupBuilder(holder)
 		'initial-anchor',
 		'TOPLEFT',
 		'oUF-initialConfigFunction',
-		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party'))
+		('self:SetWidth(%d) self:SetHeight(%d)'):format(UF.CurrentSettings.party.width, UF:CalculateHeight('party')),
+		'template',
+		'SUI_UNITPET, SUI_UNITTARGET'
 	)
 	holder.header:Show()
 	holder.header:SetPoint('TOPLEFT', holder, 'TOPLEFT')

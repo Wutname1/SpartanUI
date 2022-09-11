@@ -41,6 +41,7 @@ local function CreateUnitFrame(self, unit)
 	elseif string.match(unit, 'arena') then
 		unit = 'arena'
 	end
+	self.DB = UF.CurrentSettings[unit]
 	if self.isChild then
 		self.childType = 'pet'
 		if self == _G[self:GetName() .. 'Target'] then
@@ -55,16 +56,17 @@ local function CreateUnitFrame(self, unit)
 	local function UpdateSize()
 		if not InCombatLockdown() then
 			if self.scale then
-				self:scale(UF.CurrentSettings[unit].scale, true)
+				self:scale(self.DB.scale, true)
 			else
-				self:SetScale(UF.CurrentSettings[unit].scale)
+				self:SetScale(self.DB.scale)
 			end
-			self:SetSize(UF.CurrentSettings[unit].width, UF:CalculateHeight(unit))
+			self:SetSize(self.DB.width, UF:CalculateHeight(unit))
 		end
 	end
 
 	local function UpdateAll()
-		local elementsDB = UF.CurrentSettings[unit].elements
+		UF.Unit:Update(self)
+		local elementsDB = self.DB.elements
 		-- Check that its a frame
 		-- Loop all elements and update their status
 		for elementName, _ in pairs(self.elementList) do
@@ -111,7 +113,7 @@ local function CreateUnitFrame(self, unit)
 		if not frame[elementName] then
 			return
 		end
-		local data = UF.CurrentSettings[unit].elements[elementName]
+		local data = self.DB.elements[elementName]
 		local element = frame[elementName]
 		element.DB = data
 
@@ -188,12 +190,17 @@ local function CreateUnitFrame(self, unit)
 		end
 	end
 
+	self.raised = CreateFrame('Frame', nil, self)
+	local level = self:GetFrameLevel() + 100
+	self.raised:SetFrameLevel(level)
+	self.raised.__owner = self
+
 	self.UpdateAll = UpdateAll
 	self.ElementUpdate = ElementUpdate
 
 	UpdateSize()
 
-	local elementDB = UF.CurrentSettings[unit].elements
+	local elementDB = self.DB.elements
 	self.elementDB = elementDB
 
 	UF.Unit:BuildFrame(unit, self)
