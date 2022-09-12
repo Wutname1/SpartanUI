@@ -246,7 +246,7 @@ function UF:SpawnFrames()
 	for frameName, config in pairs(UF.Unit:GetFrameList()) do
 		if config.IsGroup then
 			UF.Unit[frameName] = UF.Unit:BuildGroup(frameName)
-		elseif not config.isChild then
+		else
 			UF.Unit[frameName] = SUIUF:Spawn(frameName, 'SUI_UF_' .. frameName)
 
 			-- Disable objects based on settings
@@ -298,32 +298,34 @@ function UF:SpawnFrames()
 
 	for groupName, _ in pairs(UF.Unit:GetFrameList(true)) do
 		local groupElement = UF.Unit:Get(groupName)
-		local firstElement = groupElement.header or groupElement.frames[1]
-		if firstElement then
-			local function GroupFrameUpdateAll(groupFrame)
-				if VisibilityCheck(groupName) and UF.CurrentSettings[groupName].enabled then
-					if firstElement.visibility then
-						RegisterStateDriver(firstElement, firstElement.visibility)
-					end
-					firstElement:Show()
-
-					for i, f in pairs(groupFrame.frames) do
-						if f.UpdateAll then
-							f:UpdateAll()
+		if groupElement then
+			local firstElement = groupElement.header or groupElement.frames[1]
+			if firstElement then
+				local function GroupFrameUpdateAll(groupFrame)
+					if VisibilityCheck(groupName) and UF.CurrentSettings[groupName].enabled then
+						if firstElement.visibility then
+							RegisterStateDriver(firstElement, firstElement.visibility)
 						end
-					end
-				else
-					UnregisterStateDriver(firstElement, 'visibility')
-					firstElement:Hide()
-				end
-			end
+						firstElement:Show()
 
-			groupElement.UpdateAll = GroupFrameUpdateAll
-			groupElement.ElementUpdate = GroupFrameElementUpdate
-			groupElement.Enable = GroupFrameEnable
-			groupElement.Disable = GroupFrameDisable
-			groupElement.EnableElement = GroupEnableElement
-			groupElement.DisableElement = GroupDisableElement
+						for i, f in pairs(groupFrame.frames) do
+							if f.UpdateAll then
+								f:UpdateAll()
+							end
+						end
+					else
+						UnregisterStateDriver(firstElement, 'visibility')
+						firstElement:Hide()
+					end
+				end
+
+				groupElement.UpdateAll = GroupFrameUpdateAll
+				groupElement.ElementUpdate = GroupFrameElementUpdate
+				groupElement.Enable = GroupFrameEnable
+				groupElement.Disable = GroupFrameDisable
+				groupElement.EnableElement = GroupEnableElement
+				groupElement.DisableElement = GroupDisableElement
+			end
 		end
 	end
 

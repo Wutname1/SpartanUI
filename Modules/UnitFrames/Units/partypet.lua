@@ -1,20 +1,29 @@
 local UF = SUI.UF
+local elementList = {
+	'Name',
+	'Health',
+	'SpartanArt',
+	'RaidTargetIndicator',
+	'Range',
+	'ThreatIndicator'
+}
 
 local function Builder(frame)
 	local elementDB = frame.elementDB
-	UF.Elements:Build(frame, 'Name', elementDB.Name)
-	UF.Elements:Build(frame, 'Health', elementDB.Health)
-	UF.Elements:Build(frame, 'SpartanArt', elementDB.SpartanArt)
-	UF.Elements:Build(frame, 'RaidTargetIndicator', elementDB.RaidTargetIndicator)
-	UF.Elements:Build(frame, 'Range', elementDB.Range)
-	UF.Elements:Build(frame, 'ThreatIndicator', elementDB.ThreatIndicator)
+	for _, elementName in pairs(elementList) do
+		UF.Elements:Build(frame, elementName, elementDB[elementName])
+	end
 	frame:SetParent(select(2, frame:GetPoint()))
+end
+
+local function GroupBuilder(holder)
+	holder.elementList = elementList
 end
 
 local function Updater(frame)
 	local db = frame.DB
 	if not InCombatLockdown() then
-		if db.enable then
+		if db.enabled then
 			frame:Enable()
 		else
 			frame:Disable()
@@ -47,8 +56,9 @@ local Settings = {
 		}
 	},
 	config = {
-		isChild = true
+		isChild = true,
+		IsGroup = true
 	}
 }
 
-UF.Unit:Add('partypet', Builder, Settings, nil, nil, Updater)
+UF.Unit:Add('partypet', Builder, Settings, nil, GroupBuilder, Updater)
