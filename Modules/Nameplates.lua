@@ -355,7 +355,6 @@ local NameplateCallback = function(self, event, unit)
 	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then
 		return
 	end
-	self.unit = unit
 
 	local elementDB = module.DB.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
