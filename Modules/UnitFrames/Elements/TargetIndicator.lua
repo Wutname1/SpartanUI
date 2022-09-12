@@ -1,0 +1,58 @@
+local UF = SUI.UF
+
+---@param frame table
+---@param DB? table
+local function Build(frame, DB)
+	local TargetIndicator = CreateFrame('Frame', 'BACKGROUND', frame)
+	TargetIndicator.bg1 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
+	TargetIndicator.bg2 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
+	TargetIndicator.bg1:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\DoubleArrow')
+	TargetIndicator.bg2:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\DoubleArrow')
+	TargetIndicator.bg1:SetPoint('RIGHT', frame, 'LEFT')
+	TargetIndicator.bg2:SetPoint('LEFT', frame, 'RIGHT')
+	TargetIndicator.bg2:SetTexCoord(1, 0, 1, 0)
+	TargetIndicator.bg1:SetSize(10, frame:GetHeight())
+	TargetIndicator.bg2:SetSize(10, frame:GetHeight())
+
+	TargetIndicator.bg1:Hide()
+	TargetIndicator.bg2:Hide()
+	frame.TargetIndicator = TargetIndicator
+end
+
+---@param frame table
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.TargetIndicator
+	local DB = settings or element.DB
+	if UnitIsUnit(frame.unit, 'target') and DB.ShowTarget then
+		-- the frame is the new target
+		element.bg1:Show()
+		element.bg2:Show()
+	elseif element.bg1:IsShown() then
+		element.bg1:Hide()
+		element.bg2:Hide()
+	end
+end
+
+---@param unitName string
+---@param OptionSet AceConfigOptionsTable
+---@param DB? table
+local function Options(unitName, OptionSet, DB)
+	local function OptUpdate(option, val)
+		--Update memory
+		UF.CurrentSettings[unitName].elements.TargetIndicator[option] = val
+		--Update the DB
+		UF.DB.UserSettings[UF.DB.Style][unitName].elements.TargetIndicator[option] = val
+		--Update the screen
+		UF.Unit:Get(unitName):ElementUpdate('TargetIndicator')
+	end
+	--local DB = UF.CurrentSettings[unitName].elements.TargetIndicator
+end
+
+local Settings = {
+	config = {
+		NoBulkUpdate = false
+	}
+}
+
+UF.Elements:Register('TargetIndicator', Build, Update, Options, Settings)

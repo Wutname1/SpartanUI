@@ -108,50 +108,52 @@ local function Build(frame, DB)
 end
 
 ---@param frame table
-local function Update(frame)
-	local DB = frame.Castbar.DB
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.Castbar
+	local DB = settings or element.DB
 
 	if SUI.IsRetail then
 		-- latency
 		if DB.latency then
-			frame.Castbar.Shield:Show()
+			element.Shield:Show()
 		else
-			frame.Castbar.Shield:Hide()
+			element.Shield:Hide()
 		end
 
 		-- spell name
 		if DB.text['1'].enabled then
-			frame.Castbar.Text:Show()
+			element.Text:Show()
 		else
-			frame.Castbar.Text:Hide()
+			element.Text:Hide()
 		end
 		-- spell timer
 		if DB.text['2'].enabled then
-			frame.Castbar.Time:Show()
+			element.Time:Show()
 		else
-			frame.Castbar.Time:Hide()
+			element.Time:Hide()
 		end
 	end
 
 	-- Spell icon
 	if DB.Icon.enabled then
-		frame.Castbar.Icon:Show()
+		element.Icon:Show()
 	else
-		frame.Castbar.Icon:Hide()
+		element.Icon:Hide()
 	end
-	frame.Castbar.Icon:ClearAllPoints()
-	frame.Castbar.Icon:SetPoint(
+	element.Icon:ClearAllPoints()
+	element.Icon:SetPoint(
 		DB.Icon.position.anchor,
-		frame.Castbar,
+		element,
 		DB.Icon.position.anchor,
 		DB.Icon.position.x,
 		DB.Icon.position.y
 	)
 
-	frame.Castbar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	frame.Castbar.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	frame.Castbar:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
-	frame.Castbar.Icon:SetSize(DB.Icon.size, DB.Icon.size)
+	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	element:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
+	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end
 
 ---@param frameName string

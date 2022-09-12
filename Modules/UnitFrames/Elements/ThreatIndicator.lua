@@ -1,4 +1,19 @@
 local UF = SUI.UF
+local elementList = {
+	---Basic
+	'Name',
+	'Health',
+	'Castbar',
+	'Power',
+	'Portrait',
+	'SpartanArt',
+	'Buffs',
+	'Debuffs',
+	'RaidTargetIndicator',
+	'Range',
+	'ThreatIndicator',
+	'RaidRoleIndicator'
+}
 
 ---@param frame table
 ---@param DB table

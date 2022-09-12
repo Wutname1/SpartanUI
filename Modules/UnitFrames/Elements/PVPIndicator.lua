@@ -87,24 +87,26 @@ local function Build(frame, DB)
 end
 
 ---@param frame table
-local function Update(frame)
-	local DB = frame.PvPIndicator.DB
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.PvPIndicator
+	local DB = settings or element.DB
 
 	for k, v in pairs({['Badge'] = 'BadgeBackup', ['Shadow'] = 'ShadowBackup'}) do
 		-- If badge is true but does not exsist create from backup
-		if DB[k] and frame.PvPIndicator[k] == nil then
-			frame.PvPIndicator[k] = frame.PvPIndicator[v]
-		elseif not DB[k] and frame.PvPIndicator[k] then
+		if DB[k] and element[k] == nil then
+			element[k] = element[v]
+		elseif not DB[k] and element[k] then
 			-- If badge is false but exsists remove it
-			frame.PvPIndicator[k]:Hide()
-			frame.PvPIndicator[k] = nil
+			element[k]:Hide()
+			element[k] = nil
 		end
 	end
 
 	if DB.enabled then
-		frame.PvPIndicator:Show()
+		element:Show()
 	else
-		frame.PvPIndicator:Hide()
+		element:Hide()
 	end
 end
 

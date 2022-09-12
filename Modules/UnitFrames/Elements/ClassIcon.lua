@@ -22,9 +22,10 @@ local function ElementBuild(frame, DB)
 end
 
 ---@param frame table
-local function ElementUpdate(frame)
-	local DB = frame.ClassIcon.DB
-
+---@param settings? table
+local function ElementUpdate(frame, settings)
+	local element = frame.ClassIcon
+	local DB = settings or element.DB
 	local reaction = UnitReaction(frame.unit, 'player')
 	if not reaction then
 		return
@@ -36,13 +37,13 @@ local function ElementUpdate(frame)
 			DB.VisibleOn == 'all') and
 			DB.enabled
 	 then
-		frame.ClassIcon:Show()
-		frame.ClassIcon.shadow:Show()
-		frame.ClassIcon:SetSize(DB.size, DB.size)
-		frame.ClassIcon:SetPoint(DB.position.anchor, frame, DB.position.anchor, DB.position.x, DB.position.y)
+		element:Show()
+		element.shadow:Show()
+		element:SetSize(DB.size, DB.size)
+		element:SetPoint(DB.position.anchor, frame, DB.position.anchor, DB.position.x, DB.position.y)
 	else
-		frame.ClassIcon:Hide()
-		frame.ClassIcon.shadow:Hide()
+		element:Hide()
+		element.shadow:Hide()
 	end
 end
 

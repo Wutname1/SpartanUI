@@ -111,8 +111,10 @@ local function Build(frame, DB)
 end
 
 ---@param frame table
-local function Update(frame)
-	local DB = frame.Health.DB
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.Health
+	local DB = settings or element.DB
 
 	--Update Health items
 	frame.Health.colorDisconnected = DB.colorDisconnected

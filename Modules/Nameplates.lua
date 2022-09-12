@@ -145,6 +145,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		frame.unitGUID = UnitGUID(unit)
+		frame.unitOnCreate = 'Nameplate'
 		frame.npcID = frame.unitGUID and select(6, strsplit('-', frame.unitGUID))
 
 		local elementsDB = module.DB.elements
@@ -210,6 +211,7 @@ local NamePlateFactory = function(frame, unit)
 		UF.Elements:Build(frame, 'Castbar', elementsDB.Castbar)
 		frame.Castbar:SetWidth(module.DB.width)
 		UF.Elements:Build(frame, 'PvPIndicator', elementsDB.PvPIndicator)
+		UF.Elements:Build(frame, 'TargetIndicator', elementsDB.TargetIndicator)
 		frame.PvPIndicator.Override = function(self, event, unit)
 			if (unit ~= self.unit) then
 				return
@@ -261,17 +263,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
-
-		-- ClassIcon
-		frame.ClassIcon = frame:CreateTexture(nil, 'BORDER')
-		frame.ClassIcon:SetSize(elementsDB.ClassIcon.size, elementsDB.ClassIcon.size)
-		frame.ClassIcon:SetPoint(
-			elementsDB.ClassIcon.position.anchor,
-			frame,
-			elementsDB.ClassIcon.position.anchor,
-			elementsDB.ClassIcon.position.x,
-			elementsDB.ClassIcon.position.y
-		)
+		UF.Elements:Build(frame, 'ClassIcon', elementsDB.ClassIcon)
 
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', unit .. 'Auras', frame)
@@ -296,20 +288,6 @@ local NamePlateFactory = function(frame, unit)
 		frame.RaidTargetIndicator:SetPoint('BOTTOM', frame.Health, 'TOPLEFT', 0, 0)
 
 		-- Target Indicator
-		local TargetIndicator = CreateFrame('Frame', 'BACKGROUND', frame)
-		TargetIndicator.bg1 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
-		TargetIndicator.bg2 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
-		TargetIndicator.bg1:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\DoubleArrow')
-		TargetIndicator.bg2:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\DoubleArrow')
-		TargetIndicator.bg1:SetPoint('RIGHT', frame, 'LEFT')
-		TargetIndicator.bg2:SetPoint('LEFT', frame, 'RIGHT')
-		TargetIndicator.bg2:SetTexCoord(1, 0, 1, 0)
-		TargetIndicator.bg1:SetSize(10, frame:GetHeight())
-		TargetIndicator.bg2:SetSize(10, frame:GetHeight())
-
-		TargetIndicator.bg1:Hide()
-		TargetIndicator.bg2:Hide()
-		frame.TargetIndicator = TargetIndicator
 
 		-- Quest Indicator
 		local QuestIndicator = frame:CreateTexture(nil, 'OVERLAY')
@@ -377,6 +355,7 @@ local NameplateCallback = function(self, event, unit)
 	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then
 		return
 	end
+	self.unit = unit
 
 	local elementDB = module.DB.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
@@ -395,14 +374,9 @@ local NameplateCallback = function(self, event, unit)
 		NameplateList[self:GetName()] = false
 	end
 
-	-- Update target Indicator
-	if UnitIsUnit(unit, 'target') and module.DB.ShowTarget then
-		-- the frame is the new target
-		self.TargetIndicator.bg1:Show()
-		self.TargetIndicator.bg2:Show()
-	elseif self.TargetIndicator.bg1:IsShown() then
-		self.TargetIndicator.bg1:Hide()
-		self.TargetIndicator.bg2:Hide()
+	for element, _ in pairs(self.elementList) do
+		self[element].DB = elementDB[element]
+		UF.Elements:Update(self, element, elementDB[element])
 	end
 
 	for _, item in ipairs(ElementList) do
@@ -415,29 +389,6 @@ local NameplateCallback = function(self, event, unit)
 
 	-- Update elements
 	UpdateElementState(self)
-
-	-- Update class icons
-	local VisibleOn = module.DB.elements.ClassIcon.visibleOn
-	local reaction = UnitReaction(unit, 'player')
-
-	if
-		((reaction <= 2 and VisibleOn == 'hostile') or (reaction >= 3 and VisibleOn == 'friendly') or
-			(UnitPlayerControlled(unit) and VisibleOn == 'PlayerControlled') or
-			VisibleOn == 'all') and
-			module.DB.elements.ClassIcon.enabled
-	 then
-		self:EnableElement('ClassIcon')
-		self.ClassIcon:SetSize(elementDB.ClassIcon.size, elementDB.ClassIcon.size)
-		self.ClassIcon:SetPoint(
-			elementDB.ClassIcon.position.anchor,
-			self,
-			elementDB.ClassIcon.position.anchor,
-			elementDB.ClassIcon.position.x,
-			elementDB.ClassIcon.position.y
-		)
-	else
-		self:DisableElement('ClassIcon')
-	end
 
 	-- Update Player Icons
 	if UnitIsUnit(unit, 'player') and event == 'NAME_PLATE_UNIT_ADDED' then
@@ -629,7 +580,7 @@ function module:OnInitialize()
 				ClassIcon = {
 					enabled = false,
 					size = 20,
-					visibleOn = 'PlayerControlled',
+					VisibleOn = 'PlayerControlled',
 					position = {
 						anchor = 'TOP',
 						x = 0,

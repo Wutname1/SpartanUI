@@ -39,8 +39,10 @@ local function Build(frame, DB)
 end
 
 ---@param frame table
-local function Update(frame)
-	local DB = frame.Power.DB
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.Power
+	local DB = settings or element.DB
 	if DB.PowerPrediction then
 		frame:EnableElement('PowerPrediction')
 	else
