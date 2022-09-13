@@ -602,18 +602,16 @@ local DBdefault = {
 				},
 				pet = {
 					elements = {
-						Auras = {
-							Buffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
-							},
-							Debuffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
+						Buffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								y = 22
 							}
 						},
 						Health = {
@@ -664,18 +662,16 @@ local DBdefault = {
 				},
 				targettarget = {
 					elements = {
-						Auras = {
-							Buffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
-							},
-							Debuffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
+						Buffs = {
+							enabled = true,
+							position = {
+								y = 22
+							}
+						},
+						Debuffs = {
+							enabled = true,
+							position = {
+								y = 22
 							}
 						},
 						Health = {
