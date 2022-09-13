@@ -373,17 +373,17 @@ local NameplateCallback = function(self, event, unit)
 		NameplateList[self:GetName()] = false
 	end
 
-	for element, _ in pairs(self.elementList) do
-		self[element].DB = elementDB[element]
-		UF.Elements:Update(self, element, elementDB[element])
-	end
-
 	for _, item in ipairs(ElementList) do
 		if self[item] and elementDB[item].enabled then
 			self:EnableElement(item)
 		else
 			self:DisableElement(item)
 		end
+	end
+
+	for element, _ in pairs(self.elementList) do
+		self[element].DB = elementDB[element]
+		UF.Elements:Update(self, element, elementDB[element])
 	end
 
 	-- Update elements
@@ -535,6 +535,7 @@ function module:OnInitialize()
 				ThreatIndicator = {},
 				Castbar = {
 					enabled = true,
+					width = false,
 					height = 5,
 					offset = -6,
 					interruptable = true,
@@ -825,7 +826,7 @@ function module:BuildOptions()
 							}
 						}
 					},
-					CastBar = {
+					Castbar = {
 						name = L['Cast bar'],
 						type = 'group',
 						order = 5,
@@ -1001,7 +1002,7 @@ function module:BuildOptions()
 									module:UpdateNameplates()
 								end
 							},
-							visibleOn = {
+							VisibleOn = {
 								name = L['Show on'],
 								type = 'select',
 								order = 2,
@@ -1012,10 +1013,10 @@ function module:BuildOptions()
 									['all'] = 'All'
 								},
 								get = function(info)
-									return module.DB.elements.ClassIcon.visibleOn
+									return module.DB.elements.ClassIcon.VisibleOn
 								end,
 								set = function(info, val)
-									module.DB.elements.ClassIcon.visibleOn = val
+									module.DB.elements.ClassIcon.VisibleOn = val
 									module:UpdateNameplates()
 								end
 							},
