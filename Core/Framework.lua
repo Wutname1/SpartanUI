@@ -414,18 +414,21 @@ local DBdefault = {
 					width = 153,
 					scale = 0.91,
 					elements = {
-						Auras = {
-							Buffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
-							},
-							Debuffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
+						Buffs = {
+							position = {
+								y = 8,
+								relativeTo = 'Name',
+								relativePoint = 'TOPLEFT',
+								anchor = 'BOTTOMLEFT',
+								x = -23
+							}
+						},
+						Debuffs = {
+							position = {
+								y = 8,
+								relativeTo = 'Name',
+								anchor = 'BOTTOMRIGHT',
+								relativePoint = 'TOPRIGHT'
 							}
 						},
 						Castbar = {
@@ -516,18 +519,21 @@ local DBdefault = {
 					width = 153,
 					scale = 0.91,
 					elements = {
-						Auras = {
-							Buffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
-							},
-							Debuffs = {
-								enabled = true,
-								position = {
-									y = 22
-								}
+						Buffs = {
+							position = {
+								y = 8,
+								relativeTo = 'Name',
+								relativePoint = 'TOPLEFT',
+								anchor = 'BOTTOMLEFT',
+								x = -23
+							}
+						},
+						Debuffs = {
+							position = {
+								y = 8,
+								relativeTo = 'Name',
+								anchor = 'BOTTOMRIGHT',
+								relativePoint = 'TOPRIGHT'
 							}
 						},
 						Health = {
