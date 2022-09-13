@@ -14,20 +14,16 @@ local function Build(frame, DB)
 	SpartanArt.bg = SpartanArt:CreateTexture(nil, 'BACKGROUND')
 	SpartanArt.bottom = SpartanArt:CreateTexture(nil, 'BORDER')
 	SpartanArt.full = SpartanArt:CreateTexture(nil, 'BACKGROUND')
-	SpartanArt.ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt
+	SpartanArt.ArtSettings = frame.DB
 
 	SpartanArt.PreUpdate = function(self, unit)
 		if not unit or unit == 'vehicle' then
 			return
 		end
-		-- Party frame shows 'player' instead of party 1-5
-		if not UF.CurrentSettings[unitName] then
-			SUI:Error(unitName .. ' - NO SETTINGS FOUND')
-			return
-		end
+		SpartanArt.ArtSettings = self.DB
 
 		for pos, _ in pairs(ArtPositions) do
-			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
+			local ArtSettings = self.DB[pos]
 
 			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
 				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
@@ -43,7 +39,7 @@ local function Build(frame, DB)
 
 	SpartanArt.PostUpdate = function(self, unit)
 		for pos, _ in pairs(ArtPositions) do
-			local ArtSettings = UF.CurrentSettings[unitName].elements.SpartanArt[pos]
+			local ArtSettings = self.DB[pos]
 
 			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
 				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
@@ -61,7 +57,8 @@ end
 local function Update(frame)
 	local element = frame.SpartanArt
 	local DB = element.DB
-	frame.SpartanArt.ForceUpdate(element)
+	element.ArtSettings = element.DB
+	element.ForceUpdate(element)
 end
 
 ---@param unitName string

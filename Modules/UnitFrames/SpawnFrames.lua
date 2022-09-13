@@ -65,6 +65,9 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	local function UpdateAll()
+		self.DB = UF.CurrentSettings[self.unitOnCreate]
+		UpdateSize()
+
 		UF.Unit:Update(self)
 		local elementsDB = self.DB.elements
 		-- Check that its a frame
@@ -102,7 +105,6 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- Tell everything to update to get current data
-		UpdateSize()
 		self:UpdateAllElements('OnUpdate')
 		self:UpdateTags()
 	end
