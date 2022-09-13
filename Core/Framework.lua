@@ -524,6 +524,8 @@ local DBdefault = {
 					scale = 0.91,
 					elements = {
 						Buffs = {
+							rows = 4,
+							growthy = 'UP',
 							position = {
 								y = 8,
 								relativeTo = 'Name',
@@ -533,6 +535,8 @@ local DBdefault = {
 							}
 						},
 						Debuffs = {
+							rows = 4,
+							growthy = 'UP',
 							position = {
 								y = 8,
 								relativeTo = 'Name',
@@ -613,9 +617,13 @@ local DBdefault = {
 							}
 						},
 						Debuffs = {
-							enabled = true,
+							rows = 4,
+							growthy = 'UP',
 							position = {
-								y = 22
+								y = 8,
+								relativeTo = 'Name',
+								anchor = 'BOTTOMRIGHT',
+								relativePoint = 'TOPRIGHT'
 							}
 						},
 						Health = {
@@ -667,10 +675,10 @@ local DBdefault = {
 				targettarget = {
 					elements = {
 						Buffs = {
-							enabled = false,
+							enabled = false
 						},
 						Debuffs = {
-							enabled = false,
+							enabled = false
 						},
 						Health = {
 							offset = 2,

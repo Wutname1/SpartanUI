@@ -37,15 +37,16 @@ end
 
 ---@type UFrameSettings
 local Settings = {
-	width = 100,
+	width = 80,
 	elements = {
 		Health = {
-			height = 30,
+			height = 25,
 			text = {
 				['1'] = {
 					text = '[perhp]%',
 					position = {
-						y = -4
+						y = 2,
+						anchor = 'BOTTOM'
 					}
 				}
 			}
@@ -53,6 +54,7 @@ local Settings = {
 		Name = {
 			enabled = true,
 			height = 10,
+			textSize = 10,
 			text = '[SUI_ColorClass][name]',
 			position = {
 				y = 0
