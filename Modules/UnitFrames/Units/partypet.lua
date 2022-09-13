@@ -36,23 +36,19 @@ end
 
 ---@type UFrameSettings
 local Settings = {
-	width = 100,
+	width = 80,
 	elements = {
 		Health = {
 			height = 25,
 			text = {
 				['1'] = {
-					text = '[perhp]%'
+					text = '[perhp]%',
+					position = {}
 				}
 			}
 		},
 		Name = {
-			enabled = false,
-			height = 10,
-			text = '[name]',
-			position = {
-				y = 0
-			}
+			enabled = false
 		}
 	},
 	config = {
