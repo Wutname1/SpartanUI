@@ -1,4 +1,4 @@
-## Interface: 11402
+## Interface: 11403
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
@@ -28,14 +28,12 @@ libs\LibCompress\LibCompress.lua
 libs\LibBase64-1.0\LibBase64-1.0.lua
 libs\WagoAnalyticsShim\Shim.lua
 libs\LibSharedMedia-3.0\lib.xml
-libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
-libs\LibHealComm-4.0\LibHealComm-4.0.lua
-libs\LibClassicDurations\LibClassicDurations.xml
-libs\LibClassicCasterino\LibClassicCasterino.lua
+libs\Non-Retail\LibHealComm-4.0\LibHealComm-4.0.lua
+libs\Non-Retail\LibClassicDurations\LibClassicDurations.xml
+libs\Non-Retail\LibClassicCasterino\LibClassicCasterino.lua
 libs\oUF\oUF_Classic.xml
-libs\oUF_SpartanArt\oUF_SpartanArt.lua
 libs\oUF_Plugins\Loader.xml
 
 # Localization
@@ -45,13 +43,4 @@ lang\localization.xml
 core\Framework.lua
 modules\LoadAll.xml
 core\Framework.xml
-
-# Load Styles
-Themes\Classic\Style.xml
-Themes\War\Style.xml
-Themes\Arcane\Style.xml
-Themes\Fel\Style.xml
-Themes\Digital\Style.xml
-Themes\Minimal\Style.xml
-Themes\Transparent\Style.xml
-Themes\Tribal\Style.xml
+Themes\Themes.xml

@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file='oUF_SpartanArt\oUF_SpartanArt.lua' />
 	<Script file='oUF_AuraBars.lua' />
 	<Script file='oUF_AuraHighlight.lua' />
 	<Script file='oUF_AuraWatch.lua' />

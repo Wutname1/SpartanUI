@@ -1,4 +1,4 @@
-## Interface: 100000
+## Interface: 100002
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
@@ -29,11 +29,9 @@ libs\LibBase64-1.0\LibBase64-1.0.lua
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\WagoAnalyticsShim\Shim.lua
 libs\LibSharedMedia-3.0\lib.xml
-libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
 libs\oUF\oUF.xml
-libs\oUF_SpartanArt\oUF_SpartanArt.lua
 libs\oUF_Plugins\Loader.xml
 
 # Localization
@@ -43,13 +41,4 @@ lang\localization.xml
 core\Framework.lua
 modules\LoadAll.xml
 core\Framework.xml
-
-# Load Styles
-Themes\Classic\Style.xml
-Themes\War\Style.xml
-Themes\Arcane\Style.xml
-Themes\Fel\Style.xml
-Themes\Digital\Style.xml
-Themes\Minimal\Style.xml
-Themes\Transparent\Style.xml
-Themes\Tribal\Style.xml
+Themes\Themes.xml
