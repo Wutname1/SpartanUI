@@ -28,6 +28,7 @@ libs\LibCompress\LibCompress.lua
 libs\LibBase64-1.0\LibBase64-1.0.lua
 libs\WagoAnalyticsShim\Shim.lua
 libs\LibSharedMedia-3.0\lib.xml
+libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
 libs\Non-Retail\LibHealComm-4.0\LibHealComm-4.0.lua

@@ -29,6 +29,7 @@ libs\LibBase64-1.0\LibBase64-1.0.lua
 libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\WagoAnalyticsShim\Shim.lua
 libs\LibSharedMedia-3.0\lib.xml
+libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
 libs\oUF\oUF.xml
