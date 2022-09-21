@@ -126,11 +126,7 @@ end
 
 ---@param ElementName string
 ---@return ElementSettings --False if the element did not provide a Size updater
-function Elements:GetConfig(ElementName, frame)
-	if frame then
-		local unit = frame.unitOnCreate
-	end
-
+function Elements:GetConfig(ElementName)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
 		return UF.Elements.List[ElementName].ElementSettings
 	else
