@@ -18,6 +18,9 @@ local Conditions = {
 }
 
 local function UpdateSize()
+	if SUI.IsDF then
+		return
+	end
 	local screenHeight = GetScreenHeight()
 	local FrameHeight = min((screenHeight - (screenHeight - (_G[frameName]:GetTop() or 0))), module.DB.height)
 
@@ -285,7 +288,9 @@ function module:OnEnable()
 	end
 
 	Options()
-	MakeMoveable()
+	if not SUI.IsDF then
+		MakeMoveable()
+	end
 end
 
 function module:OnDisable()

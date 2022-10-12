@@ -191,16 +191,14 @@ local function VehicleLeaveButton()
 end
 
 function module.BlizzMovers()
-	if SUI.IsClassic then
+	if SUI.IsClassic or SUI.IsDF then
 		return
 	end
 
 	AlertFrame()
-	if not SUI.IsDF then
-		VehicleLeaveButton()
-	end
+	VehicleLeaveButton()
 
-	if SUI.IsRetail and not SUI.IsDF then
+	if SUI.IsRetail then
 		VehicleSeatIndicator()
 		TalkingHead()
 		AltPowerBar()

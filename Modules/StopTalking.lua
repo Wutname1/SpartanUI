@@ -48,62 +48,61 @@ local function Options()
 	}
 end
 
+local function SetupRedirect()
+	-- Copy the Blizzard function local
+	local TalkingHeadFrame_PlayCurrent_Blizz = TalkingHeadFrame_PlayCurrent
+
+	--Setup our catch function
+	local NewPlayFunc = function()
+		if SUI:IsModuleEnabled('StopTalking') then
+			local displayInfo, cameraID, vo, duration, lineNumber, numLines, name, text, isNewTalkingHead =
+				C_TalkingHead.GetCurrentLineInfo()
+			if not vo then
+				return
+			end
+			local persist = module.DB.persist
+			if (module.DB.lines[vo] and persist) or (not persist and HeardLines[vo]) then
+				-- Heard this before.
+				if module.DB.chatOutput and name and text then
+					SUI:Print(name)
+					print(text)
+				end
+
+				return
+			else
+				-- New, flag it as heard.
+				if persist then
+					module.DB.lines[vo] = true
+				else
+					HeardLines[vo] = true
+				end
+			end
+		end
+
+		--Run the archived blizzard function
+		TalkingHeadFrame_PlayCurrent_Blizz()
+	end
+
+	-- Assign our catch function
+	TalkingHeadFrame_PlayCurrent = NewPlayFunc
+end
+
 function module:OnEnable()
 	if SUI.DB.DisabledComponents.StopTalking then
 		return
 	end
 
-	local function SetupRedirect(args)
-		-- Copy the Blizzard function local
-		local TalkingHeadFrame_PlayCurrent_Blizz = TalkingHeadFrame_PlayCurrent
-
-		--Setup our catch function
-		local NewPlayFunc = function()
-			if SUI:IsModuleEnabled('StopTalking') then
-				local displayInfo, cameraID, vo, duration, lineNumber, numLines, name, text, isNewTalkingHead =
-					C_TalkingHead.GetCurrentLineInfo()
-				if not vo then
-					return
-				end
-				local persist = module.DB.persist
-				if (module.DB.lines[vo] and persist) or (not persist and HeardLines[vo]) then
-					-- Heard this before.
-					if module.DB.chatOutput and name and text then
-						SUI:Print(name)
-						print(text)
-					end
-
-					return
-				else
-					-- New, flag it as heard.
-					if persist then
-						module.DB.lines[vo] = true
-					else
-						HeardLines[vo] = true
-					end
-				end
-			end
-
-			--Run the archived blizzard function
-			TalkingHeadFrame_PlayCurrent_Blizz()
-		end
-
-		-- Assign our catch function
-		TalkingHeadFrame_PlayCurrent = NewPlayFunc
-	end
-
 	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
 		SetupRedirect()
 	else
-		--We want the mover to be available immediately, so we load it ourselves
-		local f = CreateFrame('Frame')
-		f:RegisterEvent('PLAYER_ENTERING_WORLD')
-		f:SetScript(
-			'OnEvent',
-			function(frame, event)
-				frame:UnregisterEvent(event)
-				_G.TalkingHead_LoadUI()
-				SetupRedirect()
+		module:RegisterEvent(
+			'PLAYER_ENTERING_WORLD',
+			function(event)
+				module:UnregisterEvent(event)
+				if TalkingHead_LoadUI then
+					TalkingHead_LoadUI()
+					SetupRedirect()
+				end
 			end
 		)
 	end

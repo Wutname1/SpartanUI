@@ -328,36 +328,42 @@ function module:ModifyMinimapLayout()
 	end
 
 	-- Retail Version stuff
-	if SUI.IsRetail then
+	-- if SUI.IsRetail then
+	if TimeManagerClockButton then
 		TimeManagerClockButton:GetRegions():Hide() -- Hide the border
 		TimeManagerClockButton:ClearAllPoints()
 		TimeManagerClockButton:SetPoint('TOP', Minimap, 'BOTTOM', 0, 20)
+	end
 
+	if MiniMapInstanceDifficulty then
 		MiniMapInstanceDifficulty:ClearAllPoints()
 		MiniMapInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)
+	end
 
+	if GuildInstanceDifficulty then
 		GuildInstanceDifficulty:ClearAllPoints()
 		GuildInstanceDifficulty:SetPoint('TOPLEFT', Minimap, 4, 22)
-
-		if GarrisonLandingPageMinimapButton then
-			GarrisonLandingPageMinimapButton:ClearAllPoints()
-			GarrisonLandingPageMinimapButton:SetSize(35, 35)
-			GarrisonLandingPageMinimapButton:SetPoint('RIGHT', Minimap, 18, -25)
-		end
-
-		SUI_MiniMapIcon = CreateFrame('Button', 'SUI_MiniMapIcon', Minimap)
-		SUI_MiniMapIcon:SetSize(1, 1)
-		SUI_MiniMapIcon:SetScript(
-			'OnEvent',
-			function(self, event, ...)
-				GarrisonLandingPageMinimapButton:Show()
-				GarrisonLandingPageMinimapButton:SetAlpha(1)
-			end
-		)
-		SUI_MiniMapIcon:RegisterEvent('GARRISON_MISSION_FINISHED')
-		SUI_MiniMapIcon:RegisterEvent('GARRISON_INVASION_AVAILABLE')
-		SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
 	end
+
+	if GarrisonLandingPageMinimapButton then
+		GarrisonLandingPageMinimapButton:ClearAllPoints()
+		GarrisonLandingPageMinimapButton:SetSize(35, 35)
+		GarrisonLandingPageMinimapButton:SetPoint('RIGHT', Minimap, 18, -25)
+	end
+
+	-- SUI_MiniMapIcon = CreateFrame('Button', 'SUI_MiniMapIcon', Minimap)
+	-- SUI_MiniMapIcon:SetSize(1, 1)
+	-- SUI_MiniMapIcon:SetScript(
+	-- 	'OnEvent',
+	-- 	function(self, event, ...)
+	-- 		GarrisonLandingPageMinimapButton:Show()
+	-- 		GarrisonLandingPageMinimapButton:SetAlpha(1)
+	-- 	end
+	-- )
+	-- SUI_MiniMapIcon:RegisterEvent('GARRISON_MISSION_FINISHED')
+	-- SUI_MiniMapIcon:RegisterEvent('GARRISON_INVASION_AVAILABLE')
+	-- SUI_MiniMapIcon:RegisterEvent('SHIPMENT_UPDATE')
+	-- end
 
 	-- Attach Minimap Backdrop to the minimap it's self
 	MinimapBackdrop:ClearAllPoints()

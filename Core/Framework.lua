@@ -10,7 +10,7 @@ SUI.AutoOpenErrors = true
 SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
 SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
 SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
-SUI.IsDF = select(4, GetBuildInfo()) > 100000 ---@type boolean
+SUI.IsDF = select(4, GetBuildInfo()) >= 100000 ---@type boolean
 SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
