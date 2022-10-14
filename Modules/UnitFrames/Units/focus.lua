@@ -1,13 +1,25 @@
 local UF = SUI.UF
+local elementList = {
+	---Basic
+	'Name',
+	'Health',
+	'Castbar',
+	'Power',
+	'Portrait',
+	'SpartanArt',
+	'Buffs',
+	'Debuffs',
+	'RaidTargetIndicator',
+	'Range',
+	'ThreatIndicator',
+	'RaidRoleIndicator'
+}
 
 local function Builder(frame)
 	local elementDB = frame.elementDB
-	for elementName, _ in pairs(UF.Elements.List) do
-		if not elementDB[elementName] then
-			SUI:Error('MISSING: ' .. elementName .. ' Type:' .. type(elementName))
-		else
-			UF.Elements:Build(frame, elementName, elementDB[elementName])
-		end
+
+	for _, elementName in pairs(elementList) do
+		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 end
 

@@ -101,7 +101,7 @@ local function Build(frame, DB)
 
 	frame.Castbar = cast
 
-	if frame.unitOnCreate == 'player' then
+	if CastingBarFrame_SetUnit and frame.unitOnCreate == 'player' then
 		CastingBarFrame_SetUnit(_G['CastingBarFrame'])
 		CastingBarFrame_SetUnit(_G['PetCastingBarFrame'])
 	end

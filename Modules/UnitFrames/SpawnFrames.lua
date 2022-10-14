@@ -119,7 +119,7 @@ local function CreateUnitFrame(self, unit)
 		local element = frame[elementName]
 		element.DB = data
 
-		if data.enabled then
+		if data.enabled and frame.IsBuilt then
 			frame:EnableElement(elementName)
 		else
 			frame:DisableElement(elementName)
@@ -222,6 +222,7 @@ local function CreateUnitFrame(self, unit)
 	--Setup unitframes tooltip hook
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
+	self.IsBuilt = true
 
 	return self
 end

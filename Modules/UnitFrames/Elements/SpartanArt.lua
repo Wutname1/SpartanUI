@@ -57,7 +57,7 @@ end
 local function Update(frame)
 	local element = frame.SpartanArt
 	local DB = element.DB
-	if not DB.enabled then
+	if not DB.enabled or not element.ForceUpdate then
 		return
 	end
 	element.ArtSettings = element.DB
