@@ -671,13 +671,7 @@ function module:SetupChatboxes()
 		ChatFrameTab.Text:ClearAllPoints()
 		ChatFrameTab.Text:SetPoint('CENTER', ChatFrameTab)
 
-		if not SUI.IsDF then
-			for _, v in ipairs({'left', 'middle', 'right'}) do
-				ChatFrameTab[v .. 'HighlightTexture']:SetTexture(nil)
-				ChatFrameTab[v .. 'SelectedTexture']:SetTexture(nil)
-				ChatFrameTab[v .. 'Texture']:SetTexture(nil)
-			end
-		else
+		if SUI.IsDF then
 			local sides = {'Left', 'Middle', 'Right'}
 			local modes = {'Active', 'Highlight', ''}
 
@@ -685,6 +679,12 @@ function module:SetupChatboxes()
 				for _, side in ipairs(sides) do
 					ChatFrameTab[mode .. side]:SetTexture(nil)
 				end
+			end
+		else
+			for _, v in ipairs({'left', 'middle', 'right'}) do
+				ChatFrameTab[v .. 'HighlightTexture']:SetTexture(nil)
+				ChatFrameTab[v .. 'SelectedTexture']:SetTexture(nil)
+				ChatFrameTab[v .. 'Texture']:SetTexture(nil)
 			end
 		end
 
