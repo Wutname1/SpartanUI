@@ -202,7 +202,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						order = 2,
 						func = function()
 							MoverFrame.parent:scale()
-							MoveIt.DB.movers[MoverName].AdjustedScale = false
+							MoveIt.DB.movers[MoverName].AdjustedScale = nil
 							--Analytics
 							SUI.Analytics:Set(MoveIt, MoverName .. '_Scale', false)
 						end
@@ -272,23 +272,23 @@ function MoveIt:Reset(name, onlyPosition)
 		print('Moved frames reset!')
 	else
 		local frame = _G['SUI_Mover_' .. name]
-		if frame and MoveIt:IsMoved(name) then
-			-- Reset the scale
-			if MoveIt.DB.movers[name].AdjustedScale and not onlyPosition then
-				MoveIt.DB.movers[name].AdjustedScale = nil
-
-				frame:SetScale(frame.defaultScale or 1)
-				frame.parent:SetScale(frame.defaultScale or 1)
-				frame.ScaledText:Hide()
-			end
-
+		if frame and MoveIt:IsMoved(name) and MoveIt.DB.movers[name] then
 			-- Reset Position
 			local point, anchor, secondaryPoint, x, y = strsplit(',', MoverList[name].defaultPoint)
 			frame:ClearAllPoints()
 			frame:SetPoint(point, anchor, secondaryPoint, x, y)
 
-			if MoveIt.DB.movers[name].MovedPoints then
+			if onlyPosition or not MoveIt.DB.movers[name].AdjustedScale then
 				MoveIt.DB.movers[name].MovedPoints = nil
+			else
+				-- Reset the scale
+				if MoveIt.DB.movers[name].AdjustedScale and not onlyPosition then
+					frame:SetScale(frame.defaultScale or 1)
+					frame.parent:SetScale(frame.defaultScale or 1)
+					frame.ScaledText:Hide()
+				end
+				-- Clear element
+				MoveIt.DB.movers[name] = nil
 			end
 
 			-- Hide Moved Text
