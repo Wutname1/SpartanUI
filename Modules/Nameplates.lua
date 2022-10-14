@@ -165,23 +165,23 @@ local NamePlateFactory = function(frame, unit)
 
 		frame.bg = {}
 		frame.bg.artwork = {}
-		frame.bg.solid = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.solid = frame:CreateTexture(nil, 'BACKGROUND')
 		frame.bg.solid:SetAllPoints()
 		frame.bg.solid:SetTexture(BarTexture)
 		frame.bg.solid:SetVertexColor(0, 0, 0, .5)
 
-		frame.bg.artwork.Neutral = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.artwork.Neutral = frame:CreateTexture(nil, 'BACKGROUND')
 		frame.bg.artwork.Neutral:SetAllPoints()
 		frame.bg.artwork.Neutral:SetTexture(BarTexture)
 		frame.bg.artwork.Neutral:SetVertexColor(0, 0, 0, .6)
 
-		frame.bg.artwork.Alliance = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.artwork.Alliance = frame:CreateTexture(nil, 'BACKGROUND')
 		frame.bg.artwork.Alliance:SetAllPoints()
 		frame.bg.artwork.Alliance:SetTexture(Images.Alliance.bg.Texture)
 		frame.bg.artwork.Alliance:SetTexCoord(unpack(Images.Alliance.bg.Coords))
 		frame.bg.artwork.Alliance:SetSize(frame:GetSize())
 
-		frame.bg.artwork.Horde = frame:CreateTexture(nil, 'BACKGROUND', frame)
+		frame.bg.artwork.Horde = frame:CreateTexture(nil, 'BACKGROUND')
 		frame.bg.artwork.Horde:SetAllPoints()
 		frame.bg.artwork.Horde:SetTexture(Images.Horde.bg.Texture)
 		frame.bg.artwork.Horde:SetTexCoord(unpack(Images.Horde.bg.Coords))
@@ -312,7 +312,7 @@ local NamePlateFactory = function(frame, unit)
 			WidgetXPBar:SetPoint('TOP', frame, 'BOTTOM', 0, elementsDB.XPBar.Offset)
 			WidgetXPBar:SetStatusBarColor(0, .5, 1, .7)
 
-			WidgetXPBar.bg = WidgetXPBar:CreateTexture(nil, 'BACKGROUND', WidgetXPBar)
+			WidgetXPBar.bg = WidgetXPBar:CreateTexture(nil, 'BACKGROUND')
 			WidgetXPBar.bg:SetAllPoints()
 			WidgetXPBar.bg:SetTexture(BarTexture)
 			WidgetXPBar.bg:SetVertexColor(0, 0, 0, .5)

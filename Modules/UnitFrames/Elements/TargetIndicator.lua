@@ -4,8 +4,8 @@ local UF = SUI.UF
 ---@param DB? table
 local function Build(frame, DB)
 	local TargetIndicator = CreateFrame('Frame', 'BACKGROUND', frame)
-	TargetIndicator.bg1 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
-	TargetIndicator.bg2 = frame:CreateTexture(nil, 'BACKGROUND', TargetIndicator)
+	TargetIndicator.bg1 = TargetIndicator:CreateTexture(nil, 'BACKGROUND')
+	TargetIndicator.bg2 = TargetIndicator:CreateTexture(nil, 'BACKGROUND')
 	TargetIndicator.bg1:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\DoubleArrow')
 	TargetIndicator.bg2:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\DoubleArrow')
 	TargetIndicator.bg1:SetPoint('RIGHT', frame, 'LEFT')
