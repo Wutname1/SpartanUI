@@ -380,9 +380,10 @@ function module:SetupChatboxes()
 	if SUI:IsModuleDisabled('Chatbox') then
 		return
 	end
-	DEFAULT_CHATFRAME_ALPHA = 0.7
-	DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
-	DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
+	-- DEFAULT_CHATFRAME_ALPHA = 0.7
+	-- DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
+    -- DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
+	
 	local icon = 'Interface\\Addons\\SpartanUI\\images\\chaticons'
 
 	local chatBG = {

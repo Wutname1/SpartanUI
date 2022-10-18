@@ -324,7 +324,7 @@ function MoveIt:UpdateMover(name, obj, doNotScale)
 end
 
 function MoveIt:MoveIt(name)
-	if MoveEnabled then
+	if MoveEnabled and not name then
 		for _, v in pairs(MoverList) do
 			v:Hide()
 		end
@@ -334,7 +334,11 @@ function MoveIt:MoveIt(name)
 		if name then
 			if type(name) == 'string' then
 				local frame = MoverList[name]
-				frame:Show()
+				if not frame:IsVisible() then
+					frame:Show()
+				else
+					frame:Hide()
+				end
 			else
 				for _, v in pairs(name) do
 					if MoverList[v] then
@@ -938,3 +942,6 @@ function MoveIt:Options()
 		}
 	}
 end
+
+MoveIt.MoverWatcher = MoverWatcher
+MoveIt.MoveEnabled = MoveEnabled

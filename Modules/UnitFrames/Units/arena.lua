@@ -25,12 +25,15 @@ local elementList = {
 
 local function GroupBuilder(holder)
 	for i = 1, (5) do
-		holder.frames[i] = SUIUF:Spawn('arena' .. i, 'SUI_UF_arena' .. i)
+		local frame = SUIUF:Spawn('arena' .. i, 'SUI_UF_arena' .. i)
 		if i == 1 then
-			holder.frames[i]:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
+			frame:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
 		else
-			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
+			frame:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
 		end
+		frame:SetAttribute('oUF-enableArenaPrep', true)
+
+		holder.frames[i] = frame
 	end
 end
 

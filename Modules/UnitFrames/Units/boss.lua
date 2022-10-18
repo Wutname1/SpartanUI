@@ -16,13 +16,16 @@ local elementList = {
 }
 
 local function GroupBuilder(holder)
-	for i = 1, (MAX_BOSS_FRAMES or 5) do
-		holder.frames[i] = SUIUF:Spawn('boss' .. i, 'SUI_UF_boss' .. i)
+	for i = 1, 8 do
+		local frame = SUIUF:Spawn('boss' .. i, 'SUI_UF_boss' .. i)
+		frame:SetID(i)
 		if i == 1 then
-			holder.frames[i]:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
+			frame:SetPoint('TOPLEFT', holder, 'TOPLEFT', 0, 0)
 		else
-			holder.frames[i]:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
+			frame:SetPoint('TOP', holder.frames[i - 1], 'BOTTOM', 0, -10)
 		end
+
+		holder.frames[i] = frame
 	end
 end
 

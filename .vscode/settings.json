@@ -321,7 +321,8 @@
     "InCombatLockdown",
     "MultiCastActionBarFrame",
     "MinimapCompassTexture",
-    "WOW_PROJECT_WRATH_CLASSIC"
+    "WOW_PROJECT_WRATH_CLASSIC",
+    "EditModeManagerFrame"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",
