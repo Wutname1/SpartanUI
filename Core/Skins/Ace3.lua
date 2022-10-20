@@ -11,7 +11,7 @@ local function GetAce3ConfigWindow(name)
 	return ConfigOpen and ConfigOpen.frame
 end
 
-local function ConfigOpened(name)
+local function ConfigOpened(self, name)
 	local frame = GetAce3ConfigWindow(name)
 	if not frame or frame.Close then
 		return
@@ -189,8 +189,6 @@ local function SkinAce3()
 	AceGUI.RegisterAsContainer = RegisterAsContainer
 
 	--Setup custom buttons
-	local frame = GetAce3ConfigWindow()
-
 	local ACD = Lib.AceCD
 	if ACD then
 		if not ACD.OpenHookedSUISkin then
