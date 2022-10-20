@@ -216,7 +216,7 @@ function module:OnEnable()
 		GameMenuFrame.SUI = SUIMenuButton
 
 		-- reskin all esc/menu buttons
-		for _, Button in pairs({_G.GameMenuFrame:GetChildren()}) do
+		for _, Button in pairs({GameMenuFrame:GetChildren()}) do
 			if Button.IsObjectType and Button:IsObjectType('Button') then
 				Skin('Button', Button)
 				local point, relativeTo, relativePoint, xOfs, yOfs = Button:GetPoint()
@@ -240,13 +240,13 @@ function module:OnEnable()
 				local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
 				if relTo ~= SUIMenuButton then
 					SUIMenuButton:ClearAllPoints()
-					SUIMenuButton:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -1)
+					SUIMenuButton:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -2)
 					GameMenuButtonLogout:ClearAllPoints()
 					GameMenuButtonLogout:SetPoint('TOPLEFT', SUIMenuButton, 'BOTTOMLEFT', 0, offY)
 				end
 
 				RemoveAllTextures(GameMenuFrame)
-				Skin('Frame', GameMenuFrame)
+				Skin('Frame', GameMenuFrame, 'Dark')
 				if GameMenuFrame.Header then
 					RemoveTextures(GameMenuFrame.Header)
 					GameMenuFrame.Header:ClearAllPoints()
@@ -271,7 +271,9 @@ end
 local function attemptSkin()
 	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner', true)
 	if a then
+		---@diagnostic disable-next-line: undefined-field
 		a.prdb.ChatEditBox.skin = false
+		---@diagnostic disable-next-line: undefined-field
 		a.prdb.DisabledSkins['AceGUI-3.0 (Lib)'] = true
 	end
 

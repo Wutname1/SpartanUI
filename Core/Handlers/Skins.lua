@@ -38,8 +38,11 @@ local BlizzardRegionList = {
 	'MiddleTex',
 	'Center'
 }
+
 local Settings = {
 	BackdropColor = {0.0588, 0.0588, 0, 0.8},
+	BackdropColorDark = {.5, 0.5, .5, .9},
+	BackdropColorLight = {.5, 0.5, .5, .4},
 	BaseBorderColor = {1, 1, 1, .3},
 	ObjBorderColor = {1, 1, 1, .5},
 	factionColor = {
@@ -49,6 +52,13 @@ local Settings = {
 	TxBlank = 'Interface\\Addons\\SpartanUI\\images\\blank',
 	bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
 	edgeFile = 'Interface\\BUTTONS\\WHITE8X8'
+}
+---@class AppearanceMode
+local AppearanceMode = {
+	Default = 'Default',
+	Dark = 'Dark',
+	Light = 'Light',
+	NoBackdrop = 'NoBackdrop'
 }
 
 local function GetBaseBorderColor()
@@ -228,19 +238,21 @@ function module.RemoveAllTextures(frame)
 	end
 end
 
-function module.SetTemplate(frame, template)
-	frame.template = template or 'Default'
+---comment
+---@param frame FrameExpanded
+---@param appearanceMode? AppearanceMode
+function module.SetTemplate(frame, appearanceMode)
+	frame.appearanceMode = appearanceMode or 'Default'
 
 	if not frame.SetBackdrop then
 		_G.Mixin(frame, _G.BackdropTemplateMixin)
 		frame:HookScript('OnSizeChanged', frame.OnBackdropSizeChanged)
 	end
 
-	if template == 'NoBackdrop' then
-		frame:SetBackdrop()
+	local edgeSize = 1
+	if frame.appearanceMode == AppearanceMode.NoBackdrop then
+		frame:SetBackdrop(nil)
 	else
-		local edgeSize = 1
-
 		frame:SetBackdrop(
 			{
 				bgFile = Settings.bgFile,
@@ -249,8 +261,10 @@ function module.SetTemplate(frame, template)
 			}
 		)
 
-		if frame.callbackBackdropColor then
-			frame:callbackBackdropColor()
+		if frame.appearanceMode == AppearanceMode.Dark then
+			frame:SetBackdropColor(unpack(Settings.BackdropColorDark))
+		elseif frame.appearanceMode == AppearanceMode.Light then
+			frame:SetBackdropColor(unpack(Settings.BackdropColorLight))
 		else
 			frame:SetBackdropColor(unpack(Settings.BackdropColor))
 		end
@@ -316,7 +330,11 @@ function module.Objects.Button(button, clean, NormalTex, regionsToFade)
 	button.isSkinned = true
 end
 
-function module.SkinObj(ObjType, object)
+---Skins a object
+---@param ObjType string
+---@param object FrameExpanded
+---@param mode AppearanceMode
+function module.SkinObj(ObjType, object, mode)
 	if not object then
 		return
 	end
@@ -337,6 +355,13 @@ function module.SkinObj(ObjType, object)
 			TileSize = 20
 		}
 	)
-	object:SetBackdropColor(unpack(Settings.BackdropColor))
+	if mode and mode == AppearanceMode.Dark then
+		object:SetBackdropColor(unpack(Settings.BackdropColorDark))
+	elseif mode and mode == AppearanceMode.Light then
+		object:SetBackdropColor(unpack(Settings.BackdropColorLight))
+	else
+		object:SetBackdropColor(unpack(Settings.BackdropColor))
+	end
+
 	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
 end
