@@ -161,16 +161,23 @@ Settings.ClassColor = module.colors.SetColorTable(Settings.ClassColor, value)
 Settings.MutedClassColor = module.colors.SetColorTable(Settings.MutedClassColor, value)
 Settings.MutedClassColor[4] = 0.3
 
-local function BlizzardRegions(frame, name, kill, zero)
+local function SetClassBorderColor(frame, script)
+	if frame.backdrop then
+		frame = frame.backdrop
+	end
+	if frame.SetBackdropBorderColor then
+		frame:SetBackdropBorderColor(unpack(script == 'OnEnter' and Settings.ClassColor or Settings.MutedClassColor))
+	end
+end
+
+local function RemoveBlizzardRegions(frame, name, fadeOut)
 	if not name then
 		name = frame.GetName and frame:GetName()
 	end
 	for _, area in pairs(BlizzardRegionList) do
 		local object = (name and _G[name .. area]) or frame[area]
 		if object then
-			if kill then
-				object:Kill()
-			elseif zero then
+			if fadeOut then
 				object:SetAlpha(0)
 			else
 				object:Hide()
@@ -253,12 +260,13 @@ function module.SetTemplate(frame, template)
 end
 
 module.Objects = {}
-function module.Objects.Button(button, strip, overrideTex, regionsKill, regionsZero)
+
+function module.Objects.Button(button, clean, NormalTex, regionsToFade)
 	if button.isSkinned then
 		return
 	end
 
-	if button.SetNormalTexture and not overrideTex then
+	if button.SetNormalTexture and not NormalTex then
 		button:SetNormalTexture('')
 	end
 	if button.SetHighlightTexture then
@@ -271,40 +279,31 @@ function module.Objects.Button(button, strip, overrideTex, regionsKill, regionsZ
 		button:SetDisabledTexture(Settings.bgFile)
 	end
 
-	if strip then
+	if clean then
 		module.RemoveAllTextures(button)
 	end
 
-	BlizzardRegions(button, nil, regionsKill, regionsZero)
+	RemoveBlizzardRegions(button, nil, regionsToFade)
 
 	if button.Text then
 		SUI:FormatFont(button.Text, 12, 'Blizzard')
 	end
 
-	local function SetBackdropBorderColor(frame, script)
-		if frame.backdrop then
-			frame = frame.backdrop
-		end
-		if frame.SetBackdropBorderColor then
-			frame:SetBackdropBorderColor(unpack(script == 'OnEnter' and Settings.ClassColor or Settings.MutedClassColor))
-		end
-	end
-
 	function SetModifiedBackdrop(self)
 		if self:IsEnabled() then
-			SetBackdropBorderColor(self, 'OnEnter')
+			SetClassBorderColor(self, 'OnEnter')
 		end
 	end
 
 	function SetOriginalBackdrop(self)
 		if self:IsEnabled() then
-			SetBackdropBorderColor(self, 'OnLeave')
+			SetClassBorderColor(self, 'OnLeave')
 		end
 	end
 
 	function SetDisabledBackdrop(self)
 		if self:IsMouseOver() then
-			SetBackdropBorderColor(self, 'OnDisable')
+			SetClassBorderColor(self, 'OnDisable')
 		end
 	end
 

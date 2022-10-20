@@ -33,6 +33,10 @@ local function ScrollItemUpdate(_, button, data)
 end
 
 local function CreateDebugWindow()
+	if DebugWindow then
+		return
+	end
+
 	DebugWindow = StdUi:Window(nil, 500, 200, '|cffffffffSpartan|cffe21f1fUI Debug|r info')
 	DebugWindow:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 5, -5)
 	DebugWindow.TextPanel = StdUi:MultiLineBox(DebugWindow, 480, 200, 'No output active')
@@ -69,6 +73,11 @@ local function CreateDebugWindow()
 end
 
 function SUI.Debug(debugText, module)
+	if not debugger.DB.enable then
+		return
+	elseif not DebugWindow then
+		CreateDebugWindow()
+	end
 	if not DebugMessages[module] then
 		DebugMessages[module] = {}
 		table.insert(ScrollListing, {text = (module), value = module})
@@ -83,32 +92,22 @@ function SUI.Debug(debugText, module)
 			0
 		)
 		debugger.DB.modules[module] = debugger.DB.enable
-		debugger.options.args[module] = {
-			name = module,
-			type = 'toggle',
-			order = (#debugger.options.args + 1)
-		}
+		if debugger.options then
+			debugger.options.args[module] = {
+				name = module,
+				type = 'toggle',
+				order = (#debugger.options.args + 1)
+			}
+		end
+	end
+	if not debugger.DB.modules[module] then
+		return
 	end
 
 	table.insert(DebugMessages[module], tostring(debugText))
 
 	if ActiveModule and ActiveModule == module then
 		DebugWindow.TextPanel:SetValue(DebugWindow.TextPanel:GetValue() .. '\n' .. tostring(debugText))
-	end
-end
-
-function debugger:OnInitialize()
-	local defaults = {
-		enable = false,
-		modules = {
-			Core = false
-		}
-	}
-	debugger.Database = SUI.SpartanUIDB:RegisterNamespace('Debugger', {profile = defaults})
-	debugger.DB = debugger.Database.profile
-
-	for k, _ in pairs(debugger.DB.modules) do
-		DebugMessages[k] = {}
 	end
 end
 
@@ -147,6 +146,21 @@ local function AddOptions()
 	end
 	debugger.options = options
 	SUI.Options:AddOptions(options, nil, 'Help')
+end
+
+function debugger:OnInitialize()
+	local defaults = {
+		enable = false,
+		modules = {
+			Core = false
+		}
+	}
+	debugger.Database = SUI.SpartanUIDB:RegisterNamespace('Debugger', {profile = defaults})
+	debugger.DB = debugger.Database.profile
+
+	for k, _ in pairs(debugger.DB.modules) do
+		DebugMessages[k] = {}
+	end
 end
 
 function debugger:OnEnable()

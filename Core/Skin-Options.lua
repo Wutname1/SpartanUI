@@ -156,6 +156,8 @@ function module:SkinAce3()
 			if widget.scrollbar then
 				Skin('ScrollBar', widget.scrollBar)
 			end
+		-- else
+		-- 	SUI.Debug('No Widget skin ' .. widgetType, 'Skinning')
 		end
 		return regContainer(self, widget)
 	end
@@ -195,10 +197,6 @@ function module:ConfigOpened(name)
 		if child:IsObjectType('Button') and child:GetText() == _G['CLOSE'] then
 			frame.CloseBtn = child
 			child:Hide()
-		-- elseif child:IsObjectType('Frame') or child:IsObjectType('Button') then
-		-- 	if child:HasScript('OnMouseUp') then
-		-- 		child:HookScript('OnMouseUp', ConfigStopMoving)
-		-- 	end
 		end
 	end
 end
@@ -273,9 +271,7 @@ end
 local function attemptSkin()
 	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner', true)
 	if a then
-		---@diagnostic disable-next-line: undefined-field
 		a.prdb.ChatEditBox.skin = false
-		---@diagnostic disable-next-line: undefined-field
 		a.prdb.DisabledSkins['AceGUI-3.0 (Lib)'] = true
 	end
 
