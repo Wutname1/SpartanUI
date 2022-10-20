@@ -40,11 +40,20 @@ local BlizzardRegionList = {
 }
 local Settings = {
 	BackdropColor = {0.0588, 0.0588, 0, 0.8},
-	BorderColor = {0, 0, 0, 1},
+	BaseBorderColor = {1, 1, 1, .3},
+	ObjBorderColor = {1, 1, 1, .5},
+	factionColor = {
+		Alliance = {0, .6, 1, .5},
+		Horde = {1, .2, .2, .5}
+	},
 	TxBlank = 'Interface\\Addons\\SpartanUI\\images\\blank',
 	bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
 	edgeFile = 'Interface\\BUTTONS\\WHITE8X8'
 }
+
+local function GetBaseBorderColor()
+	return Settings.BaseBorderColor or Settings.factionColor[UnitFactionGroup('player')]
+end
 
 local function GetClassColor()
 	local _, class = UnitClass('player')
@@ -61,191 +70,6 @@ local function GetClassColor()
 	end
 
 	return color
-end
-
-local function BlizzardRegions(frame, name, kill, zero)
-	if not name then
-		name = frame.GetName and frame:GetName()
-	end
-	for _, area in pairs(BlizzardRegionList) do
-		local object = (name and _G[name .. area]) or frame[area]
-		if object then
-			if kill then
-				object:Kill()
-			elseif zero then
-				object:SetAlpha(0)
-			else
-				object:Hide()
-			end
-		end
-	end
-end
-
-function module.RemoveTextures(frame, option)
-	if ((not frame.GetNumRegions) or (frame.Panel and (not frame.Panel.CanBeRemoved))) then
-		return
-	end
-	local region, layer, texture
-	for i = 1, frame:GetNumRegions() do
-		region = select(i, frame:GetRegions())
-		if (region and (region:GetObjectType() == 'Texture')) then
-			layer = region:GetDrawLayer()
-			texture = region:GetTexture()
-
-			if (option) then
-				-- elseif texture ~= 'Interface\\DialogFrame\\UI-DialogBox-Background' then
-				if (type(option) == 'boolean') then
-					if region.UnregisterAllEvents then
-						region:UnregisterAllEvents()
-						region:SetParent(nil)
-					else
-						region.Show = region.Hide
-					end
-					region:Hide()
-				elseif (type(option) == 'string' and ((layer == option) or (texture ~= option))) then
-					region:SetTexture('')
-				end
-			else
-				region:SetTexture('')
-			end
-		end
-	end
-end
-
-function module.RemoveAllTextures(frame)
-	for i = 1, frame:GetNumChildren() do
-		local childFrame = select(i, frame:GetChildren())
-		if childFrame:GetObjectType() == 'Button' and childFrame:GetText() then
-			-- Widget_ButtonStyle(childFrame)
-		elseif not childFrame.ignore then
-			module.RemoveTextures(childFrame)
-		end
-	end
-end
-
-local function SetOutside(obj, anchor, xOffset, yOffset, anchor2, noScale)
-	if not anchor then
-		anchor = obj:GetParent()
-	end
-
-	if not xOffset then
-		xOffset = 0
-	end
-	if not yOffset then
-		yOffset = 0
-	end
-	local x = (noScale and xOffset) or 1
-	local y = (noScale and yOffset) or 1
-
-	if obj:GetPoint() then
-		obj:ClearAllPoints()
-	end
-
-	obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', -x, y)
-	obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', x, -y)
-end
-
-local function SetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
-	if not anchor then
-		anchor = obj:GetParent()
-	end
-
-	if not xOffset then
-		xOffset = 0
-	end
-	if not yOffset then
-		yOffset = 0
-	end
-	local x = (noScale and xOffset) or 1
-	local y = (noScale and yOffset) or 1
-
-	if obj:GetPoint() then
-		obj:ClearAllPoints()
-	end
-
-	obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', x, -y)
-	obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', -x, y)
-end
-
-function module.SetTemplate(
-	frame,
-	template,
-	glossTex,
-	ignoreUpdates,
-	forcePixelMode,
-	isUnitFrameElement,
-	isNamePlateElement,
-	noScale)
-	-- GetTemplate(template, isUnitFrameElement)
-
-	frame.template = template or 'Default'
-	frame.glossTex = glossTex
-	frame.ignoreUpdates = ignoreUpdates
-	frame.forcePixelMode = forcePixelMode
-	frame.isUnitFrameElement = isUnitFrameElement
-	frame.isNamePlateElement = isNamePlateElement
-
-	if not frame.SetBackdrop then
-		_G.Mixin(frame, _G.BackdropTemplateMixin)
-		frame:HookScript('OnSizeChanged', frame.OnBackdropSizeChanged)
-	end
-
-	if template == 'NoBackdrop' then
-		frame:SetBackdrop()
-	else
-		local edgeSize = 1
-
-		frame:SetBackdrop(
-			{
-				bgFile = Settings.bgFile,
-				edgeFile = Settings.edgeFile,
-				edgeSize = edgeSize
-			}
-		)
-
-		if frame.callbackBackdropColor then
-			frame:callbackBackdropColor()
-		else
-			frame:SetBackdropColor(0, 0, 0, 1)
-		end
-
-		local notPixelMode = not isUnitFrameElement and not isNamePlateElement
-		if notPixelMode and not forcePixelMode then
-			local backdrop = {
-				edgeFile = Settings.edgeFile,
-				edgeSize = 1
-			}
-
-			local level = frame:GetFrameLevel()
-			if not frame.iborder then
-				local border = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
-				border:SetBackdrop(backdrop)
-				border:SetBackdropBorderColor(0, 0, 0, 1)
-				border:SetFrameLevel(level)
-				SetInside(border, frame, 1, 1, nil, noScale)
-				frame.iborder = border
-			end
-
-			if not frame.oborder then
-				local border = CreateFrame('Frame', nil, frame, 'BackdropTemplate')
-				border:SetBackdrop(backdrop)
-				border:SetBackdropBorderColor(0, 0, 0, 1)
-				border:SetFrameLevel(level)
-				SetOutside(border, frame, 1, 1, nil, noScale)
-				frame.oborder = border
-			end
-		end
-	end
-
-	frame:SetBackdropBorderColor(0, 0, 0, 1)
-
-	-- if not frame.ignoreUpdates then
-	-- 	if frame.isUnitFrameElement then
-	-- 		E.unitFrameElements[frame] = true
-	-- 	else
-	-- 		E.frames[frame] = true
-	-- 	end
-	-- end
 end
 
 module.colors = {}
@@ -333,22 +157,115 @@ function module.colors.HexToRGB(hex)
 end
 
 local value = GetClassColor()
-Settings.rgbcolor = module.colors.SetColorTable(Settings.rgbcolor, value)
--- Settings.hexcolor = module.colors.RGBToHex(value.r, value.g, value.b)
+Settings.ClassColor = module.colors.SetColorTable(Settings.ClassColor, value)
+Settings.MutedClassColor = module.colors.SetColorTable(Settings.MutedClassColor, value)
+Settings.MutedClassColor[4] = 0.3
+
+local function BlizzardRegions(frame, name, kill, zero)
+	if not name then
+		name = frame.GetName and frame:GetName()
+	end
+	for _, area in pairs(BlizzardRegionList) do
+		local object = (name and _G[name .. area]) or frame[area]
+		if object then
+			if kill then
+				object:Kill()
+			elseif zero then
+				object:SetAlpha(0)
+			else
+				object:Hide()
+			end
+		end
+	end
+end
+
+function module.RemoveTextures(frame, option)
+	if ((not frame.GetNumRegions) or (frame.Panel and (not frame.Panel.CanBeRemoved))) then
+		return
+	end
+	local region, layer, texture
+	for i = 1, frame:GetNumRegions() do
+		region = select(i, frame:GetRegions())
+		if (region and (region:GetObjectType() == 'Texture')) then
+			layer = region:GetDrawLayer()
+			texture = region:GetTexture()
+
+			if (option) then
+				-- elseif texture ~= 'Interface\\DialogFrame\\UI-DialogBox-Background' then
+				if (type(option) == 'boolean') then
+					if region.UnregisterAllEvents then
+						region:UnregisterAllEvents()
+						region:SetParent(nil)
+					else
+						region.Show = region.Hide
+					end
+					region:Hide()
+				elseif (type(option) == 'string' and ((layer == option) or (texture ~= option))) then
+					region:SetTexture('')
+				end
+			else
+				region:SetTexture('')
+			end
+		end
+	end
+end
+
+function module.RemoveAllTextures(frame)
+	for i = 1, frame:GetNumChildren() do
+		local childFrame = select(i, frame:GetChildren())
+		if childFrame:GetObjectType() == 'Button' and childFrame:GetText() then
+			-- Widget_ButtonStyle(childFrame)
+		elseif not childFrame.ignore then
+			module.RemoveTextures(childFrame)
+		end
+	end
+end
+
+function module.SetTemplate(
+	frame,
+	template,
+	glossTex,
+	ignoreUpdates,
+	forcePixelMode,
+	isUnitFrameElement,
+	isNamePlateElement)
+	frame.template = template or 'Default'
+	frame.glossTex = glossTex
+	frame.ignoreUpdates = ignoreUpdates
+	frame.forcePixelMode = forcePixelMode
+	frame.isUnitFrameElement = isUnitFrameElement
+	frame.isNamePlateElement = isNamePlateElement
+
+	if not frame.SetBackdrop then
+		_G.Mixin(frame, _G.BackdropTemplateMixin)
+		frame:HookScript('OnSizeChanged', frame.OnBackdropSizeChanged)
+	end
+
+	if template == 'NoBackdrop' then
+		frame:SetBackdrop()
+	else
+		local edgeSize = 1
+
+		frame:SetBackdrop(
+			{
+				bgFile = Settings.bgFile,
+				edgeFile = Settings.edgeFile,
+				edgeSize = edgeSize
+			}
+		)
+
+		if frame.callbackBackdropColor then
+			frame:callbackBackdropColor()
+		else
+			frame:SetBackdropColor(unpack(Settings.BackdropColor))
+		end
+	end
+
+	frame:SetBackdropBorderColor(unpack(Settings.MutedClassColor))
+end
 
 module.Objects = {}
-function module.Objects.Button(
-	button,
-	strip,
-	isDecline,
-	noStyle,
-	createBackdrop,
-	template,
-	noGlossTex,
-	overrideTex,
-	frameLevel,
-	regionsKill,
-	regionsZero)
+function module.Objects.Button(button, strip, overrideTex, regionsKill, regionsZero)
 	assert(button, 'doesnt exist!')
 
 	if button.isSkinned then
@@ -374,23 +291,6 @@ function module.Objects.Button(
 
 	BlizzardRegions(button, nil, regionsKill, regionsZero)
 
-	-- if button.Icon then
-	-- 	local Texture = button.Icon:GetTexture()
-	-- 	if Texture and (type(Texture) == 'string' and strfind(Texture, [[Interface\ChatFrame\ChatFrameExpandArrow]])) then
-	-- 		button.Icon:SetTexture(E.Media.Textures.ArrowUp)
-	-- 		button.Icon:SetRotation(S.ArrowRotation.right)
-	-- 		button.Icon:SetVertexColor(1, 1, 1)
-	-- 	end
-	-- end
-
-	if isDecline and button.Icon then
-	-- button.Icon:SetTexture(E.Media.Textures.Close)
-	end
-
-	if createBackdrop then
-	-- button:CreateBackdrop(template, not noGlossTex, nil, nil, nil, nil, nil, true, frameLevel)
-	end
-
 	if button.Text then
 		SUI:FormatFont(button.Text, 12, 'Blizzard')
 	end
@@ -400,7 +300,7 @@ function module.Objects.Button(
 			frame = frame.backdrop
 		end
 		if frame.SetBackdropBorderColor then
-			frame:SetBackdropBorderColor(unpack(script == 'OnEnter' and Settings.rgbcolor or Settings.BorderColor))
+			frame:SetBackdropBorderColor(unpack(script == 'OnEnter' and Settings.ClassColor or Settings.MutedClassColor))
 		end
 	end
 
@@ -452,5 +352,5 @@ function module.SkinObj(ObjType, object)
 		}
 	)
 	object:SetBackdropColor(unpack(Settings.BackdropColor))
-	object:SetBackdropBorderColor(unpack(Settings.BorderColor))
+	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
 end
