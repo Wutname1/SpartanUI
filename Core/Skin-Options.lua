@@ -3,57 +3,9 @@ local _G, SUI, Lib, StdUi = _G, SUI, SUI.Lib, SUI.StdUi
 local module = SUI:NewModule('Handler_Skinning')
 
 local RegisterAsContainer
-
-local function RemoveTextures(frame, option)
-	if ((not frame.GetNumRegions) or (frame.Panel and (not frame.Panel.CanBeRemoved))) then
-		return
-	end
-	local region, layer, texture
-	for i = 1, frame:GetNumRegions() do
-		region = select(i, frame:GetRegions())
-		if (region and (region:GetObjectType() == 'Texture')) then
-			layer = region:GetDrawLayer()
-			texture = region:GetTexture()
-
-			if (option) then
-				-- elseif texture ~= 'Interface\\DialogFrame\\UI-DialogBox-Background' then
-				if (type(option) == 'boolean') then
-					if region.UnregisterAllEvents then
-						region:UnregisterAllEvents()
-						region:SetParent(nil)
-					else
-						region.Show = region.Hide
-					end
-					region:Hide()
-				elseif (type(option) == 'string' and ((layer == option) or (texture ~= option))) then
-					region:SetTexture('')
-				end
-			else
-				region:SetTexture('')
-			end
-		end
-	end
-end
-
-function module:Skin(ObjType, object)
-	if not object then
-		return
-	end
-	if not object.SetBackdrop then
-		Mixin(object, BackdropTemplateMixin)
-	end
-
-	object:SetBackdrop(
-		{
-			bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-			edgeFile = 'Interface\\BUTTONS\\WHITE8X8',
-			edgeSize = 1,
-			TileSize = 20
-		}
-	)
-	object:SetBackdropColor(0.0588, 0.0588, 0, 0.8)
-	object:SetBackdropBorderColor(0, 0, 0, 1)
-end
+local RemoveTextures = SUI.Skins.RemoveTextures
+local RemoveAllTextures = SUI.Skins.RemoveAllTextures
+local Skin = SUI.Skins.SkinObj
 
 local function GetAce3ConfigWindow(name)
 	local ConfigOpen = Lib.AceCD and Lib.AceCD.OpenFrames and Lib.AceCD.OpenFrames[name]
@@ -83,7 +35,7 @@ function module:SkinAce3()
 		local widgetParent = widget.content:GetParent()
 
 		if widgetType == 'ScrollFrame' then
-			module:Skin('ScrollBar', widget.scrollBar)
+			Skin('ScrollBar', widget.scrollBar)
 		elseif widgetType == 'Frame' then
 			local frame = widget.frame
 
@@ -141,7 +93,7 @@ function module:SkinAce3()
 			end
 
 			RemoveTextures(frame)
-			module:Skin('Window', frame)
+			Skin('Window', frame)
 
 			for i = 1, widgetParent:GetNumChildren() do
 				local childFrame = select(i, widgetParent:GetChildren())
@@ -151,11 +103,11 @@ function module:SkinAce3()
 					RemoveTextures(childFrame)
 				end
 			end
-			module:Skin('Window', widgetParent)
+			Skin('Window', widgetParent)
 		elseif (ProxyType[widgetType]) then
 			if widget.treeframe then
-				module:Skin('Frame', widget.border)
-				module:Skin('Frame', widget.treeframe)
+				Skin('Frame', widget.border)
+				Skin('Frame', widget.treeframe)
 				widgetParent:SetPoint('TOPLEFT', widget.treeframe, 'TOPRIGHT', 1, 0)
 				local oldFunc = widget.CreateButton
 				widget.CreateButton = function(self)
@@ -184,11 +136,11 @@ function module:SkinAce3()
 							end
 						end
 					)
-					module:Skin('Button', newButton.toggle)
+					Skin('Button', newButton.toggle)
 					return newButton
 				end
 			elseif (not widgetParent.Panel) then
-				module:Skin('Frame', widgetParent)
+				Skin('Frame', widgetParent)
 			end
 
 			if (widgetType == 'TabGroup') then
@@ -196,13 +148,13 @@ function module:SkinAce3()
 				widget.CreateTab = function(self, arg)
 					local newTab = oldFunc(self, arg)
 					RemoveTextures(newTab)
-					module:Skin('Tab', newTab)
+					Skin('Tab', newTab)
 					return newTab
 				end
 			end
 
 			if widget.scrollbar then
-				module:Skin('ScrollBar', widget.scrollBar)
+				Skin('ScrollBar', widget.scrollBar)
 			end
 		end
 		return regContainer(self, widget)
@@ -248,6 +200,73 @@ function module:ConfigOpened(name)
 		-- 		child:HookScript('OnMouseUp', ConfigStopMoving)
 		-- 	end
 		end
+	end
+end
+
+function module:OnEnable()
+	if GetAddOnEnableState(UnitName('player'), 'ConsolePortUI_Menu') == 0 then
+		local SUIMenuButton = CreateFrame('Button', nil, GameMenuFrame, 'GameMenuButtonTemplate')
+		SUIMenuButton:SetScript(
+			'OnClick',
+			function()
+				SUI.Lib.AceCD:Open('SpartanUI')
+				if not InCombatLockdown() then
+					HideUIPanel(GameMenuFrame)
+				end
+			end
+		)
+		GameMenuFrame.SUI = SUIMenuButton
+
+		-- reskin all esc/menu buttons
+		for _, Button in pairs({_G.GameMenuFrame:GetChildren()}) do
+			if Button.IsObjectType and Button:IsObjectType('Button') then
+				Skin('Button', Button)
+				local point, relativeTo, relativePoint, xOfs, yOfs = Button:GetPoint()
+				if point then
+					-- Shift Button Down
+					Button:ClearAllPoints()
+					Button:SetPoint(point, relativeTo, relativePoint, (xOfs or 0), (yOfs or 0) - 2)
+				end
+			end
+		end
+
+		SUIMenuButton:SetPoint('TOP', GameMenuButtonAddons, 'BOTTOM', 0, -1)
+
+		hooksecurefunc(
+			'GameMenuFrame_UpdateVisibleButtons',
+			function()
+				GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() + 8)
+
+				SUIMenuButton:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
+
+				local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
+				if relTo ~= SUIMenuButton then
+					SUIMenuButton:ClearAllPoints()
+					SUIMenuButton:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -1)
+					GameMenuButtonLogout:ClearAllPoints()
+					GameMenuButtonLogout:SetPoint('TOPLEFT', SUIMenuButton, 'BOTTOMLEFT', 0, offY)
+				end
+
+				RemoveAllTextures(GameMenuFrame)
+				Skin('Frame', GameMenuFrame)
+				if GameMenuFrame.Header then
+					RemoveTextures(GameMenuFrame.Header)
+					GameMenuFrame.Header:ClearAllPoints()
+					GameMenuFrame.Header:SetPoint('TOP', GameMenuFrame, 0, 0)
+					GameMenuFrame.Header:SetSize(GameMenuFrame:GetWidth(), 25)
+					GameMenuFrame.Header.Text:ClearAllPoints()
+					GameMenuFrame.Header.Text:SetPoint('CENTER', GameMenuFrame.Header)
+					GameMenuFrame.Header.Text:SetTextColor(1, 1, 1)
+					Skin('Frame', GameMenuFrame.Header)
+				end
+				if GameMenuFrameHeader then
+					RemoveTextures(GameMenuFrameHeader)
+					GameMenuFrameHeader:SetTexture()
+					GameMenuFrameHeader:SetPoint('TOP', GameMenuFrame, 0, 0)
+					GameMenuFrameHeader:SetSize(GameMenuFrame:GetWidth(), 25)
+				end
+			end
+		)
 	end
 end
 

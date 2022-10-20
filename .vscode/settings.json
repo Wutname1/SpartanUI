@@ -322,7 +322,11 @@
     "MultiCastActionBarFrame",
     "MinimapCompassTexture",
     "WOW_PROJECT_WRATH_CLASSIC",
-    "EditModeManagerFrame"
+    "EditModeManagerFrame",
+    "GameMenuFrame",
+    "GameMenuButtonLogout",
+    "GameMenuButtonAddons",
+    "GameMenuFrameHeader"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",
