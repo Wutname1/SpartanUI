@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local module = SUI:NewModule('Handler_Skins')
+local module = SUI:NewModule('Component_Skins')
 SUI.Skins = module
 local BlizzardRegionList = {
 	'Left',
@@ -368,9 +368,10 @@ end
 
 module.Registry = {}
 
-function module:Register(Name, OnEnable, Config)
+function module:Register(Name, OnEnable, OnInitialize, Config)
 	module.Registry[Name] = {
 		OnEnable = OnEnable,
+		OnInitialize = OnInitialize,
 		Config = Config
 	}
 end
@@ -379,6 +380,14 @@ function module:OnEnable()
 	for _, Data in pairs(module.Registry) do
 		if Data.OnEnable then
 			Data.OnEnable()
+		end
+	end
+end
+
+function module:OnInitalize()
+	for _, Data in pairs(module.Registry) do
+		if Data.OnInitalize then
+			Data.OnInitalize()
 		end
 	end
 end

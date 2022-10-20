@@ -1,6 +1,5 @@
 ---@class SUI
 local SUI = SUI
-local module = SUI:GetModule('Handler_Skins')
 
 local RemoveTextures = SUI.Skins.RemoveTextures
 local RemoveAllTextures = SUI.Skins.RemoveAllTextures
@@ -73,4 +72,4 @@ local function OnEnable()
 	end
 end
 
-module:Register('Blizzard', OnEnable)
+SUI.Skins:Register('Blizzard', OnEnable)
