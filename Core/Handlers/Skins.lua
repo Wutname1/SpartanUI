@@ -221,20 +221,8 @@ function module.RemoveAllTextures(frame)
 	end
 end
 
-function module.SetTemplate(
-	frame,
-	template,
-	glossTex,
-	ignoreUpdates,
-	forcePixelMode,
-	isUnitFrameElement,
-	isNamePlateElement)
+function module.SetTemplate(frame, template)
 	frame.template = template or 'Default'
-	frame.glossTex = glossTex
-	frame.ignoreUpdates = ignoreUpdates
-	frame.forcePixelMode = forcePixelMode
-	frame.isUnitFrameElement = isUnitFrameElement
-	frame.isNamePlateElement = isNamePlateElement
 
 	if not frame.SetBackdrop then
 		_G.Mixin(frame, _G.BackdropTemplateMixin)
@@ -266,8 +254,6 @@ end
 
 module.Objects = {}
 function module.Objects.Button(button, strip, overrideTex, regionsKill, regionsZero)
-	assert(button, 'doesnt exist!')
-
 	if button.isSkinned then
 		return
 	end
@@ -339,6 +325,7 @@ function module.SkinObj(ObjType, object)
 		module.Objects[ObjType](object)
 		return
 	end
+
 	if not object.SetBackdrop then
 		Mixin(object, BackdropTemplateMixin)
 	end
