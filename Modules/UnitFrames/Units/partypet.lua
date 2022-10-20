@@ -36,6 +36,7 @@ end
 
 ---@type UFrameSettings
 local Settings = {
+	enabled = false,
 	width = 80,
 	elements = {
 		Health = {
