@@ -333,7 +333,7 @@ end
 ---Skins a object
 ---@param ObjType string
 ---@param object FrameExpanded
----@param mode AppearanceMode
+---@param mode? AppearanceMode
 function module.SkinObj(ObjType, object, mode)
 	if not object then
 		return
@@ -364,4 +364,21 @@ function module.SkinObj(ObjType, object, mode)
 	end
 
 	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
+end
+
+module.Registry = {}
+
+function module:Register(Name, OnEnable, Config)
+	module.Registry[Name] = {
+		OnEnable = OnEnable,
+		Config = Config
+	}
+end
+
+function module:OnEnable()
+	for _, Data in pairs(module.Registry) do
+		if Data.OnEnable then
+			Data.OnEnable()
+		end
+	end
 end

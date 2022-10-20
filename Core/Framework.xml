@@ -6,7 +6,7 @@
 	<Script file="Handlers\Debugger.lua" />
 	<Script file="Handlers\Events.lua" />
 	<Script file="Handlers\ChatCommands.lua" />
-	<Script file="Handlers\Skins.lua" />
+	<Include file="Skins\loader.xml" />
 	<Script file="Handlers\Font.lua" />
 	<Script file="Handlers\Modules.lua" />
 	<Script file="Handlers\Profiles.lua" />
@@ -48,5 +48,4 @@
 
 	<Script file="oUF.lua" />
 	<Script file="WhatsNew.lua" />
-	<Script file="Skin-Options.lua" />
 </Ui>

@@ -1941,6 +1941,18 @@ end
 
 ---------------  Misc Backend  ---------------
 
+function SUI:IsAddonEnabled(addon)
+	return GetAddOnEnableState(UnitName('player'), addon) == 2
+end
+
+function SUI:IsAddonDisabled(addon)
+	return not self:IsAddonEnabled(addon)
+end
+
+function SUI:GetAceAddon(addon)
+	return LibStub('AceAddon-3.0'):GetAddon(addon, true)
+end
+
 function SUI:GetiLVL(itemLink)
 	if not itemLink then
 		return 0
