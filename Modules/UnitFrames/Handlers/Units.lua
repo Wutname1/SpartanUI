@@ -76,6 +76,7 @@ end
 
 ---Build a group holder
 ---@param groupName string
+---@return SUI.UnitFrame?
 function Unit:BuildGroup(groupName)
 	if not Unit.defaultConfigs[groupName].config.IsGroup then
 		return
@@ -91,6 +92,8 @@ function Unit:BuildGroup(groupName)
 	BuiltFrames[groupName] = holder
 
 	FrameData[groupName].groupbuilder(BuiltFrames[groupName])
+
+	return BuiltFrames[groupName]
 end
 
 function Unit:ToggleForceShow(frame)

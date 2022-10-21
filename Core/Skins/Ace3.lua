@@ -1,6 +1,5 @@
 --Cache global variables and Lua functions
 local _G, SUI, Lib, StdUi = _G, SUI, SUI.Lib, SUI.StdUi
--- local module = SUI:GetModule('Handler_Skins')
 
 local RegisterAsContainer
 local RemoveTextures = SUI.Skins.RemoveTextures
@@ -216,6 +215,4 @@ local function attemptSkin()
 	end
 end
 
-local f = CreateFrame('Frame')
-f:RegisterEvent('ADDON_LOADED')
-f:SetScript('OnEvent', attemptSkin)
+SUI.Skins:Register('Ace3', attemptSkin)

@@ -42,6 +42,12 @@ local function Builder(frame)
 	for _, elementName in pairs(ElementsToBuild) do
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
+
+	if EditModeManagerFrame then
+		function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
+			return false
+		end
+	end
 end
 
 local function Options()

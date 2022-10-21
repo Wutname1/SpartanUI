@@ -68,6 +68,11 @@ local function CreateUnitFrame(self, unit)
 		self.DB = UF.CurrentSettings[self.unitOnCreate]
 		UpdateSize()
 
+		if not self.DB.enabled then
+			self:Disable()
+			return
+		end
+
 		UF.Unit:Update(self)
 		local elementsDB = self.DB.elements
 		-- Check that its a frame
@@ -224,6 +229,10 @@ local function CreateUnitFrame(self, unit)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
 	self.IsBuilt = true
 
+	if not self.DB.enabled then
+		self:Disable()
+	end
+
 	return self
 end
 
@@ -244,22 +253,6 @@ end
 function UF:SpawnFrames()
 	SUIUF:RegisterStyle('SpartanUI_UnitFrames', CreateUnitFrame)
 	SUIUF:SetActiveStyle('SpartanUI_UnitFrames')
-
-	-- Spawn all main frames
-	for frameName, config in pairs(UF.Unit:GetFrameList()) do
-		if config.IsGroup then
-			UF.Unit[frameName] = UF.Unit:BuildGroup(frameName)
-		else
-			UF.Unit[frameName] = SUIUF:Spawn(frameName, 'SUI_UF_' .. frameName)
-
-			-- Disable objects based on settings
-			UF.Unit[frameName]:UpdateAll()
-
-			if not UF.CurrentSettings[frameName].enabled then
-				UF.Unit[frameName]:Disable()
-			end
-		end
-	end
 
 	local function GroupEnableElement(groupFrame, elementName)
 		for _, f in ipairs(groupFrame.frames) do
@@ -299,13 +292,14 @@ function UF:SpawnFrames()
 		end
 	end
 
-	for groupName, _ in pairs(UF.Unit:GetFrameList(true)) do
-		local groupElement = UF.Unit:Get(groupName)
-		if groupElement then
-			local firstElement = groupElement.header or groupElement.frames[1]
+	-- Spawn all main frames
+	for frameName, config in pairs(UF.Unit:GetFrameList()) do
+		if config.IsGroup then
+			local groupElement = UF.Unit:BuildGroup(frameName)
+			local firstElement = groupElement.header or groupElement.frames[1] or groupElement
 			if firstElement then
 				local function GroupFrameUpdateAll(groupFrame)
-					if VisibilityCheck(groupName) and UF.CurrentSettings[groupName].enabled then
+					if VisibilityCheck(frameName) and UF.CurrentSettings[frameName].enabled then
 						if firstElement.visibility then
 							RegisterStateDriver(firstElement, firstElement.visibility)
 						end
@@ -329,7 +323,21 @@ function UF:SpawnFrames()
 				groupElement.EnableElement = GroupEnableElement
 				groupElement.DisableElement = GroupDisableElement
 			end
+			UF.Unit[frameName] = groupElement
+		else
+			UF.Unit[frameName] = SUIUF:Spawn(frameName, 'SUI_UF_' .. frameName)
 		end
+
+		-- Trigger update
+		UF.Unit[frameName]:UpdateAll()
+
+		-- Disable objects based on settings
+		if not UF.CurrentSettings[frameName].enabled then
+			UF.Unit[frameName]:Disable()
+		end
+	end
+
+	for groupName, _ in pairs(UF.Unit:GetFrameList(true)) do
 	end
 
 	local function GroupWatcher(event)
