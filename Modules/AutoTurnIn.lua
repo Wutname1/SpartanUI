@@ -335,17 +335,15 @@ end
 
 function module.QUEST_DETAIL()
 	if (DB.AcceptGeneralQuests) then
-		QuestInfoDescriptionText:SetAlphaGradient(0, -1)
-		QuestInfoDescriptionText:SetAlpha(1)
-
 		if DB.ChatText then
 			local title = GetTitleText()
 			local objText = GetObjectiveText()
 			if title and title ~= '' then
-				SUI:Print(objText)
+				SUI:Print(title)
 			end
 			if objText and objText ~= '' then
 				SUI:Print(L['Quest Objectives'])
+				SUI:Print(objText)
 				debug('    ' .. objText)
 			end
 		end
@@ -715,7 +713,7 @@ function module.GOSSIP_SHOW()
 		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
 		local isBlacklisted = module:blacklisted(gossip.name)
 		if
-			((gossip.type ~= 'gossip') or (gossip.type == 'gossip' and gossip.status == 0)) and
+			gossip.type and ((gossip.type ~= 'gossip') or (gossip.type == 'gossip' and gossip.status == 0)) and
 				(not isBlacklisted or isWhitelisted) and
 				SUI.IsRetail
 		 then
@@ -774,13 +772,13 @@ function module:OnEnable()
 		if SUI.IsRetail then
 			local QuestID = GetQuestID()
 			local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
+			debug(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
+			debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
+			debug(C_CampaignInfo.IsCampaignQuest(QuestID))
 			if
 				C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
 					C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
 			 then
-				debug(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
-				debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
-
 				SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
 				return
 			end

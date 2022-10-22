@@ -233,8 +233,14 @@ local ClearColors = function(SUITip)
 	SUITip.border[4]:SetVertexColor(0, 0, 0, 0)
 end
 
-local TooltipSetItem = function(self)
-	local itemLink = select(2, self:GetItem())
+local TooltipSetItem = function(tooltip, tooltipData)
+	local itemLink = nil
+	if tooltip.GetItem then
+		itemLink = select(2, tooltip:GetItem())
+	else
+		itemLink = C_Item.GetItemLinkByGUID(tooltipData.guid)
+	end
+
 	if (itemLink) then
 		local quality = select(3, GetItemInfo(itemLink))
 		local style = {
@@ -263,7 +269,7 @@ local TooltipSetItem = function(self)
 		if SUI.IsClassic and SUI.DB.Tooltips.VendorPrices then
 			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = GetItemInfo(itemLink)
 			if itemSellPrice then
-				SetTooltipMoney(self, itemSellPrice, 'STATIC', L['Vendors for:'])
+				SetTooltipMoney(tooltip, itemSellPrice, 'STATIC', L['Vendors for:'])
 				local itemUnderMouse = GetMouseFocus()
 				if itemUnderMouse:GetName() then
 					if itemStackCount > 1 and _G[itemUnderMouse:GetName() .. 'Count'] then
@@ -276,7 +282,13 @@ local TooltipSetItem = function(self)
 
 						if count > 1 and count ~= itemStackCount then
 							local curValue = count * itemSellPrice
-							SetTooltipMoney(self, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
+							SetTooltipMoney(
+								tooltip,
+								curValue,
+								'STATIC',
+								L['Vendors for:'],
+								string.format(L[' (current stack of %d)'], count)
+							)
 						end
 					end
 				end
@@ -286,12 +298,12 @@ local TooltipSetItem = function(self)
 		GameTooltip:SetBackdrop(style)
 		GameTooltip:SetBackdropColor(unpack(SUI.DB.Tooltips.Color))
 
-		if (quality) and self.SetBorderColor then
+		if (quality) and tooltip.SetBorderColor then
 			local r, g, b = GetItemQualityColor(quality)
 			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
-			self:SetBorderColor(r, g, b)
+			tooltip:SetBorderColor(r, g, b)
 		end
-		self.itemCleared = true
+		tooltip.itemCleared = true
 	end
 end
 
@@ -631,12 +643,16 @@ function module:OnEnable()
 	ApplyTooltipSkins()
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
-	GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
-	GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
-	ShoppingTooltip1:HookScript('OnTooltipSetItem', TooltipSetItem)
-	ShoppingTooltip2:HookScript('OnTooltipSetItem', TooltipSetItem)
 	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
-	-- hooksecurefunc('GameTooltip_ShowCompareItem', ReStyle)
+	if TooltipDataProcessor then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
+	else
+		GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
+		GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
+		ShoppingTooltip1:HookScript('OnTooltipSetItem', TooltipSetItem)
+		ShoppingTooltip2:HookScript('OnTooltipSetItem', TooltipSetItem)
+	end
 end
 
 local OnMouseOpt = function(v)
