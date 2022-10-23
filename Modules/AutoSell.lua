@@ -219,11 +219,11 @@ local function SetupPage()
 end
 
 local function BuildOptions()
-	if SUI.opt.args['ModSetting'].args['AutoSell'] then
+	if SUI.opt.args['Modules'].args['AutoSell'] then
 		return
 	end
 
-	SUI.opt.args['ModSetting'].args['AutoSell'] = {
+	SUI.opt.args['Modules'].args['AutoSell'] = {
 		type = 'group',
 		name = L['Auto sell'],
 		get = function(info)
@@ -317,8 +317,8 @@ local function BuildOptions()
 		}
 	}
 	if SUI.IsClassic then
-		SUI.opt.args.ModSetting.args.AutoSell.args.MaxILVL.max = 90
-		SUI.opt.args.ModSetting.args.AutoSell.args.UseGuildBankRepair.hidden = true
+		SUI.opt.args.Modules.args.AutoSell.args.MaxILVL.max = 90
+		SUI.opt.args.Modules.args.AutoSell.args.UseGuildBankRepair.hidden = true
 	end
 end
 

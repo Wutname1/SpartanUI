@@ -145,7 +145,7 @@ local function AddOptions()
 		}
 	end
 	debugger.options = options
-	SUI.Options:AddOptions(options, nil, 'Help')
+	SUI.Options:AddOptions(options, 'Debug', 'Help')
 end
 
 function debugger:OnInitialize()

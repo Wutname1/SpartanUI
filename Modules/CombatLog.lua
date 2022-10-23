@@ -182,7 +182,7 @@ function module:LogCheck(event)
 end
 
 function module:Options()
-	SUI.opt.args['ModSetting'].args['CombatLog'] = {
+	SUI.opt.args['Modules'].args['CombatLog'] = {
 		type = 'group',
 		name = L['Combat logging'],
 		get = function(info)

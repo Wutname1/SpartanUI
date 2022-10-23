@@ -608,7 +608,7 @@ function module:OnInitialize()
 end
 
 function module:OnDisable()
-	SUI.opt.args.ModSetting.args.Nameplates.enabled = false
+	SUI.opt.args.Modules.args.Nameplates.enabled = false
 end
 
 function module:OnEnable()
@@ -661,7 +661,7 @@ function module:BuildOptions()
 		end
 	end
 
-	SUI.opt.args.ModSetting.args.Nameplates = {
+	SUI.opt.args.Modules.args.Nameplates = {
 		type = 'group',
 		name = L['Nameplates'],
 		childGroups = 'tab',

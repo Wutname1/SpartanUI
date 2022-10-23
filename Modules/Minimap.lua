@@ -749,7 +749,7 @@ function module:update(FullUpdate)
 end
 
 function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['Minimap'] = {
+	SUI.opt.args['Modules'].args['Minimap'] = {
 		type = 'group',
 		name = L['Minimap'],
 		args = {

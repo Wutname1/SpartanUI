@@ -382,8 +382,8 @@ function module:SetupChatboxes()
 	end
 	-- DEFAULT_CHATFRAME_ALPHA = 0.7
 	-- DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
-    -- DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
-	
+	-- DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
+
 	local icon = 'Interface\\Addons\\SpartanUI\\images\\chaticons'
 
 	local chatBG = {
@@ -796,7 +796,7 @@ function ItemRefTooltip:SetHyperlink(data, ...)
 end
 
 function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['Chatbox'] = {
+	SUI.opt.args['Modules'].args['Chatbox'] = {
 		type = 'group',
 		name = L['Chatbox'],
 		childGroups = 'tab',

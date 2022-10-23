@@ -147,7 +147,7 @@ function module:OnEnable()
 end
 
 function module:Options()
-	SUI.opt.args['ModSetting'].args['InterruptAnnouncer'] = {
+	SUI.opt.args['Modules'].args['InterruptAnnouncer'] = {
 		type = 'group',
 		name = L['Interrupt announcer'],
 		get = function(info)

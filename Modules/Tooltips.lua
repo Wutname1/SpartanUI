@@ -658,19 +658,19 @@ end
 local OnMouseOpt = function(v)
 	local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true)
 	if style and style.TooltipLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
-		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideLoc'].disabled = false
+		SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideLoc'].disabled = false
 	else
-		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideLoc'].disabled = true
+		SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideLoc'].disabled = true
 	end
 
-	SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled =
+	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled =
 		SUI.DB.Tooltips[v].Anchor.onMouse
-	SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled =
+	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled =
 		SUI.DB.Tooltips[v].Anchor.onMouse
 end
 
 function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['Tooltips'] = {
+	SUI.opt.args['Modules'].args['Tooltips'] = {
 		type = 'group',
 		name = L['Tooltips'],
 		args = {
@@ -746,7 +746,7 @@ function module:BuildOptions()
 	}
 
 	for k, v in ipairs(RuleList) do
-		SUI.opt.args['ModSetting'].args['Tooltips'].args['DisplayLocation' .. v] = {
+		SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v] = {
 			name = L['Display Location'] .. ' ' .. v,
 			type = 'group',
 			inline = true,
@@ -826,7 +826,7 @@ function module:BuildOptions()
 		}
 	end
 	if SUI.IsClassic then
-		SUI.opt.args.ModSetting.args.Tooltips.args.VendorPrices = {
+		SUI.opt.args.Modules.args.Tooltips.args.VendorPrices = {
 			name = L['Display vendor prices'],
 			type = 'toggle',
 			get = function(info)

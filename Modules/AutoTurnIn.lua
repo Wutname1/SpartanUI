@@ -771,16 +771,17 @@ function module:OnEnable()
 
 		if SUI.IsRetail then
 			local QuestID = GetQuestID()
-			local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
-			debug(C_CampaignInfo.GetCampaignChapterInfo(C_CampaignInfo.GetCampaignID(GetQuestID())).name)
-			debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
-			debug(C_CampaignInfo.IsCampaignQuest(QuestID))
-			if
-				C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
-					C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
-			 then
-				SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
-				return
+			if QuestID ~= 0 then
+				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
+				debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
+				debug(C_CampaignInfo.IsCampaignQuest(QuestID))
+				if
+					C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
+						C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
+				 then
+					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
+					return
+				end
 			end
 		end
 
@@ -891,7 +892,7 @@ function module:OnDisable()
 end
 
 function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['AutoTurnIn'] = {
+	SUI.opt.args['Modules'].args['AutoTurnIn'] = {
 		type = 'group',
 		name = L['Auto TurnIn'],
 		get = function(info)
@@ -993,10 +994,10 @@ function module:BuildOptions()
 		}
 	}
 	if SUI.IsClassic then
-		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.lootreward.hidden = true
-		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestTurnIn.args.autoequip.hidden = true
+		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestTurnIn.args.lootreward.hidden = true
+		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestTurnIn.args.autoequip.hidden = true
 
-		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestAccepting.args.trivial.hidden = true
-		SUI.opt.args.ModSetting.args.AutoTurnIn.args.QuestAccepting.args.AcceptRepeatable.hidden = true
+		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestAccepting.args.trivial.hidden = true
+		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestAccepting.args.AcceptRepeatable.hidden = true
 	end
 end

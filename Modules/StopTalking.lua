@@ -22,7 +22,7 @@ function module:OnInitialize()
 end
 
 local function Options()
-	SUI.opt.args['ModSetting'].args['StopTalking'] = {
+	SUI.opt.args['Modules'].args['StopTalking'] = {
 		name = L['Stop Talking'],
 		type = 'group',
 		get = function(info)

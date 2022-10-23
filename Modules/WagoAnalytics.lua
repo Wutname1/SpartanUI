@@ -10,11 +10,11 @@ local print = SUI.print
 local Analytics = nil
 
 local function setupOption(setting)
-	if not SUI.opt.args.ModSetting or not SUI.opt.args.ModSetting.args.WagoAnalytics then
+	if not SUI.opt.args.Modules or not SUI.opt.args.Modules.args.WagoAnalytics then
 		return
 	end
 
-	SUI.opt.args.ModSetting.args.WagoAnalytics.args.SessionData.args[setting] = {
+	SUI.opt.args.Modules.args.WagoAnalytics.args.SessionData.args[setting] = {
 		name = setting,
 		type = 'input',
 		width = 'full'
@@ -144,12 +144,12 @@ local function SetupPage()
 end
 
 local function BuildOptions()
-	if SUI.opt.args.ModSetting.args.WagoAnalytics then
-		SUI.opt.args.ModSetting.args.WagoAnalytics.disabled = false
+	if SUI.opt.args.Modules.args.WagoAnalytics then
+		SUI.opt.args.Modules.args.WagoAnalytics.disabled = false
 		return
 	end
 
-	SUI.opt.args['ModSetting'].args['WagoAnalytics'] = {
+	SUI.opt.args['Modules'].args['WagoAnalytics'] = {
 		type = 'group',
 		name = 'Wago Analytics',
 		args = {
@@ -273,7 +273,7 @@ function module:OnEnable()
 end
 
 function module:OnDisable()
-	if SUI.opt.args.ModSetting.args.WagoAnalytics then
-		SUI.opt.args.ModSetting.args.WagoAnalytics.disabled = true
+	if SUI.opt.args.Modules.args.WagoAnalytics then
+		SUI.opt.args.Modules.args.WagoAnalytics.disabled = true
 	end
 end

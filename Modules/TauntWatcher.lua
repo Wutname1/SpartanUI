@@ -172,7 +172,7 @@ function module:OnEnable()
 end
 
 function module:Options()
-	SUI.opt.args['ModSetting'].args['TauntWatcher'] = {
+	SUI.opt.args['Modules'].args['TauntWatcher'] = {
 		type = 'group',
 		name = L['Taunt watcher'],
 		get = function(info)

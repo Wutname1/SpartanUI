@@ -136,7 +136,7 @@ local ObjTrackerUpdate = function(_, event)
 end
 
 local function Options()
-	SUI.opt.args.ModSetting.args.Objectives = {
+	SUI.opt.args.Modules.args.Objectives = {
 		type = 'group',
 		name = L.Objectives,
 		args = {
@@ -172,7 +172,7 @@ local function Options()
 		}
 	}
 	for k, v in ipairs(RuleList) do
-		SUI.opt.args.ModSetting.args.Objectives.args[v] = {
+		SUI.opt.args.Modules.args.Objectives.args[v] = {
 			name = v,
 			type = 'group',
 			inline = true,

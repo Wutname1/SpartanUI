@@ -261,7 +261,7 @@ function module:OnInitialize()
 		}
 	}
 
-	SUI.opt.args['ModSetting'] = {
+	SUI.opt.args['Modules'] = {
 		name = L['Modules'],
 		type = 'group',
 		args = {
@@ -283,7 +283,7 @@ function module:OnInitialize()
 				Displayname = submodule.DisplayName
 			end
 
-			SUI.opt.args.ModSetting.args.Components.args[RealName] = {
+			SUI.opt.args.Modules.args.Components.args[RealName] = {
 				name = Displayname,
 				type = 'toggle',
 				disabled = submodule.Override or false,
@@ -304,12 +304,12 @@ function module:OnInitialize()
 		end
 	end
 
-	SUI.opt.args.ModSetting.args['enabled'] = {
+	SUI.opt.args.Modules.args['enabled'] = {
 		name = L['Enabled modules'],
 		type = 'group',
 		order = .1,
 		args = {
-			Components = SUI.opt.args.ModSetting.args['Components']
+			Components = SUI.opt.args.Modules.args['Components']
 		}
 	}
 end
@@ -322,7 +322,7 @@ function module:OnEnable()
 	SUI:AddChatCommand(
 		'help',
 		function()
-			SUI.Lib.AceCD:Open('SpartanUI', 'Help')
+			module:ToggleOptions({'Help'})
 		end,
 		'Displays SUI Help screen'
 	)
@@ -449,9 +449,9 @@ end
 ---@param OptType OptionsType Default is "Module"
 function Options:AddOptions(OptionsTable, name, OptType)
 	if OptType == nil or OptType == 'Module' then
-		-- elseif type == 'Help' then
-		-- 	SUI.opt.args.Help.args[name or #SUI.opt.args.Help.args] = optionsTable
+		SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Help.args)] = OptionsTable
 	elseif OptType == 'Root' then
+		SUI.opt.args[name or tostring(#SUI.opt.args)] = OptionsTable
 	elseif OptType ~= nil then
 		SUI.opt.args[OptType].args[name or tostring(#SUI.opt.args.Help.args)] = OptionsTable
 	end

@@ -376,7 +376,34 @@ function module:Register(Name, OnEnable, OnInitialize, Config)
 	}
 end
 
+local function Options()
+	---@type AceConfigOptionsTable
+	local OptTable = {
+		type = 'group',
+		name = 'Skins',
+		args = {
+			Header = {
+				type = 'header',
+				name = 'Skins',
+				order = 1
+			},
+			Info = {
+				type = 'description',
+				name = 'Options Soon',
+				order = 2
+			}
+		}
+	}
+
+	SUI.Options:AddOptions(OptTable, 'Skins', nil)
+end
+
 function module:OnEnable()
+	Options()
+	if SUI:IsModuleDisabled('Skins') then
+		return
+	end
+
 	for _, Data in pairs(module.Registry) do
 		if Data.OnEnable then
 			Data.OnEnable()
@@ -385,6 +412,9 @@ function module:OnEnable()
 end
 
 function module:OnInitalize()
+	if SUI:IsModuleDisabled('Skins') then
+		return
+	end
 	for _, Data in pairs(module.Registry) do
 		if Data.OnInitalize then
 			Data.OnInitalize()

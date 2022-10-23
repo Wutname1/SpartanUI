@@ -32,8 +32,8 @@ local function updateopts()
 		disabled = false
 	end
 	for _, v in ipairs(EffectList) do
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'always'].disabled = disabled
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'AFK'].disabled = disabled
+		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'always'].disabled = disabled
+		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'AFK'].disabled = disabled
 	end
 end
 
@@ -163,7 +163,7 @@ function module:UpdateStatus(elapsed)
 end
 
 function module:Options()
-	SUI.opt.args['ModSetting'].args['FilmEffects'] = {
+	SUI.opt.args['Modules'].args['FilmEffects'] = {
 		name = L['Film Effects'],
 		type = 'group',
 		args = {
@@ -190,13 +190,13 @@ function module:Options()
 	}
 
 	for k, v in ipairs(EffectList) do
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'Title'] = {
+		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'Title'] = {
 			name = v,
 			type = 'header',
 			order = k + 1,
 			width = 'full'
 		}
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'always'] = {
+		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'always'] = {
 			name = L['Always show'],
 			type = 'toggle',
 			order = k + 1.2,
@@ -212,7 +212,7 @@ function module:Options()
 				FilmEffectEvent(nil, nil, nil)
 			end
 		}
-		SUI.opt.args['ModSetting'].args['FilmEffects'].args[v .. 'AFK'] = {
+		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'AFK'] = {
 			name = L['Show if AFK'],
 			type = 'toggle',
 			order = k + 1.4,

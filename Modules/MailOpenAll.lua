@@ -118,7 +118,7 @@ function module:FormatMoney(money)
 end
 
 function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['MailOpenAll'] = {
+	SUI.opt.args['Modules'].args['MailOpenAll'] = {
 		type = 'group',
 		name = L['Open all mail'],
 		args = {

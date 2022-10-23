@@ -176,14 +176,14 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	SUI.opt.args['ModSetting'].args['Buffs'] = {
+	SUI.opt.args['Modules'].args['Buffs'] = {
 		type = 'group',
 		name = L['Buffs'],
 		args = {}
 	}
 
 	for k, v in ipairs(RuleList) do
-		SUI.opt.args['ModSetting'].args['Buffs'].args['DisplayLocation' .. v] = {
+		SUI.opt.args['Modules'].args['Buffs'].args['DisplayLocation' .. v] = {
 			name = L['Display Location'] .. ' ' .. v,
 			type = 'group',
 			inline = true,

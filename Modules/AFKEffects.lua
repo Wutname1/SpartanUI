@@ -62,7 +62,7 @@ end
 ----- Base ----
 
 local function Options()
-	SUI.opt.args.ModSetting.args.AFKEffects = {
+	SUI.opt.args.Modules.args.AFKEffects = {
 		name = L['AFK Effects'],
 		type = 'group',
 		get = function(info)

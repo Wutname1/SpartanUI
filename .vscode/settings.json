@@ -327,7 +327,8 @@
     "GameMenuButtonLogout",
     "GameMenuButtonAddons",
     "GameMenuFrameHeader",
-    "TooltipDataProcessor"
+    "TooltipDataProcessor",
+    "GameMenuButtonSUI"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

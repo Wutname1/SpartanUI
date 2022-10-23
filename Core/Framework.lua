@@ -2092,6 +2092,36 @@ function SUI:OnEnable()
 			end
 		end
 	)
+
+	--Add to Menu Frame
+	local SUIMenuButton = CreateFrame('Button', 'GameMenuButtonSUI', GameMenuFrame, 'GameMenuButtonTemplate')
+	SUIMenuButton:SetScript(
+		'OnClick',
+		function()
+			SUI:GetModule('Handler_Options'):ToggleOptions()
+			if not InCombatLockdown() then
+				HideUIPanel(GameMenuFrame)
+			end
+		end
+	)
+	SUIMenuButton:SetPoint('TOP', GameMenuButtonAddons, 'BOTTOM', 0, -1)
+	GameMenuFrame.SUI = SUIMenuButton
+	hooksecurefunc(
+		'GameMenuFrame_UpdateVisibleButtons',
+		function()
+			GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonSUI:GetHeight() + 10)
+
+			GameMenuButtonSUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
+
+			local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
+			if relTo ~= GameMenuButtonSUI then
+				GameMenuButtonSUI:ClearAllPoints()
+				GameMenuButtonSUI:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -2)
+				GameMenuButtonLogout:ClearAllPoints()
+				GameMenuButtonLogout:SetPoint('TOPLEFT', GameMenuButtonSUI, 'BOTTOMLEFT', 0, offY)
+			end
+		end
+	)
 end
 
 -- For Setting a unifid skin across all registered Skinable modules
