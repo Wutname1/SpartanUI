@@ -2,6 +2,18 @@
 local SUI = SUI
 local module = SUI:NewModule('Component_Skins')
 SUI.Skins = module
+
+---@class SkinDB
+local DBDefaults = {
+	components = {
+		['**'] = {
+			enabled = true
+		}
+	}
+}
+
+local DB = nil ---@type SkinDB
+
 local BlizzardRegionList = {
 	'Left',
 	'Middle',
@@ -379,23 +391,52 @@ end
 local function Options()
 	---@type AceConfigOptionsTable
 	local OptTable = {
-		type = 'group',
 		name = 'Skins',
+		type = 'group',
 		args = {
-			Header = {
-				type = 'header',
-				name = 'Skins',
-				order = 1
-			},
-			Info = {
-				type = 'description',
-				name = 'Options Soon',
-				order = 2
+			Elements = {
+				name = 'Elements',
+				type = 'group',
+				inline = true,
+				get = function(info)
+					return DB.components[info[#info]].enabled
+				end,
+				set = function(info, val)
+					DB.components[info[#info]].enabled = val
+					SUI:reloadui()
+				end,
+				args = {}
 			}
 		}
 	}
 
+	for name, settings in pairs(module.Registry) do
+		OptTable.args.Elements.args[name] = {
+			name = name,
+			type = 'toggle',
+			order = 1
+		}
+
+		if settings.Config then
+			settings.Config(OptTable.args.Elements.args[name])
+		end
+	end
+
 	SUI.Options:AddOptions(OptTable, 'Skins', nil)
+end
+
+function module:OnInitialize()
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', {profile = DBDefaults})
+	DB = module.Database.profile
+	if SUI:IsModuleDisabled('Skins') then
+		return
+	end
+
+	for name, Data in pairs(module.Registry) do
+		if Data.OnInitalize and DB.components[name].enabled then
+			Data.OnInitalize()
+		end
+	end
 end
 
 function module:OnEnable()
@@ -404,20 +445,9 @@ function module:OnEnable()
 		return
 	end
 
-	for _, Data in pairs(module.Registry) do
-		if Data.OnEnable then
+	for name, Data in pairs(module.Registry) do
+		if Data.OnEnable and DB.components[name].enabled then
 			Data.OnEnable()
-		end
-	end
-end
-
-function module:OnInitalize()
-	if SUI:IsModuleDisabled('Skins') then
-		return
-	end
-	for _, Data in pairs(module.Registry) do
-		if Data.OnInitalize then
-			Data.OnInitalize()
 		end
 	end
 end

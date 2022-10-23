@@ -76,8 +76,8 @@ function SUI:EnableModule(input)
 	return module:Enable()
 end
 
-local function ModuleSelectionPage()
-	local ModuleSelectionPage = {
+local function CreateSetupPage()
+	local SetupPage = {
 		ID = 'ModuleSelectionPage',
 		Name = L['Enabled modules'],
 		Priority = true,
@@ -172,9 +172,9 @@ local function ModuleSelectionPage()
 		end
 	}
 
-	SUI.Setup:AddPage(ModuleSelectionPage)
+	SUI.Setup:AddPage(SetupPage)
 end
 
 function module:OnEnable()
-	ModuleSelectionPage()
+	CreateSetupPage()
 end

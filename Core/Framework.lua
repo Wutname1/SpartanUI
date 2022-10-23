@@ -2109,7 +2109,7 @@ function SUI:OnEnable()
 	hooksecurefunc(
 		'GameMenuFrame_UpdateVisibleButtons',
 		function()
-			GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonSUI:GetHeight() + 10)
+			GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + (GameMenuButtonSUI:GetHeight() * 1.8))
 
 			GameMenuButtonSUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
 

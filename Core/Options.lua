@@ -261,7 +261,7 @@ function module:OnInitialize()
 		}
 	}
 
-	SUI.opt.args['Modules'] = {
+	SUI.opt.args.Modules = {
 		name = L['Modules'],
 		type = 'group',
 		args = {
@@ -446,6 +446,7 @@ end
 ---| "General"
 
 ---@param OptionsTable AceConfigOptionsTable
+---@param name? string Default is "Module"
 ---@param OptType OptionsType Default is "Module"
 function Options:AddOptions(OptionsTable, name, OptType)
 	if OptType == nil or OptType == 'Module' then
