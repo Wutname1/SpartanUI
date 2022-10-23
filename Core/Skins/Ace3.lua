@@ -209,4 +209,8 @@ local function attemptSkin()
 	end
 end
 
-SUI.Skins:Register('Ace3', attemptSkin)
+---@param optTable AceConfigOptionsTable
+local function Options(optTable)
+end
+
+SUI.Skins:Register('Ace3', attemptSkin, nil, Options)

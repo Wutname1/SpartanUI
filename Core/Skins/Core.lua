@@ -400,11 +400,13 @@ local function Options()
 	local OptTable = {
 		name = 'Skins',
 		type = 'group',
+		childGroups = 'tab',
 		args = {
-			Elements = {
+			enabledState = {
 				name = 'Elements',
 				type = 'group',
 				inline = true,
+				order = 1,
 				get = function(info)
 					return DB.components[info[#info]].enabled
 				end,
@@ -418,14 +420,20 @@ local function Options()
 	}
 
 	for name, settings in pairs(module.Registry) do
-		OptTable.args.Elements.args[name] = {
+		OptTable.args.enabledState.args[name] = {
 			name = name,
 			type = 'toggle',
 			order = 1
 		}
 
 		if settings.Config then
-			settings.Config(OptTable.args.Elements.args[name])
+			local SettingsScreen = {
+				name = name,
+				type = 'group',
+				args = {}
+			}
+			settings.Config(SettingsScreen)
+			OptTable.args[name] = SettingsScreen
 		end
 	end
 

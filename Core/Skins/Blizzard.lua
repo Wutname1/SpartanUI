@@ -46,4 +46,8 @@ local function OnEnable()
 	end
 end
 
-SUI.Skins:Register('Blizzard', OnEnable)
+---@param optTable AceConfigOptionsTable
+local function Options(optTable)
+end
+
+SUI.Skins:Register('Blizzard', OnEnable, nil, Options)
