@@ -15,23 +15,17 @@ local function ConfigOpened(self, name)
 	if not frame or frame.Close then
 		return
 	end
-
-	local Close = StdUi:Button(frame, 150, 20, 'CLOSE')
-	Close:HookScript(
-		'OnClick',
-		function()
-			frame.CloseBtn:Click()
-		end
-	)
-	Close:SetPoint('BOTTOMRIGHT', -17, 10)
-	Close:SetFrameLevel(500)
-	frame.Close = Close
-
 	for i = 1, frame:GetNumChildren() do
 		local child = select(i, frame:GetChildren())
-		if child:IsObjectType('Button') and child:GetText() == _G['CLOSE'] then
-			frame.CloseBtn = child
-			child:Hide()
+		SUI.Debug('Child ' .. (child:GetName() or 'NoName') .. ' ' .. (child:GetObjectType() or 'NoType'), 'Skiner')
+		if child:IsObjectType('Button') then
+			if child:IsObjectType('Button') and child:GetText() == _G['CLOSE'] then
+				SUI.Skins.SkinObj(child:GetObjectType(), child, 'Light')
+				child:SetSize(150, 20)
+				child:SetPoint('BOTTOMRIGHT', -17, 10)
+			else
+				child:Hide()
+			end
 		end
 	end
 end

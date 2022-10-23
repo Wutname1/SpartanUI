@@ -380,7 +380,9 @@ function module:ToggleOptions(pages)
 
 			local ProfileHandler = SUI:GetModule('Handler_Profiles', true)
 			if ProfileHandler then
-				local Export = StdUi:Button(bottom, 150, 20, 'Export')
+				local Export = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
+				Export:SetSize(150, 20)
+				Export:SetText('Export')
 				Export:SetPoint('BOTTOM', 80, 10)
 				Export:HookScript(
 					'OnClick',
@@ -389,9 +391,12 @@ function module:ToggleOptions(pages)
 						frame.CloseBtn:Click()
 					end
 				)
+				SUI.Skins.SkinObj('Button', Export, 'Light', 'Ace3')
 				bottom.Export = Export
 
-				local Import = StdUi:Button(bottom, 150, 20, 'Import')
+				local Import = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
+				Import:SetSize(150, 20)
+				Import:SetText('Import')
 				Import:SetPoint('BOTTOM', -80, 10)
 				Import:HookScript(
 					'OnClick',
@@ -400,11 +405,14 @@ function module:ToggleOptions(pages)
 						frame.CloseBtn:Click()
 					end
 				)
+				SUI.Skins.SkinObj('Button', Import, 'Light', 'Ace3')
 				bottom.Import = Import
 			end
 
 			if SUI:IsModuleEnabled('MoveIt') then
-				local MoveIt = StdUi:Button(bottom, 150, 20, L['Toggle movers'])
+				local MoveIt = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
+				MoveIt:SetSize(150, 20)
+				MoveIt:SetText(L['Toggle movers'])
 				MoveIt:SetPoint('RIGHT', bottom.Import, 'LEFT', -25, 0)
 				MoveIt:HookScript(
 					'OnClick',
@@ -412,6 +420,7 @@ function module:ToggleOptions(pages)
 						SUI.MoveIt:MoveIt()
 					end
 				)
+				SUI.Skins.SkinObj('Button', MoveIt, 'Light', 'Ace3')
 				bottom.MoveIt = MoveIt
 			end
 

@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local module = SUI:NewModule('Component_Skins')
+local module = SUI:NewModule('Handler_Skins')
 SUI.Skins = module
 
 ---@class SkinDB
@@ -52,9 +52,9 @@ local BlizzardRegionList = {
 }
 
 local Settings = {
-	BackdropColor = {0.0588, 0.0588, 0, 0.8},
-	BackdropColorDark = {.5, 0.5, .5, .9},
-	BackdropColorLight = {.5, 0.5, .5, .4},
+	BackdropColor = {0.05, 0.05, 0.05, 0.85},
+	BackdropColorDark = {0, 0, 0, .95},
+	BackdropColorLight = {.17, .17, .17, .9},
 	BaseBorderColor = {1, 1, 1, .3},
 	ObjBorderColor = {1, 1, 1, .5},
 	factionColor = {
@@ -267,7 +267,7 @@ function module.SetTemplate(frame, appearanceMode)
 	else
 		frame:SetBackdrop(
 			{
-				bgFile = Settings.bgFile,
+				bgFile = Settings.edgeFile,
 				edgeFile = Settings.edgeFile,
 				edgeSize = edgeSize
 			}
@@ -287,7 +287,9 @@ end
 
 module.Objects = {}
 
-function module.Objects.Button(button, clean, NormalTex, regionsToFade)
+---@param button FrameExpanded
+---@param mode? AppearanceMode
+function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 	if button.isSkinned then
 		return
 	end
@@ -305,7 +307,7 @@ function module.Objects.Button(button, clean, NormalTex, regionsToFade)
 		button:SetDisabledTexture(Settings.bgFile)
 	end
 
-	if clean then
+	if mode == 'NoBackdrop' then
 		module.RemoveAllTextures(button)
 	end
 
@@ -333,11 +335,15 @@ function module.Objects.Button(button, clean, NormalTex, regionsToFade)
 		end
 	end
 
-	module.SetTemplate(button)
+	module.SetTemplate(button, mode)
 
 	button:HookScript('OnEnter', SetModifiedBackdrop)
 	button:HookScript('OnLeave', SetOriginalBackdrop)
 	button:HookScript('OnDisable', SetDisabledBackdrop)
+
+	if button.Text then
+		button.Text:SetTextColor(1, 1, 1)
+	end
 
 	button.isSkinned = true
 end
@@ -346,12 +352,13 @@ end
 ---@param ObjType string
 ---@param object FrameExpanded
 ---@param mode? AppearanceMode
-function module.SkinObj(ObjType, object, mode)
-	if not object then
+---@param component? string
+function module.SkinObj(ObjType, object, mode, component)
+	if not object or (component and not DB.components[component].enabled) then
 		return
 	end
 	if ObjType and module.Objects[ObjType] then
-		module.Objects[ObjType](object)
+		module.Objects[ObjType](object, mode)
 		return
 	end
 

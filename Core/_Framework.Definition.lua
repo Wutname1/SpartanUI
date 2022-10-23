@@ -1,2 +1,3 @@
----@class FrameExpanded : Frame, BackdropTemplate
+---@class FrameExpanded : Frame, BackdropTemplate, Button
+---@field text ElementTextData
 local a = {}
