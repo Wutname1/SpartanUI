@@ -27,7 +27,7 @@ L['Totems'] = true
 L['Raid Group'] = true
 L['Raid Role'] = true
 L['Raid assignment (main tank or main assist)'] = true
-
+L['Cannot set position to self'] = true
 L['Accept/Complete Campaign Quests'] = true
 L['Current quest is a campaign quest, pausing AutoTurnIn'] = true
 L['General'] = true

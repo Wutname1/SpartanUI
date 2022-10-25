@@ -1000,6 +1000,10 @@ function Options:Initialize()
 				return UF.CurrentSettings[frameName].elements[elementName].position[info[#info]]
 			end
 			local PositionSet = function(info, val)
+				if val == elementName then
+					SUI:Print(L['Cannot set position to self'])
+					return
+				end
 				--Update memory
 				UF.CurrentSettings[frameName].elements[elementName].position[info[#info]] = val
 				--Update the DB
