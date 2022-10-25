@@ -114,7 +114,7 @@ local function Update(self, event, unit, powerType)
 		local powerID = unit == 'vehicle' and SPELL_POWER_COMBO_POINTS or ClassPowerID
 		max = UnitPowerMax(unit, powerID)
 		mod = UnitPowerDisplayMod(powerID)
-        chargedPoints = GetUnitChargedPowerPoints(unit)
+        chargedPoints = oUF.isRetail and GetUnitChargedPowerPoints(unit)
 
 		-- UNIT_POWER_POINT_CHARGE doesn't provide a power type
 		powerType = powerType or ClassPowerType
