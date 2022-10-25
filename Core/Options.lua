@@ -455,16 +455,21 @@ end
 ---| "General"
 
 ---@param OptionsTable AceConfigOptionsTable
----@param name? string Default is "Module"
----@param OptType OptionsType Default is "Module"
+---@param name? string
+---@param OptType? OptionsType Default is "Module"
 function Options:AddOptions(OptionsTable, name, OptType)
 	if OptType == nil or OptType == 'Module' then
-		SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Help.args)] = OptionsTable
+		SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)] = OptionsTable
 	elseif OptType == 'Root' then
 		SUI.opt.args[name or tostring(#SUI.opt.args)] = OptionsTable
 	elseif OptType ~= nil then
-		SUI.opt.args[OptType].args[name or tostring(#SUI.opt.args.Help.args)] = OptionsTable
+		SUI.opt.args[OptType].args[name or tostring(#SUI.opt.args[OptType].args)] = OptionsTable
 	end
+end
+
+function Options:DisableOptions(name)
+	SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled =
+		not (SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled or false)
 end
 
 SUI.Options = Options

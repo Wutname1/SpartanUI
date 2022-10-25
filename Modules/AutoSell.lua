@@ -219,11 +219,7 @@ local function SetupPage()
 end
 
 local function BuildOptions()
-	if SUI.opt.args['Modules'].args['AutoSell'] then
-		return
-	end
-
-	SUI.opt.args['Modules'].args['AutoSell'] = {
+	local optTable = {
 		type = 'group',
 		name = L['Auto sell'],
 		get = function(info)
@@ -316,10 +312,8 @@ local function BuildOptions()
 			}
 		}
 	}
-	if SUI.IsClassic then
-		SUI.opt.args.Modules.args.AutoSell.args.MaxILVL.max = 90
-		SUI.opt.args.Modules.args.AutoSell.args.UseGuildBankRepair.hidden = true
-	end
+
+	SUI.Options:AddOptions(optTable, 'AutoSell')
 end
 
 local function IsInGearset(bag, slot)
@@ -518,13 +512,13 @@ function module:Repair(PersonalFunds)
 end
 
 function module:OnEnable()
+	BuildOptions()
 	if SUI:IsModuleDisabled('AutoSell') then
 		return
 	end
 
 	if not LoadedOnce then
 		SetupPage()
-		BuildOptions()
 		local function MerchantEventHandler(self, event, ...)
 			if SUI:IsModuleDisabled('AutoSell') then
 				return

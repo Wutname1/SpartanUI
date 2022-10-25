@@ -747,13 +747,6 @@ end
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoTurnIn', {profile = DBDefaults})
 	DB = module.Database.profile
-
-	-- Migrate old settings
-	if SUI.DB.AutoTurnIn then
-		debug('Auto turn in DB Migration')
-		DB = SUI:MergeData(DB, SUI.DB.AutoTurnIn, true)
-		SUI.DB.AutoTurnIn = nil
-	end
 end
 
 function module:OnEnable()

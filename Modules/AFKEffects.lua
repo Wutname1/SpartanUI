@@ -62,7 +62,7 @@ end
 ----- Base ----
 
 local function Options()
-	SUI.opt.args.Modules.args.AFKEffects = {
+	local optTable = {
 		name = L['AFK Effects'],
 		type = 'group',
 		get = function(info)
@@ -117,6 +117,8 @@ local function Options()
 			}
 		}
 	}
+
+	SUI.Options:AddOptions(optTable, 'AFKEffects')
 end
 
 function module:OnInitialize()

@@ -437,7 +437,7 @@ local function Options()
 		end
 	end
 
-	SUI.Options:AddOptions(OptTable, 'Skins', nil)
+	SUI.Options:AddOptions(OptTable, 'Skins')
 end
 
 function module:OnInitialize()
