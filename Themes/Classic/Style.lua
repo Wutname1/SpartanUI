@@ -222,7 +222,7 @@ function module:OnInitialize()
 		['BT4BarMicroMenu'] = 0.7
 	}
 
-	local UF = SUI:GetModule('Component_UnitFrames')
+	local UF = SUI.UF
 	---@type UFStyleSettings
 	local ufsettings = {
 		artwork = {
@@ -333,7 +333,7 @@ function module:OnEnable()
 end
 
 function module:SetupMenus()
-	SUI.opt.args['Artwork'].args['ActionBar'] = {
+	SUI.opt.args.Artwork.args['ActionBar'] = {
 		name = L['ActionBar Settings'],
 		type = 'group',
 		desc = L['ActionBarConfDesc'],
@@ -570,7 +570,7 @@ function module:SetupMenus()
 			}
 		}
 	}
-	SUI.opt.args['Artwork'].args['popup'] = {
+	SUI.opt.args.Artwork.args['popup'] = {
 		name = L['Popup Animations'],
 		type = 'group',
 		desc = L['Toggle popup bar animations'],
@@ -655,7 +655,7 @@ function module:SetupMenus()
 			}
 		}
 	}
-	SUI.opt.args['Artwork'].args['Artwork'] = {
+	SUI.opt.args.Artwork.args['Artwork'] = {
 		name = L['Artwork Options'],
 		type = 'group',
 		order = 10,
@@ -769,9 +769,9 @@ end
 
 function module:AddNotice()
 	if (SUI.DB.alpha == 1) then
-		SUI.opt.args['Artwork'].args['Artwork'].args['TransparencyNotice'].hidden = true
+		SUI.opt.args.Artwork.args.Artwork.args['TransparencyNotice'].hidden = true
 	else
-		SUI.opt.args['Artwork'].args['Artwork'].args['TransparencyNotice'].hidden = false
+		SUI.opt.args.Artwork.args.Artwork.args['TransparencyNotice'].hidden = false
 	end
 end
 
