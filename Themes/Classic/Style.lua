@@ -189,38 +189,78 @@ end
 
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Component_BarHandler')
-	BarHandler.BarPosition.BT4.Classic = {
-		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,82',
-		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,35',
-		--
-		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,81',
-		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,35',
-		--
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
-		--
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-		--
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,297,133',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
-	}
-	BarHandler.BarScale.BT4.Classic = {
-		['BT4Bar1'] = 0.77,
-		['BT4Bar2'] = 0.77,
-		['BT4Bar3'] = 0.77,
-		['BT4Bar4'] = 0.77,
-		['BT4Bar5'] = 0.75,
-		['BT4Bar6'] = 0.75,
-		['BT4BarBagBar'] = 0.6,
-		['BT4BarStanceBar'] = 0.7,
-		-- ['BT4BarPetBar'] = 0.7,
-		['BT4BarMicroMenu'] = 0.7
-	}
+	if SUI.IsRetail then
+		BarHandler.BarPosition.BT4.Classic = {
+			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
+			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
+			--
+			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
+			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
+			--
+			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+			--
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,297,133',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
+		}
+		BarHandler.BarScale.BT4.Classic = {
+			['BT4Bar1'] = 0.63,
+			['BT4Bar2'] = 0.63,
+			['BT4Bar3'] = 0.63,
+			['BT4Bar4'] = 0.63,
+			['BT4Bar5'] = 0.63,
+			['BT4Bar6'] = 0.63,
+			['BT4Bar7'] = 0.63,
+			['BT4Bar8'] = 0.63,
+			['BT4Bar9'] = 0.63,
+			['BT4BarBagBar'] = 0.6,
+			['BT4BarStanceBar'] = 0.7,
+			-- ['BT4BarPetBar'] = 0.7,
+			['BT4BarMicroMenu'] = 0.7
+		}
+	else
+		BarHandler.BarPosition.BT4.Classic = {
+			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,82',
+			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,35',
+			--
+			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,81',
+			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,35',
+			--
+			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+			--
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,297,133',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
+		}
+		BarHandler.BarScale.BT4.Classic = {
+			['BT4Bar1'] = 0.77,
+			['BT4Bar2'] = 0.77,
+			['BT4Bar3'] = 0.77,
+			['BT4Bar4'] = 0.77,
+			['BT4Bar5'] = 0.75,
+			['BT4Bar6'] = 0.75,
+			['BT4Bar7'] = 0.77,
+			['BT4Bar8'] = 0.77,
+			['BT4Bar9'] = 0.77,
+			['BT4BarBagBar'] = 0.6,
+			['BT4BarStanceBar'] = 0.7,
+			['BT4BarMicroMenu'] = 0.7
+		}
+	end
 
 	local UF = SUI.UF
 	---@type UFStyleSettings
