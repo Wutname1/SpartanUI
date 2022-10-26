@@ -127,7 +127,7 @@ function module:OnInitialize()
 	module.DB = module.Database.profile
 	if SUI.IsRetail and SUI:IsAddonDisabled('Bartender4') then
 		module.DB.BarSystem = 'WoW'
-	elseif SUI.IsRetail and SUI:IsAddonEnabled('Bartender4') and module.DB.BarSystem == 'WoW' then
+	elseif SUI:IsAddonEnabled('Bartender4') and module.DB.BarSystem == 'WoW' then
 		module.DB.BarSystem = 'Bartender4'
 	end
 	if not module.BarSystems[module.DB.BarSystem] then
