@@ -103,6 +103,9 @@ local SUIBT4Settings = {
 		enabled = true,
 		position = {scale = 0.6}
 	},
+	QueueStatus = {
+		position = {scale = 0.58}
+	},
 	PetBar = {
 		enabled = true,
 		position = {scale = 0.6},
@@ -149,7 +152,8 @@ local FrameList = {
 	'BT4BarStanceBar',
 	'BT4BarPetBar',
 	'MultiCastActionBarFrame',
-	'BT4BarMicroMenu'
+	'BT4BarMicroMenu',
+	'BT4BarQueueStatus'
 }
 ------------------------------------------------------------
 
@@ -302,6 +306,10 @@ local function AddMovers()
 	BTMover('BT4BarStanceBar', 'Stance Bar')
 	BTMover('BT4BarPetBar', 'Pet Bar')
 	BTMover('BT4BarMicroMenu', 'Micro menu')
+	if SUI.IsRetail and _G['BT4BarQueueStatus'] then
+		BTMover('BT4BarQueueStatus', 'Queue Status')
+	end
+
 	if not SUI.IsRetail and select(2, UnitClass('player')) == 'SHAMAN' and _G['MultiCastActionBarFrame'] then
 		BTMover('MultiCastActionBarFrame', 'Totem Bar')
 	end

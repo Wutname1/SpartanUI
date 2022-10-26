@@ -27,7 +27,8 @@ module.BarPosition = {
 			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 			--
 			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
-			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193'
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193',
+			['BT4BarQueueStatus'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-107,132'
 		}
 	}
 }
@@ -50,7 +51,8 @@ module.BarScale = {
 			['BT4BarStanceBar'] = 0.6,
 			['BT4BarPetBar'] = 0.6,
 			['MultiCastActionBarFrame'] = 0.6,
-			['BT4BarMicroMenu'] = 0.7
+			['BT4BarMicroMenu'] = 0.7,
+			['BT4BarQueueStatus'] = 0.58
 		}
 	}
 }
