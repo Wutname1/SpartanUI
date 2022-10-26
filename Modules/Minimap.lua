@@ -56,7 +56,7 @@ local MiniMapBtnScrape = function()
 	if CensusButton ~= nil and CensusButton.FadeIn == nil then
 		module:SetupButton(CensusButton)
 	end
-	if GameTimeFrame then
+	if GameTimeFrame and not SUI.IsRetail then
 		module:SetupButton(GameTimeFrame)
 	end
 end
@@ -409,11 +409,15 @@ function module:ModifyMinimapLayout()
 		MiniMapMailFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 21, -53)
 	end
 
-	if GameTimeFrame then
+	if GameTimeFrame and not SUI.IsRetail then
 		GameTimeFrame:ClearAllPoints()
 		GameTimeFrame:SetScale(.7)
 		GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
 		GameTimeFrame:SetFrameLevel(122)
+	elseif GameTimeFrame and BT4BarMicroMenu and SUI.IsRetail then
+		GameTimeFrame:ClearAllPoints()
+		GameTimeFrame:SetPoint('TOPRIGHT', CharacterMicroButton, 'TOPLEFT', 2, 0)
+		GameTimeFrame:SetWidth(CharacterMicroButton:GetWidth())
 	end
 
 	module:MinimapCoords()
@@ -580,14 +584,6 @@ function module:update(FullUpdate)
 			end
 		end
 
-		if GameTimeFrame then
-			if (UserSettings.MapTimeIndicator) then
-				GameTimeFrame:Hide()
-			else
-				GameTimeFrame:Show()
-			end
-		end
-
 		local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.ZoneText.position)
 		Minimap.ZoneText:ClearAllPoints()
 		Minimap.ZoneText:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -691,12 +687,6 @@ function module:update(FullUpdate)
 			CensusButton.FadeOut:Play()
 		end
 
-		if GameTimeFrame ~= nil and GameTimeFrame:GetAlpha() == 1 then
-			GameTimeFrame.FadeIn:Stop()
-			GameTimeFrame.FadeOut:Stop()
-			GameTimeFrame.FadeOut:Play()
-		end
-
 		for _, child in ipairs({Minimap:GetChildren()}) do
 			if child:GetName() ~= nil and not isFrameIgnored(child) then
 				--catch buttons not playing nice.
@@ -719,11 +709,6 @@ function module:update(FullUpdate)
 			CensusButton.FadeIn:Stop()
 			CensusButton.FadeOut:Stop()
 			CensusButton.FadeIn:Play()
-		end
-		if GameTimeFrame ~= nil and GameTimeFrame:GetAlpha() == 0 then
-			GameTimeFrame.FadeIn:Stop()
-			GameTimeFrame.FadeOut:Stop()
-			GameTimeFrame.FadeIn:Play()
 		end
 
 		for _, child in ipairs({Minimap:GetChildren()}) do
