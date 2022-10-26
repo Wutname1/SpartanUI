@@ -409,6 +409,9 @@ function addon:updatemapIcon()
 end
 
 _G.SUIErrorDisplay = addon
+if GetCVar('scriptErrors') == 0 then
+	SetCVar('scriptErrors', 1)
+end
 
 local f = CreateFrame('Frame')
 f:SetScript(
