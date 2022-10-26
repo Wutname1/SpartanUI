@@ -54,7 +54,7 @@ module.BarScale = {
 	}
 }
 
-if not SUI.IsDF then
+if not SUI.IsRetail then
 	module.BarPosition.BT4.default = {
 		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-364,78',
 		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-366,24',

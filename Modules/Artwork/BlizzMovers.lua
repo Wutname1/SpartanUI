@@ -191,7 +191,7 @@ local function VehicleLeaveButton()
 end
 
 function module.BlizzMovers()
-	if SUI.IsClassic or SUI.IsDF then
+	if SUI.IsClassic or SUI.IsRetail then
 		return
 	end
 

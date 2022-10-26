@@ -672,7 +672,7 @@ function module:SetupChatboxes()
 		ChatFrameTab.Text:ClearAllPoints()
 		ChatFrameTab.Text:SetPoint('CENTER', ChatFrameTab)
 
-		if SUI.IsDF then
+		if SUI.IsRetail then
 			local sides = {'Left', 'Middle', 'Right'}
 			local modes = {'Active', 'Highlight', ''}
 
