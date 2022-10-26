@@ -1,4 +1,7 @@
 local _G, SUI, L = _G, SUI, SUI.L
+if SUI.IsRetail then
+	return
+end
 local module = SUI:NewModule('Component_Objectives')
 module.description = 'Allows the hiding of the Objectives tracker based on conditions'
 ----------------------------------------------------------------------------------------------------

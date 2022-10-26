@@ -102,11 +102,11 @@ local function UpdatePosition()
 	-- Position map based on Artwork
 	if SUI:IsModuleEnabled('Minimap') and Settings.position and not MoveIt:IsMoved('Minimap') then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', Settings.position)
-		if Minimap.position then
-			Minimap:position(point, anchor, secondaryPoint, x, y, false, true)
+		if MinimapCluster.position then
+			MinimapCluster:position(point, anchor, secondaryPoint, x, y, false, true)
 		else
-			Minimap:ClearAllPoints()
-			Minimap:SetPoint(point, anchor, secondaryPoint, x, y)
+			MinimapCluster:ClearAllPoints()
+			MinimapCluster:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
 	end
 end
@@ -182,7 +182,7 @@ function module:OnInitialize()
 	Settings = SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap
 	UserSettings = SUI.DB.MiniMap
 
-	-- Check for Carbonite dinking with the minimap.
+	-- Check for Carbonite
 	if (NXTITLELOW) then
 		SUI:Print(NXTITLELOW .. ' is loaded ...Checking settings ...')
 		if (Nx.db.profile.MiniMap.Own == true) then
@@ -193,7 +193,7 @@ function module:OnInitialize()
 	end
 
 	-- Look for Sexymap or other MiniMap addons
-	if (select(2, MinimapCluster:GetPoint()) ~= UIParent) or select(4, GetAddOnInfo('SexyMap')) then
+	if SUI:IsAddonEnabled('SexyMap') then
 		UserSettings.AutoDetectAllowUse = false
 	end
 end
@@ -234,9 +234,9 @@ function module:OnEnable()
 	--Look for existing buttons
 	MiniMapBtnScrape()
 
-	Minimap:HookScript('OnEnter', OnEnter)
-	Minimap:HookScript('OnLeave', OnLeave)
-	Minimap:HookScript('OnMouseDown', OnMouseDown)
+	MinimapCluster:HookScript('OnEnter', OnEnter)
+	MinimapCluster:HookScript('OnLeave', OnLeave)
+	MinimapCluster:HookScript('OnMouseDown', OnMouseDown)
 
 	-- Setup Updater script for button visibility updates
 	MinimapUpdater:SetSize(1, 1)
@@ -262,7 +262,22 @@ function module:OnEnable()
 	module:update(true)
 
 	-- Make map movable
-	MoveIt:CreateMover(Minimap, 'Minimap')
+	MoveIt:CreateMover(MinimapCluster, 'Minimap')
+
+	MinimapCluster.Selection:HookScript(
+		'OnShow',
+		function()
+			MinimapCluster.Selection:Hide()
+		end
+	)
+	local function ResetPostion(_, _, anchor)
+		if anchor == UIParent or not anchor.GetName then
+			MinimapCluster:ClearAllPoints()
+			MinimapCluster:SetPoint('TOPLEFT', SUI_Mover_Minimap)
+		end
+	end
+
+	hooksecurefunc(MinimapCluster, 'SetPoint', ResetPostion)
 
 	-- If we didint move the minimap before making the mover make sure default is set.
 	if MoveIt:IsMoved('Minimap') then
@@ -275,7 +290,6 @@ end
 
 function module:ModifyMinimapLayout()
 	Minimap:EnableMouseWheel(true)
-	MinimapCluster:EnableMouse(false)
 	Minimap:SetScript(
 		'OnMouseWheel',
 		function(_, delta)

@@ -376,9 +376,9 @@ local isDragging = false
 
 ---@param parent Frame
 ---@param name string
----@param DisplayName string
----@param postdrag function
----@param groupName string
+---@param DisplayName? string
+---@param postdrag? function
+---@param groupName? string
 ---@return nil
 function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	if SUI.DB.DisabledComponents.MoveIt then
@@ -703,7 +703,10 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		end
 	end
 
-	parent:SetScript('OnSizeChanged', SizeChanged)
+	hooksecurefunc(parent, 'SetSize', SizeChanged)
+	hooksecurefunc(parent, 'SetHeight', SizeChanged)
+	hooksecurefunc(parent, 'SetWidth', SizeChanged)
+
 	parent:HookScript('OnMouseDown', ParentMouseDown)
 	parent:HookScript('OnMouseUp', ParentMouseUp)
 	parent.mover = f
@@ -716,6 +719,9 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		return false
 	end
 
+		-- function EditModeManagerFrame.AccountSettings.Settings.PartyFrames:ShouldEnable()
+		-- 	return false
+		-- end
 	parent:ClearAllPoints()
 	parent:SetPoint('TOPLEFT', f, 0, 0)
 

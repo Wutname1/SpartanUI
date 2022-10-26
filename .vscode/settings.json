@@ -329,7 +329,8 @@
     "GameMenuFrameHeader",
     "TooltipDataProcessor",
     "GameMenuButtonSUI",
-    "PartyFrame"
+    "PartyFrame",
+    "SUI_Mover_Minimap"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",
