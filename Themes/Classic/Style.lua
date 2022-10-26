@@ -211,15 +211,15 @@ function module:OnInitialize()
 			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
 		}
 		BarHandler.BarScale.BT4.Classic = {
-			['BT4Bar1'] = 0.63,
-			['BT4Bar2'] = 0.63,
-			['BT4Bar3'] = 0.63,
-			['BT4Bar4'] = 0.63,
+			['BT4Bar1'] = 0.62,
+			['BT4Bar2'] = 0.62,
+			['BT4Bar3'] = 0.62,
+			['BT4Bar4'] = 0.62,
 			['BT4Bar5'] = 0.63,
 			['BT4Bar6'] = 0.63,
-			['BT4Bar7'] = 0.63,
-			['BT4Bar8'] = 0.63,
-			['BT4Bar9'] = 0.63,
+			['BT4Bar7'] = 0.62,
+			['BT4Bar8'] = 0.62,
+			['BT4Bar9'] = 0.62,
 			['BT4BarBagBar'] = 0.6,
 			['BT4BarStanceBar'] = 0.7,
 			-- ['BT4BarPetBar'] = 0.7,
