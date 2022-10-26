@@ -10,7 +10,7 @@ local CurScale
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
-	local BarHandler = SUI:GetModule('Component_BarHandler')
+	local BarHandler = SUI:GetModule('Handler_BarSystems')
 	BarHandler.BarPosition.BT4.Digital = {
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,192',
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',

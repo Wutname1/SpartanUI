@@ -1,10 +1,11 @@
 local SUI = SUI
 local L = SUI.L
-local module = SUI:NewModule('Component_BarHandler')
+local module = SUI:NewModule('Handler_BarSystems')
+local DB = nil
 module.DisplayName = 'Bar Handler'
 module.description = 'CORE: Handles the SpartanUI Bartender4 intergration'
 module.Core = true
-module.BarSystems = {}
+module.Registry = {}
 module.BarPosition = {
 	BT4 = {
 		default = {
@@ -101,7 +102,7 @@ end
 ------------------------------------------------------------
 
 function module:AddBarSystem(name, OnInitialize, OnEnable, OnDisable, Unlocker, RefreshConfig)
-	module.BarSystems[name] = {
+	module.Registry[name] = {
 		active = false,
 		Initialize = OnInitialize,
 		enable = OnEnable,
@@ -111,43 +112,103 @@ function module:AddBarSystem(name, OnInitialize, OnEnable, OnDisable, Unlocker, 
 	}
 end
 
--- Hard code this for now.
-function module:OnInitialize()
-	local defaults = {
-		profile = {
-			BarSystem = 'Bartender4',
-			custom = {
-				scale = {
-					BT4 = {}
-				}
+local function Options()
+	---@type AceConfigOptionsTable
+	local OptTable = {
+		name = 'Bar System',
+		type = 'group',
+		childGroups = 'tab',
+		get = function(info)
+			return DB[info[#info]]
+		end,
+		set = function(info, val)
+			DB[info[#info]] = val
+			SUI:reloadui()
+		end,
+		args = {
+			ActiveSystem = {
+				name = 'Active Bar System',
+				type = 'select',
+				order = 1,
+				values = function()
+					local t = {}
+					for k, v in pairs(module.Registry) do
+						t[k] = k
+					end
+					return t
+				end,
+				get = function()
+					return DB.ActiveSystem
+				end,
+				set = function(_, val)
+					DB.ActiveSystem = val
+					SUI:reloadui()
+				end
 			}
 		}
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', defaults)
-	module.DB = module.Database.profile
+
+	-- for name, settings in pairs(module.Registry) do
+	-- 	OptTable.args.enabledState.args[name] = {
+	-- 		name = name,
+	-- 		type = 'toggle',
+	-- 		order = 1
+	-- 	}
+
+	-- 	if settings.Config then
+	-- 		local SettingsScreen = {
+	-- 			name = name,
+	-- 			type = 'group',
+	-- 			args = {}
+	-- 		}
+	-- 		settings.Config(SettingsScreen)
+	-- 		OptTable.args[name] = SettingsScreen
+	-- 	end
+	-- end
+
+	SUI.Options:AddOptions(OptTable, 'Bar System', 'General')
+end
+
+-- Hard code this for now.
+function module:OnInitialize()
+	---@class SUI.BarHandler.DB
+	local defaults = {
+		ActiveSystem = 'Bartender4',
+		custom = {
+			scale = {
+				BT4 = {}
+			}
+		}
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', {profile = defaults})
+	module.DB = module.Database.profile ---@type SUI.BarHandler.DB
+	DB = module.DB
+
 	if SUI.IsRetail and SUI:IsAddonDisabled('Bartender4') then
-		module.DB.BarSystem = 'WoW'
-	elseif SUI:IsAddonEnabled('Bartender4') and module.DB.BarSystem == 'WoW' then
-		module.DB.BarSystem = 'Bartender4'
+		DB.ActiveSystem = 'WoW'
+	elseif SUI:IsAddonEnabled('Bartender4') and DB.ActiveSystem == 'WoW' then
+		DB.ActiveSystem = 'Bartender4'
 	end
-	if not module.BarSystems[module.DB.BarSystem] then
-		module.DB.BarSystem = 'Bartender4'
+	if not module.Registry[DB.ActiveSystem] then
+		DB.ActiveSystem = 'Bartender4'
 	end
 
+	Options()
+
 	-- Do Setup
-	module.BarSystems[module.DB.BarSystem]:Initialize()
+	module.Registry[DB.ActiveSystem]:Initialize()
 end
 
 function module:OnEnable()
-	module.BarSystems[module.DB.BarSystem]:enable()
+	module.Registry[DB.ActiveSystem]:enable()
 end
 
 function module:Refresh()
-	module.BarSystems[module.DB.BarSystem]:refresh()
+	module.Registry[DB.ActiveSystem]:refresh()
 end
 
 function module:MoveIt()
-	if module.BarSystems[module.DB.BarSystem].move then
-		module.BarSystems[module.DB.BarSystem]:move()
+	if module.Registry[DB.ActiveSystem].move then
+		module.Registry[DB.ActiveSystem]:move()
 	end
 end

@@ -22,7 +22,7 @@ function module:SetupOptions()
 			else
 				SUI.DB.scale = val
 				module:UpdateScale()
-				SUI:GetModule('Component_BarHandler'):Refresh()
+				SUI:GetModule('Handler_BarSystems'):Refresh()
 			end
 		end,
 		get = function(info)

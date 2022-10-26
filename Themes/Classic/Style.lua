@@ -188,7 +188,7 @@ local function UnitFrameCallback(self, unit)
 end
 
 function module:OnInitialize()
-	local BarHandler = SUI:GetModule('Component_BarHandler')
+	local BarHandler = SUI:GetModule('Handler_BarSystems')
 	if SUI.IsRetail then
 		BarHandler.BarPosition.BT4.Classic = {
 			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',

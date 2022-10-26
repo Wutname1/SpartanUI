@@ -11,7 +11,7 @@ function module:OnInitialize()
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Transparent'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Transparent'].disabled = false
 
-	local BarHandler = SUI:GetModule('Component_BarHandler')
+	local BarHandler = SUI:GetModule('Handler_BarSystems')
 	BarHandler.BarPosition.BT4.Transparent = {
 		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,80',
 		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,25',

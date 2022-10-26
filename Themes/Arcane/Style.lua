@@ -54,7 +54,7 @@ end
 
 function module:OnInitialize()
 	-- Bartender 4 Settings
-	local BarHandler = SUI:GetModule('Component_BarHandler')
+	local BarHandler = SUI:GetModule('Handler_BarSystems')
 	BarHandler.BarPosition.BT4.Arcane = {
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,192',
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',

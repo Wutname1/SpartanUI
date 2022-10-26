@@ -168,7 +168,7 @@ function module:SetActiveStyle(style)
 		NewStyle:Enable()
 
 		--Update bars
-		SUI:GetModule('Component_BarHandler').Refresh()
+		SUI:GetModule('Handler_BarSystems').Refresh()
 
 		--Update minimap
 		SUI:GetModule('Component_Minimap'):update(true)
@@ -207,7 +207,7 @@ function module:UpdateScale()
 	end
 
 	-- Update Bar scales
-	SUI:GetModule('Component_BarHandler'):Refresh()
+	SUI:GetModule('Handler_BarSystems'):Refresh()
 end
 
 function module:UpdateAlpha()
@@ -381,8 +381,8 @@ function module:OnEnable()
 		return
 	end
 
-	if SUI:GetModule('Component_BarHandler') then
-		SUI:GetModule('Component_BarHandler').Refresh()
+	if SUI:GetModule('Handler_BarSystems') then
+		SUI:GetModule('Handler_BarSystems').Refresh()
 	end
 
 	SetupPage()
