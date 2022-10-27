@@ -315,8 +315,7 @@ function module:OnInitialize()
 		coords = {
 			position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
 		},
-		position = SUI.IsRetail and 'CENTER,SUI_Art_Classic_Center,CENTER,0,-24' or
-			'CENTER,SUI_Art_Classic_Center,CENTER,-8,0'
+		position = SUI.IsRetail and 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,5' or 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,0,17'
 	}
 	SUI:GetModule('Component_Minimap'):Register('Classic', minimapSettings)
 

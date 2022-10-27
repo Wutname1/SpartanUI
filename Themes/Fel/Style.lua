@@ -82,7 +82,7 @@ function module:OnInitialize()
 			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 			scale = 1.2
 		},
-		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,10',
+		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
 		engulfed = true
 	}
 	SUI:GetModule('Component_Minimap'):Register('Fel', minimapSettings)
