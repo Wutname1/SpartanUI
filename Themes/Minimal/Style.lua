@@ -21,12 +21,12 @@ function module:OnInitialize()
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,130',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,0,130',
 		--
-		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-309,0',
+		['BT4BarStanceBar'] = 'TOP,SpartanUI,TOP,-301,0',
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
-		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,369,0',
-		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,680,0'
+		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,300,0',
+		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0'
 	}
 	BarHandler.BarScale.BT4.Minimal = {
 		['BT4Bar1'] = 0.78,
