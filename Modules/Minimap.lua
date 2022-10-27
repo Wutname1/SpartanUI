@@ -133,7 +133,6 @@ local function UpdatePosition()
 			MinimapCluster:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
 	end
-	SUI_Minimap.Settings = module.Settings
 end
 
 local function updateSettings()
@@ -177,6 +176,10 @@ function module:ShapeChange(shape)
 			HybridMinimap.CircleMask:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
 		end
 		HybridMinimap.MapCanvas:SetUseMaskTexture(true)
+	end
+
+	if not SUI.IsRetail then
+		MinimapCluster:SetSize(Minimap:GetWidth() * 1.2, Minimap:GetWidth() + 20 * 1.2)
 	end
 end
 
@@ -229,6 +232,8 @@ function module:ModifyMinimapLayout()
 			MinimapZoneText:ClearAllPoints()
 			MinimapZoneText:SetAllPoints(MinimapZoneTextButton)
 		end
+
+		MinimapCluster:SetSize(Minimap:GetWidth() * 1.2, Minimap:GetWidth() + 20 * 1.2)
 	end
 
 	--Retail modifications
