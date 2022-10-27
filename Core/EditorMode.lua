@@ -44,6 +44,9 @@ local IgnoreFrames = {
 
 function module:OnInitialize()
 	local editMode = _G.EditModeManagerFrame
+	if not editMode then
+		return
+	end
 
 	-- remove the initial registers
 	local registered = editMode.registeredSystemFrames
