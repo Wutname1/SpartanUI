@@ -12,6 +12,7 @@
 	<Script file="Handlers\Profiles.lua" />
 	<Script file="Handlers\SetupWizard.lua" />
 	<Script file="Options.lua" />
+	<Script file="EditorMode.lua" />
 
 	<!-- SUI_PartyMemberTemplate -->
 	<Button name="SUI_SecFrameTemplate" inherits="SecureUnitButtonTemplate" hidden="true" virtual="true">
