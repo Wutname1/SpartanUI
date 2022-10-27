@@ -116,20 +116,6 @@ function module:ShapeChange(shape)
 		return
 	end
 
-	if shape == 'square' then
-		Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
-		if MiniMapTracking then
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, 5)
-		end
-	else
-		Minimap:SetMaskTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
-		if MiniMapTracking then
-			MiniMapTracking:ClearAllPoints()
-			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
-		end
-	end
-
 	if Settings.size then
 		Minimap:SetSize(unpack(Settings.size))
 	end
@@ -335,11 +321,6 @@ function module:ModifyMinimapLayout()
 		end
 
 		Minimap.overlay:Show()
-
-		MinimapZoneTextButton:SetPoint('BOTTOMLEFT', Minimap, 'TOPLEFT', 0, 4)
-		MinimapZoneTextButton:SetPoint('BOTTOMRIGHT', Minimap, 'TOPRIGHT', 0, 4)
-		MinimapZoneText:SetShadowColor(0, 0, 0, 1)
-		MinimapZoneText:SetShadowOffset(1, -1)
 
 		if MiniMapTracking then
 			MiniMapTracking:ClearAllPoints()
