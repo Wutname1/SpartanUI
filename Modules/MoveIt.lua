@@ -374,7 +374,10 @@ end
 
 local isDragging = false
 
----@param parent Frame
+---@class SUI.MoveIt.MoverParent : Frame, SUI.MoveIt.parentMixin
+local parentFrameTemp = {}
+
+---@param parent SUI.MoveIt.MoverParent
 ---@param name string
 ---@param DisplayName? string
 ---@param postdrag? function
@@ -398,6 +401,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	local width = parent.dirtyWidth or parent:GetWidth()
 	local height = parent.dirtyHeight or parent:GetHeight()
 
+	---@class SUI.MoveIt.Mover : Frame, BackdropTemplate
 	local f = CreateFrame('Button', 'SUI_Mover_' .. name, UIParent, BackdropTemplateMixin and 'BackdropTemplate')
 	f:SetClampedToScreen(true)
 	f:RegisterForDrag('LeftButton', 'RightButton')
@@ -443,7 +447,6 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	MovedText:SetPoint('TOPRIGHT', nameText, 'BOTTOM', -2, -2)
 	MovedText:SetText('(MOVED)')
 	MovedText:SetTextColor(unpack(colors.text))
-	-- f:SetFontString(MovedText)
 	MovedText:Hide()
 	f.MovedText = MovedText
 
@@ -453,7 +456,6 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	ScaledText:SetPoint('TOPLEFT', nameText, 'BOTTOM', 2, -2)
 	ScaledText:SetText('(SCALED)')
 	ScaledText:SetTextColor(unpack(colors.text))
-	-- f:SetFontString(ScaledText)
 	ScaledText:Hide()
 	f.ScaledText = ScaledText
 
@@ -709,9 +711,17 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 	parent:HookScript('OnMouseDown', ParentMouseDown)
 	parent:HookScript('OnMouseUp', ParentMouseUp)
-	parent.mover = f
-	parent.scale = scale
-	parent.position = position
+	---@class SUI.MoveIt.parentMixin
+	local parentMixin = {
+		scale = scale,
+		position = position,
+		mover = f,
+		dirtyWidth = 0,
+		dirtyHeight = 0
+	}
+	for k, v in pairs(parentMixin) do
+		parent[k] = v
+	end
 	parent.isMoved = function()
 		if MoveIt.DB.movers[name].MovedPoints then
 			return true
