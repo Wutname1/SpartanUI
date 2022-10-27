@@ -330,7 +330,9 @@
     "TooltipDataProcessor",
     "GameMenuButtonSUI",
     "PartyFrame",
-    "SUI_Mover_Minimap"
+    "SUI_Mover_Minimap",
+    "TimeManagerClockTicker",
+    "ExpansionLandingPageMinimapButton"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

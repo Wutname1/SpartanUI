@@ -223,8 +223,8 @@ local DBdefault = {
 					scale = 1,
 					size = {80, 12},
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-					TextColor = {1, .82, 0, 1},
-					ShadowColor = {0, 0, 0, 1}
+					TextColor = {1, 1, 1, 1},
+					ShadowColor = {0, 0, 0, 0}
 				}
 			},
 			Movers = {},
@@ -726,7 +726,7 @@ local DBdefault = {
 				coords = {
 					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
 				},
-				position = 'CENTER,SUI_Art_Classic_Center,CENTER,0,0'
+				position = 'CENTER,SUI_Art_Classic_Center,CENTER,0,-24'
 			},
 			StatusBars = {
 				['**'] = {

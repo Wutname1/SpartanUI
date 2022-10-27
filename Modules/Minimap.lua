@@ -263,25 +263,40 @@ function module:OnEnable()
 
 	-- Make map movable
 	MoveIt:CreateMover(MinimapCluster, 'Minimap')
+	if SUI.IsRetail then
+		MinimapCluster.Selection:HookScript(
+			'OnShow',
+			function()
+				MinimapCluster.Selection:Hide()
+			end
+		)
+		local function ResetPostion(_, _, anchor)
+			if anchor == UIParent or not anchor.GetName then
+				MinimapCluster:ClearAllPoints()
+				MinimapCluster:SetPoint('TOPLEFT', SUI_Mover_Minimap)
+			end
+		end
 
-	MinimapCluster.Selection:HookScript(
-		'OnShow',
-		function()
-			MinimapCluster.Selection:Hide()
+		Minimap:ClearAllPoints()
+		Minimap:SetPoint('TOP', MinimapCluster, 'TOP', 0, 0)
+
+		if ExpansionLandingPageMinimapButton then
+			ExpansionLandingPageMinimapButton:HookScript(
+				'OnShow',
+				function()
+					ExpansionLandingPageMinimapButton:ClearAllPoints()
+					ExpansionLandingPageMinimapButton:SetPoint('BOTTOMLEFT', Minimap, 'BOTTOMLEFT', -20, -20)
+				end
+			)
 		end
-	)
-	local function ResetPostion(_, _, anchor)
-		if anchor == UIParent or not anchor.GetName then
-			MinimapCluster:ClearAllPoints()
-			MinimapCluster:SetPoint('TOPLEFT', SUI_Mover_Minimap)
-		end
+
+		hooksecurefunc(MinimapCluster, 'SetPoint', ResetPostion)
+		MinimapCluster:SetHeight(Minimap:GetHeight() + MinimapCluster.BorderTop:GetHeight() + 20)
 	end
-
-	hooksecurefunc(MinimapCluster, 'SetPoint', ResetPostion)
 
 	-- If we didint move the minimap before making the mover make sure default is set.
 	if MoveIt:IsMoved('Minimap') then
-		Minimap.mover.defaultPoint = Settings.position
+		MinimapCluster.mover.defaultPoint = Settings.position
 	end
 
 	-- Construct options
@@ -341,12 +356,10 @@ function module:ModifyMinimapLayout()
 		end
 	end
 
-	-- Retail Version stuff
-	-- if SUI.IsRetail then
-	if TimeManagerClockButton then
-		TimeManagerClockButton:GetRegions():Hide() -- Hide the border
+	if TimeManagerClockButton and not SUI.IsRetail then
+		TimeManagerClockButton:GetRegions():Hide()
 		TimeManagerClockButton:ClearAllPoints()
-		TimeManagerClockButton:SetPoint('TOP', Minimap, 'BOTTOM', 0, 20)
+		TimeManagerClockButton:SetPoint('BOTTOM', Minimap, 'BOTTOM', 0, -5)
 	end
 
 	if MiniMapInstanceDifficulty then
@@ -386,6 +399,31 @@ function module:ModifyMinimapLayout()
 			MinimapNorthTag:Show()
 		end
 	end
+	if MinimapCluster.BorderTop then
+		MinimapCluster.BorderTop:ClearAllPoints()
+		MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -10)
+		MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.4)
+		MinimapCluster.BorderTop:SetHeight(MinimapCluster.ZoneTextButton:GetHeight() * 2.8)
+		MinimapCluster.BorderTop:SetAlpha(.8)
+
+		MinimapCluster.ZoneTextButton:ClearAllPoints()
+		MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
+		MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -4, -4)
+
+		SUI:FormatFont(MinimapZoneText, 10, 'Minimap')
+		MinimapZoneText:SetJustifyH('CENTER')
+
+		TimeManagerClockButton:ClearAllPoints()
+		TimeManagerClockButton:SetPoint('BOTTOMRIGHT', MinimapCluster.BorderTop, 'BOTTOMRIGHT', 2, 0)
+
+		SUI:FormatFont(TimeManagerClockTicker, 10, 'Minimap')
+		SUI:FormatFont(Minimap.coords, 10, 'Minimap')
+
+		MinimapCluster.Tracking:ClearAllPoints()
+		MinimapCluster.Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 2)
+		MinimapCluster.Tracking.Background:Hide()
+	end
+
 	if MinimapToggleButton then
 		MinimapToggleButton:Hide()
 	end
@@ -431,7 +469,9 @@ function module:MinimapCoords()
 	if SUI.DB.DisabledComponents.Minimap then
 		return
 	end
-	MinimapZoneText:Hide()
+	if not SUI.IsRetail then
+		MinimapZoneText:Hide()
+	end
 
 	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
 	SUI:FormatFont(Minimap.ZoneText, 11, 'Minimap')
@@ -533,10 +573,10 @@ function module:UpdateScale()
 		module:update()
 	end
 	if Settings.scaleWithArt then
-		if Minimap.scale then
-			Minimap:scale(SUI.DB.scale)
+		if MinimapCluster.scale then
+			MinimapCluster:scale(SUI.DB.scale)
 		else
-			Minimap:SetScale(max(SUI.DB.scale, .01))
+			MinimapCluster:SetScale(max(SUI.DB.scale, .01))
 		end
 	end
 end
@@ -598,9 +638,6 @@ function module:update(FullUpdate)
 		else
 			Minimap.coords:Hide()
 		end
-		-- if HybridMinimap then
-		-- 	HybridMinimap:Hide()
-		-- end
 	end
 
 	-- Apply Style Settings
@@ -656,7 +693,7 @@ function module:update(FullUpdate)
 		 then
 			local OnHide = function(args)
 				if SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and Minimap.position then
-					Minimap:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
+					MinimapCluster:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 				end
 			end
 			local OnShow = function(args)
