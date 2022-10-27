@@ -949,6 +949,24 @@ function module:BuildOptions()
 							}
 						}
 					},
+					ThreatIndicator = {
+						name = L['Threat'],
+						type = 'group',
+						args = {
+							enabled = {
+								name = L['Enabled'],
+								type = 'toggle',
+								width = 'full',
+								order = 1,
+								get = function(info)
+									return module.DB.elements.ThreatIndicator.enabled
+								end,
+								set = function(info, val)
+									module.DB.elements.ThreatIndicator.enabled = val
+								end
+							}
+						}
+					},
 					RareElite = {
 						name = L['Rare/Elite background'],
 						type = 'group',
