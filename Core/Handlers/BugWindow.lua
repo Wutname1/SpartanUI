@@ -358,7 +358,7 @@ local MapIcon =
 	{
 		type = 'data source',
 		text = '0',
-		icon = 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm',
+		icon = 'Interface\\AddOns\\SpartanUI\\images\\MinimapError',
 		OnClick = function()
 			if IsAltKeyDown() then
 				addon:Reset()
@@ -387,9 +387,6 @@ local MapIcon =
 		end
 	}
 )
-
--- function MapIcon.UpdateCoord()
--- end
 
 function addon:updatemapIcon()
 	if icon:GetMinimapButton() then
