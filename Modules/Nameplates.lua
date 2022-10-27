@@ -197,8 +197,8 @@ local NamePlateFactory = function(frame, unit)
 		end
 		if nameString ~= '' then
 			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
-			SUI:FormatFont(frame.Name, 10, 'Nameplate')
-			frame.Name:SetSize(frame:GetWidth(), 12)
+			SUI:FormatFont(frame.Name, 8, 'Nameplate')
+			frame.Name:SetSize(frame:GetWidth(), 9)
 			frame.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
 			frame.Name:SetPoint('BOTTOM', frame, 'TOP')
 			frame:Tag(frame.Name, nameString)
