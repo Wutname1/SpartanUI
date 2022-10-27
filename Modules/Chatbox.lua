@@ -616,6 +616,12 @@ function module:SetupChatboxes()
 		module:HookScript(ChatFrame, 'OnHyperlinkEnter', OnHyperlinkEnter)
 		module:HookScript(ChatFrame, 'OnHyperlinkLeave', OnHyperlinkLeave)
 
+		if ChatFrame.Selection then
+			ChatFrame.Selection:ClearAllPoints()
+			ChatFrame.Selection:SetPoint('TOPLEFT', ChatFrame, 'TOPLEFT', 0, 30)
+			ChatFrame.Selection:SetPoint('BOTTOMRIGHT', ChatFrame, 'BOTTOMRIGHT', 25, -32)
+		end
+
 		-- Now we can skin everything
 		-- First lets setup some settings
 		ChatFrame:SetClampRectInsets(0, 0, 0, 0)
