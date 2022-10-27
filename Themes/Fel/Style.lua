@@ -33,12 +33,14 @@ function module:OnInitialize()
 	-- BarHandler
 	local BarHandler = SUI:GetModule('Handler_BarSystems')
 	BarHandler.BarPosition.BT4.Fel = {
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,192',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
+		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,175',
+		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193'
+		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or
+			'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
+		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or
+			'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
 	}
 
 	-- Unitframes
@@ -121,12 +123,10 @@ function module:CreateArtwork()
 	artFrame.Left = artFrame:CreateTexture('SUI_Art_Fel_Left', 'BORDER')
 	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM', 0, 0)
 	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Left')
-	-- artFrame.Left:SetScale(.75)
 
 	artFrame.Right = artFrame:CreateTexture('SUI_Art_Fel_Right', 'BORDER')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Right')
-	-- artFrame.Right:SetScale(.75)
 
 	FramerateText:ClearAllPoints()
 	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)

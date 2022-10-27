@@ -12,32 +12,58 @@ function module:OnInitialize()
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Transparent'].disabled = false
 
 	local BarHandler = SUI:GetModule('Handler_BarSystems')
-	BarHandler.BarPosition.BT4.Transparent = {
-		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,80',
-		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,25',
-		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,344,80',
-		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,344,25',
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,0,5',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,3,5',
-		--
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,186',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-581,187',
-		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-581,187',
-		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,320,183',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,611,188',
-		--
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15',
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15'
-	}
+	BarHandler.BarPosition.BT4.Transparent =
+		SUI.IsRetail and
+		{
+			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
+			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
+			--
+			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
+			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
+			--
+			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+			--
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,138',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
+		} or
+		{
+			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,80',
+			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-347,25',
+			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,344,80',
+			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,344,25',
+			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,0,5',
+			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,3,5',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,186',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-581,187',
+			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-581,187',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,295,155',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,611,188',
+			--
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15',
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,15'
+		}
 
 	BarHandler.BarScale.BT4.Transparent = {
-		['BT4Bar1'] = 0.77,
-		['BT4Bar2'] = 0.77,
-		['BT4Bar3'] = 0.77,
-		['BT4Bar4'] = 0.77,
-		['BT4Bar5'] = 0.74,
-		['BT4Bar6'] = 0.74
+		['BT4Bar1'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar2'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar3'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar4'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar5'] = SUI.IsRetail and .63 or .75,
+		['BT4Bar6'] = SUI.IsRetail and .63 or .75,
+		['BT4Bar7'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar8'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar9'] = SUI.IsRetail and .62 or .77,
+		['BT4BarMicroMenu'] = SUI.IsRetail and nil or .65
 	}
 
 	-- Unitframes Settings
