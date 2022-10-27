@@ -719,9 +719,6 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 		return false
 	end
 
-		-- function EditModeManagerFrame.AccountSettings.Settings.PartyFrames:ShouldEnable()
-		-- 	return false
-		-- end
 	parent:ClearAllPoints()
 	parent:SetPoint('TOPLEFT', f, 0, 0)
 

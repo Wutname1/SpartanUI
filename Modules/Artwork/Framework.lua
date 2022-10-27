@@ -389,6 +389,7 @@ function module:OnEnable()
 	VehicleUI()
 	StyleUpdate()
 	module:RegisterEvent('ADDON_LOADED', StyleUpdate)
+	module:RegisterEvent('PLAYER_ENTERING_WORLD', StyleUpdate)
 end
 
 function module:UpdateBarBG()
