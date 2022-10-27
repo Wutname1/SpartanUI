@@ -304,6 +304,13 @@ function module:ModifyMinimapLayout()
 		end
 	end
 
+	-- Attach Minimap Backdrop to the minimap it's self
+	if MinimapBackdrop then
+		MinimapBackdrop:ClearAllPoints()
+		MinimapBackdrop:SetPoint('CENTER', Minimap, 'CENTER', -10, -24)
+		MinimapBackdrop:SetFrameLevel(Minimap:GetFrameLevel())
+	end
+
 	if GameTimeFrame and not SUI.IsRetail then
 		GameTimeFrame:ClearAllPoints()
 		GameTimeFrame:SetScale(.7)
