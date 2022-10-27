@@ -71,6 +71,22 @@ function module:OnInitialize()
 	}
 	UF.Style:Register('Fel', ufsettings)
 
+	local minimapSettings = {
+		size = {156, 156},
+		BG = {
+			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
+			size = {220, 220},
+			position = 'CENTER,Minimap,CENTER,5,23'
+		},
+		coords = {
+			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+			scale = 1.2
+		},
+		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,10',
+		engulfed = true
+	}
+	SUI:GetModule('Component_Minimap'):Register('Fel', minimapSettings)
+
 	module:CreateArtwork()
 	Options()
 end

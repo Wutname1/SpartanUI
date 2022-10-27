@@ -309,6 +309,17 @@ function module:OnInitialize()
 	}
 	UF.Style:Register('Classic', ufsettings)
 
+	local minimapSettings = {
+		Movable = false,
+		size = {156, 156},
+		coords = {
+			position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+		},
+		position = SUI.IsRetail and 'CENTER,SUI_Art_Classic_Center,CENTER,0,-24' or
+			'CENTER,SUI_Art_Classic_Center,CENTER,-8,0'
+	}
+	SUI:GetModule('Component_Minimap'):Register('Classic', minimapSettings)
+
 	CreateArtwork()
 
 	local function StyleChange()

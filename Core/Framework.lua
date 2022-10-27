@@ -119,25 +119,7 @@ local DBdefault = {
 			}
 		}
 	},
-	MiniMap = {
-		northTag = false,
-		ManualAllowUse = false,
-		ManualAllowPrompt = '',
-		AutoDetectAllowUse = true,
-		MapButtons = true,
-		MouseIsOver = false,
-		MapZoomButtons = true,
-		MapTimeIndicator = false,
-		DisplayMapCords = true,
-		DisplayZoneName = true,
-		Shape = 'square',
-		BlizzStyle = 'mouseover',
-		OtherStyle = 'mouseover',
-		Moved = false,
-		lockminimap = true,
-		Position = nil,
-		SUIMapChangesActive = false
-	},
+	MiniMap = {},
 	Offset = {
 		Top = 0,
 		TopAuto = true,
@@ -199,32 +181,6 @@ local DBdefault = {
 				Right = {
 					Grow = 'RIGHT',
 					Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,0'
-				}
-			},
-			Minimap = {
-				Movable = true,
-				shape = 'circle',
-				size = {140, 140},
-				scaleWithArt = true,
-				UnderVehicleUI = true,
-				BG = {
-					enabled = true,
-					BlendMode = 'ADD',
-					alpha = 1
-				},
-				ZoneText = {
-					size = {100, 12},
-					scale = 1,
-					position = 'TOP,Minimap,BOTTOM,0,-4',
-					TextColor = {1, .82, 0, 1},
-					ShadowColor = {0, 0, 0, 1}
-				},
-				coords = {
-					scale = 1,
-					size = {80, 12},
-					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-					TextColor = {1, 1, 1, 1},
-					ShadowColor = {0, 0, 0, 0}
 				}
 			},
 			Movers = {},
@@ -320,16 +276,6 @@ local DBdefault = {
 						}
 					}
 				}
-			},
-			Minimap = {
-				size = {156, 156},
-				BG = {
-					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap'
-				},
-				coords = {
-					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
-				},
-				position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20'
 			},
 			Color = {
 				Art = {
@@ -720,14 +666,6 @@ local DBdefault = {
 					}
 				}
 			},
-			Minimap = {
-				Movable = false,
-				size = {156, 156},
-				coords = {
-					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
-				},
-				position = 'CENTER,SUI_Art_Classic_Center,CENTER,0,-24'
-			},
 			StatusBars = {
 				['**'] = {
 					size = {370, 32},
@@ -788,19 +726,6 @@ local DBdefault = {
 					}
 				}
 			},
-			Minimap = {
-				shape = 'square',
-				size = {135, 135},
-				position = 'CENTER,SUI_Art_Transparent,CENTER,0,-5',
-				ZoneText = {
-					size = {130, 12},
-					position = 'BOTTOM,Minimap,TOP,0,2'
-				},
-				coords = {
-					size = {80, 12},
-					position = 'BOTTOM,Minimap,BOTTOM,0,2'
-				}
-			},
 			StatusBars = {
 				['**'] = {
 					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\status-plate-rep',
@@ -819,12 +744,6 @@ local DBdefault = {
 			}
 		},
 		Minimal = {
-			Minimap = {
-				UnderVehicleUI = false,
-				scaleWithArt = false,
-				position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
-				shape = 'square'
-			},
 			Color = {
 				0.6156862745098039,
 				0.1215686274509804,
@@ -909,20 +828,6 @@ local DBdefault = {
 					GlowPoint = {x = 10},
 					MaxWidth = 35
 				}
-			},
-			Minimap = {
-				size = {156, 156},
-				BG = {
-					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-					size = {220, 220},
-					position = 'CENTER,Minimap,CENTER,5,23'
-				},
-				coords = {
-					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-					scale = 1.2
-				},
-				position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,10',
-				engulfed = true
 			}
 		},
 		Digital = {
@@ -968,18 +873,6 @@ local DBdefault = {
 						}
 					}
 				}
-			},
-			Minimap = {
-				size = {156, 156},
-				BG = {
-					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
-					position = {'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44'}
-				},
-				coords = {
-					position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-					scale = 1.2
-				},
-				position = 'CENTER,SUI_Art_Digital,CENTER,0,54'
 			}
 		},
 		War = {
@@ -1082,16 +975,6 @@ local DBdefault = {
 					}
 				}
 			},
-			Minimap = {
-				size = {156, 156},
-				BG = {
-					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap'
-				},
-				coords = {
-					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
-				},
-				position = 'CENTER,SUI_Art_War_Left,RIGHT,0,20'
-			},
 			SlidingTrays = {
 				left = {
 					enabled = true,
@@ -1178,16 +1061,6 @@ local DBdefault = {
 						}
 					}
 				}
-			},
-			Minimap = {
-				size = {156, 156},
-				BG = {
-					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap'
-				},
-				coords = {
-					position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
-				},
-				position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20'
 			},
 			SlidingTrays = {
 				left = {

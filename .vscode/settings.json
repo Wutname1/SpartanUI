@@ -332,7 +332,8 @@
     "PartyFrame",
     "SUI_Mover_Minimap",
     "TimeManagerClockTicker",
-    "ExpansionLandingPageMinimapButton"
+    "ExpansionLandingPageMinimapButton",
+    "CharacterMicroButton"
   ],
   "Lua.workspace.ignoreDir": [
     ".vscode",

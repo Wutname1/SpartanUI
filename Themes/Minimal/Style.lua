@@ -46,6 +46,15 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 0.6,
 		['BT4BarMicroMenu'] = 0.6
 	}
+
+	local minimapSettings = {
+		UnderVehicleUI = false,
+		scaleWithArt = false,
+		position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
+		shape = 'square'
+	}
+	SUI:GetModule('Component_Minimap'):Register('Minimal', minimapSettings)
+
 	UF.Style:Register('Minimal', {})
 end
 

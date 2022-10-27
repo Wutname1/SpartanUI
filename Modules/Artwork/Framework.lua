@@ -202,8 +202,9 @@ function module:UpdateScale()
 	end
 
 	-- Call Minimap scale update
-	if SUI.DB.Styles[SUI.DB.Artwork.Style].Minimap.scaleWithArt then
-		SUI:GetModule('Component_Minimap'):UpdateScale()
+	local minimap = SUI:GetModule('Component_Minimap')
+	if minimap.Settings and minimap.Settings.scaleWithArt then
+		minimap:UpdateScale()
 	end
 
 	-- Update Bar scales

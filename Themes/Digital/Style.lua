@@ -5,10 +5,8 @@ local module = SUI:NewModule('Style_Digital')
 local UF = SUI:GetModule('Component_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Digital', SpartanUI)
 module.Settings = {}
-local CurScale
 
 ----------------------------------------------------------------------------------------------------
-local InitRan = false
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Handler_BarSystems')
 	BarHandler.BarPosition.BT4.Digital = {
@@ -33,6 +31,20 @@ function module:OnInitialize()
 		}
 	}
 	UF.Style:Register('Digital', ufsettings)
+
+	local minimapSettings = {
+		size = {156, 156},
+		BG = {
+			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
+			position = {'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44'}
+		},
+		coords = {
+			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
+			scale = 1.2
+		},
+		position = 'CENTER,SUI_Art_Digital,CENTER,0,54'
+	}
+	SUI:GetModule('Component_Minimap'):Register('Digital', minimapSettings)
 
 	module:CreateArtwork()
 end
