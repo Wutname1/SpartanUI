@@ -8,8 +8,7 @@ module.description = 'Allows the hiding of the Objectives tracker based on condi
 local MoveIt
 local ObjectiveTrackerWatcher = CreateFrame('Frame')
 local holder = CreateFrame('Frame', 'ObjectiveTrackerHolder', UIParent)
--- local frameName = 'ObjectiveTrackerBlocksFrame'
-local frameName = 'ObjectiveTrackerFrame'
+local frameName = 'WatchFrame'
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local Conditions = {
 	['Group'] = L['In a Group'],
@@ -21,9 +20,6 @@ local Conditions = {
 }
 
 local function UpdateSize()
-	if SUI.IsDF then
-		return
-	end
 	local screenHeight = GetScreenHeight()
 	local FrameHeight = min((screenHeight - (screenHeight - (_G[frameName]:GetTop() or 0))), module.DB.height)
 
@@ -238,6 +234,9 @@ function module:OnInitialize()
 		module.Override = true
 	end
 	MoveIt = SUI:GetModule('Component_MoveIt')
+	if SUI.IsClassic or SUI.IsTBC and _G['QuestWatchFrame'] then
+		frameName = 'QuestWatchFrame'
+	end
 end
 
 function module:OnEnable()
@@ -245,28 +244,6 @@ function module:OnEnable()
 
 	if SUI:IsModuleDisabled('Objectives') or module.Override then
 		return
-	end
-
-	-- Add Fade in and out
-	if SUI.IsClassic or SUI.IsTBC and _G['QuestWatchFrame'] then
-		frameName = 'QuestWatchFrame'
-
-		_G[frameName].FadeIn = _G[frameName]:CreateAnimationGroup()
-		local FadeIn = _G[frameName].FadeIn:CreateAnimation('Alpha')
-		FadeIn:SetOrder(1)
-		FadeIn:SetDuration(0.2)
-		FadeIn:SetFromAlpha(0)
-		FadeIn:SetToAlpha(1)
-		_G[frameName].FadeIn:SetToFinalAlpha(true)
-
-		_G[frameName].FadeOut = _G[frameName]:CreateAnimationGroup()
-		local FadeOut = _G[frameName].FadeOut:CreateAnimation('Alpha')
-		FadeOut:SetOrder(1)
-		FadeOut:SetDuration(0.3)
-		FadeOut:SetFromAlpha(1)
-		FadeOut:SetToAlpha(0)
-		FadeOut:SetStartDelay(.5)
-		_G[frameName].FadeOut:SetToFinalAlpha(true)
 	end
 
 	--Event Manager
@@ -291,9 +268,7 @@ function module:OnEnable()
 	end
 
 	Options()
-	if not SUI.IsDF then
-		MakeMoveable()
-	end
+	MakeMoveable()
 end
 
 function module:OnDisable()
