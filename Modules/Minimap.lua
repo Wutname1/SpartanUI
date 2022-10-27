@@ -681,43 +681,6 @@ function module:OnInitialize()
 	if SUI:IsAddonEnabled('SexyMap') then
 		UserSettings.AutoDetectAllowUse = false
 	end
-	-- MinimapCluster.IsUserPlaced = function()
-	-- 	return true
-	-- end
-
-	-- SUI_Minimap.layouts = C_EditMode.GetLayouts()
-
-	-- C_EditMode.SaveLayouts(layoutInfo)
-
-	-- local settings = {
-	-- 	['MainMenuBar'] = {
-	-- 		settings = {
-	-- 			[Enum.EditModeActionBarSetting.HideBarArt] = 1,
-	-- 			[Enum.EditModeActionBarSetting.HideBarScrolling] = 1
-	-- 			-- [Enum.EditModeActionBarSetting.IconSize] = 2
-	-- 		},
-	-- 		anchorInfo = 'BOTTOM,UIParent,BOTTOM,-364,78'
-	-- 	}
-	-- }
-	-- for bar, values in pairs(settings) do
-	-- 	local barObj = _G[bar]
-	-- 	print(barObj:GetName())
-	-- 	-- barObj.hasActiveChanges = true
-	-- 	if values.anchorInfo then
-	-- 		barObj:ClearAllPoints()
-	-- 		local point, anchor, secondaryPoint, x, y = strsplit(',', values.anchorInfo)
-	-- 		barObj:SetPoint(point, anchor, secondaryPoint, x, y)
-	-- 	end
-	-- 	EditModeManagerFrame:OnSystemPositionChange(barObj, false)
-
-	-- 	for setting, value in pairs(values.settings or {}) do
-	-- 		print(setting)
-	-- 		EditModeManagerFrame:OnSystemSettingChange(barObj, setting, value)
-	-- 	end
-	-- end
-
-	-- EditModeManagerFrame.hasActiveChanges = true
-	-- EditModeManagerFrame:SaveLayouts()
 end
 
 function module:OnEnable()
@@ -729,6 +692,7 @@ function module:OnEnable()
 	if SUI.DB.DisabledComponents.Minimap then
 		return
 	end
+
 	updateSettings()
 
 	SUIMinimap:SetFrameStrata('BACKGROUND')
