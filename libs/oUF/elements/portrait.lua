@@ -39,15 +39,6 @@ the unit.
 local _, ns = ...
 local oUF = ns.oUF
 
--- ElvUI block
-local UnitIsUnit = UnitIsUnit
-local UnitGUID = UnitGUID
-local UnitIsConnected = UnitIsConnected
-local UnitIsVisible = UnitIsVisible
-local UnitClassBase = UnitClassBase
-local SetPortraitTexture = SetPortraitTexture
--- end block
-
 local function Update(self, event, unit)
 	if(not unit or not UnitIsUnit(self.unit, unit)) then return end
 
@@ -64,13 +55,9 @@ local function Update(self, event, unit)
 	local guid = UnitGUID(unit)
 	local isAvailable = UnitIsConnected(unit) and UnitIsVisible(unit)
 	local hasStateChanged = event ~= 'OnUpdate' or element.guid ~= guid or element.state ~= isAvailable
-	if hasStateChanged then
-		element.playerModel = element:IsObjectType('PlayerModel')
-		element.state = isAvailable
-		element.guid = guid
-
-		if element.playerModel then
-			if not isAvailable then
+	if(hasStateChanged) then
+		if(element:IsObjectType('PlayerModel')) then
+			if(not isAvailable) then
 				element:SetCamDistanceScale(0.25)
 				element:SetPortraitZoom(0)
 				element:SetPosition(0, 0, 0.25)
@@ -83,14 +70,17 @@ local function Update(self, event, unit)
 				element:ClearModel()
 				element:SetUnit(unit)
 			end
-		elseif not element.customTexture then -- ElvUI changed
+		else
 			local class = element.showClass and UnitClassBase(unit)
-			if class then
+			if(class) then
 				element:SetAtlas('classicon-' .. class)
 			else
 				SetPortraitTexture(element, unit)
 			end
 		end
+
+		element.guid = guid
+		element.state = isAvailable
 	end
 
 	--[[ Callback: Portrait:PostUpdate(unit)

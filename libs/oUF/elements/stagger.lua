@@ -34,15 +34,6 @@ if(select(2, UnitClass('player')) ~= 'MONK') then return end
 local _, ns = ...
 local oUF = ns.oUF
 
--- ElvUI block
-local GetSpecialization = GetSpecialization
-local UnitHasVehiclePlayerFrameUI = UnitHasVehiclePlayerFrameUI
-local UnitHealthMax = UnitHealthMax
-local UnitIsUnit = UnitIsUnit
-local UnitStagger = UnitStagger
--- GLOBALS: MonkStaggerBar
--- end block
-
 -- sourced from FrameXML/Constants.lua
 local SPEC_MONK_BREWMASTER = _G.SPEC_MONK_BREWMASTER or 1
 
@@ -75,14 +66,13 @@ local function UpdateColor(self, event, unit)
 	end
 
 	local r, g, b
-	if color then
+	if(color) then
 		r, g, b = color[1], color[2], color[3]
-
-		if b then
+		if(b) then
 			element:SetStatusBarColor(r, g, b)
 
 			local bg = element.bg
-			if bg and b then
+			if(bg and b) then
 				local mu = bg.multiplier or 1
 				bg:SetVertexColor(r * mu, g * mu, b * mu)
 			end
@@ -102,18 +92,8 @@ local function UpdateColor(self, event, unit)
 	end
 end
 
-local staggerID = {
-	[124275] = true, -- [GREEN]  Light Stagger
-	[124274] = true, -- [YELLOW] Moderate Stagger
-	[124273] = true, -- [RED]    Heavy Stagger
-}
-
-local function verifyStagger(frame, event, unit, auraInfo)
-	return staggerID[auraInfo.spellId]
-end
-
-local function Update(self, event, unit, isFullUpdate, updatedAuras)
-	if oUF:ShouldSkipAuraUpdate(self, event, unit, isFullUpdate, updatedAuras, verifyStagger) then return end
+local function Update(self, event, unit)
+	if(unit and unit ~= self.unit) then return end
 
 	local element = self.Stagger
 
@@ -168,32 +148,21 @@ local function Path(self, ...)
 	(self.Stagger.UpdateColor or UpdateColor) (self, ...)
 end
 
--- ElvUI changed
 local function Visibility(self, event, unit)
-	local element = self.Stagger
-	local isShown = element:IsShown()
-	local useClassbar = (SPEC_MONK_BREWMASTER ~= GetSpecialization()) or UnitHasVehiclePlayerFrameUI('player')
-	local stateChanged = false
+	if(SPEC_MONK_BREWMASTER ~= GetSpecialization() or UnitHasVehiclePlayerFrameUI('player')) then
+		if(self.Stagger:IsShown()) then
+			self.Stagger:Hide()
+			self:UnregisterEvent('UNIT_AURA', Path)
+		end
+	else
+		if(not self.Stagger:IsShown()) then
+			self.Stagger:Show()
+			self:RegisterEvent('UNIT_AURA', Path)
+		end
 
-	if useClassbar and isShown then
-		element:Hide()
-		self:UnregisterEvent('UNIT_AURA', Path)
-		stateChanged = true
-	elseif not useClassbar and not isShown then
-		element:Show()
-		self:RegisterEvent('UNIT_AURA', Path)
-		stateChanged = true
-	end
-
-	if element.PostVisibility then
-		element.PostVisibility(self, event, unit, not useClassbar, stateChanged)
-	end
-
-	if not useClassbar then
 		Path(self, event, unit)
 	end
 end
--- end block
 
 local function VisibilityPath(self, ...)
 	--[[ Override: Stagger.OverrideVisibility(self, event, unit)

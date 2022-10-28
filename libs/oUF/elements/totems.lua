@@ -48,47 +48,19 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
 local _, ns = ...
 local oUF = ns.oUF
 
-local GameTooltip = GameTooltip
-local GetTotemInfo = GetTotemInfo
-local GetTime = GetTime
-
-local _, playerClass = UnitClass('player')
-local priority = playerClass == 'SHAMAN' and SHAMAN_TOTEM_PRIORITIES or STANDARD_TOTEM_PRIORITIES
-
 local function UpdateTooltip(self)
-	if GameTooltip:IsForbidden() then return end
-
 	GameTooltip:SetTotem(self:GetID())
 end
 
 local function OnEnter(self)
-	if GameTooltip:IsForbidden() or not self:IsVisible() then return end
+	if(not self:IsVisible()) then return end
 
 	GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT')
 	self:UpdateTooltip()
 end
 
 local function OnLeave()
-	if GameTooltip:IsForbidden() then return end
-
 	GameTooltip:Hide()
-end
-
-local function TotemOnUpdate(self, elapsed)
-	self.elapsed = (self.elapsed or 0) + elapsed
-
-	if (self.elapsed >= .01) then
-		self.elapsed = 0
-
-		local _, _, startTime, expiration = GetTotemInfo(self:GetID())
-		local currentTime = GetTime() - startTime
-
-		if currentTime <= 0 or expiration <= 0 then
-			self:SetValue(0)
-		else
-			self:SetValue(1 - (currentTime / expiration))
-		end
-	end
 end
 
 local function UpdateTotem(self, event, slot)
@@ -103,20 +75,15 @@ local function UpdateTotem(self, event, slot)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(slot) end
 
-	local totem = element[priority[slot]]
-	local haveTotem, name, start, duration, icon = GetTotemInfo(slot) -- slot is the same as totem:GetID()
-
-	if haveTotem and duration > 0 then
-		if totem.Icon then
+	local totem = element[slot]
+	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
+	if(haveTotem and duration > 0) then
+		if(totem.Icon) then
 			totem.Icon:SetTexture(icon)
 		end
 
-		if totem.Cooldown then
+		if(totem.Cooldown) then
 			totem.Cooldown:SetCooldown(start, duration)
-		end
-
-		if totem:IsObjectType('StatusBar') then
-			totem:SetValue(0)
 		end
 
 		totem:Show()
@@ -152,19 +119,13 @@ local function Path(self, ...)
 end
 
 local function Update(self, event)
-	local element = self.Totems
-
-	for i = 1, #element do
+	for i = 1, #self.Totems do
 		Path(self, event, i)
-	end
-
-	if(element.PostUpdateColor) then
-		element:PostUpdateColor()
 	end
 end
 
 local function ForceUpdate(element)
-	Update(element.__owner, 'ForceUpdate')
+	return Update(element.__owner, 'ForceUpdate')
 end
 
 local function Enable(self)
@@ -174,15 +135,11 @@ local function Enable(self)
 		element.ForceUpdate = ForceUpdate
 
 		for i = 1, #element do
-			local totem = element[priority[i]]
+			local totem = element[i]
 
 			totem:SetID(i)
 
-			if totem:IsObjectType('StatusBar') then
-				totem:SetScript('OnUpdate', TotemOnUpdate)
-			end
-
-			if totem:IsMouseEnabled() then
+			if(totem:IsMouseEnabled()) then
 				totem:SetScript('OnEnter', OnEnter)
 				totem:SetScript('OnLeave', OnLeave)
 
@@ -197,8 +154,12 @@ local function Enable(self)
 			end
 		end
 
-		element:Show()
 		self:RegisterEvent('PLAYER_TOTEM_UPDATE', Path, true)
+
+		TotemFrame:UnregisterEvent('PLAYER_TOTEM_UPDATE')
+		TotemFrame:UnregisterEvent('PLAYER_ENTERING_WORLD')
+		TotemFrame:UnregisterEvent('UPDATE_SHAPESHIFT_FORM')
+		TotemFrame:UnregisterEvent('PLAYER_TALENT_UPDATE')
 
 		return true
 	end
@@ -211,7 +172,11 @@ local function Disable(self)
 			element[i]:Hide()
 		end
 
-		element:Hide()
+		TotemFrame:RegisterEvent('PLAYER_TOTEM_UPDATE')
+		TotemFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+		TotemFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
+		TotemFrame:RegisterEvent('PLAYER_TALENT_UPDATE')
+
 		self:UnregisterEvent('PLAYER_TOTEM_UPDATE', Path)
 	end
 end

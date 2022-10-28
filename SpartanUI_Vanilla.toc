@@ -34,7 +34,7 @@ libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\Non-Retail\LibHealComm-4.0\LibHealComm-4.0.lua
 libs\Non-Retail\LibClassicDurations\LibClassicDurations.xml
 libs\Non-Retail\LibClassicCasterino\LibClassicCasterino.lua
-libs\oUF\oUF_Classic.xml
+libs\Non-Retail\oUF\oUF_Classic.xml
 libs\oUF_Plugins\Loader.xml
 
 # Localization

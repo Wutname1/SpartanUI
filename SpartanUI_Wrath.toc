@@ -32,7 +32,7 @@ libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
 libs\Non-Retail\LibHealComm-4.0\LibHealComm-4.0.lua
-libs\oUF\oUF_Wrath.xml
+libs\Non-Retail\oUF\oUF_Wrath.xml
 libs\oUF_Plugins\Loader.xml
 
 # Localization
