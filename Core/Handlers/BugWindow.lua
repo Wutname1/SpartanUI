@@ -98,18 +98,7 @@ function addon:UpdateDisplay()
 end
 
 function addon:GetErrors(sessionId)
-	if sessionId then
-		wipe(errors)
-		local db = BugGrabber:GetDB(sessionId)
-		for _, e in next, db do
-			if sessionId == e.session then
-				errors[#errors + 1] = e
-			end
-		end
-		return errors
-	else
-		return BugGrabber:GetDB()
-	end
+	return BugGrabber:GetDB()
 end
 
 local function colorStack(ret)
