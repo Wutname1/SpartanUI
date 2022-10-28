@@ -111,7 +111,15 @@ local updateText = function(self)
 		remaining = SUI:comma_value(goal - now)
 		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
 	elseif (module.DB[side].display == 'rep') then
-		local _, name, _, low, high, current = 0, GetWatchedFactionInfo()
+		local name, _, low, high, current, factionID = GetWatchedFactionInfo()
+		if SUI.IsRetail then
+			local currentValue, threshold, _, _, _ = C_Reputation.GetFactionParagonInfo(factionID)
+			if currentValue ~= nil then
+				current = currentValue % threshold
+				low = 0
+				high = threshold
+			end
+		end
 		local repLevelLow = (current - low)
 		local repLevelHigh = (high - low)
 
