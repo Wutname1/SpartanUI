@@ -124,7 +124,7 @@ end
 
 local function UpdatePosition()
 	-- Position map based on Artwork
-	if SUI:IsModuleEnabled('Minimap') and module.Settings.position and not MoveIt:IsMoved('Minimap') then
+	if module.Settings.position and not MoveIt:IsMoved('Minimap') then
 		local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.position)
 		if SUIMinimap.position then
 			SUIMinimap:position(point, anchor, secondaryPoint, x, y, false, true)
@@ -132,9 +132,9 @@ local function UpdatePosition()
 			SUIMinimap:ClearAllPoints()
 			SUIMinimap:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
-		Minimap:ClearAllPoints()
-		Minimap:SetPoint('TOPLEFT', SUIMinimap, 'TOPLEFT', 0, 0)
 	end
+	Minimap:ClearAllPoints()
+	Minimap:SetPoint('TOPLEFT', SUIMinimap, 'TOPLEFT', 0, 0)
 end
 
 local function updateSettings()
@@ -422,7 +422,7 @@ function module:UpdateScale()
 end
 
 function module:update(FullUpdate)
-	if SUI.DB.DisabledComponents.Minimap then
+	if SUI:IsModuleDisabled('Minimap') then
 		return
 	end
 	updateSettings()
@@ -531,12 +531,15 @@ function module:update(FullUpdate)
 				(not MoveIt:IsMoved('Minimap'))
 		 then
 			local OnHide = function(args)
-				if SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and SUIMinimap.position then
+				if
+					SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and
+						SUIMinimap.position
+				 then
 					SUIMinimap:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 				end
 			end
 			local OnShow = function(args)
-				if SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
+				if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') then
 					-- Reset to skin position
 					UpdatePosition()
 					-- Update Scale

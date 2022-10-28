@@ -196,13 +196,13 @@ function module.BlizzMovers()
 	end
 
 	AlertFrame()
-	VehicleLeaveButton()
 
 	if SUI.IsRetail then
-		VehicleSeatIndicator()
-		TalkingHead()
-		AltPowerBar()
-		AbilityBars()
-		WidgetPowerBarContainer()
+		VehicleLeaveButton()
+	-- VehicleSeatIndicator()
+	-- TalkingHead()
+	-- AltPowerBar()
+	-- AbilityBars()
+	-- WidgetPowerBarContainer()
 	end
 end
