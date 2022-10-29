@@ -160,11 +160,7 @@ end
 
 local function VehicleLeaveButton()
 	local function MoverCreate()
-		-- if InCombatLockdown() then
-		-- 	return
-		-- end
-
-		local point, anchor, secondaryPoint, x, y =
+		local point, _, secondaryPoint, x, y =
 			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
 		local VehicleBtnHolder = CreateFrame('Frame', 'VehicleBtnHolder', SpartanUI)
 		VehicleBtnHolder:SetSize(MainMenuBarVehicleLeaveButton:GetSize())
@@ -191,18 +187,18 @@ local function VehicleLeaveButton()
 end
 
 function module.BlizzMovers()
-	if SUI.IsClassic or SUI.IsRetail then
+	if SUI.IsClassic then
 		return
 	end
 
-	AlertFrame()
-
 	if SUI.IsRetail then
-		VehicleLeaveButton()
-	-- VehicleSeatIndicator()
-	-- TalkingHead()
-	-- AltPowerBar()
-	-- AbilityBars()
-	-- WidgetPowerBarContainer()
+		-- VehicleLeaveButton()
+		-- VehicleSeatIndicator()
+		-- TalkingHead()
+		-- AltPowerBar()
+		-- AbilityBars()
+		-- WidgetPowerBarContainer()
+	else
+		AlertFrame()
 	end
 end

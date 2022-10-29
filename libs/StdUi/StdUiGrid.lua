@@ -12,10 +12,10 @@ if not StdUi:UpgradeNeeded(module, version) then return end;
 --- @param create function
 --- @param update function
 --- @param data table
---- @param padding number
---- @param oX number
---- @param oY number
---- @param limitFn function
+--- @param padding? number
+--- @param oX? number
+--- @param oY? number
+--- @param limitFn? function
 function StdUi:ObjectList(parent, itemsTable, create, update, data, padding, oX, oY, limitFn)
 	local this = self;
 	oX = oX or 1;

@@ -15,7 +15,7 @@ local SquareButtonCoords = {
 	DELETE = { 0.01562500,    0.20312500,     0.01562500,     0.20312500};
 };
 
----@class StdUi_SquareButton : Button, SquareButtonMethods
+---@class StdUi.SquareButton : Button, SquareButtonMethods
 ---@field icon Texture
 ---@field iconDisabled Texture
 
@@ -42,7 +42,7 @@ local SquareButtonMethods = {
 };
 
 function StdUi:SquareButton(parent, width, height, icon)
-	local button = CreateFrame('Button', name, parent); ---@type StdUi_SquareButton
+	local button = CreateFrame('Button', name, parent); ---@type StdUi.SquareButton
 	button.stdUi = self;
 
 	self:InitWidget(button);

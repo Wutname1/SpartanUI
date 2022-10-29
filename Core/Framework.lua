@@ -1250,9 +1250,7 @@ function SUI:OnInitialize()
 			'OnEnter',
 			function()
 				SUI.print('---------------', true)
-				SUI:Print(
-					'SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp'
-				)
+				SUI:Print('SpartanUI has detected an unsupported SUI5 profile is being used. Please reset your profile via /suihelp')
 				SUI.print('---------------', true)
 			end,
 			'LE_SCRIPT_BINDING_TYPE_EXTRINSIC'
@@ -1308,11 +1306,7 @@ function SUI:OnInitialize()
 		else
 			ResetDBWarning = true
 			SUI:Print('|cffff0000Warning')
-			SUI:Print(
-				SUI.L[
-					'This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'
-				]
-			)
+			SUI:Print(SUI.L['This will reset the full SpartanUI & Bartender4 database. If you wish to continue perform the chat command again.'])
 		end
 	end
 
@@ -1331,11 +1325,7 @@ function SUI:OnInitialize()
 	SUI:AddChatCommand('version', Version, 'Displays version information to the chat')
 	SUI:AddChatCommand('resetdb', resetdb, 'Reset SpartanUI settings')
 	SUI:AddChatCommand('resetbartender', resetbartender, 'Reset all bartender4 settings')
-	SUI:AddChatCommand(
-		'resetfulldb',
-		resetfulldb,
-		'Reset bartender4 & SpartanUI settings (This is similar to deleting your WTF folder but will only effect this character)'
-	)
+	SUI:AddChatCommand('resetfulldb', resetfulldb, 'Reset bartender4 & SpartanUI settings (This is similar to deleting your WTF folder but will only effect this character)')
 	if _G.SUIErrorDisplay then
 		local function ErrHandler(arg)
 			if arg == 'reset' then
@@ -1829,18 +1819,7 @@ function SUI:GoldFormattedValue(rawValue)
 	local silver = math.floor((rawValue % 10000) / 100)
 	local copper = (rawValue % 10000) % 100
 
-	return format(
-		GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
-		gold,
-		0,
-		0,
-		silver,
-		0,
-		0,
-		copper,
-		0,
-		0
-	)
+	return format(GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE, gold, 0, 0, silver, 0, 0, copper, 0, 0)
 end
 
 function SUI:UpdateModuleConfigs()

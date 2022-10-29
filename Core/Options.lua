@@ -468,8 +468,9 @@ function Options:AddOptions(OptionsTable, name, OptType)
 end
 
 function Options:DisableOptions(name)
-	SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled =
-		not (SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled or false)
+	SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled = not (SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled or false)
 end
+
+Options.ToggleOptions = module.ToggleOptions
 
 SUI.Options = Options

@@ -10,7 +10,7 @@ if not StdUi:UpgradeNeeded(module, version) then return end;
 ----------------------------------------------------
 --- FontString
 ----------------------------------------------------
----@class StdUi_FontString : FontString, FontStringMethods
+---@class StdUi.FontString : FontString, FontStringMethods
 
 ---@class FontStringMethods
 local FontStringMethods = {
@@ -19,7 +19,7 @@ local FontStringMethods = {
 	end
 }
 
---- @return StdUi_FontString
+--- @return StdUi.FontString
 function StdUi:FontString(parent, text, inherit)
 	local fs = parent:CreateFontString(nil, self.config.font.strata, inherit or 'GameFontNormal');
 
@@ -38,7 +38,7 @@ end
 --- Label
 ----------------------------------------------------
 
---- @return StdUi_FontString
+--- @return StdUi.FontString
 function StdUi:Label(parent, text, size, inherit, width, height)
 	local fs = self:FontString(parent, text, inherit);
 	if size then
@@ -55,7 +55,7 @@ end
 --- Header
 ----------------------------------------------------
 
---- @return FontString
+--- @return StdUi.FontString
 function StdUi:Header(parent, text, size, inherit, width, height)
 	local fs = self:Label(parent, text, size, inherit or 'GameFontNormalLarge', width, height);
 

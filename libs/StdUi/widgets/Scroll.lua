@@ -139,8 +139,9 @@ StdUi.ScrollFrameMethods = {
 	end
 };
 
+---@return StdUi.ScrollFrame
 function StdUi:ScrollFrame(parent, width, height, scrollChild)
-	local panel = self:Panel(parent, width, height); ---@class ScrollFrame : Frame, ScrollFrameMethods, ScrollFrameEvents
+	local panel = self:Panel(parent, width, height); ---@class StdUi.ScrollFrame : Frame, ScrollFrameMethods, ScrollFrameEvents
 	panel.stdUi = self;
 	panel.offset = 0;
 	panel.scrollBarWidth = 16;

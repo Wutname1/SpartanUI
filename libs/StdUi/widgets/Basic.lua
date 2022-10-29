@@ -7,7 +7,9 @@ end
 local module, version = 'Basic', 3;
 if not StdUi:UpgradeNeeded(module, version) then return end;
 
+---@return StdUi.Frame
 function StdUi:Frame(parent, width, height, inherits)
+	---@class StdUi.Frame : Frame
 	local frame = CreateFrame('Frame', nil, parent, inherits);
 	self:InitWidget(frame);
 	self:SetObjSize(frame, width, height);
@@ -15,14 +17,18 @@ function StdUi:Frame(parent, width, height, inherits)
 	return frame;
 end
 
+---@return StdUi.Panel
 function StdUi:Panel(parent, width, height, inherits)
+	---@class StdUi.Panel : StdUi.Frame,. BackdropTemplate
 	local frame = self:Frame(parent, width, height, inherits);
 	self:ApplyBackdrop(frame, 'panel');
 
 	return frame;
 end
 
+---@return StdUi.PanelWithLabel
 function StdUi:PanelWithLabel(parent, width, height, inherits, text)
+	---@class StdUi.PanelWithLabel : StdUi.Panel
 	local frame = self:Panel(parent, width, height, inherits);
 
 	frame.label = self:Header(frame, text);
@@ -32,7 +38,9 @@ function StdUi:PanelWithLabel(parent, width, height, inherits, text)
 	return frame;
 end
 
+---@return StdUi.PanelWithTitle
 function StdUi:PanelWithTitle(parent, width, height, text)
+	---@class StdUi.PanelWithTitle : StdUi.Panel
 	local frame = self:Panel(parent, width, height);
 
 	frame.titlePanel = self:PanelWithLabel(frame, 100, 20, nil, text);

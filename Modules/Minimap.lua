@@ -1,4 +1,4 @@
-local SUI, L, MoveIt = SUI, SUI.L, SUI.MoveIt
+local SUI, L, MoveIt = _G.SUI, SUI.L, SUI.MoveIt
 local module = SUI:NewModule('Component_Minimap')
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
@@ -40,8 +40,7 @@ local IsMouseOver = function()
 	local MouseFocus = GetMouseFocus()
 	if
 		MouseFocus and not MouseFocus:IsForbidden() and
-			((MouseFocus:GetName() == 'Minimap') or
-				(MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
+			((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
 	 then
 		MouseIsOver = true
 	else
@@ -261,16 +260,12 @@ function module:ModifyMinimapLayout()
 	Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
 	Minimap.overlay:SetAllPoints(Minimap)
 	Minimap.overlay:SetBlendMode('ADD')
+	function GetMinimapShape()
+		return (module.Settings.shape == 'square') and 'SQUARE' or 'ROUND'
+	end
 	if module.Settings.shape == 'square' then
 		-- Set Map Mask
-		function GetMinimapShape()
-			return 'SQUARE'
-		end
 		Minimap:SetMaskTexture('Interface\\BUTTONS\\WHITE8X8')
-		if SUI.IsRetail then
-			Minimap:SetArchBlobRingScalar(0)
-			Minimap:SetQuestBlobRingScalar(0)
-		end
 		Minimap.overlay:Show()
 		if MiniMapTracking then
 			MiniMapTracking:ClearAllPoints()
@@ -283,6 +278,12 @@ function module:ModifyMinimapLayout()
 			MiniMapTracking:ClearAllPoints()
 			MiniMapTracking:SetPoint('TOPLEFT', Minimap, 'TOPLEFT', -5, -5)
 		end
+	end
+	if SUI.IsRetail then
+		Minimap:SetArchBlobRingScalar(0)
+		Minimap:SetArchBlobRingAlpha(0)
+		Minimap:SetQuestBlobRingScalar(0)
+		Minimap:SetQuestBlobRingAlpha(0)
 	end
 	-- Attach Minimap Backdrop to the minimap it's self
 	if MinimapBackdrop then
@@ -410,7 +411,7 @@ function module:UpdateScale()
 	if Minimap.coords then
 		module:update()
 	end
-	if module.Settings.scaleWithArt then
+	if module.Settings.scaleWithArt and SUI:IsAddonDisabled('SexyMap') then
 		if SUIMinimap.scale then
 			SUIMinimap:scale(SUI.DB.scale)
 			Minimap:SetScale(SUI.DB.scale)
@@ -526,15 +527,9 @@ function module:update(FullUpdate)
 		Minimap.coords:SetScale(module.Settings.coords.scale)
 
 		-- If minimap default location is under the minimap setup scripts to move it
-		if
-			module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and (not VisibilityWatcher.hooked) and
-				(not MoveIt:IsMoved('Minimap'))
-		 then
+		if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and (not VisibilityWatcher.hooked) and (not MoveIt:IsMoved('Minimap')) then
 			local OnHide = function(args)
-				if
-					SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and
-						SUIMinimap.position
-				 then
+				if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and SUIMinimap.position then
 					SUIMinimap:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
 				end
 			end

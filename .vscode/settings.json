@@ -333,15 +333,16 @@
     "SUI_Mover_Minimap",
     "TimeManagerClockTicker",
     "ExpansionLandingPageMinimapButton",
-    "CharacterMicroButton"
+    "CharacterMicroButton",
+    "TableInspectorMixin",
+    "TableAttributeDisplay",
+    "ChatFrame1EditBox",
+    "ChatEdit_ActivateChat",
+    "TableAttributeDisplayValueButton_OnMouseDown",
+    "DEFAULT_CHATFRAME_COLOR",
+    "DEFAULT_CHATFRAME_ALPHA"
   ],
-  "Lua.workspace.ignoreDir": [
-    ".vscode",
-    "libs/Ace*",
-    "libs/lib*",
-    "libs/oUF*",
-    "libs/Wago*"
-  ],
+  "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.ignoredFiles": "Disable",
   "Lua.diagnostics.enable": true,
   "Lua.diagnostics.disable": [

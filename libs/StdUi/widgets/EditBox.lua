@@ -107,7 +107,7 @@ function StdUi:SearchEditBox(parent, width, height, placeholderText)
 	local editBox = self:SimpleEditBox(parent, width, height, '');
 
 	editBox:SetScript('OnTextChanged', SearchEditBoxOnTextChanged);
-	
+
 	self:ApplyPlaceholder(editBox, placeholderText, [[Interface\Common\UI-Searchbox-Icon]]);
 
 	return editBox;
@@ -336,7 +336,9 @@ local MultiLineBoxScrollOnVerticalScroll = function(self, offset)
 	self.scrollChild:SetHitRectInsets(0, 0, offset, self.scrollChild:GetHeight() - offset - self:GetHeight());
 end
 
+---@return StdUi.MultiLineBox
 function StdUi:MultiLineBox(parent, width, height, text)
+	---@class StdUi.MultiLineBox : Frame, EditBox
 	local editBox = CreateFrame('EditBox');
 	local widget = self:ScrollFrame(parent, width, height, editBox);
 	editBox.stdUi = self;

@@ -79,25 +79,27 @@ local ExcludedTypes = {
 	'Quest'
 }
 
+local function debugMsg(msg)
+	SUI.Debug(msg, 'AutoSell')
+end
+
 function module:OnInitialize()
 	local defaults = {
-		profile = {
-			FirstLaunch = true,
-			NotCrafting = true,
-			NotConsumables = true,
-			NotInGearset = true,
-			MaxILVL = 100,
-			Gray = true,
-			White = false,
-			Green = false,
-			Blue = false,
-			Purple = false,
-			GearTokens = false,
-			AutoRepair = false,
-			UseGuildBankRepair = false
-		}
+		FirstLaunch = true,
+		NotCrafting = true,
+		NotConsumables = true,
+		NotInGearset = true,
+		MaxILVL = 100,
+		Gray = true,
+		White = false,
+		Green = false,
+		Blue = false,
+		Purple = false,
+		GearTokens = false,
+		AutoRepair = false,
+		UseGuildBankRepair = false
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', defaults)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', {profile = defaults})
 	module.DB = module.Database.profile
 
 	-- Migrate old settings
@@ -303,13 +305,7 @@ local function BuildOptions()
 				type = 'toggle',
 				order = 202
 			},
-			line2 = {name = '', type = 'header', order = 600},
-			debug = {
-				name = L['Enable debug messages'],
-				type = 'toggle',
-				order = 601,
-				width = 'full'
-			}
+			line2 = {name = '', type = 'header', order = 600}
 		}
 	}
 
@@ -335,8 +331,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	if not item then
 		return false
 	end
-	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, _, _, isCraftingReagent =
-		GetItemInfo(ilink)
+	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, _, _, isCraftingReagent = GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
 		return false
 	end
@@ -378,9 +373,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	end
 	--Crafting Items
 	if
-		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or
-			itemType == 'Tradeskill') or
-			(itemType == 'Miscellaneous' and itemSubType == 'Reagent')) or
+		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')) or
 			(itemType == 'Item Enhancement') or
 			isCraftingReagent
 	 then
@@ -403,10 +396,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	end
 
 	-- Gear Tokens
-	if
-		quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and
-			not module.DB.GearTokens
-	 then
+	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then
 		IsGearToken = true
 	end
 
@@ -415,21 +405,18 @@ function module:IsSellable(item, ilink, bag, slot)
 	end
 
 	if
-		qualitysellable and ilvlsellable and Craftablesellable and NotInGearset and NotConsumable and not IsGearToken and
-			not SUI:IsInTable(ExcludedItems, item) and
+		qualitysellable and ilvlsellable and Craftablesellable and NotInGearset and NotConsumable and not IsGearToken and not SUI:IsInTable(ExcludedItems, item) and
 			not SUI:IsInTable(ExcludedTypes, itemType) and
 			not SUI:IsInTable(ExcludedTypes, itemSubType) or
 			(quality == 0 and module.DB.Gray)
 	 then --Legion identified some junk as consumable
-		if module.DB.debug then
-			SUI:Print('--Selling--')
-			SUI:Print(item)
-			SUI:Print(name)
-			SUI:Print(ilink)
-			SUI:Print('ilvl:     ' .. iLevel)
-			SUI:Print('type:     ' .. itemType)
-			SUI:Print('sub type: ' .. itemSubType)
-		end
+		debugMsg('--Selling--')
+		debugMsg(item)
+		debugMsg(name)
+		debugMsg(ilink)
+		debugMsg('ilvl:     ' .. iLevel)
+		debugMsg('type:     ' .. itemType)
+		debugMsg('sub type: ' .. itemSubType)
 		return true
 	end
 
@@ -492,21 +479,15 @@ function module:Repair(PersonalFunds)
 	if (CanMerchantRepair() and GetRepairAllCost() ~= 0 and not PersonalFunds) then
 		-- Use guild repair
 		if (CanGuildBankRepair and CanGuildBankRepair() and module.DB.UseGuildBankRepair) then
-			SUI:Print(
-				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds']
-			)
+			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'])
 			RepairAllItems()
 			module:ScheduleTimer('Repair', .7, true)
 		elseif GetRepairAllCost() ~= 0 then
-			SUI:Print(
-				L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds']
-			)
+			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'])
 			RepairAllItems()
 		end
 	elseif GetRepairAllCost() ~= 0 then
-		SUI:Print(
-			L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds']
-		)
+		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'])
 		RepairAllItems()
 	end
 end

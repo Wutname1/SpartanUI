@@ -7,9 +7,10 @@ end
 local module, version = 'Window', 5;
 if not StdUi:UpgradeNeeded(module, version) then return end;
 
---- @return Frame
+--- @return StdUi.Window
 function StdUi:Window(parent, width, height, title)
-	parent = parent or UIParent;
+    parent = parent or UIParent;
+	---@class StdUi.Window : StdUi.PanelWithTitle
 	local frame = self:PanelWithTitle(parent, width, height, title);
 	frame:SetClampedToScreen(true);
 	frame.titlePanel.isWidget = false;
@@ -41,8 +42,9 @@ end
 
 -- Reusing dialogs
 StdUi.dialogs = {};
---- @return Frame
+---@return StdUi.Dialog
 function StdUi:Dialog(title, message, dialogId)
+	---@class StdUi.Dialog : StdUi.Window
 	local window;
 	if dialogId and self.dialogs[dialogId] then
 		window = self.dialogs[dialogId];
@@ -80,8 +82,9 @@ end
 ---			onClick = function() end
 ---		}
 --- }
---- @return Frame
+--- @return StdUi.Confirm
 function StdUi:Confirm(title, message, buttons, dialogId)
+	---@class StdUi.Confirm : StdUi.Dialog
 	local window = self:Dialog(title, message, dialogId);
 
 	if buttons and not window.buttons then

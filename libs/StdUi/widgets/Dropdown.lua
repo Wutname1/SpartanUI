@@ -230,7 +230,7 @@ local DropdownEvents = {
 --- }
 --- @return Dropdown
 function StdUi:Dropdown(parent, width, height, options, value, multi, assoc)
-	--- @class Dropdown
+	--- @class Dropdown : Button
 	local dropdown = self:Button(parent, width, height, '');
 	dropdown.stdUi = self;
 
@@ -238,7 +238,7 @@ function StdUi:Dropdown(parent, width, height, options, value, multi, assoc)
 	-- make it shorter because of arrow
 	dropdown.text:ClearAllPoints();
 	self:GlueAcross(dropdown.text, dropdown, 2, -2, -16, 2);
-	
+
 	local dropTex = self:Texture(dropdown, 15, 15, [[Interface\Buttons\SquareButtonTextures]]);
 	dropTex:SetTexCoord(0.45312500, 0.64062500, 0.20312500, 0.01562500);
 	self:GlueRight(dropTex, dropdown, -2, 0, true);

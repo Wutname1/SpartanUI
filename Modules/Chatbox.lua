@@ -1,4 +1,6 @@
-local SUI, L, print = SUI, SUI.L, SUI.print
+---@class SUI
+local SUI = SUI
+local L = SUI.L
 local StdUi = SUI.StdUi
 local module = SUI:NewModule('Component_Chatbox', 'AceHook-3.0')
 module.description = 'Lightweight quality of life chat improvements'
@@ -243,20 +245,19 @@ end
 
 -- Module Setup
 function module:OnInitialize()
+	---@class SUI.Chat.DB
 	local defaults = {
-		profile = {
-			LinkHover = true,
-			shortenChannelNames = true,
-			webLinks = true,
-			EditBoxTop = false,
-			timestampFormat = '%X',
-			playerlevel = nil,
-			ChatCopyTip = true,
-			fontSize = 12
-		}
+		LinkHover = true,
+		shortenChannelNames = true,
+		webLinks = true,
+		EditBoxTop = false,
+		timestampFormat = '%X',
+		playerlevel = nil,
+		ChatCopyTip = true,
+		fontSize = 12
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', defaults)
-	module.DB = module.Database.profile
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', {profile = defaults})
+	module.DB = module.Database.profile ---@type SUI.Chat.DB
 
 	if SUI:IsModuleDisabled('Chatbox') then
 		return
@@ -446,11 +447,7 @@ function module:SetupChatboxes()
 				local cleanLine = popup.font:GetText() or ''
 				text = text .. cleanLine
 			end
-			text =
-				text:gsub(
-				'|T[^\\]+\\[^\\]+\\[Uu][Ii]%-[Rr][Aa][Ii][Dd][Tt][Aa][Rr][Gg][Ee][Tt][Ii][Nn][Gg][Ii][Cc][Oo][Nn]_(%d)[^|]+|t',
-				'{rt%1}'
-			)
+			text = text:gsub('|T[^\\]+\\[^\\]+\\[Uu][Ii]%-[Rr][Aa][Ii][Dd][Tt][Aa][Rr][Gg][Ee][Tt][Ii][Nn][Gg][Ii][Cc][Oo][Nn]_(%d)[^|]+|t', '{rt%1}')
 
 			text = text:gsub('|T13700([1-8])[^|]+|t', '{rt%1}') -- raid icons
 			text = text:gsub('|T[^|]+|t', '') -- Remove icons to prevent copying issues
@@ -855,3 +852,18 @@ function module:BuildOptions()
 		}
 	}
 end
+
+function module:SetEditBoxMessage(msg)
+	if not ChatFrame1EditBox:IsShown() then
+		ChatEdit_ActivateChat(ChatFrame1EditBox)
+	end
+
+	local editBoxText = ChatFrame1EditBox:GetText()
+	if editBoxText and editBoxText ~= '' then
+		ChatFrame1EditBox:SetText('')
+	end
+	ChatFrame1EditBox:Insert(msg)
+	ChatFrame1EditBox:HighlightText()
+end
+
+SUI.Chat = module

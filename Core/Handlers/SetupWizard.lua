@@ -212,9 +212,6 @@ end
 
 function module:DisplayPage(PageData)
 	CurrentDisplay = PageData
-	if PageData.title then
-		module.window.titleHolder:SetText(PageData.title)
-	end
 	if PageData.SubTitle then
 		module.window.SubTitle:SetText(PageData.SubTitle)
 	else
