@@ -10,19 +10,21 @@ module.description = 'Mutes the talking head frame once you have heard it.'
 local HeardLines = {}
 
 function module:OnInitialize()
+	---@class SUI.StopTalking.DB
 	local defaults = {
-		profile = {
-			persist = true,
-			chatOutput = true,
-			lines = {}
-		}
+		persist = true,
+		chatOutput = true,
+		lines = {},
+		history = {}
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', defaults)
-	module.DB = module.Database.profile
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', {profile = defaults})
+	module.DB = module.Database.profile ---@type SUI.StopTalking.DB
+	module.DB.lines = {} --blank this out; start fresh in 10.0
 end
 
 local function Options()
-	SUI.opt.args['Modules'].args['StopTalking'] = {
+	---@type AceConfigOptionsTable
+	local optTable = {
 		name = L['Stop Talking'],
 		type = 'group',
 		get = function(info)
@@ -43,69 +45,76 @@ local function Options()
 				type = 'toggle',
 				order = 2,
 				width = 'full'
+			},
+			lines = {
+				name = L['Heard voice lines'],
+				type = 'multiselect',
+				desc = L['Uncheck a line to remove it from the history.'],
+				width = 'full',
+				order = 3,
+				get = function(_, key)
+					return (module.DB.history[key] and true) or false
+				end,
+				set = function(_, key, val)
+					module.DB.history[key] = nil
+				end,
+				values = module.DB.history
 			}
 		}
 	}
+
+	-- for k, v in pairs(module.DB.lines) do
+	-- 	optTable.args.lines.args[k] = {
+	-- 		name = k,
+	-- 		type = 'toggle',
+	-- 		order = 1,
+	-- 		width = 'full',
+	-- 		get = function(info)
+	-- 			return module.DB.lines[info[#info - 1]]
+	-- 		end,
+	-- 		set = function(info, val)
+	-- 			module.DB.lines[info[#info - 1]] = val
+	-- 		end
+	-- 	}
+	-- end
+
+	SUI.Options:AddOptions(optTable, 'Stop Talking', 'Module')
 end
 
-local function SetupRedirect()
-	-- Copy the Blizzard function local
-	local TalkingHeadFrame_PlayCurrent_Blizz = TalkingHeadFrame_PlayCurrent
-
-	--Setup our catch function
-	local NewPlayFunc = function()
-		if SUI:IsModuleEnabled('StopTalking') then
-			local displayInfo, cameraID, vo, duration, lineNumber, numLines, name, text, isNewTalkingHead =
-				C_TalkingHead.GetCurrentLineInfo()
-			if not vo then
-				return
-			end
-			local persist = module.DB.persist
-			if (module.DB.lines[vo] and persist) or (not persist and HeardLines[vo]) then
-				-- Heard this before.
-				if module.DB.chatOutput and name and text then
-					SUI:Print(name)
-					print(text)
-				end
-
-				return
-			else
-				-- New, flag it as heard.
-				if persist then
-					module.DB.lines[vo] = true
-				else
-					HeardLines[vo] = true
-				end
-			end
-		end
-
-		--Run the archived blizzard function
-		TalkingHeadFrame_PlayCurrent_Blizz()
-	end
-
-	-- Assign our catch function
-	TalkingHeadFrame_PlayCurrent = NewPlayFunc
-end
-
-function module:OnEnable()
-	if SUI.DB.DisabledComponents.StopTalking then
+function module:TALKINGHEAD_REQUESTED()
+	local _, _, vo, _, _, _, name, text = C_TalkingHead.GetCurrentLineInfo()
+	if not vo then
 		return
 	end
 
-	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
-		SetupRedirect()
+	local persist = module.DB.persist
+	if (module.DB.history[vo] and persist) or (not persist and HeardLines[vo]) then
+		-- Heard this before.
+		if module.DB.chatOutput and name and text then
+			SUI:Print(name)
+			print(text)
+		end
+
+		return
 	else
-		module:RegisterEvent(
-			'PLAYER_ENTERING_WORLD',
-			function(event)
-				module:UnregisterEvent(event)
-				if TalkingHead_LoadUI then
-					TalkingHead_LoadUI()
-					SetupRedirect()
-				end
-			end
-		)
+		-- New, flag it as heard.
+		if persist then
+			module.DB.history[vo] = name .. ' - ' .. text
+		else
+			HeardLines[vo] = name .. ' - ' .. text
+		end
+	end
+end
+
+function module:OnEnable()
+	if SUI:IsModuleDisabled(module) then
+		return
 	end
 
+	module:RegisterEvent('TALKINGHEAD_REQUESTED')
 	Options()
+end
+
+function module:OnDisable()
+	module:UnregisterEvent('TALKINGHEAD_REQUESTED')
 end
