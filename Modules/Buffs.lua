@@ -3,6 +3,9 @@ local module = SUI:NewModule('Component_Buffs')
 ----------------------------------------------------------------------------------------------------
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local BuffWatcher = CreateFrame('Frame')
+if SUI.IsRetail then
+	return
+end
 
 function module:OnInitialize()
 	if SUI.DB.Buffs == nil then
