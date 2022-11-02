@@ -340,7 +340,9 @@
     "ChatEdit_ActivateChat",
     "TableAttributeDisplayValueButton_OnMouseDown",
     "DEFAULT_CHATFRAME_COLOR",
-    "DEFAULT_CHATFRAME_ALPHA"
+    "DEFAULT_CHATFRAME_ALPHA",
+    "ROTATE_MINIMAP",
+    "OPTION_TOOLTIP_ROTATE_MINIMAP"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.ignoredFiles": "Disable",

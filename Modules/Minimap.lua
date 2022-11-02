@@ -254,6 +254,22 @@ function module:ModifyMinimapLayout()
 		MinimapCluster.Tracking.Background:Hide()
 	--TODO: InstanceDifficulty position and scale
 	end
+	if MinimapCluster.SetRotateMinimap then
+		if UserSettings.rotate then
+			C_CVar.SetCVar('rotateMinimap', 1)
+		end
+
+		hooksecurefunc(
+			MinimapCluster,
+			'SetRotateMinimap',
+			function()
+				if UserSettings.rotate then
+					C_CVar.SetCVar('rotateMinimap', 1)
+				end
+			end
+		)
+	end
+
 	--Shared modifications
 	MinimapCluster:EnableMouse(false)
 	Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
@@ -762,7 +778,7 @@ function module:OnEnable()
 end
 
 function module:BuildOptions()
-	SUI.opt.args['Modules'].args['Minimap'] = {
+	local options = {
 		type = 'group',
 		name = L['Minimap'],
 		args = {
@@ -856,4 +872,26 @@ function module:BuildOptions()
 			}
 		}
 	}
+
+	if SUI.IsRetail then
+		options.args.rotate = {
+			order = 3,
+			type = 'toggle',
+			name = ROTATE_MINIMAP,
+			desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
+			get = function()
+				return UserSettings.rotate or false
+			end,
+			set = function(_, value)
+				if value then
+					C_CVar.SetCVar('rotateMinimap', 1)
+				else
+					C_CVar.SetCVar('rotateMinimap', 0)
+				end
+				UserSettings.rotate = value or nil
+			end
+		}
+	end
+
+	SUI.Options:AddOptions(options, 'Minimap')
 end
