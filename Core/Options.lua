@@ -388,7 +388,7 @@ function module:ToggleOptions(pages)
 					'OnClick',
 					function()
 						ProfileHandler:ExportUI()
-						frame.CloseBtn:Click()
+						ACD:Close('SpartanUI')
 					end
 				)
 				SUI.Skins.SkinObj('Button', Export, 'Light', 'Ace3')
@@ -402,7 +402,7 @@ function module:ToggleOptions(pages)
 					'OnClick',
 					function()
 						ProfileHandler:ImportUI()
-						frame.CloseBtn:Click()
+						ACD:Close('SpartanUI')
 					end
 				)
 				SUI.Skins.SkinObj('Button', Import, 'Light', 'Ace3')
