@@ -63,21 +63,6 @@ local function Options()
 		}
 	}
 
-	-- for k, v in pairs(module.DB.lines) do
-	-- 	optTable.args.lines.args[k] = {
-	-- 		name = k,
-	-- 		type = 'toggle',
-	-- 		order = 1,
-	-- 		width = 'full',
-	-- 		get = function(info)
-	-- 			return module.DB.lines[info[#info - 1]]
-	-- 		end,
-	-- 		set = function(info, val)
-	-- 			module.DB.lines[info[#info - 1]] = val
-	-- 		end
-	-- 	}
-	-- end
-
 	SUI.Options:AddOptions(optTable, 'Stop Talking', 'Module')
 end
 

@@ -262,9 +262,7 @@ function Options:AddAuraLayout(frameName, OptionSet)
 				order = 2,
 				type = 'range',
 				name = L['Scaled aura size'],
-				desc = L[
-					'Scale for auras that you casted or can Spellsteal, any number above 100% is bigger than default, any number below 100% is smaller than default.'
-				],
+				desc = L['Scale for auras that you casted or can Spellsteal, any number above 100% is bigger than default, any number below 100% is smaller than default.'],
 				min = 0,
 				max = 3,
 				step = 0.10,
@@ -378,9 +376,7 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 				order = 7,
 				type = 'toggle',
 				name = L['Smart Friendly/Hostile Filter'],
-				desc = L[
-					'Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'
-				],
+				desc = L['Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'],
 				width = 'full'
 			}
 		}
@@ -697,13 +693,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update the screen
 						local position = UF.CurrentSettings[frameName].elements[element].text[count].position
 						UF.Unit[frameName][element].TextElements[count]:ClearAllPoints()
-						UF.Unit[frameName][element].TextElements[count]:SetPoint(
-							position.anchor,
-							UF.Unit[frameName],
-							position.anchor,
-							position.x,
-							position.y
-						)
+						UF.Unit[frameName][element].TextElements[count]:SetPoint(position.anchor, UF.Unit[frameName], position.anchor, position.x, position.y)
 					end,
 					args = {
 						x = {

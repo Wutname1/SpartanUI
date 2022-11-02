@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local _G, L, print = _G, SUI.L, SUI.print
+local L, print = SUI.L, SUI.print
 ---@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
 local UF = SUI:NewModule('Component_UnitFrames')
 local MoveIt = SUI.MoveIt
@@ -27,6 +27,12 @@ local UFPositionDefaults = {
 }
 UF.Artwork = {}
 
+---@param msg string
+---@param frame UnitId
+---@param element string
+function UF:debug(msg, frame, element)
+	SUI.Debug((frame and frame .. '-' or '') .. (element and element .. '-' or '') .. msg, 'UnitFrames')
+end
 ---Returns the path to the texture for the given LSM key, or the SUI default
 ---@param LSMKey string
 ---@return string
@@ -36,6 +42,7 @@ function UF:FindStatusBarTexture(LSMKey)
 	return SUI.Lib.LSM:Fetch('statusbar', LSMKey, true) or defaultTexture
 end
 
+---@param frameName UnitId
 function UF:IsFriendlyFrame(frameName)
 	local FriendlyFrame = {
 		'player',
