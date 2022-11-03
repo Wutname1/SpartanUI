@@ -119,8 +119,8 @@ local function CreateWindow()
 		if not SUI:IsInTable(namespaceblacklist, i) then
 			local DisplayName
 			local tmpModule = SUI:GetModule('Component_' .. i, true)
-			if tmpModule and tmpModule.DisplayName then
-				DisplayName = tmpModule.DisplayName
+			if tmpModule then
+				DisplayName = tmpModule.DisplayName or i
 				table.insert(list, {text = (DisplayName or i), value = i})
 			end
 		end
@@ -422,6 +422,8 @@ function module:ImportProfile(dataString)
 			ImportModuleSettings(k, v)
 		end
 	end
+
+	window.textBox:SetValue(SUI:TableToLuaString(profileData))
 
 	return true
 end
