@@ -33,7 +33,7 @@ local ElementList = {
 	'Castbar',
 	'RareElite',
 	'RaidTargetIndicator',
-	'QuestIndicator',
+	'QuestMobIndicator',
 	'PvPIndicator',
 	'ThreatIndicator'
 }
@@ -55,6 +55,67 @@ local UpdateElementState = function(frame)
 	if (InCombatLockdown()) then
 		return
 	end
+
+	for _, elementName in ipairs(ElementList) do
+		local element = frame[elementName]
+		local data = elements[elementName]
+
+		-- Setup the Alpha scape and position
+		element:SetAlpha(data.alpha)
+		element:SetScale(data.scale)
+
+		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then
+			return
+		end
+		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' then
+			element:SetDrawLayer('BORDER', 7)
+		end
+
+		-- Positioning
+		element:ClearAllPoints()
+		if data.points then
+			if type(data.points) == 'string' then
+				element:SetAllPoints(frame[data.points])
+			elseif data.points and type(data.points) == 'table' then
+				for _, key in pairs(data.points) do
+					if key.relativeTo == 'Frame' then
+						element:SetPoint(key.anchor, frame, key.anchor, key.x, key.y)
+					else
+						element:SetPoint(key.anchor, frame[key.relativeTo], key.anchor, key.x, key.y)
+					end
+				end
+			else
+				element:SetAllPoints(frame)
+			end
+		elseif data.position.anchor then
+			if data.position.relativeTo == 'Frame' then
+				element:SetPoint(data.position.anchor, frame, data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
+			else
+				element:SetPoint(data.position.anchor, frame[data.position.relativeTo], data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
+			end
+		end
+
+		--Size it if we have a size change function for the element
+		if element and data.enabled then
+			element:ClearAllPoints()
+			element:SetPoint(data.position.anchor, frame, data.position.relativePoint, data.position.x, data.position.y)
+
+			--Size it if we have a size change function for the element
+			if element.SizeChange then
+				element:SizeChange()
+			elseif data.size then
+				element:SetSize(data.size, data.size)
+			else
+				element:SetSize(data.width or frame:GetWidth(), data.height or frame:GetHeight())
+			end
+		end
+
+		-- Call the elements update function
+		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then
+			frame[elementName].ForceUpdate(element)
+		end
+	end
+
 	-- Power
 	frame.Power:ClearAllPoints()
 	if elements.Health.enabled then
@@ -163,6 +224,11 @@ local NamePlateFactory = function(frame, unit)
 		frame:SetSize(module.DB.width, height)
 		frame:SetPoint('CENTER', 0, 0)
 
+		frame.raised = CreateFrame('Frame', nil, frame)
+		local level = frame:GetFrameLevel() + 100
+		frame.raised:SetFrameLevel(level)
+		frame.raised.__owner = frame
+
 		frame.bg = {}
 		frame.bg.artwork = {}
 		frame.bg.solid = frame:CreateTexture(nil, 'BACKGROUND')
@@ -205,6 +271,11 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- health bar
+		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
+		UF.Elements:Build(frame, 'RaidTargetIndicator', elementsDB.RaidTargetIndicator)
+		UF.Elements:Build(frame, 'ClassIcon', elementsDB.ClassIcon)
+		UF.Elements:Build(frame, 'QuestMobIndicator', elementsDB.QuestMobIndicator)
+
 		UF.Elements:Build(frame, 'Health', elementsDB.Health)
 		UF.Elements:Build(frame, 'Power', elementsDB.Power)
 		frame.Power:SetWidth(module.DB.width)
@@ -262,9 +333,6 @@ local NamePlateFactory = function(frame, unit)
 			end
 		end
 
-		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
-		UF.Elements:Build(frame, 'ClassIcon', elementsDB.ClassIcon)
-
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', unit .. 'Auras', frame)
 		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
@@ -281,19 +349,6 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		frame.Auras = Auras
-
-		-- Raid Icon
-		frame.RaidTargetIndicator = frame:CreateTexture(nil, 'OVERLAY')
-		frame.RaidTargetIndicator:SetSize(15, 15)
-		frame.RaidTargetIndicator:SetPoint('BOTTOM', frame.Health, 'TOPLEFT', 0, 0)
-
-		-- Target Indicator
-
-		-- Quest Indicator
-		local QuestIndicator = frame:CreateTexture(nil, 'OVERLAY')
-		QuestIndicator:SetSize(16, 16)
-		QuestIndicator:SetPoint('TOPRIGHT', frame)
-		frame.QuestMobIndicator = QuestIndicator
 
 		-- Rare Elite indicator
 		local RareElite = frame:CreateTexture(nil, 'BACKGROUND', nil, -2)
@@ -437,9 +492,6 @@ function module:OnInitialize()
 					Scale = 1,
 					points = false,
 					alpha = 1,
-					width = 20,
-					height = 20,
-					size = 20,
 					scale = 1,
 					FrameLevel = nil,
 					FrameStrata = nil,
@@ -486,7 +538,6 @@ function module:OnInitialize()
 				Name = {
 					SetJustifyH = 'CENTER'
 				},
-				QuestMobIndicator = {},
 				Health = {
 					enabled = true,
 					height = 5,
@@ -531,7 +582,9 @@ function module:OnInitialize()
 						}
 					}
 				},
-				PvPIndicator = {},
+				PvPIndicator = {
+					size = 10
+				},
 				ThreatIndicator = {},
 				Castbar = {
 					enabled = true,
@@ -585,6 +638,24 @@ function module:OnInitialize()
 						anchor = 'TOP',
 						x = 0,
 						y = 40
+					}
+				},
+				RaidTargetIndicator = {
+					enabled = true,
+					size = 15,
+					position = {
+						anchor = 'BOTTOMRIGHT',
+						x = 0,
+						y = 0
+					}
+				},
+				QuestMobIndicator = {
+					enabled = true,
+					size = 16,
+					position = {
+						anchor = 'BOTTOMLEFT',
+						x = 0,
+						y = 0
 					}
 				},
 				XPBar = {
