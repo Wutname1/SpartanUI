@@ -121,9 +121,8 @@ local function CreateWindow()
 			local tmpModule = SUI:GetModule('Component_' .. i, true)
 			if tmpModule and tmpModule.DisplayName then
 				DisplayName = tmpModule.DisplayName
+				table.insert(list, {text = (DisplayName or i), value = i})
 			end
-
-			table.insert(list, {text = (DisplayName or i), value = i})
 		end
 	end
 
