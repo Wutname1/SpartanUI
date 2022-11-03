@@ -9,7 +9,7 @@ SpartanUI (SUI) was originally designed to free your screen by moving a majority
 [![Discord](https://img.shields.io/discord/265564257347829771.svg?logo=discord&style=for-the-badge)](https://discord.gg/Qc9TRBv)
 [![GitHub release](https://img.shields.io/github/release/wutname1/spartanui.svg?&style=for-the-badge)](https://www.curseforge.com/wow/addons/spartan-ui)
 [![Package and release](https://img.shields.io/github/workflow/status/Wutname1/SpartanUI/Package%20and%20release?style=for-the-badge)](https://github.com/Wutname1/SpartanUI/actions)
-[![YouTube](https://img.shields.io/badge/-Youtube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/channel/UCAZ_suCikZWtNGMJH1wLmjg/)
+[![YouTube](https://img.shields.io/badge/-Youtube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/@wutname1Gaming/)
 
 ---
 
