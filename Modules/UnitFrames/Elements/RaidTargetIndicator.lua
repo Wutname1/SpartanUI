@@ -3,7 +3,7 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	frame.RaidTargetIndicator = frame:CreateTexture(nil, 'ARTWORK')
+	frame.RaidTargetIndicator = frame.raised:CreateTexture(nil, 'BORDER')
 end
 
 ---@param frame table

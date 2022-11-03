@@ -3,7 +3,7 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	frame.QuestMobIndicator = frame:CreateTexture(nil, 'OVERLAY')
+	frame.QuestMobIndicator = frame.raised:CreateTexture(nil, 'OVERLAY')
 end
 
 ---@param unitName string

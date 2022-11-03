@@ -2,7 +2,7 @@ local UF = SUI.UF
 
 ---@param frame table
 local function Build(frame)
-	frame.GroupRoleIndicator = frame:CreateTexture(nil, 'BORDER')
+	frame.GroupRoleIndicator = frame.raised:CreateTexture(nil, 'BORDER')
 	frame.GroupRoleIndicator:SetTexture('Interface\\AddOns\\SpartanUI\\images\\icon_role.tga')
 	frame.GroupRoleIndicator.Sizeable = true
 	frame.GroupRoleIndicator:Hide()
