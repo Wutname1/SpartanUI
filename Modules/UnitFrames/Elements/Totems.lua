@@ -43,22 +43,13 @@ end
 
 ---@param frame table
 local function Update(frame)
-	local element = frame.Totems
-	local DB = element.DB
+	-- local element = frame.Totems
+	-- local DB = element.DB
 end
 
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
-	local function OptUpdate(option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].elements.Totems[option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.Totems[option] = val
-		--Update the screen
-		UF.Unit[unitName]:ElementUpdate('Totems')
-	end
-	--local DB = UF.CurrentSettings[unitName].elements.Totems
 end
 
 ---@type SUI.UnitFrame.Element.Settings
