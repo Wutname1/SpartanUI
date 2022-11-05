@@ -311,6 +311,12 @@ function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
 		type = 'group',
 		order = 4,
 		args = {
+			NOTFINISHED = {
+				name = L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
+				type = 'description',
+				fontSize = 'medium',
+				order = .1
+			},
 			desc = {
 				name = L['Whitelisted auras will always be shown'],
 				type = 'description',
@@ -338,6 +344,12 @@ function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
 		type = 'group',
 		order = 5,
 		args = {
+			NOTFINISHED = {
+				name = L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
+				type = 'description',
+				fontSize = 'medium',
+				order = .1
+			},
 			desc = {
 				name = L['Blacklisted auras will never be shown'],
 				type = 'description',
@@ -373,6 +385,12 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 		get = get,
 		set = set,
 		args = {
+			NOTFINISHED = {
+				name = L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
+				type = 'description',
+				fontSize = 'medium',
+				order = .1
+			},
 			duration = {
 				name = L['Duration'],
 				type = 'group',
