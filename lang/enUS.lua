@@ -24,7 +24,6 @@ L['Whitelisted auras will always be shown'] = true
 L['Blacklisted auras will never be shown'] = true
 L['Basic filters'] = true
 L['Basic states'] = true
-
 L['Aura Bars'] = true
 L['Class Icon'] = true
 L['Class Power'] = true

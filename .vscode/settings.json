@@ -342,7 +342,9 @@
     "DEFAULT_CHATFRAME_COLOR",
     "DEFAULT_CHATFRAME_ALPHA",
     "ROTATE_MINIMAP",
-    "OPTION_TOOLTIP_ROTATE_MINIMAP"
+    "OPTION_TOOLTIP_ROTATE_MINIMAP",
+    "MAX_TOTEMS",
+    "TotemFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.ignoredFiles": "Disable",

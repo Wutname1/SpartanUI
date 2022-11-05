@@ -69,7 +69,7 @@ local Settings = {
 			enabled = true
 		},
 		Buffs = {
-			enabled = true,
+			enabled = false,
 			position = {
 				anchor = 'TOPLEFT'
 			}
