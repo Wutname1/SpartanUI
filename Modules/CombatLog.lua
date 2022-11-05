@@ -160,15 +160,10 @@ function module:LogCheck(event)
 	elseif (module.DB.mythicdungeon) and type == 'party' and difficulty == 23 and maxPlayers == 5 then
 		-- 23 - Mythic 5-player Instance, filtering Garrison
 		setLogging(true, 'Mythic Dungeon')
-	elseif
-		(module.DB.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and maxPlayers == 5
-	 then
+	elseif (module.DB.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and maxPlayers == 5 then
 		-- 8 - Mythic+ Mode Instance
 		setLogging(true, 'Mythic+ Dungeon')
-	elseif
-		(module.DB.raidlegacy) and type == 'raid' and
-			(difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9)
-	 then
+	elseif (module.DB.raidlegacy) and type == 'raid' and (difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9) then
 		-- 3-9 is legacy raid difficulties
 		setLogging(true, 'Legacy Raid')
 	else

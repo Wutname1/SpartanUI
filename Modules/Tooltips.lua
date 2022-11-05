@@ -175,11 +175,7 @@ local onShow = function(self)
 		Mixin(self, BackdropTemplateMixin)
 	end
 	self:SetBackdrop(whitebg)
-	if
-		SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip ~= nil and
-			SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip.BG and
-			not SUI.DB.Tooltip.Override[(SUI.DB.Artwork.Style or 'War')]
-	 then
+	if SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip ~= nil and SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip.BG and not SUI.DB.Tooltip.Override[(SUI.DB.Artwork.Style or 'War')] then
 		self.SUITip:SetBackdrop(SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip.BG)
 	else
 		self.SUITip:SetBackdrop(SUI.DB.Tooltips.Styles[SUI.DB.Tooltips.ActiveStyle])
@@ -194,10 +190,7 @@ local onShow = function(self)
 	end
 
 	--check if theme has a location
-	if
-		SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip ~= nil and
-			SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip.Custom
-	 then
+	if SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip ~= nil and SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip.Custom then
 		SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War')):Tooltip()
 	end
 end
@@ -282,13 +275,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 
 						if count > 1 and count ~= itemStackCount then
 							local curValue = count * itemSellPrice
-							SetTooltipMoney(
-								tooltip,
-								curValue,
-								'STATIC',
-								L['Vendors for:'],
-								string.format(L[' (current stack of %d)'], count)
-							)
+							SetTooltipMoney(tooltip, curValue, 'STATIC', L['Vendors for:'], string.format(L[' (current stack of %d)'], count))
 						end
 					end
 				end
@@ -439,10 +426,7 @@ local TooltipSetUnit = function(self)
 		else
 			totColor = FACTION_BAR_COLORS[UnitReaction(unitTarget, 'player')]
 		end
-		self:AddDoubleLine(
-			TARGET .. ':',
-			format('|cff%02x%02x%02x%s|r', totColor.r * 255, totColor.g * 255, totColor.b * 255, UnitName(unitTarget))
-		)
+		self:AddDoubleLine(TARGET .. ':', format('|cff%02x%02x%02x%s|r', totColor.r * 255, totColor.g * 255, totColor.b * 255, UnitName(unitTarget)))
 	end
 
 	if IsInGroup() then
@@ -455,13 +439,7 @@ local TooltipSetUnit = function(self)
 		end
 		local maxTargets = #targetList
 		if maxTargets > 0 and targetList ~= nil then
-			self:AddLine(
-				format('%s (|cffffffff%d|r): %s', L['Targeted By'], maxTargets, table.concat(targetList, ', ')),
-				nil,
-				nil,
-				nil,
-				true
-			)
+			self:AddLine(format('%s (|cffffffff%d|r): %s', L['Targeted By'], maxTargets, table.concat(targetList, ', ')), nil, nil, nil, true)
 			wipe(targetList)
 		end
 	end
@@ -663,10 +641,8 @@ local OnMouseOpt = function(v)
 		SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['OverrideLoc'].disabled = true
 	end
 
-	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled =
-		SUI.DB.Tooltips[v].Anchor.onMouse
-	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled =
-		SUI.DB.Tooltips[v].Anchor.onMouse
+	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled = SUI.DB.Tooltips[v].Anchor.onMouse
+	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled = SUI.DB.Tooltips[v].Anchor.onMouse
 end
 
 function module:BuildOptions()

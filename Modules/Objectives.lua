@@ -31,8 +31,7 @@ end
 local function MakeMoveable()
 	local BlizzObjectiveFrame = _G[frameName]
 	if BlizzObjectiveFrame then
-		local point, anchor, secondaryPoint, x, y =
-			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
+		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
 		holder:SetPoint(point, anchor, secondaryPoint, x, y)
 		holder:SetFrameStrata('LOW')
 		holder:SetSize(280, module.DB.height)
@@ -360,8 +359,7 @@ function module:FirstTimeSetup()
 					SUI_Win.Objectives[k].Condition = control
 
 					--InCombat 1
-					SUI_Win.Objectives[k].InCombat =
-						CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
+					SUI_Win.Objectives[k].InCombat = CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
 					SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
 					_G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
 					SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)

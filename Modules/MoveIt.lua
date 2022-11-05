@@ -138,8 +138,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 							local point, _, secondaryPoint, x, y = strsplit(',', GetPoints(MoverFrame))
 							-- Move the frame and update the DB
 							MoverFrame.parent:position(point, (_G[val] or UIParent), secondaryPoint, x, y, true)
-							MoveIt.DB.movers[MoverName].MovedPoints =
-								format('%s,%s,%s,%s,%s', point, (_G[val] or UIParent):GetName(), secondaryPoint, x, y)
+							MoveIt.DB.movers[MoverName].MovedPoints = format('%s,%s,%s,%s,%s', point, (_G[val] or UIParent):GetName(), secondaryPoint, x, y)
 							--Analytics
 							SUI.Analytics:Set(MoveIt, MoverName .. '_Moved', true)
 						end

@@ -8,11 +8,7 @@ local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	local msg = inputstring or module.DB.text
 	local DBChannel = module.DB.announceLocation or 'SELF'
 	local ChatChannel = false
-	msg =
-		msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub(
-		'%%sl',
-		GetSpellLink(sid)
-	):gsub('%%myspell', GetSpellLink(ssid))
+	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub('%%sl', GetSpellLink(sid)):gsub('%%myspell', GetSpellLink(ssid))
 
 	if DBChannel == 'SELF' then
 		print(msg)
@@ -93,23 +89,7 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 		continue = true
 	end
 
-	local timeStamp,
-		eventType,
-		_,
-		sourceGUID,
-		_,
-		_,
-		_,
-		destGUID,
-		destName,
-		_,
-		_,
-		sourceID,
-		_,
-		_,
-		spellID,
-		spellName,
-		spellSchool = CombatLogGetCurrentEventInfo()
+	local timeStamp, eventType, _, sourceGUID, _, _, _, destGUID, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool = CombatLogGetCurrentEventInfo()
 
 	-- Check if time and ID was same as last
 	-- Note: This is to prevent flooding announcements on AoE taunts.
@@ -120,19 +100,9 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 	-- Update last time and ID
 	lastTime, lastSpellID = timeStamp, spellID
 
-	if
-		(continue or module.DB.alwayson) and eventType == 'SPELL_INTERRUPT' and
-			(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and module.DB.includePets))
-	 then
+	if (continue or module.DB.alwayson) and eventType == 'SPELL_INTERRUPT' and (sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and module.DB.includePets)) then
 		if destGUID == UnitGUID('player') and module.DB.selfInterrupt then
-			printFormattedString(
-				destName,
-				spellID,
-				spellName,
-				spellSchool,
-				sourceID,
-				'I have hurt myself in confustion while casting %spell and can no longer cast.'
-			)
+			printFormattedString(destName, spellID, spellName, spellSchool, sourceID, 'I have hurt myself in confustion while casting %spell and can no longer cast.')
 		else
 			printFormattedString(destName, spellID, spellName, spellSchool, sourceID)
 		end

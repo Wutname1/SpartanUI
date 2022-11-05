@@ -121,8 +121,7 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 	local timeStamp, subEvent, _, _, srcName, _, _, _, dstName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
 	-- Check if we have been here before
 	if
-		(SUI.IsRetail and timeStamp == lastTimeStamp and spellID == lastSpellID) or
-			(SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName) or
+		(SUI.IsRetail and timeStamp == lastTimeStamp and spellID == lastSpellID) or (SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName) or
 			(SUI.IsClassic and type(spellName) ~= 'string')
 	 then
 		return

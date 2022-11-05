@@ -97,10 +97,7 @@ local function CreateSetupPage()
 
 			-- List Components
 			for _, submodule in pairs(SUI.orderedModules) do
-				if
-					((string.match(submodule.name, 'Component_')) or (string.match(submodule.name, 'Module_'))) and
-						not submodule.HideModule
-				 then
+				if ((string.match(submodule.name, 'Component_')) or (string.match(submodule.name, 'Module_'))) and not submodule.HideModule then
 					local RealName = SUI:GetModuleName(submodule)
 					-- Get modules display name
 					local Displayname = submodule.DisplayName or RealName
@@ -143,14 +140,7 @@ local function CreateSetupPage()
 			end
 
 			local btnOptional = StdUi:Button(SUI_Win.ModSelection, 130, 18, 'Toggle optional(s)')
-			btnOptional.tooltip =
-				StdUi:FrameTooltip(
-				btnOptional,
-				'Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.',
-				'OptionalTooltip',
-				'TOP',
-				true
-			)
+			btnOptional.tooltip = StdUi:FrameTooltip(btnOptional, 'Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 'OptionalTooltip', 'TOP', true)
 			btnOptional:SetScript(
 				'OnClick',
 				function(this)
