@@ -70,8 +70,7 @@ local function WidgetPowerBarContainer()
 	if not _G['UIWidgetPowerBarContainerFrame'] then
 		return
 	end
-	local point, anchor, secondaryPoint, x, y =
-		strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.WidgetPowerBarContainer)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.WidgetPowerBarContainer)
 	local holder = CreateFrame('Frame', 'WidgetPowerBarContainerHolder', UIParent)
 	holder:SetPoint(point, anchor, secondaryPoint, x, y)
 	holder:SetSize(256, 64)
@@ -138,8 +137,7 @@ end
 local function VehicleSeatIndicator()
 	local SeatIndicator = _G['VehicleSeatIndicator']
 
-	local point, anchor, secondaryPoint, x, y =
-		strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleSeatIndicator)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleSeatIndicator)
 	local VehicleSeatHolder = CreateFrame('Frame', 'VehicleSeatHolder', SpartanUI)
 	VehicleSeatHolder:SetSize(SeatIndicator:GetSize())
 	VehicleSeatHolder:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -160,8 +158,7 @@ end
 
 local function VehicleLeaveButton()
 	local function MoverCreate()
-		local point, _, secondaryPoint, x, y =
-			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
+		local point, _, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleLeaveButton)
 		local VehicleBtnHolder = CreateFrame('Frame', 'VehicleBtnHolder', SpartanUI)
 		VehicleBtnHolder:SetSize(MainMenuBarVehicleLeaveButton:GetSize())
 		VehicleBtnHolder:SetPoint(point, UIParent, secondaryPoint, x, y)
@@ -191,8 +188,9 @@ function module.BlizzMovers()
 		return
 	end
 
+	VehicleLeaveButton()
+
 	if SUI.IsRetail then
-		-- VehicleLeaveButton()
 		-- VehicleSeatIndicator()
 		-- TalkingHead()
 		-- AltPowerBar()
