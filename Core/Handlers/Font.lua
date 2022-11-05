@@ -374,77 +374,89 @@ end
 
 function module:OnEnable()
 	FontSetupWizard()
-	SUI.opt.args['General'].args['font'] = {
+	SUI.opt.args.General.args.Font = {
 		name = L['Font'],
 		type = 'group',
 		order = 200,
 		args = {
-			a = {name = L['Global font settings'], type = 'header'},
-			aa = {
-				name = L['Large number seperator'],
-				desc = L['This is used to split up large numbers example: 100,000'],
-				type = 'select',
-				values = {[''] = 'none', [','] = 'comma', ['.'] = 'period'},
-				get = function()
-					return SUI.DB.font.NumberSeperator
-				end,
-				set = function(_, val)
-					SUI.DB.font.NumberSeperator = val
-				end
-			},
-			b = {
-				name = L['Font face'],
-				type = 'select',
-				values = FontFaces,
-				get = function()
-					return SUI.DB.font.Modules.Global.Face
-				end,
-				set = function(_, val)
-					SUI.DB.font.Modules.Global.Face = val
-				end
-			},
-			c = {
-				name = L['Font style'],
-				type = 'select',
-				values = {
-					['normal'] = L['Normal'],
-					['monochrome'] = L['Monochrome'],
-					['outline'] = L['Outline'],
-					['thickoutline'] = L['Thick outline']
-				},
-				get = function()
-					return SUI.DB.font.Modules.Global.Type
-				end,
-				set = function(_, val)
-					SUI.DB.font.Modules.Global.Type = val
-				end
-			},
-			d = {
-				name = L['Adjust font size'],
-				type = 'range',
-				width = 'double',
-				min = -3,
-				max = 3,
-				step = 1,
-				get = function()
-					return SUI.DB.font.Modules.Global.Size
-				end,
-				set = function(_, val)
-					SUI.DB.font.Modules.Global.Size = val
-				end
-			},
-			z = {
-				name = L['Apply Global to all'],
-				type = 'execute',
-				width = 'double',
-				func = function()
-					for Module, _ in pairs(module.FontItems) do
-						SUI.DB.font.Modules[Module].Face = SUI.DB.font.Modules.Global.Face
-						SUI.DB.font.Modules[Module].Type = SUI.DB.font.Modules.Global.Type
-						SUI.DB.font.Modules[Module].Size = SUI.DB.font.Modules.Global.Size
-					end
-					SUI:FontRefresh()
-				end
+			Global = {
+				type = 'group',
+				name = L['Global font settings'],
+				order = 1,
+				inline = true,
+				args = {
+					face = {
+						name = L['Font face'],
+						type = 'select',
+						order = 1,
+						values = FontFaces,
+						get = function()
+							return SUI.DB.font.Modules.Global.Face
+						end,
+						set = function(_, val)
+							SUI.DB.font.Modules.Global.Face = val
+						end
+					},
+					style = {
+						name = L['Font style'],
+						type = 'select',
+						order = 2,
+						values = {
+							['normal'] = L['Normal'],
+							['monochrome'] = L['Monochrome'],
+							['outline'] = L['Outline'],
+							['thickoutline'] = L['Thick outline']
+						},
+						get = function()
+							return SUI.DB.font.Modules.Global.Type
+						end,
+						set = function(_, val)
+							SUI.DB.font.Modules.Global.Type = val
+						end
+					},
+					size = {
+						name = L['Adjust font size'],
+						type = 'range',
+						width = 'double',
+						min = -3,
+						max = 3,
+						step = 1,
+						order = 3,
+						get = function()
+							return SUI.DB.font.Modules.Global.Size
+						end,
+						set = function(_, val)
+							SUI.DB.font.Modules.Global.Size = val
+						end
+					},
+					NumberSeperator = {
+						name = L['Large number seperator'],
+						desc = L['This is used to split up large numbers example: 100,000'],
+						type = 'select',
+						order = 4,
+						values = {[''] = L['None'], [','] = L['Comma'], ['.'] = L['Period']},
+						get = function()
+							return SUI.DB.font.NumberSeperator
+						end,
+						set = function(_, val)
+							SUI.DB.font.NumberSeperator = val
+						end
+					},
+					apply = {
+						name = L['Apply Global to all'],
+						type = 'execute',
+						width = 'double',
+						order = 50,
+						func = function()
+							for Module, _ in pairs(module.FontItems) do
+								SUI.DB.font.Modules[Module].Face = SUI.DB.font.Modules.Global.Face
+								SUI.DB.font.Modules[Module].Type = SUI.DB.font.Modules.Global.Type
+								SUI.DB.font.Modules[Module].Size = SUI.DB.font.Modules.Global.Size
+							end
+							SUI:FontRefresh()
+						end
+					}
+				}
 			}
 		}
 	}
@@ -456,9 +468,11 @@ end
 function module:BuildOptions()
 	--We build the options based on the modules that are loaded and in use.
 	for Module, _ in pairs(module.FontItems) do
-		SUI.opt.args['General'].args['font'].args[Module] = {
+		SUI.opt.args.General.args.Font.args[Module] = {
 			name = Module,
 			type = 'group',
+			order = 200,
+			inline = true,
 			args = {
 				face = {
 					name = L['Font face'],
