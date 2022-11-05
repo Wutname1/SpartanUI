@@ -94,6 +94,10 @@ function UF:FilterAura(element, unit, data, rules)
 					ShouldDisplay = false
 				end
 			end
+		elseif k == 'whitelist' or k == 'blacklist' then
+			if v[data.spellId] then
+				return (k == 'whitelist' and true) or false
+			end
 		end
 	end
 
