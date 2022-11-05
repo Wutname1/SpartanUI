@@ -4,15 +4,17 @@ local UF = SUI.UF
 ---@param DB table
 local function Build(frame, DB)
 	local Totems = CreateFrame('Frame', nil, frame)
-	Totems.Destroy = {}
-	frame.MAX_CLASS_BAR = 4
-	frame.ClassBar = 'Totems'
+	Totems:SetSize(DB.width * MAX_TOTEMS, DB.height)
 
-	for index = 1, 4 do
+	for index = 1, MAX_TOTEMS do
 		-- Position and size of the totem indicator
-		local Totem = CreateFrame('Button', nil, frame)
-		Totem:SetSize(40, 40)
-		Totem:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+		local Totem = CreateFrame('Button', nil, Totems)
+		Totem:SetSize(DB.size, DB.size)
+		if index == 1 then
+			Totem:SetPoint('TOPLEFT', Totems, 'TOPLEFT', 0, 0)
+		else
+			Totem:SetPoint('LEFT', Totems[index - 1], 'RIGHT', DB.spacing, 0)
+		end
 
 		local Icon = Totem:CreateTexture(nil, 'OVERLAY')
 		Icon:SetAllPoints()
@@ -26,33 +28,23 @@ local function Build(frame, DB)
 		Totems[index] = Totem
 	end
 
+	Totems.SizeChange = function(self)
+		self:SetSize(DB.width * MAX_TOTEMS, DB.height)
+
+		for index = 1, MAX_TOTEMS do
+			---@diagnostic disable-next-line: undefined-field
+			self[index]:SetSize(self.DB.size, self.DB.size)
+		end
+	end
+
 	-- Register with oUF
 	frame.Totems = Totems
-
-	if SUI.IsRetail and frame.unitOnCreate == 'player' and TotemFrameTotem1 then
-		--Totem Bar
-		for index = 1, 4 do
-			_G['TotemFrameTotem' .. index]:SetFrameStrata('MEDIUM')
-			_G['TotemFrameTotem' .. index]:SetFrameLevel(4)
-			_G['TotemFrameTotem' .. index]:SetScale(.8)
-		end
-		hooksecurefunc(
-			'TotemFrame_Update',
-			function()
-				TotemFrameTotem1:ClearAllPoints()
-				TotemFrameTotem1:SetParent(frame)
-				TotemFrameTotem1:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 20, 0)
-			end
-		)
-	end
 end
 
 ---@param frame table
 local function Update(frame)
 	local element = frame.Totems
 	local DB = element.DB
-	-- frame.Totems[1]:SetPoint()
-	frame.Totems[1]:SetPoint('TOPLEFT', frame, 'TOPRIGHT', 5, 0)
 end
 
 ---@param unitName string
@@ -71,10 +63,18 @@ end
 
 ---@type SUI.UnitFrame.Element.Settings
 local Settings = {
+	enabled = true,
+	size = 20,
+	spacing = 2,
+	position = {
+		anchor = 'TOPLEFT',
+		relativePoint = 'BOTTOMLEFT',
+		relativeTo = 'Name',
+		y = 0
+	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Totems',
-		NoBulkUpdate = true
+		DisplayName = 'Totems'
 	}
 }
 
