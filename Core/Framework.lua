@@ -107,7 +107,7 @@ local DBdefault = {
 		Manualoffset = false,
 		offset = 0
 	},
-	DisabledComponents = {},
+	DisabledModules = {},
 	font = {
 		NumberSeperator = ',',
 		Path = '',
@@ -1168,6 +1168,11 @@ end
 -- New SUI.DB Access
 SUI.DBG = SUI.SpartanUIDB.global
 SUI.DB = SUI.SpartanUIDB.profile
+
+if SUI.DB.DisabledComponents then
+	SUI:CopyData(SUI.DB.DisabledModules, SUI.DB.DisabledComponents)
+	SUI.DB.DisabledComponents = nil
+end
 
 local function reloaduiWindow()
 	local StdUi = SUI.StdUi

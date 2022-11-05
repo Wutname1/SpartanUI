@@ -331,7 +331,7 @@ function module:FirstLaunch()
 				StdUi:GlueBelow(IAnnounce.tbAnnounceText, IAnnounce.lblvariable4, -15, -5, 'LEFT')
 
 				-- Defaults
-				IAnnounce.modEnabled:SetChecked(not SUI.DB.DisabledComponents.InterruptAnnouncer)
+				IAnnounce.modEnabled:SetChecked(SUI:IsModuleEnabled('InterruptAnnouncer'))
 				for key, object in pairs(IAnnounce.options) do
 					object:SetChecked(module.DB[key])
 				end
@@ -357,7 +357,7 @@ function module:FirstLaunch()
 				local window = SUI.Setup.window
 				local IAnnounce = window.content.IAnnounce
 				if not IAnnounce.modEnabled:GetChecked() then
-					SUI.DB.DisabledComponents.InterruptAnnouncer = true
+					SUI:DisableModule(module)
 				end
 
 				for key, object in pairs(IAnnounce.options) do

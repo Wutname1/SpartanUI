@@ -352,7 +352,7 @@ function module:FirstLaunch()
 				end
 
 				-- Defaults
-				cLog.modEnabled:SetChecked(not SUI.DB.DisabledComponents.CombatLog)
+				cLog.modEnabled:SetChecked(SUI:IsModuleEnabled('CombatLog'))
 				for key, object in pairs(cLog.options) do
 					object:SetChecked(module.DB[key])
 				end
@@ -378,7 +378,7 @@ function module:FirstLaunch()
 				local window = SUI.Setup.window
 				local cLog = window.content.cLog
 				if not cLog.modEnabled:GetChecked() then
-					SUI.DB.DisabledComponents.CombatLog = true
+					SUI:DisableModule(module)
 				end
 
 				for key, object in pairs(cLog.options) do

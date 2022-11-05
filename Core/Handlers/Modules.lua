@@ -20,7 +20,7 @@ function SUI:IsModuleEnabled(moduleName)
 		moduleName = SUI:GetModuleName(moduleName)
 	end
 
-	if SUI.DB.DisabledComponents[moduleName] then
+	if SUI.DB.DisabledModules[moduleName] then
 		return false
 	end
 	return true
@@ -33,7 +33,7 @@ function SUI:IsModuleDisabled(moduleName)
 		moduleName = SUI:GetModuleName(moduleName)
 	end
 
-	if SUI.DB.DisabledComponents[moduleName] then
+	if SUI.DB.DisabledModules[moduleName] then
 		return true
 	end
 	return false
@@ -42,34 +42,34 @@ end
 -- These override the default Ace3 calls so we can track the status
 ---@param input AceAddon-3.0|string
 function SUI:DisableModule(input)
-	local module = nil
+	local moduleToDisable
 	if type(input) == 'table' then
-		module = input
+		moduleToDisable = input
 	else
-		module = SUI:GetModule(input)
+		moduleToDisable = SUI:GetModule(input)
 	end
 
 	--Analytics
-	SUI.Analytics:Set(module, 'Enabled', false)
+	SUI.Analytics:Set(moduleToDisable, 'Enabled', false)
 
-	SUI.DB.DisabledComponents[SUI:GetModuleName(module)] = true
-	return module:Disable()
+	SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = true
+	return moduleToDisable:Disable()
 end
 
 ---@param input AceAddon-3.0|string
 function SUI:EnableModule(input)
-	local module = nil
+	local moduleToDisable
 	if type(input) == 'table' then
-		module = input
+		moduleToDisable = input
 	else
-		module = SUI:GetModule(input)
+		moduleToDisable = SUI:GetModule(input)
 	end
 
 	--Analytics
-	SUI.Analytics:Set(module, 'Enabled', true)
+	SUI.Analytics:Set(moduleToDisable, 'Enabled', true)
 
-	SUI.DB.DisabledComponents[SUI:GetModuleName(module)] = nil
-	return module:Enable()
+	SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = nil
+	return moduleToDisable:Enable()
 end
 
 local function CreateSetupPage()
@@ -114,7 +114,7 @@ local function CreateSetupPage()
 							end
 						end
 					)
-					checkbox:SetChecked(not SUI.DB.DisabledComponents[RealName])
+					checkbox:SetChecked(SUI:IsModuleEnabled(RealName))
 					checkbox.name = RealName
 					checkbox.Core = (submodule.Core or false)
 					itemsMatrix[(#itemsMatrix + 1)] = checkbox
