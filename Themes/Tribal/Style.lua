@@ -1,8 +1,8 @@
 local SUI, L = SUI, SUI.L
 local print = SUI.print
 local module = SUI:NewModule('Style_Tribal')
-local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UF = SUI:GetModule('Component_UnitFrames')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
+local UF = SUI:GetModule('Module_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Tribal', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20'
 	}
-	SUI:GetModule('Component_Minimap'):Register('Tribal', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Tribal', minimapSettings)
 
 	module:CreateArtwork()
 end

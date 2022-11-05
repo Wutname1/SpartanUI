@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:NewModule('Component_Buffs')
+local module = SUI:NewModule('Module_Buffs')
 ----------------------------------------------------------------------------------------------------
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local BuffWatcher = CreateFrame('Frame')
@@ -87,7 +87,7 @@ local BuffPosUpdate = function()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.Buffs then
+	if SUI:IsModuleDisabled('Buffs') then
 		return
 	end
 	module:BuildOptions()

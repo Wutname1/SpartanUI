@@ -158,7 +158,7 @@ function debugger:OnInitialize()
 		DebugMessages[k] = {}
 	end
 
-	if SUI:IsModuleEnabled('Component_Chatbox') then
+	if SUI:IsModuleEnabled('Module_Chatbox') then
 		debugger:RegisterEvent('ADDON_LOADED')
 	end
 end

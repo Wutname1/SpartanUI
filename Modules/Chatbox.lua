@@ -2,7 +2,7 @@
 local SUI = SUI
 local L = SUI.L
 local StdUi = SUI.StdUi
-local module = SUI:NewModule('Component_Chatbox', 'AceHook-3.0')
+local module = SUI:NewModule('Module_Chatbox', 'AceHook-3.0')
 module.description = 'Lightweight quality of life chat improvements'
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
@@ -203,7 +203,7 @@ local function shortenChannel(text)
 end
 
 local ModifyMessage = function(self)
-	if SUI.DB.DisabledComponents.Chatbox then
+	if SUI:IsModuleDisabled('Chatbox') then
 		return
 	end
 	local num = self.headIndex

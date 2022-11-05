@@ -1,5 +1,5 @@
 ---@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
-local UF = SUI:GetModule('Component_UnitFrames')
+local UF = SUI:GetModule('Module_UnitFrames')
 
 local BuiltFrames = {} ---@type table<UnitFrameName, table>
 local FrameData = {} ---@type table<UnitFrameName, table>

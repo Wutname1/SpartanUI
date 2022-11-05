@@ -37,14 +37,12 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
-		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or
-			'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or
-			'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
+		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
+		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
 	}
 
 	-- Unitframes
-	local UF = SUI:GetModule('Component_UnitFrames')
+	local UF = SUI:GetModule('Module_UnitFrames')
 	---@type UFStyleSettings
 	local ufsettings = {
 		artwork = {
@@ -85,7 +83,7 @@ function module:OnInitialize()
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
 		engulfed = true
 	}
-	SUI:GetModule('Component_Minimap'):Register('Fel', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Fel', minimapSettings)
 
 	module:CreateArtwork()
 	Options()
@@ -189,5 +187,5 @@ function module:MiniMap()
 	else
 		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, calmed, true)
 	end
-	SUI:GetModule('Component_Minimap'):update(true)
+	SUI:GetModule('Module_Minimap'):update(true)
 end

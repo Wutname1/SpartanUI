@@ -1,5 +1,5 @@
 local SUI, L, MoveIt = _G.SUI, SUI.L, SUI.MoveIt
-local module = SUI:NewModule('Component_Minimap')
+local module = SUI:NewModule('Module_Minimap')
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
 ----------------------------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ local function updateSettings()
 end
 
 function module:ShapeChange(shape)
-	if SUI.DB.DisabledComponents.Minimap then
+	if SUI:IsModuleDisabled('Minimap') then
 		return
 	end
 
@@ -321,7 +321,7 @@ function module:ModifyMinimapLayout()
 end
 
 function module:MinimapCoords()
-	if SUI.DB.DisabledComponents.Minimap then
+	if SUI:IsModuleDisabled('Minimap') then
 		return
 	end
 	if not SUI.IsRetail then
@@ -688,7 +688,7 @@ function module:OnEnable()
 	if ((not UserSettings.AutoDetectAllowUse) and (not UserSettings.ManualAllowUse)) then
 		StaticPopup_Show('MiniMapNotice')
 	end
-	if SUI.DB.DisabledComponents.Minimap then
+	if SUI:IsModuleDisabled('Minimap') then
 		return
 	end
 

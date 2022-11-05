@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_InterruptAnnouncer')
+local module = SUI:NewModule('Module_InterruptAnnouncer')
 module.Displayname = L['Interrupt announcer']
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
@@ -71,7 +71,7 @@ function module:OnInitialize()
 end
 
 local function COMBAT_LOG_EVENT_UNFILTERED()
-	if SUI.DB.DisabledComponents.InterruptAnnouncer then
+	if SUI:IsModuleDisabled('InterruptAnnouncer') then
 		return
 	end
 

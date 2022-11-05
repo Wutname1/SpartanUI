@@ -7,10 +7,6 @@ function SUI:GetModuleName(ModuleTable)
 	local name
 
 	-- Ace3 adds SpartanUI_ to the name so it knows how to handle things, we need to account for that.
-
-	if (string.match(ModuleTable.name, 'Component_')) then
-		name = string.sub(ModuleTable.name, 21)
-	end
 	if (string.match(ModuleTable.name, 'Module_')) then
 		name = string.sub(ModuleTable.name, 18)
 	end
@@ -97,7 +93,7 @@ local function CreateSetupPage()
 
 			-- List Components
 			for _, submodule in pairs(SUI.orderedModules) do
-				if ((string.match(submodule.name, 'Component_')) or (string.match(submodule.name, 'Module_'))) and not submodule.HideModule then
+				if (string.match(submodule.name, 'Module_')) and not submodule.HideModule then
 					local RealName = SUI:GetModuleName(submodule)
 					-- Get modules display name
 					local Displayname = submodule.DisplayName or RealName

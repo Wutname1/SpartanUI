@@ -1,5 +1,5 @@
 local SUI, L, StdUi = SUI, SUI.L, SUI.StdUi
-local module = SUI:NewModule('Component_AutoTurnIn')
+local module = SUI:NewModule('Module_AutoTurnIn')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
@@ -407,9 +407,7 @@ function module.QUEST_COMPLETE()
 				end
 
 				-- comparing lowest equipped item level with reward's item level
-				debug(
-					'iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. (firstinvLink or '')
-				)
+				debug('iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. (firstinvLink or ''))
 
 				if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
 					UpgradeLink = link
@@ -597,8 +595,7 @@ function module:FirstLaunch()
 				ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, L['Turn in completed quests'], 220, 20)
 				ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
 				ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
-				ATI.options.autoequip =
-					StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
+				ATI.options.autoequip = StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
 				-- Positioning
 				StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
@@ -712,11 +709,7 @@ function module.GOSSIP_SHOW()
 		debug('------')
 		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
 		local isBlacklisted = module:blacklisted(gossip.name)
-		if
-			gossip.type and ((gossip.type ~= 'gossip') or (gossip.type == 'gossip' and gossip.status == 0)) and
-				(not isBlacklisted or isWhitelisted) and
-				SUI.IsRetail
-		 then
+		if gossip.type and ((gossip.type ~= 'gossip') or (gossip.type == 'gossip' and gossip.status == 0)) and (not isBlacklisted or isWhitelisted) and SUI.IsRetail then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if (DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest'))) and not isWhitelisted then
 				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
@@ -755,7 +748,7 @@ function module:OnEnable()
 	local lastEvent = ''
 
 	local function OnEvent(_, event)
-		if SUI.DB.DisabledComponents.AutoTurnIn then
+		if SUI:IsModuleDisabled(AutoTurnIn) then
 			return
 		end
 
@@ -768,10 +761,7 @@ function module:OnEnable()
 				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
 				debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
 				debug(C_CampaignInfo.IsCampaignQuest(QuestID))
-				if
-					C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
-						C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
-				 then
+				if C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil then
 					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
 					return
 				end

@@ -1,6 +1,6 @@
 local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:GetModule('Component_Artwork')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
 local module = SUI:NewModule('Style_Transparent')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Transparent', SpartanUI)
 local unpack = unpack
@@ -79,10 +79,10 @@ function module:OnInitialize()
 			position = 'BOTTOM,Minimap,BOTTOM,0,2'
 		}
 	}
-	SUI:GetModule('Component_Minimap'):Register('Transparent', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Transparent', minimapSettings)
 
 	-- Unitframes Settings
-	local UF = SUI:GetModule('Component_UnitFrames')
+	local UF = SUI:GetModule('Module_UnitFrames')
 	---@type UFStyleSettings
 	local ufsettings = {
 		artwork = {

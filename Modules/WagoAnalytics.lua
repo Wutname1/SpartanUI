@@ -63,7 +63,7 @@ local function InitalCollection()
 		SUI.Analytics:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
 	end
 	if SUI:IsModuleEnabled('UnitFrames') then
-		SUI.Analytics:Set('UnitFrames', 'Style', SUI:GetModule('Component_UnitFrames').DB.Style)
+		SUI.Analytics:Set('UnitFrames', 'Style', SUI:GetModule('Module_UnitFrames').DB.Style)
 	end
 end
 

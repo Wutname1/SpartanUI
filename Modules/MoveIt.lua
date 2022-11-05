@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 ---@class MoveIt
-local MoveIt = SUI:NewModule('Component_MoveIt', 'AceHook-3.0')
+local MoveIt = SUI:NewModule('Module_MoveIt', 'AceHook-3.0')
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
 MoveIt.Core = true
 SUI.MoveIt = MoveIt
@@ -383,7 +383,7 @@ local parentFrameTemp = {}
 ---@param groupName? string
 ---@return nil
 function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
-	if SUI.DB.DisabledComponents.MoveIt then
+	if SUI:IsModuleDisabled('MoveIt') then
 		return
 	end
 	-- If for some reason the parent does not exist or we have already done this exit out

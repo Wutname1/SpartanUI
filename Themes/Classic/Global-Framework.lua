@@ -1,5 +1,5 @@
 local _G, SUI = _G, SUI
-local Artwork_Core = SUI:GetModule('Component_Artwork')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
 local module = SUI:NewModule('Style_Classic')
 local unpack = unpack
 local UnregisterStateDriver = _G.UnregisterStateDriver

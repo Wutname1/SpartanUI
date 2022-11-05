@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_TauntWatcher')
+local module = SUI:NewModule('Module_TauntWatcher')
 module.Displayname = L['Taunt watcher']
 module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ function module:OnInitialize()
 end
 
 function module:COMBAT_LOG_EVENT_UNFILTERED()
-	if SUI.DB.DisabledComponents.TauntWatcher or module.Override then
+	if SUI:IsModuleDisabled('TauntWatcher') or module.Override then
 		return
 	end
 

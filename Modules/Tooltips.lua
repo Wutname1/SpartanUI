@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:NewModule('Component_Tooltips')
+local module = SUI:NewModule('Module_Tooltips')
 module.description = 'SpartanUI tooltip skining'
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
@@ -546,7 +546,7 @@ function module:UpdateBG()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.Tooltips then
+	if SUI:IsModuleDisabled('Tooltips') then
 		return
 	end
 	module:BuildOptions()

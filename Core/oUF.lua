@@ -111,7 +111,7 @@ do -- TargetIndicator as an SUIUF module
 			self.TargetIndicator.bg1:Hide()
 			self.TargetIndicator.bg2:Hide()
 		end
-		if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and SUI:GetModule('Component_Nameplates').DB.ShowTarget then
+		if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and SUI:GetModule('Module_Nameplates').DB.ShowTarget then
 			if self:GetName() == 'oUF_Spartan_NamePlates' .. C_NamePlate.GetNamePlateForUnit('target'):GetName() then
 				self.TargetIndicator.bg1:Show()
 				self.TargetIndicator.bg2:Show()

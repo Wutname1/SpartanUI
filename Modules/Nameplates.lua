@@ -1,5 +1,5 @@
 local unpack, SUI, L, print, UF = unpack, SUI, SUI.L, SUI.print, SUI.UF
-local module = SUI:NewModule('Component_Nameplates')
+local module = SUI:NewModule('Module_Nameplates')
 module.description = 'Basic nameplate module'
 local Images = {
 	Alliance = {
@@ -683,7 +683,7 @@ function module:OnDisable()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.Nameplates then
+	if SUI:IsModuleDisabled('Nameplates') then
 		return
 	end
 	module:BuildOptions()

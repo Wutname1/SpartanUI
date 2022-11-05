@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_MailOpenAll')
+local module = SUI:NewModule('Module_MailOpenAll')
 module.Displayname = L['Open all mail']
 module.description = 'Quality of life update to the open all mail button'
 
@@ -27,7 +27,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI.DB.DisabledComponents.MailOpenAll then
+	if SUI:IsModuleDisabled('MailOpenAll') then
 		return
 	end
 	module:Enable()

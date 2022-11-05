@@ -1,7 +1,7 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Style_War')
-local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UF = SUI:GetModule('Component_UnitFrames') ---@type SUI_UnitFrames
+local Artwork_Core = SUI:GetModule('Module_Artwork')
+local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI_UnitFrames
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ function module:OnInitialize()
 		},
 		position = SUI.IsRetail and 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,0,-10' or 'CENTER,SUI_Art_War_Left,RIGHT,-10,20'
 	}
-	SUI:GetModule('Component_Minimap'):Register('War', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('War', minimapSettings)
 
 	---@type UFStyleSettings
 	local ufsettings = {

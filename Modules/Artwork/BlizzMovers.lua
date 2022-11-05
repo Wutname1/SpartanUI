@@ -1,6 +1,6 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
-local module = SUI:GetModule('Component_Artwork')
+local module = SUI:GetModule('Module_Artwork')
 local MoveIt = SUI.MoveIt
 
 local function TalkingHead()

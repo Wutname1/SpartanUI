@@ -1,5 +1,5 @@
 local SUI, L = SUI, SUI.L
-local Artwork_Core = SUI:GetModule('Component_Artwork')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
 local module = SUI:GetModule('Style_Classic')
 local unpack = unpack
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
@@ -317,7 +317,7 @@ function module:OnInitialize()
 		},
 		position = SUI.IsRetail and 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,5' or 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,0,17'
 	}
-	SUI:GetModule('Component_Minimap'):Register('Classic', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Classic', minimapSettings)
 
 	CreateArtwork()
 

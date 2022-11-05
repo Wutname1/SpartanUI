@@ -1382,7 +1382,7 @@ end
 
 function SUI:Error(err, mod)
 	if mod then
-		SUI:Print("|cffff0000Error|c occured in the Component '" .. mod .. "'")
+		SUI:Print("|cffff0000Error|c occured in the Module '" .. mod .. "'")
 	else
 		SUI:Print('|cffff0000Error occured')
 	end
@@ -1942,7 +1942,7 @@ end
 
 -- For Setting a unifid skin across all registered Skinable modules
 function SUI:SetActiveStyle(skin)
-	SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
+	SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
 
 	for name, submodule in SUI:IterateModules() do
 		if submodule.SetActiveStyle then
@@ -1951,5 +1951,5 @@ function SUI:SetActiveStyle(skin)
 	end
 
 	-- Ensure this is the First and last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
-	SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
+	SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
 end

@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_CombatLog')
+local module = SUI:NewModule('Module_CombatLog')
 module.DisplayName = L['Combat logging']
 module.description = 'Automatically runs /combatlog when in raids for log uploading to sites like Warcraftlogs'
 ----------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ function module:OnEnable()
 	CombatLog_Watcher:SetScript(
 		'OnEvent',
 		function(_, event)
-			if SUI.DB.DisabledComponents.CombatLog then
+			if SUI:IsModuleDisabled('CombatLog') then
 				return
 			end
 
