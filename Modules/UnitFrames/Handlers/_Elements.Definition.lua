@@ -1,5 +1,5 @@
 ---@class ElementProps
----@field DB ElementSettings
+---@field DB SUI.UnitFrame.Element.Settings
 local ElementProps = {}
 
 ---@class ElementConfig
@@ -16,7 +16,7 @@ local ElementConfig = {}
 ---|'Auras'
 ---|'General'
 
----@class ElementSettings
+---@class SUI.UnitFrame.Element.Settings
 ---@field enabled boolean
 ---@field scale integer
 ---@field points boolean|table|string
@@ -24,7 +24,8 @@ local ElementConfig = {}
 ---@field FrameStrata FrameStrata
 ---@field FrameLevel integer
 ---@field config? ElementConfig
----@field position ElementPositioning
+---@field position SUI.UnitFrame.Element.Positioning
+---@field rules SUI.UnitFrame.Aura.Rules
 local ElementSettings = {
 	enabled = false,
 	points = false,
@@ -42,9 +43,9 @@ local ElementSettings = {
 	}
 }
 
----@class ElementPositioning
+---@class SUI.UnitFrame.Element.Positioning
 ---@field anchor AnchorPoint
----@field relativeTo UnitFrameElement
+---@field relativeTo SUI.UnitFrame.Elements
 ---@field relativePoint AnchorPoint
 local ElementPositioning = {
 	anchor = 'CENTER',
@@ -64,7 +65,7 @@ local FramePositioning = {}
 ---@class ElementTextData
 ---@field SetJustifyH JustifyH
 ---@field SetJustifyV JustifyV
----@field position ElementPositioning
+---@field position SUI.UnitFrame.Element.Positioning
 local ElementTextData = {
 	enabled = false,
 	text = '',
@@ -73,7 +74,7 @@ local ElementTextData = {
 	SetJustifyV = 'MIDDLE'
 }
 
----@alias UnitFrameElement
+---@alias SUI.UnitFrame.Elements
 ---|"AdditionalPower"
 ---|"AssistantIndicator"
 ---|"AuraBars"
@@ -109,7 +110,7 @@ local ElementTextData = {
 ---|"ThreatIndicator"
 ---|"Totems"
 
----@class SUIElements
+---@class SUI.UnitFrame.Element.Details
 ---@field AdditionalPower ElementProps
 ---@field AssistantIndicator ElementProps
 ---@field AuraBars ElementProps
@@ -144,3 +145,53 @@ local ElementTextData = {
 ---@field SUI_RaidGroup ElementProps
 ---@field ThreatIndicator ElementProps
 ---@field Totems ElementProps
+local SUIElements = {}
+
+---@class UnitAuraInfo
+---@field applications number
+---@field auraInstanceID number
+---@field canApplyAura boolean
+---@field charges number
+---@field dispelName string?
+---@field duration number
+---@field expirationTime number
+---@field icon number
+---@field isBossAura boolean
+---@field isFromPlayerOrPlayerPet boolean
+---@field isHarmful boolean
+---@field isPlayerAura boolean
+---@field isHelpful boolean
+---@field isNameplateOnly boolean
+---@field isRaid boolean
+---@field isStealable boolean
+---@field maxCharges number
+---@field name string
+---@field nameplateShowAll boolean
+---@field nameplateShowPersonal boolean
+---@field points table Variable returns - Some auras return additional values that typically correspond to something shown in the tooltip, such as the remaining strength of an absorption effect.
+---@field sourceUnit string?
+---@field spellId number
+---@field timeMod number
+local UnitAuraInfo = {}
+
+---@class SUI.UnitFrame.Aura.Rules.Durations
+---@field enabled boolean
+---@field maxTime number
+---@field minTime number
+local SUIUnitFrameAuraRulesDurations = {}
+
+---@class SUI.UnitFrame.Aura.Rules
+---@field duration SUI.UnitFrame.Aura.Rules.Durations
+---@field isPlayerAura boolean
+---@field canApplyAura boolean
+---@field isBossAura boolean
+---@field isFromPlayerOrPlayerPet boolean
+---@field isHarmful boolean
+---@field isHelpful boolean
+---@field isRaid boolean
+---@field isStealable boolean
+---@field IsDispellableByMe boolean
+---@field whitelist table<string, boolean>
+---@field blacklist table<string, boolean>
+---@field sourceUnit table<string, boolean>
+local SUIUnitFrameAuraRules = {}

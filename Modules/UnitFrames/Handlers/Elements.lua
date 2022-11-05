@@ -44,11 +44,16 @@ local DefaultSettings = {
 		x = 0,
 		y = 0
 	},
+	rules = {
+		duration = {},
+		whitelist = {},
+		blacklist = {}
+	},
 	config = {
 		NoBulkUpdate = false,
 		type = 'General'
 	}
-} ---@type ElementSettings
+} ---@type SUI.UnitFrame.Element.Settings
 
 Elements.Types.General = {}
 Elements.Types.StatusBar = {}
@@ -60,14 +65,14 @@ Elements.Types.Auras = {}
 ---@field Build function
 ---@field Update? function
 ---@field OptionsTable? function
----@field ElementSettings? ElementSettings
+---@field ElementSettings? SUI.UnitFrame.Element.Settings
 
 ---@class SUIUFElementList
 ---@field T table<string, SUIUFElement>
 Elements.List = {}
 
 ---@class SUIUFFrameSettingList
----@field T table<string, UnitFrameElement>
+---@field T table<string, SUI.UnitFrame.Elements>
 Elements.FrameSettings = {}
 
 ---@class ElementConfig
@@ -77,9 +82,9 @@ Elements.FrameSettings = {}
 ---@param Build function
 ---@param Update? function
 ---@param OptionsTable? function
----@param ElementSettings? ElementSettings
+---@param ElementSettings? SUI.UnitFrame.Element.Settings
 function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
-	SUI:CopyData(ElementSettings, DefaultSettings) ---@type ElementSettings
+	SUI:CopyData(ElementSettings, DefaultSettings) ---@type SUI.UnitFrame.Element.Settings
 
 	UF.Elements.List[ElementName] = {
 		Build = Build,
@@ -92,8 +97,8 @@ function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSett
 end
 
 ---@param frame table
----@param ElementName UnitFrameElement
----@param DB? ElementSettings
+---@param ElementName SUI.UnitFrame.Elements
+---@param DB? SUI.UnitFrame.Element.Settings
 function Elements:Build(frame, ElementName, DB)
 	if UF.Elements.List[ElementName] then
 		if not frame.elementList then
@@ -125,7 +130,7 @@ function Elements:Update(frame, ElementName, DB)
 end
 
 ---@param ElementName string
----@return ElementSettings --False if the element did not provide a Size updater
+---@return SUI.UnitFrame.Element.Settings --False if the element did not provide a Size updater
 function Elements:GetConfig(ElementName)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
 		return UF.Elements.List[ElementName].ElementSettings
@@ -141,11 +146,7 @@ end
 ---@return boolean --False if the element did not provide options customizer
 function Elements:Options(unitName, ElementName, OptionSet, DB)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].OptionsTable then
-		UF.Elements.List[ElementName].OptionsTable(
-			unitName,
-			OptionSet or {},
-			DB or UF.CurrentSettings[unitName].elements[ElementName] or {}
-		)
+		UF.Elements.List[ElementName].OptionsTable(unitName, OptionSet or {}, DB or UF.CurrentSettings[unitName].elements[ElementName] or {})
 		return true
 	else
 		return false

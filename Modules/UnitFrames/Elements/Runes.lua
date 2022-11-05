@@ -56,7 +56,7 @@ local function Options(unitName, OptionSet)
 	}
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	enabled = true,
 	config = {

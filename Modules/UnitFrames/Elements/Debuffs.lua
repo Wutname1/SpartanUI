@@ -9,7 +9,6 @@ local function Build(frame, DB)
 	--Debuff Icons
 	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame)
 	-- Debuffs.PostUpdate = PostUpdateAura
-	-- Debuffs.CustomFilter = customFilter
 	frame.Debuffs = Debuffs
 end
 
@@ -57,7 +56,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Debuffs
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	number = 10,
 	auraSize = 20,
@@ -74,9 +73,10 @@ local Settings = {
 		relativePoint = 'BOTTOMRIGHT',
 		y = -10
 	},
-	filters = {
-		showPlayers = true,
-		boss = true
+	rules = {
+		duration = {},
+		isPlayerAura = true,
+		isBossAura = true
 	},
 	config = {
 		type = 'Auras'

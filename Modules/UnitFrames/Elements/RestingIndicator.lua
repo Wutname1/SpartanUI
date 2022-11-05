@@ -6,7 +6,7 @@ local function Build(frame, DB)
 	frame.RestingIndicator = frame:CreateTexture(nil, 'ARTWORK')
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	size = 20,
 	config = {

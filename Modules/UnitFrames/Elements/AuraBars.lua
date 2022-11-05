@@ -123,7 +123,7 @@ local function Options(unitName, OptionSet)
 	}
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	height = 14,
 	width = false,

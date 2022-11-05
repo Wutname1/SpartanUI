@@ -154,7 +154,7 @@ local function Options(frameName, OptionSet)
 	}
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	type = '3D',
 	scaleWithFrame = true,

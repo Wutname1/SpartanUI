@@ -26,7 +26,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:TextBasicDisplay(frameName, OptionSet)
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	enabled = true,
 	width = false,

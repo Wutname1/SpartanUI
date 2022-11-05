@@ -32,9 +32,7 @@ local function ElementUpdate(frame, settings)
 	end
 
 	if
-		((reaction <= 2 and DB.VisibleOn == 'hostile') or (reaction >= 3 and DB.VisibleOn == 'friendly') or
-			(UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled') or
-			DB.VisibleOn == 'all') and
+		((reaction <= 2 and DB.VisibleOn == 'hostile') or (reaction >= 3 and DB.VisibleOn == 'friendly') or (UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled') or DB.VisibleOn == 'all') and
 			DB.enabled
 	 then
 		element:Show()
@@ -52,7 +50,7 @@ end
 local function ElementOptions(unitName, OptionSet)
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	VisibleOn = 'PlayerControlled',
 	size = 20,

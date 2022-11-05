@@ -17,7 +17,7 @@ local function Build(frame, DB)
 	frame.AdditionalPower = AdditionalPower
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	enabled = true,
 	height = 5,

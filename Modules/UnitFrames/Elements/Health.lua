@@ -200,7 +200,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Health')
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	enabled = true,
 	height = 40,

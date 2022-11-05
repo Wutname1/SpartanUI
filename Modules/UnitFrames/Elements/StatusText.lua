@@ -22,7 +22,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:TextBasicDisplay(frameName, OptionSet)
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	textSize = 22,
 	width = 70,

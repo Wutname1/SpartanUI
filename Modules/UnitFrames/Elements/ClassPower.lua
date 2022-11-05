@@ -32,21 +32,9 @@ local function Update(frame)
 	local DB = element.DB
 
 	if DB.position.relativeTo == 'Frame' then
-		element[1]:SetPoint(
-			DB.position.anchor,
-			frame,
-			DB.position.relativePoint or DB.position.anchor,
-			DB.position.x,
-			DB.position.y
-		)
+		element[1]:SetPoint(DB.position.anchor, frame, DB.position.relativePoint or DB.position.anchor, DB.position.x, DB.position.y)
 	else
-		element[1]:SetPoint(
-			DB.position.anchor,
-			frame[DB.position.relativeTo],
-			DB.position.relativePoint or DB.position.anchor,
-			DB.position.x,
-			DB.position.y
-		)
+		element[1]:SetPoint(DB.position.anchor, frame[DB.position.relativeTo], DB.position.relativePoint or DB.position.anchor, DB.position.x, DB.position.y)
 	end
 
 	for i = 1, #element do
@@ -60,7 +48,7 @@ end
 local function Options(unitName, OptionSet)
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	enabled = true,
 	width = 16,

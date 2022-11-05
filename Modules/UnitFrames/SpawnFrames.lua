@@ -115,7 +115,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	---@param frame table
-	---@param elementName UnitFrameElement
+	---@param elementName SUI.UnitFrame.Elements
 	local function ElementUpdate(frame, elementName)
 		if not frame[elementName] then
 			return
@@ -164,21 +164,9 @@ local function CreateUnitFrame(self, unit)
 			end
 		elseif data.position.anchor then
 			if data.position.relativeTo == 'Frame' then
-				element:SetPoint(
-					data.position.anchor,
-					frame,
-					data.position.relativePoint or data.position.anchor,
-					data.position.x,
-					data.position.y
-				)
+				element:SetPoint(data.position.anchor, frame, data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
 			else
-				element:SetPoint(
-					data.position.anchor,
-					frame[data.position.relativeTo],
-					data.position.relativePoint or data.position.anchor,
-					data.position.x,
-					data.position.y
-				)
+				element:SetPoint(data.position.anchor, frame[data.position.relativeTo], data.position.relativePoint or data.position.anchor, data.position.x, data.position.y)
 			end
 		end
 

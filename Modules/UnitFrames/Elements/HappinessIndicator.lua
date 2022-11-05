@@ -3,10 +3,7 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	if
-		not _G['GetPetHappiness'] or
-			not ((_G['GetPetHappiness']) and 'HUNTER' == select(2, UnitClass('player')) and frame.unitOnCreate == 'pet')
-	 then
+	if not _G['GetPetHappiness'] or not ((_G['GetPetHappiness']) and 'HUNTER' == select(2, UnitClass('player')) and frame.unitOnCreate == 'pet') then
 		return
 	end
 	local HappinessIndicator = frame:CreateTexture(nil, 'OVERLAY')
@@ -61,7 +58,7 @@ end
 local function Options(unitName, OptionSet)
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	enabled = true,
 	position = {
