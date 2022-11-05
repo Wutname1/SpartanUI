@@ -8,7 +8,13 @@ local InverseAnchor = UF.InverseAnchor
 local function Build(frame, DB)
 	--Buff Icons
 	local Buffs = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame)
-	-- Buffs.PostUpdate = PostUpdateAura
+
+	---@param unit UnitId
+	---@param data UnitAuraInfo
+	local FilterAura = function(element, unit, data)
+		return UF:FilterAura(element, unit, data, element.DB.rules)
+	end
+	Buffs.FilterAura = FilterAura
 	-- Buffs.CustomFilter = customFilter
 	frame.Buffs = Buffs
 end
@@ -57,7 +63,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Buffs
 end
 
----@type ElementSettings
+---@type SUI.UnitFrame.Element.Settings
 local Settings = {
 	number = 10,
 	auraSize = 20,
@@ -79,6 +85,13 @@ local Settings = {
 	},
 	config = {
 		type = 'Auras'
+	},
+	rules = {
+		duration = {
+			enabled = true,
+			maxTime = 60,
+			minTime = 1
+		}
 	}
 }
 UF.Elements:Register('Buffs', Build, Update, Options, Settings)

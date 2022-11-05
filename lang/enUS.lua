@@ -1,6 +1,30 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Cased by any player'] = true
+L['Player casted'] = true
+L['Casted by boss'] = true
+L['Casted by Player or pet'] = true
+L['Harmful'] = true
+L['Dispellable by me'] = true
+L['Helpful'] = true
+L['Raid'] = true
+L['Stealable'] = true
+L['Duration rules enabled'] = true
+L['Duration'] = true
+L['Whitelist'] = true
+L['Blacklist'] = true
+L['Whitelist enabled'] = true
+L['Blacklist enabled'] = true
+L['Add spell name or ID'] = true
+L['Unknown'] = true
+L['Delete'] = true
+L['Auras list'] = true
+L['Whitelisted auras will always be shown'] = true
+L['Blacklisted auras will never be shown'] = true
+L['Basic filters'] = true
+L['Basic states'] = true
+
 L['Aura Bars'] = true
 L['Class Icon'] = true
 L['Class Power'] = true

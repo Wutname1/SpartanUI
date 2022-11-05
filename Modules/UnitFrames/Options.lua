@@ -235,16 +235,11 @@ end
 ---@param OptionSet AceConfigOptionsTable
 function Options:AddAuraLayout(frameName, OptionSet)
 	OptionSet.args.Layout = {
-		name = '',
+		name = L['Layout Configuration'],
 		type = 'group',
 		order = 100,
 		inline = true,
 		args = {
-			header = {
-				type = 'header',
-				order = .1,
-				name = L['Layout Configuration']
-			},
 			number = {
 				name = L['Number to show'],
 				type = 'range',
@@ -308,76 +303,122 @@ end
 
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
+---@param create function
+function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
+	OptionSet.args.whitelist = {
+		name = L['Whitelist'],
+		desc = L['Whitelisted auras will always be shown'],
+		type = 'group',
+		order = 4,
+		args = {
+			desc = {
+				name = L['Whitelisted auras will always be shown'],
+				type = 'description',
+				order = 1
+			},
+			create = {
+				name = L['Add spell name or ID'],
+				type = 'input',
+				order = 2,
+				width = 'full',
+				set = create
+			},
+			spells = {
+				order = 3,
+				type = 'group',
+				inline = true,
+				name = L['Auras list'],
+				args = {}
+			}
+		}
+	}
+	OptionSet.args.blacklist = {
+		name = L['Blacklist'],
+		desc = L['Blacklisted auras will never be shown'],
+		type = 'group',
+		order = 5,
+		args = {
+			desc = {
+				name = L['Blacklisted auras will never be shown'],
+				type = 'description',
+				order = 1
+			},
+			create = {
+				name = L['Add spell name or ID'],
+				type = 'input',
+				order = 2,
+				width = 'full',
+				set = create
+			},
+			spells = {
+				order = 3,
+				type = 'group',
+				inline = true,
+				name = L['Auras list'],
+				args = {}
+			}
+		}
+	}
+end
+
+---@param frameName UnitFrameName
+---@param OptionSet AceConfigOptionsTable
 ---@param set function
 ---@param get function
 function Options:AddAuraFilters(frameName, OptionSet, set, get)
 	OptionSet.args.Filters = {
-		name = '',
+		name = L['Basic filters'],
 		type = 'group',
-		inline = true,
-		order = 200,
+		order = 1,
 		get = get,
 		set = set,
 		args = {
-			header = {
-				type = 'header',
-				order = .1,
-				name = 'Filter Configuration'
-			},
-			minDuration = {
+			duration = {
+				name = L['Duration'],
+				type = 'group',
 				order = 1,
-				type = 'range',
-				name = L['Minimum Duration'],
-				desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
-				min = 0,
-				max = 7200,
-				step = 1,
-				width = 'full'
+				inline = true,
+				args = {
+					enabled = {
+						name = L['Duration rules enabled'],
+						type = 'toggle',
+						order = 1
+					},
+					minTime = {
+						name = L['Minimum Duration'],
+						desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
+						type = 'range',
+						order = 2,
+						min = 0,
+						max = 600,
+						step = 1
+					},
+					maxTime = {
+						name = L['Maximum Duration'],
+						desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
+						type = 'range',
+						order = 3,
+						min = 0,
+						max = 600,
+						step = 1
+					}
+				}
 			},
-			maxDuration = {
-				order = 2,
-				type = 'range',
-				name = L['Maximum Duration'],
-				desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
-				min = 0,
-				max = 7200,
-				step = 1,
-				width = 'full'
-			},
-			showPlayers = {
+			rules = {
+				name = L['Basic states'],
+				type = 'multiselect',
 				order = 3,
-				type = 'toggle',
-				name = L['Show your auras'],
-				desc = L['Whether auras you casted should be shown'],
-				width = 'full'
-			},
-			raid = {
-				order = 4,
-				type = 'toggle',
-				name = L['Show curable/removable auras'],
-				desc = L['Whether to show any debuffs you can remove, cure or steal.'],
-				width = 'full'
-			},
-			boss = {
-				order = 5,
-				type = 'toggle',
-				name = L['Show casted by boss'],
-				desc = L['Whether to show any auras casted by the boss'],
-				width = 'full'
-			},
-			misc = {
-				order = 6,
-				type = 'toggle',
-				name = L['Show any other auras'],
-				desc = L['Whether to show auras that do not fall into the above categories.'],
-				width = 'full'
-			},
-			relevant = {
-				order = 7,
-				type = 'toggle',
-				name = L['Smart Friendly/Hostile Filter'],
-				desc = L['Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'],
-				width = 'full'
+				values = {
+					isPlayerAura = L['Cased by any player'],
+					canApplyAura = L['Player casted'],
+					isBossAura = L['Casted by boss'],
+					isFromPlayerOrPlayerPet = L['Casted by Player or pet'],
+					isHarmful = L['Harmful'],
+					IsDispellableByMe = L['Dispellable by me'],
+					isHelpful = L['Helpful'],
+					isRaid = L['Raid'],
+					isStealable = L['Stealable']
+				}
 			}
 		}
 	}
@@ -440,7 +481,7 @@ end
 
 ---@param frameName UnitFrameName
 ---@param ElementOptSet AceConfigOptionsTable
----@param elementName UnitFrameElement
+---@param elementName SUI.UnitFrame.Elements
 function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 	ElementOptSet.args.texture = {
 		type = 'select',
@@ -495,16 +536,11 @@ end
 ---@param ElementOptSet AceConfigOptionsTable
 function Options:IndicatorAddDisplay(frameName, ElementOptSet)
 	ElementOptSet.args.display = {
-		name = '',
+		name = L['Display'],
 		type = 'group',
 		order = 20,
 		inline = true,
 		args = {
-			header = {
-				type = 'header',
-				name = L['Display'],
-				order = .1
-			},
 			size = {
 				name = L['Size'],
 				type = 'range',
@@ -545,18 +581,13 @@ function Options:AddPositioning(frameName, ElementOptSet, get, set)
 	SUI:CopyData(AnchorablePoints, builtFrame.elementList)
 
 	ElementOptSet.args.position = {
-		name = '',
+		name = L['Position'],
 		type = 'group',
 		order = 50,
 		inline = true,
 		get = get,
 		set = set,
 		args = {
-			header = {
-				type = 'header',
-				name = L['Position'],
-				order = .1
-			},
 			x = {
 				name = L['X Axis'],
 				type = 'range',
@@ -597,7 +628,7 @@ end
 
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
----@param element UnitFrameElement
+---@param element SUI.UnitFrame.Elements
 function Options:AddDynamicText(frameName, OptionSet, element)
 	OptionSet.args.Text = {
 		name = L['Text'],
@@ -967,19 +998,22 @@ function Options:Initialize()
 		for elementName, _ in pairs(builtFrame.elementList) do
 			local elementConfig = builtFrame.config.elements[elementName].config
 
+			local ElementSettings = UF.CurrentSettings[frameName].elements[elementName]
+			local UserSetting = UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName]
+
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
 				-- description = elementConfig.Description or '',
 				type = 'group',
 				order = 1,
 				get = function(info)
-					return UF.CurrentSettings[frameName].elements[elementName][info[#info]] or false
+					return ElementSettings[info[#info]] or false
 				end,
 				set = function(info, val)
 					--Update memory
-					UF.CurrentSettings[frameName].elements[elementName][info[#info]] = val
+					ElementSettings[info[#info]] = val
 					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName][info[#info]] = val
+					UserSetting[info[#info]] = val
 					--Update the screen
 					builtFrame:UpdateAll()
 				end,
@@ -987,7 +1021,7 @@ function Options:Initialize()
 			}
 
 			local PositionGet = function(info)
-				return UF.CurrentSettings[frameName].elements[elementName].position[info[#info]]
+				return ElementSettings.position[info[#info]]
 			end
 			local PositionSet = function(info, val)
 				if val == elementName then
@@ -995,9 +1029,9 @@ function Options:Initialize()
 					return
 				end
 				--Update memory
-				UF.CurrentSettings[frameName].elements[elementName].position[info[#info]] = val
+				ElementSettings.position[info[#info]] = val
 				--Update the DB
-				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].position[info[#info]] = val
+				UserSetting.position[info[#info]] = val
 				--Update Screen
 				UF.Unit[frameName]:ElementUpdate(elementName)
 			end
@@ -1016,25 +1050,109 @@ function Options:Initialize()
 				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
 				Options:AddAuraLayout(frameName, ElementOptSet)
 
-				local FilterGet = function(info)
-					return UF.CurrentSettings[frameName].elements[elementName].filters[info[#info]]
+				-- Basic Filtering Options
+				local FilterGet = function(info, key)
+					if info[#info - 1] == 'duration' then
+						return ElementSettings.rules.duration[info[#info]] or false
+					else
+						return ElementSettings.rules[key] or false
+					end
 				end
-				local FilterSet = function(info, val)
-					--Update memory
-					UF.CurrentSettings[frameName].elements[elementName].filters[info[#info]] = val
-					--Update the DB
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].filters[info[#info]] = val
+				local FilterSet = function(info, key, val)
+					if info[#info - 1] == 'duration' then
+						--Update memory
+						ElementSettings.rules.duration[info[#info]] = val
+						--Update the DB
+						UserSetting.rules.duration[info[#info]] = val
+					else
+						--Update memory
+						ElementSettings.rules[key] = val
+						--Update the DB
+						UserSetting.rules[key] = val
+					end
 					--Update Screen
 					UF.Unit[frameName]:ElementUpdate(elementName)
 				end
+				Options:AddAuraFilters(frameName, ElementOptSet, FilterSet, FilterGet)
 
-				-- Options:AddAuraFilters(frameName, ElementOptSet, FilterSet, FilterGet)
+				-- Whitelist and Blacklist Options
+				local buildItemList
 
-				ElementOptSet.args.ComingSoon = {
-					type = 'header',
-					name = 'More Options coming soon later this month.',
-					order = 500
+				local spellLabel = {
+					type = 'description',
+					width = 'double',
+					fontSize = 'medium',
+					order = function(info)
+						return tonumber(string.match(info[#(info)], '(%d+)'))
+					end,
+					name = function(info)
+						local id = tonumber(string.match(info[#(info)], '(%d+)'))
+						local name = 'unknown'
+						if id then
+							-- local spellLink = GetSpellLink(id)
+							local spellName, _, spellIcon = GetSpellInfo(id)
+							name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellIcon or 'Interface\\Icons\\Inv_misc_questionmark', spellName or L['Unknown'], id)
+						end
+						return name
+					end
 				}
+
+				local spellDelete = {
+					type = 'execute',
+					name = L['Delete'],
+					width = 'half',
+					order = function(info)
+						return tonumber(string.match(info[#(info)], '(%d+)')) + 0.5
+					end,
+					func = function(info)
+						local id = tonumber(info[#info])
+
+						--Remove Setting
+						ElementSettings.rules[info[#info - 2]][id] = nil
+						UserSetting.rules[info[#info - 2]][id] = nil
+
+						--Update Screen
+						buildItemList(info[#info - 2])
+						UF.Unit[frameName]:ElementUpdate(elementName)
+					end
+				}
+
+				buildItemList = function(mode)
+					local spellsOpt = ElementOptSet.args[mode].args.spells.args
+					table.wipe(spellsOpt)
+
+					for spellID, _ in pairs(ElementSettings.rules[mode]) do
+						spellsOpt[spellID .. 'label'] = spellLabel
+						spellsOpt[tostring(spellID)] = spellDelete
+					end
+				end
+				local additem = function(info, input)
+					local spellId
+					if type(input) == 'string' then
+						--See if we got a spell link
+						if input:find('|Hspell:%d+') then
+							spellId = tonumber(input:match('|Hspell:(%d+)'))
+						elseif input:find('%[(.-)%]') then
+							spellId = select(7, GetSpellInfo(input:match('%[(.-)%]')))
+						else
+							spellId = select(7, GetSpellInfo(input))
+						end
+						if not spellId then
+							SUI:Print('Invalid spell name or ID')
+							return
+						end
+					end
+
+					ElementSettings.rules[info[#info - 1]][spellId] = true
+					UserSetting.rules[info[#info - 1]][spellId] = true
+
+					UF.Unit[frameName]:ElementUpdate(elementName)
+					buildItemList(info[#info - 1])
+				end
+
+				Options:AddAuraWhitelistBlacklist(frameName, ElementOptSet, additem)
+				buildItemList('whitelist')
+				buildItemList('blacklist')
 			end
 
 			--Call Elements Custom function

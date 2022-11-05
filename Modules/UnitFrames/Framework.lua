@@ -58,6 +58,49 @@ function UF:IsFriendlyFrame(frameName)
 	return false
 end
 
+---@param unit UnitId
+---@param data UnitAuraInfo
+---@param rules SUI.UnitFrame.Aura.Rules
+function UF:FilterAura(element, unit, data, rules)
+	local ShouldDisplay = true
+	-- if data.dispelName then
+	-- print(unit .. '-' .. data.name .. '-' .. data.dispelName)
+	-- end
+
+	for k, v in pairs(rules) do
+		UF:debug(k, unit, 'FilterAura')
+		if data[k] then
+			UF:debug(data.name, unit, 'FilterAura')
+			if type(v) == 'table' then
+				if k == 'duration' and v.enabled then
+					local moreThanMax = data[k] > v.maxTime
+					local lessThanMin = data[k] < v.minTime
+					UF:debug('Durration is ' .. data[k], unit, 'FilterAura')
+					if lessThanMin or moreThanMax then
+						ShouldDisplay = false
+					end
+				elseif SUI:IsInTable(v, data[k]) then
+					if v[data[k]] then
+						UF:debug('Force show per rules', unit, 'FilterAura')
+						return true
+					else
+						UF:debug('Force hide per rules', unit, 'FilterAura')
+						return false
+					end
+				end
+			elseif type(v) == 'boolean' then
+				if v ~= data[k] then
+					UF:debug('Not equal', unit, 'FilterAura')
+					ShouldDisplay = false
+				end
+			end
+		end
+	end
+
+	UF:debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'), unit, 'FilterAura')
+	return ShouldDisplay
+end
+
 ---@param unit? UnitFrameName
 function UF:PositionFrame(unit)
 	local positionData = UFPositionDefaults

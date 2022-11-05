@@ -8,6 +8,13 @@ local InverseAnchor = UF.InverseAnchor
 local function Build(frame, DB)
 	--Debuff Icons
 	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame)
+	---@param unit UnitId
+	---@param data UnitAuraInfo
+	local FilterAura = function(element, unit, data)
+		return UF:FilterAura(element, unit, data, element.DB.rules)
+	end
+	Debuffs.FilterAura = FilterAura
+
 	-- Debuffs.PostUpdate = PostUpdateAura
 	frame.Debuffs = Debuffs
 end
