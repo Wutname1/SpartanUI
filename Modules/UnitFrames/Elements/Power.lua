@@ -9,11 +9,11 @@ local function Build(frame, DB)
 	power:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	power:SetHeight(DB.height)
 
-	local Background = power:CreateTexture(nil, 'BACKGROUND')
-	Background:SetAllPoints(power)
-	Background:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	Background:SetVertexColor(1, 1, 1, .2)
-	power.bg = Background
+	local bg = power:CreateTexture(nil, 'BACKGROUND')
+	bg:SetAllPoints(power)
+	bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	bg:SetVertexColor(unpack(DB.bg.color))
+	power.bg = bg
 
 	power:SetPoint('TOPLEFT', frame.Health or frame, 'TOPLEFT', 0, DB.offset or -1)
 	power:SetPoint('TOPRIGHT', frame.Health or frame, 'TOPRIGHT', 0, DB.offset or -1)
@@ -49,8 +49,9 @@ local function Update(frame, settings)
 		frame:DisableElement('PowerPrediction')
 	end
 
-	-- frame.Power:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	-- frame.Power.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	frame.Power:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	frame.Power.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	frame.Power.bg:SetVertexColor(unpack(DB.bg.color))
 end
 
 ---@param frameName string

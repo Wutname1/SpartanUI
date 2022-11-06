@@ -38,14 +38,12 @@ local function Build(frame, DB)
 	cast:SetFrameLevel(DB.FrameLevel or 2)
 	cast:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	cast:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
-	cast:Hide()
-
 	cast:SetPoint('TOP', frame, 'TOP', 0, DB.offset or 0)
 
 	local bg = cast:CreateTexture(nil, 'BACKGROUND')
 	bg:SetAllPoints(cast)
 	bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	bg:SetVertexColor(1, 1, 1, .2)
+	bg:SetVertexColor(unpack(DB.bg.color))
 	cast.bg = bg
 
 	-- Add spell text
@@ -65,7 +63,6 @@ local function Build(frame, DB)
 	Shield:SetSize(20, 20)
 	Shield:SetPoint('CENTER', cast, 'RIGHT')
 	Shield:SetTexture([[Interface\CastingBar\UI-CastingBar-Small-Shield]])
-	Shield:Hide()
 	cast.Shield = Shield
 
 	-- Add spell icon
@@ -134,6 +131,7 @@ local function Update(frame, settings)
 
 	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetVertexColor(unpack(DB.bg.color))
 	element:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end

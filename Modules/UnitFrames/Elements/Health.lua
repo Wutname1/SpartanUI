@@ -9,11 +9,11 @@ local function Build(frame, DB)
 	health:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	health:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 
-	local Background = health:CreateTexture(nil, 'BACKGROUND')
-	Background:SetAllPoints(health)
-	Background:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	Background:SetVertexColor(1, 1, 1, .2)
-	health.bg = Background
+	local bg = health:CreateTexture(nil, 'BACKGROUND')
+	bg:SetAllPoints(health)
+	bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	bg:SetVertexColor(unpack(DB.bg.color))
+	health.bg = bg
 
 	health:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or -1)
 	health:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or -1)
@@ -125,6 +125,7 @@ local function Update(frame, settings)
 
 	frame.Health:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	frame.Health.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	frame.Health.bg:SetVertexColor(unpack(DB.bg.color))
 
 	frame.Health:ClearAllPoints()
 	frame.Health:SetSize(DB.width or frame:GetWidth(), DB.height or 20)

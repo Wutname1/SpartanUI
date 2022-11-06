@@ -524,13 +524,25 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 		inline = true,
 		order = 20,
 		get = function(info)
-			return UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]]
+			local dbData = UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]]
+			if info.type == 'color' then
+				return unpack(dbData, 1, 4)
+			else
+				return dbData
+			end
 		end,
-		set = function(info, val)
-			--Update memory
-			UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]] = val
-			--Update the DB
-			UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].bg[info[#info]] = val
+		set = function(info, val, ...)
+			if info.type == 'color' then
+				--Update memory
+				UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]] = {val, ...}
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].bg[info[#info]] = {val, ...}
+			else
+				--Update memory
+				UF.CurrentSettings[frameName].elements[elementName].bg[info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].bg[info[#info]] = val
+			end
 			--Update the screen
 			UF.Unit[frameName]:UpdateAll()
 		end,
