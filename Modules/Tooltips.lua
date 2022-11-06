@@ -64,11 +64,11 @@ function module:OnInitialize()
 				tile = false
 			}
 		},
-		Background = 'smoke',
+		Background = 'Smoke',
 		VendorPrices = true,
 		Override = {},
 		ColorOverlay = true,
-		Color = {0, 0, 0, 0.4},
+		Color = {0, 0, 0, 0.5},
 		SuppressNoMatch = true
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', {profile = defaults})
@@ -102,35 +102,6 @@ function module:OnInitialize()
 				OverrideLoc = false,
 				Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
 			}
-		end
-	end
-	if module.DB.SuppressNoMatch == nil then
-		module.DB.SuppressNoMatch = true
-	end
-	local a, b, c, d = unpack(module.DB.Color)
-	if a == 0 and b == 0 and c == 0 and d == 0.7 then
-		module.DB.Color = {0, 0, 0, 0.4}
-	end
-end
-
-local function StripTextures(obj)
-	local nineSlicePieces = {
-		-- keys have to match pieceNames in nineSliceSetup table in "NineSlice.lua"
-		'TopLeftCorner',
-		'TopRightCorner',
-		'BottomLeftCorner',
-		'BottomRightCorner',
-		'TopEdge',
-		'BottomEdge',
-		'LeftEdge',
-		'RightEdge',
-		'Center'
-	}
-
-	for index, pieceName in ipairs(nineSlicePieces) do
-		local region = obj[pieceName]
-		if (region) then
-			region:SetTexture(nil)
 		end
 	end
 end
@@ -214,11 +185,6 @@ local onShow = function(self)
 		self.SUITip:SetBackdropColor(unpack(module.DB.Color))
 		self:SetBackdropColor(0, 0, 0, 0)
 	end
-
-	--check if theme has a location
-	if SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip ~= nil and SUI.DB.Styles[(SUI.DB.Artwork.Style or 'War')].Tooltip.Custom then
-		SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War')):Tooltip()
-	end
 end
 
 local onHide = function(self)
@@ -241,7 +207,7 @@ local SetBorderColor = function(self, r, g, b, hasStatusBar)
 	self.SUITip.border[4]:SetVertexColor(r, g, b, 1)
 
 	if self.NineSlice then
-		StripTextures(self.NineSlice)
+		SUI.Skins.RemoveTextures(self.NineSlice)
 	end
 end
 
@@ -250,6 +216,18 @@ local ClearColors = function(SUITip)
 	SUITip.border[2]:SetVertexColor(0, 0, 0, 0)
 	SUITip.border[3]:SetVertexColor(0, 0, 0, 0)
 	SUITip.border[4]:SetVertexColor(0, 0, 0, 0)
+end
+
+local TooltipSetGeneric = function(self, tooltipData)
+	if self.NineSlice then
+		SUI.Skins.RemoveTextures(self.NineSlice)
+	end
+
+	local style = {
+		bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
+	}
+	self:SetBackdrop(style)
+	self:SetBackdropColor(unpack(module.DB.Color))
 end
 
 local TooltipSetItem = function(tooltip, tooltipData)
@@ -471,7 +449,7 @@ local TooltipSetUnit = function(self)
 	end
 
 	if self.NineSlice then
-		StripTextures(self.NineSlice)
+		SUI.Skins.RemoveTextures(self.NineSlice)
 	end
 end
 
@@ -541,7 +519,7 @@ local function ApplyTooltipSkins()
 		end
 
 		local style = {
-			bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+			bgFile = LSM:Fetch('background', module.DB.Background)
 		}
 
 		if not tooltip.SetBackdrop then
@@ -566,7 +544,7 @@ function module:UpdateBG()
 		end
 
 		if tooltip.NineSlice then
-			StripTextures(tooltip.NineSlice)
+			SUI.Skins.RemoveTextures(tooltip.NineSlice)
 		end
 	end
 end
@@ -651,6 +629,8 @@ function module:OnEnable()
 	if TooltipDataProcessor then
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetGeneric)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
 	else
 		GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
 		GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
