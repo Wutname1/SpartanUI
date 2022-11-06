@@ -17,6 +17,12 @@ local FontFaces = {
 	['Skurri'] = 'Skurri',
 	['Morpheus'] = 'Morpheus'
 }
+SUI.Lib.LSM:Register('font', 'Cognosis', [[Interface\AddOns\SpartanUI\fonts\Cognosis.ttf]])
+SUI.Lib.LSM:Register('font', 'NotoSans Bold', [[Interface\AddOns\SpartanUI\fonts\NotoSans-Bold.ttf]])
+SUI.Lib.LSM:Register('font', 'Roboto Medium', [[Interface\AddOns\SpartanUI\fonts\Roboto-Medium.ttf]])
+SUI.Lib.LSM:Register('font', 'Roboto Bold', [[Interface\AddOns\SpartanUI\fonts\Roboto-Bold.ttf]])
+SUI.Lib.LSM:Register('font', 'Myriad', [[Interface\AddOns\SpartanUI\fonts\myriad.ttf]])
+SUI.Lib.LSM:SetDefault('font', 'Roboto Bold')
 
 function module:StoreFontItem(element, DefaultSize, Module)
 	--Create tracking table if needed
@@ -48,33 +54,9 @@ end
 
 function SUI.GetFontFace(self, Module)
 	if Module then
-		if SUI.DB.font.Modules[Module].Face == 'SpartanUI' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\Cognosis.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'SUI4' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\NotoSans-Bold.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'Roboto' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Medium.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'Roboto-Bold' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Bold.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'Myriad' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\myriad.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'FrizQuadrata' then
-			return 'Fonts\\FRIZQT__.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Arial' then
-			return 'Fonts\\ARIAL.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'ArialNarrow' then
-			return 'Fonts\\ARIALN.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Skurri' then
-			return 'Fonts\\skurri.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Morpheus' then
-			return 'Fonts\\MORPHEUS.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Custom' and SUI.DB.font.Path ~= '' then
-			return SUI.DB.font.Path
-		end
+		return SUI.Lib.LSM:Fetch('font', SUI.DB.font.Modules[Module].Face)
 	end
-
-	--Failsafe, no module should be undefined as of 5.0
-	return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Bold.ttf'
+	return SUI.Lib.LSM:Fetch('font', 'Roboto Bold')
 end
 
 local function FindID(element, Module)
@@ -386,15 +368,17 @@ function module:OnEnable()
 				inline = true,
 				args = {
 					face = {
-						name = L['Font face'],
 						type = 'select',
+						name = L['Font face'],
 						order = 1,
-						values = FontFaces,
+						dialogControl = 'LSM30_Font',
+						values = SUI.Lib.LSM:HashTable('font'),
 						get = function()
 							return SUI.DB.font.Modules.Global.Face
 						end,
 						set = function(_, val)
 							SUI.DB.font.Modules.Global.Face = val
+							SUI:FontRefresh()
 						end
 					},
 					style = {
@@ -475,10 +459,11 @@ function module:BuildOptions()
 			inline = true,
 			args = {
 				face = {
-					name = L['Font face'],
 					type = 'select',
+					name = L['Font face'],
 					order = 1,
-					values = FontFaces,
+					dialogControl = 'LSM30_Font',
+					values = SUI.Lib.LSM:HashTable('font'),
 					get = function()
 						return SUI.DB.font.Modules[Module].Face
 					end,
