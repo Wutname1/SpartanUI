@@ -1090,15 +1090,21 @@ function Options:Initialize()
 				end
 				local FilterSet = function(info, key, val)
 					if info[#info - 1] == 'duration' then
+						if (info[#info] == 'minTime') and key > ElementSettings.rules.duration.maxTime then
+							return
+						elseif (info[#info] == 'maxTime') and key < ElementSettings.rules.duration.minTime then
+							return
+						end
+
 						--Update memory
-						ElementSettings.rules.duration[info[#info]] = val
+						ElementSettings.rules.duration[info[#info]] = key
 						--Update the DB
-						UserSetting.rules.duration[info[#info]] = val
+						UserSetting.rules.duration[info[#info]] = key
 					else
 						--Update memory
-						ElementSettings.rules[key] = val
+						ElementSettings.rules[key] = (val or false)
 						--Update the DB
-						UserSetting.rules[key] = val
+						UserSetting.rules[key] = (val or nil)
 					end
 					--Update Screen
 					UF.Unit[frameName]:ElementUpdate(elementName)
