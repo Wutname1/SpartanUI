@@ -92,6 +92,21 @@ local Settings = {
 			maxTime = 60,
 			minTime = 1
 		}
+		--@field expirationTime	number
+		--@field expirationTimeRule	number
+		--@field isPlayerAura	boolean
+		--@field canApplyAura	boolean
+		--@field isBossAura	boolean
+		--@field isFromPlayerOrPlayerPet	boolean
+		--@field isHarmful	boolean
+		--@field isHelpful	boolean
+		--@field isRaid	boolean
+		--@field isStealable	boolean
+		--@field IsDispellableByMe	boolean
+		--@field name table<string, boolean>
+		--@field spellId table<number, boolean>
+		--@field sourceUnit	table<string, boolean>
+		--@field dispelName	string?
 	}
 }
 UF.Elements:Register('Buffs', Build, Update, Options, Settings)

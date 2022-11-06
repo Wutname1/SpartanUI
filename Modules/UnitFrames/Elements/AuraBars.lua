@@ -132,7 +132,6 @@ local Settings = {
 	initialAnchor = 'BOTTOMLEFT',
 	growth = 'UP',
 	maxBars = 32,
-	texture = nil,
 	fgalpha = 1,
 	bgalpha = 1,
 	spellNameSize = 10,

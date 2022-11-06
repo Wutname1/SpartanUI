@@ -36,7 +36,13 @@ SUI.Version = ''
 
 ---------------  Add Libraries ---------------
 
+---@class SUI.Lib
+---@field AceC AceConfig-3.0
+---@field AceDB AceDB-3.0
+---@field StdUi StdUi
+---@field LSM LibSharedMedia-3.0
 SUI.Lib = {}
+
 ---@param name string
 ---@param libaray table|function
 ---@param silent? boolean
@@ -63,6 +69,8 @@ SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 SUI.AddLib('WagoAnalytics', 'WagoAnalytics', true)
+
+SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\SpartanUI\images\textures\Smoothv2]])
 
 --init StdUI Instance for the whole addon
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
@@ -114,7 +122,7 @@ local DBdefault = {
 		Modules = {
 			['**'] = {
 				Size = 0,
-				Face = 'Roboto-Bold',
+				Face = 'Roboto Bold',
 				Type = 'outline'
 			}
 		}

@@ -38,8 +38,7 @@ end
 ---@return string
 function UF:FindStatusBarTexture(LSMKey)
 	local defaultTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
-
-	return SUI.Lib.LSM:Fetch('statusbar', LSMKey, true) or defaultTexture
+	return SUI.Lib.LSM:Fetch('statusbar', LSMKey, false) or defaultTexture
 end
 
 ---@param frameName UnitId
