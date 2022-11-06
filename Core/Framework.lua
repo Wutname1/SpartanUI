@@ -70,7 +70,16 @@ SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 SUI.AddLib('WagoAnalytics', 'WagoAnalytics', true)
 
-SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\SpartanUI\images\textures\Smoothv2]])
+-- Add Statusbar textures
+SUI.Lib.LSM:Register('statusbar', 'Brushed aluminum', [[Interface\AddOns\SpartanUI\images\statusbars\BrushedAluminum]])
+SUI.Lib.LSM:Register('statusbar', 'Leaves', [[Interface\AddOns\SpartanUI\images\statusbars\Leaves]])
+SUI.Lib.LSM:Register('statusbar', 'Lightning', [[Interface\AddOns\SpartanUI\images\statusbars\Lightning]])
+SUI.Lib.LSM:Register('statusbar', 'Metal', [[Interface\AddOns\SpartanUI\images\statusbars\metal]])
+SUI.Lib.LSM:Register('statusbar', 'Recessed stone', [[Interface\AddOns\SpartanUI\images\statusbars\RecessedStone]])
+SUI.Lib.LSM:Register('statusbar', 'Smoke', [[Interface\AddOns\SpartanUI\images\statusbars\Smoke]])
+SUI.Lib.LSM:Register('statusbar', 'Smooth gradient', [[Interface\AddOns\SpartanUI\images\statusbars\SmoothGradient]])
+SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\SpartanUI\images\statusbars\Smoothv2.blp]])
+SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\blank]])
 
 --init StdUI Instance for the whole addon
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi

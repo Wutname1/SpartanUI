@@ -56,7 +56,7 @@ function module:OnInitialize()
 			return 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames'
 		end
 		if position == 'bg' then
-			return 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+			return 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2'
 		end
 
 		return false
