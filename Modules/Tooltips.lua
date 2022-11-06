@@ -176,7 +176,7 @@ local onShow = function(self)
 		Mixin(self, BackdropTemplateMixin)
 	end
 	self:SetBackdrop(whitebg)
-	self.SUITip:SetBackdrop(LSM:Fetch('background', module.DB.Background))
+	self.SUITip:SetBackdrop({bgFile = LSM:Fetch('background', module.DB.Background), tile = false})
 
 	if (module.DB.Background == 'none' or module.DB.ColorOverlay) or (not self.SUITip) then
 		self:SetBackdropColor(unpack(module.DB.Color))
@@ -503,7 +503,7 @@ local function ApplyTooltipSkins()
 			SUITip.border[4]:SetWidth(2)
 			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 
-			SUITip:SetBackdrop(LSM:Fetch('background', module.DB.Background))
+			SUITip:SetBackdrop({bgFile = LSM:Fetch('background', module.DB.Background), tile = false})
 
 			SUITip.ClearColors = ClearColors
 			SUITip.border:Hide()
