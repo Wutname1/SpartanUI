@@ -81,6 +81,10 @@ SUI.Lib.LSM:Register('statusbar', 'Smooth gradient', [[Interface\AddOns\SpartanU
 SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\SpartanUI\images\statusbars\Smoothv2.blp]])
 SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\blank]])
 
+-- Add Background textures
+SUI.Lib.LSM:Register('background', 'Smoke', [[Interface\AddOns\SpartanUI\images\backgrounds\smoke]])
+SUI.Lib.LSM:Register('background', 'None', [[Interface\AddOns\SpartanUI\images\blank]])
+
 --init StdUI Instance for the whole addon
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
 
@@ -1090,32 +1094,6 @@ local DBdefault = {
 				}
 			}
 		}
-	},
-	Tooltips = {
-		Styles = {
-			metal = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\metal',
-				tile = false
-			},
-			smooth = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
-				tile = false
-			},
-			smoke = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
-				tile = false
-			},
-			none = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				tile = false
-			}
-		},
-		ActiveStyle = 'smoke',
-		VendorPrices = true,
-		Override = {},
-		ColorOverlay = true,
-		Color = {0, 0, 0, 0.4},
-		SuppressNoMatch = true
 	},
 	StatusBars = {
 		['**'] = {
