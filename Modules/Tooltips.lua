@@ -1,10 +1,10 @@
 local _G, SUI, L, LSM = _G, SUI, SUI.L, SUI.Lib.LSM
-local module = SUI:NewModule('Module_Tooltips')
+local module = SUI:NewModule('Module_Tooltips', 'AceHook-3.0')
 module.description = 'SpartanUI tooltip skining'
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 local targetList = {}
-local RuleList = {'Rule1', 'Rule2', 'Rule3'}
+local RuleList = {'Rule1', 'Rule2'}
 local tooltips = {
 	GameTooltip,
 	ItemRefTooltip,
@@ -64,6 +64,18 @@ function module:OnInitialize()
 				tile = false
 			}
 		},
+		Rule1 = {
+			Status = 'All',
+			Combat = false,
+			OverrideLoc = false,
+			Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
+		},
+		Rule2 = {
+			Status = 'All',
+			Combat = false,
+			OverrideLoc = false,
+			Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
+		},
 		Background = 'Smoke',
 		VendorPrices = true,
 		Override = {},
@@ -73,37 +85,6 @@ function module:OnInitialize()
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', {profile = defaults})
 	module.DB = module.Database.profile ---@type SUI.Tooltip.Settings
-
-	if module.DB.Rule1 == nil then
-		for _, v in ipairs(RuleList) do
-			module.DB[v] = {
-				Status = 'Disabled',
-				Combat = false,
-				OverrideLoc = false,
-				Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
-			}
-		end
-		if module.DB.OverrideLoc then
-			module.DB.Rule1 = {
-				Status = 'All',
-				Combat = false,
-				OverrideLoc = module.DB.OverrideLoc,
-				Anchor = {
-					onMouse = module.DB.Anchor.onMouse,
-					Moved = module.DB.Anchor.Moved,
-					AnchorPos = module.DB.Anchor.AnchorPos
-				}
-			}
-			module.DB.Anchor = nil
-		else
-			module.DB.Rule1 = {
-				Status = 'All',
-				Combat = false,
-				OverrideLoc = false,
-				Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
-			}
-		end
-	end
 end
 
 local function ActiveRule()
@@ -221,6 +202,9 @@ end
 local TooltipSetGeneric = function(self, tooltipData)
 	if self.NineSlice then
 		SUI.Skins.RemoveTextures(self.NineSlice)
+	end
+	if not self.SetBackdrop then
+		Mixin(self, BackdropTemplateMixin)
 	end
 
 	local style = {
@@ -533,13 +517,11 @@ end
 function module:UpdateBG()
 	for _, tooltip in pairs(tooltips) do
 		if (tooltip.SUITip) then
-			if not module.DB.c then
-				if module.DB.Background ~= 'none' then
-					tooltip.SUITip:SetBackdropColor(unpack(module.DB.Color))
-				else
-					tooltip.SUITip:SetBackdropColor(0, 0, 0, 0)
-					tooltip:SetBackdropColor(unpack(module.DB.Color))
-				end
+			if module.DB.Background ~= 'none' then
+				tooltip.SUITip:SetBackdropColor(unpack(module.DB.Color))
+			else
+				tooltip.SUITip:SetBackdropColor(0, 0, 0, 0)
+				tooltip:SetBackdropColor(unpack(module.DB.Color))
 			end
 		end
 
@@ -631,9 +613,13 @@ function module:OnEnable()
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetGeneric)
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.AllTypes, TooltipSetGeneric)
 	else
 		GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
 		GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
+		GameTooltip:HookScript('OnTooltipSetSpell', TooltipSetGeneric)
+		GameTooltip:HookScript('OnTooltipSetQuest', TooltipSetGeneric)
 		ShoppingTooltip1:HookScript('OnTooltipSetItem', TooltipSetItem)
 		ShoppingTooltip2:HookScript('OnTooltipSetItem', TooltipSetItem)
 	end

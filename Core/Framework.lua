@@ -83,6 +83,7 @@ SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\b
 
 -- Add Background textures
 SUI.Lib.LSM:Register('background', 'Smoke', [[Interface\AddOns\SpartanUI\images\backgrounds\smoke]])
+SUI.Lib.LSM:Register('background', 'Dragonflight', [[Interface\AddOns\SpartanUI\images\backgrounds\Dragonflight]])
 SUI.Lib.LSM:Register('background', 'None', [[Interface\AddOns\SpartanUI\images\blank]])
 
 --init StdUI Instance for the whole addon

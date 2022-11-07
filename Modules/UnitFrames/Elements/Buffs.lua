@@ -45,8 +45,6 @@ local function Update(frame)
 		w = 1.5
 	end
 	Buffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
-
-	frame:UpdateAllElements('ForceUpdate')
 end
 
 ---@param unitName string
