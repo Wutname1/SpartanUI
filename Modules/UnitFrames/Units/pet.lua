@@ -18,7 +18,7 @@ local function Builder(frame)
 	UF.Elements:Build(frame, 'ThreatIndicator', elementDB['ThreatIndicator'])
 	UF.Elements:Build(frame, 'Range', elementDB['Range'])
 
-	if (SUI.IsClassic or SUI.IsTBC) then
+	if (not SUI.IsRetail) then
 		UF.Elements:Build(frame, 'HappinessIndicator', elementDB['HappinessIndicator'])
 	end
 end
