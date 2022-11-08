@@ -112,9 +112,10 @@ local function Update(self, event, unit, powerType)
 	local cur, max, mod, oldMax, chargedPoints
 	if(event ~= 'ClassPowerDisable') then
 		local powerID = unit == 'vehicle' and SPELL_POWER_COMBO_POINTS or ClassPowerID
+
 		max = UnitPowerMax(unit, powerID)
 		mod = UnitPowerDisplayMod(powerID)
-        chargedPoints = oUF.isRetail and GetUnitChargedPowerPoints(unit)
+		chargedPoints = oUF.isRetail and GetUnitChargedPowerPoints(unit)
 
 		-- UNIT_POWER_POINT_CHARGE doesn't provide a power type
 		powerType = powerType or ClassPowerType
@@ -257,6 +258,9 @@ do
 
 		if not oUF.isRetail then
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', VisibilityPath, true)
+		end
+
+		if oUF.isRetail then -- according to Blizz any class may receive this event due to specific spell auras
 			self:RegisterEvent('UNIT_POWER_POINT_CHARGE', Path)
 		end
 

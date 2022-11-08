@@ -5,8 +5,9 @@ local oUF = ns.oUF
 local MAX_ARENA_ENEMIES = _G.MAX_ARENA_ENEMIES or 5
 
 -- sourced from FrameXML/TargetFrame.lua
-local MAX_BOSS_FRAMES = _G.MAX_BOSS_FRAMES or 5
+local MAX_BOSS_FRAMES = 8
 
+local isArenaHooked = false
 local isPartyHooked = false
 
 local hiddenParent = CreateFrame('Frame', nil, UIParent)
@@ -58,9 +59,14 @@ local function handleFrame(baseName, doNotReparent)
 			buffFrame:UnregisterAllEvents()
 		end
 
-		local petFrame = frame.PetFrame
+		local petFrame = frame.petFrame or frame.PetFrame
 		if(petFrame) then
 			petFrame:UnregisterAllEvents()
+		end
+
+		local totFrame = frame.totFrame
+		if(totFrame) then
+			totFrame:UnregisterAllEvents()
 		end
 	end
 end
@@ -85,54 +91,45 @@ function oUF:DisableBlizzard(unit)
 		handleFrame(PetFrame)
 	elseif(unit == 'target') then
 		handleFrame(TargetFrame)
-		handleFrame(ComboFrame)
 	elseif(unit == 'focus') then
 		handleFrame(FocusFrame)
-		handleFrame(TargetofFocusFrame)
-	elseif(unit == 'targettarget') then
-		handleFrame(TargetFrameToT)
 	elseif(unit:match('boss%d?$')) then
 		local id = unit:match('boss(%d)')
 		if(id) then
 			handleFrame('Boss' .. id .. 'TargetFrame')
 		else
 			for i = 1, MAX_BOSS_FRAMES do
-				handleFrame(string.format('Boss%dTargetFrame', i))
+				handleFrame('Boss' .. i .. 'TargetFrame')
 			end
 		end
-    elseif (unit:match('party%d?$')) then
-		if oUF.isRetail then
-			if(not isPartyHooked) then
-				isPartyHooked = true
+	elseif(unit:match('party%d?$')) then
+		if(not isPartyHooked) then
+			isPartyHooked = true
 
-				PartyFrame:UnregisterAllEvents()
+			PartyFrame:UnregisterAllEvents()
 
-				for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
-					handleFrame(frame)
-				end
-			end
-		else
-			local id = unit:match('party(%d)')
-			if(id) then
-				handleFrame('PartyMemberFrame' .. id)
-			else
-				for i = 1, MAX_PARTY_MEMBERS do
-					handleFrame(string.format('PartyMemberFrame%d', i))
-				end
+			for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+				handleFrame(frame)
 			end
 		end
 	elseif(unit:match('arena%d?$')) then
-		local id = unit:match('arena(%d)')
-		if(id) then
-			handleFrame(oUF.isRetail and 'ArenaEnemyMatchFrame' or 'ArenaEnemyFrame' .. id)
-		else
+		if(not isArenaHooked) then
+			isArenaHooked = true
+
+			-- this disables ArenaEnemyFramesContainer
+			SetCVar('showArenaEnemyFrames', '0')
+			SetCVar('showArenaEnemyPets', '0')
+
+			-- but still UAE all containers
+			ArenaEnemyFramesContainer:UnregisterAllEvents()
+			ArenaEnemyPrepFramesContainer:UnregisterAllEvents()
+			ArenaEnemyMatchFramesContainer:UnregisterAllEvents()
+
 			for i = 1, MAX_ARENA_ENEMIES do
-				handleFrame(string.format(oUF.isRetail and 'ArenaEnemyMatchFrame%d' or 'ArenaEnemyFrame%d', i))
+				handleFrame('ArenaEnemyMatchFrame' .. i)
+				handleFrame('ArenaEnemyPrepFrame' .. i)
 			end
 		end
-
-		-- this disables ArenaEnemyFramesContainer
-		SetCVar('showArenaEnemyFrames', '0')
 	elseif(unit:match('nameplate%d+$')) then
 		local frame = C_NamePlate.GetNamePlateForUnit(unit)
 		if(frame and frame.UnitFrame) then
