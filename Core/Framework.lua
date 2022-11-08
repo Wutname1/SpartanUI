@@ -78,7 +78,7 @@ SUI.Lib.LSM:Register('statusbar', 'Metal', [[Interface\AddOns\SpartanUI\images\s
 SUI.Lib.LSM:Register('statusbar', 'Recessed stone', [[Interface\AddOns\SpartanUI\images\statusbars\RecessedStone]])
 SUI.Lib.LSM:Register('statusbar', 'Smoke', [[Interface\AddOns\SpartanUI\images\statusbars\Smoke]])
 SUI.Lib.LSM:Register('statusbar', 'Smooth gradient', [[Interface\AddOns\SpartanUI\images\statusbars\SmoothGradient]])
-SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\SpartanUI\images\statusbars\Smoothv2.blp]])
+SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\SpartanUI\images\statusbars\Smoothv2]])
 SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\blank]])
 
 -- Add Background textures
