@@ -142,8 +142,8 @@ local function VehicleSeatIndicator()
 	VehicleSeatHolder:SetSize(SeatIndicator:GetSize())
 	VehicleSeatHolder:SetPoint(point, anchor, secondaryPoint, x, y)
 	VehicleSeatHolder:Hide()
-	local function SetPosition(_, _, anchor)
-		if anchor:GetName() == 'MinimapCluster' or anchor == MinimapCluster then
+	local function SetPosition(_, _, anchorPoint)
+		if anchorPoint ~= VehicleSeatHolder then
 			SeatIndicator:ClearAllPoints()
 			SeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
 		end
@@ -189,9 +189,9 @@ function module.BlizzMovers()
 	end
 
 	VehicleLeaveButton()
+	VehicleSeatIndicator()
 
 	if SUI.IsRetail then
-		-- VehicleSeatIndicator()
 		-- TalkingHead()
 		-- AltPowerBar()
 		-- AbilityBars()
