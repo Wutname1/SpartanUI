@@ -193,8 +193,7 @@ local function Options(frameName, OptionSet)
 		}
 	}
 
-	local friendly = {'player', 'party', 'raid', 'target', 'focus', 'targettarget', 'focustarget'}
-	if not SUI:IsInTable(friendly, frameName) then
+	if not UF.Unit:isFriendly(frameName) then
 		OptionSet.args.general.args.DispelHighlight.hidden = true
 	end
 

@@ -42,7 +42,8 @@ local Settings = {
 		}
 	},
 	config = {
-		Requires = 'focus'
+		Requires = 'focus',
+		isFriendly = true
 	}
 }
 

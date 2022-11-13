@@ -102,6 +102,9 @@ local Settings = {
 				}
 			}
 		}
+	},
+	config = {
+		isFriendly = true
 	}
 }
 

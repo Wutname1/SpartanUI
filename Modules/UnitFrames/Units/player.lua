@@ -126,6 +126,9 @@ local Settings = {
 			enabled = true
 		},
 		SUI_RaidGroup = {enabled = true}
+	},
+	config = {
+		isFriendly = true
 	}
 }
 

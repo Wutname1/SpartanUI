@@ -224,7 +224,8 @@ local Settings = {
 		}
 	},
 	config = {
-		IsGroup = true
+		IsGroup = true,
+		isFriendly = true
 	}
 }
 

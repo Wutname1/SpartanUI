@@ -259,4 +259,14 @@ function Unit:BuildOptions(frameName, OptionsSet)
 	FrameData[frameName].options(OptionsSet)
 end
 
+function Unit:isFriendly(unit)
+	local config = Unit:GetConfig(unit)
+
+	if not unit then
+		return false
+	end
+
+	return config.config.isFriendly
+end
+
 UF.Unit = Unit

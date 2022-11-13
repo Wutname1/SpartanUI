@@ -44,6 +44,9 @@ local Settings = {
 				relativePoint = 'BOTTOM'
 			}
 		}
+	},
+	config = {
+		isFriendly = true
 	}
 }
 
