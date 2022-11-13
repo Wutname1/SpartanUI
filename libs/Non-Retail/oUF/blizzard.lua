@@ -7,6 +7,7 @@ local MAX_ARENA_ENEMIES = _G.MAX_ARENA_ENEMIES or 5
 -- sourced from FrameXML/TargetFrame.lua
 local MAX_BOSS_FRAMES = _G.MAX_BOSS_FRAMES or 5
 
+local isArenaHooked = false
 local isPartyHooked = false
 
 local hiddenParent = CreateFrame('Frame', nil, UIParent)
@@ -58,9 +59,14 @@ local function handleFrame(baseName, doNotReparent)
 			buffFrame:UnregisterAllEvents()
 		end
 
-		local petFrame = frame.PetFrame
+		local petFrame = frame.petFrame or frame.PetFrame
 		if(petFrame) then
 			petFrame:UnregisterAllEvents()
+		end
+
+		local totFrame = frame.totFrame
+		if(totFrame) then
+			totFrame:UnregisterAllEvents()
 		end
 	end
 end
@@ -97,7 +103,7 @@ function oUF:DisableBlizzard(unit)
 			handleFrame('Boss' .. id .. 'TargetFrame')
 		else
 			for i = 1, MAX_BOSS_FRAMES do
-				handleFrame(string.format('Boss%dTargetFrame', i))
+				handleFrame('Boss' .. i .. 'TargetFrame')
 			end
 		end
     elseif (unit:match('party%d?$')) then
