@@ -49,9 +49,6 @@ function SUI:DisableModule(input)
 		moduleToDisable = SUI:GetModule(input)
 	end
 
-	--Analytics
-	SUI.Analytics:Set(moduleToDisable, 'Enabled', false)
-
 	SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = true
 	return moduleToDisable:Disable()
 end
@@ -64,9 +61,6 @@ function SUI:EnableModule(input)
 	else
 		moduleToDisable = SUI:GetModule(input)
 	end
-
-	--Analytics
-	SUI.Analytics:Set(moduleToDisable, 'Enabled', true)
 
 	SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = nil
 	return moduleToDisable:Enable()
