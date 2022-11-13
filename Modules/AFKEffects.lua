@@ -139,7 +139,7 @@ end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled('AFKEffects') then
+	if SUI:IsModuleDisabled(module) then
 		return
 	end
 
@@ -157,10 +157,6 @@ function module:OnEnable()
 				end
 			elseif event == 'PLAYER_LEAVING_WORLD' or event == 'PLAYER_ENTERING_WORLD' then
 				StopSpin()
-			end
-			-- This is to ensure that camera movement speed got reset, wow api "was" buggy at one point.
-			if module.DB.SpinCam.speed == GetCVar('cameraYawMoveSpeed') and not SpinCamRunning then
-				SetCVar('cameraYawMoveSpeed', userCameraYawMoveSpeed)
 			end
 		end
 	)
