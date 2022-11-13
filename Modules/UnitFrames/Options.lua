@@ -1019,7 +1019,7 @@ function Options:Initialize()
 
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
-				-- description = elementConfig.Description or '',
+				desc = elementConfig.Description or '',
 				type = 'group',
 				order = 1,
 				get = function(info)
