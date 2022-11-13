@@ -180,7 +180,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						end,
 						set = function(info, val)
 							MoveIt.DB.movers[MoverName].AdjustedScale = val
-							MoverFrame.parent:scale(val)
+							MoverFrame.parent:scale(val, false, true)
 						end
 					},
 					ResetScale = {
