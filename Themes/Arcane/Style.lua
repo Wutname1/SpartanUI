@@ -5,7 +5,7 @@ module.Settings = {}
 local Artwork_Core = SUI:GetModule('Module_Artwork')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Arcane', SpartanUI)
 ----------------------------------------------------------------------------------------------------
-local function SetupMenus()
+local function Options()
 	SUI.opt.args['Artwork'].args['Artwork'] = {
 		name = L['Artwork Options'],
 		type = 'group',
@@ -151,7 +151,7 @@ function module:OnEnable()
 		if SUI.DB.Styles.Arcane.Color.Art then
 			module:SetColor()
 		end
-		SetupMenus()
+		Options()
 		module:SetupVehicleUI()
 	end
 end

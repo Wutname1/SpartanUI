@@ -6,6 +6,30 @@ local artFrame = CreateFrame('Frame', 'SUI_Art_Transparent', SpartanUI)
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 
+local function Options()
+	SUI.opt.args['Artwork'].args['Artwork'] = {
+		name = L['Artwork Options'],
+		type = 'group',
+		order = 10,
+		args = {
+			Color = {
+				name = L['Artwork Color'],
+				type = 'color',
+				hasAlpha = true,
+				order = 1,
+				width = 'full',
+				get = function(info)
+					return unpack(SUI.DB.Styles.Transparent.Color.Art)
+				end,
+				set = function(info, r, b, g, a)
+					SUI.DB.Styles.Transparent.Color.Art = {r, b, g, a}
+					module:SetColor()
+				end
+			}
+		}
+	}
+end
+
 function module:OnInitialize()
 	--Enable the in the Core options screen
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Transparent'].disabled = false
@@ -183,32 +207,8 @@ function module:OnEnable()
 		end
 
 		module:SetColor()
-		module:SetupMenus()
+		Options()
 	end
-end
-
-function module:SetupMenus()
-	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = L['Artwork Options'],
-		type = 'group',
-		order = 10,
-		args = {
-			Color = {
-				name = L['Artwork Color'],
-				type = 'color',
-				hasAlpha = true,
-				order = 1,
-				width = 'full',
-				get = function(info)
-					return unpack(SUI.DB.Styles.Transparent.Color.Art)
-				end,
-				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Transparent.Color.Art = {r, b, g, a}
-					module:SetColor()
-				end
-			}
-		}
-	}
 end
 
 function module:OnDisable()

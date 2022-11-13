@@ -62,7 +62,7 @@ function module:OnEnable()
 	if (SUI.DB.Artwork.Style ~= 'Minimal') then
 		module:Disable()
 	else
-		module:SetupMenus()
+		module:Options()
 
 		hooksecurefunc(
 			'UIParent_ManageFramePositions',
@@ -101,7 +101,7 @@ function module:TooltipLoc(tooltip, parent)
 	end
 end
 
-function module:SetupMenus()
+function module:Options()
 	SUI.opt.args['Artwork'].args['Art'] = {
 		name = L['Artwork Options'],
 		type = 'group',
