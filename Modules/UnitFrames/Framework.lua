@@ -16,6 +16,7 @@ local UFPositionDefaults = {
 	['pettarget'] = 'RIGHT,SUI_UF_pet,LEFT,0,-5',
 	['target'] = 'LEFT,SUI_UF_player,RIGHT,150,0',
 	['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0',
+	['targettargettarget'] = 'LEFT,SUI_UF_targettarget,RIGHT,4,0',
 	['focus'] = 'BOTTOMLEFT,SUI_UF_target,TOP,0,30',
 	['focustarget'] = 'BOTTOMLEFT,SUI_UF_focus,BOTTOMRIGHT,5,0',
 	['boss'] = 'RIGHT,UIParent,RIGHT,-9,162',

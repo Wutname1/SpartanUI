@@ -98,6 +98,7 @@
     <Script file="Units\raid.lua"/>
     <Script file="Units\target.lua"/>
     <Script file="Units\targettarget.lua"/>
+    <Script file="Units\targettargettarget.lua"/>
 
     <Script file="SpawnFrames.lua" />
     <Script file="Options.lua" />
