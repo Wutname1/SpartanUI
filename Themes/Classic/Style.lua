@@ -1,11 +1,55 @@
 local SUI, L = SUI, SUI.L
 local Artwork_Core = SUI:GetModule('Module_Artwork')
-local module = SUI:GetModule('Style_Classic')
+local module = SUI:NewModule('Style_Classic')
 local unpack = unpack
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local SkinnedFrames = {}
 local FramesToSkin = {'player', 'target'}
+
+function module:SetColor()
+	local r, b, g, a = 1, 1, 1, 1
+	if SUI.DB.Styles.Classic.Color.Art then
+		r, b, g, a = unpack(SUI.DB.Styles.Classic.Color.Art)
+	end
+
+	for i = 1, 10 do
+		if _G['Classic_Bar' .. i] and _G['Classic_Bar' .. i].BG then
+			_G['Classic_Bar' .. i].BG:SetVertexColor(r, b, g, a)
+		end
+	end
+	SUI_Art_Classic.Center:SetVertexColor(r, b, g, a)
+	SUI_Art_Classic.Left:SetVertexColor(r, b, g, a)
+	SUI_Art_Classic.FarLeft:SetVertexColor(r, b, g, a)
+	SUI_Art_Classic.Right:SetVertexColor(r, b, g, a)
+	SUI_Art_Classic.FarRight:SetVertexColor(r, b, g, a)
+
+	if _G['SUI_StatusBar_Left'] then
+		_G['SUI_StatusBar_Left'].bg:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Left'].overlay:SetVertexColor(r, b, g, a)
+	end
+	if _G['SUI_StatusBar_Right'] then
+		_G['SUI_StatusBar_Right'].bg:SetVertexColor(r, b, g, a)
+		_G['SUI_StatusBar_Right'].overlay:SetVertexColor(r, b, g, a)
+	end
+end
+
+function module:BuffLoc(self, parent)
+	BuffFrame:ClearAllPoints()
+	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - (SUI.DB.BuffSettings.offset))
+end
+
+function module:SetupVehicleUI()
+	if SUI.DB.Artwork.VehicleUI then
+		RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
+	end
+end
+
+function module:RemoveVehicleUI()
+	if not SUI.DB.Artwork.VehicleUI then
+		UnregisterStateDriver(SUI_Art_Classic, 'visibility')
+	end
+end
 
 local function CreateArtwork()
 	local plate = CreateFrame('Frame', 'Classic_ActionBarPlate', artFrame)
@@ -187,187 +231,7 @@ local function UnitFrameCallback(self, unit)
 	end
 end
 
-function module:OnInitialize()
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
-
-	BarHandler.BarPosition.BT4.Classic =
-		SUI.IsRetail and
-		{
-			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
-			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
-			--
-			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
-			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
-			--
-			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
-			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
-			--
-			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			--
-			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
-			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			--
-			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,138',
-			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
-		} or
-		{
-			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,82',
-			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,35',
-			--
-			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,81',
-			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,35',
-			--
-			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
-			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
-			--
-			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			--
-			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
-			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			--
-			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,304,144',
-			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,647,163'
-		}
-	BarHandler.BarScale.BT4.Classic = {
-		['BT4Bar1'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar2'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar3'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar4'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar5'] = SUI.IsRetail and .63 or .75,
-		['BT4Bar6'] = SUI.IsRetail and .63 or .75,
-		['BT4Bar7'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar8'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar9'] = SUI.IsRetail and .62 or .77,
-		['BT4BarBagBar'] = 0.6,
-		['BT4BarStanceBar'] = 0.7,
-		['BT4BarMicroMenu'] = SUI.IsRetail and 0.7 or 0.6
-	}
-
-	local UF = SUI.UF
-	---@type UFStyleSettings
-	local ufsettings = {
-		artwork = {
-			full = {
-				perUnit = true,
-				UnitFrameCallback = UnitFrameCallback,
-				player = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
-					height = 80,
-					widthScale = 2.2,
-					TexCoord = {0.19140625, 0.810546875, 0.1796875, 0.8203125},
-					position = {
-						anchor = 'CENTER',
-						x = 34,
-						y = 7
-					}
-				},
-				target = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
-					height = 80,
-					widthScale = 2.2,
-					TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
-					position = {
-						anchor = 'CENTER',
-						x = -34,
-						y = 7
-					}
-				},
-				pet = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
-					height = 53,
-					widthScale = 1.6,
-					TexCoord = {0.9453125, .25, 0, 0.78125},
-					position = {
-						anchor = 'BOTTOMRIGHT',
-						x = 10,
-						y = -1
-					}
-				},
-				targettarget = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
-					height = 53,
-					widthScale = 1.6,
-					TexCoord = {0.25, 0.9453125, 0, 0.78125},
-					position = {
-						anchor = 'BOTTOMLEFT',
-						x = -10,
-						y = -1
-					}
-				}
-			}
-		},
-		positions = {
-			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
-			['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
-			['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
-			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5'
-		}
-	}
-	UF.Style:Register('Classic', ufsettings)
-
-	local minimapSettings = {
-		Movable = false,
-		size = {156, 156},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
-		},
-		position = SUI.IsRetail and 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,5' or 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,0,17'
-	}
-	SUI:GetModule('Module_Minimap'):Register('Classic', minimapSettings)
-
-	CreateArtwork()
-
-	local function StyleChange()
-		for unit, frame in pairs(SkinnedFrames) do
-			if UF.DB.Style ~= 'Classic' then
-				frame.Art_Classic:Hide()
-			elseif UF.DB.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
-				frame.Art_Classic:Show()
-			end
-		end
-	end
-	SUI.Event:RegisterEvent('UNITFRAME_STYLE_CHANGED', StyleChange)
-end
-
-function module:OnEnable()
-	if (SUI.DB.Artwork.Style == 'Classic') then
-		module:SetupMenus()
-
-		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
-		SUI_FramesAnchor:SetFrameLevel(1)
-		SUI_FramesAnchor:ClearAllPoints()
-		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Classic_AnchorFrame', 'TOPLEFT', 0, 0)
-		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Classic_AnchorFrame', 'TOPRIGHT', 0, 153)
-
-		hooksecurefunc(
-			SUI_Art_Classic,
-			'Hide',
-			function()
-				Artwork_Core:updateViewport()
-			end
-		)
-		hooksecurefunc(
-			SUI_Art_Classic,
-			'Show',
-			function()
-				Artwork_Core:updateViewport()
-			end
-		)
-
-		module:SetupVehicleUI()
-		if SUI.DB.Styles.Classic.Color.Art then
-			module:SetColor()
-		end
-	else
-		module:Disable()
-	end
-end
-
-function module:SetupMenus()
+local function Options()
 	SUI.opt.args.Artwork.args['ActionBar'] = {
 		name = L['ActionBar Settings'],
 		type = 'group',
@@ -702,7 +566,7 @@ function module:SetupMenus()
 				order = .5,
 				get = function(info)
 					if not SUI.DB.Styles.Classic.Color.Art then
-						return {1, 1, 1, 1}
+						return 1, 1, 1, 1
 					end
 					return unpack(SUI.DB.Styles.Classic.Color.Art)
 				end,
@@ -799,6 +663,186 @@ function module:SetupMenus()
 
 	if (SUI.DB.alpha ~= 1) then
 		module:AddNotice()
+	end
+end
+
+function module:OnInitialize()
+	local BarHandler = SUI:GetModule('Handler_BarSystems')
+
+	BarHandler.BarPosition.BT4.Classic =
+		SUI.IsRetail and
+		{
+			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
+			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
+			--
+			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
+			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
+			--
+			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+			--
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,138',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
+		} or
+		{
+			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,82',
+			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,35',
+			--
+			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,81',
+			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,358,35',
+			--
+			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+			--
+			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+			--
+			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+			--
+			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,304,144',
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,647,163'
+		}
+	BarHandler.BarScale.BT4.Classic = {
+		['BT4Bar1'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar2'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar3'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar4'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar5'] = SUI.IsRetail and .63 or .75,
+		['BT4Bar6'] = SUI.IsRetail and .63 or .75,
+		['BT4Bar7'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar8'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar9'] = SUI.IsRetail and .62 or .77,
+		['BT4BarBagBar'] = 0.6,
+		['BT4BarStanceBar'] = 0.7,
+		['BT4BarMicroMenu'] = SUI.IsRetail and 0.7 or 0.6
+	}
+
+	local UF = SUI.UF
+	---@type UFStyleSettings
+	local ufsettings = {
+		artwork = {
+			full = {
+				perUnit = true,
+				UnitFrameCallback = UnitFrameCallback,
+				player = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+					height = 80,
+					widthScale = 2.2,
+					TexCoord = {0.19140625, 0.810546875, 0.1796875, 0.8203125},
+					position = {
+						anchor = 'CENTER',
+						x = 34,
+						y = 7
+					}
+				},
+				target = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+					height = 80,
+					widthScale = 2.2,
+					TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
+					position = {
+						anchor = 'CENTER',
+						x = -34,
+						y = 7
+					}
+				},
+				pet = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
+					height = 53,
+					widthScale = 1.6,
+					TexCoord = {0.9453125, .25, 0, 0.78125},
+					position = {
+						anchor = 'BOTTOMRIGHT',
+						x = 10,
+						y = -1
+					}
+				},
+				targettarget = {
+					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
+					height = 53,
+					widthScale = 1.6,
+					TexCoord = {0.25, 0.9453125, 0, 0.78125},
+					position = {
+						anchor = 'BOTTOMLEFT',
+						x = -10,
+						y = -1
+					}
+				}
+			}
+		},
+		positions = {
+			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
+			['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
+			['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
+			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5'
+		}
+	}
+	UF.Style:Register('Classic', ufsettings)
+
+	local minimapSettings = {
+		Movable = false,
+		size = {156, 156},
+		coords = {
+			position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+		},
+		position = SUI.IsRetail and 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,5' or 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,0,17'
+	}
+	SUI:GetModule('Module_Minimap'):Register('Classic', minimapSettings)
+
+	CreateArtwork()
+
+	local function StyleChange()
+		for unit, frame in pairs(SkinnedFrames) do
+			if UF.DB.Style ~= 'Classic' then
+				frame.Art_Classic:Hide()
+			elseif UF.DB.Style == 'Classic' and not frame.Art_Classic:IsVisible() then
+				frame.Art_Classic:Show()
+			end
+		end
+	end
+	SUI.Event:RegisterEvent('UNITFRAME_STYLE_CHANGED', StyleChange)
+end
+
+function module:OnEnable()
+	if (SUI.DB.Artwork.Style == 'Classic') then
+		Options()
+
+		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
+		SUI_FramesAnchor:SetFrameLevel(1)
+		SUI_FramesAnchor:ClearAllPoints()
+		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Classic_AnchorFrame', 'TOPLEFT', 0, 0)
+		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Classic_AnchorFrame', 'TOPRIGHT', 0, 153)
+
+		hooksecurefunc(
+			SUI_Art_Classic,
+			'Hide',
+			function()
+				Artwork_Core:updateViewport()
+			end
+		)
+		hooksecurefunc(
+			SUI_Art_Classic,
+			'Show',
+			function()
+				Artwork_Core:updateViewport()
+			end
+		)
+
+		module:SetupVehicleUI()
+		if SUI.DB.Styles.Classic.Color.Art then
+			module:SetColor()
+		end
+	else
+		module:Disable()
 	end
 end
 

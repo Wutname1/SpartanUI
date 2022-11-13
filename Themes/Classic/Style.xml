@@ -1,8 +1,6 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" 
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-	<!-- frameStrata Parameters:  BACKGROUND, LOW, MEDIUM, HIGH, DIALOG, FULLSCREEN, FULLSCREEN_DIALOG, TOOLTIP  -->
-	<!-- Layer level Parameters:  BACKGROUND, BORDER, ARTWORK, OVERLAY, HIGHLIGHT -->
 
 	<!-- SUI_AncherFrame -->
 	<Frame name="Classic_AnchorFrame" frameStrata="BACKGROUND" parent="SpartanUI">
@@ -23,6 +21,5 @@
 		</Anchors>
 	</Frame>
 
-	<Script file="Global-Framework.lua" />
 	<Script file="Style.lua" />
 </Ui>
