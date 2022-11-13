@@ -182,7 +182,7 @@ local function AddToOptions(MoverName, DisplayName, groupName, MoverFrame)
 						type = 'range',
 						order = 1,
 						min = .01,
-						max = 1,
+						max = 2,
 						width = 'double',
 						step = .01,
 						get = function()
