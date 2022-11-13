@@ -149,7 +149,7 @@ function module:OnEnable()
 	frame:SetScript(
 		'OnEvent',
 		function(self, event, ...)
-			if event == 'CHAT_MSG_SYSTEM' then
+			if event == 'CHAT_MSG_SYSTEM' and module.DB.SpinCam.enabled and SUI:IsModuleEnabled(module) then
 				if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) then
 					StartSpin()
 				elseif (... == CLEARED_AFK) and (SpinCamRunning) then
