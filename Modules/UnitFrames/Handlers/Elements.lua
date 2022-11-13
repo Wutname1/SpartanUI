@@ -47,7 +47,15 @@ local DefaultSettings = {
 	rules = {
 		duration = {},
 		whitelist = {},
-		blacklist = {}
+		blacklist = {},
+		sourceUnit = {},
+		isPlayerAura = false,
+		isBossAura = false,
+		isHarmful = false,
+		isHelpful = false,
+		isRaid = false,
+		isStealable = false,
+		IsDispellableByMe = false
 	},
 	config = {
 		NoBulkUpdate = false,

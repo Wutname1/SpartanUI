@@ -183,9 +183,7 @@ local SUIUnitFrameAuraRulesDurations = {}
 ---@class SUI.UnitFrame.Aura.Rules
 ---@field duration SUI.UnitFrame.Aura.Rules.Durations
 ---@field isPlayerAura boolean
----@field canApplyAura boolean
 ---@field isBossAura boolean
----@field isFromPlayerOrPlayerPet boolean
 ---@field isHarmful boolean
 ---@field isHelpful boolean
 ---@field isRaid boolean

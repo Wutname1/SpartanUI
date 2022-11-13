@@ -415,13 +415,11 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 				type = 'multiselect',
 				order = 3,
 				values = {
-					isPlayerAura = L['Cased by any player'],
-					canApplyAura = L['Player casted'],
-					isBossAura = L['Casted by boss'],
-					isFromPlayerOrPlayerPet = L['Casted by Player or pet'],
-					isHarmful = L['Harmful'],
 					IsDispellableByMe = L['Dispellable by me'],
+					isBossAura = L['Casted by boss'],
+					isHarmful = L['Harmful'],
 					isHelpful = L['Helpful'],
+					isPlayerAura = L['Player casted'],
 					isRaid = L['Raid'],
 					isStealable = L['Stealable']
 				}

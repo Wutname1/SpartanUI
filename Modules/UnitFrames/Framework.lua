@@ -38,6 +38,7 @@ end
 ---@return string
 function UF:FindStatusBarTexture(LSMKey)
 	local defaultTexture = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2'
+	---@diagnostic disable-next-line: return-type-mismatch
 	return SUI.Lib.LSM:Fetch('statusbar', LSMKey, false) or defaultTexture
 end
 
@@ -61,10 +62,16 @@ end
 ---@param data UnitAuraInfo
 ---@param rules SUI.UnitFrame.Aura.Rules
 function UF:FilterAura(element, unit, data, rules)
-	local ShouldDisplay = true
-	-- if data.dispelName then
-	-- print(unit .. '-' .. data.name .. '-' .. data.dispelName)
-	-- end
+	local ShouldDisplay = false
+
+	if rules.duration.enabled then
+		local moreThanMax = data.duration > rules.duration.maxTime
+		local lessThanMin = data.duration < rules.duration.minTime
+		UF:debug('Durration is ' .. data.duration, unit, 'FilterAura')
+		if (lessThanMin and moreThanMax) then
+			ShouldDisplay = true
+		end
+	end
 
 	for k, v in pairs(rules) do
 		UF:debug(k, unit, 'FilterAura')
@@ -72,12 +79,6 @@ function UF:FilterAura(element, unit, data, rules)
 			UF:debug(data.name, unit, 'FilterAura')
 			if type(v) == 'table' then
 				if k == 'duration' and v.enabled then
-					local moreThanMax = data[k] > v.maxTime
-					local lessThanMin = data[k] < v.minTime
-					UF:debug('Durration is ' .. data[k], unit, 'FilterAura')
-					if lessThanMin or moreThanMax then
-						ShouldDisplay = false
-					end
 				elseif SUI:IsInTable(v, data[k]) then
 					if v[data[k]] then
 						UF:debug('Force show per rules', unit, 'FilterAura')
@@ -88,9 +89,9 @@ function UF:FilterAura(element, unit, data, rules)
 					end
 				end
 			elseif type(v) == 'boolean' then
-				if v ~= data[k] then
+				if v and v == data[k] then
 					UF:debug('Not equal', unit, 'FilterAura')
-					ShouldDisplay = false
+					ShouldDisplay = true
 				end
 			end
 		elseif k == 'whitelist' or k == 'blacklist' then

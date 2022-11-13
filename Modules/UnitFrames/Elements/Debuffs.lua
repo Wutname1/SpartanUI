@@ -79,9 +79,13 @@ local Settings = {
 		y = -10
 	},
 	rules = {
-		duration = {},
-		isPlayerAura = true,
-		isBossAura = true
+		duration = {
+			enabled = true,
+			maxTime = 180,
+			minTime = 1
+		},
+		isBossAura = true,
+		isFromPlayerOrPlayerPet = true
 	},
 	config = {
 		type = 'Auras'
