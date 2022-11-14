@@ -51,23 +51,6 @@ local function BuildFilmEffects()
 	Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
 	Container:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
 	Container:SetFrameStrata('BACKGROUND')
-	-- Container:RegisterEvent('PLAYER_ENTERING_WORLD')
-	-- Container:SetScript(
-	-- 	'OnEvent',
-	-- 	function(self, event, ...)
-	-- 		for _, v in ipairs(EffectList) do
-	-- 			if not module.db.profile.enable then
-	-- 				Container[v]:Hide()
-	-- 			else
-	-- 				if module.db.profile.Effects[v].always then
-	-- 					Container[v]:Show()
-	-- 				else
-	-- 					Container[v]:Hide()
-	-- 				end
-	-- 			end
-	-- 		end
-	-- 	end
-	-- )
 
 	-- vignette
 	Container.vignette = Container:CreateTexture('FE_Vignette', 'OVERLAY')
