@@ -1,6 +1,10 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Effects'] = true
+L['vignette'] = true
+L['blur'] = true
+L['crisp'] = true
 L['None'] = true
 L['Comma'] = true
 L['Period'] = true
