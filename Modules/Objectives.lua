@@ -123,7 +123,7 @@ local ObjTrackerUpdate = function(_, event)
 			if _G[frameName].HeaderMenu then
 				_G[frameName].HeaderMenu.MinimizeButton:Hide()
 			end
-		elseif FadeIn and _G[frameName]:GetAlpha() == 0 and not HideObjs then
+		elseif _G[frameName]:GetAlpha() == 0 and not HideObjs then
 			if _G[frameName].HeaderMenu then
 				_G[frameName].HeaderMenu.MinimizeButton:Show()
 			end

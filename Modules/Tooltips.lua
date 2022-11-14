@@ -382,7 +382,7 @@ local TooltipSetUnit = function(self)
 		end
 
 		if SUI.IsRetail and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
-			unitLevel = UnitBattlePetLevel(unit)
+			unitLevel = UnitBattlePetLevel(unit) ---@type integer
 			local ab = C_PetJournal.GetPetTeamAverageLevel()
 			if ab then
 				lvlColor = GetRelativeDifficultyColor(ab, unitLevel)

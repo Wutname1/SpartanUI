@@ -45,7 +45,7 @@ local visibility = {
 ---|"arena"
 ---|"pet"
 
----@class SUI.UnitFrame : frame, SUIElements
+---@class SUI.UnitFrame : frame, SUI.UnitFrame.Element.Details
 ---@field unitOnCreate UnitFrameName
 ---@field elementList table<integer, SUI.UnitFrame.Elements>
 ---@field UpdateAll function

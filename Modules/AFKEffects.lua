@@ -1,5 +1,5 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
-local module = SUI:NewModule('Module_AFKEffects') ---@type SUIModule
+local module = SUI:NewModule('Module_AFKEffects') ---@type SUI.Module
 module.DisplayName = L['AFK Effects']
 module.description = 'Spin the camera around your character and apply some effects when AFK'
 ----------------------------------------
@@ -14,10 +14,10 @@ local defaults = {
 	},
 	FilmEffects = {
 		enabled = true,
+		animationInterval = 0.2,
 		effects = {
 			['**'] = {
-				enabled = false,
-				animationInterval = 0.2
+				enabled = false
 			},
 			vignette = {},
 			blur = {},
@@ -29,20 +29,15 @@ local defaults = {
 ----- Film Effects ----
 local EffectList = {'vignette', 'blur', 'crisp'}
 local function EffectLoop()
-	if not isAFK then
+	if not module.DB.FilmEffects.effects.blur.enabled and not module.DB.FilmEffects.effects.crisp.enabled then
 		return
 	end
 
-	module.DB.FilmEffects.effects.animationInterval = addon.db.profile.animationInterval + elapsed
-	if (addon.db.profile.animationInterval > (0.02)) then -- 50 FPS
-		addon.db.profile.animationInterval = 0
+	local yOfs = math.random(0, 256)
+	local xOfs = math.random(-128, 0)
 
-		local yOfs = math.random(0, 256)
-		local xOfs = math.random(-128, 0)
-
-		if addon.db.profile.anim == 'blur' or addon.db.profile.anim == 'crisp' then
-			Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs)
-		end
+	if module.DB.FilmEffects.effects.blur.enabled or module.DB.FilmEffects.effects.crisp.enabled then
+		Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs)
 	end
 end
 
@@ -131,12 +126,17 @@ local function StartEffects()
 			Container[v]:Show()
 		end
 	end
+
+	if module.DB.FilmEffects.effects.blur.enabled or module.DB.FilmEffects.effects.crisp.enabled then
+		module:ScheduleRepeatingTimer(EffectLoop, module.DB.FilmEffects.animationInterval)
+	end
 end
 
 local function StopEffects()
 	for i, v in ipairs(EffectList) do
 		Container[v]:Hide()
 	end
+	module:CancelAllTimers()
 end
 
 ----- Spin Cam ----

@@ -345,7 +345,8 @@
     "OPTION_TOOLTIP_ROTATE_MINIMAP",
     "MAX_TOTEMS",
     "TotemFrame",
-    "EventRegistry"
+    "EventRegistry",
+    "StatusTrackingBarManager"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
