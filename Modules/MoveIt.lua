@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
----@class MoveIt
+---@class MoveIt : AceAddon, AceHook-3.0
 local MoveIt = SUI:NewModule('Module_MoveIt', 'AceHook-3.0')
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
 MoveIt.Core = true
@@ -305,13 +305,39 @@ function MoveIt:UpdateMover(name, obj, doNotScale)
 	end
 end
 
+function MoveIt:UnlockAll()
+	for _, v in pairs(MoverList) do
+		v:Show()
+	end
+	MoveEnabled = true
+	MoverWatcher:Show()
+	if MoveIt.DB.tips then
+		print('When the movement system is enabled you can:')
+		print('     Shift+Click a mover to temporarily hide it', true)
+		print("     Alt+Click a mover to reset it's position", true)
+		print("     Control+Click a mover to reset it's scale", true)
+		print(' ', true)
+		print('     Use the scroll wheel to move left and right 1 coord at a time', true)
+		print('     Hold Shift + use the scroll wheel to move up and down 1 coord at a time', true)
+		print('     Hold Alt + use the scroll wheel to scale the frame', true)
+		print(' ', true)
+		print('     Press ESCAPE to exit the movement system quickly.', true)
+		print("Use the command '/sui move tips' to disable tips")
+		print("Use the command '/sui move reset' to reset ALL moved items")
+	end
+end
+
+function MoveIt:LockAll()
+	for _, v in pairs(MoverList) do
+		v:Hide()
+	end
+	MoveEnabled = false
+	MoverWatcher:Hide()
+end
+
 function MoveIt:MoveIt(name)
 	if MoveEnabled and not name then
-		for _, v in pairs(MoverList) do
-			v:Hide()
-		end
-		MoveEnabled = false
-		MoverWatcher:Hide()
+		MoveIt:LockAll()
 	else
 		if name then
 			if type(name) == 'string' then
@@ -330,26 +356,8 @@ function MoveIt:MoveIt(name)
 				end
 			end
 		else
-			for _, v in pairs(MoverList) do
-				v:Show()
-			end
-			if MoveIt.DB.tips then
-				print('When the movement system is enabled you can:')
-				print('     Shift+Click a mover to temporarily hide it', true)
-				print("     Alt+Click a mover to reset it's position", true)
-				print("     Control+Click a mover to reset it's scale", true)
-				print(' ', true)
-				print('     Use the scroll wheel to move left and right 1 coord at a time', true)
-				print('     Hold Shift + use the scroll wheel to move up and down 1 coord at a time', true)
-				print('     Hold Alt + use the scroll wheel to scale the frame', true)
-				print(' ', true)
-				print('     Press ESCAPE to exit the movement system quickly.', true)
-				print("Use the command '/sui move tips' to disable tips")
-				print("Use the command '/sui move reset' to reset ALL moved items")
-			end
+			MoveIt:UnlockAll()
 		end
-		MoveEnabled = true
-		MoverWatcher:Show()
 	end
 	MoverWatcher:EnableKeyboard(MoveEnabled)
 end
@@ -748,6 +756,21 @@ function MoveIt:OnInitialize()
 	coordFrame.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	coordFrame.Title:SetPoint('TOP')
 	coordFrame.Title:SetAlpha(.8)
+
+	if EditModeManagerFrame then
+		EventRegistry:RegisterCallback(
+			'EditMode.Enter',
+			function()
+				self:UnlockAll()
+			end
+		)
+		EventRegistry:RegisterCallback(
+			'EditMode.Exit',
+			function()
+				self:LockAll()
+			end
+		)
+	end
 end
 
 function MoveIt:CombatLockdown()
@@ -809,7 +832,7 @@ function MoveIt:OnEnable()
 				return
 			end
 			self:SetPropagateKeyboardInput(false)
-			MoveIt:MoveIt()
+			MoveIt:LockAll()
 		else
 			self:SetPropagateKeyboardInput(true)
 		end

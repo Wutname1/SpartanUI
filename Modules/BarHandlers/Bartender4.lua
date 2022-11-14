@@ -519,7 +519,7 @@ local function OnEnable()
 
 	--Disable BT4 Movement system
 	function Bartender4:Unlock()
-		print('Bartender4 movement system overridden by SpartanUI. Please use "/sui move" going forward.')
+		-- print('Bartender4 movement system overridden by SpartanUI. Please use "/sui move" going forward.')
 		Unlock()
 	end
 
