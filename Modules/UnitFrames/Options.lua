@@ -718,7 +718,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update the DB
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].size = val
 						--Update the screen
-						SUI:UpdateDefaultSize(UF.Unit[frameName][element].TextElements[count], val, 'UnitFrames')
+						SUI.Font:UpdateDefaultSize(UF.Unit[frameName][element].TextElements[count], val, 'UnitFrames')
 					end
 				},
 				position = {

@@ -423,7 +423,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	MoverList[name] = f
 
 	local nameText = f:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(nameText, 12, 'Mover')
+	SUI.Font:Format(nameText, 12, 'Mover')
 	nameText:SetJustifyH('CENTER')
 	nameText:SetPoint('CENTER')
 	nameText:SetText(DisplayName or name)
@@ -432,7 +432,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f.DisplayName = nameText
 
 	local MovedText = f:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(MovedText, 8, 'Mover')
+	SUI.Font:Format(MovedText, 8, 'Mover')
 	MovedText:SetJustifyH('CENTER')
 	MovedText:SetPoint('TOPRIGHT', nameText, 'BOTTOM', -2, -2)
 	MovedText:SetText('(MOVED)')
@@ -441,7 +441,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f.MovedText = MovedText
 
 	local ScaledText = f:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(ScaledText, 8, 'Mover')
+	SUI.Font:Format(ScaledText, 8, 'Mover')
 	ScaledText:SetJustifyH('CENTER')
 	ScaledText:SetPoint('TOPLEFT', nameText, 'BOTTOM', 2, -2)
 	ScaledText:SetText('(SCALED)')

@@ -130,18 +130,6 @@ local DBdefault = {
 		offset = 0
 	},
 	DisabledModules = {},
-	font = {
-		NumberSeperator = ',',
-		Path = '',
-		Modules = {
-			['**'] = {
-				Size = 0,
-				Face = 'Roboto Bold',
-				Type = 'outline'
-			}
-		}
-	},
-	MiniMap = {},
 	Offset = {
 		Top = 0,
 		TopAuto = true,
@@ -1274,15 +1262,6 @@ function SUI:OnInitialize()
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileChanged', 'UpdateModuleConfigs')
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileCopied', 'UpdateModuleConfigs')
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileReset', 'UpdateModuleConfigs')
-
-	--First Time Setup Actions
-	if not SUI.DB.SetupDone then
-		if LARGE_NUMBER_SEPERATOR == '.' then
-			SUI.DB.font.NumberSeperator = '.'
-		elseif LARGE_NUMBER_SEPERATOR == '' then
-			SUI.DB.font.NumberSeperator = ''
-		end
-	end
 
 	-- Setup ReloadUI Window
 	reloaduiWindow()

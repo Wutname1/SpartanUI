@@ -92,13 +92,8 @@ local updateText = function(self)
 		if now ~= 0 then
 			rested = (rested / goal) * self:GetWidth()
 
-			if
-				(rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))) >
-					(self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
-			 then
-				rested =
-					(self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))) -
-					(now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
+			if (rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))) > (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))) then
+				rested = (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))) - (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
 			end
 
 			if rested == 0 then
@@ -108,7 +103,7 @@ local updateText = function(self)
 		end
 		valFill = now
 		valMax = goal
-		remaining = SUI:comma_value(goal - now)
+		remaining = SUI.Font:comma_value(goal - now)
 		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
 	elseif (module.DB[side].display == 'rep') then
 		local name, _, low, high, current, factionID = GetWatchedFactionInfo()
@@ -160,13 +155,7 @@ local updateText = function(self)
 			end
 		end
 		if module.DB[side].text and valFill and valMax then
-			self.Text:SetFormattedText(
-				'( %s / %s ) %d%% %s',
-				SUI:comma_value(valFill),
-				SUI:comma_value(valMax),
-				valPercent,
-				remaining or ''
-			)
+			self.Text:SetFormattedText('( %s / %s ) %d%% %s', SUI.Font:comma_value(valFill), SUI.Font:comma_value(valMax), valPercent, remaining or '')
 		end
 	end
 
@@ -178,13 +167,7 @@ local showXPTooltip = function(self)
 	local XP_LEVEL_TEMPLATE = '( %s / %s ) %d%% ' .. COMBAT_XP_GAIN -- use Global Strings and regex to make the level string work in any locale
 	local xprest = TUTORIAL_TITLE26 .. ' (%d%%) -' -- Rested (%d%%) -
 	local a = format('Level %s ', UnitLevel('player'))
-	local b =
-		format(
-		XP_LEVEL_TEMPLATE,
-		SUI:comma_value(UnitXP('player')),
-		SUI:comma_value(UnitXPMax('player')),
-		(UnitXP('player') / UnitXPMax('player') * 100)
-	)
+	local b = format(XP_LEVEL_TEMPLATE, SUI.Font:comma_value(UnitXP('player')), SUI.Font:comma_value(UnitXPMax('player')), (UnitXP('player') / UnitXPMax('player') * 100))
 	self.tooltip.TextFrame.HeaderText:SetText(a .. b) -- Level 99 (9999 / 9999) 100% Experience
 	local rested, text = GetXPExhaustion() or 0, ''
 	if (rested > 0) then
@@ -210,14 +193,7 @@ local showRepTooltip = function(self)
 			percentage = (repLevelLow / repLevelHigh) * 100
 		end
 		self.tooltip.TextFrame.HeaderText:SetText(
-			format(
-				'%s ( %s / %s ) %d%% %s',
-				name,
-				SUI:comma_value(repLevelLow),
-				SUI:comma_value(repLevelHigh),
-				percentage,
-				_G['FACTION_STANDING_LABEL' .. react]
-			)
+			format('%s ( %s / %s ) %d%% %s', name, SUI.Font:comma_value(repLevelLow), SUI.Font:comma_value(repLevelHigh), percentage, _G['FACTION_STANDING_LABEL' .. react])
 		)
 		self.tooltip.TextFrame.MainText:SetText('|cffffd200' .. text .. '|r')
 		self.tooltip:Show()
@@ -237,12 +213,7 @@ local showHonorTooltip = function(self)
 	end
 
 	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, honorLevel)
-	self.tooltip.TextFrame.MainText:SetFormattedText(
-		'( %s / %s ) %d%%',
-		SUI:comma_value(currentHonor),
-		SUI:comma_value(maxHonor),
-		((currentHonor / maxHonor) * 100)
-	)
+	self.tooltip.TextFrame.MainText:SetFormattedText('( %s / %s ) %d%%', SUI.Font:comma_value(currentHonor), SUI.Font:comma_value(maxHonor), ((currentHonor / maxHonor) * 100))
 
 	self.tooltip:Show()
 end
@@ -259,10 +230,7 @@ local showAzeriteTooltip = function(self)
 		local xpToNextLevel = totalLevelXP - xp
 		local ratio = (xp / totalLevelXP)
 		if currentLevel and xpToNextLevel then
-			self.tooltip.TextFrame.HeaderText:SetText(
-				AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel),
-				HIGHLIGHT_FONT_COLOR:GetRGB()
-			)
+			self.tooltip.TextFrame.HeaderText:SetText(AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel), HIGHLIGHT_FONT_COLOR:GetRGB())
 			if azeriteItem:GetItemName() then
 				self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
 			end
@@ -322,7 +290,7 @@ function module:factory()
 		if StyleSetting.FontSize and module.DB[i].FontSize == module.DB.default.FontSize then
 			tmp = StyleSetting.FontSize
 		end
-		SUI:FormatFont(statusbar.Text, tmp)
+		SUI.Font:Format(statusbar.Text, tmp)
 		statusbar.Text:SetJustifyH('CENTER')
 		statusbar.Text:SetJustifyV('MIDDLE')
 		statusbar.Text:SetAllPoints(statusbar)
@@ -351,19 +319,19 @@ function module:factory()
 		TextFrame:SetPoint('CENTER', tooltip, 'CENTER')
 
 		TextFrame.HeaderText = TextFrame:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(TextFrame.HeaderText, 10)
+		SUI.Font:Format(TextFrame.HeaderText, 10)
 		TextFrame.HeaderText:SetPoint('TOPLEFT', TextFrame)
 		TextFrame.HeaderText:SetPoint('TOPRIGHT', TextFrame)
 		TextFrame.HeaderText:SetHeight((0.18 * TextFrame:GetHeight()))
 
 		TextFrame.MainText = TextFrame:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(TextFrame.MainText, 8)
+		SUI.Font:Format(TextFrame.MainText, 8)
 		TextFrame.MainText:SetPoint('TOPLEFT', TextFrame.HeaderText, 'BOTTOMLEFT', 0, -2)
 		TextFrame.MainText:SetPoint('TOPRIGHT', TextFrame.HeaderText, 'BOTTOMRIGHT', 0, -2)
 		TextFrame.MainText:SetHeight((0.82 * TextFrame:GetHeight()))
 
 		TextFrame.MainText2 = TextFrame:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(TextFrame.MainText2, 8)
+		SUI.Font:Format(TextFrame.MainText2, 8)
 		TextFrame.MainText2:SetPoint('TOPLEFT', TextFrame.MainText, 'BOTTOMLEFT', 0, -2)
 		TextFrame.MainText2:SetPoint('TOPRIGHT', TextFrame.MainText, 'BOTTOMRIGHT', 0, -2)
 		TextFrame.MainText2:SetHeight((0.82 * TextFrame:GetHeight()))

@@ -547,7 +547,7 @@ function module:OnEnable()
 		anchor.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
 		anchor.bg:SetVertexColor(1, 1, 1, 0.8)
 		anchor.lbl = anchor:CreateFontString(nil, 'OVERLAY')
-		anchor.lbl:SetFont(SUI:GetFontFace(), 10)
+		anchor.lbl:SetFont(SUI.Font:GetFont(), 10)
 		anchor.lbl:SetText('Anchor for Rule ' .. k)
 		anchor.lbl:SetAllPoints(anchor)
 

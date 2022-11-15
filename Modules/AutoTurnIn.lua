@@ -418,9 +418,9 @@ function module.QUEST_COMPLETE()
 
 			-- Check if it is a weapon, do this last incase it only rewards one item
 			if slot[1] == 'MainHandSlot' or slot[1] == 'SecondaryHandSlot' then
-				QuestRewardsWeapon = 'weapon'
+				QuestRewardsWeapon = true
 			elseif slot[1] == 'Trinket0Slot' then
-				QuestRewardsWeapon = 'trinket'
+				QuestRewardsWeapon = true
 			end
 		end
 	end

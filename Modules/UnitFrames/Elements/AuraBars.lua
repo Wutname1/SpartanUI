@@ -14,8 +14,8 @@ local InverseAnchor = UF.InverseAnchor
 -- 	bar.spark:Point('BOTTOM')
 -- 	bar.spark:Point('TOP')
 
--- 	AuraBars.spellTimeFont = SUI:GetFontFace('Player')
--- 	AuraBars.spellNameFont = SUI:GetFontFace('Player')
+-- 	AuraBars.spellTimeFont = SUI.Font:GetFontFace('Player')
+-- 	AuraBars.spellNameFont = SUI.Font:GetFontFace('Player')
 -- 	UF:Update_FontString(bar.timeText)
 -- 	UF:Update_FontString(bar.nameText)
 -- end
@@ -25,8 +25,8 @@ local InverseAnchor = UF.InverseAnchor
 local function Build(frame, DB)
 	local AuraBars = CreateFrame('Frame', '$parent_AuraBars', frame)
 
-	AuraBars.spellTimeFont = SUI:GetFontFace('Player')
-	AuraBars.spellNameFont = SUI:GetFontFace('Player')
+	AuraBars.spellTimeFont = SUI.Font:GetFont('Player')
+	AuraBars.spellNameFont = SUI.Font:GetFont('Player')
 
 	local function PostCreateBar(_, bar)
 		bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))

@@ -3,6 +3,7 @@ local SUI = SUI
 local L = SUI.L
 ---@class SUI.SetupWizard
 local module = SUI:NewModule('SetupWizard')
+ ---@type SUI.Module
 local StdUi = SUI.StdUi
 module.window = nil
 

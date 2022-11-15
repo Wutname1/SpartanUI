@@ -21,7 +21,7 @@ local function Build(frame, DB)
 	health.TextElements = {}
 	for i, key in pairs(DB.text) do
 		local NewString = health:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(NewString, key.size, 'UnitFrames')
+		SUI.Font:Format(NewString, key.size, 'UnitFrames')
 		NewString:SetJustifyH(key.SetJustifyH)
 		NewString:SetJustifyV(key.SetJustifyV)
 		NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)

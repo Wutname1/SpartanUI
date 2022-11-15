@@ -2,6 +2,7 @@
 local SUI = SUI
 local L = SUI.L
 local module = SUI:NewModule('Handler_Modules')
+ ---@type SUI.Module
 
 function SUI:GetModuleName(ModuleTable)
 	local name

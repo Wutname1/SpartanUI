@@ -308,10 +308,10 @@ function UF.PostCreateAura(element, button)
 	button.count:SetParent(StringParent)
 	button.count:ClearAllPoints()
 	button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
-	button.count:SetFont(SUI:GetFontFace('UnitFrames'), select(2, button.count:GetFont()) - 3)
+	button.count:SetFont(SUI.Font:GetFont('UnitFrames'), select(2, button.count:GetFont()) - 3)
 
 	local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
-	Duration:SetFont(SUI:GetFontFace('UnitFrames'), 11)
+	Duration:SetFont(SUI.Font:GetFont('UnitFrames'), 11)
 	Duration:SetPoint('TOPLEFT', button, 0, -1)
 	button.Duration = Duration
 

@@ -263,7 +263,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 		if nameString ~= '' then
 			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
-			SUI:FormatFont(frame.Name, 8, 'Nameplate')
+			SUI.Font:Format(frame.Name, 8, 'Nameplate')
 			frame.Name:SetSize(frame:GetWidth(), 9)
 			frame.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
 			frame.Name:SetPoint('BOTTOM', frame, 'TOP')
@@ -376,13 +376,13 @@ local NamePlateFactory = function(frame, unit)
 			WidgetXPBar.Rank:SetJustifyH('LEFT')
 			WidgetXPBar.Rank:SetJustifyV('MIDDLE')
 			WidgetXPBar.Rank:SetAllPoints(WidgetXPBar)
-			SUI:FormatFont(WidgetXPBar.Rank, 7, 'Nameplate')
+			SUI.Font:Format(WidgetXPBar.Rank, 7, 'Nameplate')
 
 			WidgetXPBar.ProgressText = WidgetXPBar:CreateFontString()
 			WidgetXPBar.ProgressText:SetJustifyH('CENTER')
 			WidgetXPBar.ProgressText:SetJustifyV('MIDDLE')
 			WidgetXPBar.ProgressText:SetAllPoints(WidgetXPBar)
-			SUI:FormatFont(WidgetXPBar.ProgressText, 7, 'Nameplate')
+			SUI.Font:Format(WidgetXPBar.ProgressText, 7, 'Nameplate')
 
 			frame.WidgetXPBar = WidgetXPBar
 		end

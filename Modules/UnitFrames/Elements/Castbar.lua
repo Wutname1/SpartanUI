@@ -48,13 +48,13 @@ local function Build(frame, DB)
 
 	-- Add spell text
 	local Text = cast:CreateFontString()
-	SUI:FormatFont(Text, DB.text['1'].size, 'UnitFrames')
+	SUI.Font:Format(Text, DB.text['1'].size, 'UnitFrames')
 	Text:SetPoint(DB.text['1'].position.anchor, cast, DB.text['1'].position.anchor, DB.text['1'].position.x, DB.text['1'].position.y)
 	cast.Text = Text
 
 	-- Add a timer
 	local Time = cast:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(Time, DB.text['2'].size, 'UnitFrames')
+	SUI.Font:Format(Time, DB.text['2'].size, 'UnitFrames')
 	Time:SetPoint(DB.text['2'].position.anchor, cast, DB.text['2'].position.anchor, DB.text['2'].position.x, DB.text['2'].position.y)
 	cast.Time = Time
 

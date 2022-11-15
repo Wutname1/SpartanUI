@@ -346,7 +346,11 @@
     "MAX_TOTEMS",
     "TotemFrame",
     "EventRegistry",
-    "StatusTrackingBarManager"
+    "StatusTrackingBarManager",
+    "GetContainerNumSlots",
+    "GetContainerItemLink",
+    "UseContainerItem",
+    "GetContainerItemInfo"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
