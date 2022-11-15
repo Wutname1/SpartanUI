@@ -343,11 +343,12 @@ end
 
 local function VehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
+		local minimapModule = SUI:GetModule('Module_Minimap')
 		petbattle:HookScript(
 			'OnHide',
 			function()
 				SUI_Art_War:Hide()
-				if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+				if SUI:IsModuleEnabled('Minimap') and ((minimapModule.DB.AutoDetectAllowUse) or (minimapModule.DB.ManualAllowUse)) then
 					Minimap:Hide()
 				end
 			end
@@ -356,7 +357,7 @@ local function VehicleUI()
 			'OnShow',
 			function()
 				SUI_Art_War:Show()
-				if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+				if SUI:IsModuleEnabled('Minimap') and ((minimapModule.DB.AutoDetectAllowUse) or (minimapModule.DB.ManualAllowUse)) then
 					Minimap:Show()
 				end
 			end

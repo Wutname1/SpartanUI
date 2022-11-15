@@ -107,19 +107,4 @@ end
 
 function module:EnableArtwork()
 	module:SetupVehicleUI()
-
-	if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-		module:MiniMap()
-	end
-end
-
--- Minimap
-function module:MiniMap()
-	if Minimap.ZoneText ~= nil then
-		Minimap.ZoneText:ClearAllPoints()
-		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -5)
-		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -5)
-		Minimap.ZoneText:Hide()
-		MinimapZoneText:Show()
-	end
 end

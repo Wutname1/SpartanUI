@@ -89,7 +89,7 @@ function module:OnEnable()
 
 		module:SetupVehicleUI()
 
-		if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+		if SUI:IsModuleEnabled('Minimap') then
 			module:MiniMap()
 		end
 	end
