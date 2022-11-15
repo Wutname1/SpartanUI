@@ -1,5 +1,5 @@
 local SUI, L, StdUi = SUI, SUI.L, SUI.StdUi
-local module = SUI:NewModule('Module_AutoTurnIn')
+local module = SUI:NewModule('Module_AutoTurnIn') ---@type SUI.Module
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------

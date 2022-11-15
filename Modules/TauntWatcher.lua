@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Module_TauntWatcher')
+local module = SUI:NewModule('Module_TauntWatcher') ---@type SUI.Module
 module.Displayname = L['Taunt watcher']
 module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------

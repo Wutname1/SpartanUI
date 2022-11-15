@@ -1,5 +1,5 @@
 local SUI, L = SUI, SUI.L
-local module = SUI:NewModule('Style_Arcane')
+local module = SUI:NewModule('Style_Arcane') ---@type SUI.Module
 local unpack = unpack
 module.Settings = {}
 local Artwork_Core = SUI:GetModule('Module_Artwork')

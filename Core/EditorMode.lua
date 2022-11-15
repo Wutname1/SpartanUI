@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('EditorMode')
+local module = SUI:NewModule('EditorMode') ---@type SUI.Module
 
 function module:OnEnable()
 	-- local SUILayout =

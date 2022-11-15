@@ -2,7 +2,7 @@ local SUI = SUI
 local L = SUI.L
 local Artwork_Core = SUI:GetModule('Module_Artwork')
 local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI_UnitFrames
-local module = SUI:NewModule('Style_Minimal')
+local module = SUI:NewModule('Style_Minimal') ---@type SUI.Module
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 

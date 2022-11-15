@@ -1,5 +1,5 @@
 local _G, SUI, L, LSM = _G, SUI, SUI.L, SUI.Lib.LSM
-local module = SUI:NewModule('Module_Tooltips', 'AceHook-3.0')
+local module = SUI:NewModule('Module_Tooltips', 'AceHook-3.0') ---@type SUI.Module
 module.description = 'SpartanUI tooltip skining'
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('Artwork_StatusBars')
+---@type SUI.Module
 module.bars = {}
 local FACTION_BAR_COLORS = {
 	[1] = {r = 1, g = 0.2, b = 0},

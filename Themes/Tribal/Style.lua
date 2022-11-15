@@ -1,6 +1,7 @@
 local SUI, L = SUI, SUI.L
 local print = SUI.print
 local module = SUI:NewModule('Style_Tribal')
+---@type SUI.Module
 local Artwork_Core = SUI:GetModule('Module_Artwork')
 local UF = SUI:GetModule('Module_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Tribal', SpartanUI)

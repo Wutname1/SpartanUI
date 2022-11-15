@@ -1,5 +1,5 @@
 local SUI, L, MoveIt = _G.SUI, SUI.L, SUI.MoveIt
-local module = SUI:NewModule('Module_Minimap')
+local module = SUI:NewModule('Module_Minimap') ---@type SUI.Module
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
 ----------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 ---@class MoveIt : AceAddon, AceHook-3.0
-local MoveIt = SUI:NewModule('Module_MoveIt', 'AceHook-3.0')
+local MoveIt = SUI:NewModule('Module_MoveIt', 'AceHook-3.0') ---@type SUI.Module
 MoveIt.description = 'CORE: Is the movement system for SpartanUI'
 MoveIt.Core = true
 SUI.MoveIt = MoveIt

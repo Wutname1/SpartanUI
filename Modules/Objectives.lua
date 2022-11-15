@@ -2,7 +2,7 @@ local _G, SUI, L = _G, SUI, SUI.L
 if SUI.IsRetail then
 	return
 end
-local module = SUI:NewModule('Module_Objectives')
+local module = SUI:NewModule('Module_Objectives') ---@type SUI.Module
 module.description = 'Allows the hiding of the Objectives tracker based on conditions'
 ----------------------------------------------------------------------------------------------------
 local MoveIt

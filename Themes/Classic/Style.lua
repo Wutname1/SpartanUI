@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
 local Artwork_Core = SUI:GetModule('Module_Artwork')
-local module = SUI:NewModule('Style_Classic')
+local module = SUI:NewModule('Style_Classic') ---@type SUI.Module
 local unpack = unpack
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------

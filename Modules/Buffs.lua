@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:NewModule('Module_Buffs')
+local module = SUI:NewModule('Module_Buffs') ---@type SUI.Module
 ----------------------------------------------------------------------------------------------------
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local BuffWatcher = CreateFrame('Frame')

@@ -2,7 +2,7 @@
 local SUI = SUI
 local L, print = SUI.L, SUI.print
 ---@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
-local UF = SUI:NewModule('Module_UnitFrames')
+local UF = SUI:NewModule('Module_UnitFrames') ---@type SUI.Module
 local MoveIt = SUI.MoveIt
 SUI.UF = UF
 UF.DisplayName = L['Unit frames']

@@ -2,6 +2,7 @@ local SUI, L = SUI, SUI.L
 local print = SUI.print
 local Artwork_Core = SUI:GetModule('Module_Artwork')
 local module = SUI:NewModule('Style_Digital')
+---@type SUI.Module
 local UF = SUI:GetModule('Module_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Digital', SpartanUI)
 module.Settings = {}
