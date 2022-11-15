@@ -3,6 +3,10 @@ local module = SUI:NewModule('Component_AutoSell')
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
+local GetContainerNumSlots = C_Container.GetContainerNumSlots or GetContainerNumSlots
+local GetContainerItemInfo = C_Container.GetContainerItemInfo or GetContainerItemInfo
+local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+
 local frame = CreateFrame('Frame')
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local LoadedOnce = false

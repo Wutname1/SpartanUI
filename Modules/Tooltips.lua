@@ -385,7 +385,7 @@ local TooltipSetUnit = function(self)
 
 	for i = 2, self:NumLines() do
 		local tip = _G['GameTooltipTextLeft' .. i]
-		if tip:GetText() and tip:GetText():find(LEVEL) then
+		if tip and tip:GetText() and tip:GetText():find(LEVEL) then
 			lvlLine = tip
 		end
 	end
