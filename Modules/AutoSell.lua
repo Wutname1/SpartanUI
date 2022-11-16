@@ -3,6 +3,11 @@ local module = SUI:NewModule('Component_AutoSell') ---@type SUI.Module
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
+local GetContainerNumSlots = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
+local GetContainerItemInfo = (C_Container and C_Container.GetContainerItemInfo) or GetContainerItemInfo
+local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local UseContainerItem = (C_Container and C_Container.UseContainerItem) or UseContainerItem
+
 local frame = CreateFrame('Frame')
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local LoadedOnce = false
@@ -431,12 +436,14 @@ function module:SellTrash()
 
 	--Find Items to sell
 	for bag = 0, 4 do
-		for slot = 1, C_Container.GetContainerNumSlots(bag) do
-			local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
-			if itemInfo and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
+		for slot = 1, GetContainerNumSlots(bag) do
+			local itemInfo, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
+			if SUI.IsRetail and itemInfo and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
 				ItemToSell[#ItemToSell + 1] = {bag, slot}
-				-- ItemsToSellTotal = ItemsToSellTotal + 1
 				totalValue = totalValue + (select(11, GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
+			elseif not SUI.IsRetail and module:IsSellable(itemID, link, bag, slot) then
+				ItemToSell[#ItemToSell + 1] = {bag, slot}
+				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
 			end
 		end
 	end
@@ -463,7 +470,7 @@ function module:SellTrashInBag(ItemListing)
 	end
 
 	-- SELL!
-	C_Container.UseContainerItem(item[1], item[2])
+	UseContainerItem(item[1], item[2])
 
 	-- If it was the last item stop timers
 	if (#ItemListing == 0) then
