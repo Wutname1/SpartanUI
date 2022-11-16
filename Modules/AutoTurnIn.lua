@@ -8,7 +8,7 @@ module.description = 'Auto accept and turn in quests'
 local SelectAvailableQuest = SelectAvailableQuest
 local SelectActiveQuest = SelectActiveQuest
 local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests or GetGossipActiveQuests
-local GetNumGossipOptions = C_GossipInfo.GetNumOptions or GetNumGossipOptions
+local GetNumGossipOptions = C_GossipInfo.GetOptions or GetNumGossipOptions
 local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
 local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests or GetGossipAvailableQuests
 local GetGossipOptions = C_GossipInfo.GetOptions or GetGossipOptions
@@ -142,9 +142,9 @@ local DBDefaults = {
 		'I would like to challenge both of you to a spar.',
 		'<Request tithe>',
 		--DF
-		'We need explorers for an expedition to the Dradon Isles. Will you join us?',
-		'We need artisans for an expedition to the Dradon Isles. Will you join us?',
-		'We need scholars for an expedition to the Dradon Isles. Will you join us?',
+		'We need explorers for an expedition to the Dragon Isles. Will you join us?',
+		'We need artisans for an expedition to the Dragon Isles. Will you join us?',
+		'We need scholars for an expedition to the Dragon Isles. Will you join us?',
 		'<Ask Khadgar what happened.>'
 		-- "Tell me of the dracthyr's origins.",
 		-- "Tell me of the Neltharion's downfall.",
@@ -705,26 +705,22 @@ function module.GOSSIP_SHOW()
 	for k, gossip in pairs(options) do
 		debug('------')
 		debug(gossip.name)
-		debug(gossip.type)
 		debug(gossip.rewards)
 		debug(gossip.spellID)
 		debug(gossip.status)
+		debug(gossip.flags)
 		debug('------')
 		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
 		local isBlacklisted = module:blacklisted(gossip.name)
-		if
-			gossip.type and ((gossip.type ~= 'gossip') or (gossip.type == 'gossip' and gossip.status == 0)) and
-				(not isBlacklisted or isWhitelisted) and
-				SUI.IsRetail
-		 then
+		if (gossip.status == 0) and (not isBlacklisted or isWhitelisted) and SUI.IsRetail then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
-			if (DB.AutoGossipSafeMode and (not string.find(string.lower(gossip.type), 'quest'))) and not isWhitelisted then
+			if (DB.AutoGossipSafeMode) and not isWhitelisted then
 				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
 				return
 			end
 			TempBlackList[gossip.name] = true
-			local opcount = GetNumGossipOptions()
-			SelectGossipOption((opcount == 1) and 1 or math.floor(k / GetNumGossipOptions()) + 1)
+			SelectGossipOption(gossip.gossipOptionID)
+
 			if DB.ChatText then
 				SUI:Print('Selecting: ' .. gossip.name)
 			end
