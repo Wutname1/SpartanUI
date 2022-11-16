@@ -3,12 +3,9 @@ local module = SUI:NewModule('Module_AutoTurnIn') ---@type SUI.Module
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
--- local SelectAvailableQuest = C_GossipInfo.SelectAvailableQuest or SelectAvailableQuest
--- local SelectActiveQuest = C_GossipInfo.SelectActiveQuest or SelectActiveQuest
 local SelectAvailableQuest = SelectAvailableQuest
 local SelectActiveQuest = SelectActiveQuest
 local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests or GetGossipActiveQuests
-local GetNumGossipOptions = C_GossipInfo.GetOptions or GetNumGossipOptions
 local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
 local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests or GetGossipAvailableQuests
 local GetGossipOptions = C_GossipInfo.GetOptions or GetGossipOptions
@@ -145,10 +142,11 @@ local DBDefaults = {
 		'We need explorers for an expedition to the Dragon Isles. Will you join us?',
 		'We need artisans for an expedition to the Dragon Isles. Will you join us?',
 		'We need scholars for an expedition to the Dragon Isles. Will you join us?',
-		'<Ask Khadgar what happened.>'
-		-- "Tell me of the dracthyr's origins.",
-		-- "Tell me of the Neltharion's downfall.",
-		-- 'Tell me of the Dawn of the Aspects.'
+		'<Ask Khadgar what happened.>',
+		'Scalecommander Cindrethresh would like you to meet her at the zeppelin tower.',
+		"Tell me of the dracthyr's origins.",
+		"Tell me of the Neltharion's downfall.",
+		'Tell me of the Dawn of the Aspects.'
 	}
 }
 
