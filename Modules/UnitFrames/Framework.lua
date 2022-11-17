@@ -7,7 +7,8 @@ UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
 UF.Core = true
 UF.CurrentSettings = {}
----@class UFPositionDefaults
+
+---@class SUI.UnitFrame.FramePositions
 local UFPositionDefaults = {
 	['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-60,250',
 	['pet'] = 'RIGHT,SUI_UF_player,BOTTOMLEFT,-60,0',
@@ -218,6 +219,7 @@ function UF:Update()
 	UF:UpdateAll()
 end
 
+---@param style string
 function UF:SetActiveStyle(style)
 	UF.Style:Change(style)
 	UF.DB.Style = style
@@ -229,6 +231,7 @@ function UF:SetActiveStyle(style)
 	SUI.Analytics:Set(UF, 'Style', style)
 end
 
+---@param scale integer
 function UF:ScaleFrames(scale)
 	if SUI:IsModuleDisabled('MoveIt') then
 		return
