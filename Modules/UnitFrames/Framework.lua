@@ -1,10 +1,8 @@
 ---@class SUI
 local SUI = SUI
-local L, print = SUI.L, SUI.print
+local L, MoveIt = SUI.L, SUI.MoveIt
 ---@class SUI.UnitFrame : SUI.Module
 local UF = SUI:NewModule('Module_UnitFrames')
-local MoveIt = SUI.MoveIt
-SUI.UF = UF
 UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
 UF.Core = true
@@ -246,3 +244,5 @@ function UF:ScaleFrames(scale)
 		end
 	end
 end
+
+SUI.UF = UF

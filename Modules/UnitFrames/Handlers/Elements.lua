@@ -1,5 +1,5 @@
 ---@class SUI.UnitFrame
-local UF = SUI:GetModule('Module_UnitFrames')
+local UF = SUI.UF
 local Elements = {
 	Types = {}
 }

@@ -1,5 +1,5 @@
 ---@class SUI.UnitFrame
-local UF = SUI:GetModule('Module_UnitFrames')
+local UF = SUI.UF
 
 local BuiltFrames = {} ---@type table<UnitFrameName, table>
 local FrameData = {} ---@type table<UnitFrameName, table>
