@@ -142,7 +142,7 @@ local Settings = {
 		x = 7,
 		y = 20
 	},
-	filters = {
+	rules = {
 		showPlayers = true
 	},
 	config = {

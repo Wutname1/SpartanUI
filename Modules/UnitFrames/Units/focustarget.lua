@@ -39,7 +39,8 @@ local Settings = {
 				relativeTo = 'Castbar',
 				relativePoint = 'BOTTOM'
 			}
-		}
+		},
+		Power = {enabled = false}
 	},
 	config = {
 		Requires = 'focus',

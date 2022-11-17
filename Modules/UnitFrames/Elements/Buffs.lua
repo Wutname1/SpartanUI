@@ -11,19 +11,6 @@ function UF:Aura_OnClick()
 			print(k .. ' = ' .. tostring(v))
 		end
 	end
-
-	-- local spellName, spellID = self.name, self.spellID
-	-- local listName = UF.db.modifiers[keyDown]
-	-- if spellName and spellID and listName ~= 'NONE' then
-	-- if not E.global.unitframe.aurafilters[listName].spells[spellID] then
-	-- 	E:Print(format(L["The spell '%s' has been added to the '%s' unitframe aura filter."], spellName, listName))
-	-- 	E.global.unitframe.aurafilters[listName].spells[spellID] = {enable = true, priority = 0}
-	-- else
-	-- 	E.global.unitframe.aurafilters[listName].spells[spellID].enable = true
-	-- end
-
-	-- UF:UpdateAll()
-	-- end
 end
 
 ---@param frame table
@@ -106,10 +93,6 @@ local Settings = {
 		relativePoint = 'BOTTOMLEFT',
 		y = -10
 	},
-	filters = {
-		showPlayers = true,
-		boss = true
-	},
 	config = {
 		type = 'Auras'
 	},
@@ -119,7 +102,8 @@ local Settings = {
 			maxTime = 180,
 			minTime = 1
 		},
-		isBossAura = true
+		isBossAura = true,
+		showPlayers = true
 	}
 }
 UF.Elements:Register('Buffs', Build, Update, Options, Settings)

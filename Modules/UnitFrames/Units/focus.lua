@@ -43,7 +43,8 @@ local Settings = {
 				relativeTo = 'Castbar',
 				relativePoint = 'BOTTOM'
 			}
-		}
+		},
+		Power = {enabled = false}
 	},
 	config = {
 		isFriendly = true
