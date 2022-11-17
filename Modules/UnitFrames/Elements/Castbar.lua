@@ -96,7 +96,11 @@ end
 ---@param settings? table
 local function Update(frame, settings)
 	local element = frame.Castbar
-	local DB = settings or element.DB
+	local DB = settings or element.DB ---@type SUI.UnitFrame.Element.Settings
+	if not DB.enabled then
+		element:Hide()
+		return
+	end
 
 	if SUI.IsRetail then
 		-- latency
