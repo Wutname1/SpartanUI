@@ -96,7 +96,7 @@ end
 ---@param settings? table
 local function Update(frame, settings)
 	local element = frame.Castbar
-	local DB = settings or element.DB ---@type SUI.UnitFrame.Element.Settings
+	local DB = settings or element.DB ---@type SUI.UnitFrame.Element.Settings.Castbar
 	if not DB.enabled then
 		element:Hide()
 		return
@@ -257,7 +257,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Castbar')
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@class SUI.UnitFrame.Element.Settings.Castbar : SUI.UnitFrame.Element.Settings
 local Settings = {
 	enabled = false,
 	height = 10,
