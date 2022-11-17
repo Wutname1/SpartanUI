@@ -26,7 +26,7 @@ end
 local function Options()
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	enabled = false,
 	width = 100,

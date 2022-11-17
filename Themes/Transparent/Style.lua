@@ -107,7 +107,7 @@ function module:OnInitialize()
 
 	-- Unitframes Settings
 	local UF = SUI:GetModule('Module_UnitFrames')
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			top = {

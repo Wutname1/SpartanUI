@@ -983,7 +983,7 @@ function Options:Initialize()
 
 	-- Build style Buttons
 	for styleName, styleInfo in pairs(UF.Style:GetList()) do
-		local data = styleInfo.settings ---@type UFStyleSettings
+		local data = styleInfo.settings ---@type SUI.UF.Style.Settings
 
 		UFOptions.args.BaseStyle.args[styleName] = {
 			name = data.displayName or styleName,

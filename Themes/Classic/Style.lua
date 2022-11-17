@@ -727,7 +727,7 @@ function module:OnInitialize()
 	}
 
 	local UF = SUI.UF
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			full = {

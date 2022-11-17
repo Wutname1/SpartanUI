@@ -87,7 +87,7 @@ function module:OnInitialize()
 	}
 	SUI:GetModule('Module_Minimap'):Register('War', minimapSettings)
 
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			top = {

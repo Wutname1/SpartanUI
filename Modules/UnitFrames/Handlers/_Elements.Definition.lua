@@ -2,7 +2,7 @@
 ---@field DB SUI.UF.Elements.Settings
 local ElementProps = {}
 
----@class ElementConfig
+---@class SUI.UF.Elements.Config
 ---@field NoBulkUpdate? boolean
 ---@field type? ElementType
 ---@field DisplayName? string
@@ -23,7 +23,7 @@ local ElementConfig = {}
 ---@field size integer|boolean
 ---@field FrameStrata FrameStrata
 ---@field FrameLevel integer
----@field config? ElementConfig
+---@field config? SUI.UF.Elements.Config
 ---@field position SUI.UF.Elements.Positioning
 ---@field rules SUI.UF.Auras.Rules
 local ElementSettings = {

@@ -39,7 +39,7 @@ end
 local function Options()
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	anchor = {
 		point = 'BOTTOMLEFT',

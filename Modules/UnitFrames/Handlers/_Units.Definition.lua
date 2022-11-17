@@ -5,11 +5,11 @@
 ---@field yOfs integer
 local FramePositioning = {}
 
----@class UFrameSettings
+---@class SUI.UF.Unit.Settings
 ---@field anchor FramePositioning
 ---@field elements table<string, SUI.UF.Elements.Settings>
 ---@field visibility UFrameVisibility
----@field config UFrameConfig
+---@field config SUI.UF.Unit.Config
 local UFrameSettings = {
 	enabled = true,
 	width = 180,
@@ -17,7 +17,7 @@ local UFrameSettings = {
 	moved = false
 }
 
----@class UFrameConfig
+---@class SUI.UF.Unit.Config
 local config = {
 	IsGroup = false,
 	isChild = false,
@@ -52,7 +52,7 @@ local visibility = {
 ---@field ElementUpdate function
 ---@field mover frame
 ---@field isForced boolean
----@field config UFrameSettings
+---@field config SUI.UF.Unit.Settings
 ---@field frames? table<integer, SUI.UF.Unit.Frame>
 ---@field header? frame
 local SUIUnitFrame = {}

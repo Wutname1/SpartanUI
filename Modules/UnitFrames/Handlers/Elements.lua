@@ -1,9 +1,16 @@
 ---@class SUI.UF
 local UF = SUI.UF
+
+---@class SUI.UF.Elements
+---@field Build function
+---@field Update? function
+---@field OptionsTable? function
+---@field ElementSettings? SUI.UF.Elements.Settings
 local Elements = {
 	Types = {}
 }
 
+---@type SUI.UF.Elements.Settings
 local DefaultSettings = {
 	enabled = false,
 	alpha = 1,
@@ -61,7 +68,7 @@ local DefaultSettings = {
 		NoBulkUpdate = false,
 		type = 'General'
 	}
-} ---@type SUI.UF.Elements.Settings
+}
 
 Elements.Types.General = {}
 Elements.Types.StatusBar = {}
@@ -69,22 +76,13 @@ Elements.Types.Indicator = {}
 Elements.Types.Text = {}
 Elements.Types.Auras = {}
 
----@class SUIUFElement
----@field Build function
----@field Update? function
----@field OptionsTable? function
----@field ElementSettings? SUI.UF.Elements.Settings
-
----@class SUIUFElementList
----@field T table<string, SUIUFElement>
+---@class SUI.UF.Elements.Listing
+---@field T table<string, SUI.UF.Elements>
 Elements.List = {}
 
 ---@class SUIUFFrameSettingList
 ---@field T table<string, SUI.UF.Elements.list>
 Elements.FrameSettings = {}
-
----@class ElementConfig
----@field NoBulkUpdate boolean
 
 ---@param ElementName string
 ---@param Build function

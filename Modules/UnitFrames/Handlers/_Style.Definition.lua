@@ -1,4 +1,4 @@
----@class UFStyleSettings
+---@class SUI.UF.Style.Settings
 ---@field displayName string
 ---@field setup UFStyleSetupSettings
 ---@field positions? SUI.UF.FramePositions

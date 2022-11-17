@@ -24,7 +24,7 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			top = {

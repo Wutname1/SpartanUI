@@ -66,7 +66,7 @@ function module:OnInitialize()
 
 	-- Unitframes Settings
 	local UF = SUI:GetModule('Module_UnitFrames')
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local RedUFSettings = {
 		displayName = 'Arcane red',
 		artwork = {
@@ -102,7 +102,7 @@ function module:OnInitialize()
 	}
 	SUI:GetModule('Module_Minimap'):Register('Arcane', minimapSettings)
 
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local BlueUFSettings = {
 		displayName = 'Arcane blue',
 		artwork = {

@@ -19,7 +19,7 @@ function module:OnInitialize()
 		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
 	}
 
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			bg = {

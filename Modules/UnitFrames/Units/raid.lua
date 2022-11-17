@@ -117,7 +117,7 @@ local function Options(OptionSet)
 	}
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 95,
 	showParty = false,

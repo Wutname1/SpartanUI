@@ -53,7 +53,7 @@ end
 local function Options()
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	visibility = {
 		showAlways = true

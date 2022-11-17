@@ -5,19 +5,19 @@ local BuiltFrames = {} ---@type table<UnitFrameName, table>
 local FrameData = {} ---@type table<UnitFrameName, table>
 
 local Unit = {
-	UnitsLoaded = {}, ---@type table<UnitFrameName, UFrameConfig>
-	GroupsLoaded = {}, ---@type table<UnitFrameName, UFrameConfig>
-	defaultConfigs = {} ---@type table<string, UFrameSettings>
+	UnitsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
+	GroupsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
+	defaultConfigs = {} ---@type table<string, SUI.UF.Unit.Settings>
 }
 
 ---@param frameName string
 ---@param builder function
----@param settings? UFrameSettings
+---@param settings? SUI.UF.Unit.Settings
 ---@param options? function
 ---@param groupbuilder? function
 ---@param updater? function
 function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
-	---@class SUI_UF_Unit_DB
+	---@type SUI.UF.Unit.Settings
 	local Defaults = {
 		enabled = true,
 		width = 180,
@@ -219,9 +219,9 @@ end
 
 ---Gets the current active settings for a unit frame
 ---@param frameName UnitFrameName
----@return UFrameSettings
+---@return SUI.UF.Unit.Settings
 function Unit:GetConfig(frameName)
-	return UF.CurrentSettings[frameName] ---@type UFrameSettings
+	return UF.CurrentSettings[frameName] ---@type SUI.UF.Unit.Settings
 end
 
 ---Adds the elements needed to the passed frame for the specified unit
@@ -249,7 +249,7 @@ end
 
 ---Gets a table of all the frames that are currently loaded and their default settings
 ---@param onlyGroups any
----@return table<UnitFrameName, UFrameConfig>
+---@return table<UnitFrameName, SUI.UF.Unit.Config>
 function Unit:GetFrameList(onlyGroups)
 	if onlyGroups then
 		return Unit.GroupsLoaded
