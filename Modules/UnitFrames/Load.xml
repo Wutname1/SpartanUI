@@ -44,6 +44,7 @@
     <Script file="Framework.lua"/>
 
     <Script file="Handlers\Style.lua"/>
+    <Script file="Handlers\Auras.lua"/>
     <Script file="Handlers\Elements.lua"/>
     <Script file="Handlers\Units.lua"/>
 

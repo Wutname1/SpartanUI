@@ -1835,6 +1835,26 @@ function SUI:SplitString(str, delim)
 	return unpack(splitTable)
 end
 
+function SUI:InverseAnchor(anchor)
+	if anchor == 'TOPLEFT' then
+		return 'BOTTOMLEFT'
+	elseif anchor == 'TOPRIGHT' then
+		return 'BOTTOMRIGHT'
+	elseif anchor == 'BOTTOMLEFT' then
+		return 'TOPLEFT'
+	elseif anchor == 'BOTTOMRIGHT' then
+		return 'TOPRIGHT'
+	elseif anchor == 'BOTTOM' then
+		return 'TOP'
+	elseif anchor == 'TOP' then
+		return 'BOTTOM'
+	elseif anchor == 'LEFT' then
+		return 'RIGHT'
+	elseif anchor == 'RIGHT' then
+		return 'LEFT'
+	end
+end
+
 function SUI:OnEnable()
 	local AceC = SUI.Lib.AceC
 	local AceCD = SUI.Lib.AceCD

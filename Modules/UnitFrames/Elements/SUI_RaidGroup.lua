@@ -19,7 +19,7 @@ local function Update(frame)
 	frame.SUI_RaidGroup.Text:SetJustifyV(DB.SetJustifyV)
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UnitFrame.Elements.Settings
 local Settings = {
 	textSize = 13,
 	content = '[group]',

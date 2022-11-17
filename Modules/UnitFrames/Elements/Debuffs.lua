@@ -1,7 +1,4 @@
 local UF = SUI.UF
-local PostCreateAura = UF.PostCreateAura
-local PostUpdateAura = UF.PostUpdateAura
-local InverseAnchor = UF.InverseAnchor
 
 ---@param frame table
 ---@param DB table
@@ -11,7 +8,7 @@ local function Build(frame, DB)
 	---@param unit UnitId
 	---@param data UnitAuraInfo
 	local FilterAura = function(element, unit, data)
-		return UF:FilterAura(element, unit, data, element.DB.rules)
+		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
 	Debuffs.FilterAura = FilterAura
 
@@ -37,9 +34,9 @@ local function Update(frame)
 	Debuffs.showType = DB.showType
 	Debuffs.num = DB.number
 	Debuffs.onlyShowPlayer = DB.onlyShowPlayer
-	Debuffs.PostCreateIcon = PostCreateAura
-	Debuffs.PostUpdateIcon = PostUpdateAura
-	Debuffs:SetPoint(InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
+	Debuffs.PostCreateIcon = UF.Auras.PostCreateAura
+	Debuffs.PostUpdateIcon = UF.Auras.PostUpdateAura
+	Debuffs:SetPoint(SUI:InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
 	local w = (DB.number / DB.rows)
 	if w < 1.5 then
 		w = 1.5
@@ -61,7 +58,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Debuffs
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UnitFrame.Elements.Settings
 local Settings = {
 	number = 10,
 	auraSize = 20,

@@ -1,7 +1,4 @@
 local UF = SUI.UF
-local PostCreateAura = UF.PostCreateAura
-local PostUpdateAura = UF.PostUpdateAura
-local InverseAnchor = UF.InverseAnchor
 
 function UF:Aura_OnClick()
 	local keyDown = IsShiftKeyDown() and 'SHIFT' or IsAltKeyDown() and 'ALT' or IsControlKeyDown() and 'CTRL'
@@ -44,7 +41,7 @@ local function Build(frame, DB)
 	---@param unit UnitId
 	---@param data UnitAuraInfo
 	local FilterAura = function(element, unit, data)
-		return UF:FilterAura(element, unit, data, element.DB.rules)
+		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
 	Buffs.FilterAura = FilterAura
 	-- Buffs.CustomFilter = customFilter
@@ -69,9 +66,9 @@ local function Update(frame)
 	Buffs.showType = DB.showType
 	Buffs.num = DB.number
 	Buffs.onlyShowPlayer = DB.onlyShowPlayer
-	Buffs.PostCreateIcon = PostCreateAura
-	Buffs.PostUpdateIcon = PostUpdateAura
-	Buffs:SetPoint(InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
+	Buffs.PostCreateIcon = UF.Auras.PostCreateAura
+	Buffs.PostUpdateIcon = UF.Auras.PostUpdateAura
+	Buffs:SetPoint(SUI:InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
 	local w = (DB.number / DB.rows)
 	if w < 1.5 then
 		w = 1.5
@@ -93,7 +90,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Buffs
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UnitFrame.Elements.Settings
 local Settings = {
 	number = 10,
 	auraSize = 20,

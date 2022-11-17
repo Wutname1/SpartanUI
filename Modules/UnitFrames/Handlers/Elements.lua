@@ -1,4 +1,4 @@
----@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
+---@class SUI.UnitFrame
 local UF = SUI:GetModule('Module_UnitFrames')
 local Elements = {
 	Types = {}
@@ -61,7 +61,7 @@ local DefaultSettings = {
 		NoBulkUpdate = false,
 		type = 'General'
 	}
-} ---@type SUI.UnitFrame.Element.Settings
+} ---@type SUI.UnitFrame.Elements.Settings
 
 Elements.Types.General = {}
 Elements.Types.StatusBar = {}
@@ -73,14 +73,14 @@ Elements.Types.Auras = {}
 ---@field Build function
 ---@field Update? function
 ---@field OptionsTable? function
----@field ElementSettings? SUI.UnitFrame.Element.Settings
+---@field ElementSettings? SUI.UnitFrame.Elements.Settings
 
 ---@class SUIUFElementList
 ---@field T table<string, SUIUFElement>
 Elements.List = {}
 
 ---@class SUIUFFrameSettingList
----@field T table<string, SUI.UnitFrame.Elements>
+---@field T table<string, SUI.UnitFrame.Elements.list>
 Elements.FrameSettings = {}
 
 ---@class ElementConfig
@@ -90,9 +90,9 @@ Elements.FrameSettings = {}
 ---@param Build function
 ---@param Update? function
 ---@param OptionsTable? function
----@param ElementSettings? SUI.UnitFrame.Element.Settings
+---@param ElementSettings? SUI.UnitFrame.Elements.Settings
 function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
-	SUI:CopyData(ElementSettings, DefaultSettings) ---@type SUI.UnitFrame.Element.Settings
+	SUI:CopyData(ElementSettings, DefaultSettings) ---@type SUI.UnitFrame.Elements.Settings
 
 	UF.Elements.List[ElementName] = {
 		Build = Build,
@@ -105,8 +105,8 @@ function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSett
 end
 
 ---@param frame table
----@param ElementName SUI.UnitFrame.Elements
----@param DB? SUI.UnitFrame.Element.Settings
+---@param ElementName SUI.UnitFrame.Elements.list
+---@param DB? SUI.UnitFrame.Elements.Settings
 function Elements:Build(frame, ElementName, DB)
 	if UF.Elements.List[ElementName] then
 		if not frame.elementList then
@@ -138,7 +138,7 @@ function Elements:Update(frame, ElementName, DB)
 end
 
 ---@param ElementName string
----@return SUI.UnitFrame.Element.Settings --False if the element did not provide a Size updater
+---@return SUI.UnitFrame.Elements.Settings --False if the element did not provide a Size updater
 function Elements:GetConfig(ElementName)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
 		return UF.Elements.List[ElementName].ElementSettings

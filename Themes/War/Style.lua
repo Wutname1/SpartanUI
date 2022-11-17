@@ -2,7 +2,7 @@ local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Style_War')
 ---@type SUI.Module
 local Artwork_Core = SUI:GetModule('Module_Artwork')
-local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI_UnitFrames
+local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI.UnitFrame
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------

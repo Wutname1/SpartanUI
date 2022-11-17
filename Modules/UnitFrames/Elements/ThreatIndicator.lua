@@ -30,7 +30,7 @@ local function Build(frame, DB)
 	frame.ThreatIndicator = ThreatIndicator
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UnitFrame.Elements.Settings
 local Settings = {
 	config = {
 		type = 'Indicator',

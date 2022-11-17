@@ -78,7 +78,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Power')
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UnitFrame.Elements.Settings
 local Settings = {
 	enabled = true,
 	height = 10,

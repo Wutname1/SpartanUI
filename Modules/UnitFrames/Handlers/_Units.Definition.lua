@@ -7,7 +7,7 @@ local FramePositioning = {}
 
 ---@class UFrameSettings
 ---@field anchor FramePositioning
----@field elements table<string, SUI.UnitFrame.Element.Settings>
+---@field elements table<string, SUI.UnitFrame.Elements.Settings>
 ---@field visibility UFrameVisibility
 ---@field config UFrameConfig
 local UFrameSettings = {
@@ -47,7 +47,7 @@ local visibility = {
 
 ---@class SUI.UnitFrame : frame, SUI.UnitFrame.Element.Details
 ---@field unitOnCreate UnitFrameName
----@field elementList table<integer, SUI.UnitFrame.Elements>
+---@field elementList table<integer, SUI.UnitFrame.Elements.list>
 ---@field UpdateAll function
 ---@field ElementUpdate function
 ---@field mover frame

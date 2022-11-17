@@ -1,7 +1,4 @@
 local UF = SUI.UF
-local PostCreateAura = UF.PostCreateAura
-local PostUpdateAura = UF.PostUpdateAura
-local InverseAnchor = UF.InverseAnchor
 -- local AuraFilter = UF.AuraFilter
 
 -- function UF:AuraBars_UpdateBar(bar)
@@ -123,7 +120,7 @@ local function Options(unitName, OptionSet)
 	}
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UnitFrame.Elements.Settings
 local Settings = {
 	height = 14,
 	width = false,
