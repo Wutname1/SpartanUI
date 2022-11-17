@@ -1,5 +1,5 @@
 ---@class ElementProps
----@field DB SUI.UnitFrame.Elements.Settings
+---@field DB SUI.UF.Elements.Settings
 local ElementProps = {}
 
 ---@class ElementConfig
@@ -16,7 +16,7 @@ local ElementConfig = {}
 ---|'Auras'
 ---|'General'
 
----@class SUI.UnitFrame.Elements.Settings
+---@class SUI.UF.Elements.Settings
 ---@field enabled boolean
 ---@field scale integer
 ---@field points boolean|table|string
@@ -24,8 +24,8 @@ local ElementConfig = {}
 ---@field FrameStrata FrameStrata
 ---@field FrameLevel integer
 ---@field config? ElementConfig
----@field position SUI.UnitFrame.Elements.Positioning
----@field rules SUI.UnitFrame.Auras.Rules
+---@field position SUI.UF.Elements.Positioning
+---@field rules SUI.UF.Auras.Rules
 local ElementSettings = {
 	enabled = false,
 	points = false,
@@ -43,9 +43,9 @@ local ElementSettings = {
 	}
 }
 
----@class SUI.UnitFrame.Elements.Positioning
+---@class SUI.UF.Elements.Positioning
 ---@field anchor AnchorPoint
----@field relativeTo SUI.UnitFrame.Elements.list
+---@field relativeTo SUI.UF.Elements.list
 ---@field relativePoint AnchorPoint
 local ElementPositioning = {
 	anchor = 'CENTER',
@@ -65,7 +65,7 @@ local FramePositioning = {}
 ---@class ElementTextData
 ---@field SetJustifyH JustifyH
 ---@field SetJustifyV JustifyV
----@field position SUI.UnitFrame.Elements.Positioning
+---@field position SUI.UF.Elements.Positioning
 local ElementTextData = {
 	enabled = false,
 	text = '',
@@ -74,7 +74,7 @@ local ElementTextData = {
 	SetJustifyV = 'MIDDLE'
 }
 
----@alias SUI.UnitFrame.Elements.list
+---@alias SUI.UF.Elements.list
 ---|"AdditionalPower"
 ---|"AssistantIndicator"
 ---|"AuraBars"
@@ -110,7 +110,7 @@ local ElementTextData = {
 ---|"ThreatIndicator"
 ---|"Totems"
 
----@class SUI.UnitFrame.Elements.Details
+---@class SUI.UF.Elements.Details
 ---@field AdditionalPower ElementProps
 ---@field AssistantIndicator ElementProps
 ---@field AuraBars ElementProps

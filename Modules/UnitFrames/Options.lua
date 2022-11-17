@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local UF = SUI.UF ---@class SUI.UnitFrame
+local UF = SUI.UF ---@class SUI.UF
 ----------------------------------------------------------------------------------------------------
 local anchorPoints = {
 	['TOPLEFT'] = 'TOP LEFT',
@@ -485,7 +485,7 @@ end
 
 ---@param frameName UnitFrameName
 ---@param ElementOptSet AceConfigOptionsTable
----@param elementName SUI.UnitFrame.Elements.list
+---@param elementName SUI.UF.Elements.list
 function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 	ElementOptSet.args.texture = {
 		type = 'select',
@@ -644,7 +644,7 @@ end
 
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
----@param element SUI.UnitFrame.Elements.list
+---@param element SUI.UF.Elements.list
 function Options:AddDynamicText(frameName, OptionSet, element)
 	OptionSet.args.Text = {
 		name = L['Text'],

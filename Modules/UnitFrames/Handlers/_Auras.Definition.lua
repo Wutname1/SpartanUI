@@ -25,8 +25,8 @@
 ---@field timeMod number
 local UnitAuraInfo = {}
 
----@class SUI.UnitFrame.Auras.Rules
----@field duration SUI.UnitFrame.Auras.Rules.Durations
+---@class SUI.UF.Auras.Rules
+---@field duration SUI.UF.Auras.Rules.Durations
 ---@field isPlayerAura boolean
 ---@field isBossAura boolean
 ---@field isHarmful boolean
@@ -39,7 +39,7 @@ local UnitAuraInfo = {}
 ---@field sourceUnit table<string, boolean>
 local SUIUnitFrameAuraRules = {}
 
----@class SUI.UnitFrame.Auras.Rules.Durations
+---@class SUI.UF.Auras.Rules.Durations
 ---@field enabled boolean
 ---@field maxTime number
 ---@field minTime number

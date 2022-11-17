@@ -7,7 +7,7 @@ local FramePositioning = {}
 
 ---@class UFrameSettings
 ---@field anchor FramePositioning
----@field elements table<string, SUI.UnitFrame.Elements.Settings>
+---@field elements table<string, SUI.UF.Elements.Settings>
 ---@field visibility UFrameVisibility
 ---@field config UFrameConfig
 local UFrameSettings = {
@@ -45,13 +45,14 @@ local visibility = {
 ---|"arena"
 ---|"pet"
 
----@class SUI.UnitFrame : frame, SUI.UnitFrame.Element.Details
+---@class SUI.UF.Unit.Frame : frame, SUI.UF.Elements.Details
 ---@field unitOnCreate UnitFrameName
----@field elementList table<integer, SUI.UnitFrame.Elements.list>
+---@field elementList table<integer, SUI.UF.Elements.list>
 ---@field UpdateAll function
 ---@field ElementUpdate function
 ---@field mover frame
+---@field isForced boolean
 ---@field config UFrameSettings
----@field frames? table<integer, SUI.UnitFrame>
+---@field frames? table<integer, SUI.UF.Unit.Frame>
 ---@field header? frame
 local SUIUnitFrame = {}

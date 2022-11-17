@@ -1,7 +1,7 @@
 ---@class UFStyleSettings
 ---@field displayName string
 ---@field setup UFStyleSetupSettings
----@field positions? SUI.UnitFrame.FramePositions
+---@field positions? SUI.UF.FramePositions
 ---@field artwork? SUIUFArtworkSettings
 local UFStyleSettings = {}
 

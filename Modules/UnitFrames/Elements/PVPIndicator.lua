@@ -142,7 +142,7 @@ local function Options(frameName, OptionSet)
 	end
 end
 
----@type SUI.UnitFrame.Elements.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	Badge = false,
 	Shadow = true,

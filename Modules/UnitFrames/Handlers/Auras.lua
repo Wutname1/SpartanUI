@@ -1,10 +1,10 @@
----@class SUI.UnitFrame
+---@class SUI.UF
 local UF = SUI.UF
 local Auras = {}
 
 ---@param unit UnitId
 ---@param data UnitAuraInfo
----@param rules SUI.UnitFrame.Auras.Rules
+---@param rules SUI.UF.Auras.Rules
 function Auras:Filter(element, unit, data, rules)
 	local ShouldDisplay = false
 

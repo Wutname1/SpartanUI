@@ -7,7 +7,7 @@ local function Build(frame, DB)
 	frame.LeaderIndicator:Hide()
 end
 
----@type SUI.UnitFrame.Elements.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	size = 12,

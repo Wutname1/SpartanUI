@@ -27,7 +27,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.RareElite
 end
 
----@type SUI.UnitFrame.Elements.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	alpha = .4,

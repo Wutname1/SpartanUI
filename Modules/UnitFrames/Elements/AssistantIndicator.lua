@@ -6,7 +6,7 @@ local function Build(frame, DB)
 	frame.AssistantIndicator = frame:CreateTexture(nil, 'BORDER')
 end
 
----@type SUI.UnitFrame.Elements.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	size = 12,

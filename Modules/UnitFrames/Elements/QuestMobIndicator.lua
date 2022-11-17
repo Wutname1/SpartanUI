@@ -20,7 +20,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.QuestMobIndicator
 end
 
----@type SUI.UnitFrame.Elements.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	position = {
 		anchor = 'RIGHT'

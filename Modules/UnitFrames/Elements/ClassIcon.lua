@@ -50,7 +50,7 @@ end
 local function ElementOptions(unitName, OptionSet)
 end
 
----@type SUI.UnitFrame.Elements.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	VisibleOn = 'PlayerControlled',
 	size = 20,

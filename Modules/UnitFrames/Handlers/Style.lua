@@ -1,4 +1,4 @@
----@class SUI.UnitFrame
+---@class SUI.UF
 local UF = SUI.UF
 
 local Style = {}

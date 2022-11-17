@@ -58,7 +58,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Debuffs
 end
 
----@type SUI.UnitFrame.Elements.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	number = 10,
 	auraSize = 20,
