@@ -2,30 +2,40 @@
 local UF = SUI.UF
 local Auras = {}
 
+local MonitoredIds = {}
+
 ---@param unit UnitId
 ---@param data UnitAuraInfo
 ---@param rules SUI.UF.Auras.Rules
 function Auras:Filter(element, unit, data, rules)
+	---@param msg any
+	local function debug(msg)
+		if SUI:IsInTable(MonitoredIds, data.spellId) and SUI.releaseType == 'DEV Build' then
+			print(msg)
+		end
+	end
 	local ShouldDisplay = false
 
+	debug('--')
+	debug(data.spellId)
+
 	for k, v in pairs(rules) do
-		UF:debug(k, unit, 'FilterAura')
+		-- debug(k)
 		if data[k] then
-			UF:debug(data.name, unit, 'FilterAura')
+			-- debug(data.name)
 			if type(v) == 'table' then
-				if k == 'duration' and v.enabled then
-				elseif SUI:IsInTable(v, data[k]) then
+				if SUI:IsInTable(v, data[k]) then
 					if v[data[k]] then
-						UF:debug('Force show per rules', unit, 'FilterAura')
+						debug('Force show per rules')
 						return true
 					else
-						UF:debug('Force hide per rules', unit, 'FilterAura')
+						debug('Force hide per rules')
 						return false
 					end
 				end
 			elseif type(v) == 'boolean' then
 				if v and v == data[k] then
-					UF:debug('Not equal', unit, 'FilterAura')
+					debug(k .. ' Not equal')
 					ShouldDisplay = true
 				end
 			end
@@ -33,21 +43,30 @@ function Auras:Filter(element, unit, data, rules)
 			if v[data.spellId] then
 				return (k == 'whitelist' and true) or false
 			end
+		else
+			if k == 'showPlayers' then
+				if v == true and data.sourceUnit == 'player' then
+					ShouldDisplay = true
+				end
+			end
 		end
 	end
 
 	if rules.duration.enabled then
 		local moreThanMax = data.duration > rules.duration.maxTime
 		local lessThanMin = data.duration < rules.duration.minTime
-		UF:debug('Durration is ' .. data.duration, unit, 'FilterAura')
-		if ShouldDisplay and (lessThanMin and moreThanMax) then
-			return true
+		debug('Durration is ' .. data.duration)
+		debug('Is More than ' .. rules.duration.maxTime .. ' = ' .. (moreThanMax and 'true' or 'false'))
+		debug('Is Less than ' .. rules.duration.minTime .. ' = ' .. (lessThanMin and 'true' or 'false'))
+		if ShouldDisplay and (not lessThanMin and not moreThanMax) then
+			ShouldDisplay = true
 		else
-			return false
+			ShouldDisplay = false
 		end
+	else
+		debug('Durration is not enabled')
 	end
-
-	UF:debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'), unit, 'FilterAura')
+	debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'))
 	return ShouldDisplay
 end
 

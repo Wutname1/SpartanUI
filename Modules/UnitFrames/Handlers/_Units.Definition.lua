@@ -47,6 +47,7 @@ local visibility = {
 
 ---@class SUI.UF.Unit.Frame : frame, SUI.UF.Elements.Details
 ---@field unitOnCreate UnitFrameName
+---@field DB SUI.UF.Unit.Settings
 ---@field elementList table<integer, SUI.UF.Elements.list>
 ---@field UpdateAll function
 ---@field ElementUpdate function
