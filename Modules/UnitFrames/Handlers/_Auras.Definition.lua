@@ -31,6 +31,7 @@ local UnitAuraInfo = {}
 ---@field isBossAura boolean
 ---@field isHarmful boolean
 ---@field isHelpful boolean
+---@field isMount boolean
 ---@field isRaid boolean
 ---@field isStealable boolean
 ---@field IsDispellableByMe boolean

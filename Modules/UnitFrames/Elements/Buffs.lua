@@ -35,7 +35,6 @@ local function Build(frame, DB)
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
 	Buffs.FilterAura = FilterAura
-	-- Buffs.CustomFilter = customFilter
 	frame.Buffs = Buffs
 end
 

@@ -44,8 +44,14 @@ function Auras:Filter(element, unit, data, rules)
 				return (k == 'whitelist' and true) or false
 			end
 		else
-			if k == 'showPlayers' then
+			if k == 'isMount' and v then
+				if UF.MountIds[data.spellId] then
+					debug('Is mount')
+					return true
+				end
+			elseif k == 'showPlayers' then
 				if v == true and data.sourceUnit == 'player' then
+					debug('Is casted by the player')
 					ShouldDisplay = true
 				end
 			end

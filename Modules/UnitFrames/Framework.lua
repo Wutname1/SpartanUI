@@ -26,6 +26,7 @@ local UFPositionDefaults = {
 	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
 }
 UF.Artwork = {}
+UF.MountIds = {}
 
 ---@param msg string
 ---@param frame UnitId
@@ -137,6 +138,13 @@ function UF:OnInitialize()
 	UF.DB = UF.Database.profile
 
 	LoadDB()
+
+	if SUI.IsRetail then
+		for _, mountID in next, C_MountJournal.GetMountIDs() do
+			local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
+			UF.MountIds[spellID] = spellID
+		end
+	end
 end
 
 function UF:OnEnable()
