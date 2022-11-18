@@ -404,7 +404,7 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 						desc = L["Don't display auras that are longer than this duration (in seconds). Set to zero to disable."],
 						type = 'range',
 						order = 3,
-						min = 1,
+						min = 0,
 						max = 3600,
 						step = 1
 					}

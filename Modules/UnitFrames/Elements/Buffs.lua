@@ -6,9 +6,13 @@ function UF:Aura_OnClick()
 		return
 	end
 
-	if self.data and keyDown == 'CTRL' then
-		for k, v in pairs(self.data) do
-			print(k .. ' = ' .. tostring(v))
+	if self.data and keyDown then
+		if keyDown == 'CTRL' then
+			for k, v in pairs(self.data) do
+				print(k .. ' = ' .. tostring(v))
+			end
+		elseif keyDown == 'SHIFT' then
+		--TODO: Add a way to add spells to the whitelist or blacklist
 		end
 	end
 end
