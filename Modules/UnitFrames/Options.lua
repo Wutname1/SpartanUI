@@ -1017,6 +1017,7 @@ function Options:Initialize()
 			local ElementSettings = UF.CurrentSettings[frameName].elements[elementName]
 			local UserSetting = UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName]
 
+			---@type AceConfigOptionsTable
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
 				desc = elementConfig.Description or '',
@@ -1181,6 +1182,13 @@ function Options:Initialize()
 			UF.Elements:Options(frameName, elementName, ElementOptSet)
 
 			if not ElementOptSet.args.enabled then
+				--Add a disable check to all args
+				for k, v in pairs(ElementOptSet.args) do
+					v.disabled = function()
+						return not ElementSettings.enabled
+					end
+				end
+
 				ElementOptSet.args.enabled = {
 					name = L['Enabled'],
 					type = 'toggle',
