@@ -390,6 +390,15 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 						type = 'toggle',
 						order = 1
 					},
+					mode = {
+						name = L['Duration mode'],
+						type = 'select',
+						order = 2,
+						values = {
+							['exclude'] = 'Exclusionary',
+							['include'] = 'Inclusionary'
+						}
+					},
 					minTime = {
 						name = L['Minimum Duration'],
 						desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],

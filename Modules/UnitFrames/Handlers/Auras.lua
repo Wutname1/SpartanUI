@@ -64,7 +64,9 @@ function Auras:Filter(element, unit, data, rules)
 		debug('Durration is ' .. data.duration)
 		debug('Is More than ' .. rules.duration.maxTime .. ' = ' .. (moreThanMax and 'true' or 'false'))
 		debug('Is Less than ' .. rules.duration.minTime .. ' = ' .. (lessThanMin and 'true' or 'false'))
-		if ShouldDisplay and (not lessThanMin and not moreThanMax) then
+		if ShouldDisplay and (not lessThanMin and not moreThanMax) and rules.duration.mode == 'include' then
+			ShouldDisplay = true
+		elseif ShouldDisplay and (lessThanMin or moreThanMax) and rules.duration.mode == 'exclude' then
 			ShouldDisplay = true
 		else
 			ShouldDisplay = false

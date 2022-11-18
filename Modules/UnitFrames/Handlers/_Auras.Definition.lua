@@ -40,8 +40,13 @@ local UnitAuraInfo = {}
 ---@field sourceUnit table<string, boolean>
 local SUIUnitFrameAuraRules = {}
 
+---@alias SUI.UF.Auras.Rules.Durations.mode
+---| 'include'
+---| 'exclude'
+
 ---@class SUI.UF.Auras.Rules.Durations
 ---@field enabled boolean
+---@field mode SUI.UF.Auras.Rules.Durations.mode
 ---@field maxTime number
 ---@field minTime number
 local SUIUnitFrameAuraRulesDurations = {}

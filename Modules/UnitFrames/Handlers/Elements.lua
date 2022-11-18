@@ -52,7 +52,9 @@ local DefaultSettings = {
 		y = 0
 	},
 	rules = {
-		duration = {},
+		duration = {
+			mode = 'include'
+		},
 		whitelist = {},
 		blacklist = {},
 		sourceUnit = {},
