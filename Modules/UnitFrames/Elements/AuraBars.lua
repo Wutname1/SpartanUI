@@ -24,6 +24,16 @@ local function Build(frame, DB)
 
 	AuraBars.spellTimeFont = SUI.Font:GetFont('Player')
 	AuraBars.spellNameFont = SUI.Font:GetFont('Player')
+	AuraBars.PostCreateButton = function(self, button)
+		UF.Auras:PostCreateButton('Buffs', button)
+	end
+
+	---@param unit UnitId
+	---@param data UnitAuraInfo
+	local FilterAura = function(element, unit, data)
+		return UF.Auras:Filter(element, unit, data, element.DB.rules)
+	end
+	AuraBars.FilterAura = FilterAura
 
 	local function PostCreateBar(_, bar)
 		bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
@@ -38,10 +48,7 @@ local function Build(frame, DB)
 		bar.bg:SetVertexColor(0, 0, 0, 0.4)
 		bar.bg:Show()
 	end
-
-	-- AuraBars.PreSetPosition = SortAuras
 	AuraBars.PostCreateBar = PostCreateBar
-	-- AuraBars.PostUpdateBar = PostUpdateBar_AuraBars
 	AuraBars.CustomFilter = function(
 		element,
 		unit,
@@ -63,7 +70,9 @@ local function Build(frame, DB)
 		modRate,
 		effect1,
 		effect2,
-		effect3)
+  effect3)
+  
+		local data = {}
 		if (source == 'player' or source == 'vehicle' or isBossDebuff) and duration ~= 0 and duration <= 900 then
 			return true
 		end
