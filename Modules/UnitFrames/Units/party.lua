@@ -83,7 +83,7 @@ local function Options(OptionSet)
 	UF.Options:AddGroupLayout('party', OptionSet)
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 120,
 	showParty = true,

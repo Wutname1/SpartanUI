@@ -1,21 +1,21 @@
 local UF = SUI.UF
-local PostCreateAura = UF.PostCreateAura
-local PostUpdateAura = UF.PostUpdateAura
-local InverseAnchor = UF.InverseAnchor
 
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
 	--Debuff Icons
 	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame)
+	Debuffs.PostCreateButton = function(self, button)
+		UF.Auras:PostCreateButton('Debuffs', button)
+	end
+
 	---@param unit UnitId
 	---@param data UnitAuraInfo
 	local FilterAura = function(element, unit, data)
-		return UF:FilterAura(element, unit, data, element.DB.rules)
+		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
 	Debuffs.FilterAura = FilterAura
 
-	-- Debuffs.PostUpdate = PostUpdateAura
 	frame.Debuffs = Debuffs
 end
 
@@ -37,16 +37,14 @@ local function Update(frame)
 	Debuffs.showType = DB.showType
 	Debuffs.num = DB.number
 	Debuffs.onlyShowPlayer = DB.onlyShowPlayer
-	Debuffs.PostCreateIcon = PostCreateAura
-	Debuffs.PostUpdateIcon = PostUpdateAura
-	Debuffs:SetPoint(InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
+	Debuffs.PostCreateIcon = UF.Auras.PostCreateAura
+	Debuffs.PostUpdateIcon = UF.Auras.PostUpdateAura
+	Debuffs:SetPoint(SUI:InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
 	local w = (DB.number / DB.rows)
 	if w < 1.5 then
 		w = 1.5
 	end
 	Debuffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
-
-	frame:UpdateAllElements('ForceUpdate')
 end
 
 ---@param unitName string
@@ -63,7 +61,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Debuffs
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	number = 10,
 	auraSize = 20,
@@ -81,9 +79,13 @@ local Settings = {
 		y = -10
 	},
 	rules = {
-		duration = {},
-		isPlayerAura = true,
-		isBossAura = true
+		duration = {
+			enabled = true,
+			maxTime = 180,
+			minTime = 1
+		},
+		isBossAura = true,
+		isFromPlayerOrPlayerPet = true
 	},
 	config = {
 		type = 'Auras'

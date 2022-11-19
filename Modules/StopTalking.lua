@@ -2,7 +2,7 @@ local SUI = SUI
 if not SUI.IsRetail then
 	return
 end
-local module = SUI:NewModule('Component_StopTalking')
+local module = SUI:NewModule('Module_StopTalking') ---@type SUI.Module
 local L = SUI.L
 module.Displayname = L['Stop Talking']
 module.description = 'Mutes the talking head frame once you have heard it.'
@@ -14,12 +14,17 @@ function module:OnInitialize()
 	local defaults = {
 		persist = true,
 		chatOutput = true,
-		lines = {},
+		global = true,
 		history = {}
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', {profile = defaults, global = defaults})
 	module.DB = module.Database.profile ---@type SUI.StopTalking.DB
-	module.DB.lines = {} --blank this out; start fresh in 10.0
+	module.DBGlobal = module.Database.global ---@type SUI.StopTalking.DB
+
+	--blank this out; start fresh in 10.0
+	if module.DB.lines then
+		module.DB.lines = nil
+	end
 end
 
 local function Options()
@@ -34,6 +39,18 @@ local function Options()
 			module.DB[info[#info]] = val
 		end,
 		args = {
+			global = {
+				name = L['Remember voice lines across all characters'],
+				type = 'toggle',
+				order = .5,
+				width = 'full',
+				get = function(info)
+					return module.DBGlobal.global
+				end,
+				set = function(info, val)
+					module.DBGlobal.global = val
+				end
+			},
 			persist = {
 				name = L['Keep track of voice lines forever'],
 				type = 'toggle',
@@ -53,12 +70,20 @@ local function Options()
 				width = 'full',
 				order = 3,
 				get = function(_, key)
-					return (module.DB.history[key] and true) or false
+					if module.DBGlobal.global then
+						return (module.DBGlobal.history[key] and true) or false
+					else
+						return (module.DB.history[key] and true) or false
+					end
 				end,
 				set = function(_, key, val)
-					module.DB.history[key] = nil
+					if module.DBGlobal.global then
+						module.DBGlobal.history[key] = nil
+					else
+						module.DB.history[key] = nil
+					end
 				end,
-				values = module.DB.history
+				values = (module.DBGlobal.global and module.DBGlobal.history) or module.DB.history
 			}
 		}
 	}
@@ -73,7 +98,7 @@ function module:TALKINGHEAD_REQUESTED()
 	end
 
 	local persist = module.DB.persist
-	if (module.DB.history[vo] and persist) or (not persist and HeardLines[vo]) then
+	if (module.DB.history[vo] and persist) or (not persist and HeardLines[vo]) or (module.DBGlobal.global and module.DBGlobal.history[vo]) then
 		-- Heard this before.
 		if module.DB.chatOutput and name and text then
 			SUI:Print(name)
@@ -84,7 +109,11 @@ function module:TALKINGHEAD_REQUESTED()
 	else
 		-- New, flag it as heard.
 		if persist then
-			module.DB.history[vo] = name .. ' - ' .. text
+			if module.DBGlobal.global then
+				module.DBGlobal.history[vo] = name .. ' - ' .. text
+			else
+				module.DB.history[vo] = name .. ' - ' .. text
+			end
 		else
 			HeardLines[vo] = name .. ' - ' .. text
 		end
@@ -94,6 +123,14 @@ end
 function module:OnEnable()
 	if SUI:IsModuleDisabled(module) then
 		return
+	end
+
+	--Import Globals if active
+	if module.DBGlobal.global then
+		for k, v in pairs(module.DB.history) do
+			module.DBGlobal.history[k] = v
+		end
+		module.DB.history = {}
 	end
 
 	module:RegisterEvent('TALKINGHEAD_REQUESTED')

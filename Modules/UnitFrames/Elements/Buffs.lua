@@ -1,21 +1,23 @@
 local UF = SUI.UF
-local PostCreateAura = UF.PostCreateAura
-local PostUpdateAura = UF.PostUpdateAura
-local InverseAnchor = UF.InverseAnchor
 
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
 	--Buff Icons
 	local Buffs = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame)
+	Buffs.PostUpdateButton = function(self, button, unit, data, position)
+		button.data = data
+	end
+	Buffs.PostCreateButton = function(self, button)
+		UF.Auras:PostCreateButton('Buffs', button)
+	end
 
 	---@param unit UnitId
 	---@param data UnitAuraInfo
 	local FilterAura = function(element, unit, data)
-		return UF:FilterAura(element, unit, data, element.DB.rules)
+		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
 	Buffs.FilterAura = FilterAura
-	-- Buffs.CustomFilter = customFilter
 	frame.Buffs = Buffs
 end
 
@@ -37,16 +39,14 @@ local function Update(frame)
 	Buffs.showType = DB.showType
 	Buffs.num = DB.number
 	Buffs.onlyShowPlayer = DB.onlyShowPlayer
-	Buffs.PostCreateIcon = PostCreateAura
-	Buffs.PostUpdateIcon = PostUpdateAura
-	Buffs:SetPoint(InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
+	Buffs.PostCreateIcon = UF.Auras.PostCreateAura
+	Buffs.PostUpdateIcon = UF.Auras.PostUpdateAura
+	Buffs:SetPoint(SUI:InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
 	local w = (DB.number / DB.rows)
 	if w < 1.5 then
 		w = 1.5
 	end
 	Buffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
-
-	frame:UpdateAllElements('ForceUpdate')
 end
 
 ---@param unitName string
@@ -63,7 +63,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.Buffs
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	number = 10,
 	auraSize = 20,
@@ -79,19 +79,17 @@ local Settings = {
 		relativePoint = 'BOTTOMLEFT',
 		y = -10
 	},
-	filters = {
-		showPlayers = true,
-		boss = true
-	},
 	config = {
 		type = 'Auras'
 	},
 	rules = {
 		duration = {
 			enabled = true,
-			maxTime = 60,
+			maxTime = 180,
 			minTime = 1
-		}
+		},
+		isBossAura = true,
+		showPlayers = true
 	}
 }
 UF.Elements:Register('Buffs', Build, Update, Options, Settings)

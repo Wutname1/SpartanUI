@@ -1,11 +1,11 @@
 local SUI, L = SUI, SUI.L
-local module = SUI:NewModule('Style_Arcane')
+local module = SUI:NewModule('Style_Arcane') ---@type SUI.Module
 local unpack = unpack
 module.Settings = {}
-local Artwork_Core = SUI:GetModule('Component_Artwork')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Arcane', SpartanUI)
 ----------------------------------------------------------------------------------------------------
-local function SetupMenus()
+local function Options()
 	SUI.opt.args['Artwork'].args['Artwork'] = {
 		name = L['Artwork Options'],
 		type = 'group',
@@ -60,15 +60,13 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
-		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or
-			'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or
-			'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
+		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
+		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
 	}
 
 	-- Unitframes Settings
-	local UF = SUI:GetModule('Component_UnitFrames')
-	---@type UFStyleSettings
+	local UF = SUI:GetModule('Module_UnitFrames')
+	---@type SUI.UF.Style.Settings
 	local RedUFSettings = {
 		displayName = 'Arcane red',
 		artwork = {
@@ -102,9 +100,9 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20'
 	}
-	SUI:GetModule('Component_Minimap'):Register('Arcane', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Arcane', minimapSettings)
 
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local BlueUFSettings = {
 		displayName = 'Arcane blue',
 		artwork = {
@@ -153,7 +151,7 @@ function module:OnEnable()
 		if SUI.DB.Styles.Arcane.Color.Art then
 			module:SetColor()
 		end
-		SetupMenus()
+		Options()
 		module:SetupVehicleUI()
 	end
 end

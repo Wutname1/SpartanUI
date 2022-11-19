@@ -1,6 +1,6 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
-local module = SUI:NewModule('Component_FilmEffects')
+local module = SUI:NewModule('Module_FilmEffects') ---@type SUI.Module
 module.DisplayName = L['Film effects']
 module.description = 'Adds a film effect to the screen when AFK'
 local Container
@@ -55,7 +55,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.FilmEffects then
+	if SUI:IsModuleDisabled('FilmEffects') then
 		return
 	end
 	module:Options()

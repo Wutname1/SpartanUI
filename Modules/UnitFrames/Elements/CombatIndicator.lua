@@ -14,7 +14,7 @@ local function Build(frame, DB)
 	end
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	config = {
 		type = 'Indicator',

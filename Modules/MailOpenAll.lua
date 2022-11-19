@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_MailOpenAll')
+local module = SUI:NewModule('Module_MailOpenAll') ---@type SUI.Module
 module.Displayname = L['Open all mail']
 module.description = 'Quality of life update to the open all mail button'
 
@@ -27,7 +27,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI.DB.DisabledComponents.MailOpenAll then
+	if SUI:IsModuleDisabled('MailOpenAll') then
 		return
 	end
 	module:Enable()
@@ -98,18 +98,7 @@ function module:FormatMoney(money)
 	local silver = floor((money - gold * 10000) / 100)
 	local copper = mod(money, 100)
 	if gold > 0 then
-		return format(
-			GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE,
-			gold,
-			0,
-			0,
-			silver,
-			0,
-			0,
-			copper,
-			0,
-			0
-		)
+		return format(GOLD_AMOUNT_TEXTURE .. ' ' .. SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE, gold, 0, 0, silver, 0, 0, copper, 0, 0)
 	elseif silver > 0 then
 		return format(SILVER_AMOUNT_TEXTURE .. ' ' .. COPPER_AMOUNT_TEXTURE, silver, 0, 0, copper, 0, 0)
 	else

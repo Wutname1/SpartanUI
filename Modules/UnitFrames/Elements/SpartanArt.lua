@@ -182,7 +182,7 @@ local sectiondefault = {
 	alpha = 1,
 	graphic = ''
 }
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	full = sectiondefault,

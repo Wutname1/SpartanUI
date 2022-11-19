@@ -1,4 +1,4 @@
-local UF = SUI.UF
+local UF, L = SUI.UF, SUI.L
 
 ---@param frame table
 ---@param DB table
@@ -46,9 +46,26 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(unitName, OptionSet)
+	OptionSet.args.texture = {
+		type = 'select',
+		dialogControl = 'LSM30_Statusbar',
+		order = 2,
+		width = 'double',
+		name = 'Bar Texture',
+		values = AceGUIWidgetLSMlists.statusbar
+	}
+	OptionSet.args.display.args.size = nil
+	OptionSet.args.display.args.height = {
+		type = 'range',
+		order = 1,
+		name = L['Height'],
+		min = 1,
+		max = 100,
+		step = 1
+	}
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	width = 16,
@@ -61,8 +78,9 @@ local Settings = {
 	},
 	config = {
 		NoBulkUpdate = true,
-		type = 'StatusBar',
-		DisplayName = 'Class Power'
+		type = 'Indicator',
+		DisplayName = 'Class Power',
+		Description = 'Controls the display of Combo Points, Arcane Charges, Chi Orbs, Holy Power, and Soul Shards'
 	}
 }
 

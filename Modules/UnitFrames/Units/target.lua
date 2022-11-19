@@ -39,7 +39,7 @@ end
 local function Options()
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	anchor = {
 		point = 'BOTTOMLEFT',
@@ -53,6 +53,15 @@ local Settings = {
 		},
 		Buffs = {
 			enabled = true,
+			rules = {
+				isMount = true,
+				isPlayerAura = true,
+				isRaid = true,
+				duration = {
+					enabled = true,
+					mode = 'exclude'
+				}
+			},
 			position = {
 				anchor = 'TOPLEFT'
 			}
@@ -102,6 +111,9 @@ local Settings = {
 				}
 			}
 		}
+	},
+	config = {
+		isFriendly = true
 	}
 }
 

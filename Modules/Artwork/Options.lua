@@ -1,6 +1,6 @@
 local SUI = SUI
 local L = SUI.L
-local module = SUI:GetModule('Component_Artwork')
+local module = SUI:GetModule('Module_Artwork')
 
 function module:SetupOptions()
 	if SUI.DB.Artwork.Style == '' then

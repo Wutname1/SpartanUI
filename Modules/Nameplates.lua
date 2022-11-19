@@ -1,5 +1,5 @@
 local unpack, SUI, L, print, UF = unpack, SUI, SUI.L, SUI.print, SUI.UF
-local module = SUI:NewModule('Component_Nameplates')
+local module = SUI:NewModule('Module_Nameplates') ---@type SUI.Module
 module.description = 'Basic nameplate module'
 local Images = {
 	Alliance = {
@@ -23,7 +23,7 @@ local Images = {
 		}
 	}
 }
-local BarTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+local BarTexture = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2'
 local NameplateList = {}
 local ElementList = {
 	'Auras',
@@ -148,13 +148,13 @@ local PlayerPowerIcons = function(frame, attachPoint)
 			else
 				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
 			end
-			frame.Runes[i]:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+			frame.Runes[i]:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
 			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
 
 			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
 			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
 			frame.Runes[i].bg:SetPoint('BOTTOMRIGHT', frame.Runes[i], 'BOTTOMRIGHT', 0, -0)
-			frame.Runes[i].bg:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+			frame.Runes[i].bg:SetTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
 			frame.Runes[i].bg:SetVertexColor(0, 0, 0, 1)
 			frame.Runes[i].bg.multiplier = 0.64
 			frame.Runes[i]:Hide()
@@ -177,7 +177,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 
 		for index = 1, MaxPower do
 			local Bar = CreateFrame('StatusBar', nil, frame)
-			Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+			Bar:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
 
 			-- Position and size.
 			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
@@ -263,7 +263,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 		if nameString ~= '' then
 			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
-			SUI:FormatFont(frame.Name, 8, 'Nameplate')
+			SUI.Font:Format(frame.Name, 8, 'Nameplate')
 			frame.Name:SetSize(frame:GetWidth(), 9)
 			frame.Name:SetJustifyH(elementsDB.Name.SetJustifyH)
 			frame.Name:SetPoint('BOTTOM', frame, 'TOP')
@@ -376,13 +376,13 @@ local NamePlateFactory = function(frame, unit)
 			WidgetXPBar.Rank:SetJustifyH('LEFT')
 			WidgetXPBar.Rank:SetJustifyV('MIDDLE')
 			WidgetXPBar.Rank:SetAllPoints(WidgetXPBar)
-			SUI:FormatFont(WidgetXPBar.Rank, 7, 'Nameplate')
+			SUI.Font:Format(WidgetXPBar.Rank, 7, 'Nameplate')
 
 			WidgetXPBar.ProgressText = WidgetXPBar:CreateFontString()
 			WidgetXPBar.ProgressText:SetJustifyH('CENTER')
 			WidgetXPBar.ProgressText:SetJustifyV('MIDDLE')
 			WidgetXPBar.ProgressText:SetAllPoints(WidgetXPBar)
-			SUI:FormatFont(WidgetXPBar.ProgressText, 7, 'Nameplate')
+			SUI.Font:Format(WidgetXPBar.ProgressText, 7, 'Nameplate')
 
 			frame.WidgetXPBar = WidgetXPBar
 		end
@@ -683,7 +683,7 @@ function module:OnDisable()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.Nameplates then
+	if SUI:IsModuleDisabled('Nameplates') then
 		return
 	end
 	module:BuildOptions()

@@ -26,7 +26,7 @@ end
 local function Options()
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 100,
 	elements = {
@@ -43,7 +43,11 @@ local Settings = {
 				relativeTo = 'Castbar',
 				relativePoint = 'BOTTOM'
 			}
-		}
+		},
+		Power = {enabled = false}
+	},
+	config = {
+		isFriendly = true
 	}
 }
 

@@ -1,8 +1,17 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Mount'] = true
+L['Duration mode'] = true
+L['Remember voice lines across all characters'] = true
+L['Effects'] = true
+L['vignette'] = true
+L['blur'] = true
+L['crisp'] = true
+L['None'] = true
+L['Comma'] = true
+L['Period'] = true
 L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'] = true
-
 L['Cased by any player'] = true
 L['Player casted'] = true
 L['Casted by boss'] = true

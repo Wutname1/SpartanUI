@@ -17,10 +17,15 @@ ignore = {
 read_globals = {
 	'debugstack',
 	'geterrorhandler',
+	'hooksecurefunc',
 	string = {fields = {'join', 'split', 'trim'}},
 	table = {fields = {'removemulti', 'wipe'}},
 
 	-- FrameXML
+	'ArenaEnemyFramesContainer',
+	'ArenaEnemyMatchFramesContainer',
+	'ArenaEnemyPrepFramesContainer',
+	'BossTargetFrameContainer',
 	'ColorMixin',
 	'ComboFrame',
 	'CreateColor',

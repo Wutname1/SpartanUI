@@ -30,6 +30,27 @@ local function ConfigOpened(self, name)
 	end
 end
 
+function Ace3_SkinDropdown(self)
+	if self and self.obj then
+		local pullout = self.obj.dropdown -- Don't ask questions.. Just FUCKING ACCEPT IT
+		if pullout then
+			if pullout.frame then
+				pullout.frame:SetTemplate(nil, true)
+			else
+				pullout:SetTemplate(nil, true)
+			end
+
+			if pullout.slider then
+				pullout.slider:SetTemplate()
+				pullout.slider:SetThumbTexture(E.Media.Textures.White8x8)
+
+				local t = pullout.slider:GetThumbTexture()
+				t:SetVertexColor(1, .82, 0, 0.8)
+			end
+		end
+	end
+end
+
 local function SkinAce3()
 	local AceGUI = LibStub('AceGUI-3.0', true)
 	if not AceGUI then
@@ -46,6 +67,7 @@ local function SkinAce3()
 
 	local regWidget = AceGUI.RegisterAsWidget
 	local regContainer = AceGUI.RegisterAsContainer
+	local nextPrevColor = {r = 1, g = .8, b = 0}
 
 	--Skin main window elements
 	RegisterAsContainer = function(self, widget)
@@ -54,6 +76,47 @@ local function SkinAce3()
 
 		if widgetType == 'ScrollFrame' then
 			Skin('ScrollBar', widget.scrollBar)
+		elseif widgetType == 'LSM30_Font' or widgetType == 'LSM30_Sound' or widgetType == 'LSM30_Border' or widgetType == 'LSM30_Background' or widgetType == 'LSM30_Statusbar' then
+			local frame = widget.frame
+			local button = frame.dropButton
+			local text = frame.text
+
+			frame:StripTextures()
+			frame:CreateBackdrop(nil, nil, nil, nil, nil, nil, nil, nil, true)
+			frame.backdrop:Point('TOPLEFT', 0, -21)
+			frame.backdrop:Point('BOTTOMRIGHT', -4, -1)
+
+			frame.label:ClearAllPoints()
+			frame.label:Point('BOTTOMLEFT', frame.backdrop, 'TOPLEFT', 2, 0)
+
+			frame.text:ClearAllPoints()
+			frame.text:Point('RIGHT', button, 'LEFT', -2, 0)
+			frame.text:Point('LEFT', frame.backdrop, 'LEFT', 2, 0)
+
+			button:ClearAllPoints()
+			button:Point('TOPLEFT', frame.backdrop, 'TOPRIGHT', -22, -2)
+			button:Point('BOTTOMRIGHT', frame.backdrop, 'BOTTOMRIGHT', -2, 2)
+
+			if widgetType == 'LSM30_Sound' then
+				widget.soundbutton:SetParent(frame.backdrop)
+				widget.soundbutton:ClearAllPoints()
+				widget.soundbutton:Point('LEFT', frame.backdrop, 'LEFT', 2, 0)
+
+				Skin:HandleNextPrevButton(button, nil, nextPrevColor)
+			elseif widgetType == 'LSM30_Statusbar' then
+				widget.bar:SetParent(frame.backdrop)
+				widget.bar:ClearAllPoints()
+				widget.bar:Point('TOPLEFT', frame.backdrop, 'TOPLEFT', 1, -1)
+				widget.bar:Point('BOTTOMRIGHT', frame.backdrop, 'BOTTOMRIGHT', -1, 1)
+
+				Skin:HandleNextPrevButton(button, nil, nextPrevColor, true)
+			else
+				Skin:HandleNextPrevButton(button, nil, nextPrevColor)
+			end
+
+			button:SetParent(frame.backdrop)
+			text:SetParent(frame.backdrop)
+			button:HookScript('OnClick', Ace3_SkinDropdown)
 		elseif widgetType == 'Frame' then
 			local frame = widget.frame
 
@@ -98,7 +161,7 @@ local function SkinAce3()
 				-- Re-Create FontString to change its frame level
 				widget.titletext = AppBar:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 				widget.titletext:SetPoint('TOP', AppBar, 'TOP', 0, -5)
-				SUI:FormatFont(widget.titletext, 13)
+				SUI.Font:Format(widget.titletext, 13)
 
 				frame.AppBar = AppBar
 

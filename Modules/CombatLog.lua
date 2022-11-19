@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_CombatLog')
+local module = SUI:NewModule('Module_CombatLog') ---@type SUI.Module
 module.DisplayName = L['Combat logging']
 module.description = 'Automatically runs /combatlog when in raids for log uploading to sites like Warcraftlogs'
 ----------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ function module:OnEnable()
 	CombatLog_Watcher:SetScript(
 		'OnEvent',
 		function(_, event)
-			if SUI.DB.DisabledComponents.CombatLog then
+			if SUI:IsModuleDisabled('CombatLog') then
 				return
 			end
 
@@ -160,15 +160,10 @@ function module:LogCheck(event)
 	elseif (module.DB.mythicdungeon) and type == 'party' and difficulty == 23 and maxPlayers == 5 then
 		-- 23 - Mythic 5-player Instance, filtering Garrison
 		setLogging(true, 'Mythic Dungeon')
-	elseif
-		(module.DB.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and maxPlayers == 5
-	 then
+	elseif (module.DB.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and maxPlayers == 5 then
 		-- 8 - Mythic+ Mode Instance
 		setLogging(true, 'Mythic+ Dungeon')
-	elseif
-		(module.DB.raidlegacy) and type == 'raid' and
-			(difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9)
-	 then
+	elseif (module.DB.raidlegacy) and type == 'raid' and (difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9) then
 		-- 3-9 is legacy raid difficulties
 		setLogging(true, 'Legacy Raid')
 	else
@@ -357,7 +352,7 @@ function module:FirstLaunch()
 				end
 
 				-- Defaults
-				cLog.modEnabled:SetChecked(not SUI.DB.DisabledComponents.CombatLog)
+				cLog.modEnabled:SetChecked(SUI:IsModuleEnabled('CombatLog'))
 				for key, object in pairs(cLog.options) do
 					object:SetChecked(module.DB[key])
 				end
@@ -383,7 +378,7 @@ function module:FirstLaunch()
 				local window = SUI.Setup.window
 				local cLog = window.content.cLog
 				if not cLog.modEnabled:GetChecked() then
-					SUI.DB.DisabledComponents.CombatLog = true
+					SUI:DisableModule(module)
 				end
 
 				for key, object in pairs(cLog.options) do

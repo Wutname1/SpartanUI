@@ -1,7 +1,8 @@
 local SUI, L = SUI, SUI.L
 local module = SUI:NewModule('Style_War')
-local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UF = SUI:GetModule('Component_UnitFrames') ---@type SUI_UnitFrames
+---@type SUI.Module
+local Artwork_Core = SUI:GetModule('Module_Artwork')
+local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI.UF
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
@@ -56,7 +57,7 @@ function module:OnInitialize()
 			return 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\UnitFrames'
 		end
 		if position == 'bg' then
-			return 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
+			return 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2'
 		end
 
 		return false
@@ -84,9 +85,9 @@ function module:OnInitialize()
 		},
 		position = SUI.IsRetail and 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,0,-10' or 'CENTER,SUI_Art_War_Left,RIGHT,-10,20'
 	}
-	SUI:GetModule('Component_Minimap'):Register('War', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('War', minimapSettings)
 
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			top = {
@@ -142,7 +143,7 @@ function module:OnEnable()
 
 		module:SetupVehicleUI()
 
-		if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+		if SUI:IsModuleEnabled('Minimap') then
 			module:MiniMap()
 		end
 	end

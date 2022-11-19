@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:NewModule('Component_Buffs')
+local module = SUI:NewModule('Module_Buffs') ---@type SUI.Module
 ----------------------------------------------------------------------------------------------------
 local RuleList = {'Rule1', 'Rule2', 'Rule3'}
 local BuffWatcher = CreateFrame('Frame')
@@ -87,7 +87,7 @@ local BuffPosUpdate = function()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.Buffs then
+	if SUI:IsModuleDisabled('Buffs') then
 		return
 	end
 	module:BuildOptions()
@@ -119,7 +119,7 @@ function module:OnEnable()
 		anchor.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
 		anchor.bg:SetAlpha(0.9)
 		anchor.lbl = anchor:CreateFontString(nil, 'OVERLAY')
-		anchor.lbl:SetFont(SUI:GetFontFace(), 10)
+		anchor.lbl:SetFont(SUI.Font:GetFont(), 10)
 		anchor.lbl:SetText('Anchor for Rule ' .. k)
 		anchor.lbl:SetAllPoints(anchor)
 

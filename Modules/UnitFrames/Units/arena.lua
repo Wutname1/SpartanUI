@@ -49,7 +49,7 @@ local function Options(OptionSet)
 	UF.Options:AddGroupLayout('arena', OptionSet)
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local nameText = '[SUI_ColorClass][name]'
 if SUI.IsRetail then
 	nameText = nameText .. ' [arenaspec]'

@@ -1,8 +1,9 @@
 local SUI, L = SUI, SUI.L
 local print = SUI.print
 local module = SUI:NewModule('Style_Tribal')
-local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UF = SUI:GetModule('Component_UnitFrames')
+---@type SUI.Module
+local Artwork_Core = SUI:GetModule('Module_Artwork')
+local UF = SUI:GetModule('Module_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Tribal', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
@@ -23,7 +24,7 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			top = {
@@ -60,7 +61,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20'
 	}
-	SUI:GetModule('Component_Minimap'):Register('Tribal', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Tribal', minimapSettings)
 
 	module:CreateArtwork()
 end
@@ -89,7 +90,7 @@ function module:OnEnable()
 
 		module:SetupVehicleUI()
 
-		if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+		if SUI:IsModuleEnabled('Minimap') then
 			module:MiniMap()
 		end
 	end

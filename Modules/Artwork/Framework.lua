@@ -1,5 +1,6 @@
 local SUI, L = SUI, SUI.L
-local module = SUI:NewModule('Component_Artwork')
+local module = SUI:NewModule('Module_Artwork')
+---@type SUI.Module
 module.ActiveStyle = {}
 module.BarBG = {}
 module.description = 'CORE: Provides the graphical looks of SUI'
@@ -171,7 +172,7 @@ function module:SetActiveStyle(style)
 		SUI:GetModule('Handler_BarSystems').Refresh()
 
 		--Update minimap
-		SUI:GetModule('Component_Minimap'):update(true)
+		SUI:GetModule('Module_Minimap'):update(true)
 
 		--Analytics
 		SUI.Analytics:Set(module, 'Style', style)
@@ -202,7 +203,7 @@ function module:UpdateScale()
 	end
 
 	-- Call Minimap scale update
-	local minimap = SUI:GetModule('Component_Minimap')
+	local minimap = SUI:GetModule('Module_Minimap')
 	if minimap.Settings and minimap.Settings.scaleWithArt then
 		minimap:UpdateScale()
 	end
@@ -321,25 +322,13 @@ end
 function module:updateViewport()
 	if not InCombatLockdown() and SUI.DB.Artwork.Viewport.enabled then
 		WorldFrame:ClearAllPoints()
-		WorldFrame:SetPoint(
-			'TOPLEFT',
-			UIParent,
-			'TOPLEFT',
-			SUI.DB.Artwork.Viewport.offset.left,
-			(SUI.DB.Artwork.Viewport.offset.top * -1)
-		)
-		WorldFrame:SetPoint(
-			'BOTTOMRIGHT',
-			UIParent,
-			'BOTTOMRIGHT',
-			(SUI.DB.Artwork.Viewport.offset.right * -1),
-			SUI.DB.Artwork.Viewport.offset.bottom
-		)
+		WorldFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', SUI.DB.Artwork.Viewport.offset.left, (SUI.DB.Artwork.Viewport.offset.top * -1))
+		WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', (SUI.DB.Artwork.Viewport.offset.right * -1), SUI.DB.Artwork.Viewport.offset.bottom)
 	end
 end
 
 function module:OnInitialize()
-	if SUI.DB.DisabledComponents.Artwork then
+	if SUI:IsModuleDisabled('Artwork') then
 		return
 	end
 
@@ -355,11 +344,12 @@ end
 
 local function VehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
+		local minimapModule = SUI:GetModule('Module_Minimap')
 		petbattle:HookScript(
 			'OnHide',
 			function()
 				SUI_Art_War:Hide()
-				if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+				if SUI:IsModuleEnabled('Minimap') and ((minimapModule.DB.AutoDetectAllowUse) or (minimapModule.DB.ManualAllowUse)) then
 					Minimap:Hide()
 				end
 			end
@@ -368,7 +358,7 @@ local function VehicleUI()
 			'OnShow',
 			function()
 				SUI_Art_War:Show()
-				if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
+				if SUI:IsModuleEnabled('Minimap') and ((minimapModule.DB.AutoDetectAllowUse) or (minimapModule.DB.ManualAllowUse)) then
 					Minimap:Show()
 				end
 			end
@@ -378,7 +368,7 @@ local function VehicleUI()
 end
 
 function module:OnEnable()
-	if SUI.DB.DisabledComponents.Artwork then
+	if SUI:IsModuleDisabled('Artwork') then
 		return
 	end
 

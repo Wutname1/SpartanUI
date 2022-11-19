@@ -53,7 +53,7 @@ end
 local function Options()
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	visibility = {
 		showAlways = true
@@ -70,6 +70,12 @@ local Settings = {
 		},
 		Buffs = {
 			enabled = false,
+			rules = {
+				duration = {
+					enabled = true,
+					mode = 'exclude'
+				}
+			},
 			position = {
 				anchor = 'TOPLEFT'
 			}
@@ -126,6 +132,9 @@ local Settings = {
 			enabled = true
 		},
 		SUI_RaidGroup = {enabled = true}
+	},
+	config = {
+		isFriendly = true
 	}
 }
 

@@ -1,9 +1,16 @@
----@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
-local UF = SUI:GetModule('Component_UnitFrames')
+---@class SUI.UF
+local UF = SUI.UF
+
+---@class SUI.UF.Elements
+---@field Build function
+---@field Update? function
+---@field OptionsTable? function
+---@field ElementSettings? SUI.UF.Elements.Settings
 local Elements = {
 	Types = {}
 }
 
+---@type SUI.UF.Elements.Settings
 local DefaultSettings = {
 	enabled = false,
 	alpha = 1,
@@ -13,7 +20,7 @@ local DefaultSettings = {
 	scale = 1,
 	FrameStrata = nil,
 	FrameLevel = nil,
-	texture = nil,
+	texture = 'SpartanUI Default',
 	bg = {
 		enabled = false,
 		color = {0, 0, 0, .2}
@@ -45,15 +52,25 @@ local DefaultSettings = {
 		y = 0
 	},
 	rules = {
-		duration = {},
+		duration = {
+			mode = 'include'
+		},
 		whitelist = {},
-		blacklist = {}
+		blacklist = {},
+		sourceUnit = {},
+		isPlayerAura = false,
+		isBossAura = false,
+		isHarmful = false,
+		isHelpful = false,
+		isRaid = false,
+		isStealable = false,
+		IsDispellableByMe = false
 	},
 	config = {
 		NoBulkUpdate = false,
 		type = 'General'
 	}
-} ---@type SUI.UnitFrame.Element.Settings
+}
 
 Elements.Types.General = {}
 Elements.Types.StatusBar = {}
@@ -61,30 +78,21 @@ Elements.Types.Indicator = {}
 Elements.Types.Text = {}
 Elements.Types.Auras = {}
 
----@class SUIUFElement
----@field Build function
----@field Update? function
----@field OptionsTable? function
----@field ElementSettings? SUI.UnitFrame.Element.Settings
-
----@class SUIUFElementList
----@field T table<string, SUIUFElement>
+---@class SUI.UF.Elements.Listing
+---@field T table<string, SUI.UF.Elements>
 Elements.List = {}
 
 ---@class SUIUFFrameSettingList
----@field T table<string, SUI.UnitFrame.Elements>
+---@field T table<string, SUI.UF.Elements.list>
 Elements.FrameSettings = {}
-
----@class ElementConfig
----@field NoBulkUpdate boolean
 
 ---@param ElementName string
 ---@param Build function
 ---@param Update? function
 ---@param OptionsTable? function
----@param ElementSettings? SUI.UnitFrame.Element.Settings
+---@param ElementSettings? SUI.UF.Elements.Settings
 function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSettings)
-	SUI:CopyData(ElementSettings, DefaultSettings) ---@type SUI.UnitFrame.Element.Settings
+	SUI:CopyData(ElementSettings, DefaultSettings) ---@type SUI.UF.Elements.Settings
 
 	UF.Elements.List[ElementName] = {
 		Build = Build,
@@ -97,8 +105,8 @@ function Elements:Register(ElementName, Build, Update, OptionsTable, ElementSett
 end
 
 ---@param frame table
----@param ElementName SUI.UnitFrame.Elements
----@param DB? SUI.UnitFrame.Element.Settings
+---@param ElementName SUI.UF.Elements.list
+---@param DB? SUI.UF.Elements.Settings
 function Elements:Build(frame, ElementName, DB)
 	if UF.Elements.List[ElementName] then
 		if not frame.elementList then
@@ -130,7 +138,7 @@ function Elements:Update(frame, ElementName, DB)
 end
 
 ---@param ElementName string
----@return SUI.UnitFrame.Element.Settings --False if the element did not provide a Size updater
+---@return SUI.UF.Elements.Settings --False if the element did not provide a Size updater
 function Elements:GetConfig(ElementName)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].ElementSettings then
 		return UF.Elements.List[ElementName].ElementSettings

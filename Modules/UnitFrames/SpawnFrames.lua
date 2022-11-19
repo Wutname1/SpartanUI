@@ -1,5 +1,5 @@
 local _G, SUI = _G, SUI
-local UF = SUI.UF ---@class SUI_UnitFrames
+local UF = SUI.UF ---@class SUI.UF
 ----------------------------------------------------------------------------------------------------
 ---comment
 ---@param frameName UnitFrameName
@@ -115,7 +115,7 @@ local function CreateUnitFrame(self, unit)
 	end
 
 	---@param frame table
-	---@param elementName SUI.UnitFrame.Elements
+	---@param elementName SUI.UF.Elements.list
 	local function ElementUpdate(frame, elementName)
 		if not frame[elementName] then
 			return

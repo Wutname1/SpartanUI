@@ -1,7 +1,4 @@
 local UF = SUI.UF
-local PostCreateAura = UF.PostCreateAura
-local PostUpdateAura = UF.PostUpdateAura
-local InverseAnchor = UF.InverseAnchor
 -- local AuraFilter = UF.AuraFilter
 
 -- function UF:AuraBars_UpdateBar(bar)
@@ -14,8 +11,8 @@ local InverseAnchor = UF.InverseAnchor
 -- 	bar.spark:Point('BOTTOM')
 -- 	bar.spark:Point('TOP')
 
--- 	AuraBars.spellTimeFont = SUI:GetFontFace('Player')
--- 	AuraBars.spellNameFont = SUI:GetFontFace('Player')
+-- 	AuraBars.spellTimeFont = SUI.Font:GetFontFace('Player')
+-- 	AuraBars.spellNameFont = SUI.Font:GetFontFace('Player')
 -- 	UF:Update_FontString(bar.timeText)
 -- 	UF:Update_FontString(bar.nameText)
 -- end
@@ -25,8 +22,18 @@ local InverseAnchor = UF.InverseAnchor
 local function Build(frame, DB)
 	local AuraBars = CreateFrame('Frame', '$parent_AuraBars', frame)
 
-	AuraBars.spellTimeFont = SUI:GetFontFace('Player')
-	AuraBars.spellNameFont = SUI:GetFontFace('Player')
+	AuraBars.spellTimeFont = SUI.Font:GetFont('Player')
+	AuraBars.spellNameFont = SUI.Font:GetFont('Player')
+	AuraBars.PostCreateButton = function(self, button)
+		UF.Auras:PostCreateButton('Buffs', button)
+	end
+
+	---@param unit UnitId
+	---@param data UnitAuraInfo
+	local FilterAura = function(element, unit, data)
+		return UF.Auras:Filter(element, unit, data, element.DB.rules)
+	end
+	AuraBars.FilterAura = FilterAura
 
 	local function PostCreateBar(_, bar)
 		bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
@@ -41,10 +48,7 @@ local function Build(frame, DB)
 		bar.bg:SetVertexColor(0, 0, 0, 0.4)
 		bar.bg:Show()
 	end
-
-	-- AuraBars.PreSetPosition = SortAuras
 	AuraBars.PostCreateBar = PostCreateBar
-	-- AuraBars.PostUpdateBar = PostUpdateBar_AuraBars
 	AuraBars.CustomFilter = function(
 		element,
 		unit,
@@ -66,7 +70,9 @@ local function Build(frame, DB)
 		modRate,
 		effect1,
 		effect2,
-		effect3)
+  effect3)
+  
+		local data = {}
 		if (source == 'player' or source == 'vehicle' or isBossDebuff) and duration ~= 0 and duration <= 900 then
 			return true
 		end
@@ -123,7 +129,7 @@ local function Options(unitName, OptionSet)
 	}
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	height = 14,
 	width = false,
@@ -132,7 +138,6 @@ local Settings = {
 	initialAnchor = 'BOTTOMLEFT',
 	growth = 'UP',
 	maxBars = 32,
-	texture = nil,
 	fgalpha = 1,
 	bgalpha = 1,
 	spellNameSize = 10,
@@ -146,7 +151,7 @@ local Settings = {
 		x = 7,
 		y = 20
 	},
-	filters = {
+	rules = {
 		showPlayers = true
 	},
 	config = {

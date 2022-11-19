@@ -21,7 +21,7 @@ local function Build(frame, DB)
 	health.TextElements = {}
 	for i, key in pairs(DB.text) do
 		local NewString = health:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(NewString, key.size, 'UnitFrames')
+		SUI.Font:Format(NewString, key.size, 'UnitFrames')
 		NewString:SetJustifyH(key.SetJustifyH)
 		NewString:SetJustifyV(key.SetJustifyV)
 		NewString:SetPoint(key.position.anchor, health, key.position.anchor, key.position.x, key.position.y)
@@ -193,15 +193,14 @@ local function Options(frameName, OptionSet)
 		}
 	}
 
-	local friendly = {'player', 'party', 'raid', 'target', 'focus', 'targettarget', 'focustarget'}
-	if not SUI:IsInTable(friendly, frameName) then
+	if not UF.Unit:isFriendly(frameName) then
 		OptionSet.args.general.args.DispelHighlight.hidden = true
 	end
 
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Health')
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	height = 40,
