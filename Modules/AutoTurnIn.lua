@@ -485,10 +485,10 @@ function module:VarArgForActiveQuests(...)
 				debug('selecting.. ' .. quest.title)
 				if questInfo then
 					if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
-						C_GossipInfo.SelectActiveQuest(i)
+						C_GossipInfo.SelectActiveQuest(quest.questID)
 					end
 				else
-					C_GossipInfo.SelectActiveQuest(i)
+					C_GossipInfo.SelectActiveQuest(quest.questID)
 				end
 			-- end
 			end
