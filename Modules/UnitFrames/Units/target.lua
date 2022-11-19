@@ -53,6 +53,15 @@ local Settings = {
 		},
 		Buffs = {
 			enabled = true,
+			rules = {
+				isMount = true,
+				isPlayerAura = true,
+				isRaid = true,
+				duration = {
+					enabled = true,
+					mode = 'exclude'
+				}
+			},
 			position = {
 				anchor = 'TOPLEFT'
 			}

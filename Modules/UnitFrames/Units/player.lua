@@ -70,6 +70,12 @@ local Settings = {
 		},
 		Buffs = {
 			enabled = false,
+			rules = {
+				duration = {
+					enabled = true,
+					mode = 'exclude'
+				}
+			},
 			position = {
 				anchor = 'TOPLEFT'
 			}
