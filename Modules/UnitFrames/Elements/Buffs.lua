@@ -1,22 +1,5 @@
 local UF = SUI.UF
 
-function UF:Aura_OnClick()
-	local keyDown = IsShiftKeyDown() and 'SHIFT' or IsAltKeyDown() and 'ALT' or IsControlKeyDown() and 'CTRL'
-	if not keyDown then
-		return
-	end
-
-	if self.data and keyDown then
-		if keyDown == 'CTRL' then
-			for k, v in pairs(self.data) do
-				print(k .. ' = ' .. tostring(v))
-			end
-		elseif keyDown == 'SHIFT' then
-		--TODO: Add a way to add spells to the whitelist or blacklist
-		end
-	end
-end
-
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
@@ -26,7 +9,7 @@ local function Build(frame, DB)
 		button.data = data
 	end
 	Buffs.PostCreateButton = function(self, button)
-		button:SetScript('OnClick', UF.Aura_OnClick)
+		UF.Auras:PostCreateButton('Buffs', button)
 	end
 
 	---@param unit UnitId

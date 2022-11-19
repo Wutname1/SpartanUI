@@ -5,6 +5,10 @@ local UF = SUI.UF
 local function Build(frame, DB)
 	--Debuff Icons
 	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame)
+	Debuffs.PostCreateButton = function(self, button)
+		UF.Auras:PostCreateButton('Debuffs', button)
+	end
+
 	---@param unit UnitId
 	---@param data UnitAuraInfo
 	local FilterAura = function(element, unit, data)
@@ -12,7 +16,6 @@ local function Build(frame, DB)
 	end
 	Debuffs.FilterAura = FilterAura
 
-	-- Debuffs.PostUpdate = PostUpdateAura
 	frame.Debuffs = Debuffs
 end
 

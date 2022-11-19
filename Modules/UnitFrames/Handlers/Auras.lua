@@ -1,8 +1,8 @@
 ---@class SUI.UF
 local UF = SUI.UF
 local Auras = {}
-
 local MonitoredIds = {}
+local AddToFilterWindow = nil
 
 ---@param unit UnitId
 ---@param data UnitAuraInfo
@@ -118,6 +118,42 @@ function Auras.PostCreateAura(element, button)
 	button.Duration = Duration
 
 	button:HookScript('OnUpdate', UpdateAura)
+end
+
+function Auras:PostCreateButton(elementName, button)
+	button:SetScript(
+		'OnClick',
+		function()
+			Auras:OnClick(button, elementName)
+		end
+	)
+end
+
+local function CreateAddToFilterWindow()
+	local StdUi = SUI.StdUi
+	AddToFilterWindow = StdUi:Window(nil, 300, 200, 'Add to Filter')
+	AddToFilterWindow:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+	AddToFilterWindow:Show()
+end
+
+function Auras:OnClick(button, elementName)
+	local keyDown = IsShiftKeyDown() and 'SHIFT' or IsAltKeyDown() and 'ALT' or IsControlKeyDown() and 'CTRL'
+	if not keyDown then
+		return
+	end
+
+	if button.data and keyDown then
+		if keyDown == 'CTRL' then
+			for k, v in pairs(button.data) do
+				print(k .. ' = ' .. tostring(v))
+			end
+		elseif keyDown == 'SHIFT' then
+			if not AddToFilterWindow then
+				CreateAddToFilterWindow()
+			end
+		--TODO: Add a way to add spells to the whitelist or blacklist
+		end
+	end
 end
 
 ---@param element any
