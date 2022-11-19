@@ -741,6 +741,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	debug('AutoTurnIn Loaded')
 	module:BuildOptions()
 	module:FirstLaunch()
 	local lastEvent = ''

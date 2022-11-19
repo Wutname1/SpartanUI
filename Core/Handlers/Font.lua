@@ -58,7 +58,7 @@ end
 
 ---@param Module? string
 function Font:GetFont(Module)
-	if Module then
+	if Module and Font.DB then
 		return SUI.Lib.LSM:Fetch('font', Font.DB.Modules[Module].Face)
 	end
 	return SUI.Lib.LSM:Fetch('font', 'Roboto Bold')
