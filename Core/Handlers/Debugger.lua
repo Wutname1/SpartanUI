@@ -72,11 +72,6 @@ local function CreateDebugWindow()
 end
 
 function SUI.Debug(debugText, module)
-	if not debugger.DB.enable then
-		return
-	elseif not DebugWindow then
-		CreateDebugWindow()
-	end
 	if not DebugMessages[module] then
 		DebugMessages[module] = {}
 		table.insert(ScrollListing, {text = (module), value = module})
@@ -89,6 +84,11 @@ function SUI.Debug(debugText, module)
 				order = (#debugger.options.args + 1)
 			}
 		end
+	end
+	if not debugger.DB.enable then
+		return
+	elseif not DebugWindow then
+		CreateDebugWindow()
 	end
 	if not debugger.DB.modules[module] then
 		return
@@ -148,6 +148,7 @@ function debugger:OnInitialize()
 	local defaults = {
 		enable = false,
 		modules = {
+			['*'] = false,
 			Core = false
 		}
 	}
