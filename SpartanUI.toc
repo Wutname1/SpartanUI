@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 20504
 ## Title: |TInterface/Addons/SpartanUI/images/Spartan-Helm:16:16|t Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@

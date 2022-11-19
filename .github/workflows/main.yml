@@ -3,7 +3,7 @@ name: Package and release
 on:
   push:
     tags: ["**"]
-    branches: ["master", "develop"]
+    branches: ["classic"]
 
 jobs:
   release:
