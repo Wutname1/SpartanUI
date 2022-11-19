@@ -474,44 +474,19 @@ function module:VarArgForActiveQuests(...)
 		debug(#...)
 	end
 
-	if SUI.IsRetail then
-		for i, quest in pairs(...) do
-			debug(quest.isComplete)
-			debug(quest.frequency)
-			debug(quest.title)
-			if (quest.isComplete) and (not module:blacklisted(quest.title)) then
-				-- if self:isAppropriate(questname, true) then
-				local questInfo = Lquests[quest.title]
-				debug('selecting.. ' .. quest.title)
-				if questInfo then
-					if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
-						C_GossipInfo.SelectActiveQuest(quest.questID)
-					end
-				else
+	for i, quest in pairs(...) do
+		debug(quest.isComplete)
+		debug(quest.frequency)
+		debug(quest.title)
+		if (quest.isComplete) and (not module:blacklisted(quest.title)) then
+			local questInfo = Lquests[quest.title]
+			debug('selecting.. ' .. quest.title)
+			if questInfo then
+				if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
 					C_GossipInfo.SelectActiveQuest(quest.questID)
 				end
-			-- end
-			end
-		end
-	else
-		local INDEX_CONST = 6
-
-		for i = 1, select('#', ...), INDEX_CONST do
-			---@diagnostic disable-next-line: redundant-parameter
-			local name = select(i * 1, GetGossipActiveQuests(i))
-			local isComplete = select(i + 3, ...) -- complete status
-			if (isComplete) and (not module:blacklisted(name)) then
-				local questname = select(i, ...)
-				-- if self:isAppropriate(questname, true) then
-				local quest = Lquests[questname]
-				if quest then
-					if module:GetItemAmount(quest.currency, quest.item) >= quest.amount then
-						SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
-					end
-				else
-					SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
-				end
-			-- end
+			else
+				C_GossipInfo.SelectActiveQuest(quest.questID)
 			end
 		end
 	end
@@ -789,77 +764,75 @@ function module:OnEnable()
 
 	local IsCollapsed = true
 
-	if SUI.IsRetail and SUI:IsModuleEnabled(module) then
-		for _, v in ipairs({'QuestFrame', 'GossipFrame'}) do
-			local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
-			OptionsPopdown:SetScale(.95)
-			OptionsPopdown:SetPoint('TOP', _G[v], 'BOTTOM', 0, -2)
-			OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
-			OptionsPopdown.title:SetPoint('CENTER')
+	for _, v in ipairs({'QuestFrame', 'GossipFrame'}) do
+		local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
+		OptionsPopdown:SetScale(.95)
+		OptionsPopdown:SetPoint('TOP', _G[v], 'BOTTOM', 0, -2)
+		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
+		OptionsPopdown.title:SetPoint('CENTER')
 
-			-- OptionsPopdown.CloseButton = StdUi:Button(OptionsPopdown, 15, 15, 'X')
-			OptionsPopdown.minimizeButton = StdUi:Button(OptionsPopdown, 15, 15, '-')
+		-- OptionsPopdown.CloseButton = StdUi:Button(OptionsPopdown, 15, 15, 'X')
+		OptionsPopdown.minimizeButton = StdUi:Button(OptionsPopdown, 15, 15, '-')
 
-			StdUi:GlueRight(OptionsPopdown.minimizeButton, OptionsPopdown, -5, 0, true)
-			-- StdUi:GlueRight(OptionsPopdown.CloseButton, OptionsPopdown, -5, 0, true)
-			-- StdUi:GlueLeft(OptionsPopdown.minimizeButton, OptionsPopdown.CloseButton, -2, 0)
+		StdUi:GlueRight(OptionsPopdown.minimizeButton, OptionsPopdown, -5, 0, true)
+		-- StdUi:GlueRight(OptionsPopdown.CloseButton, OptionsPopdown, -5, 0, true)
+		-- StdUi:GlueLeft(OptionsPopdown.minimizeButton, OptionsPopdown.CloseButton, -2, 0)
 
-			OptionsPopdown.minimizeButton:SetScript(
+		OptionsPopdown.minimizeButton:SetScript(
+			'OnClick',
+			function()
+				if OptionsPopdown.Panel:IsVisible() then
+					OptionsPopdown.Panel:Hide()
+					IsCollapsed = true
+				else
+					OptionsPopdown.Panel:Show()
+					IsCollapsed = false
+				end
+			end
+		)
+		OptionsPopdown:HookScript(
+			'OnShow',
+			function()
+				if IsCollapsed then
+					OptionsPopdown.Panel:Hide()
+				else
+					OptionsPopdown.Panel:Show()
+				end
+			end
+		)
+
+		local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
+		Panel:SetPoint('TOP', OptionsPopdown, 'BOTTOM', 0, -1)
+		Panel:Hide()
+		local options = {}
+		options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
+		options.AcceptGeneralQuests = StdUi:Checkbox(Panel, L['Accept quests'], nil, 20)
+		options.TurnInEnabled = StdUi:Checkbox(Panel, L['Turn in completed quests'], nil, 20)
+		options.AutoGossip = StdUi:Checkbox(Panel, L['Auto gossip'], nil, 20)
+		options.AutoGossipSafeMode = StdUi:Checkbox(Panel, L['Auto gossip safe mode'], nil, 20)
+		for setting, Checkbox in pairs(options) do
+			Checkbox:SetChecked(DB[setting])
+			Checkbox:HookScript(
 				'OnClick',
 				function()
-					if OptionsPopdown.Panel:IsVisible() then
-						OptionsPopdown.Panel:Hide()
-						IsCollapsed = true
-					else
-						OptionsPopdown.Panel:Show()
-						IsCollapsed = false
+					DB[setting] = Checkbox:GetChecked()
+					if Checkbox:GetChecked() then
+						OnEvent(nil, lastEvent)
 					end
 				end
 			)
-			OptionsPopdown:HookScript(
-				'OnShow',
-				function()
-					if IsCollapsed then
-						OptionsPopdown.Panel:Hide()
-					else
-						OptionsPopdown.Panel:Show()
-					end
-				end
-			)
-
-			local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
-			Panel:SetPoint('TOP', OptionsPopdown, 'BOTTOM', 0, -1)
-			Panel:Hide()
-			local options = {}
-			options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
-			options.AcceptGeneralQuests = StdUi:Checkbox(Panel, L['Accept quests'], nil, 20)
-			options.TurnInEnabled = StdUi:Checkbox(Panel, L['Turn in completed quests'], nil, 20)
-			options.AutoGossip = StdUi:Checkbox(Panel, L['Auto gossip'], nil, 20)
-			options.AutoGossipSafeMode = StdUi:Checkbox(Panel, L['Auto gossip safe mode'], nil, 20)
-			for setting, Checkbox in pairs(options) do
-				Checkbox:SetChecked(DB[setting])
-				Checkbox:HookScript(
-					'OnClick',
-					function()
-						DB[setting] = Checkbox:GetChecked()
-						if Checkbox:GetChecked() then
-							OnEvent(nil, lastEvent)
-						end
-					end
-				)
-			end
-
-			StdUi:GlueTop(options.DoCampainQuests, Panel, 5, -2, 'LEFT')
-
-			StdUi:GlueBelow(options.AcceptGeneralQuests, options.DoCampainQuests, 0, 2, 'LEFT')
-			StdUi:GlueRight(options.TurnInEnabled, options.AcceptGeneralQuests, 0, 0)
-
-			StdUi:GlueBelow(options.AutoGossip, options.AcceptGeneralQuests, 0, 2, 'LEFT')
-			StdUi:GlueRight(options.AutoGossipSafeMode, options.AutoGossip, 0, 0)
-
-			OptionsPopdown.Panel = Panel
-			OptionsPopdown.Panel.options = options
 		end
+
+		StdUi:GlueTop(options.DoCampainQuests, Panel, 5, -2, 'LEFT')
+
+		StdUi:GlueBelow(options.AcceptGeneralQuests, options.DoCampainQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.TurnInEnabled, options.AcceptGeneralQuests, 0, 0)
+
+		StdUi:GlueBelow(options.AutoGossip, options.AcceptGeneralQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.AutoGossipSafeMode, options.AutoGossip, 0, 0)
+
+		OptionsPopdown.Panel = Panel
+		OptionsPopdown.Panel.options = options
 	end
 end
 

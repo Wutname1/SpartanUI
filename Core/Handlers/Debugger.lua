@@ -75,7 +75,9 @@ function SUI.Debug(debugText, module)
 	if not DebugMessages[module] then
 		DebugMessages[module] = {}
 		table.insert(ScrollListing, {text = (module), value = module})
-		StdUi:ObjectList(DebugWindow.NamespaceListings.scrollChild, DebugWindow.Modules, 'Button', ScrollItemUpdate, ScrollListing, 1, 0, 0)
+		if DebugWindow then
+			StdUi:ObjectList(DebugWindow.NamespaceListings.scrollChild, DebugWindow.Modules, 'Button', ScrollItemUpdate, ScrollListing, 1, 0, 0)
+		end
 		debugger.DB.modules[module] = debugger.DB.enable
 		if debugger.options then
 			debugger.options.args[module] = {
