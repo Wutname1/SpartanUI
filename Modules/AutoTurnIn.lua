@@ -426,7 +426,7 @@ function module.QUEST_COMPLETE()
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
-			SUI:Print(L['Canceling turn in, quest rewards'] .. ' ' .. QuestRewardsWeapon .. '.')
+			-- SUI:Print(L['Canceling turn in, quest rewards'] .. ' ' .. QuestRewardsWeapon .. '.')
 		elseif DB.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
