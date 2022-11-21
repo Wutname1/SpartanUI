@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L, Lib, StdUi = SUI.L, SUI.Lib, SUI.StdUi
-local module = SUI:NewModule('Handler_Options')
+local module = SUI:NewModule('Handler_Options') ---@type SUI.Module
 module.ShowOptionsUI = false
 local unpack = unpack
 local Options = {}
@@ -144,7 +144,7 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
+				SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
 			end
 		}
 	end
@@ -203,7 +203,7 @@ function module:OnInitialize()
 						type = 'execute',
 						order = 3,
 						func = function()
-							SUI:GetModule('Component_MoveIt'):Reset()
+							SUI:GetModule('Module_MoveIt'):Reset()
 						end
 					}
 				}
@@ -265,8 +265,8 @@ function module:OnInitialize()
 		name = L['Modules'],
 		type = 'group',
 		args = {
-			Components = {
-				name = L['Components'],
+			ModuleListing = {
+				name = L['Enabled modules'],
 				type = 'group',
 				inline = true,
 				args = {}
@@ -274,16 +274,16 @@ function module:OnInitialize()
 		}
 	}
 
-	-- List Components
+	-- List Modules
 	for name, submodule in SUI:IterateModules() do
-		if (string.match(name, 'Component_')) and not submodule.HideModule then
-			local RealName = string.sub(name, 11)
-			local Displayname = string.sub(name, 11)
+		if (string.match(name, 'Module_')) and not submodule.HideModule then
+			local RealName = string.sub(name, 8)
+			local Displayname = string.sub(name, 8)
 			if submodule.DisplayName then
 				Displayname = submodule.DisplayName
 			end
 
-			SUI.opt.args.Modules.args.Components.args[RealName] = {
+			SUI.opt.args.Modules.args.ModuleListing.args[RealName] = {
 				name = Displayname,
 				type = 'toggle',
 				disabled = submodule.Override or false,
@@ -291,7 +291,7 @@ function module:OnInitialize()
 					if submodule.Override then
 						return false
 					end
-					return not SUI.DB.DisabledComponents[RealName]
+					return SUI:IsModuleEnabled(RealName)
 				end,
 				set = function(info, val)
 					if (val) then
@@ -304,18 +304,18 @@ function module:OnInitialize()
 		end
 	end
 
-	SUI.opt.args.Modules.args['enabled'] = {
+	SUI.opt.args.Modules.args.enabledModules = {
 		name = L['Enabled modules'],
 		type = 'group',
 		order = .1,
 		args = {
-			Components = SUI.opt.args.Modules.args['Components']
+			Modules = SUI.opt.args.Modules.args.ModuleListing
 		}
 	}
 end
 
 function module:OnEnable()
-	if not SUI:GetModule('Component_Artwork', true) then
+	if not SUI:GetModule('Module_Artwork', true) then
 		SUI.opt.args.General.args['style'].args['OverallStyle'].disabled = true
 	end
 

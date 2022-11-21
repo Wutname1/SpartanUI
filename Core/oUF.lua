@@ -111,10 +111,7 @@ do -- TargetIndicator as an SUIUF module
 			self.TargetIndicator.bg1:Hide()
 			self.TargetIndicator.bg2:Hide()
 		end
-		if
-			UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and
-				SUI:GetModule('Component_Nameplates').DB.ShowTarget
-		 then
+		if UnitExists('target') and C_NamePlate.GetNamePlateForUnit('target') and SUI:GetModule('Module_Nameplates').DB.ShowTarget then
 			if self:GetName() == 'oUF_Spartan_NamePlates' .. C_NamePlate.GetNamePlateForUnit('target'):GetName() then
 				self.TargetIndicator.bg1:Show()
 				self.TargetIndicator.bg2:Show()
@@ -298,7 +295,7 @@ do --Health Formatting Tags
 		if tmp >= 1000 then
 			return SUI:round(tmp / 1000, 0) .. 'K'
 		end
-		return SUI:comma_value(tmp)
+		return SUI.Font:comma_value(tmp)
 	end
 	-- Current Health Dynamic, as an SUIUF module
 	SUIUF.Tags.Events['health:current-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
@@ -307,13 +304,13 @@ do --Health Formatting Tags
 		if tmp >= 1000000 then
 			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return SUI:comma_value(tmp)
+			return SUI.Font:comma_value(tmp)
 		end
 	end
 	-- Current Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['health:current-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:current-formatted'] = function(unit)
-		return SUI:comma_value(getCurrentUnitHP(unit))
+		return SUI.Font:comma_value(getCurrentUnitHP(unit))
 	end
 
 	-- Total Health Short, as an SUIUF module
@@ -326,7 +323,7 @@ do --Health Formatting Tags
 		if tmp >= 1000 then
 			return SUI:round(tmp / 1000, 0) .. 'K'
 		end
-		return SUI:comma_value(tmp)
+		return SUI.Font:comma_value(tmp)
 	end
 	-- Total Health Dynamic, as an SUIUF module
 	SUIUF.Tags.Events['health:max-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
@@ -335,13 +332,13 @@ do --Health Formatting Tags
 		if tmp >= 1000000 then
 			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return SUI:comma_value(tmp)
+			return SUI.Font:comma_value(tmp)
 		end
 	end
 	-- Total Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['health:max-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:max-formatted'] = function(unit)
-		return SUI:comma_value(getMaxUnitHP(unit))
+		return SUI.Font:comma_value(getMaxUnitHP(unit))
 	end
 
 	-- Missing Health Dynamic, as an SUIUF module
@@ -351,13 +348,13 @@ do --Health Formatting Tags
 		if tmp >= 1000000 then
 			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return SUI:comma_value(tmp)
+			return SUI.Font:comma_value(tmp)
 		end
 	end
 	-- Missing Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['health:missing-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:missing-formatted'] = function(unit)
-		return SUI:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
+		return SUI.Font:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
 	end
 end
 
@@ -369,13 +366,13 @@ do -- Mana Formatting Tags
 		if tmp >= 1000000 then
 			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return SUI:comma_value(tmp)
+			return SUI.Font:comma_value(tmp)
 		end
 	end
 	-- Current Mana formatted, as an SUIUF module
 	SUIUF.Tags.Events['power:current-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['power:current-formatted'] = function(unit)
-		return SUI:comma_value(UnitPower(unit))
+		return SUI.Font:comma_value(UnitPower(unit))
 	end
 
 	-- Total Mana Dynamic, as an SUIUF module
@@ -385,13 +382,13 @@ do -- Mana Formatting Tags
 		if tmp >= 1000000 then
 			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return SUI:comma_value(tmp)
+			return SUI.Font:comma_value(tmp)
 		end
 	end
 	-- Total Mana formatted, as an SUIUF module
 	SUIUF.Tags.Events['power:max-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['power:max-formatted'] = function(unit)
-		return SUI:comma_value(UnitPowerMax(unit))
+		return SUI.Font:comma_value(UnitPowerMax(unit))
 	end
 
 	-- Missing Mana Dynamic, as an SUIUF module
@@ -401,13 +398,13 @@ do -- Mana Formatting Tags
 		if tmp >= 1000000 then
 			return SUI:round(tmp / 1000000, 1) .. 'M '
 		else
-			return SUI:comma_value(tmp)
+			return SUI.Font:comma_value(tmp)
 		end
 	end
 	-- Missing Mana formatted, as an SUIUF module
 	SUIUF.Tags.Events['power:missing-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
 	SUIUF.Tags.Methods['power:missing-formatted'] = function(unit)
-		return SUI:comma_value(UnitPowerMax(unit) - UnitPower(unit))
+		return SUI.Font:comma_value(UnitPowerMax(unit) - UnitPower(unit))
 	end
 end
 

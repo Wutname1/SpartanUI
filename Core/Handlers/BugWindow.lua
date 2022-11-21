@@ -252,8 +252,7 @@ local createBugWindow = function()
 	-- Create window Items
 	window.editBox = StdUi:MultiLineBox(window, 480, 320, '')
 
-	window.SubTitle =
-		StdUi:Label(window, 'Error handler ' .. (GetAddOnMetadata('SpartanUI', 'Version') or ''), 10, nil, nil, 15)
+	window.SubTitle = StdUi:Label(window, 'Error handler ' .. (GetAddOnMetadata('SpartanUI', 'Version') or ''), 10, nil, nil, 15)
 	window.SubTitle:SetPoint('BOTTOM', window.Title, 'BOTTOMRIGHT', 0, -1)
 
 	window.sessionLabel = StdUi:Label(window, '', 10, nil, 180, 20)
@@ -357,8 +356,7 @@ local MapIcon =
 			end
 		end,
 		OnTooltipShow = function(tt)
-			local hint =
-				'|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
+			local hint = '|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
 			local line = '%d. %s (x%d)'
 			local errs = addon:GetErrors(BugGrabber:GetSessionId())
 			if #errs == 0 then

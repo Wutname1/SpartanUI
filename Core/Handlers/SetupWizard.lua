@@ -2,7 +2,7 @@
 local SUI = SUI
 local L = SUI.L
 ---@class SUI.SetupWizard
-local module = SUI:NewModule('SetupWizard')
+local module = SUI:NewModule('SetupWizard') ---@type SUI.Module
 local StdUi = SUI.StdUi
 module.window = nil
 
@@ -10,12 +10,7 @@ local DisplayRequired, WelcomeAdded = false, false
 local TotalPageCount, PageDisplayOrder, PageDisplayed = 0, 1, 0
 local RequiredPageCount, RequiredDisplayOrder, RequiredPageDisplayed = 0, 1, 0
 ---@type table<string, SUI.SetupWizard.PageData>
-local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageID, CurrentDisplay = {},
-	{},
-	{},
-	{},
-	{},
-	{}
+local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageID, CurrentDisplay = {}, {}, {}, {}, {}, {}
 
 ---@type SUI.SetupWizard.PageData
 local FinishedPage = {
@@ -399,24 +394,12 @@ local function WelcomePage()
 			WelcomePage.Helm:SetAlpha(.6)
 
 			if not select(4, GetAddOnInfo('Bartender4')) then
-				module.window.BT4Warning =
-					StdUi:Label(
-					module.window,
-					L['Bartender4 not detected! Please download and install Bartender4.'],
-					25,
-					nil,
-					module.window:GetWidth(),
-					40
-				)
+				module.window.BT4Warning = StdUi:Label(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 25, nil, module.window:GetWidth(), 40)
 				module.window.BT4Warning:SetTextColor(1, .18, .18, 1)
 				StdUi:GlueAbove(module.window.BT4Warning, module.window, 0, 20)
 			end
 
-			WelcomePage.ProfileCopyLabel =
-				StdUi:Label(
-				WelcomePage,
-				L['If you would like to copy the configuration from another character you may do so below.']
-			)
+			WelcomePage.ProfileCopyLabel = StdUi:Label(WelcomePage, L['If you would like to copy the configuration from another character you may do so below.'])
 
 			WelcomePage.ProfileList = StdUi:Dropdown(WelcomePage, 200, 20, profiles)
 			WelcomePage.CopyProfileButton = StdUi:Button(WelcomePage, 60, 20, 'COPY')

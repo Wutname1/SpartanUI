@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L, Lib = SUI.L, SUI.Lib
-local module = SUI:NewModule('Module_WagoAnalytics')
+local module = SUI:NewModule('Module_WagoAnalytics') ---@type SUI.Module
 module.DisplayName = 'Wago Analytics'
 module.description = L['Module handles Wago Analytics collection IF your update client supports it.']
 SUI.Analytics = {}
@@ -63,7 +63,7 @@ local function InitalCollection()
 		SUI.Analytics:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
 	end
 	if SUI:IsModuleEnabled('UnitFrames') then
-		SUI.Analytics:Set('UnitFrames', 'Style', SUI:GetModule('Component_UnitFrames').DB.Style)
+		SUI.Analytics:Set('UnitFrames', 'Style', SUI:GetModule('Module_UnitFrames').DB.Style)
 	end
 end
 
@@ -98,23 +98,9 @@ local function SetupPage()
 					500
 				)
 
-				WagoAnalytics.lbl1 =
-					StdUi:Label(
-					WagoAnalytics,
-					L['Without using the Wago or WowUp client no data collected will be sent.'],
-					15,
-					nil,
-					500
-				)
+				WagoAnalytics.lbl1 = StdUi:Label(WagoAnalytics, L['Without using the Wago or WowUp client no data collected will be sent.'], 15, nil, 500)
 
-				WagoAnalytics.lbl2 =
-					StdUi:Label(
-					WagoAnalytics,
-					L['You can view all collected data in the SUI options under Modules -> Wago Analytics.'],
-					nil,
-					nil,
-					500
-				)
+				WagoAnalytics.lbl2 = StdUi:Label(WagoAnalytics, L['You can view all collected data in the SUI options under Modules -> Wago Analytics.'], nil, nil, 500)
 
 				SUI.Setup.window.Skip:SetText('No thanks')
 				SUI.Setup.window.Next:SetText("I'm in")
@@ -179,18 +165,14 @@ local function BuildOptions()
 						width = 'full'
 					},
 					['2'] = {
-						name = L[
-							'This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'
-						],
+						name = L['This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'],
 						type = 'description',
 						fontSize = 'medium',
 						order = 3,
 						width = 'full'
 					},
 					['3'] = {
-						name = L[
-							'You can view all collected data below, note some additional data will/can be collected as settings within SUI are changed. That data will show up below as it is collected.'
-						],
+						name = L['You can view all collected data below, note some additional data will/can be collected as settings within SUI are changed. That data will show up below as it is collected.'],
 						type = 'description',
 						fontSize = 'medium',
 						order = 4,

@@ -117,7 +117,7 @@ local function Options(OptionSet)
 	}
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 95,
 	showParty = false,
@@ -139,12 +139,27 @@ local Settings = {
 		Buffs = {
 			enabled = true,
 			onlyShowPlayer = true,
-			size = 10
+			size = 10,
+			growthx = 'LEFT',
+			growthy = 'UP',
+			position = {
+				point = 'BOTTOMRIGHT',
+				relativePoint = 'BOTTOMRIGHT',
+				x = -2,
+				y = 2
+			}
 		},
 		Debuffs = {
 			enabled = true,
 			rows = 1,
-			size = 10
+			size = 10,
+			growthy = 'DOWN',
+			position = {
+				point = 'TOPLEFT',
+				relativePoint = 'TOPLEFT',
+				x = 2,
+				y = -2
+			}
 		},
 		Health = {
 			height = 30
@@ -209,7 +224,8 @@ local Settings = {
 		}
 	},
 	config = {
-		IsGroup = true
+		IsGroup = true,
+		isFriendly = true
 	}
 }
 

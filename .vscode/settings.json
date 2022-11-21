@@ -344,10 +344,15 @@
     "ROTATE_MINIMAP",
     "OPTION_TOOLTIP_ROTATE_MINIMAP",
     "MAX_TOTEMS",
-    "TotemFrame"
+    "TotemFrame",
+    "EventRegistry",
+    "StatusTrackingBarManager",
+    "GetContainerNumSlots",
+    "GetContainerItemLink",
+    "UseContainerItem",
+    "GetContainerItemInfo"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
-  "Lua.diagnostics.ignoredFiles": "Disable",
   "Lua.diagnostics.enable": true,
   "Lua.diagnostics.disable": [
     "param-type-mismatch",

@@ -1,21 +1,21 @@
 ---@class SUI
 local SUI = SUI
-local L, print = SUI.L, SUI.print
----@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
-local UF = SUI:NewModule('Component_UnitFrames')
-local MoveIt = SUI.MoveIt
-SUI.UF = UF
+local L, MoveIt = SUI.L, SUI.MoveIt
+---@class SUI.UF : SUI.Module
+local UF = SUI:NewModule('Module_UnitFrames')
 UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
 UF.Core = true
 UF.CurrentSettings = {}
----@class UFPositionDefaults
+
+---@class SUI.UF.FramePositions
 local UFPositionDefaults = {
 	['player'] = 'BOTTOMRIGHT,UIParent,BOTTOM,-60,250',
 	['pet'] = 'RIGHT,SUI_UF_player,BOTTOMLEFT,-60,0',
 	['pettarget'] = 'RIGHT,SUI_UF_pet,LEFT,0,-5',
 	['target'] = 'LEFT,SUI_UF_player,RIGHT,150,0',
 	['targettarget'] = 'LEFT,SUI_UF_target,BOTTOMRIGHT,4,0',
+	['targettargettarget'] = 'LEFT,SUI_UF_targettarget,RIGHT,4,0',
 	['focus'] = 'BOTTOMLEFT,SUI_UF_target,TOP,0,30',
 	['focustarget'] = 'BOTTOMLEFT,SUI_UF_focus,BOTTOMRIGHT,5,0',
 	['boss'] = 'RIGHT,UIParent,RIGHT,-9,162',
@@ -26,6 +26,7 @@ local UFPositionDefaults = {
 	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
 }
 UF.Artwork = {}
+UF.MountIds = {}
 
 ---@param msg string
 ---@param frame UnitId
@@ -37,9 +38,9 @@ end
 ---@param LSMKey string
 ---@return string
 function UF:FindStatusBarTexture(LSMKey)
-	local defaultTexture = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2'
-
-	return SUI.Lib.LSM:Fetch('statusbar', LSMKey, true) or defaultTexture
+	local defaultTexture = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2'
+	---@diagnostic disable-next-line: return-type-mismatch
+	return SUI.Lib.LSM:Fetch('statusbar', LSMKey, false) or defaultTexture
 end
 
 ---@param frameName UnitId
@@ -56,53 +57,6 @@ function UF:IsFriendlyFrame(frameName)
 		return true
 	end
 	return false
-end
-
----@param unit UnitId
----@param data UnitAuraInfo
----@param rules SUI.UnitFrame.Aura.Rules
-function UF:FilterAura(element, unit, data, rules)
-	local ShouldDisplay = true
-	-- if data.dispelName then
-	-- print(unit .. '-' .. data.name .. '-' .. data.dispelName)
-	-- end
-
-	for k, v in pairs(rules) do
-		UF:debug(k, unit, 'FilterAura')
-		if data[k] then
-			UF:debug(data.name, unit, 'FilterAura')
-			if type(v) == 'table' then
-				if k == 'duration' and v.enabled then
-					local moreThanMax = data[k] > v.maxTime
-					local lessThanMin = data[k] < v.minTime
-					UF:debug('Durration is ' .. data[k], unit, 'FilterAura')
-					if lessThanMin or moreThanMax then
-						ShouldDisplay = false
-					end
-				elseif SUI:IsInTable(v, data[k]) then
-					if v[data[k]] then
-						UF:debug('Force show per rules', unit, 'FilterAura')
-						return true
-					else
-						UF:debug('Force hide per rules', unit, 'FilterAura')
-						return false
-					end
-				end
-			elseif type(v) == 'boolean' then
-				if v ~= data[k] then
-					UF:debug('Not equal', unit, 'FilterAura')
-					ShouldDisplay = false
-				end
-			end
-		elseif k == 'whitelist' or k == 'blacklist' then
-			if v[data.spellId] then
-				return (k == 'whitelist' and true) or false
-			end
-		end
-	end
-
-	UF:debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'), unit, 'FilterAura')
-	return ShouldDisplay
 end
 
 ---@param unit? UnitFrameName
@@ -184,6 +138,13 @@ function UF:OnInitialize()
 	UF.DB = UF.Database.profile
 
 	LoadDB()
+
+	if SUI.IsRetail then
+		for _, mountID in next, C_MountJournal.GetMountIDs() do
+			local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
+			UF.MountIds[spellID] = spellID
+		end
+	end
 end
 
 function UF:OnEnable()
@@ -266,6 +227,7 @@ function UF:Update()
 	UF:UpdateAll()
 end
 
+---@param style string
 function UF:SetActiveStyle(style)
 	UF.Style:Change(style)
 	UF.DB.Style = style
@@ -277,83 +239,7 @@ function UF:SetActiveStyle(style)
 	SUI.Analytics:Set(UF, 'Style', style)
 end
 
-function UF.PostCreateAura(element, button)
-	local function UpdateAura(self, elapsed)
-		if (self.expiration) then
-			self.expiration = math.max(self.expiration - elapsed, 0)
-
-			if (self.expiration > 0 and self.expiration < 60) then
-				self.Duration:SetFormattedText('%d', self.expiration)
-			else
-				self.Duration:SetText()
-			end
-		end
-	end
-
-	if button.SetBackdrop then
-		button:SetBackdrop(nil)
-		button:SetBackdropColor(0, 0, 0)
-	end
-	button.cd:SetReverse(true)
-	button.cd:SetHideCountdownNumbers(true)
-	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	button.icon:SetDrawLayer('ARTWORK')
-	-- button:SetScript('OnEnter', OnAuraEnter)
-
-	-- We create a parent for aura strings so that they appear over the cooldown widget
-	local StringParent = CreateFrame('Frame', nil, button)
-	StringParent:SetFrameLevel(20)
-
-	button.count:SetParent(StringParent)
-	button.count:ClearAllPoints()
-	button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
-	button.count:SetFont(SUI:GetFontFace('UnitFrames'), select(2, button.count:GetFont()) - 3)
-
-	local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
-	Duration:SetFont(SUI:GetFontFace('UnitFrames'), 11)
-	Duration:SetPoint('TOPLEFT', button, 0, -1)
-	button.Duration = Duration
-
-	button:HookScript('OnUpdate', UpdateAura)
-end
-
-function UF.PostUpdateAura(element, unit, button, index)
-	local _, _, _, _, duration, expiration, owner, canStealOrPurge = UnitAura(unit, index, button.filter)
-	if (duration and duration > 0) then
-		button.expiration = expiration - GetTime()
-	else
-		button.expiration = math.huge
-	end
-
-	if button.SetBackdrop then
-		if (unit == 'target' and canStealOrPurge) then
-			button:SetBackdropColor(0, 1 / 2, 1 / 2)
-		elseif (owner ~= 'player') then
-			button:SetBackdropColor(0, 0, 0)
-		end
-	end
-end
-
-function UF.InverseAnchor(anchor)
-	if anchor == 'TOPLEFT' then
-		return 'BOTTOMLEFT'
-	elseif anchor == 'TOPRIGHT' then
-		return 'BOTTOMRIGHT'
-	elseif anchor == 'BOTTOMLEFT' then
-		return 'TOPLEFT'
-	elseif anchor == 'BOTTOMRIGHT' then
-		return 'TOPRIGHT'
-	elseif anchor == 'BOTTOM' then
-		return 'TOP'
-	elseif anchor == 'TOP' then
-		return 'BOTTOM'
-	elseif anchor == 'LEFT' then
-		return 'RIGHT'
-	elseif anchor == 'RIGHT' then
-		return 'LEFT'
-	end
-end
-
+---@param scale integer
 function UF:ScaleFrames(scale)
 	if SUI:IsModuleDisabled('MoveIt') then
 		return
@@ -369,3 +255,5 @@ function UF:ScaleFrames(scale)
 		end
 	end
 end
+
+SUI.UF = UF

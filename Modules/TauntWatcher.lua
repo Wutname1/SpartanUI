@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_TauntWatcher')
+local module = SUI:NewModule('Module_TauntWatcher') ---@type SUI.Module
 module.Displayname = L['Taunt watcher']
 module.description = 'Notify you or your party when others taunt'
 ----------------------------------------------------------------------------------------------------
@@ -114,15 +114,14 @@ function module:OnInitialize()
 end
 
 function module:COMBAT_LOG_EVENT_UNFILTERED()
-	if SUI.DB.DisabledComponents.TauntWatcher or module.Override then
+	if SUI:IsModuleDisabled('TauntWatcher') or module.Override then
 		return
 	end
 
 	local timeStamp, subEvent, _, _, srcName, _, _, _, dstName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
 	-- Check if we have been here before
 	if
-		(SUI.IsRetail and timeStamp == lastTimeStamp and spellID == lastSpellID) or
-			(SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName) or
+		(SUI.IsRetail and timeStamp == lastTimeStamp and spellID == lastSpellID) or (SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName) or
 			(SUI.IsClassic and type(spellName) ~= 'string')
 	 then
 		return

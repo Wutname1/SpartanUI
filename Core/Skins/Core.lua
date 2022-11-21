@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
+---@class SUI.Skins : SUI.Module
 local module = SUI:NewModule('Handler_Skins')
-SUI.Skins = module
 
 ---@class SkinDB
 local DBDefaults = {
@@ -314,7 +314,7 @@ function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 	RemoveBlizzardRegions(button, nil, regionsToFade)
 
 	if button.Text then
-		SUI:FormatFont(button.Text, 12, 'Blizzard')
+		SUI.Font:Format(button.Text, 12, 'Blizzard')
 	end
 
 	function SetModifiedBackdrop(self)
@@ -383,6 +383,87 @@ function module.SkinObj(ObjType, object, mode, component)
 	end
 
 	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
+end
+
+function module:HandleNextPrevButton(btn, arrowDir, color, noBackdrop, stripTexts, frameLevel)
+	if btn.isSkinned then
+		return
+	end
+
+	if not arrowDir then
+		arrowDir = 'down'
+
+		local name = btn:GetDebugName()
+		local ButtonName = name and name:lower()
+		if ButtonName then
+			if strfind(ButtonName, 'left') or strfind(ButtonName, 'prev') or strfind(ButtonName, 'decrement') or strfind(ButtonName, 'backward') or strfind(ButtonName, 'back') then
+				arrowDir = 'left'
+			elseif strfind(ButtonName, 'right') or strfind(ButtonName, 'next') or strfind(ButtonName, 'increment') or strfind(ButtonName, 'forward') then
+				arrowDir = 'right'
+			elseif
+				strfind(ButtonName, 'scrollup') or strfind(ButtonName, 'upbutton') or strfind(ButtonName, 'top') or strfind(ButtonName, 'asc') or strfind(ButtonName, 'home') or strfind(ButtonName, 'maximize')
+			 then
+				arrowDir = 'up'
+			end
+		end
+	end
+
+	btn:StripTextures()
+
+	if btn.Texture then
+		btn.Texture:SetAlpha(0)
+	end
+
+	if not noBackdrop then
+		S:HandleButton(btn, nil, nil, true, nil, nil, nil, nil, frameLevel)
+	end
+
+	if stripTexts then
+		btn:StripTexts()
+	end
+
+	btn:SetNormalTexture(E.Media.Textures.ArrowUp)
+	btn:SetPushedTexture(E.Media.Textures.ArrowUp)
+	btn:SetDisabledTexture(E.Media.Textures.ArrowUp)
+
+	local Normal, Disabled, Pushed = btn:GetNormalTexture(), btn:GetDisabledTexture(), btn:GetPushedTexture()
+
+	if noBackdrop then
+		btn:Size(20, 20)
+		Disabled:SetVertexColor(.5, .5, .5)
+		btn.Texture = Normal
+
+		if not color then
+			btn:HookScript('OnEnter', closeOnEnter)
+			btn:HookScript('OnLeave', closeOnLeave)
+		end
+	else
+		btn:Size(18, 18)
+		Disabled:SetVertexColor(.3, .3, .3)
+	end
+
+	Normal:SetInside()
+	Pushed:SetInside()
+	Disabled:SetInside()
+
+	Normal:SetTexCoord(0, 1, 0, 1)
+	Pushed:SetTexCoord(0, 1, 0, 1)
+	Disabled:SetTexCoord(0, 1, 0, 1)
+
+	local rotation = S.ArrowRotation[arrowDir]
+	if rotation then
+		Normal:SetRotation(rotation)
+		Pushed:SetRotation(rotation)
+		Disabled:SetRotation(rotation)
+	end
+
+	if color then
+		Normal:SetVertexColor(color.r, color.g, color.b)
+	else
+		Normal:SetVertexColor(1, 1, 1)
+	end
+
+	btn.isSkinned = true
 end
 
 module.Registry = {}
@@ -466,3 +547,5 @@ function module:OnEnable()
 		end
 	end
 end
+
+SUI.Skins = module

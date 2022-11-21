@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local UF = SUI.UF ---@class SUI_UnitFrames
+local UF = SUI.UF ---@class SUI.UF
 ----------------------------------------------------------------------------------------------------
 local anchorPoints = {
 	['TOPLEFT'] = 'TOP LEFT',
@@ -390,6 +390,15 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 						type = 'toggle',
 						order = 1
 					},
+					mode = {
+						name = L['Duration mode'],
+						type = 'select',
+						order = 2,
+						values = {
+							['exclude'] = 'Exclusionary',
+							['include'] = 'Inclusionary'
+						}
+					},
 					minTime = {
 						name = L['Minimum Duration'],
 						desc = L["Don't display auras that are shorter than this duration (in seconds). Set to zero to disable."],
@@ -405,7 +414,7 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 						type = 'range',
 						order = 3,
 						min = 0,
-						max = 600,
+						max = 3600,
 						step = 1
 					}
 				}
@@ -415,13 +424,12 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 				type = 'multiselect',
 				order = 3,
 				values = {
-					isPlayerAura = L['Cased by any player'],
-					canApplyAura = L['Player casted'],
-					isBossAura = L['Casted by boss'],
-					isFromPlayerOrPlayerPet = L['Casted by Player or pet'],
-					isHarmful = L['Harmful'],
 					IsDispellableByMe = L['Dispellable by me'],
+					isBossAura = L['Casted by boss'],
+					isHarmful = L['Harmful'],
 					isHelpful = L['Helpful'],
+					isMount = L['Mount'],
+					showPlayers = L['Player casted'],
 					isRaid = L['Raid'],
 					isStealable = L['Stealable']
 				}
@@ -487,7 +495,7 @@ end
 
 ---@param frameName UnitFrameName
 ---@param ElementOptSet AceConfigOptionsTable
----@param elementName SUI.UnitFrame.Elements
+---@param elementName SUI.UF.Elements.list
 function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 	ElementOptSet.args.texture = {
 		type = 'select',
@@ -646,7 +654,7 @@ end
 
 ---@param frameName UnitFrameName
 ---@param OptionSet AceConfigOptionsTable
----@param element SUI.UnitFrame.Elements
+---@param element SUI.UF.Elements.list
 function Options:AddDynamicText(frameName, OptionSet, element)
 	OptionSet.args.Text = {
 		name = L['Text'],
@@ -720,7 +728,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update the DB
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].size = val
 						--Update the screen
-						SUI:UpdateDefaultSize(UF.Unit[frameName][element].TextElements[count], val, 'UnitFrames')
+						SUI.Font:UpdateDefaultSize(UF.Unit[frameName][element].TextElements[count], val, 'UnitFrames')
 					end
 				},
 				position = {
@@ -985,7 +993,7 @@ function Options:Initialize()
 
 	-- Build style Buttons
 	for styleName, styleInfo in pairs(UF.Style:GetList()) do
-		local data = styleInfo.settings ---@type UFStyleSettings
+		local data = styleInfo.settings ---@type SUI.UF.Style.Settings
 
 		UFOptions.args.BaseStyle.args[styleName] = {
 			name = data.displayName or styleName,
@@ -1019,9 +1027,10 @@ function Options:Initialize()
 			local ElementSettings = UF.CurrentSettings[frameName].elements[elementName]
 			local UserSetting = UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName]
 
+			---@type AceConfigOptionsTable
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
-				-- description = elementConfig.Description or '',
+				desc = elementConfig.Description or '',
 				type = 'group',
 				order = 1,
 				get = function(info)
@@ -1183,6 +1192,13 @@ function Options:Initialize()
 			UF.Elements:Options(frameName, elementName, ElementOptSet)
 
 			if not ElementOptSet.args.enabled then
+				--Add a disable check to all args
+				for k, v in pairs(ElementOptSet.args) do
+					v.disabled = function()
+						return not ElementSettings.enabled
+					end
+				end
+
 				ElementOptSet.args.enabled = {
 					name = L['Enabled'],
 					type = 'toggle',

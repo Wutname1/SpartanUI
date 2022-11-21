@@ -4,7 +4,7 @@ local UF = SUI.UF
 ---@param DB table
 local function Build(frame, DB)
 	frame.DispelHighlight = frame:CreateTexture(nil, 'OVERLAY')
-	frame.DispelHighlight:SetTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2')
+	frame.DispelHighlight:SetTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
 	frame.DispelHighlight:Hide()
 end
 
@@ -29,7 +29,7 @@ local function Options(unitName, OptionSet)
 	--local DB = UF.CurrentSettings[unitName].elements.DispelHighlight
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	position = {

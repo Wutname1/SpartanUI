@@ -1,23 +1,23 @@
----@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
-local UF = SUI:GetModule('Component_UnitFrames')
+---@class SUI.UF
+local UF = SUI.UF
 
 local BuiltFrames = {} ---@type table<UnitFrameName, table>
 local FrameData = {} ---@type table<UnitFrameName, table>
 
 local Unit = {
-	UnitsLoaded = {}, ---@type table<UnitFrameName, UFrameConfig>
-	GroupsLoaded = {}, ---@type table<UnitFrameName, UFrameConfig>
-	defaultConfigs = {} ---@type table<string, UFrameSettings>
+	UnitsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
+	GroupsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
+	defaultConfigs = {} ---@type table<string, SUI.UF.Unit.Settings>
 }
 
 ---@param frameName string
 ---@param builder function
----@param settings? UFrameSettings
+---@param settings? SUI.UF.Unit.Settings
 ---@param options? function
 ---@param groupbuilder? function
 ---@param updater? function
 function Unit:Add(frameName, builder, settings, options, groupbuilder, updater)
-	---@class SUI_UF_Unit_DB
+	---@type SUI.UF.Unit.Settings
 	local Defaults = {
 		enabled = true,
 		width = 180,
@@ -76,7 +76,7 @@ end
 
 ---Build a group holder
 ---@param groupName string
----@return SUI.UnitFrame?
+---@return SUI.UF.Unit.Frame?
 function Unit:BuildGroup(groupName)
 	if not Unit.defaultConfigs[groupName].config.IsGroup then
 		return
@@ -96,6 +96,8 @@ function Unit:BuildGroup(groupName)
 	return BuiltFrames[groupName]
 end
 
+---Toggles the force display of a frame
+---@param frame string|SUI.UF.Unit.Frame
 function Unit:ToggleForceShow(frame)
 	if type(frame) == 'string' then
 		frame = Unit:Get(frame)
@@ -107,6 +109,8 @@ function Unit:ToggleForceShow(frame)
 	end
 end
 
+---Force a frame to show
+---@param frame SUI.UF.Unit.Frame
 function Unit:ForceShow(frame)
 	if InCombatLockdown() then
 		return
@@ -155,6 +159,8 @@ function Unit:ForceShow(frame)
 	end
 end
 
+---If the frame is forced to show, unforce it
+---@param frame any
 function Unit:UnforceShow(frame)
 	if InCombatLockdown() then
 		return
@@ -200,8 +206,9 @@ function Unit:UnforceShow(frame)
 	end
 end
 
+---Returns the unitframe object
 ---@param frameName UnitFrameName
----@return SUI.UnitFrame
+---@return SUI.UF.Unit.Frame
 function Unit:Get(frameName)
 	-- if Unit:GetConfig(frameName).config.IsGroup then
 	-- 	return Unit.GroupContainer[frameName]
@@ -210,12 +217,14 @@ function Unit:Get(frameName)
 	-- end
 end
 
+---Gets the current active settings for a unit frame
 ---@param frameName UnitFrameName
----@return UFrameSettings
+---@return SUI.UF.Unit.Settings
 function Unit:GetConfig(frameName)
-	return UF.CurrentSettings[frameName] ---@type UFrameSettings
+	return UF.CurrentSettings[frameName] ---@type SUI.UF.Unit.Settings
 end
 
+---Adds the elements needed to the passed frame for the specified unit
 ---@param frameName UnitFrameName
 ---@param frame table
 function Unit:BuildFrame(frameName, frame)
@@ -238,9 +247,9 @@ function Unit:BuildFrame(frameName, frame)
 	end
 end
 
----comment
+---Gets a table of all the frames that are currently loaded and their default settings
 ---@param onlyGroups any
----@return table<UnitFrameName, UFrameConfig>
+---@return table<UnitFrameName, SUI.UF.Unit.Config>
 function Unit:GetFrameList(onlyGroups)
 	if onlyGroups then
 		return Unit.GroupsLoaded
@@ -249,6 +258,7 @@ function Unit:GetFrameList(onlyGroups)
 	return Unit.UnitsLoaded
 end
 
+---Used to add unit specific frame options to the passes OptionSet
 ---@param frameName UnitFrameName
 ---@param OptionsSet AceConfigOptionsTable
 function Unit:BuildOptions(frameName, OptionsSet)
@@ -257,6 +267,19 @@ function Unit:BuildOptions(frameName, OptionsSet)
 	end
 
 	FrameData[frameName].options(OptionsSet)
+end
+
+---Returns if the frame is used to display friendly units
+---@param unit UnitFrameName
+---@return boolean
+function Unit:isFriendly(unit)
+	local config = Unit:GetConfig(unit)
+
+	if not unit then
+		return false
+	end
+
+	return config.config.isFriendly
 end
 
 UF.Unit = Unit

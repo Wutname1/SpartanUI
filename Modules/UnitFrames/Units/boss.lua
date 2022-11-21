@@ -41,7 +41,7 @@ local function Options(OptionSet)
 	UF.Options:AddGroupLayout('boss', OptionSet)
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 120,
 	maxColumns = 1,

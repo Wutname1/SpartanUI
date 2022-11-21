@@ -61,7 +61,7 @@ local function Options(unitName, OptionSet)
 	}
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	size = 18,

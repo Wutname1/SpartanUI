@@ -1,10 +1,34 @@
 local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:GetModule('Component_Artwork')
-local module = SUI:NewModule('Style_Transparent')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
+local module = SUI:NewModule('Style_Transparent') ---@type SUI.Module
 local artFrame = CreateFrame('Frame', 'SUI_Art_Transparent', SpartanUI)
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
+
+local function Options()
+	SUI.opt.args['Artwork'].args['Artwork'] = {
+		name = L['Artwork Options'],
+		type = 'group',
+		order = 10,
+		args = {
+			Color = {
+				name = L['Artwork Color'],
+				type = 'color',
+				hasAlpha = true,
+				order = 1,
+				width = 'full',
+				get = function(info)
+					return unpack(SUI.DB.Styles.Transparent.Color.Art)
+				end,
+				set = function(info, r, b, g, a)
+					SUI.DB.Styles.Transparent.Color.Art = {r, b, g, a}
+					module:SetColor()
+				end
+			}
+		}
+	}
+end
 
 function module:OnInitialize()
 	--Enable the in the Core options screen
@@ -79,11 +103,11 @@ function module:OnInitialize()
 			position = 'BOTTOM,Minimap,BOTTOM,0,2'
 		}
 	}
-	SUI:GetModule('Component_Minimap'):Register('Transparent', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Transparent', minimapSettings)
 
 	-- Unitframes Settings
-	local UF = SUI:GetModule('Component_UnitFrames')
-	---@type UFStyleSettings
+	local UF = SUI:GetModule('Module_UnitFrames')
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			top = {
@@ -183,32 +207,8 @@ function module:OnEnable()
 		end
 
 		module:SetColor()
-		module:SetupMenus()
+		Options()
 	end
-end
-
-function module:SetupMenus()
-	SUI.opt.args['Artwork'].args['Artwork'] = {
-		name = L['Artwork Options'],
-		type = 'group',
-		order = 10,
-		args = {
-			Color = {
-				name = L['Artwork Color'],
-				type = 'color',
-				hasAlpha = true,
-				order = 1,
-				width = 'full',
-				get = function(info)
-					return unpack(SUI.DB.Styles.Transparent.Color.Art)
-				end,
-				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Transparent.Color.Art = {r, b, g, a}
-					module:SetColor()
-				end
-			}
-		}
-	}
 end
 
 function module:OnDisable()

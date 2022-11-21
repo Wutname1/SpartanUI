@@ -26,7 +26,7 @@ end
 local function Options()
 end
 
----@type UFrameSettings
+---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 100,
 	elements = {
@@ -47,7 +47,8 @@ local Settings = {
 		}
 	},
 	config = {
-		Requires = 'target'
+		Requires = 'target',
+		isFriendly = true
 	}
 }
 

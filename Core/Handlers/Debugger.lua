@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local StdUi = SUI.StdUi
-local debugger = SUI:NewModule('Handler_Debugger')
+local debugger = SUI:NewModule('Handler_Debugger') ---@type SUI.Module
 debugger.description = 'Assists with debug information'
 ----------------------------------------------------------------------------------------------------
 local DebugWindow = nil ---@type StdUi.Window
@@ -72,15 +72,12 @@ local function CreateDebugWindow()
 end
 
 function SUI.Debug(debugText, module)
-	if not debugger.DB.enable then
-		return
-	elseif not DebugWindow then
-		CreateDebugWindow()
-	end
 	if not DebugMessages[module] then
 		DebugMessages[module] = {}
 		table.insert(ScrollListing, {text = (module), value = module})
-		StdUi:ObjectList(DebugWindow.NamespaceListings.scrollChild, DebugWindow.Modules, 'Button', ScrollItemUpdate, ScrollListing, 1, 0, 0)
+		if DebugWindow then
+			StdUi:ObjectList(DebugWindow.NamespaceListings.scrollChild, DebugWindow.Modules, 'Button', ScrollItemUpdate, ScrollListing, 1, 0, 0)
+		end
 		debugger.DB.modules[module] = debugger.DB.enable
 		if debugger.options then
 			debugger.options.args[module] = {
@@ -89,6 +86,11 @@ function SUI.Debug(debugText, module)
 				order = (#debugger.options.args + 1)
 			}
 		end
+	end
+	if not debugger.DB.enable then
+		return
+	elseif not DebugWindow then
+		CreateDebugWindow()
 	end
 	if not debugger.DB.modules[module] then
 		return
@@ -148,6 +150,7 @@ function debugger:OnInitialize()
 	local defaults = {
 		enable = false,
 		modules = {
+			['*'] = false,
 			Core = false
 		}
 	}
@@ -158,7 +161,7 @@ function debugger:OnInitialize()
 		DebugMessages[k] = {}
 	end
 
-	if SUI:IsModuleEnabled('Component_Chatbox') then
+	if SUI:IsModuleEnabled('Module_Chatbox') then
 		debugger:RegisterEvent('ADDON_LOADED')
 	end
 end

@@ -1,134 +1,141 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
----@class AceAddon : AceTimer-3.0
-local module = SUI:NewModule('Handler_Font')
-
-module.FontItems = {}
-local FontFaces = {
-	['SpartanUI'] = 'Cognosis',
-	['Roboto'] = 'Roboto',
-	['Roboto-Bold'] = 'Roboto Bold',
-	['Myriad'] = 'Myriad',
-	['SUI4'] = 'NotoSans',
-	['SUI4cn'] = 'NotoSans (zhCN)',
-	['FrizQuadrata'] = 'Friz Quadrata',
-	['ArialNarrow'] = 'Arial Narrow',
-	['Skurri'] = 'Skurri',
-	['Morpheus'] = 'Morpheus'
+local Font = SUI:NewModule('Handler_Font') ---@type SUI.Module
+Font.Items = {}
+---@class FontDB
+local DBDefaults = {
+	Path = '',
+	NumberSeperator = nil,
+	SetupDone = false,
+	Modules = {
+		['**'] = {
+			Size = 0,
+			Face = 'Roboto Bold',
+			Type = 'outline',
+			Order = 200
+		},
+		Global = {
+			Order = 1
+		},
+		Chatbox = {
+			Face = 'Roboto Medium'
+		}
+	}
 }
 
-function module:StoreFontItem(element, DefaultSize, Module)
+SUI.Lib.LSM:Register('font', 'Cognosis', [[Interface\AddOns\SpartanUI\fonts\Cognosis.ttf]])
+SUI.Lib.LSM:Register('font', 'NotoSans Bold', [[Interface\AddOns\SpartanUI\fonts\NotoSans-Bold.ttf]])
+SUI.Lib.LSM:Register('font', 'Roboto Medium', [[Interface\AddOns\SpartanUI\fonts\Roboto-Medium.ttf]])
+SUI.Lib.LSM:Register('font', 'Roboto Bold', [[Interface\AddOns\SpartanUI\fonts\Roboto-Bold.ttf]])
+SUI.Lib.LSM:Register('font', 'Myriad', [[Interface\AddOns\SpartanUI\fonts\myriad.ttf]])
+SUI.Lib.LSM:SetDefault('font', 'Roboto Bold')
+
+---@param value string
+---@return string
+function Font:comma_value(value)
+	local left, num, right = string.match(value, '^([^%d]*%d)(%d*)(.-)$')
+	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. (Font.DB.NumberSeperator or LARGE_NUMBER_SEPERATOR)):reverse()) .. right
+end
+
+---@param element FontInstance
+---@param DefaultSize integer
+---@param Module string
+function Font:StoreItem(element, DefaultSize, Module)
 	--Create tracking table if needed
-	if not module.FontItems[Module] then
-		module.FontItems[Module] = {Count = 0}
+	if not Font.Items[Module] then
+		Font.Items[Module] = {Count = 0}
 	end
 
 	--Load next ID number
-	local NewItemID = module.FontItems[Module].Count + 1
+	local NewItemID = Font.Items[Module].Count + 1
 
 	--Store element and latest ID used
-	module.FontItems[Module].Count = NewItemID
-	module.FontItems[Module][NewItemID .. 'DefaultSize'] = DefaultSize
-	module.FontItems[Module][NewItemID] = element
+	Font.Items[Module].Count = NewItemID
+	Font.Items[Module][NewItemID .. 'DefaultSize'] = DefaultSize
+	Font.Items[Module][NewItemID] = element
 end
 
-function SUI.comma_value(self, n)
-	local left, num, right = string.match(n, '^([^%d]*%d)(%d*)(.-)$')
-	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. SUI.DB.font.NumberSeperator):reverse()) .. right
-end
-
-function SUI.round(self, val, decimal)
-	if (decimal) then
-		return math.floor((val * 10 ^ decimal) + 0.5) / (10 ^ decimal)
-	else
-		return math.floor(val + 0.5)
+---@param Module? string
+function Font:GetFont(Module)
+	if Module and Font.DB then
+		return SUI.Lib.LSM:Fetch('font', Font.DB.Modules[Module].Face)
 	end
+	return SUI.Lib.LSM:Fetch('font', 'Roboto Bold')
 end
 
-function SUI.GetFontFace(self, Module)
-	if Module then
-		if SUI.DB.font.Modules[Module].Face == 'SpartanUI' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\Cognosis.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'SUI4' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\NotoSans-Bold.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'Roboto' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Medium.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'Roboto-Bold' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Bold.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'Myriad' then
-			return 'Interface\\AddOns\\SpartanUI\\fonts\\myriad.ttf'
-		elseif SUI.DB.font.Modules[Module].Face == 'FrizQuadrata' then
-			return 'Fonts\\FRIZQT__.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Arial' then
-			return 'Fonts\\ARIAL.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'ArialNarrow' then
-			return 'Fonts\\ARIALN.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Skurri' then
-			return 'Fonts\\skurri.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Morpheus' then
-			return 'Fonts\\MORPHEUS.TTF'
-		elseif SUI.DB.font.Modules[Module].Face == 'Custom' and SUI.DB.font.Path ~= '' then
-			return SUI.DB.font.Path
-		end
-	end
-
-	--Failsafe, no module should be undefined as of 5.0
-	return 'Interface\\AddOns\\SpartanUI\\fonts\\Roboto-Bold.ttf'
-end
-
+---@param element FontInstance
+---@param Module string
 local function FindID(element, Module)
-	for i = 1, module.FontItems[Module].Count do
-		if module.FontItems[Module][i] == element then
+	for i = 1, Font.Items[Module].Count do
+		if Font.Items[Module][i] == element then
 			return i
 		end
 	end
 	return false
 end
 
-function SUI.UpdateDefaultSize(self, element, size, Module)
+---@param element FontInstance
+---@param size integer
+---@param Module string
+function Font:UpdateDefaultSize(element, size, Module)
 	--Update stored default
 	local ID = FindID(element, Module)
 	if ID then
 		--Update the DB
-		module.FontItems[Module][ID .. 'DefaultSize'] = size
+		Font.Items[Module][ID .. 'DefaultSize'] = size
 		--Update the screen
-		SUI:FormatFont(module.FontItems[Module][ID], size, Module, true)
+		Font:Format(Font.Items[Module][ID], size, Module, true)
 	end
 end
 
-function SUI.FormatFont(self, element, size, Module, UpdateOnly)
+---@param element FontInstance
+---@param size? integer --1
+---@param Module? string --Primary
+---@param UpdateOnly? boolean --false
+function Font:Format(element, size, Module, UpdateOnly)
 	--If no module defined fall back to main settings
 	if not element then
 		return
 	end
 	if not Module then
-		Module = 'Primary'
+		Module = 'Global'
+	end
+	--If we are not initialized yet, save the data for latter processing and exit
+	if not Font.DB then
+		--Set a default font
+		element:SetFont(SUI.Lib.LSM:Fetch('font', 'Roboto Bold'), 8)
+		--Save the data for later
+		if not Font.PreLoadItems then
+			Font.PreLoadItems = {}
+		end
+		table.insert(Font.PreLoadItems, {element = element, size = size, Module = Module, UpdateOnly = UpdateOnly})
+		return
 	end
 
 	--Set Font Outline
 	local flags, sizeFinal = '', (size or 1)
-	if SUI.DB.font.Modules[Module].Type == 'monochrome' then
+	if Font.DB.Modules[Module].Type == 'monochrome' then
 		flags = flags .. 'monochrome '
-	elseif SUI.DB.font.Modules[Module].Type == 'thickoutline' then
+	elseif Font.DB.Modules[Module].Type == 'thickoutline' then
 		flags = flags .. 'thickoutline '
-	elseif SUI.DB.font.Modules[Module].Type == 'outline' then
+	elseif Font.DB.Modules[Module].Type == 'outline' then
 		element:SetShadowColor(0, 0, 0, .9)
 		element:SetShadowOffset(1, -1)
 	end
 
 	--Set Size
-	sizeFinal = size + SUI.DB.font.Modules[Module].Size
+	sizeFinal = size + Font.DB.Modules[Module].Size
 	if sizeFinal < 1 then
 		sizeFinal = 1
 	end
 
 	--Create Font
-	element:SetFont(SUI:GetFontFace(Module), sizeFinal, flags)
+	element:SetFont(SUI.Font:GetFont(Module), sizeFinal, flags)
 
 	--Store item for latter updating
 	if not UpdateOnly then
-		module:StoreFontItem(element, size, Module)
+		Font:StoreItem(element, size, Module)
 	end
 end
 
@@ -136,378 +143,270 @@ end
     Refresh the font settings for the specified module.
     If no module is specified all modules will be updated
 ]]
-function SUI.FontRefresh(self, Module)
+---@param Module? string
+function Font:Refresh(Module)
 	if not Module then
-		for key, _ in pairs(module.FontItems) do
-			SUI:FontRefresh(key)
+		for key, _ in pairs(Font.Items) do
+			Font:Refresh(key)
 		end
 	else
-		for i = 1, module.FontItems[Module].Count do
-			SUI:FormatFont(module.FontItems[Module][i], module.FontItems[Module][i .. 'DefaultSize'], Module, true)
+		for i = 1, Font.Items[Module].Count do
+			Font:Format(Font.Items[Module][i], Font.Items[Module][i .. 'DefaultSize'], Module, true)
 		end
 	end
 end
 
 local function FontSetupWizard()
-	local fontlist = {
-		'RobotoBold',
-		'Roboto',
-		'Cognosis',
-		'NotoSans',
-		'FrizQuadrata',
-		'ArialNarrow'
-	}
-	local fontnames = {
-		['RobotoBold'] = 'Roboto-Bold',
-		['Roboto'] = 'Roboto',
-		['Cognosis'] = 'SpartanUI',
-		['NotoSans'] = 'SUI4',
-		['FrizQuadrata'] = 'FrizQuadrata',
-		['ArialNarrow'] = 'ArialNarrow'
-	}
+	local function Clear()
+		local SUI_Win = SUI.Setup.window
+		SUI_Win.FontFace:Hide()
+		SUI_Win.FontFace = nil
+		Font.DB.SetupDone = true
+	end
 
 	local PageData = {
 		ID = 'FontSetup',
 		name = L['Font style'],
 		SubTitle = 'Font Style',
-		RequireDisplay = (not SUI.DB.font.SetupDone),
+		RequireDisplay = (not Font.DB.SetupDone),
 		Display = function()
 			local SUI_Win = SUI.Setup.window
 			SUI_Win.FontFace = CreateFrame('Frame', nil)
-			SUI_Win.FontFace:SetParent(SUI_Win.content)
-			SUI_Win.FontFace:SetAllPoints(SUI_Win.content)
+			SUI_Win.FontFace:SetParent(SUI.Setup.window.content)
+			SUI_Win.FontFace:SetAllPoints(SUI.Setup.window.content)
 
-			local RadioButton = function(self)
-				for _, v in ipairs(fontlist) do
-					SUI_Win.FontFace[v].radio:SetValue(false)
+			local Samples = {}
+			Samples[1] = SUI_Win.FontFace:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+			Samples[1].size = 10
+			Samples[1]:SetFont(SUI.Font:GetFont(), 10, 'OUTLINE')
+			Samples[1]:SetText(
+				'Never gonna give you up, never gonna let you down\nNever gonna run around and desert you\nNever gonna make you cry, never gonna say goodbye\nNever gonna tell a lie and hurt you'
+			)
+			Samples[1]:SetPoint('TOP', SUI_Win.FontFace, 'TOP', 10, -10)
+			Samples[1]:SetVertexColor(1, 1, 1)
+
+			Samples[2] = SUI_Win.FontFace:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+			Samples[2].size = 12
+			Samples[2]:SetFont(SUI.Font:GetFont(), 12, 'OUTLINE')
+			Samples[2]:SetText('The quick brown fox jumps over the lazy dog')
+			Samples[2]:SetPoint('TOP', Samples[1], 'BOTTOM', 0, -10)
+			Samples[2]:SetVertexColor(1, 1, 1)
+
+			Samples[3] = SUI_Win.FontFace:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+			Samples[3].size = 16
+			Samples[3]:SetFont(SUI.Font:GetFont(), 16, 'OUTLINE')
+			Samples[3]:SetText('The quick brown fox jumps over the lazy dog')
+			Samples[3]:SetPoint('TOP', Samples[2], 'BOTTOM', 0, -10)
+			Samples[3]:SetVertexColor(1, 1, 1)
+
+			Samples[4] = SUI_Win.FontFace:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+			Samples[4].size = 18
+			Samples[4]:SetFont(SUI.Font:GetFont(), 18, 'OUTLINE')
+			Samples[4]:SetText('The quick brown fox jumps over the lazy dog')
+			Samples[4]:SetPoint('TOP', Samples[3], 'BOTTOM', 0, -10)
+			Samples[4]:SetVertexColor(1, 1, 1)
+
+			SUI_Win.FontFace.Samples = Samples
+
+			---@param font string
+			local function SetFont(font)
+				for i = 1, #Samples do
+					Samples[i]:SetFont(SUI.Lib.LSM:Fetch('font', font), Samples[i].size)
 				end
-
-				self.radio:SetValue(true)
+				SUI_Win.FontFace.dropdown:SetValue(font)
 			end
 
-			local gui = LibStub('AceGUI-3.0')
-			local control, radio
-
-			--RobotoBold
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0, 0.3125)
-			control:SetImageSize(180, 60)
-			control:SetPoint('TOPLEFT', SUI_Win.FontFace, 'TOPLEFT', 55, -55)
-			control:SetCallback('OnClick', RadioButton)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Roboto Bold')
-			radio:SetUserData('value', 'Roboto-Bold')
-			radio:SetUserData('text', 'Roboto-Bold')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.RobotoBold = control
-
-			--Roboto
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0.34375, 0.65625)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.RobotoBold.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButton)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Roboto')
-			radio:SetUserData('value', 'Roboto')
-			radio:SetUserData('text', 'Roboto')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.Roboto = control
-
-			--Cognosis
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0, 0.421875, 0.6875, 1)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.Roboto.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButton)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Cognosis')
-			radio:SetUserData('value', 'SpartanUI')
-			radio:SetUserData('text', 'SpartanUI')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.Cognosis = control
-
-			--NotoSans
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0, 0.3125)
-			control:SetImageSize(180, 60)
-			control:SetPoint('TOP', SUI_Win.FontFace.RobotoBold.radio.frame, 'BOTTOM', 0, -20)
-			control:SetCallback('OnClick', RadioButton)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('NotoSans')
-			radio:SetUserData('value', 'SUI4')
-			radio:SetUserData('text', 'SUI4')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.NotoSans = control
-
-			--FrizQuadrata
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0.34375, 0.65625)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.NotoSans.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButton)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Friz Quadrata')
-			radio:SetUserData('value', 'FrizQuadrata')
-			radio:SetUserData('text', 'FrizQuadrata')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.FrizQuadrata = control
-
-			--ArialNarrow
-			control = gui:Create('Icon')
-			control:SetImage('interface\\addons\\SpartanUI\\images\\setup\\Setup-Fonts', 0.578125, 1, 0.6875, 1)
-			control:SetImageSize(180, 60)
-			control:SetPoint('LEFT', SUI_Win.FontFace.FrizQuadrata.frame, 'RIGHT', 80, 0)
-			control:SetCallback('OnClick', RadioButton)
-			control.frame:SetParent(SUI_Win.FontFace)
-			control.frame:Show()
-
-			radio = gui:Create('CheckBox')
-			radio:SetLabel('Arial Narrow')
-			radio:SetUserData('value', 'ArialNarrow')
-			radio:SetUserData('text', 'ArialNarrow')
-			radio:SetType('radio')
-			radio:SetDisabled(true)
-			radio:SetWidth(120)
-			radio:SetHeight(16)
-			radio.frame:SetPoint('TOP', control.frame, 'BOTTOM', 0, 0)
-			radio:SetCallback('OnClick', RadioButton)
-			radio.frame:SetParent(control.frame)
-			radio.frame:Show()
-			control.radio = radio
-
-			SUI_Win.FontFace.ArialNarrow = control
-
-			SUI_Win.FontFace.RobotoBold.radio:SetValue(true)
-		end,
-		Next = function()
-			local SUI_Win = SUI.Setup.window
-			local fontface
-
-			for _, v in ipairs(fontlist) do
-				if SUI_Win.FontFace[v].radio:GetValue() then
-					fontface = fontnames[v]
+			local StdUi = SUI.StdUi
+			--Create buttons and position horizontally on the bottom of the window in 2 rows 5 in each row
+			SUI_Win.FontFace.FontBtns = {}
+			for k, v in ipairs({'Cognosis', 'NotoSans Bold', 'Roboto Medium', 'Roboto Bold', 'Myriad', 'Arial Narrow', 'Friz Quadrata TT', '2002'}) do
+				--Create Buttons
+				local button = StdUi:Button(SUI_Win.FontFace, 120, 20, v)
+				button:SetScript(
+					'OnClick',
+					function()
+						SetFont(v)
+					end
+				)
+				button.text:SetFont(SUI.Lib.LSM:Fetch('font', v), 12)
+				--Position Buttons
+				if k <= 5 then
+					button:SetPoint('TOPLEFT', SUI_Win.FontFace, 'BOTTOMLEFT', 5 + (k - 1) * 130, 120)
+				else
+					button:SetPoint('TOPLEFT', SUI_Win.FontFace, 'BOTTOMLEFT', 5 + (k - 6) * 130, 70)
 				end
+				SUI_Win.FontFace.FontBtns[k] = button
 			end
 
-			if fontface then
-				SUI.DB.font.Modules.Primary.Face = fontface
-				SUI.DB.font.Modules.Core.Face = fontface
-				SUI.DB.font.Modules.Player.Face = fontface
-				SUI.DB.font.Modules.Party.Face = fontface
-				SUI.DB.font.Modules.Raid.Face = fontface
-			end
-			SUI_Win.FontFace:Hide()
-			SUI_Win.FontFace = nil
-			SUI.DB.font.SetupDone = true
+			--Create Dropdown for other fonts using AceGUI and LSM30_Font position at the end of the Sample buttons
+			local AceGUI = LibStub('AceGUI-3.0')
+			local dropdown = AceGUI:Create('LSM30_Font')
+			dropdown:SetLabel('Other Fonts')
+			dropdown:SetList(SUI.Lib.LSM:HashTable('font'))
+			dropdown:SetValue('Roboto Bold')
+			dropdown:SetCallback(
+				'OnValueChanged',
+				function(_, _, value)
+					SetFont(value)
+				end
+			)
+			dropdown.frame:SetParent(SUI_Win.FontFace)
+			dropdown.frame:SetPoint('TOPLEFT', SUI_Win.FontFace.FontBtns[#SUI_Win.FontFace.FontBtns], 'TOPRIGHT', 10, 22)
+			dropdown.frame:SetWidth(240)
+			-- SUI.Skins.RemoveAllTextures(dropdown.frame)
+			-- SUI.Skins.SkinObj('Frame', dropdown.frame, 'Dark')
+			SUI_Win.FontFace.dropdown = dropdown
 		end,
-		Skip = function()
-			local SUI_Win = SUI.Setup.window
-			SUI_Win.FontFace:Hide()
-			SUI_Win.FontFace = nil
-			SUI.DB.font.SetupDone = true
-		end
+		Next = Clear,
+		Skip = Clear
 	}
 
 	SUI.Setup:AddPage(PageData)
 end
 
-function module:OnEnable()
+function Font:OnInitialize()
+	Font.Database = SUI.SpartanUIDB:RegisterNamespace('Font', {profile = DBDefaults})
+	Font.DB = Font.Database.profile ---@type FontDB
+
+	if Font.PreLoadItems then
+		--ReRun Font:Format for any fonts that were loaded before the module was enabled
+		for k, v in pairs(Font.PreLoadItems) do
+			Font:Format(v.element, v.size, v.Module, v.UpdateOnly)
+		end
+	end
+end
+
+function Font:OnEnable()
 	FontSetupWizard()
-	SUI.opt.args['General'].args['font'] = {
+	SUI.opt.args.General.args.Font = {
 		name = L['Font'],
 		type = 'group',
 		order = 200,
 		args = {
-			a = {name = L['Global font settings'], type = 'header'},
-			aa = {
-				name = L['Large number seperator'],
-				desc = L['This is used to split up large numbers example: 100,000'],
-				type = 'select',
-				values = {[''] = 'none', [','] = 'comma', ['.'] = 'period'},
-				get = function()
-					return SUI.DB.font.NumberSeperator
+			Global = {
+				type = 'group',
+				name = L['Global font settings'],
+				order = .01,
+				inline = true,
+				get = function(info)
+					return Font.DB.Modules.Global[info[#info]]
 				end,
-				set = function(_, val)
-					SUI.DB.font.NumberSeperator = val
-				end
-			},
-			b = {
-				name = L['Font face'],
-				type = 'select',
-				values = FontFaces,
-				get = function()
-					return SUI.DB.font.Modules.Global.Face
+				set = function(info, val)
+					Font.DB.Modules.Global[info[#info]] = val
+					Font:Refresh()
 				end,
-				set = function(_, val)
-					SUI.DB.font.Modules.Global.Face = val
-				end
-			},
-			c = {
-				name = L['Font style'],
-				type = 'select',
-				values = {
-					['normal'] = L['Normal'],
-					['monochrome'] = L['Monochrome'],
-					['outline'] = L['Outline'],
-					['thickoutline'] = L['Thick outline']
-				},
-				get = function()
-					return SUI.DB.font.Modules.Global.Type
-				end,
-				set = function(_, val)
-					SUI.DB.font.Modules.Global.Type = val
-				end
-			},
-			d = {
-				name = L['Adjust font size'],
-				type = 'range',
-				width = 'double',
-				min = -3,
-				max = 3,
-				step = 1,
-				get = function()
-					return SUI.DB.font.Modules.Global.Size
-				end,
-				set = function(_, val)
-					SUI.DB.font.Modules.Global.Size = val
-				end
-			},
-			z = {
-				name = L['Apply Global to all'],
-				type = 'execute',
-				width = 'double',
-				func = function()
-					for Module, _ in pairs(module.FontItems) do
-						SUI.DB.font.Modules[Module].Face = SUI.DB.font.Modules.Global.Face
-						SUI.DB.font.Modules[Module].Type = SUI.DB.font.Modules.Global.Type
-						SUI.DB.font.Modules[Module].Size = SUI.DB.font.Modules.Global.Size
-					end
-					SUI:FontRefresh()
-				end
+				args = {
+					Face = {
+						type = 'select',
+						name = L['Font face'],
+						order = 1,
+						dialogControl = 'LSM30_Font',
+						values = SUI.Lib.LSM:HashTable('font')
+					},
+					Type = {
+						name = L['Font style'],
+						type = 'select',
+						order = 2,
+						values = {
+							['normal'] = L['Normal'],
+							['monochrome'] = L['Monochrome'],
+							['outline'] = L['Outline'],
+							['thickoutline'] = L['Thick outline']
+						}
+					},
+					Size = {
+						name = L['Adjust font size'],
+						type = 'range',
+						width = 'double',
+						min = -3,
+						max = 3,
+						step = 1,
+						order = 3
+					},
+					apply = {
+						name = L['Apply Global to all'],
+						type = 'execute',
+						width = 'double',
+						order = 50,
+						func = function()
+							for Module, _ in pairs(Font.Items) do
+								Font.DB.Modules[Module].Face = Font.DB.Modules.Global.Face
+								Font.DB.Modules[Module].Type = Font.DB.Modules.Global.Type
+								Font.DB.Modules[Module].Size = Font.DB.Modules.Global.Size
+							end
+							Font:Refresh()
+						end
+					},
+					NumberSeperator = {
+						name = L['Large number seperator'],
+						desc = L['This is used to split up large numbers example: 100,000'],
+						type = 'select',
+						get = function(info)
+							return Font.DB.Modules[info[#info]]
+						end,
+						set = function(info, val)
+							Font.DB.Modules[info[#info]] = val
+							Font:Refresh()
+						end,
+						values = {[''] = 'none', [','] = 'comma', ['.'] = 'period'}
+					}
+				}
 			}
 		}
 	}
 
-	--Setup the Options in 5 seconds giving modules time to populate.
-	module:ScheduleTimer('BuildOptions', 2)
+	--Setup the Options in 2 seconds giving modules time to populate.
+	Font:ScheduleTimer('BuildOptions', 2)
 end
 
-function module:BuildOptions()
+function Font:BuildOptions()
 	--We build the options based on the modules that are loaded and in use.
-	for Module, _ in pairs(module.FontItems) do
-		SUI.opt.args['General'].args['font'].args[Module] = {
-			name = Module,
-			type = 'group',
-			args = {
-				face = {
-					name = L['Font face'],
-					type = 'select',
-					order = 1,
-					values = FontFaces,
-					get = function()
-						return SUI.DB.font.Modules[Module].Face
-					end,
-					set = function(_, val)
-						SUI.DB.font.Modules[Module].Face = val
-						SUI:FontRefresh(Module)
-					end
-				},
-				style = {
-					name = L['Font style'],
-					type = 'select',
-					order = 2,
-					values = {
-						['normal'] = L['Normal'],
-						['monochrome'] = L['Monochrome'],
-						['outline'] = L['Outline'],
-						['thickoutline'] = L['Thick outline']
+	for Module, _ in pairs(Font.Items) do
+		if not SUI.opt.args.General.args.Font.args[Module] then
+			SUI.opt.args.General.args.Font.args[Module] = {
+				name = Module,
+				type = 'group',
+				order = Font.DB.Modules[Module].Order,
+				inline = true,
+				get = function(info)
+					return Font.DB.Modules[Module][info[#info]]
+				end,
+				set = function(info, val)
+					Font.DB.Modules[Module][info[#info]] = val
+					Font:Refresh(Module)
+				end,
+				args = {
+					Face = {
+						type = 'select',
+						name = L['Font face'],
+						order = 1,
+						dialogControl = 'LSM30_Font',
+						values = SUI.Lib.LSM:HashTable('font')
 					},
-					get = function()
-						return SUI.DB.font.Modules[Module].Type
-					end,
-					set = function(_, val)
-						SUI.DB.font.Modules[Module].Type = val
-						SUI:FontRefresh(Module)
-					end
-				},
-				size = {
-					name = L['Adjust font size'],
-					type = 'range',
-					order = 3,
-					width = 'double',
-					min = -15,
-					max = 15,
-					step = 1,
-					get = function()
-						return SUI.DB.font.Modules[Module].Size
-					end,
-					set = function(_, val)
-						SUI.DB.font.Modules[Module].Size = val
-						SUI:FontRefresh(Module)
-					end
+					Type = {
+						name = L['Font style'],
+						type = 'select',
+						order = 2,
+						values = {
+							['normal'] = L['Normal'],
+							['monochrome'] = L['Monochrome'],
+							['outline'] = L['Outline'],
+							['thickoutline'] = L['Thick outline']
+						}
+					},
+					Size = {
+						name = L['Adjust font size'],
+						type = 'range',
+						order = 3,
+						width = 'double',
+						min = -15,
+						max = 15,
+						step = 1
+					}
 				}
 			}
-		}
+		end
 	end
 end
+
+SUI.Font = Font

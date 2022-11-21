@@ -1,5 +1,5 @@
 local SUI, L, MoveIt = _G.SUI, SUI.L, SUI.MoveIt
-local module = SUI:NewModule('Component_Minimap')
+local module = SUI:NewModule('Module_Minimap') ---@type SUI.Module
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
 ----------------------------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ local function updateSettings()
 end
 
 function module:ShapeChange(shape)
-	if SUI.DB.DisabledComponents.Minimap then
+	if SUI:IsModuleDisabled('Minimap') then
 		return
 	end
 
@@ -243,12 +243,13 @@ function module:ModifyMinimapLayout()
 		MinimapCluster.ZoneTextButton:ClearAllPoints()
 		MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
 		MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -4, -4)
-		SUI:FormatFont(MinimapZoneText, 10, 'Minimap')
+		SUI.Font:Format(MinimapZoneText, 10, 'Minimap')
+		SUI.Font:Format(MinimapZoneText, 10, 'Minimap')
 		MinimapZoneText:SetJustifyH('CENTER')
 		TimeManagerClockButton:ClearAllPoints()
 		TimeManagerClockButton:SetPoint('BOTTOMRIGHT', MinimapCluster.BorderTop, 'BOTTOMRIGHT', 2, 0)
-		SUI:FormatFont(TimeManagerClockTicker, 10, 'Minimap')
-		SUI:FormatFont(Minimap.coords, 10, 'Minimap')
+		SUI.Font:Format(TimeManagerClockTicker, 10, 'Minimap')
+		SUI.Font:Format(Minimap.coords, 10, 'Minimap')
 		MinimapCluster.Tracking:ClearAllPoints()
 		MinimapCluster.Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 2)
 		MinimapCluster.Tracking.Background:Hide()
@@ -321,7 +322,7 @@ function module:ModifyMinimapLayout()
 end
 
 function module:MinimapCoords()
-	if SUI.DB.DisabledComponents.Minimap then
+	if SUI:IsModuleDisabled('Minimap') then
 		return
 	end
 	if not SUI.IsRetail then
@@ -329,8 +330,8 @@ function module:MinimapCoords()
 	end
 
 	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(Minimap.ZoneText, (SUI.IsRetail and 11 or 10), 'Minimap')
-	SUI:FormatFont(MinimapZoneText, (SUI.IsRetail and 11 or 10), 'Minimap')
+	SUI.Font:Format(Minimap.ZoneText, (SUI.IsRetail and 11 or 10), 'Minimap')
+	SUI.Font:Format(MinimapZoneText, (SUI.IsRetail and 11 or 10), 'Minimap')
 	Minimap.ZoneText:SetJustifyH('MIDDLE')
 	Minimap.ZoneText:SetJustifyV('CENTER')
 	Minimap.ZoneText:SetPoint('TOP', Minimap, 'BOTTOM', 0, -1)
@@ -346,7 +347,7 @@ function module:MinimapCoords()
 	end
 
 	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(Minimap.coords, 10, 'Minimap')
+	SUI.Font:Format(Minimap.coords, 10, 'Minimap')
 	Minimap.coords:SetJustifyH('TOP')
 	Minimap.coords:SetPoint('TOP', Minimap.ZoneText, 'BOTTOM', 0, -1)
 	Minimap.coords:SetShadowOffset(1, -1)
@@ -688,7 +689,7 @@ function module:OnEnable()
 	if ((not UserSettings.AutoDetectAllowUse) and (not UserSettings.ManualAllowUse)) then
 		StaticPopup_Show('MiniMapNotice')
 	end
-	if SUI.DB.DisabledComponents.Minimap then
+	if SUI:IsModuleDisabled('Minimap') then
 		return
 	end
 

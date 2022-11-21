@@ -14,7 +14,7 @@ SUI.IsDF = select(4, GetBuildInfo()) >= 100000 ---@type boolean
 SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
-SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) -- ---@type boolean
+SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) ---@type boolean
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
 local wowVersion = 'Retail'
 if SUI.IsClassic then
@@ -36,7 +36,17 @@ SUI.Version = ''
 
 ---------------  Add Libraries ---------------
 
+---@class SUI.Lib
+---@field AceC AceConfig-3.0
+---@field AceCD AceConfigDialog-3.0
+---@field AceDB AceDB-3.0
+---@field AceDBO AceDBOptions-3.0
+---@field Compress LibCompress
+---@field LibBase64 LibBase64-1.0
+---@field StdUi StdUi
+---@field LSM LibSharedMedia-3.0
 SUI.Lib = {}
+
 ---@param name string
 ---@param libaray table|function
 ---@param silent? boolean
@@ -55,7 +65,6 @@ end
 
 SUI.AddLib('AceC', 'AceConfig-3.0')
 SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
-SUI.AddLib('AceCR', 'AceConfigRegistry-3.0')
 SUI.AddLib('AceDB', 'AceDB-3.0')
 SUI.AddLib('AceDBO', 'AceDBOptions-3.0')
 SUI.AddLib('Compress', 'LibCompress')
@@ -63,6 +72,22 @@ SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 SUI.AddLib('WagoAnalytics', 'WagoAnalytics', true)
+
+-- Add Statusbar textures
+SUI.Lib.LSM:Register('statusbar', 'Brushed aluminum', [[Interface\AddOns\SpartanUI\images\statusbars\BrushedAluminum]])
+SUI.Lib.LSM:Register('statusbar', 'Leaves', [[Interface\AddOns\SpartanUI\images\statusbars\Leaves]])
+SUI.Lib.LSM:Register('statusbar', 'Lightning', [[Interface\AddOns\SpartanUI\images\statusbars\Lightning]])
+SUI.Lib.LSM:Register('statusbar', 'Metal', [[Interface\AddOns\SpartanUI\images\statusbars\metal]])
+SUI.Lib.LSM:Register('statusbar', 'Recessed stone', [[Interface\AddOns\SpartanUI\images\statusbars\RecessedStone]])
+SUI.Lib.LSM:Register('statusbar', 'Smoke', [[Interface\AddOns\SpartanUI\images\statusbars\Smoke]])
+SUI.Lib.LSM:Register('statusbar', 'Smooth gradient', [[Interface\AddOns\SpartanUI\images\statusbars\SmoothGradient]])
+SUI.Lib.LSM:Register('statusbar', 'SpartanUI Default', [[Interface\AddOns\SpartanUI\images\statusbars\Smoothv2]])
+SUI.Lib.LSM:Register('statusbar', 'Blank', [[Interface\AddOns\SpartanUI\images\blank]])
+
+-- Add Background textures
+SUI.Lib.LSM:Register('background', 'Smoke', [[Interface\AddOns\SpartanUI\images\backgrounds\smoke]])
+SUI.Lib.LSM:Register('background', 'Dragonflight', [[Interface\AddOns\SpartanUI\images\backgrounds\Dragonflight]])
+SUI.Lib.LSM:Register('background', 'None', [[Interface\AddOns\SpartanUI\images\blank]])
 
 --init StdUI Instance for the whole addon
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
@@ -107,19 +132,7 @@ local DBdefault = {
 		Manualoffset = false,
 		offset = 0
 	},
-	DisabledComponents = {},
-	font = {
-		NumberSeperator = ',',
-		Path = '',
-		Modules = {
-			['**'] = {
-				Size = 0,
-				Face = 'Roboto-Bold',
-				Type = 'outline'
-			}
-		}
-	},
-	MiniMap = {},
+	DisabledModules = {},
 	Offset = {
 		Top = 0,
 		TopAuto = true,
@@ -1074,32 +1087,6 @@ local DBdefault = {
 			}
 		}
 	},
-	Tooltips = {
-		Styles = {
-			metal = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\metal',
-				tile = false
-			},
-			smooth = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\Smoothv2',
-				tile = false
-			},
-			smoke = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
-				tile = false
-			},
-			none = {
-				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				tile = false
-			}
-		},
-		ActiveStyle = 'smoke',
-		VendorPrices = true,
-		Override = {},
-		ColorOverlay = true,
-		Color = {0, 0, 0, 0.4},
-		SuppressNoMatch = true
-	},
 	StatusBars = {
 		['**'] = {
 			display = 'disabled',
@@ -1168,6 +1155,11 @@ end
 -- New SUI.DB Access
 SUI.DBG = SUI.SpartanUIDB.global
 SUI.DB = SUI.SpartanUIDB.profile
+
+if SUI.DB.DisabledComponents then
+	SUI:CopyData(SUI.DB.DisabledModules, SUI.DB.DisabledComponents)
+	SUI.DB.DisabledComponents = nil
+end
 
 local function reloaduiWindow()
 	local StdUi = SUI.StdUi
@@ -1274,15 +1266,6 @@ function SUI:OnInitialize()
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileCopied', 'UpdateModuleConfigs')
 	SUI.SpartanUIDB.RegisterCallback(SUI, 'OnProfileReset', 'UpdateModuleConfigs')
 
-	--First Time Setup Actions
-	if not SUI.DB.SetupDone then
-		if LARGE_NUMBER_SEPERATOR == '.' then
-			SUI.DB.font.NumberSeperator = '.'
-		elseif LARGE_NUMBER_SEPERATOR == '' then
-			SUI.DB.font.NumberSeperator = ''
-		end
-	end
-
 	-- Setup ReloadUI Window
 	reloaduiWindow()
 
@@ -1382,7 +1365,7 @@ end
 
 function SUI:Error(err, mod)
 	if mod then
-		SUI:Print("|cffff0000Error|c occured in the Component '" .. mod .. "'")
+		SUI:Print("|cffff0000Error|c occured in the Module '" .. mod .. "'")
 	else
 		SUI:Print('|cffff0000Error occured')
 	end
@@ -1852,6 +1835,26 @@ function SUI:SplitString(str, delim)
 	return unpack(splitTable)
 end
 
+function SUI:InverseAnchor(anchor)
+	if anchor == 'TOPLEFT' then
+		return 'BOTTOMLEFT'
+	elseif anchor == 'TOPRIGHT' then
+		return 'BOTTOMRIGHT'
+	elseif anchor == 'BOTTOMLEFT' then
+		return 'TOPLEFT'
+	elseif anchor == 'BOTTOMRIGHT' then
+		return 'TOPRIGHT'
+	elseif anchor == 'BOTTOM' then
+		return 'TOP'
+	elseif anchor == 'TOP' then
+		return 'BOTTOM'
+	elseif anchor == 'LEFT' then
+		return 'RIGHT'
+	elseif anchor == 'RIGHT' then
+		return 'LEFT'
+	end
+end
+
 function SUI:OnEnable()
 	local AceC = SUI.Lib.AceC
 	local AceCD = SUI.Lib.AceCD
@@ -1942,7 +1945,7 @@ end
 
 -- For Setting a unifid skin across all registered Skinable modules
 function SUI:SetActiveStyle(skin)
-	SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
+	SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
 
 	for name, submodule in SUI:IterateModules() do
 		if submodule.SetActiveStyle then
@@ -1951,5 +1954,5 @@ function SUI:SetActiveStyle(skin)
 	end
 
 	-- Ensure this is the First and last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
-	SUI:GetModule('Component_Artwork'):SetActiveStyle(skin)
+	SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
 end

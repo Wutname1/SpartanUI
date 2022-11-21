@@ -2,7 +2,7 @@
 local SUI = SUI
 local L = SUI.L
 local StdUi = SUI.StdUi
-local module = SUI:NewModule('Component_Chatbox', 'AceHook-3.0')
+local module = SUI:NewModule('Module_Chatbox', 'AceHook-3.0')---@type SUI.Module
 module.description = 'Lightweight quality of life chat improvements'
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
@@ -203,7 +203,7 @@ local function shortenChannel(text)
 end
 
 local ModifyMessage = function(self)
-	if SUI.DB.DisabledComponents.Chatbox then
+	if SUI:IsModuleDisabled('Chatbox') then
 		return
 	end
 	local num = self.headIndex
@@ -287,7 +287,7 @@ function module:OnInitialize()
 	-- Create Popup Items
 	popup.editBox = StdUi:MultiLineBox(popup, 580, 120, '')
 	if not SUI.IsDF then -- TODO: DF Release this should work fine. Why is it not working?
-		popup.editBox.editBox:SetFont(SUI:GetFontFace('chatbox'), 12)
+		popup.editBox.editBox:SetFont(SUI.Font:GetFont('chatbox'), 12)
 	end
 
 	-- Position
@@ -702,9 +702,9 @@ function module:SetupChatboxes()
 
 		local header = _G[ChatFrameName .. 'EditBoxHeader']
 		local _, s, m = header:GetFont()
-		SUI:FormatFont(header, s, 'Chatbox')
-		SUI:FormatFont(ChatFrame, module.DB.fontSize, 'Chatbox')
-		SUI:FormatFont(ChatFrameEdit, module.DB.fontSize, 'Chatbox')
+		SUI.Font:Format(header, s, 'Chatbox')
+		SUI.Font:Format(ChatFrame, module.DB.fontSize, 'Chatbox')
+		SUI.Font:Format(ChatFrameEdit, module.DB.fontSize, 'Chatbox')
 
 		if (_G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil) then
 			_G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil)

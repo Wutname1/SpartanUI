@@ -1,5 +1,5 @@
 local SUI, L, StdUi = SUI, SUI.L, SUI.StdUi
-local module = SUI:NewModule('Component_AutoTurnIn')
+local module = SUI:NewModule('Module_AutoTurnIn') ---@type SUI.Module
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
@@ -405,9 +405,7 @@ function module.QUEST_COMPLETE()
 				end
 
 				-- comparing lowest equipped item level with reward's item level
-				debug(
-					'iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. (firstinvLink or '')
-				)
+				debug('iLVL Comparisson ' .. link .. ' - ' .. QuestItemTrueiLVL .. '-' .. EquipedLevel .. ' - ' .. (firstinvLink or ''))
 
 				if (QuestItemTrueiLVL > EquipedLevel) and ((QuestItemTrueiLVL - EquipedLevel) > UpgradeAmmount) then
 					UpgradeLink = link
@@ -418,9 +416,9 @@ function module.QUEST_COMPLETE()
 
 			-- Check if it is a weapon, do this last incase it only rewards one item
 			if slot[1] == 'MainHandSlot' or slot[1] == 'SecondaryHandSlot' then
-				QuestRewardsWeapon = 'weapon'
+				QuestRewardsWeapon = true
 			elseif slot[1] == 'Trinket0Slot' then
-				QuestRewardsWeapon = 'trinket'
+				QuestRewardsWeapon = true
 			end
 		end
 	end
@@ -428,7 +426,7 @@ function module.QUEST_COMPLETE()
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
-			SUI:Print(L['Canceling turn in, quest rewards'] .. ' ' .. QuestRewardsWeapon .. '.')
+			-- SUI:Print(L['Canceling turn in, quest rewards'] .. ' ' .. QuestRewardsWeapon .. '.')
 		elseif DB.lootreward then
 			if (GreedID and not UpgradeID) then
 				SUI:Print('Grabbing item to vendor ' .. GreedLink .. ' worth ' .. SUI:GoldFormattedValue(GreedValue))
@@ -476,44 +474,19 @@ function module:VarArgForActiveQuests(...)
 		debug(#...)
 	end
 
-	if SUI.IsRetail then
-		for i, quest in pairs(...) do
-			debug(quest.isComplete)
-			debug(quest.frequency)
-			debug(quest.title)
-			if (quest.isComplete) and (not module:blacklisted(quest.title)) then
-				-- if self:isAppropriate(questname, true) then
-				local questInfo = Lquests[quest.title]
-				debug('selecting.. ' .. quest.title)
-				if questInfo then
-					if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
-						C_GossipInfo.SelectActiveQuest(i)
-					end
-				else
-					C_GossipInfo.SelectActiveQuest(i)
+	for i, quest in pairs(...) do
+		debug(quest.isComplete)
+		debug(quest.frequency)
+		debug(quest.title)
+		if (quest.isComplete) and (not module:blacklisted(quest.title)) then
+			local questInfo = Lquests[quest.title]
+			debug('selecting.. ' .. quest.title)
+			if questInfo then
+				if module:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
+					C_GossipInfo.SelectActiveQuest(quest.questID)
 				end
-			-- end
-			end
-		end
-	else
-		local INDEX_CONST = 6
-
-		for i = 1, select('#', ...), INDEX_CONST do
-			---@diagnostic disable-next-line: redundant-parameter
-			local name = select(i * 1, GetGossipActiveQuests(i))
-			local isComplete = select(i + 3, ...) -- complete status
-			if (isComplete) and (not module:blacklisted(name)) then
-				local questname = select(i, ...)
-				-- if self:isAppropriate(questname, true) then
-				local quest = Lquests[questname]
-				if quest then
-					if module:GetItemAmount(quest.currency, quest.item) >= quest.amount then
-						SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
-					end
-				else
-					SelectGossipActiveQuest(math.floor(i / INDEX_CONST) + 1)
-				end
-			-- end
+			else
+				C_GossipInfo.SelectActiveQuest(quest.questID)
 			end
 		end
 	end
@@ -595,8 +568,7 @@ function module:FirstLaunch()
 				ATI.options.TurnInEnabled = StdUi:Checkbox(ATI, L['Turn in completed quests'], 220, 20)
 				ATI.options.AutoGossip = StdUi:Checkbox(ATI, L['Auto gossip'], 220, 20)
 				ATI.options.AutoGossipSafeMode = StdUi:Checkbox(ATI, L['Auto gossip safe mode'], 220, 20)
-				ATI.options.autoequip =
-					StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
+				ATI.options.autoequip = StdUi:Checkbox(ATI, L['Auto equip upgrade quest rewards'] .. ' - ' .. L['Based on iLVL'], 400, 20)
 
 				-- Positioning
 				StdUi:GlueTop(ATI.options.AcceptGeneralQuests, SUI_Win, -80, -30)
@@ -744,12 +716,13 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	debug('AutoTurnIn Loaded')
 	module:BuildOptions()
 	module:FirstLaunch()
 	local lastEvent = ''
 
 	local function OnEvent(_, event)
-		if SUI.DB.DisabledComponents.AutoTurnIn then
+		if SUI:IsModuleDisabled(AutoTurnIn) then
 			return
 		end
 
@@ -762,10 +735,7 @@ function module:OnEnable()
 				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
 				debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
 				debug(C_CampaignInfo.IsCampaignQuest(QuestID))
-				if
-					C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and
-						C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil
-				 then
+				if C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil then
 					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
 					return
 				end
@@ -794,77 +764,75 @@ function module:OnEnable()
 
 	local IsCollapsed = true
 
-	if SUI.IsRetail and SUI:IsModuleEnabled(module) then
-		for _, v in ipairs({'QuestFrame', 'GossipFrame'}) do
-			local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
-			OptionsPopdown:SetScale(.95)
-			OptionsPopdown:SetPoint('TOP', _G[v], 'BOTTOM', 0, -2)
-			OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
-			OptionsPopdown.title:SetPoint('CENTER')
+	for _, v in ipairs({'QuestFrame', 'GossipFrame'}) do
+		local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
+		OptionsPopdown:SetScale(.95)
+		OptionsPopdown:SetPoint('TOP', _G[v], 'BOTTOM', 0, -2)
+		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
+		OptionsPopdown.title:SetPoint('CENTER')
 
-			-- OptionsPopdown.CloseButton = StdUi:Button(OptionsPopdown, 15, 15, 'X')
-			OptionsPopdown.minimizeButton = StdUi:Button(OptionsPopdown, 15, 15, '-')
+		-- OptionsPopdown.CloseButton = StdUi:Button(OptionsPopdown, 15, 15, 'X')
+		OptionsPopdown.minimizeButton = StdUi:Button(OptionsPopdown, 15, 15, '-')
 
-			StdUi:GlueRight(OptionsPopdown.minimizeButton, OptionsPopdown, -5, 0, true)
-			-- StdUi:GlueRight(OptionsPopdown.CloseButton, OptionsPopdown, -5, 0, true)
-			-- StdUi:GlueLeft(OptionsPopdown.minimizeButton, OptionsPopdown.CloseButton, -2, 0)
+		StdUi:GlueRight(OptionsPopdown.minimizeButton, OptionsPopdown, -5, 0, true)
+		-- StdUi:GlueRight(OptionsPopdown.CloseButton, OptionsPopdown, -5, 0, true)
+		-- StdUi:GlueLeft(OptionsPopdown.minimizeButton, OptionsPopdown.CloseButton, -2, 0)
 
-			OptionsPopdown.minimizeButton:SetScript(
+		OptionsPopdown.minimizeButton:SetScript(
+			'OnClick',
+			function()
+				if OptionsPopdown.Panel:IsVisible() then
+					OptionsPopdown.Panel:Hide()
+					IsCollapsed = true
+				else
+					OptionsPopdown.Panel:Show()
+					IsCollapsed = false
+				end
+			end
+		)
+		OptionsPopdown:HookScript(
+			'OnShow',
+			function()
+				if IsCollapsed then
+					OptionsPopdown.Panel:Hide()
+				else
+					OptionsPopdown.Panel:Show()
+				end
+			end
+		)
+
+		local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
+		Panel:SetPoint('TOP', OptionsPopdown, 'BOTTOM', 0, -1)
+		Panel:Hide()
+		local options = {}
+		options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
+		options.AcceptGeneralQuests = StdUi:Checkbox(Panel, L['Accept quests'], nil, 20)
+		options.TurnInEnabled = StdUi:Checkbox(Panel, L['Turn in completed quests'], nil, 20)
+		options.AutoGossip = StdUi:Checkbox(Panel, L['Auto gossip'], nil, 20)
+		options.AutoGossipSafeMode = StdUi:Checkbox(Panel, L['Auto gossip safe mode'], nil, 20)
+		for setting, Checkbox in pairs(options) do
+			Checkbox:SetChecked(DB[setting])
+			Checkbox:HookScript(
 				'OnClick',
 				function()
-					if OptionsPopdown.Panel:IsVisible() then
-						OptionsPopdown.Panel:Hide()
-						IsCollapsed = true
-					else
-						OptionsPopdown.Panel:Show()
-						IsCollapsed = false
+					DB[setting] = Checkbox:GetChecked()
+					if Checkbox:GetChecked() then
+						OnEvent(nil, lastEvent)
 					end
 				end
 			)
-			OptionsPopdown:HookScript(
-				'OnShow',
-				function()
-					if IsCollapsed then
-						OptionsPopdown.Panel:Hide()
-					else
-						OptionsPopdown.Panel:Show()
-					end
-				end
-			)
-
-			local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
-			Panel:SetPoint('TOP', OptionsPopdown, 'BOTTOM', 0, -1)
-			Panel:Hide()
-			local options = {}
-			options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
-			options.AcceptGeneralQuests = StdUi:Checkbox(Panel, L['Accept quests'], nil, 20)
-			options.TurnInEnabled = StdUi:Checkbox(Panel, L['Turn in completed quests'], nil, 20)
-			options.AutoGossip = StdUi:Checkbox(Panel, L['Auto gossip'], nil, 20)
-			options.AutoGossipSafeMode = StdUi:Checkbox(Panel, L['Auto gossip safe mode'], nil, 20)
-			for setting, Checkbox in pairs(options) do
-				Checkbox:SetChecked(DB[setting])
-				Checkbox:HookScript(
-					'OnClick',
-					function()
-						DB[setting] = Checkbox:GetChecked()
-						if Checkbox:GetChecked() then
-							OnEvent(nil, lastEvent)
-						end
-					end
-				)
-			end
-
-			StdUi:GlueTop(options.DoCampainQuests, Panel, 5, -2, 'LEFT')
-
-			StdUi:GlueBelow(options.AcceptGeneralQuests, options.DoCampainQuests, 0, 2, 'LEFT')
-			StdUi:GlueRight(options.TurnInEnabled, options.AcceptGeneralQuests, 0, 0)
-
-			StdUi:GlueBelow(options.AutoGossip, options.AcceptGeneralQuests, 0, 2, 'LEFT')
-			StdUi:GlueRight(options.AutoGossipSafeMode, options.AutoGossip, 0, 0)
-
-			OptionsPopdown.Panel = Panel
-			OptionsPopdown.Panel.options = options
 		end
+
+		StdUi:GlueTop(options.DoCampainQuests, Panel, 5, -2, 'LEFT')
+
+		StdUi:GlueBelow(options.AcceptGeneralQuests, options.DoCampainQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.TurnInEnabled, options.AcceptGeneralQuests, 0, 0)
+
+		StdUi:GlueBelow(options.AutoGossip, options.AcceptGeneralQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.AutoGossipSafeMode, options.AutoGossip, 0, 0)
+
+		OptionsPopdown.Panel = Panel
+		OptionsPopdown.Panel.options = options
 	end
 end
 

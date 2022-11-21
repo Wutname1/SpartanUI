@@ -4,7 +4,7 @@ local UF = SUI.UF
 ---@param DB table
 local function Build(frame, DB)
 	frame.Name = frame.raised:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(frame.Name, DB.textSize, 'UnitFrames')
+	SUI.Font:Format(frame.Name, DB.textSize, 'UnitFrames')
 	frame.Name:SetSize(frame:GetWidth(), 12)
 	frame.Name:SetJustifyH(DB.SetJustifyH)
 	frame.Name:SetJustifyV(DB.SetJustifyV)
@@ -14,7 +14,7 @@ end
 ---@param frame table
 local function Update(frame)
 	local DB = frame.Name.DB
-	SUI:FormatFont(frame.Name, DB.textSize, 'UnitFrames')
+	SUI.Font:Format(frame.Name, DB.textSize, 'UnitFrames')
 	frame.Name:SetJustifyH(DB.SetJustifyH)
 	frame.Name:SetJustifyV(DB.SetJustifyV)
 	frame:Tag(frame.Name, DB.text)
@@ -26,7 +26,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:TextBasicDisplay(frameName, OptionSet)
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	width = false,

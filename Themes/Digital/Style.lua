@@ -1,8 +1,9 @@
 local SUI, L = SUI, SUI.L
 local print = SUI.print
-local Artwork_Core = SUI:GetModule('Component_Artwork')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
 local module = SUI:NewModule('Style_Digital')
-local UF = SUI:GetModule('Component_UnitFrames')
+---@type SUI.Module
+local UF = SUI:GetModule('Module_UnitFrames')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Digital', SpartanUI)
 module.Settings = {}
 
@@ -14,13 +15,11 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
-		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or
-			'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or
-			'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
+		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
+		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
 	}
 
-	---@type UFStyleSettings
+	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
 			bg = {
@@ -44,7 +43,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Digital,CENTER,0,54'
 	}
-	SUI:GetModule('Component_Minimap'):Register('Digital', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Digital', minimapSettings)
 
 	module:CreateArtwork()
 end
@@ -109,19 +108,4 @@ end
 
 function module:EnableArtwork()
 	module:SetupVehicleUI()
-
-	if SUI:IsModuleEnabled('Minimap') and ((SUI.DB.MiniMap.AutoDetectAllowUse) or (SUI.DB.MiniMap.ManualAllowUse)) then
-		module:MiniMap()
-	end
-end
-
--- Minimap
-function module:MiniMap()
-	if Minimap.ZoneText ~= nil then
-		Minimap.ZoneText:ClearAllPoints()
-		Minimap.ZoneText:SetPoint('TOPLEFT', Minimap, 'BOTTOMLEFT', 0, -5)
-		Minimap.ZoneText:SetPoint('TOPRIGHT', Minimap, 'BOTTOMRIGHT', 0, -5)
-		Minimap.ZoneText:Hide()
-		MinimapZoneText:Show()
-	end
 end

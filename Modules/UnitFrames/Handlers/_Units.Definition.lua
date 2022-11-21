@@ -5,11 +5,11 @@
 ---@field yOfs integer
 local FramePositioning = {}
 
----@class UFrameSettings
+---@class SUI.UF.Unit.Settings
 ---@field anchor FramePositioning
----@field elements table<string, SUI.UnitFrame.Element.Settings>
+---@field elements table<string, SUI.UF.Elements.Settings>
 ---@field visibility UFrameVisibility
----@field config UFrameConfig
+---@field config SUI.UF.Unit.Config
 local UFrameSettings = {
 	enabled = true,
 	width = 180,
@@ -17,10 +17,11 @@ local UFrameSettings = {
 	moved = false
 }
 
----@class UFrameConfig
+---@class SUI.UF.Unit.Config
 local config = {
 	IsGroup = false,
-	isChild = false
+	isChild = false,
+	isFriendly = false
 }
 
 ---@class UFrameVisibility
@@ -44,13 +45,15 @@ local visibility = {
 ---|"arena"
 ---|"pet"
 
----@class SUI.UnitFrame : frame, SUIElements
+---@class SUI.UF.Unit.Frame : frame, SUI.UF.Elements.Details
 ---@field unitOnCreate UnitFrameName
----@field elementList table<integer, SUI.UnitFrame.Elements>
+---@field DB SUI.UF.Unit.Settings
+---@field elementList table<integer, SUI.UF.Elements.list>
 ---@field UpdateAll function
 ---@field ElementUpdate function
 ---@field mover frame
----@field config UFrameSettings
----@field frames? table<integer, SUI.UnitFrame>
+---@field isForced boolean
+---@field config SUI.UF.Unit.Settings
+---@field frames? table<integer, SUI.UF.Unit.Frame>
 ---@field header? frame
 local SUIUnitFrame = {}

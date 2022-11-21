@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local module = SUI:NewModule('Handler_ChatCommands')
+local module = SUI:NewModule('Handler_ChatCommands') ---@type SUI.Module
 local SUIChatCommands, CommandDetails, enabled = {}, {}, false
 
 function SUI:ChatCommand(input)

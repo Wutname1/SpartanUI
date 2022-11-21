@@ -1,10 +1,10 @@
----@class SUI_UnitFrames : AceAddon-3.0, AceEvent-3.0, AceTimer-3.0
-local UF = SUI:GetModule('Component_UnitFrames')
+---@class SUI.UF
+local UF = SUI.UF
 
 local Style = {}
 local registry = {}
 
----@type UFStyleSettings
+---@type SUI.UF.Style.Settings
 local Defaults = {
 	positions = {},
 	artwork = {},
@@ -13,7 +13,7 @@ local Defaults = {
 
 ---Register a style within the registry
 ---@param styleName string
----@param settings UFStyleSettings
+---@param settings SUI.UF.Style.Settings
 ---@param update? function
 function Style:Register(styleName, settings, update)
 	registry[styleName] = {
@@ -44,7 +44,7 @@ end
 
 ---Get config for the active style OR the specified styleName
 ---@param styleName? string
----@return UFStyleSettings
+---@return SUI.UF.Style.Settings
 function Style:Get(styleName)
 	if styleName == 'war' then
 		styleName = 'War'

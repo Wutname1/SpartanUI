@@ -21,7 +21,7 @@ local function Build(frame, DB)
 	power.TextElements = {}
 	for i, key in pairs(DB.text) do
 		local NewString = power:CreateFontString(nil, 'OVERLAY')
-		SUI:FormatFont(NewString, key.size, 'UnitFrames')
+		SUI.Font:Format(NewString, key.size, 'UnitFrames')
 		NewString:SetJustifyH(key.SetJustifyH)
 		NewString:SetJustifyV(key.SetJustifyV)
 		NewString:SetPoint(key.position.anchor, power, key.position.anchor, key.position.x, key.position.y)
@@ -78,7 +78,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Power')
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
 	height = 10,

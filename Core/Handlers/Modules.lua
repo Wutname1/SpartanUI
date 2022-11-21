@@ -1,16 +1,12 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local module = SUI:NewModule('Handler_Modules')
+local module = SUI:NewModule('Handler_Modules') ---@type SUI.Module
 
 function SUI:GetModuleName(ModuleTable)
 	local name
 
 	-- Ace3 adds SpartanUI_ to the name so it knows how to handle things, we need to account for that.
-
-	if (string.match(ModuleTable.name, 'Component_')) then
-		name = string.sub(ModuleTable.name, 21)
-	end
 	if (string.match(ModuleTable.name, 'Module_')) then
 		name = string.sub(ModuleTable.name, 18)
 	end
@@ -24,7 +20,7 @@ function SUI:IsModuleEnabled(moduleName)
 		moduleName = SUI:GetModuleName(moduleName)
 	end
 
-	if SUI.DB.DisabledComponents[moduleName] then
+	if SUI.DB.DisabledModules[moduleName] then
 		return false
 	end
 	return true
@@ -37,7 +33,7 @@ function SUI:IsModuleDisabled(moduleName)
 		moduleName = SUI:GetModuleName(moduleName)
 	end
 
-	if SUI.DB.DisabledComponents[moduleName] then
+	if SUI.DB.DisabledModules[moduleName] then
 		return true
 	end
 	return false
@@ -46,34 +42,28 @@ end
 -- These override the default Ace3 calls so we can track the status
 ---@param input AceAddon-3.0|string
 function SUI:DisableModule(input)
-	local module = nil
+	local moduleToDisable
 	if type(input) == 'table' then
-		module = input
+		moduleToDisable = input
 	else
-		module = SUI:GetModule(input)
+		moduleToDisable = SUI:GetModule(input)
 	end
 
-	--Analytics
-	SUI.Analytics:Set(module, 'Enabled', false)
-
-	SUI.DB.DisabledComponents[SUI:GetModuleName(module)] = true
-	return module:Disable()
+	SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = true
+	return moduleToDisable:Disable()
 end
 
 ---@param input AceAddon-3.0|string
 function SUI:EnableModule(input)
-	local module = nil
+	local moduleToDisable
 	if type(input) == 'table' then
-		module = input
+		moduleToDisable = input
 	else
-		module = SUI:GetModule(input)
+		moduleToDisable = SUI:GetModule(input)
 	end
 
-	--Analytics
-	SUI.Analytics:Set(module, 'Enabled', true)
-
-	SUI.DB.DisabledComponents[SUI:GetModuleName(module)] = nil
-	return module:Enable()
+	SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = nil
+	return moduleToDisable:Enable()
 end
 
 local function CreateSetupPage()
@@ -97,10 +87,7 @@ local function CreateSetupPage()
 
 			-- List Components
 			for _, submodule in pairs(SUI.orderedModules) do
-				if
-					((string.match(submodule.name, 'Component_')) or (string.match(submodule.name, 'Module_'))) and
-						not submodule.HideModule
-				 then
+				if (string.match(submodule.name, 'Module_')) and not submodule.HideModule then
 					local RealName = SUI:GetModuleName(submodule)
 					-- Get modules display name
 					local Displayname = submodule.DisplayName or RealName
@@ -121,7 +108,7 @@ local function CreateSetupPage()
 							end
 						end
 					)
-					checkbox:SetChecked(not SUI.DB.DisabledComponents[RealName])
+					checkbox:SetChecked(SUI:IsModuleEnabled(RealName))
 					checkbox.name = RealName
 					checkbox.Core = (submodule.Core or false)
 					itemsMatrix[(#itemsMatrix + 1)] = checkbox
@@ -143,14 +130,7 @@ local function CreateSetupPage()
 			end
 
 			local btnOptional = StdUi:Button(SUI_Win.ModSelection, 130, 18, 'Toggle optional(s)')
-			btnOptional.tooltip =
-				StdUi:FrameTooltip(
-				btnOptional,
-				'Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.',
-				'OptionalTooltip',
-				'TOP',
-				true
-			)
+			btnOptional.tooltip = StdUi:FrameTooltip(btnOptional, 'Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 'OptionalTooltip', 'TOP', true)
 			btnOptional:SetScript(
 				'OnClick',
 				function(this)

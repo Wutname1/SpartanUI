@@ -48,13 +48,13 @@ local function Build(frame, DB)
 
 	-- Add spell text
 	local Text = cast:CreateFontString()
-	SUI:FormatFont(Text, DB.text['1'].size, 'UnitFrames')
+	SUI.Font:Format(Text, DB.text['1'].size, 'UnitFrames')
 	Text:SetPoint(DB.text['1'].position.anchor, cast, DB.text['1'].position.anchor, DB.text['1'].position.x, DB.text['1'].position.y)
 	cast.Text = Text
 
 	-- Add a timer
 	local Time = cast:CreateFontString(nil, 'OVERLAY')
-	SUI:FormatFont(Time, DB.text['2'].size, 'UnitFrames')
+	SUI.Font:Format(Time, DB.text['2'].size, 'UnitFrames')
 	Time:SetPoint(DB.text['2'].position.anchor, cast, DB.text['2'].position.anchor, DB.text['2'].position.x, DB.text['2'].position.y)
 	cast.Time = Time
 
@@ -96,7 +96,7 @@ end
 ---@param settings? table
 local function Update(frame, settings)
 	local element = frame.Castbar
-	local DB = settings or element.DB ---@type SUI.UnitFrame.Element.Settings
+	local DB = settings or element.DB ---@type SUI.UF.Element.Settings.Castbar
 	if not DB.enabled then
 		element:Hide()
 		return
@@ -257,7 +257,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Castbar')
 end
 
----@type SUI.UnitFrame.Element.Settings
+---@class SUI.UF.Element.Settings.Castbar : SUI.UF.Element.Settings
 local Settings = {
 	enabled = false,
 	height = 10,

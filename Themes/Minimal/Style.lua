@@ -1,8 +1,8 @@
 local SUI = SUI
 local L = SUI.L
-local Artwork_Core = SUI:GetModule('Component_Artwork')
-local UF = SUI:GetModule('Component_UnitFrames') ---@type SUI_UnitFrames
-local module = SUI:NewModule('Style_Minimal')
+local Artwork_Core = SUI:GetModule('Module_Artwork')
+local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI.UF
+local module = SUI:NewModule('Style_Minimal') ---@type SUI.Module
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ function module:OnInitialize()
 		position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
 		shape = 'square'
 	}
-	SUI:GetModule('Component_Minimap'):Register('Minimal', minimapSettings)
+	SUI:GetModule('Module_Minimap'):Register('Minimal', minimapSettings)
 
 	UF.Style:Register('Minimal', {})
 end
@@ -62,7 +62,7 @@ function module:OnEnable()
 	if (SUI.DB.Artwork.Style ~= 'Minimal') then
 		module:Disable()
 	else
-		module:SetupMenus()
+		module:Options()
 
 		hooksecurefunc(
 			'UIParent_ManageFramePositions',
@@ -101,7 +101,7 @@ function module:TooltipLoc(tooltip, parent)
 	end
 end
 
-function module:SetupMenus()
+function module:Options()
 	SUI.opt.args['Artwork'].args['Art'] = {
 		name = L['Artwork Options'],
 		type = 'group',

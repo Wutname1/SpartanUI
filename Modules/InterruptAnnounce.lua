@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_InterruptAnnouncer')
+local module = SUI:NewModule('Module_InterruptAnnouncer') ---@type SUI.Module
 module.Displayname = L['Interrupt announcer']
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil
@@ -8,11 +8,7 @@ local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	local msg = inputstring or module.DB.text
 	local DBChannel = module.DB.announceLocation or 'SELF'
 	local ChatChannel = false
-	msg =
-		msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub(
-		'%%sl',
-		GetSpellLink(sid)
-	):gsub('%%myspell', GetSpellLink(ssid))
+	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub('%%sl', GetSpellLink(sid)):gsub('%%myspell', GetSpellLink(ssid))
 
 	if DBChannel == 'SELF' then
 		print(msg)
@@ -75,7 +71,7 @@ function module:OnInitialize()
 end
 
 local function COMBAT_LOG_EVENT_UNFILTERED()
-	if SUI.DB.DisabledComponents.InterruptAnnouncer then
+	if SUI:IsModuleDisabled('InterruptAnnouncer') then
 		return
 	end
 
@@ -93,23 +89,7 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 		continue = true
 	end
 
-	local timeStamp,
-		eventType,
-		_,
-		sourceGUID,
-		_,
-		_,
-		_,
-		destGUID,
-		destName,
-		_,
-		_,
-		sourceID,
-		_,
-		_,
-		spellID,
-		spellName,
-		spellSchool = CombatLogGetCurrentEventInfo()
+	local timeStamp, eventType, _, sourceGUID, _, _, _, destGUID, destName, _, _, sourceID, _, _, spellID, spellName, spellSchool = CombatLogGetCurrentEventInfo()
 
 	-- Check if time and ID was same as last
 	-- Note: This is to prevent flooding announcements on AoE taunts.
@@ -120,19 +100,9 @@ local function COMBAT_LOG_EVENT_UNFILTERED()
 	-- Update last time and ID
 	lastTime, lastSpellID = timeStamp, spellID
 
-	if
-		(continue or module.DB.alwayson) and eventType == 'SPELL_INTERRUPT' and
-			(sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and module.DB.includePets))
-	 then
+	if (continue or module.DB.alwayson) and eventType == 'SPELL_INTERRUPT' and (sourceGUID == UnitGUID('player') or (sourceGUID == UnitGUID('pet') and module.DB.includePets)) then
 		if destGUID == UnitGUID('player') and module.DB.selfInterrupt then
-			printFormattedString(
-				destName,
-				spellID,
-				spellName,
-				spellSchool,
-				sourceID,
-				'I have hurt myself in confustion while casting %spell and can no longer cast.'
-			)
+			printFormattedString(destName, spellID, spellName, spellSchool, sourceID, 'I have hurt myself in confustion while casting %spell and can no longer cast.')
 		else
 			printFormattedString(destName, spellID, spellName, spellSchool, sourceID)
 		end
@@ -361,7 +331,7 @@ function module:FirstLaunch()
 				StdUi:GlueBelow(IAnnounce.tbAnnounceText, IAnnounce.lblvariable4, -15, -5, 'LEFT')
 
 				-- Defaults
-				IAnnounce.modEnabled:SetChecked(not SUI.DB.DisabledComponents.InterruptAnnouncer)
+				IAnnounce.modEnabled:SetChecked(SUI:IsModuleEnabled('InterruptAnnouncer'))
 				for key, object in pairs(IAnnounce.options) do
 					object:SetChecked(module.DB[key])
 				end
@@ -387,7 +357,7 @@ function module:FirstLaunch()
 				local window = SUI.Setup.window
 				local IAnnounce = window.content.IAnnounce
 				if not IAnnounce.modEnabled:GetChecked() then
-					SUI.DB.DisabledComponents.InterruptAnnouncer = true
+					SUI:DisableModule(module)
 				end
 
 				for key, object in pairs(IAnnounce.options) do

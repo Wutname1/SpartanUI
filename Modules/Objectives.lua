@@ -2,7 +2,7 @@ local _G, SUI, L = _G, SUI, SUI.L
 if SUI.IsRetail then
 	return
 end
-local module = SUI:NewModule('Component_Objectives')
+local module = SUI:NewModule('Module_Objectives') ---@type SUI.Module
 module.description = 'Allows the hiding of the Objectives tracker based on conditions'
 ----------------------------------------------------------------------------------------------------
 local MoveIt
@@ -31,8 +31,7 @@ end
 local function MakeMoveable()
 	local BlizzObjectiveFrame = _G[frameName]
 	if BlizzObjectiveFrame then
-		local point, anchor, secondaryPoint, x, y =
-			strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
+		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ObjectiveTracker)
 		holder:SetPoint(point, anchor, secondaryPoint, x, y)
 		holder:SetFrameStrata('LOW')
 		holder:SetSize(280, module.DB.height)
@@ -53,7 +52,7 @@ local function MakeMoveable()
 end
 
 local ObjTrackerUpdate = function(_, event)
-	if SUI.DB.DisabledComponents.Objectives or module.Override then
+	if SUI:IsModuleDisabled('Objectives') or module.Override then
 		return
 	end
 	local HideObjs = false
@@ -124,7 +123,7 @@ local ObjTrackerUpdate = function(_, event)
 			if _G[frameName].HeaderMenu then
 				_G[frameName].HeaderMenu.MinimizeButton:Hide()
 			end
-		elseif FadeIn and _G[frameName]:GetAlpha() == 0 and not HideObjs then
+		elseif _G[frameName]:GetAlpha() == 0 and not HideObjs then
 			if _G[frameName].HeaderMenu then
 				_G[frameName].HeaderMenu.MinimizeButton:Show()
 			end
@@ -233,7 +232,7 @@ function module:OnInitialize()
 	if SUI.IsClassic then
 		module.Override = true
 	end
-	MoveIt = SUI:GetModule('Component_MoveIt')
+	MoveIt = SUI:GetModule('Module_MoveIt')
 	if SUI.IsClassic or SUI.IsTBC and _G['QuestWatchFrame'] then
 		frameName = 'QuestWatchFrame'
 	end
@@ -284,7 +283,7 @@ local DummyFunction = function()
 end
 
 function module:update()
-	if SUI.DB.DisabledComponents.Objectives or module.Override then
+	if SUI:IsModuleDisabled('Objectives') or module.Override then
 		return
 	end
 
@@ -360,8 +359,7 @@ function module:FirstTimeSetup()
 					SUI_Win.Objectives[k].Condition = control
 
 					--InCombat 1
-					SUI_Win.Objectives[k].InCombat =
-						CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
+					SUI_Win.Objectives[k].InCombat = CreateFrame('CheckButton', 'SUI_Objectives_InCombat_' .. k, SUI_Win.Objectives, 'OptionsCheckButtonTemplate')
 					SUI_Win.Objectives[k].InCombat:SetPoint('LEFT', SUI_Win.Objectives[k].Condition.frame, 'RIGHT', 20, -7)
 					_G['SUI_Objectives_InCombat_' .. k .. 'Text']:SetText(L['Only if in combat'])
 					SUI_Win.Objectives[k].InCombat:SetScript('OnClick', DummyFunction)

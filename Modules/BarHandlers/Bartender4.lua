@@ -1,7 +1,7 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:GetModule('Handler_BarSystems')
-local BartenderMin = '4.10.0'
-local MoveIt = SUI:GetModule('Component_MoveIt')
+local BartenderMin = '4.13.0'
+local MoveIt = SUI:GetModule('Module_MoveIt')
 local scaleData
 local BartenderChangesActive = false
 ------------------------------------------------------------
@@ -464,10 +464,7 @@ local function OnEnable()
 			text = '|cff33ff99SpartanUI v' ..
 				SUI.Version ..
 					'|n|r|n|n' ..
-						L['Warning'] ..
-							': ' ..
-								L['Your bartender version may be out of date. We detected Version'] ..
-									' ' .. SUI.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
+						L['Warning'] .. ': ' .. L['Your bartender version may be out of date. We detected Version'] .. ' ' .. SUI.Bartender4Version .. '|n|nSpartanUI requires ' .. BartenderMin .. ' or higher.',
 			button1 = 'Ok',
 			OnAccept = function()
 				SUI.DBG.BartenderVerWarning = SUI.Version
@@ -506,10 +503,7 @@ local function OnEnable()
 			'OnEvent',
 			function()
 				if cnt <= 10 then
-					SUI.StdUi:Dialog(
-						L['Warning'],
-						L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10'
-					)
+					SUI.StdUi:Dialog(L['Warning'], L['Bartender4 not detected! Please download and install Bartender4.'] .. ' Warning ' .. cnt .. ' of 10')
 				else
 					SUI.DB.BT4Warned = true
 				end
@@ -525,7 +519,7 @@ local function OnEnable()
 
 	--Disable BT4 Movement system
 	function Bartender4:Unlock()
-		print('Bartender4 movement system overridden by SpartanUI. Please use "/sui move" going forward.')
+		-- print('Bartender4 movement system overridden by SpartanUI. Please use "/sui move" going forward.')
 		Unlock()
 	end
 
@@ -557,7 +551,7 @@ local function OnEnable()
 
 		--SUI Stuff
 		RefreshConfig()
-		local MoveIt = SUI:GetModule('Component_MoveIt')
+		local MoveIt = SUI:GetModule('Module_MoveIt')
 		MoveIt:CreateMover(bar, bar:GetName(), 'Bar ' .. id, nil, 'Bartender4')
 		MoveIt:UpdateMover(bar:GetName(), bar.overlay, true)
 
