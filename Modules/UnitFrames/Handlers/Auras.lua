@@ -143,11 +143,7 @@ function Auras:OnClick(button, elementName)
 	end
 
 	if button.data and keyDown then
-		if keyDown == 'CTRL' then
-			for k, v in pairs(button.data) do
-				print(k .. ' = ' .. tostring(v))
-			end
-		elseif keyDown == 'SHIFT' then
+		if keyDown == 'SHIFT' then
 			if not AddToFilterWindow then
 				CreateAddToFilterWindow()
 			end

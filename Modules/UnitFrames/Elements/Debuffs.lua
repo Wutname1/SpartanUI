@@ -10,11 +10,47 @@ local function Build(frame, DB)
 	end
 
 	---@param unit UnitId
-	---@param data UnitAuraInfo
-	local FilterAura = function(element, unit, data)
+	local CustomFilter = function(
+		element,
+		unit,
+		button,
+		name,
+		icon,
+		count,
+		debuffType,
+		duration,
+		expiration,
+		source,
+		isStealable,
+		nameplateShowPersonal,
+		spellID,
+		canApplyAura,
+		isBossDebuff,
+		castByPlayer,
+		nameplateShowAll,
+		modRate,
+		effect1,
+		effect2,
+		effect3)
+		---@type UnitAuraInfo
+		local data = {
+			spellId = spellID,
+			name = name,
+			icon = icon,
+			count = count,
+			duration = duration,
+			isBossAura = isBossDebuff,
+			isPlayer = castByPlayer,
+			nameplateShowAll = nameplateShowAll,
+			expirationTime = expiration,
+			debuffType = debuffType,
+			isStealable = isStealable,
+			canApplyAura = canApplyAura,
+			sourceUnit = source
+		}
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
-	Debuffs.FilterAura = FilterAura
+	Debuffs.CustomFilter = CustomFilter
 
 	frame.Debuffs = Debuffs
 end

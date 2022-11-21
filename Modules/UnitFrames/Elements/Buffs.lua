@@ -5,19 +5,52 @@ local UF = SUI.UF
 local function Build(frame, DB)
 	--Buff Icons
 	local Buffs = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame)
-	Buffs.PostUpdateButton = function(self, button, unit, data, position)
-		button.data = data
-	end
 	Buffs.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Buffs', button)
 	end
 
 	---@param unit UnitId
-	---@param data UnitAuraInfo
-	local FilterAura = function(element, unit, data)
+	local CustomFilter = function(
+		element,
+		unit,
+		button,
+		name,
+		icon,
+		count,
+		debuffType,
+		duration,
+		expiration,
+		source,
+		isStealable,
+		nameplateShowPersonal,
+		spellID,
+		canApplyAura,
+		isBossDebuff,
+		castByPlayer,
+		nameplateShowAll,
+		modRate,
+		effect1,
+		effect2,
+		effect3)
+		---@type UnitAuraInfo
+		local data = {
+			spellId = spellID,
+			name = name,
+			icon = icon,
+			count = count,
+			duration = duration,
+			isBossAura = isBossDebuff,
+			isPlayer = castByPlayer,
+			nameplateShowAll = nameplateShowAll,
+			expirationTime = expiration,
+			debuffType = debuffType,
+			isStealable = isStealable,
+			canApplyAura = canApplyAura,
+			sourceUnit = source
+		}
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
-	Buffs.FilterAura = FilterAura
+	Buffs.CustomFilter = CustomFilter
 	frame.Buffs = Buffs
 end
 

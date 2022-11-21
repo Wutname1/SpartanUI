@@ -428,10 +428,7 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 					isBossAura = L['Casted by boss'],
 					isHarmful = L['Harmful'],
 					isHelpful = L['Helpful'],
-					isMount = L['Mount'],
-					showPlayers = L['Player casted'],
-					isRaid = L['Raid'],
-					isStealable = L['Stealable']
+					showPlayers = L['Player casted']
 				}
 			}
 		}
