@@ -61,6 +61,11 @@ local colors = {
 		1, 1, 0,
 		0, 1, 0
 	},
+	happiness = {
+		[1] = oUF:CreateColor(.69, .31, .31),
+		[2] = oUF:CreateColor(.65, .63, .35),
+		[3] = oUF:CreateColor(.33, .59, .33),
+	},
 	health = oUF:CreateColor(49, 207, 37),
 	disconnected = oUF:CreateColor(0.6, 0.6, 0.6),
 	tapped = oUF:CreateColor(0.6, 0.6, 0.6),
@@ -68,6 +73,7 @@ local colors = {
 		oUF:CreateColor(247, 65, 57), -- blood
 		oUF:CreateColor(148, 203, 247), -- frost
 		oUF:CreateColor(173, 235, 66), -- unholy
+		oUF:CreateColor(247, 66, 247), -- death
 	},
 	selection = {
 		[ 0] = oUF:CreateColor(255, 0, 0), -- HOSTILE
@@ -89,7 +95,12 @@ local colors = {
 	debuff = {},
 	reaction = {},
 	power = {},
-	threat = {},
+	threat = {
+		[0] = oUF:CreateColor( .69, .69, .69),
+		[1] = oUF:CreateColor( 1, 1, .47 ),
+		[2] = oUF:CreateColor( 1, .6, 0 ),
+		[3] = oUF:CreateColor( 1, 0, 0 ),
+	},
 }
 
 -- We do this because people edit the vars directly, and changing the default
@@ -181,8 +192,10 @@ colors.power[19] = colors.power.ESSENCE
 colors.power.ALTERNATE = oUF:CreateColor(0.7, 0.7, 0.6)
 colors.power[10] = colors.power.ALTERNATE
 
-for i = 0, 3 do
-	colors.threat[i] = oUF:CreateColor(GetThreatStatusColor(i))
+if GetThreatStatusColor then
+	for i = 0, 3 do
+		colors.threat[i] = oUF:CreateColor(GetThreatStatusColor(i))
+	end
 end
 
 local function colorsAndPercent(a, b, ...)

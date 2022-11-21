@@ -59,18 +59,28 @@ local oUF = ns.oUF
 
 local _, playerClass = UnitClass('player')
 
+-- ElvUI block
+local unpack = unpack
+local CopyTable = CopyTable
+local UnitIsUnit = UnitIsUnit
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
+local UnitHasVehicleUI = UnitHasVehicleUI
+local UnitPowerType = UnitPowerType
+-- end block
+
 -- sourced from FrameXML/AlternatePowerBar.lua
-local ADDITIONAL_POWER_BAR_NAME = _G.ADDITIONAL_POWER_BAR_NAME or 'MANA'
-local ADDITIONAL_POWER_BAR_INDEX = _G.ADDITIONAL_POWER_BAR_INDEX or 0
-local ALT_MANA_BAR_PAIR_DISPLAY_INFO = _G.ALT_MANA_BAR_PAIR_DISPLAY_INFO
+local POWER_NAME = _G.ADDITIONAL_POWER_BAR_NAME or 'MANA'
+local POWER_INDEX = _G.ADDITIONAL_POWER_BAR_INDEX or 0
+local ALT_MANA_INFO = _G.ALT_MANA_BAR_PAIR_DISPLAY_INFO or {DRUID={[8]=true}, SHAMAN={[11]=true}, PRIEST={[13]=true}}
 
 local function UpdateColor(self, event, unit, powerType)
-	if(not (unit and UnitIsUnit(unit, 'player') and powerType == ADDITIONAL_POWER_BAR_NAME)) then return end
+	if(not (unit and UnitIsUnit(unit, 'player') and powerType == POWER_NAME)) then return end
 	local element = self.AdditionalPower
 
 	local r, g, b, color
 	if(element.colorPower) then
-		color = self.colors.power[ADDITIONAL_POWER_BAR_INDEX]
+		color = self.colors.power[POWER_INDEX]
 	elseif(element.colorClass) then
 		color = self.colors.class[playerClass]
 	elseif(element.colorSmooth) then
@@ -78,7 +88,7 @@ local function UpdateColor(self, event, unit, powerType)
 	end
 
 	if(color) then
-		r, g, b = color[1], color[2], color[3]
+		r, g, b = color.r, color.g, color.b
 	end
 
 	if(b) then
@@ -105,7 +115,7 @@ local function UpdateColor(self, event, unit, powerType)
 end
 
 local function Update(self, event, unit, powerType)
-	if(not (unit and UnitIsUnit(unit, 'player') and powerType == ADDITIONAL_POWER_BAR_NAME)) then return end
+	if(not (unit and UnitIsUnit(unit, 'player') and powerType == POWER_NAME)) then return end
 	local element = self.AdditionalPower
 
 	--[[ Callback: AdditionalPower:PreUpdate(unit)
@@ -118,8 +128,9 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate(unit)
 	end
 
-	local cur, max = UnitPower('player', ADDITIONAL_POWER_BAR_INDEX), UnitPowerMax('player', ADDITIONAL_POWER_BAR_INDEX)
+	local cur, max = UnitPower('player', POWER_INDEX), UnitPowerMax('player', POWER_INDEX)
 	element:SetMinMaxValues(0, max)
+
 	element:SetValue(cur)
 
 	element.cur = cur
@@ -133,7 +144,7 @@ local function Update(self, event, unit, powerType)
 	* max  - the maximum value of the player's additional power (number)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(cur, max)
+		return element:PostUpdate(cur, max, event) -- ElvUI adds event
 	end
 end
 
@@ -173,7 +184,8 @@ local function ElementEnable(self)
 	element:Show()
 
 	element.__isEnabled = true
-	Path(self, 'ElementEnable', 'player', ADDITIONAL_POWER_BAR_NAME)
+
+	Path(self, 'ElementEnable', 'player', POWER_NAME)
 end
 
 local function ElementDisable(self)
@@ -186,19 +198,17 @@ local function ElementDisable(self)
 	element:Hide()
 
 	element.__isEnabled = false
-	Path(self, 'ElementDisable', 'player', ADDITIONAL_POWER_BAR_NAME)
+	Path(self, 'ElementDisable', 'player', POWER_NAME)
 end
 
 local function Visibility(self, event, unit)
 	local element = self.AdditionalPower
 	local shouldEnable
 
-	if(not UnitHasVehicleUI('player')) then
-		if(UnitPowerMax(unit, ADDITIONAL_POWER_BAR_INDEX) ~= 0) then
-			if(element.displayPairs[playerClass]) then
-				local powerType = UnitPowerType(unit)
-				shouldEnable = element.displayPairs[playerClass][powerType]
-			end
+	if (oUF.isClassic or oUF.isTBC) or not UnitHasVehicleUI('player') then
+		local allowed = element.displayPairs[playerClass]
+		if allowed and UnitPowerMax(unit, POWER_INDEX) ~= 0 then
+			shouldEnable = allowed[UnitPowerType(unit)]
 		end
 	end
 
@@ -223,7 +233,7 @@ local function Visibility(self, event, unit)
 			element:PostVisibility(false)
 		end
 	elseif(shouldEnable and isEnabled) then
-		Path(self, event, unit, ADDITIONAL_POWER_BAR_NAME)
+		Path(self, event, unit, POWER_NAME)
 	end
 end
 
@@ -272,7 +282,7 @@ local function Enable(self, unit)
 		self:RegisterEvent('UNIT_DISPLAYPOWER', VisibilityPath)
 
 		if(not element.displayPairs) then
-			element.displayPairs = CopyTable(ALT_MANA_BAR_PAIR_DISPLAY_INFO)
+			element.displayPairs = CopyTable(ALT_MANA_INFO)
 		end
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then

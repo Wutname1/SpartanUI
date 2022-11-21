@@ -47,13 +47,26 @@ if(select(2, UnitClass('player')) ~= 'DEATHKNIGHT') then return end
 local _, ns = ...
 local oUF = ns.oUF
 
-local runemap = {1, 2, 3, 4, 5, 6}
+local sort = sort
+local ipairs = ipairs
+local UnitHasVehicleUI = UnitHasVehicleUI
+local GetSpecialization = GetSpecialization
+local GetRuneCooldown = GetRuneCooldown
+local GetRuneType = GetRuneType
+local UnitIsUnit = UnitIsUnit
+local GetTime = GetTime
+
+local runemap = oUF.isWrath and {1, 2, 5, 6, 3, 4} or {1, 2, 3, 4, 5, 6}
 local hasSortOrder = false
 
 local function onUpdate(self, elapsed)
 	local duration = self.duration + elapsed
 	self.duration = duration
 	self:SetValue(duration)
+
+	if self.PostUpdateColor then
+		self:PostUpdateColor()
+	end
 end
 
 local function ascSort(runeAID, runeBID)
@@ -80,27 +93,56 @@ local function descSort(runeAID, runeBID)
 	end
 end
 
-local function UpdateColor(self, event)
-	local element = self.Runes
+local function UpdateRuneType(rune, runeID, alt)
+	rune.runeType = GetRuneType(runeID) or alt
 
-	local spec = GetSpecialization() or 0
+	return rune
+end
 
-	local color
-	if(spec > 0 and spec < 4 and element.colorSpec) then
-		color = self.colors.runes[spec]
-	else
-		color = self.colors.power.RUNES
+local function ColorRune(self, bar, runeType)
+	local color = runeType and self.colors.runes[runeType] or self.colors.power.RUNES
+	local r, g, b = color.r, color.g, color.b
+	bar:SetStatusBarColor(r, g, b)
+
+	local bg = bar.bg
+	if bg then
+		local mu = bg.multiplier or 1
+		bg:SetVertexColor(r * mu, g * mu, b * mu)
 	end
 
-	local r, g, b = color[1], color[2], color[3]
+	return color, r, g, b
+end
 
-	for index = 1, #element do
-		element[index]:SetStatusBarColor(r, g, b)
+local function UpdateColor(self, event, runeID, alt)
+	local element = self.Runes
 
-		local bg = element[index].bg
-		if(bg) then
-			local mu = bg.multiplier or 1
-			bg:SetVertexColor(r * mu, g * mu, b * mu)
+	local rune, specType
+	if oUF.isWrath then -- runeID, alt
+		if runeID and event == 'RUNE_TYPE_UPDATE' then
+			rune = UpdateRuneType(element[runemap[runeID]], runeID, alt)
+		end
+	else
+		local spec = element.colorSpec and GetSpecialization() or 0
+		if spec > 0 and spec < 4 then
+			specType = spec
+		end
+	end
+
+	local color, r, g, b
+	if rune then
+		color, r, g, b = ColorRune(self, rune, specType or rune.runeType)
+	else
+		for i = 1, #element do
+			local bar = element[i]
+			if oUF.isWrath then
+				if not bar.runeType then
+					bar.runeType = GetRuneType(runemap[i])
+				end
+			else
+				bar.runeType = specType
+			end
+
+			color, r, g, b = ColorRune(self, bar, specType or bar.runeType)
 		end
 	end
 
@@ -113,11 +155,11 @@ local function UpdateColor(self, event)
 	* b    - the blue component of the used color (number)[0-1]
 	--]]
 	if(element.PostUpdateColor) then
-		element:PostUpdateColor(r, g, b)
+		element:PostUpdateColor(r, g, b, color, rune)
 	end
 end
 
-local function ColorPath(self, ...)
+local function ColorPath(self, event, ...)
 	--[[ Override: Runes.UpdateColor(self, event, ...)
 	Used to completely override the internal function for updating the widgets' colors.
 
@@ -125,41 +167,51 @@ local function ColorPath(self, ...)
 	* event - the event triggering the update (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	(self.Runes.UpdateColor or UpdateColor) (self, ...)
+	(self.Runes.UpdateColor or UpdateColor) (self, event, ...)
 end
 
 local function Update(self, event)
 	local element = self.Runes
 
-	if(element.sortOrder == 'asc') then
-		table.sort(runemap, ascSort)
-		hasSortOrder = true
-	elseif(element.sortOrder == 'desc') then
-		table.sort(runemap, descSort)
-		hasSortOrder = true
-	elseif(hasSortOrder) then
-		table.sort(runemap)
-		hasSortOrder = false
+	if not oUF.isWrath then
+		if element.sortOrder == 'asc' then
+			sort(runemap, ascSort)
+			hasSortOrder = true
+		elseif element.sortOrder == 'desc' then
+			sort(runemap, descSort)
+			hasSortOrder = true
+		elseif hasSortOrder then
+			sort(runemap)
+			hasSortOrder = false
+		end
 	end
 
-	local rune, start, duration, runeReady
-	for index, runeID in next, runemap do
-		rune = element[index]
-		if(not rune) then break end
+	local allReady = true
+	local currentTime = GetTime()
+	local hasVehicle = UnitHasVehicleUI('player')
+	for index, runeID in ipairs(runemap) do
+		local rune = element[index]
+		if not rune then break end
 
-		if(UnitHasVehicleUI('player')) then
+		if hasVehicle then
 			rune:Hide()
+
+			allReady = false
 		else
-			start, duration, runeReady = GetRuneCooldown(runeID)
-			if(runeReady) then
+			local start, duration, runeReady = GetRuneCooldown(runeID)
+			if runeReady then
 				rune:SetMinMaxValues(0, 1)
 				rune:SetValue(1)
 				rune:SetScript('OnUpdate', nil)
-			elseif(start) then
-				rune.duration = GetTime() - start
+			elseif start then
+				rune.duration = currentTime - start
 				rune:SetMinMaxValues(0, duration)
 				rune:SetValue(0)
 				rune:SetScript('OnUpdate', onUpdate)
+			end
+
+			if not runeReady then
+				allReady = false
 			end
 
 			rune:Show()
@@ -173,7 +225,7 @@ local function Update(self, event)
 	* runemap - the ordered list of runes' indices (table)
 	--]]
 	if(element.PostUpdate) then
-		return element:PostUpdate(runemap)
+		return element:PostUpdate(runemap, hasVehicle, allReady)
 	end
 end
 
@@ -204,14 +256,24 @@ local function Enable(self, unit)
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		for i = 1, #element do
-			local rune = element[i]
-			if(rune:IsObjectType('StatusBar') and not rune:GetStatusBarTexture()) then
+		for _, rune in ipairs(element) do
+			if rune:IsObjectType('StatusBar') and not rune:GetStatusBarTexture() then
 				rune:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 			end
 		end
 
-		self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', ColorPath)
+		-- ElvUI block
+		if element.IsObjectType and element:IsObjectType("Frame") then
+			element:Show()
+		end
+		-- end block
+
+		if oUF.isRetail then
+			self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED', ColorPath)
+		else
+			self:RegisterEvent('RUNE_TYPE_UPDATE', ColorPath, true)
+		end
+
 		self:RegisterEvent('RUNE_POWER_UPDATE', Path, true)
 
 		return true
@@ -221,11 +283,22 @@ end
 local function Disable(self)
 	local element = self.Runes
 	if(element) then
-		for i = 1, #element do
-			element[i]:Hide()
+		for _, rune in ipairs(element) do
+			rune:Hide()
 		end
 
-		self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', ColorPath)
+		-- ElvUI block
+		if element.IsObjectType and element:IsObjectType("Frame") then
+			element:Hide()
+		end
+		-- end block
+
+		if oUF.isRetail then
+			self:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED', ColorPath)
+		else
+			self:UnregisterEvent('RUNE_TYPE_UPDATE', ColorPath)
+		end
+
 		self:UnregisterEvent('RUNE_POWER_UPDATE', Path)
 	end
 end

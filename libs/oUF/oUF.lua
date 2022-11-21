@@ -19,10 +19,31 @@ local callback, objects, headers = {}, {}, {}
 local elements = {}
 local activeElements = {}
 
-local PetBattleFrameHider = CreateFrame('Frame', (global or parent) .. '_PetBattleFrameHider', UIParent, 'SecureHandlerStateTemplate')
-PetBattleFrameHider:SetAllPoints()
-PetBattleFrameHider:SetFrameStrata('LOW')
-RegisterStateDriver(PetBattleFrameHider, 'visibility', '[petbattle] hide; show')
+-- ElvUI
+local _G = _G
+local assert, setmetatable = assert, setmetatable
+local unpack, tinsert, tremove = unpack, tinsert, tremove
+local next, time, wipe, type = next, time, wipe, type
+local select, pairs, ipairs = select, pairs, ipairs
+local strupper, strsplit = strupper, strsplit
+
+local SecureButton_GetUnit = SecureButton_GetUnit
+local SecureButton_GetModifiedUnit = SecureButton_GetModifiedUnit
+local GetNamePlateForUnit = C_NamePlate.GetNamePlateForUnit
+
+local SecureHandlerSetFrameRef = SecureHandlerSetFrameRef
+local RegisterAttributeDriver = RegisterAttributeDriver
+local UnregisterUnitWatch = UnregisterUnitWatch
+local RegisterUnitWatch = RegisterUnitWatch
+local CreateFrame = CreateFrame
+local IsLoggedIn = IsLoggedIn
+local UnitGUID = UnitGUID
+local SetCVar = SetCVar
+-- end
+
+local UFParent = CreateFrame('Frame', (global or parent) .. 'Parent', UIParent, 'SecureHandlerStateTemplate')
+UFParent:SetFrameStrata('LOW')
+RegisterStateDriver(UFParent, 'visibility', '[petbattle] hide; show')
 
 local function updateActiveUnit(self, event)
 	-- Calculate units to work with
@@ -101,7 +122,7 @@ for k, v in next, {
 			activeElements[self][name] = true
 
 			if(element.update) then
-				table.insert(self.__elements, element.update)
+				tinsert(self.__elements, element.update)
 			end
 		end
 	end,
@@ -122,7 +143,7 @@ for k, v in next, {
 		if(update) then
 			for k, func in next, self.__elements do
 				if(func == update) then
-					table.remove(self.__elements, k)
+					tremove(self.__elements, k)
 					break
 				end
 			end
@@ -248,7 +269,7 @@ end
 local eventlessUnits = {
 	boss6 = true,
 	boss7 = true,
-	boss8 = true,
+	boss8 = true
 }
 
 local function isEventlessUnit(unit)
@@ -273,7 +294,7 @@ local function initObject(unit, style, styleFunc, header, ...)
 		object = setmetatable(object, frame_metatable)
 
 		-- Expose the frame through oUF.objects.
-		table.insert(objects, object)
+		tinsert(objects, object)
 
 		-- We have to force update the frames when PEW fires.
 		-- It's also important to evaluate units before running an update
@@ -305,6 +326,8 @@ local function initObject(unit, style, styleFunc, header, ...)
 			if(isEventlessUnit(objectUnit)) then
 				oUF:HandleEventlessUnit(object)
 			else
+				-- No need to enable this for eventless units.
+				object:SetAttribute('toggleForVehicle', true)
 				oUF:HandleUnit(object)
 			end
 		else
@@ -335,6 +358,10 @@ local function initObject(unit, style, styleFunc, header, ...)
 		-- need to call UAE multiple times
 		if(not object.isNamePlate) then
 			object:SetScript('OnShow', onShow)
+
+			-- Make Clique kinda happy
+			_G.ClickCastFrames = _G.ClickCastFrames or {}
+			_G.ClickCastFrames[object] = true
 		end
 
 		activeElements[object] = {}
@@ -344,12 +371,6 @@ local function initObject(unit, style, styleFunc, header, ...)
 
 		for _, func in next, callback do
 			func(object)
-		end
-
-		-- Make Clique kinda happy
-		if(not object.isNamePlate) then
-			_G.ClickCastFrames = _G.ClickCastFrames or {}
-			_G.ClickCastFrames[object] = true
 		end
 	end
 end
@@ -378,7 +399,7 @@ Used to add a function to a table to be executed upon unit frame/header initiali
 * func - function to be added
 --]]
 function oUF:RegisterInitCallback(func)
-	table.insert(callback, func)
+	tinsert(callback, func)
 end
 
 --[[ oUF:RegisterMetaFunction(name, func)
@@ -521,7 +542,7 @@ local function generateName(unit, ...)
 	elseif(party) then
 		append = 'Party'
 	elseif(unit) then
-		append = unit:gsub('^%l', string.upper)
+		append = unit:gsub('^%l', strupper)
 	end
 
 	if(append) then
@@ -637,7 +658,7 @@ do
 
 		local isPetHeader = template:match('PetHeader')
 		local name = overrideName or generateName(nil, ...)
-		local header = CreateFrame('Frame', name, PetBattleFrameHider, template)
+		local header = CreateFrame('Frame', name, UFParent, template)
 
 		header:SetAttribute('template', 'SecureUnitButtonTemplate, SecureHandlerStateTemplate, SecureHandlerEnterLeaveTemplate')
 		for i = 1, select('#', ...), 2 do
@@ -651,7 +672,7 @@ do
 		header.visibility = visibility
 
 		-- Expose the header through oUF.headers.
-		table.insert(headers, header)
+		tinsert(headers, header)
 
 		-- We set it here so layouts can't directly override it.
 		header:SetAttribute('initialConfigFunction', initialConfigFunction)
@@ -695,12 +716,12 @@ do
 		end
 
 		if(visibility) then
-			local type, list = string.split(' ', visibility, 2)
-			if(list and type == 'custom') then
+			local which, list = strsplit(' ', visibility, 2)
+			if(list and which == 'custom') then
 				RegisterAttributeDriver(header, 'state-visibility', list)
 				header.visibility = list
 			else
-				local condition = getCondition(string.split(',', visibility))
+				local condition = getCondition(strsplit(',', visibility))
 				RegisterAttributeDriver(header, 'state-visibility', condition)
 				header.visibility = condition
 			end
@@ -722,14 +743,14 @@ oUF implements some of its own attributes. These can be supplied by the layout, 
 
 * oUF-enableArenaPrep - can be used to toggle arena prep support. Defaults to true (boolean)
 --]]
-function oUF:Spawn(unit, overrideName)
+function oUF:Spawn(unit, overrideName, overrideTemplate) -- ElvUI adds overrideTemplate
 	argcheck(unit, 2, 'string')
 	if(not style) then return error('Unable to create frame. No styles have been registered.') end
 
 	unit = unit:lower()
 
 	local name = overrideName or generateName(unit)
-	local object = CreateFrame('Button', name, PetBattleFrameHider, 'SecureUnitButtonTemplate')
+	local object = CreateFrame('Button', name, UFParent, overrideTemplate or 'SecureUnitButtonTemplate')
 	Private.UpdateUnits(object, unit)
 
 	self:DisableBlizzard(unit)
@@ -764,7 +785,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	-- and because forbidden nameplates exist, we have to allow default nameplate
 	-- driver to create, update, and remove Blizz nameplates.
 	-- Disable only not forbidden nameplates.
-	NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
+	_G.NamePlateDriverFrame:HookScript('OnEvent', function(_, event, unit)
 		if(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
 			self:DisableBlizzard(unit)
 		end
@@ -774,6 +795,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_ADDED')
 	eventHandler:RegisterEvent('NAME_PLATE_UNIT_REMOVED')
 	eventHandler:RegisterEvent('PLAYER_TARGET_CHANGED')
+	eventHandler:RegisterEvent('UNIT_FACTION')
 
 	if(IsLoggedIn()) then
 		if(nameplateCVars) then
@@ -793,7 +815,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 				end
 			end
 		elseif(event == 'PLAYER_TARGET_CHANGED') then
-			local nameplate = C_NamePlate.GetNamePlateForUnit('target')
+			local nameplate = GetNamePlateForUnit('target')
 			if(nameplateCallback) then
 				nameplateCallback(nameplate and nameplate.unitFrame, event, 'target')
 			end
@@ -803,8 +825,15 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 			if(nameplate) then
 				nameplate.unitFrame:UpdateAllElements(event)
 			end
+		elseif(event == 'UNIT_FACTION' and unit) then
+			local nameplate = GetNamePlateForUnit(unit)
+			if(not nameplate) then return end
+
+			if(nameplateCallback) then
+				nameplateCallback(nameplate.unitFrame, event, unit)
+			end
 		elseif(event == 'NAME_PLATE_UNIT_ADDED' and unit) then
-			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+			local nameplate = GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
 			if(not nameplate.unitFrame) then
@@ -831,7 +860,7 @@ function oUF:SpawnNamePlates(namePrefix, nameplateCallback, nameplateCVars)
 			-- ForceUpdate calls layout devs have to do themselves
 			nameplate.unitFrame:UpdateAllElements(event)
 		elseif(event == 'NAME_PLATE_UNIT_REMOVED' and unit) then
-			local nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+			local nameplate = GetNamePlateForUnit(unit)
 			if(not nameplate) then return end
 
 			nameplate.unitFrame:SetAttribute('unit', nil)
@@ -883,5 +912,251 @@ if(global) then
 		error('%s is setting its global to an existing name "%s".', parent, global)
 	else
 		_G[global] = oUF
+	end
+end
+
+do -- ShouldSkipAuraUpdate by Blizzard (implemented and heavily modified by Simpy)
+	local SpellGetVisibilityInfo = SpellGetVisibilityInfo
+	local SpellIsPriorityAura = SpellIsPriorityAura
+	local UnitAffectingCombat = UnitAffectingCombat
+
+	local hasValidPlayer = false
+	local cachedVisibility = {}
+	local cachedPriority = {}
+
+	local eventFrame = CreateFrame('Frame')
+	eventFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
+	eventFrame:RegisterEvent('PLAYER_REGEN_DISABLED')
+	eventFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
+	eventFrame:RegisterEvent('PLAYER_LEAVING_WORLD')
+
+	if oUF.isRetail then
+		eventFrame:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
+	end
+
+	eventFrame:SetScript('OnEvent', function(_, event)
+		if event == 'PLAYER_ENTERING_WORLD' then
+			hasValidPlayer = true
+		elseif event == 'PLAYER_LEAVING_WORLD' then
+			hasValidPlayer = false
+		elseif event == 'PLAYER_SPECIALIZATION_CHANGED' then
+			wipe(cachedVisibility)
+		elseif event == 'PLAYER_REGEN_ENABLED' or event == 'PLAYER_REGEN_DISABLED' then
+			wipe(cachedVisibility)
+			wipe(cachedPriority)
+		end
+	end)
+
+	local function VisibilityInfo(spellId)
+		return SpellGetVisibilityInfo(spellId, UnitAffectingCombat('player') and 'RAID_INCOMBAT' or 'RAID_OUTOFCOMBAT')
+	end
+
+	local function CachedVisibility(spellId)
+		if cachedVisibility[spellId] == nil then
+			if not hasValidPlayer then -- Don't cache the info if the player is not valid since we didn't get a valid result
+				return VisibilityInfo(spellId)
+			else
+				cachedVisibility[spellId] = {VisibilityInfo(spellId)}
+			end
+		end
+
+		return unpack(cachedVisibility[spellId])
+	end
+
+	local function AllowAura(spellId)
+		local hasCustom, alwaysShowMine, showForMySpec = CachedVisibility(spellId)
+		return (not hasCustom) or alwaysShowMine or showForMySpec
+	end
+
+	local AlwaysAllow = { -- spells could get stuck but it's very rare, this table is for that
+		[335904] = true -- Doom Winds: Unable to gain effects of Doom Winds
+	}
+
+	local function AuraIsPriority(spellId)
+		if AlwaysAllow[spellId] then
+			return true
+		end
+
+		if cachedPriority[spellId] == nil then
+			cachedPriority[spellId] = SpellIsPriorityAura(spellId)
+		end
+
+		return cachedPriority[spellId]
+	end
+
+	local function CouldDisplayAura(frame, event, unit, auraInfo)
+		if auraInfo.isNameplateOnly then
+			return frame.isNamePlate
+		elseif auraInfo.isBossAura or AuraIsPriority(auraInfo.spellId) then
+			return true
+		elseif auraInfo.isHarmful or auraInfo.isHelpful then
+			return AllowAura(auraInfo.spellId)
+		end
+
+		return false
+	end
+
+	local function ShouldSkipAura(frame, event, unit, fullUpdate, updatedAuras, relevantFunc, ...)
+		if fullUpdate or fullUpdate == nil then
+			return false
+		elseif updatedAuras and relevantFunc then
+			for _, auraInfo in ipairs(updatedAuras) do
+				if relevantFunc(frame, event, unit, auraInfo, ...) then
+					return false
+				end
+			end
+
+			return true
+		end
+	end
+
+	function oUF:ShouldSkipAuraUpdate(frame, event, unit, fullUpdate, updatedAuras, relevantFunc)
+		return (not unit or frame.unit ~= unit) or ShouldSkipAura(frame, event, unit, fullUpdate, updatedAuras, relevantFunc or CouldDisplayAura)
+	end
+end
+
+do -- Event Pooler by Simpy
+	local pooler = CreateFrame('Frame')
+	pooler.events = {}
+	pooler.times = {}
+
+	pooler.delay = 0.1 -- update check rate
+	pooler.instant = 1 -- seconds since last event
+
+	pooler.run = function(funcs, frame, event, ...)
+		for _, func in pairs(funcs) do
+			func(frame, event, ...)
+		end
+	end
+
+	pooler.execute = function(event, pool, instant, arg1, ...)
+		for frame, info in pairs(pool) do
+			local funcs = info.functions
+			if instant and funcs then
+				if event == 'UNIT_AURA' and oUF.isRetail then
+					local fullUpdate, updatedAuras = ...
+					if not oUF:ShouldSkipAuraUpdate(frame, event, arg1, fullUpdate, updatedAuras) then
+						pooler.run(funcs, frame, event, arg1, fullUpdate, updatedAuras)
+					end
+				else
+					pooler.run(funcs, frame, event, arg1, ...)
+				end
+			else
+				local data = funcs and info.data[event]
+				if data then
+					if event == 'UNIT_AURA' and oUF.isRetail then
+						local allowUnit = false
+						for _, args in ipairs(data) do
+							local unit, fullUpdate, updatedAuras = unpack(args)
+							if not oUF:ShouldSkipAuraUpdate(frame, event, unit, fullUpdate, updatedAuras) then
+								allowUnit = unit
+								break
+							end
+						end
+
+						if allowUnit then
+							pooler.run(funcs, frame, event, allowUnit)
+						end
+					else
+						local count = #data
+						local args = count and data[count]
+						if args then
+							-- if count > 1 then print(frame:GetDebugName(), event, count, unpack(args)) end
+							pooler.run(funcs, frame, event, unpack(args))
+						end
+
+					end
+
+					wipe(data)
+				end
+			end
+		end
+	end
+
+	pooler.update = function()
+		for event, pool in pairs(pooler.events) do
+			pooler.execute(event, pool)
+		end
+	end
+
+	pooler.tracker = function(frame, event, arg1, ...)
+		-- print('tracker', frame, event, arg1, ...)
+
+		local pool = pooler.events[event]
+		if pool then
+			local now = time()
+			local last = pooler.times[event]
+			if last and (last + pooler.instant) < now then
+				pooler.execute(event, pool, true, arg1, ...)
+				-- print('instant', frame:GetDebugName(), event, arg1)
+			elseif arg1 ~= nil then -- require arg1, no unitless
+				local pooled = pool[frame]
+				if pooled then
+					if not pooled.data[event] then
+						pooled.data[event] = {}
+					end
+
+					tinsert(pooled.data[event], {arg1, ...})
+				end
+			end
+
+			pooler.times[event] = now
+		end
+	end
+
+	pooler.onUpdate = function(self, elapsed)
+		if self.elapsed and self.elapsed > pooler.delay then
+			pooler.update()
+
+			self.elapsed = 0
+		else
+			self.elapsed = (self.elapsed or 0) + elapsed
+		end
+	end
+
+	pooler:SetScript('OnUpdate', pooler.onUpdate)
+
+	function oUF:RegisterEvent(frame, event, func)
+		-- print('RegisterEvent', frame, event, func)
+
+		if not pooler.events[event] then
+			pooler.events[event] = {}
+			pooler.events[event][frame] = {functions={},data={}}
+		elseif not pooler.events[event][frame] then
+			pooler.events[event][frame] = {functions={},data={}}
+		end
+
+		frame:RegisterEvent(event, pooler.tracker)
+		tinsert(pooler.events[event][frame].functions, func)
+	end
+
+	function oUF:UnregisterEvent(frame, event, func)
+		-- print('UnregisterEvent', frame, event, func)
+
+		local pool = pooler.events[event]
+		if pool then
+			local pooled = pool[frame]
+			if pooled then
+				for i, funct in ipairs(pooled.functions) do
+					if funct == func then
+						tremove(pooled.functions, i)
+					end
+				end
+
+				if not next(pooled.functions) then
+					pooled.functions = nil
+					pooled.data = nil -- clear data
+				end
+
+				if not next(pooled) then
+					pool[frame] = nil
+				end
+			end
+
+			if not next(pool) then
+				pooler.events[event] = nil
+				frame:UnregisterEvent(event, pooler.tracker)
+			end
+		end
 	end
 end

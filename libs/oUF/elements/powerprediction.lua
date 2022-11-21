@@ -64,26 +64,31 @@ local function Update(self, event, unit)
 		element:PreUpdate(unit)
 	end
 
-	local _, _, _, startTime, endTime, _, _, _, spellID = UnitCastingInfo(unit)
-	local mainPowerType = UnitPowerType(unit)
-	local hasAltManaBar = ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass]
-		and ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass][mainPowerType]
 	local mainCost, altCost = 0, 0
+	local mainType = UnitPowerType(unit)
+	local mainMax = UnitPowerMax(unit, mainType)
+	local isPlayer = UnitIsUnit('player', unit)
+	local altManaInfo = isPlayer and oUF.isRetail and ALT_MANA_BAR_PAIR_DISPLAY_INFO[playerClass]
+	local hasAltManaBar = altManaInfo and altManaInfo[mainType]
+	local _, _, _, startTime, endTime, _, _, _, spellID = UnitCastingInfo(unit)
 
 	if(event == 'UNIT_SPELLCAST_START' and startTime ~= endTime) then
 		local costTable = GetSpellPowerCost(spellID)
-		-- hasRequiredAura is always false if there's only 1 subtable
-		local checkRequiredAura = #costTable > 1
-
-		for _, costInfo in next, costTable do
-			if(not checkRequiredAura or costInfo.hasRequiredAura) then
-				if(costInfo.type == mainPowerType) then
-					mainCost = costInfo.cost
+		if not costTable then
+			element.mainCost = mainCost
+			element.altCost = altCost
+		else
+			local checkRequiredAura = isPlayer and #costTable > 1
+			for _, costInfo in next, costTable do
+				local cost, ctype, cperc = costInfo.cost, costInfo.type, costInfo.costPercent
+				local checkSpec = not checkRequiredAura or costInfo.hasRequiredAura
+				if checkSpec and ctype == mainType then
+					mainCost = ((isPlayer or cost < mainMax) and cost) or (mainMax * cperc) / 100
 					element.mainCost = mainCost
 
 					break
-				elseif(costInfo.type == ADDITIONAL_POWER_BAR_INDEX) then
-					altCost = costInfo.cost
+				elseif hasAltManaBar and checkSpec and ctype == ADDITIONAL_POWER_BAR_INDEX then
+					altCost = cost
 					element.altCost = altCost
 
 					break
@@ -91,8 +96,7 @@ local function Update(self, event, unit)
 			end
 		end
 	elseif(spellID) then
-		-- if we try to cast a spell while casting another one we need to avoid
-		-- resetting the element
+		-- if we try to cast a spell while casting another one we need to avoid resetting the element
 		mainCost = element.mainCost or 0
 		altCost = element.altCost or 0
 	else
@@ -101,7 +105,7 @@ local function Update(self, event, unit)
 	end
 
 	if(element.mainBar) then
-		element.mainBar:SetMinMaxValues(0, UnitPowerMax(unit, mainPowerType))
+		element.mainBar:SetMinMaxValues(0, mainMax)
 		element.mainBar:SetValue(mainCost)
 		element.mainBar:Show()
 	end
@@ -142,17 +146,17 @@ local function ForceUpdate(element)
 	return Path(element.__owner, 'ForceUpdate', element.__owner.unit)
 end
 
-local function Enable(self, unit)
+local function Enable(self)
 	local element = self.PowerPrediction
-	if(element and UnitIsUnit(unit, 'player')) then
+	if(element) then
 		element.__owner = self
 		element.ForceUpdate = ForceUpdate
 
-		self:RegisterEvent('UNIT_SPELLCAST_START', Path)
-		self:RegisterEvent('UNIT_SPELLCAST_STOP', Path)
-		self:RegisterEvent('UNIT_SPELLCAST_FAILED', Path)
-		self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED', Path)
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
+		oUF:RegisterEvent(self, 'UNIT_SPELLCAST_START', Path)
+		oUF:RegisterEvent(self, 'UNIT_SPELLCAST_STOP', Path)
+		oUF:RegisterEvent(self, 'UNIT_SPELLCAST_FAILED', Path)
+		oUF:RegisterEvent(self, 'UNIT_SPELLCAST_SUCCEEDED', Path)
+		oUF:RegisterEvent(self, 'UNIT_DISPLAYPOWER', Path)
 
 		if(element.mainBar) then
 			if(element.mainBar:IsObjectType('StatusBar') and not element.mainBar:GetStatusBarTexture()) then
@@ -181,11 +185,11 @@ local function Disable(self)
 			element.altBar:Hide()
 		end
 
-		self:UnregisterEvent('UNIT_SPELLCAST_START', Path)
-		self:UnregisterEvent('UNIT_SPELLCAST_STOP', Path)
-		self:UnregisterEvent('UNIT_SPELLCAST_FAILED', Path)
-		self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED', Path)
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
+		oUF:UnregisterEvent(self, 'UNIT_SPELLCAST_START', Path)
+		oUF:UnregisterEvent(self, 'UNIT_SPELLCAST_STOP', Path)
+		oUF:UnregisterEvent(self, 'UNIT_SPELLCAST_FAILED', Path)
+		oUF:UnregisterEvent(self, 'UNIT_SPELLCAST_SUCCEEDED', Path)
+		oUF:UnregisterEvent(self, 'UNIT_DISPLAYPOWER', Path)
 	end
 end
 

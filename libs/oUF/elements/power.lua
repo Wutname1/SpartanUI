@@ -22,6 +22,8 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .displayAltPower                  - Use this to let the widget display alternative power, if the unit has one.
                                     By default, it does so only for raid and party units. If none, the display will fall
                                     back to the primary power (boolean)
+.useAtlas                         - Use this to let the widget use an atlas for its texture if an atlas is present in
+                                    `self.colors.power` for the appropriate power type (boolean)
 .smoothGradient                   - 9 color values to be used with the .colorSmooth option (table)
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
@@ -120,7 +122,7 @@ local function UpdateColor(self, event, unit)
 
 	local pType, pToken, altR, altG, altB = UnitPowerType(unit)
 
-	local r, g, b, color
+	local r, g, b, color, atlas
 	if(element.colorDisconnected and not UnitIsConnected(unit)) then
 		color = self.colors.disconnected
 	elseif(element.colorTapping and not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
@@ -146,6 +148,10 @@ local function UpdateColor(self, event, unit)
 		else
 			color = self.colors.power[ALTERNATE_POWER_INDEX]
 		end
+
+		if(element.useAtlas and color and color.atlas) then
+			atlas = color.atlas
+		end
 	elseif(element.colorClass and UnitIsPlayer(unit))
 		or (element.colorClassNPC and not UnitIsPlayer(unit))
 		or (element.colorClassPet and UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
@@ -164,7 +170,10 @@ local function UpdateColor(self, event, unit)
 		r, g, b = color[1], color[2], color[3]
 	end
 
-	if(b) then
+	if(atlas) then
+		element:SetStatusBarAtlas(atlas)
+		element:SetStatusBarColor(1, 1, 1)
+	elseif(b) then
 		element:SetStatusBarColor(r, g, b)
 
 		local bg = element.bg
@@ -214,12 +223,14 @@ local function Update(self, event, unit)
 	end
 
 	local displayType, min
-	if(element.displayAltPower) then
+	if(oUF.isRetail and element.displayAltPower) then
 		displayType, min = element:GetDisplayPower()
 	end
 
 	local cur, max = UnitPower(unit, displayType), UnitPowerMax(unit, displayType)
-	element:SetMinMaxValues(min or 0, max)
+	if not min then min = 0 end
+
+	element:SetMinMaxValues(min, max)
 
 	if(UnitIsConnected(unit)) then
 		element:SetValue(cur)
@@ -246,7 +257,9 @@ local function Update(self, event, unit)
 	end
 end
 
-local function Path(self, ...)
+local function Path(self, event, ...)
+	if (self.isForced and event ~= 'ElvUI_UpdateAllElements') then return end -- ElvUI changed
+
 	--[[ Override: Power.Override(self, event, unit, ...)
 	Used to completely override the internal update function.
 
@@ -255,9 +268,9 @@ local function Path(self, ...)
 	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	(self.Power.Override or Update) (self, ...);
+	(self.Power.Override or Update) (self, event, ...);
 
-	ColorPath(self, ...)
+	ColorPath(self, event, ...)
 end
 
 local function ForceUpdate(element)
@@ -367,38 +380,38 @@ local function Enable(self)
 		element.SetColorThreat = SetColorThreat
 		element.SetFrequentUpdates = SetFrequentUpdates
 
+		if(element.frequentUpdates) then
+			oUF:RegisterEvent(self, 'UNIT_POWER_FREQUENT', Path)
+		else
+			oUF:RegisterEvent(self, 'UNIT_POWER_UPDATE', Path)
+		end
+
 		if(element.colorDisconnected) then
-			self:RegisterEvent('UNIT_CONNECTION', ColorPath)
+			oUF:RegisterEvent(self, 'UNIT_CONNECTION', ColorPath)
 		end
 
 		if(element.colorSelection) then
-			self:RegisterEvent('UNIT_FLAGS', ColorPath)
+			oUF:RegisterEvent(self, 'UNIT_FLAGS', ColorPath)
 		end
 
 		if(element.colorTapping) then
-			self:RegisterEvent('UNIT_FACTION', ColorPath)
+			oUF:RegisterEvent(self, 'UNIT_FACTION', ColorPath)
 		end
 
 		if(element.colorThreat) then
-			self:RegisterEvent('UNIT_THREAT_LIST_UPDATE', ColorPath)
+			oUF:RegisterEvent(self, 'UNIT_THREAT_LIST_UPDATE', ColorPath)
 		end
 
-		if(element.frequentUpdates) then
-			self:RegisterEvent('UNIT_POWER_FREQUENT', Path)
-		else
-			self:RegisterEvent('UNIT_POWER_UPDATE', Path)
-		end
-
-		self:RegisterEvent('UNIT_DISPLAYPOWER', Path)
-		self:RegisterEvent('UNIT_MAXPOWER', Path)
-		self:RegisterEvent('UNIT_POWER_BAR_HIDE', Path)
-		self:RegisterEvent('UNIT_POWER_BAR_SHOW', Path)
+		oUF:RegisterEvent(self, 'UNIT_DISPLAYPOWER', Path)
+		oUF:RegisterEvent(self, 'UNIT_MAXPOWER', Path)
+		oUF:RegisterEvent(self, 'UNIT_POWER_BAR_HIDE', Path)
+		oUF:RegisterEvent(self, 'UNIT_POWER_BAR_SHOW', Path)
 
 		if(element:IsObjectType('StatusBar') and not element:GetStatusBarTexture()) then
 			element:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		end
 
-		if(not element.GetDisplayPower) then
+		if(oUF.isRetail and not element.GetDisplayPower) then
 			element.GetDisplayPower = GetDisplayPower
 		end
 
@@ -413,16 +426,16 @@ local function Disable(self)
 	if(element) then
 		element:Hide()
 
-		self:UnregisterEvent('UNIT_DISPLAYPOWER', Path)
-		self:UnregisterEvent('UNIT_MAXPOWER', Path)
-		self:UnregisterEvent('UNIT_POWER_BAR_HIDE', Path)
-		self:UnregisterEvent('UNIT_POWER_BAR_SHOW', Path)
-		self:UnregisterEvent('UNIT_POWER_FREQUENT', Path)
-		self:UnregisterEvent('UNIT_POWER_UPDATE', Path)
-		self:UnregisterEvent('UNIT_CONNECTION', ColorPath)
-		self:UnregisterEvent('UNIT_FACTION', ColorPath)
-		self:UnregisterEvent('UNIT_FLAGS', ColorPath)
-		self:UnregisterEvent('UNIT_THREAT_LIST_UPDATE', ColorPath)
+		oUF:UnregisterEvent(self, 'UNIT_DISPLAYPOWER', Path)
+		oUF:UnregisterEvent(self, 'UNIT_MAXPOWER', Path)
+		oUF:UnregisterEvent(self, 'UNIT_POWER_BAR_HIDE', Path)
+		oUF:UnregisterEvent(self, 'UNIT_POWER_BAR_SHOW', Path)
+		oUF:UnregisterEvent(self, 'UNIT_POWER_FREQUENT', Path)
+		oUF:UnregisterEvent(self, 'UNIT_POWER_UPDATE', Path)
+		oUF:UnregisterEvent(self, 'UNIT_CONNECTION', ColorPath)
+		oUF:UnregisterEvent(self, 'UNIT_FACTION', ColorPath)
+		oUF:UnregisterEvent(self, 'UNIT_FLAGS', ColorPath)
+		oUF:UnregisterEvent(self, 'UNIT_THREAT_LIST_UPDATE', ColorPath)
 	end
 end
 

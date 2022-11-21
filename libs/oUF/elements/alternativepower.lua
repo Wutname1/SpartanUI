@@ -59,8 +59,11 @@ local unitSelectionType = Private.unitSelectionType
 -- sourced from FrameXML/UnitPowerBarAlt.lua
 local ALTERNATE_POWER_INDEX = Enum.PowerType.Alternate or 10
 local ALTERNATE_POWER_NAME = 'ALTERNATE'
+local GameTooltip = GameTooltip
 
 local function updateTooltip(self)
+	if GameTooltip:IsForbidden() then return end
+
 	local name, tooltip = GetUnitPowerBarStringsByID(self.__barID)
 	GameTooltip:SetText(name or '', 1, 1, 1)
 	GameTooltip:AddLine(tooltip or '', nil, nil, nil, true)
@@ -68,13 +71,16 @@ local function updateTooltip(self)
 end
 
 local function onEnter(self)
-	if(not self:IsVisible()) then return end
+	if GameTooltip:IsForbidden() or not self:IsVisible() then return end
 
+	GameTooltip:ClearAllPoints()
 	GameTooltip_SetDefaultAnchor(GameTooltip, self)
 	self:UpdateTooltip()
 end
 
 local function onLeave()
+	if GameTooltip:IsForbidden() then return end
+
 	GameTooltip:Hide()
 end
 
@@ -141,12 +147,16 @@ local function Update(self, event, unit, powerType)
 		element:PreUpdate()
 	end
 
-	local cur, max, min
+	local min, max, cur = 0
 	local barInfo = element.__barInfo
 	if(barInfo) then
 		cur = UnitPower(unit, ALTERNATE_POWER_INDEX)
 		max = UnitPowerMax(unit, ALTERNATE_POWER_INDEX)
-		min = barInfo.minPower
+
+		if barInfo.minPower then
+			min = barInfo.minPower
+		end
+
 		element:SetMinMaxValues(min, max)
 		element:SetValue(cur)
 	end
