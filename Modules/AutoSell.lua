@@ -235,6 +235,9 @@ local function BuildOptions()
 		set = function(info, val)
 			module.DB[info[#info]] = val
 		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			NotCrafting = {
 				name = L["Don't sell crafting items"],

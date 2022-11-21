@@ -187,6 +187,9 @@ function module:Options()
 			module.DB[info[#info]] = val
 			module:LogCheck('force')
 		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			alwayson = {
 				name = L['Always on'],

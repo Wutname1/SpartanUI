@@ -38,6 +38,9 @@ local function Options()
 		set = function(info, val)
 			module.DB[info[#info]] = val
 		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			global = {
 				name = L['Remember voice lines across all characters'],
@@ -107,6 +110,7 @@ function module:TALKINGHEAD_REQUESTED()
 
 		return
 	else
+		TalkingHeadFrame:PlayCurrent()
 		-- New, flag it as heard.
 		if persist then
 			if module.DBGlobal.global then
@@ -121,6 +125,7 @@ function module:TALKINGHEAD_REQUESTED()
 end
 
 function module:OnEnable()
+	Options()
 	if SUI:IsModuleDisabled(module) then
 		return
 	end
@@ -134,9 +139,10 @@ function module:OnEnable()
 	end
 
 	module:RegisterEvent('TALKINGHEAD_REQUESTED')
-	Options()
+	TalkingHeadFrame:UnregisterEvent('TALKINGHEAD_REQUESTED')
 end
 
 function module:OnDisable()
 	module:UnregisterEvent('TALKINGHEAD_REQUESTED')
+	TalkingHeadFrame:RegisterEvent('TALKINGHEAD_REQUESTED')
 end

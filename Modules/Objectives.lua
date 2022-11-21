@@ -137,6 +137,9 @@ local function Options()
 	SUI.opt.args.Modules.args.Objectives = {
 		type = 'group',
 		name = L.Objectives,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			AlwaysShowScenario = {
 				name = L['Always show in a scenario'],

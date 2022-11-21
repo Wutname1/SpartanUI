@@ -686,6 +686,8 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	-- Construct options
+	module:BuildOptions()
 	if ((not UserSettings.AutoDetectAllowUse) and (not UserSettings.ManualAllowUse)) then
 		StaticPopup_Show('MiniMapNotice')
 	end
@@ -773,15 +775,15 @@ function module:OnEnable()
 	if MoveIt:IsMoved('Minimap') then
 		SUIMinimap.mover.defaultPoint = module.Settings.position
 	end
-
-	-- Construct options
-	module:BuildOptions()
 end
 
 function module:BuildOptions()
 	local options = {
 		type = 'group',
 		name = L['Minimap'],
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			NorthIndicator = {
 				name = L['Show North Indicator'],

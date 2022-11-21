@@ -847,7 +847,7 @@ function module:OnDisable()
 end
 
 function module:BuildOptions()
-	SUI.opt.args['Modules'].args['AutoTurnIn'] = {
+	local OptionTable = {
 		type = 'group',
 		name = L['Auto TurnIn'],
 		get = function(info)
@@ -855,6 +855,9 @@ function module:BuildOptions()
 		end,
 		set = function(info, val)
 			DB[info[#info]] = val
+		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
 		end,
 		args = {
 			DoCampainQuests = {
@@ -949,10 +952,11 @@ function module:BuildOptions()
 		}
 	}
 	if SUI.IsClassic then
-		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestTurnIn.args.lootreward.hidden = true
-		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestTurnIn.args.autoequip.hidden = true
+		OptionTable.args.QuestTurnIn.args.lootreward.hidden = true
+		OptionTable.args.QuestTurnIn.args.autoequip.hidden = true
 
-		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestAccepting.args.trivial.hidden = true
-		SUI.opt.args.Modules.args.AutoTurnIn.args.QuestAccepting.args.AcceptRepeatable.hidden = true
+		OptionTable.args.QuestAccepting.args.trivial.hidden = true
+		OptionTable.args.QuestAccepting.args.AcceptRepeatable.hidden = true
 	end
+	SUI.Options:AddOptions(OptionTable, 'AutoTurnIn')
 end
