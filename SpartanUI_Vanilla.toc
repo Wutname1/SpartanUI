@@ -1,4 +1,4 @@
-## Interface: 30400
+## Interface: 11403
 ## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
@@ -32,7 +32,9 @@ libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
 libs\LibHealComm-4.0\LibHealComm-4.0.lua
-libs\oUF\oUF_Wrath.xml
+libs\LibClassicDurations\LibClassicDurations.xml
+libs\LibClassicCasterino\LibClassicCasterino.lua
+libs\oUF\oUF_Classic.xml
 libs\oUF_Plugins\Loader.xml
 
 # Localization
