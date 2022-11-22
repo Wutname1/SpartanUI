@@ -495,6 +495,24 @@ local function functionAddToOptions(name, settings)
 		order = 1
 	}
 
+	local colors = {
+		['CLASS'] = 'Class Color',
+		['CUSTOM'] = 'Custom Color',
+		['DRUID'] = 'Druid',
+		['HUNTER'] = 'Hunter',
+		['MAGE'] = 'Mage',
+		['PALADIN'] = 'Paladin',
+		['PRIEST'] = 'Priest',
+		['ROGUE'] = 'Rogue',
+		['SHAMAN'] = 'Shaman',
+		['WARLOCK'] = 'Warlock',
+		['WARRIOR'] = 'Warrior',
+		['DEATHKNIGHT'] = 'Death Knight',
+		['MONK'] = 'Monk',
+		['DEMONHUNTER'] = 'Demon Hunter',
+		['EVOKER'] = 'Evoker'
+	}
+
 	local OptionsTab = {
 		name = name,
 		type = 'group',
@@ -511,7 +529,20 @@ local function functionAddToOptions(name, settings)
 					DB.components[name].colors[info[#info]] = val
 					SUI:reloadui()
 				end,
-				args = {}
+				args = {
+					primary = {
+						name = 'Primary',
+						type = 'select',
+						order = 1,
+						values = colors
+					},
+					secondary = {
+						name = 'Secondary',
+						type = 'select',
+						order = 2,
+						values = colors
+					}
+				}
 			}
 		}
 	}

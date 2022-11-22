@@ -47,6 +47,7 @@ local Settings = {
 		}
 	},
 	config = {
+		displayName = 'Target of Target',
 		Requires = 'target',
 		isFriendly = true
 	}
