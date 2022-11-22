@@ -70,7 +70,7 @@ local SetBarColor = function(self, side)
 	if display == 'xp' then
 		r, g, b, a = color2.r, color2.g, color2.b, color2.a
 		self.Lead:SetVertexColor(r, g, b, a)
-		self.LeadGlow:SetVertexColor(r, g, b, (a + .1))
+		self.LeadGlow:SetVertexColor(r, g, b, a)
 	end
 end
 

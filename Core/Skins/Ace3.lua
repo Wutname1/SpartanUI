@@ -72,53 +72,85 @@ local function SkinAce3()
 	local nextPrevColor = {r = 1, g = .8, b = 0}
 
 	--Skin main window elements
+	RegisterAsWidget = function(self, widget)
+		local widgetType = widget.type
+
+		if widgetType == 'LSM30_Font' or widgetType == 'LSM30_Sound' or widgetType == 'LSM30_Border' or widgetType == 'LSM30_Background' or widgetType == 'LSM30_Statusbar' then
+			-- local frame = widget.frame
+			-- local button = frame.dropButton
+			-- local text = frame.text
+			-- frame:StripTextures()
+			-- SUI.Skins.SkinObj('Dropdown', frame)
+			-- frame:CreateBackdrop(nil, nil, nil, nil, nil, nil, nil, nil, true)
+			-- frame.backdrop:Point('TOPLEFT', 0, -21)
+			-- frame.backdrop:Point('BOTTOMRIGHT', -4, -1)
+			-- frame.label:ClearAllPoints()
+			-- frame.label:Point('BOTTOMLEFT', frame.backdrop, 'TOPLEFT', 2, 0)
+			-- frame.text:ClearAllPoints()
+			-- frame.text:Point('RIGHT', button, 'LEFT', -2, 0)
+			-- frame.text:Point('LEFT', frame.backdrop, 'LEFT', 2, 0)
+			-- button:ClearAllPoints()
+			-- button:Point('TOPLEFT', frame.backdrop, 'TOPRIGHT', -22, -2)
+			-- button:Point('BOTTOMRIGHT', frame.backdrop, 'BOTTOMRIGHT', -2, 2)
+			-- if widgetType == 'LSM30_Sound' then
+			-- 	widget.soundbutton:SetParent(frame.backdrop)
+			-- 	widget.soundbutton:ClearAllPoints()
+			-- 	widget.soundbutton:Point('LEFT', frame.backdrop, 'LEFT', 2, 0)
+			-- 	Skin:HandleNextPrevButton(button, nil, nextPrevColor)
+			-- elseif widgetType == 'LSM30_Statusbar' then
+			-- 	widget.bar:SetParent(frame.backdrop)
+			-- 	widget.bar:ClearAllPoints()
+			-- 	widget.bar:Point('TOPLEFT', frame.backdrop, 'TOPLEFT', 1, -1)
+			-- 	widget.bar:Point('BOTTOMRIGHT', frame.backdrop, 'BOTTOMRIGHT', -1, 1)
+			-- 	Skin:HandleNextPrevButton(button, nil, nextPrevColor, true)
+			-- else
+			-- 	Skin:HandleNextPrevButton(button, nil, nextPrevColor)
+			-- end
+			-- button:SetParent(frame.backdrop)
+			-- text:SetParent(frame.backdrop)
+			-- button:HookScript('OnClick', Ace3_SkinDropdown)
+		elseif widgetType == 'CheckBox' then
+			local check = widget.check
+			local checkbg = widget.checkbg
+			local highlight = widget.highlight
+			hooksecurefunc(
+				widget,
+				'SetType',
+				function(self, mode)
+					checkbg:SetSize(28, 28)
+					local rowTop = (1 / 16) * (classId - 1)
+					local rowBottom = (1 / 16) * classId
+					checkbg:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox-ByClass]])
+					check:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox-ByClass]])
+					highlight:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox-ByClass]])
+					if mode == 'radio' then
+						checkbg:SetTexCoord(0, 0.25, rowTop, rowBottom)
+						check:SetTexCoord(0.75, 1, rowTop, rowBottom)
+						highlight:SetTexCoord(0.25, 0.5, rowTop, rowBottom)
+					else
+						checkbg:SetTexCoord(0, 0.25, rowTop, rowBottom)
+						check:SetTexCoord(0.5, 0.75, rowTop, rowBottom)
+						highlight:SetTexCoord(0.25, 0.5, rowTop, rowBottom)
+					end
+				end
+			)
+			Skin(widgetType, widget, 'Light', 'Ace3')
+		elseif widgetType == 'Button' then
+			local frame = widget.frame
+			Skin(widgetType, frame, 'Light', 'Ace3')
+		else
+			print(widgetType)
+		end
+		return regWidget(self, widget)
+	end
+	AceGUI.RegisterAsWidget = RegisterAsWidget
+
 	RegisterAsContainer = function(self, widget)
 		local widgetType = widget.type
 		local widgetParent = widget.content:GetParent()
 
 		if widgetType == 'ScrollFrame' then
 			Skin('ScrollBar', widget.scrollBar)
-		elseif widgetType == 'LSM30_Font' or widgetType == 'LSM30_Sound' or widgetType == 'LSM30_Border' or widgetType == 'LSM30_Background' or widgetType == 'LSM30_Statusbar' then
-			local frame = widget.frame
-			local button = frame.dropButton
-			local text = frame.text
-
-			frame:StripTextures()
-			frame:CreateBackdrop(nil, nil, nil, nil, nil, nil, nil, nil, true)
-			frame.backdrop:Point('TOPLEFT', 0, -21)
-			frame.backdrop:Point('BOTTOMRIGHT', -4, -1)
-
-			frame.label:ClearAllPoints()
-			frame.label:Point('BOTTOMLEFT', frame.backdrop, 'TOPLEFT', 2, 0)
-
-			frame.text:ClearAllPoints()
-			frame.text:Point('RIGHT', button, 'LEFT', -2, 0)
-			frame.text:Point('LEFT', frame.backdrop, 'LEFT', 2, 0)
-
-			button:ClearAllPoints()
-			button:Point('TOPLEFT', frame.backdrop, 'TOPRIGHT', -22, -2)
-			button:Point('BOTTOMRIGHT', frame.backdrop, 'BOTTOMRIGHT', -2, 2)
-
-			if widgetType == 'LSM30_Sound' then
-				widget.soundbutton:SetParent(frame.backdrop)
-				widget.soundbutton:ClearAllPoints()
-				widget.soundbutton:Point('LEFT', frame.backdrop, 'LEFT', 2, 0)
-
-				Skin:HandleNextPrevButton(button, nil, nextPrevColor)
-			elseif widgetType == 'LSM30_Statusbar' then
-				widget.bar:SetParent(frame.backdrop)
-				widget.bar:ClearAllPoints()
-				widget.bar:Point('TOPLEFT', frame.backdrop, 'TOPLEFT', 1, -1)
-				widget.bar:Point('BOTTOMRIGHT', frame.backdrop, 'BOTTOMRIGHT', -1, 1)
-
-				Skin:HandleNextPrevButton(button, nil, nextPrevColor, true)
-			else
-				Skin:HandleNextPrevButton(button, nil, nextPrevColor)
-			end
-
-			button:SetParent(frame.backdrop)
-			text:SetParent(frame.backdrop)
-			button:HookScript('OnClick', Ace3_SkinDropdown)
 		elseif widgetType == 'Frame' then
 			local frame = widget.frame
 
@@ -129,22 +161,22 @@ local function SkinAce3()
 				AppBar:SetPoint('TOPLEFT', 0, 0)
 				AppBar.ignore = true
 
-				if frame.CloseBtn then
-					local closeBtn = StdUi:HighlightButton(AppBar, 28, 20, 'X')
-					closeBtn.text:SetFontSize(15)
-					closeBtn:SetPoint('TOPRIGHT', -1, -1)
-					closeBtn:SetScript(
-						'OnClick',
-						function()
-							frame.CloseBtn:Click()
-						end
-					)
-					AppBar.closeBtn = closeBtn
-				end
+				local closeBtn = StdUi:HighlightButton(AppBar, 28, 20, 'X')
+				closeBtn.text:SetFontSize(15)
+				closeBtn:SetPoint('TOPRIGHT', -1, -1)
+				closeBtn:SetFrameLevel(501)
+				closeBtn:SetScript(
+					'OnClick',
+					function()
+						frame.CloseBtn:Click()
+					end
+				)
+				AppBar.closeBtn = closeBtn
 
 				-- local minimizeBtn = StdUi:HighlightButton(AppBar, 28, 20, '_')
 				-- minimizeBtn.text:SetFontSize(13)
 				-- minimizeBtn:SetPoint('TOPRIGHT', -30, -1)
+				-- minimizeBtn:SetFrameLevel(501)
 				-- minimizeBtn.IsMinimized = false
 				-- minimizeBtn:SetScript(
 				-- 	'OnClick',
@@ -157,7 +189,6 @@ local function SkinAce3()
 				-- 		self.IsMinimized = not minimizeBtn.IsMinimized
 				-- 	end
 				-- )
-				-- minimizeBtn:SetFrameLevel(5)
 				-- AppBar.minimizeBtn = minimizeBtn
 
 				-- Re-Create FontString to change its frame level
@@ -181,7 +212,11 @@ local function SkinAce3()
 			for i = 1, widgetParent:GetNumChildren() do
 				local childFrame = select(i, widgetParent:GetChildren())
 				if childFrame:GetObjectType() == 'Button' and childFrame:GetText() then
-					-- Widget_ButtonStyle(childFrame)
+					RemoveTextures(childFrame)
+					Skin('Button', childFrame, 'Light', 'Ace3')
+					if childFrame:GetText() == CLOSE then
+						frame.CloseBtn = childFrame
+					end
 				elseif not childFrame.ignore then
 					RemoveTextures(childFrame)
 				end

@@ -287,8 +287,16 @@ end
 
 module.Objects = {}
 
----@param button FrameExpanded
+---@param button any
 ---@param mode? AppearanceMode
+function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
+	-- local check = button.check
+	-- local checkbg = button.checkbg
+	-- local highlight = button.highlight
+	-- highlight:SetVertexColor(unpack(Settings.ClassColor))
+	-- checkbg:SetVertexColor(unpack(Settings.ClassColor))
+	-- check:SetVertexColor(unpack(Settings.MutedClassColor))
+end
 function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 	if button.isSkinned then
 		return
