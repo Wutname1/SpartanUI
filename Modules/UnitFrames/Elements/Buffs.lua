@@ -7,6 +7,7 @@ local function Build(frame, DB)
 	local Buffs = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame)
 	Buffs.PostUpdateButton = function(self, button, unit, data, position)
 		button.data = data
+		button.unit = unit
 	end
 	Buffs.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Buffs', button)

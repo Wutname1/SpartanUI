@@ -129,26 +129,38 @@ function Auras:PostCreateButton(elementName, button)
 	)
 end
 
-local function CreateAddToFilterWindow()
-	-- local StdUi = SUI.StdUi
-	-- AddToFilterWindow = StdUi:Window(nil, 300, 200, 'Add to Filter')
-	-- AddToFilterWindow:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-	-- AddToFilterWindow:Show()
+local function CreateAddToFilterWindow(button, elementName)
 	local AceGUI = SUI.Lib.AceGUI
-	local frame = AceGUI:Create('Frame') ---@type AceGUIFrame
-	frame:SetTitle('|cffffffffSpartan|cffe21f1fUI|r Aura filter addition')
+	local window = AceGUI:Create('Frame') ---@type AceGUIFrame
+	window:SetTitle('|cffffffffSpartan|cffe21f1fUI|r Aura filter addition')
+	window:SetWidth(500)
+	window:SetHeight(500)
+	window:EnableResize(false)
+
+	local label = AceGUI:Create('Label')
+	label:SetText(button.data.name)
+	label:SetFullWidth(true)
+	label:SetJustifyH('CENTER')
+	label:SetFont(SUI.Font:GetFont(), 12, 'OUTLINE')
+	window:AddChild(label)
+
+	local group = AceGUI:Create('InlineGroup') ---@type AceGUIInlineGroup
+	group:SetTitle('Mode')
+	group:SetLayout('Flow')
+	group:SetFullWidth(true)
+	window:AddChild(group)
 
 	--Create 2 checkboxes for the filter type
 	local Whitelist = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
 	Whitelist:SetLabel('Whitelist')
 	Whitelist:SetType('radio')
 	Whitelist:SetValue(false)
-	frame:AddChild(Whitelist)
+	group:AddChild(Whitelist)
 	local Blacklist = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
 	Blacklist:SetLabel('Blacklist')
 	Blacklist:SetType('radio')
-	Blacklist:SetValue(false)
-	frame:AddChild(Blacklist)
+	Blacklist:SetValue(true)
+	group:AddChild(Blacklist)
 
 	--Set Callbacks
 	Whitelist:SetCallback(
@@ -165,10 +177,51 @@ local function CreateAddToFilterWindow()
 			Whitelist:SetValue(not value)
 		end
 	)
-	--SAve Button
-	local Save = AceGUI:Create('Button')
+
+	--UnitFrameListing to add buff to
+	local scrollcontainer = AceGUI:Create('SimpleGroup') ---@type AceGUISimpleGroup
+	scrollcontainer:SetFullWidth(true)
+	scrollcontainer:SetHeight(200)
+	scrollcontainer:SetLayout('Fill') -- important!
+	window:AddChild(scrollcontainer)
+	local scroll = AceGUI:Create('ScrollFrame') ---@type AceGUIScrollFrame
+	scroll:SetLayout('Flow') -- probably?
+	scrollcontainer:AddChild(scroll)
+
+	window.units = {}
+	for name, config in pairs(SUI.UF.Unit:GetFrameList()) do
+		local check = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
+		check:SetLabel(config.displayName or name)
+
+		if button.unit == name then
+			check:SetValue(true)
+		end
+
+		scroll:AddChild(check)
+		window.units[name] = check
+	end
+
+	--Save Button
+	local Save = AceGUI:Create('Button') ---@type AceGUIButton
 	Save:SetText('Save')
-	frame:AddChild(Save)
+	Save.frame:HookScript(
+		'OnClick',
+		function()
+			for frameName, check in pairs(window.units) do
+				if check:GetValue() then
+					local mode = Whitelist:GetValue() and 'whitelist' or 'blacklist'
+
+					UF.CurrentSettings[frameName].elements[elementName].rules[mode][button.data.spellId] = true
+					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].rules[mode][button.data.spellId] = true
+
+					UF.Unit[frameName]:ElementUpdate(elementName)
+				end
+			end
+
+			window:Hide()
+		end
+	)
+	window:AddChild(Save)
 end
 
 function Auras:OnClick(button, elementName)
@@ -183,10 +236,7 @@ function Auras:OnClick(button, elementName)
 				print(k .. ' = ' .. tostring(v))
 			end
 		elseif keyDown == 'SHIFT' then
-			if not AddToFilterWindow then
-				CreateAddToFilterWindow()
-			end
-		--TODO: Add a way to add spells to the whitelist or blacklist
+			CreateAddToFilterWindow(button, elementName)
 		end
 	end
 end

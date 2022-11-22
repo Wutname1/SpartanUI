@@ -5,6 +5,10 @@ local UF = SUI.UF
 local function Build(frame, DB)
 	--Debuff Icons
 	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame)
+	Debuffs.PostUpdateButton = function(self, button, unit, data, position)
+		button.data = data
+		button.unit = unit
+	end
 	Debuffs.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Debuffs', button)
 	end
