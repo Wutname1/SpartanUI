@@ -41,6 +41,7 @@ SUI.Version = ''
 ---@field AceCD AceConfigDialog-3.0
 ---@field AceDB AceDB-3.0
 ---@field AceDBO AceDBOptions-3.0
+---@field AceGUI AceGUI-3.0
 ---@field Compress LibCompress
 ---@field LibBase64 LibBase64-1.0
 ---@field StdUi StdUi
@@ -67,6 +68,7 @@ SUI.AddLib('AceC', 'AceConfig-3.0')
 SUI.AddLib('AceCD', 'AceConfigDialog-3.0')
 SUI.AddLib('AceDB', 'AceDB-3.0')
 SUI.AddLib('AceDBO', 'AceDBOptions-3.0')
+SUI.AddLib('AceGUI', 'AceGUI-3.0')
 SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')

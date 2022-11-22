@@ -130,10 +130,45 @@ function Auras:PostCreateButton(elementName, button)
 end
 
 local function CreateAddToFilterWindow()
-	local StdUi = SUI.StdUi
-	AddToFilterWindow = StdUi:Window(nil, 300, 200, 'Add to Filter')
-	AddToFilterWindow:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
-	AddToFilterWindow:Show()
+	-- local StdUi = SUI.StdUi
+	-- AddToFilterWindow = StdUi:Window(nil, 300, 200, 'Add to Filter')
+	-- AddToFilterWindow:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+	-- AddToFilterWindow:Show()
+	local AceGUI = SUI.Lib.AceGUI
+	local frame = AceGUI:Create('Frame') ---@type AceGUIFrame
+	frame:SetTitle('|cffffffffSpartan|cffe21f1fUI|r Aura filter addition')
+
+	--Create 2 checkboxes for the filter type
+	local Whitelist = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
+	Whitelist:SetLabel('Whitelist')
+	Whitelist:SetType('radio')
+	Whitelist:SetValue(false)
+	frame:AddChild(Whitelist)
+	local Blacklist = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
+	Blacklist:SetLabel('Blacklist')
+	Blacklist:SetType('radio')
+	Blacklist:SetValue(false)
+	frame:AddChild(Blacklist)
+
+	--Set Callbacks
+	Whitelist:SetCallback(
+		'OnValueChanged',
+		function(widget, event, value)
+			Whitelist:SetValue(value)
+			Blacklist:SetValue(not value)
+		end
+	)
+	Blacklist:SetCallback(
+		'OnValueChanged',
+		function(widget, event, value)
+			Blacklist:SetValue(value)
+			Whitelist:SetValue(not value)
+		end
+	)
+	--SAve Button
+	local Save = AceGUI:Create('Button')
+	Save:SetText('Save')
+	frame:AddChild(Save)
 end
 
 function Auras:OnClick(button, elementName)

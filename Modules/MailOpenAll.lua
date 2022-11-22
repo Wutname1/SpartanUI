@@ -110,6 +110,9 @@ function module:BuildOptions()
 	SUI.opt.args['Modules'].args['MailOpenAll'] = {
 		type = 'group',
 		name = L['Open all mail'],
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			Silent = {
 				name = L['Silently open mail'],
