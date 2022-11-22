@@ -7,10 +7,17 @@ local module = SUI:NewModule('Handler_Skins')
 local DBDefaults = {
 	components = {
 		['**'] = {
-			enabled = true
+			enabled = true,
+			colors = {
+				primary = 'CLASS',
+				secondary = 'CLASS',
+				background = 'dark'
+			}
 		}
 	}
 }
+---@type AceConfigOptionsTable
+local OptTable
 
 local DB = nil ---@type SkinDB
 
@@ -92,6 +99,10 @@ local function GetClassColor()
 	end
 
 	return color
+end
+
+function module:PrimaryColor(module)
+	-- return module.DB.
 end
 
 module.colors = {}
@@ -477,17 +488,59 @@ end
 
 module.Registry = {}
 
-function module:Register(Name, OnEnable, OnInitialize, Config)
+local function functionAddToOptions(name, settings)
+	OptTable.args.enabledState.args[name] = {
+		name = name,
+		type = 'toggle',
+		order = 1
+	}
+
+	local OptionsTab = {
+		name = name,
+		type = 'group',
+		args = {
+			colors = {
+				name = 'Colors',
+				type = 'group',
+				inline = true,
+				order = 1,
+				get = function(info)
+					return DB.components[name].colors[info[#info]]
+				end,
+				set = function(info, val)
+					DB.components[name].colors[info[#info]] = val
+					SUI:reloadui()
+				end,
+				args = {}
+			}
+		}
+	}
+	if settings.Options then
+		settings.Options(OptionsTab)
+	end
+	OptTable.args[name] = OptionsTab
+end
+---Register a module to be skinned
+---@param Name string
+---@param OnEnable function
+---@param OnInitialize function
+---@param Options function
+---@param Settings table
+function module:Register(Name, OnEnable, OnInitialize, Options, Settings)
 	module.Registry[Name] = {
 		OnEnable = OnEnable,
 		OnInitialize = OnInitialize,
-		Config = Config
+		Options = Options,
+		Settings = Settings
 	}
+
+	if OptTable and not OptTable.args[Name] then
+		functionAddToOptions(Name, module.Registry[Name])
+	end
 end
 
 local function Options()
-	---@type AceConfigOptionsTable
-	local OptTable = {
+	OptTable = {
 		name = 'Skins',
 		type = 'group',
 		childGroups = 'tab',
@@ -510,21 +563,7 @@ local function Options()
 	}
 
 	for name, settings in pairs(module.Registry) do
-		OptTable.args.enabledState.args[name] = {
-			name = name,
-			type = 'toggle',
-			order = 1
-		}
-
-		if settings.Config then
-			local SettingsScreen = {
-				name = name,
-				type = 'group',
-				args = {}
-			}
-			settings.Config(SettingsScreen)
-			OptTable.args[name] = SettingsScreen
-		end
+		functionAddToOptions(name, settings)
 	end
 
 	SUI.Options:AddOptions(OptTable, 'Skins')
@@ -533,9 +572,6 @@ end
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', {profile = DBDefaults})
 	DB = module.Database.profile
-	if SUI:IsModuleDisabled('Skins') then
-		return
-	end
 
 	for name, Data in pairs(module.Registry) do
 		if Data.OnInitalize and DB.components[name].enabled then
@@ -546,9 +582,6 @@ end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled('Skins') then
-		return
-	end
 
 	for name, Data in pairs(module.Registry) do
 		if Data.OnEnable and DB.components[name].enabled then

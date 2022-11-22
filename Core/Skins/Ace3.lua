@@ -135,11 +135,12 @@ local function SkinAce3()
 				end
 			)
 			Skin(widgetType, widget, 'Light', 'Ace3')
+		elseif widgetType == 'Heading' or widgetType == 'Label' then
 		elseif widgetType == 'Button' then
 			local frame = widget.frame
 			Skin(widgetType, frame, 'Light', 'Ace3')
 		else
-			print(widgetType)
+			-- print(widgetType)
 		end
 		return regWidget(self, widget)
 	end
