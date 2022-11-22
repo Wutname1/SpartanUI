@@ -23,6 +23,7 @@ local function ConfigOpened(self, name)
 				SUI.Skins.SkinObj(child:GetObjectType(), child, 'Light')
 				child:SetSize(150, 20)
 				child:SetPoint('BOTTOMRIGHT', -17, 10)
+				frame.CloseBtn = child
 			else
 				child:Hide()
 			end
@@ -64,6 +65,7 @@ local function SkinAce3()
 		['SimpleGroup'] = true,
 		['DropdownGroup'] = true
 	}
+	local classId = select(3, UnitClass('player'))
 
 	local regWidget = AceGUI.RegisterAsWidget
 	local regContainer = AceGUI.RegisterAsContainer
@@ -255,12 +257,12 @@ local function SkinAce3()
 end
 
 local function attemptSkin()
-	local a = LibStub('AceAddon-3.0'):GetAddon('Skinner', true)
-	if a then
+	local skinner = LibStub('AceAddon-3.0'):GetAddon('Skinner', true)
+	if skinner then
 		---@diagnostic disable-next-line: undefined-field
-		a.prdb.ChatEditBox.skin = false
+		skinner.prdb.ChatEditBox.skin = false
 		---@diagnostic disable-next-line: undefined-field
-		a.prdb.DisabledSkins['AceGUI-3.0 (Lib)'] = true
+		skinner.prdb.DisabledSkins['AceGUI-3.0 (Lib)'] = true
 	end
 
 	local AceGUI = LibStub('AceGUI-3.0', true)
