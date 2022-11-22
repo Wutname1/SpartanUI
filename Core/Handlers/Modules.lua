@@ -85,7 +85,7 @@ local function CreateSetupPage()
 
 			local itemsMatrix = {}
 
-			-- List Components
+			-- List Modules
 			for _, submodule in pairs(SUI.orderedModules) do
 				if (string.match(submodule.name, 'Module_')) and not submodule.HideModule then
 					local RealName = SUI:GetModuleName(submodule)

@@ -1958,3 +1958,6 @@ function SUI:SetActiveStyle(skin)
 	-- Ensure this is the First and last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
 	SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
 end
+
+SUI.noop = function()
+end

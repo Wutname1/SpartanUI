@@ -183,7 +183,7 @@ Settings.ClassColor = module.colors.SetColorTable(Settings.ClassColor, value)
 Settings.MutedClassColor = module.colors.SetColorTable(Settings.MutedClassColor, value)
 Settings.MutedClassColor[4] = 0.3
 
-local function SetClassBorderColor(frame, script)
+function module:SetClassBorderColor(frame, script)
 	if frame.backdrop then
 		frame = frame.backdrop
 	end
@@ -319,19 +319,19 @@ function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 
 	function SetModifiedBackdrop(self)
 		if self:IsEnabled() then
-			SetClassBorderColor(self, 'OnEnter')
+			module:SetClassBorderColor(self, 'OnEnter')
 		end
 	end
 
 	function SetOriginalBackdrop(self)
 		if self:IsEnabled() then
-			SetClassBorderColor(self, 'OnLeave')
+			module:SetClassBorderColor(self, 'OnLeave')
 		end
 	end
 
 	function SetDisabledBackdrop(self)
 		if self:IsMouseOver() then
-			SetClassBorderColor(self, 'OnDisable')
+			module:SetClassBorderColor(self, 'OnDisable')
 		end
 	end
 
@@ -354,7 +354,7 @@ end
 ---@param mode? AppearanceMode
 ---@param component? string
 function module.SkinObj(ObjType, object, mode, component)
-	if not object or (component and not DB.components[component].enabled) then
+	if not object or (component and not DB.components[component].enabled) or object.isSkinned then
 		return
 	end
 	if ObjType and module.Objects[ObjType] then
@@ -383,6 +383,7 @@ function module.SkinObj(ObjType, object, mode, component)
 	end
 
 	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
+	object.isSkinned = true
 end
 
 function module:HandleNextPrevButton(btn, arrowDir, color, noBackdrop, stripTexts, frameLevel)

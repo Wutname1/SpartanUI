@@ -350,7 +350,8 @@
     "GetContainerNumSlots",
     "GetContainerItemLink",
     "UseContainerItem",
-    "GetContainerItemInfo"
+    "GetContainerItemInfo",
+    "CLOSE"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
