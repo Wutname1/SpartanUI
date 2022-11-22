@@ -283,7 +283,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 end
 
 local TooltipSetUnit = function(self)
-	if (not self) then
+	if self ~= GameTooltip or self:IsForbidden() then
 		return
 	end
 
