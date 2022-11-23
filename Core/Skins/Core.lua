@@ -100,6 +100,21 @@ local function GetClassColor(class)
 end
 
 module.colors = {}
+function module.colors:GetsecondaryColor(comp)
+	local color = DB.components[comp].colors.primary
+	if color == 'CLASS' then
+		local result = module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
+		result[4] = 0.3
+		return result
+	elseif color == 'FACTION' then
+		return Settings.factionColor[UnitFactionGroup('player')]
+	else
+		local result = module.colors.GetColorTable(GetClassColor(color))
+		result[4] = 0.3
+		return result
+	end
+end
+
 function module.colors:GetPrimaryColor(comp)
 	local color = DB.components[comp].colors.primary
 	if color == 'CLASS' then
@@ -320,12 +335,27 @@ function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
 		end
 	)
 
+	widget.Middle:SetTexture('Interface\\OptionsFrame\\UI-OptionsFrame-ActiveTab')
+	widget.Middle:SetTexCoord(0.15625, 0.84375, .45, 0)
+	local color = module.colors:GetsecondaryColor('Ace3')
+	color[4] = 0.65
+	widget.Middle:SetVertexColor(unpack(color))
+
 	widget.MiddleDisabled:SetTexture('Interface\\OptionsFrame\\UI-OptionsFrame-ActiveTab')
 	widget.MiddleDisabled:SetTexCoord(0.15625, 0.84375, .45, 0)
 	widget.MiddleDisabled:SetVertexColor(unpack(module.colors:GetPrimaryColor('Ace3')))
 
 	if widget.text then
 		widget:SetNormalFontObject(GameFontHighlightSmall)
+	-- hooksecurefunc(
+	-- 	widget,
+	-- 	'SetText',
+	-- 	function(self, text)
+	-- 		if not string.match('|cff0070', text) then
+	-- 			self:SetText('|cff0070DD' .. text)
+	-- 		end
+	-- 	end
+	-- )
 	end
 end
 function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
@@ -432,87 +462,6 @@ function module.SkinObj(ObjType, object, mode, component)
 
 	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
 	object.isSkinned = true
-end
-
-function module:HandleNextPrevButton(btn, arrowDir, color, noBackdrop, stripTexts, frameLevel)
-	if btn.isSkinned then
-		return
-	end
-
-	if not arrowDir then
-		arrowDir = 'down'
-
-		local name = btn:GetDebugName()
-		local ButtonName = name and name:lower()
-		if ButtonName then
-			if strfind(ButtonName, 'left') or strfind(ButtonName, 'prev') or strfind(ButtonName, 'decrement') or strfind(ButtonName, 'backward') or strfind(ButtonName, 'back') then
-				arrowDir = 'left'
-			elseif strfind(ButtonName, 'right') or strfind(ButtonName, 'next') or strfind(ButtonName, 'increment') or strfind(ButtonName, 'forward') then
-				arrowDir = 'right'
-			elseif
-				strfind(ButtonName, 'scrollup') or strfind(ButtonName, 'upbutton') or strfind(ButtonName, 'top') or strfind(ButtonName, 'asc') or strfind(ButtonName, 'home') or strfind(ButtonName, 'maximize')
-			 then
-				arrowDir = 'up'
-			end
-		end
-	end
-
-	btn:StripTextures()
-
-	if btn.Texture then
-		btn.Texture:SetAlpha(0)
-	end
-
-	if not noBackdrop then
-		S:HandleButton(btn, nil, nil, true, nil, nil, nil, nil, frameLevel)
-	end
-
-	if stripTexts then
-		btn:StripTexts()
-	end
-
-	btn:SetNormalTexture(E.Media.Textures.ArrowUp)
-	btn:SetPushedTexture(E.Media.Textures.ArrowUp)
-	btn:SetDisabledTexture(E.Media.Textures.ArrowUp)
-
-	local Normal, Disabled, Pushed = btn:GetNormalTexture(), btn:GetDisabledTexture(), btn:GetPushedTexture()
-
-	if noBackdrop then
-		btn:Size(20, 20)
-		Disabled:SetVertexColor(.5, .5, .5)
-		btn.Texture = Normal
-
-		if not color then
-			btn:HookScript('OnEnter', closeOnEnter)
-			btn:HookScript('OnLeave', closeOnLeave)
-		end
-	else
-		btn:Size(18, 18)
-		Disabled:SetVertexColor(.3, .3, .3)
-	end
-
-	Normal:SetInside()
-	Pushed:SetInside()
-	Disabled:SetInside()
-
-	Normal:SetTexCoord(0, 1, 0, 1)
-	Pushed:SetTexCoord(0, 1, 0, 1)
-	Disabled:SetTexCoord(0, 1, 0, 1)
-
-	local rotation = S.ArrowRotation[arrowDir]
-	if rotation then
-		Normal:SetRotation(rotation)
-		Pushed:SetRotation(rotation)
-		Disabled:SetRotation(rotation)
-	end
-
-	if color then
-		Normal:SetVertexColor(color.r, color.g, color.b)
-	else
-		Normal:SetVertexColor(1, 1, 1)
-	end
-
-	btn.isSkinned = true
 end
 
 module.Registry = {}

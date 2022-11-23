@@ -134,7 +134,7 @@ local function CreateAddToFilterWindow(button, elementName)
 	local window = AceGUI:Create('Frame') ---@type AceGUIFrame
 	window:SetTitle('|cffffffffSpartan|cffe21f1fUI|r Aura filter addition')
 	window:SetWidth(500)
-	window:SetHeight(500)
+	window:SetHeight(400)
 	window:EnableResize(false)
 
 	local label = AceGUI:Create('Label')
