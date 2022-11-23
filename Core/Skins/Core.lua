@@ -101,7 +101,7 @@ end
 
 module.colors = {}
 function module.colors:GetsecondaryColor(comp)
-	local color = DB.components[comp].colors.primary
+	local color = DB.components[comp].colors.secondary
 	if color == 'CLASS' then
 		local result = module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
 		result[4] = 0.3
