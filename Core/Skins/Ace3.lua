@@ -118,24 +118,24 @@ local function SkinAce3()
 				'SetType',
 				function(self, mode)
 					checkbg:SetSize(28, 28)
-					local rowTop = (1 / 16) * (classId - 1)
-					local rowBottom = (1 / 16) * classId
-					checkbg:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox-ByClass]])
-					check:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox-ByClass]])
-					highlight:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox-ByClass]])
+					checkbg:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+					check:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+					highlight:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+					checkbg:SetTexCoord(0, 0.25, 0, 1)
+					highlight:SetTexCoord(0.25, 0.5, 0, 1)
 					if mode == 'radio' then
-						checkbg:SetTexCoord(0, 0.25, rowTop, rowBottom)
-						check:SetTexCoord(0.75, 1, rowTop, rowBottom)
-						highlight:SetTexCoord(0.25, 0.5, rowTop, rowBottom)
+						check:SetTexCoord(0.75, 1, 0, 1)
 					else
-						checkbg:SetTexCoord(0, 0.25, rowTop, rowBottom)
-						check:SetTexCoord(0.5, 0.75, rowTop, rowBottom)
-						highlight:SetTexCoord(0.25, 0.5, rowTop, rowBottom)
+						check:SetTexCoord(0.5, 0.75, 0, 1)
 					end
+					checkbg:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
+					highlight:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
 				end
 			)
 			Skin(widgetType, widget, 'Light', 'Ace3')
 		elseif widgetType == 'Heading' or widgetType == 'Label' then
+			-- local _, fontHeight, fontFlags = widget.label:GetFont()
+			-- widget.label:SetFont(SUI.Font:GetFont('Ace3'), fontHeight, fontFlags)
 		elseif widgetType == 'Button' then
 			local frame = widget.frame
 			Skin(widgetType, frame, 'Light', 'Ace3')
