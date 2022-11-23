@@ -103,13 +103,11 @@ module.colors = {}
 function module.colors:GetPrimaryColor(comp)
 	local color = DB.components[comp].colors.primary
 	if color == 'CLASS' then
-		return Settings.ClassColor
+		return module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
 	elseif color == 'FACTION' then
 		return Settings.factionColor[UnitFactionGroup('player')]
 	else
-		local value = GetClassColor(color)
-		Settings.ClassColor = module.colors.SetColorTable(Settings.ClassColor, value)
-		return Settings.ClassColor
+		return module.colors.GetColorTable(GetClassColor(color))
 	end
 end
 
