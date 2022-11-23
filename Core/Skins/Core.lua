@@ -84,9 +84,7 @@ local function GetBaseBorderColor()
 	return Settings.BaseBorderColor or Settings.factionColor[UnitFactionGroup('player')]
 end
 
-local function GetClassColor()
-	local _, class = UnitClass('player')
-
+local function GetClassColor(class)
 	local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]) or _G.RAID_CLASS_COLORS[class]
 	if type(color) ~= 'table' then
 		return
@@ -101,11 +99,20 @@ local function GetClassColor()
 	return color
 end
 
-function module:PrimaryColor(module)
-	-- return module.DB.
+module.colors = {}
+function module.colors:GetPrimaryColor(comp)
+	local color = DB.components[comp].colors.primary
+	if color == 'CLASS' then
+		return Settings.ClassColor
+	elseif color == 'FACTION' then
+		return Settings.factionColor[UnitFactionGroup('player')]
+	else
+		local value = GetClassColor(color)
+		Settings.ClassColor = module.colors.SetColorTable(Settings.ClassColor, value)
+		return Settings.ClassColor
+	end
 end
 
-module.colors = {}
 function module.colors.SetColorTable(t, data)
 	if not data.r or not data.g or not data.b then
 		error('SetColorTable: Could not unpack color values.')
@@ -189,7 +196,7 @@ function module.colors.HexToRGB(hex)
 	return tonumber(r, 16), tonumber(g, 16), tonumber(b, 16), tonumber(a, 16)
 end
 
-local value = GetClassColor()
+local value = GetClassColor(select(2, UnitClass('player')))
 Settings.ClassColor = module.colors.SetColorTable(Settings.ClassColor, value)
 Settings.MutedClassColor = module.colors.SetColorTable(Settings.MutedClassColor, value)
 Settings.MutedClassColor[4] = 0.3
@@ -300,6 +307,29 @@ module.Objects = {}
 
 ---@param button any
 ---@param mode? AppearanceMode
+function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
+	hooksecurefunc(
+		widget,
+		'SetPoint',
+		function(self, left, parent, right, x, y)
+			if y == -7 then
+				self:ClearAllPoints()
+				self:SetPoint(left, parent, right, 0, -4)
+			-- elseif x == -10 then
+			-- 	self:ClearAllPoints()
+			-- 	self:SetPoint(left, parent, right, 0, 0)
+			end
+		end
+	)
+
+	widget.MiddleDisabled:SetTexture('Interface\\OptionsFrame\\UI-OptionsFrame-ActiveTab')
+	widget.MiddleDisabled:SetTexCoord(0.15625, 0.84375, .45, 0)
+	widget.MiddleDisabled:SetVertexColor(unpack(module.colors:GetPrimaryColor('Ace3')))
+
+	if widget.text then
+		widget:SetNormalFontObject(GameFontHighlightSmall)
+	end
+end
 function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
 	-- local check = button.check
 	-- local checkbg = button.checkbg
@@ -308,6 +338,7 @@ function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
 	-- checkbg:SetVertexColor(unpack(Settings.ClassColor))
 	-- check:SetVertexColor(unpack(Settings.MutedClassColor))
 end
+
 function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 	if button.isSkinned then
 		return
@@ -496,21 +527,21 @@ local function functionAddToOptions(name, settings)
 	}
 
 	local colors = {
-		['CLASS'] = 'Class Color',
+		['CLASS'] = 'AUTO - Class Color',
 		['CUSTOM'] = 'Custom Color',
-		['DRUID'] = 'Druid',
-		['HUNTER'] = 'Hunter',
-		['MAGE'] = 'Mage',
-		['PALADIN'] = 'Paladin',
-		['PRIEST'] = 'Priest',
-		['ROGUE'] = 'Rogue',
-		['SHAMAN'] = 'Shaman',
-		['WARLOCK'] = 'Warlock',
-		['WARRIOR'] = 'Warrior',
-		['DEATHKNIGHT'] = 'Death Knight',
-		['MONK'] = 'Monk',
-		['DEMONHUNTER'] = 'Demon Hunter',
-		['EVOKER'] = 'Evoker'
+		['DRUID'] = '|cffFF7C0ADruid (Orange)',
+		['HUNTER'] = '|cffAAD372Hunter (Pistachio)',
+		['MAGE'] = '|cff3FC7EBMage (Light Blue)',
+		['PALADIN'] = '|cffF48CBAPaladin (Pink)',
+		['PRIEST'] = '|cffFFFFFFPriest (White)',
+		['ROGUE'] = '|cffFFF468Rogue (Yellow)',
+		['SHAMAN'] = '|cff0070DDShaman (Blue)',
+		['WARLOCK'] = '|cff8788EEWarlock (Purple)',
+		['WARRIOR'] = '|cffC69B6DWarrior (Tan)',
+		['DEATHKNIGHT'] = '|cffC41E3ADeath Knight (Red)',
+		['MONK'] = '|cff00FF98Monk (Spring Green)',
+		['DEMONHUNTER'] = '|cffA330C9Demon Hunter (Dark Magenta)',
+		['EVOKER'] = '|cff33937FEvoker (Dark Emerald)'
 	}
 
 	local OptionsTab = {
