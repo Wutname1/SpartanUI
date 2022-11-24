@@ -100,7 +100,7 @@ local function GetClassColor(class)
 end
 
 module.colors = {}
-function module.colors:GetsecondaryColor(comp)
+function module.colors:GetSecondaryColor(comp)
 	local color = DB.components[comp].colors.secondary
 	if color == 'CLASS' then
 		local result = module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
@@ -337,7 +337,7 @@ function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
 
 	widget.Middle:SetTexture('Interface\\OptionsFrame\\UI-OptionsFrame-ActiveTab')
 	widget.Middle:SetTexCoord(0.15625, 0.84375, .45, 0)
-	local color = module.colors:GetsecondaryColor('Ace3')
+	local color = module.colors:GetSecondaryColor('Ace3')
 	color[4] = 0.65
 	widget.Middle:SetVertexColor(unpack(color))
 
@@ -505,7 +505,6 @@ local function functionAddToOptions(name, settings)
 				end,
 				set = function(info, val)
 					DB.components[name].colors[info[#info]] = val
-					SUI:reloadui()
 				end,
 				args = {
 					primary = {
@@ -531,10 +530,10 @@ local function functionAddToOptions(name, settings)
 end
 ---Register a module to be skinned
 ---@param Name string
----@param OnEnable function
----@param OnInitialize function
----@param Options function
----@param Settings table
+---@param OnEnable? function
+---@param OnInitialize? function
+---@param Options? function
+---@param Settings? table
 function module:Register(Name, OnEnable, OnInitialize, Options, Settings)
 	module.Registry[Name] = {
 		OnEnable = OnEnable,
