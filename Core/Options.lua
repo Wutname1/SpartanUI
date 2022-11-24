@@ -264,6 +264,7 @@ function module:OnInitialize()
 	SUI.opt.args.Modules = {
 		name = L['Modules'],
 		type = 'group',
+		order = 4,
 		args = {
 			ModuleListing = {
 				name = L['Enabled modules'],
