@@ -344,10 +344,10 @@ function Font:OnEnable()
 						desc = L['This is used to split up large numbers example: 100,000'],
 						type = 'select',
 						get = function(info)
-							return Font.DB.Modules[info[#info]]
+							return Font.DB.NumberSeperator or LARGE_NUMBER_SEPERATOR
 						end,
 						set = function(info, val)
-							Font.DB.Modules[info[#info]] = val
+							Font.DB.NumberSeperator = val
 							Font:Refresh()
 						end,
 						values = {[''] = 'none', [','] = 'comma', ['.'] = 'period'}
