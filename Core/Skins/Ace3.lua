@@ -162,16 +162,18 @@ local function SkinAce3()
 				AppBar:SetPoint('TOPLEFT', 0, 0)
 				AppBar.ignore = true
 
-				local closeBtn = StdUi:HighlightButton(AppBar, 28, 20, 'X')
-				closeBtn.text:SetFontSize(15)
-				closeBtn:SetPoint('TOPRIGHT', -1, -1)
-				closeBtn:SetFrameLevel(501)
-				closeBtn:SetScript(
+				local closeBtn = AceGUI:Create('Button') ---@type AceGUIButton
+				closeBtn:SetText('X')
+				closeBtn.frame:SetSize(20, 20)
+				closeBtn.frame:SetParent(AppBar)
+				closeBtn.frame:HookScript(
 					'OnClick',
 					function()
 						frame.CloseBtn:Click()
 					end
 				)
+				closeBtn.frame:Show()
+				closeBtn.frame:SetPoint('TOPRIGHT', -1, -1)
 				AppBar.closeBtn = closeBtn
 
 				-- local minimizeBtn = StdUi:HighlightButton(AppBar, 28, 20, '_')

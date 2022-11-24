@@ -137,18 +137,23 @@ local function CreateAddToFilterWindow(button, elementName)
 	window:SetHeight(400)
 	window:EnableResize(false)
 
-	local label = AceGUI:Create('Label')
+	local label = AceGUI:Create('Label') ---@type AceGUILabel
 	label:SetText(button.data.name)
-	label:SetFullWidth(true)
 	label:SetJustifyH('CENTER')
+	label:SetImage(button.data.icon)
 	label:SetFont(SUI.Font:GetFont(), 12, 'OUTLINE')
-	window:AddChild(label)
+	label:SetParent(window)
+	label.frame:SetPoint('TOP', window.content, 'TOP', 0, 0)
+	label.frame:Show()
+	window.SpellLabel = label
 
 	local group = AceGUI:Create('InlineGroup') ---@type AceGUIInlineGroup
 	group:SetTitle('Mode')
 	group:SetLayout('Flow')
-	group:SetFullWidth(true)
-	window:AddChild(group)
+	group:SetWidth(480)
+	group:SetParent(window)
+	group.frame:SetPoint('TOP', label.frame, 'BOTTOM', 0, -5)
+	window.group = group
 
 	--Create 2 checkboxes for the filter type
 	local Whitelist = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
@@ -165,14 +170,14 @@ local function CreateAddToFilterWindow(button, elementName)
 	--Set Callbacks
 	Whitelist:SetCallback(
 		'OnValueChanged',
-		function(widget, event, value)
+		function(_, _, value)
 			Whitelist:SetValue(value)
 			Blacklist:SetValue(not value)
 		end
 	)
 	Blacklist:SetCallback(
 		'OnValueChanged',
-		function(widget, event, value)
+		function(_, _, value)
 			Blacklist:SetValue(value)
 			Whitelist:SetValue(not value)
 		end
@@ -180,12 +185,14 @@ local function CreateAddToFilterWindow(button, elementName)
 
 	--UnitFrameListing to add buff to
 	local scrollcontainer = AceGUI:Create('SimpleGroup') ---@type AceGUISimpleGroup
-	scrollcontainer:SetFullWidth(true)
+	scrollcontainer:SetWidth(480)
 	scrollcontainer:SetHeight(200)
-	scrollcontainer:SetLayout('Fill') -- important!
-	window:AddChild(scrollcontainer)
+	scrollcontainer:SetLayout('Fill')
+	scrollcontainer:SetParent(window)
+	scrollcontainer.frame:SetPoint('TOP', group.frame, 'BOTTOM', 0, -5)
+
 	local scroll = AceGUI:Create('ScrollFrame') ---@type AceGUIScrollFrame
-	scroll:SetLayout('Flow') -- probably?
+	scroll:SetLayout('Flow')
 	scrollcontainer:AddChild(scroll)
 
 	window.units = {}
@@ -204,6 +211,7 @@ local function CreateAddToFilterWindow(button, elementName)
 	--Save Button
 	local Save = AceGUI:Create('Button') ---@type AceGUIButton
 	Save:SetText('Save')
+	Save:SetParent(window)
 	Save.frame:HookScript(
 		'OnClick',
 		function()
@@ -221,7 +229,10 @@ local function CreateAddToFilterWindow(button, elementName)
 			window:Hide()
 		end
 	)
-	window:AddChild(Save)
+	Save.frame:Show()
+	Save.frame:SetPoint('TOP', scrollcontainer.frame, 'BOTTOM', 0, -10)
+
+	window.frame.CloseBtn:SetText('Cancel')
 end
 
 function Auras:OnClick(button, elementName)
