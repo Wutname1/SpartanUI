@@ -145,15 +145,16 @@ local function CreateAddToFilterWindow(button, elementName)
 	label:SetParent(window)
 	label.frame:SetPoint('TOP', window.content, 'TOP', 0, 0)
 	label.frame:Show()
-	window.SpellLabel = label
+	window.content.SpellLabel = label
 
 	local group = AceGUI:Create('InlineGroup') ---@type AceGUIInlineGroup
 	group:SetTitle('Mode')
 	group:SetLayout('Flow')
 	group:SetWidth(480)
 	group:SetParent(window)
+	group.frame:Show()
 	group.frame:SetPoint('TOP', label.frame, 'BOTTOM', 0, -5)
-	window.group = group
+	window.content.group = group
 
 	--Create 2 checkboxes for the filter type
 	local Whitelist = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
@@ -189,7 +190,9 @@ local function CreateAddToFilterWindow(button, elementName)
 	scrollcontainer:SetHeight(200)
 	scrollcontainer:SetLayout('Fill')
 	scrollcontainer:SetParent(window)
+	scrollcontainer.frame:Show()
 	scrollcontainer.frame:SetPoint('TOP', group.frame, 'BOTTOM', 0, -5)
+	window.content.scrollcontainer = scrollcontainer
 
 	local scroll = AceGUI:Create('ScrollFrame') ---@type AceGUIScrollFrame
 	scroll:SetLayout('Flow')
@@ -231,6 +234,7 @@ local function CreateAddToFilterWindow(button, elementName)
 	)
 	Save.frame:Show()
 	Save.frame:SetPoint('TOP', scrollcontainer.frame, 'BOTTOM', 0, -10)
+	window.content.Save = Save
 
 	window.frame.CloseBtn:SetText('Cancel')
 end
