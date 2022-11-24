@@ -318,7 +318,7 @@ end
 
 module.Objects = {}
 
----@param button any
+---@param widget any|AceGUITabGroupTab
 ---@param mode? AppearanceMode
 function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
 	hooksecurefunc(
@@ -328,34 +328,44 @@ function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
 			if y == -7 then
 				self:ClearAllPoints()
 				self:SetPoint(left, parent, right, 0, -4)
-			-- elseif x == -10 then
-			-- 	self:ClearAllPoints()
-			-- 	self:SetPoint(left, parent, right, 0, 0)
+			elseif x == -10 then
+				self:ClearAllPoints()
+				self:SetPoint(left, parent, right, 0, 0)
 			end
 		end
 	)
 
-	widget.Middle:SetTexture('Interface\\OptionsFrame\\UI-OptionsFrame-ActiveTab')
-	widget.Middle:SetTexCoord(0.15625, 0.84375, .45, 0)
-	local color = module.colors:GetSecondaryColor('Ace3')
-	color[4] = 0.65
-	widget.Middle:SetVertexColor(unpack(color))
+	widget.Left:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.Left:SetTexCoord(.1, 0.15, 0, 1)
+	widget.Left:SetVertexColor(1, 1, 1, .2)
 
-	widget.MiddleDisabled:SetTexture('Interface\\OptionsFrame\\UI-OptionsFrame-ActiveTab')
-	widget.MiddleDisabled:SetTexCoord(0.15625, 0.84375, .45, 0)
-	widget.MiddleDisabled:SetVertexColor(unpack(module.colors:GetPrimaryColor('Ace3')))
+	widget.Middle:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.Middle:SetTexCoord(0.15, 0.85, 0, 1)
+	widget.Middle:SetVertexColor(1, 1, 1, .2)
+
+	widget.Right:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.Right:SetTexCoord(0.85, 1, 0, 1)
+	widget.Right:SetVertexColor(1, 1, 1, .2)
+
+	local color = module.colors:GetSecondaryColor('Ace3')
+
+	widget.LeftDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.LeftDisabled:SetTexCoord(.1, 0.15, 0, 1)
+	widget.LeftDisabled:SetVertexColor(unpack(color))
+
+	widget.MiddleDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.MiddleDisabled:SetTexCoord(0.15, 0.85, 0, 1)
+	widget.MiddleDisabled:SetVertexColor(unpack(color))
+
+	widget.RightDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.RightDisabled:SetTexCoord(0.85, 1, 0, 1)
+	widget.RightDisabled:SetVertexColor(unpack(color))
+
+	widget.LeftDisabled:ClearAllPoints()
+	widget.LeftDisabled:SetPoint('TOPLEFT')
 
 	if widget.text then
 		widget:SetNormalFontObject(GameFontHighlightSmall)
-	-- hooksecurefunc(
-	-- 	widget,
-	-- 	'SetText',
-	-- 	function(self, text)
-	-- 		if not string.match('|cff0070', text) then
-	-- 			self:SetText('|cff0070DD' .. text)
-	-- 		end
-	-- 	end
-	-- )
 	end
 end
 function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
