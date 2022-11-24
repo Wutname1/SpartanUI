@@ -1,4 +1,4 @@
-name: Package and release
+name: Classic - CI/CD
 
 on:
   push:
