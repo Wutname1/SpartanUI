@@ -11,6 +11,7 @@
 	<Script file="Tooltips.lua" />
 	<Script file="MailOpenAll.lua" />
 	<Script file="CombatLog.lua" />
+	<Script file="ImprovedLFG.lua" />
 	<Script file="InterruptAnnounce.lua" />
 	<Script file="TauntWatcher.lua" />
 	<Script file="Chatbox.lua" />
