@@ -1,4 +1,4 @@
-name: Package and release
+name: Retail - CI/CD
 
 on:
   push:
