@@ -722,7 +722,7 @@ function module:OnEnable()
 	local lastEvent = ''
 
 	local function OnEvent(_, event)
-		if SUI:IsModuleDisabled(AutoTurnIn) then
+		if SUI:IsModuleDisabled(module) then
 			return
 		end
 
