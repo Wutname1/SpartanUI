@@ -351,7 +351,8 @@
     "GetContainerItemLink",
     "UseContainerItem",
     "GetContainerItemInfo",
-    "CLOSE"
+    "CLOSE",
+    "LFG_LIST_DELISTED_FONT_COLOR"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
