@@ -616,15 +616,15 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f:SetScript('OnShow', OnShow)
 	f:SetScript('OnMouseWheel', OnMouseWheel)
 
+	local DragMoving = false
 	local function ParentMouseDown(self)
 		if IsAltKeyDown() and MoveIt.DB.AltKey then
-			MoveIt:MoveIt(name)
 			OnDragStart(self.mover)
+			DragMoving = true
 		end
 	end
 	local function ParentMouseUp(self)
-		if IsAltKeyDown() and MoveIt.DB.AltKey and MoveEnabled then
-			MoveIt:MoveIt(name)
+		if DragMoving then
 			OnDragStop(self.mover)
 		end
 	end
