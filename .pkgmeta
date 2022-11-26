@@ -3,5 +3,6 @@ package-as: SpartanUI
 ignore:
     README.md
     .travis.yml
+    *.Definition.lua
 
 enable-nolib-creation: no
