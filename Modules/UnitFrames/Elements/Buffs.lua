@@ -4,7 +4,7 @@ local UF = SUI.UF
 ---@param DB table
 local function Build(frame, DB)
 	--Buff Icons
-	local Buffs = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame)
+	local Buffs = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame.raised)
 	Buffs.PostUpdateButton = function(self, button, unit, data, position)
 		button.data = data
 		button.unit = unit

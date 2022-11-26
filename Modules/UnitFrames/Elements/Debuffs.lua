@@ -4,7 +4,7 @@ local UF = SUI.UF
 ---@param DB table
 local function Build(frame, DB)
 	--Debuff Icons
-	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame)
+	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame.raised)
 	Debuffs.PostUpdateButton = function(self, button, unit, data, position)
 		button.data = data
 		button.unit = unit
