@@ -74,6 +74,17 @@ function Unit:Update(frame)
 	FrameData[frame.unitOnCreate].updater(frame)
 end
 
+---@param frameName UnitFrameName
+---@return integer width
+---@return integer height
+function Unit:GroupSize(frameName)
+	local CurFrameOpt = UF.CurrentSettings[frameName]
+	local FrameHeight = UF:CalculateHeight(frameName)
+	local height = (CurFrameOpt.unitsPerColumn or 10) * (FrameHeight + (CurFrameOpt.yOffset or 0))
+	local width = (CurFrameOpt.maxColumns or 4) * (CurFrameOpt.width + (CurFrameOpt.columnSpacing or 1))
+	return width, height
+end
+
 ---Build a group holder
 ---@param groupName string
 ---@return SUI.UF.Unit.Frame?
@@ -84,7 +95,7 @@ function Unit:BuildGroup(groupName)
 
 	local holder = CreateFrame('Frame', 'SUI_UF_' .. groupName .. '_Holder')
 	holder:Hide()
-	holder:SetSize(UF:GroupSize(groupName))
+	holder:SetSize(Unit:GroupSize(groupName))
 
 	holder.frames = {}
 	holder.config = UF.Unit:GetConfig(groupName)

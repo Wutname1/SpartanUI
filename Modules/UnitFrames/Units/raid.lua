@@ -139,12 +139,13 @@ local Settings = {
 		Buffs = {
 			enabled = true,
 			onlyShowPlayer = true,
+			rows = 1,
 			size = 10,
 			growthx = 'LEFT',
 			growthy = 'UP',
 			position = {
-				point = 'BOTTOMRIGHT',
 				relativePoint = 'BOTTOMRIGHT',
+				relativeTo = 'BOTTOMRIGHT',
 				x = -2,
 				y = 2
 			}
@@ -155,8 +156,8 @@ local Settings = {
 			size = 10,
 			growthy = 'DOWN',
 			position = {
-				point = 'TOPLEFT',
 				relativePoint = 'TOPLEFT',
+				relativeTo = 'TOPLEFT',
 				x = 2,
 				y = -2
 			}
