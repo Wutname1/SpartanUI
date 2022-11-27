@@ -1,5 +1,17 @@
 local UF = SUI.UF
 
+local function updateSettings(element, unit, isFullUpdate)
+	local DB = element.DB
+	element.size = DB.size or 20
+	element.initialAnchor = DB.initialAnchor
+	element['growth-x'] = DB.growthx
+	element['growth-y'] = DB.growthy
+	-- Buffs.spacing = DB.spacing
+	element.showType = DB.showType
+	element.num = DB.number or 10
+	element.onlyShowPlayer = DB.onlyShowPlayer
+end
+
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
@@ -18,13 +30,19 @@ local function Build(frame, DB)
 	local FilterAura = function(element, unit, data)
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
+	local PreUpdate = function(self)
+		updateSettings(Buffs)
+	end
+
 	Buffs.FilterAura = FilterAura
+	Buffs.PreUpdate = PreUpdate
 	frame.Buffs = Buffs
 end
 
 ---@param frame table
 local function Update(frame)
 	local DB = frame.Buffs.DB
+
 	if (DB.enabled) then
 		frame.Buffs:Show()
 	else
@@ -32,22 +50,13 @@ local function Update(frame)
 	end
 
 	local Buffs = frame.Buffs
-	Buffs.size = DB.auraSize
-	Buffs.initialAnchor = DB.initialAnchor
-	Buffs['growth-x'] = DB.growthx
-	Buffs['growth-y'] = DB.growthy
-	Buffs.spacing = DB.spacing
-	Buffs.showType = DB.showType
-	Buffs.num = DB.number
-	Buffs.onlyShowPlayer = DB.onlyShowPlayer
-	Buffs.PostCreateIcon = UF.Auras.PostCreateAura
-	Buffs.PostUpdateIcon = UF.Auras.PostUpdateAura
 	Buffs:SetPoint(SUI:InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
+	updateSettings(Buffs)
 	local w = (DB.number / DB.rows)
 	if w < 1.5 then
 		w = 1.5
 	end
-	Buffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
+	Buffs:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
 end
 
 ---@param unitName string
@@ -67,7 +76,7 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	number = 10,
-	auraSize = 20,
+	size = 20,
 	spacing = 1,
 	showType = true,
 	width = false,

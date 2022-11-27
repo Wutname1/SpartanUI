@@ -352,7 +352,15 @@
     "UseContainerItem",
     "GetContainerItemInfo",
     "CLOSE",
-    "LFG_LIST_DELISTED_FONT_COLOR"
+    "LFG_LIST_DELISTED_FONT_COLOR",
+    "EventUtil",
+    "InspectFrame",
+    "EquipmentFlyout_DisplayButton",
+    "EQUIPMENTFLYOUT_FIRST_SPECIAL_LOCATION",
+    "EquipmentManager_UnpackLocation",
+    "EquipmentManager_GetItemInfoByLocation",
+    "INVSLOT_FIRST_EQUIPPED",
+    "INVSLOT_LAST_EQUIPPED"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

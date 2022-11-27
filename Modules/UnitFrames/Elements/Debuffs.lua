@@ -33,7 +33,7 @@ local function Update(frame)
 	end
 
 	local Debuffs = frame.Debuffs
-	Debuffs.size = DB.auraSize
+	Debuffs.size = DB.size
 	Debuffs.initialAnchor = DB.initialAnchor
 	Debuffs['growth-x'] = DB.growthx
 	Debuffs['growth-y'] = DB.growthy
@@ -48,7 +48,7 @@ local function Update(frame)
 	if w < 1.5 then
 		w = 1.5
 	end
-	Debuffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
+	Debuffs:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
 end
 
 ---@param unitName string
@@ -68,7 +68,7 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	number = 10,
-	auraSize = 20,
+	size = 20,
 	spacing = 1,
 	width = false,
 	ShowBoss = true,

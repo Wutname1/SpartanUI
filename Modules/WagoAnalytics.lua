@@ -90,9 +90,7 @@ local function SetupPage()
 				WagoAnalytics.lbl0 =
 					StdUi:Label(
 					WagoAnalytics,
-					L[
-						'SpartanUI has introduced Wago Analytics.\n\nWago Analytics is a service that allows us to collect anonymous data about your usage of the addon.\n\nWe use this data to improve the addon and to make it more user friendly.\n\nYou can disable this option if you do not want to share your data with us.'
-					],
+					L['SpartanUI has introduced Wago Analytics.\n\nWago Analytics is a service that allows us to collect anonymous data about your usage of the addon.\n\nWe use this data to improve the addon and to make it more user friendly.\n\nYou can disable this option if you do not want to share your data with us.'],
 					nil,
 					nil,
 					500
