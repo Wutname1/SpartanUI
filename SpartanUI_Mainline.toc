@@ -14,6 +14,7 @@
 ## X-BugGrabber-Display: SUIErrorDisplay
 
 # General Libraries
+libs\TaintLess\TaintLess.xml
 libs\Ace3\Ace3.xml
 libs\StdUi\StdUi.xml
 libs\LibDataBroker-1.1.lua
