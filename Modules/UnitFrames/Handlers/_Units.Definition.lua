@@ -18,6 +18,7 @@ local UFrameSettings = {
 }
 
 ---@class SUI.UF.Unit.Config
+---@field displayName string
 local config = {
 	IsGroup = false,
 	isChild = false,
