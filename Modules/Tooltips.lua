@@ -532,10 +532,10 @@ function module:UpdateBG()
 end
 
 function module:OnEnable()
+	module:BuildOptions()
 	if SUI:IsModuleDisabled('Tooltips') then
 		return
 	end
-	module:BuildOptions()
 
 	--Create Anchor point
 	for k, v in ipairs(RuleList) do
@@ -639,6 +639,9 @@ function module:BuildOptions()
 		end,
 		set = function(info, val)
 			module.DB[info[#info]] = val
+		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
 		end,
 		args = {
 			Background = {

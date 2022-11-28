@@ -2,7 +2,8 @@
 local SUI = SUI
 local L = SUI.L
 local StdUi = SUI.StdUi
-local module = SUI:NewModule('Module_Chatbox', 'AceHook-3.0')---@type SUI.Module
+local module = SUI:NewModule('Module_Chatbox', 'AceHook-3.0')
+---@type SUI.Module
 module.description = 'Lightweight quality of life chat improvements'
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
@@ -320,6 +321,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	module:BuildOptions()
 	if SUI:IsModuleDisabled('Chatbox') then
 		return
 	end
@@ -355,7 +357,6 @@ function module:OnEnable()
 
 	-- Setup everything
 	module:SetupChatboxes()
-	module:BuildOptions()
 end
 
 function module:EditBoxPosition()
@@ -803,7 +804,9 @@ function module:BuildOptions()
 		type = 'group',
 		name = L['Chatbox'],
 		childGroups = 'tab',
-		disabled = SUI:IsModuleDisabled('Chatbox'),
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		get = function(info)
 			return module.DB[info[#info]]
 		end,

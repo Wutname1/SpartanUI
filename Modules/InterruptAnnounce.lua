@@ -126,6 +126,9 @@ function module:Options()
 		set = function(info, val)
 			module.DB[info[#info]] = val
 		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			alwayson = {
 				name = L['Always on'],

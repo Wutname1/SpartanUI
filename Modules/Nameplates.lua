@@ -736,6 +736,9 @@ function module:BuildOptions()
 		type = 'group',
 		name = L['Nameplates'],
 		childGroups = 'tab',
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		get = function(info)
 			return module.DB[info[#info]]
 		end,

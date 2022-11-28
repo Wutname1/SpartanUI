@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Component_AutoSell') ---@type SUI.Module
+local module = SUI:NewModule('Module_AutoSell') ---@type SUI.Module
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
@@ -234,6 +234,9 @@ local function BuildOptions()
 		end,
 		set = function(info, val)
 			module.DB[info[#info]] = val
+		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
 		end,
 		args = {
 			NotCrafting = {

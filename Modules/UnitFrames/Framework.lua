@@ -169,16 +169,6 @@ function UF:OnEnable()
 	UF.Options:Initialize()
 
 	if EditModeManagerFrame then
-		-- function EditModeManagerFrame.AccountSettings.Settings.PartyFrames:ShouldEnable()
-		-- 	return false
-		-- end
-		-- function EditModeManagerFrame.AccountSettings.Settings.ArenaFrames:ShouldEnable()
-		-- 	return false
-		-- end
-		-- function EditModeManagerFrame.AccountSettings.Settings.RaidFrames:ShouldEnable()
-		-- 	return false
-		-- end
-
 		local CheckedItems = {}
 		local frames = {['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party'}
 		for k, v in pairs(frames) do
@@ -207,12 +197,6 @@ function UF:OnEnable()
 				MoveIt.MoveEnabled = false
 			end
 		)
-
-	-- EditModeManagerFrame:HookScript(
-	-- 	'OnShow',
-	-- 	function()
-	-- 	end
-	-- )
 	end
 end
 

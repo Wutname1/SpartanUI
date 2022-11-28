@@ -936,6 +936,10 @@ function Options:Initialize()
 	local UFOptions = {
 		name = L['Unit frames'],
 		type = 'group',
+		order = 2,
+		disabled = function()
+			return SUI:IsModuleDisabled(SUI.UF)
+		end,
 		args = {
 			ResetUFSettings = {
 				name = L['Reset to base style (Revert customizations)'],

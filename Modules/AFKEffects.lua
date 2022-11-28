@@ -177,6 +177,9 @@ local function Options()
 		get = function(info)
 			return module.DB[info[#info]]
 		end,
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			toggle = {
 				name = L['Toggle Effects'],

@@ -264,6 +264,7 @@ function module:OnInitialize()
 	SUI.opt.args.Modules = {
 		name = L['Modules'],
 		type = 'group',
+		order = 4,
 		args = {
 			ModuleListing = {
 				name = L['Enabled modules'],
@@ -338,15 +339,19 @@ function module:ConfigOpened(name)
 		frame.bottomHolder:Show()
 	end
 end
+function module:PLAYER_REGEN_ENABLED()
+	module:ToggleOptions()
+end
 
+---@param pages? table
 function module:ToggleOptions(pages)
 	if InCombatLockdown() then
 		SUI:Print(ERR_NOT_IN_COMBAT)
 		module.ShowOptionsUI = true
-		module:RegisterEvent('PLAYER_REGEN_ENABLED', module.ToggleOptions)
+		module:RegisterEvent('PLAYER_REGEN_ENABLED')
 		return
 	end
-	module:UnregisterEvent('PLAYER_REGEN_ENABLED', module.ToggleOptions)
+	module:UnregisterEvent('PLAYER_REGEN_ENABLED')
 	module.ShowOptionsUI = false
 
 	local frame = module:GetConfigWindow()

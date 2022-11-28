@@ -55,10 +55,10 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	module:Options()
 	if SUI:IsModuleDisabled('FilmEffects') then
 		return
 	end
-	module:Options()
 
 	Container = CreateFrame('Frame', 'FilmEffects', WorldFrame)
 	-- Container:SetSize(1,1);
@@ -166,6 +166,9 @@ function module:Options()
 	SUI.opt.args['Modules'].args['FilmEffects'] = {
 		name = L['Film Effects'],
 		type = 'group',
+		disabled = function()
+			return SUI:IsModuleDisabled(module)
+		end,
 		args = {
 			enable = {
 				name = L['Enable Film Effects'],
