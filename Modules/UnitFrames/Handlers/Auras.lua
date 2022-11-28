@@ -127,6 +127,8 @@ function Auras:PostCreateButton(elementName, button)
 			Auras:OnClick(button, elementName)
 		end
 	)
+	--Remove game cooldown text
+	button.Cooldown:SetHideCountdownNumbers(true)
 end
 
 local function CreateAddToFilterWindow(button, elementName)
