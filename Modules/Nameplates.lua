@@ -542,6 +542,7 @@ function module:OnInitialize()
 					enabled = true,
 					height = 5,
 					offset = 0,
+					texture = 'SpartanUI Default',
 					colorReaction = true,
 					colorSmooth = false,
 					colorClass = true,
