@@ -2,7 +2,6 @@
 local UF = SUI.UF
 local Auras = {}
 local MonitoredIds = {}
-local AddToFilterWindow = nil
 
 ---@param unit UnitId
 ---@param data UnitAuraInfo
@@ -78,48 +77,8 @@ function Auras:Filter(element, unit, data, rules)
 	return ShouldDisplay
 end
 
----@param element any
+---@param elementName string
 ---@param button any
-function Auras.PostCreateAura(element, button)
-	local function UpdateAura(self, elapsed)
-		if (self.expiration) then
-			self.expiration = math.max(self.expiration - elapsed, 0)
-
-			if (self.expiration > 0 and self.expiration < 60) then
-				self.Duration:SetFormattedText('%d', self.expiration)
-			else
-				self.Duration:SetText()
-			end
-		end
-	end
-
-	if button.SetBackdrop then
-		button:SetBackdrop(nil)
-		button:SetBackdropColor(0, 0, 0)
-	end
-	button.cd:SetReverse(true)
-	button.cd:SetHideCountdownNumbers(true)
-	button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-	button.icon:SetDrawLayer('ARTWORK')
-	-- button:SetScript('OnEnter', OnAuraEnter)
-
-	-- We create a parent for aura strings so that they appear over the cooldown widget
-	local StringParent = CreateFrame('Frame', nil, button)
-	StringParent:SetFrameLevel(20)
-
-	button.count:SetParent(StringParent)
-	button.count:ClearAllPoints()
-	button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
-	button.count:SetFont(SUI.Font:GetFont('UnitFrames'), select(2, button.count:GetFont()) - 3)
-
-	local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
-	Duration:SetFont(SUI.Font:GetFont('UnitFrames'), 11)
-	Duration:SetPoint('TOPLEFT', button, 0, -1)
-	button.Duration = Duration
-
-	button:HookScript('OnUpdate', UpdateAura)
-end
-
 function Auras:PostCreateButton(elementName, button)
 	button:SetScript(
 		'OnClick',
@@ -129,6 +88,20 @@ function Auras:PostCreateButton(elementName, button)
 	)
 	--Remove game cooldown text
 	button.Cooldown:SetHideCountdownNumbers(true)
+
+	-- -- We create a parent for aura strings so that they appear over the cooldown widget
+	-- local StringParent = CreateFrame('Frame', nil, button)
+	-- StringParent:SetFrameLevel(20)
+
+	-- button.count:SetParent(StringParent)
+	-- button.count:ClearAllPoints()
+	-- button.count:SetPoint('BOTTOMRIGHT', button, 2, 1)
+	-- button.count:SetFont(SUI.Font:GetFont('UnitFrames'), select(2, button.count:GetFont()) - 3)
+
+	-- local Duration = StringParent:CreateFontString(nil, 'OVERLAY')
+	-- Duration:SetFont(SUI.Font:GetFont('UnitFrames'), 11)
+	-- Duration:SetPoint('TOPLEFT', button, 0, -1)
+	-- button.Duration = Duration
 end
 
 local function CreateAddToFilterWindow(button, elementName)
@@ -277,6 +250,16 @@ function Auras.PostUpdateAura(element, unit, button, index)
 			button:SetBackdropColor(0, 0, 0)
 		end
 	end
+
+	-- if (self.expiration) then
+	-- 	self.expiration = math.max(self.expiration - elapsed, 0)
+
+	-- 	if (self.expiration > 0 and self.expiration < 60) then
+	-- 		self.Duration:SetFormattedText('%d', self.expiration)
+	-- 	else
+	-- 		self.Duration:SetText()
+	-- 	end
+	-- end
 end
 
 UF.Auras = Auras
