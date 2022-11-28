@@ -7,10 +7,17 @@ local module = SUI:NewModule('Handler_Skins')
 local DBDefaults = {
 	components = {
 		['**'] = {
-			enabled = true
+			enabled = true,
+			colors = {
+				primary = 'CLASS',
+				secondary = 'CLASS',
+				background = 'dark'
+			}
 		}
 	}
 }
+---@type AceConfigOptionsTable
+local OptTable
 
 local DB = nil ---@type SkinDB
 
@@ -77,9 +84,7 @@ local function GetBaseBorderColor()
 	return Settings.BaseBorderColor or Settings.factionColor[UnitFactionGroup('player')]
 end
 
-local function GetClassColor()
-	local _, class = UnitClass('player')
-
+local function GetClassColor(class)
 	local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]) or _G.RAID_CLASS_COLORS[class]
 	if type(color) ~= 'table' then
 		return
@@ -95,6 +100,32 @@ local function GetClassColor()
 end
 
 module.colors = {}
+function module.colors:GetSecondaryColor(comp)
+	local color = DB.components[comp].colors.secondary
+	if color == 'CLASS' then
+		local result = module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
+		result[4] = 0.3
+		return result
+	elseif color == 'FACTION' then
+		return Settings.factionColor[UnitFactionGroup('player')]
+	else
+		local result = module.colors.GetColorTable(GetClassColor(color))
+		result[4] = 0.3
+		return result
+	end
+end
+
+function module.colors:GetPrimaryColor(comp)
+	local color = DB.components[comp].colors.primary
+	if color == 'CLASS' then
+		return module.colors.GetColorTable(GetClassColor(select(2, UnitClass('player'))))
+	elseif color == 'FACTION' then
+		return Settings.factionColor[UnitFactionGroup('player')]
+	else
+		return module.colors.GetColorTable(GetClassColor(color))
+	end
+end
+
 function module.colors.SetColorTable(t, data)
 	if not data.r or not data.g or not data.b then
 		error('SetColorTable: Could not unpack color values.')
@@ -178,12 +209,12 @@ function module.colors.HexToRGB(hex)
 	return tonumber(r, 16), tonumber(g, 16), tonumber(b, 16), tonumber(a, 16)
 end
 
-local value = GetClassColor()
+local value = GetClassColor(select(2, UnitClass('player')))
 Settings.ClassColor = module.colors.SetColorTable(Settings.ClassColor, value)
 Settings.MutedClassColor = module.colors.SetColorTable(Settings.MutedClassColor, value)
 Settings.MutedClassColor[4] = 0.3
 
-local function SetClassBorderColor(frame, script)
+function module:SetClassBorderColor(frame, script)
 	if frame.backdrop then
 		frame = frame.backdrop
 	end
@@ -287,8 +318,65 @@ end
 
 module.Objects = {}
 
----@param button FrameExpanded
+---@param widget any|AceGUITabGroupTab
 ---@param mode? AppearanceMode
+function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
+	hooksecurefunc(
+		widget,
+		'SetPoint',
+		function(self, left, parent, right, x, y)
+			if y == -7 then
+				self:ClearAllPoints()
+				self:SetPoint(left, parent, right, 0, -4)
+			elseif x == -10 then
+				self:ClearAllPoints()
+				self:SetPoint(left, parent, right, 0, 0)
+			end
+		end
+	)
+
+	widget.Left:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.Left:SetTexCoord(.1, 0.15, 0, 1)
+	widget.Left:SetVertexColor(1, 1, 1, .2)
+
+	widget.Middle:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.Middle:SetTexCoord(0.15, 0.85, 0, 1)
+	widget.Middle:SetVertexColor(1, 1, 1, .2)
+
+	widget.Right:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.Right:SetTexCoord(0.85, 1, 0, 1)
+	widget.Right:SetVertexColor(1, 1, 1, .2)
+
+	local color = module.colors:GetSecondaryColor('Ace3')
+
+	widget.LeftDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.LeftDisabled:SetTexCoord(.1, 0.15, 0, 1)
+	widget.LeftDisabled:SetVertexColor(unpack(color))
+
+	widget.MiddleDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.MiddleDisabled:SetTexCoord(0.15, 0.85, 0, 1)
+	widget.MiddleDisabled:SetVertexColor(unpack(color))
+
+	widget.RightDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
+	widget.RightDisabled:SetTexCoord(0.85, 1, 0, 1)
+	widget.RightDisabled:SetVertexColor(unpack(color))
+
+	widget.LeftDisabled:ClearAllPoints()
+	widget.LeftDisabled:SetPoint('TOPLEFT')
+
+	if widget.text then
+		widget:SetNormalFontObject(GameFontHighlightSmall)
+	end
+end
+function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
+	-- local check = button.check
+	-- local checkbg = button.checkbg
+	-- local highlight = button.highlight
+	-- highlight:SetVertexColor(unpack(Settings.ClassColor))
+	-- checkbg:SetVertexColor(unpack(Settings.ClassColor))
+	-- check:SetVertexColor(unpack(Settings.MutedClassColor))
+end
+
 function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 	if button.isSkinned then
 		return
@@ -319,19 +407,19 @@ function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 
 	function SetModifiedBackdrop(self)
 		if self:IsEnabled() then
-			SetClassBorderColor(self, 'OnEnter')
+			module:SetClassBorderColor(self, 'OnEnter')
 		end
 	end
 
 	function SetOriginalBackdrop(self)
 		if self:IsEnabled() then
-			SetClassBorderColor(self, 'OnLeave')
+			module:SetClassBorderColor(self, 'OnLeave')
 		end
 	end
 
 	function SetDisabledBackdrop(self)
 		if self:IsMouseOver() then
-			SetClassBorderColor(self, 'OnDisable')
+			module:SetClassBorderColor(self, 'OnDisable')
 		end
 	end
 
@@ -354,7 +442,7 @@ end
 ---@param mode? AppearanceMode
 ---@param component? string
 function module.SkinObj(ObjType, object, mode, component)
-	if not object or (component and not DB.components[component].enabled) then
+	if not object or (component and not DB.components[component].enabled) or object.isSkinned then
 		return
 	end
 	if ObjType and module.Objects[ObjType] then
@@ -383,102 +471,94 @@ function module.SkinObj(ObjType, object, mode, component)
 	end
 
 	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
-end
-
-function module:HandleNextPrevButton(btn, arrowDir, color, noBackdrop, stripTexts, frameLevel)
-	if btn.isSkinned then
-		return
-	end
-
-	if not arrowDir then
-		arrowDir = 'down'
-
-		local name = btn:GetDebugName()
-		local ButtonName = name and name:lower()
-		if ButtonName then
-			if strfind(ButtonName, 'left') or strfind(ButtonName, 'prev') or strfind(ButtonName, 'decrement') or strfind(ButtonName, 'backward') or strfind(ButtonName, 'back') then
-				arrowDir = 'left'
-			elseif strfind(ButtonName, 'right') or strfind(ButtonName, 'next') or strfind(ButtonName, 'increment') or strfind(ButtonName, 'forward') then
-				arrowDir = 'right'
-			elseif
-				strfind(ButtonName, 'scrollup') or strfind(ButtonName, 'upbutton') or strfind(ButtonName, 'top') or strfind(ButtonName, 'asc') or strfind(ButtonName, 'home') or strfind(ButtonName, 'maximize')
-			 then
-				arrowDir = 'up'
-			end
-		end
-	end
-
-	btn:StripTextures()
-
-	if btn.Texture then
-		btn.Texture:SetAlpha(0)
-	end
-
-	if not noBackdrop then
-		S:HandleButton(btn, nil, nil, true, nil, nil, nil, nil, frameLevel)
-	end
-
-	if stripTexts then
-		btn:StripTexts()
-	end
-
-	btn:SetNormalTexture(E.Media.Textures.ArrowUp)
-	btn:SetPushedTexture(E.Media.Textures.ArrowUp)
-	btn:SetDisabledTexture(E.Media.Textures.ArrowUp)
-
-	local Normal, Disabled, Pushed = btn:GetNormalTexture(), btn:GetDisabledTexture(), btn:GetPushedTexture()
-
-	if noBackdrop then
-		btn:Size(20, 20)
-		Disabled:SetVertexColor(.5, .5, .5)
-		btn.Texture = Normal
-
-		if not color then
-			btn:HookScript('OnEnter', closeOnEnter)
-			btn:HookScript('OnLeave', closeOnLeave)
-		end
-	else
-		btn:Size(18, 18)
-		Disabled:SetVertexColor(.3, .3, .3)
-	end
-
-	Normal:SetInside()
-	Pushed:SetInside()
-	Disabled:SetInside()
-
-	Normal:SetTexCoord(0, 1, 0, 1)
-	Pushed:SetTexCoord(0, 1, 0, 1)
-	Disabled:SetTexCoord(0, 1, 0, 1)
-
-	local rotation = S.ArrowRotation[arrowDir]
-	if rotation then
-		Normal:SetRotation(rotation)
-		Pushed:SetRotation(rotation)
-		Disabled:SetRotation(rotation)
-	end
-
-	if color then
-		Normal:SetVertexColor(color.r, color.g, color.b)
-	else
-		Normal:SetVertexColor(1, 1, 1)
-	end
-
-	btn.isSkinned = true
+	object.isSkinned = true
 end
 
 module.Registry = {}
 
-function module:Register(Name, OnEnable, OnInitialize, Config)
+local function functionAddToOptions(name, settings)
+	OptTable.args.enabledState.args[name] = {
+		name = name,
+		type = 'toggle',
+		order = 1
+	}
+
+	local colors = {
+		['CLASS'] = 'AUTO - Class Color',
+		['CUSTOM'] = 'Custom Color',
+		['DRUID'] = '|cffFF7C0ADruid (Orange)',
+		['HUNTER'] = '|cffAAD372Hunter (Pistachio)',
+		['MAGE'] = '|cff3FC7EBMage (Light Blue)',
+		['PALADIN'] = '|cffF48CBAPaladin (Pink)',
+		['PRIEST'] = '|cffFFFFFFPriest (White)',
+		['ROGUE'] = '|cffFFF468Rogue (Yellow)',
+		['SHAMAN'] = '|cff0070DDShaman (Blue)',
+		['WARLOCK'] = '|cff8788EEWarlock (Purple)',
+		['WARRIOR'] = '|cffC69B6DWarrior (Tan)',
+		['DEATHKNIGHT'] = '|cffC41E3ADeath Knight (Red)',
+		['MONK'] = '|cff00FF98Monk (Spring Green)',
+		['DEMONHUNTER'] = '|cffA330C9Demon Hunter (Dark Magenta)',
+		['EVOKER'] = '|cff33937FEvoker (Dark Emerald)'
+	}
+
+	local OptionsTab = {
+		name = name,
+		type = 'group',
+		args = {
+			colors = {
+				name = 'Colors',
+				type = 'group',
+				inline = true,
+				order = 1,
+				get = function(info)
+					return DB.components[name].colors[info[#info]]
+				end,
+				set = function(info, val)
+					DB.components[name].colors[info[#info]] = val
+				end,
+				args = {
+					primary = {
+						name = 'Primary',
+						type = 'select',
+						order = 1,
+						values = colors
+					},
+					secondary = {
+						name = 'Secondary',
+						type = 'select',
+						order = 2,
+						values = colors
+					}
+				}
+			}
+		}
+	}
+	if settings.Options then
+		settings.Options(OptionsTab)
+	end
+	OptTable.args[name] = OptionsTab
+end
+---Register a module to be skinned
+---@param Name string
+---@param OnEnable? function
+---@param OnInitialize? function
+---@param Options? function
+---@param Settings? table
+function module:Register(Name, OnEnable, OnInitialize, Options, Settings)
 	module.Registry[Name] = {
 		OnEnable = OnEnable,
 		OnInitialize = OnInitialize,
-		Config = Config
+		Options = Options,
+		Settings = Settings
 	}
+
+	if OptTable and not OptTable.args[Name] then
+		functionAddToOptions(Name, module.Registry[Name])
+	end
 end
 
 local function Options()
-	---@type AceConfigOptionsTable
-	local OptTable = {
+	OptTable = {
 		name = 'Skins',
 		type = 'group',
 		childGroups = 'tab',
@@ -501,21 +581,7 @@ local function Options()
 	}
 
 	for name, settings in pairs(module.Registry) do
-		OptTable.args.enabledState.args[name] = {
-			name = name,
-			type = 'toggle',
-			order = 1
-		}
-
-		if settings.Config then
-			local SettingsScreen = {
-				name = name,
-				type = 'group',
-				args = {}
-			}
-			settings.Config(SettingsScreen)
-			OptTable.args[name] = SettingsScreen
-		end
+		functionAddToOptions(name, settings)
 	end
 
 	SUI.Options:AddOptions(OptTable, 'Skins')
@@ -524,9 +590,6 @@ end
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', {profile = DBDefaults})
 	DB = module.Database.profile
-	if SUI:IsModuleDisabled('Skins') then
-		return
-	end
 
 	for name, Data in pairs(module.Registry) do
 		if Data.OnInitalize and DB.components[name].enabled then
@@ -537,9 +600,6 @@ end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled('Skins') then
-		return
-	end
 
 	for name, Data in pairs(module.Registry) do
 		if Data.OnEnable and DB.components[name].enabled then

@@ -851,6 +851,9 @@ function MoveIt:Options()
 		name = L['Movers'],
 		type = 'group',
 		order = 800,
+		disabled = function()
+			return SUI:IsModuleDisabled(MoveIt)
+		end,
 		args = {
 			MoveIt = {
 				name = L['Toggle movers'],
