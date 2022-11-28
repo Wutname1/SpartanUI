@@ -13,11 +13,18 @@ function SUI:GetModuleName(ModuleTable)
 	return name
 end
 
----@param moduleName AceAddon-3.0|string
+---@param moduleName AceAddon|string
 ---@return boolean
 function SUI:IsModuleEnabled(moduleName)
 	if type(moduleName) == 'table' then
+		if not string.match(moduleName.name, 'Module_') then
+			return true
+		end
 		moduleName = SUI:GetModuleName(moduleName)
+	end
+	local moduleObj = SUI:GetModule('Module_' .. moduleName)
+	if moduleObj and moduleObj.override then
+		return false
 	end
 
 	if SUI.DB.DisabledModules[moduleName] then
@@ -26,21 +33,14 @@ function SUI:IsModuleEnabled(moduleName)
 	return true
 end
 
----@param moduleName AceAddon-3.0|string
+---@param moduleName AceAddon|string
 ---@return boolean
 function SUI:IsModuleDisabled(moduleName)
-	if type(moduleName) == 'table' then
-		moduleName = SUI:GetModuleName(moduleName)
-	end
-
-	if SUI.DB.DisabledModules[moduleName] then
-		return true
-	end
-	return false
+	return not SUI:IsModuleEnabled(moduleName)
 end
 
 -- These override the default Ace3 calls so we can track the status
----@param input AceAddon-3.0|string
+---@param input AceAddon|string
 function SUI:DisableModule(input)
 	local moduleToDisable
 	if type(input) == 'table' then
@@ -53,7 +53,7 @@ function SUI:DisableModule(input)
 	return moduleToDisable:Disable()
 end
 
----@param input AceAddon-3.0|string
+---@param input AceAddon|string
 function SUI:EnableModule(input)
 	local moduleToDisable
 	if type(input) == 'table' then
@@ -85,7 +85,7 @@ local function CreateSetupPage()
 
 			local itemsMatrix = {}
 
-			-- List Components
+			-- List Modules
 			for _, submodule in pairs(SUI.orderedModules) do
 				if (string.match(submodule.name, 'Module_')) and not submodule.HideModule then
 					local RealName = SUI:GetModuleName(submodule)
