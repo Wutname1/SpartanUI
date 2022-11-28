@@ -331,18 +331,20 @@ function module.MERCHANT_CLOSED()
 	IsMerchantOpen = false
 end
 
+local QUESTDETAILHistory = {}
 function module.QUEST_DETAIL()
 	if (DB.AcceptGeneralQuests) then
 		if DB.ChatText then
 			local title = GetTitleText()
 			local objText = GetObjectiveText()
-			if title and title ~= '' then
+			if title and title ~= '' and not QUESTDETAILHistory[title] then
+				QUESTDETAILHistory[title] = objText
 				SUI:Print(title)
-			end
-			if objText and objText ~= '' then
-				SUI:Print(L['Quest Objectives'])
-				SUI:Print(objText)
-				debug('    ' .. objText)
+				if objText and objText ~= '' then
+					SUI:Print(L['Quest Objectives'])
+					print(objText)
+					debug('    ' .. objText)
+				end
 			end
 		end
 		if (not IsAltKeyDown()) then
@@ -496,46 +498,21 @@ end
 ---@param ... GossipQuestUIInfo[]
 function module:VarArgForAvailableQuests(...)
 	debug('VarArgForAvailableQuests')
-	if SUI.IsRetail then
-		debug(#...)
-		local INDEX_CONST = 6 -- was '5' in Cataclysm
-		for i, quest in pairs(...) do
-			local trivialORAllowed = (not quest.isTrivial) or DB.trivial
-			local isRepeatableORAllowed = (not quest.repeatable) or DB.AcceptRepeatable
+	debug(#...)
+	local INDEX_CONST = 6 -- was '5' in Cataclysm
+	for i, quest in pairs(...) do
+		local trivialORAllowed = (not quest.isTrivial) or DB.trivial
+		local isRepeatableORAllowed = (not quest.repeatable) or DB.AcceptRepeatable
 
-			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
-				local questInfo = Lquests[quest.title]
-				if questInfo and questInfo.amount then
-					if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
-						C_GossipInfo.SelectAvailableQuest(math.floor(i / INDEX_CONST) + 1)
-					end
-				else
-					C_GossipInfo.SelectAvailableQuest(math.floor(i / INDEX_CONST) + 1)
+		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
+		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
+			local questInfo = Lquests[quest.title]
+			if questInfo and questInfo.amount then
+				if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
+					C_GossipInfo.SelectAvailableQuest(quest.questID)
 				end
-			end
-		end
-	else
-		local INDEX_CONST = 6 -- was '5' in Cataclysm
-		for i = 1, select('#', ...), INDEX_CONST do
-			---@diagnostic disable-next-line: redundant-parameter
-			local name = select(i * 1, GetGossipAvailableQuests(i))
-			local isTrivial = select(i + 2, ...)
-			local isDaily = select(i + 3, ...)
-			local isRepeatable = select(i + 4, ...)
-			local trivialORAllowed = (not isTrivial) or DB.trivial
-			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or DB.AcceptRepeatable
-
-			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
-				local questInfo = Lquests[name]
-				if questInfo and questInfo.amount then
-					if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then
-						SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
-					end
-				else
-					SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
-				end
+			else
+				C_GossipInfo.SelectAvailableQuest(quest.questID)
 			end
 		end
 	end
