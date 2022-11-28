@@ -213,7 +213,7 @@ end
 local function Options()
 	---@type AceConfigOptionsTable
 	local OptTable = {
-		name = 'ImprovedLFG',
+		name = module.DisplayName,
 		type = 'group',
 		disabled = function()
 			return SUI:IsModuleDisabled(module)
