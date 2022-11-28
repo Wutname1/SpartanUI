@@ -100,21 +100,19 @@ local Settings = {
 			enabled = true,
 			onlyShowPlayer = true,
 			size = 15,
-			initialAnchor = 'BOTTOMLEFT',
-			growthx = 'LEFT',
 			position = {
-				anchor = 'BOTTOMLEFT',
-				x = -15,
-				y = 47
+				relativePoint = 'BOTTOMRIGHT',
+				relativeTo = 'BOTTOMLEFT',
+				x = -2
 			}
 		},
 		Debuffs = {
 			enabled = true,
 			size = 15,
-			initialAnchor = 'BOTTOMRIGHT',
 			growthx = 'RIGHT',
 			position = {
-				anchor = 'BOTTOMRIGHT',
+				relativePoint = 'BOTTOMLEFT',
+				relativeTo = 'BOTTOMRIGHT',
 				x = 15,
 				y = 47
 			}

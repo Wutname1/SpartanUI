@@ -40,7 +40,7 @@ local function Build(frame, DB)
 
 		bar.spark:SetTexture(UF:FindStatusBarTexture(DB.texture))
 		bar.spark:SetVertexColor(1, 1, 1, 0.4)
-		bar.spark:SetSize(2, DB.height)
+		bar.spark:SetSize(2, DB.size)
 
 		bar.bg = bar:CreateTexture(nil, 'BORDER')
 		bar.bg:SetAllPoints(bar)
@@ -70,8 +70,7 @@ local function Build(frame, DB)
 		modRate,
 		effect1,
 		effect2,
-  effect3)
-  
+		effect3)
 		local data = {}
 		if (source == 'player' or source == 'vehicle' or isBossDebuff) and duration ~= 0 and duration <= 900 then
 			return true
@@ -84,27 +83,29 @@ local function Build(frame, DB)
 end
 
 ---@param frame table
-local function Update(frame)
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.AuraBars
 	if not frame.AuraBars then
 		return
 	end
+	local DB = settings or element.DB
 
-	local AuraBars = frame.AuraBars
-	local DB = frame.AuraBars.DB
-	if DB.enabled then
-		AuraBars.anchoredBars = DB.anchoredBars or 0
-		AuraBars.width = (DB.width or frame:GetWidth()) - DB.height
-		AuraBars.height = DB.height or 12
-		AuraBars.sparkEnabled = DB.sparkEnabled or true
-		AuraBars.spacing = DB.spacing or 2
-		AuraBars.initialAnchor = DB.initialAnchor or 'BOTTOMLEFT'
-		AuraBars.growth = DB.growth or 'UP'
-		AuraBars.maxBars = DB.maxBars or 32
-		AuraBars.barSpacing = DB.barSpacing or 2
+	if (DB.enabled) then
+		element:Show()
 	else
-		frame:DisableElement('AuraBars')
-		AuraBars:Hide()
+		element:Hide()
 	end
+
+	element.anchoredBars = DB.anchoredBars or 0
+	element.width = (DB.width or frame:GetWidth()) - DB.size
+	element.size = DB.size or 14
+	element.sparkEnabled = DB.sparkEnabled or true
+	element.spacing = DB.spacing or 2
+	element.initialAnchor = DB.initialAnchor or 'BOTTOMLEFT'
+	element.growth = DB.growth or 'UP'
+	element.maxBars = DB.maxBars or 32
+	element.barSpacing = DB.barSpacing or 2
 end
 
 ---@param unitName string
@@ -131,7 +132,7 @@ end
 
 ---@type SUI.UF.Elements.Settings
 local Settings = {
-	height = 14,
+	size = 14,
 	width = false,
 	sparkEnabled = true,
 	spacing = 2,
@@ -146,8 +147,8 @@ local Settings = {
 	scaleTime = false,
 	icon = true,
 	position = {
-		anchor = 'BOTTOM',
-		relativePoint = 'TOP',
+		anchor = 'BOTTOMLEFT',
+		relativePoint = 'TOPLEFT',
 		x = 7,
 		y = 20
 	},

@@ -1,17 +1,6 @@
 local _G, SUI = _G, SUI
 local UF = SUI.UF ---@class SUI.UF
 ----------------------------------------------------------------------------------------------------
----comment
----@param frameName UnitFrameName
----@return integer width
----@return integer height
-function UF:GroupSize(frameName)
-	local CurFrameOpt = UF.CurrentSettings[frameName]
-	local FrameHeight = UF:CalculateHeight(frameName)
-	local height = (CurFrameOpt.unitsPerColumn or 10) * (FrameHeight + (CurFrameOpt.yOffset or 0))
-	local width = (CurFrameOpt.maxColumns or 4) * (CurFrameOpt.width + (CurFrameOpt.columnSpacing or 1))
-	return width, height
-end
 
 function UF:CalculateHeight(frameName)
 	local elements = UF.CurrentSettings[frameName].elements
@@ -323,9 +312,6 @@ function UF:SpawnFrames()
 		if not UF.CurrentSettings[frameName].enabled then
 			UF.Unit[frameName]:Disable()
 		end
-	end
-
-	for groupName, _ in pairs(UF.Unit:GetFrameList(true)) do
 	end
 
 	local function GroupWatcher(event)
