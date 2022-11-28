@@ -128,6 +128,12 @@ local function Options(unitName, OptionSet)
 		inline = true,
 		args = {}
 	}
+	OptionSet.args.Filters.args.NOTFINISHED = {
+		name = SUI.L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
+		type = 'description',
+		fontSize = 'medium',
+		order = .1
+	}
 end
 
 ---@type SUI.UF.Elements.Settings

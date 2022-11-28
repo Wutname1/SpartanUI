@@ -153,7 +153,7 @@ local function CreateOptionSet(frameName)
 				type = 'execute',
 				order = 1,
 				width = 'full',
-				disabled = (frameName == 'raid' or frameName == 'party' or frameName == 'boss' or frameName == 'arena'),
+				disabled = (frameName == 'raid' or frameName == 'boss' or frameName == 'arena'),
 				func = function()
 					UF.Unit:ToggleForceShow(frameName)
 				end
@@ -373,12 +373,6 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 		get = get,
 		set = set,
 		args = {
-			NOTFINISHED = {
-				name = L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
-				type = 'description',
-				fontSize = 'medium',
-				order = .1
-			},
 			duration = {
 				name = L['Duration'],
 				type = 'group',
