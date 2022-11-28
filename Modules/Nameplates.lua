@@ -568,6 +568,7 @@ function module:OnInitialize()
 					enabled = true,
 					height = 3,
 					offset = 1,
+					texture = 'SpartanUI Default',
 					bg = {
 						enabled = true,
 						color = {1, 1, 1, .2}
@@ -596,6 +597,7 @@ function module:OnInitialize()
 					FlashOnInterruptible = true,
 					latency = false,
 					InterruptSpeed = .1,
+					texture = 'SpartanUI Default',
 					bg = {
 						enabled = true,
 						color = {1, 1, 1, .2}
