@@ -96,7 +96,9 @@ local DBDefaults = {
 		'I am ready to choose my fate in the Shadowlands.',
 		'What adventures await me if i join your covenant?',
 		'Show me how I can help the Shadowlands.',
-		'What are you offering here?'
+		'What are you offering here?',
+		--DF
+		"Tell me of the dracthyr's origins."
 	},
 	WildcardBlackList = {
 		'wartime donation',
