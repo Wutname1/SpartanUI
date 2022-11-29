@@ -655,16 +655,17 @@ function module.GOSSIP_SHOW()
 		debug('------')
 		debug(gossip.name)
 		debug(gossip.rewards)
-		debug(gossip.spellID)
 		debug(gossip.status)
 		debug(gossip.flags)
-		debug('------')
 		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
 		local isBlacklisted = module:blacklisted(gossip.name)
-		if (gossip.status == 0) and (not isBlacklisted or isWhitelisted) and SUI.IsRetail then
+		local isQuest = string.match(gossip.name, 'Quest') and true or false
+		debug(isQuest)
+		debug('------')
+		if (gossip.status == 0) and (not isBlacklisted or (isWhitelisted or isQuest)) then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
-			if (DB.AutoGossipSafeMode) and not isWhitelisted then
-				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
+			if (DB.AutoGossipSafeMode) and (not isWhitelisted and not isQuest) then
+				debug(string.format('Safe mode active - not selecting gossip option "%s"', gossip.name))
 				return
 			end
 			TempBlackList[gossip.name] = true
@@ -880,6 +881,7 @@ function module:BuildOptions()
 					},
 					AutoGossipSafeMode = {
 						name = L['Auto gossip safe mode'],
+						desc = 'If the option is not in the whitelist or does not have the (Quest) tag, it will not be automatically selected.',
 						type = 'toggle',
 						order = 16
 					}
