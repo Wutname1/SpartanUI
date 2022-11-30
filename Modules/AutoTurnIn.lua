@@ -96,9 +96,8 @@ local DBDefaults = {
 		'I am ready to choose my fate in the Shadowlands.',
 		'What adventures await me if i join your covenant?',
 		'Show me how I can help the Shadowlands.',
-		'What are you offering here?',
+		'What are you offering here?'
 		--DF
-		"Tell me of the dracthyr's origins."
 	},
 	WildcardBlackList = {
 		'wartime donation',
@@ -146,7 +145,6 @@ local DBDefaults = {
 		'We need scholars for an expedition to the Dragon Isles. Will you join us?',
 		'<Ask Khadgar what happened.>',
 		'Scalecommander Cindrethresh would like you to meet her at the zeppelin tower.',
-		"Tell me of the dracthyr's origins.",
 		"Tell me of the Neltharion's downfall.",
 		'Tell me of the Dawn of the Aspects.'
 	}
@@ -593,7 +591,7 @@ end
 function module:blacklisted(lookupId)
 	local name = tostring(lookupId)
 	if SUI:IsInTable(DB.GossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) then
-		debug(name .. ' - IS BLACKLISTED')
+		debug(name .. '---IS BLACKLISTED')
 		return true
 	end
 
@@ -659,23 +657,25 @@ function module.GOSSIP_SHOW()
 		debug(gossip.flags)
 		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
 		local isBlacklisted = module:blacklisted(gossip.name)
+		debug(isBlacklisted)
 		local isQuest = string.match(gossip.name, 'Quest') and true or false
 		debug(isQuest)
 		debug('------')
-		if (gossip.status == 0) and (not isBlacklisted or (isWhitelisted or isQuest)) then
+		debug((not isBlacklisted or (isWhitelisted or isQuest)))
+		debug('------')
+		if (gossip.status == 0) and (not isBlacklisted and (isWhitelisted or isQuest)) then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if (DB.AutoGossipSafeMode) and (not isWhitelisted and not isQuest) then
 				debug(string.format('Safe mode active - not selecting gossip option "%s"', gossip.name))
 				return
 			end
 			TempBlackList[gossip.name] = true
+			debug(gossip.name .. '---BLACKLISTED')
 			SelectGossipOption(gossip.gossipOptionID)
 
 			if DB.ChatText then
 				SUI:Print('Selecting: ' .. gossip.name)
 			end
-			TempBlackList[gossip.name] = true
-			debug(gossip.name .. '---BLACKLISTED')
 			return
 		end
 	end
