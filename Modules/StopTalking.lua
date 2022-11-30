@@ -95,6 +95,11 @@ local function Options()
 end
 
 function module:TALKINGHEAD_REQUESTED()
+	if SUI:IsModuleDisabled(module) then
+		TalkingHeadFrame:PlayCurrent()
+		return
+	end
+
 	local _, _, vo, _, _, _, name, text = C_TalkingHead.GetCurrentLineInfo()
 	if not vo then
 		return
@@ -140,9 +145,4 @@ function module:OnEnable()
 
 	module:RegisterEvent('TALKINGHEAD_REQUESTED')
 	TalkingHeadFrame:UnregisterEvent('TALKINGHEAD_REQUESTED')
-end
-
-function module:OnDisable()
-	module:UnregisterEvent('TALKINGHEAD_REQUESTED')
-	TalkingHeadFrame:RegisterEvent('TALKINGHEAD_REQUESTED')
 end

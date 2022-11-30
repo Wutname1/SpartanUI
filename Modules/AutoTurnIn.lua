@@ -146,7 +146,8 @@ local DBDefaults = {
 		'<Ask Khadgar what happened.>',
 		'Scalecommander Cindrethresh would like you to meet her at the zeppelin tower.',
 		"Tell me of the Neltharion's downfall.",
-		'Tell me of the Dawn of the Aspects.'
+		'Tell me of the Dawn of the Aspects.',
+		"I'm here to test your combat skills."
 	}
 }
 
@@ -271,6 +272,8 @@ end
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
+	debug('TurnInQuest')
+	debug(rewardIndex)
 	if (DB.ChatText) then
 		SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText())
 	end
@@ -363,13 +366,9 @@ function module.QUEST_COMPLETE()
 	local GreedLink, UpgradeLink, UpgradeAmmount = nil, nil, 0
 	local QuestRewardsWeapon = false
 	for i = 1, GetNumQuestChoices() do
-		if SUI.IsClassic then
-			SUI:Print(L['Canceling turn in, quest rewards items.'])
-			return
-		end
-
 		-- Load the items information
 		local link = GetQuestItemLink('choice', i)
+		debug(link)
 		if (link == nil) then
 			return
 		end
@@ -425,6 +424,7 @@ function module.QUEST_COMPLETE()
 		end
 	end
 
+	debug(GetNumQuestChoices())
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then

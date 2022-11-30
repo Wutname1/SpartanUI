@@ -92,9 +92,9 @@ function Font:UpdateDefaultSize(element, size, Module)
 end
 
 ---@param element FontInstance
----@param size? integer --1
----@param Module? string --Primary
----@param UpdateOnly? boolean --false
+---@param size? integer
+---@param Module? string
+---@param UpdateOnly? boolean
 function Font:Format(element, size, Module, UpdateOnly)
 	--If no module defined fall back to main settings
 	if not element then
