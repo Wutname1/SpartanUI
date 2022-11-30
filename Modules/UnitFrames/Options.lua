@@ -552,9 +552,8 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 	}
 end
 
----@param frameName UnitFrameName
 ---@param ElementOptSet AceConfigOptionsTable
-function Options:IndicatorAddDisplay(frameName, ElementOptSet)
+function Options:IndicatorAddDisplay(ElementOptSet)
 	ElementOptSet.args.display = {
 		name = L['Display'],
 		type = 'group',
@@ -589,16 +588,15 @@ function Options:IndicatorAddDisplay(frameName, ElementOptSet)
 	}
 end
 
----@param frameName UnitFrameName
+---@param anchors table
 ---@param ElementOptSet AceConfigOptionsTable
 ---@param get function
 ---@param set function
-function Options:AddPositioning(frameName, ElementOptSet, get, set)
-	local builtFrame = UF.Unit:Get(frameName)
+function Options:AddPositioning(anchors, ElementOptSet, get, set)
 	local AnchorablePoints = {
 		['Frame'] = 'Unit Frame'
 	}
-	SUI:CopyData(AnchorablePoints, builtFrame.elementList)
+	SUI:CopyData(AnchorablePoints, anchors)
 
 	ElementOptSet.args.position = {
 		name = L['Position'],
@@ -1065,14 +1063,14 @@ function Options:Initialize()
 			elseif elementConfig.type == 'StatusBar' then
 				Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 			elseif elementConfig.type == 'Indicator' then
-				Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:IndicatorAddDisplay(ElementOptSet)
+				Options:AddPositioning(builtFrame.elementList, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Text' then
-				-- Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				-- Options:IndicatorAddDisplay(ElementOptSet)
+				Options:AddPositioning(builtFrame.elementList, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Auras' then
-				Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:IndicatorAddDisplay(ElementOptSet)
+				Options:AddPositioning(builtFrame.elementList, ElementOptSet, PositionGet, PositionSet)
 				Options:AddAuraLayout(frameName, ElementOptSet)
 
 				-- Basic Filtering Options
