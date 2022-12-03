@@ -102,7 +102,7 @@ local Settings = {
 			size = 15,
 			position = {
 				relativePoint = 'BOTTOMRIGHT',
-				relativeTo = 'BOTTOMLEFT',
+				anchor = 'BOTTOMLEFT',
 				x = -2
 			}
 		},
@@ -112,7 +112,7 @@ local Settings = {
 			growthx = 'RIGHT',
 			position = {
 				relativePoint = 'BOTTOMLEFT',
-				relativeTo = 'BOTTOMRIGHT',
+				anchor = 'BOTTOMRIGHT',
 				x = 15,
 				y = 47
 			}
