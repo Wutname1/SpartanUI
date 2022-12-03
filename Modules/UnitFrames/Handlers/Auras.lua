@@ -14,6 +14,12 @@ function Auras:Filter(element, unit, data, rules)
 		end
 	end
 	local ShouldDisplay = false
+	element.displayReasons[data.spellId] = {}
+
+	local function AddDisplayReason(reason)
+		element.displayReasons[data.spellId][reason] = true
+		ShouldDisplay = true
+	end
 
 	debug('--')
 	debug(data.spellId)
@@ -26,7 +32,7 @@ function Auras:Filter(element, unit, data, rules)
 				if SUI:IsInTable(v, data[k]) then
 					if v[data[k]] then
 						debug('Force show per rules')
-						return true
+						AddDisplayReason(k)
 					else
 						debug('Force hide per rules')
 						return false
@@ -35,22 +41,29 @@ function Auras:Filter(element, unit, data, rules)
 			elseif type(v) == 'boolean' then
 				if v and v == data[k] then
 					debug(k .. ' Not equal')
-					ShouldDisplay = true
+					AddDisplayReason(k)
 				end
 			end
 		elseif k == 'whitelist' or k == 'blacklist' then
 			if v[data.spellId] then
-				return (k == 'whitelist' and true) or false
+				if k == 'whitelist' then
+					AddDisplayReason(k)
+					return true
+				else
+					return false
+				end
 			end
 		else
 			if k == 'isMount' and v then
 				if UF.MountIds[data.spellId] then
 					debug('Is mount')
+					AddDisplayReason(k)
 					return true
 				end
 			elseif k == 'showPlayers' then
 				if v == true and data.sourceUnit == 'player' then
 					debug('Is casted by the player')
+					AddDisplayReason(k)
 					ShouldDisplay = true
 				end
 			end
@@ -64,9 +77,9 @@ function Auras:Filter(element, unit, data, rules)
 		debug('Is More than ' .. rules.duration.maxTime .. ' = ' .. (moreThanMax and 'true' or 'false'))
 		debug('Is Less than ' .. rules.duration.minTime .. ' = ' .. (lessThanMin and 'true' or 'false'))
 		if ShouldDisplay and (not lessThanMin and not moreThanMax) and rules.duration.mode == 'include' then
-			ShouldDisplay = true
+			AddDisplayReason('duration')
 		elseif ShouldDisplay and (lessThanMin or moreThanMax) and rules.duration.mode == 'exclude' then
-			ShouldDisplay = true
+			AddDisplayReason('duration')
 		else
 			ShouldDisplay = false
 		end
@@ -220,10 +233,19 @@ function Auras:OnClick(button, elementName)
 		return
 	end
 
-	if button.data and keyDown then
+	local data = button.data ---@type UnitAuraInfo
+
+	if data and keyDown then
 		if keyDown == 'CTRL' then
-			for k, v in pairs(button.data) do
+			for k, v in pairs(data) do
 				print(k .. ' = ' .. tostring(v))
+			end
+		elseif keyDown == 'ALT' then
+			if button:GetParent().displayReasons[data.spellId] then
+				print('Reasons for display:')
+				for k, _ in pairs(button:GetParent().displayReasons[data.spellId]) do
+					print(k)
+				end
 			end
 		elseif keyDown == 'SHIFT' then
 			CreateAddToFilterWindow(button, elementName)

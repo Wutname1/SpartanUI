@@ -47,6 +47,7 @@ local function Build(frame, DB)
 		updateSettings(element)
 	end
 
+	element.displayReasons = {}
 	element.FilterAura = FilterAura
 	element.PreUpdate = PreUpdate
 	element.SizeChange = SizeChange
