@@ -65,6 +65,9 @@ local Settings = {
 		Power = {
 			height = 5
 		},
+		Portrait = {
+			enabled = false
+		},
 		Castbar = {
 			enabled = true,
 			height = 15

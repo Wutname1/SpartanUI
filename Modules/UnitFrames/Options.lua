@@ -702,8 +702,10 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update the DB
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].text = val
 						--Update the screen
-						UF.Unit[frameName]:Tag(UF.Unit[frameName][element].TextElements[count], val)
-						UF.Unit[frameName]:UpdateTags()
+						if UF.Unit[frameName][element] then
+							UF.Unit[frameName]:Tag(UF.Unit[frameName][element].TextElements[count], val)
+							UF.Unit[frameName]:UpdateTags()
+						end
 					end
 				},
 				size = {
@@ -735,9 +737,6 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update memory
 						UF.CurrentSettings[frameName].elements[element].text[count].position[info[#info]] = val
 						--Update the DB
-						if not UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position then
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position = {}
-						end
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position[info[#info]] = val
 						--Update the screen
 						local position = UF.CurrentSettings[frameName].elements[element].text[count].position
