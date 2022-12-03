@@ -260,7 +260,7 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', {profile = defaults})
 	module.DB = module.Database.profile ---@type SUI.Chat.DB
 
-	if SUI:IsModuleDisabled('Chatbox') then
+	if SUI:IsModuleDisabled(module) then
 		return
 	end
 	local ChatAddons = {'Chatter', 'BasicChatMods', 'Prat-3.0'}
@@ -322,7 +322,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI:IsModuleDisabled('Chatbox') then
+	if SUI:IsModuleDisabled(module) then
 		return
 	end
 
@@ -379,7 +379,7 @@ function module:EditBoxPosition()
 end
 
 function module:SetupChatboxes()
-	if SUI:IsModuleDisabled('Chatbox') then
+	if SUI:IsModuleDisabled(module) then
 		return
 	end
 	-- DEFAULT_CHATFRAME_ALPHA = 0.7
@@ -800,7 +800,8 @@ function ItemRefTooltip:SetHyperlink(data, ...)
 end
 
 function module:BuildOptions()
-	SUI.opt.args['Modules'].args['Chatbox'] = {
+	--@type AceConfigOptionsTable
+	local optTable = {
 		type = 'group',
 		name = L['Chatbox'],
 		childGroups = 'tab',
@@ -854,6 +855,7 @@ function module:BuildOptions()
 			}
 		}
 	}
+	SUI.Options:AddOptions(optTable, 'Chatbox')
 end
 
 function module:SetEditBoxMessage(msg)
