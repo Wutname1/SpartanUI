@@ -106,8 +106,7 @@ local Settings = {
 			maxTime = 180,
 			minTime = 1
 		},
-		isBossAura = true,
-		isFromPlayerOrPlayerPet = true
+		isBossAura = true
 	},
 	config = {
 		type = 'Auras'
