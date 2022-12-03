@@ -226,6 +226,7 @@ local function SetupPage()
 end
 
 local function BuildOptions()
+	--@type AceConfigOptionsTable
 	local optTable = {
 		type = 'group',
 		name = L['Auto sell'],

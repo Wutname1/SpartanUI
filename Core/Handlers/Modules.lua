@@ -46,11 +46,13 @@ function SUI:DisableModule(input)
 	if type(input) == 'table' then
 		moduleToDisable = input
 	else
-		moduleToDisable = SUI:GetModule(input)
+		moduleToDisable = SUI:GetModule(input, true)
 	end
 
-	SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = true
-	return moduleToDisable:Disable()
+	if moduleToDisable then
+		SUI.DB.DisabledModules[SUI:GetModuleName(moduleToDisable)] = true
+		return moduleToDisable:Disable()
+	end
 end
 
 ---@param input AceAddon|string
