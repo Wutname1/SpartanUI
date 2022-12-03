@@ -49,9 +49,29 @@ local function Update(frame, settings)
 		frame:DisableElement('PowerPrediction')
 	end
 
-	frame.Power:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	frame.Power.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	frame.Power.bg:SetVertexColor(unpack(DB.bg.color))
+	-- Basic Bar updates
+	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, .2}))
+
+	element.TextElements = {}
+	for i, TextElement in pairs(element.TextElements) do
+		local key = DB.text[i]
+		TextElement:SetJustifyH(key.SetJustifyH)
+		TextElement:SetJustifyV(key.SetJustifyV)
+		TextElement:ClearAllPoints()
+		TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
+		frame:Tag(TextElement, key.text)
+
+		if not key.enabled then
+			element.TextElements[i]:Hide()
+		end
+	end
+
+	element:ClearAllPoints()
+	element:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
+	element:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
+	element:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
 end
 
 ---@param frameName string

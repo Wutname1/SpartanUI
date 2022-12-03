@@ -117,20 +117,34 @@ local function Update(frame, settings)
 	local DB = settings or element.DB
 
 	--Update Health items
-	frame.Health.colorDisconnected = DB.colorDisconnected
-	frame.Health.colorTapping = DB.colorTapping
-	frame.Health.colorReaction = DB.colorReaction
-	frame.Health.colorSmooth = DB.colorSmooth
-	frame.Health.colorClass = DB.colorClass
+	element.colorDisconnected = DB.colorDisconnected
+	element.colorTapping = DB.colorTapping
+	element.colorReaction = DB.colorReaction
+	element.colorSmooth = DB.colorSmooth
+	element.colorClass = DB.colorClass
 
-	frame.Health:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	frame.Health.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	frame.Health.bg:SetVertexColor(unpack(DB.bg.color))
+	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, .2}))
 
-	frame.Health:ClearAllPoints()
-	frame.Health:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
-	frame.Health:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
-	frame.Health:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
+	element.TextElements = {}
+	for i, TextElement in pairs(element.TextElements) do
+		local key = DB.text[i]
+		TextElement:SetJustifyH(key.SetJustifyH)
+		TextElement:SetJustifyV(key.SetJustifyV)
+		TextElement:ClearAllPoints()
+		TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
+		frame:Tag(TextElement, key.text)
+
+		if not key.enabled then
+			element.TextElements[i]:Hide()
+		end
+	end
+
+	element:ClearAllPoints()
+	element:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
+	element:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
+	element:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
 end
 
 ---@param frameName string
