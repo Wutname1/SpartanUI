@@ -360,7 +360,8 @@
     "EquipmentManager_UnpackLocation",
     "EquipmentManager_GetItemInfoByLocation",
     "INVSLOT_FIRST_EQUIPPED",
-    "INVSLOT_LAST_EQUIPPED"
+    "INVSLOT_LAST_EQUIPPED",
+    "UiMapPoint"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
