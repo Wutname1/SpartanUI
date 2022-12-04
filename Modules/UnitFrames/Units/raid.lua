@@ -161,7 +161,12 @@ local Settings = {
 			}
 		},
 		Health = {
-			height = 30
+			height = 30,
+			text = {
+				['1'] = {
+					text = '[health:missing-formatted] [perhp:conditional]'
+				}
+			}
 		},
 		Power = {
 			height = 3,
