@@ -97,8 +97,7 @@ local Settings = {
 	rows = 2,
 	position = {
 		anchor = 'TOPRIGHT',
-		relativePoint = 'BOTTOMRIGHT',
-		y = -10
+		relativePoint = 'BOTTOMRIGHT'
 	},
 	rules = {
 		duration = {

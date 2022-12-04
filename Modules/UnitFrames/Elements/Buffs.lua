@@ -95,8 +95,7 @@ local Settings = {
 	rows = 2,
 	position = {
 		anchor = 'TOPLEFT',
-		relativePoint = 'BOTTOMLEFT',
-		y = -10
+		relativePoint = 'BOTTOMLEFT'
 	},
 	config = {
 		type = 'Auras'

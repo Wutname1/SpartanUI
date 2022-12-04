@@ -6,5 +6,6 @@ local a = {}
 local SUI_Module = {
 	description = '',
 	DisplayName = '',
+	override = false,
 	Core = false
 }
