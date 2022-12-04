@@ -18,6 +18,7 @@
 	<Script file="Chatbox.lua" />
 	<Script file="AFKEffects.lua" />
 	<Script file="StopTalking.lua" />
+	<Script file="MiniTom.lua" />
 	<Script file="LibsToolkit.lua" />
 
 	<!-- Load BarHandlers -->
