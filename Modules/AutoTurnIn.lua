@@ -700,6 +700,9 @@ function module:OnEnable()
 	module:BuildOptions()
 	module:FirstLaunch()
 	local lastEvent = ''
+	if SUI:IsModuleDisabled(module) then
+		return
+	end
 
 	local function OnEvent(_, event)
 		if SUI:IsModuleDisabled(module) then
