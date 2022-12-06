@@ -76,7 +76,7 @@ function module:OnInitialize()
 	end
 
 	local minimapSettings = {
-		size = {160, 160},
+		size = {180, 180},
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap'
 		},
