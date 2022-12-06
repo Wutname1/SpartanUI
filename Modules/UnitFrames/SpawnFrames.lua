@@ -57,7 +57,7 @@ local function CreateUnitFrame(self, unit)
 		self.DB = UF.CurrentSettings[self.unitOnCreate]
 		UpdateSize()
 
-		if not self.DB.enabled then
+		if not self.DB or not self.DB.enabled then
 			self:Disable()
 			return
 		end
