@@ -68,7 +68,74 @@ local function Options()
 		set = function(info, value)
 			module.DB[info[#info]] = value
 		end,
-		args = {}
+		args = {
+			enabled = {
+				name = 'Enabled',
+				type = 'toggle',
+				order = 1,
+				width = 'full',
+				get = function()
+					return not SUI:IsModuleDisabled(module)
+				end,
+				set = function(value)
+					SUI:DisableModule(not value)
+				end
+			},
+			desc1 = {
+				name = 'This module enables a simple "Mini" version of the larger TomTom addon. It allows you to set waypoints using the /way command.',
+				type = 'description',
+				order = 2
+			},
+			desc2 = {
+				name = 'This module is not compatible with the full TomTom addon. If you have TomTom enabled, this module will be automatically disabled.',
+				type = 'description',
+				order = 3
+			},
+			desc3 = {
+				name = 'Example waypoint commands:',
+				order = 4,
+				type = 'input',
+				width = 'full',
+				get = function()
+					return '/way 58 68'
+				end,
+				set = function()
+				end
+			},
+			desc4 = {
+				name = '',
+				type = 'input',
+				order = 5,
+				width = 'full',
+				get = function()
+					return '/way Waking Shore 58 68'
+				end,
+				set = function()
+				end
+			},
+			desc5 = {
+				name = '',
+				type = 'input',
+				order = 6,
+				width = 'full',
+				get = function()
+					return '/way Waking Shore 58 68 Tail Fragment'
+				end,
+				set = function()
+				end
+			},
+			desc6 = {
+				name = '',
+				type = 'input',
+				order = 7,
+				width = 'full',
+				get = function()
+					return '/way #2022 58 68 Tail Fragment'
+				end,
+				set = function()
+				end
+			}
+		}
 	}
 
 	SUI.Options:AddOptions(OptTable, 'MiniTom', nil)
