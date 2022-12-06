@@ -113,7 +113,13 @@ function module:OnEnable()
 
 		if inputSections[1] and not tonumber(inputSections[1]) then
 			-- Find MapID
-			local mapID = module:GetMapID(zone)
+			local mapID
+			if string.match(inputSections[1], '#') then
+				mapID = tonumber(string.match(inputSections[1], '#(%d+)'))
+			else
+				mapID = module:GetMapID(zone)
+			end
+
 			if mapID then
 				module:SetPoint(mapID, x, y, desc)
 			else
