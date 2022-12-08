@@ -85,9 +85,6 @@ local SetBarColor = function(self, side)
 end
 
 local updateText = function(self)
-	if GetRealmName() == 'arctium.io' then
-		return
-	end
 	-- local FrameName = self:GetName()
 	-- Reset graphics to avoid issues
 	self.Fill:SetWidth(0.1)
@@ -150,9 +147,9 @@ local updateText = function(self)
 			elseif isMajorFaction then
 				local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
 
-				valFill, valMax = 0, majorFactionData.renownLevelThreshold
-				current = C_MajorFactions.HasMaximumRenown(factionID) and majorFactionData.renownLevelThreshold or majorFactionData.renownReputationEarned or 0
-				valPercent = (current / valMax) * 100
+				valMax = majorFactionData.renownLevelThreshold
+				valFill = C_MajorFactions.HasMaximumRenown(factionID) and majorFactionData.renownLevelThreshold or majorFactionData.renownReputationEarned or 0
+				valPercent = (valFill / valMax) * 100
 			end
 		end
 	elseif (module.DB[side].display == 'az') then
@@ -409,9 +406,6 @@ function module:factory()
 		statusbar:SetScript(
 			'OnEnter',
 			function()
-				if GetRealmName() == 'arctium.io' then
-					return
-				end
 				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then
 					showRepTooltip(statusbar)
 				end
@@ -429,9 +423,6 @@ function module:factory()
 		statusbar:SetScript(
 			'OnMouseDown',
 			function()
-				if GetRealmName() == 'arctium.io' then
-					return
-				end
 				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then
 					showRepTooltip(statusbar)
 				end
