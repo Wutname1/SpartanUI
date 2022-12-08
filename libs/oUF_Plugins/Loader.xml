@@ -5,7 +5,6 @@
 	<Script file='oUF_AuraWatch.lua' />
 	<Script file='oUF_ClassicAuraDurations.lua'/>
 	<Script file='oUF_Fader.lua'/>
-	<Script file='oUF_QuestMobIndicator.lua'/>
 	<Script file='oUF_PVPSpecIcons.lua'/>
 	<Script file='oUF_RaidDebuffs.lua' />
 	<Script file='oUF_Trinkets.lua'/>

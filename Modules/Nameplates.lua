@@ -33,7 +33,7 @@ local ElementList = {
 	'Castbar',
 	'RareElite',
 	'RaidTargetIndicator',
-	'QuestMobIndicator',
+	'QuestIndicator',
 	'PvPIndicator',
 	'ThreatIndicator'
 }
@@ -274,7 +274,7 @@ local NamePlateFactory = function(frame, unit)
 		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
 		UF.Elements:Build(frame, 'RaidTargetIndicator', elementsDB.RaidTargetIndicator)
 		UF.Elements:Build(frame, 'ClassIcon', elementsDB.ClassIcon)
-		UF.Elements:Build(frame, 'QuestMobIndicator', elementsDB.QuestMobIndicator)
+		BuildElement(frame, 'QuestIndicator')
 
 		UF.Elements:Build(frame, 'Health', elementsDB.Health)
 		UF.Elements:Build(frame, 'Power', elementsDB.Power)
@@ -673,11 +673,12 @@ function module:OnInitialize()
 						y = 0
 					}
 				},
-				QuestMobIndicator = {
+				QuestIndicator = {
 					enabled = true,
 					size = 16,
 					position = {
-						anchor = 'BOTTOMLEFT',
+						anchor = 'RIGHT',
+						relativePoint = 'LEFT',
 						x = 0,
 						y = 0
 					}

@@ -1,106 +1,106 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\FrameXML\UI.xsd">
-    <Button name='SUI_UNITTARGET' inherits='SecureUnitButtonTemplate' hidden='true' virtual='true'>
-        <Frames>
-            <Button name='$parentTarget' inherits='SecureUnitButtonTemplate'>
-                <Anchors>
-                    <Anchor point='TOPLEFT' relativePoint='TOPRIGHT' relativeTo='$parent'>
-                        <Offset>
-                            <AbsDimension x='7' y='0'/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Attributes>
-                    <Attribute name='unitsuffix' type='string' value='target'/>
-                    <Attribute name='useparent-unit' type='boolean' value='true'/>
-                    <Attribute name='type1' type='string' value='target'/>
-                    <Attribute name='initial-unitWatch' type='boolean' value='true'/>
-                </Attributes>
-            </Button>
-        </Frames>
-    </Button>
+	<Button name='SUI_UNITTARGET' inherits='SecureUnitButtonTemplate' hidden='true' virtual='true'>
+		<Frames>
+			<Button name='$parentTarget' inherits='SecureUnitButtonTemplate'>
+				<Anchors>
+					<Anchor point='TOPLEFT' relativePoint='TOPRIGHT' relativeTo='$parent'>
+						<Offset>
+							<AbsDimension x='7' y='0'/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Attributes>
+					<Attribute name='unitsuffix' type='string' value='target'/>
+					<Attribute name='useparent-unit' type='boolean' value='true'/>
+					<Attribute name='type1' type='string' value='target'/>
+					<Attribute name='initial-unitWatch' type='boolean' value='true'/>
+				</Attributes>
+			</Button>
+		</Frames>
+	</Button>
 
-    <Button name='SUI_UNITPET' inherits='SecureUnitButtonTemplate' hidden='true' virtual='true'>
-        <Frames>
-            <Button name='$parentPet' inherits='SecureUnitButtonTemplate'>
-                <Anchors>
-                    <Anchor point='BOTTOMRIGHT' relativePoint='BOTTOMLEFT' relativeTo='$parent'>
-                        <Offset>
-                            <AbsDimension x='0' y='1'/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Attributes>
-                    <Attribute name='unitsuffix' type='string' value='pet'/>
-                    <Attribute name='useparent-unit' type='boolean' value='true'/>
-                    <Attribute name='type1' type='string' value='target'/>
-                    <Attribute name='initial-unitWatch' type='boolean' value='true'/>
-                </Attributes>
-            </Button>
-        </Frames>
-    </Button>
+	<Button name='SUI_UNITPET' inherits='SecureUnitButtonTemplate' hidden='true' virtual='true'>
+		<Frames>
+			<Button name='$parentPet' inherits='SecureUnitButtonTemplate'>
+				<Anchors>
+					<Anchor point='BOTTOMRIGHT' relativePoint='BOTTOMLEFT' relativeTo='$parent'>
+						<Offset>
+							<AbsDimension x='0' y='1'/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Attributes>
+					<Attribute name='unitsuffix' type='string' value='pet'/>
+					<Attribute name='useparent-unit' type='boolean' value='true'/>
+					<Attribute name='type1' type='string' value='target'/>
+					<Attribute name='initial-unitWatch' type='boolean' value='true'/>
+				</Attributes>
+			</Button>
+		</Frames>
+	</Button>
 
-    <Script file="Framework.lua"/>
+	<Script file="Framework.lua"/>
 
-    <Script file="Handlers\Style.lua"/>
-    <Script file="Handlers\Auras.lua"/>
-    <Script file="Handlers\Elements.lua"/>
-    <Script file="Handlers\Units.lua"/>
+	<Script file="Handlers\Style.lua"/>
+	<Script file="Handlers\Auras.lua"/>
+	<Script file="Handlers\Elements.lua"/>
+	<Script file="Handlers\Units.lua"/>
 
-    <Script file="Elements\AdditionalPower.lua"/>
-    <Script file="Elements\AssistantIndicator.lua"/>
-    <Script file="Elements\AuraBars.lua"/>
-    <Script file="Elements\Buffs.lua"/>
-    <Script file="Elements\Castbar.lua"/>
-    <Script file="Elements\ClassIcon.lua"/>
-    <Script file="Elements\ClassPower.lua"/>
-    <Script file="Elements\CombatIndicator.lua"/>
-    <Script file="Elements\Debuffs.lua"/>
-    <Script file="Elements\DispelHighlight.lua"/>
-    <Script file="Elements\GroupRoleIndicator.lua"/>
-    <Script file="Elements\Health.lua"/>
-    <Script file="Elements\LeaderIndicator.lua"/>
-    <Script file="Elements\Name.lua"/>
-    <Script file="Elements\HappinessIndicator.lua"/>
-    <Script file="Elements\PhaseIndicator.lua"/>
-    <Script file="Elements\Portrait.lua"/>
-    <Script file="Elements\Power.lua"/>
-    <Script file="Elements\PvPIndicator.lua"/>
-    <Script file="Elements\QuestMobIndicator.lua"/>
-    <Script file="Elements\RaidRoleIndicator.lua"/>
-    <Script file="Elements\RaidTargetIndicator.lua"/>
-    <Script file="Elements\ResurrectIndicator.lua"/>
-    <Script file="Elements\Range.lua"/>
-    <Script file="Elements\RareElite.lua"/>
-    <Script file="Elements\ReadyCheckIndicator.lua"/>
-    <Script file="Elements\RestingIndicator.lua"/>
-    <Script file="Elements\Runes.lua"/>
-    <Script file="Elements\SpartanArt.lua"/>
-    <Script file="Elements\StatusText.lua"/>
-    <Script file="Elements\SUI_RaidGroup.lua"/>
-    <Script file="Elements\SummonIndicator.lua"/>
-    <Script file="Elements\TargetIndicator.lua"/>
-    <Script file="Elements\ThreatIndicator.lua"/>
-    <Script file="Elements\Totems.lua"/>
+	<Script file="Elements\AdditionalPower.lua"/>
+	<Script file="Elements\AssistantIndicator.lua"/>
+	<Script file="Elements\AuraBars.lua"/>
+	<Script file="Elements\Buffs.lua"/>
+	<Script file="Elements\Castbar.lua"/>
+	<Script file="Elements\ClassIcon.lua"/>
+	<Script file="Elements\ClassPower.lua"/>
+	<Script file="Elements\CombatIndicator.lua"/>
+	<Script file="Elements\Debuffs.lua"/>
+	<Script file="Elements\DispelHighlight.lua"/>
+	<Script file="Elements\GroupRoleIndicator.lua"/>
+	<Script file="Elements\Health.lua"/>
+	<Script file="Elements\LeaderIndicator.lua"/>
+	<Script file="Elements\Name.lua"/>
+	<Script file="Elements\HappinessIndicator.lua"/>
+	<Script file="Elements\PhaseIndicator.lua"/>
+	<Script file="Elements\Portrait.lua"/>
+	<Script file="Elements\Power.lua"/>
+	<Script file="Elements\PvPIndicator.lua"/>
+	<Script file="Elements\QuestIndicator.lua"/>
+	<Script file="Elements\RaidRoleIndicator.lua"/>
+	<Script file="Elements\RaidTargetIndicator.lua"/>
+	<Script file="Elements\ResurrectIndicator.lua"/>
+	<Script file="Elements\Range.lua"/>
+	<Script file="Elements\RareElite.lua"/>
+	<Script file="Elements\ReadyCheckIndicator.lua"/>
+	<Script file="Elements\RestingIndicator.lua"/>
+	<Script file="Elements\Runes.lua"/>
+	<Script file="Elements\SpartanArt.lua"/>
+	<Script file="Elements\StatusText.lua"/>
+	<Script file="Elements\SUI_RaidGroup.lua"/>
+	<Script file="Elements\SummonIndicator.lua"/>
+	<Script file="Elements\TargetIndicator.lua"/>
+	<Script file="Elements\ThreatIndicator.lua"/>
+	<Script file="Elements\Totems.lua"/>
 
 
-    <Script file="Units\arena.lua"/>
-    <Script file="Units\boss.lua"/>
-    <!-- <Script file="Units\bosstarget.lua"/> -->
-    <Script file="Units\focus.lua"/>
-    <Script file="Units\focustarget.lua"/>
-    <Script file="Units\party.lua"/>
-    <Script file="Units\partypet.lua"/>
-    <Script file="Units\partytarget.lua"/>
-    <Script file="Units\pet.lua"/>
-    <Script file="Units\pettarget.lua"/>
-    <Script file="Units\player.lua"/>
-    <Script file="Units\raid.lua"/>
-    <Script file="Units\target.lua"/>
-    <Script file="Units\targettarget.lua"/>
-    <Script file="Units\targettargettarget.lua"/>
+	<Script file="Units\arena.lua"/>
+	<Script file="Units\boss.lua"/>
+	<!-- <Script file="Units\bosstarget.lua"/> -->
+	<Script file="Units\focus.lua"/>
+	<Script file="Units\focustarget.lua"/>
+	<Script file="Units\party.lua"/>
+	<Script file="Units\partypet.lua"/>
+	<Script file="Units\partytarget.lua"/>
+	<Script file="Units\pet.lua"/>
+	<Script file="Units\pettarget.lua"/>
+	<Script file="Units\player.lua"/>
+	<Script file="Units\raid.lua"/>
+	<Script file="Units\target.lua"/>
+	<Script file="Units\targettarget.lua"/>
+	<Script file="Units\targettargettarget.lua"/>
 
-    <Script file="SpawnFrames.lua" />
-    <Script file="Options.lua" />
+	<Script file="SpawnFrames.lua" />
+	<Script file="Options.lua" />
 </Ui>

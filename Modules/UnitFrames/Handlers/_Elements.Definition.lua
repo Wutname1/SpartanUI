@@ -95,7 +95,7 @@ local ElementTextData = {
 ---|"Portrait"
 ---|"Power"
 ---|"PvPIndicator"
----|"QuestMobIndicator"
+---|"QuestIndicator"
 ---|"RaidTargetIndicator"
 ---|"RaidRoleIndicator"
 ---|"Range"
@@ -131,7 +131,7 @@ local ElementTextData = {
 ---@field Portrait ElementProps
 ---@field Power ElementProps
 ---@field PvPIndicator ElementProps
----@field QuestMobIndicator ElementProps
+---@field QuestIndicator ElementProps
 ---@field RaidTargetIndicator ElementProps
 ---@field RaidRoleIndicator ElementProps
 ---@field Range ElementProps
