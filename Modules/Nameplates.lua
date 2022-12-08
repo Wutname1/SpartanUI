@@ -411,6 +411,8 @@ local NameplateCallback = function(self, event, unit)
 		return
 	end
 
+	self.ShowWidgetOnly = UnitNameplateShowsWidgetsOnly(unit)
+
 	local elementDB = module.DB.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
 		local blizzPlate = self:GetParent().UnitFrame
@@ -424,6 +426,25 @@ local NameplateCallback = function(self, event, unit)
 		NameplateList[self:GetName()] = true
 
 		self:UpdateAllElements('ForceUpdate')
+
+		if self.ShowWidgetOnly then
+			for _, element in ipairs(ElementList) do
+				if self:IsElementEnabled(element) then
+					self:DisableElement(element)
+					if self[element] then
+						self[element]:Hide()
+					end
+				end
+			end
+
+			self.widgetContainer = self.blizzPlate.WidgetContainer
+			if self.widgetContainer then
+				self.widgetContainer:SetParent(self)
+				self.widgetContainer:ClearAllPoints()
+				self.widgetContainer:SetPoint('BOTTOM', self, 'TOP')
+			end
+			return
+		end
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
 		NameplateList[self:GetName()] = false
 	end
