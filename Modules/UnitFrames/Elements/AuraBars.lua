@@ -20,11 +20,11 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	local AuraBars = CreateFrame('Frame', '$parent_AuraBars', frame)
+	local element = CreateFrame('Frame', '$parent_AuraBars', frame)
 
-	AuraBars.spellTimeFont = SUI.Font:GetFont('Player')
-	AuraBars.spellNameFont = SUI.Font:GetFont('Player')
-	AuraBars.PostCreateButton = function(self, button)
+	element.spellTimeFont = SUI.Font:GetFont('Player')
+	element.spellNameFont = SUI.Font:GetFont('Player')
+	element.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Buffs', button)
 	end
 
@@ -33,7 +33,7 @@ local function Build(frame, DB)
 	local FilterAura = function(element, unit, data)
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
-	AuraBars.FilterAura = FilterAura
+	element.FilterAura = FilterAura
 
 	local function PostCreateBar(_, bar)
 		bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
@@ -48,8 +48,8 @@ local function Build(frame, DB)
 		bar.bg:SetVertexColor(0, 0, 0, 0.4)
 		bar.bg:Show()
 	end
-	AuraBars.PostCreateBar = PostCreateBar
-	AuraBars.CustomFilter = function(
+	element.PostCreateBar = PostCreateBar
+	element.CustomFilter = function(
 		element,
 		unit,
 		bar,
@@ -77,9 +77,10 @@ local function Build(frame, DB)
 		end
 	end
 
-	AuraBars.initialAnchor = 'BOTTOMRIGHT'
+	element.displayReasons = {}
+	element.initialAnchor = 'BOTTOMRIGHT'
 
-	frame.AuraBars = AuraBars
+	frame.AuraBars = element
 end
 
 ---@param frame table
@@ -127,6 +128,12 @@ local function Options(unitName, OptionSet)
 		order = 100,
 		inline = true,
 		args = {}
+	}
+	OptionSet.args.Filters.args.NOTFINISHED = {
+		name = SUI.L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
+		type = 'description',
+		fontSize = 'medium',
+		order = .1
 	}
 end
 

@@ -124,6 +124,30 @@ local function Update(frame, settings)
 		end
 	end
 
+	-- Basic Bar updates
+	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
+	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, .2}))
+
+	element.TextElements = {}
+	for i, TextElement in pairs(element.TextElements) do
+		local key = DB.text[i]
+		TextElement:SetJustifyH(key.SetJustifyH)
+		TextElement:SetJustifyV(key.SetJustifyV)
+		TextElement:ClearAllPoints()
+		TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
+		frame:Tag(TextElement, key.text)
+
+		if not key.enabled then
+			element.TextElements[i]:Hide()
+		end
+	end
+
+	element:ClearAllPoints()
+	element:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
+	element:SetPoint('TOPLEFT', frame, 'TOPLEFT', 0, DB.offset or 0)
+	element:SetPoint('TOPRIGHT', frame, 'TOPRIGHT', 0, DB.offset or 0)
+
 	-- Spell icon
 	if DB.Icon.enabled then
 		element.Icon:Show()
@@ -132,11 +156,6 @@ local function Update(frame, settings)
 	end
 	element.Icon:ClearAllPoints()
 	element.Icon:SetPoint(DB.Icon.position.anchor, element, DB.Icon.position.anchor, DB.Icon.position.x, DB.Icon.position.y)
-
-	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	element.bg:SetVertexColor(unpack(DB.bg.color))
-	element:SetSize(DB.width or frame:GetWidth(), DB.height or 20)
 	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 end
 

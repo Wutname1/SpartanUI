@@ -49,6 +49,9 @@ local Settings = {
 	columnSpacing = 0,
 	yOffset = -10,
 	elements = {
+		Portrait = {
+			enabled = false
+		},
 		Castbar = {
 			enabled = true
 		},

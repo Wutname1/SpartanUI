@@ -87,7 +87,7 @@ end
 ---@param frameName string
 ---@param OptionSet AceConfigOptionsTable
 local function Options(frameName, OptionSet)
-	UF.Options:IndicatorAddDisplay(frameName, OptionSet)
+	UF.Options:IndicatorAddDisplay(OptionSet)
 	OptionSet.args.display.args.size = nil
 	OptionSet.args.display.args.scale = nil
 

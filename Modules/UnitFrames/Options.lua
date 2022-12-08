@@ -153,7 +153,7 @@ local function CreateOptionSet(frameName)
 				type = 'execute',
 				order = 1,
 				width = 'full',
-				disabled = (frameName == 'raid' or frameName == 'party' or frameName == 'boss' or frameName == 'arena'),
+				disabled = (frameName == 'raid' or frameName == 'boss' or frameName == 'arena'),
 				func = function()
 					UF.Unit:ToggleForceShow(frameName)
 				end
@@ -555,9 +555,8 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 	}
 end
 
----@param frameName UnitFrameName
 ---@param ElementOptSet AceConfigOptionsTable
-function Options:IndicatorAddDisplay(frameName, ElementOptSet)
+function Options:IndicatorAddDisplay(ElementOptSet)
 	ElementOptSet.args.display = {
 		name = L['Display'],
 		type = 'group',
@@ -592,16 +591,15 @@ function Options:IndicatorAddDisplay(frameName, ElementOptSet)
 	}
 end
 
----@param frameName UnitFrameName
+---@param anchors table
 ---@param ElementOptSet AceConfigOptionsTable
 ---@param get function
 ---@param set function
-function Options:AddPositioning(frameName, ElementOptSet, get, set)
-	local builtFrame = UF.Unit:Get(frameName)
+function Options:AddPositioning(anchors, ElementOptSet, get, set)
 	local AnchorablePoints = {
 		['Frame'] = 'Unit Frame'
 	}
-	SUI:CopyData(AnchorablePoints, builtFrame.elementList)
+	SUI:CopyData(AnchorablePoints, anchors)
 
 	ElementOptSet.args.position = {
 		name = L['Position'],
@@ -707,8 +705,10 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update the DB
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].text = val
 						--Update the screen
-						UF.Unit[frameName]:Tag(UF.Unit[frameName][element].TextElements[count], val)
-						UF.Unit[frameName]:UpdateTags()
+						if UF.Unit[frameName][element] then
+							UF.Unit[frameName]:Tag(UF.Unit[frameName][element].TextElements[count], val)
+							UF.Unit[frameName]:UpdateTags()
+						end
 					end
 				},
 				size = {
@@ -740,9 +740,6 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 						--Update memory
 						UF.CurrentSettings[frameName].elements[element].text[count].position[info[#info]] = val
 						--Update the DB
-						if not UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position then
-							UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position = {}
-						end
 						UF.DB.UserSettings[UF.DB.Style][frameName].elements[element].text[count].position[info[#info]] = val
 						--Update the screen
 						local position = UF.CurrentSettings[frameName].elements[element].text[count].position
@@ -1015,7 +1012,7 @@ function Options:Initialize()
 	SUI.opt.args.General.args.style.args.Unitframes = UFOptions.args.BaseStyle
 
 	-- Build frame options
-	for frameName, FrameConfig in pairs(UF.Unit:GetFrameList()) do
+	for frameName, _ in pairs(UF.Unit:GetBuiltFrameList()) do
 		local FrameOptSet = CreateOptionSet(frameName)
 		AddGeneral(FrameOptSet)
 
@@ -1068,14 +1065,14 @@ function Options:Initialize()
 			elseif elementConfig.type == 'StatusBar' then
 				Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 			elseif elementConfig.type == 'Indicator' then
-				Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:IndicatorAddDisplay(ElementOptSet)
+				Options:AddPositioning(builtFrame.elementList, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Text' then
-				-- Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				-- Options:IndicatorAddDisplay(ElementOptSet)
+				Options:AddPositioning(builtFrame.elementList, ElementOptSet, PositionGet, PositionSet)
 			elseif elementConfig.type == 'Auras' then
-				Options:IndicatorAddDisplay(frameName, ElementOptSet)
-				Options:AddPositioning(frameName, ElementOptSet, PositionGet, PositionSet)
+				Options:IndicatorAddDisplay(ElementOptSet)
+				Options:AddPositioning(builtFrame.elementList, ElementOptSet, PositionGet, PositionSet)
 				Options:AddAuraLayout(frameName, ElementOptSet)
 
 				-- Basic Filtering Options

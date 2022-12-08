@@ -46,7 +46,7 @@ local function GroupBuilder(holder)
 		'showRaid',
 		true,
 		'showParty',
-		true,
+		false,
 		'showPlayer',
 		UF.CurrentSettings.raid.showSelf,
 		'showSolo',
@@ -145,25 +145,28 @@ local Settings = {
 			growthy = 'UP',
 			position = {
 				relativePoint = 'BOTTOMRIGHT',
-				relativeTo = 'BOTTOMRIGHT',
-				x = -2,
-				y = 2
+				anchor = 'BOTTOMRIGHT'
 			}
 		},
 		Debuffs = {
 			enabled = true,
-			rows = 1,
+            rows = 1,
+			number = 5,
 			size = 10,
 			growthy = 'DOWN',
+			growthx = 'RIGHT',
 			position = {
 				relativePoint = 'TOPLEFT',
-				relativeTo = 'TOPLEFT',
-				x = 2,
-				y = -2
+				anchor = 'TOPLEFT'
 			}
 		},
 		Health = {
-			height = 30
+			height = 30,
+			text = {
+				['1'] = {
+					text = '[health:missing-formatted] [perhp:conditional]'
+				}
+			}
 		},
 		Power = {
 			height = 3,
@@ -217,6 +220,7 @@ local Settings = {
 			enabled = true,
 			size = 15,
 			alpha = .75,
+			ShowDPS = false,
 			position = {
 				anchor = 'TOPRIGHT',
 				x = -1,

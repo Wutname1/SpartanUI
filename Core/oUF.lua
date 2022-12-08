@@ -356,6 +356,22 @@ do --Health Formatting Tags
 	SUIUF.Tags.Methods['health:missing-formatted'] = function(unit)
 		return SUI.Font:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
 	end
+
+	-- -- Missing Health formatted, as an SUIUF module
+	SUIUF.Tags.Events['perhp:conditional'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+	SUIUF.Tags.Methods['perhp:conditional'] = function(unit)
+		local m = UnitHealthMax(unit)
+		if (m == 0) then
+			return '(0%)'
+		else
+			local p = math.floor(UnitHealth(unit) / m * 100 + .5)
+			if p == 100 then
+				return ''
+			else
+				return '(' .. p .. '%)'
+			end
+		end
+	end
 end
 
 do -- Mana Formatting Tags
