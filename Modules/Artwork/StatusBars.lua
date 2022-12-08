@@ -108,7 +108,9 @@ local updateText = function(self)
 		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
 	elseif (module.DB[side].display == 'rep') then
 		local name, _, low, high, current, factionID = GetWatchedFactionInfo()
-		if SUI.IsRetail then
+		local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+
+		if C_Reputation.IsFactionParagon(factionID) then
 			local currentValue, threshold, _, _, _ = C_Reputation.GetFactionParagonInfo(factionID)
 			if currentValue ~= nil then
 				current = currentValue % threshold
@@ -127,6 +129,20 @@ local updateText = function(self)
 			valFill = repLevelLow
 			valMax = repLevelHigh
 			valPercent = (repLevelLow / repLevelHigh) * 100
+		end
+
+		if repInfo and repInfo.friendshipFactionID then
+			local isMajorFaction = factionID and C_Reputation.IsMajorFaction(factionID)
+
+			if repInfo and repInfo.friendshipFactionID > 0 then
+				valFill, valMax, current = repInfo.reactionThreshold or 0, repInfo.nextThreshold or 1, repInfo.standing or 1
+				valPercent = (current / valMax) * 100
+			elseif isMajorFaction then
+				local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
+				valFill, valMax = 0, majorFactionData.renownLevelThreshold
+				current = C_MajorFactions.HasMaximumRenown(factionID) and majorFactionData.renownLevelThreshold or majorFactionData.renownReputationEarned or 0
+				valPercent = (current / valMax) * 100
+			end
 		end
 	elseif (module.DB[side].display == 'az') then
 		if C_AzeriteItem.HasActiveAzeriteItem() then
