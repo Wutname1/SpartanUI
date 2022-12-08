@@ -1,15 +1,39 @@
 local UF = SUI.UF
 
+---@param element any
+---@param unit? UnitId
+---@param isFullUpdate? boolean
+local function updateSettings(element, unit, isFullUpdate)
+	local DB = element.DB
+	element.size = DB.size or 20
+	element.initialAnchor = DB.position.anchor
+	element['growth-x'] = DB.growthx
+	element['growth-y'] = DB.growthy
+	-- Buffs.spacing = DB.spacing
+	element.showType = DB.showType
+	element.num = DB.number or 10
+	element.onlyShowPlayer = DB.onlyShowPlayer
+end
+
+---@param element any
+local function SizeChange(element)
+	local DB = element.DB
+	local w = (DB.number / DB.rows)
+	if w < 1.5 then
+		w = 1.5
+	end
+	element:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
+end
+
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
 	--Buff Icons
-	local Buffs = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame)
-	Buffs.PostCreateButton = function(self, button)
+	local element = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame.raised)
+	element.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Buffs', button)
 	end
 
-	---@param unit UnitId
 	local CustomFilter = function(
 		element,
 		unit,
@@ -48,38 +72,35 @@ local function Build(frame, DB)
 			canApplyAura = canApplyAura,
 			sourceUnit = source
 		}
+		button.data = data
+		button.unit = unit
+
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
-	Buffs.CustomFilter = CustomFilter
-	frame.Buffs = Buffs
+	local PreUpdate = function(self)
+		updateSettings(element)
+	end
+
+	element.displayReasons = {}
+	element.CustomFilter = CustomFilter
+	element.PreUpdate = PreUpdate
+	element.SizeChange = SizeChange
+	frame.Buffs = element
 end
 
 ---@param frame table
-local function Update(frame)
-	local DB = frame.Buffs.DB
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.Buffs
+	local DB = settings or element.DB
+
 	if (DB.enabled) then
-		frame.Buffs:Show()
+		element:Show()
 	else
-		frame.Buffs:Hide()
+		element:Hide()
 	end
 
-	local Buffs = frame.Buffs
-	Buffs.size = DB.auraSize
-	Buffs.initialAnchor = DB.initialAnchor
-	Buffs['growth-x'] = DB.growthx
-	Buffs['growth-y'] = DB.growthy
-	Buffs.spacing = DB.spacing
-	Buffs.showType = DB.showType
-	Buffs.num = DB.number
-	Buffs.onlyShowPlayer = DB.onlyShowPlayer
-	Buffs.PostCreateIcon = UF.Auras.PostCreateAura
-	Buffs.PostUpdateIcon = UF.Auras.PostUpdateAura
-	Buffs:SetPoint(SUI:InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
-	local w = (DB.number / DB.rows)
-	if w < 1.5 then
-		w = 1.5
-	end
-	Buffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
+	updateSettings(element)
 end
 
 ---@param unitName string
@@ -99,18 +120,16 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	number = 10,
-	auraSize = 20,
+	size = 20,
 	spacing = 1,
 	showType = true,
 	width = false,
-	initialAnchor = 'BOTTOMLEFT',
 	growthx = 'RIGHT',
 	growthy = 'DOWN',
 	rows = 2,
 	position = {
 		anchor = 'TOPLEFT',
-		relativePoint = 'BOTTOMLEFT',
-		y = -10
+		relativePoint = 'BOTTOMLEFT'
 	},
 	config = {
 		type = 'Auras'

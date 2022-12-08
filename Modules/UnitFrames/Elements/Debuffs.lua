@@ -1,15 +1,39 @@
 local UF = SUI.UF
 
+---@param element any
+---@param unit? UnitId
+---@param isFullUpdate? boolean
+local function updateSettings(element, unit, isFullUpdate)
+	local DB = element.DB
+	element.size = DB.size or 20
+	element.initialAnchor = DB.position.anchor
+	element['growth-x'] = DB.growthx
+	element['growth-y'] = DB.growthy
+	-- Buffs.spacing = DB.spacing
+	element.showType = DB.showType
+	element.num = DB.number or 10
+	element.onlyShowPlayer = DB.onlyShowPlayer
+end
+
+---@param element any
+local function SizeChange(element)
+	local DB = element.DB
+	local w = (DB.number / DB.rows)
+	if w < 1.5 then
+		w = 1.5
+	end
+	element:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
+end
+
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
 	--Debuff Icons
-	local Debuffs = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame)
-	Debuffs.PostCreateButton = function(self, button)
+	local element = CreateFrame('Frame', frame.unitOnCreate .. 'Debuffs', frame.raised)
+	element.PostCreateButton = function(self, button)
 		UF.Auras:PostCreateButton('Debuffs', button)
 	end
 
-	---@param unit UnitId
 	local CustomFilter = function(
 		element,
 		unit,
@@ -48,39 +72,36 @@ local function Build(frame, DB)
 			canApplyAura = canApplyAura,
 			sourceUnit = source
 		}
+		button.data = data
+		button.unit = unit
+
 		return UF.Auras:Filter(element, unit, data, element.DB.rules)
 	end
-	Debuffs.CustomFilter = CustomFilter
+	local PreUpdate = function(self)
+		updateSettings(element)
+	end
 
-	frame.Debuffs = Debuffs
+	element.displayReasons = {}
+	element.CustomFilter = CustomFilter
+	element.PreUpdate = PreUpdate
+	element.SizeChange = SizeChange
+
+	frame.Debuffs = element
 end
 
 ---@param frame table
-local function Update(frame)
-	local DB = frame.Debuffs.DB
+---@param settings? table
+local function Update(frame, settings)
+	local element = frame.Debuffs
+	local DB = settings or element.DB
+
 	if (DB.enabled) then
-		frame.Debuffs:Show()
+		element:Show()
 	else
-		frame.Debuffs:Hide()
+		element:Hide()
 	end
 
-	local Debuffs = frame.Debuffs
-	Debuffs.size = DB.auraSize
-	Debuffs.initialAnchor = DB.initialAnchor
-	Debuffs['growth-x'] = DB.growthx
-	Debuffs['growth-y'] = DB.growthy
-	Debuffs.spacing = DB.spacing
-	Debuffs.showType = DB.showType
-	Debuffs.num = DB.number
-	Debuffs.onlyShowPlayer = DB.onlyShowPlayer
-	Debuffs.PostCreateIcon = UF.Auras.PostCreateAura
-	Debuffs.PostUpdateIcon = UF.Auras.PostUpdateAura
-	Debuffs:SetPoint(SUI:InverseAnchor(DB.position.anchor), frame, DB.position.anchor, DB.position.x, DB.position.y)
-	local w = (DB.number / DB.rows)
-	if w < 1.5 then
-		w = 1.5
-	end
-	Debuffs:SetSize((DB.auraSize + DB.spacing) * w, (DB.spacing + DB.auraSize) * DB.rows)
+	updateSettings(element)
 end
 
 ---@param unitName string
@@ -100,19 +121,17 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	number = 10,
-	auraSize = 20,
+	size = 20,
 	spacing = 1,
 	width = false,
 	ShowBoss = true,
 	showType = true,
-	initialAnchor = 'BOTTOMRIGHT',
 	growthx = 'LEFT',
 	growthy = 'UP',
 	rows = 2,
 	position = {
 		anchor = 'TOPRIGHT',
-		relativePoint = 'BOTTOMRIGHT',
-		y = -10
+		relativePoint = 'BOTTOMRIGHT'
 	},
 	rules = {
 		duration = {
@@ -120,8 +139,7 @@ local Settings = {
 			maxTime = 180,
 			minTime = 1
 		},
-		isBossAura = true,
-		isFromPlayerOrPlayerPet = true
+		isBossAura = true
 	},
 	config = {
 		type = 'Auras'
