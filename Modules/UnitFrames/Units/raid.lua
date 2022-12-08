@@ -46,7 +46,7 @@ local function GroupBuilder(holder)
 		'showRaid',
 		true,
 		'showParty',
-		true,
+		false,
 		'showPlayer',
 		UF.CurrentSettings.raid.showSelf,
 		'showSolo',

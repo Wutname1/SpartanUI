@@ -79,7 +79,7 @@ function UF:PositionFrame(unit)
 			UnitFrame:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
 	else
-		for frameName, config in pairs(UF.Unit:GetFrameList()) do
+		for frameName, config in pairs(UF.Unit:GetBuiltFrameList()) do
 			if not config.isChild then
 				local UnitFrame = UF.Unit:Get(frameName)
 				local point, anchor, secondaryPoint, x, y = strsplit(',', positionData[frameName])
@@ -159,7 +159,7 @@ function UF:OnEnable()
 	UF:PositionFrame()
 
 	-- Create movers
-	for unit, config in pairs(UF.Unit:GetFrameList()) do
+	for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
 		if not config.isChild then
 			MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
 		end
@@ -229,7 +229,7 @@ function UF:ScaleFrames(scale)
 		return
 	end
 
-	for unitName, config in pairs(UF.Unit:GetFrameList()) do
+	for unitName, config in pairs(UF.Unit:GetBuiltFrameList()) do
 		if not config.isChild then
 			local UFrame = UF.Unit:Get(unitName)
 			if UFrame and UFrame.mover then

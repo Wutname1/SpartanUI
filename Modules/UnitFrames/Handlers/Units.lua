@@ -6,6 +6,7 @@ local FrameData = {} ---@type table<UnitFrameName, table>
 
 local Unit = {
 	UnitsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
+	UnitsBuilt = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
 	GroupsLoaded = {}, ---@type table<UnitFrameName, SUI.UF.Unit.Config>
 	defaultConfigs = {} ---@type table<string, SUI.UF.Unit.Settings>
 }
@@ -248,7 +249,6 @@ function Unit:BuildFrame(frameName, frame)
 
 	if Unit:GetConfig(frameName).config.IsGroup then
 		if not BuiltFrames[frameName] then
-			print('NO WHERE TO STORE FRAME FOR ' .. frameName)
 			return
 		end
 
@@ -256,6 +256,14 @@ function Unit:BuildFrame(frameName, frame)
 	else
 		BuiltFrames[frameName] = frame
 	end
+
+	Unit.UnitsBuilt[frameName] = frame.config.config
+end
+
+---Gets a table of all the frames that are currently built and their default settings
+---@return table<UnitFrameName, SUI.UF.Unit.Config>
+function Unit:GetBuiltFrameList()
+	return Unit.UnitsBuilt
 end
 
 ---Gets a table of all the frames that are currently loaded and their default settings

@@ -1009,7 +1009,7 @@ function Options:Initialize()
 	SUI.opt.args.General.args.style.args.Unitframes = UFOptions.args.BaseStyle
 
 	-- Build frame options
-	for frameName, FrameConfig in pairs(UF.Unit:GetFrameList()) do
+	for frameName, _ in pairs(UF.Unit:GetBuiltFrameList()) do
 		local FrameOptSet = CreateOptionSet(frameName)
 		AddGeneral(FrameOptSet)
 
