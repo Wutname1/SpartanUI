@@ -10,7 +10,9 @@ local FACTION_BAR_COLORS = {
 	[5] = {r = 0, g = 1, b = 0.1},
 	[6] = {r = 0, g = 1, b = 0.2},
 	[7] = {r = 0, g = 1, b = 0.3},
-	[8] = {r = 0, g = 0.6, b = 0.1}
+	[8] = {r = 0, g = 0.6, b = 0.1},
+	[9] = {r = 0, g = .6, b = .1},
+	[10] = {r = 0, g = 0.74, b = 0.95}
 }
 local COLORS = {
 	Orange = {r = 1, g = 0.2, b = 0, a = .7},
@@ -60,7 +62,15 @@ local SetBarColor = function(self, side)
 		elseif display == 'honor' then
 			color1 = COLORS.Red
 		elseif display == 'rep' then
+			local factionID = select(6, GetWatchedFactionInfo())
+			local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+
 			color1 = FACTION_BAR_COLORS[select(2, GetWatchedFactionInfo())] or FACTION_BAR_COLORS[7]
+			if C_Reputation.IsFactionParagon(factionID) then
+				color1 = FACTION_BAR_COLORS[9]
+			elseif repInfo and repInfo.friendshipFactionID and C_Reputation.IsMajorFaction(factionID) then
+				color1 = FACTION_BAR_COLORS[10]
+			end
 		end
 	end
 	r, g, b, a = color1.r, color1.g, color1.b, color1.a
@@ -139,6 +149,7 @@ local updateText = function(self)
 				valPercent = (current / valMax) * 100
 			elseif isMajorFaction then
 				local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
+
 				valFill, valMax = 0, majorFactionData.renownLevelThreshold
 				current = C_MajorFactions.HasMaximumRenown(factionID) and majorFactionData.renownLevelThreshold or majorFactionData.renownReputationEarned or 0
 				valPercent = (current / valMax) * 100
