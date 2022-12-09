@@ -37,6 +37,24 @@ local ElementList = {
 	'PvPIndicator',
 	'ThreatIndicator'
 }
+---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
+local ElementDefaults = {
+}
+
+---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
+local CurrentSettings = {}
+
+---@param frame any
+---@param obj SUI.UF.Elements.list
+local function BuildElement(frame, obj)
+	--Ensure we have settings
+	if not CurrentSettings[obj] then
+		CurrentSettings[obj] = SUI:CopyData(SUI.UF.Elements:GetConfig(obj), {})
+	end
+
+	--Build it
+	UF.Elements:Build(frame, obj, CurrentSettings[obj])
+end
 
 local UpdateElementState = function(frame)
 	local elements = module.DB.elements
@@ -708,10 +726,10 @@ function module:OnDisable()
 end
 
 function module:OnEnable()
+	module:BuildOptions()
 	if SUI:IsModuleDisabled('Nameplates') then
 		return
 	end
-	module:BuildOptions()
 
 	if (not oUF_NamePlateDriver) then
 		SUIUF:SetActiveStyle('Spartan_NamePlates')
@@ -727,9 +745,19 @@ function module:OnEnable()
 			)
 		end
 	end
+
+	--Make sure we start fresh
+	CurrentSettings = {}
+	for _, v in ipairs(ElementList) do
+		--Import base options
+		CurrentSettings[v] = SUI:CopyData(ElementDefaults[v], SUI.UF.Elements:GetConfig(v))
+		--Import User settings
+		SUI:CopyData(CurrentSettings[v], module.DB[v] or {})
+	end
 end
 
 function module:BuildOptions()
+	local Options = UF.Options
 	---#TODO: update to new element options process
 	local anchorPoints = {
 		['TOPLEFT'] = 'TOP LEFT',
