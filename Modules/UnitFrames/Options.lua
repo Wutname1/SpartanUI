@@ -128,25 +128,16 @@ local Options = {}
 ---Creates the base options screen for a frame name
 ---@param frameName UnitFrameName
 ---@return AceConfigOptionsTable
-local function CreateOptionSet(frameName)
+function Options:CreateFrameOptionSet(frameName, get, set)
 	local OptionSet = {
 		name = frameName,
 		type = 'group',
 		childGroups = 'tab',
 		disabled = function()
-			return not UF.CurrentSettings[frameName].enabled
+			return (UF.CurrentSettings[frameName] and not UF.CurrentSettings[frameName].enabled) or false
 		end,
-		get = function(info)
-			return UF.CurrentSettings[frameName][info[#info]] or false
-		end,
-		set = function(info, val)
-			--Update memory
-			UF.CurrentSettings[frameName][info[#info]] = val
-			--Update the DB
-			UF.DB.UserSettings[UF.DB.Style][frameName][info[#info]] = val
-			--Update the screen
-			UF.Unit[frameName]:UpdateAll()
-		end,
+		get = get,
+		set = set,
 		args = {
 			ShowFrame = {
 				name = 'Show Frame',
@@ -209,7 +200,7 @@ local function CreateOptionSet(frameName)
 end
 
 ---@param OptionSet AceConfigOptionsTable
-local function AddGeneral(OptionSet)
+function Options:AddGeneral(OptionSet)
 	OptionSet.args.General.args = {
 		General = {
 			name = '',
@@ -1010,8 +1001,22 @@ function Options:Initialize()
 
 	-- Build frame options
 	for frameName, _ in pairs(UF.Unit:GetBuiltFrameList()) do
-		local FrameOptSet = CreateOptionSet(frameName)
-		AddGeneral(FrameOptSet)
+		local FrameOptSet =
+			Options:CreateFrameOptionSet(
+			frameName,
+			function(info)
+				return UF.CurrentSettings[frameName][info[#info]] or false
+			end,
+			function(info, val)
+				--Update memory
+				UF.CurrentSettings[frameName][info[#info]] = val
+				--Update the DB
+				UF.DB.UserSettings[UF.DB.Style][frameName][info[#info]] = val
+				--Update the screen
+				UF.Unit[frameName]:UpdateAll()
+			end
+		)
+		Options:AddGeneral(FrameOptSet)
 
 		-- Add Element Options
 		local builtFrame = UF.Unit:Get(frameName)

@@ -150,7 +150,7 @@ local Settings = {
 		},
 		Debuffs = {
 			enabled = true,
-            rows = 1,
+			rows = 1,
 			number = 5,
 			size = 10,
 			growthy = 'DOWN',
