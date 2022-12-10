@@ -1205,6 +1205,11 @@ local function reloaduiWindow()
 end
 
 function SUI:OnInitialize()
+	if not SpartanUICharDB then
+		SpartanUICharDB = {}
+	end
+	SUI.CharDB = SpartanUICharDB
+
 	SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
 
 	-- New SUI.DB Access

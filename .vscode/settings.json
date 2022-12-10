@@ -361,7 +361,8 @@
     "EquipmentManager_GetItemInfoByLocation",
     "INVSLOT_FIRST_EQUIPPED",
     "INVSLOT_LAST_EQUIPPED",
-    "UiMapPoint"
+    "UiMapPoint",
+    "IsSecureCmd"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

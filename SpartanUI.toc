@@ -11,6 +11,7 @@
 ## X-oUF: SUIUF
 ## OptionalDeps: Bartender4, WagoAnalytics
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
+## SavedVariablesPerCharacter: SpartanUICharDB
 ## X-BugGrabber-Display: SUIErrorDisplay
 
 # General Libraries
