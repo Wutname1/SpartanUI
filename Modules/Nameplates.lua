@@ -33,7 +33,7 @@ local ElementList = {
 	'Castbar',
 	'RareElite',
 	'RaidTargetIndicator',
-	'QuestIndicator',
+	'QuestMob',
 	'PvPIndicator',
 	'ThreatIndicator'
 }
