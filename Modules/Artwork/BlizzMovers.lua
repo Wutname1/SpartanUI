@@ -66,11 +66,7 @@ end
 
 local function AltPowerBar()
 	if not IsAddOnLoaded('SimplePowerBar') then
-		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.AltPowerBar)
-		local holder = CreateFrame('Frame', 'AltPowerBarHolder', UIParent)
-		holder:SetPoint(point, anchor, secondaryPoint, x, y)
-		holder:SetSize(256, 64)
-		holder:Hide()
+		local holder = GenerateHolder('PlayerPowerBarAlt')
 
 		_G['PlayerPowerBarAlt']:ClearAllPoints()
 		_G['PlayerPowerBarAlt']:SetPoint('CENTER', holder, 'CENTER')
@@ -101,27 +97,17 @@ local function DurabilityFrame()
 end
 
 local function WidgetPowerBarContainer()
-	if not _G['UIWidgetPowerBarContainerFrame'] then
+	local element = _G['UIWidgetPowerBarContainerFrame']
+	if not element then
 		return
 	end
-	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.WidgetPowerBarContainer)
-	local holder = CreateFrame('Frame', 'WidgetPowerBarContainerHolder', UIParent)
-	holder:SetPoint(point, anchor, secondaryPoint, x, y)
-	holder:SetSize(256, 64)
-	holder:Hide()
+	local holder = GenerateHolder('WidgetPowerBarContainer')
 
-	_G['UIWidgetPowerBarContainerFrame']:ClearAllPoints()
-	_G['UIWidgetPowerBarContainerFrame']:SetPoint('CENTER', holder, 'CENTER')
-	_G['UIWidgetPowerBarContainerFrame'].ignoreFramePositionManager = true
+	element:ClearAllPoints()
+	element:SetPoint('CENTER', holder)
+	element.SUIHolder = holder
 
-	hooksecurefunc(
-		_G['UIWidgetPowerBarContainerFrame'],
-		'ClearAllPoints',
-		function(bar)
-			bar:SetPoint('CENTER', holder, 'CENTER')
-		end
-	)
-
+	hooksecurefunc(element, 'SetPoint', ResetPosition)
 	MoveIt:CreateMover(holder, 'WidgetPowerBarContainer', 'Power bar', nil, 'Blizzard UI')
 end
 
@@ -218,19 +204,11 @@ local function VehicleLeaveButton()
 end
 
 function module.BlizzMovers()
-	if SUI.IsClassic then
-		return
+	-- AltPowerBar()
+	-- AbilityBars()
 	DurabilityFrame()
-
+	-- TalkingHead()
 	VehicleLeaveButton()
 	VehicleSeatIndicator()
-
-	if SUI.IsRetail then
-		-- TalkingHead()
-		-- AltPowerBar()
-		-- AbilityBars()
-		-- WidgetPowerBarContainer()
-	else
-		AlertFrame()
-	end
+	WidgetPowerBarContainer()
 end
