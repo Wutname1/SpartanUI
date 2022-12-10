@@ -385,10 +385,7 @@ function module:factory()
 		statusbar:RegisterEvent('PLAYER_LEVEL_UP')
 		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
 		statusbar:RegisterEvent('UPDATE_FACTION')
-
-		if SUI.IsRetail then
-			statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
-		end
+		statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
 
 		--Statusbar Update event
 		statusbar:SetScript(
