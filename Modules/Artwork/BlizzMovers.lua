@@ -3,17 +3,40 @@ local L = SUI.L
 local module = SUI:GetModule('Module_Artwork')
 local MoveIt = SUI.MoveIt
 
+local function ResetPosition(frame, _, anchor)
+	local holder = frame.SUIHolder
+	if holder and anchor ~= holder then
+		frame:ClearAllPoints()
+		frame:SetPoint('CENTER', holder)
+	end
+end
+
+local function GenerateHolder(name)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[name])
+	local holder = CreateFrame('Frame', name .. 'Holder', UIParent)
+	holder:SetPoint(point, anchor, secondaryPoint, x, y)
+
+	if _G[name] then
+		local width, height = _G[name]:GetSize()
+		holder:SetSize(width, height)
+	else
+		holder:SetSize(256, 64)
+	end
+
+	holder:Hide()
+
+	return holder
+end
+
 local function TalkingHead()
 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.TalkingHead)
 	local THUIHolder = CreateFrame('Frame', 'THUIHolder', SpartanUI)
 	THUIHolder:SetPoint(point, anchor, secondaryPoint, x, y)
 	THUIHolder:Hide()
-
 	local SetupTalkingHead = function()
 		--Prevent WoW from moving the frame around
 		TalkingHeadFrame.ignoreFramePositionManager = true
 		UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
-
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
 		TalkingHeadFrame:HookScript(
@@ -24,7 +47,6 @@ local function TalkingHead()
 			end
 		)
 	end
-
 	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
 		SetupTalkingHead()
 	else
@@ -64,6 +86,18 @@ local function AltPowerBar()
 
 		MoveIt:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power', nil, 'Blizzard UI')
 	end
+end
+
+local function DurabilityFrame()
+	local element = _G['DurabilityFrame']
+	local holder = GenerateHolder('DurabilityFrame')
+
+	element:ClearAllPoints()
+	element:SetPoint('CENTER', holder, 'CENTER')
+	element.SUIHolder = holder
+
+	hooksecurefunc(element, 'SetPoint', ResetPosition)
+	MoveIt:CreateMover(holder, 'DurabilityFrame', 'Durability Frame', nil, 'Blizzard UI')
 end
 
 local function WidgetPowerBarContainer()
@@ -186,7 +220,7 @@ end
 function module.BlizzMovers()
 	if SUI.IsClassic then
 		return
-	end
+	DurabilityFrame()
 
 	VehicleLeaveButton()
 	VehicleSeatIndicator()
