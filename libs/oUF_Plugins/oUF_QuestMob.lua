@@ -12,7 +12,7 @@ local questIcons = {
 
 local typesLocalized = {
 	enUS = {
-		KILL = {'slain', 'destroy', 'eliminate', 'repel', 'kill', 'defeat'},
+		KILL = {'slain', 'destroy', 'eliminate', 'repel', 'kill', 'defeat', 'slay'},
 		CHAT = {'speak', 'talk', 'spoken'}
 	},
 	deDE = {
@@ -254,6 +254,7 @@ local function Enable(self)
 
 		self:RegisterEvent('QUEST_LOG_UPDATE', Path, true)
 		self:RegisterEvent('UNIT_NAME_UPDATE', Path, true)
+		self:RegisterEvent('PLAYER_TARGET_CHANGED', Path, true)
 		self:RegisterEvent('PLAYER_ENTERING_WORLD', Path, true)
 	end
 end
@@ -266,6 +267,7 @@ local function Disable(self)
 
 		self:UnregisterEvent('QUEST_LOG_UPDATE', Path)
 		self:UnregisterEvent('UNIT_NAME_UPDATE', Path)
+		self:UnregisterEvent('PLAYER_TARGET_CHANGED', Path)
 		self:UnregisterEvent('PLAYER_ENTERING_WORLD', Path)
 	end
 end
