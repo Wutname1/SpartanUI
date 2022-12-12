@@ -177,6 +177,9 @@ function module:OnEnable()
 
 		local zone = table.concat(inputSections, ' ', 1, zoneEnd)
 		local x, y, desc = select(zoneEnd + 1, unpack(inputSections))
+		if desc then
+			desc = table.concat(inputSections, ' ', zoneEnd + 3)
+		end
 
 		if inputSections[1] and not tonumber(inputSections[1]) then
 			-- Find MapID
