@@ -20,6 +20,7 @@
 	<Script file="Elements\Portrait.lua"/>
 	<Script file="Elements\Power.lua"/>
 	<Script file="Elements\PvPIndicator.lua"/>
+	<Script file="Elements\PVPSpecIcon.lua"/>
 	<Script file="Elements\QuestMob.lua"/>
 	<Script file="Elements\RaidRoleIndicator.lua"/>
 	<Script file="Elements\RaidTargetIndicator.lua"/>
