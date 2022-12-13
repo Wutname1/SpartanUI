@@ -27,12 +27,14 @@ local function Build(frame, DB)
 			frame:SetUnit(unit)
 		end
 	end
+	Portrait3D:Hide()
 	frame.Portrait3D = Portrait3D
 
 	-- 2D Portrait
 	local Portrait2D = frame:CreateTexture(nil, 'OVERLAY')
 	Portrait2D:SetSize(frame:GetHeight(), frame:GetHeight())
 	Portrait2D:SetScale(DB.scale)
+	Portrait2D:Hide()
 	frame.Portrait2D = Portrait2D
 
 	frame.Portrait = Portrait3D
