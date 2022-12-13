@@ -83,26 +83,27 @@ end
 
 local function AbilityBars()
 	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
-	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
-	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
+	-- local ExtraActionBarFrame = _G['ExtraActionBarFrame']
+	-- local ZoneAbilityFrame = _G['ZoneAbilityFrame']
 
 	-- ZoneAbility
-	local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
-	AttachToHolder(ZoneAbilityFrame, ZoneAbilityHolder)
+	-- local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
+	-- AttachToHolder(ZoneAbilityFrame, ZoneAbilityHolder)
 
 	-- Extra Action / Boss Bar
 	local BossButtonHolder = GenerateHolder('BossButton')
-	AttachToHolder(ExtraActionBarFrame, BossButtonHolder)
+	BossButtonHolder:SetSize(100, 70)
+	-- AttachToHolder(ExtraActionBarFrame, BossButtonHolder)
 	AttachToHolder(ExtraAbilityContainer, BossButtonHolder)
 
 	-- Hook the SetPoint function to prevent the frame from moving
-	hooksecurefunc(ZoneAbilityFrame, 'SetPoint', ResetPosition)
-	hooksecurefunc(ExtraActionBarFrame, 'SetPoint', ResetPosition)
+	-- hooksecurefunc(ZoneAbilityFrame, 'SetPoint', ResetPosition)
+	-- hooksecurefunc(ExtraActionBarFrame, 'SetPoint', ResetPosition)
 	hooksecurefunc(ExtraAbilityContainer, 'SetPoint', ResetPosition)
 
 	-- Create the movers
-	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
-	MoveIt:CreateMover(BossButtonHolder, 'BossButton', 'Boss Button', nil, 'Blizzard UI')
+	-- MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
+	MoveIt:CreateMover(BossButtonHolder, 'BossButton', 'Extra action button', nil, 'Blizzard UI')
 end
 
 local function AlertFrame()

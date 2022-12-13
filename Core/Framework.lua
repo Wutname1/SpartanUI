@@ -205,8 +205,8 @@ local DBdefault = {
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
 				['WidgetPowerBarContainer'] = 'TOP,SpartanUI,TOP,0,-50',
-				['ZoneAbility'] = 'CENTER,SpartanUI,CENTER,0,-172',
-				['BossButton'] = 'CENTER,SpartanUI,CENTER,0,-172',
+				['ZoneAbility'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
+				['BossButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180'
 			},
