@@ -340,11 +340,10 @@ function module:IsSellable(item, ilink, bag, slot)
 	if not item then
 		return false
 	end
-	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, _, _, isCraftingReagent = GetItemInfo(ilink)
+	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then
 		return false
 	end
-
 	-- 0. Poor (gray): Broken I.W.I.N. Button
 	-- 1. Common (white): Archmage Vargoth's Staff
 	-- 2. Uncommon (green): X-52 Rocket Helmet
@@ -360,6 +359,11 @@ function module:IsSellable(item, ilink, bag, slot)
 	local NotConsumable = true
 	local IsGearToken = false
 	local iLevel = SUI:GetiLVL(ilink)
+
+	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 then
+		return false
+	end
+
 
 	if quality == 0 and module.DB.Gray then
 		qualitysellable = true
@@ -423,6 +427,7 @@ function module:IsSellable(item, ilink, bag, slot)
 		debugMsg(item)
 		debugMsg(name)
 		debugMsg(ilink)
+		debugMsg(expacID)
 		debugMsg('ilvl:     ' .. iLevel)
 		debugMsg('type:     ' .. itemType)
 		debugMsg('sub type: ' .. itemSubType)
