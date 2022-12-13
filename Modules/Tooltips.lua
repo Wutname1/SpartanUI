@@ -77,6 +77,7 @@ function module:OnInitialize()
 			Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
 		},
 		Background = 'Smoke',
+		onMouse = false,
 		VendorPrices = true,
 		Override = {},
 		ColorOverlay = true,
@@ -113,6 +114,14 @@ local TipCleared = function(self)
 	self.SUITip:ClearColors()
 	self.SUITip.border:Hide()
 	self.itemCleared = nil
+end
+
+local setPoint = function(self, parent)
+	if parent then
+		if (module.DB.onMouse) then
+			self:SetOwner(parent, 'ANCHOR_CURSOR')
+		end
+	end
 end
 
 local SetBorderColor = function(self, r, g, b, hasStatusBar)
@@ -474,6 +483,7 @@ function module:OnEnable()
 
 	--Do Setup
 	ApplyTooltipSkins()
+	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
 	if TooltipDataProcessor then
@@ -533,6 +543,12 @@ function module:BuildOptions()
 				type = 'toggle',
 				order = 11,
 				desc = L['Apply the color to the texture or put it over the texture']
+			},
+			onMouse = {
+				name = L['Display on mouse?'],
+				type = 'toggle',
+				order = 12,
+				desc = L['TooltipOverrideDesc']
 			}
 		}
 	}
