@@ -362,7 +362,8 @@
     "INVSLOT_FIRST_EQUIPPED",
     "INVSLOT_LAST_EQUIPPED",
     "UiMapPoint",
-    "IsSecureCmd"
+    "IsSecureCmd",
+    "THREAT_TOOLTIP"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

@@ -364,7 +364,6 @@ function module:IsSellable(item, ilink, bag, slot)
 		return false
 	end
 
-
 	if quality == 0 and module.DB.Gray then
 		qualitysellable = true
 	end
@@ -428,8 +427,8 @@ function module:IsSellable(item, ilink, bag, slot)
 		debugMsg(name)
 		debugMsg(ilink)
 		debugMsg(expacID)
-		debugMsg('ilvl:     ' .. iLevel)
-		debugMsg('type:     ' .. itemType)
+		debugMsg('ilvl: ' .. iLevel)
+		debugMsg('type: ' .. itemType)
 		debugMsg('sub type: ' .. itemSubType)
 		return true
 	end
