@@ -21,6 +21,8 @@ local function Builder(frame)
 	if (not SUI.IsRetail) then
 		UF.Elements:Build(frame, 'HappinessIndicator', elementDB['HappinessIndicator'])
 	end
+	PetCastingBarFrame:SetUnit(nil)
+	PetCastingBarFrame:UnregisterEvent('UNIT_PET')
 end
 
 local function Options()

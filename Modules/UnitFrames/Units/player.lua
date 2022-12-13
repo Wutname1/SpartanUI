@@ -48,6 +48,7 @@ local function Builder(frame)
 	-- 		return false
 	-- 	end
 	-- end
+	PlayerCastingBarFrame:SetUnit(nil)
 end
 
 local function Options()

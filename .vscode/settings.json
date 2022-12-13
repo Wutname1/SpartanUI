@@ -363,7 +363,9 @@
     "INVSLOT_LAST_EQUIPPED",
     "UiMapPoint",
     "IsSecureCmd",
-    "THREAT_TOOLTIP"
+    "THREAT_TOOLTIP",
+    "PlayerCastingBarFrame",
+    "PetCastingBarFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
