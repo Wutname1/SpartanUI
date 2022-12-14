@@ -2,8 +2,9 @@ local _G, SUI = _G, SUI
 local L = SUI.L
 local module = SUI:GetModule('Module_Artwork')
 local MoveIt = SUI.MoveIt
-
 -- Helper functions
+local ReparentAB = false
+local ExtraAB = SUI:NewModule('ExtraAB') ---@type SUI.Module
 
 ---@param frame any
 ---@param anchor FramePoint
@@ -13,6 +14,24 @@ local function ResetPosition(frame, _, anchor)
 		frame:ClearAllPoints()
 		frame:SetPoint('CENTER' or frame.SUIHolderMountPoint, holder)
 	end
+end
+
+local function ResetParent(frame, parent)
+	if parent ~= BossButtonHolder and not ReparentAB then
+		if InCombatLockdown() then
+			ReparentAB = true
+			ExtraAB:RegisterEvent('PLAYER_REGEN_ENABLED')
+			return
+		end
+
+		ZoneAbilityFrame:SetParent(BossButtonHolder)
+		ExtraActionBarFrame:SetParent(BossButtonHolder)
+	end
+end
+
+ExtraAB.PLAYER_REGEN_ENABLED = function(self)
+	ZoneAbilityFrame:SetParent(BossButtonHolder)
+	ExtraActionBarFrame:SetParent(BossButtonHolder)
 end
 
 ---@param name string
@@ -83,8 +102,10 @@ end
 
 local function AbilityBars()
 	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
-	-- local ExtraActionBarFrame = _G['ExtraActionBarFrame']
-	-- local ZoneAbilityFrame = _G['ZoneAbilityFrame']
+	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
+	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
+	ExtraActionBarFrame.ignoreInLayout = true
+	ZoneAbilityFrame.ignoreInLayout = true
 
 	-- ZoneAbility
 	-- local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
@@ -93,13 +114,22 @@ local function AbilityBars()
 	-- Extra Action / Boss Bar
 	local BossButtonHolder = GenerateHolder('BossButton')
 	BossButtonHolder:SetSize(100, 70)
-	-- AttachToHolder(ExtraActionBarFrame, BossButtonHolder)
+	BossButtonHolder:Show()
+
+	-- Attach the frames to the holder
+	AttachToHolder(ZoneAbilityFrame, BossButtonHolder)
+	AttachToHolder(ExtraActionBarFrame, BossButtonHolder)
 	AttachToHolder(ExtraAbilityContainer, BossButtonHolder)
 
 	-- Hook the SetPoint function to prevent the frame from moving
-	-- hooksecurefunc(ZoneAbilityFrame, 'SetPoint', ResetPosition)
-	-- hooksecurefunc(ExtraActionBarFrame, 'SetPoint', ResetPosition)
+	hooksecurefunc(ZoneAbilityFrame, 'SetPoint', ResetPosition)
+	hooksecurefunc(ExtraActionBarFrame, 'SetPoint', ResetPosition)
 	hooksecurefunc(ExtraAbilityContainer, 'SetPoint', ResetPosition)
+
+	-- Hook the SetParent function to prevent the frame from moving
+	hooksecurefunc(ZoneAbilityFrame, 'SetParent', ResetParent)
+	hooksecurefunc(ExtraActionBarFrame, 'SetParent', ResetParent)
+	hooksecurefunc(ExtraAbilityContainer, 'SetParent', ResetParent)
 
 	-- Create the movers
 	-- MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
