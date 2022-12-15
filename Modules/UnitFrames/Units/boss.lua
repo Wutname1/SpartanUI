@@ -60,6 +60,11 @@ local Settings = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
 				relativePoint = 'BOTTOM'
+			},
+			text = {
+				['1'] = {
+					text = '[health:current-dynamic] [perhp:conditional]'
+				}
 			}
 		}
 	},
