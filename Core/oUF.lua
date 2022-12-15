@@ -354,6 +354,13 @@ do --Health Formatting Tags
 	-- Missing Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['health:missing-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:missing-formatted'] = function(unit)
+		if UnitIsDeadOrGhost(unit) then
+			return 'DEAD'
+		end
+		if getMaxUnitHP(unit) == getCurrentUnitHP(unit) then
+			return ''
+		end
+
 		return SUI.Font:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
 	end
 
