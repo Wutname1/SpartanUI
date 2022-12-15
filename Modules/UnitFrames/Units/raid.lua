@@ -25,21 +25,18 @@ local elementList = {
 	'ResurrectIndicator',
 	'SummonIndicator',
 	'StatusText',
-	'SUI_RaidGroup'
+	'SUI_RaidGroup',
 }
 
 local function groupingOrder()
 	local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
 
-	if UF.CurrentSettings.raid.mode == 'GROUP' then
-		groupingOrder = '1,2,3,4,5,6,7,8'
-	end
+	if UF.CurrentSettings.raid.mode == 'GROUP' then groupingOrder = '1,2,3,4,5,6,7,8' end
 	return groupingOrder
 end
 
 local function GroupBuilder(holder)
-	holder.header =
-		SUIUF:SpawnHeader(
+	holder.header = SUIUF:SpawnHeader(
 		'SUI_UF_raid_Header',
 		nil,
 		'raid',
@@ -95,12 +92,12 @@ local function Options(OptionSet)
 	UF.Options:AddGroupDisplay('raid', OptionSet)
 	UF.Options:AddGroupLayout('raid', OptionSet)
 
-	OptionSet.args.General.args.Layout.args.bar2 = {name = 'Offsets', type = 'header', order = 20}
+	OptionSet.args.General.args.Layout.args.bar2 = { name = 'Offsets', type = 'header', order = 20 }
 	OptionSet.args.General.args.Layout.args.mode = {
 		name = SUI.L['Sort order'],
 		type = 'select',
 		order = 11,
-		values = {['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles'},
+		values = { ['GROUP'] = 'Groups', ['NAME'] = 'Name', ['ASSIGNEDROLE'] = 'Roles' },
 		set = function(info, val)
 			--Update memory
 			UF.CurrentSettings.raid.mode = val
@@ -108,12 +105,10 @@ local function Options(OptionSet)
 			UF.DB.UserSettings[UF.DB.Style].raid.mode = val
 			--Update the screen
 			local groupingOrder = 'TANK,HEALER,DAMAGER,NONE'
-			if val == 'GROUP' then
-				groupingOrder = '1,2,3,4,5,6,7,8'
-			end
+			if val == 'GROUP' then groupingOrder = '1,2,3,4,5,6,7,8' end
 
 			UF.Unit:Get('raid').header:SetAttribute('groupingOrder', groupingOrder)
-		end
+		end,
 	}
 end
 
@@ -133,7 +128,7 @@ local Settings = {
 	visibility = {
 		showAlways = false,
 		showInRaid = true,
-		showInParty = false
+		showInParty = false,
 	},
 	elements = {
 		Buffs = {
@@ -145,8 +140,8 @@ local Settings = {
 			growthy = 'UP',
 			position = {
 				relativePoint = 'BOTTOMRIGHT',
-				anchor = 'BOTTOMRIGHT'
-			}
+				anchor = 'BOTTOMRIGHT',
+			},
 		},
 		Debuffs = {
 			enabled = true,
@@ -157,57 +152,57 @@ local Settings = {
 			growthx = 'RIGHT',
 			position = {
 				relativePoint = 'TOPLEFT',
-				anchor = 'TOPLEFT'
-			}
+				anchor = 'TOPLEFT',
+			},
 		},
 		Health = {
 			height = 30,
 			text = {
 				['1'] = {
-					text = '[health:missing-formatted] [perhp:conditional]'
-				}
-			}
+					text = '[health:missing-formatted] [perhp:conditional]',
+				},
+			},
 		},
 		Power = {
 			height = 2,
 			position = {
-				y = 0
+				y = 0,
 			},
 			text = {
 				['1'] = {
-					enabled = false
-				}
-			}
+					enabled = false,
+				},
+			},
 		},
 		ResurrectIndicator = {
-			enabled = true
+			enabled = true,
 		},
 		SummonIndicator = {
-			enabled = true
+			enabled = true,
 		},
 		RaidTargetIndicator = {
-			size = 10
+			size = 10,
 		},
 		RaidRoleIndicator = {
 			enabled = true,
 			size = 10,
-			alpha = .7,
+			alpha = 0.7,
 			position = {
 				anchor = 'BOTTOMLEFT',
 				x = 0,
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		ReadyCheckIndicator = {
 			size = 15,
 			position = {
 				anchor = 'RIGHT',
-				x = -5
-			}
+				x = -5,
+			},
 		},
 		ThreatIndicator = {
 			enabled = true,
-			points = 'Name'
+			points = 'Name',
 		},
 		Name = {
 			enabled = true,
@@ -215,8 +210,8 @@ local Settings = {
 			textSize = 10,
 			text = '[SUI_ColorClass][name]',
 			position = {
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		SUI_RaidGroup = {
 			textSize = 9,
@@ -226,25 +221,25 @@ local Settings = {
 			position = {
 				anchor = 'BOTTOMRIGHT',
 				x = 0,
-				y = 5
-			}
+				y = 5,
+			},
 		},
 		GroupRoleIndicator = {
 			enabled = true,
 			size = 15,
-			alpha = .75,
+			alpha = 0.75,
 			ShowDPS = false,
 			position = {
 				anchor = 'TOPRIGHT',
 				x = -1,
-				y = 1
-			}
-		}
+				y = 1,
+			},
+		},
 	},
 	config = {
 		IsGroup = true,
-		isFriendly = true
-	}
+		isFriendly = true,
+	},
 }
 
 UF.Unit:Add('raid', Builder, Settings, Options, GroupBuilder)

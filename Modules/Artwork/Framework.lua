@@ -31,9 +31,7 @@ local function SetupPage()
 			end
 			local SetStyle = function(self)
 				local NewStyle = StdUi:GetRadioGroupValue('SUIArtwork')
-				if SUI.DB.Artwork.Style == NewStyle then
-					return
-				end
+				if SUI.DB.Artwork.Style == NewStyle then return end
 
 				SUI:SetActiveStyle(NewStyle)
 			end
@@ -41,7 +39,7 @@ local function SetupPage()
 			local count = 0
 			local row = 1
 			local Themes = {}
-			for i, v in pairs({'Classic', 'War', 'Fel', 'Digital', 'Arcane', 'Minimal', 'Tribal', 'Transparent'}) do
+			for i, v in pairs({ 'Classic', 'War', 'Fel', 'Digital', 'Arcane', 'Minimal', 'Tribal', 'Transparent' }) do
 				local control = StdUi:HighlightButton(SUI_Win.Artwork, 120, 60, '')
 				control:SetScript('OnClick', RadioButtons)
 				control:SetNormalTexture('interface\\addons\\SpartanUI\\images\\setup\\Style_' .. v)
@@ -50,9 +48,7 @@ local function SetupPage()
 				control.radio:SetValue(v)
 				control.radio:HookScript('OnClick', SetStyle)
 				StdUi:GlueBelow(control.radio, control)
-				if v == SUI.DB.Artwork.Style then
-					control.radio:SetChecked(true)
-				end
+				if v == SUI.DB.Artwork.Style then control.radio:SetChecked(true) end
 
 				Themes[i] = control
 
@@ -76,15 +72,13 @@ local function SetupPage()
 			Popular:SetPoint('TOPLEFT', Themes[2], 'TOPLEFT', -5, 5)
 			Popular:SetPoint('BOTTOMRIGHT', Themes[3].radio, 'BOTTOMRIGHT', 5, -2)
 
-			Popular:SetBackdrop(
-				{
-					bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-					edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-					edgeSize = 1
-				}
-			)
-			Popular:SetBackdropColor(0.0588, 0.0588, 0, .85)
-			Popular:SetBackdropBorderColor(.9, .9, 0, .9)
+			Popular:SetBackdrop({
+				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
+				edgeSize = 1,
+			})
+			Popular:SetBackdropColor(0.0588, 0.0588, 0, 0.85)
+			Popular:SetBackdropBorderColor(0.9, 0.9, 0, 0.9)
 			Popular.lbl = StdUi:FontString(SUI_Win.Artwork, 'Popular')
 			Popular.lbl:SetPoint('BOTTOMLEFT', Popular, 'TOPLEFT', 0, 0)
 
@@ -96,38 +90,32 @@ local function SetupPage()
 			SUI_Win.Artwork.sliderText:Disable()
 			SUI_Win.Artwork.sliderButton = StdUi:Button(SUI_Win.Artwork, 40, 15, 'reset')
 			-- Slider Actions
-			SUI_Win.Artwork.slider:SetScript(
-				'OnValueChanged',
-				function(self)
-					local calculate = SUI_Win.Artwork.slider:GetValue()
-					if math.floor(calculate) ~= math.floor(calculate) then
-						SUI_Win.Artwork.slider:SetValue(math.floor(calculate))
-						return
-					end
-
-					local scale = math.floor(SUI_Win.Artwork.slider:GetValue()) / 100
-					SUI_Win.Artwork.sliderText:SetText(scale)
-
-					SUI.DB.scale = scale
-
-					-- Update screen
-					module:UpdateScale()
-
-					if scale ~= 0.92 then
-						SUI_Win.Artwork.sliderButton:Enable()
-						SUI_Win.Artwork.sliderButton:Show()
-					else
-						SUI_Win.Artwork.sliderButton:Disable()
-						SUI_Win.Artwork.sliderButton:Hide()
-					end
+			SUI_Win.Artwork.slider:SetScript('OnValueChanged', function(self)
+				local calculate = SUI_Win.Artwork.slider:GetValue()
+				if math.floor(calculate) ~= math.floor(calculate) then
+					SUI_Win.Artwork.slider:SetValue(math.floor(calculate))
+					return
 				end
-			)
-			SUI_Win.Artwork.sliderButton:SetScript(
-				'OnClick',
-				function()
-					SUI_Win.Artwork.slider:SetValue(92)
+
+				local scale = math.floor(SUI_Win.Artwork.slider:GetValue()) / 100
+				SUI_Win.Artwork.sliderText:SetText(scale)
+
+				SUI.DB.scale = scale
+
+				-- Update screen
+				module:UpdateScale()
+
+				if scale ~= 0.92 then
+					SUI_Win.Artwork.sliderButton:Enable()
+					SUI_Win.Artwork.sliderButton:Show()
+				else
+					SUI_Win.Artwork.sliderButton:Disable()
+					SUI_Win.Artwork.sliderButton:Hide()
 				end
-			)
+			end)
+			SUI_Win.Artwork.sliderButton:SetScript('OnClick', function()
+				SUI_Win.Artwork.slider:SetValue(92)
+			end)
 			SUI_Win.Artwork.slider:SetValue(SUI.DB.scale * 100)
 
 			-- Position Slider elements
@@ -137,15 +125,13 @@ local function SetupPage()
 		end,
 		Next = function()
 			SUI.DB.Artwork.SetupDone = true
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end
 
 local function StyleUpdate()
-	if InCombatLockdown() then
-		return
-	end
+	if InCombatLockdown() then return end
 
 	module:UpdateScale()
 	module:UpdateAlpha()
@@ -195,38 +181,26 @@ function module:UpdateScale()
 
 	-- Call style scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-	if style.UpdateScale then
-		style:UpdateScale()
-	end
-	if SUI:IsModuleEnabled('UnitFrames') then
-		SUI.UF:ScaleFrames(SUI.DB.scale)
-	end
+	if style.UpdateScale then style:UpdateScale() end
+	if SUI:IsModuleEnabled('UnitFrames') then SUI.UF:ScaleFrames(SUI.DB.scale) end
 
 	-- Call Minimap scale update
 	local minimap = SUI:GetModule('Module_Minimap')
-	if minimap.Settings and minimap.Settings.scaleWithArt then
-		minimap:UpdateScale()
-	end
+	if minimap.Settings and minimap.Settings.scaleWithArt then minimap:UpdateScale() end
 
 	-- Update Bar scales
 	SUI:GetModule('Handler_BarSystems'):Refresh()
 end
 
 function module:UpdateAlpha()
-	if styleArt then
-		styleArt:SetAlpha(SUI.DB.alpha)
-	end
+	if styleArt then styleArt:SetAlpha(SUI.DB.alpha) end
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-	if style.UpdateAlpha then
-		style:UpdateAlpha()
-	end
+	if style.UpdateAlpha then style:UpdateAlpha() end
 end
 
 function module:updateOffset()
-	if InCombatLockdown() then
-		return
-	end
+	if InCombatLockdown() then return end
 
 	local Top, Bottom = 0, 0
 	local Tfubar, TChocolateBar, Ttitan = 0, 0, 0
@@ -236,33 +210,25 @@ function module:updateOffset()
 		-- FuBar Offset
 		for i = 1, 4 do
 			local bar = _G['FuBarFrame' .. i]
-			if (bar and bar:IsVisible()) then
+			if bar and bar:IsVisible() then
 				local point = bar:GetPoint(1)
-				if point:find('TOP.*') then
-					Tfubar = Tfubar + bar:GetHeight()
-				end
-				if point == 'BOTTOMLEFT' then
-					Bfubar = Bfubar + bar:GetHeight()
-				end
+				if point:find('TOP.*') then Tfubar = Tfubar + bar:GetHeight() end
+				if point == 'BOTTOMLEFT' then Bfubar = Bfubar + bar:GetHeight() end
 			end
 		end
 
 		-- Chocolate Bar Offset
 		for i = 1, 100 do
 			local bar = _G['ChocolateBar' .. i]
-			if (bar and bar:IsVisible()) then
+			if bar and bar:IsVisible() then
 				local point = bar:GetPoint(1)
-				if point:find('TOP.*') then
-					TChocolateBar = TChocolateBar + bar:GetHeight()
-				end
-				if point == 'RIGHT' then
-					BChocolateBar = BChocolateBar + bar:GetHeight()
-				end
+				if point:find('TOP.*') then TChocolateBar = TChocolateBar + bar:GetHeight() end
+				if point == 'RIGHT' then BChocolateBar = BChocolateBar + bar:GetHeight() end
 			end
 		end
 
 		-- Titan Bar
-		local TitanBars = {['Bar2'] = 'top', ['Bar'] = 'top', ['AuxBar2'] = 'bottom', ['AuxBar'] = 'bottom'}
+		local TitanBars = { ['Bar2'] = 'top', ['Bar'] = 'top', ['AuxBar2'] = 'bottom', ['AuxBar'] = 'bottom' }
 		for k, v in pairs(TitanBars) do
 			local bar = _G['Titan_Bar__Display_' .. k]
 			if bar and bar:IsVisible() then
@@ -275,9 +241,7 @@ function module:updateOffset()
 		end
 
 		-- Blizz Legion Order Hall
-		if OrderHallCommandBar and OrderHallCommandBar:IsVisible() then
-			Top = Top + OrderHallCommandBar:GetHeight()
-		end
+		if OrderHallCommandBar and OrderHallCommandBar:IsVisible() then Top = Top + OrderHallCommandBar:GetHeight() end
 
 		-- Update DB if set to auto
 		if SUI.DB.Offset.TopAuto then
@@ -292,9 +256,7 @@ function module:updateOffset()
 
 	-- Call module update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-	if style.updateOffset then
-		style:updateOffset(SUI.DB.Offset.Top, SUI.DB.Offset.Bottom)
-	end
+	if style.updateOffset then style:updateOffset(SUI.DB.Offset.Top, SUI.DB.Offset.Bottom) end
 
 	SpartanUI:ClearAllPoints()
 	SpartanUI:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, (SUI.DB.Offset.Top * -1))
@@ -314,9 +276,7 @@ function module:updateHorizontalOffset()
 
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-	if style.updateXOffset then
-		style:updateXOffset()
-	end
+	if style.updateXOffset then style:updateXOffset() end
 end
 
 function module:updateViewport()
@@ -328,9 +288,7 @@ function module:updateViewport()
 end
 
 function module:OnInitialize()
-	if SUI:IsModuleDisabled('Artwork') then
-		return
-	end
+	if SUI:IsModuleDisabled('Artwork') then return end
 
 	-- Setup options
 	module:SetupOptions()
@@ -345,36 +303,22 @@ end
 local function VehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
 		local minimapModule = SUI:GetModule('Module_Minimap')
-		petbattle:HookScript(
-			'OnHide',
-			function()
-				SUI_Art_War:Hide()
-				if SUI:IsModuleEnabled('Minimap') and ((minimapModule.DB.AutoDetectAllowUse) or (minimapModule.DB.ManualAllowUse)) then
-					Minimap:Hide()
-				end
-			end
-		)
-		petbattle:HookScript(
-			'OnShow',
-			function()
-				SUI_Art_War:Show()
-				if SUI:IsModuleEnabled('Minimap') and ((minimapModule.DB.AutoDetectAllowUse) or (minimapModule.DB.ManualAllowUse)) then
-					Minimap:Show()
-				end
-			end
-		)
+		petbattle:HookScript('OnHide', function()
+			SUI_Art_War:Hide()
+			if SUI:IsModuleEnabled('Minimap') and (minimapModule.DB.AutoDetectAllowUse or minimapModule.DB.ManualAllowUse) then Minimap:Hide() end
+		end)
+		petbattle:HookScript('OnShow', function()
+			SUI_Art_War:Show()
+			if SUI:IsModuleEnabled('Minimap') and (minimapModule.DB.AutoDetectAllowUse or minimapModule.DB.ManualAllowUse) then Minimap:Show() end
+		end)
 		RegisterStateDriver(SpartanUI, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled('Artwork') then
-		return
-	end
+	if SUI:IsModuleDisabled('Artwork') then return end
 
-	if SUI:GetModule('Handler_BarSystems') then
-		SUI:GetModule('Handler_BarSystems').Refresh()
-	end
+	if SUI:GetModule('Handler_BarSystems') then SUI:GetModule('Handler_BarSystems').Refresh() end
 
 	SetupPage()
 	VehicleUI()
@@ -384,9 +328,7 @@ function module:OnEnable()
 end
 
 function module:UpdateBarBG()
-	if not module.BarBG[SUI.DB.Artwork.Style] then
-		return
-	end
+	if not module.BarBG[SUI.DB.Artwork.Style] then return end
 	local usersettings = module.ActiveStyle.Artwork.barBG
 	for i, bgFrame in pairs(module.BarBG[SUI.DB.Artwork.Style]) do
 		if usersettings[i] then
@@ -409,7 +351,7 @@ function module:CreateBarBG(skinSettings, number, parent)
 	frame:SetSize((skinSettings.width or 400), (skinSettings.height or 32))
 	frame.BG = frame:CreateTexture(skinSettings.name .. '_Bar' .. number .. 'BG', 'BACKGROUND')
 	frame.BG:SetTexture(skinSettings.TexturePath)
-	frame.BG:SetTexCoord(unpack(skinSettings.TexCoord or {0, 1, 0, 1}))
+	frame.BG:SetTexCoord(unpack(skinSettings.TexCoord or { 0, 1, 0, 1 }))
 	frame.BG:SetAlpha(skinSettings.alpha or 1)
 	if skinSettings.point then
 		frame.BG:SetPoint(skinSettings.point)
@@ -417,9 +359,7 @@ function module:CreateBarBG(skinSettings, number, parent)
 		frame.BG:SetAllPoints(frame)
 	end
 
-	if not module.BarBG[skinSettings.name] then
-		module.BarBG[skinSettings.name] = {}
-	end
+	if not module.BarBG[skinSettings.name] then module.BarBG[skinSettings.name] = {} end
 	module.BarBG[skinSettings.name][tostring(number)] = frame
 
 	module:UpdateBarBG()

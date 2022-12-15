@@ -3,9 +3,7 @@ local UF, L = SUI.UF, SUI.L
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	if frame.unitOnCreate ~= 'player' then
-		return
-	end
+	if frame.unitOnCreate ~= 'player' then return end
 	frame.CPAnchor = frame:CreateFontString(nil, 'BORDER')
 	frame.CPAnchor:SetPoint('TOPLEFT', frame.Name, 'BOTTOMLEFT', 40, -5)
 	local ClassPower = {}
@@ -14,7 +12,7 @@ local function Build(frame, DB)
 		Bar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 
 		-- Position and size.
-		if (index == 1) then
+		if index == 1 then
 			Bar:SetPoint('LEFT', frame.CPAnchor, 'RIGHT', (index - 1) * Bar:GetWidth(), -1)
 		else
 			Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 3, 0)
@@ -52,7 +50,7 @@ local function Options(unitName, OptionSet)
 		order = 2,
 		width = 'double',
 		name = 'Bar Texture',
-		values = AceGUIWidgetLSMlists.statusbar
+		values = AceGUIWidgetLSMlists.statusbar,
 	}
 	OptionSet.args.display.args.size = nil
 	OptionSet.args.display.args.height = {
@@ -61,7 +59,7 @@ local function Options(unitName, OptionSet)
 		name = L['Height'],
 		min = 1,
 		max = 100,
-		step = 1
+		step = 1,
 	}
 end
 
@@ -74,14 +72,14 @@ local Settings = {
 		anchor = 'TOPLEFT',
 		relativeTo = 'Name',
 		relativePoint = 'BOTTOMLEFT',
-		y = -5
+		y = -5,
 	},
 	config = {
 		NoBulkUpdate = true,
 		type = 'Indicator',
 		DisplayName = 'Class Power',
-		Description = 'Controls the display of Combo Points, Arcane Charges, Chi Orbs, Holy Power, and Soul Shards'
-	}
+		Description = 'Controls the display of Combo Points, Arcane Charges, Chi Orbs, Holy Power, and Soul Shards',
+	},
 }
 
 UF.Elements:Register('ClassPower', Build, Update, Options, Settings)

@@ -5,7 +5,7 @@ local elementList = {
 	'SpartanArt',
 	'RaidTargetIndicator',
 	'Range',
-	'ThreatIndicator'
+	'ThreatIndicator',
 }
 
 local function Builder(frame)
@@ -31,8 +31,7 @@ local function Updater(frame)
 	end
 end
 
-local function Options()
-end
+local function Options() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -44,18 +43,18 @@ local Settings = {
 			text = {
 				['1'] = {
 					text = '[perhp]%',
-					position = {}
-				}
-			}
+					position = {},
+				},
+			},
 		},
 		Name = {
-			enabled = false
-		}
+			enabled = false,
+		},
 	},
 	config = {
 		isChild = true,
-		IsGroup = true
-	}
+		IsGroup = true,
+	},
 }
 
 UF.Unit:Add('partypet', Builder, Settings, nil, GroupBuilder, Updater)

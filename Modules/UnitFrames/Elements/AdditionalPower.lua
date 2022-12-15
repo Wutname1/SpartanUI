@@ -12,7 +12,7 @@ local function Build(frame, DB)
 
 	AdditionalPower.bg = AdditionalPower:CreateTexture(nil, 'BACKGROUND')
 	AdditionalPower.bg:SetAllPoints(AdditionalPower)
-	AdditionalPower.bg:SetColorTexture(1, 1, 1, .2)
+	AdditionalPower.bg:SetColorTexture(1, 1, 1, 0.2)
 
 	frame.AdditionalPower = AdditionalPower
 end
@@ -26,12 +26,12 @@ local Settings = {
 		anchor = 'TOP',
 		relativeTo = 'Power',
 		relativePoint = 'BOTTOM',
-		y = -1
+		y = -1,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Additional power'
-	}
+		DisplayName = 'Additional power',
+	},
 }
 
 UF.Elements:Register('AdditionalPower', Build, nil, nil, Settings)

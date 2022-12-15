@@ -70,11 +70,10 @@ local function Build(frame, DB)
 		modRate,
 		effect1,
 		effect2,
-		effect3)
+		effect3
+	)
 		local data = {}
-		if (source == 'player' or source == 'vehicle' or isBossDebuff) and duration ~= 0 and duration <= 900 then
-			return true
-		end
+		if (source == 'player' or source == 'vehicle' or isBossDebuff) and duration ~= 0 and duration <= 900 then return true end
 	end
 
 	element.displayReasons = {}
@@ -87,12 +86,10 @@ end
 ---@param settings? table
 local function Update(frame, settings)
 	local element = frame.AuraBars
-	if not frame.AuraBars then
-		return
-	end
+	if not frame.AuraBars then return end
 	local DB = settings or element.DB
 
-	if (DB.enabled) then
+	if DB.enabled then
 		element:Show()
 	else
 		element:Hide()
@@ -127,13 +124,13 @@ local function Options(unitName, OptionSet)
 		type = 'group',
 		order = 100,
 		inline = true,
-		args = {}
+		args = {},
 	}
 	OptionSet.args.Filters.args.NOTFINISHED = {
 		name = SUI.L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
 		type = 'description',
 		fontSize = 'medium',
-		order = .1
+		order = 0.1,
 	}
 end
 
@@ -157,15 +154,15 @@ local Settings = {
 		anchor = 'BOTTOMLEFT',
 		relativePoint = 'TOPLEFT',
 		x = 7,
-		y = 20
+		y = 20,
 	},
 	rules = {
-		showPlayers = true
+		showPlayers = true,
 	},
 	config = {
 		type = 'Auras',
-		DisplayName = 'Aura Bars'
-	}
+		DisplayName = 'Aura Bars',
+	},
 }
 
 UF.Elements:Register('AuraBars', Build, Update, Options, Settings)

@@ -20,7 +20,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
 		['BT4BarMicroMenu'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,300,0' or 'TOP,SpartanUI,TOP,338,0',
-		['BT4BarBagBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,595,0' or 'TOP,SpartanUI,TOP,614,0'
+		['BT4BarBagBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,595,0' or 'TOP,SpartanUI,TOP,614,0',
 	}
 
 	-- Unitframes Settings
@@ -29,37 +29,37 @@ function module:OnInitialize()
 		artwork = {
 			top = {
 				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-				TexCoord = {0.25390625, 0.580078125, 0.583984375, 0.712890625},
-				heightScale = .38,
-				widthScale = .6,
-				yScale = -.072
+				TexCoord = { 0.25390625, 0.580078125, 0.583984375, 0.712890625 },
+				heightScale = 0.38,
+				widthScale = 0.6,
+				yScale = -0.072,
 			},
 			bg = {
 				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-				TexCoord = {0.126953125, 0.734375, 0.171875, 0.291015625}
+				TexCoord = { 0.126953125, 0.734375, 0.171875, 0.291015625 },
 			},
 			bottom = {
 				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\UnitFrames',
-				TexCoord = {0.869140625, 1, 0.3203125, 0.359375},
-				heightScale = .15,
-				widthScale = .25
-			}
+				TexCoord = { 0.869140625, 1, 0.3203125, 0.359375 },
+				heightScale = 0.15,
+				widthScale = 0.25,
+			},
 		},
 		positions = {
-			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250'
-		}
+			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
+		},
 	}
 	UF.Style:Register('Tribal', ufsettings)
 
 	local minimapSettings = {
-		size = {156, 156},
+		size = { 156, 156 },
 		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap'
+			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
 		},
 		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 		},
-		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20'
+		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Tribal', minimapSettings)
 
@@ -67,32 +67,27 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DB.Artwork.Style ~= 'Tribal') then
+	if SUI.DB.Artwork.Style ~= 'Tribal' then
 		module:Disable()
 	else
 		--Setup Sliding Trays
 		module:SlidingTrays()
 
-		hooksecurefunc(
-			'UIParent_ManageFramePositions',
-			function()
-				if TutorialFrameAlertButton then
-					TutorialFrameAlertButton:SetParent(Minimap)
-					TutorialFrameAlertButton:ClearAllPoints()
-					TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-				end
-				if CastingBarFrame then
-					CastingBarFrame:ClearAllPoints()
-					CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Tribal, 'TOP', 0, 90)
-				end
+		hooksecurefunc('UIParent_ManageFramePositions', function()
+			if TutorialFrameAlertButton then
+				TutorialFrameAlertButton:SetParent(Minimap)
+				TutorialFrameAlertButton:ClearAllPoints()
+				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
-		)
+			if CastingBarFrame then
+				CastingBarFrame:ClearAllPoints()
+				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Tribal, 'TOP', 0, 90)
+			end
+		end)
 
 		module:SetupVehicleUI()
 
-		if SUI:IsModuleEnabled('Minimap') then
-			module:MiniMap()
-		end
+		if SUI:IsModuleEnabled('Minimap') then module:MiniMap() end
 	end
 end
 
@@ -103,7 +98,7 @@ end
 
 --	Module Calls
 function module:TooltipLoc(tooltip, parent)
-	if (parent == 'UIParent') then
+	if parent == 'UIParent' then
 		tooltip:ClearAllPoints()
 		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Tribal', 'TOPRIGHT', 0, 10)
 	end
@@ -111,31 +106,24 @@ end
 
 function module:SetupVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		SUI_Art_Tribal:HookScript(
-			'OnShow',
-			function()
-				Artwork_Core:trayWatcherEvents()
-			end
-		)
+		SUI_Art_Tribal:HookScript('OnShow', function()
+			Artwork_Core:trayWatcherEvents()
+		end)
 		RegisterStateDriver(SUI_Art_Tribal, 'visibility', '[overridebar][vehicleui] hide; show')
 	end
 end
 
 function module:RemoveVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then
-		UnregisterStateDriver(SUI_Art_Tribal, 'visibility')
-	end
+	if SUI.DB.Artwork.VehicleUI then UnregisterStateDriver(SUI_Art_Tribal, 'visibility') end
 end
 
 function module:CreateArtwork()
-	if Tribal_ActionBarPlate then
-		return
-	end
+	if Tribal_ActionBarPlate then return end
 
 	local BarBGSettings = {
 		name = 'Tribal',
 		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Barbg',
-		TexCoord = {0.07421875, 0.92578125, 0.359375, 0.6796875}
+		TexCoord = { 0.07421875, 0.92578125, 0.359375, 0.6796875 },
 	}
 
 	local plate = CreateFrame('Frame', 'Tribal_ActionBarPlate', SUI_Art_Tribal)
@@ -146,7 +134,7 @@ function module:CreateArtwork()
 
 	for i = 1, 4 do
 		plate['BG' .. i] = Artwork_Core:CreateBarBG(BarBGSettings, i, Tribal_ActionBarPlate)
-		_G['Tribal_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 0, .5)
+		_G['Tribal_Bar' .. i .. 'BG']:SetVertexColor(0, 0, 0, 0.5)
 	end
 	plate.BG1:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 70)
 	plate.BG2:SetPoint('BOTTOMRIGHT', plate, 'BOTTOM', -110, 25)
@@ -165,14 +153,14 @@ function module:CreateArtwork()
 	artFrame.Left = artFrame:CreateTexture('SUI_Art_Tribal_Left', 'BORDER')
 	artFrame.Left:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Art-Left')
 	artFrame.Left:SetPoint('BOTTOMRIGHT', artFrame, 'BOTTOM', 0, 0)
-	artFrame.Left:SetScale(.75)
-	artFrame.Left:SetAlpha(.85)
+	artFrame.Left:SetScale(0.75)
+	artFrame.Left:SetAlpha(0.85)
 
 	artFrame.Right = artFrame:CreateTexture('SUI_Art_Tribal_Right', 'BORDER')
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Art-Right')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
-	artFrame.Right:SetScale(.75)
-	artFrame.Right:SetAlpha(.85)
+	artFrame.Right:SetScale(0.75)
+	artFrame.Right:SetAlpha(0.85)
 end
 
 -- Artwork Stuff
@@ -180,20 +168,20 @@ function module:SlidingTrays()
 	local Settings = {
 		bg = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = {.076171875, 0.92578125, 0, 0.18359375}
+			TexCoord = { 0.076171875, 0.92578125, 0, 0.18359375 },
 		},
 		bgCollapsed = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = {0.076171875, 0.92578125, 1, 0.92578125}
+			TexCoord = { 0.076171875, 0.92578125, 1, 0.92578125 },
 		},
 		UpTex = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = {0.3671875, 0.640625, 0.20703125, 0.25390625}
+			TexCoord = { 0.3671875, 0.640625, 0.20703125, 0.25390625 },
 		},
 		DownTex = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\Trays',
-			TexCoord = {0.3671875, 0.640625, 0.25390625, 0.20703125}
-		}
+			TexCoord = { 0.3671875, 0.640625, 0.25390625, 0.20703125 },
+		},
 	}
 
 	Artwork_Core:SlidingTrays(Settings)

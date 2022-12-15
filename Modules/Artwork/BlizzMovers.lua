@@ -75,13 +75,10 @@ local function TalkingHead()
 		UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
-		TalkingHeadFrame:HookScript(
-			'OnShow',
-			function()
-				TalkingHeadFrame:ClearAllPoints()
-				TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
-			end
-		)
+		TalkingHeadFrame:HookScript('OnShow', function()
+			TalkingHeadFrame:ClearAllPoints()
+			TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
+		end)
 	end
 	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
 		SetupTalkingHead()
@@ -89,14 +86,11 @@ local function TalkingHead()
 		--We want the mover to be available immediately, so we load it ourselves
 		local f = CreateFrame('Frame')
 		f:RegisterEvent('PLAYER_ENTERING_WORLD')
-		f:SetScript(
-			'OnEvent',
-			function(frame, event)
-				frame:UnregisterEvent(event)
-				TalkingHead_LoadUI()
-				SetupTalkingHead()
-			end
-		)
+		f:SetScript('OnEvent', function(frame, event)
+			frame:UnregisterEvent(event)
+			TalkingHead_LoadUI()
+			SetupTalkingHead()
+		end)
 	end
 end
 
@@ -170,17 +164,13 @@ local function VehicleLeaveButton()
 
 		MainMenuBarVehicleLeaveButton:ClearAllPoints()
 		MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
-		hooksecurefunc(
-			MainMenuBarVehicleLeaveButton,
-			'SetPoint',
-			function(_, _, parent)
-				if parent ~= VehicleBtnHolder then
-					MainMenuBarVehicleLeaveButton:ClearAllPoints()
-					MainMenuBarVehicleLeaveButton:SetParent(UIParent)
-					MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
-				end
+		hooksecurefunc(MainMenuBarVehicleLeaveButton, 'SetPoint', function(_, _, parent)
+			if parent ~= VehicleBtnHolder then
+				MainMenuBarVehicleLeaveButton:ClearAllPoints()
+				MainMenuBarVehicleLeaveButton:SetParent(UIParent)
+				MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
 			end
-		)
+		end)
 	end
 
 	-- Delay this so unit frames have been generated

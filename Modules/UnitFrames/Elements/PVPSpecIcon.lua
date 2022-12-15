@@ -18,17 +18,16 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 ---@param DB? table
-local function Options(unitName, OptionSet, DB)
-end
+local function Options(unitName, OptionSet, DB) end
 
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	position = {
-		anchor = 'RIGHT'
+		anchor = 'RIGHT',
 	},
 	config = {
-		NoBulkUpdate = false
-	}
+		NoBulkUpdate = false,
+	},
 }
 
 UF.Elements:Register('PVPSpecIcon', Build, Update, Options, Settings)

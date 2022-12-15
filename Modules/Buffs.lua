@@ -1,16 +1,12 @@
 local _G, SUI, L = _G, SUI, SUI.L
 local module = SUI:NewModule('Module_Buffs') ---@type SUI.Module
 ----------------------------------------------------------------------------------------------------
-local RuleList = {'Rule1', 'Rule2', 'Rule3'}
+local RuleList = { 'Rule1', 'Rule2', 'Rule3' }
 local BuffWatcher = CreateFrame('Frame')
-if SUI.IsRetail then
-	return
-end
+if SUI.IsRetail then return end
 
 function module:OnInitialize()
-	if SUI.DB.Buffs == nil then
-		SUI.DB.Buffs = {Override = {}}
-	end
+	if SUI.DB.Buffs == nil then SUI.DB.Buffs = { Override = {} } end
 
 	if SUI.DB.Buffs.Rule1 == nil then
 		for _, v in ipairs(RuleList) do
@@ -19,7 +15,7 @@ function module:OnInitialize()
 				Combat = false,
 				OverrideLoc = false,
 				offset = 0,
-				Anchor = {Moved = false, AnchorPos = {}}
+				Anchor = { Moved = false, AnchorPos = {} },
 			}
 		end
 	end
@@ -81,15 +77,11 @@ local BuffPosUpdate = function()
 		end
 	end
 
-	if setdefault then
-		BuffFrame:SetPoint('TOPRIGHT', -13, -13 - (SUI.DB.BuffSettings.offset))
-	end
+	if setdefault then BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset) end
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled('Buffs') then
-		return
-	end
+	if SUI:IsModuleDisabled('Buffs') then return end
 	module:BuildOptions()
 
 	BuffWatcher:SetScript('OnEvent', BuffPosUpdate)
@@ -123,57 +115,45 @@ function module:OnEnable()
 		anchor.lbl:SetText('Anchor for Rule ' .. k)
 		anchor.lbl:SetAllPoints(anchor)
 
-		anchor:SetScript(
-			'OnMouseDown',
-			function(self, button)
-				if button == 'LeftButton' then
-					SUI.DB.Buffs[v].Anchor.Moved = true
-					module[v].anchor:SetMovable(true)
-					module[v].anchor:StartMoving()
-				end
+		anchor:SetScript('OnMouseDown', function(self, button)
+			if button == 'LeftButton' then
+				SUI.DB.Buffs[v].Anchor.Moved = true
+				module[v].anchor:SetMovable(true)
+				module[v].anchor:StartMoving()
 			end
-		)
+		end)
 
-		anchor:SetScript(
-			'OnMouseUp',
-			function(self, button)
-				module[v].anchor:Hide()
-				module[v].anchor:StopMovingOrSizing()
+		anchor:SetScript('OnMouseUp', function(self, button)
+			module[v].anchor:Hide()
+			module[v].anchor:StopMovingOrSizing()
+			local Anchors = {}
+			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module[v].anchor:GetPoint()
+			for k, val in pairs(Anchors) do
+				SUI.DB.Buffs[v].Anchor.AnchorPos[k] = val
+			end
+			BuffPosUpdate()
+		end)
+
+		anchor:SetScript('OnShow', function(self)
+			if SUI.DB.Buffs[v].Anchor.Moved then
 				local Anchors = {}
-				Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module[v].anchor:GetPoint()
-				for k, val in pairs(Anchors) do
-					SUI.DB.Buffs[v].Anchor.AnchorPos[k] = val
+				for key, val in pairs(SUI.DB.Buffs[v].Anchor.AnchorPos) do
+					Anchors[key] = val
 				end
-				BuffPosUpdate()
+				self:ClearAllPoints()
+				self:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+			else
+				self:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -140, -10)
 			end
-		)
+		end)
 
-		anchor:SetScript(
-			'OnShow',
-			function(self)
-				if SUI.DB.Buffs[v].Anchor.Moved then
-					local Anchors = {}
-					for key, val in pairs(SUI.DB.Buffs[v].Anchor.AnchorPos) do
-						Anchors[key] = val
-					end
-					self:ClearAllPoints()
-					self:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-				else
-					self:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', -140, -10)
-				end
-			end
-		)
-
-		anchor:SetScript(
-			'OnEvent',
-			function(self, event, ...)
-				self:Hide()
-				BuffPosUpdate()
-			end
-		)
+		anchor:SetScript('OnEvent', function(self, event, ...)
+			self:Hide()
+			BuffPosUpdate()
+		end)
 		anchor:RegisterEvent('PLAYER_REGEN_DISABLED')
 
-		module[v] = {anchor = anchor}
+		module[v] = { anchor = anchor }
 		module[v].anchor:Hide()
 	end
 end
@@ -182,7 +162,7 @@ function module:BuildOptions()
 	SUI.opt.args['Modules'].args['Buffs'] = {
 		type = 'group',
 		name = L['Buffs'],
-		args = {}
+		args = {},
 	}
 
 	for k, v in ipairs(RuleList) do
@@ -202,7 +182,7 @@ function module:BuildOptions()
 						['Raid'] = 'In a Raid Group',
 						['Instance'] = 'In a instance',
 						['All'] = 'All the time',
-						['Disabled'] = 'Disabled'
+						['Disabled'] = 'Disabled',
 					},
 					get = function(info)
 						return SUI.DB.Buffs[v].Status
@@ -210,7 +190,7 @@ function module:BuildOptions()
 					set = function(info, val)
 						SUI.DB.Buffs[v].Status = val
 						BuffPosUpdate()
-					end
+					end,
 				},
 				Combat = {
 					name = L['Only in combat'],
@@ -222,7 +202,7 @@ function module:BuildOptions()
 					set = function(info, val)
 						SUI.DB.Buffs[v].Combat = val
 						BuffPosUpdate()
-					end
+					end,
 				},
 				OverrideTheme = {
 					name = L['Override theme'],
@@ -234,7 +214,7 @@ function module:BuildOptions()
 					set = function(info, val)
 						SUI.DB.Buffs[v].OverrideLoc = val
 						BuffPosUpdate()
-					end
+					end,
 				},
 				MoveAnchor = {
 					name = L['Move anchor'],
@@ -243,7 +223,7 @@ function module:BuildOptions()
 					width = 'half',
 					func = function(info, val)
 						module[v].anchor:Show()
-					end
+					end,
 				},
 				ResetAnchor = {
 					name = L['Reset anchor'],
@@ -253,9 +233,9 @@ function module:BuildOptions()
 					func = function(info, val)
 						SUI.DB.Buffs[v].Anchor.Moved = false
 						BuffPosUpdate()
-					end
-				}
-			}
+					end,
+				},
+			},
 		}
 	end
 end

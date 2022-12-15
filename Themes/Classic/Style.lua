@@ -5,7 +5,7 @@ local unpack = unpack
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local SkinnedFrames = {}
-local FramesToSkin = {'player', 'target'}
+local FramesToSkin = { 'player', 'target' }
 
 function module:SetColor()
 	local r, b, g, a = 1, 1, 1, 1
@@ -14,9 +14,7 @@ function module:SetColor()
 	end
 
 	for i = 1, 10 do
-		if _G['Classic_Bar' .. i] and _G['Classic_Bar' .. i].BG then
-			_G['Classic_Bar' .. i].BG:SetVertexColor(r, b, g, a)
-		end
+		if _G['Classic_Bar' .. i] and _G['Classic_Bar' .. i].BG then _G['Classic_Bar' .. i].BG:SetVertexColor(r, b, g, a) end
 	end
 	SUI_Art_Classic.Center:SetVertexColor(r, b, g, a)
 	SUI_Art_Classic.Left:SetVertexColor(r, b, g, a)
@@ -36,19 +34,15 @@ end
 
 function module:BuffLoc(self, parent)
 	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - (SUI.DB.BuffSettings.offset))
+	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
 end
 
 function module:SetupVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then
-		RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
-	end
+	if SUI.DB.Artwork.VehicleUI then RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show') end
 end
 
 function module:RemoveVehicleUI()
-	if not SUI.DB.Artwork.VehicleUI then
-		UnregisterStateDriver(SUI_Art_Classic, 'visibility')
-	end
+	if not SUI.DB.Artwork.VehicleUI then UnregisterStateDriver(SUI_Art_Classic, 'visibility') end
 end
 
 local function CreateArtwork()
@@ -63,7 +57,7 @@ local function CreateArtwork()
 		name = 'Classic',
 		height = 37,
 		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop1',
-		TexCoord = {0.107421875, 0.896484375, 0.25, 0.765625}
+		TexCoord = { 0.107421875, 0.896484375, 0.25, 0.765625 },
 	}
 
 	local BarBGSettings2 = {
@@ -71,14 +65,14 @@ local function CreateArtwork()
 		width = 140,
 		height = 110,
 		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop3',
-		TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
+		TexCoord = { 0.23828125, 0.76171875, 0.09375, 0.8828125 },
 	}
 
 	local BarBGSettings3 = {
 		name = 'Classic',
 		-- height = 32,
 		point = 'BOTTOM',
-		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop0'
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-backdrop0',
 		-- TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
 	}
 
@@ -86,7 +80,7 @@ local function CreateArtwork()
 		name = 'Classic',
 		height = 34,
 		point = 'BOTTOMRIGHT',
-		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup1'
+		TexturePath = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup1',
 		-- TexCoord = {0.23828125, 0.76171875, 0.09375, 0.8828125}
 	}
 
@@ -157,41 +151,34 @@ local function CreateArtwork()
 	artFrame.FarRight:SetPoint('BOTTOMLEFT', artFrame.Right, 'BOTTOMRIGHT')
 	artFrame.FarRight:SetPoint('BOTTOMRIGHT', SpartanUI, 'BOTTOMRIGHT')
 
-	if SUI.DB.Artwork.VehicleUI then
-		RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
-	end
+	if SUI.DB.Artwork.VehicleUI then RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show') end
 
 	do -- create base module frames
 		-- Fix CPU leak, use UpdateInterval
 		plate.UpdateInterval = 0.5
 		plate.TimeSinceLastUpdate = 0
-		plate:HookScript(
-			'OnUpdate',
-			function(self, ...) -- backdrop and popup visibility changes (alpha, animation, hide/show)
-				local elapsed = select(1, ...)
-				self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
-				if (self.TimeSinceLastUpdate > self.UpdateInterval) then
-					if not MouseIsOver(plate.mask1) and not MouseIsOver(plate.POP1) and SUI.DB.ActionBars['popup1'].anim then -- popup1 animation
-						plate.mask1:Show()
-					else
-						plate.mask1:Hide()
-					end
-					if not MouseIsOver(plate.mask2) and not MouseIsOver(plate.POP2) and SUI.DB.ActionBars['popup2'].anim then -- popup2 animation
-						plate.mask2:Show()
-					else
-						plate.mask2:Hide()
-					end
-					self.TimeSinceLastUpdate = 0
+		plate:HookScript('OnUpdate', function(self, ...) -- backdrop and popup visibility changes (alpha, animation, hide/show)
+			local elapsed = select(1, ...)
+			self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
+			if self.TimeSinceLastUpdate > self.UpdateInterval then
+				if not MouseIsOver(plate.mask1) and not MouseIsOver(plate.POP1) and SUI.DB.ActionBars['popup1'].anim then -- popup1 animation
+					plate.mask1:Show()
+				else
+					plate.mask1:Hide()
 				end
+				if not MouseIsOver(plate.mask2) and not MouseIsOver(plate.POP2) and SUI.DB.ActionBars['popup2'].anim then -- popup2 animation
+					plate.mask2:Show()
+				else
+					plate.mask2:Hide()
+				end
+				self.TimeSinceLastUpdate = 0
 			end
-		)
+		end)
 	end
 end
 
 local function UnitFrameCallback(self, unit)
-	if InCombatLockdown() then
-		return
-	end
+	if InCombatLockdown() then return end
 	unit = self.unitOnCreate
 
 	if not self.Art_Classic and SUI:IsInTable(FramesToSkin, unit) then
@@ -205,9 +192,7 @@ local function UnitFrameCallback(self, unit)
 		ring.bg = ring:CreateTexture(nil, 'BACKGROUND')
 		ring.bg:SetParent(ring)
 		ring.bg:SetTexture(base_ring1)
-		if unit == 'target' then
-			ring.bg:SetTexCoord(1, 0, 0, 1)
-		end
+		if unit == 'target' then ring.bg:SetTexCoord(1, 0, 0, 1) end
 
 		self.Art_Classic = ring
 		self:SetFrameLevel(5)
@@ -237,7 +222,7 @@ local function Options()
 		type = 'group',
 		desc = L['ActionBarConfDesc'],
 		args = {
-			header1 = {name = '', type = 'header', order = 1.1},
+			header1 = { name = '', type = 'header', order = 1.1 },
 			Allenable = {
 				name = L['AllBarEnable'],
 				type = 'toggle',
@@ -250,7 +235,7 @@ local function Options()
 					for i = 1, 6 do
 						SUI.DB.ActionBars['bar' .. i].enable = val
 					end
-				end
+				end,
 			},
 			Allalpha = {
 				name = L['AllBarAlpha'],
@@ -267,7 +252,7 @@ local function Options()
 					for i = 1, 6 do
 						SUI.DB.ActionBars['bar' .. i].alpha, SUI.DB.ActionBars.Allalpha = val, val
 					end
-				end
+				end,
 			},
 			Bar1 = {
 				name = L['Bar'] .. '1',
@@ -285,10 +270,8 @@ local function Options()
 							return SUI.DB.ActionBars.bar1.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.ActionBars.bar1.enable == true then
-								SUI.DB.ActionBars.bar1.alpha = val
-							end
-						end
+							if SUI.DB.ActionBars.bar1.enable == true then SUI.DB.ActionBars.bar1.alpha = val end
+						end,
 					},
 					bar1enable = {
 						name = L['Enabled'],
@@ -298,9 +281,9 @@ local function Options()
 						end,
 						set = function(info, val)
 							SUI.DB.ActionBars.bar1.enable = val
-						end
-					}
-				}
+						end,
+					},
+				},
 			},
 			Bar2 = {
 				name = L['Bar'] .. '2',
@@ -318,10 +301,8 @@ local function Options()
 							return SUI.DB.ActionBars.bar2.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.ActionBars.bar2.enable == true then
-								SUI.DB.ActionBars.bar2.alpha = val
-							end
-						end
+							if SUI.DB.ActionBars.bar2.enable == true then SUI.DB.ActionBars.bar2.alpha = val end
+						end,
 					},
 					bar2enable = {
 						name = L['Enabled'],
@@ -331,9 +312,9 @@ local function Options()
 						end,
 						set = function(info, val)
 							SUI.DB.ActionBars.bar2.enable = val
-						end
-					}
-				}
+						end,
+					},
+				},
 			},
 			Bar3 = {
 				name = L['Bar'] .. '3',
@@ -351,10 +332,8 @@ local function Options()
 							return SUI.DB.ActionBars.bar3.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.ActionBars.bar3.enable == true then
-								SUI.DB.ActionBars.bar3.alpha = val
-							end
-						end
+							if SUI.DB.ActionBars.bar3.enable == true then SUI.DB.ActionBars.bar3.alpha = val end
+						end,
 					},
 					bar3enable = {
 						name = L['Enabled'],
@@ -364,9 +343,9 @@ local function Options()
 						end,
 						set = function(info, val)
 							SUI.DB.ActionBars.bar3.enable = val
-						end
-					}
-				}
+						end,
+					},
+				},
 			},
 			Bar4 = {
 				name = L['Bar'] .. '4',
@@ -384,10 +363,8 @@ local function Options()
 							return SUI.DB.ActionBars.bar4.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.ActionBars.bar4.enable == true then
-								SUI.DB.ActionBars.bar4.alpha = val
-							end
-						end
+							if SUI.DB.ActionBars.bar4.enable == true then SUI.DB.ActionBars.bar4.alpha = val end
+						end,
 					},
 					bar4enable = {
 						name = L['Enabled'],
@@ -397,9 +374,9 @@ local function Options()
 						end,
 						set = function(info, val)
 							SUI.DB.ActionBars.bar4.enable = val
-						end
-					}
-				}
+						end,
+					},
+				},
 			},
 			Bar5 = {
 				name = L['Bar'] .. '5',
@@ -417,10 +394,8 @@ local function Options()
 							return SUI.DB.ActionBars.bar5.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.ActionBars.bar5.enable == true then
-								SUI.DB.ActionBars.bar5.alpha = val
-							end
-						end
+							if SUI.DB.ActionBars.bar5.enable == true then SUI.DB.ActionBars.bar5.alpha = val end
+						end,
 					},
 					bar5enable = {
 						name = L['Enabled'],
@@ -430,9 +405,9 @@ local function Options()
 						end,
 						set = function(info, val)
 							SUI.DB.ActionBars.bar5.enable = val
-						end
-					}
-				}
+						end,
+					},
+				},
 			},
 			Bar6 = {
 				name = L['Bar'] .. '6',
@@ -450,10 +425,8 @@ local function Options()
 							return SUI.DB.ActionBars.bar6.alpha
 						end,
 						set = function(info, val)
-							if SUI.DB.ActionBars.bar6.enable == true then
-								SUI.DB.ActionBars.bar6.alpha = val
-							end
-						end
+							if SUI.DB.ActionBars.bar6.enable == true then SUI.DB.ActionBars.bar6.alpha = val end
+						end,
 					},
 					bar6enable = {
 						name = L['Enabled'],
@@ -463,11 +436,11 @@ local function Options()
 						end,
 						set = function(info, val)
 							SUI.DB.ActionBars.bar6.enable = val
-						end
-					}
-				}
-			}
-		}
+						end,
+					},
+				},
+			},
+		},
 	}
 	SUI.opt.args.Artwork.args['popup'] = {
 		name = L['Popup Animations'],
@@ -484,7 +457,7 @@ local function Options()
 				end,
 				set = function(info, val)
 					SUI.DB.ActionBars.popup1.anim = val
-				end
+				end,
 			},
 			popup1alpha = {
 				name = L['Alpha left popup'],
@@ -497,10 +470,8 @@ local function Options()
 					return SUI.DB.ActionBars.popup1.alpha
 				end,
 				set = function(info, val)
-					if SUI.DB.ActionBars.popup1.enable == true then
-						SUI.DB.ActionBars.popup1.alpha = val
-					end
-				end
+					if SUI.DB.ActionBars.popup1.enable == true then SUI.DB.ActionBars.popup1.alpha = val end
+				end,
 			},
 			popup1enable = {
 				name = L['Enable left popup'],
@@ -511,7 +482,7 @@ local function Options()
 				end,
 				set = function(info, val)
 					SUI.DB.ActionBars.popup1.enable = val
-				end
+				end,
 			},
 			popup2anim = {
 				name = L['Animate right popup'],
@@ -523,7 +494,7 @@ local function Options()
 				end,
 				set = function(info, val)
 					SUI.DB.ActionBars.popup2.anim = val
-				end
+				end,
 			},
 			popup2alpha = {
 				name = L['Alpha right popup'],
@@ -536,10 +507,8 @@ local function Options()
 					return SUI.DB.ActionBars.popup2.alpha
 				end,
 				set = function(info, val)
-					if SUI.DB.ActionBars.popup2.enable == true then
-						SUI.DB.ActionBars.popup2.alpha = val
-					end
-				end
+					if SUI.DB.ActionBars.popup2.enable == true then SUI.DB.ActionBars.popup2.alpha = val end
+				end,
 			},
 			popup2enable = {
 				name = L['Enable right popup'],
@@ -550,9 +519,9 @@ local function Options()
 				end,
 				set = function(info, val)
 					SUI.DB.ActionBars.popup2.enable = val
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 	SUI.opt.args.Artwork.args['Artwork'] = {
 		name = L['Artwork Options'],
@@ -563,22 +532,20 @@ local function Options()
 				name = L['Artwork Color'],
 				type = 'color',
 				hasAlpha = true,
-				order = .5,
+				order = 0.5,
 				get = function(info)
-					if not SUI.DB.Styles.Classic.Color.Art then
-						return 1, 1, 1, 1
-					end
+					if not SUI.DB.Styles.Classic.Color.Art then return 1, 1, 1, 1 end
 					return unpack(SUI.DB.Styles.Classic.Color.Art)
 				end,
 				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Classic.Color.Art = {r, b, g, a}
+					SUI.DB.Styles.Classic.Color.Art = { r, b, g, a }
 					module:SetColor()
-				end
+				end,
 			},
 			ColorEnabled = {
 				name = L['Color enabled'],
 				type = 'toggle',
-				order = .6,
+				order = 0.6,
 				get = function(info)
 					if SUI.DB.Styles.Classic.Color.Art then
 						return true
@@ -588,13 +555,13 @@ local function Options()
 				end,
 				set = function(info, val)
 					if val then
-						SUI.DB.Styles.Classic.Color.Art = {1, 1, 1, 1}
+						SUI.DB.Styles.Classic.Color.Art = { 1, 1, 1, 1 }
 						module:SetColor()
 					else
 						SUI.DB.Styles.Classic.Color.Art = false
 						module:SetColor()
 					end
-				end
+				end,
 			},
 			alpha = {
 				name = L['Transparency'],
@@ -612,14 +579,14 @@ local function Options()
 					SUI.DB.alpha = (val / 100)
 					module:updateSpartanAlpha()
 					module:AddNotice()
-				end
+				end,
 			},
 			TransparencyNotice = {
 				name = L['TransparencyNotice'],
 				order = 1.1,
 				type = 'description',
 				fontSize = 'small',
-				hidden = true
+				hidden = true,
 			},
 			offset = {
 				name = L['Configure Offset'],
@@ -629,12 +596,12 @@ local function Options()
 				desc = L['Offsets the bottom bar automatically, or set value'],
 				min = 0,
 				max = 200,
-				step = .1,
+				step = 0.1,
 				get = function(info)
 					return SUI.DB.yoffset
 				end,
 				set = function(info, val)
-					if (InCombatLockdown()) then
+					if InCombatLockdown() then
 						SUI:Print(ERR_NOT_IN_COMBAT)
 					else
 						if SUI.DB.yoffsetAuto then
@@ -644,7 +611,7 @@ local function Options()
 							SUI.DB.yoffset = val
 						end
 					end
-				end
+				end,
 			},
 			offsetauto = {
 				name = L['Auto Offset'],
@@ -656,42 +623,39 @@ local function Options()
 				end,
 				set = function(info, val)
 					SUI.DB.yoffsetAuto = val
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
-	if (SUI.DB.alpha ~= 1) then
-		module:AddNotice()
-	end
+	if SUI.DB.alpha ~= 1 then module:AddNotice() end
 end
 
 function module:OnInitialize()
 	local BarHandler = SUI:GetModule('Handler_BarSystems')
 
-	BarHandler.BarPosition.BT4.Classic =
-		SUI.IsRetail and
-		{
-			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
-			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
-			--
-			['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
-			['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
-			--
-			['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
-			['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
-			--
-			['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
-			--
-			['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
-			['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
-			--
-			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,138',
-			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168'
-		} or
-		{
+	BarHandler.BarPosition.BT4.Classic = SUI.IsRetail
+			and {
+				['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
+				['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,47',
+				--
+				['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,104',
+				['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,445,47',
+				--
+				['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-5,7',
+				['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,5,7',
+				--
+				['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+				['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,130',
+				--
+				['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-240,138',
+				['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+				['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
+				--
+				['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,138',
+				['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168',
+			}
+		or {
 			['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,82',
 			['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-359,35',
 			--
@@ -709,21 +673,21 @@ function module:OnInitialize()
 			['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
 			--
 			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,304,144',
-			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,647,163'
+			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,647,163',
 		}
 	BarHandler.BarScale.BT4.Classic = {
-		['BT4Bar1'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar2'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar3'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar4'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar5'] = SUI.IsRetail and .63 or .75,
-		['BT4Bar6'] = SUI.IsRetail and .63 or .75,
-		['BT4Bar7'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar8'] = SUI.IsRetail and .62 or .77,
-		['BT4Bar9'] = SUI.IsRetail and .62 or .77,
+		['BT4Bar1'] = SUI.IsRetail and 0.62 or 0.77,
+		['BT4Bar2'] = SUI.IsRetail and 0.62 or 0.77,
+		['BT4Bar3'] = SUI.IsRetail and 0.62 or 0.77,
+		['BT4Bar4'] = SUI.IsRetail and 0.62 or 0.77,
+		['BT4Bar5'] = SUI.IsRetail and 0.63 or 0.75,
+		['BT4Bar6'] = SUI.IsRetail and 0.63 or 0.75,
+		['BT4Bar7'] = SUI.IsRetail and 0.62 or 0.77,
+		['BT4Bar8'] = SUI.IsRetail and 0.62 or 0.77,
+		['BT4Bar9'] = SUI.IsRetail and 0.62 or 0.77,
 		['BT4BarBagBar'] = 0.6,
 		['BT4BarStanceBar'] = 0.7,
-		['BT4BarMicroMenu'] = SUI.IsRetail and 0.7 or 0.6
+		['BT4BarMicroMenu'] = SUI.IsRetail and 0.7 or 0.6,
 	}
 
 	local UF = SUI.UF
@@ -737,64 +701,64 @@ function module:OnInitialize()
 					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
 					height = 80,
 					widthScale = 2.2,
-					TexCoord = {0.19140625, 0.810546875, 0.1796875, 0.8203125},
+					TexCoord = { 0.19140625, 0.810546875, 0.1796875, 0.8203125 },
 					position = {
 						anchor = 'CENTER',
 						x = 34,
-						y = 7
-					}
+						y = 7,
+					},
 				},
 				target = {
 					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
 					height = 80,
 					widthScale = 2.2,
-					TexCoord = {0.810546875, 0.19140625, 0.1796875, 0.8203125},
+					TexCoord = { 0.810546875, 0.19140625, 0.1796875, 0.8203125 },
 					position = {
 						anchor = 'CENTER',
 						x = -34,
-						y = 7
-					}
+						y = 7,
+					},
 				},
 				pet = {
 					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
 					height = 53,
 					widthScale = 1.6,
-					TexCoord = {0.9453125, .25, 0, 0.78125},
+					TexCoord = { 0.9453125, 0.25, 0, 0.78125 },
 					position = {
 						anchor = 'BOTTOMRIGHT',
 						x = 10,
-						y = -1
-					}
+						y = -1,
+					},
 				},
 				targettarget = {
 					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
 					height = 53,
 					widthScale = 1.6,
-					TexCoord = {0.25, 0.9453125, 0, 0.78125},
+					TexCoord = { 0.25, 0.9453125, 0, 0.78125 },
 					position = {
 						anchor = 'BOTTOMLEFT',
 						x = -10,
-						y = -1
-					}
-				}
-			}
+						y = -1,
+					},
+				},
+			},
 		},
 		positions = {
 			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-182,160',
 			['pet'] = 'BOTTOMRIGHT,SUI_UF_player,BOTTOMLEFT,-50,-4',
 			['target'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,182,160',
-			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5'
-		}
+			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,-5',
+		},
 	}
 	UF.Style:Register('Classic', ufsettings)
 
 	local minimapSettings = {
 		Movable = false,
-		size = {156, 156},
+		size = { 156, 156 },
 		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4'
+			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 		},
-		position = SUI.IsRetail and 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,5' or 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,0,17'
+		position = SUI.IsRetail and 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,5' or 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,0,17',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Classic', minimapSettings)
 
@@ -813,7 +777,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DB.Artwork.Style == 'Classic') then
+	if SUI.DB.Artwork.Style == 'Classic' then
 		Options()
 
 		SUI_FramesAnchor:SetFrameStrata('BACKGROUND')
@@ -822,32 +786,22 @@ function module:OnEnable()
 		SUI_FramesAnchor:SetPoint('BOTTOMLEFT', 'Classic_AnchorFrame', 'TOPLEFT', 0, 0)
 		SUI_FramesAnchor:SetPoint('TOPRIGHT', 'Classic_AnchorFrame', 'TOPRIGHT', 0, 153)
 
-		hooksecurefunc(
-			SUI_Art_Classic,
-			'Hide',
-			function()
-				Artwork_Core:updateViewport()
-			end
-		)
-		hooksecurefunc(
-			SUI_Art_Classic,
-			'Show',
-			function()
-				Artwork_Core:updateViewport()
-			end
-		)
+		hooksecurefunc(SUI_Art_Classic, 'Hide', function()
+			Artwork_Core:updateViewport()
+		end)
+		hooksecurefunc(SUI_Art_Classic, 'Show', function()
+			Artwork_Core:updateViewport()
+		end)
 
 		module:SetupVehicleUI()
-		if SUI.DB.Styles.Classic.Color.Art then
-			module:SetColor()
-		end
+		if SUI.DB.Styles.Classic.Color.Art then module:SetColor() end
 	else
 		module:Disable()
 	end
 end
 
 function module:AddNotice()
-	if (SUI.DB.alpha == 1) then
+	if SUI.DB.alpha == 1 then
 		SUI.opt.args.Artwork.args.Artwork.args['TransparencyNotice'].hidden = true
 	else
 		SUI.opt.args.Artwork.args.Artwork.args['TransparencyNotice'].hidden = false

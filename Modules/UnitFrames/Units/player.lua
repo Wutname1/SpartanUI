@@ -36,7 +36,7 @@ local function Builder(frame)
 		'RestingIndicator',
 		'ClassPower',
 		'AdditionalPower',
-		'AuraBars'
+		'AuraBars',
 	}
 
 	for _, elementName in pairs(ElementsToBuild) do
@@ -51,92 +51,91 @@ local function Builder(frame)
 	PlayerCastingBarFrame:SetUnit(nil)
 end
 
-local function Options()
-end
+local function Options() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
 	visibility = {
-		showAlways = true
+		showAlways = true,
 	},
 	anchor = {
 		point = 'BOTTOMRIGHT',
 		relativePoint = 'BOTTOM',
 		xOfs = -60,
-		yOfs = 250
+		yOfs = 250,
 	},
 	elements = {
 		AuraBars = {
-			enabled = true
+			enabled = true,
 		},
 		Buffs = {
 			enabled = false,
 			rules = {
 				duration = {
 					enabled = true,
-					mode = 'exclude'
-				}
+					mode = 'exclude',
+				},
 			},
 			position = {
-				anchor = 'TOPLEFT'
-			}
+				anchor = 'TOPLEFT',
+			},
 		},
 		Debuffs = {
 			enabled = true,
 			position = {
-				anchor = 'TOPRIGHT'
-			}
+				anchor = 'TOPRIGHT',
+			},
 		},
 		Portrait = {
-			enabled = true
+			enabled = true,
 		},
 		Castbar = {
-			enabled = true
+			enabled = true,
 		},
 		Health = {
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM'
-			}
+				relativePoint = 'BOTTOM',
+			},
 		},
 		CombatIndicator = {
 			enabled = true,
 			position = {
 				anchor = 'TOPRIGHT',
 				x = 10,
-				y = 10
-			}
+				y = 10,
+			},
 		},
 		ClassIcon = {
-			enabled = true
+			enabled = true,
 		},
 		RestingIndicator = {
 			enabled = true,
 			position = {
 				anchor = 'TOPLEFT',
 				x = 0,
-				y = 0
-			}
+				y = 0,
+			},
 		},
 		Power = {
 			text = {
 				['1'] = {
-					enabled = true
-				}
-			}
+					enabled = true,
+				},
+			},
 		},
 		PvPIndicator = {
-			enabled = true
+			enabled = true,
 		},
 		AdditionalPower = {
-			enabled = true
+			enabled = true,
 		},
-		SUI_RaidGroup = {enabled = true}
+		SUI_RaidGroup = { enabled = true },
 	},
 	config = {
-		isFriendly = true
-	}
+		isFriendly = true,
+	},
 }
 
 UF.Unit:Add('player', Builder, Settings)

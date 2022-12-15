@@ -11,8 +11,8 @@ function module:OnInitialize()
 		profile = {
 			FirstLaunch = true,
 			Silent = false,
-			FreeSpace = 0
-		}
+			FreeSpace = 0,
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('MailOpenAll', defaults)
 	module.DB = module.Database.profile
@@ -27,9 +27,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI:IsModuleDisabled('MailOpenAll') then
-		return
-	end
+	if SUI:IsModuleDisabled('MailOpenAll') then return end
 	module:Enable()
 end
 
@@ -47,16 +45,16 @@ function module:Enable()
 
 		function OpenButton:ProcessNextItem()
 			local _, _, _, subject, money, CODAmount, _, itemCount, _, _, _, _, isGM = GetInboxHeaderInfo(self.mailIndex)
-			if (isGM or (CODAmount and CODAmount > 0)) then
+			if isGM or (CODAmount and CODAmount > 0) then
 				self:AdvanceAndProcessNextItem()
 				return
 			end
 
-			if (money > 0) then
+			if money > 0 then
 				if not module.DB.Silent then
 					local moneyString = money > 0 and ' [' .. module:FormatMoney(money) .. ']' or ''
 					local playerName
-					if (mailType == 'AHSuccess' or mailType == 'AHWon') then
+					if mailType == 'AHSuccess' or mailType == 'AHWon' then
 						playerName = select(3, GetInboxInvoiceInfo(self.mailIndex))
 						playerName = playerName and (' (' .. playerName .. ')')
 					end
@@ -64,10 +62,8 @@ function module:Enable()
 				end
 				TakeInboxMoney(self.mailIndex)
 				self.timeUntilNextRetrieval = 0.6
-			elseif (itemCount and itemCount > 0) then
-				if not module.DB.Silent then
-					SUI:Print(format('%s: %s', L['Mail'], subject or ''))
-				end
+			elseif itemCount and itemCount > 0 then
+				if not module.DB.Silent then SUI:Print(format('%s: %s', L['Mail'], subject or '')) end
 
 				TakeInboxItem(self.mailIndex, self.attachmentIndex)
 				self.timeUntilNextRetrieval = 0.6
@@ -90,8 +86,7 @@ function module:Disable()
 	OpenButton:Hide()
 end
 
-function module:MAIL_SHOW()
-end
+function module:MAIL_SHOW() end
 
 function module:FormatMoney(money)
 	local gold = floor(money / 10000)
@@ -124,7 +119,7 @@ function module:BuildOptions()
 				end,
 				set = function(info, val)
 					module.DB.Silent = val
-				end
+				end,
 			},
 			FreeSpace = {
 				name = L['Bag free space to maintain'],
@@ -139,8 +134,8 @@ function module:BuildOptions()
 				end,
 				get = function(info)
 					return module.DB.FreeSpace
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end

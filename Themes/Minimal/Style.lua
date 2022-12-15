@@ -26,7 +26,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
 		['BT4BarMicroMenu'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,300,0' or 'TOP,SpartanUI,TOP,338,0',
-		['BT4BarBagBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,595,0' or 'TOP,SpartanUI,TOP,614,0'
+		['BT4BarBagBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,595,0' or 'TOP,SpartanUI,TOP,614,0',
 	}
 	BarHandler.BarScale.BT4.Minimal = {
 		['BT4Bar1'] = 0.78,
@@ -44,14 +44,14 @@ function module:OnInitialize()
 		['BT4BarStanceBar'] = 0.6,
 		['BT4BarPetBar'] = 0.6,
 		['MultiCastActionBarFrame'] = 0.6,
-		['BT4BarMicroMenu'] = 0.6
+		['BT4BarMicroMenu'] = 0.6,
 	}
 
 	local minimapSettings = {
 		UnderVehicleUI = false,
 		scaleWithArt = false,
 		position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
-		shape = 'square'
+		shape = 'square',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Minimal', minimapSettings)
 
@@ -59,25 +59,22 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DB.Artwork.Style ~= 'Minimal') then
+	if SUI.DB.Artwork.Style ~= 'Minimal' then
 		module:Disable()
 	else
 		module:Options()
 
-		hooksecurefunc(
-			'UIParent_ManageFramePositions',
-			function()
-				if TutorialFrameAlertButton then
-					TutorialFrameAlertButton:SetParent(Minimap)
-					TutorialFrameAlertButton:ClearAllPoints()
-					TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-				end
-				if CastingBarFrame then
-					CastingBarFrame:ClearAllPoints()
-					CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, 90)
-				end
+		hooksecurefunc('UIParent_ManageFramePositions', function()
+			if TutorialFrameAlertButton then
+				TutorialFrameAlertButton:SetParent(Minimap)
+				TutorialFrameAlertButton:ClearAllPoints()
+				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 			end
-		)
+			if CastingBarFrame then
+				CastingBarFrame:ClearAllPoints()
+				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Minimal_Base1, 'TOP', 0, 90)
+			end
+		end)
 
 		--Setup Sliding Trays
 		module:SlidingTrays()
@@ -95,7 +92,7 @@ function module:OnEnable()
 end
 
 function module:TooltipLoc(tooltip, parent)
-	if (parent == 'UIParent') then
+	if parent == 'UIParent' then
 		tooltip:ClearAllPoints()
 		tooltip:SetPoint('BOTTOMRIGHT', SUI_Art_Minimal, 'BOTTOMRIGHT', -20, 20)
 	end
@@ -121,7 +118,7 @@ function module:Options()
 					else
 						SUI_Art_Minimal_Base1:Show()
 					end
-				end
+				end,
 			},
 			alpha = {
 				name = L['Artwork Color'],
@@ -134,11 +131,11 @@ function module:Options()
 					return unpack(SUI.DB.Styles.Minimal.Color)
 				end,
 				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Minimal.Color = {r, b, g, a}
+					SUI.DB.Styles.Minimal.Color = { r, b, g, a }
 					module:SetColor()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -150,20 +147,20 @@ function module:SlidingTrays()
 	local Settings = {
 		bg = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = {.076171875, 0.92578125, 0, 0.18359375}
+			TexCoord = { 0.076171875, 0.92578125, 0, 0.18359375 },
 		},
 		bgCollapsed = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = {0.076171875, 0.92578125, 1, 0.92578125}
+			TexCoord = { 0.076171875, 0.92578125, 1, 0.92578125 },
 		},
 		UpTex = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = {0.3675, 0.64, 0.235, 0.265}
+			TexCoord = { 0.3675, 0.64, 0.235, 0.265 },
 		},
 		DownTex = {
 			Texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Minimal\\Images\\base-center-top',
-			TexCoord = {0.3675, 0.64, 0.265, 0.235}
-		}
+			TexCoord = { 0.3675, 0.64, 0.265, 0.235 },
+		},
 	}
 
 	Artwork_Core:SlidingTrays(Settings)

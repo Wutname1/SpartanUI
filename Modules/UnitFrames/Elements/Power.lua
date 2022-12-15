@@ -28,9 +28,7 @@ local function Build(frame, DB)
 		frame:Tag(NewString, key.text or '')
 
 		power.TextElements[i] = NewString
-		if not key.enabled then
-			power.TextElements[i]:Hide()
-		end
+		if not key.enabled then power.TextElements[i]:Hide() end
 	end
 
 	frame.Power = power
@@ -52,7 +50,7 @@ local function Update(frame, settings)
 	-- Basic Bar updates
 	element:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-	element.bg:SetVertexColor(unpack(DB.bg.color or {1, 1, 1, .2}))
+	element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 
 	element.TextElements = {}
 	for i, TextElement in pairs(element.TextElements) do
@@ -63,9 +61,7 @@ local function Update(frame, settings)
 		TextElement:SetPoint(key.position.anchor, element, key.position.anchor, key.position.x, key.position.y)
 		frame:Tag(TextElement, key.text)
 
-		if not key.enabled then
-			element.TextElements[i]:Hide()
-		end
+		if not key.enabled then element.TextElements[i]:Hide() end
 	end
 
 	element:ClearAllPoints()
@@ -81,7 +77,7 @@ local function Options(frameName, OptionSet)
 		name = '',
 		type = 'group',
 		inline = true,
-		args = {}
+		args = {},
 	}
 
 	if frameName == 'player' then
@@ -91,7 +87,7 @@ local function Options(frameName, OptionSet)
 				desc = L['Used to represent cost of spells on top of the Power bar'],
 				type = 'toggle',
 				width = 'double',
-				order = 10
+				order = 10,
 			}
 		end
 	end
@@ -106,27 +102,27 @@ local Settings = {
 	FrameStrata = 'BACKGROUND',
 	bg = {
 		enabled = true,
-		color = {1, 1, 1, .2}
+		color = { 1, 1, 1, 0.2 },
 	},
 	text = {
 		['1'] = {
 			enabled = false,
-			text = '[power:current-formatted] / [power:max-formatted]'
+			text = '[power:current-formatted] / [power:max-formatted]',
 		},
 		['2'] = {
 			enabled = false,
-			text = '[perpp]%'
-		}
+			text = '[perpp]%',
+		},
 	},
 	position = {
 		anchor = 'TOP',
 		relativeTo = 'Health',
 		relativePoint = 'BOTTOM',
-		y = -1
+		y = -1,
 	},
 	config = {
-		type = 'StatusBar'
-	}
+		type = 'StatusBar',
+	},
 }
 
 UF.Elements:Register('Power', Build, Update, Options, Settings)

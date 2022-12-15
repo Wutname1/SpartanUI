@@ -5,21 +5,15 @@ local UF = SUI.UF ---@class SUI.UF
 function UF:CalculateHeight(frameName)
 	local elements = UF.CurrentSettings[frameName].elements
 	local FrameHeight = 0
-	if elements.Castbar.enabled then
-		FrameHeight = FrameHeight + elements.Castbar.height
-	end
-	if elements.Health.enabled then
-		FrameHeight = FrameHeight + elements.Health.height
-	end
-	if elements.Power.enabled then
-		FrameHeight = FrameHeight + elements.Power.height
-	end
+	if elements.Castbar.enabled then FrameHeight = FrameHeight + elements.Castbar.height end
+	if elements.Health.enabled then FrameHeight = FrameHeight + elements.Health.height end
+	if elements.Power.enabled then FrameHeight = FrameHeight + elements.Power.height end
 	return FrameHeight
 end
 
 local function CreateUnitFrame(self, unit)
-	if (unit ~= 'raid' and unit ~= 'party') then
-		if (SUI_FramesAnchor:GetParent() == UIParent) then
+	if unit ~= 'raid' and unit ~= 'party' then
+		if SUI_FramesAnchor:GetParent() == UIParent then
 			self:SetParent(UIParent)
 		else
 			self:SetParent(SUI_FramesAnchor)
@@ -33,9 +27,7 @@ local function CreateUnitFrame(self, unit)
 	self.DB = UF.CurrentSettings[unit]
 	if self.isChild then
 		self.childType = 'pet'
-		if self == _G[self:GetName() .. 'Target'] then
-			self.childType = 'target'
-		end
+		if self == _G[self:GetName() .. 'Target'] then self.childType = 'target' end
 	end
 
 	self.unitOnCreate = unit
@@ -86,9 +78,7 @@ local function CreateUnitFrame(self, unit)
 				if self[element].bg then
 					if elementsDB[element].bg.enabled then
 						self[element].bg:Show()
-						if elementsDB[element].bg.color and type(elementsDB[element].bg.color) == 'table' then
-							self[element].bg:SetVertexColor(unpack(elementsDB[element].bg.color))
-						end
+						if elementsDB[element].bg.color and type(elementsDB[element].bg.color) == 'table' then self[element].bg:SetVertexColor(unpack(elementsDB[element].bg.color)) end
 					else
 						self[element].bg:Hide()
 					end
@@ -106,9 +96,7 @@ local function CreateUnitFrame(self, unit)
 	---@param frame table
 	---@param elementName SUI.UF.Elements.list
 	local function ElementUpdate(frame, elementName)
-		if not frame[elementName] then
-			return
-		end
+		if not frame[elementName] then return end
 		local data = self.DB.elements[elementName]
 		local element = frame[elementName]
 		element.DB = data
@@ -122,9 +110,7 @@ local function CreateUnitFrame(self, unit)
 		-- Call the elements update function
 		UF.Elements:Update(frame, elementName)
 
-		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then
-			return
-		end
+		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
 
 		if not data then
 			SUI:Error('NO SETTINGS FOR "' .. unit .. '" element: ' .. elementName)
@@ -169,9 +155,7 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- Call the elements update function
-		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then
-			frame[elementName].ForceUpdate(element)
-		end
+		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then frame[elementName].ForceUpdate(element) end
 	end
 
 	self.raised = CreateFrame('Frame', nil, self)
@@ -190,39 +174,27 @@ local function CreateUnitFrame(self, unit)
 	UF.Unit:BuildFrame(unit, self)
 
 	for elementName, _ in pairs(self.elementList) do
-		if elementDB[elementName] then
-			ElementUpdate(self, elementName)
-		end
+		if elementDB[elementName] then ElementUpdate(self, elementName) end
 	end
 
 	-- Setup the frame's Right click menu.
 	self:RegisterForClicks('AnyDown')
-	if not InCombatLockdown() then
-		self:EnableMouse(true)
-	end
+	if not InCombatLockdown() then self:EnableMouse(true) end
 	self:SetClampedToScreen(true)
 	--Setup unitframes tooltip hook
 	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
 	self.IsBuilt = true
 
-	if not self.DB.enabled then
-		self:Disable()
-	end
+	if not self.DB.enabled then self:Disable() end
 
 	return self
 end
 
 local function VisibilityCheck(group)
-	if UF.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then
-		return true
-	end
-	if UF.CurrentSettings[group].showRaid and IsInRaid() then
-		return true
-	end
-	if UF.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then
-		return true
-	end
+	if UF.CurrentSettings[group].showParty and (IsInGroup() and not IsInRaid()) then return true end
+	if UF.CurrentSettings[group].showRaid and IsInRaid() then return true end
+	if UF.CurrentSettings[group].showSolo and not (IsInGroup() or IsInRaid()) then return true end
 
 	return false
 end
@@ -233,39 +205,29 @@ function UF:SpawnFrames()
 
 	local function GroupEnableElement(groupFrame, elementName)
 		for _, f in ipairs(groupFrame.frames) do
-			if f.EnableElement then
-				f:EnableElement(elementName)
-			end
+			if f.EnableElement then f:EnableElement(elementName) end
 		end
 	end
 	local function GroupDisableElement(groupFrame, elementName)
 		for _, f in ipairs(groupFrame.frames) do
-			if f.DisableElement then
-				f:DisableElement(elementName)
-			end
+			if f.DisableElement then f:DisableElement(elementName) end
 		end
 	end
 	local function GroupFrameElementUpdate(groupFrame, elementName)
 		for _, f in ipairs(groupFrame.frames) do
-			if f.ElementUpdate then
-				f:ElementUpdate(elementName)
-			end
+			if f.ElementUpdate then f:ElementUpdate(elementName) end
 		end
 	end
 	local function GroupFrameEnable(groupFrame)
 		groupFrame:UpdateAll()
 		for _, f in ipairs(groupFrame.frames) do
-			if f.Enable then
-				f:Enable()
-			end
+			if f.Enable then f:Enable() end
 		end
 	end
 	local function GroupFrameDisable(groupFrame)
 		groupFrame:UpdateAll()
 		for _, f in ipairs(groupFrame.frames) do
-			if f.Disable then
-				f:Disable()
-			end
+			if f.Disable then f:Disable() end
 		end
 	end
 
@@ -279,15 +241,11 @@ function UF:SpawnFrames()
 				if firstElement then
 					local function GroupFrameUpdateAll(groupFrame)
 						if VisibilityCheck(frameName) and UF.CurrentSettings[frameName].enabled then
-							if firstElement.visibility then
-								RegisterStateDriver(firstElement, firstElement.visibility)
-							end
+							if firstElement.visibility then RegisterStateDriver(firstElement, firstElement.visibility) end
 							firstElement:Show()
 
 							for i, f in pairs(groupFrame.frames) do
-								if f.UpdateAll then
-									f:UpdateAll()
-								end
+								if f.UpdateAll then f:UpdateAll() end
 							end
 						else
 							UnregisterStateDriver(firstElement, 'visibility')
@@ -352,8 +310,6 @@ end
 function UF:UpdateGroupFrames(event, ...)
 	for frameName, _ in pairs(UF.Unit:GetFrameList(true)) do
 		local frame = UF.Unit:Get(frameName)
-		if frame then
-			frame:UpdateAll()
-		end
+		if frame then frame:UpdateAll() end
 	end
 end

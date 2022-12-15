@@ -19,17 +19,15 @@ function module:OnInitialize()
 			InParty = 'Enabled', ---@type HHActiveType
 			InBG = 'Enabled', ---@type HHActiveType
 			InArena = 'Enabled', ---@type HHActiveType
-			WhenSolo = 'InCombat' ---@type HHActiveType
+			WhenSolo = 'InCombat', ---@type HHActiveType
 		},
 		ChatOutput = true, ---When Enabled will output to chat on enable/disable change
-		KeySets = {}
+		KeySets = {},
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('HealHelper', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('HealHelper', { profile = defaults })
 	module.DB = module.Database.profile ---@type HHSettings
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled('HealHelper') or SUI:IsModuleDisabled('UnitFrames') then
-		return
-	end
+	if SUI:IsModuleDisabled('HealHelper') or SUI:IsModuleDisabled('UnitFrames') then return end
 end

@@ -1,7 +1,5 @@
 local SUI = SUI
-if not SUI.IsRetail then
-	return
-end
+if not SUI.IsRetail then return end
 local module = SUI:NewModule('Module_StopTalking') ---@type SUI.Module
 local L = SUI.L
 module.Displayname = L['Stop Talking']
@@ -15,16 +13,14 @@ function module:OnInitialize()
 		persist = true,
 		chatOutput = true,
 		global = true,
-		history = {}
+		history = {},
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', {profile = defaults, global = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', { profile = defaults, global = defaults })
 	module.DB = module.Database.profile ---@type SUI.StopTalking.DB
 	module.DBGlobal = module.Database.global ---@type SUI.StopTalking.DB
 
 	--blank this out; start fresh in 10.0
-	if module.DB.lines then
-		module.DB.lines = nil
-	end
+	if module.DB.lines then module.DB.lines = nil end
 end
 
 local function Options()
@@ -45,26 +41,26 @@ local function Options()
 			global = {
 				name = L['Remember voice lines across all characters'],
 				type = 'toggle',
-				order = .5,
+				order = 0.5,
 				width = 'full',
 				get = function(info)
 					return module.DBGlobal.global
 				end,
 				set = function(info, val)
 					module.DBGlobal.global = val
-				end
+				end,
 			},
 			persist = {
 				name = L['Keep track of voice lines forever'],
 				type = 'toggle',
 				order = 1,
-				width = 'full'
+				width = 'full',
 			},
 			chatOutput = {
 				name = L['Display heard voice lines in the chat.'],
 				type = 'toggle',
 				order = 2,
-				width = 'full'
+				width = 'full',
 			},
 			lines = {
 				name = L['Heard voice lines'],
@@ -86,9 +82,9 @@ local function Options()
 						module.DB.history[key] = nil
 					end
 				end,
-				values = (module.DBGlobal.global and module.DBGlobal.history) or module.DB.history
-			}
-		}
+				values = (module.DBGlobal.global and module.DBGlobal.history) or module.DB.history,
+			},
+		},
 	}
 
 	SUI.Options:AddOptions(optTable, 'Stop Talking', 'Module')
@@ -101,9 +97,7 @@ function module:TALKINGHEAD_REQUESTED()
 	end
 
 	local _, _, vo, _, _, _, name, text = C_TalkingHead.GetCurrentLineInfo()
-	if not vo then
-		return
-	end
+	if not vo then return end
 
 	local persist = module.DB.persist
 	if (module.DB.history[vo] and persist) or (not persist and HeardLines[vo]) or (module.DBGlobal.global and module.DBGlobal.history[vo]) then
@@ -131,9 +125,7 @@ end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled(module) then
-		return
-	end
+	if SUI:IsModuleDisabled(module) then return end
 
 	--Import Globals if active
 	if module.DBGlobal.global then

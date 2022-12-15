@@ -13,35 +13,36 @@ local IgnoredFrames = {}
 local BaseSettings = {
 	Movable = true,
 	shape = 'circle',
-	size = {160, 160},
+	size = { 160, 160 },
 	scaleWithArt = true,
 	UnderVehicleUI = true,
 	BG = {
 		enabled = true,
 		BlendMode = 'ADD',
-		alpha = 1
+		alpha = 1,
 	},
 	ZoneText = {
 		scale = 1,
 		position = 'TOP,Minimap,BOTTOM,0,-4',
-		TextColor = {1, .82, 0, 1},
-		ShadowColor = {0, 0, 0, 1}
+		TextColor = { 1, 0.82, 0, 1 },
+		ShadowColor = { 0, 0, 0, 1 },
 	},
 	coords = {
 		scale = 1,
-		size = {80, 12},
+		size = { 80, 12 },
 		position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-		TextColor = {1, 1, 1, 1},
-		ShadowColor = {0, 0, 0, 0}
-	}
+		TextColor = { 1, 1, 1, 1 },
+		ShadowColor = { 0, 0, 0, 0 },
+	},
 }
 
 local IsMouseOver = function()
 	local MouseFocus = GetMouseFocus()
 	if
-		MouseFocus and not MouseFocus:IsForbidden() and
-			((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
-	 then
+		MouseFocus
+		and not MouseFocus:IsForbidden()
+		and ((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
+	then
 		MouseIsOver = true
 	else
 		MouseIsOver = false
@@ -50,19 +51,15 @@ local IsMouseOver = function()
 end
 
 local isFrameIgnored = function(item)
-	local ignored = {'HybridMinimap', 'AAP-Classic', 'HandyNotes'}
-	local WildcardIgnore = {'Questie'}
+	local ignored = { 'HybridMinimap', 'AAP-Classic', 'HandyNotes' }
+	local WildcardIgnore = { 'Questie' }
 
 	local name = item:GetName()
 	if name ~= nil then
-		if SUI:IsInTable(ignored, name) then
-			return true
-		end
+		if SUI:IsInTable(ignored, name) then return true end
 
 		for _, v in ipairs(WildcardIgnore) do
-			if string.match(name, v) then
-				return true
-			end
+			if string.match(name, v) then return true end
 		end
 	end
 	return false
@@ -70,17 +67,11 @@ end
 
 local MiniMapBtnScrape = function()
 	-- Hook Minimap Icons
-	for _, child in ipairs({Minimap:GetChildren()}) do
-		if child.FadeIn == nil and not isFrameIgnored(child) then
-			module:SetupButton(child)
-		end
+	for _, child in ipairs({ Minimap:GetChildren() }) do
+		if child.FadeIn == nil and not isFrameIgnored(child) then module:SetupButton(child) end
 	end
-	if CensusButton ~= nil and CensusButton.FadeIn == nil then
-		module:SetupButton(CensusButton)
-	end
-	if GameTimeFrame and not SUI.IsRetail then
-		module:SetupButton(GameTimeFrame)
-	end
+	if CensusButton ~= nil and CensusButton.FadeIn == nil then module:SetupButton(CensusButton) end
+	if GameTimeFrame and not SUI.IsRetail then module:SetupButton(GameTimeFrame) end
 end
 
 local PerformFullBtnUpdate = function(forced)
@@ -93,13 +84,9 @@ end
 
 local OnEnter = function()
 	-- OnEnter fires repeatedly, so we need to check if we are already in the correct state
-	if MouseIsOver then
-		return
-	end
+	if MouseIsOver then return end
 	--don't use PerformFullBtnUpdate as we want to perform the actions in reverse. since any new unknown icons will already be shown.
-	if LastMouseStatus ~= IsMouseOver() then
-		module:update()
-	end --update visibility
+	if LastMouseStatus ~= IsMouseOver() then module:update() end --update visibility
 	MiniMapBtnScrape()
 end
 
@@ -140,23 +127,17 @@ local function updateSettings()
 	-- Refresh settings
 	module.Settings = {}
 	module.Settings = SUI:CopyData(BaseSettings, module.Settings)
-	if Registry[SUI.DB.Artwork.Style] then
-		module.Settings = SUI:CopyData(Registry[SUI.DB.Artwork.Style].settings, module.Settings)
-	end
+	if Registry[SUI.DB.Artwork.Style] then module.Settings = SUI:CopyData(Registry[SUI.DB.Artwork.Style].settings, module.Settings) end
 end
 
 function module:ShapeChange(shape)
-	if SUI:IsModuleDisabled('Minimap') then
-		return
-	end
+	if SUI:IsModuleDisabled('Minimap') then return end
 
-	if module.Settings.size then
-		Minimap:SetSize(unpack(module.Settings.size))
-	end
+	if module.Settings.size then Minimap:SetSize(unpack(module.Settings.size)) end
 	if SUI.IsRetail then
 		SUIMinimap:SetSize(Minimap:GetWidth(), (Minimap:GetHeight() + MinimapCluster.BorderTop:GetHeight() + 15))
 	else
-		SUIMinimap:SetSize(Minimap:GetWidth(), Minimap:GetHeight() + (20) + (UserSettings.DisplayMapCords and 15 or 0))
+		SUIMinimap:SetSize(Minimap:GetWidth(), Minimap:GetHeight() + 20 + (UserSettings.DisplayMapCords and 15 or 0))
 	end
 
 	Minimap.ZoneText:ClearAllPoints()
@@ -189,16 +170,13 @@ function module:ModifyMinimapLayout()
 	--Classic modifcations
 	if not SUI.IsRetail then
 		Minimap:EnableMouseWheel(true)
-		Minimap:SetScript(
-			'OnMouseWheel',
-			function(_, delta)
-				if (delta > 0) then
-					Minimap_ZoomIn()
-				else
-					Minimap_ZoomOut()
-				end
+		Minimap:SetScript('OnMouseWheel', function(_, delta)
+			if delta > 0 then
+				Minimap_ZoomIn()
+			else
+				Minimap_ZoomOut()
 			end
-		)
+		end)
 		if TimeManagerClockButton then
 			TimeManagerClockButton:GetRegions():Hide()
 			TimeManagerClockButton:ClearAllPoints()
@@ -231,15 +209,13 @@ function module:ModifyMinimapLayout()
 		end
 	end
 	--Retail modifications
-	if MinimapCompassTexture then
-		MinimapCompassTexture:Hide()
-	end
+	if MinimapCompassTexture then MinimapCompassTexture:Hide() end
 	if MinimapCluster.BorderTop then
 		MinimapCluster.BorderTop:ClearAllPoints()
 		MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
 		MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.4)
 		MinimapCluster.BorderTop:SetHeight(MinimapCluster.ZoneTextButton:GetHeight() * 2.8)
-		MinimapCluster.BorderTop:SetAlpha(.8)
+		MinimapCluster.BorderTop:SetAlpha(0.8)
 		MinimapCluster.ZoneTextButton:ClearAllPoints()
 		MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
 		MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -4, -4)
@@ -253,22 +229,14 @@ function module:ModifyMinimapLayout()
 		MinimapCluster.Tracking:ClearAllPoints()
 		MinimapCluster.Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 2)
 		MinimapCluster.Tracking.Background:Hide()
-	--TODO: InstanceDifficulty position and scale
+		--TODO: InstanceDifficulty position and scale
 	end
 	if MinimapCluster.SetRotateMinimap then
-		if UserSettings.rotate then
-			C_CVar.SetCVar('rotateMinimap', 1)
-		end
+		if UserSettings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
 
-		hooksecurefunc(
-			MinimapCluster,
-			'SetRotateMinimap',
-			function()
-				if UserSettings.rotate then
-					C_CVar.SetCVar('rotateMinimap', 1)
-				end
-			end
-		)
+		hooksecurefunc(MinimapCluster, 'SetRotateMinimap', function()
+			if UserSettings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
+		end)
 	end
 
 	--Shared modifications
@@ -310,7 +278,7 @@ function module:ModifyMinimapLayout()
 	end
 	if GameTimeFrame and not SUI.IsRetail then
 		GameTimeFrame:ClearAllPoints()
-		GameTimeFrame:SetScale(.7)
+		GameTimeFrame:SetScale(0.7)
 		GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
 		GameTimeFrame:SetFrameLevel(122)
 	elseif GameTimeFrame and BT4BarMicroMenu and SUI.IsRetail then
@@ -322,12 +290,8 @@ function module:ModifyMinimapLayout()
 end
 
 function module:MinimapCoords()
-	if SUI:IsModuleDisabled('Minimap') then
-		return
-	end
-	if not SUI.IsRetail then
-		MinimapZoneText:Hide()
-	end
+	if SUI:IsModuleDisabled('Minimap') then return end
+	if not SUI.IsRetail then MinimapZoneText:Hide() end
 
 	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
 	SUI.Font:Format(Minimap.ZoneText, (SUI.IsRetail and 11 or 10), 'Minimap')
@@ -355,20 +319,14 @@ function module:MinimapCoords()
 	local function UpdateCoords()
 		--Get the Map we are on
 		local mapID = C_Map.GetBestMapForUnit('player')
-		if (not mapID) then
-			return
-		end
+		if not mapID then return end
 		-- Get the Cords we are at for said map
 		-- C_Map.GetPlayerMapPosition has to be nil checked for as GetXY is defined if off the edge of the map
 		-- Notibly this causes errors on the [The Stormwind Extraction] (BFA Horde start quest)
 		local MapPos = C_Map.GetPlayerMapPosition(mapID, 'player')
-		if (not MapPos) then
-			return
-		end
+		if not MapPos then return end
 		local x, y = MapPos:GetXY()
-		if (not x) or (not y) then
-			return
-		end
+		if (not x) or not y then return end
 		--Update label
 		Minimap.coords:SetText(format('%.1f, %.1f', x * 100, y * 100))
 	end
@@ -399,55 +357,41 @@ function module:SetupButton(btn, force)
 		FadeOut:SetDuration(0.3)
 		FadeOut:SetFromAlpha(1)
 		FadeOut:SetToAlpha(0)
-		FadeOut:SetStartDelay(.5)
+		FadeOut:SetStartDelay(0.5)
 		btn.FadeOut:SetToFinalAlpha(true)
 
 		--Hook into the buttons show and hide events to catch for the button being enabled/disabled
-		btn:HookScript(
-			'OnHide',
-			function(self, event, ...)
-				if not UserSettings.SUIMapChangesActive then
-					table.insert(IgnoredFrames, self:GetName())
-				end
+		btn:HookScript('OnHide', function(self, event, ...)
+			if not UserSettings.SUIMapChangesActive then table.insert(IgnoredFrames, self:GetName()) end
+		end)
+		btn:HookScript('OnShow', function(self, event, ...)
+			for i = 1, table.getn(IgnoredFrames) do
+				if IgnoredFrames[i] == btn:GetName() then table.remove(IgnoredFrames, i) end
 			end
-		)
-		btn:HookScript(
-			'OnShow',
-			function(self, event, ...)
-				for i = 1, table.getn(IgnoredFrames) do
-					if IgnoredFrames[i] == btn:GetName() then
-						table.remove(IgnoredFrames, i)
-					end
-				end
-			end
-		)
+		end)
 	end
 end
 
 function module:UpdateScale()
-	if Minimap.coords then
-		module:update()
-	end
+	if Minimap.coords then module:update() end
 	if module.Settings.scaleWithArt and SUI:IsAddonDisabled('SexyMap') then
 		if SUIMinimap.scale then
 			SUIMinimap:scale(SUI.DB.scale)
 			Minimap:SetScale(SUI.DB.scale)
 		else
-			SUIMinimap:SetScale(max(SUI.DB.scale, .01))
-			Minimap:SetScale(max(SUI.DB.scale, .01))
+			SUIMinimap:SetScale(max(SUI.DB.scale, 0.01))
+			Minimap:SetScale(max(SUI.DB.scale, 0.01))
 		end
 	end
 end
 
 function module:update(FullUpdate)
-	if SUI:IsModuleDisabled('Minimap') then
-		return
-	end
+	if SUI:IsModuleDisabled('Minimap') then return end
 	updateSettings()
 
 	-- UserSettings item visibility
 	do
-		if (UserSettings.MapZoomButtons) then
+		if UserSettings.MapZoomButtons then
 			if Minimap.ZoomIn then
 				Minimap.ZoomIn:Hide()
 				Minimap.ZoomOut:Hide()
@@ -501,13 +445,9 @@ function module:update(FullUpdate)
 	do
 		if module.Settings.BG.enabled then
 			SUIMinimap.BG.Settings = module.Settings.BG or nil
-			if SUIMinimap.BG then
-				SUIMinimap.BG:ClearAllPoints()
-			end
+			if SUIMinimap.BG then SUIMinimap.BG:ClearAllPoints() end
 
-			if module.Settings.BG.size then
-				SUIMinimap.BG:SetSize(unpack(module.Settings.BG.size))
-			end
+			if module.Settings.BG.size then SUIMinimap.BG:SetSize(unpack(module.Settings.BG.size)) end
 
 			if module.Settings.BG.position then
 				if type(module.Settings.BG.position) == 'table' then
@@ -544,7 +484,7 @@ function module:update(FullUpdate)
 		Minimap.coords:SetScale(module.Settings.coords.scale)
 
 		-- If minimap default location is under the minimap setup scripts to move it
-		if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and (not VisibilityWatcher.hooked) and (not MoveIt:IsMoved('Minimap')) then
+		if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
 			local OnHide = function(args)
 				if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and SUIMinimap.position then
 					SUIMinimap:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
@@ -563,7 +503,7 @@ function module:update(FullUpdate)
 			VisibilityWatcher:SetScript('OnShow', OnShow)
 			RegisterStateDriver(VisibilityWatcher, 'visibility', '[petbattle][overridebar][vehicleui] hide; show')
 			VisibilityWatcher.hooked = true
-		elseif (MoveIt:IsMoved('Minimap') or (not SUI.DB.Artwork.VehicleUI)) and VisibilityWatcher.hooked then
+		elseif (MoveIt:IsMoved('Minimap') or not SUI.DB.Artwork.VehicleUI) and VisibilityWatcher.hooked then
 			UnregisterStateDriver(VisibilityWatcher, 'visibility')
 			VisibilityWatcher.hooked = false
 		end
@@ -578,20 +518,18 @@ function module:update(FullUpdate)
 			CensusButton.FadeOut:Play()
 		end
 
-		for _, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:GetName() ~= nil and not isFrameIgnored(child) then
 				--catch buttons not playing nice.
-				if child.FadeOut == nil then
-					module:SetupButton(child, true)
-				end
+				if child.FadeOut == nil then module:SetupButton(child, true) end
 
 				if child.FadeOut ~= nil and child:GetAlpha() == 1 then
 					child.FadeIn:Stop()
 					child.FadeOut:Stop()
 					child.FadeOut:Play()
 				elseif child.FadeIn == nil then
-				--if they still fail print a error and continue with our name
-				-- SUI.Error('Minimap', child:GetName() .. ' is not fading')
+					--if they still fail print a error and continue with our name
+					-- SUI.Error('Minimap', child:GetName() .. ' is not fading')
 				end
 			end
 		end
@@ -602,7 +540,7 @@ function module:update(FullUpdate)
 			CensusButton.FadeIn:Play()
 		end
 
-		for _, child in ipairs({Minimap:GetChildren()}) do
+		for _, child in ipairs({ Minimap:GetChildren() }) do
 			if child:GetName() ~= nil and child.FadeIn ~= nil and not isFrameIgnored(child) and child:GetAlpha() == 0 then
 				child.FadeIn:Stop()
 				child.FadeOut:Stop()
@@ -626,7 +564,7 @@ function module:update(FullUpdate)
 end
 
 function module:Register(name, settings)
-	Registry[name] = {settings = settings}
+	Registry[name] = { settings = settings }
 end
 
 function module:OnInitialize()
@@ -645,7 +583,7 @@ function module:OnInitialize()
 		end,
 		timeout = 0,
 		whileDead = true,
-		hideOnEscape = false
+		hideOnEscape = false,
 	}
 	local defaults = {
 		northTag = false,
@@ -663,16 +601,16 @@ function module:OnInitialize()
 		Moved = false,
 		lockminimap = true,
 		Position = nil,
-		SUIMapChangesActive = false
+		SUIMapChangesActive = false,
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Minimap', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Minimap', { profile = defaults })
 	module.DB = module.Database.profile
 	UserSettings = module.DB
 
 	-- Check for Carbonite
-	if (NXTITLELOW) then
+	if NXTITLELOW then
 		SUI:Print(NXTITLELOW .. ' is loaded ...Checking settings ...')
-		if (Nx.db.profile.MiniMap.Own == true) then
+		if Nx.db.profile.MiniMap.Own == true then
 			SUI:Print(NXTITLELOW .. ' is controlling the Minimap')
 			SUI:Print('SpartanUI Will not modify or move the minimap unless Carbonite is a separate minimap')
 			UserSettings.AutoDetectAllowUse = false
@@ -680,38 +618,26 @@ function module:OnInitialize()
 	end
 
 	-- Look for Sexymap or other MiniMap addons
-	if SUI:IsAddonEnabled('SexyMap') then
-		UserSettings.AutoDetectAllowUse = false
-	end
+	if SUI:IsAddonEnabled('SexyMap') then UserSettings.AutoDetectAllowUse = false end
 end
 
 function module:OnEnable()
 	-- Construct options
 	module:BuildOptions()
-	if ((not UserSettings.AutoDetectAllowUse) and (not UserSettings.ManualAllowUse)) then
-		StaticPopup_Show('MiniMapNotice')
-	end
-	if SUI:IsModuleDisabled('Minimap') then
-		return
-	end
+	if (not UserSettings.AutoDetectAllowUse) and not UserSettings.ManualAllowUse then StaticPopup_Show('MiniMapNotice') end
+	if SUI:IsModuleDisabled('Minimap') then return end
 
 	updateSettings()
 
 	SUIMinimap:SetFrameStrata('BACKGROUND')
 	SUIMinimap:SetFrameLevel(99)
 	SUIMinimap:SetPoint('BOTTOM', UIParent, 'BOTTOM', 0, 0)
-	Minimap:HookScript(
-		'OnShow',
-		function()
-			SUIMinimap:Show()
-		end
-	)
-	Minimap:HookScript(
-		'OnHide',
-		function()
-			SUIMinimap:Hide()
-		end
-	)
+	Minimap:HookScript('OnShow', function()
+		SUIMinimap:Show()
+	end)
+	Minimap:HookScript('OnHide', function()
+		SUIMinimap:Hide()
+	end)
 
 	SUIMinimap.BG = SUIMinimap:CreateTexture(nil, 'BACKGROUND', nil, -8)
 	if SUI.IsRetail then
@@ -730,14 +656,9 @@ function module:OnEnable()
 	-- Setup Updater script for button visibility updates
 	MinimapUpdater:SetSize(1, 1)
 	MinimapUpdater:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', -128, 128)
-	MinimapUpdater:SetScript(
-		'OnEvent',
-		function()
-			if not InCombatLockdown() then
-				module:ScheduleTimer(PerformFullBtnUpdate, 2, true)
-			end
-		end
-	)
+	MinimapUpdater:SetScript('OnEvent', function()
+		if not InCombatLockdown() then module:ScheduleTimer(PerformFullBtnUpdate, 2, true) end
+	end)
 	MinimapUpdater:RegisterEvent('ADDON_LOADED')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED')
 	MinimapUpdater:RegisterEvent('ZONE_CHANGED_INDOORS')
@@ -753,28 +674,20 @@ function module:OnEnable()
 	-- Make map movable
 	MoveIt:CreateMover(SUIMinimap, 'Minimap')
 	if SUI.IsRetail then
-		MinimapCluster.Selection:HookScript(
-			'OnShow',
-			function()
-				MinimapCluster.Selection:Hide()
-			end
-		)
+		MinimapCluster.Selection:HookScript('OnShow', function()
+			MinimapCluster.Selection:Hide()
+		end)
 
 		if ExpansionLandingPageMinimapButton then
-			ExpansionLandingPageMinimapButton:HookScript(
-				'OnShow',
-				function()
-					ExpansionLandingPageMinimapButton:ClearAllPoints()
-					ExpansionLandingPageMinimapButton:SetPoint('BOTTOMLEFT', Minimap, 'BOTTOMLEFT', -20, -20)
-				end
-			)
+			ExpansionLandingPageMinimapButton:HookScript('OnShow', function()
+				ExpansionLandingPageMinimapButton:ClearAllPoints()
+				ExpansionLandingPageMinimapButton:SetPoint('BOTTOMLEFT', Minimap, 'BOTTOMLEFT', -20, -20)
+			end)
 		end
 	end
 
 	-- If we didint move the minimap before making the mover make sure default is set.
-	if MoveIt:IsMoved('Minimap') then
-		SUIMinimap.mover.defaultPoint = module.Settings.position
-	end
+	if MoveIt:IsMoved('Minimap') then SUIMinimap.mover.defaultPoint = module.Settings.position end
 end
 
 function module:BuildOptions()
@@ -793,7 +706,7 @@ function module:BuildOptions()
 					return UserSettings.northTag
 				end,
 				set = function(info, val)
-					if (InCombatLockdown()) then
+					if InCombatLockdown() then
 						SUI:Print(ERR_NOT_IN_COMBAT)
 						return
 					end
@@ -803,7 +716,7 @@ function module:BuildOptions()
 					else
 						MinimapNorthTag:Hide()
 					end
-				end
+				end,
 			},
 			minimapzoom = {
 				name = L['Hide Zoom Buttons'],
@@ -815,12 +728,12 @@ function module:BuildOptions()
 				set = function(info, val)
 					UserSettings.MapZoomButtons = val
 					module:update()
-				end
+				end,
 			},
 			minimapTimeIndicator = {
 				name = L['Hide Time Indicator'],
 				type = 'toggle',
-				hidden = (not SUI.IsClassic),
+				hidden = not SUI.IsClassic,
 				order = 0.5,
 				get = function(info)
 					return UserSettings.MapTimeIndicator
@@ -828,7 +741,7 @@ function module:BuildOptions()
 				set = function(info, val)
 					UserSettings.MapTimeIndicator = val
 					module:update()
-				end
+				end,
 			},
 			OtherStyle = {
 				name = L['Button display mode'],
@@ -839,7 +752,7 @@ function module:BuildOptions()
 				values = {
 					['hide'] = 'Always Hide',
 					['mouseover'] = 'Show on Mouse over',
-					['show'] = 'Always Show'
+					['show'] = 'Always Show',
 				},
 				get = function(info)
 					return UserSettings.OtherStyle
@@ -847,7 +760,7 @@ function module:BuildOptions()
 				set = function(info, val)
 					UserSettings.OtherStyle = val
 					module:update()
-				end
+				end,
 			},
 			DisplayZoneName = {
 				name = L['Display zone name'],
@@ -859,7 +772,7 @@ function module:BuildOptions()
 				set = function(info, val)
 					UserSettings.DisplayZoneName = val
 					module:update()
-				end
+				end,
 			},
 			DisplayMapCords = {
 				name = L['Display map cords'],
@@ -871,9 +784,9 @@ function module:BuildOptions()
 				set = function(info, val)
 					UserSettings.DisplayMapCords = val
 					module:update()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	if SUI.IsRetail then
@@ -892,7 +805,7 @@ function module:BuildOptions()
 					C_CVar.SetCVar('rotateMinimap', 0)
 				end
 				UserSettings.rotate = value or nil
-			end
+			end,
 		}
 	end
 

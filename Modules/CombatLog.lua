@@ -21,8 +21,8 @@ function module:OnInitialize()
 			normaldungeon = false,
 			loggingActive = false,
 			FirstLaunch = true,
-			debug = false
-		}
+			debug = false,
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('CombatLog', defaults)
 	module.DB = module.Database.profile
@@ -37,16 +37,14 @@ end
 
 local function setLogging(on, msg)
 	if on then
-		if GetCVar('advancedCombatLogging') ~= 1 then
-			SetCVar('advancedCombatLogging', 1)
-		end
+		if GetCVar('advancedCombatLogging') ~= 1 then SetCVar('advancedCombatLogging', 1) end
 		LoggingCombat(true)
 		module.DB.loggingActive = true -- We have to track this ourself incase the player reloads the ui
 	else
 		LoggingCombat(false)
 		module.DB.loggingActive = false
 	end
-	if (module.DB.announce and msg) then
+	if module.DB.announce and msg then
 		if msg == 'disabled' then
 			SUI:Print('Combat logging disabled')
 		else
@@ -65,7 +63,7 @@ end
 
 -- This is used to keep loggin turned on if the user /reloads
 function module.PLAYER_ENTERING_WORLD()
-	if (module.DB.loggingActive) then
+	if module.DB.loggingActive then
 		setLogging(true)
 	else
 		module:LogCheck('CHALLENGE_MODE_START')
@@ -77,55 +75,37 @@ function module:OnEnable()
 	module:Options()
 	module:FirstLaunch()
 
-	CombatLog_Watcher:SetScript(
-		'OnEvent',
-		function(_, event)
-			if SUI:IsModuleDisabled('CombatLog') then
-				return
-			end
+	CombatLog_Watcher:SetScript('OnEvent', function(_, event)
+		if SUI:IsModuleDisabled('CombatLog') then return end
 
-			if module[event] then
-				module[event]()
-			end
-		end
-	)
+		if module[event] then module[event]() end
+	end)
 
-	if SUI.IsRetail then
-		CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START')
-	end
+	if SUI.IsRetail then CombatLog_Watcher:RegisterEvent('CHALLENGE_MODE_START') end
 	CombatLog_Watcher:RegisterEvent('ZONE_CHANGED_NEW_AREA')
 	CombatLog_Watcher:RegisterEvent('PLAYER_ENTERING_WORLD')
-	SUI:AddChatCommand(
-		'logging',
-		function(arg)
-			if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
-				if LoggingCombat() then
-					SUI:Print('Currently logging combat')
-				else
-					SUI:Print('NOT Currently logging combat')
-				end
-			elseif arg == 'start' then
-				setLogging(true, 'manual command')
-			elseif arg == 'stop' then
-				setLogging(false, 'disabled')
+	SUI:AddChatCommand('logging', function(arg)
+		if (not arg) or (arg == 'start' and LoggingCombat()) or (arg == 'stop' and not LoggingCombat()) then
+			if LoggingCombat() then
+				SUI:Print('Currently logging combat')
+			else
+				SUI:Print('NOT Currently logging combat')
 			end
-		end,
-		'Toggles combat logging',
-		nil,
-		true
-	)
+		elseif arg == 'start' then
+			setLogging(true, 'manual command')
+		elseif arg == 'stop' then
+			setLogging(false, 'disabled')
+		end
+	end, 'Toggles combat logging', nil, true)
 end
 
 function module:OnDisable()
-	if SUI.IsRetail then
-		CombatLog_Watcher:UnregisterEvent('CHALLENGE_MODE_START')
-	end
+	if SUI.IsRetail then CombatLog_Watcher:UnregisterEvent('CHALLENGE_MODE_START') end
 	CombatLog_Watcher:UnregisterEvent('ZONE_CHANGED_NEW_AREA')
 	CombatLog_Watcher:UnregisterEvent('PLAYER_ENTERING_WORLD')
 end
 
-function module:announce(msg)
-end
+function module:announce(msg) end
 
 function module:LogCheck(event)
 	local _, type, difficulty, _, maxPlayers = GetInstanceInfo()
@@ -137,40 +117,38 @@ function module:LogCheck(event)
 		print('maxPlayers: ' .. maxPlayers)
 	end
 
-	if (module.DB.alwayson) then
+	if module.DB.alwayson then
 		setLogging(true, 'Always on')
-	elseif (module.DB.raidmythic) and type == 'raid' and difficulty == 16 then
+	elseif module.DB.raidmythic and type == 'raid' and difficulty == 16 then
 		-- 16 - 20-player Mythic Raid Instance
 		setLogging(true, 'Mythic Raid')
-	elseif (module.DB.raidheroic) and type == 'raid' and difficulty == 15 then
+	elseif module.DB.raidheroic and type == 'raid' and difficulty == 15 then
 		-- 15 - 10-30-player Heroic Raid Instance
 		setLogging(true, 'Heroic Raid')
-	elseif (module.DB.raidnormal) and type == 'raid' and difficulty == 14 then
+	elseif module.DB.raidnormal and type == 'raid' and difficulty == 14 then
 		-- 14 - 10-30-player Normal Raid Instance
 		setLogging(true, 'Normal Raid')
-	elseif (module.DB.raidlfr) and type == 'raid' and difficulty == 17 then
+	elseif module.DB.raidlfr and type == 'raid' and difficulty == 17 then
 		-- 17 - 10-30-player Raid Finder Instance
 		setLogging(true, 'Raid Finder')
-	elseif (module.DB.normaldungeon) and type == 'party' and difficulty == 1 and maxPlayers == 5 then
+	elseif module.DB.normaldungeon and type == 'party' and difficulty == 1 and maxPlayers == 5 then
 		-- 1 - 5-player Instance, filtering Garrison
 		setLogging(true, 'Normal Dungeon')
-	elseif (module.DB.heroicdungeon) and type == 'party' and difficulty == 2 and maxPlayers == 5 then
+	elseif module.DB.heroicdungeon and type == 'party' and difficulty == 2 and maxPlayers == 5 then
 		-- 2 - 5-player Heroic Instance, filtering Garrison
 		setLogging(true, 'Heroic Dungeon')
-	elseif (module.DB.mythicdungeon) and type == 'party' and difficulty == 23 and maxPlayers == 5 then
+	elseif module.DB.mythicdungeon and type == 'party' and difficulty == 23 and maxPlayers == 5 then
 		-- 23 - Mythic 5-player Instance, filtering Garrison
 		setLogging(true, 'Mythic Dungeon')
-	elseif (module.DB.mythicplus) and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and maxPlayers == 5 then
+	elseif module.DB.mythicplus and event == 'CHALLENGE_MODE_START' and type == 'party' and difficulty == 8 and maxPlayers == 5 then
 		-- 8 - Mythic+ Mode Instance
 		setLogging(true, 'Mythic+ Dungeon')
-	elseif (module.DB.raidlegacy) and type == 'raid' and (difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9) then
+	elseif module.DB.raidlegacy and type == 'raid' and (difficulty == 3 or difficulty == 4 or difficulty == 5 or difficulty == 6 or difficulty == 7 or difficulty == 9) then
 		-- 3-9 is legacy raid difficulties
 		setLogging(true, 'Legacy Raid')
 	else
 		-- If we are curently logging announce we are disabling it.
-		if module.DB.loggingActive and LoggingCombat() then
-			setLogging(false, 'disabled')
-		end
+		if module.DB.loggingActive and LoggingCombat() then setLogging(false, 'disabled') end
 		-- Do this here to ensure DB is set to false
 		module.DB.loggingActive = false
 	end
@@ -194,18 +172,18 @@ function module:Options()
 			alwayson = {
 				name = L['Always on'],
 				type = 'toggle',
-				order = 1
+				order = 1,
 			},
 			announce = {
 				name = L['Announce logging in chat'],
 				type = 'toggle',
 				width = 'double',
-				order = 5
+				order = 5,
 			},
 			debug = {
 				name = L['Debug mode'],
 				type = 'toggle',
-				order = 500
+				order = 500,
 			},
 			raid = {
 				name = L['Raid settings'],
@@ -224,29 +202,29 @@ function module:Options()
 					raidlegacy = {
 						name = L['Legacy raids'],
 						type = 'toggle',
-						order = 0
+						order = 0,
 					},
 					raidlfr = {
 						name = L['Looking for raid'],
 						type = 'toggle',
-						order = 2
+						order = 2,
 					},
 					raidnormal = {
 						name = L['Normal'],
 						type = 'toggle',
-						order = 4
+						order = 4,
 					},
 					raidheroic = {
 						name = L['Heroic'],
 						type = 'toggle',
-						order = 6
+						order = 6,
 					},
 					raidmythic = {
 						name = L['Mythic'],
 						type = 'toggle',
-						order = 8
-					}
-				}
+						order = 8,
+					},
+				},
 			},
 			dungeons = {
 				name = L['Dungeon settings'],
@@ -265,26 +243,26 @@ function module:Options()
 					normaldungeon = {
 						name = L['Normal'],
 						type = 'toggle',
-						order = 0
+						order = 0,
 					},
 					heroicdungeon = {
 						name = L['Heroic'],
 						type = 'toggle',
-						order = 2
+						order = 2,
 					},
 					mythicdungeon = {
 						name = L['Mythic'],
 						type = 'toggle',
-						order = 4
+						order = 4,
 					},
 					mythicplus = {
 						name = L['Mythic+'],
 						type = 'toggle',
-						order = 6
-					}
-				}
-			}
-		}
+						order = 6,
+					},
+				},
+			},
+		},
 	}
 end
 
@@ -360,18 +338,15 @@ function module:FirstLaunch()
 					object:SetChecked(module.DB[key])
 				end
 
-				cLog.modEnabled:HookScript(
-					'OnClick',
-					function()
-						for _, object in pairs(cLog.options) do
-							if cLog.modEnabled:GetChecked() then
-								object:Enable()
-							else
-								object:Disable()
-							end
+				cLog.modEnabled:HookScript('OnClick', function()
+					for _, object in pairs(cLog.options) do
+						if cLog.modEnabled:GetChecked() then
+							object:Enable()
+						else
+							object:Disable()
 						end
 					end
-				)
+				end)
 			end
 
 			SUI_Win.cLog = cLog
@@ -380,9 +355,7 @@ function module:FirstLaunch()
 			if SUI:IsModuleEnabled('CombatLog') then
 				local window = SUI.Setup.window
 				local cLog = window.content.cLog
-				if not cLog.modEnabled:GetChecked() then
-					SUI:DisableModule(module)
-				end
+				if not cLog.modEnabled:GetChecked() then SUI:DisableModule(module) end
 
 				for key, object in pairs(cLog.options) do
 					module.DB[key] = object:GetChecked()
@@ -392,7 +365,7 @@ function module:FirstLaunch()
 		end,
 		Skip = function()
 			module.DB.FirstLaunch = false
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end

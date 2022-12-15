@@ -30,25 +30,25 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
-	alpha = .4,
+	alpha = 0.4,
 	points = {
 		['1'] = {
 			anchor = 'TOPLEFT',
 			relativeTo = 'Frame',
 			x = 0,
-			y = 0
+			y = 0,
 		},
 		['2'] = {
 			anchor = 'BOTTOMRIGHT',
 			relativeTo = 'Frame',
 			x = 0,
-			y = 0
-		}
+			y = 0,
+		},
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Rare/Elite'
-	}
+		DisplayName = 'Rare/Elite',
+	},
 }
 
 UF.Elements:Register('RareElite', Build, Update, Options, Settings)

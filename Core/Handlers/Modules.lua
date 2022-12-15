@@ -7,9 +7,7 @@ function SUI:GetModuleName(ModuleTable)
 	local name
 
 	-- Ace3 adds SpartanUI_ to the name so it knows how to handle things, we need to account for that.
-	if (string.match(ModuleTable.name, 'Module_')) then
-		name = string.sub(ModuleTable.name, 18)
-	end
+	if string.match(ModuleTable.name, 'Module_') then name = string.sub(ModuleTable.name, 18) end
 	return name
 end
 
@@ -17,19 +15,13 @@ end
 ---@return boolean
 function SUI:IsModuleEnabled(moduleName)
 	if type(moduleName) == 'table' then
-		if not string.match(moduleName.name, 'Module_') then
-			return true
-		end
+		if not string.match(moduleName.name, 'Module_') then return true end
 		moduleName = SUI:GetModuleName(moduleName)
 	end
 	local moduleObj = SUI:GetModule('Module_' .. moduleName)
-	if moduleObj and moduleObj.override then
-		return false
-	end
+	if moduleObj and moduleObj.override then return false end
 
-	if SUI.DB.DisabledModules[moduleName] then
-		return false
-	end
+	if SUI.DB.DisabledModules[moduleName] then return false end
 	return true
 end
 
@@ -75,7 +67,7 @@ local function CreateSetupPage()
 		Priority = true,
 		SubTitle = L['Enabled modules'],
 		Desc1 = 'Below you can disable modules of SpartanUI',
-		RequireDisplay = (not SUI.DB.SetupDone),
+		RequireDisplay = not SUI.DB.SetupDone,
 		Display = function()
 			local SUI_Win = SUI.Setup.window.content
 			local StdUi = SUI.StdUi
@@ -95,21 +87,16 @@ local function CreateSetupPage()
 					local Displayname = submodule.DisplayName or RealName
 
 					local checkbox = StdUi:Checkbox(SUI_Win.ModSelection, Displayname, 160, 20)
-					if submodule.description then
-						StdUi:FrameTooltip(checkbox, submodule.description, submodule.name .. 'Tooltip', 'TOP', true)
-					end
+					if submodule.description then StdUi:FrameTooltip(checkbox, submodule.description, submodule.name .. 'Tooltip', 'TOP', true) end
 
-					checkbox:HookScript(
-						'OnClick',
-						function()
-							local IsDisabled = (not checkbox:GetValue()) or false
-							if (IsDisabled) then
-								SUI:DisableModule(submodule)
-							else
-								SUI:EnableModule(submodule)
-							end
+					checkbox:HookScript('OnClick', function()
+						local IsDisabled = (not checkbox:GetValue()) or false
+						if IsDisabled then
+							SUI:DisableModule(submodule)
+						else
+							SUI:EnableModule(submodule)
 						end
-					)
+					end)
 					checkbox:SetChecked(SUI:IsModuleEnabled(RealName))
 					checkbox.name = RealName
 					checkbox.Core = (submodule.Core or false)
@@ -133,16 +120,11 @@ local function CreateSetupPage()
 
 			local btnOptional = StdUi:Button(SUI_Win.ModSelection, 130, 18, 'Toggle optional(s)')
 			btnOptional.tooltip = StdUi:FrameTooltip(btnOptional, 'Toggles optional SUI modules. Disabling Core modules may cause unintended side effects.', 'OptionalTooltip', 'TOP', true)
-			btnOptional:SetScript(
-				'OnClick',
-				function(this)
-					for i, v in ipairs(itemsMatrix) do
-						if not v.Core then
-							v:Click()
-						end
-					end
+			btnOptional:SetScript('OnClick', function(this)
+				for i, v in ipairs(itemsMatrix) do
+					if not v.Core then v:Click() end
 				end
-			)
+			end)
 			StdUi:GlueBottom(btnOptional, SUI_Win.ModSelection, 0, 0)
 			SUI_Win.ModSelection.btnOptional = btnOptional
 		end,
@@ -151,7 +133,7 @@ local function CreateSetupPage()
 		end,
 		Skip = function()
 			SUI.DB.SetupDone = true
-		end
+		end,
 	}
 
 	SUI.Setup:AddPage(SetupPage)

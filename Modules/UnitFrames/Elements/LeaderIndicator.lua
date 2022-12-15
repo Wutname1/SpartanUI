@@ -14,12 +14,12 @@ local Settings = {
 	position = {
 		anchor = 'TOP',
 		x = 0,
-		y = 6
+		y = 6,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Leader'
-	}
+		DisplayName = 'Leader',
+	},
 }
 
 UF.Elements:Register('LeaderIndicator', Build, nil, nil, Settings)

@@ -3,46 +3,40 @@ local module = SUI:NewModule('Artwork_StatusBars')
 ---@type SUI.Module
 module.bars = {}
 local FACTION_BAR_COLORS = {
-	[1] = {r = 1, g = 0.2, b = 0},
-	[2] = {r = 0.8, g = 0.3, b = 0},
-	[3] = {r = 0.8, g = 0.2, b = 0},
-	[4] = {r = 1, g = 0.8, b = 0},
-	[5] = {r = 0, g = 1, b = 0.1},
-	[6] = {r = 0, g = 1, b = 0.2},
-	[7] = {r = 0, g = 1, b = 0.3},
-	[8] = {r = 0, g = 0.6, b = 0.1},
-	[9] = {r = 0, g = .6, b = .1},
-	[10] = {r = 0, g = 0.74, b = 0.95}
+	[1] = { r = 1, g = 0.2, b = 0 },
+	[2] = { r = 0.8, g = 0.3, b = 0 },
+	[3] = { r = 0.8, g = 0.2, b = 0 },
+	[4] = { r = 1, g = 0.8, b = 0 },
+	[5] = { r = 0, g = 1, b = 0.1 },
+	[6] = { r = 0, g = 1, b = 0.2 },
+	[7] = { r = 0, g = 1, b = 0.3 },
+	[8] = { r = 0, g = 0.6, b = 0.1 },
+	[9] = { r = 0, g = 0.6, b = 0.1 },
+	[10] = { r = 0, g = 0.74, b = 0.95 },
 }
 local COLORS = {
-	Orange = {r = 1, g = 0.2, b = 0, a = .7},
-	Yellow = {r = 1, g = 0.8, b = 0, a = .7},
-	Green = {r = 0, g = 1, b = .1, a = .7},
-	Blue = {r = 0, g = .1, b = 1, a = .7},
-	Red = {r = 1, g = 0, b = .08, a = .7},
-	Light_Blue = {r = 0, g = .5, b = 1, a = .7}
+	Orange = { r = 1, g = 0.2, b = 0, a = 0.7 },
+	Yellow = { r = 1, g = 0.8, b = 0, a = 0.7 },
+	Green = { r = 0, g = 1, b = 0.1, a = 0.7 },
+	Blue = { r = 0, g = 0.1, b = 1, a = 0.7 },
+	Red = { r = 1, g = 0, b = 0.08, a = 0.7 },
+	Light_Blue = { r = 0, g = 0.5, b = 1, a = 0.7 },
 }
 
 function module:OnEnable()
 	module.DB = SUI.DB.StatusBars
 	--Create Status Bars
-	if not SUI.IsRetail and module.DB[2].display == 'honor' then
-		module.DB[2].display = 'rep'
-	end
+	if not SUI.IsRetail and module.DB[2].display == 'honor' then module.DB[2].display = 'rep' end
 
 	module:factory()
 	module:BuildOptions()
 end
 
 local GetFactionDetails = function(name)
-	if (not name) then
-		return
-	end
+	if not name then return end
 	local description = ' '
 	for i = 1, GetNumFactions() do
-		if name == GetFactionInfo(i) then
-			description = select(2, GetFactionInfo(i))
-		end
+		if name == GetFactionInfo(i) then description = select(2, GetFactionInfo(i)) end
 	end
 	return description
 end
@@ -100,20 +94,22 @@ local updateText = function(self)
 		if now ~= 0 then
 			rested = (rested / goal) * self:GetWidth()
 
-			if (rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))) > (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))) then
-				rested = (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))) - (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
+			if
+				(rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
+				> (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
+			then
+				rested = (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
+					- (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
 			end
 
-			if rested == 0 then
-				rested = .001
-			end
+			if rested == 0 then rested = 0.001 end
 			self.Lead:SetWidth(rested)
 		end
 		valFill = now
 		valMax = goal
 		remaining = SUI.Font:comma_value(goal - now)
 		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
-	elseif (module.DB[side].display == 'rep') then
+	elseif module.DB[side].display == 'rep' then
 		local name, _, low, high, current, factionID = GetWatchedFactionInfo()
 		local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
 
@@ -152,19 +148,17 @@ local updateText = function(self)
 				valPercent = (valFill / valMax) * 100
 			end
 		end
-	elseif (module.DB[side].display == 'az') then
+	elseif module.DB[side].display == 'az' then
 		if C_AzeriteItem.HasActiveAzeriteItem() then
 			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-			if (not azeriteItemLocation) then
-				return
-			end
+			if not azeriteItemLocation then return end
 			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
 			valMax = totalLevelXP - xp
 			local ratio = (xp / totalLevelXP)
 			valFill = xp
 			valPercent = ratio * 100
 		end
-	elseif (module.DB[side].display == 'honor') then
+	elseif module.DB[side].display == 'honor' then
 		valFill = UnitHonor('player')
 		valMax = UnitHonorMax('player')
 		valPercent = ((valFill / valMax) * 100)
@@ -195,7 +189,7 @@ local showXPTooltip = function(self)
 	local b = format(XP_LEVEL_TEMPLATE, SUI.Font:comma_value(UnitXP('player')), SUI.Font:comma_value(UnitXPMax('player')), (UnitXP('player') / UnitXPMax('player') * 100))
 	self.tooltip.TextFrame.HeaderText:SetText(a .. b) -- Level 99 (9999 / 9999) 100% Experience
 	local rested, text = GetXPExhaustion() or 0, ''
-	if (rested > 0) then
+	if rested > 0 then
 		text = format(xptip1, format(xprest, (rested / UnitXPMax('player')) * 100), 200)
 		self.tooltip.TextFrame.MainText:SetText(text) -- Rested (15%) - 200% of normal experience gained from monsters.
 	else
@@ -246,9 +240,7 @@ end
 local showAzeriteTooltip = function(self)
 	if C_AzeriteItem.HasActiveAzeriteItem() then
 		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-		if (not azeriteItemLocation) then
-			return
-		end
+		if not azeriteItemLocation then return end
 		local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
 		local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
 		local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
@@ -256,16 +248,14 @@ local showAzeriteTooltip = function(self)
 		local ratio = (xp / totalLevelXP)
 		if currentLevel and xpToNextLevel then
 			self.tooltip.TextFrame.HeaderText:SetText(AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel), HIGHLIGHT_FONT_COLOR:GetRGB())
-			if azeriteItem:GetItemName() then
-				self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName()))
-			end
+			if azeriteItem:GetItemName() then self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName())) end
 		end
 	end
 	self.tooltip:Show()
 end
 
 function module:factory()
-	for i, key in ipairs({'Left', 'Right'}) do
+	for i, key in ipairs({ 'Left', 'Right' }) do
 		local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
 
 		--Status Bar
@@ -286,11 +276,11 @@ function module:factory()
 
 		statusbar.Fill = statusbar:CreateTexture(nil, 'BORDER')
 		statusbar.Fill:SetTexture(StyleSetting.GlowImage)
-		statusbar.Fill:SetSize(.1, StyleSetting.GlowHeight)
+		statusbar.Fill:SetSize(0.1, StyleSetting.GlowHeight)
 
 		statusbar.Lead = statusbar:CreateTexture(nil, 'BORDER')
 		statusbar.Lead:SetTexture(StyleSetting.GlowImage)
-		statusbar.Lead:SetSize(.1, StyleSetting.GlowHeight)
+		statusbar.Lead:SetSize(0.1, StyleSetting.GlowHeight)
 
 		statusbar.FillGlow = statusbar:CreateTexture(nil, 'ARTWORK')
 		statusbar.FillGlow:SetTexture(StyleSetting.GlowImage)
@@ -312,9 +302,7 @@ function module:factory()
 		statusbar.Text = statusbar:CreateFontString(nil, 'OVERLAY')
 		--Only allow Style to override default font sizes
 		local tmp = module.DB.default.FontSize
-		if StyleSetting.FontSize and module.DB[i].FontSize == module.DB.default.FontSize then
-			tmp = StyleSetting.FontSize
-		end
+		if StyleSetting.FontSize and module.DB[i].FontSize == module.DB.default.FontSize then tmp = StyleSetting.FontSize end
 		SUI.Font:Format(statusbar.Text, tmp)
 		statusbar.Text:SetJustifyH('CENTER')
 		statusbar.Text:SetJustifyV('MIDDLE')
@@ -388,103 +376,60 @@ function module:factory()
 		statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
 
 		--Statusbar Update event
-		statusbar:SetScript(
-			'OnEvent',
-			function(self)
-				if module.DB[i].display ~= 'disabled' then
-					self:Show()
-					updateText(self)
-				else
-					self:Hide()
-				end
+		statusbar:SetScript('OnEvent', function(self)
+			if module.DB[i].display ~= 'disabled' then
+				self:Show()
+				updateText(self)
+			else
+				self:Hide()
 			end
-		)
+		end)
 		--Tooltip Display Events
-		statusbar:SetScript(
-			'OnEnter',
-			function()
-				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then
-					showRepTooltip(statusbar)
-				end
-				if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then
-					showXPTooltip(statusbar)
-				end
-				if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then
-					showAzeriteTooltip(statusbar)
-				end
-				if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then
-					showHonorTooltip(statusbar)
-				end
-			end
-		)
-		statusbar:SetScript(
-			'OnMouseDown',
-			function()
-				if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then
-					showRepTooltip(statusbar)
-				end
-				if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then
-					showXPTooltip(statusbar)
-				end
-				if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then
-					showAzeriteTooltip(statusbar)
-				end
-				if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'click' then
-					showHonorTooltip(statusbar)
-				end
-			end
-		)
-		statusbar:SetScript(
-			'OnLeave',
-			function()
-				statusbar.tooltip:Hide()
-			end
-		)
+		statusbar:SetScript('OnEnter', function()
+			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then showRepTooltip(statusbar) end
+			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then showXPTooltip(statusbar) end
+			if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then showAzeriteTooltip(statusbar) end
+			if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then showHonorTooltip(statusbar) end
+		end)
+		statusbar:SetScript('OnMouseDown', function()
+			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then showRepTooltip(statusbar) end
+			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then showXPTooltip(statusbar) end
+			if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then showAzeriteTooltip(statusbar) end
+			if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'click' then showHonorTooltip(statusbar) end
+		end)
+		statusbar:SetScript('OnLeave', function()
+			statusbar.tooltip:Hide()
+		end)
 
 		-- Hide with SpartanUI
-		SpartanUI:HookScript(
-			'OnHide',
-			function()
-				statusbar:Hide()
-			end
-		)
-		SpartanUI:HookScript(
-			'OnShow',
-			function()
-				statusbar:Show()
-			end
-		)
+		SpartanUI:HookScript('OnHide', function()
+			statusbar:Hide()
+		end)
+		SpartanUI:HookScript('OnShow', function()
+			statusbar:Show()
+		end)
 
 		--Hook the visibility of the tooltip to the text
-		tooltip:HookScript(
-			'OnHide',
-			function()
-				tooltip.TextFrame:Hide()
-			end
-		)
-		tooltip:HookScript(
-			'OnShow',
-			function()
-				tooltip.TextFrame:Show()
-			end
-		)
+		tooltip:HookScript('OnHide', function()
+			tooltip.TextFrame:Hide()
+		end)
+		tooltip:HookScript('OnShow', function()
+			tooltip.TextFrame:Show()
+		end)
 		--Hide the new tooltip
 		tooltip:Hide()
 	end
 
-	SUI:RegisterMessage(
-		'StatusBarUpdate',
-		function()
-			for i, key in ipairs({'Left', 'Right'}) do
-				if module.DB[i].display ~= 'disabled' then
-					module.bars[key]:Show()
-					updateText(module.bars[key])
-				else
-					module.bars[key]:Hide()
-				end
+	SUI:RegisterMessage('StatusBarUpdate', function()
+		for i, key in ipairs({ 'Left', 'Right' }) do
+			if module.DB[i].display ~= 'disabled' then
+				module.bars[key]:Show()
+				updateText(module.bars[key])
+			else
+				module.bars[key]:Hide()
 			end
 		end
-	)
+	end)
 end
 
 function module:BuildOptions()
@@ -493,33 +438,31 @@ function module:BuildOptions()
 		['rep'] = L['Reputation'],
 		['honor'] = L['Honor'],
 		['az'] = L['Azerite Bar'],
-		['disabled'] = L['Disabled']
+		['disabled'] = L['Disabled'],
 	}
-	if (not SUI.IsRetail) then
-		StatusBars = {
-			['xp'] = L['Experiance'],
-			['rep'] = L['Reputation'],
-			['disabled'] = L['Disabled']
-		}
-	end
+	if not SUI.IsRetail then StatusBars = {
+		['xp'] = L['Experiance'],
+		['rep'] = L['Reputation'],
+		['disabled'] = L['Disabled'],
+	} end
 
 	local ids = {
 		[1] = 'one',
 		[2] = 'two',
 		[3] = 'three',
 		[4] = 'four',
-		[5] = 'five'
+		[5] = 'five',
 	}
 
 	-- Build Holder
 	SUI.opt.args['Artwork'].args['StatusBars'] = {
 		name = L['Status bars'],
 		type = 'group',
-		args = {}
+		args = {},
 	}
 
 	--Bar Display dropdowns
-	for i, _ in ipairs({'Left', 'Right'}) do
+	for i, _ in ipairs({ 'Left', 'Right' }) do
 		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
 			name = L['Status bar'] .. ' ' .. i,
 			order = i,
@@ -537,7 +480,7 @@ function module:BuildOptions()
 					set = function(info, val)
 						module.DB[i].display = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				text = {
 					name = L['Display statusbar text'],
@@ -549,7 +492,7 @@ function module:BuildOptions()
 					set = function(info, val)
 						module.DB[i].text = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				TooltipDisplay = {
 					name = L['Tooltip display mode'],
@@ -558,7 +501,7 @@ function module:BuildOptions()
 					values = {
 						['hover'] = L['On mouse over'],
 						['click'] = L['On click'],
-						['off'] = L['Disabled']
+						['off'] = L['Disabled'],
 					},
 					get = function(info)
 						return module.DB[i].ToolTip
@@ -566,7 +509,7 @@ function module:BuildOptions()
 					set = function(info, val)
 						module.DB[i].ToolTip = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				CustomColor1 = {
 					name = L['Primary custom color'],
@@ -581,7 +524,7 @@ function module:BuildOptions()
 						local colors = module.DB[i].CustomColor
 						colors.r, colors.g, colors.b, colors.a = r, g, b, a
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				CustomColor2 = {
 					name = L['Secondary custom color'],
@@ -596,7 +539,7 @@ function module:BuildOptions()
 						local colors = module.DB[i].CustomColor2
 						colors.r, colors.g, colors.b, colors.a = r, g, b, a
 						SUI:SendMessage('StatusBarUpdate')
-					end
+					end,
 				},
 				AutoColor = {
 					name = L['Auto color'],
@@ -608,9 +551,9 @@ function module:BuildOptions()
 					set = function(info, val)
 						module.DB[i].AutoColor = val
 						SUI:SendMessage('StatusBarUpdate')
-					end
-				}
-			}
+					end,
+				},
+			},
 		}
 	end
 end

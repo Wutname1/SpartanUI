@@ -10,7 +10,7 @@ local elementList = {
 	'RaidTargetIndicator',
 	'Range',
 	'ThreatIndicator',
-	'RaidRoleIndicator'
+	'RaidRoleIndicator',
 }
 
 local function Builder(frame)
@@ -21,35 +21,34 @@ local function Builder(frame)
 	end
 end
 
-local function Options()
-end
+local function Options() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 100,
 	elements = {
 		Health = {
-			height = 30
+			height = 30,
 		},
 		Power = {
 			height = 5,
 			text = {
 				['1'] = {
-					enabled = false
-				}
-			}
+					enabled = false,
+				},
+			},
 		},
 		Name = {
 			enabled = true,
 			height = 10,
 			position = {
-				y = 0
-			}
-		}
+				y = 0,
+			},
+		},
 	},
 	config = {
-		Requires = 'pet'
-	}
+		Requires = 'pet',
+	},
 }
 
 UF.Unit:Add('pettarget', Builder, Settings)

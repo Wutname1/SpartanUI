@@ -496,6 +496,5 @@ L['Without using the Wago or WowUp client no data collected will be sent.'] = tr
 L['This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'] = true
 L['All data collected'] = true
 L['You can view all collected data in the SUI options under Modules -> Wago Analytics.'] = true
-L[
-		'SpartanUI has introduced Wago Analytics.\n\nWago Analytics is a service that allows us to collect anonymous data about your usage of the addon.\n\nWe use this data to improve the addon and to make it more user friendly.\n\nYou can disable this option if you do not want to share your data with us.'
-	] = true
+L['SpartanUI has introduced Wago Analytics.\n\nWago Analytics is a service that allows us to collect anonymous data about your usage of the addon.\n\nWe use this data to improve the addon and to make it more user friendly.\n\nYou can disable this option if you do not want to share your data with us.'] =
+	true

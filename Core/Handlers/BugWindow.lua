@@ -29,7 +29,7 @@ local onError = function()
 	if (not InCombatLockdown() and SUI and SUI.AutoOpenErrors) or (window and window:IsShown()) then
 		addon:OpenErrWindow()
 	elseif (SUI and not SUI.AutoOpenErrors) and (not InCombatLockdown()) then
-	-- print('Error captured by error handler')
+		-- print('Error captured by error handler')
 	end
 
 	addon:updatemapIcon()
@@ -40,48 +40,34 @@ end
 --
 
 local eventFrame = CreateFrame('Frame', nil, InterfaceOptionsFramePanelContainer)
-eventFrame:SetScript(
-	'OnEvent',
-	function(self, event, loadedAddon)
-		if loadedAddon ~= 'SpartanUI' or not BugGrabber then
-			return
-		end
-		self:UnregisterEvent('ADDON_LOADED')
+eventFrame:SetScript('OnEvent', function(self, event, loadedAddon)
+	if loadedAddon ~= 'SpartanUI' or not BugGrabber then return end
+	self:UnregisterEvent('ADDON_LOADED')
 
-		local ac = LibStub('AceComm-3.0', true)
-		if ac then
-			ac:Embed(addon)
-		end
-		local as = LibStub('AceSerializer-3.0', true)
-		if as then
-			as:Embed(addon)
-		end
+	local ac = LibStub('AceComm-3.0', true)
+	if ac then ac:Embed(addon) end
+	local as = LibStub('AceSerializer-3.0', true)
+	if as then as:Embed(addon) end
 
-		-- Make sure we grab any errors fired before we loaded.
-		local session = addon:GetErrors(BugGrabber:GetSessionId())
-		if #session > 0 then
-			onError()
-		end
+	-- Make sure we grab any errors fired before we loaded.
+	local session = addon:GetErrors(BugGrabber:GetSessionId())
+	if #session > 0 then onError() end
 
-		-- Set up our error event handler
-		BugGrabber.RegisterCallback(addon, 'BugGrabber_BugGrabbed', onError)
+	-- Set up our error event handler
+	BugGrabber.RegisterCallback(addon, 'BugGrabber_BugGrabbed', onError)
 
-		SlashCmdList.suierrors = function()
-			addon:OpenErrWindow()
-		end
-		SLASH_suierrors1 = '/suierrors'
-
-		ScriptErrorsFrame:Hide()
-		ScriptErrorsFrame:HookScript(
-			'OnShow',
-			function()
-				ScriptErrorsFrame:Hide()
-			end
-		)
-
-		self:SetScript('OnEvent', nil)
+	SlashCmdList.suierrors = function()
+		addon:OpenErrWindow()
 	end
-)
+	SLASH_suierrors1 = '/suierrors'
+
+	ScriptErrorsFrame:Hide()
+	ScriptErrorsFrame:HookScript('OnShow', function()
+		ScriptErrorsFrame:Hide()
+	end)
+
+	self:SetScript('OnEvent', nil)
+end)
 eventFrame:RegisterEvent('ADDON_LOADED')
 addon.frame = eventFrame
 
@@ -108,7 +94,7 @@ local function colorStack(ret)
 	ret = ret:gsub('|([^chHr])', '||%1'):gsub('|$', '||') -- Pipes
 	ret = ret:gsub('<(.-)>', '|cffffea00<%1>|r') -- Things wrapped in <>
 	ret = ret:gsub('%[(.-)%]', '|cffffea00[%1]|r') -- Things wrapped in []
-	ret = ret:gsub("([\"`'])(.-)([\"`'])", '|cff8888ff%1%2%3|r') -- Quotes
+	ret = ret:gsub('(["`\'])(.-)(["`\'])', '|cff8888ff%1%2%3|r') -- Quotes
 	ret = ret:gsub(':(%d+)([%S\n])', ':|cff00ff00%1|r%2') -- Line numbers
 	ret = ret:gsub('([^\\]+%.lua)', '|cffffffff%1|r') -- Lua files
 	return ret
@@ -147,9 +133,7 @@ local function updateDisplay(forceRefresh)
 		addon:updatemapIcon()
 		return
 	end
-	if not BugGrabber then
-		return
-	end
+	if not BugGrabber then return end
 
 	if forceRefresh then
 		currentErrorObject = nil
@@ -178,13 +162,9 @@ local function updateDisplay(forceRefresh)
 			end
 		end
 	end
-	if not ErrObj then
-		ErrObj = currentErrorList[currentErrorIndex] or currentErrorList[size]
-	end
+	if not ErrObj then ErrObj = currentErrorList[currentErrorIndex] or currentErrorList[size] end
 
-	if SessionID == -1 and ErrObj then
-		SessionID = ErrObj.session
-	end
+	if SessionID == -1 and ErrObj then SessionID = ErrObj.session end
 
 	if size > 0 then
 		window.countLabel:SetText(('%d/%d'):format(currentErrorIndex, size))
@@ -226,17 +206,11 @@ function addon:Reset()
 	print('All stored bugs have been wiped.')
 end
 
-hooksecurefunc(
-	addon,
-	'UpdateDisplay',
-	function()
-		if not window or not window:IsShown() then
-			return
-		end
-		-- can't just hook it right in because it would pass |self| as forceRefresh
-		updateDisplay(true)
-	end
-)
+hooksecurefunc(addon, 'UpdateDisplay', function()
+	if not window or not window:IsShown() then return end
+	-- can't just hook it right in because it would pass |self| as forceRefresh
+	updateDisplay(true)
+end)
 
 local createBugWindow = function()
 	-- Create window
@@ -247,7 +221,7 @@ local createBugWindow = function()
 	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	window.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	window.Title:SetPoint('TOP')
-	window.Title:SetAlpha(.8)
+	window.Title:SetAlpha(0.8)
 
 	-- Create window Items
 	window.editBox = StdUi:MultiLineBox(window, 480, 320, '')
@@ -265,9 +239,7 @@ local createBugWindow = function()
 
 	window.btnClose = StdUi:Button(window, 120, 20, 'CLOSE')
 	window.AutoOpen = StdUi:Checkbox(window, 'Auto open on error', 200, 20)
-	if SUI.AutoOpenErrors then
-		window.AutoOpen:SetChecked(true)
-	end
+	if SUI.AutoOpenErrors then window.AutoOpen:SetChecked(true) end
 
 	-- Position
 	window.editBox:SetPoint('TOP', window, 'TOP', 0, -50)
@@ -280,46 +252,31 @@ local createBugWindow = function()
 	window.prevButton:SetPoint('RIGHT', window.countLabel, 'LEFT', -5, 0)
 
 	--Button Actions
-	window.AutoOpen:HookScript(
-		'OnClick',
-		function()
-			SUI.DBG.ErrorHandler.AutoOpenErrors = window.AutoOpen:GetValue()
-			SUI.AutoOpenErrors = (SUI.DBG.ErrorHandler.AutoOpenErrors or false)
-		end
-	)
-	window.prevButton:SetScript(
-		'OnClick',
-		function()
-			currentErrorIndex = currentErrorIndex - 1
-			updateDisplay()
-		end
-	)
+	window.AutoOpen:HookScript('OnClick', function()
+		SUI.DBG.ErrorHandler.AutoOpenErrors = window.AutoOpen:GetValue()
+		SUI.AutoOpenErrors = (SUI.DBG.ErrorHandler.AutoOpenErrors or false)
+	end)
+	window.prevButton:SetScript('OnClick', function()
+		currentErrorIndex = currentErrorIndex - 1
+		updateDisplay()
+	end)
 
-	window.nextButton:SetScript(
-		'OnClick',
-		function()
-			currentErrorIndex = currentErrorIndex + 1
-			updateDisplay()
-		end
-	)
+	window.nextButton:SetScript('OnClick', function()
+		currentErrorIndex = currentErrorIndex + 1
+		updateDisplay()
+	end)
 
-	window.btnClose:SetScript(
-		'OnClick',
-		function()
-			window:Hide()
-		end
-	)
+	window.btnClose:SetScript('OnClick', function()
+		window:Hide()
+	end)
 
 	window:Hide()
 
 	window.font = window:CreateFontString(nil, nil, 'GameFontNormal')
 	window.font:Hide()
-	window:HookScript(
-		'OnShow',
-		function()
-			window.editBox.scrollFrame:SetVerticalScroll(0)
-		end
-	)
+	window:HookScript('OnShow', function()
+		window.editBox.scrollFrame:SetVerticalScroll(0)
+	end)
 end
 
 function addon:OpenErrWindow()
@@ -328,62 +285,48 @@ function addon:OpenErrWindow()
 		return
 	end
 
-	if window == nil then
-		createBugWindow()
-	end
+	if window == nil then createBugWindow() end
 	updateDisplay(true)
 	window:Show()
 end
 
 local icon = LibStub('LibDBIcon-1.0', true)
 local ldb = LibStub:GetLibrary('LibDataBroker-1.1', true)
-if not icon or not ldb then
-	return
-end
+if not icon or not ldb then return end
 
-local MapIcon =
-	ldb:NewDataObject(
-	IconName,
-	{
-		type = 'data source',
-		text = '0',
-		icon = 'Interface\\AddOns\\SpartanUI\\images\\MinimapError',
-		OnClick = function()
-			if IsAltKeyDown() then
-				addon:Reset()
-			else
-				addon:OpenErrWindow()
-			end
-		end,
-		OnTooltipShow = function(tt)
-			local hint = '|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
-			local line = '%d. %s (x%d)'
-			local errs = addon:GetErrors(BugGrabber:GetSessionId())
-			if #errs == 0 then
-				tt:AddLine('You have no bugs, yay!')
-			else
-				tt:AddLine('SpartanUI error handler')
-				for i, err in next, errs do
-					tt:AddLine(line:format(i, colorStack(err.message), err.counter), .5, .5, .5)
-					if i > 8 then
-						break
-					end
-				end
-			end
-			tt:AddLine(' ')
-			tt:AddLine(hint, 0.2, 1, 0.2, 1)
+local MapIcon = ldb:NewDataObject(IconName, {
+	type = 'data source',
+	text = '0',
+	icon = 'Interface\\AddOns\\SpartanUI\\images\\MinimapError',
+	OnClick = function()
+		if IsAltKeyDown() then
+			addon:Reset()
+		else
+			addon:OpenErrWindow()
 		end
-	}
-)
+	end,
+	OnTooltipShow = function(tt)
+		local hint = '|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
+		local line = '%d. %s (x%d)'
+		local errs = addon:GetErrors(BugGrabber:GetSessionId())
+		if #errs == 0 then
+			tt:AddLine('You have no bugs, yay!')
+		else
+			tt:AddLine('SpartanUI error handler')
+			for i, err in next, errs do
+				tt:AddLine(line:format(i, colorStack(err.message), err.counter), 0.5, 0.5, 0.5)
+				if i > 8 then break end
+			end
+		end
+		tt:AddLine(' ')
+		tt:AddLine(hint, 0.2, 1, 0.2, 1)
+	end,
+})
 
 function addon:updatemapIcon()
-	if icon:GetMinimapButton() then
-		icon:Refresh(IconName)
-	end
+	if icon:GetMinimapButton() then icon:Refresh(IconName) end
 
-	if not BugGrabber then
-		return
-	end
+	if not BugGrabber then return end
 
 	local count = #addon:GetErrors(BugGrabber:GetSessionId())
 	if count ~= 0 then
@@ -394,24 +337,13 @@ function addon:updatemapIcon()
 end
 
 _G.SUIErrorDisplay = addon
-if GetCVar('scriptErrors') == 0 then
-	SetCVar('scriptErrors', 1)
-end
+if GetCVar('scriptErrors') == 0 then SetCVar('scriptErrors', 1) end
 
 local f = CreateFrame('Frame')
-f:SetScript(
-	'OnEvent',
-	function()
-		if not SUIErrorHandler then
-			SUIErrorHandler = {}
-		end
-		if not BugGrabber then
-			return
-		end
-		icon:Register(IconName, MapIcon, SUIErrorHandler)
-		if #addon:GetErrors(BugGrabber:GetSessionId()) == 0 then
-			icon:Hide(IconName)
-		end
-	end
-)
+f:SetScript('OnEvent', function()
+	if not SUIErrorHandler then SUIErrorHandler = {} end
+	if not BugGrabber then return end
+	icon:Register(IconName, MapIcon, SUIErrorHandler)
+	if #addon:GetErrors(BugGrabber:GetSessionId()) == 0 then icon:Hide(IconName) end
+end)
 f:RegisterEvent('PLAYER_LOGIN')

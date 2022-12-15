@@ -11,10 +11,10 @@ local DBDefaults = {
 			colors = {
 				primary = 'CLASS',
 				secondary = 'CLASS',
-				background = 'dark'
-			}
-		}
-	}
+				background = 'dark',
+			},
+		},
+	},
 }
 ---@type AceConfigOptionsTable
 local OptTable
@@ -55,29 +55,29 @@ local BlizzardRegionList = {
 	'BottomRightTex',
 	'RightTex',
 	'MiddleTex',
-	'Center'
+	'Center',
 }
 
 local Settings = {
-	BackdropColor = {0.05, 0.05, 0.05, 0.85},
-	BackdropColorDark = {0, 0, 0, .95},
-	BackdropColorLight = {.17, .17, .17, .9},
-	BaseBorderColor = {1, 1, 1, .3},
-	ObjBorderColor = {1, 1, 1, .5},
+	BackdropColor = { 0.05, 0.05, 0.05, 0.85 },
+	BackdropColorDark = { 0, 0, 0, 0.95 },
+	BackdropColorLight = { 0.17, 0.17, 0.17, 0.9 },
+	BaseBorderColor = { 1, 1, 1, 0.3 },
+	ObjBorderColor = { 1, 1, 1, 0.5 },
 	factionColor = {
-		Alliance = {0, .6, 1, .5},
-		Horde = {1, .2, .2, .5}
+		Alliance = { 0, 0.6, 1, 0.5 },
+		Horde = { 1, 0.2, 0.2, 0.5 },
 	},
 	TxBlank = 'Interface\\Addons\\SpartanUI\\images\\blank',
 	bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-	edgeFile = 'Interface\\BUTTONS\\WHITE8X8'
+	edgeFile = 'Interface\\BUTTONS\\WHITE8X8',
 }
 ---@class AppearanceMode
 local AppearanceMode = {
 	Default = 'Default',
 	Dark = 'Dark',
 	Light = 'Light',
-	NoBackdrop = 'NoBackdrop'
+	NoBackdrop = 'NoBackdrop',
 }
 
 local function GetBaseBorderColor()
@@ -86,9 +86,7 @@ end
 
 local function GetClassColor(class)
 	local color = (_G.CUSTOM_CLASS_COLORS and _G.CUSTOM_CLASS_COLORS[class]) or _G.RAID_CLASS_COLORS[class]
-	if type(color) ~= 'table' then
-		return
-	end
+	if type(color) ~= 'table' then return end
 
 	if not color.colorStr then
 		color.colorStr = module.colors.RGBToHex(color.r, color.g, color.b, 'ff')
@@ -127,9 +125,7 @@ function module.colors:GetPrimaryColor(comp)
 end
 
 function module.colors.SetColorTable(t, data)
-	if not data.r or not data.g or not data.b then
-		error('SetColorTable: Could not unpack color values.')
-	end
+	if not data.r or not data.g or not data.b then error('SetColorTable: Could not unpack color values.') end
 
 	if t and (type(t) == 'table') then
 		t[1], t[2], t[3], t[4] = module.colors.UpdateColorTable(data)
@@ -141,22 +137,12 @@ function module.colors.SetColorTable(t, data)
 end
 
 function module.colors.UpdateColorTable(data)
-	if not data.r or not data.g or not data.b then
-		error('UpdateColorTable: Could not unpack color values.')
-	end
+	if not data.r or not data.g or not data.b then error('UpdateColorTable: Could not unpack color values.') end
 
-	if data.r > 1 or data.r < 0 then
-		data.r = 1
-	end
-	if data.g > 1 or data.g < 0 then
-		data.g = 1
-	end
-	if data.b > 1 or data.b < 0 then
-		data.b = 1
-	end
-	if data.a and (data.a > 1 or data.a < 0) then
-		data.a = 1
-	end
+	if data.r > 1 or data.r < 0 then data.r = 1 end
+	if data.g > 1 or data.g < 0 then data.g = 1 end
+	if data.b > 1 or data.b < 0 then data.b = 1 end
+	if data.a and (data.a > 1 or data.a < 0) then data.a = 1 end
 
 	if data.a then
 		return data.r, data.g, data.b, data.a
@@ -166,27 +152,17 @@ function module.colors.UpdateColorTable(data)
 end
 
 function module.colors.GetColorTable(data)
-	if not data.r or not data.g or not data.b then
-		error('GetColorTable: Could not unpack color values.')
-	end
+	if not data.r or not data.g or not data.b then error('GetColorTable: Could not unpack color values.') end
 
-	if data.r > 1 or data.r < 0 then
-		data.r = 1
-	end
-	if data.g > 1 or data.g < 0 then
-		data.g = 1
-	end
-	if data.b > 1 or data.b < 0 then
-		data.b = 1
-	end
-	if data.a and (data.a > 1 or data.a < 0) then
-		data.a = 1
-	end
+	if data.r > 1 or data.r < 0 then data.r = 1 end
+	if data.g > 1 or data.g < 0 then data.g = 1 end
+	if data.b > 1 or data.b < 0 then data.b = 1 end
+	if data.a and (data.a > 1 or data.a < 0) then data.a = 1 end
 
 	if data.a then
-		return {data.r, data.g, data.b, data.a}
+		return { data.r, data.g, data.b, data.a }
 	else
-		return {data.r, data.g, data.b}
+		return { data.r, data.g, data.b }
 	end
 end
 
@@ -199,9 +175,7 @@ end
 
 function module.colors.HexToRGB(hex)
 	local a, r, g, b = strmatch(hex, '^|?c?(%x%x)(%x%x)(%x%x)(%x?%x?)|?r?$')
-	if not a then
-		return 0, 0, 0, 0
-	end
+	if not a then return 0, 0, 0, 0 end
 	if b == '' then
 		r, g, b, a = a, r, g, 'ff'
 	end
@@ -215,18 +189,12 @@ Settings.MutedClassColor = module.colors.SetColorTable(Settings.MutedClassColor,
 Settings.MutedClassColor[4] = 0.3
 
 function module:SetClassBorderColor(frame, script)
-	if frame.backdrop then
-		frame = frame.backdrop
-	end
-	if frame.SetBackdropBorderColor then
-		frame:SetBackdropBorderColor(unpack(script == 'OnEnter' and Settings.ClassColor or Settings.MutedClassColor))
-	end
+	if frame.backdrop then frame = frame.backdrop end
+	if frame.SetBackdropBorderColor then frame:SetBackdropBorderColor(unpack(script == 'OnEnter' and Settings.ClassColor or Settings.MutedClassColor)) end
 end
 
 local function RemoveBlizzardRegions(frame, name, fadeOut)
-	if not name then
-		name = frame.GetName and frame:GetName()
-	end
+	if not name then name = frame.GetName and frame:GetName() end
 	for _, area in pairs(BlizzardRegionList) do
 		local object = (name and _G[name .. area]) or frame[area]
 		if object then
@@ -240,19 +208,17 @@ local function RemoveBlizzardRegions(frame, name, fadeOut)
 end
 
 function module.RemoveTextures(frame, option)
-	if ((not frame.GetNumRegions) or (frame.Panel and (not frame.Panel.CanBeRemoved))) then
-		return
-	end
+	if (not frame.GetNumRegions) or (frame.Panel and not frame.Panel.CanBeRemoved) then return end
 	local region, layer, texture
 	for i = 1, frame:GetNumRegions() do
 		region = select(i, frame:GetRegions())
-		if (region and (region:GetObjectType() == 'Texture')) then
+		if region and (region:GetObjectType() == 'Texture') then
 			layer = region:GetDrawLayer()
 			texture = region:GetTexture()
 
-			if (option) then
+			if option then
 				-- elseif texture ~= 'Interface\\DialogFrame\\UI-DialogBox-Background' then
-				if (type(option) == 'boolean') then
+				if type(option) == 'boolean' then
 					if region.UnregisterAllEvents then
 						region:UnregisterAllEvents()
 						region:SetParent(nil)
@@ -260,7 +226,7 @@ function module.RemoveTextures(frame, option)
 						region.Show = region.Hide
 					end
 					region:Hide()
-				elseif (type(option) == 'string' and ((layer == option) or (texture ~= option))) then
+				elseif type(option) == 'string' and ((layer == option) or (texture ~= option)) then
 					region:SetTexture('')
 				end
 			else
@@ -296,13 +262,11 @@ function module.SetTemplate(frame, appearanceMode)
 	if frame.appearanceMode == AppearanceMode.NoBackdrop then
 		frame:SetBackdrop(nil)
 	else
-		frame:SetBackdrop(
-			{
-				bgFile = Settings.edgeFile,
-				edgeFile = Settings.edgeFile,
-				edgeSize = edgeSize
-			}
-		)
+		frame:SetBackdrop({
+			bgFile = Settings.edgeFile,
+			edgeFile = Settings.edgeFile,
+			edgeSize = edgeSize,
+		})
 
 		if frame.appearanceMode == AppearanceMode.Dark then
 			frame:SetBackdropColor(unpack(Settings.BackdropColorDark))
@@ -321,36 +285,32 @@ module.Objects = {}
 ---@param widget any|AceGUITabGroupTab
 ---@param mode? AppearanceMode
 function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
-	hooksecurefunc(
-		widget,
-		'SetPoint',
-		function(self, left, parent, right, x, y)
-			if y == -7 then
-				self:ClearAllPoints()
-				self:SetPoint(left, parent, right, 0, -4)
-			elseif x == -10 then
-				self:ClearAllPoints()
-				self:SetPoint(left, parent, right, 0, 0)
-			end
+	hooksecurefunc(widget, 'SetPoint', function(self, left, parent, right, x, y)
+		if y == -7 then
+			self:ClearAllPoints()
+			self:SetPoint(left, parent, right, 0, -4)
+		elseif x == -10 then
+			self:ClearAllPoints()
+			self:SetPoint(left, parent, right, 0, 0)
 		end
-	)
+	end)
 
 	widget.Left:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
-	widget.Left:SetTexCoord(.1, 0.15, 0, 1)
-	widget.Left:SetVertexColor(1, 1, 1, .2)
+	widget.Left:SetTexCoord(0.1, 0.15, 0, 1)
+	widget.Left:SetVertexColor(1, 1, 1, 0.2)
 
 	widget.Middle:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
 	widget.Middle:SetTexCoord(0.15, 0.85, 0, 1)
-	widget.Middle:SetVertexColor(1, 1, 1, .2)
+	widget.Middle:SetVertexColor(1, 1, 1, 0.2)
 
 	widget.Right:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
 	widget.Right:SetTexCoord(0.85, 1, 0, 1)
-	widget.Right:SetVertexColor(1, 1, 1, .2)
+	widget.Right:SetVertexColor(1, 1, 1, 0.2)
 
 	local color = module.colors:GetSecondaryColor('Ace3')
 
 	widget.LeftDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
-	widget.LeftDisabled:SetTexCoord(.1, 0.15, 0, 1)
+	widget.LeftDisabled:SetTexCoord(0.1, 0.15, 0, 1)
 	widget.LeftDisabled:SetVertexColor(unpack(color))
 
 	widget.MiddleDisabled:SetTexture('Interface\\AddOns\\SpartanUI\\images\\UI-Tab')
@@ -364,9 +324,7 @@ function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
 	widget.LeftDisabled:ClearAllPoints()
 	widget.LeftDisabled:SetPoint('TOPLEFT')
 
-	if widget.text then
-		widget:SetNormalFontObject(GameFontHighlightSmall)
-	end
+	if widget.text then widget:SetNormalFontObject(GameFontHighlightSmall) end
 end
 function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
 	-- local check = button.check
@@ -378,49 +336,29 @@ function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
 end
 
 function module.Objects.Button(button, mode, NormalTex, regionsToFade)
-	if button.isSkinned then
-		return
-	end
+	if button.isSkinned then return end
 
-	if button.SetNormalTexture and not NormalTex then
-		button:SetNormalTexture('')
-	end
-	if button.SetHighlightTexture then
-		button:SetHighlightTexture(Settings.bgFile)
-	end
-	if button.SetPushedTexture then
-		button:SetPushedTexture(Settings.bgFile)
-	end
-	if button.SetDisabledTexture then
-		button:SetDisabledTexture(Settings.bgFile)
-	end
+	if button.SetNormalTexture and not NormalTex then button:SetNormalTexture('') end
+	if button.SetHighlightTexture then button:SetHighlightTexture(Settings.bgFile) end
+	if button.SetPushedTexture then button:SetPushedTexture(Settings.bgFile) end
+	if button.SetDisabledTexture then button:SetDisabledTexture(Settings.bgFile) end
 
-	if mode == 'NoBackdrop' then
-		module.RemoveAllTextures(button)
-	end
+	if mode == 'NoBackdrop' then module.RemoveAllTextures(button) end
 
 	RemoveBlizzardRegions(button, nil, regionsToFade)
 
-	if button.Text then
-		SUI.Font:Format(button.Text, 12, 'Blizzard')
-	end
+	if button.Text then SUI.Font:Format(button.Text, 12, 'Blizzard') end
 
 	function SetModifiedBackdrop(self)
-		if self:IsEnabled() then
-			module:SetClassBorderColor(self, 'OnEnter')
-		end
+		if self:IsEnabled() then module:SetClassBorderColor(self, 'OnEnter') end
 	end
 
 	function SetOriginalBackdrop(self)
-		if self:IsEnabled() then
-			module:SetClassBorderColor(self, 'OnLeave')
-		end
+		if self:IsEnabled() then module:SetClassBorderColor(self, 'OnLeave') end
 	end
 
 	function SetDisabledBackdrop(self)
-		if self:IsMouseOver() then
-			module:SetClassBorderColor(self, 'OnDisable')
-		end
+		if self:IsMouseOver() then module:SetClassBorderColor(self, 'OnDisable') end
 	end
 
 	module.SetTemplate(button, mode)
@@ -429,9 +367,7 @@ function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 	button:HookScript('OnLeave', SetOriginalBackdrop)
 	button:HookScript('OnDisable', SetDisabledBackdrop)
 
-	if button.Text then
-		button.Text:SetTextColor(1, 1, 1)
-	end
+	if button.Text then button.Text:SetTextColor(1, 1, 1) end
 
 	button.isSkinned = true
 end
@@ -442,26 +378,20 @@ end
 ---@param mode? AppearanceMode
 ---@param component? string
 function module.SkinObj(ObjType, object, mode, component)
-	if not object or (component and not DB.components[component].enabled) or object.isSkinned then
-		return
-	end
+	if not object or (component and not DB.components[component].enabled) or object.isSkinned then return end
 	if ObjType and module.Objects[ObjType] then
 		module.Objects[ObjType](object, mode)
 		return
 	end
 
-	if not object.SetBackdrop then
-		Mixin(object, BackdropTemplateMixin)
-	end
+	if not object.SetBackdrop then Mixin(object, BackdropTemplateMixin) end
 
-	object:SetBackdrop(
-		{
-			bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-			edgeFile = 'Interface\\BUTTONS\\WHITE8X8',
-			edgeSize = 1,
-			TileSize = 20
-		}
-	)
+	object:SetBackdrop({
+		bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+		edgeFile = 'Interface\\BUTTONS\\WHITE8X8',
+		edgeSize = 1,
+		TileSize = 20,
+	})
 	if mode and mode == AppearanceMode.Dark then
 		object:SetBackdropColor(unpack(Settings.BackdropColorDark))
 	elseif mode and mode == AppearanceMode.Light then
@@ -480,7 +410,7 @@ local function functionAddToOptions(name, settings)
 	OptTable.args.enabledState.args[name] = {
 		name = name,
 		type = 'toggle',
-		order = 1
+		order = 1,
 	}
 
 	local colors = {
@@ -498,7 +428,7 @@ local function functionAddToOptions(name, settings)
 		['DEATHKNIGHT'] = '|cffC41E3ADeath Knight (Red)',
 		['MONK'] = '|cff00FF98Monk (Spring Green)',
 		['DEMONHUNTER'] = '|cffA330C9Demon Hunter (Dark Magenta)',
-		['EVOKER'] = '|cff33937FEvoker (Dark Emerald)'
+		['EVOKER'] = '|cff33937FEvoker (Dark Emerald)',
 	}
 
 	local OptionsTab = {
@@ -521,21 +451,19 @@ local function functionAddToOptions(name, settings)
 						name = 'Primary',
 						type = 'select',
 						order = 1,
-						values = colors
+						values = colors,
 					},
 					secondary = {
 						name = 'Secondary',
 						type = 'select',
 						order = 2,
-						values = colors
-					}
-				}
-			}
-		}
+						values = colors,
+					},
+				},
+			},
+		},
 	}
-	if settings.Options then
-		settings.Options(OptionsTab)
-	end
+	if settings.Options then settings.Options(OptionsTab) end
 	OptTable.args[name] = OptionsTab
 end
 ---Register a module to be skinned
@@ -549,12 +477,10 @@ function module:Register(Name, OnEnable, OnInitialize, Options, Settings)
 		OnEnable = OnEnable,
 		OnInitialize = OnInitialize,
 		Options = Options,
-		Settings = Settings
+		Settings = Settings,
 	}
 
-	if OptTable and not OptTable.args[Name] then
-		functionAddToOptions(Name, module.Registry[Name])
-	end
+	if OptTable and not OptTable.args[Name] then functionAddToOptions(Name, module.Registry[Name]) end
 end
 
 local function Options()
@@ -575,9 +501,9 @@ local function Options()
 					DB.components[info[#info]].enabled = val
 					SUI:reloadui()
 				end,
-				args = {}
-			}
-		}
+				args = {},
+			},
+		},
 	}
 
 	for name, settings in pairs(module.Registry) do
@@ -588,13 +514,11 @@ local function Options()
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', {profile = DBDefaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', { profile = DBDefaults })
 	DB = module.Database.profile
 
 	for name, Data in pairs(module.Registry) do
-		if Data.OnInitalize and DB.components[name].enabled then
-			Data.OnInitalize()
-		end
+		if Data.OnInitalize and DB.components[name].enabled then Data.OnInitalize() end
 	end
 end
 
@@ -602,9 +526,7 @@ function module:OnEnable()
 	Options()
 
 	for name, Data in pairs(module.Registry) do
-		if Data.OnEnable and DB.components[name].enabled then
-			Data.OnEnable()
-		end
+		if Data.OnEnable and DB.components[name].enabled then Data.OnEnable() end
 	end
 end
 

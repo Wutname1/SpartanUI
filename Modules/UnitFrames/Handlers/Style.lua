@@ -8,7 +8,7 @@ local registry = {}
 local Defaults = {
 	positions = {},
 	artwork = {},
-	setup = {}
+	setup = {},
 }
 
 ---Register a style within the registry
@@ -18,23 +18,17 @@ local Defaults = {
 function Style:Register(styleName, settings, update)
 	registry[styleName] = {
 		settings = SUI:CopyData(settings, Defaults),
-		update = update
+		update = update,
 	}
 
-	if not registry[styleName].setup then
-		registry[styleName].setup = {}
-	end
+	if not registry[styleName].setup then registry[styleName].setup = {} end
 end
 
 ---Activates a specified style, or will update the currently active style
 ---@param styleName? string
 function Style:Change(styleName)
-	if styleName then
-		UF.DB.Style = styleName
-	end
-	if registry[styleName or UF.DB.Style].update then
-		registry[styleName or UF.DB.Style].update()
-	end
+	if styleName then UF.DB.Style = styleName end
+	if registry[styleName or UF.DB.Style].update then registry[styleName or UF.DB.Style].update() end
 end
 
 ---Returns the ful list of registered styles
@@ -46,9 +40,7 @@ end
 ---@param styleName? string
 ---@return SUI.UF.Style.Settings
 function Style:Get(styleName)
-	if styleName == 'war' then
-		styleName = 'War'
-	end
+	if styleName == 'war' then styleName = 'War' end
 
 	return registry[styleName or UF.DB.Style].settings
 end

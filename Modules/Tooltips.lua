@@ -4,7 +4,7 @@ module.description = 'SpartanUI tooltip skining'
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 local targetList = {}
-local RuleList = {'Rule1', 'Rule2'}
+local RuleList = { 'Rule1', 'Rule2' }
 local tooltips = {
 	GameTooltip,
 	ItemRefTooltip,
@@ -39,9 +39,9 @@ local tooltips = {
 	BrowserSettingsTooltip,
 	QueueStatusFrame,
 	EventTraceTooltip,
-	ItemSocketingDescription
+	ItemSocketingDescription,
 }
-local whitebg = {bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3}
+local whitebg = { bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3 }
 
 function module:OnInitialize()
 	---@class SUI.Tooltip.Settings
@@ -49,53 +49,51 @@ function module:OnInitialize()
 		Styles = {
 			metal = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\metal',
-				tile = false
+				tile = false,
 			},
 			smooth = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2',
-				tile = false
+				tile = false,
 			},
 			smoke = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\textures\\smoke',
-				tile = false
+				tile = false,
 			},
 			none = {
 				bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga',
-				tile = false
-			}
+				tile = false,
+			},
 		},
 		Rule1 = {
 			Status = 'All',
 			Combat = false,
 			OverrideLoc = false,
-			Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
+			Anchor = { onMouse = false, Moved = false, AnchorPos = {} },
 		},
 		Rule2 = {
 			Status = 'All',
 			Combat = false,
 			OverrideLoc = false,
-			Anchor = {onMouse = false, Moved = false, AnchorPos = {}}
+			Anchor = { onMouse = false, Moved = false, AnchorPos = {} },
 		},
 		Background = 'Smoke',
 		onMouse = false,
 		VendorPrices = true,
 		Override = {},
 		ColorOverlay = true,
-		Color = {0, 0, 0, 0.5},
-		SuppressNoMatch = true
+		Color = { 0, 0, 0, 0.5 },
+		SuppressNoMatch = true,
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Tooltip.Settings
 end
 
 local onShow = function(self)
-	if not self.SetBackdrop then
-		Mixin(self, BackdropTemplateMixin)
-	end
+	if not self.SetBackdrop then Mixin(self, BackdropTemplateMixin) end
 	self:SetBackdrop(whitebg)
-	self.SUITip:SetBackdrop({bgFile = LSM:Fetch('background', module.DB.Background), tile = false})
+	self.SUITip:SetBackdrop({ bgFile = LSM:Fetch('background', module.DB.Background), tile = false })
 
-	if (module.DB.Background == 'none' or module.DB.ColorOverlay) or (not self.SUITip) then
+	if (module.DB.Background == 'none' or module.DB.ColorOverlay) or not self.SUITip then
 		self:SetBackdropColor(unpack(module.DB.Color))
 		self.SUITip:SetBackdropColor(1, 1, 1, 1)
 	else
@@ -118,9 +116,7 @@ end
 
 local setPoint = function(self, parent)
 	if parent then
-		if (module.DB.onMouse) then
-			self:SetOwner(parent, 'ANCHOR_CURSOR')
-		end
+		if module.DB.onMouse then self:SetOwner(parent, 'ANCHOR_CURSOR') end
 	end
 end
 
@@ -131,9 +127,7 @@ local SetBorderColor = function(self, r, g, b, hasStatusBar)
 	self.SUITip.border[3]:SetVertexColor(r, g, b, 1)
 	self.SUITip.border[4]:SetVertexColor(r, g, b, 1)
 
-	if self.NineSlice then
-		SUI.Skins.RemoveTextures(self.NineSlice)
-	end
+	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
 end
 
 local ClearColors = function(SUITip)
@@ -144,15 +138,11 @@ local ClearColors = function(SUITip)
 end
 
 local TooltipSetGeneric = function(self, tooltipData)
-	if self.NineSlice then
-		SUI.Skins.RemoveTextures(self.NineSlice)
-	end
-	if not self.SetBackdrop then
-		Mixin(self, BackdropTemplateMixin)
-	end
+	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
+	if not self.SetBackdrop then Mixin(self, BackdropTemplateMixin) end
 
 	local style = {
-		bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
+		bgFile = 'Interface/Tooltips/UI-Tooltip-Background',
 	}
 	self:SetBackdrop(style)
 	self:SetBackdropColor(unpack(module.DB.Color))
@@ -166,27 +156,27 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		itemLink = C_Item.GetItemLinkByGUID(tooltipData.guid)
 	end
 
-	if (itemLink) then
+	if itemLink then
 		local quality = select(3, GetItemInfo(itemLink))
 		local style = {
-			bgFile = 'Interface/Tooltips/UI-Tooltip-Background'
+			bgFile = 'Interface/Tooltips/UI-Tooltip-Background',
 		}
 		if SUI.IsRetail then
 			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
 				style = {
 					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
 					overlayAtlasTop = 'AzeriteTooltip-Topper',
-					overlayAtlasTopScale = .75,
+					overlayAtlasTopScale = 0.75,
 					overlayAtlasTopYOffset = 1,
 					overlayAtlasBottom = 'AzeriteTooltip-Bottom',
-					overlayAtlasBottomYOffset = 2
+					overlayAtlasBottomYOffset = 2,
 				}
 			elseif IsCorruptedItem(itemLink) then
 				style = {
 					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Corrupted',
 					overlayAtlasTop = 'Nzoth-tooltip-topper',
-					overlayAtlasTopScale = .75,
-					overlayAtlasTopYOffset = -2
+					overlayAtlasTopScale = 0.75,
+					overlayAtlasTopYOffset = -2,
 				}
 			end
 		end
@@ -201,9 +191,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 						-- local buttonUnderMouse = itemUnderMouse:GetName() and ()
 						local count = _G[itemUnderMouse:GetName() .. 'Count']:GetText()
 						count = tonumber(count) or 1
-						if count <= 1 then
-							count = 1
-						end
+						if count <= 1 then count = 1 end
 
 						if count > 1 and count ~= itemStackCount then
 							local curValue = count * itemSellPrice
@@ -217,7 +205,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		GameTooltip:SetBackdrop(style)
 		GameTooltip:SetBackdropColor(unpack(module.DB.Color))
 
-		if (quality) and tooltip.SetBorderColor then
+		if quality and tooltip.SetBorderColor then
 			local r, g, b = GetItemQualityColor(quality)
 			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
 			tooltip:SetBorderColor(r, g, b)
@@ -227,31 +215,25 @@ local TooltipSetItem = function(tooltip, tooltipData)
 end
 
 local TooltipSetUnit = function(self, data)
-	if self ~= GameTooltip or self:IsForbidden() then
-		return
-	end
+	if self ~= GameTooltip or self:IsForbidden() then return end
 
 	local unit = select(2, self:GetUnit())
 	if not unit then
 		local mFocus = GetMouseFocus()
-		if mFocus and mFocus.GetAttribute and mFocus:GetAttribute('unit') then
-			unit = mFocus:GetAttribute('unit')
-		end
-		if not unit or not UnitExists(unit) then
-			return
-		end
+		if mFocus and mFocus.GetAttribute and mFocus:GetAttribute('unit') then unit = mFocus:GetAttribute('unit') end
+		if not unit or not UnitExists(unit) then return end
 	end
 
 	local unitLevel = UnitLevel(unit)
 	local className, classToken = UnitClass(unit)
 	local colors, lvlColor, totColor, lvlLine
 	local line = 2
-	local sex = {'', 'Male ', 'Female '}
+	local sex = { '', 'Male ', 'Female ' }
 	local creatureClassColors = {
 		worldboss = format('|cffAF5050World Boss%s|r', BOSS),
 		rareelite = format('|cffAF5050RARE-ELITE%s|r', ITEM_QUALITY3_DESC),
 		elite = '|cffAF5050ELITE|r',
-		rare = format('|cffAF5050RARE%s|r', ITEM_QUALITY3_DESC)
+		rare = format('|cffAF5050RARE%s|r', ITEM_QUALITY3_DESC),
 	}
 
 	if UnitIsPlayer(unit) then
@@ -264,13 +246,11 @@ local TooltipSetUnit = function(self, data)
 
 		if uRealm and uRealm ~= '' then
 			local tmp = ''
-			if gRealm ~= uRealm then
-				tmp = ' ' .. uRealm
-			end
+			if gRealm ~= uRealm then tmp = ' ' .. uRealm end
 
-			if (realmRelation == LE_REALM_RELATION_COALESCED) then
+			if realmRelation == LE_REALM_RELATION_COALESCED then
 				nameString = nameString .. FOREIGN_SERVER_LABEL .. tmp
-			elseif (realmRelation == LE_REALM_RELATION_VIRTUAL) then
+			elseif realmRelation == LE_REALM_RELATION_VIRTUAL then
 				nameString = nameString .. INTERACTIVE_SERVER_LABEL .. tmp
 			elseif gRealm ~= uRealm then
 				nameString = nameString .. '-' .. uRealm
@@ -278,9 +258,9 @@ local TooltipSetUnit = function(self, data)
 		end
 
 		if colors then
-			if (UnitIsAFK(unit)) then
+			if UnitIsAFK(unit) then
 				GameTooltipTextLeft1:SetFormattedText('|cffFF0000%s|r |c%s%s|r', L['AFK'], colors.colorStr, nameString)
-			elseif (UnitIsDND(unit)) then
+			elseif UnitIsDND(unit) then
 				GameTooltipTextLeft1:SetFormattedText('|cffFFA500%s|r |c%s%s|r', L['DND'], colors.colorStr, nameString)
 			else
 				GameTooltipTextLeft1:SetFormattedText('|c%s%s|r', colors.colorStr, nameString)
@@ -289,10 +269,8 @@ local TooltipSetUnit = function(self, data)
 			GameTooltipTextLeft1:SetText(nameString)
 		end
 
-		if (gName) then
-			if gRealm then
-				gName = gName .. '-' .. gRealm
-			end
+		if gName then
+			if gRealm then gName = gName .. '-' .. gRealm end
 			if SUI.IsClassic then
 				self:AddLine(('|cff008000<%s>|r'):format(gName))
 			else
@@ -304,25 +282,19 @@ local TooltipSetUnit = function(self, data)
 
 	for i = 2, self:NumLines() do
 		local tip = _G['GameTooltipTextLeft' .. i]
-		if tip and tip:GetText() and tip:GetText():find(LEVEL) then
-			lvlLine = tip
-		end
+		if tip and tip:GetText() and tip:GetText():find(LEVEL) then lvlLine = tip end
 	end
 
-	if (lvlLine) then
+	if lvlLine then
 		local creatureClassification = UnitClassification(unit)
 		local creatureType = UnitCreatureType(unit)
 		local race, englishRace = UnitRace(unit)
 		local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 
 		race = (race or '') .. ' ' .. (className or '')
-		if (factionGroup and englishRace == 'Pandaren') then
-			race = factionGroup .. ' ' .. race
-		end
-		if (GENDER_INFO) then
-			if (gender) then
-				race = race .. ' ' .. gender
-			end
+		if factionGroup and englishRace == 'Pandaren' then race = factionGroup .. ' ' .. race end
+		if GENDER_INFO then
+			if gender then race = race .. ' ' .. gender end
 		end
 
 		if SUI.IsRetail and (UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit)) then
@@ -336,9 +308,7 @@ local TooltipSetUnit = function(self, data)
 		else
 			lvlColor = GetCreatureDifficultyColor(unitLevel)
 		end
-		if creatureType == nil then
-			creatureType = ''
-		end
+		if creatureType == nil then creatureType = '' end
 
 		lvlLine:SetFormattedText(
 			'|cff%02x%02x%02x%s|r %s %s',
@@ -376,9 +346,7 @@ local TooltipSetUnit = function(self, data)
 		end
 	end
 
-	if self.NineSlice then
-		SUI.Skins.RemoveTextures(self.NineSlice)
-	end
+	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
 end
 
 local function ApplyTooltipSkins()
@@ -393,11 +361,9 @@ local function ApplyTooltipSkins()
 	GameTooltipStatusBar.bg:SetAllPoints(GameTooltipStatusBar)
 
 	for i, tooltip in pairs(tooltips) do
-		if (not tooltip) then
-			return
-		end
+		if not tooltip then return end
 
-		if (not tooltip.SUITip) then
+		if not tooltip.SUITip then
 			local SUITip = CreateFrame('Frame', nil, tooltip, BackdropTemplateMixin and 'BackdropTemplate')
 			SUITip:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', 0, 0)
 			SUITip:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 0, 0)
@@ -431,28 +397,24 @@ local function ApplyTooltipSkins()
 			SUITip.border[4]:SetWidth(2)
 			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
 
-			SUITip:SetBackdrop({bgFile = LSM:Fetch('background', module.DB.Background), tile = false})
+			SUITip:SetBackdrop({ bgFile = LSM:Fetch('background', module.DB.Background), tile = false })
 
 			SUITip.ClearColors = ClearColors
 			SUITip.border:Hide()
 
 			tooltip.SUITip = SUITip
 			tooltip.SetBorderColor = SetBorderColor
-			if (tooltip.SetBackdrop) then
-				tooltip:SetBackdrop(nil)
-			end
+			if tooltip.SetBackdrop then tooltip:SetBackdrop(nil) end
 			tooltip:HookScript('OnShow', onShow)
 			tooltip:HookScript('OnHide', onHide)
 			_G.tremove(tooltips, i)
 		end
 
 		local style = {
-			bgFile = LSM:Fetch('background', module.DB.Background)
+			bgFile = LSM:Fetch('background', module.DB.Background),
 		}
 
-		if not tooltip.SetBackdrop then
-			Mixin(tooltip, BackdropTemplateMixin)
-		end
+		if not tooltip.SetBackdrop then Mixin(tooltip, BackdropTemplateMixin) end
 		tooltip:SetBackdrop(style)
 		tooltip:SetBackdropColor(unpack(module.DB.Color))
 	end
@@ -460,7 +422,7 @@ end
 
 function module:UpdateBG()
 	for _, tooltip in pairs(tooltips) do
-		if (tooltip.SUITip) then
+		if tooltip.SUITip then
 			if module.DB.Background ~= 'none' then
 				tooltip.SUITip:SetBackdropColor(unpack(module.DB.Color))
 			else
@@ -469,17 +431,13 @@ function module:UpdateBG()
 			end
 		end
 
-		if tooltip.NineSlice then
-			SUI.Skins.RemoveTextures(tooltip.NineSlice)
-		end
+		if tooltip.NineSlice then SUI.Skins.RemoveTextures(tooltip.NineSlice) end
 	end
 end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI:IsModuleDisabled('Tooltips') then
-		return
-	end
+	if SUI:IsModuleDisabled('Tooltips') then return end
 
 	--Do Setup
 	ApplyTooltipSkins()
@@ -522,7 +480,7 @@ function module:BuildOptions()
 				type = 'select',
 				order = 1,
 				dialogControl = 'LSM30_Background',
-				values = SUI.Lib.LSM:HashTable('background')
+				values = SUI.Lib.LSM:HashTable('background'),
 			},
 			color = {
 				name = L['Color'],
@@ -534,22 +492,22 @@ function module:BuildOptions()
 					return unpack(module.DB.Color)
 				end,
 				set = function(info, r, g, b, a)
-					module.DB.Color = {r, g, b, a}
+					module.DB.Color = { r, g, b, a }
 					module:UpdateBG()
-				end
+				end,
 			},
 			ColorOverlay = {
 				name = L['Color Overlay'],
 				type = 'toggle',
 				order = 11,
-				desc = L['Apply the color to the texture or put it over the texture']
+				desc = L['Apply the color to the texture or put it over the texture'],
 			},
 			onMouse = {
 				name = L['Display on mouse?'],
 				type = 'toggle',
 				order = 12,
-				desc = L['TooltipOverrideDesc']
-			}
-		}
+				desc = L['TooltipOverrideDesc'],
+			},
+		},
 	}
 end

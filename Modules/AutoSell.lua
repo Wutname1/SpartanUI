@@ -73,7 +73,7 @@ local ExcludedItems = {
 	2730,
 	--End Shredder Operating Manual pages
 	63207, -- Wrap of unity
-	63206 -- Wrap of unity
+	63206, -- Wrap of unity
 }
 local ExcludedTypes = {
 	'Container',
@@ -81,7 +81,7 @@ local ExcludedTypes = {
 	'Holiday',
 	'Mounts',
 	'Projectiles',
-	'Quest'
+	'Quest',
 }
 
 local function debugMsg(msg)
@@ -102,9 +102,9 @@ function module:OnInitialize()
 		Purple = false,
 		GearTokens = false,
 		AutoRepair = false,
-		UseGuildBankRepair = false
+		UseGuildBankRepair = false,
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = defaults })
 	module.DB = module.Database.profile
 
 	-- Migrate old settings
@@ -155,26 +155,20 @@ local function SetupPage()
 				AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
 				AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, module.DB.MaxILVL)
 				local MaxiLVL = 500
-				if SUI.IsClassic then
-					MaxiLVL = 100
-				end
+				if SUI.IsClassic then MaxiLVL = 100 end
 				AutoSell.iLVLLabel:SetMaxValue(MaxiLVL)
 				AutoSell.iLVLLabel:SetMinValue(1)
 				AutoSell.iLVLLabel.OnValueChanged = function()
 					local win = SUI.Setup.window.content.AutoSell
 
-					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
-						AutoSell.iLVLSlider:SetValue(math.floor(AutoSell.iLVLLabel:GetValue()))
-					end
+					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then AutoSell.iLVLSlider:SetValue(math.floor(AutoSell.iLVLLabel:GetValue())) end
 				end
 
 				AutoSell.iLVLSlider = StdUi:Slider(AutoSell, MaxiLVL, 20, module.DB.MaxILVL, false, 1, MaxiLVL)
 				AutoSell.iLVLSlider.OnValueChanged = function()
 					local win = SUI.Setup.window.content.AutoSell
 
-					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then
-						AutoSell.iLVLLabel:SetValue(math.floor(AutoSell.iLVLSlider:GetValue()))
-					end
+					if math.floor(AutoSell.iLVLLabel:GetValue()) ~= math.floor(AutoSell.iLVLSlider:GetValue()) then AutoSell.iLVLLabel:SetValue(math.floor(AutoSell.iLVLSlider:GetValue())) end
 				end
 
 				-- AutoRepair
@@ -220,7 +214,7 @@ local function SetupPage()
 		end,
 		Skip = function()
 			module.DB.FirstLaunch = false
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end
@@ -244,25 +238,25 @@ local function BuildOptions()
 				name = L["Don't sell crafting items"],
 				type = 'toggle',
 				order = 1,
-				width = 'full'
+				width = 'full',
 			},
 			NotConsumables = {
 				name = L["Don't sell consumables"],
 				type = 'toggle',
 				order = 2,
-				width = 'full'
+				width = 'full',
 			},
 			NotInGearset = {
 				name = L["Don't sell items in a equipment set"],
 				type = 'toggle',
 				order = 3,
-				width = 'full'
+				width = 'full',
 			},
 			GearTokens = {
 				name = L['Sell tier tokens'],
 				type = 'toggle',
 				order = 4,
-				width = 'full'
+				width = 'full',
 			},
 			MaxILVL = {
 				name = L['Maximum iLVL to sell'],
@@ -271,51 +265,51 @@ local function BuildOptions()
 				width = 'full',
 				min = 1,
 				max = 500,
-				step = 1
+				step = 1,
 			},
 			Gray = {
 				name = L['Sell gray'],
 				type = 'toggle',
 				order = 20,
-				width = 'double'
+				width = 'double',
 			},
 			White = {
 				name = L['Sell white'],
 				type = 'toggle',
 				order = 21,
-				width = 'double'
+				width = 'double',
 			},
 			Green = {
 				name = L['Sell green'],
 				type = 'toggle',
 				order = 22,
-				width = 'double'
+				width = 'double',
 			},
 			Blue = {
 				name = L['Sell blue'],
 				type = 'toggle',
 				order = 23,
-				width = 'double'
+				width = 'double',
 			},
 			Purple = {
 				name = L['Sell purple'],
 				type = 'toggle',
 				order = 24,
-				width = 'double'
+				width = 'double',
 			},
-			line1 = {name = '', type = 'header', order = 200},
+			line1 = { name = '', type = 'header', order = 200 },
 			AutoRepair = {
 				name = L['Auto repair'],
 				type = 'toggle',
-				order = 201
+				order = 201,
 			},
 			UseGuildBankRepair = {
 				name = L['Use guild bank repair if possible'],
 				type = 'toggle',
-				order = 202
+				order = 202,
 			},
-			line2 = {name = '', type = 'header', order = 600}
-		}
+			line2 = { name = '', type = 'header', order = 600 },
+		},
 	}
 
 	SUI.Options:AddOptions(optTable, 'AutoSell')
@@ -328,22 +322,16 @@ local function IsInGearset(bag, slot)
 
 	for i = 1, Tooltip:NumLines() do
 		line = _G['AutoSellTooltipTextLeft' .. i]
-		if line:GetText():find(EQUIPMENT_SETS:format('.*')) then
-			return true
-		end
+		if line:GetText():find(EQUIPMENT_SETS:format('.*')) then return true end
 	end
 
 	return false
 end
 
 function module:IsSellable(item, ilink, bag, slot)
-	if not item then
-		return false
-	end
+	if not item then return false end
 	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = GetItemInfo(ilink)
-	if vendorPrice == 0 or name == nil then
-		return false
-	end
+	if vendorPrice == 0 or name == nil then return false end
 	-- 0. Poor (gray): Broken I.W.I.N. Button
 	-- 1. Common (white): Archmage Vargoth's Staff
 	-- 2. Uncommon (green): X-52 Rocket Helmet
@@ -360,68 +348,50 @@ function module:IsSellable(item, ilink, bag, slot)
 	local IsGearToken = false
 	local iLevel = SUI:GetiLVL(ilink)
 
-	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then
-		return false
-	end
+	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then return false end
 
-	if quality == 0 and module.DB.Gray then
-		qualitysellable = true
-	end
-	if quality == 1 and module.DB.White then
-		qualitysellable = true
-	end
-	if quality == 2 and module.DB.Green then
-		qualitysellable = true
-	end
-	if quality == 3 and module.DB.Blue then
-		qualitysellable = true
-	end
-	if quality == 4 and module.DB.Purple then
-		qualitysellable = true
-	end
+	if quality == 0 and module.DB.Gray then qualitysellable = true end
+	if quality == 1 and module.DB.White then qualitysellable = true end
+	if quality == 2 and module.DB.Green then qualitysellable = true end
+	if quality == 3 and module.DB.Blue then qualitysellable = true end
+	if quality == 4 and module.DB.Purple then qualitysellable = true end
 
-	if (not iLevel) or (iLevel <= module.DB.MaxILVL) then
-		ilvlsellable = true
-	end
+	if (not iLevel) or (iLevel <= module.DB.MaxILVL) then ilvlsellable = true end
 	--Crafting Items
 	if
-		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')) or
-			(itemType == 'Item Enhancement') or
-			isCraftingReagent
-	 then
-		if not module.DB.NotCrafting then
-			Craftablesellable = true
-		end
+		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent'))
+		or (itemType == 'Item Enhancement')
+		or isCraftingReagent
+	then
+		if not module.DB.NotCrafting then Craftablesellable = true end
 	else
 		Craftablesellable = true
 	end
 
 	--Gearset detection
-	if C_EquipmentSet and C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then
-		NotInGearset = false
-	end
+	if C_EquipmentSet and C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then NotInGearset = false end
 
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then
-		NotConsumable = false
-	end
+	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then NotConsumable = false end
 
 	-- Gear Tokens
-	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then
-		IsGearToken = true
-	end
+	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then IsGearToken = true end
 
-	if string.find(name, 'Treasure Map') and quality == 1 then
-		qualitysellable = false
-	end
+	if string.find(name, 'Treasure Map') and quality == 1 then qualitysellable = false end
 
 	if
-		qualitysellable and ilvlsellable and Craftablesellable and NotInGearset and NotConsumable and not IsGearToken and not SUI:IsInTable(ExcludedItems, item) and
-			not SUI:IsInTable(ExcludedTypes, itemType) and
-			not SUI:IsInTable(ExcludedTypes, itemSubType) or
-			(quality == 0 and module.DB.Gray)
-	 then --Legion identified some junk as consumable
+		qualitysellable
+			and ilvlsellable
+			and Craftablesellable
+			and NotInGearset
+			and NotConsumable
+			and not IsGearToken
+			and not SUI:IsInTable(ExcludedItems, item)
+			and not SUI:IsInTable(ExcludedTypes, itemType)
+			and not SUI:IsInTable(ExcludedTypes, itemSubType)
+		or (quality == 0 and module.DB.Gray)
+	then --Legion identified some junk as consumable
 		debugMsg('--Selling--')
 		debugMsg(item)
 		debugMsg(name)
@@ -447,10 +417,10 @@ function module:SellTrash()
 		for slot = 1, GetContainerNumSlots(bag) do
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
 			if SUI.IsRetail and itemInfo and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
-				ItemToSell[#ItemToSell + 1] = {bag, slot}
+				ItemToSell[#ItemToSell + 1] = { bag, slot }
 				totalValue = totalValue + (select(11, GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 			elseif not SUI.IsRetail and module:IsSellable(itemID, link, bag, slot) then
-				ItemToSell[#ItemToSell + 1] = {bag, slot}
+				ItemToSell[#ItemToSell + 1] = { bag, slot }
 				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
 			end
 		end
@@ -462,7 +432,7 @@ function module:SellTrash()
 	else
 		SUI:Print('Need to sell ' .. #ItemToSell .. ' item(s) for ' .. SUI:GoldFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
-		module.SellTimer = module:ScheduleRepeatingTimer('SellTrashInBag', .2, ItemToSell)
+		module.SellTimer = module:ScheduleRepeatingTimer('SellTrashInBag', 0.2, ItemToSell)
 	end
 end
 
@@ -472,7 +442,7 @@ function module:SellTrashInBag(ItemListing)
 	local item = table.remove(ItemListing)
 
 	-- If the Table is empty then exit.
-	if (not item) then
+	if not item then
 		module:CancelAllTimers()
 		return
 	end
@@ -481,22 +451,18 @@ function module:SellTrashInBag(ItemListing)
 	UseContainerItem(item[1], item[2])
 
 	-- If it was the last item stop timers
-	if (#ItemListing == 0) then
-		module:CancelAllTimers()
-	end
+	if #ItemListing == 0 then module:CancelAllTimers() end
 end
 
 function module:Repair(PersonalFunds)
-	if not module.DB.AutoRepair then
-		return
-	end
+	if not module.DB.AutoRepair then return end
 	-- First see if this vendor can repair
-	if (CanMerchantRepair() and GetRepairAllCost() ~= 0 and not PersonalFunds) then
+	if CanMerchantRepair() and GetRepairAllCost() ~= 0 and not PersonalFunds then
 		-- Use guild repair
-		if (CanGuildBankRepair and CanGuildBankRepair() and module.DB.UseGuildBankRepair) then
+		if CanGuildBankRepair and CanGuildBankRepair() and module.DB.UseGuildBankRepair then
 			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'])
 			RepairAllItems()
-			module:ScheduleTimer('Repair', .7, true)
+			module:ScheduleTimer('Repair', 0.7, true)
 		elseif GetRepairAllCost() ~= 0 then
 			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'])
 			RepairAllItems()
@@ -509,25 +475,19 @@ end
 
 function module:OnEnable()
 	BuildOptions()
-	if SUI:IsModuleDisabled('AutoSell') then
-		return
-	end
+	if SUI:IsModuleDisabled('AutoSell') then return end
 
 	if not LoadedOnce then
 		SetupPage()
 		local function MerchantEventHandler(self, event, ...)
-			if SUI:IsModuleDisabled('AutoSell') then
-				return
-			end
+			if SUI:IsModuleDisabled('AutoSell') then return end
 			if event == 'MERCHANT_SHOW' then
 				-- Sell then repair so we gain gold before we use it.
-				module:ScheduleTimer('SellTrash', .2)
+				module:ScheduleTimer('SellTrash', 0.2)
 				module:Repair()
 			else
 				module:CancelAllTimers()
-				if (totalValue > 0) then
-					totalValue = 0
-				end
+				if totalValue > 0 then totalValue = 0 end
 			end
 			LoadedOnce = true
 		end

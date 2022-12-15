@@ -4,16 +4,16 @@ local module = SUI:NewModule('Module_FilmEffects') ---@type SUI.Module
 module.DisplayName = L['Film effects']
 module.description = 'Adds a film effect to the screen when AFK'
 local Container
-local EffectList = {'vignette', 'blur', 'crisp'}
+local EffectList = { 'vignette', 'blur', 'crisp' }
 
 local FilmEffectEvent = function(self, event, ...)
 	for _, v in ipairs(EffectList) do
 		if not module.DB.profile.enable then
 			Container[v]:Hide()
 		elseif event == 'CHAT_MSG_SYSTEM' then
-			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and (module.DB.profile.Effects[v].afk) then
+			if (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) and module.DB.profile.Effects[v].afk then
 				Container[v]:Show()
-			elseif (... == CLEARED_AFK) then
+			elseif ... == CLEARED_AFK then
 				Container[v]:Hide()
 			end
 		else
@@ -28,9 +28,7 @@ end
 
 local function updateopts()
 	local disabled = true
-	if module.DB.profile.enable then
-		disabled = false
-	end
+	if module.DB.profile.enable then disabled = false end
 	for _, v in ipairs(EffectList) do
 		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'always'].disabled = disabled
 		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'AFK'].disabled = disabled
@@ -44,11 +42,11 @@ function module:OnInitialize()
 			animationInterval = 0,
 			anim = '',
 			Effects = {
-				vignette = {always = false, afk = true},
-				blur = {always = false, afk = false},
-				crisp = {always = false, afk = true}
-			}
-		}
+				vignette = { always = false, afk = true },
+				blur = { always = false, afk = false },
+				crisp = { always = false, afk = true },
+			},
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', defaults)
 	module.DB = module.Database.profile
@@ -56,9 +54,7 @@ end
 
 function module:OnEnable()
 	module:Options()
-	if SUI:IsModuleDisabled('FilmEffects') then
-		return
-	end
+	if SUI:IsModuleDisabled('FilmEffects') then return end
 
 	Container = CreateFrame('Frame', 'FilmEffects', WorldFrame)
 	-- Container:SetSize(1,1);
@@ -68,12 +64,9 @@ function module:OnEnable()
 	Container:RegisterEvent('CHAT_MSG_SYSTEM')
 	Container:RegisterEvent('PLAYER_ENTERING_WORLD')
 	Container:SetScript('OnEvent', FilmEffectEvent)
-	Container:SetScript(
-		'OnUpdate',
-		function(self, elapsed)
-			module:UpdateStatus(elapsed)
-		end
-	)
+	Container:SetScript('OnUpdate', function(self, elapsed)
+		module:UpdateStatus(elapsed)
+	end)
 
 	Container.vignette = Container:CreateTexture('FE_Vignette', 'OVERLAY')
 	Container.vignette:SetAllPoints(UIParent)
@@ -90,8 +83,8 @@ function module:OnEnable()
 	Container.blur.layer2:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\FilmEffects\\25ASA_Mod')
 	Container.blur.layer1:SetBlendMode('ADD')
 	Container.blur.layer2:SetBlendMode('MOD')
-	Container.blur.layer1:SetAlpha(.2)
-	Container.blur.layer2:SetAlpha(.05)
+	Container.blur.layer1:SetAlpha(0.2)
+	Container.blur.layer2:SetAlpha(0.05)
 	Container.blur.layer1:SetAllPoints(UIParent)
 	Container.blur.layer2:SetAllPoints(UIParent)
 	Container.blur:Hide()
@@ -120,8 +113,8 @@ function module:OnEnable()
 
 		Container.crisp[nameAdd]:SetBlendMode('ADD')
 		Container.crisp[nameMod]:SetBlendMode('MOD')
-		Container.crisp[nameAdd]:SetAlpha(intensity * .45)
-		Container.crisp[nameMod]:SetAlpha(intensity * .3)
+		Container.crisp[nameAdd]:SetAlpha(intensity * 0.45)
+		Container.crisp[nameMod]:SetAlpha(intensity * 0.3)
 
 		local father, anchor
 		father = _G['FG_' .. (ix - 1) .. '_' .. iy .. '_Add'] or _G['FG_' .. ix .. '_' .. (iy - 1) .. '_Add'] or Container
@@ -150,15 +143,13 @@ end
 
 function module:UpdateStatus(elapsed)
 	module.DB.profile.animationInterval = module.DB.profile.animationInterval + elapsed
-	if (module.DB.profile.animationInterval > (0.02)) then -- 50 FPS
+	if module.DB.profile.animationInterval > 0.02 then -- 50 FPS
 		module.DB.profile.animationInterval = 0
 
 		local yOfs = math.random(0, 256)
 		local xOfs = math.random(-128, 0)
 
-		if module.DB.profile.anim == 'blur' or module.DB.profile.anim == 'crisp' then
-			Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs)
-		end
+		if module.DB.profile.anim == 'blur' or module.DB.profile.anim == 'crisp' then Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs) end
 	end
 end
 
@@ -187,9 +178,9 @@ function module:Options()
 					module.DB.profile.enable = val
 					FilmEffectEvent(nil, nil, nil)
 					updateopts()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	for k, v in ipairs(EffectList) do
@@ -197,7 +188,7 @@ function module:Options()
 			name = v,
 			type = 'header',
 			order = k + 1,
-			width = 'full'
+			width = 'full',
 		}
 		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'always'] = {
 			name = L['Always show'],
@@ -213,7 +204,7 @@ function module:Options()
 				end
 				module.DB.profile.Effects[v].always = val
 				FilmEffectEvent(nil, nil, nil)
-			end
+			end,
 		}
 		SUI.opt.args['Modules'].args['FilmEffects'].args[v .. 'AFK'] = {
 			name = L['Show if AFK'],
@@ -228,7 +219,7 @@ function module:Options()
 			end,
 			set = function(info, val)
 				module.DB.profile.Effects[v].afk = val
-			end
+			end,
 		}
 	end
 end

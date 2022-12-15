@@ -3,7 +3,7 @@ local StdUi = SUI.StdUi
 local module = SUI:NewModule('Handler_Profiles') ---@type AceAddon
 ----------------------------------------------------------------------------------------------------
 local window
-local namespaceblacklist = {'LibDualSpec-1.0'}
+local namespaceblacklist = { 'LibDualSpec-1.0' }
 
 local function ResetWindow()
 	window.textBox:SetValue('')
@@ -32,11 +32,11 @@ local function CreateWindow()
 	window.Title = StdUi:Texture(window, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	window.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	window.Title:SetPoint('TOP')
-	window.Title:SetAlpha(.8)
+	window.Title:SetAlpha(0.8)
 
 	window.Desc1 = StdUi:Label(window, '', 13, nil, window:GetWidth())
 	window.Desc1:SetPoint('TOP', window.Title, 'BOTTOM', 0, -5)
-	window.Desc1:SetTextColor(1, 1, 1, .8)
+	window.Desc1:SetTextColor(1, 1, 1, 0.8)
 	window.Desc1:SetWidth(window:GetWidth() - 40)
 	window.Desc1:SetJustifyH('CENTER')
 	window.Desc1:SetText('')
@@ -51,34 +51,28 @@ local function CreateWindow()
 	local optionPane = StdUi:Window(nil, OptWidth + 4, window:GetHeight())
 	optionPane:SetPoint('LEFT', window, 'RIGHT', 1, 0)
 	optionPane:SetFrameStrata('DIALOG')
-	window:HookScript(
-		'OnHide',
-		function()
-			optionPane:Hide()
-		end
-	)
+	window:HookScript('OnHide', function()
+		optionPane:Hide()
+	end)
 	optionPane.closeBtn:Hide()
 
 	optionPane.Title = StdUi:Label(optionPane, '', 13, nil, OptWidth)
-	optionPane.Title:SetTextColor(1, 1, 1, .8)
+	optionPane.Title:SetTextColor(1, 1, 1, 0.8)
 	optionPane.Title:SetJustifyH('CENTER')
 	optionPane.Title:SetText('Import settings')
 	optionPane.Title:SetPoint('TOP', 0, -2)
 
 	optionPane.SwitchMode = StdUi:Button(optionPane, OptWidth, 20, 'SWITCH MODE')
 	optionPane.SwitchMode:SetPoint('BOTTOM', optionPane, 0, 24)
-	optionPane.SwitchMode:SetScript(
-		'OnClick',
-		function()
-			if window.mode == 'import' then
-				window.mode = 'export'
-			else
-				window.mode = 'import'
-			end
-
-			ResetWindow()
+	optionPane.SwitchMode:SetScript('OnClick', function()
+		if window.mode == 'import' then
+			window.mode = 'export'
+		else
+			window.mode = 'import'
 		end
-	)
+
+		ResetWindow()
+	end)
 
 	--------------------------------
 	-------- EXPORT STUFF ----------
@@ -100,28 +94,25 @@ local function CreateWindow()
 	exportOpt.AllNamespaces = StdUi:Checkbox(exportOpt, 'All', OptWidth, 20)
 	exportOpt.AllNamespaces:SetPoint('TOP', exportOpt.formatExportTable, 'BOTTOM', 0, -20)
 	exportOpt.AllNamespaces:SetChecked(true)
-	exportOpt.AllNamespaces:HookScript(
-		'OnClick',
-		function(self)
-			for _, v in ipairs(exportOpt.items) do
-				v:SetChecked(self:GetChecked())
-			end
+	exportOpt.AllNamespaces:HookScript('OnClick', function(self)
+		for _, v in ipairs(exportOpt.items) do
+			v:SetChecked(self:GetChecked())
 		end
-	)
+	end)
 
 	local NamespaceListings = StdUi:FauxScrollFrame(exportOpt, OptWidth, 300, 15, 20)
 	NamespaceListings:SetPoint('TOP', exportOpt.AllNamespaces, 'BOTTOM', 0, -2)
 
 	exportOpt.items = {}
 	local list = {}
-	table.insert(list, {text = 'Core', value = 'core'})
+	table.insert(list, { text = 'Core', value = 'core' })
 	for i, _ in pairs(SpartanUIDB.namespaces) do
 		if not SUI:IsInTable(namespaceblacklist, i) then
 			local DisplayName
 			local tmpModule = SUI:GetModule('Module_' .. i, true)
 			if tmpModule then
 				DisplayName = tmpModule.DisplayName or i
-				table.insert(list, {text = (DisplayName or i), value = i})
+				table.insert(list, { text = (DisplayName or i), value = i })
 			end
 		end
 	end
@@ -133,14 +124,9 @@ local function CreateWindow()
 		StdUi:SetObjSize(checkbox, 60, 20)
 		checkbox:SetPoint('RIGHT')
 		checkbox:SetPoint('LEFT')
-		checkbox:HookScript(
-			'OnClick',
-			function(self)
-				if not self:GetChecked() then
-					exportOpt.AllNamespaces:SetChecked(false)
-				end
-			end
-		)
+		checkbox:HookScript('OnClick', function(self)
+			if not self:GetChecked() then exportOpt.AllNamespaces:SetChecked(false) end
+		end)
 		return checkbox
 	end
 
@@ -149,29 +135,24 @@ local function CreateWindow()
 
 	exportOpt.Export = StdUi:Button(exportOpt, OptWidth, 20, 'EXPORT')
 	exportOpt.Export:SetPoint('BOTTOM')
-	exportOpt.Export:SetScript(
-		'OnClick',
-		function()
-			local ExportScopes = {}
-			for _, v in ipairs(exportOpt.items) do
-				if v:GetChecked() then
-					ExportScopes[v:GetValue()] = {}
-				end
-			end
-
-			local profileExport = module:ExportProfile(StdUi:GetRadioGroupValue('exportFormat'), ExportScopes)
-
-			if not profileExport then
-				window.Desc1:SetText('Error exporting profile!')
-			else
-				window.Desc1:SetText('Exported!')
-
-				window.textBox:SetValue(profileExport)
-				window.textBox.editBox:HighlightText()
-				window.textBox.editBox:SetFocus()
-			end
+	exportOpt.Export:SetScript('OnClick', function()
+		local ExportScopes = {}
+		for _, v in ipairs(exportOpt.items) do
+			if v:GetChecked() then ExportScopes[v:GetValue()] = {} end
 		end
-	)
+
+		local profileExport = module:ExportProfile(StdUi:GetRadioGroupValue('exportFormat'), ExportScopes)
+
+		if not profileExport then
+			window.Desc1:SetText('Error exporting profile!')
+		else
+			window.Desc1:SetText('Exported!')
+
+			window.textBox:SetValue(profileExport)
+			window.textBox.editBox:HighlightText()
+			window.textBox.editBox:SetFocus()
+		end
+	end)
 
 	--------------------------------
 	-------- IMPORT STUFF ----------
@@ -191,42 +172,36 @@ local function CreateWindow()
 	importOpt.NewProfileName = StdUi:SimpleEditBox(importOpt, OptWidth, 20, '')
 	importOpt.NewProfileName:SetPoint('TOP', importOpt.NewProfile, 'BOTTOM', 0, -2)
 
-	StdUi:OnRadioGroupValueChanged(
-		'importTo',
-		function(v)
-			importOpt.NewProfileName:SetText('')
-			if v == 'new' then
-				importOpt.NewProfileName:Enable()
-			else
-				importOpt.NewProfileName:Disable()
-			end
+	StdUi:OnRadioGroupValueChanged('importTo', function(v)
+		importOpt.NewProfileName:SetText('')
+		if v == 'new' then
+			importOpt.NewProfileName:Enable()
+		else
+			importOpt.NewProfileName:Disable()
 		end
-	)
+	end)
 	StdUi:SetRadioGroupValue('importTo', 'current')
 
 	importOpt.Import = StdUi:Button(importOpt, OptWidth, 20, 'IMPORT')
 	importOpt.Import:SetPoint('BOTTOM')
-	importOpt.Import:SetScript(
-		'OnClick',
-		function()
-			if StdUi:GetRadioGroupValue('importTo') == 'new' then
-				local profileName = importOpt.NewProfileName:GetText()
-				if profileName == '' then
-					window.Desc1:SetText('Please enter a new profile name')
-					return
-				end
-				SUI.SpartanUIDB:SetProfile(profileName)
+	importOpt.Import:SetScript('OnClick', function()
+		if StdUi:GetRadioGroupValue('importTo') == 'new' then
+			local profileName = importOpt.NewProfileName:GetText()
+			if profileName == '' then
+				window.Desc1:SetText('Please enter a new profile name')
+				return
 			end
-
-			local profileImport = window.textBox:GetValue()
-			if profileImport == '' then
-				window.Desc1:SetText('Please enter a string to import')
-			else
-				module:ImportProfile(profileImport)
-				window.Desc1:SetText('Settings imported!')
-			end
+			SUI.SpartanUIDB:SetProfile(profileName)
 		end
-	)
+
+		local profileImport = window.textBox:GetValue()
+		if profileImport == '' then
+			window.Desc1:SetText('Please enter a string to import')
+		else
+			module:ImportProfile(profileImport)
+			window.Desc1:SetText('Settings imported!')
+		end
+	end)
 
 	optionPane.exportOpt = exportOpt
 	optionPane.importOpt = importOpt
@@ -234,17 +209,13 @@ local function CreateWindow()
 end
 
 function module:ImportUI()
-	if not window then
-		CreateWindow()
-	end
+	if not window then CreateWindow() end
 	window.mode = 'import'
 	ResetWindow()
 end
 
 function module:ExportUI()
-	if not window then
-		CreateWindow()
-	end
+	if not window then CreateWindow() end
 	window.mode = 'export'
 	ResetWindow()
 end
@@ -258,23 +229,17 @@ end
 
 local function GetProfileData(ScopeTable)
 	local function SetCustomVars(data, keys)
-		if not data then
-			return
-		end
+		if not data then return end
 
 		local vars = SUI:CopyTable({}, keys)
 		for key in pairs(data) do
-			if type(key) ~= 'table' then
-				vars[key] = true
-			end
+			if type(key) ~= 'table' then vars[key] = true end
 		end
 
 		return vars
 	end
 	local function inScope(localScope)
-		if ScopeTable and ScopeTable[localScope] ~= nil then
-			return true
-		end
+		if ScopeTable and ScopeTable[localScope] ~= nil then return true end
 		return false
 	end
 
@@ -396,17 +361,13 @@ end
 
 local function ImportModuleSettings(ModuleName, NewSettings)
 	local module = SUI:GetModule('Module_' .. ModuleName, true) or SUI:GetModule('Handler_' .. ModuleName, true)
-	if not module then
-		return
-	end
+	if not module then return end
 	local newsettings = PrepareImport(module.Database.defaults.profile, NewSettings)
 
 	module.DB = SUI:MergeData(module.DB, newsettings, true)
 	-- Trigger a update for the module if the module has an updater
 	-- If module needs reloadui it can call SUI:reloadui in the update call
-	if module.update then
-		module:update()
-	end
+	if module.update then module:update() end
 end
 
 function module:ImportProfile(dataString)

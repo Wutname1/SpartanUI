@@ -13,14 +13,13 @@ local function Builder(frame)
 	UF.Elements:Build(frame, 'Debuffs', elementDB.Debuffs)
 end
 
-local function Options()
-end
+local function Options() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
 	config = {
-		Requires = 'boss'
-	}
+		Requires = 'boss',
+	},
 }
 
 UF.Unit:Add('bosstarget', Builder, Settings)

@@ -10,7 +10,7 @@ local function Build(frame, DB)
 	Portrait3D:SetFrameStrata('BACKGROUND')
 	Portrait3D:SetFrameLevel(2)
 	Portrait3D.PostUpdate = function(unit, event, shouldUpdate)
-		if (frame:IsObjectType('PlayerModel')) then
+		if frame:IsObjectType('PlayerModel') then
 			frame:SetAlpha(DB.alpha)
 
 			local rotation = DB.rotation
@@ -62,7 +62,7 @@ local function Update(frame)
 		if DB.type == '3D' then
 			frame.Portrait = frame.Portrait3D
 			frame.Portrait3D:Show()
-			if (frame.Portrait:IsObjectType('PlayerModel')) then
+			if frame.Portrait:IsObjectType('PlayerModel') then
 				frame.Portrait:SetAlpha(DB.alpha)
 
 				local rotation = DB.rotation
@@ -102,7 +102,7 @@ local function Options(frameName, OptionSet)
 			header = {
 				type = 'header',
 				name = 'General',
-				order = .1
+				order = 0.1,
 			},
 			type = {
 				name = L['Portrait type'],
@@ -110,24 +110,24 @@ local function Options(frameName, OptionSet)
 				order = 20,
 				values = {
 					['3D'] = '3D',
-					['2D'] = '2D'
-				}
+					['2D'] = '2D',
+				},
 			},
 			rotation = {
 				name = L['Rotation'],
 				type = 'range',
 				min = -1,
 				max = 1,
-				step = .01,
-				order = 21
+				step = 0.01,
+				order = 21,
 			},
 			camDistanceScale = {
 				name = L['Camera Distance Scale'],
 				type = 'range',
-				min = .01,
+				min = 0.01,
 				max = 5,
-				step = .1,
-				order = 22
+				step = 0.1,
+				order = 22,
 			},
 			position = {
 				name = L['Position'],
@@ -136,7 +136,7 @@ local function Options(frameName, OptionSet)
 				values = {
 					['left'] = L['Left'],
 					['right'] = L['Right'],
-					['overlay'] = 'Overlay'
+					['overlay'] = 'Overlay',
 				},
 				set = function(info, val)
 					if val == 'overlay' then
@@ -150,9 +150,9 @@ local function Options(frameName, OptionSet)
 					UF.DB.UserSettings[UF.DB.Style][frameName].elements.Portrait.position = val
 					--Update the screen
 					UF.Unit[frameName]:ElementUpdate('Portrait')
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -169,8 +169,8 @@ local Settings = {
 	position = 'left',
 	config = {
 		NoBulkUpdate = true,
-		type = 'General'
-	}
+		type = 'General',
+	},
 }
 
 UF.Elements:Register('Portrait', Build, Update, Options, Settings)
