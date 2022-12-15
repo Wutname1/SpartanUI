@@ -374,6 +374,9 @@
     "assign-type-mismatch",
     "need-check-nil"
   ],
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
   "todo-tree.tree.showBadges": true,
   "todo-tree.tree.showCountsInTree": true,
   "todo-tree.tree.disableCompactFolders": false
