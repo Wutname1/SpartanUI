@@ -182,6 +182,9 @@ local Settings = {
 		SummonIndicator = {
 			enabled = true
 		},
+		RaidTargetIndicator = {
+			size = 10
+		},
 		RaidRoleIndicator = {
 			enabled = true,
 			size = 10,
