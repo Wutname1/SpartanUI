@@ -367,16 +367,12 @@ do --Health Formatting Tags
 	-- -- Missing Health formatted, as an SUIUF module
 	SUIUF.Tags.Events['perhp:conditional'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['perhp:conditional'] = function(unit)
-		local m = UnitHealthMax(unit)
-		if (m == 0) then
-			return '(0%)'
+		-- local m = UnitHealthMax(unit)
+		local p = math.floor(UnitHealth(unit) / (UnitHealthMax(unit) or UnitHealth(unit)) * 100 + .5)
+		if p == 100 or UnitIsDeadOrGhost(unit) then
+			return ''
 		else
-			local p = math.floor(UnitHealth(unit) / m * 100 + .5)
-			if p == 100 then
-				return ''
-			else
-				return '(' .. p .. '%)'
-			end
+			return '(' .. p .. '%)'
 		end
 	end
 end
