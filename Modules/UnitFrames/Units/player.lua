@@ -43,15 +43,28 @@ local function Builder(frame)
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
 
-	-- if EditModeManagerFrame then
-	-- 	function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
-	-- 		return false
-	-- 	end
-	-- end
-	PlayerCastingBarFrame:SetUnit(nil)
+	if EditModeManagerFrame then
+		function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
+			return false
+		end
+	end
+
+	for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
+		local castFrame = _G[k]
+		castFrame:SetUnit(nil)
+		castFrame:UnregisterAllEvents()
+		castFrame:Hide()
+	end
 end
 
-local function Options() end
+local function Update()
+	for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
+		local castFrame = _G[k]
+		castFrame:SetUnit(nil)
+		castFrame:UnregisterAllEvents()
+		castFrame:Hide()
+	end
+end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -138,4 +151,4 @@ local Settings = {
 	},
 }
 
-UF.Unit:Add('player', Builder, Settings)
+UF.Unit:Add('player', Builder, Settings, nil, nil, Update)
