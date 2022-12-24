@@ -348,6 +348,8 @@ function module:IsSellable(item, ilink, bag, slot)
 	local IsGearToken = false
 	local iLevel = SUI:GetiLVL(ilink)
 
+	if itemSubType == 'Companion Pets' then return false end
+
 	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then return false end
 
 	if quality == 0 and module.DB.Gray then qualitysellable = true end
