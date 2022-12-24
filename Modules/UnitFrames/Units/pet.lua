@@ -35,7 +35,7 @@ local Settings = {
 			colorReaction = false,
 			text = {
 				['1'] = {
-					text = '[health:current-short] [perhp]%',
+					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
 				},
 			},
 		},

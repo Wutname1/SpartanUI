@@ -63,7 +63,7 @@ local Settings = {
 			},
 			text = {
 				['1'] = {
-					text = '[health:current-dynamic] [perhp:conditional]',
+					text = '[health:current-dynamic] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
 				},
 			},
 		},

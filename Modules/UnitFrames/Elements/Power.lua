@@ -107,7 +107,7 @@ local Settings = {
 	text = {
 		['1'] = {
 			enabled = false,
-			text = '[power:current-formatted] / [power:max-formatted]',
+			text = '[SUIPower(hideDead)][ / $>SUIPower(max,hideDead,hideMax)]',
 		},
 		['2'] = {
 			enabled = false,

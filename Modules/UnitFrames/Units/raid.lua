@@ -159,7 +159,7 @@ local Settings = {
 			height = 30,
 			text = {
 				['1'] = {
-					text = '[health:missing-formatted] [perhp:conditional]',
+					text = '[health:missing-formatted] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
 				},
 			},
 		},
