@@ -84,9 +84,17 @@ local function Build(frame, DB)
 
 	frame.Castbar = cast
 
-	if CastingBarFrame_SetUnit and frame.unitOnCreate == 'player' then
-		CastingBarFrame_SetUnit(_G['CastingBarFrame'])
-		CastingBarFrame_SetUnit(_G['PetCastingBarFrame'])
+	if frame.unitOnCreate == 'player' then
+		for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
+			local castFrame = _G[k]
+			castFrame:SetUnit(nil)
+			castFrame:UnregisterAllEvents()
+			castFrame:Hide()
+		end
+		if CastingBarFrame_SetUnit then
+			CastingBarFrame_SetUnit(_G['CastingBarFrame'])
+			CastingBarFrame_SetUnit(_G['PetCastingBarFrame'])
+		end
 	end
 end
 

@@ -48,13 +48,6 @@ local function Builder(frame)
 			return false
 		end
 	end
-
-	for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
-		local castFrame = _G[k]
-		castFrame:SetUnit(nil)
-		castFrame:UnregisterAllEvents()
-		castFrame:Hide()
-	end
 end
 
 local function Update()
