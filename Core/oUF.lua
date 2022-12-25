@@ -249,9 +249,6 @@ local function calculateResult(currentVal, maxVal, isDead, ...)
 end
 
 local function SUIHealth(unit, _, ...)
-	local returnVal = ''
-	if not ... then return returnVal end
-
 	local currentVal = UnitHealth(unit) or 0
 	local maxVal = UnitHealthMax(unit) or currentVal
 	local isDead = UnitIsDeadOrGhost(unit)
@@ -291,7 +288,7 @@ do --LEGACY Health Formatting Tags
 	for k, v in pairs(listing) do
 		SUIUF.Tags.Events[k] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 		SUIUF.Tags.Methods[k] = function(unit)
-			return SUIHealth(unit, nil, unpack(v))
+			return SUIHealth(unit, nil, unpack(v or {}))
 		end
 	end
 end
