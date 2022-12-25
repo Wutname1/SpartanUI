@@ -304,7 +304,6 @@ function module:IsSellable(item, ilink, bag, slot)
 	-- 7. Heirloom (light yellow): Bloodied Arcanite Reaper
 	local ilvlsellable = false
 	local qualitysellable = false
-	local Craftablesellable = false
 	local NotInGearset = true
 	local NotConsumable = true
 	local IsGearToken = false
@@ -314,26 +313,31 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then return false end
 
-	if quality == 0 and module.DB.Gray then qualitysellable = true end
-	if quality == 1 and module.DB.White then qualitysellable = true end
-	if quality == 2 and module.DB.Green then qualitysellable = true end
-	if quality == 3 and module.DB.Blue then qualitysellable = true end
-	if quality == 4 and module.DB.Purple then qualitysellable = true end
+	if
+		(quality == 0 and not module.DB.Gray)
+		or (quality == 1 and not module.DB.White)
+		or (quality == 2 and not module.DB.Green)
+		or (quality == 3 and not module.DB.Blue)
+		or (quality == 4 and not module.DB.Purple)
+		or (iLevel and iLevel > module.DB.MaxILVL)
+	then
+		return false
+	end
 
-	if (not iLevel) or (iLevel <= module.DB.MaxILVL) then ilvlsellable = true end
 	--Crafting Items
 	if
-		((itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill') or (itemType == 'Miscellaneous' and itemSubType == 'Reagent'))
-		or (itemType == 'Item Enhancement')
-		or isCraftingReagent
+		(
+			(itemType == 'Gem' or itemType == 'Reagent' or itemType == 'Recipes' or itemType == 'Trade Goods' or itemType == 'Tradeskill')
+			or (itemType == 'Miscellaneous' and itemSubType == 'Reagent')
+			or (itemType == 'Item Enhancement')
+			or isCraftingReagent
+		) and not module.DB.NotCrafting
 	then
-		if not module.DB.NotCrafting then Craftablesellable = true end
-	else
-		Craftablesellable = true
+		return false
 	end
 
 	--Gearset detection
-	if C_EquipmentSet and C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then NotInGearset = false end
+	if C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then NotInGearset = false end
 
 	--Consumable
 	--Tome of the Tranquil Mind is consumable but is identified as Other.
@@ -345,10 +349,7 @@ function module:IsSellable(item, ilink, bag, slot)
 	if string.find(name, 'Treasure Map') and quality == 1 then qualitysellable = false end
 
 	if
-		qualitysellable
-			and ilvlsellable
-			and Craftablesellable
-			and NotInGearset
+		NotInGearset
 			and NotConsumable
 			and not IsGearToken
 			and not SUI:IsInTable(ExcludedItems, item)
