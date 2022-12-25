@@ -3,16 +3,12 @@ local module = SUI:NewModule('Module_AutoSell') ---@type SUI.Module
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
-local GetContainerNumSlots = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
-local GetContainerItemInfo = (C_Container and C_Container.GetContainerItemInfo) or GetContainerItemInfo
-local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
-local UseContainerItem = (C_Container and C_Container.UseContainerItem) or UseContainerItem
+local MaxiLVL = 500
 
-local frame = CreateFrame('Frame')
 local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipTemplate')
 local LoadedOnce = false
 local totalValue = 0
-module.SellTimer = nil
+
 local ExcludedItems = {
 	-- Shadowlands
 	180276, --Locked Toolbox Key
@@ -88,38 +84,6 @@ local function debugMsg(msg)
 	SUI.Debug(msg, 'AutoSell')
 end
 
-function module:OnInitialize()
-	local defaults = {
-		FirstLaunch = true,
-		NotCrafting = true,
-		NotConsumables = true,
-		NotInGearset = true,
-		MaxILVL = 100,
-		Gray = true,
-		White = false,
-		Green = false,
-		Blue = false,
-		Purple = false,
-		GearTokens = false,
-		AutoRepair = false,
-		UseGuildBankRepair = false,
-	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = defaults })
-	module.DB = module.Database.profile
-
-	-- Migrate old settings
-	if SUI.DB.AutoSell then
-		print('Auto sell DB Migration')
-		module.DB = SUI:MergeData(module.DB, SUI.DB.AutoSell, true)
-		SUI.DB.AutoSell = nil
-	end
-	-- Bump Autosell iLVL down for classic
-	if module.DB.MaxILVL >= 40 and SUI.IsClassic then
-		module.DB.MaxILVL = 40
-		module.DB.UseGuildBankRepair = false
-	end
-end
-
 local function SetupPage()
 	---@type SUI.SetupWizard.PageData
 	local PageData = {
@@ -154,8 +118,6 @@ local function SetupPage()
 				-- Max iLVL
 				AutoSell.iLVLDesc = StdUi:Label(AutoSell, L['Maximum iLVL to sell'], nil, nil, 350)
 				AutoSell.iLVLLabel = StdUi:NumericBox(AutoSell, 80, 20, module.DB.MaxILVL)
-				local MaxiLVL = 500
-				if SUI.IsClassic then MaxiLVL = 100 end
 				AutoSell.iLVLLabel:SetMaxValue(MaxiLVL)
 				AutoSell.iLVLLabel:SetMinValue(1)
 				AutoSell.iLVLLabel.OnValueChanged = function()
@@ -264,7 +226,7 @@ local function BuildOptions()
 				order = 10,
 				width = 'full',
 				min = 1,
-				max = 500,
+				max = MaxiLVL,
 				step = 1,
 			},
 			Gray = {
@@ -416,14 +378,14 @@ function module:SellTrash()
 
 	--Find Items to sell
 	for bag = 0, 4 do
-		for slot = 1, GetContainerNumSlots(bag) do
-			local itemInfo, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
+		for slot = 1, C_Container.GetContainerNumSlots(bag) do
+			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 			if SUI.IsRetail and itemInfo and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
 				ItemToSell[#ItemToSell + 1] = { bag, slot }
 				totalValue = totalValue + (select(11, GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 			elseif not SUI.IsRetail and module:IsSellable(itemID, link, bag, slot) then
 				ItemToSell[#ItemToSell + 1] = { bag, slot }
-				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
+				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
 			end
 		end
 	end
@@ -434,11 +396,12 @@ function module:SellTrash()
 	else
 		SUI:Print('Need to sell ' .. #ItemToSell .. ' item(s) for ' .. SUI:GoldFormattedValue(totalValue))
 		--Start Loop to sell, reset locals
-		module.SellTimer = module:ScheduleRepeatingTimer('SellTrashInBag', 0.2, ItemToSell)
+		module:ScheduleRepeatingTimer('SellTrashInBag', 0.2, ItemToSell)
 	end
 end
 
--- Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.
+---Sell Items 5 at a time, sometimes it can sell stuff too fast for the game.
+---@param ItemListing number
 function module:SellTrashInBag(ItemListing)
 	-- Grab an item to sell
 	local item = table.remove(ItemListing)
@@ -450,59 +413,73 @@ function module:SellTrashInBag(ItemListing)
 	end
 
 	-- SELL!
-	UseContainerItem(item[1], item[2])
+	C_Container.UseContainerItem(item[1], item[2])
 
 	-- If it was the last item stop timers
 	if #ItemListing == 0 then module:CancelAllTimers() end
 end
 
-function module:Repair(PersonalFunds)
-	if not module.DB.AutoRepair then return end
-	-- First see if this vendor can repair
-	if CanMerchantRepair() and GetRepairAllCost() ~= 0 and not PersonalFunds then
-		-- Use guild repair
-		if CanGuildBankRepair and CanGuildBankRepair() and module.DB.UseGuildBankRepair then
-			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'])
-			RepairAllItems()
-			module:ScheduleTimer('Repair', 0.7, true)
-		elseif GetRepairAllCost() ~= 0 then
-			SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'])
-			RepairAllItems()
-		end
-	elseif GetRepairAllCost() ~= 0 then
+---@param personalFunds? boolean
+function module:Repair(personalFunds)
+	-- First see if this vendor can repair & we need to
+	if not module.DB.AutoRepair or not CanMerchantRepair() or GetRepairAllCost() == 0 then return end
+
+	if CanGuildBankRepair() and module.DB.UseGuildBankRepair and not personalFunds then
+		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used guild funds'])
+		RepairAllItems(true)
+		module:ScheduleTimer('Repair', 0.7, true)
+	else
 		SUI:Print(L['Auto repair cost'] .. ': ' .. SUI:GoldFormattedValue(GetRepairAllCost()) .. ' ' .. L['used personal funds'])
 		RepairAllItems()
 	end
 end
 
-function module:OnEnable()
-	BuildOptions()
+function module:MERCHANT_SHOW()
 	if SUI:IsModuleDisabled('AutoSell') then return end
+	module:ScheduleTimer('SellTrash', 0.2)
+	module:Repair()
+end
 
+function module:MERCHANT_CLOSED()
+	module:CancelAllTimers()
+	if totalValue > 0 then totalValue = 0 end
+end
+
+function module:OnInitialize()
+	---@class AutoSell.DB
+	local defaults = {
+		FirstLaunch = true,
+		NotCrafting = true,
+		NotConsumables = true,
+		NotInGearset = true,
+		MaxILVL = 100,
+		Gray = true,
+		White = false,
+		Green = false,
+		Blue = false,
+		Purple = false,
+		GearTokens = false,
+		AutoRepair = false,
+		UseGuildBankRepair = false,
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = defaults })
+	module.DB = module.Database.profile ---@type AutoSell.DB
+end
+
+function module:OnEnable()
 	if not LoadedOnce then
+		BuildOptions()
 		SetupPage()
-		local function MerchantEventHandler(self, event, ...)
-			if SUI:IsModuleDisabled('AutoSell') then return end
-			if event == 'MERCHANT_SHOW' then
-				-- Sell then repair so we gain gold before we use it.
-				module:ScheduleTimer('SellTrash', 0.2)
-				module:Repair()
-			else
-				module:CancelAllTimers()
-				if totalValue > 0 then totalValue = 0 end
-			end
-			LoadedOnce = true
-		end
-
-		frame:SetScript('OnEvent', MerchantEventHandler)
 	end
+	if SUI:IsModuleDisabled(module) then return end
 
-	frame:RegisterEvent('MERCHANT_SHOW')
-	frame:RegisterEvent('MERCHANT_CLOSED')
+	module:RegisterEvent('MERCHANT_SHOW')
+	module:RegisterEvent('MERCHANT_CLOSED')
+	LoadedOnce = true
 end
 
 function module:OnDisable()
 	SUI:Print('Autosell disabled')
-	frame:UnregisterEvent('MERCHANT_SHOW')
-	frame:UnregisterEvent('MERCHANT_CLOSED')
+	module:UnregisterEvent('MERCHANT_SHOW')
+	module:UnregisterEvent('MERCHANT_CLOSED')
 end
