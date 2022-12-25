@@ -87,6 +87,7 @@ local function Build(frame, DB)
 	if frame.unitOnCreate == 'player' then
 		for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
 			local castFrame = _G[k]
+			castFrame.showCastbar = false
 			castFrame:SetUnit(nil)
 			castFrame:UnregisterAllEvents()
 			castFrame:Hide()
