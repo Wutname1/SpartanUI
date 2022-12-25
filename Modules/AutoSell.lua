@@ -302,17 +302,11 @@ function module:IsSellable(item, ilink, bag, slot)
 	-- 5. Legendary (orange): Fragment of Val'anyr
 	-- 6. Artifact (golden yellow): The Twin Blades of Azzinoth
 	-- 7. Heirloom (light yellow): Bloodied Arcanite Reaper
-	local ilvlsellable = false
-	local qualitysellable = false
 	local NotInGearset = true
 	local NotConsumable = true
-	local IsGearToken = false
 	local iLevel = SUI:GetiLVL(ilink)
 
-	if itemSubType == 'Companion Pets' then return false end
-
-	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then return false end
-
+	-- Quality check
 	if
 		(quality == 0 and not module.DB.Gray)
 		or (quality == 1 and not module.DB.White)
@@ -323,6 +317,11 @@ function module:IsSellable(item, ilink, bag, slot)
 	then
 		return false
 	end
+
+	--Gearset detection
+	if C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then return false end
+	-- Gear Tokens
+	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then return false end
 
 	--Crafting Items
 	if
@@ -336,26 +335,18 @@ function module:IsSellable(item, ilink, bag, slot)
 		return false
 	end
 
-	--Gearset detection
-	if C_EquipmentSet.CanUseEquipmentSets() and IsInGearset(bag, slot) then NotInGearset = false end
+	-- Dont sell pets
+	if itemSubType == 'Companion Pets' then return false end
+	-- Transmog tokens
+	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then return false end
 
-	--Consumable
-	--Tome of the Tranquil Mind is consumable but is identified as Other.
-	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then NotConsumable = false end
+	--Consumables
+	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then return false end
 
-	-- Gear Tokens
-	if quality == 4 and itemType == 'Miscellaneous' and itemSubType == 'Junk' and equipSlot == '' and not module.DB.GearTokens then IsGearToken = true end
-
-	if string.find(name, 'Treasure Map') and quality == 1 then qualitysellable = false end
+	if string.find(name, '') and quality == 1 then return false end
 
 	if
-		NotInGearset
-			and NotConsumable
-			and not IsGearToken
-			and not SUI:IsInTable(ExcludedItems, item)
-			and not SUI:IsInTable(ExcludedTypes, itemType)
-			and not SUI:IsInTable(ExcludedTypes, itemSubType)
-		or (quality == 0 and module.DB.Gray)
+		not SUI:IsInTable(ExcludedItems, item) and not SUI:IsInTable(ExcludedTypes, itemType) and not SUI:IsInTable(ExcludedTypes, itemSubType)
 	then --Legion identified some junk as consumable
 		debugMsg('--Selling--')
 		debugMsg(item)
