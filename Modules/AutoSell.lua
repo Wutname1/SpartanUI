@@ -302,8 +302,6 @@ function module:IsSellable(item, ilink, bag, slot)
 	-- 5. Legendary (orange): Fragment of Val'anyr
 	-- 6. Artifact (golden yellow): The Twin Blades of Azzinoth
 	-- 7. Heirloom (light yellow): Bloodied Arcanite Reaper
-	local NotInGearset = true
-	local NotConsumable = true
 	local iLevel = SUI:GetiLVL(ilink)
 
 	-- Quality check
@@ -345,9 +343,7 @@ function module:IsSellable(item, ilink, bag, slot)
 
 	if string.find(name, '') and quality == 1 then return false end
 
-	if
-		not SUI:IsInTable(ExcludedItems, item) and not SUI:IsInTable(ExcludedTypes, itemType) and not SUI:IsInTable(ExcludedTypes, itemSubType)
-	then --Legion identified some junk as consumable
+	if not SUI:IsInTable(ExcludedItems, item) and not SUI:IsInTable(ExcludedTypes, itemType) and not SUI:IsInTable(ExcludedTypes, itemSubType) then --Legion identified some junk as consumable
 		debugMsg('--Selling--')
 		debugMsg(item)
 		debugMsg(name)
@@ -444,7 +440,7 @@ function module:OnInitialize()
 		NotCrafting = true,
 		NotConsumables = true,
 		NotInGearset = true,
-		MaxILVL = 100,
+		MaxILVL = 200,
 		Gray = true,
 		White = false,
 		Green = false,
