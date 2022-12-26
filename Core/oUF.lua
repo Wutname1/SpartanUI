@@ -239,7 +239,7 @@ local function calculateResult(currentVal, maxVal, isDead, ...)
 			return ''
 		elseif var == 'displayDead' and isDead then
 			return 'Dead'
-		elseif var == 'hideZero' and currentVal == 0 then
+		elseif var == 'hideZero' and (currentVal == 0 or num == 0) then
 			return ''
 		elseif var == 'hideMax' and currentVal == maxVal then
 			return ''
