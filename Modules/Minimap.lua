@@ -232,7 +232,9 @@ function module:ModifyMinimapLayout()
 		MinimapCluster.MailFrame:ClearAllPoints()
 		MinimapCluster.MailFrame:SetScale(0.8)
 		MinimapCluster.MailFrame:SetPoint('BOTTOM', MinimapCluster.Tracking, 'RIGHT', 3)
-		--TODO: InstanceDifficulty position and scale
+		MinimapCluster.InstanceDifficulty:ClearAllPoints()
+		MinimapCluster.InstanceDifficulty:SetScale(0.8)
+		MinimapCluster.InstanceDifficulty:SetPoint('RIGHT', MinimapCluster.BorderTop, 'LEFT', 2)
 	end
 	if MinimapCluster.SetRotateMinimap then
 		if UserSettings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
