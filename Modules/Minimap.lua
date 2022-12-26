@@ -229,6 +229,9 @@ function module:ModifyMinimapLayout()
 		MinimapCluster.Tracking:ClearAllPoints()
 		MinimapCluster.Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 2)
 		MinimapCluster.Tracking.Background:Hide()
+		MinimapCluster.MailFrame:ClearAllPoints()
+		MinimapCluster.MailFrame:SetScale(0.8)
+		MinimapCluster.MailFrame:SetPoint('BOTTOM', MinimapCluster.Tracking, 'RIGHT', 3)
 		--TODO: InstanceDifficulty position and scale
 	end
 	if MinimapCluster.SetRotateMinimap then
