@@ -53,9 +53,15 @@ end
 local function Update()
 	for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
 		local castFrame = _G[k]
+		castFrame.showCastbar = false
 		castFrame:SetUnit(nil)
 		castFrame:UnregisterAllEvents()
 		castFrame:Hide()
+		castFrame:HookScript('OnShow', function(self)
+			self:Hide()
+			self.showCastbar = false
+			self:SetUnit(nil)
+		end)
 	end
 end
 

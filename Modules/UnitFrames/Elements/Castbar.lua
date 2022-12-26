@@ -148,20 +148,6 @@ local function Update(frame, settings)
 	element.Icon:ClearAllPoints()
 	element.Icon:SetPoint(DB.Icon.position.anchor, element, DB.Icon.position.anchor, DB.Icon.position.x, DB.Icon.position.y)
 	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
-
-	if frame.unitOnCreate == 'player' then
-		for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
-			local castFrame = _G[k]
-			castFrame.showCastbar = false
-			castFrame:SetUnit(nil)
-			castFrame:UnregisterAllEvents()
-			castFrame:Hide()
-		end
-		if CastingBarFrame_SetUnit then
-			CastingBarFrame_SetUnit(_G['CastingBarFrame'])
-			CastingBarFrame_SetUnit(_G['PetCastingBarFrame'])
-		end
-	end
 end
 
 ---@param frameName string
