@@ -126,7 +126,7 @@ local Settings = {
 		Health = {
 			text = {
 				['1'] = {
-					text = '[health:current-formatted] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
+					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
 				},
 			},
 			position = {
