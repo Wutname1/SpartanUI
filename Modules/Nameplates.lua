@@ -41,22 +41,28 @@ local ElementList = {
 local ElementDefaults = {
 	Health = {
 		enabled = true,
-		height = 10,
+		height = 8,
+		offset = 0,
 		texture = 'SpartanUI Default',
 		colorReaction = true,
-		colorSmooth = false,
+		colorSmooth = true,
 		colorClass = true,
 		colorTapping = true,
 		colorDisconnected = true,
 		bg = {
 			enabled = true,
-			color = { 1, 1, 1, 0.2 },
+			color = { 1, 1, 1, 0.6 },
 		},
 		text = {
 			['1'] = {
-				enabled = false,
-				text = '[perhp]%',
-				size = 10,
+				enabled = true,
+				size = 8,
+				text = '[SUIHealth(percentage)]',
+				position = {
+					anchor = 'CENTER',
+					x = 0,
+					y = 0,
+				},
 			},
 		},
 	},
@@ -358,7 +364,7 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', unit .. 'Auras', frame)
-		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
+		Auras:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 0, 2)
 		Auras:SetSize(frame:GetWidth(), 16)
 		if UnitReaction(unit, 'player') <= 2 then
 			if module.DB.onlyShowPlayer and module.DB.showStealableBuffs then
@@ -576,22 +582,23 @@ function module:OnInitialize()
 				},
 				Health = {
 					enabled = true,
-					height = 5,
+					height = 8,
 					offset = 0,
 					texture = 'SpartanUI Default',
 					colorReaction = true,
-					colorSmooth = false,
+					colorSmooth = true,
 					colorClass = true,
 					colorTapping = true,
 					colorDisconnected = true,
 					bg = {
 						enabled = true,
-						color = { 1, 1, 1, 0.2 },
+						color = { 1, 1, 1, 0.3 },
 					},
 					text = {
 						['1'] = {
-							enabled = false,
-							text = '[perhp]%',
+							enabled = true,
+							size = 5,
+							text = '[SUIHealth(percentage,hideMax)]',
 							position = {
 								anchor = 'CENTER',
 								x = 0,
@@ -601,7 +608,7 @@ function module:OnInitialize()
 					},
 				},
 				Power = {
-					enabled = true,
+					enabled = false,
 					height = 3,
 					offset = 1,
 					texture = 'SpartanUI Default',
@@ -749,18 +756,6 @@ end
 function module:BuildOptions()
 	local Options = UF.Options
 	---#TODO: update to new element options process
-	local anchorPoints = {
-		['TOPLEFT'] = 'TOP LEFT',
-		['TOP'] = 'TOP',
-		['TOPRIGHT'] = 'TOP RIGHT',
-		['RIGHT'] = 'RIGHT',
-		['CENTER'] = 'CENTER',
-		['LEFT'] = 'LEFT',
-		['BOTTOMLEFT'] = 'BOTTOM LEFT',
-		['BOTTOM'] = 'BOTTOM',
-		['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
-	}
-
 	local function toInt(val)
 		if val then return 1 end
 		return 0
