@@ -54,6 +54,9 @@ local Settings = {
 		},
 		Castbar = {
 			enabled = true,
+			Icon = {
+				enabled = false,
+			},
 		},
 		Health = {
 			position = {
@@ -66,6 +69,9 @@ local Settings = {
 					text = '[SUIHealth(dynamic,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
 				},
 			},
+		},
+		Power = {
+			height = 5,
 		},
 	},
 	config = {
