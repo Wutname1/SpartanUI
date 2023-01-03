@@ -89,32 +89,30 @@ end
 ---@param settings? table
 local function Update(frame, settings)
 	local element = frame.Castbar
-	local DB = settings or element.DB ---@type SUI.UF.Element.Settings.Castbar
+	local DB = settings or element.DB ---@type SUI.UF.Elements.Settings.Castbar
 	if not DB.enabled then
 		element:Hide()
 		return
 	end
 
-	if SUI.IsRetail then
-		-- latency
-		if DB.latency then
-			element.Shield:Show()
-		else
-			element.Shield:Hide()
-		end
+	-- latency
+	if DB.latency then
+		element.Shield:Show()
+	else
+		element.Shield:Hide()
+	end
 
-		-- spell name
-		if DB.text['1'].enabled then
-			element.Text:Show()
-		else
-			element.Text:Hide()
-		end
-		-- spell timer
-		if DB.text['2'].enabled then
-			element.Time:Show()
-		else
-			element.Time:Hide()
-		end
+	-- spell name
+	if DB.text['1'].enabled then
+		element.Text:Show()
+	else
+		element.Text:Hide()
+	end
+	-- spell timer
+	if DB.text['2'].enabled then
+		element.Time:Show()
+	else
+		element.Time:Hide()
 	end
 
 	-- Basic Bar updates
@@ -148,6 +146,27 @@ local function Update(frame, settings)
 	element.Icon:ClearAllPoints()
 	element.Icon:SetPoint(DB.Icon.position.anchor, element, DB.Icon.position.anchor, DB.Icon.position.x, DB.Icon.position.y)
 	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
+
+	if frame.unitOnCreate == 'player' then
+		print('disable')
+		if EditModeManagerFrame then
+			function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
+				return false
+			end
+		end
+		for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
+			local castFrame = _G[k]
+			castFrame.showCastbar = false
+			castFrame:SetUnit(nil)
+			castFrame:UnregisterAllEvents()
+			castFrame:Hide()
+			castFrame:HookScript('OnShow', function(self)
+				self:Hide()
+				self.showCastbar = false
+				self:SetUnit(nil)
+			end)
+		end
+	end
 end
 
 ---@param frameName string
@@ -265,7 +284,7 @@ local function Options(frameName, OptionSet)
 	UF.Options:AddDynamicText(frameName, OptionSet, 'Castbar')
 end
 
----@class SUI.UF.Element.Settings.Castbar : SUI.UF.Element.Settings
+---@class SUI.UF.Elements.Settings.Castbar : SUI.UF.Elements.Settings
 local Settings = {
 	enabled = false,
 	height = 10,
