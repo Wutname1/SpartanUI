@@ -16,7 +16,7 @@ local ElementConfig = {}
 ---|'Auras'
 ---|'General'
 
----@class SUI.UF.Elements.Settings
+---@class SUI.UF.Element.Settings
 ---@field enabled boolean
 ---@field scale integer
 ---@field points boolean|table|string

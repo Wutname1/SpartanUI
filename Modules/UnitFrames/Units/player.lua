@@ -42,28 +42,9 @@ local function Builder(frame)
 	for _, elementName in pairs(ElementsToBuild) do
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
-
-	if EditModeManagerFrame then
-		function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
-			return false
-		end
-	end
 end
 
-local function Update()
-	for _, k in ipairs({ 'PlayerCastingBarFrame', 'PetCastingBarFrame' }) do
-		local castFrame = _G[k]
-		castFrame.showCastbar = false
-		castFrame:SetUnit(nil)
-		castFrame:UnregisterAllEvents()
-		castFrame:Hide()
-		castFrame:HookScript('OnShow', function(self)
-			self:Hide()
-			self.showCastbar = false
-			self:SetUnit(nil)
-		end)
-	end
-end
+local function Update() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
