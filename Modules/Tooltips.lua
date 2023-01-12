@@ -42,6 +42,7 @@ local tooltips = {
 	ItemSocketingDescription,
 }
 local whitebg = { bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3 }
+local ilvlTempData = {}
 
 function module:OnInitialize()
 	---@class SUI.Tooltip.Settings
@@ -228,7 +229,6 @@ local TooltipSetUnit = function(self, data)
 	local className, classToken = UnitClass(unit)
 	local colors, lvlColor, totColor, lvlLine
 	local line = 2
-	local sex = { '', 'Male ', 'Female ' }
 	local creatureClassColors = {
 		worldboss = format('|cffAF5050World Boss%s|r', BOSS),
 		rareelite = format('|cffAF5050RARE-ELITE%s|r', ITEM_QUALITY3_DESC),
@@ -239,7 +239,6 @@ local TooltipSetUnit = function(self, data)
 	if UnitIsPlayer(unit) then
 		local uName, uRealm = UnitName(unit)
 		local gName, _, _, gRealm = GetGuildInfo(unit)
-		local gender = sex[UnitSex(unit)]
 		local realmRelation = UnitRealmRelationship(unit)
 		colors = _G.RAID_CLASS_COLORS[classToken]
 		local nameString = UnitPVPName(unit) or uName
@@ -271,12 +270,16 @@ local TooltipSetUnit = function(self, data)
 
 		if gName then
 			if gRealm then gName = gName .. '-' .. gRealm end
-			if SUI.IsClassic then
-				self:AddLine(('|cff008000<%s>|r'):format(gName))
-			else
-				GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
-				line = line + 1
+			GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
+
+			local iLvl = ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] or C_PaperDollInfo.GetInspectItemLevel('mouseover')
+			if iLvl == 0 then
+				NotifyInspect('mouseover')
+			elseif iLvl then
+				self:AddLine(format('|cffFED000iLvl:|r %s', iLvl))
 			end
+
+			line = line + 1
 		end
 	end
 
@@ -420,6 +423,18 @@ local function ApplyTooltipSkins()
 	end
 end
 
+function module:ZONE_CHANGED()
+	ilvlTempData = {}
+end
+
+function module:INSPECT_READY()
+	if UnitIsPlayer('mouseover') then
+		local uName, uRealm = UnitName('mouseover')
+		local ilvl = C_PaperDollInfo.GetInspectItemLevel('mouseover')
+		if ilvl ~= 0 then ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] = ilvl end
+	end
+end
+
 function module:UpdateBG()
 	for _, tooltip in pairs(tooltips) do
 		if tooltip.SUITip then
@@ -438,6 +453,8 @@ end
 function module:OnEnable()
 	module:BuildOptions()
 	if SUI:IsModuleDisabled('Tooltips') then return end
+	module:RegisterEvent('INSPECT_READY')
+	module:RegisterEvent('ZONE_CHANGED')
 
 	--Do Setup
 	ApplyTooltipSkins()
