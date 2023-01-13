@@ -148,7 +148,6 @@ local function Update(frame, settings)
 	element.Icon:SetSize(DB.Icon.size, DB.Icon.size)
 
 	if frame.unitOnCreate == 'player' then
-		print('disable')
 		if EditModeManagerFrame then
 			function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
 				return false
