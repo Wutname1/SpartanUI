@@ -33,13 +33,13 @@ local Settings = {
 	position = {
 		anchor = 'TOP',
 		x = 20,
-		y = -10
+		y = -10,
 	},
 	config = {
 		type = 'Indicator',
 		DisplayName = 'Raid Role',
-		Description = 'Raid assignment (main tank or main assist)'
-	}
+		Description = 'Raid assignment (main tank or main assist)',
+	},
 }
 
 UF.Elements:Register('RaidRoleIndicator', Build, Update, Options, Settings)

@@ -16,16 +16,14 @@ local linkTypes = {
 	glyph = true,
 	currency = true,
 	unit = true,
-	quest = true
+	quest = true,
 }
 local ChatLevelLog, nameColor = {}, {}
 
 local function StripTextures(object)
 	for i = 1, object:GetNumRegions() do
 		local region = select(i, object:GetRegions())
-		if region and region:GetObjectType() == 'Texture' then
-			region:SetTexture(nil)
-		end
+		if region and region:GetObjectType() == 'Texture' then region:SetTexture(nil) end
 	end
 end
 
@@ -64,13 +62,9 @@ function module:GetColor(className, isLocal)
 end
 
 local function get_color(c)
-	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' and type(c.a) == 'number' then
-		return c.r, c.g, c.b, c.a
-	end
-	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' then
-		return c.r, c.g, c.b, .8
-	end
-	return 1.0, 1.0, 1.0, .8
+	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' and type(c.a) == 'number' then return c.r, c.g, c.b, c.a end
+	if type(c.r) == 'number' and type(c.g) == 'number' and type(c.b) == 'number' then return c.r, c.g, c.b, 0.8 end
+	return 1.0, 1.0, 1.0, 0.8
 end
 
 local function get_var_color(a1, a2, a3, a4)
@@ -81,9 +75,9 @@ local function get_var_color(a1, a2, a3, a4)
 	elseif type(a1) == 'number' and type(a2) == 'number' and type(a3) == 'number' and type(a4) == 'number' then
 		r, g, b, a = a1, a2, a3, a4
 	elseif type(a1) == 'number' and type(a2) == 'number' and type(a3) == 'number' and type(a4) == 'nil' then
-		r, g, b, a = a1, a2, a3, .8
+		r, g, b, a = a1, a2, a3, 0.8
 	else
-		r, g, b, a = 1.0, 1.0, 1.0, .8
+		r, g, b, a = 1.0, 1.0, 1.0, 0.8
 	end
 
 	return r, g, b, a
@@ -103,18 +97,14 @@ local changeName = function(fullName, misc, nameToChange, colon)
 	--leading to player logins lacking color/level, unless we held a database of the entire guild.
 	--Since the event usually fires when a player logs in, doing it this way should be virtually the same.
 	local hasColor = nameToChange:find('|c', nil, true)
-	if ((nameColor and not hasColor and not nameColor[name]) or (ChatLevelLog and not ChatLevelLog[name])) then
+	if (nameColor and not hasColor and not nameColor[name]) or (ChatLevelLog and not ChatLevelLog[name]) then
 		for i = 1, GetNumGuildMembers() do
 			local n, _, _, l, _, _, _, _, _, _, c = GetGuildRosterInfo(i)
 			if n then
 				n = Ambiguate(n, 'none')
 				if n == name then
-					if ChatLevelLog and l and l > 0 then
-						ChatLevelLog[n] = tostring(l)
-					end
-					if nameColor and c and not hasColor then
-						nameColor[n] = module:GetColor(c)
-					end
+					if ChatLevelLog and l and l > 0 then ChatLevelLog[n] = tostring(l) end
+					if nameColor and c and not hasColor then nameColor[n] = module:GetColor(c) end
 					break
 				end
 			end
@@ -128,12 +118,8 @@ local changeName = function(fullName, misc, nameToChange, colon)
 				local tbl = C_FriendList.GetWhoInfo(i)
 				local n, l, c = tbl.fullName, tbl.level, tbl.filename
 				if n == name and l and l > 0 then
-					if ChatLevelLog then
-						ChatLevelLog[n] = tostring(l)
-					end
-					if nameColor and c then
-						nameColor[n] = module:GetColor(c)
-					end
+					if ChatLevelLog then ChatLevelLog[n] = tostring(l) end
+					if nameColor and c then nameColor[n] = module:GetColor(c) end
 					break
 				end
 			end
@@ -145,7 +131,7 @@ local changeName = function(fullName, misc, nameToChange, colon)
 	if ChatLevelLog and ChatLevelLog[name] and module.DB.playerlevel then
 		local color = GetHexColor(GetQuestDifficultyColor(ChatLevelLog[name]))
 
-		nameToChange = '|cff' .. color .. (ChatLevelLog[name]) .. '|r:' .. nameToChange
+		nameToChange = '|cff' .. color .. ChatLevelLog[name] .. '|r:' .. nameToChange
 	end
 	return '|Hplayer:' .. fullName .. misc .. '[' .. nameToChange .. ']' .. (colon == ':' and ' ' or colon) .. '|h'
 end
@@ -156,17 +142,13 @@ function module:PlayerName(text)
 end
 
 function module:TimeStamp(text)
-	if module.DB.timestampFormat == '' then
-		return text
-	end
+	if module.DB.timestampFormat == '' then return text end
 	text = date('|cff7d7d7d[' .. module.DB.timestampFormat .. ']|r ') .. text
 	return text
 end
 
 local function shortenChannel(text)
-	if not module.DB.shortenChannelNames then
-		return text
-	end
+	if not module.DB.shortenChannelNames then return text end
 
 	local rplc = {
 		'[I]', --Instance
@@ -179,7 +161,7 @@ local function shortenChannel(text)
 		'[R]', --Raid
 		'[RL]', --Raid Leader
 		'[RW]', --Raid Warning
-		'[%1]' --Custom Channels
+		'[%1]', --Custom Channels
 	}
 	local gsub = gsub
 	local chn = {
@@ -193,7 +175,7 @@ local function shortenChannel(text)
 		gsub(CHAT_RAID_GET, '.*%[(.*)%].*', '%%[%1%%]'),
 		gsub(CHAT_RAID_LEADER_GET, '.*%[(.*)%].*', '%%[%1%%]'),
 		gsub(CHAT_RAID_WARNING_GET, '.*%[(.*)%].*', '%%[%1%%]'),
-		'%[(%d%d?)%. ([^%]]+)%]' --Custom Channels
+		'%[(%d%d?)%. ([^%]]+)%]', --Custom Channels
 	}
 
 	local num = #chn
@@ -204,13 +186,9 @@ local function shortenChannel(text)
 end
 
 local ModifyMessage = function(self)
-	if SUI:IsModuleDisabled('Chatbox') then
-		return
-	end
+	if SUI:IsModuleDisabled('Chatbox') then return end
 	local num = self.headIndex
-	if num == 0 then
-		num = self.maxElements
-	end
+	if num == 0 then num = self.maxElements end
 	local tbl = self.elements[num]
 	local text = tbl and tbl.message
 
@@ -255,15 +233,13 @@ function module:OnInitialize()
 		timestampFormat = '%X',
 		playerlevel = nil,
 		ChatCopyTip = true,
-		fontSize = 12
+		fontSize = 12,
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Chat.DB
 
-	if SUI:IsModuleDisabled(module) then
-		return
-	end
-	local ChatAddons = {'Chatter', 'BasicChatMods', 'Prat-3.0'}
+	if SUI:IsModuleDisabled(module) then return end
+	local ChatAddons = { 'Chatter', 'BasicChatMods', 'Prat-3.0' }
 	for _, addonName in pairs(ChatAddons) do
 		local enabled = select(4, GetAddOnInfo(addonName))
 		if enabled then
@@ -283,7 +259,7 @@ function module:OnInitialize()
 	popup.Title = StdUi:Texture(popup, 156, 45, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	popup.Title:SetTexCoord(0, 0.611328125, 0, 0.6640625)
 	StdUi:GlueTop(popup.Title, popup, 0, 0)
-	popup.Title:SetAlpha(.8)
+	popup.Title:SetAlpha(0.8)
 
 	-- Create Popup Items
 	popup.editBox = StdUi:MultiLineBox(popup, 580, 120, '')
@@ -300,17 +276,12 @@ function module:OnInitialize()
 
 	popup.font = popup:CreateFontString(nil, nil, 'GameFontNormal')
 	popup.font:Hide()
-	popup:HookScript(
-		'OnShow',
-		function()
-			popup.editBox.scrollFrame:SetVerticalScroll((popup.editBox.scrollFrame:GetVerticalScrollRange()) or 0)
-		end
-	)
+	popup:HookScript('OnShow', function()
+		popup.editBox.scrollFrame:SetVerticalScroll((popup.editBox.scrollFrame:GetVerticalScrollRange()) or 0)
+	end)
 
 	-- Disable Blizz class color
-	if GetCVar('chatClassColorOverride') ~= '0' then
-		SetCVar('chatClassColorOverride', '0')
-	end
+	if GetCVar('chatClassColorOverride') ~= '0' then SetCVar('chatClassColorOverride', '0') end
 	-- Disable Blizz time stamping
 	if GetCVar('showTimestamps') ~= 'none' then
 		SetCVar('showTimestamps', 'none')
@@ -322,9 +293,7 @@ end
 
 function module:OnEnable()
 	module:BuildOptions()
-	if SUI:IsModuleDisabled(module) then
-		return
-	end
+	if SUI:IsModuleDisabled(module) then return end
 
 	-- Setup Player level monitor
 	module.PLAYER_TARGET_CHANGED = function()
@@ -332,9 +301,7 @@ function module:OnEnable()
 			local n, s = UnitName('target')
 			local l = UnitLevel('target')
 			if n and l and l > 0 then
-				if s and s ~= '' then
-					n = n .. '-' .. s
-				end
+				if s and s ~= '' then n = n .. '-' .. s end
 				ChatLevelLog[n] = tostring(l)
 			end
 		end
@@ -346,9 +313,7 @@ function module:OnEnable()
 			local n, s = UnitName('mouseover')
 			local l = UnitLevel('mouseover')
 			if n and l and l > 0 then
-				if s and s ~= '' then
-					n = n .. '-' .. s
-				end
+				if s and s ~= '' then n = n .. '-' .. s end
 				ChatLevelLog[n] = tostring(l)
 			end
 		end
@@ -379,9 +344,7 @@ function module:EditBoxPosition()
 end
 
 function module:SetupChatboxes()
-	if SUI:IsModuleDisabled(module) then
-		return
-	end
+	if SUI:IsModuleDisabled(module) then return end
 	-- DEFAULT_CHATFRAME_ALPHA = 0.7
 	-- DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
 	-- DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
@@ -393,44 +356,33 @@ function module:SetupChatboxes()
 		edgeFile = [[Interface\Buttons\WHITE8X8]],
 		tile = true,
 		tileSize = 16,
-		edgeSize = 2
+		edgeSize = 2,
 	}
 
-	local c = {r = .05, g = .05, b = .05, a = 0.7}
+	local c = { r = 0.05, g = 0.05, b = 0.05, a = 0.7 }
 	local filterFunc = function(_, _, msg, ...)
-		if not module.DB.webLinks then
-			return
-		end
+		if not module.DB.webLinks then return end
 
-		local newMsg, found =
-			gsub(
+		local newMsg, found = gsub(
 			msg,
-			"[^ \"£%^`¬{}%[%]\\|<>]*[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d]%.[^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ '%-=%./,\"£%^`¬{}%[%]\\|<>%d][^ \"£%^`¬{}%[%]\\|<>]*",
+			'[^ "£%^`¬{}%[%]\\|<>]*[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d]%.[^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ \'%-=%./,"£%^`¬{}%[%]\\|<>%d][^ "£%^`¬{}%[%]\\|<>]*',
 			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
-		if found > 0 then
-			return false, newMsg, ...
-		end
-		newMsg, found =
-			gsub(
+		if found > 0 then return false, newMsg, ... end
+		newMsg, found = gsub(
 			msg,
 			-- This is our IPv4/v6 pattern at the beggining of a sentence.
 			'^%x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
 			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
-		if found > 0 then
-			return false, newMsg, ...
-		end
-		newMsg, found =
-			gsub(
+		if found > 0 then return false, newMsg, ... end
+		newMsg, found = gsub(
 			msg,
 			-- Mid-sentence IPv4/v6 pattern
 			' %x+[%.:]%x+[%.:]%x+[%.:]%x+[^ "£%^`¬{}%[%]\\|<>]*',
 			'|cffffffff|Hbcmurl~%1|h[%1]|h|r'
 		)
-		if found > 0 then
-			return false, newMsg, ...
-		end
+		if found > 0 then return false, newMsg, ... end
 	end
 
 	--Copying Functions
@@ -462,35 +414,27 @@ function module:SetupChatboxes()
 			end
 		end
 
-		if ChatFrameEdit:IsVisible() then
-			ChatFrameEdit:Hide()
-		end
+		if ChatFrameEdit:IsVisible() then ChatFrameEdit:Hide() end
 	end
 	local TabHintEnter = function(frame)
-		if not module.DB.ChatCopyTip then
-			return
-		end
+		if not module.DB.ChatCopyTip then return end
 
 		ShowUIPanel(GameTooltip)
 		GameTooltip:SetOwner(frame, 'ANCHOR_TOP')
-		GameTooltip:AddLine('Alt+Click to copy', .8, 0, 0)
+		GameTooltip:AddLine('Alt+Click to copy', 0.8, 0, 0)
 		GameTooltip:AddLine('Shift+Click to toggle', 0, 0.1, 1)
 		GameTooltip:Show()
 	end
 	local TabHintLeave = function(frame)
-		if not module.DB.ChatCopyTip then
-			return
-		end
+		if not module.DB.ChatCopyTip then return end
 
 		HideUIPanel(GameTooltip)
 	end
 
 	local GDM = _G['GeneralDockManager']
-	if not GDM.SetBackdrop then
-		Mixin(GDM, BackdropTemplateMixin)
-	end
+	if not GDM.SetBackdrop then Mixin(GDM, BackdropTemplateMixin) end
 
-	if (GDM.SetBackdrop) then
+	if GDM.SetBackdrop then
 		GDM:SetBackdrop(chatBG)
 		GDM:SetBackdropColor(c.r, c.g, c.b, c.a)
 		GDM:SetBackdropBorderColor(c.r, c.g, c.b, c.a)
@@ -511,30 +455,20 @@ function module:SetupChatboxes()
 		QJTB:ClearAllPoints()
 		QJTB:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
 		QJTB.FriendCount:Hide()
-		hooksecurefunc(
-			QJTB,
-			'UpdateQueueIcon',
-			function(frame)
-				if not frame.displayedToast then
-					return
-				end
-				frame.FriendsButton:SetTexture(icon)
-				frame.QueueButton:SetTexture(icon)
-				frame.FlashingLayer:SetTexture(icon)
-				frame.FriendsButton:SetShown(false)
-				frame.FriendCount:SetShown(false)
+		hooksecurefunc(QJTB, 'UpdateQueueIcon', function(frame)
+			if not frame.displayedToast then return end
+			frame.FriendsButton:SetTexture(icon)
+			frame.QueueButton:SetTexture(icon)
+			frame.FlashingLayer:SetTexture(icon)
+			frame.FriendsButton:SetShown(false)
+			frame.FriendCount:SetShown(false)
+		end)
+		hooksecurefunc(QJTB, 'SetPoint', function(frame, point, anchor)
+			if anchor ~= GDM and point ~= 'TOPRIGHT' then
+				frame:ClearAllPoints()
+				frame:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
 			end
-		)
-		hooksecurefunc(
-			QJTB,
-			'SetPoint',
-			function(frame, point, anchor)
-				if anchor ~= GDM and point ~= 'TOPRIGHT' then
-					frame:ClearAllPoints()
-					frame:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
-				end
-			end
-		)
+		end)
 
 		local function updateTexture()
 			QJTB.FriendsButton:SetTexture(icon)
@@ -590,7 +524,7 @@ function module:SetupChatboxes()
 	VoiceChannelButton:SetSize(18, 18)
 	VoiceChannelButton.Icon:SetTexture(icon)
 	VoiceChannelButton.Icon:SetTexCoord(0.1484375, 0.359375, 0.1484375, 0.359375)
-	VoiceChannelButton.Icon:SetScale(.8)
+	VoiceChannelButton.Icon:SetScale(0.8)
 
 	ChatFrameMenuButton:ClearAllPoints()
 	ChatFrameMenuButton:SetPoint('TOPRIGHT', VoiceChannelButton, 'TOPLEFT', -1, 0)
@@ -599,7 +533,7 @@ function module:SetupChatboxes()
 	ChatFrameMenuButton.Icon = ChatFrameMenuButton:CreateTexture(nil, 'ARTWORK')
 	ChatFrameMenuButton.Icon:SetAllPoints(ChatFrameMenuButton)
 	ChatFrameMenuButton.Icon:SetTexture(icon)
-	ChatFrameMenuButton.Icon:SetTexCoord(.6, .9, .6, .9)
+	ChatFrameMenuButton.Icon:SetTexCoord(0.6, 0.9, 0.6, 0.9)
 
 	for i = 1, 10 do
 		local ChatFrameName = ('%s%d'):format('ChatFrame', i)
@@ -627,17 +561,15 @@ function module:SetupChatboxes()
 
 		-- Setup main BG
 		local _, _, r, g, b, a = FCF_GetChatWindowInfo(i)
-		if r == 0 and g == 0 and b == 0 and ((SUI.IsRetail and a < .16 and a > .15) or (SUI.IsClassic and a < .1)) then
+		if r == 0 and g == 0 and b == 0 and ((SUI.IsRetail and a < 0.16 and a > 0.15) or (SUI.IsClassic and a < 0.1)) then
 			FCF_SetWindowColor(ChatFrame, DEFAULT_CHATFRAME_COLOR.r, DEFAULT_CHATFRAME_COLOR.g, DEFAULT_CHATFRAME_COLOR.b)
 			FCF_SetWindowAlpha(ChatFrame, DEFAULT_CHATFRAME_ALPHA)
 		end
-		if (ChatFrame.SetBackdrop) then
-			ChatFrame:SetBackdrop(nil)
-		end
+		if ChatFrame.SetBackdrop then ChatFrame:SetBackdrop(nil) end
 
 		--Setup Scrollbar
 		if ChatFrame.ScrollBar then
-			ChatFrame.ScrollBar.ThumbTexture:SetColorTexture(1, 1, 1, .4)
+			ChatFrame.ScrollBar.ThumbTexture:SetColorTexture(1, 1, 1, 0.4)
 			ChatFrame.ScrollBar.ThumbTexture:SetWidth(10)
 
 			StripTextures(ChatFrame.ScrollToBottomButton)
@@ -645,7 +577,7 @@ function module:SetupChatboxes()
 			BG = ChatFrame.ScrollToBottomButton:CreateTexture(nil, 'ARTWORK')
 			BG:SetAllPoints(ChatFrame.ScrollToBottomButton)
 			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\bottomArrow')
-			BG:SetAlpha(.4)
+			BG:SetAlpha(0.4)
 			ChatFrame.ScrollToBottomButton.BG = BG
 			ChatFrame.ScrollToBottomButton:ClearAllPoints()
 			ChatFrame.ScrollToBottomButton:SetSize(20, 20)
@@ -661,7 +593,7 @@ function module:SetupChatboxes()
 			BG = element:CreateTexture(nil, 'ARTWORK')
 			BG:SetAllPoints(element)
 			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\bottomArrow')
-			BG:SetAlpha(.6)
+			BG:SetAlpha(0.6)
 			element.BG = BG
 			element:ClearAllPoints()
 			element:SetSize(20, 20)
@@ -677,8 +609,8 @@ function module:SetupChatboxes()
 		ChatFrameTab.Text:SetPoint('CENTER', ChatFrameTab)
 
 		if SUI.IsRetail then
-			local sides = {'Left', 'Middle', 'Right'}
-			local modes = {'Active', 'Highlight', ''}
+			local sides = { 'Left', 'Middle', 'Right' }
+			local modes = { 'Active', 'Highlight', '' }
 
 			for _, mode in ipairs(modes) do
 				for _, side in ipairs(sides) do
@@ -686,7 +618,7 @@ function module:SetupChatboxes()
 				end
 			end
 		else
-			for _, v in ipairs({'left', 'middle', 'right'}) do
+			for _, v in ipairs({ 'left', 'middle', 'right' }) do
 				ChatFrameTab[v .. 'HighlightTexture']:SetTexture(nil)
 				ChatFrameTab[v .. 'SelectedTexture']:SetTexture(nil)
 				ChatFrameTab[v .. 'Texture']:SetTexture(nil)
@@ -707,15 +639,9 @@ function module:SetupChatboxes()
 		SUI.Font:Format(ChatFrame, module.DB.fontSize, 'Chatbox')
 		SUI.Font:Format(ChatFrameEdit, module.DB.fontSize, 'Chatbox')
 
-		if (_G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil) then
-			_G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil)
-		end
-		if (_G[ChatFrameName .. 'EditBoxFocusRight'] ~= nil) then
-			_G[ChatFrameName .. 'EditBoxFocusRight']:SetTexture(nil)
-		end
-		if (_G[ChatFrameName .. 'EditBoxFocusMid'] ~= nil) then
-			_G[ChatFrameName .. 'EditBoxFocusMid']:SetTexture(nil)
-		end
+		if _G[ChatFrameName .. 'EditBoxFocusLeft'] ~= nil then _G[ChatFrameName .. 'EditBoxFocusLeft']:SetTexture(nil) end
+		if _G[ChatFrameName .. 'EditBoxFocusRight'] ~= nil then _G[ChatFrameName .. 'EditBoxFocusRight']:SetTexture(nil) end
+		if _G[ChatFrameName .. 'EditBoxFocusMid'] ~= nil then _G[ChatFrameName .. 'EditBoxFocusMid']:SetTexture(nil) end
 
 		ChatFrameEdit:Hide()
 		ChatFrameEdit:SetHeight(22)
@@ -730,19 +656,17 @@ function module:SetupChatboxes()
 			element:Hide()
 		end
 
-		if not ChatFrameEdit.SetBackdrop then
-			Mixin(ChatFrameEdit, BackdropTemplateMixin)
-		end
-		if (ChatFrameEdit.SetBackdrop) then
+		if not ChatFrameEdit.SetBackdrop then Mixin(ChatFrameEdit, BackdropTemplateMixin) end
+		if ChatFrameEdit.SetBackdrop then
 			ChatFrameEdit:SetBackdrop(chatBG)
-			local bg = {ChatFrame.Background:GetVertexColor()}
+			local bg = { ChatFrame.Background:GetVertexColor() }
 			ChatFrameEdit:SetBackdropColor(unpack(bg))
 			ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
 		end
 
 		local function BackdropColorUpdate(frame, r, g, b)
-			local bg = {ChatFrame.Background:GetVertexColor()}
-			if (ChatFrameEdit.SetBackdrop) then
+			local bg = { ChatFrame.Background:GetVertexColor() }
+			if ChatFrameEdit.SetBackdrop then
 				ChatFrameEdit:SetBackdropColor(unpack(bg))
 				ChatFrameEdit:SetBackdropBorderColor(unpack(bg))
 			end
@@ -827,46 +751,42 @@ function module:BuildOptions()
 					['%X'] = 'HH:MM:SS (24-hour)',
 					['%I:%M'] = 'HH:MM (12-hour)',
 					['%H:%M'] = 'HH:MM (24-hour)',
-					['%M:%S'] = 'MM:SS'
-				}
+					['%M:%S'] = 'MM:SS',
+				},
 			},
 			shortenChannelNames = {
 				name = L['Shorten channel names'],
-				type = 'toggle'
+				type = 'toggle',
 			},
 			EditBoxTop = {
 				name = L['Edit box on top'],
-				type = 'toggle'
+				type = 'toggle',
 			},
 			playerlevel = {
 				name = L['Display level'],
 				type = 'toggle',
-				order = 1
+				order = 1,
 			},
 			webLinks = {
 				name = L['Clickable web link'],
 				type = 'toggle',
-				order = 20
+				order = 20,
 			},
 			LinkHover = {
 				name = L['Hoveable game links'],
 				type = 'toggle',
-				order = 21
-			}
-		}
+				order = 21,
+			},
+		},
 	}
 	SUI.Options:AddOptions(optTable, 'Chatbox')
 end
 
 function module:SetEditBoxMessage(msg)
-	if not ChatFrame1EditBox:IsShown() then
-		ChatEdit_ActivateChat(ChatFrame1EditBox)
-	end
+	if not ChatFrame1EditBox:IsShown() then ChatEdit_ActivateChat(ChatFrame1EditBox) end
 
 	local editBoxText = ChatFrame1EditBox:GetText()
-	if editBoxText and editBoxText ~= '' then
-		ChatFrame1EditBox:SetText('')
-	end
+	if editBoxText and editBoxText ~= '' then ChatFrame1EditBox:SetText('') end
 	ChatFrame1EditBox:Insert(msg)
 	ChatFrame1EditBox:HighlightText()
 end

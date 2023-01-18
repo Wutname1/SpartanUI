@@ -10,35 +10,27 @@ local print = SUI.print
 local Analytics = nil
 
 local function setupOption(setting)
-	if not SUI.opt.args.Modules or not SUI.opt.args.Modules.args.WagoAnalytics then
-		return
-	end
+	if not SUI.opt.args.Modules or not SUI.opt.args.Modules.args.WagoAnalytics then return end
 
 	SUI.opt.args.Modules.args.WagoAnalytics.args.SessionData.args[setting] = {
 		name = setting,
 		type = 'input',
-		width = 'full'
+		width = 'full',
 	}
 end
 
 function SUI.Analytics:Set(moduleName, setting, value)
-	if not module.DB.Enabled or SUI:IsModuleDisabled(module) or not Analytics then
-		return
-	end
+	if not module.DB.Enabled or SUI:IsModuleDisabled(module) or not Analytics then return end
 
 	-- Find Module name
 	if type(moduleName) == 'table' then
 		moduleName = SUI:GetModuleName(moduleName)
-		if not moduleName then
-			return
-		end
+		if not moduleName then return end
 	end
 
 	--Detect module type
 	local name = moduleName .. '_' .. setting
-	if moduleName ~= 'Core' then
-		name = 'Module_' .. name
-	end
+	if moduleName ~= 'Core' then name = 'Module_' .. name end
 
 	if module.DB.CollectedData[name] ~= tostring(value) then
 		module.DB.CollectedData[name] = tostring(value)
@@ -59,12 +51,8 @@ local function InitalCollection()
 	end
 
 	SUI.Analytics:Set('Core', 'Scale', SUI.DB.scale)
-	if SUI:IsModuleEnabled('Artwork') then
-		SUI.Analytics:Set('Artwork', 'Style', SUI.DB.Artwork.Style)
-	end
-	if SUI:IsModuleEnabled('UnitFrames') then
-		SUI.Analytics:Set('UnitFrames', 'Style', SUI:GetModule('Module_UnitFrames').DB.Style)
-	end
+	if SUI:IsModuleEnabled('Artwork') then SUI.Analytics:Set('Artwork', 'Style', SUI.DB.Artwork.Style) end
+	if SUI:IsModuleEnabled('UnitFrames') then SUI.Analytics:Set('UnitFrames', 'Style', SUI:GetModule('Module_UnitFrames').DB.Style) end
 end
 
 local function SetupPage()
@@ -87,8 +75,7 @@ local function SetupPage()
 				-- Attaching
 				SUI_Win.WagoAnalytics = WagoAnalytics
 			else
-				WagoAnalytics.lbl0 =
-					StdUi:Label(
+				WagoAnalytics.lbl0 = StdUi:Label(
 					WagoAnalytics,
 					L['SpartanUI has introduced Wago Analytics.\n\nWago Analytics is a service that allows us to collect anonymous data about your usage of the addon.\n\nWe use this data to improve the addon and to make it more user friendly.\n\nYou can disable this option if you do not want to share your data with us.'],
 					nil,
@@ -122,7 +109,7 @@ local function SetupPage()
 			SUI.Setup.window.Next:SetText('CONTINUE')
 			SUI:DisableModule(module)
 			module.DB.FirstLaunch = false
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end
@@ -146,37 +133,37 @@ local function BuildOptions()
 					Enabled = {
 						name = L['Enabled'],
 						type = 'toggle',
-						order = .1,
+						order = 0.1,
 						width = 'full',
 						get = function(info)
 							return module.DB[info[#info]]
 						end,
 						set = function(info, val)
 							module.DB[info[#info]] = val
-						end
+						end,
 					},
 					['1'] = {
 						name = L['Without using the Wago or WowUp client no data collected will be sent.'],
 						type = 'description',
 						fontSize = 'large',
 						order = 2,
-						width = 'full'
+						width = 'full',
 					},
 					['2'] = {
 						name = L['This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'],
 						type = 'description',
 						fontSize = 'medium',
 						order = 3,
-						width = 'full'
+						width = 'full',
 					},
 					['3'] = {
 						name = L['You can view all collected data below, note some additional data will/can be collected as settings within SUI are changed. That data will show up below as it is collected.'],
 						type = 'description',
 						fontSize = 'medium',
 						order = 4,
-						width = 'full'
-					}
-				}
+						width = 'full',
+					},
+				},
 			},
 			SessionData = {
 				name = L['Data collected this session'],
@@ -186,8 +173,7 @@ local function BuildOptions()
 				get = function(info)
 					return module.DB.CollectedData[info[#info]]
 				end,
-				set = function(info, value)
-				end,
+				set = function(info, value) end,
 				args = {
 					['1'] = {
 						name = 'Class',
@@ -196,10 +182,9 @@ local function BuildOptions()
 						get = function(info)
 							return UnitClass('player')
 						end,
-						set = function(info, value)
-						end
-					}
-				}
+						set = function(info, value) end,
+					},
+				},
 			},
 			AllDataCollected = {
 				name = L['All data collected'],
@@ -210,10 +195,9 @@ local function BuildOptions()
 				get = function(info)
 					return SUI:TableToLuaString(module.DB.CollectedData)
 				end,
-				set = function(info, value)
-				end
-			}
-		}
+				set = function(info, value) end,
+			},
+		},
 	}
 end
 
@@ -222,14 +206,12 @@ function module:OnInitialize()
 		profile = {
 			FirstLaunch = true,
 			Enabled = true,
-			CollectedData = {}
-		}
+			CollectedData = {},
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('WagoAnalytics', defaults)
 	module.DB = module.Database.profile
-	if not SUI.Lib.WagoAnalytics then
-		return
-	end
+	if not SUI.Lib.WagoAnalytics then return end
 	Analytics = SUI.Lib.WagoAnalytics:Register(GetAddOnMetadata('SpartanUI', 'X-Wago-ID'))
 end
 
@@ -238,22 +220,16 @@ function module:OnEnable()
 		SUI:DisableModule(module)
 		return
 	end
-	if not Analytics then
-		return
-	end
+	if not Analytics then return end
 	--Module Setup
 	SetupPage()
 	BuildOptions()
 
-	if not module.DB.Enabled or module.DB.FirstLaunch then
-		return
-	end
+	if not module.DB.Enabled or module.DB.FirstLaunch then return end
 
 	InitalCollection()
 end
 
 function module:OnDisable()
-	if SUI.opt.args.Modules.args.WagoAnalytics then
-		SUI.opt.args.Modules.args.WagoAnalytics.disabled = true
-	end
+	if SUI.opt.args.Modules.args.WagoAnalytics then SUI.opt.args.Modules.args.WagoAnalytics.disabled = true end
 end

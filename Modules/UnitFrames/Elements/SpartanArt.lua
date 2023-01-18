@@ -1,5 +1,5 @@
 local _G, SUI, L, UF = _G, SUI, SUI.L, SUI.UF
-local ArtPositions = {['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom'}
+local ArtPositions = { ['full'] = 'Full frame skin', ['top'] = 'Top', ['bg'] = 'Background', ['bottom'] = 'Bottom' }
 
 ---@param frame table
 ---@param DB table
@@ -17,9 +17,7 @@ local function Build(frame, DB)
 	SpartanArt.ArtSettings = frame.DB
 
 	SpartanArt.PreUpdate = function(self, unit)
-		if not unit or unit == 'vehicle' then
-			return
-		end
+		if not unit or unit == 'vehicle' then return end
 		SpartanArt.ArtSettings = self.DB
 
 		for pos, _ in pairs(ArtPositions) do
@@ -30,9 +28,7 @@ local function Build(frame, DB)
 				self[pos].ArtData = ufArt[pos]
 				self[pos].ArtData.graphic = ArtSettings.graphic
 				--Grab the settings for the frame specifically if defined (classic skin)
-				if self[pos].ArtData.perUnit and self[pos].ArtData[unitName] then
-					self[pos].ArtData = self[pos].ArtData[unitName]
-				end
+				if self[pos].ArtData.perUnit and self[pos].ArtData[unitName] then self[pos].ArtData = self[pos].ArtData[unitName] end
 			end
 		end
 	end
@@ -43,9 +39,7 @@ local function Build(frame, DB)
 
 			if ArtSettings and ArtSettings.enabled and ArtSettings.graphic ~= '' then
 				local ufArt = UF.Style:Get(ArtSettings.graphic).artwork
-				if ufArt[pos].UnitFrameCallback then
-					ufArt[pos].UnitFrameCallback(self:GetParent(), unit)
-				end
+				if ufArt[pos].UnitFrameCallback then ufArt[pos].UnitFrameCallback(self:GetParent(), unit) end
 			end
 		end
 	end
@@ -57,9 +51,7 @@ end
 local function Update(frame)
 	local element = frame.SpartanArt
 	local DB = element.DB
-	if not DB.enabled or not element.ForceUpdate then
-		return
-	end
+	if not DB.enabled or not element.ForceUpdate then return end
 	element.ArtSettings = element.DB
 	element.ForceUpdate(element)
 end
@@ -78,9 +70,7 @@ local function Options(unitName, OptionSet)
 				return UF.CurrentSettings[unitName].elements.SpartanArt[position][info[#info]]
 			end,
 			set = function(info, val)
-				if val == 0 then
-					val = false
-				end
+				if val == 0 then val = false end
 				--Update memory
 				UF.CurrentSettings[unitName].elements.SpartanArt[position][info[#info]] = val
 				--Update the DB
@@ -92,20 +82,20 @@ local function Options(unitName, OptionSet)
 				enabled = {
 					name = L['Enabled'],
 					type = 'toggle',
-					order = 1
+					order = 1,
 				},
 				graphic = {
 					name = L['Current Style'],
 					type = 'select',
 					order = 2,
-					values = {[''] = 'None'}
+					values = { [''] = 'None' },
 				},
 				style = {
 					name = L['Style'],
 					type = 'group',
 					order = 3,
 					inline = true,
-					args = {}
+					args = {},
 				},
 				settings = {
 					name = L['Settings'],
@@ -120,11 +110,11 @@ local function Options(unitName, OptionSet)
 							width = 'double',
 							min = 0,
 							max = 1,
-							step = .01
-						}
-					}
-				}
-			}
+							step = 0.01,
+						},
+					},
+				},
+			},
 		}
 	end
 
@@ -134,9 +124,7 @@ local function Options(unitName, OptionSet)
 			if data[position] then
 				local options = OptionSet.args[position].args
 				local dataObj = data[position]
-				if dataObj.perUnit and data[unitName] then
-					dataObj = data[unitName]
-				end
+				if dataObj.perUnit and data[unitName] then dataObj = data[unitName] end
 
 				if dataObj then
 					--Enable art option
@@ -151,9 +139,7 @@ local function Options(unitName, OptionSet)
 						image = function()
 							if type(dataObj.path) == 'function' then
 								local path = dataObj.path(nil, position)
-								if path then
-									return path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
-								end
+								if path then return path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40) end
 							else
 								return dataObj.path, (dataObj.exampleWidth or 160), (dataObj.exampleHeight or 40)
 							end
@@ -161,13 +147,11 @@ local function Options(unitName, OptionSet)
 						imageCoords = function()
 							if type(dataObj.TexCoord) == 'function' then
 								local cords = dataObj.TexCoord(nil, position)
-								if cords then
-									return cords
-								end
+								if cords then return cords end
 							else
 								return dataObj.TexCoord
 							end
-						end
+						end,
 					}
 				end
 			end
@@ -180,7 +164,7 @@ local sectiondefault = {
 	x = 0,
 	y = 0,
 	alpha = 1,
-	graphic = ''
+	graphic = '',
 }
 ---@type SUI.UF.Elements.Settings
 local Settings = {
@@ -191,8 +175,8 @@ local Settings = {
 	bottom = sectiondefault,
 	config = {
 		NoBulkUpdate = true,
-		DisplayName = 'SUI Artwork'
-	}
+		DisplayName = 'SUI Artwork',
+	},
 }
 
 UF.Elements:Register('SpartanArt', Build, Update, Options, Settings)

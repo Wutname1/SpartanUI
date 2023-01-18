@@ -25,14 +25,14 @@ local FinishedPage = {
 
 		FinishedPage.Helm = StdUi:Texture(FinishedPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
 		FinishedPage.Helm:SetPoint('CENTER')
-		FinishedPage.Helm:SetAlpha(.6)
+		FinishedPage.Helm:SetAlpha(0.6)
 		module.window.Next:SetText('FINISH')
 
 		module.window.content.FinishedPage = FinishedPage
 	end,
 	Next = function()
 		module.window:Hide()
-	end
+	end,
 }
 
 ---@class SUI.SetupWizard.PageData
@@ -48,7 +48,7 @@ local FinishedPage = {
 ---@field Skip? function
 
 local LoadWatcherEvent = function()
-	if (not module.window or not module.window:IsShown()) then
+	if not module.window or not module.window:IsShown() then
 		if SUI.DB.SetupWizard.FirstLaunch then
 			module:SetupWizard()
 		elseif DisplayRequired then
@@ -60,14 +60,10 @@ end
 ---@param PageData SUI.SetupWizard.PageData
 function module:AddPage(PageData)
 	-- Make sure SetupWizard does it's initalization before any pages other are added
-	if not WelcomeAdded and PageData.ID ~= 'WelcomePage' then
-		module:OnInitialize()
-	end
+	if not WelcomeAdded and PageData.ID ~= 'WelcomePage' then module:OnInitialize() end
 
 	-- Do not allow more than 1 page with a specific ID
-	if PriorityPageList[PageData.ID] or StandardPageList[PageData.ID] then
-		return
-	end
+	if PriorityPageList[PageData.ID] or StandardPageList[PageData.ID] then return end
 
 	-- Incriment the page count/id by 1
 	TotalPageCount = TotalPageCount + 1
@@ -88,7 +84,7 @@ function module:AddPage(PageData)
 	PageID[TotalPageCount] = {
 		ID = PageData.ID,
 		DisplayOrder = nil,
-		Required = PageData.RequireDisplay
+		Required = PageData.RequireDisplay,
 	}
 end
 
@@ -195,9 +191,7 @@ function module:FindNextPage(RequiredPagesOnly)
 		if module.window.ProgressBar then
 			if CurPage > TotalPage then
 				module.window.ProgressBar:SetValue(100)
-				if CurPage > (TotalPage + 1) then
-					module.window:Hide()
-				end
+				if CurPage > (TotalPage + 1) then module.window:Hide() end
 			else
 				module.window.ProgressBar:SetValue((100 / TotalPage) * (CurPage - 1))
 			end
@@ -222,9 +216,7 @@ function module:DisplayPage(PageData)
 	else
 		module.window.Desc2:SetText('')
 	end
-	if PageData.Display then
-		PageData.Display()
-	end
+	if PageData.Display then PageData.Display() end
 	if PageData.Skip ~= nil then
 		module.window.Skip:Show()
 	else
@@ -239,23 +231,23 @@ function module:SetupWizard(RequiredPagesOnly)
 	module.window:SetFrameStrata('DIALOG')
 	module.window.Title = StdUi:Texture(module.window, 256, 64, 'Interface\\AddOns\\SpartanUI\\images\\setup\\SUISetup')
 	module.window.Title:SetPoint('TOP')
-	module.window.Title:SetAlpha(.8)
+	module.window.Title:SetAlpha(0.8)
 
 	-- Setup the Top text fields
 	module.window.SubTitle = StdUi:Label(module.window, '', 16, nil, module.window:GetWidth(), 20)
 	module.window.SubTitle:SetPoint('TOP', module.window.titlePanel, 'BOTTOM', 0, -5)
-	module.window.SubTitle:SetTextColor(.29, .18, .96, 1)
+	module.window.SubTitle:SetTextColor(0.29, 0.18, 0.96, 1)
 	module.window.SubTitle:SetJustifyH('CENTER')
 
 	module.window.Desc1 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
 	module.window.Desc1:SetPoint('TOP', module.window.SubTitle, 'BOTTOM', 0, -5)
-	module.window.Desc1:SetTextColor(1, 1, 1, .8)
+	module.window.Desc1:SetTextColor(1, 1, 1, 0.8)
 	module.window.Desc1:SetWidth(module.window:GetWidth() - 40)
 	module.window.Desc1:SetJustifyH('CENTER')
 
 	module.window.Desc2 = StdUi:Label(module.window, '', 13, nil, module.window:GetWidth())
 	module.window.Desc2:SetPoint('TOP', module.window.Desc1, 'BOTTOM', 0, -3)
-	module.window.Desc2:SetTextColor(1, 1, 1, .8)
+	module.window.Desc2:SetTextColor(1, 1, 1, 0.8)
 	module.window.Desc2:SetWidth(module.window:GetWidth() - 40)
 	module.window.Desc2:SetJustifyH('CENTER')
 
@@ -293,7 +285,7 @@ function module:SetupWizard(RequiredPagesOnly)
 
 	local function LoadNextPage()
 		--Hide anything attached to the Content frame
-		for _, child in ipairs({module.window.content:GetChildren()}) do
+		for _, child in ipairs({ module.window.content:GetChildren() }) do
 			child:Hide()
 		end
 
@@ -301,29 +293,19 @@ function module:SetupWizard(RequiredPagesOnly)
 		module:FindNextPage(RequiredPagesOnly)
 	end
 
-	module.window.Skip:SetScript(
-		'OnClick',
-		function()
-			-- Perform the Page's Custom Skip action
-			if CurrentDisplay.Skip then
-				CurrentDisplay.Skip()
-			end
+	module.window.Skip:SetScript('OnClick', function()
+		-- Perform the Page's Custom Skip action
+		if CurrentDisplay.Skip then CurrentDisplay.Skip() end
 
-			LoadNextPage()
-		end
-	)
+		LoadNextPage()
+	end)
 
-	module.window.Next:SetScript(
-		'OnClick',
-		function()
-			-- Perform the Page's Custom Next action
-			if CurrentDisplay.Next then
-				CurrentDisplay.Next()
-			end
+	module.window.Next:SetScript('OnClick', function()
+		-- Perform the Page's Custom Next action
+		if CurrentDisplay.Next then CurrentDisplay.Next() end
 
-			LoadNextPage()
-		end
-	)
+		LoadNextPage()
+	end)
 
 	module.window.Status = StdUi:Label(module.window, '', 9, nil, 60, 15)
 	module.window.Status:SetPoint('TOPRIGHT', module.window, 'TOPRIGHT', -2, -2)
@@ -331,14 +313,9 @@ function module:SetupWizard(RequiredPagesOnly)
 	-- Display first page
 	module.window.closeBtn:Hide()
 	module.window:Show()
-	module.window:HookScript(
-		'OnShow',
-		function()
-			if PageDisplayed > (TotalPageCount + 1) then
-				module.window:Hide()
-			end
-		end
-	)
+	module.window:HookScript('OnShow', function()
+		if PageDisplayed > (TotalPageCount + 1) then module.window:Hide() end
+	end)
 	module:FindNextPage(RequiredPagesOnly)
 end
 
@@ -350,25 +327,17 @@ function module:OnEnable()
 		LoadWatcher:RegisterEvent('PLAYER_LOGIN')
 		LoadWatcher:RegisterEvent('PLAYER_ENTERING_WORLD')
 	end
-	SUI:AddChatCommand(
-		'setup',
-		function()
-			if module.window then
-				module.window:Hide()
-			end
+	SUI:AddChatCommand('setup', function()
+		if module.window then module.window:Hide() end
 
-			PageDisplayOrder = 1
-			PageDisplayed = 0
-			module:SetupWizard()
-		end,
-		'Re-run the setup wizard'
-	)
+		PageDisplayOrder = 1
+		PageDisplayed = 0
+		module:SetupWizard()
+	end, 'Re-run the setup wizard')
 end
 
 local function WelcomePage()
-	if WelcomeAdded then
-		return
-	end
+	if WelcomeAdded then return end
 
 	local WelcomePage = {
 		ID = 'WelcomePage',
@@ -380,9 +349,7 @@ local function WelcomePage()
 			local profiles = {}
 			local currentProfile = SUI.SpartanUIDB:GetCurrentProfile()
 			for _, v in pairs(SUI.SpartanUIDB:GetProfiles()) do
-				if v ~= currentProfile then
-					profiles[#profiles + 1] = {text = v, value = v}
-				end
+				if v ~= currentProfile then profiles[#profiles + 1] = { text = v, value = v } end
 			end
 
 			local WelcomePage = CreateFrame('Frame', nil)
@@ -391,11 +358,11 @@ local function WelcomePage()
 
 			WelcomePage.Helm = StdUi:Texture(WelcomePage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
 			WelcomePage.Helm:SetPoint('CENTER', 0, 45)
-			WelcomePage.Helm:SetAlpha(.6)
+			WelcomePage.Helm:SetAlpha(0.6)
 
 			if not select(4, GetAddOnInfo('Bartender4')) then
 				module.window.BT4Warning = StdUi:Label(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 25, nil, module.window:GetWidth(), 40)
-				module.window.BT4Warning:SetTextColor(1, .18, .18, 1)
+				module.window.BT4Warning:SetTextColor(1, 0.18, 0.18, 1)
 				StdUi:GlueAbove(module.window.BT4Warning, module.window, 0, 20)
 			end
 
@@ -403,19 +370,14 @@ local function WelcomePage()
 
 			WelcomePage.ProfileList = StdUi:Dropdown(WelcomePage, 200, 20, profiles)
 			WelcomePage.CopyProfileButton = StdUi:Button(WelcomePage, 60, 20, 'COPY')
-			WelcomePage.CopyProfileButton:SetScript(
-				'OnClick',
-				function()
-					local ProfileSelection = module.window.content.WelcomePage.ProfileList:GetValue()
-					if not ProfileSelection or ProfileSelection == '' then
-						return
-					end
-					-- Copy profile
-					SUI.SpartanUIDB:CopyProfile(ProfileSelection)
-					-- Reload the UI
-					ReloadUI()
-				end
-			)
+			WelcomePage.CopyProfileButton:SetScript('OnClick', function()
+				local ProfileSelection = module.window.content.WelcomePage.ProfileList:GetValue()
+				if not ProfileSelection or ProfileSelection == '' then return end
+				-- Copy profile
+				SUI.SpartanUIDB:CopyProfile(ProfileSelection)
+				-- Reload the UI
+				ReloadUI()
+			end)
 			if #profiles == 0 then
 				WelcomePage.ProfileCopyLabel:Hide()
 				WelcomePage.ProfileList:Hide()
@@ -427,33 +389,27 @@ local function WelcomePage()
 			StdUi:GlueRight(WelcomePage.CopyProfileButton, WelcomePage.ProfileList, 2, 0)
 
 			WelcomePage.Import = StdUi:Button(WelcomePage, 200, 20, 'IMPORT SETTINGS')
-			WelcomePage.Import:SetScript(
-				'OnClick',
-				function()
-					local Profiles = SUI:GetModule('Handler_Profiles')
-					Profiles:ImportUI()
-				end
-			)
+			WelcomePage.Import:SetScript('OnClick', function()
+				local Profiles = SUI:GetModule('Handler_Profiles')
+				Profiles:ImportUI()
+			end)
 			WelcomePage.Import:SetPoint('TOP', WelcomePage.ProfileList, 'BOTTOM', 31, -5)
 
 			WelcomePage.SkipAllButton = StdUi:Button(WelcomePage, 150, 20, 'SKIP SETUP')
-			WelcomePage.SkipAllButton:SetScript(
-				'OnClick',
-				function()
-					module.window:Hide()
-					for _, ID in pairs(FinalPageList) do
-						if PriorityPageList[ID] then
-							PriorityPageList[ID].Display()
-							PriorityPageList[ID].Next()
-						elseif StandardPageList[ID] then
-							StandardPageList[ID].Display()
-							StandardPageList[ID].Next()
-						end
+			WelcomePage.SkipAllButton:SetScript('OnClick', function()
+				module.window:Hide()
+				for _, ID in pairs(FinalPageList) do
+					if PriorityPageList[ID] then
+						PriorityPageList[ID].Display()
+						PriorityPageList[ID].Next()
+					elseif StandardPageList[ID] then
+						StandardPageList[ID].Display()
+						StandardPageList[ID].Next()
 					end
-					DisplayRequired = false
-					module.window:Hide()
 				end
-			)
+				DisplayRequired = false
+				module.window:Hide()
+			end)
 			WelcomePage.SkipOr = StdUi:Label(WelcomePage, 'OR')
 			StdUi:GlueBelow(WelcomePage.SkipOr, WelcomePage.SkipAllButton, 0, -5)
 
@@ -469,7 +425,7 @@ local function WelcomePage()
 			module.window.Next:SetPoint('BOTTOMRIGHT', module.window.ProgressBar, 'TOPRIGHT', 0, 2)
 		end,
 		RequireDisplay = SUI.DB.SetupWizard.FirstLaunch,
-		Priority = true
+		Priority = true,
 	}
 
 	module:AddPage(WelcomePage)

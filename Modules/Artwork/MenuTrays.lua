@@ -6,7 +6,7 @@ local trayWatcher = CreateFrame('Frame')
 local settings = {}
 local trayIDs = {
 	'left',
-	'right'
+	'right',
 }
 
 local SetBarVisibility = function(side, state)
@@ -15,7 +15,7 @@ local SetBarVisibility = function(side, state)
 		['BT4BarPetBar'] = 'left',
 		['MultiCastActionBarFrame'] = 'left',
 		['BT4BarBagBar'] = 'right',
-		['BT4BarMicroMenu'] = 'right'
+		['BT4BarMicroMenu'] = 'right',
 	}
 	for k, v in pairs(bt4Positions) do
 		if _G[k] and v == side and _G[k].isMoved and not _G[k].isMoved() then
@@ -29,9 +29,7 @@ local SetBarVisibility = function(side, state)
 end
 
 local trayWatcherEvents = function()
-	if InCombatLockdown() then
-		return
-	end
+	if InCombatLockdown() then return end
 
 	-- Make sure we are in the right spot
 	module:updateOffset()
@@ -81,7 +79,7 @@ function module:SlidingTrays(StyleSettings)
 		if not module.Trays[key] then
 			local tray = CreateFrame('Frame', 'SlidingTray_' .. key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
 			tray:SetFrameStrata('BACKGROUND')
-			tray:SetAlpha(.8)
+			tray:SetAlpha(0.8)
 			tray:SetSize(400, 45)
 
 			local expanded = CreateFrame('Frame', nil, tray)

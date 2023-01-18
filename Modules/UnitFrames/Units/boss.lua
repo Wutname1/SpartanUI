@@ -12,7 +12,7 @@ local elementList = {
 	'RaidTargetIndicator',
 	'Range',
 	'ThreatIndicator',
-	'RaidRoleIndicator'
+	'RaidRoleIndicator',
 }
 
 local function GroupBuilder(holder)
@@ -50,22 +50,22 @@ local Settings = {
 	yOffset = -10,
 	elements = {
 		Portrait = {
-			enabled = false
+			enabled = false,
 		},
 		Castbar = {
-			enabled = true
+			enabled = true,
 		},
 		Health = {
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',
-				relativePoint = 'BOTTOM'
-			}
-		}
+				relativePoint = 'BOTTOM',
+			},
+		},
 	},
 	config = {
-		IsGroup = true
-	}
+		IsGroup = true,
+	},
 }
 
 UF.Unit:Add('boss', Builder, Settings, Options, GroupBuilder)

@@ -28,9 +28,9 @@ module.BarPosition = {
 			--
 			['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
 			['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193',
-			['BT4BarQueueStatus'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-107,132'
-		}
-	}
+			['BT4BarQueueStatus'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-107,132',
+		},
+	},
 }
 module.BarScale = {
 	BT4 = {
@@ -52,9 +52,9 @@ module.BarScale = {
 			['BT4BarPetBar'] = 0.6,
 			['MultiCastActionBarFrame'] = 0.6,
 			['BT4BarMicroMenu'] = 0.7,
-			['BT4BarQueueStatus'] = 0.58
-		}
-	}
+			['BT4BarQueueStatus'] = 0.58,
+		},
+	},
 }
 
 if not SUI.IsRetail then
@@ -77,7 +77,7 @@ if not SUI.IsRetail then
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
 		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193'
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193',
 	}
 
 	module.BarScale.BT4.default = {
@@ -97,7 +97,7 @@ if not SUI.IsRetail then
 		['BT4BarStanceBar'] = 0.6,
 		['BT4BarPetBar'] = 0.6,
 		['MultiCastActionBarFrame'] = 0.6,
-		['BT4BarMicroMenu'] = 0.6
+		['BT4BarMicroMenu'] = 0.6,
 	}
 end
 
@@ -110,7 +110,7 @@ function module:AddBarSystem(name, OnInitialize, OnEnable, OnDisable, Unlocker, 
 		enable = OnEnable,
 		disable = OnDisable,
 		move = Unlocker,
-		refresh = RefreshConfig
+		refresh = RefreshConfig,
 	}
 end
 
@@ -145,9 +145,9 @@ local function Options()
 				set = function(_, val)
 					DB.ActiveSystem = val
 					SUI:reloadui()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 
 	-- for name, settings in pairs(module.Registry) do
@@ -178,11 +178,11 @@ function module:OnInitialize()
 		ActiveSystem = 'Bartender4',
 		custom = {
 			scale = {
-				BT4 = {}
-			}
-		}
+				BT4 = {},
+			},
+		},
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('BarHandler', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.BarHandler.DB
 	DB = module.DB
 
@@ -191,9 +191,7 @@ function module:OnInitialize()
 	elseif SUI:IsAddonEnabled('Bartender4') and DB.ActiveSystem == 'WoW' then
 		DB.ActiveSystem = 'Bartender4'
 	end
-	if not module.Registry[DB.ActiveSystem] then
-		DB.ActiveSystem = 'Bartender4'
-	end
+	if not module.Registry[DB.ActiveSystem] then DB.ActiveSystem = 'Bartender4' end
 
 	Options()
 
@@ -210,7 +208,5 @@ function module:Refresh()
 end
 
 function module:MoveIt()
-	if module.Registry[DB.ActiveSystem].move then
-		module.Registry[DB.ActiveSystem]:move()
-	end
+	if module.Registry[DB.ActiveSystem].move then module.Registry[DB.ActiveSystem]:move() end
 end

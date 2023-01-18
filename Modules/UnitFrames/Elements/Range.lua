@@ -5,7 +5,7 @@ local UF, L = SUI.UF, SUI.L
 local function Build(frame, DB)
 	frame.Range = {
 		insideAlpha = DB.insideAlpha,
-		outsideAlpha = DB.outsideAlpha
+		outsideAlpha = DB.outsideAlpha,
 	}
 end
 
@@ -39,22 +39,22 @@ local function Options(unitName, OptionSet)
 				else
 					UF.Unit[unitName]:DisableElement('Range')
 				end
-			end
+			end,
 		},
 		insideAlpha = {
 			name = L['In range alpha'],
 			type = 'range',
 			min = 0,
 			max = 1,
-			step = .1
+			step = 0.1,
 		},
 		outsideAlpha = {
 			name = L['Out of range alpha'],
 			type = 'range',
 			min = 0,
 			max = 1,
-			step = .1
-		}
+			step = 0.1,
+		},
 	}
 end
 
@@ -62,10 +62,10 @@ end
 local Settings = {
 	enabled = true,
 	insideAlpha = 1,
-	outsideAlpha = .3,
+	outsideAlpha = 0.3,
 	config = {
-		NoBulkUpdate = true
-	}
+		NoBulkUpdate = true,
+	},
 }
 
 UF.Elements:Register('Range', Build, Update, Options, Settings)

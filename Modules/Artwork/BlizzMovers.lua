@@ -16,13 +16,10 @@ local function TalkingHead()
 
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
-		TalkingHeadFrame:HookScript(
-			'OnShow',
-			function()
-				TalkingHeadFrame:ClearAllPoints()
-				TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
-			end
-		)
+		TalkingHeadFrame:HookScript('OnShow', function()
+			TalkingHeadFrame:ClearAllPoints()
+			TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
+		end)
 	end
 
 	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
@@ -31,14 +28,11 @@ local function TalkingHead()
 		--We want the mover to be available immediately, so we load it ourselves
 		local f = CreateFrame('Frame')
 		f:RegisterEvent('PLAYER_ENTERING_WORLD')
-		f:SetScript(
-			'OnEvent',
-			function(frame, event)
-				frame:UnregisterEvent(event)
-				TalkingHead_LoadUI()
-				SetupTalkingHead()
-			end
-		)
+		f:SetScript('OnEvent', function(frame, event)
+			frame:UnregisterEvent(event)
+			TalkingHead_LoadUI()
+			SetupTalkingHead()
+		end)
 	end
 end
 
@@ -54,22 +48,16 @@ local function AltPowerBar()
 		_G['PlayerPowerBarAlt']:SetPoint('CENTER', holder, 'CENTER')
 		_G['PlayerPowerBarAlt'].ignoreFramePositionManager = true
 
-		hooksecurefunc(
-			_G['PlayerPowerBarAlt'],
-			'ClearAllPoints',
-			function(bar)
-				bar:SetPoint('CENTER', holder, 'CENTER')
-			end
-		)
+		hooksecurefunc(_G['PlayerPowerBarAlt'], 'ClearAllPoints', function(bar)
+			bar:SetPoint('CENTER', holder, 'CENTER')
+		end)
 
 		MoveIt:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power', nil, 'Blizzard UI')
 	end
 end
 
 local function WidgetPowerBarContainer()
-	if not _G['UIWidgetPowerBarContainerFrame'] then
-		return
-	end
+	if not _G['UIWidgetPowerBarContainerFrame'] then return end
 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.WidgetPowerBarContainer)
 	local holder = CreateFrame('Frame', 'WidgetPowerBarContainerHolder', UIParent)
 	holder:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -80,13 +68,9 @@ local function WidgetPowerBarContainer()
 	_G['UIWidgetPowerBarContainerFrame']:SetPoint('CENTER', holder, 'CENTER')
 	_G['UIWidgetPowerBarContainerFrame'].ignoreFramePositionManager = true
 
-	hooksecurefunc(
-		_G['UIWidgetPowerBarContainerFrame'],
-		'ClearAllPoints',
-		function(bar)
-			bar:SetPoint('CENTER', holder, 'CENTER')
-		end
-	)
+	hooksecurefunc(_G['UIWidgetPowerBarContainerFrame'], 'ClearAllPoints', function(bar)
+		bar:SetPoint('CENTER', holder, 'CENTER')
+	end)
 
 	MoveIt:CreateMover(holder, 'WidgetPowerBarContainer', 'Power bar', nil, 'Blizzard UI')
 end
@@ -166,17 +150,13 @@ local function VehicleLeaveButton()
 
 		MainMenuBarVehicleLeaveButton:ClearAllPoints()
 		MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
-		hooksecurefunc(
-			MainMenuBarVehicleLeaveButton,
-			'SetPoint',
-			function(_, _, parent)
-				if parent ~= VehicleBtnHolder then
-					MainMenuBarVehicleLeaveButton:ClearAllPoints()
-					MainMenuBarVehicleLeaveButton:SetParent(UIParent)
-					MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
-				end
+		hooksecurefunc(MainMenuBarVehicleLeaveButton, 'SetPoint', function(_, _, parent)
+			if parent ~= VehicleBtnHolder then
+				MainMenuBarVehicleLeaveButton:ClearAllPoints()
+				MainMenuBarVehicleLeaveButton:SetParent(UIParent)
+				MainMenuBarVehicleLeaveButton:SetPoint('CENTER', VehicleBtnHolder, 'CENTER')
 			end
-		)
+		end)
 	end
 
 	-- Delay this so unit frames have been generated
@@ -184,9 +164,7 @@ local function VehicleLeaveButton()
 end
 
 function module.BlizzMovers()
-	if SUI.IsClassic then
-		return
-	end
+	if SUI.IsClassic then return end
 
 	VehicleLeaveButton()
 	VehicleSeatIndicator()

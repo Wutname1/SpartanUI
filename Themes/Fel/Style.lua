@@ -15,7 +15,7 @@ local function Options()
 			MinimapEngulfed = {
 				name = L['Douse the flames'],
 				type = 'toggle',
-				order = .1,
+				order = 0.1,
 				desc = L['Is it getting hot in here?'],
 				get = function(info)
 					return not SUI.DB.Styles.Fel.Minimap.engulfed
@@ -24,9 +24,9 @@ local function Options()
 					print(val)
 					SUI.DB.Styles.Fel.Minimap.engulfed = not val or false
 					module:MiniMap()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
 end
 
@@ -39,7 +39,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
 		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
+		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
 	}
 
 	-- Unitframes
@@ -49,40 +49,40 @@ function module:OnInitialize()
 		artwork = {
 			top = {
 				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-				TexCoord = {0.1796875, 0.736328125, 0, 0.099609375},
-				heightScale = .25,
+				TexCoord = { 0.1796875, 0.736328125, 0, 0.099609375 },
+				heightScale = 0.25,
 				yScale = -0.05,
-				alpha = .8
+				alpha = 0.8,
 			},
 			bg = {
 				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-				TexCoord = {.02, .385, .45, .575},
-				PVPAlpha = .4
+				TexCoord = { 0.02, 0.385, 0.45, 0.575 },
+				PVPAlpha = 0.4,
 			},
 			bottom = {
 				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\UnitFrames',
-				heightScale = .115,
+				heightScale = 0.115,
 				yScale = 0.0158,
-				TexCoord = {0.1796875, 0.736328125, 0.197265625, 0.244140625},
-				PVPAlpha = .8
-			}
-		}
+				TexCoord = { 0.1796875, 0.736328125, 0.197265625, 0.244140625 },
+				PVPAlpha = 0.8,
+			},
+		},
 	}
 	UF.Style:Register('Fel', ufsettings)
 
 	local minimapSettings = {
-		size = {156, 156},
+		size = { 156, 156 },
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-			size = {220, 220},
-			position = 'CENTER,Minimap,CENTER,5,23'
+			size = { 220, 220 },
+			position = 'CENTER,Minimap,CENTER,5,23',
 		},
 		coords = {
 			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-			scale = 1.2
+			scale = 1.2,
 		},
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
-		engulfed = true
+		engulfed = true,
 	}
 	SUI:GetModule('Module_Minimap'):Register('Fel', minimapSettings)
 
@@ -91,7 +91,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DB.Artwork.Style ~= 'Fel') then
+	if SUI.DB.Artwork.Style ~= 'Fel' then
 		module:Disable()
 	else
 		module:EnableArtwork()
@@ -107,19 +107,15 @@ end
 --	Module Calls
 function module:BuffLoc(_, parent)
 	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - (SUI.DB.BuffSettings.offset))
+	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
 end
 
 function module:SetupVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then
-		RegisterStateDriver(SUI_Art_Fel, 'visibility', '[overridebar][vehicleui] hide; show')
-	end
+	if SUI.DB.Artwork.VehicleUI then RegisterStateDriver(SUI_Art_Fel, 'visibility', '[overridebar][vehicleui] hide; show') end
 end
 
 function module:RemoveVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then
-		UnregisterStateDriver(SUI_Art_Fel, 'visibility')
-	end
+	if SUI.DB.Artwork.VehicleUI then UnregisterStateDriver(SUI_Art_Fel, 'visibility') end
 end
 
 function module:CreateArtwork()
@@ -148,39 +144,34 @@ function module:CreateArtwork()
 end
 
 function module:EnableArtwork()
-	hooksecurefunc(
-		'UIParent_ManageFramePositions',
-		function()
-			if TutorialFrameAlertButton then
-				TutorialFrameAlertButton:SetParent(Minimap)
-				TutorialFrameAlertButton:ClearAllPoints()
-				TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
-			end
-			if CastingBarFrame then
-				CastingBarFrame:ClearAllPoints()
-				CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Fel, 'TOP', 0, 90)
-			end
+	hooksecurefunc('UIParent_ManageFramePositions', function()
+		if TutorialFrameAlertButton then
+			TutorialFrameAlertButton:SetParent(Minimap)
+			TutorialFrameAlertButton:ClearAllPoints()
+			TutorialFrameAlertButton:SetPoint('CENTER', Minimap, 'TOP', -2, 30)
 		end
-	)
+		if CastingBarFrame then
+			CastingBarFrame:ClearAllPoints()
+			CastingBarFrame:SetPoint('BOTTOM', SUI_Art_Fel, 'TOP', 0, 90)
+		end
+	end)
 
 	module:SetupVehicleUI()
 
-	if SUI:IsModuleEnabled('Minimap') then
-		module:MiniMap()
-	end
+	if SUI:IsModuleEnabled('Minimap') then module:MiniMap() end
 end
 
 -- Minimap
 function module:MiniMap()
 	local enfulfed = {
 		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-		size = {220, 220},
-		position = 'CENTER,Minimap,CENTER,5,23'
+		size = { 220, 220 },
+		position = 'CENTER,Minimap,CENTER,5,23',
 	}
 	local calmed = {
 		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Calmed',
-		size = {162, 162},
-		position = 'CENTER,Minimap,CENTER,3,-1'
+		size = { 162, 162 },
+		position = 'CENTER,Minimap,CENTER,3,-1',
 	}
 
 	if SUI.DB.Styles.Fel.Minimap.engulfed then

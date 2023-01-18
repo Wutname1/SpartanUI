@@ -9,9 +9,7 @@ local MonitoredIds = {}
 function Auras:Filter(element, unit, data, rules)
 	---@param msg any
 	local function debug(msg)
-		if SUI:IsInTable(MonitoredIds, data.spellId) and SUI.releaseType == 'DEV Build' then
-			print(msg)
-		end
+		if SUI:IsInTable(MonitoredIds, data.spellId) and SUI.releaseType == 'DEV Build' then print(msg) end
 	end
 	local ShouldDisplay = false
 	element.displayReasons[data.spellId] = {}
@@ -93,12 +91,9 @@ end
 ---@param elementName string
 ---@param button any
 function Auras:PostCreateButton(elementName, button)
-	button:SetScript(
-		'OnClick',
-		function()
-			Auras:OnClick(button, elementName)
-		end
-	)
+	button:SetScript('OnClick', function()
+		Auras:OnClick(button, elementName)
+	end)
 	--Remove game cooldown text
 	button.Cooldown:SetHideCountdownNumbers(true)
 
@@ -157,20 +152,14 @@ local function CreateAddToFilterWindow(button, elementName)
 	group:AddChild(Blacklist)
 
 	--Set Callbacks
-	Whitelist:SetCallback(
-		'OnValueChanged',
-		function(_, _, value)
-			Whitelist:SetValue(value)
-			Blacklist:SetValue(not value)
-		end
-	)
-	Blacklist:SetCallback(
-		'OnValueChanged',
-		function(_, _, value)
-			Blacklist:SetValue(value)
-			Whitelist:SetValue(not value)
-		end
-	)
+	Whitelist:SetCallback('OnValueChanged', function(_, _, value)
+		Whitelist:SetValue(value)
+		Blacklist:SetValue(not value)
+	end)
+	Blacklist:SetCallback('OnValueChanged', function(_, _, value)
+		Blacklist:SetValue(value)
+		Whitelist:SetValue(not value)
+	end)
 
 	--UnitFrameListing to add buff to
 	local scrollcontainer = AceGUI:Create('SimpleGroup') ---@type AceGUISimpleGroup
@@ -191,9 +180,7 @@ local function CreateAddToFilterWindow(button, elementName)
 		local check = AceGUI:Create('CheckBox') ---@type AceGUICheckBox
 		check:SetLabel(config.displayName or name)
 
-		if button.unit == name then
-			check:SetValue(true)
-		end
+		if button.unit == name then check:SetValue(true) end
 
 		scroll:AddChild(check)
 		window.units[name] = check
@@ -203,23 +190,20 @@ local function CreateAddToFilterWindow(button, elementName)
 	local Save = AceGUI:Create('Button') ---@type AceGUIButton
 	Save:SetText('Save')
 	Save:SetParent(window)
-	Save.frame:HookScript(
-		'OnClick',
-		function()
-			for frameName, check in pairs(window.units) do
-				if check:GetValue() then
-					local mode = Whitelist:GetValue() and 'whitelist' or 'blacklist'
+	Save.frame:HookScript('OnClick', function()
+		for frameName, check in pairs(window.units) do
+			if check:GetValue() then
+				local mode = Whitelist:GetValue() and 'whitelist' or 'blacklist'
 
-					UF.CurrentSettings[frameName].elements[elementName].rules[mode][button.data.spellId] = true
-					UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].rules[mode][button.data.spellId] = true
+				UF.CurrentSettings[frameName].elements[elementName].rules[mode][button.data.spellId] = true
+				UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName].rules[mode][button.data.spellId] = true
 
-					UF.Unit[frameName]:ElementUpdate(elementName)
-				end
+				UF.Unit[frameName]:ElementUpdate(elementName)
 			end
-
-			window:Hide()
 		end
-	)
+
+		window:Hide()
+	end)
 	Save.frame:Show()
 	Save.frame:SetPoint('TOP', scrollcontainer.frame, 'BOTTOM', 0, -10)
 	window.content.Save = Save
@@ -229,9 +213,7 @@ end
 
 function Auras:OnClick(button, elementName)
 	local keyDown = IsShiftKeyDown() and 'SHIFT' or IsAltKeyDown() and 'ALT' or IsControlKeyDown() and 'CTRL'
-	if not keyDown then
-		return
-	end
+	if not keyDown then return end
 
 	local data = button.data ---@type UnitAuraInfo
 
@@ -259,16 +241,16 @@ end
 ---@param index integer
 function Auras.PostUpdateAura(element, unit, button, index)
 	local _, _, _, _, duration, expiration, owner, canStealOrPurge = UnitAura(unit, index, button.filter)
-	if (duration and duration > 0) then
+	if duration and duration > 0 then
 		button.expiration = expiration - GetTime()
 	else
 		button.expiration = math.huge
 	end
 
 	if button.SetBackdrop then
-		if (unit == 'target' and canStealOrPurge) then
+		if unit == 'target' and canStealOrPurge then
 			button:SetBackdropColor(0, 1 / 2, 1 / 2)
-		elseif (owner ~= 'player') then
+		elseif owner ~= 'player' then
 			button:SetBackdropColor(0, 0, 0)
 		end
 	end

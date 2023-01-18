@@ -18,37 +18,34 @@ local function Builder(frame)
 	UF.Elements:Build(frame, 'ThreatIndicator', elementDB['ThreatIndicator'])
 	UF.Elements:Build(frame, 'Range', elementDB['Range'])
 
-	if (not SUI.IsRetail) then
-		UF.Elements:Build(frame, 'HappinessIndicator', elementDB['HappinessIndicator'])
-	end
+	if not SUI.IsRetail then UF.Elements:Build(frame, 'HappinessIndicator', elementDB['HappinessIndicator']) end
 end
 
-local function Options()
-end
+local function Options() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
 	width = 100,
 	elements = {
 		Health = {
-			height = 30
+			height = 30,
 		},
 		Power = {
 			height = 5,
 			text = {
 				['1'] = {
-					enabled = false
-				}
-			}
+					enabled = false,
+				},
+			},
 		},
 		Name = {
 			enabled = true,
 			height = 10,
 			position = {
-				y = 0
-			}
-		}
-	}
+				y = 0,
+			},
+		},
+	},
 }
 
 UF.Unit:Add('pet', Builder, Settings)

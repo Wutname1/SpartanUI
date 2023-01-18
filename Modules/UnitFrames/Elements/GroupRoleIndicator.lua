@@ -8,11 +8,11 @@ local function Build(frame)
 	frame.GroupRoleIndicator:Hide()
 	function frame.GroupRoleIndicator:PostUpdate(role)
 		local DB = frame.GroupRoleIndicator.DB
-		if (DB.ShowTank and role == 'TANK') then
+		if DB.ShowTank and role == 'TANK' then
 			self:Show()
-		elseif (DB.ShowHealer and role == 'HEALER') then
+		elseif DB.ShowHealer and role == 'HEALER' then
 			self:Show()
-		elseif (DB.ShowDPS and role == 'DAMAGER') then
+		elseif DB.ShowDPS and role == 'DAMAGER' then
 			self:Show()
 		else
 			-- if DB.ShowDPS and role == '' then
@@ -47,17 +47,17 @@ local function Options(unitName, OptionSet)
 		args = {
 			ShowTank = {
 				name = 'Show tank',
-				type = 'toggle'
+				type = 'toggle',
 			},
 			ShowHealer = {
 				name = 'Show healer',
-				type = 'toggle'
+				type = 'toggle',
 			},
 			ShowDPS = {
 				name = 'Show DPS',
-				type = 'toggle'
-			}
-		}
+				type = 'toggle',
+			},
+		},
 	}
 end
 
@@ -65,19 +65,19 @@ end
 local Settings = {
 	enabled = true,
 	size = 18,
-	alpha = .75,
+	alpha = 0.75,
 	ShowTank = true,
 	ShowHealer = true,
 	ShowDPS = true,
 	position = {
 		anchor = 'TOPRIGHT',
 		x = 0,
-		y = 10
+		y = 10,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Group Role'
-	}
+		DisplayName = 'Group Role',
+	},
 }
 
 UF.Elements:Register('GroupRoleIndicator', Build, nil, Options, Settings)

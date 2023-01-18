@@ -23,7 +23,7 @@ local UFPositionDefaults = {
 	['partypet'] = 'BOTTOMRIGHT,frame,BOTTOMLEFT,-2,0',
 	['partytarget'] = 'LEFT,frame,RIGHT,2,0',
 	['raid'] = 'TOPLEFT,UIParent,TOPLEFT,20,-40',
-	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191'
+	['arena'] = 'RIGHT,UIParent,RIGHT,-366,191',
 }
 UF.Artwork = {}
 UF.MountIds = {}
@@ -51,11 +51,9 @@ function UF:IsFriendlyFrame(frameName)
 		'party',
 		'partypet',
 		'target',
-		'targettarget'
+		'targettarget',
 	}
-	if SUI:IsInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then
-		return true
-	end
+	if SUI:IsInTable(FriendlyFrame, frameName) or frameName:match('party') or frameName:match('raid') then return true end
 	return false
 end
 
@@ -64,9 +62,7 @@ function UF:PositionFrame(unit)
 	local positionData = UFPositionDefaults
 	-- If artwork is enabled load the art's position data if supplied
 	local posData = UF.Style:Get(SUI.DB.Artwork.Style).positions
-	if SUI:IsModuleEnabled('Artwork') and posData then
-		positionData = SUI:CopyData(posData, UFPositionDefaults)
-	end
+	if SUI:IsModuleEnabled('Artwork') and posData then positionData = SUI:CopyData(posData, UFPositionDefaults) end
 
 	if unit then
 		local UnitFrame = UF.Unit:Get(unit)
@@ -121,18 +117,16 @@ local function LoadDB()
 end
 
 function UF:OnInitialize()
-	if SUI:IsModuleDisabled('UnitFrames') then
-		return
-	end
+	if SUI:IsModuleDisabled('UnitFrames') then return end
 
 	-- Setup Database
 	local defaults = {
 		profile = {
 			Style = 'War',
 			UserSettings = {
-				['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {['**'] = {}}}}}}
-			}
-		}
+				['**'] = { ['**'] = { ['**'] = { ['**'] = { ['**'] = { ['**'] = {} } } } } },
+			},
+		},
 	}
 	UF.Database = SUI.SpartanUIDB:RegisterNamespace('UnitFrames', defaults)
 	UF.DB = UF.Database.profile
@@ -148,9 +142,7 @@ function UF:OnInitialize()
 end
 
 function UF:OnEnable()
-	if SUI:IsModuleDisabled('UnitFrames') then
-		return
-	end
+	if SUI:IsModuleDisabled('UnitFrames') then return end
 
 	-- Spawn Frames
 	UF:SpawnFrames()
@@ -160,9 +152,7 @@ function UF:OnEnable()
 
 	-- Create movers
 	for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
-		if not config.isChild then
-			MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames')
-		end
+		if not config.isChild then MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames') end
 	end
 
 	-- Build options
@@ -170,33 +160,27 @@ function UF:OnEnable()
 
 	if EditModeManagerFrame then
 		local CheckedItems = {}
-		local frames = {['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party'}
+		local frames = { ['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party' }
 		for k, v in pairs(frames) do
-			EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames'].Button:HookScript(
-				'OnClick',
-				function(...)
-					if EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:IsControlChecked() then
-						CheckedItems[k] = v
-					else
-						CheckedItems[k] = nil
-					end
-
-					SUI.MoveIt:MoveIt(k)
+			EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames'].Button:HookScript('OnClick', function(...)
+				if EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:IsControlChecked() then
+					CheckedItems[k] = v
+				else
+					CheckedItems[k] = nil
 				end
-			)
+
+				SUI.MoveIt:MoveIt(k)
+			end)
 		end
 
-		EditModeManagerFrame:HookScript(
-			'OnHide',
-			function()
-				for k, v in pairs(CheckedItems) do
-					EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:SetControlChecked(false)
-					SUI.MoveIt:MoveIt(k)
-				end
-				MoveIt.MoverWatcher:Hide()
-				MoveIt.MoveEnabled = false
+		EditModeManagerFrame:HookScript('OnHide', function()
+			for k, v in pairs(CheckedItems) do
+				EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:SetControlChecked(false)
+				SUI.MoveIt:MoveIt(k)
 			end
-		)
+			MoveIt.MoverWatcher:Hide()
+			MoveIt.MoveEnabled = false
+		end)
 	end
 end
 
@@ -225,15 +209,13 @@ end
 
 ---@param scale integer
 function UF:ScaleFrames(scale)
-	if SUI:IsModuleDisabled('MoveIt') then
-		return
-	end
+	if SUI:IsModuleDisabled('MoveIt') then return end
 
 	for unitName, config in pairs(UF.Unit:GetBuiltFrameList()) do
 		if not config.isChild then
 			local UFrame = UF.Unit:Get(unitName)
 			if UFrame and UFrame.mover then
-				local newScale = UFrame.mover.defaultScale * (scale + .08) -- Add .08 to use .92 (the default scale) as 1.
+				local newScale = UFrame.mover.defaultScale * (scale + 0.08) -- Add .08 to use .92 (the default scale) as 1.
 				UFrame:scale(newScale)
 			end
 		end

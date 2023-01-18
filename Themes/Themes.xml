@@ -1,10 +1,10 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-    <Include file="War\Style.xml"/>
-    <Include file="Classic\Style.xml"/>
-    <Include file="Arcane\Style.xml"/>
-    <Include file="Digital\Style.xml"/>
-    <Include file="Fel\Style.xml"/>
-    <Include file="Minimal\Style.xml"/>
-    <Include file="Transparent\Style.xml"/>
-    <Include file="Tribal\Style.xml"/>
+	<Include file="War\Style.xml"/>
+	<Include file="Classic\Style.xml"/>
+	<Include file="Arcane\Style.xml"/>
+	<Include file="Digital\Style.xml"/>
+	<Include file="Fel\Style.xml"/>
+	<Include file="Minimal\Style.xml"/>
+	<Include file="Transparent\Style.xml"/>
+	<Include file="Tribal\Style.xml"/>
 </Ui>

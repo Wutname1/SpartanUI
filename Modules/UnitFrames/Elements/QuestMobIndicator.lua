@@ -23,12 +23,12 @@ end
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	position = {
-		anchor = 'RIGHT'
+		anchor = 'RIGHT',
 	},
 	config = {
 		DisplayName = 'Quest',
-		type = 'Indicator'
-	}
+		type = 'Indicator',
+	},
 }
 
 UF.Elements:Register('QuestMobIndicator', Build, nil, Options, Settings)

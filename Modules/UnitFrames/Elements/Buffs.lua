@@ -19,9 +19,7 @@ end
 local function SizeChange(element)
 	local DB = element.DB
 	local w = (DB.number / DB.rows)
-	if w < 1.5 then
-		w = 1.5
-	end
+	if w < 1.5 then w = 1.5 end
 	element:SetSize((DB.size + DB.spacing) * w, (DB.spacing + DB.size) * DB.rows)
 end
 
@@ -55,7 +53,8 @@ local function Build(frame, DB)
 		modRate,
 		effect1,
 		effect2,
-		effect3)
+		effect3
+	)
 		---@type UnitAuraInfo
 		local data = {
 			spellId = spellID,
@@ -70,7 +69,7 @@ local function Build(frame, DB)
 			debuffType = debuffType,
 			isStealable = isStealable,
 			canApplyAura = canApplyAura,
-			sourceUnit = source
+			sourceUnit = source,
 		}
 		button.data = data
 		button.unit = unit
@@ -94,7 +93,7 @@ local function Update(frame, settings)
 	local element = frame.Buffs
 	local DB = settings or element.DB
 
-	if (DB.enabled) then
+	if DB.enabled then
 		element:Show()
 	else
 		element:Hide()
@@ -129,19 +128,19 @@ local Settings = {
 	rows = 2,
 	position = {
 		anchor = 'TOPLEFT',
-		relativePoint = 'BOTTOMLEFT'
+		relativePoint = 'BOTTOMLEFT',
 	},
 	config = {
-		type = 'Auras'
+		type = 'Auras',
 	},
 	rules = {
 		duration = {
 			enabled = true,
 			maxTime = 180,
-			minTime = 1
+			minTime = 1,
 		},
 		isBossAura = true,
-		showPlayers = true
-	}
+		showPlayers = true,
+	},
 }
 UF.Elements:Register('Buffs', Build, Update, Options, Settings)

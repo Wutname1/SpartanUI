@@ -5,23 +5,23 @@ local Images = {
 	Alliance = {
 		bg = {
 			Texture = 'Interface\\addons\\SpartanUI\\Images\\war\\UnitFrames',
-			Coords = {0, 0.458984375, 0.74609375, 1} --left, right, top, bottom
+			Coords = { 0, 0.458984375, 0.74609375, 1 }, --left, right, top, bottom
 		},
 		flair = {
 			Texture = 'Interface\\addons\\SpartanUI\\Images\\war\\UnitFrames',
-			Coords = {0.03125, 0.427734375, 0, 0.421875}
-		}
+			Coords = { 0.03125, 0.427734375, 0, 0.421875 },
+		},
 	},
 	Horde = {
 		bg = {
 			Texture = 'Interface\\addons\\SpartanUI\\Images\\war\\UnitFrames',
-			Coords = {0.572265625, 0.96875, 0.74609375, 1} --left, right, top, bottom
+			Coords = { 0.572265625, 0.96875, 0.74609375, 1 }, --left, right, top, bottom
 		},
 		flair = {
 			Texture = 'Interface\\addons\\SpartanUI\\Images\\war\\UnitFrames',
-			Coords = {0.541015625, 1, 0, 0.421875}
-		}
-	}
+			Coords = { 0.541015625, 1, 0, 0.421875 },
+		},
+	},
 }
 local BarTexture = 'Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2'
 local NameplateList = {}
@@ -35,7 +35,7 @@ local ElementList = {
 	'RaidTargetIndicator',
 	'QuestMobIndicator',
 	'PvPIndicator',
-	'ThreatIndicator'
+	'ThreatIndicator',
 }
 
 local UpdateElementState = function(frame)
@@ -52,9 +52,7 @@ local UpdateElementState = function(frame)
 		end
 	end
 	-- Position Updates
-	if (InCombatLockdown()) then
-		return
-	end
+	if InCombatLockdown() then return end
 
 	for _, elementName in ipairs(ElementList) do
 		local element = frame[elementName]
@@ -64,12 +62,8 @@ local UpdateElementState = function(frame)
 		element:SetAlpha(data.alpha)
 		element:SetScale(data.scale)
 
-		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then
-			return
-		end
-		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' then
-			element:SetDrawLayer('BORDER', 7)
-		end
+		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
+		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' then element:SetDrawLayer('BORDER', 7) end
 
 		-- Positioning
 		element:ClearAllPoints()
@@ -111,9 +105,7 @@ local UpdateElementState = function(frame)
 		end
 
 		-- Call the elements update function
-		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then
-			frame[elementName].ForceUpdate(element)
-		end
+		if frame[elementName] and data.enabled and frame[elementName].ForceUpdate then frame[elementName].ForceUpdate(element) end
 	end
 
 	-- Power
@@ -143,13 +135,13 @@ local PlayerPowerIcons = function(frame, attachPoint)
 		for i = 1, 6 do
 			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
 			frame.Runes[i]:SetSize((frame.Health:GetWidth() - 10) / 6, 4)
-			if (i == 1) then
+			if i == 1 then
 				frame.Runes[i]:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, 0)
 			else
 				frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
 			end
 			frame.Runes[i]:SetStatusBarTexture('Interface\\AddOns\\SpartanUI\\images\\statusbars\\Smoothv2')
-			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+			frame.Runes[i]:SetStatusBarColor(0, 0.39, 0.63, 1)
 
 			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
 			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
@@ -159,21 +151,16 @@ local PlayerPowerIcons = function(frame, attachPoint)
 			frame.Runes[i].bg.multiplier = 0.64
 			frame.Runes[i]:Hide()
 
-			DeathKnightResourceOverlayFrame:HookScript(
-				'OnShow',
-				function()
-					DeathKnightResourceOverlayFrame:Hide()
-				end
-			)
+			DeathKnightResourceOverlayFrame:HookScript('OnShow', function()
+				DeathKnightResourceOverlayFrame:Hide()
+			end)
 		end
 	else
 		frame.ComboPoints = frame:CreateFontString(nil, 'BORDER')
 		frame.ComboPoints:SetPoint('TOPLEFT', frame[attachPoint], 'BOTTOMLEFT', 0, -2)
 		local MaxPower, ClassPower = 5, {}
 
-		if (select(2, UnitClass('player')) == 'MONK') then
-			MaxPower = 6
-		end
+		if select(2, UnitClass('player')) == 'MONK' then MaxPower = 6 end
 
 		for index = 1, MaxPower do
 			local Bar = CreateFrame('StatusBar', nil, frame)
@@ -181,7 +168,7 @@ local PlayerPowerIcons = function(frame, attachPoint)
 
 			-- Position and size.
 			Bar:SetSize(((frame.Health:GetWidth() - 10) / MaxPower), 6)
-			if (index == 1) then
+			if index == 1 then
 				Bar:SetPoint('TOPLEFT', frame.ComboPoints, 'TOPLEFT')
 			else
 				Bar:SetPoint('LEFT', ClassPower[index - 1], 'RIGHT', 2, 0)
@@ -211,15 +198,9 @@ local NamePlateFactory = function(frame, unit)
 
 		local elementsDB = module.DB.elements
 		local height = 0
-		if elementsDB.Health.enabled then
-			height = height + elementsDB.Health.height
-		end
-		if elementsDB.Power.enabled then
-			height = height + elementsDB.Power.height
-		end
-		if elementsDB.Castbar.enabled then
-			height = height + elementsDB.Castbar.height
-		end
+		if elementsDB.Health.enabled then height = height + elementsDB.Health.height end
+		if elementsDB.Power.enabled then height = height + elementsDB.Power.height end
+		if elementsDB.Castbar.enabled then height = height + elementsDB.Castbar.height end
 
 		frame:SetSize(module.DB.width, height)
 		frame:SetPoint('CENTER', 0, 0)
@@ -234,12 +215,12 @@ local NamePlateFactory = function(frame, unit)
 		frame.bg.solid = frame:CreateTexture(nil, 'BACKGROUND')
 		frame.bg.solid:SetAllPoints()
 		frame.bg.solid:SetTexture(BarTexture)
-		frame.bg.solid:SetVertexColor(0, 0, 0, .5)
+		frame.bg.solid:SetVertexColor(0, 0, 0, 0.5)
 
 		frame.bg.artwork.Neutral = frame:CreateTexture(nil, 'BACKGROUND')
 		frame.bg.artwork.Neutral:SetAllPoints()
 		frame.bg.artwork.Neutral:SetTexture(BarTexture)
-		frame.bg.artwork.Neutral:SetVertexColor(0, 0, 0, .6)
+		frame.bg.artwork.Neutral:SetVertexColor(0, 0, 0, 0.6)
 
 		frame.bg.artwork.Alliance = frame:CreateTexture(nil, 'BACKGROUND')
 		frame.bg.artwork.Alliance:SetAllPoints()
@@ -255,12 +236,8 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Name
 		local nameString = ''
-		if module.DB.ShowLevel then
-			nameString = '[difficulty][level]'
-		end
-		if module.DB.ShowName then
-			nameString = nameString .. ' [SUI_ColorClass][name]'
-		end
+		if module.DB.ShowLevel then nameString = '[difficulty][level]' end
+		if module.DB.ShowName then nameString = nameString .. ' [SUI_ColorClass][name]' end
 		if nameString ~= '' then
 			frame.Name = frame:CreateFontString(nil, 'OVERLAY')
 			SUI.Font:Format(frame.Name, 8, 'Nameplate')
@@ -284,13 +261,11 @@ local NamePlateFactory = function(frame, unit)
 		UF.Elements:Build(frame, 'PvPIndicator', elementsDB.PvPIndicator)
 		UF.Elements:Build(frame, 'TargetIndicator', elementsDB.TargetIndicator)
 		frame.PvPIndicator.Override = function(self, event, unit)
-			if (unit ~= self.unit) then
-				return
-			end
+			if unit ~= self.unit then return end
 			local factionColor = {
-				['Alliance'] = {0, 0, 1, 0.3},
-				['Horde'] = {1, 0, 0, 0.3},
-				['Neutral'] = {0, 0, 0, 0.5}
+				['Alliance'] = { 0, 0, 1, 0.3 },
+				['Horde'] = { 1, 0, 0, 0.3 },
+				['Neutral'] = { 0, 0, 0, 0.5 },
 			}
 			local settings = module.DB.elements
 			self.bg.solid:Hide()
@@ -298,9 +273,7 @@ local NamePlateFactory = function(frame, unit)
 			self.bg.artwork.Alliance:Hide()
 			self.bg.artwork.Horde:Hide()
 
-			if not settings.Background.enabled then
-				return
-			end
+			if not settings.Background.enabled then return end
 
 			local factionGroup = UnitFactionGroup(unit) or 'Neutral'
 			if settings.Background.type == 'solid' then
@@ -311,7 +284,7 @@ local NamePlateFactory = function(frame, unit)
 					local colors = SUIUF.colors.reaction[UnitReaction(unit, 'player')]
 					if colors then
 						if colors[1] == 0.9 and colors[2] == 0.7 then
-							self.bg.solid:SetVertexColor(.5, .5, .5, .5)
+							self.bg.solid:SetVertexColor(0.5, 0.5, 0.5, 0.5)
 						else
 							self.bg.solid:SetVertexColor(colors[1], colors[2], colors[3])
 						end
@@ -323,7 +296,7 @@ local NamePlateFactory = function(frame, unit)
 				end
 				self.bg.solid:SetAlpha(settings.Background.alpha)
 			else
-				if (factionGroup) then
+				if factionGroup then
 					self.bg.artwork[factionGroup]:Show()
 					self.bg.artwork[factionGroup]:SetAlpha(settings.Background.alpha)
 				else
@@ -338,7 +311,7 @@ local NamePlateFactory = function(frame, unit)
 		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
 		Auras:SetSize(frame:GetWidth(), 16)
 		if UnitReaction(unit, 'player') <= 2 then
-			if (module.DB.onlyShowPlayer and module.DB.showStealableBuffs) then
+			if module.DB.onlyShowPlayer and module.DB.showStealableBuffs then
 				Auras.showStealableBuffs = module.DB.showStealableBuffs
 			else
 				Auras.onlyShowPlayer = module.DB.onlyShowPlayer
@@ -353,7 +326,7 @@ local NamePlateFactory = function(frame, unit)
 		-- Rare Elite indicator
 		local RareElite = frame:CreateTexture(nil, 'BACKGROUND', nil, -2)
 		RareElite:SetTexture('Interface\\Addons\\SpartanUI\\Images\\status-glow')
-		RareElite:SetAlpha(.6)
+		RareElite:SetAlpha(0.6)
 		RareElite:SetAllPoints(frame)
 		frame.RareElite = RareElite
 
@@ -365,12 +338,12 @@ local NamePlateFactory = function(frame, unit)
 			WidgetXPBar:SetStatusBarTexture(BarTexture)
 			WidgetXPBar:SetSize(frame:GetWidth(), elementsDB.XPBar.height)
 			WidgetXPBar:SetPoint('TOP', frame, 'BOTTOM', 0, elementsDB.XPBar.Offset)
-			WidgetXPBar:SetStatusBarColor(0, .5, 1, .7)
+			WidgetXPBar:SetStatusBarColor(0, 0.5, 1, 0.7)
 
 			WidgetXPBar.bg = WidgetXPBar:CreateTexture(nil, 'BACKGROUND')
 			WidgetXPBar.bg:SetAllPoints()
 			WidgetXPBar.bg:SetTexture(BarTexture)
-			WidgetXPBar.bg:SetVertexColor(0, 0, 0, .5)
+			WidgetXPBar.bg:SetVertexColor(0, 0, 0, 0.5)
 
 			WidgetXPBar.Rank = WidgetXPBar:CreateFontString()
 			WidgetXPBar.Rank:SetJustifyH('LEFT')
@@ -407,9 +380,7 @@ local NamePlateFactory = function(frame, unit)
 end
 
 local NameplateCallback = function(self, event, unit)
-	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then
-		return
-	end
+	if not self or not unit or event == 'NAME_PLATE_UNIT_REMOVED' then return end
 
 	local elementDB = module.DB.elements
 	if event == 'NAME_PLATE_UNIT_ADDED' then
@@ -467,9 +438,7 @@ end
 
 function module:UpdateNameplates()
 	for k, v in pairs(NameplateList) do
-		if v then
-			UpdateElementState(_G[k])
-		end
+		if v then UpdateElementState(_G[k]) end
 	end
 end
 
@@ -497,7 +466,7 @@ function module:OnInitialize()
 					FrameStrata = nil,
 					bg = {
 						enabled = false,
-						color = false
+						color = false,
 					},
 					text = {
 						['**'] = {
@@ -509,34 +478,34 @@ function module:OnInitialize()
 							position = {
 								anchor = 'CENTER',
 								x = 0,
-								y = 0
-							}
+								y = 0,
+							},
 						},
 						['1'] = {
 							enabled = false,
-							position = {}
+							position = {},
 						},
 						['2'] = {
 							enabled = false,
-							position = {}
-						}
+							position = {},
+						},
 					},
 					position = {
 						anchor = 'CENTER',
 						x = 0,
-						y = 0
-					}
+						y = 0,
+					},
 				},
 				Auras = {},
 				Background = {
 					type = 'solid',
 					colorMode = 'reaction',
-					alpha = 0.35
+					alpha = 0.35,
 				},
 				DispelHighlight = {},
 				RareElite = {},
 				Name = {
-					SetJustifyH = 'CENTER'
+					SetJustifyH = 'CENTER',
 				},
 				Health = {
 					enabled = true,
@@ -550,7 +519,7 @@ function module:OnInitialize()
 					colorDisconnected = true,
 					bg = {
 						enabled = true,
-						color = {1, 1, 1, .2}
+						color = { 1, 1, 1, 0.2 },
 					},
 					text = {
 						['1'] = {
@@ -559,10 +528,10 @@ function module:OnInitialize()
 							position = {
 								anchor = 'CENTER',
 								x = 0,
-								y = 0
-							}
-						}
-					}
+								y = 0,
+							},
+						},
+					},
 				},
 				Power = {
 					enabled = true,
@@ -571,21 +540,21 @@ function module:OnInitialize()
 					texture = 'SpartanUI Default',
 					bg = {
 						enabled = true,
-						color = {1, 1, 1, .2}
+						color = { 1, 1, 1, 0.2 },
 					},
 					text = {
 						['1'] = {
 							enabled = false,
-							text = '[power:current-formatted] / [power:max-formatted]'
+							text = '[power:current-formatted] / [power:max-formatted]',
 						},
 						['2'] = {
 							enabled = false,
-							text = '[perpp]%'
-						}
-					}
+							text = '[perpp]%',
+						},
+					},
 				},
 				PvPIndicator = {
-					size = 10
+					size = 10,
 				},
 				ThreatIndicator = {},
 				Castbar = {
@@ -596,11 +565,11 @@ function module:OnInitialize()
 					interruptable = true,
 					FlashOnInterruptible = true,
 					latency = false,
-					InterruptSpeed = .1,
+					InterruptSpeed = 0.1,
 					texture = 'SpartanUI Default',
 					bg = {
 						enabled = true,
-						color = {1, 1, 1, .2}
+						color = { 1, 1, 1, 0.2 },
 					},
 					Icon = {
 						enabled = false,
@@ -608,8 +577,8 @@ function module:OnInitialize()
 						position = {
 							anchor = 'LEFT',
 							x = 0,
-							y = 0
-						}
+							y = 0,
+						},
 					},
 					text = {
 						['1'] = {
@@ -618,8 +587,8 @@ function module:OnInitialize()
 							position = {
 								anchor = 'CENTER',
 								x = 0,
-								y = 0
-							}
+								y = 0,
+							},
 						},
 						['2'] = {
 							enabled = true,
@@ -628,10 +597,10 @@ function module:OnInitialize()
 							position = {
 								anchor = 'RIGHT',
 								x = 0,
-								y = 0
-							}
-						}
-					}
+								y = 0,
+							},
+						},
+					},
 				},
 				ClassIcon = {
 					enabled = false,
@@ -640,8 +609,8 @@ function module:OnInitialize()
 					position = {
 						anchor = 'TOP',
 						x = 0,
-						y = 40
-					}
+						y = 40,
+					},
 				},
 				RaidTargetIndicator = {
 					enabled = true,
@@ -649,8 +618,8 @@ function module:OnInitialize()
 					position = {
 						anchor = 'BOTTOMRIGHT',
 						x = 0,
-						y = 0
-					}
+						y = 0,
+					},
 				},
 				QuestMobIndicator = {
 					enabled = true,
@@ -658,15 +627,15 @@ function module:OnInitialize()
 					position = {
 						anchor = 'BOTTOMLEFT',
 						x = 0,
-						y = 0
-					}
+						y = 0,
+					},
 				},
 				XPBar = {
 					height = 5,
-					Offset = -10
-				}
-			}
-		}
+					Offset = -10,
+				},
+			},
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Nameplates', defaults)
 	module.DB = module.Database.profile
@@ -686,24 +655,17 @@ function module:OnDisable()
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled('Nameplates') then
-		return
-	end
+	if SUI:IsModuleDisabled('Nameplates') then return end
 	module:BuildOptions()
 
-	if (not oUF_NamePlateDriver) then
+	if not oUF_NamePlateDriver then
 		SUIUF:SetActiveStyle('Spartan_NamePlates')
 		SUIUF:SpawnNamePlates(nil, NameplateCallback)
 
 		-- oUF is not hiding the mana bar. So we need to hide it.
-		if ClassNameplateManaBarFrame then
-			ClassNameplateManaBarFrame:HookScript(
-				'OnShow',
-				function()
-					ClassNameplateManaBarFrame:Hide()
-				end
-			)
-		end
+		if ClassNameplateManaBarFrame then ClassNameplateManaBarFrame:HookScript('OnShow', function()
+			ClassNameplateManaBarFrame:Hide()
+		end) end
 	end
 end
 
@@ -718,13 +680,11 @@ function module:BuildOptions()
 		['LEFT'] = 'LEFT',
 		['BOTTOMLEFT'] = 'BOTTOM LEFT',
 		['BOTTOM'] = 'BOTTOM',
-		['BOTTOMRIGHT'] = 'BOTTOM RIGHT'
+		['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
 	}
 
 	local function toInt(val)
-		if val then
-			return 1
-		end
+		if val then return 1 end
 		return 0
 	end
 	local function toBool(val)
@@ -752,16 +712,16 @@ function module:BuildOptions()
 		args = {
 			width = {
 				name = L['Frame width'],
-				type = 'input'
+				type = 'input',
 			},
 			Scale = {
 				name = L['Scale'],
 				type = 'range',
 				width = 'full',
-				min = .01,
+				min = 0.01,
 				max = 3,
-				step = .01,
-				order = 1
+				step = 0.01,
+				order = 1,
 			},
 			General = {
 				name = L['General Apperance'],
@@ -785,13 +745,13 @@ function module:BuildOptions()
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
-								order = 1
+								order = 1,
 							},
 							type = {
 								name = L['Type'],
 								order = 2,
 								type = 'select',
-								values = {['artwork'] = 'Artwork', ['solid'] = 'Solid'}
+								values = { ['artwork'] = 'Artwork', ['solid'] = 'Solid' },
 							},
 							colorMode = {
 								name = L['Color mode'],
@@ -799,8 +759,8 @@ function module:BuildOptions()
 								order = 3,
 								values = {
 									['faction'] = 'Faction',
-									['reaction'] = 'Reaction'
-								}
+									['reaction'] = 'Reaction',
+								},
 							},
 							alpha = {
 								name = L['Alpha'],
@@ -809,9 +769,9 @@ function module:BuildOptions()
 								order = 4,
 								min = 0,
 								max = 1,
-								step = .01
-							}
-						}
+								step = 0.01,
+							},
+						},
 					},
 					HealthBar = {
 						name = L['Health bar'],
@@ -829,7 +789,7 @@ function module:BuildOptions()
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
-								order = 1
+								order = 1,
 							},
 							height = {
 								name = L['Height'],
@@ -838,31 +798,31 @@ function module:BuildOptions()
 								min = 1,
 								max = 30,
 								step = 1,
-								order = 10
+								order = 10,
 							},
 							colorTapping = {
 								name = L['Grey out tapped targets'],
 								type = 'toggle',
 								width = 'full',
-								order = 20
+								order = 20,
 							},
 							colorReaction = {
 								name = L['Color based on reaction'],
 								type = 'toggle',
 								width = 'full',
-								order = 30
+								order = 30,
 							},
 							colorSmooth = {
 								name = L['Color by health remaning'],
 								type = 'toggle',
 								width = 'full',
-								order = 30
+								order = 30,
 							},
 							colorClass = {
 								name = L['Color based on class'],
 								type = 'toggle',
 								width = 'full',
-								order = 40
+								order = 40,
 							},
 							offset = {
 								name = L['Offset'],
@@ -870,9 +830,9 @@ function module:BuildOptions()
 								order = 3,
 								min = -30,
 								max = 30,
-								step = .5
-							}
-						}
+								step = 0.5,
+							},
+						},
 					},
 					PowerBar = {
 						name = L['Power bar'],
@@ -890,7 +850,7 @@ function module:BuildOptions()
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
-								order = 1
+								order = 1,
 							},
 							height = {
 								name = L['Height'],
@@ -899,9 +859,9 @@ function module:BuildOptions()
 								min = 1,
 								max = 15,
 								step = 1,
-								order = 10
-							}
-						}
+								order = 10,
+							},
+						},
 					},
 					Castbar = {
 						name = L['Cast bar'],
@@ -919,7 +879,7 @@ function module:BuildOptions()
 								name = L['Enabled'],
 								type = 'toggle',
 								width = 'full',
-								order = 1
+								order = 1,
 							},
 							height = {
 								name = L['Height'],
@@ -928,30 +888,30 @@ function module:BuildOptions()
 								min = 1,
 								max = 15,
 								step = 1,
-								order = 10
+								order = 10,
 							},
 							text = {
 								name = L['Show text'],
 								type = 'toggle',
 								width = 'full',
-								order = 20
+								order = 20,
 							},
 							FlashOnInterruptible = {
 								name = L['Flash on interruptible cast'],
 								type = 'toggle',
 								width = 'full',
-								order = 30
+								order = 30,
 							},
 							InterruptSpeed = {
 								name = L['Interrupt flash speed'],
 								type = 'range',
-								min = .01,
+								min = 0.01,
 								max = 1,
-								step = .01
-							}
-						}
-					}
-				}
+								step = 0.01,
+							},
+						},
+					},
+				},
 			},
 			Indicator = {
 				name = L['Indicators'],
@@ -973,7 +933,7 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									module.DB.ShowLevel = val
-								end
+								end,
 							},
 							ShowName = {
 								name = L['Show name'],
@@ -985,7 +945,7 @@ function module:BuildOptions()
 								set = function(info, val)
 									--Update the DB
 									module.DB.elements.Name.enabled = val
-								end
+								end,
 							},
 							JustifyH = {
 								name = L['Horizontal alignment'],
@@ -994,7 +954,7 @@ function module:BuildOptions()
 								values = {
 									['LEFT'] = 'Left',
 									['CENTER'] = 'Center',
-									['RIGHT'] = 'Right'
+									['RIGHT'] = 'Right',
 								},
 								get = function(info)
 									return module.DB.elements.Name.SetJustifyH
@@ -1004,9 +964,9 @@ function module:BuildOptions()
 									module.DB.elements.Name.SetJustifyH = val
 									--Update the screen
 									-- module.frames[frameName][key]:SetJustifyH(val)
-								end
-							}
-						}
+								end,
+							},
+						},
 					},
 					QuestIndicator = {
 						name = L['Quest icon'],
@@ -1022,9 +982,9 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									module.DB.elements.QuestIndicator.enabled = val
-								end
-							}
-						}
+								end,
+							},
+						},
 					},
 					ThreatIndicator = {
 						name = L['Threat'],
@@ -1040,9 +1000,9 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									module.DB.elements.ThreatIndicator.enabled = val
-								end
-							}
-						}
+								end,
+							},
+						},
 					},
 					RareElite = {
 						name = L['Rare/Elite background'],
@@ -1058,9 +1018,9 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									module.DB.elements.RareElite.enabled = val
-								end
-							}
-						}
+								end,
+							},
+						},
 					},
 					TargetIndicator = {
 						name = L['Target indicator'],
@@ -1076,9 +1036,9 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									module.DB.ShowTarget = val
-								end
-							}
-						}
+								end,
+							},
+						},
 					},
 					ClassIcon = {
 						name = L['Class icon'],
@@ -1095,7 +1055,7 @@ function module:BuildOptions()
 								set = function(info, val)
 									module.DB.elements.ClassIcon.enabled = val
 									module:UpdateNameplates()
-								end
+								end,
 							},
 							VisibleOn = {
 								name = L['Show on'],
@@ -1105,7 +1065,7 @@ function module:BuildOptions()
 									['friendly'] = 'Friendly',
 									['hostile'] = 'Hostile',
 									['PlayerControlled'] = 'Player controlled',
-									['all'] = 'All'
+									['all'] = 'All',
 								},
 								get = function(info)
 									return module.DB.elements.ClassIcon.VisibleOn
@@ -1113,7 +1073,7 @@ function module:BuildOptions()
 								set = function(info, val)
 									module.DB.elements.ClassIcon.VisibleOn = val
 									module:UpdateNameplates()
-								end
+								end,
 							},
 							size = {
 								name = L['Size'],
@@ -1128,7 +1088,7 @@ function module:BuildOptions()
 								set = function(info, val)
 									--Update the DB
 									module.DB.elements.ClassIcon.size = val
-								end
+								end,
 							},
 							position = {
 								name = L['Position'],
@@ -1149,7 +1109,7 @@ function module:BuildOptions()
 										set = function(info, val)
 											--Update the DB
 											module.DB.elements.ClassIcon.position.x = val
-										end
+										end,
 									},
 									y = {
 										name = L['Y Axis'],
@@ -1164,7 +1124,7 @@ function module:BuildOptions()
 										set = function(info, val)
 											--Update the DB
 											module.DB.elements.ClassIcon.position.y = val
-										end
+										end,
 									},
 									anchor = {
 										name = L['Anchor point'],
@@ -1177,11 +1137,11 @@ function module:BuildOptions()
 										set = function(info, val)
 											--Update the DB
 											module.DB.elements.ClassIcon.position.anchor = val
-										end
-									}
-								}
-							}
-						}
+										end,
+									},
+								},
+							},
+						},
 					},
 					Auras = {
 						name = L['Auras'],
@@ -1198,7 +1158,7 @@ function module:BuildOptions()
 								set = function(info, val)
 									module.DB.elements.Auras.enabled = val
 									module:UpdateNameplates()
-								end
+								end,
 							},
 							onlyShowPlayer = {
 								name = L['Show only auras created by player'],
@@ -1211,7 +1171,7 @@ function module:BuildOptions()
 								set = function(info, val)
 									module.DB.onlyShowPlayer = val
 									module:UpdateNameplates()
-								end
+								end,
 							},
 							showStealableBuffs = {
 								name = L['Show Stealable/Dispellable buffs'],
@@ -1224,15 +1184,15 @@ function module:BuildOptions()
 								set = function(info, val)
 									module.DB.showStealableBuffs = val
 									module:UpdateNameplates()
-								end
+								end,
 							},
 							notice = {
 								name = L['With both of these options active your DOTs will not appear on enemies.'],
 								type = 'description',
 								order = 4,
-								fontSize = 'small'
-							}
-						}
+								fontSize = 'small',
+							},
+						},
 					},
 					XPBar = {
 						name = L['XP Bar'],
@@ -1248,7 +1208,7 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									module.DB.elements.XPBar.enabled = val
-								end
+								end,
 							},
 							size = {
 								name = L['Size'],
@@ -1262,7 +1222,7 @@ function module:BuildOptions()
 								end,
 								set = function(info, val)
 									module.DB.elements.XPBar.size = val
-								end
+								end,
 							},
 							Offset = {
 								name = L['Offset'],
@@ -1270,17 +1230,17 @@ function module:BuildOptions()
 								order = 3,
 								min = -30,
 								max = 30,
-								step = .5,
+								step = 0.5,
 								get = function(info)
 									return module.DB.elements.XPBar.Offset
 								end,
 								set = function(info, val)
 									module.DB.elements.XPBar.Offset = val
-								end
-							}
-						}
-					}
-				}
+								end,
+							},
+						},
+					},
+				},
 			},
 			Display = {
 				name = L['Blizzard display options'],
@@ -1297,7 +1257,7 @@ function module:BuildOptions()
 						end,
 						set = function(info, val)
 							SetCVar('nameplateShowAll', toInt(val))
-						end
+						end,
 					},
 					nameplateShowSelf = {
 						name = DISPLAY_PERSONAL_RESOURCE,
@@ -1309,7 +1269,7 @@ function module:BuildOptions()
 						end,
 						set = function(info, val)
 							SetCVar('nameplateShowSelf', toInt(val))
-						end
+						end,
 					},
 					nameplateMotion = {
 						name = UNIT_NAMEPLATES_TYPES,
@@ -1321,16 +1281,16 @@ function module:BuildOptions()
 							end
 						end,
 						type = 'select',
-						values = {['1'] = UNIT_NAMEPLATES_TYPE_2, ['0'] = UNIT_NAMEPLATES_TYPE_1},
+						values = { ['1'] = UNIT_NAMEPLATES_TYPE_2, ['0'] = UNIT_NAMEPLATES_TYPE_1 },
 						get = function(info)
 							return GetCVar('nameplateMotion')
 						end,
 						set = function(info, val)
 							SetCVar('nameplateMotion', tonumber(val))
-						end
-					}
-				}
-			}
-		}
+						end,
+					},
+				},
+			},
+		},
 	}
 end

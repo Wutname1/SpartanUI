@@ -12,9 +12,7 @@ end
 
 local function ConfigOpened(self, name)
 	local frame = GetAce3ConfigWindow(name)
-	if not frame or frame.Close then
-		return
-	end
+	if not frame or frame.Close then return end
 	for i = 1, frame:GetNumChildren() do
 		local child = select(i, frame:GetChildren())
 		SUI.Debug('Child ' .. (child:GetName() or 'NoName') .. ' ' .. (child:GetObjectType() or 'NoType'), 'Skiner')
@@ -46,7 +44,7 @@ function Ace3_SkinDropdown(self)
 				pullout.slider:SetThumbTexture(E.Media.Textures.White8x8)
 
 				local t = pullout.slider:GetThumbTexture()
-				t:SetVertexColor(1, .82, 0, 0.8)
+				t:SetVertexColor(1, 0.82, 0, 0.8)
 			end
 		end
 	end
@@ -54,22 +52,20 @@ end
 
 local function SkinAce3()
 	local AceGUI = LibStub('AceGUI-3.0', true)
-	if not AceGUI then
-		return
-	end
+	if not AceGUI then return end
 
 	local ProxyType = {
 		['InlineGroup'] = true,
 		['TreeGroup'] = true,
 		['TabGroup'] = true,
 		['SimpleGroup'] = true,
-		['DropdownGroup'] = true
+		['DropdownGroup'] = true,
 	}
 	local classId = select(3, UnitClass('player'))
 
 	local regWidget = AceGUI.RegisterAsWidget
 	local regContainer = AceGUI.RegisterAsContainer
-	local nextPrevColor = {r = 1, g = .8, b = 0}
+	local nextPrevColor = { r = 1, g = 0.8, b = 0 }
 
 	--Skin main window elements
 	RegisterAsWidget = function(self, widget)
@@ -113,25 +109,21 @@ local function SkinAce3()
 			local check = widget.check
 			local checkbg = widget.checkbg
 			local highlight = widget.highlight
-			hooksecurefunc(
-				widget,
-				'SetType',
-				function(self, mode)
-					checkbg:SetSize(28, 28)
-					checkbg:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
-					check:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
-					highlight:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
-					checkbg:SetTexCoord(0, 0.25, 0, 1)
-					highlight:SetTexCoord(0.25, 0.5, 0, 1)
-					if mode == 'radio' then
-						check:SetTexCoord(0.75, 1, 0, 1)
-					else
-						check:SetTexCoord(0.5, 0.75, 0, 1)
-					end
-					checkbg:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
-					highlight:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
+			hooksecurefunc(widget, 'SetType', function(self, mode)
+				checkbg:SetSize(28, 28)
+				checkbg:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+				check:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+				highlight:SetTexture([[Interface\Addons\SpartanUI\images\UI-CheckBox]])
+				checkbg:SetTexCoord(0, 0.25, 0, 1)
+				highlight:SetTexCoord(0.25, 0.5, 0, 1)
+				if mode == 'radio' then
+					check:SetTexCoord(0.75, 1, 0, 1)
+				else
+					check:SetTexCoord(0.5, 0.75, 0, 1)
 				end
-			)
+				checkbg:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
+				highlight:SetVertexColor(unpack(SUI.Skins.colors:GetPrimaryColor('Ace3')))
+			end)
 			Skin(widgetType, widget, 'Light', 'Ace3')
 		elseif widgetType == 'Heading' or widgetType == 'Label' then
 			-- local _, fontHeight, fontFlags = widget.label:GetFont()
@@ -166,12 +158,9 @@ local function SkinAce3()
 				closeBtn:SetText('X')
 				closeBtn.frame:SetSize(20, 20)
 				closeBtn.frame:SetParent(AppBar)
-				closeBtn.frame:HookScript(
-					'OnClick',
-					function()
-						frame.CloseBtn:Click()
-					end
-				)
+				closeBtn.frame:HookScript('OnClick', function()
+					frame.CloseBtn:Click()
+				end)
 				closeBtn.frame:Show()
 				closeBtn.frame:SetPoint('TOPRIGHT', -1, -1)
 				AppBar.closeBtn = closeBtn
@@ -217,15 +206,13 @@ local function SkinAce3()
 				if childFrame:GetObjectType() == 'Button' and childFrame:GetText() then
 					RemoveTextures(childFrame)
 					Skin('Button', childFrame, 'Light', 'Ace3')
-					if childFrame:GetText() == CLOSE then
-						frame.CloseBtn = childFrame
-					end
+					if childFrame:GetText() == CLOSE then frame.CloseBtn = childFrame end
 				elseif not childFrame.ignore then
 					RemoveTextures(childFrame)
 				end
 			end
 			Skin('Window', widgetParent)
-		elseif (ProxyType[widgetType]) then
+		elseif ProxyType[widgetType] then
 			if widget.treeframe then
 				Skin('Frame', widget.border)
 				Skin('Frame', widget.treeframe)
@@ -236,35 +223,25 @@ local function SkinAce3()
 					RemoveTextures(newButton.toggle)
 					newButton.toggle:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
 					newButton.toggle:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton')
-					hooksecurefunc(
-						newButton.toggle,
-						'SetNormalTexture',
-						function(frame, texture)
-							local tex = tostring(frame:GetNormalTexture():GetTexture())
-							if tex == '130838' then
-								frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
-							elseif tex == '130821' then
-								frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\MinusButton')
-							end
+					hooksecurefunc(newButton.toggle, 'SetNormalTexture', function(frame, texture)
+						local tex = tostring(frame:GetNormalTexture():GetTexture())
+						if tex == '130838' then
+							frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PlusButton')
+						elseif tex == '130821' then
+							frame:SetNormalTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\MinusButton')
 						end
-					)
-					hooksecurefunc(
-						newButton.toggle,
-						'SetPushedTexture',
-						function(frame, texture)
-							if not strfind(texture, 'PushButton') then
-								frame:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton')
-							end
-						end
-					)
+					end)
+					hooksecurefunc(newButton.toggle, 'SetPushedTexture', function(frame, texture)
+						if not strfind(texture, 'PushButton') then frame:SetPushedTexture('Interface\\AddOns\\SpartanUI\\images\\textures\\PushButton') end
+					end)
 					Skin('Button', newButton.toggle)
 					return newButton
 				end
-			elseif (not widgetParent.Panel) then
+			elseif not widgetParent.Panel then
 				Skin('Frame', widgetParent)
 			end
 
-			if (widgetType == 'TabGroup') then
+			if widgetType == 'TabGroup' then
 				local oldFunc = widget.CreateTab
 				widget.CreateTab = function(self, arg)
 					local newTab = oldFunc(self, arg)
@@ -274,11 +251,9 @@ local function SkinAce3()
 				end
 			end
 
-			if widget.scrollbar then
-				Skin('ScrollBar', widget.scrollBar)
-			end
-		-- else
-		-- 	SUI.Debug('No Widget skin ' .. widgetType, 'Skinning')
+			if widget.scrollbar then Skin('ScrollBar', widget.scrollBar) end
+			-- else
+			-- 	SUI.Debug('No Widget skin ' .. widgetType, 'Skinning')
 		end
 		return regContainer(self, widget)
 	end
@@ -305,15 +280,12 @@ local function attemptSkin()
 
 	local AceGUI = LibStub('AceGUI-3.0', true)
 	if AceGUI and (AceGUI.RegisterAsContainer ~= RegisterAsContainer or AceGUI.RegisterAsWidget ~= RegisterAsWidget) then
-		if select(4, GetAddOnInfo('ElvUI')) then
-			return
-		end
+		if select(4, GetAddOnInfo('ElvUI')) then return end
 		SkinAce3()
 	end
 end
 
 ---@param optTable AceConfigOptionsTable
-local function Options(optTable)
-end
+local function Options(optTable) end
 
 SUI.Skins:Register('Ace3', attemptSkin, nil, Options)

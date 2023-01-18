@@ -3,9 +3,7 @@ local L = SUI.L
 local module = SUI:GetModule('Module_Artwork')
 
 function module:SetupOptions()
-	if SUI.DB.Artwork.Style == '' then
-		return
-	end
+	if SUI.DB.Artwork.Style == '' then return end
 
 	local ArtworkOpts = SUI.opt.args.Artwork.args
 	ArtworkOpts.scale = {
@@ -17,7 +15,7 @@ function module:SetupOptions()
 		min = 0,
 		max = 1,
 		set = function(info, val)
-			if (InCombatLockdown()) then
+			if InCombatLockdown() then
 				SUI:Print(ERR_NOT_IN_COMBAT)
 			else
 				SUI.DB.scale = val
@@ -27,7 +25,7 @@ function module:SetupOptions()
 		end,
 		get = function(info)
 			return SUI.DB.scale
-		end
+		end,
 	}
 
 	ArtworkOpts.DefaultScales = {
@@ -41,7 +39,7 @@ function module:SetupOptions()
 			else
 				ArtworkOpts.scale.set(nil, 0.92)
 			end
-		end
+		end,
 	}
 
 	ArtworkOpts.VehicleUI = {
@@ -52,7 +50,7 @@ function module:SetupOptions()
 			return SUI.DB.Artwork.VehicleUI
 		end,
 		set = function(info, val)
-			if (InCombatLockdown()) then
+			if InCombatLockdown() then
 				SUI:Print(ERR_NOT_IN_COMBAT)
 				return
 			end
@@ -64,15 +62,11 @@ function module:SetupOptions()
 			end
 
 			if SUI.DB.Artwork.VehicleUI then
-				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then
-					SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):SetupVehicleUI()
-				end
+				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):SetupVehicleUI() end
 			else
-				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then
-					SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):RemoveVehicleUI()
-				end
+				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):RemoveVehicleUI() end
 			end
-		end
+		end,
 	}
 
 	ArtworkOpts.alpha = {
@@ -89,7 +83,7 @@ function module:SetupOptions()
 		set = function(info, val)
 			SUI.DB.alpha = (val / 100)
 			module:UpdateAlpha()
-		end
+		end,
 	}
 
 	ArtworkOpts.Viewport = {
@@ -107,11 +101,11 @@ function module:SetupOptions()
 					return SUI.DB.Artwork.Viewport.enabled
 				end,
 				set = function(info, val)
-					if (InCombatLockdown()) then
+					if InCombatLockdown() then
 						SUI:Print(ERR_NOT_IN_COMBAT)
 						return
 					end
-					if (not val) then
+					if not val then
 						--Since we are disabling reset the viewport
 						WorldFrame:ClearAllPoints()
 						WorldFrame:SetPoint('TOPLEFT', 0, 0)
@@ -119,28 +113,28 @@ function module:SetupOptions()
 					end
 					SUI.DB.Artwork.Viewport.enabled = val
 
-					for _, v in ipairs({'Top', 'Bottom', 'Left', 'Right'}) do
-						ArtworkOpts['Viewport'].args['viewportoffset' .. v].disabled = (not SUI.DB.Artwork.Viewport.enabled)
+					for _, v in ipairs({ 'Top', 'Bottom', 'Left', 'Right' }) do
+						ArtworkOpts['Viewport'].args['viewportoffset' .. v].disabled = not SUI.DB.Artwork.Viewport.enabled
 					end
 
 					module:updateViewport()
-				end
+				end,
 			},
-			viewportoffsets = {name = L['Offset'], order = 2, type = 'description', fontSize = 'large'},
+			viewportoffsets = { name = L['Offset'], order = 2, type = 'description', fontSize = 'large' },
 			viewportoffsetTop = {
 				name = L['Top'],
 				type = 'range',
 				order = 2.1,
 				min = -50,
 				max = 200,
-				step = .1,
+				step = 0.1,
 				get = function(info)
 					return SUI.DB.Artwork.Viewport.offset.top
 				end,
 				set = function(info, val)
 					SUI.DB.Artwork.Viewport.offset.top = val
 					module:updateViewport()
-				end
+				end,
 			},
 			viewportoffsetBottom = {
 				name = L['Bottom'],
@@ -148,14 +142,14 @@ function module:SetupOptions()
 				order = 2.2,
 				min = -50,
 				max = 200,
-				step = .1,
+				step = 0.1,
 				get = function(info)
 					return SUI.DB.Artwork.Viewport.offset.bottom
 				end,
 				set = function(info, val)
 					SUI.DB.Artwork.Viewport.offset.bottom = val
 					module:updateViewport()
-				end
+				end,
 			},
 			viewportoffsetLeft = {
 				name = L['Left'],
@@ -163,14 +157,14 @@ function module:SetupOptions()
 				order = 2.3,
 				min = -50,
 				max = 200,
-				step = .1,
+				step = 0.1,
 				get = function(info)
 					return SUI.DB.Artwork.Viewport.offset.left
 				end,
 				set = function(info, val)
 					SUI.DB.Artwork.Viewport.offset.left = val
 					module:updateViewport()
-				end
+				end,
 			},
 			viewportoffsetRight = {
 				name = L['Right'],
@@ -178,19 +172,19 @@ function module:SetupOptions()
 				order = 2.4,
 				min = -50,
 				max = 200,
-				step = .1,
+				step = 0.1,
 				get = function(info)
 					return SUI.DB.Artwork.Viewport.offset.right
 				end,
 				set = function(info, val)
 					SUI.DB.Artwork.Viewport.offset.right = val
 					module:updateViewport()
-				end
-			}
-		}
+				end,
+			},
+		},
 	}
-	for _, v in ipairs({'Top', 'Bottom', 'Left', 'Right'}) do
-		ArtworkOpts.Viewport.args['viewportoffset' .. v].disabled = (not SUI.DB.Artwork.Viewport.enabled)
+	for _, v in ipairs({ 'Top', 'Bottom', 'Left', 'Right' }) do
+		ArtworkOpts.Viewport.args['viewportoffset' .. v].disabled = not SUI.DB.Artwork.Viewport.enabled
 	end
 
 	ArtworkOpts.Offset = {
@@ -212,14 +206,14 @@ function module:SetupOptions()
 						order = 3,
 						min = -500,
 						max = 500,
-						step = .1,
+						step = 0.1,
 						get = function(info)
 							return SUI.DB.Offset.Horizontal.Top
 						end,
 						set = function(info, val)
 							SUI.DB.Offset.Horizontal.Top = val
 							module:updateHorizontalOffset()
-						end
+						end,
 					},
 					Bottom = {
 						name = L['Bottom offset'],
@@ -228,20 +222,20 @@ function module:SetupOptions()
 						order = 3,
 						min = -500,
 						max = 500,
-						step = .1,
+						step = 0.1,
 						get = function(info)
 							return SUI.DB.Offset.Horizontal.Bottom
 						end,
 						set = function(info, val)
 							SUI.DB.Offset.Horizontal.Bottom = val
 							module:updateHorizontalOffset()
-						end
-					}
-				}
-			}
-		}
+						end,
+					},
+				},
+			},
+		},
 	}
-	for i, v in ipairs({'Top', 'Bottom'}) do
+	for i, v in ipairs({ 'Top', 'Bottom' }) do
 		ArtworkOpts.Offset.args[v] = {
 			name = v,
 			type = 'group',
@@ -255,12 +249,12 @@ function module:SetupOptions()
 					order = 3,
 					min = 0,
 					max = 200,
-					step = .1,
+					step = 0.1,
 					get = function(info)
 						return SUI.DB.Offset[v]
 					end,
 					set = function(info, val)
-						if (InCombatLockdown()) then
+						if InCombatLockdown() then
 							SUI:Print(ERR_NOT_IN_COMBAT)
 						else
 							if SUI.DB.Offset[v .. 'Auto'] then
@@ -271,7 +265,7 @@ function module:SetupOptions()
 								module:updateOffset()
 							end
 						end
-					end
+					end,
 				},
 				offsetauto = {
 					name = L['Auto Offset'],
@@ -283,16 +277,16 @@ function module:SetupOptions()
 					set = function(info, val)
 						SUI.DB.Offset[v .. 'Auto'] = val
 						module:updateOffset()
-					end
-				}
-			}
+					end,
+				},
+			},
 		}
 	end
 
 	ArtworkOpts.BarBG = {
 		name = L['Bar backgrounds'],
 		type = 'group',
-		args = {}
+		args = {},
 	}
 	local function CreatOption(key)
 		local function updateOpt(opt, val)
@@ -306,9 +300,7 @@ function module:SetupOptions()
 			inline = true,
 			hidden = function(info)
 				if module.BarBG[SUI.DB.Artwork.Style] then
-					if module.BarBG[SUI.DB.Artwork.Style][key] then
-						return false
-					end
+					if module.BarBG[SUI.DB.Artwork.Style][key] then return false end
 				end
 				return true
 			end,
@@ -322,7 +314,7 @@ function module:SetupOptions()
 					end,
 					set = function(info, val)
 						updateOpt('enabled', val)
-					end
+					end,
 				},
 				alpha = {
 					order = 2,
@@ -330,20 +322,20 @@ function module:SetupOptions()
 					type = 'range',
 					min = 0,
 					max = 1,
-					step = .01,
+					step = 0.01,
 					width = 'double',
 					get = function(info)
 						return module.ActiveStyle.Artwork.barBG[key].alpha
 					end,
 					set = function(info, val)
 						updateOpt('alpha', val)
-					end
-				}
-			}
+					end,
+				},
+			},
 		}
 	end
 
-	for i, v in pairs({'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Stance', 'MenuBar'}) do
+	for i, v in pairs({ '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Stance', 'MenuBar' }) do
 		CreatOption(v)
 	end
 end

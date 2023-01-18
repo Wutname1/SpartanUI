@@ -8,7 +8,7 @@ local function ElementBuild(frame, DB)
 	frame.ClassIcon.shadow = frame:CreateTexture(nil, 'BACKGROUND')
 	frame.ClassIcon.shadow:SetPoint('TOPLEFT', frame.ClassIcon, 'TOPLEFT', 2, -2)
 	frame.ClassIcon.shadow:SetPoint('BOTTOMRIGHT', frame.ClassIcon, 'BOTTOMRIGHT', 2, -2)
-	frame.ClassIcon.shadow:SetVertexColor(0, 0, 0, .9)
+	frame.ClassIcon.shadow:SetVertexColor(0, 0, 0, 0.9)
 
 	function frame.ClassIcon:PostUpdate()
 		if self.DB and self.DB.enabled then
@@ -27,14 +27,16 @@ local function ElementUpdate(frame, settings)
 	local element = frame.ClassIcon
 	local DB = settings or element.DB
 	local reaction = UnitReaction(frame.unit, 'player')
-	if not reaction then
-		return
-	end
+	if not reaction then return end
 
 	if
-		((reaction <= 2 and DB.VisibleOn == 'hostile') or (reaction >= 3 and DB.VisibleOn == 'friendly') or (UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled') or DB.VisibleOn == 'all') and
-			DB.enabled
-	 then
+		(
+			(reaction <= 2 and DB.VisibleOn == 'hostile')
+			or (reaction >= 3 and DB.VisibleOn == 'friendly')
+			or (UnitPlayerControlled(frame.unit) and DB.VisibleOn == 'PlayerControlled')
+			or DB.VisibleOn == 'all'
+		) and DB.enabled
+	then
 		element:Show()
 		element.shadow:Show()
 		element:SetSize(DB.size, DB.size)
@@ -47,8 +49,7 @@ end
 
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
-local function ElementOptions(unitName, OptionSet)
-end
+local function ElementOptions(unitName, OptionSet) end
 
 ---@type SUI.UF.Elements.Settings
 local Settings = {
@@ -57,12 +58,12 @@ local Settings = {
 	position = {
 		anchor = 'BOTTOMLEFT',
 		x = -12,
-		y = 0
+		y = 0,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Class Icon'
-	}
+		DisplayName = 'Class Icon',
+	},
 }
 
 UF.Elements:Register('ClassIcon', ElementBuild, ElementUpdate, ElementOptions, Settings)
@@ -70,11 +71,9 @@ UF.Elements:Register('ClassIcon', ElementBuild, ElementUpdate, ElementOptions, S
 do -- ClassIcon as an SUIUF module
 	local function Update(self, event, unit)
 		local icon = self.ClassIcon
-		if (icon) then
+		if icon then
 			local _, class = UnitClass(self.unit)
-			if not class then
-				return
-			end
+			if not class then return end
 
 			local path = 'Interface\\AddOns\\SpartanUI\\images\\flat_classicons\\' .. (string.lower(class))
 
@@ -91,9 +90,7 @@ do -- ClassIcon as an SUIUF module
 				icon:Hide()
 				icon.shadow:Hide()
 			end
-			if (icon.PostUpdate) then
-				return icon:PostUpdate()
-			end
+			if icon.PostUpdate then return icon:PostUpdate() end
 		end
 	end
 
@@ -103,7 +100,7 @@ do -- ClassIcon as an SUIUF module
 
 	local function Enable(self)
 		local icon = self.ClassIcon
-		if (icon) then
+		if icon then
 			icon.__owner = self
 			icon.ForceUpdate = ForceUpdate
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
@@ -112,7 +109,7 @@ do -- ClassIcon as an SUIUF module
 				icon.shadow = self:CreateTexture(nil, 'BACKGROUND')
 				icon.shadow:SetSize(icon:GetSize())
 				icon.shadow:SetPoint('CENTER', icon, 'CENTER', 2, -2)
-				icon.shadow:SetVertexColor(0, 0, 0, .9)
+				icon.shadow:SetVertexColor(0, 0, 0, 0.9)
 			end
 			return true
 		end
@@ -120,7 +117,7 @@ do -- ClassIcon as an SUIUF module
 
 	local function Disable(self)
 		local icon = self.ClassIcon
-		if (icon) then
+		if icon then
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 			self:UnregisterEvent('UNIT_PET', Update)
 			self.ClassIcon:Hide()

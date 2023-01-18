@@ -10,9 +10,7 @@ function SUI:ChatCommand(input)
 	elseif string.find(input, ' ') then
 		for i in string.gmatch(input, '%S+') do
 			local arg, _ = string.gsub(input, i .. ' ', '')
-			if SUIChatCommands[i] then
-				SUIChatCommands[i](arg)
-			end
+			if SUIChatCommands[i] then SUIChatCommands[i](arg) end
 		end
 	else
 		SUI:GetModule('Handler_Options'):ToggleOptions()
@@ -38,10 +36,9 @@ local function AddToOptions(arg)
 						get = function()
 							return '/sui ' .. arg
 						end,
-						set = function()
-						end
-					}
-				}
+						set = function() end,
+					},
+				},
 			}
 			local i = 2
 			for k, v in pairs(settings.arguments) do
@@ -54,8 +51,7 @@ local function AddToOptions(arg)
 						get = function()
 							return '/sui ' .. arg .. ' ' .. k
 						end,
-						set = function()
-						end
+						set = function() end,
 					}
 					i = i + 1
 				end
@@ -69,8 +65,7 @@ local function AddToOptions(arg)
 			get = function()
 				return '/sui ' .. arg
 			end,
-			set = function()
-			end
+			set = function() end,
 		}
 	end
 end
@@ -82,9 +77,7 @@ end
 ---@param silent? boolean if adding the command should error silently
 function SUI:AddChatCommand(arg, func, commandDescription, arguments, silent)
 	if SUIChatCommands[arg] then
-		if not silent then
-			SUI:Error(arg .. ' Chat command has already been added')
-		end
+		if not silent then SUI:Error(arg .. ' Chat command has already been added') end
 		return
 	end
 
@@ -95,20 +88,18 @@ function SUI:AddChatCommand(arg, func, commandDescription, arguments, silent)
 	CommandDetails[arg] = {
 		func = func,
 		commandDescription = commandDescription,
-		arguments = arguments
+		arguments = arguments,
 	}
 
 	-- if OnEnable has ran add to options
-	if enabled then
-		AddToOptions(arg)
-	end
+	if enabled then AddToOptions(arg) end
 end
 
 function module:OnEnable()
 	SUI.opt.args.Help.args.ChatCommands = {
 		name = L['Chat commands'],
 		type = 'group',
-		args = {}
+		args = {},
 	}
 	for k, _ in pairs(CommandDetails) do
 		AddToOptions(k)

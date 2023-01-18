@@ -360,7 +360,12 @@
     "EquipmentManager_UnpackLocation",
     "EquipmentManager_GetItemInfoByLocation",
     "INVSLOT_FIRST_EQUIPPED",
-    "INVSLOT_LAST_EQUIPPED"
+    "INVSLOT_LAST_EQUIPPED",
+    "UiMapPoint",
+    "IsSecureCmd",
+    "THREAT_TOOLTIP",
+    "PlayerCastingBarFrame",
+    "PetCastingBarFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
@@ -369,6 +374,9 @@
     "assign-type-mismatch",
     "need-check-nil"
   ],
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
   "todo-tree.tree.showBadges": true,
   "todo-tree.tree.showCountsInTree": true,
   "todo-tree.tree.disableCompactFolders": false

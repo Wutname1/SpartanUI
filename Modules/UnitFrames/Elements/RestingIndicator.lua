@@ -11,8 +11,8 @@ local Settings = {
 	size = 20,
 	config = {
 		DisplayName = 'Resting',
-		type = 'Indicator'
-	}
+		type = 'Indicator',
+	},
 }
 
 UF.Elements:Register('RestingIndicator', Build, nil, nil, Settings)

@@ -10,7 +10,7 @@ function SUI:HotsListing()
 		return {
 			774, -- Rejuvenation
 			LifebloomSpellId, -- Lifebloom
-			8936 -- Regrowth
+			8936, -- Regrowth
 			-- 48438, -- Wild Growth
 			-- 155777, -- Germination
 			-- 102351, -- Cenarion Ward
@@ -20,37 +20,29 @@ function SUI:HotsListing()
 		if SUI.IsClassic then
 			return {
 				139, -- Renew
-				17 -- sheild
+				17, -- sheild
 			}
 		else
 			return {
 				139, -- Renew
 				17, -- sheild
-				33076 -- Prayer of Mending
+				33076, -- Prayer of Mending
 			}
 		end
 	elseif classFileName == 'MONK' then
 		return {
 			119611, -- Renewing Mist
-			227345 -- Enveloping Mist
+			227345, -- Enveloping Mist
 		}
 	end
 	return {}
 end
 
 function SUI:oUF_Buffs(self, point, relativePoint, SizeModifier)
-	if self == nil then
-		return
-	end
-	if point == nil then
-		point = 'TOPRIGHT'
-	end
-	if relativePoint == nil then
-		relativePoint = 'TOPRIGHT'
-	end
-	if SizeModifier == nil then
-		SizeModifier = 0
-	end
+	if self == nil then return end
+	if point == nil then point = 'TOPRIGHT' end
+	if relativePoint == nil then relativePoint = 'TOPRIGHT' end
+	if SizeModifier == nil then SizeModifier = 0 end
 
 	local auras = {}
 	local spellIDs = SUI:HotsListing()
@@ -59,9 +51,7 @@ function SUI:oUF_Buffs(self, point, relativePoint, SizeModifier)
 	-- auras.PostCreateIcon = myCustomIconSkinnerFunction
 
 	-- Make icons table if needed
-	if auras.icons == nil then
-		auras.icons = {}
-	end
+	if auras.icons == nil then auras.icons = {} end
 
 	-- Set any other AuraWatch settings
 
@@ -123,7 +113,7 @@ do -- TargetIndicator as an SUIUF module
 	end
 	local Enable = function(self)
 		local icon = self.TargetIndicator
-		if (icon) then
+		if icon then
 			icon.__owner = self
 			icon.ForceUpdate = ForceUpdate
 			self:RegisterEvent('PLAYER_TARGET_CHANGED', Update, true)
@@ -131,7 +121,7 @@ do -- TargetIndicator as an SUIUF module
 	end
 	local Disable = function(self)
 		local icon = self.TargetIndicator
-		if (icon) then
+		if icon then
 			self:UnregisterEvent('PLAYER_TARGET_CHANGED', Update)
 			icon:Hide()
 		end
@@ -141,19 +131,13 @@ end
 
 do -- Level Skull as an SUIUF module
 	local Update = function(self, event, unit)
-		if (self.unit ~= unit) then
-			return
-		end
-		if (not self.LevelSkull) then
-			return
-		end
+		if self.unit ~= unit then return end
+		if not self.LevelSkull then return end
 		local level = UnitLevel(unit)
 		self.LevelSkull:SetTexture('Interface\\TargetingFrame\\UI-TargetingFrame-Skull')
 		if level < 0 then
 			self.LevelSkull:SetTexCoord(0, 1, 0, 1)
-			if self.Level then
-				self.Level:SetText ''
-			end
+			if self.Level then self.Level:SetText('') end
 		else
 			self.LevelSkull:SetTexCoord(0, 0.01, 0, 0.01)
 		end
@@ -162,28 +146,22 @@ do -- Level Skull as an SUIUF module
 		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 	end
 	local Enable = function(self)
-		if (self.LevelSkull) then
+		if self.LevelSkull then
 			self.LevelSkull.__owner = self
 			self.LevelSkull.ForceUpdate = ForceUpdate
 			return true
 		end
 	end
 	local Disable = function(self)
-		if (self.LevelSkull) then
-			self.LevelSkull:Hide()
-		end
+		if self.LevelSkull then self.LevelSkull:Hide() end
 	end
 	SUIUF:AddElement('LevelSkull', Update, Enable, Disable)
 end
 
 do -- Rare / Elite dragon graphic as an SUIUF module
 	local Update = function(self, event, unit)
-		if (self.unit ~= unit) then
-			return
-		end
-		if (not self.RareElite) then
-			return
-		end
+		if self.unit ~= unit then return end
+		if not self.RareElite then return end
 		local c = UnitClassification(unit)
 		local element = self.RareElite
 
@@ -196,16 +174,12 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 			return
 		end
 
-		if (element:IsObjectType 'Texture' and not element:GetTexture()) then
+		if element:IsObjectType('Texture') and not element:GetTexture() then
 			element:SetTexture('Interface\\AddOns\\SpartanUI\\Images\\elite_rare')
 			element:SetTexCoord(0, 1, 0, 1)
-			element:SetAlpha(.75)
-			if element.short == true then
-				element:SetTexCoord(0, 1, 0, .7)
-			end
-			if element.small == true then
-				element:SetTexCoord(0, 1, 0, .4)
-			end
+			element:SetAlpha(0.75)
+			if element.short == true then element:SetTexCoord(0, 1, 0, 0.7) end
+			if element.small == true then element:SetTexCoord(0, 1, 0, 0.4) end
 		end
 		element:Show()
 	end
@@ -213,7 +187,7 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 		return Update(element.__owner, 'ForceUpdate', element.__owner.unit)
 	end
 	local Enable = function(self)
-		if (self.RareElite) then
+		if self.RareElite then
 			self.RareElite.__owner = self
 			self.RareElite.ForceUpdate = ForceUpdate
 			self.RareElite:Hide()
@@ -222,9 +196,7 @@ do -- Rare / Elite dragon graphic as an SUIUF module
 	end
 
 	local Disable = function(self)
-		if (self.RareElite) then
-			self.RareElite:Hide()
-		end
+		if self.RareElite then self.RareElite:Hide() end
 	end
 	SUIUF:AddElement('RareElite', Update, Enable, Disable)
 end
@@ -240,13 +212,13 @@ do -- SUI_RaidGroup as an SUIUF module
 		end
 	end
 	local Enable = function(self)
-		if (self.SUI_RaidGroup) then
+		if self.SUI_RaidGroup then
 			self:RegisterEvent('GROUP_ROSTER_UPDATE', Update, true)
 			return true
 		end
 	end
 	local Disable = function(self)
-		if (self.SUI_RaidGroup) then
+		if self.SUI_RaidGroup then
 			self:UnregisterEvent('GROUP_ROSTER_UPDATE', Update)
 			self.SUI_RaidGroup:Hide()
 			self.SUI_RaidGroup.Text:Hide()
@@ -258,17 +230,13 @@ end
 -- AFK / DND status text, as an SUIUF module
 SUIUF.Tags.Events['afkdnd'] = 'PLAYER_FLAGS_CHANGED PLAYER_TARGET_CHANGED UNIT_TARGET'
 SUIUF.Tags.Methods['afkdnd'] = function(unit)
-	if unit then
-		return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or ''
-	end
+	if unit then return UnitIsAFK(unit) and 'AFK' or UnitIsDND(unit) and 'DND' or '' end
 end
 
 if SUI.IsRetail then
 	SUIUF.Tags.Events['title'] = 'UNIT_NAME_UPDATE INSTANCE_ENCOUNTER_ENGAGE_UNIT'
 	SUIUF.Tags.Methods['title'] = function(unit)
-		if UnitIsPlayer(unit) then
-			return GetTitleName(GetCurrentTitle())
-		end
+		if UnitIsPlayer(unit) then return GetTitleName(GetCurrentTitle()) end
 	end
 	SUIUF.Tags.Events['specialization'] = 'PLAYER_TALENT_UPDATE'
 	SUIUF.Tags.Methods['specialization'] = function(unit)
@@ -276,9 +244,7 @@ if SUI.IsRetail then
 			local currentSpec = GetSpecialization()
 			if currentSpec then
 				local _, currentSpecName = GetSpecializationInfo(currentSpec)
-				if currentSpecName then
-					return currentSpecName
-				end
+				if currentSpecName then return currentSpecName end
 			end
 		end
 	end
@@ -289,12 +255,8 @@ do --Health Formatting Tags
 	SUIUF.Tags.Events['health:current-short'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:current-short'] = function(unit)
 		local tmp = getCurrentUnitHP(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 0) .. 'M'
-		end
-		if tmp >= 1000 then
-			return SUI:round(tmp / 1000, 0) .. 'K'
-		end
+		if tmp >= 1000000 then return SUI:round(tmp / 1000000, 0) .. 'M' end
+		if tmp >= 1000 then return SUI:round(tmp / 1000, 0) .. 'K' end
 		return SUI.Font:comma_value(tmp)
 	end
 	-- Current Health Dynamic, as an SUIUF module
@@ -317,12 +279,8 @@ do --Health Formatting Tags
 	SUIUF.Tags.Events['health:max-short'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['health:max-short'] = function(unit)
 		local tmp = getMaxUnitHP(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 0) .. 'M'
-		end
-		if tmp >= 1000 then
-			return SUI:round(tmp / 1000, 0) .. 'K'
-		end
+		if tmp >= 1000000 then return SUI:round(tmp / 1000000, 0) .. 'M' end
+		if tmp >= 1000 then return SUI:round(tmp / 1000, 0) .. 'K' end
 		return SUI.Font:comma_value(tmp)
 	end
 	-- Total Health Dynamic, as an SUIUF module
@@ -361,10 +319,10 @@ do --Health Formatting Tags
 	SUIUF.Tags.Events['perhp:conditional'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
 	SUIUF.Tags.Methods['perhp:conditional'] = function(unit)
 		local m = UnitHealthMax(unit)
-		if (m == 0) then
+		if m == 0 then
 			return '(0%)'
 		else
-			local p = math.floor(UnitHealth(unit) / m * 100 + .5)
+			local p = math.floor(UnitHealth(unit) / m * 100 + 0.5)
 			if p == 100 then
 				return ''
 			else
@@ -427,8 +385,8 @@ end
 do --Color name by Class
 	local function hex(r, g, b)
 		if r then
-			if (type(r) == 'table') then
-				if (r.r) then
+			if type(r) == 'table' then
+				if r.r then
 					r, g, b = r.r, r.g, r.b
 				else
 					r, g, b = unpack(r)
@@ -442,9 +400,9 @@ do --Color name by Class
 	SUIUF.Tags.Methods['SUI_ColorClass'] = function(u)
 		local _, class = UnitClass(u)
 
-		if (u == 'pet') then
+		if u == 'pet' then
 			return hex(SUIUF.colors.class[class])
-		elseif (UnitIsPlayer(u)) then
+		elseif UnitIsPlayer(u) then
 			return hex(SUIUF.colors.class[class])
 		else
 			return hex(1, 1, 1)

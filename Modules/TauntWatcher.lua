@@ -20,7 +20,7 @@ local TauntsList = {
 	--Demon Hunter
 	185245, --Torment
 	--Paladin
-	204079 --Final Stand
+	204079, --Final Stand
 }
 local lastTimeStamp, lastSpellID, lastspellName = 0, 0, ''
 
@@ -29,45 +29,29 @@ local function printFormattedString(who, target, sid, failed)
 	local ChatChannel = module.DB.announceLocation
 
 	msg = msg:gsub('%%what', target):gsub('%%who', who):gsub('%%spell', GetSpellLink(sid))
-	if failed then
-		msg = msg .. ' and it failed horribly.'
-	end
+	if failed then msg = msg .. ' and it failed horribly.' end
 
 	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else
 		if not IsInGroup(2) then
 			if IsInRaid() then
-				if ChatChannel == 'INSTANCE_CHAT' then
-					ChatChannel = 'RAID'
-				end
+				if ChatChannel == 'INSTANCE_CHAT' then ChatChannel = 'RAID' end
 			elseif IsInGroup(1) then
-				if ChatChannel == 'INSTANCE_CHAT' then
-					ChatChannel = 'PARTY'
-				end
+				if ChatChannel == 'INSTANCE_CHAT' then ChatChannel = 'PARTY' end
 			end
 		elseif IsInGroup(2) then
-			if ChatChannel == 'RAID' then
-				ChatChannel = 'INSTANCE_CHAT'
-			end
-			if ChatChannel == 'PARTY' then
-				ChatChannel = 'INSTANCE_CHAT'
-			end
+			if ChatChannel == 'RAID' then ChatChannel = 'INSTANCE_CHAT' end
+			if ChatChannel == 'PARTY' then ChatChannel = 'INSTANCE_CHAT' end
 		end
 
 		if ChatChannel == 'SMART' then
 			ChatChannel = 'RAID'
-			if ChatChannel == 'RAID' and not IsInRaid() then
-				ChatChannel = 'PARTY'
-			end
+			if ChatChannel == 'RAID' and not IsInRaid() then ChatChannel = 'PARTY' end
 
-			if ChatChannel == 'PARTY' and not IsInGroup(1) then
-				ChatChannel = 'SAY'
-			end
+			if ChatChannel == 'PARTY' and not IsInGroup(1) then ChatChannel = 'SAY' end
 
-			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then
-				ChatChannel = 'SAY'
-			end
+			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then ChatChannel = 'SAY' end
 		end
 
 		SendChatMessage(msg, ChatChannel)
@@ -75,7 +59,7 @@ local function printFormattedString(who, target, sid, failed)
 end
 
 function module:OnInitialize()
-	if (SUI.IsClassic or SUI.IsTBC) then
+	if SUI.IsClassic or SUI.IsTBC then
 		TauntsList = {
 			-- Warrior taunt
 			'Taunt',
@@ -83,7 +67,7 @@ function module:OnInitialize()
 			'Improved Taunt',
 			-- Druid Growl ranks
 			'Challenging Roar',
-			'Growl'
+			'Growl',
 		}
 	end
 	local defaults = {
@@ -94,13 +78,13 @@ function module:OnInitialize()
 				inRaid = true,
 				inParty = true,
 				inArena = true,
-				outdoors = false
+				outdoors = false,
 			},
 			failures = true,
 			FirstLaunch = true,
 			announceLocation = 'SELF',
-			text = '%who taunted %what!'
-		}
+			text = '%who taunted %what!',
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('TauntWatcher', defaults)
 	module.DB = module.Database.profile
@@ -114,16 +98,15 @@ function module:OnInitialize()
 end
 
 function module:COMBAT_LOG_EVENT_UNFILTERED()
-	if SUI:IsModuleDisabled('TauntWatcher') or module.Override then
-		return
-	end
+	if SUI:IsModuleDisabled('TauntWatcher') or module.Override then return end
 
 	local timeStamp, subEvent, _, _, srcName, _, _, _, dstName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
 	-- Check if we have been here before
 	if
-		(SUI.IsRetail and timeStamp == lastTimeStamp and spellID == lastSpellID) or (SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName) or
-			(SUI.IsClassic and type(spellName) ~= 'string')
-	 then
+		(SUI.IsRetail and timeStamp == lastTimeStamp and spellID == lastSpellID)
+		or (SUI.IsClassic and timeStamp == lastTimeStamp and spellName == lastspellName)
+		or (SUI.IsClassic and type(spellName) ~= 'string')
+	then
 		return
 	end
 
@@ -143,9 +126,7 @@ function module:COMBAT_LOG_EVENT_UNFILTERED()
 			continue = true
 		end
 
-		if not (continue or module.DB.active.alwayson) then
-			return
-		end
+		if not (continue or module.DB.active.alwayson) then return end
 
 		if subEvent == 'SPELL_AURA_APPLIED' then
 			printFormattedString(srcName, dstName, spellID)
@@ -194,7 +175,7 @@ function module:Options()
 				end,
 				set = function(info, val)
 					module.DB.active.alwayson = val
-				end
+				end,
 			},
 			active = {
 				name = L['Active'],
@@ -211,35 +192,35 @@ function module:Options()
 					inBG = {
 						name = L['Battleground'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					inRaid = {
 						name = L['Raid'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					inParty = {
 						name = L['Party'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					inArena = {
 						name = L['Arena'],
 						type = 'toggle',
-						order = 1
+						order = 1,
 					},
 					outdoors = {
 						name = L['Outdoor'],
 						type = 'toggle',
-						order = 1
-					}
-				}
+						order = 1,
+					},
+				},
 			},
 			failures = {
 				name = L['Annnounce failed taunts'],
 				type = 'toggle',
 				width = 'full',
-				order = 150
+				order = 150,
 			},
 			announceLocation = {
 				name = L['Announce location'],
@@ -251,8 +232,8 @@ function module:Options()
 					['PARTY'] = 'Party',
 					['SMART'] = 'SMART',
 					['SAY'] = 'Say',
-					['SELF'] = 'No chat'
-				}
+					['SELF'] = 'No chat',
+				},
 			},
 			TextInfo = {
 				name = '',
@@ -264,31 +245,31 @@ function module:Options()
 						name = L['Text variables:'],
 						type = 'description',
 						order = 10,
-						fontSize = 'large'
+						fontSize = 'large',
 					},
 					b = {
 						name = '- %who - ' .. L['Player/Pet that taunted'],
 						type = 'description',
 						order = 11,
-						fontSize = 'small'
+						fontSize = 'small',
 					},
 					b2 = {
 						name = '- %what - ' .. L['Name of mob taunted'],
 						type = 'description',
 						order = 12,
-						fontSize = 'small'
+						fontSize = 'small',
 					},
 					c = {
 						name = '- %spell - ' .. L['Spell link of spell used to taunt'],
 						type = 'description',
 						order = 13,
-						fontSize = 'small'
+						fontSize = 'small',
 					},
 					h = {
 						name = '',
 						type = 'description',
 						order = 499,
-						fontSize = 'medium'
+						fontSize = 'medium',
 					},
 					text = {
 						name = L['Announce text:'],
@@ -300,11 +281,11 @@ function module:Options()
 						end,
 						set = function(info, value)
 							module.DB.text = value
-						end
-					}
-				}
-			}
-		}
+						end,
+					},
+				},
+			},
+		},
 	}
 end
 
@@ -328,12 +309,12 @@ function module:SetupWizard()
 				TauntWatch.lblDisabled:SetPoint('CENTER', TauntWatch)
 			else
 				local items = {
-					{text = L['Instance chat'], value = 'INSTANCE_CHAT'},
-					{text = L['Raid'], value = 'RAID'},
-					{text = L['Party'], value = 'PARTY'},
-					{text = L['Say'], value = 'SAY'},
-					{text = L['Smart'], value = 'SMART'},
-					{text = L['Self'], value = 'SELF'}
+					{ text = L['Instance chat'], value = 'INSTANCE_CHAT' },
+					{ text = L['Raid'], value = 'RAID' },
+					{ text = L['Party'], value = 'PARTY' },
+					{ text = L['Say'], value = 'SAY' },
+					{ text = L['Smart'], value = 'SMART' },
+					{ text = L['Self'], value = 'SELF' },
 				}
 
 				TauntWatch.announceLocation = StdUi:Dropdown(TauntWatch, 190, 20, items, module.DB.announceLocation)
@@ -395,24 +376,21 @@ function module:SetupWizard()
 					object:SetChecked(module.DB.active[key])
 				end
 
-				TauntWatch.modEnabled:HookScript(
-					'OnClick',
-					function()
-						for _, object in pairs(TauntWatch.options) do
-							if TauntWatch.modEnabled:GetChecked() then
-								SUI:EnableModule(module)
-							else
-								SUI:DisableModule(module)
-							end
+				TauntWatch.modEnabled:HookScript('OnClick', function()
+					for _, object in pairs(TauntWatch.options) do
+						if TauntWatch.modEnabled:GetChecked() then
+							SUI:EnableModule(module)
+						else
+							SUI:DisableModule(module)
 						end
 					end
-				)
+				end)
 			end
 
 			SUI_Win.TauntWatch = TauntWatch
 		end,
 		Next = function()
-			if SUI:IsModuleEnabled('TauntWatcher') and (not module.Override) then
+			if SUI:IsModuleEnabled('TauntWatcher') and not module.Override then
 				local window = SUI.Setup.window
 				local TauntWatch = window.content.TauntWatch
 
@@ -425,7 +403,7 @@ function module:SetupWizard()
 		end,
 		Skip = function()
 			module.DB.FirstLaunch = false
-		end
+		end,
 	}
 	SUI.Setup:AddPage(PageData)
 end

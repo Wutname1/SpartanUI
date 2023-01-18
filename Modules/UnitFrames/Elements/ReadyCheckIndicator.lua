@@ -27,12 +27,12 @@ local Settings = {
 	position = {
 		anchor = 'LEFT',
 		x = 0,
-		y = 0
+		y = 0,
 	},
 	config = {
 		type = 'Indicator',
-		DisplayName = 'Ready Check'
-	}
+		DisplayName = 'Ready Check',
+	},
 }
 
 UF.Elements:Register('ReadyCheckIndicator', Build, nil, Options, Settings)

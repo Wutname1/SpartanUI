@@ -10,35 +10,31 @@ local Container
 local defaults = {
 	SpinCam = {
 		enabled = true,
-		speed = 8
+		speed = 8,
 	},
 	FilmEffects = {
 		enabled = true,
 		animationInterval = 0.2,
 		effects = {
 			['**'] = {
-				enabled = false
+				enabled = false,
 			},
 			vignette = {},
 			blur = {},
-			crisp = {}
-		}
-	}
+			crisp = {},
+		},
+	},
 }
 
 ----- Film Effects ----
-local EffectList = {'vignette', 'blur', 'crisp'}
+local EffectList = { 'vignette', 'blur', 'crisp' }
 local function EffectLoop()
-	if not module.DB.FilmEffects.effects.blur.enabled and not module.DB.FilmEffects.effects.crisp.enabled then
-		return
-	end
+	if not module.DB.FilmEffects.effects.blur.enabled and not module.DB.FilmEffects.effects.crisp.enabled then return end
 
 	local yOfs = math.random(0, 256)
 	local xOfs = math.random(-128, 0)
 
-	if module.DB.FilmEffects.effects.blur.enabled or module.DB.FilmEffects.effects.crisp.enabled then
-		Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs)
-	end
+	if module.DB.FilmEffects.effects.blur.enabled or module.DB.FilmEffects.effects.crisp.enabled then Container:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', xOfs, yOfs) end
 end
 
 local function BuildFilmEffects()
@@ -62,8 +58,8 @@ local function BuildFilmEffects()
 	Container.blur.layer2:SetTexture('Interface\\AddOns\\SpartanUI\\images\\FilmEffects\\25ASA_Mod')
 	Container.blur.layer1:SetBlendMode('ADD')
 	Container.blur.layer2:SetBlendMode('MOD')
-	Container.blur.layer1:SetAlpha(.2)
-	Container.blur.layer2:SetAlpha(.05)
+	Container.blur.layer1:SetAlpha(0.2)
+	Container.blur.layer2:SetAlpha(0.05)
 	Container.blur.layer1:SetAllPoints(UIParent)
 	Container.blur.layer2:SetAllPoints(UIParent)
 	Container.blur:Hide()
@@ -92,8 +88,8 @@ local function BuildFilmEffects()
 
 		Container.crisp[nameAdd]:SetBlendMode('ADD')
 		Container.crisp[nameMod]:SetBlendMode('MOD')
-		Container.crisp[nameAdd]:SetAlpha(intensity * .45)
-		Container.crisp[nameMod]:SetAlpha(intensity * .3)
+		Container.crisp[nameAdd]:SetAlpha(intensity * 0.45)
+		Container.crisp[nameMod]:SetAlpha(intensity * 0.3)
 
 		local father, anchor
 		father = _G['FG_' .. (ix - 1) .. '_' .. iy .. '_Add'] or _G['FG_' .. ix .. '_' .. (iy - 1) .. '_Add'] or Container
@@ -122,14 +118,10 @@ end
 
 local function StartEffects()
 	for i, v in ipairs(EffectList) do
-		if module.DB.FilmEffects.effects[v].enabled then
-			Container[v]:Show()
-		end
+		if module.DB.FilmEffects.effects[v].enabled then Container[v]:Show() end
 	end
 
-	if module.DB.FilmEffects.effects.blur.enabled or module.DB.FilmEffects.effects.crisp.enabled then
-		module:ScheduleRepeatingTimer(EffectLoop, module.DB.FilmEffects.animationInterval)
-	end
+	if module.DB.FilmEffects.effects.blur.enabled or module.DB.FilmEffects.effects.crisp.enabled then module:ScheduleRepeatingTimer(EffectLoop, module.DB.FilmEffects.animationInterval) end
 end
 
 local function StopEffects()
@@ -141,9 +133,7 @@ end
 
 ----- Spin Cam ----
 local function StopSpin()
-	if not SpinCamRunning then
-		return
-	end
+	if not SpinCamRunning then return end
 
 	MoveViewRightStop()
 	SpinCamRunning = false
@@ -160,13 +150,9 @@ local function AFKToggle()
 		StopSpin()
 		StopEffects()
 	else
-		if module.DB.SpinCam.enabled then
-			StartSpin()
-		end
+		if module.DB.SpinCam.enabled then StartSpin() end
 
-		if module.DB.FilmEffects.enabled then
-			StartEffects()
-		end
+		if module.DB.FilmEffects.enabled then StartEffects() end
 	end
 end
 
@@ -187,11 +173,9 @@ local function Options()
 				order = 2,
 				-- width = 'double',
 				func = function(info, val)
-					if not SpinCamRunning then
-						DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['Spinning, to stop type /spin again'])
-					end
+					if not SpinCamRunning then DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['Spinning, to stop type /spin again']) end
 					AFKToggle()
-				end
+				end,
 			},
 			SpinCam = {
 				name = L['Spin cam'],
@@ -213,7 +197,7 @@ local function Options()
 						name = L['Enabled'],
 						type = 'toggle',
 						order = 1,
-						width = 'double'
+						width = 'double',
 					},
 					speed = {
 						name = L['Spin speed'],
@@ -222,9 +206,9 @@ local function Options()
 						width = 'full',
 						min = 1,
 						max = 100,
-						step = 1
-					}
-				}
+						step = 1,
+					},
+				},
 			},
 			FilmEffects = {
 				name = L['Film effects'],
@@ -241,7 +225,7 @@ local function Options()
 						name = L['Enable Film Effects'],
 						type = 'toggle',
 						order = 1,
-						width = 'full'
+						width = 'full',
 					},
 					effects = {
 						name = L['Effects'],
@@ -253,11 +237,11 @@ local function Options()
 						set = function(info, val)
 							module.DB.FilmEffects.effects[info[#info - 1]][info[#info]] = val
 						end,
-						args = {}
-					}
-				}
-			}
-		}
+						args = {},
+					},
+				},
+			},
+		},
 	}
 
 	for k, v in ipairs(EffectList) do
@@ -270,18 +254,16 @@ local function Options()
 					name = L['Enabled'],
 					type = 'toggle',
 					order = 1,
-					width = 'double'
-				}
-			}
+					width = 'double',
+				},
+			},
 		}
 	end
 	SUI.Options:AddOptions(optTable, 'AFKEffects')
 end
 
 function module:PLAYER_ENTERING_WORLD()
-	if SUI:IsModuleDisabled(module) then
-		module:UnregisterEvent('PLAYER_ENTERING_WORLD')
-	end
+	if SUI:IsModuleDisabled(module) then module:UnregisterEvent('PLAYER_ENTERING_WORLD') end
 
 	StopSpin()
 end
@@ -295,32 +277,28 @@ function module:CHAT_MSG_SYSTEM(_, ...)
 
 	if module.DB.SpinCam.enabled and (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) then
 		StartSpin()
-	elseif (... == CLEARED_AFK) then
+	elseif ... == CLEARED_AFK then
 		StopSpin()
 	end
 
 	if module.DB.FilmEffects.enabled and (... == format(MARKED_AFK_MESSAGE, DEFAULT_AFK_MESSAGE)) then
 		StartEffects()
-	elseif (... == CLEARED_AFK) then
+	elseif ... == CLEARED_AFK then
 		StopEffects()
 	end
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AFKEffects', {profile = defaults})
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AFKEffects', { profile = defaults })
 	module.DB = module.Database.profile ---@type AFKEffectsDB
 
 	--If speed is less than 1 reset it
-	if module.DB.SpinCam.speed < 1 then
-		module.DB.SpinCam.speed = module.DB.SpinCam.speed * 100
-	end
+	if module.DB.SpinCam.speed < 1 then module.DB.SpinCam.speed = module.DB.SpinCam.speed * 100 end
 end
 
 function module:OnEnable()
 	Options()
-	if SUI:IsModuleDisabled(module) then
-		return
-	end
+	if SUI:IsModuleDisabled(module) then return end
 
 	BuildFilmEffects()
 	---@diagnostic disable-next-line: missing-parameter
@@ -329,9 +307,7 @@ function module:OnEnable()
 	module:RegisterEvent('PLAYER_ENTERING_WORLD')
 
 	local ChatCommand = function()
-		if not SpinCamRunning then
-			DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['Spinning, to stop type /spin again'])
-		end
+		if not SpinCamRunning then DEFAULT_CHAT_FRAME:AddMessage('|cff33ff99SpinCam|r: ' .. L['Spinning, to stop type /spin again']) end
 		AFKToggle()
 	end
 	SUI:AddChatCommand('spin', ChatCommand, 'Toggles the Spincam', nil, true)

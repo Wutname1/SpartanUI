@@ -3,9 +3,7 @@ local UF = SUI.UF
 ---@param frame table
 ---@param DB table
 local function Build(frame, DB)
-	if frame.unitOnCreate ~= 'player' then
-		return
-	end
+	if frame.unitOnCreate ~= 'player' then return end
 	local playerClass = select(2, UnitClass('player'))
 	if playerClass == 'DEATHKNIGHT' then
 		frame.Runes = CreateFrame('Frame', nil, frame)
@@ -15,7 +13,7 @@ local function Build(frame, DB)
 			frame.Runes[i] = CreateFrame('StatusBar', frame:GetName() .. '_Runes' .. i, frame)
 			frame.Runes[i]:SetHeight(6)
 			frame.Runes[i]:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-			frame.Runes[i]:SetStatusBarColor(0, .39, .63, 1)
+			frame.Runes[i]:SetStatusBarColor(0, 0.39, 0.63, 1)
 
 			frame.Runes[i].bg = frame.Runes[i]:CreateTexture(nil, 'BORDER')
 			frame.Runes[i].bg:SetPoint('TOPLEFT', frame.Runes[i], 'TOPLEFT', -0, 0)
@@ -35,7 +33,7 @@ local function Update(frame)
 		frame.Runes[i]:SetWidth((frame.Health:GetWidth() - 10) / 6)
 		frame.Runes[i]:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
 		frame.Runes[i].bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
-		if (i == 1) then
+		if i == 1 then
 			frame.Runes[i]:SetPoint('TOPLEFT', frame.Name, 'BOTTOMLEFT', 0, -3)
 		else
 			frame.Runes[i]:SetPoint('TOPLEFT', frame.Runes[i - 1], 'TOPRIGHT', 2, 0)
@@ -52,7 +50,7 @@ local function Options(unitName, OptionSet)
 		order = 2,
 		width = 'double',
 		name = 'Bar Texture',
-		values = AceGUIWidgetLSMlists.statusbar
+		values = AceGUIWidgetLSMlists.statusbar,
 	}
 end
 
@@ -61,8 +59,8 @@ local Settings = {
 	enabled = true,
 	config = {
 		type = 'Indicator',
-		NoBulkUpdate = true
-	}
+		NoBulkUpdate = true,
+	},
 }
 
 UF.Elements:Register('Runes', Build, Update, Options, Settings)

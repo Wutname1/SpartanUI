@@ -16,7 +16,7 @@ function module:OnInitialize()
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
 		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174'
+		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
 	}
 
 	---@type SUI.UF.Style.Settings
@@ -24,24 +24,24 @@ function module:OnInitialize()
 		artwork = {
 			bg = {
 				path = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-				TexCoord = {0.0234375, 0.9765625, 0.265625, 0.7734375},
-				PVPAlpha = .4
-			}
-		}
+				TexCoord = { 0.0234375, 0.9765625, 0.265625, 0.7734375 },
+				PVPAlpha = 0.4,
+			},
+		},
 	}
 	UF.Style:Register('Digital', ufsettings)
 
 	local minimapSettings = {
-		size = {156, 156},
+		size = { 156, 156 },
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
-			position = {'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44'}
+			position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
 		},
 		coords = {
 			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-			scale = 1.2
+			scale = 1.2,
 		},
-		position = 'CENTER,SUI_Art_Digital,CENTER,0,54'
+		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Digital', minimapSettings)
 
@@ -49,7 +49,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if (SUI.DB.Artwork.Style ~= 'Digital') then
+	if SUI.DB.Artwork.Style ~= 'Digital' then
 		module:Disable()
 	else
 		module:EnableArtwork()
@@ -64,19 +64,15 @@ end
 --	Module Calls
 function module:BuffLoc(_, parent)
 	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - (SUI.DB.BuffSettings.offset))
+	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
 end
 
 function module:SetupVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then
-		RegisterStateDriver(SUI_Art_Digital, 'visibility', '[overridebar][vehicleui] hide; show')
-	end
+	if SUI.DB.Artwork.VehicleUI then RegisterStateDriver(SUI_Art_Digital, 'visibility', '[overridebar][vehicleui] hide; show') end
 end
 
 function module:RemoveVehicleUI()
-	if SUI.DB.Artwork.VehicleUI then
-		UnregisterStateDriver(SUI_Art_Digital, 'visibility')
-	end
+	if SUI.DB.Artwork.VehicleUI then UnregisterStateDriver(SUI_Art_Digital, 'visibility') end
 end
 
 function module:CreateArtwork()
