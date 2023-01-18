@@ -42,15 +42,9 @@ local function Builder(frame)
 	for _, elementName in pairs(ElementsToBuild) do
 		UF.Elements:Build(frame, elementName, elementDB[elementName])
 	end
-
-	-- if EditModeManagerFrame then
-	-- 	function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
-	-- 		return false
-	-- 	end
-	-- end
 end
 
-local function Options() end
+local function Update() end
 
 ---@type SUI.UF.Unit.Settings
 local Settings = {
@@ -137,4 +131,4 @@ local Settings = {
 	},
 }
 
-UF.Unit:Add('player', Builder, Settings)
+UF.Unit:Add('player', Builder, Settings, nil, nil, Update)

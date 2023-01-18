@@ -33,10 +33,63 @@ local ElementList = {
 	'Castbar',
 	'RareElite',
 	'RaidTargetIndicator',
-	'QuestMobIndicator',
+	'QuestMob',
 	'PvPIndicator',
 	'ThreatIndicator',
 }
+---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
+local ElementDefaults = {
+	Health = {
+		enabled = true,
+		height = 8,
+		offset = 0,
+		texture = 'SpartanUI Default',
+		colorReaction = true,
+		colorSmooth = true,
+		colorClass = true,
+		colorTapping = true,
+		colorDisconnected = true,
+		bg = {
+			enabled = true,
+			color = { 1, 1, 1, 0.6 },
+		},
+		text = {
+			['1'] = {
+				enabled = true,
+				size = 8,
+				text = '[SUIHealth(percentage)]',
+				position = {
+					anchor = 'CENTER',
+					x = 0,
+					y = 0,
+				},
+			},
+		},
+	},
+	QuestMob = {
+		enabled = true,
+		size = 16,
+		position = {
+			anchor = 'RIGHT',
+			relativePoint = 'LEFT',
+			x = 0,
+			y = 0,
+		},
+	},
+}
+
+---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
+local CurrentSettings = {}
+
+---@param frame any
+---@param obj SUI.UF.Elements.list
+local function BuildElement(frame, obj)
+	--Ensure we have settings
+	if not CurrentSettings[obj] then CurrentSettings[obj] = SUI:CopyData(SUI.UF.Elements:GetConfig(obj), {}) end
+
+	--Build it
+	UF.Elements:Build(frame, obj, CurrentSettings[obj])
+end
 
 local UpdateElementState = function(frame)
 	local elements = module.DB.elements
@@ -63,7 +116,7 @@ local UpdateElementState = function(frame)
 		element:SetScale(data.scale)
 
 		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
-		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' then element:SetDrawLayer('BORDER', 7) end
+		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' and element.SetDrawLayer then element:SetDrawLayer('BORDER', 7) end
 
 		-- Positioning
 		element:ClearAllPoints()
@@ -248,18 +301,21 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- health bar
-		UF.Elements:Build(frame, 'ThreatIndicator', elementsDB.ThreatIndicator)
-		UF.Elements:Build(frame, 'RaidTargetIndicator', elementsDB.RaidTargetIndicator)
-		UF.Elements:Build(frame, 'ClassIcon', elementsDB.ClassIcon)
-		UF.Elements:Build(frame, 'QuestMobIndicator', elementsDB.QuestMobIndicator)
+		BuildElement(frame, 'ThreatIndicator')
+		BuildElement(frame, 'RaidTargetIndicator')
+		BuildElement(frame, 'ClassIcon')
+		BuildElement(frame, 'QuestMob')
 
-		UF.Elements:Build(frame, 'Health', elementsDB.Health)
-		UF.Elements:Build(frame, 'Power', elementsDB.Power)
+		BuildElement(frame, 'Health')
+		BuildElement(frame, 'Power')
 		frame.Power:SetWidth(module.DB.width)
-		UF.Elements:Build(frame, 'Castbar', elementsDB.Castbar)
+		BuildElement(frame, 'Castbar')
 		frame.Castbar:SetWidth(module.DB.width)
-		UF.Elements:Build(frame, 'PvPIndicator', elementsDB.PvPIndicator)
-		UF.Elements:Build(frame, 'TargetIndicator', elementsDB.TargetIndicator)
+
+		BuildElement(frame, 'TargetIndicator')
+		BuildElement(frame, 'WidgetXPBar')
+
+		BuildElement(frame, 'PvPIndicator')
 		frame.PvPIndicator.Override = function(self, event, unit)
 			if unit ~= self.unit then return end
 			local factionColor = {
@@ -308,7 +364,7 @@ local NamePlateFactory = function(frame, unit)
 
 		-- Hots/Dots
 		local Auras = CreateFrame('Frame', unit .. 'Auras', frame)
-		Auras:SetPoint('BOTTOMLEFT', frame, 'TOPLEFT', 0, 2)
+		Auras:SetPoint('TOPLEFT', frame, 'BOTTOMLEFT', 0, 2)
 		Auras:SetSize(frame:GetWidth(), 16)
 		if UnitReaction(unit, 'player') <= 2 then
 			if module.DB.onlyShowPlayer and module.DB.showStealableBuffs then
@@ -446,11 +502,9 @@ function module:OnInitialize()
 	---#TODO: convert to new element settings process
 	local defaults = {
 		profile = {
-			ShowThreat = true,
 			ShowName = true,
 			ShowLevel = true,
 			ShowTarget = true,
-			ShowRaidTargetIndicator = true,
 			onlyShowPlayer = true,
 			showStealableBuffs = false,
 			Scale = 1,
@@ -509,22 +563,23 @@ function module:OnInitialize()
 				},
 				Health = {
 					enabled = true,
-					height = 5,
+					height = 8,
 					offset = 0,
 					texture = 'SpartanUI Default',
 					colorReaction = true,
-					colorSmooth = false,
+					colorSmooth = true,
 					colorClass = true,
 					colorTapping = true,
 					colorDisconnected = true,
 					bg = {
 						enabled = true,
-						color = { 1, 1, 1, 0.2 },
+						color = { 1, 1, 1, 0.3 },
 					},
 					text = {
 						['1'] = {
-							enabled = false,
-							text = '[health:current-formatted] [perhp]%',
+							enabled = true,
+							size = 5,
+							text = '[SUIHealth(percentage,hideMax)]',
 							position = {
 								anchor = 'CENTER',
 								x = 0,
@@ -534,7 +589,7 @@ function module:OnInitialize()
 					},
 				},
 				Power = {
-					enabled = true,
+					enabled = false,
 					height = 3,
 					offset = 1,
 					texture = 'SpartanUI Default',
@@ -621,11 +676,12 @@ function module:OnInitialize()
 						y = 0,
 					},
 				},
-				QuestMobIndicator = {
+				QuestMob = {
 					enabled = true,
 					size = 16,
 					position = {
-						anchor = 'BOTTOMLEFT',
+						anchor = 'RIGHT',
+						relativePoint = 'LEFT',
 						x = 0,
 						y = 0,
 					},
@@ -655,8 +711,8 @@ function module:OnDisable()
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled('Nameplates') then return end
 	module:BuildOptions()
+	if SUI:IsModuleDisabled('Nameplates') then return end
 
 	if not oUF_NamePlateDriver then
 		SUIUF:SetActiveStyle('Spartan_NamePlates')
@@ -667,22 +723,20 @@ function module:OnEnable()
 			ClassNameplateManaBarFrame:Hide()
 		end) end
 	end
+
+	--Make sure we start fresh
+	CurrentSettings = {}
+	for _, v in ipairs(ElementList) do
+		--Import base options
+		CurrentSettings[v] = SUI:CopyData(ElementDefaults[v], SUI.UF.Elements:GetConfig(v))
+		--Import User settings
+		SUI:CopyData(CurrentSettings[v], module.DB[v] or {})
+	end
 end
 
 function module:BuildOptions()
+	local Options = UF.Options
 	---#TODO: update to new element options process
-	local anchorPoints = {
-		['TOPLEFT'] = 'TOP LEFT',
-		['TOP'] = 'TOP',
-		['TOPRIGHT'] = 'TOP RIGHT',
-		['RIGHT'] = 'RIGHT',
-		['CENTER'] = 'CENTER',
-		['LEFT'] = 'LEFT',
-		['BOTTOMLEFT'] = 'BOTTOM LEFT',
-		['BOTTOM'] = 'BOTTOM',
-		['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
-	}
-
 	local function toInt(val)
 		if val then return 1 end
 		return 0
@@ -695,24 +749,26 @@ function module:BuildOptions()
 		end
 	end
 
-	SUI.opt.args.Modules.args.Nameplates = {
+	---@type AceConfigOptionsTable
+	local OptSet = Options:CreateFrameOptionSet(L['Nameplates'], function(info)
+		return module.DB[info[#info]]
+	end, function(info, val)
+		module.DB[info[#info]] = val
+		module:UpdateNameplates()
+	end)
+	OptSet.disabled = function()
+		return SUI:IsModuleDisabled(module)
+	end
+	OptSet.args.ShowFrame.hidden = true
+	OptSet.args.General.args.Display = {
+		name = L.Display,
 		type = 'group',
-		name = L['Nameplates'],
-		childGroups = 'tab',
-		disabled = function()
-			return SUI:IsModuleDisabled(module)
-		end,
-		get = function(info)
-			return module.DB[info[#info]]
-		end,
-		set = function(info, val)
-			module.DB[info[#info]] = val
-			module:UpdateNameplates()
-		end,
+		order = 1,
 		args = {
 			width = {
 				name = L['Frame width'],
 				type = 'input',
+				order = 1,
 			},
 			Scale = {
 				name = L['Scale'],
@@ -721,576 +777,305 @@ function module:BuildOptions()
 				min = 0.01,
 				max = 3,
 				step = 0.01,
-				order = 1,
-			},
-			General = {
-				name = L['General Apperance'],
-				type = 'group',
-				order = 10,
-				childGroups = 'tree',
-				args = {
-					Background = {
-						name = L['Background'],
-						type = 'group',
-						order = 1,
-						get = function(info)
-							return module.DB.elements.Background[info[#info]]
-						end,
-						set = function(info, val)
-							module.DB.elements.Background[info[#info]] = val
-							module:UpdateNameplates()
-						end,
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-							},
-							type = {
-								name = L['Type'],
-								order = 2,
-								type = 'select',
-								values = { ['artwork'] = 'Artwork', ['solid'] = 'Solid' },
-							},
-							colorMode = {
-								name = L['Color mode'],
-								type = 'select',
-								order = 3,
-								values = {
-									['faction'] = 'Faction',
-									['reaction'] = 'Reaction',
-								},
-							},
-							alpha = {
-								name = L['Alpha'],
-								type = 'range',
-								width = 'full',
-								order = 4,
-								min = 0,
-								max = 1,
-								step = 0.01,
-							},
-						},
-					},
-					HealthBar = {
-						name = L['Health bar'],
-						type = 'group',
-						order = 3,
-						get = function(info)
-							return module.DB.elements.Health[info[#info]]
-						end,
-						set = function(info, val)
-							module.DB.elements.Health[info[#info]] = val
-							module:UpdateNameplates()
-						end,
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-							},
-							height = {
-								name = L['Height'],
-								type = 'range',
-								width = 'full',
-								min = 1,
-								max = 30,
-								step = 1,
-								order = 10,
-							},
-							colorTapping = {
-								name = L['Grey out tapped targets'],
-								type = 'toggle',
-								width = 'full',
-								order = 20,
-							},
-							colorReaction = {
-								name = L['Color based on reaction'],
-								type = 'toggle',
-								width = 'full',
-								order = 30,
-							},
-							colorSmooth = {
-								name = L['Color by health remaning'],
-								type = 'toggle',
-								width = 'full',
-								order = 30,
-							},
-							colorClass = {
-								name = L['Color based on class'],
-								type = 'toggle',
-								width = 'full',
-								order = 40,
-							},
-							offset = {
-								name = L['Offset'],
-								type = 'range',
-								order = 3,
-								min = -30,
-								max = 30,
-								step = 0.5,
-							},
-						},
-					},
-					PowerBar = {
-						name = L['Power bar'],
-						type = 'group',
-						order = 4,
-						get = function(info)
-							return module.DB.elements.Power[info[#info]]
-						end,
-						set = function(info, val)
-							module.DB.elements.Power[info[#info]] = val
-							module:UpdateNameplates()
-						end,
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-							},
-							height = {
-								name = L['Height'],
-								type = 'range',
-								width = 'full',
-								min = 1,
-								max = 15,
-								step = 1,
-								order = 10,
-							},
-						},
-					},
-					Castbar = {
-						name = L['Cast bar'],
-						type = 'group',
-						order = 5,
-						get = function(info)
-							return module.DB.elements.Castbar[info[#info]]
-						end,
-						set = function(info, val)
-							module.DB.elements.Castbar[info[#info]] = val
-							module:UpdateNameplates()
-						end,
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-							},
-							height = {
-								name = L['Height'],
-								type = 'range',
-								width = 'full',
-								min = 1,
-								max = 15,
-								step = 1,
-								order = 10,
-							},
-							text = {
-								name = L['Show text'],
-								type = 'toggle',
-								width = 'full',
-								order = 20,
-							},
-							FlashOnInterruptible = {
-								name = L['Flash on interruptible cast'],
-								type = 'toggle',
-								width = 'full',
-								order = 30,
-							},
-							InterruptSpeed = {
-								name = L['Interrupt flash speed'],
-								type = 'range',
-								min = 0.01,
-								max = 1,
-								step = 0.01,
-							},
-						},
-					},
-				},
-			},
-			Indicator = {
-				name = L['Indicators'],
-				type = 'group',
-				order = 20,
-				childGroups = 'tree',
-				args = {
-					Name = {
-						name = L['Name'],
-						type = 'group',
-						order = 1,
-						args = {
-							ShowLevel = {
-								name = L['Show level'],
-								type = 'toggle',
-								order = 1,
-								get = function(info)
-									return module.DB.ShowLevel
-								end,
-								set = function(info, val)
-									module.DB.ShowLevel = val
-								end,
-							},
-							ShowName = {
-								name = L['Show name'],
-								type = 'toggle',
-								order = 2,
-								get = function(info)
-									return module.DB.elements.Name.enabled
-								end,
-								set = function(info, val)
-									--Update the DB
-									module.DB.elements.Name.enabled = val
-								end,
-							},
-							JustifyH = {
-								name = L['Horizontal alignment'],
-								type = 'select',
-								order = 3,
-								values = {
-									['LEFT'] = 'Left',
-									['CENTER'] = 'Center',
-									['RIGHT'] = 'Right',
-								},
-								get = function(info)
-									return module.DB.elements.Name.SetJustifyH
-								end,
-								set = function(info, val)
-									--Update the DB
-									module.DB.elements.Name.SetJustifyH = val
-									--Update the screen
-									-- module.frames[frameName][key]:SetJustifyH(val)
-								end,
-							},
-						},
-					},
-					QuestIndicator = {
-						name = L['Quest icon'],
-						type = 'group',
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-								get = function(info)
-									return module.DB.elements.QuestIndicator.enabled
-								end,
-								set = function(info, val)
-									module.DB.elements.QuestIndicator.enabled = val
-								end,
-							},
-						},
-					},
-					ThreatIndicator = {
-						name = L['Threat'],
-						type = 'group',
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-								get = function(info)
-									return module.DB.elements.ThreatIndicator.enabled
-								end,
-								set = function(info, val)
-									module.DB.elements.ThreatIndicator.enabled = val
-								end,
-							},
-						},
-					},
-					RareElite = {
-						name = L['Rare/Elite background'],
-						type = 'group',
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-								get = function(info)
-									return module.DB.elements.RareElite.enabled
-								end,
-								set = function(info, val)
-									module.DB.elements.RareElite.enabled = val
-								end,
-							},
-						},
-					},
-					TargetIndicator = {
-						name = L['Target indicator'],
-						type = 'group',
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-								get = function(info)
-									return module.DB.ShowTarget
-								end,
-								set = function(info, val)
-									module.DB.ShowTarget = val
-								end,
-							},
-						},
-					},
-					ClassIcon = {
-						name = L['Class icon'],
-						type = 'group',
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'double',
-								order = 1,
-								get = function(info)
-									return module.DB.elements.ClassIcon.enabled
-								end,
-								set = function(info, val)
-									module.DB.elements.ClassIcon.enabled = val
-									module:UpdateNameplates()
-								end,
-							},
-							VisibleOn = {
-								name = L['Show on'],
-								type = 'select',
-								order = 2,
-								values = {
-									['friendly'] = 'Friendly',
-									['hostile'] = 'Hostile',
-									['PlayerControlled'] = 'Player controlled',
-									['all'] = 'All',
-								},
-								get = function(info)
-									return module.DB.elements.ClassIcon.VisibleOn
-								end,
-								set = function(info, val)
-									module.DB.elements.ClassIcon.VisibleOn = val
-									module:UpdateNameplates()
-								end,
-							},
-							size = {
-								name = L['Size'],
-								type = 'range',
-								order = 3,
-								min = 1,
-								max = 100,
-								step = 1,
-								get = function(info)
-									return module.DB.elements.ClassIcon.size
-								end,
-								set = function(info, val)
-									--Update the DB
-									module.DB.elements.ClassIcon.size = val
-								end,
-							},
-							position = {
-								name = L['Position'],
-								type = 'group',
-								order = 50,
-								inline = true,
-								args = {
-									x = {
-										name = L['X Axis'],
-										type = 'range',
-										order = 1,
-										min = -100,
-										max = 100,
-										step = 1,
-										get = function(info)
-											return module.DB.elements.ClassIcon.position.x
-										end,
-										set = function(info, val)
-											--Update the DB
-											module.DB.elements.ClassIcon.position.x = val
-										end,
-									},
-									y = {
-										name = L['Y Axis'],
-										type = 'range',
-										order = 2,
-										min = -100,
-										max = 100,
-										step = 1,
-										get = function(info)
-											return module.DB.elements.ClassIcon.position.y
-										end,
-										set = function(info, val)
-											--Update the DB
-											module.DB.elements.ClassIcon.position.y = val
-										end,
-									},
-									anchor = {
-										name = L['Anchor point'],
-										type = 'select',
-										order = 3,
-										values = anchorPoints,
-										get = function(info)
-											return module.DB.elements.ClassIcon.position.anchor
-										end,
-										set = function(info, val)
-											--Update the DB
-											module.DB.elements.ClassIcon.position.anchor = val
-										end,
-									},
-								},
-							},
-						},
-					},
-					Auras = {
-						name = L['Auras'],
-						type = 'group',
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								order = 1,
-								width = 'double',
-								get = function(info)
-									return module.DB.elements.Auras.enabled
-								end,
-								set = function(info, val)
-									module.DB.elements.Auras.enabled = val
-									module:UpdateNameplates()
-								end,
-							},
-							onlyShowPlayer = {
-								name = L['Show only auras created by player'],
-								type = 'toggle',
-								order = 2,
-								width = 'double',
-								get = function(info)
-									return module.DB.onlyShowPlayer
-								end,
-								set = function(info, val)
-									module.DB.onlyShowPlayer = val
-									module:UpdateNameplates()
-								end,
-							},
-							showStealableBuffs = {
-								name = L['Show Stealable/Dispellable buffs'],
-								type = 'toggle',
-								order = 3,
-								width = 'double',
-								get = function(info)
-									return module.DB.showStealableBuffs
-								end,
-								set = function(info, val)
-									module.DB.showStealableBuffs = val
-									module:UpdateNameplates()
-								end,
-							},
-							notice = {
-								name = L['With both of these options active your DOTs will not appear on enemies.'],
-								type = 'description',
-								order = 4,
-								fontSize = 'small',
-							},
-						},
-					},
-					XPBar = {
-						name = L['XP Bar'],
-						type = 'group',
-						args = {
-							enabled = {
-								name = L['Enabled'],
-								type = 'toggle',
-								width = 'full',
-								order = 1,
-								get = function(info)
-									return module.DB.elements.XPBar.enabled
-								end,
-								set = function(info, val)
-									module.DB.elements.XPBar.enabled = val
-								end,
-							},
-							size = {
-								name = L['Size'],
-								type = 'range',
-								order = 2,
-								min = 1,
-								max = 30,
-								step = 1,
-								get = function(info)
-									return module.DB.elements.XPBar.size
-								end,
-								set = function(info, val)
-									module.DB.elements.XPBar.size = val
-								end,
-							},
-							Offset = {
-								name = L['Offset'],
-								type = 'range',
-								order = 3,
-								min = -30,
-								max = 30,
-								step = 0.5,
-								get = function(info)
-									return module.DB.elements.XPBar.Offset
-								end,
-								set = function(info, val)
-									module.DB.elements.XPBar.Offset = val
-								end,
-							},
-						},
-					},
-				},
-			},
-			Display = {
-				name = L['Blizzard display options'],
-				type = 'group',
-				order = 300,
-				args = {
-					nameplateShowAll = {
-						name = UNIT_NAMEPLATES_AUTOMODE,
-						desc = OPTION_TOOLTIP_UNIT_NAMEPLATES_AUTOMODE,
-						type = 'toggle',
-						width = 'double',
-						get = function(info)
-							return toBool(GetCVar('nameplateShowAll'))
-						end,
-						set = function(info, val)
-							SetCVar('nameplateShowAll', toInt(val))
-						end,
-					},
-					nameplateShowSelf = {
-						name = DISPLAY_PERSONAL_RESOURCE,
-						desc = OPTION_TOOLTIP_UNIT_NAMEPLATES_AUTOMODE,
-						type = 'toggle',
-						width = 'double',
-						get = function(info)
-							return toBool(GetCVar('nameplateShowSelf'))
-						end,
-						set = function(info, val)
-							SetCVar('nameplateShowSelf', toInt(val))
-						end,
-					},
-					nameplateMotion = {
-						name = UNIT_NAMEPLATES_TYPES,
-						desc = function(info)
-							if GetCVar('nameplateMotion') == '1' then
-								return UNIT_NAMEPLATES_TYPE_TOOLTIP_2
-							else
-								return UNIT_NAMEPLATES_TYPE_TOOLTIP_1
-							end
-						end,
-						type = 'select',
-						values = { ['1'] = UNIT_NAMEPLATES_TYPE_2, ['0'] = UNIT_NAMEPLATES_TYPE_1 },
-						get = function(info)
-							return GetCVar('nameplateMotion')
-						end,
-						set = function(info, val)
-							SetCVar('nameplateMotion', tonumber(val))
-						end,
-					},
-				},
+				order = 2,
 			},
 		},
 	}
+	OptSet.args.General.args.Blizzard = {
+		name = L['Blizzard display options'],
+		type = 'group',
+		args = {
+			nameplateShowAll = {
+				name = UNIT_NAMEPLATES_AUTOMODE,
+				desc = OPTION_TOOLTIP_UNIT_NAMEPLATES_AUTOMODE,
+				type = 'toggle',
+				width = 'double',
+				get = function(info)
+					return toBool(GetCVar('nameplateShowAll'))
+				end,
+				set = function(info, val)
+					SetCVar('nameplateShowAll', toInt(val))
+				end,
+			},
+			nameplateShowSelf = {
+				name = DISPLAY_PERSONAL_RESOURCE,
+				desc = OPTION_TOOLTIP_UNIT_NAMEPLATES_AUTOMODE,
+				type = 'toggle',
+				width = 'double',
+				get = function(info)
+					return toBool(GetCVar('nameplateShowSelf'))
+				end,
+				set = function(info, val)
+					SetCVar('nameplateShowSelf', toInt(val))
+				end,
+			},
+			nameplateMotion = {
+				name = UNIT_NAMEPLATES_TYPES,
+				desc = function(info)
+					if GetCVar('nameplateMotion') == '1' then
+						return UNIT_NAMEPLATES_TYPE_TOOLTIP_2
+					else
+						return UNIT_NAMEPLATES_TYPE_TOOLTIP_1
+					end
+				end,
+				type = 'select',
+				values = { ['1'] = UNIT_NAMEPLATES_TYPE_2, ['0'] = UNIT_NAMEPLATES_TYPE_1 },
+				get = function(info)
+					return GetCVar('nameplateMotion')
+				end,
+				set = function(info, val)
+					SetCVar('nameplateMotion', tonumber(val))
+				end,
+			},
+		},
+	}
+
+	-- ---@type AceConfigOptionsTable
+	-- local OptSet = {
+	-- 	args = {
+	-- 		Indicator = {
+	-- 			name = L['Indicators'],
+	-- 			type = 'group',
+	-- 			order = 20,
+	-- 			childGroups = 'tree',
+	-- 			args = {
+	-- 				Name = {
+	-- 					name = L['Name'],
+	-- 					type = 'group',
+	-- 					order = 1,
+	-- 					args = {
+	-- 						ShowLevel = {
+	-- 							name = L['Show level'],
+	-- 							type = 'toggle',
+	-- 							order = 1,
+	-- 							get = function(info)
+	-- 								return module.DB.ShowLevel
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								module.DB.ShowLevel = val
+	-- 							end
+	-- 						},
+	-- 						ShowName = {
+	-- 							name = L['Show name'],
+	-- 							type = 'toggle',
+	-- 							order = 2,
+	-- 							get = function(info)
+	-- 								return module.DB.elements.Name.enabled
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								--Update the DB
+	-- 								module.DB.elements.Name.enabled = val
+	-- 							end
+	-- 						},
+	-- 						JustifyH = {
+	-- 							name = L['Horizontal alignment'],
+	-- 							type = 'select',
+	-- 							order = 3,
+	-- 							values = {
+	-- 								['LEFT'] = 'Left',
+	-- 								['CENTER'] = 'Center',
+	-- 								['RIGHT'] = 'Right'
+	-- 							},
+	-- 							get = function(info)
+	-- 								return module.DB.elements.Name.SetJustifyH
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								--Update the DB
+	-- 								module.DB.elements.Name.SetJustifyH = val
+	-- 								--Update the screen
+	-- 								-- module.frames[frameName][key]:SetJustifyH(val)
+	-- 							end
+	-- 						}
+	-- 					}
+	-- 				},
+	-- 				Auras = {
+	-- 					name = L['Auras'],
+	-- 					type = 'group',
+	-- 					args = {
+	-- 						enabled = {
+	-- 							name = L['Enabled'],
+	-- 							type = 'toggle',
+	-- 							order = 1,
+	-- 							width = 'double',
+	-- 							get = function(info)
+	-- 								return module.DB.elements.Auras.enabled
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								module.DB.elements.Auras.enabled = val
+	-- 								module:UpdateNameplates()
+	-- 							end
+	-- 						},
+	-- 						onlyShowPlayer = {
+	-- 							name = L['Show only auras created by player'],
+	-- 							type = 'toggle',
+	-- 							order = 2,
+	-- 							width = 'double',
+	-- 							get = function(info)
+	-- 								return module.DB.onlyShowPlayer
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								module.DB.onlyShowPlayer = val
+	-- 								module:UpdateNameplates()
+	-- 							end
+	-- 						},
+	-- 						showStealableBuffs = {
+	-- 							name = L['Show Stealable/Dispellable buffs'],
+	-- 							type = 'toggle',
+	-- 							order = 3,
+	-- 							width = 'double',
+	-- 							get = function(info)
+	-- 								return module.DB.showStealableBuffs
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								module.DB.showStealableBuffs = val
+	-- 								module:UpdateNameplates()
+	-- 							end
+	-- 						},
+	-- 						notice = {
+	-- 							name = L['With both of these options active your DOTs will not appear on enemies.'],
+	-- 							type = 'description',
+	-- 							order = 4,
+	-- 							fontSize = 'small'
+	-- 						}
+	-- 					}
+	-- 				},
+	-- 				XPBar = {
+	-- 					name = L['XP Bar'],
+	-- 					type = 'group',
+	-- 					args = {
+	-- 						enabled = {
+	-- 							name = L['Enabled'],
+	-- 							type = 'toggle',
+	-- 							width = 'full',
+	-- 							order = 1,
+	-- 							get = function(info)
+	-- 								return module.DB.elements.XPBar.enabled
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								module.DB.elements.XPBar.enabled = val
+	-- 							end
+	-- 						},
+	-- 						size = {
+	-- 							name = L['Size'],
+	-- 							type = 'range',
+	-- 							order = 2,
+	-- 							min = 1,
+	-- 							max = 30,
+	-- 							step = 1,
+	-- 							get = function(info)
+	-- 								return module.DB.elements.XPBar.size
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								module.DB.elements.XPBar.size = val
+	-- 							end
+	-- 						},
+	-- 						Offset = {
+	-- 							name = L['Offset'],
+	-- 							type = 'range',
+	-- 							order = 3,
+	-- 							min = -30,
+	-- 							max = 30,
+	-- 							step = .5,
+	-- 							get = function(info)
+	-- 								return module.DB.elements.XPBar.Offset
+	-- 							end,
+	-- 							set = function(info, val)
+	-- 								module.DB.elements.XPBar.Offset = val
+	-- 							end
+	-- 						}
+	-- 					}
+	-- 				}
+	-- 			}
+	-- 		},
+	-- 	}
+	-- }
+
+	for _, elementName in ipairs(ElementList) do
+		local config = UF.Elements:GetConfig(elementName).config
+
+		--TODO: Right now these are the same, but in the future they will not be
+		local ElementSettings = module.DB.elements[elementName]
+		local UserSetting = module.DB.elements[elementName]
+
+		---@type AceConfigOptionsTable
+		local ElementOptSet = {
+			name = config.DisplayName and L[config.DisplayName] or elementName,
+			desc = config.Description or '',
+			type = 'group',
+			order = 1,
+			get = function(info)
+				return ElementSettings[info[#info]] or false
+			end,
+			set = function(info, val)
+				--Update memory
+				ElementSettings[info[#info]] = val
+				--Update the DB
+				UserSetting[info[#info]] = val
+				-- TODO: Update the frame
+			end,
+			args = {},
+		}
+
+		local PositionGet = function(info)
+			return ElementSettings.position[info[#info]]
+		end
+		local PositionSet = function(info, val)
+			if val == elementName then
+				SUI:Print(L['Cannot set position to self'])
+				return
+			end
+			--Update memory
+			ElementSettings.position[info[#info]] = val
+			--Update the DB
+			UserSetting.position[info[#info]] = val
+			-- TODO: Update the frame
+		end
+
+		if config.type == 'General' then
+		elseif config.type == 'StatusBar' then
+			-- TODO
+			-- Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
+		elseif config.type == 'Indicator' then
+			Options:IndicatorAddDisplay(ElementOptSet)
+			Options:AddPositioning(ElementList, ElementOptSet, PositionGet, PositionSet)
+		elseif config.type == 'Text' then
+			--TODO
+		elseif config.type == 'Auras' then
+			--TODO
+		end
+
+		-- local Opt = OptSet.args[config.type].args[elementName]
+		-- if Opt then
+		-- 	if config.type == 'StatusBar' then
+		-- 		-- SUI.UF.Options:StatusBarDefaults('Nameplate', Opt, elementName)
+		-- 	elseif config.type == 'Indicator' then
+		-- 		SUI.UF.Options:IndicatorAddDisplay(Opt)
+		-- 		SUI.UF.Options:AddPositioning(ElementList, Opt, PositionGet, PositionSet)
+		-- 	end
+		-- else
+		-- 	print(elementName)
+		-- end
+
+		--Call Elements Custom function
+		-- UF.Elements:Options('Nameplates', elementName, ElementOptSet, ElementSettings)
+
+		if not ElementOptSet.args.enabled then
+			--Add a disable check to all args
+			for k, v in pairs(ElementOptSet.args) do
+				v.disabled = function()
+					return not ElementSettings.enabled
+				end
+			end
+
+			ElementOptSet.args.enabled = {
+				name = L['Enabled'],
+				type = 'toggle',
+				order = 1,
+			}
+		end
+		-- Add element option to screen
+		OptSet.args[config.type].args[elementName] = ElementOptSet
+	end
+
+	SUI.opt.args.Modules.args.Nameplates = OptSet
 end

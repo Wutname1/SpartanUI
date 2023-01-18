@@ -31,7 +31,7 @@ local function Builder(frame)
 	UF.Elements:Build(frame, 'StatusText', elementDB['StatusText'])
 	UF.Elements:Build(frame, 'SUI_RaidGroup', elementDB['SUI_RaidGroup'])
 
-	UF.Elements:Build(frame, 'QuestMobIndicator', elementDB['QuestMobIndicator'])
+	UF.Elements:Build(frame, 'QuestMob', elementDB['QuestMob'])
 	UF.Elements:Build(frame, 'RareElite', elementDB['RareElite'])
 	UF.Elements:Build(frame, 'AuraBars', elementDB['AuraBars'])
 end
@@ -88,7 +88,7 @@ local Settings = {
 				relativePoint = 'BOTTOM',
 			},
 		},
-		QuestMobIndicator = {
+		QuestMob = {
 			enabled = true,
 		},
 		RaidRoleIndicator = {

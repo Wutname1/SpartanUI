@@ -15,10 +15,9 @@ local elementList = {
 	'ClassIcon',
 	'RaidTargetIndicator',
 	'Range',
-	--Friendly Only
+	'PVPSpecIcon',
 	'GroupRoleIndicator',
 	'RaidRoleIndicator',
-	-- 'AuraBars'
 }
 
 local function GroupBuilder(holder)
@@ -48,16 +47,13 @@ local function Options(OptionSet)
 end
 
 ---@type SUI.UF.Unit.Settings
-local nameText = '[SUI_ColorClass][name]'
-if SUI.IsRetail then nameText = nameText .. ' [arenaspec]' end
-
 local Settings = {
 	maxColumns = 1,
 	unitsPerColumn = 5,
 	columnSpacing = 1,
 	yOffset = -25,
 	elements = {
-		Name = { text = nameText },
+		Name = { text = '[SUI_ColorClass][name]' },
 		Power = {
 			height = 5,
 		},

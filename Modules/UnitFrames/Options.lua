@@ -13,8 +13,183 @@ local anchorPoints = {
 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
 }
 
+---@param optTable AceConfigOptionsTable
+local function SUIHealth(optTable)
+	local mode = 'Health'
+	if optTable.name == 'SUIPower' then mode = 'Power' end
+
+	local prefix = ''
+	local suffix = ''
+	local options = {
+		displayDead = false,
+		hideDead = false,
+		hideZero = false,
+		hideMax = false,
+		short = false,
+		percentage = false,
+		dynamic = false,
+		formatted = true,
+		current = true,
+		max = false,
+		missing = false,
+	}
+	local tagText = 'current'
+	local tagTextMode = 'formatted'
+
+	optTable.type = 'group'
+	optTable.inline = true
+	optTable.order = 0.1
+	optTable.args = {
+		description = {
+			name = 'This is a custom dynamic text tag that you can use to display information about the ' .. mode .. ' of the unit. You can use the following options to customize the text.',
+			type = 'description',
+			order = 0,
+		},
+		output = {
+			name = optTable.name or '',
+			type = 'input',
+			order = 1,
+			width = 'full',
+			get = function(info)
+				local opt = ''
+				for k, v in pairs(options) do
+					if v and k ~= 'formatted' and k ~= 'current' then
+						if opt == '' then
+							opt = opt .. k
+						else
+							opt = opt .. ',' .. k
+						end
+					end
+				end
+
+				--Setup the misc stuff
+				if opt ~= '' then opt = '(' .. opt .. ')' end
+				local finalPrefix = ''
+				local finalSuffix = ''
+				if prefix ~= '' then finalPrefix = prefix .. '$>' end
+				if suffix ~= '' then finalSuffix = '<$' .. suffix end
+
+				return '[' .. finalPrefix .. optTable.name .. finalSuffix .. opt .. ']'
+			end,
+		},
+		prefix = {
+			name = 'Prefix',
+			type = 'input',
+			order = 2,
+			get = function(info)
+				return prefix
+			end,
+			set = function(info, value)
+				prefix = value
+			end,
+		},
+		suffix = {
+			name = 'Suffix',
+			type = 'input',
+			order = 3,
+			get = function(info)
+				return suffix
+			end,
+			set = function(info, value)
+				suffix = value
+			end,
+		},
+		tagText = {
+			name = mode .. ' text to show',
+			type = 'select',
+			style = 'radio',
+			order = 4,
+			get = function(info)
+				return tagText
+			end,
+			set = function(info, value)
+				options.missing = false
+				options.current = false
+				options.max = false
+
+				tagText = value
+				options[value] = true
+			end,
+			values = {
+				['missing'] = 'Missing ' .. mode,
+				['current'] = 'Current ' .. mode,
+				['max'] = 'Max ' .. mode,
+			},
+		},
+		tagTextMode = {
+			name = 'How to show selected text',
+			desc = '- Formatted will add commas to the value\n- Short will round the number to the thousands or millions\n- Dynamic will change based on the total health pool\n- Percentage will show the percentage of health remaining and includes a % sign',
+			type = 'select',
+			style = 'radio',
+			order = 5,
+			get = function(info)
+				return tagTextMode
+			end,
+			set = function(info, value)
+				options.dynamic = false
+				options.short = false
+				options.percentage = false
+				options.formatted = false
+
+				tagTextMode = value
+				options[value] = true
+			end,
+			values = {
+				['formatted'] = 'Formatted',
+				['short'] = 'Short',
+				['dynamic'] = 'Dynamic',
+				['percentage'] = 'Percentage',
+			},
+		},
+		options = {
+			type = 'group',
+			name = 'Options',
+			desc = 'Options for the tag, you may select as many as you like',
+			order = 6,
+			get = function(info)
+				return options[info[#info]]
+			end,
+			set = function(info, value)
+				options[info[#info]] = value
+			end,
+			args = {
+				displayDead = {
+					type = 'toggle',
+					name = 'Display Dead',
+					desc = "Display 'DEAD' when the unit is dead",
+					order = 1,
+				},
+				hideDead = {
+					type = 'toggle',
+					name = 'Hide Dead',
+					desc = 'Show nothing when the unit is dead',
+					order = 2,
+				},
+				hideMax = {
+					type = 'toggle',
+					name = 'Hide Max',
+					desc = 'Show nothing when the unit is at full health',
+					order = 3,
+				},
+				hideZero = {
+					type = 'toggle',
+					name = 'Hide Zero',
+					desc = 'Show nothing when the specified health data is at 0',
+					order = 4,
+				},
+				line = {
+					type = 'description',
+					name = '',
+					order = 5,
+				},
+			},
+		},
+	}
+end
+
 local TagList = {
 	--Health
+	['SUIHealth'] = { category = 'Health', description = 'SUIHealth', func = SUIHealth },
 	['curhp'] = { category = 'Health', description = 'Displays the current HP without decimals' },
 	['deficit:name'] = { category = 'Health', description = 'Displays the health as a deficit and the name at full health' },
 	['perhp'] = {
@@ -26,18 +201,8 @@ local TagList = {
 		category = 'Health',
 		description = 'Displays the missing health of the unit in whole numbers, when not at full health',
 	},
-	['health:current-short'] = {
-		category = 'Health',
-		description = 'Displays current HP rounded to the nearest Thousand or Million',
-	},
-	['health:current-dynamic'] = {
-		category = 'Health',
-		description = 'Displays current HP Rounded to the nearest Million or with commas below 1 million',
-	},
-	['health:current-formatted'] = { category = 'Health', description = 'Displays current HP with commas' },
-	['health:missing-formatted'] = { category = 'Health', description = 'Displays missing HP with commas' },
-	['health:max-formatted'] = { category = 'Health', description = 'Displays max HP with commas' },
 	--Power
+	['SUIPower'] = { category = 'Power', description = 'SUIPower', func = SUIHealth },
 	['perpp'] = { category = 'Power', description = "Displays the unit's percentage power without decimals " },
 	['curpp'] = { category = 'Power', description = "Displays the unit's current power without decimals" },
 	['maxpp'] = {
@@ -48,9 +213,6 @@ local TagList = {
 		category = 'Power',
 		description = 'Displays the missing power of the unit in whole numbers when not at full power',
 	},
-	['power:current-formatted'] = { category = 'Power', description = 'Displays current power with commas' },
-	['power:missing-formatted'] = { category = 'Power', description = 'Displays missing power with commas' },
-	['power:max-formatted'] = { category = 'Power', description = 'Displays max power with commas' },
 	--Mana
 	['curmana'] = { category = 'Mana', description = 'Displays the current mana without decimals' },
 	['maxmana'] = { category = 'Mana', description = 'Displays the max amount of mana the unit can have' },
@@ -79,6 +241,11 @@ local TagList = {
 		category = 'Classpower',
 		description = 'Displays amount of combo points the player has (only for player, shows nothing on 0)',
 	},
+	['arcanecharges'] = { category = 'Classpower', description = 'Displays the arcane charges (Mage)' },
+	['chi'] = { category = 'Classpower', description = 'Displays the chi points (Monk)' },
+	['holypower'] = { category = 'Classpower', description = 'Displays the holy power (Paladin)' },
+	['runes'] = { category = 'Classpower', description = 'Displays the runes (Death Knight)' },
+	['soulshards'] = { category = 'Classpower', description = 'Displays the soulshards (Warlock)' },
 	--Colors
 	['difficulty'] = {
 		category = 'Colors',
@@ -89,6 +256,7 @@ local TagList = {
 	--PvP
 	['faction'] = { category = 'PvP', description = "Displays 'Alliance' or 'Horde'" },
 	['pvp'] = { category = 'PvP', description = "Displays 'PvP' if the unit is pvp flagged" },
+	['arenaspec'] = { category = 'PvP', description = 'Displays the area spec of an unit' },
 	--Party and Raid
 	['group'] = { category = 'Party and Raid', description = "Displays the group number the unit is in ('1' - '8')" },
 	['leader'] = { category = 'Party and Raid', description = "Displays 'L' if the unit is the group/raid leader" },
@@ -98,55 +266,37 @@ local TagList = {
 	['smartlevel'] = { category = 'Level', description = "Only display the unit's level if it is not the same as yours" },
 	--Names
 	['name'] = { category = 'Names', description = 'Displays the full name of the unit without any letter limitation' },
-}
-if SUI.IsRetail then
-	TagList['affix'] = { category = 'Miscellaneous', description = 'Displays low level critter mobs' }
-	TagList['specialization'] = {
+	['affix'] = { category = 'Miscellaneous', description = 'Displays low level critter mobs' },
+	['specialization'] = {
 		category = 'Miscellaneous',
 		description = 'Displays your current specialization as text',
-	}
-	TagList['arcanecharges'] = { category = 'Classpower', description = 'Displays the arcane charges (Mage)' }
-	TagList['arenaspec'] = { category = 'PvP', description = 'Displays the area spec of an unit' }
-	TagList['chi'] = { category = 'Classpower', description = 'Displays the chi points (Monk)' }
-	TagList['faction'] = { category = 'PvP', description = "Displays 'Alliance' or 'Horde'" }
-	TagList['holypower'] = { category = 'Classpower', description = 'Displays the holy power (Paladin)' }
-	TagList['runes'] = { category = 'Classpower', description = 'Displays the runes (Death Knight)' }
-	TagList['soulshards'] = { category = 'Classpower', description = 'Displays the soulshards (Warlock)' }
-	TagList['threat'] = {
+	},
+	['threat'] = {
 		category = 'Threat',
 		description = 'Displays the current threat situation (Aggro is secure tanking, -- is losing threat and ++ is gaining threat)',
-	}
-	TagList['title'] = { category = 'Names', description = 'Displays player title' }
-	TagList['threatcolor'] = {
+	},
+	['title'] = { category = 'Names', description = 'Displays player title' },
+	['threatcolor'] = {
 		category = 'Colors',
 		description = "Changes the text color, depending on the unit's threat situation",
-	}
-end
+	},
+}
 local Options = {}
 ----------------------------------------------------------------------------------------------------
 
 ---Creates the base options screen for a frame name
 ---@param frameName UnitFrameName
 ---@return AceConfigOptionsTable
-local function CreateOptionSet(frameName)
+function Options:CreateFrameOptionSet(frameName, get, set)
 	local OptionSet = {
 		name = frameName,
 		type = 'group',
 		childGroups = 'tab',
 		disabled = function()
-			return not UF.CurrentSettings[frameName].enabled
+			return (UF.CurrentSettings[frameName] and not UF.CurrentSettings[frameName].enabled) or false
 		end,
-		get = function(info)
-			return UF.CurrentSettings[frameName][info[#info]] or false
-		end,
-		set = function(info, val)
-			--Update memory
-			UF.CurrentSettings[frameName][info[#info]] = val
-			--Update the DB
-			UF.DB.UserSettings[UF.DB.Style][frameName][info[#info]] = val
-			--Update the screen
-			UF.Unit[frameName]:UpdateAll()
-		end,
+		get = get,
+		set = set,
 		args = {
 			ShowFrame = {
 				name = 'Show Frame',
@@ -209,7 +359,7 @@ local function CreateOptionSet(frameName)
 end
 
 ---@param OptionSet AceConfigOptionsTable
-local function AddGeneral(OptionSet)
+function Options:AddGeneral(OptionSet)
 	OptionSet.args.General.args = {
 		General = {
 			name = '',
@@ -373,12 +523,6 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 		get = get,
 		set = set,
 		args = {
-			NOTFINISHED = {
-				name = L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
-				type = 'description',
-				fontSize = 'medium',
-				order = 0.1,
-			},
 			duration = {
 				name = L['Duration'],
 				type = 'group',
@@ -892,25 +1036,44 @@ function Options:Initialize()
 		name = L['Text tags'],
 		type = 'group',
 		childGroups = 'tab',
-		args = {},
+		args = {
+			Health = {
+				name = L['Health'],
+				type = 'group',
+				order = 0.1,
+				args = {},
+			},
+			Power = {
+				name = L['Power'],
+				type = 'group',
+				order = 0.2,
+				args = {},
+			},
+			Names = {
+				name = 'Names',
+				type = 'group',
+				order = 0.3,
+				args = {},
+			},
+		},
 	}
 	for k, v in pairs(TagList) do
 		if v.category and not HelpScreen.args[v.category] then HelpScreen.args[v.category] = {
 			name = v.category,
 			type = 'group',
 			args = {},
+			set = function(info, val) end,
 		} end
+
 		HelpScreen.args[v.category].args[k] = {
-			name = v.description,
-			-- desc = 'desc',
+			name = v.description or '',
 			type = 'input',
-			-- multiline = 'false',
 			width = 'full',
 			get = function(info)
 				return '[' .. k .. ']'
 			end,
-			set = function(info, val) end,
 		}
+		if v.func then v.func(HelpScreen.args[v.category].args[k]) end
 	end
 	SUI.opt.args.Help.args.UnitFrames = HelpScreen
 
@@ -1010,8 +1173,17 @@ function Options:Initialize()
 
 	-- Build frame options
 	for frameName, _ in pairs(UF.Unit:GetBuiltFrameList()) do
-		local FrameOptSet = CreateOptionSet(frameName)
-		AddGeneral(FrameOptSet)
+		local FrameOptSet = Options:CreateFrameOptionSet(frameName, function(info)
+			return UF.CurrentSettings[frameName][info[#info]] or false
+		end, function(info, val)
+			--Update memory
+			UF.CurrentSettings[frameName][info[#info]] = val
+			--Update the DB
+			UF.DB.UserSettings[UF.DB.Style][frameName][info[#info]] = val
+			--Update the screen
+			UF.Unit[frameName]:UpdateAll()
+		end)
+		Options:AddGeneral(FrameOptSet)
 
 		-- Add Element Options
 		local builtFrame = UF.Unit:Get(frameName)

@@ -42,6 +42,7 @@ local tooltips = {
 	ItemSocketingDescription,
 }
 local whitebg = { bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3 }
+local ilvlTempData = {}
 
 function module:OnInitialize()
 	---@class SUI.Tooltip.Settings
@@ -77,6 +78,7 @@ function module:OnInitialize()
 			Anchor = { onMouse = false, Moved = false, AnchorPos = {} },
 		},
 		Background = 'Smoke',
+		onMouse = false,
 		VendorPrices = true,
 		Override = {},
 		ColorOverlay = true,
@@ -85,71 +87,6 @@ function module:OnInitialize()
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Tooltip.Settings
-end
-
-local function ActiveRule()
-	for _, v in ipairs(RuleList) do
-		if module.DB[v] and module.DB[v].Status ~= 'Disabled' then
-			local CombatRule = false
-			if InCombatLockdown() and module.DB[v].Combat then
-				CombatRule = true
-			elseif not InCombatLockdown() and not module.DB[v].Combat then
-				CombatRule = true
-			end
-
-			if module.DB[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
-				return v
-			elseif module.DB[v].Status == 'Raid' and IsInRaid() and CombatRule then
-				return v
-			elseif module.DB[v].Status == 'Instance' and IsInInstance() then
-				return v
-			elseif module.DB[v].Status == 'All' and CombatRule then
-				return v
-			end
-		end
-	end
-	--Failback of Rule1
-	if not module.DB.SuppressNoMatch then
-		SUI:Print('|cffff0000Error detected')
-		SUI:Print(L['None of your custom tooltip conditions have been met. Defaulting to what is specified for Rule 1'])
-		SUI:Print(L['You may customize the tooltip settings via'] .. ' /SUI > Modules > Tooltips')
-	end
-	return 'Rule1'
-end
-
-local setPoint = function(self, parent)
-	if parent then
-		if module.DB[ActiveRule()].Anchor.onMouse then
-			self:SetOwner(parent, 'ANCHOR_CURSOR')
-			return
-		else
-			self:SetOwner(parent, 'ANCHOR_NONE')
-		end
-
-		--See If the theme has an anchor and if we are allowed to use it
-		local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true)
-		if style and style.TooltipLoc and not module.DB[ActiveRule()].OverrideLoc then
-			style:TooltipLoc(self, parent)
-		else
-			self:ClearAllPoints()
-			if module.DB[ActiveRule()].Anchor.Moved then
-				local Anchors = {}
-				for key, val in pairs(module.DB[ActiveRule()].Anchor.AnchorPos) do
-					Anchors[key] = val
-				end
-				-- self:ClearAllPoints();
-				if Anchors.point == nil then
-					--Error Catch
-					self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
-					module.DB[ActiveRule()].Anchor.Moved = false
-				else
-					self:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-				end
-			else
-				self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
-			end
-		end
-	end
 end
 
 local onShow = function(self)
@@ -176,6 +113,12 @@ local TipCleared = function(self)
 	self.SUITip:ClearColors()
 	self.SUITip.border:Hide()
 	self.itemCleared = nil
+end
+
+local setPoint = function(self, parent)
+	if parent then
+		if module.DB.onMouse then self:SetOwner(parent, 'ANCHOR_CURSOR') end
+	end
 end
 
 local SetBorderColor = function(self, r, g, b, hasStatusBar)
@@ -286,7 +229,6 @@ local TooltipSetUnit = function(self, data)
 	local className, classToken = UnitClass(unit)
 	local colors, lvlColor, totColor, lvlLine
 	local line = 2
-	local sex = { '', 'Male ', 'Female ' }
 	local creatureClassColors = {
 		worldboss = format('|cffAF5050World Boss%s|r', BOSS),
 		rareelite = format('|cffAF5050RARE-ELITE%s|r', ITEM_QUALITY3_DESC),
@@ -297,7 +239,6 @@ local TooltipSetUnit = function(self, data)
 	if UnitIsPlayer(unit) then
 		local uName, uRealm = UnitName(unit)
 		local gName, _, _, gRealm = GetGuildInfo(unit)
-		local gender = sex[UnitSex(unit)]
 		local realmRelation = UnitRealmRelationship(unit)
 		colors = _G.RAID_CLASS_COLORS[classToken]
 		local nameString = UnitPVPName(unit) or uName
@@ -329,12 +270,16 @@ local TooltipSetUnit = function(self, data)
 
 		if gName then
 			if gRealm then gName = gName .. '-' .. gRealm end
-			if SUI.IsClassic then
-				self:AddLine(('|cff008000<%s>|r'):format(gName))
-			else
-				GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
-				line = line + 1
+			GameTooltipTextLeft2:SetText(('|cff008000%s|r'):format(gName))
+
+			local iLvl = ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] or C_PaperDollInfo.GetInspectItemLevel('mouseover')
+			if iLvl == 0 then
+				NotifyInspect('mouseover')
+			elseif iLvl then
+				self:AddLine(format('|cffFED000iLvl:|r %s', iLvl))
 			end
+
+			line = line + 1
 		end
 	end
 
@@ -478,6 +423,18 @@ local function ApplyTooltipSkins()
 	end
 end
 
+function module:ZONE_CHANGED()
+	ilvlTempData = {}
+end
+
+function module:INSPECT_READY()
+	if UnitIsPlayer('mouseover') then
+		local uName, uRealm = UnitName('mouseover')
+		local ilvl = C_PaperDollInfo.GetInspectItemLevel('mouseover')
+		if ilvl ~= 0 then ilvlTempData[uName .. '-' .. (uRealm or GetRealmName())] = ilvl end
+	end
+end
+
 function module:UpdateBG()
 	for _, tooltip in pairs(tooltips) do
 		if tooltip.SUITip then
@@ -496,66 +453,14 @@ end
 function module:OnEnable()
 	module:BuildOptions()
 	if SUI:IsModuleDisabled('Tooltips') then return end
-
-	--Create Anchor point
-	for k, v in ipairs(RuleList) do
-		local anchor = CreateFrame('Frame', nil)
-		anchor:SetSize(150, 20)
-		anchor:EnableMouse(true)
-		anchor.bg = anchor:CreateTexture(nil, 'OVERLAY')
-		anchor.bg:SetAllPoints(anchor)
-		anchor.bg:SetTexture('Interface\\BlackMarket\\BlackMarketBackground-Tile')
-		anchor.bg:SetVertexColor(1, 1, 1, 0.8)
-		anchor.lbl = anchor:CreateFontString(nil, 'OVERLAY')
-		anchor.lbl:SetFont(SUI.Font:GetFont(), 10)
-		anchor.lbl:SetText('Anchor for Rule ' .. k)
-		anchor.lbl:SetAllPoints(anchor)
-
-		anchor:SetScript('OnMouseDown', function(self, button)
-			if button == 'LeftButton' then
-				module.DB[v].Anchor.Moved = true
-				module[v].anchor:SetMovable(true)
-				module[v].anchor:StartMoving()
-			end
-		end)
-
-		anchor:SetScript('OnMouseUp', function(self, button)
-			module[v].anchor:Hide()
-			module[v].anchor:StopMovingOrSizing()
-			local Anchors = {}
-			Anchors.point, Anchors.relativeTo, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs = module[v].anchor:GetPoint()
-			for k, val in pairs(Anchors) do
-				module.DB[v].Anchor.AnchorPos[k] = val
-			end
-		end)
-
-		anchor:SetScript('OnShow', function(self)
-			if module.DB[v].Anchor.Moved then
-				local Anchors = {}
-				for key, val in pairs(module.DB[v].Anchor.AnchorPos) do
-					Anchors[key] = val
-				end
-				self:ClearAllPoints()
-				self:SetPoint(Anchors.point, nil, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-			else
-				self:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', -20, 20)
-			end
-		end)
-
-		anchor:SetScript('OnEvent', function(self, event, ...)
-			module[v].anchor:Hide()
-		end)
-		anchor:RegisterEvent('PLAYER_REGEN_DISABLED')
-
-		module[v] = { anchor = anchor }
-		module[v].anchor:Hide()
-	end
+	module:RegisterEvent('INSPECT_READY')
+	module:RegisterEvent('ZONE_CHANGED')
 
 	--Do Setup
 	ApplyTooltipSkins()
+	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
-	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
 	if TooltipDataProcessor then
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
@@ -571,11 +476,6 @@ function module:OnEnable()
 		ShoppingTooltip1:HookScript('OnTooltipSetItem', TooltipSetItem)
 		ShoppingTooltip2:HookScript('OnTooltipSetItem', TooltipSetItem)
 	end
-end
-
-local OnMouseOpt = function(v)
-	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['MoveAnchor'].disabled = module.DB[v].Anchor.onMouse
-	SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v].args['ResetAnchor'].disabled = module.DB[v].Anchor.onMouse
 end
 
 function module:BuildOptions()
@@ -599,12 +499,6 @@ function module:BuildOptions()
 				dialogControl = 'LSM30_Background',
 				values = SUI.Lib.LSM:HashTable('background'),
 			},
-			OverrideLoc = {
-				name = L['Override theme'],
-				type = 'toggle',
-				order = 2,
-				desc = L['TooltipOverrideDesc'],
-			},
 			color = {
 				name = L['Color'],
 				type = 'color',
@@ -625,105 +519,12 @@ function module:BuildOptions()
 				order = 11,
 				desc = L['Apply the color to the texture or put it over the texture'],
 			},
-			SuppressNoMatch = {
-				name = L['Suppress no rule match error'],
+			onMouse = {
+				name = L['Display on mouse?'],
 				type = 'toggle',
-				order = 11,
-				desc = L['Apply the color to the texture or put it over the texture'],
+				order = 12,
+				desc = L['TooltipOverrideDesc'],
 			},
 		},
 	}
-
-	for k, v in ipairs(RuleList) do
-		SUI.opt.args['Modules'].args['Tooltips'].args['DisplayLocation' .. v] = {
-			name = L['Display Location'] .. ' ' .. v,
-			type = 'group',
-			inline = true,
-			order = k + 20.1,
-			width = 'full',
-			get = function(info)
-				return module.DB[v][info[#info]]
-			end,
-			args = {
-				Status = {
-					name = L['Condition'],
-					type = 'select',
-					order = k + 20.2,
-					values = {
-						['Group'] = 'In a Group',
-						['Raid'] = 'In a Raid Group',
-						['Instance'] = 'In a instance',
-						['All'] = 'All the time',
-						['Disabled'] = 'Disabled',
-					},
-					set = function(info, val)
-						module.DB[v].Status = val
-					end,
-				},
-				Combat = {
-					name = L['Only if in combat'],
-					type = 'toggle',
-					order = k + 20.3,
-					set = function(info, val)
-						module.DB[v].Combat = val
-					end,
-				},
-				OnMouse = {
-					name = L['Display on mouse?'],
-					type = 'toggle',
-					order = k + 20.4,
-					desc = L['TooltipOverrideDesc'],
-					get = function(info)
-						OnMouseOpt(v)
-						return module.DB[v].Anchor.onMouse
-					end,
-					set = function(info, val)
-						module.DB[v].Anchor.onMouse = val
-						OnMouseOpt(v)
-					end,
-				},
-				OverrideLoc = {
-					name = L['Override theme'],
-					type = 'toggle',
-					order = k + 20.5,
-					set = function(info, val)
-						module.DB[v].OverrideLoc = val
-					end,
-				},
-				MoveAnchor = {
-					name = L['Move anchor'],
-					type = 'execute',
-					order = k + 20.6,
-					width = 'half',
-					func = function(info, val)
-						-- Force override sincce the user is moving the anchor
-						module.DB[v].OverrideLoc = true
-						--show the anchor
-						module[v].anchor:Show()
-					end,
-				},
-				ResetAnchor = {
-					name = L['Reset anchor'],
-					type = 'execute',
-					order = k + 20.7,
-					width = 'half',
-					func = function(info, val)
-						module.DB[v].Anchor.Moved = false
-					end,
-				},
-			},
-		}
-	end
-	if SUI.IsClassic then
-		SUI.opt.args.Modules.args.Tooltips.args.VendorPrices = {
-			name = L['Display vendor prices'],
-			type = 'toggle',
-			get = function(info)
-				return module.DB.VendorPrices
-			end,
-			set = function(info, val)
-				module.DB.VendorPrices = val
-			end,
-		}
-	end
 end

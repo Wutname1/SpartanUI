@@ -16,7 +16,7 @@ local ElementConfig = {}
 ---|'Auras'
 ---|'General'
 
----@class SUI.UF.Elements.Settings
+---@class SUI.UF.Element.Settings
 ---@field enabled boolean
 ---@field scale integer
 ---@field points boolean|table|string
@@ -95,7 +95,7 @@ local ElementTextData = {
 ---|"Portrait"
 ---|"Power"
 ---|"PvPIndicator"
----|"QuestMobIndicator"
+---|"QuestMob"
 ---|"RaidTargetIndicator"
 ---|"RaidRoleIndicator"
 ---|"Range"
@@ -131,7 +131,7 @@ local ElementTextData = {
 ---@field Portrait ElementProps
 ---@field Power ElementProps
 ---@field PvPIndicator ElementProps
----@field QuestMobIndicator ElementProps
+---@field QuestMob ElementProps
 ---@field RaidTargetIndicator ElementProps
 ---@field RaidRoleIndicator ElementProps
 ---@field Range ElementProps

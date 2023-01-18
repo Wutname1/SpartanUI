@@ -31,8 +31,8 @@ local Settings = {
 	enabled = true,
 	size = 20,
 	position = {
-		anchor = 'BOTTOMRIGHT',
-		relativePoint = 'CENTER',
+		anchor = 'LEFT',
+		relativePoint = 'LEFT',
 		x = 0,
 		y = 0,
 	},

@@ -1,0 +1,39 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\..\FrameXML\UI.xsd">
+	<Script file="AdditionalPower.lua"/>
+	<Script file="AssistantIndicator.lua"/>
+	<Script file="AuraBars.lua"/>
+	<Script file="Buffs.lua"/>
+	<Script file="Castbar.lua"/>
+	<Script file="ClassIcon.lua"/>
+	<Script file="ClassPower.lua"/>
+	<Script file="CombatIndicator.lua"/>
+	<Script file="Debuffs.lua"/>
+	<Script file="DispelHighlight.lua"/>
+	<Script file="GroupRoleIndicator.lua"/>
+	<Script file="Health.lua"/>
+	<Script file="LeaderIndicator.lua"/>
+	<Script file="Name.lua"/>
+	<Script file="HappinessIndicator.lua"/>
+	<Script file="PhaseIndicator.lua"/>
+	<Script file="Portrait.lua"/>
+	<Script file="Power.lua"/>
+	<Script file="PvPIndicator.lua"/>
+	<Script file="QuestMob.lua"/>
+	<Script file="RaidRoleIndicator.lua"/>
+	<Script file="RaidTargetIndicator.lua"/>
+	<Script file="ResurrectIndicator.lua"/>
+	<Script file="Range.lua"/>
+	<Script file="RareElite.lua"/>
+	<Script file="ReadyCheckIndicator.lua"/>
+	<Script file="RestingIndicator.lua"/>
+	<Script file="Runes.lua"/>
+	<Script file="SpartanArt.lua"/>
+	<Script file="StatusText.lua"/>
+	<Script file="SUI_RaidGroup.lua"/>
+	<Script file="SummonIndicator.lua"/>
+	<Script file="TargetIndicator.lua"/>
+	<Script file="ThreatIndicator.lua"/>
+	<Script file="Totems.lua"/>
+</Ui>

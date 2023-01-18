@@ -2,8 +2,7 @@
 local SUI = SUI
 local L = SUI.L
 local StdUi = SUI.StdUi
-local module = SUI:NewModule('Module_Chatbox', 'AceHook-3.0')
----@type SUI.Module
+local module = SUI:NewModule('Module_Chatbox', 'AceHook-3.0') ---@type SUI.Module : AceHook-3.0
 module.description = 'Lightweight quality of life chat improvements'
 ----------------------------------------------------------------------------------------------------
 local popup = CreateFrame('Frame', nil, UIParent)
@@ -238,6 +237,9 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Chat.DB
 
+	if not SUI.CharDB.ChatHistory then SUI.CharDB.ChatHistory = {} end
+	if not SUI.CharDB.ChatEditHistory then SUI.CharDB.ChatEditHistory = {} end
+
 	if SUI:IsModuleDisabled(module) then return end
 	local ChatAddons = { 'Chatter', 'BasicChatMods', 'Prat-3.0' }
 	for _, addonName in pairs(ChatAddons) do
@@ -263,9 +265,6 @@ function module:OnInitialize()
 
 	-- Create Popup Items
 	popup.editBox = StdUi:MultiLineBox(popup, 580, 120, '')
-	if not SUI.IsDF then -- TODO: DF Release this should work fine. Why is it not working?
-		popup.editBox.editBox:SetFont(SUI.Font:GetFont('chatbox'), 12)
-	end
 
 	-- Position
 	popup.editBox:SetPoint('TOPLEFT', popup, 'TOPLEFT', 10, -55)
@@ -340,6 +339,55 @@ function module:EditBoxPosition()
 			ChatFrameEdit:SetPoint('TOPLEFT', ChatFrame.Background, 'BOTTOMLEFT', -1, -1)
 			ChatFrameEdit:SetPoint('TOPRIGHT', ChatFrame.Background, 'BOTTOMRIGHT', 1, -1)
 		end
+	end
+end
+
+---@param key string
+function module:ChatEdit_OnKeyDown(key)
+	-- Make sure we are setup and valid
+	local history = SUI.CharDB.ChatEditHistory
+	if (not history) or #history == 0 then return end
+
+	--Grab the next item in the history
+	if key == 'DOWN' then
+		self.historyIndex = self.historyIndex - 1
+
+		if self.historyIndex < 1 then
+			self.historyIndex = 0
+			self:SetText('')
+			return
+		end
+	elseif key == 'UP' then
+		self.historyIndex = self.historyIndex + 1
+
+		if self.historyIndex > #history then self.historyIndex = #history end
+	else
+		return
+	end
+
+	--Display the history item
+	self:SetText(strtrim(history[#history - (self.historyIndex - 1)]))
+end
+
+---@param line string
+function module:ChatEdit_AddHistory(_, line)
+	line = line and strtrim(line)
+
+	if line and strlen(line) > 0 then
+		local cmd = strmatch(line, '^/%w+')
+		-- block secure commands from history
+		if cmd and IsSecureCmd(cmd) then return end
+
+		for index, text in pairs(SUI.CharDB.ChatEditHistory) do
+			if text == line then
+				tremove(SUI.CharDB.ChatEditHistory, index)
+				break
+			end
+		end
+
+		tinsert(SUI.CharDB.ChatEditHistory, line)
+
+		if #SUI.CharDB.ChatEditHistory > 50 then tremove(SUI.CharDB.ChatEditHistory, 1) end
 	end
 end
 
@@ -540,7 +588,13 @@ function module:SetupChatboxes()
 
 		--Allow arrow keys editing in the edit box
 		local ChatFrameEdit = _G[ChatFrameName .. 'EditBox']
+
+		--Setup Chatbox History
 		ChatFrameEdit:SetAltArrowKeyMode(false)
+		ChatFrameEdit.historyIndex = 0
+
+		ChatFrameEdit:HookScript('OnKeyDown', module.ChatEdit_OnKeyDown)
+		module:SecureHook(ChatFrameEdit, 'AddHistoryLine', 'ChatEdit_AddHistory')
 
 		-- Setup chat message modification
 		local ChatFrame = _G[ChatFrameName]

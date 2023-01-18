@@ -150,7 +150,7 @@ end
 ---@return boolean --False if the element did not provide options customizer
 function Elements:Options(unitName, ElementName, OptionSet, DB)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].OptionsTable then
-		UF.Elements.List[ElementName].OptionsTable(unitName, OptionSet or {}, DB or UF.CurrentSettings[unitName].elements[ElementName] or {})
+		UF.Elements.List[ElementName].OptionsTable(unitName, OptionSet, DB or (UF.CurrentSettings[unitName] and UF.CurrentSettings[unitName].elements[ElementName]) or {})
 		return true
 	else
 		return false

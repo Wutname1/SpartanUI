@@ -27,12 +27,14 @@ local function Build(frame, DB)
 			frame:SetUnit(unit)
 		end
 	end
+	Portrait3D:Hide()
 	frame.Portrait3D = Portrait3D
 
 	-- 2D Portrait
 	local Portrait2D = frame:CreateTexture(nil, 'OVERLAY')
 	Portrait2D:SetSize(frame:GetHeight(), frame:GetHeight())
 	Portrait2D:SetScale(DB.scale)
+	Portrait2D:Hide()
 	frame.Portrait2D = Portrait2D
 
 	frame.Portrait = Portrait3D
@@ -46,6 +48,8 @@ local function Update(frame)
 	frame.Portrait2D:Hide()
 	frame.Portrait3D:ClearAllPoints()
 	frame.Portrait2D:ClearAllPoints()
+	if not DB.enabled then return end
+
 	if DB.position == 'left' then
 		frame.Portrait3D:SetPoint('RIGHT', frame, 'LEFT')
 		frame.Portrait2D:SetPoint('RIGHT', frame, 'LEFT')
@@ -56,32 +60,28 @@ local function Update(frame)
 		frame.Portrait2D:SetPoint('LEFT', frame, 'RIGHT')
 	end
 
-	if DB.enabled then
-		if DB.type == '3D' then
-			frame.Portrait = frame.Portrait3D
-			frame.Portrait3D:Show()
-			if frame.Portrait:IsObjectType('PlayerModel') then
-				frame.Portrait:SetAlpha(DB.alpha)
+	if DB.type == '3D' then
+		frame.Portrait = frame.Portrait3D
+		frame.Portrait3D:Show()
+		frame.Portrait:SetAlpha(DB.alpha)
 
-				local rotation = DB.rotation
+		local rotation = DB.rotation
 
-				if frame.Portrait:GetFacing() ~= (rotation / 57.29573671972358) then
-					frame.Portrait:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
-				end
-
-				frame.Portrait:SetCamDistanceScale(DB.camDistanceScale)
-				frame.Portrait:SetPosition(DB.xOffset, DB.xOffset, DB.yOffset)
-
-				--Refresh model to fix incorrect display issues
-				frame.Portrait:ClearModel()
-				frame.Portrait:SetUnit(frame.unitOnCreate)
-			end
-		else
-			frame.Portrait = frame.Portrait2D
-			frame.Portrait2D:Show()
+		if frame.Portrait:GetFacing() ~= (rotation / 57.29573671972358) then
+			frame.Portrait:SetFacing(rotation / 57.29573671972358) -- because 1 degree is equal 0,0174533 radian. Credit: Hndrxuprt
 		end
-		frame:UpdateAllElements('OnUpdate')
+
+		frame.Portrait:SetCamDistanceScale(DB.camDistanceScale)
+		frame.Portrait:SetPosition(DB.xOffset, DB.xOffset, DB.yOffset)
+
+		--Refresh model to fix incorrect display issues
+		frame.Portrait:ClearModel()
+		frame.Portrait:SetUnit(frame.unitOnCreate)
+	else
+		frame.Portrait = frame.Portrait2D
+		frame.Portrait2D:Show()
 	end
+	frame:UpdateAllElements('OnUpdate')
 end
 
 ---@param frameName string

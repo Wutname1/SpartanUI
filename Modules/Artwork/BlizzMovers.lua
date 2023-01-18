@@ -2,18 +2,77 @@ local _G, SUI = _G, SUI
 local L = SUI.L
 local module = SUI:GetModule('Module_Artwork')
 local MoveIt = SUI.MoveIt
+-- Helper functions
+local ReparentAB = false
+local ExtraAB = SUI:NewModule('ExtraAB') ---@type SUI.Module
 
+---@param frame any
+---@param anchor FramePoint
+local function ResetPosition(frame, _, anchor)
+	local holder = frame.SUIHolder
+	if holder and anchor ~= holder then
+		frame:ClearAllPoints()
+		frame:SetPoint('CENTER' or frame.SUIHolderMountPoint, holder)
+	end
+end
+
+local function ResetParent(frame, parent)
+	if parent ~= BossButtonHolder and not ReparentAB then
+		if InCombatLockdown() then
+			ReparentAB = true
+			ExtraAB:RegisterEvent('PLAYER_REGEN_ENABLED')
+			return
+		end
+
+		ZoneAbilityFrame:SetParent(BossButtonHolder)
+		ExtraActionBarFrame:SetParent(BossButtonHolder)
+	end
+end
+
+ExtraAB.PLAYER_REGEN_ENABLED = function(self)
+	ZoneAbilityFrame:SetParent(BossButtonHolder)
+	ExtraActionBarFrame:SetParent(BossButtonHolder)
+end
+
+---@param name string
+---@return Frame
+local function GenerateHolder(name)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[name])
+	local holder = CreateFrame('Frame', name .. 'Holder', UIParent)
+	holder:SetPoint(point, anchor, secondaryPoint, x, y)
+
+	if _G[name] then
+		local width, height = _G[name]:GetSize()
+		holder:SetSize(width, height)
+	else
+		holder:SetSize(256, 64)
+	end
+
+	holder:Hide()
+
+	return holder
+end
+
+---@param frame Frame
+---@param holder Frame
+---@param pos? FramePoint
+local function AttachToHolder(frame, holder, pos)
+	frame:ClearAllPoints()
+	frame:SetPoint(pos or 'CENTER', holder)
+	frame.SUIHolder = holder
+	frame.SUIHolderMountPoint = pos or 'CENTER'
+end
+
+-- Blizzard Movers
 local function TalkingHead()
 	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.TalkingHead)
 	local THUIHolder = CreateFrame('Frame', 'THUIHolder', SpartanUI)
 	THUIHolder:SetPoint(point, anchor, secondaryPoint, x, y)
 	THUIHolder:Hide()
-
 	local SetupTalkingHead = function()
 		--Prevent WoW from moving the frame around
 		TalkingHeadFrame.ignoreFramePositionManager = true
 		UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
-
 		THUIHolder:SetSize(TalkingHeadFrame:GetSize())
 		MoveIt:CreateMover(THUIHolder, 'THUIHolder', 'Talking Head Frame', nil, 'Blizzard UI')
 		TalkingHeadFrame:HookScript('OnShow', function()
@@ -21,7 +80,6 @@ local function TalkingHead()
 			TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
 		end)
 	end
-
 	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
 		SetupTalkingHead()
 	else
@@ -36,108 +94,64 @@ local function TalkingHead()
 	end
 end
 
-local function AltPowerBar()
-	if not IsAddOnLoaded('SimplePowerBar') then
-		local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.AltPowerBar)
-		local holder = CreateFrame('Frame', 'AltPowerBarHolder', UIParent)
-		holder:SetPoint(point, anchor, secondaryPoint, x, y)
-		holder:SetSize(256, 64)
-		holder:Hide()
-
-		_G['PlayerPowerBarAlt']:ClearAllPoints()
-		_G['PlayerPowerBarAlt']:SetPoint('CENTER', holder, 'CENTER')
-		_G['PlayerPowerBarAlt'].ignoreFramePositionManager = true
-
-		hooksecurefunc(_G['PlayerPowerBarAlt'], 'ClearAllPoints', function(bar)
-			bar:SetPoint('CENTER', holder, 'CENTER')
-		end)
-
-		MoveIt:CreateMover(holder, 'AltPowerBarMover', 'Alternative Power', nil, 'Blizzard UI')
-	end
-end
-
-local function WidgetPowerBarContainer()
-	if not _G['UIWidgetPowerBarContainerFrame'] then return end
-	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.WidgetPowerBarContainer)
-	local holder = CreateFrame('Frame', 'WidgetPowerBarContainerHolder', UIParent)
-	holder:SetPoint(point, anchor, secondaryPoint, x, y)
-	holder:SetSize(256, 64)
-	holder:Hide()
-
-	_G['UIWidgetPowerBarContainerFrame']:ClearAllPoints()
-	_G['UIWidgetPowerBarContainerFrame']:SetPoint('CENTER', holder, 'CENTER')
-	_G['UIWidgetPowerBarContainerFrame'].ignoreFramePositionManager = true
-
-	hooksecurefunc(_G['UIWidgetPowerBarContainerFrame'], 'ClearAllPoints', function(bar)
-		bar:SetPoint('CENTER', holder, 'CENTER')
-	end)
-
-	MoveIt:CreateMover(holder, 'WidgetPowerBarContainer', 'Power bar', nil, 'Blizzard UI')
-end
-
 local function AbilityBars()
-	-- ZoneAbility
-	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ZoneAbility)
-	local ZoneAbilityHolder = CreateFrame('Frame', 'ZoneAbilityHolder', SpartanUI)
-	ZoneAbilityHolder:SetSize(ZoneAbilityFrame:GetSize())
-	ZoneAbilityHolder:SetPoint(point, anchor, secondaryPoint, x, y)
-	ZoneAbilityHolder:Hide()
-	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
+	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
+	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
+	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
+	ExtraActionBarFrame.ignoreInLayout = true
+	ZoneAbilityFrame.ignoreInLayout = true
 
-	ExtraAbilityContainer:ClearAllPoints()
-	ExtraAbilityContainer:SetPoint('CENTER', ZoneAbilityHolder)
-	-- ExtraAbilityContainer.ignoreFramePositionManager = true
+	-- ZoneAbility
+	-- local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
+	-- AttachToHolder(ZoneAbilityFrame, ZoneAbilityHolder)
 
 	-- Extra Action / Boss Bar
-	point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.ZoneAbility)
-	local ExtraActionHolder = CreateFrame('Frame', 'ExtraActionHolder', SpartanUI)
-	ExtraActionHolder:SetSize(ExtraActionBarFrame:GetSize())
-	ExtraActionHolder:SetPoint(point, anchor, secondaryPoint, x, y)
-	ExtraActionHolder:Hide()
-	MoveIt:CreateMover(ExtraActionHolder, 'ExtraAction', 'Boss Button', nil, 'Blizzard UI')
+	local BossButtonHolder = GenerateHolder('BossButton')
+	BossButtonHolder:SetSize(100, 70)
+	BossButtonHolder:Show()
 
-	ExtraActionBarFrame:ClearAllPoints()
-	ExtraActionBarFrame:SetPoint('CENTER', ExtraActionHolder)
-	ExtraActionBarFrame.ignoreFramePositionManager = true
+	-- Attach the frames to the holder
+	AttachToHolder(ZoneAbilityFrame, BossButtonHolder)
+	AttachToHolder(ExtraActionBarFrame, BossButtonHolder)
+	AttachToHolder(ExtraAbilityContainer, BossButtonHolder)
+
+	-- Hook the SetPoint function to prevent the frame from moving
+	hooksecurefunc(ZoneAbilityFrame, 'SetPoint', ResetPosition)
+	hooksecurefunc(ExtraActionBarFrame, 'SetPoint', ResetPosition)
+	hooksecurefunc(ExtraAbilityContainer, 'SetPoint', ResetPosition)
+
+	-- Hook the SetParent function to prevent the frame from moving
+	hooksecurefunc(ZoneAbilityFrame, 'SetParent', ResetParent)
+	hooksecurefunc(ExtraActionBarFrame, 'SetParent', ResetParent)
+	hooksecurefunc(ExtraAbilityContainer, 'SetParent', ResetParent)
+
+	-- Create the movers
+	-- MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
+	MoveIt:CreateMover(BossButtonHolder, 'BossButton', 'Extra action button', nil, 'Blizzard UI')
 end
 
 local function AlertFrame()
-	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.AlertFrame)
-	local AlertHolder = CreateFrame('Frame', 'AlertHolder', SpartanUI)
-	AlertHolder:SetSize(250, 40)
-	AlertHolder:SetPoint(point, anchor, secondaryPoint, x, y)
-	AlertHolder:Hide()
-	MoveIt:CreateMover(AlertHolder, 'AlertHolder', 'Alert frame anchor', nil, 'Blizzard UI')
+	local holder = GenerateHolder('AlertFrame')
 
-	local Alertframe = _G['AlertFrame']
-	local GroupLootContainer = _G['GroupLootContainer']
+	AttachToHolder(_G['AlertFrame'], holder, 'BOTTOM')
+	AttachToHolder(_G['GroupLootContainer'], holder, 'BOTTOM')
 
-	Alertframe:ClearAllPoints()
-	Alertframe:SetPoint('BOTTOM', AlertHolder)
-	GroupLootContainer:ClearAllPoints()
-	GroupLootContainer:SetPoint('BOTTOM', AlertHolder)
+	hooksecurefunc(_G['AlertFrame'], 'SetPoint', ResetPosition)
+	hooksecurefunc(_G['GroupLootContainer'], 'SetPoint', ResetPosition)
+
+	MoveIt:CreateMover(holder, 'AlertHolder', 'Alert frame anchor', nil, 'Blizzard UI')
 end
 
-local function VehicleSeatIndicator()
-	local SeatIndicator = _G['VehicleSeatIndicator']
+local function DurabilityFrame()
+	local element = _G['DurabilityFrame']
+	local holder = GenerateHolder('DurabilityFrame')
 
-	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleSeatIndicator)
-	local VehicleSeatHolder = CreateFrame('Frame', 'VehicleSeatHolder', SpartanUI)
-	VehicleSeatHolder:SetSize(SeatIndicator:GetSize())
-	VehicleSeatHolder:SetPoint(point, anchor, secondaryPoint, x, y)
-	VehicleSeatHolder:Hide()
-	local function SetPosition(_, _, anchorPoint)
-		if anchorPoint ~= VehicleSeatHolder then
-			SeatIndicator:ClearAllPoints()
-			SeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
-		end
-	end
-	MoveIt:CreateMover(VehicleSeatHolder, 'VehicleSeatIndicator', 'Vehicle seat anchor', nil, 'Blizzard UI')
+	element:ClearAllPoints()
+	element:SetPoint('CENTER', holder, 'CENTER')
+	element.SUIHolder = holder
 
-	hooksecurefunc(SeatIndicator, 'SetPoint', SetPosition)
-	SeatIndicator.PositionVehicleFrameHooked = true
-	SeatIndicator:ClearAllPoints()
-	SeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
+	hooksecurefunc(element, 'SetPoint', ResetPosition)
+	MoveIt:CreateMover(holder, 'DurabilityFrame', 'Durability Frame', nil, 'Blizzard UI')
 end
 
 local function VehicleLeaveButton()
@@ -163,18 +177,49 @@ local function VehicleLeaveButton()
 	module:ScheduleTimer(MoverCreate, 2)
 end
 
+local function VehicleSeatIndicator()
+	local SeatIndicator = _G['VehicleSeatIndicator']
+
+	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers.VehicleSeatIndicator)
+	local VehicleSeatHolder = CreateFrame('Frame', 'VehicleSeatHolder', SpartanUI)
+	VehicleSeatHolder:SetSize(SeatIndicator:GetSize())
+	VehicleSeatHolder:SetPoint(point, anchor, secondaryPoint, x, y)
+	VehicleSeatHolder:Hide()
+	local function SetPosition(_, _, anchorPoint)
+		if anchorPoint ~= VehicleSeatHolder then
+			SeatIndicator:ClearAllPoints()
+			SeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
+		end
+	end
+	MoveIt:CreateMover(VehicleSeatHolder, 'VehicleSeatIndicator', 'Vehicle seat anchor', nil, 'Blizzard UI')
+
+	hooksecurefunc(SeatIndicator, 'SetPoint', SetPosition)
+	SeatIndicator.PositionVehicleFrameHooked = true
+	SeatIndicator:ClearAllPoints()
+	SeatIndicator:SetPoint('TOPLEFT', VehicleSeatHolder)
+end
+
+local function WidgetPowerBarContainer()
+	local holder = GenerateHolder('WidgetPowerBarContainer')
+
+	if _G['UIWidgetPowerBarContainerFrame'] then
+		AttachToHolder(_G['UIWidgetPowerBarContainerFrame'], holder)
+		hooksecurefunc(_G['UIWidgetPowerBarContainerFrame'], 'SetPoint', ResetPosition)
+	end
+
+	if not IsAddOnLoaded('SimplePowerBar') then
+		AttachToHolder(_G['PlayerPowerBarAlt'], holder)
+		hooksecurefunc(_G['PlayerPowerBarAlt'], 'SetPoint', ResetPosition)
+	end
+
+	MoveIt:CreateMover(holder, 'WidgetPowerBarContainer', 'Power bar', nil, 'Blizzard UI')
+end
+
+-- This is the main inpoint
 function module.BlizzMovers()
 	if SUI.IsClassic then return end
 
 	VehicleLeaveButton()
 	VehicleSeatIndicator()
-
-	if SUI.IsRetail then
-		-- TalkingHead()
-		-- AltPowerBar()
-		-- AbilityBars()
-		-- WidgetPowerBarContainer()
-	else
-		AlertFrame()
-	end
+	AlertFrame()
 end

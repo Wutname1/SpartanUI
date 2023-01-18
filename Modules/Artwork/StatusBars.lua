@@ -69,7 +69,6 @@ local SetBarColor = function(self, side)
 end
 
 local updateText = function(self)
-	if GetRealmName() == 'arctium.io' then return end
 	-- local FrameName = self:GetName()
 	-- Reset graphics to avoid issues
 	self.Fill:SetWidth(0.1)
@@ -361,14 +360,12 @@ function module:factory()
 		end)
 		--Tooltip Display Events
 		statusbar:SetScript('OnEnter', function()
-			if GetRealmName() == 'arctium.io' then return end
 			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then showRepTooltip(statusbar) end
 			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then showXPTooltip(statusbar) end
 			if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then showAzeriteTooltip(statusbar) end
 			if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then showHonorTooltip(statusbar) end
 		end)
 		statusbar:SetScript('OnMouseDown', function()
-			if GetRealmName() == 'arctium.io' then return end
 			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then showRepTooltip(statusbar) end
 			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then showXPTooltip(statusbar) end
 			if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then showAzeriteTooltip(statusbar) end

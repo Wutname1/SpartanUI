@@ -124,6 +124,11 @@ local Settings = {
 			points = 'Name',
 		},
 		Health = {
+			text = {
+				['1'] = {
+					text = '[SUIHealth(displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
+				},
+			},
 			position = {
 				anchor = 'TOP',
 				relativeTo = 'Castbar',

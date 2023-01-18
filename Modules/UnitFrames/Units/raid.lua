@@ -119,9 +119,9 @@ local Settings = {
 	showPlayer = true,
 	showRaid = true,
 	showSolo = false,
-	mode = 'NAME',
+	mode = 'ASSIGNEDROLE',
 	xOffset = 2,
-	yOffset = 0,
+	yOffset = -3,
 	maxColumns = 4,
 	unitsPerColumn = 10,
 	columnSpacing = 2,
@@ -159,12 +159,15 @@ local Settings = {
 			height = 30,
 			text = {
 				['1'] = {
-					text = '[health:missing-formatted] [perhp:conditional]',
+					text = '[SUIHealth(missing,displayDead,hideMax)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
 				},
 			},
 		},
 		Power = {
-			height = 3,
+			height = 2,
+			position = {
+				y = 0,
+			},
 			text = {
 				['1'] = {
 					enabled = false,
@@ -177,14 +180,24 @@ local Settings = {
 		SummonIndicator = {
 			enabled = true,
 		},
+		RaidTargetIndicator = {
+			size = 10,
+		},
 		RaidRoleIndicator = {
 			enabled = true,
 			size = 10,
-			alpha = 0.75,
+			alpha = 0.7,
 			position = {
 				anchor = 'BOTTOMLEFT',
 				x = 0,
 				y = 0,
+			},
+		},
+		ReadyCheckIndicator = {
+			size = 15,
+			position = {
+				anchor = 'RIGHT',
+				x = -5,
 			},
 		},
 		ThreatIndicator = {

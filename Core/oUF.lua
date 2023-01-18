@@ -38,41 +38,6 @@ function SUI:HotsListing()
 	return {}
 end
 
-function SUI:oUF_Buffs(self, point, relativePoint, SizeModifier)
-	if self == nil then return end
-	if point == nil then point = 'TOPRIGHT' end
-	if relativePoint == nil then relativePoint = 'TOPRIGHT' end
-	if SizeModifier == nil then SizeModifier = 0 end
-
-	local auras = {}
-	local spellIDs = SUI:HotsListing()
-	auras.presentAlpha = 1
-	auras.onlyShowPresent = true
-	-- auras.PostCreateIcon = myCustomIconSkinnerFunction
-
-	-- Make icons table if needed
-	if auras.icons == nil then auras.icons = {} end
-
-	-- Set any other AuraWatch settings
-
-	for i, sid in pairs(spellIDs) do
-		local icon = CreateFrame('Frame', nil, self)
-		icon.spellID = sid
-		-- set the dimensions and positions
-		local size = SUI.DB.PartyFrames.Auras.size + SizeModifier
-		icon:SetSize(size, size)
-		icon:SetPoint(point, self, relativePoint, (-icon:GetWidth() * (i - 1)) - 2, -2)
-
-		local cd = CreateFrame('Cooldown', nil, icon)
-		cd:SetAllPoints(icon)
-		icon.cd = cd
-
-		auras.icons[sid] = icon
-		-- Set any other AuraWatch icon settings
-	end
-	return auras
-end
-
 local function getCurrentUnitHP(unitid)
 	local aCurrentHP = 0
 	local aMaxHP = 0
@@ -250,135 +215,125 @@ if SUI.IsRetail then
 	end
 end
 
-do --Health Formatting Tags
-	-- Current Health Short, as an SUIUF module
-	SUIUF.Tags.Events['health:current-short'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:current-short'] = function(unit)
-		local tmp = getCurrentUnitHP(unit)
-		if tmp >= 1000000 then return SUI:round(tmp / 1000000, 0) .. 'M' end
-		if tmp >= 1000 then return SUI:round(tmp / 1000, 0) .. 'K' end
-		return SUI.Font:comma_value(tmp)
+local function dynamicCalc(num)
+	if num >= 1000000000 then
+		return SUI:round(num / 1000000000, 1) .. 'B'
+	elseif num >= 1000000 then
+		return SUI:round(num / 1000000, 1) .. 'M'
+	else
+		return SUI.Font:comma_value(num)
 	end
-	-- Current Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['health:current-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:current-dynamic'] = function(unit)
-		local tmp = getCurrentUnitHP(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 1) .. 'M '
-		else
-			return SUI.Font:comma_value(tmp)
+end
+
+local function shortCalc(num)
+	if num >= 1000000 then
+		return SUI:round(num / 1000000, 0) .. 'M'
+	elseif num >= 1000 then
+		return SUI:round(num / 1000, 0) .. 'K'
+	else
+		return SUI.Font:comma_value(num)
+	end
+end
+
+local function calculateResult(currentVal, maxVal, isDead, ...)
+	local returnVal = ''
+	local num = currentVal
+
+	for i = 1, select('#', ...) do
+		local var = tostring(select(i, ...))
+		if var == 'missing' then
+			num = maxVal - currentVal
+		elseif var == 'max' then
+			num = maxVal
 		end
 	end
-	-- Current Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['health:current-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:current-formatted'] = function(unit)
-		return SUI.Font:comma_value(getCurrentUnitHP(unit))
-	end
 
-	-- Total Health Short, as an SUIUF module
-	SUIUF.Tags.Events['health:max-short'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:max-short'] = function(unit)
-		local tmp = getMaxUnitHP(unit)
-		if tmp >= 1000000 then return SUI:round(tmp / 1000000, 0) .. 'M' end
-		if tmp >= 1000 then return SUI:round(tmp / 1000, 0) .. 'K' end
-		return SUI.Font:comma_value(tmp)
-	end
-	-- Total Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['health:max-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:max-dynamic'] = function(unit)
-		local tmp = getMaxUnitHP(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 1) .. 'M '
-		else
-			return SUI.Font:comma_value(tmp)
+	for i = 1, select('#', ...) do
+		local var = tostring(select(i, ...))
+
+		if var == 'percentage' then
+			returnVal = math.floor(currentVal / maxVal * 100 + 0.5) .. '%'
+		elseif var == 'dynamic' then
+			returnVal = dynamicCalc(num)
+		elseif var == 'short' then
+			returnVal = shortCalc(num)
+		elseif var == 'hideDead' and isDead then
+			return ''
+		elseif var == 'displayDead' and isDead then
+			return 'Dead'
+		elseif var == 'hideZero' and (currentVal == 0 or num == 0) then
+			return ''
+		elseif var == 'hideMax' and currentVal == maxVal then
+			return ''
 		end
 	end
-	-- Total Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['health:max-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:max-formatted'] = function(unit)
-		return SUI.Font:comma_value(getMaxUnitHP(unit))
-	end
+	if returnVal == '' then returnVal = SUI.Font:comma_value(num) end
 
-	-- Missing Health Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['health:missing-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:missing-dynamic'] = function(unit)
-		local tmp = getMaxUnitHP(unit) - getCurrentUnitHP(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 1) .. 'M '
-		else
-			return SUI.Font:comma_value(tmp)
-		end
-	end
-	-- Missing Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['health:missing-formatted'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['health:missing-formatted'] = function(unit)
-		return SUI.Font:comma_value(getMaxUnitHP(unit) - getCurrentUnitHP(unit))
-	end
+	return returnVal
+end
 
-	-- -- Missing Health formatted, as an SUIUF module
-	SUIUF.Tags.Events['perhp:conditional'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['perhp:conditional'] = function(unit)
-		local m = UnitHealthMax(unit)
-		if m == 0 then
-			return '(0%)'
-		else
-			local p = math.floor(UnitHealth(unit) / m * 100 + 0.5)
-			if p == 100 then
-				return ''
-			else
-				return '(' .. p .. '%)'
-			end
+local function SUIHealth(unit, _, ...)
+	local currentVal = getCurrentUnitHP(unit) or 0
+	local maxVal = getMaxUnitHP(unit) or currentVal
+	local isDead = UnitIsDeadOrGhost(unit)
+
+	return calculateResult(currentVal, maxVal, isDead, ...)
+end
+
+local function SUIPower(unit, _, ...)
+	local returnVal = ''
+	if not ... then return returnVal end
+
+	local currentVal = UnitPower(unit) or 0
+	local maxVal = UnitPowerMax(unit) or currentVal
+	local isDead = UnitIsDeadOrGhost(unit)
+
+	return calculateResult(currentVal, maxVal, isDead, ...)
+end
+
+SUIUF.Tags.Events['SUIHealth'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+SUIUF.Tags.Methods['SUIHealth'] = SUIHealth
+
+SUIUF.Tags.Events['SUIPower'] = 'UNIT_MAXPOWER UNIT_POWER_UPDATE'
+SUIUF.Tags.Methods['SUIPower'] = SUIPower
+
+do --LEGACY Health Formatting Tags
+	local listing = {
+		['health:current-short'] = { 'short' },
+		['health:current-dynamic'] = { 'dynamic' },
+		['health:current-formatted'] = {},
+		['health:max-short'] = { 'max', 'short' },
+		['health:max-dynamic'] = { 'max', 'dynamic' },
+		['health:max-formatted'] = { 'max' },
+		['health:missing-short'] = { 'missing', 'short' },
+		['health:missing-dynamic'] = { 'missing', 'dynamic' },
+		['health:missing-formatted'] = { 'missing' },
+	}
+	for k, v in pairs(listing) do
+		SUIUF.Tags.Events[k] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+		SUIUF.Tags.Methods[k] = function(unit)
+			return SUIHealth(unit, nil, unpack(v or {}))
 		end
 	end
 end
 
-do -- Mana Formatting Tags
-	-- Current Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['power:current-dynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['power:current-dynamic'] = function(unit)
-		local tmp = UnitPower(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 1) .. 'M '
-		else
-			return SUI.Font:comma_value(tmp)
+do -- LEGACY Mana Formatting Tags
+	local listing = {
+		['power:current-short'] = { 'short' },
+		['power:current-dynamic'] = { 'dynamic' },
+		['power:current-formatted'] = {},
+		['power:max-short'] = { 'max', 'short' },
+		['power:max-dynamic'] = { 'max', 'dynamic' },
+		['power:max-formatted'] = { 'max' },
+		['power:missing-short'] = { 'missing', 'short' },
+		['power:missing-dynamic'] = { 'missing', 'dynamic' },
+		['power:missing-formatted'] = { 'missing' },
+	}
+	for k, v in pairs(listing) do
+		SUIUF.Tags.Events[k] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
+		SUIUF.Tags.Methods[k] = function(unit)
+			return SUIPower(unit, nil, unpack(v))
 		end
-	end
-	-- Current Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['power:current-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['power:current-formatted'] = function(unit)
-		return SUI.Font:comma_value(UnitPower(unit))
-	end
-
-	-- Total Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['power:max-dynamic'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['power:max-dynamic'] = function(unit)
-		local tmp = UnitPowerMax(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 1) .. 'M '
-		else
-			return SUI.Font:comma_value(tmp)
-		end
-	end
-	-- Total Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['power:max-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['power:max-formatted'] = function(unit)
-		return SUI.Font:comma_value(UnitPowerMax(unit))
-	end
-
-	-- Missing Mana Dynamic, as an SUIUF module
-	SUIUF.Tags.Events['power:missing-dynamic'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
-	SUIUF.Tags.Methods['power:missing-dynamic'] = function(unit)
-		local tmp = UnitPowerMax(unit) - UnitPower(unit)
-		if tmp >= 1000000 then
-			return SUI:round(tmp / 1000000, 1) .. 'M '
-		else
-			return SUI.Font:comma_value(tmp)
-		end
-	end
-	-- Missing Mana formatted, as an SUIUF module
-	SUIUF.Tags.Events['power:missing-formatted'] = 'UNIT_MAXPOWER UNIT_DISPLAYPOWER UNIT_POWER_FREQUENT'
-	SUIUF.Tags.Methods['power:missing-formatted'] = function(unit)
-		return SUI.Font:comma_value(UnitPowerMax(unit) - UnitPower(unit))
 	end
 end
 

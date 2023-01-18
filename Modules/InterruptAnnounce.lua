@@ -7,38 +7,39 @@ local lastTime, lastSpellID = nil, nil
 local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	local msg = inputstring or module.DB.text
 	local DBChannel = module.DB.announceLocation or 'SELF'
-	local ChatChannel = false
+
 	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub('%%sl', GetSpellLink(sid)):gsub('%%myspell', GetSpellLink(ssid))
 
-	if DBChannel == 'SELF' then
-		print(msg)
-	else
+	if not DBChannel == 'SELF' then
 		if DBChannel == 'SMART' then
-			if IsInGroup(2) then
+			local ChatChannel
+			if IsInRaid() and IsInGroup(2) then
 				ChatChannel = 'INSTANCE_CHAT'
-			elseif IsInRaid() then
+			elseif IsInRaid() and not IsInGroup(2) then
 				ChatChannel = 'RAID'
 			elseif IsInGroup(1) then
 				ChatChannel = 'PARTY'
-			else
-				ChatChannel = 'SELF'
 			end
+			if ChatChannel then SendChatMessage(msg, ChatChannel) end
 		else
 			if DBChannel == 'RAID' or DBChannel == 'INSTANCE_CHAT' then
 				if IsInRaid() and IsInGroup(2) then
 					-- We are in a raid with instance chat
-					ChatChannel = 'INSTANCE_CHAT'
+					SendChatMessage(msg, 'INSTANCE_CHAT')
+					return
 				elseif IsInRaid() and not IsInGroup(2) then
 					-- We are in a manual Raid
-					ChatChannel = 'RAID'
+					SendChatMessage(msg, 'RAID')
+					return
 				end
 			elseif DBChannel == 'PARTY' and IsInGroup(1) then
-				ChatChannel = 'PARTY'
+				SendChatMessage(msg, 'PARTY')
+				return
 			end
 		end
-
-		if ChatChannel then SendChatMessage(msg, ChatChannel) end
 	end
+
+	print(msg)
 end
 
 function module:OnInitialize()
@@ -59,13 +60,6 @@ function module:OnInitialize()
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('InterruptAnnouncer', defaults)
 	module.DB = module.Database.profile
-
-	-- Migrate old settings
-	if SUI.DB.InterruptAnnouncer then
-		print('Interrupt announcer DB Migration')
-		module.DB = SUI:MergeData(module.DB, SUI.DB.InterruptAnnouncer, true)
-		SUI.DB.InterruptAnnouncer = nil
-	end
 end
 
 local function COMBAT_LOG_EVENT_UNFILTERED()

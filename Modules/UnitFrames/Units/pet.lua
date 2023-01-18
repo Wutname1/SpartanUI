@@ -28,21 +28,34 @@ local Settings = {
 	width = 100,
 	elements = {
 		Health = {
-			height = 30,
+			height = 35,
+			colorSmooth = true,
+			colorReaction = false,
+			text = {
+				['1'] = {
+					text = '[SUIHealth(short,displayDead)] [($>SUIHealth<$)(percentage,hideDead,hideMax)]',
+				},
+			},
 		},
 		Power = {
-			height = 5,
+			height = 2,
 			text = {
 				['1'] = {
 					enabled = false,
 				},
 			},
+			position = {
+				y = 0,
+			},
 		},
 		Name = {
 			enabled = true,
-			height = 10,
+			height = 8,
+			text = '[name]',
 			position = {
-				y = 0,
+				y = 1,
+				anchor = 'BOTTOM',
+				relativePoint = 'TOP',
 			},
 		},
 	},

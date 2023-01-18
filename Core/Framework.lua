@@ -192,11 +192,12 @@ local DBdefault = {
 			BlizzMovers = {
 				['VehicleSeatIndicator'] = 'RIGHT,SpartanUI,RIGHT,-10,-30',
 				['ObjectiveTracker'] = 'TOPRIGHT,SpartanUI,TOPRIGHT,-30,-100',
+				['DurabilityFrame'] = 'TOPRIGHT,SpartanUI,TOPRIGHT,-30,-100',
 				['TalkingHead'] = 'TOP,SpartanUI,TOP,0,-18',
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
-				['WidgetPowerBarContainer'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
-				['ZoneAbility'] = 'CENTER,SpartanUI,CENTER,0,-172',
-				['ExtraAction'] = 'CENTER,SpartanUI,CENTER,0,-172',
+				['WidgetPowerBarContainer'] = 'TOP,SpartanUI,TOP,0,-50',
+				['ZoneAbility'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
+				['BossButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180',
 			},
@@ -1187,6 +1188,9 @@ local function reloaduiWindow()
 end
 
 function SUI:OnInitialize()
+	if not SpartanUICharDB then SpartanUICharDB = {} end
+	SUI.CharDB = SpartanUICharDB
+
 	SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
 
 	-- New SUI.DB Access
