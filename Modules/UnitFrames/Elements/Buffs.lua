@@ -71,6 +71,7 @@ local function Build(frame, DB)
 			isStealable = isStealable,
 			canApplyAura = canApplyAura,
 			sourceUnit = source,
+			isHelpful = true,
 		}
 		button.data = data
 		button.unit = unit
