@@ -29,6 +29,7 @@ local function Build(frame, DB)
 	--Buff Icons
 	local element = CreateFrame('Frame', frame.unitOnCreate .. 'Buffs', frame.raised)
 	element.PostCreateButton = function(self, button)
+		button:RegisterForClicks('AnyUp')
 		UF.Auras:PostCreateButton('Buffs', button)
 	end
 
