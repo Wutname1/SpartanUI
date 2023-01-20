@@ -9,25 +9,25 @@ local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	local DBChannel = module.DB.announceLocation or 'SELF'
 
 	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub('%%sl', GetSpellLink(sid)):gsub('%%myspell', GetSpellLink(ssid))
-
-	if not DBChannel == 'SELF' then
+	if DBChannel ~= 'SELF' then
 		if DBChannel == 'SMART' then
-			local ChatChannel
-			if IsInRaid() and IsInGroup(2) then
-				ChatChannel = 'INSTANCE_CHAT'
-			elseif IsInRaid() and not IsInGroup(2) then
-				ChatChannel = 'RAID'
+			if IsInGroup(2) then
+				SendChatMessage(msg, 'INSTANCE_CHAT')
+				return
+			elseif IsInRaid() then
+				SendChatMessage(msg, 'RAID')
+				return
 			elseif IsInGroup(1) then
-				ChatChannel = 'PARTY'
+				SendChatMessage(msg, 'PARTY')
+				return
 			end
-			if ChatChannel then SendChatMessage(msg, ChatChannel) end
 		else
 			if DBChannel == 'RAID' or DBChannel == 'INSTANCE_CHAT' then
-				if IsInRaid() and IsInGroup(2) then
+				if IsInGroup(2) then
 					-- We are in a raid with instance chat
 					SendChatMessage(msg, 'INSTANCE_CHAT')
 					return
-				elseif IsInRaid() and not IsInGroup(2) then
+				elseif IsInRaid() then
 					-- We are in a manual Raid
 					SendChatMessage(msg, 'RAID')
 					return
