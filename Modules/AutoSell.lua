@@ -339,11 +339,11 @@ function module:IsSellable(item, ilink, bag, slot)
 	if expacID == 9 and (itemType == 'Miscellaneous' or (itemType == 'Armor' and itemSubType == 'Miscellaneous')) and iLevel == 0 and quality >= 2 then return false end
 
 	--Consumables
-	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') then return false end
+	if module.DB.NotConsumables and (itemType == 'Consumable' or itemSubType == 'Consumables') and quality ~= 0 then return false end --Some junk is labeled as consumable
 
 	if string.find(name, '') and quality == 1 then return false end
 
-	if not SUI:IsInTable(ExcludedItems, item) and not SUI:IsInTable(ExcludedTypes, itemType) and not SUI:IsInTable(ExcludedTypes, itemSubType) then --Legion identified some junk as consumable
+	if not SUI:IsInTable(ExcludedItems, item) and not SUI:IsInTable(ExcludedTypes, itemType) and not SUI:IsInTable(ExcludedTypes, itemSubType) then
 		debugMsg('--Selling--')
 		debugMsg(item)
 		debugMsg(name)
