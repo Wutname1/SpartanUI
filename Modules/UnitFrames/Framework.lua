@@ -182,6 +182,28 @@ function UF:OnEnable()
 			MoveIt.MoveEnabled = false
 		end)
 	end
+
+	SUI:AddChatCommand('BuffDebug', function(args)
+		local unit, spellId = strsplit(' ', args)
+
+		if not spellId then
+			print('Please specify a SpellID')
+			return
+		end
+
+		if not SUI.UF.MonitoredBuffs[unit] then SUI.UF.MonitoredBuffs[unit] = {} end
+
+		for i, v in ipairs(SUI.UF.MonitoredBuffs[unit]) do
+			if v == tonumber(spellId) then
+				print('Removed ' .. spellId .. ' from the list of monitored buffs')
+				table.remove(SUI.UF.MonitoredBuffs[unit], i)
+				return
+			end
+		end
+
+		table.insert(SUI.UF.MonitoredBuffs[unit], tonumber(spellId))
+		print('Added ' .. spellId .. ' to the list of monitored buffs')
+	end, 'Add/Remove a spellID to the list of spells to debug')
 end
 
 function UF:Update()

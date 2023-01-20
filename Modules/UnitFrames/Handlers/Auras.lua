@@ -1,7 +1,7 @@
 ---@class SUI.UF
 local UF = SUI.UF
 local Auras = {}
-local MonitoredIds = {}
+UF.MonitoredBuffs = {}
 
 ---@param unit UnitId
 ---@param data UnitAuraInfo
@@ -9,17 +9,20 @@ local MonitoredIds = {}
 function Auras:Filter(element, unit, data, rules)
 	---@param msg any
 	local function debug(msg)
-		if SUI:IsInTable(MonitoredIds, data.spellId) and SUI.releaseType == 'DEV Build' then print(msg) end
+		if not UF.MonitoredBuffs[unit] then UF.MonitoredBuffs[unit] = {} end
+
+		if SUI:IsInTable(UF.MonitoredBuffs[unit], data.spellId) then print(msg) end
 	end
 	local ShouldDisplay = false
 	element.displayReasons[data.spellId] = {}
 
 	local function AddDisplayReason(reason)
+		debug('Adding display reason ' .. reason)
 		element.displayReasons[data.spellId][reason] = true
 		ShouldDisplay = true
 	end
 
-	debug('--')
+	debug('----')
 	debug(data.spellId)
 
 	for k, v in pairs(rules) do
@@ -48,13 +51,13 @@ function Auras:Filter(element, unit, data, rules)
 					AddDisplayReason(k)
 					return true
 				else
+					debug('Blacklisted')
 					return false
 				end
 			end
 		else
 			if k == 'isMount' and v then
 				if UF.MountIds[data.spellId] then
-					debug('Is mount')
 					AddDisplayReason(k)
 					return true
 				end
@@ -79,12 +82,24 @@ function Auras:Filter(element, unit, data, rules)
 		elseif ShouldDisplay and (lessThanMin or moreThanMax) and rules.duration.mode == 'exclude' then
 			AddDisplayReason('duration')
 		else
+			debug('Durration check Failed, ShouldDisplay is now false')
 			ShouldDisplay = false
 		end
 	else
 		debug('Durration is not enabled')
 	end
 	debug('ShouldDisplay result ' .. (ShouldDisplay and 'true' or 'false'))
+	debug('----')
+	if SUI:IsInTable(UF.MonitoredBuffs[unit], data.spellId) then
+		for i, v in ipairs(UF.MonitoredBuffs[unit]) do
+			if v == tonumber(data.spellId) then
+				debug('Removed ' .. data.spellId .. ' from the list of monitored buffs for ' .. unit)
+				table.remove(UF.MonitoredBuffs[unit], i)
+				print('----')
+			end
+		end
+	end
+
 	return ShouldDisplay
 end
 
