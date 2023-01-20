@@ -153,8 +153,10 @@ local TooltipSetItem = function(tooltip, tooltipData)
 	local itemLink = nil
 	if tooltip.GetItem then
 		itemLink = select(2, tooltip:GetItem())
-	else
+	elseif tooltipData.guid then
 		itemLink = C_Item.GetItemLinkByGUID(tooltipData.guid)
+	else
+		return
 	end
 
 	if itemLink then
