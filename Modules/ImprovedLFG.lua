@@ -261,7 +261,7 @@ function module:OnEnable()
 	end
 	hooksecurefunc('LFGListSearchEntry_Update', LFGSearchUpdate)
 
-	if SUI:IsAddonEnabled('PremadeGroupsFilter') then module.override = true end
+	if SUI:IsAddonEnabled('PremadeGroupsFilter') then module.Override = true end
 end
 
 function module:OnDisable() end

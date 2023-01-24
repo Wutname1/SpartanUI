@@ -10,7 +10,7 @@ local Elements = {
 	Types = {},
 }
 
----@type SUI.UF.Elements.Settings
+---@class SUI.UF.Elements.Settings
 local DefaultSettings = {
 	enabled = false,
 	alpha = 1,
