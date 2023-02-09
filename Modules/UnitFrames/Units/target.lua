@@ -34,6 +34,8 @@ local function Builder(frame)
 	UF.Elements:Build(frame, 'QuestMob', elementDB['QuestMob'])
 	UF.Elements:Build(frame, 'RareElite', elementDB['RareElite'])
 	UF.Elements:Build(frame, 'AuraBars', elementDB['AuraBars'])
+
+	UF.Elements:Build(frame, 'AuraWatch', elementDB['AuraWatch'])
 end
 
 local function Options() end

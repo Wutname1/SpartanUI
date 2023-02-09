@@ -26,6 +26,7 @@ local elementList = {
 	'SummonIndicator',
 	'StatusText',
 	'SUI_RaidGroup',
+	'AuraWatch',
 }
 
 local function groupingOrder()
@@ -131,6 +132,10 @@ local Settings = {
 		showInParty = false,
 	},
 	elements = {
+		AuraWatch = {
+			enabled = true,
+			size = 16,
+		},
 		Buffs = {
 			enabled = true,
 			onlyShowPlayer = true,
@@ -181,7 +186,11 @@ local Settings = {
 			enabled = true,
 		},
 		RaidTargetIndicator = {
-			size = 10,
+			size = 16,
+			alpha = 0.65,
+			position = {
+				x = 2,
+			},
 		},
 		RaidRoleIndicator = {
 			enabled = true,

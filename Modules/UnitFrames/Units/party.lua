@@ -26,6 +26,7 @@ local elementList = {
 	'SummonIndicator',
 	'StatusText',
 	'SUI_RaidGroup',
+	'AuraWatch',
 }
 
 local function GroupBuilder(holder)
@@ -95,6 +96,9 @@ local Settings = {
 	unitsPerColumn = 5,
 	columnSpacing = 2,
 	elements = {
+		AuraWatch = {
+			enabled = true,
+		},
 		Buffs = {
 			enabled = true,
 			onlyShowPlayer = true,

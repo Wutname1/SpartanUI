@@ -1,9 +1,7 @@
 -- Original work by Astromech
--- Rewritten based on Auras by Azilroka and Simpy
-
+-- Rewritten based on Auras by wutname1
 local _, ns = ...
 local oUF = ns.oUF
-local LCD = oUF.isClassic and LibStub('LibClassicDurations', true)
 
 local VISIBLE = 1
 local HIDDEN = 0
@@ -38,7 +36,7 @@ local function createAuraIcon(element, index)
 	local overlay = button:CreateTexture(nil, 'OVERLAY')
 	overlay:SetTexture([[Interface\Buttons\UI-Debuff-Overlays]])
 	overlay:SetAllPoints()
-	overlay:SetTexCoord(.296875, .5703125, 0, .515625)
+	overlay:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
 
 	button.overlay = overlay
 	button.icon = icon
@@ -52,16 +50,12 @@ end
 
 local function customFilter(element, _, button)
 	local setting = element.watched[button.spellID]
-	if not setting then
-		return false
-	end
+	if not setting then return false end
 
 	button.onlyShowMissing = setting.onlyShowMissing
 	button.anyUnit = setting.anyUnit
 
-	if setting.enabled and ((not setting.anyUnit and button.isPlayer) or (setting.anyUnit and button.castByPlayer)) then
-		return not setting.onlyShowMissing
-	end
+	if setting.enabled and ((not setting.anyUnit and button.isPlayer) or (setting.anyUnit and button.castByPlayer)) then return not setting.onlyShowMissing end
 
 	return false
 end
@@ -71,7 +65,7 @@ local function getIcon(element, visible, offset)
 	local button = element[position]
 
 	if not button then
-		button = (element.CreateIcon or createAuraIcon) (element, position)
+		button = (element.CreateIcon or createAuraIcon)(element, position)
 
 		tinsert(element, button)
 		element.createdIcons = element.createdIcons + 1
@@ -117,9 +111,9 @@ local function handleElements(element, unit, button, setting, icon, count, durat
 		end
 	end
 
-	if button.icon then
-		button.icon:SetTexture(icon)
-	end
+	if button.icon then button.icon:SetTexture(icon) end
+
+	button.setting = setting
 
 	if not setting.sizeOffset or setting.sizeOffset == 0 then
 		button:SetSize(element.size, element.size)
@@ -137,9 +131,7 @@ local function preOnlyMissing(element)
 	wipe(missing)
 
 	for spellID, setting in pairs(element.watched) do
-		if setting.onlyShowMissing then
-			missing[spellID] = setting
-		end
+		if setting.onlyShowMissing then missing[spellID] = setting end
 	end
 end
 
@@ -153,9 +145,7 @@ local function postOnlyMissing(element, unit, offset)
 		local icon = GetSpellTexture(spellID)
 		handleElements(element, unit, button, setting, icon)
 
-		if element.PostUpdateIcon then
-			element:PostUpdateIcon(unit, button, nil, position)
-		end
+		if element.PostUpdateIcon then element:PostUpdateIcon(unit, button, nil, position) end
 
 		visible = visible + 1
 	end
@@ -164,7 +154,8 @@ local function postOnlyMissing(element, unit, offset)
 end
 
 local function updateIcon(element, unit, index, offset, filter, isDebuff, visible)
-	local name, icon, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3 = UnitAura(unit, index, filter)
+	local name, icon, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3 =
+		UnitAura(unit, index, filter)
 	if not name then return end
 
 	local button, position = getIcon(element, visible, offset)
@@ -179,28 +170,37 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 
 	button:SetID(index)
 
-	if LCD and spellID and not UnitIsUnit('player', unit) then
-		local durationNew, expirationTimeNew = LCD:GetAuraDurationByUnit(unit, spellID, source, name)
-		if durationNew and durationNew > 0 then
-			duration, expiration = durationNew, expirationTimeNew
-		end
-	end
-
-	local show = (element.CustomFilter or customFilter) (element, unit, button, name, icon,
-		count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID,
-		canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3)
+	local show = (element.CustomFilter or customFilter)(
+		element,
+		unit,
+		button,
+		name,
+		icon,
+		count,
+		debuffType,
+		duration,
+		expiration,
+		source,
+		isStealable,
+		nameplateShowPersonal,
+		spellID,
+		canApplyAura,
+		isBossDebuff,
+		castByPlayer,
+		nameplateShowAll,
+		modRate,
+		effect1,
+		effect2,
+		effect3
+	)
 
 	local setting = element.watched[spellID]
-	if setting and setting.onlyShowMissing then
-		missing[spellID] = nil
-	end
+	if setting and setting.onlyShowMissing then missing[spellID] = nil end
 
 	if show then
 		handleElements(element, unit, button, setting, icon, count, duration, expiration, isDebuff, debuffType, isStealable, modRate)
 
-		if element.PostUpdateIcon then
-			element:PostUpdateIcon(unit, button, index, position, duration, expiration, debuffType, isStealable)
-		end
+		if element.PostUpdateIcon then element:PostUpdateIcon(unit, button, index, position, duration, expiration, debuffType, isStealable) end
 
 		return VISIBLE
 	else
