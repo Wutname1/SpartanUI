@@ -58,7 +58,7 @@ end
 function Font:GetFont(Module)
 	if Module and Font.DB then
 		return SUI.Lib.LSM:Fetch('font', Font.DB.Modules[Module].Face)
-	elseif not module and Font.DB then
+	elseif not Module and Font.DB then
 		return SUI.Lib.LSM:Fetch('font', Font.DB.Modules.Global.Face)
 	end
 	return SUI.Lib.LSM:Fetch('font', 'Roboto Bold')
@@ -330,7 +330,7 @@ function Font:OnEnable()
 							Font.DB.NumberSeperator = val
 							Font:Refresh()
 						end,
-						values = { [''] = 'none', [','] = 'comma', ['.'] = 'period' },
+						values = { [''] = 'none', [','] = 'comma', ['.'] = 'period', [' '] = 'space' },
 					},
 				},
 			},
