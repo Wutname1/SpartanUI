@@ -1,6 +1,10 @@
--- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
+-- Copyright 2022-2023 plusmouse. Licensed under terms found in LICENSE file.
 
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 8)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 9)
+
+if not lib then return end
+
+local activeLayoutPending = false
 
 local pointGetter = CreateFrame("Frame", nil, UIParent)
 
@@ -89,8 +93,14 @@ function lib:SetFrameSetting(frame, setting, value)
   if restrictions then
     local min, max
     if restrictions.type == Enum.EditModeSettingDisplayType.Dropdown then
-      min = 1
-      max = #restrictions.options
+      for _, option in pairs(restrictions.options) do
+        if min == nil or min > option.value then
+          min = option.value
+        end
+        if max == nil or max < option.value then
+          max = option.value
+        end
+      end
     elseif restrictions.type == Enum.EditModeSettingDisplayType.Checkbox then
       min = 0
       max = 1
@@ -169,6 +179,10 @@ end
 function lib:SaveOnly()
   assert(layoutInfo, LOAD_ERROR)
   C_EditMode.SaveLayouts(layoutInfo)
+  if activeLayoutPending then
+    C_EditMode.SetActiveLayout(layoutInfo.activeLayout)
+    activeLayoutPending = false
+  end
   reconciledLayouts = true -- Would have updated for new/old systems in LoadLayouts
 end
 
@@ -212,8 +226,7 @@ function lib:AddLayout(layoutType, layoutName)
   end
 
   table.insert(layoutInfo.layouts, newLayoutIndex, newLayout)
-  C_EditMode.OnLayoutAdded(newLayoutIndex)
-  C_EditMode.SetActiveLayout(newLayoutIndex)
+  self:SetActiveLayout(layoutName)
 end
 
 function lib:DeleteLayout(layoutName)
@@ -263,7 +276,8 @@ function lib:SetActiveLayout(layoutName)
   local index = GetLayoutIndex(layoutName)
 
   layoutInfo.activeLayout = index
-  C_EditMode.SetActiveLayout(index)
+
+  activeLayoutPending = true
 end
 
 function lib:GetActiveLayout()
