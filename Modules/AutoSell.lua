@@ -414,10 +414,10 @@ function module:SellTrash()
 	for bag = 0, 4 do
 		for slot = 1, GetContainerNumSlots(bag) do
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = GetContainerItemInfo(bag, slot)
-			if SUI.IsRetail and itemInfo and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
+			if itemInfo and type(itemInfo) == 'table' and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
 				ItemToSell[#ItemToSell + 1] = { bag, slot }
 				totalValue = totalValue + (select(11, GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
-			elseif not SUI.IsRetail and module:IsSellable(itemID, link, bag, slot) then
+			elseif itemInfo and module:IsSellable(itemID, link, bag, slot) then
 				ItemToSell[#ItemToSell + 1] = { bag, slot }
 				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, GetContainerItemInfo(bag, slot)))
 			end
