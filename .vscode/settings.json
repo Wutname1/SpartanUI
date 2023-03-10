@@ -365,7 +365,10 @@
     "IsSecureCmd",
     "THREAT_TOOLTIP",
     "PlayerCastingBarFrame",
-    "PetCastingBarFrame"
+    "PetCastingBarFrame",
+    "DebuffTypeColor",
+    "Settings",
+    "BossButtonHolder"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

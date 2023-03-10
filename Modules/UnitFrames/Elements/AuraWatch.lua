@@ -26,7 +26,18 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfigOptionsTable
 ---@param DB? table
-local function Options(unitName, OptionSet, DB) end
+local function Options(unitName, OptionSet, DB)
+	local ElementSettings = UF.CurrentSettings[unitName].elements.AuraWatch
+	local UserSetting = UF.DB.UserSettings[UF.DB.Style][unitName].elements.AuraWatch
+
+	--Remove Basic Filters
+	OptionSet.args.Filters = nil
+	--Remove Blacklist
+	OptionSet.args.whitelist = nil
+	OptionSet.args.blacklist = nil
+	--Remove Layout Configuration
+	OptionSet.args.Layout = nil
+end
 
 ---@class SUI.UF.Unit.Settings.AuraWatch.Watched
 ---@field anyUnit boolean

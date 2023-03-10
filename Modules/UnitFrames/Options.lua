@@ -1359,7 +1359,7 @@ function Options:Initialize()
 			end
 
 			--Call Elements Custom function
-			UF.Elements:Options(frameName, elementName, ElementOptSet)
+			UF.Elements:Options(frameName, elementName, ElementOptSet, ElementSettings)
 
 			if not ElementOptSet.args.enabled then
 				--Add a disable check to all args

@@ -56,10 +56,6 @@ local ElementPositioning = {
 }
 
 ---@class FramePositioning
----@field point AnchorPoint
----@field relativePoint AnchorPoint
----@field xOfs integer
----@field yOfs integer
 local FramePositioning = {}
 
 ---@class ElementTextData
