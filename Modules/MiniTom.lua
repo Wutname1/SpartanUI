@@ -194,4 +194,7 @@ function module:OnEnable()
 	SLASH_MiniTom1 = '/way'
 end
 
-function module:OnDisable() end
+function module:OnDisable()
+	SlashCmdList.MiniTom = nil
+	SLASH_MiniTom1 = nil
+end
