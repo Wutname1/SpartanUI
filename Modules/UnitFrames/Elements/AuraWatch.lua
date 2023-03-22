@@ -138,7 +138,7 @@ local function Options(unitName, OptionSet, DB)
 		},
 	}
 
-	OptionSet.args.watched.disabled.args.create = true
+	OptionSet.args.watched.args.create.disabled = true
 end
 
 ---@class SUI.UF.Unit.Settings.AuraWatch.Watched
