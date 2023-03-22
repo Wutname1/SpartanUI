@@ -37,6 +37,108 @@ local function Options(unitName, OptionSet, DB)
 	OptionSet.args.blacklist = nil
 	--Remove Layout Configuration
 	OptionSet.args.Layout = nil
+	local buildItemList
+
+	local spellLabel = {
+		type = 'description',
+		width = 'double',
+		fontSize = 'medium',
+		order = function(info)
+			return tonumber(string.match(info[#info], '(%d+)'))
+		end,
+		name = function(info)
+			local id = tonumber(string.match(info[#info], '(%d+)'))
+			local name = 'unknown'
+			if id then
+				-- local spellLink = GetSpellLink(id)
+				local spellName, _, spellIcon = GetSpellInfo(id)
+				name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellIcon or 'Interface\\Icons\\Inv_misc_questionmark', spellName or SUI.L['Unknown'], id)
+			end
+			return name
+		end,
+	}
+
+	local spellDelete = {
+		type = 'execute',
+		name = SUI.L['Delete'],
+		width = 'half',
+		order = function(info)
+			return tonumber(string.match(info[#info], '(%d+)')) + 0.5
+		end,
+		func = function(info)
+			local id = tonumber(info[#info])
+
+			--Remove Setting
+			ElementSettings.rules[info[#info - 2]][id] = nil
+			UserSetting.rules[info[#info - 2]][id] = nil
+
+			--Update Screen
+			buildItemList(info[#info - 2])
+			UF.Unit[unitName]:ElementUpdate('AuraWatch')
+		end,
+	}
+
+	buildItemList = function(mode)
+		local spellsOpt = OptionSet.args[mode].args.spells.args
+		table.wipe(spellsOpt)
+
+		for spellID, _ in pairs(ElementSettings.rules[mode]) do
+			spellsOpt[spellID .. 'label'] = spellLabel
+			spellsOpt[tostring(spellID)] = spellDelete
+		end
+	end
+	local additem = function(info, input)
+		local spellId
+		if type(input) == 'string' then
+			--See if we got a spell link
+			if input:find('|Hspell:%d+') then
+				spellId = tonumber(input:match('|Hspell:(%d+)'))
+			elseif input:find('%[(.-)%]') then
+				spellId = select(7, GetSpellInfo(input:match('%[(.-)%]')))
+			else
+				spellId = select(7, GetSpellInfo(input))
+			end
+			if not spellId then
+				SUI:Print('Invalid spell name or ID')
+				return
+			end
+		end
+
+		ElementSettings.rules[info[#info - 1]][spellId] = true
+		UserSetting.rules[info[#info - 1]][spellId] = true
+
+		UF.Unit[unitName]:ElementUpdate('AuraWatch')
+		buildItemList(info[#info - 1])
+	end
+
+	OptionSet.args.watched = {
+		name = 'Tracked Auras',
+		type = 'group',
+		order = 4,
+		args = {
+			soon = {
+				type = 'description',
+				name = 'Options Coming soon, Right now Priest, Mage, and Druid raid buffs tracked by default IF the current character is one of those classes.',
+				order = 0.5,
+			},
+			create = {
+				name = SUI.L['Add spell name or ID'],
+				type = 'input',
+				order = 1,
+				width = 'full',
+				set = additem,
+			},
+			spells = {
+				order = 2,
+				type = 'group',
+				inline = true,
+				name = 'Auras list',
+				args = {},
+			},
+		},
+	}
+
+	OptionSet.args.watched.disabled.args.create = true
 end
 
 ---@class SUI.UF.Unit.Settings.AuraWatch.Watched
