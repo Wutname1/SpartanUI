@@ -138,15 +138,68 @@ local ClearColors = function(SUITip)
 	SUITip.border[4]:SetVertexColor(0, 0, 0, 0)
 end
 
-local TooltipSetGeneric = function(self, tooltipData)
-	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
-	if not self.SetBackdrop then Mixin(self, BackdropTemplateMixin) end
+local function ApplySkin(tooltip)
+	if not tooltip.SUITip then
+		local SUITip = CreateFrame('Frame', nil, tooltip, BackdropTemplateMixin and 'BackdropTemplate')
+		SUITip:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', 0, 0)
+		SUITip:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 0, 0)
+		SUITip:SetFrameLevel(0)
+
+		SUITip.border = CreateFrame('Frame', nil, tooltip)
+		SUITip.border:SetFrameLevel(1)
+
+		--TOP
+		SUITip.border[1] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+		SUITip.border[1]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
+		SUITip.border[1]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
+		SUITip.border[1]:SetHeight(2)
+		SUITip.border[1]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
+		--BOTTOM
+		SUITip.border[2] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+		SUITip.border[2]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
+		SUITip.border[2]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
+		SUITip.border[2]:SetHeight(2)
+		SUITip.border[2]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
+		--RIGHT
+		SUITip.border[3] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+		SUITip.border[3]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
+		SUITip.border[3]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
+		SUITip.border[3]:SetWidth(2)
+		SUITip.border[3]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
+		--LEFT
+		SUITip.border[4] = SUITip.border:CreateTexture(nil, 'OVERLAY')
+		SUITip.border[4]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
+		SUITip.border[4]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
+		SUITip.border[4]:SetWidth(2)
+		SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
+
+		SUITip:SetBackdrop({ bgFile = LSM:Fetch('background', module.DB.Background), tile = false })
+
+		SUITip.ClearColors = ClearColors
+		SUITip.border:Hide()
+
+		tooltip.SUITip = SUITip
+		tooltip.SetBorderColor = SetBorderColor
+		if tooltip.SetBackdrop then tooltip:SetBackdrop(nil) end
+		tooltip:HookScript('OnShow', onShow)
+		tooltip:HookScript('OnHide', onHide)
+		_G.tremove(tooltips, i)
+	end
 
 	local style = {
-		bgFile = 'Interface/Tooltips/UI-Tooltip-Background',
+		bgFile = LSM:Fetch('background', module.DB.Background),
 	}
-	self:SetBackdrop(style)
-	self:SetBackdropColor(unpack(module.DB.Color))
+
+	if not tooltip.SetBackdrop then Mixin(tooltip, BackdropTemplateMixin) end
+	tooltip:SetBackdrop(style)
+	tooltip:SetBackdropColor(unpack(module.DB.Color))
+	tooltip.skined = true
+end
+
+local TooltipSetGeneric = function(self, tooltipData)
+	if self.NineSlice then SUI.Skins.RemoveTextures(self.NineSlice) end
+
+	ApplySkin(self)
 end
 
 local TooltipSetItem = function(tooltip, tooltipData)
@@ -367,61 +420,7 @@ local function ApplyTooltipSkins()
 
 	for i, tooltip in pairs(tooltips) do
 		if not tooltip then return end
-
-		if not tooltip.SUITip then
-			local SUITip = CreateFrame('Frame', nil, tooltip, BackdropTemplateMixin and 'BackdropTemplate')
-			SUITip:SetPoint('TOPLEFT', tooltip, 'TOPLEFT', 0, 0)
-			SUITip:SetPoint('BOTTOMRIGHT', tooltip, 'BOTTOMRIGHT', 0, 0)
-			SUITip:SetFrameLevel(0)
-
-			SUITip.border = CreateFrame('Frame', nil, tooltip)
-			SUITip.border:SetFrameLevel(1)
-
-			--TOP
-			SUITip.border[1] = SUITip.border:CreateTexture(nil, 'OVERLAY')
-			SUITip.border[1]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
-			SUITip.border[1]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
-			SUITip.border[1]:SetHeight(2)
-			SUITip.border[1]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
-			--BOTTOM
-			SUITip.border[2] = SUITip.border:CreateTexture(nil, 'OVERLAY')
-			SUITip.border[2]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
-			SUITip.border[2]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
-			SUITip.border[2]:SetHeight(2)
-			SUITip.border[2]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
-			--RIGHT
-			SUITip.border[3] = SUITip.border:CreateTexture(nil, 'OVERLAY')
-			SUITip.border[3]:SetPoint('TOPRIGHT', SUITip, 'TOPRIGHT')
-			SUITip.border[3]:SetPoint('BOTTOMRIGHT', SUITip, 'BOTTOMRIGHT')
-			SUITip.border[3]:SetWidth(2)
-			SUITip.border[3]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
-			--LEFT
-			SUITip.border[4] = SUITip.border:CreateTexture(nil, 'OVERLAY')
-			SUITip.border[4]:SetPoint('TOPLEFT', SUITip, 'TOPLEFT')
-			SUITip.border[4]:SetPoint('BOTTOMLEFT', SUITip, 'BOTTOMLEFT')
-			SUITip.border[4]:SetWidth(2)
-			SUITip.border[4]:SetTexture('Interface\\AddOns\\SpartanUI\\images\\blank.tga')
-
-			SUITip:SetBackdrop({ bgFile = LSM:Fetch('background', module.DB.Background), tile = false })
-
-			SUITip.ClearColors = ClearColors
-			SUITip.border:Hide()
-
-			tooltip.SUITip = SUITip
-			tooltip.SetBorderColor = SetBorderColor
-			if tooltip.SetBackdrop then tooltip:SetBackdrop(nil) end
-			tooltip:HookScript('OnShow', onShow)
-			tooltip:HookScript('OnHide', onHide)
-			_G.tremove(tooltips, i)
-		end
-
-		local style = {
-			bgFile = LSM:Fetch('background', module.DB.Background),
-		}
-
-		if not tooltip.SetBackdrop then Mixin(tooltip, BackdropTemplateMixin) end
-		tooltip:SetBackdrop(style)
-		tooltip:SetBackdropColor(unpack(module.DB.Color))
+		ApplySkin(tooltip)
 	end
 end
 
