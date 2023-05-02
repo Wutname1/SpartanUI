@@ -625,7 +625,7 @@ function module:SetupChatboxes()
 		if ChatFrame.SetBackdrop then ChatFrame:SetBackdrop(nil) end
 
 		--Setup Scrollbar
-		if ChatFrame.ScrollBar then
+		if ChatFrame.ScrollBar and ChatFrame.ScrollBar.ThumbTexture then
 			ChatFrame.ScrollBar.ThumbTexture:SetColorTexture(1, 1, 1, 0.4)
 			ChatFrame.ScrollBar.ThumbTexture:SetWidth(10)
 
@@ -639,22 +639,6 @@ function module:SetupChatboxes()
 			ChatFrame.ScrollToBottomButton:ClearAllPoints()
 			ChatFrame.ScrollToBottomButton:SetSize(20, 20)
 			ChatFrame.ScrollToBottomButton:SetPoint('BOTTOMRIGHT', ChatFrame.ResizeButton, 'TOPRIGHT', -4, 0)
-		end
-
-		if not SUI.IsRetail then
-			ChatFrame.buttonFrame.downButton:Hide()
-			ChatFrame.buttonFrame.upButton:Hide()
-			local element = ChatFrame.buttonFrame.bottomButton
-			StripTextures(element)
-			local BG = element:CreateTexture()
-			BG = element:CreateTexture(nil, 'ARTWORK')
-			BG:SetAllPoints(element)
-			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\bottomArrow')
-			BG:SetAlpha(0.6)
-			element.BG = BG
-			element:ClearAllPoints()
-			element:SetSize(20, 20)
-			element:SetPoint('BOTTOMRIGHT', ChatFrame, 'BOTTOMRIGHT', -4, 0)
 		end
 
 		--Skin the Tab
