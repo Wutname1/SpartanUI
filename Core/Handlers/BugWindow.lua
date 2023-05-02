@@ -44,7 +44,7 @@ eventFrame:SetScript('OnEvent', function(self, event, loadedAddon)
 	if loadedAddon ~= 'SpartanUI' or not BugGrabber then return end
 	self:UnregisterEvent('ADDON_LOADED')
 
-	local ac = LibStub('AceComm-3.0', true)
+	local ac = LibStub('AceComm-3.0', true) ---@class AceComm-3.0
 	if ac then ac:Embed(addon) end
 	local as = LibStub('AceSerializer-3.0', true)
 	if as then as:Embed(addon) end

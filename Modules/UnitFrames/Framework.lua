@@ -162,8 +162,8 @@ function UF:OnEnable()
 		local CheckedItems = {}
 		local frames = { ['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party' }
 		for k, v in pairs(frames) do
-			EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames'].Button:HookScript('OnClick', function(...)
-				if EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:IsControlChecked() then
+			EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames'].Button:HookScript('OnClick', function(...)
+				if EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:IsControlChecked() then
 					CheckedItems[k] = v
 				else
 					CheckedItems[k] = nil
@@ -175,7 +175,7 @@ function UF:OnEnable()
 
 		EditModeManagerFrame:HookScript('OnHide', function()
 			for k, v in pairs(CheckedItems) do
-				EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:SetControlChecked(false)
+				EditModeManagerFrame.AccountSettings.SettingsContainer[v .. 'Frames']:SetControlChecked(false)
 				SUI.MoveIt:MoveIt(k)
 			end
 			MoveIt.MoverWatcher:Hide()

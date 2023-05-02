@@ -149,7 +149,7 @@ local function Update(frame, settings)
 
 	if frame.unitOnCreate == 'player' then
 		if EditModeManagerFrame then
-			function EditModeManagerFrame.AccountSettings.Settings.CastBar:ShouldEnable()
+			function EditModeManagerFrame.AccountSettings.SettingsContainer.CastBar:ShouldEnable()
 				return false
 			end
 		end
