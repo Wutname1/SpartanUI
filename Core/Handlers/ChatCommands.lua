@@ -17,6 +17,10 @@ function SUI:ChatCommand(input)
 	end
 end
 
+function SUI_OnAddonCompartmentClick()
+	SUI:GetModule('Handler_Options'):ToggleOptions()
+end
+
 local function AddToOptions(arg)
 	local settings = CommandDetails[arg]
 
