@@ -56,9 +56,6 @@ function module:OnInitialize()
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
 		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-		},
 		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,0,20',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Tribal', minimapSettings)

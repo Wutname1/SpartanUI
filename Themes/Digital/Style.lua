@@ -37,10 +37,6 @@ function module:OnInitialize()
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
 			position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
 		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-			scale = 1.2,
-		},
 		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Digital', minimapSettings)

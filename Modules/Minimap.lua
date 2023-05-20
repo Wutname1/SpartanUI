@@ -30,7 +30,6 @@ local BaseSettings = {
 	coords = {
 		scale = 1,
 		size = { 80, 12 },
-		position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
 		TextColor = { 1, 1, 1, 1 },
 		ShadowColor = { 0, 0, 0, 0 },
 	},
@@ -213,23 +212,21 @@ function module:ModifyMinimapLayout()
 	if MinimapCluster.BorderTop then
 		MinimapCluster.BorderTop:ClearAllPoints()
 		MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
-		MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.4)
+		MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.3)
 		MinimapCluster.BorderTop:SetHeight(MinimapCluster.ZoneTextButton:GetHeight() * 2.8)
 		MinimapCluster.BorderTop:SetAlpha(0.8)
 		MinimapCluster.ZoneTextButton:ClearAllPoints()
 		MinimapCluster.ZoneTextButton:SetPoint('TOPLEFT', MinimapCluster.BorderTop, 'TOPLEFT', 4, -4)
-		MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -4, -4)
+		MinimapCluster.ZoneTextButton:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', -15, -4)
 		SUI.Font:Format(MinimapZoneText, 10, 'Minimap')
 		SUI.Font:Format(MinimapZoneText, 10, 'Minimap')
 		MinimapZoneText:SetJustifyH('CENTER')
-		TimeManagerClockButton:ClearAllPoints()
-		TimeManagerClockButton:SetPoint('BOTTOMRIGHT', MinimapCluster.BorderTop, 'BOTTOMRIGHT', 2, 0)
 		SUI.Font:Format(TimeManagerClockTicker, 10, 'Minimap')
 		SUI.Font:Format(Minimap.coords, 10, 'Minimap')
+
 		MinimapCluster.Tracking:ClearAllPoints()
-		MinimapCluster.Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 2)
+		MinimapCluster.Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 1)
 		MinimapCluster.Tracking.Background:Hide()
-		--TODO: Remove MinimapCluster.MailFrame in 10.0.5
 		local mailFrame = MinimapCluster.IndicatorFrame or MinimapCluster.MailFrame
 		mailFrame:ClearAllPoints()
 		mailFrame:SetScale(0.8)
@@ -237,6 +234,18 @@ function module:ModifyMinimapLayout()
 		MinimapCluster.InstanceDifficulty:ClearAllPoints()
 		MinimapCluster.InstanceDifficulty:SetScale(0.8)
 		MinimapCluster.InstanceDifficulty:SetPoint('RIGHT', MinimapCluster.BorderTop, 'LEFT', 2)
+
+		GameTimeFrame:ClearAllPoints()
+		GameTimeFrame:SetPoint('BOTTOMRIGHT', MinimapCluster.BorderTop, 'BOTTOMRIGHT', 2, 0)
+		if AddonCompartmentFrame then
+			AddonCompartmentFrame:ClearAllPoints()
+			AddonCompartmentFrame:SetPoint('TOPRIGHT', MinimapCluster.BorderTop, 'TOPRIGHT', 0, 0)
+			AddonCompartmentFrame:SetFrameLevel(4)
+		end
+		TimeManagerClockButton:ClearAllPoints()
+		TimeManagerClockButton:SetPoint('BOTTOMRIGHT', MinimapCluster.BorderTop, 'BOTTOMRIGHT', -10, 0)
+		TimeManagerClockTicker:ClearAllPoints()
+		TimeManagerClockTicker:SetAllPoints(TimeManagerClockButton)
 	end
 	if MinimapCluster.SetRotateMinimap then
 		if UserSettings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
@@ -283,16 +292,6 @@ function module:ModifyMinimapLayout()
 		MinimapBackdrop:SetPoint('CENTER', Minimap, 'CENTER', -10, -24)
 		MinimapBackdrop:SetFrameLevel(Minimap:GetFrameLevel())
 	end
-	if GameTimeFrame and not SUI.IsRetail then
-		GameTimeFrame:ClearAllPoints()
-		GameTimeFrame:SetScale(0.7)
-		GameTimeFrame:SetPoint('TOPRIGHT', Minimap, 'TOPRIGHT', 20, -16)
-		GameTimeFrame:SetFrameLevel(122)
-	elseif GameTimeFrame and BT4BarMicroMenu and SUI.IsRetail then
-		GameTimeFrame:ClearAllPoints()
-		GameTimeFrame:SetPoint('TOPRIGHT', CharacterMicroButton, 'TOPLEFT', 2, 0)
-		GameTimeFrame:SetWidth(CharacterMicroButton:GetWidth())
-	end
 	module:MinimapCoords()
 end
 
@@ -320,7 +319,7 @@ function module:MinimapCoords()
 	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
 	SUI.Font:Format(Minimap.coords, 10, 'Minimap')
 	Minimap.coords:SetJustifyH('TOP')
-	Minimap.coords:SetPoint('TOP', Minimap.ZoneText, 'BOTTOM', 0, -1)
+	Minimap.coords:SetPoint('BOTTOM', MinimapCluster.BorderTop, 'BOTTOM', 0, 3)
 	Minimap.coords:SetShadowOffset(1, -1)
 
 	local function UpdateCoords()
@@ -437,11 +436,6 @@ function module:update(FullUpdate)
 		Minimap.ZoneText:SetPoint(point, anchor, secondaryPoint, x, y)
 
 		if UserSettings.DisplayMapCords then
-			-- Position coords
-			local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.coords.position)
-			Minimap.coords:ClearAllPoints()
-			Minimap.coords:SetPoint(point, anchor, secondaryPoint, x, y)
-
 			Minimap.coords:Show()
 		else
 			Minimap.coords:Hide()
@@ -793,28 +787,25 @@ function module:BuildOptions()
 					module:update()
 				end,
 			},
+			rotate = {
+				order = 3,
+				type = 'toggle',
+				name = ROTATE_MINIMAP,
+				desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
+				get = function()
+					return UserSettings.rotate or false
+				end,
+				set = function(_, value)
+					if value then
+						C_CVar.SetCVar('rotateMinimap', 1)
+					else
+						C_CVar.SetCVar('rotateMinimap', 0)
+					end
+					UserSettings.rotate = value or nil
+				end,
+			},
 		},
 	}
-
-	if SUI.IsRetail then
-		options.args.rotate = {
-			order = 3,
-			type = 'toggle',
-			name = ROTATE_MINIMAP,
-			desc = OPTION_TOOLTIP_ROTATE_MINIMAP,
-			get = function()
-				return UserSettings.rotate or false
-			end,
-			set = function(_, value)
-				if value then
-					C_CVar.SetCVar('rotateMinimap', 1)
-				else
-					C_CVar.SetCVar('rotateMinimap', 0)
-				end
-				UserSettings.rotate = value or nil
-			end,
-		}
-	end
 
 	SUI.Options:AddOptions(options, 'Minimap')
 end

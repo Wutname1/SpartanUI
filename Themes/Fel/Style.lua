@@ -77,10 +77,6 @@ function module:OnInitialize()
 			size = { 220, 220 },
 			position = 'CENTER,Minimap,CENTER,5,23',
 		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-			scale = 1.2,
-		},
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
 		engulfed = true,
 	}

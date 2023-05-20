@@ -97,10 +97,6 @@ function module:OnInitialize()
 			size = { 130, 12 },
 			position = 'BOTTOM,Minimap,TOP,0,2',
 		},
-		coords = {
-			size = { 80, 12 },
-			position = 'BOTTOM,Minimap,BOTTOM,0,2',
-		},
 	}
 	SUI:GetModule('Module_Minimap'):Register('Transparent', minimapSettings)
 

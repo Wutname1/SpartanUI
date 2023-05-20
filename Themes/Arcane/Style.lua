@@ -93,9 +93,6 @@ function module:OnInitialize()
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\minimap',
 		},
-		coords = {
-			position = 'TOP,MinimapZoneText,BOTTOM,0,-4',
-		},
 		position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Arcane', minimapSettings)
