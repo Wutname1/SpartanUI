@@ -1,11 +1,10 @@
 ## Interface: 100100
-## Title: |TInterface/Addons/SpartanUI/images/Spartan-Helm:16:16|t Spartan|cffe21f1fUI
+## Title: Spartan|cffe21f1fUI
 ## Notes: User Interface combining elegant artwork with well designed features.
 ## Version: @project-version@
 ## X-Build: @project-revision@
 ## Author: Wutname1
 ## IconTexture: Interface/Addons/SpartanUI/images/Spartan-Helm
-## AddonCompartmentFunc: SUI_OnAddonCompartmentClick
 ## X-Curse-Project-ID: 4575
 ## X-WoWI-ID: 18206
 ## X-Wago-ID: vEGPqeN1

@@ -16,10 +16,10 @@ SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
 SUI.IsTBC = (WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC) ---@type boolean
 SUI.IsWrath = (WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC) ---@type boolean
 SUI.GitHash = '@project-abbreviated-hash@' -- The ZIP packager will replace this with the Git hash.
-local wowVersion = 'Retail'
-if SUI.IsClassic then wowVersion = 'Classic' end
-if SUI.IsTBC then wowVersion = 'TBC' end
-if SUI.IsWrath then wowVersion = 'Wrath' end
+SUI.wowVersion = 'Retail'
+if SUI.IsClassic then SUI.wowVersion = 'Classic' end
+if SUI.IsTBC then SUI.wowVersion = 'TBC' end
+if SUI.IsWrath then SUI.wowVersion = 'Wrath' end
 --@alpha@
 SUI.releaseType = 'ALPHA ' .. SUI.BuildNum
 --@end-alpha@
@@ -87,9 +87,9 @@ SUI.Lib.LSM:Register('background', 'None', [[Interface\AddOns\SpartanUI\images\b
 SUI.StdUi = SUI.Lib.StdUi:NewInstance() ---@type StdUi
 
 ---------------  Options Init ---------------
----@type AceConfigOptionsTable
+---@type AceConfig.OptionsTable
 SUI.opt = {
-	name = string.format('|cffffffffSpartan|cffe21f1fUI|r %s %s %s', wowVersion, SUI.Version, SUI.releaseType or ''),
+	name = string.format('|cffffffffSpartan|cffe21f1fUI|r %s %s %s', SUI.wowVersion, SUI.Version, SUI.releaseType or ''),
 	type = 'group',
 	childGroups = 'tree',
 	args = {
@@ -1276,7 +1276,7 @@ function SUI:OnInitialize()
 
 	local function Version()
 		SUI:Print(SUI.L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
-		SUI:Print(string.format('%s build %s', wowVersion, SUI.BuildNum))
+		SUI:Print(string.format('%s build %s', SUI.wowVersion, SUI.BuildNum))
 		if SUI.Bartender4Version ~= 0 then SUI:Print(SUI.L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version) end
 	end
 
