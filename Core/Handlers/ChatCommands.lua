@@ -39,7 +39,7 @@ AddonCompartmentFrame:RegisterAddon({
 		GameTooltip:SetOwner(AddonCompartmentFrame, 'ANCHOR_CURSOR_RIGHT')
 		GameTooltip:AddDoubleLine('|cffffffffSpartan|cffe21f1fUI', '|cffffffff' .. (SUI.releaseType or '') .. tostring(SUI.Version))
 		GameTooltip:AddLine(' ', 1, 1, 1)
-		GameTooltip:AddLine('|cffeda55fLeft-Click|r to toggle showing the options window.', 1, 1, 1)
+		GameTooltip:AddLine('|cffeda55fLeft-Click|r to toggle the options window.', 1, 1, 1)
 		GameTooltip:AddLine('|cffeda55fShift-Click|r to toggle the movement system.', 1, 1, 1)
 		GameTooltip:Show()
 	end,
