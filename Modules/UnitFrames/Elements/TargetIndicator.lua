@@ -35,7 +35,7 @@ local function Update(frame, settings)
 end
 
 ---@param unitName string
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 ---@param DB? table
 local function Options(unitName, OptionSet, DB)
 	local function OptUpdate(option, val)

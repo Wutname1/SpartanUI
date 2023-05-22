@@ -13,7 +13,7 @@ local anchorPoints = {
 	['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
 }
 
----@param optTable AceConfigOptionsTable
+---@param optTable AceConfig.OptionsTable
 local function SUIHealth(optTable)
 	local mode = 'Health'
 	if optTable.name == 'SUIPower' then mode = 'Power' end
@@ -286,7 +286,7 @@ local Options = {}
 
 ---Creates the base options screen for a frame name
 ---@param frameName UnitFrameName
----@return AceConfigOptionsTable
+---@return AceConfig.OptionsTable
 function Options:CreateFrameOptionSet(frameName, get, set)
 	local OptionSet = {
 		name = frameName,
@@ -353,12 +353,12 @@ function Options:CreateFrameOptionSet(frameName, get, set)
 				args = {},
 			},
 		},
-	} ---@type AceConfigOptionsTable
+	} ---@type AceConfig.OptionsTable
 
 	return OptionSet
 end
 
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 function Options:AddGeneral(OptionSet)
 	OptionSet.args.General.args = {
 		General = {
@@ -382,7 +382,7 @@ function Options:AddGeneral(OptionSet)
 end
 
 ---@param frameName UnitFrameName
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 function Options:AddAuraLayout(frameName, OptionSet)
 	OptionSet.args.Layout = {
 		name = L['Layout Configuration'],
@@ -452,7 +452,7 @@ function Options:AddAuraLayout(frameName, OptionSet)
 end
 
 ---@param frameName UnitFrameName
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 ---@param create function
 function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
 	OptionSet.args.whitelist = {
@@ -512,7 +512,7 @@ function Options:AddAuraWhitelistBlacklist(frameName, OptionSet, create)
 end
 
 ---@param frameName UnitFrameName
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 ---@param set function
 ---@param get function
 function Options:AddAuraFilters(frameName, OptionSet, set, get)
@@ -583,7 +583,7 @@ function Options:AddAuraFilters(frameName, OptionSet, set, get)
 end
 
 ---@param frameName UnitFrameName
----@param ElementOptSet AceConfigOptionsTable
+---@param ElementOptSet AceConfig.OptionsTable
 function Options:TextBasicDisplay(frameName, ElementOptSet)
 	ElementOptSet.args.Text = {
 		name = '',
@@ -638,7 +638,7 @@ function Options:TextBasicDisplay(frameName, ElementOptSet)
 end
 
 ---@param frameName UnitFrameName
----@param ElementOptSet AceConfigOptionsTable
+---@param ElementOptSet AceConfig.OptionsTable
 ---@param elementName SUI.UF.Elements.list
 function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 	ElementOptSet.args.texture = {
@@ -702,7 +702,7 @@ function Options:StatusBarDefaults(frameName, ElementOptSet, elementName)
 	}
 end
 
----@param ElementOptSet AceConfigOptionsTable
+---@param ElementOptSet AceConfig.OptionsTable
 function Options:IndicatorAddDisplay(ElementOptSet)
 	ElementOptSet.args.display = {
 		name = L['Display'],
@@ -739,7 +739,7 @@ function Options:IndicatorAddDisplay(ElementOptSet)
 end
 
 ---@param anchors table
----@param ElementOptSet AceConfigOptionsTable
+---@param ElementOptSet AceConfig.OptionsTable
 ---@param get function
 ---@param set function
 function Options:AddPositioning(anchors, ElementOptSet, get, set)
@@ -795,7 +795,7 @@ function Options:AddPositioning(anchors, ElementOptSet, get, set)
 end
 
 ---@param frameName UnitFrameName
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 ---@param element SUI.UF.Elements.list
 function Options:AddDynamicText(frameName, OptionSet, element)
 	OptionSet.args.Text = {
@@ -924,7 +924,7 @@ function Options:AddDynamicText(frameName, OptionSet, element)
 end
 
 ---@param frameName UnitFrameName
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 function Options:AddGroupDisplay(frameName, OptionSet)
 	OptionSet.args.General.args.Display = {
 		name = L['Display'],
@@ -965,7 +965,7 @@ function Options:AddGroupDisplay(frameName, OptionSet)
 end
 
 ---@param frameName UnitFrameName
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 function Options:AddGroupLayout(frameName, OptionSet)
 	OptionSet.args.General.args.Layout = {
 		name = L['Layout Configuration'],
@@ -1034,7 +1034,7 @@ end
 function Options:Initialize()
 	---Build Help screen
 
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local HelpScreen = {
 		name = L['Text tags'],
 		type = 'group',
@@ -1092,7 +1092,7 @@ function Options:Initialize()
 	}
 
 	-- Construct base Options object
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local UFOptions = {
 		name = L['Unit frames'],
 		type = 'group',
@@ -1197,7 +1197,7 @@ function Options:Initialize()
 			local ElementSettings = UF.CurrentSettings[frameName].elements[elementName]
 			local UserSetting = UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName]
 
-			---@type AceConfigOptionsTable
+			---@type AceConfig.OptionsTable
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
 				desc = elementConfig.Description or '',

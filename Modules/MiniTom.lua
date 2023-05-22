@@ -54,7 +54,7 @@ function module:SetPoint(mapID, x, y, desc)
 end
 
 local function Options()
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local OptTable = {
 		name = 'MiniTom',
 		type = 'group',

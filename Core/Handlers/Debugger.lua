@@ -88,7 +88,7 @@ function SUI.Debug(debugText, module)
 end
 
 local function AddOptions()
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local options = {
 		name = 'Debug',
 		type = 'group',

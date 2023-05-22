@@ -17,7 +17,7 @@ local function Update(frame)
 end
 
 ---@param frameName string
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 local function Options(frameName, OptionSet)
 	UF.Options:TextBasicDisplay(frameName, OptionSet)
 end

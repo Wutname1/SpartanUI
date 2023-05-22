@@ -24,7 +24,7 @@ function module:OnInitialize()
 end
 
 local function Options()
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local optTable = {
 		name = L['Stop Talking'],
 		type = 'group',

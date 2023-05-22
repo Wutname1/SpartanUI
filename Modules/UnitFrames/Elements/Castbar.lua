@@ -169,7 +169,7 @@ local function Update(frame, settings)
 end
 
 ---@param frameName string
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 local function Options(frameName, OptionSet)
 	OptionSet.args.general = {
 		name = '',

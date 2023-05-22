@@ -16,7 +16,7 @@ local DBDefaults = {
 		},
 	},
 }
----@type AceConfigOptionsTable
+---@type AceConfig.OptionsTable
 local OptTable
 
 local DB = nil ---@type SkinDB

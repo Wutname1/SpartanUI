@@ -197,7 +197,7 @@ local function LeaderRating(self, searchResultInfo)
 end
 
 local function Options()
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local OptTable = {
 		name = module.DisplayName,
 		type = 'group',

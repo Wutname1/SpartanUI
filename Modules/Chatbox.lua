@@ -765,7 +765,7 @@ function ItemRefTooltip:SetHyperlink(data, ...)
 end
 
 function module:BuildOptions()
-	--@type AceConfigOptionsTable
+	--@type AceConfig.OptionsTable
 	local optTable = {
 		type = 'group',
 		name = L['Chatbox'],

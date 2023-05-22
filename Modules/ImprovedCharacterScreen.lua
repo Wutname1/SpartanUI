@@ -99,7 +99,7 @@ local function UpdateSpellFlyout(button)
 end
 
 local function Options()
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local OptTable = {
 		name = module.DisplayName,
 		type = 'group',

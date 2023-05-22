@@ -768,7 +768,7 @@ function module:BuildOptions()
 		end
 	end
 
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local OptSet = Options:CreateFrameOptionSet(L['Nameplates'], function(info)
 		return module.DB[info[#info]]
 	end, function(info, val)
@@ -849,7 +849,7 @@ function module:BuildOptions()
 		},
 	}
 
-	-- ---@type AceConfigOptionsTable
+	-- ---@type AceConfig.OptionsTable
 	-- local OptSet = {
 	-- 	args = {
 	-- 		Indicator = {
@@ -1016,7 +1016,7 @@ function module:BuildOptions()
 		local ElementSettings = module.DB.elements[elementName]
 		local UserSetting = module.DB.elements[elementName]
 
-		---@type AceConfigOptionsTable
+		---@type AceConfig.OptionsTable
 		local ElementOptSet = {
 			name = config.DisplayName and L[config.DisplayName] or elementName,
 			desc = config.Description or '',

@@ -523,7 +523,9 @@
     "C_MountJournal",
     "UnitAura",
     "GetTime",
-    "AddonCompartmentFrame"
+    "AddonCompartmentFrame",
+    "CopyTable",
+    "HideUIPanel"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

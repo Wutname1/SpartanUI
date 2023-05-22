@@ -61,7 +61,7 @@ local DBDefaults = {
 local function SetupPage() end
 
 local function Options()
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local OptTable = {
 		name = 'Spell announce',
 		type = 'group',

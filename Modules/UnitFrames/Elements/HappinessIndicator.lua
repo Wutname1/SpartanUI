@@ -45,7 +45,7 @@ local function Update(frame)
 end
 
 ---@param unitName string
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet) end
 
 ---@type SUI.UF.Elements.Settings

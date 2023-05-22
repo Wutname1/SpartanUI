@@ -285,7 +285,7 @@ local function attemptSkin()
 	end
 end
 
----@param optTable AceConfigOptionsTable
+---@param optTable AceConfig.OptionsTable
 local function Options(optTable) end
 
 SUI.Skins:Register('Ace3', attemptSkin, nil, Options)

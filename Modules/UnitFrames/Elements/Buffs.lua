@@ -68,7 +68,7 @@ local function Update(frame, settings)
 end
 
 ---@param unitName string
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
 	local function OptUpdate(option, val)
 		--Update memory

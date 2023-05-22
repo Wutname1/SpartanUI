@@ -421,7 +421,7 @@ end
 ---| "Root"
 ---| "General"
 
----@param OptionsTable AceConfigOptionsTable
+---@param OptionsTable AceConfig.OptionsTable
 ---@param name? string
 ---@param OptType? OptionsType Default is "Module"
 function Options:AddOptions(OptionsTable, name, OptType)

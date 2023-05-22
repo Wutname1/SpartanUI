@@ -115,7 +115,7 @@ function module:AddBarSystem(name, OnInitialize, OnEnable, OnDisable, Unlocker, 
 end
 
 local function Options()
-	---@type AceConfigOptionsTable
+	---@type AceConfig.OptionsTable
 	local OptTable = {
 		name = 'Bar System',
 		type = 'group',

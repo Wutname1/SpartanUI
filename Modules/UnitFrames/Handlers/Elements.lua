@@ -145,7 +145,7 @@ end
 
 ---@param unitName string
 ---@param ElementName string
----@param OptionSet AceConfigOptionsTable
+---@param OptionSet AceConfig.OptionsTable
 ---@param DB? table
 ---@return boolean --False if the element did not provide options customizer
 function Elements:Options(unitName, ElementName, OptionSet, DB)

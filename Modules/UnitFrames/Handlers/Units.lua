@@ -245,7 +245,7 @@ end
 
 ---Used to add unit specific frame options to the passes OptionSet
 ---@param frameName UnitFrameName
----@param OptionsSet AceConfigOptionsTable
+---@param OptionsSet AceConfig.OptionsTable
 function Unit:BuildOptions(frameName, OptionsSet)
 	if not FrameData[frameName] or not FrameData[frameName].options then return end
 
