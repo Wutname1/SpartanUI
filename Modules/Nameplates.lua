@@ -466,7 +466,7 @@ local NameplateCallback = function(self, event, unit)
 			if self.widgetContainer then
 				self.widgetContainer:SetParent(self)
 				self.widgetContainer:ClearAllPoints()
-				self.widgetContainer:SetPoint('BOTTOM', self, 'TOP')
+				self.widgetContainer:SetPoint('TOP', self, 'BOTTOM')
 			end
 			return
 		end

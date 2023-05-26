@@ -525,7 +525,13 @@
     "GetTime",
     "AddonCompartmentFrame",
     "CopyTable",
-    "HideUIPanel"
+    "HideUIPanel",
+    "UnitWatchRegistered",
+    "NamePlateDriverFrame",
+    "SecureButton_GetUnit",
+    "SecureButton_GetModifiedUnit",
+    "SecureHandlerSetFrameRef",
+    "IsLoggedIn"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
