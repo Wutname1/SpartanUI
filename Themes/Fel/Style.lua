@@ -18,11 +18,11 @@ local function Options()
 				order = 0.1,
 				desc = L['Is it getting hot in here?'],
 				get = function(info)
-					return not SUI.DB.Styles.Fel.Minimap.engulfed
+					return not module.DB.minimap.engulfed
 				end,
 				set = function(info, val)
 					print(val)
-					SUI.DB.Styles.Fel.Minimap.engulfed = not val or false
+					module.DB.minimap.engulfed = not val or false
 					module:MiniMap()
 				end,
 			},
@@ -31,6 +31,14 @@ local function Options()
 end
 
 function module:OnInitialize()
+	---@class SUI.Skins.Fel.Settings
+	local defaults = {
+		minimap = {
+			engulfed = false,
+		},
+	}
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('SkinsFel', { profile = defaults })
+	module.DB = module.Database.profile ---@type SUI.Skins.Fel.Settings
 	-- BarHandler
 	local BarHandler = SUI:GetModule('Handler_BarSystems')
 	BarHandler.BarPosition.BT4.Fel = {
@@ -38,8 +46,8 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
 		--
-		['BT4BarMicroMenu'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,294,147' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,310,151',
-		['BT4BarBagBar'] = SUI.IsRetail and 'BOTTOM,SUI_BottomAnchor,BOTTOM,644,174' or 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,250,151',
+		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
 	}
 
 	-- Unitframes
@@ -170,10 +178,10 @@ function module:MiniMap()
 		position = 'CENTER,Minimap,CENTER,3,-1',
 	}
 
-	if SUI.DB.Styles.Fel.Minimap.engulfed then
-		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, enfulfed, true)
-	else
-		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, calmed, true)
-	end
+	-- if module.DB.minimap.engulfed then
+	-- 	module.DB.minimap.BG = SUI:MergeData(module.DB.minimap.BG, enfulfed, true)
+	-- else
+	-- 	module.DB.minimap.BG = SUI:MergeData(module.DB.minimap.BG, calmed, true)
+	-- end
 	SUI:GetModule('Module_Minimap'):update(true)
 end

@@ -19,8 +19,8 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
-		['BT4BarMicroMenu'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,300,0' or 'TOP,SpartanUI,TOP,338,0',
-		['BT4BarBagBar'] = SUI.IsRetail and 'TOP,SpartanUI,TOP,595,0' or 'TOP,SpartanUI,TOP,614,0',
+		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,285,0',
+		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0',
 	}
 
 	-- Unitframes Settings
