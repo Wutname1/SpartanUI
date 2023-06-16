@@ -164,6 +164,7 @@ local DBdefault = {
 			StatusBars = {
 				['**'] = {
 					size = { 256, 36 },
+					alpha = 1,
 					bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
 					texCordsTooltip = { 0.103515625, 0.8984375, 0.1796875, 0.8203125 },
 					TooltipSize = { 300, 100 },

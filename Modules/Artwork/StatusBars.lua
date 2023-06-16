@@ -232,7 +232,7 @@ function module:factory()
 		local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
 
 		--Status Bar
-		local statusbar = CreateFrame('Frame', 'SUI_StatusBar_' .. key, _G['SUI_Art_' .. SUI.DB.Artwork.Style])
+		local statusbar = CreateFrame('Frame', 'SUI_StatusBar_' .. key, SpartanUI)
 		statusbar:SetSize(unpack(StyleSetting.size))
 		statusbar:SetFrameStrata('BACKGROUND')
 
@@ -337,6 +337,7 @@ function module:factory()
 		local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
 		statusbar:ClearAllPoints()
 		statusbar:SetPoint(point, anchor, secondaryPoint, x, y)
+		statusbar:SetAlpha(module.DB[i].alpha or 1)
 
 		--Setup Actions
 		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
@@ -402,6 +403,7 @@ function module:factory()
 			else
 				module.bars[key]:Hide()
 			end
+			module.bars[key]:SetAlpha(module.DB[i].alpha or 1)
 		end
 	end)
 end
@@ -485,45 +487,61 @@ function module:BuildOptions()
 						SUI:SendMessage('StatusBarUpdate')
 					end,
 				},
-				CustomColor1 = {
-					name = L['Primary custom color'],
-					type = 'color',
-					hasAlpha = true,
-					order = 4,
+				colors = {
+					name = 'name',
+					type = 'group',
+					inline = true,
 					get = function(info)
-						local colors = module.DB[i].CustomColor
-						return colors.r, colors.g, colors.b, colors.a
-					end,
-					set = function(info, r, g, b, a)
-						local colors = module.DB[i].CustomColor
-						colors.r, colors.g, colors.b, colors.a = r, g, b, a
-						SUI:SendMessage('StatusBarUpdate')
-					end,
-				},
-				CustomColor2 = {
-					name = L['Secondary custom color'],
-					type = 'color',
-					hasAlpha = true,
-					order = 4,
-					get = function(info)
-						local colors = module.DB[i].CustomColor2
-						return colors.r, colors.g, colors.b, colors.a
-					end,
-					set = function(info, r, g, b, a)
-						local colors = module.DB[i].CustomColor2
-						colors.r, colors.g, colors.b, colors.a = r, g, b, a
-						SUI:SendMessage('StatusBarUpdate')
-					end,
-				},
-				AutoColor = {
-					name = L['Auto color'],
-					type = 'toggle',
-					order = 5,
-					get = function(info)
-						return module.DB[i].AutoColor
+						return module.DB[i][info[#info]]
 					end,
 					set = function(info, val)
-						module.DB[i].AutoColor = val
+						module.DB[i][info[#info]] = val
+						SUI:SendMessage('StatusBarUpdate')
+					end,
+					args = {
+						CustomColor = {
+							name = L['Primary custom color'],
+							type = 'color',
+							hasAlpha = true,
+							order = 4,
+							get = function(info)
+								local colors = module.DB[i].CustomColor
+								return colors.r, colors.g, colors.b, colors.a
+							end,
+							set = function(info, r, g, b, a)
+								local colors = module.DB[i].CustomColor
+								colors.r, colors.g, colors.b, colors.a = r, g, b, a
+								SUI:SendMessage('StatusBarUpdate')
+							end,
+						},
+						CustomColor2 = {
+							name = L['Secondary custom color'],
+							type = 'color',
+							hasAlpha = true,
+							order = 4,
+							get = function(info)
+								local colors = module.DB[i].CustomColor2
+								return colors.r, colors.g, colors.b, colors.a
+							end,
+							set = function(info, r, g, b, a)
+								local colors = module.DB[i].CustomColor2
+								colors.r, colors.g, colors.b, colors.a = r, g, b, a
+								SUI:SendMessage('StatusBarUpdate')
+							end,
+						},
+					},
+				},
+				alpha = {
+					name = 'Transparency',
+					type = 'range',
+					min = 0,
+					max = 1,
+					step = 0.01,
+					get = function(info)
+						return module.DB[i].alpha
+					end,
+					set = function(info, val)
+						module.DB[i].alpha = val
 						SUI:SendMessage('StatusBarUpdate')
 					end,
 				},
