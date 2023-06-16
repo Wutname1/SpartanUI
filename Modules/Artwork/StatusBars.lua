@@ -538,7 +538,7 @@ function module:BuildOptions()
 					max = 1,
 					step = 0.01,
 					get = function(info)
-						return module.DB[i].alpha
+						return module.DB[i].alpha or 1
 					end,
 					set = function(info, val)
 						module.DB[i].alpha = val
