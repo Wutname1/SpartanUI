@@ -93,9 +93,6 @@ function module:CreateArtwork()
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Base_Bar_Right')
 	-- artFrame.Right:SetScale(.75)
-
-	FramerateText:ClearAllPoints()
-	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
 end
 
 function module:EnableArtwork()

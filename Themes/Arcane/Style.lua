@@ -207,9 +207,6 @@ function module:CreateArtwork()
 	plate.BG3:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 110, 70)
 	plate.BG4:SetPoint('BOTTOMLEFT', plate, 'BOTTOM', 110, 25)
 
-	FramerateText:ClearAllPoints()
-	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
-
 	--Setup the Bottom Artwork
 	artFrame:SetFrameStrata('BACKGROUND')
 	artFrame:SetFrameLevel(1)

@@ -142,9 +142,6 @@ function module:CreateArtwork()
 	artFrame.Right = artFrame:CreateTexture('SUI_Art_Fel_Right', 'BORDER')
 	artFrame.Right:SetPoint('BOTTOMLEFT', artFrame, 'BOTTOM')
 	artFrame.Right:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Base_Bar_Right')
-
-	FramerateText:ClearAllPoints()
-	FramerateText:SetPoint('TOPLEFT', SpartanUI, 'TOPLEFT', 10, -10)
 end
 
 function module:EnableArtwork()

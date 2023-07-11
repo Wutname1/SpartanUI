@@ -200,6 +200,7 @@ local DBdefault = {
 				['BossButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180',
+				['FramerateFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 			},
 			Color = {
 				Art = false,

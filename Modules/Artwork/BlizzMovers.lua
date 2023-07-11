@@ -130,6 +130,13 @@ local function AbilityBars()
 	MoveIt:CreateMover(BossButtonHolder, 'BossButton', 'Extra action button', nil, 'Blizzard UI')
 end
 
+local function FramerateFrame()
+	local holder = GenerateHolder('FramerateFrame')
+	holder:SetSize(64, 20)
+	AttachToHolder(_G['FramerateFrame'], holder)
+	MoveIt:CreateMover(holder, 'FramerateFrame', 'Framerate frame', nil, 'Blizzard UI')
+end
+
 local function AlertFrame()
 	local holder = GenerateHolder('AlertFrame')
 
@@ -217,6 +224,7 @@ end
 
 -- This is the main inpoint
 function module.BlizzMovers()
+	FramerateFrame()
 	AbilityBars()
 	AlertFrame()
 	DurabilityFrame()

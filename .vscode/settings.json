@@ -531,7 +531,8 @@
     "SecureButton_GetUnit",
     "SecureButton_GetModifiedUnit",
     "SecureHandlerSetFrameRef",
-    "IsLoggedIn"
+    "IsLoggedIn",
+    "FramerateFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
