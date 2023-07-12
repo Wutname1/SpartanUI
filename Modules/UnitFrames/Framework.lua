@@ -149,6 +149,9 @@ function UF:OnEnable()
 	-- Spawn Frames
 	UF:SpawnFrames()
 
+	-- Build options
+	UF.Options:Initialize()
+
 	-- Put frames into their inital position
 	UF:PositionFrame()
 
@@ -156,9 +159,6 @@ function UF:OnEnable()
 	for unit, config in pairs(UF.Unit:GetBuiltFrameList()) do
 		if not config.isChild then MoveIt:CreateMover(UF.Unit:Get(unit), unit, nil, nil, 'Unit frames') end
 	end
-
-	-- Build options
-	UF.Options:Initialize()
 
 	if EditModeManagerFrame then
 		local CheckedItems = {}
