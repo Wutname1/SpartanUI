@@ -941,7 +941,7 @@ function Options:AddGroupDisplay(frameName, OptionSet)
 		end,
 		args = {
 			showRaid = {
-				name = L['Show Raid Frames'],
+				name = L['Show while in raid'],
 				type = 'toggle',
 				order = 1,
 			},
