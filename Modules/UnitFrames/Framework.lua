@@ -158,31 +158,6 @@ function UF:OnEnable()
 	-- Build options
 	UF.Options:Initialize()
 
-	if EditModeManagerFrame then
-		local CheckedItems = {}
-		local frames = { ['boss'] = 'Boss', ['raid'] = 'Raid', ['arena'] = 'Arena', ['party'] = 'Party' }
-		for k, v in pairs(frames) do
-			EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames'].Button:HookScript('OnClick', function(...)
-				if EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:IsControlChecked() then
-					CheckedItems[k] = v
-				else
-					CheckedItems[k] = nil
-				end
-
-				SUI.MoveIt:MoveIt(k)
-			end)
-		end
-
-		EditModeManagerFrame:HookScript('OnHide', function()
-			for k, v in pairs(CheckedItems) do
-				EditModeManagerFrame.AccountSettings.Settings[v .. 'Frames']:SetControlChecked(false)
-				SUI.MoveIt:MoveIt(k)
-			end
-			MoveIt.MoverWatcher:Hide()
-			MoveIt.MoveEnabled = false
-		end)
-	end
-
 	SUI:AddChatCommand('BuffDebug', function(args)
 		local unit, spellId = strsplit(' ', args)
 
