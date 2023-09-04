@@ -689,19 +689,6 @@ function module:OnEnable()
 		debug(event)
 		lastEvent = event
 
-		if SUI.IsRetail then
-			local QuestID = GetQuestID()
-			if QuestID ~= 0 then
-				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
-				debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
-				debug(C_CampaignInfo.IsCampaignQuest(QuestID))
-				if C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil then
-					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
-					return
-				end
-			end
-		end
-
 		if IsAltKeyDown() then
 			SUI:Print('Canceling Override key held disabled')
 			module:CancelAllTimers()
