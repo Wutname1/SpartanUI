@@ -169,6 +169,7 @@ end
 function module:ModifyMinimapLayout()
 	--Classic modifcations
 	if not SUI.IsRetail then
+		if MinimapToggleButton then MinimapToggleButton:Hide() end
 		Minimap:EnableMouseWheel(true)
 		Minimap:SetScript('OnMouseWheel', function(_, delta)
 			if delta > 0 then
