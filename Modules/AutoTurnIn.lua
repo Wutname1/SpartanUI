@@ -676,6 +676,8 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	if SUI:IsModuleDisabled(module) then return end
+
 	debug('AutoTurnIn Loaded')
 	module:BuildOptions()
 	module:FirstLaunch()
@@ -744,6 +746,10 @@ function module:OnEnable()
 			end
 		end)
 		OptionsPopdown:HookScript('OnShow', function()
+			if SUI:IsModuleDisabled(module) then
+				OptionsPopdown:Hide()
+				return
+			end
 			if IsCollapsed then
 				OptionsPopdown.Panel:Hide()
 			else
