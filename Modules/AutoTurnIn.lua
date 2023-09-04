@@ -712,7 +712,7 @@ function module:OnEnable()
 	for _, v in ipairs({ 'QuestFrame', 'GossipFrame' }) do
 		local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
 		OptionsPopdown:SetScale(0.95)
-		OptionsPopdown:SetPoint('TOP', _G[v], 'BOTTOM', 0, -2)
+		OptionsPopdown:SetPoint('BOTTOM', _G[v], 'TOP', 0, 2)
 		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
 		OptionsPopdown.title:SetPoint('CENTER')
 
@@ -745,7 +745,7 @@ function module:OnEnable()
 		end)
 
 		local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
-		Panel:SetPoint('TOP', OptionsPopdown, 'BOTTOM', 0, -1)
+		Panel:SetPoint('BOTTOM', OptionsPopdown, 'TOP', 0, 1)
 		Panel:Hide()
 		local options = {}
 		options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
