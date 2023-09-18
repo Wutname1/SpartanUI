@@ -489,12 +489,7 @@ L['Hide center graphic'] = true
 L['Debuffs'] = true
 L['Scale for auras that you casted or can Spellsteal, any number above 100% is bigger than default, any number below 100% is smaller than default.'] = true
 L['Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'] = true
-L['Module handles Wago Analytics collection IF your update client supports it.'] = true
 L['Data collected this session'] = true
 L['You can view all collected data below, note some additional data will/can be collected as settings within SUI are changed. That data will show up below as it is collected.'] = true
-L['Without using the Wago or WowUp client no data collected will be sent.'] = true
 L['This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'] = true
 L['All data collected'] = true
-L['You can view all collected data in the SUI options under Modules -> Wago Analytics.'] = true
-L['SpartanUI has introduced Wago Analytics.\n\nWago Analytics is a service that allows us to collect anonymous data about your usage of the addon.\n\nWe use this data to improve the addon and to make it more user friendly.\n\nYou can disable this option if you do not want to share your data with us.'] =
-	true

@@ -226,9 +226,6 @@ function UF:SetActiveStyle(style)
 
 	-- Refersh Settings
 	UF:Update()
-
-	--Analytics
-	SUI.Analytics:Set(UF, 'Style', style)
 end
 
 ---@param scale integer
