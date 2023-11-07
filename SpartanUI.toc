@@ -9,7 +9,7 @@
 ## X-Wago-ID: vEGPqeN1
 ## X-Github: https://github.com/Wutname1/SpartanUI
 ## X-oUF: SUIUF
-## OptionalDeps: Bartender4, WagoAnalytics
+## OptionalDeps: Bartender4
 ## SavedVariables: SpartanUIDB, SUIErrorHandler
 ## X-BugGrabber-Display: SUIErrorDisplay
 
@@ -26,7 +26,6 @@ Core\Handlers\BugWindow.lua
 # General Libraries Continued
 libs\LibCompress\LibCompress.lua
 libs\LibBase64-1.0\LibBase64-1.0.lua
-libs\WagoAnalyticsShim\Shim.lua
 libs\LibSharedMedia-3.0\lib.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
