@@ -244,11 +244,11 @@ local function BTMover(BarName, DisplayName)
 				-- update memory
 				scaleData[BarName] = scale
 				--Update screen
-				bar:SetScale(scale)
+				bar:SetScale(scale and (scale > 0 and 1 or scale) or 1)
 			end
 		end
 
-		if scaleData[BarName] then bar:SetScale(scaleData[BarName]) end
+		if scaleData[BarName] then bar:SetScale(scaleData[BarName] and (scaleData[BarName] > 0 and 1 or scaleData[BarName]) or 1) end
 		MoveIt:CreateMover(bar, BarName, DisplayName, nil, 'Bartender4')
 		MoveIt:UpdateMover(BarName, bar.overlay, true)
 	end
@@ -271,11 +271,11 @@ local function AddMovers()
 					-- update memory
 					scaleData[BarName] = scale
 					--Update screen
-					bar:SetScale(scale)
+					bar:SetScale(scale and (scale > 0 and 1 or scale) or 1)
 				end
 			end
 
-			if scaleData[BarName] then bar:SetScale(scaleData[BarName]) end
+			if scaleData[BarName] then bar:SetScale(scaleData[BarName] and (scaleData[BarName] > 0 and 1 or scaleData[BarName]) or 1) end
 			MoveIt:CreateMover(bar, BarName, 'Bar ' .. i, nil, 'Bartender4')
 			MoveIt:UpdateMover(BarName, bar.overlay, true)
 		end

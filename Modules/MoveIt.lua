@@ -284,7 +284,7 @@ function MoveIt:UpdateMover(name, obj, doNotScale)
 
 	local f = (obj or mover.updateObj or mover.parent)
 	mover:SetSize(f:GetWidth(), f:GetHeight())
-	if not doNotScale then mover:SetScale(f:GetScale()) end
+	if not doNotScale then mover:SetScale(f:GetScale() or 1) end
 end
 
 function MoveIt:UnlockAll()
@@ -426,7 +426,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 	f:SetScale(MoveIt.DB.movers[name].AdjustedScale or parent:GetScale() or 1)
 	if MoveIt.DB.movers[name].AdjustedScale then
 		ScaledText:Show()
-		parent:SetScale(MoveIt.DB.movers[name].AdjustedScale)
+		parent:SetScale(MoveIt.DB.movers[name].AdjustedScale or 1)
 	end
 
 	if MoveIt.DB.movers[name].MovedPoints then
@@ -450,7 +450,7 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 
 	local Scale = function(self, ammount)
 		local Current = self:GetScale()
-		local NewScale = Current + (ammount or 0)
+		local NewScale = Current + (ammount or 1)
 
 		self:SetScale(NewScale)
 		self.parent:SetScale(NewScale)
@@ -542,8 +542,8 @@ function MoveIt:CreateMover(parent, name, DisplayName, postdrag, groupName)
 			MoveIt:Reset(name)
 			if MoveIt.DB.tips then print("Tip use the chat command '/sui move reset' to reset everything quickly.") end
 		elseif IsControlKeyDown() then -- Reset Scale to default
-			self:SetScale(self.defaultScale)
-			self.parent:SetScale(self.defaultScale)
+			self:SetScale(self.defaultScale or 1)
+			self.parent:SetScale(self.defaultScale or 1)
 			ScaledText:Hide()
 
 			MoveIt.DB.movers[name].AdjustedScale = false

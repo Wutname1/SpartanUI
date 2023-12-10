@@ -376,7 +376,7 @@ function module:UpdateScale()
 	if module.Settings.scaleWithArt and SUI:IsAddonDisabled('SexyMap') then
 		if SUIMinimap.scale then
 			SUIMinimap:scale(SUI.DB.scale)
-			Minimap:SetScale(SUI.DB.scale)
+			Minimap:SetScale(SUI.DB.scale or 1)
 		else
 			SUIMinimap:SetScale(max(SUI.DB.scale, 0.01))
 			Minimap:SetScale(max(SUI.DB.scale, 0.01))
@@ -466,12 +466,12 @@ function module:update(FullUpdate)
 		Minimap.ZoneText:SetSize(Minimap:GetWidth(), 12)
 		Minimap.ZoneText:SetTextColor(unpack(module.Settings.ZoneText.TextColor))
 		Minimap.ZoneText:SetShadowColor(unpack(module.Settings.ZoneText.ShadowColor))
-		Minimap.ZoneText:SetScale(module.Settings.ZoneText.scale)
+		Minimap.ZoneText:SetScale(module.Settings.ZoneText.scale or 1)
 
 		Minimap.coords:SetSize(unpack(module.Settings.coords.size))
 		Minimap.coords:SetTextColor(unpack(module.Settings.coords.TextColor))
 		Minimap.coords:SetShadowColor(unpack(module.Settings.coords.ShadowColor))
-		Minimap.coords:SetScale(module.Settings.coords.scale)
+		Minimap.coords:SetScale(module.Settings.coords.scale or 1)
 
 		-- If minimap default location is under the minimap setup scripts to move it
 		if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then

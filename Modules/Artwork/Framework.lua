@@ -174,7 +174,7 @@ end
 
 function module:UpdateScale()
 	-- Set overall UI scale
-	SpartanUI:SetScale(SUI.DB.scale)
+	SpartanUI:SetScale(SUI.DB.scale or 1)
 
 	-- Call style scale update if defined.
 	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)

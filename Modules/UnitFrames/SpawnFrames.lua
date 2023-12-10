@@ -39,7 +39,7 @@ local function CreateUnitFrame(self, unit)
 			if self.scale then
 				self:scale(self.DB.scale, true)
 			else
-				self:SetScale(self.DB.scale)
+				self:SetScale(self.DB.scale or 1)
 			end
 			self:SetSize(self.DB.width, UF:CalculateHeight(unit))
 		end
@@ -118,8 +118,8 @@ local function CreateUnitFrame(self, unit)
 		end
 
 		-- Setup the Alpha scape and position
-		element:SetAlpha(data.alpha)
-		element:SetScale(data.scale)
+		element:SetAlpha(data.alpha or 1)
+		element:SetScale(data.scale or 1)
 
 		-- Positioning
 		element:ClearAllPoints()
