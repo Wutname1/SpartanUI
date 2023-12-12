@@ -168,8 +168,8 @@ local function UpdatePosition()
 			SUIMinimap:SetPoint(point, anchor, secondaryPoint, x, y)
 		end
 	end
-	Minimap:ClearAllPoints()
-	Minimap:SetPoint('TOPLEFT', SUIMinimap, 'TOPLEFT', 0, 0)
+	MinimapCluster.MinimapContainer:ClearAllPoints()
+	MinimapCluster.MinimapContainer:SetPoint('TOPLEFT', SUIMinimap, 'TOPLEFT', -30, 32)
 end
 
 local function updateSettings()
