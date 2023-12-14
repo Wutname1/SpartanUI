@@ -113,7 +113,7 @@ local UpdateElementState = function(frame)
 
 		-- Setup the Alpha scape and position
 		element:SetAlpha(data.alpha)
-		element:SetScale(data.scale or 1)
+		element:SetScale(data.scale)
 
 		if UF.Elements:GetConfig(elementName).config.NoBulkUpdate then return end
 		if UF.Elements:GetConfig(elementName).config.type == 'Indicator' and element.SetDrawLayer then element:SetDrawLayer('BORDER', 7) end
@@ -431,7 +431,7 @@ local NamePlateFactory = function(frame, unit)
 		end
 
 		-- Setup Scale
-		frame:SetScale(module.DB.Scale or 1)
+		frame:SetScale(module.DB.Scale)
 	end
 end
 
@@ -508,7 +508,7 @@ local NameplateCallback = function(self, event, unit)
 	end
 
 	-- Set the Scale of the nameplate
-	self:SetScale(module.DB.Scale or 1)
+	self:SetScale(module.DB.Scale)
 end
 
 function module:UpdateNameplates()

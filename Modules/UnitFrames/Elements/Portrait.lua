@@ -6,7 +6,7 @@ local function Build(frame, DB)
 	-- 3D Portrait
 	local Portrait3D = CreateFrame('PlayerModel', nil, frame)
 	Portrait3D:SetSize(frame:GetHeight(), frame:GetHeight())
-	Portrait3D:SetScale(DB.scale or 1)
+	Portrait3D:SetScale(DB.scale)
 	Portrait3D:SetFrameStrata('BACKGROUND')
 	Portrait3D:SetFrameLevel(2)
 	Portrait3D.PostUpdate = function(unit, event, shouldUpdate)
@@ -33,7 +33,7 @@ local function Build(frame, DB)
 	-- 2D Portrait
 	local Portrait2D = frame:CreateTexture(nil, 'OVERLAY')
 	Portrait2D:SetSize(frame:GetHeight(), frame:GetHeight())
-	Portrait2D:SetScale(DB.scale or 1)
+	Portrait2D:SetScale(DB.scale)
 	Portrait2D:Hide()
 	frame.Portrait2D = Portrait2D
 

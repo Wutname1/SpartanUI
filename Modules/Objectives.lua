@@ -35,7 +35,7 @@ local function MakeMoveable()
 		holder:SetSize(280, module.DB.height)
 		holder:Hide()
 		holder.OnScale = function(self, val)
-			BlizzObjectiveFrame:SetScale(val or 1)
+			BlizzObjectiveFrame:SetScale(val)
 		end
 
 		BlizzObjectiveFrame:SetClampedToScreen(false)
