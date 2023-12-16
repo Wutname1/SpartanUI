@@ -18,7 +18,7 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 'TOP,SpartanUI,TOP,-558,0',
 		['MultiCastActionBarFrame'] = 'TOP,SpartanUI,TOP,-558,0',
 		--
-		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,285,0',
+		['BT4BarMicroMenu'] = 'TOP,SpartanUI,TOP,322,0',
 		['BT4BarBagBar'] = 'TOP,SpartanUI,TOP,595,0',
 	}
 
