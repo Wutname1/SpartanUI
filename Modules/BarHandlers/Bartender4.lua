@@ -101,6 +101,7 @@ local SUIBT4Settings = {
 	},
 	MicroMenu = {
 		enabled = true,
+		padding = -7,
 		position = { scale = 0.6 },
 	},
 	QueueStatus = {
@@ -166,8 +167,6 @@ local function SetupProfile()
 
 	--Flag the SUI.DB that we are making changes
 	BartenderChangesActive = true
-	--Load the profile name the art style wants
-	local ProfileName = BTProfileName
 
 	-- Set/Create our Profile
 	Bartender4.db:SetProfile(BTProfileName)

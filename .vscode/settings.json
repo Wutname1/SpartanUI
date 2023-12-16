@@ -531,14 +531,17 @@
     "SecureButton_GetModifiedUnit",
     "SecureHandlerSetFrameRef",
     "IsLoggedIn",
-    "FramerateFrame"
+    "FramerateFrame",
+    "AchievementMicroButton"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
   "Lua.diagnostics.disable": [
     "param-type-mismatch",
     "assign-type-mismatch",
-    "need-check-nil"
+    "need-check-nil",
+    "inject-field",
+    "duplicate-set-field"
   ],
   "[lua]": {
     "editor.defaultFormatter": "JohnnyMorganz.stylua"

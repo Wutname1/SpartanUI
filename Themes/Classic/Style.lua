@@ -100,14 +100,14 @@ local function CreateArtwork()
 	plate.POP2:SetFrameLevel(3)
 
 	plate.mask1 = Artwork_Core:CreateBarBG(PopupMask, 9, Classic_ActionBarPlate)
-	plate.mask1:SetFrameStrata('MEDIUM')
-	plate.mask1:SetFrameLevel(50)
+	plate.mask1:SetFrameStrata('HIGH')
+	plate.mask1:SetFrameLevel(1)
 	plate.mask1:SetPoint('BOTTOMRIGHT', plate.POP1, 'BOTTOMRIGHT')
 
 	plate.mask2 = Artwork_Core:CreateBarBG(PopupMask, 10, Classic_ActionBarPlate)
 	plate.mask2.BG:SetTexture('Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\bar-popup2')
-	plate.mask2:SetFrameStrata('MEDIUM')
-	plate.mask2:SetFrameLevel(50)
+	plate.mask2:SetFrameStrata('HIGH')
+	plate.mask2:SetFrameLevel(1)
 	plate.mask2.BG:ClearAllPoints()
 	plate.mask2.BG:SetPoint('BOTTOMLEFT', plate.mask2)
 	plate.mask2:SetPoint('BOTTOMLEFT', plate.POP2, 'BOTTOMLEFT')
@@ -651,7 +651,7 @@ function module:OnInitialize()
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
 		['MultiCastActionBarFrame'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-570,165',
 		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,240,138',
+		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,282,138',
 		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,628,168',
 	}
 	BarHandler.BarScale.BT4.Classic = {
