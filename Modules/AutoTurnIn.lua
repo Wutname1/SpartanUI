@@ -28,109 +28,114 @@ local DBDefaults = {
 	weapon = {},
 	stat = {},
 	secondary = {},
-	GossipBlacklist = {
-		-- General Blacklist
-		'i wish to buy from you.',
-		'i would like to buy from you.',
-		'make this inn your home.',
-		"i'd like to heal and revive my battle pets.",
-		'let me browse your goods.',
-		"i'm looking for a lost companion.",
-		'i need a ride to the top of the statue.',
-		'show me what you have available.',
-		'flight master',
-		'guild master & vendor',
-		'void storage',
-		'auction house',
-		'stable master',
-		'zeppelin master',
-		'other continents',
-		"officer's lounge",
-		'transmogrification',
-		'i want to transmogrify my gear.',
-		'The Enclave',
-		'Bank',
-		'Appearance Agitator',
-		'Portal to Orgrimmar',
-		'Inn',
-		'Master of Conflict',
-		'Mailbox',
-		'Item Upgrade',
-		-- wotlk blacklist
-		'i am prepared to face saragosa!',
-		'what is the cause of this conflict?',
-		'can you spare a drake to take me to lord afrasastrasz in the middle of the temple?',
-		'i must return to the world of shadows, koltira. send me back.',
-		'i am ready to be teleported to dalaran.',
-		'can i get a ride back to ground level, lord afrasastrasz?',
-		'i would like to go to lord afrasastrasz in the middle of the temple.',
-		'my lord, i need to get to the top of the temple.',
-		'yes, please, i would like to return to the ground level of the temple.',
-		"steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple.",
-		'i want to exchange my ruby essence for amber essence.',
-		'what abilities do ruby drakes have?',
-		'i want to fly on the wings of the bronze flight.',
-		'i want to fly on the wings of the red flight.',
-		'i want to exchange my ruby essence for emerald essence.',
-		'what abilities do emerald drakes have?',
-		'i want to fly on the wings of the green flight.',
-		'i want to exchange my amber essence for ruby essence.',
-		'what abilities do amber drakes have?',
-		'i am ready.', -- this one is used alot but blacklisted due to trial of the champion
-		"i am ready.  however, i'd like to skip the pageantry.",
-		-- mop
-		"i'm ready to be introduced to the instructors, high elder.",
-		"fine. let's proceed with the introductions.",
-		'what is this place?',
-		-- legion
-		'your people treat you with contempt. why? what did you do?',
-		-- bfa
-		"yes, i'm ready to go to drustvar.",
-		'warchief, may i ask why we want to capture teldrassil?',
-		'i am ready to go to the undercity.',
-		"i've heard this tale before... <skip the scenario and begin your next mission.>",
-		'release me.',
-		--- Shadowlands
-		"Witness the Jailer's defeat.",
-		'What is the Purpose?',
-		'I am ready to choose my fate in the Shadowlands.',
-		'What adventures await me if i join your covenant?',
-		'Show me how I can help the Shadowlands.',
-		'What are you offering here?',
-		--DF
-	},
-	WildcardBlackList = {
-		'wartime donation',
-		'work order',
-		'supplies needed',
-		'taxi',
-		'trade',
-		'train',
-		'trainer',
-		'repeat',
-		'buy',
-		'browse your',
-		'my home',
-		'reinforcements',
-		'Set sail',
-		'drustvar',
-		'stormsong valley',
-		'tiragarde sound',
-		'tell me about the',
-		'like to change',
-		'goods',
-		'take us back',
-		'take me back',
-		'and listen',
-		'where I can fly',
-		'seal of wartorn',
-		'Threads of Fate',
-		'What are the strengths of the',
-		'covenant abilities again',
-		'could you please reset the cooldown on my ability',
-		'your home',
-		'this inn',
-		'what you have on offer',
+	Blacklist = {
+		QuestIDs = {
+			72169,
+		},
+		Gossip = {
+			-- General Blacklist
+			'i wish to buy from you.',
+			'i would like to buy from you.',
+			'make this inn your home.',
+			"i'd like to heal and revive my battle pets.",
+			'let me browse your goods.',
+			"i'm looking for a lost companion.",
+			'i need a ride to the top of the statue.',
+			'show me what you have available.',
+			'flight master',
+			'guild master & vendor',
+			'void storage',
+			'auction house',
+			'stable master',
+			'zeppelin master',
+			'other continents',
+			"officer's lounge",
+			'transmogrification',
+			'i want to transmogrify my gear.',
+			'The Enclave',
+			'Bank',
+			'Appearance Agitator',
+			'Portal to Orgrimmar',
+			'Inn',
+			'Master of Conflict',
+			'Mailbox',
+			'Item Upgrade',
+			-- wotlk blacklist
+			'i am prepared to face saragosa!',
+			'what is the cause of this conflict?',
+			'can you spare a drake to take me to lord afrasastrasz in the middle of the temple?',
+			'i must return to the world of shadows, koltira. send me back.',
+			'i am ready to be teleported to dalaran.',
+			'can i get a ride back to ground level, lord afrasastrasz?',
+			'i would like to go to lord afrasastrasz in the middle of the temple.',
+			'my lord, i need to get to the top of the temple.',
+			'yes, please, i would like to return to the ground level of the temple.',
+			"steward, please allow me to ride one of the drakes to the queen's chamber at the top of the temple.",
+			'i want to exchange my ruby essence for amber essence.',
+			'what abilities do ruby drakes have?',
+			'i want to fly on the wings of the bronze flight.',
+			'i want to fly on the wings of the red flight.',
+			'i want to exchange my ruby essence for emerald essence.',
+			'what abilities do emerald drakes have?',
+			'i want to fly on the wings of the green flight.',
+			'i want to exchange my amber essence for ruby essence.',
+			'what abilities do amber drakes have?',
+			'i am ready.', -- this one is used alot but blacklisted due to trial of the champion
+			"i am ready.  however, i'd like to skip the pageantry.",
+			-- mop
+			"i'm ready to be introduced to the instructors, high elder.",
+			"fine. let's proceed with the introductions.",
+			'what is this place?',
+			-- legion
+			'your people treat you with contempt. why? what did you do?',
+			-- bfa
+			"yes, i'm ready to go to drustvar.",
+			'warchief, may i ask why we want to capture teldrassil?',
+			'i am ready to go to the undercity.',
+			"i've heard this tale before... <skip the scenario and begin your next mission.>",
+			'release me.',
+			--- Shadowlands
+			"Witness the Jailer's defeat.",
+			'What is the Purpose?',
+			'I am ready to choose my fate in the Shadowlands.',
+			'What adventures await me if i join your covenant?',
+			'Show me how I can help the Shadowlands.',
+			'What are you offering here?',
+			--DF
+		},
+		Wildcard = {
+			'wartime donation',
+			'work order',
+			'supplies needed',
+			'taxi',
+			'trade',
+			'train',
+			'trainer',
+			'repeat',
+			'buy',
+			'browse your',
+			'my home',
+			'reinforcements',
+			'Set sail',
+			'drustvar',
+			'stormsong valley',
+			'tiragarde sound',
+			'tell me about the',
+			'like to change',
+			'goods',
+			'take us back',
+			'take me back',
+			'and listen',
+			'where I can fly',
+			'seal of wartorn',
+			'Threads of Fate',
+			'What are the strengths of the',
+			'covenant abilities again',
+			'could you please reset the cooldown on my ability',
+			'your home',
+			'this inn',
+			'what you have on offer',
+		},
 	},
 	GossipWhitelist = {
 		'Evacuate, now!',
@@ -176,11 +181,6 @@ local SLOTS = {
 	['INVTYPE_WEAPONOFFHAND'] = { 'SecondaryHandSlot' },
 	['INVTYPE_HOLDABLE'] = { 'SecondaryHandSlot' },
 }
-local itemCache = setmetatable({}, {
-	__index = function(table, key)
-		return {}
-	end,
-})
 local TempBlackList = {}
 local Lquests = {
 	-- Steamwheedle Cartel
@@ -475,13 +475,13 @@ end
 function module:VarArgForAvailableQuests(...)
 	debug('VarArgForAvailableQuests')
 	debug(#...)
-	local INDEX_CONST = 6 -- was '5' in Cataclysm
+
 	for i, quest in pairs(...) do
 		local trivialORAllowed = (not quest.isTrivial) or DB.trivial
 		local isRepeatableORAllowed = (not quest.repeatable) or DB.AcceptRepeatable
 
 		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-		if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
+		if (trivialORAllowed and isRepeatableORAllowed) and not module:blacklisted(quest.title) and not module:blacklisted(quest.questID) then
 			local questInfo = Lquests[quest.title]
 			if questInfo and questInfo.amount then
 				if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then C_GossipInfo.SelectAvailableQuest(quest.questID) end
@@ -562,14 +562,17 @@ function module:FirstLaunch()
 	SUI.Setup:AddPage(PageData)
 end
 
+---Returns true if blacklisted
+---@param lookupId string|number
+---@return boolean
 function module:blacklisted(lookupId)
 	local name = tostring(lookupId)
-	if SUI:IsInTable(DB.GossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) then
+	if SUI:IsInTable(DB.Blacklist.Gossip, name) or SUI:IsInTable(TempBlackList, name) or SUI:IsInTable(DB.Blacklist.QuestIDs, lookupId) then
 		debug(name .. '---IS BLACKLISTED')
 		return true
 	end
 
-	for _, key in pairs(DB.WildcardBlackList) do
+	for _, key in pairs(DB.Blacklist.Wildcard) do
 		if string.find(string.lower(name), string.lower(key)) then
 			debug(name .. ' - IS BLACKLISTED')
 			return true
@@ -614,10 +617,9 @@ function module.GOSSIP_SHOW()
 
 	module:VarArgForActiveQuests(GetGossipActiveQuests())
 	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
-	if not SUI.IsRetail then return end
 
 	local options = GetGossipOptions()
-	for k, gossip in pairs(options) do
+	for _, gossip in pairs(options) do
 		debug('------')
 		debug(gossip.name)
 		debug(gossip.rewards)
@@ -688,6 +690,24 @@ function module:OnEnable()
 		if IsAltKeyDown() then
 			SUI:Print('Canceling Override key held disabled')
 			module:CancelAllTimers()
+			return
+		end
+		if IsControlKeyDown() and event == 'GOSSIP_SHOW' then
+			SUI:Print('Quest Blacklist key held, select the quest to blacklist')
+			module:CancelAllTimers()
+			return
+		end
+		if IsControlKeyDown() and event == 'QUEST_DETAIL' then
+			module:CancelAllTimers()
+			local QuestID = GetQuestID()
+
+			if module:blacklisted(QuestID) then
+				SUI:Print('Quest "' .. GetTitleText() .. '" is already blacklisted ')
+			else
+				SUI:Print('Blacklisting quest "' .. GetTitleText() .. '" ID# ' .. QuestID)
+				DB.Blacklist.QuestIDs[#DB.Blacklist.QuestIDs + 1] = QuestID
+			end
+
 			return
 		end
 
@@ -780,6 +800,7 @@ function module:BuildOptions()
 	local OptionTable = {
 		type = 'group',
 		name = L['Auto TurnIn'],
+		childGroups = 'tab',
 		get = function(info)
 			return DB[info[#info]]
 		end,
@@ -795,6 +816,12 @@ function module:BuildOptions()
 				type = 'toggle',
 				width = 'double',
 				order = 1,
+			},
+			ChatText = {
+				name = L['Output quest text in chat'],
+				type = 'toggle',
+				width = 'double',
+				order = 2,
 			},
 			QuestAccepting = {
 				name = L['Quest accepting'],
@@ -882,12 +909,5 @@ function module:BuildOptions()
 			},
 		},
 	}
-	if SUI.IsClassic then
-		OptionTable.args.QuestTurnIn.args.lootreward.hidden = true
-		OptionTable.args.QuestTurnIn.args.autoequip.hidden = true
-
-		OptionTable.args.QuestAccepting.args.trivial.hidden = true
-		OptionTable.args.QuestAccepting.args.AcceptRepeatable.hidden = true
-	end
 	SUI.Options:AddOptions(OptionTable, 'AutoTurnIn')
 end
