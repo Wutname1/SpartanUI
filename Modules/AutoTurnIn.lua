@@ -342,6 +342,10 @@ end
 
 local QUESTDETAILHistory = {}
 function module.QUEST_DETAIL()
+	debug('QUEST_DETAIL')
+	debug(GetTitleText())
+	debug(GetObjectiveText())
+	debug(GetQuestID())
 	if DB.AcceptGeneralQuests then
 		if DB.ChatText then
 			local title = GetTitleText()
@@ -356,7 +360,8 @@ function module.QUEST_DETAIL()
 				end
 			end
 		end
-		if not IsAltKeyDown() then AcceptQuest() end
+
+		if not IsAltKeyDown() and not module:blacklisted(GetQuestID()) then AcceptQuest() end
 	end
 end
 
