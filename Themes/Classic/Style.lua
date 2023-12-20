@@ -734,7 +734,7 @@ function module:OnInitialize()
 	local minimapSettings = {
 		Movable = false,
 		size = { 156, 156 },
-		position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,-9,17',
+		position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
 	}
 	SUI:GetModule('Module_Minimap'):Register('Classic', minimapSettings)
 

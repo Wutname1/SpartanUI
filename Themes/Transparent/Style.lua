@@ -92,7 +92,7 @@ function module:OnInitialize()
 	local minimapSettings = {
 		shape = 'square',
 		size = { 135, 135 },
-		position = SUI.IsRetail and 'CENTER,SUI_Art_Transparent,CENTER,0,-5' or 'BOTTOM,SUI_Art_Transparent,BOTTOM,-10,5',
+		position = 'CENTER,SUI_Art_Transparent,CENTER,-10,-5',
 		ZoneText = {
 			size = { 130, 12 },
 			position = 'BOTTOM,Minimap,TOP,0,2',

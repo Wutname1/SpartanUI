@@ -83,7 +83,7 @@ function module:OnInitialize()
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
 			size = { 220, 220 },
-			position = 'CENTER,Minimap,CENTER,5,23',
+			position = 'CENTER,Minimap,CENTER,-2,-36',
 		},
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
 		engulfed = true,

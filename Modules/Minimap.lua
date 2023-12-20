@@ -215,6 +215,7 @@ function module:ModifyMinimapLayout()
 	--Retail modifications
 	MinimapCompassTexture:Hide()
 
+	--TODO: Set the Point of MinimapCluster.BorderTop via settings
 	MinimapCluster.BorderTop:ClearAllPoints()
 	MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
 	MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.3)
@@ -376,10 +377,10 @@ function module:UpdateScale()
 	if module.Settings.scaleWithArt and SUI:IsAddonDisabled('SexyMap') then
 		if SUIMinimap.scale then
 			SUIMinimap:scale(SUI.DB.scale)
-			Minimap:SetScale(SUI.DB.scale)
+			MinimapCluster:SetScale(SUI.DB.scale)
 		else
 			SUIMinimap:SetScale(max(SUI.DB.scale, 0.01))
-			Minimap:SetScale(max(SUI.DB.scale, 0.01))
+			MinimapCluster:SetScale(max(SUI.DB.scale, 0.01))
 		end
 	end
 end
