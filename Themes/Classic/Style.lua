@@ -770,6 +770,8 @@ function module:OnEnable()
 		end)
 
 		module:SetupVehicleUI()
+
+		BT4BarMicroMenu:SetFrameStrata('LOW')
 		if SUI.DB.Styles.Classic.Color.Art then module:SetColor() end
 	else
 		module:Disable()
