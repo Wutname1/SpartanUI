@@ -697,7 +697,7 @@ function module:OnEnable()
 			module:CancelAllTimers()
 			return
 		end
-		if IsControlKeyDown() and event == 'QUEST_DETAIL' then
+		if IsControlKeyDown() and (event == 'QUEST_DETAIL' or event == 'QUEST_PROGRESS') then
 			module:CancelAllTimers()
 			local QuestID = GetQuestID()
 
@@ -810,104 +810,228 @@ function module:BuildOptions()
 		disabled = function()
 			return SUI:IsModuleDisabled(module)
 		end,
-		args = {
-			DoCampainQuests = {
-				name = L['Accept/Complete Campaign Quests'],
-				type = 'toggle',
+	}
+	local buildItemList
+	buildItemList = function(mode)
+		local spellsOpt = OptionTable.args[mode].args.list.args
+		table.wipe(spellsOpt)
+
+		for itemId, entry in pairs(DB.Blacklist[mode]) do
+			local label
+
+			if type(entry) == 'number' then
+				-- If the entry is a number, assume it's a quest ID
+				local title = C_QuestLog.GetTitleForQuestID(entry)
+				if title then
+					label = 'ID: ' .. entry .. ' (' .. title .. ')'
+				else
+					label = '|cFFFF0000ID: ' .. entry .. ' (Title not found)'
+				end
+			else
+				-- If the entry is not a number, use it directly
+				label = entry
+			end
+
+			spellsOpt[itemId .. 'label'] = {
+				type = 'description',
 				width = 'double',
-				order = 1,
-			},
-			ChatText = {
-				name = L['Output quest text in chat'],
-				type = 'toggle',
-				width = 'double',
-				order = 2,
-			},
-			QuestAccepting = {
-				name = L['Quest accepting'],
-				type = 'group',
-				inline = true,
-				order = 10,
-				width = 'full',
-				get = function(info)
-					return DB[info[#info]]
+				fontSize = 'medium',
+				order = itemId,
+				name = label,
+			}
+			spellsOpt[tostring(itemId)] = {
+				type = 'execute',
+				name = L['Delete'],
+				width = 'half',
+				order = itemId + 0.05,
+				func = function(info)
+					DB.Blacklist[mode][itemId] = nil
+					buildItemList(mode)
 				end,
-				set = function(info, val)
-					DB[info[#info]] = val
-				end,
-				args = {
-					AcceptGeneralQuests = {
-						name = L['Accept quests'],
-						type = 'toggle',
-						order = 10,
-					},
-					trivial = {
-						name = L['Accept trivial quests'],
-						type = 'toggle',
-						order = 20,
-					},
-					AcceptRepeatable = {
-						name = L['Accept repeatable'],
-						type = 'toggle',
-						order = 30,
-					},
-					AutoGossip = {
-						name = L['Auto gossip'],
-						type = 'toggle',
-						order = 15,
-					},
-					AutoGossipSafeMode = {
-						name = L['Auto gossip safe mode'],
-						desc = 'If the option is not in the whitelist or does not have the (Quest) tag, it will not be automatically selected.',
-						type = 'toggle',
-						order = 16,
-					},
+			}
+		end
+	end
+
+	OptionTable.args = {
+		DoCampainQuests = {
+			name = L['Accept/Complete Campaign Quests'],
+			type = 'toggle',
+			width = 'double',
+			order = 1,
+		},
+		ChatText = {
+			name = L['Output quest text in chat'],
+			type = 'toggle',
+			width = 'double',
+			order = 2,
+		},
+		QuestAccepting = {
+			name = L['Quest accepting'],
+			type = 'group',
+			inline = true,
+			order = 10,
+			width = 'full',
+			get = function(info)
+				return DB[info[#info]]
+			end,
+			set = function(info, val)
+				DB[info[#info]] = val
+			end,
+			args = {
+				AcceptGeneralQuests = {
+					name = L['Accept quests'],
+					type = 'toggle',
+					order = 10,
+				},
+				trivial = {
+					name = L['Accept trivial quests'],
+					type = 'toggle',
+					order = 20,
+				},
+				AcceptRepeatable = {
+					name = L['Accept repeatable'],
+					type = 'toggle',
+					order = 30,
+				},
+				AutoGossip = {
+					name = L['Auto gossip'],
+					type = 'toggle',
+					order = 15,
+				},
+				AutoGossipSafeMode = {
+					name = L['Auto gossip safe mode'],
+					desc = 'If the option is not in the whitelist or does not have the (Quest) tag, it will not be automatically selected.',
+					type = 'toggle',
+					order = 16,
 				},
 			},
-			QuestTurnIn = {
-				name = L['Quest turn in'],
-				type = 'group',
-				inline = true,
-				order = 20,
-				width = 'full',
-				get = function(info)
-					return DB[info[#info]]
-				end,
-				set = function(info, val)
-					DB[info[#info]] = val
-				end,
-				args = {
-					TurnInEnabled = {
-						name = L['Turn in completed quests'],
-						type = 'toggle',
-						order = 10,
-					},
-					lootreward = {
-						name = L['Auto select quest reward'],
-						type = 'toggle',
-						order = 30,
-					},
-					autoequip = {
-						name = L['Auto equip upgrade quest rewards'],
-						desc = L['Based on iLVL'],
-						type = 'toggle',
-						order = 30,
-					},
+		},
+		QuestTurnIn = {
+			name = L['Quest turn in'],
+			type = 'group',
+			inline = true,
+			order = 20,
+			width = 'full',
+			get = function(info)
+				return DB[info[#info]]
+			end,
+			set = function(info, val)
+				DB[info[#info]] = val
+			end,
+			args = {
+				TurnInEnabled = {
+					name = L['Turn in completed quests'],
+					type = 'toggle',
+					order = 10,
+				},
+				lootreward = {
+					name = L['Auto select quest reward'],
+					type = 'toggle',
+					order = 30,
+				},
+				autoequip = {
+					name = L['Auto equip upgrade quest rewards'],
+					desc = L['Based on iLVL'],
+					type = 'toggle',
+					order = 30,
 				},
 			},
-			ChatText = {
-				name = L['Output quest text in chat'],
-				type = 'toggle',
-				width = 'double',
-				order = 30,
+		},
+		QuestIDs = {
+			type = 'group',
+			name = 'Blacklist',
+			order = 40,
+			args = {
+				desc = {
+					name = 'Blacklisted quests will never be auto accepted',
+					type = 'description',
+					order = 1,
+				},
+				desc2 = {
+					name = 'Queests can be blacklisted by holding CTRL while talking to a NPC or by adding the quest ID to the list below',
+					type = 'description',
+					order = 1.1,
+				},
+				create = {
+					name = 'Add Quest ID',
+					type = 'input',
+					order = 2,
+					width = 'full',
+					set = function(info, input)
+						DB.Blacklist.QuestIDs[#info - 1] = input
+						buildItemList(info[#info - 1])
+					end,
+				},
+				list = {
+					order = 3,
+					type = 'group',
+					inline = true,
+					name = 'Quest list',
+					args = {},
+				},
 			},
-			debug = {
-				name = L['Debug mode'],
-				type = 'toggle',
-				width = 'full',
-				order = 900,
+		},
+		Wildcard = {
+			type = 'group',
+			name = 'Blacklist Wildcard',
+			order = 41,
+			args = {
+				desc = {
+					name = 'Any quest or gossip selection when talking to a NPC containing the text below will not be auto selected',
+					type = 'description',
+					order = 1,
+				},
+				create = {
+					name = 'Add text to block',
+					type = 'input',
+					order = 2,
+					width = 'full',
+					set = function(info, input)
+						DB.Blacklist.Wildcard[#info - 1] = input
+						buildItemList(info[#info - 1])
+					end,
+				},
+				list = {
+					order = 3,
+					type = 'group',
+					inline = true,
+					name = 'Quest list',
+					args = {},
+				},
+			},
+		},
+		Gossip = {
+			type = 'group',
+			name = 'Gossip Blacklist',
+			order = 42,
+			args = {
+				desc = {
+					name = 'Blacklisted gossip options will never be auto selected',
+					type = 'description',
+					order = 1,
+				},
+				create = {
+					name = 'Add gossip text',
+					type = 'input',
+					order = 2,
+					width = 'full',
+					set = function(info, input)
+						DB.Blacklist.Gossip[#info - 1] = input
+						buildItemList(info[#info - 1])
+					end,
+				},
+				list = {
+					order = 3,
+					type = 'group',
+					inline = true,
+					name = 'Quest list',
+					args = {},
+				},
 			},
 		},
 	}
+	buildItemList('QuestIDs')
+	buildItemList('Wildcard')
+	buildItemList('Gossip')
 	SUI.Options:AddOptions(OptionTable, 'AutoTurnIn')
 end
