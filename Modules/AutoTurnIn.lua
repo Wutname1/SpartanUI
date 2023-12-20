@@ -261,6 +261,22 @@ local Lquests = {
 	['Pristine Firestorm Egg'] = { item = 'Pristine Firestorm Egg', amount = 1, currency = false },
 	['Thick Tiger Haunch'] = { item = 'Thick Tiger Haunch', amount = 1, currency = false },
 }
+
+local OptionTable = {
+	type = 'group',
+	name = L['Auto TurnIn'],
+	childGroups = 'tab',
+	get = function(info)
+		return DB[info[#info]]
+	end,
+	set = function(info, val)
+		DB[info[#info]] = val
+	end,
+	disabled = function()
+		return SUI:IsModuleDisabled(module)
+	end,
+}
+local buildItemList
 local function debug(content)
 	SUI.Debug(content, 'AutoTurnIn')
 end
@@ -706,6 +722,7 @@ function module:OnEnable()
 			else
 				SUI:Print('Blacklisting quest "' .. GetTitleText() .. '" ID# ' .. QuestID)
 				DB.Blacklist.QuestIDs[#DB.Blacklist.QuestIDs + 1] = QuestID
+				buildItemList('QuestIDs')
 			end
 
 			return
@@ -797,21 +814,6 @@ function module:OnDisable()
 end
 
 function module:BuildOptions()
-	local OptionTable = {
-		type = 'group',
-		name = L['Auto TurnIn'],
-		childGroups = 'tab',
-		get = function(info)
-			return DB[info[#info]]
-		end,
-		set = function(info, val)
-			DB[info[#info]] = val
-		end,
-		disabled = function()
-			return SUI:IsModuleDisabled(module)
-		end,
-	}
-	local buildItemList
 	buildItemList = function(mode)
 		local spellsOpt = OptionTable.args[mode].args.list.args
 		table.wipe(spellsOpt)
