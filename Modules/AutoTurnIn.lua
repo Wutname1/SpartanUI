@@ -621,7 +621,7 @@ function module.QUEST_GREETING()
 			local trivialORAllowed = (not isTrivial) or DB.trivial
 			local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
 			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or DB.AcceptRepeatable
-			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(questID)) then
+			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(questID)) and questID ~= 0 then
 				debug('selecting ' .. i .. ' questId ' .. questID)
 				---@diagnostic disable-next-line: redundant-parameter
 				SelectAvailableQuest(i)
