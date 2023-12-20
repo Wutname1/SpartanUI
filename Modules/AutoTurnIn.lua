@@ -691,20 +691,17 @@ function module:OnEnable()
 
 	local function OnEvent(_, event)
 		if SUI:IsModuleDisabled(module) then return end
-
 		debug(event)
 		lastEvent = event
 
-		if SUI.IsRetail then
-			local QuestID = GetQuestID()
-			if QuestID ~= 0 then
-				local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
-				debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
-				debug(C_CampaignInfo.IsCampaignQuest(QuestID))
-				if C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil then
-					SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
-					return
-				end
+		local QuestID = GetQuestID()
+		if QuestID ~= 0 then
+			local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
+			debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
+			debug(C_CampaignInfo.IsCampaignQuest(QuestID))
+			if C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil then
+				SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
+				return
 			end
 		end
 
@@ -713,23 +710,19 @@ function module:OnEnable()
 			module:CancelAllTimers()
 			return
 		end
-		if IsControlKeyDown() and event == 'GOSSIP_SHOW' then
-			SUI:Print('Quest Blacklist key held, select the quest to blacklist')
-			module:CancelAllTimers()
-			return
-		end
-		if IsControlKeyDown() and (event == 'QUEST_DETAIL' or event == 'QUEST_PROGRESS') then
-			module:CancelAllTimers()
-			local QuestID = GetQuestID()
-
-			if module:blacklisted(QuestID) then
-				SUI:Print('Quest "' .. GetTitleText() .. '" is already blacklisted ')
-			else
-				SUI:Print('Blacklisting quest "' .. GetTitleText() .. '" ID# ' .. QuestID)
-				DB.Blacklist.QuestIDs[#DB.Blacklist.QuestIDs + 1] = QuestID
-				buildItemList('QuestIDs')
+		if IsControlKeyDown() then
+			if event == 'GOSSIP_SHOW' or event == 'QUEST_GREETING' then
+				SUI:Print('Quest Blacklist key held, select the quest to blacklist')
+			elseif event == 'QUEST_DETAIL' or event == 'QUEST_PROGRESS' then
+				if module:blacklisted(QuestID) then
+					SUI:Print('Quest "' .. GetTitleText() .. '" is already blacklisted ')
+				else
+					SUI:Print('Blacklisting quest "' .. GetTitleText() .. '" ID# ' .. QuestID)
+					DB.Blacklist.QuestIDs[#DB.Blacklist.QuestIDs + 1] = QuestID
+					buildItemList('QuestIDs')
+				end
 			end
-
+			module:CancelAllTimers()
 			return
 		end
 
