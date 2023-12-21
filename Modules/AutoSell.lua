@@ -373,6 +373,19 @@ local function BuildOptions()
 					order = 2,
 					width = 'full',
 					set = function(info, input)
+						--Check that the input is a valid number
+						local itemID = tonumber(input)
+						if not itemID then
+							SUI:Print('Invalid item ID: ' .. input)
+							return
+						end
+						--Check that the inputted nmumber is a valid item
+						local itemLink = GetItemInfo(itemID)
+						if not itemLink then
+							SUI:Print('Could not load item ID: ' .. input .. ' this can happen if the item is not in your cache, please try again in a few seconds.')
+							return
+						end
+						-- Add the item ID to the blacklist
 						module.DB.Blacklist.Items[#info - 1] = input
 						buildItemList(info[#info - 1])
 					end,
