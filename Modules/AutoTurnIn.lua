@@ -948,7 +948,7 @@ function module:BuildOptions()
 					order = 1,
 				},
 				desc2 = {
-					name = 'Queests can be blacklisted by holding CTRL while talking to a NPC or by adding the quest ID to the list below',
+					name = 'Quests can be blacklisted by holding CTRL while talking to a NPC or by adding the quest ID to the list below',
 					type = 'description',
 					order = 1.1,
 				},
