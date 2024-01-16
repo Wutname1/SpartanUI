@@ -508,14 +508,13 @@ function module:IsSellable(item, ilink, bag, slot)
 	if string.find(name, '') and quality == 1 then return false end
 
 	if not SUI:IsInTable(module.DB.Blacklist.Items, item) and not SUI:IsInTable(module.DB.Blacklist.Types, itemType) and not SUI:IsInTable(module.DB.Blacklist.Types, itemSubType) then
-		debugMsg('--Selling--')
-		debugMsg(item)
-		debugMsg(name)
-		debugMsg(ilink)
-		debugMsg(expacID)
-		debugMsg('ilvl: ' .. iLevel)
-		debugMsg('type: ' .. itemType)
-		debugMsg('sub type: ' .. itemSubType)
+		debugMsg('--Decision: Selling--')
+		debugMsg('Item: ' .. (name or 'Unknown') .. ' (Link: ' .. ilink .. ')')
+		debugMsg('Expansion ID: ' .. tostring(expacID))
+		debugMsg('Item Level: ' .. tostring(iLevel))
+		debugMsg('Item Type: ' .. itemType)
+		debugMsg('Item Sub-Type: ' .. itemSubType)
+		debugMsg('Vendor Price: ' .. tostring(vendorPrice))
 		return true
 	end
 

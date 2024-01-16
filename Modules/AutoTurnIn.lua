@@ -639,22 +639,35 @@ function module.GOSSIP_SHOW()
 	module:VarArgForActiveQuests(GetGossipActiveQuests())
 	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
 
+	debug('------ [Debugging Gossip] ------')
 	local options = GetGossipOptions()
+	debug('Number of Options ' .. #options)
 	for _, gossip in pairs(options) do
-		debug('------')
-		debug(gossip.name)
-		debug(gossip.rewards)
-		debug(gossip.status)
-		debug(gossip.flags)
+		debug('---Start Option Info---')
+
+		-- Debug individual gossip attributes
+		debug('Gossip Name: ' .. tostring(gossip.name))
+		debug('Gossip Rewards: ' .. tostring(gossip.rewards))
+		debug('Gossip Status: ' .. tostring(gossip.status))
+		debug('Gossip Flags: ' .. tostring(gossip.flags))
+
+		-- Check if gossip is whitelisted
 		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
+		debug('Is Whitelisted: ' .. tostring(isWhitelisted))
+
+		-- Check if gossip is blacklisted
 		local isBlacklisted = module:blacklisted(gossip.name)
-		debug(isBlacklisted)
+		debug('Is Blacklisted: ' .. tostring(isBlacklisted))
+
+		-- Check if gossip is a quest
 		local isQuest = string.match(gossip.name, 'Quest') and true or false
-		debug(isQuest)
-		debug('------')
-		debug((not isBlacklisted or (isWhitelisted or isQuest)))
-		debug('------')
-		if (gossip.status == 0) and (not isBlacklisted and (isWhitelisted or isQuest)) then
+		debug('Is a Quest: ' .. tostring(isQuest))
+
+		-- Check the final condition
+		local Allow = not isBlacklisted or (isWhitelisted or isQuest)
+		debug('Final Condition: ' .. tostring(Allow))
+		debug('---End Option Info---')
+		if (gossip.status == 0) and Allow then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
 			if DB.AutoGossipSafeMode and (not isWhitelisted and not isQuest) then
 				debug(string.format('Safe mode active - not selecting gossip option "%s"', gossip.name))
