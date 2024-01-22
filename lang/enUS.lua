@@ -493,3 +493,4 @@ L['Data collected this session'] = true
 L['You can view all collected data below, note some additional data will/can be collected as settings within SUI are changed. That data will show up below as it is collected.'] = true
 L['This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'] = true
 L['All data collected'] = true
+L['Automatically output number of BG leavers to instance chat if over 15'] = true

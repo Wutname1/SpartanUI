@@ -19,6 +19,9 @@ local linkTypes = {
 }
 local ChatLevelLog, nameColor = {}, {}
 
+local LeaveCount = 0
+local battleOver = false
+
 local function StripTextures(object)
 	for i = 1, object:GetNumRegions() do
 		local region = select(i, object:GetRegions())
@@ -192,6 +195,17 @@ local ModifyMessage = function(self)
 	local text = tbl and tbl.message
 
 	if text then
+		--Check if the message is from someone leaving the battle
+		if text:find('has left the battle') and not battleOver then LeaveCount = LeaveCount + 1 end
+		-- See if the alliance or horde has won the battle
+		if text:find('The Alliance Wins!') or text:find('The Horde Wins!') then
+			--Print the number of leavers
+			SUI:Print('Leavers: ' .. LeaveCount)
+			--Output to Instance chat if over 15 leavers
+			if LeaveCount > 15 and module.DB.autoLeaverOutput then SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
+			battleOver = true
+		end
+
 		text = tostring(text)
 		text = shortenChannel(text)
 		text = module:TimeStamp(text)
@@ -226,6 +240,7 @@ function module:OnInitialize()
 	---@class SUI.Chat.DB
 	local defaults = {
 		LinkHover = true,
+		autoLeaverOutput = true,
 		shortenChannelNames = true,
 		webLinks = true,
 		EditBoxTop = false,
@@ -324,6 +339,18 @@ function module:OnEnable()
 
 	-- Setup everything
 	module:SetupChatboxes()
+
+	--Add a chat command to print the number of leavers
+	SUI:AddChatCommand('leavers', function(output)
+		--If output is true then tell the instance chat
+		if output then SendChatMessage('SpartanUI: BG Leavers counter: ' .. LeaveCount, 'INSTANCE_CHAT') end
+		SUI:Print('Leavers: ' .. LeaveCount)
+	end, 'Prints the number of leavers in the current battleground, addings anything after leavers will output to instance chat')
+	--Detect when we leave the battleground and reset the counter
+	module:SecureHook('LeaveBattlefield', function()
+		LeaveCount = 0
+		battleOver = false
+	end)
 end
 
 function module:EditBoxPosition()
@@ -794,6 +821,10 @@ function module:BuildOptions()
 					['%H:%M'] = 'HH:MM (24-hour)',
 					['%M:%S'] = 'MM:SS',
 				},
+			},
+			autoLeaverOutput = {
+				name = L['Automatically output number of BG leavers to instance chat if over 15'],
+				type = 'toggle',
 			},
 			shortenChannelNames = {
 				name = L['Shorten channel names'],
