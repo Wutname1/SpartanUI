@@ -171,7 +171,7 @@ local DBDefaults = {
 	weapon = {},
 	stat = {},
 	secondary = {},
-	useGlobalBlacklist = true,
+	useGlobalDB = true,
 	Blacklist = Blacklist,
 	GossipWhitelist = GossipWhitelist,
 }
@@ -617,7 +617,7 @@ function module.Blacklist.isBlacklisted(lookupId)
 	local name = tostring(lookupId)
 
 	-- Determine which blacklist to use
-	local blacklistDB = DB.useGlobalBlacklist and GlobalDB.Blacklist or DB.Blacklist
+	local blacklistDB = DB.useGlobalDB and GlobalDB.Blacklist or DB.Blacklist
 	local gossipBlacklist = blacklistDB.Gossip
 	local questBlacklist = blacklistDB.QuestIDs
 	local wildcardBlacklist = blacklistDB.Wildcard
@@ -651,7 +651,7 @@ function module.Blacklist.Add(id, mode, temp, index)
 	if temp then
 		TempBlackList[id] = true
 	else
-		local database = DB.useGlobalBlacklist and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
+		local database = DB.useGlobalDB and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
 		if index then
 			database[index] = id
 		else
@@ -663,7 +663,7 @@ end
 ---@param mode ListTypes
 ---@return table<number, any>
 function module.Blacklist.Get(mode)
-	return DB.useGlobalBlacklist and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
+	return DB.useGlobalDB and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
 end
 
 ---@param id string|number
@@ -675,7 +675,7 @@ function module.Blacklist.Remove(id, mode, temp, index)
 	if temp then
 		TempBlackList[name] = nil
 	else
-		local database = DB.useGlobalBlacklist and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
+		local database = DB.useGlobalDB and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
 		if index then
 			database[index] = nil
 		else
@@ -733,7 +733,7 @@ function module.GOSSIP_SHOW()
 		debug('Gossip Flags: ' .. tostring(gossip.flags))
 
 		-- Check if gossip is whitelisted
-		local whitelist = GlobalDB.useGlobal and GlobalDB.GossipWhitelist or DB.GossipWhitelist
+		local whitelist = DB.useGlobalDB and GlobalDB.GossipWhitelist or DB.GossipWhitelist
 		local isWhitelisted = SUI:IsInTable(whitelist, gossip.name)
 		debug('Is Whitelisted: ' .. tostring(isWhitelisted))
 
@@ -1033,7 +1033,7 @@ function module:BuildOptions()
 				},
 			},
 		},
-		useGlobalBlacklist = {
+		useGlobalDB = {
 			name = L['Use a shared Blacklist & Whitelist for all characters.'],
 			type = 'toggle',
 			width = 'full',
