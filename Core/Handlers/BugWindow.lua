@@ -226,7 +226,7 @@ local createBugWindow = function()
 	-- Create window Items
 	window.editBox = StdUi:MultiLineBox(window, 480, 320, '')
 
-	window.SubTitle = StdUi:Label(window, 'Error handler ' .. (GetAddOnMetadata('SpartanUI', 'Version') or ''), 10, nil, nil, 15)
+	window.SubTitle = StdUi:Label(window, 'Error handler ' .. (C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or ''), 10, nil, nil, 15)
 	window.SubTitle:SetPoint('BOTTOM', window.Title, 'BOTTOMRIGHT', 0, -1)
 
 	window.sessionLabel = StdUi:Label(window, '', 10, nil, 180, 20)

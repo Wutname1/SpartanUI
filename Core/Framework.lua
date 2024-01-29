@@ -7,9 +7,9 @@ local type, pairs, unpack = type, pairs, unpack
 local _G = _G
 SUI.L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true) ---@type SUIL
 SUI.AutoOpenErrors = true
-SUI.Version = GetAddOnMetadata('SpartanUI', 'Version') or 0
-SUI.BuildNum = GetAddOnMetadata('SpartanUI', 'X-Build') or 0
-SUI.Bartender4Version = (GetAddOnMetadata('Bartender4', 'Version') or 0)
+SUI.Version = C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or 0
+SUI.BuildNum = C_AddOns.GetAddOnMetadata('SpartanUI', 'X-Build') or 0
+SUI.Bartender4Version = (C_AddOns.GetAddOnMetadata('Bartender4', 'Version') or 0)
 SUI.IsDF = select(4, GetBuildInfo()) >= 100000 ---@type boolean
 SUI.IsRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) ---@type boolean
 SUI.IsClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC) ---@type boolean
@@ -1276,7 +1276,7 @@ function SUI:OnInitialize()
 	end
 
 	local function Version()
-		SUI:Print(SUI.L['Version'] .. ' ' .. GetAddOnMetadata('SpartanUI', 'Version'))
+		SUI:Print(SUI.L['Version'] .. ' ' .. C_AddOns.GetAddOnMetadata('SpartanUI', 'Version'))
 		SUI:Print(string.format('%s build %s', SUI.wowVersion, SUI.BuildNum))
 		if SUI.Bartender4Version ~= 0 then SUI:Print(SUI.L['Bartender4 version'] .. ' ' .. SUI.Bartender4Version) end
 	end

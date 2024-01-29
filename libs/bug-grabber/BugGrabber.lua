@@ -1,18 +1,15 @@
 local _G = _G
 local type, table, next, tostring, tonumber, print = type, table, next, tostring, tonumber, print
-local debuglocals, debugstack, wipe, IsEncounterInProgress, GetTime =
-	debuglocals,
-	debugstack,
-	table.wipe,
-	IsEncounterInProgress,
-	GetTime
+local debuglocals, debugstack, wipe, IsEncounterInProgress, GetTime = debuglocals, debugstack, table.wipe, IsEncounterInProgress, GetTime
+local GetAddOnMetadata = C_AddOns.GetAddOnMetadata
+local GetNumAddOns = C_AddOns.GetNumAddOns
+local GetAddOnInfo = C_AddOns.GetAddOnInfo
+local DisableAddOn = C_AddOns.DisableAddOn
 
 -----------------------------------------------------------------------
 -- Check if we already exist in the global space
 -- If we do - bail out early, there's no version checks.
-if _G.BugGrabber then
-	return
-end
+if _G.BugGrabber then return end
 
 -----------------------------------------------------------------------
 -- If we're embedded we create a .BugGrabber object on the addons
@@ -21,17 +18,13 @@ end
 local bugGrabberParentAddon, parentAddonTable = ...
 local STANDALONE_NAME = '!BugGrabber'
 if bugGrabberParentAddon ~= STANDALONE_NAME then
-	local tbl = {STANDALONE_NAME, '!Swatter', '!ImprovedErrorFrame'}
+	local tbl = { STANDALONE_NAME, '!Swatter', '!ImprovedErrorFrame' }
 	for i = 1, 3 do
 		local _, _, _, enabled = GetAddOnInfo(tbl[i])
-		if enabled then
-			return
-		end -- Bail out
+		if enabled then return end -- Bail out
 	end
 end
-if not parentAddonTable.BugGrabber then
-	parentAddonTable.BugGrabber = {}
-end
+if not parentAddonTable.BugGrabber then parentAddonTable.BugGrabber = {} end
 local addon = parentAddonTable.BugGrabber
 
 local real_seterrorhandler = seterrorhandler
@@ -60,7 +53,7 @@ local L = {
 	NO_DISPLAY_2 = '|cffffff00The standard display is called BugSack, and can probably be found on the same site where you found !BugGrabber.|r',
 	NO_DISPLAY_STOP = "|cffffff00If you don't want to be reminded about this again, run /stopnag.|r",
 	STOP_NAG = '|cffffff00!BugGrabber will not nag about missing a display addon again until next patch.|r',
-	USAGE = '|cffffff00Usage: /buggrabber <1-%d>.|r'
+	USAGE = '|cffffff00Usage: /buggrabber <1-%d>.|r',
 }
 
 -----------------------------------------------------------------------
@@ -103,14 +96,10 @@ local function setupCallbacks()
 	if not callbacks and LibStub and LibStub('CallbackHandler-1.0', true) then
 		callbacks = LibStub('CallbackHandler-1.0'):New(addon)
 		function callbacks:OnUsed(target, eventname)
-			if eventname == 'BugGrabber_BugGrabbed' then
-				isBugGrabbedRegistered = true
-			end
+			if eventname == 'BugGrabber_BugGrabbed' then isBugGrabbedRegistered = true end
 		end
 		function callbacks:OnUnused(target, eventname)
-			if eventname == 'BugGrabber_BugGrabbed' then
-				isBugGrabbedRegistered = nil
-			end
+			if eventname == 'BugGrabber_BugGrabbed' then isBugGrabbedRegistered = nil end
 		end
 		setupCallbacks = nil
 	end
@@ -118,12 +107,8 @@ end
 addon.setupCallbacks = setupCallbacks -- make it accessible from the outside for add-ons relying on BugGrabber events so they can make BugGrabber.RegisterCallback appear when they need it (CallbackHandler-1.0 is not embedded in BugGrabber)
 
 local function triggerEvent(...)
-	if not callbacks then
-		setupCallbacks()
-	end
-	if callbacks then
-		callbacks:Fire(...)
-	end
+	if not callbacks then setupCallbacks() end
+	if callbacks then callbacks:Fire(...) end
 end
 
 -----------------------------------------------------------------------
@@ -153,12 +138,8 @@ local function printErrorObject(err)
 	end
 	if not found then
 		print(err.message)
-		if err.stack then
-			print(err.stack)
-		end
-		if err.locals then
-			print(err.locals)
-		end
+		if err.stack then print(err.stack) end
+		if err.locals then print(err.locals) end
 	end
 end
 
@@ -167,9 +148,7 @@ end
 --
 
 local function slashHandler(index)
-	if not db then
-		return
-	end
+	if not db then return end
 	index = tonumber(index)
 	local err = type(index) == 'number' and db[index] or nil
 	if not index or not err or type(err) ~= 'table' or (type(err.message) ~= 'string' and type(err.message) ~= 'table') then
@@ -183,7 +162,7 @@ end
 -- Error catching
 --
 
-local findVersions  -- Function set below
+local findVersions -- Function set below
 do
 	local function scanObject(o)
 		local version, revision = nil, nil
@@ -196,64 +175,48 @@ do
 					revision = v
 				end
 			end
-			if version and revision then
-				break
-			end
+			if version and revision then break end
 		end
 		return version, revision
 	end
 
-	local matchCache =
-		setmetatable(
-		{},
-		{
-			__index = function(self, object)
-				if type(object) ~= 'string' or #object < 3 then
-					return
-				end
-				local found = nil
-				-- First see if it's a library
-				if LibStub then
-					local _, minor = LibStub(object, true)
-					found = minor
-				end
-				-- Then see if we can get some addon metadata
-				if not found and IsAddOnLoaded(object) then
-					found = GetAddOnMetadata(object, 'X-Curse-Packaged-Version')
-					if not found then
-						found = GetAddOnMetadata(object, 'Version')
-					end
-				end
-				-- Perhaps it's a global object?
-				if not found then
-					local o = _G[object] or _G[object:upper()]
-					if type(o) == 'table' then
-						local v, r = scanObject(o)
-						if v or r then
-							found = tostring(v) .. '.' .. tostring(r)
-						end
-					elseif o then
-						found = o
-					end
-				end
-				if not found then
-					found = _G[object:upper() .. '_VERSION']
-				end
-				if type(found) == 'string' or type(found) == 'number' then
-					self[object] = found
-					return found
+	local matchCache = setmetatable({}, {
+		__index = function(self, object)
+			if type(object) ~= 'string' or #object < 3 then return end
+			local found = nil
+			-- First see if it's a library
+			if LibStub then
+				local _, minor = LibStub(object, true)
+				found = minor
+			end
+			-- Then see if we can get some addon metadata
+			if not found and IsAddOnLoaded(object) then
+				found = GetAddOnMetadata(object, 'X-Curse-Packaged-Version')
+				if not found then found = GetAddOnMetadata(object, 'Version') end
+			end
+			-- Perhaps it's a global object?
+			if not found then
+				local o = _G[object] or _G[object:upper()]
+				if type(o) == 'table' then
+					local v, r = scanObject(o)
+					if v or r then found = tostring(v) .. '.' .. tostring(r) end
+				elseif o then
+					found = o
 				end
 			end
-		}
-	)
+			if not found then found = _G[object:upper() .. '_VERSION'] end
+			if type(found) == 'string' or type(found) == 'number' then
+				self[object] = found
+				return found
+			end
+		end,
+	})
 
 	local tmp = {}
 	local function replacer(start, object, tail)
 		-- Have we matched this object before on the same line?
 		-- (another pattern could re-match a previous match...)
-		if tmp[object] then
-			return
-		end
+		if tmp[object] then return end
 		local found = matchCache[object]
 		if found then
 			tmp[object] = true
@@ -265,12 +228,10 @@ do
 		'(\\)([^\\]+)(%.lua)', -- \Anything-except-backslashes.lua
 		'^()([^\\]+)(\\)', -- Start-of-the-line-until-first-backslash\
 		'()(%a+%-%d%.?%d?)()', -- Anything-#.#, where .# is optional
-		'()(Lib%u%a+%-?%d?%.?%d?)()' -- LibXanything-#.#, where X is any capital letter and -#.# is optional
+		'()(Lib%u%a+%-?%d?%.?%d?)()', -- LibXanything-#.#, where X is any capital letter and -#.# is optional
 	}
 	function findVersions(line)
-		if not line or line:find('FrameXML\\') then
-			return line
-		end
+		if not line or line:find('FrameXML\\') then return line end
 		for i = 1, 4 do
 			line = line:gsub(matchers[i], replacer)
 		end
@@ -304,9 +265,7 @@ do
 			return
 		end
 		paused = false
-		if msgsAllowed > BUGGRABBER_ERRORS_PER_SEC_BEFORE_THROTTLE then
-			msgsAllowed = BUGGRABBER_ERRORS_PER_SEC_BEFORE_THROTTLE
-		end
+		if msgsAllowed > BUGGRABBER_ERRORS_PER_SEC_BEFORE_THROTTLE then msgsAllowed = BUGGRABBER_ERRORS_PER_SEC_BEFORE_THROTTLE end
 		msgsAllowed = msgsAllowed - 1
 
 		-- Grab it --
@@ -343,7 +302,7 @@ do
 					message = sanitizedMessage,
 					session = addon:GetSessionId(),
 					time = date('%Y/%m/%d %H:%M:%S'),
-					counter = 1
+					counter = 1,
 				}
 			else
 				local stack = debugstack(3)
@@ -359,15 +318,11 @@ do
 					locals = inCombat and 'Skipped (In Encounter)' or debuglocals(3),
 					session = addon:GetSessionId(),
 					time = date('%Y/%m/%d %H:%M:%S'),
-					counter = 1
+					counter = 1,
 				}
 
 				wipe(tmp)
 			end
-		end
-
-		if not isBugGrabbedRegistered then
-			print(L.ERROR_DETECTED:format(addon:GetChatLink(errorObject)))
 		end
 
 		addon:StoreError(errorObject)
@@ -384,54 +339,21 @@ function addon:StoreError(errorObject)
 	if db then
 		db[#db + 1] = errorObject
 		-- Save only the last MAX_BUGGRABBER_ERRORS errors (otherwise the SV gets too big)
-		if #db > MAX_BUGGRABBER_ERRORS then
-			table.remove(db, 1)
-		end
+		if #db > MAX_BUGGRABBER_ERRORS then table.remove(db, 1) end
 	else
 		loadErrors[#loadErrors + 1] = errorObject
 	end
 end
 
-do
-	local function createChatHook()
-		-- Set up the ItemRef hook that allow us to link bugs.
-		local SetHyperlink = ItemRefTooltip.SetHyperlink
-		function ItemRefTooltip:SetHyperlink(link, ...)
-			local player, tableId = link:match('^buggrabber:([^:]+):([^:]+):')
-			if player then
-				addon:HandleBugLink(player, tableId, link)
-			else
-				SetHyperlink(self, link, ...)
-			end
-		end
-	end
-
-	-- We need to hook the chat frame when anyone requests a chat link from us,
-	-- in case some other addon has hooked :HandleBugLink to process it. If not,
-	-- we could've just created the hook in grabError when we do the print.
-	function addon:GetChatLink(errorObject)
-		if createChatHook then
-			createChatHook()
-			createChatHook = nil
-		end
-		local tableId = tostring(errorObject):sub(8)
-		return chatLinkFormat:format(playerName, tableId, tableId)
-	end
-end
-
 function addon:GetErrorByPlayerAndID(player, id)
-	if player == playerName then
-		return addon:GetErrorByID(id)
-	end
+	if player == playerName then return addon:GetErrorByID(id) end
 	print(L.ERROR_UNABLE)
 end
 
 function addon:GetErrorByID(id)
 	local errorId = tableToString:format(id)
 	for i, err in next, db do
-		if tostring(err) == errorId then
-			return err
-		end
+		if tostring(err) == errorId then return err end
 	end
 end
 
@@ -439,9 +361,7 @@ function addon:GetErrorID(errorObject)
 	return tostring(errorObject):sub(8)
 end
 function addon:Reset()
-	if BugGrabberDB then
-		wipe(BugGrabberDB.errors)
-	end
+	if BugGrabberDB then wipe(BugGrabberDB.errors) end
 end
 function addon:GetDB()
 	return db or loadErrors
@@ -455,9 +375,7 @@ end
 
 function addon:HandleBugLink(player, id)
 	local errorObject = addon:GetErrorByPlayerAndID(player, id)
-	if errorObject then
-		printErrorObject(errorObject)
-	end
+	if errorObject then printErrorObject(errorObject) end
 end
 
 -----------------------------------------------------------------------
@@ -466,16 +384,10 @@ end
 
 local function initDatabase()
 	-- Persist defaults and make sure we have sane SavedVariables
-	if type(BugGrabberDB) ~= 'table' then
-		BugGrabberDB = {}
-	end
+	if type(BugGrabberDB) ~= 'table' then BugGrabberDB = {} end
 	local sv = BugGrabberDB
-	if type(sv.session) ~= 'number' then
-		sv.session = 0
-	end
-	if type(sv.errors) ~= 'table' then
-		sv.errors = {}
-	end
+	if type(sv.session) ~= 'number' then sv.session = 0 end
+	if type(sv.errors) ~= 'table' then sv.errors = {} end
 
 	-- From now on we can persist errors. Create a new session.
 	sv.session = sv.session + 1
@@ -498,9 +410,7 @@ local function initDatabase()
 
 	if type(sv.lastSanitation) ~= 'number' or sv.lastSanitation ~= 3 then
 		for i, v in next, db do
-			if type(v.message) == 'table' then
-				table.remove(db, i)
-			end
+			if type(v.message) == 'table' then table.remove(db, i) end
 		end
 		sv.lastSanitation = 3
 	end
@@ -508,18 +418,14 @@ local function initDatabase()
 	-- load locales
 	if type(addon.LoadTranslations) == 'function' then
 		local locale = GetLocale()
-		if locale ~= 'enUS' and locale ~= 'enGB' then
-			addon:LoadTranslations(locale, L)
-		end
+		if locale ~= 'enUS' and locale ~= 'enGB' then addon:LoadTranslations(locale, L) end
 		addon.LoadTranslations = nil
 	end
 
 	-- Only warn about missing display if we're running standalone.
 	if not displayObjectName and bugGrabberParentAddon == STANDALONE_NAME then
 		local _, _, _, currentInterface = GetBuildInfo()
-		if type(currentInterface) ~= 'number' then
-			currentInterface = 0
-		end
+		if type(currentInterface) ~= 'number' then currentInterface = 0 end
 		if not sv.stopnag or sv.stopnag < currentInterface then
 			print(L.NO_DISPLAY_1)
 			print(L.NO_DISPLAY_2)
@@ -538,19 +444,15 @@ end
 local events = {}
 do
 	local frame = CreateFrame('Frame')
-	frame:SetScript(
-		'OnEvent',
-		function(_, event, ...)
-			events[event](events, event, ...)
-		end
-	)
+	frame:SetScript('OnEvent', function(_, event, ...)
+		events[event](events, event, ...)
+	end)
 	frame:RegisterEvent('ADDON_LOADED')
 	frame:RegisterEvent('PLAYER_LOGIN')
 	frame:RegisterEvent('ADDON_ACTION_BLOCKED')
 	frame:RegisterEvent('ADDON_ACTION_FORBIDDEN')
 	frame:RegisterEvent('LUA_WARNING')
-	local function noop()
-	end -- Prevent abusive addons
+	local function noop() end -- Prevent abusive addons
 	frame.RegisterEvent = noop
 	frame.UnregisterEvent = noop
 	frame.SetScript = noop
@@ -567,51 +469,37 @@ do
 			OnError = function(msg, _, stack)
 				grabError(tostring(msg) .. tostring(stack))
 			end,
-			isFake = true
+			isFake = true,
 		}
 	end
 
 	local swatterDisabled = nil
 	function events:ADDON_LOADED(_, msg)
-		if not callbacks then
-			setupCallbacks()
-		end
-		if msg == 'Stubby' then
-			createSwatter()
-		end
+		if not callbacks then setupCallbacks() end
+		if msg == 'Stubby' then createSwatter() end
 		if initDatabase then
 			-- If we're running embedded, just init as soon as possible,
 			-- but if we are running separately we init when !BugGrabber
 			-- loads so that our SVs are available.
-			if bugGrabberParentAddon ~= STANDALONE_NAME or msg == bugGrabberParentAddon then
-				initDatabase()
-			end
+			if bugGrabberParentAddon ~= STANDALONE_NAME or msg == bugGrabberParentAddon then initDatabase() end
 		end
 
 		if not swatterDisabled and _G.Swatter and not _G.Swatter.isFake then
 			swatterDisabled = true
-			if bugGrabberParentAddon == STANDALONE_NAME then
-				print(L.ADDON_DISABLED:format('Swatter', 'Swatter', 'Swatter'))
-			end
+			if bugGrabberParentAddon == STANDALONE_NAME then print(L.ADDON_DISABLED:format('Swatter', 'Swatter', 'Swatter')) end
 			DisableAddOn('!Swatter')
 			SlashCmdList.SWATTER = nil
 			SLASH_SWATTER1, SLASH_SWATTER2 = nil, nil
 			for _, v in next, Swatter do
 				if type(v) == 'table' then
-					if v.UnregisterAllEvents then
-						v:UnregisterAllEvents()
-					end
-					if v.Hide then
-						v:Hide()
-					end
+					if v.UnregisterAllEvents then v:UnregisterAllEvents() end
+					if v.Hide then v:Hide() end
 				end
 			end
 			Swatter = nil
 
 			local _, _, _, enabled = GetAddOnInfo('Stubby')
-			if enabled then
-				createSwatter()
-			end
+			if enabled then createSwatter() end
 
 			real_seterrorhandler(grabError)
 		end
@@ -619,9 +507,7 @@ do
 end
 
 function events:PLAYER_LOGIN()
-	if not callbacks then
-		setupCallbacks()
-	end
+	if not callbacks then setupCallbacks() end
 	real_seterrorhandler(grabError)
 end
 do
@@ -638,23 +524,15 @@ events.ADDON_ACTION_BLOCKED = events.ADDON_ACTION_FORBIDDEN
 function events:LUA_WARNING(_, warnType, warningText)
 	-- Temporary hack for the few dropdown libraries that exist that were designed poorly
 	-- Hopefully we will see a rewrite of dropdowns soon
-	if warnType == 0 and warningText:find('DropDown', nil, true) then
-		return
-	end
+	if warnType == 0 and warningText:find('DropDown', nil, true) then return end
 	grabError(warningText, true)
 end
 
 UIParent:UnregisterEvent('LUA_WARNING')
 real_seterrorhandler(grabError)
-function seterrorhandler --[[ noop ]]()
-end
+function seterrorhandler --[[ noop ]]() end
 
 -- Set up slash command
 SlashCmdList.BugGrabber = slashHandler
 SLASH_BugGrabber1 = '/buggrabber'
-BugGrabber =
-	setmetatable(
-	{},
-	{__index = addon, __newindex = function()
-		end, __metatable = false}
-)
+BugGrabber = setmetatable({}, { __index = addon, __newindex = function() end, __metatable = false })
