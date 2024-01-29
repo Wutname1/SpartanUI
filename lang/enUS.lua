@@ -495,3 +495,4 @@ L['This sends anonymous crash logs and telemetry from your game right to the dev
 L['All data collected'] = true
 L['Automatically output number of BG leavers to instance chat if over 15'] = true
 L['PVP Role Indicator'] = true
+L['Use a shared Blacklist & Whitelist for all characters.'] = true
