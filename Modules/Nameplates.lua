@@ -519,201 +519,220 @@ end
 
 function module:OnInitialize()
 	---#TODO: convert to new element settings process
+	---@class SUI.NamePlates.Settings
 	local defaults = {
-		profile = {
-			ShowName = true,
-			ShowLevel = true,
-			ShowTarget = true,
-			onlyShowPlayer = true,
-			showStealableBuffs = false,
-			Scale = 1,
-			width = 128,
-			elements = {
-				['**'] = {
+		ShowName = true,
+		ShowLevel = true,
+		ShowTarget = true,
+		onlyShowPlayer = true,
+		showStealableBuffs = false,
+		Scale = 1,
+		width = 128,
+		elements = {
+			['**'] = {
+				enabled = false,
+				Scale = 1,
+				points = false,
+				alpha = 1,
+				scale = 1,
+				FrameLevel = nil,
+				FrameStrata = nil,
+				bg = {
 					enabled = false,
-					Scale = 1,
-					points = false,
-					alpha = 1,
-					scale = 1,
-					FrameLevel = nil,
-					FrameStrata = nil,
-					bg = {
+					color = false,
+				},
+				text = {
+					['**'] = {
 						enabled = false,
-						color = false,
-					},
-					text = {
-						['**'] = {
-							enabled = false,
-							text = '',
-							size = 10,
-							SetJustifyH = 'CENTER',
-							SetJustifyV = 'MIDDLE',
-							position = {
-								anchor = 'CENTER',
-								x = 0,
-								y = 0,
-							},
-						},
-						['1'] = {
-							enabled = false,
-							position = {},
-						},
-						['2'] = {
-							enabled = false,
-							position = {},
-						},
-					},
-					position = {
-						anchor = 'CENTER',
-						x = 0,
-						y = 0,
-					},
-				},
-				Auras = {},
-				Background = {
-					type = 'solid',
-					colorMode = 'reaction',
-					alpha = 0.35,
-				},
-				DispelHighlight = {},
-				RareElite = {},
-				Name = {
-					SetJustifyH = 'CENTER',
-				},
-				Health = {
-					enabled = true,
-					height = 8,
-					offset = 0,
-					texture = 'SpartanUI Default',
-					colorReaction = true,
-					colorSmooth = true,
-					colorClass = true,
-					colorTapping = true,
-					colorDisconnected = true,
-					bg = {
-						enabled = true,
-						color = { 1, 1, 1, 0.3 },
-					},
-					text = {
-						['1'] = {
-							enabled = true,
-							size = 5,
-							text = '[SUIHealth(percentage,hideMax)]',
-							position = {
-								anchor = 'CENTER',
-								x = 0,
-								y = 0,
-							},
-						},
-					},
-				},
-				Power = {
-					enabled = false,
-					height = 3,
-					offset = 1,
-					texture = 'SpartanUI Default',
-					bg = {
-						enabled = true,
-						color = { 1, 1, 1, 0.2 },
-					},
-					text = {
-						['1'] = {
-							enabled = false,
-							text = '[power:current-formatted] / [power:max-formatted]',
-						},
-						['2'] = {
-							enabled = false,
-							text = '[perpp]%',
-						},
-					},
-				},
-				PvPIndicator = {
-					size = 10,
-				},
-				ThreatIndicator = {},
-				Castbar = {
-					enabled = true,
-					width = false,
-					height = 5,
-					offset = -6,
-					interruptable = true,
-					FlashOnInterruptible = true,
-					latency = false,
-					InterruptSpeed = 0.1,
-					texture = 'SpartanUI Default',
-					bg = {
-						enabled = true,
-						color = { 1, 1, 1, 0.2 },
-					},
-					Icon = {
-						enabled = false,
-						size = 12,
+						text = '',
+						size = 10,
+						SetJustifyH = 'CENTER',
+						SetJustifyV = 'MIDDLE',
 						position = {
-							anchor = 'LEFT',
+							anchor = 'CENTER',
 							x = 0,
 							y = 0,
 						},
 					},
-					text = {
-						['1'] = {
-							enabled = true,
-							text = '[Spell name]',
-							position = {
-								anchor = 'CENTER',
-								x = 0,
-								y = 0,
-							},
-						},
-						['2'] = {
-							enabled = true,
-							text = '[Spell timer]',
-							size = 8,
-							position = {
-								anchor = 'RIGHT',
-								x = 0,
-								y = 0,
-							},
+					['1'] = {
+						enabled = false,
+						position = {},
+					},
+					['2'] = {
+						enabled = false,
+						position = {},
+					},
+				},
+				position = {
+					anchor = 'CENTER',
+					x = 0,
+					y = 0,
+				},
+			},
+			Auras = {},
+			Background = {
+				type = 'solid',
+				colorMode = 'reaction',
+				alpha = 0.35,
+			},
+			DispelHighlight = {},
+			RareElite = {},
+			Name = {
+				SetJustifyH = 'CENTER',
+			},
+			Health = {
+				enabled = true,
+				height = 8,
+				offset = 0,
+				texture = 'SpartanUI Default',
+				colorReaction = true,
+				colorSmooth = true,
+				colorClass = true,
+				colorTapping = true,
+				colorDisconnected = true,
+				bg = {
+					enabled = true,
+					color = { 1, 1, 1, 0.3 },
+				},
+				text = {
+					['1'] = {
+						enabled = true,
+						size = 5,
+						text = '[SUIHealth(percentage,hideMax)]',
+						position = {
+							anchor = 'CENTER',
+							x = 0,
+							y = 0,
 						},
 					},
 				},
-				ClassIcon = {
+			},
+			Power = {
+				enabled = false,
+				height = 3,
+				offset = 1,
+				texture = 'SpartanUI Default',
+				bg = {
+					enabled = true,
+					color = { 1, 1, 1, 0.2 },
+				},
+				text = {
+					['1'] = {
+						enabled = false,
+						text = '[power:current-formatted] / [power:max-formatted]',
+					},
+					['2'] = {
+						enabled = false,
+						text = '[perpp]%',
+					},
+				},
+			},
+			PvPIndicator = {
+				size = 10,
+			},
+			ThreatIndicator = {},
+			Castbar = {
+				enabled = true,
+				width = false,
+				height = 5,
+				offset = -6,
+				interruptable = true,
+				FlashOnInterruptible = true,
+				latency = false,
+				InterruptSpeed = 0.1,
+				texture = 'SpartanUI Default',
+				bg = {
+					enabled = true,
+					color = { 1, 1, 1, 0.2 },
+				},
+				Icon = {
 					enabled = false,
-					size = 20,
-					VisibleOn = 'PlayerControlled',
+					size = 12,
 					position = {
-						anchor = 'TOP',
-						x = 0,
-						y = 40,
-					},
-				},
-				RaidTargetIndicator = {
-					enabled = true,
-					size = 15,
-					position = {
-						anchor = 'BOTTOMRIGHT',
+						anchor = 'LEFT',
 						x = 0,
 						y = 0,
 					},
 				},
-				QuestMob = {
-					enabled = true,
-					size = 16,
-					position = {
-						anchor = 'RIGHT',
-						relativePoint = 'LEFT',
-						x = 0,
-						y = 0,
+				text = {
+					['1'] = {
+						enabled = true,
+						text = '[Spell name]',
+						position = {
+							anchor = 'CENTER',
+							x = 0,
+							y = 0,
+						},
+					},
+					['2'] = {
+						enabled = true,
+						text = '[Spell timer]',
+						size = 8,
+						position = {
+							anchor = 'RIGHT',
+							x = 0,
+							y = 0,
+						},
 					},
 				},
-				XPBar = {
-					height = 5,
-					Offset = -10,
+			},
+			ClassIcon = {
+				enabled = false,
+				size = 20,
+				VisibleOn = 'PlayerControlled',
+				position = {
+					anchor = 'TOP',
+					x = 0,
+					y = 40,
 				},
+			},
+			RaidTargetIndicator = {
+				enabled = true,
+				size = 15,
+				position = {
+					anchor = 'BOTTOMRIGHT',
+					x = 0,
+					y = 0,
+				},
+			},
+			QuestMob = {
+				enabled = true,
+				size = 16,
+				position = {
+					anchor = 'RIGHT',
+					relativePoint = 'LEFT',
+					x = 0,
+					y = 0,
+				},
+			},
+			XPBar = {
+				height = 5,
+				Offset = -10,
+			},
+			PvPRoleIndicator = {
+				enabled = true,
+				size = 20,
+				position = {
+					anchor = 'BOTTOM',
+					relativeTo = 'Name',
+					relativePoint = 'TOP',
+					x = 0,
+					y = 7,
+				},
+				['**'] = {
+					display = true,
+				},
+				friendly = {
+					display = true,
+					alertonDamage = false,
+					damageThreshold = 10000,
+				},
+				enemy = {},
 			},
 		},
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Nameplates', defaults)
-	module.DB = module.Database.profile
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Nameplates', { profile = defaults })
+	module.DB = module.Database.profile ---@type SUI.NamePlates.Settings
 
 	-- Migrate old settings
 	if SUI.DB.Nameplates then
