@@ -50,10 +50,6 @@ local function Update(self, event)
 	elseif info and info.roleAssigned == 4 then
 		element:SetTexCoord(GetTexCoordsForRole('HEALER'))
 		element:Show()
-	elseif info then
-		if not SUI.DBG.RoleInfo then SUI.DBG.RoleInfo = {} end
-		SUI.DBG.RoleInfo[info.roleAssigned] = true
-		element:Hide()
 	else
 		element:Hide()
 	end
