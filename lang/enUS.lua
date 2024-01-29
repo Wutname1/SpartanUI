@@ -494,3 +494,4 @@ L['You can view all collected data below, note some additional data will/can be 
 L['This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'] = true
 L['All data collected'] = true
 L['Automatically output number of BG leavers to instance chat if over 15'] = true
+L['PVP Role Indicator'] = true

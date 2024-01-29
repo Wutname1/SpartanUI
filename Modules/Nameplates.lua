@@ -36,6 +36,7 @@ local ElementList = {
 	'QuestMob',
 	'PvPIndicator',
 	'ThreatIndicator',
+	'PvPRoleIndicator',
 }
 ---@type table<SUI.UF.Elements.list, SUI.UF.Elements.Settings>
 local ElementDefaults = {
@@ -305,6 +306,7 @@ local NamePlateFactory = function(frame, unit)
 		BuildElement(frame, 'RaidTargetIndicator')
 		BuildElement(frame, 'ClassIcon')
 		BuildElement(frame, 'QuestMob')
+		BuildElement(frame, 'PvPRoleIndicator')
 
 		BuildElement(frame, 'Health')
 		BuildElement(frame, 'Power')
