@@ -1,5 +1,6 @@
 local SUI, L, StdUi = SUI, SUI.L, SUI.StdUi
-local module = SUI:NewModule('Module_AutoTurnIn') ---@type SUI.Module
+---@class SUI.Module.AutoTurnIn : SUI.Module
+local module = SUI:NewModule('Module_AutoTurnIn')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
@@ -588,6 +589,7 @@ function module:FirstLaunch()
 		Next = function()
 			if SUI:IsModuleEnabled('AutoTurnIn') then
 				local window = SUI.Setup.window
+				---@diagnostic disable-next-line: undefined-field
 				local ATI = window.content.ATI
 
 				for key, object in pairs(ATI.options) do

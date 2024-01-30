@@ -6,9 +6,12 @@ local registry = {}
 
 ---@type SUI.UF.Style.Settings
 local Defaults = {
+	displayName = 'Default',
 	positions = {},
 	artwork = {},
-	setup = {},
+	setup = {
+		image = 'Interface\\AddOns\\SpartanUI\\Media\\Textures\\UI-StatusBar',
+	},
 }
 
 ---Register a style within the registry

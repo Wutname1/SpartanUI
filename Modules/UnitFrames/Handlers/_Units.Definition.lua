@@ -7,9 +7,9 @@ local FramePositioning = {}
 
 ---@class SUI.UF.Unit.Settings
 ---@field anchor? FramePositioning
----@field elements table<string, SUI.UF.Elements.Settings>
+---@field elements? table<string, SUI.UF.Elements.Settings>
 ---@field visibility? UFrameVisibility
----@field config SUI.UF.Unit.Config
+---@field config? SUI.UF.Unit.Config
 local UFrameSettings = {
 	enabled = true,
 	width = 180,

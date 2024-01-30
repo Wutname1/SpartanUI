@@ -41,7 +41,7 @@ function Ace3_SkinDropdown(self)
 
 			if pullout.slider then
 				pullout.slider:SetTemplate()
-				pullout.slider:SetThumbTexture(E.Media.Textures.White8x8)
+				pullout.slider:SetThumbTexture(nil)
 
 				local t = pullout.slider:GetThumbTexture()
 				t:SetVertexColor(1, 0.82, 0, 0.8)

@@ -15,7 +15,7 @@ local PriorityPageList, StandardPageList, FinalPageList, RequiredPageList, PageI
 ---@type SUI.SetupWizard.PageData
 local FinishedPage = {
 	ID = 'FinishedPage',
-	name = L['Setup Finished!'],
+	SubTitle = L['Setup Finished!'],
 	Desc1 = 'This completes the setup wizard.',
 	Desc2 = 'Thank you for trying SpartanUI.',
 	Display = function()
@@ -37,7 +37,6 @@ local FinishedPage = {
 
 ---@class SUI.SetupWizard.PageData
 ---@field ID string
----@field Name string
 ---@field SubTitle? string
 ---@field Desc1? string
 ---@field Desc2? string
@@ -286,6 +285,7 @@ function module:SetupWizard(RequiredPagesOnly)
 	local function LoadNextPage()
 		--Hide anything attached to the Content frame
 		for _, child in ipairs({ module.window.content:GetChildren() }) do
+			---@diagnostic disable-next-line: undefined-field
 			child:Hide()
 		end
 
@@ -339,10 +339,9 @@ end
 local function WelcomePage()
 	if WelcomeAdded then return end
 
-	local WelcomePage = {
+	local PageData = {
 		ID = 'WelcomePage',
-		name = L['Welcome'],
-		SubTitle = '',
+		SubTitle = L['Welcome'],
 		Desc1 = "Welcome to SpartanUI, This setup wizard help guide you through the inital setup of the UI and it's modules.",
 		Desc2 = 'This setup wizard may be re-ran at any time via the SUI settings screen. You can access the SUI settings via the /sui chat command. For a full list of chat commands as well as common questions visit the wiki at http://wiki.spartanui.net or Join the SpartanUI Discord.',
 		Display = function()
@@ -352,13 +351,13 @@ local function WelcomePage()
 				if v ~= currentProfile then profiles[#profiles + 1] = { text = v, value = v } end
 			end
 
-			local WelcomePage = CreateFrame('Frame', nil)
-			WelcomePage:SetParent(module.window.content)
-			WelcomePage:SetAllPoints(module.window.content)
+			local IntroPage = CreateFrame('Frame', nil)
+			IntroPage:SetParent(module.window.content)
+			IntroPage:SetAllPoints(module.window.content)
 
-			WelcomePage.Helm = StdUi:Texture(WelcomePage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
-			WelcomePage.Helm:SetPoint('CENTER', 0, 45)
-			WelcomePage.Helm:SetAlpha(0.6)
+			IntroPage.Helm = StdUi:Texture(IntroPage, 190, 190, 'Interface\\AddOns\\SpartanUI\\images\\Spartan-Helm')
+			IntroPage.Helm:SetPoint('CENTER', 0, 45)
+			IntroPage.Helm:SetAlpha(0.6)
 
 			if not select(4, GetAddOnInfo('Bartender4')) then
 				module.window.BT4Warning = StdUi:Label(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 25, nil, module.window:GetWidth(), 40)
@@ -366,11 +365,11 @@ local function WelcomePage()
 				StdUi:GlueAbove(module.window.BT4Warning, module.window, 0, 20)
 			end
 
-			WelcomePage.ProfileCopyLabel = StdUi:Label(WelcomePage, L['If you would like to copy the configuration from another character you may do so below.'])
+			IntroPage.ProfileCopyLabel = StdUi:Label(IntroPage, L['If you would like to copy the configuration from another character you may do so below.'])
 
-			WelcomePage.ProfileList = StdUi:Dropdown(WelcomePage, 200, 20, profiles)
-			WelcomePage.CopyProfileButton = StdUi:Button(WelcomePage, 60, 20, 'COPY')
-			WelcomePage.CopyProfileButton:SetScript('OnClick', function()
+			IntroPage.ProfileList = StdUi:Dropdown(IntroPage, 200, 20, profiles)
+			IntroPage.CopyProfileButton = StdUi:Button(IntroPage, 60, 20, 'COPY')
+			IntroPage.CopyProfileButton:SetScript('OnClick', function()
 				local ProfileSelection = module.window.content.WelcomePage.ProfileList:GetValue()
 				if not ProfileSelection or ProfileSelection == '' then return end
 				-- Copy profile
@@ -379,24 +378,24 @@ local function WelcomePage()
 				ReloadUI()
 			end)
 			if #profiles == 0 then
-				WelcomePage.ProfileCopyLabel:Hide()
-				WelcomePage.ProfileList:Hide()
-				WelcomePage.CopyProfileButton:Hide()
+				IntroPage.ProfileCopyLabel:Hide()
+				IntroPage.ProfileList:Hide()
+				IntroPage.CopyProfileButton:Hide()
 			end
 
-			StdUi:GlueBottom(WelcomePage.ProfileCopyLabel, WelcomePage.Helm, 0, -25)
-			StdUi:GlueBottom(WelcomePage.ProfileList, WelcomePage.ProfileCopyLabel, -31, -25)
-			StdUi:GlueRight(WelcomePage.CopyProfileButton, WelcomePage.ProfileList, 2, 0)
+			StdUi:GlueBottom(IntroPage.ProfileCopyLabel, IntroPage.Helm, 0, -25)
+			StdUi:GlueBottom(IntroPage.ProfileList, IntroPage.ProfileCopyLabel, -31, -25)
+			StdUi:GlueRight(IntroPage.CopyProfileButton, IntroPage.ProfileList, 2, 0)
 
-			WelcomePage.Import = StdUi:Button(WelcomePage, 200, 20, 'IMPORT SETTINGS')
-			WelcomePage.Import:SetScript('OnClick', function()
-				local Profiles = SUI:GetModule('Handler_Profiles')
+			IntroPage.Import = StdUi:Button(IntroPage, 200, 20, 'IMPORT SETTINGS')
+			IntroPage.Import:SetScript('OnClick', function()
+				local Profiles = SUI:GetModule('Handler_Profiles') ---@type SUI.Handler.Profiles
 				Profiles:ImportUI()
 			end)
-			WelcomePage.Import:SetPoint('TOP', WelcomePage.ProfileList, 'BOTTOM', 31, -5)
+			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 31, -5)
 
-			WelcomePage.SkipAllButton = StdUi:Button(WelcomePage, 150, 20, 'SKIP SETUP')
-			WelcomePage.SkipAllButton:SetScript('OnClick', function()
+			IntroPage.SkipAllButton = StdUi:Button(IntroPage, 150, 20, 'SKIP SETUP')
+			IntroPage.SkipAllButton:SetScript('OnClick', function()
 				module.window:Hide()
 				for _, ID in pairs(FinalPageList) do
 					if PriorityPageList[ID] then
@@ -410,14 +409,14 @@ local function WelcomePage()
 				DisplayRequired = false
 				module.window:Hide()
 			end)
-			WelcomePage.SkipOr = StdUi:Label(WelcomePage, 'OR')
-			StdUi:GlueBelow(WelcomePage.SkipOr, WelcomePage.SkipAllButton, 0, -5)
+			IntroPage.SkipOr = StdUi:Label(IntroPage, 'OR')
+			StdUi:GlueBelow(IntroPage.SkipOr, IntroPage.SkipAllButton, 0, -5)
 
 			module.window.ProgressBar:Hide()
 			module.window.Next:SetPoint('BOTTOMRIGHT', module.window, 'BOTTOMRIGHT', 0, 2)
-			WelcomePage.SkipAllButton:SetPoint('BOTTOMRIGHT', 0, 2)
+			IntroPage.SkipAllButton:SetPoint('BOTTOMRIGHT', 0, 2)
 
-			module.window.content.WelcomePage = WelcomePage
+			module.window.content.WelcomePage = IntroPage
 		end,
 		Next = function()
 			SUI.DB.SetupWizard.FirstLaunch = false
@@ -428,7 +427,7 @@ local function WelcomePage()
 		Priority = true,
 	}
 
-	module:AddPage(WelcomePage)
+	module:AddPage(PageData)
 	WelcomeAdded = true
 end
 

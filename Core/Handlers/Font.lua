@@ -38,7 +38,7 @@ function Font:comma_value(value)
 	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. (Font.DB.NumberSeperator or LARGE_NUMBER_SEPERATOR)):reverse()) .. right
 end
 
----@param element FontInstance
+---@param element Font
 ---@param DefaultSize integer
 ---@param Module string
 function Font:StoreItem(element, DefaultSize, Module)
@@ -64,7 +64,7 @@ function Font:GetFont(Module)
 	return SUI.Lib.LSM:Fetch('font', 'Roboto Bold')
 end
 
----@param element FontInstance
+---@param element Font
 ---@param Module string
 local function FindID(element, Module)
 	for i = 1, Font.Items[Module].Count do
@@ -73,7 +73,7 @@ local function FindID(element, Module)
 	return false
 end
 
----@param element FontInstance
+---@param element Font
 ---@param size integer
 ---@param Module string
 function Font:UpdateDefaultSize(element, size, Module)
@@ -87,7 +87,7 @@ function Font:UpdateDefaultSize(element, size, Module)
 	end
 end
 
----@param element FontInstance
+---@param element Font
 ---@param size? integer
 ---@param Module? string
 ---@param UpdateOnly? boolean
@@ -98,7 +98,7 @@ function Font:Format(element, size, Module, UpdateOnly)
 	--If we are not initialized yet, save the data for latter processing and exit
 	if not Font.DB then
 		--Set a default font
-		element:SetFont(SUI.Lib.LSM:Fetch('font', 'Roboto Bold'), 8)
+		element:SetFont(SUI.Lib.LSM:Fetch('font', 'Roboto Bold'), 8, '')
 		--Save the data for later
 		if not Font.PreLoadItems then Font.PreLoadItems = {} end
 		table.insert(Font.PreLoadItems, { element = element, size = size, Module = Module, UpdateOnly = UpdateOnly })
