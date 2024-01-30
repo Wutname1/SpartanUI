@@ -1,5 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Module_AutoSell') ---@type SUI.Module
+---@class SUI.Module.AutoSell : SUI.Module
+local module = SUI:NewModule('Module_AutoSell')
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
@@ -9,7 +10,7 @@ local Tooltip = CreateFrame('GameTooltip', 'AutoSellTooltip', nil, 'GameTooltipT
 local LoadedOnce = false
 local totalValue = 0
 
----@class AutoSell.DB
+---@class SUI.Module.AutoSell.DB
 local DbDefaults = {
 	FirstLaunch = true,
 	NotCrafting = true,
@@ -598,7 +599,7 @@ end
 
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoSell', { profile = DbDefaults })
-	module.DB = module.Database.profile ---@type AutoSell.DB
+	module.DB = module.Database.profile ---@type SUI.Module.AutoSell.DB
 end
 
 function module:OnEnable()

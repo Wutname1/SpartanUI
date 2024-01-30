@@ -6,10 +6,10 @@ module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
 local SelectAvailableQuest = SelectAvailableQuest
 local SelectActiveQuest = SelectActiveQuest
-local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests or GetGossipActiveQuests
-local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
-local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests or GetGossipAvailableQuests
-local GetGossipOptions = C_GossipInfo.GetOptions or GetGossipOptions
+local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests
+local SelectGossipOption = C_GossipInfo.SelectOption
+local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests
+local GetGossipOptions = C_GossipInfo.GetOptions
 local DB ---@type AutoTurnInDB
 local GlobalDB ---@type AutoTurnInGlobalDB
 local Blacklist = {

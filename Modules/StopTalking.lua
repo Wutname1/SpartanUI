@@ -1,6 +1,7 @@
 local SUI = SUI
 if not SUI.IsRetail then return end
-local module = SUI:NewModule('Module_StopTalking') ---@type SUI.Module
+---@class SUI.Module.StopTalking : SUI.Module
+local module = SUI:NewModule('Module_StopTalking')
 local L = SUI.L
 module.Displayname = L['Stop Talking']
 module.description = 'Mutes the talking head frame once you have heard it.'
@@ -8,7 +9,7 @@ module.description = 'Mutes the talking head frame once you have heard it.'
 local HeardLines = {}
 
 function module:OnInitialize()
-	---@class SUI.StopTalking.DB
+	---@class SUI.Module.StopTalking.DB
 	local defaults = {
 		persist = true,
 		chatOutput = true,
@@ -16,8 +17,8 @@ function module:OnInitialize()
 		history = {},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', { profile = defaults, global = defaults })
-	module.DB = module.Database.profile ---@type SUI.StopTalking.DB
-	module.DBGlobal = module.Database.global ---@type SUI.StopTalking.DB
+	module.DB = module.Database.profile ---@type SUI.Module.StopTalking.DB
+	module.DBGlobal = module.Database.global ---@type SUI.Module.StopTalking.DB
 
 	--blank this out; start fresh in 10.0
 	if module.DB.lines then module.DB.lines = nil end
