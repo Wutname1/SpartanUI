@@ -475,7 +475,7 @@ function module:SetupChatboxes()
 			-- Fix special pipe methods e.g. 5 |4hour:hours; Example: copying /played text
 			for i = 1, ChatFrame:GetNumMessages() do
 				local line = ChatFrame:GetMessageInfo(i)
-				popup.font:SetFormattedText('%s\n', line)
+				popup.font:SetFormattedText(string.format('%s\n', line))
 				local cleanLine = popup.font:GetText() or ''
 				text = text .. cleanLine
 			end

@@ -37,9 +37,9 @@ local function addiLvlDisplay(button, itemLevel, itemQuality)
 
 	local hex = select(4, GetItemQualityColor(itemQuality))
 
-	button.ilvlText:SetFormattedText('|c%s%s|r', hex or '', itemLevel or '')
+	button.ilvlText:SetFormattedText(string.format('|c%s%s|r', hex or '', itemLevel or ''))
 	if not module.DB.color.byQuality then
-		button.ilvlText:SetFormattedText('%s', itemLevel or '')
+		button.ilvlText:SetFormattedText(itemLevel or '')
 		button.ilvlText:SetTextColor(unpack(module.DB.color.fontColor))
 	end
 	button.ilvlText:Show()

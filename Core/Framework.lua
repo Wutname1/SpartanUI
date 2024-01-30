@@ -1461,7 +1461,7 @@ end
 ---Takes a target table and searches for the specified phrase
 ---@param searchTable table
 ---@param searchPhrase string|number
----@param all boolean
+---@param all? boolean
 ---@return boolean
 function SUI:IsInTable(searchTable, searchPhrase, all)
 	if searchTable == nil or searchPhrase == nil then
