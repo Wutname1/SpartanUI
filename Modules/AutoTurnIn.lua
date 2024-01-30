@@ -625,7 +625,7 @@ function module.Blacklist.isBlacklisted(lookupId)
 	local wildcardBlacklist = blacklistDB.Wildcard
 
 	-- Function to perform a case-insensitive search
-	local function isNameInBlacklist(blacklist, checkName)
+	local function isInPairSearch(blacklist, checkName)
 		for _, key in pairs(blacklist) do
 			if string.find(string.lower(checkName), string.lower(key)) then return true end
 		end
@@ -633,15 +633,16 @@ function module.Blacklist.isBlacklisted(lookupId)
 	end
 
 	-- Check for direct match in blacklists or wildcard match
-	if SUI:IsInTable(gossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) or SUI:IsInTable(questBlacklist, lookupId) then
+	if SUI:IsInTable(gossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) then
 		debug(name .. '---IS BLACKLISTED')
 		return true
-	elseif isNameInBlacklist(wildcardBlacklist, name) then
+	elseif isInPairSearch(wildcardBlacklist, name) or isInPairSearch(questBlacklist, name) then
 		debug(name .. ' - IS BLACKLISTED')
 		return true
 	end
 
 	-- Not blacklisted
+	debug(name .. '---IS NOT BLACKLISTED')
 	return false
 end
 

@@ -1376,6 +1376,10 @@ end
 	override allows the source to be put into the target
 	even if its already populated
 ]]
+---@param target table
+---@param source table
+---@param override boolean
+---@return table
 function SUI:MergeData(target, source, override)
 	if source == nil then return target end
 
@@ -1454,9 +1458,11 @@ function SUI:isPartialMatch(frameName, tab)
 	return result
 end
 
---[[
-	Takes a target table and searches for the specified phrase
-]]
+---Takes a target table and searches for the specified phrase
+---@param searchTable table
+---@param searchPhrase string|number
+---@param all boolean
+---@return boolean
 function SUI:IsInTable(searchTable, searchPhrase, all)
 	if searchTable == nil or searchPhrase == nil then
 		SUI:Error('Invalid isInTable call', 'Core')
@@ -1485,6 +1491,9 @@ function SUI:IsInTable(searchTable, searchPhrase, all)
 	return false
 end
 
+---@param currentTable table
+---@param defaultTable table
+---@return table
 function SUI:CopyTable(currentTable, defaultTable)
 	if type(currentTable) ~= 'table' then currentTable = {} end
 
@@ -1622,6 +1631,8 @@ function SUI:FilterTableFromBlacklist(cleanTable, blacklistTable)
 	return tfbCleaned
 end
 
+---@param inTable table
+---@return string
 function SUI:TableToLuaString(inTable)
 	local function recurse(table, level, ret)
 		for i, v in pairs(table) do
