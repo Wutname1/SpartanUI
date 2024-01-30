@@ -1,8 +1,8 @@
-local SUI = SUI
-local L = SUI.L
-local Artwork_Core = SUI:GetModule('Module_Artwork')
+local SUI, L = SUI, SUI.L
+---@class SUI.Theme.Minimal : SUI.Theme.StyleBase
+local module = SUI:NewModule('Style_Minimal')
+local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
 local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI.UF
-local module = SUI:NewModule('Style_Minimal') ---@type SUI.Module
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 

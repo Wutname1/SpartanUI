@@ -1,6 +1,5 @@
 local _G, SUI = _G, SUI
-local L = SUI.L
-local module = SUI:GetModule('Module_Artwork')
+local module = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
 local MoveIt = SUI.MoveIt
 -- Helper functions
 local ReparentAB = false

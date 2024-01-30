@@ -142,11 +142,11 @@ local function Options(unitName, OptionSet, DB)
 end
 
 ---@class SUI.UF.Unit.Settings.AuraWatch.Watched
----@field anyUnit boolean
----@field onlyShowMissing boolean
----@field point string
----@field xOffset number
----@field yOffset number
+---@field anyUnit? boolean
+---@field onlyShowMissing? boolean
+---@field point? string
+---@field xOffset? number
+---@field yOffset? number
 local watched = {}
 
 ---@class SUI.UF.Unit.Settings.AuraWatch : SUI.UF.Unit.Settings

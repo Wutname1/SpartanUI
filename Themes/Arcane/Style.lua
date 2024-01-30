@@ -1,8 +1,9 @@
 local SUI, L = SUI, SUI.L
-local module = SUI:NewModule('Style_Arcane') ---@type SUI.Module
+---@class SUI.Theme.Arcane : SUI.Theme.StyleBase
+local module = SUI:NewModule('Style_Arcane')
 local unpack = unpack
 module.Settings = {}
-local Artwork_Core = SUI:GetModule('Module_Artwork')
+local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
 local artFrame = CreateFrame('Frame', 'SUI_Art_Arcane', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local function Options()

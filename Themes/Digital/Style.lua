@@ -1,6 +1,5 @@
 local SUI, L = SUI, SUI.L
-local print = SUI.print
-local Artwork_Core = SUI:GetModule('Module_Artwork')
+---@class SUI.Theme.Digital : SUI.Theme.StyleBase
 local module = SUI:NewModule('Style_Digital')
 ---@type SUI.Module
 local UF = SUI:GetModule('Module_UnitFrames')

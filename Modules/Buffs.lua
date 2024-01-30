@@ -54,7 +54,7 @@ local BuffPosUpdate = function()
 	local setdefault = false
 
 	--See If the theme has an anchor and if we are allowed to use it
-	local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true)
+	local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true) ---@type SUI.Module
 	if style and style.BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
 		style:BuffLoc(nil, nil)
 	else

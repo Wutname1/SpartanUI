@@ -1,5 +1,6 @@
 local SUI, L = SUI, SUI.L
 local print = SUI.print
+---@class SUI.Theme.Fel : SUI.Theme.StyleBase
 local module = SUI:NewModule('Style_Fel')
 ---@type SUI.Module
 local artFrame = CreateFrame('Frame', 'SUI_Art_Fel', SpartanUI)

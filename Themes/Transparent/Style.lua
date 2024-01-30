@@ -1,7 +1,7 @@
-local SUI = SUI
-local L = SUI.L
-local Artwork_Core = SUI:GetModule('Module_Artwork')
-local module = SUI:NewModule('Style_Transparent') ---@type SUI.Module
+local SUI, L = SUI, SUI.L
+---@class SUI.Theme.Transparent : SUI.Theme.StyleBase
+local module = SUI:NewModule('Style_Transparent')
+local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
 local artFrame = CreateFrame('Frame', 'SUI_Art_Transparent', SpartanUI)
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------

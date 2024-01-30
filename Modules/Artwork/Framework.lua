@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
+---@class SUI.Module.Artwork : SUI.Module
 local module = SUI:NewModule('Module_Artwork')
----@type SUI.Module
 module.ActiveStyle = {}
 module.BarBG = {}
 module.description = 'CORE: Provides the graphical looks of SUI'
