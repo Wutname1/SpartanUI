@@ -132,27 +132,31 @@ local Blacklist = {
 		"i'd like to try the",
 	},
 }
-local GossipWhitelist = {
-	'Evacuate, now!',
-	"I've cleared a path for you. You should leave.",
-	'If you insist. The show must go on!',
-	'Will you spar with me?',
-	'I would like to challenge both of you to a spar.',
-	'<Request tithe>',
-	--DF
-	'We need explorers for an expedition to the Dragon Isles. Will you join us?',
-	'We need artisans for an expedition to the Dragon Isles. Will you join us?',
-	'We need scholars for an expedition to the Dragon Isles. Will you join us?',
-	'<Ask Khadgar what happened.>',
-	'Scalecommander Cindrethresh would like you to meet her at the zeppelin tower.',
-	"Tell me of the Neltharion's downfall.",
-	'Tell me of the Dawn of the Aspects.',
-	"I'm here to test your combat skills.",
+local Whitelist = {
+	Gossip = {
+		'Evacuate, now!',
+		"I've cleared a path for you. You should leave.",
+		'If you insist. The show must go on!',
+		'Will you spar with me?',
+		'I would like to challenge both of you to a spar.',
+		'<Request tithe>',
+		--DF
+		'We need explorers for an expedition to the Dragon Isles. Will you join us?',
+		'We need artisans for an expedition to the Dragon Isles. Will you join us?',
+		'We need scholars for an expedition to the Dragon Isles. Will you join us?',
+		'<Ask Khadgar what happened.>',
+		'Scalecommander Cindrethresh would like you to meet her at the zeppelin tower.',
+		"Tell me of the Neltharion's downfall.",
+		'Tell me of the Dawn of the Aspects.',
+		"I'm here to test your combat skills.",
+		--Event
+		'Begin the battle.',
+	},
 }
 ---@class AutoTurnInGlobalDB
 local GlobalDBDefaults = {
 	Blacklist = Blacklist,
-	GossipWhitelist = GossipWhitelist,
+	Whitelist = Whitelist,
 }
 ---@class AutoTurnInDB
 local DBDefaults = {
@@ -174,7 +178,7 @@ local DBDefaults = {
 	secondary = {},
 	useGlobalDB = true,
 	Blacklist = Blacklist,
-	GossipWhitelist = GossipWhitelist,
+	Whitelist = Whitelist,
 }
 
 local ATI_Container = CreateFrame('Frame')
@@ -606,7 +610,7 @@ function module:FirstLaunch()
 end
 
 module.Blacklist = {}
-
+module.Whitelist = {}
 ---@enum ListTypes
 ---| 'QuestIDs'
 ---| 'Gossip'
@@ -646,15 +650,11 @@ function module.Blacklist.isBlacklisted(lookupId)
 	return false
 end
 
----@param id string|number
----@param mode ListTypes
----@param temp? boolean
----@param index? number
-function module.Blacklist.Add(id, mode, temp, index)
+local function Add(list, id, mode, temp, index)
 	if temp then
 		TempBlackList[id] = true
 	else
-		local database = DB.useGlobalDB and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
+		local database = DB.useGlobalDB and GlobalDB[list][mode] or DB[list][mode]
 		if index then
 			database[index] = id
 		else
@@ -662,11 +662,45 @@ function module.Blacklist.Add(id, mode, temp, index)
 		end
 	end
 end
+---@param id string|number
+---@param mode ListTypes
+---@param temp? boolean
+---@param index? number
+function module.Blacklist.Add(id, mode, temp, index)
+	Add('Blacklist', id, mode, temp, index)
+end
+
+---@param id string|number
+---@param mode ListTypes
+---@param temp? boolean
+---@param index? number
+function module.Whitelist.Add(id, mode, temp, index)
+	Add('Whitelist', id, mode, temp, index)
+end
 
 ---@param mode ListTypes
 ---@return table<number, any>
 function module.Blacklist.Get(mode)
 	return DB.useGlobalDB and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
+end
+---@param mode ListTypes
+---@return table<number, any>
+function module.Whitelist.Get(mode)
+	return DB.useGlobalDB and GlobalDB.Whitelist[mode] or DB.Whitelist[mode]
+end
+
+local function Remove(list, id, mode, temp, index)
+	local name = tostring(id)
+	if temp then
+		TempBlackList[name] = nil
+	else
+		local database = DB.useGlobalDB and GlobalDB[list][mode] or DB[list][mode]
+		if index then
+			database[index] = nil
+		else
+			database[name] = nil
+		end
+	end
 end
 
 ---@param id string|number
@@ -674,17 +708,15 @@ end
 ---@param temp? boolean
 ---@param index? number
 function module.Blacklist.Remove(id, mode, temp, index)
-	local name = tostring(id)
-	if temp then
-		TempBlackList[name] = nil
-	else
-		local database = DB.useGlobalDB and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
-		if index then
-			database[index] = nil
-		else
-			database[name] = nil
-		end
-	end
+	Remove('Blacklist', id, mode, temp, index)
+end
+
+---@param id string|number
+---@param mode ListTypes
+---@param temp? boolean
+---@param index? number
+function module.Whitelist.Remove(id, mode, temp, index)
+	Remove('Whitelist', id, mode, temp, index)
 end
 
 function module.QUEST_GREETING()
@@ -736,7 +768,7 @@ function module.GOSSIP_SHOW()
 		debug('Gossip Flags: ' .. tostring(gossip.flags))
 
 		-- Check if gossip is whitelisted
-		local whitelist = DB.useGlobalDB and GlobalDB.GossipWhitelist or DB.GossipWhitelist
+		local whitelist = DB.useGlobalDB and GlobalDB.Whitelist.Gossip or DB.Whitelist.Gossip
 		local isWhitelisted = SUI:IsInTable(whitelist, gossip.name)
 		debug('Is Whitelisted: ' .. tostring(isWhitelisted))
 
@@ -911,11 +943,12 @@ function module:OnDisable()
 end
 
 function module:BuildOptions()
-	buildItemList = function(mode)
-		local spellsOpt = OptionTable.args[mode].args.list.args
+	buildItemList = function(listType, mode)
+		if not mode then mode = 'Blacklist' end
+		local spellsOpt = OptionTable.args[mode].args[listType].args.list.args
 		table.wipe(spellsOpt)
 
-		for itemId, entry in pairs(module.Blacklist.Get(mode)) do
+		for itemId, entry in pairs(module[mode].Get(listType)) do
 			local label
 
 			if type(entry) == 'number' then
@@ -944,8 +977,8 @@ function module:BuildOptions()
 				width = 'half',
 				order = itemId + 0.05,
 				func = function(info)
-					module.Blacklist.Remove(itemId, mode)
-					buildItemList(mode)
+					module[mode].Remove(itemId, listType)
+					buildItemList(listType)
 				end,
 			}
 		end
@@ -1042,95 +1075,138 @@ function module:BuildOptions()
 			width = 'full',
 			order = 30,
 		},
-		QuestIDs = {
+		Blacklist = {
 			type = 'group',
 			name = 'Blacklist',
 			order = 40,
 			args = {
-				desc = {
-					name = 'Blacklisted quests will never be auto accepted',
-					type = 'description',
-					order = 1,
-				},
-				desc2 = {
-					name = 'Quests can be blacklisted by holding CTRL while talking to a NPC or by adding the quest ID to the list below',
-					type = 'description',
-					order = 1.1,
-				},
-				create = {
-					name = 'Add Quest ID',
-					type = 'input',
-					order = 2,
-					width = 'full',
-					set = function(info, input)
-						module.Blacklist.Add(input, 'QuestIDs', false, #info - 1)
-						buildItemList(info[#info - 1])
-					end,
-				},
-				list = {
-					order = 3,
+				QuestIDs = {
 					type = 'group',
-					inline = true,
-					name = 'Quest list',
-					args = {},
+					name = 'Quest ID',
+					order = 40,
+					args = {
+						desc = {
+							name = 'Blacklisted quests will never be auto accepted',
+							type = 'description',
+							order = 1,
+						},
+						desc2 = {
+							name = 'Quests can be blacklisted by holding CTRL while talking to a NPC or by adding the quest ID to the list below',
+							type = 'description',
+							order = 1.1,
+						},
+						create = {
+							name = 'Add Quest ID',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Blacklist.Add(input, 'QuestIDs', false, #info - 1)
+								buildItemList(info[#info - 1])
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
+					},
+				},
+				Wildcard = {
+					type = 'group',
+					name = 'Wildcard',
+					order = 41,
+					args = {
+						desc = {
+							name = 'Any quest or gossip selection when talking to a NPC containing the text below will not be auto selected',
+							type = 'description',
+							order = 1,
+						},
+						create = {
+							name = 'Add text to block',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Blacklist.Add(input, 'Wildcard', false, #info - 1)
+								buildItemList(info[#info - 1])
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
+					},
+				},
+				Gossip = {
+					type = 'group',
+					name = 'Gossip options',
+					order = 42,
+					args = {
+						desc = {
+							name = 'Blacklisted gossip options will never be auto selected',
+							type = 'description',
+							order = 1,
+						},
+						create = {
+							name = 'Add gossip text',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Blacklist.Add(input, 'Gossip', false, #info - 1)
+								buildItemList(info[#info - 1])
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
+					},
 				},
 			},
 		},
-		Wildcard = {
+		Whitelist = {
 			type = 'group',
-			name = 'Blacklist Wildcard',
-			order = 41,
+			name = 'Whitelist',
+			order = 50,
 			args = {
-				desc = {
-					name = 'Any quest or gossip selection when talking to a NPC containing the text below will not be auto selected',
-					type = 'description',
-					order = 1,
-				},
-				create = {
-					name = 'Add text to block',
-					type = 'input',
-					order = 2,
-					width = 'full',
-					set = function(info, input)
-						module.Blacklist.Add(input, 'Wildcard', false, #info - 1)
-						buildItemList(info[#info - 1])
-					end,
-				},
-				list = {
-					order = 3,
+				Gossip = {
 					type = 'group',
-					inline = true,
-					name = 'Quest list',
-					args = {},
-				},
-			},
-		},
-		Gossip = {
-			type = 'group',
-			name = 'Gossip Blacklist',
-			order = 42,
-			args = {
-				desc = {
-					name = 'Blacklisted gossip options will never be auto selected',
-					type = 'description',
-					order = 1,
-				},
-				create = {
-					name = 'Add gossip text',
-					type = 'input',
-					order = 2,
-					width = 'full',
-					set = function(info, input)
-						module.Blacklist.Add(input, 'Gossip', false, #info - 1)
-						buildItemList(info[#info - 1])
-					end,
-				},
-				list = {
-					order = 3,
-					type = 'group',
-					inline = true,
-					name = 'Quest list',
-					args = {},
+					name = 'Gossip',
+					order = 42,
+					args = {
+						desc = {
+							name = 'Whitelisted gossip options will be auto selected',
+							type = 'description',
+							order = 1,
+						},
+						create = {
+							name = 'Add gossip text',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Whitelist.Add(input, 'Gossip', false, #info - 1)
+								buildItemList(info[#info - 1], 'Whitelist')
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
+					},
 				},
 			},
 		},
@@ -1138,5 +1214,6 @@ function module:BuildOptions()
 	buildItemList('QuestIDs')
 	buildItemList('Wildcard')
 	buildItemList('Gossip')
+	buildItemList('Gossip', 'Whitelist')
 	SUI.Options:AddOptions(OptionTable, 'AutoTurnIn')
 end
