@@ -1,6 +1,6 @@
 local SUI = SUI
-local L = SUI.L
-local module = SUI:NewModule('Handler_BarSystems') ---@type SUI.Module
+---@class SUI.Module.BarHandler : SUI.Module
+local module = SUI:NewModule('Handler_BarSystems')
 local DB = nil
 module.DisplayName = 'Bar Handler'
 module.description = 'CORE: Handles the SpartanUI Bartender4 intergration'
@@ -51,55 +51,11 @@ module.BarScale = {
 			['BT4BarStanceBar'] = 0.6,
 			['BT4BarPetBar'] = 0.6,
 			['MultiCastActionBarFrame'] = 0.6,
-			['BT4BarMicroMenu'] = 0.7,
+			['BT4BarMicroMenu'] = 0.6,
 			['BT4BarQueueStatus'] = 0.58,
 		},
 	},
 }
-
-if not SUI.IsRetail then
-	module.BarPosition.BT4.default = {
-		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-364,78',
-		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-366,24',
-		['BT4Bar3'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,364,78',
-		['BT4Bar4'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,366,24',
-		['BT4Bar5'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOMLEFT,-15,0',
-		['BT4Bar6'] = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOMRIGHT,15,0',
-		['BT4Bar7'] = '',
-		['BT4Bar8'] = '',
-		['BT4Bar9'] = '',
-		['BT4Bar10'] = '',
-		--
-		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,87',
-		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,87',
-		--
-		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,192',
-		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-661,191',
-		--
-		['BT4BarMicroMenu'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,340,191',
-		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,707,193',
-	}
-
-	module.BarScale.BT4.default = {
-		['BT4Bar1'] = 0.78,
-		['BT4Bar2'] = 0.78,
-		['BT4Bar3'] = 0.78,
-		['BT4Bar4'] = 0.78,
-		['BT4Bar5'] = 0.80,
-		['BT4Bar6'] = 0.80,
-		['BT4Bar7'] = 0.78,
-		['BT4Bar8'] = 0.78,
-		['BT4Bar9'] = 0.78,
-		['BT4Bar10'] = 0.78,
-		['BT4BarBagBar'] = 0.6,
-		['BT4BarZoneAbilityBar'] = 0.8,
-		['BT4BarExtraActionBar'] = 0.8,
-		['BT4BarStanceBar'] = 0.6,
-		['BT4BarPetBar'] = 0.6,
-		['MultiCastActionBarFrame'] = 0.6,
-		['BT4BarMicroMenu'] = 0.6,
-	}
-end
 
 ------------------------------------------------------------
 
@@ -186,9 +142,9 @@ function module:OnInitialize()
 	module.DB = module.Database.profile ---@type SUI.BarHandler.DB
 	DB = module.DB
 
-	if SUI.IsRetail and SUI:IsAddonDisabled('Bartender4') then
+	if SUI:IsAddonDisabled('Bartender4') then
 		DB.ActiveSystem = 'WoW'
-	elseif SUI:IsAddonEnabled('Bartender4') and DB.ActiveSystem == 'WoW' then
+	elseif SUI:IsAddonEnabled('Bartender4') then
 		DB.ActiveSystem = 'Bartender4'
 	end
 	if not module.Registry[DB.ActiveSystem] then DB.ActiveSystem = 'Bartender4' end
