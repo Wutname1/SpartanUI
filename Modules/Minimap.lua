@@ -232,13 +232,13 @@ function module:ModifyMinimapLayout()
 	SUI.Font:Format(TimeManagerClockTicker, 10, 'Minimap')
 	SUI.Font:Format(Minimap.coords, 10, 'Minimap')
 
-	MinimapCluster.Tracking:ClearAllPoints()
-	MinimapCluster.Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 1)
-	MinimapCluster.Tracking.Background:Hide()
+	MinimapCluster.TrackingFrame:ClearAllPoints()
+	MinimapCluster.TrackingFrame:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 1)
+	MinimapCluster.TrackingFrame.Background:Hide()
 
 	MinimapCluster.IndicatorFrame:ClearAllPoints()
 	MinimapCluster.IndicatorFrame:SetScale(0.8)
-	MinimapCluster.IndicatorFrame:SetPoint('LEFT', MinimapCluster.Tracking, 'RIGHT', 3)
+	MinimapCluster.IndicatorFrame:SetPoint('LEFT', MinimapCluster.TrackingFrame, 'RIGHT', 3)
 
 	MinimapCluster.InstanceDifficulty:ClearAllPoints()
 	MinimapCluster.InstanceDifficulty:SetScale(0.8)
