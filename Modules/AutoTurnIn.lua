@@ -16,6 +16,7 @@ local Blacklist = {
 	QuestIDs = {},
 	Gossip = {
 		-- General Blacklist
+		'Send me into the Black Temple.',
 		'what do you have for me?',
 		'show me your offerings.',
 		'What is the Superbloom?',
