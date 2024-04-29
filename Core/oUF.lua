@@ -254,7 +254,7 @@ local function SUIHealth(unit, _, ...)
 	local currentVal = UnitHealth(unit) or 0
 	local maxVal = UnitHealthMax(unit) or currentVal
 	local isDead = UnitIsDeadOrGhost(unit)
-
+	if maxVal == 0 then maxVal = 1 end
 	return calculateResult(currentVal, maxVal, isDead, ...)
 end
 
