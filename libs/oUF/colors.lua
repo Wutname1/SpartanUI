@@ -4,6 +4,9 @@ local Private = oUF.Private
 
 local frame_metatable = Private.frame_metatable
 
+local LibDispel = LibStub('LibDispel-1.0')
+local DebuffColors = LibDispel:GetDebuffTypeColor()
+
 local colorMixin = {
 	SetRGBA = function(self, r, g, b, a)
 		if(r > 1 or g > 1 or b > 1) then
@@ -139,7 +142,7 @@ if(not customClassColors()) then
 	end)
 end
 
-for debuffType, color in next, _G.DebuffTypeColor do
+for debuffType, color in next, DebuffColors do
 	colors.debuff[debuffType] = oUF:CreateColor(color.r, color.g, color.b)
 end
 
@@ -147,19 +150,33 @@ for eclass, color in next, _G.FACTION_BAR_COLORS do
 	colors.reaction[eclass] = oUF:CreateColor(color.r, color.g, color.b)
 end
 
+local staggerIndices = {
+	green = 1,
+	yellow = 2,
+	red = 3
+}
+
 for power, color in next, PowerBarColor do
 	if (type(power) == 'string') then
-		if(type(select(2, next(color))) == 'table') then
-			colors.power[power] = {}
-
-			for index, color_ in next, color do
-				colors.power[power][index] = oUF:CreateColor(color_.r, color_.g, color_.b)
-			end
-		else
+		if(color.r) then
 			colors.power[power] = oUF:CreateColor(color.r, color.g, color.b)
 
 			if(color.atlas) then
 				colors.power[power]:SetAtlas(color.atlas)
+			end
+		else
+			-- special handling for stagger
+			colors.power[power] = {}
+
+			for name, color_ in next, color do
+				local index = staggerIndices[name]
+				if(index) then
+					colors.power[power][index] = oUF:CreateColor(color_.r, color_.g, color_.b)
+
+					if(color_.atlas) then
+						colors.power[power][index]:SetAtlas(color_.atlas)
+					end
+				end
 			end
 		end
 	end

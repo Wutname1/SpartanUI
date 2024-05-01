@@ -108,6 +108,21 @@ local function Update(self, event, unit)
 	local otherIncomingHeal = 0
 	local hasOverHealAbsorb = false
 
+	-- Kludge to override value for heals not reported by WoW client (ref: https://github.com/Stanzilla/WoWUIBugs/issues/163)
+	-- There may be other bugs that this workaround does not catch, but this does fix Priest PoH
+	if(HealComm and not oUF.isRetail) then
+		local healAmount = HealComm:GetHealAmount(GUID, HealComm.CASTED_HEALS) or 0
+		if(healAmount > 0) then
+			if(myIncomingHeal == 0 and unit == 'player') then
+				myIncomingHeal = healAmount
+			end
+
+			if(allIncomingHeal == 0) then
+				allIncomingHeal = healAmount
+			end
+		end
+	end
+
 	if(healAbsorb > allIncomingHeal) then
 		healAbsorb = healAbsorb - allIncomingHeal
 		allIncomingHeal = 0
@@ -259,14 +274,17 @@ local function Enable(self)
 		oUF:RegisterEvent(self, 'UNIT_MAXHEALTH', Path)
 		oUF:RegisterEvent(self, 'UNIT_HEAL_PREDICTION', Path)
 
-		if oUF.isRetail then
+		if oUF.isClassic then
+			oUF:RegisterEvent(self, 'UNIT_HEALTH_FREQUENT', Path)
+		else
 			oUF:RegisterEvent(self, 'UNIT_HEALTH', Path)
+		end
+
+		if oUF.isRetail then
 			oUF:RegisterEvent(self, 'UNIT_ABSORB_AMOUNT_CHANGED', Path)
 			oUF:RegisterEvent(self, 'UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 		else
 			element:SetUseHealComm(true)
-
-			oUF:RegisterEvent(self, 'UNIT_HEALTH_FREQUENT', Path)
 		end
 
 		if (not element.maxOverflow) then
@@ -345,14 +363,17 @@ local function Disable(self)
 		oUF:UnregisterEvent(self, 'UNIT_MAXHEALTH', Path)
 		oUF:UnregisterEvent(self, 'UNIT_HEAL_PREDICTION', Path)
 
-		if oUF.isRetail then
+		if oUF.isClassic then
+			oUF:UnregisterEvent(self, 'UNIT_HEALTH_FREQUENT', Path)
+		else
 			oUF:UnregisterEvent(self, 'UNIT_HEALTH', Path)
+		end
+
+		if oUF.isRetail then
 			oUF:UnregisterEvent(self, 'UNIT_ABSORB_AMOUNT_CHANGED', Path)
 			oUF:UnregisterEvent(self, 'UNIT_HEAL_ABSORB_AMOUNT_CHANGED', Path)
 		else
 			element:SetUseHealComm(false)
-
-			oUF:UnregisterEvent(self, 'UNIT_HEALTH_FREQUENT', Path)
 		end
 	end
 end
