@@ -295,10 +295,10 @@ function module:MinimapCoords()
 	if not SUI.IsRetail then MinimapZoneText:Hide() end
 
 	Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY')
-	SUI.Font:Format(Minimap.ZoneText, (SUI.IsRetail and 11 or 10), 'Minimap')
-	SUI.Font:Format(MinimapZoneText, (SUI.IsRetail and 11 or 10), 'Minimap')
-	Minimap.ZoneText:SetJustifyH('MIDDLE')
-	Minimap.ZoneText:SetJustifyV('CENTER')
+	SUI.Font:Format(Minimap.ZoneText, 11, 'Minimap')
+	SUI.Font:Format(MinimapZoneText, 11, 'Minimap')
+	Minimap.ZoneText:SetJustifyH('CENTER')
+	Minimap.ZoneText:SetJustifyV('MIDDLE')
 	Minimap.ZoneText:SetPoint('TOP', Minimap, 'BOTTOM', 0, -1)
 	Minimap.ZoneText:SetShadowColor(0, 0, 0, 1)
 	Minimap.ZoneText:SetShadowOffset(1, -1)
@@ -313,7 +313,7 @@ function module:MinimapCoords()
 
 	Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY')
 	SUI.Font:Format(Minimap.coords, 10, 'Minimap')
-	Minimap.coords:SetJustifyH('TOP')
+	Minimap.coords:SetJustifyV('BOTTOM')
 	Minimap.coords:SetPoint('TOP', Minimap.ZoneText, 'BOTTOM', 0, -1)
 	Minimap.coords:SetShadowOffset(1, -1)
 
