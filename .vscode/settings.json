@@ -543,7 +543,12 @@
     "TargetFrame",
     "FocusFrame",
     "BossTargetFrameContainer",
-    "CompactArenaFrame"
+    "CompactArenaFrame",
+    "PingableType_UnitFrameMixin",
+    "ComboFrame",
+    "TargetFrameToT",
+    "MAX_PARTY_MEMBERS",
+    "MAX_ARENA_ENEMIES"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
