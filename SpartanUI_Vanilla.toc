@@ -31,6 +31,7 @@ libs\LibSharedMedia-3.0\lib.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
+libs\LibDispel\LibDispel.lua
 libs\LibHealComm-4.0\LibHealComm-4.0.lua
 libs\LibClassicDurations\LibClassicDurations.xml
 libs\LibClassicCasterino\LibClassicCasterino.lua
