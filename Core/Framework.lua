@@ -1130,6 +1130,7 @@ local DBdefault = {
 }
 SUI.DBdefault = DBdefault
 local GlobalDefaults = {
+	ChatLevelLog = {},
 	ErrorHandler = {
 		SUIErrorIcon = {},
 	},
