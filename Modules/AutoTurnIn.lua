@@ -1,35 +1,25 @@
 local SUI, L, StdUi = SUI, SUI.L, SUI.StdUi
-local module = SUI:NewModule('Module_AutoTurnIn') ---@type SUI.Module
+---@class SUI.Module.AutoTurnIn : SUI.Module
+local module = SUI:NewModule('Module_AutoTurnIn')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
 local SelectAvailableQuest = SelectAvailableQuest
 local SelectActiveQuest = SelectActiveQuest
-local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests or GetGossipActiveQuests
-local SelectGossipOption = C_GossipInfo.SelectOption or SelectGossipOption
-local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests or GetGossipAvailableQuests
-local GetGossipOptions = C_GossipInfo.GetOptions or GetGossipOptions
+local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests
+local SelectGossipOption = C_GossipInfo.SelectOption
+local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests
+local GetGossipOptions = C_GossipInfo.GetOptions
 local DB ---@type AutoTurnInDB
----@class AutoTurnInDB
-local DBDefaults = {
-	ChatText = true,
-	FirstLaunch = true,
-	debug = false,
-	TurnInEnabled = true,
-	AutoGossip = true,
-	AutoGossipSafeMode = true,
-	AcceptGeneralQuests = true,
-	DoCampainQuests = false,
-	AcceptRepeatable = false,
-	trivial = false,
-	lootreward = false,
-	autoequip = false,
-	armor = {},
-	weapon = {},
-	stat = {},
-	secondary = {},
-	GossipBlacklist = {
+local GlobalDB ---@type AutoTurnInGlobalDB
+local Blacklist = {
+	QuestIDs = {},
+	Gossip = {
 		-- General Blacklist
+		'Send me into the Black Temple.',
+		'what do you have for me?',
+		'show me your offerings.',
+		'What is the Superbloom?',
 		'i wish to buy from you.',
 		'i would like to buy from you.',
 		'make this inn your home.',
@@ -56,6 +46,12 @@ local DBDefaults = {
 		'Master of Conflict',
 		'Mailbox',
 		'Item Upgrade',
+		'Item Upgrades',
+		'Points of Interest',
+		'Barber',
+		'Rostrum of Transformation',
+		'Crafting Orders',
+		'Transmogrifier',
 		-- wotlk blacklist
 		'i am prepared to face saragosa!',
 		'what is the cause of this conflict?',
@@ -97,11 +93,15 @@ local DBDefaults = {
 		'What adventures await me if i join your covenant?',
 		'Show me how I can help the Shadowlands.',
 		'What are you offering here?',
+		--DF
 	},
-	WildcardBlackList = {
+	Wildcard = {
 		'wartime donation',
+		'where do i stand',
+		'how do i',
 		'work order',
 		'supplies needed',
+		'like to build',
 		'taxi',
 		'trade',
 		'train',
@@ -130,8 +130,11 @@ local DBDefaults = {
 		'your home',
 		'this inn',
 		'what you have on offer',
+		"i'd like to try the",
 	},
-	GossipWhitelist = {
+}
+local Whitelist = {
+	Gossip = {
 		'Evacuate, now!',
 		"I've cleared a path for you. You should leave.",
 		'If you insist. The show must go on!',
@@ -144,10 +147,39 @@ local DBDefaults = {
 		'We need scholars for an expedition to the Dragon Isles. Will you join us?',
 		'<Ask Khadgar what happened.>',
 		'Scalecommander Cindrethresh would like you to meet her at the zeppelin tower.',
-		"Tell me of the dracthyr's origins.",
 		"Tell me of the Neltharion's downfall.",
 		'Tell me of the Dawn of the Aspects.',
+		"I'm here to test your combat skills.",
+		--Event
+		'Begin the battle.',
 	},
+}
+---@class AutoTurnInGlobalDB
+local GlobalDBDefaults = {
+	Blacklist = Blacklist,
+	Whitelist = Whitelist,
+}
+---@class AutoTurnInDB
+local DBDefaults = {
+	ChatText = true,
+	FirstLaunch = true,
+	debug = false,
+	TurnInEnabled = true,
+	AutoGossip = true,
+	AutoGossipSafeMode = true,
+	AcceptGeneralQuests = true,
+	DoCampainQuests = false,
+	AcceptRepeatable = false,
+	trivial = false,
+	lootreward = false,
+	autoequip = false,
+	armor = {},
+	weapon = {},
+	stat = {},
+	secondary = {},
+	useGlobalDB = true,
+	Blacklist = Blacklist,
+	Whitelist = Whitelist,
 }
 
 local ATI_Container = CreateFrame('Frame')
@@ -175,11 +207,6 @@ local SLOTS = {
 	['INVTYPE_WEAPONOFFHAND'] = { 'SecondaryHandSlot' },
 	['INVTYPE_HOLDABLE'] = { 'SecondaryHandSlot' },
 }
-local itemCache = setmetatable({}, {
-	__index = function(table, key)
-		return {}
-	end,
-})
 local TempBlackList = {}
 local Lquests = {
 	-- Steamwheedle Cartel
@@ -260,6 +287,22 @@ local Lquests = {
 	['Pristine Firestorm Egg'] = { item = 'Pristine Firestorm Egg', amount = 1, currency = false },
 	['Thick Tiger Haunch'] = { item = 'Thick Tiger Haunch', amount = 1, currency = false },
 }
+
+local OptionTable = {
+	type = 'group',
+	name = L['Auto TurnIn'],
+	childGroups = 'tab',
+	get = function(info)
+		return DB[info[#info]]
+	end,
+	set = function(info, val)
+		DB[info[#info]] = val
+	end,
+	disabled = function()
+		return SUI:IsModuleDisabled(module)
+	end,
+}
+local buildItemList
 local function debug(content)
 	SUI.Debug(content, 'AutoTurnIn')
 end
@@ -267,13 +310,15 @@ end
 -- prints appropriate message if item is taken by greed
 -- equips received reward if such option selected
 function module:TurnInQuest(rewardIndex)
+	debug('TurnInQuest')
+	debug(rewardIndex)
 	if DB.ChatText then SUI:Print((UnitName('target') and UnitName('target') or '') .. '\n', GetRewardText()) end
 	if IsAltKeyDown() then
 		SUI:Print('Override key held, turn in disabled')
 		module:CancelAllTimers()
 		return
 	end
-	if module:blacklisted(GetQuestID()) then
+	if module.Blacklist.isBlacklisted(GetQuestID()) then
 		SUI:Print('Quest is blacklisted, not turning in.')
 		return
 	end
@@ -321,19 +366,28 @@ function module.MERCHANT_CLOSED()
 	IsMerchantOpen = false
 end
 
+local QUESTDETAILHistory = {}
 function module.QUEST_DETAIL()
+	debug('QUEST_DETAIL')
+	debug(GetTitleText())
+	debug(GetObjectiveText())
+	debug(GetQuestID())
 	if DB.AcceptGeneralQuests then
 		if DB.ChatText then
 			local title = GetTitleText()
 			local objText = GetObjectiveText()
-			if title and title ~= '' then SUI:Print(title) end
-			if objText and objText ~= '' then
-				SUI:Print(L['Quest Objectives'])
-				SUI:Print(objText)
-				debug('    ' .. objText)
+			if title and title ~= '' and not QUESTDETAILHistory[title] then
+				QUESTDETAILHistory[title] = objText
+				SUI:Print(title)
+				if objText and objText ~= '' then
+					SUI:Print(L['Quest Objectives'])
+					print(objText)
+					debug('    ' .. objText)
+				end
 			end
 		end
-		if not IsAltKeyDown() then AcceptQuest() end
+
+		if not IsAltKeyDown() and not module.Blacklist.isBlacklisted(GetQuestID()) then AcceptQuest() end
 	end
 end
 
@@ -345,13 +399,9 @@ function module.QUEST_COMPLETE()
 	local GreedLink, UpgradeLink, UpgradeAmmount = nil, nil, 0
 	local QuestRewardsWeapon = false
 	for i = 1, GetNumQuestChoices() do
-		if SUI.IsClassic then
-			SUI:Print(L['Canceling turn in, quest rewards items.'])
-			return
-		end
-
 		-- Load the items information
 		local link = GetQuestItemLink('choice', i)
+		debug(link)
 		if link == nil then return end
 		local itemName, _, _, _, _, _, _, _, itemEquipLoc, _, itemSellPrice = GetItemInfo(link)
 		local QuestItemTrueiLVL = SUI:GetiLVL(link) or 0
@@ -405,6 +455,7 @@ function module.QUEST_COMPLETE()
 		end
 	end
 
+	debug(GetNumQuestChoices())
 	-- If there is more than one reward check that we are allowed to select it.
 	if GetNumQuestChoices() > 1 then
 		if QuestRewardsWeapon then
@@ -454,7 +505,7 @@ function module:VarArgForActiveQuests(...)
 		debug(quest.isComplete)
 		debug(quest.frequency)
 		debug(quest.title)
-		if quest.isComplete and (not module:blacklisted(quest.title)) then
+		if quest.isComplete and (not module.Blacklist.isBlacklisted(quest.title)) then
 			local questInfo = Lquests[quest.title]
 			debug('selecting.. ' .. quest.title)
 			if questInfo then
@@ -470,42 +521,19 @@ end
 ---@param ... GossipQuestUIInfo[]
 function module:VarArgForAvailableQuests(...)
 	debug('VarArgForAvailableQuests')
-	if SUI.IsRetail then
-		debug(#...)
-		local INDEX_CONST = 6 -- was '5' in Cataclysm
-		for i, quest in pairs(...) do
-			local trivialORAllowed = (not quest.isTrivial) or DB.trivial
-			local isRepeatableORAllowed = (not quest.repeatable) or DB.AcceptRepeatable
+	debug(#...)
 
-			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(quest.title)) then
-				local questInfo = Lquests[quest.title]
-				if questInfo and questInfo.amount then
-					if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then C_GossipInfo.SelectAvailableQuest(math.floor(i / INDEX_CONST) + 1) end
-				else
-					C_GossipInfo.SelectAvailableQuest(math.floor(i / INDEX_CONST) + 1)
-				end
-			end
-		end
-	else
-		local INDEX_CONST = 6 -- was '5' in Cataclysm
-		for i = 1, select('#', ...), INDEX_CONST do
-			---@diagnostic disable-next-line: redundant-parameter
-			local name = select(i * 1, GetGossipAvailableQuests(i))
-			local isTrivial = select(i + 2, ...)
-			local isDaily = select(i + 3, ...)
-			local isRepeatable = select(i + 4, ...)
-			local trivialORAllowed = (not isTrivial) or DB.trivial
-			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or DB.AcceptRepeatable
+	for i, quest in pairs(...) do
+		local trivialORAllowed = (not quest.isTrivial) or DB.trivial
+		local isRepeatableORAllowed = (not quest.repeatable) or DB.AcceptRepeatable
 
-			-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
-			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(name)) then
-				local questInfo = Lquests[name]
-				if questInfo and questInfo.amount then
-					if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1) end
-				else
-					SelectGossipAvailableQuest(math.floor(i / INDEX_CONST) + 1)
-				end
+		-- Quest is appropriate if: (it is trivial and trivial are accepted) and (any quest accepted or (it is daily quest that is not in ignore list))
+		if (trivialORAllowed and isRepeatableORAllowed) and not module.Blacklist.isBlacklisted(quest.title) and not module.Blacklist.isBlacklisted(quest.questID) then
+			local questInfo = Lquests[quest.title]
+			if questInfo and questInfo.amount then
+				if self:GetItemAmount(questInfo.currency, questInfo.item) >= questInfo.amount then C_GossipInfo.SelectAvailableQuest(quest.questID) end
+			else
+				C_GossipInfo.SelectAvailableQuest(quest.questID)
 			end
 		end
 	end
@@ -566,6 +594,7 @@ function module:FirstLaunch()
 		Next = function()
 			if SUI:IsModuleEnabled('AutoTurnIn') then
 				local window = SUI.Setup.window
+				---@diagnostic disable-next-line: undefined-field
 				local ATI = window.content.ATI
 
 				for key, object in pairs(ATI.options) do
@@ -581,21 +610,114 @@ function module:FirstLaunch()
 	SUI.Setup:AddPage(PageData)
 end
 
-function module:blacklisted(lookupId)
+module.Blacklist = {}
+module.Whitelist = {}
+---@enum ListTypes
+---| 'QuestIDs'
+---| 'Gossip'
+---| 'Wildcard'
+
+---Returns true if blacklisted
+---@param lookupId string|number
+---@return boolean
+function module.Blacklist.isBlacklisted(lookupId)
 	local name = tostring(lookupId)
-	if SUI:IsInTable(DB.GossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) then
+
+	-- Determine which blacklist to use
+	local blacklistDB = DB.useGlobalDB and GlobalDB.Blacklist or DB.Blacklist
+	local gossipBlacklist = blacklistDB.Gossip
+	local questBlacklist = blacklistDB.QuestIDs
+	local wildcardBlacklist = blacklistDB.Wildcard
+
+	-- Function to perform a case-insensitive search
+	local function isInPairSearch(blacklist, checkName)
+		for _, key in pairs(blacklist) do
+			if string.find(string.lower(checkName), string.lower(key)) then return true end
+		end
+		return false
+	end
+
+	-- Check for direct match in blacklists or wildcard match
+	if SUI:IsInTable(gossipBlacklist, name) or SUI:IsInTable(TempBlackList, name) then
+		debug(name .. '---IS BLACKLISTED')
+		return true
+	elseif isInPairSearch(wildcardBlacklist, name) or isInPairSearch(questBlacklist, name) then
 		debug(name .. ' - IS BLACKLISTED')
 		return true
 	end
 
-	for _, key in pairs(DB.WildcardBlackList) do
-		if string.find(string.lower(name), string.lower(key)) then
-			debug(name .. ' - IS BLACKLISTED')
-			return true
+	-- Not blacklisted
+	debug(name .. '---IS NOT BLACKLISTED')
+	return false
+end
+
+local function Add(list, id, mode, temp, index)
+	if temp then
+		TempBlackList[id] = true
+	else
+		local database = DB.useGlobalDB and GlobalDB[list][mode] or DB[list][mode]
+		if index then
+			database[index] = id
+		else
+			database[#database + 1] = id
 		end
 	end
+end
+---@param id string|number
+---@param mode ListTypes
+---@param temp? boolean
+---@param index? number
+function module.Blacklist.Add(id, mode, temp, index)
+	Add('Blacklist', id, mode, temp, index)
+end
 
-	return false
+---@param id string|number
+---@param mode ListTypes
+---@param temp? boolean
+---@param index? number
+function module.Whitelist.Add(id, mode, temp, index)
+	Add('Whitelist', id, mode, temp, index)
+end
+
+---@param mode ListTypes
+---@return table<number, any>
+function module.Blacklist.Get(mode)
+	return DB.useGlobalDB and GlobalDB.Blacklist[mode] or DB.Blacklist[mode]
+end
+---@param mode ListTypes
+---@return table<number, any>
+function module.Whitelist.Get(mode)
+	return DB.useGlobalDB and GlobalDB.Whitelist[mode] or DB.Whitelist[mode]
+end
+
+local function Remove(list, id, mode, temp, index)
+	local name = tostring(id)
+	if temp then
+		TempBlackList[name] = nil
+	else
+		local database = DB.useGlobalDB and GlobalDB[list][mode] or DB[list][mode]
+		if index then
+			database[index] = nil
+		else
+			database[name] = nil
+		end
+	end
+end
+
+---@param id string|number
+---@param mode ListTypes
+---@param temp? boolean
+---@param index? number
+function module.Blacklist.Remove(id, mode, temp, index)
+	Remove('Blacklist', id, mode, temp, index)
+end
+
+---@param id string|number
+---@param mode ListTypes
+---@param temp? boolean
+---@param index? number
+function module.Whitelist.Remove(id, mode, temp, index)
+	Remove('Whitelist', id, mode, temp, index)
 end
 
 function module.QUEST_GREETING()
@@ -616,7 +738,7 @@ function module.QUEST_GREETING()
 			local trivialORAllowed = (not isTrivial) or DB.trivial
 			local isDaily = (frequency == LE_QUEST_FREQUENCY_DAILY or frequency == LE_QUEST_FREQUENCY_WEEKLY)
 			local isRepeatableORAllowed = (not isRepeatable or not isDaily) or DB.AcceptRepeatable
-			if (trivialORAllowed and isRepeatableORAllowed) and (not module:blacklisted(questID)) then
+			if (trivialORAllowed and isRepeatableORAllowed) and (not module.Blacklist.isBlacklisted(questID)) and questID ~= 0 then
 				debug('selecting ' .. i .. ' questId ' .. questID)
 				---@diagnostic disable-next-line: redundant-parameter
 				SelectAvailableQuest(i)
@@ -633,31 +755,47 @@ function module.GOSSIP_SHOW()
 
 	module:VarArgForActiveQuests(GetGossipActiveQuests())
 	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
-	if not SUI.IsRetail then return end
 
+	debug('------ [Debugging Gossip] ------')
 	local options = GetGossipOptions()
-	for k, gossip in pairs(options) do
-		debug('------')
-		debug(gossip.name)
-		debug(gossip.rewards)
-		debug(gossip.spellID)
-		debug(gossip.status)
-		debug(gossip.flags)
-		debug('------')
-		local isWhitelisted = SUI:IsInTable(DB.GossipWhitelist, gossip.name)
-		local isBlacklisted = module:blacklisted(gossip.name)
-		if (gossip.status == 0) and (not isBlacklisted or isWhitelisted) and SUI.IsRetail then
+	debug('Number of Options ' .. #options)
+	for _, gossip in pairs(options) do
+		debug('---Start Option Info---')
+
+		-- Debug individual gossip attributes
+		debug('Gossip Name: ' .. tostring(gossip.name))
+		debug('Gossip Rewards: ' .. tostring(gossip.rewards))
+		debug('Gossip Status: ' .. tostring(gossip.status))
+		debug('Gossip Flags: ' .. tostring(gossip.flags))
+
+		-- Check if gossip is whitelisted
+		local whitelist = DB.useGlobalDB and GlobalDB.Whitelist.Gossip or DB.Whitelist.Gossip
+		local isWhitelisted = SUI:IsInTable(whitelist, gossip.name)
+		debug('Is Whitelisted: ' .. tostring(isWhitelisted))
+
+		-- Check if gossip is blacklisted
+		local isBlacklisted = module.Blacklist.isBlacklisted(gossip.name)
+		debug('Is Blacklisted: ' .. tostring(isBlacklisted))
+
+		-- Check if gossip is a quest
+		local isQuest = string.match(gossip.name, 'Quest') and true or false
+		debug('Is a Quest: ' .. tostring(isQuest))
+
+		-- Check the final condition
+		local Allow = not isBlacklisted or (isWhitelisted or isQuest)
+		debug('Final Condition: ' .. tostring(Allow))
+		debug('---End Option Info---')
+		if (gossip.status == 0) and Allow then
 			-- If we are in safemode and gossip option flagged as 'QUEST' then exit
-			if DB.AutoGossipSafeMode and not isWhitelisted then
-				debug(string.format('Safe mode active not selection gossip option "%s"', gossip.name))
+			if DB.AutoGossipSafeMode and (not isWhitelisted and not isQuest) then
+				debug(string.format('Safe mode active - not selecting gossip option "%s"', gossip.name))
 				return
 			end
 			TempBlackList[gossip.name] = true
+			debug(gossip.name .. '---BLACKLISTED')
 			SelectGossipOption(gossip.gossipOptionID)
 
 			if DB.ChatText then SUI:Print('Selecting: ' .. gossip.name) end
-			TempBlackList[gossip.name] = true
-			debug(gossip.name .. '---BLACKLISTED')
 			return
 		end
 	end
@@ -667,30 +805,46 @@ function module.GOSSIP_SHOW()
 end
 
 function module.QUEST_PROGRESS()
-	if IsQuestCompletable() and DB.TurnInEnabled and (not module:blacklisted(GetTitleText())) then CompleteQuest() end
+	if IsQuestCompletable() and DB.TurnInEnabled and (not module.Blacklist.isBlacklisted(GetTitleText())) then CompleteQuest() end
 end
 
 function module:OnInitialize()
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoTurnIn', { profile = DBDefaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('AutoTurnIn', { global = GlobalDBDefaults, profile = DBDefaults })
 	DB = module.Database.profile
+	GlobalDB = module.Database.global
 end
 
 function module:OnEnable()
-	if SUI:IsModuleDisabled(module) then return end
-
 	debug('AutoTurnIn Loaded')
 	module:BuildOptions()
 	module:FirstLaunch()
 	local lastEvent = ''
+	if SUI:IsModuleDisabled(module) then return end
 
 	local function OnEvent(_, event)
 		if SUI:IsModuleDisabled(module) then return end
-
 		debug(event)
 		lastEvent = event
 
+		local QuestID = GetQuestID()
+
 		if IsAltKeyDown() then
 			SUI:Print('Canceling Override key held disabled')
+			module:CancelAllTimers()
+			return
+		end
+		if IsControlKeyDown() then
+			if event == 'GOSSIP_SHOW' or event == 'QUEST_GREETING' then
+				SUI:Print('Quest Blacklist key held, select the quest to blacklist')
+			elseif event == 'QUEST_DETAIL' or event == 'QUEST_PROGRESS' then
+				if module.Blacklist.isBlacklisted(QuestID) then
+					SUI:Print('Quest "' .. GetTitleText() .. '" is already blacklisted ')
+				else
+					SUI:Print('Blacklisting quest "' .. GetTitleText() .. '" ID# ' .. QuestID)
+					module.Blacklist.Add(QuestID, 'QuestIDs')
+					buildItemList('QuestIDs')
+				end
+			end
 			module:CancelAllTimers()
 			return
 		end
@@ -706,72 +860,6 @@ function module:OnEnable()
 	ATI_Container:RegisterEvent('QUEST_COMPLETE') -- quest turn in screen
 	ATI_Container:RegisterEvent('MERCHANT_SHOW')
 	ATI_Container:RegisterEvent('MERCHANT_CLOSED')
-
-	local IsCollapsed = true
-
-	for _, v in ipairs({ 'QuestFrame', 'GossipFrame' }) do
-		local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
-		OptionsPopdown:SetScale(0.95)
-		OptionsPopdown:SetPoint('BOTTOM', _G[v], 'TOP', 0, 2)
-		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
-		OptionsPopdown.title:SetPoint('CENTER')
-
-		-- OptionsPopdown.CloseButton = StdUi:Button(OptionsPopdown, 15, 15, 'X')
-		OptionsPopdown.minimizeButton = StdUi:Button(OptionsPopdown, 15, 15, '-')
-
-		StdUi:GlueRight(OptionsPopdown.minimizeButton, OptionsPopdown, -5, 0, true)
-		-- StdUi:GlueRight(OptionsPopdown.CloseButton, OptionsPopdown, -5, 0, true)
-		-- StdUi:GlueLeft(OptionsPopdown.minimizeButton, OptionsPopdown.CloseButton, -2, 0)
-
-		OptionsPopdown.minimizeButton:SetScript('OnClick', function()
-			if OptionsPopdown.Panel:IsVisible() then
-				OptionsPopdown.Panel:Hide()
-				IsCollapsed = true
-			else
-				OptionsPopdown.Panel:Show()
-				IsCollapsed = false
-			end
-		end)
-		OptionsPopdown:HookScript('OnShow', function()
-			if SUI:IsModuleDisabled(module) then
-				OptionsPopdown:Hide()
-				return
-			end
-			if IsCollapsed then
-				OptionsPopdown.Panel:Hide()
-			else
-				OptionsPopdown.Panel:Show()
-			end
-		end)
-
-		local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
-		Panel:SetPoint('BOTTOM', OptionsPopdown, 'TOP', 0, 1)
-		Panel:Hide()
-		local options = {}
-		options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
-		options.AcceptGeneralQuests = StdUi:Checkbox(Panel, L['Accept quests'], nil, 20)
-		options.TurnInEnabled = StdUi:Checkbox(Panel, L['Turn in completed quests'], nil, 20)
-		options.AutoGossip = StdUi:Checkbox(Panel, L['Auto gossip'], nil, 20)
-		options.AutoGossipSafeMode = StdUi:Checkbox(Panel, L['Auto gossip safe mode'], nil, 20)
-		for setting, Checkbox in pairs(options) do
-			Checkbox:SetChecked(DB[setting])
-			Checkbox:HookScript('OnClick', function()
-				DB[setting] = Checkbox:GetChecked()
-				if Checkbox:GetChecked() then OnEvent(nil, lastEvent) end
-			end)
-		end
-
-		StdUi:GlueTop(options.DoCampainQuests, Panel, 5, -2, 'LEFT')
-
-		StdUi:GlueBelow(options.AcceptGeneralQuests, options.DoCampainQuests, 0, 2, 'LEFT')
-		StdUi:GlueRight(options.TurnInEnabled, options.AcceptGeneralQuests, 0, 0)
-
-		StdUi:GlueBelow(options.AutoGossip, options.AcceptGeneralQuests, 0, 2, 'LEFT')
-		StdUi:GlueRight(options.AutoGossipSafeMode, options.AutoGossip, 0, 0)
-
-		OptionsPopdown.Panel = Panel
-		OptionsPopdown.Panel.options = options
-	end
 end
 
 function module:OnDisable()
@@ -785,116 +873,277 @@ function module:OnDisable()
 end
 
 function module:BuildOptions()
-	local OptionTable = {
-		type = 'group',
-		name = L['Auto TurnIn'],
-		get = function(info)
-			return DB[info[#info]]
-		end,
-		set = function(info, val)
-			DB[info[#info]] = val
-		end,
-		disabled = function()
-			return SUI:IsModuleDisabled(module)
-		end,
-		args = {
-			DoCampainQuests = {
-				name = L['Accept/Complete Campaign Quests'],
-				type = 'toggle',
+	buildItemList = function(listType, mode)
+		if not mode then mode = 'Blacklist' end
+		local spellsOpt = OptionTable.args[mode].args[listType].args.list.args
+		table.wipe(spellsOpt)
+
+		for itemId, entry in pairs(module[mode].Get(listType)) do
+			local label
+
+			if type(entry) == 'number' then
+				-- If the entry is a number, assume it's a quest ID
+				local title = C_QuestLog.GetTitleForQuestID(entry)
+				if title then
+					label = 'ID: ' .. entry .. ' (' .. title .. ')'
+				else
+					label = '|cFFFF0000ID: ' .. entry .. ' (Title not found)'
+				end
+			else
+				-- If the entry is not a number, use it directly
+				label = entry
+			end
+
+			spellsOpt[itemId .. 'label'] = {
+				type = 'description',
 				width = 'double',
-				order = 1,
+				fontSize = 'medium',
+				order = itemId,
+				name = label,
+			}
+			spellsOpt[tostring(itemId)] = {
+				type = 'execute',
+				name = L['Delete'],
+				width = 'half',
+				order = itemId + 0.05,
+				func = function(info)
+					module[mode].Remove(itemId, listType)
+					buildItemList(listType)
+				end,
+			}
+		end
+	end
+
+	OptionTable.args = {
+		DoCampainQuests = {
+			name = L['Accept/Complete Campaign Quests'],
+			type = 'toggle',
+			width = 'double',
+			order = 1,
+		},
+		ChatText = {
+			name = L['Output quest text in chat'],
+			type = 'toggle',
+			width = 'double',
+			order = 2,
+		},
+		QuestAccepting = {
+			name = L['Quest accepting'],
+			type = 'group',
+			inline = true,
+			order = 10,
+			width = 'full',
+			get = function(info)
+				return DB[info[#info]]
+			end,
+			set = function(info, val)
+				DB[info[#info]] = val
+			end,
+			args = {
+				AcceptGeneralQuests = {
+					name = L['Accept quests'],
+					type = 'toggle',
+					order = 10,
+				},
+				trivial = {
+					name = L['Accept trivial quests'],
+					type = 'toggle',
+					order = 20,
+				},
+				AcceptRepeatable = {
+					name = L['Accept repeatable'],
+					type = 'toggle',
+					order = 30,
+				},
+				AutoGossip = {
+					name = L['Auto gossip'],
+					type = 'toggle',
+					order = 15,
+				},
+				AutoGossipSafeMode = {
+					name = L['Auto gossip safe mode'],
+					desc = 'If the option is not in the whitelist or does not have the (Quest) tag, it will not be automatically selected.',
+					type = 'toggle',
+					order = 16,
+				},
 			},
-			QuestAccepting = {
-				name = L['Quest accepting'],
-				type = 'group',
-				inline = true,
-				order = 10,
-				width = 'full',
-				get = function(info)
-					return DB[info[#info]]
-				end,
-				set = function(info, val)
-					DB[info[#info]] = val
-				end,
-				args = {
-					AcceptGeneralQuests = {
-						name = L['Accept quests'],
-						type = 'toggle',
-						order = 10,
+		},
+		QuestTurnIn = {
+			name = L['Quest turn in'],
+			type = 'group',
+			inline = true,
+			order = 20,
+			width = 'full',
+			get = function(info)
+				return DB[info[#info]]
+			end,
+			set = function(info, val)
+				DB[info[#info]] = val
+			end,
+			args = {
+				TurnInEnabled = {
+					name = L['Turn in completed quests'],
+					type = 'toggle',
+					order = 10,
+				},
+				lootreward = {
+					name = L['Auto select quest reward'],
+					type = 'toggle',
+					order = 30,
+				},
+				autoequip = {
+					name = L['Auto equip upgrade quest rewards'],
+					desc = L['Based on iLVL'],
+					type = 'toggle',
+					order = 30,
+				},
+			},
+		},
+		useGlobalDB = {
+			name = L['Use a shared Blacklist & Whitelist for all characters.'],
+			type = 'toggle',
+			width = 'full',
+			order = 30,
+		},
+		Blacklist = {
+			type = 'group',
+			name = 'Blacklist',
+			order = 40,
+			args = {
+				QuestIDs = {
+					type = 'group',
+					name = 'Quest ID',
+					order = 40,
+					args = {
+						desc = {
+							name = 'Blacklisted quests will never be auto accepted',
+							type = 'description',
+							order = 1,
+						},
+						desc2 = {
+							name = 'Quests can be blacklisted by holding CTRL while talking to a NPC or by adding the quest ID to the list below',
+							type = 'description',
+							order = 1.1,
+						},
+						create = {
+							name = 'Add Quest ID',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Blacklist.Add(input, 'QuestIDs', false, #info - 1)
+								buildItemList(info[#info - 1])
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
 					},
-					trivial = {
-						name = L['Accept trivial quests'],
-						type = 'toggle',
-						order = 20,
+				},
+				Wildcard = {
+					type = 'group',
+					name = 'Wildcard',
+					order = 41,
+					args = {
+						desc = {
+							name = 'Any quest or gossip selection when talking to a NPC containing the text below will not be auto selected',
+							type = 'description',
+							order = 1,
+						},
+						create = {
+							name = 'Add text to block',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Blacklist.Add(input, 'Wildcard', false, #info - 1)
+								buildItemList(info[#info - 1])
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
 					},
-					AcceptRepeatable = {
-						name = L['Accept repeatable'],
-						type = 'toggle',
-						order = 30,
-					},
-					AutoGossip = {
-						name = L['Auto gossip'],
-						type = 'toggle',
-						order = 15,
-					},
-					AutoGossipSafeMode = {
-						name = L['Auto gossip safe mode'],
-						type = 'toggle',
-						order = 16,
+				},
+				Gossip = {
+					type = 'group',
+					name = 'Gossip options',
+					order = 42,
+					args = {
+						desc = {
+							name = 'Blacklisted gossip options will never be auto selected',
+							type = 'description',
+							order = 1,
+						},
+						create = {
+							name = 'Add gossip text',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Blacklist.Add(input, 'Gossip', false, #info - 1)
+								buildItemList(info[#info - 1])
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
 					},
 				},
 			},
-			QuestTurnIn = {
-				name = L['Quest turn in'],
-				type = 'group',
-				inline = true,
-				order = 20,
-				width = 'full',
-				get = function(info)
-					return DB[info[#info]]
-				end,
-				set = function(info, val)
-					DB[info[#info]] = val
-				end,
-				args = {
-					TurnInEnabled = {
-						name = L['Turn in completed quests'],
-						type = 'toggle',
-						order = 10,
-					},
-					lootreward = {
-						name = L['Auto select quest reward'],
-						type = 'toggle',
-						order = 30,
-					},
-					autoequip = {
-						name = L['Auto equip upgrade quest rewards'],
-						desc = L['Based on iLVL'],
-						type = 'toggle',
-						order = 30,
+		},
+		Whitelist = {
+			type = 'group',
+			name = 'Whitelist',
+			order = 50,
+			args = {
+				Gossip = {
+					type = 'group',
+					name = 'Gossip',
+					order = 42,
+					args = {
+						desc = {
+							name = 'Whitelisted gossip options will be auto selected',
+							type = 'description',
+							order = 1,
+						},
+						create = {
+							name = 'Add gossip text',
+							type = 'input',
+							order = 2,
+							width = 'full',
+							set = function(info, input)
+								module.Whitelist.Add(input, 'Gossip', false, #info - 1)
+								buildItemList(info[#info - 1], 'Whitelist')
+							end,
+						},
+						list = {
+							order = 3,
+							type = 'group',
+							inline = true,
+							name = 'Quest list',
+							args = {},
+						},
 					},
 				},
-			},
-			ChatText = {
-				name = L['Output quest text in chat'],
-				type = 'toggle',
-				width = 'double',
-				order = 30,
-			},
-			debug = {
-				name = L['Debug mode'],
-				type = 'toggle',
-				width = 'full',
-				order = 900,
 			},
 		},
 	}
-	if SUI.IsClassic then
-		OptionTable.args.QuestTurnIn.args.lootreward.hidden = true
-		OptionTable.args.QuestTurnIn.args.autoequip.hidden = true
-
-		OptionTable.args.QuestAccepting.args.trivial.hidden = true
-		OptionTable.args.QuestAccepting.args.AcceptRepeatable.hidden = true
-	end
+	buildItemList('QuestIDs')
+	buildItemList('Wildcard')
+	buildItemList('Gossip')
+	buildItemList('Gossip', 'Whitelist')
 	SUI.Options:AddOptions(OptionTable, 'AutoTurnIn')
 end

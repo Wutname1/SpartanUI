@@ -491,6 +491,8 @@ L['Scale for auras that you casted or can Spellsteal, any number above 100% is b
 L['Only apply the selected filters to buffs on friendly units and debuffs on hostile units, and otherwise show all auras.'] = true
 L['Data collected this session'] = true
 L['You can view all collected data below, note some additional data will/can be collected as settings within SUI are changed. That data will show up below as it is collected.'] = true
-L['Without using the Wago or WowUp client no data collected will be sent.'] = true
 L['This sends anonymous crash logs and telemetry from your game right to the developer, enabling me to improve the addon.'] = true
 L['All data collected'] = true
+L['Automatically output number of BG leavers to instance chat if over 15'] = true
+L['PVP Role Indicator'] = true
+L['Use a shared Blacklist & Whitelist for all characters.'] = true
