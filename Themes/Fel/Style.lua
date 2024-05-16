@@ -84,9 +84,10 @@ function module:OnInitialize()
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
 			size = { 220, 220 },
-			position = 'CENTER,Minimap,CENTER,-2,-36',
+			position = 'CENTER,Minimap,CENTER,5,25',
+			-- position = { 'TOPLEFT,Minimap,TOPLEFT,-2,-4', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,2,4' },
 		},
-		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,0',
+		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
 		engulfed = true,
 	}
 	SUI:GetModule('Module_Minimap'):Register('Fel', minimapSettings)
