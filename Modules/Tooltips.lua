@@ -556,21 +556,21 @@ function module:OnEnable()
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
 	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
-	if TooltipDataProcessor then
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetGeneric)
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.AllTypes, TooltipSetGeneric)
-	else
-		GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
-		GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
-		GameTooltip:HookScript('OnTooltipSetSpell', TooltipSetGeneric)
-		GameTooltip:HookScript('OnTooltipSetQuest', TooltipSetGeneric)
-		ShoppingTooltip1:HookScript('OnTooltipSetItem', TooltipSetItem)
-		ShoppingTooltip2:HookScript('OnTooltipSetItem', TooltipSetItem)
-	end
+	-- if TooltipDataProcessor then
+	-- 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
+	-- 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, TooltipSetUnit)
+	-- 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, TooltipSetGeneric)
+	-- 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Mount, TooltipSetGeneric)
+	-- 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Quest, TooltipSetGeneric)
+	-- 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.AllTypes, TooltipSetGeneric)
+	-- else
+	GameTooltip:HookScript('OnTooltipSetItem', TooltipSetItem)
+	GameTooltip:HookScript('OnTooltipSetUnit', TooltipSetUnit)
+	GameTooltip:HookScript('OnTooltipSetSpell', TooltipSetGeneric)
+	GameTooltip:HookScript('OnTooltipSetQuest', TooltipSetGeneric)
+	ShoppingTooltip1:HookScript('OnTooltipSetItem', TooltipSetItem)
+	ShoppingTooltip2:HookScript('OnTooltipSetItem', TooltipSetItem)
+	-- end
 end
 
 local OnMouseOpt = function(v)
