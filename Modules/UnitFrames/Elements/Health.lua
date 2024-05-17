@@ -31,6 +31,15 @@ local function Build(frame, DB)
 		if not key.enabled then health.TextElements[i]:Hide() end
 	end
 
+	-- TWW Added a Temp health Loss bar
+	local tempLoss = CreateFrame('StatusBar', nil, frame.Health)
+	tempLoss:SetFrameLevel(DB.FrameLevel or 3)
+	tempLoss:SetPoint('TOP')
+	tempLoss:SetPoint('BOTTOM')
+	tempLoss:SetPoint('RIGHT', frame.Health, 'LEFT')
+	tempLoss:SetWidth(10)
+	tempLoss:Hide()
+
 	frame.Health = health
 
 	frame.Health.frequentUpdates = true
@@ -45,67 +54,65 @@ local function Build(frame, DB)
 
 	frame.Health.DataTable = DB.text
 
-	if SUI.IsRetail then
-		-- Position and size
-		local myBar = CreateFrame('StatusBar', nil, frame.Health)
-		myBar:SetPoint('TOP')
-		myBar:SetPoint('BOTTOM')
-		myBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
-		myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-		myBar:SetStatusBarColor(0, 1, 0.5, 0.45)
-		myBar:SetSize(150, 16)
-		myBar:Hide()
+	-- Position and size
+	local myBar = CreateFrame('StatusBar', nil, frame.Health)
+	myBar:SetPoint('TOP')
+	myBar:SetPoint('BOTTOM')
+	myBar:SetPoint('LEFT', frame.Health:GetStatusBarTexture(), 'RIGHT')
+	myBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	myBar:SetStatusBarColor(0, 1, 0.5, 0.45)
+	myBar:SetSize(150, 16)
+	myBar:Hide()
 
-		local otherBar = CreateFrame('StatusBar', nil, myBar)
-		otherBar:SetPoint('TOP')
-		otherBar:SetPoint('BOTTOM')
-		otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
-		otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-		otherBar:SetStatusBarColor(0, 0.5, 1, 0.35)
-		otherBar:SetSize(150, 16)
-		otherBar:Hide()
+	local otherBar = CreateFrame('StatusBar', nil, myBar)
+	otherBar:SetPoint('TOP')
+	otherBar:SetPoint('BOTTOM')
+	otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
+	otherBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	otherBar:SetStatusBarColor(0, 0.5, 1, 0.35)
+	otherBar:SetSize(150, 16)
+	otherBar:Hide()
 
-		local absorbBar = CreateFrame('StatusBar', nil, frame.Health)
-		absorbBar:SetPoint('TOP')
-		absorbBar:SetPoint('BOTTOM')
-		absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
-		absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-		absorbBar:SetWidth(10)
-		absorbBar:Hide()
+	local absorbBar = CreateFrame('StatusBar', nil, frame.Health)
+	absorbBar:SetPoint('TOP')
+	absorbBar:SetPoint('BOTTOM')
+	absorbBar:SetPoint('LEFT', otherBar:GetStatusBarTexture(), 'RIGHT')
+	absorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	absorbBar:SetWidth(10)
+	absorbBar:Hide()
 
-		local healAbsorbBar = CreateFrame('StatusBar', nil, frame.Health)
-		healAbsorbBar:SetPoint('TOP')
-		healAbsorbBar:SetPoint('BOTTOM')
-		healAbsorbBar:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
-		healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
-		healAbsorbBar:SetReverseFill(true)
-		healAbsorbBar:SetWidth(10)
-		healAbsorbBar:Hide()
+	local healAbsorbBar = CreateFrame('StatusBar', nil, frame.Health)
+	healAbsorbBar:SetPoint('TOP')
+	healAbsorbBar:SetPoint('BOTTOM')
+	healAbsorbBar:SetPoint('RIGHT', frame.Health:GetStatusBarTexture())
+	healAbsorbBar:SetStatusBarTexture(UF:FindStatusBarTexture(DB.texture))
+	healAbsorbBar:SetReverseFill(true)
+	healAbsorbBar:SetWidth(10)
+	healAbsorbBar:Hide()
 
-		local overAbsorb = frame.Health:CreateTexture(nil, 'OVERLAY')
-		overAbsorb:SetPoint('TOP')
-		overAbsorb:SetPoint('BOTTOM')
-		overAbsorb:SetPoint('LEFT', frame.Health, 'RIGHT')
-		overAbsorb:SetWidth(10)
-		overAbsorb:Hide()
+	local overAbsorb = frame.Health:CreateTexture(nil, 'OVERLAY')
+	overAbsorb:SetPoint('TOP')
+	overAbsorb:SetPoint('BOTTOM')
+	overAbsorb:SetPoint('LEFT', frame.Health, 'RIGHT')
+	overAbsorb:SetWidth(10)
+	overAbsorb:Hide()
 
-		local overHealAbsorb = frame.Health:CreateTexture(nil, 'OVERLAY')
-		overHealAbsorb:SetPoint('TOP')
-		overHealAbsorb:SetPoint('BOTTOM')
-		overHealAbsorb:SetPoint('RIGHT', frame.Health, 'LEFT')
-		overHealAbsorb:SetWidth(10)
-		overHealAbsorb:Hide()
+	local overHealAbsorb = frame.Health:CreateTexture(nil, 'OVERLAY')
+	overHealAbsorb:SetPoint('TOP')
+	overHealAbsorb:SetPoint('BOTTOM')
+	overHealAbsorb:SetPoint('RIGHT', frame.Health, 'LEFT')
+	overHealAbsorb:SetWidth(10)
+	overHealAbsorb:Hide()
 
-		frame.HealthPrediction = {
-			myBar = myBar,
-			otherBar = otherBar,
-			absorbBar = absorbBar,
-			healAbsorbBar = healAbsorbBar,
-			overAbsorb = overAbsorb,
-			overHealAbsorb = overHealAbsorb,
-			maxOverflow = 2,
-		}
-	end
+	frame.HealthPrediction = {
+		myBar = myBar,
+		otherBar = otherBar,
+		absorbBar = absorbBar,
+		healAbsorbBar = healAbsorbBar,
+		overAbsorb = overAbsorb,
+		overHealAbsorb = overHealAbsorb,
+		maxOverflow = 2,
+	}
 end
 
 ---@param frame table
