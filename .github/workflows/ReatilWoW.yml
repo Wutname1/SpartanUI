@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Clone project
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
 
       # Run the GitHub Action for the packager project
       - name: Package and release
