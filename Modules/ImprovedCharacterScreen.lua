@@ -12,6 +12,7 @@ local DBDefaults = {
 		fontColor = { 1, 1, 1, 1 },
 	},
 }
+local timerunner = false
 
 ---@param button any
 ---@param itemLevel number
@@ -73,19 +74,21 @@ local function UpdateItemSlotButton(button, unit)
 			addiLvlDisplay(button, item:GetCurrentItemLevel(), item:GetItemQuality())
 
 			--Add Text next to item if its Cloak of Infinite Potential
-			if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
-				local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
-				for i = 1, 9 do
-					ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
+			if timerunner then
+				if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
+					local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
+					for i = 1, 9 do
+						ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
+					end
+					-- print('Total threads updated: ' .. ThreadCount)
+					if not button.threadCount then
+						button.threadCount = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
+						SUI.Font:Format(button.threadCount, module.DB.fontSize - 2, 'CharacterScreen')
+						button.threadCount:ClearAllPoints()
+						button.threadCount:SetPoint('LEFT', button.SUIOverlay, 'RIGHT', 2, 0)
+					end
+					button.threadCount:SetFormattedText('|cff00FF98Threads:|cffFFFFFF\n' .. SUI.Font:comma_value(ThreadCount))
 				end
-				-- print('Total threads updated: ' .. ThreadCount)
-				if not button.threadCount then
-					button.threadCount = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
-					SUI.Font:Format(button.threadCount, module.DB.fontSize - 2, 'CharacterScreen')
-					button.threadCount:ClearAllPoints()
-					button.threadCount:SetPoint('LEFT', button.SUIOverlay, 'RIGHT', 2, 0)
-				end
-				button.threadCount:SetFormattedText('Threads:\n' .. ThreadCount)
 			end
 		end)
 	end
@@ -218,6 +221,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
+	timerunner = C_UnitAuras.GetPlayerAuraBySpellID(424143)
 	Options()
 	if SUI:IsModuleDisabled(module) then return end
 
