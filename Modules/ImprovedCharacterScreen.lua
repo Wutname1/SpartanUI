@@ -23,14 +23,10 @@ local function addiLvlDisplay(button, itemLevel, itemQuality)
 	end
 
 	if not button.ilvlText then
-		local overlayFrame = CreateFrame('FRAME', nil, button)
-		overlayFrame:SetAllPoints()
-		button.ilvlOverlay = overlayFrame
-		button.ilvlText = overlayFrame:CreateFontString('$parentItemLevel', 'OVERLAY')
+		button.ilvlText = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
 		button.ilvlText:Hide()
 	end
 
-	button.ilvlOverlay:SetFrameLevel(button:GetFrameLevel() + 1)
 	button.ilvlText:ClearAllPoints()
 	button.ilvlText:SetPoint(module.DB.position)
 	SUI.Font:Format(button.ilvlText, module.DB.fontSize, 'CharacterScreen')
@@ -65,7 +61,32 @@ local function UpdateItemSlotButton(button, unit)
 		if not item or item:IsItemEmpty() then return end
 
 		item:ContinueOnItemLoad(function()
+			-- Create overlay frame if it doesn't exist
+			if not button.SUIOverlay then
+				local overlayFrame = CreateFrame('FRAME', nil, button)
+				overlayFrame:SetAllPoints()
+				overlayFrame:SetFrameLevel(button:GetFrameLevel() + 1)
+				button.SUIOverlay = overlayFrame
+			end
+
+			-- Add item level text to the overlay frame
 			addiLvlDisplay(button, item:GetCurrentItemLevel(), item:GetItemQuality())
+
+			--Add Text next to item if its Cloak of Infinite Potential
+			if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
+				local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
+				for i = 1, 9 do
+					ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
+				end
+				-- print('Total threads updated: ' .. ThreadCount)
+				if not button.threadCount then
+					button.threadCount = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
+					SUI.Font:Format(button.threadCount, module.DB.fontSize - 2, 'CharacterScreen')
+					button.threadCount:ClearAllPoints()
+					button.threadCount:SetPoint('LEFT', button.SUIOverlay, 'RIGHT', 2, 0)
+				end
+				button.threadCount:SetFormattedText('Threads:\n' .. ThreadCount)
+			end
 		end)
 	end
 end
