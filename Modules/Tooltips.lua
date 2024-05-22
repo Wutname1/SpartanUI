@@ -336,6 +336,18 @@ local TooltipSetUnit = function(self, data)
 
 			line = line + 1
 		end
+
+		local timerunner = C_UnitAuras.GetPlayerAuraBySpellID(424143)
+		if timerunner then
+			local playerData = C_UnitAuras.GetAuraDataBySpellName(unit, "Timerunner's Advantage")
+			if playerData ~= nil then
+				local total = 0
+				for i = 1, 9 do
+					total = total + playerData.points[i]
+				end
+				self:AddLine('\n|cff00FF98Threads |cffFFFFFF' .. SUI.Font:comma_value(total))
+			end
+		end
 	end
 
 	for i = 2, self:NumLines() do
