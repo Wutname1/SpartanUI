@@ -12,7 +12,15 @@ local DBDefaults = {
 		fontColor = { 1, 1, 1, 1 },
 	},
 }
-local timerunner = false
+
+local function ButtonOverlay(button)
+	if not button.SUIOverlay then
+		local overlayFrame = CreateFrame('FRAME', nil, button)
+		overlayFrame:SetAllPoints()
+		overlayFrame:SetFrameLevel(button:GetFrameLevel() + 1)
+		button.SUIOverlay = overlayFrame
+	end
+end
 
 ---@param button any
 ---@param itemLevel number
@@ -24,6 +32,7 @@ local function addiLvlDisplay(button, itemLevel, itemQuality)
 	end
 
 	if not button.ilvlText then
+		ButtonOverlay(button)
 		button.ilvlText = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
 		button.ilvlText:Hide()
 	end
@@ -40,6 +49,29 @@ local function addiLvlDisplay(button, itemLevel, itemQuality)
 		button.ilvlText:SetTextColor(unpack(module.DB.color.fontColor))
 	end
 	button.ilvlText:Show()
+end
+
+---@param button SUI.ICS.ItemButtonFrame
+---@param item ItemMixin
+local function addTimerunnerThreadCount(button, item)
+	local timerunner = C_UnitAuras.GetPlayerAuraBySpellID(424143)
+	if timerunner then
+		if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
+			local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
+			for i = 1, 9 do
+				ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
+			end
+
+			if not button.threadCount then
+				ButtonOverlay(button)
+				button.threadCount = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
+				SUI.Font:Format(button.threadCount, module.DB.fontSize - 2, 'CharacterScreen')
+				button.threadCount:ClearAllPoints()
+				button.threadCount:SetPoint('LEFT', button.SUIOverlay, 'RIGHT', 2, 0)
+			end
+			button.threadCount:SetFormattedText('|cff00FF98Threads:|cffFFFFFF\n' .. SUI.Font:comma_value(ThreadCount))
+		end
+	end
 end
 
 ---@param button SUI.ICS.ItemButtonFrame
@@ -62,34 +94,11 @@ local function UpdateItemSlotButton(button, unit)
 		if not item or item:IsItemEmpty() then return end
 
 		item:ContinueOnItemLoad(function()
-			-- Create overlay frame if it doesn't exist
-			if not button.SUIOverlay then
-				local overlayFrame = CreateFrame('FRAME', nil, button)
-				overlayFrame:SetAllPoints()
-				overlayFrame:SetFrameLevel(button:GetFrameLevel() + 1)
-				button.SUIOverlay = overlayFrame
-			end
-
 			-- Add item level text to the overlay frame
 			addiLvlDisplay(button, item:GetCurrentItemLevel(), item:GetItemQuality())
 
 			--Add Text next to item if its Cloak of Infinite Potential
-			if timerunner then
-				if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
-					local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
-					for i = 1, 9 do
-						ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
-					end
-					-- print('Total threads updated: ' .. ThreadCount)
-					if not button.threadCount then
-						button.threadCount = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
-						SUI.Font:Format(button.threadCount, module.DB.fontSize - 2, 'CharacterScreen')
-						button.threadCount:ClearAllPoints()
-						button.threadCount:SetPoint('LEFT', button.SUIOverlay, 'RIGHT', 2, 0)
-					end
-					button.threadCount:SetFormattedText('|cff00FF98Threads:|cffFFFFFF\n' .. SUI.Font:comma_value(ThreadCount))
-				end
-			end
+			addTimerunnerThreadCount(button, item)
 		end)
 	end
 end
@@ -221,7 +230,6 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	timerunner = C_UnitAuras.GetPlayerAuraBySpellID(424143)
 	Options()
 	if SUI:IsModuleDisabled(module) then return end
 
