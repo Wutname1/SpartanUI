@@ -539,7 +539,8 @@
     "SPLASH_BASE_HEADER",
     "SPLASH_NEW_HEADER_SEASON",
     "GameTooltip_SetDefaultAnchor",
-    "PlayerPowerBarAlt"
+    "PlayerPowerBarAlt",
+    "PlayerGetTimerunningSeasonID"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

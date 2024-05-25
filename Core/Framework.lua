@@ -1343,6 +1343,10 @@ function SUI:Error(err, mod)
 	SUI:Print('Please submit a bug at |cff3370FFhttp://bugs.spartanui.net/')
 end
 
+---@return boolean
+function SUI:IsTimerunner()
+	return PlayerGetTimerunningSeasonID and PlayerGetTimerunningSeasonID() ~= nil
+end
 ---------  Create SpartanUI Container  ---------
 do
 	-- Create Plate

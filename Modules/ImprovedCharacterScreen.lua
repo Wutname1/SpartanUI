@@ -54,23 +54,20 @@ end
 ---@param button SUI.ICS.ItemButtonFrame
 ---@param item ItemMixin
 local function addTimerunnerThreadCount(button, item)
-	local timerunner = C_UnitAuras.GetPlayerAuraBySpellID(424143)
-	if timerunner then
-		if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
-			local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
-			for i = 1, 9 do
-				ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
-			end
-
-			if not button.threadCount then
-				ButtonOverlay(button)
-				button.threadCount = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
-				SUI.Font:Format(button.threadCount, module.DB.fontSize - 2, 'CharacterScreen')
-				button.threadCount:ClearAllPoints()
-				button.threadCount:SetPoint('LEFT', button.SUIOverlay, 'RIGHT', 2, 0)
-			end
-			button.threadCount:SetFormattedText('|cff00FF98Threads:|cffFFFFFF\n' .. SUI.Font:comma_value(ThreadCount))
+	if string.match(item:GetItemName(), 'Cloak of Infinite Potential') and SUI:IsModuleEnabled(module) then
+		local c, ThreadCount = { 0, 1, 2, 3, 4, 5, 6, 7, 148 }, 0
+		for i = 1, 9 do
+			ThreadCount = ThreadCount + C_CurrencyInfo.GetCurrencyInfo(2853 + c[i]).quantity
 		end
+
+		if not button.threadCount then
+			ButtonOverlay(button)
+			button.threadCount = button.SUIOverlay:CreateFontString('$parentItemLevel', 'OVERLAY')
+			SUI.Font:Format(button.threadCount, module.DB.fontSize - 2, 'CharacterScreen')
+			button.threadCount:ClearAllPoints()
+			button.threadCount:SetPoint('LEFT', button.SUIOverlay, 'RIGHT', 2, 0)
+		end
+		button.threadCount:SetFormattedText('|cff00FF98Threads:|cffFFFFFF\n' .. SUI.Font:comma_value(ThreadCount))
 	end
 end
 
@@ -98,7 +95,7 @@ local function UpdateItemSlotButton(button, unit)
 			addiLvlDisplay(button, item:GetCurrentItemLevel(), item:GetItemQuality())
 
 			--Add Text next to item if its Cloak of Infinite Potential
-			addTimerunnerThreadCount(button, item)
+			if SUI:IsTimerunner() then addTimerunnerThreadCount(button, item) end
 		end)
 	end
 end
