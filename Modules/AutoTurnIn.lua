@@ -329,7 +329,7 @@ end
 function module:EquipItem(ItemToEquip)
 	if InCombatLockdown() then return end
 
-	local EquipItemName = GetItemInfo(ItemToEquip)
+	local EquipItemName = C_Item.GetItemInfo(ItemToEquip)
 	local EquipILvl = GetDetailedItemLevelInfo(ItemToEquip)
 	local ItemFound = false
 
@@ -339,7 +339,7 @@ function module:EquipItem(ItemToEquip)
 		for slot = 1, GetContainerNumSlots(bag), 1 do
 			local link = GetContainerItemLink(bag, slot)
 			if link then
-				local slotItemName = GetItemInfo(link)
+				local slotItemName = C_Item.GetItemInfo(link)
 				local SlotILvl = GetDetailedItemLevelInfo(link)
 				if (slotItemName == EquipItemName) and (SlotILvl == EquipILvl) then
 					if IsMerchantOpen then
@@ -403,7 +403,7 @@ function module.QUEST_COMPLETE()
 		local link = GetQuestItemLink('choice', i)
 		debug(link)
 		if link == nil then return end
-		local itemName, _, _, _, _, _, _, _, itemEquipLoc, _, itemSellPrice = GetItemInfo(link)
+		local itemName, _, _, _, _, _, _, _, itemEquipLoc, _, itemSellPrice = C_Item.GetItemInfo(link)
 		local QuestItemTrueiLVL = SUI:GetiLVL(link) or 0
 
 		-- Check the items value

@@ -221,7 +221,7 @@ local function BuildOptions()
 	eventFrame:RegisterEvent('GET_ITEM_INFO_RECEIVED')
 	eventFrame:SetScript('OnEvent', function(_, event, itemID, success)
 		if event == 'GET_ITEM_INFO_RECEIVED' and success then
-			local itemName, itemLink = GetItemInfo(itemID)
+			local itemName, itemLink = C_Item.GetItemInfo(itemID)
 			if itemLink then
 				itemCache[itemID] = itemLink
 				-- Call buildItemList with the current mode to refresh the list
@@ -246,7 +246,7 @@ local function BuildOptions()
 					label = itemLink .. ' (' .. entry .. ')'
 				else
 					-- Request item info which may return nil initially
-					local itemName, itemLink = GetItemInfo(entry)
+					local itemName, itemLink = C_Item.GetItemInfo(entry)
 					if itemLink then
 						-- If the item link is available, use it
 						label = itemLink .. ' (' .. entry .. ')'
@@ -381,7 +381,7 @@ local function BuildOptions()
 							return
 						end
 						--Check that the inputted nmumber is a valid item
-						local itemLink = GetItemInfo(itemID)
+						local itemLink = C_Item.GetItemInfo(itemID)
 						if not itemLink then
 							SUI:Print('Could not load item ID: ' .. input .. ' this can happen if the item is not in your cache, please try again in a few seconds.')
 							return
@@ -457,7 +457,7 @@ end
 
 function module:IsSellable(item, ilink, bag, slot)
 	if not item then return false end
-	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = GetItemInfo(ilink)
+	local name, _, quality, _, _, itemType, itemSubType, _, equipSlot, _, vendorPrice, _, _, _, expacID, _, isCraftingReagent = C_Item.GetItemInfo(ilink)
 	if vendorPrice == 0 or name == nil then return false end
 	-- 0. Poor (gray): Broken I.W.I.N. Button
 	-- 1. Common (white): Archmage Vargoth's Staff
@@ -534,10 +534,10 @@ function module:SellTrash()
 			local itemInfo, _, _, _, _, _, link, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
 			if SUI.IsRetail and itemInfo and module:IsSellable(itemInfo.itemID, itemInfo.hyperlink, bag, slot) then
 				ItemToSell[#ItemToSell + 1] = { bag, slot }
-				totalValue = totalValue + (select(11, GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
+				totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemInfo.itemID)) * itemInfo.stackCount)
 			elseif not SUI.IsRetail and module:IsSellable(itemID, link, bag, slot) then
 				ItemToSell[#ItemToSell + 1] = { bag, slot }
-				totalValue = totalValue + (select(11, GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
+				totalValue = totalValue + (select(11, C_Item.GetItemInfo(itemID)) * select(2, C_Container.GetContainerItemInfo(bag, slot)))
 			end
 		end
 	end

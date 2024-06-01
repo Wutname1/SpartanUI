@@ -213,7 +213,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 	end
 
 	if itemLink then
-		local quality = select(3, GetItemInfo(itemLink))
+		local quality = select(3, C_Item.GetItemInfo(itemLink))
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background',
 		}
@@ -238,7 +238,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		end
 
 		if SUI.IsClassic and module.DB.VendorPrices then
-			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = GetItemInfo(itemLink)
+			local _, _, _, _, _, _, _, itemStackCount, _, _, itemSellPrice = C_Item.GetItemInfo(itemLink)
 			if itemSellPrice then
 				SetTooltipMoney(tooltip, itemSellPrice, 'STATIC', L['Vendors for:'])
 				local itemUnderMouse = GetMouseFocus()

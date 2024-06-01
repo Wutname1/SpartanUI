@@ -121,7 +121,7 @@ local function UpdateSpellFlyout(button)
 	if not item or item:IsItemEmpty() then return end
 
 	item:ContinueOnItemLoad(function()
-		local _, _, _, _, _, itemClass, itemSubClass = GetItemInfoInstant(item:GetItemID())
+		local _, _, _, _, _, itemClass, itemSubClass = C_Item.GetItemInfoInstant(item:GetItemID())
 		if not (itemClass == Enum.ItemClass.Weapon or itemClass == Enum.ItemClass.Armor or (itemClass == Enum.ItemClass.Gem and itemSubClass == Enum.ItemGemSubclass.Artifactrelic)) then return end
 		local quality = item:GetItemQuality()
 		addiLvlDisplay(button, item:GetCurrentItemLevel(), quality)
