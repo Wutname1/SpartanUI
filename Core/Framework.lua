@@ -1693,7 +1693,7 @@ end
 ---------------  Misc Backend  ---------------
 
 function SUI:IsAddonEnabled(addon)
-	return GetAddOnEnableState(UnitName('player'), addon) == 2
+	return C_AddOns.GetAddOnEnableState(UnitName('player'), addon) == 2
 end
 
 function SUI:IsAddonDisabled(addon)

@@ -359,7 +359,7 @@ local function WelcomePage()
 			IntroPage.Helm:SetPoint('CENTER', 0, 45)
 			IntroPage.Helm:SetAlpha(0.6)
 
-			if not select(4, GetAddOnInfo('Bartender4')) then
+			if not SUI:IsAddonEnabled('Bartender4') then
 				module.window.BT4Warning = StdUi:Label(module.window, L['Bartender4 not detected! Please download and install Bartender4.'], 25, nil, module.window:GetWidth(), 40)
 				module.window.BT4Warning:SetTextColor(1, 0.18, 0.18, 1)
 				StdUi:GlueAbove(module.window.BT4Warning, module.window, 0, 20)

@@ -280,7 +280,7 @@ local function attemptSkin()
 
 	local AceGUI = LibStub('AceGUI-3.0', true)
 	if AceGUI and (AceGUI.RegisterAsContainer ~= RegisterAsContainer or AceGUI.RegisterAsWidget ~= RegisterAsWidget) then
-		if select(4, GetAddOnInfo('ElvUI')) then return end
+		if SUI:IsAddonEnabled('ElvUI') then return end
 		SkinAce3()
 	end
 end
