@@ -10,7 +10,6 @@ local min, wipe, pairs, tinsert = min, wipe, pairs, tinsert
 local GetSpellTexture = GetSpellTexture
 local CreateFrame = CreateFrame
 local UnitIsUnit = UnitIsUnit
-local UnitAura = UnitAura
 
 local function createAuraIcon(element, index)
 	local button = CreateFrame('Button', element:GetName() .. 'Button' .. index, element)
@@ -155,7 +154,7 @@ end
 
 local function updateIcon(element, unit, index, offset, filter, isDebuff, visible)
 	local name, icon, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3 =
-		UnitAura(unit, index, filter)
+		C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
 	if not name then return end
 
 	local button, position = getIcon(element, visible, offset)
