@@ -98,8 +98,13 @@ local function createAuraBar(element, index)
 	return bar
 end
 
-local function customFilter(element, unit, button, name)
-	if (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and name) then return true end
+---@param element any
+---@param unit UnitId
+---@param button any
+---@param auraData AuraData
+---@return boolean
+local function customFilter(element, unit, button, auraData)
+	if (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and auraData.name) then return true end
 end
 
 local function updateBar(element, bar)
@@ -139,26 +144,8 @@ local function updateBar(element, bar)
 end
 
 local function updateAura(element, unit, index, offset, filter, isDebuff, visible)
-	local name, texture, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3
-
-	if LCD and not UnitIsUnit('player', unit) then
-		local durationNew, expirationTimeNew
-		name, texture, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3 =
-			LCD:UnitAura(unit, index, filter)
-
-		if spellID then
-			durationNew, expirationTimeNew = LCD:GetAuraDurationByUnit(unit, spellID, source, name)
-		end
-
-		if durationNew and durationNew > 0 then
-			duration, expiration = durationNew, expirationTimeNew
-		end
-	else
-		name, texture, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3 =
-			UnitAura(unit, index, filter)
-	end
-
-	if not name then return end
+	local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
+	if not auraData then return end
 
 	local position = visible + offset + 1
 	local bar = element[position]
@@ -171,46 +158,23 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 	element.active[position] = bar
 
 	bar.unit = unit
-	bar.count = count
+	bar.count = auraData.charges or 1
 	bar.index = index
-	bar.caster = source
+	bar.caster = auraData.sourceUnit
 	bar.filter = filter
-	bar.texture = texture
 	bar.isDebuff = isDebuff
-	bar.debuffType = debuffType
-	bar.isStealable = isStealable
-	bar.isPlayer = source == 'player' or source == 'vehicle'
+	bar.texture = auraData.icon
+	bar.isStealable = auraData.isStealable
+	bar.isPlayer = auraData.sourceUnit == 'player' or auraData.sourceUnit == 'vehicle'
 	bar.position = position
-	bar.duration = duration
-	bar.expiration = expiration
-	bar.modRate = modRate
-	bar.spellID = spellID
-	bar.spell = name
-	bar.noTime = (duration == 0 and expiration == 0)
+	bar.duration = auraData.duration
+	bar.expiration = auraData.expirationTime
+	bar.modRate = auraData.timeMod
+	bar.spellID = auraData.spellId
+	bar.spell = auraData.name
+	bar.noTime = (auraData.duration == 0 and auraData.expirationTime == 0)
 
-	local show = (element.CustomFilter or customFilter)(
-		element,
-		unit,
-		bar,
-		name,
-		texture,
-		count,
-		debuffType,
-		duration,
-		expiration,
-		source,
-		isStealable,
-		nameplateShowPersonal,
-		spellID,
-		canApplyAura,
-		isBossDebuff,
-		castByPlayer,
-		nameplateShowAll,
-		modRate,
-		effect1,
-		effect2,
-		effect3
-	)
+	local show = (element.CustomFilter or customFilter)(element, unit, bar, auraData)
 
 	updateBar(element, bar)
 	bar:SetScript('OnUpdate', not bar.noTime and onUpdate or nil)

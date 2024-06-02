@@ -47,7 +47,7 @@ local function createAuraIcon(element, index)
 	return button
 end
 
-local function customFilter(element, _, button)
+local function customFilter(element, _, button, AuraData)
 	local setting = element.watched[button.spellID]
 	if not setting then return false end
 
@@ -153,54 +153,31 @@ local function postOnlyMissing(element, unit, offset)
 end
 
 local function updateIcon(element, unit, index, offset, filter, isDebuff, visible)
-	local name, icon, count, debuffType, duration, expiration, source, isStealable, nameplateShowPersonal, spellID, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, modRate, effect1, effect2, effect3 =
-		C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
+	local AuraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
 
-	if not name then return end
+	if not AuraData then return end
 
 	local button, position = getIcon(element, visible, offset)
 
-	button.caster = source
+	button.caster = AuraData.sourceUnit
 	button.filter = filter
-	button.spellID = spellID
+	button.spellID = AuraData.spellId
 	button.isDebuff = isDebuff
-	button.debuffType = debuffType
-	button.castByPlayer = castByPlayer
-	button.isPlayer = source == 'player'
+	-- button.debuffType = debuffType
+	button.castByPlayer = AuraData.isFromPlayerOrPlayerPet
+	button.isPlayer = AuraData.sourceUnit == 'player'
 
 	button:SetID(index)
 
-	local show = (element.CustomFilter or customFilter)(
-		element,
-		unit,
-		button,
-		name,
-		icon,
-		count,
-		debuffType,
-		duration,
-		expiration,
-		source,
-		isStealable,
-		nameplateShowPersonal,
-		spellID,
-		canApplyAura,
-		isBossDebuff,
-		castByPlayer,
-		nameplateShowAll,
-		modRate,
-		effect1,
-		effect2,
-		effect3
-	)
+	local show = (element.CustomFilter or customFilter)(element, unit, button, AuraData)
 
-	local setting = element.watched[spellID]
-	if setting and setting.onlyShowMissing then missing[spellID] = nil end
+	local setting = element.watched[AuraData.spellId]
+	if setting and setting.onlyShowMissing then missing[AuraData.spellId] = nil end
 
 	if show then
-		handleElements(element, unit, button, setting, icon, count, duration, expiration, isDebuff, debuffType, isStealable, modRate)
+		handleElements(element, unit, button, setting, AuraData.icon, AuraData.charges or 1, AuraData.duration, AuraData.expirationTime, isDebuff, AuraData.isStealable, AuraData.timeMod)
 
-		if element.PostUpdateIcon then element:PostUpdateIcon(unit, button, index, position, duration, expiration, debuffType, isStealable) end
+		if element.PostUpdateIcon then element:PostUpdateIcon(unit, button, index, position, AuraData.duration, AuraData.expirationTime, AuraData.isStealable) end
 
 		return VISIBLE
 	else
