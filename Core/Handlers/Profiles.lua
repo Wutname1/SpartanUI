@@ -1,7 +1,7 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
 local StdUi = SUI.StdUi
 ---@class SUI.Handler.Profiles : SUI.Module
-local module = SUI:NewModule('Handler_Profiles')
+local module = SUI:NewModule('Handler.Profiles')
 ----------------------------------------------------------------------------------------------------
 local window
 local namespaceblacklist = { 'LibDualSpec-1.0' }
@@ -110,7 +110,7 @@ local function CreateWindow()
 	for i, _ in pairs(SpartanUIDB.namespaces) do
 		if not SUI:IsInTable(namespaceblacklist, i) then
 			local DisplayName
-			local tmpModule = SUI:GetModule('Module_' .. i, true)
+			local tmpModule = SUI:GetModule(i, true)
 			if tmpModule then
 				DisplayName = tmpModule.DisplayName or i
 				table.insert(list, { text = (DisplayName or i), value = i })
@@ -361,7 +361,7 @@ local function ImportCoreSettings(importData)
 end
 
 local function ImportModuleSettings(ModuleName, NewSettings)
-	local module = SUI:GetModule('Module_' .. ModuleName, true) or SUI:GetModule('Handler_' .. ModuleName, true)
+	local module = SUI:GetModule(ModuleName, true) or SUI:GetModule('Handler.' .. ModuleName, true)
 	if not module then return end
 	local newsettings = PrepareImport(module.Database.defaults.profile, NewSettings)
 

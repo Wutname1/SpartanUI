@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('Module_DisplayPanel') ---@type SUI.Module
+local module = SUI:NewModule('DisplayPanel') ---@type SUI.Module
 module.panels = {}
 module.plugins = {}
 module.pluginNames = {}

@@ -1,9 +1,9 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Arcane : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_Arcane')
+local module = SUI:NewModule('Style.Arcane')
 local unpack = unpack
 module.Settings = {}
-local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
+local Artwork_Core = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 local artFrame = CreateFrame('Frame', 'SUI_Art_Arcane', SpartanUI)
 ----------------------------------------------------------------------------------------------------
 local function Options()
@@ -53,7 +53,7 @@ end
 
 function module:OnInitialize()
 	-- Bartender 4 Settings
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
+	local BarHandler = SUI:GetModule('Handler.BarSystems')
 	BarHandler.BarPosition.BT4.Arcane = {
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,175',
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
@@ -64,7 +64,6 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	local UF = SUI:GetModule('Module_UnitFrames')
 	---@type SUI.UF.Style.Settings
 	local RedUFSettings = {
 		displayName = 'Arcane red',
@@ -87,7 +86,7 @@ function module:OnInitialize()
 			},
 		},
 	}
-	UF.Style:Register('ArcaneRed', RedUFSettings)
+	SUI.UF.Style:Register('ArcaneRed', RedUFSettings)
 
 	local minimapSettings = {
 		size = { 156, 156 },
@@ -96,7 +95,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Arcane_Left,RIGHT,0,20',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Arcane', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Arcane', minimapSettings)
 
 	---@type SUI.UF.Style.Settings
 	local BlueUFSettings = {
@@ -120,7 +119,7 @@ function module:OnInitialize()
 			},
 		},
 	}
-	UF.Style:Register('Arcane', BlueUFSettings)
+	SUI.UF.Style:Register('Arcane', BlueUFSettings)
 
 	module:CreateArtwork()
 end

@@ -1,6 +1,6 @@
 local SUI, L, Lib = SUI, SUI.L, SUI.Lib
 local StdUi = Lib.StdUi
-local module = SUI:NewModule('Handler_HealHelper') ---@type SUI.Module
+local module = SUI:NewModule('Handler.HealHelper') ---@type SUI.Module
 module.name = 'Heal helper'
 module.description = 'SUI click to heal implementation'
 ----------------------------------------------------------------------------------------------------

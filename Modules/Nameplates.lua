@@ -1,5 +1,5 @@
 local unpack, SUI, L, print, UF = unpack, SUI, SUI.L, SUI.print, SUI.UF
-local module = SUI:NewModule('Module_Nameplates') ---@type SUI.Module
+local module = SUI:NewModule('Nameplates') ---@type SUI.Module
 module.description = 'Basic nameplate module'
 local Images = {
 	Alliance = {

@@ -1,5 +1,5 @@
 local SUI, L = SUI, SUI.L
-local module = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
+local module = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 
 function module:SetupOptions()
 	if SUI.DB.Artwork.Style == '' then return end
@@ -19,7 +19,7 @@ function module:SetupOptions()
 			else
 				SUI.DB.scale = val
 				module:UpdateScale()
-				SUI:GetModule('Handler_BarSystems'):Refresh()
+				SUI:GetModule('Handler.BarSystems'):Refresh()
 			end
 		end,
 		get = function(info)
@@ -61,9 +61,9 @@ function module:SetupOptions()
 			end
 
 			if SUI.DB.Artwork.VehicleUI then
-				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):SetupVehicleUI() end
+				if SUI:GetModule('Style.' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then SUI:GetModule('Style.' .. SUI.DB.Artwork.Style):SetupVehicleUI() end
 			else
-				if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):RemoveVehicleUI() end
+				if SUI:GetModule('Style.' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then SUI:GetModule('Style.' .. SUI.DB.Artwork.Style):RemoveVehicleUI() end
 			end
 		end,
 	}

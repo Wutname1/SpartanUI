@@ -1,15 +1,14 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Tribal : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_War')
-local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
-local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI.UF
+local module = SUI:NewModule('Style.War')
+local Artwork_Core = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
 
 function module:OnInitialize()
 	-- Bartender 4 Settings
-	local BarHandler = SUI:GetModule('Handler_BarSystems') ---@type SUI.Module.BarHandler
+	local BarHandler = SUI:GetModule('Handler.BarSystems') ---@type SUI.Module.BarHandler
 	BarHandler.BarPosition.BT4.War = {
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
@@ -74,7 +73,7 @@ function module:OnInitialize()
 		},
 		position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
 	}
-	SUI:GetModule('Module_Minimap'):Register('War', minimapSettings)
+	SUI:GetModule('Minimap'):Register('War', minimapSettings)
 
 	---@type SUI.UF.Style.Settings
 	local ufsettings = {
@@ -103,7 +102,7 @@ function module:OnInitialize()
 			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
 		},
 	}
-	UF.Style:Register('War', ufsettings)
+	SUI.UF.Style:Register('War', ufsettings)
 
 	module:CreateArtwork()
 end

@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('Module_LibsToolkit') ---@type SUI.Module
+local module = SUI:NewModule('LibsToolkit') ---@type SUI.Module
 local L = SUI.L
 module.DisplayName = "Lib's Toolkit"
 module.HideModule = true

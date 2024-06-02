@@ -1,15 +1,14 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Tribal : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_Tribal')
-local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
-local UF = SUI:GetModule('Module_UnitFrames')
+local module = SUI:NewModule('Style.Tribal')
+local Artwork_Core = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 local artFrame = CreateFrame('Frame', 'SUI_Art_Tribal', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
 local InitRan = false
 function module:OnInitialize()
 	-- Bartender 4 Settings
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
+	local BarHandler = SUI:GetModule('Handler.BarSystems')
 	BarHandler.BarPosition.BT4.Tribal = {
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
@@ -48,7 +47,7 @@ function module:OnInitialize()
 			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
 		},
 	}
-	UF.Style:Register('Tribal', ufsettings)
+	SUI.UF.Style:Register('Tribal', ufsettings)
 
 	local minimapSettings = {
 		size = { 156, 156 },
@@ -57,7 +56,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Tribal', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Tribal', minimapSettings)
 
 	module:CreateArtwork()
 end

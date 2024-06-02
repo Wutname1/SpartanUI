@@ -1,5 +1,5 @@
 local SUI = SUI
-local module = SUI:NewModule('WhatsNew') ---@type SUI.Module
+local module = SUI:NewModule('Handler.WhatsNew') ---@type SUI.Module
 -- DB or DBG - This allows us to change if the whats new should appear on every profile or once.
 local db = 'DB'
 

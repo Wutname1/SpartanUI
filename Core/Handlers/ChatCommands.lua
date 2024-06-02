@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local module = SUI:NewModule('Handler_ChatCommands') ---@type SUI.Module
+local module = SUI:NewModule('Handler.ChatCommands') ---@type SUI.Module
 local SUIChatCommands, CommandDetails, enabled = {}, {}, false
 
 function SUI:ChatCommand(input)
@@ -13,7 +13,7 @@ function SUI:ChatCommand(input)
 			if SUIChatCommands[i] then SUIChatCommands[i](arg) end
 		end
 	else
-		SUI:GetModule('Handler_Options'):ToggleOptions()
+		SUI:GetModule('Handler.Options'):ToggleOptions()
 	end
 end
 
@@ -32,7 +32,7 @@ AddonCompartmentFrame:RegisterAddon({
 		-- elseif mouseButton == 'RightButton' then
 		-- end
 
-		SUI:GetModule('Handler_Options'):ToggleOptions()
+		SUI:GetModule('Handler.Options'):ToggleOptions()
 	end,
 	funcOnEnter = function()
 		-- GameTooltip:ClearLines()

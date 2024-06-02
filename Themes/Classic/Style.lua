@@ -1,7 +1,7 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Classic : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_Classic')
-local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
+local module = SUI:NewModule('Style.Classic')
+local Artwork_Core = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 local unpack = unpack
 local artFrame = CreateFrame('Frame', 'SUI_Art_Classic', SpartanUI)
 ----------------------------------------------------------------------------------------------------
@@ -633,7 +633,7 @@ local function Options()
 end
 
 function module:OnInitialize()
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
+	local BarHandler = SUI:GetModule('Handler.BarSystems')
 
 	BarHandler.BarPosition.BT4.Classic = {
 		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
@@ -737,7 +737,7 @@ function module:OnInitialize()
 		size = { 156, 156 },
 		position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Classic', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Classic', minimapSettings)
 
 	CreateArtwork()
 

@@ -1,6 +1,6 @@
 local _G, SUI = _G, SUI
 local L = SUI.L
-local module = SUI:NewModule('Module_FilmEffects') ---@type SUI.Module
+local module = SUI:NewModule('FilmEffects') ---@type SUI.Module
 module.DisplayName = L['Film effects']
 module.description = 'Adds a film effect to the screen when AFK'
 local Container

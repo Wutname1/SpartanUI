@@ -1,7 +1,7 @@
 local SUI = SUI
 if not SUI.IsRetail then return end
 ---@class SUI.Module.StopTalking : SUI.Module
-local module = SUI:NewModule('Module_StopTalking')
+local module = SUI:NewModule('StopTalking')
 local L = SUI.L
 module.Displayname = L['Stop Talking']
 module.description = 'Mutes the talking head frame once you have heard it.'

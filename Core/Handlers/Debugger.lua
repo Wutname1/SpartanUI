@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local StdUi = SUI.StdUi
-local debugger = SUI:NewModule('Handler_Debugger') ---@type SUI.Module
+local debugger = SUI:NewModule('Handler.Debugger') ---@type SUI.Module
 debugger.description = 'Assists with debug information'
 ----------------------------------------------------------------------------------------------------
 local DebugWindow = nil ---@type StdUi.Window

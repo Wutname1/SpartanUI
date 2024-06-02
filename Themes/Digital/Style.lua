@@ -1,14 +1,12 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Digital : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_Digital')
----@type SUI.Module
-local UF = SUI:GetModule('Module_UnitFrames')
+local module = SUI:NewModule('Style.Digital')
 local artFrame = CreateFrame('Frame', 'SUI_Art_Digital', SpartanUI)
 module.Settings = {}
 
 ----------------------------------------------------------------------------------------------------
 function module:OnInitialize()
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
+	local BarHandler = SUI:GetModule('Handler.BarSystems')
 	BarHandler.BarPosition.BT4.Digital = {
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,175',
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
@@ -28,7 +26,7 @@ function module:OnInitialize()
 			},
 		},
 	}
-	UF.Style:Register('Digital', ufsettings)
+	SUI.UF.Style:Register('Digital', ufsettings)
 
 	local minimapSettings = {
 		size = { 156, 156 },
@@ -38,7 +36,7 @@ function module:OnInitialize()
 		},
 		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Digital', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Digital', minimapSettings)
 
 	module:CreateArtwork()
 end

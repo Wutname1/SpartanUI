@@ -1,5 +1,5 @@
 local _G, SUI = _G, SUI
-local module = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
+local module = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 module.Trays = {}
 local trayWatcher = CreateFrame('Frame')
 local settings = {}

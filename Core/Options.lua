@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L, Lib, StdUi = SUI.L, SUI.Lib, SUI.StdUi
-local module = SUI:NewModule('Handler_Options') ---@type SUI.Module
+local module = SUI:NewModule('Handler.Options') ---@type SUI.Module
 module.ShowOptionsUI = false
 local unpack = unpack
 local Options = {}
@@ -142,7 +142,7 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
+				SUI:GetModule('Artwork'):SetActiveStyle(skin)
 			end,
 		}
 	end
@@ -201,7 +201,7 @@ function module:OnInitialize()
 						type = 'execute',
 						order = 3,
 						func = function()
-							SUI:GetModule('Module_MoveIt'):Reset()
+							SUI:GetModule('MoveIt'):Reset()
 						end,
 					},
 				},
@@ -273,18 +273,17 @@ function module:OnInitialize()
 
 	-- List Modules
 	for name, submodule in SUI:IterateModules() do
-		if (string.match(name, 'Module_')) and not submodule.HideModule then
-			local RealName = string.sub(name, 8)
-			local Displayname = string.sub(name, 8)
+		if not string.match(name, 'Handler.') and not string.match(name, 'Style.') and not submodule.HideModule then
+			local Displayname = name
 			if submodule.DisplayName then Displayname = submodule.DisplayName end
 
-			SUI.opt.args.Modules.args.ModuleListing.args[RealName] = {
+			SUI.opt.args.Modules.args.ModuleListing.args[name] = {
 				name = Displayname,
 				type = 'toggle',
 				disabled = submodule.Override or false,
 				get = function(info)
 					if submodule.Override then return false end
-					return SUI:IsModuleEnabled(RealName)
+					return SUI:IsModuleEnabled(name)
 				end,
 				set = function(info, val)
 					if val then
@@ -308,7 +307,7 @@ function module:OnInitialize()
 end
 
 function module:OnEnable()
-	if not SUI:GetModule('Module_Artwork', true) then SUI.opt.args.General.args['style'].args['OverallStyle'].disabled = true end
+	if not SUI:GetModule('Artwork', true) then SUI.opt.args.General.args['style'].args['OverallStyle'].disabled = true end
 
 	SUI:AddChatCommand('help', function()
 		module:ToggleOptions({ 'Help' })
@@ -361,7 +360,7 @@ function module:ToggleOptions(pages)
 			bottom:SetBackdropBorderColor(0, 0, 0, 0)
 			frame.bottomHolder = bottom
 
-			local ProfileHandler = SUI:GetModule('Handler_Profiles', true)
+			local ProfileHandler = SUI:GetModule('Handler.Profiles', true)
 			if ProfileHandler then
 				local Export = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
 				Export:SetSize(150, 20)

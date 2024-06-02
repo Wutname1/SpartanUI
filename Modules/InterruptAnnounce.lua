@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:NewModule('Module_InterruptAnnouncer') ---@type SUI.Module
+local module = SUI:NewModule('InterruptAnnouncer') ---@type SUI.Module
 module.Displayname = L['Interrupt announcer']
 ----------------------------------------------------------------------------------------------------
 local lastTime, lastSpellID = nil, nil

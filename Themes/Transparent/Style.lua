@@ -1,7 +1,7 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Transparent : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_Transparent')
-local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
+local module = SUI:NewModule('Style.Transparent')
+local Artwork_Core = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 local artFrame = CreateFrame('Frame', 'SUI_Art_Transparent', SpartanUI)
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ function module:OnInitialize()
 	SUI.opt.args['General'].args['style'].args['OverallStyle'].args['Transparent'].disabled = false
 	SUI.opt.args['General'].args['style'].args['Artwork'].args['Transparent'].disabled = false
 
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
+	local BarHandler = SUI:GetModule('Handler.BarSystems')
 	BarHandler.BarPosition.BT4.Transparent = SUI.IsRetail
 			and {
 				['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',
@@ -98,10 +98,9 @@ function module:OnInitialize()
 			position = 'BOTTOM,Minimap,TOP,0,2',
 		},
 	}
-	SUI:GetModule('Module_Minimap'):Register('Transparent', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Transparent', minimapSettings)
 
 	-- Unitframes Settings
-	local UF = SUI:GetModule('Module_UnitFrames')
 	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
@@ -121,7 +120,7 @@ function module:OnInitialize()
 			['targettarget'] = 'BOTTOMLEFT,SUI_UF_target,BOTTOMRIGHT,50,0',
 		},
 	}
-	UF.Style:Register('Transparent', ufsettings)
+	SUI.UF.Style:Register('Transparent', ufsettings)
 end
 
 function module:OnEnable()

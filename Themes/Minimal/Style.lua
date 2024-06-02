@@ -1,13 +1,12 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Minimal : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_Minimal')
-local Artwork_Core = SUI:GetModule('Module_Artwork') ---@type SUI.Module.Artwork
-local UF = SUI:GetModule('Module_UnitFrames') ---@type SUI.UF
+local module = SUI:NewModule('Style.Minimal')
+local Artwork_Core = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
 local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 
 function module:OnInitialize()
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
+	local BarHandler = SUI:GetModule('Handler.BarSystems')
 	BarHandler.BarPosition.BT4.Minimal = {
 		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-1,90',
 		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-1,45',
@@ -53,9 +52,9 @@ function module:OnInitialize()
 		position = 'TOPRIGHT,SUI_Art_Minimal_Base3,TOPRIGHT,-10,-10',
 		shape = 'square',
 	}
-	SUI:GetModule('Module_Minimap'):Register('Minimal', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Minimal', minimapSettings)
 
-	UF.Style:Register('Minimal', {})
+	SUI.UF.Style:Register('Minimal', {})
 end
 
 function module:OnEnable()

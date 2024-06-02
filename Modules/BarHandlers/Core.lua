@@ -1,6 +1,6 @@
 local SUI = SUI
 ---@class SUI.Module.BarHandler : SUI.Module
-local module = SUI:NewModule('Handler_BarSystems')
+local module = SUI:NewModule('Handler.BarSystems')
 local DB = nil
 module.DisplayName = 'Bar Handler'
 module.description = 'CORE: Handles the SpartanUI Bartender4 intergration'

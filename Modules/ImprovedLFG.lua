@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local module = SUI:NewModule('Module_ImprovedLFG')
+local module = SUI:NewModule('ImprovedLFG')
 module.DisplayName = 'Improved LFG'
 ------------------------------------------
 local FrameStorage = {

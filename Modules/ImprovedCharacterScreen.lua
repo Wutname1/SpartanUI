@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local module = SUI:NewModule('Component_ImprovedCharacterScreen')
+local module = SUI:NewModule('ImprovedCharacterScreen')
 module.DisplayName = 'Improved Character Screen'
 ------------------------------------------
 ---@class ImprovedCharacterScreenDB

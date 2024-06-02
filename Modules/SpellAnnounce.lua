@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local module = SUI:NewModule('Module_SpellAnnounce') ---@type SUI.Module
+local module = SUI:NewModule('SpellAnnounce') ---@type SUI.Module
 module.DisplayName = 'Spell announce'
 module.description = 'Announce spells cast by players'
 

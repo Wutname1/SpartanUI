@@ -1,27 +1,36 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local module = SUI:NewModule('Handler_Modules') ---@type SUI.Module
+local module = SUI:NewModule('Handler.Modules') ---@type SUI.Module
 
+---@param ModuleTable AceAddon
+---@return string
 function SUI:GetModuleName(ModuleTable)
 	local name
 
-	-- Ace3 adds SpartanUI_ to the name so it knows how to handle things, we need to account for that.
-	if string.match(ModuleTable.name, 'Module_') then name = string.sub(ModuleTable.name, 18) end
+	-- Remove SpartanUI_
+	name = string.gsub(ModuleTable.name, 'SpartanUI_', '')
+
 	return name
 end
 
 ---@param moduleName AceAddon|string
 ---@return boolean
 function SUI:IsModuleEnabled(moduleName)
+	-- If we are passed a table, we need to get the name from it.
 	if type(moduleName) == 'table' then
-		if not string.match(moduleName.name, 'Module_') then return true end
+		if moduleName.override then return false end
+
 		moduleName = SUI:GetModuleName(moduleName)
+	else
+		-- Fetch the Module
+		local moduleObj = SUI:GetModule(moduleName)
+		-- See if the modules has been overridden
+		if moduleObj and moduleObj.override then return false end
 	end
-	local moduleObj = SUI:GetModule('Module_' .. moduleName)
-	if moduleObj and moduleObj.override then return false end
 
 	if SUI.DB.DisabledModules[moduleName] then return false end
+
 	return true
 end
 
@@ -81,7 +90,7 @@ local function CreateSetupPage()
 
 			-- List Modules
 			for _, submodule in pairs(SUI.orderedModules) do
-				if (string.match(submodule.name, 'Module_')) and not submodule.HideModule then
+				if not string.match(name, 'Handler.') and not string.match(name, 'Style.') and not submodule.HideModule then
 					local RealName = SUI:GetModuleName(submodule)
 					-- Get modules display name
 					local Displayname = submodule.DisplayName or RealName

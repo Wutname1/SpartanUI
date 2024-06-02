@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local module = SUI:NewModule('Module_MiniTom') ---@type SUI.Module
+local module = SUI:NewModule('MiniTom') ---@type SUI.Module
 module.DisplayName = 'MiniTom'
 module.description = 'Enables /way command to set a waypoint on your map'
 local HBD = LibStub('HereBeDragons-2.0')

@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Module.Artwork.StatusBars : SUI.Module
-local module = SUI:NewModule('Artwork_StatusBars')
+local module = SUI:NewModule('Artwork.StatusBars')
 module.bars = {}
 local FACTION_BAR_COLORS = {
 	[1] = { r = 1, g = 0.2, b = 0 },

@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Module.Artwork : SUI.Module
-local module = SUI:NewModule('Module_Artwork')
+local module = SUI:NewModule('Artwork')
 module.ActiveStyle = {}
 module.BarBG = {}
 module.description = 'CORE: Provides the graphical looks of SUI'
@@ -144,8 +144,8 @@ end
 function module:SetActiveStyle(style)
 	if style and style ~= SUI.DB.Artwork.Style then
 		-- Cache the styles to swap
-		local OldStyle = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
-		local NewStyle = SUI:GetModule('Style_' .. style)
+		local OldStyle = SUI:GetModule('Style.' .. SUI.DB.Artwork.Style)
+		local NewStyle = SUI:GetModule('Style.' .. style)
 
 		-- Update the DB
 		SUI.DB.Artwork.Style = style
@@ -155,10 +155,10 @@ function module:SetActiveStyle(style)
 		NewStyle:Enable()
 
 		--Update bars
-		SUI:GetModule('Handler_BarSystems').Refresh()
+		SUI:GetModule('Handler.BarSystems').Refresh()
 
 		--Update minimap
-		SUI:GetModule('Module_Minimap'):update(true)
+		SUI:GetModule('Minimap'):update(true)
 	end
 
 	-- Update style settings shortcut
@@ -177,22 +177,22 @@ function module:UpdateScale()
 	SpartanUI:SetScale(SUI.DB.scale)
 
 	-- Call style scale update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
+	local style = SUI:GetModule('Style.' .. SUI.DB.Artwork.Style)
 	if style.UpdateScale then style:UpdateScale() end
 	if SUI:IsModuleEnabled('UnitFrames') then SUI.UF:ScaleFrames(SUI.DB.scale) end
 
 	-- Call Minimap scale update
-	local minimap = SUI:GetModule('Module_Minimap')
+	local minimap = SUI:GetModule('Minimap')
 	if minimap.Settings and minimap.Settings.scaleWithArt then minimap:UpdateScale() end
 
 	-- Update Bar scales
-	SUI:GetModule('Handler_BarSystems'):Refresh()
+	SUI:GetModule('Handler.BarSystems'):Refresh()
 end
 
 function module:UpdateAlpha()
 	if styleArt then styleArt:SetAlpha(SUI.DB.alpha) end
 	-- Call module scale update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
+	local style = SUI:GetModule('Style.' .. SUI.DB.Artwork.Style)
 	if style.UpdateAlpha then style:UpdateAlpha() end
 end
 
@@ -252,7 +252,7 @@ function module:updateOffset()
 	end
 
 	-- Call module update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
+	local style = SUI:GetModule('Style.' .. SUI.DB.Artwork.Style)
 	if style.updateOffset then style:updateOffset(SUI.DB.Offset.Top, SUI.DB.Offset.Bottom) end
 
 	SpartanUI:ClearAllPoints()
@@ -272,7 +272,7 @@ function module:updateHorizontalOffset()
 	SUI_TopAnchor:SetPoint('TOP', SpartanUI, 'TOP', SUI.DB.Offset.Horizontal.Top, 0)
 
 	-- Call module scale update if defined.
-	local style = SUI:GetModule('Style_' .. SUI.DB.Artwork.Style)
+	local style = SUI:GetModule('Style.' .. SUI.DB.Artwork.Style)
 	if style.updateXOffset then style:updateXOffset() end
 end
 
@@ -299,7 +299,7 @@ end
 
 local function VehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		local minimapModule = SUI:GetModule('Module_Minimap')
+		local minimapModule = SUI:GetModule('Minimap')
 		petbattle:HookScript('OnHide', function()
 			SUI_Art_War:Hide()
 			if SUI:IsModuleEnabled('Minimap') and (minimapModule.DB.AutoDetectAllowUse or minimapModule.DB.ManualAllowUse) then Minimap:Hide() end
@@ -315,7 +315,7 @@ end
 function module:OnEnable()
 	if SUI:IsModuleDisabled('Artwork') then return end
 
-	if SUI:GetModule('Handler_BarSystems') then SUI:GetModule('Handler_BarSystems').Refresh() end
+	if SUI:GetModule('Handler.BarSystems') then SUI:GetModule('Handler.BarSystems').Refresh() end
 
 	SetupPage()
 	VehicleUI()

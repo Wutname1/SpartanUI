@@ -1,6 +1,6 @@
 local SUI = SUI
 local L = SUI.L
-local module = SUI:GetModule('Handler_BarSystems')
+local module = SUI:GetModule('Handler.BarSystems')
 
 ------------------------------------------------------------
 

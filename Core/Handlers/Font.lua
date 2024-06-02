@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
-local Font = SUI:NewModule('Handler_Font') ---@type SUI.Module
+local Font = SUI:NewModule('Handler.Font') ---@type SUI.Module
 Font.Items = {}
 ---@class FontDB
 local DBDefaults = {

@@ -2,7 +2,7 @@
 local SUI = SUI
 local L, MoveIt = SUI.L, SUI.MoveIt
 ---@class SUI.UF : SUI.Module
-local UF = SUI:NewModule('Module_UnitFrames')
+local UF = SUI:NewModule('UnitFrames')
 UF.DisplayName = L['Unit frames']
 UF.description = 'CORE: SUI Unitframes'
 UF.Core = true

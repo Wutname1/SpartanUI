@@ -1,5 +1,5 @@
 local _G, SUI, L = _G, SUI, SUI.L
-local module = SUI:NewModule('Module_Buffs') ---@type SUI.Module
+local module = SUI:NewModule('Buffs') ---@type SUI.Module
 ----------------------------------------------------------------------------------------------------
 local RuleList = { 'Rule1', 'Rule2', 'Rule3' }
 local BuffWatcher = CreateFrame('Frame')
@@ -54,7 +54,7 @@ local BuffPosUpdate = function()
 	local setdefault = false
 
 	--See If the theme has an anchor and if we are allowed to use it
-	local style = SUI:GetModule('Style_' .. (SUI.DB.Artwork.Style or 'War'), true) ---@type SUI.Module
+	local style = SUI:GetModule('Style.' .. (SUI.DB.Artwork.Style or 'War'), true) ---@type SUI.Module
 	if style and style.BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
 		style:BuffLoc(nil, nil)
 	else

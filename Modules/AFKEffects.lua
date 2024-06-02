@@ -1,6 +1,6 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Module.AFKEffects : SUI.Module
-local module = SUI:NewModule('Module_AFKEffects')
+local module = SUI:NewModule('AFKEffects')
 module.DisplayName = L['AFK Effects']
 module.description = 'Spin the camera around your character and apply some effects when AFK'
 ----------------------------------------

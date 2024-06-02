@@ -1,7 +1,7 @@
 local SUI, L = SUI, SUI.L
 local print = SUI.print
 ---@class SUI.Theme.Fel : SUI.Theme.StyleBase
-local module = SUI:NewModule('Style_Fel')
+local module = SUI:NewModule('Style.Fel')
 ---@type SUI.Module
 local artFrame = CreateFrame('Frame', 'SUI_Art_Fel', SpartanUI)
 module.Settings = {}
@@ -41,7 +41,7 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('SkinsFel', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Skins.Fel.Settings
 	-- BarHandler
-	local BarHandler = SUI:GetModule('Handler_BarSystems')
+	local BarHandler = SUI:GetModule('Handler.BarSystems')
 	BarHandler.BarPosition.BT4.Fel = {
 		['BT4BarStanceBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-285,175',
 		['BT4BarPetBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-607,177',
@@ -52,7 +52,6 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes
-	local UF = SUI:GetModule('Module_UnitFrames')
 	---@type SUI.UF.Style.Settings
 	local ufsettings = {
 		artwork = {
@@ -77,7 +76,7 @@ function module:OnInitialize()
 			},
 		},
 	}
-	UF.Style:Register('Fel', ufsettings)
+	SUI.UF.Style:Register('Fel', ufsettings)
 
 	local minimapSettings = {
 		size = { 156, 156 },
@@ -90,7 +89,7 @@ function module:OnInitialize()
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
 		engulfed = true,
 	}
-	SUI:GetModule('Module_Minimap'):Register('Fel', minimapSettings)
+	SUI:GetModule('Minimap'):Register('Fel', minimapSettings)
 
 	module:CreateArtwork()
 	Options()
@@ -182,5 +181,5 @@ function module:MiniMap()
 	-- else
 	-- 	module.DB.minimap.BG = SUI:MergeData(module.DB.minimap.BG, calmed, true)
 	-- end
-	SUI:GetModule('Module_Minimap'):update(true)
+	SUI:GetModule('Minimap'):update(true)
 end

@@ -2,7 +2,7 @@
 local SUI = SUI
 local L = SUI.L
 ---@class SUI.SetupWizard
-local module = SUI:NewModule('SetupWizard') ---@type SUI.Module
+local module = SUI:NewModule('Handler.SetupWizard') ---@type SUI.Module
 local StdUi = SUI.StdUi
 module.window = nil
 
@@ -389,7 +389,7 @@ local function WelcomePage()
 
 			IntroPage.Import = StdUi:Button(IntroPage, 200, 20, 'IMPORT SETTINGS')
 			IntroPage.Import:SetScript('OnClick', function()
-				local Profiles = SUI:GetModule('Handler_Profiles') ---@type SUI.Handler.Profiles
+				local Profiles = SUI:GetModule('Handler.Profiles') ---@type SUI.Handler.Profiles
 				Profiles:ImportUI()
 			end)
 			IntroPage.Import:SetPoint('TOP', IntroPage.ProfileList, 'BOTTOM', 31, -5)

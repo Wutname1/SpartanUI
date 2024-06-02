@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 ---@class SUI.Skins : SUI.Module
-local module = SUI:NewModule('Handler_Skins')
+local module = SUI:NewModule('Handler.Skins')
 
 ---@class SkinDB
 local DBDefaults = {

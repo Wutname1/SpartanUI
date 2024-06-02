@@ -1,6 +1,6 @@
 local _G, SUI, L = _G, SUI, SUI.L
 if SUI.IsRetail then return end
-local module = SUI:NewModule('Module_Objectives') ---@type SUI.Module
+local module = SUI:NewModule('Objectives') ---@type SUI.Module
 module.description = 'Allows the hiding of the Objectives tracker based on conditions'
 ----------------------------------------------------------------------------------------------------
 local MoveIt
@@ -215,7 +215,7 @@ function module:OnInitialize()
 
 	-- Is the player is on classic disable the module
 	if SUI.IsClassic then module.Override = true end
-	MoveIt = SUI:GetModule('Module_MoveIt')
+	MoveIt = SUI:GetModule('MoveIt')
 	if SUI.IsClassic or SUI.IsTBC and _G['QuestWatchFrame'] then frameName = 'QuestWatchFrame' end
 end
 

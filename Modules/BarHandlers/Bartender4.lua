@@ -1,7 +1,7 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:GetModule('Handler_BarSystems')
+local module = SUI:GetModule('Handler.BarSystems')
 local BartenderMin = '4.13.0'
-local MoveIt = SUI:GetModule('Module_MoveIt')
+local MoveIt = SUI:GetModule('MoveIt')
 local scaleData
 local BartenderChangesActive = false
 ------------------------------------------------------------
@@ -383,9 +383,9 @@ local function Options()
 					end
 
 					if SUI.DB.Artwork.VehicleUI then
-						if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):SetupVehicleUI() end
+						if SUI:GetModule('Style.' .. SUI.DB.Artwork.Style).SetupVehicleUI() ~= nil then SUI:GetModule('Style.' .. SUI.DB.Artwork.Style):SetupVehicleUI() end
 					else
-						if SUI:GetModule('Style_' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then SUI:GetModule('Style_' .. SUI.DB.Artwork.Style):RemoveVehicleUI() end
+						if SUI:GetModule('Style.' .. SUI.DB.Artwork.Style).RemoveVehicleUI() ~= nil then SUI:GetModule('Style.' .. SUI.DB.Artwork.Style):RemoveVehicleUI() end
 					end
 				end,
 			},
@@ -517,7 +517,7 @@ local function OnEnable()
 
 		--SUI Stuff
 		RefreshConfig()
-		local MoveIt = SUI:GetModule('Module_MoveIt')
+		local MoveIt = SUI:GetModule('MoveIt')
 		MoveIt:CreateMover(bar, bar:GetName(), 'Bar ' .. id, nil, 'Bartender4')
 		MoveIt:UpdateMover(bar:GetName(), bar.overlay, true)
 

@@ -1,6 +1,6 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 ---@class SUI.Module.AutoSell : SUI.Module
-local module = SUI:NewModule('Module_AutoSell')
+local module = SUI:NewModule('AutoSell')
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
