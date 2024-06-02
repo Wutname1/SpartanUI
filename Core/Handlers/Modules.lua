@@ -90,6 +90,7 @@ local function CreateSetupPage()
 
 			-- List Modules
 			for _, submodule in pairs(SUI.orderedModules) do
+				local name = submodule.name
 				if not string.match(name, 'Handler.') and not string.match(name, 'Style.') and not submodule.HideModule then
 					local RealName = SUI:GetModuleName(submodule)
 					-- Get modules display name
