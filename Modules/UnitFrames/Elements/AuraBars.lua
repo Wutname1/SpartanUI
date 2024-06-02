@@ -49,31 +49,13 @@ local function Build(frame, DB)
 		bar.bg:Show()
 	end
 	element.PostCreateBar = PostCreateBar
-	element.CustomFilter = function(
-		element,
-		unit,
-		bar,
-		name,
-		texture,
-		count,
-		debuffType,
-		duration,
-		expiration,
-		source,
-		isStealable,
-		nameplateShowPersonal,
-		spellID,
-		canApplyAura,
-		isBossDebuff,
-		castByPlayer,
-		nameplateShowAll,
-		modRate,
-		effect1,
-		effect2,
-		effect3
-	)
-		local data = {}
-		if (source == 'player' or source == 'vehicle' or isBossDebuff) and duration ~= 0 and duration <= 900 then return true end
+
+	---@param element any
+	---@param unit any
+	---@param bar any
+	---@param auraData AuraData
+	element.CustomFilter = function(element, unit, bar, auraData)
+		if (auraData.sourceUnit == 'player' or auraData.sourceUnit == 'vehicle' or auraData.isBossAura) and auraData.duration ~= 0 and auraData.duration <= 900 then return true end
 	end
 
 	element.displayReasons = {}
