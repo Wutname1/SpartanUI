@@ -1839,7 +1839,7 @@ function SUI:OnEnable()
 	--Add to Menu Frame
 	local SUIMenuButton = CreateFrame('Button', 'GameMenuButtonSUI', GameMenuFrame, 'GameMenuButtonTemplate')
 	SUIMenuButton:SetScript('OnClick', function()
-		SUI:GetModule('Handler_Options'):ToggleOptions()
+		SUI:GetModule('Handler.Options'):ToggleOptions()
 		if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
 	end)
 	SUIMenuButton:SetPoint('TOP', GameMenuButtonAddons, 'BOTTOM', 0, -1)
@@ -1861,14 +1861,14 @@ end
 
 -- For Setting a unifid skin across all registered Skinable modules
 function SUI:SetActiveStyle(skin)
-	SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
+	SUI:GetModule('Artwork'):SetActiveStyle(skin)
 
 	for name, submodule in SUI:IterateModules() do
 		if submodule.SetActiveStyle then submodule:SetActiveStyle(skin) end
 	end
 
 	-- Ensure this is the First and last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
-	SUI:GetModule('Module_Artwork'):SetActiveStyle(skin)
+	SUI:GetModule('Artwork'):SetActiveStyle(skin)
 end
 
 SUI.noop = function() end

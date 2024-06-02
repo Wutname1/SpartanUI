@@ -217,24 +217,15 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		local style = {
 			bgFile = 'Interface/Tooltips/UI-Tooltip-Background',
 		}
-		if SUI.IsRetail then
-			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
-				style = {
-					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
-					overlayAtlasTop = 'AzeriteTooltip-Topper',
-					overlayAtlasTopScale = 0.75,
-					overlayAtlasTopYOffset = 1,
-					overlayAtlasBottom = 'AzeriteTooltip-Bottom',
-					overlayAtlasBottomYOffset = 2,
-				}
-			elseif IsCorruptedItem(itemLink) then
-				style = {
-					bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Corrupted',
-					overlayAtlasTop = 'Nzoth-tooltip-topper',
-					overlayAtlasTopScale = 0.75,
-					overlayAtlasTopYOffset = -2,
-				}
-			end
+		if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
+			style = {
+				bgFile = 'Interface/Tooltips/UI-Tooltip-Background-Azerite',
+				overlayAtlasTop = 'AzeriteTooltip-Topper',
+				overlayAtlasTopScale = 0.75,
+				overlayAtlasTopYOffset = 1,
+				overlayAtlasBottom = 'AzeriteTooltip-Bottom',
+				overlayAtlasBottomYOffset = 2,
+			}
 		end
 
 		if SUI.IsClassic and module.DB.VendorPrices then
@@ -262,7 +253,7 @@ local TooltipSetItem = function(tooltip, tooltipData)
 		GameTooltip:SetBackdropColor(unpack(module.DB.Color))
 
 		if quality and tooltip.SetBorderColor then
-			local r, g, b = GetItemQualityColor(quality)
+			local r, g, b = C_Item.GetItemQualityColor(quality)
 			r, g, b = (r * 0.5), (g * 0.5), (b * 0.5)
 			tooltip:SetBorderColor(r, g, b)
 		end

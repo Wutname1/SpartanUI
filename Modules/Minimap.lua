@@ -9,6 +9,7 @@ local Registry = {}
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 ---@class SUI.Minimap.Holder : FrameExpanded, SUI.MoveIt.MoverParent
 local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
+local GetMouseFocus = GetMouseFocus or GetMouseFoci
 local LastMouseStatus, MouseIsOver, IsMouseDown = nil, false, false
 local IgnoredFrames = {}
 local BaseSettings = {
@@ -91,7 +92,7 @@ local IsMouseOver = function()
 	local MouseFocus = GetMouseFocus()
 	if
 		MouseFocus
-		and not MouseFocus:IsForbidden()
+		-- and not MouseFocus:IsForbidden()
 		and ((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
 	then
 		MouseIsOver = true
@@ -232,13 +233,15 @@ function module:ModifyMinimapLayout()
 	SUI.Font:Format(TimeManagerClockTicker, 10, 'Minimap')
 	SUI.Font:Format(Minimap.coords, 10, 'Minimap')
 
-	MinimapCluster.TrackingFrame:ClearAllPoints()
-	MinimapCluster.TrackingFrame:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 1)
-	MinimapCluster.TrackingFrame.Background:Hide()
+	local Tracking = MinimapCluster.TrackingFrame or MinimapCluster.Tracking
+
+	Tracking:ClearAllPoints()
+	Tracking:SetPoint('BOTTOMLEFT', MinimapCluster.BorderTop, 'BOTTOMLEFT', 2, 1)
+	Tracking.Background:Hide()
 
 	MinimapCluster.IndicatorFrame:ClearAllPoints()
 	MinimapCluster.IndicatorFrame:SetScale(0.8)
-	MinimapCluster.IndicatorFrame:SetPoint('LEFT', MinimapCluster.TrackingFrame, 'RIGHT', 3)
+	MinimapCluster.IndicatorFrame:SetPoint('LEFT', Tracking, 'RIGHT', 3)
 
 	MinimapCluster.InstanceDifficulty:ClearAllPoints()
 	MinimapCluster.InstanceDifficulty:SetScale(0.8)

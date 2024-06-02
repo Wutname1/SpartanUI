@@ -174,7 +174,7 @@ local function LeaderRating(self, searchResultInfo)
 			[7] = { tier = 4, minRating = 1600, quality = 2 }, -- Challenger II
 			[8] = { tier = 6, minRating = 1950, quality = 3 }, -- Rival II
 		}
-		local r, g, b = GetItemQualityColor(PVPUtilGetTierName[searchResultInfo.leaderPvpRatingInfo.tier or 0].quality)
+		local r, g, b = C_Item.GetItemQualityColor(PVPUtilGetTierName[searchResultInfo.leaderPvpRatingInfo.tier or 0].quality)
 		ratingColor = { r = r, g = g, b = b } or ratingColor
 	else
 		return

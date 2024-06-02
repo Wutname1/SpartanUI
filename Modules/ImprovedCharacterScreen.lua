@@ -41,7 +41,7 @@ local function addiLvlDisplay(button, itemLevel, itemQuality)
 	button.ilvlText:SetPoint(module.DB.position)
 	SUI.Font:Format(button.ilvlText, module.DB.fontSize, 'CharacterScreen')
 
-	local hex = select(4, GetItemQualityColor(itemQuality))
+	local hex = select(4, C_Item.GetItemQualityColor(itemQuality))
 
 	button.ilvlText:SetFormattedText(string.format('|c%s%s|r', hex or '', itemLevel or ''))
 	if not module.DB.color.byQuality then
