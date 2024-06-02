@@ -214,7 +214,7 @@ end)
 
 local createBugWindow = function()
 	-- Create window
-	window = StdUi:Window(nil, 510, 400)
+	window = StdUi:Window(nil, 670, 400)
 	window:SetPoint('CENTER', 0, 0)
 	window:SetFrameStrata('DIALOG')
 
@@ -224,7 +224,7 @@ local createBugWindow = function()
 	window.Title:SetAlpha(0.8)
 
 	-- Create window Items
-	window.editBox = StdUi:MultiLineBox(window, 480, 320, '')
+	window.editBox = StdUi:MultiLineBox(window, 660, 320, '')
 
 	window.SubTitle = StdUi:Label(window, 'Error handler ' .. (C_AddOns.GetAddOnMetadata('SpartanUI', 'Version') or ''), 10, nil, nil, 15)
 	window.SubTitle:SetPoint('BOTTOM', window.Title, 'BOTTOMRIGHT', 0, -1)
