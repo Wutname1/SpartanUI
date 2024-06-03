@@ -23,7 +23,6 @@ local TauntsList = {
 	204079, --Final Stand
 }
 local lastTimeStamp, lastSpellID, lastspellName = 0, 0, ''
-
 local function printFormattedString(who, target, sid, failed)
 	local msg = module.DB.text
 	local ChatChannel = module.DB.announceLocation
@@ -34,24 +33,45 @@ local function printFormattedString(who, target, sid, failed)
 	if ChatChannel == 'SELF' then
 		SUI:Print(msg)
 	else
-		if not IsInGroup(2) then
-			if IsInRaid() then
-				if ChatChannel == 'INSTANCE_CHAT' then ChatChannel = 'RAID' end
-			elseif IsInGroup(1) then
-				if ChatChannel == 'INSTANCE_CHAT' then ChatChannel = 'PARTY' end
-			end
-		elseif IsInGroup(2) then
-			if ChatChannel == 'RAID' then ChatChannel = 'INSTANCE_CHAT' end
-			if ChatChannel == 'PARTY' then ChatChannel = 'INSTANCE_CHAT' end
+		local inInstanceGroup = IsInGroup(2)
+		local inInstanceRaid = IsInRaid(2)
+		local inGroup = IsInGroup(1)
+		local inRaid = IsInRaid(1)
+
+		-- Handle group type and location
+		if ChatChannel == 'RAID' and not inRaid then
+			return
+		elseif ChatChannel == 'PARTY' and not inGroup then
+			return
 		end
 
-		if ChatChannel == 'SMART' then
-			ChatChannel = 'RAID'
-			if ChatChannel == 'RAID' and not IsInRaid() then ChatChannel = 'PARTY' end
+		-- Adjust ChatChannel for instance groups
+		if inInstanceGroup then
+			if ChatChannel == 'RAID' and inInstanceRaid then
+				ChatChannel = 'INSTANCE_CHAT'
+			elseif ChatChannel == 'PARTY' and not inInstanceRaid then
+				ChatChannel = 'INSTANCE_CHAT'
+			end
+		else
+			if inRaid and ChatChannel == 'INSTANCE_CHAT' then
+				ChatChannel = 'RAID'
+			elseif inGroup and ChatChannel == 'INSTANCE_CHAT' then
+				ChatChannel = 'PARTY'
+			end
+		end
 
-			if ChatChannel == 'PARTY' and not IsInGroup(1) then ChatChannel = 'SAY' end
-
-			if ChatChannel == 'INSTANCE_CHAT' and not IsInGroup(2) then ChatChannel = 'SAY' end
+		-- Simplified SMART channel logic
+		if module.DB.announceLocation == 'SMART' then
+			if inInstanceRaid or inInstanceGroup then
+				ChatChannel = 'INSTANCE_CHAT'
+			elseif inRaid then
+				ChatChannel = 'RAID'
+			elseif inGroup then
+				ChatChannel = 'PARTY'
+			else
+				SUI:Print(msg)
+				return
+			end
 		end
 
 		SendChatMessage(msg, ChatChannel)
@@ -59,17 +79,6 @@ local function printFormattedString(who, target, sid, failed)
 end
 
 function module:OnInitialize()
-	if SUI.IsClassic or SUI.IsTBC then
-		TauntsList = {
-			-- Warrior taunt
-			'Taunt',
-			-- Warrior improved taunt
-			'Improved Taunt',
-			-- Druid Growl ranks
-			'Challenging Roar',
-			'Growl',
-		}
-	end
 	local defaults = {
 		profile = {
 			active = {
