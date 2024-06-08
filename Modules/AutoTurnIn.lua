@@ -4,12 +4,6 @@ local module = SUI:NewModule('AutoTurnIn')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
-local SelectAvailableQuest = SelectAvailableQuest
-local SelectActiveQuest = SelectActiveQuest
-local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests
-local SelectGossipOption = C_GossipInfo.SelectOption
-local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests
-local GetGossipOptions = C_GossipInfo.GetOptions
 local DB ---@type AutoTurnInDB
 local GlobalDB ---@type AutoTurnInGlobalDB
 local Blacklist = {
@@ -330,7 +324,7 @@ function module:EquipItem(ItemToEquip)
 	if InCombatLockdown() then return end
 
 	local EquipItemName = C_Item.GetItemInfo(ItemToEquip)
-	local EquipILvl = GetDetailedItemLevelInfo(ItemToEquip)
+	local EquipILvl = C_Item.GetDetailedItemLevelInfo(ItemToEquip)
 	local ItemFound = false
 
 	-- Make sure it is in the bags
@@ -340,7 +334,7 @@ function module:EquipItem(ItemToEquip)
 			local link = GetContainerItemLink(bag, slot)
 			if link then
 				local slotItemName = C_Item.GetItemInfo(link)
-				local SlotILvl = GetDetailedItemLevelInfo(link)
+				local SlotILvl = C_Item.GetDetailedItemLevelInfo(link)
 				if (slotItemName == EquipItemName) and (SlotILvl == EquipILvl) then
 					if IsMerchantOpen then
 						SUI:Print(L['Unable to equip'] .. ' ' .. link)
@@ -753,11 +747,11 @@ end
 function module.GOSSIP_SHOW()
 	if (not DB.AutoGossip) or (IsAltKeyDown()) then return end
 
-	module:VarArgForActiveQuests(GetGossipActiveQuests())
-	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
+	module:VarArgForActiveQuests(C_GossipInfo.GetActiveQuests())
+	module:VarArgForAvailableQuests(C_GossipInfo.GetAvailableQuests())
 
 	debug('------ [Debugging Gossip] ------')
-	local options = GetGossipOptions()
+	local options = C_GossipInfo.GetOptions()
 	debug('Number of Options ' .. #options)
 	for _, gossip in pairs(options) do
 		debug('---Start Option Info---')
@@ -793,15 +787,15 @@ function module.GOSSIP_SHOW()
 			end
 			TempBlackList[gossip.name] = true
 			debug(gossip.name .. '---BLACKLISTED')
-			SelectGossipOption(gossip.gossipOptionID)
+			C_GossipInfo.SelectOption(gossip.gossipOptionID)
 
 			if DB.ChatText then SUI:Print('Selecting: ' .. gossip.name) end
 			return
 		end
 	end
 
-	module:VarArgForActiveQuests(GetGossipActiveQuests())
-	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
+	module:VarArgForActiveQuests(C_GossipInfo.GetActiveQuests())
+	module:VarArgForAvailableQuests(C_GossipInfo.GetAvailableQuests())
 end
 
 function module.QUEST_PROGRESS()
