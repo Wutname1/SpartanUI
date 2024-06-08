@@ -168,9 +168,7 @@ local function updateDisplay(forceRefresh)
 
 	if size > 0 then
 		window.countLabel:SetText(('%d/%d'):format(currentErrorIndex, size))
-		window.editBox:SetText(addon:FormatError(ErrObj))
-
-		window.editBox.scrollFrame.scrollBar:SetValue(0)
+		window.editBox:SetValue(addon:FormatError(ErrObj))
 
 		-- if ErrObj.session == BugGrabber:GetSessionId() then
 		-- 	window.sessionLabel:SetText(('%s - |cff44ff44%d|r'):format('Today', ErrObj.session))
