@@ -1844,19 +1844,47 @@ function SUI:OnEnable()
 	end)
 	SUIMenuButton:SetPoint('TOP', GameMenuButtonAddons, 'BOTTOM', 0, -1)
 	GameMenuFrame.SUI = SUIMenuButton
-	hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function()
-		GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + (GameMenuButtonSUI:GetHeight() * 1.8))
+	--TODO: REMOVE THIS for TWW
+	if GameMenuFrame_UpdateVisibleButtons then
+		hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function()
+			GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + (GameMenuButtonSUI:GetHeight() * 1.8))
 
-		GameMenuButtonSUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
+			GameMenuButtonSUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
 
-		local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
-		if relTo ~= GameMenuButtonSUI then
-			GameMenuButtonSUI:ClearAllPoints()
-			GameMenuButtonSUI:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -2)
-			GameMenuButtonLogout:ClearAllPoints()
-			GameMenuButtonLogout:SetPoint('TOPLEFT', GameMenuButtonSUI, 'BOTTOMLEFT', 0, offY)
-		end
-	end)
+			local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
+			if relTo ~= GameMenuButtonSUI then
+				GameMenuButtonSUI:ClearAllPoints()
+				GameMenuButtonSUI:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -2)
+				GameMenuButtonLogout:ClearAllPoints()
+				GameMenuButtonLogout:SetPoint('TOPLEFT', GameMenuButtonSUI, 'BOTTOMLEFT', 0, offY)
+			end
+		end)
+	else
+		local GameMenuButtonsStore = {} --Table to hold data for buttons to be added to GameMenu
+
+		tinsert(GameMenuButtonsStore, {
+			text = '|cffffffffSpartan|cffe21f1fUI|r',
+			callback = function()
+				SUI:GetModule('Handler.Options'):ToggleOptions()
+				if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
+			end,
+			isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
+			disabledText = 'This button is somehow disabled. Probably someone was messing around with the code.', --this text will show up in tooltip when the button is disabled
+		})
+
+		--hooking to blizz button add function for game menu, since the list of those is reset every time menu is opened
+		hooksecurefunc(GameMenuFrame, 'AddButton', function(text, callback, isDisabled)
+			if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
+				for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
+					if i == 1 then
+						GameMenuFrame:AddSection() --spacer off first button
+					end
+
+					GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
+				end
+			end
+		end)
+	end
 end
 
 -- For Setting a unifid skin across all registered Skinable modules

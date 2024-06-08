@@ -9,7 +9,6 @@ local Registry = {}
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 ---@class SUI.Minimap.Holder : FrameExpanded, SUI.MoveIt.MoverParent
 local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
-local GetMouseFocus = GetMouseFocus or GetMouseFoci
 local LastMouseStatus, MouseIsOver, IsMouseDown = nil, false, false
 local IgnoredFrames = {}
 local BaseSettings = {
@@ -89,16 +88,19 @@ local BaseSettings = {
 }
 
 local IsMouseOver = function()
-	local MouseFocus = GetMouseFocus()
-	if
-		MouseFocus
-		-- and not MouseFocus:IsForbidden()
-		and ((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
-	then
-		MouseIsOver = true
-	else
-		MouseIsOver = false
+	local MouseFocus = GetMouseFoci()
+	for _, MouseFocus in ipairs(MouseFocus) do
+		if
+			MouseFocus
+			and not MouseFocus:IsForbidden()
+			and ((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
+		then
+			MouseIsOver = true
+		else
+			MouseIsOver = false
+		end
 	end
+
 	return MouseIsOver
 end
 
