@@ -30,7 +30,6 @@ libs\LibSharedMedia-3.0\lib.xml
 libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 # Unit Frame libraries
-libs\LibHealComm-4.0\LibHealComm-4.0.lua
 libs\LibDispel\LibDispel.lua
 libs\oUF\oUF_Wrath.xml
 libs\oUF_Plugins\Loader.xml
