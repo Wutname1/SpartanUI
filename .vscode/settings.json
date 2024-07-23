@@ -538,7 +538,8 @@
     "PlayerPowerBarAlt",
     "PlayerGetTimerunningSeasonID",
     "MACROS",
-    "GetMouseFoci"
+    "GetMouseFoci",
+    "GameMenuFrame_UpdateVisibleButtons"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
