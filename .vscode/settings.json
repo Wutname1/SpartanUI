@@ -539,7 +539,9 @@
     "PlayerGetTimerunningSeasonID",
     "MACROS",
     "GetMouseFoci",
-    "GameMenuFrame_UpdateVisibleButtons"
+    "GameMenuFrame_UpdateVisibleButtons",
+    "MAJOR_FACTION_MAX_RENOWN_REACHED",
+    "GetText"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

@@ -22,6 +22,7 @@ local COLORS = {
 	Red = { r = 1, g = 0, b = 0.08, a = 0.7 },
 	Light_Blue = { r = 0, g = 0.5, b = 1, a = 0.7 },
 }
+local watchedFaction = nil
 
 function module:OnEnable()
 	module.DB = SUI.DB.StatusBars
@@ -35,8 +36,9 @@ end
 local GetFactionDetails = function(name)
 	if not name then return end
 	local description = ' '
-	for i = 1, GetNumFactions() do
-		if name == GetFactionInfo(i) then description = select(2, GetFactionInfo(i)) end
+	for i = 1, C_Reputation.GetNumFactions() do
+		local factionData = C_Reputation.GetFactionDataByIndex(i)
+		if name == factionData.name then description = factionData.description end
 	end
 	return description
 end
@@ -51,18 +53,16 @@ local SetBarColor = function(self, side)
 		if display == 'xp' then
 			color1 = COLORS.Blue
 			color2 = COLORS.Light_Blue
-		elseif display == 'az' then
-			color1 = COLORS.Orange
 		elseif display == 'honor' then
 			color1 = COLORS.Red
 		elseif display == 'rep' then
-			local factionID = select(6, GetWatchedFactionInfo())
-			local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+			watchedFaction = C_Reputation.GetWatchedFactionData()
+			local repInfo = C_GossipInfo.GetFriendshipReputation(watchedFaction.factionID)
 
-			color1 = FACTION_BAR_COLORS[select(2, GetWatchedFactionInfo())] or FACTION_BAR_COLORS[7]
-			if C_Reputation.IsFactionParagon(factionID) then
+			color1 = FACTION_BAR_COLORS[watchedFaction.currentStanding] or FACTION_BAR_COLORS[7]
+			if C_Reputation.IsFactionParagon(watchedFaction.factionID) then
 				color1 = FACTION_BAR_COLORS[9]
-			elseif repInfo and repInfo.friendshipFactionID and C_Reputation.IsMajorFaction(factionID) then
+			elseif repInfo and repInfo.friendshipFactionID and C_Reputation.IsMajorFaction(watchedFaction.factionID) then
 				color1 = FACTION_BAR_COLORS[10]
 			end
 		end
@@ -110,53 +110,43 @@ local updateText = function(self)
 		remaining = SUI.Font:comma_value(goal - now)
 		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
 	elseif module.DB[side].display == 'rep' then
-		local name, _, low, high, current, factionID = GetWatchedFactionInfo()
-		local repInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+		watchedFaction = C_Reputation.GetWatchedFactionData()
+		local repInfo = C_GossipInfo.GetFriendshipReputation(watchedFaction.factionID)
 
-		if C_Reputation.IsFactionParagon(factionID) then
-			local currentValue, threshold, _, _, _ = C_Reputation.GetFactionParagonInfo(factionID)
+		if C_Reputation.IsFactionParagon(watchedFaction.factionID) then
+			local currentValue, threshold, _, _, _ = C_Reputation.GetFactionParagonInfo(watchedFaction.factionID)
 			if currentValue ~= nil then
-				current = currentValue % threshold
-				low = 0
-				high = threshold
+				watchedFaction.currentStanding = currentValue % threshold
+				watchedFaction.currentReactionThreshold = 0
+				watchedFaction.nextReactionThreshold = threshold
 			end
 		end
-		local repLevelLow = (current - low)
-		local repLevelHigh = (high - low)
+		local repLevelLow = (watchedFaction.currentStanding - watchedFaction.currentReactionThreshold)
+		local repLevelHigh = (watchedFaction.nextReactionThreshold - watchedFaction.currentReactionThreshold)
 
-		if repLevelHigh == 0 and name then
+		if repLevelHigh == 0 and watchedFaction.name then
 			valFill = 42000
 			valMax = 42000
 			valPercent = 100
-		elseif name then
+		elseif watchedFaction.name then
 			valFill = repLevelLow
 			valMax = repLevelHigh
 			valPercent = (repLevelLow / repLevelHigh) * 100
 		end
 
 		if repInfo and repInfo.friendshipFactionID then
-			local isMajorFaction = factionID and C_Reputation.IsMajorFaction(factionID)
+			local isMajorFaction = watchedFaction.factionID and C_Reputation.IsMajorFaction(watchedFaction.factionID)
 
 			if repInfo and repInfo.friendshipFactionID > 0 then
-				valFill, valMax, current = repInfo.reactionThreshold or 0, repInfo.nextThreshold or 1, repInfo.standing or 1
-				valPercent = (current / valMax) * 100
+				valFill, valMax, watchedFaction.currentStanding = repInfo.reactionThreshold or 0, repInfo.nextThreshold or 1, repInfo.standing or 1
+				valPercent = (watchedFaction.currentStanding / valMax) * 100
 			elseif isMajorFaction then
-				local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
+				local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFaction.factionID)
 
 				valMax = majorFactionData.renownLevelThreshold
-				valFill = C_MajorFactions.HasMaximumRenown(factionID) and majorFactionData.renownLevelThreshold or majorFactionData.renownReputationEarned or 0
+				valFill = C_MajorFactions.HasMaximumRenown(watchedFaction.factionID) and majorFactionData.renownLevelThreshold or majorFactionData.renownReputationEarned or 0
 				valPercent = (valFill / valMax) * 100
 			end
-		end
-	elseif module.DB[side].display == 'az' then
-		if C_AzeriteItem.HasActiveAzeriteItem() then
-			local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-			if not azeriteItemLocation then return end
-			local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-			valMax = totalLevelXP - xp
-			local ratio = (xp / totalLevelXP)
-			valFill = xp
-			valPercent = ratio * 100
 		end
 	elseif module.DB[side].display == 'honor' then
 		valFill = UnitHonor('player')
@@ -199,20 +189,38 @@ local showXPTooltip = function(self)
 end
 
 local showRepTooltip = function(self)
-	local name, react, low, high, current = GetWatchedFactionInfo()
-	local repLevelLow = (current - low)
-	local repLevelHigh = (high - low)
+	watchedFaction = C_Reputation.GetWatchedFactionData()
+	local factionID = watchedFaction.factionID
+
+	local factionStandingtext
+	local factionData = C_Reputation.GetFactionDataByID(factionID)
+	local reputationInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+	if reputationInfo and reputationInfo.friendshipFactionID > 0 then
+		factionStandingtext = reputationInfo.reaction
+	elseif C_Reputation.IsMajorFaction(factionID) then
+		factionStandingtext = MAJOR_FACTION_MAX_RENOWN_REACHED
+	else
+		local gender = UnitSex('player')
+		factionStandingtext = GetText('FACTION_STANDING_LABEL' .. factionData.reaction, gender)
+	end
+	local currentValue, threshold, rewardQuestID, hasRewardPending, tooLowLevelForParagon = C_Reputation.GetFactionParagonInfo(factionID)
+
+	local low = watchedFaction.currentReactionThreshold or 0
+	local high = threshold or watchedFaction.nextReactionThreshold or 1
+	local current = currentValue or watchedFaction.currentStanding or 1
+	local repLevelLow = (current - low) or 0
+	local repLevelHigh = (high - low) or 1
 	local percentage
 
-	if name then
-		local text = GetFactionDetails(name)
+	if watchedFaction.name then
+		local text = GetFactionDetails(watchedFaction.name)
 		if repLevelHigh == 0 then
 			percentage = 100
 		else
 			percentage = (repLevelLow / repLevelHigh) * 100
 		end
 		self.tooltip.TextFrame.HeaderText:SetText(
-			format('%s ( %s / %s ) %d%% %s', name, SUI.Font:comma_value(repLevelLow), SUI.Font:comma_value(repLevelHigh), percentage, _G['FACTION_STANDING_LABEL' .. react])
+			format('%s ( %s / %s ) %d%% %s', watchedFaction.name, SUI.Font:comma_value(repLevelLow), SUI.Font:comma_value(repLevelHigh), percentage, factionStandingtext)
 		)
 		self.tooltip.TextFrame.MainText:SetText('|cffffd200' .. text .. '|r')
 		self.tooltip:Show()
@@ -234,23 +242,6 @@ local showHonorTooltip = function(self)
 	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, honorLevel)
 	self.tooltip.TextFrame.MainText:SetFormattedText('( %s / %s ) %d%%', SUI.Font:comma_value(currentHonor), SUI.Font:comma_value(maxHonor), ((currentHonor / maxHonor) * 100))
 
-	self.tooltip:Show()
-end
-
-local showAzeriteTooltip = function(self)
-	if C_AzeriteItem.HasActiveAzeriteItem() then
-		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-		if not azeriteItemLocation then return end
-		local azeriteItem = Item:CreateFromItemLocation(azeriteItemLocation)
-		local xp, totalLevelXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-		local currentLevel = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
-		local xpToNextLevel = totalLevelXP - xp
-		local ratio = (xp / totalLevelXP)
-		if currentLevel and xpToNextLevel then
-			self.tooltip.TextFrame.HeaderText:SetText(AZERITE_POWER_TOOLTIP_TITLE:format(currentLevel, xpToNextLevel), HIGHLIGHT_FONT_COLOR:GetRGB())
-			if azeriteItem:GetItemName() then self.tooltip.TextFrame.MainText:SetText(AZERITE_POWER_TOOLTIP_BODY:format(azeriteItem:GetItemName())) end
-		end
-	end
 	self.tooltip:Show()
 end
 
@@ -389,13 +380,11 @@ function module:factory()
 		statusbar:SetScript('OnEnter', function()
 			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then showRepTooltip(statusbar) end
 			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then showXPTooltip(statusbar) end
-			if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'hover' then showAzeriteTooltip(statusbar) end
 			if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then showHonorTooltip(statusbar) end
 		end)
 		statusbar:SetScript('OnMouseDown', function()
 			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then showRepTooltip(statusbar) end
 			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then showXPTooltip(statusbar) end
-			if module.DB[i].display == 'az' and module.DB[i].ToolTip == 'click' then showAzeriteTooltip(statusbar) end
 			if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'click' then showHonorTooltip(statusbar) end
 		end)
 		statusbar:SetScript('OnLeave', function()
@@ -439,14 +428,8 @@ function module:BuildOptions()
 		['xp'] = L['Experiance'],
 		['rep'] = L['Reputation'],
 		['honor'] = L['Honor'],
-		['az'] = L['Azerite Bar'],
 		['disabled'] = L['Disabled'],
 	}
-	if not SUI.IsRetail then StatusBars = {
-		['xp'] = L['Experiance'],
-		['rep'] = L['Reputation'],
-		['disabled'] = L['Disabled'],
-	} end
 
 	local ids = {
 		[1] = 'one',
