@@ -88,28 +88,17 @@ local BaseSettings = {
 }
 
 local IsMouseOver = function()
-	if GetMouseFocus then
-		local MouseFocus = GetMouseFocus()
+	for _, MouseFocus in ipairs(GetMouseFoci()) do
 		if
 			MouseFocus
-			-- and not MouseFocus:IsForbidden()
+			and not MouseFocus:IsForbidden()
 			and ((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
 		then
 			MouseIsOver = true
 			return true
 		end
-	else
-		for _, MouseFocus in ipairs(GetMouseFoci()) do
-			if
-				MouseFocus
-				and not MouseFocus:IsForbidden()
-				and ((MouseFocus:GetName() == 'Minimap') or (MouseFocus:GetParent() and MouseFocus:GetParent():GetName() and MouseFocus:GetParent():GetName():find('Mini[Mm]ap')))
-			then
-				MouseIsOver = true
-				return true
-			end
-		end
 	end
+
 	MouseIsOver = false
 	return false
 end
