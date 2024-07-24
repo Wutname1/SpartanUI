@@ -1,0 +1,18 @@
+## Interface: 110000, 110002
+## Author: p3lim
+## Version: @project-version@
+## Title: Lib: EditMode
+## Notes: Library that allows easy frame integration with Edit Mode
+## OptionalDeps: LibStub
+
+## X-Curse-Project-ID: 699702
+## X-WoWI-ID: 26456
+## X-Wago-ID: ZQ6aWjGW
+
+#@non-debug@
+# LibStub\LibStub.lua
+#@end-non-debug@
+
+embed.xml
+
+#tests\xp.lua

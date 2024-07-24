@@ -1,5 +1,5 @@
-local MINOR = 2
-local lib, oldMinor = LibStub:NewLibrary('LibEditMode', MINOR)
+local MINOR = 8
+local lib = LibStub:NewLibrary('LibEditMode', MINOR)
 if not lib then
 	-- this or a newer version is already loaded
 	return
@@ -27,20 +27,20 @@ local layoutNames = setmetatable({'Modern', 'Classic'}, {
 	end
 })
 
-local frameSelections = {}
-local frameCallbacks = {}
-local frameDefaults = {}
-local frameSettings = {}
-local frameButtons = {}
+lib.frameSelections = lib.frameSelections or {}
+lib.frameCallbacks = lib.frameCallbacks or {}
+lib.frameDefaults = lib.frameDefaults or {}
+lib.frameSettings = lib.frameSettings or {}
+lib.frameButtons = lib.frameButtons or {}
 
-local anonCallbacksEnter = {}
-local anonCallbacksExit = {}
-local anonCallbacksLayout = {}
+lib.anonCallbacksEnter = lib.anonCallbacksEnter or {}
+lib.anonCallbacksExit = lib.anonCallbacksExit or {}
+lib.anonCallbacksLayout = lib.anonCallbacksLayout or {}
 
 local function resetSelection()
 	internal.dialog:Hide()
 
-	for frame, selection in next, frameSelections do
+	for frame, selection in next, lib.frameSelections do
 		if selection.isSelected then
 			frame:SetMovable(false)
 		end
@@ -137,8 +137,8 @@ local function onEditModeEnter()
 
 	resetSelection()
 
-	for _, callback in next, anonCallbacksEnter do
-		callback()
+	for _, callback in next, lib.anonCallbacksEnter do
+		securecallfunction(callback)
 	end
 end
 
@@ -147,8 +147,8 @@ local function onEditModeExit()
 
 	resetSelection()
 
-	for _, callback in next, anonCallbacksExit do
-		callback()
+	for _, callback in next, lib.anonCallbacksExit do
+		securecallfunction(callback)
 	end
 end
 
@@ -157,8 +157,8 @@ local function onEditModeChanged(_, layoutInfo)
 	if layoutName ~= lib.activeLayoutName then
 		lib.activeLayoutName = layoutName
 
-		for _, callback in next, anonCallbacksLayout do
-			callback(layoutName)
+		for _, callback in next, lib.anonCallbacksLayout do
+			securecallfunction(callback, layoutName)
 		end
 
 		-- TODO: we should update the position of the button here, let the user not deal with that
@@ -184,12 +184,12 @@ function lib:AddFrame(frame, callback, default)
 	selection:SetScript('OnMouseDown', onMouseDown)
 	selection:SetScript('OnDragStart', onDragStart)
 	selection:SetScript('OnDragStop', onDragStop)
-	selection:SetLabelText(frame:GetName())
+	selection.Label:SetText(frame.editModeName or frame:GetName())
 	selection:Hide()
 
-	frameSelections[frame] = selection
-	frameCallbacks[frame] = callback
-	frameDefaults[frame] = default
+	lib.frameSelections[frame] = selection
+	lib.frameCallbacks[frame] = callback
+	lib.frameDefaults[frame] = default
 
 	if not internal.dialog then
 		internal.dialog = internal:CreateDialog()
@@ -218,11 +218,11 @@ Register extra settings that will be displayed in a dialog attached to the frame
 * `settings`: table containing [SettingObject](Types#settingobject) entries _(table, number indexed)_
 --]]
 function lib:AddFrameSettings(frame, settings)
-	if not frameSelections[frame] then
+	if not lib.frameSelections[frame] then
 		error('frame must be registered')
 	end
 
-	frameSettings[frame] = settings
+	lib.frameSettings[frame] = settings
 end
 
 --[[ LibEditMode:AddFrameSettingsButton(_frame, data_)
@@ -232,11 +232,11 @@ Register extra buttons that will be displayed in a dialog attached to the frame 
 * `data`: table containing [ButtonObject](Types#buttonobject) entries _(table, number indexed)_
 --]]
 function lib:AddFrameSettingsButton(frame, data)
-	if not frameButtons[frame] then
-		frameButtons[frame] = {}
+	if not lib.frameButtons[frame] then
+		lib.frameButtons[frame] = {}
 	end
 
-	table.insert(frameButtons[frame], data)
+	table.insert(lib.frameButtons[frame], data)
 end
 
 --[[ LibEditMode:RegisterCallback(_event, callback_)
@@ -258,11 +258,11 @@ function lib:RegisterCallback(event, callback)
 	assert(callback and type(callback) == 'function', 'callback must be a function')
 
 	if event == 'enter' then
-		table.insert(anonCallbacksEnter, callback)
+		table.insert(lib.anonCallbacksEnter, callback)
 	elseif event == 'exit' then
-		table.insert(anonCallbacksExit, callback)
+		table.insert(lib.anonCallbacksExit, callback)
 	elseif event == 'layout' then
-		table.insert(anonCallbacksLayout, callback)
+		table.insert(lib.anonCallbacksLayout, callback)
 	else
 		error('invalid callback event "' .. event .. '"')
 	end
@@ -295,26 +295,26 @@ Returns:
 * `defaultPosition`: table registered with the frame in [AddFrame](#libeditmodeaddframeframe-callback-default) _(table)_
 --]]
 function lib:GetFrameDefaultPosition(frame)
-	return frameDefaults[frame]
+	return lib.frameDefaults[frame]
 end
 
 function internal:TriggerCallback(frame, ...)
-	if frameCallbacks[frame] then
-		frameCallbacks[frame](frame, lib.activeLayoutName, ...)
+	if lib.frameCallbacks[frame] then
+		securecallfunction(lib.frameCallbacks[frame], frame, lib.activeLayoutName, ...)
 	end
 end
 
 function internal:GetFrameSettings(frame)
-	if frameSettings[frame] then
-		return frameSettings[frame], #frameSettings[frame]
+	if lib.frameSettings[frame] then
+		return lib.frameSettings[frame], #lib.frameSettings[frame]
 	else
 		return nil, 0
 	end
 end
 
 function internal:GetFrameButtons(frame)
-	if frameButtons[frame] then
-		return frameButtons[frame], #frameButtons[frame]
+	if lib.frameButtons[frame] then
+		return lib.frameButtons[frame], #lib.frameButtons[frame]
 	else
 		return nil, 0
 	end
@@ -341,9 +341,16 @@ Depending on the setting type there are additional required and optional entries
 
 ### Dropdown
 
-| key     | value                                                                                                    | type  | required |
-|:--------|:---------------------------------------------------------------------------------------------------------|:------|:---------|
-| values  | LibDropDown [LineData](https://github.com/p3lim-wow/LibDropDown/wiki/Menu#menuaddlinedata) configuration | table | yes      |
+| key       | value                                                                                                                 | type     | required |
+|:----------|:----------------------------------------------------------------------------------------------------------------------|:---------|:---------|
+| values    | indexed table containing [DropdownOption](#dropdownoption)s                                                           | table    | no       |
+| generator | [Dropdown `SetupMenu` "generator" (callback)](https://warcraft.wiki.gg/wiki/Patch_11.0.0/API_changes#New_menu_system) | function | no       |
+| height    | max height of the menu                                                                                                | integer  | no       |
+
+- Either `values` or `generator` is required, the former for simple menues and the latter for complex ones.
+    - They are not exclusive, but `generator` takes precedence (e.g. `values` will be available but not used).
+- `generator` signature is `(dropdown, rootDescription, settingObject)` - `settingObject` being the addition to the default arguments.
+	- getters and setters are not handled using `generator`, and must be handled by the layout
 
 ### Slider
 
@@ -365,6 +372,15 @@ Table containing the following entries:
 | text  | text rendered on the button     | string   | yes      |
 | click | callback when button is clicked | function | yes      |
 
+## DropdownOption
+
+Table containing the following entries:
+
+| key     | value                                                              | type    | required |
+|:--------|:-------------------------------------------------------------------|---------|:---------|
+| text    | text rendered in the dropdown                                      | string  | yes      |
+| isRadio | turns the dropdown entry into a Radio button, otherwise a Checkbox | boolean | no       |
+
 ## SettingType
 Convenient shorthand for `Enum.EditModeSettingDisplayType`.
 
@@ -374,31 +390,3 @@ One of:
 - `Slider`
 --]]
 lib.SettingType = CopyTable(Enum.EditModeSettingDisplayType)
-
--- compat
-if oldMinor and oldMinor < 3 then
-	-- internal restructuring happened in minor-3, add compat in case someone used it
-	lib.dialog = internal.dialog -- this will just be lost to the ages, since we can't really turn
-	                             -- lib into a metatable just for this (or atleast shouldn't)
-	function lib:TriggerCallback(...)
-		internal:TriggerCallback(...)
-	end
-	function lib:GetFrameSettings(...)
-		return internal:GetFrameSettings(...)
-	end
-	function lib:GetFrameButtons(...)
-		return internal:GetFrameButtons(...)
-	end
-	function lib:CreatePool(...)
-		internal:CreatePool(...)
-	end
-	function lib:GetPool(...)
-		return internal:GetPool(...)
-	end
-	function lib:ReleaseAllPools()
-		internal:ReleaseAllPools()
-	end
-	function lib:CreateDialog()
-		return internal:CreateDialog()
-	end
-end

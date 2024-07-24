@@ -1,4 +1,4 @@
-local MINOR = 2
+local MINOR = 8
 local lib, minor = LibStub('LibEditMode')
 if minor > MINOR then
 	return
@@ -9,7 +9,7 @@ function checkboxMixin:Setup(data)
 	self.setting = data
 	self.Label:SetText(data.name)
 
-	self.checked = data.get(lib.activeLayoutName)
+	self.checked = data.get(lib.activeLayoutName) or data.default
 	self.Button:SetChecked(not not self.checked)
 end
 
@@ -22,4 +22,7 @@ end
 lib.internal:CreatePool(lib.SettingType.Checkbox, function()
 	local frame = CreateFrame('Frame', nil, UIParent, 'EditModeSettingCheckboxTemplate')
 	return Mixin(frame, checkboxMixin)
+end, function(_, frame)
+	frame:Hide()
+	frame.layoutIndex = nil
 end)

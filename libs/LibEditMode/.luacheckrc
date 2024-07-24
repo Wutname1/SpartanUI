@@ -22,25 +22,20 @@ exclude_files = {
 
 read_globals = {
 	-- FrameXML objects
-	'UIParent', -- FrameXML/UIParent.xml
-	'EditModeManagerFrame', -- FrameXML/EditModeManager.xml
+	'CreateUnsecuredObjectPool',
+	'EditModeManagerFrame',
+	'EventRegistry',
+	'MinimalSliderWithSteppersMixin',
+	'UIParent',
 
 	-- FrameXML functions
-	'CopyTable', -- FrameXML/TableUtil.lua 
+	'CopyTable',
+	'CreateMinimalSliderFormatter',
+	'GenerateClosure',
+	'Mixin',
 
-	-- SharedXML objects
-	'ObjectPoolMixin', -- SharedXML/Pools.lua
-	'EventRegistry', -- SharedXML/GlobalCallbackRegistry.lua
-	'MinimalSliderWithSteppersMixin', -- SharedXML/Slider/MinimalSlider.lua
-
-	-- SharedXML functions
-	'Mixin', -- SharedXML/Mixin.lua
-	'CreateFromMixins', -- SharedXML/Mixin.lua
-	'GenerateClosure', -- SharedXML/FunctionUtil.lua
-	'CreateMinimalSliderFormatter', -- SharedXML/Slider/MinimalSlider.lua
-
-	-- SharedXML constants
-	'SOUNDKIT', -- SharedXML/SoundKitConstants.lua
+	-- FrameXML constants
+	'SOUNDKIT',
 
 	-- GlobalStrings
 	'HUD_EDIT_MODE_RESET_POSITION',
@@ -54,6 +49,7 @@ read_globals = {
 	'CreateFrame',
 	'PlaySound',
 	'hooksecurefunc',
+	'securecallfunction',
 
 	-- exposed from other addons
 	'LibStub',

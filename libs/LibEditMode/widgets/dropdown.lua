@@ -1,16 +1,15 @@
-local MINOR = 2
+local MINOR = 8
 local lib, minor = LibStub('LibEditMode')
 if minor > MINOR then
 	return
 end
 
-local LDD, lddMinor = LibStub('LibDropDown', true)
-if not LDD then
-	error('LibEditMode requires LibDropDown to function')
+local function get(data)
+	return data.get(lib.activeLayoutName) == data.value
 end
 
-local function isChecked(a, getB)
-	return a == getB(lib.activeLayoutName)
+local function set(data)
+	data.set(lib.activeLayoutName, data.value)
 end
 
 local dropdownMixin = {}
@@ -18,27 +17,34 @@ function dropdownMixin:Setup(data)
 	self.setting = data
 	self.Label:SetText(data.name)
 
-	self.Dropdown:Clear()
+	if data.generator then
+		-- let the user have full control
+		self.Dropdown:SetupMenu(function(owner, rootDescription)
+			pcall(data.generator, owner, rootDescription, data)
+		end)
+	elseif data.values then
+		self.Dropdown:SetupMenu(function(_, rootDescription)
+			if data.height then
+				rootDescription:SetScrollMode(data.height)
+			end
 
-	for _, info in next, data.values do
-		info.checked = GenerateClosure(isChecked, info.text, data.get)
-		info.func = GenerateClosure(self.OnSettingSelected, self, info.text)
-		info.keepShown = false
-		self.Dropdown:Add(info)
-
-		if info.checked then
-			self.Dropdown:SetText(info.text)
-		end
+			for _, value in next, data.values do
+				if value.isRadio then
+					rootDescription:CreateRadio(value.text, get, set, {
+						get = data.get,
+						set = data.set,
+						value = value.text,
+					})
+				else
+					rootDescription:CreateCheckbox(value.text, get, set, {
+						get = data.get,
+						set = data.set,
+						value = value.text
+					})
+				end
+			end
+		end)
 	end
-end
-
-function dropdownMixin:OnSettingSelected(value)
-	self.setting.set(lib.activeLayoutName, value)
-
-	if lddMinor >= 7 then
-		self.Dropdown:Refresh()
-	end
-	self.Dropdown:SetText(value)
 end
 
 lib.internal:CreatePool(lib.SettingType.Dropdown, function()
@@ -52,12 +58,13 @@ lib.internal:CreatePool(lib.SettingType.Dropdown, function()
 	label:SetJustifyH('LEFT')
 	frame.Label = label
 
-	local dropdown = LDD:NewButton(frame)
+	local dropdown = CreateFrame('DropdownButton', nil, frame, 'WowStyle1DropdownTemplate')
 	dropdown:SetPoint('LEFT', label, 'RIGHT', 5, 0)
 	dropdown:SetSize(200, 30)
-	dropdown:SetJustifyH('LEFT')
-	dropdown:SetCheckAlignment('LEFT')
 	frame.Dropdown = dropdown
 
 	return frame
+end, function(_, frame)
+	frame:Hide()
+	frame.layoutIndex = nil
 end)

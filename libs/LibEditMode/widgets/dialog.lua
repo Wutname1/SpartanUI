@@ -1,4 +1,4 @@
-local MINOR = 2
+local MINOR = 8
 local lib, minor = LibStub('LibEditMode')
 if minor > MINOR then
 	return
@@ -11,7 +11,7 @@ local dialogMixin = {}
 function dialogMixin:Update(selection)
 	self.selection = selection
 
-	self.Title:SetText(selection.parent:GetName())
+	self.Title:SetText(selection.parent.editModeName or selection.parent:GetName())
 	self:UpdateSettings()
 	self:UpdateButtons()
 
