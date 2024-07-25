@@ -1292,7 +1292,6 @@ function Options:Initialize()
 						local id = tonumber(string.match(info[#info], '(%d+)'))
 						local name = 'unknown'
 						if id then
-							-- local spellLink = GetSpellLink(id)
 							local spellName, _, spellIcon = GetSpellInfo(id)
 							name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellIcon or 'Interface\\Icons\\Inv_misc_questionmark', spellName or L['Unknown'], id)
 						end

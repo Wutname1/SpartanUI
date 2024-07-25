@@ -7,8 +7,9 @@ local lastTime, lastSpellID = nil, nil
 local function printFormattedString(t, sid, spell, ss, ssid, inputstring)
 	local msg = inputstring or module.DB.text
 	local DBChannel = module.DB.announceLocation or 'SELF'
+	local spelllink = C_Spell.GetSpellLink(sid)
 
-	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', GetSpellLink(sid)):gsub('%%sl', GetSpellLink(sid)):gsub('%%myspell', GetSpellLink(ssid))
+	msg = msg:gsub('%%t', t):gsub('%%cl', CombatLog_String_SchoolString(ss)):gsub('%%spell', spelllink):gsub('%%sl', spelllink):gsub('%%myspell', C_Spell.GetSpellLink(ssid))
 	if DBChannel ~= 'SELF' then
 		if DBChannel == 'SMART' then
 			if IsInGroup(2) then
