@@ -1383,7 +1383,7 @@ end
 ]]
 ---@param target table
 ---@param source table
----@param override boolean
+---@param override? boolean
 ---@return table
 function SUI:MergeData(target, source, override)
 	if source == nil then return target end
