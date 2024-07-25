@@ -2,33 +2,58 @@ local SUI, L = SUI, SUI.L
 ---@class SUI.Module.Artwork.StatusBars : SUI.Module
 local module = SUI:NewModule('Artwork.StatusBars')
 module.bars = {}
-local FACTION_BAR_COLORS = {
-	[1] = { r = 1, g = 0.2, b = 0 },
-	[2] = { r = 0.8, g = 0.3, b = 0 },
-	[3] = { r = 0.8, g = 0.2, b = 0 },
-	[4] = { r = 1, g = 0.8, b = 0 },
-	[5] = { r = 0, g = 1, b = 0.1 },
-	[6] = { r = 0, g = 1, b = 0.2 },
-	[7] = { r = 0, g = 1, b = 0.3 },
-	[8] = { r = 0, g = 0.6, b = 0.1 },
-	[9] = { r = 0, g = 0.6, b = 0.1 },
-	[10] = { r = 0, g = 0.74, b = 0.95 },
+local DB ---@type SUI.StatusBars.DB
+
+local Enums = {
+	Bars = {
+		None = -1,
+		Reputation = 1,
+		Honor = 2,
+		Artifact = 3,
+		Experience = 4,
+		Azerite = 5,
+	},
+	TextDisplayMode = {
+		OnMouseOver = 0,
+		Always = 1,
+		Never = 2,
+	},
 }
-local COLORS = {
-	Orange = { r = 1, g = 0.2, b = 0, a = 0.7 },
-	Yellow = { r = 1, g = 0.8, b = 0, a = 0.7 },
-	Green = { r = 0, g = 1, b = 0.1, a = 0.7 },
-	Blue = { r = 0, g = 0.1, b = 1, a = 0.7 },
-	Red = { r = 1, g = 0, b = 0.08, a = 0.7 },
-	Light_Blue = { r = 0, g = 0.5, b = 1, a = 0.7 },
+
+local BarLabels = {
+	[Enums.Bars.Azerite] = 'Azerite',
+	[Enums.Bars.Reputation] = 'Reputation',
+	[Enums.Bars.Honor] = 'Honor',
+	[Enums.Bars.Artifact] = 'Artifact',
+	[Enums.Bars.Experience] = 'Experience',
 }
-local watchedFaction = nil
+
+---@class SUI.StatusBars.DB
+local DBDefaults = {
+	AllowRep = true,
+	PriorityDirection = 'ltr',
+	BarPriorities = {
+		[Enums.Bars.Azerite] = 0,
+		[Enums.Bars.Reputation] = 1,
+		[Enums.Bars.Honor] = 2,
+		[Enums.Bars.Artifact] = 3,
+		[Enums.Bars.Experience] = 4,
+	},
+	bars = {
+		['**'] = {
+			ToolTip = 'hover',
+			text = Enums.TextDisplayMode.OnMouseOver,
+			alpha = 1,
+		},
+	},
+}
+
+function module:OnInitialize()
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = DBDefaults })
+	DB = module.Database.profile
+end
 
 function module:OnEnable()
-	module.DB = SUI.DB.StatusBars
-	--Create Status Bars
-	if not SUI.IsRetail and module.DB[2].display == 'honor' then module.DB[2].display = 'rep' end
-
 	module:factory()
 	module:BuildOptions()
 end
@@ -41,134 +66,6 @@ local GetFactionDetails = function(name)
 		if name == factionData.name then description = factionData.description end
 	end
 	return description
-end
-
-local SetBarColor = function(self, side)
-	local display = module.DB[side].display
-	local color1 = module.DB[side].CustomColor
-	local color2 = module.DB[side].CustomColor2
-	local r, g, b, a
-
-	if module.DB[side].AutoColor then
-		if display == 'xp' then
-			color1 = COLORS.Blue
-			color2 = COLORS.Light_Blue
-		elseif display == 'honor' then
-			color1 = COLORS.Red
-		elseif display == 'rep' then
-			watchedFaction = C_Reputation.GetWatchedFactionData()
-			local repInfo = C_GossipInfo.GetFriendshipReputation(watchedFaction.factionID)
-
-			color1 = FACTION_BAR_COLORS[watchedFaction.currentStanding] or FACTION_BAR_COLORS[7]
-			if C_Reputation.IsFactionParagon(watchedFaction.factionID) then
-				color1 = FACTION_BAR_COLORS[9]
-			elseif repInfo and repInfo.friendshipFactionID and C_Reputation.IsMajorFaction(watchedFaction.factionID) then
-				color1 = FACTION_BAR_COLORS[10]
-			end
-		end
-	end
-	r, g, b, a = color1.r, color1.g, color1.b, color1.a
-
-	self.Fill:SetVertexColor(r, g, b, a)
-	self.FillGlow:SetVertexColor(r, g, b, a)
-	if display == 'xp' then
-		r, g, b, a = color2.r, color2.g, color2.b, color2.a
-		self.Lead:SetVertexColor(r, g, b, a)
-		self.LeadGlow:SetVertexColor(r, g, b, a)
-	end
-end
-
-local updateText = function(self)
-	-- local FrameName = self:GetName()
-	-- Reset graphics to avoid issues
-	self.Fill:SetWidth(0.1)
-	self.Lead:SetWidth(0.1)
-	--Reset Text
-	self.Text:SetText('')
-
-	local side = self.i
-	local valFill, valMax, valPercent
-	local remaining = ''
-	if (module.DB[side].display == 'xp') and UnitLevel('player') <= GetMaxPlayerLevel() then
-		local rested, now, goal = GetXPExhaustion() or 0, UnitXP('player'), UnitXPMax('player')
-		if now ~= 0 then
-			rested = (rested / goal) * self:GetWidth()
-
-			if
-				(rested + (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
-				> (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
-			then
-				rested = (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
-					- (now / goal) * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x)))
-			end
-
-			if rested == 0 then rested = 0.001 end
-			self.Lead:SetWidth(rested)
-		end
-		valFill = now
-		valMax = goal
-		remaining = SUI.Font:comma_value(goal - now)
-		valPercent = (UnitXP('player') / UnitXPMax('player') * 100)
-	elseif module.DB[side].display == 'rep' then
-		watchedFaction = C_Reputation.GetWatchedFactionData()
-		local repInfo = C_GossipInfo.GetFriendshipReputation(watchedFaction.factionID)
-
-		if C_Reputation.IsFactionParagon(watchedFaction.factionID) then
-			local currentValue, threshold, _, _, _ = C_Reputation.GetFactionParagonInfo(watchedFaction.factionID)
-			if currentValue ~= nil then
-				watchedFaction.currentStanding = currentValue % threshold
-				watchedFaction.currentReactionThreshold = 0
-				watchedFaction.nextReactionThreshold = threshold
-			end
-		end
-		local repLevelLow = (watchedFaction.currentStanding - watchedFaction.currentReactionThreshold)
-		local repLevelHigh = (watchedFaction.nextReactionThreshold - watchedFaction.currentReactionThreshold)
-
-		if repLevelHigh == 0 and watchedFaction.name then
-			valFill = 42000
-			valMax = 42000
-			valPercent = 100
-		elseif watchedFaction.name then
-			valFill = repLevelLow
-			valMax = repLevelHigh
-			valPercent = (repLevelLow / repLevelHigh) * 100
-		end
-
-		if repInfo and repInfo.friendshipFactionID then
-			local isMajorFaction = watchedFaction.factionID and C_Reputation.IsMajorFaction(watchedFaction.factionID)
-
-			if repInfo and repInfo.friendshipFactionID > 0 then
-				valFill, valMax, watchedFaction.currentStanding = repInfo.reactionThreshold or 0, repInfo.nextThreshold or 1, repInfo.standing or 1
-				valPercent = (watchedFaction.currentStanding / valMax) * 100
-			elseif isMajorFaction then
-				local majorFactionData = C_MajorFactions.GetMajorFactionData(watchedFaction.factionID)
-
-				valMax = majorFactionData.renownLevelThreshold
-				valFill = C_MajorFactions.HasMaximumRenown(watchedFaction.factionID) and majorFactionData.renownLevelThreshold or majorFactionData.renownReputationEarned or 0
-				valPercent = (valFill / valMax) * 100
-			end
-		end
-	elseif module.DB[side].display == 'honor' then
-		valFill = UnitHonor('player')
-		valMax = UnitHonorMax('player')
-		valPercent = ((valFill / valMax) * 100)
-	end
-
-	if type(valPercent) == 'number' then
-		if valPercent ~= 0 and valPercent then
-			local ratio = (valPercent / 100)
-			if (ratio * self:GetWidth()) > self:GetWidth() then
-				self.Fill:SetWidth(self:GetWidth())
-			else
-				self.Fill:SetWidth(ratio * (self:GetWidth() - (self.settings.MaxWidth - math.abs(self.settings.GlowPoint.x))))
-			end
-		end
-		if module.DB[side].text and valFill and valMax then
-			self.Text:SetFormattedText('( %s / %s ) %d%% %s', SUI.Font:comma_value(valFill), SUI.Font:comma_value(valMax), valPercent, remaining or '')
-		end
-	end
-
-	SetBarColor(self, side)
 end
 
 local showXPTooltip = function(self)
@@ -189,8 +86,9 @@ local showXPTooltip = function(self)
 end
 
 local showRepTooltip = function(self)
-	watchedFaction = C_Reputation.GetWatchedFactionData()
-	local factionID = watchedFaction.factionID
+	local watchedFactionData = C_Reputation.GetWatchedFactionData()
+	if not watchedFactionData or watchedFactionData.factionID == 0 then return end
+	local factionID = watchedFactionData.factionID
 
 	local factionStandingtext
 	local factionData = C_Reputation.GetFactionDataByID(factionID)
@@ -205,22 +103,22 @@ local showRepTooltip = function(self)
 	end
 	local currentValue, threshold, rewardQuestID, hasRewardPending, tooLowLevelForParagon = C_Reputation.GetFactionParagonInfo(factionID)
 
-	local low = watchedFaction.currentReactionThreshold or 0
-	local high = threshold or watchedFaction.nextReactionThreshold or 1
-	local current = currentValue or watchedFaction.currentStanding or 1
+	local low = watchedFactionData.currentReactionThreshold or 0
+	local high = threshold or watchedFactionData.nextReactionThreshold or 1
+	local current = currentValue or watchedFactionData.currentStanding or 1
 	local repLevelLow = (current - low) or 0
 	local repLevelHigh = (high - low) or 1
 	local percentage
 
-	if watchedFaction.name then
-		local text = GetFactionDetails(watchedFaction.name)
+	if watchedFactionData.name then
+		local text = GetFactionDetails(watchedFactionData.name)
 		if repLevelHigh == 0 then
 			percentage = 100
 		else
 			percentage = (repLevelLow / repLevelHigh) * 100
 		end
 		self.tooltip.TextFrame.HeaderText:SetText(
-			format('%s ( %s / %s ) %d%% %s', watchedFaction.name, SUI.Font:comma_value(repLevelLow), SUI.Font:comma_value(repLevelHigh), percentage, factionStandingtext)
+			format('%s ( %s / %s ) %d%% %s', watchedFactionData.name, SUI.Font:comma_value(repLevelLow), SUI.Font:comma_value(repLevelHigh), percentage, factionStandingtext)
 		)
 		self.tooltip.TextFrame.MainText:SetText('|cffffd200' .. text .. '|r')
 		self.tooltip:Show()
@@ -246,312 +144,315 @@ local showHonorTooltip = function(self)
 end
 
 function module:factory()
+	local barManager = CreateFrame('Frame', 'SUI_StatusBar_Manager', SpartanUI)
+	-- barManager.barContainers = {}
+	--Setup Actions
+	for k, v in pairs(StatusTrackingManagerMixin) do
+		barManager[k] = v
+	end
+
+	barManager:SetScript('OnLoad', barManager.OnLoad)
+	barManager:SetScript('OnEvent', barManager.OnEvent)
+
+	--Override UpdateBarsShown
+	barManager.UpdateBarsShown = function(self)
+		local function onFinishedAnimating(barContainer)
+			barContainer:UnsubscribeFromOnFinishedAnimating(self)
+			self:UpdateBarsShown()
+		end
+
+		-- If any bar is animating then wait for that animation to end before updating shown bars
+		for i, barContainer in ipairs(self.barContainers) do
+			if barContainer:IsAnimating() then
+				barContainer:SubscribeToOnFinishedAnimating(self, onFinishedAnimating)
+				return
+			end
+		end
+
+		-- Determine what bars should be shown
+		local newBarIndicesToShow = {}
+
+		for _, barIndex in pairs(Enums.Bars) do
+			if barIndex == Enums.Bars.Reputation and DB.AllowRep and self:CanShowBar(barIndex) then
+				table.insert(newBarIndicesToShow, barIndex)
+			elseif self:CanShowBar(barIndex) then
+				table.insert(newBarIndicesToShow, barIndex)
+			end
+		end
+		table.sort(newBarIndicesToShow, function(left, right)
+			return self:GetBarPriority(left) > self:GetBarPriority(right)
+		end)
+
+		-- We can only show as many bars as we have containers for
+		while #newBarIndicesToShow > #self.barContainers do
+			table.remove(newBarIndicesToShow, #newBarIndicesToShow)
+		end
+
+		-- Assign the bar indices to the bar containers
+		for i = 1, #self.barContainers do
+			local barContainer = self.barContainers[i]
+			local newBarIndex = newBarIndicesToShow[i] or Enums.Bars.None
+			local oldBarIndex = self.shownBarIndices[i]
+
+			if newBarIndex ~= oldBarIndex then
+				-- If the bar being shown in this container is already being shown in another container then
+				-- make both containers fade out fully before actually assigning the new bars.
+				-- This will lead to the bars fading in together rather than staggering.
+				if (newBarIndex ~= Enums.Bars.None and tContains(self.shownBarIndices, newBarIndex)) or (oldBarIndex ~= Enums.Bars.None and tContains(newBarIndicesToShow, oldBarIndex)) then
+					newBarIndex = Enums.Bars.None
+					barContainer:SubscribeToOnFinishedAnimating(self, onFinishedAnimating)
+				end
+			end
+
+			barContainer:SetShownBar(newBarIndex)
+		end
+
+		self.shownBarIndices = newBarIndicesToShow
+	end
+	--Override GetBarPriority
+	barManager.GetBarPriority = function(self, barIndex)
+		return DB.BarPriorities[barIndex] or -1
+	end
+
 	for i, key in ipairs({ 'Left', 'Right' }) do
 		local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
 
 		--Status Bar
-		local statusbar = CreateFrame('Frame', 'SUI_StatusBar_' .. key, SpartanUI)
-		statusbar:SetSize(unpack(StyleSetting.size))
-		statusbar:SetFrameStrata('BACKGROUND')
+		local barContainer = CreateFrame('Frame', 'SUI_StatusBar_' .. key, barManager, 'StatusTrackingBarContainerTemplate')
 
-		--Status Bar Images
-		statusbar.bg = statusbar:CreateTexture(nil, 'BACKGROUND')
-		statusbar.bg:SetTexture(StyleSetting.bgImg or '')
-		statusbar.bg:SetAllPoints(statusbar)
-		statusbar.bg:SetTexCoord(unpack(StyleSetting.texCords))
+		local width, height = unpack(StyleSetting.size)
 
-		statusbar.overlay = statusbar:CreateTexture(nil, 'OVERLAY')
-		statusbar.overlay:SetTexture(StyleSetting.bgImg)
-		statusbar.overlay:SetAllPoints(statusbar.bg)
-		statusbar.overlay:SetTexCoord(unpack(StyleSetting.texCords))
+		barContainer.BarFrameTexture:Hide()
 
-		statusbar.Fill = statusbar:CreateTexture(nil, 'BORDER')
-		statusbar.Fill:SetTexture(StyleSetting.GlowImage)
-		statusbar.Fill:SetSize(0.1, StyleSetting.GlowHeight)
+		barContainer:SetSize(unpack(StyleSetting.size))
+		barContainer:SetFrameStrata('LOW')
+        barContainer:SetFrameLevel(20)
+		
+		--loop over the bars and set the sizes
+		for _, bar in pairs(barContainer.bars) do
+			bar:SetSize(width - 30, height - 5)
+			bar.StatusBar:SetSize(width - 30, height - 5)
+			bar:ClearAllPoints()
+			bar:SetPoint('BOTTOM', barContainer, 'BOTTOM', 0, 0)
+			bar:SetUsingParentLevel(false)
+			bar:SetFrameLevel(barContainer:GetFrameLevel() - 5)
 
-		statusbar.Lead = statusbar:CreateTexture(nil, 'BORDER')
-		statusbar.Lead:SetTexture(StyleSetting.GlowImage)
-		statusbar.Lead:SetSize(0.1, StyleSetting.GlowHeight)
+			-- Text
+			SUI.Font:Format(bar.OverlayFrame.Text, StyleSetting.Font or 10, 'StatusBars')
+			if DB.bars[i].text == Enums.TextDisplayMode.Always then
+				bar.OverlayFrame.Text:Show()
+			else
+				bar.OverlayFrame.Text:Hide()
+			end
 
-		statusbar.FillGlow = statusbar:CreateTexture(nil, 'ARTWORK')
-		statusbar.FillGlow:SetTexture(StyleSetting.GlowImage)
-		statusbar.FillGlow:SetAllPoints(statusbar.Fill)
+			bar.UpdateTextVisibility = function(self)
+				-- self:SetFrameLevel(barContainer:GetFrameLevel() - 5)
+				local blizzMode = self:ShouldBarTextBeDisplayed()
+				self.OverlayFrame.Text:SetShown(DB.bars[i].text == Enums.TextDisplayMode.Always and blizzMode)
+			end
 
-		statusbar.LeadGlow = statusbar:CreateTexture(nil, 'ARTWORK')
-		statusbar.LeadGlow:SetTexture(StyleSetting.GlowImage)
-		statusbar.LeadGlow:SetAllPoints(statusbar.Lead)
-
-		if StyleSetting.Grow == 'LEFT' then
-			statusbar.Fill:SetPoint('RIGHT', statusbar, 'RIGHT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
-			statusbar.Lead:SetPoint('RIGHT', statusbar.Fill, 'LEFT', 0, 0)
-		else
-			statusbar.Fill:SetPoint('LEFT', statusbar, 'LEFT', StyleSetting.GlowPoint.x, StyleSetting.GlowPoint.y)
-			statusbar.Lead:SetPoint('LEFT', statusbar.Fill, 'RIGHT', 0, 0)
+			--Setup OnMouseOver
+			bar:HookScript('OnEnter', function()
+				if DB.bars[i].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
+			end)
+			bar:HookScript('OnLeave', function()
+				if DB.bars[i].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
+			end)
 		end
 
-		--Status Bar Text
-		statusbar.Text = statusbar:CreateFontString(nil, 'OVERLAY')
-		--Only allow Style to override default font sizes
-		local tmp = module.DB.default.FontSize
-		if StyleSetting.FontSize and module.DB[i].FontSize == module.DB.default.FontSize then tmp = StyleSetting.FontSize end
-		SUI.Font:Format(statusbar.Text, tmp)
-		statusbar.Text:SetJustifyH('CENTER')
-		statusbar.Text:SetJustifyV('MIDDLE')
-		statusbar.Text:SetAllPoints(statusbar)
-		statusbar.Text:SetTextColor(unpack(StyleSetting.TextColor))
+		--Theme image overlay
+		barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
+		barContainer.bg:SetTexture(StyleSetting.bgImg or '')
+		barContainer.bg:SetAllPoints(barContainer)
+		barContainer.bg:SetTexCoord(unpack(StyleSetting.texCords))
 
-		--Tooltip
-		local tooltip = CreateFrame('Frame')
-		tooltip:SetParent(statusbar)
-		tooltip:SetFrameStrata('TOOLTIP')
-		tooltip:SetSize(unpack(StyleSetting.TooltipSize))
-		if StyleSetting.tooltipAnchor == 'TOP' then
-			tooltip:SetPoint('BOTTOM', statusbar, 'TOP')
-		else
-			tooltip:SetPoint('TOP', statusbar, 'BOTTOM')
-		end
+		barContainer.overlay = barContainer:CreateTexture(nil, 'OVERLAY')
+		barContainer.overlay:SetTexture(StyleSetting.bgImg)
+		barContainer.overlay:SetAllPoints(barContainer.bg)
+		barContainer.overlay:SetTexCoord(unpack(StyleSetting.texCords))
 
-		tooltip.bg = tooltip:CreateTexture(nil, 'BORDER')
-		tooltip.bg:SetTexture(StyleSetting.bgTooltip)
-		tooltip.bg:SetAllPoints(tooltip)
-		tooltip.bg:SetTexCoord(unpack(StyleSetting.texCordsTooltip))
+		barContainer.settings = StyleSetting
+		barContainer.i = i
 
-		local TextFrame = CreateFrame('Frame')
-		TextFrame:SetFrameStrata('TOOLTIP')
-		TextFrame:SetParent(tooltip)
-		TextFrame:SetSize(unpack(StyleSetting.TooltipTextSize))
-		TextFrame:SetPoint('CENTER', tooltip, 'CENTER')
-
-		TextFrame.HeaderText = TextFrame:CreateFontString(nil, 'OVERLAY')
-		SUI.Font:Format(TextFrame.HeaderText, 10)
-		TextFrame.HeaderText:SetPoint('TOPLEFT', TextFrame)
-		TextFrame.HeaderText:SetPoint('TOPRIGHT', TextFrame)
-		TextFrame.HeaderText:SetHeight((0.18 * TextFrame:GetHeight()))
-
-		TextFrame.MainText = TextFrame:CreateFontString(nil, 'OVERLAY')
-		SUI.Font:Format(TextFrame.MainText, 8)
-		TextFrame.MainText:SetPoint('TOPLEFT', TextFrame.HeaderText, 'BOTTOMLEFT', 0, -2)
-		TextFrame.MainText:SetPoint('TOPRIGHT', TextFrame.HeaderText, 'BOTTOMRIGHT', 0, -2)
-		TextFrame.MainText:SetHeight((0.82 * TextFrame:GetHeight()))
-
-		TextFrame.MainText2 = TextFrame:CreateFontString(nil, 'OVERLAY')
-		SUI.Font:Format(TextFrame.MainText2, 8)
-		TextFrame.MainText2:SetPoint('TOPLEFT', TextFrame.MainText, 'BOTTOMLEFT', 0, -2)
-		TextFrame.MainText2:SetPoint('TOPRIGHT', TextFrame.MainText, 'BOTTOMRIGHT', 0, -2)
-		TextFrame.MainText2:SetHeight((0.82 * TextFrame:GetHeight()))
-
-		TextFrame.HeaderText:SetJustifyH('LEFT')
-		TextFrame.MainText:SetJustifyH('LEFT')
-		TextFrame.MainText:SetJustifyV('TOP')
-
-		--Assign to globals
-		tooltip.TextFrame = TextFrame
-		statusbar.tooltip = tooltip
-		statusbar.settings = StyleSetting
-		statusbar.i = i
-		module.bars[key] = statusbar
+		module.bars[key] = barContainer
 
 		--Position
 		local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
-		statusbar:ClearAllPoints()
-		statusbar:SetPoint(point, anchor, secondaryPoint, x, y)
-		statusbar:SetAlpha(module.DB[i].alpha or 1)
-
-		--Setup Actions
-		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
-		statusbar:RegisterEvent('UNIT_INVENTORY_CHANGED')
-		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
-		statusbar:RegisterEvent('PLAYER_XP_UPDATE')
-		statusbar:RegisterEvent('PLAYER_LEVEL_UP')
-		statusbar:RegisterEvent('PLAYER_ENTERING_WORLD')
-		statusbar:RegisterEvent('UPDATE_FACTION')
-		statusbar:RegisterEvent('ARTIFACT_XP_UPDATE')
-
-		--Statusbar Update event
-		statusbar:SetScript('OnEvent', function(self)
-			if module.DB[i].display ~= 'disabled' then
-				self:Show()
-				updateText(self)
-			else
-				self:Hide()
-			end
-		end)
-		--Tooltip Display Events
-		statusbar:SetScript('OnEnter', function()
-			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'hover' then showRepTooltip(statusbar) end
-			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'hover' then showXPTooltip(statusbar) end
-			if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'hover' then showHonorTooltip(statusbar) end
-		end)
-		statusbar:SetScript('OnMouseDown', function()
-			if module.DB[i].display == 'rep' and module.DB[i].ToolTip == 'click' then showRepTooltip(statusbar) end
-			if module.DB[i].display == 'xp' and module.DB[i].ToolTip == 'click' then showXPTooltip(statusbar) end
-			if module.DB[i].display == 'honor' and module.DB[i].ToolTip == 'click' then showHonorTooltip(statusbar) end
-		end)
-		statusbar:SetScript('OnLeave', function()
-			statusbar.tooltip:Hide()
-		end)
+		barContainer:ClearAllPoints()
+		barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
+		barContainer:SetAlpha(DB.bars[i].alpha or 1)
 
 		-- Hide with SpartanUI
 		SpartanUI:HookScript('OnHide', function()
-			statusbar:Hide()
+			barContainer:Hide()
 		end)
 		SpartanUI:HookScript('OnShow', function()
-			statusbar:Show()
+			barContainer:Show()
 		end)
-
-		--Hook the visibility of the tooltip to the text
-		tooltip:HookScript('OnHide', function()
-			tooltip.TextFrame:Hide()
-		end)
-		tooltip:HookScript('OnShow', function()
-			tooltip.TextFrame:Show()
-		end)
-		--Hide the new tooltip
-		tooltip:Hide()
 	end
 
-	SUI:RegisterMessage('StatusBarUpdate', function()
-		for i, key in ipairs({ 'Left', 'Right' }) do
-			if module.DB[i].display ~= 'disabled' then
-				module.bars[key]:Show()
-				updateText(module.bars[key])
-			else
-				module.bars[key]:Hide()
-			end
-			module.bars[key]:SetAlpha(module.DB[i].alpha or 1)
-		end
-	end)
+	barManager:OnLoad()
 end
 
 function module:BuildOptions()
-	local StatusBars = {
-		['xp'] = L['Experiance'],
-		['rep'] = L['Reputation'],
-		['honor'] = L['Honor'],
-		['disabled'] = L['Disabled'],
-	}
-
-	local ids = {
-		[1] = 'one',
-		[2] = 'two',
-		[3] = 'three',
-		[4] = 'four',
-		[5] = 'five',
-	}
-
 	-- Build Holder
 	SUI.opt.args['Artwork'].args['StatusBars'] = {
 		name = L['Status bars'],
 		type = 'group',
-		args = {},
+		args = {
+			IsWatchingHonorAsXP = {
+				name = 'Enable Honor bar',
+				type = 'toggle',
+				order = 2,
+				get = function()
+					return GetCVarBool('showHonorAsExperience')
+				end,
+				set = function(_, value)
+					SetCVar('showHonorAsExperience', value)
+				end,
+			},
+			EnableReputation = {
+				name = 'Enable Reputation',
+				type = 'toggle',
+				order = 3,
+				get = function()
+					return DB.AllowRep
+				end,
+				set = function(_, value)
+					DB.AllowRep = value
+				end,
+			},
+			PriorityDirection = {
+				name = 'Priority Direction',
+				type = 'select',
+				order = 4,
+				values = {
+					['ltr'] = 'Left to Right',
+					['rtl'] = 'Right to Left',
+				},
+				get = function()
+					return DB.PriorityDirection
+				end,
+				set = function(_, value)
+					DB.PriorityDirection = value
+				end,
+			},
+			Font = {
+				name = 'Font Settings',
+				type = 'group',
+				order = 90,
+				inline = true,
+				get = function(info)
+					return SUI.Font.DB.Modules.StatusBars[info[#info]]
+				end,
+				set = function(info, val)
+					SUI.Font.DB.Modules.StatusBars[info[#info]] = val
+					SUI.Font:Refresh('StatusBars')
+				end,
+				args = {
+					Face = {
+						type = 'select',
+						name = L['Font face'],
+						order = 1,
+						dialogControl = 'LSM30_Font',
+						values = SUI.Lib.LSM:HashTable('font'),
+					},
+					Type = {
+						name = L['Font style'],
+						type = 'select',
+						order = 2,
+						values = {
+							['normal'] = L['Normal'],
+							['monochrome'] = L['Monochrome'],
+							['outline'] = L['Outline'],
+							['thickoutline'] = L['Thick outline'],
+						},
+					},
+					Size = {
+						name = L['Adjust font size'],
+						type = 'range',
+						order = 3,
+						width = 'double',
+						min = -15,
+						max = 15,
+						step = 1,
+					},
+				},
+			},
+			BarPriorities = {
+				name = 'Bar Priorities',
+				type = 'group',
+				order = 100,
+				inline = true,
+				args = {},
+			},
+		},
 	}
 
-	--Bar Display dropdowns
-	for i, _ in ipairs({ 'Left', 'Right' }) do
-		SUI.opt.args['Artwork'].args['StatusBars'].args[ids[i]] = {
-			name = L['Status bar'] .. ' ' .. i,
-			order = i,
+	-- Build Bar Priorities
+	for i, v in pairs(DB.BarPriorities) do
+		SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[BarLabels[i]] = {
+			name = '',
 			type = 'group',
-			inline = true,
+			order = v,
 			args = {
-				display = {
-					name = L['Display mode'],
-					type = 'select',
+				label = {
+					type = 'description',
+					width = 'double',
+					fontSize = 'medium',
 					order = 1,
-					values = StatusBars,
-					get = function(info)
-						return module.DB[i].display
-					end,
-					set = function(info, val)
-						module.DB[i].display = val
-						SUI:SendMessage('StatusBarUpdate')
-					end,
+					name = BarLabels[i],
 				},
-				text = {
-					name = L['Display statusbar text'],
-					type = 'toggle',
+				up = {
+					type = 'execute',
+					name = 'Up',
+					width = 'half',
 					order = 2,
-					get = function(info)
-						return module.DB[i].text
+					disabled = function(info)
+						--If wea re at the top, disable the button
+						return DB.BarPriorities[Enums.Bars[info[#info - 1]]] == 0
 					end,
-					set = function(info, val)
-						module.DB[i].text = val
-						SUI:SendMessage('StatusBarUpdate')
+					func = function(info)
+						local myName = info[#info - 1]
+						local currentPriority = DB.BarPriorities[Enums.Bars[myName]]
+
+						--Find the next highest priority
+						local newspot = currentPriority - 1
+						for k, j in pairs(DB.BarPriorities) do
+							if j == newspot then
+								DB.BarPriorities[k] = currentPriority
+								DB.BarPriorities[Enums.Bars[myName]] = j
+								--Swap the order on the options
+								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[myName].order = newspot
+								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[BarLabels[k]].order = currentPriority
+							end
+						end
 					end,
 				},
-				TooltipDisplay = {
-					name = L['Tooltip display mode'],
-					type = 'select',
+				down = {
+					type = 'execute',
+					name = 'Down',
+					width = 'half',
 					order = 3,
-					values = {
-						['hover'] = L['On mouse over'],
-						['click'] = L['On click'],
-						['off'] = L['Disabled'],
-					},
-					get = function(info)
-						return module.DB[i].ToolTip
+					disabled = function(info)
+						--If we are at the bottom, disable the button
+						return DB.BarPriorities[Enums.Bars[info[#info - 1]]] == #DB.BarPriorities - 1
 					end,
-					set = function(info, val)
-						module.DB[i].ToolTip = val
-						SUI:SendMessage('StatusBarUpdate')
-					end,
-				},
-				colors = {
-					name = 'name',
-					type = 'group',
-					inline = true,
-					get = function(info)
-						return module.DB[i][info[#info]]
-					end,
-					set = function(info, val)
-						module.DB[i][info[#info]] = val
-						SUI:SendMessage('StatusBarUpdate')
-					end,
-					args = {
-						CustomColor = {
-							name = L['Primary custom color'],
-							type = 'color',
-							hasAlpha = true,
-							order = 4,
-							get = function(info)
-								local colors = module.DB[i].CustomColor
-								return colors.r, colors.g, colors.b, colors.a
-							end,
-							set = function(info, r, g, b, a)
-								local colors = module.DB[i].CustomColor
-								colors.r, colors.g, colors.b, colors.a = r, g, b, a
-								SUI:SendMessage('StatusBarUpdate')
-							end,
-						},
-						CustomColor2 = {
-							name = L['Secondary custom color'],
-							type = 'color',
-							hasAlpha = true,
-							order = 4,
-							get = function(info)
-								local colors = module.DB[i].CustomColor2
-								return colors.r, colors.g, colors.b, colors.a
-							end,
-							set = function(info, r, g, b, a)
-								local colors = module.DB[i].CustomColor2
-								colors.r, colors.g, colors.b, colors.a = r, g, b, a
-								SUI:SendMessage('StatusBarUpdate')
-							end,
-						},
-					},
-				},
-				alpha = {
-					name = 'Transparency',
-					type = 'range',
-					min = 0,
-					max = 1,
-					step = 0.01,
-					get = function(info)
-						return module.DB[i].alpha or 1
-					end,
-					set = function(info, val)
-						module.DB[i].alpha = val
-						SUI:SendMessage('StatusBarUpdate')
+					func = function(info)
+						local myName = info[#info - 1]
+						local currentPriority = DB.BarPriorities[Enums.Bars[myName]]
+
+						--Find the next lowest priority
+						local newspot = currentPriority + 1
+						for k, j in pairs(DB.BarPriorities) do
+							if j == newspot then
+								DB.BarPriorities[k] = currentPriority
+								DB.BarPriorities[Enums.Bars[myName]] = j
+								--Swap the order on the options
+								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[myName].order = newspot
+								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[BarLabels[k]].order = currentPriority
+							end
+						end
 					end,
 				},
 			},
