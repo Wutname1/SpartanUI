@@ -541,7 +541,8 @@
     "GetMouseFoci",
     "GameMenuFrame_UpdateVisibleButtons",
     "MAJOR_FACTION_MAX_RENOWN_REACHED",
-    "GetText"
+    "GetText",
+    "StatusTrackingManagerMixin"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

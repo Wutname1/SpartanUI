@@ -58,104 +58,30 @@ function module:OnEnable()
 	module:BuildOptions()
 end
 
-local GetFactionDetails = function(name)
-	if not name then return end
-	local description = ' '
-	for i = 1, C_Reputation.GetNumFactions() do
-		local factionData = C_Reputation.GetFactionDataByIndex(i)
-		if name == factionData.name then description = factionData.description end
-	end
-	return description
-end
-
-local showXPTooltip = function(self)
-	local xptip1 = string.gsub(EXHAUST_TOOLTIP1, '\n', ' ') -- %s %d%% of normal experience gained from monsters.
-	local XP_LEVEL_TEMPLATE = '( %s / %s ) %d%% ' .. COMBAT_XP_GAIN -- use Global Strings and regex to make the level string work in any locale
-	local xprest = TUTORIAL_TITLE26 .. ' (%d%%) -' -- Rested (%d%%) -
-	local a = format('Level %s ', UnitLevel('player'))
-	local b = format(XP_LEVEL_TEMPLATE, SUI.Font:comma_value(UnitXP('player')), SUI.Font:comma_value(UnitXPMax('player')), (UnitXP('player') / UnitXPMax('player') * 100))
-	self.tooltip.TextFrame.HeaderText:SetText(a .. b) -- Level 99 (9999 / 9999) 100% Experience
-	local rested, text = GetXPExhaustion() or 0, ''
-	if rested > 0 then
-		text = format(xptip1, format(xprest, (rested / UnitXPMax('player')) * 100), 200)
-		self.tooltip.TextFrame.MainText:SetText(text) -- Rested (15%) - 200% of normal experience gained from monsters.
-	else
-		self.tooltip.TextFrame.MainText:SetText(format(xptip1, EXHAUST_TOOLTIP2, 100)) -- You should rest at an Inn. 100% of normal experience gained from monsters.
-	end
-	self.tooltip:Show()
-end
-
-local showRepTooltip = function(self)
-	local watchedFactionData = C_Reputation.GetWatchedFactionData()
-	if not watchedFactionData or watchedFactionData.factionID == 0 then return end
-	local factionID = watchedFactionData.factionID
-
-	local factionStandingtext
-	local factionData = C_Reputation.GetFactionDataByID(factionID)
-	local reputationInfo = C_GossipInfo.GetFriendshipReputation(factionID)
-	if reputationInfo and reputationInfo.friendshipFactionID > 0 then
-		factionStandingtext = reputationInfo.reaction
-	elseif C_Reputation.IsMajorFaction(factionID) then
-		factionStandingtext = MAJOR_FACTION_MAX_RENOWN_REACHED
-	else
-		local gender = UnitSex('player')
-		factionStandingtext = GetText('FACTION_STANDING_LABEL' .. factionData.reaction, gender)
-	end
-	local currentValue, threshold, rewardQuestID, hasRewardPending, tooLowLevelForParagon = C_Reputation.GetFactionParagonInfo(factionID)
-
-	local low = watchedFactionData.currentReactionThreshold or 0
-	local high = threshold or watchedFactionData.nextReactionThreshold or 1
-	local current = currentValue or watchedFactionData.currentStanding or 1
-	local repLevelLow = (current - low) or 0
-	local repLevelHigh = (high - low) or 1
-	local percentage
-
-	if watchedFactionData.name then
-		local text = GetFactionDetails(watchedFactionData.name)
-		if repLevelHigh == 0 then
-			percentage = 100
-		else
-			percentage = (repLevelLow / repLevelHigh) * 100
-		end
-		self.tooltip.TextFrame.HeaderText:SetText(
-			format('%s ( %s / %s ) %d%% %s', watchedFactionData.name, SUI.Font:comma_value(repLevelLow), SUI.Font:comma_value(repLevelHigh), percentage, factionStandingtext)
-		)
-		self.tooltip.TextFrame.MainText:SetText('|cffffd200' .. text .. '|r')
-		self.tooltip:Show()
-	else
-		self.tooltip.TextFrame.HeaderText:SetText(REPUTATION)
-		self.tooltip.TextFrame.MainText:SetText(REPUTATION_STANDING_DESCRIPTION)
-	end
-end
-
-local showHonorTooltip = function(self)
-	local honorLevel = UnitHonorLevel('player')
-	local currentHonor = UnitHonor('player')
-	local maxHonor = UnitHonorMax('player')
-
-	if currentHonor == 0 and maxHonor == 0 then
-		return -- If something odd happened and both values are 0 don't show anything
-	end
-
-	self.tooltip.TextFrame.HeaderText:SetFormattedText(HONOR_LEVEL_LABEL, honorLevel)
-	self.tooltip.TextFrame.MainText:SetFormattedText('( %s / %s ) %d%%', SUI.Font:comma_value(currentHonor), SUI.Font:comma_value(maxHonor), ((currentHonor / maxHonor) * 100))
-
-	self.tooltip:Show()
-end
-
 function module:factory()
+	local barManager = self:CreateBarManager()
+	self:SetupBarManagerBehavior(barManager)
+	self:CreateBarContainers(barManager)
+	barManager:OnLoad()
+end
+
+function module:CreateBarManager()
 	local barManager = CreateFrame('Frame', 'SUI_StatusBar_Manager', SpartanUI)
-	-- barManager.barContainers = {}
-	--Setup Actions
 	for k, v in pairs(StatusTrackingManagerMixin) do
 		barManager[k] = v
 	end
+	return barManager
+end
 
+function module:SetupBarManagerBehavior(barManager)
 	barManager:SetScript('OnLoad', barManager.OnLoad)
 	barManager:SetScript('OnEvent', barManager.OnEvent)
+	barManager.UpdateBarsShown = self:CreateUpdateBarsShownFunction()
+	barManager.GetBarPriority = self:CreateGetBarPriorityFunction()
+end
 
-	--Override UpdateBarsShown
-	barManager.UpdateBarsShown = function(self)
+function module:CreateUpdateBarsShownFunction()
+	return function(self)
 		local function onFinishedAnimating(barContainer)
 			barContainer:UnsubscribeFromOnFinishedAnimating(self)
 			self:UpdateBarsShown()
@@ -209,93 +135,114 @@ function module:factory()
 
 		self.shownBarIndices = newBarIndicesToShow
 	end
-	--Override GetBarPriority
-	barManager.GetBarPriority = function(self, barIndex)
+end
+
+function module:CreateGetBarPriorityFunction()
+	return function(self, barIndex)
 		return DB.BarPriorities[barIndex] or -1
 	end
+end
 
+function module:CreateBarContainers(barManager)
 	for i, key in ipairs({ 'Left', 'Right' }) do
-		local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
-
-		--Status Bar
-		local barContainer = CreateFrame('Frame', 'SUI_StatusBar_' .. key, barManager, 'StatusTrackingBarContainerTemplate')
-
-		local width, height = unpack(StyleSetting.size)
-
-		barContainer.BarFrameTexture:Hide()
-
-		barContainer:SetSize(unpack(StyleSetting.size))
-		barContainer:SetFrameStrata('LOW')
-        barContainer:SetFrameLevel(20)
-		
-		--loop over the bars and set the sizes
-		for _, bar in pairs(barContainer.bars) do
-			bar:SetSize(width - 30, height - 5)
-			bar.StatusBar:SetSize(width - 30, height - 5)
-			bar:ClearAllPoints()
-			bar:SetPoint('BOTTOM', barContainer, 'BOTTOM', 0, 0)
-			bar:SetUsingParentLevel(false)
-			bar:SetFrameLevel(barContainer:GetFrameLevel() - 5)
-
-			-- Text
-			SUI.Font:Format(bar.OverlayFrame.Text, StyleSetting.Font or 10, 'StatusBars')
-			if DB.bars[i].text == Enums.TextDisplayMode.Always then
-				bar.OverlayFrame.Text:Show()
-			else
-				bar.OverlayFrame.Text:Hide()
-			end
-
-			bar.UpdateTextVisibility = function(self)
-				-- self:SetFrameLevel(barContainer:GetFrameLevel() - 5)
-				local blizzMode = self:ShouldBarTextBeDisplayed()
-				self.OverlayFrame.Text:SetShown(DB.bars[i].text == Enums.TextDisplayMode.Always and blizzMode)
-			end
-
-			--Setup OnMouseOver
-			bar:HookScript('OnEnter', function()
-				if DB.bars[i].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
-			end)
-			bar:HookScript('OnLeave', function()
-				if DB.bars[i].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
-			end)
-		end
-
-		--Theme image overlay
-		barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
-		barContainer.bg:SetTexture(StyleSetting.bgImg or '')
-		barContainer.bg:SetAllPoints(barContainer)
-		barContainer.bg:SetTexCoord(unpack(StyleSetting.texCords))
-
-		barContainer.overlay = barContainer:CreateTexture(nil, 'OVERLAY')
-		barContainer.overlay:SetTexture(StyleSetting.bgImg)
-		barContainer.overlay:SetAllPoints(barContainer.bg)
-		barContainer.overlay:SetTexCoord(unpack(StyleSetting.texCords))
-
-		barContainer.settings = StyleSetting
-		barContainer.i = i
-
+		local barContainer = self:CreateBarContainer(barManager, key, i)
+		self:SetupBarContainerBehavior(barContainer, i)
 		module.bars[key] = barContainer
-
-		--Position
-		local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
-		barContainer:ClearAllPoints()
-		barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
-		barContainer:SetAlpha(DB.bars[i].alpha or 1)
-
-		-- Hide with SpartanUI
-		SpartanUI:HookScript('OnHide', function()
-			barContainer:Hide()
-		end)
-		SpartanUI:HookScript('OnShow', function()
-			barContainer:Show()
-		end)
 	end
+end
 
-	barManager:OnLoad()
+function module:CreateBarContainer(barManager, key, index)
+	local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
+	local barContainer = CreateFrame('Frame', 'SUI_StatusBar_' .. key, barManager, 'StatusTrackingBarContainerTemplate')
+
+	barContainer:SetSize(unpack(StyleSetting.size))
+	barContainer:SetFrameStrata('LOW')
+	barContainer:SetFrameLevel(20)
+
+	self:SetupBarContainerVisuals(barContainer, StyleSetting)
+	self:SetupBarContainerPosition(barContainer, StyleSetting, index)
+
+	return barContainer
+end
+
+function module:SetupBarContainerVisuals(barContainer, StyleSetting)
+	barContainer.BarFrameTexture:Hide()
+
+	-- Create background
+	barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
+	barContainer.bg:SetTexture(StyleSetting.bgImg or '')
+	barContainer.bg:SetAllPoints(barContainer)
+	barContainer.bg:SetTexCoord(unpack(StyleSetting.texCords))
+
+	-- Create overlay
+	barContainer.overlay = barContainer:CreateTexture(nil, 'OVERLAY')
+	barContainer.overlay:SetTexture(StyleSetting.bgImg)
+	barContainer.overlay:SetAllPoints(barContainer.bg)
+	barContainer.overlay:SetTexCoord(unpack(StyleSetting.texCords))
+
+	barContainer.settings = StyleSetting
+end
+
+function module:SetupBarContainerPosition(barContainer, StyleSetting, index)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
+	barContainer:ClearAllPoints()
+	barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
+	barContainer:SetAlpha(DB.bars[index].alpha or 1)
+end
+
+function module:SetupBarContainerBehavior(barContainer, index)
+	self:SetupBarsInContainer(barContainer, index)
+	self:SetupBarContainerVisibility(barContainer)
+end
+
+function module:SetupBarsInContainer(barContainer, index)
+	local width, height = unpack(barContainer.settings.size)
+	for _, bar in pairs(barContainer.bars) do
+		self:SetupBar(bar, barContainer, width, height, index)
+	end
+end
+
+function module:SetupBar(bar, barContainer, width, height, index)
+	bar:SetSize(width - 30, height - 5)
+	bar.StatusBar:SetSize(width - 30, height - 5)
+	bar:ClearAllPoints()
+	bar:SetPoint('BOTTOM', barContainer, 'BOTTOM', 0, 0)
+	bar:SetUsingParentLevel(false)
+	bar:SetFrameLevel(barContainer:GetFrameLevel() - 5)
+
+	self:SetupBarText(bar, barContainer.settings, index)
+	self:SetupBarMouseover(bar, index)
+end
+
+function module:SetupBarText(bar, StyleSetting, index)
+	SUI.Font:Format(bar.OverlayFrame.Text, StyleSetting.Font or 10, 'StatusBars')
+	bar.OverlayFrame.Text:SetShown(DB.bars[index].text == Enums.TextDisplayMode.Always)
+
+	bar.UpdateTextVisibility = function(self)
+		local blizzMode = self:ShouldBarTextBeDisplayed()
+		self.OverlayFrame.Text:SetShown(DB.bars[index].text == Enums.TextDisplayMode.Always and blizzMode)
+	end
+end
+
+function module:SetupBarMouseover(bar, index)
+	bar:HookScript('OnEnter', function()
+		if DB.bars[index].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
+	end)
+	bar:HookScript('OnLeave', function()
+		if DB.bars[index].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
+	end)
+end
+
+function module:SetupBarContainerVisibility(barContainer)
+	SpartanUI:HookScript('OnHide', function()
+		barContainer:Hide()
+	end)
+	SpartanUI:HookScript('OnShow', function()
+		barContainer:Show()
+	end)
 end
 
 function module:BuildOptions()
-	-- Build Holder
 	SUI.opt.args['Artwork'].args['StatusBars'] = {
 		name = L['Status bars'],
 		type = 'group',
@@ -320,6 +267,7 @@ function module:BuildOptions()
 				end,
 				set = function(_, value)
 					DB.AllowRep = value
+					self:UpdateBars()
 				end,
 			},
 			PriorityDirection = {
@@ -335,63 +283,103 @@ function module:BuildOptions()
 				end,
 				set = function(_, value)
 					DB.PriorityDirection = value
+					self:UpdateBars()
 				end,
 			},
-			Font = {
-				name = 'Font Settings',
-				type = 'group',
-				order = 90,
-				inline = true,
-				get = function(info)
-					return SUI.Font.DB.Modules.StatusBars[info[#info]]
-				end,
-				set = function(info, val)
-					SUI.Font.DB.Modules.StatusBars[info[#info]] = val
-					SUI.Font:Refresh('StatusBars')
-				end,
-				args = {
-					Face = {
-						type = 'select',
-						name = L['Font face'],
-						order = 1,
-						dialogControl = 'LSM30_Font',
-						values = SUI.Lib.LSM:HashTable('font'),
-					},
-					Type = {
-						name = L['Font style'],
-						type = 'select',
-						order = 2,
-						values = {
-							['normal'] = L['Normal'],
-							['monochrome'] = L['Monochrome'],
-							['outline'] = L['Outline'],
-							['thickoutline'] = L['Thick outline'],
-						},
-					},
-					Size = {
-						name = L['Adjust font size'],
-						type = 'range',
-						order = 3,
-						width = 'double',
-						min = -15,
-						max = 15,
-						step = 1,
-					},
+			Font = self:CreateFontOptions(),
+			BarPriorities = self:CreateBarPrioritiesOptions(),
+		},
+	}
+end
+
+function module:CreateFontOptions()
+	return {
+		name = 'Font Settings',
+		type = 'group',
+		order = 90,
+		inline = true,
+		get = function(info)
+			return SUI.Font.DB.Modules.StatusBars[info[#info]]
+		end,
+		set = function(info, val)
+			SUI.Font.DB.Modules.StatusBars[info[#info]] = val
+			SUI.Font:Refresh('StatusBars')
+		end,
+		args = {
+			Face = {
+				type = 'select',
+				name = L['Font face'],
+				order = 1,
+				dialogControl = 'LSM30_Font',
+				values = SUI.Lib.LSM:HashTable('font'),
+			},
+			Type = {
+				name = L['Font style'],
+				type = 'select',
+				order = 2,
+				values = {
+					['normal'] = L['Normal'],
+					['monochrome'] = L['Monochrome'],
+					['outline'] = L['Outline'],
+					['thickoutline'] = L['Thick outline'],
 				},
 			},
-			BarPriorities = {
-				name = 'Bar Priorities',
-				type = 'group',
-				order = 100,
-				inline = true,
-				args = {},
+			Size = {
+				name = L['Adjust font size'],
+				type = 'range',
+				order = 3,
+				width = 'double',
+				min = -15,
+				max = 15,
+				step = 1,
 			},
 		},
 	}
+end
 
-	-- Build Bar Priorities
+function module:CreateBarPrioritiesOptions()
+	local options = {
+		name = 'Bar Priorities',
+		type = 'group',
+		order = 100,
+		inline = true,
+		args = {},
+	}
+
+	local function isBarAtTop(barIndex)
+		return DB.BarPriorities[barIndex] == 0
+	end
+
+	local function isBarAtBottom(barIndex)
+		local highest = 0
+		for _, priority in pairs(DB.BarPriorities) do
+			if priority > highest then highest = priority end
+		end
+		return DB.BarPriorities[barIndex] == highest
+	end
+
+	local function moveBar(barIndex, direction)
+		local currentPriority = DB.BarPriorities[barIndex]
+		local newPriority = currentPriority + (direction == 'up' and -1 or 1)
+
+		for otherBarIndex, priority in pairs(DB.BarPriorities) do
+			if priority == newPriority then
+				DB.BarPriorities[otherBarIndex] = currentPriority
+				DB.BarPriorities[barIndex] = newPriority
+				break
+			end
+		end
+
+		for barIndex, priority in pairs(DB.BarPriorities) do
+			local optionKey = BarLabels[barIndex]
+			options.args[optionKey].order = priority
+		end
+
+		self:UpdateBars()
+	end
+
 	for i, v in pairs(DB.BarPriorities) do
-		SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[BarLabels[i]] = {
+		options.args[BarLabels[i]] = {
 			name = '',
 			type = 'group',
 			order = v,
@@ -408,25 +396,11 @@ function module:BuildOptions()
 					name = 'Up',
 					width = 'half',
 					order = 2,
-					disabled = function(info)
-						--If wea re at the top, disable the button
-						return DB.BarPriorities[Enums.Bars[info[#info - 1]]] == 0
+					disabled = function()
+						return isBarAtTop(i)
 					end,
-					func = function(info)
-						local myName = info[#info - 1]
-						local currentPriority = DB.BarPriorities[Enums.Bars[myName]]
-
-						--Find the next highest priority
-						local newspot = currentPriority - 1
-						for k, j in pairs(DB.BarPriorities) do
-							if j == newspot then
-								DB.BarPriorities[k] = currentPriority
-								DB.BarPriorities[Enums.Bars[myName]] = j
-								--Swap the order on the options
-								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[myName].order = newspot
-								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[BarLabels[k]].order = currentPriority
-							end
-						end
+					func = function()
+						moveBar(i, 'up')
 					end,
 				},
 				down = {
@@ -434,28 +408,16 @@ function module:BuildOptions()
 					name = 'Down',
 					width = 'half',
 					order = 3,
-					disabled = function(info)
-						--If we are at the bottom, disable the button
-						return DB.BarPriorities[Enums.Bars[info[#info - 1]]] == #DB.BarPriorities - 1
+					disabled = function()
+						return isBarAtBottom(i)
 					end,
-					func = function(info)
-						local myName = info[#info - 1]
-						local currentPriority = DB.BarPriorities[Enums.Bars[myName]]
-
-						--Find the next lowest priority
-						local newspot = currentPriority + 1
-						for k, j in pairs(DB.BarPriorities) do
-							if j == newspot then
-								DB.BarPriorities[k] = currentPriority
-								DB.BarPriorities[Enums.Bars[myName]] = j
-								--Swap the order on the options
-								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[myName].order = newspot
-								SUI.opt.args['Artwork'].args['StatusBars'].args.BarPriorities.args[BarLabels[k]].order = currentPriority
-							end
-						end
+					func = function()
+						moveBar(i, 'down')
 					end,
 				},
 			},
 		}
 	end
+
+	return options
 end
