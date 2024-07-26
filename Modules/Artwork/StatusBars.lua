@@ -88,7 +88,8 @@ function module:CreateBarManager()
 	for k, v in pairs(StatusTrackingManagerMixin) do
 		barManager[k] = v
 	end
-	local UpdateBarsShown = function(self)
+
+	barManager.UpdateBarsShown = function(self)
 		local function onFinishedAnimating(barContainer)
 			barContainer:UnsubscribeFromOnFinishedAnimating(self)
 			self:UpdateBarsShown()
@@ -104,7 +105,6 @@ function module:CreateBarManager()
 
 		-- Determine what bars should be shown
 		local newBarIndicesToShow = {}
-
 		for _, barIndex in pairs(Enums.Bars) do
 			if (barIndex == Enums.Bars.Reputation and DB.AllowRep and self:CanShowBar(barIndex)) or (barIndex ~= Enums.Bars.Reputation and self:CanShowBar(barIndex)) then
 				table.insert(newBarIndicesToShow, barIndex)
@@ -125,15 +125,20 @@ function module:CreateBarManager()
 		for i = 1, #self.barContainers do
 			local barContainer = self.barContainers[i]
 			local newBarIndex
-			if DB.PriorityDirection == 'ltr' then
-				newBarIndex = newBarIndicesToShow[i] or Enums.Bars.None
-			else
-				newBarIndex = newBarIndicesToShow[#newBarIndicesToShow - i + 1] or Enums.Bars.None
-			end
-			local oldBarIndex = self.shownBarIndices[i]
 
-			if newBarIndex ~= oldBarIndex then
-				-- ... (keep existing code for handling animations)
+			if #newBarIndicesToShow == 1 then
+				-- Special case for single bar
+				if DB.PriorityDirection == 'ltr' then
+					newBarIndex = (i == 1) and newBarIndicesToShow[1] or Enums.Bars.None
+				else
+					newBarIndex = (i == #self.barContainers) and newBarIndicesToShow[1] or Enums.Bars.None
+				end
+			else
+				if DB.PriorityDirection == 'ltr' then
+					newBarIndex = newBarIndicesToShow[i] or Enums.Bars.None
+				else
+					newBarIndex = newBarIndicesToShow[#newBarIndicesToShow - i + 1] or Enums.Bars.None
+				end
 			end
 
 			barContainer:SetShownBar(newBarIndex)
@@ -144,9 +149,9 @@ function module:CreateBarManager()
 
 	barManager:SetScript('OnLoad', barManager.OnLoad)
 	barManager:SetScript('OnEvent', barManager.OnEvent)
-	barManager.UpdateBarsShown = UpdateBarsShown
+
 	barManager.GetBarPriority = function(self, barIndex)
-		return DB.BarPriorities[barIndex] or -1
+		return DB.BarPriorities[barIndex] or 0
 	end
 
 	return barManager
