@@ -60,7 +60,6 @@ end
 
 function module:factory()
 	local barManager = self:CreateBarManager()
-	self:SetupBarManagerBehavior(barManager)
 	self:CreateBarContainers(barManager)
 	barManager:OnLoad()
 end
@@ -70,18 +69,7 @@ function module:CreateBarManager()
 	for k, v in pairs(StatusTrackingManagerMixin) do
 		barManager[k] = v
 	end
-	return barManager
-end
-
-function module:SetupBarManagerBehavior(barManager)
-	barManager:SetScript('OnLoad', barManager.OnLoad)
-	barManager:SetScript('OnEvent', barManager.OnEvent)
-	barManager.UpdateBarsShown = self:CreateUpdateBarsShownFunction()
-	barManager.GetBarPriority = self:CreateGetBarPriorityFunction()
-end
-
-function module:CreateUpdateBarsShownFunction()
-	return function(self)
+	local UpdateBarsShown = function(self)
 		local function onFinishedAnimating(barContainer)
 			barContainer:UnsubscribeFromOnFinishedAnimating(self)
 			self:UpdateBarsShown()
@@ -135,12 +123,15 @@ function module:CreateUpdateBarsShownFunction()
 
 		self.shownBarIndices = newBarIndicesToShow
 	end
-end
 
-function module:CreateGetBarPriorityFunction()
-	return function(self, barIndex)
+	barManager:SetScript('OnLoad', barManager.OnLoad)
+	barManager:SetScript('OnEvent', barManager.OnEvent)
+	barManager.UpdateBarsShown = UpdateBarsShown
+	barManager.GetBarPriority = function(self, barIndex)
 		return DB.BarPriorities[barIndex] or -1
 	end
+
+	return barManager
 end
 
 function module:CreateBarContainers(barManager)
