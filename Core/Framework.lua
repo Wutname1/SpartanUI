@@ -613,7 +613,7 @@ local DBdefault = {
 						},
 						Name = {
 							position = {
-								y = 17,
+								y = 5,
 							},
 						},
 						SpartanArt = {
