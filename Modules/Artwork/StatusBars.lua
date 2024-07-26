@@ -70,8 +70,39 @@ function module:UpdateBars()
 		-- Update the shown bars
 		barManager:UpdateBarsShown()
 
+		-- Update text visibility for both containers
+		self:UpdateBarTextVisibility('Left')
+		self:UpdateBarTextVisibility('Right')
+
+		-- Update container alphas
+		for _, key in ipairs({ 'Left', 'Right' }) do
+			local barContainer = module.bars[key]
+			if barContainer then barContainer:SetAlpha(DB.bars[key].alpha or 1) end
+		end
+
 		-- Refresh the options display
 		self:RefreshBarPriorityOptions()
+	end
+end
+
+function module:UpdateBarTextVisibility(containerKey)
+	local barContainer = module.bars[containerKey]
+	if not barContainer then return end
+
+	local textMode = DB.bars[containerKey].text
+
+	for _, bar in pairs(barContainer.bars) do
+		if textMode == Enums.TextDisplayMode.Always then
+			bar.OverlayFrame.Text:Show()
+		else -- OnMouseOver
+			bar.OverlayFrame.Text:Hide()
+		end
+
+		-- Update the bar's UpdateTextVisibility function
+		bar.UpdateTextVisibility = function(self)
+			local blizzMode = self:ShouldBarTextBeDisplayed()
+			self.OverlayFrame.Text:SetShown(textMode == Enums.TextDisplayMode.Always and blizzMode)
+		end
 	end
 end
 
@@ -201,19 +232,22 @@ function module:SetupBarContainerPosition(barContainer, StyleSetting, index)
 	local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
 	barContainer:ClearAllPoints()
 	barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
-	barContainer:SetAlpha(DB.bars[index].alpha or 1)
+	local containerKey = index == 1 and 'Left' or 'Right'
+	barContainer:SetAlpha(DB.bars[containerKey].alpha or 1)
 end
 
 function module:SetupBarContainerBehavior(barContainer, index)
-	self:SetupBarsInContainer(barContainer, index)
-	self:SetupBarContainerVisibility(barContainer)
-end
-
-function module:SetupBarsInContainer(barContainer, index)
 	local width, height = unpack(barContainer.settings.size)
 	for _, bar in pairs(barContainer.bars) do
 		self:SetupBar(bar, barContainer, width, height, index)
 	end
+
+	SpartanUI:HookScript('OnHide', function()
+		barContainer:Hide()
+	end)
+	SpartanUI:HookScript('OnShow', function()
+		barContainer:Show()
+	end)
 end
 
 function module:SetupBar(bar, barContainer, width, height, index)
@@ -225,35 +259,27 @@ function module:SetupBar(bar, barContainer, width, height, index)
 	bar:SetFrameLevel(barContainer:GetFrameLevel() - 5)
 
 	self:SetupBarText(bar, barContainer.settings, index)
-	self:SetupBarMouseover(bar, index)
+
+	local containerKey = index == 1 and 'Left' or 'Right'
+	bar:HookScript('OnEnter', function()
+		if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
+	end)
+	bar:HookScript('OnLeave', function()
+		if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
+	end)
 end
 
 function module:SetupBarText(bar, StyleSetting, index)
+	local containerKey = index == 1 and 'Left' or 'Right'
+	local textMode = DB.bars[containerKey].text
 	SUI.Font:Format(bar.OverlayFrame.Text, StyleSetting.Font or 10, 'StatusBars')
-	bar.OverlayFrame.Text:SetShown(DB.bars[index].text == Enums.TextDisplayMode.Always)
+	bar.OverlayFrame.Text:SetShown(textMode == Enums.TextDisplayMode.Always)
 
+	-- Update the bar's UpdateTextVisibility function
 	bar.UpdateTextVisibility = function(self)
 		local blizzMode = self:ShouldBarTextBeDisplayed()
-		self.OverlayFrame.Text:SetShown(DB.bars[index].text == Enums.TextDisplayMode.Always and blizzMode)
+		self.OverlayFrame.Text:SetShown(textMode == Enums.TextDisplayMode.Always and blizzMode)
 	end
-end
-
-function module:SetupBarMouseover(bar, index)
-	bar:HookScript('OnEnter', function()
-		if DB.bars[index].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
-	end)
-	bar:HookScript('OnLeave', function()
-		if DB.bars[index].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
-	end)
-end
-
-function module:SetupBarContainerVisibility(barContainer)
-	SpartanUI:HookScript('OnHide', function()
-		barContainer:Hide()
-	end)
-	SpartanUI:HookScript('OnShow', function()
-		barContainer:Show()
-	end)
 end
 
 function module:BuildOptions()
@@ -300,8 +326,53 @@ function module:BuildOptions()
 					self:UpdateBars()
 				end,
 			},
-			Font = self:CreateFontOptions(),
 			BarPriorities = self:CreateBarPrioritiesOptions(),
+			Font = self:CreateFontOptions(),
+			Left = self:CreateContainerOptions('Left', 110),
+			Right = self:CreateContainerOptions('Right', 120),
+		},
+	}
+end
+
+function module:CreateContainerOptions(containerKey, order)
+	return {
+		name = containerKey .. ' Status Bar',
+		type = 'group',
+		inline = true,
+		order = order,
+		args = {
+			text = {
+				name = 'Text Display',
+				type = 'select',
+				order = 1,
+				values = {
+					[Enums.TextDisplayMode.OnMouseOver] = 'On Mouse Over',
+					[Enums.TextDisplayMode.Always] = 'Always',
+					[Enums.TextDisplayMode.Never] = 'Never',
+				},
+				get = function()
+					return DB.bars[containerKey].text
+				end,
+				set = function(_, value)
+					DB.bars[containerKey].text = value
+					self:UpdateBars()
+				end,
+			},
+			alpha = {
+				name = 'Alpha',
+				type = 'range',
+				order = 2,
+				min = 0,
+				max = 1,
+				step = 0.01,
+				get = function()
+					return DB.bars[containerKey].alpha
+				end,
+				set = function(_, value)
+					DB.bars[containerKey].alpha = value
+					self:UpdateBars()
+				end,
+			},
 		},
 	}
 end
@@ -310,7 +381,7 @@ function module:CreateFontOptions()
 	return {
 		name = 'Font Settings',
 		type = 'group',
-		order = 90,
+		order = 100,
 		inline = true,
 		get = function(info)
 			return SUI.Font.DB.Modules.StatusBars[info[#info]]
@@ -355,7 +426,7 @@ function module:CreateBarPrioritiesOptions()
 	local options = {
 		name = 'Bar Priorities',
 		type = 'group',
-		order = 100,
+		order = 50,
 		inline = true,
 		args = {},
 	}
