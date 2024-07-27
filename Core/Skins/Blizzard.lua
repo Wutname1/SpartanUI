@@ -36,6 +36,7 @@ local function OnEnable()
 		-- 		GameMenuFrameHeader:SetSize(GameMenuFrame:GetWidth(), 25)
 		-- 	end
 		-- end)
+		GameMenuFrame:SetScale(0.8)
 	end
 end
 
