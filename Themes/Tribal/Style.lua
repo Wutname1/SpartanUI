@@ -22,7 +22,7 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes Settings
-	---@type SUI.UF.Style.Settings
+	---@type SUI.Style.Settings.UnitFrames
 	local ufsettings = {
 		artwork = {
 			top = {
@@ -57,6 +57,17 @@ function module:OnInitialize()
 		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
 	}
 	SUI:GetModule('Minimap'):Register('Tribal', minimapSettings)
+
+	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+	---@type SUI.Style.Settings.StatusBars
+	local StatusBarsSettings = {
+		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\StatusBar',
+		alpha = 0.9,
+		size = { 370, 20 },
+		texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
+		MaxWidth = 48,
+	}
+	statusBarModule:RegisterStyle('Tribal', { Left = StatusBarsSettings, Right = StatusBarsSettings })
 
 	module:CreateArtwork()
 end

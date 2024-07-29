@@ -66,6 +66,7 @@ function module:OnInitialize()
 		end
 	end
 
+	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
 		size = { 180, 180 },
 		BG = {
@@ -75,7 +76,7 @@ function module:OnInitialize()
 	}
 	SUI:GetModule('Minimap'):Register('War', minimapSettings)
 
-	---@type SUI.UF.Style.Settings
+	---@type SUI.Style.Settings.UnitFrames
 	local ufsettings = {
 		artwork = {
 			top = {
@@ -103,6 +104,19 @@ function module:OnInitialize()
 		},
 	}
 	SUI.UF.Style:Register('War', ufsettings)
+
+	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+	---@type SUI.Style.Settings.StatusBars
+	local StatusBarsSettings = {
+		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
+		alpha = 0.9,
+		size = { 370, 20 },
+		TooltipSize = { 350, 100 },
+		TooltipTextSize = { 330, 80 },
+		texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
+		MaxWidth = 48,
+	}
+	statusBarModule:RegisterStyle('War', { Left = StatusBarsSettings, Right = StatusBarsSettings })
 
 	module:CreateArtwork()
 end
@@ -143,11 +157,6 @@ function module:TooltipLoc(tooltip, parent)
 		tooltip:ClearAllPoints()
 		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_War', 'TOPRIGHT', 0, 10)
 	end
-end
-
-function module:BuffLoc(_, parent)
-	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
 end
 
 function module:SetupVehicleUI()

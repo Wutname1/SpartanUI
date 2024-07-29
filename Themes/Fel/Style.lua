@@ -52,7 +52,7 @@ function module:OnInitialize()
 	}
 
 	-- Unitframes
-	---@type SUI.UF.Style.Settings
+	---@type SUI.Style.Settings.UnitFrames
 	local ufsettings = {
 		artwork = {
 			top = {
@@ -91,6 +91,17 @@ function module:OnInitialize()
 	}
 	SUI:GetModule('Minimap'):Register('Fel', minimapSettings)
 
+	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+	---@type SUI.Style.Settings.StatusBars
+	local StatusBarsSettings = {
+		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\StatusBar.png',
+		alpha = 0.9,
+		size = { 370, 20 },
+		texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
+		MaxWidth = 48,
+	}
+	statusBarModule:RegisterStyle('Fel', { Left = StatusBarsSettings, Right = StatusBarsSettings })
+
 	module:CreateArtwork()
 	Options()
 end
@@ -107,12 +118,6 @@ function module:OnDisable()
 	artFrame:Hide()
 	SUI.opt.args.Artwork.args.Fel.hidden = true
 	UnregisterStateDriver(SUI_Art_Fel, 'visibility')
-end
-
---	Module Calls
-function module:BuffLoc(_, parent)
-	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
 end
 
 function module:SetupVehicleUI()

@@ -127,10 +127,10 @@ function module:Options()
 				width = 'full',
 				desc = L['XP and Rep Bars are known issues and need a redesign to look right'],
 				get = function(info)
-					return unpack(SUI.DB.Styles.Minimal.Color)
+					return unpack(SUI.DB.Styles.Minimal.Color.Art)
 				end,
 				set = function(info, r, b, g, a)
-					SUI.DB.Styles.Minimal.Color = { r, b, g, a }
+					SUI.DB.Styles.Minimal.Color.Art = { r, b, g, a }
 					module:SetColor()
 				end,
 			},
@@ -166,10 +166,10 @@ function module:SlidingTrays()
 end
 
 function module:SetColor()
-	local r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color)
+	local r, b, g, a = unpack(SUI.DB.Styles.Minimal.Color.Art)
 
 	for i = 1, 5 do
-		_G['SUI_Art_Minimal_Base' .. i]:SetVertexColor(r, b, g, a)
+		if _G['SUI_Art_Minimal_Base' .. i] then _G['SUI_Art_Minimal_Base' .. i]:SetVertexColor(r, b, g, a) end
 	end
 
 	for _, v in pairs(Artwork_Core.Trays) do

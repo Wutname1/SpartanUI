@@ -16,7 +16,7 @@ function module:OnInitialize()
 		['BT4BarBagBar'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,661,174',
 	}
 
-	---@type SUI.UF.Style.Settings
+	---@type SUI.Style.Settings.UnitFrames
 	local ufsettings = {
 		artwork = {
 			bg = {
@@ -38,6 +38,20 @@ function module:OnInitialize()
 	}
 	SUI:GetModule('Minimap'):Register('Digital', minimapSettings)
 
+	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+	---@type SUI.Style.Settings.StatusBars
+	local StatusBarsSettings = {
+		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\StatusBar',
+		size = { 370, 20 },
+		tooltip = {
+			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
+			textureCoords = { 0.03125, 0.96875, 0.2578125, 0.7578125 },
+		},
+		texCords = { 0.150390625, 1, 0, 1 },
+		MaxWidth = 32,
+	}
+	statusBarModule:RegisterStyle('Digital', { Left = StatusBarsSettings, Right = StatusBarsSettings })
+
 	module:CreateArtwork()
 end
 
@@ -52,12 +66,6 @@ end
 function module:OnDisable()
 	UnregisterStateDriver(SUI_Art_Digital, 'visibility')
 	SUI_Art_Digital:Hide()
-end
-
---	Module Calls
-function module:BuffLoc(_, parent)
-	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
 end
 
 function module:SetupVehicleUI()

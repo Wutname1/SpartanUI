@@ -33,11 +33,6 @@ function module:SetColor()
 	end
 end
 
-function module:BuffLoc(self, parent)
-	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
-end
-
 function module:SetupVehicleUI()
 	if SUI.DB.Artwork.VehicleUI then RegisterStateDriver(SUI_Art_Classic, 'visibility', '[petbattle][overridebar][vehicleui] hide; show') end
 end
@@ -633,6 +628,7 @@ local function Options()
 end
 
 function module:OnInitialize()
+	---@type SUI.Module.BarHandler
 	local BarHandler = SUI:GetModule('Handler.BarSystems')
 
 	BarHandler.BarPosition.BT4.Classic = {
@@ -671,7 +667,7 @@ function module:OnInitialize()
 	}
 
 	local UF = SUI.UF
-	---@type SUI.UF.Style.Settings
+	---@type SUI.Style.Settings.UnitFrames
 	local ufsettings = {
 		artwork = {
 			full = {
@@ -740,6 +736,25 @@ function module:OnInitialize()
 	SUI:GetModule('Minimap'):Register('Classic', minimapSettings)
 
 	CreateArtwork()
+
+	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+	---@type SUI.Style.Settings.StatusBars.Storage
+	local StatusBarsSettings = {
+		Left = {
+			size = { 370, 32 },
+			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
+			texCords = { 0.150390625, 0.96875, 0, 1 },
+			MaxWidth = 15,
+		},
+		Right = {
+			size = { 370, 32 },
+			bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-rep',
+			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,79,0',
+			texCords = { 0, 0.849609375, 0, 1 },
+			MaxWidth = 50,
+		},
+	}
+	statusBarModule:RegisterStyle('Classic', StatusBarsSettings)
 
 	local function StyleChange()
 		for unit, frame in pairs(SkinnedFrames) do

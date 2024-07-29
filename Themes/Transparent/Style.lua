@@ -101,7 +101,7 @@ function module:OnInitialize()
 	SUI:GetModule('Minimap'):Register('Transparent', minimapSettings)
 
 	-- Unitframes Settings
-	---@type SUI.UF.Style.Settings
+	---@type SUI.Style.Settings.UnitFrames
 	local ufsettings = {
 		artwork = {
 			top = {
@@ -121,6 +121,20 @@ function module:OnInitialize()
 		},
 	}
 	SUI.UF.Style:Register('Transparent', ufsettings)
+
+	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+	---@type SUI.Style.Settings.StatusBars.Storage
+	local StatusBarsSettings = {
+		Left = {
+			size = { 400, 15 },
+			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-90,2',
+		},
+		Right = {
+			size = { 400, 15 },
+			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,90,2',
+		},
+	}
+	statusBarModule:RegisterStyle('Transparent', { Left = StatusBarsSettings, Right = StatusBarsSettings })
 end
 
 function module:OnEnable()
@@ -215,11 +229,6 @@ function module:TooltipLoc(tooltip, parent)
 		tooltip:ClearAllPoints()
 		tooltip:SetPoint('BOTTOMRIGHT', 'SUI_Art_Transparent', 'TOPRIGHT', 0, 10)
 	end
-end
-
-function module:BuffLoc(self, parent)
-	BuffFrame:ClearAllPoints()
-	BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset)
 end
 
 function module:SetupVehicleUI() end

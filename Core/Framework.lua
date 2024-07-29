@@ -117,23 +117,7 @@ local DBdefault = {
 		bar5 = { alpha = 100, enable = true },
 		bar6 = { alpha = 100, enable = true },
 	},
-	BuffSettings = {
-		disableblizz = true,
-		enabled = true,
-		Manualoffset = false,
-		offset = 0,
-	},
 	DisabledModules = {},
-	Offset = {
-		Top = 0,
-		TopAuto = true,
-		Bottom = 0,
-		BottomAuto = true,
-		Horizontal = {
-			Bottom = 0,
-			Top = 0,
-		},
-	},
 	SetupWizard = {
 		FirstLaunch = true,
 	},
@@ -160,34 +144,6 @@ local DBdefault = {
 					MenuBar = {},
 				},
 			},
-			StatusBars = {
-				['**'] = {
-					size = { 256, 36 },
-					alpha = 1,
-					bgTooltip = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
-					texCordsTooltip = { 0.103515625, 0.8984375, 0.1796875, 0.8203125 },
-					TooltipSize = { 300, 100 },
-					TooltipTextSize = { 230, 60 },
-					TooltipTextWidth = 300,
-					tooltipAnchor = 'TOP',
-					FontSize = 9,
-					TextColor = { 1, 1, 1, 1 },
-					MaxWidth = 0,
-					GlowAnchor = 'RIGHT',
-					GlowPoint = { x = 0, y = 0 },
-					GlowHeight = 20,
-					GlowImage = 'Interface\\AddOns\\SpartanUI\\Images\\status-glow',
-					texCords = { 0, 1, 0, 1 },
-				},
-				Left = {
-					Grow = 'LEFT',
-					Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-100,0',
-				},
-				Right = {
-					Grow = 'RIGHT',
-					Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,0',
-				},
-			},
 			Movers = {},
 			BlizzMovers = {
 				['VehicleSeatIndicator'] = 'RIGHT,SpartanUI,RIGHT,-10,-30',
@@ -209,24 +165,6 @@ local DBdefault = {
 			},
 		},
 		Arcane = {
-			StatusBars = {
-				['**'] = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Arcane\\Images\\StatusBar',
-					alpha = 0.9,
-					size = { 370, 20 },
-					TooltipSize = { 350, 100 },
-					TooltipTextSize = { 330, 80 },
-					texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
-					MaxWidth = 48,
-				},
-				Left = {
-					GlowPoint = { x = -16 },
-					MaxWidth = 48,
-				},
-				Right = {
-					GlowPoint = { x = 16 },
-				},
-			},
 			Frames = {
 				player = {
 					elements = {
@@ -672,28 +610,6 @@ local DBdefault = {
 					},
 				},
 			},
-			StatusBars = {
-				['**'] = {
-					size = { 370, 32 },
-					TooltipSize = { 400, 100 },
-					TooltipTextSize = { 380, 90 },
-					bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-					texCordsTooltip = { 0.03125, 0.96875, 0.2578125, 0.7578125 },
-				},
-				Left = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-					texCords = { 0.150390625, 0.96875, 0, 1 },
-					MaxWidth = 15,
-				},
-				Right = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-rep',
-					Grow = 'RIGHT',
-					Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,79,0',
-					texCords = { 0, 0.849609375, 0, 1 },
-					GlowPoint = { x = 20 },
-					MaxWidth = 50,
-				},
-			},
 			BlizzMovers = {
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,195',
 			},
@@ -732,16 +648,6 @@ local DBdefault = {
 					},
 				},
 			},
-			StatusBars = {
-				['**'] = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Transparent\\Images\\status-plate-rep',
-					size = { 400, 10 },
-					TooltipSize = { 400, 100 },
-					TooltipTextSize = { 380, 90 },
-					texCords = { 0.150390625, 1, 0, 1 },
-					texCordsTooltip = { 0.107421875, 0.892578125, 0.1875, 0.765625 },
-				},
-			},
 			Color = {
 				Art = { 0, 0.8, 0.9, 0.7 },
 				PlayerFrames = { 0, 0.8, 0.9, 0.7 },
@@ -751,10 +657,12 @@ local DBdefault = {
 		},
 		Minimal = {
 			Color = {
-				0.6156862745098039,
-				0.1215686274509804,
-				0.1215686274509804,
-				0.9,
+				Art = {
+					0.6156862745098039,
+					0.1215686274509804,
+					0.1215686274509804,
+					0.9,
+				},
 			},
 			HideCenterGraphic = false,
 		},
@@ -816,48 +724,9 @@ local DBdefault = {
 					},
 				},
 			},
-			StatusBars = {
-				['**'] = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-					size = { 370, 20 },
-					TooltipSize = { 400, 100 },
-					TooltipTextSize = { 380, 90 },
-					texCords = { 0.150390625, 1, 0, 1 },
-					bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Fel-Box',
-					texCordsTooltip = { 0.03125, 0.96875, 0.2578125, 0.7578125 },
-				},
-				Left = {
-					GlowPoint = { x = -10 },
-					MaxWidth = 32,
-				},
-				Right = {
-					GlowPoint = { x = 10 },
-					MaxWidth = 35,
-				},
-			},
 		},
 		Digital = {
 			Artwork = {},
-			StatusBars = {
-				['**'] = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\status-plate-exp',
-					size = { 370, 20 },
-					TooltipSize = { 400, 100 },
-					TooltipTextSize = { 380, 90 },
-					texCords = { 0.150390625, 1, 0, 1 },
-					bgTooltip = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\BarBG',
-					texCordsTooltip = { 0.03125, 0.96875, 0.2578125, 0.7578125 },
-				},
-				Left = {
-					GlowPoint = { x = -10 },
-					MaxWidth = 32,
-				},
-				Right = {
-					Grow = 'RIGHT',
-					GlowPoint = { x = 10 },
-					MaxWidth = 35,
-				},
-			},
 			Frames = {
 				player = {
 					elements = {
@@ -883,24 +752,6 @@ local DBdefault = {
 		},
 		War = {
 			Artwork = {},
-			StatusBars = {
-				['**'] = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
-					alpha = 0.9,
-					size = { 370, 20 },
-					TooltipSize = { 350, 100 },
-					TooltipTextSize = { 330, 80 },
-					texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
-					MaxWidth = 48,
-				},
-				Left = {
-					GlowPoint = { x = -16 },
-					MaxWidth = 48,
-				},
-				Right = {
-					GlowPoint = { x = 16 },
-				},
-			},
 			Frames = {
 				player = {
 					elements = {
@@ -994,24 +845,6 @@ local DBdefault = {
 		},
 		Tribal = {
 			Artwork = {},
-			StatusBars = {
-				['**'] = {
-					bgImg = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\StatusBar',
-					alpha = 0.9,
-					size = { 370, 20 },
-					TooltipSize = { 350, 100 },
-					TooltipTextSize = { 330, 80 },
-					texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
-					MaxWidth = 48,
-				},
-				Left = {
-					GlowPoint = { x = -16 },
-					MaxWidth = 48,
-				},
-				Right = {
-					GlowPoint = { x = 16 },
-				},
-			},
 			Frames = {
 				player = {
 					elements = {
@@ -1080,37 +913,6 @@ local DBdefault = {
 			},
 		},
 	},
-	StatusBars = {
-		['**'] = {
-			display = 'disabled',
-			ToolTip = 'hover',
-			text = true,
-			AutoColor = true,
-			Color = { 0, 0, 0, 1 },
-			FontSize = 10,
-			GlowAnchor = 'RIGHT',
-			GlowHeight = 20,
-			texCords = { 0, 1, 0, 1 },
-			CustomColor2 = {
-				r = 0,
-				g = 0,
-				b = 0,
-				a = 1,
-			},
-			CustomColor = {
-				r = 0,
-				g = 0,
-				b = 0,
-				a = 1,
-			},
-		},
-		[1] = {
-			display = 'xp',
-		},
-		[2] = {
-			display = 'honor',
-		},
-	},
 	Artwork = {
 		Style = 'War',
 		FirstLoad = true,
@@ -1125,8 +927,19 @@ local DBdefault = {
 				collapsed = false,
 			},
 		},
+		Offset = {
+			Top = 0,
+			TopAuto = true,
+			Bottom = 0,
+			BottomAuto = true,
+			Horizontal = {
+				Bottom = 0,
+				Top = 0,
+			},
+		},
 	},
 }
+
 SUI.DBdefault = DBdefault
 local GlobalDefaults = {
 	ChatLevelLog = {},
@@ -1303,6 +1116,12 @@ end
 
 function SUI:DBUpgrades()
 	if SUI.DB.Artwork.Style == '' and SUI.DB.Artwork.SetupDone then SUI.DB.Artwork.Style = 'Classic' end
+
+	-- 6.3.0
+	if SUI.DB.Offset then
+		SUI:CopyData(SUI.DB.Artwork.Offset, SUI.DB.Offset)
+		SUI.DB.Offset = nil
+	end
 
 	SUI.DB.Version = SUI.Version
 end
@@ -1672,7 +1491,7 @@ function SUI:TableToLuaString(inTable)
 	end
 	if type(inTable) ~= 'table' then
 		print('Invalid argument #1 to SUI:TableToLuaString (table expected)')
-		return
+		return ''
 	end
 
 	local ret = '{\n'
@@ -1836,67 +1655,44 @@ function SUI:OnEnable()
 		end
 	end)
 
-	--Add to Menu Frame
-	local SUIMenuButton = CreateFrame('Button', 'GameMenuButtonSUI', GameMenuFrame, 'GameMenuButtonTemplate')
-	SUIMenuButton:SetScript('OnClick', function()
-		SUI:GetModule('Handler.Options'):ToggleOptions()
-		if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
-	end)
-	SUIMenuButton:SetPoint('TOP', GameMenuButtonAddons, 'BOTTOM', 0, -1)
-	GameMenuFrame.SUI = SUIMenuButton
-	--TODO: REMOVE THIS for TWW
-	if GameMenuFrame_UpdateVisibleButtons then
-		hooksecurefunc('GameMenuFrame_UpdateVisibleButtons', function()
-			GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + (GameMenuButtonSUI:GetHeight() * 1.8))
+	local GameMenuButtonsStore = {} --Table to hold data for buttons to be added to GameMenu
 
-			GameMenuButtonSUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
+	tinsert(GameMenuButtonsStore, {
+		text = '|cffffffffSpartan|cffe21f1fUI|r',
+		callback = function()
+			SUI:GetModule('Handler.Options'):ToggleOptions()
+			if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
+		end,
+		isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
+		disabledText = 'This button is somehow disabled. Probably someone was messing around with the code.', --this text will show up in tooltip when the button is disabled
+	})
 
-			local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
-			if relTo ~= GameMenuButtonSUI then
-				GameMenuButtonSUI:ClearAllPoints()
-				GameMenuButtonSUI:SetPoint('TOPLEFT', relTo, 'BOTTOMLEFT', 0, -2)
-				GameMenuButtonLogout:ClearAllPoints()
-				GameMenuButtonLogout:SetPoint('TOPLEFT', GameMenuButtonSUI, 'BOTTOMLEFT', 0, offY)
-			end
-		end)
-	else
-		local GameMenuButtonsStore = {} --Table to hold data for buttons to be added to GameMenu
-
-		tinsert(GameMenuButtonsStore, {
-			text = '|cffffffffSpartan|cffe21f1fUI|r',
-			callback = function()
-				SUI:GetModule('Handler.Options'):ToggleOptions()
-				if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
-			end,
-			isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
-			disabledText = 'This button is somehow disabled. Probably someone was messing around with the code.', --this text will show up in tooltip when the button is disabled
-		})
-
-		--hooking to blizz button add function for game menu, since the list of those is reset every time menu is opened
-		hooksecurefunc(GameMenuFrame, 'AddButton', function(text, callback, isDisabled)
-			if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
-				for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
-					if i == 1 then
-						GameMenuFrame:AddSection() --spacer off first button
-					end
-
-					GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
+	--hooking to blizz button add function for game menu, since the list of those is reset every time menu is opened
+	hooksecurefunc(GameMenuFrame, 'AddButton', function(text, callback, isDisabled)
+		if text == MACROS then --check for text "Macros". That button is the last before logout in default so we insert our stuff in between
+			for i, data in next, GameMenuButtonsStore do --Go through buttons in the tabe and adding them based on data provided
+				if i == 1 then
+					GameMenuFrame:AddSection() --spacer off first button
 				end
+
+				GameMenuFrame:AddButton(data.text, data.callback, data.isDisabled, data.disabledText)
 			end
-		end)
-	end
+		end
+	end)
 end
 
 -- For Setting a unifid skin across all registered Skinable modules
 function SUI:SetActiveStyle(skin)
-	SUI:GetModule('Artwork'):SetActiveStyle(skin)
+	---@type SUI.Module.Artwork
+	local artModule = SUI:GetModule('Artwork')
+	artModule:SetActiveStyle(skin)
 
-	for name, submodule in SUI:IterateModules() do
+	for _, submodule in SUI:IterateModules() do
 		if submodule.SetActiveStyle then submodule:SetActiveStyle(skin) end
 	end
 
 	-- Ensure this is the First and last thing to occur, iincase the art style has any StyleUpdate's needed after doing the other updates
-	SUI:GetModule('Artwork'):SetActiveStyle(skin)
+	artModule:SetActiveStyle(skin)
 end
 
 SUI.noop = function() end
