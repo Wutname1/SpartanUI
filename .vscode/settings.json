@@ -542,7 +542,9 @@
     "GameMenuFrame_UpdateVisibleButtons",
     "MAJOR_FACTION_MAX_RENOWN_REACHED",
     "GetText",
-    "StatusTrackingManagerMixin"
+    "StatusTrackingManagerMixin",
+    "GAMEMENU_OPTIONS",
+    "BLIZZARD_STORE"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
@@ -559,5 +561,7 @@
   "todo-tree.tree.showBadges": true,
   "todo-tree.tree.showCountsInTree": true,
   "todo-tree.tree.disableCompactFolders": false,
-  "stylua.targetReleaseVersion": "latest"
+  "stylua.targetReleaseVersion": "latest",
+  "CodeGPT.apiKey": "CodeGPT Plus Beta",
+  "CodeGPT.Autocomplete.enabled": true
 }

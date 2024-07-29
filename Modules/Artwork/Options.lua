@@ -207,10 +207,10 @@ function module:SetupOptions()
 						max = 500,
 						step = 0.1,
 						get = function(info)
-							return SUI.DB.Offset.Horizontal.Top
+							return SUI.DB.Artwork.Offset.Horizontal.Top
 						end,
 						set = function(info, val)
-							SUI.DB.Offset.Horizontal.Top = val
+							SUI.DB.Artwork.Offset.Horizontal.Top = val
 							module:updateHorizontalOffset()
 						end,
 					},
@@ -223,10 +223,10 @@ function module:SetupOptions()
 						max = 500,
 						step = 0.1,
 						get = function(info)
-							return SUI.DB.Offset.Horizontal.Bottom
+							return SUI.DB.Artwork.Offset.Horizontal.Bottom
 						end,
 						set = function(info, val)
-							SUI.DB.Offset.Horizontal.Bottom = val
+							SUI.DB.Artwork.Offset.Horizontal.Bottom = val
 							module:updateHorizontalOffset()
 						end,
 					},
@@ -250,17 +250,17 @@ function module:SetupOptions()
 					max = 200,
 					step = 0.1,
 					get = function(info)
-						return SUI.DB.Offset[v]
+						return SUI.DB.Artwork.Offset[v]
 					end,
 					set = function(info, val)
 						if InCombatLockdown() then
 							SUI:Print(ERR_NOT_IN_COMBAT)
 						else
-							if SUI.DB.Offset[v .. 'Auto'] then
+							if SUI.DB.Artwork.Offset[v .. 'Auto'] then
 								SUI:Print(L['Offset is set AUTO'])
 							else
 								val = tonumber(val)
-								SUI.DB.Offset[v] = val
+								SUI.DB.Artwork.Offset[v] = val
 								module:updateOffset()
 							end
 						end
@@ -271,10 +271,10 @@ function module:SetupOptions()
 					type = 'toggle',
 					order = 3.1,
 					get = function(info)
-						return SUI.DB.Offset[v .. 'Auto']
+						return SUI.DB.Artwork.Offset[v .. 'Auto']
 					end,
 					set = function(info, val)
-						SUI.DB.Offset[v .. 'Auto'] = val
+						SUI.DB.Artwork.Offset[v .. 'Auto'] = val
 						module:updateOffset()
 					end,
 				},

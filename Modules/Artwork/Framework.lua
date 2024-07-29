@@ -158,7 +158,12 @@ function module:SetActiveStyle(style)
 		SUI:GetModule('Handler.BarSystems').Refresh()
 
 		--Update minimap
-		SUI:GetModule('Minimap'):update(true)
+		local minimapModule = SUI:GetModule('Minimap') ---@type SUI.Module.Minimap
+		minimapModule:SetActiveStyle(style)
+
+		--Update statusbar
+		local StatusBars = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+		StatusBars:SetActiveStyle(style)
 	end
 
 	-- Update style settings shortcut
@@ -182,7 +187,7 @@ function module:UpdateScale()
 	if SUI:IsModuleEnabled('UnitFrames') then SUI.UF:ScaleFrames(SUI.DB.scale) end
 
 	-- Call Minimap scale update
-	local minimap = SUI:GetModule('Minimap')
+	local minimap = SUI:GetModule('Minimap') ---@type SUI.Module.Minimap
 	if minimap.Settings and minimap.Settings.scaleWithArt then minimap:UpdateScale() end
 
 	-- Update Bar scales
@@ -203,7 +208,7 @@ function module:updateOffset()
 	local Tfubar, TChocolateBar, Ttitan = 0, 0, 0
 	local Bfubar, BChocolateBar, Btitan = 0, 0, 0
 
-	if SUI.DB.Offset.TopAuto or SUI.DB.Offset.BottomAuto then
+	if SUI.DB.Artwork.Offset.TopAuto or SUI.DB.Artwork.Offset.BottomAuto then
 		-- FuBar Offset
 		for i = 1, 4 do
 			local bar = _G['FuBarFrame' .. i]
@@ -241,35 +246,35 @@ function module:updateOffset()
 		if OrderHallCommandBar and OrderHallCommandBar:IsVisible() then Top = Top + OrderHallCommandBar:GetHeight() end
 
 		-- Update DB if set to auto
-		if SUI.DB.Offset.TopAuto then
+		if SUI.DB.Artwork.Offset.TopAuto then
 			Top = max(Top + Tfubar + Ttitan + TChocolateBar, 0)
-			SUI.DB.Offset.Top = Top
+			SUI.DB.Artwork.Offset.Top = Top
 		end
-		if SUI.DB.Offset.BottomAuto then
+		if SUI.DB.Artwork.Offset.BottomAuto then
 			Bottom = max(Bottom + Bfubar + Btitan + BChocolateBar, 0)
-			SUI.DB.Offset.Bottom = Bottom
+			SUI.DB.Artwork.Offset.Bottom = Bottom
 		end
 	end
 
 	-- Call module update if defined.
 	local style = SUI:GetModule('Style.' .. SUI.DB.Artwork.Style)
-	if style.updateOffset then style:updateOffset(SUI.DB.Offset.Top, SUI.DB.Offset.Bottom) end
+	if style.updateOffset then style:updateOffset(SUI.DB.Artwork.Offset.Top, SUI.DB.Artwork.Offset.Bottom) end
 
 	SpartanUI:ClearAllPoints()
-	SpartanUI:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, (SUI.DB.Offset.Top * -1))
-	if SUI.DB.Offset.BottomAuto and _G['TitanPanelBottomAnchor'] then
+	SpartanUI:SetPoint('TOPRIGHT', UIParent, 'TOPRIGHT', 0, (SUI.DB.Artwork.Offset.Top * -1))
+	if SUI.DB.Artwork.Offset.BottomAuto and _G['TitanPanelBottomAnchor'] then
 		SpartanUI:SetPoint('BOTTOMLEFT', _G['TitanPanelBottomAnchor'], 'BOTTOMLEFT', 0, 0)
 	else
-		SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Offset.Bottom)
+		SpartanUI:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', 0, SUI.DB.Artwork.Offset.Bottom)
 	end
 end
 
 function module:updateHorizontalOffset()
 	SUI_BottomAnchor:ClearAllPoints()
-	SUI_BottomAnchor:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', SUI.DB.Offset.Horizontal.Bottom, 0)
+	SUI_BottomAnchor:SetPoint('BOTTOM', SpartanUI, 'BOTTOM', SUI.DB.Artwork.Offset.Horizontal.Bottom, 0)
 
 	SUI_TopAnchor:ClearAllPoints()
-	SUI_TopAnchor:SetPoint('TOP', SpartanUI, 'TOP', SUI.DB.Offset.Horizontal.Top, 0)
+	SUI_TopAnchor:SetPoint('TOP', SpartanUI, 'TOP', SUI.DB.Artwork.Offset.Horizontal.Top, 0)
 
 	-- Call module scale update if defined.
 	local style = SUI:GetModule('Style.' .. SUI.DB.Artwork.Style)

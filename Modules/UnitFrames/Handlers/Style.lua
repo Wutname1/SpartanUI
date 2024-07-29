@@ -4,7 +4,7 @@ local UF = SUI.UF
 local Style = {}
 local registry = {}
 
----@type SUI.UF.Style.Settings
+---@type SUI.Style.Settings.UnitFrames
 local Defaults = {
 	displayName = 'Default',
 	positions = {},
@@ -16,7 +16,7 @@ local Defaults = {
 
 ---Register a style within the registry
 ---@param styleName string
----@param settings SUI.UF.Style.Settings
+---@param settings SUI.Style.Settings.UnitFrames
 ---@param update? function
 function Style:Register(styleName, settings, update)
 	registry[styleName] = {
@@ -41,7 +41,7 @@ end
 
 ---Get config for the active style OR the specified styleName
 ---@param styleName? string
----@return SUI.UF.Style.Settings
+---@return SUI.Style.Settings.UnitFrames
 function Style:Get(styleName)
 	if styleName == 'war' then styleName = 'War' end
 

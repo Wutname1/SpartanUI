@@ -142,7 +142,9 @@ function module:OnInitialize()
 				return 'interface\\addons\\SpartanUI\\images\\setup\\Style_' .. skin, 120, 60
 			end,
 			func = function()
-				SUI:GetModule('Artwork'):SetActiveStyle(skin)
+				---@type SUI.Module.Artwork
+				local artworkModule = SUI:GetModule('Artwork')
+				artworkModule:SetActiveStyle(skin)
 			end,
 		}
 	end

@@ -1,10 +1,10 @@
 ---@diagnostic disable: undefined-field
 local SUI, L, MoveIt = _G.SUI, SUI.L, SUI.MoveIt
-local module = SUI:NewModule('Minimap') ---@type SUI.Module
+local module = SUI:NewModule('Minimap') ---@class SUI.Module.Minimap : SUI.Module
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
 ----------------------------------------------------------------------------------------------------
-module.Settings = nil
+module.Settings = nil ---@type SUI.Style.Settings.Minimap
 local Registry = {}
 local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Frame')
 ---@class SUI.Minimap.Holder : FrameExpanded, SUI.MoveIt.MoverParent
@@ -177,9 +177,14 @@ end
 
 local function updateSettings()
 	-- Refresh settings
+	---@diagnostic disable-next-line: missing-fields
 	module.Settings = {}
 	module.Settings = SUI:CopyData(BaseSettings, module.Settings)
 	if Registry[SUI.DB.Artwork.Style] then module.Settings = SUI:CopyData(Registry[SUI.DB.Artwork.Style].settings, module.Settings) end
+end
+
+function module:Register(name, settings)
+	Registry[name] = { settings = settings }
 end
 
 function module:ShapeChange(shape)
@@ -559,8 +564,8 @@ function module:update(FullUpdate)
 	UserSettings.SUIMapChangesActive = false
 end
 
-function module:Register(name, settings)
-	Registry[name] = { settings = settings }
+function module:SetActiveStyle(style)
+	if Registry[style] then module:update(true) end
 end
 
 function module:OnInitialize()
@@ -784,3 +789,27 @@ function module:BuildOptions()
 
 	SUI.Options:AddOptions(options, 'Minimap')
 end
+
+---@class SUI.Style.Settings.Minimap
+---@field BG? SUI.Settings.Minimap.background
+---@field position? string
+---@field shape? MapShape
+---@field scaleWithArt? boolean
+---@field size? table
+---@field textLocation? string
+
+---@alias MapShape 'SQUARE' | 'ROUND'
+
+---@class SUI.Settings.Minimap.coords
+---@field scale? number
+---@field size? table
+---@field TextColor? table
+---@field ShadowColor? table
+
+---@class SUI.Settings.Minimap.background
+---@field enabled? boolean
+---@field BlendMode? string
+---@field alpha? number
+---@field texture? string
+---@field size? table
+---@field position? string|table

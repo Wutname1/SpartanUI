@@ -55,29 +55,23 @@ local BuffPosUpdate = function()
 
 	--See If the theme has an anchor and if we are allowed to use it
 	local style = SUI:GetModule('Style.' .. (SUI.DB.Artwork.Style or 'War'), true) ---@type SUI.Module
-	if style and style.BuffLoc and not SUI.DB.Buffs[ActiveRule()].OverrideLoc then
-		style:BuffLoc(nil, nil)
-	else
-		if SUI.DB.Buffs[ActiveRule()].Anchor.Moved then
-			local Anchors = {}
-			for key, val in pairs(SUI.DB.Buffs[ActiveRule()].Anchor.AnchorPos) do
-				Anchors[key] = val
-			end
+	-- if SUI.DB.Buffs[ActiveRule()].Anchor.Moved then
+	-- 	local Anchors = {}
+	-- 	for key, val in pairs(SUI.DB.Buffs[ActiveRule()].Anchor.AnchorPos) do
+	-- 		Anchors[key] = val
+	-- 	end
 
-			if Anchors.point == nil then
-				--Error Catch
-				setdefault = true
-				SUI.DB.Buffs[ActiveRule()].Anchor.Moved = false
-			else
-				--Set the Buff location
-				BuffFrame:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
-			end
-		else
-			setdefault = true
-		end
-	end
-
-	if setdefault then BuffFrame:SetPoint('TOPRIGHT', -13, -13 - SUI.DB.BuffSettings.offset) end
+	-- 	if Anchors.point == nil then
+	-- 		--Error Catch
+	-- 		setdefault = true
+	-- 		SUI.DB.Buffs[ActiveRule()].Anchor.Moved = false
+	-- 	else
+	-- 		--Set the Buff location
+	-- 		BuffFrame:SetPoint(Anchors.point, UIParent, Anchors.relativePoint, Anchors.xOfs, Anchors.yOfs)
+	-- 	end
+	-- else
+	-- 	setdefault = true
+	-- end
 end
 
 function module:OnEnable()
