@@ -48,9 +48,72 @@ local DBDefaults = {
 	},
 }
 
+---@class SUI.Style.Settings.StatusBars.Storage
+---@field Left SUI.Style.Settings.StatusBars
+---@field Right SUI.Style.Settings.StatusBars
+
+---@class SUI.Style.Settings.StatusBars
+---@field bgTexture? string
+local StyleSettingsBase = {
+	size = { 400, 15 },
+	alpha = 1,
+	MaxWidth = 0,
+	texCords = { 0, 1, 0, 1 },
+	tooltip = {
+		texture = 'Interface\\Addons\\SpartanUI\\Images\\status-tooltip',
+		textureCoords = { 0.103515625, 0.8984375, 0.1796875, 0.8203125 },
+		size = { 300, 100 },
+		textAreaSize = { 200, 60 },
+		statusBarAnchor = 'TOP',
+	},
+	Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-100,0',
+}
+
+local StyleSetting = {
+	base = {
+		Left = {
+			Position = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-100,0',
+		},
+		Right = {
+			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,100,0',
+		},
+	},
+	skinsettings = {},
+}
+---Copy Base into left and right
+for k, v in pairs(StyleSetting.base) do
+	StyleSetting[k] = SUI:CopyData(v, StyleSettingsBase)
+end
+
+---@param ContainerKey string
+---@return SUI.Style.Settings.StatusBars
+local function GetStyleSettings(ContainerKey)
+	if StyleSetting.skinsettings[SUI.DB.Artwork.Style] then
+		return SUI:CopyData(StyleSetting.skinsettings[SUI.DB.Artwork.Style][ContainerKey], StyleSetting[ContainerKey])
+	else
+		return StyleSetting[ContainerKey]
+	end
+end
+
+---@param style string
+---@param settings SUI.Style.Settings.StatusBars.Storage
+function module:RegisterStyle(style, settings)
+	StyleSetting.skinsettings[style] = settings
+end
+
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = DBDefaults })
 	DB = module.Database.profile
+
+	-- Migrate old settings
+	if SUI.DB.StatusBars then
+		-- Check if old bar was set to honor
+		for i = 1, 2 do
+			if SUI.DB.StatusBars and SUI.DB.StatusBars[i] and SUI.DB.StatusBars[i].display == 'honor' then SetCVar('showHonorAsExperience', 1) end
+		end
+		-- Remove old settings
+		SUI.DB.StatusBars = nil
+	end
 end
 
 function module:OnEnable()
@@ -197,39 +260,49 @@ function module:CreateBarContainers(barManager)
 end
 
 function module:CreateBarContainer(barManager, key, index)
-	local StyleSetting = SUI.DB.Styles[SUI.DB.Artwork.Style].StatusBars[key]
+	local barStyle = GetStyleSettings(key)
 	local barContainer = CreateFrame('Frame', 'SUI_StatusBar_' .. key, barManager, 'StatusTrackingBarContainerTemplate')
+	barContainer.barStyle = barStyle
 
-	barContainer:SetSize(unpack(StyleSetting.size))
+	barContainer:SetSize(unpack(barStyle.size))
 	barContainer:SetFrameStrata('LOW')
 	barContainer:SetFrameLevel(20)
 
-	self:SetupBarContainerVisuals(barContainer, StyleSetting)
-	self:SetupBarContainerPosition(barContainer, StyleSetting, index)
+	self:SetupBarContainerVisuals(barContainer, barStyle)
+	self:SetupBarContainerPosition(barContainer, barStyle, index)
 
 	return barContainer
 end
 
-function module:SetupBarContainerVisuals(barContainer, StyleSetting)
+function module:SetupBarContainerVisuals(barContainer, barStyle)
 	barContainer.BarFrameTexture:Hide()
-
 	-- Create background
 	barContainer.bg = barContainer:CreateTexture(nil, 'BACKGROUND')
-	barContainer.bg:SetTexture(StyleSetting.bgImg or '')
+	barContainer.bg:SetTexture(barStyle.bgTexture or '')
 	barContainer.bg:SetAllPoints(barContainer)
-	barContainer.bg:SetTexCoord(unpack(StyleSetting.texCords))
+	barContainer.bg:SetTexCoord(unpack(barStyle.texCords))
+	if barStyle.bgTexture then
+		barContainer.bg:Show()
+	else
+		barContainer.bg:Hide()
+	end
 
 	-- Create overlay
 	barContainer.overlay = barContainer:CreateTexture(nil, 'OVERLAY')
-	barContainer.overlay:SetTexture(StyleSetting.bgImg)
+	barContainer.overlay:SetTexture(barStyle.bgTexture or '')
 	barContainer.overlay:SetAllPoints(barContainer.bg)
-	barContainer.overlay:SetTexCoord(unpack(StyleSetting.texCords))
+	barContainer.overlay:SetTexCoord(unpack(barStyle.texCords))
+	if barStyle.bgTexture then
+		barContainer.overlay:Show()
+	else
+		barContainer.overlay:Hide()
+	end
 
-	barContainer.settings = StyleSetting
+	barContainer.settings = barStyle
 end
 
-function module:SetupBarContainerPosition(barContainer, StyleSetting, index)
-	local point, anchor, secondaryPoint, x, y = strsplit(',', StyleSetting.Position)
+function module:SetupBarContainerPosition(barContainer, barStyle, index)
+	local point, anchor, secondaryPoint, x, y = strsplit(',', barStyle.Position)
 	barContainer:ClearAllPoints()
 	barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
 	local containerKey = index == 1 and 'Left' or 'Right'
