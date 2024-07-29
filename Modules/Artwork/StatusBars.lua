@@ -269,6 +269,67 @@ function module:SetupBar(bar, barContainer, width, height, index)
 	end)
 end
 
+function module:SetActiveStyle(style)
+	-- Update the style for each container (Left and Right)
+	for _, key in ipairs({ 'Left', 'Right' }) do
+		local barContainer = module.bars[key]
+		if barContainer then
+			local newStyle = GetStyleSettings(key)
+
+			-- Update size
+			barContainer:SetSize(unpack(newStyle.size))
+
+			-- Update background
+			if newStyle.bgTexture then
+				barContainer.bg:SetTexture(newStyle.bgTexture)
+				barContainer.bg:Show()
+				if newStyle.texCords then
+					barContainer.bg:SetTexCoord(unpack(newStyle.texCords))
+				else
+					barContainer.bg:SetTexCoord(0, 1, 0, 1)
+				end
+			else
+				barContainer.bg:SetTexture('')
+				barContainer.bg:Hide()
+			end
+
+			-- Update overlay
+			if newStyle.bgTexture then
+				barContainer.overlay:SetTexture(newStyle.bgTexture)
+				barContainer.overlay:Show()
+				if newStyle.texCords then
+					barContainer.overlay:SetTexCoord(unpack(newStyle.texCords))
+				else
+					barContainer.overlay:SetTexCoord(0, 1, 0, 1)
+				end
+			else
+				barContainer.overlay:SetTexture('')
+				barContainer.overlay:Hide()
+			end
+
+			-- Update position
+			local point, anchor, secondaryPoint, x, y = strsplit(',', newStyle.Position)
+			barContainer:ClearAllPoints()
+			barContainer:SetPoint(point, anchor, secondaryPoint, x, y)
+
+			-- Update individual bars
+			for _, bar in pairs(barContainer.bars) do
+				bar:SetSize(newStyle.size[1] - 30, newStyle.size[2] - 5)
+				bar.StatusBar:SetSize(newStyle.size[1] - 30, newStyle.size[2] - 5)
+
+				-- Update text if needed
+				self:SetupBarText(bar, newStyle, key == 'Left' and 1 or 2)
+			end
+
+			-- Store the new style settings
+			barContainer.settings = newStyle
+		end
+	end
+
+	-- Refresh the bars
+	self:UpdateBars()
+end
+
 function module:SetupBarText(bar, StyleSetting, index)
 	local containerKey = index == 1 and 'Left' or 'Right'
 	local textMode = DB.bars[containerKey].text
