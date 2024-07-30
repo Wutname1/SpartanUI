@@ -178,7 +178,7 @@ local function UnitFrameCallback(self, unit)
 	unit = self.unitOnCreate
 
 	if not self.Art_Classic and SUI:IsInTable(FramesToSkin, unit) then
-		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\base_ring1' -- Player and Target
+		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\base_ring1.png' -- Player and Target
 		local circle = 'Interface\\AddOns\\SpartanUI\\images\\circle'
 		local ring = CreateFrame('Frame', nil, self)
 		ring:SetFrameStrata('BACKGROUND')
@@ -187,6 +187,7 @@ local function UnitFrameCallback(self, unit)
 
 		ring.bg = ring:CreateTexture(nil, 'BACKGROUND')
 		ring.bg:SetParent(ring)
+		ring.bg:SetPoint('CENTER', ring, 'CENTER', 0, 0)
 		ring.bg:SetTexture(base_ring1)
 		if unit == 'target' then ring.bg:SetTexCoord(1, 0, 0, 1) end
 
@@ -200,7 +201,7 @@ local function UnitFrameCallback(self, unit)
 		self.Portrait:SetPoint('TOPRIGHT', self, 'TOPRIGHT', 72, 15)
 		self.Portrait:SetPoint('BOTTOMLEFT', self, 'BOTTOMRIGHT', 10, 0)
 
-		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', -80, 0)
+		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', 12, -2)
 	elseif unit == 'targettarget' then
 		self.SpartanArt:SetFrameLevel(1)
 	elseif unit == 'target' then
@@ -208,7 +209,7 @@ local function UnitFrameCallback(self, unit)
 		self.Portrait:SetPoint('TOPLEFT', self, 'TOPLEFT', -72, 15)
 		self.Portrait:SetPoint('BOTTOMRIGHT', self, 'BOTTOMLEFT', -10, 0)
 
-		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', 80, 0)
+		self.Art_Classic.bg:SetPoint('CENTER', self.Art_Classic, 'CENTER', -13, -2)
 	end
 end
 
