@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
----@class SUI.Skins : SUI.Module
+---@class SUI.Module.Handler.Skins : SUI.Module
 local module = SUI:NewModule('Handler.Skins')
 
 ---@class SkinDB
@@ -515,6 +515,8 @@ end
 
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Skins', { profile = DBDefaults })
+
+	module.DB = module.Database.profile
 	DB = module.Database.profile
 
 	for name, Data in pairs(module.Registry) do
