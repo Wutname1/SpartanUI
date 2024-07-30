@@ -178,7 +178,7 @@ local function UnitFrameCallback(self, unit)
 	unit = self.unitOnCreate
 
 	if not self.Art_Classic and SUI:IsInTable(FramesToSkin, unit) then
-		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\base_ring1.png' -- Player and Target
+		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\ring1.png' -- Player and Target
 		local circle = 'Interface\\AddOns\\SpartanUI\\images\\circle'
 		local ring = CreateFrame('Frame', nil, self)
 		ring:SetFrameStrata('BACKGROUND')
