@@ -592,12 +592,8 @@ function module:SetupChatboxes()
 
 	local VoiceChannelButton = _G['ChatFrameChannelButton']
 	VoiceChannelButton:ClearAllPoints()
-	if SUI.IsRetail then
-		VoiceChannelButton:SetPoint('TOPRIGHT', QJTB, 'TOPLEFT', -1, 0)
-	else
-		VoiceChannelButton:SetPoint('TOPRIGHT', GDM, 'TOPRIGHT', -2, -3)
-	end
-
+	VoiceChannelButton:SetParent(GDM)
+	VoiceChannelButton:SetPoint('RIGHT', QJTB, 'LEFT', -1, 0)
 	StripTextures(VoiceChannelButton)
 	VoiceChannelButton:SetSize(18, 18)
 	VoiceChannelButton.Icon:SetTexture(icon)
@@ -605,7 +601,8 @@ function module:SetupChatboxes()
 	VoiceChannelButton.Icon:SetScale(0.8)
 
 	ChatFrameMenuButton:ClearAllPoints()
-	ChatFrameMenuButton:SetPoint('TOPRIGHT', VoiceChannelButton, 'TOPLEFT', -1, 0)
+	ChatFrameMenuButton:SetParent(GDM)
+	ChatFrameMenuButton:SetPoint('RIGHT', VoiceChannelButton, 'LEFT', -1, -2)
 	ChatFrameMenuButton:SetSize(18, 18)
 	StripTextures(ChatFrameMenuButton)
 	ChatFrameMenuButton.Icon = ChatFrameMenuButton:CreateTexture(nil, 'ARTWORK')
