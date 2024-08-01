@@ -178,7 +178,7 @@ local function UnitFrameCallback(self, unit)
 	unit = self.unitOnCreate
 
 	if not self.Art_Classic and SUI:IsInTable(FramesToSkin, unit) then
-		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\images\\classic\\ring1.png' -- Player and Target
+		local base_ring1 = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\ring1.png' -- Player and Target
 		local circle = 'Interface\\AddOns\\SpartanUI\\images\\circle'
 		local ring = CreateFrame('Frame', nil, self)
 		ring:SetFrameStrata('BACKGROUND')
@@ -675,7 +675,7 @@ function module:OnInitialize()
 				perUnit = true,
 				UnitFrameCallback = UnitFrameCallback,
 				player = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_plate1',
 					height = 80,
 					widthScale = 2.2,
 					TexCoord = { 0.19140625, 0.810546875, 0.1796875, 0.8203125 },
@@ -686,7 +686,7 @@ function module:OnInitialize()
 					},
 				},
 				target = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_plate1',
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_plate1',
 					height = 80,
 					widthScale = 2.2,
 					TexCoord = { 0.810546875, 0.19140625, 0.1796875, 0.8203125 },
@@ -697,7 +697,7 @@ function module:OnInitialize()
 					},
 				},
 				pet = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_2_dual',
 					height = 53,
 					widthScale = 1.6,
 					TexCoord = { 0.9453125, 0.25, 0, 0.78125 },
@@ -708,7 +708,7 @@ function module:OnInitialize()
 					},
 				},
 				targettarget = {
-					path = 'Interface\\AddOns\\SpartanUI\\Images\\Classic\\base_2_dual',
+					path = 'Interface\\AddOns\\SpartanUI\\Themes\\Classic\\Images\\base_2_dual',
 					height = 53,
 					widthScale = 1.6,
 					TexCoord = { 0.25, 0.9453125, 0, 0.78125 },
