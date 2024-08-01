@@ -30,8 +30,8 @@ local function CreateMenuSkin()
 
 	-- Logo Button
 	MenuSkin.LogoButton = CreateFrame('Button', nil, MenuSkin)
-	MenuSkin.LogoButton:SetSize(60, 60)
-	MenuSkin.LogoButton:SetPoint('BOTTOM', 0, -30)
+	MenuSkin.LogoButton:SetSize(80, 80)
+	MenuSkin.LogoButton:SetPoint('BOTTOM', 0, -45)
 
 	MenuSkin.LogoButton.texture = MenuSkin.LogoButton:CreateTexture(nil, 'ARTWORK')
 	MenuSkin.LogoButton.texture:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Menu\\SUILogo_white.png')
@@ -48,7 +48,7 @@ local function CreateMenuSkin()
 	-- Highlight effect
 	MenuSkin.LogoButton.highlight = MenuSkin.LogoButton:CreateTexture(nil, 'HIGHLIGHT')
 	MenuSkin.LogoButton.highlight:SetTexture('Interface\\AddOns\\SpartanUI\\images\\Menu\\ItemBorderOuterHighlight.jpg')
-	MenuSkin.LogoButton.highlight:SetSize(140, 140)
+	MenuSkin.LogoButton.highlight:SetSize(MenuSkin.LogoButton:GetWidth() * 2.4, MenuSkin.LogoButton:GetWidth() * 2.4)
 	MenuSkin.LogoButton.highlight:SetPoint('CENTER')
 	MenuSkin.LogoButton.highlight:SetBlendMode('ADD')
 	MenuSkin.LogoButton.highlight:SetAlpha(0)
@@ -81,7 +81,7 @@ local function CreateMenuSkin()
 	-- Bottom Line
 	MenuSkin.BottomLine = MenuSkin:CreateTexture(nil, 'ARTWORK')
 	MenuSkin.BottomLine:SetSize(600, 16)
-	MenuSkin.BottomLine:SetPoint('BOTTOM', 0, -140)
+	MenuSkin.BottomLine:SetPoint('BOTTOM', 0, 0)
 
 	-- Line Mask
 	MenuSkin.LineMask = MenuSkin:CreateMaskTexture()
@@ -90,6 +90,8 @@ local function CreateMenuSkin()
 	MenuSkin.LineMask:SetPoint('BOTTOMRIGHT', MenuSkin.Gradient, 'BOTTOMRIGHT', -100, 0)
 	MenuSkin.TopLine:AddMaskTexture(MenuSkin.LineMask)
 	MenuSkin.BottomLine:AddMaskTexture(MenuSkin.LineMask)
+	MenuSkin.Gradient:AddMaskTexture(MenuSkin.LineMask)
+	MenuSkin.Background:AddMaskTexture(MenuSkin.LineMask)
 
 	return MenuSkin
 end
@@ -129,7 +131,6 @@ function MenuSkin:OnFrameShown(showMenu)
 		self:ResetAnimation()
 		self:OnDataLoaded()
 		self:InterpolatePoints(GameMenu)
-		self:UpdateMasks(false) -- useSquareMask is always false for GameMenu
 		self:SkinGameMenu()
 		self:Show()
 	else
@@ -207,20 +208,7 @@ function MenuSkin:InterpolatePoints(center)
 	end)
 end
 
-function MenuSkin:UpdateMasks(useSquareMask)
-	if self.useSquareMask == useSquareMask then return end
-	if not useSquareMask then
-		self.Gradient:AddMaskTexture(self.LineMask)
-		self.Background:AddMaskTexture(self.LineMask)
-	else
-		self.Gradient:RemoveMaskTexture(self.LineMask)
-		self.Background:RemoveMaskTexture(self.LineMask)
-	end
-	self.useSquareMask = useSquareMask
-end
-
 -- Set up hooks
-
 GameMenu:HookScript('OnShow', function()
 	MenuSkin:OnFrameShown(true)
 end)
