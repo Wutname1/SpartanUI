@@ -3,5 +3,6 @@
 ..\..\FrameXML\UI.xsd">
 	<Script file="Core.lua" />
 	<Script file="Ace3.lua" />
-	<Script file="Blizzard.lua" />
+	<Script file="Blizzard\GameMenu.lua" />
+	<Script file="Blizzard\Base.lua" />
 </Ui>
