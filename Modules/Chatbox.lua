@@ -19,7 +19,24 @@ local linkTypes = {
 	quest = true,
 }
 local ChatLevelLog, nameColor = {}, {}
-
+local CHAT_TYPES_TO_LOG = {
+	'CHAT_MSG_SAY',
+	'CHAT_MSG_YELL',
+	'CHAT_MSG_PARTY',
+	'CHAT_MSG_RAID',
+	'CHAT_MSG_WHISPER',
+	'CHAT_MSG_WHISPER_INFORM',
+	'CHAT_MSG_INSTANCE_CHAT',
+}
+local chatTypeMap = {
+	CHAT_MSG_SAY = 'SAY',
+	CHAT_MSG_YELL = 'YELL',
+	CHAT_MSG_PARTY = 'PARTY',
+	CHAT_MSG_RAID = 'RAID',
+	CHAT_MSG_WHISPER = 'WHISPER',
+	CHAT_MSG_WHISPER_INFORM = 'WHISPER_INFORM',
+	CHAT_MSG_INSTANCE_CHAT = 'INSTANCE_CHAT',
+}
 local LeaveCount = 0
 local battleOver = false
 
@@ -35,33 +52,23 @@ function module:SetPopupText(text)
 	popup:Show()
 end
 
-function module:GetColor(className, isLocal)
-	-- For modules that need to class color things
-	if isLocal then
-		local found
-		for k, v in next, LOCALIZED_CLASS_NAMES_FEMALE do
-			if v == className then
-				className = k
-				found = true
-				break
-			end
-		end
-		if not found then
-			for k, v in next, LOCALIZED_CLASS_NAMES_MALE do
-				if v == className then
-					className = k
-					break
-				end
-			end
-		end
+function module:GetColor(input)
+	local className, color
+
+	if type(input) == 'string' and input:match('^Player%-') then
+		-- It's a GUID, get the class from it
+		_, className = GetPlayerInfoByGUID(input)
+	elseif type(input) == 'string' then
+		-- Assume it's already a class name
+		className = input
 	end
-	local tbl = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[className] or RAID_CLASS_COLORS[className]
-	if not tbl then
-		-- Seems to be a bug since 5.3 where the friends list is randomly empty and fires friendlist updates with an "Unknown" class.
-		return ('%02x%02x%02x'):format(GRAY_FONT_COLOR.r * 255, GRAY_FONT_COLOR.g * 255, GRAY_FONT_COLOR.b * 255)
-	end
-	local color = ('%02x%02x%02x'):format(tbl.r * 255, tbl.g * 255, tbl.b * 255)
-	return color
+
+	if className then color = RAID_CLASS_COLORS[className] end
+
+	if color then return ('%02x%02x%02x'):format(color.r * 255, color.g * 255, color.b * 255) end
+
+	-- Default color if we couldn't determine the class color
+	return 'ffffff'
 end
 
 local function get_color(c)
@@ -144,9 +151,25 @@ function module:PlayerName(text)
 	return text
 end
 
-function module:TimeStamp(text)
+function module:TimeStamp(text, isHistory)
 	if module.DB.timestampFormat == '' then return text end
-	text = date('|cff7d7d7d[' .. module.DB.timestampFormat .. ']|r ') .. text
+
+	local timestamp
+	if isHistory then
+		-- For history messages, extract the existing timestamp
+		local existingTimestamp = text:match('^|cff7d7d7d%[(.-)%]|r')
+		if existingTimestamp then
+			timestamp = existingTimestamp
+		else
+			-- If no existing timestamp (shouldn't happen), use current time
+			timestamp = date(module.DB.timestampFormat)
+		end
+	else
+		-- For new messages, use current time
+		timestamp = date(module.DB.timestampFormat)
+	end
+
+	text = '|cff7d7d7d[' .. timestamp .. ']|r ' .. text
 	return text
 end
 
@@ -249,6 +272,13 @@ function module:OnInitialize()
 		playerlevel = nil,
 		ChatCopyTip = true,
 		fontSize = 12,
+		chatLog = {
+			enabled = true,
+			maxEntries = 1000,
+			expireDays = 30,
+			cleanupLoginMessages = true,
+			history = {},
+		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Chat.DB
@@ -348,6 +378,106 @@ function module:OnEnable()
 		LeaveCount = 0
 		battleOver = false
 	end)
+
+	if self.DB.chatLog.enabled then self:EnableChatLog() end
+
+	-- Hook this function to the chat frame's AddMessage method
+	for i = 1, NUM_CHAT_WINDOWS do
+		local chatFrame = _G['ChatFrame' .. i]
+		module:SecureHook(chatFrame, 'AddMessage', function(frame, message, ...)
+			if module:CleanupLoginMessages(frame, nil, message) then return end
+		end)
+	end
+
+	self:RegisterEvent('PLAYER_ENTERING_WORLD')
+end
+
+function module:PLAYER_ENTERING_WORLD(event, isInitialLogin, isReloadingUi)
+	if isInitialLogin and self.DB.chatLog.cleanupLoginMessages then self:CleanupLoginMessages() end
+end
+
+function module:EnableChatLog()
+	for _, event in ipairs(CHAT_TYPES_TO_LOG) do
+		self:RegisterEvent(event, 'LogChatMessage')
+	end
+	self:RestoreChatHistory()
+end
+
+function module:DisableChatLog()
+	for _, event in ipairs(CHAT_TYPES_TO_LOG) do
+		self:UnregisterEvent(event)
+	end
+end
+
+function module:LogChatMessage(event, message, sender, _, _, _, _, _, _, _, _, _, guid)
+	if not self.DB.chatLog.enabled then return end
+
+	local entry = {
+		timestamp = time(),
+		event = event,
+		sender = sender,
+		message = message,
+		guid = guid,
+	}
+
+	table.insert(self.DB.chatLog.history, entry)
+
+	while #self.DB.chatLog.history > self.DB.chatLog.maxEntries do
+		table.remove(self.DB.chatLog.history, 1)
+	end
+end
+
+function module:CleanupLoginMessages()
+
+	-- The below for loop is breaking the chatframe, need to find a way to clear the chatframe without breaking it
+	-- for i = 1, NUM_CHAT_WINDOWS do
+	-- 	local chatFrame = _G['ChatFrame' .. i]
+	-- 	chatFrame:Clear()
+	-- end
+
+	-- -- Re-add important system messages
+	-- local info = ChatTypeInfo['SYSTEM']
+	-- DEFAULT_CHAT_FRAME:AddMessage(GUILD_MOTD_TEMPLATE:format(GetGuildRosterMOTD() or ''), info.r, info.g, info.b)
+
+	-- -- Add played time messages
+	-- RequestTimePlayed()
+end
+
+function module:RestoreChatHistory()
+	if self.DB.chatLog.cleanupLoginMessages then self:CleanupLoginMessages() end
+
+	local chatFrame = DEFAULT_CHAT_FRAME
+	local playerRealm = GetRealmName()
+
+	for _, entry in ipairs(self.DB.chatLog.history) do
+		local entryTime = date('*t', entry.timestamp)
+		local timeString = string.format('%02d:%02d:%02d', entryTime.hour, entryTime.min, entryTime.sec)
+
+		-- Extract the sender name and realm
+		local senderName, senderRealm = entry.sender:match('(.+)%-(.+)')
+		if not senderName then
+			senderName = entry.sender
+			senderRealm = playerRealm
+		end
+
+		-- Include realm if different from player's realm
+		local displayName = senderName
+		if senderRealm ~= playerRealm then displayName = displayName .. '-' .. senderRealm end
+
+		local messageWithTime = string.format('|cFF%s[%s]|r %s', module:GetColor(entry.guid), displayName, entry.message)
+
+		local chatType = chatTypeMap[entry.event] or 'SYSTEM'
+		local info = ChatTypeInfo[chatType]
+
+		-- Apply our timestamp function, but with a flag to indicate it's from history
+		local timestampedMessage = module:TimeStamp(messageWithTime, true)
+		chatFrame:AddMessage(timestampedMessage, info.r, info.g, info.b)
+	end
+end
+
+function module:ClearChatLog()
+	wipe(self.DB.chatLog.history)
+	SUI:Print(L['Chat log cleared'])
 end
 
 function module:EditBoxPosition()
@@ -735,22 +865,20 @@ function module:SetupChatboxes()
 		end
 		hooksecurefunc(ChatFrame.Background, 'SetVertexColor', BackdropColorUpdate)
 
-		if SUI.IsRetail then
-			local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
-			local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
-			local EBFocusRight = _G[ChatFrameName .. 'EditBoxFocusRight']
-			EBFocusLeft:SetVertexColor(c.r, c.g, c.b, c.a)
-			EBFocusMid:SetVertexColor(c.r, c.g, c.b, c.a)
-			EBFocusRight:SetVertexColor(c.r, c.g, c.b, c.a)
+		local EBFocusLeft = _G[ChatFrameName .. 'EditBoxFocusLeft']
+		local EBFocusMid = _G[ChatFrameName .. 'EditBoxFocusMid']
+		local EBFocusRight = _G[ChatFrameName .. 'EditBoxFocusRight']
+		EBFocusLeft:SetVertexColor(c.r, c.g, c.b, c.a)
+		EBFocusMid:SetVertexColor(c.r, c.g, c.b, c.a)
+		EBFocusRight:SetVertexColor(c.r, c.g, c.b, c.a)
 
-			-- Ensure the edit box hides all textures
-			local EditBoxFocusHide = function(frame)
-				ChatFrameEdit:Hide()
-			end
-			hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
-
-			disable(_G[ChatFrameName .. 'ButtonFrame'])
+		-- Ensure the edit box hides all textures
+		local EditBoxFocusHide = function(frame)
+			ChatFrameEdit:Hide()
 		end
+		hooksecurefunc(EBFocusMid, 'Hide', EditBoxFocusHide)
+
+		disable(_G[ChatFrameName .. 'ButtonFrame'])
 	end
 
 	module:EditBoxPosition()
@@ -842,6 +970,82 @@ function module:BuildOptions()
 				name = L['Hoveable game links'],
 				type = 'toggle',
 				order = 21,
+			},
+			chatLog = {
+				name = L['Chat Log'],
+				type = 'group',
+				args = {
+					enable = {
+						name = L['Enable Chat Log'],
+						desc = L['Enable saving chat messages to a log'],
+						type = 'toggle',
+						get = function()
+							return module.DB.chatLog.enabled
+						end,
+						set = function(_, val)
+							module.DB.chatLog.enabled = val
+							if val then
+								module:EnableChatLog()
+							else
+								module:DisableChatLog()
+							end
+						end,
+						order = 1,
+					},
+					maxEntries = {
+						name = L['Max Log Entries'],
+						desc = L['Maximum number of chat log entries to keep'],
+						type = 'range',
+						min = 100,
+						max = 5000,
+						step = 100,
+						get = function()
+							return module.DB.chatLog.maxEntries
+						end,
+						set = function(_, val)
+							module.DB.chatLog.maxEntries = val
+							module:CleanupOldChatLog()
+						end,
+						order = 2,
+					},
+					expireDays = {
+						name = L['Log Expiration (Days)'],
+						desc = L['Number of days to keep chat log entries'],
+						type = 'range',
+						min = 1,
+						max = 90,
+						step = 1,
+						get = function()
+							return module.DB.chatLog.expireDays
+						end,
+						set = function(_, val)
+							module.DB.chatLog.expireDays = val
+							module:CleanupOldChatLog()
+						end,
+						order = 3,
+					},
+					cleanupLoginMessages = {
+						name = L['Clean Up Login Messages'],
+						desc = L['Remove addon spam and unnecessary messages on login'],
+						type = 'toggle',
+						get = function()
+							return module.DB.chatLog.cleanupLoginMessages
+						end,
+						set = function(_, val)
+							module.DB.chatLog.cleanupLoginMessages = val
+						end,
+						order = 4,
+					},
+					clearLog = {
+						name = L['Clear Chat Log'],
+						desc = L['Clear all saved chat log entries'],
+						type = 'execute',
+						func = function()
+							module:ClearChatLog()
+						end,
+						order = 4,
+					},
+				},
 			},
 		},
 	}
