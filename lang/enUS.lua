@@ -1,6 +1,20 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Chat Log'] = true
+L['Enable Chat Log'] = true
+L['Enable saving chat messages to a log'] = true
+L['Max Log Entries'] = true
+L['Maximum number of chat log entries to keep'] = true
+L['Log Expiration (Days)'] = true
+L['Number of days to keep chat log entries'] = true
+L['Clear Chat Log'] = true
+L['Clear all saved chat log entries'] = true
+L['Chat log cleared'] = true
+L['Loading chat history...'] = true
+L['Chat history loaded'] = true
+L['Clean Up Login Messages'] = true
+L['Remove addon spam and unnecessary messages on login'] = true
 L['Mount'] = true
 L['Duration mode'] = true
 L['Remember voice lines across all characters'] = true
