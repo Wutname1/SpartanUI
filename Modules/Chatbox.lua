@@ -24,6 +24,8 @@ local CHAT_TYPES_TO_LOG = {
 	'CHAT_MSG_YELL',
 	'CHAT_MSG_PARTY',
 	'CHAT_MSG_RAID',
+	'CHAT_MSG_GUILD',
+	'CHAT_MSG_OFFICER',
 	'CHAT_MSG_WHISPER',
 	'CHAT_MSG_WHISPER_INFORM',
 	'CHAT_MSG_INSTANCE_CHAT',
@@ -33,6 +35,8 @@ local chatTypeMap = {
 	CHAT_MSG_YELL = 'YELL',
 	CHAT_MSG_PARTY = 'PARTY',
 	CHAT_MSG_RAID = 'RAID',
+	CHAT_MSG_GUILD = 'GUILD',
+	CHAT_MSG_OFFICER = 'OFFICER',
 	CHAT_MSG_WHISPER = 'WHISPER',
 	CHAT_MSG_WHISPER_INFORM = 'WHISPER_INFORM',
 	CHAT_MSG_INSTANCE_CHAT = 'INSTANCE_CHAT',
@@ -151,26 +155,14 @@ function module:PlayerName(text)
 	return text
 end
 
-function module:TimeStamp(text, isHistory)
+function module:TimeStamp(text)
 	if module.DB.timestampFormat == '' then return text end
 
-	local timestamp
-	if isHistory then
-		-- For history messages, extract the existing timestamp
-		local existingTimestamp = text:match('^|cff7d7d7d%[(.-)%]|r')
-		if existingTimestamp then
-			timestamp = existingTimestamp
-		else
-			-- If no existing timestamp (shouldn't happen), use current time
-			timestamp = date(module.DB.timestampFormat)
-		end
-	else
-		-- For new messages, use current time
-		timestamp = date(module.DB.timestampFormat)
-	end
+	-- Check if the message already has a timestamp
+	if text:match('^|cff7d7d7d%[%d+:%d+:%d+%]|r') then return text end
 
-	text = '|cff7d7d7d[' .. timestamp .. ']|r ' .. text
-	return text
+	local timestamp = date(module.DB.timestampFormat)
+	return '|cff7d7d7d[' .. timestamp .. ']|r ' .. text
 end
 
 local function shortenChannel(text)
@@ -381,19 +373,16 @@ function module:OnEnable()
 
 	if self.DB.chatLog.enabled then self:EnableChatLog() end
 
-	-- Hook this function to the chat frame's AddMessage method
-	for i = 1, NUM_CHAT_WINDOWS do
-		local chatFrame = _G['ChatFrame' .. i]
-		module:SecureHook(chatFrame, 'AddMessage', function(frame, message, ...)
-			if module:CleanupLoginMessages(frame, nil, message) then return end
-		end)
-	end
-
 	self:RegisterEvent('PLAYER_ENTERING_WORLD')
 end
 
 function module:PLAYER_ENTERING_WORLD(event, isInitialLogin, isReloadingUi)
-	if isInitialLogin and self.DB.chatLog.cleanupLoginMessages then self:CleanupLoginMessages() end
+	if isInitialLogin and self.DB.chatLog.cleanupLoginMessages then
+		-- Delay the cleanup to ensure it happens after login is complete
+		C_Timer.After(5, function()
+			self:CleanupLoginMessages()
+		end)
+	end
 end
 
 function module:EnableChatLog()
@@ -428,18 +417,16 @@ function module:LogChatMessage(event, message, sender, _, _, _, _, _, _, _, _, _
 end
 
 function module:CleanupLoginMessages()
-
-	-- The below for loop is breaking the chatframe, need to find a way to clear the chatframe without breaking it
 	-- for i = 1, NUM_CHAT_WINDOWS do
 	-- 	local chatFrame = _G['ChatFrame' .. i]
 	-- 	chatFrame:Clear()
 	-- end
 
-	-- -- Re-add important system messages
-	-- local info = ChatTypeInfo['SYSTEM']
-	-- DEFAULT_CHAT_FRAME:AddMessage(GUILD_MOTD_TEMPLATE:format(GetGuildRosterMOTD() or ''), info.r, info.g, info.b)
+	-- Re-add important system messages
+	local info = ChatTypeInfo['SYSTEM']
+	DEFAULT_CHAT_FRAME:AddMessage(GUILD_MOTD_TEMPLATE:format(GetGuildRosterMOTD() or ''), info.r, info.g, info.b)
 
-	-- -- Add played time messages
+	-- Add played time messages
 	-- RequestTimePlayed()
 end
 
@@ -450,9 +437,6 @@ function module:RestoreChatHistory()
 	local playerRealm = GetRealmName()
 
 	for _, entry in ipairs(self.DB.chatLog.history) do
-		local entryTime = date('*t', entry.timestamp)
-		local timeString = string.format('%02d:%02d:%02d', entryTime.hour, entryTime.min, entryTime.sec)
-
 		-- Extract the sender name and realm
 		local senderName, senderRealm = entry.sender:match('(.+)%-(.+)')
 		if not senderName then
@@ -464,14 +448,13 @@ function module:RestoreChatHistory()
 		local displayName = senderName
 		if senderRealm ~= playerRealm then displayName = displayName .. '-' .. senderRealm end
 
-		local messageWithTime = string.format('|cFF%s[%s]|r %s', module:GetColor(entry.guid), displayName, entry.message)
+		local messageWithName = string.format('|cFF%s[%s]|r %s', module:GetColor(entry.guid), displayName, entry.message)
 
 		local chatType = chatTypeMap[entry.event] or 'SYSTEM'
 		local info = ChatTypeInfo[chatType]
 
-		-- Apply our timestamp function, but with a flag to indicate it's from history
-		local timestampedMessage = module:TimeStamp(messageWithTime, true)
-		chatFrame:AddMessage(timestampedMessage, info.r, info.g, info.b)
+		-- Use AddMessage directly, which will trigger our filterFunc to add the timestamp
+		chatFrame:AddMessage(messageWithName, info.r, info.g, info.b)
 	end
 end
 
@@ -565,7 +548,7 @@ function module:SetupChatboxes()
 	}
 
 	local c = { r = 0.05, g = 0.05, b = 0.05, a = 0.7 }
-	local filterFunc = function(_, _, msg, ...)
+	local filterFunc = function(a, b, msg, ...)
 		if not module.DB.webLinks then return end
 
 		local newMsg, found = gsub(
