@@ -27,32 +27,33 @@ local function SUI_PositionGameMenuButton()
 
 	if GameMenuFrame.Header then GameMenuFrame.Header.Text:SetTextColor(1, 1, 1) end
 
-	GameMenuFrame.SUI:SetFormattedText('|cffffffffSpartan|cffe21f1fUI|r')
+	GameMenuFrame.SUI:SetFormattedText('SpartanUI')
 end
 
 local function OnEnable()
-	if SUI:IsAddonDisabled('Skinner') and SUI:IsAddonDisabled('ConsolePortUI_Menu') then
+	if SUI:IsAddonDisabled('Skinner') and SUI:IsAddonDisabled('ConsolePort') then
 		if GameMenuFrame.SUI then return end
 
-		if SUI:IsAddonDisabled('Skinner') and SUI:IsAddonDisabled('ConsolePortUI_Menu') then
-			local button = CreateFrame('Button', 'SUI_GameMenuButton', GameMenuFrame, 'MainMenuFrameButtonTemplate')
-			button:SetScript('OnClick', function()
-				SUI:GetModule('Handler.Options'):ToggleOptions()
-				if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
-			end)
-			button:SetSize(200, 35)
+		local button = CreateFrame('Button', 'SUI_GameMenuButton', GameMenuFrame, 'MainMenuFrameButtonTemplate')
+		button:SetScript('OnClick', function()
+			SUI.Options:ToggleOptions()
+			if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
+		end)
+		button:SetSize(200, 35)
 
-			GameMenuFrame.SUI = button
-			GameMenuFrame.MenuButtons = GameMenuFrame.MenuButtons or {}
+		GameMenuFrame.SUI = button
+		GameMenuFrame.MenuButtons = GameMenuFrame.MenuButtons or {}
 
-			---@class SUI.Module.Handler.Skins
-			local SkinModule = SUI:GetModule('Handler.Skins')
-			if not SkinModule.DB.Blizzard then SkinModule.DB.Blizzard = {} end
-			if not SkinModule.DB.Blizzard.GameMenuScale then SkinModule.DB.Blizzard.GameMenuScale = 0.8 end
-			GameMenuFrame:SetScale(SkinModule.DB.Blizzard.GameMenuScale)
+		---@class SUI.Module.Handler.Skins
+		local SkinModule = SUI:GetModule('Handler.Skins')
+		if not SkinModule.DB.Blizzard then SkinModule.DB.Blizzard = {} end
+		if not SkinModule.DB.Blizzard.GameMenuScale then SkinModule.DB.Blizzard.GameMenuScale = 0.8 end
+		GameMenuFrame:SetScale(SkinModule.DB.Blizzard.GameMenuScale)
 
-			hooksecurefunc(GameMenuFrame, 'Layout', SUI_PositionGameMenuButton)
-		end
+		hooksecurefunc(GameMenuFrame, 'Layout', SUI_PositionGameMenuButton)
+
+		SUIMenuSkin:ACTIVE_PLAYER_SPECIALIZATION_CHANGED()
+		SUIMenuSkin:OnDataLoaded()
 	end
 end
 
