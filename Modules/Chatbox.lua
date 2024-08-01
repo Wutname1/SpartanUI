@@ -427,7 +427,7 @@ function module:SetupChatboxes()
 	-- DEFAULT_CHATFRAME_COLOR = {r = .05, g = .05, b = .05}
 	-- DEFAULT_TAB_SELECTED_COLOR_TABLE = {r = .9, g = .9, b = .9}
 
-	local icon = 'Interface\\Addons\\SpartanUI\\images\\chaticons'
+	local icon = 'Interface\\Addons\\SpartanUI\\images\\chatbox\\chaticons'
 
 	local chatBG = {
 		bgFile = [[Interface\Buttons\WHITE8X8]],
@@ -657,7 +657,7 @@ function module:SetupChatboxes()
 			local BG = ChatFrame.ScrollToBottomButton:CreateTexture()
 			BG = ChatFrame.ScrollToBottomButton:CreateTexture(nil, 'ARTWORK')
 			BG:SetAllPoints(ChatFrame.ScrollToBottomButton)
-			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\bottomArrow')
+			BG:SetTexture('Interface\\Addons\\SpartanUI\\images\\chatbox\\bottomArrow')
 			BG:SetAlpha(0.4)
 			ChatFrame.ScrollToBottomButton.BG = BG
 			ChatFrame.ScrollToBottomButton:ClearAllPoints()
