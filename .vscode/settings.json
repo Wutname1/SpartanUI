@@ -564,7 +564,8 @@
     "CHAT_SAY_GET",
     "CHAT_YELL_GET",
     "CHAT_WHISPER_GET",
-    "CHAT_EMOTE_GET"
+    "CHAT_EMOTE_GET",
+    "UIWidgetTopCenterContainerFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
