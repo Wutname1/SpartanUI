@@ -34,11 +34,22 @@ ExtraAB.PLAYER_REGEN_ENABLED = function(self)
 end
 
 ---@param name string
+---@param frame? Frame
 ---@return Frame
-local function GenerateHolder(name)
-	local point, anchor, secondaryPoint, x, y = strsplit(',', SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[name])
+local function GenerateHolder(name, frame)
 	local holder = CreateFrame('Frame', name .. 'Holder', UIParent)
-	holder:SetPoint(point, anchor, secondaryPoint, x, y)
+
+	local dbEntry = SUI.DB.Styles[SUI.DB.Artwork.Style].BlizzMovers[name]
+	if dbEntry then
+		local point, anchor, secondaryPoint, x, y = strsplit(',', dbEntry)
+		holder:SetPoint(point, anchor, secondaryPoint, x, y)
+	elseif frame then
+		local point, relativeTo, relativePoint, x, y = frame:GetPoint()
+		holder:SetPoint(point, relativeTo, relativePoint, x, y)
+	else
+		-- Default position if neither DB entry nor frame is available
+		holder:SetPoint('CENTER', UIParent, 'CENTER', 0, 0)
+	end
 
 	if _G[name] then
 		local width, height = _G[name]:GetSize()
@@ -221,12 +232,20 @@ local function WidgetPowerBarContainer()
 	MoveIt:CreateMover(holder, 'WidgetPowerBarContainer', 'Power bar', nil, 'Blizzard UI')
 end
 
+local function TopCenterContainer()
+	local holder = GenerateHolder('TopCenterContainer', _G['UIWidgetTopCenterContainerFrame'])
+	AttachToHolder(_G['UIWidgetTopCenterContainerFrame'], holder)
+	hooksecurefunc(_G['UIWidgetTopCenterContainerFrame'], 'SetPoint', ResetPosition)
+	MoveIt:CreateMover(holder, 'TopCenterContainer', 'Top center container', nil, 'Blizzard UI')
+end
+
 -- This is the main inpoint
 function module.BlizzMovers()
 	FramerateFrame()
 	AbilityBars()
 	AlertFrame()
 	DurabilityFrame()
+	TopCenterContainer()
 	-- TalkingHead()
 	VehicleLeaveButton()
 	VehicleSeatIndicator()
