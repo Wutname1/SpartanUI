@@ -272,6 +272,10 @@ function module:OnInitialize()
 				CHAT_MSG_INSTANCE_CHAT = true,
 				CHAT_MSG_CHANNEL = true,
 			},
+			blacklist = {
+				enabled = true,
+				strings = { 'WTS' },
+			},
 		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', { profile = defaults })
@@ -406,6 +410,15 @@ end
 
 function module:LogChatMessage(event, message, sender, languageName, channelName, _, _, _, channelIndex, channelBaseName, _, _, guid, _, _, _, _, _)
 	if not self.DB.chatLog.enabled then return end
+
+	-- Check against blacklist
+	if self.DB.chatLog.blacklist.enabled then
+		for _, blacklistedString in ipairs(self.DB.chatLog.blacklist.strings) do
+			if message:lower():find(blacklistedString:lower(), 1, true) then
+				return -- Don't log this message
+			end
+		end
+	end
 
 	local entry = {
 		timestamp = time(),
@@ -967,6 +980,19 @@ function module:CleanupOldChatLog()
 	end
 end
 
+-- Add functions to manage the blacklist
+function module:AddBlacklistString(string)
+	if not tContains(self.DB.chatLog.blacklist.strings, string) then table.insert(self.DB.chatLog.blacklist.strings, string) end
+end
+
+function module:RemoveBlacklistString(string)
+	tDeleteItem(self.DB.chatLog.blacklist.strings, string)
+end
+
+function module:ToggleBlacklist(enable)
+	self.DB.chatLog.blacklist.enabled = enable
+end
+
 function module:BuildOptions()
 	--@type AceConfig.OptionsTable
 	local optTable = {
@@ -1123,33 +1149,98 @@ function module:BuildOptions()
 							module.DB.chatLog.typesToLog[key] = value
 							module:EnableChatLog()
 						end,
-						order = 5,
+						order = 6,
 					},
-					cleanupLoginMessages = {
-						name = L['Clean Up Login Messages'],
-						desc = L['Remove addon spam and unnecessary messages on login'],
-						type = 'toggle',
-						get = function()
-							return module.DB.chatLog.cleanupLoginMessages
-						end,
-						set = function(_, val)
-							module.DB.chatLog.cleanupLoginMessages = val
-						end,
-						order = 4,
-					},
-					clearLog = {
-						name = L['Clear Chat Log'],
-						desc = L['Clear all saved chat log entries'],
-						type = 'execute',
-						func = function()
-							module:ClearChatLog()
-						end,
-						order = 4,
+					blacklist = {
+						name = L['Blacklist'],
+						type = 'group',
+						order = 7,
+						inline = true,
+						args = {},
 					},
 				},
 			},
 		},
 	}
+
+	local function isBlacklistDuplicate(newString)
+		for _, existingString in ipairs(module.DB.chatLog.blacklist.strings) do
+			if newString:lower() == existingString:lower() then return true end
+		end
+		return false
+	end
+
+	local function applyBlacklistToHistory(blacklistString)
+		local newHistory = {}
+		local removed = 0
+		for _, entry in ipairs(module.DB.chatLog.history) do
+			if not string.find(entry.message:lower(), blacklistString:lower()) then
+				table.insert(newHistory, entry)
+			else
+				removed = removed + 1
+			end
+		end
+		if removed > 0 then SUI:Print(string.format(L['Removed %d entries containing %s'], removed, blacklistString)) end
+		module.DB.chatLog.history = newHistory
+	end
+
+	local function buildBlacklistOptions()
+		local blacklistOpt = optTable.args.chatLog.args.blacklist.args
+		table.wipe(blacklistOpt)
+
+		blacklistOpt.desc = {
+			name = L['Blacklisted strings will not be logged'],
+			type = 'description',
+			order = 1,
+		}
+
+		blacklistOpt.add = {
+			name = L['Add Blacklist String'],
+			desc = L['Add a string to the blacklist'],
+			type = 'input',
+			order = 2,
+			set = function(_, val)
+				if isBlacklistDuplicate(val) then
+					SUI:Print(string.format(L["'%s' is already in the blacklist"], val))
+				else
+					table.insert(module.DB.chatLog.blacklist.strings, val)
+					applyBlacklistToHistory(val)
+					buildBlacklistOptions()
+				end
+			end,
+		}
+
+		blacklistOpt.list = {
+			order = 3,
+			type = 'group',
+			inline = true,
+			name = L['Blacklist'],
+			args = {},
+		}
+
+		for index, entry in ipairs(module.DB.chatLog.blacklist.strings) do
+			blacklistOpt.list.args[tostring(index) .. 'label'] = {
+				type = 'description',
+				width = 'double',
+				fontSize = 'medium',
+				order = index * 2 - 1,
+				name = entry,
+			}
+			blacklistOpt.list.args[tostring(index)] = {
+				type = 'execute',
+				name = L['Delete'],
+				width = 'half',
+				order = index * 2,
+				func = function()
+					table.remove(module.DB.chatLog.blacklist.strings, index)
+					buildBlacklistOptions()
+				end,
+			}
+		end
+	end
+
+	buildBlacklistOptions()
+
 	SUI.Options:AddOptions(optTable, 'Chatbox')
 end
 
