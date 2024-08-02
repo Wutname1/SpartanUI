@@ -1,6 +1,17 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Chat Types to Log'] = true
+L['Say'] = true
+L['Yell'] = true
+L['Party'] = true
+L['Raid'] = true
+L['Guild'] = true
+L['Officer'] = true
+L['Whisper'] = true
+L['Whisper Sent'] = true
+L['Instance'] = true
+L['Channels'] = true
 L['Chat Log'] = true
 L['Enable Chat Log'] = true
 L['Enable saving chat messages to a log'] = true

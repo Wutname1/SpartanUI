@@ -19,17 +19,6 @@ local linkTypes = {
 	quest = true,
 }
 local ChatLevelLog, nameColor = {}, {}
-local CHAT_TYPES_TO_LOG = {
-	'CHAT_MSG_SAY',
-	'CHAT_MSG_YELL',
-	'CHAT_MSG_PARTY',
-	'CHAT_MSG_RAID',
-	'CHAT_MSG_GUILD',
-	'CHAT_MSG_OFFICER',
-	'CHAT_MSG_WHISPER',
-	'CHAT_MSG_WHISPER_INFORM',
-	'CHAT_MSG_INSTANCE_CHAT',
-}
 local chatTypeMap = {
 	CHAT_MSG_SAY = 'SAY',
 	CHAT_MSG_YELL = 'YELL',
@@ -41,6 +30,11 @@ local chatTypeMap = {
 	CHAT_MSG_WHISPER_INFORM = 'WHISPER_INFORM',
 	CHAT_MSG_INSTANCE_CHAT = 'INSTANCE_CHAT',
 }
+local standardLanguages = {
+	['Common'] = true,
+	['Orcish'] = true,
+}
+
 local LeaveCount = 0
 local battleOver = false
 
@@ -266,10 +260,22 @@ function module:OnInitialize()
 		fontSize = 12,
 		chatLog = {
 			enabled = true,
-			maxEntries = 1000,
-			expireDays = 30,
+			maxEntries = 50,
+			expireDays = 14,
 			cleanupLoginMessages = true,
 			history = {},
+			typesToLog = {
+				CHAT_MSG_SAY = true,
+				CHAT_MSG_YELL = true,
+				CHAT_MSG_PARTY = true,
+				CHAT_MSG_RAID = true,
+				CHAT_MSG_GUILD = true,
+				CHAT_MSG_OFFICER = true,
+				CHAT_MSG_WHISPER = true,
+				CHAT_MSG_WHISPER_INFORM = true,
+				CHAT_MSG_INSTANCE_CHAT = true,
+				CHAT_MSG_CHANNEL = true,
+			},
 		},
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Chatbox', { profile = defaults })
@@ -386,19 +392,23 @@ function module:PLAYER_ENTERING_WORLD(event, isInitialLogin, isReloadingUi)
 end
 
 function module:EnableChatLog()
-	for _, event in ipairs(CHAT_TYPES_TO_LOG) do
-		self:RegisterEvent(event, 'LogChatMessage')
+	for chatType in pairs(self.DB.chatLog.typesToLog) do
+		if self.DB.chatLog.typesToLog[chatType] then
+			self:RegisterEvent(chatType, 'LogChatMessage')
+		else
+			self:UnregisterEvent(chatType)
+		end
 	end
 	self:RestoreChatHistory()
 end
 
 function module:DisableChatLog()
-	for _, event in ipairs(CHAT_TYPES_TO_LOG) do
-		self:UnregisterEvent(event)
+	for chatType in pairs(self.DB.chatLog.typesToLog) do
+		self:UnregisterEvent(chatType)
 	end
 end
 
-function module:LogChatMessage(event, message, sender, _, _, _, _, _, _, _, _, _, guid)
+function module:LogChatMessage(event, message, sender, languageName, channelName, _, _, _, channelIndex, channelBaseName, _, _, guid, _, _, _, _, _)
 	if not self.DB.chatLog.enabled then return end
 
 	local entry = {
@@ -407,6 +417,10 @@ function module:LogChatMessage(event, message, sender, _, _, _, _, _, _, _, _, _
 		sender = sender,
 		message = message,
 		guid = guid,
+		channelName = channelName,
+		channelIndex = channelIndex,
+		channelBaseName = channelBaseName,
+		languageName = languageName,
 	}
 
 	table.insert(self.DB.chatLog.history, entry)
@@ -448,9 +462,14 @@ function module:RestoreChatHistory()
 		local displayName = senderName
 		if senderRealm ~= playerRealm then displayName = displayName .. '-' .. senderRealm end
 
-		local messageWithName = string.format('|cFF%s[%s]|r %s', module:GetColor(entry.guid), displayName, entry.message)
+		local messageWithName
+		local channelText, languageDisplay = '', ''
+		if entry.event == 'CHAT_MSG_CHANNEL' then channelText = string.format('[%s] ', entry.channelIndex) end
+		if entry.languageName and entry.languageName ~= '' and entry.languageName ~= select(1, GetDefaultLanguage()) then languageDisplay = string.format(' [%s]', entry.languageName) end
+		messageWithName = string.format('%s|cFF%s[%s]|r%s %s', channelText, module:GetColor(entry.guid), displayName, languageDisplay, entry.message)
 
 		local chatType = chatTypeMap[entry.event] or 'SYSTEM'
+		if entry.event == 'CHAT_MSG_CHANNEL' then chatType = 'CHANNEL' .. entry.channelIndex end
 		local info = ChatTypeInfo[chatType]
 
 		-- Use AddMessage directly, which will trigger our filterFunc to add the timestamp
@@ -896,6 +915,24 @@ function ItemRefTooltip:SetHyperlink(data, ...)
 	end
 end
 
+function module:CleanupOldChatLog()
+	if not self.DB.chatLog.history then return end
+
+	local currentTime = time()
+	local expirationTime = currentTime - (self.DB.chatLog.expireDays * 24 * 60 * 60)
+	local maxEntries = self.DB.chatLog.maxEntries
+
+	-- Remove expired entries
+	for i = #self.DB.chatLog.history, 1, -1 do
+		if self.DB.chatLog.history[i].timestamp < expirationTime then table.remove(self.DB.chatLog.history, i) end
+	end
+
+	-- Trim to max entries
+	while #self.DB.chatLog.history > maxEntries do
+		table.remove(self.DB.chatLog.history, 1)
+	end
+end
+
 function module:BuildOptions()
 	--@type AceConfig.OptionsTable
 	local optTable = {
@@ -979,9 +1016,10 @@ function module:BuildOptions()
 						name = L['Max Log Entries'],
 						desc = L['Maximum number of chat log entries to keep'],
 						type = 'range',
-						min = 100,
-						max = 5000,
-						step = 100,
+						width = 'double',
+						min = 1,
+						max = 100,
+						step = 1,
 						get = function()
 							return module.DB.chatLog.maxEntries
 						end,
@@ -995,6 +1033,7 @@ function module:BuildOptions()
 						name = L['Log Expiration (Days)'],
 						desc = L['Number of days to keep chat log entries'],
 						type = 'range',
+						width = 'double',
 						min = 1,
 						max = 90,
 						step = 1,
@@ -1006,6 +1045,30 @@ function module:BuildOptions()
 							module:CleanupOldChatLog()
 						end,
 						order = 3,
+					},
+					typesToLog = {
+						name = L['Chat Types to Log'],
+						type = 'multiselect',
+						values = {
+							CHAT_MSG_SAY = L['Say'],
+							CHAT_MSG_YELL = L['Yell'],
+							CHAT_MSG_PARTY = L['Party'],
+							CHAT_MSG_RAID = L['Raid'],
+							CHAT_MSG_GUILD = L['Guild'],
+							CHAT_MSG_OFFICER = L['Officer'],
+							CHAT_MSG_WHISPER = L['Whisper'],
+							CHAT_MSG_WHISPER_INFORM = L['Whisper Sent'],
+							CHAT_MSG_INSTANCE_CHAT = L['Instance'],
+							CHAT_MSG_CHANNEL = L['Channels'],
+						},
+						get = function(info, key)
+							return module.DB.chatLog.typesToLog[key]
+						end,
+						set = function(info, key, value)
+							module.DB.chatLog.typesToLog[key] = value
+							module:EnableChatLog()
+						end,
+						order = 5,
 					},
 					cleanupLoginMessages = {
 						name = L['Clean Up Login Messages'],
