@@ -1072,10 +1072,37 @@ function module:BuildOptions()
 						end,
 						order = 1,
 					},
+					clearLog = {
+						name = L['Clear Chat Log'],
+						desc = L['Clear all saved chat log entries'],
+						type = 'execute',
+						func = function()
+							module:ClearChatLog()
+						end,
+						order = 2,
+					},
+					cleanupLoginMessages = {
+						name = L['Clean Up Login Messages'],
+						desc = L['Remove addon spam and unnecessary messages on login'],
+						type = 'toggle',
+						disabled = function()
+							return not module.DB.chatLog.enabled
+						end,
+						get = function()
+							return module.DB.chatLog.cleanupLoginMessages
+						end,
+						set = function(_, val)
+							module.DB.chatLog.cleanupLoginMessages = val
+						end,
+						order = 3,
+					},
 					maxEntries = {
 						name = L['Max Log Entries'],
 						desc = L['Maximum number of chat log entries to keep'],
 						type = 'range',
+						disabled = function()
+							return not module.DB.chatLog.enabled
+						end,
 						width = 'double',
 						min = 1,
 						max = 100,
@@ -1087,24 +1114,15 @@ function module:BuildOptions()
 							module.DB.chatLog.maxEntries = val
 							module:CleanupOldChatLog()
 						end,
-						order = 2,
-					},
-					cleanupLoginMessages = {
-						name = L['Clean Up Login Messages'],
-						desc = L['Remove addon spam and unnecessary messages on login'],
-						type = 'toggle',
-						get = function()
-							return module.DB.chatLog.cleanupLoginMessages
-						end,
-						set = function(_, val)
-							module.DB.chatLog.cleanupLoginMessages = val
-						end,
-						order = 3,
+						order = 4,
 					},
 					expireDays = {
 						name = L['Log Expiration (Days)'],
 						desc = L['Number of days to keep chat log entries'],
 						type = 'range',
+						disabled = function()
+							return not module.DB.chatLog.enabled
+						end,
 						width = 'double',
 						min = 1,
 						max = 90,
@@ -1116,20 +1134,14 @@ function module:BuildOptions()
 							module.DB.chatLog.expireDays = val
 							module:CleanupOldChatLog()
 						end,
-						order = 4,
-					},
-					clearLog = {
-						name = L['Clear Chat Log'],
-						desc = L['Clear all saved chat log entries'],
-						type = 'execute',
-						func = function()
-							module:ClearChatLog()
-						end,
 						order = 5,
 					},
 					typesToLog = {
 						name = L['Chat Types to Log'],
 						type = 'multiselect',
+						disabled = function()
+							return not module.DB.chatLog.enabled
+						end,
 						values = {
 							CHAT_MSG_SAY = L['Say'],
 							CHAT_MSG_YELL = L['Yell'],
@@ -1156,6 +1168,9 @@ function module:BuildOptions()
 						type = 'group',
 						order = 7,
 						inline = true,
+						disabled = function()
+							return not module.DB.chatLog.enabled
+						end,
 						args = {},
 					},
 				},
