@@ -1,6 +1,14 @@
 ---@class SUIL
 local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
 
+L['Blacklisted strings will not be logged'] = true
+L['Add Blacklist String'] = true
+L['Add a string to the blacklist'] = true
+L['Blacklist'] = true
+L['Delete'] = true
+L["Added '%s' to blacklist and removed matching entries from history"] = true
+L["Removed '%s' from blacklist"] = true
+L['Removed %d entries containing %s'] = true
 L['Chat Types to Log'] = true
 L['Say'] = true
 L['Yell'] = true
