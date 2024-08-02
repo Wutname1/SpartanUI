@@ -25,13 +25,19 @@ local function SUI_PositionGameMenuButton()
 
 	GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + 35)
 
-	if GameMenuFrame.Header then GameMenuFrame.Header.Text:SetTextColor(1, 1, 1) end
-
 	GameMenuFrame.SUI:SetFormattedText('SpartanUI')
 end
 
 local function OnEnable()
+	GameMenuFrame.MenuButtons = GameMenuFrame.MenuButtons or {}
+
 	if SUI:IsAddonDisabled('Skinner') and SUI:IsAddonDisabled('ConsolePort') then
+		---@class SUI.Module.Handler.Skins
+		local SkinModule = SUI:GetModule('Handler.Skins')
+		if not SkinModule.DB.Blizzard then SkinModule.DB.Blizzard = {} end
+		if not SkinModule.DB.Blizzard.GameMenuScale then SkinModule.DB.Blizzard.GameMenuScale = 0.8 end
+		GameMenuFrame:SetScale(SkinModule.DB.Blizzard.GameMenuScale)
+	else
 		if GameMenuFrame.SUI then return end
 
 		local button = CreateFrame('Button', 'SUI_GameMenuButton', GameMenuFrame, 'MainMenuFrameButtonTemplate')
@@ -42,18 +48,7 @@ local function OnEnable()
 		button:SetSize(200, 35)
 
 		GameMenuFrame.SUI = button
-		GameMenuFrame.MenuButtons = GameMenuFrame.MenuButtons or {}
-
-		---@class SUI.Module.Handler.Skins
-		local SkinModule = SUI:GetModule('Handler.Skins')
-		if not SkinModule.DB.Blizzard then SkinModule.DB.Blizzard = {} end
-		if not SkinModule.DB.Blizzard.GameMenuScale then SkinModule.DB.Blizzard.GameMenuScale = 0.8 end
-		GameMenuFrame:SetScale(SkinModule.DB.Blizzard.GameMenuScale)
-
 		hooksecurefunc(GameMenuFrame, 'Layout', SUI_PositionGameMenuButton)
-
-		SUIMenuSkin:ACTIVE_PLAYER_SPECIALIZATION_CHANGED()
-		SUIMenuSkin:OnDataLoaded()
 	end
 end
 
