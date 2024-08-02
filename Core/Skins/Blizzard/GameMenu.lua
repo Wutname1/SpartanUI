@@ -1,6 +1,39 @@
+---@class SUI.Module.Handler.GameMenu : SUI.Module
+local SUIGameMenu = SUI:NewModule('Handler.GameMenu', 'AceEvent-3.0')
 local GameMenu = GameMenuFrame
 ---@class SUIMenuSkin : Frame
 local MenuSkin = _G['SUIMenuSkin'] or CreateFrame('Frame', 'SUIMenuSkin', UIParent)
+
+function SUIGameMenu:IsDisabled()
+	if SUI:IsAddonEnabled('Skinner') or SUI:IsAddonEnabled('ConsolePort') or not SUI.Skins.DB.components['Blizzard'].enabled then return true end
+	return false
+end
+
+function SUIGameMenu:OnEnable()
+	-- Set up hooks
+	GameMenu:HookScript('OnShow', function()
+		if SUIGameMenu:IsDisabled() then return end
+
+		MenuSkin:OnFrameShown(true)
+	end)
+	GameMenu:HookScript('OnHide', function()
+		if SUIGameMenu:IsDisabled() then return end
+		MenuSkin:OnFrameShown(false)
+		MenuSkin:ResetAnimation()
+	end)
+
+	MenuSkin.Background:SetTexCoord(0, 1, 0, 1)
+	-- self.Background:SetAtlas(visual, true)
+	MenuSkin.Background:SetAtlas('gearUpdate-BG', true)
+
+	MenuSkin.TopLine:SetTexCoord(0, 1, 1, 0)
+	MenuSkin.TopLine:SetAtlas('gearUpdate-glow-filigree', true)
+	MenuSkin.TopLine:SetAlpha(0.5)
+
+	MenuSkin.BottomLine:SetAtlas('gearUpdate-glow-filigree', true)
+	MenuSkin.BottomLine:SetAlpha(0.5)
+end
+
 local function CreateMenuSkin()
 	MenuSkin:SetSize(330, 450)
 	MenuSkin:SetFrameStrata('BACKGROUND')
@@ -100,8 +133,6 @@ CreateMenuSkin()
 
 MenuSkin:SetFrameStrata(GameMenu:GetFrameStrata())
 MenuSkin:SetFrameLevel(GameMenu:GetFrameLevel() - 1)
-MenuSkin:RegisterEvent('ACTIVE_PLAYER_SPECIALIZATION_CHANGED')
-MenuSkin:RegisterEvent('PLAYER_LOGIN')
 ---------------------------------------------------------------
 -- Settings
 ---------------------------------------------------------------
@@ -151,30 +182,12 @@ function MenuSkin:SkinGameMenu()
 end
 
 ---------------------------------------------------------------
--- Events
----------------------------------------------------------------
-function MenuSkin:ACTIVE_PLAYER_SPECIALIZATION_CHANGED()
-	-- local visual, isAtlas = MenuSkin:GetSpecializationVisual()
-	-- if isAtlas then
-	self.Background:SetTexCoord(0, 1, 0, 1)
-	-- self.Background:SetAtlas(visual, true)
-	self.Background:SetAtlas('gearUpdate-BG', true)
-
-	self.TopLine:SetTexCoord(0, 1, 1, 0)
-	self.TopLine:SetAtlas('gearUpdate-glow-filigree', true)
-	self.TopLine:SetAlpha(0.5)
-
-	self.BottomLine:SetAtlas('gearUpdate-glow-filigree', true)
-	self.BottomLine:SetAlpha(0.5)
-end
-
-MenuSkin.PLAYER_LOGIN = MenuSkin.ACTIVE_PLAYER_SPECIALIZATION_CHANGED
-
----------------------------------------------------------------
--- Callbacks
+-- Animation
 ---------------------------------------------------------------
 local x, y = 4, 5
 function MenuSkin:InterpolatePoints(center)
+	if SUIGameMenu:IsDisabled() then return end
+
 	local MainFramePosition = { self:GetPoint() }
 	local gradientEndPoint = { self.Gradient:GetPoint(1) }
 	local secondGradientPoint = { self.Gradient:GetPoint(2) }
@@ -207,12 +220,3 @@ function MenuSkin:InterpolatePoints(center)
 		if t >= 1.0 then self:SetScript('OnUpdate', nil) end
 	end)
 end
-
--- Set up hooks
-GameMenu:HookScript('OnShow', function()
-	MenuSkin:OnFrameShown(true)
-end)
-GameMenu:HookScript('OnHide', function()
-	MenuSkin:OnFrameShown(false)
-	MenuSkin:ResetAnimation()
-end)
