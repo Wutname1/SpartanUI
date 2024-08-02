@@ -560,7 +560,11 @@
     "CHAT_MSG_WHISPER_INFORM",
     "CHAT_MSG_INSTANCE_CHAT",
     "CHAT_MSG_GUILD",
-    "CHAT_MSG_OFFICER"
+    "CHAT_MSG_OFFICER",
+    "CHAT_SAY_GET",
+    "CHAT_YELL_GET",
+    "CHAT_WHISPER_GET",
+    "CHAT_EMOTE_GET"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

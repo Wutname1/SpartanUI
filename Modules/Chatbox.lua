@@ -462,18 +462,42 @@ function module:RestoreChatHistory()
 		local displayName = senderName
 		if senderRealm ~= playerRealm then displayName = displayName .. '-' .. senderRealm end
 
-		local messageWithName
-		local channelText, languageDisplay = '', ''
-		if entry.event == 'CHAT_MSG_CHANNEL' then channelText = string.format('[%s] ', entry.channelIndex) end
-		if entry.languageName and entry.languageName ~= '' and entry.languageName ~= select(1, GetDefaultLanguage()) then languageDisplay = string.format(' [%s]', entry.languageName) end
-		messageWithName = string.format('%s|cFF%s[%s]|r%s %s', channelText, module:GetColor(entry.guid), displayName, languageDisplay, entry.message)
-
 		local chatType = chatTypeMap[entry.event] or 'SYSTEM'
 		if entry.event == 'CHAT_MSG_CHANNEL' then chatType = 'CHANNEL' .. entry.channelIndex end
 		local info = ChatTypeInfo[chatType]
 
+		local messageWithName = ''
+		local channelInfo = ''
+		local languageInfo = ''
+
+		if entry.event == 'CHAT_MSG_CHANNEL' then channelInfo = string.format('|Hchannel:channel:%d|h[%d. %s]|h ', entry.channelIndex, entry.channelIndex, entry.channelBaseName) end
+
+		if entry.languageName and entry.languageName ~= '' and entry.languageName ~= select(1, GetDefaultLanguage()) then languageInfo = string.format(' [%s]', entry.languageName) end
+
+		local coloredName = string.format('[|cFF%s%s|r]', module:GetColor(entry.guid), displayName)
+
+		local function formatMessage(eventFormat, name)
+			return string.format(eventFormat, name)
+		end
+
+		if entry.event == 'CHAT_MSG_SAY' then
+			messageWithName = formatMessage(CHAT_SAY_GET, coloredName)
+		elseif entry.event == 'CHAT_MSG_YELL' then
+			messageWithName = formatMessage(CHAT_YELL_GET, coloredName)
+		elseif entry.event == 'CHAT_MSG_WHISPER' or entry.event == 'CHAT_MSG_WHISPER_INFORM' then
+			messageWithName = formatMessage(CHAT_WHISPER_GET, coloredName)
+		elseif entry.event == 'CHAT_MSG_EMOTE' then
+			messageWithName = formatMessage(CHAT_EMOTE_GET, coloredName)
+		elseif entry.event == 'CHAT_MSG_CHANNEL' then
+			messageWithName = string.format('%s', coloredName)
+		else
+			messageWithName = string.format('%s', coloredName)
+		end
+
+		local formattedMessage = string.format('%s%s%s %s', channelInfo, messageWithName, languageInfo, entry.message)
+
 		-- Use AddMessage directly, which will trigger our filterFunc to add the timestamp
-		chatFrame:AddMessage(messageWithName, info.r, info.g, info.b)
+		chatFrame:AddMessage(formattedMessage, info.r, info.g, info.b)
 	end
 end
 
