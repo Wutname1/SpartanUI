@@ -4,6 +4,41 @@ local GameMenu = GameMenuFrame
 ---@class SUIMenuSkin : Frame
 local MenuSkin = _G['SUIMenuSkin'] or CreateFrame('Frame', 'SUIMenuSkin', UIParent)
 
+---@param frame Frame The frame to reskin buttons for (typically GameMenuFrame)
+local function ReskinGameMenuButtons(frame)
+	-- Check if the frame exists
+	if not frame then return end
+
+	-- Loop through all the child frames
+	for _, child in pairs({ frame:GetChildren() }) do
+		-- Check if the child is a button
+		if child:IsObjectType('Button') then
+			-- Reskin the button
+			child:SetNormalAtlas('auctionhouse-nav-button')
+			child:SetHighlightAtlas('auctionhouse-nav-button-highlight')
+			child:SetPushedAtlas('auctionhouse-nav-button-select')
+
+			local normalTexture = child:GetNormalTexture()
+			normalTexture:SetTexCoord(0, 1, 0, 0.7)
+
+			-- Adjust text position if needed
+			local text = child:GetFontString()
+			if text then
+				text:ClearAllPoints()
+				text:SetPoint('CENTER', child, 'CENTER', 0, 0)
+			end
+
+			-- Remove old textures
+			for _, region in pairs({ child:GetRegions() }) do
+				if region:IsObjectType('Texture') and region ~= child:GetNormalTexture() and region ~= child:GetHighlightTexture() and region ~= child:GetPushedTexture() then region:Hide() end
+			end
+
+			-- Adjust button size if needed
+			child:SetSize(200, 36) -- You may need to adjust these values
+		end
+	end
+end
+
 function SUIGameMenu:IsDisabled()
 	if SUI:IsAddonEnabled('Skinner') or SUI:IsAddonEnabled('ConsolePort') or not SUI.Skins.DB.components['Blizzard'].enabled then return true end
 	return false
@@ -13,6 +48,7 @@ function SUIGameMenu:OnEnable()
 	-- Set up hooks
 	GameMenu:HookScript('OnShow', function()
 		if SUIGameMenu:IsDisabled() then return end
+		ReskinGameMenuButtons(GameMenuFrame)
 
 		MenuSkin:OnFrameShown(true)
 	end)
