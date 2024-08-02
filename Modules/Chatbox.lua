@@ -30,10 +30,6 @@ local chatTypeMap = {
 	CHAT_MSG_WHISPER_INFORM = 'WHISPER_INFORM',
 	CHAT_MSG_INSTANCE_CHAT = 'INSTANCE_CHAT',
 }
-local standardLanguages = {
-	['Common'] = true,
-	['Orcish'] = true,
-}
 
 local LeaveCount = 0
 local battleOver = false
@@ -451,14 +447,12 @@ function module:RestoreChatHistory()
 	local playerRealm = GetRealmName()
 
 	for _, entry in ipairs(self.DB.chatLog.history) do
-		-- Extract the sender name and realm
 		local senderName, senderRealm = entry.sender:match('(.+)%-(.+)')
 		if not senderName then
 			senderName = entry.sender
 			senderRealm = playerRealm
 		end
 
-		-- Include realm if different from player's realm
 		local displayName = senderName
 		if senderRealm ~= playerRealm then displayName = displayName .. '-' .. senderRealm end
 
@@ -470,9 +464,26 @@ function module:RestoreChatHistory()
 		local channelInfo = ''
 		local languageInfo = ''
 
-		if entry.event == 'CHAT_MSG_CHANNEL' then channelInfo = string.format('|Hchannel:channel:%d|h[%d. %s]|h ', entry.channelIndex, entry.channelIndex, entry.channelBaseName) end
+		-- Handle channel names for all chat types
+		if entry.event == 'CHAT_MSG_CHANNEL' then
+			if module.DB.shortenChannelNames then
+				channelInfo = string.format('[%d. %s] ', entry.channelIndex, entry.channelBaseName)
+			else
+				channelInfo = string.format('[%s] ', entry.channelBaseName)
+			end
+		elseif chatType == 'GUILD' then
+			channelInfo = module.DB.shortenChannelNames and '[G] ' or '[Guild] '
+		elseif chatType == 'OFFICER' then
+			channelInfo = module.DB.shortenChannelNames and '[O] ' or '[Officer] '
+		elseif chatType == 'RAID' then
+			channelInfo = module.DB.shortenChannelNames and '[R] ' or '[Raid] '
+		elseif chatType == 'PARTY' then
+			channelInfo = module.DB.shortenChannelNames and '[P] ' or '[Party] '
+		elseif chatType == 'INSTANCE_CHAT' then
+			channelInfo = module.DB.shortenChannelNames and '[I] ' or '[Instance] '
+		end
 
-		if entry.languageName and entry.languageName ~= '' and entry.languageName ~= select(1, GetDefaultLanguage()) then languageInfo = string.format(' [%s]', entry.languageName) end
+		if entry.languageName and entry.languageName ~= '' and entry.languageName ~= select(1, GetDefaultLanguage()) then languageInfo = string.format('[%s]', entry.languageName) end
 
 		local coloredName = string.format('[|cFF%s%s|r]', module:GetColor(entry.guid), displayName)
 
@@ -488,7 +499,7 @@ function module:RestoreChatHistory()
 			messageWithName = formatMessage(CHAT_WHISPER_GET, coloredName)
 		elseif entry.event == 'CHAT_MSG_EMOTE' then
 			messageWithName = formatMessage(CHAT_EMOTE_GET, coloredName)
-		elseif entry.event == 'CHAT_MSG_CHANNEL' then
+		elseif entry.event == 'CHAT_MSG_CHANNEL' or entry.event == 'CHAT_MSG_GUILD' or entry.event == 'CHAT_MSG_OFFICER' then
 			messageWithName = string.format('%s', coloredName)
 		else
 			messageWithName = string.format('%s', coloredName)
@@ -496,7 +507,6 @@ function module:RestoreChatHistory()
 
 		local formattedMessage = string.format('%s%s%s %s', channelInfo, messageWithName, languageInfo, entry.message)
 
-		-- Use AddMessage directly, which will trigger our filterFunc to add the timestamp
 		chatFrame:AddMessage(formattedMessage, info.r, info.g, info.b)
 	end
 end
@@ -1053,6 +1063,18 @@ function module:BuildOptions()
 						end,
 						order = 2,
 					},
+					cleanupLoginMessages = {
+						name = L['Clean Up Login Messages'],
+						desc = L['Remove addon spam and unnecessary messages on login'],
+						type = 'toggle',
+						get = function()
+							return module.DB.chatLog.cleanupLoginMessages
+						end,
+						set = function(_, val)
+							module.DB.chatLog.cleanupLoginMessages = val
+						end,
+						order = 3,
+					},
 					expireDays = {
 						name = L['Log Expiration (Days)'],
 						desc = L['Number of days to keep chat log entries'],
@@ -1068,7 +1090,16 @@ function module:BuildOptions()
 							module.DB.chatLog.expireDays = val
 							module:CleanupOldChatLog()
 						end,
-						order = 3,
+						order = 4,
+					},
+					clearLog = {
+						name = L['Clear Chat Log'],
+						desc = L['Clear all saved chat log entries'],
+						type = 'execute',
+						func = function()
+							module:ClearChatLog()
+						end,
+						order = 5,
 					},
 					typesToLog = {
 						name = L['Chat Types to Log'],
