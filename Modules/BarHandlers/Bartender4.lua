@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:GetModule('Handler.BarSystems')
+local module = SUI:GetModule('Handler.BarSystems') ---@type SUI.Module.BarHandler
 local BartenderMin = '4.13.0'
 local MoveIt = SUI:GetModule('MoveIt') ---@type MoveIt
 local Bartender4 = Bartender4
@@ -521,7 +521,7 @@ local function OnEnable()
 
 		--SUI Stuff
 		RefreshConfig()
-		local MoveIt = SUI:GetModule('MoveIt')
+		local MoveIt = SUI:GetModule('MoveIt') ---@type MoveIt
 		MoveIt:CreateMover(bar, bar:GetName(), 'Bar ' .. id, nil, 'Bartender4')
 		MoveIt:UpdateMover(bar:GetName(), bar.overlay, true)
 
