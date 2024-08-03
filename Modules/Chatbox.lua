@@ -470,7 +470,7 @@ function module:RestoreChatHistory()
 		if senderRealm ~= playerRealm then displayName = displayName .. '-' .. senderRealm end
 
 		local chatType = chatTypeMap[entry.event] or 'SYSTEM'
-		if entry.event == 'CHAT_MSG_CHANNEL' then chatType = 'CHANNEL' .. entry.channelIndex end
+		if entry.event == 'CHAT_MSG_CHANNEL' and entry.channelIndex then chatType = 'CHANNEL' .. entry.channelIndex end
 		local info = ChatTypeInfo[chatType]
 
 		local messageWithName = ''
@@ -478,7 +478,7 @@ function module:RestoreChatHistory()
 		local languageInfo = ''
 
 		-- Handle channel names for all chat types
-		if entry.event == 'CHAT_MSG_CHANNEL' then
+		if entry.event == 'CHAT_MSG_CHANNEL' and entry.channelIndex then
 			if module.DB.shortenChannelNames then
 				channelInfo = string.format('[%d. %s] ', entry.channelIndex, entry.channelBaseName)
 			else
