@@ -1,7 +1,8 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:GetModule('Handler.BarSystems')
 local BartenderMin = '4.13.0'
-local MoveIt = SUI:GetModule('MoveIt')
+local MoveIt = SUI:GetModule('MoveIt') ---@type MoveIt
+local Bartender4 = Bartender4
 local scaleData
 local BartenderChangesActive = false
 ------------------------------------------------------------
@@ -254,10 +255,13 @@ local function BTMover(BarName, DisplayName)
 end
 
 local function AddMovers()
+	local bt4ActionBars = Bartender4:GetModule('ActionBars')
+
 	for i = 1, 10 do
 		local BarName = 'BT4Bar' .. i
 		local bar = _G[BarName]
 		if bar then
+			local barLabel = bt4ActionBars:GetBarName(i)
 			function bar:LoadPosition() end
 			function bar:GetConfigScale()
 				return scaleData[BarName]
@@ -275,7 +279,7 @@ local function AddMovers()
 			end
 
 			if scaleData[BarName] then bar:SetScale(scaleData[BarName]) end
-			MoveIt:CreateMover(bar, BarName, 'Bar ' .. i, nil, 'Bartender4')
+			MoveIt:CreateMover(bar, BarName, barLabel, nil, 'Bartender4')
 			MoveIt:UpdateMover(BarName, bar.overlay, true)
 		end
 	end
