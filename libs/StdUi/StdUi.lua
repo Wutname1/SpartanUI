@@ -1,5 +1,5 @@
 local MAJOR, MINOR = 'StdUi', 5;
---- @class StdUi
+---@class StdUi
 local StdUi = LibStub:NewLibrary(MAJOR, MINOR);
 
 if not StdUi then
