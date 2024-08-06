@@ -66,6 +66,9 @@ SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
 
+SLASH_RELOADUI1 = '/rl' -- new slash command for reloading UI
+SlashCmdList.RELOADUI = ReloadUI
+
 -- Add Statusbar textures
 SUI.Lib.LSM:Register('statusbar', 'Brushed aluminum', [[Interface\AddOns\SpartanUI\images\statusbars\BrushedAluminum]])
 SUI.Lib.LSM:Register('statusbar', 'Leaves', [[Interface\AddOns\SpartanUI\images\statusbars\Leaves]])
@@ -1660,7 +1663,7 @@ function SUI:OnEnable()
 	tinsert(GameMenuButtonsStore, {
 		text = '|cffffffffSpartan|cffe21f1fUI|r',
 		callback = function()
-			SUI:GetModule('Handler.Options'):ToggleOptions()
+			SUI.Options:ToggleOptions()
 			if not InCombatLockdown() then HideUIPanel(GameMenuFrame) end
 		end,
 		isDisabled = false, --If set to true will make button disabled. Can be set as a fucn to return true/false dynamically if needed
