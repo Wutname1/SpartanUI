@@ -3,7 +3,7 @@ local SUI = SUI
 
 local gameMenuLastButtons = {
 	[_G['GAMEMENU_OPTIONS']] = 1,
-	[_G.BLIZZARD_STORE] = 2,
+	[_G['BLIZZARD_STORE']] = 2,
 }
 
 local function SUI_PositionGameMenuButton()
@@ -33,10 +33,12 @@ local function OnEnable()
 
 	if SUI:IsAddonDisabled('Skinner') and SUI:IsAddonDisabled('ConsolePort') then
 		---@class SUI.Module.Handler.Skins
-		local SkinModule = SUI:GetModule('Handler.Skins')
-		if not SkinModule.DB.Blizzard then SkinModule.DB.Blizzard = {} end
-		if not SkinModule.DB.Blizzard.GameMenuScale then SkinModule.DB.Blizzard.GameMenuScale = 0.8 end
-		GameMenuFrame:SetScale(SkinModule.DB.Blizzard.GameMenuScale)
+		if not SUI.Skins.DB.Blizzard then SUI.Skins.DB.Blizzard = {
+			GameMenu = {},
+		} end
+		if not SUI.Skins.DB.Blizzard.GameMenu then SUI.Skins.DB.Blizzard.GameMenu = {} end
+		if not SUI.Skins.DB.Blizzard.GameMenu.Scale then SUI.Skins.DB.Blizzard.GameMenu.Scale = 0.8 end
+		GameMenuFrame:SetScale(SUI.Skins.DB.Blizzard.GameMenu.Scale)
 	else
 		if GameMenuFrame.SUI then return end
 
@@ -54,24 +56,36 @@ end
 
 ---@param optTable AceConfig.OptionsTable
 local function Options(optTable)
-	---@type SUI.Module.Handler.Skins
-	local SkinModule = SUI:GetModule('Handler.Skins')
+	if not SUI.Skins.DB.components['Blizzard'].GameMenu then SUI.Skins.DB.components['Blizzard'].GameMenu = {} end
 
-	optTable.args.gameMenuScale = {
-		type = 'range',
-		name = 'Game Menu Scale',
-		desc = 'Adjust the scale of the Game Menu',
-		min = 0.5,
-		max = 1.5,
-		step = 0.05,
-		get = function()
-			return SkinModule.DB.Blizzard.GameMenuScale
+	optTable.args.GameMenu = {
+		name = 'Game menu',
+		type = 'group',
+		inline = true,
+		get = function(info)
+			return SUI.Skins.DB.components['Blizzard'].GameMenu[info[#info]]
 		end,
-		set = function(_, value)
-			SkinModule.DB.Blizzard.GameMenuScale = value
-			if GameMenuFrame then GameMenuFrame:SetScale(value) end
+		set = function(info, val)
+			SUI.Skins.DB.components['Blizzard'].GameMenu[info[#info]] = val
 		end,
-		order = 10,
+		args = {
+			Scale = {
+				type = 'range',
+				name = 'Game Menu Scale',
+				desc = 'Adjust the scale of the Game Menu',
+				min = 0.5,
+				max = 1.5,
+				step = 0.05,
+				get = function(info)
+					return SUI.Skins.DB.components['Blizzard'].GameMenu[info[#info]] or 0.8
+				end,
+				set = function(info, value)
+					SUI.Skins.DB.components['Blizzard'].GameMenu[info[#info]] = value
+					if GameMenuFrame then GameMenuFrame:SetScale(value) end
+				end,
+				order = 10,
+			},
+		},
 	}
 end
 
