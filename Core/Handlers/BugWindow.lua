@@ -1,3 +1,4 @@
+---@diagnostic disable
 local StdUi = LibStub('StdUi'):NewInstance()
 local IconName = 'SUIErrorIcon'
 local addon = {}

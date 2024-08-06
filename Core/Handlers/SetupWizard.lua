@@ -1,7 +1,7 @@
 ---@class SUI
 local SUI = SUI
 local L = SUI.L
----@class SUI.SetupWizard
+---@class SUI.Handler.SetupWizard
 local module = SUI:NewModule('Handler.SetupWizard') ---@type SUI.Module
 local StdUi = SUI.StdUi
 module.window = nil

@@ -204,7 +204,7 @@ function module:OnInitialize()
 						type = 'execute',
 						order = 3,
 						func = function()
-							SUI:GetModule('MoveIt'):Reset()
+							SUI.MoveIt:Reset()
 						end,
 					},
 				},
@@ -363,7 +363,7 @@ function module:ToggleOptions(pages)
 			bottom:SetBackdropBorderColor(0, 0, 0, 0)
 			frame.bottomHolder = bottom
 
-			local ProfileHandler = SUI:GetModule('Handler.Profiles', true)
+			local ProfileHandler = SUI:GetModule('Handler.Profiles', true) ---@type SUI.Handler.Profiles
 			if ProfileHandler then
 				local Export = CreateFrame('Button', nil, bottom, 'UIPanelButtonTemplate')
 				Export:SetSize(150, 20)
