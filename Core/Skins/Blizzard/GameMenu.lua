@@ -132,13 +132,12 @@ local function CreateMenuSkin()
 
 	MenuSkin.LogoButton:SetScript('OnMouseDown', function(self)
 		self.texture:Hide()
-		self.highlight:Hide()
+		self.highlight:SetAlpha(0)
 		self.mousedownTexture:Show()
 	end)
 
 	MenuSkin.LogoButton:SetScript('OnMouseUp', function(self)
 		self.texture:Show()
-		self.highlight:Hide()
 		self.mousedownTexture:Hide()
 	end)
 
