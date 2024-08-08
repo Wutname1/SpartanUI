@@ -69,10 +69,10 @@ function module:OnInitialize()
 	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
 		size = { 180, 180 },
+		position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
 		BG = {
 			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
 		},
-		position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
 	}
 	SUI:GetModule('Minimap'):Register('War', minimapSettings)
 

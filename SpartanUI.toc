@@ -21,6 +21,8 @@ libs\Ace3\Ace3.xml
 libs\StdUi\StdUi.xml
 libs\LibDataBroker-1.1.lua
 libs\LibDBIcon-1.0\lib.xml
+libs\LibEditMode\embed.xml
+libs\LibEditModeOverride\LibEditModeOverride.xml
 
 #Setup SUI error catcher
 libs\bug-grabber\load.xml

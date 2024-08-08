@@ -40,6 +40,7 @@ SUI.Version = ''
 ---@field LibBase64 LibBase64-1.0
 ---@field StdUi StdUi
 ---@field LSM LibSharedMedia-3.0
+---@field LEM LibEditMode
 SUI.Lib = {}
 
 ---@param name string
@@ -65,6 +66,7 @@ SUI.AddLib('Compress', 'LibCompress')
 SUI.AddLib('Base64', 'LibBase64-1.0-SUI')
 SUI.AddLib('StdUi', 'StdUi')
 SUI.AddLib('LSM', 'LibSharedMedia-3.0')
+SUI.AddLib('LEM', 'LibEditMode')
 
 SLASH_RELOADUI1 = '/rl' -- new slash command for reloading UI
 SlashCmdList.RELOADUI = ReloadUI

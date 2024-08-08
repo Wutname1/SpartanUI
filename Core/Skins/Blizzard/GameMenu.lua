@@ -1,6 +1,6 @@
 ---@class SUI.Module.Handler.GameMenu : SUI.Module
 local SUIGameMenu = SUI:NewModule('Handler.GameMenu', 'AceEvent-3.0')
-local GameMenu = GameMenuFrame
+local GameMenuFrame = GameMenuFrame
 ---@class SUIMenuSkin : Frame
 local MenuSkin = _G['SUIMenuSkin'] or CreateFrame('Frame', 'SUIMenuSkin', UIParent)
 
@@ -46,13 +46,13 @@ end
 
 function SUIGameMenu:OnEnable()
 	-- Set up hooks
-	GameMenu:HookScript('OnShow', function()
+	GameMenuFrame:HookScript('OnShow', function()
 		if SUIGameMenu:IsDisabled() then return end
 		ReskinGameMenuButtons(GameMenuFrame)
 
 		MenuSkin:OnFrameShown(true)
 	end)
-	GameMenu:HookScript('OnHide', function()
+	GameMenuFrame:HookScript('OnHide', function()
 		if SUIGameMenu:IsDisabled() then return end
 		MenuSkin:OnFrameShown(false)
 		MenuSkin:ResetAnimation()
@@ -68,6 +68,10 @@ function SUIGameMenu:OnEnable()
 
 	MenuSkin.BottomLine:SetAtlas('gearUpdate-glow-filigree', true)
 	MenuSkin.BottomLine:SetAlpha(0.5)
+
+	hooksecurefunc(GameMenuFrame, 'Layout', function()
+		MenuSkin:OnFrameShown(GameMenuFrame:IsShown())
+	end)
 end
 
 local function CreateMenuSkin()
@@ -166,14 +170,14 @@ end
 
 CreateMenuSkin()
 
-MenuSkin:SetFrameStrata(GameMenu:GetFrameStrata())
-MenuSkin:SetFrameLevel(GameMenu:GetFrameLevel() - 1)
+MenuSkin:SetFrameStrata(GameMenuFrame:GetFrameStrata())
+MenuSkin:SetFrameLevel(GameMenuFrame:GetFrameLevel() - 1)
 ---------------------------------------------------------------
 -- Settings
 ---------------------------------------------------------------
 
 function MenuSkin:OnDataLoaded()
-	self:SetPoint('CENTER', UIParent, 'BOTTOMLEFT', self:GetTargetOffsets(GameMenu))
+	self:SetPoint('CENTER', UIParent, 'BOTTOMLEFT', self:GetTargetOffsets(GameMenuFrame))
 end
 
 MenuSkin:SetScript('OnEvent', function(event, ...)
@@ -194,14 +198,15 @@ end
 
 function MenuSkin:OnFrameShown(showMenu)
 	if showMenu then
+		GameMenuFrame:SetScale(SUI.Skins.DB.Blizzard.GameMenu.Scale)
 		self:ResetAnimation()
 		self:OnDataLoaded()
-		self:InterpolatePoints(GameMenu)
+		self:InterpolatePoints(GameMenuFrame)
 		self:SkinGameMenu()
 		self:Show()
 	else
 		self:Hide()
-		self:SetScript('OnUpdate', nil) -- Stop any ongoing animation
+		self:SetScript('OnUpdate', nil)
 	end
 end
 
@@ -212,8 +217,8 @@ function MenuSkin:GetTargetOffsets(target)
 end
 
 function MenuSkin:SkinGameMenu()
-	GameMenu.Border:SetShown(false)
-	GameMenu.Header:SetShown(false)
+	GameMenuFrame.Border:SetShown(false)
+	GameMenuFrame.Header:SetShown(false)
 end
 
 ---------------------------------------------------------------
