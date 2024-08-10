@@ -6,7 +6,7 @@ local unpack = unpack
 ----------------------------------------------------------------------------------------------------
 
 function module:OnInitialize()
-	local BarHandler = SUI:GetModule('Handler.BarSystems')
+	local BarHandler = SUI.Handlers.BarSystem
 	BarHandler.BarPosition.BT4.Minimal = {
 		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-1,90',
 		['BT4Bar2'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-1,45',

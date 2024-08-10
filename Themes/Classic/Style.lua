@@ -629,8 +629,7 @@ local function Options()
 end
 
 function module:OnInitialize()
-	---@type SUI.Module.BarHandler
-	local BarHandler = SUI:GetModule('Handler.BarSystems')
+	local BarHandler = SUI.Handlers.BarSystem
 
 	BarHandler.BarPosition.BT4.Classic = {
 		['BT4Bar1'] = 'BOTTOM,SUI_BottomAnchor,BOTTOM,-445,104',

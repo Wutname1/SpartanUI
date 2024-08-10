@@ -42,6 +42,7 @@ SUI.Version = ''
 ---@field LSM LibSharedMedia-3.0
 ---@field LEM LibEditMode
 SUI.Lib = {}
+SUI.Handlers = {}
 
 ---@param name string
 ---@param libaray table|function

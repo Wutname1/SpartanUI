@@ -1,6 +1,6 @@
 local SUI = SUI
 ---@class SUI.Module.BarHandler : SUI.Module
-local module = SUI:NewModule('Handler.BarSystems')
+local module = SUI:NewModule('Handler.BarSystem')
 local DB = nil
 module.DisplayName = 'Bar Handler'
 module.description = 'CORE: Handles the SpartanUI Bartender4 intergration'
@@ -166,3 +166,5 @@ end
 function module:MoveIt()
 	if module.Registry[DB.ActiveSystem].move then module.Registry[DB.ActiveSystem]:move() end
 end
+
+SUI.Handlers.BarSystem = module

@@ -1,5 +1,5 @@
 local SUI, L, print = SUI, SUI.L, SUI.print
-local module = SUI:GetModule('Handler.BarSystems') ---@type SUI.Module.BarHandler
+local module = SUI.Handlers.BarSystem ---@type SUI.Module.BarHandler
 local BartenderMin = '4.13.0'
 local MoveIt = SUI:GetModule('MoveIt') ---@type MoveIt
 local Bartender4 = Bartender4

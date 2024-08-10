@@ -8,7 +8,7 @@ module.Settings = {}
 
 function module:OnInitialize()
 	-- Bartender 4 Settings
-	local BarHandler = SUI:GetModule('Handler.BarSystems') ---@type SUI.Module.BarHandler
+	local BarHandler = SUI.Handlers.BarSystem
 	BarHandler.BarPosition.BT4.War = {
 		['BT4BarExtraActionBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',
 		['BT4BarZoneAbilityBar'] = 'BOTTOM,SUI_BottomAnchor,TOP,0,70',

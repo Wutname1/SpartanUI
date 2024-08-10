@@ -155,7 +155,7 @@ function module:SetActiveStyle(style)
 		NewStyle:Enable()
 
 		--Update bars
-		SUI:GetModule('Handler.BarSystems').Refresh()
+		SUI.Handlers.BarSystem.Refresh()
 
 		--Update minimap
 		local minimapModule = SUI:GetModule('Minimap') ---@type SUI.Module.Minimap
@@ -191,7 +191,7 @@ function module:UpdateScale()
 	if minimap.Settings and minimap.Settings.scaleWithArt then minimap:UpdateScale() end
 
 	-- Update Bar scales
-	SUI:GetModule('Handler.BarSystems'):Refresh()
+	SUI.Handlers.BarSystem:Refresh()
 end
 
 function module:UpdateAlpha()
@@ -320,7 +320,7 @@ end
 function module:OnEnable()
 	if SUI:IsModuleDisabled('Artwork') then return end
 
-	if SUI:GetModule('Handler.BarSystems') then SUI:GetModule('Handler.BarSystems').Refresh() end
+	if SUI.Handlers.BarSystem then SUI.Handlers.BarSystem.Refresh() end
 
 	SetupPage()
 	VehicleUI()
