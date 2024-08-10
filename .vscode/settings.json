@@ -649,6 +649,6 @@
   },
   "Lua.workspace.library": [
     "..\\LibLuaDefinitions",
-    "$USERPROFILE\\.vscode\\extensions\\ketho.wow-api-0.15.7\\Annotations"
+    "$USERPROFILE\\.vscode\\extensions\\ketho.wow-api-0.15.8\\Annotations"
   ]
 }

@@ -993,6 +993,18 @@ function module:ToggleBlacklist(enable)
 	self.DB.chatLog.blacklist.enabled = enable
 end
 
+function module:ClearAllChatLogs()
+	-- Clear the current profile's chat log
+	wipe(self.DB.chatLog.history)
+
+	-- Clear chat logs from all other profiles
+	for profileName, profileData in pairs(SUI.SpartanUIDB.profiles) do
+		if profileData.Chatbox and profileData.Chatbox.chatLog then wipe(profileData.Chatbox.chatLog.history) end
+	end
+
+	SUI:Print(L['All chat logs cleared from all profiles'])
+end
+
 function module:BuildOptions()
 	--@type AceConfig.OptionsTable
 	local optTable = {
@@ -1080,6 +1092,15 @@ function module:BuildOptions()
 							module:ClearChatLog()
 						end,
 						order = 2,
+					},
+					clearAllLogs = {
+						name = L['Clear All Chat Logs'],
+						desc = L['Clear all saved chat log entries from all profiles'],
+						type = 'execute',
+						func = function()
+							module:ClearAllChatLogs()
+						end,
+						order = 2.5, -- Place it after the existing clear log button
 					},
 					cleanupLoginMessages = {
 						name = L['Clean Up Login Messages'],
@@ -1256,6 +1277,7 @@ function module:BuildOptions()
 
 	buildBlacklistOptions()
 
+	SUI.opt.args.Help.args.SUIModuleHelp.args.clearAllLogs = optTable.args.chatLog.args.clearAllLogs
 	SUI.Options:AddOptions(optTable, 'Chatbox')
 end
 
