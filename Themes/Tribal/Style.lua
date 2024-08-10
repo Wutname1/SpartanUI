@@ -49,14 +49,18 @@ function module:OnInitialize()
 	}
 	SUI.UF.Style:Register('Tribal', ufsettings)
 
+	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
 		size = { 156, 156 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
-		},
 		position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
+		elements = {
+			background = {
+				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Tribal\\Images\\minimap',
+				position = 'CENTER,SUI_Art_Tribal_Left,RIGHT,-2,-4',
+			},
+		},
 	}
-	SUI:GetModule('Minimap'):Register('Tribal', minimapSettings)
+	SUI.Minimap:Register('Tribal', minimapSettings)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
 	---@type SUI.Style.Settings.StatusBars

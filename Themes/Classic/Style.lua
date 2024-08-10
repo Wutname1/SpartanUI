@@ -728,12 +728,12 @@ function module:OnInitialize()
 	}
 	UF.Style:Register('Classic', ufsettings)
 
+	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
-		Movable = false,
 		size = { 156, 156 },
-		position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,6',
+		position = 'BOTTOM,SUI_Art_Classic_Center,BOTTOM,1,25',
 	}
-	SUI:GetModule('Minimap'):Register('Classic', minimapSettings)
+	SUI.Minimap:Register('Classic', minimapSettings)
 
 	CreateArtwork()
 

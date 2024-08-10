@@ -70,11 +70,13 @@ function module:OnInitialize()
 	local minimapSettings = {
 		size = { 180, 180 },
 		position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+		elements = {
+			background = {
+				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+			},
 		},
 	}
-	SUI:GetModule('Minimap'):Register('War', minimapSettings)
+	SUI.Minimap:Register('War', minimapSettings)
 
 	---@type SUI.Style.Settings.UnitFrames
 	local ufsettings = {

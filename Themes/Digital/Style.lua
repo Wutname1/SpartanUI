@@ -28,15 +28,18 @@ function module:OnInitialize()
 	}
 	SUI.UF.Style:Register('Digital', ufsettings)
 
+	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
 		size = { 156, 156 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
-			position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
-		},
 		position = 'CENTER,SUI_Art_Digital,CENTER,0,54',
+		elements = {
+			background = {
+				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Digital\\Images\\Minimap',
+				position = { 'TOPLEFT,Minimap,TOPLEFT,-38,41', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,47,-44' },
+			},
+		},
 	}
-	SUI:GetModule('Minimap'):Register('Digital', minimapSettings)
+	SUI.Minimap:Register('Digital', minimapSettings)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
 	---@type SUI.Style.Settings.StatusBars

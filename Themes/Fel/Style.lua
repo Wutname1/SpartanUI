@@ -78,18 +78,20 @@ function module:OnInitialize()
 	}
 	SUI.UF.Style:Register('Fel', ufsettings)
 
+	---@type SUI.Style.Settings.Minimap
 	local minimapSettings = {
 		size = { 156, 156 },
-		BG = {
-			texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-			size = { 220, 220 },
-			position = 'CENTER,Minimap,CENTER,5,25',
-			-- position = { 'TOPLEFT,Minimap,TOPLEFT,-2,-4', 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,2,4' },
-		},
 		position = 'CENTER,SUI_Art_Fel_Left,RIGHT,0,-10',
 		engulfed = true,
+		elements = {
+			background = {
+				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
+				size = { 220, 220 },
+				position = 'CENTER,Minimap,CENTER,5,25',
+			},
+		},
 	}
-	SUI:GetModule('Minimap'):Register('Fel', minimapSettings)
+	SUI.Minimap:Register('Fel', minimapSettings)
 
 	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
 	---@type SUI.Style.Settings.StatusBars
