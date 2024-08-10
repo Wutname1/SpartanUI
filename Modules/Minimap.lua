@@ -19,6 +19,7 @@ local BaseSettings = {
 	scaleWithArt = true,
 	UnderVehicleUI = true,
 	position = 'TOPRIGHT,UIParent,TOPRIGHT,-20,-20',
+	rotate = false,
 
 	-- Elements
 	elements = {
@@ -117,21 +118,16 @@ local BaseSettings = {
 			scale = 1,
 		},
 
-		-- North Indicator
-		northIndicator = {
-			enabled = false,
-			texture = 'Interface\\Minimap\\CompassNorthTag',
-			size = { 32, 32 },
-			position = 'TOP,Minimap,TOP,0,-2',
+		--Expansion Button
+		expansionButton = {
+			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,-20,-20',
+			scale = 1,
 		},
 
 		-- Addon Buttons
 		addonButtons = {
 			style = 'mouseover', -- 'always', 'mouseover', or 'never'
 		},
-
-		-- Rotation
-		rotate = false,
 	},
 }
 
@@ -214,11 +210,11 @@ function module:ModifyMinimapLayout()
 
 	-- Setup rotation if needed
 	if MinimapCluster.SetRotateMinimap then
-		if module.Settings.elements.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
+		if module.Settings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
 
-		hooksecurefunc(MinimapCluster, 'SetRotateMinimap', function()
-			if module.Settings.elements.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
-		end)
+		-- hooksecurefunc(MinimapCluster, 'SetRotateMinimap', function()
+		-- 	if module.Settings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
+		-- end)
 	end
 end
 
@@ -251,7 +247,7 @@ function module:SetupElements()
 	module:SetupQueueStatus()
 
 	-- Setup North Indicator
-	module:SetupNorthIndicator()
+	module:SetupExpansionButton()
 
 	-- Setup addon buttons
 	module:SetupAddonButtons()
@@ -391,16 +387,16 @@ function module:SetupQueueStatus()
 	end
 end
 
-function module:SetupNorthIndicator()
-	if module.Settings.elements.northIndicator.enabled then
-		if not Minimap.northIndicator then Minimap.northIndicator = Minimap:CreateTexture(nil, 'OVERLAY') end
-		Minimap.northIndicator:SetTexture(module.Settings.elements.northIndicator.texture)
-		Minimap.northIndicator:SetSize(unpack(module.Settings.elements.northIndicator.size))
-		module:PositionItem(Minimap.northIndicator, module.Settings.elements.northIndicator.position)
-		Minimap.northIndicator:Show()
-	elseif Minimap.northIndicator then
-		Minimap.northIndicator:Hide()
-	end
+function module:SetupExpansionButton()
+	if not ExpansionLandingPageMinimapButton then return end
+
+	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
+	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
+
+	ExpansionLandingPageMinimapButton:HookScript('OnShow', function()
+		ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
+		module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
+	end)
 end
 
 function module:SetupAddonButtons()
@@ -550,7 +546,7 @@ function module:Update(fullUpdate)
 	module:SetupCalendarButton()
 	module:SetupInstanceDifficulty()
 	module:SetupQueueStatus()
-	module:SetupNorthIndicator()
+	module:SetupExpansionButton()
 	module:UpdateAddonButtons()
 
 	-- If minimap default location is under the minimap setup scripts to move it
@@ -642,6 +638,8 @@ function module:OnInitialize()
 
 	-- Check for other addons modifying the minimap
 	module:DetectMinimapAddons()
+
+	if C_CVar.GetCVar('rotateMinimap') == '1' and not module.DB.customSettings[SUI.DB.Artwork.Style].rotate then module.DB.customSettings[SUI.DB.Artwork.Style].rotate = true end
 end
 
 function module:DetectMinimapAddons()
@@ -768,6 +766,7 @@ SUI.Minimap = module
 ---@field scaleWithArt? boolean
 ---@field UnderVehicleUI? boolean
 ---@field position? string
+---@field rotate? boolean
 ---@field elements? table
 
 ---@class SUI.Style.Settings.Minimap.elements
@@ -784,7 +783,6 @@ SUI.Minimap = module
 ---@field queueStatus? SUI.Settings.Minimap.queueStatus
 ---@field northIndicator? SUI.Settings.Minimap.northIndicator
 ---@field addonButtons? SUI.Settings.Minimap.addonButtons
----@field rotate? boolean
 
 ---@alias MapShape 'circle' | 'square'
 
