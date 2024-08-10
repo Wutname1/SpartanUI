@@ -11,7 +11,7 @@ local MinimapUpdater, VisibilityWatcher = CreateFrame('Frame'), CreateFrame('Fra
 ---@class SUI.Minimap.Holder : FrameExpanded, SUI.MoveIt.MoverParent
 local SUIMinimap = CreateFrame('Frame', 'SUI_Minimap')
 
----@type SUI.Style.Settings.Minimap
+---@class SUI.Style.Settings.IMinimap : SUI.Style.Settings.Minimap
 local BaseSettings = {
 	-- Top-level settings
 	shape = 'circle',
@@ -100,7 +100,7 @@ local BaseSettings = {
 		-- Mail Icon
 		mailIcon = {
 			enabled = true,
-			position = 'BOTTOMRIGHT,Minimap,BOTTOMRIGHT,-4,6',
+			position = 'BOTTOMRIGHT,BorderTop,BOTTOMRIGHT,-4,6',
 			scale = 1,
 		},
 
@@ -151,7 +151,7 @@ end
 
 function module:UpdateSettings()
 	-- Start with base settings
-	---@type SUI.Style.Settings.Minimap
+	---@type SUI.Style.Settings.IMinimap
 	module.Settings = SUI:CopyData(BaseSettings, {})
 
 	-- Apply theme settings if available
@@ -684,10 +684,123 @@ function module:OnEnable()
 
 	-- Initialize Buttons & Style settings
 	module:Update(true)
+
+	-- Setup Options
+	module:BuildOptions()
 end
 
 -- Options
 function module:BuildOptions()
+	local function GetOption(info)
+		local element = info[#info - 2] -- Changed from #info - 1 to #info - 2 to account for the new 'position' submenu
+		local option = info[#info]
+		return module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element][option] or module.Settings.elements[element][option]
+	end
+
+	local function SetOption(info, value)
+		local element = info[#info - 2] -- Changed from #info - 1 to #info - 2
+		local option = info[#info]
+		if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
+		if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
+		module.DB.customSettings[SUI.DB.Artwork.Style][element][option] = value
+		module:Update(true)
+	end
+
+	local function GetRelativeToValues()
+		local values = {
+			Minimap = L['Minimap'],
+			MinimapCluster = L['Minimap Cluster'],
+			UIParent = L['Screen'],
+			BorderTop = L['Border Top'],
+		}
+
+		-- Add other Minimap elements
+		for elementName, elementSettings in pairs(module.Settings.elements) do
+			if elementSettings.enabled then values[elementName] = L[elementName] or elementName end
+		end
+
+		-- Add special cases
+		local specialCases = {
+			'Tracking',
+			'Calendar',
+			'Coordinates',
+			'Clock',
+			'ZoneText',
+			'MailIcon',
+			'InstanceDifficulty',
+			'QueueStatus',
+		}
+
+		for _, case in ipairs(specialCases) do
+			if not values[case] then values[case] = L[case] or case end
+		end
+
+		return values
+	end
+
+	local function GetPositionOption(info)
+		local element = info[#info - 2]
+		local positionPart = info[#info]
+		print(element)
+		local positionString = module.Settings.elements[element].position
+		print(positionString)
+		if module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element].position then
+			print('usersetting')
+			positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
+			print(positionString)
+		end
+		local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
+		if positionPart == 'point' then
+			return point
+		elseif positionPart == 'relativeTo' then
+			return relativeTo
+		elseif positionPart == 'relativePoint' then
+			return relativePoint
+		elseif positionPart == 'x' then
+			return tonumber(x)
+		elseif positionPart == 'y' then
+			return tonumber(y)
+		end
+	end
+
+	local function SetPositionOption(info, value)
+		local element = info[#info - 2]
+		local positionPart = info[#info]
+		local positionString = module.Settings.elements[element].position
+		if module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element].position then
+			positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
+		end
+		local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
+		if positionPart == 'point' then
+			point = value
+		elseif positionPart == 'relativeTo' then
+			relativeTo = value
+		elseif positionPart == 'relativePoint' then
+			relativePoint = value
+		elseif positionPart == 'x' then
+			x = value
+		elseif positionPart == 'y' then
+			y = value
+		end
+		local newPositionString = string.format('%s,%s,%s,%s,%s', point, relativeTo, relativePoint, x, y)
+		if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
+		if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
+		module.DB.customSettings[SUI.DB.Artwork.Style][element].position = newPositionString
+		module:Update(true)
+	end
+
+	local anchorValues = {
+		TOP = L['Top'],
+		TOPLEFT = L['Top Left'],
+		TOPRIGHT = L['Top Right'],
+		BOTTOM = L['Bottom'],
+		BOTTOMLEFT = L['Bottom Left'],
+		BOTTOMRIGHT = L['Bottom Right'],
+		LEFT = L['Left'],
+		RIGHT = L['Right'],
+		CENTER = L['Center'],
+	}
+
 	local options = {
 		type = 'group',
 		name = L['Minimap'],
@@ -696,44 +809,181 @@ function module:BuildOptions()
 		end,
 		childGroups = 'tab',
 		args = {
-			elements = {
-				name = 'Elements',
+			general = {
+				name = L['General'],
 				type = 'group',
 				order = 1,
+				args = {
+					shape = {
+						name = L['Shape'],
+						type = 'select',
+						order = 1,
+						values = {
+							circle = L['Circle'],
+							square = L['Square'],
+						},
+						get = function()
+							return module.Settings.shape
+						end,
+						set = function(_, value)
+							module.DB.customSettings[SUI.DB.Artwork.Style].shape = value
+							module:Update(true)
+						end,
+					},
+					size = {
+						name = L['Size'],
+						type = 'range',
+						order = 2,
+						min = 120,
+						max = 300,
+						step = 1,
+						get = function()
+							return module.Settings.size[1]
+						end,
+						set = function(_, value)
+							module.DB.customSettings[SUI.DB.Artwork.Style].size = { value, value }
+							module:Update(true)
+						end,
+					},
+					scaleWithArt = {
+						name = L['Scale with UI'],
+						type = 'toggle',
+						order = 3,
+						get = function()
+							return module.Settings.scaleWithArt
+						end,
+						set = function(_, value)
+							module.DB.customSettings[SUI.DB.Artwork.Style].scaleWithArt = value
+							module:Update(true)
+						end,
+					},
+					rotate = {
+						name = L['Rotate the minimap'],
+						type = 'toggle',
+						order = 3,
+						get = function()
+							return module.Settings.rotate
+						end,
+						set = function(_, value)
+							module.DB.customSettings[SUI.DB.Artwork.Style].rotate = value
+							module:Update(true)
+						end,
+					},
+				},
+			},
+			elements = {
+				name = L['Elements'],
+				type = 'group',
+				order = 2,
 				childGroups = 'tree',
 				args = {},
 			},
-			-- Other top-level options
 		},
 	}
 
-	-- Build options for each element
+	-- Build options for each elemen
 	for elementName, elementSettings in pairs(module.Settings.elements) do
 		options.args.elements.args[elementName] = {
 			name = L[elementName] or elementName,
 			type = 'group',
-			args = {},
+			args = {
+				enabled = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 1,
+					get = GetOption,
+					set = SetOption,
+				},
+			},
 		}
-
-		for settingName, settingValue in pairs(elementSettings) do
-			local optionType = type(settingValue)
-			options.args.elements.args[elementName].args[settingName] = {
-				name = L[settingName] or settingName,
-				type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
-				get = function(info)
-					return (
-						module.DB.customSettings[SUI.DB.Artwork.Style]
-						and module.DB.customSettings[SUI.DB.Artwork.Style][elementName]
-						and module.DB.customSettings[SUI.DB.Artwork.Style][elementName][settingName]
-					) or module.Settings.elements[elementName][settingName]
-				end,
-				set = function(info, value)
-					if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
-					if not module.DB.customSettings[SUI.DB.Artwork.Style][elementName] then module.DB.customSettings[SUI.DB.Artwork.Style][elementName] = {} end
-					module.DB.customSettings[SUI.DB.Artwork.Style][elementName][settingName] = value
-					module:Update(true)
-				end,
+		if elementSettings.position then
+			options.args.elements.args[elementName].args.position = {
+				name = L['Position'],
+				type = 'group',
+				order = 2,
+				inline = true,
+				args = {
+					point = {
+						name = L['Anchor'],
+						type = 'select',
+						order = 1,
+						values = anchorValues,
+						get = GetPositionOption,
+						set = SetPositionOption,
+					},
+					relativeTo = {
+						name = L['Relative To'],
+						type = 'select',
+						order = 2,
+						values = GetRelativeToValues,
+						get = GetPositionOption,
+						set = SetPositionOption,
+					},
+					relativePoint = {
+						name = L['Relative Anchor'],
+						type = 'select',
+						order = 3,
+						values = anchorValues,
+						get = GetPositionOption,
+						set = SetPositionOption,
+					},
+					x = {
+						name = L['X Offset'],
+						type = 'range',
+						order = 4,
+						min = -100,
+						max = 100,
+						step = 1,
+						get = GetPositionOption,
+						set = SetPositionOption,
+					},
+					y = {
+						name = L['Y Offset'],
+						type = 'range',
+						order = 5,
+						min = -100,
+						max = 100,
+						step = 1,
+						get = GetPositionOption,
+						set = SetPositionOption,
+					},
+				},
 			}
+		end
+
+		if elementSettings.scale then
+			options.args.elements.args[elementName].args.scale = {
+				name = L['Scale'],
+				type = 'range',
+				order = 3,
+				min = 0.5,
+				max = 2,
+				step = 0.05,
+				get = GetOption,
+				set = SetOption,
+			}
+		end
+
+		local order = 4
+		for settingName, settingValue in pairs(elementSettings) do
+			if settingName ~= 'enabled' and settingName ~= 'position' and settingName ~= 'scale' then
+				local optionType = type(settingValue)
+				options.args.elements.args[elementName].args[settingName] = {
+					name = L[settingName] or settingName,
+					type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
+					order = order,
+					get = GetOption,
+					set = SetOption,
+				}
+
+				if optionType == 'number' then
+					options.args.elements.args[elementName].args[settingName].min = 0
+					options.args.elements.args[elementName].args[settingName].max = 2
+					options.args.elements.args[elementName].args[settingName].step = 0.01
+				end
+
+				order = order + 1
+			end
 		end
 	end
 
