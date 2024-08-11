@@ -326,6 +326,7 @@ function module.Objects.Tab(widget, mode, NormalTex, regionsToFade)
 
 	if widget.text then widget:SetNormalFontObject(GameFontHighlightSmall) end
 end
+
 function module.Objects.CheckBox(button, mode, NormalTex, regionsToFade)
 	-- local check = button.check
 	-- local checkbg = button.checkbg
@@ -372,6 +373,20 @@ function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 	button.isSkinned = true
 end
 
+function module.Objects.StatusBar(statusBarFrame)
+	local bar = statusBarFrame.Bar
+	if not bar or bar.backdrop then return end
+
+	module.SetTemplate(bar)
+
+	if bar.BGLeft then bar.BGLeft:SetAlpha(0) end
+	if bar.BGRight then bar.BGRight:SetAlpha(0) end
+	if bar.BGCenter then bar.BGCenter:SetAlpha(0) end
+	if bar.BorderLeft then bar.BorderLeft:SetAlpha(0) end
+	if bar.BorderRight then bar.BorderRight:SetAlpha(0) end
+	if bar.BorderCenter then bar.BorderCenter:SetAlpha(0) end
+end
+
 ---Skins a object
 ---@param ObjType string
 ---@param object FrameExpanded
@@ -402,6 +417,21 @@ function module.SkinObj(ObjType, object, mode, component)
 
 	object:SetBackdropBorderColor(unpack(GetBaseBorderColor()))
 	object.isSkinned = true
+end
+
+local function GetWidgetVisualizationTypeKey(value)
+	for k, v in pairs(Enum.UIWidgetVisualizationType) do
+		if v == value then return k end
+	end
+	return nil -- Return nil if no matching key is found
+end
+
+--Skins a frame and all its children
+---@param widget Frame
+function module.SkinWidgets(widget)
+	---@diagnostic disable-next-line: undefined-field
+	local widgetFunc = module.Objects[GetWidgetVisualizationTypeKey(widget.widgetType)]
+	if widgetFunc then widgetFunc(widget) end
 end
 
 module.Registry = {}

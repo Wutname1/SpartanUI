@@ -237,6 +237,26 @@ local function TopCenterContainer()
 	AttachToHolder(_G['UIWidgetTopCenterContainerFrame'], holder)
 	hooksecurefunc(_G['UIWidgetTopCenterContainerFrame'], 'SetPoint', ResetPosition)
 	MoveIt:CreateMover(holder, 'TopCenterContainer', 'Top center container', nil, 'Blizzard UI')
+	for _, widget in pairs(_G['UIWidgetTopCenterContainerFrame'].widgetFrames) do
+		SUI.Skins.SkinWidgets(widget)
+	end
+	module:RegisterEvent('PLAYER_ENTERING_WORLD')
+	module:RegisterEvent('UPDATE_ALL_UI_WIDGETS')
+	module:RegisterEvent('UPDATE_UI_WIDGET')
+end
+
+function module:UPDATE_UI_WIDGET()
+	module:UPDATE_ALL_UI_WIDGETS()
+end
+function module:UPDATE_ALL_UI_WIDGETS()
+	for _, widget in pairs(_G['UIWidgetTopCenterContainerFrame'].widgetFrames) do
+		SUI.Skins.SkinWidgets(widget)
+	end
+end
+
+function module:PLAYER_ENTERING_WORLD()
+	print('PLAYER_ENTERING_WORLD')
+	module:UPDATE_ALL_UI_WIDGETS()
 end
 
 -- This is the main inpoint
