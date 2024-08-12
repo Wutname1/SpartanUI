@@ -45,6 +45,7 @@ function SUIGameMenu:IsDisabled()
 end
 
 function SUIGameMenu:OnEnable()
+	if SUIGameMenu:IsDisabled() then return end
 	-- Set up hooks
 	GameMenuFrame:HookScript('OnShow', function()
 		if SUIGameMenu:IsDisabled() then return end
@@ -70,6 +71,7 @@ function SUIGameMenu:OnEnable()
 	MenuSkin.BottomLine:SetAlpha(0.5)
 
 	hooksecurefunc(GameMenuFrame, 'Layout', function()
+		if SUIGameMenu:IsDisabled() then return end
 		MenuSkin:OnFrameShown(GameMenuFrame:IsShown())
 	end)
 end
@@ -198,7 +200,7 @@ end
 
 function MenuSkin:OnFrameShown(showMenu)
 	if showMenu then
-		GameMenuFrame:SetScale(SUI.Skins.DB.Blizzard.GameMenu.Scale)
+		GameMenuFrame:SetScale(SUI.Skins.DB.Blizzard.GameMenu.Scale or 0.8)
 		self:ResetAnimation()
 		self:OnDataLoaded()
 		self:InterpolatePoints(GameMenuFrame)

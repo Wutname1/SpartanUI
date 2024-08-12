@@ -5,6 +5,11 @@ local module = SUI:NewModule('Handler.Skins')
 
 ---@class SkinDB
 local DBDefaults = {
+	Blizzard = {
+		GameMenu = {
+			Scale = 0.8,
+		},
+	},
 	components = {
 		['**'] = {
 			enabled = true,

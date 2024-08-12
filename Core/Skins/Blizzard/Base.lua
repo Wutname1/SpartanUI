@@ -36,9 +36,7 @@ local function OnEnable()
 	if not SUI.Skins.DB.Blizzard.GameMenu then SUI.Skins.DB.Blizzard.GameMenu = {} end
 	if not SUI.Skins.DB.Blizzard.GameMenu.Scale then SUI.Skins.DB.Blizzard.GameMenu.Scale = 0.8 end
 
-	if SUI:IsAddonDisabled('Skinner') and SUI:IsAddonDisabled('ConsolePort') then
-		GameMenuFrame:SetScale(SUI.Skins.DB.Blizzard.GameMenu.Scale)
-	else
+	if SUI:IsAddonEnabled('Skinner') or SUI:IsAddonEnabled('ConsolePort') then
 		if GameMenuFrame.SUI then return end
 
 		local button = CreateFrame('Button', 'SUI_GameMenuButton', GameMenuFrame, 'MainMenuFrameButtonTemplate')
