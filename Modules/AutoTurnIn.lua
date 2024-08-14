@@ -486,7 +486,8 @@ function module.QUEST_COMPLETE()
 end
 
 function module:GetItemAmount(isCurrency, item)
-	local amount = isCurrency and select(2, GetCurrencyInfo(item)) or C_Item.GetItemCount(item, nil, true)
+	local currency = C_CurrencyInfo.GetCurrencyInfo(item)
+	local amount = isCurrency and (currency.quantity or C_Item.GetItemCount(item, nil, true))
 	return amount and amount or 0
 end
 
@@ -722,7 +723,7 @@ function module.QUEST_GREETING()
 	debug(numAvailableQuests)
 	for i = 1, numActiveQuests do
 		local isComplete = select(2, GetActiveTitle(i))
-		if isComplete then SelectActiveQuest(i) end
+		if isComplete then C_GossipInfo.SelectActiveQuest(i) end
 	end
 
 	for i = 1, numAvailableQuests do
@@ -735,11 +736,11 @@ function module.QUEST_GREETING()
 			if (trivialORAllowed and isRepeatableORAllowed) and (not module.Blacklist.isBlacklisted(questID)) and questID ~= 0 then
 				debug('selecting ' .. i .. ' questId ' .. questID)
 				---@diagnostic disable-next-line: redundant-parameter
-				SelectAvailableQuest(i)
+				C_GossipInfo.SelectAvailableQuest(i)
 			end
 		else
 			---@diagnostic disable-next-line: redundant-parameter
-			SelectAvailableQuest(i)
+			C_GossipInfo.SelectAvailableQuest(i)
 		end
 	end
 end

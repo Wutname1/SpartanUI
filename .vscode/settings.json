@@ -633,7 +633,8 @@
     "assign-type-mismatch",
     "need-check-nil",
     "inject-field",
-    "duplicate-set-field"
+    "duplicate-set-field",
+    "invisible"
   ],
   "[lua]": {
     "editor.defaultFormatter": "JohnnyMorganz.stylua"

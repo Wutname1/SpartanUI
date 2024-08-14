@@ -225,7 +225,7 @@ local function FontSetupWizard()
 
 			--Create Dropdown for other fonts using AceGUI and LSM30_Font position at the end of the Sample buttons
 			local AceGUI = LibStub('AceGUI-3.0')
-			local dropdown = AceGUI:Create('LSM30_Font')
+			local dropdown = AceGUI:Create('LSM30_Font') ---@type AceGUIWidgetLSM30_Font
 			dropdown:SetLabel('Other Fonts')
 			dropdown:SetList(SUI.Lib.LSM:HashTable('font'))
 			dropdown:SetValue('Roboto Bold')
