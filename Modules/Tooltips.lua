@@ -183,7 +183,6 @@ local function ApplySkin(tooltip)
 		if tooltip.SetBackdrop then tooltip:SetBackdrop(nil) end
 		tooltip:HookScript('OnShow', onShow)
 		tooltip:HookScript('OnHide', onHide)
-		_G.tremove(tooltips, tooltip)
 	end
 
 	local style = {
