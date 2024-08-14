@@ -30,12 +30,12 @@ local function Options(unitName, OptionSet, DB)
 	local ElementSettings = UF.CurrentSettings[unitName].elements.AuraWatch
 	local UserSetting = UF.DB.UserSettings[UF.DB.Style][unitName].elements.AuraWatch
 
-	--Remove Basic Filters
+	-- Remove Basic Filters
 	OptionSet.args.Filters = nil
-	--Remove Blacklist
+	-- Remove Blacklist
 	OptionSet.args.whitelist = nil
 	OptionSet.args.blacklist = nil
-	--Remove Layout Configuration
+	-- Remove Layout Configuration
 	OptionSet.args.Layout = nil
 	local buildItemList
 
@@ -50,8 +50,8 @@ local function Options(unitName, OptionSet, DB)
 			local id = tonumber(string.match(info[#info], '(%d+)'))
 			local name = 'unknown'
 			if id then
-				local spellName, _, spellIcon = GetSpellInfo(id)
-				name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellIcon or 'Interface\\Icons\\Inv_misc_questionmark', spellName or SUI.L['Unknown'], id)
+				local spellInfo = C_Spell.GetSpellInfo(id)
+				if spellInfo then name = string.format('|T%s:14:14:0:0|t %s (#%i)', spellInfo.iconID or 'Interface\\Icons\\Inv_misc_questionmark', spellInfo.name or SUI.L['Unknown'], id) end
 			end
 			return name
 		end,
@@ -67,11 +67,11 @@ local function Options(unitName, OptionSet, DB)
 		func = function(info)
 			local id = tonumber(info[#info])
 
-			--Remove Setting
+			-- Remove Setting
 			ElementSettings.rules[info[#info - 2]][id] = nil
 			UserSetting.rules[info[#info - 2]][id] = nil
 
-			--Update Screen
+			-- Update Screen
 			buildItemList(info[#info - 2])
 			UF.Unit[unitName]:ElementUpdate('AuraWatch')
 		end,
@@ -86,16 +86,19 @@ local function Options(unitName, OptionSet, DB)
 			spellsOpt[tostring(spellID)] = spellDelete
 		end
 	end
+
 	local additem = function(info, input)
 		local spellId
 		if type(input) == 'string' then
-			--See if we got a spell link
+			-- See if we got a spell link
 			if input:find('|Hspell:%d+') then
 				spellId = tonumber(input:match('|Hspell:(%d+)'))
 			elseif input:find('%[(.-)%]') then
-				spellId = select(7, GetSpellInfo(input:match('%[(.-)%]')))
+				local spellInfo = C_Spell.GetSpellInfo(input:match('%[(.-)%]'))
+				spellId = spellInfo and spellInfo.spellID
 			else
-				spellId = select(7, GetSpellInfo(input))
+				local spellInfo = C_Spell.GetSpellInfo(input)
+				spellId = spellInfo and spellInfo.spellID
 			end
 			if not spellId then
 				SUI:Print('Invalid spell name or ID')

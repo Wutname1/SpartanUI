@@ -255,7 +255,10 @@ end
 ---@param button any
 ---@param index integer
 function Auras.PostUpdateAura(element, unit, button, index)
-	local _, _, _, _, duration, expiration, owner, canStealOrPurge = UnitAura(unit, index, button.filter)
+	local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, button.filter)
+	if not auraData then return end
+
+	local duration, expiration = auraData.duration, auraData.expirationTime
 	if duration and duration > 0 then
 		button.expiration = expiration - GetTime()
 	else
@@ -263,9 +266,9 @@ function Auras.PostUpdateAura(element, unit, button, index)
 	end
 
 	if button.SetBackdrop then
-		if unit == 'target' and canStealOrPurge then
+		if unit == 'target' and auraData.isStealable then
 			button:SetBackdropColor(0, 1 / 2, 1 / 2)
-		elseif owner ~= 'player' then
+		elseif auraData.sourceUnit ~= 'player' then
 			button:SetBackdropColor(0, 0, 0)
 		end
 	end

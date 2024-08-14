@@ -13,9 +13,7 @@ local infinity = math.huge
 
 local _G = _G
 local GetTime = GetTime
-local UnitAura = UnitAura
 local CreateFrame = CreateFrame
-local UnitIsUnit = UnitIsUnit
 local UnitIsEnemy = UnitIsEnemy
 local UnitReaction = UnitReaction
 local GameTooltip = GameTooltip
@@ -104,7 +102,11 @@ end
 ---@param auraData AuraData
 ---@return boolean
 local function customFilter(element, unit, button, auraData)
-	if (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and auraData.name) then return true end
+	if (element.onlyShowPlayer and button.isPlayer) or (not element.onlyShowPlayer and auraData.name) then
+		return true
+	else
+		return false
+	end
 end
 
 local function updateBar(element, bar)
@@ -128,7 +130,7 @@ local function updateBar(element, bar)
 	if bar.filter == 'HARMFUL' then
 		if not debuffType or debuffType == '' then debuffType = 'none' end
 
-		local color = _G.DebuffTypeColor[debuffType]
+		local color = _G['DebuffTypeColor'][debuffType]
 		r, g, b = color.r, color.g, color.b
 	end
 
@@ -158,14 +160,14 @@ local function updateAura(element, unit, index, offset, filter, isDebuff, visibl
 	element.active[position] = bar
 
 	bar.unit = unit
-	bar.count = auraData.charges or 1
+	bar.count = auraData.applications or 1
 	bar.index = index
 	bar.caster = auraData.sourceUnit
 	bar.filter = filter
 	bar.isDebuff = isDebuff
 	bar.texture = auraData.icon
 	bar.isStealable = auraData.isStealable
-	bar.isPlayer = auraData.sourceUnit == 'player' or auraData.sourceUnit == 'vehicle'
+	bar.isPlayer = auraData.isFromPlayerOrPlayerPet
 	bar.position = position
 	bar.duration = auraData.duration
 	bar.expiration = auraData.expirationTime

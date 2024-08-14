@@ -486,7 +486,7 @@ function module.QUEST_COMPLETE()
 end
 
 function module:GetItemAmount(isCurrency, item)
-	local amount = isCurrency and select(2, GetCurrencyInfo(item)) or GetItemCount(item, nil, true)
+	local amount = isCurrency and select(2, GetCurrencyInfo(item)) or C_Item.GetItemCount(item, nil, true)
 	return amount and amount or 0
 end
 

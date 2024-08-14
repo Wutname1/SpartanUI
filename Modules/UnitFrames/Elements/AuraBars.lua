@@ -91,6 +91,7 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
+	local ElementSettings = UF.CurrentSettings[unitName].elements.AuraWatch
 	local function OptUpdate(option, val)
 		--Update memory
 		UF.CurrentSettings[unitName].elements.AuraBars[option] = val

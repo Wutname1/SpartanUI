@@ -5,16 +5,17 @@ local unpack = unpack
 --------------   oUF Functions   ------------------------------------
 function SUI:HotsListing()
 	local _, classFileName = UnitClass('player')
-	local LifebloomSpellId = select(7, GetSpellInfo('Lifebloom'))
+	local lifebloomInfo = C_Spell.GetSpellInfo('Lifebloom')
+	local lifebloomSpellId = lifebloomInfo and lifebloomInfo.spellID
 	if classFileName == 'DRUID' then
 		return {
 			774, -- Rejuvenation
-			LifebloomSpellId, -- Lifebloom
+			lifebloomSpellId, -- Lifebloom
 			8936, -- Regrowth
-			-- 48438, -- Wild Growth
-			-- 155777, -- Germination
-			-- 102351, -- Cenarion Ward
-			-- 102342 -- Ironbark
+			48438, -- Wild Growth
+			155777, -- Germination
+			102351, -- Cenarion Ward
+			102342, -- Ironbark
 		}
 	elseif classFileName == 'PRIEST' then
 		if SUI.IsClassic then

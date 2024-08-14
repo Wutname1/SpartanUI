@@ -618,7 +618,13 @@
     "issecurevariable",
     "AddonList",
     "DropDownList1",
-    "securecallfunction"
+    "securecallfunction",
+    "CreateUnsecuredObjectPool",
+    "HUD_EDIT_MODE_RESET_POSITION",
+    "RESET_TO_DEFAULT",
+    "GenerateClosure",
+    "MinimalSliderWithSteppersMixin",
+    "CreateMinimalSliderFormatter"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
@@ -649,6 +655,10 @@
   },
   "Lua.workspace.library": [
     "..\\LibLuaDefinitions",
-    "$USERPROFILE\\.vscode\\extensions\\ketho.wow-api-0.15.8\\Annotations"
+    "~\\.vscode\\extensions\\ketho.wow-api-0.16.6\\Annotations",
+    "Core",
+    "libs\\oUF_Plugins",
+    "Modules",
+    "Themes"
   ]
 }
