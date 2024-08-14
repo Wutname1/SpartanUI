@@ -1,6 +1,7 @@
 package-as: SpartanUI
 
 ignore:
+    Definitions
     README.md
     *.Definition.lua
 
