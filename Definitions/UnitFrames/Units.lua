@@ -1,6 +1,6 @@
 ---@class FramePositioning
----@field point AnchorPoint
----@field relativePoint AnchorPoint
+---@field point FramePoint
+---@field relativePoint FramePoint
 ---@field xOfs integer
 ---@field yOfs integer
 local FramePositioning = {}
