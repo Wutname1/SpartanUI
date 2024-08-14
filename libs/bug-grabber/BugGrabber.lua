@@ -2,9 +2,10 @@ local _G = _G
 local type, table, next, tostring, tonumber, print = type, table, next, tostring, tonumber, print
 local debuglocals, debugstack, wipe, IsEncounterInProgress, GetTime = debuglocals, debugstack, table.wipe, IsEncounterInProgress, GetTime
 local GetAddOnMetadata = C_AddOns.GetAddOnMetadata
-local GetNumAddOns = C_AddOns.GetNumAddOns
-local GetAddOnInfo = C_AddOns.GetAddOnInfo
-local DisableAddOn = C_AddOns.DisableAddOn
+local DisableAddOn = C_AddOns.DisableAddOn or DisableAddOn
+local GetAddOnInfo = C_AddOns.GetAddOnInfo or GetAddOnInfo
+local IsAddOnLoaded = C_AddOns.IsAddOnLoaded or IsAddOnLoaded
+local GetNumAddOns = C_AddOns.GetNumAddOns or GetNumAddOns
 
 -----------------------------------------------------------------------
 -- Check if we already exist in the global space
@@ -95,10 +96,10 @@ local tableToString = 'table: %s'
 local function setupCallbacks()
 	if not callbacks and LibStub and LibStub('CallbackHandler-1.0', true) then
 		callbacks = LibStub('CallbackHandler-1.0'):New(addon)
-		function callbacks:OnUsed(target, eventname)
+		function callbacks:OnUsed(_, eventname)
 			if eventname == 'BugGrabber_BugGrabbed' then isBugGrabbedRegistered = true end
 		end
-		function callbacks:OnUnused(target, eventname)
+		function callbacks:OnUnused(_, eventname)
 			if eventname == 'BugGrabber_BugGrabbed' then isBugGrabbedRegistered = nil end
 		end
 		setupCallbacks = nil
@@ -243,7 +244,6 @@ end
 -- Error handler
 local grabError
 do
-	local tmp = {}
 	local msgsAllowed = BUGGRABBER_ERRORS_PER_SEC_BEFORE_THROTTLE
 	local msgsAllowedLastTime = GetTime()
 	local lastWarningTime = 0
@@ -306,24 +306,27 @@ do
 				}
 			else
 				local stack = debugstack(3)
+				local tbl = {}
 
 				-- Scan for version numbers in the stack
-				for line in stack:gmatch('(.-)\n') do
-					tmp[#tmp + 1] = findVersions(line)
+				if stack then
+					for line in stack:gmatch('(.-)\n') do
+						tbl[#tbl + 1] = findVersions(line)
+					end
 				end
 				local inCombat = IsEncounterInProgress() -- debuglocals can be slow sometimes (200ms+)
 				errorObject = {
 					message = sanitizedMessage,
-					stack = table.concat(tmp, '\n'),
+					stack = stack and table.concat(tbl, '\n') or 'Debugstack was nil.',
 					locals = inCombat and 'Skipped (In Encounter)' or debuglocals(3),
 					session = addon:GetSessionId(),
 					time = date('%Y/%m/%d %H:%M:%S'),
 					counter = 1,
 				}
-
-				wipe(tmp)
 			end
 		end
+
+		if not isBugGrabbedRegistered then print(L.ERROR_DETECTED:format(addon:GetChatLink(errorObject))) end
 
 		addon:StoreError(errorObject)
 
@@ -345,6 +348,33 @@ function addon:StoreError(errorObject)
 	end
 end
 
+do
+	local function createChatHook()
+		-- Set up the ItemRef hook that allow us to link bugs.
+		local SetHyperlink = ItemRefTooltip.SetHyperlink
+		function ItemRefTooltip:SetHyperlink(link, ...)
+			local player, tableId = link:match('^buggrabber:([^:]+):([^:]+):')
+			if player then
+				addon:HandleBugLink(player, tableId, link)
+			else
+				SetHyperlink(self, link, ...)
+			end
+		end
+	end
+
+	-- We need to hook the chat frame when anyone requests a chat link from us,
+	-- in case some other addon has hooked :HandleBugLink to process it. If not,
+	-- we could've just created the hook in grabError when we do the print.
+	function addon:GetChatLink(errorObject)
+		if createChatHook then
+			createChatHook()
+			createChatHook = nil
+		end
+		local tableId = tostring(errorObject):sub(8)
+		return chatLinkFormat:format(playerName, tableId, tableId)
+	end
+end
+
 function addon:GetErrorByPlayerAndID(player, id)
 	if player == playerName then return addon:GetErrorByID(id) end
 	print(L.ERROR_UNABLE)
@@ -352,7 +382,7 @@ end
 
 function addon:GetErrorByID(id)
 	local errorId = tableToString:format(id)
-	for i, err in next, db do
+	for _, err in next, db do
 		if tostring(err) == errorId then return err end
 	end
 end
@@ -401,7 +431,7 @@ local function initDatabase()
 
 	-- If there were any load errors, we need to iterate them and
 	-- insert the relevant ones into our SV DB.
-	for i, err in next, loadErrors do
+	for _, err in next, loadErrors do
 		err.session = sv.session -- Update the session ID directly
 		local exists = fetchFromDatabase(db, err.message)
 		addon:StoreError(exists or err)
@@ -530,7 +560,8 @@ end
 
 UIParent:UnregisterEvent('LUA_WARNING')
 real_seterrorhandler(grabError)
-function seterrorhandler --[[ noop ]]() end
+function seterrorhandler() --[[ noop ]]
+end
 
 -- Set up slash command
 SlashCmdList.BugGrabber = slashHandler
