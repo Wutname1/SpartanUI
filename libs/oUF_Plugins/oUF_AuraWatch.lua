@@ -7,7 +7,6 @@ local VISIBLE = 1
 local HIDDEN = 0
 
 local min, wipe, pairs, tinsert = min, wipe, pairs, tinsert
-local GetSpellTexture = GetSpellTexture
 local CreateFrame = CreateFrame
 local UnitIsUnit = UnitIsUnit
 
@@ -141,7 +140,7 @@ local function postOnlyMissing(element, unit, offset)
 
 		button.spellID = spellID
 
-		local icon = GetSpellTexture(spellID)
+		local icon = C_Spell.GetSpellTexture(spellID)
 		handleElements(element, unit, button, setting, icon)
 
 		if element.PostUpdateIcon then element:PostUpdateIcon(unit, button, nil, position) end
