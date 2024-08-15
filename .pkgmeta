@@ -1,9 +1,8 @@
 package-as: SpartanUI
 
 ignore:
-    Definitions
-    Definitions/*
-    README.md
-    *.Definition.lua
+- Definitions
+- README.md
+- *.Definition.lua
 
 enable-nolib-creation: no
