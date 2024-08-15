@@ -446,7 +446,7 @@ function module:CleanupLoginMessages()
 	-- end
 
 	-- Re-add important system messages
-	local info = ChatTypeInfo['SYSTEM']
+	local info = ChatTypeInfo['GUILD']
 	DEFAULT_CHAT_FRAME:AddMessage(GUILD_MOTD_TEMPLATE:format(GetGuildRosterMOTD() or ''), info.r, info.g, info.b)
 
 	-- Add played time messages
