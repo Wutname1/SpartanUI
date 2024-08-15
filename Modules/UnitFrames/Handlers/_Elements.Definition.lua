@@ -44,9 +44,9 @@ local ElementSettings = {
 }
 
 ---@class SUI.UF.Elements.Positioning
----@field anchor FramePoint
+---@field anchor AnchorPoint
 ---@field relativeTo SUI.UF.Elements.list
----@field relativePoint FramePoint
+---@field relativePoint AnchorPoint
 local ElementPositioning = {
 	anchor = 'CENTER',
 	relativeTo = 'Frame',
@@ -59,8 +59,8 @@ local ElementPositioning = {
 local FramePositioning = {}
 
 ---@class ElementTextData
----@field SetJustifyH JustifyHorizontal
----@field SetJustifyV JustifyVertical
+---@field SetJustifyH JustifyH
+---@field SetJustifyV JustifyV
 ---@field position SUI.UF.Elements.Positioning
 local ElementTextData = {
 	enabled = false,
