@@ -103,14 +103,35 @@ local ObjTrackerUpdate = function(_, event)
 			end
 		end
 	else
-		if HideObjs and _G[frameName]:GetAlpha() == 1 then
-			_G[frameName].FadeOut:Play()
-			_G[frameName]:Hide()
-			if _G[frameName].HeaderMenu then _G[frameName].HeaderMenu.MinimizeButton:Hide() end
-		elseif _G[frameName]:GetAlpha() == 0 and not HideObjs then
-			if _G[frameName].HeaderMenu then _G[frameName].HeaderMenu.MinimizeButton:Show() end
-			_G[frameName].FadeOut:Stop()
-			_G[frameName].FadeIn:Play()
+		local frame = _G[frameName]
+		if not frame then return end
+
+		if not frame.FadeOut then
+			frame.FadeOut = frame:CreateAnimationGroup()
+			local fadeOut = frame.FadeOut:CreateAnimation('Alpha')
+			fadeOut:SetFromAlpha(1)
+			fadeOut:SetToAlpha(0)
+			fadeOut:SetDuration(0.2)
+			fadeOut:SetSmoothing('OUT')
+		end
+
+		if not frame.FadeIn then
+			frame.FadeIn = frame:CreateAnimationGroup()
+			local fadeIn = frame.FadeIn:CreateAnimation('Alpha')
+			fadeIn:SetFromAlpha(0)
+			fadeIn:SetToAlpha(1)
+			fadeIn:SetDuration(0.2)
+			fadeIn:SetSmoothing('OUT')
+		end
+
+		if HideObjs and frame:GetAlpha() == 1 then
+			frame.FadeOut:Play()
+			frame:Hide()
+			if frame.HeaderMenu then frame.HeaderMenu.MinimizeButton:Hide() end
+		elseif frame:GetAlpha() == 0 and not HideObjs then
+			if frame.HeaderMenu then frame.HeaderMenu.MinimizeButton:Show() end
+			frame.FadeOut:Stop()
+			frame.FadeIn:Play()
 		end
 	end
 end

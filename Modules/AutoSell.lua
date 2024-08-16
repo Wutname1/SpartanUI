@@ -5,7 +5,7 @@ module.description = 'Auto sells junk and more'
 ----------------------------------------------------------------------------------------------------
 local GetContainerNumSlots = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
 local GetContainerItemInfo = (C_Container and C_Container.GetContainerItemInfo) or GetContainerItemInfo
-local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local GetItemInfo = C_Item.GetItemInfo
 local UseContainerItem = (C_Container and C_Container.UseContainerItem) or UseContainerItem
 
 local frame = CreateFrame('Frame')

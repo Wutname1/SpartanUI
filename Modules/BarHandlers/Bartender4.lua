@@ -162,7 +162,7 @@ local FrameList = {
 -- Creates the SUI BT4 Profile
 local function SetupProfile()
 	--Exit if Bartender4 is not loaded
-	if not select(4, GetAddOnInfo('Bartender4')) then return end
+	if not select(4, C_AddOns.GetAddOnInfo('Bartender4')) then return end
 
 	--Flag the SUI.DB that we are making changes
 	BartenderChangesActive = true
@@ -467,7 +467,7 @@ local function OnEnable()
 	AddMovers()
 
 	-- Eventually this will not be needed until then port this over.
-	if not select(4, GetAddOnInfo('Bartender4')) and not SUI.DB.BT4Warned then
+	if not select(4, C_AddOns.GetAddOnInfo('Bartender4')) and not SUI.DB.BT4Warned then
 		local cnt = 1
 		local BT4Warning = CreateFrame('Frame')
 		BT4Warning:SetScript('OnEvent', function()

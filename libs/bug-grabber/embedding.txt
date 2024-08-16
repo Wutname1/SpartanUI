@@ -28,7 +28,7 @@ errors as you see fit.
 or not there is - you should not do /anything/ or even register for
 the callbacks. For now you can use the following code to check;
 
-local name, _, _, enabled = GetAddOnInfo("BugSack")
+local name, _, _, enabled = C_AddOns.GetAddOnInfo("BugSack")
 if name and enabled then
 	-- Don't do anything!
 end

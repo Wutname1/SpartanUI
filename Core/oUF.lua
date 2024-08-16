@@ -3,41 +3,6 @@ local SUI = SUI
 local unpack = unpack
 
 --------------   oUF Functions   ------------------------------------
-function SUI:HotsListing()
-	local _, classFileName = UnitClass('player')
-	local LifebloomSpellId = select(7, GetSpellInfo('Lifebloom'))
-	if classFileName == 'DRUID' then
-		return {
-			774, -- Rejuvenation
-			LifebloomSpellId, -- Lifebloom
-			8936, -- Regrowth
-			-- 48438, -- Wild Growth
-			-- 155777, -- Germination
-			-- 102351, -- Cenarion Ward
-			-- 102342 -- Ironbark
-		}
-	elseif classFileName == 'PRIEST' then
-		if SUI.IsClassic then
-			return {
-				139, -- Renew
-				17, -- sheild
-			}
-		else
-			return {
-				139, -- Renew
-				17, -- sheild
-				33076, -- Prayer of Mending
-			}
-		end
-	elseif classFileName == 'MONK' then
-		return {
-			119611, -- Renewing Mist
-			227345, -- Enveloping Mist
-		}
-	end
-	return {}
-end
-
 local function getCurrentUnitHP(unitid)
 	local aCurrentHP = 0
 	local aMaxHP = 0

@@ -243,7 +243,7 @@ function module:OnInitialize()
 	if SUI:IsModuleDisabled(module) then return end
 	local ChatAddons = { 'Chatter', 'BasicChatMods', 'Prat-3.0' }
 	for _, addonName in pairs(ChatAddons) do
-		local enabled = select(4, GetAddOnInfo(addonName))
+		local enabled = select(4, C_AddOns.GetAddOnInfo(addonName))
 		if enabled then
 			SUI:Print('Chat module disabling ' .. addonName .. ' Detected')
 			module.override = true

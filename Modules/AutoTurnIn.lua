@@ -1,15 +1,9 @@
 local SUI, L, StdUi = SUI, SUI.L, SUI.StdUi
 ---@class SUI.Module.AutoTurnIn : SUI.Module
-local module = SUI:NewModule('Module_AutoTurnIn')
+local module = SUI:NewModule('AutoTurnIn')
 module.DisplayName = L['Auto turn in']
 module.description = 'Auto accept and turn in quests'
 ----------------------------------------------------------------------------------------------------
-local SelectAvailableQuest = SelectAvailableQuest
-local SelectActiveQuest = SelectActiveQuest
-local GetGossipActiveQuests = C_GossipInfo.GetActiveQuests
-local SelectGossipOption = C_GossipInfo.SelectOption
-local GetGossipAvailableQuests = C_GossipInfo.GetAvailableQuests
-local GetGossipOptions = C_GossipInfo.GetOptions
 local DB ---@type AutoTurnInDB
 local GlobalDB ---@type AutoTurnInGlobalDB
 local Blacklist = {
@@ -329,8 +323,8 @@ end
 function module:EquipItem(ItemToEquip)
 	if InCombatLockdown() then return end
 
-	local EquipItemName = GetItemInfo(ItemToEquip)
-	local EquipILvl = GetDetailedItemLevelInfo(ItemToEquip)
+	local EquipItemName = C_Item.GetItemInfo(ItemToEquip)
+	local EquipILvl = C_Item.GetDetailedItemLevelInfo(ItemToEquip)
 	local ItemFound = false
 
 	-- Make sure it is in the bags
@@ -339,8 +333,8 @@ function module:EquipItem(ItemToEquip)
 		for slot = 1, GetContainerNumSlots(bag), 1 do
 			local link = GetContainerItemLink(bag, slot)
 			if link then
-				local slotItemName = GetItemInfo(link)
-				local SlotILvl = GetDetailedItemLevelInfo(link)
+				local slotItemName = C_Item.GetItemInfo(link)
+				local SlotILvl = C_Item.GetDetailedItemLevelInfo(link)
 				if (slotItemName == EquipItemName) and (SlotILvl == EquipILvl) then
 					if IsMerchantOpen then
 						SUI:Print(L['Unable to equip'] .. ' ' .. link)
@@ -403,7 +397,7 @@ function module.QUEST_COMPLETE()
 		local link = GetQuestItemLink('choice', i)
 		debug(link)
 		if link == nil then return end
-		local itemName, _, _, _, _, _, _, _, itemEquipLoc, _, itemSellPrice = GetItemInfo(link)
+		local itemName, _, _, _, _, _, _, _, itemEquipLoc, _, itemSellPrice = C_Item.GetItemInfo(link)
 		local QuestItemTrueiLVL = SUI:GetiLVL(link) or 0
 
 		-- Check the items value
@@ -492,7 +486,8 @@ function module.QUEST_COMPLETE()
 end
 
 function module:GetItemAmount(isCurrency, item)
-	local amount = isCurrency and select(2, GetCurrencyInfo(item)) or GetItemCount(item, nil, true)
+	local currency = C_CurrencyInfo.GetCurrencyInfo(item)
+	local amount = isCurrency and (currency.quantity or C_Item.GetItemCount(item, nil, true))
 	return amount and amount or 0
 end
 
@@ -728,7 +723,7 @@ function module.QUEST_GREETING()
 	debug(numAvailableQuests)
 	for i = 1, numActiveQuests do
 		local isComplete = select(2, GetActiveTitle(i))
-		if isComplete then SelectActiveQuest(i) end
+		if isComplete then C_GossipInfo.SelectActiveQuest(i) end
 	end
 
 	for i = 1, numAvailableQuests do
@@ -741,11 +736,11 @@ function module.QUEST_GREETING()
 			if (trivialORAllowed and isRepeatableORAllowed) and (not module.Blacklist.isBlacklisted(questID)) and questID ~= 0 then
 				debug('selecting ' .. i .. ' questId ' .. questID)
 				---@diagnostic disable-next-line: redundant-parameter
-				SelectAvailableQuest(i)
+				C_GossipInfo.SelectAvailableQuest(i)
 			end
 		else
 			---@diagnostic disable-next-line: redundant-parameter
-			SelectAvailableQuest(i)
+			C_GossipInfo.SelectAvailableQuest(i)
 		end
 	end
 end
@@ -753,11 +748,11 @@ end
 function module.GOSSIP_SHOW()
 	if (not DB.AutoGossip) or (IsAltKeyDown()) then return end
 
-	module:VarArgForActiveQuests(GetGossipActiveQuests())
-	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
+	module:VarArgForActiveQuests(C_GossipInfo.GetActiveQuests())
+	module:VarArgForAvailableQuests(C_GossipInfo.GetAvailableQuests())
 
 	debug('------ [Debugging Gossip] ------')
-	local options = GetGossipOptions()
+	local options = C_GossipInfo.GetOptions()
 	debug('Number of Options ' .. #options)
 	for _, gossip in pairs(options) do
 		debug('---Start Option Info---')
@@ -793,15 +788,15 @@ function module.GOSSIP_SHOW()
 			end
 			TempBlackList[gossip.name] = true
 			debug(gossip.name .. '---BLACKLISTED')
-			SelectGossipOption(gossip.gossipOptionID)
+			C_GossipInfo.SelectOption(gossip.gossipOptionID)
 
 			if DB.ChatText then SUI:Print('Selecting: ' .. gossip.name) end
 			return
 		end
 	end
 
-	module:VarArgForActiveQuests(GetGossipActiveQuests())
-	module:VarArgForAvailableQuests(GetGossipAvailableQuests())
+	module:VarArgForActiveQuests(C_GossipInfo.GetActiveQuests())
+	module:VarArgForAvailableQuests(C_GossipInfo.GetAvailableQuests())
 end
 
 function module.QUEST_PROGRESS()
@@ -827,6 +822,15 @@ function module:OnEnable()
 		lastEvent = event
 
 		local QuestID = GetQuestID()
+		if QuestID ~= 0 and C_CampaignInfo then
+			local CampaignId = C_CampaignInfo.GetCampaignID(QuestID)
+			debug(C_CampaignInfo.GetCurrentChapterID(CampaignId))
+			debug(C_CampaignInfo.IsCampaignQuest(QuestID))
+			if C_CampaignInfo.IsCampaignQuest(QuestID) and not DB.DoCampainQuests and C_CampaignInfo.GetCurrentChapterID(CampaignId) ~= nil then
+				SUI:Print(L['Current quest is a campaign quest, pausing AutoTurnIn'])
+				return
+			end
+		end
 
 		if IsAltKeyDown() then
 			SUI:Print('Canceling Override key held disabled')
@@ -860,6 +864,68 @@ function module:OnEnable()
 	ATI_Container:RegisterEvent('QUEST_COMPLETE') -- quest turn in screen
 	ATI_Container:RegisterEvent('MERCHANT_SHOW')
 	ATI_Container:RegisterEvent('MERCHANT_CLOSED')
+
+	local IsCollapsed = true
+
+	for _, v in ipairs({ 'QuestFrame', 'GossipFrame' }) do
+		local OptionsPopdown = StdUi:Panel(_G[v], 330, 20)
+		OptionsPopdown:SetScale(0.95)
+		OptionsPopdown:SetPoint('TOP', _G[v], 'BOTTOM', 0, -2)
+		OptionsPopdown.title = StdUi:Label(OptionsPopdown, '|cffffffffSpartan|cffe21f1fUI|r AutoTurnIn', 12)
+		OptionsPopdown.title:SetPoint('CENTER')
+
+		-- OptionsPopdown.CloseButton = StdUi:Button(OptionsPopdown, 15, 15, 'X')
+		OptionsPopdown.minimizeButton = StdUi:Button(OptionsPopdown, 15, 15, '-')
+
+		StdUi:GlueRight(OptionsPopdown.minimizeButton, OptionsPopdown, -5, 0, true)
+		-- StdUi:GlueRight(OptionsPopdown.CloseButton, OptionsPopdown, -5, 0, true)
+		-- StdUi:GlueLeft(OptionsPopdown.minimizeButton, OptionsPopdown.CloseButton, -2, 0)
+
+		OptionsPopdown.minimizeButton:SetScript('OnClick', function()
+			if OptionsPopdown.Panel:IsVisible() then
+				OptionsPopdown.Panel:Hide()
+				IsCollapsed = true
+			else
+				OptionsPopdown.Panel:Show()
+				IsCollapsed = false
+			end
+		end)
+		OptionsPopdown:HookScript('OnShow', function()
+			if IsCollapsed then
+				OptionsPopdown.Panel:Hide()
+			else
+				OptionsPopdown.Panel:Show()
+			end
+		end)
+
+		local Panel = StdUi:Panel(OptionsPopdown, OptionsPopdown:GetWidth(), 62)
+		Panel:SetPoint('TOP', OptionsPopdown, 'BOTTOM', 0, -1)
+		Panel:Hide()
+		local options = {}
+		options.DoCampainQuests = StdUi:Checkbox(Panel, L['Accept/Complete Campaign Quests'], nil, 20)
+		options.AcceptGeneralQuests = StdUi:Checkbox(Panel, L['Accept quests'], nil, 20)
+		options.TurnInEnabled = StdUi:Checkbox(Panel, L['Turn in completed quests'], nil, 20)
+		options.AutoGossip = StdUi:Checkbox(Panel, L['Auto gossip'], nil, 20)
+		options.AutoGossipSafeMode = StdUi:Checkbox(Panel, L['Auto gossip safe mode'], nil, 20)
+		for setting, Checkbox in pairs(options) do
+			Checkbox:SetChecked(DB[setting])
+			Checkbox:HookScript('OnClick', function()
+				DB[setting] = Checkbox:GetChecked()
+				if Checkbox:GetChecked() then OnEvent(nil, lastEvent) end
+			end)
+		end
+
+		StdUi:GlueTop(options.DoCampainQuests, Panel, 5, -2, 'LEFT')
+
+		StdUi:GlueBelow(options.AcceptGeneralQuests, options.DoCampainQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.TurnInEnabled, options.AcceptGeneralQuests, 0, 0)
+
+		StdUi:GlueBelow(options.AutoGossip, options.AcceptGeneralQuests, 0, 2, 'LEFT')
+		StdUi:GlueRight(options.AutoGossipSafeMode, options.AutoGossip, 0, 0)
+
+		OptionsPopdown.Panel = Panel
+		OptionsPopdown.Panel.options = options
+	end
 end
 
 function module:OnDisable()

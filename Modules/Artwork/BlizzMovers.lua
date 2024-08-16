@@ -80,7 +80,7 @@ local function TalkingHead()
 			TalkingHeadFrame:SetPoint('CENTER', THUIHolder, 'CENTER', 0, 0)
 		end)
 	end
-	if IsAddOnLoaded('Blizzard_TalkingHeadUI') then
+	if C_AddOns.IsAddOnLoaded('Blizzard_TalkingHeadUI') then
 		SetupTalkingHead()
 	else
 		--We want the mover to be available immediately, so we load it ourselves
@@ -207,7 +207,7 @@ local function WidgetPowerBarContainer()
 		hooksecurefunc(_G['UIWidgetPowerBarContainerFrame'], 'SetPoint', ResetPosition)
 	end
 
-	if not IsAddOnLoaded('SimplePowerBar') then
+	if not C_AddOns.IsAddOnLoaded('SimplePowerBar') then
 		AttachToHolder(_G['PlayerPowerBarAlt'], holder)
 		hooksecurefunc(_G['PlayerPowerBarAlt'], 'SetPoint', ResetPosition)
 	end

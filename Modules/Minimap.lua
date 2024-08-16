@@ -366,7 +366,7 @@ function module:SetupButton(btn, force)
 			if not UserSettings.SUIMapChangesActive then table.insert(IgnoredFrames, self:GetName()) end
 		end)
 		btn:HookScript('OnShow', function(self, event, ...)
-			for i = 1, table.getn(IgnoredFrames) do
+			for i = 1, #IgnoredFrames do
 				if IgnoredFrames[i] == btn:GetName() then table.remove(IgnoredFrames, i) end
 			end
 		end)
