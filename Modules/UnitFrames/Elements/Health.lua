@@ -125,8 +125,7 @@ local function Update(frame, settings)
 	element.bg:SetTexture(UF:FindStatusBarTexture(DB.texture))
 	element.bg:SetVertexColor(unpack(DB.bg.color or { 1, 1, 1, 0.2 }))
 
-	element.TextElements = {}
-	for i, TextElement in pairs(element.TextElements) do
+	for i, TextElement in pairs(element.TextElements or {}) do
 		local key = DB.text[i]
 		TextElement:SetJustifyH(key.SetJustifyH)
 		TextElement:SetJustifyV(key.SetJustifyV)

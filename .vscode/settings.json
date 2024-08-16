@@ -401,7 +401,8 @@
     "MAX_PARTY_MEMBERS",
     "MAX_ARENA_ENEMIES",
     "RAID_CLASS_COLORS",
-    "ShowUIPanel"
+    "ShowUIPanel",
+    "MAX_RAID_MEMBERS"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

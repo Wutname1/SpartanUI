@@ -18,10 +18,11 @@ local function Options()
 				order = 0.1,
 				desc = L['Is it getting hot in here?'],
 				get = function(info)
-					return not SUI.DB.Styles.Fel.Minimap.engulfed
+					return not (SUI.DB.Styles.Fel and SUI.DB.Styles.Fel.Minimap and SUI.DB.Styles.Fel.Minimap.engulfed)
 				end,
 				set = function(info, val)
-					print(val)
+					if not SUI.DB.Styles.Fel then SUI.DB.Styles.Fel = {} end
+					if not SUI.DB.Styles.Fel.Minimap then SUI.DB.Styles.Fel.Minimap = {} end
 					SUI.DB.Styles.Fel.Minimap.engulfed = not val or false
 					module:MiniMap()
 				end,
@@ -165,7 +166,7 @@ end
 function module:MiniMap()
 	local enfulfed = {
 		texture = 'Interface\\AddOns\\SpartanUI\\Themes\\Fel\\Images\\Minimap-Engulfed',
-		size = { 220, 220 },
+		size = { 250, 250 },
 		position = 'CENTER,Minimap,CENTER,5,23',
 	}
 	local calmed = {
@@ -174,10 +175,13 @@ function module:MiniMap()
 		position = 'CENTER,Minimap,CENTER,3,-1',
 	}
 
+	if not SUI.DB.Styles.Fel then SUI.DB.Styles.Fel = {} end
+	if not SUI.DB.Styles.Fel.Minimap then SUI.DB.Styles.Fel.Minimap = {} end
+
 	if SUI.DB.Styles.Fel.Minimap.engulfed then
-		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, enfulfed, true)
+		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG or {}, enfulfed, true)
 	else
-		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG, calmed, true)
+		SUI.DB.Styles.Fel.Minimap.BG = SUI:MergeData(SUI.DB.Styles.Fel.Minimap.BG or {}, calmed, true)
 	end
 	SUI:GetModule('Module_Minimap'):update(true)
 end
