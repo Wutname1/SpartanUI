@@ -1,4 +1,5 @@
 local UF = SUI.UF
+local L = SUI.L
 -- local AuraFilter = UF.AuraFilter
 
 -- function UF:AuraBars_UpdateBar(bar)
@@ -91,29 +92,135 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
-	local ElementSettings = UF.CurrentSettings[unitName].elements.AuraWatch
+	local ElementSettings = UF.CurrentSettings[unitName].elements.AuraBars
 	local function OptUpdate(option, val)
-		--Update memory
 		UF.CurrentSettings[unitName].elements.AuraBars[option] = val
-		--Update the DB
 		UF.DB.UserSettings[UF.DB.Style][unitName].elements.AuraBars[option] = val
-		--Update the screen
 		UF.Unit[unitName]:ElementUpdate('AuraBars')
 	end
-	--local DB = UF.CurrentSettings[unitName].elements.AuraBars
 
 	OptionSet.args.Layout = {
-		name = '',
+		name = L['Layout'],
 		type = 'group',
 		order = 100,
 		inline = true,
-		args = {},
+		args = {
+			growth = {
+				name = L['Growth Direction'],
+				desc = L['Choose the direction in which aura bars grow'],
+				type = 'select',
+				order = 1,
+				values = {
+					UP = L['Up'],
+					DOWN = L['Down'],
+				},
+				get = function()
+					return ElementSettings.growth
+				end,
+				set = function(_, val)
+					OptUpdate('growth', val)
+				end,
+			},
+			maxBars = {
+				name = L['Maximum Bars'],
+				desc = L['Set the maximum number of aura bars to display'],
+				type = 'range',
+				order = 2,
+				min = 1,
+				max = 40,
+				step = 1,
+				get = function()
+					return ElementSettings.maxBars
+				end,
+				set = function(_, val)
+					OptUpdate('maxBars', val)
+				end,
+			},
+			barSpacing = {
+				name = L['Bar Spacing'],
+				desc = L['Set the space between aura bars'],
+				type = 'range',
+				order = 3,
+				min = 0,
+				max = 20,
+				step = 1,
+				get = function()
+					return ElementSettings.barSpacing
+				end,
+				set = function(_, val)
+					OptUpdate('barSpacing', val)
+				end,
+			},
+		},
 	}
-	OptionSet.args.Filters.args.NOTFINISHED = {
-		name = SUI.L['The below options are not finished, and may not work at all or be wiped in the next update. Use at your own risk.'],
-		type = 'description',
-		fontSize = 'medium',
-		order = 0.1,
+
+	OptionSet.args.Appearance = {
+		name = L['Appearance'],
+		type = 'group',
+		order = 200,
+		inline = true,
+		args = {
+			fgalpha = {
+				name = L['Foreground Alpha'],
+				desc = L['Set the opacity of the aura bar foreground'],
+				type = 'range',
+				order = 1,
+				min = 0,
+				max = 1,
+				step = 0.01,
+				get = function()
+					return ElementSettings.fgalpha
+				end,
+				set = function(_, val)
+					OptUpdate('fgalpha', val)
+				end,
+			},
+			bgalpha = {
+				name = L['Background Alpha'],
+				desc = L['Set the opacity of the aura bar background'],
+				type = 'range',
+				order = 2,
+				min = 0,
+				max = 1,
+				step = 0.01,
+				get = function()
+					return ElementSettings.bgalpha
+				end,
+				set = function(_, val)
+					OptUpdate('bgalpha', val)
+				end,
+			},
+			spellNameSize = {
+				name = L['Spell Name Font Size'],
+				desc = L['Set the font size for spell names on aura bars'],
+				type = 'range',
+				order = 3,
+				min = 6,
+				max = 20,
+				step = 1,
+				get = function()
+					return ElementSettings.spellNameSize
+				end,
+				set = function(_, val)
+					OptUpdate('spellNameSize', val)
+				end,
+			},
+			spellTimeSize = {
+				name = L['Spell Time Font Size'],
+				desc = L['Set the font size for spell durations on aura bars'],
+				type = 'range',
+				order = 4,
+				min = 6,
+				max = 20,
+				step = 1,
+				get = function()
+					return ElementSettings.spellTimeSize
+				end,
+				set = function(_, val)
+					OptUpdate('spellTimeSize', val)
+				end,
+			},
+		},
 	}
 end
 

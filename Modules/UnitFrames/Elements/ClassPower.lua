@@ -44,22 +44,111 @@ end
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
 local function Options(unitName, OptionSet)
+	local ElementSettings = UF.CurrentSettings[unitName].elements.ClassPower
+	local function OptUpdate(option, val)
+		UF.CurrentSettings[unitName].elements.ClassPower[option] = val
+		UF.DB.UserSettings[UF.DB.Style][unitName].elements.ClassPower[option] = val
+		UF.Unit[unitName]:ElementUpdate('ClassPower')
+	end
+
 	OptionSet.args.texture = {
 		type = 'select',
 		dialogControl = 'LSM30_Statusbar',
 		order = 2,
 		width = 'double',
-		name = 'Bar Texture',
+		name = L['Bar Texture'],
+		desc = L['Select the texture used for the class power bars'],
 		values = AceGUIWidgetLSMlists.statusbar,
+		get = function()
+			return ElementSettings.texture
+		end,
+		set = function(_, val)
+			OptUpdate('texture', val)
+		end,
 	}
-	OptionSet.args.display.args.size = nil
+
 	OptionSet.args.display.args.height = {
 		type = 'range',
 		order = 1,
 		name = L['Height'],
+		desc = L['Set the height of the class power bars'],
 		min = 1,
 		max = 100,
 		step = 1,
+		get = function()
+			return ElementSettings.height
+		end,
+		set = function(_, val)
+			OptUpdate('height', val)
+		end,
+	}
+
+	OptionSet.args.display.args.width = {
+		type = 'range',
+		order = 2,
+		name = L['Width'],
+		desc = L['Set the width of individual class power bars'],
+		min = 1,
+		max = 100,
+		step = 1,
+		get = function()
+			return ElementSettings.width
+		end,
+		set = function(_, val)
+			OptUpdate('width', val)
+		end,
+	}
+
+	OptionSet.args.display.args.spacing = {
+		type = 'range',
+		order = 3,
+		name = L['Spacing'],
+		desc = L['Set the spacing between class power bars'],
+		min = 0,
+		max = 20,
+		step = 1,
+		get = function()
+			return ElementSettings.spacing
+		end,
+		set = function(_, val)
+			OptUpdate('spacing', val)
+		end,
+	}
+
+	OptionSet.args.colors = {
+		type = 'group',
+		order = 4,
+		name = L['Colors'],
+		inline = true,
+		args = {
+			useClassColors = {
+				type = 'toggle',
+				order = 1,
+				name = L['Use Class Colors'],
+				desc = L['Use class-specific colors for power bars'],
+				get = function()
+					return ElementSettings.useClassColors
+				end,
+				set = function(_, val)
+					OptUpdate('useClassColors', val)
+				end,
+			},
+			customColor = {
+				type = 'color',
+				order = 2,
+				name = L['Custom Color'],
+				desc = L['Set a custom color for power bars'],
+				disabled = function()
+					return ElementSettings.useClassColors
+				end,
+				get = function()
+					return unpack(ElementSettings.customColor or { 1, 1, 1 })
+				end,
+				set = function(_, r, g, b)
+					OptUpdate('customColor', { r, g, b })
+				end,
+			},
+		},
 	}
 end
 

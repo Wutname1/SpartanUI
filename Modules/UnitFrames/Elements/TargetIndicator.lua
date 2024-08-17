@@ -34,25 +34,10 @@ local function Update(frame, settings)
 	end
 end
 
----@param unitName string
----@param OptionSet AceConfig.OptionsTable
----@param DB? table
-local function Options(unitName, OptionSet, DB)
-	local function OptUpdate(option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].elements.TargetIndicator[option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.TargetIndicator[option] = val
-		--Update the screen
-		UF.Unit:Get(unitName):ElementUpdate('TargetIndicator')
-	end
-	--local DB = UF.CurrentSettings[unitName].elements.TargetIndicator
-end
-
 local Settings = {
 	config = {
 		NoBulkUpdate = false,
 	},
 }
 
-UF.Elements:Register('TargetIndicator', Build, Update, Options, Settings)
+UF.Elements:Register('TargetIndicator', Build, Update, _, Settings)
