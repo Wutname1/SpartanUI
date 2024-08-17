@@ -54,12 +54,6 @@ local Settings = {
 		x = 0,
 		y = 40,
 	},
-	friendly = {
-		display = true,
-		alertonDamage = false,
-		damageThreshold = 10000,
-	},
-	enemy = {},
 	config = {
 		type = 'Indicator',
 		DisplayName = 'PVP Role Indicator',

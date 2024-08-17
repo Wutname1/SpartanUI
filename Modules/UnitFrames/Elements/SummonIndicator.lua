@@ -7,26 +7,6 @@ local function Build(frame, DB)
 	frame.SummonIndicator = SummonIndicator
 end
 
----@param frame table
-local function Update(frame)
-	-- local element = frame.SummonIndicator
-	-- local DB = element.DB
-end
-
----@param unitName string
----@param OptionSet AceConfig.OptionsTable
-local function Options(unitName, OptionSet)
-	local function OptUpdate(option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].elements.SummonIndicator[option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.SummonIndicator[option] = val
-		--Update the screen
-		UF.frames[unitName]:ElementUpdate('SummonIndicator')
-	end
-	--local DB = UF.CurrentSettings[unitName].elements.SummonIndicator
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	config = {
@@ -36,4 +16,4 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('SummonIndicator', Build, Update, Options, Settings)
+UF.Elements:Register('SummonIndicator', Build, _, _, Settings)

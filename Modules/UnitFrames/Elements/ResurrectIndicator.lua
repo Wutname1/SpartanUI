@@ -14,20 +14,6 @@ local function Update(frame)
 	element:SetSize(DB.size, DB.size)
 end
 
----@param unitName string
----@param OptionSet AceConfig.OptionsTable
-local function Options(unitName, OptionSet)
-	local function OptUpdate(option, val)
-		--Update memory
-		UF.CurrentSettings[unitName].elements.ResurrectIndicator[option] = val
-		--Update the DB
-		UF.DB.UserSettings[UF.DB.Style][unitName].elements.ResurrectIndicator[option] = val
-		--Update the screen
-		UF.frames[unitName]:ElementUpdate('ResurrectIndicator')
-	end
-	--local DB = UF.CurrentSettings[unitName].elements.ResurrectIndicator
-end
-
 ---@type SUI.UF.Elements.Settings
 local Settings = {
 	enabled = true,
@@ -38,4 +24,4 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('ResurrectIndicator', Build, Update, Options, Settings)
+UF.Elements:Register('ResurrectIndicator', Build, Update, nil, Settings)

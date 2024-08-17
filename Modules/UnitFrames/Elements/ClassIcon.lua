@@ -1,4 +1,5 @@
 local UF = SUI.UF
+local L = SUI.L
 
 ---@param frame table
 ---@param DB table
@@ -49,7 +50,46 @@ end
 
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
-local function ElementOptions(unitName, OptionSet) end
+local function ElementOptions(unitName, OptionSet)
+	local ElementSettings = UF.CurrentSettings[unitName].elements.ClassIcon
+	local function OptUpdate(option, val)
+		UF.CurrentSettings[unitName].elements.ClassIcon[option] = val
+		UF.DB.UserSettings[UF.DB.Style][unitName].elements.ClassIcon[option] = val
+		UF.Unit[unitName]:ElementUpdate('ClassIcon')
+	end
+
+	OptionSet.args.VisibleOn = {
+		name = L['Visibility'],
+		desc = L['Set when the class icon should be visible'],
+		type = 'select',
+		order = 1,
+		values = {
+			all = L['Always'],
+			hostile = L['Hostile Units'],
+			friendly = L['Friendly Units'],
+			PlayerControlled = L['Player Controlled Units'],
+		},
+		get = function()
+			return ElementSettings.VisibleOn
+		end,
+		set = function(_, val)
+			OptUpdate('VisibleOn', val)
+		end,
+	}
+
+	OptionSet.args.shadow = {
+		name = L['Show Shadow'],
+		desc = L['Toggle the visibility of the icon shadow'],
+		type = 'toggle',
+		order = 3,
+		get = function()
+			return ElementSettings.shadow
+		end,
+		set = function(_, val)
+			OptUpdate('shadow', val)
+		end,
+	}
+end
 
 ---@type SUI.UF.Elements.Settings
 local Settings = {
