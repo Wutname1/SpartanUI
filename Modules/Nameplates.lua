@@ -469,6 +469,10 @@ local NameplateCallback = function(self, event, unit)
 				self.widgetContainer:SetParent(self)
 				self.widgetContainer:ClearAllPoints()
 				self.widgetContainer:SetPoint('TOP', self, 'BOTTOM')
+
+				for _, widget in pairs(self.widgetContainer.widgetFrames) do
+					if widget then SUI.Skins.SkinWidgets(widget) end
+				end
 			end
 			return
 		end

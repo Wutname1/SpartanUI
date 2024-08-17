@@ -252,7 +252,6 @@ function module.RemoveAllTextures(frame)
 	end
 end
 
----comment
 ---@param frame FrameExpanded
 ---@param appearanceMode? AppearanceMode
 function module.SetTemplate(frame, appearanceMode)
@@ -266,23 +265,27 @@ function module.SetTemplate(frame, appearanceMode)
 	local edgeSize = 1
 	if frame.appearanceMode == AppearanceMode.NoBackdrop then
 		frame:SetBackdrop(nil)
+	elseif frame.appearanceMode == AppearanceMode.NoBorder then
+		frame:SetBackdrop({
+			bgFile = Settings.edgeFile,
+		})
 	else
 		frame:SetBackdrop({
 			bgFile = Settings.edgeFile,
 			edgeFile = Settings.edgeFile,
 			edgeSize = edgeSize,
 		})
-
-		if frame.appearanceMode == AppearanceMode.Dark then
-			frame:SetBackdropColor(unpack(Settings.BackdropColorDark))
-		elseif frame.appearanceMode == AppearanceMode.Light then
-			frame:SetBackdropColor(unpack(Settings.BackdropColorLight))
-		else
-			frame:SetBackdropColor(unpack(Settings.BackdropColor))
-		end
 	end
 
-	frame:SetBackdropBorderColor(unpack(Settings.MutedClassColor))
+	if frame.appearanceMode == AppearanceMode.Dark then
+		frame:SetBackdropColor(unpack(Settings.BackdropColorDark))
+	elseif frame.appearanceMode == AppearanceMode.Light then
+		frame:SetBackdropColor(unpack(Settings.BackdropColorLight))
+	else
+		frame:SetBackdropColor(unpack(Settings.BackdropColor))
+	end
+
+	if frame.appearanceMode ~= AppearanceMode.NoBorder then frame:SetBackdropBorderColor(unpack(Settings.MutedClassColor)) end
 end
 
 module.Objects = {}
@@ -382,14 +385,42 @@ function module.Objects.StatusBar(statusBarFrame)
 	local bar = statusBarFrame.Bar
 	if not bar or bar.backdrop then return end
 
-	module.SetTemplate(bar)
+	-- Create a background frame
+	local bgFrame = CreateFrame('Frame', nil, bar)
+	bgFrame:SetFrameLevel(bar:GetFrameLevel() - 1) -- Set background frame level lower than the bar
+	bgFrame:SetAllPoints(bar)
 
+	-- Create a border frame
+	local borderFrame = CreateFrame('Frame', nil, bar)
+	borderFrame:SetFrameLevel(bar:GetFrameLevel() + 1) -- Set border frame level higher than the bar
+	borderFrame:SetAllPoints(bar)
+
+	-- Set up the background frame
+	module.SetTemplate(bgFrame, 'NoBackdrop')
+	bgFrame:SetBackdrop({
+		bgFile = Settings.edgeFile,
+	})
+	bgFrame:SetBackdropColor(unpack(Settings.BackdropColor))
+
+	-- Set up the border frame
+	module.SetTemplate(borderFrame, 'NoBorder')
+	borderFrame:SetBackdrop({
+		edgeFile = Settings.edgeFile,
+		edgeSize = 1,
+	})
+	borderFrame:SetBackdropBorderColor(unpack(Settings.MutedClassColor))
+
+	-- Hide default textures
 	if bar.BGLeft then bar.BGLeft:SetAlpha(0) end
 	if bar.BGRight then bar.BGRight:SetAlpha(0) end
 	if bar.BGCenter then bar.BGCenter:SetAlpha(0) end
 	if bar.BorderLeft then bar.BorderLeft:SetAlpha(0) end
 	if bar.BorderRight then bar.BorderRight:SetAlpha(0) end
 	if bar.BorderCenter then bar.BorderCenter:SetAlpha(0) end
+
+	-- Store references
+	bar.bgFrame = bgFrame
+	bar.borderFrame = borderFrame
 end
 
 ---Skins a object
@@ -434,6 +465,7 @@ end
 --Skins a frame and all its children
 ---@param widget Frame
 function module.SkinWidgets(widget)
+	if not widget or not widget.widgetType then return end
 	---@diagnostic disable-next-line: undefined-field
 	local widgetFunc = module.Objects[GetWidgetVisualizationTypeKey(widget.widgetType)]
 	if widgetFunc then widgetFunc(widget) end
