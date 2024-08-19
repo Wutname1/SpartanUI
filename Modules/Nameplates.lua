@@ -466,13 +466,26 @@ local NameplateCallback = function(self, event, unit)
 
 			self.widgetContainer = self.blizzPlate.WidgetContainer
 			if self.widgetContainer then
+				self.Name:Hide()
 				self.widgetContainer:SetParent(self)
 				self.widgetContainer:ClearAllPoints()
 				self.widgetContainer:SetPoint('TOP', self, 'BOTTOM')
 
-				for _, widget in pairs(self.widgetContainer.widgetFrames) do
-					if widget then SUI.Skins.SkinWidgets(widget) end
+				local function skinWidgets()
+					local widgetCount = 0
+					for _, widget in pairs(self.widgetContainer.widgetFrames) do
+						if widget then
+							SUI.Skins.SkinWidgets(widget)
+							widgetCount = widgetCount + 1
+						end
+					end
+
+					if widgetCount == 0 then
+						-- If no widgets were found, try again after a short delay
+						C_Timer.After(0.1, skinWidgets)
+					end
 				end
+				skinWidgets()
 			end
 			return
 		end
