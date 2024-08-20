@@ -1,6 +1,6 @@
 ---@class SUI
 local SUI = SUI
-local L, MoveIt = SUI.L, SUI.MoveIt
+local MoveIt = SUI.MoveIt
 local module = SUI:NewModule('Minimap') ---@class SUI.Module.Minimap : SUI.Module
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
 module.Core = true
@@ -38,8 +38,7 @@ local BaseSettings = {
 			enabled = true,
 			scale = 1,
 			position = 'TOP,Minimap,BOTTOM,0,-1',
-			TextColor = { 1, 0.82, 0, 1 },
-			ShadowColor = { 0, 0, 0, 1 },
+			color = { 1, 0.82, 0, 1 },
 		},
 
 		-- Coordinates
@@ -48,8 +47,7 @@ local BaseSettings = {
 			scale = 1,
 			size = { 80, 12 },
 			position = 'BOTTOM,BorderTop,BOTTOM,-5,3',
-			TextColor = { 1, 1, 1, 1 },
-			ShadowColor = { 0, 0, 0, 0 },
+			color = { 1, 1, 1, 1 },
 			format = '%.1f, %.1f',
 		},
 
@@ -76,11 +74,6 @@ local BaseSettings = {
 			scale = 1,
 			format = '%I:%M %p',
 			color = { 1, 1, 1, 1 },
-			font = {
-				family = 'Fonts\\FRIZQT__.TTF',
-				size = 10,
-				style = 'OUTLINE',
-			},
 		},
 
 		-- Tracking Icon
@@ -157,44 +150,27 @@ function module:UpdateSettings()
 	-- Apply theme settings if available
 	local currentStyle = SUI.DB.Artwork.Style
 	if Registry[currentStyle] then module.Settings = SUI:MergeData(module.Settings, Registry[currentStyle].settings, true) end
+	module.BaseOpt = SUI:CopyData(module.BaseOpt, module.Settings)
 
 	-- Apply user custom settings
 	module.Settings = SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true)
 end
 
 function module:ModifyMinimapLayout()
-	-- Set size of Minimap
-	if module.Settings.size then Minimap:SetSize(unpack(module.Settings.size)) end
-
-	-- Set size of SUIMinimap (our holder)
-	SUIMinimap:SetSize(Minimap:GetWidth(), (Minimap:GetHeight() + MinimapCluster.BorderTop:GetHeight() + 15))
+	module:UpdateMinimapSize()
+	module:UpdateMinimapShape()
 
 	-- Modify basic Minimap properties
-	Minimap:SetMaskTexture(module.Settings.shape == 'square' and 'Interface\\BUTTONS\\WHITE8X8' or 'Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
 	Minimap:SetArchBlobRingScalar(0)
 	Minimap:SetQuestBlobRingScalar(0)
 
 	-- Modify MinimapCluster
 	MinimapCluster:EnableMouse(false)
 
-	-- Setup Minimap overlay
-	if not Minimap.overlay then
-		Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
-		Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
-		Minimap.overlay:SetAllPoints(Minimap)
-		Minimap.overlay:SetBlendMode('ADD')
-	end
-	Minimap.overlay:SetShown(module.Settings.shape == 'square')
-
 	-- Modify MinimapBackdrop
 	MinimapBackdrop:ClearAllPoints()
 	MinimapBackdrop:SetPoint('CENTER', Minimap, 'CENTER', -10, -24)
 	MinimapBackdrop:SetFrameLevel(Minimap:GetFrameLevel())
-
-	-- Setup GetMinimapShape function
-	function GetMinimapShape()
-		return module.Settings.shape == 'square' and 'SQUARE' or 'ROUND'
-	end
 
 	MinimapCompassTexture:Hide()
 
@@ -211,10 +187,33 @@ function module:ModifyMinimapLayout()
 	-- Setup rotation if needed
 	if MinimapCluster.SetRotateMinimap then
 		if module.Settings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
+	end
+end
 
-		-- hooksecurefunc(MinimapCluster, 'SetRotateMinimap', function()
-		-- 	if module.Settings.rotate then C_CVar.SetCVar('rotateMinimap', 1) end
-		-- end)
+function module:UpdateMinimapSize()
+	-- Set size of Minimap
+	if module.Settings.size then Minimap:SetSize(unpack(module.Settings.size)) end
+
+	-- Set size of SUIMinimap (our holder)
+	SUIMinimap:SetSize(Minimap:GetWidth(), (Minimap:GetHeight() + MinimapCluster.BorderTop:GetHeight() + 15))
+end
+
+function module:UpdateMinimapShape()
+	-- Set Minimap shape
+	Minimap:SetMaskTexture(module.Settings.shape == 'square' and 'Interface\\BUTTONS\\WHITE8X8' or 'Interface\\AddOns\\SpartanUI\\images\\minimap\\circle-overlay')
+
+	-- Setup Minimap overlay
+	if not Minimap.overlay then
+		Minimap.overlay = Minimap:CreateTexture(nil, 'OVERLAY')
+		Minimap.overlay:SetTexture('Interface\\AddOns\\SpartanUI\\images\\minimap\\square-overlay')
+		Minimap.overlay:SetAllPoints(Minimap)
+		Minimap.overlay:SetBlendMode('ADD')
+	end
+	Minimap.overlay:SetShown(module.Settings.shape == 'square')
+
+	-- Setup GetMinimapShape function
+	function GetMinimapShape()
+		return module.Settings.shape == 'square' and 'SQUARE' or 'ROUND'
 	end
 end
 
@@ -291,8 +290,8 @@ function module:SetupZoneText()
 		module:PositionItem(Minimap.ZoneText, module.Settings.elements.ZoneText.position)
 		Minimap.ZoneText:SetJustifyH('CENTER')
 		Minimap.ZoneText:SetJustifyV('MIDDLE')
-		Minimap.ZoneText:SetTextColor(unpack(module.Settings.elements.ZoneText.TextColor))
-		Minimap.ZoneText:SetShadowColor(unpack(module.Settings.elements.ZoneText.ShadowColor))
+		Minimap.ZoneText:SetTextColor(unpack(module.Settings.elements.ZoneText.color))
+		Minimap.ZoneText:SetShadowColor(0, 0, 0, 1)
 		Minimap.ZoneText:SetScale(module.Settings.elements.ZoneText.scale)
 		Minimap.ZoneText:Show()
 	elseif Minimap.ZoneText then
@@ -305,8 +304,8 @@ function module:SetupCoords()
 		if not Minimap.coords then Minimap.coords = Minimap:CreateFontString(nil, 'OVERLAY') end
 		SUI.Font:Format(Minimap.coords, 10, 'Minimap')
 		module:PositionItem(Minimap.coords, module.Settings.elements.coords.position)
-		Minimap.coords:SetTextColor(unpack(module.Settings.elements.coords.TextColor))
-		Minimap.coords:SetShadowColor(unpack(module.Settings.elements.coords.ShadowColor))
+		Minimap.coords:SetTextColor(unpack(module.Settings.elements.coords.color))
+		Minimap.coords:SetShadowColor(0, 0, 0, 1)
 		Minimap.coords:SetScale(module.Settings.elements.coords.scale)
 		Minimap.coords:SetSize(unpack(module.Settings.elements.coords.size))
 		Minimap.coords:SetJustifyH('CENTER')
@@ -335,7 +334,7 @@ function module:SetupClock()
 		module:PositionItem(TimeManagerClockButton, module.Settings.elements.clock.position)
 		TimeManagerClockButton:SetScale(module.Settings.elements.clock.scale)
 		TimeManagerClockTicker:SetTextColor(unpack(module.Settings.elements.clock.color))
-		SUI.Font:Format(TimeManagerClockTicker, module.Settings.elements.clock.font.size, 'Minimap')
+		SUI.Font:Format(TimeManagerClockTicker, 10, 'Minimap')
 		TimeManagerClockButton:Show()
 	elseif TimeManagerClockButton then
 		TimeManagerClockButton:Hide()
@@ -393,10 +392,10 @@ function module:SetupExpansionButton()
 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
 
-	ExpansionLandingPageMinimapButton:HookScript('OnShow', function()
-		ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
-		module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
-	end)
+	-- ExpansionLandingPageMinimapButton:HookScript('OnShow', function()
+	-- 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
+	-- 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
+	-- end)
 end
 
 function module:SetupAddonButtons()
@@ -548,6 +547,8 @@ function module:Update(fullUpdate)
 	module:SetupQueueStatus()
 	module:SetupExpansionButton()
 	module:UpdateAddonButtons()
+	module:UpdateMinimapShape()
+	module:UpdateMinimapSize()
 
 	-- If minimap default location is under the minimap setup scripts to move it
 	if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
@@ -689,307 +690,6 @@ function module:OnEnable()
 	module:BuildOptions()
 end
 
--- Options
-function module:BuildOptions()
-	local function GetOption(info)
-		local element = info[#info - 2] -- Changed from #info - 1 to #info - 2 to account for the new 'position' submenu
-		local option = info[#info]
-		return module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element][option] or module.Settings.elements[element][option]
-	end
-
-	local function SetOption(info, value)
-		local element = info[#info - 2] -- Changed from #info - 1 to #info - 2
-		local option = info[#info]
-		if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
-		if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
-		module.DB.customSettings[SUI.DB.Artwork.Style][element][option] = value
-		module:Update(true)
-	end
-
-	local function GetRelativeToValues()
-		local values = {
-			Minimap = L['Minimap'],
-			MinimapCluster = L['Minimap Cluster'],
-			UIParent = L['Screen'],
-			BorderTop = L['Border Top'],
-		}
-
-		-- Add other Minimap elements
-		for elementName, elementSettings in pairs(module.Settings.elements) do
-			if elementSettings.enabled then values[elementName] = L[elementName] or elementName end
-		end
-
-		-- Add special cases
-		local specialCases = {
-			'Tracking',
-			'Calendar',
-			'Coordinates',
-			'Clock',
-			'ZoneText',
-			'MailIcon',
-			'InstanceDifficulty',
-			'QueueStatus',
-		}
-
-		for _, case in ipairs(specialCases) do
-			if not values[case] then values[case] = L[case] or case end
-		end
-
-		return values
-	end
-
-	local function GetPositionOption(info)
-		local element = info[#info - 2]
-		local positionPart = info[#info]
-		print(element)
-		local positionString = module.Settings.elements[element].position
-		print(positionString)
-		if module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element].position then
-			print('usersetting')
-			positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
-			print(positionString)
-		end
-		local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
-		if positionPart == 'point' then
-			return point
-		elseif positionPart == 'relativeTo' then
-			return relativeTo
-		elseif positionPart == 'relativePoint' then
-			return relativePoint
-		elseif positionPart == 'x' then
-			return tonumber(x)
-		elseif positionPart == 'y' then
-			return tonumber(y)
-		end
-	end
-
-	local function SetPositionOption(info, value)
-		local element = info[#info - 2]
-		local positionPart = info[#info]
-		local positionString = module.Settings.elements[element].position
-		if module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element].position then
-			positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
-		end
-		local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
-		if positionPart == 'point' then
-			point = value
-		elseif positionPart == 'relativeTo' then
-			relativeTo = value
-		elseif positionPart == 'relativePoint' then
-			relativePoint = value
-		elseif positionPart == 'x' then
-			x = value
-		elseif positionPart == 'y' then
-			y = value
-		end
-		local newPositionString = string.format('%s,%s,%s,%s,%s', point, relativeTo, relativePoint, x, y)
-		if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
-		if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
-		module.DB.customSettings[SUI.DB.Artwork.Style][element].position = newPositionString
-		module:Update(true)
-	end
-
-	local anchorValues = {
-		TOP = L['Top'],
-		TOPLEFT = L['Top Left'],
-		TOPRIGHT = L['Top Right'],
-		BOTTOM = L['Bottom'],
-		BOTTOMLEFT = L['Bottom Left'],
-		BOTTOMRIGHT = L['Bottom Right'],
-		LEFT = L['Left'],
-		RIGHT = L['Right'],
-		CENTER = L['Center'],
-	}
-
-	local options = {
-		type = 'group',
-		name = L['Minimap'],
-		disabled = function()
-			return SUI:IsModuleDisabled(module)
-		end,
-		childGroups = 'tab',
-		args = {
-			general = {
-				name = L['General'],
-				type = 'group',
-				order = 1,
-				args = {
-					shape = {
-						name = L['Shape'],
-						type = 'select',
-						order = 1,
-						values = {
-							circle = L['Circle'],
-							square = L['Square'],
-						},
-						get = function()
-							return module.Settings.shape
-						end,
-						set = function(_, value)
-							module.DB.customSettings[SUI.DB.Artwork.Style].shape = value
-							module:Update(true)
-						end,
-					},
-					size = {
-						name = L['Size'],
-						type = 'range',
-						order = 2,
-						min = 120,
-						max = 300,
-						step = 1,
-						get = function()
-							return module.Settings.size[1]
-						end,
-						set = function(_, value)
-							module.DB.customSettings[SUI.DB.Artwork.Style].size = { value, value }
-							module:Update(true)
-						end,
-					},
-					scaleWithArt = {
-						name = L['Scale with UI'],
-						type = 'toggle',
-						order = 3,
-						get = function()
-							return module.Settings.scaleWithArt
-						end,
-						set = function(_, value)
-							module.DB.customSettings[SUI.DB.Artwork.Style].scaleWithArt = value
-							module:Update(true)
-						end,
-					},
-					rotate = {
-						name = L['Rotate the minimap'],
-						type = 'toggle',
-						order = 3,
-						get = function()
-							return module.Settings.rotate
-						end,
-						set = function(_, value)
-							module.DB.customSettings[SUI.DB.Artwork.Style].rotate = value
-							module:Update(true)
-						end,
-					},
-				},
-			},
-			elements = {
-				name = L['Elements'],
-				type = 'group',
-				order = 2,
-				childGroups = 'tree',
-				args = {},
-			},
-		},
-	}
-
-	-- Build options for each elemen
-	for elementName, elementSettings in pairs(module.Settings.elements) do
-		options.args.elements.args[elementName] = {
-			name = L[elementName] or elementName,
-			type = 'group',
-			args = {
-				enabled = {
-					name = L['Enabled'],
-					type = 'toggle',
-					order = 1,
-					get = GetOption,
-					set = SetOption,
-				},
-			},
-		}
-		if elementSettings.position then
-			options.args.elements.args[elementName].args.position = {
-				name = L['Position'],
-				type = 'group',
-				order = 2,
-				inline = true,
-				args = {
-					point = {
-						name = L['Anchor'],
-						type = 'select',
-						order = 1,
-						values = anchorValues,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-					relativeTo = {
-						name = L['Relative To'],
-						type = 'select',
-						order = 2,
-						values = GetRelativeToValues,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-					relativePoint = {
-						name = L['Relative Anchor'],
-						type = 'select',
-						order = 3,
-						values = anchorValues,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-					x = {
-						name = L['X Offset'],
-						type = 'range',
-						order = 4,
-						min = -100,
-						max = 100,
-						step = 1,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-					y = {
-						name = L['Y Offset'],
-						type = 'range',
-						order = 5,
-						min = -100,
-						max = 100,
-						step = 1,
-						get = GetPositionOption,
-						set = SetPositionOption,
-					},
-				},
-			}
-		end
-
-		if elementSettings.scale then
-			options.args.elements.args[elementName].args.scale = {
-				name = L['Scale'],
-				type = 'range',
-				order = 3,
-				min = 0.5,
-				max = 2,
-				step = 0.05,
-				get = GetOption,
-				set = SetOption,
-			}
-		end
-
-		local order = 4
-		for settingName, settingValue in pairs(elementSettings) do
-			if settingName ~= 'enabled' and settingName ~= 'position' and settingName ~= 'scale' then
-				local optionType = type(settingValue)
-				options.args.elements.args[elementName].args[settingName] = {
-					name = L[settingName] or settingName,
-					type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
-					order = order,
-					get = GetOption,
-					set = SetOption,
-				}
-
-				if optionType == 'number' then
-					options.args.elements.args[elementName].args[settingName].min = 0
-					options.args.elements.args[elementName].args[settingName].max = 2
-					options.args.elements.args[elementName].args[settingName].step = 0.01
-				end
-
-				order = order + 1
-			end
-		end
-	end
-
-	SUI.Options:AddOptions(options, 'Minimap')
-end
-
 StaticPopupDialogs['MiniMapNotice'] = {
 	text = '|cff33ff99SpartanUI Notice|n|r|n Another addon has been found modifying the minimap. Do you give permission for SpartanUI to move and possibly modify the minimap as your theme dictates? |n|n You can change this option in the settings should you change your mind.',
 	button1 = 'Yes',
@@ -1009,108 +709,3 @@ StaticPopupDialogs['MiniMapNotice'] = {
 }
 
 SUI.Minimap = module
-
----@class SUI.Style.Settings.Minimap
----@field shape? MapShape
----@field size? table
----@field scaleWithArt? boolean
----@field UnderVehicleUI? boolean
----@field position? string
----@field rotate? boolean
----@field elements? table
-
----@class SUI.Style.Settings.Minimap.elements
----@field background? SUI.Settings.Minimap.background
----@field ZoneText? SUI.Settings.Minimap.ZoneText
----@field coords? SUI.Settings.Minimap.coords
----@field border? SUI.Settings.Minimap.border
----@field zoomButtons? SUI.Settings.Minimap.zoomButtons
----@field clock? SUI.Settings.Minimap.clock
----@field tracking? SUI.Settings.Minimap.tracking
----@field calendarButton? SUI.Settings.Minimap.calendarButton
----@field mailIcon? SUI.Settings.Minimap.mailIcon
----@field instanceDifficulty? SUI.Settings.Minimap.instanceDifficulty
----@field queueStatus? SUI.Settings.Minimap.queueStatus
----@field northIndicator? SUI.Settings.Minimap.northIndicator
----@field addonButtons? SUI.Settings.Minimap.addonButtons
-
----@alias MapShape 'circle' | 'square'
-
----@class SUI.Settings.Minimap.coords
----@field enabled? boolean
----@field scale? number
----@field size? table
----@field position? string
----@field TextColor? table
----@field ShadowColor? table
----@field format? string
-
----@class SUI.Settings.Minimap.background
----@field enabled? boolean
----@field texture? string
----@field size? table
----@field position? string
----@field color? table
----@field BlendMode? string
----@field alpha? number
-
----@class SUI.Settings.Minimap.ZoneText
----@field enabled? boolean
----@field scale? number
----@field position? string
----@field TextColor? table
----@field ShadowColor? table
-
----@class SUI.Settings.Minimap.border
----@field enabled? boolean
----@field texture? string
----@field size? table
----@field position? string
----@field color? table
----@field BlendMode? string
-
----@class SUI.Settings.Minimap.zoomButtons
----@field enabled? boolean
----@field scale? number
-
----@class SUI.Settings.Minimap.clock
----@field enabled? boolean
----@field position? string
----@field scale? number
----@field format? string
----@field color? table
----@field font? table
-
----@class SUI.Settings.Minimap.tracking
----@field enabled? boolean
----@field position? string
----@field scale? number
-
----@class SUI.Settings.Minimap.calendarButton
----@field enabled? boolean
----@field position? string
----@field scale? number
-
----@class SUI.Settings.Minimap.mailIcon
----@field enabled? boolean
----@field position? string
----@field scale? number
-
----@class SUI.Settings.Minimap.instanceDifficulty
----@field enabled? boolean
----@field position? string
----@field scale? number
-
----@class SUI.Settings.Minimap.queueStatus
----@field enabled? boolean
----@field position? string
----@field scale? number
-
----@class SUI.Settings.Minimap.northIndicator
----@field enabled? boolean
----@field texture? string
----@field size? table
----@field position? string
-
----@class SUI.Settings.Minimap.addonButtons
----@field style? string
