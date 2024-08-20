@@ -37,7 +37,7 @@ local BaseSettings = {
 		ZoneText = {
 			enabled = true,
 			scale = 1,
-			position = 'TOP,Minimap,BOTTOM,0,-1',
+			position = 'TOPLEFT,BorderTop,TOPLEFT,4,-4',
 			color = { 1, 0.82, 0, 1 },
 		},
 
@@ -63,7 +63,7 @@ local BaseSettings = {
 
 		-- Zoom Buttons
 		zoomButtons = {
-			enabled = true,
+			enabled = false,
 			scale = 1,
 		},
 
@@ -113,7 +113,7 @@ local BaseSettings = {
 
 		--Expansion Button
 		expansionButton = {
-			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,-20,-20',
+			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,-20,-10',
 			scale = 1,
 		},
 
@@ -176,8 +176,6 @@ function module:ModifyMinimapLayout()
 
 	MinimapCluster.BorderTop:ClearAllPoints()
 	MinimapCluster.BorderTop:SetPoint('TOP', Minimap, 'BOTTOM', 0, -5)
-	MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.3)
-	MinimapCluster.BorderTop:SetHeight(MinimapCluster.ZoneTextButton:GetHeight() * 2.8)
 	MinimapCluster.BorderTop:SetAlpha(0.8)
 
 	MinimapCluster.ZoneTextButton:ClearAllPoints()
@@ -196,6 +194,10 @@ function module:UpdateMinimapSize()
 
 	-- Set size of SUIMinimap (our holder)
 	SUIMinimap:SetSize(Minimap:GetWidth(), (Minimap:GetHeight() + MinimapCluster.BorderTop:GetHeight() + 15))
+
+	-- Set size of MinimapCluster BorderTop
+	MinimapCluster.BorderTop:SetWidth(Minimap:GetWidth() / 1.1)
+	MinimapCluster.BorderTop:SetHeight(MinimapCluster.ZoneTextButton:GetHeight() * 2.8)
 end
 
 function module:UpdateMinimapShape()
@@ -250,6 +252,9 @@ function module:SetupElements()
 
 	-- Setup addon buttons
 	module:SetupAddonButtons()
+
+	-- Setup addon buttons
+	module:SetupZoomButtons()
 end
 
 function module:PositionItem(obj, position)
@@ -283,19 +288,34 @@ function module:SetupBackground()
 	end
 end
 
+function module:SetupZoomButtons()
+	if module.Settings.elements.zoomButtons.enabled then
+		if Minimap.ZoomIn then
+			Minimap.ZoomIn:Show()
+			Minimap.ZoomOut:Show()
+		end
+	else
+		if Minimap.ZoomIn then
+			Minimap.ZoomIn:Hide()
+			Minimap.ZoomOut:Hide()
+		end
+	end
+end
+
 function module:SetupZoneText()
+	---@diagnostic disable-next-line: undefined-field
+	if not MinimapCluster.ZoneTextButton then return end
+
 	if module.Settings.elements.ZoneText.enabled then
-		if not Minimap.ZoneText then Minimap.ZoneText = Minimap:CreateFontString(nil, 'OVERLAY') end
-		SUI.Font:Format(Minimap.ZoneText, 12, 'Minimap')
-		module:PositionItem(Minimap.ZoneText, module.Settings.elements.ZoneText.position)
-		Minimap.ZoneText:SetJustifyH('CENTER')
-		Minimap.ZoneText:SetJustifyV('MIDDLE')
-		Minimap.ZoneText:SetTextColor(unpack(module.Settings.elements.ZoneText.color))
-		Minimap.ZoneText:SetShadowColor(0, 0, 0, 1)
-		Minimap.ZoneText:SetScale(module.Settings.elements.ZoneText.scale)
-		Minimap.ZoneText:Show()
-	elseif Minimap.ZoneText then
-		Minimap.ZoneText:Hide()
+		module:PositionItem(MinimapCluster.ZoneTextButton, module.Settings.elements.ZoneText.position)
+		MinimapZoneText:SetTextColor(unpack(module.Settings.elements.ZoneText.color))
+		MinimapZoneText:SetShadowColor(0, 0, 0, 1)
+		MinimapCluster.ZoneTextButton:SetScale(module.Settings.elements.ZoneText.scale)
+		MinimapCluster.ZoneTextButton:Show()
+		SUI.Font:Format(MinimapZoneText, 10, 'Minimap')
+		MinimapZoneText:SetJustifyH('CENTER')
+	elseif MinimapCluster.ZoneTextButton then
+		MinimapCluster.ZoneTextButton:Hide()
 	end
 end
 
