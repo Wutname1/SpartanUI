@@ -1197,21 +1197,6 @@ function Options:Initialize()
 			local ElementSettings = UF.CurrentSettings[frameName].elements[elementName]
 			local UserSetting = UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName]
 
-			---@param UserSetting table
-			---@param DefaultSetting table
-			---@return boolean
-			local function hasChanges(UserSetting, DefaultSetting)
-				if not UserSetting or not DefaultSetting then return false end
-				for k, v in pairs(UserSetting) do
-					if type(v) == 'table' then
-						if hasChanges(v, DefaultSetting[k]) then return true end
-					elseif v ~= DefaultSetting[k] then
-						return true
-					end
-				end
-				return false
-			end
-
 			---@type AceConfig.OptionsTable
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
@@ -1235,7 +1220,7 @@ function Options:Initialize()
 						type = 'execute',
 						order = 0,
 						hidden = function()
-							return not hasChanges(UserSetting, UF.Unit.defaultConfigs[frameName].elements[elementName])
+							return not SUI.Options:hasChanges(UserSetting, UF.Unit.defaultConfigs[frameName].elements[elementName])
 						end,
 						func = function()
 							-- Reset the element's settings to default

@@ -440,6 +440,21 @@ function Options:DisableOptions(name)
 	SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled = not (SUI.opt.args.Modules.args[name or tostring(#SUI.opt.args.Modules.args)].disabled or false)
 end
 
+---@param UserSetting table
+---@param DefaultSetting table
+---@return boolean
+function Options:hasChanges(UserSetting, DefaultSetting)
+	if not UserSetting or not DefaultSetting then return false end
+	for k, v in pairs(UserSetting) do
+		if type(v) == 'table' then
+			if Options:hasChanges(v, DefaultSetting[k]) then return true end
+		elseif v ~= DefaultSetting[k] then
+			return true
+		end
+	end
+	return false
+end
+
 Options.ToggleOptions = module.ToggleOptions
 
 SUI.Options = Options
