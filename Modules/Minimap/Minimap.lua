@@ -93,7 +93,7 @@ local BaseSettings = {
 		-- Mail Icon
 		mailIcon = {
 			enabled = true,
-			position = 'BOTTOMRIGHT,BorderTop,BOTTOMRIGHT,-4,6',
+			position = 'LEFT,Tracking,RIGHT,2,0',
 			scale = 1,
 		},
 
@@ -247,6 +247,9 @@ function module:SetupElements()
 	-- Setup Queue Status (LFG eye)
 	module:SetupQueueStatus()
 
+	-- Setup Mail Icon
+	module:SetupMailIcon()
+
 	-- Setup North Indicator
 	module:SetupExpansionButton()
 
@@ -259,7 +262,7 @@ end
 
 function module:PositionItem(obj, position)
 	local point, anchor, secondaryPoint, x, y = strsplit(',', position)
-	if anchor == 'BorderTop' then anchor = MinimapCluster.BorderTop end
+	if MinimapCluster[anchor] then anchor = MinimapCluster[anchor] end
 
 	obj:ClearAllPoints()
 	obj:SetPoint(point, anchor, secondaryPoint, x, y)
@@ -358,6 +361,16 @@ function module:SetupClock()
 		TimeManagerClockButton:Show()
 	elseif TimeManagerClockButton then
 		TimeManagerClockButton:Hide()
+	end
+end
+
+function module:SetupMailIcon()
+	if module.Settings.elements.mailIcon.enabled then
+		if MinimapCluster.IndicatorFrame.MailFrame then
+			MinimapCluster.IndicatorFrame.MailFrame:ClearAllPoints()
+			module:PositionItem(MinimapCluster.IndicatorFrame.MailFrame, module.Settings.elements.mailIcon.position)
+			MinimapCluster.IndicatorFrame.MailFrame:SetScale(module.Settings.elements.mailIcon.scale)
+		end
 	end
 end
 
@@ -561,6 +574,7 @@ function module:Update(fullUpdate)
 	module:SetupZoneText()
 	module:SetupCoords()
 	module:SetupClock()
+	module:SetupMailIcon()
 	module:SetupTracking()
 	module:SetupCalendarButton()
 	module:SetupInstanceDifficulty()
