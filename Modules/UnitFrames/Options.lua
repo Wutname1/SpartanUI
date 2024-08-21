@@ -1194,7 +1194,7 @@ function Options:Initialize()
 			local ElementSettings = UF.CurrentSettings[frameName].elements[elementName]
 			local UserSetting = UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName]
 
-			---@type AceConfigOptionsTable
+			---@type AceConfig.OptionsTable
 			local ElementOptSet = {
 				name = elementConfig.DisplayName and L[elementConfig.DisplayName] or elementName,
 				desc = elementConfig.Description or '',
@@ -1211,7 +1211,26 @@ function Options:Initialize()
 					--Update the screen
 					builtFrame:UpdateAll()
 				end,
-				args = {},
+				args = {
+					resetElement = {
+						name = L['Reset Element'],
+						type = 'execute',
+						order = 0,
+						hidden = function()
+							return not SUI.Options:hasChanges(UserSetting, UF.Unit.defaultConfigs[frameName].elements[elementName])
+						end,
+						func = function()
+							-- Reset the element's settings to default
+							UF.DB.UserSettings[UF.DB.Style][frameName].elements[elementName] = nil
+
+							-- Trigger a full update of the UnitFrames
+							UF:Update()
+
+							-- Refresh the options UI
+							SUI.Lib.AceConfigRegistry:NotifyChange('SpartanUI')
+						end,
+					},
+				},
 			}
 
 			local PositionGet = function(info)
