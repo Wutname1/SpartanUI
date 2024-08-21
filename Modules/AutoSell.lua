@@ -3,6 +3,7 @@ local SUI, L, print = SUI, SUI.L, SUI.print
 local module = SUI:NewModule('AutoSell')
 module.DisplayName = L['Auto sell']
 module.description = 'Auto sells junk and more'
+
 ----------------------------------------------------------------------------------------------------
 local MaxiLVL = 500
 
@@ -221,11 +222,11 @@ local function BuildOptions()
 	eventFrame:RegisterEvent('GET_ITEM_INFO_RECEIVED')
 	eventFrame:SetScript('OnEvent', function(_, event, itemID, success)
 		if event == 'GET_ITEM_INFO_RECEIVED' and success then
-			local itemName, itemLink = C_Item.GetItemInfo(itemID)
+			eventFrame:UnregisterEvent('GET_ITEM_INFO_RECEIVED')
+			local itemLink = C_Item.GetItemInfo(itemID)
 			if itemLink then
 				itemCache[itemID] = itemLink
-				-- Call buildItemList with the current mode to refresh the list
-				-- You need to determine how to get the current mode here
+				-- Call buildItemList to refresh the list
 				buildItemList('Items')
 			end
 		end
@@ -246,7 +247,7 @@ local function BuildOptions()
 					label = itemLink .. ' (' .. entry .. ')'
 				else
 					-- Request item info which may return nil initially
-					local itemName, itemLink = C_Item.GetItemInfo(entry)
+					local _, itemLink = C_Item.GetItemInfo(entry)
 					if itemLink then
 						-- If the item link is available, use it
 						label = itemLink .. ' (' .. entry .. ')'
