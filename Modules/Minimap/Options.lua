@@ -70,10 +70,13 @@ local function GetPositionOption(info)
 	local element = info[#info - 2]
 	local positionPart = info[#info]
 	local positionString = module.Settings.elements[element].position
-	if module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element].position then
-		print('usersetting')
+
+	if
+		module.DB.customSettings[SUI.DB.Artwork.Style][element]
+		and module.DB.customSettings[SUI.DB.Artwork.Style][element].position
+		and type(module.DB.customSettings[SUI.DB.Artwork.Style][element].position) == 'string'
+	then
 		positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
-		print(positionString)
 	end
 	local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
 	if positionPart == 'point' then
@@ -230,9 +233,8 @@ function module:BuildOptions()
 
 	-- Build options for each element
 	for elementName, elementSettings in pairs(module.Settings.elements) do
-		local elementName = elementNaming[elementName] or elementName
 		options.args.elements.args[elementName] = {
-			name = L[elementName] or elementName,
+			name = L[elementNaming[elementName] or elementName],
 			type = 'group',
 			args = {
 				resetElement = {
@@ -256,19 +258,15 @@ function module:BuildOptions()
 						module:Update(true)
 					end,
 				},
+				enabled = {
+					name = L['Enabled'],
+					type = 'toggle',
+					order = 1,
+					get = GetOption,
+					set = SetOption,
+				},
 			},
 		}
-
-		if elementSettings.enabled then
-			options.args.elements.args[elementName].args.enabled = {
-				name = L['Enabled'],
-				type = 'toggle',
-				order = 1,
-				get = GetOption,
-				set = SetOption,
-			}
-		end
-
 		if elementSettings.position then
 			options.args.elements.args[elementName].args.position = {
 				name = L['Position'],
@@ -329,10 +327,12 @@ function module:BuildOptions()
 				name = L['Scale'],
 				type = 'range',
 				order = 3,
-				min = 0.5,
+				min = 0.1,
 				max = 2,
 				step = 0.05,
-				get = GetOption,
+				get = function()
+					return elementSettings.scale
+				end,
 				set = SetOption,
 			}
 		end
@@ -342,34 +342,35 @@ function module:BuildOptions()
 				name = L['Color'],
 				type = 'color',
 				order = 3,
-				min = 0.5,
-				max = 2,
-				step = 0.05,
-				get = GetOption,
-				set = SetOption,
+				get = function()
+					return unpack(elementSettings.color)
+				end,
+				set = function(info, r, g, b, a)
+					module.DB.customSettings[SUI.DB.Artwork.Style][elementName].color[info[#info]] = { r, g, b, a }
+				end,
 			}
 		end
 
 		local order = 4
 		for settingName, settingValue in pairs(elementSettings) do
-			if settingName ~= 'enabled' and settingName ~= 'position' and settingName ~= 'scale' then
-				local optionType = type(settingValue)
-				options.args.elements.args[elementName].args[settingName] = {
-					name = L[settingName] or settingName,
-					type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
-					order = order,
-					get = GetOption,
-					set = SetOption,
-				}
+			-- if not options.args.elements.args[elementName].args[settingName] then
+			-- 	local optionType = type(settingValue)
+			-- 	options.args.elements.args[elementName].args[settingName] = {
+			-- 		name = L[settingName] or settingName,
+			-- 		type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
+			-- 		order = order,
+			-- 		get = GetOption,
+			-- 		set = SetOption,
+			-- 	}
 
-				if optionType == 'number' then
-					options.args.elements.args[elementName].args[settingName].min = 0
-					options.args.elements.args[elementName].args[settingName].max = 2
-					options.args.elements.args[elementName].args[settingName].step = 0.01
-				end
+			-- 	if optionType == 'number' then
+			-- 		options.args.elements.args[elementName].args[settingName].min = 0
+			-- 		options.args.elements.args[elementName].args[settingName].max = 2
+			-- 		options.args.elements.args[elementName].args[settingName].step = 0.01
+			-- 	end
 
-				order = order + 1
-			end
+			-- 	order = order + 1
+			-- end
 		end
 	end
 
