@@ -242,7 +242,7 @@ local function TopCenterContainer()
 	end
 	module:RegisterEvent('PLAYER_ENTERING_WORLD')
 	module:RegisterEvent('UPDATE_ALL_UI_WIDGETS')
-	module:RegisterEvent('UPDATE_UI_WIDGET')
+	-- module:RegisterEvent('UPDATE_UI_WIDGET')
 end
 
 function module:UPDATE_UI_WIDGET()

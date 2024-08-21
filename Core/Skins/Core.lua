@@ -465,10 +465,11 @@ end
 --Skins a frame and all its children
 ---@param widget Frame
 function module.SkinWidgets(widget)
-	if not widget or not widget.widgetType then return end
+	if not widget or not widget.widgetType or widget.SUISkinned then return end
 	---@diagnostic disable-next-line: undefined-field
 	local widgetFunc = module.Objects[GetWidgetVisualizationTypeKey(widget.widgetType)]
 	if widgetFunc then widgetFunc(widget) end
+	widget.SUISkinned = true
 end
 
 module.Registry = {}
