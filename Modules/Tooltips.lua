@@ -85,7 +85,7 @@ function module:OnInitialize()
 		Color = { 0, 0, 0, 0.5 },
 		SuppressNoMatch = true,
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('FilmEffects', { profile = defaults })
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Tooltips', { profile = defaults })
 	module.DB = module.Database.profile ---@type SUI.Tooltip.Settings
 end
 
