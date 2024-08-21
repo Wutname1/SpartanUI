@@ -22,4 +22,4 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('RaidRoleIndicator', Build, _, _, Settings)
+UF.Elements:Register('RaidRoleIndicator', Build, nil, nil, Settings)

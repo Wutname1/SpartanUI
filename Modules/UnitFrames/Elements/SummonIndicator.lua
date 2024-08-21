@@ -16,4 +16,4 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('SummonIndicator', Build, _, _, Settings)
+UF.Elements:Register('SummonIndicator', Build, nil, nil, Settings)

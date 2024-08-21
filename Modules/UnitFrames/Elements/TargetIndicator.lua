@@ -40,4 +40,4 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('TargetIndicator', Build, Update, _, Settings)
+UF.Elements:Register('TargetIndicator', Build, Update, nil, Settings)

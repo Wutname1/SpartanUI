@@ -3,7 +3,7 @@ local L = SUI.L
 
 ---@param frame table
 ---@param DB table
-local function ElementBuild(frame, DB)
+local function Build(frame, DB)
 	frame.ClassIcon = frame:CreateTexture(nil, 'BORDER')
 	frame.ClassIcon.Sizeable = true
 	frame.ClassIcon.shadow = frame:CreateTexture(nil, 'BACKGROUND')
@@ -24,7 +24,7 @@ end
 
 ---@param frame table
 ---@param settings? table
-local function ElementUpdate(frame, settings)
+local function Update(frame, settings)
 	local element = frame.ClassIcon
 	local DB = settings or element.DB
 	local reaction = UnitReaction(frame.unit, 'player')
@@ -50,7 +50,7 @@ end
 
 ---@param unitName string
 ---@param OptionSet AceConfig.OptionsTable
-local function ElementOptions(unitName, OptionSet)
+local function Options(unitName, OptionSet)
 	local ElementSettings = UF.CurrentSettings[unitName].elements.ClassIcon
 	local function OptUpdate(option, val)
 		UF.CurrentSettings[unitName].elements.ClassIcon[option] = val
@@ -106,7 +106,7 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('ClassIcon', ElementBuild, ElementUpdate, ElementOptions, Settings)
+UF.Elements:Register('ClassIcon', Build, Update, Options, Settings)
 
 do -- ClassIcon as an SUIUF module
 	local function Update(self, event, unit)

@@ -18,4 +18,4 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('PVPSpecIcon', Build, _, _, Settings)
+UF.Elements:Register('PVPSpecIcon', Build, nil, nil, Settings)

@@ -22,4 +22,4 @@ local Settings = {
 	},
 }
 
-UF.Elements:Register('RaidTargetIndicator', Build, _, _, Settings)
+UF.Elements:Register('RaidTargetIndicator', Build, nil, nil, Settings)

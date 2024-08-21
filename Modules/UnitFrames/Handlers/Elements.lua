@@ -126,6 +126,11 @@ end
 ---@return boolean --False if the element did not provide an updater
 function Elements:Update(frame, ElementName, DB)
 	if UF.Elements.List[ElementName] and UF.Elements.List[ElementName].Update then
+		if type(UF.Elements.List[ElementName].Update) ~= 'function' then
+			SUI:Error('Element ' .. ElementName .. ' does not have a valid update function.', 'UnitFrames')
+			return false
+		end
+
 		UF.Elements.List[ElementName].Update(frame, DB or UF.CurrentSettings[frame.unitOnCreate].elements[ElementName] or {})
 		return true
 	else
