@@ -1,5 +1,5 @@
 ---@class SUIL
-local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, debug)
+local L = LibStub('AceLocale-3.0'):NewLocale('SpartanUI', 'enUS', true, true)
 
 L['Mount'] = true
 L['Duration mode'] = true
