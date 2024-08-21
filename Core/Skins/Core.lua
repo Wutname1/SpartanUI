@@ -358,15 +358,15 @@ function module.Objects.Button(button, mode, NormalTex, regionsToFade)
 
 	if button.Text then SUI.Font:Format(button.Text, 12, 'Blizzard') end
 
-	function SetModifiedBackdrop(self)
+	local function SetModifiedBackdrop(self)
 		if self:IsEnabled() then module:SetClassBorderColor(self, 'OnEnter') end
 	end
 
-	function SetOriginalBackdrop(self)
+	local function SetOriginalBackdrop(self)
 		if self:IsEnabled() then module:SetClassBorderColor(self, 'OnLeave') end
 	end
 
-	function SetDisabledBackdrop(self)
+	local function SetDisabledBackdrop(self)
 		if self:IsMouseOver() then module:SetClassBorderColor(self, 'OnDisable') end
 	end
 

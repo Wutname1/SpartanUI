@@ -68,7 +68,7 @@ local function SkinAce3()
 	local nextPrevColor = { r = 1, g = 0.8, b = 0 }
 
 	--Skin main window elements
-	RegisterAsWidget = function(self, widget)
+	local RegisterAsWidget = function(self, widget)
 		local widgetType = widget.type
 
 		if widgetType == 'LSM30_Font' or widgetType == 'LSM30_Sound' or widgetType == 'LSM30_Border' or widgetType == 'LSM30_Background' or widgetType == 'LSM30_Statusbar' then
@@ -138,7 +138,7 @@ local function SkinAce3()
 	end
 	AceGUI.RegisterAsWidget = RegisterAsWidget
 
-	RegisterAsContainer = function(self, widget)
+	local RegisterAsContainer = function(self, widget)
 		local widgetType = widget.type
 		local widgetParent = widget.content:GetParent()
 

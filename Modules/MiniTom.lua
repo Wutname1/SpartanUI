@@ -147,7 +147,7 @@ function module:OnEnable()
 	Options()
 	if SUI:IsModuleDisabled(module) then return end
 
-	function SetWaypoint(args)
+	local function SetWaypoint(args)
 		-- Remove any commas or periods from the numbers
 		args = args:gsub('(%d)[%.,] (%d)', '%1 %2')
 		local inputSections = {}
