@@ -461,7 +461,7 @@ function module.QUEST_COMPLETE()
 			elseif UpgradeID then
 				SUI:Print('Upgrade found! Grabbing ' .. UpgradeLink)
 				module:TurnInQuest(UpgradeID)
-				if DB.autoequip then module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', 0.5, UpgradeLink) end
+				-- if DB.autoequip then module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', 0.5, UpgradeLink) end
 			end
 		else
 			if GreedID and not UpgradeID then
@@ -477,7 +477,7 @@ function module.QUEST_COMPLETE()
 		elseif UpgradeID then
 			SUI:Print('Quest rewards a upgrade ' .. UpgradeLink)
 			module:TurnInQuest(UpgradeID)
-			if DB.autoequip then module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', 0.5, UpgradeLink) end
+			-- if DB.autoequip then module.equipTimer = module:ScheduleRepeatingTimer('EquipItem', 0.5, UpgradeLink) end
 		else
 			debug(L['No Reward, turning in.'])
 			module:TurnInQuest(1)

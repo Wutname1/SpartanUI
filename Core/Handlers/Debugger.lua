@@ -171,10 +171,10 @@ local function RefreshData(self)
 		elseif button == 'MiddleButton' then
 			local rawData = line:GetParent():GetAttributeData().rawValue
 			if rawData.IsObjectType and rawData:IsObjectType('Texture') then
-				_G.TEX = rawData
+				-- _G.TEX = rawData
 				SUI:Print('_G.TEX set to: ', text)
 			else
-				_G.FRAME = rawData
+				-- _G.FRAME = rawData
 				SUI:Print('_G.FRAME set to: ', text)
 			end
 		else
