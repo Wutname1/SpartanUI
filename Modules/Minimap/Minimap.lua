@@ -340,14 +340,15 @@ function module:SetupCoords()
 end
 
 function module:SetupCoordinatesUpdater()
-	module:ScheduleRepeatingTimer(function()
+	if self.coordsTimer then return end
+
+	self.coordsTimer = self:ScheduleRepeatingTimer(function()
 		local mapID = C_Map.GetBestMapForUnit('player')
 		if not mapID then return end
 		local pos = C_Map.GetPlayerMapPosition(mapID, 'player')
 		if not pos then return end
-		local x, y = pos:GetXY()
-		if x and y then Minimap.coords:SetText(string.format(module.Settings.elements.coords.format, x * 100, y * 100)) end
-	end, 0.1)
+		if pos.x and pos.y then Minimap.coords:SetText(string.format(module.Settings.elements.coords.format, pos.x * 100, pos.y * 100)) end
+	end, 0.5)
 end
 
 function module:SetupClock()

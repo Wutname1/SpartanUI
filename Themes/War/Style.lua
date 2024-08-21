@@ -1,7 +1,7 @@
 local SUI, L = SUI, SUI.L
 ---@class SUI.Theme.Tribal : SUI.Theme.StyleBase
 local module = SUI:NewModule('Style.War')
-local Artwork_Core = SUI:GetModule('Artwork') ---@type SUI.Module.Artwork
+local Artwork_Core = SUI:GetModule('Artwork', true) ---@type SUI.Module.Artwork
 local artFrame = CreateFrame('Frame', 'SUI_Art_War', SpartanUI)
 module.Settings = {}
 ----------------------------------------------------------------------------------------------------
@@ -66,48 +66,52 @@ function module:OnInitialize()
 		end
 	end
 
-	---@type SUI.Style.Settings.Minimap
-	local minimapSettings = {
-		size = { 180, 180 },
-		position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
-		elements = {
-			background = {
-				texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+	if SUI.Minimap then
+		---@type SUI.Style.Settings.Minimap
+		local minimapSettings = {
+			size = { 180, 180 },
+			position = 'BOTTOM,SUI_Art_War_Left,BOTTOMRIGHT,11,-10',
+			elements = {
+				background = {
+					texture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\minimap',
+				},
 			},
-		},
-	}
-	SUI.Minimap:Register('War', minimapSettings)
+		}
+		SUI.Minimap:Register('War', minimapSettings)
+	end
 
-	---@type SUI.Style.Settings.UnitFrames
-	local ufsettings = {
-		artwork = {
-			top = {
-				path = pathFunc,
-				TexCoord = TexCoordFunc,
-				heightScale = 0.225,
-				yScale = -0.0555,
-				PVPAlpha = 0.6,
+	if SUI.UF then
+		---@type SUI.Style.Settings.UnitFrames
+		local ufsettings = {
+			artwork = {
+				top = {
+					path = pathFunc,
+					TexCoord = TexCoordFunc,
+					heightScale = 0.225,
+					yScale = -0.0555,
+					PVPAlpha = 0.6,
+				},
+				bg = {
+					path = pathFunc,
+					TexCoord = TexCoordFunc,
+					PVPAlpha = 0.7,
+				},
+				bottom = {
+					path = pathFunc,
+					TexCoord = TexCoordFunc,
+					heightScale = 0.0825,
+					yScale = 0.0223,
+					PVPAlpha = 0.7,
+				},
 			},
-			bg = {
-				path = pathFunc,
-				TexCoord = TexCoordFunc,
-				PVPAlpha = 0.7,
+			positions = {
+				['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
 			},
-			bottom = {
-				path = pathFunc,
-				TexCoord = TexCoordFunc,
-				heightScale = 0.0825,
-				yScale = 0.0223,
-				PVPAlpha = 0.7,
-			},
-		},
-		positions = {
-			['player'] = 'BOTTOMRIGHT,SUI_BottomAnchor,BOTTOM,-45,250',
-		},
-	}
-	SUI.UF.Style:Register('War', ufsettings)
+		}
+		SUI.UF.Style:Register('War', ufsettings)
+	end
 
-	local statusBarModule = SUI:GetModule('Artwork.StatusBars') ---@type SUI.Module.Artwork.StatusBars
+	local statusBarModule = SUI:GetModule('Artwork.StatusBars', true) ---@type SUI.Module.Artwork.StatusBars
 	---@type SUI.Style.Settings.StatusBars
 	local StatusBarsSettings = {
 		bgTexture = 'Interface\\AddOns\\SpartanUI\\Themes\\War\\Images\\StatusBar-' .. UnitFactionGroup('Player'),
@@ -118,9 +122,9 @@ function module:OnInitialize()
 		texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
 		MaxWidth = 48,
 	}
-	statusBarModule:RegisterStyle('War', { Left = StatusBarsSettings, Right = StatusBarsSettings })
+	if statusBarModule then statusBarModule:RegisterStyle('War', { Left = StatusBarsSettings, Right = StatusBarsSettings }) end
 
-	module:CreateArtwork()
+	if Artwork_Core then module:CreateArtwork() end
 end
 
 function module:OnEnable()
@@ -128,7 +132,7 @@ function module:OnEnable()
 		module:Disable()
 	else
 		--Setup Sliding Trays
-		module:SlidingTrays()
+		if Artwork_Core then module:SlidingTrays() end
 
 		hooksecurefunc('UIParent_ManageFramePositions', function()
 			if TutorialFrameAlertButton then

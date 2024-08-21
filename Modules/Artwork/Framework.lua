@@ -187,8 +187,8 @@ function module:UpdateScale()
 	if SUI:IsModuleEnabled('UnitFrames') then SUI.UF:ScaleFrames(SUI.DB.scale) end
 
 	-- Call Minimap scale update
-	local minimap = SUI:GetModule('Minimap') ---@type SUI.Module.Minimap
-	if minimap.Settings and minimap.Settings.scaleWithArt then minimap:UpdateScale() end
+	local minimap = SUI:GetModule('Minimap', true) ---@type SUI.Module.Minimap
+	if minimap and minimap.Settings and minimap.Settings.scaleWithArt then minimap:UpdateScale() end
 
 	-- Update Bar scales
 	SUI.Handlers.BarSystem:Refresh()
@@ -304,7 +304,8 @@ end
 
 local function VehicleUI()
 	if SUI.DB.Artwork.VehicleUI then
-		local minimapModule = SUI:GetModule('Minimap')
+		local minimapModule = SUI:GetModule('Minimap', true)
+
 		petbattle:HookScript('OnHide', function()
 			SUI_Art_War:Hide()
 			if SUI:IsModuleEnabled('Minimap') and (minimapModule.DB.AutoDetectAllowUse or minimapModule.DB.ManualAllowUse) then Minimap:Hide() end

@@ -24,7 +24,8 @@ function SUI:IsModuleEnabled(moduleName)
 		moduleName = SUI:GetModuleName(moduleName)
 	else
 		-- Fetch the Module
-		local moduleObj = SUI:GetModule(moduleName)
+		local moduleObj = SUI:GetModule(moduleName, true)
+		if not moduleObj then return false end
 		-- See if the modules has been overridden
 		if moduleObj and moduleObj.override then return false end
 	end
