@@ -33,11 +33,11 @@ local DBDefaults = {
 	AllowRep = true,
 	PriorityDirection = 'ltr',
 	BarPriorities = {
-		[Enums.Bars.Azerite] = 0,
+		[Enums.Bars.Experience] = 0,
 		[Enums.Bars.Reputation] = 1,
-		[Enums.Bars.Honor] = 2,
-		[Enums.Bars.Artifact] = 3,
-		[Enums.Bars.Experience] = 4,
+		[Enums.Bars.Honor] = 3,
+		[Enums.Bars.Azerite] = 4,
+		[Enums.Bars.Artifact] = 5,
 	},
 	bars = {
 		['**'] = {
