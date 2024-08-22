@@ -20,16 +20,17 @@ local elementNaming = {
 }
 
 local function GetOption(info)
-	local element = info[#info - 2]
+	local element = info[#info - 1]
 	local option = info[#info]
 	return module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element][option] or module.Settings.elements[element][option]
 end
 
 local function SetOption(info, value)
-	local element = info[#info - 2]
+	local element = info[#info - 1]
 	local option = info[#info]
 	if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
 	if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
+	module.Settings.elements[element][option] = value
 	module.DB.customSettings[SUI.DB.Artwork.Style][element][option] = value
 	module:Update(true)
 end
@@ -96,7 +97,7 @@ local function SetPositionOption(info, value)
 	local element = info[#info - 2]
 	local positionPart = info[#info]
 	local positionString = module.Settings.elements[element].position
-	if module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element].position then
+	if module.DB.customSettings[SUI.DB.Artwork.Style][element] and type(module.DB.customSettings[SUI.DB.Artwork.Style][element].position) == 'string' then
 		positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
 	end
 	local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
@@ -114,6 +115,7 @@ local function SetPositionOption(info, value)
 	local newPositionString = string.format('%s,%s,%s,%s,%s', point, relativeTo, relativePoint, x, y)
 	if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
 	if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
+	module.Settings.elements[element].position = newPositionString
 	module.DB.customSettings[SUI.DB.Artwork.Style][element].position = newPositionString
 	module:Update(true)
 end
@@ -214,9 +216,6 @@ function module:BuildOptions()
 
 							-- Trigger a full update of the UnitFrames
 							module:Update(true)
-
-							-- Refresh the options UI
-							-- SUI.Lib.AceConfigRegistry:NotifyChange('SpartanUI')
 						end,
 					},
 				},
@@ -242,16 +241,7 @@ function module:BuildOptions()
 					type = 'execute',
 					order = 0,
 					hidden = function()
-						if
-							module.DB.customSettings[SUI.DB.Artwork.Style]
-							and module.DB.customSettings[SUI.DB.Artwork.Style][elementName]
-							and #module.DB.customSettings[SUI.DB.Artwork.Style][elementName] ~= 0
-						then
-							print(#module.DB.customSettings[SUI.DB.Artwork.Style][elementName])
-							return false
-						else
-							return true
-						end
+						return not SUI.Options:hasChanges(module.DB.customSettings[SUI.DB.Artwork.Style][elementName], module.BaseOpt.elements[elementName])
 					end,
 					func = function()
 						if module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style][elementName] = nil end
@@ -262,7 +252,9 @@ function module:BuildOptions()
 					name = L['Enabled'],
 					type = 'toggle',
 					order = 1,
-					get = GetOption,
+					get = function()
+						return module.Settings.elements[elementName].enabled
+					end,
 					set = SetOption,
 				},
 			},
@@ -353,24 +345,24 @@ function module:BuildOptions()
 
 		local order = 4
 		for settingName, settingValue in pairs(elementSettings) do
-			-- if not options.args.elements.args[elementName].args[settingName] then
-			-- 	local optionType = type(settingValue)
-			-- 	options.args.elements.args[elementName].args[settingName] = {
-			-- 		name = L[settingName] or settingName,
-			-- 		type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
-			-- 		order = order,
-			-- 		get = GetOption,
-			-- 		set = SetOption,
-			-- 	}
+			if not options.args.elements.args[elementName].args[settingName] then
+				local optionType = type(settingValue)
+				options.args.elements.args[elementName].args[settingName] = {
+					name = L[settingName] or settingName,
+					type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
+					order = order,
+					get = GetOption,
+					set = SetOption,
+				}
 
-			-- 	if optionType == 'number' then
-			-- 		options.args.elements.args[elementName].args[settingName].min = 0
-			-- 		options.args.elements.args[elementName].args[settingName].max = 2
-			-- 		options.args.elements.args[elementName].args[settingName].step = 0.01
-			-- 	end
+				if optionType == 'number' then
+					options.args.elements.args[elementName].args[settingName].min = 0
+					options.args.elements.args[elementName].args[settingName].max = 2
+					options.args.elements.args[elementName].args[settingName].step = 0.01
+				end
 
-			-- 	order = order + 1
-			-- end
+				order = order + 1
+			end
 		end
 	end
 

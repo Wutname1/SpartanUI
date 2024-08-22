@@ -143,6 +143,7 @@ function module:Register(name, settings)
 end
 
 function module:UpdateSettings()
+	module.Settings = nil
 	-- Start with base settings
 	---@type SUI.Style.Settings.IMinimap
 	module.Settings = SUI:CopyData(BaseSettings, {})
@@ -150,7 +151,7 @@ function module:UpdateSettings()
 	-- Apply theme settings if available
 	local currentStyle = SUI.DB.Artwork.Style
 	if Registry[currentStyle] then module.Settings = SUI:MergeData(module.Settings, Registry[currentStyle].settings, true) end
-	module.BaseOpt = SUI:CopyData(module.BaseOpt, module.Settings)
+	module.BaseOpt = SUI:CopyTable({}, module.Settings)
 
 	-- Apply user custom settings
 	module.Settings = SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true)
