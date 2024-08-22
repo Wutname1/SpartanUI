@@ -134,7 +134,7 @@ function module:OnInitialize()
 			Position = 'BOTTOMLEFT,SUI_BottomAnchor,BOTTOM,90,2',
 		},
 	}
-	statusBarModule:RegisterStyle('Transparent', { Left = StatusBarsSettings, Right = StatusBarsSettings })
+	statusBarModule:RegisterStyle('Transparent', { Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings) })
 end
 
 function module:OnEnable()

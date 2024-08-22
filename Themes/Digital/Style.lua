@@ -53,7 +53,7 @@ function module:OnInitialize()
 		texCords = { 0.150390625, 1, 0, 1 },
 		MaxWidth = 32,
 	}
-	statusBarModule:RegisterStyle('Digital', { Left = StatusBarsSettings, Right = StatusBarsSettings })
+	statusBarModule:RegisterStyle('Digital', { Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings) })
 
 	module:CreateArtwork()
 end

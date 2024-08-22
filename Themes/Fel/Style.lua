@@ -102,7 +102,7 @@ function module:OnInitialize()
 		texCords = { 0.0546875, 0.9140625, 0.5555555555555556, 0 },
 		MaxWidth = 48,
 	}
-	statusBarModule:RegisterStyle('Fel', { Left = StatusBarsSettings, Right = StatusBarsSettings })
+	statusBarModule:RegisterStyle('Fel', { Left = SUI:CopyTable({}, StatusBarsSettings), Right = SUI:CopyTable({}, StatusBarsSettings) })
 
 	module:CreateArtwork()
 	Options()
