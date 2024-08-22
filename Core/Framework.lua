@@ -1014,15 +1014,9 @@ function SUI:OnInitialize()
 
 	SUI.SpartanUIDB = SUI.Lib.AceDB:New('SpartanUIDB', DBdefaults)
 
-	-- New SUI.DB Access
+	-- SUI.DB Access
 	SUI.DBG = SUI.SpartanUIDB.global
 	SUI.DB = SUI.SpartanUIDB.profile
-
-	SUI.AutoOpenErrors = (SUI.DBG.ErrorHandler.AutoOpenErrors or false)
-	if _G.SUIErrorDisplay then
-		_G.SUIErrorDisplay:UpdateDisplay()
-		_G.SUIErrorDisplay:updatemapIcon()
-	end
 
 	--Check for any SUI.DB changes
 	if SUI.DB.SetupDone and (SUI.Version ~= SUI.DB.Version) and SUI.DB.Version ~= '0' then SUI:DBUpgrades() end

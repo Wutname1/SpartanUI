@@ -188,7 +188,7 @@ local function Unlock()
 	MoveIt:MoveIt(FrameList)
 end
 
--- Returns True if the Inputed profileName is the active one in BT4
+-- Returns True if the Inputed profileName is in BT4
 local function ProfileCheck(profileName, Report)
 	if not Bartender4 then return end
 

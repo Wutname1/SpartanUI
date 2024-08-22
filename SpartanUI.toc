@@ -24,9 +24,12 @@ libs\LibDBIcon-1.0\lib.xml
 libs\LibEditMode\embed.xml
 libs\LibEditModeOverride\LibEditModeOverride.xml
 
+# Localization
+lang\localization.xml
+
 #Setup SUI error catcher
 libs\bug-grabber\load.xml
-Core\Handlers\BugWindow.lua
+Core\Handlers\Bugs\loader.xml
 
 # General Libraries Continued
 libs\LibCompress\LibCompress.lua
@@ -40,8 +43,6 @@ libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
 libs\oUF\oUF.xml
 libs\oUF_Plugins\Loader.xml
 
-# Localization
-lang\localization.xml
 
 # Now load SpartanUI
 core\Framework.lua
