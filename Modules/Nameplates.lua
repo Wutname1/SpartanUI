@@ -463,10 +463,10 @@ local NameplateCallback = function(self, event, unit)
 					if self[element] then self[element]:Hide() end
 				end
 			end
+			self.Name:Show()
 
 			self.widgetContainer = self.blizzPlate.WidgetContainer
 			if self.widgetContainer then
-				self.Name:Hide()
 				self.widgetContainer:SetParent(self)
 				self.widgetContainer:ClearAllPoints()
 				self.widgetContainer:SetPoint('TOP', self, 'BOTTOM')
@@ -475,6 +475,7 @@ local NameplateCallback = function(self, event, unit)
 					local widgetCount = 0
 					for _, widget in pairs(self.widgetContainer.widgetFrames) do
 						if widget then
+							self.Name:Hide()
 							SUI.Skins.SkinWidgets(widget)
 							widgetCount = widgetCount + 1
 						end
