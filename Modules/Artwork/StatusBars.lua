@@ -245,6 +245,8 @@ function module:CreateBarManager()
 	barManager:SetScript('OnEvent', barManager.OnEvent)
 
 	barManager.GetBarPriority = function(self, barIndex)
+		if not DB.BarPriorities then return 0 end -- Sometimes we get called before Initilize has been called. This is a safe guard.
+
 		return DB.BarPriorities[barIndex] or 0
 	end
 
