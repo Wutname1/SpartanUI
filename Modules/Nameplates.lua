@@ -457,16 +457,18 @@ local NameplateCallback = function(self, event, unit)
 		self:UpdateAllElements('ForceUpdate')
 
 		if self.ShowWidgetOnly then
-			for _, element in ipairs(ElementList) do
-				if self:IsElementEnabled(element) then
-					self:DisableElement(element)
-					if self[element] then self[element]:Hide() end
-				end
-			end
-			self.Name:Show()
-
 			self.widgetContainer = self.blizzPlate.WidgetContainer
 			if self.widgetContainer then
+				if not UnitInPartyIsAI(unit) and not UnitPlayerControlled(unit) then
+					for _, element in ipairs(ElementList) do
+						if self:IsElementEnabled(element) then
+							self:DisableElement(element)
+							if self[element] then self[element]:Hide() end
+						end
+					end
+				end
+				-- self.Name:Show()
+
 				self.widgetContainer:SetParent(self)
 				self.widgetContainer:ClearAllPoints()
 				self.widgetContainer:SetPoint('TOP', self, 'BOTTOM')
@@ -475,7 +477,8 @@ local NameplateCallback = function(self, event, unit)
 					local widgetCount = 0
 					for _, widget in pairs(self.widgetContainer.widgetFrames) do
 						if widget then
-							self.Name:Hide()
+							if not UnitInPartyIsAI(unit) and not UnitPlayerControlled(unit) then self.Name:Hide() end
+
 							SUI.Skins.SkinWidgets(widget)
 							widgetCount = widgetCount + 1
 						end
@@ -488,7 +491,7 @@ local NameplateCallback = function(self, event, unit)
 				end
 				skinWidgets()
 			end
-			return
+			if not UnitInPartyIsAI(unit) and not UnitPlayerControlled(unit) then return end
 		end
 	elseif event == 'NAME_PLATE_UNIT_REMOVED' then
 		NameplateList[self:GetName()] = false
