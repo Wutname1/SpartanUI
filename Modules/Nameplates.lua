@@ -467,7 +467,7 @@ local NameplateCallback = function(self, event, unit)
 						end
 					end
 				end
-				-- self.Name:Show()
+				self.Name:Show()
 
 				self.widgetContainer:SetParent(self)
 				self.widgetContainer:ClearAllPoints()

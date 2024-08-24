@@ -433,8 +433,26 @@ function module:SetupExpansionButton()
 	-- end)
 end
 
+local isFrameIgnored = function(item)
+	local ignored = { 'HybridMinimap', 'AAP-Classic', 'HandyNotes' }
+	local WildcardIgnore = { 'Questie', 'HandyNotes' }
+	if not item or not item.GetName then return false end
+
+	local name = item:GetName()
+	if name ~= nil then
+		if SUI:IsInTable(ignored, name) then return true end
+
+		for _, v in ipairs(WildcardIgnore) do
+			if string.match(name, v) then return true end
+		end
+	end
+	return false
+end
+
 function module:SetupAddonButtons()
 	local function setupButtonFading(button)
+		local name = button:GetName()
+		if isFrameIgnored(name) then print('ignore me!' .. name) end
 		if button.fadeInAnim then return end -- Already set up
 
 		button.fadeInAnim = button:CreateAnimationGroup()
@@ -489,7 +507,7 @@ function module:SetupAddonButtons()
 		if event == 'ADDON_LOADED' then
 			C_Timer.After(0.1, function()
 				for _, child in ipairs({ self:GetChildren() }) do
-					if child:IsObjectType('Button') and not child.fadeInAnim then
+					if child:IsObjectType('Button') and not child.fadeInAnim and not isFrameIgnored(child) then
 						setupButtonFading(child)
 						child:HookScript('OnEnter', showAllButtons)
 						child:HookScript('OnLeave', hideAllButtons)
@@ -509,15 +527,15 @@ function module:UpdateAddonButtons()
 	local style = module.Settings.elements.addonButtons.style
 	if style == 'always' then
 		for _, child in ipairs({ Minimap:GetChildren() }) do
-			if child:IsObjectType('Button') then child:SetAlpha(1) end
+			if child:IsObjectType('Button') and not isFrameIgnored(child) then child:SetAlpha(1) end
 		end
 	elseif style == 'never' then
 		for _, child in ipairs({ Minimap:GetChildren() }) do
-			if child:IsObjectType('Button') then child:SetAlpha(0) end
+			if child:IsObjectType('Button') and not isFrameIgnored(child) then child:SetAlpha(0) end
 		end
 	else -- "mouseover"
 		for _, child in ipairs({ Minimap:GetChildren() }) do
-			if child:IsObjectType('Button') then
+			if child:IsObjectType('Button') and not isFrameIgnored(child) then
 				child:SetAlpha(0) -- Start hidden
 			end
 		end
