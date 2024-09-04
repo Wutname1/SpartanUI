@@ -465,7 +465,9 @@
     "ScrollUtil",
     "CreateAnchor",
     "CreateScrollBoxListLinearView",
-    "CreateDataProvider"
+    "CreateDataProvider",
+    "MainMenuBarBackpackButton",
+    "SUI_Mover_BT4BarBagBar"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
@@ -501,6 +503,6 @@
     "libs\\oUF_Plugins",
     "Modules",
     "Themes",
-    "~\\.vscode\\extensions\\ketho.wow-api-0.17.4\\Annotations"
+    "~\\.vscode\\extensions\\ketho.wow-api-0.17.6\\Annotations"
   ]
 }
