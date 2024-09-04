@@ -151,10 +151,11 @@ function module:UpdateSettings()
 	-- Apply theme settings if available
 	local currentStyle = SUI.DB.Artwork.Style
 	if Registry[currentStyle] then module.Settings = SUI:MergeData(module.Settings, Registry[currentStyle].settings, true) end
-	module.BaseOpt = SUI:CopyTable({}, module.Settings)
 
 	-- Apply user custom settings
-	module.Settings = SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true)
+	if module.DB.customSettings[currentStyle] then module.Settings = SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true) end
+	
+	module.BaseOpt = SUI:CopyTable({}, module.Settings)
 end
 
 function module:ModifyMinimapLayout()
@@ -670,23 +671,23 @@ function module:UpdateScale()
 end
 
 function module:OnInitialize()
+	---@class SUI.Minimap.Database
 	local defaults = {
-		profile = {
-			enabled = true,
-			style = 'Default',
-			customSettings = {
+		enabled = true,
+		style = 'Default',
+		customSettings = {
+			['**'] = {
 				['**'] = {
-					['**'] = {
-						['**'] = {},
-					},
+					['**'] = {},
 				},
 			},
-			AutoDetectAllowUse = true,
-			ManualAllowUse = false,
 		},
+		AutoDetectAllowUse = true,
+		ManualAllowUse = false,
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Minimap', defaults)
-	module.DB = module.Database.profile
+
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Minimap', { profile = defaults })
+	module.DB = module.Database.profile ---@type SUI.Minimap.Database
 
 	-- Initialize the settings
 	module:UpdateSettings()
