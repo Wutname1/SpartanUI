@@ -270,6 +270,14 @@ function module:CreateBarContainer(barManager, key, index)
 	barContainer:SetFrameStrata('LOW')
 	barContainer:SetFrameLevel(20)
 
+	-- Hide with SpartanUI
+	SpartanUI:HookScript('OnHide', function()
+		barContainer:Hide()
+	end)
+	SpartanUI:HookScript('OnShow', function()
+		barContainer:Show()
+	end)
+
 	self:SetupBarContainerVisuals(barContainer, barStyle)
 	self:SetupBarContainerPosition(barContainer, barStyle, index)
 
