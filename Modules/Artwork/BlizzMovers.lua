@@ -106,38 +106,22 @@ end
 
 local function AbilityBars()
 	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
-	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
-	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
-	ExtraActionBarFrame.ignoreInLayout = true
-	ZoneAbilityFrame.ignoreInLayout = true
-
-	-- ZoneAbility
-	-- local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
-	-- AttachToHolder(ZoneAbilityFrame, ZoneAbilityHolder)
-
 	-- Extra Action / Boss Bar
-	local BossButtonHolder = GenerateHolder('BossButton')
-	BossButtonHolder:SetSize(100, 70)
-	BossButtonHolder:Show()
+	local ExtraAbilityHolder = GenerateHolder('ExtraAbility')
+	ExtraAbilityHolder:SetSize(256, 120)
+	ExtraAbilityHolder:Show()
 
 	-- Attach the frames to the holder
-	AttachToHolder(ZoneAbilityFrame, BossButtonHolder)
-	AttachToHolder(ExtraActionBarFrame, BossButtonHolder)
-	AttachToHolder(ExtraAbilityContainer, BossButtonHolder)
+	AttachToHolder(ExtraAbilityContainer, ExtraAbilityHolder)
 
 	-- Hook the SetPoint function to prevent the frame from moving
-	hooksecurefunc(ZoneAbilityFrame, 'SetPoint', ResetPosition)
-	hooksecurefunc(ExtraActionBarFrame, 'SetPoint', ResetPosition)
 	hooksecurefunc(ExtraAbilityContainer, 'SetPoint', ResetPosition)
 
 	-- Hook the SetParent function to prevent the frame from moving
-	hooksecurefunc(ZoneAbilityFrame, 'SetParent', ResetParent)
-	hooksecurefunc(ExtraActionBarFrame, 'SetParent', ResetParent)
-	hooksecurefunc(ExtraAbilityContainer, 'SetParent', ResetParent)
+	-- hooksecurefunc(ExtraAbilityContainer, 'SetParent', ResetParent)
 
 	-- Create the movers
-	-- MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
-	MoveIt:CreateMover(BossButtonHolder, 'BossButton', 'Extra action button', nil, 'Blizzard UI')
+	MoveIt:CreateMover(ExtraAbilityHolder, 'ExtraAbility', 'Extra Abilities', nil, 'Blizzard UI')
 end
 
 local function FramerateFrame()
@@ -248,6 +232,7 @@ end
 function module:UPDATE_UI_WIDGET()
 	module:UPDATE_ALL_UI_WIDGETS()
 end
+
 function module:UPDATE_ALL_UI_WIDGETS()
 	for _, widget in pairs(_G['UIWidgetTopCenterContainerFrame'].widgetFrames) do
 		SUI.Skins.SkinWidgets(widget)
@@ -268,6 +253,6 @@ function module.BlizzMovers()
 	TopCenterContainer()
 	-- TalkingHead()
 	VehicleLeaveButton()
-	VehicleSeatIndicator()
+	-- VehicleSeatIndicator()
 	WidgetPowerBarContainer()
 end
