@@ -235,6 +235,8 @@ function module:BuildOptions()
 		options.args.elements.args[elementName] = {
 			name = L[elementNaming[elementName] or elementName],
 			type = 'group',
+			get = GetOption,
+			set = SetOption,
 			args = {
 				resetElement = {
 					name = L['Reset Element'],
@@ -363,6 +365,21 @@ function module:BuildOptions()
 
 				order = order + 1
 			end
+		end
+
+		if elementSettings.style then
+			options.args.elements.args[elementName].args.enabled.hidden = true
+
+			options.args.elements.args[elementName].args.style = {
+				name = L['Style'],
+				type = 'select',
+				order = 4,
+				values = {
+					['always'] = L['Always'],
+					['mouseover'] = L['Mouseover'],
+					['never'] = L['Never'],
+				},
+			}
 		end
 	end
 
