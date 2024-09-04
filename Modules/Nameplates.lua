@@ -467,7 +467,6 @@ local NameplateCallback = function(self, event, unit)
 						end
 					end
 				end
-				self.Name:Show()
 
 				self.widgetContainer:SetParent(self)
 				self.widgetContainer:ClearAllPoints()
@@ -477,8 +476,6 @@ local NameplateCallback = function(self, event, unit)
 					local widgetCount = 0
 					for _, widget in pairs(self.widgetContainer.widgetFrames) do
 						if widget then
-							if not UnitInPartyIsAI(unit) and not UnitPlayerControlled(unit) then self.Name:Hide() end
-
 							SUI.Skins.SkinWidgets(widget)
 							widgetCount = widgetCount + 1
 						end
