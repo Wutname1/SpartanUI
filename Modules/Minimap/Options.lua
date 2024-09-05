@@ -22,16 +22,15 @@ local elementNaming = {
 local function GetOption(info)
 	local element = info[#info - 1]
 	local option = info[#info]
-	return #module.DB.customSettings[SUI.DB.Artwork.Style][element] ~= 0 and module.DB.customSettings[SUI.DB.Artwork.Style][element][option] or module.Settings.elements[element][option]
+	return #module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] ~= 0 and module.DB.customSettings[SUI.DB.Artwork.Style].elements[element][option]
+		or module.Settings.elements[element][option]
 end
 
 local function SetOption(info, value)
 	local element = info[#info - 1]
 	local option = info[#info]
-	if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
-	if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
 	module.Settings.elements[element][option] = value
-	module.DB.customSettings[SUI.DB.Artwork.Style][element][option] = value
+	module.DB.customSettings[SUI.DB.Artwork.Style].elements[element][option] = value
 	module:Update(true)
 end
 
@@ -73,11 +72,11 @@ local function GetPositionOption(info)
 	local positionString = module.Settings.elements[element].position
 
 	if
-		module.DB.customSettings[SUI.DB.Artwork.Style][element]
-		and module.DB.customSettings[SUI.DB.Artwork.Style][element].position
-		and type(module.DB.customSettings[SUI.DB.Artwork.Style][element].position) == 'string'
+		module.DB.customSettings[SUI.DB.Artwork.Style].elements[element]
+		and module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position
+		and type(module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position) == 'string'
 	then
-		positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
+		positionString = module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position
 	end
 	local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
 	if positionPart == 'point' then
@@ -97,8 +96,8 @@ local function SetPositionOption(info, value)
 	local element = info[#info - 2]
 	local positionPart = info[#info]
 	local positionString = module.Settings.elements[element].position
-	if module.DB.customSettings[SUI.DB.Artwork.Style][element] and type(module.DB.customSettings[SUI.DB.Artwork.Style][element].position) == 'string' then
-		positionString = module.DB.customSettings[SUI.DB.Artwork.Style][element].position
+	if module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] and type(module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position) == 'string' then
+		positionString = module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position
 	end
 	local point, relativeTo, relativePoint, x, y = strsplit(',', positionString)
 	if positionPart == 'point' then
@@ -113,10 +112,9 @@ local function SetPositionOption(info, value)
 		y = value
 	end
 	local newPositionString = string.format('%s,%s,%s,%s,%s', point, relativeTo, relativePoint, x, y)
-	if not module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style] = {} end
-	if not module.DB.customSettings[SUI.DB.Artwork.Style][element] then module.DB.customSettings[SUI.DB.Artwork.Style][element] = {} end
+	if not module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] then module.DB.customSettings[SUI.DB.Artwork.Style].elements[element] = {} end
 	module.Settings.elements[element].position = newPositionString
-	module.DB.customSettings[SUI.DB.Artwork.Style][element].position = newPositionString
+	module.DB.customSettings[SUI.DB.Artwork.Style].elements[element].position = newPositionString
 	module:Update(true)
 end
 
@@ -243,10 +241,10 @@ function module:BuildOptions()
 					type = 'execute',
 					order = 0,
 					hidden = function()
-						return not SUI.Options:hasChanges(module.DB.customSettings[SUI.DB.Artwork.Style][elementName], module.BaseOpt.elements[elementName])
+						return not SUI.Options:hasChanges(module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName], module.BaseOpt.elements[elementName])
 					end,
 					func = function()
-						if module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style][elementName] = nil end
+						if module.DB.customSettings[SUI.DB.Artwork.Style] then module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName] = nil end
 						module:Update(true)
 					end,
 				},
@@ -340,7 +338,7 @@ function module:BuildOptions()
 					return unpack(elementSettings.color)
 				end,
 				set = function(info, r, g, b, a)
-					module.DB.customSettings[SUI.DB.Artwork.Style][elementName].color[info[#info]] = { r, g, b, a }
+					module.DB.customSettings[SUI.DB.Artwork.Style].elements[elementName].color[info[#info]] = { r, g, b, a }
 				end,
 			}
 		end
