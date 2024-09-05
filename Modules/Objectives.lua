@@ -49,162 +49,36 @@ local function MakeMoveable()
 	end
 end
 
-local ObjTrackerUpdate = function(_, event)
-	if SUI:IsModuleDisabled('Objectives') or module.Override then return end
-	local HideObjs = false
-
-	--Figure out if we need to hide objectives
-	for _, v in ipairs(RuleList) do
-		if module.DB[v].Status ~= 'Disabled' then
-			local CombatRule = false
-			if InCombatLockdown() and module.DB[v].Combat then
-				CombatRule = true
-			elseif not InCombatLockdown() and not module.DB[v].Combat then
-				CombatRule = true
-			end
-
-			if module.DB[v].Status == 'Group' and (IsInGroup() and not IsInRaid()) and CombatRule then
-				HideObjs = true
-			elseif module.DB[v].Status == 'Raid' and IsInRaid() and CombatRule then
-				HideObjs = true
-			elseif module.DB[v].Status == 'Boss' and event == 'ENCOUNTER_START' then
-				HideObjs = true
-			elseif module.DB[v].Status == 'Instance' and IsInInstance() then
-				HideObjs = true
-			elseif module.DB[v].Status == 'All' and CombatRule then
-				HideObjs = true
-			end
-		end
-	end
-
-	--Scenario Detection
-	local ScenarioActive = false
-	if ScenarioBlocksFrame and ScenarioBlocksFrame:IsVisible() then ScenarioActive = true end
-
-	-- Always Shown logic
-	if module.DB.AlwaysShowScenario and ScenarioActive then HideObjs = false end
-
-	if SUI.IsRetail then
-		for _, headerName in ipairs({ 'CampaignQuestHeader', 'QuestHeader' }) do
-			local QuestHeader = _G['ObjectiveTrackerBlocksFrame'][headerName]
-			if QuestHeader and QuestHeader.module then
-				if QuestHeader.module.collapsed == nil then
-					if (not QuestHeader.nextBlock) or (QuestHeader.nextBlock and QuestHeader.nextBlock.isHeader) then QuestHeader.module.collapsed = true end
-					if QuestHeader.nextBlock and not QuestHeader.nextBlock.isHeader then QuestHeader.module.collapsed = false end
-				end
-
-				-- print(HideObjs)
-				-- print(QuestHeader.module:IsCollapsed())
-				-- print((QuestHeader.module.collapsed and HideObjs))
-				-- print((QuestHeader.module.collapsed == false and HideObjs))
-				-- print('---')
-
-				if (QuestHeader.module:IsCollapsed() and not HideObjs) or (QuestHeader.module:IsCollapsed() and HideObjs) then QuestHeader.MinimizeButton:Click() end
-			end
-		end
-	else
-		if HideObjs and _G[frameName]:GetAlpha() == 1 then
-			_G[frameName].FadeOut:Play()
-			_G[frameName]:Hide()
-			if _G[frameName].HeaderMenu then _G[frameName].HeaderMenu.MinimizeButton:Hide() end
-		elseif _G[frameName]:GetAlpha() == 0 and not HideObjs then
-			if _G[frameName].HeaderMenu then _G[frameName].HeaderMenu.MinimizeButton:Show() end
-			_G[frameName].FadeOut:Stop()
-			_G[frameName].FadeIn:Play()
-		end
-	end
-end
-
-local function Options()
-	SUI.opt.args.Modules.args.Objectives = {
-		type = 'group',
-		name = L.Objectives,
-		disabled = function()
-			return SUI:IsModuleDisabled(module)
-		end,
-		args = {
-			AlwaysShowScenario = {
-				name = L['Always show in a scenario'],
-				type = 'toggle',
-				order = 0,
-				width = 'full',
-				get = function(info)
-					return module.DB.AlwaysShowScenario
-				end,
-				set = function(info, val)
-					module.DB.AlwaysShowScenario = val
-					ObjTrackerUpdate()
-				end,
-			},
-			height = {
-				name = L['Height'],
-				type = 'range',
-				min = 20,
-				max = 1000,
-				step = 1,
-				order = 0.1,
-				width = 'full',
-				get = function(info)
-					return module.DB.height
-				end,
-				set = function(info, val)
-					module.DB.height = val
-					UpdateSize()
-				end,
-			},
-		},
-	}
-	for k, v in ipairs(RuleList) do
-		SUI.opt.args.Modules.args.Objectives.args[v] = {
-			name = v,
-			type = 'group',
-			inline = true,
-			order = k + 5.2,
-			get = function(info)
-				return module.DB[v][info[#info]]
-			end,
-			set = function(info, val)
-				module.DB[v][info[#info]] = val
-				ObjTrackerUpdate()
-			end,
-			args = {
-				Status = {
-					name = L['When to hide'],
-					type = 'select',
-					order = 1,
-					values = Conditions,
-				},
-				Combat = {
-					name = L['Only if in combat'],
-					type = 'toggle',
-					order = 2,
-				},
-			},
-		}
-	end
-end
-
 function module:OnInitialize()
+	---@class SUI.Objectives.DB
 	local defaults = {
-		profile = {
-			SetupDone = false,
-			AlwaysShowScenario = true,
-			height = 480,
-			Rule1 = {
-				Status = 'Raid',
-				Combat = false,
+		SetupDone = false,
+		AlwaysShowScenario = true,
+		height = 480,
+		Sections = {
+			['**'] = {
+				Rules = {
+					['**'] = {
+						Display = 'collapsed',
+						Combat = true,
+					},
+				},
 			},
-			Rule2 = {
-				Status = 'Disabled',
-				Combat = false,
+			ObjectiveTrackerFrame = {
+				Rules = {
+					['1'] = {
+						Combat = true,
+						ScenarioObjectiveTracker = false,
+						AchievementObjectiveTracker = false,
+					},
+				},
 			},
-			Rule3 = {
-				Status = 'Disabled',
-				Combat = false,
-			},
+			ScenarioObjectiveTracker = {},
+			QuestObjectiveTracker = {},
+			AchievementObjectiveTracker = {},
 		},
 	}
-	module.Database = SUI.SpartanUIDB:RegisterNamespace('Objectives', defaults)
+	module.Database = SUI.SpartanUIDB:RegisterNamespace('Objectives', { profile = defaults })
 	module.DB = module.Database.profile
 
 	--Migrate old settings
@@ -225,7 +99,7 @@ function module:OnEnable()
 	if SUI:IsModuleDisabled('Objectives') or module.Override then return end
 
 	--Event Manager
-	ObjectiveTrackerWatcher:SetScript('OnEvent', ObjTrackerUpdate)
+	-- ObjectiveTrackerWatcher:SetScript('OnEvent', ObjTrackerUpdate)
 
 	ObjectiveTrackerWatcher:RegisterEvent('ZONE_CHANGED')
 	ObjectiveTrackerWatcher:RegisterEvent('ZONE_CHANGED_INDOORS')
@@ -237,15 +111,11 @@ function module:OnEnable()
 	ObjectiveTrackerWatcher:RegisterEvent('RAID_INSTANCE_WELCOME')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_START')
 	ObjectiveTrackerWatcher:RegisterEvent('ENCOUNTER_END')
+	--Scenarios
+	ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_COMPLETED')
+	ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_CRITERIA_UPDATE')
+	ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_UPDATE')
 
-	if SUI.IsRetail then
-		--Scenarios
-		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_COMPLETED')
-		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_CRITERIA_UPDATE')
-		ObjectiveTrackerWatcher:RegisterEvent('SCENARIO_UPDATE')
-	end
-
-	Options()
 	MakeMoveable()
 end
 
@@ -254,15 +124,6 @@ function module:OnDisable()
 	if _G[frameName].HeaderMenu then _G[frameName].HeaderMenu.MinimizeButton:Show() end
 	_G[frameName].FadeOut:Stop()
 	_G[frameName].FadeIn:Play()
-end
-
-local DummyFunction = function() end
-
-function module:update()
-	if SUI:IsModuleDisabled('Objectives') or module.Override then return end
-
-	UpdateSize()
-	ObjTrackerUpdate()
 end
 
 function module:FirstTimeSetup()
