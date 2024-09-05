@@ -154,7 +154,7 @@ function module:UpdateSettings()
 
 	-- Apply user custom settings
 	if module.DB.customSettings[currentStyle] then module.Settings = SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true) end
-	
+
 	module.BaseOpt = SUI:CopyTable({}, module.Settings)
 end
 
@@ -263,6 +263,11 @@ function module:SetupElements()
 end
 
 function module:PositionItem(obj, position)
+	if type(position) == 'table' then
+		local name = obj:GetName()
+		if name then SUI:Error('Minimap', 'Position for ' .. name .. ' is bad. Please report this error along with an export of your minimap settings.') end
+		return
+	end
 	local point, anchor, secondaryPoint, x, y = strsplit(',', position)
 	if MinimapCluster[anchor] then anchor = MinimapCluster[anchor] end
 
