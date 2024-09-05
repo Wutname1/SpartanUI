@@ -467,7 +467,11 @@
     "CreateScrollBoxListLinearView",
     "CreateDataProvider",
     "MainMenuBarBackpackButton",
-    "SUI_Mover_BT4BarBagBar"
+    "SUI_Mover_BT4BarBagBar",
+    "AchievementObjectiveTracker",
+    "QuestObjectiveTracker",
+    "ScenarioObjectiveTracker",
+    "ObjectiveTrackerFrame"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
