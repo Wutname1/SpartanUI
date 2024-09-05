@@ -10,6 +10,7 @@ local ExtraAB = SUI:NewModule('ExtraAB') ---@type SUI.Module
 local function ResetPosition(frame, _, anchor)
 	local holder = frame.SUIHolder
 	if holder and anchor ~= holder then
+		if InCombatLockdown() then return end
 		frame:ClearAllPoints()
 		frame:SetPoint('CENTER' or frame.SUIHolderMountPoint, holder)
 	end
