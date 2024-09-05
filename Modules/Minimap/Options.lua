@@ -22,7 +22,7 @@ local elementNaming = {
 local function GetOption(info)
 	local element = info[#info - 1]
 	local option = info[#info]
-	return module.DB.customSettings[SUI.DB.Artwork.Style][element] and module.DB.customSettings[SUI.DB.Artwork.Style][element][option] or module.Settings.elements[element][option]
+	return #module.DB.customSettings[SUI.DB.Artwork.Style][element] ~= 0 and module.DB.customSettings[SUI.DB.Artwork.Style][element][option] or module.Settings.elements[element][option]
 end
 
 local function SetOption(info, value)
