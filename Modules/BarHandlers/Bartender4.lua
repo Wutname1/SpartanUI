@@ -257,7 +257,7 @@ end
 local function AddMovers()
 	local bt4ActionBars = Bartender4:GetModule('ActionBars')
 
-	for i = 1, 10 do
+	for _, i in ipairs(bt4ActionBars.LIST_ACTIONBARS) do
 		local BarName = 'BT4Bar' .. i
 		local bar = _G[BarName]
 		if bar then
