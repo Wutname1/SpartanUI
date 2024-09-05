@@ -345,27 +345,27 @@ function module:BuildOptions()
 			}
 		end
 
-		local order = 4
-		for settingName, settingValue in pairs(elementSettings) do
-			if not options.args.elements.args[elementName].args[settingName] then
-				local optionType = type(settingValue)
-				options.args.elements.args[elementName].args[settingName] = {
-					name = L[settingName] or settingName,
-					type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
-					order = order,
-					get = GetOption,
-					set = SetOption,
-				}
+		-- local order = 4
+		-- for settingName, settingValue in pairs(elementSettings) do
+		-- 	if not options.args.elements.args[elementName].args[settingName] then
+		-- 		local optionType = type(settingValue)
+		-- 		options.args.elements.args[elementName].args[settingName] = {
+		-- 			name = L[settingName] or settingName,
+		-- 			type = optionType == 'boolean' and 'toggle' or optionType == 'number' and 'range' or 'input',
+		-- 			order = order,
+		-- 			get = GetOption,
+		-- 			set = SetOption,
+		-- 		}
 
-				if optionType == 'number' then
-					options.args.elements.args[elementName].args[settingName].min = 0
-					options.args.elements.args[elementName].args[settingName].max = 2
-					options.args.elements.args[elementName].args[settingName].step = 0.01
-				end
+		-- 		if optionType == 'number' then
+		-- 			options.args.elements.args[elementName].args[settingName].min = 0
+		-- 			options.args.elements.args[elementName].args[settingName].max = 2
+		-- 			options.args.elements.args[elementName].args[settingName].step = 0.01
+		-- 		end
 
-				order = order + 1
-			end
-		end
+		-- 		order = order + 1
+		-- 	end
+		-- end
 
 		if elementSettings.style then
 			options.args.elements.args[elementName].args.enabled.hidden = true
