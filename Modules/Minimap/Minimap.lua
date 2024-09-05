@@ -152,10 +152,9 @@ function module:UpdateSettings()
 	local currentStyle = SUI.DB.Artwork.Style
 	if Registry[currentStyle] then module.Settings = SUI:MergeData(module.Settings, Registry[currentStyle].settings, true) end
 
-	-- Apply user custom settings
-	if module.DB.customSettings[currentStyle] then module.Settings = SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true) end
-
 	module.BaseOpt = SUI:CopyTable({}, module.Settings)
+	-- Apply user custom settings
+	if module.DB.customSettings[currentStyle] then SUI:MergeData(module.Settings, module.DB.customSettings[currentStyle], true) end
 end
 
 function module:ModifyMinimapLayout()
