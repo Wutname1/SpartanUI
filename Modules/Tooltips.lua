@@ -82,7 +82,7 @@ function module:OnInitialize()
 		VendorPrices = true,
 		Override = {},
 		ColorOverlay = true,
-		Color = { 0, 0, 0, 0.5 },
+		Color = { 0, 0, 0, 0.4 },
 		SuppressNoMatch = true,
 	}
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('Tooltips', { profile = defaults })

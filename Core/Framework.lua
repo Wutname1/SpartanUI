@@ -158,6 +158,7 @@ local DBdefault = {
 				['AltPowerBar'] = 'TOP,SpartanUI,TOP,0,-18',
 				['WidgetPowerBarContainer'] = 'TOP,SpartanUI,TOP,0,-50',
 				['ZoneAbility'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
+				['ExtraActionBar'] = 'BOTTOM,SpartanUI,BOTTOM,0,280',
 				['BossButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,210',
 				['AlertFrame'] = 'BOTTOM,SpartanUI,BOTTOM,0,215',
 				['VehicleLeaveButton'] = 'BOTTOM,SpartanUI,BOTTOM,0,180',
