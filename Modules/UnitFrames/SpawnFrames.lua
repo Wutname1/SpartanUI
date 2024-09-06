@@ -240,15 +240,14 @@ function UF:SpawnFrames()
 				local firstElement = groupElement.header or groupElement.frames[1] or groupElement
 				if firstElement then
 					local function GroupFrameUpdateAll(groupFrame)
+						UnregisterAttributeDriver(firstElement, 'state-visibility')
 						if VisibilityCheck(frameName) and UF.CurrentSettings[frameName].enabled then
-							if firstElement.visibility then RegisterStateDriver(firstElement, firstElement.visibility) end
 							firstElement:Show()
 
-							for i, f in pairs(groupFrame.frames) do
+							for _, f in pairs(groupFrame.frames) do
 								if f.UpdateAll then f:UpdateAll() end
 							end
 						else
-							UnregisterStateDriver(firstElement, 'visibility')
 							firstElement:Hide()
 						end
 					end

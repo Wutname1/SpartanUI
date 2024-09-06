@@ -474,7 +474,8 @@
     "ObjectiveTrackerFrame",
     "RENOWN_LEVEL_LABEL",
     "STANDING",
-    "UNKNOWN"
+    "UNKNOWN",
+    "UnregisterAttributeDriver"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,

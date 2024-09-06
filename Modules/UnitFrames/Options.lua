@@ -938,6 +938,7 @@ function Options:AddGroupDisplay(frameName, OptionSet)
 			UF.DB.UserSettings[UF.DB.Style][frameName][setting] = val
 			--Update the screen
 			UF.Unit:Get(frameName).header:SetAttribute(setting, val)
+			UF.Unit:Get(frameName):UpdateAll()
 		end,
 		args = {
 			showRaid = {
