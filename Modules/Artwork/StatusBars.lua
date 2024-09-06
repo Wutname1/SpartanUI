@@ -119,6 +119,54 @@ function module:GetExperienceTooltipText()
 	if restedXP > 0 then GameTooltip:AddDoubleLine(L['Rested:'], string.format('Rested: +%s (%.2f%%)', SUI.Font:FormatNumber(restedXP), (restedXP / maxXP) * 100), 1, 1, 1) end
 end
 
+function module:GetReputationTooltipText()
+	local data = C_Reputation.GetWatchedFactionData()
+	if not data then return end
+
+	GameTooltip:AddLine(data.name)
+	GameTooltip:AddLine(' ')
+
+	local friendshipInfo = C_GossipInfo.GetFriendshipReputation(data.factionID)
+	local isMajorFaction = C_Reputation.IsMajorFaction(data.factionID)
+
+	if friendshipInfo and friendshipInfo.friendshipFactionID > 0 then
+		-- Friendship reputation
+		GameTooltip:AddDoubleLine(STANDING .. ':', friendshipInfo.reaction, 1, 1, 1)
+		if friendshipInfo.nextThreshold then
+			local current = friendshipInfo.standing - (friendshipInfo.reactionThreshold or 0)
+			local total = friendshipInfo.nextThreshold - (friendshipInfo.reactionThreshold or 0)
+			GameTooltip:AddDoubleLine(REPUTATION .. ':', string.format('%d / %d (%d%%)', current, total, (current / total) * 100), 1, 1, 1)
+		end
+	elseif isMajorFaction then
+		-- Major faction (Dragonflight renown system)
+		local majorFactionData = C_MajorFactions.GetMajorFactionData(data.factionID)
+		local renownLevel = majorFactionData.renownLevel
+		local renownReputationEarned = majorFactionData.renownReputationEarned
+		local renownLevelThreshold = majorFactionData.renownLevelThreshold
+
+		GameTooltip:AddDoubleLine(RENOWN_LEVEL_LABEL, renownLevel, BLUE_FONT_COLOR.r, BLUE_FONT_COLOR.g, BLUE_FONT_COLOR.b)
+		GameTooltip:AddDoubleLine(REPUTATION .. ':', string.format('%d / %d (%d%%)', renownReputationEarned, renownLevelThreshold, (renownReputationEarned / renownLevelThreshold) * 100), 1, 1, 1)
+	else
+		-- Standard reputation
+		local standingText = _G['FACTION_STANDING_LABEL' .. data.reaction] or UNKNOWN
+		GameTooltip:AddDoubleLine(STANDING .. ':', standingText, 1, 1, 1)
+
+		if data.reaction < 8 then -- Not at max standing
+			local current = data.currentStanding - data.currentReactionThreshold
+			local total = data.nextReactionThreshold - data.currentReactionThreshold
+			GameTooltip:AddDoubleLine(REPUTATION .. ':', string.format('%d / %d (%d%%)', current, total, (current / total) * 100), 1, 1, 1)
+		end
+	end
+
+	-- Paragon reputation (if applicable)
+	if C_Reputation.IsFactionParagon(data.factionID) then
+		local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(data.factionID)
+		local current = currentValue % threshold
+		GameTooltip:AddDoubleLine(L['Paragon'] .. ':', string.format('%d / %d (%d%%)', current, threshold, (current / threshold) * 100), 1, 1, 1)
+		if hasRewardPending then GameTooltip:AddLine(L['Reward Available'], 0, 1, 0) end
+	end
+end
+
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = DBDefaults })
 	DB = module.Database.profile
@@ -368,7 +416,11 @@ function module:SetupBar(bar, barContainer, width, height, index)
 		-- Show custom tooltip
 		GameTooltip:ClearLines()
 		GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
-		if self.barIndex == Enums.Bars.Experience then module:GetExperienceTooltipText() end
+		if self.barIndex == Enums.Bars.Experience then
+			module:GetExperienceTooltipText()
+		elseif self.barIndex == Enums.Bars.Reputation then
+			module:GetReputationTooltipText()
+		end
 		GameTooltip:Show()
 	end)
 

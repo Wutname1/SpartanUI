@@ -471,7 +471,10 @@
     "AchievementObjectiveTracker",
     "QuestObjectiveTracker",
     "ScenarioObjectiveTracker",
-    "ObjectiveTrackerFrame"
+    "ObjectiveTrackerFrame",
+    "RENOWN_LEVEL_LABEL",
+    "STANDING",
+    "UNKNOWN"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
