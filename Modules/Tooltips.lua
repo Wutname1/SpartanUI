@@ -77,7 +77,7 @@ function module:OnInitialize()
 			OverrideLoc = false,
 			Anchor = { onMouse = false, Moved = false, AnchorPos = {} },
 		},
-		Background = 'Smoke',
+		Background = 'Blizzard Dialog Background Dark',
 		onMouse = false,
 		VendorPrices = true,
 		Override = {},
@@ -189,6 +189,7 @@ local function ApplySkin(tooltip)
 		bgFile = LSM:Fetch('background', module.DB.Background),
 	}
 
+	if tooltip.NineSlice then SUI.Skins.RemoveTextures(tooltip.NineSlice) end
 	if not tooltip.SetBackdrop then Mixin(tooltip, BackdropTemplateMixin) end
 	tooltip:SetBackdrop(style)
 	tooltip:SetBackdropColor(unpack(module.DB.Color))
@@ -436,6 +437,13 @@ function module:OnEnable()
 	--Do Setup
 	ApplyTooltipSkins()
 	hooksecurefunc('GameTooltip_SetDefaultAnchor', setPoint)
+	hooksecurefunc('GameTooltip_SetDefaultAnchor', function(tooltip)
+		ApplySkin(tooltip)
+	end)
+
+	hooksecurefunc('SharedTooltip_SetBackdropStyle', function(self)
+		ApplySkin(self)
+	end)
 
 	GameTooltip:HookScript('OnTooltipCleared', TipCleared)
 	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, TooltipSetItem)
