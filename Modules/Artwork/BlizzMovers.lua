@@ -109,36 +109,61 @@ local function AbilityBars()
 	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
 	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
 	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
+
+	-- Create holders
+	local ExtraActionBarHolder = GenerateHolder('ExtraActionBar')
+	local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
+
+	ExtraActionBarHolder:SetSize(100, 70)
+	ZoneAbilityHolder:SetSize(100, 70)
+
+	ExtraActionBarHolder:Show()
+	ZoneAbilityHolder:Show()
+
+	-- Set up ExtraActionBarFrame
+	ExtraActionBarFrame:SetParent(ExtraActionBarHolder)
+	ExtraActionBarFrame:ClearAllPoints()
+	ExtraActionBarFrame:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
 	ExtraActionBarFrame.ignoreInLayout = true
+
+	-- Set up ZoneAbilityFrame
+	ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
+	ZoneAbilityFrame:ClearAllPoints()
+	ZoneAbilityFrame:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
 	ZoneAbilityFrame.ignoreInLayout = true
 
-	-- ZoneAbility
-	-- local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
-	-- AttachToHolder(ZoneAbilityFrame, ZoneAbilityHolder)
+	-- Set up ExtraAbilityContainer
+	if ExtraAbilityContainer then
+		ExtraAbilityContainer:SetParent(UIParent)
+		ExtraAbilityContainer:ClearAllPoints()
+		ExtraAbilityContainer.SetPoint = function() end -- Prevent any attempts to move it
+	end
 
-	-- Extra Action / Boss Bar
-	local BossButtonHolder = GenerateHolder('BossButton')
-	BossButtonHolder:SetSize(100, 70)
-	BossButtonHolder:Show()
+	-- Hook functions to prevent movement
+	hooksecurefunc(ExtraActionBarFrame, 'SetPoint', function(self)
+		if self:GetParent() ~= ExtraActionBarHolder then
+			self:ClearAllPoints()
+			self:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
+		end
+	end)
 
-	-- Attach the frames to the holder
-	AttachToHolder(ZoneAbilityFrame, BossButtonHolder)
-	AttachToHolder(ExtraActionBarFrame, BossButtonHolder)
-	AttachToHolder(ExtraAbilityContainer, BossButtonHolder)
+	hooksecurefunc(ZoneAbilityFrame, 'SetPoint', function(self)
+		if self:GetParent() ~= ZoneAbilityHolder then
+			self:ClearAllPoints()
+			self:SetPoint('CENTER', ZoneAbilityHolder, 'CENTER')
+		end
+	end)
 
-	-- Hook the SetPoint function to prevent the frame from moving
-	hooksecurefunc(ZoneAbilityFrame, 'SetPoint', ResetPosition)
-	hooksecurefunc(ExtraActionBarFrame, 'SetPoint', ResetPosition)
-	hooksecurefunc(ExtraAbilityContainer, 'SetPoint', ResetPosition)
+	-- Create movers
+	MoveIt:CreateMover(ExtraActionBarHolder, 'ExtraActionBar', 'Extra action button', nil, 'Blizzard UI')
+	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability button', nil, 'Blizzard UI')
 
-	-- Hook the SetParent function to prevent the frame from moving
-	hooksecurefunc(ZoneAbilityFrame, 'SetParent', ResetParent)
-	hooksecurefunc(ExtraActionBarFrame, 'SetParent', ResetParent)
-	hooksecurefunc(ExtraAbilityContainer, 'SetParent', ResetParent)
-
-	-- Create the movers
-	-- MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability', nil, 'Blizzard UI')
-	MoveIt:CreateMover(BossButtonHolder, 'BossButton', 'Extra action button', nil, 'Blizzard UI')
+	-- Update the layout when new frames are added
+	hooksecurefunc(ExtraAbilityContainer, 'AddFrame', function()
+		ExtraActionBarFrame:SetParent(ExtraActionBarHolder)
+		ExtraActionBarFrame:ClearAllPoints()
+		ExtraActionBarFrame:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
+	end)
 end
 
 local function FramerateFrame()
