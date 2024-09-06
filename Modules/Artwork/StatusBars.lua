@@ -101,6 +101,24 @@ function module:RegisterStyle(style, settings)
 	StyleSetting.skinsettings[style] = settings
 end
 
+function module:GetExperienceTooltipText()
+	local currentXP = UnitXP('player')
+	local maxXP = UnitXPMax('player')
+	local restedXP = GetXPExhaustion() or 0
+	local level = UnitLevel('player')
+	local questLogXP = GetQuestLogRewardXP()
+
+	GameTooltip:AddDoubleLine(L['Experience'], string.format('(Level %d)', level))
+	GameTooltip:AddDoubleLine(L['Remaining:'], string.format('%s (%.2f%%)', SUI.Font:FormatNumber(maxXP - currentXP), ((maxXP - currentXP) / maxXP) * 100), 1, 1, 1)
+
+	if currentXP then
+		GameTooltip:AddLine(' ')
+		GameTooltip:AddDoubleLine(L['XP'], string.format('%s / %s (%.2f%%)', SUI.Font:FormatNumber(currentXP), SUI.Font:FormatNumber(maxXP), (currentXP / maxXP) * 100), 1, 1, 1)
+	end
+	if questLogXP > 0 then GameTooltip:AddDoubleLine(L['Quest Log XP:'], string.format('Quest Log XP: %s (%.2f%%)', SUI.Font:FormatNumber(questLogXP), (questLogXP / maxXP) * 100), 1, 1, 1) end
+	if restedXP > 0 then GameTooltip:AddDoubleLine(L['Rested:'], string.format('Rested: +%s (%.2f%%)', SUI.Font:FormatNumber(restedXP), (restedXP / maxXP) * 100), 1, 1, 1) end
+end
+
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = DBDefaults })
 	DB = module.Database.profile
@@ -343,12 +361,23 @@ function module:SetupBar(bar, barContainer, width, height, index)
 
 	self:SetupBarText(bar, barContainer.settings, index)
 
-	local containerKey = index == 1 and 'Left' or 'Right'
-	bar:HookScript('OnEnter', function()
+	bar:HookScript('OnEnter', function(self)
+		local containerKey = index == 1 and 'Left' or 'Right'
 		if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Show() end
+
+		-- Show custom tooltip
+		GameTooltip:ClearLines()
+		GameTooltip:SetOwner(self, 'ANCHOR_CURSOR')
+		if self.barIndex == Enums.Bars.Experience then module:GetExperienceTooltipText() end
+		GameTooltip:Show()
 	end)
-	bar:HookScript('OnLeave', function()
+
+	bar:HookScript('OnLeave', function(self)
+		local containerKey = index == 1 and 'Left' or 'Right'
 		if DB.bars[containerKey].text == Enums.TextDisplayMode.OnMouseOver then bar.OverlayFrame.Text:Hide() end
+
+		-- Hide tooltip
+		GameTooltip:Hide()
 	end)
 end
 

@@ -38,6 +38,18 @@ function Font:comma_value(value)
 	return left .. (num:reverse():gsub('(%d%d%d)', '%1' .. (Font.DB.NumberSeperator or LARGE_NUMBER_SEPERATOR)):reverse()) .. right
 end
 
+---@param number any
+---@return string
+function Font:FormatNumber(number)
+	if number >= 1000000 then
+		return string.format('%.2fM', number / 1000000)
+	elseif number >= 1000 then
+		return string.format('%.2fK', number / 1000)
+	else
+		return tostring(number)
+	end
+end
+
 ---@param element Font
 ---@param DefaultSize integer
 ---@param Module string
