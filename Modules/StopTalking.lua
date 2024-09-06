@@ -19,9 +19,6 @@ function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StopTalking', { profile = defaults, global = defaults })
 	module.DB = module.Database.profile ---@type SUI.Module.StopTalking.DB
 	module.DBGlobal = module.Database.global ---@type SUI.Module.StopTalking.DB
-
-	--blank this out; start fresh in 10.0
-	if module.DB.lines then module.DB.lines = nil end
 end
 
 local function Options()
@@ -101,23 +98,21 @@ function module:TALKINGHEAD_REQUESTED()
 	if not vo then return end
 
 	local persist = module.DB.persist
-	if (module.DB.history[vo] and persist) or (not persist and HeardLines[vo]) or (module.DBGlobal.global and module.DBGlobal.history[vo]) then
-		-- Heard this before.
+	local history = module.DBGlobal.global and module.DBGlobal.history or module.DB.history
+
+	-- Check both persistent storage and session-based HeardLines
+	if (persist and history[vo]) or (not persist and HeardLines[vo]) then
+		-- Line has been heard before
 		if module.DB.chatOutput and name and text then
 			SUI:Print(name)
 			print(text)
 		end
-
-		return
+		TalkingHeadFrame:CloseImmediately()
 	else
+		-- New line, play it and store it
 		TalkingHeadFrame:PlayCurrent()
-		-- New, flag it as heard.
 		if persist then
-			if module.DBGlobal.global then
-				module.DBGlobal.history[vo] = name .. ' - ' .. text
-			else
-				module.DB.history[vo] = name .. ' - ' .. text
-			end
+			history[vo] = name .. ' - ' .. text
 		else
 			HeardLines[vo] = name .. ' - ' .. text
 		end
