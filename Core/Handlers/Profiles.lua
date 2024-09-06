@@ -365,7 +365,7 @@ end
 
 local function ImportModuleSettings(ModuleName, NewSettings)
 	local module = SUI:GetModule(ModuleName, true) or SUI:GetModule('Handler.' .. ModuleName, true)
-	if not module then return end
+	if not module or not module.Database then return end
 	local newsettings = PrepareImport(module.Database.defaults.profile, NewSettings)
 
 	module.DB = SUI:MergeData(module.DB, newsettings, true)
