@@ -134,9 +134,12 @@ local function AbilityBars()
 
 	-- Set up ExtraAbilityContainer
 	if ExtraAbilityContainer then
-		ExtraAbilityContainer:SetParent(UIParent)
-		ExtraAbilityContainer:ClearAllPoints()
-		ExtraAbilityContainer.SetPoint = function() end -- Prevent any attempts to move it
+		ExtraAbilityContainer.HighlightSystem = SUI.noop
+		ExtraAbilityContainer.ClearHighlight = SUI.noop
+		ExtraAbilityContainer:SetScript('OnShow', nil)
+		ExtraAbilityContainer:SetScript('OnUpdate', nil)
+		ExtraAbilityContainer.OnUpdate = nil -- remove BaseLayoutMixin.OnUpdate
+		ExtraAbilityContainer.IsLayoutFrame = nil -- dont let it get readded
 	end
 
 	-- Hook functions to prevent movement
