@@ -93,6 +93,7 @@ local onShow = function(self)
 	if not self.SetBackdrop then Mixin(self, BackdropTemplateMixin) end
 	self:SetBackdrop(whitebg)
 	self.SUITip:SetBackdrop({ bgFile = LSM:Fetch('background', module.DB.Background), tile = false })
+	self.SUITip:SetFrameLevel(0)
 
 	if (module.DB.Background == 'none' or module.DB.ColorOverlay) or not self.SUITip then
 		self:SetBackdropColor(unpack(module.DB.Color))
