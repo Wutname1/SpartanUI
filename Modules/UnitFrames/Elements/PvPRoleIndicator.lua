@@ -3,9 +3,6 @@ local UF = SUI.UF
 ---@param frame table
 local function Build(frame)
 	frame.PvPRoleIndicator = frame.raised:CreateTexture(nil, 'BORDER')
-	frame.PvPRoleIndicator:SetTexture([[Interface\LFGFrame\UI-LFG-ICON-ROLES]])
-	frame.PvPRoleIndicator.Sizeable = true
-	frame.PvPRoleIndicator:Hide()
 end
 
 ---@param unitName string

@@ -36,19 +36,16 @@ local function Update(self, event)
 	* self - the PvPRoleIndicator element
 	--]]
 	if element.PreUpdate then element:PreUpdate() end
-	if element:IsObjectType('Texture') and not element:GetTexture() then
-		element:SetTexture(DEFAULT_TEXTURE)
-		element:SetTexCoord(GetTexCoordsForRole('HEALER'))
-	end
-	-- local RegItem = element.Registry[self.unitGUID]
-	-- local role = UnitGroupRolesAssigned(self.unit)
-	-- print(self.unitGUID)
 	local info = C_PvP.GetScoreInfoByPlayerGuid(self.unitGUID)
+	if not info then
+		element:Hide()
+		return
+	end
 	if info and info.roleAssigned == 2 and element.showTank then
-		element:SetTexCoord(GetTexCoordsForRole('TANK'))
+		element:SetAtlas('UI-LFG-RoleIcon-Tank')
 		element:Show()
 	elseif info and info.roleAssigned == 4 then
-		element:SetTexCoord(GetTexCoordsForRole('HEALER'))
+		element:SetAtlas('UI-LFG-RoleIcon-Healer')
 		element:Show()
 	else
 		element:Hide()
