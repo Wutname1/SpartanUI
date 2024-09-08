@@ -51,16 +51,6 @@ local BaseSettings = {
 			format = '%.1f, %.1f',
 		},
 
-		-- Border
-		border = {
-			enabled = true,
-			texture = 'Interface\\AddOns\\SpartanUI\\images\\minimap\\border',
-			size = { 192, 192 },
-			position = 'CENTER,Minimap,CENTER,0,0',
-			color = { 1, 1, 1, 1 },
-			BlendMode = 'BLEND',
-		},
-
 		-- Zoom Buttons
 		zoomButtons = {
 			enabled = false,
