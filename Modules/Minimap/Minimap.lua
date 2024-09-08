@@ -298,16 +298,17 @@ function module:SetupBackground()
 end
 
 function module:SetupZoomButtons()
+	if not Minimap.ZoomIn then return end
+
+	DISABLE_MAP_ZOOM = not module.Settings.elements.zoomButtons.enabled
 	if module.Settings.elements.zoomButtons.enabled then
-		if Minimap.ZoomIn then
-			Minimap.ZoomIn:Show()
-			Minimap.ZoomOut:Show()
-		end
+		Minimap.ZoomIn:Show()
+		Minimap.ZoomOut:Show()
+		Minimap.ZoomIn:SetScale(module.Settings.elements.zoomButtons.scale)
+		Minimap.ZoomOut:SetScale(module.Settings.elements.zoomButtons.scale)
 	else
-		if Minimap.ZoomIn then
-			Minimap.ZoomIn:Hide()
-			Minimap.ZoomOut:Hide()
-		end
+		Minimap.ZoomIn:Hide()
+		Minimap.ZoomOut:Hide()
 	end
 end
 
