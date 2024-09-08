@@ -167,6 +167,66 @@ function module:GetReputationTooltipText()
 	end
 end
 
+function module:GetHonorTooltipText()
+	local honorLevel = UnitHonorLevel('player')
+	local currentHonor = UnitHonor('player')
+	local maxHonor = UnitHonorMax('player')
+
+	if currentHonor == 0 and maxHonor == 0 then
+		return -- If something odd happened and both values are 0 don't show anything
+	end
+
+	GameTooltip:AddLine(HONOR)
+	GameTooltip:AddLine(' ')
+
+	-- Current Honor Level
+	GameTooltip:AddDoubleLine(
+		HONOR_LEVEL_LABEL:format(honorLevel),
+		string.format('%s / %s (%d%%)', SUI.Font:FormatNumber(currentHonor), SUI.Font:FormatNumber(maxHonor), ((currentHonor / maxHonor) * 100)),
+		NORMAL_FONT_COLOR.r,
+		NORMAL_FONT_COLOR.g,
+		NORMAL_FONT_COLOR.b,
+		1,
+		1,
+		1
+	)
+
+	-- Next Honor Level Reward
+	local nextHonorLevelForReward = C_PvP.GetNextHonorLevelForReward(honorLevel)
+	if nextHonorLevelForReward then
+		local nextRewardInfo = C_PvP.GetHonorRewardInfo(nextHonorLevelForReward)
+		if nextRewardInfo then
+			GameTooltip:AddLine(' ')
+			GameTooltip:AddDoubleLine(L['Next Honor Reward'], string.format(L['Level %d'], nextHonorLevelForReward), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1, 1)
+			local rewardItemID = C_AchievementInfo.GetRewardItemID(nextRewardInfo.achievementRewardedID)
+			if rewardItemID then GameTooltip:AddDoubleLine('|---', C_Item.GetItemNameByID(rewardItemID), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1, 1) end
+		end
+	end
+
+	local brackets = {
+		[1] = L['2v2'],
+		[2] = L['3v3'],
+		[3] = L['Solo Shuffle'],
+		[4] = L['Rated Battleground'],
+	}
+	local hasRating = false
+	local function AddPVPRatings()
+		-- Arena Scores
+		GameTooltip:AddLine(' ')
+		GameTooltip:AddLine(L['PvP Ratings:'], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+	end
+	for i, bracketName in ipairs(brackets) do
+		local rating, seasonBest = GetPersonalRatedInfo(i)
+		if rating > 0 then
+			if not hasRating then
+				AddPVPRatings()
+				hasRating = true
+			end
+			GameTooltip:AddDoubleLine(bracketName, string.format('%d (%d)', rating, seasonBest), 1, 1, 1, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
+		end
+	end
+end
+
 function module:OnInitialize()
 	module.Database = SUI.SpartanUIDB:RegisterNamespace('StatusBars', { profile = DBDefaults })
 	DB = module.Database.profile
@@ -420,6 +480,8 @@ function module:SetupBar(bar, barContainer, width, height, index)
 			module:GetExperienceTooltipText()
 		elseif self.barIndex == Enums.Bars.Reputation then
 			module:GetReputationTooltipText()
+		elseif self.barIndex == Enums.Bars.Honor then
+			module:GetHonorTooltipText()
 		end
 		GameTooltip:Show()
 	end)

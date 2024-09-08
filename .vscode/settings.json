@@ -475,7 +475,13 @@
     "RENOWN_LEVEL_LABEL",
     "STANDING",
     "UNKNOWN",
-    "UnregisterAttributeDriver"
+    "UnregisterAttributeDriver",
+    "HONOR",
+    "BATTLEGROUND_10V10",
+    "EmbeddedItemTooltip_SetItemByID",
+    "EmbeddedItemTooltip",
+    "GameTooltip_AddNormalLine",
+    "REWARD"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
