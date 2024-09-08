@@ -97,14 +97,14 @@ local BaseSettings = {
 		-- Queue Status (LFG eye)
 		queueStatus = {
 			enabled = true,
-			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,-2,2',
-			scale = 1,
+			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,-15,45',
+			scale = 0.85,
 		},
 
 		--Expansion Button
 		expansionButton = {
-			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,-20,-10',
-			scale = 1,
+			position = 'BOTTOMLEFT,Minimap,BOTTOMLEFT,0,0',
+			scale = 0.6,
 		},
 
 		-- Addon Buttons
