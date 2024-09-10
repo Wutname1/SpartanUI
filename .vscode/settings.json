@@ -482,7 +482,8 @@
     "EmbeddedItemTooltip",
     "GameTooltip_AddNormalLine",
     "REWARD",
-    "DISABLE_MAP_ZOOM"
+    "DISABLE_MAP_ZOOM",
+    "FlexBar"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
