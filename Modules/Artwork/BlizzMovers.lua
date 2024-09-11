@@ -30,8 +30,23 @@ local function ResetParent(frame, parent)
 end
 
 ExtraAB.PLAYER_REGEN_ENABLED = function(self)
-	ZoneAbilityFrame:SetParent(BossButtonHolder)
-	ExtraActionBarFrame:SetParent(BossButtonHolder)
+	ExtraAB.Reparent()
+end
+
+function ExtraAB.Reparent()
+	if InCombatLockdown() then
+		NeedsReparent = true
+		ExtraAB:RegisterEvent('PLAYER_REGEN_ENABLED')
+		return
+	end
+
+	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
+	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
+
+	ZoneAbilityFrame:SetParent(ExtraAB.ZoneAbilityHolder)
+	ExtraActionBarFrame:SetParent(ExtraAB.ExtraActionBarHolder)
+	ExtraActionBarFrame:ClearAllPoints()
+	ExtraActionBarFrame:SetPoint('CENTER', ExtraAB.ExtraActionBarHolder, 'CENTER')
 end
 
 ---@param name string
@@ -106,6 +121,7 @@ local function TalkingHead()
 end
 
 local function AbilityBars()
+	local NeedsReparent = false
 	local ExtraAbilityContainer = _G['ExtraAbilityContainer']
 	local ExtraActionBarFrame = _G['ExtraActionBarFrame']
 	local ZoneAbilityFrame = _G['ZoneAbilityFrame']
@@ -113,6 +129,8 @@ local function AbilityBars()
 	-- Create holders
 	local ExtraActionBarHolder = GenerateHolder('ExtraActionBar')
 	local ZoneAbilityHolder = GenerateHolder('ZoneAbility')
+	ExtraAB.ExtraActionBarHolder = ExtraActionBarHolder
+	ExtraAB.ZoneAbilityHolder = ZoneAbilityHolder
 
 	ExtraActionBarHolder:SetSize(100, 70)
 	ZoneAbilityHolder:SetSize(100, 70)
@@ -162,11 +180,16 @@ local function AbilityBars()
 	MoveIt:CreateMover(ZoneAbilityHolder, 'ZoneAbility', 'Zone ability button', nil, 'Blizzard UI')
 
 	-- Update the layout when new frames are added
-	-- hooksecurefunc(ExtraAbilityContainer, 'AddFrame', function()
-	-- 	ExtraActionBarFrame:SetParent(ExtraActionBarHolder)
-	-- 	ExtraActionBarFrame:ClearAllPoints()
-	-- 	ExtraActionBarFrame:SetPoint('CENTER', ExtraActionBarHolder, 'CENTER')
-	-- end)
+	hooksecurefunc(ExtraAbilityContainer, 'AddFrame', function()
+		ExtraAB.Reparent()
+	end)
+
+	hooksecurefunc(ZoneAbilityFrame, 'SetParent', function(_, parent)
+		if parent ~= ZoneAbilityHolder and not NeedsReparent then ExtraAB.Reparent() end
+	end)
+	hooksecurefunc(ExtraActionBarFrame, 'SetParent', function(_, parent)
+		if parent ~= ExtraActionBarHolder and not NeedsReparent then ExtraAB.Reparent() end
+	end)
 end
 
 local function FramerateFrame()
