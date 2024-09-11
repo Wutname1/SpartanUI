@@ -173,7 +173,9 @@ end
 CreateMenuSkin()
 
 MenuSkin:SetFrameStrata(GameMenuFrame:GetFrameStrata())
-MenuSkin:SetFrameLevel(GameMenuFrame:GetFrameLevel() - 1)
+--Default Level is 1, alot of items will display at this level so lets bump it up
+GameMenuFrame:SetFrameLevel(300)
+MenuSkin:SetFrameLevel(299)
 ---------------------------------------------------------------
 -- Settings
 ---------------------------------------------------------------
