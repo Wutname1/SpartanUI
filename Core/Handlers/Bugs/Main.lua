@@ -1,7 +1,7 @@
 ---@class Lib.ErrorWindow
 local addon = select(2, ...)
 local addonName = select(1, ...)
-local MinimapIconName = addonName .. 'MinimapIcon'
+local MinimapIconName = addonName .. 'ErrorDisplay'
 
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 
