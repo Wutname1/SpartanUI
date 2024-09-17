@@ -1,4 +1,6 @@
-local addonName, addon = ...
+---@class Lib.ErrorWindow
+local addon = select(2, ...)
+
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 
 addon.BugWindow = {}

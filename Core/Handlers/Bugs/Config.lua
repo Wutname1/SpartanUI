@@ -1,4 +1,8 @@
-local addonName, addon = ...
+---@class Lib.ErrorWindow
+local addon = select(2, ...)
+local addonName = select(1, ...)
+local MinimapIconName = addonName .. 'MinimapIcon'
+
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 
 addon.Config = {}
@@ -87,9 +91,9 @@ function addon.Config:CreatePanel()
 	minimapIconCheckbox:SetScript('OnClick', function(self)
 		addon.Config.db.minimapIcon.hide = not self:GetChecked()
 		if addon.Config.db.minimapIcon.hide then
-			addon.icon:Hide(addonName)
+			addon.icon:Hide(MinimapIconName)
 		else
-			addon.icon:Show(addonName)
+			addon.icon:Show(MinimapIconName)
 		end
 	end)
 

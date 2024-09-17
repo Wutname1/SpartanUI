@@ -1,4 +1,8 @@
-local addonName, addon = ...
+---@class Lib.ErrorWindow
+local addon = select(2, ...)
+local addonName = select(1, ...)
+local MinimapIconName = addonName .. 'MinimapIcon'
+
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 
 -- LibDBIcon for minimap button
@@ -8,28 +12,56 @@ addon.icon = icon
 
 local function InitializeMinimapButton()
 	local SUIErrorLauncher = LDB:NewDataObject(addonName, {
-		type = 'launcher',
-		icon = 'Interface\\AddOns\\' .. addonName .. '\\Media\\Icon',
+		type = 'data source',
+		text = '0',
+		icon = 'Interface\\AddOns\\SpartanUI\\images\\MinimapError',
 		OnClick = function(self, button)
-			if button == 'LeftButton' then
-				addon.BugWindow:OpenErrorWindow()
+			if IsAltKeyDown() then
+				BugGrabber:Reset()
 			elseif button == 'RightButton' then
-				if InterfaceOptionsFrame_OpenToCategory then
-					InterfaceOptionsFrame_OpenToCategory(addonName)
-					InterfaceOptionsFrame_OpenToCategory(addonName)
-				else
-					Settings.OpenToCategory(addon.settingsCategory.ID)
-				end
+				Settings.OpenToCategory(addon.settingsCategory.ID)
+			else
+				addon.BugWindow:OpenErrorWindow()
 			end
 		end,
-		OnTooltipShow = function(tooltip)
-			tooltip:AddLine(L['SpartanUI Error Display'])
-			tooltip:AddLine(L['Left-click to open error window'])
-			tooltip:AddLine(L['Right-click to open options'])
+		OnTooltipShow = function(tt)
+			local hint = '|cffeda55fClick|r to open bug window with the last bug. |cffeda55fAlt-Click|r to clear all saved errors.'
+			local line = '%d. %s (x%d)'
+			local errs = addon.ErrorHandler:GetErrors(BugGrabber:GetSessionId())
+			if #errs == 0 then
+				tt:AddLine('You have no bugs, yay!')
+			else
+				tt:AddLine('SpartanUI error handler')
+				for i, err in next, errs do
+					tt:AddLine(line:format(i, addon.ErrorHandler:ColorText(err.message), err.counter), 0.5, 0.5, 0.5)
+					if i > 8 then break end
+				end
+			end
+			tt:AddLine(' ')
+			tt:AddLine(hint, 0.2, 1, 0.2, 1)
 		end,
+		-- type = 'launcher',
+		-- icon = 'Interface\\AddOns\\' .. addonName .. '\\Media\\Icon',
+		-- OnClick = function(self, button)
+		-- 	if button == 'LeftButton' then
+		-- 		addon.BugWindow:OpenErrorWindow()
+		-- 	elseif button == 'RightButton' then
+		-- 		if InterfaceOptionsFrame_OpenToCategory then
+		-- 			InterfaceOptionsFrame_OpenToCategory(addonName)
+		-- 			InterfaceOptionsFrame_OpenToCategory(addonName)
+		-- 		else
+		-- 			Settings.OpenToCategory(addon.settingsCategory.ID)
+		-- 		end
+		-- 	end
+		-- end,
+		-- OnTooltipShow = function(tooltip)
+		-- 	tooltip:AddLine(L['SpartanUI Error Display'])
+		-- 	tooltip:AddLine(L['Left-click to open error window'])
+		-- 	tooltip:AddLine(L['Right-click to open options'])
+		-- end,
 	})
 
-	icon:Register(addonName, SUIErrorLauncher, addon.Config:Get('minimapIcon'))
+	icon:Register(MinimapIconName, SUIErrorLauncher, addon.Config:Get('minimapIcon'))
 end
 
 addon.onError = function()
@@ -94,12 +126,12 @@ _G.SUIErrorDisplay = {
 
 -- Add a function to update the minimap icon
 function addon:updatemapIcon()
-	if icon:GetMinimapButton(addonName) then icon:Refresh(addonName) end
+	if icon:GetMinimapButton(MinimapIconName) then icon:Refresh(addonName) end
 
 	local count = #addon.ErrorHandler:GetErrors()
 	if count ~= 0 then
-		icon:Show(addonName)
+		icon:Show(MinimapIconName)
 	else
-		icon:Hide(addonName)
+		icon:Hide(MinimapIconName)
 	end
 end
