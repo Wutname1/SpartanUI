@@ -979,7 +979,7 @@ function Options:AddGroupLayout(frameName, OptionSet)
 			--Update the DB
 			UF.DB.UserSettings[UF.DB.Style][frameName][setting] = val
 			--Update the screen
-			UF.Unit:Get(frameName).header:SetAttribute(setting, val)
+			UF.Unit:Get(frameName):SetAttribute(setting, val)
 		end,
 		args = {
 			maxColumns = {
