@@ -1,4 +1,6 @@
-local addonName, addon = ...
+---@class Lib.ErrorWindow
+local addon = select(2, ...)
+
 local L = LibStub('AceLocale-3.0'):GetLocale('SpartanUI', true)
 
 addon.ErrorHandler = {}
@@ -10,14 +12,72 @@ local currentSession = nil
 
 local function colorStack(ret)
 	ret = tostring(ret) or ''
-	ret = ret:gsub('[%.I][%.n][%.t][%.e][%.r]face\\', '')
-	ret = ret:gsub('%.?%.?%.?\\?AddOns\\', '')
-	ret = ret:gsub('|([^chHr])', '||%1'):gsub('|$', '||') -- Pipes
-	ret = ret:gsub('<(.-)>', '|cffffea00<%1>|r') -- Things wrapped in <>
-	ret = ret:gsub('%[(.-)%]', '|cffffea00[%1]|r') -- Things wrapped in []
-	ret = ret:gsub('(["\'`])(.-)(["\'`])', '|cff8888ff%1%2%3|r') -- Quotes
-	ret = ret:gsub(':(%d+)([%S\n])', ':|cff00ff00%1|r%2') -- Line numbers
-	ret = ret:gsub('([^\\]+%.lua)', '|cffffffff%1|r') -- Lua files
+
+	-- Color string literals
+	ret = ret:gsub('"([^"]+)"', '"|cffCE9178%1|r"')
+
+	-- Color the error count at the start
+	ret = ret:gsub('^(%d+x)', '|cffB5CEA8%1|r')
+
+	-- Color the file name (keeping the extension .lua in the same color)
+	ret = ret:gsub('/([^/]+%.lua)', '/|cff4EC9B0%1|r')
+
+	-- Color the full path, with non-important parts in light grey
+	ret = ret:gsub('(%[)(@?)([^%]]+)(%])', function(open, at, path, close)
+		-- Color 'string' purple when it's the first word in the path
+		local coloredPath = path:gsub('^(string%s)', '|cffC586C0%1|r')
+		return '|r' .. open .. at .. '|r|cffCE9178' .. coloredPath:gsub('"', '|r"|r') .. '|r' .. close .. '|r'
+	end)
+
+	-- Color partial paths
+	ret = ret:gsub('(<%.%.%.%S+/)', '|cffCE9178%1|r')
+
+	-- Color line numbers
+	ret = ret:gsub(':(%d+)', ':|cffD7BA7D%1|r')
+
+	-- Color error messages
+	ret = ret:gsub('([^:\n]+):', '|cffFF5252%1:|r')
+
+	-- Color method names and special callouts orange (including `Register` style)
+	ret = ret:gsub("'([^']+)'", "|cffFFA500'%1'|r|r")
+	ret = ret:gsub('`([^`]+)`', '|cffFFA500`%1`|r|r')
+	ret = ret:gsub("`([^`]+)'", '|cffFFA500`%1`|r|r')
+	ret = ret:gsub('(%([^)]+%))', '|cffFFA500%1|r|r')
+
+	-- Color Lua keywords purple, 'in' grey
+	local keywords = {
+		['and'] = true,
+		['break'] = true,
+		['do'] = true,
+		['else'] = true,
+		['elseif'] = true,
+		['end'] = true,
+		['false'] = true,
+		['for'] = true,
+		['function'] = true,
+		['if'] = true,
+		['local'] = true,
+		['nil'] = true,
+		['not'] = true,
+		['or'] = true,
+		['repeat'] = true,
+		['return'] = true,
+		['then'] = true,
+		['true'] = true,
+		['until'] = true,
+		['while'] = true,
+		['boolean'] = true,
+		['string'] = true,
+	}
+	ret = ret:gsub('%f[%w](%a+)%f[%W]', function(word)
+		if keywords[word] then
+			return '|cffC586C0' .. word .. '|r'
+		elseif word == 'in' then
+			return '|r' .. word .. '|r'
+		end
+		return word
+	end)
+
 	return ret
 end
 
@@ -26,13 +86,28 @@ local function colorLocals(ret)
 	ret = ret:gsub('[%.I][%.n][%.t][%.e][%.r]face\\', '')
 	ret = ret:gsub('%.?%.?%.?\\?AddOns\\', '')
 	ret = ret:gsub('|(%a)', '||%1'):gsub('|$', '||') -- Pipes
-	ret = ret:gsub('> %@(.-):(%d+)', '> @|cffeda55f%1|r:|cff00ff00%2|r') -- Files/Line Numbers of locals
-	ret = ret:gsub('(%s-)([%a_%(][%a_%d%*%)]+) = ', '%1|cffffff80%2|r = ') -- Table keys
-	ret = ret:gsub('= (%-?[%d%p]+)\n', '= |cffff7fff%1|r\n') -- locals: number
-	ret = ret:gsub('= nil\n', '= |cffff7f7fnil|r\n') -- locals: nil
-	ret = ret:gsub('= true\n', '= |cffff9100true|r\n') -- locals: true
-	ret = ret:gsub('= false\n', '= |cffff9100false|r\n') -- locals: false
-	ret = ret:gsub('= <(.-)>', '= |cffffea00<%1>|r') -- Things wrapped in <>
+
+	-- File paths and line numbers
+	ret = ret:gsub('> %@(.-):(%d+)', '> @|cff4EC9B0%1|r:|cffD7BA7D%2|r')
+
+	-- Variable names
+	ret = ret:gsub('(%s-)([%a_][%w_]*) = ', '%1|cff9CDCFE%2|r = ')
+
+	-- Numbers
+	ret = ret:gsub('= (%-?%d+%.?%d*)\n', '= |cffB5CEA8%1|r\n')
+
+	-- nil, true, false
+	ret = ret:gsub('= (nil)\n', '= |cff569CD6%1|r\n')
+	ret = ret:gsub('= (true)\n', '= |cff569CD6%1|r\n')
+	ret = ret:gsub('= (false)\n', '= |cff569CD6%1|r\n')
+
+	-- Strings
+	ret = ret:gsub('= (".-")\n', '= |cffCE9178%1|r\n')
+	ret = ret:gsub("= ('.-')\n", '= |cffCE9178%1|r\n')
+
+	-- Tables and functions
+	ret = ret:gsub('= (<.->)', '= |cffDCDCAA%1|r')
+
 	return ret
 end
 
@@ -53,6 +128,12 @@ function addon.ErrorHandler:Initialize()
 	for _, err in ipairs(existingErrors) do
 		self:ProcessError(err)
 	end
+end
+
+function addon.ErrorHandler:ColorText(text)
+	text = colorLocals(text)
+	text = colorStack(text)
+	return text
 end
 
 function addon.ErrorHandler:OnBugGrabbed(callback, errorObject)
