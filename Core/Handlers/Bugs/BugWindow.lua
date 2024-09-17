@@ -215,12 +215,10 @@ function addon.BugWindow.Create()
 	window.Buttons.CopyAll = createButton(window, L['Easy Copy All'])
 	window.Buttons.CopyAll:SetPoint('BOTTOM', 0, 16)
 	window.Buttons.CopyAll:SetScript('OnClick', function()
-		local lineBreak = '---------------------------------\n'
 		local allErrors = ''
-		local i = 2
-		for _, err in ipairs(currentErrorList) do
-			allErrors = allErrors .. addon.ErrorHandler:FormatError(err) .. '\n\n' .. lineBreak .. '                  Error #' .. i .. ' \n' .. lineBreak .. '\n\n'
-			i = i + 1
+		for i, err in ipairs(currentErrorList) do
+			allErrors = allErrors
+				.. string.format('---------------------------------\n                  Error #%d\n---------------------------------\n\n%s\n\n', i, addon.ErrorHandler:FormatError(err))
 		end
 		textArea:SetText(allErrors)
 		scrollFrame:UpdateScrollChildRect()

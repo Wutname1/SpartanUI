@@ -16,9 +16,6 @@ local function colorStack(ret)
 	-- Color string literals
 	ret = ret:gsub('"([^"]+)"', '"|cffCE9178%1|r"')
 
-	-- Color the error count at the start
-	ret = ret:gsub('^(%d+x)', '|cffB5CEA8%1|r')
-
 	-- Color the file name (keeping the extension .lua in the same color)
 	ret = ret:gsub('/([^/]+%.lua)', '/|cff4EC9B0%1|r')
 
@@ -35,14 +32,21 @@ local function colorStack(ret)
 	-- Color line numbers
 	ret = ret:gsub(':(%d+)', ':|cffD7BA7D%1|r')
 
-	-- Color error messages
-	ret = ret:gsub('([^:\n]+):', '|cffFF5252%1:|r')
+	-- Color error messages (main error text)
+	ret = ret:gsub('([^:\n]+):([^\n]*)', function(prefix, message)
+		if not prefix:match('[/\\]') and not prefix:match('^%d+$') then
+			return '|cffFF5252' .. prefix .. ':' .. message .. '|r'
+		else
+			return '|cffCE9178' .. prefix .. ':|r|cffFF5252' .. message .. '|r'
+		end
+	end)
 
-	-- Color method names and special callouts orange (including `Register` style)
+	-- Color method names, function calls, and variables orange
 	ret = ret:gsub("'([^']+)'", "|cffFFA500'%1'|r|r")
 	ret = ret:gsub('`([^`]+)`', '|cffFFA500`%1`|r|r')
 	ret = ret:gsub("`([^`]+)'", '|cffFFA500`%1`|r|r')
 	ret = ret:gsub('(%([^)]+%))', '|cffFFA500%1|r|r')
+	ret = ret:gsub('([%w_]+:[%w_]+)', '|cffFFA500%1|r')
 
 	-- Color Lua keywords purple, 'in' grey
 	local keywords = {
@@ -78,11 +82,18 @@ local function colorStack(ret)
 		return word
 	end)
 
+	-- Color the error count at the start
+	ret = ret:gsub('^(%d+x)', '|cffa6fd79%1|r')
+
 	return ret
 end
 
 local function colorLocals(ret)
 	ret = tostring(ret) or ''
+	-- Remove temporary nil and table lines
+	ret = ret:gsub('%(%*temporary%) = nil\n', '')
+	ret = ret:gsub('%(%*temporary%) = <table> {.-}\n', '')
+
 	ret = ret:gsub('[%.I][%.n][%.t][%.e][%.r]face\\', '')
 	ret = ret:gsub('%.?%.?%.?\\?AddOns\\', '')
 	ret = ret:gsub('|(%a)', '||%1'):gsub('|$', '||') -- Pipes
@@ -219,7 +230,7 @@ function addon.ErrorHandler:GetSessionList()
 end
 
 function addon.ErrorHandler:FormatError(err)
-	local s = colorStack(tostring(err.message) .. (err.stack and '\n' .. tostring(err.stack) or ''))
+	local s = addon.ErrorHandler:ColorText(tostring(err.message) .. (err.stack and '\n' .. tostring(err.stack) or ''))
 	local l = colorLocals(tostring(err.locals))
 	return string.format('%dx %s\n\nLocals:\n%s', err.counter or 1, s, l)
 end
