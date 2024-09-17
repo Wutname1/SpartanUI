@@ -68,7 +68,7 @@ function addon.Config:CreatePanel()
 	fontSizeSlider:SetScript('OnValueChanged', function(self, value)
 		value = math.floor(value + 0.5)
 		addon.Config.db.fontSize = value
-		getglobal(self:GetName() .. 'Text'):SetText(L['Font Size'] .. ': ' .. value)
+		-- fontSizeSlider.Text:SetText(L['Font Size'] .. ': ' .. value)
 		addon.BugWindow:UpdateFontSize()
 	end)
 
