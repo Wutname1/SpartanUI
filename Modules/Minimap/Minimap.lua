@@ -423,10 +423,14 @@ function module:SetupExpansionButton()
 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
 
-	-- ExpansionLandingPageMinimapButton:HookScript('OnShow', function()
-	-- 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
-	-- 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
-	-- end)
+	ExpansionLandingPageMinimapButton:HookScript('OnMouseUp', function(_, button)
+		if InCombatLockdown() then SUI:Print(L['You cannot open the Great Vault while in combat.']) end
+
+		if button == 'RightButton' then
+			if not C_AddOns.IsAddOnLoaded('Blizzard_WeeklyRewards') then C_AddOns.LoadAddOn('Blizzard_WeeklyRewards') end
+			_G['WeeklyRewardsFrame']:SetShown(not _G['WeeklyRewardsFrame']:IsShown())
+		end
+	end)
 end
 
 local isFrameIgnored = function(item)
