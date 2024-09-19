@@ -155,18 +155,18 @@ function addon.BugWindow.Create()
 	sessionLabel = window:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
 	sessionLabel:SetPoint('TOP', 0, -27)
 
+	local innerFrame = CreateFrame('Frame', nil, window)
+	window.innerFrame = innerFrame
+	innerFrame:SetPoint('TOPLEFT', 17, -95)
+	innerFrame:SetPoint('BOTTOMRIGHT', -17, 50)
+
 	-- Create category buttons
 	local buttonNames = { L['All Errors'], L['Current Session'], L['Previous Session'] }
 	for i, name in ipairs(buttonNames) do
-		local point = { 'TOPLEFT', window, 'TOPLEFT', 32 + (i - 1) * 125, -64 }
+		local point = { 'BOTTOMLEFT', innerFrame, 'TOPLEFT', 0 + (i - 1) * 125, 0 }
 		local button = createCategoryButton(window, i, name, point)
 		table.insert(categoryButtons, button)
 	end
-
-	local innerFrame = CreateFrame('Frame', nil, window)
-	window.innerFrame = innerFrame
-	innerFrame:SetPoint('TOPLEFT', 17, -96)
-	innerFrame:SetPoint('BOTTOMRIGHT', -17, 50)
 
 	-- Create ScrollFrame and ScrollChild
 	local scrollFrame = CreateFrame('ScrollFrame', nil, innerFrame, 'UIPanelScrollFrameTemplate')

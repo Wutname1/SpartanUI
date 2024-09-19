@@ -129,6 +129,9 @@ local Blacklist = {
 }
 local Whitelist = {
 	Gossip = {
+		-- TWW
+		'Your general asked me to spar with you.',
+		-- MISC
 		'Evacuate, now!',
 		"I've cleared a path for you. You should leave.",
 		'If you insist. The show must go on!',

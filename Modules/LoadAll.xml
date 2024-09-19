@@ -36,4 +36,6 @@
 	<Include file="UnitFrames\Load.xml"/>
 
 	<Script file="Nameplates.lua" />
+
+	<Include file="FlexBar\Load.xml"/>
 </Ui>

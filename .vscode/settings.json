@@ -483,7 +483,8 @@
     "GameTooltip_AddNormalLine",
     "REWARD",
     "DISABLE_MAP_ZOOM",
-    "FlexBar"
+    "FlexBar",
+    "Game12Font"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
