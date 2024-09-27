@@ -427,8 +427,13 @@ function module:SetupExpansionButton()
 		if InCombatLockdown() then SUI:Print(L['You cannot open the Great Vault while in combat.']) end
 
 		if button == 'RightButton' then
-			if not C_AddOns.IsAddOnLoaded('Blizzard_WeeklyRewards') then C_AddOns.LoadAddOn('Blizzard_WeeklyRewards') end
-			_G['WeeklyRewardsFrame']:SetShown(not _G['WeeklyRewardsFrame']:IsShown())
+			if not WeeklyRewardsFrame then UIParentLoadAddOn('Blizzard_WeeklyRewards') end
+
+			if _G['WeeklyRewardsFrame'] then
+				ShowUIPanel(WeeklyRewardsFrame, true)
+			else
+				SUI:Print('Something went wrong and the weekly rewards could not be loaded.')
+			end
 		end
 	end)
 end

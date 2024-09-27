@@ -484,7 +484,10 @@
     "REWARD",
     "DISABLE_MAP_ZOOM",
     "FlexBar",
-    "Game12Font"
+    "Game12Font",
+    "WeeklyRewardsFrame",
+    "WeeklyRewards_LoadUI",
+    "UIParentLoadAddOn"
   ],
   "Lua.workspace.ignoreDir": [".vscode", "libs/*"],
   "Lua.diagnostics.enable": true,
