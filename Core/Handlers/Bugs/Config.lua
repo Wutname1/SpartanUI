@@ -12,19 +12,19 @@ local defaults = {
 	autoPopup = false,
 	chatframe = true,
 	fontSize = 12,
-	minimapIcon = { hide = false },
+	minimapIcon = { hide = false, minimapPos = 97.66349921766368 },
 }
 
 -- Initialize the saved variables
 function addon.Config:Initialize()
-	if not SUIErrorsDB then
-		SUIErrorsDB = CopyTable(defaults)
+	if not SUIErrorHandler then
+		SUIErrorHandler = CopyTable(defaults)
 	else
 		for k, v in pairs(defaults) do
-			if SUIErrorsDB[k] == nil then SUIErrorsDB[k] = v end
+			if SUIErrorHandler[k] == nil then SUIErrorHandler[k] = v end
 		end
 	end
-	self.db = SUIErrorsDB
+	self.db = SUIErrorHandler
 end
 
 -- Create the options panel
@@ -126,8 +126,8 @@ function addon.Config:CreatePanel()
 end
 
 function addon.Config:ResetToDefaults()
-	SUIErrorsDB = CopyTable(defaults)
-	self.db = SUIErrorsDB
+	SUIErrorHandler = CopyTable(defaults)
+	self.db = SUIErrorHandler
 	addon.BugWindow:UpdateFontSize()
 end
 

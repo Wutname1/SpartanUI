@@ -61,7 +61,7 @@ local function InitializeMinimapButton()
 		-- end,
 	})
 
-	icon:Register(MinimapIconName, SUIErrorLauncher, addon.Config:Get('minimapIcon'))
+	icon:Register(MinimapIconName, SUIErrorLauncher, addon.Config.db.minimapIcon)
 end
 
 addon.onError = function()
