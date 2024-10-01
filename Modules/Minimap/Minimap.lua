@@ -422,17 +422,23 @@ function module:SetupExpansionButton()
 
 	ExpansionLandingPageMinimapButton:SetScale(module.Settings.elements.expansionButton.scale)
 	module:PositionItem(ExpansionLandingPageMinimapButton, module.Settings.elements.expansionButton.position)
+	ExpansionLandingPageMinimapButton:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
 
-	ExpansionLandingPageMinimapButton:HookScript('OnMouseUp', function(_, button)
-		if InCombatLockdown() then SUI:Print(L['You cannot open the Great Vault while in combat.']) end
+	ExpansionLandingPageMinimapButton:SetScript('OnClick', function(self, button)
+		if button == 'LeftButton' then
+			self:ToggleLandingPage()
+			return
+		elseif button == 'RightButton' then
+			if InCombatLockdown() then SUI:Print(L['You cannot open the Great Vault while in combat.']) end
 
-		if button == 'RightButton' then
-			if not WeeklyRewardsFrame then UIParentLoadAddOn('Blizzard_WeeklyRewards') end
+			if button == 'RightButton' then
+				if not WeeklyRewardsFrame then UIParentLoadAddOn('Blizzard_WeeklyRewards') end
 
-			if _G['WeeklyRewardsFrame'] then
-				ShowUIPanel(WeeklyRewardsFrame, true)
-			else
-				SUI:Print('Something went wrong and the weekly rewards could not be loaded.')
+				if _G['WeeklyRewardsFrame'] then
+					ShowUIPanel(WeeklyRewardsFrame, true)
+				else
+					SUI:Print('Something went wrong and the weekly rewards could not be loaded.')
+				end
 			end
 		end
 	end)
