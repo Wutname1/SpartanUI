@@ -41,7 +41,7 @@ local tooltips = {
 	EventTraceTooltip,
 	ItemSocketingDescription,
 }
-local whitebg = { bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3 }
+local whitebg = { bgFile = 'Interface\\AddOns\\SpartanUI\\images\\blank.tga', tile = false, edgeSize = 3, insets = { left = 0, right = 1, top = 0, bottom = 1 } }
 local ilvlTempData = {}
 
 function module:OnInitialize()
