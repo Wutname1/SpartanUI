@@ -1,5 +1,6 @@
 ---@class SUI
 local SUI = SUI
+local L = SUI.L
 local MoveIt = SUI.MoveIt
 local module = SUI:NewModule('Minimap') ---@class SUI.Module.Minimap : SUI.Module
 module.description = 'CORE: Skins, sizes, and positions the Minimap'
@@ -19,6 +20,7 @@ local BaseSettings = {
 	scaleWithArt = true,
 	UnderVehicleUI = true,
 	position = 'TOPRIGHT,UIParent,TOPRIGHT,-20,-20',
+	vehiclePosition = 'TOPRIGHT,UIParent,TOPRIGHT,-20,-20',
 	rotate = false,
 
 	-- Elements
@@ -564,6 +566,15 @@ function module:CreateMover()
 	MoveIt:CreateMover(SUIMinimap, 'Minimap')
 end
 
+function module:SwitchMinimapPosition(inVehicle)
+	local position = inVehicle and self.Settings.vehiclePosition or self.Settings.position
+	if not MoveIt:IsMoved('Minimap') then
+		local point, anchor, secondaryPoint, x, y = strsplit(',', position)
+		SUIMinimap:ClearAllPoints()
+		SUIMinimap:SetPoint(point, _G[anchor], secondaryPoint, x, y)
+	end
+end
+
 function module:SetupHooks()
 	Minimap:HookScript('OnShow', function()
 		SUIMinimap:Show()
@@ -619,7 +630,7 @@ function module:Update(fullUpdate)
 	if module.Settings.UnderVehicleUI and SUI.DB.Artwork.VehicleUI and not VisibilityWatcher.hooked and (not MoveIt:IsMoved('Minimap')) then
 		local OnHide = function(args)
 			if SUI:IsModuleEnabled('Minimap') and SUI.DB.Artwork.VehicleUI and not MoveIt:IsMoved('Minimap') and SUIMinimap.position then
-				SUIMinimap:position('TOPRIGHT', UIParent, 'TOPRIGHT', -20, -20)
+				SUIMinimap:position(strsplit(',', module.Settings.vehiclePosition))
 			end
 		end
 		local OnShow = function(args)

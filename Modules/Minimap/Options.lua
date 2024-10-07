@@ -131,6 +131,18 @@ local anchorValues = {
 
 -- Options
 function module:BuildOptions()
+	local anchorPoints = {
+		['TOPLEFT'] = 'TOP LEFT',
+		['TOP'] = 'TOP',
+		['TOPRIGHT'] = 'TOP RIGHT',
+		['RIGHT'] = 'RIGHT',
+		['CENTER'] = 'CENTER',
+		['LEFT'] = 'LEFT',
+		['BOTTOMLEFT'] = 'BOTTOM LEFT',
+		['BOTTOM'] = 'BOTTOM',
+		['BOTTOMRIGHT'] = 'BOTTOM RIGHT',
+	}
+
 	---@type AceConfig.OptionsTable
 	local options = {
 		type = 'group',
@@ -214,6 +226,96 @@ function module:BuildOptions()
 							-- Trigger a full update of the UnitFrames
 							module:Update(true)
 						end,
+					},
+					UnderVehicleUI = {
+						name = L['Under Vehicle UI'],
+						desc = L['Set to enabled if the minimap is under the Blizzard VehicleUI'],
+						type = 'toggle',
+						width = 'full',
+						order = 290,
+						get = function()
+							return module.Settings.UnderVehicleUI
+						end,
+					},
+					vehiclePosition = {
+						name = L['Vehicle Position'],
+						type = 'group',
+						order = 300,
+						inline = true,
+						disabled = function()
+							return not module.Settings.UnderVehicleUI
+						end,
+						get = function(info)
+							local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.vehiclePosition)
+							if info[#info] == 'x' then
+								return tonumber(x)
+							elseif info[#info] == 'y' then
+								return tonumber(y)
+							elseif info[#info] == 'anchor' then
+								return point
+							elseif info[#info] == 'relativeTo' then
+								return anchor
+							elseif info[#info] == 'relativePoint' then
+								return secondaryPoint
+							end
+						end,
+						set = function(info, val)
+							local point, anchor, secondaryPoint, x, y = strsplit(',', module.Settings.vehiclePosition)
+
+							if info[#info] == 'x' then
+								x = val
+							elseif info[#info] == 'y' then
+								y = val
+							elseif info[#info] == 'anchor' then
+								point = val
+							elseif info[#info] == 'relativeTo' then
+								anchor = val
+							elseif info[#info] == 'relativePoint' then
+								secondaryPoint = val
+							end
+
+							module.Settings.vehiclePosition = strjoin(',', point, anchor, secondaryPoint, x, y)
+							module.DB.customSettings[SUI.DB.Artwork.Style].vehiclePosition = module.Settings.vehiclePosition
+							module:Update(true)
+						end,
+						args = {
+							x = {
+								name = L['X Axis'],
+								type = 'range',
+								order = 1,
+								min = -200,
+								max = 200,
+								step = 1,
+							},
+							y = {
+								name = L['Y Axis'],
+								type = 'range',
+								order = 2,
+								min = -200,
+								max = 200,
+								step = 1,
+							},
+							anchor = {
+								name = L['Anchor point'],
+								type = 'select',
+								order = 3,
+								values = anchorPoints,
+							},
+							relativeTo = {
+								name = 'Relative To',
+								type = 'select',
+								order = 3,
+								values = {
+									['UIParent'] = 'UIParent',
+								},
+							},
+							relativePoint = {
+								name = 'Relative Point',
+								type = 'select',
+								order = 3,
+								values = anchorPoints,
+							},
+						},
 					},
 				},
 			},
