@@ -9,6 +9,7 @@ local window, currentErrorIndex, currentErrorList, currentSession
 local countLabel, sessionLabel, textArea
 local ActiveButton = nil
 local categoryButtons = {}
+addon.BugWindow.window = window
 
 local function updateDisplay(forceRefresh)
 	if not window then addon.BugWindow.Create() end
@@ -177,7 +178,7 @@ function addon.BugWindow.Create()
 	innerFrame.bg:SetAllPoints()
 	innerFrame.bg:SetAtlas('weeklyrewards-background-reward-locked')
 	innerFrame.bg:SetTexCoord(0.05, 0.95, 0.05, 0.95)
-	innerFrame.bg:SetVertexColor(0.6, 0.6, 0.6, 0.7)
+	innerFrame.bg:SetVertexColor(0.6, 0.6, 0.6, 1)
 
 	textArea = CreateFrame('EditBox', 'SUI_ErrorTextArea', scrollFrame)
 	textArea:SetTextColor(0.5, 0.5, 0.5, 1)
@@ -236,6 +237,15 @@ function addon.BugWindow.Create()
 	clearAllBtn:SetPoint('BOTTOMRIGHT', search, 'TOPRIGHT', 0, 5)
 	clearAllBtn:SetScript('OnClick', function()
 		BugGrabber:Reset()
+		-- Reset the UI
+		currentErrorList = {}
+		currentErrorIndex = nil
+		updateDisplay(true)
+
+		-- Reset the MiniMap Icon
+		if addon.MiniMapIcon then
+			addon.MiniMapIcon:Reset() -- Assuming there's a Reset method for the MiniMap Icon
+		end
 	end)
 	window.Buttons.ClearAll = clearAllBtn
 

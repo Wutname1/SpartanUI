@@ -149,6 +149,8 @@ end
 
 function addon.ErrorHandler:OnBugGrabbed(callback, errorObject)
 	self:ProcessError(errorObject)
+	-- Check if the error window is shown and update the display
+	if addon.BugWindow.window and addon.BugWindow.window:IsShown() then addon.BugWindow:updateDisplay(true) end
 end
 
 function addon.ErrorHandler:ProcessError(errorObject)

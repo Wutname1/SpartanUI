@@ -40,25 +40,6 @@ local function InitializeMinimapButton()
 			tt:AddLine(' ')
 			tt:AddLine(hint, 0.2, 1, 0.2, 1)
 		end,
-		-- type = 'launcher',
-		-- icon = 'Interface\\AddOns\\' .. addonName .. '\\Media\\Icon',
-		-- OnClick = function(self, button)
-		-- 	if button == 'LeftButton' then
-		-- 		addon.BugWindow:OpenErrorWindow()
-		-- 	elseif button == 'RightButton' then
-		-- 		if InterfaceOptionsFrame_OpenToCategory then
-		-- 			InterfaceOptionsFrame_OpenToCategory(addonName)
-		-- 			InterfaceOptionsFrame_OpenToCategory(addonName)
-		-- 		else
-		-- 			Settings.OpenToCategory(addon.settingsCategory.ID)
-		-- 		end
-		-- 	end
-		-- end,
-		-- OnTooltipShow = function(tooltip)
-		-- 	tooltip:AddLine(L['SpartanUI Error Display'])
-		-- 	tooltip:AddLine(L['Left-click to open error window'])
-		-- 	tooltip:AddLine(L['Right-click to open options'])
-		-- end,
 	})
 
 	icon:Register(MinimapIconName, SUIErrorLauncher, addon.Config.db.minimapIcon)
